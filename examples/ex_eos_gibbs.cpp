@@ -102,7 +102,8 @@ public:
   double c_quark;
   double mp_start;
   
-  int f_bag_constant(size_t nv, const ubvector &x, ubvector &y) {
+  int f_bag_constant(size_t nv, const ubvector &x, ubvector &y,
+		     double &quark_nqch2, double &quark_nQ2) {
     n.n=x[0];
     p.n=nB-n.n;
     e.n=p.n;
@@ -532,10 +533,6 @@ public:
 
     double mp_end;
     
-    mm_funct fp_bag_constant=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
-       (&ex_eos_gibbs::f_bag_constant),this,std::placeholders::_1,
-       std::placeholders::_2, std::placeholders::_3);
     mm_funct fp_had_phase=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
        (&ex_eos_gibbs::f_had_phase),this,std::placeholders::_1,
@@ -573,12 +570,20 @@ public:
 
     // -----------------------------------------------------------------
     // Determine bag constant
-    
+
+    double quark_nQ2, quark_nqch2;
+    mm_funct fp_bag_constant=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,
+		       double &,double &)>
+       (&ex_eos_gibbs::f_bag_constant),this,std::placeholders::_1,
+       std::placeholders::_2, std::placeholders::_3,
+       std::ref(quark_nQ2),std::ref(quark_nqch2));
+
     cout << "Determine B by fixing the "
 	 << "beginning of the mixed phase to\n n_B=" << mp_start
 	 << " fm^{-3}:" << endl;
     nB=mp_start;
-    x[0]=0.22;
+    x[0]=mp_start*0.9;
     x[1]=1.0;
     mh.msolve(2,x,fp_bag_constant);
     B=x[1];
@@ -639,7 +644,7 @@ public:
     cout << "Mixed phase at n_B=" << mp_start+0.01
 	 << " fm^{-3} from solver:" << endl;
     nB=mp_start+0.01;
-    x[0]=0.24;
+    x[0]=nB*0.9;
     x[1]=0.02;
     mh.msolve(2,x,fp_mixed_phase);
     n.n=x[0];
