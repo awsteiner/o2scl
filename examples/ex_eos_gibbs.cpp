@@ -99,7 +99,7 @@ public:
   //@}
   
   int f_bag_constant(size_t nv, const ubvector &x, ubvector &y,
-		     double &nB, double &quark_nqch, double &quark_nQ) {
+		     double &nB) {
     n.n=x[0];
     p.n=nB-n.n;
     e.n=p.n;
@@ -108,6 +108,7 @@ public:
     sk.calc_e(n,p,hth);
     fzt.calc_density_zerot(e);
 
+    double quark_nqch, quark_nQ;
     if (alt_quark_model) {
       u.mu=n.mu/3.0-e.mu*2.0/3.0;
       d.mu=n.mu/3.0+e.mu/3.0;
@@ -160,8 +161,7 @@ public:
   }
   
   int f_mixed_phase(size_t nv, const ubvector &x, ubvector &y,
-		    double &nB, double &chi,
-		    double &quark_nqch, double &quark_nQ) {
+		    double &nB, double &chi) {
     n.n=x[0];
     p.n=x[1];
     
@@ -169,6 +169,7 @@ public:
     e.mu=n.mu-p.mu;
     fzt.calc_mu_zerot(e);
 
+    double quark_nqch, quark_nQ;
     if (alt_quark_model) {
       u.mu=n.mu/3.0-e.mu*2.0/3.0;
       d.mu=n.mu/3.0+e.mu/3.0;
@@ -210,13 +211,14 @@ public:
   }
   
   int f_quark_phase(size_t nv, const ubvector &x, ubvector &y,
-		    double &nB, double &quark_nqch, double &quark_nQ) {
+		    double &nB) {
     
     double muQ=x[0];
     e.mu=x[1];
     
     fzt.calc_mu_zerot(e);
     
+    double quark_nqch, quark_nQ;
     if (alt_quark_model) {
       u.mu=muQ-e.mu*2.0/3.0;
       d.mu=muQ+e.mu/3.0;
@@ -251,8 +253,7 @@ public:
   }
   
   int f_end_mixed_phase(size_t nv, const ubvector &x, ubvector &y,
-			double &nB, double &chi,
-			double &quark_nqch, double &quark_nQ) {
+			double &nB, double &chi) {
 
     n.n=x[0];
     p.n=x[1];
@@ -261,6 +262,7 @@ public:
     e.mu=n.mu-p.mu;
     fzt.calc_mu_zerot(e);
 
+    double quark_nqch, quark_nQ;
     if (alt_quark_model) {
       u.mu=n.mu/3.0-e.mu*2.0/3.0;
       d.mu=n.mu/3.0+e.mu/3.0;
@@ -306,7 +308,7 @@ public:
   }
   
   int f_min_densities(size_t nv, const ubvector &x, ubvector &y,
-		      double &nB, double &quark_nqch, double &quark_nQ) {
+		      double &nB) {
     
     double chi=x[0];
     p.n=x[1];
@@ -322,6 +324,7 @@ public:
     e.mu=n.mu-p.mu;
     fzt.calc_mu_zerot(e);
     
+    double quark_nqch, quark_nQ;
     if (alt_quark_model) {
       u.mu=n.mu/3.0-e.mu*2.0/3.0;
       d.mu=n.mu/3.0+e.mu/3.0;
@@ -353,16 +356,14 @@ public:
   }
   
   double f_mixed_phase_min(size_t nv, const ubvector &x,
-			   double &nB, double &chi,
-			   double &quark_nqch, double &quark_nQ) {
+			   double &nB, double &chi) {
     n.n=x[0];
 
     mm_funct fp_min_densities=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,
-		       double &, double &, double &)>
+		       double &)>
        (&ex_eos_gibbs::f_min_densities),this,std::placeholders::_1,
-       std::placeholders::_2,std::placeholders::_3,std::ref(nB),
-       std::ref(quark_nqch),std::ref(quark_nQ));
+       std::placeholders::_2,std::placeholders::_3,std::ref(nB));
 
     ubvector x2(2), y2(2);
     x2[0]=chi;
@@ -374,8 +375,9 @@ public:
     mh.err_nonconv=true;
     chi=x2[0];
     p.n=x2[1];
-    f_min_densities(2,x2,y2,nB,quark_nqch,quark_nQ);
+    f_min_densities(2,x2,y2,nB);
     
+    double quark_nqch, quark_nQ;
     if (alt_quark_model) {
       u.mu=n.mu/3.0-e.mu*2.0/3.0;
       d.mu=n.mu/3.0+e.mu/3.0;
@@ -426,7 +428,6 @@ public:
 
   double f_mixed_phase_min_r(size_t nv, const ubvector &x,
 			     double &nB, double &chi, double &dim,
-			     double &quark_nqch, double &quark_nQ,
 			     double &esurf, double &ecoul) {
     n.n=x[0];
     double r_rare=x[1];
@@ -434,10 +435,10 @@ public:
     // Set up the functor
     mm_funct fp_min_densities=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,
-		       double &, double &,double &)>
+		       double &)>
        (&ex_eos_gibbs::f_min_densities),this,std::placeholders::_1,
        std::placeholders::_2,std::placeholders::_3,
-       std::ref(nB),std::ref(quark_nqch),std::ref(quark_nQ));
+       std::ref(nB));
 
     // Determine the proton density and chi by solving 
     ubvector x2(2), y2(2);
@@ -450,8 +451,9 @@ public:
     mh.err_nonconv=true;
     chi=x2[0];
     p.n=x2[1];
-    f_min_densities(2,x2,y2,nB,quark_nqch,quark_nQ);
+    f_min_densities(2,x2,y2,nB);
 
+    double quark_nqch, quark_nQ;
     if (alt_quark_model) {
       u.mu=n.mu/3.0-e.mu*2.0/3.0;
       d.mu=n.mu/3.0+e.mu/3.0;
@@ -544,7 +546,7 @@ public:
 
   void run() {
 
-    double mp_end, quark_nqch, quark_nQ, chi, nB, dim=3.0, esurf, ecoul;
+    double mp_end, chi, nB, dim=3.0, esurf, ecoul;
     
     mm_funct fp_had_phase=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,double &)>
@@ -552,35 +554,31 @@ public:
        std::placeholders::_2,std::placeholders::_3,std::ref(nB));
     mm_funct fp_mixed_phase=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,
-		       double &, double &, double &, double &)>
+		       double &, double &)>
        (&ex_eos_gibbs::f_mixed_phase),this,std::placeholders::_1,
        std::placeholders::_2,std::placeholders::_3,
-       std::ref(nB),std::ref(chi),std::ref(quark_nqch),std::ref(quark_nQ));
+       std::ref(nB),std::ref(chi));
     mm_funct fp_quark_phase=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &, double &,
-		       double &,double &)>
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &, double &)>
        (&ex_eos_gibbs::f_quark_phase),this,std::placeholders::_1,
        std::placeholders::_2,std::placeholders::_3,
-       std::ref(nB),std::ref(quark_nqch),std::ref(quark_nQ));
+       std::ref(nB));
     mm_funct fp_end_mixed_phase=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,
-		       double &, double &, double &, double &)>
+		       double &, double &)>
        (&ex_eos_gibbs::f_end_mixed_phase),this,std::placeholders::_1,
        std::placeholders::_2,std::placeholders::_3,
-       std::ref(nB),std::ref(chi),std::ref(quark_nqch),std::ref(quark_nQ));
+       std::ref(nB),std::ref(chi));
     multi_funct fp_mixed_phase_min=std::bind
-      (std::mem_fn<double(size_t,const ubvector &, double &, double &,
-			  double &, double &)>
+      (std::mem_fn<double(size_t,const ubvector &, double &, double &)>
        (&ex_eos_gibbs::f_mixed_phase_min),this,std::placeholders::_1,
-       std::placeholders::_2,std::ref(nB),std::ref(chi),
-       std::ref(quark_nqch),std::ref(quark_nQ));
+       std::placeholders::_2,std::ref(nB),std::ref(chi));
     multi_funct fp_mixed_phase_min_r=std::bind
       (std::mem_fn<double(size_t,const ubvector &, double &, double &,
-			  double &, double &, double &, double &, double &)>
+			  double &, double &, double &)>
        (&ex_eos_gibbs::f_mixed_phase_min_r),this,std::placeholders::_1,
        std::placeholders::_2,std::ref(nB),std::ref(chi),std::ref(dim),
-       std::ref(quark_nqch),std::ref(quark_nQ),std::ref(esurf),
-       std::ref(ecoul));
+       std::ref(esurf),std::ref(ecoul));
 
     ubvector x(2), y(2);
 
@@ -597,10 +595,10 @@ public:
 
     mm_funct fp_bag_constant=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,
-		       double &,double &,double &)>
+		       double &)>
        (&ex_eos_gibbs::f_bag_constant),this,std::placeholders::_1,
        std::placeholders::_2, std::placeholders::_3,
-       std::ref(nB),std::ref(quark_nqch),std::ref(quark_nQ));
+       std::ref(nB));
 
     cout << "Determine B by fixing the "
 	 << "beginning of the mixed phase to\n n_B=" << mp_start
@@ -634,9 +632,9 @@ public:
 	   << qth.ed*hc_mev_fm << " MeV/fm^3, "
 	   << qth.pr*hc_mev_fm << " MeV/fm^3"
 	   << endl;
-      cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
-      cout << "Charge density in quark matter: " << quark_nqch
-	   << " 1/fm^3" << endl;
+      //cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
+      //cout << "Charge density in quark matter: " << quark_nqch
+      //<< " 1/fm^3" << endl;
     }
     cout << endl;
     
@@ -650,7 +648,7 @@ public:
       mh.msolve(2,x,fp_end_mixed_phase);
       n.n=x[0];
       p.n=x[1];
-      f_end_mixed_phase(2,x,y,nB,chi,quark_nqch,quark_nQ);
+      f_end_mixed_phase(2,x,y,nB,chi);
       mp_end=nB;
       cout << "Baryon density: " << nB << " fm^{-3}" << endl;
       cout << "Chem pots. (n,p,e): " << n.mu*hc_mev_fm << " "
@@ -672,7 +670,7 @@ public:
     mh.msolve(2,x,fp_mixed_phase);
     n.n=x[0];
     p.n=x[1];
-    f_mixed_phase(2,x,y,nB,chi,quark_nqch,quark_nQ);
+    f_mixed_phase(2,x,y,nB,chi);
     cout << "Chi: " << chi << endl;
     cout << "Densities (n,p,e): " << n.n << " " << p.n << " " << e.n 
 	 << " fm^{-3}" << endl;
@@ -693,22 +691,24 @@ public:
 	   << qth.ed*hc_mev_fm << " MeV/fm^3, "
 	   << qth.pr*hc_mev_fm << " MeV/fm^3"
 	   << endl;
-      cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
-      cout << "Charge density in quark matter: " << quark_nqch
-	   << " 1/fm^3" << endl;
+      //cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
+      //cout << "Charge density in quark matter: " << quark_nqch
+      //<< " 1/fm^3" << endl;
     }
     {
       cout << "Check thermodynamic identities:" << endl;
       cout << "\tSkyrme: " << fabs(hth.pr+hth.ed-n.n*n.mu-p.n*p.mu)/
 	(hth.pr) << endl;
       cout << "\tElectrons: " << fabs(e.pr+e.ed-e.n*e.mu)/e.pr << endl;
-      cout << "\tQuarks: " << fabs(qth.pr+qth.ed-quark_nQ*n.mu/3.0+
-				   quark_nqch*e.mu)/(qth.pr) << endl;
-      cout << "\tTotal: " << fabs(tot.pr+tot.ed-chi*n.n*n.mu-
-				  chi*p.n*p.mu-e.n*e.mu-
-				  (1.0-chi)*quark_nQ*n.mu/3.0+
-				  (1.0-chi)*quark_nqch*e.mu)/
+      /*
+	cout << "\tQuarks: " << fabs(qth.pr+qth.ed-quark_nQ*n.mu/3.0+
+	quark_nqch*e.mu)/(qth.pr) << endl;
+	cout << "\tTotal: " << fabs(tot.pr+tot.ed-chi*n.n*n.mu-
+	chi*p.n*p.mu-e.n*e.mu-
+	(1.0-chi)*quark_nQ*n.mu/3.0+
+	(1.0-chi)*quark_nqch*e.mu)/
 	fabs(tot.pr) << endl;
+      */
     }
     cout << endl;
     
@@ -737,22 +737,24 @@ public:
 	   << qth.ed*hc_mev_fm << " MeV/fm^3, "
 	   << qth.pr*hc_mev_fm << " MeV/fm^3"
 	   << endl;
-      cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
-      cout << "Charge density in quark matter: " << quark_nqch
-	   << " 1/fm^3" << endl;
+      //cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
+      //cout << "Charge density in quark matter: " << quark_nqch
+      //<< " 1/fm^3" << endl;
     }
     {
       cout << "Check thermodynamic identities:" << endl;
       cout << "\tSkyrme: " << fabs(hth.pr+hth.ed-n.n*n.mu-p.n*p.mu)/
 	(hth.pr) << endl;
       cout << "\tElectrons: " << fabs(e.pr+e.ed-e.n*e.mu)/e.pr << endl;
-      cout << "\tQuarks: " << fabs(qth.pr+qth.ed-quark_nQ*n.mu/3.0+
-				   quark_nqch*e.mu)/(qth.pr) << endl;
-      cout << "\tTotal: " << fabs(tot.pr+tot.ed-chi*n.n*n.mu-
-				  chi*p.n*p.mu-e.n*e.mu-
-				  (1.0-chi)*quark_nQ*n.mu/3.0+
-				  (1.0-chi)*quark_nqch*e.mu)/
+      /*
+	cout << "\tQuarks: " << fabs(qth.pr+qth.ed-quark_nQ*n.mu/3.0+
+	quark_nqch*e.mu)/(qth.pr) << endl;
+	cout << "\tTotal: " << fabs(tot.pr+tot.ed-chi*n.n*n.mu-
+	chi*p.n*p.mu-e.n*e.mu-
+	(1.0-chi)*quark_nQ*n.mu/3.0+
+	(1.0-chi)*quark_nqch*e.mu)/
 	fabs(tot.pr) << endl;
+      */
     }
     cout << endl;
 
@@ -768,7 +770,7 @@ public:
     mh.msolve(2,x,fp_mixed_phase);
     n.n=x[0];
     p.n=x[1];
-    f_mixed_phase(2,x,y,nB,chi,quark_nqch,quark_nQ);
+    f_mixed_phase(2,x,y,nB,chi);
     cout << "Chi: " << chi << endl;
     cout << "Densities (n,p,e): " << n.n << " " << p.n << " " << e.n 
 	 << " fm^{-3}" << endl;
@@ -789,22 +791,24 @@ public:
 	   << qth.ed*hc_mev_fm << " MeV/fm^3, "
 	   << qth.pr*hc_mev_fm << " MeV/fm^3"
 	   << endl;
-      cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
-      cout << "Charge density in quark matter: " << quark_nqch
-	   << " 1/fm^3" << endl;
+      //cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
+      //cout << "Charge density in quark matter: " << quark_nqch
+      //<< " 1/fm^3" << endl;
     }
     {
       cout << "Check thermodynamic identities:" << endl;
       cout << "\tSkyrme: " << fabs(hth.pr+hth.ed-n.n*n.mu-p.n*p.mu)/
 	(hth.pr) << endl;
       cout << "\tElectrons: " << fabs(e.pr+e.ed-e.n*e.mu)/e.pr << endl;
-      cout << "\tQuarks: " << fabs(qth.pr+qth.ed-quark_nQ*n.mu/3.0+
-				   quark_nqch*e.mu)/(qth.pr) << endl;
-      cout << "\tTotal: " << fabs(tot.pr+tot.ed-chi*n.n*n.mu-
-				  chi*p.n*p.mu-e.n*e.mu-
-				  (1.0-chi)*quark_nQ*n.mu/3.0+
-				  (1.0-chi)*quark_nqch*e.mu)/
+      /*
+	cout << "\tQuarks: " << fabs(qth.pr+qth.ed-quark_nQ*n.mu/3.0+
+	quark_nqch*e.mu)/(qth.pr) << endl;
+	cout << "\tTotal: " << fabs(tot.pr+tot.ed-chi*n.n*n.mu-
+	chi*p.n*p.mu-e.n*e.mu-
+	(1.0-chi)*quark_nQ*n.mu/3.0+
+	(1.0-chi)*quark_nqch*e.mu)/
 	fabs(tot.pr) << endl;
+      */
     }
     cout << endl;
 
@@ -835,22 +839,24 @@ public:
 	   << qth.ed*hc_mev_fm << " MeV/fm^3, "
 	   << qth.pr*hc_mev_fm << " MeV/fm^3"
 	   << endl;
-      cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
-      cout << "Charge density in quark matter: " << quark_nqch
-	   << " 1/fm^3" << endl;
+      //cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
+      //cout << "Charge density in quark matter: " << quark_nqch
+      //<< " 1/fm^3" << endl;
     }
     {
       cout << "Check thermodynamic identities:" << endl;
       cout << "\tSkyrme: " << fabs(hth.pr+hth.ed-n.n*n.mu-p.n*p.mu)/
 	(hth.pr) << endl;
       cout << "\tElectrons: " << fabs(e.pr+e.ed-e.n*e.mu)/e.pr << endl;
-      cout << "\tQuarks: " << fabs(qth.pr+qth.ed-quark_nQ*n.mu/3.0+
-				   quark_nqch*e.mu)/(qth.pr) << endl;
-      cout << "\tTotal: " << fabs(tot.pr+tot.ed-chi*n.n*n.mu-
-				  chi*p.n*p.mu-e.n*e.mu-
-				  (1.0-chi)*quark_nQ*n.mu/3.0+
-				  (1.0-chi)*quark_nqch*e.mu)/
+      /*
+	cout << "\tQuarks: " << fabs(qth.pr+qth.ed-quark_nQ*n.mu/3.0+
+	quark_nqch*e.mu)/(qth.pr) << endl;
+	cout << "\tTotal: " << fabs(tot.pr+tot.ed-chi*n.n*n.mu-
+	chi*p.n*p.mu-e.n*e.mu-
+	(1.0-chi)*quark_nQ*n.mu/3.0+
+	(1.0-chi)*quark_nqch*e.mu)/
 	fabs(tot.pr) << endl;
+      */
     }
     cout << endl;
 
@@ -1018,7 +1024,7 @@ public:
 				    qth.pr*hc_mev_fm,n.mu*hc_mev_fm,
 				    p.mu*hc_mev_fm,chi,x[1],
 				    esurf*hc_mev_fm,ecoul*hc_mev_fm,
-				    quark_nqch,e.n,r_ws};
+				    0.0,e.n,r_ws};
 	  t[id].line_of_data(line);
 	  if (chi<0.05) high_done=true;
 	  
@@ -1048,7 +1054,7 @@ public:
 				    qth.pr*hc_mev_fm,n.mu*hc_mev_fm,
 				    p.mu*hc_mev_fm,chi,x[1],
 				    esurf*hc_mev_fm,ecoul*hc_mev_fm,
-				    quark_nqch,e.n,r_ws};
+				    0.0,e.n,r_ws};
 	  t[id].line_of_data(line);
 	  if (chi>0.95) low_done=true;
 	  
