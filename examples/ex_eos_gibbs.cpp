@@ -83,27 +83,23 @@ public:
   thermo hth;
   thermo qth;
   thermo tot;
-  double quark_nqch;
-  double quark_nQ;
   fermion_zerot fzt;
-  double ms;
   mroot_hybrids<> mh;
   mmin_simp2<> mmin;
   anneal_gsl<> mmin2;
-  double chi;
+
+  /// \name Parameters
+  //@{
   double B;
-  double nB;
-  double r_rare;
+  double ms;
   double sigma;
-  double esurf;
-  double ecoul;
-  double dim;
   bool alt_quark_model;
   double c_quark;
   double mp_start;
+  //@}
   
   int f_bag_constant(size_t nv, const ubvector &x, ubvector &y,
-		     double &quark_nqch2, double &quark_nQ2) {
+		     double &nB, double &quark_nqch, double &quark_nQ) {
     n.n=x[0];
     p.n=nB-n.n;
     e.n=p.n;
@@ -149,7 +145,8 @@ public:
     return 0;
   }
   
-  int f_had_phase(size_t nv, const ubvector &x, ubvector &y) {
+  int f_had_phase(size_t nv, const ubvector &x, ubvector &y,
+		  double &nB) {
     n.n=x[0];
     p.n=nB-n.n;
     
@@ -162,7 +159,9 @@ public:
     return 0;
   }
   
-  int f_mixed_phase(size_t nv, const ubvector &x, ubvector &y) {
+  int f_mixed_phase(size_t nv, const ubvector &x, ubvector &y,
+		    double &nB, double &chi,
+		    double &quark_nqch, double &quark_nQ) {
     n.n=x[0];
     p.n=x[1];
     
@@ -210,7 +209,9 @@ public:
     return 0;
   }
   
-  int f_quark_phase(size_t nv, const ubvector &x, ubvector &y) {
+  int f_quark_phase(size_t nv, const ubvector &x, ubvector &y,
+		    double &nB, double &quark_nqch, double &quark_nQ) {
+    
     double muQ=x[0];
     e.mu=x[1];
     
@@ -249,7 +250,10 @@ public:
     return 0;
   }
   
-  int f_end_mixed_phase(size_t nv, const ubvector &x, ubvector &y) {
+  int f_end_mixed_phase(size_t nv, const ubvector &x, ubvector &y,
+			double &nB, double &chi,
+			double &quark_nqch, double &quark_nQ) {
+
     n.n=x[0];
     p.n=x[1];
     
@@ -301,8 +305,10 @@ public:
     return 0;
   }
   
-  int f_min_densities(size_t nv, const ubvector &x, ubvector &y) {
-    chi=x[0];
+  int f_min_densities(size_t nv, const ubvector &x, ubvector &y,
+		      double &nB, double &quark_nqch, double &quark_nQ) {
+    
+    double chi=x[0];
     p.n=x[1];
 
     if (chi<0.0 || p.n<0.0) return 1;
@@ -346,13 +352,17 @@ public:
     return 0;
   }
   
-  double f_mixed_phase_min(size_t nv, const ubvector &x) {
+  double f_mixed_phase_min(size_t nv, const ubvector &x,
+			   double &nB, double &chi,
+			   double &quark_nqch, double &quark_nQ) {
     n.n=x[0];
 
     mm_funct fp_min_densities=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,
+		       double &, double &, double &)>
        (&ex_eos_gibbs::f_min_densities),this,std::placeholders::_1,
-       std::placeholders::_2,std::placeholders::_3);
+       std::placeholders::_2,std::placeholders::_3,std::ref(nB),
+       std::ref(quark_nqch),std::ref(quark_nQ));
 
     ubvector x2(2), y2(2);
     x2[0]=chi;
@@ -364,7 +374,7 @@ public:
     mh.err_nonconv=true;
     chi=x2[0];
     p.n=x2[1];
-    f_min_densities(2,x2,y2);
+    f_min_densities(2,x2,y2,nB,quark_nqch,quark_nQ);
     
     if (alt_quark_model) {
       u.mu=n.mu/3.0-e.mu*2.0/3.0;
@@ -414,15 +424,20 @@ public:
     return ret;
   }
 
-  double f_mixed_phase_min_r(size_t nv, const ubvector &x) {
+  double f_mixed_phase_min_r(size_t nv, const ubvector &x,
+			     double &nB, double &chi, double &dim,
+			     double &quark_nqch, double &quark_nQ,
+			     double &esurf, double &ecoul) {
     n.n=x[0];
-    r_rare=x[1];
+    double r_rare=x[1];
 
     // Set up the functor
     mm_funct fp_min_densities=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,
+		       double &, double &,double &)>
        (&ex_eos_gibbs::f_min_densities),this,std::placeholders::_1,
-       std::placeholders::_2,std::placeholders::_3);
+       std::placeholders::_2,std::placeholders::_3,
+       std::ref(nB),std::ref(quark_nqch),std::ref(quark_nQ));
 
     // Determine the proton density and chi by solving 
     ubvector x2(2), y2(2);
@@ -435,7 +450,7 @@ public:
     mh.err_nonconv=true;
     chi=x2[0];
     p.n=x2[1];
-    f_min_densities(2,x2,y2);
+    f_min_densities(2,x2,y2,nB,quark_nqch,quark_nQ);
 
     if (alt_quark_model) {
       u.mu=n.mu/3.0-e.mu*2.0/3.0;
@@ -521,8 +536,6 @@ public:
     mmin.set_step(1,step);
 
     sigma=1.0/hc_mev_fm;
-
-    dim=3.0;
     
     alt_quark_model=false;
     c_quark=0.0;
@@ -531,32 +544,43 @@ public:
 
   void run() {
 
-    double mp_end;
+    double mp_end, quark_nqch, quark_nQ, chi, nB, dim=3.0, esurf, ecoul;
     
     mm_funct fp_had_phase=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,double &)>
        (&ex_eos_gibbs::f_had_phase),this,std::placeholders::_1,
-       std::placeholders::_2,std::placeholders::_3);
+       std::placeholders::_2,std::placeholders::_3,std::ref(nB));
     mm_funct fp_mixed_phase=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,
+		       double &, double &, double &, double &)>
        (&ex_eos_gibbs::f_mixed_phase),this,std::placeholders::_1,
-       std::placeholders::_2,std::placeholders::_3);
+       std::placeholders::_2,std::placeholders::_3,
+       std::ref(nB),std::ref(chi),std::ref(quark_nqch),std::ref(quark_nQ));
     mm_funct fp_quark_phase=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &, double &,
+		       double &,double &)>
        (&ex_eos_gibbs::f_quark_phase),this,std::placeholders::_1,
-       std::placeholders::_2,std::placeholders::_3);
+       std::placeholders::_2,std::placeholders::_3,
+       std::ref(nB),std::ref(quark_nqch),std::ref(quark_nQ));
     mm_funct fp_end_mixed_phase=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,
+		       double &, double &, double &, double &)>
        (&ex_eos_gibbs::f_end_mixed_phase),this,std::placeholders::_1,
-       std::placeholders::_2,std::placeholders::_3);
+       std::placeholders::_2,std::placeholders::_3,
+       std::ref(nB),std::ref(chi),std::ref(quark_nqch),std::ref(quark_nQ));
     multi_funct fp_mixed_phase_min=std::bind
-      (std::mem_fn<double(size_t,const ubvector &)>
+      (std::mem_fn<double(size_t,const ubvector &, double &, double &,
+			  double &, double &)>
        (&ex_eos_gibbs::f_mixed_phase_min),this,std::placeholders::_1,
-       std::placeholders::_2);
+       std::placeholders::_2,std::ref(nB),std::ref(chi),
+       std::ref(quark_nqch),std::ref(quark_nQ));
     multi_funct fp_mixed_phase_min_r=std::bind
-      (std::mem_fn<double(size_t,const ubvector &)>
+      (std::mem_fn<double(size_t,const ubvector &, double &, double &,
+			  double &, double &, double &, double &, double &)>
        (&ex_eos_gibbs::f_mixed_phase_min_r),this,std::placeholders::_1,
-       std::placeholders::_2);
+       std::placeholders::_2,std::ref(nB),std::ref(chi),std::ref(dim),
+       std::ref(quark_nqch),std::ref(quark_nQ),std::ref(esurf),
+       std::ref(ecoul));
 
     ubvector x(2), y(2);
 
@@ -571,13 +595,12 @@ public:
     // -----------------------------------------------------------------
     // Determine bag constant
 
-    double quark_nQ2, quark_nqch2;
     mm_funct fp_bag_constant=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,
-		       double &,double &)>
+		       double &,double &,double &)>
        (&ex_eos_gibbs::f_bag_constant),this,std::placeholders::_1,
        std::placeholders::_2, std::placeholders::_3,
-       std::ref(quark_nQ2),std::ref(quark_nqch2));
+       std::ref(nB),std::ref(quark_nqch),std::ref(quark_nQ));
 
     cout << "Determine B by fixing the "
 	 << "beginning of the mixed phase to\n n_B=" << mp_start
@@ -627,7 +650,7 @@ public:
       mh.msolve(2,x,fp_end_mixed_phase);
       n.n=x[0];
       p.n=x[1];
-      f_end_mixed_phase(2,x,y);
+      f_end_mixed_phase(2,x,y,nB,chi,quark_nqch,quark_nQ);
       mp_end=nB;
       cout << "Baryon density: " << nB << " fm^{-3}" << endl;
       cout << "Chem pots. (n,p,e): " << n.mu*hc_mev_fm << " "
@@ -649,7 +672,7 @@ public:
     mh.msolve(2,x,fp_mixed_phase);
     n.n=x[0];
     p.n=x[1];
-    f_mixed_phase(2,x,y);
+    f_mixed_phase(2,x,y,nB,chi,quark_nqch,quark_nQ);
     cout << "Chi: " << chi << endl;
     cout << "Densities (n,p,e): " << n.n << " " << p.n << " " << e.n 
 	 << " fm^{-3}" << endl;
@@ -745,7 +768,7 @@ public:
     mh.msolve(2,x,fp_mixed_phase);
     n.n=x[0];
     p.n=x[1];
-    f_mixed_phase(2,x,y);
+    f_mixed_phase(2,x,y,nB,chi,quark_nqch,quark_nQ);
     cout << "Chi: " << chi << endl;
     cout << "Densities (n,p,e): " << n.n << " " << p.n << " " << e.n 
 	 << " fm^{-3}" << endl;
@@ -982,6 +1005,7 @@ public:
 	  //cout << "nB: " << id << " " << nB << " " << chi << endl;
 	  
 	  mmin.mmin(2,x,y[0],fp_mixed_phase_min_r);
+	  double r_rare=x[1];
 	  //cout << id << " " << nB << " " << n.n << " " << p.n << " "
 	  //<< x[1] << " " << tot.ed << endl;
 	  double xglen=chi;
@@ -1011,6 +1035,7 @@ public:
 	  //cout << "nB: " << id << " " << nB << " " << chi << endl;
 	  
 	  mmin.mmin(2,x,y[0],fp_mixed_phase_min_r);
+	  double r_rare=x[1];
 	  //cout << id << " " << nB << " " << n.n << " " << p.n << " "
 	  //<< x[1] << " " << tot.ed << endl;
 	  double xglen=chi;
