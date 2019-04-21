@@ -73,31 +73,59 @@ class ex_eos_gibbs {
 public:
 
   typedef boost::numeric::ublas::vector<double> ubvector;
+
+  /// Hadronic EOS
   eos_had_skyrme sk;
+
+  /// \name Particle objects
+  //@{
   fermion &n;
   fermion &p;
   fermion e;
   fermion u;
   fermion d;
   fermion s;
+  //@}
+  
+  /// \name Thermodynamic quantities
+  //@{
   thermo hth;
   thermo qth;
   thermo tot;
+  //@}
+
+  /// Electron EOS
   fermion_zerot fzt;
+
+  /// Solver
   mroot_hybrids<> mh;
+
+  /// Minimizer
   mmin_simp2<> mmin;
+  
+  /// Alternate minimizer (unused)
   anneal_gsl<> mmin2;
 
   /// \name Parameters
   //@{
-  double B;
+  /// (default \f$ (150~\mathrm{MeV})/(\hbar c) \f$
   double ms;
+  /// (default \f$ (1~\mathrm{MeV})/(\hbar c) \f$
   double sigma;
+  /// (default false)
   bool alt_quark_model;
+  /// (default 0)
   double c_quark;
+  /// (default 0.24)
   double mp_start;
   //@}
-  
+
+  /// Bag constant
+  double B;
+
+  /** \brief Determine the bag constant by fixing the density at which
+      the mixed phase begins
+  */
   int f_bag_constant(size_t nv, const ubvector &x, ubvector &y,
 		     double &nB) {
     n.n=x[0];
@@ -108,7 +136,6 @@ public:
     sk.calc_e(n,p,hth);
     fzt.calc_density_zerot(e);
 
-    double quark_nqch, quark_nQ;
     if (alt_quark_model) {
       u.mu=n.mu/3.0-e.mu*2.0/3.0;
       d.mu=n.mu/3.0+e.mu/3.0;
@@ -118,8 +145,6 @@ public:
       fzt.calc_mu_zerot(s);
       qth.pr=u.pr+d.pr+s.pr-B;
       qth.ed=u.ed+d.ed+s.ed+B;
-      quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
-      quark_nQ=u.n+d.n+s.n;
     } else {
       double muQ=n.mu/3.0;
       double p0=3.0*pow(muQ,4.0)/4.0/pi2*(1.0-c_quark)-B;
@@ -130,8 +155,6 @@ public:
       double nQ=3.0*pow(muQ,3.0)/pi2*(1.0-c_quark)-ms*ms/2.0/pi2*e.mu+
 	0.5*e.mu*e.mu*4.0*muQ/pi2;
       double nqch=aQ-chiQ*e.mu;
-      quark_nqch=nqch;
-      quark_nQ=nQ;
 
       // Energy density from quarks, etc.
       qth.ed=-qth.pr+nQ*muQ-nqch*e.mu;
@@ -145,7 +168,9 @@ public:
 
     return 0;
   }
-  
+
+  /** \brief Solve for the hadronic phase
+   */
   int f_had_phase(size_t nv, const ubvector &x, ubvector &y,
 		  double &nB) {
     n.n=x[0];
@@ -160,6 +185,8 @@ public:
     return 0;
   }
   
+  /** \brief Solve for the mixed phase (with no Coulomb or surface)
+   */
   int f_mixed_phase(size_t nv, const ubvector &x, ubvector &y,
 		    double &nB, double &chi) {
     n.n=x[0];
@@ -209,7 +236,9 @@ public:
 
     return 0;
   }
-  
+
+  /** \brief Solve for the quark phase
+   */
   int f_quark_phase(size_t nv, const ubvector &x, ubvector &y,
 		    double &nB) {
     
@@ -251,7 +280,9 @@ public:
 
     return 0;
   }
-  
+
+  /** \brief Solve for the end of the mixed phase
+   */
   int f_end_mixed_phase(size_t nv, const ubvector &x, ubvector &y,
 			double &nB, double &chi) {
 
@@ -313,7 +344,7 @@ public:
     double chi=x[0];
     p.n=x[1];
 
-    if (chi<0.0 || p.n<0.0) return 1;
+    if (chi<0.0 || p.n<0.0 || n.n<0.0) return 1;
 
     double t1, t2;
     sk.eff_mass(n,p,t1,t2);
@@ -377,7 +408,6 @@ public:
     p.n=x2[1];
     f_min_densities(2,x2,y2,nB);
     
-    double quark_nqch, quark_nQ;
     if (alt_quark_model) {
       u.mu=n.mu/3.0-e.mu*2.0/3.0;
       d.mu=n.mu/3.0+e.mu/3.0;
@@ -387,8 +417,6 @@ public:
       fzt.calc_mu_zerot(s);
       qth.pr=u.pr+d.pr+s.pr-B;
       qth.ed=u.ed+d.ed+s.ed+B;
-      quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
-      quark_nQ=u.n+d.n+s.n;
     } else {
       double muQ=n.mu/3.0;
       double p0=3.0*pow(muQ,4.0)/4.0/pi2*(1.0-c_quark)-B;
@@ -402,8 +430,6 @@ public:
       
       // Energy density from quarks
       qth.ed=-qth.pr+nQ*muQ-nqch*e.mu;
-      quark_nqch=nqch;
-      quark_nQ=nQ;
     }
 
     // Update the energy density and pressure
@@ -415,7 +441,7 @@ public:
     return tot.ed;
   }
 
-  /** \brief The Coulomb energy
+  /** \brief The Coulomb function
    */
   double fcoul(double d, double chi) {
     double ret;
