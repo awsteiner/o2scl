@@ -45,9 +45,9 @@ eos_quark_njl::eos_quark_njl() {
 
   B0=0.0;
 
-  up_default_mass=5.5/197.3269602;
-  down_default_mass=5.5/197.3269602;
-  strange_default_mass=140.7/197.3269602;
+  up_default_mass=5.5/hc_mev_fm;
+  down_default_mass=5.5/hc_mev_fm;
+  strange_default_mass=140.7/hc_mev_fm;
 
   L=602.3/hc_mev_fm;
   G=1.835/L/L;
@@ -74,7 +74,7 @@ int eos_quark_njl::set_quarks(quark &u, quark &d, quark &s) {
 }
 
 int eos_quark_njl::set_parameters(double lambda, double fourferm, 
-				double sixferm) {
+				  double sixferm) {
   
   if (lambda!=0.0) L=lambda;
   else L=602.3/hc_mev_fm;
@@ -153,7 +153,7 @@ int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
 }
 
 int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s, 
-			     double T, thermo &th) {
+			       double T, thermo &th) {
   ubvector x(3);
   int vp=0;
   int ret;
@@ -200,7 +200,8 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
 }
 
 int eos_quark_njl::calc_eq_p(quark &u, quark &d, quark &s, double &gap1,
-			   double &gap2, double &gap3, thermo &th) {
+			     double &gap2, double &gap3, thermo &th) {
+  
   if (fromqq==true) {
     
     //--------------------------------------------
@@ -308,8 +309,8 @@ int eos_quark_njl::calc_eq_p(quark &u, quark &d, quark &s, double &gap1,
 }
 
 int eos_quark_njl::calc_eq_e(quark &u, quark &d, quark &s, double &gap1,
-			   double &gap2, double &gap3, thermo &th) {
-
+			     double &gap2, double &gap3, thermo &th) {
+  
   if (fromqq==true) {
 
     //--------------------------------------------
@@ -444,7 +445,8 @@ int eos_quark_njl::gapfunqq(size_t nv, const ubvector &x, ubvector &y) {
   y[1]=gap2;
   y[2]=gap3;
 
-  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) || !std::isfinite(y[2])) return 2;
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) ||
+      !std::isfinite(y[2])) return 2;
   
   return 0;
 }
@@ -465,10 +467,12 @@ int eos_quark_njl::gapfunms(size_t nv, const ubvector &x, ubvector &y) {
   y[1]=gap2;
   y[2]=gap3;
 
-  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) || !std::isfinite(y[2])) return 2;
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) ||
+      !std::isfinite(y[2])) return 2;
 
   return 0;
 }
+
 int eos_quark_njl::gapfunqqT(size_t nv, const ubvector &x, ubvector &y) {
 
   double gap1,gap2,gap3;
@@ -485,7 +489,8 @@ int eos_quark_njl::gapfunqqT(size_t nv, const ubvector &x, ubvector &y) {
   y[1]=gap2;
   y[2]=gap3;
 
-  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) || !std::isfinite(y[2])) return 2;
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) ||
+      !std::isfinite(y[2])) return 2;
   
   return 0;
 }
@@ -506,7 +511,8 @@ int eos_quark_njl::gapfunmsT(size_t nv, const ubvector &x, ubvector &y) {
   y[1]=gap2;
   y[2]=gap3;
 
-  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) || !std::isfinite(y[2])) return 2;
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) ||
+      !std::isfinite(y[2])) return 2;
 
   return 0;
 }
@@ -531,14 +537,15 @@ int eos_quark_njl::B0fun(size_t nv, const ubvector &x, ubvector &y) {
   y[1]=gap2;
   y[2]=gap3;
 
-  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) || !std::isfinite(y[2])) return 2;
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) ||
+      !std::isfinite(y[2])) return 2;
 
   return 0;
 }
 
 int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s, 
-				double &gap1, double &gap2, double &gap3, 
-				thermo &qb, double temper) {
+				  double &gap1, double &gap2, double &gap3, 
+				  thermo &qb, double temper) {
   double ierr;
   int iret1, iret2, iret3, iret4;
 
@@ -572,31 +579,31 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
     pa.mu=u.mu;
     pa.m=u.m;
     funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
-			  (&eos_quark_njl::iqq),
-			  this,std::placeholders::_1,pa);
+			(&eos_quark_njl::iqq),
+			this,std::placeholders::_1,pa);
     iret1=it->integ_err(fqq,0.0,L,u.qq,ierr);
     u.qq-=L;
   }
 
   {
-  funct fde=std::bind(std::mem_fn<double(double,const njtp &)>
+    funct fde=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ide),
 			this,std::placeholders::_1,pa);
-  funct fed=std::bind(std::mem_fn<double(double,const njtp &)>
+    funct fed=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ied),
 			this,std::placeholders::_1,pa);
-  funct fpr=std::bind(std::mem_fn<double(double,const njtp &)>
+    funct fpr=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ipr),
 			this,std::placeholders::_1,pa);
-  iret2=it->integ_err(fde,0.0,L,u.n,ierr);
-  u.n-=L;
-  fet->kf_from_density(u);
-  iret3=it->integ_err(fpr,0.0,L,u.pr,ierr);
-  iret4=it->integ_err(fed,0.0,L,u.ed,ierr);
-  if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
-    O2SCL_ERR("Up quark failed in eos_quark_njl::calc_eq_temp_p().",
-	    exc_efailed);
-  }
+    iret2=it->integ_err(fde,0.0,L,u.n,ierr);
+    u.n-=L;
+    fet->kf_from_density(u);
+    iret3=it->integ_err(fpr,0.0,L,u.pr,ierr);
+    iret4=it->integ_err(fed,0.0,L,u.ed,ierr);
+    if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
+      O2SCL_ERR("Up quark failed in eos_quark_njl::calc_eq_temp_p().",
+		exc_efailed);
+    }
   }
   
   if (fromqq==true) {
@@ -610,31 +617,31 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
     pa.mu=d.mu;
     pa.m=d.m;
     funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
-			  (&eos_quark_njl::iqq),
-			  this,std::placeholders::_1,pa);
+			(&eos_quark_njl::iqq),
+			this,std::placeholders::_1,pa);
     iret1=it->integ_err(fqq,0.0,L,d.qq,ierr);
     d.qq-=L;
   }
   {
-  funct fde=std::bind(std::mem_fn<double(double,const njtp &)>
+    funct fde=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ide),
 			this,std::placeholders::_1,pa);
-  funct fed=std::bind(std::mem_fn<double(double,const njtp &)>
+    funct fed=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ied),
 			this,std::placeholders::_1,pa);
-  funct fpr=std::bind(std::mem_fn<double(double,const njtp &)>
+    funct fpr=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ipr),
 			this,std::placeholders::_1,pa);
 
-  iret2=it->integ_err(fde,0.0,L,d.n,ierr);
-  d.n-=L;
-  fet->kf_from_density(d);
-  iret3=it->integ_err(fpr,0.0,L,d.pr,ierr);
-  iret4=it->integ_err(fed,0.0,L,d.ed,ierr);
-  if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
-    O2SCL_ERR("Down quark failed in eos_quark_njl::calc_eq_temp_p().",
-	    exc_efailed);
-  }
+    iret2=it->integ_err(fde,0.0,L,d.n,ierr);
+    d.n-=L;
+    fet->kf_from_density(d);
+    iret3=it->integ_err(fpr,0.0,L,d.pr,ierr);
+    iret4=it->integ_err(fed,0.0,L,d.ed,ierr);
+    if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
+      O2SCL_ERR("Down quark failed in eos_quark_njl::calc_eq_temp_p().",
+		exc_efailed);
+    }
   }
   
   if (fromqq==true) {
@@ -648,30 +655,30 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
     pa.mu=s.mu;
     pa.m=s.m;
     funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
-			  (&eos_quark_njl::iqq),
-			  this,std::placeholders::_1,pa);
+			(&eos_quark_njl::iqq),
+			this,std::placeholders::_1,pa);
     iret1=it->integ_err(fqq,0.0,L,s.qq,ierr);
     s.qq-=L;
   }
   {
-  funct fde=std::bind(std::mem_fn<double(double,const njtp &)>
+    funct fde=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ide),
 			this,std::placeholders::_1,pa);
-  funct fed=std::bind(std::mem_fn<double(double,const njtp &)>
+    funct fed=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ied),
 			this,std::placeholders::_1,pa);
-  funct fpr=std::bind(std::mem_fn<double(double,const njtp &)>
+    funct fpr=std::bind(std::mem_fn<double(double,const njtp &)>
 			(&eos_quark_njl::ipr),
 			this,std::placeholders::_1,pa);
-  iret2=it->integ_err(fde,0.0,L,s.n,ierr);
-  s.n-=L;
-  fet->kf_from_density(s);
-  iret3=it->integ_err(fpr,0.0,L,s.pr,ierr);
-  iret4=it->integ_err(fed,0.0,L,s.ed,ierr);
-  if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
-    O2SCL_ERR("Strange quark failed in eos_quark_njl::calc_eq_temp_p().",
-	    exc_efailed);
-  }
+    iret2=it->integ_err(fde,0.0,L,s.n,ierr);
+    s.n-=L;
+    fet->kf_from_density(s);
+    iret3=it->integ_err(fpr,0.0,L,s.pr,ierr);
+    iret4=it->integ_err(fed,0.0,L,s.ed,ierr);
+    if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
+      O2SCL_ERR("Strange quark failed in eos_quark_njl::calc_eq_temp_p().",
+		exc_efailed);
+    }
   }
 
   qb.ed=u.ed+d.ed+s.ed+2.0*G*(u.qq*u.qq+d.qq*d.qq+s.qq*s.qq)+
@@ -689,8 +696,8 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
     pa.m=u.m;
     {
       funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
-			    (&eos_quark_njl::iqq),
-			    this,std::placeholders::_1,pa);
+			  (&eos_quark_njl::iqq),
+			  this,std::placeholders::_1,pa);
       iret1=it->integ_err(fqq,0.0,L,qqt,ierr);
     }
     gap1=-u.qq+qqt-L;
@@ -700,8 +707,8 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
     pa.m=d.m;
     {
       funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
-			    (&eos_quark_njl::iqq),
-			    this,std::placeholders::_1,pa);
+			  (&eos_quark_njl::iqq),
+			  this,std::placeholders::_1,pa);
       iret2=it->integ_err(fqq,0.0,L,qqt,ierr);
     }
     gap2=-d.qq+qqt-L;
@@ -711,15 +718,15 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
     pa.m=s.m;
     {
       funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
-			    (&eos_quark_njl::iqq),
-			    this,std::placeholders::_1,pa);
-    iret3=it->integ_err(fqq,0.0,L,qqt,ierr);
+			  (&eos_quark_njl::iqq),
+			  this,std::placeholders::_1,pa);
+      iret3=it->integ_err(fqq,0.0,L,qqt,ierr);
     }
     gap3=-s.qq+qqt-L;
 
     if (iret1!=0 || iret2!=0 || iret3!=0) {
       O2SCL_ERR("Strange quark failed in eos_quark_njl::calc_eq_temp_p().",
-	      exc_efailed);
+		exc_efailed);
     }
   } else {
     gap1=-u.ms+u.m-4.0*G*u.qq+2.0*K*d.qq*s.qq;

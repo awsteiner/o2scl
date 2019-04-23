@@ -39,21 +39,34 @@
 namespace o2scl {
 #endif
 
-  /** \brief Nambu Jona-Lasinio EOS at zero temperature
+  /** \brief Nambu Jona-Lasinio EOS
 
-      Calculates everything from the quark condensates ([uds].qq) and the
-      chemical potentials ([uds].mu). If "fromqq" is set to false, then
-      instead it calculates everything from the dynamical masses
-      ([uds].ms) and the chemical potentials. L, G, K, and B0 are fixed
-      constants.  [uds].pr returns the pressure due to the Fermi-gas
-      contribution plus the bag pressure contribution. [uds.ed] is the
-      energy density for each quark so that e.g. u.ed+u.pr=u.mu*u.n. B0
-      should be fixed using calc_B0() beforehand to ensure that the energy
-      density and pressure of the vacuum is zero.
+      This class is based on \ref Buballa99 .
 
-      The functions set_parameters() should be called first.
+      The quantities \ref L, \ref G, and \ref K are the coupling
+      constants. In order to use the EOS, the user should either (i)
+      set the bag constant, \ref B0 directly, or (ii) use \ref
+      set_parameters() to modify the parameters (and then the \ref
+      set_parameters() function also automatically computes the bag
+      constant.
 
-      The code is based on \ref Buballa99.
+      This class can compute the EOS from the quark condensates
+      (stored in \ref o2scl::quark::qq) by setting \ref fromqq to
+      <tt>true</tt> (this is the default) or from the dynamical masses
+      (stored in \ref o2scl::part::ms) by setting \ref fromqq to
+      <tt>false</tt>.
+
+      The Fermi gas-like contribution to the pressure due
+      plus the the contribution from the bag pressure is stored in
+      \ref o2scl::part::pr . For the \f$ T=0 \f$ EOS, the 
+      energy density for each quark is set so that
+      \f$ \varepsilon + P = \mu n \f$ . 
+
+      <b>Finite T documentation</b>
+
+      This implementation includes contributions from antiquarks.
+      
+      <b>Details</b>
 
       The Lagrangian is
       \f[
@@ -68,7 +81,7 @@ namespace o2scl {
 
       And the corresponding thermodynamic potential is
       \f[
-      \Omega = \Omega_{FG} + \Omega_{Int}
+      \Omega = \Omega_{FG} + \Omega_{\mathrm{Int}}
       \f]
       where \f$\Omega_{FG}\f$ is the Fermi gas contribution and
       \f[
@@ -85,15 +98,14 @@ namespace o2scl {
       where \f$B_0\f$ is a constant defined to ensure that the 
       energy density and the pressure of the vacuum is zero.
 
-      Unlike \ref Buballa99, the bag constant, \f$\Omega_{Int}/V\f$ is
+      Unlike \ref Buballa99, the bag constant, \f$\Omega_{\mathrm{Int}}/V\f$ is
       defined without the term
       \f[
       \sum_{i=u,d,s} 2 N_C \int_0^{\Lambda} 
       \frac{d^3 p}{(2 \pi)^3} \sqrt{ m_{0,i}^2+p^2 } ~dp
       \f]
       since this allows an easier comparison to the finite temperature
-      EOS. 
-      The constant \f$B_0\f$ in this case 
+      EOS. The constant \f$B_0\f$ in this case 
       is therefore significantly 
       larger, but the energy density and pressure are still zero in
       the vacuum. 
@@ -107,22 +119,7 @@ namespace o2scl {
       than zero, but will give nonsensical results for nonsensical
       inputs.
 
-      <b>Finite T documentation</b>
-
-      Calculates everything from the quark condensates ([uds].qq) and the
-      chemical potentials ([uds].mu). If "fromqq" is set to false, then
-      instead it calculates everything from the dynamical masses
-      ([uds].ms) and the chemical potentials. L, G, K, and B0 are fixed
-      constants.  [uds].pr returns the pressure due to the Fermi-gas
-      contribution plus the bag pressure contribution. [uds.ed] is the
-      energy density for each quark so that e.g. u.ed+u.pr=u.mu*u.n. B0 is
-      fixed to ensure that the energy density and pressure of the vacuum
-      is zero.  
-
-      This implementation includes contributions from antiquarks.
-      
-      \hline
-      <b>References:</b>
+      <b>References</b>
 
       Created for \ref Steiner00. See also \ref Buballa99 and 
       \ref Hatsuda94. 
@@ -168,17 +165,17 @@ namespace o2scl {
     bool fromqq;
 
     eos_quark_njl();
-
+    
     /** \brief Equation of state as a function of chemical potentials
 	
-	This function automatically solves the gap equations
+	This function automatically solves the gap equations.
     */
     virtual int calc_p(quark &u, quark &d, quark &s, thermo &lth);
 
     /** \brief Equation of state as a function of chemical potentials at 
 	finite temperature
 
-	This function automatically solves the gap equations
+	This function automatically solves the gap equations.
     */
     virtual int calc_temp_p(quark &u, quark &d, quark &s, 
 			    double T, thermo &th);
@@ -204,7 +201,7 @@ namespace o2scl {
     
     /** \brief Calculates gap equations in \c y as a function of the 
 	constituent masses in \c x
-
+	
 	The function utilizes the \ref quark objects which can
 	be specified in set_quarks() and the \ref thermo object
 	which can be specified in eos::set_thermo().
@@ -240,10 +237,13 @@ namespace o2scl {
 
     /** \name The default quark masses
 
-	These are the values from \ref Buballa99 which were used
-	to fix the pion and kaon decay constants, and the pion,
-	kaon, and eta prime masses. They are set in the constructor
-	and are in units of \f$ \mathrm{fm}^{-1} \f$ .
+	These are the values from \ref Buballa99 which were used to
+	fix the pion and kaon decay constants, and the pion, kaon, and
+	eta prime masses. They are set in the constructor and are in
+	units of \f$ \mathrm{fm}^{-1} \f$ . The default values are 5.5
+	MeV for the up and down quark and 140.7 MeV for the strange
+	quark (then divided by \ref o2scl_const::hc_mev_fm for the
+	conversion).
     */
     //@{
     double up_default_mass;
@@ -258,16 +258,18 @@ namespace o2scl {
     */
     int set_quarks(quark &u, quark &d, quark &s);
 
-    /// The momentum cutoff
+    /// The momentum cutoff (in \f$ \mathrm{fm}^{-1} \f$)
     double L;
     
-    /// The four-fermion coupling
+    /// The four-fermion coupling (in \f$ \mathrm{fm}^{2} \f$)
     double G;
     
-    /// The 't Hooft six-fermion interaction coupling
+    /** \brief The 't Hooft six-fermion interaction coupling
+	(in \f$ \mathrm{fm}^{2} \f$)
+    */
     double K;
     
-    /// The bag constant
+    /// The bag constant (in \f$ \mathrm{fm}^{-4} \f$)
     double B0;
     
     /** \name The default quark objects
