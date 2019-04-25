@@ -209,9 +209,11 @@ namespace o2scl {
   
     tov_love();
 
+    /** \brief If greater than zero, show the ODE output (default 0)
+     */
     int show_ode;
     
-    /** \brief Additional testing
+    /** \brief Additional testing if the ODE solver fails
      */
     bool addl_testing;
     

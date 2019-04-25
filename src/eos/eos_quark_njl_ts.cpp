@@ -66,8 +66,6 @@ namespace eos_quark_njl_ts_ns {
     return 0;
   }
 
-  double omfun(double x);
-
   double omfun(double x) {
     double L=602.3/hc_mev_fm;
     double g1,g2,g3,G=1.835/L/L,K=12.36/pow(L,5.0);

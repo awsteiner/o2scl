@@ -75,18 +75,26 @@
     -d \Phi = \frac{d P}{\mu n} = \frac{d \mu}{\mu}
     \f]
     and this implies that \f$ \mu e^{\Phi} \f$ is everywhere
-    constant in the star. Alternatively,
+    constant in the star. Alternatively, if one defines the
+    "enthalpy" by 
     \f[
-    -d \Phi = \frac{d P}{h}
+    d h = \frac{dP}{P + \varepsilon} 
     \f]
-    where \f$ h \f$ is the enthalpy density. Since
-    \f$ d h = T d s + d P \f$, then if the entropy is everywhere
-    a constant we also have
+    then
     \f[
-    -d \Phi = \frac{d h}{h}
+    -d \Phi = dh
     \f]
-    and \f$ h e^{\Phi} \f$ is everywhere
-    constant (even if there is more than one conserved charge). 
+    Keep in mind that this enthalpy is determined by integrating
+    the quantities in the stellar profile (which may be, for example,
+    in beta-equilibrium). Thus, 
+    this is not equal the usual thermodynamic enthalpy which is
+    \f[
+    H(P,S,N) = E + P V = T S + \sum_i \mu_i N_i
+    \f]
+    or in differential form
+    \f[
+    d H = T dS + V dP + \sum_i \mu_i d N_i \, .
+    \f]
 
     The proper boundary condition for the gravitational potential
     is 

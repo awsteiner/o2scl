@@ -30,28 +30,31 @@ using namespace std;
 using namespace o2scl;
 
 eos_quark::eos_quark() {
-  fet=&def_fet;
 }
 
 int eos_quark::calc_p(quark &u, quark &d, quark &s, thermo &th) {
-  O2SCL_ERR("Tried to run missing function eos_quark::calc_p().",-1);
-  return -1;
+  O2SCL_ERR("Tried to run missing function eos_quark::calc_p().",
+	    o2scl::exc_eunimpl);
+  return o2scl::exc_eunimpl;
 }
 
 int eos_quark::calc_e(quark &u, quark &d, quark &s, thermo &th) {
-  O2SCL_ERR("Tried to run missing function eos_quark::calc_e().",-1);
-  return -1;
+  O2SCL_ERR("Tried to run missing function eos_quark::calc_e().",
+		o2scl::exc_eunimpl);
+  return o2scl::exc_eunimpl;
 }
 
 int eos_quark::calc_temp_p(quark &u, quark &d, quark &s,
-			  double temper, thermo &th) {
-  O2SCL_ERR("Tried to run missing function eos_quark::calc_temp_p().",-1);
-  return -1;
+			   double temper, thermo &th) {
+  O2SCL_ERR("Tried to run missing function eos_quark::calc_temp_p().",
+		o2scl::exc_eunimpl);
+  return o2scl::exc_eunimpl;
 }
 
 int eos_quark::calc_temp_e(quark &u, quark &d, quark &s, 
-			  double temper, thermo &th) {
-  O2SCL_ERR("Tried to run missing function eos_quark::calc_temp_e().",-1);
-  return -1;
+			   double temper, thermo &th) {
+  O2SCL_ERR("Tried to run missing function eos_quark::calc_temp_e().",
+		o2scl::exc_eunimpl);
+  return o2scl::exc_eunimpl;
 }
 

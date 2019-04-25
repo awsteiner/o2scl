@@ -391,30 +391,30 @@ namespace o2scl {
       if (!std::isfinite(ne.n) || !std::isfinite(pr.n) ||
 	  !std::isfinite(T)) {
 	O2SCL_ERR2("Nucleon densities or temperature not finite in ",
-		   "eos_had_skyrme::calc_deriv_temp_e().",exc_einval);
+		   "eos_had_skyrme::check_input().",exc_einval);
       }
       if (ne.n<0.0 || pr.n<0.0) {
 	std::string str=((std::string)"Nucleon densities negative, n_n=")+
 	  std::to_string(ne.n)+", n_p="+std::to_string(pr.n)+", in "+
-	  "eos_had_skyrme::calc_deriv_temp_e().";
+	  "eos_had_skyrme::check_input().";
 	O2SCL_ERR(str.c_str(),exc_einval);
       }
       if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10) {
 	O2SCL_ERR((((std::string)"Neutron (")+std::to_string(ne.g)+
 		   ") or proton ("+std::to_string(pr.g)+") spin deg"+
 		   "eneracies wrong in "+
-		   "eos_had_skyrme::calc_deriv_temp_e().").c_str(),
+		   "eos_had_skyrme::check_input().").c_str(),
 		  exc_einval);
       }
       if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
 	O2SCL_ERR((((std::string)"Neutron (")+std::to_string(ne.m)+
 		   ") or proton ("+std::to_string(pr.m)+") masses wrong "+
-		   "in eos_had_skyrme::calc_deriv_temp_e().").c_str(),
+		   "in eos_had_skyrme::check_input().").c_str(),
 		  exc_einval);
       }
       if (ne.non_interacting==true || pr.non_interacting==true) {
 	O2SCL_ERR2("Neutron or protons non-interacting in ",
-		   "eos_had_skyrme::calc_deriv_temp_e().",exc_einval);
+		   "eos_had_skyrme::check_input().",exc_einval);
       }
       if (alpha<=0.0) {
 	O2SCL_ERR2("Parameter alpha negative in ",

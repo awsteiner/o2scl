@@ -29,7 +29,7 @@
 #include <iostream>
 #include <o2scl/eos_base.h>
 #include <o2scl/quark.h>
-#include <o2scl/fermion_eff.h>
+#include <o2scl/fermion_rel.h>
 #include <o2scl/deriv.h>
 #include <o2scl/mroot.h>
 
@@ -53,11 +53,15 @@ namespace o2scl {
     /// Calculate equation of state as a function of density
     virtual int calc_e(quark &u, quark &d, quark &s, thermo &th);
 
-    /// Calculate equation of state as a function of chemical potentials
+    /** \brief Calculate equation of state as a function of chemical 
+	potentials at finite temperature
+    */
     virtual int calc_temp_p(quark &u, quark &d, quark &s, 
 			    double temper, thermo &th);
   
-    /// Calculate equation of state as a function of density
+    /** \brief Calculate equation of state as a function of density
+	at finite temperature
+    */
     virtual int calc_temp_e(quark &u, quark &d, quark &s, 
 			    double temper, thermo &th);
   
@@ -65,10 +69,8 @@ namespace o2scl {
     virtual const char *type() { return "eos_quark"; }
 
     /// Object for computing fermion thermodynamics
-    fermion_thermo *fet;
+    o2scl::fermion_rel fet;
 
-    /// Default fermion thermodynamics
-    fermion_eff def_fet;
   };
 
 #ifndef DOXYGEN_NO_O2NS
@@ -76,6 +78,5 @@ namespace o2scl {
 #endif
 
 #endif
-
 
 

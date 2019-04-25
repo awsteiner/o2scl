@@ -73,7 +73,7 @@ nstar_cold::nstar_cold() : eost(new table_units<>) {
   well_formed=true;
 }
 
-double nstar_cold::solve_fun(double x) {
+double nstar_cold::solve_fun(double x, thermo &hb) {
   double y;
   
   np.n=x;
@@ -137,8 +137,12 @@ int nstar_cold::calc_eos(double np_0) {
   double oldpr=0.0;
   pressure_dec=0.0;
   
-  funct sf=std::bind(std::mem_fn<double(double)>(&nstar_cold::solve_fun),
-		       this,std::placeholders::_1);
+  /// Thermodynamic quantities
+  thermo h, hb;
+  
+  funct sf=std::bind(std::mem_fn<double(double, thermo &)>
+		     (&nstar_cold::solve_fun),
+		     this,std::placeholders::_1,std::ref(hb));
   
   if (verbose>0) {
     cout << "baryon dens neutrons    protons     electrons   " 
@@ -153,17 +157,17 @@ int nstar_cold::calc_eos(double np_0) {
   barn=nb_start;
   bool done=false;
   for(size_t i=0;done==false && i<20;i++) {
-    if (solve_fun(x)>0.0) {
+    if (solve_fun(x,hb)>0.0) {
       x=sqrt(nb_start*x);
     } else {
       done=true;
     }
   }
-  
+
   for(barn=nb_start;barn<=nb_end+dnb/10.0;barn+=dnb) {
     
     int ret=rp->solve(x,sf);
-    double y=solve_fun(x);
+    double y=solve_fun(x,hb);
     
     if (ret!=0 || fabs(y)>solver_tol) {
       // We don't use the CONV macro here because we
@@ -200,7 +204,7 @@ int nstar_cold::calc_eos(double np_0) {
     // ------------------------------------------------------------
 
     // Recompute np.n and pp.n
-    y=solve_fun(x);
+    y=solve_fun(x,hb);
 
     if (include_muons) {
 
@@ -394,15 +398,17 @@ double nstar_cold::calc_urca(double np_0) {
   if (fabs(np_0)<1.0e-12) x=nb_start/3.0;
   else x=np_0;
 
-  funct sf=std::bind(std::mem_fn<double(double)>
+  thermo hb;
+  
+  funct sf=std::bind(std::mem_fn<double(double,thermo &)>
 		       (&nstar_cold::solve_fun),
-		       this,std::placeholders::_1);
+		     this,std::placeholders::_1,std::ref(hb));
   
   bool success=true;
   for(barn=nb_start;barn<=nb_end+dnb/10.0;barn+=dnb) {
     
     ret=rp->solve(x,sf);
-    double y=solve_fun(x);
+    double y=solve_fun(x,hb);
     
     if (ret!=0 || fabs(y)>1.0e-4) {
       success=false;

@@ -219,9 +219,9 @@ int eos_quark_njl::calc_eq_p(quark &u, quark &d, quark &s, double &gap1,
     if (s.mu>s.ms) s.n=1.0/pi2*pow(s.mu*s.mu-s.ms*s.ms,1.5);
     else s.n=0.0;
 
-    fet->kf_from_density(u);
-    fet->kf_from_density(d);
-    fet->kf_from_density(s);
+    fet.kf_from_density(u);
+    fet.kf_from_density(d);
+    fet.kf_from_density(s);
   
     gap1=3.0/pi2*(-u.ms/2.0*L*sqrt(u.ms*u.ms+L*L)+pow(u.ms,3.0)/2.0*
 		  log(L+sqrt(L*L+u.ms*u.ms)));
@@ -284,9 +284,9 @@ int eos_quark_njl::calc_eq_p(quark &u, quark &d, quark &s, double &gap1,
 
   }    
   
-  fet->energy_density_zerot(u);
-  fet->energy_density_zerot(d);
-  fet->energy_density_zerot(s);
+  fet.energy_density_zerot(u);
+  fet.energy_density_zerot(d);
+  fet.energy_density_zerot(s);
   
   njbag(u);
   njbag(d);
@@ -321,9 +321,9 @@ int eos_quark_njl::calc_eq_e(quark &u, quark &d, quark &s, double &gap1,
     d.ms=d.m-4.0*G*d.qq+2.0*K*u.qq*s.qq;
     s.ms=s.m-4.0*G*s.qq+2.0*K*d.qq*u.qq;
 
-    fet->kf_from_density(u);
-    fet->kf_from_density(d);
-    fet->kf_from_density(s);
+    fet.kf_from_density(u);
+    fet.kf_from_density(d);
+    fet.kf_from_density(s);
   
     u.mu=sqrt(u.kf*u.kf+u.ms*u.ms);
     d.mu=sqrt(d.kf*d.kf+d.ms*d.ms);
@@ -354,9 +354,9 @@ int eos_quark_njl::calc_eq_e(quark &u, quark &d, quark &s, double &gap1,
     // Calculate everything from the dynamical 
     // masses and the chemical potentials
 
-    fet->kf_from_density(u);
-    fet->kf_from_density(d);
-    fet->kf_from_density(s);
+    fet.kf_from_density(u);
+    fet.kf_from_density(d);
+    fet.kf_from_density(s);
   
     u.mu=sqrt(u.kf*u.kf+u.ms*u.ms);
     d.mu=sqrt(d.kf*d.kf+d.ms*d.ms);
@@ -384,9 +384,9 @@ int eos_quark_njl::calc_eq_e(quark &u, quark &d, quark &s, double &gap1,
 
   }    
 
-  fet->energy_density_zerot(u);
-  fet->energy_density_zerot(d);
-  fet->energy_density_zerot(s);
+  fet.energy_density_zerot(u);
+  fet.energy_density_zerot(d);
+  fet.energy_density_zerot(s);
 
   njbag(u);
   njbag(d);
@@ -597,7 +597,7 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
 			this,std::placeholders::_1,pa);
     iret2=it->integ_err(fde,0.0,L,u.n,ierr);
     u.n-=L;
-    fet->kf_from_density(u);
+    fet.kf_from_density(u);
     iret3=it->integ_err(fpr,0.0,L,u.pr,ierr);
     iret4=it->integ_err(fed,0.0,L,u.ed,ierr);
     if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
@@ -635,7 +635,7 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
 
     iret2=it->integ_err(fde,0.0,L,d.n,ierr);
     d.n-=L;
-    fet->kf_from_density(d);
+    fet.kf_from_density(d);
     iret3=it->integ_err(fpr,0.0,L,d.pr,ierr);
     iret4=it->integ_err(fed,0.0,L,d.ed,ierr);
     if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
@@ -672,7 +672,7 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
 			this,std::placeholders::_1,pa);
     iret2=it->integ_err(fde,0.0,L,s.n,ierr);
     s.n-=L;
-    fet->kf_from_density(s);
+    fet.kf_from_density(s);
     iret3=it->integ_err(fpr,0.0,L,s.pr,ierr);
     iret4=it->integ_err(fed,0.0,L,s.ed,ierr);
     if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {

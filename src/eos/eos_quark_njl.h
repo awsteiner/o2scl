@@ -123,6 +123,14 @@ namespace o2scl {
 
       Created for \ref Steiner00. See also \ref Buballa99 and 
       \ref Hatsuda94. 
+
+      \todo Better documentation.
+      \future Remove the njtp structure and move the numbers
+      there to function parameters. 
+      \future Consider rewriting the testing code and making
+      the various gap functions protected instead of public.
+      \future Remove the stored quark pointers if they are
+      unnecessary?
   */
 
   class eos_quark_njl : public eos_quark {
@@ -193,7 +201,7 @@ namespace o2scl {
 			  double &gap2, double &gap3, thermo &lth);
     
     /** \brief Equation of state and gap equations
-	as a function of chemical potentials
+	as a function of chemical potentials at finite temperature
     */
     int calc_eq_temp_p(quark &tu, quark &td, quark &ts,
 		       double &gap1, double &gap2, double &gap3,

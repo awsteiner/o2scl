@@ -176,10 +176,6 @@ namespace o2scl {
 
       \hline
 
-      \todo Maybe calc_eos() doesn't really need a thermo object since
-      it can use the default EOS thermo object and we can get
-      rid of the class variables h, hb, and l
-
       \future Warn if the EOS becomes pure neutron matter.
       \future Some of the auxillary quantities can be computed
       directly without using the table methods and the 
@@ -378,13 +374,8 @@ namespace o2scl {
 
   protected:
 
-    /// \name The thermodynamic information
-    //@{
-    thermo hb, h, l;
-    //@}
-
     /// Solve to ensure zero charge in \f$ \beta \f$-equilibrium
-    double solve_fun(double x);
+    double solve_fun(double x, thermo &hb);
 
     /// True if equation of state has been set
     bool eos_set;

@@ -47,9 +47,9 @@ int eos_quark_bag::calc_p(quark &u, quark &d, quark &s, thermo &th) {
   d.ms=d.m;
   s.ms=s.m;
   
-  fet->calc_mu_zerot(u);
-  fet->calc_mu_zerot(d);
-  fet->calc_mu_zerot(s);
+  fet.calc_mu_zerot(u);
+  fet.calc_mu_zerot(d);
+  fet.calc_mu_zerot(s);
   
   th.ed=u.ed+d.ed+s.ed+bag_constant;
   th.pr=u.pr+d.pr+s.pr-bag_constant;
@@ -60,9 +60,9 @@ int eos_quark_bag::calc_p(quark &u, quark &d, quark &s, thermo &th) {
 
 int eos_quark_bag::calc_e(quark &u, quark &d, quark &s, thermo &th) {
 
-  fet->kf_from_density(u);
-  fet->kf_from_density(d);
-  fet->kf_from_density(s);
+  fet.kf_from_density(u);
+  fet.kf_from_density(d);
+  fet.kf_from_density(s);
 
   u.mu=sqrt(u.kf*u.kf+u.m*u.m);
   d.mu=sqrt(d.kf*d.kf+d.m*d.m);
@@ -72,9 +72,9 @@ int eos_quark_bag::calc_e(quark &u, quark &d, quark &s, thermo &th) {
   d.ms=d.m;
   s.ms=s.m;
 
-  fet->calc_density_zerot(u);
-  fet->calc_density_zerot(d);
-  fet->calc_density_zerot(s);
+  fet.calc_density_zerot(u);
+  fet.calc_density_zerot(d);
+  fet.calc_density_zerot(s);
 
   th.ed=u.ed+d.ed+s.ed+bag_constant;
   th.pr=u.pr+d.pr+s.pr-bag_constant;
@@ -97,13 +97,13 @@ int eos_quark_bag::calc_temp_p(quark& u, quark& d, quark& s,
   d.ms=d.m;
   s.ms=s.m;
   
-  fet->pair_mu(u,temper);
-  fet->pair_mu(d,temper);
-  fet->pair_mu(s,temper);
+  fet.pair_mu(u,temper);
+  fet.pair_mu(d,temper);
+  fet.pair_mu(s,temper);
   
-  fet->kf_from_density(u);
-  fet->kf_from_density(d);
-  fet->kf_from_density(s);
+  fet.kf_from_density(u);
+  fet.kf_from_density(d);
+  fet.kf_from_density(s);
   
   th.ed=u.ed+d.ed+s.ed+bag_constant;
   th.pr=u.pr+d.pr+s.pr-bag_constant;
@@ -119,13 +119,13 @@ int eos_quark_bag::calc_temp_e(quark& u, quark& d, quark& s,
   d.ms=d.m;
   s.ms=s.m;
   
-  fet->pair_density(u,temper);
-  fet->pair_density(d,temper);
-  fet->pair_density(s,temper);
+  fet.pair_density(u,temper);
+  fet.pair_density(d,temper);
+  fet.pair_density(s,temper);
 
-  fet->kf_from_density(u);
-  fet->kf_from_density(d);
-  fet->kf_from_density(s);
+  fet.kf_from_density(u);
+  fet.kf_from_density(d);
+  fet.kf_from_density(s);
   
   th.ed=u.ed+d.ed+s.ed+bag_constant;
   th.pr=u.pr+d.pr+s.pr-bag_constant;
