@@ -45,8 +45,8 @@
     \section dcsect Quick Reference to User's Guide
     - \subpage hadronic
     - \subpage quark_matter
-    - \subpage tovtoc \n
-      (including moment of inertia in the slow rotation approximation)
+    - \subpage tovtoc
+    - \subpage momitoc
     - \subpage tidaldef
     - \subpage cnstar
     - \subpage rotpage

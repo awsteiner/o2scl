@@ -347,7 +347,7 @@ int main(void) {
   int info=at.fixed(1.4,1.0e-4);
   tab=at.get_results();
   double beta=o2scl_mks::schwarzchild_radius/2.0e3*at.mass/at.rad;
-  t.test_rel(36.0*buch.Pstar*beta*beta,tab->get("pr",0),1.0e-8,"Buch Pc");
+  t.test_rel(36.0*buch.Pstar*beta*beta,tab->get("pr",0),3.0e-8,"Buch Pc");
   t.test_rel(72.0*buch.Pstar*beta*(1.0-2.5*beta),
 	     tab->get("ed",0),1.0e-8,"Buch rho_c");
 

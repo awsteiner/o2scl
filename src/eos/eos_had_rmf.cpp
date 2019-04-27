@@ -32,16 +32,15 @@ using namespace o2scl_const;
 
 eos_had_rmf::eos_had_rmf() {
 
-  // FIXME: should document here which model this is
   mnuc=939.0/hc_mev_fm;
-  ms=500.0/hc_mev_fm;
-  mr=770.0/hc_mev_fm;
-  mw=783.0/hc_mev_fm;
-  cs=3.815826;
-  cw=3.088793;
-  cr=2.041844;
-  b=2.479608e-03;
-  c=-3.315842e-03;
+  ms=0.0;
+  mr=0.0;
+  mw=0.0;
+  cs=0.0;
+  cw=0.0;
+  cr=0.0;
+  b=0.0;
+  c=0.0;
 
   zeta=0.0;
   xi=0.0;

@@ -127,6 +127,10 @@ lib_settings_class::lib_settings_class() {
   def_cu.insert_cache("1/fm^3","1/cm^3",1.0e39);
   def_cu.insert_cache("1/fm^3","1/m^3",1.0e45);
 
+  // Simple mass conversions
+  
+  def_cu.insert_cache("Msun","g",o2scl_cgs::solar_mass);
+  
   // Simple powers of length conversions 
 
   def_cu.insert_cache("pc","m",o2scl_mks::parsec);

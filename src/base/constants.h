@@ -30,7 +30,7 @@
 
 /** \brief Constants
     
-    CODATA 2010 values are in \ref Mohr12.
+    CODATA 2014 values are in \ref Mohr16.
 */
 namespace o2scl_const {
 
@@ -51,12 +51,12 @@ namespace o2scl_const {
   const double zepto=1e-21;
   const double yocto=1e-24;
 
-  /** \brief Fine structure constant (CODATA 2010 value)
+  /** \brief Fine structure constant (CODATA 2014 value)
    */
-  const double fine_structure=7.2973525698e-3;
-  /** \brief Avogadro's number (CODATA 2010 value)
+  const double fine_structure=7.2973525664e-3;
+  /** \brief Avogadro's number (CODATA 2014 value)
   */
-  const double avogadro=6.02214129e23;
+  const double avogadro=6.022140857e23;
 
   /// \f$ \pi \f$ 
   const double pi=acos(-1.0);
@@ -82,63 +82,102 @@ namespace o2scl_const {
 /** \brief Constants in CGS units 
     
     CODATA 2010 values are in \ref Mohr12. IAU 2009 values
-    are from \ref Luzum11 . Solar mass from 
-    http://asa.usno.navy.mil/SecK/2013/Astronomical_Constants_2013.pdf
+    are from \ref Luzum11 . Solar mass from 2018 value
+    at http://asa.usno.navy.mil/
 
-    \comment 
-    See also
-    http://asa.usno.navy.mil/static/files/2015/Astronomical_Constants_2015.pdf
-    \endcomment
-
+    CODATA 2014 values are from \ref Mohr16 .
 */
 namespace o2scl_cgs {
-  /// cm
-  const double schwarzchild_radius=2.95325008e5;
-  /// cm / s
+
+  /// \name Fundamental constants
+  //@{
+  /// Speed of light in \f$ \mathrm{cm}/\mathrm{s} \f$
   const double speed_of_light=2.99792458e10;
-  /// Newtonian constant of gravitation in cm^3 / g s^2 (CODATA 2010 value)
-  const double gravitational_constant=6.67384e-8;
-  /// Planck constant in g cm^2 / s (CODATA 2010 value)
-  const double plancks_constant_h=6.62606957e-27;
+  /// Newtonian constant of gravitation in cm^3 / g s^2 (CODATA 2014 value)
+  const double gravitational_constant=6.67408e-8;
+  /// Planck constant in g cm^2 / s (CODATA 2014 value)
+  const double plancks_constant_h=6.62607004e-27;
   /// Planck constant divided by 2 pi in g cm^2 / s (derived)
   const double plancks_constant_hbar=o2scl_cgs::plancks_constant_h/
     2.0/o2scl_const::pi;
+  /// Electron volt in g cm^2 / s^2 (CODATA 2014 value)
+  const double electron_volt=1.6021766208e-12;
+  /// The Bohr radius in cm (CODATA 2014 value)
+  const double bohr_radius=5.2917721067e-9;
+  /// Stefan-Boltzmann constant in g / K^4 s^3 (CODATA 2014 value)
+  const double stefan_boltzmann_constant=5.670367e-5;
+  /// Thomson cross section in cm^2
+  const double thomson_cross_section=6.65245853542e-25;
+  /** \brief Fermi coupling constant in s^4 / cm^4 g^2, 
+      defined as \f$ 1.1663787 \times 10^{-5}~\mathrm{GeV}^{-2} \f$
+      (CODATA 2014 value)
+  */
+  const double Gfermi=1.1663787e-23/electron_volt/electron_volt;
+  /// Boltzmann constant in g cm^2 / K s^2 (CODATA 2014 value)
+  const double boltzmann=1.38064852e-16;
+  //@}
+
+  /// \name Astrophysical constants
+  //@{
   /// Astronomical unit in cm (IAU 2009 value; now exact)
   const double astronomical_unit=1.49597870700e13;
-  /// cm
+  /// Light year in \f$ \mathrm{cm} \f$
   const double light_year=9.46053620707e17;
-  /// cm
+  /// Parsec in \f$ \mathrm{cm} \f$
   const double parsec=3.08567758135e18;
-  /// cm / s^2
+  /// Acccleration due to gravity in cm / s^2
   const double grav_accel=9.80665e2;
-  /// Electron volt in g cm^2 / s^2 (CODATA 2010 value)
-  const double electron_volt=1.602176565e-12;
-  /// Electron mass in g (CODATA 2010 value)
-  const double mass_electron=9.10938291e-28;
-  /// Muon mass in g (CODATA 2010 value)
-  const double mass_muon=1.883531475e-25;
-  /// Proton mass in g (CODATA 2010 value)
-  const double mass_proton=1.672621777e-24;
-  /// Neutron mass in g (CODATA 2010 value)
-  const double mass_neutron=1.674927351e-24;
+  /** \brief Solar mass parameter times gravitational 
+      constant in cm^3 / s^2 (from navy.mil)
+  */
+  const double solar_mass_G=1.32712441e26;
+  /// Mass of the sun in g (from navy.mil)
+  const double solar_mass=1.9884e33;
+  /// Schwarzchild radius in cm (derived)
+  const double schwarzchild_radius=2.0*o2scl_cgs::solar_mass_G/
+    o2scl_cgs::speed_of_light/o2scl_cgs::speed_of_light;
+  //@}
 
-  /// Deuteron mass in kg (CODATA 2010 value)
-  const double mass_deuteron=3.34358348e-24;
-  /// Triton mass in kg (CODATA 2010 value)
-  const double mass_triton=5.00735630e-24;
-  /// Helion mass in kg (CODATA 2010 value)
-  const double mass_helion=5.00641234e-24;
-  /// Alpha particle mass in kg (CODATA 2010 value)
-  const double mass_alpha=6.64465675e-24;
+  /// \name Particle masses
+  //@{
+  /// Electron mass in g (CODATA 2014 value)
+  const double mass_electron=9.10938356e-28;
+  /// Muon mass in g (CODATA 2014 value)
+  const double mass_muon=1.883531594e-25;
+  /// Proton mass in g (CODATA 2014 value)
+  const double mass_proton=1.672621898e-24;
+  /// Neutron mass in g (CODATA 2014 value)
+  const double mass_neutron=1.674927471e-24;
+  //@}
 
-  /// Rydberg constant in g cm^2 / s^2 (CODATA 2010 value)
-  const double rydberg=2.179872171e-11;
-  /// Boltzmann constant in g cm^2 / K s^2 (CODATA 2010 value)
-  const double boltzmann=1.3806488e-16;
-  /// g cm^2 / K mol s^2
-  const double molar_gas=8.314472e7;
-  /// cm^3 / mol
-  const double standard_gas_volume=2.2710981e4;
+  /// \name Nuclear masses
+  //@{
+  /// Deuteron mass in kg (CODATA 2014 value)
+  const double mass_deuteron=3.343583719e-24;
+  /// Triton mass in kg (CODATA 2014 value)
+  const double mass_triton=5.007356665e-24;
+  /// Helion mass in kg (CODATA 2014 value)
+  const double mass_helion=5.006412700e-24;
+  /// Alpha particle mass in kg (CODATA 2014 value)
+  const double mass_alpha=6.64465723e-24;
+  /// Atomic mass constant in g (CODATA 2014 value)
+  const double unified_atomic_mass=1.66053904e-24;
+  //@}
+
+  /// \name Chemical constants
+  //@{
+  /// Rydberg constant in g cm^2 / s^2 (CODATA 2014 value)
+  const double rydberg=2.179872325e-11;
+  /// Molar gas constant, "R", in g cm^2 / K mol s^2 (CODATA 2014 value)
+  const double molar_gas=8.3144598e7;
+  /** \brief Molar volume of ideal gas at standard T and P in 
+      cm^3 / mol (CODATA 2014 value)
+  */
+  const double standard_gas_volume=2.2710947e4;
+  //@}
+
+  /// \name Unit conversions
+  //@{
   /// s
   const double minute=6e1;
   /// s
@@ -162,7 +201,7 @@ namespace o2scl_cgs {
   /// cm
   const double mil=2.54e-3;
   /// cm
-  const double point=3.52777777778e-2;
+  const double point=3175.0/90000.0;
   /// cm
   const double texpoint=3.51459803515e-2;
   /// cm
@@ -198,9 +237,9 @@ namespace o2scl_cgs {
   /// cm / s
   const double miles_per_hour=4.4704e1;
   /// cm / s
-  const double kilometers_per_hour=2.77777777778e1;
+  const double kilometers_per_hour=250.0/9.0;
   /// cm / s
-  const double knot=5.14444444444e1;
+  const double knot=463.0/9.0;
   /// g
   const double pound_mass=4.5359237e2;
   /// g
@@ -215,8 +254,6 @@ namespace o2scl_cgs {
   const double troy_ounce=3.1103475e1;
   /// g
   const double carat=2e-1;
-  /// Atomic mass constant in g (CODATA 2010 value)
-  const double unified_atomic_mass=1.660538921e-24;
   /// cm g / s^2
   const double gram_force=9.80665e2;
   /// cm g / s^2
@@ -271,10 +308,6 @@ namespace o2scl_cgs {
   const double roentgen=2.58e-7;
   /// cm^2 / s^2
   const double rad=1e2;
-  /// g
-  const double solar_mass=1.9884e33;
-  /// cm
-  const double bohr_radius=5.291772083e-9;
   /// cm g / s^2
   const double newton=1e5;
   /// cm g / s^2
@@ -283,15 +316,7 @@ namespace o2scl_cgs {
   const double joule=1e7;
   /// g cm^2 / s^2
   const double erg=1e0;
-  /// g / K^4 s^3
-  const double stefan_boltzmann_constant=5.67039934436e-5;
-  /// cm^2
-  const double thomson_cross_section=6.65245853542e-25;
-  /** \brief Fermi coupling constant in s^4 / cm^4 g^2, 
-      defined as \f$ 1.166364 \times 10^{-5}~\mathrm{GeV}^{-2} \f$
-      (CODATA 2010 value)
-  */
-  const double Gfermi=1.166364e-23/electron_volt/electron_volt;
+  //@}
 }
 
 /** \brief Constants in CGSM units
@@ -715,6 +740,10 @@ namespace o2scl_mks {
   const double roentgen=2.58e-4;
   /// m^2 / s^2
   const double rad=1e-2;
+  /** \brief Solar mass parameter times gravitational 
+      constant in m^3 / s^2 (from navy.mil)
+  */
+  const double solar_mass_G=1.32712441e20;
   /// kg
   const double solar_mass=1.9884e30;
   /// m
