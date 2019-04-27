@@ -45,9 +45,12 @@ namespace o2scl {
 
   /** \brief Nonrelativistic fermion class
 
-      The rest mass energy density is given by <tt>n*m</tt> not
-      <tt>n*ms</tt>. Note that the effective mass here is the Landau
-      mass, not the Dirac mass.
+      The effective mass computed by this class and stored in \ref
+      part::ms is the Landau mass, not the Dirac mass, as computed by
+      \ref o2scl::fermion_rel .
+
+      This class works with both true and false values for either \ref
+      part::non_interacting or \ref part::inc_rest_mass.
 
       Pressure is computed with
       \f[
@@ -73,10 +76,6 @@ namespace o2scl {
       \future Implement \ref o2scl::fermion_nonrel::pair_density() and
       \ref o2scl::fermion_nonrel::pair_mu(). AWS, 1/23/19: it is not
       entirely clear to me that this antiparticles will be useful.
-
-      \todo Make sure to test with non-interacting equal to 
-      true or false, and document whether or not it works
-      with both inc_rest_mass equal to true or false
 
       \future This could be improved by performing a Chebyshev
       approximation (for example) to invert the density integral so

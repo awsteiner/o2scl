@@ -83,20 +83,14 @@ namespace o2scl_hdf {
       see \ref hdf_nucmass_io.h .
    */
   void ame_load(o2scl::nucmass_ame &ame, std::string name="16",
-		bool exp_only=false);
+		bool exp_only=false, bool external=false);
   
   /** \brief Read data for \ref o2scl::nucmass_mnmsk from an HDF table
 
-      \comment
-      On ubuntu/doxygen-1.8.11, \ref o2scl_hdf fails here.
-      \endcomment
       \note This function is in the o2scl_hdf namespace,
       see \ref hdf_nucmass_io.h .
-
-      \todo Switch to the same 'external' file mechanism used in 
-      hdf_eos_io.h. 
    */
-  void mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, std::string dir="");
+  void mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, std::string filename="");
   
   /** \brief Read data for \ref o2scl::nucmass_hfb from an HDF table
       
@@ -105,35 +99,26 @@ namespace o2scl_hdf {
       (\ref Goriely07). If a number other than these three is given,
       the error handler is called. 
 
-      \comment
-      On ubuntu/doxygen-1.8.11, \ref o2scl_hdf fails here.
-      \endcomment
       \note This function is in the o2scl_hdf namespace,
       see \ref hdf_nucmass_io.h .
-
-      \todo Switch to the same 'external' file mechanism used in 
-      hdf_eos_io.h. 
   */
-  void hfb_load(o2scl::nucmass_hfb &hfb, size_t model=14, std::string dir="");
+  void hfb_load(o2scl::nucmass_hfb &hfb, size_t model=14,
+		std::string filename="");
 
   /** \brief Read data for \ref o2scl::nucmass_hfb from an HDF table
       
-      Valid values of \c model at present are 17 and 21, corresponding
-      to the HFB17 (\ref Goriely02) and HFB21 (\ref Samyn04). If a
-      number other than these two is given, the error handler is
-      called.
+      Valid values of \c model at present are 17, and 21 through 27.
+      The first two correspond to the HFB17 (\ref Goriely02) and HFB21
+      (\ref Samyn04). If a number outside this range is given, then 27
+      is assumed.
 
-      \comment
-      On ubuntu/doxygen-1.8.11, \ref o2scl_hdf fails here.
-      \endcomment
+      \todo Document models 22 through 27.
+
       \note This function is in the o2scl_hdf namespace,
       see \ref hdf_nucmass_io.h .
-
-      \todo Switch to the same 'external' file mechanism used in 
-      hdf_eos_io.h. 
   */
-  void hfb_sp_load(o2scl::nucmass_hfb_sp &hfb, size_t model=21, 
-		   std::string dir="");
+  void hfb_sp_load(o2scl::nucmass_hfb_sp &hfb, size_t model=27, 
+		   std::string filename="");
 
 #ifndef DOXYGEN_NO_O2NS
 }

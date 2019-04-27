@@ -422,7 +422,6 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
       cout << "Solving in eos_had_rmf::calc_e()." << endl;
       cout << "alpha      n_B        n_ch       mu_n       "
 	   << "mu_p       sigma       omega      rho         ret" << endl;
-      cout.precision(4);
     }
 
     for(double alpha=0.0;alpha<=1.0+1.0e-10;
@@ -465,14 +464,15 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 	O2SCL_CONV_RET(s.c_str(),exc_efailed,this->err_nonconv);
       }
       ret=eos_mroot->msolve(5,x,fmf);
-      if (verbose>0.0) {
+      if (verbose>0) {
+	cout.precision(4);
 	cout << alpha << " " << n_baryon << " " << n_charge << " "
 	     << x[0] << " " << x[1] << " " << x[2] << " " 
 	     << x[3] << " " << x[4] << " " << ret << endl;
+	cout.precision(6);
       }
     }
     if (verbose>0) {
-      cout.precision(6);
       cout << endl;
     }
     

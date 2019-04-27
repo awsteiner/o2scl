@@ -129,7 +129,7 @@ void o2scl_hdf::ame_load_ext(o2scl::nucmass_ame &ame, std::string file_name,
 
 void o2scl_hdf::ame_load(o2scl::nucmass_ame &ame, std::string name,
 			 bool exp_only) {
-  
+
   std::string file_name, table_name;
   file_name=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
   if (name=="95exp") {
@@ -163,15 +163,12 @@ void o2scl_hdf::ame_load(o2scl::nucmass_ame &ame, std::string name,
   return;
 }
 
-void o2scl_hdf::mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, string dir) {
-    
-  if (dir.size()==0) {
-    dir=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
+void o2scl_hdf::mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, string filename) {
+
+  if (filename.size()==0) {
+    filename=o2scl::o2scl_settings.get_data_dir()+"/nucmass/mnmsk.o2";
   }
     
-  std::string fname, tname="/mnmsk.o2";
-  fname=dir+tname;
-  
   size_t offset[34]={HOFFSET(o2scl::nucmass_mnmsk::entry,N),
 		     HOFFSET(o2scl::nucmass_mnmsk::entry,Z),
 		     HOFFSET(o2scl::nucmass_mnmsk::entry,A),
@@ -244,7 +241,7 @@ void o2scl_hdf::mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, string dir) {
 		    sizeof(me.Talpha)};
 
   hdf_file hf;
-  hf.open(fname);
+  hf.open(filename);
   hid_t file=hf.get_current_id();
 
   int nrecords;
@@ -257,7 +254,7 @@ void o2scl_hdf::mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, string dir) {
 
   o2scl::nucmass_mnmsk::entry *m=new o2scl::nucmass_mnmsk::entry[nrecords];
   herr_t status=H5TBread_table
-    (file,tname.c_str(),sizeof(o2scl::nucmass_mnmsk::entry),offset,sizes,m);
+    (file,"mnmsk.o2",sizeof(o2scl::nucmass_mnmsk::entry),offset,sizes,m);
     
   mnmsk.set_data(nrecords,m,reference);
     
@@ -267,13 +264,13 @@ void o2scl_hdf::mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, string dir) {
 }
 
 void o2scl_hdf::hfb_load(o2scl::nucmass_hfb &hfb, size_t model, 
-			string dir) {
+			string filename) {
     
-  if (dir.size()==0) {
-    dir=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
+  if (filename.size()==0) {
+    filename=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
   }
     
-  std::string fname, tname;
+  std::string tname;
   if (model==2) {
     tname="/hfb2.o2";
   } else if (model==8) {
@@ -283,7 +280,7 @@ void o2scl_hdf::hfb_load(o2scl::nucmass_hfb &hfb, size_t model,
   } else {
     tname="/hfb14_v0.o2";
   }
-  fname=dir+tname;
+  filename=filename+tname;
   
   size_t offset[12]={HOFFSET(o2scl::nucmass_hfb::entry,N),
 		     HOFFSET(o2scl::nucmass_hfb::entry,Z),
@@ -314,7 +311,7 @@ void o2scl_hdf::hfb_load(o2scl::nucmass_hfb &hfb, size_t model,
 		    sizeof(he.Err)};
     
   hdf_file hf;
-  hf.open(fname);
+  hf.open(filename);
   hid_t file=hf.get_current_id();
 
   int nrecords;
@@ -336,13 +333,14 @@ void o2scl_hdf::hfb_load(o2scl::nucmass_hfb &hfb, size_t model,
   return;
 }
 
-void o2scl_hdf::hfb_sp_load(nucmass_hfb_sp &hfb, size_t model, string dir) {
+void o2scl_hdf::hfb_sp_load(nucmass_hfb_sp &hfb, size_t model,
+			    string filename) {
   
-  if (dir.size()==0) {
-    dir=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
+  if (filename.size()==0) {
+    filename=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
   }
     
-  std::string fname, tname;
+  std::string tname;
   if (model==17) {
     tname="/hfb17.o2";
   } else if (model==21) {
@@ -357,10 +355,10 @@ void o2scl_hdf::hfb_sp_load(nucmass_hfb_sp &hfb, size_t model, string dir) {
     tname="/hfb25.o2";
   } else if (model==26) {
     tname="/hfb26.o2";
-  } else if (model==27) {
+  } else {
     tname="/hfb27.o2";
   }
-  fname=dir+tname;
+  filename=filename+tname;
   
   size_t offset[16]={HOFFSET(o2scl::nucmass_hfb_sp::entry,N),
 		     HOFFSET(o2scl::nucmass_hfb_sp::entry,Z),
@@ -399,7 +397,7 @@ void o2scl_hdf::hfb_sp_load(nucmass_hfb_sp &hfb, size_t model, string dir) {
 		    sizeof(he.Pth)};
     
   hdf_file hf;
-  hf.open(fname);
+  hf.open(filename);
   hid_t file=hf.get_current_id();
 
   int nrecords;

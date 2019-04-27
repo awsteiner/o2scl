@@ -48,10 +48,10 @@ namespace o2scl_hdf {
   /** \brief Read the Gogny EOS from a data file
 
       If \c external is <tt>false</tt> (the default), then the model
-      (either <tt>d1n</tt> or <tt>d1s</tt> is loaded from the \o2 data
-      directory in file <tt>gogny.o2</tt>. Otherwise, the parameter \c
-      model is taken to be the full pathname of the HDF5 file
-      containing the EOS model data to be loaded.
+      (either <tt>"d1n"</tt> or <tt>"d1s"</tt> is loaded from the \o2
+      data directory in file <tt>gogny.o2</tt>. Otherwise, the
+      parameter \c model is taken to be the full pathname of the HDF5
+      file containing the EOS model data to be loaded.
   */
   void gogny_load(o2scl::eos_had_gogny &ge, std::string model,
 		  std::string filename="");
