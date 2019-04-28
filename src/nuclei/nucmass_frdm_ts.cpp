@@ -77,7 +77,7 @@ int main(void) {
   // Compare nucmass_frdm with the macroscopic parts from
   // nucmass_mnmsk table and show that they're almost the same
   nucmass_mnmsk mm;
-  o2scl_hdf::mnmsk_load(mm,"../../data/o2scl/nucmass/");
+  o2scl_hdf::mnmsk_load(mm,"../../data/o2scl/nucmass/mnmsk.o2");
   nucmass_mnmsk::entry mme;
   double comp=0.0;
   size_t nnuc=0;

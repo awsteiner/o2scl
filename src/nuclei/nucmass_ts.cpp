@@ -145,30 +145,24 @@ int main(void) {
 
   nucmass_semi_empirical sm;
   nucmass_mnmsk m95;
-  cout << "Here." << endl;
-  o2scl_hdf::mnmsk_load(m95,"../../data/o2scl/nucmass/");
-  cout << "Here2." << endl;
+  o2scl_hdf::mnmsk_load(m95,"../../data/o2scl/nucmass/mnmsk.o2");
   
   nucmass_ktuy kt;
   kt.load("../../data/o2scl/nucmass/ktuy04.o2",1);
   nucmass_ktuy kt2;
   kt2.load("../../data/o2scl/nucmass/ktuy05.o2",1);
 
-  cout << "Here2b1." << endl;
   nucmass_wlw wlw1;
   wlw1.load("../../data/o2scl/nucmass/wlw10.o2",1);
-  cout << "Here2b2." << endl;
   nucmass_wlw wlw2;
   wlw2.load("../../data/o2scl/nucmass/wllw10.o2",1);
-  cout << "Here2b3." << endl;
   nucmass_wlw wlw3;
   wlw3.load("../../data/o2scl/nucmass/lwdw11.o2",1);
-  cout << "Here2b4." << endl;
+  //cout << "Here2b4." << endl;
   //nucmass_wlw wlw4("../../data/o2scl/nucmass/wl11.o2",1);
-  cout << "Here2b5." << endl;
+  //cout << "Here2b5." << endl;
   //  nucmass_wlw wlw5("../../data/o2scl/nucmass/wlwm14.o2",1);
   
-  cout << "Here3." << endl;
   nucmass_sdnp sdnp1;
   sdnp1.load("../../data/o2scl/nucmass/sdnp03.o2",1);
   nucmass_sdnp sdnp2;
@@ -176,7 +170,6 @@ int main(void) {
   nucmass_sdnp sdnp3;
   sdnp3.load("../../data/o2scl/nucmass/sd_sly4_04.o2",1);
   
-  cout << "Here4." << endl;
   nucmass_hfb hfb2;
   o2scl_hdf::hfb_load(hfb2,2,"../../data/o2scl/nucmass/");
   nucmass_hfb hfb8;
@@ -201,9 +194,7 @@ int main(void) {
   o2scl_hdf::hfb_sp_load(hfb26,26,"../../data/o2scl/nucmass/");
   nucmass_hfb_sp hfb27;
   o2scl_hdf::hfb_sp_load(hfb27,27,"../../data/o2scl/nucmass/");
-  cout << "Herey." << endl;
   //nucmass_dglg dglg;
-  cout << "Herex." << endl;
 
   // Set up generic pointers for testing
   nucmass_table *nmd[27]={&ame,&ame95rmd,&ame03round,&ame95exp,

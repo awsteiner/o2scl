@@ -114,7 +114,7 @@ int main(void) {
        << ld.ss << " " << ld.Epair << endl;
   cout << "Quality: " << qual << endl;
 
-  t.test_rel(qual,2.4629,1.0e-3,"pair qual");
+  t.test_rel(qual,2.4675,1.0e-3,"pair qual");
   
   cout << endl;
   
@@ -153,7 +153,7 @@ int main(void) {
     cout << "Quality: " << qual << endl;
 
   }
-  t.test_rel(qual,1.1189,1.0e-3,"nucmass_ldrop_shell qual");
+  t.test_rel(qual,1.1353,1.0e-3,"nucmass_ldrop_shell qual");
   cout << endl;
 
   cout << "-------------------------------------------------\n" << endl;

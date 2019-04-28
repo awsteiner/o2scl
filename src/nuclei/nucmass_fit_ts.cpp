@@ -49,9 +49,9 @@ int main(void) {
   o2scl_hdf::ame_load_ext(amex,"../../data/o2scl/nucmass/ame12.o2",
 			  "ame12.o2",true);
   nucmass_mnmsk_exp mexp;
-  o2scl_hdf::mnmsk_load(mexp,"../../data/o2scl/nucmass/");
+  o2scl_hdf::mnmsk_load(mexp,"../../data/o2scl/nucmass/mnmsk.o2");
   nucmass_mnmsk mm;
-  o2scl_hdf::mnmsk_load(mm,"../../data/o2scl/nucmass/");
+  o2scl_hdf::mnmsk_load(mm,"../../data/o2scl/nucmass/mnmsk.o2");
 
   nucdist_set(mf.dist,ame);
   mf.fit(sem,res);
