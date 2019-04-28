@@ -609,6 +609,9 @@ namespace o2scl_mks {
   const double Gfermi=o2scl_cgs::Gfermi;
   /// Boltzmann constant in kg m^2 / K s^2
   const double boltzmann=o2scl_cgs::boltzmann/1.0e7;
+  /// Stefan-Boltzmann constant in kg / K^4 s^3
+  const double stefan_boltzmann_constant=
+    o2scl_cgs::stefan_boltzmann_constant/1.0e3;
   //@{
 
   /// \name Astrophysical constants
@@ -845,8 +848,6 @@ namespace o2scl_mks {
     values. See also the documentation at \ref o2scl_cgs .
 */
 namespace o2scl_mksa {
-  /// m
-  const double schwarzchild_radius=2.95325008e3;
   /// m / s
   const double speed_of_light=2.99792458e8;
   /// Newtonian constant of gravitation in m^3 / kg s^2 (CODATA 2010 value)
@@ -856,6 +857,9 @@ namespace o2scl_mksa {
   /// Planck constant divided by 2 pi in kg m^2 / s (CODATA 2010 value)
   const double plancks_constant_hbar=o2scl_mksa::plancks_constant_h/
     2.0/o2scl_const::pi;
+  
+  /// m
+  const double schwarzchild_radius=2.95325008e3;
   /// Astronomical unit in m (IAU 2009 value; now exact)
   const double astronomical_unit=1.49597870700e11;
   /// m
