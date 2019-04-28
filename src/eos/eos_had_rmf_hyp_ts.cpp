@@ -44,6 +44,14 @@ int main(void) {
   t.set_output_level(1);
 
   eos_had_rmf_hyp re;
+  re.ms=508.194;
+  re.mw=782.501;
+  re.mr=763.0;
+  re.mnuc=939.0;
+  re.ms/=hc_mev_fm; 
+  re.mw/=hc_mev_fm; 
+  re.mr/=hc_mev_fm; 
+  re.mnuc/=hc_mev_fm;
   re.cs=sqrt(9.927);
   re.cw=sqrt(4.820);
   re.cr=sqrt(4.791);
