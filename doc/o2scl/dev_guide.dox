@@ -27,7 +27,7 @@
     - Make the final commit targeted for release. 
     - Check the commit succeeds on travis-ci.org
     - Promote the snaps on snapcraft from edge to beta
-    - Refresh the documentation using "make o2scl-doc".
+    - Refresh the documentation using <tt>make o2scl-doc</tt>.
     - Create the new distribution and copy to internal svn repo.
     - Create github release, tagging the recent commit and uploading
     the distribution.
