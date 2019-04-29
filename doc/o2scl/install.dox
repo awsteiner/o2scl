@@ -54,7 +54,10 @@
     \o2 uses Travis CI (see https://travis-ci.org/awsteiner/o2scl ) to
     ensure that compilation and testing works on standard
     Ubuntu and Mac OS X environments.
+
+    \comment
     <img src="https://travis-ci.org/awsteiner/o2scl.svg?branch=master">
+    \endcomment
     
     \section installlinux_subsect Compiling on Linux
 
@@ -191,7 +194,7 @@
     distribution.
 
     The most recent release documentation is available at
-    https://isospin.roam.utk.edu/static/code/o2scl . The documentation for
+    https://neutronstars.utk.edu/code/o2scl . The documentation for
     previous releases is not on the web, but still available in the
     release <tt>.tar.gz</tt> file.
 

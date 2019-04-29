@@ -7,9 +7,11 @@ A new matrix_view_transpose class and a new wordexp() function were
 created.
 
 The classes cloud_file, boson_rel, eos_had_skyrme, eos_tov_buchdahl,
-fermion_deriv_rel, fermion_eff, fermion_nonrel, fermion_rel, hist,
-interpm_krige, and interp_krige_optim classes were improved improved.
-The particle calibration routines were improved.
+fermion_deriv_rel, fermion_eff, fermion_nonrel, fermion_rel,
+eos_had_rmf, hist, interpm_krige, and interp_krige_optim classes were
+improved improved. The particle calibration routines were improved.
+
+The constants were updated for the CODATA 2014 release.
 
 Several updates were made to acol. The handling of tensor and
 tensor_grid classes was improved. Vector and value specifications were

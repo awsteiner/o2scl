@@ -19,11 +19,11 @@
     - For most recent commit, make sure the tests, examples, and
     documentation all succeed. Check source installs on ubuntu and
     OS X and a homebrew HEAD install.
-    - Make sure pushes are being installed on travis-ci.org
-    - Make sure snaps are working
+    - Try a test build on travis-ci.org
+    - Make sure snaps are working ("sudo snapcraft cleanbuild"?)
     - Update NEWS file with recent changes.
-    - Make the final commit targeted for release. Double check
-    that it succeeds on travis-ci.org.
+    - Make the final commit targeted for release. 
+    - Check the commit succeeds on travis-ci.org
     - Promote the snaps on snapcraft from edge to beta
     - Refresh the documentation using "make o2scl-doc".
     - Create the new distribution and copy to internal svn repo.
