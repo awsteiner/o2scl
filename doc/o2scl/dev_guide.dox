@@ -43,6 +43,16 @@
     - Check installation using homebrew directly.
     - Turn on build pushes in travis-ci.org and commit again since
     dl_page.dox has changed. 
+
+    <b>Procedure for moving to new development version:</b>
+    - Update to the new development version number and new OLIB numbers
+    in configure.ac .
+    - Update version numbers in doxyfile files and main.dox files
+    and in dl_page.dox .
+    - Update local configure scripts to refer to new version number
+    if necessary
+    
+    <b>o2sclpy release procedure:</b>
     - Update version numbers in o2sclpy/setup.py and o2sclpy/doc/index.rst
     - Regenerate the o2sclpy documentation using <tt>make doc</tt>
     and upload it to web using <tt>make sync-doc</tt>
@@ -51,7 +61,7 @@
     - Upload a new version of o2sclpy to pypi using
     <tt>twine upload dist/*</tt>
 
-    <b>General coding guidelines:</b>
+    <b>Coding recommendations and guidelines:</b>
     - Comment code liberally. 
     - Avoid goto statements.
     - Avoid hard-coded numerical values which are not either:
@@ -120,33 +130,20 @@
     - Comment Doxygen documentation with \\comment and \\endcomment.
     (Yes, sometimes comments in comments are useful.)
 
-    <b>Patches:</b>
-    - For those who are uncomfortable with Subversion, patches are
-    always accepted.
-    - Prepare patches based on the most recent version of the
-    trunk or the appropriate branch.
-    
-    <b>SVN:</b>
-    - Editing the trunk directly should be avoided. Most development
-    should occur on branches, to be merged with the trunk at the
-    appropriate time. 
-    - Ideally the trunk should always compile and all the tests should
-    pass.
-    - Communicate with the lead developer before, during, and after any
-    non-trivial development. Communicate your ideas before development,
-    so that you don't write many lines of code only to find that your new
-    code will be rejected. Communicate your ideas during development to
-    avoid conflicting changes. Communicate your ideas after development
-    to ensure they have a chance of being implmented. Subversion is 
-    not a replacement for real communication.
-    - Commit often.
-    - Merge carefully. If you fail to merge correctly, code added
-    by other developers will be (at least temporarily) lost.
-    - Branches will be merged into the trunk by the lead developer
-    at whatever time they deem appropriate.
+    <b>git repository:</b>
+    - Communicate with the lead developer before, during, and after
+    any non-trivial development. Communicate your ideas before
+    development, so that you don't write many lines of code only to
+    find that your pull request will be rejected. Communicate your
+    ideas during development to avoid conflicting changes. Communicate
+    your ideas after development to ensure they have a chance of being
+    implmented. Subversion is not a replacement for real
+    communication.
+    - Pull requests will be integrated into the trunk by the lead
+    developer at whatever time they deem appropriate.
     - Developer-specific files which are not platform-independent
-    should not be added to the repository. Sometimes svn:ignore can
-    be used to ignore these files, but this should be done 
-    sparingly.
+    should not be added to the repository. Sometimes
+    <tt>.gitignore</tt> can be used to ignore these files, but this
+    should be done sparingly.
     
 */
