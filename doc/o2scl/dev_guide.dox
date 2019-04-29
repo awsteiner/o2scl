@@ -31,13 +31,11 @@
     - Create the new distribution and copy to internal svn repo.
     - Create github release, tagging the recent commit and uploading
     the distribution.
-    - Compute hashes and update dl_page.dox with hashes and github
-    release hash.
+    - Compute hashes with <tt>md5sum</tt> and <tt>openssl dgst -sha256</tt>
+    and update dl_page.dox with hashes and github
+    release hash. Regenerate documentation with <tt>make o2scl-doc</tt>.
     - Do a 'make install' on isospin so that 'make utk-sync-doc'
     can copy docs from the post-installation directory
-    - Run "make utk-sync-doc" (already has sudo implemented) 
-    in doc/o2scl in order to copy the new
-    docs to their location on the web server.
     - Copy the new distribution and the new sha256 hash to the web 
     server.
     - Update homebrew recipe with the new version number and new hash.
