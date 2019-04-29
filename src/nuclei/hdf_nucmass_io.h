@@ -81,9 +81,9 @@ namespace o2scl_hdf {
       
       \note This function is in the o2scl_hdf namespace,
       see \ref hdf_nucmass_io.h .
-   */
+  */
   void ame_load(o2scl::nucmass_ame &ame, std::string name="16",
-		bool exp_only=false, bool external=false);
+		bool exp_only=false);
   
   /** \brief Read data for \ref o2scl::nucmass_mnmsk from an HDF table
 

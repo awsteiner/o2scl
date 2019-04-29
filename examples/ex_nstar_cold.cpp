@@ -100,11 +100,6 @@ int main(void) {
   // Compute EOS, include muons
   nst.include_muons=true;
   nst.set_eos(rmf);
-  nst.verbose=1;
-  nst.def_root.verbose=1;
-  rmf.def_mroot.verbose=1;
-  cout << "Hx." << endl;
-  rmf.calc_e_steps=200;
   nst.calc_eos();
   std::shared_ptr<table_units<> > te=nst.get_eos_results();
 

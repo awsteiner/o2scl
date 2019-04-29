@@ -129,7 +129,7 @@ void o2scl_hdf::ame_load_ext(o2scl::nucmass_ame &ame, std::string file_name,
 
 void o2scl_hdf::ame_load(o2scl::nucmass_ame &ame, std::string name,
 			 bool exp_only) {
-
+  
   std::string file_name, table_name;
   file_name=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
   if (name=="95exp") {

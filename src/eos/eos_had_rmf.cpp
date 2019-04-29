@@ -438,12 +438,6 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 	n_charge=0.08*(1.0-alpha)+np*alpha;
       }
     
-      // 10/16/14: I think this was some previous debug code
-      // if (fabs(alpha-0.1)<1.0e-8) {
-      // x[0]*=1.0+1.0e-5;
-      // x[4]=-1.0e-10;
-      // }
-
       // If the chemical potentials are too small, shift them by
       // a little more than required to get positive densities. 
       int rt=calc_e_solve_fun(5,x,y);
@@ -456,6 +450,17 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 	rt=calc_e_solve_fun(5,x,y);
       }
 
+      // The initial point has n_n = n_p and thus rho=0, and the
+      // solver has a little problem with the stepsize getting away
+      // from the rho=0 point, so we give rho a small non-zero value
+      if (fabs(x[4])<1.0e-8) {
+	if (neutron->n>proton->n) {
+	  x[4]=-1.0e-8;
+	} else if (neutron->n<proton->n) {
+	  x[4]=1.0e-8;
+	}
+      }
+      
       // If the initial guess failed then we won't be able to solve
       if (rt!=0) {
 	string s=((string)"Initial guess failed at (nn=")+
@@ -471,6 +476,7 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 	     << x[3] << " " << x[4] << " " << ret << endl;
 	cout.precision(6);
       }
+
     }
     if (verbose>0) {
       cout << endl;
@@ -1042,11 +1048,6 @@ int eos_had_rmf::calc_e_solve_fun(size_t nv, const ubvector &ex,
   ey[3]=f2;
   ey[4]=f3;
 
-  cout << "ex: ";
-  vector_out(cout,ex,true);
-  cout << "ey: ";
-  vector_out(cout,ey,true);
-  
   for(int i=0;i<5;i++) {
     if (!std::isfinite(ex[i]) || !std::isfinite(ey[i])) {
       // 07/12/11 - We don't want to call the error handler here, because
