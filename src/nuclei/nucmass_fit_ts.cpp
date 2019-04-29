@@ -38,6 +38,7 @@ int main(void) {
   
   cout.setf(ios::scientific);
 
+#ifndef O2SCL_FAST_TEST
   double res;
   nucmass_semi_empirical sem;
   nucmass_fit mf;
@@ -97,6 +98,8 @@ int main(void) {
   cout << res << endl;
   t.test_rel(res,0.894578,1.0e-4,"Moller fit 3");
 
+#endif
+  
   t.report();
   return 0;
 }

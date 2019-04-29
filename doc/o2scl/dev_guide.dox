@@ -14,13 +14,15 @@
 
     <b>Release procedure</b>
     - Make sure version numbers are updated in configure.ac, 
-    doc/o2scl/doxyfile, doc/o2scl/main.dox, and tables in dl_page.dox
+    doc/o2scl/doxyfile, doc/o2scl/main.dox, snap/snapcraft.yaml, 
+    and tables in dl_page.dox
     are updated with "not yet set" for the new version hashes.
     - For most recent commit, make sure the tests, examples, and
     documentation all succeed. Check source installs on ubuntu and
     OS X and a homebrew HEAD install.
     - Try a test build on travis-ci.org
-    - Make sure snaps are working ("sudo snapcraft cleanbuild"?)
+    - Make sure snaps are working using 
+    <tt>sudo snapcraft -d cleanbuild</tt>
     - Update NEWS file with recent changes.
     - Make the final commit targeted for release. 
     - Check the commit succeeds on travis-ci.org
@@ -38,10 +40,12 @@
     docs to their location on the web server.
     - Copy the new distribution and the new sha256 hash to the web 
     server.
-    - Update homebrew recipe with the new hash.
+    - Update homebrew recipe with the new version number and new hash.
     - Check installation using homebrew directly.
     - Turn on build pushes in travis-ci.org and commit again since
     dl_page.dox has changed. 
+    - Update version numbers in o2sclpy/setup.py
+    - Upload a new version of o2sclpy to pypi
 
     <b>General coding guidelines:</b>
     - Comment code liberally. 

@@ -45,6 +45,8 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
+#ifndef O2SCL_FAST_TEST
+
   double d1, d2, qual;
   nucmass_ame au;
   o2scl_hdf::ame_load_ext(au,"../../data/o2scl/nucmass/ame03.o2","ame03.o2");
@@ -214,6 +216,8 @@ int main(void) {
     cout << endl;
   */
 
+#endif
+  
   t.report();
   return 0;
 }

@@ -1,6 +1,6 @@
 
   name: o2scl
-  version: '0.922'
+  version: '0.923'
   summary: Object-oriented Scientific Computing Library
   description: |
     O2scl is a C++ library for object-oriented numerical programming. 
@@ -13,19 +13,23 @@
 
   grade: devel
   confinement: devmode
-  
+
+# 4/29/19: I used to include -libc6 in stage-packages but it
+# doesn't appear to be needed any more
+
   parts:
     o2scl:
       source: https://github.com/awsteiner/o2scl.git
       plugin: autotools
       install-via: prefix
       stage-packages:
+      - g++
+      - make
       - libboost-all-dev
       - libreadline-dev
       - libncurses-dev
       - libhdf5-serial-dev
       - libgsl0-dev
-      - libc6
       build: |
         mkdir -p m4 && ./autogen.sh && CXXFLAGS="-DO2SCL_UBUNTU_HDF5 -DO2SCL_UBUNTU_PKG" ./configure --prefix=$PWD/../install --enable-snap && make blank-doc && make && make install
   

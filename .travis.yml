@@ -59,14 +59,13 @@ script:
   # trusty is 1.6, so we leave out --enable-gsl2
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      CXXFLAGS="-DO2SCL_UBUNTU_HDF5 -DO2SCL_FAST_TEST" ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples;
+      CXXFLAGS="-DO2SCL_UBUNTU_HDF5" ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples;
     fi
   #
   # Use homebrew to install the HEAD version on OSX. At the end, 'acol
   # --version' is used to double check that the install worked. We
   # need to use '-v' for brew install so that the build doesn't
-  # timeout. We use ';' rather than '&&' to ignore
-  # homebrew errors when installing gcc.
+  # timeout. 
   # 
   # 10/11/18: I removed --with-examples from this line because
   # the travis.ci runs were taking too long
