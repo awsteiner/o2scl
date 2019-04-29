@@ -27,6 +27,7 @@
     - Make the final commit targeted for release. 
     - Check the commit succeeds on travis-ci.org
     - Promote the snaps on snapcraft from edge to beta
+    at https://snapcraft.io/o2scl/releases .
     - Refresh the documentation using <tt>make o2scl-doc</tt>.
     - Create the new distribution and copy to internal svn repo.
     - Create github release, tagging the recent commit and uploading
@@ -36,14 +37,19 @@
     release hash. Regenerate documentation with <tt>make o2scl-doc</tt>.
     - Do a 'make install' on isospin so that 'make utk-sync-doc'
     can copy docs from the post-installation directory
-    - Copy the new distribution and the new sha256 hash to the web 
-    server.
+    - Copy the new distribution and the new sha256 hash to 
+    https://isospin.roam.utk.edu/public_data/o2scl_dists/
     - Update homebrew recipe with the new version number and new hash.
     - Check installation using homebrew directly.
     - Turn on build pushes in travis-ci.org and commit again since
     dl_page.dox has changed. 
-    - Update version numbers in o2sclpy/setup.py
-    - Upload a new version of o2sclpy to pypi
+    - Update version numbers in o2sclpy/setup.py and o2sclpy/doc/index.rst
+    - Regenerate the o2sclpy documentation using <tt>make doc</tt>
+    and upload it to web using <tt>make sync-doc</tt>
+    - Remove old dists in o2sclpy by clearing o2sclpy/dist directory
+    - Run <tt>python3 setup.py sdist bdist_wheel</tt>
+    - Upload a new version of o2sclpy to pypi using
+    <tt>twine upload dist/*</tt>
 
     <b>General coding guidelines:</b>
     - Comment code liberally. 

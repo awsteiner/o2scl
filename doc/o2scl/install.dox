@@ -96,7 +96,8 @@
     using <tt>make</tt> and <tt>make install</tt>.
 
     An experimental O2scl "snap" is also being developed on
-    snapcraft.io and can be installed using 
+    snapcraft (see https://snapcraft.io/o2scl) 
+    and can be installed using 
     \code
     sudo snap install (--edge or --beta) --devmode o2scl
     \endcode
