@@ -68,6 +68,7 @@ int main(void) {
   int sret=rmf.saturation();
 
   if (sret!=0) {
+    
     rmf.set_fields(0.1,0.07,0.0);
     rmf.def_neutron.mu=5.0;
     rmf.def_proton.mu=5.0;
@@ -100,6 +101,10 @@ int main(void) {
   nst.include_muons=true;
   nst.set_eos(rmf);
   nst.verbose=1;
+  nst.def_root.verbose=1;
+  rmf.def_mroot.verbose=1;
+  cout << "Hx." << endl;
+  rmf.calc_e_steps=200;
   nst.calc_eos();
   std::shared_ptr<table_units<> > te=nst.get_eos_results();
 

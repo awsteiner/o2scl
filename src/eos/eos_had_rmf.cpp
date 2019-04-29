@@ -1042,6 +1042,11 @@ int eos_had_rmf::calc_e_solve_fun(size_t nv, const ubvector &ex,
   ey[3]=f2;
   ey[4]=f3;
 
+  cout << "ex: ";
+  vector_out(cout,ex,true);
+  cout << "ey: ";
+  vector_out(cout,ey,true);
+  
   for(int i=0;i<5;i++) {
     if (!std::isfinite(ex[i]) || !std::isfinite(ey[i])) {
       // 07/12/11 - We don't want to call the error handler here, because
@@ -1143,7 +1148,7 @@ int eos_had_rmf::zero_pressure(size_t nv, const ubvector &ex,
   }
   
   calc_eq_p(*n,*p,sig,ome,lrho,f1,f2,f3,*eos_thermo);
-  
+
   ey[0]=eos_thermo->pr;
   ey[1]=p->n/(n->n+p->n)-0.5;
   ey[2]=f1;

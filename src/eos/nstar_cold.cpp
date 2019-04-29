@@ -165,7 +165,7 @@ int nstar_cold::calc_eos(double np_0) {
   }
 
   for(barn=nb_start;barn<=nb_end+dnb/10.0;barn+=dnb) {
-    
+
     int ret=rp->solve(x,sf);
     double y=solve_fun(x,hb);
     

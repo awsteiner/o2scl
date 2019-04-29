@@ -26,7 +26,7 @@ BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 	interp.scr columnify.scr convert_units.scr \
 	string_conv.scr tensor.scr shunting_yard.scr \
 	format_float.scr table_units.scr exception.scr uniform_grid.scr \
-	tensor_grid.scr
+	tensor_grid.scr constants.scr
 
 TEST_VAR = $(BASE_TEST_VAR)
 
@@ -110,7 +110,7 @@ am__pkginclude_HEADERS_DIST = $(HEADER_VAR)
 # ------------------------------------------------------------
 
 CPVAR = err_hnd_ts funct_ts convert_units_ts \
-	lib_settings_ts misc_ts mm_funct_ts \
+	lib_settings_ts misc_ts mm_funct_ts constants_ts \
 	multi_funct_ts search_vec_ts table_ts interp_ts \
 	columnify_ts shunting_yard_ts interp_krige_ts \
 	string_conv_ts tensor_ts tensor_grid_ts vector_ts table3d_ts \
@@ -128,6 +128,7 @@ endif
 
 if O2SCL_OPENMP
 interp_krige_ts_LDFLAGS = -fopenmp
+constants_ts_LDFLAGS = -fopenmp
 err_hnd_ts_LDFLAGS = -fopenmp
 convert_units_ts_LDFLAGS = -fopenmp
 funct_ts_LDFLAGS = -fopenmp
@@ -152,6 +153,7 @@ shunting_yard_ts_LDFLAGS = -fopenmp
 endif
 
 interp_krige_ts_LDADD = $(VCHECK_LIBS)
+constants_ts_LDADD = $(VCHECK_LIBS)
 err_hnd_ts_LDADD = $(VCHECK_LIBS)
 convert_units_ts_LDADD = $(VCHECK_LIBS)
 funct_ts_LDADD = $(VCHECK_LIBS)
@@ -176,6 +178,8 @@ shunting_yard_ts_LDADD = $(VCHECK_LIBS)
 
 interp_krige.scr: interp_krige_ts$(EXEEXT) 
 	./interp_krige_ts$(EXEEXT) > interp_krige.scr
+constants.scr: constants_ts$(EXEEXT) 
+	./constants_ts$(EXEEXT) > constants.scr
 err_hnd.scr: err_hnd_ts$(EXEEXT) 
 	./err_hnd_ts$(EXEEXT) > err_hnd.scr
 convert_units.scr: convert_units_ts$(EXEEXT) 
@@ -220,6 +224,7 @@ shunting_yard.scr: shunting_yard_ts$(EXEEXT)
 	./shunting_yard_ts$(EXEEXT) > shunting_yard.scr
 
 interp_krige_ts_SOURCES = interp_krige_ts.cpp
+constants_ts_SOURCES = constants_ts.cpp
 err_hnd_ts_SOURCES = err_hnd_ts.cpp
 convert_units_ts_SOURCES = convert_units_ts.cpp
 funct_ts_SOURCES = funct_ts.cpp
