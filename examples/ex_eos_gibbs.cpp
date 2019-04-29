@@ -34,6 +34,7 @@
 #include <o2scl/anneal_gsl.h>
 #include <o2scl/mm_funct.h>
 #include <o2scl/tov_solve.h>
+#include <o2scl/test_mgr.h>
 
 using namespace std;
 using namespace o2scl;
@@ -1197,7 +1198,9 @@ public:
 
 int main(void) {
   cout.setf(ios::scientific);
+  test_mgr t;
   ex_eos_gibbs ehg;
   ehg.run();
+  t.report();
   return 0;
 }
