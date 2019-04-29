@@ -103,7 +103,7 @@ namespace o2scl_cgs {
   /// Bohr radius in cm (CODATA 2014 value)
   const double bohr_radius=5.2917721067e-9;
   /// Stefan-Boltzmann constant in g / K^4 s^3 (CODATA 2014 value)
-  const double stefan_boltzmann=5.670367e-5;
+  const double stefan_boltzmann_constant=5.670367e-5;
   /// Thomson cross section in cm^2 (CODATA 2014 value)
   const double thomson_cross_section=6.652457158e-25;
   /** \brief Fermi coupling constant in s^4 / cm^4 g^2, 
@@ -352,8 +352,8 @@ namespace o2scl_cgsm {
   /// Bohr radius in cm
   const double bohr_radius=o2scl_cgs::bohr_radius;
   /// Stefan-Boltzmann constant in g / K^4 s^3
-  const double stefan_boltzmann=
-    o2scl_cgs::stefan_boltzmann;
+  const double stefan_boltzmann_constant=
+    o2scl_cgs::stefan_boltzmann_constant;
   /// Thomson cross section in cm^2
   const double thomson_cross_section=o2scl_cgs::thomson_cross_section;
   /// Fermi coupling constant in s^4 / cm^4 g^2
@@ -610,8 +610,8 @@ namespace o2scl_mks {
   /// Boltzmann constant in kg m^2 / K s^2
   const double boltzmann=o2scl_cgs::boltzmann/1.0e7;
   /// Stefan-Boltzmann constant in kg / K^4 s^3
-  const double stefan_boltzmann=
-    o2scl_cgs::stefan_boltzmann/1.0e3;
+  const double stefan_boltzmann_constant=
+    o2scl_cgs::stefan_boltzmann_constant/1.0e3;
   //@{
 
   /// \name Astrophysical constants
@@ -1055,7 +1055,7 @@ namespace o2scl_mksa {
   /// kg m^2 / s^2
   const double erg=1e-7;
   /// kg / K^4 s^3
-  const double stefan_boltzmann=5.67039934436e-8;
+  const double stefan_boltzmann_constant=5.67039934436e-8;
   /// m^2
   const double thomson_cross_section=6.65245853542e-29;
   /// A^2 s^4 / kg m^3

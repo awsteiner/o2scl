@@ -54,7 +54,7 @@ int main(void) {
 	     o2scl_cgs::bohr_radius,1.0e-7,
 	     "CGS bohr_radius");
   t.test_rel(GSL_CONST_CGS_STEFAN_BOLTZMANN_CONSTANT,
-	     o2scl_cgs::stefan_boltzmann,1.0e-5,
+	     o2scl_cgs::stefan_boltzmann_constant,1.0e-5,
 	     "CGS stefan_boltzmann");
   t.test_rel(GSL_CONST_CGS_THOMSON_CROSS_SECTION,
 	     o2scl_cgs::thomson_cross_section,4.0e-7,
@@ -328,7 +328,7 @@ int main(void) {
 	     o2scl_cgsm::bohr_radius,1.0e-7,
 	     "CGSM bohr_radius");
   t.test_rel(GSL_CONST_CGSM_STEFAN_BOLTZMANN_CONSTANT,
-	     o2scl_cgsm::stefan_boltzmann,1.0e-5,
+	     o2scl_cgsm::stefan_boltzmann_constant,1.0e-5,
 	     "CGSM stefan_boltzmann");
   t.test_rel(GSL_CONST_CGSM_THOMSON_CROSS_SECTION,
 	     o2scl_cgsm::thomson_cross_section,4.0e-7,
@@ -626,7 +626,7 @@ int main(void) {
 	     o2scl_mks::boltzmann,4.0e-6,
 	     "MKS boltzmann");
   t.test_rel(GSL_CONST_MKS_STEFAN_BOLTZMANN_CONSTANT,
-	     o2scl_mks::stefan_boltzmann,1.0e-5,
+	     o2scl_mks::stefan_boltzmann_constant,1.0e-5,
 	     "MKS stefan_boltzmann");
   t.test_rel(GSL_CONST_MKS_ASTRONOMICAL_UNIT,
 	     o2scl_mks::astronomical_unit,1.0e-7,
@@ -1191,7 +1191,7 @@ int main(void) {
 	     o2scl_mksa::erg,1.0e-7,
 	     "MKSA erg");
   t.test_rel(GSL_CONST_MKSA_STEFAN_BOLTZMANN_CONSTANT,
-	     o2scl_mksa::stefan_boltzmann,1.0e-5,
+	     o2scl_mksa::stefan_boltzmann_constant,1.0e-5,
 	     "MKSA stefan_boltzmann");
   t.test_rel(GSL_CONST_MKSA_THOMSON_CROSS_SECTION,
 	     o2scl_mksa::thomson_cross_section,4.0e-7,
