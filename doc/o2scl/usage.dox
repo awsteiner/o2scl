@@ -219,6 +219,10 @@
     library is to be included. The end-user should not
     need to use this.
 
+    - O2SCL_FAST_TEST - Internal flag to speed up testing so that
+    travis-ci.org builds don't time out. This constant is 
+    defined by the <tt>--with-fast-test</tt> option in homebrew.
+
     - O2SCL_GSL2 - Flag to allow functionality from later GSL versions
     in \ref o2scl::fit_linear and \ref o2scl::fit_nonlin . This flag
     is set during compilation if <tt>--enable-gsl2</tt> is passed to
