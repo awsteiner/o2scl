@@ -149,6 +149,8 @@ namespace o2scl_cgs {
   const double mass_electron=9.10938356e-28;
   /// Muon mass in g (CODATA 2014 value)
   const double mass_muon=1.883531594e-25;
+  /// Muon mass in g (CODATA 2014 value)
+  const double mass_tau=3.16747e-24;
   /// Proton mass in g (CODATA 2014 value)
   const double mass_proton=1.672621898e-24;
   /// Neutron mass in g (CODATA 2014 value)
@@ -358,7 +360,7 @@ namespace o2scl_cgsm {
   const double thomson_cross_section=o2scl_cgs::thomson_cross_section;
   /// Fermi coupling constant in s^4 / cm^4 g^2
   const double Gfermi=o2scl_cgs::Gfermi;
-  /// Boltzmann constant in g cm^2 / K s^2 (CODATA 2010 value)
+  /// Boltzmann constant in g cm^2 / K s^2
   const double boltzmann=o2scl_cgs::boltzmann;
   //@}
 
@@ -392,6 +394,8 @@ namespace o2scl_cgsm {
   const double mass_electron=o2scl_cgs::mass_electron;
   /// Muon mass in g
   const double mass_muon=o2scl_cgs::mass_muon;
+  /// Muon mass in g
+  const double mass_tau=o2scl_cgs::mass_tau;
   /// Proton mass in g
   const double mass_proton=o2scl_cgs::mass_proton;
   /// Neutron mass in g
@@ -644,6 +648,8 @@ namespace o2scl_mks {
   const double mass_electron=o2scl_cgs::mass_electron/1.0e3;
   /// Muon mass in kg
   const double mass_muon=o2scl_cgs::mass_muon/1.0e3;
+  /// Muon mass in kg
+  const double mass_tau=o2scl_cgs::mass_tau/1.0e3;
   /// Proton mass in kg
   const double mass_proton=o2scl_cgs::mass_proton/1.0e3;
   /// Neutron mass in kg
@@ -677,81 +683,81 @@ namespace o2scl_mks {
   /// \name Unit conversions
   //@{
   /// s
-  const double minute=6e1;
+  const double minute=o2scl_cgs::minute;
   /// s
-  const double hour=3.6e3;
+  const double hour=o2scl_cgs::hour;
   /// s
-  const double day=8.64e4;
+  const double day=o2scl_cgs::day;
   /// s
-  const double week=6.048e5;
+  const double week=o2scl_cgs::week;
   /// m
-  const double inch=2.54e-2;
+  const double inch=o2scl_cgs::inch*1.0e-2;
   /// m
-  const double foot=3.048e-1;
+  const double foot=o2scl_cgs::foot*1.0e-2;
   /// m
-  const double yard=9.144e-1;
+  const double yard=o2scl_cgs::yard*1.0e-2;
   /// m
-  const double mile=1.609344e3;
+  const double mile=o2scl_cgs::mile*1.0e-2;
   /// m
-  const double nautical_mile=1.852e3;
+  const double nautical_mile=o2scl_cgs::nautical_mile*1.0e-2;
   /// m
-  const double fathom=1.8288e0;
+  const double fathom=o2scl_cgs::fathom*1.0e-2;
   /// m
-  const double mil=2.54e-5;
+  const double mil=o2scl_cgs::mil*1.0e-2;
   /// m
-  const double point=3.52777777778e-4;
+  const double point=o2scl_cgs::point*1.0e-2;
   /// m
-  const double texpoint=3.51459803515e-4;
+  const double texpoint=o2scl_cgs::texpoint*1.0e-2;
   /// m
-  const double micron=1e-6;
+  const double micron=o2scl_cgs::micron*1.0e-2;
   /// m
-  const double angstrom=1e-10;
+  const double angstrom=o2scl_cgs::angstrom*1.0e-2;
   /// m^2
-  const double hectare=1e4;
+  const double hectare=o2scl_cgs::hectare*1.0e-4;
   /// m^2
-  const double acre=4.04685642241e3;
+  const double acre=o2scl_cgs::acre*1.0e-4;
   /// m^2
-  const double barn=1e-28;
+  const double barn=o2scl_cgs::barn*1.0e-4;
   /// m^3
-  const double liter=1e-3;
+  const double liter=o2scl_cgs::liter*1.0e-6;
   /// m^3
-  const double us_gallon=3.78541178402e-3;
+  const double us_gallon=o2scl_cgs::us_gallon*1.0e-6;
   /// m^3
-  const double quart=9.46352946004e-4;
+  const double quart=o2scl_cgs::quart*1.0e-6;
   /// m^3
-  const double pint=4.73176473002e-4;
+  const double pint=o2scl_cgs::pint*1.0e-6;
   /// m^3
-  const double cup=2.36588236501e-4;
+  const double cup=o2scl_cgs::cup*1.0e-6;
   /// m^3
-  const double fluid_ounce=2.95735295626e-5;
+  const double fluid_ounce=o2scl_cgs::fluid_ounce*1.0e-6;
   /// m^3
-  const double tablespoon=1.47867647813e-5;
+  const double tablespoon=o2scl_cgs::tablespoon*1.0e-6;
   /// m^3
-  const double teaspoon=4.92892159375e-6;
+  const double teaspoon=o2scl_cgs::teaspoon*1.0e-6;
   /// m^3
-  const double canadian_gallon=4.54609e-3;
+  const double canadian_gallon=o2scl_cgs::canadian_gallon*1.0e-6;
   /// m^3
-  const double uk_gallon=4.546092e-3;
+  const double uk_gallon=o2scl_cgs::uk_gallon*1.0e-6;
   /// m / s
-  const double miles_per_hour=4.4704e-1;
+  const double miles_per_hour=o2scl_cgs::miles_per_hour*1.0e-2;
   /// m / s
-  const double kilometers_per_hour=2.77777777778e-1;
+  const double kilometers_per_hour=o2scl_cgs::kilometers_per_hour*1.0e-2;
   /// m / s
-  const double knot=5.14444444444e-1;
+  const double knot=o2scl_cgs::knot*1.0e-2;
   /// kg
-  const double pound_mass=4.5359237e-1;
+  const double pound_mass=o2scl_cgs::pound_mass*1.0e-3;
   /// kg
-  const double ounce_mass=2.8349523125e-2;
+  const double ounce_mass=o2scl_cgs::ounce_mass*1.0e-3;
   /// kg
-  const double ton=9.0718474e2;
+  const double ton=o2scl_cgs::ton*1.0e-3;
   /// kg
-  const double metric_ton=1e3;
+  const double metric_ton=o2scl_cgs::metric_ton*1.0e-3;
   /// kg
-  const double uk_ton=1.0160469088e3;
+  const double uk_ton=o2scl_cgs::uk_ton*1.0e-3;
   /// kg
-  const double troy_ounce=3.1103475e-2;
+  const double troy_ounce=o2scl_cgs::troy_ounce*1.0e-3;
   /// kg
-  const double carat=2e-4;
+  const double carat=o2scl_cgs::carat*1.0e-3;
   /// kg m / s^2
   const double gram_force=9.80665e-3;
   /// kg m / s^2
@@ -803,7 +809,7 @@ namespace o2scl_mks {
   /// cd sr / m^2
   const double footlambert=1.07639104e1;
   /// 1 / s
-  const double curie=3.7e10;
+  const double curie=o2scl_cgs::curie;
   /// m^2 / s^2
   const double rad=1e-2;
   /// kg m / s^2
@@ -848,6 +854,9 @@ namespace o2scl_mks {
     values. See also the documentation at \ref o2scl_cgs .
 */
 namespace o2scl_mksa {
+
+  /// \name Fundamental constants
+  //@{
   /// m / s
   const double speed_of_light=2.99792458e8;
   /// Newtonian constant of gravitation in m^3 / kg s^2 (CODATA 2010 value)
@@ -857,28 +866,55 @@ namespace o2scl_mksa {
   /// Planck constant divided by 2 pi in kg m^2 / s (CODATA 2010 value)
   const double plancks_constant_hbar=o2scl_mksa::plancks_constant_h/
     2.0/o2scl_const::pi;
-  
+  /// Electron volt in kg m^2 / s^2 (CODATA 2010 value)
+  const double electron_volt=1.602176565e-19;
   /// m
-  const double schwarzchild_radius=2.95325008e3;
+  const double bohr_radius=5.291772083e-11;
+  /// kg / K^4 s^3
+  const double stefan_boltzmann_constant=5.67039934436e-8;
+  /// m^2
+  const double thomson_cross_section=6.65245853542e-29;
+  /** \brief Fermi coupling constant in s^4 / cm^4 g^2, 
+      defined as \f$ 1.166364 \times 10^{-5}~\mathrm{GeV}^{-2} \f$
+      (CODATA 2010 value)
+  */
+  const double Gfermi=1.166364e-23/electron_volt/electron_volt;
+  /// Boltzmann constant in kg m^2 / K s^2 (CODATA 2010 value)
+  const double boltzmann=1.3806488e-23;
+  //@}
+
+  /// \name Astrophysical constants
+  //@{
   /// Astronomical unit in m (IAU 2009 value; now exact)
   const double astronomical_unit=1.49597870700e11;
-  /// m
-  const double light_year=9.46053620707e15;
   /// m
   const double parsec=3.08567758135e16;
   /// m / s^2
   const double grav_accel=9.80665e0;
-  /// Electron volt in kg m^2 / s^2 (CODATA 2010 value)
-  const double electron_volt=1.602176565e-19;
-  /// Electron mass in kg (CODATA 2010 value)
-  const double mass_electron=9.10938291e-31;
-  /// Muon mass in kg (CODATA 2010 value)
-  const double mass_muon=1.883531475e-28;
-  /// Proton mass in kg (CODATA 2010 value)
-  const double mass_proton=1.672621777e-27;
-  /// Neutron mass in kg (CODATA 2010 value)
-  const double mass_neutron=1.674927351e-27;
+  /// kg
+  const double solar_mass=1.9884e30;
+  /// m
+  const double schwarzchild_radius=2.95325008e3;
+  /// m
+  const double light_year=9.46053620707e15;
+  //@}
 
+  /// \name Particle masses
+  //@{
+  /// Electron mass in kg
+  const double mass_electron=o2scl_cgs::mass_electron/1.0e3;
+  /// Muon mass in kg
+  const double mass_muon=o2scl_cgs::mass_muon/1.0e3;
+  /// Muon mass in kg
+  const double mass_tau=o2scl_cgs::mass_tau/1.0e3;
+  /// Proton mass in kg
+  const double mass_proton=o2scl_cgs::mass_proton/1.0e3;
+  /// Neutron mass in kg
+  const double mass_neutron=o2scl_cgs::mass_neutron/1.0e3;
+  //@}
+
+  /// \name Nuclear masses
+  //@{
   /// Deuteron mass in kg (CODATA 2010 value)
   const double mass_deuteron=3.34358348e-27;
   /// Triton mass in kg (CODATA 2010 value)
@@ -887,23 +923,20 @@ namespace o2scl_mksa {
   const double mass_helion=5.00641234e-27;
   /// Alpha particle mass in kg (CODATA 2010 value)
   const double mass_alpha=6.64465675e-27;
+  //@}
 
+  /// \name Chemical constants
+  //@{
   /// Rydberg constant in kg m^2 / s^2 (CODATA 2010 value)
   const double rydberg=2.179872171e-18;
-  /// Boltzmann constant in kg m^2 / K s^2 (CODATA 2010 value)
-  const double boltzmann=1.3806488e-23;
-  /// Bohr magneton in A m^2 (CODATA 2010 value)
-  const double bohr_magneton=9.27400968e-24;
-  /// A m^2
-  const double nuclear_magneton=5.05078317e-27;
-  /// A m^2
-  const double electron_magnetic_moment=9.28476362e-24;
-  /// A m^2
-  const double proton_magnetic_moment=1.410606633e-26;
   /// kg m^2 / K mol s^2
   const double molar_gas=8.314472e0;
   /// m^3 / mol
   const double standard_gas_volume=2.2710981e-2;
+  //@}
+
+  /// \name Unit conversions
+  //@{
   /// s
   const double minute=6e1;
   /// s
@@ -1016,10 +1049,6 @@ namespace o2scl_mksa {
   const double poise=1e-1;
   /// m^2 / s
   const double stokes=1e-4;
-  /// A s / mol
-  const double faraday=9.64853429775e4;
-  /// A s
-  const double electron_charge=1.602176565e-19;
   /// kg / A s^2
   const double gauss=1e-4;
   /// cd / m^2
@@ -1042,10 +1071,6 @@ namespace o2scl_mksa {
   const double roentgen=2.58e-4;
   /// m^2 / s^2
   const double rad=1e-2;
-  /// kg
-  const double solar_mass=1.9884e30;
-  /// m
-  const double bohr_radius=5.291772083e-11;
   /// kg m / s^2
   const double newton=1e0;
   /// kg m / s^2
@@ -1054,19 +1079,27 @@ namespace o2scl_mksa {
   const double joule=1e0;
   /// kg m^2 / s^2
   const double erg=1e-7;
-  /// kg / K^4 s^3
-  const double stefan_boltzmann_constant=5.67039934436e-8;
-  /// m^2
-  const double thomson_cross_section=6.65245853542e-29;
+  //@}x
+
+  /// \name Electromagnetic constants
+  //@{
+  /// Bohr magneton in A m^2 (CODATA 2010 value)
+  const double bohr_magneton=9.27400968e-24;
+  /// A m^2
+  const double nuclear_magneton=5.05078317e-27;
+  /// A m^2
+  const double electron_magnetic_moment=9.28476362e-24;
+  /// A m^2
+  const double proton_magnetic_moment=1.410606633e-26;
   /// A^2 s^4 / kg m^3
   const double vacuum_permittivity=8.854187817e-12;
   /// kg m / A^2 s^2
   const double vacuum_permeability=1.25663706144e-6;
-  /** \brief Fermi coupling constant in s^4 / cm^4 g^2, 
-      defined as \f$ 1.166364 \times 10^{-5}~\mathrm{GeV}^{-2} \f$
-      (CODATA 2010 value)
-  */
-  const double Gfermi=1.166364e-23/electron_volt/electron_volt;
+  /// A s / mol
+  const double faraday=9.64853429775e4;
+  /// A s
+  const double electron_charge=1.602176565e-19;
+  //@}
 }
 
 // Other derived values to add to the namespace
@@ -1169,7 +1202,7 @@ namespace o2scl_const {
 
   /** \brief \f$ \Lambda \f$ hyperon mass in \f$ \mathrm{MeV} \f$
       
-      Value from PDG live (5/1/14).
+      Value from PDG live (4/30/19).
   */
   const double mass_lambda_MeV=1115.683;
 
@@ -1184,6 +1217,12 @@ namespace o2scl_const {
   /** \brief \f$ \Sigma \f$ hyperon mass in \f$ \mathrm{MeV} \f$
    */
   const double mass_sigma_plus_MeV=1189.37;
+
+  const double mass_cascade_zero_MeV=1314.86;
+  const double mass_cascade_minus_MeV=1321.71;
+  const double mass_up_MeV=2.2;
+  const double mass_down_MeV=4.7;
+  const double mass_strange_MeV=95.0;
 }
 
 
