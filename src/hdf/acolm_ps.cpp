@@ -1319,6 +1319,56 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
 	   << endl;
     }
     
+  } else if (type=="table3d") {
+    
+    if (table3d_obj.get_nx()==0) {
+      cerr << "No table3d object to analyze." << endl;
+      return exc_efailed;
+    }
+    
+    std::string i1;
+    int ret=get_input_one(sv,"Enter slice to get info on",i1,"stats",
+			  itive_com);
+    if (ret!=0) return ret;
+
+    size_t sl_index;
+    if (table3d_obj.is_slice(i1,sl_index)==false) {
+      cerr << "Could not find slice named '" << i1 << "'." << endl;
+      return exc_efailed;
+    }
+    
+    const ubmatrix &cmref=table3d_obj.get_slice(i1);
+    cout << "Nx       : " << table3d_obj.get_nx() << endl;
+    cout << "Ny       : " << table3d_obj.get_ny() << endl;
+    cout << "Sum      : "
+	 << matrix_sum<ubmatrix,double>(table3d_obj.get_nx(),
+					table3d_obj.get_ny(),
+					cmref) << endl;
+    double min, max;
+    size_t i_min, i_max, j_min, j_max;
+    matrix_minmax_index(table3d_obj.get_nx(),
+			table3d_obj.get_ny(),cmref,i_min,j_min,min,
+			i_max,j_max,max);
+    cout << "Min      : " << min << " at (" << i_min << ","
+	 << j_min << ")" << endl;
+    cout << "Max      : " << max << " at (" << i_max << ","
+	 << j_max << ")" << endl;
+    
+    size_t ninf=0, nnan=0;
+    for(size_t i=0;i<table3d_obj.get_nx();i++) {
+      for(size_t j=0;j<table3d_obj.get_ny();j++) {
+	if (std::isinf(cmref(i,j))) ninf++;
+	if (std::isnan(cmref(i,j))) nnan++;
+      }
+    }
+    
+    if (ninf>0) {
+      cout << ninf << " infinite values." << endl;
+    }
+    if (nnan>0) {
+      cout << nnan << " NaN values." << endl;
+    }
+    
   } else if (type=="tensor") {
     
     const std::vector<double> &data=tensor_obj.get_data();

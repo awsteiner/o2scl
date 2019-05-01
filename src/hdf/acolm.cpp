@@ -120,7 +120,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   {
     vector<std::string> itmp={"cat","contours","deriv-x","deriv-y",
 			      "function","entry","entry-grid","insert",
-			      "interp",
+			      "interp","stats",
 			      "list","max","min","rename","set-data",
 			      "slice","sum","x-name","y-name"};
     type_comm_list.insert(std::make_pair("table3d",itmp));
@@ -481,7 +481,7 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="table3d") {
     
-    static const size_t narr=18;
+    static const size_t narr=19;
     comm_option_s options_arr[narr]={
       {0,"cat",
        "Concatenate data from a second table3d onto current table3d.",0,2,
@@ -575,6 +575,10 @@ void acol_manager::command_add(std::string new_type) {
        "slices in the table3d object to create a table with a column "+
        "for each slice.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slice),
+       both},
+      {0,"stats","Show slice statistics.",0,1,"<slice>",
+       "Output the size, sum, max and min of <slice>. ",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_stats),
        both},
       {0,"sum","Add data from a second table3d object to current table3d.",
        0,2,"<file> [name]",((string)"Add all slides from the ")+
