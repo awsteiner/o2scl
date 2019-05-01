@@ -607,15 +607,15 @@ namespace o2scl_mks {
   const double electron_volt=o2scl_cgs::electron_volt/1.0e7;
   /// Bohr radius in m
   const double bohr_radius=o2scl_cgs::bohr_radius/1.0e2;
-  /// Thomson cross section in m^2
-  const double thomson_cross_section=o2scl_cgs::thomson_cross_section/1.0e4;
-  /// Fermi coupling constant in s^4 / m^4 kg^2 (FIXME)
-  const double Gfermi=o2scl_cgs::Gfermi;
-  /// Boltzmann constant in kg m^2 / K s^2
-  const double boltzmann=o2scl_cgs::boltzmann/1.0e7;
   /// Stefan-Boltzmann constant in kg / K^4 s^3
   const double stefan_boltzmann_constant=
     o2scl_cgs::stefan_boltzmann_constant/1.0e3;
+  /// Thomson cross section in m^2
+  const double thomson_cross_section=o2scl_cgs::thomson_cross_section/1.0e4;
+  /// Fermi coupling constant in s^4 / m^4 kg^2
+  const double Gfermi=o2scl_cgs::Gfermi*1.0e14;
+  /// Boltzmann constant in kg m^2 / K s^2
+  const double boltzmann=o2scl_cgs::boltzmann/1.0e7;
   //@{
 
   /// \name Astrophysical constants
@@ -633,11 +633,11 @@ namespace o2scl_mks {
   /// Schwarzchild radius in m
   const double schwarzchild_radius=o2scl_cgs::schwarzchild_radius/1.0e2;
   /// Sidereal year in s 
-  const double sidereal_year=365.256363004*8.64e4;
+  const double sidereal_year=o2scl_cgs::sidereal_year;
   /// Tropical year in s 
-  const double tropical_year=365.242190402*8.64e4;
+  const double tropical_year=o2scl_cgs::tropical_year;
   /// Julian year in s 
-  const double julian_year=365.25*8.64e4;
+  const double julian_year=o2scl_cgs::julian_year;
   /// Light year in \f$ \mathrm{m} \f$
   const double light_year=o2scl_cgs::light_year/1.0e2;
   //@}
@@ -759,90 +759,94 @@ namespace o2scl_mks {
   /// kg
   const double carat=o2scl_cgs::carat*1.0e-3;
   /// kg m / s^2
-  const double gram_force=9.80665e-3;
+  const double gram_force=o2scl_cgs::gram_force*1.0e-5;
   /// kg m / s^2
-  const double pound_force=4.44822161526e0;
+  const double pound_force=o2scl_cgs::pound_force*1.0e-5;
   /// kg m / s^2
-  const double kilopound_force=4.44822161526e3;
+  const double kilopound_force=o2scl_cgs::kilopound_force*1.0e-5;
   /// kg m / s^2
-  const double poundal=1.38255e-1;
+  const double poundal=o2scl_cgs::poundal*1.0e-5;
   /// kg m^2 / s^2
-  const double calorie=4.1868e0;
+  const double calorie=o2scl_cgs::calorie*1.0e-7;
   /// kg m^2 / s^2
-  const double btu=1.05505585262e3;
+  const double btu=o2scl_cgs::btu*1.0e-7;
   /// kg m^2 / s^2
-  const double therm=1.05506e8;
+  const double therm=o2scl_cgs::therm*1.0e-7;
   /// kg m^2 / s^3
-  const double horsepower=7.457e2;
+  const double horsepower=o2scl_cgs::horsepower*1.0e-7;
   /// kg / m s^2
-  const double bar=1e5;
+  const double bar=o2scl_cgs::bar*1.0e-1;
   /// kg / m s^2
-  const double std_atmosphere=1.01325e5;
+  const double std_atmosphere=o2scl_cgs::std_atmosphere*1.0e-1;
   /// kg / m s^2
-  const double torr=1.33322368421e2;
+  const double torr=o2scl_cgs::torr*1.0e-1;
   /// kg / m s^2
-  const double meter_of_mercury=1.33322368421e5;
+  const double meter_of_mercury=o2scl_cgs::meter_of_mercury*1.0e-1;
   /// kg / m s^2
-  const double inch_of_mercury=3.38638815789e3;
+  const double inch_of_mercury=o2scl_cgs::inch_of_mercury*1.0e-1;
   /// kg / m s^2
-  const double inch_of_water=2.490889e2;
+  const double inch_of_water=o2scl_cgs::inch_of_water*1.0e-1;
   /// kg / m s^2
-  const double psi=6.89475729317e3;
+  const double psi=o2scl_cgs::psi*1.0e-1;
   /// kg m^-1 s^-1
-  const double poise=1e-1;
+  const double poise=o2scl_cgs::poise*1.0e-1;
   /// m^2 / s
-  const double stokes=1e-4;
+  const double stokes=o2scl_cgs::stokes*1.0e-4;
   /// kg / A s^2
-  const double gauss=1e-4;
+  const double gauss=1.0e-4;
   /// cd / m^2
-  const double stilb=1e4;
+  const double stilb=o2scl_cgs::stilb*1.0e4;
   /// cd sr
-  const double lumen=1e0;
+  const double lumen=o2scl_cgs::lumen;
   /// cd sr / m^2
-  const double lux=1e0;
+  const double lux=o2scl_cgs::lux*1.0e4;
   /// cd sr / m^2
-  const double phot=1e4;
+  const double phot=o2scl_cgs::phot*1.0e4;
   /// cd sr / m^2
-  const double footcandle=1.076e1;
+  const double footcandle=o2scl_cgs::footcandle*1.0e4;
   /// cd sr / m^2
-  const double lambert=1e4;
+  const double lambert=o2scl_cgs::lambert*1.0e4;
   /// cd sr / m^2
-  const double footlambert=1.07639104e1;
+  const double footlambert=o2scl_cgs::footlambert*1.0e4;
   /// 1 / s
   const double curie=o2scl_cgs::curie;
   /// m^2 / s^2
-  const double rad=1e-2;
+  const double rad=o2scl_cgs::rad*1.0e-4;
   /// kg m / s^2
-  const double newton=1e0;
+  const double newton=o2scl_cgs::newton*1.0e-5;
   /// kg m / s^2
-  const double dyne=1e-5;
+  const double dyne=o2scl_cgs::dyne*1.0e-5;
   /// kg m^2 / s^2
-  const double joule=1e0;
+  const double joule=o2scl_cgs::joule*1.0e-7;
   /// kg m^2 / s^2
-  const double erg=1e-7;
+  const double erg=o2scl_cgs::erg*1.0e-7;
   //@}
   
   /// \name ELectromagnetic constants
   //@{
-  /// A m^2 (CODATA 2014 value)
-  const double electron_magnetic_moment=9.284764620e-24;
-  /// A m^2 (CODATA 2014 value)
-  const double proton_magnetic_moment=1.4106067873e-26;
+  /// A m^2
+  const double electron_magnetic_moment=
+    o2scl_cgsm::electron_magnetic_moment/1.0e3;
+  /// A m^2
+  const double proton_magnetic_moment=
+    o2scl_cgsm::proton_magnetic_moment/1.0e3;
   /// A s / kg
-  const double roentgen=2.58e-4;
-  /// Bohr magneton in A m^2 (CODATA 2014 value)
-  const double bohr_magneton=9.274009994e-24;
-  /// A m^2 (CODATA 2014 value)
-  const double nuclear_magneton=5.050783699e-27;
+  const double roentgen=o2scl_cgs::roentgen*1.0e3;
+  /// Bohr magneton in A m^2
+  const double bohr_magneton=o2scl_cgsm::bohr_magneton/1.0e3;
+  /// A m^2
+  const double nuclear_magneton=o2scl_cgsm::nuclear_magneton/1.0e3;
   /// A^2 s^4 / kg m^3 (derived)
   const double vacuum_permittivity=1.0/o2scl_mks::speed_of_light/
     o2scl_mks::speed_of_light/4.0e-7/o2scl_const::pi;
-  /// kg m / A^2 s^2
-  const double vacuum_permeability=1.25663706144e-6;
+  /** \brief Vacuum permeability in kg m / A^2 s^2 
+      (being redefined as of 5/20, this value is from Wikipedia)
+  */
+  const double vacuum_permeability=4.0*o2scl_const::pi*1.00000000082e-7;
   /// A s / mol
   const double faraday=o2scl_cgsm::faraday*10.0;
   /// A s (derived)
-  const double electron_charge=o2scl_mks::electron_volt;
+  const double electron_charge=o2scl_cgsm::electron_charge*1.0e1;
   //@}
 
 }
@@ -1199,30 +1203,44 @@ namespace o2scl_const {
   const double gauss2_fm4=ec_gauss_fm2*ec_gauss_fm2/
     o2scl_const::fine_structure;
 
-
+  /// \name Particle masses from PDG (4/30/19)
+  //@{
   /** \brief \f$ \Lambda \f$ hyperon mass in \f$ \mathrm{MeV} \f$
-      
-      Value from PDG live (4/30/19).
   */
   const double mass_lambda_MeV=1115.683;
 
-  /** \brief \f$ \Sigma \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+  /** \brief \f$ \Sigma^{-} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
    */
   const double mass_sigma_minus_MeV=1197.449;
 
-  /** \brief \f$ \Sigma \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+  /** \brief \f$ \Sigma^{0} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
    */
   const double mass_sigma_zero_MeV=1192.642;
 
-  /** \brief \f$ \Sigma \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+  /** \brief \f$ \Sigma^{+} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
    */
   const double mass_sigma_plus_MeV=1189.37;
 
+  /** \brief \f$ \Xi^{0} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+   */
   const double mass_cascade_zero_MeV=1314.86;
+  
+  /** \brief \f$ \Xi^{-} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+   */
   const double mass_cascade_minus_MeV=1321.71;
+  
+  /** \brief Up quark mass in \f$ \mathrm{MeV} \f$
+   */
   const double mass_up_MeV=2.2;
+  
+  /** \brief Down quark mass in \f$ \mathrm{MeV} \f$
+   */
   const double mass_down_MeV=4.7;
+  
+  /** \brief Strange quark mass in \f$ \mathrm{MeV} \f$
+   */
   const double mass_strange_MeV=95.0;
+  //@}
 }
 
 
