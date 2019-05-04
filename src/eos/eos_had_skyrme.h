@@ -347,30 +347,18 @@ namespace o2scl {
       locthd.dmudn_mixed=-4.0*(term+term2)*term*
 	(ne.ms*ne.ms*X_n+pr.ms*pr.ms*X_p)+dhdnndnp;
 
-      locth.ed=ne.ed+pr.ed;
-      double gn, gp;
-      if (ne.inc_rest_mass) {
-	gn=2.0*ne.ms*(ne.ed-ne.n*ne.m);
-      } else {
-	gn=2.0*ne.ms*ne.ed;
-      }
-      if (pr.inc_rest_mass) {
-	gp=2.0*pr.ms*(pr.ed-pr.n*pr.m);
-      } else {
-	gp=2.0*pr.ms*pr.ed;
-      }
-      ne.mu=ne.nu+(gn+gp)*term+gn*term2;
-      pr.mu=pr.nu+(gn+gp)*term+gp*term2;
-      locthd.dmundT=2.0*ltemper*ne.ms*(term+term2)*n_dsdT_f+
-	2.0*ltemper*pr.ms*term*p_dsdT_f+n_dmudT_f;
-      locthd.dmupdT=2.0*ltemper*pr.ms*(term+term2)*p_dsdT_f+
-	2.0*ltemper*ne.ms*term*n_dsdT_f+p_dmudT_f;
-      locthd.dmundnn=-4.0*ne.ms*ne.ms*pow(term+term2,2.0)*X_n-
-	4.0*term*term*pr.ms*pr.ms*X_p+n_dmudn_f;
-      locthd.dmupdnp=-4.0*pr.ms*pr.ms*pow(term+term2,2.0)*X_p-
-	4.0*term*term*ne.ms*ne.ms*X_n+p_dmudn_f;
-      locthd.dmudn_mixed=-4.0*(term+term2)*term*
-	(ne.ms*ne.ms*X_n+pr.ms*pr.ms*X_p);
+      locthd.dmundnn=-10.0*(term+term2)*(term+term2)*ne.ms*ne.ms*ne.ed-
+	10.0*term*term*pr.ms*pr.ms*pr.ed+
+	pow(1.0+3.0*(term+term2)*ne.n*ne.ms,2.0)*n_dmudn_f+
+	9.0*term*term*ne.n*ne.ms*pr.n*pr.ms*n_dmudn_f;
+      locthd.dmupdnp=-10.0*(term+term2)*(term+term2)*pr.ms*pr.ms*pr.ed-
+	10.0*term*term*ne.ms*ne.ms*ne.ed+
+	pow(1.0+3.0*(term+term2)*pr.n*pr.ms,2.0)*p_dmudn_f+
+	9.0*term*term*ne.n*ne.ms*pr.n*pr.ms*p_dmudn_f;
+      locthd.dmudn_mixed=-10.0*term*(term+term2)*
+	(ne.ed*ne.ms*ne.ms+pr.ed*pr.ms*pr.ms)+
+	3.0*term*ne.ms*ne.n*(1.0+3.0*(term+term2)*ne.n*ne.ms)*n_dmudn_f+
+	3.0*term*pr.ms*pr.n*(1.0+3.0*(term+term2)*pr.n*pr.ms)*p_dmudn_f;
       
       return;
     }
