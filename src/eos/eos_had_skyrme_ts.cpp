@@ -484,27 +484,23 @@ int main(void) {
   // Test calc_deriv_temp_e
   // -----------------------------------------------------------
 
+  cout << "-----------------------------------------------------------"
+       << endl;
+  cout << "Test second derivatives\n" << endl;
+
   fermion_deriv ne(939.0/hc_mev_fm,2.0), pr(938.0/hc_mev_fm,2.0);
   ne.non_interacting=false;
   pr.non_interacting=false;
   ne.inc_rest_mass=false;
   pr.inc_rest_mass=false;
-  
+
+  double eps=1.0e-5;
   thermo_np_deriv_helm tnfd;
 
   ne.n=0.5;
   pr.n=0.7;
-  ne.m=4.1;
-  pr.m=4.3;
-  sk.t1=-1.0;
-  sk.t2=1.4;
-  sk.x1=0.0;
-  sk.x2=0.0;
   
-  cout << "Here." << endl;
   sk.calc_deriv_temp_e(ne,pr,0.07,th,tnfd);
-  cout << "nu: " << ne.nu << " " << pr.nu << endl;
-  cout << "ms: " << ne.ms << " " << pr.ms << endl;
   double dfdnn1=th.ed-0.07*th.en;
   double dfdnp1=th.ed-0.07*th.en;
   double dmundnn1=ne.mu;
@@ -515,23 +511,21 @@ int main(void) {
   double dmupdT1=pr.mu;
   double dsdT1=th.en;
 
-  ne.n+=1.0e-4;
-  cout << "nu: " << ne.nu << " " << pr.nu << endl;
+  ne.n+=eps;
   sk.calc_deriv_temp_e(ne,pr,0.07,th,tnfd);
   double dfdnn2=th.ed-0.07*th.en;
   double dmundnn2=ne.mu;
   double dmupdnn2=pr.mu;
-  ne.n-=1.0e-4;
+  ne.n-=eps;
 
-  pr.n+=1.0e-4;
-  cout << "nu: " << ne.nu << " " << pr.nu << endl;
+  pr.n+=eps;
   sk.calc_deriv_temp_e(ne,pr,0.07,th,tnfd);
   double dfdnp2=th.ed-0.07*th.en;
   double dmundnp2=ne.mu;
   double dmupdnp2=pr.mu;
-  pr.n-=1.0e-4;
+  pr.n-=eps;
 
-  sk.calc_deriv_temp_e(ne,pr,0.07+1.0e-4,th,tnfd);
+  sk.calc_deriv_temp_e(ne,pr,0.07+eps,th,tnfd);
   double dmundT2=ne.mu;
   double dmupdT2=pr.mu;
   double dsdT2=th.en;
@@ -539,23 +533,21 @@ int main(void) {
   sk.calc_deriv_temp_e(ne,pr,0.07,th,tnfd);
 
   // Test the six derivatives
-  cout << "code vs. numerical result" << endl;
-  cout << "dfdnn: " << ne.mu << " " << (dfdnn2-dfdnn1)/1.0e-4 << endl;
-  cout << "dfdnp: " << pr.mu << " " << (dfdnp2-dfdnp1)/1.0e-4 << endl;
-  cout << "dsdT: "
-       << tnfd.dsdT << " " << (dsdT2-dsdT1)/1.0e-4 << endl;
-  cout << "dmundT: "
-       << tnfd.dmundT << " " << (dmundT2-dmundT1)/1.0e-4 << endl;
-  cout << "dmupdT: " << tnfd.dmupdT << " "
-       << (dmupdT2-dmupdT1)/1.0e-4 << endl;
-  cout << "dmundnn: " << tnfd.dmundnn << " "
-       << (dmundnn2-dmundnn1)/1.0e-4 << endl;
-  cout << "dmupdnp: " << tnfd.dmupdnp << " "
-       << (dmupdnp2-dmupdnp1)/1.0e-4 << endl;
-  cout << "code vs. numerical 1 vs. numerical 2." << endl;
-  cout << "dmudn_mixed: " << tnfd.dmudn_mixed << " "
-       << (dmundnp2-dmundnp1)/1.0e-4 << " " 
-       << (dmupdnn2-dmupdnn1)/1.0e-4 << endl;
+  t.test_rel(ne.mu,(dfdnn2-dfdnn1)/eps,1.0e-4,"second deriv, mun");
+  t.test_rel(pr.mu,(dfdnp2-dfdnp1)/eps,1.0e-4,"second deriv mup");
+  t.test_rel(tnfd.dsdT,(dsdT2-dsdT1)/eps,1.0e-4,"second deriv, dsdT");
+  t.test_rel(tnfd.dmundT,(dmundT2-dmundT1)/eps,
+	     1.0e-4,"second deriv, dmundT");
+  t.test_rel(tnfd.dmupdT,(dmupdT2-dmupdT1)/eps,
+	     1.0e-4,"second deriv, dmupdT");
+  t.test_rel(tnfd.dmundnn,(dmundnn2-dmundnn1)/eps,
+	     1.0e-4,"second deriv, dmundnn");
+  t.test_rel(tnfd.dmupdnp,(dmupdnp2-dmupdnp1)/eps,
+	     1.0e-4,"second deriv, dmupdnp");
+  t.test_rel(tnfd.dmudn_mixed,(dmundnp2-dmundnp1)/eps,
+	     1.0e-4,"second deriv, dmundnp");
+  t.test_rel(tnfd.dmudn_mixed,(dmupdnn2-dmupdnn1)/eps,
+	     1.0e-4,"second deriv, dmupdnn");
 
   t.report();
 
