@@ -299,7 +299,13 @@ namespace o2scl {
        double ham1, double ham2, double ham3,
        double ham4, double ham5, double ham6) {
 
-      std::cout << term << " " << term2 << std::endl;
+      /*
+	std::cout << term << " " << term2 << std::endl;
+	std::cout << ne.n << " " << ne.ms << " " << ne.nu << " "
+	<< ne.ed << std::endl;
+	std::cout << pr.n << " " << pr.ms << " " << pr.nu << " "
+	<< pr.ed << std::endl;
+      */
       
       double nb=ne.n+pr.n;
       double na=pow(nb,alpha);
@@ -330,6 +336,9 @@ namespace o2scl {
       double n_dmudn_f=0.0, p_dmudn_f=0.0;
       ne.deriv_f(n_dmudn_f,n_dmudT_f,n_dsdT_f);
       pr.deriv_f(p_dmudn_f,p_dmudT_f,p_dsdT_f);
+
+      // These are equal to dndmu at constant mstar?!
+      //std::cout << 1.0/n_dmudn_f << " " << 1.0/p_dmudn_f << std::endl;
       
       double X_n=2.5*ne.ed-2.25*ne.n*ne.n/ne.dndmu;
       double X_p=2.5*pr.ed-2.25*pr.n*pr.n/pr.dndmu;
@@ -350,15 +359,18 @@ namespace o2scl {
       locthd.dmundnn=-10.0*(term+term2)*(term+term2)*ne.ms*ne.ms*ne.ed-
 	10.0*term*term*pr.ms*pr.ms*pr.ed+
 	pow(1.0+3.0*(term+term2)*ne.n*ne.ms,2.0)*n_dmudn_f+
-	9.0*term*term*ne.n*ne.ms*pr.n*pr.ms*n_dmudn_f;
+	9.0*term*term*pr.n*pr.ms*pr.n*pr.ms*p_dmudn_f+dhdnn2;
       locthd.dmupdnp=-10.0*(term+term2)*(term+term2)*pr.ms*pr.ms*pr.ed-
 	10.0*term*term*ne.ms*ne.ms*ne.ed+
 	pow(1.0+3.0*(term+term2)*pr.n*pr.ms,2.0)*p_dmudn_f+
-	9.0*term*term*ne.n*ne.ms*pr.n*pr.ms*p_dmudn_f;
+	9.0*term*term*ne.n*ne.ms*ne.n*ne.ms*n_dmudn_f+dhdnp2;
       locthd.dmudn_mixed=-10.0*term*(term+term2)*
 	(ne.ed*ne.ms*ne.ms+pr.ed*pr.ms*pr.ms)+
 	3.0*term*ne.ms*ne.n*(1.0+3.0*(term+term2)*ne.n*ne.ms)*n_dmudn_f+
-	3.0*term*pr.ms*pr.n*(1.0+3.0*(term+term2)*pr.n*pr.ms)*p_dmudn_f;
+	3.0*term*pr.ms*pr.n*(1.0+3.0*(term+term2)*pr.n*pr.ms)*p_dmudn_f+
+	dhdnndnp;
+      //std::cout << locthd.dmundnn << " " << locthd.dmupdnp << " "
+      //<< locthd.dmudn_mixed << std::endl;
       
       return;
     }

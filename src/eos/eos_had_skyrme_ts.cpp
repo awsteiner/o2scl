@@ -490,16 +490,23 @@ int main(void) {
   ne.inc_rest_mass=false;
   pr.inc_rest_mass=false;
   
-  ne.n=0.25;
-  pr.n=0.35;
-  cout << ne.m << " " << pr.m << " " << 4.0/hc_mev_fm << endl;
   thermo_np_deriv_helm tnfd;
 
-  sk.calc_deriv_temp_e(ne,pr,4.0/hc_mev_fm,th,tnfd);
+  ne.n=0.5;
+  pr.n=0.7;
+  ne.m=4.1;
+  pr.m=4.3;
+  sk.t1=-1.0;
+  sk.t2=1.4;
+  sk.x1=0.0;
+  sk.x2=0.0;
+  
+  cout << "Here." << endl;
+  sk.calc_deriv_temp_e(ne,pr,0.07,th,tnfd);
   cout << "nu: " << ne.nu << " " << pr.nu << endl;
   cout << "ms: " << ne.ms << " " << pr.ms << endl;
-  double dfdnn1=th.ed-4.0/hc_mev_fm*th.en;
-  double dfdnp1=th.ed-4.0/hc_mev_fm*th.en;
+  double dfdnn1=th.ed-0.07*th.en;
+  double dfdnp1=th.ed-0.07*th.en;
   double dmundnn1=ne.mu;
   double dmupdnp1=pr.mu;
   double dmundnp1=ne.mu;
@@ -510,37 +517,37 @@ int main(void) {
 
   ne.n+=1.0e-4;
   cout << "nu: " << ne.nu << " " << pr.nu << endl;
-  sk.calc_deriv_temp_e(ne,pr,4.0/hc_mev_fm,th,tnfd);
-  double dfdnn2=th.ed-4.0/hc_mev_fm*th.en;
+  sk.calc_deriv_temp_e(ne,pr,0.07,th,tnfd);
+  double dfdnn2=th.ed-0.07*th.en;
   double dmundnn2=ne.mu;
   double dmupdnn2=pr.mu;
   ne.n-=1.0e-4;
 
   pr.n+=1.0e-4;
   cout << "nu: " << ne.nu << " " << pr.nu << endl;
-  sk.calc_deriv_temp_e(ne,pr,4.0/hc_mev_fm,th,tnfd);
-  double dfdnp2=th.ed-4.0/hc_mev_fm*th.en;
+  sk.calc_deriv_temp_e(ne,pr,0.07,th,tnfd);
+  double dfdnp2=th.ed-0.07*th.en;
   double dmundnp2=ne.mu;
   double dmupdnp2=pr.mu;
   pr.n-=1.0e-4;
 
-  sk.calc_deriv_temp_e(ne,pr,(4.0+1.0e-3)/hc_mev_fm,th,tnfd);
+  sk.calc_deriv_temp_e(ne,pr,0.07+1.0e-4,th,tnfd);
   double dmundT2=ne.mu;
   double dmupdT2=pr.mu;
   double dsdT2=th.en;
 
-  sk.calc_deriv_temp_e(ne,pr,4.0/hc_mev_fm,th,tnfd);
+  sk.calc_deriv_temp_e(ne,pr,0.07,th,tnfd);
 
   // Test the six derivatives
   cout << "code vs. numerical result" << endl;
   cout << "dfdnn: " << ne.mu << " " << (dfdnn2-dfdnn1)/1.0e-4 << endl;
   cout << "dfdnp: " << pr.mu << " " << (dfdnp2-dfdnp1)/1.0e-4 << endl;
   cout << "dsdT: "
-       << tnfd.dsdT << " " << (dsdT2-dsdT1)/(1.0e-3/hc_mev_fm) << endl;
+       << tnfd.dsdT << " " << (dsdT2-dsdT1)/1.0e-4 << endl;
   cout << "dmundT: "
-       << tnfd.dmundT << " " << (dmundT2-dmundT1)/(1.0e-3/hc_mev_fm) << endl;
+       << tnfd.dmundT << " " << (dmundT2-dmundT1)/1.0e-4 << endl;
   cout << "dmupdT: " << tnfd.dmupdT << " "
-       << (dmupdT2-dmupdT1)/(1.0e-3/hc_mev_fm) << endl;
+       << (dmupdT2-dmupdT1)/1.0e-4 << endl;
   cout << "dmundnn: " << tnfd.dmundnn << " "
        << (dmundnn2-dmundnn1)/1.0e-4 << endl;
   cout << "dmupdnp: " << tnfd.dmupdnp << " "
