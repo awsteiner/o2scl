@@ -311,11 +311,11 @@ namespace o2scl {
 
 	The function \ref nu_from_n() sets this value equal to
 	100 times the value reported by 
-	\ref o2scl::fermion_rel::nu_from_n_tlate().
+	\ref o2scl::fermion_rel::nu_from_n_tlate() .
 
 	The function \ref calc_density() sets this value equal to the
 	value from \ref o2scl::fermion_deriv_rel::nu_from_n() plus the
-	value from \ref \ref o2scl::fermion_deriv_rel::calc_mu() .
+	value from \ref o2scl::fermion_deriv_rel::calc_mu() .
 
      */
     int last_method;

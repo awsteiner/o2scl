@@ -151,38 +151,53 @@
     \section part_deriv_sect Thermodynamics with derivatives
 
     Sometimes it is useful to know derivatives like \f$ ds/dT \f$ in
-    addition to the energy and pressure. The new data classes are
-    children of \ref o2scl::part_deriv . The three classes which
-    compute these derivatives for fermions and classical particles.
-    The class \ref o2scl::classical_deriv_thermo handles the
-    nondegenerate limit, \ref o2scl::fermion_deriv_rel handles
-    fermions and \ref o2scl::fermion_deriv_nr handles nonrelativistic
-    fermions. These classes compute the derivatives \f[
+    addition to the energy and pressure.
+    The class \ref o2scl::part_deriv_press stores the three
+    derivatives which correspond to second derivatives
+    of the pressure
+    \f[
     \left(\frac{\partial n}{\partial \mu}\right)_{T}, \quad
     \left(\frac{\partial n}{\partial T}\right)_{\mu}, \quad
     \mathrm{and} \quad \left(\frac{\partial s}{\partial
-    T}\right)_{\mu} \quad . \f] All other first derivatives of the
-    thermodynamic functions can be written in terms of these three.
+    T}\right)_{\mu} \quad . 
+    \f] 
+    All other first derivatives of the thermodynamic functions can be
+    written in terms of these three.
+
+    The new data classes are 
+    \ref o2scl::part_deriv and \ref o2scl::fermion_deriv 
+    which store the basic particle thermodynamics described
+    above with these additional three derivatives.
+
+    There are three classes which compute these derivatives for
+    fermions and classical particles. The class \ref
+    o2scl::classical_deriv_thermo handles the nondegenerate limit,
+    \ref o2scl::fermion_deriv_rel handles fermions and \ref
+    o2scl::fermion_deriv_nr handles nonrelativistic fermions.
+    The class \ref o2scl::fermion_deriv_thermo is a base
+    class for \ref o2scl::fermion_deriv_rel and uses
+    degenerate and nondegenerate expansions to evaluate
+    both the base thermodynamic quantities and the three 
+    derivatives from \ref o2scl::part_deriv_press .
+
+    The function \ref o2scl::part_deriv::deriv_f() computes
+    the derivatives which are second derivatives of the
+    free energy from the three computed above.
 
     \hline
+    \section part_deriv_other_sect Other derivatives
     
-    <b>Other derivatives with respect 
-    to chemical potential and temperature:</b>
-    
-    There is a Maxwell relation
+    For the derivative of the entropy with respect
+    to the chemical potential, there is a Maxwell relation
     \f[
     \left(\frac{\partial s}{\partial \mu}\right)_{T,V} =
     \left(\frac{\partial^2 P}{\partial \mu \partial T}\right)_{V} =
     \left(\frac{\partial^2 P}{\partial T \partial \mu}\right)_{T,V} =
     \left(\frac{\partial n}{\partial T}\right)_{\mu,V}
     \f]
-    The pressure derivatives are trivial
-    \f[
-    \left(\frac{\partial P}{\partial \mu}\right)_{T,V}=n, \quad
-    \left(\frac{\partial P}{\partial T}\right)_{\mu,V}=s
-    \f]
-    The energy density derivatives are related through the 
-    thermodynamic identity:
+
+    The first derivatives of the energy density can be computed using
+    the thermodynamic identity:
     \f[
     \left(\frac{\partial \varepsilon}{\partial \mu}\right)_{T,V}=
     \mu \left(\frac{\partial n}{\partial \mu}\right)_{T,V}+
@@ -193,12 +208,6 @@
     \mu \left(\frac{\partial n}{\partial T}\right)_{\mu,V}+
     T \left(\frac{\partial s}{\partial T}\right)_{\mu,V}
     \f]
-    
-    \hline
-    
-    <b>Other derivatives:</b>
-
-    \todo These expressions need work.
     
     Most of the other common derivatives which are used 
     are those which can be obtained by second derivatives
@@ -220,10 +229,21 @@
     Other common derivatives are the heat capacity per particle at
     constant volume, \f$ c_V \f$, and the speed of sound, \f$ ( d P /
     d \varepsilon)_{\{N_i\},S} \f$. These derivatives are computed by
-    functions in \ref o2scl::deriv_thermo_base .
+    functions in \ref o2scl::deriv_thermo_base from the 
+    three second derivatives of the pressure stored in a 
+    \ref o2scl::part_deriv or \ref o2scl::fermion_deriv object.
+    - \ref o2scl::deriv_thermo_base::heat_cap_ppart_const_vol()
+    - \ref o2scl::deriv_thermo_base::heat_cap_ppart_const_press()
+    - \ref o2scl::deriv_thermo_base::compress_adiabatic()
+    - \ref o2scl::deriv_thermo_base::compress_const_tptr()
+    - \ref o2scl::deriv_thermo_base::coeff_thermal_exp()
+    - \ref o2scl::deriv_thermo_base::squared_sound_speed()
 
-    \todo I think the expression below only works for fermions
+    \comment
 
+    I think the expression below only works for fermions? 
+    I'm taking this section out until it's better commented
+    
     In the case where the particle is interacting, the 
     derivative of the density with respect to the effective mass is
     \f[
@@ -240,6 +260,8 @@
     the chemical potential to vary. This derivative is useful, for
     example, in models of quark matter where the quark mass is
     dynamically generated.
+    \endcomment
+
 
     \hline
     \section ex_part_sect Particle example
