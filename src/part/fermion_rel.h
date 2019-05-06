@@ -1,5 +1,4 @@
-/*
-  -------------------------------------------------------------------
+/* -------------------------------------------------------------------
   
   Copyright (C) 2006-2019, Andrew W. Steiner
   
@@ -310,9 +309,9 @@ namespace o2scl {
 	In all functions
 	- 0: no previous calculation or last calculation failed
 
-	In \ref nu_from_n_tlate():
+        In \ref nu_from_n_tlate():
 	- 1: default solver
-	- 2: default solver with increased tolerances
+	- 2: default solver with smaller tolerances
 	- 3: bracketing solver
 
 	In \ref calc_mu_tlate():
@@ -323,10 +322,11 @@ namespace o2scl {
 	 on entropy integration
 	- 8: exact integration, degenerate integrands, full
 	entropy integration
+	- 9: T=0 result
 
-	In \ref calc_density_tlate(), the first digit (1 to 3)
-	is the method used by \ref nu_from_n_tlate() and the
-	last digit is one of 
+	In \ref calc_density_tlate(), the integer is a two-digit
+	number. The first digit (1 to 3) is the method used by \ref
+	nu_from_n_tlate() and the second digit is one of
 	- 1: nondegenerate expansion
 	- 2: degenerate expansion
 	- 3: exact integration, non-degenerate integrands
@@ -334,13 +334,26 @@ namespace o2scl {
 	 on entropy integration
 	- 5: exact integration, degenerate integrands, full
 	entropy integration
+	If \ref calc_density_tlate() uses the T=0 code, then
+	last_method is 40. 
 
-	In \ref pair_mu_tlate(), the third digit is always 0 (to
-	ensure a value of last_method which is unique from the other
-	values reported from other functions as described above), and
-	the first digit is the method used for particles from \ref
-	calc_mu_tlate() above and the second digit is the method used
-	for antiparticles.
+	In \ref pair_mu_tlate(), the integer is a three-digit number.
+	The third digit is always 0 (to ensure a value of last_method
+	which is unique from the other values reported from other
+	functions as described above). The first digit is the method
+	used for particles from \ref calc_mu_tlate() above and the
+	second digit is the method used for antiparticles. 
+
+	In \ref pair_density_tlate(), the integer is a four-digit
+	number. The first digit is from the list below and the
+	remaining three digits, if nonzero, are from \ref
+	pair_mu_tlate().
+	- 1: T=0 result
+	- 2: default solver
+	- 3: bracketing solver
+	- 4: default solver with smaller tolerances
+	- 5: default solver with smaller tolerances in log units
+	- 6: bracketing in log units
     */
     int last_method;
     
@@ -494,7 +507,6 @@ namespace o2scl {
       f.nu=nex*temper;
 
       return success;
-      
     }
 
     /** \brief Calculate properties as function of chemical potential
@@ -509,11 +521,12 @@ namespace o2scl {
       // Handle T<=0
 
       if (temper<0.0) {
-	O2SCL_ERR("Temperature less than zero in fermion_rel::calc_density().",
-		  exc_einval);
+	O2SCL_ERR2("Temperature less than zero in ",
+		   "fermion_rel::calc_mu_tlate().",exc_einval);
       }
       if (temper==0.0) {
-	calc_density_zerot(f);
+	calc_mu_zerot(f);
+	last_method=9;
 	return;
       }
 
@@ -699,9 +712,11 @@ namespace o2scl {
     template<class fermion_t>
       int calc_density_tlate(fermion_t &f, double temper) {
 
-      // The function pair_mu() can modify the density, which is
-      // confusing to the user, so we return it to the user-specified
-      // value.
+      last_method=0;
+      
+      // The code below may modify the density, which is confusing to
+      // the user, so we store it here so we can restore it before
+      // this function returns
       double density_temp=f.n;
   
       // -----------------------------------------------------------------
@@ -709,10 +724,11 @@ namespace o2scl {
 
       if (temper<0.0) {
 	O2SCL_ERR2("Temperature less than zero in ",
-		   "fermion_rel::calc_density().",
+		   "fermion_rel::calc_density_tlate().",
 		   exc_einval);
       }
       if (temper==0.0) {
+	last_method=40;
 	calc_density_zerot(f);
 	return 0;
       }
@@ -724,7 +740,7 @@ namespace o2scl {
       // for debugging.
       if (!std::isfinite(f.n)) {
 	O2SCL_ERR2("Density not finite in ",
-		   "fermion_rel::calc_density().",exc_einval);
+		   "fermion_rel::calc_density_tlate().",exc_einval);
       }
 #endif
 
@@ -884,7 +900,9 @@ namespace o2scl {
       if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
       
       // AWS: 2/12/19: I'm taking this out, similar to the removal
-      // of the code in fermion_rel::pair_fun().
+      // of the code in fermion_rel::pair_fun(). If I put it
+      // back in, I need to find a new value for last_method
+      // other than 9.
       if (false && use_expansions) {
 	if (calc_mu_ndeg(f,temper,1.0e-14,true)) {
 	  unc.n=1.0e-14*f.n;
@@ -944,6 +962,7 @@ namespace o2scl {
 
       if (temper<=0.0) {
 	calc_density_zerot(f);
+	last_method=1000;
 	return success;
       }
 
@@ -966,7 +985,9 @@ namespace o2scl {
       int ret=density_root->solve(nex,mf);
 
       // If that doesn't work, try bracketing the root
-      if (ret!=0) {
+      if (ret==0) {
+	last_method=2000;
+      } else {
 	double lg=std::max(fabs(f.nu),f.ms);
 	double bhigh=lg/temper, blow=-bhigh;
 	double yhigh=mf(bhigh), ylow=mf(blow);
@@ -982,7 +1003,10 @@ namespace o2scl {
 	  root_brent_gsl<> rbg;
 	  rbg.err_nonconv=false;
 	  ret=rbg.solve_bkt(blow,bhigh,mf);
-	  if (ret==0) nex=blow;
+	  if (ret==0) {
+	    nex=blow;
+	    last_method=3000;
+	  }
 	}
       }
   
@@ -996,7 +1020,7 @@ namespace o2scl {
 	nit->tol_rel/=1.0e2;
 	nit->tol_abs/=1.0e2;
 	ret=density_root->solve(nex,mf);
-	if (ret==0) last_method=7;
+	if (ret==0) last_method=4000;
     
 	// AWS: 7/25/18: We work in log units below, so we ensure the
 	// chemical potential is not negative
@@ -1015,7 +1039,7 @@ namespace o2scl {
 	  nex=log(nex);
 	  ret=density_root->solve(nex,lmf);
 	  nex=exp(nex);
-	  if (ret==0) last_method=8;
+	  if (ret==0) last_method=5000;
 	}
 	
 	if (ret!=0) {
@@ -1025,7 +1049,7 @@ namespace o2scl {
 	  nex=log(nex);
 	  ret=rbg.solve(nex,lmf);
 	  nex=exp(nex);
-	  if (ret==0) last_method=9;
+	  if (ret==0) last_method=6000;
 	}
 
 	// Return tolerances to their original values
@@ -1033,8 +1057,6 @@ namespace o2scl {
 	dit->tol_abs=tol2;
 	nit->tol_rel=tol3;
 	nit->tol_abs=tol4;
-      } else {
-	last_method=7;
       }
 
       // Restore value of err_nonconv
@@ -1055,7 +1077,7 @@ namespace o2scl {
 
       // Finally, now that we have the chemical potential, use pair_mu()
       // to evaluate the energy density, pressure, and entropy
-      int lm=last_method*10;
+      int lm=last_method;
       pair_mu(f,temper);
       last_method+=lm;
 

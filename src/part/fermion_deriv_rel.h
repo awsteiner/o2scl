@@ -294,11 +294,10 @@ namespace o2scl {
 
     /** \brief An integer indicating the last numerical method used
 
-	The function \ref calc_mu() sets this value equal to
-	100 times the value reported by 
-	\ref o2scl::fermion_rel::calc_mu_tlate() plus
-	a value from the list below corresponding to the 
-	method used for the derivatives
+	The function \ref calc_mu() sets this integer to a three-digit
+	number. It is equal to 10 times the value reported by \ref
+	o2scl::fermion_rel::calc_mu_tlate() plus a value from the list
+	below corresponding to the method used for the derivatives
 	- 1: nondegenerate expansion
 	- 2: degenerate expansion
 	- 3: degenerate integrand, using \ref by_parts for
@@ -314,9 +313,9 @@ namespace o2scl {
 	100 times the value reported by 
 	\ref o2scl::fermion_rel::nu_from_n_tlate().
 
-	The function \ref calc_density() sets this value equal to
-	100 times the value reported by 
-	\ref o2scl::fermion_rel::nu_from_n_tlate().
+	The function \ref calc_density() sets this value equal to the
+	value from \ref o2scl::fermion_deriv_rel::nu_from_n() plus the
+	value from \ref \ref o2scl::fermion_deriv_rel::calc_mu() .
 
      */
     int last_method;
