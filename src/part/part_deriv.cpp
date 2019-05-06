@@ -127,6 +127,9 @@ bool fermion_deriv_thermo::calc_mu_ndeg
     double dj=((double)j);
     double jot=dj/tt;
 
+    // Here, we are only computing the derivatives, but we need to
+    // compute the terms in the pressure, density, and entropy because
+    // they are used in computing the terms for the derivatives.
     double pterm, nterm, enterm;
     double dndmu_term, dndT_term, dsdT_term;
 
@@ -220,11 +223,21 @@ bool fermion_deriv_thermo::calc_mu_ndeg
 	pow(tt,4.0);
       dsdT_term/=f.ms;
     }
-    
+
+    if (j==1) first_term=pterm;
     f.dndmu+=dndmu_term;
     f.dndT+=dndT_term;
     f.dsdT+=dsdT_term;
 
+    // If the first term is zero, then the rest of the terms
+    // will be zero so just return early
+    if (first_term==0.0) {
+      f.dndmu=0.0;
+      f.dndT=0.0;
+      f.dsdT=0.0;
+      return true;
+    }
+    
     // Stop if the last term is sufficiently small compared to
     // the first term
     if (j>1 && fabs(pterm)<prec*fabs(first_term)) {
