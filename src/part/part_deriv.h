@@ -83,7 +83,7 @@ namespace o2scl {
   };
   
   /** \brief Particle derivatives in the pressure representation
-
+      
       This class adds the derivatives \ref dndmu, \ref dndT, and
       \ref dsdT, which correspond to
       \f[

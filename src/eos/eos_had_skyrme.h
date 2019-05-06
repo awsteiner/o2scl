@@ -333,6 +333,20 @@ namespace o2scl {
       ne.deriv_f(n_dmudn_f,n_dmudT_f,n_dsdT_f);
       pr.deriv_f(p_dmudn_f,p_dmudT_f,p_dsdT_f);
 
+      // The product 10 mstar^2 epsilon
+      
+      double hn, hp;
+      if (ne.inc_rest_mass) {
+	hn=10.0*ne.ms*(ne.ed-ne.n*ne.m)*ne.ms;
+      } else {
+	hn=10.0*ne.ms*ne.ed*ne.ms;
+      }
+      if (pr.inc_rest_mass) {
+	hp=10.0*pr.ms*(pr.ed-pr.n*pr.m)*pr.ms;
+      } else {
+	hp=10.0*pr.ms*pr.ed*pr.ms;
+      }
+
       // Now combine to compute the six derivatives
       
       locthd.dsdT=n_dsdT_f+p_dsdT_f;
@@ -343,18 +357,15 @@ namespace o2scl {
       locthd.dmupdT=2.0*ltemper*pr.ms*(term+term2)*p_dsdT_f+
 	2.0*ltemper*ne.ms*term*n_dsdT_f+p_dmudT_f;
 
-      locthd.dmundnn=-10.0*(term+term2)*(term+term2)*ne.ms*ne.ms*ne.ed-
-	10.0*term*term*pr.ms*pr.ms*pr.ed+
+      locthd.dmundnn=-(term+term2)*(term+term2)*hn-term*term*hp+
 	pow(1.0+3.0*(term+term2)*ne.n*ne.ms,2.0)*n_dmudn_f+
 	9.0*term*term*pr.n*pr.ms*pr.n*pr.ms*p_dmudn_f+dhdnn2;
       
-      locthd.dmupdnp=-10.0*(term+term2)*(term+term2)*pr.ms*pr.ms*pr.ed-
-	10.0*term*term*ne.ms*ne.ms*ne.ed+
+      locthd.dmupdnp=-(term+term2)*(term+term2)*hp-term*term*hn+
 	pow(1.0+3.0*(term+term2)*pr.n*pr.ms,2.0)*p_dmudn_f+
 	9.0*term*term*ne.n*ne.ms*ne.n*ne.ms*n_dmudn_f+dhdnp2;
       
-      locthd.dmudn_mixed=-10.0*term*(term+term2)*
-	(ne.ed*ne.ms*ne.ms+pr.ed*pr.ms*pr.ms)+
+      locthd.dmudn_mixed=-term*(term+term2)*(hn+hp)+
 	3.0*term*ne.ms*ne.n*(1.0+3.0*(term+term2)*ne.n*ne.ms)*n_dmudn_f+
 	3.0*term*pr.ms*pr.n*(1.0+3.0*(term+term2)*pr.n*pr.ms)*p_dmudn_f+
 	dhdnndnp;
