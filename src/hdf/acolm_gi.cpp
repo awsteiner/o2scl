@@ -588,12 +588,27 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   if (sv.size()==2 && sv[1]=="value-spec") {
     
     std::string str=((std::string)"Value specification ")+
-      "description:\n\nSome acol commands value specifications as "+
+      "description:\n\nSome "+cl->cmd_name+
+      " commands value specifications as "+
       "arguments. The first part of the specification is a \"type\" "+
       "followed by a colon, followed by arguments which depend on "+
-      "the type. The different types for a value specification are:\n\n"+
-      "1. func:<function>\n\n"+
-      "2. hdf5:<object name>";
+      "the type. If no colon is present, then a \"func:\" prefix is "+
+      "assumed. The different types for a value specification are:\n\n"+
+      "1. func:<function> - Value equal to the result of <function>, "+
+      "e.g. \"func:7.6\" or \"func:sin(0.5)\". See \""+cl->cmd_name+
+      " -help functions\" for a list of functions that can be used.\n\n"+
+      "2. hdf5:<object name>:[addl. spec.] - Read an HDF5 value and "+
+      "obtain the value from object named <object name>. For some "+
+      "object types, additional specifications are required to "+
+      "specify which value should be used. A list of object types "+
+      "and additional specifications and more detail is given below.\n\n"+
+      "                 type: addl. spec.      Description\n"+
+      " --------------------------------------------------\n"+
+      "               double: (no addl. spec.)\n"+
+      "                  int: (no addl. spec.)\n"+
+      "               size_t: (no addl. spec.)\n\n"+
+      "3. shell:<shell command> - Set the value equal to the first "+
+      "result obtained using the specified shell command.";
     
     std::vector<std::string> sv;
     o2scl::rewrap_keep_endlines(str,sv);
@@ -608,7 +623,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   if (sv.size()==2 && sv[1]=="vector-spec") {
     
     std::string str=((std::string)"Vector specification ")+
-      "description:\n\nSome acol commands take arguments "+
+      "description:\n\nSome "+cl->cmd_name+
+      " commands take arguments "+
       "which are 'vector specifications', i.e. an "+
       "array specified as a string. The different parts of the string "+
       "are separated by a colon, and the first part specifes the type "+
@@ -661,7 +677,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   if (sv.size()==2 && sv[1]=="mult-vector-spec") {
     
     std::string str=((std::string)"Multiple vector specification ")+
-      "description:\n\nSome acol commands take arguments "+
+      "description:\n\nSome "+cl->cmd_name+
+      " commands take arguments "+
       "which are 'multiple vector specifications', i.e. a set of "+
       "arrays specified as a string. The different parts of the string "+
       "are separated by a colon, and the first part specifes the type "+
