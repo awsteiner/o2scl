@@ -59,6 +59,10 @@ namespace o2scl_acol {
   /** \brief The driver for 'acol' command-line utility
       \nothing
 
+      \future There is quite a bit of code duplication in
+      comm_autocorr() between the "table" and "other" types. 
+      This could be streamlined.
+
       \future sum/max/min/output/interp/deriv/integ/deriv2 
       for hist, hist_2d, and v<c>
 

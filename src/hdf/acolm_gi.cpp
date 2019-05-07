@@ -565,22 +565,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
   
-  // Handle the special case 'help vector-spec'
-  if (sv.size()==2 && sv[1]=="vector-spec") {
-    
-    std::string str=((std::string)"Value specification ")+
-      "description:\n\nSome acol commands take arguments... ";
-    
-    std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv);
-    for(size_t i=0;i<sv.size();i++) {
-      cout << sv[i] << endl;
-    }
-      
-    return 0;
-  }
-
-  // Handle the special case 'help vector-spec'
+  // Handle the special case 'help types'
   if (sv.size()==2 && sv[1]=="types") {
 
     string str="The O2scl types which can be handled by "+cl->cmd_name;
@@ -599,6 +584,26 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
   
+  // Handle the special case 'help value-spec'
+  if (sv.size()==2 && sv[1]=="value-spec") {
+    
+    std::string str=((std::string)"Value specification ")+
+      "description:\n\nSome acol commands value specifications as "+
+      "arguments. The first part of the specification is a \"type\" "+
+      "followed by a colon, followed by arguments which depend on "+
+      "the type. The different types for a value specification are:\n\n"+
+      "1. func:<function>\n\n"+
+      "2. hdf5:<object name>";
+    
+    std::vector<std::string> sv;
+    o2scl::rewrap_keep_endlines(str,sv);
+    for(size_t i=0;i<sv.size();i++) {
+      cout << sv[i] << endl;
+    }
+      
+    return 0;
+  }
+
   // Handle the special case 'help vector-spec'
   if (sv.size()==2 && sv[1]=="vector-spec") {
     

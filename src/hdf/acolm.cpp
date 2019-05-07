@@ -1151,11 +1151,12 @@ int acol_manager::setup_options() {
     {0,"autocorr","Compute the autocorrelation coefficients.",0,-1,
      "[arguments depend on current object type.]",
      ((std::string)"The behavior of the autocorr command depends on ")+
-     "the type of the current object.\n\nNumerical array:"+
+     "the type of the current object.\n\nNumerical array: "+
      "(no arguments)\n\nReplace the current "+
      "object with a vector of doubles which contains the autocorrelation "+
-     "coefficient as a function of the step size.\n\n "+
-     "table: <ac> <ftom> <data>\n\nThree arguments are required "+
+     "coefficient as a function of the step size.\n\n"+
+     "table: <ac> <ftom> <column or vec. spec> [column or vec. spec. 2]"+
+     "\n\nThree arguments are required "+
      "A column name <ac>, a column name <ftom>, and arguments which "+
      "specify the data. The "
      "autocorrelation coefficients are stored in column <ac> and "+
@@ -1167,10 +1168,16 @@ int acol_manager::setup_options() {
      "already contain data. Also, the autocorrelation length and "+
      "estimated sample size are output to the screen. If multiple "+
      "data sources are given, then the autocorrelation coefficients "+
-     "are averaged together.\n\nno object: <vec. spec. 1> [vec. spec 2] "+
+     "are averaged together. See "+cl->cmd_name+" -help vector-spec"+
+     " for help on multiple vector specifications.\n\n"+
+     "no object: <mult. vec. spec. 1> "+
+     "[mult. vec. spec 2] "+
      "...\n\n Compute the autocorrelation coefficient for all vectors "+
      "specified as arguments then average those autocorrelation "+
-     "coefficients together and store as a double[] object.",
+     "coefficients together. If there is no current object "+
+     "then the averaged autocorrelation coefficients are kept "+
+     "as a double[] object. See "+cl->cmd_name+" -help mult-vector-spec"+
+     " for help on multiple vector specifications.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
      both},
     {0,"calc","Compute the value of a constant expression.",0,1,"<expr>",

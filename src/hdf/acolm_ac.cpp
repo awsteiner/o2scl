@@ -92,26 +92,23 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       for(size_t i=1;i<sv.size();i++) in.push_back(sv[i]);
     }
 
-    vector<vector<double> > v_all, ac_all, ftom_all;
-    size_t max_ftom_size=0;
+    vector<vector<double> > ac_all;
+    size_t max_ac_size=0;
     
     for(size_t ix=2;ix<in.size();ix++) {
       
       vector<double> v, ac, ftom;
-      
+
+      // If the argument is not a vector specification, then look
+      // for the column in the table
       if (in[ix].find(':')==std::string::npos &&
 	  table_obj.is_column(in[ix])==false) {
 	cerr << "Could not find column named '" << in[ix] << "'." << endl;
 	return exc_efailed;
       }
-      
-      if (!table_obj.is_column(in[0])) {
-	table_obj.new_column(in[0]);
-      }
-      if (!table_obj.is_column(in[1])) {
-	table_obj.new_column(in[1]);
-      }
-      
+
+      // Determine vector from table column (requires copy) or
+      // vector specification
       if (in[ix].find(':')==std::string::npos) {
 	v.resize(table_obj.get_nlines());
 	for(size_t i=0;i<table_obj.get_nlines();i++) {
@@ -135,45 +132,62 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 	cout << "Autocorrelation length determination failed." << endl;
       }
 
-      if (ftom.size()>max_ftom_size) {
-	max_ftom_size=ftom.size();
+      if (ix==2 || ac.size()>max_ac_size) {
+	max_ac_size=ac.size();
       }
-      v_all.push_back(v);
       ac_all.push_back(ac);
-      ftom_all.push_back(ftom);
     }
 
-    vector<double> ac_avg(max_ftom_size), ftom_avg(max_ftom_size);
-    for(size_t i=0;i<max_ftom_size;i++) {
+    if (max_ac_size==0) {
+      cerr << "Failed to find any data in 'autocorr'." << endl;
+      return 1;
+    }
+    vector<double> ac_avg(max_ac_size);
+    for(size_t i=0;i<max_ac_size;i++) {
       size_t n=0;
       ac_avg[i]=0.0;
-      ftom_avg[i]=0.0;
       for(size_t j=0;j<ac_all.size();j++) {
-	if (i<ac_all[j].size() && i<ftom_all[j].size()) {
+	if (i<ac_all[j].size()) {
 	  n++;
 	  ac_avg[i]+=ac_all[j][i];
-	  ftom_avg[i]+=ftom_all[j][i];
 	}
       }
-      if (n==0) {
-	cerr << "Failed to find any data in 'autocorr'." << endl;
-	return 1;
-      }
       ac_avg[i]/=((double)n);
-      ftom_avg[i]/=((double)n);
+    }
+    
+    // Now report autocorrelation length and sample size from
+    // averaged result
+    vector<double> ftom2;
+    
+    // Compute autocorrelation length
+    size_t len=vector_autocorr_tau(ac_avg,ftom2);
+    cout << "Averaged data, ";
+    if (len>0) {
+      cout << "autocorrelation length: " << len << endl;
+    } else {
+      cout << "autocorrelation length determination failed." << endl;
+    }
+
+    // Create new columns if necessary
+    if (!table_obj.is_column(in[0])) {
+      table_obj.new_column(in[0]);
+    }
+    if (!table_obj.is_column(in[1])) {
+      table_obj.new_column(in[1]);
     }
     
     // Add autocorrelation and ftom data to table, replacing the
     // values with zero when we reach the end of the vectors given by
     // vector_autocorr_tau() .
+    
     for(size_t i=0;i<table_obj.get_nlines();i++) {
       if (i<ac_avg.size()) {
 	table_obj.set(in[0],i,ac_avg[i]);
       } else {
 	table_obj.set(in[0],i,0.0);
       }
-      if (i<ftom_avg.size()) {
-	table_obj.set(in[1],i,ftom_avg[i]);
+      if (i<ftom2.size()) {
+	table_obj.set(in[1],i,ftom2[i]);
       } else {
 	table_obj.set(in[1],i,0.0);
       }
@@ -235,23 +249,24 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
     
     vector<string> in, pr;
     if (sv.size()<2) {
-      pr.push_back("Enter vector specification for data");
+      pr.push_back("Enter multiple vector specification for data");
       int ret=get_input(sv,pr,in,"autocorr",itive_com);
       if (ret!=0) return ret;
     } else {
       for(size_t i=1;i<sv.size();i++) in.push_back(sv[i]);
     }
 
-    vector<vector<double> > v_all, ac_all, ftom_all;
-    size_t max_ftom_size=0;
+    vector<vector<double> > ac_all;
+    size_t max_ac_size=0;
     
     for(size_t ix=0;ix<in.size();ix++) {
       
       vector<vector<double> > v;
-      
-      int vs_ret=o2scl_hdf::mult_vector_spec(in[0],v,verbose,false);
+
+      int vs_ret=o2scl_hdf::mult_vector_spec(in[ix],v,verbose,false);
       if (vs_ret!=0) {
-	cout << "Vector specification failed." << endl;
+	cout << "Vector specification failed (returned " << vs_ret << ")."
+	     << endl;
 	return 1;
       }
 
@@ -263,50 +278,65 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 	vector_autocorr_vector(v[j],ac);
 	size_t len=vector_autocorr_tau(ac,ftom);
 	if (len>0) {
-	  cout << "Autocorrelation length: " << len << endl;
+	  cout << "Autocorrelation length: " << len << " sample size: "
+	       << v[j].size()/len << endl;
 	} else {
 	  cout << "Autocorrelation length determination failed." << endl;
 	}
 	
-	if (ftom.size()>max_ftom_size) {
-	  max_ftom_size=ftom.size();
+	if (j==0 || max_ac_size<ac.size()) {
+	  max_ac_size=ac.size();
 	}
 	
-	v_all.push_back(v[j]);
 	ac_all.push_back(ac);
-	ftom_all.push_back(ftom);
       }
     }
     
-    command_del();
-    clear_obj();
-
     if (verbose>0) {
       cout << "Storing autocorrelation coefficient averaged "
 	   << "over all data sets in\n  double[] object." << endl;
     }
     
+    if (max_ac_size==0) {
+      cerr << "Failed to find any data in 'autocorr'." << endl;
+      return 2;
+    }
+    
     // Average over all of the autocorrelation coefficients from the
     // specified data sets and store the result in doublev_obj .
-    doublev_obj.resize(max_ftom_size);
-    for(size_t i=0;i<max_ftom_size;i++) {
+    doublev_obj.resize(max_ac_size);
+    for(size_t i=0;i<max_ac_size;i++) {
       size_t n=0;
       doublev_obj[i]=0.0;
       for(size_t j=0;j<ac_all.size();j++) {
-	if (i<ac_all[j].size() && i<ftom_all[j].size()) {
+	if (i<ac_all[j].size()) {
 	  n++;
 	  doublev_obj[i]+=ac_all[j][i];
 	}
       }
-      if (n==0) {
-	cerr << "Failed to find any data in 'autocorr'." << endl;
-	return 2;
-      }
       doublev_obj[i]/=((double)n);
     }
+
+    // Now report autocorrelation length and sample size from
+    // averaged result
+    vector<double> ftom2;
     
-    command_add("double[]");
-    type="double[]";
+    // Compute autocorrelation length
+    size_t len=vector_autocorr_tau(doublev_obj,ftom2);
+    cout << "Averaged data, ";
+    if (len>0) {
+      cout << "autocorrelation length: " << len << endl;
+    } else {
+      cout << "autocorrelation length determination failed." << endl;
+    }
+
+    // If no current object, then set current object as double[]
+    if (type=="") {
+      command_del();
+      clear_obj();
+      command_add("double[]");
+      type="double[]";
+    }
   }    
   
   return 0;
