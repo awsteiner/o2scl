@@ -280,7 +280,14 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
     
     command_del();
     clear_obj();
+
+    if (verbose>0) {
+      cout << "Storing autocorrelation coefficient averaged "
+	   << "over all data sets in\n  double[] object." << endl;
+    }
     
+    // Average over all of the autocorrelation coefficients from the
+    // specified data sets and store the result in doublev_obj .
     doublev_obj.resize(max_ftom_size);
     for(size_t i=0;i<max_ftom_size;i++) {
       size_t n=0;

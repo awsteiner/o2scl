@@ -1150,11 +1150,12 @@ int acol_manager::setup_options() {
   comm_option_s options_arr[narr]={
     {0,"autocorr","Compute the autocorrelation coefficients.",0,-1,
      "[arguments depend on current object type.]",
-     ((std::string)"If the current object is a numerical array, then ")+
-     "\"autocorr\" requires no arguments and replaces the current "+
+     ((std::string)"The behavior of the autocorr command depends on ")+
+     "the type of the current object.\n\nNumerical array:"+
+     "(no arguments)\n\nReplace the current "+
      "object with a vector of doubles which contains the autocorrelation "+
-     "coefficient as a function of the step size. If the current object "+
-     "is a table, then \"autocorr\" requires at least three arguments: "+
+     "coefficient as a function of the step size.\n\n "+
+     "table: <ac> <ftom> <data>\n\nThree arguments are required "+
      "A column name <ac>, a column name <ftom>, and arguments which "+
      "specify the data. The "
      "autocorrelation coefficients are stored in column <ac> and "+
@@ -1166,7 +1167,10 @@ int acol_manager::setup_options() {
      "already contain data. Also, the autocorrelation length and "+
      "estimated sample size are output to the screen. If multiple "+
      "data sources are given, then the autocorrelation coefficients "+
-     "are averaged together.",
+     "are averaged together.\n\nno object: <vec. spec. 1> [vec. spec 2] "+
+     "...\n\n Compute the autocorrelation coefficient for all vectors "+
+     "specified as arguments then average those autocorrelation "+
+     "coefficients together and store as a double[] object.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
      both},
     {0,"calc","Compute the value of a constant expression.",0,1,"<expr>",
