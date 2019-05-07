@@ -34,13 +34,13 @@ int o2scl_hdf::value_spec(std::string spec, double &d,
 			  int verbose, bool err_on_fail) {
   
   if (verbose>2) {
-    std::cout << "Function vector_spec is parsing: " << spec << std::endl;
+    std::cout << "Function value_spec is parsing: " << spec << std::endl;
   }
   
   if (spec.find(':')==std::string::npos) {
 
     if (verbose>1) {
-      std::cout << "vector_spec(): simple function or value "
+      std::cout << "value_spec(): simple function or value "
 		<< spec << std::endl;
     }
       
@@ -51,7 +51,7 @@ int o2scl_hdf::value_spec(std::string spec, double &d,
 
     std::string temp=spec.substr(5,spec.length()-5);
     if (verbose>1) {
-      std::cout << "vector_spec(): single value " << temp
+      std::cout << "value_spec(): single value " << temp
 		<< std::endl;
     }
       

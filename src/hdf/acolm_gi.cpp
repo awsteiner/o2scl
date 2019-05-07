@@ -630,11 +630,23 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "any header rows which contain non-numeric values. For "+
       "example 'text:~/temp.dat:2' will construct a vector from the "+
       "second row of the file 'temp.dat' in the user's home directory.\n\n"+
-      "  6. hdf5:<file name>:<object name>:[additional spec.] - "+
+      "  6. hdf5:<file name>:<object name>:[addtional spec.] - "+
       "Read an HDF5 file\nand obtain a vector from the object with "+
       "the specified name. The remaining parts of the string contain "+
       "additional information which may be needed depending on the "+
-      "type of object stored in the HDF5 file.";
+      "type of object stored in the HDF5 file. A list of object types "+
+      "and additional specifications and more detail is given below.\n\n"+
+      "                 type: addl. spec.      Description\n"+
+      " --------------------------------------------------\n"+
+      "               double: (no addl. spec.) Implies vector of size 1\n"+
+      "             double[]: (no addl. spec.)\n"+
+      "                 hist: (no addl. spec.) Vector of histogram weights\n"+
+      "                  int: (no addl. spec.) Implies vector of size 1\n"+
+      "                int[]: (no addl. spec.)\n"+
+      "               size_t: (no addl. spec.) Implies vector of size 1\n"+
+      "             size_t[]: (no addl. spec.)\n"+
+      "                table: <column>         Selected column from table\n"+
+      " uniform_grid<double>: (no addl. spec.)\n";
 
     std::vector<std::string> sv;
     o2scl::rewrap_keep_endlines(str,sv);
