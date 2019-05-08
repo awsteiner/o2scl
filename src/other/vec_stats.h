@@ -2020,7 +2020,7 @@ namespace o2scl {
 
     if (qual_log<qual_lin) {
       if (verbose>0) {
-	std::cout << "Auto-detected log mode in vector_to_bins()."
+	std::cout << "Auto-detected log mode in o2scl::vector_to_bins()."
 		  << std::endl;
       }
       if (logs[1]>logs[0]) {

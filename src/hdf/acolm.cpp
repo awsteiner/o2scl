@@ -1450,7 +1450,7 @@ int acol_manager::setup_help() {
   dsc+=line+"\n";
 
   dsc+="List of additional help topics (e.g. \"acol -help <topic>\"): ";
-  dsc+="function, mult-vector-spec, types, value-spec, and vector-spec.\n\n";
+  dsc+="functions, mult-vector-spec, types, value-spec, and vector-spec.\n\n";
   
 #ifndef O2SCL_UBUNTU_PKG
   dsc+=((string)"Compiled at ")+((string)__TIME__)+" on "+
