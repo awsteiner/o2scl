@@ -189,25 +189,44 @@ int o2scl_acol_mult_vectors_to_conts(void *vp, char *str1,
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
   
   vector<vector<double> > v1, v2;
-  string s1=str1, s2=str2;
+  string s1, s2;
+  if (str1!=0) {
+    s1=str1;
+    int ret1=mult_vector_spec(s1,v1,amp->get_verbose(),false);
+    if (ret1!=0) return ret1;
+  }
   
-  int ret1=mult_vector_spec(s1,v1,amp->get_verbose(),false);
-  if (ret1!=0) return ret1;
+  s2=str2;
   int ret2=mult_vector_spec(s2,v2,amp->get_verbose(),false);
   if (ret2!=0) return ret2;
   
   amp->cont_obj.clear();
-  
-  for(size_t i=0;i<v1.size();i++) {
+
+  if (str1!=0) {
+    for(size_t i=0;i<v1.size();i++) {
+      for(size_t j=0;j<v2.size();j++) {
+	size_t ntemp=v1[i].size();
+	if (v2[j].size()<ntemp) ntemp=v2[j].size();
+	contour_line cl;
+	cl.level=0.0;
+	cl.x.resize(ntemp);
+	cl.y.resize(ntemp);
+	for(size_t k=0;k<ntemp;k++) {
+	  cl.x[k]=v1[i][k];
+	  cl.y[k]=v2[j][k];
+	}
+	amp->cont_obj.push_back(cl);
+      }
+    }
+  } else {
     for(size_t j=0;j<v2.size();j++) {
-      size_t ntemp=v1[i].size();
-      if (v2[j].size()<ntemp) ntemp=v2[j].size();
+      size_t ntemp=v2[j].size();
       contour_line cl;
       cl.level=0.0;
       cl.x.resize(ntemp);
       cl.y.resize(ntemp);
       for(size_t k=0;k<ntemp;k++) {
-	cl.x[k]=v1[i][k];
+	cl.x[k]=k;
 	cl.y[k]=v2[j][k];
       }
       amp->cont_obj.push_back(cl);
