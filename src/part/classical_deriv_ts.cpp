@@ -264,16 +264,16 @@ int main(void) {
   cout << "sf: " << sf.n << " " << sf.ed << " " << sf.en << " " 
        << sf.pr << " " << sf.nu << endl;
 
-  if (true) {
-    double T=1.0;
-    sf.non_interacting=true;
-    sf.inc_rest_mass=false;
-    sf.m=2.5;
+  // Test cv and cp
+  
+  T=1.0;
+  sf.non_interacting=true;
+  sf.inc_rest_mass=false;
+  sf.m=2.5;
     
-    snc.calc_density(sf,T);
-    cout << snc.heat_cap_ppart_const_vol(sf,T) << endl;
-    cout << snc.heat_cap_ppart_const_press(sf,T) << endl;
-  }    
+  snc.calc_density(sf,T);
+  t.test_rel(1.5,snc.heat_cap_ppart_const_vol(sf,T),1.0e-12,"classical Cv");
+  t.test_rel(2.5,snc.heat_cap_ppart_const_press(sf,T),1.0e-12,"classical Cp");
   
   t.report();
   return 0;

@@ -666,7 +666,13 @@ namespace o2scl {
     */
     template<class part_deriv_t> 
       double squared_sound_speed(part_deriv_t &p, double temper) {
-      return 1.0/(-(p.ed+p.pr)*(p.dndT*p.dndT-p.dndmu*p.dsdT)/
+      double edt;
+      if (p.inc_rest_mass) {
+	edt=p.ed;
+      } else {
+	edt=p.ed+p.n*p.m;
+      }
+      return 1.0/(-(edt+p.pr)*(p.dndT*p.dndT-p.dndmu*p.dsdT)/
 		  (p.n*p.n*p.dsdT-2.0*p.n*p.en*p.dndT+
 		   p.en*p.en*p.dndmu)-1.0);
     }
