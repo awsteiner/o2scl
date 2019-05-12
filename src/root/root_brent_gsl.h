@@ -93,7 +93,7 @@ namespace o2scl {
   public root_bkt<func_t> {
     
   public:
-  
+
   root_brent_gsl() {
     test_form=0;
   }
@@ -225,12 +225,10 @@ namespace o2scl {
   virtual int solve_bkt(double &x1, double x2, func_t &f) {
 	
     int status, iter=0;
-	
-    if (set(f,x1,x2)!=0) {
-      O2SCL_ERR2("Function set() failed in",
-		     "root_brent_gsl::solve_bkt().",exc_einval);
-    }
-  
+
+    int set_ret=set(f,x1,x2);
+    if (set_ret!=0) return set_ret;
+    
     if (test_form==0) {
 
       // Test the bracket size
@@ -366,9 +364,9 @@ namespace o2scl {
 	
     if ((f_lower<0.0 && f_upper<0.0) || 
 	(f_lower>0.0 && f_upper>0.0)) {
-      std::cout << f_lower << " " << f_upper << std::endl;
-      O2SCL_ERR2("Endpoints don't straddle y=0 in ",
-		     "root_brent_gsl::set().",o2scl::exc_einval);
+      O2SCL_CONV2_RET("Endpoints don't straddle y=0 in ",
+		      "root_brent_gsl::set().",o2scl::exc_einval,
+		      this->err_nonconv);
     }
 	
     return o2scl::success;
