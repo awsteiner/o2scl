@@ -718,8 +718,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	cl->cmd_name+".";
       std::vector<std::string> svx;
       o2scl::rewrap_keep_endlines(str,svx);
-      for(size_t i=0;i<svx.size();i++) {
-	cout << svx[i] << endl;
+      for(size_t j=0;j<svx.size();j++) {
+	cout << svx[j] << endl;
       }
       cout << endl;
       svx.clear();
