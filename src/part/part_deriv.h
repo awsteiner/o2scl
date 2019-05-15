@@ -623,44 +623,40 @@ namespace o2scl {
 	with					
 	\f[
 	\frac{\partial \varepsilon}{\partial T} =
-	-s + T \frac{\partial s}{\partial T}  
+	-T \frac{\partial s}{\partial T}  
 	+ \mu \frac{\partial n}{\partial T} 
 	\quad \mathrm{and} \quad
 	\frac{\partial \varepsilon}{\partial \mu} =
-	-n + T \frac{\partial n}{\partial T}  
+	T \frac{\partial n}{\partial T}  
 	+ \mu \frac{\partial n}{\partial \mu} 
 	\f]
 	giving 
 	\f[
 	\frac{\partial (\varepsilon,S,N)}
 	{\partial (V,T,\mu)} = V 
-	\left\{ (P + \varepsilon)
+	(P + \varepsilon)
 	\left[ \left(\frac{\partial n}{\partial T}\right)^2
 	- \left(\frac{\partial n}{\partial \mu}\right)
 	\left(\frac{\partial s}{\partial T}\right)
-	\right] + n^2
-	\left(\frac{\partial s}{\partial T}\right)
-	- 2 n s \left(\frac{\partial n}{\partial T}\right)
-	+ s^2 \left(\frac{\partial n}{\partial \mu}\right)
-	\right\} = V\left[(P+\varepsilon)Y+X\right]
+	\right] = V Y \left(P+\varepsilon\right)
 	\f]
 	The final result is 
 	\f[
 	c_s^2 = 
-	- \frac{X}{(P+\varepsilon)Y+X}
-	= \frac{1}{-(P+\varepsilon) Y/X - 1}
+	- \frac{X}{(P+\varepsilon)Y}
 	= 
-	\left\{ \frac{
-	-\left(P + \varepsilon\right)
+	\frac{
+	  n^2 \left(\frac{\partial s}{\partial T}\right)
+	  - 2 n s \left(\frac{\partial n}{\partial T}\right)
+	  + s^2 \left(\frac{\partial n}{\partial \mu}\right)
+	}{
+	  \left(P + \varepsilon\right)
 	\left[ 
 	\left(\frac{\partial n}{\partial \mu}\right)
 	\left(\frac{\partial s}{\partial T}\right) -
 	\left(\frac{\partial n}{\partial T}\right)^2
 	\right]
-	}{n^2 \left(\frac{\partial s}{\partial T}\right)
-	- 2 n s \left(\frac{\partial n}{\partial T}\right)
-	+ s^2 \left(\frac{\partial n}{\partial \mu}\right)}
-	-1 \right\}^{-1}
+	}
 	\f]
 
     */
@@ -672,9 +668,8 @@ namespace o2scl {
       } else {
 	edt=p.ed+p.n*p.m;
       }
-      return 1.0/(-(edt+p.pr)*(p.dndT*p.dndT-p.dndmu*p.dsdT)/
-		  (p.n*p.n*p.dsdT-2.0*p.n*p.en*p.dndT+
-		   p.en*p.en*p.dndmu)-1.0);
+      return (p.n*p.n*p.dsdT-2.0*p.n*p.en*p.dndT+p.en*p.en*p.dndmu)/
+	(edt+p.pr)/(p.dndmu*p.dsdT-p.dndT*p.dndT);
     }
     
   };
