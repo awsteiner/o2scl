@@ -314,6 +314,8 @@ namespace o2scl {
   
   /// Stepsize factor (default 10.0)
   double step_fac;
+    
+    std::vector<double> step_vec;    
 
   /** \brief Number of warm up steps (successful steps not
       iterations) (default 0)
@@ -1076,8 +1078,13 @@ namespace o2scl {
 	    
 	      // Uniform random-walk step
 	      for(size_t k=0;k<n_params;k++) {
-		next[it][k]=current[it][k]+(rg[it].random()*2.0-1.0)*
-		  (high[k]-low[k])/step_fac;
+		if (step_vec.size()>0) {
+		  next[it][k]=current[it][k]+(rg[it].random()*2.0-1.0)*
+		    step_vec[k%step_vec.size()];
+		} else {
+		  next[it][k]=current[it][k]+(rg[it].random()*2.0-1.0)*
+		    (high[k]-low[k])/step_fac;
+		}
 	      }
 	    
 	    }	  
