@@ -553,50 +553,41 @@
     \bar{n}_k &=& \frac{k}{t}{\bar{P}_k} 
     \mathrm{tanh} \left[k (x+1)/t\right]
     \f}
-    The entropy terms are
+    The entropy terms (with and without antiparticles) are
     \f{eqnarray*}
-    s_k &=& 
-    \frac{2 P_k}{t} - \frac{k (x+1) P_k}{t^2} + 
-    \frac{(-1)^{k+1}}{2k} e^{k x/t} e^{k/t}
-    \left[ K_1(k/t) + K_3(k/t)\right] 
+    s_k &=& \left( \frac{4t-kx-k}{kt}\right) n_k +
+    \frac{(-1)^{k+1}}{k} e^{k x/t} \left[ e^{k/t} K_1(k/t) \right]
     \nonumber \\
     \bar{s}_k &=& 
-    \frac{2 \bar{P}_k}{t} + \frac{k \bar{P}_k}{t^2} -
-    \frac{k (x+1) \bar{P}_k \mathrm{tanh}[k(x+1)/t]}{t^2} + 
-    \frac{(-1)^{k+1}}{k} e^{-k/t} \mathrm{cosh}[k(x+1)/t] e^{k/t}
-    \left[ K_1(k/t) + K_3(k/t)\right] 
+    -\frac{(1+x)\bar{n}_k}{t} +
+    \frac{2(-1)^{k+1}}{k}  e^{-k/t} \mathrm{cosh}[k(x+1)/t] 
+    \left[ e^{k/t} K_3(k/t) \right]
     \f}
-    if antiparticles are included. For the derivatives
+    included. For the derivatives, no additional Bessel functions are
+    required
     \f{eqnarray*}
     \left(\frac{dn}{d\mu}\right)_k &=& 
-    \frac{k^2}{t^2}{P_k} \\
+    \frac{k}{t}{n_k} \\
     \left(\frac{d\bar{n}}{d\mu}\right)_k &=&
-    \frac{k^2}{t^2}{\bar{P}_k} \\
+    \frac{k}{t}{\bar{n}_k} \\
     \left(\frac{dn}{dT}\right)_k &=& 
-    \frac{k}{t} s_k - \frac{k}{t^2} P_k \\
+    \frac{k}{t} s_k - \frac{1}{t} n_k \\
     \left(\frac{d\bar{n}}{dT}\right)_k &=& 
-    \left( \frac{k}{t} \bar{s}_k
-    - \frac{k}{t^2} \bar{P}_k \right) \mathrm{tanh}\left[k(x+1)/t\right]
-    - \frac{k^2(x+1)}{t^2} \bar{P}_k \mathrm{sech}^2
-    \left[k(x+1)/t\right] \\
+    \frac{k}{t} \bar{s}_k \mathrm{tanh}\left[k(x+1)/t\right]
+    - \left\{ t+2 k (1+x) \mathrm{csch}\left[k(x+1)/t\right]
+    \right\} \frac{\bar{n}_k}{t^2} \\
     \left(\frac{ds}{dT}\right)_k &=& 
-    \left[ \frac{2 k (x+1)-2 t}{t^3}\right] P_k
-    + \left[ \frac{2 t-k (x+1)}{t^2}\right] s_k \\
-    && - \frac{(x+1)(-1)^{k+1}}{2 t^2} 
-    e^{k x/t} e^{k/t} \left[ K_1(k/t)+K_3(k/t) \right]
-    - \frac{(-1)^{k+1}}{4 k} e^{k x/t} e^{k/t} 
-    \left[ K_0 (k/t) + 2 K_2 (k/t) + K_4 (k/t)\right] \\
+    \left[ \frac{3t -2k x -2 k}{t^2}\right] s_k
+    + \left[ \frac{5 k t - 2 k^2 x +5 k t x - k^2 x^2}{k t^3}\right] n_k \\
     \left(\frac{d\bar{s}}{dT}\right)_k &=& 
-    \left[ \frac{-2(t+k)}{t^3}\right] \bar{P}_k
-    + \left[ \frac{2 t+k}{t^2}\right] \bar{s}_k 
-    - \frac{k (x+1) \bar{s}_k \mathrm{tanh}[k(x+1)/t]}{t^2}
-    + \frac{k^2 (x+1)^2 \bar{P}_k \mathrm{sech}^2[k(x+1)/t]}{t^4} \\
-    && - \frac{(x+1)(-1)^{k+1}}{2 t^2} 
-    e^{-k/t} \mathrm{sinh}\left[k(x+1)/t\right]e^{k/t} 
-    \left[ K_1(k/t)+K_3(k/t) \right]
-    - \frac{(-1)^{k+1}}{2 k} e^{-k/t} \mathrm{cosh}\left[k(x+1)/t\right]
-    e^{k/t} 
-    \left[ K_0 (k/t) + 2 K_2 (k/t) + K_4 (k/t)\right]
+    \left\{2 k (1+x) \mathrm{tanh}\left[ k(1+x)/t\right] - 3 t\right\}
+    \frac{\bar{s}_k}{t^2} +
+    \left\{2 k^2 (1+x)^2 \mathrm{tanh}\left[ k(1+x)/t\right] - 
+    \right. \nonumber \\
+    && \left.
+    k^2 (2 + 2 x + x^2) \mathrm{coth}\left[ k(1+x)/t\right] -
+    5 k(1+x) t \right\}
+    \frac{\bar{n}_k}{k t^3}
     \f}
 
     These expansions are used in 
