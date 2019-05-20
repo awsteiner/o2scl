@@ -2889,8 +2889,9 @@ namespace o2scl {
     return parent_t::mcmc_cleanup();
   }
 
-  /** \brief Compute autocorrelation coefficient for one column,
-      averaging over walker and thread
+  /** \brief Compute autocorrelation coefficient for column
+      with index \c icol averaging over all walkers and 
+      all threads
    */
   virtual void ac_coeffs(size_t icol,
 			 std::vector<double> &ac_coeff_avg) {
