@@ -2889,67 +2889,56 @@ namespace o2scl {
     return parent_t::mcmc_cleanup();
   }
 
-  /** \brief Compute autocorrelation coefficients
+  /** \brief Compute autocorrelation coefficient for one column,
+      averaging over walker and thread
    */
-  virtual void ac_coeffs(size_t ncols, ubmatrix &ac_coeffs) {
-    std::vector<size_t> chain_sizes;
-    get_chain_sizes(chain_sizes);
-    size_t min_size=chain_sizes[0];
-    for(size_t i=1;i<chain_sizes.size();i++) {
-      if (chain_sizes[i]<min_size) min_size=chain_sizes[i];
-    }
-    size_t N_max=min_size/2;
-    ac_coeffs.resize(ncols,N_max-1);
-    for(size_t i=0;i<ncols;i++) {
-      for(size_t ell=1;ell<N_max;ell++) {
-	ac_coeffs(i,ell-1)=0.0;
-      }
-    }
+  virtual void ac_coeffs(size_t icol,
+			 std::vector<double> &ac_coeff_avg) {
+
+    ac_coeff_avg.resize(0);
+
     size_t n_tot=this->n_threads*this->n_walk;
-    size_t table_row=0;
-    size_t cstart=table->lookup_column("log_wgt")+1;
-    for(size_t i=0;i<ncols;i++) {
-      for(size_t j=0;j<this->n_threads;j++) {
-	for(size_t k=0;k<this->n_walk;k++) {
-	  size_t tindex=j*this->n_walk+k;
-	  for(size_t ell=1;ell<N_max;ell++) {
-	    const double &x=(*table)[cstart+i][table_row];
-	    double mean=o2scl::vector_mean<const double *>
-	      (chain_sizes[tindex]+1,&x);
-	    ac_coeffs(i,ell-1)+=o2scl::vector_lagk_autocorr
-	      <const double *>(chain_sizes[tindex]+1,&x,ell,mean);
+    
+    std::vector<std::vector<double> > ac_coeff_temp(n_tot);
+    size_t max_size=0;
+    for(size_t j=0;j<this->n_threads;j++) {
+      for(size_t k=0;k<this->n_walk;k++) {
+	size_t tindex=j*this->n_walk+k;
+	std::vector<double> vec, mult;
+	for(size_t ell=0;ell<table->get_nlines();ell++) {
+	  if (fabs(table->get("walker",ell)-k)<0.1 &&
+	      fabs(table->get("thread",ell)-j)<0.1 &&
+	      table->get("mult",ell)>0.5) {
+	    mult.push_back(table->get("mult",ell));
+	    vec.push_back(table->get(icol,ell));
 	  }
-	  table_row+=chain_sizes[tindex]+1;
+	}
+	if (mult.size()>1) {
+	  o2scl::vector_autocorr_vector_mult
+	    (vec.size(),vec,mult,ac_coeff_temp[tindex]);
+	  if (ac_coeff_temp[tindex].size()>max_size) {
+	    max_size=ac_coeff_temp[tindex].size();
+	  }
 	}
       }
-      for(size_t ell=1;ell<N_max;ell++) {
-	ac_coeffs(i,ell-1)/=((double)n_tot);
+    }
+    for(size_t j=0;j<max_size;j++) {
+      double ac_sum=0.0;
+      int ac_count=0;
+      for(size_t k=0;k<n_tot;k++) {
+	if (j<ac_coeff_temp[k].size()) {
+	  ac_sum+=ac_coeff_temp[k][j];
+	  ac_count++;
+	}
+      }
+      if (ac_count>0) {
+	ac_coeff_avg.push_back(ac_sum/((double)ac_count));
       }
     }
+    
     return;
   }
 
-  /** \brief Compute autocorrelation lengths
-   */
-  virtual void ac_lengths(size_t ncols, ubmatrix &ac_coeffs_cols,
-			  ubvector &ac_lengths) {
-    size_t N_max=ac_coeffs_cols.size2();
-    ac_lengths.resize(ncols);
-    for(size_t icol=0;icol<ncols;icol++) {
-      std::vector<double> tau(N_max);
-      for(size_t i=5;i<N_max;i++) {
-	double sum=0.0;
-	for(size_t j=0;j<i;j++) {
-	  sum+=ac_coeffs_cols(icol,j);
-	}
-	tau[i]=1.0+2.0*sum;
-	std::cout << tau[i] << " " << ((double)i)/5.0 << std::endl;
-      }
-      std::cout << std::endl;
-    }
-    return;
-  }
-  
   /** \brief Reorder the table by thread and walker index
    */
   virtual void reorder_table() {
