@@ -490,6 +490,42 @@ namespace o2scl {
       return true;
     }
 
+    /** \brief Desc
+     */
+    void ndeg_terms(size_t j, double dj, double jot, double tt,
+		    double xx, double m, bool inc_rest_mass,
+		    bool inc_antip, double &pterm, double &nterm,
+		    double &enterm) {
+      
+      if (inc_antip==false) {
+	pterm=exp(jot*xx)/jot/jot*gsl_sf_bessel_Kn_scaled(2.0,jot);
+	nterm=pterm*jot/m;
+	double enterm1=(4.0*tt-dj*xx-dj)/dj/tt*nterm;
+	double enterm2=exp(jot*xx)/dj*gsl_sf_bessel_Kn_scaled(1.0,jot)/m;
+	if (j%2==0) {
+	  pterm*=-1.0;
+	  enterm=enterm1-enterm2;
+	} else {
+	  enterm=enterm1+enterm2;
+	}
+      } else {
+	pterm=exp(-jot)*2.0*cosh(jot*(xx+1.0)/tt)/jot/jot*
+	  gsl_sf_bessel_Kn_scaled(2.0,jot);
+	nterm=pterm*tanh(jot*(xx+1.0))*jot;
+	double enterm1=-(1.0+xx)/tt*nterm/m;
+	double enterm2=2.0*exp(-jot*xx)/dj*cosh(jot*(xx+1.0))*
+	  gsl_sf_bessel_Kn_scaled(3.0,jot)/m;
+	if (j%2==0) {
+	  pterm*=-1.0;
+	  enterm=enterm1-enterm2;
+	} else {
+	  enterm=enterm1+enterm2;
+	}
+      }
+		    
+      return;
+    }
+    
     /** \brief Calculate thermodynamic properties from the chemical
 	potential using a nondegenerate expansion
      */
@@ -622,6 +658,18 @@ namespace o2scl {
 		    (gsl_sf_bessel_Kn_scaled(1.0,jot)+
 		     gsl_sf_bessel_Kn_scaled(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
 		    tanh(dj*nu2/temper)/f.ms)/f.ms;
+	  }
+	}
+
+	if (false && f.inc_rest_mass==true) {
+	  if (inc_antip) {
+	    std::cout << f.inc_rest_mass << " " << inc_antip << " "
+		      << pterm << " " << nterm << " " << enterm << std::endl;
+	    ndeg_terms(j,dj,jot,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
+		       pterm,nterm,enterm);
+	    std::cout << f.inc_rest_mass << " " << inc_antip << " "
+		      << pterm << " " << nterm << " " << enterm << std::endl;
+	    exit(-1);
 	  }
 	}
 
