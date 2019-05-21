@@ -123,11 +123,13 @@ int main(int argc, char *argv[]) {
   cout << pc_fdr_dir << endl;
   cout << endl;
   
-  double dc_dir=pdcc.part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
-    (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
-  t.test_rel(dc_dir,0.0,8.0e-6,"deriv_calibrate direct");
-  cout << dc_dir << endl;
-  cout << endl;
+  if (false) {
+    double dc_dir=pdcc.part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
+      (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
+    t.test_rel(dc_dir,0.0,8.0e-6,"deriv_calibrate direct");
+    cout << dc_dir << endl;
+    cout << endl;
+  }
 
   cout << "----------------------------------------------------" << endl;
   cout << "Function deriv_calibrate() method=by_parts." << endl;
@@ -142,11 +144,13 @@ int main(int argc, char *argv[]) {
   cout << pc_fdr_byp << endl;
   cout << endl;
 
-  double dc_byp=pdcc.part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
-    (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
-  t.test_rel(dc_byp,0.0,1.0e-6,"deriv_calibrate by parts");
-  cout << dc_byp << endl;
-  cout << endl;
+  if (false) {
+    double dc_byp=pdcc.part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
+      (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
+    t.test_rel(dc_byp,0.0,1.0e-6,"deriv_calibrate by parts");
+    cout << dc_byp << endl;
+    cout << endl;
+  }
 
   cout << "----------------------------------------------------" << endl;
   cout << "Function deriv_calibrate() method=automatic." << endl;
@@ -161,11 +165,13 @@ int main(int argc, char *argv[]) {
   cout << pc_fdr_auto << endl;
   cout << endl;
 
-  double dc_auto=pdcc.part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
-    (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
-  t.test_rel(dc_auto,0.0,1.0e-6,"deriv_calibrate auto");
-  cout << dc_auto << endl;
-  cout << endl;
+  if (false) {
+    double dc_auto=pdcc.part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
+      (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
+    t.test_rel(dc_auto,0.0,1.0e-6,"deriv_calibrate auto");
+    cout << dc_auto << endl;
+    cout << endl;
+  }
 
   cout << "------------------------------------------------------" << endl;
   {

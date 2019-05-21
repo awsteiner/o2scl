@@ -63,10 +63,8 @@ namespace o2scl {
 
     /** \brief Calculate properties as function of chemical potential
 	
-	If the temperature is less than zero, the error
-	handler will be called. 
-
-	\future Handle the case \f$ \mu/T>308 \f$ properly.
+	If the temperature is less than zero, the error handler will
+	be called.
      */
     virtual void calc_mu(part &p, double temper);
 

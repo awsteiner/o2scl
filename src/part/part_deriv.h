@@ -689,6 +689,14 @@ namespace o2scl {
   */
   class fermion_deriv_thermo : public deriv_thermo_base {
 
+  protected:
+
+    /** \brief A fermion_thermo object 
+
+	This is for access to fermion_thermo::ndeg_terms().
+    */
+    fermion_rel fr;
+    
   public:
 
     virtual ~fermion_deriv_thermo() {

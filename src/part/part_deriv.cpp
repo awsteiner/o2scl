@@ -133,96 +133,27 @@ bool fermion_deriv_thermo::calc_mu_ndeg
     double pterm, nterm, enterm;
     double dndmu_term, dndT_term, dsdT_term;
 
+    fr.ndeg_terms(j,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
+		  pterm,nterm,enterm);
+    
     if (inc_antip==false) {
-      pterm=exp(dj*psi)/jot/jot*gsl_sf_bessel_Kn_scaled(2.0,jot);
-      if (j%2==0) {
-	pterm*=-1.0;
-	enterm=(pterm*2.0/tt-pterm/tt/tt*dj-
-		exp(dj*psi)/2.0/dj*(gsl_sf_bessel_Kn_scaled(1.0,jot)+
-				    gsl_sf_bessel_Kn_scaled(3.0,jot)))/f.ms-
-	  pterm*dj*psi_num/temper/temper;
-      } else {
-	enterm=(pterm*2.0/tt-pterm/tt/tt*dj+
-		exp(dj*psi)/2.0/dj*(gsl_sf_bessel_Kn_scaled(1.0,jot)+
-				    gsl_sf_bessel_Kn_scaled(3.0,jot)))/f.ms-
-	  pterm*dj*psi_num/temper/temper;
-      }
-      nterm=pterm*dj/temper;
-      dndmu_term=nterm*dj/temper;
-      dndT_term=-dj*pterm/temper/temper+dj/temper*enterm;
-      if (j%2==0) {
-	dsdT_term=((xx+1.0)/2.0/tt/tt*exp(dj*xx/tt)*
-		   (gsl_sf_bessel_Kn_scaled(1.0,jot)+
-		    gsl_sf_bessel_Kn_scaled(3.0,jot))-
-		   1.0/4.0/tt/tt*exp(dj*xx/tt)*
-		   (gsl_sf_bessel_Kn_scaled(0.0,jot)+
-		    2.0*gsl_sf_bessel_Kn_scaled(2.0,jot)+
-		    gsl_sf_bessel_Kn_scaled(4.0,jot)))/f.ms/f.ms;
-      } else {
-	dsdT_term=(-(xx+1.0)/2.0/tt/tt*exp(dj*xx/tt)*
-		   (gsl_sf_bessel_Kn_scaled(1.0,jot)+
-		    gsl_sf_bessel_Kn_scaled(3.0,jot))+
-		   1.0/4.0/tt/tt*exp(dj*xx/tt)*
-		   (gsl_sf_bessel_Kn_scaled(0.0,jot)+
-		    2.0*gsl_sf_bessel_Kn_scaled(2.0,jot)+
-		    gsl_sf_bessel_Kn_scaled(4.0,jot)))/f.ms/f.ms;
-      }
-      dsdT_term+=(2.0*dj*(xx+1.0)-2.0*tt)/tt/temper/temper*pterm+
-	(2.0*tt-dj*(xx+1.0))/tt/temper*enterm;
+      dndmu_term=nterm*jot;
+      dndT_term=jot*enterm-nterm/tt;
+      dsdT_term=(3.0*tt-2.0*dj*xx-2.0*dj)/tt/tt*enterm+
+	(5.0*dj*tt-2.0*dj*dj*xx+5.0*dj*tt*xx-dj*dj*xx*xx)/
+	dj/tt/tt/tt*nterm;
     } else {
-      if (f.inc_rest_mass) {
-	pterm=exp(-jot)*2.0*cosh(dj*f.nu/temper)/jot/jot*
-	  gsl_sf_bessel_Kn_scaled(2.0,jot);
-	if (j%2==0) {
-	  pterm*=-1.0;
-	}
-	nterm=pterm*tanh(dj*f.nu/temper)*dj/temper;
-      } else {
-	pterm=exp(-jot)*2.0*cosh(dj*(f.nu+f.m)/temper)/jot/jot*
-	  gsl_sf_bessel_Kn_scaled(2.0,jot);
-	if (j%2==0) {
-	  pterm*=-1.0;
-	}
-	nterm=pterm*tanh(dj*(f.nu+f.m)/temper)*dj/temper;
-      }
-      if (j%2==0) {
-	enterm=(pterm*2.0/tt-cosh(dj*nu2/temper)/dj*exp(-jot)*
-		(gsl_sf_bessel_Kn_scaled(1.0,jot)+
-		 gsl_sf_bessel_Kn_scaled(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
-		tanh(dj*nu2/temper)/f.ms)/f.ms;
-      } else {
-	enterm=(pterm*2.0/tt+cosh(dj*nu2/temper)/dj*exp(-jot)*
-		(gsl_sf_bessel_Kn_scaled(1.0,jot)+
-		 gsl_sf_bessel_Kn_scaled(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
-		tanh(dj*nu2/temper)/f.ms)/f.ms;
-      }
-      dndmu_term=pterm*dj*dj/temper/temper;
-      dndT_term=(dj/temper*enterm-dj/temper/temper*pterm)*
-	tanh(dj*(xx+1.0)/tt)-dj*dj*(xx+1.0)/temper/temper*pterm/
-	pow(cosh(dj*(xx+1.0)/tt),2.0);
-      if (j%2==0) {
-	dsdT_term=-(xx+1.0)/2.0/tt/tt*exp(-dj/tt)*sinh(dj*(xx+1.0)/tt)*
-	  (gsl_sf_bessel_Kn_scaled(1.0,jot)+
-	   gsl_sf_bessel_Kn_scaled(3.0,jot))-
-	  1.0/2.0/dj*exp(-dj/tt)*cos(dj*(xx+1.0)/tt)*
-	  (gsl_sf_bessel_Kn_scaled(0.0,jot)+
-	   2.0*gsl_sf_bessel_Kn_scaled(2.0,jot)+
-	   gsl_sf_bessel_Kn_scaled(4.0,jot));
-      } else {
-	dsdT_term=(xx+1.0)/2.0/tt/tt*exp(-dj/tt)*sinh(dj*(xx+1.0)/tt)*
-	  (gsl_sf_bessel_Kn_scaled(1.0,jot)+
-	   gsl_sf_bessel_Kn_scaled(3.0,jot))+
-	  1.0/2.0/dj*exp(-dj/tt)*cos(dj*(xx+1.0)/tt)*
-	  (gsl_sf_bessel_Kn_scaled(0.0,jot)+
-	   2.0*gsl_sf_bessel_Kn_scaled(2.0,jot)+
-	   gsl_sf_bessel_Kn_scaled(4.0,jot));
-      }
-      dsdT_term+=(-2.0*tt+dj)/tt/tt/tt*pterm+(2.0*tt+dj)/tt/tt*enterm-
-	(dj*(xx+1.0)*enterm*tanh(dj*(xx+1.0)/tt))/tt/tt+
-	(dj*dj*(xx+1.0)*(xx+1.0)*pterm/pow(cosh(dj*(xx+1.0)/tt),2.0))/
-	pow(tt,4.0);
-      dsdT_term/=f.ms;
+      dndmu_term=nterm*jot;
+      dndT_term=jot*enterm*tanh(jot*(xx+1.0))-
+	(tt+2.0*dj*(1.0+xx))/sinh(jot*(xx+1.0))*nterm/tt/tt;
+      dsdT_term=(2.0*dj*(1.0+xx)*tanh(jot*(xx+1.0))-3.0*tt)*enterm/tt/tt+
+	(2.0*pow(dj*1.0+xx,2.0)*tanh(jot*(xx+1.0))-
+	 dj*dj*(2.0+2.0*xx+xx*xx)*cosh(jot*(xx+1.0))-
+	 5.0*dj*(1.0+xx)*tt)*nterm/dj/tt/tt/tt;
     }
+    dndmu_term/=f.ms;
+    dndT_term/=f.ms;
+    dsdT_term/=f.ms;
 
     if (j==1) first_term=pterm;
     f.dndmu+=dndmu_term;

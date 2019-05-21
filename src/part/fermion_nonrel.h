@@ -74,8 +74,8 @@ namespace o2scl {
       of \f$ mu = m \f$ without calling the error handler.
 
       \future Implement \ref o2scl::fermion_nonrel::pair_density() and
-      \ref o2scl::fermion_nonrel::pair_mu(). AWS, 1/23/19: it is not
-      entirely clear to me that this antiparticles will be useful.
+      \ref o2scl::fermion_nonrel::pair_mu(). [AWS, 1/23/19: it is not
+      entirely clear to me that antiparticles will be useful.]
 
       \future This could be improved by performing a Chebyshev
       approximation (for example) to invert the density integral so

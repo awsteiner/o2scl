@@ -492,10 +492,13 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    void ndeg_terms(size_t j, double dj, double jot, double tt,
+    void ndeg_terms(size_t j, double tt,
 		    double xx, double m, bool inc_rest_mass,
 		    bool inc_antip, double &pterm, double &nterm,
 		    double &enterm) {
+      
+      double dj=((double)j);
+      double jot=dj/tt;
       
       if (inc_antip==false) {
 	pterm=exp(jot*xx)/jot/jot*gsl_sf_bessel_Kn_scaled(2.0,jot);
@@ -604,74 +607,10 @@ namespace o2scl {
 
       for(size_t j=1;j<=max_term;j++) {
 
-	double dj=((double)j);
-	double jot=dj/tt;
-
 	double pterm, nterm, enterm;
-
-	if (inc_antip==false) {
-	  pterm=exp(dj*psi)/jot/jot*gsl_sf_bessel_Kn_scaled(2.0,jot);
-	  if (j%2==0) {
-	    pterm*=-1.0;
-	  }
-	  nterm=pterm*dj/temper;
-	} else {
-	  if (f.inc_rest_mass) {
-	    pterm=exp(-jot)*2.0*cosh(dj*f.nu/temper)/jot/jot*
-	      gsl_sf_bessel_Kn_scaled(2.0,jot);
-	    if (j%2==0) {
-	      pterm*=-1.0;
-	    }
-	    nterm=pterm*tanh(dj*f.nu/temper)*dj/temper;
-	  } else {
-	    pterm=exp(-jot)*2.0*cosh(dj*(f.nu+f.m)/temper)/jot/jot*
-	      gsl_sf_bessel_Kn_scaled(2.0,jot);
-	    if (j%2==0) {
-	      pterm*=-1.0;
-	    }
-	    nterm=pterm*tanh(dj*(f.nu+f.m)/temper)*dj/temper;
-	  }
-	}
-    
-	if (inc_antip==false) {
-	  if (j%2==0) {
-	    enterm=(pterm*2.0/tt-pterm/tt/tt*dj-
-		    exp(dj*psi)/2.0/dj*(gsl_sf_bessel_Kn_scaled(1.0,jot)+
-					gsl_sf_bessel_Kn_scaled(3.0,jot)))/f.ms-
-	      pterm*dj*psi_num/temper/temper;
-	  } else {
-	    enterm=(pterm*2.0/tt-pterm/tt/tt*dj+
-		    exp(dj*psi)/2.0/dj*(gsl_sf_bessel_Kn_scaled(1.0,jot)+
-					gsl_sf_bessel_Kn_scaled(3.0,jot)))/f.ms-
-	      pterm*dj*psi_num/temper/temper;
-	  }
-	} else {
-	  double nu2=f.nu;
-	  if (f.inc_rest_mass==false) nu2+=f.m;
-	  if (j%2==0) {
-	    enterm=(pterm*2.0/tt-cosh(dj*nu2/temper)/dj*exp(-jot)*
-		    (gsl_sf_bessel_Kn_scaled(1.0,jot)+
-		     gsl_sf_bessel_Kn_scaled(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
-		    tanh(dj*nu2/temper)/f.ms)/f.ms;
-	  } else {
-	    enterm=(pterm*2.0/tt+cosh(dj*nu2/temper)/dj*exp(-jot)*
-		    (gsl_sf_bessel_Kn_scaled(1.0,jot)+
-		     gsl_sf_bessel_Kn_scaled(3.0,jot))+2.0*pterm*nu2*dj/tt/tt*
-		    tanh(dj*nu2/temper)/f.ms)/f.ms;
-	  }
-	}
-
-	if (false && f.inc_rest_mass==true) {
-	  if (inc_antip) {
-	    std::cout << f.inc_rest_mass << " " << inc_antip << " "
-		      << pterm << " " << nterm << " " << enterm << std::endl;
-	    ndeg_terms(j,dj,jot,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
-		       pterm,nterm,enterm);
-	    std::cout << f.inc_rest_mass << " " << inc_antip << " "
-		      << pterm << " " << nterm << " " << enterm << std::endl;
-	    exit(-1);
-	  }
-	}
+	
+	ndeg_terms(j,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
+		   pterm,nterm,enterm);
 
 	if (j==1) first_term=pterm;
 	f.pr+=pterm;

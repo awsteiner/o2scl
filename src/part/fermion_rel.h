@@ -284,12 +284,7 @@ namespace o2scl {
     virtual int pair_density(fermion &f, double temper);
 
     /** \brief Calculate effective chemical potential from density
-
-	\future This function might be improved by generating a
-	bracket for a bracketing solver, rather than \ref
-	o2scl::root_cern which is the default for \ref
-	o2scl::fermion_rel::density_root.
-    */
+     */
     virtual int nu_from_n(fermion &f, double temper);
     
     /// The non-degenerate integrator

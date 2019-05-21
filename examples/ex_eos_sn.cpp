@@ -53,33 +53,33 @@ public:
     // the first entry is ignored
     fin >> n_nB >> n_nB;
     nB_grid.resize(n_nB);
-    for(size_t j=0;j<n_nB;j++) {
+    for(int j=0;j<n_nB;j++) {
       fin >> nB_grid[j];
       grid.push_back(nB_grid[j]);
     }
     fin.close();
     
-    ifstream fin("eos.yq");
+    ifstream fin2("eos.yq");
     int n_Ye;
     // the first entry is ignored
-    fin >> n_Ye >> n_Ye;
+    fin2 >> n_Ye >> n_Ye;
     Ye_grid.resize(n_Ye);
-    for(size_t j=0;j<n_Ye;j++) {
-      fin >> Ye_grid[j];
+    for(int j=0;j<n_Ye;j++) {
+      fin2 >> Ye_grid[j];
       grid.push_back(Ye_grid[j]);
     }
-    fin.close();
+    fin2.close();
     
-    ifstream fin("eos.t");
+    ifstream fin3("eos.t");
     int n_T;
     // the first entry is ignored
-    fin >> n_T >> n_T;
+    fin3 >> n_T >> n_T;
     T_grid.resize(n_T);
-    for(size_t j=0;j<n_T;j++) {
-      fin >> T_grid[j];
+    for(int j=0;j<n_T;j++) {
+      fin3 >> T_grid[j];
       grid.push_back(T_grid[j]);
     }
-    fin.close();
+    fin3.close();
 
     alloc();
     
@@ -87,74 +87,74 @@ public:
       arr[i]->set_grid_packed(grid);
     }
 
-    ifstream fin("eos.thermo");
-    fin >> m_neut;
-    fin >> m_prot;
+    ifstream fin4("eos.thermo");
+    fin4 >> m_neut;
+    fin4 >> m_prot;
     
     double dtemp, dtemp2;
-    for(size_t m=0;m<n_T;m++) {
-      for(size_t k=0;k<n_Ye;k++) {
-	for(size_t j=0;j<n_nB;j++) {
+    for(int m=0;m<n_T;m++) {
+      for(int k=0;k<n_Ye;k++) {
+	for(int j=0;j<n_nB;j++) {
 	  
 	  // Skip the grid points since we know them already
-	  fin >> dtemp;
-	  fin >> dtemp;
-	  fin >> dtemp;
+	  fin4 >> dtemp;
+	  fin4 >> dtemp;
+	  fin4 >> dtemp;
 	  
-	  fin >> dtemp;
-	  P.set(i,j,k,dtemp*nB_grid[j]);
-	  fin >> dtemp;
-	  S.set(i,j,k,dtemp);
+	  fin4 >> dtemp;
+	  P.set(j,k,m,dtemp*nB_grid[j]);
+	  fin4 >> dtemp;
+	  S.set(j,k,m,dtemp);
 	  
-	  fin >> dtemp;
-	  mun.set(i,j,k,(dtemp+1.0)*m_neut);
-	  fin >> dtemp2;
-	  mup.set(i,j,k,dtemp2*m_neut+(dtemp+1.0)*m_neut);
+	  fin4 >> dtemp;
+	  mun.set(j,k,m,(dtemp+1.0)*m_neut);
+	  fin4 >> dtemp2;
+	  mup.set(j,k,m,dtemp2*m_neut+(dtemp+1.0)*m_neut);
 	  // Skip the lepton chemical potential
-	  fin >> dtemp;
+	  fin4 >> dtemp;
 	  
-	  fin >> dtemp;
-	  F.set(i,j,k,(dtemp+1.0)*nB_grid[j]*m_neut);
-	  fin >> dtemp;
-	  E.set(i,j,k,(dtemp+1.0)*nB_grid[j]*m_neut);
+	  fin4 >> dtemp;
+	  F.set(j,k,m,(dtemp+1.0)*nB_grid[j]*m_neut);
+	  fin4 >> dtemp;
+	  E.set(j,k,m,(dtemp+1.0)*nB_grid[j]*m_neut);
 
 	  // Skip the last column
-	  fin >> dtemp;
+	  fin4 >> dtemp;
 	}
       }
     }
-    fin.close();
+    fin4.close();
 
-    ifstream fin("eos.compo");
+    ifstream fin5("eos.compo");
     
-    for(size_t m=0;m<n_T;m++) {
-      for(size_t k=0;k<n_Ye;k++) {
-	for(size_t j=0;j<n_nB;j++) {
+    for(int m=0;m<n_T;m++) {
+      for(int k=0;k<n_Ye;k++) {
+	for(int j=0;j<n_nB;j++) {
 	  
 	  // Skip the grid points since we know them already
-	  fin >> dtemp;
-	  fin >> dtemp;
-	  fin >> dtemp;
+	  fin5 >> dtemp;
+	  fin5 >> dtemp;
+	  fin5 >> dtemp;
 
-	  fin >> dtemp;
-	  fin >> dtemp;
-	  fin >> dtemp;
-	  fin >> dtemp;
-	  fin >> dtemp;
-	  fin >> dtemp;
+	  fin5 >> dtemp;
+	  fin5 >> dtemp;
+	  fin5 >> dtemp;
+	  fin5 >> dtemp;
+	  fin5 >> dtemp;
+	  fin5 >> dtemp;
 	  
 	  // This isn't right yet
-	  fin >> dtemp;
-	  A.set(i,j,k,dtemp);
-	  fin >> dtemp;
-	  Z.set(i,j,k,dtemp);
+	  fin5 >> dtemp;
+	  A.set(j,k,m,dtemp);
+	  fin5 >> dtemp;
+	  Z.set(j,k,m,dtemp);
 	  
 	  // Skip the last column
-	  fin >> dtemp;
+	  fin5 >> dtemp;
 	}
       }
     }
-    fin.close();
+    fin5.close();
 
     // Loaded must be set to true before calling set_interp()
     n_oth=0;
@@ -715,6 +715,12 @@ protected:
       name="ls375";
       mode=eos_sn_oo::ls_mode;
       fname=directory+"/LS375_234r_136t_50y_analmu_20091212_SVNr26.h5";
+    } else if (sv[1]=="acmp_apr_sna") {
+      mode=eos_sn_oo::sht_mode;
+      fname="APR_0000_rho393_temp133_ye66_gitM180edd5_20190225.h5";
+    } else if (sv[1]=="acmp_apr_nse") {
+      mode=eos_sn_oo::sht_mode;
+      fname="APR_0000_rho393_temp133_ye66_gitM180edd5_20190225.h5";
     } else {
       O2SCL_ERR("Need EOS type.",exc_efailed);
     }
