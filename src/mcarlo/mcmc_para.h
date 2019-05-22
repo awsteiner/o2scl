@@ -2921,6 +2921,13 @@ namespace o2scl {
 	    max_size=ac_coeff_temp[tindex].size();
 	  }
 	}
+	if (false) {
+	  std::cout << "acf: " << icol << " "
+		    << j << " " << k << " " << mult.size() << " "
+		    << table->get_nlines() << " "
+		    << o2scl::vector_sum<std::vector<double>,double>
+	    (mult.size(),mult) << " " << max_size << std::endl;
+	}
       }
     }
     for(size_t j=0;j<max_size;j++) {
