@@ -117,7 +117,9 @@ bool fermion_deriv_thermo::calc_mu_ndeg
   // 0 are useful.
   static const size_t max_term=200;
   
-  double first_term=0.0;
+  double first_dndT=0.0;
+  double first_dsdT=0.0;
+  double first_dndmu=0.0;
 
   double nu2=f.nu;
   if (f.inc_rest_mass==false) nu2+=f.m;
@@ -159,14 +161,18 @@ bool fermion_deriv_thermo::calc_mu_ndeg
     dndT_term/=f.ms;
     dsdT_term/=f.ms;
 
-    if (j==1) first_term=pterm;
+    if (j==1) {
+      first_dndT=dndT_term;
+      first_dsdT=dsdT_term;
+      first_dndmu=dndmu_term;
+    }
     f.dndmu+=dndmu_term;
     f.dndT+=dndT_term;
     f.dsdT+=dsdT_term;
 
-    // If the first term is zero, then the rest of the terms
+    // If the first terms are zero, then the rest of the terms
     // will be zero so just return early
-    if (first_term==0.0) {
+    if (first_dndT==0.0 && first_dndmu==0.0 && first_dsdT==0.0) {
       f.dndmu=0.0;
       f.dndT=0.0;
       f.dsdT=0.0;
@@ -175,7 +181,10 @@ bool fermion_deriv_thermo::calc_mu_ndeg
     
     // Stop if the last term is sufficiently small compared to
     // the first term
-    if (j>1 && fabs(pterm)<prec*fabs(first_term)) {
+    if (j>1 &&
+	fabs(dndT_term)<prec*fabs(first_dndT) &&
+	fabs(dndmu_term)<prec*fabs(first_dndmu) &&
+	fabs(dsdT_term)<prec*fabs(first_dsdT)) {
       f.dndT*=prefac;
       f.dndmu*=prefac;
       f.dsdT*=prefac;
