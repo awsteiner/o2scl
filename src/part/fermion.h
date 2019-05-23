@@ -490,7 +490,7 @@ namespace o2scl {
       return true;
     }
 
-    /** \brief Desc
+    /** \brief Compute a term in the nondegenerate expansion
      */
     void ndeg_terms(size_t j, double tt,
 		    double xx, double m, bool inc_rest_mass,

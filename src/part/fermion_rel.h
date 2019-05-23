@@ -969,7 +969,7 @@ namespace o2scl {
       double initial_guess=f.nu;
   
       double nex=f.nu/temper;
-
+      
       funct mf=std::bind(std::mem_fn<double(double,fermion &,double,bool)>
 			 (&fermion_rel::pair_fun),
 			 this,std::placeholders::_1,std::ref(f),temper,false);

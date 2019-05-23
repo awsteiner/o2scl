@@ -387,9 +387,9 @@ namespace o2scl {
       return;
     }      
     
-    /** \brief Check the energy density, pressure, and entropy against
+    /** \brief Check the three derivatives against
 	the exact result and update
-     */
+    */
     template<class part1_t, class part2_t, class part3_t>
       void check_derivs(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
 			double T, double mot, double psi,

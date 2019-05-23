@@ -123,12 +123,32 @@ int main(int argc, char *argv[]) {
   cout << pc_fdr_dir << endl;
   cout << endl;
   
-  if (false) {
+  if (true) {
     double dc_dir=pdcc.part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
-      (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
+      (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,2,true);
     t.test_rel(dc_dir,0.0,8.0e-6,"deriv_calibrate direct");
     cout << dc_dir << endl;
     cout << endl;
+
+    sf.mu=-1.1e4;
+    sf.m=1.0e4;
+    double T2=1.0e2;
+    sf.inc_rest_mass=true;
+    sf.non_interacting=true;
+
+    // First compute the density 
+    fr.pair_mu(sf,T2);
+    double denx=sf.n;
+    cout << "denx: " << denx << endl;
+
+    fr.pair_density(sf,T2);
+    cout << sf.mu << endl;
+    
+    // Now, 
+    snf.pair_density(sf,T2);
+    cout << sf.dndmu << " " << sf.dndT << " " << sf.dsdT << endl;
+    
+    exit(-1);
   }
 
   cout << "----------------------------------------------------" << endl;

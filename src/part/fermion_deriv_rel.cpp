@@ -537,7 +537,8 @@ int fermion_deriv_rel::pair_mu(fermion_deriv &f, double temper) {
 }
 
 int fermion_deriv_rel::pair_density(fermion_deriv &f, double temper) {
-  fr.pair_density_tlate<fermion_deriv>(f,temper);
+  int ret=fr.pair_density_tlate<fermion_deriv>(f,temper);
+  //cout << "ret: " << ret << endl;
   pair_mu(f,temper);
   return 0;
 }
