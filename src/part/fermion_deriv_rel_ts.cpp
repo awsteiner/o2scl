@@ -128,6 +128,7 @@ int main(int argc, char *argv[]) {
       (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,2,true);
     t.test_rel(dc_dir,0.0,8.0e-6,"deriv_calibrate direct");
     cout << dc_dir << endl;
+    /*
     cout << endl;
 
     sf.mu=-1.1e4;
@@ -149,6 +150,7 @@ int main(int argc, char *argv[]) {
     cout << sf.dndmu << " " << sf.dndT << " " << sf.dsdT << endl;
     
     exit(-1);
+    */
   }
 
   cout << "----------------------------------------------------" << endl;
@@ -164,7 +166,7 @@ int main(int argc, char *argv[]) {
   cout << pc_fdr_byp << endl;
   cout << endl;
 
-  if (false) {
+  if (true) {
     double dc_byp=pdcc.part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
       (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
     t.test_rel(dc_byp,0.0,1.0e-6,"deriv_calibrate by parts");
@@ -185,7 +187,7 @@ int main(int argc, char *argv[]) {
   cout << pc_fdr_auto << endl;
   cout << endl;
 
-  if (false) {
+  if (true) {
     double dc_auto=pdcc.part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
       (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
     t.test_rel(dc_auto,0.0,1.0e-6,"deriv_calibrate auto");
