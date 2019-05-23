@@ -283,7 +283,7 @@ int fermion_deriv_rel::calc_mu(fermion_deriv &f, double temper) {
   f.pr=-f.ed+temper*f.en+f.nu*f.n;
   // Pressure uncertainties are not computed
   unc.pr=0.0;
-  
+
   return 0;
 }
 
@@ -538,7 +538,6 @@ int fermion_deriv_rel::pair_mu(fermion_deriv &f, double temper) {
 
 int fermion_deriv_rel::pair_density(fermion_deriv &f, double temper) {
   int ret=fr.pair_density_tlate<fermion_deriv>(f,temper);
-  //cout << "ret: " << ret << endl;
   pair_mu(f,temper);
   return 0;
 }

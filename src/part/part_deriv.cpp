@@ -121,6 +121,10 @@ bool fermion_deriv_thermo::calc_mu_ndeg
 
   double nu2=f.nu;
   if (f.inc_rest_mass==false) nu2+=f.m;
+
+  f.dndmu=0.0;
+  f.dndT=0.0;
+  f.dsdT=0.0;
   
   for(size_t j=1;j<=max_term;j++) {
     

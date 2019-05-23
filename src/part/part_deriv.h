@@ -1195,7 +1195,7 @@ namespace o2scl {
 
 	// k=0,2 are with rest mass, k=1,3 are without
 	// k=0,1 are non-interacting, k=2,3 are interacting
-	for(size_t k=5;k<4;k++) {
+	for(size_t k=0;k<4;k++) {
 
 	  double ret_local=0.0;
 
@@ -1228,7 +1228,7 @@ namespace o2scl {
 	      p.mu=p.m;
 
 	      th.pair_density(p,T);
-	
+
 	      dev.dndmu+=fabs((p.dndmu-exact.dndmu)/exact.dndmu);
 	      dev.dndT+=fabs((p.dndT-exact.dndT)/exact.dndT);
 	      dev.dsdT+=fabs((p.dsdT-exact.dsdT)/exact.dsdT);
