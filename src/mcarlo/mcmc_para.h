@@ -2894,7 +2894,8 @@ namespace o2scl {
       all threads
    */
   virtual void ac_coeffs(size_t icol,
-			 std::vector<double> &ac_coeff_avg) {
+			 std::vector<double> &ac_coeff_avg,
+			 int loc_verbose=0) {
 
     ac_coeff_avg.resize(0);
 
@@ -2921,10 +2922,10 @@ namespace o2scl {
 	    max_size=ac_coeff_temp[tindex].size();
 	  }
 	}
-	if (false) {
-	  std::cout << "acf: " << icol << " "
-		    << j << " " << k << " " << mult.size() << " "
-		    << table->get_nlines() << " "
+	if (loc_verbose>0) {
+	  std::cout << "column index, thread, walker, length, mult. sum: "
+		    << icol << " " << j << " " << k << " "
+		    << mult.size() << " "
 		    << o2scl::vector_sum<std::vector<double>,double>
 	    (mult.size(),mult) << " " << max_size << std::endl;
 	}
