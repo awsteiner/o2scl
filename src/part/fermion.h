@@ -502,11 +502,11 @@ namespace o2scl {
       
       if (inc_antip==false) {
 	pterm=exp(jot*xx)/jot/jot*gsl_sf_bessel_Kn_scaled(2.0,jot);
+	if (j%2==0) pterm*=-1.0;
 	nterm=pterm*jot/m;
 	double enterm1=(4.0*tt-dj*xx-dj)/dj/tt*nterm;
 	double enterm2=exp(jot*xx)/dj*gsl_sf_bessel_Kn_scaled(1.0,jot)/m;
 	if (j%2==0) {
-	  pterm*=-1.0;
 	  enterm=enterm1-enterm2;
 	} else {
 	  enterm=enterm1+enterm2;
@@ -514,12 +514,12 @@ namespace o2scl {
       } else {
 	pterm=exp(-jot)*2.0*cosh(jot*(xx+1.0)/tt)/jot/jot*
 	  gsl_sf_bessel_Kn_scaled(2.0,jot);
+	if (j%2==0) pterm*=-1.0;
 	nterm=pterm*tanh(jot*(xx+1.0))*jot;
 	double enterm1=-(1.0+xx)/tt*nterm/m;
 	double enterm2=2.0*exp(-jot*xx)/dj*cosh(jot*(xx+1.0))*
 	  gsl_sf_bessel_Kn_scaled(3.0,jot)/m;
 	if (j%2==0) {
-	  pterm*=-1.0;
 	  enterm=enterm1-enterm2;
 	} else {
 	  enterm=enterm1+enterm2;

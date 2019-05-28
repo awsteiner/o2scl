@@ -170,6 +170,13 @@ bool fermion_deriv_thermo::calc_mu_ndeg
     f.dndT+=dndT_term;
     f.dsdT+=dsdT_term;
 
+    /*
+      cout << j << " " << dj << " " << tt << " " << xx << " "
+      << f.ms << " " << pterm << " " << nterm << " "
+      << enterm << " "
+      << dndmu_term << " " << dndT_term << endl;
+    */
+
     // If the first terms are zero, then the rest of the terms
     // will be zero so just return early
     if (first_dndT==0.0 && first_dndmu==0.0 && first_dsdT==0.0) {
