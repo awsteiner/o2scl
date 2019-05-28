@@ -217,7 +217,7 @@ namespace o2scl {
    */
   virtual void mcmc_cleanup() {
     if (verbose>0) {
-      for(size_t it=0;it<n_chains_per_rank;it++) {
+      for(size_t it=0;it<n_threads;it++) {
 	scr_out << "mcmc (" << it << "," << mpi_rank
 	<< "): accept=" << n_accept[it]
 	<< " reject=" << n_reject[it] << std::endl;
@@ -228,7 +228,11 @@ namespace o2scl {
   }
 
   /** \brief Function to run for the best point 
-   */
+
+      When this function is in a OpenMP parallel region it is
+      marked critical to allow the user to store data which
+      is shared across threads. 
+  */
   virtual void best_point(vec_t &best, double w_best, data_t &dat) {
     return;
   }
@@ -241,10 +245,6 @@ namespace o2scl {
       the initialization phase for the affine sampling algorithm.
   */
   std::vector<size_t> curr_walker;
-
-  /** \brief Number of fully independent chains in each MPI rank
-   */
-  size_t n_chains_per_rank;
 
   public:
 
@@ -264,14 +264,14 @@ namespace o2scl {
   /** \brief The number of Metropolis steps which were accepted in 
       each independent chain (summed over all walkers)
 
-      This vector has a size equal to \ref n_chains_per_rank .
+      This vector has a size equal to \ref n_threads .
   */
   std::vector<size_t> n_accept;
   
   /** \brief The number of Metropolis steps which were rejected in 
       each independent chain (summed over all walkers)
 
-      This vector has a size equal to \ref n_chains_per_rank .
+      This vector has a size equal to \ref n_threads .
   */
   std::vector<size_t> n_reject;
   //@}
@@ -314,8 +314,12 @@ namespace o2scl {
   
   /// Stepsize factor (default 10.0)
   double step_fac;
-    
-    std::vector<double> step_vec;    
+  
+  /// Optionally specify step sizes for each parameter
+  std::vector<double> step_vec;
+
+  /// If true, couple the walkers across threads (default false)
+  bool couple_threads;
 
   /** \brief Number of warm up steps (successful steps not
       iterations) (default 0)
@@ -331,6 +335,13 @@ namespace o2scl {
 
       The random number generator is modified so that each thread and
       each rank has a different set of random numbers.
+
+      If this value is zero, then the random number generators are
+      seeded by the clock time in seconds, so that if two separate
+      simulations begin at the same time (to within 1 second) they
+      will produce identical results. This can be avoided simply by
+      ensuring that user_seed is different between the two
+      simulations.
   */
   int user_seed;
 
@@ -342,14 +353,10 @@ namespace o2scl {
   */
   size_t max_bad_steps;
 
-  /** \brief Number of walkers for affine-invariant MC or 1 
-      otherwise (default 1)
+  /** \brief Number of walkers (per openMP thread) for
+      affine-invariant MC or 1 otherwise (default 1)
   */
   size_t n_walk;
-
-  /** \brief Number of walkers per thread (default 1)
-   */
-  size_t n_walk_per_thread;
 
   /** \brief If true, call the error handler if msolve() or
       msolve_de() does not converge (default true)
@@ -401,6 +408,7 @@ namespace o2scl {
     max_time=0.0;
     max_iters=0;
     meas_for_initial=true;
+    couple_threads=false;
   }
 
   /// Number of OpenMP threads
@@ -409,7 +417,9 @@ namespace o2scl {
   /** \brief Initial points in parameter space
 
       To fully specify all of the initial points, this should be 
-      a vector of size \ref n_walk times \ref n_threads .
+      a vector of size \ref n_walk times \ref n_threads . Initial
+      points are used for multiple threads and/or walkers if the
+      full number of initial points is not specified.
   */
   std::vector<ubvector> initial_points;
 
@@ -461,7 +471,7 @@ namespace o2scl {
 
     if (initial_points.size()==0) {
       
-      // Setup initial guess if not specified
+      // Setup initial guess from midpoint if not specified
       initial_points.resize(1);
       initial_points[0].resize(n_params);
       for(size_t k=0;k<n_params;k++) {
@@ -538,40 +548,6 @@ namespace o2scl {
     // Storage for return values from each thread
     std::vector<int> func_ret(n_threads), meas_ret(n_threads);
       
-    // Fix the number of walkers if it is too small
-    if (aff_inv) {
-      if (n_walk<=1) {
-	std::cout << "mcmc_para::mcmc(): Requested only 1 walker, "
-		  << "forcing 2 walkers." << std::endl;
-	n_walk=2;
-      }
-#ifdef O2SCL_NEVER_DEFINED
-      /*
-	n_walk is always greater than or equal to n_walk_per_thread,
-	and n_chains_per_rank * n_walk = n_walk_per_thread * n_threads
-	thus n_threads is always larger than n_chains_per_rank.
-      */
-      if (n_walk_per_thread>n_walk) {
-	O2SCL_ERR2("More walkers per thread than total walkers ",
-		   "in mcmc_para::mcmc().",o2scl::exc_einval);
-      }
-      n_chains_per_rank=n_walk_per_thread*n_threads/n_walk;
-      if (n_chains_per_walk*n_walk!=n_walk_per_thread*n_threads) {
-	std::cout << "mcmc_para::mcmc(): Could not evenly "
-		  << "organize threads and walkers." << std::endl;
-	std::cout << "n_threads: " << n_threads << std::endl;
-	std::cout << "n_walk: " << n_walk << std::endl;
-	std::cout << "n_walk_per_thread: "
-		  << n_walk_per_thread << << std::endl;
-	std::cout << "n_chains_per_rank: "
-		  << n_chains_per_rank << << std::endl;
-      }
-#endif
-    }
-    
-    n_walk_per_thread=n_walk;
-    n_chains_per_rank=n_threads;
-    
     // Fix 'step_fac' if it's less than or equal to zero
     if (step_fac<=0.0) {
       if (aff_inv) {
@@ -586,7 +562,7 @@ namespace o2scl {
       }
     }
     
-    // Set RNGs with a different seed for each thread and rank
+    // Set RNGs with a different seed for each thread and rank. 
     rg.resize(n_threads);
     unsigned long int seed=time(0);
     if (this->user_seed!=0) {
@@ -599,9 +575,9 @@ namespace o2scl {
     
     // Keep track of successful and failed MH moves in each
     // independent chain
-    n_accept.resize(n_chains_per_rank);
-    n_reject.resize(n_chains_per_rank);
-    for(size_t it=0;it<n_chains_per_rank;it++) {
+    n_accept.resize(n_threads);
+    n_reject.resize(n_threads);
+    for(size_t it=0;it<n_threads;it++) {
       n_accept[it]=0;
       n_reject[it]=0;
     }
@@ -612,7 +588,7 @@ namespace o2scl {
     if (n_warm_up==0) warm_up=false;
 
     // Storage size required
-    size_t ssize=n_walk*n_chains_per_rank;
+    size_t ssize=n_walk*n_threads;
 
     // Allocate current point and current weight
     current.resize(ssize);
@@ -627,7 +603,7 @@ namespace o2scl {
 
     // Allocation of ret_value_counts should be handled by the
     // user in mcmc_init()
-    //ret_value_counts.resize(n_chains_per_rank);
+    //ret_value_counts.resize(n_threads);
 
     // Initialize data and switch arrays
     data_arr.resize(2*ssize);
@@ -655,9 +631,9 @@ namespace o2scl {
     // Proposal weight
     std::vector<double> q_prop(n_threads);
     
-    // Run mcmc_init() function. The initial point, stored in
-    // current[0] can be modified by this function and the local
-    // variable 'init' is not accessible to the mcmc_init() function.
+    // --------------------------------------------------------------
+    // Run the mcmc_init() function. 
+    
     int init_ret=mcmc_init();
     if (init_ret!=0) {
       O2SCL_ERR("Function mcmc_init() failed in mcmc_base::mcmc().",
@@ -665,16 +641,14 @@ namespace o2scl {
       return init_ret;
     }
 
-    // ---------------------------------------------------
-    // Initial verbose output (note that scr_out isn't
-    // created until the mcmc_init() function call above.
+    // --------------------------------------------------------------
+    // Initial verbose output (note that scr_out isn't created until
+    // the mcmc_init() function call above.
     
     if (verbose>=1) {
       if (aff_inv) {
 	scr_out << "mcmc: Affine-invariant step, n_params="
 		<< n_params << ", n_walk=" << n_walk
-		<< ", n_chains_per_rank=" << n_chains_per_rank
-		<< ",\n\tn_walk_per_thread=" << n_walk_per_thread
 		<< ", n_threads=" << n_threads << ", rank="
 		<< mpi_rank << ", n_ranks="
 		<< mpi_size << std::endl;
@@ -707,7 +681,7 @@ namespace o2scl {
 	for(size_t it=0;it<n_threads;it++) {
 	  
 	  // Initialize each walker in turn
-	  for(curr_walker[it]=0;curr_walker[it]<n_walk_per_thread &&
+	  for(curr_walker[it]=0;curr_walker[it]<n_walk &&
 		mcmc_done_flag[it]==false;curr_walker[it]++) {
 
 	    // Index in storage
@@ -866,7 +840,7 @@ namespace o2scl {
 	}
       }
 
-      // End of 'if (aff_inv)'
+      // End of 'if (aff_inv)' for initial point evaluation
       
     } else {
 
@@ -883,8 +857,8 @@ namespace o2scl {
 	for(size_t it=0;it<n_threads;it++) {
 	  
 	  // Note that this value is used (e.g. in
-	  // mcmc_para_table::add_line() ) even if aff_inv is false, so we
-	  // set it to zero here.
+	  // mcmc_para_table::add_line() ) even if aff_inv is false,
+	  // so we set it to zero here.
 	  curr_walker[it]=0;
 	  
 	  // Copy from the initial points array into current point
@@ -1159,21 +1133,21 @@ namespace o2scl {
 	    
 	      if (pd_mode) {
 		/*
-		if (mcmc_iters%100==0) {
-		std::cout.setf(std::ios::showpos);
-		std::cout.precision(4);
-		double v1=prop_dist[it]->log_pdf(next[it],current[it]);
-		double v2=prop_dist[it]->log_pdf(current[it],next[it]);
-		std::cout << "PD: " << w_current[it] << " "
-		<< w_next[it] << " "
-		<< v1 << " " << v2 << " " << q_prop[it] << " "
-		<< w_next[it]-w_current[sindex]+q_prop[it]
-		<< std::endl;
-		//std::cout << current[it][0] << " " << next[it][0]
-		//<< std::endl;
-		std::cout.precision(6);
-		std::cout.unsetf(std::ios::showpos);
-		}
+		  if (mcmc_iters%100==0) {
+		  std::cout.setf(std::ios::showpos);
+		  std::cout.precision(4);
+		  double v1=prop_dist[it]->log_pdf(next[it],current[it]);
+		  double v2=prop_dist[it]->log_pdf(current[it],next[it]);
+		  std::cout << "PD: " << w_current[it] << " "
+		  << w_next[it] << " "
+		  << v1 << " " << v2 << " " << q_prop[it] << " "
+		  << w_next[it]-w_current[sindex]+q_prop[it]
+		  << std::endl;
+		  //std::cout << current[it][0] << " " << next[it][0]
+		  //<< std::endl;
+		  std::cout.precision(6);
+		  std::cout.unsetf(std::ios::showpos);
+		  }
 		*/
 		if (r<exp(w_next[it]-w_current[sindex]+q_prop[it])) {
 		  accept=true;
@@ -1336,16 +1310,7 @@ namespace o2scl {
 
       while (!main_done) {
 
-	// Choose walker to move (or zero when aff_inv is false)
 	std::vector<double> smove_z(n_threads);
-	for(size_t it=0;it<n_threads;it++) {
-	  curr_walker[it]=0;
-	  smove_z[it]=0.0;
-	  // Choose walker to move (same for all threads)
-	  if (aff_inv) {
-	    curr_walker[it]=mcmc_iters % n_walk;
-	  }
-	}
       
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
@@ -1356,30 +1321,44 @@ namespace o2scl {
 #endif
 	  for(size_t it=0;it<n_threads;it++) {
 	  
+	    // Choose walker to move
+	    curr_walker[it]=mcmc_iters % n_walk;
+	    
 	    // ---------------------------------------------------
 	    // Select next point
 	  
-	    if (aff_inv) {
-	      // Choose jth walker
-	      size_t ij;
-	      do {
-		ij=((size_t)(rg[it].random()*((double)n_walk)));
-	      } while (ij==curr_walker[it] || ij>=n_walk);
+	    // Choose jth walker
+	    size_t ij;
+	      
+	    size_t n_tot;
+	    if (couple_threads) {
+	      n_tot=n_walk*n_threads;
+	    } else {
+	      n_tot=n_walk;
+	    }
+	      
+	    do {
+	      ij=((size_t)(rg[it].random()*((double)n_tot)));
+	    } while (ij==curr_walker[it] || ij>=n_tot);
 	    
-	      // Select z 
-	      double p=rg[it].random();
-	      double a=step_fac;
-	      smove_z[it]=(1.0-2.0*p+2.0*a*p+p*p-2.0*a*p*p+a*a*p*p)/a;
+	    // Select z 
+	    double p=rg[it].random();
+	    double a=step_fac;
+	    smove_z[it]=(1.0-2.0*p+2.0*a*p+p*p-2.0*a*p*p+a*a*p*p)/a;
+
+	    size_t jt=it;
+	    if (couple_threads && ij>n_walk) {
+	      jt+=(ij/n_walk)%n_threads;
+	      ij=ij%n_walk;
+	    }
 	    
-	      // Create new trial point
-	      for(size_t i=0;i<n_params;i++) {
-		next[it][i]=current[n_walk*it+ij][i]+
-		  smove_z[it]*(current[n_walk*it+curr_walker[it]][i]-
-			       current[n_walk*it+ij][i]);
-	      }
+	    // Create new trial point
+	    for(size_t i=0;i<n_params;i++) {
+	      next[it][i]=current[n_walk*jt+ij][i]+
+		smove_z[it]*(current[n_walk*it+curr_walker[it]][i]-
+			     current[n_walk*jt+ij][i]);
+	    }
 	    
-	    } 
-	  
 	    // ---------------------------------------------------
 	    // Compute next weight
       
@@ -1436,7 +1415,7 @@ namespace o2scl {
 	    }
 	  }
 	}
-	// End of parallel region
+	// End of first parallel region for aff_inv=true
 
 	// ---------------------------------------------------------
 	// Post-function verbose output in case parameter was out of
@@ -1507,21 +1486,10 @@ namespace o2scl {
 	    if (func_ret[it]==o2scl::success) {
 	      double r=rg[it].random();
 	    
-	      if (aff_inv) {
-		double ai_ratio=pow(smove_z[it],((double)n_params)-1.0)*
-		  exp(w_next[it]-w_current[sindex]);
-		if (r<ai_ratio) {
-		  accept=true;
-		}
-	      } else if (pd_mode) {
-		if (r<exp(w_next[it]-w_current[sindex]+q_prop[it])) {
-		  accept=true;
-		}
-	      } else {
-		// Metropolis algorithm
-		if (r<exp(w_next[it]-w_current[sindex])) {
-		  accept=true;
-		}
+	      double ai_ratio=pow(smove_z[it],((double)n_params)-1.0)*
+		exp(w_next[it]-w_current[sindex]);
+	      if (r<ai_ratio) {
+		accept=true;
 	      }
 
 	      // End of 'if (func_ret[it]==o2scl::success)'
@@ -1571,7 +1539,7 @@ namespace o2scl {
 
 	  }
 	}
-	// End of parallel region
+	// End of second parallel region for aff_inv=true
 
 	// -----------------------------------------------------------
 	// Post-measurement verbose output of iteration count, weight,
@@ -1676,10 +1644,10 @@ namespace o2scl {
 	}
 
 	// --------------------------------------------------------------
-	// End of main loop
+	// End of main loop for aff_inv=true
       }
 
-      // End of new loop
+      // End of conditional for aff_inv=true
     }
     
     // --------------------------------------------------------------
@@ -1736,7 +1704,7 @@ namespace o2scl {
       \note This function automatically sets \ref aff_inv
       to false and \ref n_walk to 1.
   */
-  template<class prob_vec_t> void set_proposal_ptrs(prob_vec_t &pv) {
+  template<class prob_ptr_vec_t> void set_proposal_ptrs(prob_ptr_vec_t &pv) {
     prop_dist.resize(pv.size());
     for(size_t i=0;i<pv.size();i++) {
       prop_dist[i]=pv[i];
@@ -2095,11 +2063,9 @@ namespace o2scl {
       hf.set_szt("file_update_time",this->file_update_time);
       hf.seti("mpi_rank",this->mpi_rank);
       hf.seti("mpi_size",this->mpi_size);
-      hf.set_szt("n_chains_per_rank",this->n_chains_per_rank);
       hf.set_szt("n_params",this->n_params);
       hf.set_szt("n_threads",this->n_threads);
       hf.set_szt("n_walk",this->n_walk);
-      hf.set_szt("n_walk_per_thread",this->n_walk_per_thread);
       hf.set_szt("n_warm_up",this->n_warm_up);
       hf.seti("pd_mode",this->pd_mode);
       hf.sets("prefix",this->prefix);
@@ -2644,7 +2610,7 @@ namespace o2scl {
 
   /** \brief Additional code to execute inside the
       OpenMP critical section
-   */
+  */
   virtual void critical_extra(size_t i_thread) {
 
     if (i_thread==0) {
@@ -2653,7 +2619,7 @@ namespace o2scl {
       bool updated=false;
       if (file_update_iters>0) {
 	size_t total_iters=0;
-	for(size_t it=0;it<this->n_chains_per_rank;it++) {
+	for(size_t it=0;it<this->n_threads;it++) {
 	  total_iters+=this->n_accept[it]+this->n_reject[it];
 	}
 	if (total_iters>=last_write_iters+file_update_iters) {
@@ -2892,7 +2858,7 @@ namespace o2scl {
   /** \brief Compute autocorrelation coefficient for column
       with index \c icol averaging over all walkers and 
       all threads
-   */
+  */
   virtual void ac_coeffs(size_t icol,
 			 std::vector<double> &ac_coeff_avg,
 			 int loc_verbose=0) {
