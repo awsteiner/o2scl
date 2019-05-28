@@ -1,0 +1,30 @@
+.title {
+    font-size: 200%;
+}
+
+h1 {
+    font-size: 150%;
+}
+
+.navpath ul {
+    font-size: 0px;
+    height:0px;
+    line-height:0px;
+}
+
+.navpath li.navelem a {
+    height:0px;
+}
+
+.navpath li.footer {
+    font-size: 0pt;
+}
+
+div.summary
+{
+    font-size: 0pt;
+}       
+
+.memItemLeft, .memTemplItemLeft {
+    white-space: normal;
+}
