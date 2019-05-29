@@ -72,7 +72,8 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_stiff.scr ex_chebapp.scr ex_poly.scr ex_conmin.scr \
 	ex_nucleus_rmf.scr ex_methast.scr ex_eos_had_skyrme.scr \
 	ex_nucmass.scr ex_tensor.scr ex_mcmc.scr ex_nstar_rot.scr \
-	ex_interp2_nogrid.scr ex_interp.scr ex_eos_gibbs.scr
+	ex_interp2_nogrid.scr ex_interp.scr ex_eos_gibbs.scr \
+	ex_fermion_summ.scr
 
 # ex_ode_it.scr ex_eos_sn.scr 
 
@@ -150,6 +151,7 @@ if O2SCL_EOSLIB
 
 EXTRA_PROGRAMS = \
 	ex_fptr \
+	ex_fermion_summ \
 	ex_mcmc \
 	ex_diff \
 	ex_interp \
@@ -258,6 +260,11 @@ ex_eos_sn_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_eos_sn_SOURCES = ex_eos_sn.cpp
 ex_eos_sn.scr: ex_eos_sn
 	./ex_eos_sn -help > ex_eos_sn.scr
+
+ex_fermion_summ_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_fermion_summ_SOURCES = ex_fermion_summ.cpp
+ex_fermion_summ.scr: ex_fermion_summ
+	./ex_fermion_summ -help > ex_fermion_summ.scr
 
 ex_eos_gibbs_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_eos_gibbs_SOURCES = ex_eos_gibbs.cpp
