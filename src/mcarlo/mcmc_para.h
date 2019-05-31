@@ -1348,7 +1348,7 @@ namespace o2scl {
 
 	    size_t jt=it;
 	    if (couple_threads && ij>n_walk) {
-	      jt+=(ij/n_walk)%n_threads;
+	      jt=(jt+ij/n_walk)%n_threads;
 	      ij=ij%n_walk;
 	    }
 	    
