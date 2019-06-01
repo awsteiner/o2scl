@@ -1351,9 +1351,25 @@ namespace o2scl {
 	      jt=(jt+ij/n_walk)%n_threads;
 	      ij=ij%n_walk;
 	    }
+
+	    if (couple_threads) {
+	      if (jt>n_threads || ij>n_walk) {
+		std::cout << "Problem 1." << std::endl;
+		std::cout << jt << " " << n_threads << " " << ij << " "
+			  << n_walk << std::endl;
+		exit(-1);
+	      }
+	    }
 	    
 	    // Create new trial point
 	    for(size_t i=0;i<n_params;i++) {
+	      if (n_walk*jt+ij>current.size() ||
+		  n_walk*it+curr_walker[it]>current.size()) {
+		std::cout << "Problem 2." << std::endl;
+		std::cout << jt << " " << ij << " " << it << " "
+			  << curr_walker[it] << std::endl;
+		exit(-1);
+	      }
 	      next[it][i]=current[n_walk*jt+ij][i]+
 		smove_z[it]*(current[n_walk*it+curr_walker[it]][i]-
 			     current[n_walk*jt+ij][i]);
