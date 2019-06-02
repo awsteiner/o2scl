@@ -15,6 +15,8 @@
     - \ref o2scl::funct : One function of one variable (used in 
     one-dimensional solver and minimizer classes, derivative classes,
     integration classes, etc.)
+    - \ref o2scl::funct_ld : One function of one variable using
+    long double 
     - \ref o2scl::multi_funct : One function of several variables (used
     in minimizer and integration classes)
     - \ref o2scl::mm_funct : \c n functions of \c n variables (used in 
@@ -27,6 +29,7 @@
       iterative solution
     - \ref o2scl::jac_funct : Jacobian function for solver and
       fitting classes
+    - \ref o2scl::fit_funct : Fit function
     - \ref o2scl::ool_hfunct : Hessian matrix function for constrained
       minimization
 

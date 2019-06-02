@@ -43,7 +43,7 @@
 namespace o2scl {
 #endif
 
-  /// \name Vector mean, standard deviation, and variance
+  /// \name Vector mean, std. dev., and variance in src/other/vec_stats.h
   //@{
   /** \brief Compute the mean of the first \c n elements of a vector
 
@@ -350,7 +350,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Vector absolute deviation, skewness, and kurtosis
+  /// \name Vector absolute deviation, skewness, etc. in src/other/vec_stats.h
   //@{
   /** \brief Absolute deviation from the specified mean
 
@@ -593,7 +593,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Other vector functions
+  /// \name Other vector functions in src/other/vec_stats.h
   //@{
   /** \brief Compute the covariance of two vectors
       
@@ -1076,7 +1076,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Weighted vector mean, standard deviation, and variance
+  /// \name Weighted vector mean, std. dev., etc. in src/other/vec_stats.h
   //@{
   /** \brief Compute the mean of weighted data
 
@@ -1344,7 +1344,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Other weighted vector functions
+  /// \name Other weighted vector functions in src/other/vec_stats.h
   //@{
   /** \brief The weighted covariance of two vectors
 
@@ -1615,7 +1615,7 @@ namespace o2scl {
   //@}
 
   // This section has to appear after wvector_mean()
-  /// \name Vector autocorrelation
+  /// \name Vector autocorrelation in src/other/vec_stats.h
   //@{
   /** \brief Lag-1 autocorrelation
 

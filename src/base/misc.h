@@ -66,6 +66,19 @@ namespace o2scl {
   */
   double fermi_function(double E, double mu, double T, double limit=40.0);
 
+  /** \brief Calculate a Bose-Einstein distribution function safely
+
+      \f$ \left[\exp\left(E/T-\mu/T\right)-1\right]^{-1} \f$ 
+
+      This function computes a Bose-Einstein distribution function
+      using an expansion to ensure accurate results when 
+      \f$ (E-\mu)/T \f$ is near zero. 
+
+      \note This function may return Inf or NAN if \c limit is too 
+      large, depending on the machine precision.
+      
+      This function is used in the \ref o2scl::boson_rel class.
+  */
   double bose_function(double E, double mu, double T, double limit=40.0);
 
   /** \brief Store the first line from the output of the shell

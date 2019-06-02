@@ -305,7 +305,7 @@ namespace o2scl {
       o2scl::set_err_fn((std::string(d)+d2).c_str(),			\
 			__FILE__,__LINE__,n); return n; } } while (0)
   
-  /// \name The error handler function 
+  /// \name The error handler function in err_hnd.h
   //@{
   /** \brief Call the error handler
    */

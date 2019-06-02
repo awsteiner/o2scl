@@ -109,7 +109,7 @@ namespace o2scl {
     }
   };
 
-  /// \name Copying vectors and matrices
+  /// \name Copying vectors and matrices in src/base/vector.h
   //@{
   /** \brief Simple vector copy
 
@@ -207,7 +207,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Tranpositions
+  /// \name Tranpositions in src/base/vector.h
   //@{
   /** \brief Simple transpose
       
@@ -296,7 +296,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Upper and lower triangular functions
+  /// \name Upper and lower triangular functions in src/base/vector.h
   //@{
   /** \brief Simple test that a matrix is lower triangular
    */
@@ -409,7 +409,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Swapping parts of vectors and matrices
+  /// \name Swapping parts of vectors and matrices in src/base/vector.h
   //@{
   /** \brief Swap the first \c N elements of two vectors
 
@@ -642,7 +642,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Sorting vectors
+  /// \name Sorting vectors in src/base/vector.h
   //@{
   /** \brief Provide a downheap() function for vector_sort()
    */
@@ -897,7 +897,7 @@ namespace o2scl {
   }
   //@}
   
-  /// \name Smallest or largest subset functions
+  /// \name Smallest or largest subset functions in src/base/vector.h
   //@{
   /** \brief Find the k smallest entries of the first \c n elements
       of a vector
@@ -1113,7 +1113,7 @@ namespace o2scl {
   }
   //@}
   
-  /// \name Vector minimum and maximum functions
+  /// \name Vector minimum and maximum functions in src/base/vector.h
   //@{
   /** \brief Compute the maximum of the first \c n elements of a vector
    */
@@ -1344,7 +1344,7 @@ namespace o2scl {
   }
   //@}
   
-  /// \name Minima and maxima of vectors through quadratic fit
+  /// \name Extrema of vectors through quadratic fit in src/base/vector.h
   //@{
   /** \brief Maximum of vector by quadratic fit
    */
@@ -1417,7 +1417,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Matrix minimum and maximum functions
+  /// \name Matrix minimum and maximum functions in src/base/vector.h
   //@{
   /** \brief Compute the maximum of the lower-left part of a matrix
    */
@@ -1761,7 +1761,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Searching vectors and matrices
+  /// \name Searching vectors and matrices in src/base/vector.h
   //@{
   /** \brief Lookup the value \c x0 in the first \c n elements of 
       vector \c x
@@ -2000,7 +2000,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Ordering and finite tests
+  /// \name Ordering and finite tests in src/base/vector.h
   //@{
   /** \brief Test if the first \c n elements of a vector are 
       monotonic and increasing or decreasing
@@ -2169,7 +2169,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Miscellaneous mathematical functions
+  /// \name Miscellaneous mathematical functions in src/base/vector.h
   //@{
   /** \brief Compute the sum of the first \c n elements of a vector
 
@@ -2330,7 +2330,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Other vector and matrix functions
+  /// \name Other vector and matrix functions in src/base/vector.h
   //@{
   /** \brief Set the first N entries in a vector to a particular value
    */
@@ -3077,7 +3077,7 @@ namespace o2scl {
   }
   //@}
 
-  /// \name Vector range classes and functions
+  /// \name Vector range classes and functions in src/base/vector.h
   //@{
   /** \brief Vector range function for pointers
 
@@ -3516,7 +3516,7 @@ namespace o2scl {
 #include <armadillo>
 namespace o2scl {
 
-  /// \name Armadillo specializations
+  /// \name Armadillo specializations in src/base/vector.h
   //@{
   /// Armadillo version of \ref matrix_max()
   double matrix_max(const arma::mat &data);
@@ -3544,7 +3544,7 @@ namespace o2scl {
 
 namespace o2scl {
 
-  /// \name Eigen specializations
+  /// \name Eigen specializations in src/base/vector.h
   //@{
   /// Eigen version of \ref matrix_max()
   double matrix_max(const Eigen::MatrixXd &data);

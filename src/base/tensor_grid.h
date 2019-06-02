@@ -60,10 +60,21 @@ namespace o2scl_hdf {
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
-  
+
+  /** \brief A <tt>ublas::range</tt> typedef for \ref 
+      o2scl::tensor_grid and related classes
+   */
   typedef boost::numeric::ublas::range ub_range;
+
+  /** \brief A <tt>ublas::vector_range</tt> typedef for \ref 
+      o2scl::tensor_grid and related classes
+   */
   typedef boost::numeric::ublas::vector_range
     <boost::numeric::ublas::vector<double> > ubvector_range;
+
+  /** \brief A <tt>ublas::vector_range</tt> typedef (size_t version)
+      for \ref o2scl::tensor_grid and related classes
+   */
   typedef boost::numeric::ublas::vector_range
     <boost::numeric::ublas::vector<size_t> > ubvector_size_t_range;
   
