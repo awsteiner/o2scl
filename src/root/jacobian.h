@@ -37,7 +37,7 @@
 namespace o2scl {
 #endif
   
-  /// Jacobian function (not necessarily square)
+  /// Jacobian function (not necessarily square) in src/root/jacobian.h
   typedef std::function<
     int(size_t,boost::numeric::ublas::vector<double> &,
 	size_t,boost::numeric::ublas::vector<double> &,

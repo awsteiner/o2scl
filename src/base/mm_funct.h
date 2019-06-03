@@ -37,7 +37,7 @@
 namespace o2scl {
 #endif
 
-  /// Array of multi-dimensional functions typedef
+  /// Array of multi-dimensional functions typedef in src/base/mm_funct.h
   typedef std::function<
     int(size_t,const boost::numeric::ublas::vector<double> &,
 	boost::numeric::ublas::vector<double> &) > mm_funct;

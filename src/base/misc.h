@@ -48,7 +48,7 @@ extern "C" {
 namespace o2scl {
 #endif
 
-  /// \name Functions from misc.h
+  /// \name Functions from src/base/misc.h
   //@{
   /** \brief Calculate a Fermi-Dirac distribution function safely
       
@@ -327,6 +327,8 @@ namespace o2scl {
     }
   };
 
+  /// \name Quadratic extrema functions in src/base/misc.h
+  //@{
   /** \brief Return the x value of the extremum of a quadratic defined by 
       three \f$ (x,y) \f$ pairs
 
@@ -512,6 +514,7 @@ namespace o2scl {
 
     return;
   }
+  //@}
 
 #ifndef O2SCL_OLDER_COMPILER
   
@@ -604,6 +607,8 @@ namespace o2scl {
 
   };
 
+  /// \name Filesystem wrapper functions in src/base/misc.h
+  //@{
   /** \brief Wrapper for the glob() function which
       finds files which match a pattern
 
@@ -624,6 +629,7 @@ namespace o2scl {
   /** \brief Use wordexp() to obtain a single file
    */
   void wordexp_single_file(std::string &fname);
+  //@}
   
 #endif
 

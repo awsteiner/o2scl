@@ -37,7 +37,7 @@
 namespace o2scl {
 #endif
 
-  /** \brief The integer error definitions 
+  /** \brief The integer error definitions in src/base/err_hnd.h
       
       The errors associated with the integers between -2 and 32
       are based on GSL, the rest are specific to \o2 . 
@@ -305,7 +305,7 @@ namespace o2scl {
       o2scl::set_err_fn((std::string(d)+d2).c_str(),			\
 			__FILE__,__LINE__,n); return n; } } while (0)
   
-  /// \name The error handler function in err_hnd.h
+  /// \name The error handler function in src/base/err_hnd.h
   //@{
   /** \brief Call the error handler
    */
@@ -316,12 +316,15 @@ namespace o2scl {
   }
   //@}
   
+  /// \name The error update function in src/base/err_hnd.h
+  //@{
   /** \brief Update an error value \c err with the value in \c ret
 
       If \c ret is zero, this sets \c ret to the value \c err, and 
       if \c ret is nonzero this function does nothing.
    */
   inline void error_update(int &ret, int err) { if (ret==0) ret=err; }
+  //@}
 
 #ifdef O2SCL_NEVER_DEFINED
   

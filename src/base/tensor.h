@@ -119,6 +119,8 @@ namespace o2scl {
   
   };
 
+  /// \name Tensor index functions in src/base/tensor.h
+  //@{
   /** \brief Choose an index
    */
   index_spec ix_index(size_t ix);
@@ -159,6 +161,7 @@ namespace o2scl {
   */
   index_spec ix_gridw(size_t ix, double begin, double end, double width,
 		     bool log=false);
+  //@}
 
   /** \brief Tensor class with arbitrary dimensions
 
@@ -1454,6 +1457,8 @@ namespace o2scl {
   //@}
   };
 
+  /// \name Tensor functions in src/base/tensor.h
+  //@{
   /** \brief Output a tensor to a stream
    */
   template<class tensor_t>
@@ -1524,6 +1529,7 @@ namespace o2scl {
     }
     return true;
   }
+  //@}
   
 #ifndef DOXYGEN_NO_O2NS
 }

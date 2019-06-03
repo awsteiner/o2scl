@@ -39,7 +39,7 @@
 namespace o2scl {
 #endif
 
-  /// Multi-dimensional function typedef
+  /// Multi-dimensional function typedef in src/base/multi_funct.h
   typedef std::function<
     double(size_t,const boost::numeric::ublas::vector<double> &)>
     multi_funct;

@@ -36,7 +36,9 @@
 namespace o2scl {
 #endif
 
-  /// Array of multi-dimensional functions typedef (C++11 version)
+  /** \brief Array of multi-dimensional functions typedef (C++11 
+      version) in src/fit/fit_base.h
+  */
   typedef std::function<
     double(size_t,const boost::numeric::ublas::vector<double> &, 
 	   double)> fit_funct;

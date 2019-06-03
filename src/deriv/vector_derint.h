@@ -51,7 +51,7 @@
 namespace o2scl {
 #endif
 
-  /** \name Compute the derivative at every point of a generic vector
+  /** \name Derivative of a generic vector in src/deriv/vector_derint.h
 
       Given a vector \c v of size \c n, these functions compute
       the derivative at every point and store the result in \c dv.
@@ -157,7 +157,7 @@ namespace o2scl {
   }
   //@}
 
-  /** \name Compute the integral over a generic vector
+  /** \name Integral of a generic vector in src/deriv/vector_derint.h
 
       These functions implement composite (sometimes called
       extended) Newton-Cotes rules. 

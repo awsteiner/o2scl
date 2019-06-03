@@ -36,7 +36,7 @@
 namespace o2scl {
 #endif
 
-  /// Array of multi-dimensional functions typedef
+  /// Array of multi-dimensional functions typedef in src/min/mmin.h
   typedef std::function<int(size_t,boost::numeric::ublas::vector<double> &,
 			    boost::numeric::ublas::vector<double> &)> 
     grad_funct;

@@ -233,7 +233,7 @@ namespace o2scl {
   
   };
 
-  /// \name Matrix output functions from columnify.h
+  /// \name Matrix output functions from src/base/columnify.h
   //@{
   /** \brief A operator for simple matrix output using \c operator()
       

@@ -62,18 +62,19 @@ namespace o2scl {
 #endif
 
   /** \brief A <tt>ublas::range</tt> typedef for \ref 
-      o2scl::tensor_grid and related classes
+      o2scl::tensor_grid and related classes in src/base/tensor_grid.h
    */
   typedef boost::numeric::ublas::range ub_range;
 
   /** \brief A <tt>ublas::vector_range</tt> typedef for \ref 
-      o2scl::tensor_grid and related classes
+      o2scl::tensor_grid and related classes in src/base/tensor_grid.h
    */
   typedef boost::numeric::ublas::vector_range
     <boost::numeric::ublas::vector<double> > ubvector_range;
 
   /** \brief A <tt>ublas::vector_range</tt> typedef (size_t version)
       for \ref o2scl::tensor_grid and related classes
+      in src/base/tensor_grid.h
    */
   typedef boost::numeric::ublas::vector_range
     <boost::numeric::ublas::vector<size_t> > ubvector_size_t_range;

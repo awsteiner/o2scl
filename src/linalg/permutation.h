@@ -340,6 +340,8 @@ namespace o2scl {
     // End of permutation class
   };
 
+  /// \name Output operator function in src/linalg/permutation.h
+  //@{
   /** \brief Output operator for permutations
 
       A space is output between the permutation elements but no
@@ -349,6 +351,7 @@ namespace o2scl {
       not call the error handler.
   */
   std::ostream &operator<<(std::ostream &os, const permutation &p);
+  //@}
 
 #ifndef DOXYGEN_NO_O2NS
 }

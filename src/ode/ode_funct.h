@@ -38,7 +38,7 @@
 namespace o2scl {
 #endif
 
-  /** \brief Ordinary differential equation function
+  /** \brief Ordinary differential equation function in src/ode/ode_funct.h
    */
   typedef std::function<int(double,size_t,
 			    const boost::numeric::ublas::vector<double> &,

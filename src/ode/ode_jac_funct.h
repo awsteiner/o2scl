@@ -33,7 +33,7 @@
 namespace o2scl {
 #endif
 
-  /// Functor for ODE Jacobians
+  /// Functor for ODE Jacobians in src/ode/ode_jac_funct.h
   typedef std::function<
     int(double,size_t,const boost::numeric::ublas::vector<double> &,
 	boost::numeric::ublas::matrix<double> &,

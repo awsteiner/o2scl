@@ -64,7 +64,7 @@
 namespace o2scl {
 #endif
   
-  /** \brief Interpolation types
+  /** \brief Interpolation types in src/base/interp.h
    */
   enum {
     /// Linear
@@ -2061,59 +2061,8 @@ namespace o2scl {
     return count;
   }
 
-  /** \brief Perform inverse linear interpolation
-
-      This function performs inverse linear interpolation of the data
-      defined by \c x and \c y, finding all points in \c x which have
-      the property \f$ \mathrm{level} = y(x) \f$. All points for which
-      this relation holds are put into the vector \c locs. The
-      previous information contained in vector \c locs before the
-      function call is destroyed.
-
-      This is the 1-dimensional analog of finding contour levels as
-      the \ref contour class does for 2 dimensions.
-
-      This function will call the error handler if \c n is
-      less than two. 
-
-      This function is inclusive of the endpoints, so that if either
-      <tt>y[0]</tt> and/or <tt>y[n-1]</tt> is equal to level, then
-      <tt>x[0]</tt> and/or <tt>x[n-1]</tt> are added to \c locs,
-      respectively.
-  */
-  template<class vec_t, class vec2_t> void vector_find_level
-    (double level, size_t n, vec_t &x, vec2_t &y, std::vector<double> &locs) {
-    
-    if (n<=1) {
-      O2SCL_ERR2("Need at least two data points in ",
-		 "vector_find_level().",exc_einval);
-    }
-    
-    // Ensure that the location vector is empty
-    locs.clear();
-
-    // Handle left boundary 
-    if (y[0]==level) {
-      locs.push_back(x[0]);
-    }
-    
-    // Find intersections
-    for(size_t i=0;i<n-1;i++) {
-      
-      if ((y[i]<level && y[i+1]>level) ||
-	  (y[i]>level && y[i+1]<level)) {
-	// For each intersection, add the location using linear 
-	// interpolation
-	double x0=x[i]+(x[i+1]-x[i])*(level-y[i])/(y[i+1]-y[i]);
-	locs.push_back(x0);
-      } else if (y[i+1]==level) {
-	locs.push_back(x[i+1]);
-      }
-    }
-
-    return;
-  }
-
+  /// \name Derivatives and integrals of vectors in src/base/interp.h
+  //@{
   /** \brief Compute derivative at all points from an 
       interpolation object
    */
@@ -2244,6 +2193,62 @@ namespace o2scl {
     double total=si.integ(x[0],x2,n,x,y);
 
     return total;
+  }
+  //@}
+
+  /// \name Inverse interpolation and related in src/base/interp.h
+  //@{
+  /** \brief Perform inverse linear interpolation
+
+      This function performs inverse linear interpolation of the data
+      defined by \c x and \c y, finding all points in \c x which have
+      the property \f$ \mathrm{level} = y(x) \f$. All points for which
+      this relation holds are put into the vector \c locs. The
+      previous information contained in vector \c locs before the
+      function call is destroyed.
+
+      This is the 1-dimensional analog of finding contour levels as
+      the \ref contour class does for 2 dimensions.
+
+      This function will call the error handler if \c n is
+      less than two. 
+
+      This function is inclusive of the endpoints, so that if either
+      <tt>y[0]</tt> and/or <tt>y[n-1]</tt> is equal to level, then
+      <tt>x[0]</tt> and/or <tt>x[n-1]</tt> are added to \c locs,
+      respectively.
+  */
+  template<class vec_t, class vec2_t> void vector_find_level
+    (double level, size_t n, vec_t &x, vec2_t &y, std::vector<double> &locs) {
+    
+    if (n<=1) {
+      O2SCL_ERR2("Need at least two data points in ",
+		 "vector_find_level().",exc_einval);
+    }
+    
+    // Ensure that the location vector is empty
+    locs.clear();
+
+    // Handle left boundary 
+    if (y[0]==level) {
+      locs.push_back(x[0]);
+    }
+    
+    // Find intersections
+    for(size_t i=0;i<n-1;i++) {
+      
+      if ((y[i]<level && y[i+1]>level) ||
+	  (y[i]>level && y[i+1]<level)) {
+	// For each intersection, add the location using linear 
+	// interpolation
+	double x0=x[i]+(x[i+1]-x[i])*(level-y[i])/(y[i+1]-y[i]);
+	locs.push_back(x0);
+      } else if (y[i+1]==level) {
+	locs.push_back(x[i+1]);
+      }
+    }
+
+    return;
   }
 
   /** \brief Compute the endpoints which enclose the regions whose
@@ -2529,7 +2534,10 @@ namespace o2scl {
     vector_max(locs.size(),locs,ix,high);
     return 0;
   }
+  //@}
 
+  /// \name Binning and log vs. linear in src/base/interp.h
+  //@{
   /** \brief From an (x,y) pair, create a new (x,y) pair using
       interpolation where the new x vector is uniformly spaced
   */
@@ -2739,6 +2747,7 @@ namespace o2scl {
     linear_or_log(x,y,log_x,log_y);
     return;
   }
+  //@}
   
 #ifndef DOXYGEN_NO_O2NS
 }

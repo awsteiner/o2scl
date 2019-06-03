@@ -41,10 +41,10 @@
 namespace o2scl {
 #endif
 
-  /// One-dimensional function typedef
+  /// One-dimensional function typedef in src/base/funct.h
   typedef std::function<double(double)> funct;
 
-  /// One-dimensional function typedef
+  /// One-dimensional function typedef in src/base/funct.h
   typedef std::function<long double(long double)> funct_ld;
 
   /** \brief One-dimensional function from a string

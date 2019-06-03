@@ -40,7 +40,7 @@
 namespace o2scl {
 #endif
 
-  /// \name Functions in string_conv.h
+  /// \name Functions in src/base/string_conv.h
   //@{
   /** \brief Convert a pointer to a string 
 
