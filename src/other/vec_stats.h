@@ -1988,6 +1988,8 @@ namespace o2scl {
   }
   //@}
 
+  /// \name Convert a vector to bin edges in src/other/vec_stats.h
+  //@{
   /** \brief Take a vector of data and convert it to a vector
       of bin edges automatically adjusting for increasing or
       decreasing and linear or logarithmic spacing
@@ -2052,6 +2054,7 @@ namespace o2scl {
     
     return;
   }
+  //@}
 
 #ifndef DOXYGEN_NO_O2NS
 }

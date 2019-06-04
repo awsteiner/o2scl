@@ -2015,6 +2015,8 @@ namespace o2scl {
     interp_vec<arr_t>(nv,x,y,interp_type) {}
   };
 
+  /// \name A function for inverse interpolation in src/base/interp.h
+  //@{
   /** \brief Count level crossings
 
       This function counts the number of times the function \f$ y(x) =
@@ -2060,6 +2062,7 @@ namespace o2scl {
 
     return count;
   }
+  //@}
 
   /// \name Derivatives and integrals of vectors in src/base/interp.h
   //@{

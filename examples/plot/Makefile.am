@@ -53,8 +53,8 @@ ex_anneal_plot: ex_anneal_plot.o  ../../src/other/graph.o
 	$(CXX) -o ex_anneal_plot ex_anneal_plot.o \
 		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
 
-ex_chebapp_plot.eps: ex_chebapp_plot.py
-	python ex_chebapp_plot.py
+#ex_chebapp_plot.eps: ex_chebapp_plot.py
+#	python ex_chebapp_plot.py
 
 ex_contour_plot.o: ex_contour_plot.cpp
 	$(CXX) $(CPPFLAGS) -o ex_contour_plot.o -c ex_contour_plot.cpp
@@ -63,19 +63,57 @@ ex_contour_plot: ex_contour_plot.o ../../src/other/graph.o
 	$(CXX) $(CPPFLAGS) -o ex_contour_plot ex_contour_plot.o \
 		-lo2scl_hdf -lo2scl $(ROOT_LIB) $(LDFLAGS) 
 
-ex_fptr_plot.eps: ex_fptr_plot.py
-	python ex_fptr_plot.py
+ex_chebapp_plot.png: empty
+	o2graph -backend Agg -generic table ../ex_chebapp.out \
+		-plot c1 c2 color=black -plot c1 c4 color=red \
+		-plot c1 c5 color=blue,ls=: \
+		-line 0.8 "(-0.5)" 0.95 "(-0.5)" color=black \
+		-text 0.78 "(-0.5)" Exact ha=right \
+		-line 0.8 "(-0.65)" 0.95 "(-0.65)" color=red \
+		-text 0.78 "(-0.65)" "Approx. (n=50)" ha=right,color=red \
+		-line 0.8 "(-0.8)" 0.95 "(-0.8)" color=blue \
+		-text 0.78 "(-0.8)" "Approx. (n=25)" ha=right,color=blue \
+		-ttext 0.5 "(-0.1)" x \
+		-save ex_chebapp_plot.png
 
-ex_mandel_plot.o: ex_mandel_plot.cpp
-	$(CXX) $(CPPFLAGS) -o ex_mandel_plot.o -c ex_mandel_plot.cpp
+ex_fptr_plot.png:
+	cat ../ex_fptr.scr | grep -v t > exftemp1
+	acol -generic table ../ex_fptr.out -internal exftemp2.o2
+	o2graph -backend Agg -read exftemp2.o2 -plot x y color=red \
+		-ttext 0.5 "(-0.1)" x -ttext "(-0.1)" 0.5 y \
+		-generic table exftemp1 -plot c1 c2 marker=s \
+		-save ex_fptr_plot.png
+	rm -f exftemp1 exftemp2.o2
 
-ex_mandel_plot: ex_mandel_plot.o  ../../src/other/graph.o
-	$(CXX) -o ex_mandel_plot ex_mandel_plot.o \
-		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
+ex_ode_bessel.png: empty
+	o2graph -read ../ex_ode.o2 table_0 \
+		-function "abs(calc-exact)" diff -set logy 1 \
+		-plot x err -plot x diff \
+		-read ../ex_ode.o2 table_1 \
+		-function "abs(calc-exact)" diff -set logy 1 \
+		-plot x err -plot x diff \
+		-ttext 0.5 "(-0.07)" x \
+		-ttext "(-0.12)" 0.5 y -ttext 0.03 1.06 \
+		"Bessel function with non-adaptive steppers" \
+		-ttext 0.4 0.87 "Prince-Dormand act. error" \
+		-ttext 0.50 0.67 "Cash-Karp act. error" \
+		-ttext 0.5 0.48 "Cash-Karp est. error" \
+		-ttext 0.28 0.09 "Prince-Dorman est. error" \
+		-save ex_ode_bessel.png
 
-ex_mandel_plot_all: ex_mandel_plot
-	./ex_mandel_plot
-	convert ex_mandel_plot.png ex_mandel_plot.pdf
+#ex_fptr_plot.eps: ex_fptr_plot.py
+#	python ex_fptr_plot.py
+
+# ex_mandel_plot.o: ex_mandel_plot.cpp
+# 	$(CXX) $(CPPFLAGS) -o ex_mandel_plot.o -c ex_mandel_plot.cpp
+
+# ex_mandel_plot: ex_mandel_plot.o  ../../src/other/graph.o
+# 	$(CXX) -o ex_mandel_plot ex_mandel_plot.o \
+# 		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
+
+# ex_mandel_plot_all: ex_mandel_plot
+# 	./ex_mandel_plot
+# 	convert ex_mandel_plot.png ex_mandel_plot.pdf
 
 ex_mmin_plot.o: ex_mmin_plot.cpp
 	$(CXX) $(CPPFLAGS) $(CPPFLAGS) -o ex_mmin_plot.o -c ex_mmin_plot.cpp
@@ -129,3 +167,4 @@ ex_ublas: ex_ublas.o  ../../src/other/graph.o
 		-L/home/asteiner/install/lib -o ex_ublas ex_ublas.o -lgsl \
 		-lo2scl
 
+empty:

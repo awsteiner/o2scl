@@ -33,6 +33,7 @@
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
 #include <o2scl/contour.h>
+#include <o2scl/test_mgr.h>
 
 using namespace std;
 using namespace o2scl;
@@ -97,6 +98,8 @@ void pairs_func(double x, double y, double T,
 int main(void) {
 
   cout.setf(ios::scientific);
+
+  test_mgr t;
   
   fermion_deriv f(1.0,2.0);
   f.inc_rest_mass=true;
@@ -285,6 +288,8 @@ int main(void) {
   }
   
   hf.close();
+
+  t.report();
 
   return 0;
 }

@@ -339,6 +339,8 @@ namespace o2scl {
   
   };
 
+  /// \name Helper functions for constrained min in src/min/min.h
+  //@{
   /** \brief Constrain \c x to be within \c width
       of the value given by \c center
       
@@ -470,6 +472,7 @@ namespace o2scl {
     }
     return ret;
   }
+  //@}
 
 #ifndef DOXYGEN_NO_O2NS
 }
