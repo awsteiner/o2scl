@@ -34,11 +34,17 @@
 #include <o2scl/funct.h>
 #include <o2scl/anneal_gsl.h>
 #include <o2scl/test_mgr.h>
+#include <o2scl/hdf_file.h>
+#include <o2scl/hdf_io.h>
 
 using namespace std;
 using namespace o2scl;
+using namespace o2scl_hdf;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
+
+// Make data for the plot in the documentation
+void make_plot_data();
 
 // A simple function with many local minima. A "greedy" minimizer
 // would likely fail to find the correct minimum.
@@ -93,9 +99,30 @@ int main(int argc, char *argv[]) {
   t.test_rel(init[1],-3.0,1.0e-3,"another test - value 2");
   t.test_rel(result,-1.0,1.0e-3,"another test - min");
 
+  make_plot_data();
+  
   t.report();
   
   return 0;
 }
 // End of example
 
+void make_plot_data() {
+  table3d t3d;
+  uniform_grid_end<double> ug(-4.0,10.0,199);
+  t3d.set_xy("x",ug,"y",ug);
+  t3d.new_slice("f");
+  for(size_t i=0;i<t3d.get_nx();i++) {
+    for(size_t j=0;j<t3d.get_ny();j++) {
+      ubvector v(2);
+      v[0]=ug[i];
+      v[1]=ug[j];
+      t3d.set(i,j,"f",bessel_fun(2,v));
+    }
+  }
+  hdf_file hf;
+  hf.open_or_create("ex_anneal_plot.o2");
+  hdf_output(hf,(const table3d &)t3d,"ex_anneal");
+  hf.close();
+  return;
+}

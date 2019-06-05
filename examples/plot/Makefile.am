@@ -46,12 +46,40 @@ plot-all: ex_fptr_plot.eps ex_chebapp_plot.eps ex_ode_bessel.eps
 
 # In approximate alphabetical order
 
-ex_anneal_plot.o: ex_anneal_plot.cpp
-	$(CXX) $(CPPFLAGS) -o ex_anneal_plot.o -c ex_anneal_plot.cpp
+ex_anneal_plot.png:
+	o2graph -set colbar 1 \
+		-read ../ex_anneal_plot.o2 -set xtitle x -set ytitle y \
+		-den-plot f \
+		-contours "(-0.9)" f conts.o2 l1 \
+		-contours "(-0.7)" f conts.o2 l2 \
+		-contours "(-0.5)" f conts.o2 l3 \
+		-contours "(-0.3)" f conts.o2 l4 \
+		-contours "(-0.2)" f conts.o2 l5 \
+		-contours "(-0.1)" f conts.o2 l6 \
+		-contours "(-0.05)" f conts.o2 l7 \
+		-contours "0.05" f conts.o2 l8 \
+		-contours "0.1" f conts.o2 l9 \
+		-read conts.o2 l1 -plot color=black \
+		-read conts.o2 l2 -plot color=black \
+		-read conts.o2 l3 -plot color=black \
+		-read conts.o2 l4 -plot color=black \
+		-read conts.o2 l5 -plot color=black \
+		-read conts.o2 l6 -plot color=black \
+		-read conts.o2 l7 -plot color=black \
+		-read conts.o2 l8 -plot color=black \
+		-read conts.o2 l9 -plot color=black \
+		-point 6 7 marker=s,color=black \
+		-text 6 6.5 "Initial point" color=black \
+		-point 2 "(-3)" marker=s,color=white \
+		-text 2 "(-2.5)" "Global minimum" color=white \
+		-save ex_anneal_plot.png
 
-ex_anneal_plot: ex_anneal_plot.o  ../../src/other/graph.o
-	$(CXX) -o ex_anneal_plot ex_anneal_plot.o \
-		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
+# ex_anneal_plot.o: ex_anneal_plot.cpp
+# 	$(CXX) $(CPPFLAGS) -o ex_anneal_plot.o -c ex_anneal_plot.cpp
+
+# ex_anneal_plot: ex_anneal_plot.o  ../../src/other/graph.o
+# 	$(CXX) -o ex_anneal_plot ex_anneal_plot.o \
+# 		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
 
 #ex_chebapp_plot.eps: ex_chebapp_plot.py
 #	python ex_chebapp_plot.py
@@ -63,7 +91,7 @@ ex_contour_plot: ex_contour_plot.o ../../src/other/graph.o
 	$(CXX) $(CPPFLAGS) -o ex_contour_plot ex_contour_plot.o \
 		-lo2scl_hdf -lo2scl $(ROOT_LIB) $(LDFLAGS) 
 
-ex_chebapp_plot.png: empty
+ex_chebapp_plot.png: 
 	o2graph -backend Agg -generic table ../ex_chebapp.out \
 		-plot c1 c2 color=black -plot c1 c4 color=red \
 		-plot c1 c5 color=blue,ls=: \
@@ -79,27 +107,12 @@ ex_chebapp_plot.png: empty
 ex_fptr_plot.png:
 	cat ../ex_fptr.scr | grep -v t > exftemp1
 	acol -generic table ../ex_fptr.out -internal exftemp2.o2
-	o2graph -backend Agg -read exftemp2.o2 -plot x y color=red \
+	o2graph -backend Agg -set xlo "(-1)" -set xhi 2 \
+		-read exftemp2.o2 -plot x y color=red \
 		-ttext 0.5 "(-0.1)" x -ttext "(-0.1)" 0.5 y \
 		-generic table exftemp1 -plot c1 c2 marker=s \
 		-save ex_fptr_plot.png
 	rm -f exftemp1 exftemp2.o2
-
-ex_ode_bessel.png: empty
-	o2graph -read ../ex_ode.o2 table_0 \
-		-function "abs(calc-exact)" diff -set logy 1 \
-		-plot x err -plot x diff \
-		-read ../ex_ode.o2 table_1 \
-		-function "abs(calc-exact)" diff -set logy 1 \
-		-plot x err -plot x diff \
-		-ttext 0.5 "(-0.07)" x \
-		-ttext "(-0.12)" 0.5 y -ttext 0.03 1.06 \
-		"Bessel function with non-adaptive steppers" \
-		-ttext 0.4 0.87 "Prince-Dormand act. error" \
-		-ttext 0.50 0.67 "Cash-Karp act. error" \
-		-ttext 0.5 0.48 "Cash-Karp est. error" \
-		-ttext 0.28 0.09 "Prince-Dorman est. error" \
-		-save ex_ode_bessel.png
 
 #ex_fptr_plot.eps: ex_fptr_plot.py
 #	python ex_fptr_plot.py
@@ -136,8 +149,24 @@ ex_nuc_plot: ex_nuc_plot.o  ../../src/other/graph.o
 	$(CXX) -o ex_nuc_plot ex_nuc_plot.o \
 		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
 
-ex_ode_bessel.eps: ex_ode_plot.py
-	python ex_ode_plot.py
+ex_ode_bessel.png: 
+	o2graph -read ../ex_ode.o2 table_0 \
+		-function "abs(calc-exact)" diff -set logy 1 \
+		-plot x err -plot x diff \
+		-read ../ex_ode.o2 table_1 \
+		-function "abs(calc-exact)" diff -set logy 1 \
+		-plot x err -plot x diff \
+		-ttext 0.5 "(-0.07)" x \
+		-ttext "(-0.12)" 0.5 y -ttext 0.03 1.06 \
+		"Bessel function with non-adaptive steppers" \
+		-ttext 0.4 0.87 "Prince-Dormand act. error" \
+		-ttext 0.50 0.67 "Cash-Karp act. error" \
+		-ttext 0.5 0.48 "Cash-Karp est. error" \
+		-ttext 0.28 0.09 "Prince-Dorman est. error" \
+		-show
+
+#ex_ode_bessel.eps: ex_ode_plot.py
+#	python ex_ode_plot.py
 
 ex_planar_plot.o: ex_planar_plot.cpp
 	$(CXX) $(CPPFLAGS) -o ex_planar_plot.o -c ex_planar_plot.cpp
@@ -167,4 +196,3 @@ ex_ublas: ex_ublas.o  ../../src/other/graph.o
 		-L/home/asteiner/install/lib -o ex_ublas ex_ublas.o -lgsl \
 		-lo2scl
 
-empty:
