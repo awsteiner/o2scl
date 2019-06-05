@@ -77,7 +77,8 @@ namespace o2scl {
       \note This function may return Inf or NAN if \c limit is too 
       large, depending on the machine precision.
       
-      This function is used in the \ref o2scl::boson_rel class.
+      This function is used in the <tt>o2scl::boson_rel</tt> class
+      in \o2p . 
   */
   double bose_function(double E, double mu, double T, double limit=40.0);
 
