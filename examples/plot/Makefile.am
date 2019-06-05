@@ -47,7 +47,7 @@ plot-all: ex_fptr_plot.eps ex_chebapp_plot.eps ex_ode_bessel.eps
 # In approximate alphabetical order
 
 ex_anneal_plot.png:
-	o2graph -set colbar 1 \
+	o2graph -backend Agg -set colbar 1 \
 		-read ../ex_anneal_plot.o2 -set xtitle x -set ytitle y \
 		-den-plot f \
 		-contours "(-0.9)" f conts.o2 l1 \
@@ -149,21 +149,35 @@ ex_nuc_plot: ex_nuc_plot.o  ../../src/other/graph.o
 	$(CXX) -o ex_nuc_plot ex_nuc_plot.o \
 		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
 
+ex_ode_airy.png: 
+	o2graph -read ../ex_ode.o2 table_2 \
+		-set xtitle x -set ytitle y -set top-margin 0.05 \
+		-function "abs(calc-exact)" diff -set logy 1 \
+		-plot x err -plot x diff \
+		-read ../ex_ode.o2 table_3 \
+		-function "abs(calc-exact)" diff -set logy 1 \
+		-plot x err -plot x diff \
+		-ttext 0.46 0.87 "Prince-Dormand act. error" \
+		-ttext 0.70 0.67 "Cash-Karp act. error" \
+		-ttext 0.60 0.48 "Cash-Karp est. error" \
+		-ttext 0.48 0.09 "Prince-Dormand est. error" \
+		-ttext 0.5 1.03 "Bessel function w/non-adaptive steppers" \
+		-show
+
 ex_ode_bessel.png: 
-	o2graph -read ../ex_ode.o2 table_0 \
+	o2graph -backend Agg -read ../ex_ode.o2 table_0 \
+		-set xtitle x -set ytitle y -set top-margin 0.05 \
 		-function "abs(calc-exact)" diff -set logy 1 \
 		-plot x err -plot x diff \
 		-read ../ex_ode.o2 table_1 \
 		-function "abs(calc-exact)" diff -set logy 1 \
 		-plot x err -plot x diff \
-		-ttext 0.5 "(-0.07)" x \
-		-ttext "(-0.12)" 0.5 y -ttext 0.03 1.06 \
-		"Bessel function with non-adaptive steppers" \
-		-ttext 0.4 0.87 "Prince-Dormand act. error" \
-		-ttext 0.50 0.67 "Cash-Karp act. error" \
-		-ttext 0.5 0.48 "Cash-Karp est. error" \
-		-ttext 0.28 0.09 "Prince-Dorman est. error" \
-		-show
+		-ttext 0.46 0.87 "Prince-Dormand act. error" \
+		-ttext 0.70 0.67 "Cash-Karp act. error" \
+		-ttext 0.60 0.48 "Cash-Karp est. error" \
+		-ttext 0.48 0.09 "Prince-Dormand est. error" \
+		-ttext 0.5 1.03 "Bessel function w/non-adaptive steppers" \
+		-save ex_ode_bessel.png
 
 #ex_ode_bessel.eps: ex_ode_plot.py
 #	python ex_ode_plot.py
