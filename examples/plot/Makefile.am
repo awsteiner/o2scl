@@ -73,6 +73,7 @@ ex_anneal_plot.png:
 		-point 2 "(-3)" marker=s,color=white \
 		-text 2 "(-2.5)" "Global minimum" color=white \
 		-save ex_anneal_plot.png
+	rm -f conts.o2
 
 # ex_anneal_plot.o: ex_anneal_plot.cpp
 # 	$(CXX) $(CPPFLAGS) -o ex_anneal_plot.o -c ex_anneal_plot.cpp

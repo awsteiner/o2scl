@@ -578,6 +578,7 @@ public:
 
     bool of_old=output_files;
     output_files=true;
+    file_prefix="ex_eos_had_skyrme_";
 
     // Just summarize SLy4
     vector<string> args;

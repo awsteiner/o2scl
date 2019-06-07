@@ -46,6 +46,11 @@
     exact result.
     \include ex_interp2.scr
 
+    \comment
+
+    AWS: 6/6/19: I'm commenting this out because interp2_planar is
+    unstable and probably not recommended.
+
     \section ex_interp2_planar_sect Interpolation of randomly spaced points
     
     For example, with 10 random points in the x-y plane with \f$
@@ -56,6 +61,8 @@
 
     \image html ex_planar_plot.png "Planes from interp2_planar class"
     \image latex ex_planar_plot.pdf "Planes from interp2_planar class" width=9cm
+
+    \endcomment
 
     \section ex_contour_sect Contour lines
 
