@@ -633,12 +633,24 @@ extern "C" {
   int o2scl_acol_get_row_ser(void *vp, char *parttern, int row_index,
 			     int &n, double *&ptr);
   
-  /** \brief Return the size and a pointer to the column
-      named \c col_name in a \ref o2scl::table object
+  /** \brief Return the size and a pointer to a double array
+      corresponding to a <tt>int[]</tt>, <tt>size_t[]</tt>, or
+      <tt>double[]</tt> object
 
       This function is used in o2graph_plotter::plot1().
    */
   int o2scl_acol_get_double_arr(void *vp, int &n, double *&ptr);
+
+  /** \brief Return the sizes, grid, and data pointer for 
+      a rank 3 \ref o2scl::tensor_grid object
+
+      This function is used in <tt>o2graph_plotter</tt> for 
+      <tt>yt-add-vol</tt>.
+   */
+  int o2scl_acol_get_tensor_grid3(void *vp, int &nx, int &ny,
+				  int &nz, const double *&xg,
+				  const double *&yg,
+				  const double *&zg, const double *&data);
   
   /** \brief Return the size and a pointer to the column
       named \c col_name in a \ref o2scl::table object

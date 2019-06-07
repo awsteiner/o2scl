@@ -146,13 +146,6 @@ namespace o2scl {
       problem is that the resize functions are templates, so they
       cannot be virtual.
 
-      \future Is it really necessary that get_data() is public and not
-      const? This is used in HDF5 I/O, but the HDF5 output function
-      already appears to be a friend and it conflicts with the parent
-      version from tensor which is non-const. Also, there are some
-      applications for which it's really helpful to have access to the
-      base data object. I'm not sure what to do here.
-
       \future A swap function for the grid similar to the data swap
       function in the parent \ref o2scl::tensor class?
 
@@ -409,9 +402,9 @@ namespace o2scl {
       return this->data[ix];
     }
 
-    /// Return a reference to the data (for HDF I/O)
-    vec_t &get_data() {
-      return this->data;
+    /// Get grid
+    const vec_t &get_grid() const {
+      return grid;
     }
     //@}
     

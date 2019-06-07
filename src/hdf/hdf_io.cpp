@@ -1380,7 +1380,8 @@ void o2scl_hdf::hdf_output(hdf_file &hf,
       
   // Add data
   const std::vector<double> &d=t.get_data();
-  hf.setd_vec("data",d);
+  const double *ptr=&d[0];
+  hf.setd_arr("data",d.size(),ptr);
       
   // Add grid
   if (t.is_grid_set()) hf.seti("grid_set",1);
@@ -1442,8 +1443,16 @@ void o2scl_hdf::hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
       
   delete[] size_i;
   delete[] size_s;
-    
-  hf.getd_vec("data",t.get_data());
+
+  // Get non-const pointer to first element
+  vector<size_t> zero(rank);
+  for(int k=0;k<rank;k++) zero[k]=0;
+  double *start=&t.get(zero);
+  
+  // The tensor_grid class really doesn't allow one to obtain a
+  // non-const vector, so we just use a const pointer instead
+  hf.getd_arr("data",t.total_size(),start);
+  //hf.getd_vec("data",t.get_data());
   
   // Get grid
   bool grid_set2=false;

@@ -169,6 +169,8 @@ int o2scl_acol_get_double_arr(void *vp, int &n, double *&ptr) {
     for(int i=0;i<n;i++) {
       amp->doublev_obj[i]=amp->size_tv_obj[i];
     }
+  } else {
+    return 1;
   }
   ptr=&(amp->doublev_obj[0]);
   return 0;
@@ -176,11 +178,31 @@ int o2scl_acol_get_double_arr(void *vp, int &n, double *&ptr) {
 
 int o2scl_acol_get_hist_reps(void *vp, int &n, double *&ptr) {
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+  if (amp->type!="hist") return 1;
   n=amp->hist_obj.size();
   amp->xtemp.resize(n);
   for(int i=0;i<n;i++) amp->xtemp[i]=amp->hist_obj.get_rep_i(i);
   ptr=&(amp->xtemp[0]);
   return 0;
+}
+
+int o2scl_acol_get_tensor_grid3(void *vp, int &nx, int &ny,
+				int &nz, const double *&xg, const double *&yg,
+				const double *&zg, const double *&data) {
+  o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+  if (amp->type=="tensor_grid") {
+    if (amp->tensor_grid_obj.get_rank()!=3) return 2;
+    nx=amp->tensor_grid_obj.get_size(0);
+    ny=amp->tensor_grid_obj.get_size(1);
+    nz=amp->tensor_grid_obj.get_size(2);
+    const std::vector<double> &grid=amp->tensor_grid_obj.get_grid();
+    xg=&(grid[0]);
+    yg=&(grid[nx]);
+    zg=&(grid[nx+ny]);
+    data=&(amp->tensor_grid_obj.get_data()[0]);
+    return 0;
+  }
+  return 1;
 }
 
 int o2scl_acol_mult_vectors_to_conts(void *vp, char *str1,
@@ -237,6 +259,7 @@ int o2scl_acol_mult_vectors_to_conts(void *vp, char *str1,
 
 int o2scl_acol_get_hist_wgts(void *vp, int &n, double *&ptr) {
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+  if (amp->type!="hist") return 1;
   n=amp->hist_obj.size();
   amp->ytemp.resize(n);
   for(int i=0;i<n;i++) amp->ytemp[i]=amp->hist_obj.get_wgt_i(i);

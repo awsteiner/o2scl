@@ -922,7 +922,8 @@ namespace o2scl_hdf {
 	hold \c n entries, and \c n must match the size of the
 	array in the HDF file.
     */
-    int getd_arr_compr(std::string name, size_t n, double *d, int &compr);
+    int getd_arr_compr(std::string name, size_t n, double *d,
+		       int &compr);
     
     /** \brief Get a float array named \c name of size \c n 
 
