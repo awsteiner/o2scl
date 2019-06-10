@@ -916,6 +916,18 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
     calc.compile(function.c_str(),&vars);
     calc_cond.compile(cond_func.c_str(),&vars);
 
+    if (verbose>0) {
+      if (cond_func.length()==0) {
+	cout << "Command \"function\" using " << function
+	     << " to set all entries." << endl;
+      } else {
+	cout << "Command \"function\" using conditional " << cond_func
+	     << " and function " << function
+	     << " to set all entries." << endl;
+      }
+    }
+
+    
     // Set
     size_t rk=tensor_grid_obj.get_rank();
     vector<size_t> ix(rk);
@@ -925,7 +937,7 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
 	vars[((string)"i")+szttos(j)]=ix[j];
 	vars[((string)"x")+szttos(j)]=tensor_grid_obj.get_grid(j,ix[j]);
       }
-      if (cond_func.length()>0 && calc_cond.eval(&vars)>0.5) {
+      if (cond_func.length()==0 || calc_cond.eval(&vars)>0.5) {
 	tensor_grid_obj.set(ix,calc.eval(&vars));
       }
     }
