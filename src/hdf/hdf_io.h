@@ -410,6 +410,9 @@ namespace o2scl_hdf {
       - HDF5 object in file: 
       hdf5:\<file name\>:\<object name\>:[additional specification]
       
+      Filenames are expanded using wordexp() and HDF5 object names
+      are expanded using fnmatch() .
+
       Additional specifications
       - table: \<column\>
   */

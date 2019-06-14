@@ -996,23 +996,35 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
       // The user has given a command name as an parameter, so 
       // print out usage information for that command
 
+      bool redirected=false;
+      if (!isatty(STDOUT_FILENO)) redirected=true;
+      
       if (clist[ix].parm_desc.length()==0) {
+
 	ostringstream oss;
 	oss << "Usage: ";
-	oss << ((char)27) << "[1m";
-	oss << ((char)27) << "[36m";
-	oss << clist[ix].lng;
-	oss << ((char)27) << "[m";
+	if (!redirected) {
+	  oss << ((char)27) << "[1m";
+	  oss << ((char)27) << "[36m";
+	  oss << clist[ix].lng;
+	  oss << ((char)27) << "[m";
+	} else {
+	  oss << clist[ix].lng;
+	}
 	oss << " (no arguments)" << endl;
 	string s=oss.str();
 	cout << s << endl;
       } else {
 	ostringstream oss;
 	oss << "Usage: ";
-	oss << ((char)27) << "[1m";
-	oss << ((char)27) << "[36m";
-	oss << clist[ix].lng;
-	oss << ((char)27) << "[m";
+	if (!redirected) {
+	  oss << ((char)27) << "[1m";
+	  oss << ((char)27) << "[36m";
+	  oss << clist[ix].lng;
+	  oss << ((char)27) << "[m";
+	} else {
+	  oss << clist[ix].lng;
+	}
 	oss << " " << clist[ix].parm_desc << endl;
 	string s=oss.str();
 	cout << s << endl;

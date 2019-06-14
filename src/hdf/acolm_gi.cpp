@@ -22,6 +22,9 @@
 */
 #include "acolm.h"
 
+// unistd.h is for isatty()
+#include <unistd.h>
+
 #include <o2scl/cloud_file.h>
 #include <o2scl/vector_derint.h>
 
@@ -518,6 +521,21 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
+  // Determine if we're being redirected to a file
+  bool redirected=false;
+  if (!isatty(STDOUT_FILENO)) redirected=true;
+
+  // Create a line for separating help text sections
+  ostringstream oss;
+  if (redirected) {
+    for(size_t i=0;i<78;i++) oss << '-';
+  } else {
+    oss << ((char)27) << '(' << '0';
+    for(size_t i=0;i<78;i++) oss << 'q';
+    oss << ((char)27) << '(' << 'B';
+  }
+  string line=oss.str();
+
   // Handle the 'help type command' case for type-specific commands
   if (sv.size()==3) {
     string temp_type=sv[1];
@@ -775,15 +793,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	    found=true;
 	  }
 	  
-	  {
-	    // Draw a line
-	    ostringstream oss;
-	    oss << ((char)27) << '(' << '0';
-	    for(size_t i=0;i<78;i++) oss << 'q';
-	    oss << ((char)27) << '(' << 'B';
-	    string s=oss.str();
-	    cout << s << endl;
-	  }
+	  cout << line << endl;
 	  
 	  string cur_type=type;
 	  
@@ -810,7 +820,95 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     if (found) return 0;
   }
 
-  // Handle the usual cli case
+  // ----------------------------------------------------------------
+  // Handle the generic help case using cli::comm_option_help(). We
+  // have to define the additional help text here because we need to
+  // know if the output is being redirected to decide whether or not
+  // to print colors and lines.
+  
+  string stemp;
+  string dsc=line+"\nNotes:\n\n";
+  vector<std::string> sv2;
+  
+  stemp="1. Help for general commands may be obtained with 'help ";
+  stemp+="<command>'. Help for type-specific commands can be obtained ";
+  stemp+="by 'help <type> <command>'. A list of commands for each type ";
+  stemp+="can be obtained with 'commands <type>'. Required arguments ";
+  stemp+="are surrounded by ";
+  stemp+="<>'s and optional arguments are surrounded by []'s.\n";
+  rewrap(stemp,sv2,76);
+  dsc+=sv2[0]+"\n";
+  for(size_t j=1;j<sv2.size();j++) {
+    dsc+="   "+sv2[j]+"\n";
+  }
+  
+  stemp="2. Options may also be specified in the environment variable ";
+  stemp+="ACOL_DEFAULTS.\n";
+  rewrap(stemp,sv2,76);
+  dsc+=sv2[0]+"\n";
+  for(size_t j=1;j<sv2.size();j++) {
+    dsc+="   "+sv2[j]+"\n";
+  }
+
+  stemp="3. Long options may be preceeded by two dashes.\n";
+  rewrap(stemp,sv2,76);
+  dsc+=sv2[0]+"\n";
+  for(size_t j=1;j<sv2.size();j++) {
+    dsc+="   "+sv2[j]+"\n";
+  }
+
+  stemp="4. In order to avoid confusion between arguments and functions, ";
+  stemp+="use parenthesis and quotes, i.e. \"(-x*2)\" instead of -x*2.\n";
+  rewrap(stemp,sv2,76);
+  dsc+=sv2[0]+"\n";
+  for(size_t j=1;j<sv2.size();j++) {
+    dsc+="   "+sv2[j]+"\n";
+  }
+
+  stemp="5. Also, do not use a unary minus next to a binary operator, ";
+  stemp+="i.e. use \"a>(-1)\" instead of \"a>-1\".\n\n";
+  rewrap(stemp,sv2,76);
+  dsc+=sv2[0]+"\n";
+  for(size_t j=1;j<sv2.size();j++) {
+    dsc+="   "+sv2[j]+"\n";
+  }
+
+  dsc+=line+"\n";
+  
+  dsc+="List of additional type-specific commands\n";
+  dsc+="(use 'help <type> <command>' for more info):\n\n";
+  std::map<std::string,std::vector<std::string> >::iterator it;
+  for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
+    stemp=it->first+": ";
+    std::vector<std::string> &clist=it->second;
+    for(size_t j=0;j<clist.size()-1;j++) {
+      stemp+=clist[j]+", ";
+    }
+    stemp+=clist[clist.size()-1];
+    vector<std::string> sv2;
+    rewrap(stemp,sv2,77);
+    dsc+=sv2[0]+"\n";
+    for(size_t j=1;j<sv2.size();j++) {
+      dsc+="  "+sv2[j]+"\n";
+    }
+  }
+  dsc+=line+"\n";
+
+  dsc+="List of additional help topics (e.g. \"acol -help <topic>\"): ";
+  dsc+="functions, mult-vector-spec, types, value-spec, and vector-spec.\n\n";
+  
+#ifndef O2SCL_UBUNTU_PKG
+  dsc+=((string)"Compiled at ")+((string)__TIME__)+" on "+
+    ((string)__DATE__)+" for "+((string)PACKAGE)+", version "+
+    ((string)VERSION)+".\n";
+#else
+  dsc+=((string)"Compiled for ")+((string)PACKAGE)+", version "+
+    ((string)VERSION)+".\n";
+#endif
+  
+  cl->addl_help_cmd=dsc;
+  cl->addl_help_cli=dsc;
+
   return cl->comm_option_help(sv,itive_com);
 }
 

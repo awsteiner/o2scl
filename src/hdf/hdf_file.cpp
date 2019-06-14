@@ -24,6 +24,8 @@
 #include <config.h>
 #endif
 
+#include <fnmatch.h>
+
 #include <o2scl/err_hnd.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/table.h>
@@ -3281,8 +3283,20 @@ int hdf_file::find_object_by_type(std::string type,
   return exc_enotfound;
 }
 
+int hdf_file::find_object_by_pattern(std::string pattern,
+				     std::string &type, int verbose) {
+  iterate_parms ip={pattern,this,false,"",verbose,ip_type_from_pattern};
+  H5Literate(get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
+             0,iterate_func,&ip);
+  if (ip.found) {
+    type=ip.type;
+    return success;
+  }
+  return exc_enotfound;
+}
+
 int hdf_file::find_object_by_name(std::string name,
-				 std::string &type, int verbose) {
+				     std::string &type, int verbose) {
   iterate_parms ip={name,this,false,"",verbose,ip_type_from_name};
   H5Literate(get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
              0,iterate_func,&ip);
@@ -3311,6 +3325,11 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	  ip.type=base_type;
 	  ip.found=true;
 	  return;
+	} else if (mode==ip_type_from_pattern &&
+		   fnmatch(name.c_str(),ip.tname.c_str(),0)==0) {
+	  ip.type=base_type;
+	  ip.found=true;
+	  return;
 	} else if (mode==ip_name_from_type && base_type==ip.type) {
 	  ip.tname=name;
 	  ip.found=true;
@@ -3333,6 +3352,11 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	  curr_type=base_type+"[]";
 	}
 	if (mode==ip_type_from_name && name==ip.tname) {
+	  ip.type=curr_type;
+	  ip.found=true;
+	  return;
+	} else if (mode==ip_type_from_pattern &&
+		   fnmatch(name.c_str(),ip.tname.c_str(),0)==0) {
 	  ip.type=curr_type;
 	  ip.found=true;
 	  return;
@@ -3371,6 +3395,11 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	  ip.type=curr_type;
 	  ip.found=true;
 	  return;
+	} else if (mode==ip_type_from_pattern &&
+		   fnmatch(name.c_str(),ip.tname.c_str(),0)==0) {
+	  ip.type=curr_type;
+	  ip.found=true;
+	  return;
 	} else if (mode==ip_name_from_type && curr_type==ip.type) {
 	  ip.tname=name;
 	  ip.found=true;
@@ -3405,6 +3434,11 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	curr_type+="[]";
       }
       if (mode==ip_type_from_name && name==ip.tname) {
+	ip.type=curr_type;
+	ip.found=true;
+	return;
+      } else if (mode==ip_type_from_pattern &&
+		 fnmatch(name.c_str(),ip.tname.c_str(),0)==0) {
 	ip.type=curr_type;
 	ip.found=true;
 	return;
@@ -3467,6 +3501,11 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 	       << otype << "." << endl;
 	}
       } else if (mode==ip_type_from_name && name==ip->tname) {
+	ip->type=otype;
+	ip->found=true;
+	return 1;
+      } else if (mode==ip_type_from_pattern &&
+		 fnmatch(name,ip->tname.c_str(),0)==0) {
 	ip->type=otype;
 	ip->found=true;
 	return 1;
@@ -3663,6 +3702,10 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 	  ip->type="char[fixed]";
 	  ip->found=true;
 	  return 1;
+	} else if (mode==ip_type_from_pattern &&
+		   fnmatch(name,ip->tname.c_str(),0)==0) {
+	  ip->type="char[fixed]";
+	  ip->found=true;
 	}
 	if (mode==ip_filelist) {
 	  if (str_size==0) {
@@ -3687,7 +3730,8 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
       cout << endl;
     }
 
-    if (mode==ip_type_from_name && loc_verbose>1) {
+    if ((mode==ip_type_from_name || mode==ip_type_from_pattern) &&
+	loc_verbose>1) {
       cout << "Value of found " << ip->found << " and type "
 	   << ip->type << endl;
     }

@@ -1064,7 +1064,17 @@ namespace o2scl_hdf {
 	found and \ref o2scl::exc_enoprog if it fails.
     */
     int find_object_by_name(std::string name,
-			   std::string &type, int verbose=0);
+			    std::string &type, int verbose=0);
+
+    /** \brief Look in hdf_file \c hf for an \o2 object with name 
+	which matches (by <tt>fnmatch()</tt>) \c pattern.
+
+	If an object is found, \c type is set to the associated type.
+	This function returns 0 if an object with name \c name is
+	found and \ref o2scl::exc_enoprog if it fails.
+     */
+    int find_object_by_pattern(std::string name,
+			       std::string &type, int verbose=0);
     //@}
 
     /** \brief List datasets and \o2 objects in the top-level
@@ -1087,6 +1097,7 @@ namespace o2scl_hdf {
     static const int ip_filelist=1;
     static const int ip_name_from_type=2;
     static const int ip_type_from_name=3;
+    static const int ip_type_from_pattern=4;
     //@}
 
     /// Process a type for \ref iterate_func() 
