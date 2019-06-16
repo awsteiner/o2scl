@@ -116,10 +116,10 @@ ex_ode_airy.png:
 		-function "abs(calc-exact)" diff -set logy 1 \
 		-function "abs(err)" abserr \
 		-plot x abserr -plot x diff \
-		-ttext 0.6 0.1 "Prince-Dormand act. error" \
-		-ttext 0.20 0.97 "Cash-Karp act. error" \
-		-ttext 0.60 0.80 "Cash-Karp est. error" \
-		-ttext 0.6 0.2 "Prince-Dormand est. error" \
+		-ttext 0.57 0.14 "Prince-Dormand act. error" \
+		-ttext 0.25 0.96 "Cash-Karp act. error" \
+		-ttext 0.60 0.86 "Cash-Karp est. error" \
+		-ttext 0.5 0.21 "Prince-Dormand est. error" \
 		-ttext 0.5 1.03 "Airy function w/non-adaptive steppers" \
 		-show
 
@@ -137,6 +137,27 @@ ex_ode_bessel.png:
 		-ttext 0.48 0.09 "Prince-Dormand est. error" \
 		-ttext 0.5 1.03 "Bessel function w/non-adaptive steppers" \
 		-save ex_ode_bessel.png
+
+ex_ode_bessel2.png: 
+	o2graph -backend Agg -read ../ex_ode.o2 table_4 \
+		-set xtitle x -set ytitle y -set top-margin 0.05 \
+		-function "abs(calc-exact)" diff -set logy 1 \
+		-function "abs(err0)" abserr \
+		-plot x abserr -plot x diff \
+		-read ../ex_ode.o2 table_5 \
+		-function "abs(calc-exact)" diff -set logy 1 \
+		-function "abs(err0)" abserr \
+		-plot x abserr -plot x diff \
+		-read ../ex_ode.o2 table_6 \
+		-function "abs(calc-exact)" diff -set logy 1 \
+		-function "abs(err0)" abserr \
+		-plot x abserr -plot x diff \
+		-ttext 0.46 0.87 "Prince-Dormand act. error" \
+		-ttext 0.70 0.67 "Cash-Karp act. error" \
+		-ttext 0.60 0.48 "Cash-Karp est. error" \
+		-ttext 0.48 0.09 "Prince-Dormand est. error" \
+		-ttext 0.5 1.03 "Bessel function w/adaptive steppers" \
+		-save ex_ode_bessel2.png
 
 ex_stiff_plot.o: ex_stiff_plot.cpp
 	$(CXX) $(CPPFLAGS) -o ex_stiff_plot.o -c ex_stiff_plot.cpp
