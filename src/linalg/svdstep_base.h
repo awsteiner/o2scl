@@ -175,7 +175,6 @@ namespace o2scl_linalg {
   template<class vec_t, class vec2_t, class mat_t, class mat2_t>
     void svd2(size_t M, size_t N, vec_t &d, vec2_t &f, mat_t &U, mat2_t &V) {
     
-    size_t i;
     double c,s,a11,a12,a21,a22;
     
     double d0=O2SCL_IX(d,0);
@@ -316,7 +315,6 @@ namespace o2scl_linalg {
     void svd2_sub(size_t M, size_t N, vec_t &d, vec2_t &f, mat_t &U, 
 		  mat2_t &V, size_t a) {
     
-    size_t i;
     double c,s,a11,a12,a21,a22;
     
     double d0=O2SCL_IX(d,a);

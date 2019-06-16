@@ -2,6 +2,7 @@
 # All figures should be generated with python or o2graph
 #  
 # Reworking June 2019
+# 
 # -------------------------------------------------------------------- 
 
 help:
@@ -20,7 +21,8 @@ help:
 
 EXTRA_DIST = *.eps *.png
 
-plot-all: ex_fptr_plot.eps ex_chebapp_plot.eps ex_ode_bessel.eps
+plot-all: ex_anneal_plot.png ex_chebapp_plot.png ex_fptr_plot.png \
+	ex_ode_airy.png
 
 # -------------------------------------------------------------------- 
 
@@ -28,30 +30,30 @@ ex_anneal_plot.png:
 	o2graph -backend Agg -set colbar 1 \
 		-read ../ex_anneal_plot.o2 -set xtitle x -set ytitle y \
 		-den-plot f \
-		-contours "(-0.9)" f conts.o2 l1 \
-		-contours "(-0.7)" f conts.o2 l2 \
-		-contours "(-0.5)" f conts.o2 l3 \
-		-contours "(-0.3)" f conts.o2 l4 \
-		-contours "(-0.2)" f conts.o2 l5 \
-		-contours "(-0.1)" f conts.o2 l6 \
-		-contours "(-0.05)" f conts.o2 l7 \
-		-contours "0.05" f conts.o2 l8 \
-		-contours "0.1" f conts.o2 l9 \
-		-read conts.o2 l1 -plot color=black \
-		-read conts.o2 l2 -plot color=black \
-		-read conts.o2 l3 -plot color=black \
-		-read conts.o2 l4 -plot color=black \
-		-read conts.o2 l5 -plot color=black \
-		-read conts.o2 l6 -plot color=black \
-		-read conts.o2 l7 -plot color=black \
-		-read conts.o2 l8 -plot color=black \
-		-read conts.o2 l9 -plot color=black \
+		-contours "(-0.9)" f ex_anneal_conts.o2 l1 \
+		-contours "(-0.7)" f ex_anneal_conts.o2 l2 \
+		-contours "(-0.5)" f ex_anneal_conts.o2 l3 \
+		-contours "(-0.3)" f ex_anneal_conts.o2 l4 \
+		-contours "(-0.2)" f ex_anneal_conts.o2 l5 \
+		-contours "(-0.1)" f ex_anneal_conts.o2 l6 \
+		-contours "(-0.05)" f ex_anneal_conts.o2 l7 \
+		-contours "0.05" f ex_anneal_conts.o2 l8 \
+		-contours "0.1" f ex_anneal_conts.o2 l9 \
+		-read ex_anneal_conts.o2 l1 -plot color=black \
+		-read ex_anneal_conts.o2 l2 -plot color=black \
+		-read ex_anneal_conts.o2 l3 -plot color=black \
+		-read ex_anneal_conts.o2 l4 -plot color=black \
+		-read ex_anneal_conts.o2 l5 -plot color=black \
+		-read ex_anneal_conts.o2 l6 -plot color=black \
+		-read ex_anneal_conts.o2 l7 -plot color=black \
+		-read ex_anneal_conts.o2 l8 -plot color=black \
+		-read ex_anneal_conts.o2 l9 -plot color=black \
 		-point 6 7 marker=s,color=black \
 		-text 6 6.5 "Initial point" color=black \
 		-point 2 "(-3)" marker=s,color=white \
 		-text 2 "(-2.5)" "Global minimum" color=white \
 		-save ex_anneal_plot.png
-	rm -f conts.o2
+	rm -f ex_anneal_conts.o2
 
 ex_contour_plot.o: ex_contour_plot.cpp
 	$(CXX) $(CPPFLAGS) -o ex_contour_plot.o -c ex_contour_plot.cpp
@@ -108,15 +110,17 @@ ex_ode_airy.png:
 	o2graph -read ../ex_ode.o2 table_2 \
 		-set xtitle x -set ytitle y -set top-margin 0.05 \
 		-function "abs(calc-exact)" diff -set logy 1 \
-		-plot x err -plot x diff \
+		-function "abs(err)" abserr \
+		-plot x abserr -plot x diff \
 		-read ../ex_ode.o2 table_3 \
 		-function "abs(calc-exact)" diff -set logy 1 \
-		-plot x err -plot x diff \
-		-ttext 0.46 0.87 "Prince-Dormand act. error" \
-		-ttext 0.70 0.67 "Cash-Karp act. error" \
-		-ttext 0.60 0.48 "Cash-Karp est. error" \
-		-ttext 0.48 0.09 "Prince-Dormand est. error" \
-		-ttext 0.5 1.03 "Bessel function w/non-adaptive steppers" \
+		-function "abs(err)" abserr \
+		-plot x abserr -plot x diff \
+		-ttext 0.6 0.1 "Prince-Dormand act. error" \
+		-ttext 0.20 0.97 "Cash-Karp act. error" \
+		-ttext 0.60 0.80 "Cash-Karp est. error" \
+		-ttext 0.6 0.2 "Prince-Dormand est. error" \
+		-ttext 0.5 1.03 "Airy function w/non-adaptive steppers" \
 		-show
 
 ex_ode_bessel.png: 
