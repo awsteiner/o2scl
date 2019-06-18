@@ -241,6 +241,46 @@ AC_ARG_ENABLE(fftw,
 AM_CONDITIONAL(O2SCL_FFTW, test x$fftw = xtrue)
 
 # ----------------------------------------------
+# Enable or disable python support
+# ----------------------------------------------
+
+AC_ARG_ENABLE(python,
+	[  --enable-python         Include Python support @<:@default=no@:>@],
+	[case "${enableval}" in
+	yes) python=true ;;
+	no)  python=false ;;
+	*) AC_MSG_ERROR(bad value ${enableval} for --enable-python) ;;
+	esac],[python=false])
+
+AM_CONDITIONAL(O2SCL_PYTHON, test x$python = xtrue)
+
+# ----------------------------------------------
+
+dnl AS_IF([test "$python" != "no"], [
+
+dnl AM_PATH_PYTHON([3.0])
+dnl AC_ARG_VAR([PYTHON_INCLUDE],
+dnl            [Include flags for python, bypassing python-config])
+dnl AC_ARG_VAR([PYTHON_CONFIG],
+dnl            [Path to python-config])
+dnl AS_IF([test -z "$PYTHON_INCLUDE"], [
+dnl   AS_IF([test -z "$PYTHON_CONFIG"], [
+dnl     AC_PATH_PROGS([PYTHON_CONFIG],
+dnl                   [python$PYTHON_VERSION-config python-config],
+dnl                   [no],
+dnl                   [`dirname $PYTHON`])
+dnl     AS_IF([test "$PYTHON_CONFIG" = no],
+dnl           [AC_MSG_ERROR([cannot find python-config for $PYTHON.])])
+dnl   ])
+dnl   AC_MSG_CHECKING([python include flags])
+dnl   PYTHON_INCLUDE=`$PYTHON_CONFIG --includes`
+dnl   PYTHON_LIB=`$PYTHON_CONFIG --ldflags`
+dnl   AC_MSG_RESULT([$PYTHON_INCLUDE])
+dnl ])
+
+dnl ])
+
+# ----------------------------------------------
 # If enabled, check for the FFTW library
 # ----------------------------------------------
 
@@ -343,20 +383,6 @@ AC_ARG_ENABLE(openmp,
 	esac],[openmp=false])
 
 AM_CONDITIONAL(O2SCL_OPENMP, test x$openmp = xtrue)
-
-# ----------------------------------------------
-# Enable or disable python support
-# ----------------------------------------------
-
-AC_ARG_ENABLE(python,
-	[  --enable-python         Include Python support @<:@default=no@:>@],
-	[case "${enableval}" in
-	yes) python=true ;;
-	no)  python=false ;;
-	*) AC_MSG_ERROR(bad value ${enableval} for --enable-python) ;;
-	esac],[python=false])
-
-AM_CONDITIONAL(O2SCL_PYTHON, test x$python = xtrue)
 
 # ----------------------------------------------
 
