@@ -47,6 +47,7 @@
 #include <o2scl/table_units.h>
 #include <o2scl/contour.h>
 #include <o2scl/shunting_yard.h>
+#include <o2scl/vector.h>
 
 // Forward definition of the table3d class for HDF I/O
 namespace o2scl {
@@ -763,26 +764,36 @@ namespace o2scl {
       // Setup x and y grid vectors from data
       const vec_t &xdata=tab[xname2];
       const vec_t &ydata=tab[yname2];
+      
       std::vector<double> xgrid, ygrid;
-      // Note it is important that this go up to tab.get_nlines()
+      
+      // Note it is important that this loop ends at tab.get_nlines()
       // rather than xdata.size() because the internal vector storage
       // can be larger than the actual table size
       for(size_t i=0;i<tab.get_nlines();i++) {
+
+	// Look for x value in x grid
 	bool found=false;
 	for(size_t j=0;j<xgrid.size();j++) {
 	  if (fabs(xdata[i]-xgrid[j])/fabs(xgrid[j])<eps) {
 	    found=true;
 	  }
 	}
+
+	// If not found, add it
 	if (found==false) {
 	  xgrid.push_back(xdata[i]);
 	}
+
+	// Now look for y value in y grid
 	found=false;
 	for(size_t j=0;j<ygrid.size();j++) {
 	  if (fabs(ydata[i]-ygrid[j])/fabs(ygrid[j])<eps) {
 	    found=true;
 	  }
 	}
+
+	// If not found, add it
 	if (found==false) {
 	  ygrid.push_back(ydata[i]);
 	}
@@ -798,8 +809,12 @@ namespace o2scl {
 	  std::cout << k << " " << ygrid[k] << std::endl;
 	}
       }
+
+      // Sor the grids
+      vector_sort_double(xgrid.size(),xgrid);
+      vector_sort_double(ygrid.size(),ygrid);
       
-      // Set grid from x and y vectors
+      // Set grid from x and y grid vectors
       set_xy(xname2,xgrid.size(),xgrid,yname2,ygrid.size(),ygrid);
       
       // Create new slices

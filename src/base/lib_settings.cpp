@@ -287,6 +287,22 @@ bool lib_settings_class::eigen_support() {
 #endif
 }
 
+bool lib_settings_class::fftw_support() {
+#ifdef O2SCL_FFTW
+  return true;
+#else
+  return false;
+#endif
+}
+
+bool lib_settings_class::python_support() {
+#ifdef O2SCL_PYTHON
+  return true;
+#else
+  return false;
+#endif
+}
+
 bool lib_settings_class::openmp_support() {
 #ifdef O2SCL_OPENMP
   return true;

@@ -18,7 +18,11 @@ BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	string_conv.cpp exception.cpp format_float.cpp \
 	shunting_yard.cpp tensor.cpp
 
+if O2SCL_PYTHON
 BASE_SRCS = $(BASE_BASE_SRCS)
+else
+BASE_SRCS = $(BASE_BASE_SRCS) python.cpp
+endif
 
 BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 	lib_settings.scr misc.scr mm_funct.scr multi_funct.scr \
@@ -96,6 +100,7 @@ AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
 	$(O2SCL_GSL2_MVAR) $(O2SCL_PYTHON_MVAR) -DO2SCL_COND_FLAG
 endif
+
 
 # ------------------------------------------------------------
 # Install headers
