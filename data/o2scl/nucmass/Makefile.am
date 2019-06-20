@@ -7,6 +7,8 @@ dist_ndata_DATA = ame03.o2 ame03round.o2 ame95exp.o2 hfb*.o2 \
 			wlwm14.o2 lwdw11.o2 sd*.o2 dglg10.o2 \
 			ame16.o2 ame16round.o2
 
+subdirs = frib_mex
+
 WSall: WS3.2.o2 WS3.3.o2 WS3.6.o2 WS3_RBF.o2 WS4_RBF.o2
 
 WS3.2.o2:
