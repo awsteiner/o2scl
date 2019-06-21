@@ -32,9 +32,16 @@ using namespace o2scl_const;
 nucmass_gen::nucmass_gen() {
 }
 
+nucmass_gen::~nucmass_gen() {
+}
+
 int nucmass_gen::load_be(std::string fname, std::string be_col,
 			 double be_units, bool external) {
-  n=0;
+
+  if (n>0) {
+    data.clear();
+    n=0;
+  }
   
   std::string dir=o2scl::o2scl_settings.get_data_dir();
   if (!external) {
@@ -52,6 +59,8 @@ int nucmass_gen::load_be(std::string fname, std::string be_col,
   }
   data.sort_table("Z");
 
+  n=data.get_nlines();
+
   data.new_column("mex");
   for(size_t i=0;i<n;i++) {
     double be=data.get(be_col,i);
@@ -62,13 +71,9 @@ int nucmass_gen::load_be(std::string fname, std::string be_col,
   }
   mex_col_ix=data.lookup_column("mex");
   
-  n=data.get_nlines();
   last=n/2;
 
   return 0;
-}
-
-nucmass_gen::~nucmass_gen() {
 }
 
 bool nucmass_gen::is_included(int l_Z, int l_N) {
