@@ -679,7 +679,7 @@ namespace o2scl {
       while(done==false && ret==0) {
 	
 	ret=astp->astep_full(x,xsol[i],xnext,h,n,ystart,dydx_start,
-	y_row,yerr_row,dydx_row,derivs);
+			     y_row,yerr_row,dydx_row,derivs);
 
 	nsteps++;
 	if (ret!=0) {

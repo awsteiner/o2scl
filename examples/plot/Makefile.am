@@ -108,7 +108,7 @@ ex_nuc_plot: ex_nuc_plot.o  ../../src/other/graph.o
 
 ex_ode_airy.png: 
 	o2graph -read ../ex_ode.o2 table_2 \
-		-set xtitle x -set ytitle y -set top-margin 0.05 \
+		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
 		-function "abs(calc-exact)" diff -set logy 1 \
 		-function "abs(err)" abserr \
 		-plot x abserr -plot x diff \
@@ -125,7 +125,7 @@ ex_ode_airy.png:
 
 ex_ode_bessel.png: 
 	o2graph -backend Agg -read ../ex_ode.o2 table_0 \
-		-set xtitle x -set ytitle y -set top-margin 0.05 \
+		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
 		-function "abs(calc-exact)" diff -set logy 1 \
 		-plot x err -plot x diff \
 		-read ../ex_ode.o2 table_1 \
@@ -140,24 +140,41 @@ ex_ode_bessel.png:
 
 ex_ode_bessel2.png: 
 	o2graph -backend Agg -read ../ex_ode.o2 table_4 \
-		-set xtitle x -set ytitle y -set top-margin 0.05 \
+		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
+		-set ylo 1.0e-11 -set yhi 2.5e-6 \
 		-function "abs(calc-exact)" diff -set logy 1 \
 		-function "abs(err0)" abserr \
-		-plot x abserr -plot x diff \
+		-plot x abserr color=black,ls=-. -plot x diff color=black \
 		-read ../ex_ode.o2 table_5 \
-		-function "abs(calc-exact)" diff -set logy 1 \
+		-function "abs(calc-exact)" diff \
 		-function "abs(err0)" abserr \
-		-plot x abserr -plot x diff \
+		-plot x abserr color=red,ls=-. -plot x diff color=red \
 		-read ../ex_ode.o2 table_6 \
-		-function "abs(calc-exact)" diff -set logy 1 \
+		-function "abs(calc-exact)" diff \
 		-function "abs(err0)" abserr \
-		-plot x abserr -plot x diff \
-		-ttext 0.46 0.87 "Prince-Dormand act. error" \
-		-ttext 0.70 0.67 "Cash-Karp act. error" \
-		-ttext 0.60 0.48 "Cash-Karp est. error" \
-		-ttext 0.48 0.09 "Prince-Dormand est. error" \
+		-plot x abserr color=blue,ls=-. -plot x diff color=blue \
+		-ttext 0.45 0.97 "Cash-Karp act. error" color=black \
+		-ttext 0.22 0.92 "Cash-Karp est. error" color=black \
+		-ttext 0.55 0.65 "Cash-Karp(2) act. error" color=red \
+		-ttext 0.30 0.60 "Prince-Dormand act. error" color=blue \
+		-ttext 0.70 0.10 "Cash-Karp(2) est. error" color=red \
+		-ttext 0.35 0.05 "Prince-Dormand est. error" color=blue \
 		-ttext 0.5 1.03 "Bessel function w/adaptive steppers" \
 		-save ex_ode_bessel2.png
+
+ex_ode_bessel3.png: 
+	o2graph -backend Agg -read ../ex_ode.o2 table_7 \
+		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
+		-set ylo 1.0e-11 -set yhi 2.5e-7 \
+		-list \
+		-function "abs(calc-exact)" diff -set logy 1 \
+		-function "abs(err0)" abserr \
+		-plot x abserr color=black,ls=-. -plot x diff color=black \
+		-ttext 0.45 0.97 "Act. error" color=black \
+		-ttext 0.22 0.92 "Est. error" color=black \
+		-ttext 0.5 1.03 \
+		"Bessel function, high-level adaptive stepper" \
+		-save ex_ode_bessel3.png
 
 ex_stiff_plot.o: ex_stiff_plot.cpp
 	$(CXX) $(CPPFLAGS) -o ex_stiff_plot.o -c ex_stiff_plot.cpp

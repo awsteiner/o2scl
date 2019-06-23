@@ -412,10 +412,10 @@ int main(void) {
   yg(0,0)=0.0;
   yg(0,1)=0.5;
 
-#ifdef O2SCL_NEVER_DEFINED
+#ifndef O2SCL_NEVER_DEFINED
 
   // Perform the full solution
-  ode4.solve_grid<ubmatrix,ubmatrix_row>(0.1,2,ngrid,xg,yg,ypg,yerrg,od);
+  ode4.solve_grid<ubmatrix,const ubmatrix_row>(0.1,2,ngrid,xg,yg,ypg,yerrg,od);
   
   // Output and test the results
   cout << " x             J1(calc)      J1(exact)     rel. diff." << endl;
