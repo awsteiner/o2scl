@@ -19,7 +19,7 @@ BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	shunting_yard.cpp tensor.cpp
 
 if O2SCL_PYTHON
-BASE_SRCS = $(BASE_BASE_SRCS) python.cpp
+BASE_SRCS = $(BASE_BASE_SRCS) python_base.cpp
 else
 BASE_SRCS = $(BASE_BASE_SRCS) 
 endif
@@ -35,6 +35,9 @@ BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 TEST_VAR = $(BASE_TEST_VAR)
 
 SUBDIRS = arma eigen both neither
+
+python_base.cpp: python_base.i
+	swig -c++ -python -o python_base.cpp python_base.i
 
 # ------------------------------------------------------------
 # Includes
@@ -83,7 +86,7 @@ O2SCL_GSL2_MVAR =
 endif
 
 if O2SCL_PYTHON
-O2SCL_PYTHON_MVAR = -DO2SCL_PYTHON
+O2SCL_PYTHON_MVAR = -DO2SCL_PYTHON $(PYTHON_INCLUDE)
 else
 O2SCL_PYTHON_MVAR =
 endif

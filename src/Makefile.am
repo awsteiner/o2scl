@@ -185,11 +185,6 @@ O2SCL_TEST_ADD = test_anneal test_base test_deriv test_fit \
 endif
 endif
 
-all: pybuild all-am
-
-pybuild:
-	swig -c++ -python -o base/python.cpp python.i
-
 test_anneal:
 	cd anneal && $(MAKE) o2scl-test-rec
 
