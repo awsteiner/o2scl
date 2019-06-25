@@ -18,12 +18,21 @@ help:
 if O2SCL_PARTLIB
 if O2SCL_EOSLIB
 if O2SCL_HDF
+if O2SCL_PYTHON
+
+SUBDIRS = internal anneal base deriv fit inte mcarlo \
+	min ode other root linalg \
+	part nuclei eos hdf cubature python
+LIBLIST = libo2scl.la libo2scl_part.la
+
+else
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
 	min ode other root linalg \
 	part nuclei eos hdf cubature
 LIBLIST = libo2scl.la libo2scl_part.la
 
+endif
 else
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
@@ -67,10 +76,21 @@ LIBLIST = libo2scl.la
 endif
 endif
 
+if O2SCL_PYTHON
+
+SUBLIBS = mcarlo/libo2scl_mcarlo.la other/libo2scl_other.la \
+	min/libo2scl_min.la \
+	inte/libo2scl_inte.la linalg/libo2scl_linalg.la \
+	base/libo2scl_base.la python/libo2scl_python.la
+
+else
+
 SUBLIBS = mcarlo/libo2scl_mcarlo.la other/libo2scl_other.la \
 	min/libo2scl_min.la \
 	inte/libo2scl_inte.la linalg/libo2scl_linalg.la \
 	base/libo2scl_base.la
+
+endif
 
 #	fit/libo2scl_fit.la
 
