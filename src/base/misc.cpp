@@ -38,6 +38,10 @@
 using namespace std;
 using namespace o2scl;
 
+int o2scl_python_test(int x) {
+  return x*x;
+}
+
 int o2scl::pipe_cmd_string(std::string cmd, std::string &result,
 			   bool err_on_fail, int nmax) {
   
