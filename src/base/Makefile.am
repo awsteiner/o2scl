@@ -18,12 +18,6 @@ BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	string_conv.cpp exception.cpp format_float.cpp \
 	shunting_yard.cpp tensor.cpp
 
-#if O2SCL_PYTHON
-#BASE_SRCS = $(BASE_BASE_SRCS) python.cpp
-#else
-#BASE_SRCS = $(BASE_BASE_SRCS) 
-#endif
-
 BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 	lib_settings.scr misc.scr mm_funct.scr multi_funct.scr \
 	search_vec.scr table.scr vector.scr interp_krige.scr \
@@ -82,23 +76,17 @@ else
 O2SCL_GSL2_MVAR =
 endif
 
-if O2SCL_PYTHON
-O2SCL_PYTHON_MVAR = -DO2SCL_PYTHON
-else
-O2SCL_PYTHON_MVAR =
-endif
-
 if O2SCL_SNAP
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"/snap/o2scl/current/share/o2scl/\" \
 	$(O2SCL_PART_MVAR) $(O2SCL_EOS_MVAR) $(O2SCL_HDF_MVAR) \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
-	$(O2SCL_GSL2_MVAR) $(O2SCL_PYTHON_MVAR) -DO2SCL_COND_FLAG
+	$(O2SCL_GSL2_MVAR) -DO2SCL_COND_FLAG
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	$(O2SCL_PART_MVAR) $(O2SCL_EOS_MVAR) $(O2SCL_HDF_MVAR) \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
-	$(O2SCL_GSL2_MVAR) $(O2SCL_PYTHON_MVAR) -DO2SCL_COND_FLAG
+	$(O2SCL_GSL2_MVAR) -DO2SCL_COND_FLAG
 endif
 
 
