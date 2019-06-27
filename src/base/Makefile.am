@@ -18,11 +18,11 @@ BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	string_conv.cpp exception.cpp format_float.cpp \
 	shunting_yard.cpp tensor.cpp
 
-if O2SCL_PYTHON
-BASE_SRCS = $(BASE_BASE_SRCS) python.cpp
-else
-BASE_SRCS = $(BASE_BASE_SRCS) 
-endif
+#if O2SCL_PYTHON
+#BASE_SRCS = $(BASE_BASE_SRCS) python.cpp
+#else
+#BASE_SRCS = $(BASE_BASE_SRCS) 
+#endif
 
 BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 	lib_settings.scr misc.scr mm_funct.scr multi_funct.scr \

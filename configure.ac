@@ -258,31 +258,31 @@ AM_CONDITIONAL(O2SCL_PYTHON, test x$python = xtrue)
 # Relevant python environment variables
 # -------------------------------------------------------------------
 
-AC_ARG_VAR([PYTHON_INCLUDE],
-           [Include flags for python, bypassing python-config])
-AC_ARG_VAR([PYTHON_CONFIG],
-           [Path to python-config])
+dnl AC_ARG_VAR([PYTHON_INCLUDE],
+dnl            [Include flags for python, bypassing python-config])
+dnl AC_ARG_VAR([PYTHON_CONFIG],
+dnl            [Path to python-config])
 
-# -------------------------------------------------------------------
-# If python was requested, then set up the proper makefile variables
-# -------------------------------------------------------------------
+dnl # -------------------------------------------------------------------
+dnl # If python was requested, then set up the proper makefile variables
+dnl # -------------------------------------------------------------------
 
-AS_IF([test "x$python" != "xfalse"],
-  [AM_PATH_PYTHON([3.0])
-   AS_IF([test -z "$PYTHON_INCLUDE"], [
-     AS_IF([test -z "$PYTHON_CONFIG"], [
-       AC_PATH_PROGS([PYTHON_CONFIG],
-                     [python$PYTHON_VERSION-config python-config],
-                     [no],[`dirname $PYTHON`])
-   AS_IF([test "$PYTHON_CONFIG" = no],
-     [AC_MSG_ERROR([cannot find python-config for $PYTHON.])])
-     ])
-   AC_MSG_CHECKING([python include flags])
-     PYTHON_INCLUDE=`$PYTHON_CONFIG --includes`
-     PYTHON_LIB=`$PYTHON_CONFIG --ldflags`
-     AC_MSG_RESULT([$PYTHON_INCLUDE])
-     ])],
-   [echo Not looking for python libraries.])
+dnl AS_IF([test "x$python" != "xfalse"],
+dnl   [AM_PATH_PYTHON([3.0])
+dnl    AS_IF([test -z "$PYTHON_INCLUDE"], [
+dnl      AS_IF([test -z "$PYTHON_CONFIG"], [
+dnl        AC_PATH_PROGS([PYTHON_CONFIG],
+dnl                      [python$PYTHON_VERSION-config python-config],
+dnl                      [no],[`dirname $PYTHON`])
+dnl    AS_IF([test "$PYTHON_CONFIG" = no],
+dnl      [AC_MSG_ERROR([cannot find python-config for $PYTHON.])])
+dnl      ])
+dnl    AC_MSG_CHECKING([python include flags])
+dnl      PYTHON_INCLUDE=`$PYTHON_CONFIG --includes`
+dnl      PYTHON_LIB=`$PYTHON_CONFIG --ldflags`
+dnl      AC_MSG_RESULT([$PYTHON_INCLUDE])
+dnl      ])],
+dnl    [echo Not looking for python libraries.])
 
 # ----------------------------------------------
 # If enabled, check for the FFTW library
