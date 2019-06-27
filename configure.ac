@@ -416,7 +416,6 @@ AC_CONFIG_FILES([Makefile
                  src/other/Makefile
                  src/internal/Makefile
                  src/part/Makefile
-                 src/python/Makefile
                  src/root/Makefile	
                  src/root/arma/Makefile	
                  src/root/both/Makefile	
