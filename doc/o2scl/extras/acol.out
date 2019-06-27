@@ -5,7 +5,7 @@
 # commands individually, e.g.
 # -----------------------------------------------------------------
 > help create
-Usage: [1m[36mcreate[m <type> [...]
+Usage: create <type> [...]
 
 Short description: Create an object.
 
