@@ -18,6 +18,8 @@ BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	string_conv.cpp exception.cpp format_float.cpp \
 	shunting_yard.cpp tensor.cpp
 
+BASE_SRCS = $(BASE_BASE_SRCS)
+
 BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 	lib_settings.scr misc.scr mm_funct.scr multi_funct.scr \
 	search_vec.scr table.scr vector.scr interp_krige.scr \
