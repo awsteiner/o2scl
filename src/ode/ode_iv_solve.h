@@ -611,6 +611,115 @@ namespace o2scl {
 
     return first_ret;
   }
+
+  /** \brief Solve the initial-value problem from \c x0 to \c x1 over
+      a grid storing derivatives and errors
+
+      Initially, \c xsol should be an array of size \c nsol, and \c
+      ysol should be a \c ubmatrix of size \c [nsol][n]. This function
+      never takes a step larger than the grid size.
+
+      If \ref verbose is greater than zero, The solution at each grid
+      point will be written to \c std::cout. If \ref verbose is
+      greater than one, a character will be required after each point.
+
+      \future Consider making a version of grid which gives the 
+      same answers as solve_final_value(). After each proposed step,
+      it would go back and fill in the grid points if the proposed
+      step was past the next grid point.
+  */
+  template<class mat_t, class mat_row_t>
+  int solve_grid(double h, size_t n, size_t nsol, vec_t &xsol, 
+		 mat_t &ysol, mat_t &err_sol, mat_t &dydx_sol, 
+		 func_t &derivs) {
+    
+    double x0=xsol[0];
+    double x1=xsol[nsol-1];
+
+    double x=x0, xnext;
+    int ret=0, first_ret=0;
+    nsteps=0;
+
+    // Copy the initial point to the first row
+    xsol[0]=x0;
+
+    // Create space for the initial point of each step
+    allocate(n);
+
+    // Create some references just to make the code easier
+    // to read
+    vec_t &ystart=vtemp;
+    vec_t &dydx_start=vtemp2;
+
+    // Copy ysol[0] to ystart
+    for(size_t j=0;j<n;j++) {
+      ystart[j]=ysol(0,j);
+    }
+
+    // Verbose output for the first row
+    if (verbose>0) print_iter(xsol[0],n,ystart);
+    
+    // Evalulate the first derivative
+    derivs(x0,n,ystart,dydx_start);
+    
+    // Set the derivatives and the uncertainties for the first row
+    for(size_t j=0;j<n;j++) {
+      dydx_sol(0,j)=dydx_start[j];
+      err_sol(0,j)=0.0;
+    }
+
+    for(size_t i=1;i<nsol && ret==0;i++) {
+      
+      mat_row_t y_row(ysol,i);
+      mat_row_t dydx_row(dydx_sol,i);
+      mat_row_t yerr_row(err_sol,i);
+
+      // Step until we reach the next grid point
+      bool done=false;
+      while(done==false && ret==0) {
+	
+	ret=astp->astep_full(x,xsol[i],xnext,h,n,ystart,dydx_start,
+			     y_row,yerr_row,dydx_row,derivs);
+
+	nsteps++;
+	if (ret!=0) {
+	  if (exit_on_fail) {
+	    O2SCL_ERR2("Adaptive stepper failed in ",
+			   "ode_iv_solve::solve_grid()",ret);
+	  } else if (first_ret!=0) {
+	    first_ret=ret;
+	  }
+	}
+	
+	if (nsteps>ntrial) {
+	  std::string str="Too many steps required (ntrial="+itos(ntrial)+
+	    ", x="+o2scl::dtos(x)+") in ode_iv_solve::solve_grid().";
+	  O2SCL_ERR(str.c_str(),exc_emaxiter);
+	}
+
+	// Copy the results of the last step to the starting
+	// point for the next step
+	x=xnext;
+	for(size_t j=0;j<n;j++) {
+	  ystart[j]=y_row[j];
+	  dydx_start[j]=dydx_row[j];
+	}
+	
+	// Decide if we have reached the grid point
+	if (x1>x0) {
+	  if (x>=xsol[i]) done=true;
+	} else {
+	  if (x<=xsol[i]) done=true;
+	}
+	    
+      }
+      
+      if (verbose>0) print_iter(xsol[i],n,ystart);
+
+    }
+    
+    return first_ret;
+  }
   //@}
 
   /// Set output level
@@ -649,186 +758,6 @@ namespace o2scl {
 
   /// Return the type, \c "ode_iv_solve".
   virtual const char *type() { return "ode_iv_solve"; }
-  
-  };
-
-/** \brief Desc
- */
-template<class func_t=ode_funct, 
-  class vec_t=boost::numeric::ublas::vector<double>,
-  class mat_row_t=boost::numeric::ublas::matrix_row<boost::numeric::ublas::matrix<double> > > 
-    class ode_iv_solve_grid {
-
-  public:
-
-  typedef boost::numeric::ublas::vector<double> ubvector;
-  typedef boost::numeric::ublas::matrix<double> ubmatrix;
-  typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
-   
-#ifndef DOXYGEN_INTERNAL
-    
-  protected:
-
-  /// The adaptive stepper
-  astep_base<mat_row_t,mat_row_t,mat_row_t,func_t> *astp;
-    
-  /// Print out iteration information
-  virtual int print_iter(double x, size_t nv, vec_t &y) {
-    std::cout << type() << " x: " << x << " y: ";
-    for(size_t i=0;i<nv;i++) std::cout << y[i] << " ";
-    std::cout << std::endl;
-    if (verbose>1) {
-      char ch;
-      std::cin >> ch;
-    }
-    return 0;
-  }
-
-#endif
-
-  public:
-      
-  ode_iv_solve_grid() {
-    verbose=0;
-    ntrial=1000;
-    astp=&gsl_astp;
-    exit_on_fail=true;
-    err_nonconv=true;
-  }
-      
-  virtual ~ode_iv_solve_grid() {
-  }
-
-  /** \brief If true, call the error handler if the solution does 
-      not converge (default true)
-  */
-  bool err_nonconv;
-  
-  /// \name Main solver function
-  //@{
-  /** \brief Solve the initial-value problem from \c x0 to \c x1 over
-      a grid storing derivatives and errors
-
-      Initially, \c xsol should be an array of size \c nsol, and \c
-      ysol should be a \c ubmatrix of size \c [nsol][n]. This function
-      never takes a step larger than the grid size.
-
-      If \ref verbose is greater than zero, The solution at each grid
-      point will be written to \c std::cout. If \ref verbose is
-      greater than one, a character will be required after each point.
-
-      \future Consider making a version of grid which gives the 
-      same answers as solve_final_value(). After each proposed step,
-      it would go back and fill in the grid points if the proposed
-      step was past the next grid point.
-  */
-  template<class mat_t>
-  int solve_grid(double h, size_t n, size_t nsol, vec_t &xsol, 
-		 mat_t &ysol, mat_t &err_sol, mat_t &dydx_sol, 
-		 func_t &derivs) {
-    
-    double x0=xsol[0];
-    double x1=xsol[nsol-1];
-
-    double x=x0, xnext;
-    int ret=0, first_ret=0;
-    nsteps=0;
-
-    // Copy the initial point to the first row
-    xsol[0]=x0;
-
-    // Evalulate the first derivative
-    mat_row_t y_start_init(ysol,0);
-    mat_row_t dydx_start_init(dydx_sol,0);
-    derivs(x0,n,y_start_init,dydx_start_init);
-    
-    // Verbose output for the first row
-    if (verbose>0) print_iter(xsol[0],n,y_start_init);
-    
-    // Set the derivatives and the uncertainties for the first row
-    for(size_t j=0;j<n;j++) {
-      err_sol(0,j)=0.0;
-    }
-
-    for(size_t i=1;i<nsol && ret==0;i++) {
-      
-      mat_row_t y_start(ysol,i-1);
-      mat_row_t dydx_start(dydx_sol,i-1);
-      mat_row_t y_row(ysol,i);
-      mat_row_t dydx_row(dydx_sol,i);
-      mat_row_t yerr_row(err_sol,i);
-
-      // Step until we reach the next grid point
-      bool done=false;
-      while(done==false && ret==0) {
-	
-	ret=astp->astep_full(x,xsol[i],xnext,h,n,y_start,dydx_start,
-			     y_row,yerr_row,dydx_row,derivs);
-
-	nsteps++;
-	if (ret!=0) {
-	  if (exit_on_fail) {
-	    O2SCL_ERR2("Adaptive stepper failed in ",
-			   "ode_iv_solve::solve_grid()",ret);
-	  } else if (first_ret!=0) {
-	    first_ret=ret;
-	  }
-	}
-	
-	if (nsteps>ntrial) {
-	  std::string str="Too many steps required (ntrial="+itos(ntrial)+
-	    ", x="+o2scl::dtos(x)+") in ode_iv_solve::solve_grid().";
-	  O2SCL_ERR(str.c_str(),exc_emaxiter);
-	}
-
-	// Adjust independent variable for next step
-	x=xnext;
-	
-	// Decide if we have reached the grid point
-	if (x1>x0) {
-	  if (x>=xsol[i]) done=true;
-	} else {
-	  if (x<=xsol[i]) done=true;
-	}
-	    
-      }
-      
-      if (verbose>0) print_iter(xsol[i],n,y_row);
-
-    }
-    
-    return first_ret;
-  }
-  //@}
-
-  /// Set output level
-  int verbose;
-  
-  /// Maximum number of applications of the adaptive stepper (default 1000)
-  size_t ntrial;
-
-  /// Number of adaptive steps employed
-  size_t nsteps;
-
-  /// \name The adaptive stepper
-  //@{
-  /// Set the adaptive stepper to use
-  int set_astep(astep_base<mat_row_t,mat_row_t,mat_row_t,func_t> &as) {
-    astp=&as;
-    return 0;
-  }
-
-  /** \brief If true, stop the solution if the adaptive stepper fails
-      (default true)
-  */
-  bool exit_on_fail;
-
-  /// The default adaptive stepper
-  astep_gsl<mat_row_t,mat_row_t,mat_row_t,func_t> gsl_astp;
-  //@}
-
-  /// Return the type, \c "ode_iv_solve".
-  virtual const char *type() { return "ode_iv_solve_grid"; }
   
   };
 
