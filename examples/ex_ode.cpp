@@ -72,6 +72,14 @@ int derivs2(double x, size_t nv, const ubvector &y,
   return 0;
 }
 
+int derivs3(double x, size_t nv, const o2scl::solve_grid_mat_row &y, 
+	    o2scl::solve_grid_mat_row &dydx, double &alpha) {
+  dydx[0]=y[1];
+  if (x==0.0) dydx[1]=0.0;
+  else dydx[1]=(-x*y[1]+(-x*x+alpha*alpha)*y[0])/x/x;
+  return 0;
+}
+
 int main(void) {
 
   cout.setf(ios::scientific);
@@ -95,6 +103,9 @@ int main(void) {
     std::bind(derivs,std::placeholders::_1,std::placeholders::_2,
 	      std::placeholders::_3,std::placeholders::_4,alpha);
   ode_funct od2=derivs2;
+  ode_funct_solve_grid od3=
+    std::bind(derivs3,std::placeholders::_1,std::placeholders::_2,
+	      std::placeholders::_3,std::placeholders::_4,alpha);
 #else
   ode_funct_fptr_param<double,ubvector> od(derivs,alpha);
   ode_funct_fptr<ubvector> od2(derivs2);
@@ -398,7 +409,8 @@ int main(void) {
   cout.precision(6);
   
   cout << "Initial value solver: " << endl;
-  ode_iv_solve<> ode4;
+  ode_iv_solve_grid<> ode4;
+  ode4.ntrial=10000;
 
   // Define the grid and the storage for the solution
   const size_t ngrid=101;
@@ -412,10 +424,10 @@ int main(void) {
   yg(0,0)=0.0;
   yg(0,1)=0.5;
 
-#ifndef O2SCL_NEVER_DEFINED
-
   // Perform the full solution
-  ode4.solve_grid<ubmatrix,const ubmatrix_row>(0.1,2,ngrid,xg,yg,ypg,yerrg,od);
+  cout << "H1." << endl;
+  ode4.solve_grid<ubvector,ubmatrix>(0.1,2,ngrid,xg,yg,ypg,yerrg,od3);
+  cout << "H2." << endl;
   
   // Output and test the results
   cout << " x             J1(calc)      J1(exact)     rel. diff." << endl;
@@ -443,8 +455,6 @@ int main(void) {
     gsl_sf_bessel_J1(xg[ngrid-1]) << endl;
   cout << endl;
 
-#endif
-  
   // End of Solution 8
   // ------------------------------------------------------------
   // Output results to a file
