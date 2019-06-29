@@ -646,22 +646,30 @@ namespace o2scl {
   
   };
 
+  typedef matrix_row_gen_ctor<boost::numeric::ublas::matrix<double> >
+    solve_grid_mat_row;
+
+  typedef std::function<int(double,size_t,const solve_grid_mat_row &,
+			    solve_grid_mat_row &)>
+    ode_funct_solve_grid;
+ 
   /** \brief Solve an initial-value ODE problems on a grid 
       given an adaptive ODE stepper
       
-      The functions solve_grid() works as in solve_store() except
-      that the solution is stored on a grid of points in the 
-      independent variable specified by the user, at the cost of 
-      taking extra steps to ensure that function values,
-      derivatives, and errors are computed at each grid point. 
-   */
-  template<class func_t=ode_funct,
-	   class mat_row_t=boost::numeric::ublas::matrix_row<
-	     boost::numeric::ublas::matrix<double> > > 
-  class ode_iv_solve_grid {
-    
-  public:
+      This class works as similar to ode_iv_solve::solve_store()
+      except that the solution is stored on a grid of points in the
+      independent variable specified by the user, at the cost of
+      taking extra steps to ensure that function values, derivatives,
+      and errors are computed at each grid point.
 
+      There is an example for the usage of this class in
+      <tt>examples/ex_ode.cpp</tt> documented in the \ref ex_ode_sect
+      section.
+   */
+  template<class func_t=ode_funct_solve_grid,
+    class mat_row_t=solve_grid_mat_row> 
+    class ode_iv_solve_grid {
+    
 #ifndef DOXYGEN_INTERNAL
     
   protected:

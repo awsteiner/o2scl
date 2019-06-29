@@ -30,11 +30,6 @@ using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
-typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
-
-typedef std::function<int(double,size_t,const ubmatrix_row &,
-			  ubmatrix_row &)>
-    ode_funct2;
 
 int derivs(double x, size_t nv, const ubvector &y, ubvector &dydx) {
   dydx[0]=y[1];
@@ -42,7 +37,8 @@ int derivs(double x, size_t nv, const ubvector &y, ubvector &dydx) {
   return 0;
 }
 
-int derivs2(double x, size_t nv, const ubmatrix_row &y, ubmatrix_row &dydx) {
+int derivs2(double x, size_t nv, const o2scl::solve_grid_mat_row &y,
+	    o2scl::solve_grid_mat_row &dydx) {
   dydx[0]=y[1];
   dydx[1]=-y[0];
   return 0;
@@ -63,10 +59,8 @@ int main(void) {
   t.set_output_level(1);
 
   ode_iv_solve<> ivs;
-  ode_iv_solve_grid<ode_funct2> ivsg;
 
   ode_funct od=derivs;
-  ode_funct2 od2=derivs2;
 
   ubvector y(2), dydx(2), yout(2), yerr(2), yend(2);
 
@@ -122,6 +116,9 @@ int main(void) {
     ubvector xgrid;
     ubmatrix ygrid, dydxgrid, err_grid;
     size_t ngrid;
+
+    ode_funct_solve_grid od2=derivs2;
+    ode_iv_solve_grid<> ivsg;
 
     cout << "Grid: " << endl;
   
