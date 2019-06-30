@@ -1,11 +1,12 @@
 %define DOCSTRING
 "O2scl docstring."
 %enddef
-%module(docstring=DOCSTRING) o2scl_base
+%module(docstring=DOCSTRING) o2scl
 
-namespace o2scl {
-  double fermi_function(double E, double mu, double T, double limit=40.0);
-}
+%{
+#define SWIG_FILE_WITH_INIT
+#include "../base/misc.h"
+%}
 
-  
+%include "../base/misc.h"
 
