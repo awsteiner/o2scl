@@ -72,6 +72,8 @@ int derivs2(double x, size_t nv, const ubvector &y,
   return 0;
 }
 
+// Differential equation defining the Bessel function using
+// a vector object for o2scl::ode_iv_solve_grid
 int derivs3(double x, size_t nv, const o2scl::solve_grid_mat_row &y, 
 	    o2scl::solve_grid_mat_row &dydx, double &alpha) {
   dydx[0]=y[1];
@@ -425,9 +427,7 @@ int main(void) {
   yg(0,1)=0.5;
 
   // Perform the full solution
-  cout << "H1." << endl;
   ode4.solve_grid<ubvector,ubmatrix>(0.1,2,ngrid,xg,yg,ypg,yerrg,od3);
-  cout << "H2." << endl;
   
   // Output and test the results
   cout << " x             J1(calc)      J1(exact)     rel. diff." << endl;

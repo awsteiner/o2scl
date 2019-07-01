@@ -742,23 +742,28 @@ namespace o2scl {
       // Copy the initial point to the first row
       xsol[0]=x0;
 
-      // Evalulate the first derivative
-      mat_row_t y_start_init(ysol,0);
-      mat_row_t dydx_start_init(dydx_sol,0);
-      derivs(x0,n,y_start_init,dydx_start_init);
+      mat_row_t y_start(n);
+      mat_row_t dydx_start(n);
+
+      // Copy ysol[0] to ystart
+      for(size_t j=0;j<n;j++) {
+	y_start[j]=ysol(0,j);
+      }
     
       // Verbose output for the first row
-      if (verbose>0) print_iter(xsol[0],n,y_start_init);
-    
+      if (verbose>0) print_iter(xsol[0],n,y_start);
+
+      // Evaluate the first derivative
+      derivs(x0,n,y_start,dydx_start);
+
       // Set the derivatives and the uncertainties for the first row
       for(size_t j=0;j<n;j++) {
+	dydx_sol(0,j)=dydx_start[j];
 	err_sol(0,j)=0.0;
       }
 
       for(size_t i=1;i<nsol && ret==0;i++) {
       
-	mat_row_t y_start(ysol,i-1);
-	mat_row_t dydx_start(dydx_sol,i-1);
 	mat_row_t y_row(ysol,i);
 	mat_row_t dydx_row(dydx_sol,i);
 	mat_row_t yerr_row(err_sol,i);
@@ -774,7 +779,7 @@ namespace o2scl {
 	  if (ret!=0) {
 	    if (exit_on_fail) {
 	      O2SCL_ERR2("Adaptive stepper failed in ",
-			 "ode_iv_solve::solve_grid()",ret);
+			 "ode_iv_solve_grid::solve_grid()",ret);
 	    } else if (first_ret!=0) {
 	      first_ret=ret;
 	    }
@@ -782,12 +787,16 @@ namespace o2scl {
 	
 	  if (nsteps>ntrial) {
 	    std::string str="Too many steps required (ntrial="+itos(ntrial)+
-	      ", x="+o2scl::dtos(x)+") in ode_iv_solve::solve_grid().";
+	      ", x="+o2scl::dtos(x)+") in ode_iv_solve_grid::solve_grid().";
 	    O2SCL_ERR(str.c_str(),exc_emaxiter);
 	  }
 
 	  // Adjust independent variable for next step
 	  x=xnext;
+	  for(size_t j=0;j<n;j++) {
+	    y_start[j]=y_row[j];
+	    dydx_start[j]=dydx_row[j];
+	  }
 	
 	  // Decide if we have reached the grid point
 	  if (x1>x0) {
