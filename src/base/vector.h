@@ -2574,6 +2574,82 @@ namespace o2scl {
     }
   };
 
+  /** \brief Matrix row object with a constructor and resize method
+
+      This is used in \ref o2scl::ode_iv_solve_grid .
+   */
+  template<class mat_t> class matrix_row_gen_ctor {
+
+  protected:
+
+    /// A pointer to the matrix
+    mat_t *mp;
+
+    /// The selected row
+    size_t row_;
+
+    /// A matrix to point to
+    mat_t mat;
+
+  public:
+
+    /// Create a row object from row \c row of matrix \c m 
+  matrix_row_gen_ctor(mat_t &m, size_t row) : mp(&m), row_(row) {
+    }
+
+    /// Create a row object from row \c row of matrix \c m 
+    matrix_row_gen_ctor(size_t n_cols=0) {
+      if (n_cols==0) {
+	mp=0;
+      } else {
+	mat.resize(1,n_cols);
+	mp=&mat;
+	row_=0;
+      }
+    }
+
+    /** \brief Resize
+     */
+    void resize(size_t n_cols=0) {
+      if (n_cols==0) {
+	mp=0;
+	mat.resize(0,0);
+      } else {
+	mat.resize(1,n_cols);
+	mp=&mat;
+	row_=0;
+      }
+      return;
+    }
+    
+    /** \brief Return size
+     */
+    size_t size() const {
+      if (mp==0) {
+	return 0;
+      }
+      return mp->size2();
+    }
+    
+    /// Return a reference to the ith column of the selected row
+    double &operator[](size_t i) {
+      if (mp==0) {
+	O2SCL_ERR("No matrix in matrix_row_gen_ctor::operator[].",
+		  o2scl::exc_efailed);
+      }
+      return (*mp)(row_,i);
+    }
+    
+    /// Return a const reference to the ith column of the selected row
+    const double &operator[](size_t i) const {
+      if (mp==0) {
+	O2SCL_ERR("No matrix in matrix_row_gen_ctor::operator[].",
+		  o2scl::exc_efailed);
+      }
+      return (*mp)(row_,i);
+    }
+  };
+
   /** \brief Construct a view of the transpose of a matrix
 
       \note This class is experimental.

@@ -30,9 +30,15 @@ using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
-typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
 
 int derivs(double x, size_t nv, const ubvector &y, ubvector &dydx) {
+  dydx[0]=y[1];
+  dydx[1]=-y[0];
+  return 0;
+}
+
+int derivs2(double x, size_t nv, const o2scl::solve_grid_mat_row &y,
+	    o2scl::solve_grid_mat_row &dydx) {
   dydx[0]=y[1];
   dydx[1]=-y[0];
   return 0;
@@ -106,38 +112,40 @@ int main(void) {
   // ------------------------------------------------
   // Two-equation test of solve_grid
 
-#ifdef O2SCL_NEVER_DEFINED
+  {
+    ubvector xgrid;
+    ubmatrix ygrid, dydxgrid, err_grid;
+    size_t ngrid;
 
-  ubvector xgrid;
-  ubmatrix ygrid, dydxgrid, err_grid;
-  size_t ngrid;
+    ode_funct_solve_grid od2=derivs2;
+    ode_iv_solve_grid<> ivsg;
 
-  cout << "Grid: " << endl;
+    cout << "Grid: " << endl;
   
-  ngrid=11;
-  xgrid.resize(ngrid);
-  ygrid.resize(ngrid,2);
-  dydxgrid.resize(ngrid,2);
-  err_grid.resize(ngrid,2);
-  vector_grid(uniform_grid_end<>(0.0,1.0,ngrid-1),xgrid);
-  ygrid(0,0)=1.0;
-  ygrid(0,1)=(2.0/cos(1.0)+tan(1.0));
+    ngrid=11;
+    xgrid.resize(ngrid);
+    ygrid.resize(ngrid,2);
+    dydxgrid.resize(ngrid,2);
+    err_grid.resize(ngrid,2);
+    vector_grid(uniform_grid_end<>(0.0,1.0,ngrid-1),xgrid);
+    ygrid(0,0)=1.0;
+    ygrid(0,1)=(2.0/cos(1.0)+tan(1.0));
   
-  ivs.solve_grid<ubmatrix>(1.0,2,ngrid,xgrid,ygrid,err_grid,dydxgrid,od);
+    ivsg.solve_grid<ubvector,ubmatrix>(1.0,2,ngrid,xgrid,ygrid,
+				       err_grid,dydxgrid,od2);
   
-  for(size_t i=0;i<ngrid;i++) {
-    exact_sol(xgrid[i],ey,edydx,ed2ydx2);
-    cout << xgrid[i] << " " << ygrid(i,0) << " " << ey << " "
-	 << dydxgrid(i,0) << " " << edydx << endl;
-    t.test_rel(ygrid(i,0),ey,1.0e-8,"y g2");
-    t.test_rel(ygrid(i,1),edydx,1.0e-8,"y g2");
-    t.test_rel(dydxgrid(i,0),edydx,1.0e-8,"y g2");
-    t.test_rel(dydxgrid(i,1),ed2ydx2,1.0e-8,"y g2");
+    for(size_t i=0;i<ngrid;i++) {
+      exact_sol(xgrid[i],ey,edydx,ed2ydx2);
+      cout << xgrid[i] << " " << ygrid(i,0) << " " << ey << " "
+	   << dydxgrid(i,0) << " " << edydx << endl;
+      t.test_rel(ygrid(i,0),ey,1.0e-8,"y g2");
+      t.test_rel(ygrid(i,1),edydx,1.0e-8,"y g2");
+      t.test_rel(dydxgrid(i,0),edydx,1.0e-8,"y g2");
+      t.test_rel(dydxgrid(i,1),ed2ydx2,1.0e-8,"y g2");
+    }
+  
+    cout << endl;
   }
-  
-  cout << endl;
-
-#endif
 
   // ------------------------------------------------
   // Test solve_store
