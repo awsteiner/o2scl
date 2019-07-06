@@ -32,8 +32,6 @@ TEST_VAR = $(BASE_TEST_VAR)
 
 SUBDIRS = arma eigen both neither
 
-BASE_SRCS = $(BASE_BASE_SRCS)
-
 # ------------------------------------------------------------
 # Includes
 # ------------------------------------------------------------
