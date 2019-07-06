@@ -145,7 +145,7 @@ void o2scl_hdf::rmf_load(o2scl::eos_had_rmf &rmf, std::string model,
 }
   
 void o2scl_hdf::skyrme_load(o2scl::eos_had_skyrme &sk, std::string model, 
-			    bool external) {
+			    bool external, int verbose) {
 
   std::string fname;
   std::string dir=o2scl::o2scl_settings.get_data_dir();
@@ -156,7 +156,15 @@ void o2scl_hdf::skyrme_load(o2scl::eos_had_skyrme &sk, std::string model,
   }
 
   hdf_file hf;
+  if (verbose>0) {
+    cout << "In o2scl_hdf::skyrme_load(), reading file: " << fname
+	 << endl;
+  }
   hf.open(fname);
+  if (verbose>0) {
+    cout << "In o2scl_hdf::skyrme_load(), done reading file: " << fname
+	 << endl;
+  }
 
   hf.getd("t0hc",sk.t0);
   hf.getd("t2hc",sk.t2);
@@ -204,6 +212,10 @@ void o2scl_hdf::skyrme_load(o2scl::eos_had_skyrme &sk, std::string model,
   hf.getd_def("b4",0.0,sk.b4);
   hf.getd_def("b4p",0.0,sk.b4p);
 
+  if (verbose>0) {
+    cout << "In o2scl_hdf::skyrme_load(), finished loading mode." << endl;
+  }
+  
   return;
 }
 

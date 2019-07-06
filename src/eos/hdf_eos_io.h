@@ -110,7 +110,7 @@ namespace o2scl_hdf {
       <tt>W0</tt> times \f$ \hbar c \f$ .
   */
   void skyrme_load(o2scl::eos_had_skyrme &sk, std::string model, 
-		   bool external=false);
+		   bool external=false, int verbose=0);
   
   /** \brief Write a \ref o2scl::eos_had_skyrme object to an HDF file
    */
