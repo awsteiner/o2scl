@@ -110,7 +110,7 @@ int main(void) {
 	 << exact[1] << endl;
     cout.unsetf(ios::showpos);
     
-    double line[5]={x1,y1[0],exact[0],yerr1[0]/exact[0],
+    double line[5]={x1,y1[0],exact[0],fabs(yerr1[0]/exact[0]),
 		    fabs((y1[0]-exact[0])/exact[0])};
     tab[0].line_of_data(5,line);
 
@@ -140,8 +140,8 @@ int main(void) {
 
     ga.astep(x2,4.0,dx,2,y2,dydx2,yerr2,od11);
 
-    double exact[2]={-exp(-500.0*x1)+2.0*exp(-10.0*x1),
-		     exp(-500.0*x1)-exp(-10.0*x1)};
+    double exact[2]={-exp(-500.0*x2)+2.0*exp(-10.0*x2),
+		     exp(-500.0*x2)-exp(-10.0*x2)};
     
     if (j%25==0) {
       cout.setf(ios::showpos);
@@ -152,7 +152,7 @@ int main(void) {
     }
     j++;
     
-    double line[5]={x2,y2[0],exact[0],yerr2[0]/exact[0],
+    double line[5]={x2,y2[0],exact[0],fabs(yerr2[0]/exact[0]),
 		    fabs((y2[0]-exact[0])/exact[0])};
     tab[1].line_of_data(5,line);
     

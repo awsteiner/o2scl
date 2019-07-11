@@ -8,25 +8,31 @@
     class \ref o2scl::interp2_direct implements bilinear or bicubic
     interpolation, and is based on D. Zaslavsky's routines at
     https://github.com/diazona/interp2d (licensed under GPLv3).
-    A slightly slower (but a bit more flexible alternative) is 
+    A slightly slower (but a bit more flexible) alternative is 
     successive use of \ref o2scl::interp_base objects, implemented
     in \ref o2scl::interp2_seq . 
 
     If data is arranged without a grid, then \ref o2scl::interp2_neigh
-    performs nearest-neighbor interpolation and \ref
-    o2scl::interp2_planar performs interpolation using planes. At
-    present, the only way to compute \contour lines on data which is
-    not defined on a grid is to use one of these two classes to recast
-    the data on a grid and then use \ref o2scl::contour afterwards.
+    performs nearest-neighbor interpolation. At present, the only way
+    to compute \contour lines on data which is not defined on a grid
+    is to use this class or one of the multi-dimensional interpolation
+    classes described below the data on a grid and then use \ref
+    o2scl::contour afterwards.
+
+    \comment 
+    7/10/19: I removed the reference to interp2_planar because
+    it's unstable and I don't recommend using it. 
+    \endcomment
 
     \section mintp_subsect Multi-dimensional interpolation
 
-    Multi-dimensional interpolation for table defined on a grid 
-    is possible with \ref o2scl::tensor_grid. See the documentation
-    for \ref o2scl::tensor_grid::interpolate() and 
-    \ref o2scl::tensor_grid::interp_linear() . Also, if you want
-    to interpolate <tt>rank-1</tt> indices to get a vector result,
-    you can use \ref o2scl::tensor_grid::interp_linear_vec() .
+    Multi-dimensional interpolation for table defined on a grid is
+    possible with \ref o2scl::tensor_grid. See the documentation for
+    \ref o2scl::tensor_grid::interpolate(), \ref
+    o2scl::tensor_grid::interp_linear() and \ref
+    o2scl::tensor_grid::rearrange_and_copy() . Also, if you want to
+    interpolate <tt>rank-1</tt> indices to get a vector result, you
+    can use \ref o2scl::tensor_grid::interp_linear_vec() .
 
     If the data is not on a grid, then inverse distance
     weighted interpolation is performed by \ref o2scl::interpm_idw.

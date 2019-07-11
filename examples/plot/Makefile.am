@@ -178,9 +178,21 @@ ex_ode_bessel3.png:
 ex_stiff.png:
 	o2graph -backend Agg -read ../ex_stiff.o2 table_0 \
 		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
-		-set ylo 1.0e-20 -set yhi 1.0e17 -set logy 1 \
-		-set xlo 0 -set xhi 4 -plot x rel_err -plot x rel_diff \
-		-read ../ex_stiff.o2 table_1 -plot x rel_err -plot x rel_diff \
+		-set ylo 1.0e-16 -set yhi 1.0e8 -set logy 1 \
+		-set xlo 0 -set xhi 4 -plot x rel_err color=black \
+		-plot x rel_diff color=red \
+		-read ../ex_stiff.o2 table_1 -plot x rel_err color=blue \
+		-plot x rel_diff color=green \
+		-ttext 0.35 0.83 \
+		"Explicit actual err." color=green \
+		-ttext 0.5 0.53 \
+		"Explicit estimated err." color=blue \
+		-ttext 0.5 0.15 \
+		"BS implicit actual err." color=red \
+		-ttext 0.5 0.05 \
+		"BS implicit estimated err." color=black \
+		-ttext 0.5 1.03 \
+		"Stiff exponential function, implicit vs. explicit" \
 		-save ex_stiff.png -show
 
 ex_stiff_plot.o: ex_stiff_plot.cpp

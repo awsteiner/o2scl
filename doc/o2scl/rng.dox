@@ -4,7 +4,7 @@
     favor of the C++11 generators, which are used automatically if
     <tt>O2SCL_CPP11</tt> is defined.
 
-    For compatibility with older compilers, a GSL-based random number
-    generator is given in \ref o2scl::rng_gsl .
+    A GSL-based random number generator is given in \ref o2scl::rng_gsl 
+    and is still currently used by some \o2 classes.
 
 */

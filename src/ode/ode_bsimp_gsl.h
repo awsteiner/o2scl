@@ -61,7 +61,8 @@ namespace o2scl {
 
   /** \brief Bulirsch-Stoer implicit ODE stepper (GSL)
       
-      Bader-Deuflhard implicit extrapolative stepper (\ref Bader83). 
+      Implicit Bulirsch-Stoer method of Bader and Deuflhard (\ref
+      Bader83).
 
       \note The variable <tt>h_next</tt> was defined in the original
       GSL version has been removed here, as it was unused by the
