@@ -121,7 +121,7 @@ ex_ode_airy.png:
 		-ttext 0.60 0.86 "Cash-Karp est. error" \
 		-ttext 0.5 0.21 "Prince-Dormand est. error" \
 		-ttext 0.5 1.03 "Airy function w/non-adaptive steppers" \
-		-show
+		-save ex_ode_airy.png
 
 ex_ode_bessel.png: 
 	o2graph -backend Agg -read ../ex_ode.o2 table_0 \
@@ -165,16 +165,23 @@ ex_ode_bessel2.png:
 ex_ode_bessel3.png: 
 	o2graph -backend Agg -read ../ex_ode.o2 table_7 \
 		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
-		-set ylo 1.0e-11 -set yhi 2.5e-7 \
-		-list \
-		-function "abs(calc-exact)" diff -set logy 1 \
+		-set ylo 1.0e-11 -set yhi 5.0e-8 \
+		-set xlo 0 -set xhi 10 -set logy 1 \
 		-function "abs(err0)" abserr \
-		-plot x abserr color=black,ls=-. -plot x diff color=black \
-		-ttext 0.45 0.97 "Act. error" color=black \
-		-ttext 0.22 0.92 "Est. error" color=black \
+		-plot x abserr color=red,ls=-. -plot x diff color=black \
+		-ttext 0.45 0.95 "Act. error" color=black \
+		-ttext 0.50 0.50 "Est. error" color=red \
 		-ttext 0.5 1.03 \
 		"Bessel function, high-level adaptive stepper" \
 		-save ex_ode_bessel3.png
+
+ex_stiff.png:
+	o2graph -backend Agg -read ../ex_stiff.o2 table_0 \
+		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
+		-set ylo 1.0e-20 -set yhi 1.0e17 -set logy 1 \
+		-set xlo 0 -set xhi 4 -plot x rel_err -plot x rel_diff \
+		-read ../ex_stiff.o2 table_1 -plot x rel_err -plot x rel_diff \
+		-save ex_stiff.png -show
 
 ex_stiff_plot.o: ex_stiff_plot.cpp
 	$(CXX) $(CPPFLAGS) -o ex_stiff_plot.o -c ex_stiff_plot.cpp

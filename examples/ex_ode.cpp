@@ -427,7 +427,7 @@ int main(void) {
   yg(0,1)=0.5;
 
   // Perform the full solution
-  ode4.solve_grid<ubvector,ubmatrix>(0.1,2,ngrid,xg,yg,ypg,yerrg,od3);
+  ode4.solve_grid<ubvector,ubmatrix>(0.1,2,ngrid,xg,yg,yerrg,ypg,od3);
   
   // Output and test the results
   cout << " x             J1(calc)      J1(exact)     rel. diff." << endl;
