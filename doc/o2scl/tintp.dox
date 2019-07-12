@@ -92,15 +92,6 @@
     \image html ex_contour_plot1.png "Contour example plot"
     \image latex ex_contour_plot1.eps "Contour example plot" width=9cm
 
-    The next figure below shows the edge crossings constructed by the
-    contour class which are used to obtain the two \f$ z=10 \f$
-    contour lines. The edge crossings are connected to their
-    respective data grid points with line segments. Endpoints are in
-    red and internal contour points are in blue.
-
-    \image html ex_contour_plot3.png "Contour edge crossings"
-    \image latex ex_contour_plot3.eps "Contour edge crossings" width=9cm
-
     The \ref o2scl::contour class can also use interpolation to 
     attempt to refine the data grid. The new contours after a 
     refinement of a factor of 5 is given in the figure below.

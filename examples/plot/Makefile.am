@@ -21,8 +21,9 @@ help:
 
 EXTRA_DIST = *.eps *.png
 
-plot-all: ex_anneal_plot.png ex_chebapp_plot.png ex_fptr_plot.png \
-	ex_ode_airy.png
+plot-all: ex_anneal_plot.png ex_chebapp_plot.png ex_contour_plot1.png \
+	ex_contour_plot2.png ex_fptr_plot.png \
+	ex_ode_airy.png 
 
 # -------------------------------------------------------------------- 
 
@@ -55,12 +56,13 @@ ex_anneal_plot.png:
 		-save ex_anneal_plot.png
 	rm -f ex_anneal_conts.o2
 
-ex_contour_plot.o: ex_contour_plot.cpp
-	$(CXX) $(CPPFLAGS) -o ex_contour_plot.o -c ex_contour_plot.cpp
+ex_contour_plot1.png:
+	o2graph -backend Agg -read ../ex_contour.o2 c1_cl \
+		-plot -save ex_contour_plot1.png
 
-ex_contour_plot: ex_contour_plot.o ../../src/other/graph.o
-	$(CXX) $(CPPFLAGS) -o ex_contour_plot ex_contour_plot.o \
-		-lo2scl_hdf -lo2scl $(ROOT_LIB) $(LDFLAGS) 
+ex_contour_plot2.png:
+	o2graph -backend Agg -read ../ex_contour.o2 c2_cl \
+		-plot -save ex_contour_plot2.png
 
 ex_chebapp_plot.png: 
 	o2graph -backend Agg -generic table ../ex_chebapp.out \
@@ -91,6 +93,60 @@ ex_mmin_plot.o: ex_mmin_plot.cpp
 ex_mmin_plot: ex_mmin_plot.o  ../../src/other/graph.o
 	$(CXX) -o ex_mmin_plot ex_mmin_plot.o \
 		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
+
+ex_mmin.png:
+	o2graph -set xlo "(-2)" -set xhi 3 -set ylo "(-1)" -set yhi 15 \
+		-set fig-dict "top_margin=0.05" -set xtitle x \
+		-set ytitle z \
+		-generic table ../ex_mmin1.dat -internal ex_mmin.o2 \
+		-plot c1 c3 color=green \
+		-generic table ../ex_mmin2.dat -internal ex_mmin.o2 \
+		-plot c1 c3 color=red \
+		-generic table ../ex_mmin2g.dat -internal ex_mmin.o2 \
+		-plot c1 c3 color=blue \
+		-generic table ../ex_mmin3.dat -internal ex_mmin.o2 \
+		-plot c1 c3 color=magenta \
+		-generic table ../ex_mmin3g.dat -internal ex_mmin.o2 \
+		-plot c1 c3 color=brown \
+		-generic table ../ex_mmin4.dat -internal ex_mmin.o2 \
+		-plot c1 c3 color=black \
+		-show
+
+ex_mmin.png:
+	o2graph -set xlo "(-2)" -set xhi 3 -set ylo "(-1)" -set yhi 15 \
+		-set fig-dict "top_margin=0.05" -set xtitle x \
+		-set ytitle z \
+		-generic table ../ex_mmin1.dat -internal ex_mmin.o2 \
+		-plot c1 c3 color=green \
+		-generic table ../ex_mmin2.dat -internal ex_mmin.o2 \
+		-plot c1 c3 color=red \
+		-generic table ../ex_mmin2g.dat -internal ex_mmin.o2 \
+		-plot c1 c3 color=blue \
+		-generic table ../ex_mmin3.dat -internal ex_mmin.o2 \
+		-plot c1 c3 color=magenta \
+		-generic table ../ex_mmin3g.dat -internal ex_mmin.o2 \
+		-plot c1 c3 color=brown \
+		-generic table ../ex_mmin4.dat -internal ex_mmin.o2 \
+		-plot c1 c3 color=black \
+		-show
+
+ex_mmin2.png:
+	o2graph -set xlo "(-3)" -set xhi 3 -set ylo "(-3)" -set yhi 3 \
+		-set fig-dict "top_margin=0.05" -set xtitle x \
+		-set ytitle y \
+		-generic table ../ex_mmin1.dat -internal ex_mmin.o2 \
+		-plot c1 c2 color=green \
+		-generic table ../ex_mmin2.dat -internal ex_mmin.o2 \
+		-plot c1 c2 color=red \
+		-generic table ../ex_mmin2g.dat -internal ex_mmin.o2 \
+		-plot c1 c2 color=blue \
+		-generic table ../ex_mmin3.dat -internal ex_mmin.o2 \
+		-plot c1 c2 color=magenta \
+		-generic table ../ex_mmin3g.dat -internal ex_mmin.o2 \
+		-plot c1 c2 color=brown \
+		-generic table ../ex_mmin4.dat -internal ex_mmin.o2 \
+		-plot c1 c2 color=black \
+		-show
 
 ex_nucmass_plot.o: ex_nucmass_plot.cpp
 	$(CXX) $(CPPFLAGS) -o ex_nucmass_plot.o -c ex_nucmass_plot.cpp
