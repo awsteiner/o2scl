@@ -72,12 +72,13 @@
     <tt>make install</tt>. This installation method is tested by the 
     Travis CI script. 
     
-    In some recent Ubuntu versions, the HDF5 package installs its
-    header files in a slightly different location than on other
-    operating systems, so you may need to use the
-    <tt>O2SCL_UBUNTU_HDF5</tt> flag, i.e.
+    The HDF5 package installs its header files in a slightly different
+    location depending on the operating system. If you have trouble
+    finding the HDF5 include files, you may need to use
+    <tt>-DO2SCL_PLAIN_HDF5_HEADER</tt> and manually include the HDF5
+    library using <tt>-I</tt>i.e.
     \verbatim
-    CXXFLAGS="-DO2SCL_UBUNTU_HDF5" ./configure
+    CXXFLAGS="-DO2SCL_PLAIN_HDF5_HEADER" ./configure
     \endverbatim
 
     If you want to install from source (without generating the

@@ -28,12 +28,17 @@
     \ref o2scl::nucmass_mnmsk data files
 */
 
-#ifdef O2SCL_UBUNTU_HDF5
+#ifdef O2SCL_PLAIN_HDF5_HEADER
+#include <hdf5.h>
+#include <hdf5_hl.h>
+#else
+#ifdef O2SCL_LINUX
 #include <hdf5/serial/hdf5.h>
 #include <hdf5/serial/hdf5_hl.h>
 #else
 #include <hdf5.h>
 #include <hdf5_hl.h>
+#endif
 #endif
 
 #include <o2scl/constants.h>

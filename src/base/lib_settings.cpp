@@ -27,10 +27,14 @@
 #include <o2scl/lib_settings.h>
 
 #ifdef O2SCL_HDF
-#ifdef O2SCL_UBUNTU_HDF5
+#ifdef O2SCL_PLAIN_HDF5_HEADER
+#include <hdf5.h>
+#else
+#ifdef O2SCL_LINUX
 #include <hdf5/serial/hdf5.h>
 #else
 #include <hdf5.h>
+#endif
 #endif
 #endif
 

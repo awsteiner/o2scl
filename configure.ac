@@ -359,6 +359,36 @@ AC_ARG_ENABLE(openmp,
 AM_CONDITIONAL(O2SCL_OPENMP, test x$openmp = xtrue)
 
 # ----------------------------------------------
+# Define 'host_os' to determine target system
+# from https://stackoverflow.com/questions/38898591/how-to-check-the-os-with-automake
+
+AC_CANONICAL_HOST
+build_linux=no
+build_windows=no
+build_mac=no
+
+# Detect the target system
+case "${host_os}" in
+    linux*)
+        build_linux=yes
+        ;;
+    cygwin*|mingw*)
+        build_windows=yes
+        ;;
+    darwin*)
+        build_mac=yes
+        ;;
+    *)
+        AC_MSG_ERROR(["OS $host_os is not supported"])
+        ;;
+esac
+
+# Pass the conditionals to automake
+AM_CONDITIONAL([O2SCL_LINUX], [test "$build_linux" = "yes"])
+AM_CONDITIONAL([O2SCL_WINDOWS], [test "$build_windows" = "yes"])
+AM_CONDITIONAL([O2SCL_OSX], [test "$build_mac" = "yes"])
+
+# ----------------------------------------------
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile

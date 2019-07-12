@@ -26,7 +26,17 @@ plot-all: ex_anneal_plot ex_chebapp_plot ex_contour_plots \
 	ex_ode_airy_plot ex_ode_bessel_plot ex_ode_bessel2_plot \
 	ex_ode_bessel3_plot ex_stiff_plot 
 
+if O2SCL_LINUX
+IMAGE_VIEW = eog
+IMAGE_VIEW2 = &
+else
+if O2SCL_OSX
 IMAGE_VIEW = open
+IMAGE_VIEW2 = 
+else 
+IMAGE_VIEW =
+endif
+endif
 
 # UNAME_S := $(shell uname -s)
 

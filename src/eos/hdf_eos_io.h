@@ -27,10 +27,14 @@
     \brief HDF input of the \o2 EOS data files
 */
 
-#ifdef O2SCL_UBUNTU_HDF5
+#ifdef O2SCL_PLAIN_HDF5_HEADER
+#include <hdf5.h>
+#else
+#ifdef O2SCL_LINUX
 #include <hdf5/serial/hdf5.h>
 #else
 #include <hdf5.h>
+#endif
 #endif
 
 #include <o2scl/constants.h>
