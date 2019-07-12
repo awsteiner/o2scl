@@ -21,15 +21,24 @@ help:
 
 EXTRA_DIST = *.eps *.png
 
-plot-all: ex_anneal_plot.png ex_chebapp_plot.png ex_contour_plot1.png \
-	ex_contour_plot2.png ex_fptr_plot.png ex_nuc_prof.png \
-	ex_nucmass_plots \
-	ex_ode_airy.png ex_ode_bessel.png ex_ode_bessel2.png \
-	ex_ode_bessel3.png ex_stiff.png 
+plot-all: ex_anneal_plot ex_chebapp_plot ex_contour_plots \
+	ex_fptr_plot ex_nuc_prof ex_nucmass_plots \
+	ex_ode_airy_plot ex_ode_bessel_plot ex_ode_bessel2_plot \
+	ex_ode_bessel3_plot ex_stiff_plot 
+
+IMAGE_VIEW = open
+
+# UNAME_S := $(shell uname -s)
+
+# ifeq ($(UNAME_S),Darwin)
+#   IMAGE_VIEW = open
+# else
+#   IMAGE_VIEW = eog
+# endif
 
 # -------------------------------------------------------------------- 
 
-ex_anneal_plot.png:
+ex_anneal_plot:
 	o2graph -backend Agg -set colbar 1 \
 		-read ../ex_anneal_plot.o2 -set xtitle x -set ytitle y \
 		-den-plot f \
@@ -55,18 +64,27 @@ ex_anneal_plot.png:
 		-text 6 6.5 "Initial point" color=black \
 		-point 2 "(-3)" marker=s,color=white \
 		-text 2 "(-2.5)" "Global minimum" color=white \
-		-save ex_anneal_plot.png
+		-save ex_anneal_plot_new.png
 	rm -f ex_anneal_conts.o2
+	convert +append ex_anneal_plot.png ex_anneal_plot_new.png \
+		temp.png
+	$(IMAGE_VIEW) temp.png
 
-ex_contour_plot1.png:
+ex_contour_plot1:
 	o2graph -backend Agg -read ../ex_contour.o2 c1_cl \
-		-plot -save ex_contour_plot1.png
+		-plot -save ex_contour_plot1_new.png
+	convert +append ex_contour_plot.png ex_contour_plot_new.png \
+		temp.png
+	$(IMAGE_VIEW) temp.png
 
-ex_contour_plot2.png:
+ex_contour_plot2:
 	o2graph -backend Agg -read ../ex_contour.o2 c2_cl \
-		-plot -save ex_contour_plot2.png
+		-plot -save ex_contour_plot2_new.png
+	convert +append ex_contour_plot.png ex_contour_plot_new.png \
+		temp.png
+	$(IMAGE_VIEW) temp.png
 
-ex_chebapp_plot.png: 
+ex_chebapp_plot: 
 	o2graph -backend Agg -generic table ../ex_chebapp.out \
 		-plot c1 c2 color=black -plot c1 c4 color=red \
 		-plot c1 c5 color=blue,ls=: \
@@ -78,8 +96,11 @@ ex_chebapp_plot.png:
 		-text 0.78 "(-0.8)" "Approx. (n=25)" ha=right,color=blue \
 		-ttext 0.5 "(-0.1)" x \
 		-save ex_chebapp_plot.png
+	convert +append ex_chebapp_plot.png ex_chebapp_plot_new.png \
+		temp.png
+	$(IMAGE_VIEW) temp.png
 
-ex_fptr_plot.png:
+ex_fptr_plot:
 	cat ../ex_fptr.scr | grep -v t > exftemp1
 	acol -generic table ../ex_fptr.out -internal exftemp2.o2
 	o2graph -backend Agg -set xlo "(-1)" -set xhi 2 \
@@ -88,15 +109,11 @@ ex_fptr_plot.png:
 		-generic table exftemp1 -plot c1 c2 marker=s \
 		-save ex_fptr_plot.png
 	rm -f exftemp1 exftemp2.o2
+	convert +append ex_fptr_plot.png ex_fptr_plot_new.png \
+		temp.png
+	$(IMAGE_VIEW) temp.png
 
-ex_mmin_plot.o: ex_mmin_plot.cpp
-	$(CXX) $(CPPFLAGS) $(CPPFLAGS) -o ex_mmin_plot.o -c ex_mmin_plot.cpp
-
-ex_mmin_plot: ex_mmin_plot.o  ../../src/other/graph.o
-	$(CXX) -o ex_mmin_plot ex_mmin_plot.o \
-		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
-
-ex_mmin.png:
+ex_mmin:
 	o2graph -set xlo "(-2)" -set xhi 3 -set ylo "(-1)" -set yhi 15 \
 		-set fig-dict "top_margin=0.05" -set xtitle x \
 		-set ytitle z \
@@ -113,8 +130,11 @@ ex_mmin.png:
 		-generic table ../ex_mmin4.dat -internal ex_mmin.o2 \
 		-scatter c1 c3 color=black \
 		-show
+	convert +append ex_mmin_plot.png ex_mmin_plot_new.png \
+		temp.png
+	$(IMAGE_VIEW) temp.png
 
-ex_mmin2.png:
+ex_mmin2:
 	o2graph -set xlo "(-3)" -set xhi 3 -set ylo "(-3)" -set yhi 3 \
 		-set fig-dict "top_margin=0.05" -set xtitle x \
 		-set ytitle y \
@@ -131,8 +151,11 @@ ex_mmin2.png:
 		-generic table ../ex_mmin4.dat -internal ex_mmin.o2 \
 		-plot c1 c2 color=black \
 		-show
+	convert +append ex_mmin_plot.png ex_mmin_plot_new.png \
+		temp.png
+	$(IMAGE_VIEW) temp.png
 
-ex_nuc_prof.png:
+ex_nuc_prof:
 	o2graph -read ../ex_nucleus_rmf_prof.o2 -set xlo 0 -set xhi 10 \
 		-set ylo 0 -set yhi 0.1 \
 		-set xtitle "$$ r~(\mathrm{fm})$$" -set ytitle \
@@ -146,6 +169,9 @@ ex_nuc_prof.png:
 		-line 5.4 0.04 6.0 0.0488 color=black \
 		-text 3.5 0.066 "charge (expt.)" color=black \
 		-save ex_nuc_prof.png
+	convert +append ex_nuc_prof_plot.png ex_nuc_prof_plot_new.png \
+		temp.png
+	$(IMAGE_VIEW) temp.png
 
 ex_nucmass_plots:
 	o2graph -backend Agg \
@@ -184,22 +210,11 @@ ex_nucmass_plots:
 		-clf -den-plot ws36 cmap=PuOr \
 		-ttext 0.6 0.95 "$$ \mathrm{Liu~et~al.~(2011)} $$" \
 		-save ex_nucmass_ws36.png 
+	convert +append ex_anneal_plot.png ex_anneal_plot_new.png \
+		temp.png
+	$(IMAGE_VIEW) temp.png
 
-ex_nucmass_plot.o: ex_nucmass_plot.cpp
-	$(CXX) $(CPPFLAGS) -o ex_nucmass_plot.o -c ex_nucmass_plot.cpp
-
-ex_nucmass_plot: ex_nucmass_plot.o  ../../src/other/graph.o
-	$(CXX) -o ex_nucmass_plot ex_nucmass_plot.o \
-		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
-
-ex_nuc_plot.o: ex_nuc_plot.cpp
-	$(CXX) $(CPPFLAGS) -o ex_nuc_plot.o -c ex_nuc_plot.cpp
-
-ex_nuc_plot: ex_nuc_plot.o  ../../src/other/graph.o
-	$(CXX) -o ex_nuc_plot ex_nuc_plot.o \
-		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
-
-ex_ode_airy.png: 
+ex_ode_airy: 
 	o2graph -read ../ex_ode.o2 table_2 \
 		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
 		-function "abs(calc-exact)" diff -set logy 1 \
@@ -215,8 +230,11 @@ ex_ode_airy.png:
 		-ttext 0.5 0.21 "Prince-Dormand est. error" \
 		-ttext 0.5 1.03 "Airy function w/non-adaptive steppers" \
 		-save ex_ode_airy.png
+	convert +append ex_ode_airy_plot.png ex_ode_airy_plot_new.png \
+		temp.png
+	$(IMAGE_VIEW) temp.png
 
-ex_ode_bessel.png: 
+ex_ode_bessel: 
 	o2graph -backend Agg -read ../ex_ode.o2 table_0 \
 		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
 		-function "abs(calc-exact)" diff -set logy 1 \
@@ -230,8 +248,11 @@ ex_ode_bessel.png:
 		-ttext 0.48 0.09 "Prince-Dormand est. error" \
 		-ttext 0.5 1.03 "Bessel function w/non-adaptive steppers" \
 		-save ex_ode_bessel.png
+	convert +append ex_ode_bessel_plot.png ex_ode_bessel_plot_new.png \
+		temp.png
+	$(IMAGE_VIEW) temp.png
 
-ex_ode_bessel2.png: 
+ex_ode_bessel2: 
 	o2graph -backend Agg -read ../ex_ode.o2 table_4 \
 		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
 		-set ylo 1.0e-11 -set yhi 2.5e-6 \
@@ -254,8 +275,11 @@ ex_ode_bessel2.png:
 		-ttext 0.35 0.05 "Prince-Dormand est. error" color=blue \
 		-ttext 0.5 1.03 "Bessel function w/adaptive steppers" \
 		-save ex_ode_bessel2.png
+	convert +append ex_ode_bessel2.png ex_ode_bessel2_new.png \
+		temp.png
+	$(IMAGE_VIEW) temp.png
 
-ex_ode_bessel3.png: 
+ex_ode_bessel3: 
 	o2graph -backend Agg -read ../ex_ode.o2 table_7 \
 		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
 		-set ylo 1.0e-11 -set yhi 5.0e-8 \
@@ -267,8 +291,11 @@ ex_ode_bessel3.png:
 		-ttext 0.5 1.03 \
 		"Bessel function, high-level adaptive stepper" \
 		-save ex_ode_bessel3.png
+	convert +append ex_ode_bessel3.png ex_ode_bessel3_new.png \
+		temp.png
+	$(IMAGE_VIEW) temp.png
 
-ex_stiff.png:
+ex_stiff_plot:
 	o2graph -backend Agg -read ../ex_stiff.o2 table_0 \
 		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
 		-set ylo 1.0e-16 -set yhi 1.0e8 -set logy 1 \
@@ -286,17 +313,27 @@ ex_stiff.png:
 		"BS implicit estimated err." color=black \
 		-ttext 0.5 1.03 \
 		"Stiff exponential function, implicit vs. explicit" \
-		-save ex_stiff.png -show
-
-ex_stiff_plot.o: ex_stiff_plot.cpp
-	$(CXX) $(CPPFLAGS) -o ex_stiff_plot.o -c ex_stiff_plot.cpp
-
-ex_stiff_plot: ex_stiff_plot.o  ../../src/other/graph.o
-	$(CXX) -o ex_stiff_plot ex_stiff_plot.o \
-		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl \
-		-lo2scl_hdf
+		-save ex_stiff_plot.png -show
+	convert +append ex_stiff_plot.png ex_stiff_plot_new.png \
+		temp.png
+	$(IMAGE_VIEW) temp.png
 
 # Old targets
+
+# ex_mmin_plot.o: ex_mmin_plot.cpp
+# 	$(CXX) $(CPPFLAGS) $(CPPFLAGS) -o ex_mmin_plot.o -c ex_mmin_plot.cpp
+
+# ex_mmin_plot: ex_mmin_plot.o  ../../src/other/graph.o
+# 	$(CXX) -o ex_mmin_plot ex_mmin_plot.o \
+# 		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
+
+# ex_stiff_plot.o: ex_stiff_plot.cpp
+# 	$(CXX) $(CPPFLAGS) -o ex_stiff_plot.o -c ex_stiff_plot.cpp
+
+# ex_stiff_plot: ex_stiff_plot.o  ../../src/other/graph.o
+# 	$(CXX) -o ex_stiff_plot ex_stiff_plot.o \
+# 		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl \
+# 		-lo2scl_hdf
 
 # ex_anneal_plot.o: ex_anneal_plot.cpp
 # 	$(CXX) $(CPPFLAGS) -o ex_anneal_plot.o -c ex_anneal_plot.cpp
