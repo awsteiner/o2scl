@@ -474,7 +474,7 @@ void acol_manager::command_add(std::string new_type) {
        "If 'empty value', then this value is used for points not given "+
        "by the table. If 'eps' is specified, then use that value as the "+
        "minimum value between grid points.",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_hist_2d),
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_table3d),
        both}
     };
     cl->set_comm_option_vec(narr,options_arr);

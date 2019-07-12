@@ -25,7 +25,9 @@
     the minimum obtained by the example program.
 
     \image html ex_anneal_plot.png "Results of simulated annealing minimization"
+    \comment
     \image latex ex_anneal_plot.eps "Results of simulated annealing minimization" width=9cm
+    \endcomment
 
     \dontinclude ex_anneal.cpp
     \skip Example:

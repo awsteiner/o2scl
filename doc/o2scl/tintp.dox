@@ -90,14 +90,18 @@
     shows the peaks at \f$ (20,5) \f$ and \f$ (70,2) \f$ .
 
     \image html ex_contour_plot1.png "Contour example plot"
+    \comment
     \image latex ex_contour_plot1.eps "Contour example plot" width=9cm
+    \endcomment
 
     The \ref o2scl::contour class can also use interpolation to 
     attempt to refine the data grid. The new contours after a 
     refinement of a factor of 5 is given in the figure below.
     
     \image html ex_contour_plot2.png "Contours after regrid_data()"
+    \comment
     \image latex ex_contour_plot2.eps "Contour after regrid_data()" width=9cm
+    \endcomment
 
 
 */

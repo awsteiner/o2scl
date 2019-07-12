@@ -22,7 +22,8 @@ help:
 EXTRA_DIST = *.eps *.png
 
 plot-all: ex_anneal_plot.png ex_chebapp_plot.png ex_contour_plot1.png \
-	ex_contour_plot2.png ex_fptr_plot.png \
+	ex_contour_plot2.png ex_fptr_plot.png ex_nuc_prof.png \
+	ex_nucmass_plots \
 	ex_ode_airy.png ex_ode_bessel.png ex_ode_bessel2.png \
 	ex_ode_bessel3.png ex_stiff.png 
 
@@ -145,6 +146,44 @@ ex_nuc_prof.png:
 		-line 5.4 0.04 6.0 0.0488 color=black \
 		-text 3.5 0.066 "charge (expt.)" color=black \
 		-save ex_nuc_prof.png
+
+ex_nucmass_plots:
+	o2graph -backend Agg \
+		-set xtitle N -set ytitle Z -read ../ex_nucmass_table.o2 \
+		-to-table3d N Z -set colbar 1 \
+		-den-plot se cmap=PuOr \
+		-ttext 0.6 0.95 "$$ \mathrm{Semi-empirical} $$" \
+		-save ex_nucmass_se.png \
+		-clf -den-plot mnmsk cmap=PuOr \
+		-ttext 0.6 0.95 "$$ \mathrm{M\ddot{o}ller~et~al.~(1995)} $$" \
+		-save ex_nucmass_mnmsk.png \
+		-clf -den-plot hfb14 cmap=PuOr \
+		-ttext 0.6 0.95 "$$ \mathrm{HFB~14} $$" \
+		-save ex_nucmass_hfb14.png \
+		-clf -den-plot hfb21 cmap=PuOr \
+		-ttext 0.6 0.95 "$$ \mathrm{HFB~21} $$" \
+		-save ex_nucmass_hfb21.png \
+		-clf -den-plot hfb27 cmap=PuOr \
+		-ttext 0.6 0.95 "$$ \mathrm{HFB~27} $$" \
+		-save ex_nucmass_hfb27.png \
+		-clf -den-plot ame03 cmap=PuOr \
+		-ttext 0.6 0.95 "$$ \mathrm{AME~(2003)} $$" \
+		-save ex_nucmass_ame03.png \
+		-clf -den-plot dz96 cmap=PuOr \
+		-ttext 0.6 0.95 "$$ \mathrm{Duflo~and~Zuker~(1996)} $$" \
+		-save ex_nucmass_dz96.png \
+		-clf -den-plot ktuy05 cmap=PuOr \
+		-ttext 0.6 0.95 "$$ \mathrm{Koura~et~al.~(1996)} $$" \
+		-save ex_nucmass_ktuy05.png \
+		-clf -den-plot dvi cmap=PuOr \
+		-ttext 0.6 0.95 "$$ \mathrm{Dieperink~et~al.~(2009)} $$" \
+		-save ex_nucmass_dvi.png \
+		-clf -den-plot ws32 cmap=PuOr \
+		-ttext 0.6 0.95 "$$ \mathrm{Wang~et~al.~(2010)} $$" \
+		-save ex_nucmass_ws32.png \
+		-clf -den-plot ws36 cmap=PuOr \
+		-ttext 0.6 0.95 "$$ \mathrm{Liu~et~al.~(2011)} $$" \
+		-save ex_nucmass_ws36.png 
 
 ex_nucmass_plot.o: ex_nucmass_plot.cpp
 	$(CXX) $(CPPFLAGS) -o ex_nucmass_plot.o -c ex_nucmass_plot.cpp

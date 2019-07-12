@@ -56,7 +56,9 @@
     \until End of Solution 2
 
     \image html ex_ode_bessel.png "Bessel function with non-adaptive steppers"
+    \comment
     \image latex ex_ode_bessel.eps "Bessel function with non-adaptive steppers" width=9cm
+    \endcomment
 
     Note that with a Bessel function and a fixed step size, the
     Prince-Dormand stepper (even though of higher order than the
@@ -75,7 +77,9 @@
     \until End of Solution 4
 
     \image html ex_ode_airy.png "Airy function with non-adaptive steppers"
+    \comment
     \image latex ex_ode_airy.eps "Airy function with non-adaptive steppers" width=9cm
+    \endcomment
 
     Here the higher order stepper is more accurate.
 
@@ -84,14 +88,18 @@
     \until End of Solution 7
 
     \image html ex_ode_bessel2.png "Bessel function with adaptive steppers"
+    \comment
     \image latex ex_ode_bessel2.eps "Bessel function with adaptive steppers" width=9cm
+    \endcomment
 
     \dontinclude ex_ode.cpp
     \skip Solution 8:
     \until End of example
 
     \image html ex_ode_bessel3.png "Bessel function with ode_iv_solve"
+    \comment
     \image latex ex_ode_bessel3.eps "Bessel function with ode_iv_solve" width=9cm
+    \endcomment
 
     \section ex_stiff_sect Stiff differential equations example
 
@@ -110,7 +118,9 @@
     the adaptive stepper is orders of magnitude larger.
 
     \image html ex_stiff.png "Comparison of non-stiff and stiff ODE integrators"
+    \comment
     \image latex ex_stiff.eps "Comparison of non-stiff and stiff ODE integrators" width=9cm
+    \endcomment
 
     \dontinclude ex_stiff.cpp
     \skip Example:

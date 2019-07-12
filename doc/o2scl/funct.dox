@@ -76,7 +76,9 @@
     The image below shows how the solver progresses to the 
     solution of the example function.
     \image html ex_fptr_plot.png "Function object example plot"
+    \comment
     \image latex ex_fptr_plot.eps "Function object example plot" width=9cm
+    \endcomment
 
     \dontinclude ex_fptr.cpp
     \skip Example:

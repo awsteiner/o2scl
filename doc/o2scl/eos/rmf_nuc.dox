@@ -15,7 +15,9 @@
     \until End of example
 
     \image html ex_nuc_prof.png "Nucleon density distributions in Pb-208"
+    \comment
     \image latex ex_nuc_prof.eps "Nucleon density distributions in Pb-208" width=9cm
+    \endcomment
 
     Typical output:
     \verbinclude ex_nucleus_rmf.scr

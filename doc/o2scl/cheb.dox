@@ -18,7 +18,9 @@
     and \f$ n=25 \f$ . The \f$ n=100 \f$ would be nearly 
     indistinguishable from the exact result on this scale.
     \image html ex_chebapp_plot.png "Chebyshev approximation plot"
+    \comment
     \image latex ex_chebapp_plot.eps "Chebyshev approximation plot" width=9cm
+    \endcomment
 
     \dontinclude ex_chebapp.cpp
     \skip Example:
