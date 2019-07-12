@@ -77,15 +77,17 @@ ex_anneal_plot:
 
 ex_contour_plot1:
 	o2graph -backend Agg -read ../ex_contour.o2 c1_cl \
+		-set xtitle x -set ytitle y \
 		-plot -save ex_contour_plot1_new.png
-	convert +append ex_contour_plot.png ex_contour_plot_new.png \
+	convert +append ex_contour_plot1.png ex_contour_plot1_new.png \
 		temp.png
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_contour_plot2:
 	o2graph -backend Agg -read ../ex_contour.o2 c2_cl \
+		-set xtitle x -set ytitle y \
 		-plot -save ex_contour_plot2_new.png
-	convert +append ex_contour_plot.png ex_contour_plot_new.png \
+	convert +append ex_contour_plot2.png ex_contour_plot2_new.png \
 		temp.png
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
