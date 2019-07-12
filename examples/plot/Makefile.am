@@ -23,7 +23,8 @@ EXTRA_DIST = *.eps *.png
 
 plot-all: ex_anneal_plot.png ex_chebapp_plot.png ex_contour_plot1.png \
 	ex_contour_plot2.png ex_fptr_plot.png \
-	ex_ode_airy.png 
+	ex_ode_airy.png ex_ode_bessel.png ex_ode_bessel2.png \
+	ex_ode_bessel3.png ex_stiff.png 
 
 # -------------------------------------------------------------------- 
 
@@ -101,33 +102,15 @@ ex_mmin.png:
 		-generic table ../ex_mmin1.dat -internal ex_mmin.o2 \
 		-plot c1 c3 color=green \
 		-generic table ../ex_mmin2.dat -internal ex_mmin.o2 \
-		-plot c1 c3 color=red \
+		-plot c1 c3 color=red,ls=: \
 		-generic table ../ex_mmin2g.dat -internal ex_mmin.o2 \
 		-plot c1 c3 color=blue \
 		-generic table ../ex_mmin3.dat -internal ex_mmin.o2 \
-		-plot c1 c3 color=magenta \
+		-plot c1 c3 color=magenta,ls=-. \
 		-generic table ../ex_mmin3g.dat -internal ex_mmin.o2 \
 		-plot c1 c3 color=brown \
 		-generic table ../ex_mmin4.dat -internal ex_mmin.o2 \
-		-plot c1 c3 color=black \
-		-show
-
-ex_mmin.png:
-	o2graph -set xlo "(-2)" -set xhi 3 -set ylo "(-1)" -set yhi 15 \
-		-set fig-dict "top_margin=0.05" -set xtitle x \
-		-set ytitle z \
-		-generic table ../ex_mmin1.dat -internal ex_mmin.o2 \
-		-plot c1 c3 color=green \
-		-generic table ../ex_mmin2.dat -internal ex_mmin.o2 \
-		-plot c1 c3 color=red \
-		-generic table ../ex_mmin2g.dat -internal ex_mmin.o2 \
-		-plot c1 c3 color=blue \
-		-generic table ../ex_mmin3.dat -internal ex_mmin.o2 \
-		-plot c1 c3 color=magenta \
-		-generic table ../ex_mmin3g.dat -internal ex_mmin.o2 \
-		-plot c1 c3 color=brown \
-		-generic table ../ex_mmin4.dat -internal ex_mmin.o2 \
-		-plot c1 c3 color=black \
+		-scatter c1 c3 color=black \
 		-show
 
 ex_mmin2.png:
@@ -147,6 +130,21 @@ ex_mmin2.png:
 		-generic table ../ex_mmin4.dat -internal ex_mmin.o2 \
 		-plot c1 c2 color=black \
 		-show
+
+ex_nuc_prof.png:
+	o2graph -read ../ex_nucleus_rmf_prof.o2 -set xlo 0 -set xhi 10 \
+		-set ylo 0 -set yhi 0.1 \
+		-set xtitle "$$ r~(\mathrm{fm})$$" -set ytitle \
+		"$$ \mathrm{density}~(\mathrm{fm}^{-3}) $$" \
+		-plot r rhon color=red -plot r rhop color=blue \
+		-plot r chden color=black -plot r chden_exp \
+		color=black,ls=-. \
+		-text 4.5 0.09 "neutrons" color=red \
+		-text 0.9 0.074 "protons" color=blue \
+		-text 4.7 0.04 "charge" color=black \
+		-line 5.4 0.04 6.0 0.0488 color=black \
+		-text 3.5 0.066 "charge (expt.)" color=black \
+		-save ex_nuc_prof.png
 
 ex_nucmass_plot.o: ex_nucmass_plot.cpp
 	$(CXX) $(CPPFLAGS) -o ex_nucmass_plot.o -c ex_nucmass_plot.cpp

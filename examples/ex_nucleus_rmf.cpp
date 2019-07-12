@@ -41,8 +41,10 @@ using namespace o2scl_const;
 using namespace o2scl_hdf;
 #endif
 
-int main(int argc, char *argv[]) {
+int lead_chden_exp(std::shared_ptr<table_units<> > profiles);
 
+int main(int argc, char *argv[]) {
+  
   cout.setf(ios::scientific);
 
   test_mgr t;
@@ -105,13 +107,15 @@ int main(int argc, char *argv[]) {
   
   t.test_rel(-7.842551,rn.etot,1.0e-5,"Lead binding energy");
 
+  std::shared_ptr<table_units<> > profiles=rn.get_profiles();
+  lead_chden_exp(profiles);
+  
 #ifdef O2SCL_HDF
 
   hdf_file hf;
   hdf_file hf2;
   hf.open_or_create("ex_nucleus_rmf_prof.o2");
   hf2.open_or_create("ex_nucleus_rmf_chden.o2");
-  std::shared_ptr<table_units<> > profiles=rn.get_profiles();
   std::shared_ptr<table_units<> > charge_dens=rn.get_chden();
   hdf_output(hf,*profiles,"profiles");
   hdf_output(hf2,*charge_dens,"charge_densities");
@@ -129,3 +133,33 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 // End of example
+
+int lead_chden_exp(std::shared_ptr<table_units<> > profiles) {
+  
+  // The experimental charge density for Lead 208 from de Vries, et
+  // al. At. Data Nucl. Data Tables 36 (1987) 495 using the
+  // Sum-of-Gaussians method
+  double rr[12]={0.1,0.7,1.6,2.1,2.7,3.5,4.2,
+                 5.1,6.0,6.6,7.6,8.7};
+  double qq[12]={0.003845,0.009724,0.033093,0.000120,
+                 0.083107,0.080869,0.139957,0.260892,
+                 0.336013,0.0033637,0.018729,0.000020};
+  double g=1.7/sqrt(1.5);
+  double a[12];
+  for(size_t i=0;i<12;i++) {
+    a[i]=82.0*qq[i]/2.0/pow(o2scl_const::pi,1.5)/
+      pow(g,3.0)/(1.0+2.0*rr[i]*rr[i]/g/g);
+  }
+  
+  // Add experimental profile to table
+  profiles->new_column("chden_exp");
+  for(size_t i=0;i<profiles->get_nlines();i++) {
+    double val=0.0;
+    for(size_t j=0;j<12;j++) {
+      val+=a[j]*(exp(-pow((profiles->get("r",i)-rr[j])/g,2.0))+
+		 exp(-pow((profiles->get("r",i)+rr[j])/g,2.0)));
+    }
+    profiles->set("chden_exp",i,val);
+  }
+  return 0;
+}
