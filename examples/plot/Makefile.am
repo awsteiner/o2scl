@@ -26,6 +26,8 @@ plot-all: ex_anneal_plot ex_chebapp_plot ex_contour_plots \
 	ex_ode_airy_plot ex_ode_bessel_plot ex_ode_bessel2_plot \
 	ex_ode_bessel3_plot ex_stiff_plot 
 
+# Use 'open' for OSX and 'eyes of gnome' for linux
+
 if O2SCL_LINUX
 IMAGE_VIEW = eog
 IMAGE_VIEW2 = &
@@ -35,16 +37,9 @@ IMAGE_VIEW = open
 IMAGE_VIEW2 = 
 else 
 IMAGE_VIEW =
+IMAGE_VIEW2 = 
 endif
 endif
-
-# UNAME_S := $(shell uname -s)
-
-# ifeq ($(UNAME_S),Darwin)
-#   IMAGE_VIEW = open
-# else
-#   IMAGE_VIEW = eog
-# endif
 
 # -------------------------------------------------------------------- 
 
@@ -78,21 +73,21 @@ ex_anneal_plot:
 	rm -f ex_anneal_conts.o2
 	convert +append ex_anneal_plot.png ex_anneal_plot_new.png \
 		temp.png
-	$(IMAGE_VIEW) temp.png
+	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_contour_plot1:
 	o2graph -backend Agg -read ../ex_contour.o2 c1_cl \
 		-plot -save ex_contour_plot1_new.png
 	convert +append ex_contour_plot.png ex_contour_plot_new.png \
 		temp.png
-	$(IMAGE_VIEW) temp.png
+	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_contour_plot2:
 	o2graph -backend Agg -read ../ex_contour.o2 c2_cl \
 		-plot -save ex_contour_plot2_new.png
 	convert +append ex_contour_plot.png ex_contour_plot_new.png \
 		temp.png
-	$(IMAGE_VIEW) temp.png
+	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_chebapp_plot: 
 	o2graph -backend Agg -generic table ../ex_chebapp.out \
@@ -108,7 +103,7 @@ ex_chebapp_plot:
 		-save ex_chebapp_plot.png
 	convert +append ex_chebapp_plot.png ex_chebapp_plot_new.png \
 		temp.png
-	$(IMAGE_VIEW) temp.png
+	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_fptr_plot:
 	cat ../ex_fptr.scr | grep -v t > exftemp1
@@ -121,7 +116,7 @@ ex_fptr_plot:
 	rm -f exftemp1 exftemp2.o2
 	convert +append ex_fptr_plot.png ex_fptr_plot_new.png \
 		temp.png
-	$(IMAGE_VIEW) temp.png
+	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_mmin:
 	o2graph -set xlo "(-2)" -set xhi 3 -set ylo "(-1)" -set yhi 15 \
@@ -142,7 +137,7 @@ ex_mmin:
 		-show
 	convert +append ex_mmin_plot.png ex_mmin_plot_new.png \
 		temp.png
-	$(IMAGE_VIEW) temp.png
+	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_mmin2:
 	o2graph -set xlo "(-3)" -set xhi 3 -set ylo "(-3)" -set yhi 3 \
@@ -163,7 +158,7 @@ ex_mmin2:
 		-show
 	convert +append ex_mmin_plot.png ex_mmin_plot_new.png \
 		temp.png
-	$(IMAGE_VIEW) temp.png
+	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_nuc_prof:
 	o2graph -read ../ex_nucleus_rmf_prof.o2 -set xlo 0 -set xhi 10 \
@@ -181,7 +176,7 @@ ex_nuc_prof:
 		-save ex_nuc_prof.png
 	convert +append ex_nuc_prof_plot.png ex_nuc_prof_plot_new.png \
 		temp.png
-	$(IMAGE_VIEW) temp.png
+	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_nucmass_plots:
 	o2graph -backend Agg \
@@ -222,7 +217,7 @@ ex_nucmass_plots:
 		-save ex_nucmass_ws36.png 
 	convert +append ex_anneal_plot.png ex_anneal_plot_new.png \
 		temp.png
-	$(IMAGE_VIEW) temp.png
+	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_ode_airy: 
 	o2graph -read ../ex_ode.o2 table_2 \
@@ -242,7 +237,7 @@ ex_ode_airy:
 		-save ex_ode_airy.png
 	convert +append ex_ode_airy_plot.png ex_ode_airy_plot_new.png \
 		temp.png
-	$(IMAGE_VIEW) temp.png
+	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_ode_bessel: 
 	o2graph -backend Agg -read ../ex_ode.o2 table_0 \
@@ -260,7 +255,7 @@ ex_ode_bessel:
 		-save ex_ode_bessel.png
 	convert +append ex_ode_bessel_plot.png ex_ode_bessel_plot_new.png \
 		temp.png
-	$(IMAGE_VIEW) temp.png
+	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_ode_bessel2: 
 	o2graph -backend Agg -read ../ex_ode.o2 table_4 \
@@ -287,7 +282,7 @@ ex_ode_bessel2:
 		-save ex_ode_bessel2.png
 	convert +append ex_ode_bessel2.png ex_ode_bessel2_new.png \
 		temp.png
-	$(IMAGE_VIEW) temp.png
+	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_ode_bessel3: 
 	o2graph -backend Agg -read ../ex_ode.o2 table_7 \
@@ -303,7 +298,7 @@ ex_ode_bessel3:
 		-save ex_ode_bessel3.png
 	convert +append ex_ode_bessel3.png ex_ode_bessel3_new.png \
 		temp.png
-	$(IMAGE_VIEW) temp.png
+	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_stiff_plot:
 	o2graph -backend Agg -read ../ex_stiff.o2 table_0 \
@@ -326,7 +321,7 @@ ex_stiff_plot:
 		-save ex_stiff_plot.png -show
 	convert +append ex_stiff_plot.png ex_stiff_plot_new.png \
 		temp.png
-	$(IMAGE_VIEW) temp.png
+	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 # Old targets
 
