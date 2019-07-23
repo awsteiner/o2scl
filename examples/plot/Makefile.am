@@ -22,9 +22,10 @@ help:
 EXTRA_DIST = *.eps *.png
 
 plot-all: ex_anneal_plot ex_chebapp_plot ex_contour_plots \
-	ex_fptr_plot ex_nuc_prof ex_nucmass_plots \
+	ex_fptr_plot ex_mmin_plot ex_mmin_plot2 \
+	ex_nuc_prof ex_nucmass_plots \
 	ex_ode_airy_plot ex_ode_bessel_plot ex_ode_bessel2_plot \
-	ex_ode_bessel3_plot ex_stiff_plot 
+	ex_ode_bessel3_plot ex_stiff_plot
 
 # Use 'open' for OSX and 'eyes of gnome' for linux
 
@@ -166,45 +167,72 @@ ex_fptr_plot:
 		temp.png
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
+LEG_X1 = 0.8
+LEG_X2 = 1.15
+LEG_X3 = 1.25
+
 ex_mmin_plot:
 	o2graph -set xlo "(-2)" -set xhi 3 -set ylo "(-1)" -set yhi 15 \
 		-set fig-dict "top_margin=0.05" -set xtitle x \
 		-set ytitle z \
+		-ttext 0.5 1.03 "Minimizer trajectories in x-z plane" \
 		-generic table ../ex_mmin1.dat -internal ex_mmin.o2 \
-		-plot c1 c3 color=green \
+		-plot c1 c3 color=green,ls=: \
+		-line $(LEG_X1) 4.5 $(LEG_X2) 4.5 color=green,ls=: \
+		-text $(LEG_X3) 4.5 "Nelder-Mead" color=green,ha=left \
 		-generic table ../ex_mmin2.dat -internal ex_mmin.o2 \
-		-plot c1 c3 color=red,ls=: \
+		-plot c1 c3 color=red \
+		-line $(LEG_X1) 3.75 $(LEG_X2) 3.75 color=red \
+		-text $(LEG_X3) 3.75 "Fletcher-Reeves" color=red,ha=left \
 		-generic table ../ex_mmin2g.dat -internal ex_mmin.o2 \
 		-plot c1 c3 color=blue \
+		-line $(LEG_X1) 3.0 $(LEG_X2) 3.0 color=blue \
+		-text $(LEG_X3) 3.0 "FR with gradient" color=blue,ha=left \
 		-generic table ../ex_mmin3.dat -internal ex_mmin.o2 \
 		-plot c1 c3 color=magenta,ls=-. \
+		-line $(LEG_X1) 2.25 $(LEG_X2) 2.25 color=magenta,ls=-. \
+		-text $(LEG_X3) 2.25 "Polak-Ribere" color=magenta,ha=left \
 		-generic table ../ex_mmin3g.dat -internal ex_mmin.o2 \
-		-plot c1 c3 color=brown \
-		-generic table ../ex_mmin4.dat -internal ex_mmin.o2 \
-		-scatter c1 c3 color=black \
+		-plot c1 c3 color=brown,ls=-- \
+		-line $(LEG_X1) 1.5 $(LEG_X2) 1.5 color=brown,ls=-- \
+		-text $(LEG_X3) 1.5 "PR with gradient" color=brown,ha=left \
+		-point 1 0 marker=o,color=black \
 		-save ex_mmin_plot_new.png
-	convert +append ex_mmin.png ex_mmin_plot_new.png \
+	convert +append ex_mmin_plot.png ex_mmin_plot_new.png \
 		temp.png
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
+
+LEG_X4 = 0.8
+LEG_X5 = 1.15
+LEG_X6 = 1.25
 
 ex_mmin_plot2:
 	o2graph -set xlo "(-2)" -set xhi 3 -set ylo "(-2)" -set yhi 3 \
 		-set fig-dict "top_margin=0.05" -set xtitle x \
 		-set ytitle y \
+		-ttext 0.5 1.03 "Minimizer trajectories in x-y plane" \
 		-generic table ../ex_mmin1.dat -internal ex_mmin.o2 \
-		-plot c1 c2 color=green \
+		-plot c1 c2 color=green,ls=: \
+		-line $(LEG_X4) 2.75 $(LEG_X5) 2.75 color=green,ls=: \
+		-text $(LEG_X6) 2.75 "Nelder-Mead" color=green,ha=left \
 		-generic table ../ex_mmin2.dat -internal ex_mmin.o2 \
 		-plot c1 c2 color=red \
+		-line $(LEG_X4) 2.5 $(LEG_X5) 2.5 color=red \
+		-text $(LEG_X6) 2.5 "Fletcher-Reeves" color=red,ha=left \
 		-generic table ../ex_mmin2g.dat -internal ex_mmin.o2 \
 		-plot c1 c2 color=blue \
+		-line $(LEG_X4) 2.25 $(LEG_X5) 2.25 color=blue \
+		-text $(LEG_X6) 2.25 "FR with gradient" color=blue,ha=left \
 		-generic table ../ex_mmin3.dat -internal ex_mmin.o2 \
-		-plot c1 c2 color=magenta \
+		-plot c1 c2 color=magenta,ls=-. \
+		-line $(LEG_X4) 2.0 $(LEG_X5) 2.0 color=magenta,ls=-. \
+		-text $(LEG_X6) 2.0 "Polak-Ribere" color=magenta,ha=left \
 		-generic table ../ex_mmin3g.dat -internal ex_mmin.o2 \
-		-plot c1 c2 color=brown \
-		-generic table ../ex_mmin4.dat -internal ex_mmin.o2 \
-		-plot c1 c2 color=black \
+		-plot c1 c2 color=brown,ls=-- \
+		-line $(LEG_X4) 1.75 $(LEG_X5) 1.75 color=brown,ls=-- \
+		-text $(LEG_X6) 1.75 "PR with gradient" color=brown,ha=left \
 		-save ex_mmin_plot2_new.png
-	convert +append ex_mmin2.png ex_mmin_plot2_new.png \
+	convert +append ex_mmin_plot2.png ex_mmin_plot2_new.png \
 		temp.png
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 

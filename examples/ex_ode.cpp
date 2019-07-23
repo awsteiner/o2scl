@@ -100,7 +100,6 @@ int main(void) {
   double alpha=1.0;
   
   // Specify the differential equations to solve
-#ifndef O2SCL_NO_CPP11
   ode_funct od=
     std::bind(derivs,std::placeholders::_1,std::placeholders::_2,
 	      std::placeholders::_3,std::placeholders::_4,alpha);
@@ -108,10 +107,6 @@ int main(void) {
   ode_funct_solve_grid od3=
     std::bind(derivs3,std::placeholders::_1,std::placeholders::_2,
 	      std::placeholders::_3,std::placeholders::_4,alpha);
-#else
-  ode_funct_fptr_param<double,ubvector> od(derivs,alpha);
-  ode_funct_fptr<ubvector> od2(derivs2);
-#endif
   
   // The basic ODE steppers
   ode_rkck_gsl<> ode;

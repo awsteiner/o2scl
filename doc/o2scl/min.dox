@@ -80,7 +80,8 @@
     \skip Example:
     \until End of example
 
-    \future Plot the spring function
+    \image html ex_mmin_plot.png "Plot showing minimizer trajectories"
+    \image html ex_mmin_plot2.png "Plot showing minimizer trajectories"
 
     \section ex_mmin_fix_sect Minimizer fixing variables 
 

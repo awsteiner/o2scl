@@ -37,6 +37,7 @@
 #include <o2scl/mmin_conf.h>
 #include <o2scl/mmin_conp.h>
 #include <o2scl/mmin_bfgs2.h>
+#include <o2scl/rng_gsl.h>
 
 using namespace std;
 using namespace o2scl;
@@ -108,11 +109,7 @@ int main(void) {
   t.set_output_level(1);
   cout.setf(ios::scientific);
 
-  // Using a member function
-#ifdef O2SCL_NO_CPP11
-  multi_funct_mfptr<cl> f1(&acl,&cl::spring_two);
-  grad_funct_mfptr<cl> f1g(&acl,&cl::sgrad);
-#else
+  // Set up the function objects
   multi_funct f1=std::bind
     (std::mem_fn<double(size_t,const ubvector &)>(&cl::spring_two),
      &acl,std::placeholders::_1,std::placeholders::_2);
@@ -120,25 +117,22 @@ int main(void) {
     (std::mem_fn<int(size_t,ubvector &,ubvector &)>(&cl::sgrad),
      &acl,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);
-#endif
 
   mmin_simp2<> gm1;
   mmin_conf<> gm2;
   mmin_conp<> gm3;
-  mmin_bfgs2<> gm4;
 
+  vector<double> guess={1.0,0.0,7.0*o2scl_const::pi};
+  
   // This function is difficult to minimize, so more trials
   // are required.
   gm1.ntrial*=10;
   gm2.ntrial*=10;
   gm3.ntrial*=10;
-  gm4.ntrial*=10;
 
   // Simplex minimization
   acl.fout.open("ex_mmin1.dat");
-  x[0]=1.0;
-  x[1]=1.0;
-  x[2]=7.0*o2scl_const::pi;
+  vector_copy(3,guess,x);
   gm1.mmin(3,x,fmin,f1);
   acl.fout.close();
   cout << gm1.last_ntrial << endl;
@@ -150,9 +144,7 @@ int main(void) {
 
   // Fletcher-Reeves conjugate 
   acl.fout.open("ex_mmin2.dat");
-  x[0]=1.0;
-  x[1]=0.0;
-  x[2]=7.0*o2scl_const::pi;
+  vector_copy(3,guess,x);
   gm2.mmin(3,x,fmin,f1);
   acl.fout.close();
   cout << gm2.last_ntrial << endl;
@@ -164,9 +156,7 @@ int main(void) {
 
   // Fletcher-Reeves conjugate with gradients
   acl.fout.open("ex_mmin2g.dat");
-  x[0]=1.0;
-  x[1]=0.0;
-  x[2]=7.0*o2scl_const::pi;
+  vector_copy(3,guess,x);
   gm2.mmin_de(3,x,fmin,f1,f1g);
   acl.fout.close();
   cout << gm2.last_ntrial << endl;
@@ -178,9 +168,7 @@ int main(void) {
 
   // Polak-Ribere conjugate
   acl.fout.open("ex_mmin3.dat");
-  x[0]=1.0;
-  x[1]=0.0;
-  x[2]=7.0*o2scl_const::pi;
+  vector_copy(3,guess,x);
   gm3.mmin(3,x,fmin,f1);
   acl.fout.close();
   cout << gm3.last_ntrial << endl;
@@ -192,9 +180,7 @@ int main(void) {
 
   // Polak-Ribere conjugate with gradients
   acl.fout.open("ex_mmin3g.dat");
-  x[0]=1.0;
-  x[1]=0.0;
-  x[2]=7.0*o2scl_const::pi;
+  vector_copy(3,guess,x);
   gm3.mmin_de(3,x,fmin,f1,f1g);
   acl.fout.close();
   cout << gm3.last_ntrial << endl;
@@ -203,27 +189,6 @@ int main(void) {
   t.test_rel(x[0],1.0,4.0e-3,"3a");
   t.test_rel(x[1],0.0,4.0e-3,"3b");
   t.test_rel(x[2],0.0,4.0e-3,"3c");
-
-  // BFGS method
-
-  // BFGS has trouble converging (especially to zero, since the
-  // minimimum of x[0] is exactly at zero) if the derivative is not
-  // very accurate.
-  gm4.def_grad.epsrel=1.0e-8;
-
-  gm4.err_nonconv=false;
-  acl.fout.open("ex_mmin4.dat");
-  x[0]=1.0;
-  x[1]=0.0;
-  x[2]=7.0*o2scl_const::pi;
-  gm4.mmin(3,x,fmin,f1);
-  acl.fout.close();
-  cout << gm4.last_ntrial << endl;
-  cout << "Found minimum at: " 
-       << x[0] << " " << x[1] << " " << x[2] << endl;
-  t.test_rel(x[0],1.0,1.0e-4,"4a");
-  t.test_rel(x[1],0.0,1.0e-4,"4b");
-  t.test_rel(x[2],0.0,1.0e-4,"4c");
 
   t.report();
   return 0;
