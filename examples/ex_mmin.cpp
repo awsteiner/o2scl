@@ -61,13 +61,14 @@ public:
   // Updated spring function
   double spring_two(size_t nv, const ubvector &x) {
     double theta=atan2(x[1],x[0]);
-    double r=sqrt(x[0]*x[0]+x[1]*x[1]);
+    double r=hypot(x[0],x[1]);
     double z=x[2];
     double tmz=theta-z;
     double fact=8.0-pow(sin(tmz+o2scl_const::pi/2.0)+1.0,3.0);
     double rm1=r-1.0;
     double ret=fact+exp(rm1*rm1)+z*z/param;
-    fout << x[0] << " " << x[1] << " " << x[2] << " " << ret << endl;
+    fout << x[0] << " " << x[1] << " " << x[2] << " " << ret << " "
+	 << fact << " " << rm1 << " " << endl;
     return ret;
   }
 
@@ -75,7 +76,7 @@ public:
   int sgrad(size_t nv, ubvector &x, ubvector &g) {
 
     double theta=atan2(x[1],x[0]);
-    double r=sqrt(x[0]*x[0]+x[1]*x[1]);
+    double r=hypot(x[0],x[1]);
     double z=x[2];
     double tmz=theta-z;
     double rm1=r-1.0;
@@ -121,14 +122,16 @@ int main(void) {
   mmin_simp2<> gm1;
   mmin_conf<> gm2;
   mmin_conp<> gm3;
+  mmin_bfgs2<> gm4;
 
-  vector<double> guess={1.0,0.0,7.0*o2scl_const::pi};
+  vector<double> guess={2.0,1.0,7.0*o2scl_const::pi};
   
   // This function is difficult to minimize, so more trials
   // are required.
   gm1.ntrial*=10;
   gm2.ntrial*=10;
   gm3.ntrial*=10;
+  gm4.ntrial*=10;
 
   // Simplex minimization
   acl.fout.open("ex_mmin1.dat");
@@ -189,6 +192,30 @@ int main(void) {
   t.test_rel(x[0],1.0,4.0e-3,"3a");
   t.test_rel(x[1],0.0,4.0e-3,"3b");
   t.test_rel(x[2],0.0,4.0e-3,"3c");
+
+  gm4.def_grad.epsrel=1.0e-8;
+  
+  acl.fout.open("ex_mmin4.dat");
+  vector_copy(3,guess,x);
+  gm4.mmin(3,x,fmin,f1);
+  acl.fout.close();
+  cout << gm4.last_ntrial << endl;
+  cout << "Found minimum at: " 
+       << x[0] << " " << x[1] << " " << x[2] << endl;
+  t.test_rel(x[0],1.0,4.0e-3,"4a");
+  t.test_rel(x[1],0.0,4.0e-3,"4b");
+  t.test_rel(x[2],0.0,4.0e-3,"4c");
+
+  acl.fout.open("ex_mmin4g.dat");
+  vector_copy(3,guess,x);
+  gm4.mmin_de(3,x,fmin,f1,f1g);
+  acl.fout.close();
+  cout << gm4.last_ntrial << endl;
+  cout << "Found minimum at: " 
+       << x[0] << " " << x[1] << " " << x[2] << endl;
+  t.test_rel(x[0],1.0,4.0e-3,"4a");
+  t.test_rel(x[1],0.0,4.0e-3,"4b");
+  t.test_rel(x[2],0.0,4.0e-3,"4c");
 
   t.report();
   return 0;
