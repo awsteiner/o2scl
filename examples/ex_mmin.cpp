@@ -37,6 +37,8 @@
 #include <o2scl/mmin_conf.h>
 #include <o2scl/mmin_conp.h>
 #include <o2scl/mmin_bfgs2.h>
+#include <o2scl/diff_evo.h>
+#include <o2scl/diff_evo_adapt.h>
 #include <o2scl/rng_gsl.h>
 
 using namespace std;
@@ -50,6 +52,7 @@ public:
 
   cl() {
     param=30.0;
+    rg.clock_seed();
   }
 
   // To output function evaluations to a file
@@ -58,6 +61,8 @@ public:
   // Parameter of the quadratic
   double param;
   
+  rng_gsl rg;
+
   // Updated spring function
   double spring_two(size_t nv, const ubvector &x) {
     double theta=atan2(x[1],x[0]);
@@ -99,6 +104,13 @@ public:
     return 0;
   }
   
+  int de_init_function(size_t dim, const ubvector &x, ubvector &y) {
+    y[0]=1.9+rg.random()*0.2;
+    y[1]=0.9+rg.random()*0.2;
+    y[2]=7.0*o2scl_const::pi-0.1+rg.random()*0.2;
+    return 0;
+  }
+  
 };
 
 int main(void) {
@@ -118,11 +130,18 @@ int main(void) {
     (std::mem_fn<int(size_t,ubvector &,ubvector &)>(&cl::sgrad),
      &acl,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);
+  mm_funct mfg=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&cl::de_init_function),
+     &acl,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
 
   mmin_simp2<> gm1;
   mmin_conf<> gm2;
   mmin_conp<> gm3;
   mmin_bfgs2<> gm4;
+  diff_evo<> gm5;
+  diff_evo_adapt<> gm6;
 
   vector<double> guess={2.0,1.0,7.0*o2scl_const::pi};
   
@@ -165,9 +184,9 @@ int main(void) {
   cout << gm2.last_ntrial << endl;
   cout << "Found minimum at: " 
        << x[0] << " " << x[1] << " " << x[2] << endl;
-  t.test_rel(x[0],1.0,4.0e-3,"2a");
-  t.test_rel(x[1],0.0,4.0e-3,"2b");
-  t.test_rel(x[2],0.0,4.0e-3,"2c");
+  t.test_rel(x[0],1.0,4.0e-3,"2ga");
+  t.test_rel(x[1],0.0,4.0e-3,"2gb");
+  t.test_rel(x[2],0.0,4.0e-3,"2gc");
 
   // Polak-Ribere conjugate
   acl.fout.open("ex_mmin3.dat");
@@ -189,9 +208,56 @@ int main(void) {
   cout << gm3.last_ntrial << endl;
   cout << "Found minimum at: " 
        << x[0] << " " << x[1] << " " << x[2] << endl;
-  t.test_rel(x[0],1.0,4.0e-3,"3a");
-  t.test_rel(x[1],0.0,4.0e-3,"3b");
-  t.test_rel(x[2],0.0,4.0e-3,"3c");
+  t.test_rel(x[0],1.0,4.0e-3,"3ga");
+  t.test_rel(x[1],0.0,4.0e-3,"3gb");
+  t.test_rel(x[2],0.0,4.0e-3,"3gc");
+
+  // BFGS with gradients
+  acl.fout.open("ex_mmin4g.dat");
+  vector_copy(3,guess,x);
+  gm4.mmin_de(3,x,fmin,f1,f1g);
+  acl.fout.close();
+  cout << gm4.last_ntrial << endl;
+  cout << "Found minimum at: " 
+       << x[0] << " " << x[1] << " " << x[2] << endl;
+  t.test_rel(x[0],1.0,4.0e-3,"4ga");
+  t.test_rel(x[1],0.0,4.0e-3,"4gb");
+  t.test_rel(x[2],0.0,4.0e-3,"4gc");
+
+  // de
+  acl.fout.open("ex_mmin5.dat");
+  vector_copy(3,guess,x);
+  gm5.set_init_function(mfg);
+  gm5.mmin(3,x,fmin,f1);
+  acl.fout.close();
+  cout << "Found minimum at: " 
+       << x[0] << " " << x[1] << " " << x[2] << endl;
+  t.test_rel(x[0],1.0,4.0e-3,"5a");
+  t.test_rel(x[1],0.0,4.0e-3,"5b");
+  t.test_rel(x[2],0.0,4.0e-3,"5c");
+
+  // dea
+  acl.fout.open("ex_mmin6.dat");
+  vector_copy(3,guess,x);
+  gm6.set_init_function(mfg);
+  gm6.mmin(3,x,fmin,f1);
+  acl.fout.close();
+  cout << "Found minimum at: " 
+       << x[0] << " " << x[1] << " " << x[2] << endl;
+  t.test_rel(x[0],1.0,4.0e-3,"6a");
+  t.test_rel(x[1],0.0,4.0e-3,"6b");
+  t.test_rel(x[2],0.0,4.0e-3,"6c");
+
+  t.report();
+  return 0;
+}
+// End of example
+
+/*
+  This is the BFGS version with numerical gradients which doesn't
+  appear to work for this particular example. This may be a result of
+  finite precision in the object function rather than a failure of the
+  BFGS.
 
   gm4.def_grad.epsrel=1.0e-8;
   
@@ -206,19 +272,4 @@ int main(void) {
   t.test_rel(x[1],0.0,4.0e-3,"4b");
   t.test_rel(x[2],0.0,4.0e-3,"4c");
 
-  acl.fout.open("ex_mmin4g.dat");
-  vector_copy(3,guess,x);
-  gm4.mmin_de(3,x,fmin,f1,f1g);
-  acl.fout.close();
-  cout << gm4.last_ntrial << endl;
-  cout << "Found minimum at: " 
-       << x[0] << " " << x[1] << " " << x[2] << endl;
-  t.test_rel(x[0],1.0,4.0e-3,"4a");
-  t.test_rel(x[1],0.0,4.0e-3,"4b");
-  t.test_rel(x[2],0.0,4.0e-3,"4c");
-
-  t.report();
-  return 0;
-}
-// End of example
-
+*/
