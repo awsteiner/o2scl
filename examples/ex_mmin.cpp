@@ -104,13 +104,6 @@ public:
     return 0;
   }
   
-  int de_init_function(size_t dim, const ubvector &x, ubvector &y) {
-    y[0]=1.9+rg.random()*0.2;
-    y[1]=0.9+rg.random()*0.2;
-    y[2]=7.0*o2scl_const::pi-0.1+rg.random()*0.2;
-    return 0;
-  }
-  
 };
 
 int main(void) {
@@ -128,11 +121,6 @@ int main(void) {
      &acl,std::placeholders::_1,std::placeholders::_2);
   grad_funct f1g=std::bind
     (std::mem_fn<int(size_t,ubvector &,ubvector &)>(&cl::sgrad),
-     &acl,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3);
-  mm_funct mfg=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
-     (&cl::de_init_function),
      &acl,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);
 
@@ -212,24 +200,12 @@ int main(void) {
   t.test_rel(x[1],0.0,4.0e-3,"3gb");
   t.test_rel(x[2],0.0,4.0e-3,"3gc");
 
-  // BFGS with gradients
-  acl.fout.open("ex_mmin4g.dat");
-  vector_copy(3,guess,x);
-  gm4.mmin_de(3,x,fmin,f1,f1g);
-  acl.fout.close();
-  cout << gm4.last_ntrial << endl;
-  cout << "Found minimum at: " 
-       << x[0] << " " << x[1] << " " << x[2] << endl;
-  t.test_rel(x[0],1.0,4.0e-3,"4ga");
-  t.test_rel(x[1],0.0,4.0e-3,"4gb");
-  t.test_rel(x[2],0.0,4.0e-3,"4gc");
-
   // de
   acl.fout.open("ex_mmin5.dat");
   vector_copy(3,guess,x);
-  //gm5.set_init_function(mfg);
   gm5.mmin(3,x,fmin,f1);
   acl.fout.close();
+  cout << gm5.last_ntrial << endl;
   cout << "Found minimum at: " 
        << x[0] << " " << x[1] << " " << x[2] << endl;
   t.test_rel(x[0],1.0,4.0e-3,"5a");
@@ -239,9 +215,9 @@ int main(void) {
   // dea
   acl.fout.open("ex_mmin6.dat");
   vector_copy(3,guess,x);
-  gm6.set_init_function(mfg);
   gm6.mmin(3,x,fmin,f1);
   acl.fout.close();
+  cout << gm6.last_ntrial << endl;
   cout << "Found minimum at: " 
        << x[0] << " " << x[1] << " " << x[2] << endl;
   t.test_rel(x[0],1.0,4.0e-3,"6a");
@@ -254,10 +230,21 @@ int main(void) {
 // End of example
 
 /*
-  This is the BFGS version with numerical gradients which doesn't
-  appear to work for this particular example. This may be a result of
-  finite precision in the object function rather than a failure of the
-  BFGS.
+  The BFGS minimizer doesn't appear to work for this particular
+  example. This may be a result of finite precision in the object
+  function rather than a failure of the BFGS.
+
+  // BFGS with gradients
+  acl.fout.open("ex_mmin4g.dat");
+  vector_copy(3,guess,x);
+  gm4.mmin_de(3,x,fmin,f1,f1g);
+  acl.fout.close();
+  cout << gm4.last_ntrial << endl;
+  cout << "Found minimum at: " 
+       << x[0] << " " << x[1] << " " << x[2] << endl;
+  t.test_rel(x[0],1.0,4.0e-3,"4ga");
+  t.test_rel(x[1],0.0,4.0e-3,"4gb");
+  t.test_rel(x[2],0.0,4.0e-3,"4gc");
 
   gm4.def_grad.epsrel=1.0e-8;
   

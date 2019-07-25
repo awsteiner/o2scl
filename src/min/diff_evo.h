@@ -63,8 +63,11 @@ namespace o2scl {
       If the population converges prematurely, then \ref diff_evo::f
       and \ref pop_size should be increased.
 
-      \future AWS, 7/25/19, Consider some code which terminates early
-      if the minimum is found to within a particular tolerance?
+      \future AWS, 7/25/19, The code stops early if \ref nconv
+      generations go by without a better fit, but we could also
+      consider some code which terminates early if the minimum is
+      found to within a particular tolerance.
+
       \future This class probably has a simple parallelization like 
       \ref o2scl::anneal_para ?
   */
@@ -259,11 +262,14 @@ namespace o2scl {
 	  }
 
 	}
-	if (this->verbose > 0)
+	if (this->verbose > 0) {
 	  this->print_iter( nvar, fmin, gen, x0 );
+	}
       }
 
-      if(gen>=this->ntrial) {
+      this->last_ntrial=gen;
+      
+      if (gen>=this->ntrial) {
 	std::string str="Exceeded maximum number of iterations ("+
 	  itos(this->ntrial)+") in diff_evo::mmin().";
 	O2SCL_CONV_RET(str.c_str(),exc_emaxiter,this->err_nonconv);
@@ -300,6 +306,11 @@ namespace o2scl {
 	}
 	std::cout << "fmin: " << fmins[i] << std::endl;
       }
+      if (this->verbose>1) {
+	char ch;
+	std::cin >> ch;
+      }
+      return;
     }
 
     /// Set the step sizes for the default initialization

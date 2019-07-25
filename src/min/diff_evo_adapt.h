@@ -1,7 +1,7 @@
 /* 
    -------------------------------------------------------------------
    
-   Copyright (C) 2010-2014, Edwin van Leeuwen
+   Copyright (C) 2010-2019, Edwin van Leeuwen and Andrew W. Steiner
    
    This file is part of O2scl.
    
@@ -44,9 +44,9 @@ namespace o2scl {
        
       This class minimizes a function using differential evolution.
       This method is a genetic algorithm and as such works well for
-      non continuous problems, since it does not rely on a gradient of
-      the function that is being mind.
-       
+      non continuous problems, since it does not require the gradient
+      of the function to be minimized.
+
       This is an adaptive version of \ref diff_evo as described in
       \ref Brest06 .
   */
@@ -70,7 +70,7 @@ namespace o2scl {
     double fl, fr;
     //@}
 
-    diff_evo_adapt() : diff_evo<func_t, vec_t, init_funct_t>() {
+    diff_evo_adapt() : diff_evo<func_t,vec_t,init_funct_t>() {
       tau_1 = 0.1;
       tau_2 = 0.1;
       fl = 0.1;
@@ -105,14 +105,14 @@ namespace o2scl {
 	fmins[x]=fmin_x;
 	if (x==0) {
 	  fmin = fmin_x;
-	  for (size_t i = 0; i<nvar; ++i)  
+	  for (size_t i = 0; i<nvar; ++i) {
 	    x0[i] = agent_x[i];
-	  //x0 = agent_x;
+	  }
 	} else if (fmin_x<fmin) {
 	  fmin = fmin_x;
-	  for (size_t i = 0; i<nvar; ++i)  
+	  for (size_t i = 0; i<nvar; ++i) {
 	    x0[i] = agent_x[i];
-	  //x0 = agent_x;
+	  }
 	}
 
       }
@@ -197,19 +197,22 @@ namespace o2scl {
 	  this->print_iter( nvar, fmin, gen, x0 );
 	}
       }
-      if(gen>=this->ntrial) {
+      
+      this->last_ntrial=gen;
+      
+      if (gen>=this->ntrial) {
 	std::string str="Exceeded maximum number of iterations ("+
-	itos(this->ntrial)+") in diff_evo::mmin().";
+	itos(this->ntrial)+") in diff_evo_adapt::mmin().";
 	O2SCL_CONV_RET(str.c_str(),exc_emaxiter,this->err_nonconv);
       }
       return 0;
     };
 
-    /** \brief Print out iteration information.
-	
+    /** \brief Print out iteration information
      */
-    virtual void print_iter( size_t nvar, double fmin, 
-			     int iter, vec_t &best_fit ) {
+    virtual void print_iter(size_t nvar, double fmin, 
+			    int iter, vec_t &best_fit) {
+      
       std::cout << "Generation " << iter << std::endl;
       std::cout << "Fmin: " << fmin << std::endl;
       std::cout << "Parameters: ";
@@ -227,6 +230,11 @@ namespace o2scl {
 	  " F: " << variables[i*2] <<
 	  " CR: " << variables[i*2+1] << std::endl;
       }
+      if (this->verbose>1) {
+	char ch;
+	std::cin >> ch;
+      }
+      return;
     }
 
  
@@ -234,35 +242,37 @@ namespace o2scl {
 
     protected:
 
-    /**
-     * \brief Vector containing the tunable variable F and CR
+    /** \brief Vector containing the tunable variable F and CR
      */
     vec_t variables;
-
+    
     /// Vector that keeps track of fmins values
     ubvector fmins;
 
-    /**
-     * \brief Initialize a population of random agents
+    /** \brief Initialize a population of random agents
      */
     virtual int initialize_population( size_t nvar, vec_t &x0 ) {
+      this->population.resize(nvar*this->pop_size);
+      variables.resize(2*this->pop_size);
       if (this->rand_init_funct==0) {
-	O2SCL_ERR("No initialization function provided.",
-		  exc_ebadfunc );
-
-      }
-      this->population.resize(nvar*this->pop_size );
-      variables.resize(2*this->pop_size );
-      for (size_t i = 0; i < this->pop_size; ++i) {
-	vec_t y(nvar);
-	(*this->rand_init_funct)( nvar, x0, y );
-	for (size_t j = 0; j < nvar; ++j) {
-	  this->population[ i*nvar+j ] = y[j];
-
+	for(size_t i=0;i<this->pop_size;i++) {
+	  for(size_t j=0;j<nvar;j++) {
+	    double stepj=this->step[j%this->step.size()];
+	    this->population[i*nvar+j]=x0[j]-stepj/2.0+stepj*this->gr.random();
+	  }
+	  variables[i*2] = fl + this->gr.random()*fr;
+	  variables[i*2+1] = this->gr.random();
 	}
-
-	variables[i*2] = fl + this->gr.random()*fr;
-	variables[i*2+1] = this->gr.random();
+      } else {
+	for (size_t i = 0; i < this->pop_size; ++i) {
+	  vec_t y(nvar);
+	  (*this->rand_init_funct)(nvar,x0,y);
+	  for (size_t j = 0; j < nvar; ++j) {
+	    this->population[ i*nvar+j ] = y[j];
+	  }
+	  variables[i*2] = fl + this->gr.random()*fr;
+	  variables[i*2+1] = this->gr.random();
+	}
       }
       return 0;
     }
