@@ -1,24 +1,24 @@
 /* 
-  -------------------------------------------------------------------
+   -------------------------------------------------------------------
    
-  Copyright (C) 2010-2014, Edwin van Leeuwen
+   Copyright (C) 2010-2019, Edwin van Leeuwen and Andrew W. Steiner
    
-  This file is part of O2scl.
+   This file is part of O2scl.
    
-  O2scl is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 3 of the License, or
-  (at your option) any later version.
+   O2scl is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
   
-  O2scl is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+   O2scl is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License
-  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+   You should have received a copy of the GNU General Public License
+   along with O2scl. If not, see <http://www.gnu.org/licenses/>.
   
-  -------------------------------------------------------------------
+   -------------------------------------------------------------------
 */
 #ifndef O2SCL_DIFF_EVO_H
 #define O2SCL_DIFF_EVO_H
@@ -43,38 +43,45 @@ namespace o2scl {
       
       This class minimizes a function using differential evolution.
       This method is a genetic algorithm and as such works well for
-      non continuous problems, since it does not rely on a gradient of
-      the function that is being mind.
+      non continuous problems, since it does not require the gradient
+      of the function to be minimized.
       
-      The method starts by initializing a random population of
-      candidate parameters. To do this the user needs to define a
-      function to create these random parameters, which can be
-      provided using \ref set_init_function().
+      The method starts by initializing a the population of 
+      points in the parameter space. The user can specify
+      a function which creates the initial population using
+      \ref set_init_function() . Alternatively, by default this
+      class chooses random points near the initial point 
+      with a default step size of 0.01 in every direction. 
+      The step size can be changed using \ref set_step() .
       
       After the initial population is created the algorithm will
-      repeat a number of standard steps until a solution is found or
-      the maximum number of iterations is reached. Based on 
-      \ref Storn97.
+      repeat until a solution is found or the maximum number of
+      iterations is reached. Based on \ref Storn97.
 
       \note The constructor sets \ref o2scl::mmin_base::ntrial to 1000 .
 
       If the population converges prematurely, then \ref diff_evo::f
       and \ref pop_size should be increased.
+
+      \future AWS, 7/25/19, Consider some code which terminates early
+      if the minimum is found to within a particular tolerance?
+      \future This class probably has a simple parallelization like 
+      \ref o2scl::anneal_para ?
   */
-    template<class func_t=multi_funct, 
-      class vec_t=boost::numeric::ublas::vector<double> , 
-      class init_funct_t=mm_funct> class diff_evo : 
-      public mmin_base<func_t,func_t,vec_t> {
+  template<class func_t=multi_funct, 
+	   class vec_t=boost::numeric::ublas::vector<double> , 
+	   class init_funct_t=mm_funct> class diff_evo : 
+    public mmin_base<func_t,func_t,vec_t> {
       
-    public:
-    
+  public:
+      
     typedef boost::numeric::ublas::vector<double> ubvector;
-
+      
     /** \brief Population size (default 0)
-
+	  
 	Should be at least 4. Typically between \f$ 5 d \f$ and \f$ 10
 	d \f$ where \f$ d \f$ is the dimensionality of the problem.
-
+	  
 	If this is 0 (the default), then it is set by mmin to be 
 	equal to \f$ 10 d \f$ .
     */
@@ -91,9 +98,9 @@ namespace o2scl {
 	differential variation. Usually between 0 and 2.
     */
     double f;
-
+      
     /** \brief Crossover probability (default 0.8)
-	
+	  
 	Usually between 0 and 1. 
     */
     double cr;
@@ -105,15 +112,15 @@ namespace o2scl {
       rand_init_funct = 0;
       pop_size = 0;
       nconv = 25;
+      step.resize(1);
+      step[0]=1.0e-2;
     }
 
     virtual ~diff_evo() {
     }
 
-    /** \brief Set the function that is used to produce random 
-	init variables
-	
-	REQUIRED
+    /** \brief Set the function that is used to select the 
+	initial population
 	
 	The init function is called in the beginning to fill 
 	the population with random individuals, so it is best 
@@ -121,8 +128,12 @@ namespace o2scl {
 	are interested in. The method will find solutions outside 
 	this parameter space, but choosing a good init function will 
 	help finding solutions faster.
+
+	Note that this function stores a pointer to the user-specified
+	function so care must be taken to ensure the pointer is still
+	valid when the minimization is run.
     */
-    virtual void set_init_function( init_funct_t &function ) {
+    virtual void set_init_function(init_funct_t &function) {
       rand_init_funct = &function;
     }
 
@@ -154,7 +165,7 @@ namespace o2scl {
       size_t nconverged = 0;
 
       if (pop_size==0) {
-	// Automatically select pop_size dependent on dimensionality.
+	// Automatically select pop_size based on on dimensionality.
 	pop_size = 10*nvar;
       }
 
@@ -174,14 +185,14 @@ namespace o2scl {
 	fmins[x]=fmin_x;
 	if (x==0) {
 	  fmin = fmin_x;
-	  for (size_t i = 0; i<nvar; ++i)  
+	  for (size_t i = 0; i<nvar; ++i) {
 	    x0[i] = agent_x[i];
-	  //x0 = agent_x;
+	  }
 	} else if (fmin_x<fmin) {
 	  fmin = fmin_x;
-	  for (size_t i = 0; i<nvar; ++i)  
+	  for (size_t i = 0; i<nvar; ++i) {
 	    x0[i] = agent_x[i];
-	  //x0 = agent_x;
+	  }
 	}
       }
 
@@ -254,7 +265,7 @@ namespace o2scl {
 
       if(gen>=this->ntrial) {
 	std::string str="Exceeded maximum number of iterations ("+
-	itos(this->ntrial)+") in diff_evo::mmin().";
+	  itos(this->ntrial)+") in diff_evo::mmin().";
 	O2SCL_CONV_RET(str.c_str(),exc_emaxiter,this->err_nonconv);
       }
 
@@ -291,17 +302,26 @@ namespace o2scl {
       }
     }
 
+    /// Set the step sizes for the default initialization
+    template<class vec2_t> int set_step(size_t nv, vec2_t &stepv) {
+      if (nv>0) {
+	step.resize(nv);
+	for(size_t i=0;i<nv;i++) step[i]=stepv[i];
+      }
+      return 0;
+    }
+
 #ifndef DOXYGEN_INTERNAL
 
-    protected:
+  protected:
 
     /** \brief Vector containing the population.
 	
-	For now using one long vector with all agents after each other
+	A long vector with all agents after each other
     */
     vec_t population;
 
-    /// Vector that keeps track of fmins values
+    /// Vector that keeps track of the function values
     ubvector fmins;
 
     /** \brief Function that is used to produce random init variables
@@ -313,21 +333,28 @@ namespace o2scl {
     /// Random number generator
     rng_gsl gr;
 
+    /// Step size for initialization
+    std::vector<double> step;
+    
     /** \brief Initialize a population of random agents
      */
     virtual int initialize_population( size_t nvar, vec_t &x0 ) {
+      population.resize(nvar*pop_size);
       if (rand_init_funct==0) {
-	O2SCL_ERR("No initialization function provided.",
-		      exc_ebadfunc);
-
-      }
-      population.resize(nvar*pop_size );
-      for (size_t i = 0; i < pop_size; ++i) {
-	vec_t y(nvar);
-	(*rand_init_funct)( nvar, x0, y );
-	for (size_t j = 0; j < nvar; ++j) {
-	  population[ i*nvar+j ] = y[j];
-
+	for(size_t i=0;i<pop_size;i++) {
+	  for(size_t j=0;j<nvar;j++) {
+	    double stepj=step[j%step.size()];
+	    population[i*nvar+j]=x0[j]-stepj/2.0+stepj*gr.random();
+	  }
+	}
+      } else {
+	for (size_t i = 0; i < pop_size; ++i) {
+	  vec_t y(nvar);
+	  (*rand_init_funct)( nvar, x0, y );
+	  for (size_t j = 0; j < nvar; ++j) {
+	    population[ i*nvar+j ] = y[j];
+	    
+	  }
 	}
       }
       return 0;
@@ -338,9 +365,12 @@ namespace o2scl {
 	Unique from x and each other
 	
 	Uses the Fisher-Yates algorithm.  
-	
+
+	\future AWS, 7/25/19: GSL may have a better Fisher-Yates
+	implementation we should use here. Or is it in the
+	\ref o2scl::permutation class?
     */
-    virtual std::vector<int> pick_unique_agents( int nr, size_t x ) {
+    virtual std::vector<int> pick_unique_agents(int nr, size_t x) {
       std::vector<int> ids;
       std::vector<int> agents;
       // Fill array with ids
@@ -375,7 +405,7 @@ namespace o2scl {
 
 #endif
 
-    }; 
+  }; 
 
 #ifndef DOXYGEN_NO_O2NS
 }

@@ -246,7 +246,7 @@ namespace o2scl {
      * \brief Initialize a population of random agents
      */
     virtual int initialize_population( size_t nvar, vec_t &x0 ) {
-      if (this->rand_init_funct==NULL) {
+      if (this->rand_init_funct==0) {
 	O2SCL_ERR("No initialization function provided.",
 		  exc_ebadfunc );
 

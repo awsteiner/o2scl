@@ -227,7 +227,7 @@ int main(void) {
   // de
   acl.fout.open("ex_mmin5.dat");
   vector_copy(3,guess,x);
-  gm5.set_init_function(mfg);
+  //gm5.set_init_function(mfg);
   gm5.mmin(3,x,fmin,f1);
   acl.fout.close();
   cout << "Found minimum at: " 
