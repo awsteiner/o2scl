@@ -484,6 +484,14 @@ namespace o2scl {
       // the user-specified limits
       for(size_t iip=0;iip<initial_points.size();iip++) {
 	for(size_t ipar=0;ipar<n_params;ipar++) {
+	  if (initial_points[iip].size()<n_params) {
+	    std::cout << "iip,ipar: " << iip << " " << ipar << std::endl;
+	    std::cout << "iip,ipar: " << initial_points.size() << " "
+		      << initial_points[iip].size() << " " << n_params
+		      << std::endl;
+	    O2SCL_ERR2("Initial point vector not correctly sized ",
+		      "in mcmc_base::mcmc().",o2scl::exc_efailed);
+	  }
 	  if (initial_points[iip][ipar]<low[ipar] ||
 	      initial_points[iip][ipar]>high[ipar]) {
 	    O2SCL_ERR((((std::string)"Parameter ")+o2scl::szttos(ipar)+
