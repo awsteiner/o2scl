@@ -19,7 +19,7 @@ help:
 # necessary to generate the documentation.
 # -------------------------------------------------------------------- 
 
-EXTRA_DIST = *.eps *.png
+EXTRA_DIST = *.png
 
 plot-all: ex_anneal_plot ex_chebapp_plot ex_contour_plots \
 	ex_fptr_plot ex_mmin_plot ex_mmin_plot2 \
