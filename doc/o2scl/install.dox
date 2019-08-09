@@ -78,14 +78,19 @@
     <tt>make install</tt>. This installation method is tested by the 
     Travis CI script. 
     
-    The HDF5 package installs its header files in a slightly different
-    location depending on the operating system. If you have trouble
-    finding the HDF5 include files, you may need to use
-    <tt>-DO2SCL_PLAIN_HDF5_HEADER</tt> and manually include the HDF5
-    library using <tt>-I</tt>i.e.
+    The HDF5 package for Ubuntu and many other Linux systems is
+    installed in <tt>hdf5/serial/hdf5.h</tt> instead of
+    <tt>hdf5.h</tt>, so \o2 presumes that Linux systems are arranged
+    that way. If HDF5 include statements should not have the
+    <tt>hdf5/serial/</tt> prefix, then you can use
+    <tt>-DO2SCL_HDF5_PLAIN_HEADER</tt>, i.e.
     \verbatim
     CXXFLAGS="-DO2SCL_PLAIN_HDF5_HEADER" ./configure
     \endverbatim
+    to instruct \o2 to look for them there (for example, on bridges at
+    the PSC). On many systems, one can use a parallel HDF5 library
+    using <tt>-DO2SCL_HDF5_PLAIN_HEADER</tt> and a <tt>-I</tt> option
+    to select the proper location for the parallel HDF5 header files.
 
     If you want to install from source (without generating the
     documentation), then you must first install the
