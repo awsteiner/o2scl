@@ -19,12 +19,18 @@
     \o2 requires the Boost (any relatively recent version) and the GSL
     libraries (version 1.16 or later). If the <tt>configure</tt>
     script cannot find Boost or GSL, you may have to specify their
-    location in the <tt>CXXFLAGS</tt> and <tt>LDFLAGS</tt> environment
-    variables (<tt>./configure --help</tt> shows some information on
-    this). In order to allow \o2 to take advantage of new
-    functionality in GSL versions 2.0 and later, you can add
-    <tt>--enable-gsl2</tt> to the <tt>./configure</tt> script.
-    Along with GSL, a CBLAS library is also required, and
+    location for the associated header files in the <tt>CXXFLAGS</tt>
+    variable and the associated libraries in the <tt>LDFLAGS</tt>
+    environment variable. Running <tt>./configure --help</tt> shows some
+    information on this.  For example, in a bash shell,
+    you could do something like
+    \code
+    CXX="g++" CXXFLAGS="-I/dir/to/gsl/include" LDFLAGS="-L/dir/to/gsl/libs" ./configure --prefix=="/dir/to/destination_directory
+    \endcode
+    In order to allow \o2 to take advantage of
+    new functionality in GSL versions 2.0 and later, you can add
+    <tt>--enable-gsl2</tt> to the <tt>./configure</tt> script. Along
+    with GSL, a CBLAS library is also required, and
     <tt>./configure</tt> will look for <tt>libcblas</tt> first, and if
     not found then it will look for <tt>libgslcblas</tt>. If neither
     is present, then you may have to manually specify a CBLAS library
