@@ -37,6 +37,33 @@ using namespace o2scl_acol;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
+int acol_manager::comm_slack(std::vector<std::string> &sv, bool itive_com) {
+  if (smess.url.length()==0) {
+    if (smess.set_url_from_env("O2SCL_SLACK_URL")==false) {
+      return 1;
+    }
+    cout << "Set Slack URL to " << smess.url << endl;
+  }
+  if (smess.channel.length()==0) {
+    if (smess.set_channel_from_env("O2SCL_SLACK_CHANNEL")==false) {
+      return 2;
+    }
+    cout << "Set Slack channel to " << smess.channel << endl;
+  }
+  if (smess.username.length()==0) {
+    if (smess.set_username_from_env("O2SCL_SLACK_USERNAME")==false) {
+      return 3;
+    }
+    cout << "Set Slack username to " << smess.username << endl;
+  }
+
+  if (sv.size()<2) return 4;
+  
+  smess.send(sv[1]);
+  
+  return 0;
+}
+
 int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
   if (type.length()==0) {

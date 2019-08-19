@@ -31,6 +31,8 @@ namespace o2scl {
 #endif
 
   /** \brief Object to send messages to Slack using curl
+
+      \note Experimental
    */
   class slack_messenger {
 
@@ -93,49 +95,70 @@ namespace o2scl {
 #ifdef O2SCL_MPI
 	time_last_message=MPI_Wtime();
 #else
-	O2SCL_ERR("Value mpi_time is true but O2SCL_MPI not defined ",
-		  "in slack_messenger::slack_messenger().",
-		  o2scl::exc_einval);
+	O2SCL_ERR2("Value mpi_time is true but O2SCL_MPI not defined ",
+		   "in slack_messenger::slack_messenger().",
+		   o2scl::exc_einval);
 #endif
       } else {
-	time_last_message=time();
+	time_last_message=time(0);
       }
       mpi_time=p_mpi_time;
     }
 
     /** \brief Set the time mode (normal or MPI)
      */
-    void set_time_mode(bool mpi_time) {
+    void set_time_mode(bool loc_mpi_time) {
       if (mpi_time) {
 #ifdef O2SCL_MPI
 	time_last_message=MPI_Wtime();
 #else
-	O2SCL_ERR("Value mpi_time is true but O2SCL_MPI not defined ",
-		  "in slack_message::slack_message().",
-		  o2scl::exc_einval);
+	O2SCL_ERR2("Value mpi_time is true but O2SCL_MPI not defined ",
+		   "in slack_message::slack_message().",
+		   o2scl::exc_einval);
 #endif
       } else {
-	time_last_message=time();
+	time_last_message=time(0);
       }
-      loc_mpi_time=mpi_time;
+      mpi_time=loc_mpi_time;
       return;
     }
   
     /** \brief Set the Slack webhook URL from an environment variable
      */
-    void set_url_from_env(std::string env_var) {
+    bool set_url_from_env(std::string env_var) {
       char *cstring=getenv(env_var.c_str());
       if (cstring) {
-	loc_url=cstring;
+	url=cstring;
+	return true;
       }
-      return;
+      return false;
+    }
+  
+    bool set_channel_from_env(std::string env_var) {
+      char *cstring=getenv(env_var.c_str());
+      if (cstring) {
+	channel=cstring;
+	return true;
+      }
+      return false;
+    }
+
+    /** \brief Desc
+     */
+    bool set_username_from_env(std::string env_var) {
+      char *cstring=getenv(env_var.c_str());
+      if (cstring) {
+	username=cstring;
+	return true;
+      }
+      return false;
     }
   
     /** \brief Send a message
      */
-    void send(std::string message, bool err_on_fail=true) {
-
-      int iret;
+    int send(std::string message, bool err_on_fail=true) {
+      
+      int iret=0;
 
       if (url.length()>0) {
 
@@ -153,32 +176,32 @@ namespace o2scl {
 #ifdef O2SCL_MPI
 	  time_now=MPI_Wtime();
 #else
-	  O2SCL_ERR("Value mpi_time is true but O2SCL_MPI not defined ",
-		    "in slack_message::slack_message().",
+	  O2SCL_ERR2("Value mpi_time is true but O2SCL_MPI not defined ",
+		     "in slack_message::slack_message().",
 		    o2scl::exc_einval);
 #endif
 	} else {
-	  time_now=time();
+	  time_now=time(0);
 	}
       
-	if (time_now-last_message_time>min_time_between) {
+	if (time_now-time_last_message>min_time_between) {
 	
-	  string scr;
+	  std::string scr;
 	  if (icon.length()>0) {
-	    scr=((string)"curl -X POST --data-urlencode ")+
+	    scr=((std::string)"curl -X POST --data-urlencode ")+
 	      "\"payload={\\\"channel\\\": \\\""+channel+"\\\", "+
 	      "\\\"username\\\": \\\""+username+"\\\", "+
 	      "\\\"text\\\": \\\""+message+"\\\", "+
 	      "\\\"icon_emoji\\\": \\\":"+icon+":\\\"}\" "+url;
 	  } else {
-	    scr=((string)"curl -X POST --data-urlencode ")+
+	    scr=((std::string)"curl -X POST --data-urlencode ")+
 	      "\"payload={\\\"channel\\\": \\\""+channel+"\\\", "+
 	      "\\\"username\\\": \\\""+username+"\\\", "+
 	      "\\\"text\\\": \\\""+message+"\\\"}\" "+url;
 	  }
 
 	  if (verbose>1) {
-	    cout << "Executing: " << scr << endl;
+	    std::cout << "Executing: " << scr << std::endl;
 	  }
 	
 	  iret=system(scr.c_str());
@@ -188,7 +211,7 @@ namespace o2scl {
 		       "slack_messenger::send().",o2scl::exc_efailed);
 	  }
 	
-	  last_message_time=time_now;
+	  time_last_message=time_now;
 	
 	}
       

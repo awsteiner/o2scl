@@ -46,6 +46,7 @@
 #include <o2scl/contour.h>
 #include <o2scl/tensor_grid.h>
 #include <o2scl/uniform_grid.h>
+#include <o2scl/slack_messenger.h>
 
 #ifdef O2SCL_READLINE
 #include <o2scl/cli_readline.h>
@@ -101,6 +102,9 @@ namespace o2scl_acol {
 
   protected:
 
+    /// Desc
+    o2scl::slack_messenger smess;
+    
     /** \brief A list of all type-specific commands for each type
      */
     std::map<std::string,std::vector<std::string> > type_comm_list;
@@ -458,6 +462,8 @@ namespace o2scl_acol {
 
     /// Preview the table
     virtual int comm_preview(std::vector<std::string> &sv, bool itive_com);
+
+    virtual int comm_slack(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Get or set the value 
      */

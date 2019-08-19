@@ -1137,7 +1137,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=16;
+  static const int narr=17;
 
   string type_list_str;
   for(size_t i=0;i<type_list.size()-1;i++) {
@@ -1315,6 +1315,9 @@ int acol_manager::setup_options() {
      "the conversions which have been previously used and are now stored "+
      "in the unit cache.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_show_units),
+     both},
+    {0,"slack","Send a slack message.",0,1,"","",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slack),
      both},
     {0,"type","Show current object type.",0,0,"",
      ((string)"Show the current object type, either table, ")+
