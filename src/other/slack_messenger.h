@@ -91,18 +91,18 @@ namespace o2scl {
       min_time_between=300.0;
       icon="computer";
       verbose=1;
+      mpi_time=p_mpi_time;
       if (mpi_time) {
 #ifdef O2SCL_MPI
-	time_last_message=MPI_Wtime();
+	time_last_message=MPI_Wtime()-min_time_between-1.0;
 #else
 	O2SCL_ERR2("Value mpi_time is true but O2SCL_MPI not defined ",
 		   "in slack_messenger::slack_messenger().",
 		   o2scl::exc_einval);
 #endif
       } else {
-	time_last_message=time(0);
+	time_last_message=time(0)-min_time_between-1.0;
       }
-      mpi_time=p_mpi_time;
     }
 
     /** \brief Set the time mode (normal or MPI)
@@ -170,7 +170,7 @@ namespace o2scl {
 	  O2SCL_ERR2("No slack username specified in ",
 		     "slack_messenger::send().",o2scl::exc_einval);
 	}
-      
+
 	double time_now=time_last_message;
 	if (mpi_time) {
 #ifdef O2SCL_MPI

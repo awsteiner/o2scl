@@ -58,7 +58,7 @@ int acol_manager::comm_slack(std::vector<std::string> &sv, bool itive_com) {
   }
 
   if (sv.size()<2) return 4;
-  
+
   smess.send(sv[1]);
   
   return 0;
