@@ -1316,7 +1316,14 @@ int acol_manager::setup_options() {
      "in the unit cache.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_show_units),
      both},
-    {0,"slack","Send a slack message.",0,1,"","",
+    {0,"slack","Send a slack message.",0,2,"[\"#channel\"] <message>",
+     ((string)"Send a message to slack, using the specified channel. ")+
+     "If the channel is not specified, it is taken from the "+
+     "environment variable O2SCL_SLACK_CHANNEL. The '#' sign "+
+     "should be included with the channel name. "+
+     "The Slack webhook URL is taken "+
+     "from the environment variable O2SCL_SLACK_URL and the username "+
+     "is taken from the environment variable O2SCL_SLACK_USERNAME. ",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slack),
      both},
     {0,"type","Show current object type.",0,0,"",
