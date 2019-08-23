@@ -27,82 +27,21 @@ using namespace std;
 using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
-typedef boost::numeric::ublas::matrix<double> ubmatrix;
-
-double func2(size_t nv, const ubvector &x, double &pa);
-
-double func2(size_t nv, const ubvector &x, double &pa) {
-  return pa+x[0]-x[1];
-}
-
-class ac {
-public:
-  double mfunc2(size_t nv, const ubvector &x, double &pa) {
-    return pa+x[0]-x[1];
-  }
-};
-
-typedef double arr_t[2];
-
-double vfunc2(size_t nv, const arr_t &x, double &pa);
-
-double vfunc2(size_t nv, const arr_t &x, double &pa) {
-  return pa+x[0]-x[1];
-}
-
-class vac {
-public:
-  double mvfunc2(size_t nv, const arr_t &x, double &pa) {
-    return pa+x[0]-x[1];
-  }
-};
 
 int main(void) {
+  cout.setf(ios::scientific);
+  
   test_mgr t;
   t.set_output_level(2);
 
-#ifdef O2SCL_NEVER_DEFINED
-
-  // --------------------------------------------------------------------
-  // test ubvector versions
-  // --------------------------------------------------------------------
-
-  double a=2.0, y;
-  ac c1;
-  vac c12;
-
-  multi_funct_fptr_param<double,ubvector> f4(func2,a);
-  multi_funct_mfptr_param<ac,double,ubvector> f5(&c1,&ac::mfunc2,a);
-
+  vector<string> list(2);
+  list[0]="x1";
+  list[1]="x2";
+  multi_funct_strings f("x1*x2-x1",2,list);
   ubvector x(2);
-  x[0]=1.2;
-  x[1]=3.5;
-  void *vp=0;
-  
-  y=f4(2,x);
-  t.test_rel(y,-0.3,1.0e-6,"fptr");
-  
-  y=f5(2,x);
-  t.test_rel(y,-0.3,1.0e-6,"mfptr");
-
-  // --------------------------------------------------------------------
-  // test array versions
-  // --------------------------------------------------------------------
-
-  multi_funct_fptr_param<double,arr_t> f42(vfunc2,a);
-  multi_funct_mfptr_param<vac,double,arr_t> f52(&c12,&vac::mvfunc2,a);
-
-  double x2[2];
-  x2[0]=1.2;
-  x2[1]=3.5;
-  
-  y=f42(2,x2);
-  t.test_rel(y,-0.3,1.0e-6,"fptr");
-  
-  y=f52(2,x2);
-  t.test_rel(y,-0.3,1.0e-6,"mfptr");
-
-#endif
+  x[0]=1.5;
+  x[1]=2.1;
+  t.test_rel(x[0]*x[1]-x[0],f(2,x),1.0e-12,"multi_funct_strings");
 
   t.report();
   return 0;

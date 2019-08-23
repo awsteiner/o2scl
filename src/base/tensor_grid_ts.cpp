@@ -344,34 +344,6 @@ int main(void) {
       }
     }
 
-#ifdef O2SCL_NEVER_DEFINED
-    
-    for(size_t j=0;j<i3[1];j++) {
-      j3[1]=j;
-      ubmatrix_view mt=m3.matrix_slice(0,j3);
-      for(size_t m=0;m<i3[0];m++) {
-	for(size_t n=0;n<i3[2];n++) {
-	  j3[0]=m;
-	  j3[2]=n;
-	  t.test_rel(m3.get(j3),mt[m][n],1.0e-12,"matrix slice 0,2.");
-	}
-      }
-    }
-    
-    for(size_t j=0;j<i3[0];j++) {
-      j3[0]=j;
-      ubmatrix_view mt=m3.matrix_slice(1,j3);
-      for(size_t m=0;m<i3[1];m++) {
-	for(size_t n=0;n<i3[2];n++) {
-	  j3[1]=m;
-	  j3[2]=n;
-	  t.test_rel(m3.get(j3),mt[m][n],1.0e-12,"matrix slice 1,2.");
-	}
-      }
-    }
-    
-#endif
-    
     // -------------------------------------------------------
     // Test successive and linear interpolation
     

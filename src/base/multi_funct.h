@@ -97,7 +97,7 @@ namespace o2scl {
     template<class vec_t=boost::numeric::ublas::vector<double> >
       double operator()(size_t nv, const vec_t &x) {
 
-      for(int i=0;i<nv;i++) {
+      for(size_t i=0;i<nv;i++) {
 	vars[st_vars[i]]=x[i];
       }
 

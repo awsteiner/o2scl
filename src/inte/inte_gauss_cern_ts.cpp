@@ -44,6 +44,10 @@ long double testfun2_ld(long double tx) {
 }
 
 int main(void) {
+  
+  cout.setf(ios::scientific);
+  cout.precision(10);
+  
   test_mgr t;
   t.set_output_level(2);
 
@@ -53,9 +57,6 @@ int main(void) {
   
     funct tf=std::bind(testfun,std::placeholders::_1,a);
 
-    cout.setf(ios::scientific);
-    cout.precision(10);
-  
     calc=cg.integ(tf,0.0,1.0);
     exact=a*(0.900729064796877177);
     t.test_rel(calc,exact,1.0e-8,"inte_gauss_cern 1");
@@ -83,7 +84,7 @@ int main(void) {
     
     calc=cg_ld.integ(tf2,0.0,1.0);
     exact=boost::math::constants::pi<long double>();
-    t.test_rel(calc,exact,1.0e-16L,"inte_gauss_cern ld");
+    t.test_rel<long double>(calc,exact,1.0e-16L,"inte_gauss_cern ld");
     diff=fabs(calc-exact);
     cout << calc << " " << exact << " " << diff << endl;
   }

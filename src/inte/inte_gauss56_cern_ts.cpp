@@ -34,22 +34,47 @@ double testfun(double tx, double &pa) {
   return (a*sin(tx)/(tx+0.01));
 }
 
+long double testfun_ld(long double tx, long double &pa) {
+  long double a=pa;
+  return (a*sin(tx)/(tx+0.01));
+}
+
 int main(void) {
-  double a=3.0, calc, exact, diff;
-  inte_gauss56_cern<funct> cg;
+  cout.setf(ios::scientific);
+  cout.precision(10);
+
   test_mgr t;
   t.set_output_level(2);
 
-  funct tf=std::bind(testfun,std::placeholders::_1,a);
+  double a=3.0, calc, exact, diff;
+  inte_gauss56_cern<funct> cg;
 
-  cout.setf(ios::scientific);
-  cout.precision(10);
+  funct tf=std::bind(testfun,std::placeholders::_1,a);
 
   calc=cg.integ(tf,0.0,1.0);
   exact=a*(0.900729064796877177);
   t.test_rel(calc,exact,1.0e-2,"inte_gauss56_cern");
   diff=fabs(calc-exact);
   cout << calc << " " << exact << " " << diff << endl;
+
+  // Moving to long double here doesn't really improve the accuracy
+  // for this particular function at the moment, but it verifies that
+  // inte_gauss56_cern works with the long double type.
+  
+  inte_gauss56_cern<funct_ld,long double,
+		    inte_gauss56_cern_x5_long_double,
+		    inte_gauss56_cern_w5_long_double,
+		    inte_gauss56_cern_x6_long_double,
+		    inte_gauss56_cern_w6_long_double> cg_ld;
+  long double a_ld=3.0, calc_ld, exact_ld, diff_ld;
+
+  funct_ld tf_ld=std::bind(testfun_ld,std::placeholders::_1,a_ld);
+  
+  calc_ld=cg_ld.integ(tf_ld,0.0,1.0);
+  exact_ld=a_ld*(0.900729064796877177);
+  t.test_rel<long double>(calc_ld,exact_ld,1.0e-2L,"inte_gauss56_cern");
+  diff_ld=fabs(calc_ld-exact_ld);
+  cout << calc_ld << " " << exact_ld << " " << diff_ld << endl;
   
   t.report();
   return 0;

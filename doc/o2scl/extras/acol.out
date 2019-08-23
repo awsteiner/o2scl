@@ -39,10 +39,10 @@ possible value, and the increment between successive values.
 > commands
 Command list:
 
-alias       create      get         license     read        type        
-autocorr    download    get-conv    no-intro    run         version     
-calc        exit        help        output      set         warranty    
-clear       filelist    interactive preview     shell       
+alias       create      get         license     read        slack       
+autocorr    download    get-conv    no-intro    run         type        
+calc        exit        help        output      set         version     
+clear       filelist    interactive preview     shell       warranty    
 commands    generic     internal    quit        show-units  
 
 # -----------------------------------------------------------------

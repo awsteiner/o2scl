@@ -36,6 +36,14 @@ double testfun(double tx, double &a) {
   return -cos(1.0/(tx+a))/(a+tx)/(a+tx);
 }
 
+double sin_recip(double x) {
+  return sin(1.0/(-x+0.01))*pow(-x+0.01,-2.0);
+}
+
+long double sin_recip_ld(long double x) {
+  return sin(1.0/(-x+0.01))*pow(-x+0.01,-2.0);
+}
+
 int main(void) {
   double a, calc, exact, diff, ei;
   inte_adapt_cern<funct> cg;
@@ -78,6 +86,30 @@ int main(void) {
   diff=fabs(calc-exact);
   cout << calc << " " << exact << " " << diff << " " << ei << endl;
 
+  // Test qagil_cern with double precision
+
+  /*
+    inte_qagil_cern<funct> iqc;
+    exact=1.0-cos(100.0/101.0);
+    funct tf2=std::bind(sin_recip,std::placeholders::_1);
+    iqc.integ_err(tf2,0.0,-1.0,calc,ei);
+    diff=fabs(calc-exact);
+    cout << calc << " " << exact << " " << diff << " " << ei << endl;
+  */
+  
+  // Test qagil_cern with long double precision
+
+  /*
+    inte_qagil_cern<funct_ld,long double> iqc_ld;
+    long double exact_ld=1.0-cos(100.0/101.0);
+    funct_ld tf2_ld=std::bind(sin_recip,std::placeholders::_1);
+    long double calc_ld, ei_ld;
+    iqc_ld.integ_err(tf2_ld,0.0,-1.0,calc_ld,ei_ld);
+    long double diff_ld=fabs(calc_ld-exact_ld);
+    cout << calc_ld << " " << exact_ld << " "
+    << diff_ld << " " << ei_ld << endl;
+  */
+  
   t.report();
   return 0;
 }

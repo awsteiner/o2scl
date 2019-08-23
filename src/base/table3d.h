@@ -715,9 +715,12 @@ namespace o2scl {
 	This function reads a set of columns of numerical values,
 	presuming that the first column is the x-grid value, the
 	second column is the y-grid value, and the remaining columns
-	are slices to be added. 
-
-	\todo A bit more documentation needs to be added here.
+	are slices to be added. If the first row appears to be strings
+	rather than numerical values, then the first row is used for
+	the x name, y name, and slice names. Values in the first two
+	columns which differ by less than \c eps are assumed to refer
+	to the same grid point. If not all combinations of x and y are
+	found, then those entries are left unchanged in all slices.
 
 	\future It would be great to add a function which generates
 	a text file in this format as well. 

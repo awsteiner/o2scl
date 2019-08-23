@@ -59,7 +59,7 @@ namespace o2scl {
       st_vars.resize(nv);
       calc.resize(nv);
       for (int i=0;i<nv;i++) {
-	calc[i].compile(exprs[i],&vars);
+	calc[i].compile(exprs[i].c_str(),&vars);
 	st_vars[i]=var_arr[i];
 	st_forms[i]=exprs[i];
       }
