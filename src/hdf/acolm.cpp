@@ -1211,8 +1211,21 @@ int acol_manager::setup_options() {
      "are needed: the name of "+
      "the column, the first value, the maximum possible value, and the "+
      "increment between successive values.\n\n"+
-     "\"create tensor <rank> <size 0> <size 1> ...\":\n\n"+
-     "\"create tensor_grid <rank> <size 0> <size 1> ...\":\n\n",
+     "\"create tensor <rank> <size 0> <size 1> ...\": Create a tensor "+
+     "object with the specified rank and sizes. All tensor entries "+
+     "are initialized to zero.\n\n"+
+     "\"create tensor_grid <rank> <size 0> <size 1> ...\": Create a "+
+     "tensor_grid object with the specified rank and sizes. The tensor "+
+     "grid is initialized to count each index (beginning with zero) and "+
+     "the entries of the tensor "+
+     "are initialized to zero. The grid can be specified afterwards "+
+     "using \"set-grid\".\n\n"+
+     "\"create table3d <x name> <x vector spec.> <y name> "+
+     "<y vector spec.>\n  <slice name> <slice function>\": Create "+
+     "a new table3d object which has one slice. The x and y grids "+
+     "are given as vector specifications (see \"acol -help vector-spec\" "+
+     "for the syntax). The slice function can be written in terms "+
+     "of the x- and y-grid values which are referred to by name.\n\n",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
      both},
     {0,"download","Download file from specified URL.",0,4,

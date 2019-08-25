@@ -1147,24 +1147,22 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     
     vector<string> in, pr;
     pr.push_back("Name of new column");
-    pr.push_back("Value for first row");
-    pr.push_back("Maximum value");
-    pr.push_back("Increment");
+    pr.push_back("Vector specification for column");
     int ret=get_input(sv2,pr,in,"create",itive_com);
     if (ret!=0) return ret;
-    
-    double d2=function_to_double(in[1]);
-    double d3=function_to_double(in[2]);
-    double d4=function_to_double(in[3]);
-    d3+=d4/1.0e4;
-    int cnl=((int)((d3-d2)/d4))+1;
+
+    std::vector<double> d;
+    int vs_ret=vector_spec(in[1],d,0,false);
+    if (vs_ret!=0) {
+      cerr << "Vector specification " << in[1] << " failed." << endl;
+    }
     
     table_obj.clear();
     table_obj.line_of_names(in[0]);
-    table_obj.set_nlines(cnl);
+    table_obj.set_nlines(d.size());
     
-    for(int li=0;li<cnl;li++) {
-      table_obj.set(in[0],li,d2+((double)li)*d4);
+    for(size_t li=0;li<d.size();li++) {
+      table_obj.set(in[0],li,d[li]);
     }
     command_add("table");
     type="table";
@@ -1232,38 +1230,36 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     type="tensor_grid";
 
   } else if (ctype=="table3d") {
-    
+
     vector<string> in;
     vector<string> pr=
-      {"Enter x-axis name (or blank to stop): ",
-       "Enter x-axis lower limit (or blank to stop): ",
-       "Enter x-axis upper limit (or blank to stop): ",
-       "Enter x-axis step size (or blank to stop): ",
-       "Enter y-axis name (or blank to stop): ",
-       "Enter y-axis lower limit (or blank to stop): ",
-       "Enter y-axis upper limit (or blank to stop): ",
-       "Enter y-axis step size (or blank to stop): ",
-       "Enter slice name (or blank to stop): ",
-       "Enter slice function (or blank to stop): "};
+      {"Enter x-axis name",
+       "Enter x-axis vector specification",
+       "Enter y-axis name",
+       "Enter y-axis vector specification",
+       "Enter slice name",
+       "Enter slice function"};
     int ret=get_input(sv2,pr,in,"create",itive_com);
     if (ret!=0) return ret;
+
+    std::vector<double> dx, dy;
     
     std::string xname=in[0];
-    double x0=function_to_double(in[1]);
-    double x1=function_to_double(in[2]);
-    double dx=function_to_double(in[3]);
-    uniform_grid_end<double> ugx(x0,x1,((size_t)(x1-x0)/(dx*(1.0-1.0e-14))));
+    int vs_ret=vector_spec(in[1],dx,0,false);
+    if (vs_ret!=0) {
+      cerr << "Vector specification " << in[1] << " failed." << endl;
+    }
+
+    std::string yname=in[2];
+    vs_ret=vector_spec(in[3],dy,0,false);
+    if (vs_ret!=0) {
+      cerr << "Vector specification " << in[3] << " failed." << endl;
+    }
     
-    std::string yname=in[4];
-    double y0=function_to_double(in[5]);
-    double y1=function_to_double(in[6]);
-    double dy=function_to_double(in[7]);
-    uniform_grid_end<double> ugy(y0,y1,((size_t)(y1-y0)/(dy*(1.0-1.0e-14))));
+    std::string zname=in[4];
+    std::string zfunc=in[5];
     
-    std::string zname=in[8];
-    std::string zfunc=in[9];
-    
-    table3d_obj.set_xy(xname,ugx,yname,ugy);
+    table3d_obj.set_xy(xname,dx.size(),dx,yname,dy.size(),dy);
     
     table3d_obj.function_slice(zfunc,zname);
     
