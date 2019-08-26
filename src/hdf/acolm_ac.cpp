@@ -1152,7 +1152,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     if (ret!=0) return ret;
 
     std::vector<double> d;
-    int vs_ret=vector_spec(in[1],d,0,false);
+    int vs_ret=vector_spec(in[1],d,verbose,false);
     if (vs_ret!=0) {
       cerr << "Vector specification " << in[1] << " failed." << endl;
     }

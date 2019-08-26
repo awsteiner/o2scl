@@ -603,7 +603,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   }
   
   // Handle the special case 'help value-spec'
-  if (sv.size()==2 && sv[1]=="value-spec") {
+  if (sv.size()==2 && (sv[1]=="value-spec" || sv[1]=="value_spec")) {
     
     std::string str=((std::string)"Value specification ")+
       "description:\n\nSome "+cl->cmd_name+
@@ -638,7 +638,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   }
 
   // Handle the special case 'help vector-spec'
-  if (sv.size()==2 && sv[1]=="vector-spec") {
+  if (sv.size()==2 && (sv[1]=="vector-spec" || sv[1]=="vector_spec")) {
     
     std::string str=((std::string)"Vector specification ")+
       "description:\n\nSome "+cl->cmd_name+
@@ -656,7 +656,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "  3. func:<N>:<function of i> - Create a vector by specifying "+
       "the length of\nthe vector and a function used to fill the "+
       "elements. For example: 'func:41:sin(i/20.0*acos(-1))'.\n\n"+
-      "  4. grid:<begin>:<end>:<width>:[\"log\"] - Create a "+
+      "  4. grid:<begin>,<end>,<width>,[\"log\"] - Create a "+
       "vector equal to a\nuniform grid, e.g. use 'grid:1.0,10.0,1.0' "+
       "for a 10-element vector filled with the numbers 1 to 10.\n\n"+
       "  5. text:<filename>:<column> - Read a text file and extract "+
@@ -692,7 +692,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   }
 
   // Handle the special case 'help mult-vector-spec'
-  if (sv.size()==2 && sv[1]=="mult-vector-spec") {
+  if (sv.size()==2 && (sv[1]=="mult-vector-spec" ||
+		       sv[1]=="mult_vector_spec")) {
     
     std::string str=((std::string)"Multiple vector specification ")+
       "description:\n\nSome "+cl->cmd_name+
