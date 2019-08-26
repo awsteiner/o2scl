@@ -1203,14 +1203,16 @@ int acol_manager::setup_options() {
      "(See \"acol -help "+
      "functions\" for help on specifying functions.)\n\n"+
      "\"create <type> <size> <function of \"i\">\": For array types "+
-     "double[], int[], and size_t[], the user must specify the size of "+
+     "int[] and size_t[], the user must specify the size of "+
      "the array and a function of the array index 'i' to fill the array.\n\n"+
-     "\"create table <col> <first> <max> <step>\": "+
-     "Create a new table object with one column whose entries "+
-     "are an evenly-spaced grid. In this case four additional arguments "+
-     "are needed: the name of "+
-     "the column, the first value, the maximum possible value, and the "+
-     "increment between successive values.\n\n"+
+     "\"create double[] [<size> <function of \"i\">] or [vector spec.]\": "+
+     "For double[] the user must either "+
+     "give a vector specification, or specify the size of "+
+     "the array and a function of the array index 'i'.\n\n"+
+     "\"create table <name> <vector spec.>\": "+
+     "Create a new table object with one column named <name> "+
+     "from a vector specification (see \"acol -help vector-spec\" "+
+     "for the syntax).\n\n"+
      "\"create tensor <rank> <size 0> <size 1> ...\": Create a tensor "+
      "object with the specified rank and sizes. All tensor entries "+
      "are initialized to zero.\n\n"+
