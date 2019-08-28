@@ -384,8 +384,8 @@ namespace o2scl {
     int output_param_list();
 
     /// Replace all occurences of \c sold with \c snew in \c sv
-    int apply_alias(std::vector<std::string> &sv, 
-		    std::string sold, std::string snew);
+    int apply_alias(std::vector<std::string> &sv, size_t istart,
+		    std::string sold, std::string snew, bool debug=false);
 
     /// Control screen output
     int verbose;
@@ -599,7 +599,8 @@ namespace o2scl {
 	\c sv and packs the information into \c ca.
     */
     int process_args(std::vector<std::string> &sv,
-		     std::vector<cmd_line_arg> &ca, int debug);
+		     std::vector<cmd_line_arg> &ca, int debug,
+		     bool also_call_args=false);
     
     /** \brief Process command-line arguments from a string
 

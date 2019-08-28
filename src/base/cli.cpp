@@ -129,12 +129,15 @@ cli::cli() {
 
   c_alias.shrt=0;
   c_alias.lng="alias";
+  // The value of min_parms has to be two so that it is possible
+  // to parse aliases which have definitions which begin with
+  // dashes.
   c_alias.min_parms=2;
   c_alias.max_parms=-1;
   c_alias.desc="Create a command alias.";
-  c_alias.help=((string)"This creates an alias for a command")+
+  c_alias.help=((string)"This creates an alias for a command ")+
     "or arguments or a combination of both.";
-  c_alias.parm_desc="";
+  c_alias.parm_desc="<alias name> <alias definition>";
   c_alias.func=new comm_option_mfptr<cli>(this,&cli::comm_option_alias);
   c_alias.type=comm_option_both;
   
@@ -258,10 +261,16 @@ cli::~cli() {
   delete c_warranty.func;
 }
 
-int cli::apply_alias(vector<string> &sv, string sold, string snew) {
+int cli::apply_alias(vector<string> &sv, size_t istart, string sold,
+		     string snew, bool debug) {
   if (sv[0]!="alias") {
-    for(size_t i=0;i<sv.size();i++) {
-      if (sv[i]==sold) sv[i]=snew;
+    for(size_t i=istart;i<sv.size();i++) {
+      if (sv[i]==sold) {
+	if (debug) {
+	  cout << "Replacing " << sv[i] << " with " << snew << endl;
+	}
+	sv[i]=snew;
+      }
     }
   }
   return 0;
@@ -294,15 +303,18 @@ int cli::comm_option_alias(vector<string> &sv, bool itive_com) {
       val+=' ';
     }
 
+    if (verbose>2) {
+      cout << "Aliasing " << sv[1] << " to " << val << endl;
+    }
     set_alias(sv[1],val);
 
   } else if (sv.size()>1) {
     
     string val=get_alias(sv[1]);
     if (val.length()>0) {
-      cout << "Alias '" << sv[1] << "': " << val << endl;
+      cout << "Alias \"" << sv[1] << "\": " << val << endl;
     } else {
-      cout << "Alias '" << sv[1] << "' not found." << endl;
+      cout << "Alias \"" << sv[1] << "\" not found." << endl;
     }
 
   } else {
@@ -363,35 +375,17 @@ int cli::process_args(string s, vector<cmd_line_arg> &ca,
   return ret;
 }
 
-int cli::process_args(std::vector<std::string> &sv,
-		      std::vector<cmd_line_arg> &ca, int debug) {
-  
-  int argc=sv.size()+1;
-  char **argv=new char *[argc];
-  std::string s="acol";
-  argv[0]=(char *)s.c_str();
-  for(size_t i=0;i<sv.size();i++) argv[i+1]=(char *)(sv[i].c_str());
-
-  // Process arguments from the (argc,argv) format
-  int ret=process_args(argc,argv,ca,debug);
-
-  // Delete allocated memory
-  delete[] argv;
-
-  return ret;
-}
-
-int cli::process_args(int argc, char *argv[], 
-		      vector<cmd_line_arg> &ca, int debug,
+int cli::process_args(std::vector<std::string> &svsv,
+		      std::vector<cmd_line_arg> &ca, int debug,
 		      bool also_call_args) {
-
+  
   int retval=0;
   
   // Temporary storage for a command-line argument
   cmd_line_arg c;
   
   bool done=false;
-  if (argc<=1) {
+  if (svsv.size()<=1) {
     if (debug>0) cout << "No arguments. Returning." << endl;
     return 0;
   }
@@ -399,14 +393,35 @@ int cli::process_args(int argc, char *argv[],
   // Index of current argument
   int current=1;
 
+  // Apply aliases
+  for (int c2=1;c2<((int)svsv.size());c2++) {
+    for(al_it it=als.begin();it!=als.end();it++) {
+      apply_alias(svsv,current,it->first,it->second,true);
+    }
+    if (svsv[c2]==((string)"-alias") && c2+2<((int)svsv.size()) &&
+	svsv[c2+1][0]!='-' && svsv[c2+2][0]!='-') {
+      // Add alias
+      als.insert(std::make_pair(svsv[c2+1],svsv[c2+2]));
+      cout << "New alias: " << svsv[c2+1] << " " << svsv[c2+2] << endl;
+      c2+=3;
+      if (c2<((int)svsv.size())) {
+	// Reprocess the rest of the strings with the new alias
+	for(al_it it=als.begin();it!=als.end();it++) {
+	  apply_alias(svsv,c2,it->first,it->second,true);
+	}
+      }
+    }
+  }
+  
   while(done==false) {
 
-    string s=argv[current];
-    if (debug>0) cout << "Processing: " << s << endl;
+    string s=svsv[current];
 
+    if (debug>0) cout << "Processing: " << s << endl;
+    
     // If it's an option, it begins with '-'. Otherwise, just skip it
     if (s[0]=='-') {
-      
+
       // The corresponding index in clist
       int option_index=0;
       bool found=false;
@@ -470,7 +485,7 @@ int cli::process_args(int argc, char *argv[],
 	if (it!=par_list.end()) {
 
 	  // There are no more arguments left, so assume a 'get'
-	  if (current+1>=argc) {
+	  if (current+1>=((int)svsv.size())) {
 
 	    bool found_get_cmd=false;
 	    for(size_t i=0;found_get_cmd==false && i<clist.size();i++) {
@@ -509,7 +524,7 @@ int cli::process_args(int argc, char *argv[],
 	  } else {
 	    
 	    // The next string on the command-line
-	    string s2=argv[current+1];
+	    string s2=svsv[current+1];
 
 	    // The next string is an argument, so assume 'get'
 	    if (s2[0]=='-') {
@@ -627,13 +642,13 @@ int cli::process_args(int argc, char *argv[],
 	  
 	  // If we're past the end of the argument list, then
 	  // we must be done
-	  if (current>=argc) {
+	  if (current>=((int)svsv.size())) {
 
 	    option_done=true;
 
 	  } else {
 
-	    s=argv[current];
+	    s=svsv[current];
 	    if (debug>0) cout << "Possible argument: " << s << endl;
 
 	    // If we still haven't got the minimum number of parameters
@@ -714,7 +729,7 @@ int cli::process_args(int argc, char *argv[],
       (*(c.cop->func))(sv,false);
     }
     
-    if (current==argc) {
+    if (current==((int)svsv.size())) {
       done=true;
     }
 
@@ -723,6 +738,17 @@ int cli::process_args(int argc, char *argv[],
   if (debug>0) cout << "Done with process_args()." << endl;
 
   return retval;
+}
+
+int cli::process_args(int argc, char *argv[], 
+		      vector<cmd_line_arg> &ca, int debug,
+		      bool also_call_args) {
+
+  vector<string> sv;
+  for(int i=0;i<argc;i++) {
+    sv.push_back(argv[i]);
+  }
+  return process_args(sv,ca,debug,also_call_args);
 }
 
 int cli::call_args(vector<cmd_line_arg> &ca, int debug) {
@@ -1179,7 +1205,7 @@ int cli::comm_option_run(vector<string> &sv, bool itive_com) {
       
       // Apply any aliases
       for(al_it it=als.begin();it!=als.end();it++) {
-	apply_alias(sw,it->first,it->second);
+	apply_alias(sw,0,it->first,it->second);
       }
 
       if (sw[0][0]=='!') {
@@ -1358,7 +1384,7 @@ int cli::run_interactive() {
       
       // Apply any aliases
       for(al_it it=als.begin();it!=als.end();it++) {
-	apply_alias(sv,it->first,it->second);
+	apply_alias(sv,0,it->first,it->second);
       }
 
 	  

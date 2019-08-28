@@ -1615,13 +1615,13 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
   //-------------------------------------------------------------------
   // Process default options and call
 
-  if (verbose>2) {
-    cout << "Process default options" << endl;
-  }
   std::vector<cmd_line_arg> ca;
   
   char *dc=getenv(env_var_name.c_str());
   if (dc) {
+    if (verbose>2) {
+      cout << "Process default options: " << dc << endl;
+    }
     def_args=dc;
     if (verbose>2) {
       cl->process_args(def_args,ca,1,true);
