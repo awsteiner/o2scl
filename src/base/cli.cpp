@@ -355,7 +355,7 @@ int cli::comm_option_commands(vector<string> &sv, bool itive_com) {
   return 0;
 }
 
-int cli::process_args(string s, vector<cmd_line_arg> &ca, 
+int cli::process_args_str(string s, vector<cmd_line_arg> &ca, 
 		      int debug, bool also_call_args) {
   
   // Reformat string s into the (argc,argv) format
@@ -367,7 +367,7 @@ int cli::process_args(string s, vector<cmd_line_arg> &ca,
   for(int i=0;i<argc;i++) argv[i]=(char *)(sv[i].c_str());
   
   // Process arguments from the (argc,argv) format
-  int ret=process_args(argc,argv,ca,debug,also_call_args);
+  int ret=process_args_c(argc,argv,ca,debug,also_call_args);
 
   // Delete allocated memory
   delete[] argv;
@@ -740,13 +740,14 @@ int cli::process_args(std::vector<std::string> &svsv,
   return retval;
 }
 
-int cli::process_args(int argc, char *argv[], 
+int cli::process_args_c(int argc, char *argv[], 
 		      vector<cmd_line_arg> &ca, int debug,
 		      bool also_call_args) {
 
   vector<string> sv;
   for(int i=0;i<argc;i++) {
     sv.push_back(argv[i]);
+    cout << "Xere: " << argv[i] << endl;
   }
   return process_args(sv,ca,debug,also_call_args);
 }

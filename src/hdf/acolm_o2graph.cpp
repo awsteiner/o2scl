@@ -86,8 +86,14 @@ void o2scl_acol_parse(void *vp, int n_entries, int *sizes,
   std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
   std::vector<o2scl::cmd_line_arg> ca;
+  std::cout << "Process args: " << std::endl;
+  for(size_t j=0;j<args.size();j++) {
+    std::cout << "1: " << j << " " << args[j] << std::endl;
+  }
   amp->cl->process_args(args,ca,0);
+  std::cout << "Call args: " << std::endl;
   amp->cl->call_args(ca);
+  std::cout << "Done." << std::endl;
   return;
 }
 

@@ -588,7 +588,7 @@ namespace o2scl {
 	This function assumes that <tt>argc[0]</tt> just contains
 	the name of the command, and should thus be ignored.
     */
-    int process_args(int argc, char *argv[], 
+    int process_args_c(int argc, char *argv[], 
 		     std::vector<cmd_line_arg> &ca, int debug=0,
 		     bool also_call_args=false);
 
@@ -607,7 +607,7 @@ namespace o2scl {
 	\future There's a typecast in this function to (char *)
 	from (const char *) which needs reworking.
      */
-    int process_args(std::string s, std::vector<cmd_line_arg> &ca, 
+    int process_args_str(std::string s, std::vector<cmd_line_arg> &ca, 
 		     int debug=0, bool also_call_args=false);
 
     /** \brief Set verbosity
