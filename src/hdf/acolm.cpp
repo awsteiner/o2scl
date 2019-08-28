@@ -1624,9 +1624,9 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
     }
     def_args=dc;
     if (verbose>2) {
-      cl->process_args(def_args,ca,1,true);
+      cl->process_args_str(def_args,ca,1,true);
     } else {
-      cl->process_args(def_args,ca,0,true);
+      cl->process_args_str(def_args,ca,0,true);
     }
   }
   
@@ -1641,9 +1641,9 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
     
     if (verbose>2) {
       cout << "Process command-line options" << endl;
-      cl->process_args(argc,argv,ca,1,true);
+      cl->process_args_c(argc,argv,ca,1,true);
     } else {
-      cl->process_args(argc,argv,ca,0,true);
+      cl->process_args_c(argc,argv,ca,0,true);
     }
     if (argc<2) {
       post_interactive=true;

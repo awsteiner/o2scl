@@ -356,21 +356,13 @@ int cli::comm_option_commands(vector<string> &sv, bool itive_com) {
 }
 
 int cli::process_args_str(string s, vector<cmd_line_arg> &ca, 
-		      int debug, bool also_call_args) {
+			  int debug, bool also_call_args) {
   
   // Reformat string s into the (argc,argv) format
-  s="acol "+s;
   vector<string> sv;
   split_string(s,sv);
-  int argc=sv.size();
-  char **argv=new char *[argc];
-  for(int i=0;i<argc;i++) argv[i]=(char *)(sv[i].c_str());
-  
-  // Process arguments from the (argc,argv) format
-  int ret=process_args_c(argc,argv,ca,debug,also_call_args);
 
-  // Delete allocated memory
-  delete[] argv;
+  int ret=process_args(sv,ca,debug,also_call_args);
 
   return ret;
 }
@@ -384,14 +376,13 @@ int cli::process_args(std::vector<std::string> &svsv,
   // Temporary storage for a command-line argument
   cmd_line_arg c;
   
-  bool done=false;
-  if (svsv.size()<=1) {
+  if (svsv.size()==0) {
     if (debug>0) cout << "No arguments. Returning." << endl;
     return 0;
   }
 
   // Index of current argument
-  int current=1;
+  int current=0;
 
   // Apply aliases
   for (int c2=1;c2<((int)svsv.size());c2++) {
@@ -413,6 +404,7 @@ int cli::process_args(std::vector<std::string> &svsv,
     }
   }
   
+  bool done=false;
   while(done==false) {
 
     string s=svsv[current];
@@ -741,13 +733,12 @@ int cli::process_args(std::vector<std::string> &svsv,
 }
 
 int cli::process_args_c(int argc, char *argv[], 
-		      vector<cmd_line_arg> &ca, int debug,
-		      bool also_call_args) {
+			vector<cmd_line_arg> &ca, int debug,
+			bool also_call_args) {
 
   vector<string> sv;
-  for(int i=0;i<argc;i++) {
+  for(int i=1;i<argc;i++) {
     sv.push_back(argv[i]);
-    cout << "Xere: " << argv[i] << endl;
   }
   return process_args(sv,ca,debug,also_call_args);
 }
@@ -1552,7 +1543,7 @@ int cli::run_auto(int argc, char *argv[], int debug) {
   // ---------------------------------------
   // Process command-line options
   
-  ret=process_args(argc,argv,ca,debug);
+  ret=process_args_c(argc,argv,ca,debug);
   if (ret!=0) {
     O2SCL_ERR("Failed to process command-line in cli::run_auto().",
 		  exc_efailed);
