@@ -383,10 +383,6 @@ namespace o2scl {
     /// Output the parameter list
     int output_param_list();
 
-    /// Replace all occurences of \c sold with \c snew in \c sv
-    int apply_alias(std::vector<std::string> &sv, size_t istart,
-		    std::string sold, std::string snew, bool debug=false);
-
     /// Control screen output
     int verbose;
 
@@ -435,6 +431,10 @@ namespace o2scl {
     int comm_option_set(std::vector<std::string> &sv, bool itive_com);
     int comm_option_warranty(std::vector<std::string> &sv, bool itive_com);
     //@}
+
+    /// Replace all occurences of \c sold with \c snew in \c sv
+    int apply_aliases(std::vector<std::string> &sv, size_t istart,
+		      bool debug=false);
 
     /// String to replace tildes with
     std::string tilde_string;

@@ -85,9 +85,42 @@ void o2scl_acol_parse(void *vp, int n_entries, int *sizes,
 		      char *str) {
   std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-  std::vector<o2scl::cmd_line_arg> ca;
-  amp->cl->process_args(args,ca,0);
-  amp->cl->call_args(ca);
+  amp->cl->apply_aliases(args,0);
+  return;
+}
+
+void o2scl_acol_form_arrays(o2scl_acol::acol_manager *amp,
+			    std::vector<std::string> vec, int *&sizes_new,
+			    char *&str_new) {
+
+  amp->intv_obj.resize(vec.size());
+  size_t tot=0;
+  for(size_t i=0;i<vec.size();i++) {
+    amp->intv_obj[i]=((int)vec[i].size());
+    tot+=vec[i].size();
+  }
+  amp->vchar_temp.resize(tot);
+  size_t cnt=0;
+  for(size_t i=0;i<vec.size();i++) {
+    for(size_t j=0;j<vec[i].size();j++) {
+      amp->vchar_temp[cnt]=vec[i][j];
+      cnt++;
+    }
+  }
+
+  sizes_new=&(amp->intv_obj[0]);
+  str_new=&(amp->vchar_temp[0]);
+  
+  return;
+}
+
+void o2scl_acol_apply_aliases(void *vp, int n_entries, int *sizes, 
+			      char *str, int *&sizes_new,
+			      char *&str_new) {
+  o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+  std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
+  amp->cl->apply_aliases(args,0);
+  o2scl_acol_form_arrays(amp,args,sizes_new,str_new);
   return;
 }
 

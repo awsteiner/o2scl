@@ -261,15 +261,16 @@ cli::~cli() {
   delete c_warranty.func;
 }
 
-int cli::apply_alias(vector<string> &sv, size_t istart, string sold,
-		     string snew, bool debug) {
-  if (sv[0]!="alias") {
-    for(size_t i=istart;i<sv.size();i++) {
-      if (sv[i]==sold) {
-	if (debug) {
-	  cout << "Replacing " << sv[i] << " with " << snew << endl;
+int cli::apply_aliases(vector<string> &sv, size_t istart, bool debug) {
+  for(al_it it=als.begin();it!=als.end();it++) {
+    if (sv[0]!="alias") {
+      for(size_t i=istart;i<sv.size();i++) {
+	if (sv[i]==it->first) {
+	  if (debug) {
+	    cout << "Replacing " << sv[i] << " with " << it->second << endl;
+	  }
+	  sv[i]=it->second;
 	}
-	sv[i]=snew;
       }
     }
   }
@@ -386,9 +387,7 @@ int cli::process_args(std::vector<std::string> &svsv,
 
   // Apply aliases
   for (int c2=1;c2<((int)svsv.size());c2++) {
-    for(al_it it=als.begin();it!=als.end();it++) {
-      apply_alias(svsv,current,it->first,it->second,true);
-    }
+    apply_aliases(svsv,current,true);
     if (svsv[c2]==((string)"-alias") && c2+2<((int)svsv.size()) &&
 	svsv[c2+1][0]!='-' && svsv[c2+2][0]!='-') {
       // Add alias
@@ -398,7 +397,7 @@ int cli::process_args(std::vector<std::string> &svsv,
       if (c2<((int)svsv.size())) {
 	// Reprocess the rest of the strings with the new alias
 	for(al_it it=als.begin();it!=als.end();it++) {
-	  apply_alias(svsv,c2,it->first,it->second,true);
+	  apply_aliases(svsv,c2,true);
 	}
       }
     }
@@ -1197,7 +1196,7 @@ int cli::comm_option_run(vector<string> &sv, bool itive_com) {
       
       // Apply any aliases
       for(al_it it=als.begin();it!=als.end();it++) {
-	apply_alias(sw,0,it->first,it->second);
+	apply_aliases(sw,0);
       }
 
       if (sw[0][0]=='!') {
@@ -1375,10 +1374,7 @@ int cli::run_interactive() {
       split_string(entry,sv);
       
       // Apply any aliases
-      for(al_it it=als.begin();it!=als.end();it++) {
-	apply_alias(sv,0,it->first,it->second);
-      }
-
+      apply_aliases(sv,0);
 	  
       if (sv[0][0]!='#') {
 
