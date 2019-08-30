@@ -262,15 +262,52 @@ cli::~cli() {
 }
 
 int cli::apply_aliases(vector<string> &sv, size_t istart, bool debug) {
+
+  // No new alias definitions are allowed, this function
+  // only makes the relevant replacements
+  
   for(al_it it=als.begin();it!=als.end();it++) {
-    if (sv[0]!="alias") {
-      for(size_t i=istart;i<sv.size();i++) {
-	if (sv[i]==it->first) {
-	  if (debug) {
-	    cout << "Replacing " << sv[i] << " with " << it->second << endl;
+    for(size_t i=istart;i<sv.size();i++) {
+      if (sv[i]==((string)"-alias")) {
+	i+=2;
+      } else if (sv[i]==it->first) {
+	if (debug) {
+	  cout << "Replacing " << sv[i] << " with " << it->second << endl;
+	  cout << "Before: " << endl;
+	  for(size_t j=0;j<sv.size();j++) {
+	    cout << j << ": " << sv[j] << endl;
 	  }
-	  sv[i]=it->second;
 	}
+	
+	// ---------------------------------------------------------
+	// Refactor the replacement into an array and insert into sv
+	
+	// First, split the alias definition into sv3
+	vector<std::string> sv3;
+	o2scl::split_string(it->second,sv3);
+	
+	// Then, construct a new vector, sv2, which contains the
+	// correct entries in order
+	vector<string> sv2;
+	for(size_t j=0;j<i;j++) {
+	  sv2.push_back(sv[j]);
+	}
+	for(size_t j=0;j<sv3.size();j++) {
+	  sv2.push_back(sv3[j]);
+	}
+	for(size_t j=i+1;j<sv.size();j++) {
+	  sv2.push_back(sv[j]);
+	}
+	
+	if (debug) {
+	  cout << "After: " << endl;
+	  for(size_t j=0;j<sv2.size();j++) {
+	    cout << j << ": " << sv2[j] << endl;
+	  }
+	}
+	
+	// Set sv equal to the new vector
+	sv=sv2;
       }
     }
   }
@@ -385,23 +422,21 @@ int cli::process_args(std::vector<std::string> &svsv,
   // Index of current argument
   int current=0;
 
-  // Apply aliases
-  for (int c2=1;c2<((int)svsv.size());c2++) {
-    apply_aliases(svsv,current,true);
-    if (svsv[c2]==((string)"-alias") && c2+2<((int)svsv.size()) &&
-	svsv[c2+1][0]!='-' && svsv[c2+2][0]!='-') {
+  // Apply aliases. We don't want this to be recursive, so we
+  // loop through to look for new alias definitions, and then
+  // afterwards we make all of the alias replacements
+  for (int c2=0;c2<((int)svsv.size());c2++) {
+    if (svsv[c2]==((string)"-alias") && c2+2<((int)svsv.size())) {
       // Add alias
       als.insert(std::make_pair(svsv[c2+1],svsv[c2+2]));
-      cout << "New alias: " << svsv[c2+1] << " " << svsv[c2+2] << endl;
-      c2+=3;
-      if (c2<((int)svsv.size())) {
-	// Reprocess the rest of the strings with the new alias
-	for(al_it it=als.begin();it!=als.end();it++) {
-	  apply_aliases(svsv,c2,true);
-	}
+      if (verbose>0) {
+	cout << "New alias \"" << svsv[c2+1] << "\" = \"" << svsv[c2+2]
+	     << "\"" << endl;
       }
+      c2+=3;
     }
   }
+  apply_aliases(svsv,current);
   
   bool done=false;
   while(done==false) {
