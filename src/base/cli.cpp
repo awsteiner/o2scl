@@ -332,32 +332,9 @@ int cli::set_verbose(int v) {
 
 int cli::comm_option_alias(vector<string> &sv, bool itive_com) {
 
-  if (sv.size()>2) {
-
-    // Construct the value string from sv
-    string val;
-    for(size_t i=2;i<sv.size();i++) {
-      val+=sv[i];
-      val+=' ';
-    }
-
-    if (verbose>2) {
-      cout << "Aliasing " << sv[1] << " to " << val << endl;
-    }
-    set_alias(sv[1],val);
-
-  } else if (sv.size()>1) {
-    
-    string val=get_alias(sv[1]);
-    if (val.length()>0) {
-      cout << "Alias \"" << sv[1] << "\": " << val << endl;
-    } else {
-      cout << "Alias \"" << sv[1] << "\" not found." << endl;
-    }
-
-  } else {
-    cout << "Not enough arguments to the 'alias' command." << endl;
-  }
+  // This function is only a placeholder. Aliases are parsed separately
+  // by process_args().
+  
   return 0;
 }
 
