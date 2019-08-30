@@ -85,7 +85,9 @@ void o2scl_acol_parse(void *vp, int n_entries, int *sizes,
 		      char *str) {
   std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-  amp->cl->apply_aliases(args,0);
+  std::vector<o2scl::cmd_line_arg> ca;
+  amp->cl->process_args(args,ca,0);
+  amp->cl->call_args(ca);
   return;
 }
 
