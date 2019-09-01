@@ -113,6 +113,12 @@
     \code
     sudo snap install (--edge or --beta) --devmode o2scl
     \endcode
+    The command-line utility <tt>acol</tt> may require you to 
+    set the environment variable <tt>LD_LIBRARY_PATH</tt>.
+    For example, in my <tt>.bashrc</tt>, I use
+    \code
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/snap/o2scl/current/usr/lib/x86_64-linux-gnu:/snap/o2scl/current/lib/x86_64-linux-gnu
+    \endcode
 
     \section installmac_subsect Compiling on Mac OS X
 
@@ -136,7 +142,7 @@
     By default, a homebrew installation of \o2 uses the OSX LLVM
     compiler. However, a homebrew installation of \o2 will also
     install \c gcc because \o2 requires \c hdf5, and the homebrew \c
-    hdf5 package requires gcc. The homebrew installation of 
+    hdf5 package requires \c gcc. The homebrew installation of 
     \o2 is tested by Travis CI.
 
     Alternatively, it is also possible to install \o2 on OSX directly
