@@ -594,7 +594,7 @@ extern "C" {
   void o2scl_free_acol_manager(void *vp);
 
   void o2scl_acol_apply_aliases(void *vp, int n_entries, int *sizes, 
-				char *str, int *&sizes_new,
+				char *str, int &n_new, int *&sizes_new,
 				char *&str_new);
   
   void o2scl_acol_form_arrays(o2scl_acol::acol_manager *amp,

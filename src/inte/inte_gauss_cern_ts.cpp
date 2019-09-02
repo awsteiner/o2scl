@@ -74,8 +74,7 @@ int main(void) {
 
   {
     inte_gauss_cern<funct_ld,long double,
-		    o2scl::inte_gauss_cern_x_long_double,
-		    o2scl::inte_gauss_cern_w_long_double> cg_ld;
+		    inte_gauss_coeffs_long_double> cg_ld;
     cg_ld.tol_rel=1.0e-20;
     cg_ld.tol_abs=1.0e-20;
     long double a=3.0, calc, exact, diff;

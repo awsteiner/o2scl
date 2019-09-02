@@ -72,10 +72,7 @@ namespace o2scl {
       - Output the point where most subdividing was required?
   */
   template<class func_t=funct, size_t nsub=100, class fp_t=double,
-    const fp_t x5[]=inte_gauss56_cern_x5_double,
-    const fp_t w5[]=inte_gauss56_cern_w5_double,
-    const fp_t x6[]=inte_gauss56_cern_x6_double,
-    const fp_t w6[]=inte_gauss56_cern_w6_double>
+    class weights_t=inte_gauss56_coeffs_double>
     class inte_adapt_cern : public inte<func_t,fp_t> {
 
 #ifndef DOXYGEN_INTERNAL
@@ -137,7 +134,7 @@ namespace o2scl {
 	  tvals+=tval[i];
 	  terss+=ters[i];
 	}
-	err=sqrt(2.0*terss);
+	err=std::sqrt(2.0*terss);
 	res=tvals;
 	return 0;
       }
@@ -181,7 +178,7 @@ namespace o2scl {
 	std::cout.setf(std::ios::showpos);
 	std::cout << " Res: " << tvals;
 	std::cout.unsetf(std::ios::showpos);
-	std::cout << " Err: " << sqrt(2.0*terss);
+	std::cout << " Err: " << std::sqrt(2.0*terss);
 	if (this->tol_abs>this->tol_rel*std::abs(tvals)) {
 	  std::cout << " Tol: " << this->tol_abs << std::endl;
 	} else {
@@ -196,7 +193,7 @@ namespace o2scl {
       }
 
       // See if we're finished
-      root=sqrt(2.0*terss);
+      root=std::sqrt(2.0*terss);
       if (root<=this->tol_abs || root<=this->tol_rel*std::abs(tvals)) {
 	res=tvals;
 	err=root;
@@ -256,8 +253,7 @@ namespace o2scl {
   }
       
   /// Default integration object
-  inte_gauss56_cern<func_t,fp_t> def_inte;
-  //inte_gauss56_cern<func_t,fp_t,x5,w5,x6,x6> def_inte;
+  inte_gauss56_cern<func_t,fp_t,weights_t> def_inte;
   //@}
       
   /// \name Subdivisions
@@ -307,7 +303,8 @@ namespace o2scl {
   };
 
 
-  template<class func_t=funct, class fp_t=double> 
+  template<class func_t=funct, class fp_t=double,
+    class weights_t=inte_gauss56_coeffs_double>
     class inte_qagil_cern : public inte<func_t,fp_t> {
     
   protected:
@@ -377,11 +374,9 @@ namespace o2scl {
   }
       
   /// Default integration object
-  inte_adapt_cern<internal_funct,100,fp_t> def_inte;
+  inte_adapt_cern<internal_funct,100,fp_t,weights_t> def_inte;
   //@}
 
-
-  
   };
 
 

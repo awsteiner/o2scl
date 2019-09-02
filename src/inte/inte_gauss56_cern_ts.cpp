@@ -62,17 +62,14 @@ int main(void) {
   // inte_gauss56_cern works with the long double type.
   
   inte_gauss56_cern<funct_ld,long double,
-		    inte_gauss56_cern_x5_long_double,
-		    inte_gauss56_cern_w5_long_double,
-		    inte_gauss56_cern_x6_long_double,
-		    inte_gauss56_cern_w6_long_double> cg_ld;
+		    inte_gauss56_coeffs_long_double> cg_ld;
   long double a_ld=3.0, calc_ld, exact_ld, diff_ld;
 
   funct_ld tf_ld=std::bind(testfun_ld,std::placeholders::_1,a_ld);
   
   calc_ld=cg_ld.integ(tf_ld,0.0,1.0);
   exact_ld=a_ld*(0.900729064796877177);
-  t.test_rel<long double>(calc_ld,exact_ld,1.0e-2L,"inte_gauss56_cern");
+  t.test_rel<long double>(calc_ld,exact_ld,1.0e-2L,"inte_gauss56_cern ls");
   diff_ld=fabs(calc_ld-exact_ld);
   cout << calc_ld << " " << exact_ld << " " << diff_ld << endl;
   

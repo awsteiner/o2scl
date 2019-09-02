@@ -117,10 +117,14 @@ void o2scl_acol_form_arrays(o2scl_acol::acol_manager *amp,
 }
 
 void o2scl_acol_apply_aliases(void *vp, int n_entries, int *sizes, 
-			      char *str, int *&sizes_new,
+			      char *str, int &n_new, int *&sizes_new,
 			      char *&str_new) {
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
   std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
+  for(size_t k=0;k<args.size();k++) {
+    cout << "args[k]: " << k << " " << args[k] << endl;
+  }
+  exit(-1);
   amp->cl->apply_aliases(args,0);
   o2scl_acol_form_arrays(amp,args,sizes_new,str_new);
   return;
