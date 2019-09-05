@@ -1054,23 +1054,23 @@ namespace o2scl {
   }
 
   /// Copy constructor
-  prob_dens_mdim_gaussian(const prob_dens_mdim_gaussian &pdmg) {
-    ndim=pdmg.ndim;
-    chol=pdmg.chol;
-    covar_inv=pdmg.covar_inv;
-    norm=pdmg.norm;
+  prob_dens_mdim_gaussian(const prob_dens_mdim_gaussian &pdmg_loc) {
+    ndim=pdmg_loc.ndim;
+    chol=pdmg_loc.chol;
+    covar_inv=pdmg_loc.covar_inv;
+    norm=pdmg_loc.norm;
     q.resize(ndim);
     vtmp.resize(ndim);
   }
   
   /// Copy constructor with operator=
-  prob_dens_mdim_gaussian &operator=(const prob_dens_mdim_gaussian &pdmg) {
+  prob_dens_mdim_gaussian &operator=(const prob_dens_mdim_gaussian &pdmg_loc) {
     // Check for self-assignment
-    if (this!=&pdmg) {
-      ndim=pdmg.ndim;
-      chol=pdmg.chol;
-      covar_inv=pdmg.covar_inv;
-      norm=pdmg.norm;
+    if (this!=&pdmg_loc) {
+      ndim=pdmg_loc.ndim;
+      chol=pdmg_loc.chol;
+      covar_inv=pdmg_loc.covar_inv;
+      norm=pdmg_loc.norm;
       q.resize(ndim);
       vtmp.resize(ndim);
     }

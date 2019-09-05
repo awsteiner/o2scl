@@ -425,12 +425,12 @@ namespace o2scl {
   
   /// The covariance function
   template<class vec2_t, class vec3_t>
-  double covar(const vec2_t &x1, const vec3_t &x2, size_t sz, double len) {
+  double covar(const vec2_t &x1, const vec3_t &x2, size_t sz, double len2) {
     double ret=0.0;
     for(size_t i=0;i<sz;i++) {
       ret+=pow(x1[i]-x2[i],2.0);
     }
-    ret=exp(-ret/len/len/2.0);
+    ret=exp(-ret/len2/len2/2.0);
     return ret;
   }
 
@@ -699,10 +699,10 @@ namespace o2scl {
   
   /** \brief Set the range for the length parameter
    */
-  void set_len_range(double min, double max) {
+  void set_len_range(double min2, double max2) {
     len_guess_set=true;
-    len_min=min;
-    len_max=max;
+    len_min=min2;
+    len_max=max2;
     return;
   }
   
@@ -871,7 +871,7 @@ namespace o2scl {
 	for(size_t j=0;j<nlen;j++) {
 	  double xlen=len_min*pow(len_ratio,((double)j)/((double)nlen-1));
 
-	  int success=0;
+	  success=0;
 	  qual[iout]=qual_fun(xlen,noise_var[iout],iout,yiout,success);
 	
 	  if (success==0 && (min_set==false || qual[iout]<min_qual)) {
@@ -1102,14 +1102,14 @@ namespace o2scl {
       \c index, this function produces a list of 
   */
   template<class vec2_t, class vec_func_t>
-  void find_lin_indep(const vec2_t &x, size_t iout,
+  void find_lin_indep(const vec2_t &x2, size_t iout,
 		      vec_func_t &fcovar,
 		      ubvector_size_t &index,
 		      ubvector_size_t &indep) const {
     
-    if (x.size()<nd_in || index.size()<np || indep.size()<n_order
+    if (x2.size()<nd_in || index.size()<np || indep.size()<n_order
 	|| iout>=nd_out) {
-      std::cout << x.size() << " " << nd_in << std::endl;
+      std::cout << x2.size() << " " << nd_in << std::endl;
       std::cout << index.size() << " " << np << std::endl;
       std::cout << indep.size() << " " << n_order << std::endl;
       std::cout << iout << " " << nd_out << std::endl;
@@ -1133,8 +1133,8 @@ namespace o2scl {
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else {
-	    KXX(irow,icol)=fcovar[iout](x[index[indep[irow]]],
-					x[index[indep[icol]]]);
+	    KXX(irow,icol)=fcovar[iout](x2[index[indep[irow]]],
+					x2[index[indep[icol]]]);
 	  }
 	}
       }
@@ -1183,7 +1183,7 @@ namespace o2scl {
       index \c iout
   */
   template<class vec2_t, class vec_func_t>
-  double eval(const vec2_t &x, size_t iout,
+  double eval(const vec2_t &x2, size_t iout,
 	      vec_func_t &fcovar) const {
       
     if (data_set==false) {
@@ -1197,7 +1197,7 @@ namespace o2scl {
     // by the negative covariance for this output function
     ubvector dists(np);
     for(size_t ip=0;ip<np;ip++) {
-      dists[ip]=-fcovar[iout](x,x[ip]);
+      dists[ip]=-fcovar[iout](x2,x2[ip]);
     }
       
     ubvector_size_t index(np);
@@ -1211,7 +1211,7 @@ namespace o2scl {
       indep[io]=io;
     }
 
-    find_lin_indep(x,iout,fcovar,index,indep);
+    find_lin_indep(x2,iout,fcovar,index,indep);
     
     // Construct subset of function values for nearest neighbors
     ubvector func(n_order);
@@ -1226,8 +1226,8 @@ namespace o2scl {
 	if (irow>icol) {
 	  KXX(irow,icol)=KXX(icol,irow);
 	} else {
-	  KXX(irow,icol)=fcovar[iout](x[index[indep[irow]]],
-				      x[index[indep[icol]]]);
+	  KXX(irow,icol)=fcovar[iout](x2[index[indep[irow]]],
+				      x2[index[indep[icol]]]);
 	}
       }
     }
@@ -1255,7 +1255,7 @@ namespace o2scl {
       using jackknife resampling
   */
   template<class vec2_t, class func_vec_t>
-  double eval_jackknife(const vec2_t &x, size_t iout,
+  double eval_jackknife(const vec2_t &x2, size_t iout,
 			func_vec_t &fcovar) const {
     
     if (data_set==false) {
@@ -1272,7 +1272,7 @@ namespace o2scl {
     // covariance for this output function
     ubvector dists(np);
     for(size_t ip=0;ip<np;ip++) {
-      dists[ip]=-fcovar[iout](x,x[ip]);
+      dists[ip]=-fcovar[iout](x2,x2[ip]);
     }
     
     // Create an index array which sorts by distance
@@ -1291,7 +1291,7 @@ namespace o2scl {
     // Before the jackknife loop, we want to create a full
     // set of n_order linearly independent points
 
-    find_lin_indep(x,iout,fcovar,index,indep);
+    find_lin_indep(x2,iout,fcovar,index,indep);
 
     // -------------------------------------------------------------
     // Now, the jackknife loop, removing one point at a time
@@ -1319,8 +1319,8 @@ namespace o2scl {
 	  if (irow>icol) {
 	    KXX(irow,icol)=KXX(icol,irow);
 	  } else {
-	    KXX(irow,icol)=fcovar[iout](x[index[indep_jk[irow]]],
-					x[index[indep_jk[icol]]]);
+	    KXX(irow,icol)=fcovar[iout](x2[index[indep_jk[irow]]],
+					x2[index[indep_jk[icol]]]);
 	  }
 	}
       }
