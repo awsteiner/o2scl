@@ -592,6 +592,8 @@ namespace o2scl {
 		     std::vector<cmd_line_arg> &ca, int debug=0,
 		     bool also_call_args=false);
 
+    int parse_for_aliases(std::vector<std::string> &svsv);
+    
     /** \brief Process command-line arguments from a vector of strings
 	
         This doesn't actually execute the functions for the

@@ -562,9 +562,6 @@ namespace o2scl_acol {
     std::vector<double> stemp;
     //@}
 
-    /// Temporary storage for \ref o2scl_acol_form_arrays()
-    std::vector<char> vchar_temp;
-    
     // End of class acol_manager
   };
   
@@ -593,9 +590,11 @@ extern "C" {
   */
   void o2scl_free_acol_manager(void *vp);
 
+  void o2scl_acol_alias_counts(void *vp, int n_entries, int *sizes, 
+			       char *str, int &n_new, int &s_new);
+
   void o2scl_acol_apply_aliases(void *vp, int n_entries, int *sizes, 
-				char *str, int &n_new, int *&sizes_new,
-				char *&str_new);
+				char *str, int *sizes_new, char *str_new);
   
   void o2scl_acol_form_arrays(o2scl_acol::acol_manager *amp,
 			      std::vector<std::string> vec, int *&sizes_new,

@@ -382,6 +382,21 @@ int cli::process_args_str(string s, vector<cmd_line_arg> &ca,
   return ret;
 }
 
+int cli::parse_for_aliases(std::vector<std::string> &svsv) {
+  for (int c2=0;c2<((int)svsv.size());c2++) {
+    if (svsv[c2]==((string)"-alias") && c2+2<((int)svsv.size())) {
+      // Add alias
+      als.insert(std::make_pair(svsv[c2+1],svsv[c2+2]));
+      if (verbose>0) {
+	cout << "New alias \"" << svsv[c2+1] << "\" = \"" << svsv[c2+2]
+	     << "\"" << endl;
+      }
+      c2+=3;
+    }
+  }
+  return 0;
+}
+
 int cli::process_args(std::vector<std::string> &svsv,
 		      std::vector<cmd_line_arg> &ca, int debug,
 		      bool also_call_args) {
@@ -402,17 +417,7 @@ int cli::process_args(std::vector<std::string> &svsv,
   // Apply aliases. We don't want this to be recursive, so we
   // loop through to look for new alias definitions, and then
   // afterwards we make all of the alias replacements
-  for (int c2=0;c2<((int)svsv.size());c2++) {
-    if (svsv[c2]==((string)"-alias") && c2+2<((int)svsv.size())) {
-      // Add alias
-      als.insert(std::make_pair(svsv[c2+1],svsv[c2+2]));
-      if (verbose>0) {
-	cout << "New alias \"" << svsv[c2+1] << "\" = \"" << svsv[c2+2]
-	     << "\"" << endl;
-      }
-      c2+=3;
-    }
-  }
+  parse_for_aliases(svsv);
   apply_aliases(svsv,current);
   
   bool done=false;

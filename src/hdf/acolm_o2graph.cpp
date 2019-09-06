@@ -91,42 +91,51 @@ void o2scl_acol_parse(void *vp, int n_entries, int *sizes,
   return;
 }
 
-void o2scl_acol_form_arrays(o2scl_acol::acol_manager *amp,
-			    std::vector<std::string> vec, int *&sizes_new,
-			    char *&str_new) {
-
-  amp->intv_obj.resize(vec.size());
-  size_t tot=0;
-  for(size_t i=0;i<vec.size();i++) {
-    amp->intv_obj[i]=((int)vec[i].size());
-    tot+=vec[i].size();
-  }
-  amp->vchar_temp.resize(tot);
-  size_t cnt=0;
-  for(size_t i=0;i<vec.size();i++) {
-    for(size_t j=0;j<vec[i].size();j++) {
-      amp->vchar_temp[cnt]=vec[i][j];
-      cnt++;
+void o2scl_acol_alias_counts(void *vp, int n_entries, int *sizes, 
+			     char *str, int &n_new, int &s_new) {
+  o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+  /*
+    cout << "Before: " << n_entries << endl;
+    for(int k=0;k<n_entries;k++) {
+    cout << k << " " << sizes[k] << endl;
     }
-  }
-
-  sizes_new=&(amp->intv_obj[0]);
-  str_new=&(amp->vchar_temp[0]);
-  
+  */
+  std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
+  /*
+    cout << "Before: " << endl;
+    for(size_t k=0;k<args.size();k++) {
+    cout << "args[k]: " << k << " " << args[k] << endl;
+    }
+  */
+  amp->cl->parse_for_aliases(args);
+  amp->cl->apply_aliases(args,0);
+  /*
+    cout << "After: " << endl;
+    for(size_t k=0;k<args.size();k++) {
+    cout << "args[k]: " << k << " " << args[k] << endl;
+    }
+  */
+  n_new=args.size();
+  s_new=0;
+  for(size_t k=0;k<args.size();k++) s_new+=args[k].length();
+  //cout << "n_new, s_new: " << n_new << " " << s_new << endl;
   return;
 }
 
 void o2scl_acol_apply_aliases(void *vp, int n_entries, int *sizes, 
-			      char *str, int &n_new, int *&sizes_new,
-			      char *&str_new) {
+			      char *str, int *sizes_new,
+			      char *str_new) {
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
   std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
-  for(size_t k=0;k<args.size();k++) {
-    cout << "args[k]: " << k << " " << args[k] << endl;
-  }
-  exit(-1);
   amp->cl->apply_aliases(args,0);
-  o2scl_acol_form_arrays(amp,args,sizes_new,str_new);
+  int cnt=0;
+  for(size_t i=0;i<args.size();i++) {
+    sizes_new[i]=args[i].length();
+    for(size_t j=0;j<args[i].length();j++) {
+      str_new[cnt]=args[i][j];
+      cnt++;
+    }
+  }
   return;
 }
 
