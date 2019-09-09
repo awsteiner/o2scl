@@ -39,7 +39,7 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
 void *o2scl_create_acol_manager() {
   o2scl_acol::acol_manager *amp=new o2scl_acol::acol_manager;
-  amp->run(0,0,false);
+  // We call acol_manager::run() in o2scl_acol_set_names() later
   return amp;
 }
   
@@ -52,16 +52,25 @@ void o2scl_free_acol_manager(void *vp) {
 void o2scl_acol_set_names(void *vp, int n1, char *cmd_name,
 			  int n2, char *short_desc, int n3,
 			  char *env_var) {
+
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
   string str;
+  for(int i=0;i<n3;i++) str+=env_var[i];
+  amp->env_var_name=str;
+  str.clear();
+
+  // We call run() here because the environment variable
+  // name is now properly set
+  amp->run(0,0,false);
+
+  // And now that run() has been called, the 'cl' pointer is valid
   for(int i=0;i<n1;i++) str+=cmd_name[i];
   amp->cl->cmd_name=str;
   str.clear();
   for(int i=0;i<n2;i++) str+=short_desc[i];
   amp->cl->desc=str;
   str.clear();
-  for(int i=0;i<n3;i++) str+=env_var[i];
-  amp->env_var_name=str;
+  
   return;
 }
 

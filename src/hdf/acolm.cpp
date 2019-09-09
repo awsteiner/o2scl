@@ -1423,7 +1423,8 @@ int acol_manager::setup_help() {
   }
   
   stemp="2. Options may also be specified in the environment variable ";
-  stemp+="ACOL_DEFAULTS.\n";
+  stemp+=env_var_name+".\n";
+  //stemp+="ACOL_DEFAULTS.\n";
   rewrap(stemp,sv,76);
   dsc+=sv[0]+"\n";
   for(size_t j=1;j<sv.size();j++) {
@@ -1509,7 +1510,7 @@ int acol_manager::setup_parameters() {
   p_obj_name.help="The current object name.";
   p_unit_fname.help="The unit filename.";
   p_def_args.help=((std::string)"The default arguments from the ")+
-    "environment varable ACOL_DEFAULTS.";
+    "environment varable "+env_var_name+".";
   p_prec.help="The numerical precision.";
   p_verbose.help="Control the amount of output.";
   p_compress.help=((std::string)"If true, enable compression ")+

@@ -844,7 +844,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   }
   
   stemp="2. Options may also be specified in the environment variable ";
-  stemp+="ACOL_DEFAULTS.\n";
+  stemp+=env_var_name+".\n";
   rewrap(stemp,sv2,76);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
