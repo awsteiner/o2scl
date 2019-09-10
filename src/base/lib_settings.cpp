@@ -323,6 +323,18 @@ bool lib_settings_class::gsl2_support() {
 #endif
 }
 
+std::string lib_settings_class::system_type() {
+#ifdef O2SCL_LINUX
+  return ((string)"Linux");
+#else
+#ifdef O2SCL_OSX
+  return ((string)"OSX");
+#else
+  return ((string)"unknown");
+#endif
+#endif
+}
+
 void lib_settings_class::config_h_report() {
 #ifdef HAVE_ACOSH
   cout << "HAVE_ACOSH: " << HAVE_ACOSH << endl;

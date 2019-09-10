@@ -485,9 +485,15 @@ void convert_units::make_units_dat(std::string fname, bool c_1,
   std::ofstream fout(fname.c_str());
   fout.precision(14);
 
+#ifdef O2SCL_OSX
+  fout << "/ ----------------------------------------------" 
+       << "--------------" << std::endl;
+  fout << "/ Fundamental units" << std::endl;
+#else
   fout << "################################################" 
        << "##############" << std::endl;
   fout << "# Fundamental units" << std::endl;
+#endif
   fout << "m\t!" << std::endl;
   fout << "meter\tm" << std::endl;
   if (c_1==false) {
@@ -526,9 +532,15 @@ void convert_units::make_units_dat(std::string fname, bool c_1,
   fout << "bit\t!" << std::endl;
   fout << std::endl;
       
+#ifdef O2SCL_OSX
+  fout << "/ ----------------------------------------------" 
+       << "--------------" << std::endl;
+  fout << "/ " << std::endl;
+#else
   fout << "################################################" 
        << "##############" << std::endl;
   fout << "# SI and common prefixes" << std::endl;
+#endif
   fout << "yotta-\t\t1e24" << std::endl;
   fout << "zetta-\t\t1e21" << std::endl;
   fout << "exa-\t\t1e18" << std::endl;
@@ -561,9 +573,15 @@ void convert_units::make_units_dat(std::string fname, bool c_1,
   fout << "treble-\t\t3" << std::endl;
   fout << std::endl;
 
+#ifdef O2SCL_OSX
+  fout << "/ ----------------------------------------------" 
+       << "--------------" << std::endl;
+  fout << "/ " << std::endl;
+#else
   fout << "################################################" 
        << "##############" << std::endl;
   fout << "# SI prefix abbreviations" << std::endl;
+#endif
   fout << "Y-                      yotta" << std::endl;
   fout << "Z-                      zetta" << std::endl;
   fout << "E-                      exa" << std::endl;
@@ -585,9 +603,15 @@ void convert_units::make_units_dat(std::string fname, bool c_1,
   fout << "y-                      yocto" << std::endl;
   fout << std::endl;
 
+#ifdef O2SCL_OSX
+  fout << "/ ----------------------------------------------" 
+       << "--------------" << std::endl;
+  fout << "/ " << std::endl;
+#else
   fout << "################################################" 
        << "##############" << std::endl;
   fout << "# Basic numbers" << std::endl;
+#endif
   fout << "one                     1" << std::endl;
   fout << "two                     2" << std::endl;
   fout << "double                  2" << std::endl;
@@ -638,9 +662,15 @@ void convert_units::make_units_dat(std::string fname, bool c_1,
   fout << "centillion              1e303" << std::endl;
   fout << std::endl;
 
+#ifdef O2SCL_OSX
+  fout << "/ ----------------------------------------------" 
+       << "--------------" << std::endl;
+  fout << "/ " << std::endl;
+#else
   fout << "################################################" 
        << "##############" << std::endl;
   fout << "# Basic SI units" << std::endl;
+#endif
   fout << "newton                  kg m / s^2   " << std::endl;
   fout << "N                       newton" << std::endl;
   fout << "pascal                  N/m^2        " << std::endl;
@@ -670,9 +700,15 @@ void convert_units::make_units_dat(std::string fname, bool c_1,
   fout << "g                       gram" << std::endl;
   fout << std::endl;
 
+#ifdef O2SCL_OSX
+  fout << "/ ----------------------------------------------" 
+       << "--------------" << std::endl;
+  fout << "/ " << std::endl;
+#else
   fout << "################################################" 
        << "##############" << std::endl;
   fout << "# Dimensional analysis units" << std::endl;
+#endif
   fout << "LENGTH                  meter" << std::endl;
   fout << "AREA                    LENGTH^2" << std::endl;
   fout << "VOLUME                  LENGTH^3" << std::endl;
@@ -699,9 +735,15 @@ void convert_units::make_units_dat(std::string fname, bool c_1,
   fout << "KINEMATIC_VISCOSITY     VISCOSITY / DENSITY" << std::endl;
   fout << std::endl;
       
+#ifdef O2SCL_OSX
+  fout << "/ ----------------------------------------------" 
+       << "--------------" << std::endl;
+  fout << "/ " << std::endl;
+#else
   fout << "################################################" 
        << "##############" << std::endl;
   fout << "# GSL constants" << std::endl;
+#endif
   fout << "schwarzchild_radius\t\t" << o2scl_mks::schwarzchild_radius
        << " m" << std::endl;
   fout << "Rschwarz\t\tschwarzchild_radius" << std::endl;

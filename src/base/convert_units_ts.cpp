@@ -27,7 +27,7 @@
 using namespace o2scl;
 using namespace std;
 
-int main(void) {
+int main(int argc, char *argv[]) {
   cout.setf(ios::scientific);
   test_mgr t;
   t.set_output_level(1);
@@ -131,13 +131,22 @@ int main(void) {
     t.test_rel(res,1.0/(12.0*2.540),1.0e-10,"1");
   }
 
-  // This is an exhaustive check not intended for the end-user
-  // and is thus commented out.
-  if (false) {
+  if (argc>=2 && ((string)argv[1])==((string)"test-cache")) {
+    // An exhaustive check not intended for the end-user
     convert_units &cu=o2scl_settings.get_convert_units();
     //cu.units_cmd_string=((std::string)"units -f /home/awsteiner")+
     ///wcs/int4/misc/units_hck.dat ";
     cu.test_cache();
+  }
+
+  if (argc>=2 && ((string)argv[1])==((string)"make-units")) {
+    convert_units cu;
+    cu.make_units_dat("units.dat");
+  }
+  
+  if (argc>=2 && ((string)argv[1])==((string)"make-units-hck")) {
+    convert_units cu;
+    cu.make_units_dat("units_hck.dat",true,true,true);
   }
   
   t.report();

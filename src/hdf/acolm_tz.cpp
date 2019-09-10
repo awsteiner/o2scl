@@ -703,6 +703,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << "GSL V2.0+ support: " << o2scl_settings.gsl2_support() << endl;
   cout << "OpenMP support: " << o2scl_settings.openmp_support() << endl;
   cout << "Data directory: " << o2scl_settings.get_data_dir() << endl;
+  cout << "System type: " << o2scl_settings.system_type() << endl;
   cout << endl;
   cout << "o2scl_name: " << o2scl_settings.o2scl_name() << endl;
   cout << "o2scl_package: " << o2scl_settings.o2scl_package() << endl;

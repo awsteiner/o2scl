@@ -122,6 +122,12 @@ namespace o2scl {
     /// Return true if \o2 was installed with HDF5 compression support
     bool hdf5_compression_support();
 
+    /** \brief Return system type determined by autoconf
+
+	Returns either "OSX", "Linux" or "unknown".
+     */
+    std::string system_type();
+    
     /** \brief Return true if range checking was turned on during 
 	installation (default true)
     */
