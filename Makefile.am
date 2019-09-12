@@ -78,6 +78,7 @@ o2scl-test:
 sinstall:
 	cd include && $(MAKE) install
 	cd src && $(MAKE) install
+	cd acol && $(MAKE) install
 
 # Clean o2scl-test targets
 test-clean:
