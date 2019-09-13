@@ -82,10 +82,10 @@ namespace o2scl {
     template<class vec_t=boost::numeric::ublas::vector<double> >
       int operator()(size_t nv, const vec_t &x, vec_t &y) {
 
-      for(int i=0;i<nv;i++) {
+      for(size_t i=0;i<nv;i++) {
 	vars[st_vars[i]]=x[i];
       }
-      for(int i=0;i<nv;i++) {
+      for(size_t i=0;i<nv;i++) {
 	y[i]=calc[i].eval(&vars);
       }
       return 0;

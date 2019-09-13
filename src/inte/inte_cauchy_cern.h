@@ -67,14 +67,18 @@ namespace o2scl {
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d104/top.html
   */
   template<class func_t, class fp_t=double,
-    const fp_t x[]=inte_gauss_cern_x_double,
-    const fp_t w[]=inte_gauss_cern_w_double>
-    class inte_cauchy_cern : public inte<func_t,fp_t> {
-
+	   class weights_t=inte_gauss_coeffs_double>
+	   class inte_cauchy_cern : public inte<func_t,fp_t> {
+	     
     public:
   
+    const fp_t *w, *x;
+    weights_t wgts;
+	     
     inte_cauchy_cern() {
       it=&def_inte;
+      w=&(wgts.w[0]);
+      x=&(wgts.x[0]);
     }
 
     /// The singularity (must be set before calling integ() or integ_err())
