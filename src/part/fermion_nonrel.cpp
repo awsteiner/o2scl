@@ -143,6 +143,8 @@ void fermion_nonrel::calc_mu(fermion &f, double temper) {
 
 void fermion_nonrel::nu_from_n(fermion &f, double temper) {
 
+  double init_n=f.n, init_m=f.m, init_ms=f.ms, init_nu=f.nu;
+  
   // Use initial value of nu for initial guess
   double nex;
   if (f.inc_rest_mass) {
@@ -200,11 +202,13 @@ void fermion_nonrel::nu_from_n(fermion &f, double temper) {
     
     // If it failed again, add error information
     if (ret!=0) {
-      std::cout.precision(12);
       std::cout << "Function fermion_nonrel::nu_from_n() failed."
 		<< std::endl;
-      std::cout << "  n,m,ms,T,nu: " << f.n << " " << f.m << " "
-		<< f.ms << " " << temper << " " << f.nu << std::endl;
+      std::cout.precision(14);
+      std::cout << "  n,m,ms,T,nu: " << init_n << " " << init_m << " "
+		<< init_ms << " " << temper << " " << init_nu << std::endl;
+      std::cout << "  ni,irm: " << f.non_interacting << " "
+		<< f.inc_rest_mass << std::endl;
       O2SCL_ERR("Solver failed in fermion_nonrel::nu_from_n().",ret);
     }
   }
