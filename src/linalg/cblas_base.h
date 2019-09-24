@@ -82,7 +82,7 @@ namespace o2scl_cblas {
       an exception.
   */
   template<class mat_t>
-    bool matrix_is_finite(size_t m, size_t n, mat_t &data) {
+  bool matrix_is_finite(size_t m, size_t n, mat_t &data) {
     for(size_t i=0;i<m;i++) {
       for(size_t j=0;j<n;j++) {
 	if (!std::isfinite(O2SCL_IX2(data,i,j))) return false;
@@ -122,8 +122,8 @@ namespace o2scl_cblas {
       no computations. 
   */
   template<class vec_t, class vec2_t>
-    void daxpy(const double alpha, const size_t N, const vec_t &X, 
-	       vec2_t &Y) {
+  void daxpy(const double alpha, const size_t N, const vec_t &X, 
+	     vec2_t &Y) {
     
     size_t i;
     
@@ -147,7 +147,7 @@ namespace o2scl_cblas {
   
   /// Compute \f$ r=x \cdot y \f$
   template<class vec_t, class vec2_t> 
-    double ddot(const size_t N, const vec_t &X, const vec2_t &Y) {
+  double ddot(const size_t N, const vec_t &X, const vec2_t &Y) {
 
     double r=0.0;
     size_t i;
@@ -214,7 +214,7 @@ namespace o2scl_cblas {
   /** \brief Compute \f$ x=\alpha x \f$
    */
   template<class vec_t> 
-    void dscal(const double alpha, const size_t N, vec_t &X) {
+  void dscal(const double alpha, const size_t N, vec_t &X) {
 
     size_t i;
     const size_t m=N % 4;
@@ -242,10 +242,10 @@ namespace o2scl_cblas {
       calling the error handler.
   */
   template<class mat_t, class vec_t, class vec2_t>
-    void dgemv(const enum o2cblas_order order, 
-	       const enum o2cblas_transpose TransA, const size_t M, 
-	       const size_t N, const double alpha, const mat_t &A,
-	       const vec_t &X, const double beta, vec2_t &Y) {
+  void dgemv(const enum o2cblas_order order, 
+	     const enum o2cblas_transpose TransA, const size_t M, 
+	     const size_t N, const double alpha, const mat_t &A,
+	     const vec_t &X, const double beta, vec2_t &Y) {
     
     size_t i, j;
     size_t lenX, lenY;
@@ -332,11 +332,11 @@ namespace o2scl_cblas {
       If \c N is zero, this function does nothing and returns zero.
   */
   template<class mat_t, class vec_t> 
-    void dtrsv(const enum o2cblas_order order, 
-	       const enum o2cblas_uplo Uplo,
-	       const enum o2cblas_transpose TransA, 
-	       const enum o2cblas_diag Diag,
-	       const size_t M, const size_t N, const mat_t &A, vec_t &X) {
+  void dtrsv(const enum o2cblas_order order, 
+	     const enum o2cblas_uplo Uplo,
+	     const enum o2cblas_transpose TransA, 
+	     const enum o2cblas_diag Diag,
+	     const size_t M, const size_t N, const mat_t &A, vec_t &X) {
 
     const int nonunit=(Diag == o2cblas_NonUnit);
     int ix, jx;
@@ -474,11 +474,11 @@ namespace o2scl_cblas {
   /** \brief Compute \f$ x=op(A) x \f$ for the triangular matrix \c A
    */
   template<class mat_t, class vec_t>
-    void dtrmv(const enum o2cblas_order Order, 
-	       const enum o2cblas_uplo Uplo,
-	       const enum o2cblas_transpose TransA,
-	       const enum o2cblas_diag Diag, const size_t N,
-	       const mat_t &A, vec_t &x) {
+  void dtrmv(const enum o2cblas_order Order, 
+	     const enum o2cblas_uplo Uplo,
+	     const enum o2cblas_transpose TransA,
+	     const enum o2cblas_diag Diag, const size_t N,
+	     const mat_t &A, vec_t &x) {
 
     int i, j;
 
@@ -606,11 +606,11 @@ namespace o2scl_cblas {
       \c TransB.
   */
   template<class mat_t>
-    void dgemm(const enum o2cblas_order Order, 
-	       const enum o2cblas_transpose TransA,
-	       const enum o2cblas_transpose TransB, const size_t M, 
-	       const size_t N, const size_t K, const double alpha, 
-	       const mat_t &A, const mat_t &B, const double beta, mat_t &C) {
+  void dgemm(const enum o2cblas_order Order, 
+	     const enum o2cblas_transpose TransA,
+	     const enum o2cblas_transpose TransB, const size_t M, 
+	     const size_t N, const size_t K, const double alpha, 
+	     const mat_t &A, const mat_t &B, const double beta, mat_t &C) {
     
     size_t i, j, k;
     size_t n1, n2;
@@ -804,7 +804,281 @@ namespace o2scl_cblas {
     return;
   }
   //@}
+  
+  template<class mat_t>
+  void dtrsm(const enum o2cblas_order Order,
+	     const enum o2cblas_side Side, 
+	     const enum o2cblas_uplo Uplo, 
+	     const enum o2cblas_transpose TransA,
+	     const enum o2cblas_diag Diag, 
+	     const size_t M, const size_t N, const double alpha, 
+	     const mat_t &A, const mat_t &B,) {
+    
+    size_t i, j, k;
+    size_t n1, n2;
+    
+    const int nonunit = (Diag == o2cblas_NonUnit);
+    int side, uplo, trans;
+    
+    if (Order == o2cblas_RowMajor) {
+      n1 = M;
+      n2 = N;
+      side = Side;
+      uplo = Uplo;
+      trans = (TransA == o2cblas_ConjTrans) ? o2cblas_Trans : TransA;
+    } else {
+      n1 = N;
+      n2 = M;
+      side = (Side == o2cblas_Left) ? o2cblas_Right : o2cblas_Left;
+      uplo = (Uplo == o2cblas_Upper) ? o2cblas_Lower : o2cblas_Upper;
+      trans = (TransA == o2cblas_ConjTrans) ? o2cblas_Trans : TransA;
+    }
+    
+    if (side == o2cblas_Left && uplo == o2cblas_Upper &&
+	trans == o2cblas_NoTrans) {
+      
+      /* form  B := alpha * inv(TriU(A)) *B */
+      
+      if (alpha != 1.0) {
+	for (i = 0; i < n1; i++) {
+	  for (j = 0; j < n2; j++) {
+	    O2SCL_IX2(B,i,j)*=alpha;
+	    B[ldb * i + j] *= alpha;
+	  }
+	}
+      }
+      
+      for (i = n1; i > 0 && i--;) {
+	if (nonunit) {
+	  BASE Aii = A[lda * i + i];
+	  for (j = 0; j < n2; j++) {
+	    B[ldb * i + j] /= Aii;
+	  }
+	}
+	
+	for (k = 0; k < i; k++) {
+	  const BASE Aki = A[k * lda + i];
+	  for (j = 0; j < n2; j++) {
+	    B[ldb * k + j] -= Aki * B[ldb * i + j];
+	  }
+	}
+      }
 
+    } else if (side == o2cblas_Left && uplo == o2cblas_Upper &&
+	       trans == o2cblas_Trans) {
+
+      /* form  B := alpha * inv(TriU(A))' *B */
+
+      if (alpha != 1.0) {
+	for (i = 0; i < n1; i++) {
+	  for (j = 0; j < n2; j++) {
+	    B[ldb * i + j] *= alpha;
+	  }
+	}
+      }
+
+      for (i = 0; i < n1; i++) {
+	if (nonunit) {
+	  BASE Aii = A[lda * i + i];
+	  for (j = 0; j < n2; j++) {
+	    B[ldb * i + j] /= Aii;
+	  }
+	}
+
+	for (k = i + 1; k < n1; k++) {
+	  const BASE Aik = A[i * lda + k];
+	  for (j = 0; j < n2; j++) {
+	    B[ldb * k + j] -= Aik * B[ldb * i + j];
+	  }
+	}
+      }
+
+    } else if (side == o2cblas_Left && uplo == o2cblas_Lower &&
+	       trans == o2cblas_NoTrans) {
+
+      /* form  B := alpha * inv(TriL(A))*B */
+
+      if (alpha != 1.0) {
+	for (i = 0; i < n1; i++) {
+	  for (j = 0; j < n2; j++) {
+	    B[ldb * i + j] *= alpha;
+	  }
+	}
+      }
+
+      for (i = 0; i < n1; i++) {
+	if (nonunit) {
+	  BASE Aii = A[lda * i + i];
+	  for (j = 0; j < n2; j++) {
+	    B[ldb * i + j] /= Aii;
+	  }
+	}
+
+	for (k = i + 1; k < n1; k++) {
+	  const BASE Aki = A[k * lda + i];
+	  for (j = 0; j < n2; j++) {
+	    B[ldb * k + j] -= Aki * B[ldb * i + j];
+	  }
+	}
+      }
+
+
+    } else if (side == o2cblas_Left && uplo == o2cblas_Lower &&
+	       trans == o2cblas_Trans) {
+
+      /* form  B := alpha * TriL(A)' *B */
+
+      if (alpha != 1.0) {
+	for (i = 0; i < n1; i++) {
+	  for (j = 0; j < n2; j++) {
+	    B[ldb * i + j] *= alpha;
+	  }
+	}
+      }
+
+      for (i = n1; i > 0 && i--;) {
+	if (nonunit) {
+	  BASE Aii = A[lda * i + i];
+	  for (j = 0; j < n2; j++) {
+	    B[ldb * i + j] /= Aii;
+	  }
+	}
+
+	for (k = 0; k < i; k++) {
+	  const BASE Aik = A[i * lda + k];
+	  for (j = 0; j < n2; j++) {
+	    B[ldb * k + j] -= Aik * B[ldb * i + j];
+	  }
+	}
+      }
+
+    } else if (side == o2cblas_Right && uplo == o2cblas_Upper &&
+	       trans == o2cblas_NoTrans) {
+
+      /* form  B := alpha * B * inv(TriU(A)) */
+
+      if (alpha != 1.0) {
+	for (i = 0; i < n1; i++) {
+	  for (j = 0; j < n2; j++) {
+	    B[ldb * i + j] *= alpha;
+	  }
+	}
+      }
+
+      for (i = 0; i < n1; i++) {
+	for (j = 0; j < n2; j++) {
+	  if (nonunit) {
+	    BASE Ajj = A[lda * j + j];
+	    B[ldb * i + j] /= Ajj;
+	  }
+
+	  {
+	    BASE Bij = B[ldb * i + j];
+	    for (k = j + 1; k < n2; k++) {
+	      B[ldb * i + k] -= A[j * lda + k] * Bij;
+	    }
+	  }
+	}
+      }
+
+    } else if (side == o2cblas_Right && uplo == o2cblas_Upper &&
+	       trans == o2cblas_Trans) {
+
+      /* form  B := alpha * B * inv(TriU(A))' */
+
+      if (alpha != 1.0) {
+	for (i = 0; i < n1; i++) {
+	  for (j = 0; j < n2; j++) {
+	    B[ldb * i + j] *= alpha;
+	  }
+	}
+      }
+
+      for (i = 0; i < n1; i++) {
+	for (j = n2; j > 0 && j--;) {
+
+	  if (nonunit) {
+	    BASE Ajj = A[lda * j + j];
+	    B[ldb * i + j] /= Ajj;
+	  }
+
+	  {
+	    BASE Bij = B[ldb * i + j];
+	    for (k = 0; k < j; k++) {
+	      B[ldb * i + k] -= A[k * lda + j] * Bij;
+	    }
+	  }
+	}
+      }
+
+    } else if (side == o2cblas_Right && uplo == o2cblas_Lower &&
+	       trans == o2cblas_NoTrans) {
+
+      /* form  B := alpha * B * inv(TriL(A)) */
+
+      if (alpha != 1.0) {
+	for (i = 0; i < n1; i++) {
+	  for (j = 0; j < n2; j++) {
+	    B[ldb * i + j] *= alpha;
+	  }
+	}
+      }
+
+      for (i = 0; i < n1; i++) {
+	for (j = n2; j > 0 && j--;) {
+
+	  if (nonunit) {
+	    BASE Ajj = A[lda * j + j];
+	    B[ldb * i + j] /= Ajj;
+	  }
+
+	  {
+	    BASE Bij = B[ldb * i + j];
+	    for (k = 0; k < j; k++) {
+	      B[ldb * i + k] -= A[j * lda + k] * Bij;
+	    }
+	  }
+	}
+      }
+      
+    } else if (side == o2cblas_Right && uplo == o2cblas_Lower &&
+	       trans == o2cblas_Trans) {
+
+      /* form  B := alpha * B * inv(TriL(A))' */
+
+      
+      if (alpha != 1.0) {
+	for (i = 0; i < n1; i++) {
+	  for (j = 0; j < n2; j++) {
+	    B[ldb * i + j] *= alpha;
+	  }
+	}
+      }
+
+      for (i = 0; i < n1; i++) {
+	for (j = 0; j < n2; j++) {
+	  if (nonunit) {
+	    BASE Ajj = A[lda * j + j];
+	    B[ldb * i + j] /= Ajj;
+	  }
+
+	  {
+	    BASE Bij = B[ldb * i + j];
+	    for (k = j + 1; k < n2; k++) {
+	      B[ldb * i + k] -= A[k * lda + j] * Bij;
+	    }
+	  }
+	}
+      }
+
+
+
+    } else {
+      BLAS_ERROR("unrecognized operation");
+    }
+    return;
+  }
+  
   /// \name Helper BLAS functions - Subvectors
   //@{
   /** \brief Compute \f$ y=\alpha x+y \f$ beginning with index \c ie 
@@ -821,8 +1095,8 @@ namespace o2scl_cblas {
       defined.
   */
   template<class vec_t, class vec2_t> 
-    void daxpy_subvec(const double alpha, const size_t N, const vec_t &X,
-		      vec2_t &Y, const size_t ie) {
+  void daxpy_subvec(const double alpha, const size_t N, const vec_t &X,
+		    vec2_t &Y, const size_t ie) {
     
     size_t i;
 
@@ -858,8 +1132,8 @@ namespace o2scl_cblas {
       defined.
   */
   template<class vec_t, class vec2_t> 
-    double ddot_subvec(const size_t N, const vec_t &X, const vec2_t &Y,
-		       const size_t ie) {
+  double ddot_subvec(const size_t N, const vec_t &X, const vec2_t &Y,
+		     const size_t ie) {
     double r=0.0;
     size_t i;
 
@@ -899,7 +1173,7 @@ namespace o2scl_cblas {
       defined. 
   */
   template<class vec_t> 
-    double dnrm2_subvec(const size_t N, const vec_t &X, const size_t ie) {
+  double dnrm2_subvec(const size_t N, const vec_t &X, const size_t ie) {
     
     double scale=0.0;
     double ssq=1.0;
@@ -944,8 +1218,8 @@ namespace o2scl_cblas {
       defined. 
   */
   template<class vec_t> 
-    void dscal_subvec(const double alpha, const size_t N, vec_t &X,
-		      const size_t ie) {
+  void dscal_subvec(const double alpha, const size_t N, vec_t &X,
+		    const size_t ie) {
 
 #if O2SCL_NO_RANGE_CHECK
 #else
@@ -983,8 +1257,8 @@ namespace o2scl_cblas {
       Used in householder_hv_sub().
   */
   template<class mat_t, class vec_t> 
-    void daxpy_subcol(const double alpha, const size_t M, const mat_t &X,
-		      const size_t ir, const size_t ic, vec_t &y) {
+  void daxpy_subcol(const double alpha, const size_t M, const mat_t &X,
+		    const size_t ir, const size_t ic, vec_t &y) {
     
 #if O2SCL_NO_RANGE_CHECK
 #else
@@ -1025,8 +1299,8 @@ namespace o2scl_cblas {
       Used in householder_hv_sub().
   */
   template<class mat_t, class vec_t> 
-    double ddot_subcol(const size_t M, const mat_t &X, const size_t ir, 
-		       const size_t ic, const vec_t &y) {
+  double ddot_subcol(const size_t M, const mat_t &X, const size_t ir, 
+		     const size_t ic, const vec_t &y) {
 #if O2SCL_NO_RANGE_CHECK
 #else
     if (ir+1>M) {
@@ -1068,8 +1342,8 @@ namespace o2scl_cblas {
       this computes the "2-norm", not that the norm is squared.
   */
   template<class mat_t> 
-    double dnrm2_subcol(const mat_t &A, const size_t ir, const size_t ic,
-			const size_t M) {
+  double dnrm2_subcol(const mat_t &A, const size_t ir, const size_t ic,
+		      const size_t M) {
     
     double scale=0.0;
     double ssq=1.0;
@@ -1117,8 +1391,8 @@ namespace o2scl_cblas {
       Used in householder_transform_subcol().
   */
   template<class mat_t> 
-    void dscal_subcol(mat_t &A, const size_t ir, const size_t ic,
-		      const size_t M, const double alpha) {
+  void dscal_subcol(mat_t &A, const size_t ir, const size_t ic,
+		    const size_t M, const double alpha) {
 
 #if O2SCL_NO_RANGE_CHECK
 #else
@@ -1155,8 +1429,8 @@ namespace o2scl_cblas {
       Used in householder_transform_subcol().
   */
   template<class mat_t> 
-    double dasum_subcol(mat_t &A, const size_t ir, const size_t ic,
-			const size_t M) {
+  double dasum_subcol(mat_t &A, const size_t ir, const size_t ic,
+		      const size_t M) {
     
 #if O2SCL_NO_RANGE_CHECK
 #else
@@ -1201,8 +1475,8 @@ namespace o2scl_cblas {
       Used in householder_hv_sub().
   */
   template<class mat_t, class vec_t> 
-    void daxpy_subrow(const double alpha, const size_t N, const mat_t &X,
-		      const size_t ir, const size_t ic, vec_t &Y) {
+  void daxpy_subrow(const double alpha, const size_t N, const mat_t &X,
+		    const size_t ir, const size_t ic, vec_t &Y) {
     
 #if O2SCL_NO_RANGE_CHECK
 #else
@@ -1247,8 +1521,8 @@ namespace o2scl_cblas {
       Used in householder_hv_sub().
   */
   template<class mat_t, class vec_t> 
-    double ddot_subrow(const size_t N, const mat_t &X, const size_t ir, 
-		       const size_t ic, const vec_t &Y) {
+  double ddot_subrow(const size_t N, const mat_t &X, const size_t ir, 
+		     const size_t ic, const vec_t &Y) {
 
 #if O2SCL_NO_RANGE_CHECK
 #else
@@ -1286,8 +1560,8 @@ namespace o2scl_cblas {
       computes the "2-norm", not that the norm is squared.
   */
   template<class mat_t> 
-    double dnrm2_subrow(const mat_t &M, const size_t ir, const size_t ic,
-			const size_t N) {
+  double dnrm2_subrow(const mat_t &M, const size_t ir, const size_t ic,
+		      const size_t N) {
     
     double scale=0.0;
     double ssq=1.0;
@@ -1329,8 +1603,8 @@ namespace o2scl_cblas {
       defined. 
   */
   template<class mat_t> 
-    void dscal_subrow(mat_t &A, const size_t ir, const size_t ic,
-		      const size_t N, const double alpha) {
+  void dscal_subrow(mat_t &A, const size_t ir, const size_t ic,
+		    const size_t N, const double alpha) {
 
 #if O2SCL_NO_RANGE_CHECK
 #else

@@ -194,7 +194,7 @@ int main(void) {
 		       o2scl_cblas::o2cblas_NonUnit,5,5,m1,v3);
     t.test_rel_vec(5,gsl_vector_wrap(g3),gsl_vector_wrap(h3),1.0e-12,"dtrsv1ltn operator[] ");
     t.test_rel_vec(5,v3,gsl_vector_wrap(h3),1.0e-12,"dtrsv2ltn operator[] ");
-
+    
     // dgemm, NoTrans, NoTrans
     cout << "dgemm, NoTrans, NoTrans: " << endl;
     gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,0.1,gm1,gm2,0.2,gm3);
