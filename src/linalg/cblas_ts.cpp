@@ -264,9 +264,10 @@ int main(void) {
 		       o2scl_cblas::o2cblas_Upper,
 		       o2scl_cblas::o2cblas_NoTrans,
 		       o2scl_cblas::o2cblas_NonUnit,5,5,2.0,m1,m2);
-    t.test_rel_mat(5,5,gsl_matrix_wrap(gm2),
-		   gsl_matrix_wrap(hm2),1.0e-12,"dtrsm");
-    t.test_rel_mat(5,5,m2,gsl_matrix_wrap(hm2),1.0e-12,"dtrsm");
+    t.test_rel_nonzero_mat(5,5,gsl_matrix_wrap(gm2),
+		   gsl_matrix_wrap(hm2),1.0e-12,1.0e-15,"dtrsm 1");
+    t.test_rel_nonzero_mat(5,5,m2,gsl_matrix_wrap(hm2),
+			   1.0e-12,1.0e-15,"dtrsm 2");
 
     // dtrsm, Right, Upper, NoTrans, NonUnit
     cout << "dtrsm, Right, Upper, NoTrans, NonUnit: " << endl;
@@ -282,9 +283,10 @@ int main(void) {
 		       o2scl_cblas::o2cblas_Upper,
 		       o2scl_cblas::o2cblas_NoTrans,
 		       o2scl_cblas::o2cblas_NonUnit,5,5,2.0,m1,m2);
-    t.test_rel_mat(5,5,gsl_matrix_wrap(gm2),
-		   gsl_matrix_wrap(hm2),1.0e-12,"dtrsm");
-    t.test_rel_mat(5,5,m2,gsl_matrix_wrap(hm2),1.0e-12,"dtrsm");
+    t.test_rel_nonzero_mat(5,5,gsl_matrix_wrap(gm2),
+		   gsl_matrix_wrap(hm2),1.0e-12,1.0e-15,"dtrsm 3");
+    t.test_rel_nonzero_mat(5,5,m2,gsl_matrix_wrap(hm2),
+			   1.0e-12,1.0e-15,"dtrsm 4");
 
     // dtrsm, Left, Lower, NoTrans, NonUnit
     cout << "dtrsm, Left, Lower, NoTrans, NonUnit: " << endl;
@@ -300,9 +302,10 @@ int main(void) {
 		       o2scl_cblas::o2cblas_Lower,
 		       o2scl_cblas::o2cblas_NoTrans,
 		       o2scl_cblas::o2cblas_NonUnit,5,5,2.0,m1,m2);
-    t.test_rel_mat(5,5,gsl_matrix_wrap(gm2),
-		   gsl_matrix_wrap(hm2),1.0e-12,"dtrsm");
-    t.test_rel_mat(5,5,m2,gsl_matrix_wrap(hm2),1.0e-12,"dtrsm");
+    t.test_rel_nonzero_mat(5,5,gsl_matrix_wrap(gm2),
+		   gsl_matrix_wrap(hm2),1.0e-12,1.0e-15,"dtrsm 5");
+    t.test_rel_nonzero_mat(5,5,m2,gsl_matrix_wrap(hm2),
+			   1.0e-12,1.0e-15,"dtrsm 6");
 
     // dtrsm, Left, Upper, Trans, NonUnit
     cout << "dtrsm, Left, Upper, Trans, NonUnit: " << endl;
@@ -318,9 +321,10 @@ int main(void) {
 		       o2scl_cblas::o2cblas_Upper,
 		       o2scl_cblas::o2cblas_Trans,
 		       o2scl_cblas::o2cblas_NonUnit,5,5,2.0,m1,m2);
-    t.test_rel_mat(5,5,gsl_matrix_wrap(gm2),
-		   gsl_matrix_wrap(hm2),1.0e-12,"dtrsm");
-    t.test_rel_mat(5,5,m2,gsl_matrix_wrap(hm2),1.0e-12,"dtrsm");
+    t.test_rel_nonzero_mat(5,5,gsl_matrix_wrap(gm2),
+		   gsl_matrix_wrap(hm2),1.0e-12,1.0e-15,"dtrsm 7");
+    t.test_rel_nonzero_mat(5,5,m2,gsl_matrix_wrap(hm2),
+			   1.0e-12,1.0e-15,"dtrsm 8");
 
     // dgemm, NoTrans, NoTrans
     reset_data(v1,v2,v3,g1,g2,g3,h1,h2,h3,

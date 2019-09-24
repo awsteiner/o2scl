@@ -124,8 +124,8 @@ namespace o2scl {
 	\mathrm{expected}<\mathrm{rel\_error}\f$
     */
     template<class data_t>
-      bool test_rel(data_t result, data_t expected, data_t rel_error,
-		    std::string description) {
+    bool test_rel(data_t result, data_t expected, data_t rel_error,
+		  std::string description) {
       bool ret;
       if (std::isnan(expected)) {
 	ret=(std::isnan(expected)==std::isnan(result));
@@ -160,8 +160,8 @@ namespace o2scl {
 	<\mathrm{abs\_error}\f$
     */
     template<class data_t>
-      bool test_abs(data_t result, data_t expected, data_t abs_error,
-		    std::string description) {
+    bool test_abs(data_t result, data_t expected, data_t abs_error,
+		  std::string description) {
       bool ret;
       if (std::isnan(expected)) {
 	ret=(std::isnan(expected)==std::isnan(result));
@@ -193,8 +193,8 @@ namespace o2scl {
 	< \mathrm{factor}\f$
     */
     template<class data_t>
-      bool test_fact(data_t result, data_t expected, data_t factor,
-		     std::string description) {
+    bool test_fact(data_t result, data_t expected, data_t factor,
+		   std::string description) {
       bool ret;
       double ratio;
       if (std::isnan(expected)) {
@@ -228,8 +228,8 @@ namespace o2scl {
 	of an array
     */
     template<class vec_t, class vec2_t, class data_t>
-      bool test_rel_vec(int nv, const vec_t &result, const vec2_t &expected, 
-			data_t rel_error, std::string description) {
+    bool test_rel_vec(int nv, const vec_t &result, const vec2_t &expected, 
+		      data_t rel_error, std::string description) {
       bool ret=true;
       double max=0.0;
       int i;
@@ -265,8 +265,8 @@ namespace o2scl {
 	of an array
     */
     template<class vec_t, class vec2_t, class data_t>
-      bool test_abs_vec(int nv, const vec_t &result, const vec2_t &expected, 
-			data_t abs_error, std::string description) {
+    bool test_abs_vec(int nv, const vec_t &result, const vec2_t &expected, 
+		      data_t abs_error, std::string description) {
       bool ret=true;
       int i;
   
@@ -290,8 +290,8 @@ namespace o2scl {
 	over each element of an array
     */
     template<class vec_t, class vec2_t, class data_t>
-      bool test_fact_vec(int nv, const vec_t &result, const vec2_t &expected, 
-			 data_t factor, std::string description) {
+    bool test_fact_vec(int nv, const vec_t &result, const vec2_t &expected, 
+		       data_t factor, std::string description) {
       bool ret=true;
       int i;
       double ratio;
@@ -315,8 +315,8 @@ namespace o2scl {
     
     /// Test for equality of a generic array
     template<class vec_t>
-      bool test_gen_vec(int nv, const vec_t &result, const vec_t &expected, 
-			std::string description) {
+    bool test_gen_vec(int nv, const vec_t &result, const vec_t &expected, 
+		      std::string description) {
       bool ret=true;
       int i;
       
@@ -338,9 +338,9 @@ namespace o2scl {
 	in a matrix
     */
     template<class mat_t, class mat2_t, class data_t>
-      bool test_rel_mat(int nr, int nc, const mat_t &result, 
-			const mat2_t &expected, 
-			data_t rel_error, std::string description) {
+    bool test_rel_mat(int nr, int nc, const mat_t &result, 
+		      const mat2_t &expected, 
+		      data_t rel_error, std::string description) {
       bool ret=true;
       double max=0.0;
       int i, j;
@@ -362,8 +362,10 @@ namespace o2scl {
 	  } else {
 	    ret=(ret && ((std::abs(expected(i,j)-result(i,j)))/
 			 std::abs(expected(i,j))<rel_error));
-	    if (std::abs(expected(i,j)-result(i,j))/std::abs(expected(i,j))>max) {
-	      max=std::abs(expected(i,j)-result(i,j))/std::abs(expected(i,j));
+	    if (std::abs(expected(i,j)-result(i,j))/
+		std::abs(expected(i,j))>max) {
+	      max=std::abs(expected(i,j)-result(i,j))/
+		std::abs(expected(i,j));
 	    }
 	  }
 	}
@@ -382,10 +384,10 @@ namespace o2scl {
 	in a matrix larger than a specified tolerance
     */
     template<class mat_t, class mat2_t, class data_t>
-      bool test_rel_nonzero_mat(int nr, int nc, const mat_t &result, 
-				const mat2_t &expected, 
-				data_t error, data_t zero_tol,
-				std::string description) {
+    bool test_rel_nonzero_mat(int nr, int nc, const mat_t &result, 
+			      const mat2_t &expected, 
+			      data_t error, data_t zero_tol,
+			      std::string description) {
       bool ret=true;
       double max=0.0;
       int i, j;
@@ -428,9 +430,9 @@ namespace o2scl {
 	\mathrm{abs\_error} \f$ over each element in a matrix
     */
     template<class mat_t, class mat2_t, class data_t>
-      bool test_abs_mat(int nr, int nc, const mat_t &result, 
-			const mat2_t &expected, data_t abs_error, 
-			std::string description) {
+    bool test_abs_mat(int nr, int nc, const mat_t &result, 
+		      const mat2_t &expected, data_t abs_error, 
+		      std::string description) {
 			
       bool ret=true;
       double max=0.0;
@@ -476,12 +478,12 @@ namespace o2scl {
 	difference is used for the comparison. Otherwise, the absolute
 	value of the relative difference is used to make the
 	comparison.
-     */
+    */
     template<class vec_t, class data_t>
-      bool test_rel_nonzero_table(const table_units<vec_t> &result,
-				  const table_units<vec_t> &expected,
-				  data_t error, data_t zero_tol,
-				  std::string description) {
+    bool test_rel_nonzero_table(const table_units<vec_t> &result,
+				const table_units<vec_t> &expected,
+				data_t error, data_t zero_tol,
+				std::string description) {
       bool ret=true;
       int i, j;
       int nr=result.get_nlines();

@@ -252,7 +252,7 @@ namespace o2scl {
       opposite convention, use \ref matrix_trans_out().
   */
   template<class mat_t> int matrix_out(std::ostream &os, size_t nrows, 
-				       size_t ncols, mat_t &A) {
+				       size_t ncols, const mat_t &A) {
     
     columnify co;
     std::vector<std::vector<std::string> > stab(ncols);
@@ -291,7 +291,7 @@ namespace o2scl {
       row index and the second index is the column index. For the
       opposite convention, use \ref matrix_trans_out().
   */
-  template<class mat_t> int matrix_out(std::ostream &os, mat_t &A) {
+  template<class mat_t> int matrix_out(std::ostream &os, const mat_t &A) {
 
     size_t nrows=A.size1();
     size_t ncols=A.size2();
@@ -332,7 +332,7 @@ namespace o2scl {
       opposite convention, use \ref matrix_out().
   */
   template<class mat_t> int matrix_trans_out(std::ostream &os, size_t nrows, 
-					     size_t ncols, mat_t &A) {
+					     size_t ncols, const mat_t &A) {
    
     columnify co;
     std::vector<std::vector<std::string> > stab(nrows);
@@ -371,7 +371,8 @@ namespace o2scl {
       column index and the second index is the row index. For the
       opposite convention, use \ref matrix_out().
   */
-  template<class mat_t> int matrix_trans_out(std::ostream &os, mat_t &A) {
+  template<class mat_t> int matrix_trans_out(std::ostream &os,
+					     const mat_t &A) {
 
     size_t nrows=A.size1();
     size_t ncols=A.size2();

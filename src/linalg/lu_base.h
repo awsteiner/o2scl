@@ -137,6 +137,90 @@ namespace o2scl_linalg {
     return o2scl::success;
   }
 
+#ifdef O2SCL_NEVER_DEFINED
+
+  template<class mat_t, class vec_size_t>
+  int LU_decomp_L3_sub(const size_t M, const size_t N, mat_t &A,
+		       vec_size_t &ipiv, size_t istart,
+		       size_t jstart) {
+    
+    if (M < N) {
+      O2SCL_ERR("matrix must have M >= N",o2scl::exc_ebadlen);
+    } else if (N <= 24) {
+      /* use Level 2 algorithm */
+      return LU_decomp_L2(A, ipiv);
+    } else {
+      /*
+       * partition matrix:
+       *
+       *       N1  N2
+       * N1  [ A11 A12 ]
+       * M2  [ A21 A22 ]
+       *
+       * and
+       *      N1  N2
+       * M  [ AL  AR  ]
+       */
+      int status;
+      const size_t N1=((N >= 16) ? ((N + 8) / 16) * 8 : N / 2);
+      const size_t N2 = N - N1;
+      const size_t M2 = M - N1;
+      /*
+	gsl_matrix_view A11 = gsl_matrix_submatrix(A, 0, 0, N1, N1);
+	gsl_matrix_view A12 = gsl_matrix_submatrix(A, 0, N1, N1, N2);
+	gsl_matrix_view A21 = gsl_matrix_submatrix(A, N1, 0, M2, N1);
+	gsl_matrix_view A22 = gsl_matrix_submatrix(A, N1, N1, M2, N2);
+	
+	gsl_matrix_view AL = gsl_matrix_submatrix(A, 0, 0, M, N1);
+	gsl_matrix_view AR = gsl_matrix_submatrix(A, 0, N1, M, N2);
+      */
+      
+      /*
+       * partition ipiv = [ ipiv1 ] N1
+       *                  [ ipiv2 ] N2
+       */
+      //gsl_vector_uint_view ipiv1 = gsl_vector_uint_subvector(ipiv, 0, N1);
+      //gsl_vector_uint_view ipiv2 = gsl_vector_uint_subvector(ipiv, N1, N2);
+      
+      size_t i;
+      
+      /* recursion on (AL, ipiv1) */
+      status=LU_decomp_L3(M,N1,AL,ipiv,0,0);
+      if (status) {
+        return status;
+      }
+      
+      /* apply ipiv1 to AR */
+      apply_pivots(&AR.matrix, &ipiv1.vector);
+
+      /* A12 = A11^{-1} A12 */
+      gsl_blas_dtrsm(CblasLeft, CblasLower, CblasNoTrans, CblasUnit, 1.0, &A11.matrix, &A12.matrix);
+
+      /* A22 = A22 - A21 * A12 */
+      gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, -1.0, &A21.matrix, &A12.matrix, 1.0, &A22.matrix);
+
+      /* recursion on (A22, ipiv2) */
+      status = LU_decomp_L3(&A22.matrix, &ipiv2.vector);
+      if (status)
+        return status;
+
+      /* apply pivots to A21 */
+      apply_pivots(&A21.matrix, &ipiv2.vector);
+
+      /* shift pivots */
+      for (i = 0; i < N2; ++i)
+        {
+          unsigned int * ptr = gsl_vector_uint_ptr(&ipiv2.vector, i);
+          *ptr += N1;
+        }
+
+      return GSL_SUCCESS;
+    }
+
+    return 0;
+  }
+#endif
+  
   /** \brief Solve a linear system after LU decomposition in place
       
       These functions solve the square system A x = b in-place using

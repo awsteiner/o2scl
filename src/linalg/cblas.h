@@ -55,7 +55,7 @@
 
     <b>Level-3 BLAS functions</b>
 
-    Currently only \ref dgemm() is implemented.
+    Currently only \ref dgemm() and \ref dtrsm() are implemented.
 
     <b>Helper BLAS functions</b>
 
