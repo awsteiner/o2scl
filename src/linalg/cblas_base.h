@@ -587,20 +587,15 @@ namespace o2scl_cblas {
   }
   //@}
 
-
   /// \name Level-3 BLAS functions
   //@{
   /** \brief Compute \f$ y=\alpha \mathrm{op}(A) \mathrm{op}(B) +
       \beta C \f$
       
-      \comment
-      If \c Order is \c RowMajor, then the matrix \c A
-      has \c M rows and \c K columns, the matrix \c B has 
-      \c K rows and \c N columns, and the 
-      matrix \c C has \c M rows and \c N columns.
-
-      Is this right?
-      \endcommment
+      When both \c TransA and \c TransB are \c NoTrans, this function
+      operates on the first M rows and K columns of matrix A, and the
+      first K rows and N columns of matrix B to produce a matrix C
+      with M rows and N columns. 
 
       This function works for all values of \c Order, \c TransA, and
       \c TransB.
@@ -803,13 +798,18 @@ namespace o2scl_cblas {
 
     return;
   }
-  //@}
 
   /** \brief Compute \f$ B=\alpha \mathrm{op}[\mathrm{inv}(A)] B
       \f$ where $A$ is triangular
       
       This function works for all values of \c Order, \c Side, \c Uplo,
-      \c TransA, and \c Diag .
+      \c TransA, and \c Diag . The variable \c Side is \c Left
+      when A is on the left 
+
+      This function operates on the first M rows and N columns of the
+      matrix B. If Side is Left, then this function operates on the
+      first M rows and M columns of A. If Side is Right, then this
+      function operates on the first N rows and N columns of A.
   */
   template<class mat_t>
   void dtrsm(const enum o2cblas_order Order,
@@ -817,8 +817,8 @@ namespace o2scl_cblas {
 	     const enum o2cblas_uplo Uplo, 
 	     const enum o2cblas_transpose TransA,
 	     const enum o2cblas_diag Diag, 
-	     const size_t M, const size_t N, const double alpha, 
-	     const mat_t &A, mat_t &B) {
+	     const size_t M, const size_t N,
+	     const double alpha, const mat_t &A, mat_t &B) {
     
     size_t i, j, k;
     size_t n1, n2;
@@ -1082,8 +1082,9 @@ namespace o2scl_cblas {
     
     return;
   }
+  //@}
   
-  /// \name Helper BLAS functions - Subvectors
+  /// \name Helper Level-1 BLAS functions - Subvectors
   //@{
   /** \brief Compute \f$ y=\alpha x+y \f$ beginning with index \c ie 
       and ending with index \c N-1
@@ -1248,7 +1249,7 @@ namespace o2scl_cblas {
   }
   //@}
 
-  /// \name Helper BLAS functions - Subcolums of a matrix
+  /// \name Helper Level-1 BLAS functions - Subcolums of a matrix
   //@{
   /** \brief Compute \f$ y=\alpha x+y \f$ for a subcolumn of a matrix
       
@@ -1462,7 +1463,7 @@ namespace o2scl_cblas {
   }
   //@}
 
-  /// \name Helper BLAS functions - Subrows of a matrix
+  /// \name Helper Level-1 BLAS functions - Subrows of a matrix
   //@{
   /** \brief Compute \f$ y=\alpha x+y \f$ for a subrow of a matrix
 
@@ -1635,6 +1636,514 @@ namespace o2scl_cblas {
   }
   //@}
 
+#ifdef O2SCL_NEVER_DEFINED
+  /// \name Helper Level-3 BLAS functions
+  //@{
+  /** \brief Compute \f$ y=\alpha \mathrm{op}(A) \mathrm{op}(B) +
+      \beta C \f$ using only part of the matrices A, B, and C
+
+      When both \c TransA and \c TransB are \c NoTrans, this function
+      operates on the rows in \f$ [\mathrm{rstarta},M-1] \f$ and
+      columns \f$ [\mathrm{cstarta,K-1] \f$ in matrix A and rows in
+      \f$ [\mathrm{rstartb},K-1] \f$ and columns \f$
+      [\mathrm{cstartb,N-1] \f$ in matrix B. The results are placed in
+      rows \f$ [\mathrm{rstartc},M-1] \f$ and columns \f$
+      [\mathrm{cstartc},N-1] \f$ .
+      
+      This function works for all values of \c Order, \c TransA, and
+      \c TransB.
+  */
+  template<class mat_t>
+  void dgemm_submat(const enum o2cblas_order Order, 
+		    const enum o2cblas_transpose TransA,
+		    const enum o2cblas_transpose TransB, const size_t M, 
+		    const size_t N, const size_t K, const double alpha, 
+		    const mat_t &A, const mat_t &B,
+		    const double beta, mat_t &C, size_t rstarta,
+		    size_t cstarta, size_t rstartb, size_t cstartb,
+		    size_t rstartc, size_t cstartc) {
+    
+    size_t i, j, k;
+    size_t n1, n2;
+    int TransF, TransG;
+
+    if (alpha == 0.0 && beta == 1.0) {
+      return;
+    }
+
+    /*
+      This is a little more complicated than the original in GSL,
+      which assigned the matrices A and B to variables *F and *G which
+      then allowed some code duplication. We can't really do that
+      here, since we don't have that kind of type info on A and B, so
+      we just handle the two cases separately.
+    */
+    
+    if (Order == o2cblas_RowMajor) {
+
+      n1=M;
+      n2=N;
+
+      /* form  y := beta*y */
+      if (beta == 0.0) {
+	for (i=rstartc;i<n1;i++) {
+	  for (j=cstartc;j<n2;j++) {
+	    O2SCL_IX2(C,i,j)=0.0;
+	  }
+	}
+      } else if (beta != 1.0) {
+	for (i=rstartc;i<n1;i++) {
+	  for (j=cstartc;j<n2;j++) {
+	    O2SCL_IX2(C,i,j)*=beta;
+	  }
+	}
+      }
+
+      if (alpha == 0.0) {
+	return;
+      }
+
+      TransF=(TransA == o2cblas_ConjTrans) ? o2cblas_Trans : TransA;
+      TransG=(TransB == o2cblas_ConjTrans) ? o2cblas_Trans : TransB;
+      
+      if (TransF == o2cblas_NoTrans && TransG == o2cblas_NoTrans) {
+
+	/* form  C := alpha*A*B+C */
+
+	for (k=cstarta;k<K;k++) {
+	  for (i=rstarta;i<n1;i++) {
+	    const double temp=alpha*O2SCL_IX2(A,i,k);
+	    if (temp != 0.0) {
+	      for (j=rstartc;j<n2;j++) {
+		O2SCL_IX2(C,i,j)+=temp*O2SCL_IX2(B,k,j);
+	      }
+	    }
+	  }
+	}
+
+      } else if (TransF == o2cblas_NoTrans && TransG == o2cblas_Trans) {
+
+	/* form  C := alpha*A*B'+C */
+
+	for (i=mstart;i<n1;i++) {
+	  for (j=nstart;j<n2;j++) {
+	    double temp=0.0;
+	    for (k=kstart;k<K;k++) {
+	      temp+=O2SCL_IX2(A,i,k)*O2SCL_IX2(B,j,k);
+	    }
+	    O2SCL_IX2(C,i,j)+=alpha*temp;
+	  }
+	}
+
+      } else if (TransF == o2cblas_Trans && TransG == o2cblas_NoTrans) {
+
+	for (k=kstart;k<K;k++) {
+	  for (i=mstart;i<n1;i++) {
+	    const double temp=alpha*O2SCL_IX2(A,k,i);
+	    if (temp != 0.0) {
+	      for (j=nstart;j<n2;j++) {
+		O2SCL_IX2(C,i,j)+=temp*O2SCL_IX2(B,k,j);
+	      }
+	    }
+	  }
+	}
+
+      } else if (TransF == o2cblas_Trans && TransG == o2cblas_Trans) {
+	
+	for (i=mstart;i<n1;i++) {
+	  for (j=nstart;j<n2;j++) {
+	    double temp=0.0;
+	    for (k=kstart;k<K;k++) {
+	      temp+=O2SCL_IX2(A,k,i)*O2SCL_IX2(B,j,k);
+	    }
+	    O2SCL_IX2(C,i,j)+=alpha*temp;
+	  }
+	}
+
+      } else {
+	O2SCL_ERR("Unrecognized operation in dgemm_submat().",
+		  o2scl::exc_einval);
+      }
+
+    } else {
+
+      // Column-major case
+
+      n1=N;
+      n2=M;
+
+      /* form  y := beta*y */
+      if (beta == 0.0) {
+	for (i=nstart;i<n1;i++) {
+	  for (j=mstart;j<n2;j++) {
+	    O2SCL_IX2(C,i,j)=0.0;
+	  }
+	}
+      } else if (beta != 1.0) {
+	for (i=nstart;i<n1;i++) {
+	  for (j=mstart;j<n2;j++) {
+	    O2SCL_IX2(C,i,j)*=beta;
+	  }
+	}
+      }
+
+      if (alpha == 0.0) {
+	return;
+      }
+
+      TransF=(TransB == o2cblas_ConjTrans) ? o2cblas_Trans : TransB;
+      TransG=(TransA == o2cblas_ConjTrans) ? o2cblas_Trans : TransA;
+
+      if (TransF == o2cblas_NoTrans && TransG == o2cblas_NoTrans) {
+
+	/* form  C := alpha*A*B+C */
+
+	for (k=kstart;k<K;k++) {
+	  for (i=nstart;i<n1;i++) {
+	    const double temp=alpha*O2SCL_IX2(B,i,k);
+	    if (temp != 0.0) {
+	      for (j=mstart;j<n2;j++) {
+		O2SCL_IX2(C,i,j)+=temp*O2SCL_IX2(A,k,j);
+	      }
+	    }
+	  }
+	}
+
+      } else if (TransF == o2cblas_NoTrans && TransG == o2cblas_Trans) {
+
+	/* form  C := alpha*A*B'+C */
+
+	for (i=nstart;i<n1;i++) {
+	  for (j=mstart;j<n2;j++) {
+	    double temp=0.0;
+	    for (k=kstart;k<K;k++) {
+	      temp+=O2SCL_IX2(B,i,k)*O2SCL_IX2(A,j,k);
+	    }
+	    O2SCL_IX2(C,i,j)+=alpha*temp;
+	  }
+	}
+
+      } else if (TransF == o2cblas_Trans && TransG == o2cblas_NoTrans) {
+
+	for (k=kstart;k<K;k++) {
+	  for (i=nstart;i<n1;i++) {
+	    const double temp=alpha*O2SCL_IX2(B,k,i);
+	    if (temp != 0.0) {
+	      for (j=mstart;j<n2;j++) {
+		O2SCL_IX2(C,i,j)+=temp*O2SCL_IX2(A,k,j);
+	      }
+	    }
+	  }
+	}
+
+      } else if (TransF == o2cblas_Trans && TransG == o2cblas_Trans) {
+
+	for (i=nstart;i<n1;i++) {
+	  for (j=mstart;j<n2;j++) {
+	    double temp=0.0;
+	    for (k=kstart;k<K;k++) {
+	      temp+=O2SCL_IX2(B,k,i)*O2SCL_IX2(A,j,k);
+	    }
+	    O2SCL_IX2(C,i,j)+=alpha*temp;
+	  }
+	}
+
+      } else {
+	O2SCL_ERR("Unrecognized operation in dgemm_submat().",
+		  o2scl::exc_einval);
+      }
+    }
+
+    return;
+  }
+
+  /** \brief Compute \f$ B=\alpha \mathrm{op}[\mathrm{inv}(A)] B
+      \f$ where $A$ is triangular using only part of the matrices
+      A and B
+      
+      This function works for all values of \c Order, \c Side, \c Uplo,
+      \c TransA, and \c Diag .
+  */
+  template<class mat_t>
+  void dtrsm_submat(const enum o2cblas_order Order,
+		    const enum o2cblas_side Side, 
+		    const enum o2cblas_uplo Uplo, 
+		    const enum o2cblas_transpose TransA,
+		    const enum o2cblas_diag Diag, 
+		    const size_t M, const size_t N, const double alpha, 
+		    const mat_t &A, mat_t &B, size_t mstart, size_t nstart) {
+    
+    size_t i, j, k;
+    size_t n1, n2;
+    size_t istart, jstart;
+    
+    const int nonunit = (Diag == o2cblas_NonUnit);
+    int side, uplo, trans;
+    
+    if (Order == o2cblas_RowMajor) {
+      n1 = M;
+      n2 = N;
+      side = Side;
+      uplo = Uplo;
+      trans = (TransA == o2cblas_ConjTrans) ? o2cblas_Trans : TransA;
+      istart=mstart;
+      jstart=nstart;
+    } else {
+      n1 = N;
+      n2 = M;
+      side = (Side == o2cblas_Left) ? o2cblas_Right : o2cblas_Left;
+      uplo = (Uplo == o2cblas_Upper) ? o2cblas_Lower : o2cblas_Upper;
+      trans = (TransA == o2cblas_ConjTrans) ? o2cblas_Trans : TransA;
+      istart=nstart;
+      jstart=mstart;
+    }
+    
+    if (side == o2cblas_Left && uplo == o2cblas_Upper &&
+	trans == o2cblas_NoTrans) {
+      
+      /* form  B := alpha * inv(TriU(A)) *B */
+      
+      if (alpha != 1.0) {
+	for (i = istart; i < n1; i++) {
+	  for (j = jstart; j < n2; j++) {
+	    O2SCL_IX2(B,i,j)*=alpha;
+	  }
+	}
+      }
+      
+      for (i = n1; i > istart && i--;) {
+	if (nonunit) {
+	  double Aii = O2SCL_IX2(A,i,i);
+	  for (j = jstart; j < n2; j++) {
+	    O2SCL_IX2(B,i,j)/=Aii;
+	  }
+	}
+	
+	for (k = 0; k < i; k++) {
+	  const double Aki = O2SCL_IX2(A,k,i);
+	  for (j = jstart; j < n2; j++) {
+	    O2SCL_IX2(B,k,j)-=Aki*O2SCL_IX2(B,i,j);
+	  }
+	}
+      }
+
+    } else if (side == o2cblas_Left && uplo == o2cblas_Upper &&
+	       trans == o2cblas_Trans) {
+
+      /* form  B := alpha * inv(TriU(A))' *B */
+
+      if (alpha != 1.0) {
+	for (i = istart; i < n1; i++) {
+	  for (j = jstart; j < n2; j++) {
+	    O2SCL_IX2(B,i,j) *= alpha;
+	  }
+	}
+      }
+
+      for (i = istart; i < n1; i++) {
+	if (nonunit) {
+	  double Aii = O2SCL_IX2(A,i,i);
+	  for (j = jstart; j < n2; j++) {
+	    O2SCL_IX2(B,i,j) /= Aii;
+	  }
+	}
+
+	for (k = i + 1; k < n1; k++) {
+	  const double Aik = O2SCL_IX2(A,i,k);
+	  for (j = jstart; j < n2; j++) {
+	    O2SCL_IX2(B,k,j) -= Aik * O2SCL_IX2(B,i,j);
+	  }
+	}
+      }
+
+    } else if (side == o2cblas_Left && uplo == o2cblas_Lower &&
+	       trans == o2cblas_NoTrans) {
+
+      /* form  B := alpha * inv(TriL(A))*B */
+
+      if (alpha != 1.0) {
+	for (i = istart; i < n1; i++) {
+	  for (j = jstart; j < n2; j++) {
+	    O2SCL_IX2(B,i,j) *= alpha;
+	  }
+	}
+      }
+
+      for (i = istart; i < n1; i++) {
+	if (nonunit) {
+	  double Aii = O2SCL_IX2(A,i,i);
+	  for (j = jstart; j < n2; j++) {
+	    O2SCL_IX2(B,i,j) /= Aii;
+	  }
+	}
+
+	for (k = i + 1; k < n1; k++) {
+	  const double Aki = O2SCL_IX2(A,k,i);
+	  for (j = jstart; j < n2; j++) {
+	    O2SCL_IX2(B,k,j) -= Aki * O2SCL_IX2(B,i,j);
+	  }
+	}
+      }
+
+
+    } else if (side == o2cblas_Left && uplo == o2cblas_Lower &&
+	       trans == o2cblas_Trans) {
+
+      /* form  B := alpha * TriL(A)' *B */
+
+      if (alpha != 1.0) {
+	for (i = istart; i < n1; i++) {
+	  for (j = jstart; j < n2; j++) {
+	    O2SCL_IX2(B,i,j) *= alpha;
+	  }
+	}
+      }
+
+      for (i = n1; i > istart && i--;) {
+	if (nonunit) {
+	  double Aii = O2SCL_IX2(A,i,i);
+	  for (j = jstart; j < n2; j++) {
+	    O2SCL_IX2(B,i,j) /= Aii;
+	  }
+	}
+
+	for (k = 0; k < i; k++) {
+	  const double Aik = O2SCL_IX2(A,i,k);
+	  for (j = jstart; j < n2; j++) {
+	    O2SCL_IX2(B,k,j) -= Aik * O2SCL_IX2(B,i,j);
+	  }
+	}
+      }
+
+    } else if (side == o2cblas_Right && uplo == o2cblas_Upper &&
+	       trans == o2cblas_NoTrans) {
+
+      /* form  B := alpha * B * inv(TriU(A)) */
+
+      if (alpha != 1.0) {
+	for (i = istart; i < n1; i++) {
+	  for (j = jstart; j < n2; j++) {
+	    O2SCL_IX2(B,i,j) *= alpha;
+	  }
+	}
+      }
+
+      for (i = istart; i < n1; i++) {
+	for (j = jstart; j < n2; j++) {
+	  if (nonunit) {
+	    double Ajj = O2SCL_IX2(A,j,j);
+	    O2SCL_IX2(B,i,j) /= Ajj;
+	  }
+
+	  {
+	    double Bij = O2SCL_IX2(B,i,j);
+	    for (k = j + 1; k < n2; k++) {
+	      O2SCL_IX2(B,i,k) -= O2SCL_IX2(A,j,k) * Bij;
+	    }
+	  }
+	}
+      }
+
+    } else if (side == o2cblas_Right && uplo == o2cblas_Upper &&
+	       trans == o2cblas_Trans) {
+
+      /* form  B := alpha * B * inv(TriU(A))' */
+
+      if (alpha != 1.0) {
+	for (i = istart; i < n1; i++) {
+	  for (j = jstart; j < n2; j++) {
+	    O2SCL_IX2(B,i,j) *= alpha;
+	  }
+	}
+      }
+
+      for (i = istart; i < n1; i++) {
+	for (j = n2; j > jstart && j--;) {
+
+	  if (nonunit) {
+	    double Ajj = O2SCL_IX2(A,j,j);
+	    O2SCL_IX2(B,i,j) /= Ajj;
+	  }
+
+	  {
+	    double Bij = O2SCL_IX2(B,i,j);
+	    for (k = 0; k < j; k++) {
+	      O2SCL_IX2(B,i,k) -= O2SCL_IX2(A,k,j) * Bij;
+	    }
+	  }
+	}
+      }
+
+    } else if (side == o2cblas_Right && uplo == o2cblas_Lower &&
+	       trans == o2cblas_NoTrans) {
+
+      /* form  B := alpha * B * inv(TriL(A)) */
+
+      if (alpha != 1.0) {
+	for (i = istart; i < n1; i++) {
+	  for (j = jstart; j < n2; j++) {
+	    O2SCL_IX2(B,i,j) *= alpha;
+	  }
+	}
+      }
+
+      for (i = istart; i < n1; i++) {
+	for (j = n2; j > jstart && j--;) {
+
+	  if (nonunit) {
+	    double Ajj = O2SCL_IX2(A,j,j);
+	    O2SCL_IX2(B,i,j) /= Ajj;
+	  }
+
+	  {
+	    double Bij = O2SCL_IX2(B,i,j);
+	    for (k = 0; k < j; k++) {
+	      O2SCL_IX2(B,i,k) -= O2SCL_IX2(A,j,k) * Bij;
+	    }
+	  }
+	}
+      }
+      
+    } else if (side == o2cblas_Right && uplo == o2cblas_Lower &&
+	       trans == o2cblas_Trans) {
+
+      /* form  B := alpha * B * inv(TriL(A))' */
+
+      
+      if (alpha != 1.0) {
+	for (i = istart; i < n1; i++) {
+	  for (j = jstart; j < n2; j++) {
+	    O2SCL_IX2(B,i,j) *= alpha;
+	  }
+	}
+      }
+
+      for (i = istart; i < n1; i++) {
+	for (j = jstart; j < n2; j++) {
+	  if (nonunit) {
+	    double Ajj = O2SCL_IX2(A,j,j);
+	    O2SCL_IX2(B,i,j) /= Ajj;
+	  }
+
+	  {
+	    double Bij = O2SCL_IX2(B,i,j);
+	    for (k = j + 1; k < n2; k++) {
+	      O2SCL_IX2(B,i,k) -= O2SCL_IX2(A,k,j) * Bij;
+	    }
+	  }
+	}
+      }
+
+    } else {
+      O2SCL_ERR("Bad operation in dtrsm().",o2scl::exc_einval);
+    }
+    
+    return;
+  }
+  //@}
+
+#endif
+  
 #ifdef DOXYGEN
 }
 #endif

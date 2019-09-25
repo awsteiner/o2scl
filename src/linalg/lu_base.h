@@ -194,7 +194,10 @@ namespace o2scl_linalg {
       apply_pivots(&AR.matrix, &ipiv1.vector);
 
       /* A12 = A11^{-1} A12 */
-      gsl_blas_dtrsm(CblasLeft, CblasLower, CblasNoTrans, CblasUnit, 1.0, &A11.matrix, &A12.matrix);
+      dtrsm_submat(CblasLeft,CblasLower,CblasNoTrans,CblasUnit,
+		   N1,N2,1.0,0,0,0,N1);
+      //gsl_blas_dtrsm(CblasLeft, CblasLower, CblasNoTrans, CblasUnit,
+      //1.0, &A11.matrix, &A12.matrix);
 
       /* A22 = A22 - A21 * A12 */
       gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, -1.0, &A21.matrix, &A12.matrix, 1.0, &A22.matrix);
