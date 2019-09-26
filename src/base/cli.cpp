@@ -391,7 +391,7 @@ int cli::parse_for_aliases(std::vector<std::string> &svsv) {
 	cout << "New alias \"" << svsv[c2+1] << "\" = \"" << svsv[c2+2]
 	     << "\"" << endl;
       }
-      c2+=3;
+      c2+=2;
     }
   }
   return 0;
