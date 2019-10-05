@@ -316,11 +316,7 @@ namespace o2scl {
     ytmp=func(a+rang*x6[5]);
     e6+=w6[5]*ytmp;
     res=(e6+e5)*rang/2.0;
-    
-    // AWS 10/4/19: I replaced std::abs here with a
-    // more type-agnostic code
-    err=(e6-e5)*rang;
-    if (err<0.0) err=-err;
+    err=abs(e6-e5)*rang;
 
     return success;
   }
