@@ -134,7 +134,7 @@ namespace o2scl {
 	  tvals+=tval[i];
 	  terss+=ters[i];
 	}
-	err=std::sqrt(2.0*terss);
+	err=sqrt(2.0*terss);
 	res=tvals;
 	return 0;
       }
@@ -178,11 +178,11 @@ namespace o2scl {
 	std::cout.setf(std::ios::showpos);
 	std::cout << " Res: " << tvals;
 	std::cout.unsetf(std::ios::showpos);
-	std::cout << " Err: " << std::sqrt(2.0*terss);
-	if (this->tol_abs>this->tol_rel*std::abs(tvals)) {
+	std::cout << " Err: " << sqrt(2.0*terss);
+	if (this->tol_abs>this->tol_rel*abs(tvals)) {
 	  std::cout << " Tol: " << this->tol_abs << std::endl;
 	} else {
-	  std::cout << " Tol: " << this->tol_rel*std::abs(tvals)
+	  std::cout << " Tol: " << this->tol_rel*abs(tvals)
 		    << std::endl;
 	}
 	if (this->verbose>1) {
@@ -193,8 +193,8 @@ namespace o2scl {
       }
 
       // See if we're finished
-      root=std::sqrt(2.0*terss);
-      if (root<=this->tol_abs || root<=this->tol_rel*std::abs(tvals)) {
+      root=sqrt(2.0*terss);
+      if (root<=this->tol_abs || root<=this->tol_rel*abs(tvals)) {
 	res=tvals;
 	err=root;
 	this->last_iter=iter;
@@ -319,11 +319,13 @@ namespace o2scl {
   virtual fp_t transform(fp_t t) {
     fp_t x=upper_limit-(1-t)/t, y;
     y=(*user_func)(x);
-    if (false) {
+    /*
+      if (false) {
       std::cout << upper_limit << " " << t << " " << y/t/t << std::endl;
       char ch;
       std::cin >> ch;
-    }
+      }
+    */
     return y/t/t;
   }
 

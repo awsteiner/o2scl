@@ -19,8 +19,8 @@
 
   -------------------------------------------------------------------
 */
-#ifndef O2SCL_REL_FERMION_H
-#define O2SCL_REL_FERMION_H
+#ifndef O2SCL_FERMION_REL_H
+#define O2SCL_FERMION_REL_H
 
 /** \file fermion_rel.h
     \brief File defining \ref o2scl::fermion_rel
