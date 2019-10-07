@@ -96,7 +96,7 @@ void test_iac(test_mgr &t, func_t &f, fp_t acc,
     typedef boost::numeric::ublas::vector<fp_t> ubvector;
     ubvector xlo(n), xhi(n), val(n), err(n);
     iac.get_subdivisions(xlo,xhi,val,err);
-    cout << "xlo              xhi              ";
+    cout << "xlo              xhi               ";
     cout << "val              err              " << endl;;
     for(size_t i=0;i<n;i+=10) {
       cout << xlo[i] << " " << xhi[i] << " ";
@@ -130,10 +130,11 @@ int main(void) {
 
     test_iac<funct,double,
 	     inte_newton_cotes_open<funct,double>,1000>
-      (t,tf,1.0e-8,"iac, NCO, double, testfun",diff,true);
+      (t,tf,1.0e-8,"iac, NCO, double, testfun",diff);
     t.test_abs<double>(diff,0.0,1.0e-7,"inte_adapt_cern");
 
 #ifdef O2SCL_LD_TYPES
+    
     long double a_ld=0.01L, diff_ld;
     funct_ld tf_ld=std::bind(testfun_ld,std::placeholders::_1,a_ld);
     test_iac<funct_ld,long double,
@@ -143,8 +144,8 @@ int main(void) {
     t.test_abs<long double>(diff_ld,0.0,1.0e-14,"inte_adapt_cern_ld");
     
     test_iac<funct_ld,long double,
-	     inte_newton_cotes_open<funct_ld,long double>,1000>
-      (t,tf_ld,1.0e-15,"iac, long double, testfun",diff_ld);
+	     inte_newton_cotes_open<funct_ld,long double>,10000>
+      (t,tf_ld,1.0e-15,"iac, NCO, long double, testfun",diff_ld);
     t.test_abs<long double>(diff_ld,0.0,1.0e-14,"inte_adapt_cern_ld");
     
     cout << "iac, cpp_dec_float_50 prec, testfun:\n  ";
@@ -156,6 +157,11 @@ int main(void) {
 	     inte_gauss56_cern<funct_cdf50,cpp_dec_float_50,
 			       inte_gauss56_coeffs_cpp_dec_float_50>,10000>
       (t,tf_cdf,1.0e-30,"iac, cpp_dec_float_50, testfun",diff_cdf);
+
+    test_iac<funct_cdf50,cpp_dec_float_50,
+	     inte_newton_cotes_open<funct_cdf50,cpp_dec_float_50>,100000>
+      (t,tf_cdf,1.0e-30,"iac, NCO, cpp_dec_float_50, testfun",diff_cdf);
+    
 #endif
     
     exit(-1);
