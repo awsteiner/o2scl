@@ -27,6 +27,10 @@
 using namespace std;
 using namespace o2scl;
 
+#ifdef O2SCL_LD_TYPES
+typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+#endif
+
 double testfun(double tx, double &pa);
 
 double testfun(double tx, double &pa) {
@@ -36,6 +40,16 @@ double testfun(double tx, double &pa) {
 long double testfun_ld(long double tx, long double &pa) {
   return (pa*sinl(tx)/(tx+0.01L));
 }
+
+#ifdef O2SCL_LD_TYPES
+
+cpp_dec_float_50 testfun_cdf(cpp_dec_float_50 tx, cpp_dec_float_50 &pa) {
+  cpp_dec_float_50 one=1;
+  cpp_dec_float_50 hundred=100;
+  return (pa*sin(tx)/(tx+one/hundred));
+}
+
+#endif
 
 int main(void) {
   cout.setf(ios::scientific);
@@ -70,6 +84,19 @@ int main(void) {
   t.test_rel<long double>(calc_ld,exact_ld,1.0e-2L,"inte_gauss56_cern ls");
   diff_ld=fabsl(calc_ld-exact_ld);
   cout << calc_ld << " " << exact_ld << " " << diff_ld << endl;
+  
+  inte_gauss56_cern<funct_cdf50,cpp_dec_float_50,
+		    inte_gauss56_coeffs_cpp_dec_float_50> cg_cdf;
+  cpp_dec_float_50 a_cdf=3.0L, calc_cdf, exact_cdf, diff_cdf;
+
+  funct_cdf50 tf_cdf=std::bind(testfun_cdf,std::placeholders::_1,a_cdf);
+  
+  calc_cdf=cg_cdf.integ(tf_cdf,0.0L,1.0L);
+  exact_cdf=a_cdf*(0.900729064796877177036268L);
+  //t.test_rel<cpp_dec_float_50>(calc_cdf,exact_cdf,1.0e-2L,
+  //"inte_gauss56_cern ls");
+  diff_cdf=fabs(calc_cdf-exact_cdf);
+  cout << calc_cdf << " " << exact_cdf << " " << diff_cdf << endl;
   
   t.report();
   return 0;

@@ -121,65 +121,33 @@ namespace o2scl {
     /// \name Main testing methods
     //@{
     /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}|/
-	\mathrm{expected}<\mathrm{rel\_error}\f$
-    */
-    template<class data_t>
-    bool test_rel(data_t result, data_t expected, data_t rel_error,
-		  std::string description) {
-      bool ret;
-      if (std::isnan(expected)) {
-	ret=(std::isnan(expected)==std::isnan(result));
-	description=dtos(result)+" vs. "+ dtos(expected)+
-	  "\n "+description;
-      } else if (std::isinf(expected)) {
-	ret=(std::isinf(expected)==std::isinf(result));
-	description=dtos(result)+" vs. "+ dtos(expected)+
-	  "\n "+description;
-      } else if (expected==0.0) {
-	ret=test_abs(result,expected,rel_error,description);
-	return ret;
-      } else {
-	double obs_err=std::abs(expected-result)/std::abs(expected);
-	ret=(obs_err<rel_error);
-	if (ret) {
-	  description=dtos(result)+" vs. "+dtos(expected)+
-	    " : "+dtos(obs_err)+
-	    " < "+dtos(rel_error)+"\n "+description;
-	} else {
-	  description=dtos(result)+" vs. "+dtos(expected)+
-	    " : "+dtos(obs_err)+
-	    " > "+dtos(rel_error)+"\n "+description;
-	}
-      }
-      
-      process_test(ret,"relative",description);
-      return ret;
-    }
-    
-    /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}|/
 	<\mathrm{abs\_error}\f$
     */
-    template<class data_t>
+    template<class data_t=double>
     bool test_abs(data_t result, data_t expected, data_t abs_error,
 		  std::string description) {
       bool ret;
       if (std::isnan(expected)) {
 	ret=(std::isnan(expected)==std::isnan(result));
-	description=dtos(result)+" vs. "+ dtos(expected)+
+	description=dtos<data_t>(result)+" vs. "+ dtos<data_t>(expected)+
 	  "\n "+description;
       } else if (std::isinf(expected)) {
 	ret=(std::isinf(expected)==std::isinf(result));
-	description=dtos(result)+" vs. "+ dtos(expected)+
+	description=dtos<data_t>(result)+" vs. "+ dtos<data_t>(expected)+
 	  "\n "+description;
       } else {
 	ret=(std::abs(expected-result)<abs_error);
 	if (ret) {
-	  description=dtos(result)+" vs. "+ dtos(expected)+" : "
-	    +dtos(std::abs(expected-result))+" < "+dtos(abs_error)+
+	  description=dtos<data_t>(result)+" vs. "+
+	    dtos<data_t>(expected)+" : "
+	    +dtos<data_t>(std::abs(expected-result))+" < "+
+	    dtos<data_t>(abs_error)+
 	    "\n "+description;
 	} else {
-	  description=dtos(result)+" vs. "+ dtos(expected)+" : "
-	    +dtos(std::abs(expected-result))+" > "+dtos(abs_error)+
+	  description=dtos<data_t>(result)+" vs. "+
+	    dtos<data_t>(expected)+" : "
+	    +dtos<data_t>(std::abs(expected-result))+" > "+
+	    dtos<data_t>(abs_error)+
 	    "\n "+description;
 	}
       }
@@ -189,6 +157,42 @@ namespace o2scl {
       return ret;
     }
 
+    /** \brief Test for \f$|\mathrm{result}-\mathrm{expected}|/
+	\mathrm{expected}<\mathrm{rel\_error}\f$
+    */
+    template<class data_t=double>
+    bool test_rel(data_t result, data_t expected, data_t rel_error,
+		  std::string description) {
+      bool ret;
+      if (std::isnan(expected)) {
+	ret=(std::isnan(expected)==std::isnan(result));
+	description=dtos<data_t>(result)+" vs. "+ dtos<data_t>(expected)+
+	  "\n "+description;
+      } else if (std::isinf(expected)) {
+	ret=(std::isinf(expected)==std::isinf(result));
+	description=dtos<data_t>(result)+" vs. "+ dtos<data_t>(expected)+
+	  "\n "+description;
+      } else if (expected==0.0) {
+	ret=test_abs<data_t>(result,expected,rel_error,description);
+	return ret;
+      } else {
+	double obs_err=std::abs(expected-result)/std::abs(expected);
+	ret=(obs_err<rel_error);
+	if (ret) {
+	  description=dtos<data_t>(result)+" vs. "+dtos<data_t>(expected)+
+	    " : "+dtos<data_t>(obs_err)+
+	    " < "+dtos<data_t>(rel_error)+"\n "+description;
+	} else {
+	  description=dtos<data_t>(result)+" vs. "+dtos<data_t>(expected)+
+	    " : "+dtos<data_t>(obs_err)+
+	    " > "+dtos<data_t>(rel_error)+"\n "+description;
+	}
+      }
+      
+      process_test(ret,"relative",description);
+      return ret;
+    }
+    
     /** \brief  Test for \f$1/\mathrm{factor} < \mathrm{result/expected} 
 	< \mathrm{factor}\f$
     */

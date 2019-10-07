@@ -29,6 +29,10 @@
 using namespace std;
 using namespace o2scl;
 
+#ifdef O2SCL_LD_TYPES
+typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+#endif
+
 double testfun(double tx, double &a);
 
 double testfun(double tx, double &a) {
@@ -42,6 +46,14 @@ double testfun2(double tx) {
 long double testfun2_ld(long double tx) {
   return 4.0*sqrtl(1.0-tx*tx);
 }
+
+#ifdef O2SCL_LD_TYPES
+cpp_dec_float_50 testfun2_cdf(cpp_dec_float_50 tx) {
+  cpp_dec_float_50 one=1;
+  cpp_dec_float_50 four=4;
+  return four*sqrt(one-tx*tx);
+}
+#endif
 
 int main(void) {
   
@@ -87,6 +99,24 @@ int main(void) {
     diff=fabs(calc-exact);
     cout << calc << " " << exact << " " << diff << endl;
   }
+
+#ifdef O2SCL_LD_TYPES  
+  {
+    inte_gauss_cern<funct_cdf50,cpp_dec_float_50,
+		    inte_gauss_coeffs_cpp_dec_float_50> cg_cdf;
+    cg_cdf.tol_rel=1.0e-20;
+    cg_cdf.tol_abs=1.0e-20;
+    cpp_dec_float_50 a=3.0, calc, exact, diff;
+
+    funct_cdf50 tf2=testfun2_cdf;
+    
+    calc=cg_cdf.integ(tf2,0.0,1.0);
+    exact=boost::math::constants::pi<cpp_dec_float_50>();
+    //t.test_rel<cpp_dec_float_50>(calc,exact,1.0e-16L,"inte_gauss_cern ld");
+    diff=fabs(calc-exact);
+    cout << calc << " " << exact << " " << diff << endl;
+  }
+#endif
   
   t.report();
   return 0;

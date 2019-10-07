@@ -33,6 +33,9 @@
 #include <gsl/gsl_math.h>
 
 #include <boost/numeric/ublas/vector.hpp>
+#ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#endif
 
 #include <o2scl/shunting_yard.h>
 #include <o2scl/err_hnd.h>
@@ -47,6 +50,13 @@ namespace o2scl {
   /// One-dimensional function typedef in src/base/funct.h
   typedef std::function<long double(long double)> funct_ld;
 
+#ifdef O2SCL_LD_TYPES
+  /// One-dimensional function typedef in src/base/funct.h
+  typedef std::function<boost::multiprecision::cpp_dec_float_50
+			(boost::multiprecision::cpp_dec_float_50)>
+  funct_cdf50;
+#endif
+  
   /** \brief One-dimensional function from a string
       
       For example,

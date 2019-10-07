@@ -230,11 +230,16 @@ namespace o2scl {
     } else if (n==1) {
       return v[0];
     } else if (n==2) {
-      return (v[0]+v[1])/2.0;
+      fp_t two=2;
+      return (v[0]+v[1])/two;
     } else if (n==3) {
-      return (v[0]+4.0*v[1]+v[2])/3.0;
+      fp_t three=3;
+      return (v[0]+4.0*v[1]+v[2])/three;
     }
-    fp_t res=(v[0]*5.0+v[1]*13.0+v[n-1]*5.0+v[n-2]*13.0)/12.0;
+    fp_t c1=5;
+    fp_t c2=13;
+    fp_t den=12;
+    fp_t res=(v[0]*c1+v[1]*c2+v[n-1]*c1+v[n-2]*c2)/den;
     for(size_t i=2;i<n-2;i++) {
       res+=v[i];
     }
@@ -273,8 +278,13 @@ namespace o2scl {
   template<class vec_t, class fp_t=double> fp_t vector_integ_extended8
     (size_t n, vec_t &v) {
     if (n<8) return vector_integ_extended4<vec_t,fp_t>(n,v);
-    fp_t res=((v[0]+v[n-1])*17.0+(v[1]+v[n-2])*59.0+(v[2]+v[n-3])*43.0+
-		(v[3]+v[n-4])*49.0)/48.0;
+    fp_t c1=17;
+    fp_t c2=59;
+    fp_t c3=43;
+    fp_t c4=49;
+    fp_t den=48;
+    fp_t res=((v[0]+v[n-1])*c1+(v[1]+v[n-2])*c2+(v[2]+v[n-3])*c3+
+		(v[3]+v[n-4])*c4)/den;
     for(size_t i=4;i<n-4;i++) {
       res+=v[i];
     }
