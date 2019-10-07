@@ -29,11 +29,126 @@
 #include <o2scl/inte.h>
 #include <o2scl/inte_gauss56_cern.h>
 #include <o2scl/string_conv.h>
+#include <o2scl/vector_derint.h>
  
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
 
+  /** \brief A simple precision-agnostic Newton-Cotes integrator 
+
+      \note Experimental.
+   */
+  template<class func_t=funct, class fp_t=double>
+    class inte_newton_cotes : public inte<func_t,fp_t> {
+
+  public:
+  
+  /** \brief Integrate function \c func from \c a to \c b
+      giving result \c res and error \c err
+  */
+  virtual int integ_err(func_t &func, fp_t a, fp_t b,
+			fp_t &res, fp_t &err) {
+    
+    std::vector<fp_t> x(8), y(8);
+    fp_t dx=(b-a)/7;
+    for(size_t i=0;i<8;i++) {
+      x[i]=((fp_t)i)*dx+a;
+      y[i]=func(x[i]);
+    }
+    res=o2scl::vector_integ_extended8<std::vector<fp_t>,
+    fp_t>(8,y)*dx;
+    fp_t res2=o2scl::vector_integ_extended4<std::vector<fp_t>,
+    fp_t>(8,y)*dx;
+    err=fabs(res2-res);
+
+    return 0;
+  }
+  
+  };
+  
+  /** \brief A simple precision-agnostic Newton-Cotes integrator 
+
+      \note Experimental.
+   */
+  template<class func_t=funct, class fp_t=double>
+    class inte_newton_cotes2 : public inte<func_t,fp_t> {
+
+  public:
+  
+  /** \brief Integrate function \c func from \c a to \c b
+      giving result \c res and error \c err
+  */
+  virtual int integ_err(func_t &func, fp_t a, fp_t b,
+			fp_t &res, fp_t &err) {
+
+    std::vector<fp_t> x(11), y(11);
+    fp_t dx=(b-a)/10;
+    for(size_t i=0;i<11;i++) {
+      x[i]=((fp_t)i)*dx+a;
+      y[i]=func(x[i]);
+    }
+    res=dx*5.0/299376.0*(16067.0*(y[0]+y[10])+
+			 106300.0*(y[1]+y[9])-
+			 48525.0*(y[2]+y[8])+
+			 272400.0*(y[3]+y[7])-
+			 260550.0*(y[4]+y[6])+
+			 427368.0*y[5]);
+    fp_t dx2=(b-a)/10;
+    for(size_t i=0;i<10;i++) {
+      x[i]=((fp_t)i)*dx2+a;
+      y[i]=func(x[i]);
+    }
+    fp_t res2=dx*9.0/89600.0*(2857.0*(y[0]+y[9])+
+			      15741.0*(y[1]+y[8])+
+			      1080.0*(y[2]+y[7])+
+			      19344.0*(y[3]+y[6])+
+			      5778.0*(y[4]+y[5]));
+    err=fabs(res2-res);
+
+    return 0;
+  }
+  
+  };
+  
+  /** \brief A simple precision-agnostic Newton-Cotes integrator 
+
+      \note Experimental.
+   */
+  template<class func_t=funct, class fp_t=double>
+    class inte_newton_cotes_open : public inte<func_t,fp_t> {
+
+  public:
+  
+  /** \brief Integrate function \c func from \c a to \c b
+      giving result \c res and error \c err
+  */
+  virtual int integ_err(func_t &func, fp_t a, fp_t b,
+			fp_t &res, fp_t &err) {
+    
+    std::vector<fp_t> x(7), y(7);
+    fp_t dx=(b-a)/8;
+    for(size_t i=0;i<7;i++) {
+      x[i]=((fp_t)i+1)*dx+a;
+      y[i]=func(x[i]);
+    }
+    res=dx*8.0/945.0*(460.0*y[0]-954.0*y[1]+2196.0*y[2]-
+		      2459.0*y[3]+2196.0*y[4]-954.0*y[5]+
+		      460.0*y[6]);
+    fp_t dx2=(b-a)/7;
+    for(size_t i=0;i<6;i++) {
+      x[i]=((fp_t)i+1)*dx2+a;
+      y[i]=func(x[i]);
+    }
+    fp_t res2=dx*7.0/144.0*(611.0*y[0]-453.0*y[1]+562.0*y[2]+
+			    562.0*y[3]-453.0*y[4]+611.0*y[5]);
+    err=fabs(res2-res);
+
+    return 0;
+  }
+  
+  };
+  
   /** \brief Adaptive integration (CERNLIB)
     
       Uses a base integration object (default is \ref
@@ -71,8 +186,10 @@ namespace o2scl {
       - There is a fixme entry in the code which could be resolved.
       - Output the point where most subdividing was required?
   */
-  template<class func_t=funct, size_t nsub=100, class fp_t=double,
-    class weights_t=inte_gauss56_coeffs_double>
+  template<class func_t=funct,
+    class def_inte_t=inte_gauss56_cern<funct,double,
+    inte_gauss56_coeffs_double>,
+    size_t nsub=100, class fp_t=double>
     class inte_adapt_cern : public inte<func_t,fp_t> {
 
 #ifndef DOXYGEN_INTERNAL
@@ -253,7 +370,7 @@ namespace o2scl {
   }
       
   /// Default integration object
-  inte_gauss56_cern<func_t,fp_t,weights_t> def_inte;
+  def_inte_t def_inte;
   //@}
       
   /// \name Subdivisions
@@ -302,9 +419,11 @@ namespace o2scl {
 
   };
 
-
-  template<class func_t=funct, class fp_t=double,
-    class weights_t=inte_gauss56_coeffs_double>
+  template<class func_t=funct, 
+    class def_inte_t=inte_gauss56_cern<funct,double,
+    inte_gauss56_coeffs_double>,
+    size_t nsub=100,
+    class fp_t=double>
     class inte_qagil_cern : public inte<func_t,fp_t> {
     
   protected:
@@ -376,12 +495,11 @@ namespace o2scl {
   }
       
   /// Default integration object
-  inte_adapt_cern<internal_funct,100,fp_t,weights_t> def_inte;
+  inte_adapt_cern<internal_funct,def_inte_t,nsub,fp_t> def_inte;
   //@}
 
   };
-
-
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

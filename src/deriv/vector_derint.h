@@ -59,14 +59,14 @@ namespace o2scl {
   //@{
   /** \brief Derivative of a vector with a three-point formula
    */
-  template<class vec_t, class vec2_t> 
+  template<class vec_t, class vec2_t, class fp_t=double> 
     void vector_deriv_threept(size_t n, vec_t &v, vec2_t &dv) {
     if (n<=1) {
       O2SCL_ERR2("Requested derivative of zero or one-element vector ",
 		 "in vector_deriv_threept().",exc_einval);
     }
     if (n==2) {
-      double d=v[1]-v[0];
+      fp_t d=v[1]-v[0];
       dv[0]=d;
       dv[1]=d;
       return;
@@ -82,14 +82,14 @@ namespace o2scl {
   /** \brief Derivative of a vector with a three-point formula
       using two-point at the edges
   */
-  template<class vec_t, class vec2_t> 
+  template<class vec_t, class vec2_t, class fp_t=double> 
     void vector_deriv_threept_tap(size_t n, vec_t &v, vec2_t &dv) {
     if (n<=1) {
       O2SCL_ERR2("Requested derivative of zero or one-element vector ",
 		 "in vector_deriv_threept().",exc_einval);
     }
     if (n==2) {
-      double d=v[1]-v[0];
+      fp_t d=v[1]-v[0];
       dv[0]=d;
       dv[1]=d;
       return;
@@ -106,14 +106,14 @@ namespace o2scl {
 
   /** \brief Derivative of a vector with a five-point formula
    */
-  template<class vec_t, class vec2_t> 
+  template<class vec_t, class vec2_t, class fp_t=double> 
     void vector_deriv_fivept(size_t n, vec_t &v, vec2_t &dv) {
     if (n<=1) {
       O2SCL_ERR2("Requested derivative of zero or one-element vector ",
 		 "in vector_deriv_fivept().",exc_einval);
     }
     if (n==2) {
-      double d=v[1]-v[0];
+      fp_t d=v[1]-v[0];
       dv[0]=d;
       dv[1]=d;
       return;
@@ -131,14 +131,14 @@ namespace o2scl {
   /** \brief Derivative of a vector with a five-point formula with 
       four- and three-point formulas used at the edges
   */
-  template<class vec_t, class vec2_t> 
+  template<class vec_t, class vec2_t, class fp_t=double> 
     void vector_deriv_fivept_tap(size_t n, vec_t &v, vec2_t &dv) {
     if (n<=1) {
       O2SCL_ERR2("Requested derivative of zero or one-element vector ",
 		 "in vector_deriv_fivept().",exc_einval);
     }
     if (n==2) {
-      double d=v[1]-v[0];
+      fp_t d=v[1]-v[0];
       dv[0]=d;
       dv[1]=d;
       return;
@@ -171,14 +171,15 @@ namespace o2scl {
   //@{
   /** \brief Integrate with an extended trapezoidal rule. 
    */
-  template<class vec_t> double vector_integ_trap(size_t n, vec_t &v) {
+  template<class vec_t, class fp_t=double> fp_t vector_integ_trap
+    (size_t n, vec_t &v) {
     if (n==0) {
       O2SCL_ERR2("Tried to integrate zero-length vector in ",
 		     "vector_integ_trap",exc_einval);
     } else if (n==1) {
       return v[0];
     }
-    double res=(v[0]+v[n-1])/2.0;
+    fp_t res=(v[0]+v[n-1])/2.0;
     for(size_t i=1;i<n-1;i++) res+=v[i];
     return res;
   }
@@ -188,7 +189,8 @@ namespace o2scl {
 
       \note This function uses an untested hack I wrote for even n. 
   */
-  template<class vec_t> double vector_integ_threept(size_t n, vec_t &v) {
+  template<class vec_t, class fp_t=double> fp_t vector_integ_threept
+    (size_t n, vec_t &v) {
     if (n==0) {
       O2SCL_ERR2("Tried to integrate zero-length vector in ",
 		     "vector_integ_threept",exc_einval);
@@ -197,7 +199,7 @@ namespace o2scl {
     } else if (n==2) {
       return (v[0]+v[1])/2.0;
     }
-    double res=v[0]+v[n-1];
+    fp_t res=v[0]+v[n-1];
     // If true, next terms have a prefactor of 4, otherwise
     // the next terms have a prefactor of 2
     bool four=true;
@@ -220,7 +222,8 @@ namespace o2scl {
       This function falls back to the equivalent of
       vector_integ_threept() for 3 points.
   */
-  template<class vec_t> double vector_integ_extended4(size_t n, vec_t &v) {
+  template<class vec_t, class fp_t=double> fp_t vector_integ_extended4
+    (size_t n, vec_t &v) {
     if (n==0) {
       O2SCL_ERR2("Tried to integrate zero-length vector in ",
 		     "vector_integ_extended4",exc_einval);
@@ -231,7 +234,7 @@ namespace o2scl {
     } else if (n==3) {
       return (v[0]+4.0*v[1]+v[2])/3.0;
     }
-    double res=(v[0]*5.0+v[1]*13.0+v[n-1]*5.0+v[n-2]*13.0)/12.0;
+    fp_t res=(v[0]*5.0+v[1]*13.0+v[n-1]*5.0+v[n-2]*13.0)/12.0;
     for(size_t i=2;i<n-2;i++) {
       res+=v[i];
     }
@@ -243,7 +246,8 @@ namespace o2scl {
       This function falls back to the equivalent of
       vector_integ_threept() for 3 points.
   */
-  template<class vec_t> double vector_integ_durand(size_t n, vec_t &v) {
+  template<class vec_t, class fp_t=double> fp_t vector_integ_durand
+    (size_t n, vec_t &v) {
     if (n==0) {
       O2SCL_ERR2("Tried to integrate zero-length vector in ",
 		     "vector_integ_durand",exc_einval);
@@ -254,7 +258,7 @@ namespace o2scl {
     } else if (n==3) {
       return (v[0]+4.0*v[1]+v[2])/3.0;
     }
-    double res=(v[0]*4.0+v[1]*11.0+v[n-1]*4.0+v[n-2]*11.0)/10.0;
+    fp_t res=(v[0]*4.0+v[1]*11.0+v[n-1]*4.0+v[n-2]*11.0)/10.0;
     for(size_t i=2;i<n-2;i++) {
       res+=v[i];
     }
@@ -262,13 +266,14 @@ namespace o2scl {
   }
 
   /** \brief Integrate with an extended rule for 8 or more points. 
-
+      
       This function falls back to vector_integ_extended4() 
       for less than 8 points.
   */
-  template<class vec_t> double vector_integ_extended8(size_t n, vec_t &v) {
-    if (n<8) return vector_integ_extended4(n,v);
-    double res=((v[0]+v[n-1])*17.0+(v[1]+v[n-2])*59.0+(v[2]+v[n-3])*43.0+
+  template<class vec_t, class fp_t=double> fp_t vector_integ_extended8
+    (size_t n, vec_t &v) {
+    if (n<8) return vector_integ_extended4<vec_t,fp_t>(n,v);
+    fp_t res=((v[0]+v[n-1])*17.0+(v[1]+v[n-2])*59.0+(v[2]+v[n-3])*43.0+
 		(v[3]+v[n-4])*49.0)/48.0;
     for(size_t i=4;i<n-4;i++) {
       res+=v[i];

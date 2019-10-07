@@ -27,6 +27,11 @@
 using namespace std;
 using namespace o2scl;
 
+#ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#include <boost/multiprecision/float128.hpp>
+#endif
+
 int main(void) {
 
   cout.setf(ios::scientific);
@@ -90,6 +95,28 @@ int main(void) {
   t.test_gen(list.size()==9,"list6");
   o2scl::string_to_uint_list("4,10-11",list);
   t.test_gen(list.size()==3,"list7");
+
+#ifdef O2SCL_LD_TYPES
+  
+  typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+  
+  {
+    double pi=boost::math::constants::pi<double>();
+    cout << dtos(pi,-1) << endl;
+  }
+  /*
+  AWS this appears to require libquadmath
+  typedef boost::multiprecision::float128 float128;
+    {
+    float128 pi=boost::math::constants::pi<float128>();
+    cout << dtos(pi,-1) << endl;
+    }
+  */
+  {
+    cpp_dec_float_50 pi=boost::math::constants::pi<cpp_dec_float_50>();
+    cout << dtos(pi,-1) << endl;
+  }
+#endif
   
   t.report();
   return 0;

@@ -27,6 +27,10 @@
 #include <o2scl/inte_adapt_cern.h>
 #include <o2scl/test_mgr.h>
 
+#ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#endif
+
 using namespace std;
 using namespace o2scl;
 
@@ -48,48 +52,45 @@ long double sin_recip_ld(long double x) {
 
 #ifdef O2SCL_LD_TYPES
 
-/*
-  __float128 testfun_f128(__float128 tx, __float128 &a) {
-  return -cosq(1.0/(tx+a))/(a+tx)/(a+tx);
-  }
-  
-  __float128 sin_recip_f128(__float128 x) {
-  return sinq(1.0/(-x+0.01))*pow(-x+0.01,-2.0);
-  }
-*/
+typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+typedef std::function<cpp_dec_float_50(cpp_dec_float_50)> funct_cdf;
 
 cpp_dec_float_50 testfun_cdf(cpp_dec_float_50 tx, cpp_dec_float_50 &a) {
-  return -cos(1.0/(tx+a))/(a+tx)/(a+tx);
+  cpp_dec_float_50 one=1.0;
+  return -cos(one/(tx+a))/(a+tx)/(a+tx);
 }
 
 cpp_dec_float_50 sin_recip_cdf(cpp_dec_float_50 x) {
-  return sin(1.0/(-x+0.01))*pow(-x+0.01,-2.0);
+  cpp_dec_float_50 one=1;
+  cpp_dec_float_50 hundred=100;
+  return sin(one/(-x+one/hundred))*pow(-x+one/hundred,-one-one);
 }
-
-typedef std::function<__float128(__float128)> funct_f128;
-typedef std::function<cpp_dec_float_50(cpp_dec_float_50)> funct_cdf;
 
 #endif
 
 int main(void) {
   
   test_mgr t;
-  t.set_output_level(2);
+  t.set_output_level(1);
 
   cout.setf(ios::scientific);
   cout.precision(10);
 
+  cout << "Here." << endl;
+  
   {
     double a, calc, exact, diff, ei;
-    inte_adapt_cern<funct> cg;
+    inte_adapt_cern<> cg;
   
     a=0.01;
     funct tf=std::bind(testfun,std::placeholders::_1,a);
 
+    cout << "Here2." << endl;
     cg.integ_err(tf,0.0,1.0,calc,ei);
     exact=sin(1.0/(1.0+a))-sin(1.0/a);
     t.test_rel(calc,exact,1.0e-8,"inte_adapt_cern");
     diff=fabs(calc-exact);
+    cout << "iac, double prec, testfun:\n  ";
     cout << calc << " " << exact << " " << diff << " " << ei << endl;
 
     // This is a nasty function and takes many subdivisions (68)
@@ -97,6 +98,7 @@ int main(void) {
     size_t n=cg.get_nsubdivisions();
     typedef boost::numeric::ublas::vector<double> ubvector;
     ubvector xlo(n), xhi(n), val(n), err(n);
+    cout << "subdivisions: " << endl;
     cg.get_subdivisions(xlo,xhi,val,err);
     for(size_t i=0;i<n;i+=10) {
       cout << xlo[i] << " " << xhi[i] << " ";
@@ -105,10 +107,14 @@ int main(void) {
       cout.unsetf(ios::showpos);
       cout << err[i] << endl;
     }
+    cout << endl;
 
+    cout << "iac, long double double prec, testfun:\n  ";
     long double a_ld=0.01L, calc_ld, ei_ld, diff_ld;
-    inte_adapt_cern<funct_ld,100,long double,
-		    inte_gauss56_coeffs_long_double> cg_ld;
+    inte_adapt_cern<funct_ld,
+		    inte_gauss56_cern<funct_ld,long double,
+				      inte_gauss56_coeffs_long_double>,
+		    100,long double> cg_ld;
     funct_ld tf_ld=std::bind(testfun_ld,std::placeholders::_1,a_ld);
     long double exact_ld=sin(1.0/(1.0+a_ld))-sin(1.0/a_ld);
     cg_ld.integ_err(tf_ld,0.0L,1.0L,calc_ld,ei_ld);
@@ -116,57 +122,111 @@ int main(void) {
     diff_ld=fabs(calc_ld-exact_ld);
     cout << calc_ld << " " << exact_ld << " " << diff_ld << " "
 	 << ei_ld << endl;
+    cout << endl;
   }
 
   {
+    
     double calc, ei, diff;
     // Test qagil_cern with double precision
-
+    
+    cout << "iqc, double prec, sin_recip:\n  ";
     inte_qagil_cern<funct> iqc;
     double exact=1.0-cos(100.0/101.0);
     funct tf2=std::bind(sin_recip,std::placeholders::_1);
     iqc.integ_err(tf2,0.0,-1.0,calc,ei);
     diff=fabs(calc-exact);
     cout << calc << " " << exact << " " << diff << " " << ei << endl;
+    cout << endl;
   
     // Test qagil_cern with long double precision
-    inte_qagil_cern<funct_ld,long double,
-		    inte_gauss56_coeffs_long_double> iqc_ld;
-    long double exact_ld=1.0-cos(100.0/101.0);
+    cout << "iqc, long double prec, sin_recip:\n  ";
+    inte_qagil_cern<funct_ld,
+		    inte_gauss56_cern<funct_ld,long double,
+				      inte_gauss56_coeffs_long_double>,
+		    100,long double> iqc_ld;
+    long double exact_ld=1.0L-cos(100.0L/101.0L);
     funct_ld tf2_ld=std::bind(sin_recip_ld,std::placeholders::_1);
     long double calc_ld, ei_ld;
     iqc_ld.integ_err(tf2_ld,0.0,-1.0,calc_ld,ei_ld);
     long double diff_ld=fabs(calc_ld-exact_ld);
     cout << calc_ld << " " << exact_ld << " "
 	 << diff_ld << " " << ei_ld << endl;
+    cout << endl;
 
 #ifdef O2SCL_LD_TYPES
 
-    // Test qagil_cern with __float128 precision
-    /*
-      inte_qagil_cern<funct_f128,__float128,
-      inte_gauss56_coeffs_float128> iqc_f128;
-      __float128 exact_f128=1.0-cos(100.0/101.0);
-      funct_f128 tf2_f128=std::bind(sin_recip_f128,std::placeholders::_1);
-      __float128 calc_f128, ei_f128;
-      iqc_f128.integ_err(tf2_f128,0.0,-1.0,calc_f128,ei_f128);
-      __float128 diff_f128=fabsl(calc_f128-exact_f128);
-      cout << (long double)calc_f128 << " "
-      << (long double)exact_f128 << " "
-      << (long double)diff_f128 << " "
-      << (long double)ei_f128 << endl;
-    */
+    // Test qagil_cern with double precision
+    cout << "iqc, double newton-cotes, testfun:\n  ";
+    inte_adapt_cern<funct,inte_newton_cotes<funct,double>,
+		    100000,double> iqc_d3;
+    double a_d3=0.01;
+    double exact_d3=sin(1.0/(1.0+a_d3))-sin(1.0/a_d3);
+    funct tf2_d3=std::bind(testfun,std::placeholders::_1,a_d3);
+    double calc_d3, ei_d3;
+    iqc_d3.integ_err(tf2_d3,0.0,1.0,calc_d3,ei_d3);
+    double diff_d3=fabs(calc_d3-exact_d3);
+    cout << calc_d3 << " " << exact_d3 << " "
+	 << diff_d3 << " " << ei_d3 << endl;
+    cout << endl;
+
+    // Test qagil_cern with double precision
+    cout << "iqc, double newton-cotes2, testfun:\n  ";
+    inte_adapt_cern<funct,inte_newton_cotes2<funct,double>,
+		    100000,double> iqc_d4;
+    double a_d4=0.01;
+    double exact_d4=sin(1.0/(1.0+a_d4))-sin(1.0/a_d4);
+    funct tf2_d4=std::bind(testfun,std::placeholders::_1,a_d4);
+    double calc_d4, ei_d4;
+    iqc_d4.integ_err(tf2_d4,0.0,1.0,calc_d4,ei_d4);
+    double diff_d4=fabs(calc_d4-exact_d4);
+    cout << calc_d4 << " " << exact_d4 << " "
+	 << diff_d4 << " " << ei_d4 << endl;
+    cout << endl;
+
+    // Test qagil_cern with double precision
+    cout << "iqc, double newton-cotes_open, testfun:\n  ";
+    inte_adapt_cern<funct,inte_newton_cotes_open<funct,double>,
+		    100000,double> iqc_d5;
+    double a_d5=0.01;
+    double exact_d5=sin(1.0/(1.0+a_d5))-sin(1.0/a_d5);
+    funct tf2_d5=std::bind(testfun,std::placeholders::_1,a_d5);
+    double calc_d5, ei_d5;
+    iqc_d5.integ_err(tf2_d5,0.0,1.0,calc_d5,ei_d5);
+    double diff_d5=fabs(calc_d5-exact_d5);
+    cout << calc_d5 << " " << exact_d5 << " "
+	 << diff_d5 << " " << ei_d5 << endl;
+    cout << endl;
+
+    // Test qagil_cern with double precision
+    cout << "iqc, double newton-cotes, sin_recip:\n  ";
+    inte_qagil_cern<funct,inte_newton_cotes<funct,double>,
+		    1000,double> iqc_d2;
+    double exact_d2=1.0-cos(100.0/101.0);
+    funct tf2_d2=std::bind(sin_recip,std::placeholders::_1);
+    double calc_d2, ei_d2;
+    iqc_d2.verbose=1;
+    iqc_d2.integ_err(tf2_d2,0.0,-1.0,calc_d2,ei_d2);
+    double diff_d2=fabs(calc_d2-exact_d2);
+    cout << calc_d2 << " " << exact_d2 << " "
+	 << diff_d2 << " " << ei_d2 << endl;
+    cout << endl;
 
     // Test qagil_cern with cpp_dec_float_50 precision
-    inte_qagil_cern<funct_cdf,cpp_dec_float_50,
-		    inte_gauss56_coeffs_cpp_dec_float_50> iqc_cdf;
-    cpp_dec_float_50 exact_cdf=1.0-cos(100.0/101.0);
+    cout << "iqc, cdf 50 prec, sin_recip:\n  ";
+    inte_qagil_cern<funct_cdf,
+		    inte_newton_cotes<funct_cdf,cpp_dec_float_50>,
+		    1000,cpp_dec_float_50> iqc_cdf;
+    cpp_dec_float_50 one=1.0;
+    cpp_dec_float_50 hundred=100.0;
+    cpp_dec_float_50 exact_cdf=one-cos(hundred/(hundred+one));
     funct_cdf tf2_cdf=std::bind(sin_recip_cdf,std::placeholders::_1);
     cpp_dec_float_50 calc_cdf, ei_cdf;
-    iqc_cdf.integ_err(tf2_cdf,0.0,-1.0,calc_cdf,ei_cdf);
+    iqc_cdf.integ_err(tf2_cdf,0.0,-one,calc_cdf,ei_cdf);
     cpp_dec_float_50 diff_cdf=fabs(calc_cdf-exact_cdf);
     cout << calc_cdf << " " << exact_cdf << " "
 	 << diff_cdf << " " << ei_cdf << endl;
+    cout << endl;
 
 #endif
   }

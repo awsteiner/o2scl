@@ -128,24 +128,6 @@ size_t o2scl::size_of_exponent(double x) {
   return 0;
 }
   
-string o2scl::dtos(double x, int prec, bool auto_prec) {
-  string ret;
-  ostringstream strout;
-
-  if (prec!=0) {
-    if (!auto_prec) strout.setf(ios::scientific);
-    strout.precision(prec);
-  }
-
-  if (strout << x) {
-    return strout.str();
-  }
-  
-  O2SCL_ERR2("Conversion from double to string failed in ",
-	     "dtos(double,int,bool).",exc_einval);
-  return "";
-}
-
 int o2scl::stoi(string s) {
   return std::stoi(s);
 }

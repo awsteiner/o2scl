@@ -33,6 +33,9 @@
 #include <fstream>
 #include <sstream>
 
+// For numeric_limits for dtos()
+#include <limits>
+
 // For screenify()
 #include <o2scl/misc.h>
 
@@ -70,7 +73,27 @@ namespace o2scl {
       neither the scientific or fixed mode flags are set and the
       number is converted to a string in "automatic" mode.
    */
-  std::string dtos(double x, int prec=6, bool auto_prec=false);
+  template<class fp_t>
+    std::string dtos(const fp_t &x, int prec=6, bool auto_prec=false) {
+    
+    std::ostringstream strout;
+    
+    size_t max=std::numeric_limits<fp_t>::digits10;
+    if (prec<0 || (prec>((int)max) && prec>6)) prec=((int)max);
+    
+    if (prec!=0) {
+      if (!auto_prec) strout.setf(std::ios::scientific);
+      strout.precision(prec);
+    }
+    
+    if (strout << x) {
+      return strout.str();
+    }
+    
+    O2SCL_ERR2("Conversion from floating point value to string failed in ",
+	       "dtos(fp_t,int,bool).",exc_einval);
+    return "";
+  }
 
   /** \brief Returns the number of characters required to display the 
       exponent of \c x in scientific mode
