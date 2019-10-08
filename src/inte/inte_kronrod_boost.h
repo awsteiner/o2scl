@@ -24,8 +24,7 @@
 #define O2SCL_INTE_KRONROD_BOOST_H
 
 /** \file inte_kronrod_boost.h
-    \brief File defining BOOST-based integration coefficients, workspace, 
-    and \ref o2scl::inte_kronrod_boost
+    \brief File defining \ref o2scl::inte_kronrod_boost
 */
 
 #include <cmath>
@@ -56,14 +55,14 @@ namespace o2scl {
    */
   template<class func_t=funct, size_t rule=15, class fp_t=double>
   class inte_kronrod_boost :
-    public inte<func_t> {
+    public inte<func_t,fp_t> {
     
   protected:
 
     /// Maximum depth
     size_t max_depth;
 
-    // L1 norm
+  /// L1 norm
     double L1norm;
     
   public:
