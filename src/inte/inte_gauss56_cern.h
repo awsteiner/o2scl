@@ -155,13 +155,18 @@ namespace o2scl {
   
   };
 
-#ifdef O2SCL_LD_TYPES
+#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
   
   /** \brief Integration weights and abcissas for 
       \ref o2scl::inte_gauss56_cern in long double precision
 
-      \note The long double type doesn't work uniformly across systems
-      and so the accuracy when using these coefficients varies.
+      \note Experimental, and only included if 
+      O2SCL_LD_TYPES is defined during the library configuration.
+
+      \comment
+      Weights and abcissas originally generated using cpp_dec_float_100
+      numbers by AWS using code in ~/wcs/int5/sbox on 10/7/19. 
+      \endcomment
   */
   class inte_gauss56_coeffs_cpp_dec_float_50 {
 
@@ -251,9 +256,6 @@ namespace o2scl {
       This class is based on the CERNLIB routines RGS56P and
       DGS56P which are documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d106/top.html
-
-      \note Currently \o2 supports only types \c double and
-      \c long \c double for the floating point type \c fp_t .
   */
   template<class func_t=funct, class fp_t=double,
     class weights_t=inte_gauss56_coeffs_double>

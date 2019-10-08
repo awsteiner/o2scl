@@ -135,15 +135,18 @@ namespace o2scl {
     
   };
 
-#ifdef O2SCL_LD_TYPES  
+#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
 
   /** \brief Integration weights and abcissas for
-      o2scl::inte_gauss_cern and \ref o2scl::inte_cauchy_cern in
-      cpp_dec_float_50 precision
+      o2scl::inte_gauss_cern and \ref o2scl::inte_cauchy_cern for 
+      the cpp_dec_float_50 type
+
+      \note Experimental, and only included if 
+      O2SCL_LD_TYPES is defined during the library configuration.
 
       \comment
       Weights and abcissas originally generated using cpp_dec_float_100
-      numbers by AWS using code in ~/wcs/int5/sbox on 9/7/19. 
+      numbers by AWS using code in ~/wcs/int5/sbox on 10/7/19. 
       \endcomment
   */
   class inte_gauss_coeffs_cpp_dec_float_50 {

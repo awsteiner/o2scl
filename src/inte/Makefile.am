@@ -7,7 +7,7 @@ INTE_SRCS = inte_kronrod_gsl.cpp
 HEADER_VAR = inte.h inte_multi.h inte_gen.h inte_qng_gsl.h inte_qag_gsl.h \
 	inte_cauchy_cern.h inte_adapt_cern.h \
 	inte_gsl.h inte_gauss56_cern.h inte_gauss_cern.h \
-	inte_kronrod_gsl.h inte_qawc_gsl.h \
+	inte_kronrod_gsl.h inte_qawc_gsl.h inte_kronrod_boost.h \
 	inte_qags_gsl.h inte_qagi_gsl.h inte_qagil_gsl.h inte_qagiu_gsl.h \
 	inte_qawo_gsl.h inte_qawf_gsl.h inte_qaws_gsl.h inte_singular_gsl.h 
 
@@ -15,7 +15,8 @@ TEST_VAR = inte_adapt_cern.scr inte_cauchy_cern.scr inte_gauss_cern.scr \
 	inte_gauss56_cern.scr inte_qawc_gsl.scr \
 	inte_qng_gsl.scr inte_qag_gsl.scr inte_qags_gsl.scr \
 	inte_qagi_gsl.scr inte_qagil_gsl.scr inte_qagiu_gsl.scr \
-	inte_qawo_gsl.scr inte_qawf_gsl.scr inte_qaws_gsl.scr 
+	inte_qawo_gsl.scr inte_qawf_gsl.scr inte_qaws_gsl.scr \
+	inte_kronrod_boost.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -86,7 +87,7 @@ check_PROGRAMS = inte_adapt_cern_ts inte_cauchy_cern_ts inte_gauss_cern_ts \
 	inte_qng_gsl_ts inte_qag_gsl_ts inte_qags_gsl_ts \
 	inte_qagi_gsl_ts inte_qagil_gsl_ts inte_qagiu_gsl_ts \
 	inte_qawo_gsl_ts inte_qawf_gsl_ts inte_gauss56_cern_ts \
-	inte_qawc_gsl_ts inte_qaws_gsl_ts
+	inte_qawc_gsl_ts inte_qaws_gsl_ts inte_kronrod_boost_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -110,6 +111,7 @@ inte_qawo_gsl_ts_LDADD = $(VCHECK_LIBS)
 inte_qawf_gsl_ts_LDADD = $(VCHECK_LIBS)
 inte_qaws_gsl_ts_LDADD = $(VCHECK_LIBS)
 inte_gauss56_cern_ts_LDADD = $(VCHECK_LIBS)
+inte_kronrod_boost_ts_LDADD = $(VCHECK_LIBS)
 
 inte_adapt_cern.scr: inte_adapt_cern_ts$(EXEEXT) 
 	./inte_adapt_cern_ts$(EXEEXT) > inte_adapt_cern.scr
@@ -139,6 +141,8 @@ inte_qaws_gsl.scr: inte_qaws_gsl_ts$(EXEEXT)
 	./inte_qaws_gsl_ts$(EXEEXT) > inte_qaws_gsl.scr
 inte_gauss56_cern.scr: inte_gauss56_cern_ts$(EXEEXT) 
 	./inte_gauss56_cern_ts$(EXEEXT) > inte_gauss56_cern.scr
+inte_kronrod_boost.scr: inte_kronrod_boost_ts$(EXEEXT) 
+	./inte_kronrod_boost_ts$(EXEEXT) > inte_kronrod_boost.scr
 
 inte_adapt_cern_ts_SOURCES = inte_adapt_cern_ts.cpp
 inte_cauchy_cern_ts_SOURCES = inte_cauchy_cern_ts.cpp
@@ -154,6 +158,7 @@ inte_qawo_gsl_ts_SOURCES = inte_qawo_gsl_ts.cpp
 inte_qawf_gsl_ts_SOURCES = inte_qawf_gsl_ts.cpp
 inte_qaws_gsl_ts_SOURCES = inte_qaws_gsl_ts.cpp
 inte_gauss56_cern_ts_SOURCES = inte_gauss56_cern_ts.cpp
+inte_kronrod_boost_ts_SOURCES = inte_kronrod_boost_ts.cpp
 
 # ------------------------------------------------------------
 # Library o2scl_inte

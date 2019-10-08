@@ -216,7 +216,7 @@ namespace o2scl {
       CERNLIB routine, and defaults to 100 here. The default base
       integration object is of type \ref inte_gauss56_cern. This is the
       CERNLIB default, but can be modified by calling set_inte().
-      
+
       This class is based on the CERNLIB routines RADAPT and
       DADAPT which are documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d102/top.html
@@ -461,7 +461,10 @@ namespace o2scl {
     //@}
 
   };
-
+  
+  /** \brief An experimental adaptive integrator from 0 to \$ \infty \f$
+      based on \ref o2scl::inte_adapt_cern
+  */
   template<class func_t=funct, 
 	   class def_inte_t=inte_gauss56_cern<funct,double,
 					      inte_gauss56_coeffs_double>,
