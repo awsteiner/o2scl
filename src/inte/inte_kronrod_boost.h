@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2019 Andrew W. Steiner
+  Copyright (C) 2019, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -63,9 +63,9 @@ namespace o2scl {
     size_t max_depth;
 
   /// L1 norm
-    double L1norm;
-    
-  public:
+  fp_t L1norm;
+  
+    public:
 
     inte_kronrod_boost() {
       max_depth=15;
@@ -73,6 +73,11 @@ namespace o2scl {
   
     virtual ~inte_kronrod_boost() {
     }
+
+  void set_max_depth(size_t md) {
+    max_depth=md;
+    return;
+  }
     
     /** \brief Integrate function \c func from \c a to \c b and place
 	the result in \c res and the error in \c err

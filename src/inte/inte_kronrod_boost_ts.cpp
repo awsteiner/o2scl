@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2019, Jerry Gagelman and Andrew W. Steiner
+  Copyright (C) 2019, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -24,33 +24,94 @@
 #include <o2scl/funct.h>
 #include <o2scl/inte_kronrod_boost.h>
 
+#ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#endif
+
 using namespace std;
 using namespace o2scl;
 
 // This function oscillates quite rapidly near x=0
-double test_func_1(double x) {
+double test_func(double x) {
   return -sin(1.0/(x+0.01))*pow(x+0.01,-2.0);
 }
 
+#ifdef O2SCL_LD_TYPES
+
+long double test_func_ld(long double x) {
+  return -sin(1.0L/(x+0.01L))*pow(x+0.01L,-2.0L);
+}
+
+typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+
+cpp_dec_float_50 test_func_cdf(cpp_dec_float_50 x) {
+  cpp_dec_float_50 one=1;
+  cpp_dec_float_50 hundred=100;
+  return -sin(one/(x+one/hundred))/(x+one/hundred)/(x+one/hundred);
+}
+
+#endif
+
 int main(void) {
+  cout.setf(ios::scientific);
+  
   test_mgr t;
   t.set_output_level(1);
 
-  inte_kronrod_boost<funct,61> ikb;
+  {
+    inte_kronrod_boost<funct,61> ikb;
+    
+    double ans, exact, err;
+    
+    funct tf=test_func;
+    
+    // Compare with the exact result
+    ikb.integ_err(tf,0.0,1.0,ans,err);
+    exact=cos(100.0)-cos(1/1.01);
+    std::cout << ans << " " << err << std::endl;
+    t.test_rel(ans,exact,1.0e-8,"qag test");
+  }
 
-  double ans, exact, err;
+#ifdef O2SCL_LD_TYPES
 
-  cout.setf(ios::scientific);
+  {
+    inte_kronrod_boost<funct_ld,61,long double> ikb;
+    
+    long double ans, exact, err;
+    
+    funct_ld tf=test_func_ld;
+    
+    // Compare with the exact result
+    ikb.tol_rel=1.0e-14;
+    ikb.set_max_depth(15);
+    ikb.integ_err(tf,0.0L,1.0L,ans,err);
+    exact=cos(100.0L)-cos(1.0L/1.01L);
+    std::cout << ans << " " << err << std::endl;
+    t.test_rel<long double>(ans,exact,1.0e-15,"qag test");
+  }
 
-  funct tf2=test_func_1;
+  typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+  
+  {
+    inte_kronrod_boost<funct_cdf50,61,cpp_dec_float_50> ikb;
+    
+    cpp_dec_float_50 ans, exact, err;
+    
+    funct_cdf50 tf=test_func_cdf;
+    
+    // Compare with the exact result
+    ikb.tol_rel=1.0e-30;
+    ikb.set_max_depth(25);
+    cpp_dec_float_50 one=1;
+    cpp_dec_float_50 hundred=100;
+    ikb.integ_err(tf,0.0L,one,ans,err);
+    exact=cos(hundred)-cos(hundred/(hundred+one));
+    std::cout << ans << " " << err << std::endl;
+    //t.test_rel<cpp_dec_float_50>(ans,exact,1.0e-15,"qag test");
+  }
 
-  // Compare with the exact result
-  ikb.integ_err(tf2,0.0,1.0,ans,err);
-  exact=cos(100.0)-cos(1/1.01);
-  std::cout << ans << " " << err << std::endl;
-  t.test_rel(ans,exact,1.0e-8,"qag test");
-
-
+#endif
+  
   t.report();
   return 0;
 }
