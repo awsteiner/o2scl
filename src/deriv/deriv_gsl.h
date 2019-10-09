@@ -175,7 +175,8 @@ namespace o2scl {
       fp_t hh;
       if (h<=0.0) {
 	if (x==0.0) hh=1.0e-4;
-	else hh=1.0e-4*std::abs(x);
+	else if (x<0.0) h=-1.0e-4*x;
+	else hh=1.0e-4*x;
       } else {
 	hh=h;
       }
@@ -203,7 +204,7 @@ namespace o2scl {
 	     using the scaling of the truncation error (O(h^2)) and
 	     rounding error (O(1/h)). */
 	
-	  h_opt=hh*std::pow(round/(two*trunc),one/three);
+	  h_opt=hh*pow(round/(two*trunc),one/three);
 	  cret=central_deriv(x,h_opt,r_opt,round_opt,trunc_opt,func);
 	  if (cret!=0) fail=true;
 	  error_opt=round_opt+trunc_opt;
@@ -212,7 +213,7 @@ namespace o2scl {
 	     is consistent with the error bounds of the original estimate. */
 	
 	  if (fail==false && error_opt < error &&
-	      std::abs(r_opt-r_0) < two*two*error) {
+	      abs(r_opt-r_0) < two*two*error) {
 	    r_0=r_opt;
 	    error=error_opt;
 	  }
@@ -289,26 +290,26 @@ namespace o2scl {
 		  << fp1 << std::endl;
       }
 
-      if (!std::isfinite(fm1) ||
-	  !std::isfinite(fp1) ||
-	  !std::isfinite(fmh) ||
-	  !std::isfinite(fph) ||
-	  (func_max>0.0 && (std::abs(fm1)>func_max ||
-			    std::abs(fp1)>func_max ||
-			    std::abs(fmh)>func_max ||
-			    std::abs(fph)>func_max))) {
+      if (!isfinite(fm1) ||
+	  !isfinite(fp1) ||
+	  !isfinite(fmh) ||
+	  !isfinite(fph) ||
+	  (func_max>0.0 && (abs(fm1)>func_max ||
+			    abs(fp1)>func_max ||
+			    abs(fmh)>func_max ||
+			    abs(fph)>func_max))) {
 	return 1;
       }
 
       fp_t r3=(fp1-fm1)/two;
       fp_t r5=(four/three)*(fph-fmh)-(one/three)*r3;
       
-      fp_t e3=(std::abs(fp1)+std::abs(fm1))*eps;
-      fp_t e5=two*(std::abs(fph)+std::abs(fmh))*eps+e3;
+      fp_t e3=(abs(fp1)+abs(fm1))*eps;
+      fp_t e5=two*(abs(fph)+abs(fmh))*eps+e3;
       
       /* The next term is due to finite precision in x+h=O (eps*x) */
       
-      fp_t dy=std::max(std::abs(r3/hh),std::abs(r5/hh))*std::abs(x/hh)*eps;
+      fp_t dy=std::max(abs(r3/hh),abs(r5/hh))*abs(x/hh)*eps;
       
       /* The truncation error in the r5 approximation itself is O(h^4).
 	 However, for safety, we estimate the error from r5-r3, which is
@@ -318,9 +319,9 @@ namespace o2scl {
       
       result=r5/hh;
       /* Estimated truncation error O(h^2) */
-      abserr_trunc=std::abs((r5-r3)/hh); 
+      abserr_trunc=abs((r5-r3)/hh); 
       /* Rounding error (cancellations) */
-      abserr_round=std::abs(e5/hh)+dy;   
+      abserr_round=abs(e5/hh)+dy;   
       
       if (this->verbose>0) {
 	std::cout << "res: " << result << " trc: " << abserr_trunc 
