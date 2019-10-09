@@ -89,8 +89,63 @@ namespace o2scl {
       rather than in roots/brent.c . Thus, everything looks fine now.
       \endcomment
   */
-  template<class func_t=funct> class root_brent_gsl : 
-  public root_bkt<func_t> {
+  template<class func_t=funct, class fp_t=double> class root_brent_gsl : 
+    public root_bkt<func_t,func_t,fp_t> {
+
+  protected:
+
+    /** \brief Floating point-type agnostic version of
+	\c gsl_root_test_interval() .
+     */
+    int test_interval(fp_t x_lower, fp_t x_upper, fp_t epsabs,
+		      fp_t epsrel) {
+      fp_t abs_lower, abs_upper;
+	
+      if (x_lower<0.0) abs_lower=-x_lower;
+      else abs_lower=x_lower;
+      if (x_upper<0.0) abs_upper=-x_upper;
+      else abs_upper=x_upper;
+      
+      fp_t min_abs, tolerance;
+      if (epsrel<0.0) {
+	O2SCL_ERR2("Relative tolerance is negative in ",
+		   "root_brent_gsl::test_interval().",o2scl::exc_ebadtol);
+      }
+      if (epsabs<0.0) {
+	O2SCL_ERR2("Absolute tolerance is negative in ",
+		   "root_brent_gsl::test_interval().",o2scl::exc_ebadtol);
+      }
+      if (x_lower>x_upper) {
+	O2SCL_ERR2("Lower bound larger than upper bound in ",
+		   "root_brent_gsl::test_interval().",o2scl::exc_einval);
+      }
+
+      if ((x_lower>0.0 && x_upper>0.0) ||
+	  (x_lower<0.0 && x_upper<0.0)) {
+	if (abs_lower<abs_upper) min_abs=abs_lower;
+	else min_abs=abs_upper;
+      } else {
+	min_abs=0;
+      }
+
+      tolerance=epsabs+epsrel*min_abs;
+
+      // AWS: I could combine this if statement but this form ensures
+      // success in case floating point problems imply that
+      // x_lower<x_upper and x_lower>=x_upper are both false.
+      
+      if (x_lower<x_upper) {
+	if (x_upper-x_lower<tolerance) {
+	  return o2scl::success;
+	}
+      } else {
+	if (x_lower-x_upper<tolerance) {
+	  return o2scl::success;
+	}
+      }
+      
+      return o2scl::gsl_continue;
+    }
     
   public:
 
@@ -107,7 +162,7 @@ namespace o2scl {
   */
   int iterate(func_t &f) {
       
-    double tol, m;
+    fp_t tol, m, two=2;
 	
     int ac_equal=0;
 	
@@ -129,8 +184,8 @@ namespace o2scl {
       fc=fa;
     }
     
-    tol=0.5*fabs(b)*std::numeric_limits<double>::epsilon();
-    m=0.5*(c-b);
+    tol=fabs(b)*std::numeric_limits<fp_t>::epsilon()/two;
+    m=(c-b)/two;
   
     if (fb == 0) {
       root=b;
@@ -160,8 +215,8 @@ namespace o2scl {
     } else {
 
       // [GSL] Use inverse cubic interpolation 
-      double p, q, r;   
-      double s=fb/fa;
+      fp_t p, q, r;   
+      fp_t s=fb/fa;
     
       if (ac_equal) {
 	p=2*m*s;
@@ -178,7 +233,7 @@ namespace o2scl {
       } else {
 	p=-p;
       }
-      double dtmp;
+      fp_t dtmp;
       if (3*m*q-fabs(tol*q)<fabs(e*q)) dtmp=3*m*q-fabs(tol*q);
       else dtmp=fabs(e*q);
       if (2*p<dtmp) {
@@ -222,7 +277,7 @@ namespace o2scl {
   }
       
   /// Solve \c func in region \f$ x_1<x<x_2 \f$ returning \f$ x_1 \f$.
-  virtual int solve_bkt(double &x1, double x2, func_t &f) {
+  virtual int solve_bkt(fp_t &x1, fp_t x2, func_t &f) {
 	
     int status, iter=0;
 
@@ -238,11 +293,11 @@ namespace o2scl {
       
 	iter++;
 	iterate(f);
-	status=gsl_root_test_interval(x_lower,x_upper,
-				      this->tol_abs,this->tol_rel);
+	status=test_interval(x_lower,x_upper,
+			     this->tol_abs,this->tol_rel);
       
 	if (this->verbose>0) {
-	  double y;
+	  fp_t y;
 
 	  y=f(root);
 	    
@@ -261,7 +316,7 @@ namespace o2scl {
 	iter++;
 	iterate(f);
 
-	double y=f(root);
+	fp_t y=f(root);
 
 	if (fabs(y)<this->tol_rel) status=o2scl::success;
       
@@ -281,11 +336,11 @@ namespace o2scl {
       
 	iter++;
 	iterate(f);
-	status=gsl_root_test_interval(x_lower,x_upper,
+	status=test_interval(x_lower,x_upper,
 				      this->tol_abs,this->tol_rel);
       
 	if (status==o2scl::success) {
-	  double y=f(root);
+	  fp_t y=f(root);
 	  if (fabs(y)>=this->tol_rel) status=gsl_continue;
 	  if (this->verbose>0) {
 	    this->print_iter(root,y,iter,fabs(y),this->tol_rel,
@@ -293,7 +348,7 @@ namespace o2scl {
 	  }
 	} else {
 	  if (this->verbose>0) {
-	    double y=f(root);
+	    fp_t y=f(root);
 	    this->print_iter(root,y,iter,fabs(x_upper-x_lower),this->tol_abs,
 			     "root_brent_gsl (abs)");
 	  }
@@ -321,31 +376,32 @@ namespace o2scl {
   int test_form;
      
   /// Get the most recent value of the root
-  double get_root() { return root; }
+  fp_t get_root() { return root; }
       
   /// Get the lower limit
-  double get_lower() { return x_lower; }
+  fp_t get_lower() { return x_lower; }
       
   /// Get the upper limit
-  double get_upper() { return x_upper; }
+  fp_t get_upper() { return x_upper; }
     
   /** \brief Set the information for the solver
 
       This function currently always returns \ref success.
   */
-  int set(func_t &ff, double lower, double upper) {
+  int set(func_t &ff, fp_t lower, fp_t upper) {
       
     if (lower > upper) {
-      double tmp=lower;
+      fp_t tmp=lower;
       lower=upper;
       upper=tmp;
     }
 	
     x_lower=lower;
     x_upper=upper;
-    root=0.5*(lower+upper);
+    fp_t two=2;
+    root=(lower+upper)/two;
   
-    double f_lower, f_upper;
+    fp_t f_lower, f_upper;
     
     f_lower=ff(x_lower);
     f_upper=ff(x_upper);
@@ -378,16 +434,16 @@ namespace o2scl {
   protected:
       
   /// The present solution estimate
-  double root;
+  fp_t root;
   /// The present lower limit
-  double x_lower;
+  fp_t x_lower;
   /// The present upper limit
-  double x_upper;
+  fp_t x_upper;
 
   /// \name Storage for solver state
   //@{
-  double a, b, c, d, e;
-  double fa, fb, fc;
+  fp_t a, b, c, d, e;
+  fp_t fa, fb, fc;
   //@}
       
 #endif

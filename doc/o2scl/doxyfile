@@ -884,6 +884,7 @@ INPUT                  = . \
                          examples.dox \
                          team.dox \
                          design.dox \
+			 multip.dox \
                          license.dox \
                          ack.dox \
                          refs.dox \

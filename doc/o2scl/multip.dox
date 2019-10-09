@@ -1,0 +1,12 @@
+/** \page multip_section Multiprecision
+
+    There are a few \o2 classes and functions which allow \c long \c
+    double and/or <tt>boost::multiprecision</tt> floating types. These
+    currently include \ref o2scl::dtos(), \ref o2scl::root_brent_gsl,
+    \ref o2scl::deriv_gsl, \ref
+    o2scl::inte_gauss56_cern, \ref o2scl::inte_gauss_cern, \ref
+    o2scl::inte_adapt_cern, \ref o2scl::inte_kronrod_boost, and \ref
+    o2scl::inte_tanh_sinh_boost . The associated tests 
+    are not included unless <tt>O2SCL_LD_TYPES</tt> is defined during
+    the library configuration. 
+*/

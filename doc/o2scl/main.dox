@@ -80,6 +80,7 @@
     - \subpage algebraic_section
     - \subpage gslcheb_section
     - \subpage unitconv_section
+    - \subpage multip_section
     - \subpage hdf_section
     - \subpage acol_section
     - \subpage o2scl_python_section

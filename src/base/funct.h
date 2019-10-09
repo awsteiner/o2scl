@@ -50,11 +50,17 @@ namespace o2scl {
   /// One-dimensional function typedef in src/base/funct.h
   typedef std::function<long double(long double)> funct_ld;
 
-#ifdef O2SCL_LD_TYPES
-  /// One-dimensional function typedef in src/base/funct.h
+#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
+  
+  /** \brief One-dimensional function typedef in src/base/funct.h
+      
+      This typedef is only present if O2SCL_LD_TYPES is
+      defined during compilation.
+   */
   typedef std::function<boost::multiprecision::cpp_dec_float_50
 			(boost::multiprecision::cpp_dec_float_50)>
   funct_cdf50;
+  
 #endif
   
   /** \brief One-dimensional function from a string

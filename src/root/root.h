@@ -44,7 +44,8 @@ namespace o2scl {
       \future Maybe consider allowing the user to specify
       the stream to which 'verbose' information is sent.
   */
-  template<class func_t=funct, class dfunc_t=func_t> class root {
+  template<class func_t=funct, class dfunc_t=func_t, class fp_t=double>
+  class root {
     
   public:
   
@@ -62,12 +63,12 @@ namespace o2scl {
   /** \brief The maximum value of the functions for success 
       (default \f$ 10^{-8} \f$ )
   */
-  double tol_rel;
+  fp_t tol_rel;
       
   /** \brief The minimum allowable stepsize 
       (default \f$ 10^{-12} \f$ )
   */
-  double tol_abs;
+  fp_t tol_abs;
     
   /// Output control (default 0)
   int verbose;
@@ -96,8 +97,8 @@ namespace o2scl {
       verbose>=2 then each iteration waits for a character before
       continuing.
   */
-  virtual int print_iter(double x, double y, int iter, double value=0.0,
-			 double limit=0.0, std::string comment="") {
+  virtual int print_iter(fp_t x, fp_t y, int iter, fp_t value=0.0,
+			 fp_t limit=0.0, std::string comment="") {
     if (verbose<=0) return success;
 	
     char ch;
@@ -121,29 +122,28 @@ namespace o2scl {
     
   /** \brief Solve \c func using \c x as an initial guess
   */
-  virtual int solve(double &x, func_t &func)=0;
+  virtual int solve(fp_t &x, func_t &func)=0;
 
   /** \brief Solve \c func in region \f$ x_1<x<x_2 \f$  
       returning \f$ x_1 \f$ .
   */
-  virtual int solve_bkt(double &x1, double x2, func_t &func) {
+  virtual int solve_bkt(fp_t &x1, fp_t x2, func_t &func) {
     return solve(x1,func);
   }
 
   /** \brief Solve \c func using \c x as an initial
       guess using derivatives \c df.
   */
-  virtual int solve_de(double &x, func_t &func, dfunc_t &df) {
+  virtual int solve_de(fp_t &x, func_t &func, dfunc_t &df) {
     return solve(x,func);
   }
 
   };
 
   /** \brief One-dimensional bracketing solver [abstract base]
-      
   */
-  template<class func_t=funct, class dfunc_t=func_t> class root_bkt :
-  public root<func_t,dfunc_t> {
+  template<class func_t=funct, class dfunc_t=func_t, class fp_t=double>
+  class root_bkt : public root<func_t,dfunc_t,fp_t> {
 
   public:
 
@@ -161,12 +161,12 @@ namespace o2scl {
       If this is less than or equal to zero, then 
       \f$ 10^{-4} \f$, will be used.
   */
-  double bracket_step;
+  fp_t bracket_step;
 
   /** \brief The minimum stepsize for automatic bracketing
       (default zero)
   */
-  double bracket_min;
+  fp_t bracket_min;
 
   /// The number of iterations in attempt to bracket root (default 10)
   size_t bracket_iters;
@@ -177,7 +177,7 @@ namespace o2scl {
   /** \brief Solve \c func in region \f$ x_1<x<x_2 \f$  
       returning \f$ x_1 \f$ .
   */
-  virtual int solve_bkt(double &x1, double x2, func_t &func)=0; 
+  virtual int solve_bkt(fp_t &x1, fp_t x2, func_t &func)=0; 
     
   /** \brief Solve \c func using \c x as an initial guess
 
@@ -189,10 +189,10 @@ namespace o2scl {
       \future Return early if the bracketing procedure finds a root
       early?
    */
-  virtual int solve(double &x, func_t &func) {
+  virtual int solve(fp_t &x, func_t &func) {
 
     // Internal version of bracket step
-    double bstep_int;
+    fp_t bstep_int;
 
     // Set value of bstep_int
     if (bracket_step<=0.0) {
@@ -205,7 +205,7 @@ namespace o2scl {
       if (bstep_int<=0.0) bstep_int=bracket_step;
     }
     
-    double x2=0.0, df, fx, fx2;
+    fp_t x2=0.0, df, fx, fx2;
     size_t i=0;
     bool done=false;
 
@@ -233,11 +233,12 @@ namespace o2scl {
       // If the stepsize made the function not finite or the
       // derivative zero, adjust accordingly
       size_t j=0;
-      double step_phase1=bstep_int;
+      fp_t two=2;
+      fp_t step_phase1=bstep_int;
       while ((!std::isfinite(fx2) || df==0.0) && j<bracket_iters*2) {
 	// Alternate between flipping the sign and making it smaller
-	if (j%2==0) step_phase1*=-1.0;
-	else step_phase1/=2.0;
+	if (j%2==0) step_phase1=-step_phase1;
+	else step_phase1/=two;
 	x2=x+step_phase1;
 	fx2=func(x2);
 	df=(fx2-fx)/step_phase1;
@@ -270,7 +271,7 @@ namespace o2scl {
       // -----------------------------------------------------------
       // Phase 2: Create a new value which may provide a bracket
       
-      double step_phase2=2.0;
+      fp_t step_phase2=two;
       x2=x-step_phase2*fx/df;
       fx2=func(x2);
       if (this->verbose>0) {
@@ -281,7 +282,7 @@ namespace o2scl {
       // Adjust if the function value is not finite
       size_t k=0;
       while (!std::isfinite(fx2) && k<bracket_iters) {
-	step_phase2/=2.0;
+	step_phase2/=two;
 	x2=x-step_phase2*fx/df;
 	fx2=func(x2);
 	k++;
@@ -316,7 +317,7 @@ namespace o2scl {
       } else {
 	// The step didn't cause a sign flip. Update 'x' to move
 	// closer to the purported root. 
-	x=(x2+x)/2.0;
+	x=(x2+x)/two;
       }
 
       // Continue for the next bracketing iteration
@@ -340,9 +341,9 @@ namespace o2scl {
   /** \brief Solve \c func using \c x as an initial
       guess using derivatives \c df.
   */
-  virtual int solve_de(double &x, func_t &func, dfunc_t &df) {
+  virtual int solve_de(fp_t &x, func_t &func, dfunc_t &df) {
 
-    double x2=0.0, dx, fx, fx2;
+    fp_t x2=0, dx, fx, fx2, two=2;
     int i=0;
     bool done=false;
 	
@@ -352,14 +353,14 @@ namespace o2scl {
       fx=func(x);
       dx=df(x);
 	  
-      x2=x-2.0*fx/dx;
+      x2=x-two*fx/dx;
 	  
       fx2=func(x2);
 	    
       if (fx*fx2<0.0) {
 	done=true;
       } else {
-	x=(x2+x)/2.0;
+	x=(x2+x)/two;
       }
       i++;
     }
@@ -382,8 +383,8 @@ namespace o2scl {
       \future Implement the functions solve() and solve_bkt() 
       for derivative solvers.
   */
-  template<class func_t=funct, class dfunc_t=func_t> 
-    class root_de : public root<func_t> {
+  template<class func_t=funct, class dfunc_t=func_t, class fp_t=double> 
+  class root_de : public root<func_t,dfunc_t,fp_t> {
     
   public:
   
@@ -398,14 +399,14 @@ namespace o2scl {
   /** \brief Solve \c func in region \f$ x_1<x<x_2 \f$  
       returning \f$ x_1 \f$ .
   */
-  virtual int solve_bkt(double &x1, double x2, func_t &func) {
+  virtual int solve_bkt(fp_t &x1, fp_t x2, func_t &func) {
     O2SCL_ERR("Function solve_bkt() not implemented.",exc_eunimpl);
     return 0;
   }
 
   /** \brief Solve \c func using \c x as an initial guess
   */
-  virtual int solve(double &x, func_t &func) {
+  virtual int solve(fp_t &x, func_t &func) {
     O2SCL_ERR("Function solve() not implemented.",exc_eunimpl);
     return 0;
   }
@@ -413,7 +414,7 @@ namespace o2scl {
   /** \brief Solve \c func using \c x as an initial
       guess using derivatives \c df.
   */
-  virtual int solve_de(double &x, func_t &func, dfunc_t &df)=0;
+  virtual int solve_de(fp_t &x, func_t &func, dfunc_t &df)=0;
 
   };
   

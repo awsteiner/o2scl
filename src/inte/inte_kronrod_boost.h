@@ -29,7 +29,9 @@
 
 #include <cmath>
 
+#ifdef O2SCL_LD_TYPES
 #include <boost/math/quadrature/gauss_kronrod.hpp>
+#endif
 
 #include <o2scl/inte.h>
 

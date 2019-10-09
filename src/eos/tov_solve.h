@@ -238,7 +238,7 @@ namespace o2scl {
       solve for each central pressure. 
 
       The differential equation for \f$ \bar{\omega} \f$ (see the
-      section in the User's Guide called \ref tovtoc ) is independent
+      section in the User's Guide called \ref momitoc ) is independent
       of the relative scale for \f$ \bar{\omega} \f$ and \f$ j \f$ .
       (Note that \f$ j \f$ is a metric function not simply related to
       the angular momentum, \f$ J \f$ .) First, one rescales \f$
