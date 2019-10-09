@@ -50,7 +50,6 @@ int main(void) {
   std::cout << ans << " " << err << std::endl;
   t.test_rel(ans,exact,1.0e-8,"qag test");
 
-
   t.report();
   return 0;
 }

@@ -149,6 +149,8 @@ int main(void) {
 	     inte_gauss56_cern<funct_cdf50,cpp_dec_float_50,
 			       inte_gauss56_coeffs_cpp_dec_float_50>,10000>
       (t,tf_cdf,1.0e-30,"iac, cpp_dec_float_50, testfun",diff_cdf);
+    t.test_abs_boost<cpp_dec_float_50>(diff_cdf,0.0,1.0e-29,
+				       "inte_adapt_cern_cdf");
 
 #endif
     
@@ -166,6 +168,7 @@ int main(void) {
     iqc.integ_err(tf2,0.0,-1.0,calc,ei);
     diff=fabs(calc-exact);
     cout << calc << " " << exact << " " << diff << " " << ei << endl;
+    t.test_rel<double>(calc,exact,1.0e-12,"iqc double");
     cout << endl;
   
 #ifdef O2SCL_LD_TYPES
@@ -185,6 +188,7 @@ int main(void) {
     long double diff_ld=fabs(calc_ld-exact_ld);
     cout << calc_ld << " " << exact_ld << " "
 	 << diff_ld << " " << ei_ld << endl;
+    t.test_rel<double>(calc_ld,exact_ld,1.0e-15,"iqc double");
     cout << endl;
     
     // Test qagil_cern with cpp_dec_float_50 precision
@@ -204,9 +208,12 @@ int main(void) {
     cpp_dec_float_50 diff_cdf=fabs(calc_cdf-exact_cdf);
     cout << calc_cdf << " " << exact_cdf << " "
 	 << diff_cdf << " " << ei_cdf << endl;
+    t.test_rel_boost<cpp_dec_float_50>(calc_cdf,exact_cdf,1.0e-29,
+				       "iqc cpp_dec_float_50");
     cout << endl;
 
 #endif
+    
   }
   
   t.report();

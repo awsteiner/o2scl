@@ -99,7 +99,7 @@ int main(void) {
     
     calc=cg_ld.integ(tf2,0.0,1.0);
     exact=boost::math::constants::pi<long double>();
-    t.test_rel<long double>(calc,exact,1.0e-16L,"inte_gauss_cern ld");
+    t.test_rel<long double>(calc,exact,1.0e-20L,"inte_gauss_cern ld");
     diff=fabs(calc-exact);
     cout << calc << " " << exact << " " << diff << endl;
   }
@@ -107,8 +107,8 @@ int main(void) {
   {
     inte_gauss_cern<funct_cdf50,cpp_dec_float_50,
 		    inte_gauss_coeffs_cpp_dec_float_50> cg_cdf;
-    cg_cdf.tol_rel=1.0e-20;
-    cg_cdf.tol_abs=1.0e-20;
+    cg_cdf.tol_rel=1.0e-30;
+    cg_cdf.tol_abs=1.0e-30;
     cpp_dec_float_50 a=3.0, calc, exact, diff;
 
     funct_cdf50 tf2=testfun2_cdf;
@@ -116,7 +116,7 @@ int main(void) {
     calc=cg_cdf.integ(tf2,0.0,1.0);
     exact=boost::math::constants::pi<cpp_dec_float_50>();
     t.test_rel_boost<cpp_dec_float_50>(calc,exact,
-				       1.0e-16L,"inte_gauss_cern ld");
+				       1.0e-30,"inte_gauss_cern ld");
     diff=fabs(calc-exact);
     cout << calc << " " << exact << " " << diff << endl;
   }

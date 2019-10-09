@@ -107,7 +107,7 @@ int main(void) {
     ikb.integ_err(tf,0.0L,one,ans,err);
     exact=cos(hundred)-cos(hundred/(hundred+one));
     std::cout << ans << " " << err << std::endl;
-    //t.test_rel<cpp_dec_float_50>(ans,exact,1.0e-15,"qag test");
+    t.test_rel_boost<cpp_dec_float_50>(ans,exact,1.0e-30,"qag test");
   }
 
 #endif
