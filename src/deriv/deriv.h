@@ -81,6 +81,8 @@ namespace o2scl {
     /// Avoids infinite loops in case the user calls the base class version
     bool from_deriv;
 
+    typedef std::function<fp_t(fp_t)> internal_func_t;
+    
 #endif
 
   public:
@@ -115,10 +117,10 @@ namespace o2scl {
      */
     virtual fp_t deriv2(fp_t x, func_t &func) {
       fp_t val;
-
-      funct mf=
-      std::bind(std::mem_fn<fp_t(fp_t,func_t *)>(&deriv_base::derivfun),
-		this,std::placeholders::_1,&func);
+      
+      internal_func_t mf=
+	std::bind(std::mem_fn<fp_t(fp_t,func_t *)>(&deriv_base::derivfun),
+		  this,std::placeholders::_1,&func);
       
       val=deriv_int(x,mf);
       // The error estimate is unavailable, so we set it to zero 
@@ -131,7 +133,7 @@ namespace o2scl {
     virtual fp_t deriv3(fp_t x, func_t &func) {
       fp_t val;
 
-      funct mf=
+      internal_func_t mf=
       std::bind(std::mem_fn<fp_t(fp_t,func_t *)>(&deriv_base::derivfun2),
 		this,std::placeholders::_1,&func);
 
@@ -162,7 +164,7 @@ namespace o2scl {
     */
     virtual int deriv2_err(fp_t x, func_t &func, 
 			  fp_t &d2fdx2, fp_t &err) {
-      funct mf=
+      internal_func_t mf=
       std::bind(std::mem_fn<fp_t(fp_t,func_t *)>(&deriv_base::derivfun),
 		this,std::placeholders::_1,&func);
 
@@ -177,7 +179,7 @@ namespace o2scl {
     */
     virtual int deriv3_err(fp_t x, func_t &func, 
 			  fp_t &d3fdx3, fp_t &err) {
-      funct mf=
+      internal_func_t mf=
       std::bind(std::mem_fn<fp_t(fp_t,func_t *)>(&deriv_base::derivfun2),
 		this,std::placeholders::_1,&func);
       
@@ -203,7 +205,7 @@ namespace o2scl {
 	This is an internal version of deriv() which is used in
 	computing second and third derivatives
     */
-    virtual fp_t deriv_int(fp_t x, funct &func) {
+    virtual fp_t deriv_int(fp_t x, internal_func_t &func) {
       fp_t dx;
       from_deriv=true;
       deriv_err_int(x,func,dx,derr);
@@ -217,7 +219,7 @@ namespace o2scl {
 	This is an internal version of deriv_err() which is used in
 	computing second and third derivatives
     */
-    virtual int deriv_err_int(fp_t x, funct &func, 
+    virtual int deriv_err_int(fp_t x, internal_func_t &func, 
 			      fp_t &dfdx, fp_t &err)=0;
     
     /// The uncertainity in the most recent derivative computation
@@ -230,7 +232,7 @@ namespace o2scl {
     
     /// The function for the third derivative
     fp_t derivfun2(fp_t x, func_t *fp) {
-      funct mf=
+      internal_func_t mf=
 	std::bind(std::mem_fn<fp_t(fp_t,func_t *)>(&deriv_base::derivfun),
 		  this,std::placeholders::_1,fp);
       fp_t val=deriv_int(x,mf);

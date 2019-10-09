@@ -29,7 +29,9 @@
 
 #include <cmath>
 
+#ifndef O2SCL_OLDER_COMPILER
 #include <boost/math/quadrature/tanh_sinh.hpp>
+#endif
 
 #include <o2scl/inte.h>
 

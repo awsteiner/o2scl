@@ -27,6 +27,10 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/deriv_gsl.h>
 
+#ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#endif
+
 using namespace std;
 using namespace o2scl;
 
@@ -41,6 +45,16 @@ double testfun2(double x) {
 long double testfun_ld(long double x) {
   return std::sin(x);
 }
+
+#ifdef O2SCL_LD_TYPES
+
+typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+
+cpp_dec_float_50 testfun_cdf(cpp_dec_float_50 x) {
+  return sin(x);
+}
+
+#endif
 
 class tempc {
 public:
@@ -97,6 +111,8 @@ int main(void) {
   t.test_rel(res,1.0/2.0/std::sqrt(1.0e-6),1.0e-7,"first, non-finite");
   cout << endl;
 
+#ifdef O2SCL_LD_TYPES
+  
   // Try a long double derivative
   deriv_gsl<funct_ld,long double> de_ld;
   funct_ld tf_ld=testfun_ld;
@@ -107,6 +123,22 @@ int main(void) {
   cout << ld_res << " " << de.get_err() 
        << " " << std::cos(0.5L) << endl;
   t.test_rel(ld_res,std::cos(0.5L),4.0e-14L,"simple derivative");
+  
+  deriv_gsl<funct_cdf50,cpp_dec_float_50> de_cdf;
+  funct_cdf50 tf_cdf=testfun_cdf;
+  cpp_dec_float_50 cdf_res;
+  cpp_dec_float_50 one=1;
+  cpp_dec_float_50 two=2;
+  cpp_dec_float_50 half=one/two;
+
+  cdf_res=de_cdf.deriv(half,tf_cdf);
+  cout << "First derivative: " << endl;
+  cout << cdf_res << " " << de.get_err() 
+       << " " << cos(half) << endl;
+  t.test_rel_boost<cpp_dec_float_50>(cdf_res,cos(half),
+				     4.0e-20,"simple derivative");
+  
+#endif
   
   t.report();
   return 0;

@@ -125,206 +125,214 @@ namespace o2scl {
     
   public:
   
-  deriv_gsl() {
-    h=0.0;
-    h_opt=0.0;
-    func_max=-1.0;
-  }
+    deriv_gsl() {
+      h=0.0;
+      h_opt=0.0;
+      func_max=-1.0;
+    }
 
-  virtual ~deriv_gsl() {}
+    virtual ~deriv_gsl() {}
     
-  /** \brief Initial stepsize 
+    /** \brief Initial stepsize 
 	
-      This should be specified before a call to deriv() or
-      deriv_err(). If it is less than or equal to zero, then \f$ x
-      10^{-4} \f$ will used, or if \c x is zero, then \f$ 10^{-4} \f$
-      will be used.
-  */
-  fp_t h;
+	This should be specified before a call to deriv() or
+	deriv_err(). If it is less than or equal to zero, then \f$ x
+	10^{-4} \f$ will used, or if \c x is zero, then \f$ 10^{-4} \f$
+	will be used.
+    */
+    fp_t h;
 
-  /** \brief Maximum absolute value of function, or 
-      a negative value for no maximum (default -1)
-  */
-  fp_t func_max;
+    /** \brief Maximum absolute value of function, or 
+	a negative value for no maximum (default -1)
+    */
+    fp_t func_max;
 
-  /** \brief The last value of the optimized stepsize
+    /** \brief The last value of the optimized stepsize
 
-      This is initialized to zero in the constructor and set by
-      deriv_err() to the most recent value of the optimized stepsize.
-  */
-  fp_t h_opt;
+	This is initialized to zero in the constructor and set by
+	deriv_err() to the most recent value of the optimized stepsize.
+    */
+    fp_t h_opt;
   
-  /** \brief Calculate the first derivative of \c func  w.r.t. x and 
-      uncertainty
-  */
-  virtual int deriv_err(fp_t x, func_t &func, fp_t &dfdx, fp_t &err) {
-    return deriv_tlate<func_t>(x,func,dfdx,err);
-  }
+    /** \brief Calculate the first derivative of \c func  w.r.t. x and 
+	uncertainty
+    */
+    virtual int deriv_err(fp_t x, func_t &func, fp_t &dfdx, fp_t &err) {
+      return deriv_tlate<func_t>(x,func,dfdx,err);
+    }
 
-  /// Return string denoting type ("deriv_gsl")
-  virtual const char *type() { return "deriv_gsl"; }
+    /// Return string denoting type ("deriv_gsl")
+    virtual const char *type() { return "deriv_gsl"; }
 
 #ifndef DOXYGEN_INTERNAL
 
   protected:
 
-  /** \brief Internal template version of the derivative function
-   */
-  template<class func2_t> int deriv_tlate(fp_t x, func2_t &func, 
-					  fp_t &dfdx, fp_t &err) {
-    fp_t hh;
-    if (h<=0.0) {
-      if (x==0.0) hh=1.0e-4;
-      else hh=1.0e-4*std::abs(x);
-    } else {
-      hh=h;
-    }
+    /** \brief Internal template version of the derivative function
+     */
+    template<class func2_t> int deriv_tlate(fp_t x, func2_t &func, 
+					    fp_t &dfdx, fp_t &err) {
+      fp_t hh;
+      if (h<=0.0) {
+	if (x==0.0) hh=1.0e-4;
+	else hh=1.0e-4*std::abs(x);
+      } else {
+	hh=h;
+      }
 
-    fp_t r_0, round, trunc, error;
+      fp_t r_0, round, trunc, error;
+      // Ensure all floating-point constants are initialized by
+      // integers
+      fp_t one=1, two=2, three=3, ten=10;
       
-    size_t it_count=0;
-    bool fail=true;
-    while (fail && it_count<20) {
+      size_t it_count=0;
+      bool fail=true;
+      while (fail && it_count<20) {
       
-      fail=false;
+	fail=false;
       
-      int cret=central_deriv(x,hh,r_0,round,trunc,func);
-      if (cret!=0) fail=true;
-
-      error=round+trunc;
-      
-      if (fail==false && round < trunc && (round > 0 && trunc > 0)) {
-	fp_t r_opt, round_opt, trunc_opt, error_opt;
-	
-	/* Compute an optimised stepsize to minimize the total error,
-	   using the scaling of the truncation error (O(h^2)) and
-	   rounding error (O(1/h)). */
-	
-	h_opt=hh*std::pow(round/(2.0*trunc),1.0/3.0);
-	cret=central_deriv(x,h_opt,r_opt,round_opt,trunc_opt,func);
+	int cret=central_deriv(x,hh,r_0,round,trunc,func);
 	if (cret!=0) fail=true;
-	error_opt=round_opt+trunc_opt;
+
+	error=round+trunc;
+      
+	if (fail==false && round < trunc && (round > 0 && trunc > 0)) {
+	  fp_t r_opt, round_opt, trunc_opt, error_opt;
 	
-	/* Check that the new error is smaller, and that the new derivative
-	   is consistent with the error bounds of the original estimate. */
+	  /* Compute an optimised stepsize to minimize the total error,
+	     using the scaling of the truncation error (O(h^2)) and
+	     rounding error (O(1/h)). */
 	
-	if (fail==false && error_opt < error &&
-	    std::abs(r_opt-r_0) < 4.0*error) {
-	  r_0=r_opt;
-	  error=error_opt;
+	  h_opt=hh*std::pow(round/(two*trunc),one/three);
+	  cret=central_deriv(x,h_opt,r_opt,round_opt,trunc_opt,func);
+	  if (cret!=0) fail=true;
+	  error_opt=round_opt+trunc_opt;
+	
+	  /* Check that the new error is smaller, and that the new derivative
+	     is consistent with the error bounds of the original estimate. */
+	
+	  if (fail==false && error_opt < error &&
+	      std::abs(r_opt-r_0) < two*two*error) {
+	    r_0=r_opt;
+	    error=error_opt;
+	  }
+	}
+
+	it_count++;
+	if (fail==true) {
+	  hh/=ten;
+	  if (this->verbose>0) {
+	    std::cout << "Function deriv_gsl::deriv_tlate out of range. "
+		      << "Decreasing step." << std::endl;
+	  }
 	}
       }
 
-      it_count++;
-      if (fail==true) {
-	hh/=10.0;
-	if (this->verbose>0) {
-	  std::cout << "Function deriv_gsl::deriv_tlate out of range. "
-		    << "Decreasing step." << std::endl;
+      if (fail==true || it_count>=20) {
+	if (this->err_nonconv) {
+	  O2SCL_ERR2("Failed to find finite derivative in ",
+		     "deriv_gsl::deriv_tlate<>.",o2scl::exc_efailed);
 	}
+	return o2scl::exc_efailed;
       }
-    }
-
-    if (fail==true || it_count>=20) {
-      if (this->err_nonconv) {
-	O2SCL_ERR2("Failed to find finite derivative in ",
-		   "deriv_gsl::deriv_tlate<>.",o2scl::exc_efailed);
-      }
-      return o2scl::exc_efailed;
-    }
       
-    dfdx=r_0;
-    err=error;
+      dfdx=r_0;
+      err=error;
       
-    return 0;
-  }
+      return 0;
+    }
   
-  /** \brief Internal version of calc_err() for second
-      and third derivatives
-  */
-  virtual int deriv_err_int
-  (fp_t x, funct &func, fp_t &dfdx, fp_t &err) {
-    return deriv_tlate<>(x,func,dfdx,err);
-  }
-    
-  /** \brief Compute derivative using 5-point rule
-	
-      Compute the derivative using the 5-point rule (x-h, x-h/2, x,
-      x+h/2, x+h) and the error using the difference between the
-      5-point and the 3-point rule (x-h,x,x+h). Note that the
-      central point is not used for either.
-
-      This must be a class template because it is used by
-      both deriv_err() and deriv_err_int().
-  */
-  template<class func2_t> 
-  int central_deriv(fp_t x, fp_t hh, fp_t &result, 
-		    fp_t &abserr_round, fp_t &abserr_trunc, 
-		    func2_t &func) {
-      
-    fp_t fm1, fp1, fmh, fph;
-
-    fp_t eps=std::numeric_limits<fp_t>::epsilon();
-      
-    fm1=func(x-hh);
-    fp1=func(x+hh);
-
-    fmh=func(x-hh/2.0);
-    fph=func(x+hh/2.0);
-
-    if (this->verbose>0) {
-      std::cout << "deriv_gsl: " << std::endl;
-      std::cout << "step: " << hh << std::endl;
-      std::cout << "abscissas: " << x-hh/2.0 << " " << x-hh << " " 
-		<< x+hh/2.0 << " " << x+hh << std::endl;
-      std::cout << "ordinates: " << fm1 << " " << fmh << " " << fph << " " 
-		<< fp1 << std::endl;
-    }
-
-    if (!std::isfinite(fm1) ||
-	!std::isfinite(fp1) ||
-	!std::isfinite(fmh) ||
-	!std::isfinite(fph) ||
-	(func_max>0.0 && (std::abs(fm1)>func_max ||
-			  std::abs(fp1)>func_max ||
-			  std::abs(fmh)>func_max ||
-			  std::abs(fph)>func_max))) {
-      return 1;
-    }
-
-    fp_t r3=0.5*(fp1-fm1);
-    fp_t r5=(4.0/3.0)*(fph-fmh)-(1.0/3.0)*r3;
-      
-    fp_t e3=(std::abs(fp1)+std::abs(fm1))*eps;
-    fp_t e5=2.0*(std::abs(fph)+std::abs(fmh))*eps+e3;
-      
-    /* The next term is due to finite precision in x+h=O (eps*x) */
-      
-    fp_t dy=std::max(std::abs(r3/hh),std::abs(r5/hh))*std::abs(x/hh)*eps;
-      
-    /* The truncation error in the r5 approximation itself is O(h^4).
-       However, for safety, we estimate the error from r5-r3, which is
-       O(h^2).  By scaling h we will minimise this estimated error, not
-       the actual truncation error in r5. 
+    /** \brief Internal version of calc_err() for second
+	and third derivatives
     */
-      
-    result=r5/hh;
-    /* Estimated truncation error O(h^2) */
-    abserr_trunc=std::abs((r5-r3)/hh); 
-    /* Rounding error (cancellations) */
-    abserr_round=std::abs(e5/hh)+dy;   
-      
-    if (this->verbose>0) {
-      std::cout << "res: " << result << " trc: " << abserr_trunc 
-		<< " rnd: " << abserr_round << std::endl;
-      if (this->verbose>1) {
-	char ch;
-	std::cin >> ch;
-      }
+    virtual int deriv_err_int
+    (fp_t x, typename deriv_base<func_t,fp_t>::internal_func_t &func,
+     fp_t &dfdx, fp_t &err) {
+      return deriv_tlate<>(x,func,dfdx,err);
     }
+    
+    /** \brief Compute derivative using 5-point rule
+	
+	Compute the derivative using the 5-point rule (x-h, x-h/2, x,
+	x+h/2, x+h) and the error using the difference between the
+	5-point and the 3-point rule (x-h,x,x+h). Note that the
+	central point is not used for either.
+
+	This must be a class template because it is used by
+	both deriv_err() and deriv_err_int().
+    */
+    template<class func2_t> 
+    int central_deriv(fp_t x, fp_t hh, fp_t &result, 
+		      fp_t &abserr_round, fp_t &abserr_trunc, 
+		      func2_t &func) {
       
-    return 0;
-  }
+      fp_t fm1, fp1, fmh, fph;
+    
+      // Ensure all floating-point constants are initialized by
+      // integers
+      fp_t two=2, three=3, four=4, one=1;
+
+      fp_t eps=std::numeric_limits<fp_t>::epsilon();
+      
+      fm1=func(x-hh);
+      fp1=func(x+hh);
+
+      fmh=func(x-hh/two);
+      fph=func(x+hh/two);
+
+      if (this->verbose>0) {
+	std::cout << "deriv_gsl: " << std::endl;
+	std::cout << "step: " << hh << std::endl;
+	std::cout << "abscissas: " << x-hh/two << " " << x-hh << " " 
+		  << x+hh/two << " " << x+hh << std::endl;
+	std::cout << "ordinates: " << fm1 << " " << fmh << " " << fph << " " 
+		  << fp1 << std::endl;
+      }
+
+      if (!std::isfinite(fm1) ||
+	  !std::isfinite(fp1) ||
+	  !std::isfinite(fmh) ||
+	  !std::isfinite(fph) ||
+	  (func_max>0.0 && (std::abs(fm1)>func_max ||
+			    std::abs(fp1)>func_max ||
+			    std::abs(fmh)>func_max ||
+			    std::abs(fph)>func_max))) {
+	return 1;
+      }
+
+      fp_t r3=(fp1-fm1)/two;
+      fp_t r5=(four/three)*(fph-fmh)-(one/three)*r3;
+      
+      fp_t e3=(std::abs(fp1)+std::abs(fm1))*eps;
+      fp_t e5=two*(std::abs(fph)+std::abs(fmh))*eps+e3;
+      
+      /* The next term is due to finite precision in x+h=O (eps*x) */
+      
+      fp_t dy=std::max(std::abs(r3/hh),std::abs(r5/hh))*std::abs(x/hh)*eps;
+      
+      /* The truncation error in the r5 approximation itself is O(h^4).
+	 However, for safety, we estimate the error from r5-r3, which is
+	 O(h^2).  By scaling h we will minimise this estimated error, not
+	 the actual truncation error in r5. 
+      */
+      
+      result=r5/hh;
+      /* Estimated truncation error O(h^2) */
+      abserr_trunc=std::abs((r5-r3)/hh); 
+      /* Rounding error (cancellations) */
+      abserr_round=std::abs(e5/hh)+dy;   
+      
+      if (this->verbose>0) {
+	std::cout << "res: " << result << " trc: " << abserr_trunc 
+		  << " rnd: " << abserr_round << std::endl;
+	if (this->verbose>1) {
+	  char ch;
+	  std::cin >> ch;
+	}
+      }
+      
+      return 0;
+    }
     
 #endif
 
