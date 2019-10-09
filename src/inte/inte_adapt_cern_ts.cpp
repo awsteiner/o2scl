@@ -47,7 +47,7 @@ double sin_recip(double x) {
 }
 
 long double sin_recip_ld(long double x) {
-  return sin(1.0/(-x+0.01))*pow(-x+0.01,-2.0);
+  return sin(1.0L/(-x+0.01L))*pow(-x+0.01L,-2.0L);
 }
 
 #ifdef O2SCL_LD_TYPES
@@ -128,12 +128,9 @@ int main(void) {
       (t,tf,1.0e-8,"iac, double, testfun",diff,true);
     t.test_abs<double>(diff,0.0,1.0e-7,"inte_adapt_cern");
 
-    test_iac<funct,double,
-	     inte_newton_cotes_open<funct,double>,1000>
-      (t,tf,1.0e-8,"iac, NCO, double, testfun",diff);
-    t.test_abs<double>(diff,0.0,1.0e-7,"inte_adapt_cern");
-
 #ifdef O2SCL_LD_TYPES
+    
+    cout << "iac, long double, testfun:\n  ";
     
     long double a_ld=0.01L, diff_ld;
     funct_ld tf_ld=std::bind(testfun_ld,std::placeholders::_1,a_ld);
@@ -142,13 +139,8 @@ int main(void) {
 			       inte_gauss56_coeffs_long_double>,1000>
       (t,tf_ld,1.0e-15,"iac, long double, testfun",diff_ld);
     t.test_abs<long double>(diff_ld,0.0,1.0e-14,"inte_adapt_cern_ld");
-    
-    test_iac<funct_ld,long double,
-	     inte_newton_cotes_open<funct_ld,long double>,10000>
-      (t,tf_ld,1.0e-15,"iac, NCO, long double, testfun",diff_ld);
-    t.test_abs<long double>(diff_ld,0.0,1.0e-14,"inte_adapt_cern_ld");
-    
-    cout << "iac, cpp_dec_float_50 prec, testfun:\n  ";
+
+    cout << "iac, cpp_dec_float_50, testfun:\n  ";
     cpp_dec_float_50 one=1.0, diff_cdf;
     cpp_dec_float_50 hundred=100.0;
     cpp_dec_float_50 a_cdf=one/hundred;
@@ -158,16 +150,11 @@ int main(void) {
 			       inte_gauss56_coeffs_cpp_dec_float_50>,10000>
       (t,tf_cdf,1.0e-30,"iac, cpp_dec_float_50, testfun",diff_cdf);
 
-    // AWS 10/8/19: this segfaults I don't know why yet
-    //test_iac<funct_cdf50,cpp_dec_float_50,
-    //inte_newton_cotes_open<funct_cdf50,cpp_dec_float_50>,100000>
-    //(t,tf_cdf,1.0e-30,"iac, NCO, cpp_dec_float_50, testfun",diff_cdf);
-    
 #endif
     
   }
 
-  if (false) {
+  if (true) {
     
     double calc, ei, diff;
     // Test qagil_cern with double precision
@@ -181,6 +168,8 @@ int main(void) {
     cout << calc << " " << exact << " " << diff << " " << ei << endl;
     cout << endl;
   
+#ifdef O2SCL_LD_TYPES
+
     // Test qagil_cern with long double precision
     cout << "iqc, long double prec, sin_recip:\n  ";
     inte_qagil_cern<funct_ld,
@@ -190,80 +179,27 @@ int main(void) {
     long double exact_ld=1.0L-cos(100.0L/101.0L);
     funct_ld tf2_ld=std::bind(sin_recip_ld,std::placeholders::_1);
     long double calc_ld, ei_ld;
+    iqc_ld.def_inte.tol_rel=1.0e-15;
+    iqc_ld.def_inte.tol_abs=1.0e-15;
     iqc_ld.integ_err(tf2_ld,0.0,-1.0,calc_ld,ei_ld);
     long double diff_ld=fabs(calc_ld-exact_ld);
     cout << calc_ld << " " << exact_ld << " "
 	 << diff_ld << " " << ei_ld << endl;
     cout << endl;
-
-#ifdef O2SCL_LD_TYPES
-
-    // Test qagil_cern with double precision
-    cout << "iqc, double newton-cotes, testfun:\n  ";
-    inte_adapt_cern<funct,inte_newton_cotes<funct,double>,
-		    100000,double> iqc_d3;
-    double a_d3=0.01;
-    double exact_d3=sin(1.0/(1.0+a_d3))-sin(1.0/a_d3);
-    funct tf2_d3=std::bind(testfun,std::placeholders::_1,a_d3);
-    double calc_d3, ei_d3;
-    iqc_d3.integ_err(tf2_d3,0.0,1.0,calc_d3,ei_d3);
-    double diff_d3=fabs(calc_d3-exact_d3);
-    cout << calc_d3 << " " << exact_d3 << " "
-	 << diff_d3 << " " << ei_d3 << endl;
-    cout << endl;
-
-    // Test qagil_cern with double precision
-    cout << "iqc, double newton-cotes2, testfun:\n  ";
-    inte_adapt_cern<funct,inte_newton_cotes2<funct,double>,
-		    100000,double> iqc_d4;
-    double a_d4=0.01;
-    double exact_d4=sin(1.0/(1.0+a_d4))-sin(1.0/a_d4);
-    funct tf2_d4=std::bind(testfun,std::placeholders::_1,a_d4);
-    double calc_d4, ei_d4;
-    iqc_d4.integ_err(tf2_d4,0.0,1.0,calc_d4,ei_d4);
-    double diff_d4=fabs(calc_d4-exact_d4);
-    cout << calc_d4 << " " << exact_d4 << " "
-	 << diff_d4 << " " << ei_d4 << endl;
-    cout << endl;
-
-    // Test qagil_cern with double precision
-    cout << "iqc, double newton-cotes_open, testfun:\n  ";
-    inte_adapt_cern<funct,inte_newton_cotes_open<funct,double>,
-		    100000,double> iqc_d5;
-    double a_d5=0.01;
-    double exact_d5=sin(1.0/(1.0+a_d5))-sin(1.0/a_d5);
-    funct tf2_d5=std::bind(testfun,std::placeholders::_1,a_d5);
-    double calc_d5, ei_d5;
-    iqc_d5.integ_err(tf2_d5,0.0,1.0,calc_d5,ei_d5);
-    double diff_d5=fabs(calc_d5-exact_d5);
-    cout << calc_d5 << " " << exact_d5 << " "
-	 << diff_d5 << " " << ei_d5 << endl;
-    cout << endl;
-
-    // Test qagil_cern with double precision
-    cout << "iqc, double newton-cotes, sin_recip:\n  ";
-    inte_qagil_cern<funct,inte_newton_cotes<funct,double>,
-		    1000,double> iqc_d2;
-    double exact_d2=1.0-cos(100.0/101.0);
-    funct tf2_d2=std::bind(sin_recip,std::placeholders::_1);
-    double calc_d2, ei_d2;
-    iqc_d2.verbose=1;
-    iqc_d2.integ_err(tf2_d2,0.0,-1.0,calc_d2,ei_d2);
-    double diff_d2=fabs(calc_d2-exact_d2);
-    cout << calc_d2 << " " << exact_d2 << " "
-	 << diff_d2 << " " << ei_d2 << endl;
-    cout << endl;
-
+    
     // Test qagil_cern with cpp_dec_float_50 precision
     cout << "iqc, cdf 50 prec, sin_recip:\n  ";
     inte_qagil_cern<funct_cdf,
-		    inte_newton_cotes<funct_cdf,cpp_dec_float_50>,
+		    inte_gauss56_cern<funct_cdf50,cpp_dec_float_50,
+				      inte_gauss56_coeffs_cpp_dec_float_50>,
 		    1000,cpp_dec_float_50> iqc_cdf;
     cpp_dec_float_50 one=1.0;
     cpp_dec_float_50 hundred=100.0;
     cpp_dec_float_50 exact_cdf=one-cos(hundred/(hundred+one));
     funct_cdf tf2_cdf=std::bind(sin_recip_cdf,std::placeholders::_1);
     cpp_dec_float_50 calc_cdf, ei_cdf;
+    iqc_cdf.def_inte.tol_rel=1.0e-30;
+    iqc_cdf.def_inte.tol_abs=1.0e-30;
     iqc_cdf.integ_err(tf2_cdf,0.0,-one,calc_cdf,ei_cdf);
     cpp_dec_float_50 diff_cdf=fabs(calc_cdf-exact_cdf);
     cout << calc_cdf << " " << exact_cdf << " "

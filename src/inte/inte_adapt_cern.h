@@ -35,6 +35,11 @@
 namespace o2scl {
 #endif
 
+#ifdef O2SCL_NEVER_DEFINED
+
+  // AWS 10/8/19: I think these are unnecessary now, so I'm
+  // removing them with the new ifdef given above.
+  
   /** \brief A simple precision-agnostic Newton-Cotes integrator 
 
       \note Experimental.
@@ -190,6 +195,8 @@ namespace o2scl {
   }
   
   };
+  
+#endif
   
   /** \brief Adaptive integration (CERNLIB)
     

@@ -29,6 +29,10 @@
 
 #include <string>
 
+#ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/number.hpp>
+#endif
+
 #include <o2scl/string_conv.h>
 #include <o2scl/misc.h>
 #include <o2scl/table_units.h>
@@ -124,8 +128,8 @@ namespace o2scl {
 	<\mathrm{abs\_error}\f$
     */
     template<class data_t=double>
-    bool test_abs(data_t result, data_t expected, data_t abs_error,
-		  std::string description) {
+      bool test_abs(data_t result, data_t expected, data_t abs_error,
+		    std::string description) {
       bool ret;
       if (std::isnan(expected)) {
 	ret=(std::isnan(expected)==std::isnan(result));
@@ -134,7 +138,7 @@ namespace o2scl {
       } else if (std::isinf(expected)) {
 	ret=(std::isinf(expected)==std::isinf(result));
 	description=dtos<data_t>(result)+" vs. "+ dtos<data_t>(expected)+
-	  "\n "+description;
+	"\n "+description;
       } else {
 	ret=(std::abs(expected-result)<abs_error);
 	if (ret) {
@@ -145,10 +149,10 @@ namespace o2scl {
 	    "\n "+description;
 	} else {
 	  description=dtos<data_t>(result)+" vs. "+
-	    dtos<data_t>(expected)+" : "
-	    +dtos<data_t>(std::abs(expected-result))+" > "+
-	    dtos<data_t>(abs_error)+
-	    "\n "+description;
+	  dtos<data_t>(expected)+" : "
+	  +dtos<data_t>(std::abs(expected-result))+" > "+
+	  dtos<data_t>(abs_error)+
+	  "\n "+description;
 	}
       }
   
@@ -161,8 +165,8 @@ namespace o2scl {
 	\mathrm{expected}<\mathrm{rel\_error}\f$
     */
     template<class data_t=double>
-    bool test_rel(data_t result, data_t expected, data_t rel_error,
-		  std::string description) {
+      bool test_rel(data_t result, data_t expected, data_t rel_error,
+		    std::string description) {
       bool ret;
       if (std::isnan(expected)) {
 	ret=(std::isnan(expected)==std::isnan(result));
@@ -171,7 +175,7 @@ namespace o2scl {
       } else if (std::isinf(expected)) {
 	ret=(std::isinf(expected)==std::isinf(result));
 	description=dtos<data_t>(result)+" vs. "+ dtos<data_t>(expected)+
-	  "\n "+description;
+	"\n "+description;
       } else if (expected==0.0) {
 	ret=test_abs<data_t>(result,expected,rel_error,description);
 	return ret;
@@ -184,8 +188,8 @@ namespace o2scl {
 	    " < "+dtos<data_t>(rel_error)+"\n "+description;
 	} else {
 	  description=dtos<data_t>(result)+" vs. "+dtos<data_t>(expected)+
-	    " : "+dtos<data_t>(obs_err)+
-	    " > "+dtos<data_t>(rel_error)+"\n "+description;
+	  " : "+dtos<data_t>(obs_err)+
+	  " > "+dtos<data_t>(rel_error)+"\n "+description;
 	}
       }
       
@@ -193,12 +197,99 @@ namespace o2scl {
       return ret;
     }
     
+#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
+    
+    /** \brief Testing functions for \c boost::multiprecision numbers
+
+	This function is similar to \ref test_abs(), but replaces 
+	\c isnan and related functions with boost versions from
+	\c boost::multiprecision::number .
+     */
+    template<class data_t=double>
+      bool test_abs_boost(data_t result, data_t expected, data_t abs_error,
+			  std::string description) {
+      bool ret;
+      if (boost::multiprecision::isnan(expected)) {
+	ret=(boost::multiprecision::isnan(expected)==
+	     boost::multiprecision::isnan(result));
+	description=dtos<data_t>(result)+" vs. "+ dtos<data_t>(expected)+
+	  "\n "+description;
+      } else if (boost::multiprecision::isinf(expected)) {
+	ret=(boost::multiprecision::isinf(expected)==
+	     boost::multiprecision::isinf(result));
+	description=dtos<data_t>(result)+" vs. "+ dtos<data_t>(expected)+
+	"\n "+description;
+      } else {
+	ret=(boost::multiprecision::abs(expected-result)<abs_error);
+	if (ret) {
+	  description=dtos<data_t>(result)+" vs. "+
+	    dtos<data_t>(expected)+" : "
+	    +dtos<data_t>(boost::multiprecision::abs(expected-result))+" < "+
+	    dtos<data_t>(abs_error)+
+	    "\n "+description;
+	} else {
+	  description=dtos<data_t>(result)+" vs. "+
+	  dtos<data_t>(expected)+" : "
+	  +dtos<data_t>(boost::multiprecision::abs(expected-result))+" > "+
+	  dtos<data_t>(abs_error)+
+	  "\n "+description;
+	}
+      }
+  
+      process_test(ret,"absolute",description);
+
+      return ret;
+    }
+
+    /** \brief Testing functions for \c boost::multiprecision numbers
+
+	This function is similar to \ref test_abs(), but replaces 
+	\c isnan and related functions with boost versions from
+	\c boost::multiprecision::number .
+    */
+    template<class data_t=double>
+      bool test_rel_boost(data_t result, data_t expected, data_t rel_error,
+			  std::string description) {
+      bool ret;
+      if (boost::multiprecision::isnan(expected)) {
+	ret=(boost::multiprecision::isnan(expected)==
+	     boost::multiprecision::isnan(result));
+	description=dtos<data_t>(result)+" vs. "+ dtos<data_t>(expected)+
+	  "\n "+description;
+      } else if (boost::multiprecision::isinf(expected)) {
+	ret=(boost::multiprecision::isinf(expected)==
+	     boost::multiprecision::isinf(result));
+	description=dtos<data_t>(result)+" vs. "+ dtos<data_t>(expected)+
+	"\n "+description;
+      } else if (expected==0.0) {
+	ret=test_abs_boost<data_t>(result,expected,rel_error,description);
+	return ret;
+      } else {
+	double obs_err=boost::multiprecision::abs(expected-result)/boost::multiprecision::abs(expected);
+	ret=(obs_err<rel_error);
+	if (ret) {
+	  description=dtos<data_t>(result)+" vs. "+dtos<data_t>(expected)+
+	    " : "+dtos<data_t>(obs_err)+
+	    " < "+dtos<data_t>(rel_error)+"\n "+description;
+	} else {
+	  description=dtos<data_t>(result)+" vs. "+dtos<data_t>(expected)+
+	  " : "+dtos<data_t>(obs_err)+
+	  " > "+dtos<data_t>(rel_error)+"\n "+description;
+	}
+      }
+      
+      process_test(ret,"relative",description);
+      return ret;
+    }
+    
+#endif
+
     /** \brief  Test for \f$1/\mathrm{factor} < \mathrm{result/expected} 
 	< \mathrm{factor}\f$
     */
     template<class data_t>
-    bool test_fact(data_t result, data_t expected, data_t factor,
-		   std::string description) {
+      bool test_fact(data_t result, data_t expected, data_t factor,
+		     std::string description) {
       bool ret;
       double ratio;
       if (std::isnan(expected)) {
@@ -232,8 +323,8 @@ namespace o2scl {
 	of an array
     */
     template<class vec_t, class vec2_t, class data_t>
-    bool test_rel_vec(int nv, const vec_t &result, const vec2_t &expected, 
-		      data_t rel_error, std::string description) {
+      bool test_rel_vec(int nv, const vec_t &result, const vec2_t &expected, 
+			data_t rel_error, std::string description) {
       bool ret=true;
       double max=0.0;
       int i;
@@ -269,8 +360,8 @@ namespace o2scl {
 	of an array
     */
     template<class vec_t, class vec2_t, class data_t>
-    bool test_abs_vec(int nv, const vec_t &result, const vec2_t &expected, 
-		      data_t abs_error, std::string description) {
+      bool test_abs_vec(int nv, const vec_t &result, const vec2_t &expected, 
+			data_t abs_error, std::string description) {
       bool ret=true;
       int i;
   
@@ -294,8 +385,8 @@ namespace o2scl {
 	over each element of an array
     */
     template<class vec_t, class vec2_t, class data_t>
-    bool test_fact_vec(int nv, const vec_t &result, const vec2_t &expected, 
-		       data_t factor, std::string description) {
+      bool test_fact_vec(int nv, const vec_t &result, const vec2_t &expected, 
+			 data_t factor, std::string description) {
       bool ret=true;
       int i;
       double ratio;
@@ -319,8 +410,8 @@ namespace o2scl {
     
     /// Test for equality of a generic array
     template<class vec_t>
-    bool test_gen_vec(int nv, const vec_t &result, const vec_t &expected, 
-		      std::string description) {
+      bool test_gen_vec(int nv, const vec_t &result, const vec_t &expected, 
+			std::string description) {
       bool ret=true;
       int i;
       
@@ -342,9 +433,9 @@ namespace o2scl {
 	in a matrix
     */
     template<class mat_t, class mat2_t, class data_t>
-    bool test_rel_mat(int nr, int nc, const mat_t &result, 
-		      const mat2_t &expected, 
-		      data_t rel_error, std::string description) {
+      bool test_rel_mat(int nr, int nc, const mat_t &result, 
+			const mat2_t &expected, 
+			data_t rel_error, std::string description) {
       bool ret=true;
       double max=0.0;
       int i, j;
@@ -388,10 +479,10 @@ namespace o2scl {
 	in a matrix larger than a specified tolerance
     */
     template<class mat_t, class mat2_t, class data_t>
-    bool test_rel_nonzero_mat(int nr, int nc, const mat_t &result, 
-			      const mat2_t &expected, 
-			      data_t error, data_t zero_tol,
-			      std::string description) {
+      bool test_rel_nonzero_mat(int nr, int nc, const mat_t &result, 
+				const mat2_t &expected, 
+				data_t error, data_t zero_tol,
+				std::string description) {
       bool ret=true;
       double max=0.0;
       int i, j;
@@ -434,9 +525,9 @@ namespace o2scl {
 	\mathrm{abs\_error} \f$ over each element in a matrix
     */
     template<class mat_t, class mat2_t, class data_t>
-    bool test_abs_mat(int nr, int nc, const mat_t &result, 
-		      const mat2_t &expected, data_t abs_error, 
-		      std::string description) {
+      bool test_abs_mat(int nr, int nc, const mat_t &result, 
+			const mat2_t &expected, data_t abs_error, 
+			std::string description) {
 			
       bool ret=true;
       double max=0.0;
@@ -484,10 +575,10 @@ namespace o2scl {
 	comparison.
     */
     template<class vec_t, class data_t>
-    bool test_rel_nonzero_table(const table_units<vec_t> &result,
-				const table_units<vec_t> &expected,
-				data_t error, data_t zero_tol,
-				std::string description) {
+      bool test_rel_nonzero_table(const table_units<vec_t> &result,
+				  const table_units<vec_t> &expected,
+				  data_t error, data_t zero_tol,
+				  std::string description) {
       bool ret=true;
       int i, j;
       int nr=result.get_nlines();
