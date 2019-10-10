@@ -141,6 +141,11 @@ namespace o2scl {
   };
 
   /** \brief One-dimensional bracketing solver [abstract base]
+
+      \comment 
+      I avoid abs() because of the confusion suggested by 
+      https://stackoverflow.com/questions/21392627/abs-vs-stdabs-what-does-the-reference-say
+      \endcomment
   */
   template<class func_t=funct, class dfunc_t=func_t, class fp_t=double>
   class root_bkt : public root<func_t,dfunc_t,fp_t> {
@@ -196,11 +201,13 @@ namespace o2scl {
 
     // Set value of bstep_int
     if (bracket_step<=0.0) {
-      bstep_int=fabs(x)*1.0e-4;
+      bstep_int=x*1.0e-4;
+      if (bstep_int<0.0) bstep_int=-bstep_int;
       if (bstep_int<bracket_min) bstep_int=bracket_min;
       if (bstep_int<=0.0) bstep_int=1.0e-4;
     } else {
-      bstep_int=fabs(x)*bracket_step;
+      bstep_int=x*bracket_step;
+      if (bstep_int<0.0) bstep_int=-bstep_int;
       if (bstep_int<bracket_min) bstep_int=bracket_min;
       if (bstep_int<=0.0) bstep_int=bracket_step;
     }

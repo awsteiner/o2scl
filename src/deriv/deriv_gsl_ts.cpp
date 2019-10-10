@@ -137,7 +137,7 @@ int main(void) {
        << " " << cos(half) << endl;
   t.test_rel_boost<cpp_dec_float_50>(cdf_res,cos(half),
 				     4.0e-20,"simple derivative");
-  
+
 #endif
   
   t.report();
