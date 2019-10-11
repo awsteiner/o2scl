@@ -42,22 +42,22 @@ int o2scl_python_test(int x) {
   return x*x;
 }
 
-float o2scl::o2abs(const float &x) {
+float o2scl::o2abs(const float x) {
   return fabsf(x);
 }
 
-double o2scl::o2abs(const double &x) {
+double o2scl::o2abs(const double x) {
   return fabs(x);
 }
 
-long double o2scl::o2abs(const long double &x) {
+long double o2scl::o2abs(const long double x) {
   return fabsl(x);
 }
 
 #ifdef O2SCL_LD_TYPES
 
 boost::multiprecision::cpp_dec_float_50
-o2abs(const boost::multiprecision::cpp_dec_float_50 &x) {
+o2scl::o2abs(const boost::multiprecision::cpp_dec_float_50 x) {
   return boost::multiprecision::abs(x);
 }
   

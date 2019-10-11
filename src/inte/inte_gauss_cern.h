@@ -26,6 +26,7 @@
 #ifndef O2SCL_CERN_GAUSS_H
 #define O2SCL_CERN_GAUSS_H
 
+#include <o2scl/misc.h>
 #include <o2scl/inte.h>
  
 #ifdef O2SCL_LD_TYPES
@@ -351,7 +352,7 @@ namespace o2scl {
       loop=false;
       loop2=false;
 
-      if (o2scl::o2abs(s12-c2*s8)<this->tol_rel*
+      if (o2scl::o2abs(s16-c2*s8)<this->tol_rel*
 	  (1.0+o2scl::o2abs(s16))) {
 	h+=s16;
 	if (bb!=b) loop=true;

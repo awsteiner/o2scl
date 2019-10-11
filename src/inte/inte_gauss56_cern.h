@@ -30,6 +30,7 @@
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #endif
 
+#include <o2scl/misc.h>
 #include <o2scl/inte.h>
 #include <o2scl/funct.h>
 

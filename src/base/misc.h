@@ -66,22 +66,22 @@ namespace o2scl {
   //@{
   /** \brief Absolute value for single precision numbers
    */
-  float o2abs(const float &x);
+  float o2abs(const float x);
   
   /** \brief Absolute value for double precision numbers
    */
-  double o2abs(const double &x);
+  double o2abs(const double x);
   
   /** \brief Absolute value for long double
    */
-  long double o2abs(const long double &x);
+  long double o2abs(const long double x);
 
 #if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
   
   /** \brief Absolute value for cpp_dec_float_50
    */
   boost::multiprecision::cpp_dec_float_50
-    o2abs(const boost::multiprecision::cpp_dec_float_50 &x);
+    o2abs(const boost::multiprecision::cpp_dec_float_50 x);
   
 #endif
   
