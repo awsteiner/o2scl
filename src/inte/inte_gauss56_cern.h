@@ -294,14 +294,7 @@ namespace o2scl {
     ytmp=func(a+rang*x6[5]);
     e6+=w6[5]*ytmp;
     res=(e6+e5)*rang/2.0;
-    // AWS 10/7/19: On Ubuntu I have trouble with fabs() compiling
-    // for boost::multiprecision numbers, so we do the absolute
-    // value manually.
-    if (e6-e5<0.0) {
-      err=(e5-e6)*rang;
-    } else {
-      err=(e6-e5)*rang;
-    }
+    err=o2scl::o2abs(e5-e6)*rang;
 
     return success;
   }

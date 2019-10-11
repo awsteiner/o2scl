@@ -174,7 +174,7 @@ namespace o2scl {
       e=b-a;
     }
   
-    if (fabs(fc) < fabs(fb)) {
+    if (o2scl::o2abs(fc) < o2scl::o2abs(fb)) {
       ac_equal=1;
       a=b;
       b=c;
@@ -184,7 +184,7 @@ namespace o2scl {
       fc=fa;
     }
     
-    tol=fabs(b)*std::numeric_limits<fp_t>::epsilon()/two;
+    tol=o2scl::o2abs(b)*std::numeric_limits<fp_t>::epsilon()/two;
     m=(c-b)/two;
   
     if (fb == 0) {
@@ -194,7 +194,7 @@ namespace o2scl {
     
       return o2scl::success;
     }
-    if (fabs(m) <= tol) {
+    if (o2scl::o2abs(m) <= tol) {
       root=b;
     
       if (b < c) {
@@ -208,7 +208,7 @@ namespace o2scl {
       return o2scl::success;
     }
   
-    if (fabs(e) < tol || fabs(fa) <= fabs(fb)) {
+    if (o2scl::o2abs(e) < tol || o2scl::o2abs(fa) <= o2scl::o2abs(fb)) {
       // [GSL] Use bisection 
       d=m;            
       e=m;
@@ -234,8 +234,8 @@ namespace o2scl {
 	p=-p;
       }
       fp_t dtmp;
-      if (3*m*q-fabs(tol*q)<fabs(e*q)) dtmp=3*m*q-fabs(tol*q);
-      else dtmp=fabs(e*q);
+      if (3*m*q-o2scl::o2abs(tol*q)<o2scl::o2abs(e*q)) dtmp=3*m*q-o2scl::o2abs(tol*q);
+      else dtmp=o2scl::o2abs(e*q);
       if (2*p<dtmp) {
 	e=d;
 	d=p/q;
@@ -249,7 +249,7 @@ namespace o2scl {
     a=b;
     fa=fb;
   
-    if (fabs(d) > tol) {
+    if (o2scl::o2abs(d) > tol) {
       b+=d;
     } else {
       b+=(m > 0 ? +tol : -tol);
@@ -301,8 +301,8 @@ namespace o2scl {
 
 	  y=f(root);
 	    
-	  this->print_iter(root,y,iter,fabs(x_upper-x_lower),this->tol_abs,
-			   "root_brent_gsl (abs)");
+	  this->print_iter(root,y,iter,o2scl::o2abs(x_upper-x_lower),
+			   this->tol_abs,"root_brent_gsl (abs)");
 	}
       }
 	
@@ -318,10 +318,10 @@ namespace o2scl {
 
 	fp_t y=f(root);
 
-	if (fabs(y)<this->tol_rel) status=o2scl::success;
+	if (o2scl::o2abs(y)<this->tol_rel) status=o2scl::success;
       
 	if (this->verbose>0) {
-	  this->print_iter(root,y,iter,fabs(y),this->tol_rel,
+	  this->print_iter(root,y,iter,o2scl::o2abs(y),this->tol_rel,
 			   "root_brent_gsl (rel)");
 	}
       }
@@ -341,16 +341,16 @@ namespace o2scl {
       
 	if (status==o2scl::success) {
 	  fp_t y=f(root);
-	  if (fabs(y)>=this->tol_rel) status=gsl_continue;
+	  if (o2scl::o2abs(y)>=this->tol_rel) status=gsl_continue;
 	  if (this->verbose>0) {
-	    this->print_iter(root,y,iter,fabs(y),this->tol_rel,
+	    this->print_iter(root,y,iter,o2scl::o2abs(y),this->tol_rel,
 			     "root_brent_gsl (rel)");
 	  }
 	} else {
 	  if (this->verbose>0) {
 	    fp_t y=f(root);
-	    this->print_iter(root,y,iter,fabs(x_upper-x_lower),this->tol_abs,
-			     "root_brent_gsl (abs)");
+	    this->print_iter(root,y,iter,o2scl::o2abs(x_upper-x_lower),
+			     this->tol_abs,"root_brent_gsl (abs)");
 	  }
 	}
       }

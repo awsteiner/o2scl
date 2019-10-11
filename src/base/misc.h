@@ -38,6 +38,10 @@
 #include <map>
 #include <initializer_list>
 
+#ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#endif
+
 #include <o2scl/err_hnd.h>
 
 extern "C" {
@@ -48,6 +52,41 @@ extern "C" {
 namespace o2scl {
 #endif
 
+  /*
+    AWS 10/10/19: A new abs() function is probably overkill, but I am
+    concerned that a user who includes math.h before an o2scl header
+    file might get the wrong abs() function. (see
+    https://stackoverflow.com/questions/21392627/
+    abs-vs-stdabs-what-does-the-reference-say ). The usual recommendation
+    is just to use std::abs, but I have had problems with that working
+    on Ubuntu. 
+  */
+  
+  /// \name New abs() function
+  //@{
+  /** \brief Absolute value for single precision numbers
+   */
+  float o2abs(const float &x);
+  
+  /** \brief Absolute value for double precision numbers
+   */
+  double o2abs(const double &x);
+  
+  /** \brief Absolute value for long double
+   */
+  long double o2abs(const long double &x);
+
+#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
+  
+  /** \brief Absolute value for cpp_dec_float_50
+   */
+  boost::multiprecision::cpp_dec_float_50
+    o2abs(const boost::multiprecision::cpp_dec_float_50 &x);
+  
+#endif
+  
+  //@}
+  
   /// \name Functions from src/base/misc.h
   //@{
   /** \brief Calculate a Fermi-Dirac distribution function safely

@@ -54,6 +54,7 @@
 #include <gsl/gsl_deriv.h>
 #include <gsl/gsl_errno.h>
 
+#include <o2scl/misc.h>
 #include <o2scl/deriv.h>
 #include <o2scl/funct.h>
 #include <o2scl/err_hnd.h>
@@ -116,11 +117,6 @@ namespace o2scl {
       An example demonstrating the usage of this class is given in
       <tt>examples/ex_deriv.cpp</tt> and the \ref ex_deriv_sect .
 
-      \comment 
-      I avoid abs() because of the confusion suggested by 
-      https://stackoverflow.com/questions/21392627/abs-vs-stdabs-what-does-the-reference-say
-      \endcomment
-
       \future Include the forward and backward GSL derivatives. 
       These would be useful for EOS classes which run in to 
       trouble for negative densities.
@@ -182,8 +178,7 @@ namespace o2scl {
       fp_t hh=0;
       if (h<=0.0) {
 	if (x==0.0) hh=1.0e-4;
-	else if (x<0.0) h=-1.0e-4*x;
-	else hh=1.0e-4*x;
+	else hh=o2scl::o2abs(x)*1.0e-4;
       } else {
 	hh=h;
       }
@@ -219,10 +214,8 @@ namespace o2scl {
 	  /* Check that the new error is smaller, and that the new derivative
 	     is consistent with the error bounds of the original estimate. */
 
-	  fp_t delta=r_opt-r_0;
-	  if (delta<0.0) delta=-delta;
 	  if (fail==false && error_opt < error &&
-	      delta < two*two*error) {
+	      o2scl::o2abs(r_opt-r_0) < two*two*error) {
 	    r_0=r_opt;
 	    error=error_opt;
 	  }
@@ -298,42 +291,25 @@ namespace o2scl {
 	std::cout << "ordinates: " << fm1 << " " << fmh << " " << fph << " " 
 		  << fp1 << std::endl;
       }
-
-      fp_t afm1, afp1, afmh, afph;
-      if (fm1<0.0) afm1=-fm1;
-      afm1=fm1;
-      if (fp1<0.0) afp1=-fp1;
-      afp1=fp1;
-      if (fmh<0.0) afmh=-fmh;
-      afmh=fmh;
-      if (fph<0.0) afph=-fph;
-      afph=fph;
-      
       
       if (!isfinite(fm1) || !isfinite(fp1) ||
 	  !isfinite(fmh) || !isfinite(fph) ||
-	  (func_max>0.0 && (afm1>func_max ||
-			    afp1>func_max ||
-			    afmh>func_max ||
-			    afph>func_max))) {
+	  (func_max>0.0 && (o2scl::o2abs(fm1)>func_max ||
+			    o2scl::o2abs(fp1)>func_max ||
+			    o2scl::o2abs(fmh)>func_max ||
+			    o2scl::o2abs(fph)>func_max))) {
 	return 1;
       }
 
       fp_t r3=(fp1-fm1)/two;
       fp_t r5=(four/three)*(fph-fmh)-(one/three)*r3;
       
-      fp_t e3=(afp1+afm1)*eps;
-      fp_t e5=two*(afph+afmh)*eps+e3;
+      fp_t e3=(o2scl::o2abs(fp1)+o2scl::o2abs(fm1))*eps;
+      fp_t e5=two*(o2scl::o2abs(fph)+o2scl::o2abs(fmh))*eps+e3;
       
       /* The next term is due to finite precision in x+h=O (eps*x) */
-      fp_t ar3hh=r3/hh;
-      if (ar3hh<0.0) ar3hh=-ar3hh;
-      fp_t ar5hh=r5/hh;
-      if (ar5hh<0.0) ar5hh=-ar5hh;
-      fp_t axhh=x/hh;
-      if (axhh<0.0) axhh=-axhh;
-      
-      fp_t dy=std::max(ar3hh,ar5hh)*axhh*eps;
+      fp_t dy=std::max(o2scl::o2abs(r3/hh),o2scl::o2abs(r5/hh))*
+      o2scl::o2abs(x/hh)*eps;
       
       /* The truncation error in the r5 approximation itself is O(h^4).
 	 However, for safety, we estimate the error from r5-r3, which is
@@ -343,12 +319,9 @@ namespace o2scl {
       
       result=r5/hh;
       /* Estimated truncation error O(h^2) */
-      abserr_trunc=(r5-r3)/hh;
-      if (abserr_trunc<0.0) abserr_trunc=-abserr_trunc;
+      abserr_trunc=o2scl::o2abs((r5-r3)/hh);
       /* Rounding error (cancellations) */
-      abserr_round=e5/hh;
-      if (abserr_round<0.0) abserr_round=-abserr_round;
-      abserr_round+=dy;
+      abserr_round=o2scl::o2abs(e5/hh)+dy;
       
       if (this->verbose>0) {
 	std::cout << "res: " << result << " trc: " << abserr_trunc 

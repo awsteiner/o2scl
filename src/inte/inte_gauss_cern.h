@@ -351,31 +351,14 @@ namespace o2scl {
       loop=false;
       loop2=false;
 
-      fp_t abs1, abs2;
-      if (s16-c2*s8<0.0) {
-	abs1=c2*s8-s16;
-      } else {
-	abs1=s16-c2*s8;
-      }
-      if (s16<0.0) {
-	abs2=-s16;
-      } else {
-	abs2=s16;
-      }
-      
-      if (abs1<this->tol_rel*(1.0+abs2)) {
+      if (o2scl::o2abs(s12-c2*s8)<this->tol_rel*
+	  (1.0+o2scl::o2abs(s16))) {
 	h+=s16;
 	if (bb!=b) loop=true;
       } else {
 	bb=c1;
-	fp_t abs3;
-	if (c2<0.0) {
-	  abs3=-c2;
-	} else {
-	  abs3=c2;
-	}
 	fp_t one=1;
-	if (one+cnst*abs3!=one) {
+	if (one+cnst*o2scl::o2abs(c2)!=one) {
 	  loop2=true;
 	} else {
 	  this->last_iter=itx;
