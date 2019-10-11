@@ -29,7 +29,7 @@
 
 #include <cmath>
 
-#ifdef O2SCL_OLDER_COMPILER
+#ifndef O2SCL_OLDER_COMPILER
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 #endif
 
