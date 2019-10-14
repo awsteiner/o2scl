@@ -859,7 +859,10 @@ int cli::output_param_list() {
     tab[1][0]="Value";
     for(size_t i=0;i<par_list.size();i++) {
       tab[0][i+1]=it->first;
-      tab[1][i+1]=it->second->get();
+      string stmp=it->second->get();
+      static const size_t nc2=64;
+      if (stmp.length()>=nc2) stmp=stmp.substr(0,nc2-3)+"...";
+      tab[1][i+1]=stmp;
       it++;
     }
     
