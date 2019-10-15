@@ -69,9 +69,12 @@ int main(void) {
 
       for(size_t i=0;i<5;i++) {
 	for(size_t j=0;j<5;j++) {
-	  gsl_matrix_set(gm1,i,j,1.0+sin(((double)ki))+
+	  double diag=0.0;
+	  if (i==j) diag+=3.0;
+	  gsl_matrix_set(gm1,i,j,1.0+diag+sin(((double)ki))+
 			 sin((double)(i))+tan(((double)(j))));
-	  om1(i,j)=1.0+sin(((double)ki))+sin((double)(i))+tan(((double)(j)));
+	  om1(i,j)=1.0+diag+sin(((double)ki))+sin((double)(i))+
+	    tan(((double)(j)));
 	}
       }
 
@@ -79,6 +82,9 @@ int main(void) {
       LU_decomp(5,om1,op1,sig);
 
       matrix_out(cout,5,5,om1);
+      cout << endl;
+      matrix_out(cout,5,5,gsl_matrix_wrap(gm1));
+      cout << endl;
       t.test_rel_nonzero_mat(5,5,om1,gsl_matrix_wrap(gm1),1.0e-8,
 			     1.0e-14,"LU decomp");
 
@@ -167,7 +173,7 @@ int main(void) {
       LU_decomp(5,om1,op1,sig);
       LU_invert<ubmatrix,ubmatrix,ubmatrix_column>(5,om1,op1,om2);
       
-      t.test_rel_nonzero_mat(5,5,om2,gsl_matrix_wrap(gm2),1.0e-12,1.0e-14,
+      t.test_rel_nonzero_mat(5,5,om2,gsl_matrix_wrap(gm2),1.0e-7,1.0e-14,
 			     "LU invert 1 (paren)");
 
     }
