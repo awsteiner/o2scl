@@ -58,7 +58,7 @@ int acol_manager::comm_diag(std::vector<std::string> &sv, bool itive_com) {
       doublev_obj.push_back(tensor_obj.get(ix));
     }
     
-    command_del();
+    command_del(type);
     clear_obj();
     command_add("double[]");
     type="double[]";

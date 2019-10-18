@@ -1080,11 +1080,11 @@ void acol_manager::command_add(std::string new_type) {
   return;
 }
 
-void acol_manager::command_del() {
+void acol_manager::command_del(std::string loc_type) {
 
   std::map<std::string,std::vector<std::string> >::iterator it;
   for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
-    if (it->first==type) {
+    if (it->first==loc_type) {
       std::vector<std::string> &clist=it->second;
       for(size_t j=0;j<clist.size();j++) {
 	cl->remove_comm_option(clist[j]);

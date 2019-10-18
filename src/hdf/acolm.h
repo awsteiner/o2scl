@@ -256,7 +256,7 @@ namespace o2scl_acol {
 
     /** \brief Remove the type-specific commands
      */
-    void command_del();
+    void command_del(std::string ltype);
     
     // Ensure \c col is unique from entries in \c cnames
     //int make_unique_name(std::string &col, std::vector<std::string> &cnames);

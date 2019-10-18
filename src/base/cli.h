@@ -544,8 +544,9 @@ namespace o2scl {
 	  // Call the error handler
 	  if (option_list[k].shrt!=0) {
 	    std::string err="Option ";
+	    err+=option_list[k].lng+" ('";
 	    err+=option_list[k].shrt;
-	    err+=((std::string)" , ")+option_list[k].lng+" already present.";
+	    err+="') already present.";
 	    O2SCL_ERR(err.c_str(),exc_einval);
 	  } else {
 	    std::string err="Option ";

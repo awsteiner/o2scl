@@ -52,7 +52,7 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
       table_obj.set(i1,i,doublev_obj[i]);
     }
 
-    command_del();
+    command_del(type);
     clear_obj();
     command_add("table");
     type="table";
@@ -70,7 +70,7 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
       table_obj.set(i1,i,intv_obj[i]);
     }
 
-    command_del();
+    command_del(type);
     clear_obj();
     command_add("table");
     type="table";
@@ -88,7 +88,7 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
       table_obj.set(i1,i,size_tv_obj[i]);
     }
 
-    command_del();
+    command_del(type);
     clear_obj();
     command_add("table");
     type="table";
@@ -97,7 +97,7 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
     
     table_obj.clear();
     hist_obj.copy_to_table(table_obj,"rep","low","high","wgt");
-    command_del();
+    command_del(type);
     clear_obj();
     command_add("table");
     type="table";
@@ -160,7 +160,7 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
       table_obj.line_of_data(2,line);
     }
 
-    command_del();
+    command_del(type);
     clear_obj();
     command_add("table");
     type="table";
@@ -217,7 +217,7 @@ int acol_manager::comm_to_table3d_sum(std::vector<std::string> &sv,
     tensor_obj.convert_table3d_sum(ix_x,ix_y,table3d_obj,in[0],
 				   in[2],in[4]);
 
-    command_del();
+    command_del(type);
     clear_obj();
     command_add("table3d");
     type="table3d";
@@ -264,7 +264,7 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
       return 1;
     }
 
-    command_del();
+    command_del(type);
     clear_obj();
     command_add("table3d");
     type="table3d";
@@ -361,7 +361,7 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     }
     }
 
-    command_del();
+    command_del(type);
     clear_obj();
     command_add("table3d");
     type="table3d";
@@ -420,7 +420,7 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     tensor_grid_obj.copy_table3d_interp_values_setxy<vector<double> >
       (ix_x,ix_y,values,table3d_obj,"x","y",in[2]);
     
-    command_del();
+    command_del(type);
     clear_obj();
     command_add("table3d");
     type="table3d";
@@ -453,7 +453,7 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
 	 << in[4] << endl;
     pdma_obj.two_indices_to_density(i,j,table3d_obj,in[4]);
     
-    command_del();
+    command_del(type);
     clear_obj();
     command_add("table3d");
     type="table3d";
@@ -529,7 +529,7 @@ int acol_manager::comm_to_tensor_grid(std::vector<std::string> &sv,
     tensor_obj.swap_data(d);
     tensor_grid_obj.swap_data(d);
 
-    command_del();
+    command_del(type);
     clear_obj();
     command_add("tensor_grid");
     type="tensor_grid";
@@ -551,7 +551,7 @@ int acol_manager::comm_to_tensor(std::vector<std::string> &sv,
 
     tensor_obj=tensor_grid_obj;
 
-    command_del();
+    command_del(type);
     clear_obj();
     command_add("tensor");
     type="tensor";
@@ -811,7 +811,7 @@ int acol_manager::comm_to_hist_2d(std::vector<std::string> &sv,
 			     nbinsx,nbinsy);
     }
 
-    command_del();
+    command_del(type);
     clear_obj();
     command_add("hist_2d");
     type="hist_2d";
@@ -863,7 +863,7 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
       hist_obj.from_table(table_obj,in[0],col2,nbins);
     }
 
-    command_del();
+    command_del(type);
     clear_obj();
     command_add("hist");
     type="hist";

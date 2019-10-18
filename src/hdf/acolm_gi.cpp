@@ -342,7 +342,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
   std::string ctype;
 
   // Delete previous object
-  command_del();
+  command_del(type);
   clear_obj();
   
   int ret=get_input_one(sv,"Enter type of object to create",ctype,"create",
@@ -541,7 +541,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     string temp_type=sv[1];
     string cur_type=type;
 
-    command_del();
+    command_del(type);
     command_add(temp_type);
     
     std::vector<std::string>::iterator it=sv.begin();
@@ -550,7 +550,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     
     int ret=cl->comm_option_help(sv,itive_com);
 
-    command_del();
+    command_del(type);
     command_add(cur_type);
     return ret;
   }
@@ -803,7 +803,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	  sv2.push_back("help");
 	  sv2.push_back(sv[1]);
 	  
-	  command_del();
+	  command_del(type);
 	  command_add(it->first);
 	  type=it->first;
 
@@ -811,7 +811,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	  int ret=cl->comm_option_help(sv2,itive_com);
 	  cout << endl;
 
-	  command_del();
+	  command_del(type);
 	  command_add(cur_type);
 	  type=cur_type;
 	}

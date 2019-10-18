@@ -220,7 +220,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       cout << "Autocorrelation length determination failed." << endl;
     }
 
-    command_del();
+    command_del(type);
     clear_obj();
     doublev_obj=ac_vec;
     command_add("double[]");
@@ -239,7 +239,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       cout << "Autocorrelation length determination failed." << endl;
     }
 
-    command_del();
+    command_del(type);
     clear_obj();
     doublev_obj=ac_vec;
     command_add("double[]");
@@ -332,7 +332,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 
     // If no current object, then set current object as double[]
     if (type=="") {
-      command_del();
+      command_del(type);
       clear_obj();
       command_add("double[]");
       type="double[]";
@@ -422,7 +422,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_clear(std::vector<std::string> &sv, bool itive_com) {
 
-  command_del();
+  command_del(type);
 
   // The clear_obj() function sets type to an empty string.
   clear_obj();
@@ -570,7 +570,7 @@ int acol_manager::comm_commands(std::vector<std::string> &sv, bool itive_com) {
     string temp_type=sv[1];
     string cur_type=type;
 
-    command_del();
+    command_del(cur_type);
     command_add(temp_type);
     
     std::vector<std::string>::iterator it=sv.begin();
@@ -578,7 +578,7 @@ int acol_manager::comm_commands(std::vector<std::string> &sv, bool itive_com) {
     sv.erase(it);
     int ret=cl->comm_option_commands(sv,itive_com);
 
-    command_del();
+    command_del(temp_type);
     command_add(cur_type);
     return ret;
   }
@@ -779,7 +779,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     } else {
       table3d_obj.slice_contours(slice,1,levs,cont_obj);
       if (cont_obj.size()>0) {
-	command_del();
+	command_del(type);
 	clear_obj();
 	command_add("vector<contour_line>");
 	type="vector<contour_line>";
@@ -938,7 +938,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     } else {
       co.calc_contours(cont_obj);
       if (cont_obj.size()>0) {
-	command_del();
+	command_del(type);
 	clear_obj();
 	command_add("vector<contour_line>");
 	type="vector<contour_line>";
@@ -993,7 +993,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
   std::string ctype, tval;
 
   // Delete previous object
-  command_del();
+  command_del(type);
   clear_obj();
   
   int ret=get_input_one(sv,"Enter type of object to create",ctype,"create",

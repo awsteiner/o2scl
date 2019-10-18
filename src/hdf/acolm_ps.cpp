@@ -999,13 +999,13 @@ int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
     
     if (sv[1]=="x") {
       table3d_obj.extract_x(std::stod(sv[2]),table_obj);
-      command_del();
+      command_del(type);
       clear_obj();
       command_add("table");
       type="table";
     } else if (sv[1]=="y") {
       table3d_obj.extract_y(std::stod(sv[2]),table_obj);
-      command_del();
+      command_del(type);
       clear_obj();
       command_add("table");
       type="table";
@@ -2023,7 +2023,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
   }
   
   // Delete previous object
-  command_del();
+  command_del(type);
   clear_obj();
 
   // Use hdf_file to open the file
