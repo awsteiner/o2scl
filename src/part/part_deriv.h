@@ -42,45 +42,51 @@ namespace o2scl {
   /** \brief Object to store second derivatives of 
       \f$ P(\mu_n,\mu_p,T) \f$
   */
-  class thermo_np_deriv_press {
+  template<class fp_t=double>
+    class thermo_np_deriv_press_tl {
     
   public:
     
-    /// The quantity \f$ (\partial^2 P)/(\partial T^2) \f$
-    double dsdT;
-    /// The quantity \f$ (\partial^2 P)/(\partial T \partial \mu_n) \f$
-    double dnndT;
-    /// The quantity \f$ (\partial^2 P)/(\partial T \partial \mu_p) \f$
-    double dnpdT;
-    /// The quantity \f$ (\partial^2 P)/(\partial \mu_n^2) \f$
-    double dnndmun;
-    /// The quantity \f$ (\partial^2 P)/(\partial \mu_n \partial \mu_p) \f$
-    double dndmu_mixed;
-    /// The quantity \f$ (\partial^2 P)/(\partial \mu_p^2) \f$
-    double dnpdmup;
+  /// The quantity \f$ (\partial^2 P)/(\partial T^2) \f$
+  fp_t dsdT;
+  /// The quantity \f$ (\partial^2 P)/(\partial T \partial \mu_n) \f$
+  fp_t dnndT;
+  /// The quantity \f$ (\partial^2 P)/(\partial T \partial \mu_p) \f$
+  fp_t dnpdT;
+  /// The quantity \f$ (\partial^2 P)/(\partial \mu_n^2) \f$
+  fp_t dnndmun;
+  /// The quantity \f$ (\partial^2 P)/(\partial \mu_n \partial \mu_p) \f$
+  fp_t dndmu_mixed;
+  /// The quantity \f$ (\partial^2 P)/(\partial \mu_p^2) \f$
+  fp_t dnpdmup;
     
   };
+
+  typedef thermo_np_deriv_press_tl<double> thermo_np_deriv_press;
   
   /** \brief Object to store second derivatives of 
       \f$ f(n_n,n_p,T) \f$
   */
-  class thermo_np_deriv_helm {
+  template<class fp_t=double>
+    class thermo_np_deriv_helm_tl {
     
   public:
     
-    /// The quantity \f$ (\partial^2 P)/(\partial T^2) \f$
-    double dsdT;
-    /// The quantity \f$ (\partial^2 P)/(\partial T \partial n_n) \f$
-    double dmundT;
-    /// The quantity \f$ (\partial^2 P)/(\partial T \partial n_p) \f$
-    double dmupdT;
-    /// The quantity \f$ (\partial^2 P)/(\partial n_n^2) \f$
-    double dmundnn;
-    /// The quantity \f$ (\partial^2 P)/(\partial n_n \partial n_p) \f$
-    double dmudn_mixed;
-    /// The quantity \f$ (\partial^2 P)/(\partial n_p^2) \f$
-    double dmupdnp;
+  /// The quantity \f$ (\partial^2 P)/(\partial T^2) \f$
+  fp_t dsdT;
+  /// The quantity \f$ (\partial^2 P)/(\partial T \partial n_n) \f$
+  fp_t dmundT;
+  /// The quantity \f$ (\partial^2 P)/(\partial T \partial n_p) \f$
+  fp_t dmupdT;
+  /// The quantity \f$ (\partial^2 P)/(\partial n_n^2) \f$
+  fp_t dmundnn;
+  /// The quantity \f$ (\partial^2 P)/(\partial n_n \partial n_p) \f$
+  fp_t dmudn_mixed;
+  /// The quantity \f$ (\partial^2 P)/(\partial n_p^2) \f$
+  fp_t dmupdnp;
   };
+
+  typedef thermo_np_deriv_helm_tl<double> thermo_np_deriv_helm;
   
   /** \brief Particle derivatives in the pressure representation
       
@@ -114,191 +120,202 @@ namespace o2scl {
 
       \endcomment
   */
-  class part_deriv_press {
+  template<class fp_t=double>
+    class part_deriv_press_tl {
     
   public:
     
-    /// Derivative of number density with respect to chemical potential
-    double dndmu;
+  /// Derivative of number density with respect to chemical potential
+  fp_t dndmu;
     
-    /// Derivative of number density with respect to temperature
-    double dndT;
+  /// Derivative of number density with respect to temperature
+  fp_t dndT;
 
-    /// Derivative of entropy density with respect to temperature
-    double dsdT;
+  /// Derivative of entropy density with respect to temperature
+  fp_t dsdT;
 
-    part_deriv_press() {
-    }
+  part_deriv_press_tl() {
+  }
     
-    /// Copy constructor
-    part_deriv_press(const part_deriv_press &p) {
+  /// Copy constructor
+  part_deriv_press_tl(const part_deriv_press_tl &p) {
+    dndmu=p.dndmu;
+    dndT=p.dndT;
+    dsdT=p.dsdT;
+  }
+
+  /// Copy construction with operator=()
+  part_deriv_press_tl &operator=(const part_deriv_press_tl &p) {
+    if (this!=&p) {
       dndmu=p.dndmu;
       dndT=p.dndT;
       dsdT=p.dsdT;
     }
+    return *this;
+  }
 
-    /// Copy construction with operator=()
-    part_deriv_press &operator=(const part_deriv_press &p) {
-      if (this!=&p) {
-	dndmu=p.dndmu;
-	dndT=p.dndT;
-	dsdT=p.dsdT;
-      }
-      return *this;
-    }
-
-    /** \brief Compute derivatives in the Helmholtz free energy
-	representation from the derivatives in the pressure
-	representation
-    */
-    void deriv_f(double &dmudn, double &dmudT, double &dsdT_n) {
-      dmudn=1.0/dndmu;
-      dmudT=-dndT/dndmu;
-      dsdT_n=dsdT-dndT*dndT/dndmu;
-      return;
-    }
+  /** \brief Compute derivatives in the Helmholtz free energy
+      representation from the derivatives in the pressure
+      representation
+  */
+  void deriv_f(fp_t &dmudn, fp_t &dmudT, fp_t &dsdT_n) {
+    dmudn=1.0/dndmu;
+    dmudT=-dndT/dndmu;
+    dsdT_n=dsdT-dndT*dndT/dndmu;
+    return;
+  }
   };
+
+  typedef part_deriv_press_tl<double> part_deriv_press;
   
   /** \brief A fermion with derivative information
    */
-  class fermion_deriv : public fermion, public part_deriv_press {
+  template<class fp_t=double>
+    class fermion_deriv_tl : public fermion_tl<fp_t>,
+    public part_deriv_press_tl<fp_t> {
     
   public:
 
-    /// Make a particle of mass \c mass and degeneracy \c dof.
-  fermion_deriv(double mass=0.0, double dof=0.0) : fermion(mass,dof) {
+  /// Make a particle of mass \c mass and degeneracy \c dof.
+  fermion_deriv_tl(fp_t mass=0.0, fp_t dof=0.0) : fermion(mass,dof) {
     }
     
-    /// Copy constructor
-    fermion_deriv(const fermion_deriv &p) {
-      g=p.g;
-      m=p.m;
-      ms=p.ms;
-      n=p.n;
-      ed=p.ed;
-      pr=p.pr;
-      mu=p.mu;
-      en=p.en;
-      nu=p.nu;
-      dndmu=p.dndmu;
-      dndT=p.dndT;
-      dsdT=p.dsdT;
-      inc_rest_mass=p.inc_rest_mass;
-      non_interacting=p.non_interacting;
-    }
+  /// Copy constructor
+  fermion_deriv_tl(const fermion_deriv_tl &p) {
+    this->g=p.g;
+    this->m=p.m;
+    this->ms=p.ms;
+    this->n=p.n;
+    this->ed=p.ed;
+    this->pr=p.pr;
+    this->mu=p.mu;
+    this->en=p.en;
+    this->nu=p.nu;
+    this->dndmu=p.dndmu;
+    this->dndT=p.dndT;
+    this->dsdT=p.dsdT;
+    this->inc_rest_mass=p.inc_rest_mass;
+    this->non_interacting=p.non_interacting;
+  }
 
-    /// Copy constructor
-    fermion_deriv(const fermion &p) {
-      g=p.g;
-      m=p.m;
-      ms=p.ms;
-      n=p.n;
-      ed=p.ed;
-      pr=p.pr;
-      mu=p.mu;
-      en=p.en;
-      nu=p.nu;
-      dndmu=0.0;
-      dndT=0.0;
-      dsdT=0.0;
-      inc_rest_mass=p.inc_rest_mass;
-      non_interacting=p.non_interacting;
-    }
+  /// Copy constructor
+  fermion_deriv_tl(const fermion &p) {
+    this->g=p.g;
+    this->m=p.m;
+    this->ms=p.ms;
+    this->n=p.n;
+    this->ed=p.ed;
+    this->pr=p.pr;
+    this->mu=p.mu;
+    this->en=p.en;
+    this->nu=p.nu;
+    this->dndmu=0.0;
+    this->dndT=0.0;
+    this->dsdT=0.0;
+    this->inc_rest_mass=p.inc_rest_mass;
+    this->non_interacting=p.non_interacting;
+  }
 
-    /// Copy construction with operator=()
-    fermion_deriv &operator=(const fermion_deriv &p) {
-      if (this!=&p) {
-	g=p.g;
-	m=p.m;
-	ms=p.ms;
-	n=p.n;
-	ed=p.ed;
-	pr=p.pr;
-	mu=p.mu;
-	en=p.en;
-	nu=p.nu;
-	dndmu=p.dndmu;
-	dndT=p.dndT;
-	dsdT=p.dsdT;
-	inc_rest_mass=p.inc_rest_mass;
-	non_interacting=p.non_interacting;
-      }
-      return *this;
+  /// Copy construction with operator=()
+  fermion_deriv_tl &operator=(const fermion_deriv_tl &p) {
+    if (this!=&p) {
+      this->g=p.g;
+      this->m=p.m;
+      this->ms=p.ms;
+      this->n=p.n;
+      this->ed=p.ed;
+      this->pr=p.pr;
+      this->mu=p.mu;
+      this->en=p.en;
+      this->nu=p.nu;
+      this->dndmu=p.dndmu;
+      this->dndT=p.dndT;
+      this->dsdT=p.dsdT;
+      this->inc_rest_mass=p.inc_rest_mass;
+      this->non_interacting=p.non_interacting;
     }
+    return *this;
+  }
     
-    /// Copy construction with operator=()
-    fermion_deriv &operator=(const fermion &p) {
-      if (this!=&p) {
-	g=p.g;
-	m=p.m;
-	ms=p.ms;
-	n=p.n;
-	ed=p.ed;
-	pr=p.pr;
-	mu=p.mu;
-	en=p.en;
-	nu=p.nu;
-	dndmu=0.0;
-	dndT=0.0;
-	dsdT=0.0;
-	inc_rest_mass=p.inc_rest_mass;
-	non_interacting=p.non_interacting;
-      }
-      return *this;
+  /// Copy construction with operator=()
+  fermion_deriv_tl &operator=(const fermion &p) {
+    if (this!=&p) {
+      this->g=p.g;
+      this->m=p.m;
+      this->ms=p.ms;
+      this->n=p.n;
+      this->ed=p.ed;
+      this->pr=p.pr;
+      this->mu=p.mu;
+      this->en=p.en;
+      this->nu=p.nu;
+      this->dndmu=0.0;
+      this->dndT=0.0;
+      this->dsdT=0.0;
+      this->inc_rest_mass=p.inc_rest_mass;
+      this->non_interacting=p.non_interacting;
     }
+    return *this;
+  }
     
   };
+
+  typedef fermion_deriv_tl<double> fermion_deriv;
   
   /** \brief A part with derivative information
    */
-  class part_deriv : public part, public part_deriv_press {
+  template<class fp_t=double>
+    class part_deriv_tl : public part_tl<fp_t>,
+    public part_deriv_press_tl<fp_t> {
     
   public:
 
-    /// Make a particle of mass \c mass and degeneracy \c dof.
-  part_deriv(double mass=0.0, double dof=0.0) : part(mass,dof) {
+  /// Make a particle of mass \c mass and degeneracy \c dof.
+  part_deriv_tl(fp_t mass=0.0, fp_t dof=0.0) : part(mass,dof) {
     }
     
-    /// Copy constructor
-    part_deriv(const part_deriv &p) {
-      g=p.g;
-      m=p.m;
-      ms=p.ms;
-      n=p.n;
-      ed=p.ed;
-      pr=p.pr;
-      mu=p.mu;
-      en=p.en;
-      nu=p.nu;
-      dndmu=p.dndmu;
-      dndT=p.dndT;
-      dsdT=p.dsdT;
-      inc_rest_mass=p.inc_rest_mass;
-      non_interacting=p.non_interacting;
-    }
+  /// Copy constructor
+  part_deriv_tl(const part_deriv_tl &p) {
+    this->g=p.g;
+    this->m=p.m;
+    this->ms=p.ms;
+    this->n=p.n;
+    this->ed=p.ed;
+    this->pr=p.pr;
+    this->mu=p.mu;
+    this->en=p.en;
+    this->nu=p.nu;
+    this->dndmu=p.dndmu;
+    this->dndT=p.dndT;
+    this->dsdT=p.dsdT;
+    this->inc_rest_mass=p.inc_rest_mass;
+    this->non_interacting=p.non_interacting;
+  }
 
-    /// Copy construction with operator=()
-    part_deriv &operator=(const part_deriv &p) {
-      if (this!=&p) {
-	g=p.g;
-	m=p.m;
-	ms=p.ms;
-	n=p.n;
-	ed=p.ed;
-	pr=p.pr;
-	mu=p.mu;
-	en=p.en;
-	nu=p.nu;
-	dndmu=p.dndmu;
-	dndT=p.dndT;
-	dsdT=p.dsdT;
-	inc_rest_mass=p.inc_rest_mass;
-	non_interacting=p.non_interacting;
-      }
-      return *this;
+  /// Copy construction with operator=()
+  part_deriv_tl &operator=(const part_deriv_tl &p) {
+    if (this!=&p) {
+      this->g=p.g;
+      this->m=p.m;
+      this->ms=p.ms;
+      this->n=p.n;
+      this->ed=p.ed;
+      this->pr=p.pr;
+      this->mu=p.mu;
+      this->en=p.en;
+      this->nu=p.nu;
+      this->dndmu=p.dndmu;
+      this->dndT=p.dndT;
+      this->dsdT=p.dsdT;
+      this->inc_rest_mass=p.inc_rest_mass;
+      this->non_interacting=p.non_interacting;
     }
+    return *this;
+  }
     
   };
+
+  typedef part_deriv_tl<double> part_deriv;
   
   /** \brief Base quantities for thermodynamic derivatives
 
@@ -359,320 +376,322 @@ namespace o2scl {
       \f]
       
   */
-  class deriv_thermo_base {
+  template<class fp_t=double> class deriv_thermo_base_tl {
     
   public:
     
-    /** \brief The heat capacity per particle at 
-	constant volume (unitless)
+  /** \brief The heat capacity per particle at 
+      constant volume (unitless)
 
-	This function returns 
-	\f[
-	c_V = \frac{T}{N} 
-	\left(\frac{\partial S}{\partial T}\right)_{V,N} =
-	\frac{T}{n} \left(\frac{\partial s}{\partial T}\right)_{V,n} =
-	\frac{1}{N} \left(\frac{\partial E}{\partial T}\right)_{V,N} 
-	\f]
+      This function returns 
+      \f[
+      c_V = \frac{T}{N} 
+      \left(\frac{\partial S}{\partial T}\right)_{V,N} =
+      \frac{T}{n} \left(\frac{\partial s}{\partial T}\right)_{V,n} =
+      \frac{1}{N} \left(\frac{\partial E}{\partial T}\right)_{V,N} 
+      \f]
 
-	To write this in terms of the three derivatives in 
-	\ref o2scl::part_deriv_press, 
-	\f[
-	\frac{T}{n} \left(\frac{\partial s}{\partial T}\right)_{V,n}
-	= \frac{T}{n} \frac{\partial(s,n,V)}{\partial(T,n,V)} = 
-	\frac{T}{n} \left[\frac{\partial(s,n,V)}{\partial(T,\mu,V)}\right]
-	\left[\frac{\partial(T,n,V)}{\partial(T,\mu,V)}\right]^{-1}
-	\f]
-	\f[
-	= \frac{T}{n} 
-	\left[
-	\left(\frac{\partial s}{\partial T}\right)_{\mu} -
-	\left(\frac{\partial n}{\partial T}\right)_{\mu}^2
-	\left(\frac{\partial n}{\partial \mu}\right)_{T}^{-1}  
-	\right]
-	\f]
+      To write this in terms of the three derivatives in 
+      \ref o2scl::part_deriv_press, 
+      \f[
+      \frac{T}{n} \left(\frac{\partial s}{\partial T}\right)_{V,n}
+      = \frac{T}{n} \frac{\partial(s,n,V)}{\partial(T,n,V)} = 
+      \frac{T}{n} \left[\frac{\partial(s,n,V)}{\partial(T,\mu,V)}\right]
+      \left[\frac{\partial(T,n,V)}{\partial(T,\mu,V)}\right]^{-1}
+      \f]
+      \f[
+      = \frac{T}{n} 
+      \left[
+      \left(\frac{\partial s}{\partial T}\right)_{\mu} -
+      \left(\frac{\partial n}{\partial T}\right)_{\mu}^2
+      \left(\frac{\partial n}{\partial \mu}\right)_{T}^{-1}  
+      \right]
+      \f]
 
-	This is \f$ 3/2 \f$ for an ideal gas.
-    */
-    template<class part_deriv_t> 
-      double heat_cap_ppart_const_vol(part_deriv_t &p, double temper) {
-      return (p.dsdT-p.dndT*p.dndT/p.dndmu)*temper/p.n;
-    }
+      This is \f$ 3/2 \f$ for an ideal gas.
+  */
+  template<class part_deriv_t> 
+  fp_t heat_cap_ppart_const_vol(part_deriv_t &p, fp_t temper) {
+    return (p.dsdT-p.dndT*p.dndT/p.dndmu)*temper/p.n;
+  }
     
-    /** \brief The heat capacity per particle 
-	at constant pressure (unitless)
+  /** \brief The heat capacity per particle 
+      at constant pressure (unitless)
 
-	This function returns 
-	\f[
-	c_P = \frac{T}{N} 
-	\left(\frac{\partial S}{\partial T}\right)_{P,N} =
-	\frac{1}{N} \left(\frac{\partial H}{\partial T}\right)_{P,N} 
-	\f]
+      This function returns 
+      \f[
+      c_P = \frac{T}{N} 
+      \left(\frac{\partial S}{\partial T}\right)_{P,N} =
+      \frac{1}{N} \left(\frac{\partial H}{\partial T}\right)_{P,N} 
+      \f]
 
-	To write this in terms of the three derivatives in 
-	\ref o2scl::part_deriv_press, 
-	\f[
-	\frac{T}{N} \left(\frac{\partial S}{\partial T}\right)_{P,N}
-	= \frac{T}{N} \frac{\partial(S,N,P)}{\partial(T,N,P)} = 
-	\frac{T}{N} \left[\frac{\partial(S,N,P)}{\partial(T,\mu,V)}\right]
-	\left[\frac{\partial(T,N,P)}{\partial(T,\mu,V)}\right]^{-1}
-	\f]
-	The first Jacobian was computed above since
-	\f[
-	\frac{\partial(S,N,P)}{\partial(T,\mu,V)} = -
-	\frac{\partial(P,S,N)}{\partial(V,\mu,T)}
-	\f]
-	The second is
-	\f[
-	\frac{\partial(T,N,P)}{\partial(T,\mu,V)}
-	=
-	\left[
-	\left(\frac{\partial N}{\partial \mu}\right)_{T,V}
-	\left(\frac{\partial P}{\partial V}\right)_{\mu,T}
-	- \left(\frac{\partial N}{\partial V}\right)_{\mu,T}
-	\left(\frac{\partial P}{\partial \mu}\right)_{T,V}
-	\right] = - n^2
-	\f]
-	The final result is
-	\f[
-	c_P = \frac{T X}{n^3} = 
-	\frac{T}{n} \left(\frac{\partial s}{\partial T}\right)_{\mu}
-	+ \frac{s^2 T}{n^3} \left(\frac{\partial n}{\partial \mu}\right)_{T}
-	- \frac{2 s T}{n^2} \left(\frac{\partial n}{\partial T}\right)_{\mu}
-	\f]
+      To write this in terms of the three derivatives in 
+      \ref o2scl::part_deriv_press, 
+      \f[
+      \frac{T}{N} \left(\frac{\partial S}{\partial T}\right)_{P,N}
+      = \frac{T}{N} \frac{\partial(S,N,P)}{\partial(T,N,P)} = 
+      \frac{T}{N} \left[\frac{\partial(S,N,P)}{\partial(T,\mu,V)}\right]
+      \left[\frac{\partial(T,N,P)}{\partial(T,\mu,V)}\right]^{-1}
+      \f]
+      The first Jacobian was computed above since
+      \f[
+      \frac{\partial(S,N,P)}{\partial(T,\mu,V)} = -
+      \frac{\partial(P,S,N)}{\partial(V,\mu,T)}
+      \f]
+      The second is
+      \f[
+      \frac{\partial(T,N,P)}{\partial(T,\mu,V)}
+      =
+      \left[
+      \left(\frac{\partial N}{\partial \mu}\right)_{T,V}
+      \left(\frac{\partial P}{\partial V}\right)_{\mu,T}
+      - \left(\frac{\partial N}{\partial V}\right)_{\mu,T}
+      \left(\frac{\partial P}{\partial \mu}\right)_{T,V}
+      \right] = - n^2
+      \f]
+      The final result is
+      \f[
+      c_P = \frac{T X}{n^3} = 
+      \frac{T}{n} \left(\frac{\partial s}{\partial T}\right)_{\mu}
+      + \frac{s^2 T}{n^3} \left(\frac{\partial n}{\partial \mu}\right)_{T}
+      - \frac{2 s T}{n^2} \left(\frac{\partial n}{\partial T}\right)_{\mu}
+      \f]
 	
-	This is \f$ 5/2 \f$ for an ideal gas.
-    */
-    template<class part_deriv_t> 
-      double heat_cap_ppart_const_press(part_deriv_t &p, double temper) {
-      return temper/p.n*p.dsdT+p.en*p.en*temper/p.n/p.n/p.n*p.dndmu-
-	2.0*p.en*temper/p.n/p.n*p.dndT;
-    }
+      This is \f$ 5/2 \f$ for an ideal gas.
+  */
+  template<class part_deriv_t> 
+  fp_t heat_cap_ppart_const_press(part_deriv_t &p, fp_t temper) {
+    return temper/p.n*p.dsdT+p.en*p.en*temper/p.n/p.n/p.n*p.dndmu-
+    2.0*p.en*temper/p.n/p.n*p.dndT;
+  }
 
-    /** \brief The adiabatic compressibility
+  /** \brief The adiabatic compressibility
 
-	This function computes
-	\f[
-	\beta_S \equiv - \frac{1}{V} 
-	\left(\frac{\partial V}{\partial P}\right)_{S,N}
-	\f]
-	(sometimes referred to as \f$ \kappa_S \f$ or 
-	\f$ \chi_S \f$)
+      This function computes
+      \f[
+      \beta_S \equiv - \frac{1}{V} 
+      \left(\frac{\partial V}{\partial P}\right)_{S,N}
+      \f]
+      (sometimes referred to as \f$ \kappa_S \f$ or 
+      \f$ \chi_S \f$)
 
-	To write this in terms of the three derivatives in 
-	\ref o2scl::part_deriv_press, 
-	\f[
-	\left(\frac{\partial V}{\partial P}\right)_{S,N} = 
-	\frac{\partial (V,S,N)}{\partial (P,S,N)} =
-	\frac{\partial (V,S,N)}{\partial (V,\mu,T)}
-	\left[ \frac{\partial (P,S,N)}{\partial (V,\mu,T)}\right]^{-1}
-	\f]
-	The first Jacobian
-	\f[
-	\frac{\partial (V,S,N)}{\partial (V,\mu,T)} = V^2
-	\left[
-	\left(\frac{\partial s}{\partial T}\right)_{\mu,V}
-	\left(\frac{\partial n}{\partial \mu}\right)_{T,V}
-	- \left(\frac{\partial n}{\partial T}\right)_{\mu,V}^2
-	\right]
-	\f]
-	and the second Jacobian was computed above.
-	The result is
-	\f[
-	\beta_S = Y/X = \left[
-	\left(\frac{\partial n}{\partial T}\right)_{\mu}^2 -
-	\left(\frac{\partial s}{\partial T}\right)_{\mu}
-	\left(\frac{\partial n}{\partial \mu}\right)_{T}
-	\right]
-	\left[
-	n^2 \left(\frac{\partial s}{\partial T}\right)_{\mu,V}
-	- 2 n s \left(\frac{\partial n}{\partial T}\right)_{\mu,V}
-	+ s^2 \left(\frac{\partial n}{\partial \mu}\right)_{T,V}
-	\right]^{-1}
-	\f]
-    */
-    template<class part_deriv_t> 
-      double compress_adiabatic(part_deriv_t &p, double temper) {
-      return (p.dndT*p.dndT-p.dndmu*p.dsdT)/
-	(p.n*p.n*p.dsdT-2.0*p.n*p.en*p.dndT+p.en*p.en*p.dndmu);
-    }
+      To write this in terms of the three derivatives in 
+      \ref o2scl::part_deriv_press, 
+      \f[
+      \left(\frac{\partial V}{\partial P}\right)_{S,N} = 
+      \frac{\partial (V,S,N)}{\partial (P,S,N)} =
+      \frac{\partial (V,S,N)}{\partial (V,\mu,T)}
+      \left[ \frac{\partial (P,S,N)}{\partial (V,\mu,T)}\right]^{-1}
+      \f]
+      The first Jacobian
+      \f[
+      \frac{\partial (V,S,N)}{\partial (V,\mu,T)} = V^2
+      \left[
+      \left(\frac{\partial s}{\partial T}\right)_{\mu,V}
+      \left(\frac{\partial n}{\partial \mu}\right)_{T,V}
+      - \left(\frac{\partial n}{\partial T}\right)_{\mu,V}^2
+      \right]
+      \f]
+      and the second Jacobian was computed above.
+      The result is
+      \f[
+      \beta_S = Y/X = \left[
+      \left(\frac{\partial n}{\partial T}\right)_{\mu}^2 -
+      \left(\frac{\partial s}{\partial T}\right)_{\mu}
+      \left(\frac{\partial n}{\partial \mu}\right)_{T}
+      \right]
+      \left[
+      n^2 \left(\frac{\partial s}{\partial T}\right)_{\mu,V}
+      - 2 n s \left(\frac{\partial n}{\partial T}\right)_{\mu,V}
+      + s^2 \left(\frac{\partial n}{\partial \mu}\right)_{T,V}
+      \right]^{-1}
+      \f]
+  */
+  template<class part_deriv_t> 
+  fp_t compress_adiabatic(part_deriv_t &p, fp_t temper) {
+    return (p.dndT*p.dndT-p.dndmu*p.dsdT)/
+    (p.n*p.n*p.dsdT-2.0*p.n*p.en*p.dndT+p.en*p.en*p.dndmu);
+  }
     
-    /** \brief The isothermal compressibility
+  /** \brief The isothermal compressibility
 
-	This function computes
-	\f[
-	\beta_T \equiv - \frac{1}{V} 
-	\left(\frac{\partial V}{\partial P}\right)_{T,N}
-	\f]
-	(sometimes referred to as \f$ \kappa_T \f$ or 
-	\f$ \chi_T \f$) in units of inverse length to the fourth 
-	power.
+      This function computes
+      \f[
+      \beta_T \equiv - \frac{1}{V} 
+      \left(\frac{\partial V}{\partial P}\right)_{T,N}
+      \f]
+      (sometimes referred to as \f$ \kappa_T \f$ or 
+      \f$ \chi_T \f$) in units of inverse length to the fourth 
+      power.
 
-	To write this in terms of the three derivatives in 
-	\ref o2scl::part_deriv_press, 
-	\f{eqnarray*}
-	- \frac{1}{V} \left(\frac{\partial V}{\partial P}\right)_{T,N} &=& 
-	\frac{\partial (V,T,N)}{\partial (P,T,N)} =
-	\frac{1}{V}
-	\frac{\partial (V,T,N)}{\partial (V,T,\mu)} 
-	\left[\frac{\partial (N,P,T)}{\partial (V,\mu,T)}\right]^{-1}
-	\nonumber \\ 
-	&=& \left(\frac{\partial n}{\partial \mu}\right)_{T,V} 
-	\left[
-	\left(\frac{\partial N}{\partial V}\right)_{\mu,T} 
-	\left(\frac{\partial P}{\partial \mu}\right)_{V,T} 
-	- \left(\frac{\partial P}{\partial V}\right)_{\mu,T} 
-	\left(\frac{\partial N}{\partial \mu}\right)_{V,T} 
-	\right]^{-1} = 
-	\frac{1}{n^2} \left(\frac{\partial n}{\partial \mu}\right)_{T} 
-	\f}
-    */
-    template<class part_deriv_t> 
-      double compress_const_tptr(part_deriv_t &p, double temper) {
-      return p.dndmu/p.n/p.n;
-    }
+      To write this in terms of the three derivatives in 
+      \ref o2scl::part_deriv_press, 
+      \f{eqnarray*}
+      - \frac{1}{V} \left(\frac{\partial V}{\partial P}\right)_{T,N} &=& 
+      \frac{\partial (V,T,N)}{\partial (P,T,N)} =
+      \frac{1}{V}
+      \frac{\partial (V,T,N)}{\partial (V,T,\mu)} 
+      \left[\frac{\partial (N,P,T)}{\partial (V,\mu,T)}\right]^{-1}
+      \nonumber \\ 
+      &=& \left(\frac{\partial n}{\partial \mu}\right)_{T,V} 
+      \left[
+      \left(\frac{\partial N}{\partial V}\right)_{\mu,T} 
+      \left(\frac{\partial P}{\partial \mu}\right)_{V,T} 
+      - \left(\frac{\partial P}{\partial V}\right)_{\mu,T} 
+      \left(\frac{\partial N}{\partial \mu}\right)_{V,T} 
+      \right]^{-1} = 
+      \frac{1}{n^2} \left(\frac{\partial n}{\partial \mu}\right)_{T} 
+      \f}
+  */
+  template<class part_deriv_t> 
+  fp_t compress_const_tptr(part_deriv_t &p, fp_t temper) {
+    return p.dndmu/p.n/p.n;
+  }
 
-    /** \brief The coefficient of thermal expansion
+  /** \brief The coefficient of thermal expansion
 
-	This function computes
-	\f[
-	\alpha_V = 
-	\frac{1}{V} \left(\frac{\partial V}{\partial T}\right)_{P,N}
-	\f]
-	in units of length. 
+      This function computes
+      \f[
+      \alpha_V = 
+      \frac{1}{V} \left(\frac{\partial V}{\partial T}\right)_{P,N}
+      \f]
+      in units of length. 
 
-	To write this in terms of the three derivatives in 
-	\ref o2scl::part_deriv_press, 
-	\f{eqnarray*}
-	\left(\frac{\partial V}{\partial T}\right)_{P,N} &=&
-	\frac{\partial (V,P,N)}{\partial (T,P,N)} =
-	-\frac{\partial (V,P,N)}{\partial (V,T,\mu)} 
-	\left[ \frac{\partial (T,P,N)}{\partial (T,V,\mu)} \right]^{-1}
-	\nonumber \\
-	& = & 
-	- \left[ 
-	\left(\frac{\partial P}{\partial T}\right)_{\mu,V} 
-	\left(\frac{\partial N}{\partial \mu}\right)_{T,V} -
-	\left(\frac{\partial N}{\partial T}\right)_{\mu,V} 
-	\left(\frac{\partial P}{\partial \mu}\right)_{T,V} 
-	\right]
-	\left[ 
-	\left(\frac{\partial P}{\partial V}\right)_{\mu,T} 
-	\left(\frac{\partial N}{\partial \mu}\right)_{V,T} -
-	\left(\frac{\partial P}{\partial \mu}\right)_{V,T} 
-	\left(\frac{\partial N}{\partial V}\right)_{\mu,T} 
-	\right]^{-1}
-	\nonumber \\
-	&=& \frac{s}{n^2} 
-	\left(\frac{\partial n}{\partial \mu}\right)_{T} -
-	\frac{1}{n} \left(\frac{\partial n}{\partial T}\right)_{\mu}
-	\f}
-    */
-    template<class part_deriv_t> 
-      double coeff_thermal_exp(part_deriv_t &p, double temper) {
-      return p.en/p.n/p.n*p.dndmu-p.dndT/p.n;
-    }
+      To write this in terms of the three derivatives in 
+      \ref o2scl::part_deriv_press, 
+      \f{eqnarray*}
+      \left(\frac{\partial V}{\partial T}\right)_{P,N} &=&
+      \frac{\partial (V,P,N)}{\partial (T,P,N)} =
+      -\frac{\partial (V,P,N)}{\partial (V,T,\mu)} 
+      \left[ \frac{\partial (T,P,N)}{\partial (T,V,\mu)} \right]^{-1}
+      \nonumber \\
+      & = & 
+      - \left[ 
+      \left(\frac{\partial P}{\partial T}\right)_{\mu,V} 
+      \left(\frac{\partial N}{\partial \mu}\right)_{T,V} -
+      \left(\frac{\partial N}{\partial T}\right)_{\mu,V} 
+      \left(\frac{\partial P}{\partial \mu}\right)_{T,V} 
+      \right]
+      \left[ 
+      \left(\frac{\partial P}{\partial V}\right)_{\mu,T} 
+      \left(\frac{\partial N}{\partial \mu}\right)_{V,T} -
+      \left(\frac{\partial P}{\partial \mu}\right)_{V,T} 
+      \left(\frac{\partial N}{\partial V}\right)_{\mu,T} 
+      \right]^{-1}
+      \nonumber \\
+      &=& \frac{s}{n^2} 
+      \left(\frac{\partial n}{\partial \mu}\right)_{T} -
+      \frac{1}{n} \left(\frac{\partial n}{\partial T}\right)_{\mu}
+      \f}
+  */
+  template<class part_deriv_t> 
+  fp_t coeff_thermal_exp(part_deriv_t &p, fp_t temper) {
+    return p.en/p.n/p.n*p.dndmu-p.dndT/p.n;
+  }
 
-    /** \brief The squared sound speed (unitless)
+  /** \brief The squared sound speed (unitless)
 
-	This function computes the squared sound speed
-	(including relativistic effects)
-	\f[
-	c_s^2 = \left(\frac{\partial P}
-	{\partial \varepsilon}\right)_{S,N}
-	\f]
-	The result is unitless. To get the units of a squared velocity, 
-	one must multiply by \f$ c^2 \f$ . 
+      This function computes the squared sound speed
+      (including relativistic effects)
+      \f[
+      c_s^2 = \left(\frac{\partial P}
+      {\partial \varepsilon}\right)_{S,N}
+      \f]
+      The result is unitless. To get the units of a squared velocity, 
+      one must multiply by \f$ c^2 \f$ . 
 
-	The 
-	nonrelativistic squared sound speed
-	is 
-	\f[
-	c_{s,\mathrm{NR}}^2 = \left[\frac{\partial P}
-	{\partial (N/V)}\right]_{S,N} = 
-	- \frac{V^2}{N} \left(\frac{\partial P}
-	{\partial V}\right)_{S,N} = \frac{1}{n \beta_S}
-	\f]
-	where \f$ \beta_S \f$
-	is computed in \ref compress_adiabatic() .
+      The 
+      nonrelativistic squared sound speed
+      is 
+      \f[
+      c_{s,\mathrm{NR}}^2 = \left[\frac{\partial P}
+      {\partial (N/V)}\right]_{S,N} = 
+      - \frac{V^2}{N} \left(\frac{\partial P}
+      {\partial V}\right)_{S,N} = \frac{1}{n \beta_S}
+      \f]
+      where \f$ \beta_S \f$
+      is computed in \ref compress_adiabatic() .
 
-	To write \f$ c_s^2 \f$ in terms of the three derivatives in 
-	\ref o2scl::part_deriv_press, 
-	\f[
-	\left(\frac{\partial P}
-	{\partial \varepsilon}\right)_{S,N} =
-	\frac{\partial (P,S,N)}{\partial (\varepsilon,S,N)} =
-	\frac{\partial (P,S,N)}{\partial (V,T,\mu)} 
-	\left[ \frac{\partial (\varepsilon,S,N)}
-	{\partial (V,T,\mu)} \right]^{-1}
-	\f]
-	The first Jacobian was computed above (up to a sign).
-	The second is the determinant of
-	\f[
-	\left(
-	\begin{array}{ccc}
-	0 
-	& \frac{\partial \varepsilon}{\partial T} 
-	& \frac{\partial \varepsilon}{\partial \mu} \\
-	s & V \frac{\partial s}{\partial T} 
-	& V \frac{\partial n}{\partial T} \\
-	n & V \frac{\partial n}{\partial T} 
-	& V \frac{\partial n}{\partial \mu} 
-	\end{array}
-	\right)
-	\f]
-	with					
-	\f[
-	\frac{\partial \varepsilon}{\partial T} =
-	-T \frac{\partial s}{\partial T}  
-	+ \mu \frac{\partial n}{\partial T} 
-	\quad \mathrm{and} \quad
-	\frac{\partial \varepsilon}{\partial \mu} =
-	T \frac{\partial n}{\partial T}  
-	+ \mu \frac{\partial n}{\partial \mu} 
-	\f]
-	giving 
-	\f[
-	\frac{\partial (\varepsilon,S,N)}
-	{\partial (V,T,\mu)} = V 
-	(P + \varepsilon)
-	\left[ \left(\frac{\partial n}{\partial T}\right)^2
-	- \left(\frac{\partial n}{\partial \mu}\right)
-	\left(\frac{\partial s}{\partial T}\right)
-	\right] = V Y \left(P+\varepsilon\right)
-	\f]
-	The final result is 
-	\f[
-	c_s^2 = 
-	- \frac{X}{(P+\varepsilon)Y}
-	= 
-	\frac{
-	  n^2 \left(\frac{\partial s}{\partial T}\right)
-	  - 2 n s \left(\frac{\partial n}{\partial T}\right)
-	  + s^2 \left(\frac{\partial n}{\partial \mu}\right)
-	}{
-	  \left(P + \varepsilon\right)
-	\left[ 
-	\left(\frac{\partial n}{\partial \mu}\right)
-	\left(\frac{\partial s}{\partial T}\right) -
-	\left(\frac{\partial n}{\partial T}\right)^2
-	\right]
-	}
-	\f]
-
-    */
-    template<class part_deriv_t> 
-      double squared_sound_speed(part_deriv_t &p, double temper) {
-      double edt;
-      if (p.inc_rest_mass) {
-	edt=p.ed;
-      } else {
-	edt=p.ed+p.n*p.m;
+      To write \f$ c_s^2 \f$ in terms of the three derivatives in 
+      \ref o2scl::part_deriv_press, 
+      \f[
+      \left(\frac{\partial P}
+      {\partial \varepsilon}\right)_{S,N} =
+      \frac{\partial (P,S,N)}{\partial (\varepsilon,S,N)} =
+      \frac{\partial (P,S,N)}{\partial (V,T,\mu)} 
+      \left[ \frac{\partial (\varepsilon,S,N)}
+      {\partial (V,T,\mu)} \right]^{-1}
+      \f]
+      The first Jacobian was computed above (up to a sign).
+      The second is the determinant of
+      \f[
+      \left(
+      \begin{array}{ccc}
+      0 
+      & \frac{\partial \varepsilon}{\partial T} 
+      & \frac{\partial \varepsilon}{\partial \mu} \\
+      s & V \frac{\partial s}{\partial T} 
+      & V \frac{\partial n}{\partial T} \\
+      n & V \frac{\partial n}{\partial T} 
+      & V \frac{\partial n}{\partial \mu} 
+      \end{array}
+      \right)
+      \f]
+      with					
+      \f[
+      \frac{\partial \varepsilon}{\partial T} =
+      -T \frac{\partial s}{\partial T}  
+      + \mu \frac{\partial n}{\partial T} 
+      \quad \mathrm{and} \quad
+      \frac{\partial \varepsilon}{\partial \mu} =
+      T \frac{\partial n}{\partial T}  
+      + \mu \frac{\partial n}{\partial \mu} 
+      \f]
+      giving 
+      \f[
+      \frac{\partial (\varepsilon,S,N)}
+      {\partial (V,T,\mu)} = V 
+      (P + \varepsilon)
+      \left[ \left(\frac{\partial n}{\partial T}\right)^2
+      - \left(\frac{\partial n}{\partial \mu}\right)
+      \left(\frac{\partial s}{\partial T}\right)
+      \right] = V Y \left(P+\varepsilon\right)
+      \f]
+      The final result is 
+      \f[
+      c_s^2 = 
+      - \frac{X}{(P+\varepsilon)Y}
+      = 
+      \frac{
+      n^2 \left(\frac{\partial s}{\partial T}\right)
+      - 2 n s \left(\frac{\partial n}{\partial T}\right)
+      + s^2 \left(\frac{\partial n}{\partial \mu}\right)
+      }{
+      \left(P + \varepsilon\right)
+      \left[ 
+      \left(\frac{\partial n}{\partial \mu}\right)
+      \left(\frac{\partial s}{\partial T}\right) -
+      \left(\frac{\partial n}{\partial T}\right)^2
+      \right]
       }
-      return (p.n*p.n*p.dsdT-2.0*p.n*p.en*p.dndT+p.en*p.en*p.dndmu)/
-	(edt+p.pr)/(p.dndmu*p.dsdT-p.dndT*p.dndT);
+      \f]
+
+  */
+  template<class part_deriv_t> 
+  fp_t squared_sound_speed(part_deriv_t &p, fp_t temper) {
+    fp_t edt;
+    if (p.inc_rest_mass) {
+      edt=p.ed;
+    } else {
+      edt=p.ed+p.n*p.m;
     }
+    return (p.n*p.n*p.dsdT-2.0*p.n*p.en*p.dndT+p.en*p.en*p.dndmu)/
+    (edt+p.pr)/(p.dndmu*p.dsdT-p.dndT*p.dndT);
+  }
     
   };
+  
+  typedef deriv_thermo_base_tl<double> deriv_thermo_base;
   
   /** \brief Compute properties of a fermion including derivatives
       [abstract base]
@@ -687,69 +706,244 @@ namespace o2scl {
       of massless fermions with pairs at finite temperature
       in Constantinou et al. 2014 which could be implemented here.
   */
-  class fermion_deriv_thermo : public deriv_thermo_base {
+  template<class fp_t=double>
+    class fermion_deriv_thermo_tl : public deriv_thermo_base_tl<fp_t> {
 
   protected:
 
-    /** \brief A fermion_thermo object 
+  /** \brief A fermion_thermo object 
 
-	This is for access to fermion_thermo::ndeg_terms().
-    */
-    fermion_rel fr;
-    
+      This is for access to fermion_thermo::ndeg_terms().
+  */
+  fermion_rel fr;
+  
   public:
 
-    virtual ~fermion_deriv_thermo() {
+  virtual ~fermion_deriv_thermo_tl() {
+  }
+
+  /** \brief Calculate properties as function of chemical potential
+   */
+  virtual int calc_mu(fermion_deriv &f, fp_t temper)=0;
+
+  /** \brief Calculate properties as function of density
+   */
+  virtual int calc_density(fermion_deriv &f, fp_t temper)=0;
+
+  /** \brief Calculate properties with antiparticles as function of
+      chemical potential
+  */
+  virtual int pair_mu(fermion_deriv &f, fp_t temper)=0;
+
+  /** \brief Calculate properties with antiparticles as function of
+      density
+  */
+  virtual int pair_density(fermion_deriv &f, fp_t temper)=0;
+
+  /// Calculate effective chemical potential from density
+  virtual int nu_from_n(fermion_deriv &f, fp_t temper)=0;
+
+  /** \brief Calculate properties as a function of chemical 
+      potential using a degenerate expansion
+
+      \future There is some repetition of the code
+      for this function and the function
+      \ref o2scl::fermion_thermo::calc_mu_deg() .
+      which could be avoided.
+  */
+  virtual bool calc_mu_deg(fermion_deriv &f, fp_t temper,
+			   fp_t prec) {
+      
+    fermion_rel fr;
+    if (fr.calc_mu_deg_tlate<fermion_deriv>(f,temper,prec)==false) {
+      return false;
     }
-
-    /** \brief Calculate properties as function of chemical potential
-     */
-    virtual int calc_mu(fermion_deriv &f, double temper)=0;
-
-    /** \brief Calculate properties as function of density
-     */
-    virtual int calc_density(fermion_deriv &f, double temper)=0;
-
-    /** \brief Calculate properties with antiparticles as function of
-	chemical potential
-    */
-    virtual int pair_mu(fermion_deriv &f, double temper)=0;
-
-    /** \brief Calculate properties with antiparticles as function of
-	density
-    */
-    virtual int pair_density(fermion_deriv &f, double temper)=0;
-
-    /// Calculate effective chemical potential from density
-    virtual int nu_from_n(fermion_deriv &f, double temper)=0;
-
-    /** \brief Calculate properties as a function of chemical 
-	potential using a degenerate expansion
-
-	\future There is some repetition of the code
-	for this function and the function
-	\ref o2scl::fermion_thermo::calc_mu_deg() .
-	which could be avoided.
-    */
-    virtual bool calc_mu_deg(fermion_deriv &f, double temper,
-			     double prec);
+      
+    // Compute psi and tt
+    fp_t psi;
+    if (f.inc_rest_mass) psi=(f.nu-f.ms)/temper;
+    else psi=(f.nu+f.m-f.ms)/temper;
+    fp_t tt=temper/f.ms;
+      
+    // Prefactor 'd' in Johns96
+    fp_t prefac=f.g/2.0/o2scl_const::pi2*pow(f.ms,4.0);
+      
+    // Define x = psi * t = (mu/m - 1) and related values
+    fp_t x=psi*tt;
+    fp_t sx=sqrt(x);
+    fp_t s2x=sqrt(2.0+x);
+    fp_t x2=x*x;
+    fp_t x3=x2*x;
+    fp_t x4=x2*x2;
+      
+    // First order density term (first order entropy term is zero)
+    fp_t dndmu_term1=sx*s2x*(1.0+x)/f.ms/f.ms;
+      
+    // Second order terms
+    fp_t dndmu_term2=tt*tt*o2scl_const::pi2/6.0*(1.0+x)*
+      (-1.0+2.0*x*(2.0+x))/
+      f.ms/f.ms/sx/s2x/x/(2.0+x);
+    fp_t dndT_term2=tt*o2scl_const::pi2/3.0*(1.0+2.0*x*(2.0+x))/
+      f.ms/f.ms/sx/s2x;
+    fp_t dsdT_term2=o2scl_const::pi2/3.0*(1.0+x)*sx*s2x/
+      f.ms/f.ms;
+      
+    // Third order terms
+    fp_t dndmu_term3=-7.0*pow(o2scl_const::pi*tt,4.0)/24.0*
+      (1.0+x)/sx/s2x/x3/(x+2.0)/(x+2.0)/(x+2.0)/f.ms/f.ms;
+    fp_t dndT_term3=7.0*pow(o2scl_const::pi*tt,4.0)/tt/30.0/
+      f.ms/f.ms/pow(x*(2.0+x),2.5);
+    fp_t dsdT_term3=7.0*pow(o2scl_const::pi*tt,2.0)*
+      o2scl_const::pi2/30.0/f.ms/f.ms*(1.0+x)*(-1.0+2.0*x*(2.0+x))/
+      x/(2.0+x)/sx/s2x;
+      
+    // Fourth order terms for density and entropy
+    fp_t dndmu_term4=-31.0*pow(o2scl_const::pi*tt,6.0)/48.0*(1.0+x)*
+      (3.0+2.0*x*(2.0+x))/f.ms/f.ms/pow(x*(2.0+x),5.5);
+    fp_t dndT_term4=31.0*pow(o2scl_const::pi*tt,6.0)/tt/168.0*
+      (7.0+6.0*x*(2.0+x))/f.ms/f.ms/pow(x*(2.0+x),4.5);
+    fp_t dsdT_term4=-155.0*pow(o2scl_const::pi*tt,4.0)*
+      o2scl_const::pi2/168.0*
+      (1.0+x)/f.ms/f.ms/pow(x*(2.0+x),3.5);
+      
+    // Add up all the terms
+    f.dndmu=prefac*(dndmu_term1+dndmu_term2+dndmu_term3+dndmu_term4);
+    f.dndT=prefac*(dndT_term2+dndT_term3+dndT_term4);
+    f.dsdT=prefac*(dsdT_term2+dsdT_term3+dsdT_term4);
+      
+    return true;
+  }
     
-    /** \brief Calculate properties as a function of chemical 
-	potential using a nondegenerate expansion
+  /** \brief Calculate properties as a function of chemical 
+      potential using a nondegenerate expansion
 
-	\future There is some repetition of the code
-	for this function and the function
-	\ref o2scl::fermion_thermo::calc_mu_ndeg() .
-	which could be avoided.
-    */
-    virtual bool calc_mu_ndeg(fermion_deriv &f, double temper,
-			      double prec, bool inc_antip=false);
+      \future There is some repetition of the code
+      for this function and the function
+      \ref o2scl::fermion_thermo::calc_mu_ndeg() .
+      which could be avoided.
+  */
+  virtual bool calc_mu_ndeg(fermion_deriv &f, fp_t temper,
+			    fp_t prec, bool inc_antip=false) {
+      
+    fermion_rel fr;
+    if (fr.calc_mu_ndeg_tlate<fermion_deriv>(f,temper,prec,
+					     inc_antip)==false) {
+      return false;
+    }
+      
+    // Compute psi and tt
+    fp_t psi, psi_num;
+    if (f.inc_rest_mass) {
+      psi_num=f.nu-f.ms;
+    } else {
+      psi_num=f.nu+f.m-f.ms;
+    }
+    psi=psi_num/temper;
+    fp_t tt=temper/f.ms;
+    fp_t xx=psi*tt;
+      
+    // Prefactor 'd' in Johns96
+    fp_t prefac=f.g/2.0/o2scl_const::pi2*pow(f.ms,4.0);
+      
+    // One term is always used, so only values of max_term greater than
+    // 0 are useful.
+    static const size_t max_term=200;
+      
+    fp_t first_dndT=0.0;
+    fp_t first_dsdT=0.0;
+    fp_t first_dndmu=0.0;
+      
+    fp_t nu2=f.nu;
+    if (f.inc_rest_mass==false) nu2+=f.m;
+      
+    f.dndmu=0.0;
+    f.dndT=0.0;
+    f.dsdT=0.0;
+      
+    for(size_t j=1;j<=max_term;j++) {
+	
+      fp_t dj=((fp_t)j);
+      fp_t jot=dj/tt;
+	
+      // Here, we are only computing the derivatives, but we need to
+      // compute the terms in the pressure, density, and entropy because
+      // they are used in computing the terms for the derivatives.
+      fp_t pterm, nterm, enterm;
+      fp_t dndmu_term, dndT_term, dsdT_term;
+	
+      fr.ndeg_terms(j,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
+		    pterm,nterm,enterm);
+	
+      if (inc_antip==false) {
+	dndmu_term=nterm*jot;
+	dndT_term=jot*enterm-nterm/tt;
+	dsdT_term=(3.0*tt-2.0*dj*xx-2.0*dj)/tt/tt*enterm+
+	  (5.0*dj*tt-2.0*dj*dj*xx+5.0*dj*tt*xx-dj*dj*xx*xx)/
+	  dj/tt/tt/tt*nterm;
+      } else {
+	dndmu_term=nterm*jot;
+	dndT_term=jot*enterm*tanh(jot*(xx+1.0))-
+	  (tt+2.0*dj*(1.0+xx))/sinh(jot*(xx+1.0))*nterm/tt/tt;
+	dsdT_term=(2.0*dj*(1.0+xx)*tanh(jot*(xx+1.0))-3.0*tt)*enterm/tt/tt+
+	  (2.0*pow(dj*1.0+xx,2.0)*tanh(jot*(xx+1.0))-
+	   dj*dj*(2.0+2.0*xx+xx*xx)*cosh(jot*(xx+1.0))-
+	   5.0*dj*(1.0+xx)*tt)*nterm/dj/tt/tt/tt;
+      }
+      dndmu_term/=f.ms;
+      dndT_term/=f.ms;
+      dsdT_term/=f.ms;
+	
+      if (j==1) {
+	first_dndT=dndT_term;
+	first_dsdT=dsdT_term;
+	first_dndmu=dndmu_term;
+      }
+      f.dndmu+=dndmu_term;
+      f.dndT+=dndT_term;
+      f.dsdT+=dsdT_term;
+	
+      /*
+	cout << j << " " << dj << " " << tt << " " << xx << " "
+	<< f.ms << " " << pterm << " " << nterm << " "
+	<< enterm << " "
+	<< dndmu_term << " " << dndT_term << endl;
+      */
+	
+      // If the first terms are zero, then the rest of the terms
+      // will be zero so just return early
+      if (first_dndT==0.0 && first_dndmu==0.0 && first_dsdT==0.0) {
+	f.dndmu=0.0;
+	f.dndT=0.0;
+	f.dsdT=0.0;
+	return true;
+      }
+	
+      // Stop if the last term is sufficiently small compared to
+      // the first term
+      if (j>1 &&
+	  fabs(dndT_term)<prec*fabs(first_dndT) &&
+	  fabs(dndmu_term)<prec*fabs(first_dndmu) &&
+	  fabs(dsdT_term)<prec*fabs(first_dsdT)) {
+	f.dndT*=prefac;
+	f.dndmu*=prefac;
+	f.dsdT*=prefac;
+	return true;
+      }
+	
+      // End of 'for(size_t j=1;j<=max_term;j++)'
+    }
+      
+    // We failed to add enough terms, so return false
+    return false;
+  }
 
   };
 
+  typedef fermion_deriv_thermo_tl<double> fermion_deriv_thermo;
+
   /** \brief Object to organize calibration of derivative quantities
       in particle classes to results stored in a table
-   */
+  */
   class part_deriv_calibrate_class : public part_calibrate_class {
     
   public:

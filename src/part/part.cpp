@@ -62,41 +62,4 @@ thermo o2scl::operator-(const thermo &left, const part &right) {
   return th;
 }
 
-//--------------------------------------------
-// part class
-
-part::part(double mass, double dof) {
-  m=mass; 
-  ms=mass; 
-  g=dof;
-
-  non_interacting=true;
-  inc_rest_mass=true;
-}
-
-part::~part() {
-}
-
-void part::init(double mass, double dof) {
-  m=mass; 
-  ms=mass; 
-  g=dof;
-  return;
-}
-
-void part::anti(part& ax) {
-  ax.g=g;
-  ax.m=m;
-  ax.ms=ms;
-  ax.inc_rest_mass=inc_rest_mass;
-  ax.non_interacting=non_interacting;
-  if (inc_rest_mass) {
-    ax.nu=-nu;
-    ax.mu=-mu;
-  } else {
-    ax.nu=-nu-2.0*m;
-    ax.mu=-mu-2.0*m;
-  }
-  return;
-}
 

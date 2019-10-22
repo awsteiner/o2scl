@@ -35,6 +35,7 @@
 #include <o2scl/root_cern.h>
 
 #include <o2scl/part_deriv.h>
+#include <o2scl/classical_deriv.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -222,87 +223,388 @@ namespace o2scl {
       \int_0^{\infty} u^{1/2} f d u
       \f]
   */
-  class fermion_deriv_nr : public fermion_deriv_thermo {
+  template<class fp_t=double>
+    class fermion_deriv_nr_tl : public fermion_deriv_thermo_tl<fp_t> {
 
   public:
 
-    /// Create a fermion with mass \c m and degeneracy \c g
-    fermion_deriv_nr();
+  /// Create a fermion with mass \c m and degeneracy \c g
+  fermion_deriv_nr_tl() {
+  
+    flimit=20.0;
 
-    virtual ~fermion_deriv_nr();
+    density_root=&def_density_root;
+  }
+
+  virtual ~fermion_deriv_nr_tl() {
+  }
+  
+  /** \brief The limit for the Fermi functions (default 20.0)
     
-    /** \brief The limit for the Fermi functions (default 20.0)
+      fermion_deriv_nr will ignore corrections smaller than about
+      \f$ \exp(-\mathrm{f{l}imit}) \f$ . 
+  */
+  fp_t flimit;
     
-	fermion_deriv_nr will ignore corrections smaller than about
-	 \f$ \exp(-\mathrm{f{l}imit}) \f$ . 
-     */
-    double flimit;
+  /// Storage for the most recently calculated uncertainties 
+  fermion_deriv unc;
+
+  /** \brief Calculate properties as function of density
+      at \f$ T=0 \f$
+  */
+  virtual void calc_density_zerot(fermion_deriv &f) {
+    if (f.non_interacting) { f.ms=f.m; }
+    f.kf=cbrt(6.0*o2scl_const::pi2/f.g*f.n);
+    f.nu=f.kf*f.kf/2.0/f.ms;
+    f.ed=f.g*pow(f.kf,5.0)/20.0/o2scl_const::pi2/f.ms;
+    if (f.inc_rest_mass) {
+      f.ed+=f.n*f.m;
+      f.nu+=f.m;
+    }
+    f.pr=-f.ed+f.n*f.nu;
+    f.en=0.0;
+  
+    if (f.non_interacting) { f.mu=f.nu; }
+
+    f.dndT=0.0;
+    if (f.inc_rest_mass) {
+      f.dndmu=3.0*f.n/2.0/(f.nu-f.m);
+    } else {
+      f.dndmu=3.0*f.n/2.0/f.nu;
+    }
+    f.dsdT=0.0;
+    return;
+  }
+
     
-    /// Storage for the most recently calculated uncertainties 
-    fermion_deriv unc;
+  /** \brief Calculate properties as function of chemical potential
+      at \f$ T=0 \f$
+  */
+  virtual void calc_mu_zerot(fermion_deriv &f) {
+    if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
+    if (f.inc_rest_mass) {
+      f.kf=sqrt(2.0*f.ms*(f.nu-f.m));
+    } else {
+      f.kf=sqrt(2.0*f.ms*f.nu);
+    }
+    f.n=f.kf*f.kf*f.kf*f.g/6.0/o2scl_const::pi2;
+    f.ed=f.g*pow(f.kf,5.0)/20.0/o2scl_const::pi2/f.ms;
+    if (f.inc_rest_mass) f.ed+=f.n*f.m;
+    f.pr=-f.ed+f.n*f.nu;
+    f.en=0.0;
 
-    /** \brief Calculate properties as function of density
-	at \f$ T=0 \f$
-     */
-    virtual void calc_density_zerot(fermion_deriv &f);
+    f.dndT=0.0;
+    if (f.inc_rest_mass) {
+      f.dndmu=3.0*f.n/2.0/(f.nu-f.m);
+    } else {
+      f.dndmu=3.0*f.n/2.0/f.nu;
+    }
+    f.dsdT=0.0;
+    return;
+  }
+
     
-    /** \brief Calculate properties as function of chemical potential
-	at \f$ T=0 \f$
-     */
-    virtual void calc_mu_zerot(fermion_deriv &f);
+  /** \brief Calculate properties as function of chemical potential
+   */
+  virtual int calc_mu(fermion_deriv &f, fp_t temper) {
+
+    if (temper<0.0) {
+      O2SCL_ERR("T<0 in fermion_deriv_nr_tl<fp_t>::calc_mu().",exc_einval);
+    }
+    if (temper==0.0) {
+      calc_mu_zerot(f);
+      return 0;
+    }
+    if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
+  
+    fp_t pfac2=f.g*pow(f.ms*temper/2.0/o2scl_const::pi,1.5)/temper, y;
+  
+    if (f.inc_rest_mass) {
+      y=(f.nu-f.m)/temper;
+    } else {
+      y=f.nu/temper;
+    }
     
-    /** \brief Calculate properties as function of chemical potential
-     */
-    virtual int calc_mu(fermion_deriv &f, double temper);
+    fp_t half=gsl_sf_fermi_dirac_half(y);
+    fp_t mhalf=gsl_sf_fermi_dirac_mhalf(y);
+    fp_t thalf=gsl_sf_fermi_dirac_3half(y);
+  
+    // Number density:
+    f.n=pfac2*half*temper;
+  
+    // Energy density:
+    f.ed=pfac2*temper*temper*1.5*thalf;
 
-    /** \brief Calculate properties as function of density
-     */
-    virtual int calc_density(fermion_deriv &f, double temper);
+    if (f.inc_rest_mass) {
+    
+      // Finish energy density
+      f.ed+=f.n*f.m;
+    
+      // entropy density
+      f.en=((f.ed-f.n*f.m)/0.6-(f.nu-f.m)*f.n)/temper;
+    
+      // pressure
+      f.pr=(f.ed-f.n*f.m)/1.5;
+    
+    } else {
+    
+      // entropy density
+      f.en=(5.0*f.ed/3.0-f.nu*f.n)/temper;
+    
+      // pressure
+      f.pr=2.0*f.ed/3.0;
+    
+    }
+    
+    f.dndT=pfac2*(1.5*half-y*mhalf);
+    f.dndmu=pfac2*mhalf;
+    f.dsdT=pfac2*(3.75*thalf-3.0*y*half+y*y*mhalf);
+  
+    return 0;
+  }
 
-    /** \brief Calculate properties with antiparticles as function of
-	chemical potential
-    */
-    virtual int pair_mu(fermion_deriv &f, double temper);
 
-    /** \brief Calculate properties with antiparticles as function of
-	density
-     */
-    virtual int pair_density(fermion_deriv &f, double temper);
+  /** \brief Calculate properties as function of density
+   */
+  virtual int calc_density(fermion_deriv &f, fp_t temper) {
 
-    /// Calculate effective chemical potential from density
-    virtual int nu_from_n(fermion_deriv &f, double temper);
-
-    /** \brief Set the solver for use in calculating the chemical
-	potential from the density */
-    void set_density_root(root<> &rp) {
-      density_root=&rp;
-      return;
+    if (f.m<0.0 || (f.non_interacting==false && f.ms<0.0)) {
+      O2SCL_ERR2("Mass negative in ",
+		 "fermion_deriv_nr_tl<fp_t>::calc_density().",exc_einval);
+    }
+    if (temper<0.0) {
+      O2SCL_ERR2("Temperature less than zero in ",
+		 "fermion_deriv_nr_tl<fp_t>::calc_density().",exc_einval);
+    }
+    if (f.n<0.0) {
+      O2SCL_ERR2("Density less than zero in ",
+		 "fermion_deriv_nr_tl<fp_t>::calc_density().",exc_einval);
     }
 
-    /// The default solver for npen_density() and pair_density()
-    root_cern<> def_density_root;
+    if (temper==0.0) {
+      calc_density_zerot(f);
+      return 0;
+    }
+    if (f.n==0.0) {
+      if (f.inc_rest_mass) {
+	f.nu=f.m;
+	f.mu=f.m;
+      } else {
+	f.nu=0.0;
+	f.mu=0.0;
+      }
+      f.ed=0.0;
+      f.en=0.0;
+      f.pr=0.0;
+      f.nu=0.0;
+      f.dndT=0.0;
+      f.dndmu=0.0;
+      f.dsdT=0.0;
+    }
+  
+    if (f.non_interacting==true) { f.ms=f.m; f.nu=f.mu; }
 
-    /// Return string denoting type ("fermion_deriv_nr")
-    virtual const char *type() { return "fermion_deriv_nr"; };
+    nu_from_n(f,temper);
+  
+    if (f.non_interacting) { f.mu=f.nu; }
+  
+    calc_mu(f,temper);
+  
+    return 0;
+  }
+
+
+  /** \brief Calculate properties with antiparticles as function of
+      chemical potential
+  */
+  virtual int pair_mu(fermion_deriv &f, fp_t temper) {
+  
+    if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
+
+    fermion_deriv antip(f.ms,f.g);
+    f.anti(antip);
+
+    calc_mu(f,temper);
+
+    calc_mu(antip,temper);
+
+    f.n-=antip.n;
+    f.pr+=antip.pr;
+    f.ed+=antip.ed;
+    f.en+=antip.en;
+    f.dsdT+=antip.dsdT;
+    f.dndT+=antip.dndT;
+    f.dndmu+=antip.dndmu;
+  
+    return 0;
+  }
+
+
+  /** \brief Calculate properties with antiparticles as function of
+      density
+  */
+  virtual int pair_density(fermion_deriv &f, fp_t temper) {
+    fp_t nex;
+  
+    if (temper<=0.0) {
+      O2SCL_ERR("T=0 not implemented in fermion_deriv_nr().",exc_eunimpl);
+    }
+    if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
+  
+    nex=f.nu/temper;
+    funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv &,fp_t)>
+		       (&fermion_deriv_nr_tl<fp_t>::pair_fun),
+		       this,std::placeholders::_1,std::ref(f),temper);
+
+    density_root->solve(nex,mf);
+    f.nu=nex*temper;
+
+    if (f.non_interacting==true) { f.mu=f.nu; }
+  
+    pair_mu(f,temper);
+
+    return 0;
+  }
+
+
+  /// Calculate effective chemical potential from density
+  virtual int nu_from_n(fermion_deriv &f, fp_t temper) {
+
+    // Use initial value of nu for initial guess
+    fp_t nex;
+    if (f.inc_rest_mass) {
+      nex=-(f.nu-f.m)/temper;
+    } else {
+      nex=f.nu/temper;
+    }
+
+    // Make a correction if nex is too small and negative
+    // (Note GSL_LOG_DBL_MIN is about -708)
+    if (nex>-GSL_LOG_DBL_MIN*0.9) nex=-GSL_LOG_DBL_MIN/2.0;
+  
+    funct mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
+		       (&fermion_deriv_nr_tl<fp_t>::solve_fun),
+		       this,std::placeholders::_1,f.n/f.g,f.ms*temper);
+    
+    // Turn off convergence errors temporarily, since we'll
+    // try again if it fails
+    bool enc=density_root->err_nonconv;
+    density_root->err_nonconv=false;
+    int ret=density_root->solve(nex,mf);
+    density_root->err_nonconv=enc;
+
+    if (ret!=0) {
+
+      // If it failed, try to get a guess from classical_thermo particle
+    
+      classical_thermo cl;
+      cl.calc_density(f,temper);
+      if (f.inc_rest_mass) {
+	nex=-(f.nu-f.m)/temper;
+      } else {
+	nex=-f.nu/temper;
+      } 
+      ret=density_root->solve(nex,mf);
+    
+      // If it failed again, add error information
+      if (ret!=0) {
+	O2SCL_ERR("Solver failed in fermion_nonrel::nu_from_n().",ret);
+      }
+    }
+
+    if (f.inc_rest_mass) {
+      f.nu=-nex*temper+f.m;
+    } else {
+      f.nu=-nex*temper;
+    }
+
+    return 0;
+  }
+
+
+  /** \brief Set the solver for use in calculating the chemical
+      potential from the density */
+  void set_density_root(root<> &rp) {
+    density_root=&rp;
+    return;
+  }
+
+  /// The default solver for npen_density() and pair_density()
+  root_cern<> def_density_root;
+
+  /// Return string denoting type ("fermion_deriv_nr")
+  virtual const char *type() { return "fermion_deriv_nr"; };
 
   protected:
 
 #ifndef DOXYGEN_INTERNAL
 
-    /// Solver to compute chemical potential from density
-    root<> *density_root;
+  /// Solver to compute chemical potential from density
+  root<> *density_root;
     
-    /// Function to compute chemical potential from density
-    double solve_fun(double x, double nog, double msT);
+  /// Function to compute chemical potential from density
+  fp_t solve_fun(fp_t x, fp_t nog, fp_t msT) {
 
-    /** \brief Function to compute chemical potential from density
-	when antiparticles are included
-     */
-    double pair_fun(double x, fermion_deriv &f, double T);
+    fp_t nden;
+  
+    // If the argument to gsl_sf_fermi_dirac_half() is less
+    // than GSL_LOG_DBL_MIN (which is about -708), then 
+    // an underflow occurs. We just set nden to zero in this 
+    // case, as this helps the solver find the right root.
+  
+    if (((-x)<GSL_LOG_DBL_MIN) || !std::isfinite(x)) nden=0.0;
+    else nden=gsl_sf_fermi_dirac_half(-x)*sqrt(o2scl_const::pi)/2.0;
+  
+    nden*=pow(2.0*msT,1.5)/4.0/o2scl_const::pi2;
+    return nden/nog-1.0;
+  }
+
+
+  /** \brief Function to compute chemical potential from density
+      when antiparticles are included
+  */
+  fp_t pair_fun(fp_t x, fermion_deriv &f, fp_t T) {
+    
+    fp_t nden, y, yy;
+
+    f.nu=T*x;
+
+    // 6/6/03 - Should this be included? I think yes!
+    if (f.non_interacting) f.mu=f.nu;
+
+    if (f.inc_rest_mass) {
+      y=(f.nu-f.m)/T;
+    } else {
+      y=f.nu/T;
+    }
+
+    nden=gsl_sf_fermi_dirac_half(y)*sqrt(o2scl_const::pi)/2.0;
+    nden*=f.g*pow(2.0*f.ms*T,1.5)/4.0/o2scl_const::pi2;
+  
+    yy=nden;
+
+    if (f.inc_rest_mass) {
+      y=-(f.nu-f.m)/T;
+    } else {
+      y=-f.nu/T;
+    }
+  
+    nden=gsl_sf_fermi_dirac_half(y)*sqrt(o2scl_const::pi)/2.0;
+    nden*=f.g*pow(2.0*f.ms*T,1.5)/4.0/o2scl_const::pi2;
+  
+    yy-=nden;
+  
+    yy=yy/f.n-1.0;
+
+    return yy;
+  }
+
 
 #endif
 
   };
+
+  typedef fermion_deriv_nr_tl<double> fermion_deriv_nr;
 
 #ifndef DOXYGEN_NO_O2NS
 }

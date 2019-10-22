@@ -49,42 +49,46 @@ namespace o2scl {
   /** \brief A class containing three thermodynamical variables (energy
       density, pressure, entropy density)
   */
-  class thermo {
+  template<class fp_t=double> class thermo_tl {
 
   public:
 
-    /// pressure
-    double pr;
-    /// energy density
-    double ed;
-    /// entropy density
-    double en;
+  /// Pressure
+  fp_t pr;
+  /// Energy density
+  fp_t ed;
+  /// Entropy density
+  fp_t en;
 
-    /// Return string denoting type ("thermo")
-    const char *type() { return "thermo"; }
+  /// Return string denoting type ("thermo")
+  const char *type() { return "thermo"; }
 
-    // Default constructor
-    thermo() {
-    }
+  // Default constructor
+  thermo_tl() {
+  }
 
-    /// Copy constructor
-    thermo(const thermo &t) {
+  /// Copy constructor
+  thermo_tl(const thermo_tl &t) {
+    ed=t.ed;
+    pr=t.pr;
+    en=t.en;
+  }
+
+  /// Copy construction with operator=()
+  thermo_tl &operator=(const thermo_tl &t) {
+    if (this!=&t) {
       ed=t.ed;
       pr=t.pr;
       en=t.en;
     }
-
-    /// Copy construction with operator=()
-    thermo &operator=(const thermo &t) {
-      if (this!=&t) {
-	ed=t.ed;
-	pr=t.pr;
-	en=t.en;
-      }
-      return *this;
-    }
+    return *this;
+  }
 
   };
+
+  /** \brief Double-precision thermodynamics object
+   */
+  typedef thermo_tl<double> thermo;
 
   /** \brief Addition operator
    */
@@ -96,37 +100,53 @@ namespace o2scl {
 
   /** \brief Particle base class 
    */
-  class part {
+  template<class fp_t=double> class part_tl {
     
   public:
 
-    /// Degeneracy (e.g. spin and color if applicable)
-    double g;
-    /// Mass
-    double m;
-    /// Number density
-    double n;
-    /// Energy density
-    double ed;
-    /// Pressure
-    double pr;
-    /// Chemical potential
-    double mu;
-    /// Entropy density
-    double en;
-    /// Effective mass (Dirac unless otherwise specified)
-    double ms;
-    /// Effective chemical potential
-    double nu;
-    /** \brief If true, include the mass in the energy 
-	density and chemical potential (default true) 
-    */
-    bool inc_rest_mass;
-    /// True if the particle is non-interacting (default true)
-    bool non_interacting;
+  /// Degeneracy (e.g. spin and color if applicable)
+  fp_t g;
+  /// Mass
+  fp_t m;
+  /// Number density
+  fp_t n;
+  /// Energy density
+  fp_t ed;
+  /// Pressure
+  fp_t pr;
+  /// Chemical potential
+  fp_t mu;
+  /// Entropy density
+  fp_t en;
+  /// Effective mass (Dirac unless otherwise specified)
+  fp_t ms;
+  /// Effective chemical potential
+  fp_t nu;
+  /** \brief If true, include the mass in the energy 
+      density and chemical potential (default true) 
+  */
+  bool inc_rest_mass;
+  /// True if the particle is non-interacting (default true)
+  bool non_interacting;
 
-    /// Copy constructor
-    part(const part &p) {
+  /// Copy constructor
+  part_tl(const part_tl &p) {
+    g=p.g;
+    m=p.m;
+    ms=p.ms;
+    n=p.n;
+    ed=p.ed;
+    pr=p.pr;
+    mu=p.mu;
+    en=p.en;
+    nu=p.nu;
+    inc_rest_mass=p.inc_rest_mass;
+    non_interacting=p.non_interacting;
+  }
+
+  /// Copy construction with operator=()
+  part_tl &operator=(const part_tl &p) {
+    if (this!=&p) {
       g=p.g;
       m=p.m;
       ms=p.ms;
@@ -139,58 +159,73 @@ namespace o2scl {
       inc_rest_mass=p.inc_rest_mass;
       non_interacting=p.non_interacting;
     }
-
-    /// Copy construction with operator=()
-    part &operator=(const part &p) {
-      if (this!=&p) {
-	g=p.g;
-	m=p.m;
-	ms=p.ms;
-	n=p.n;
-	ed=p.ed;
-	pr=p.pr;
-	mu=p.mu;
-	en=p.en;
-	nu=p.nu;
-	inc_rest_mass=p.inc_rest_mass;
-	non_interacting=p.non_interacting;
-      }
-      return *this;
-    }
+    return *this;
+  }
     
-    /// Make a particle of mass \c mass and degeneracy \c dof.
-    part(double mass=0.0, double dof=0.0);
-
-    virtual ~part();
+  /// Make a particle of mass \c mass and degeneracy \c dof.
+  part_tl(fp_t mass=0.0, fp_t dof=0.0) {
+    m=mass; 
+    ms=mass; 
+    g=dof;
+    
+    non_interacting=true;
+    inc_rest_mass=true;
+  }    
   
-    /// Set the mass \c mass and degeneracy \c dof.
-    virtual void init(double mass, double dof);
+  virtual ~part_tl() {
+  }
+  
+  /// Set the mass \c mass and degeneracy \c dof.
+  virtual void init(fp_t mass, fp_t dof) {
+    m=mass; 
+    ms=mass; 
+    g=dof;
+    return;
+  }
 
-    /** \brief Make \c ap an anti-particle with the same mass
-	and degeneracy
+  /** \brief Make \c ap an anti-particle with the same mass
+      and degeneracy
 
-	This sets the \ref m, \ref g, \ref ms, \ref inc_rest_mass
-	and \ref non_interacting fields of \c ap equal to that
-	of the current object. If \ref inc_rest_mass is true,
-	then it sets 
-	\f[
-	\mu_{\mathrm{anti}} = - \mu
-	\qquad\mathrm{and}\qquad
-	\nu_{\mathrm{anti}} = - \nu
-	\f]
-	and if \ref inc_rest_mass is false, it sets
-	\f[
-	\mu_{\mathrm{anti}} = - \mu - 2 m
-	\qquad\mathrm{and}\qquad
-	\nu_{\mathrm{anti}} = - \nu - 2 m
-	\f]
-    */
-    virtual void anti(part &ap);
+      This sets the \ref m, \ref g, \ref ms, \ref inc_rest_mass
+      and \ref non_interacting fields of \c ap equal to that
+      of the current object. If \ref inc_rest_mass is true,
+      then it sets 
+      \f[
+      \mu_{\mathrm{anti}} = - \mu
+      \qquad\mathrm{and}\qquad
+      \nu_{\mathrm{anti}} = - \nu
+      \f]
+      and if \ref inc_rest_mass is false, it sets
+      \f[
+      \mu_{\mathrm{anti}} = - \mu - 2 m
+      \qquad\mathrm{and}\qquad
+      \nu_{\mathrm{anti}} = - \nu - 2 m
+      \f]
+  */
+  virtual void anti(part_tl &ax) {
+    ax.g=g;
+    ax.m=m;
+    ax.ms=ms;
+    ax.inc_rest_mass=inc_rest_mass;
+    ax.non_interacting=non_interacting;
+    if (inc_rest_mass) {
+      ax.nu=-nu;
+      ax.mu=-mu;
+    } else {
+      ax.nu=-nu-2.0*m;
+      ax.mu=-mu-2.0*m;
+    }
+    return;
+  }    
 
-    /// Return string denoting type ("part")
-    virtual const char *type() { return "part"; }
+  /// Return string denoting type ("part_tl")
+  virtual const char *type() { return "part_tl"; }
     
   };
+
+  /** \brief Double-precision thermodynamics object
+   */
+  typedef part_tl<double> part;
 
   /** \brief Addition operator
    */
@@ -202,7 +237,7 @@ namespace o2scl {
 
   /** \brief Object to organize calibration of particle classes
       to results stored in a table
-   */
+  */
   class part_calibrate_class {
     
   public:
@@ -230,7 +265,7 @@ namespace o2scl {
     
     /** \brief Set chemical potential from psi, T, the index k,
 	and the flag nr_mode
-     */
+    */
     template<class part_t>
       void set_chem_pot(part_t &p, double psi, double T, size_t k,
 			bool nr_mode) {
@@ -264,7 +299,7 @@ namespace o2scl {
 
     /** \brief Check the density against the exact result 
 	and update 
-     */
+    */
     template<class part1_t, class part2_t, class part3_t>
       void check_density(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
 			 double T, double mot, double psi,
@@ -292,7 +327,7 @@ namespace o2scl {
     
     /** \brief Check the chemical potential against the exact result 
 	and update 
-     */
+    */
     template<class part1_t, class part2_t, class part3_t>
       void check_chem_pot(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
 			  double T, double mot, double psi,
@@ -329,7 +364,7 @@ namespace o2scl {
       
     /** \brief Check the energy density, pressure, and entropy against
 	the exact result and update
-     */
+    */
     template<class part1_t, class part2_t, class part3_t>
       void check_eps(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
 		     double T, double mot, double psi,
