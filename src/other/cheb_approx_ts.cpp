@@ -22,6 +22,11 @@
 */
 
 #include <iostream>
+
+#ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#endif
+
 #include <o2scl/constants.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/cheb_approx.h>
@@ -39,7 +44,28 @@ double func2(double x) {
   return exp(x)*a+b;
 }
 
+#ifdef O2SCL_LD_TYPES
+
+typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+
+long double func2_ld(long double x) {
+  long double a=1.0/(exp(1.0)-1.0);
+  long double b=1.0/(1.0-exp(1.0));
+  return exp(x)*a+b;
+}
+
+cpp_dec_float_50 func2_cdf(cpp_dec_float_50 x) {
+  cpp_dec_float_50 a=1.0/(exp(1.0)-1.0);
+  cpp_dec_float_50 b=1.0/(1.0-exp(1.0));
+  return exp(x)*a+b;
+}
+
+#endif
+
 int main(void) {
+
+  cout.setf(ios::scientific);
+  
   test_mgr t;
   t.set_output_level(2);
 
@@ -78,8 +104,8 @@ int main(void) {
   // the Chebyshev approximation as a funct object
   //funct_cmfptr<cheb_approx> fmn(&gc,&cheb_approx::eval);
   funct fmn=std::bind(std::mem_fn<double(double) const>
-			(&cheb_approx::eval),&gc,
-			std::placeholders::_1);
+		      (&cheb_approx::eval),&gc,
+		      std::placeholders::_1);
   
   double y;
   for(double x=0.0;x<1.01;x+=0.2) {
@@ -102,7 +128,47 @@ int main(void) {
 	 << gc.get_coefficient(0) << endl;
   }
   cout << gc.eval(0.0) << " " << gc.eval(1.0) << endl;
+  cout << endl;
 
+#ifdef O2SCL_LD_TYPES
+
+  {
+    cout << "double:" << endl;
+    cheb_approx_tl<double> ca;
+    ca.init(func2,10,0.0,1.0);
+    for(double xx=0.05;xx<1.0;xx+=0.1) {
+      cout << xx << " " << gc.eval(xx) << " "
+	   << ca.eval(xx) << " " << func2(xx) << " "
+	   << fabs(ca.eval(xx)-func2(xx))/fabs(func2(xx)) << endl;
+    }
+    cout << endl;
+    
+    cout << "long double:" << endl;
+    cheb_approx_tl<long double> ca_ld;
+    ca_ld.init(func2_ld,20,0.0,1.0);
+    for(long double xx=((long double)1)/((long double)20);
+	xx<1.0;xx+=((long double)1)/((long double)10)) {
+      cout << xx << " " << gc.eval(xx) << " "
+	   << ca_ld.eval(xx) << " " << func2_ld(xx) << " "
+	   << fabs(ca_ld.eval(xx)-func2_ld(xx))/fabs(func2_ld(xx)) << endl;
+    }
+    cout << endl;
+    
+    cout << "cpp_dec_float_50:" << endl;
+    cheb_approx_tl<cpp_dec_float_50> ca_cdf;
+    ca_cdf.init(func2_cdf,30,0.0,1.0);
+    for(cpp_dec_float_50 xx=((cpp_dec_float_50)1)/((cpp_dec_float_50)20);
+	xx<1.0;xx+=((cpp_dec_float_50)1)/((cpp_dec_float_50)10)) {
+      cout << xx << " " << gc.eval((double)xx) << " "
+	   << ca_cdf.eval(xx) << " " << func2_cdf(xx) << " "
+	   << fabs(ca_cdf.eval(xx)-func2_cdf(xx))/fabs(func2_cdf(xx)) << endl;
+    }
+    cout << endl;
+    
+  }
+  
+#endif
+  
   t.report();
   return 0;
 }
