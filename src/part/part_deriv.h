@@ -716,8 +716,19 @@ namespace o2scl {
       This is for access to fermion_thermo::ndeg_terms().
   */
   fermion_rel fr;
+
+  /// Desc
+  fp_t pi;
+  
+  /// Desc
+  fp_t pi2;
   
   public:
+
+  fermion_deriv_thermo_tl() {
+    pi=boost::math::constants::pi<fp_t>();
+    pi2=boost::math::constants::pi_sqr<fp_t>();
+  }    
 
   virtual ~fermion_deriv_thermo_tl() {
   }

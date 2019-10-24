@@ -359,7 +359,7 @@ namespace o2scl {
 
     if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
 
-    fp_t prefac=f.g/2.0/o2scl_const::pi2;
+    fp_t prefac=f.g/2.0/this->pi2;
 
     // Compute the degeneracy parameter
 

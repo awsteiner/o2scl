@@ -42,33 +42,72 @@ namespace o2scl {
 
   /** \brief Equation of state for a classical particle with derivatives
    */
-  class classical_deriv_thermo : public deriv_thermo_base {
+  template<class fp_t=double>
+    class classical_deriv_thermo_tl : public deriv_thermo_base_tl<fp_t> {
 
   protected:
     
-    /// For computing non-derivative properties
-    classical_thermo cl;
+  /// For computing non-derivative properties
+  classical_thermo_tl<fp_t> cl;
 
   public:
 
-    classical_deriv_thermo();
-
-    virtual ~classical_deriv_thermo();
+  classical_deriv_thermo_tl() {
+  }
+  
+  virtual ~classical_deriv_thermo_tl() {
+  }
     
-    /** \brief Compute the properties of particle \c p at temperature 
-	\c temper from its chemical potential
-    */
-    virtual void calc_mu(part_deriv &p, double temper);
-    
-    /** \brief Compute the properties of particle \c p at temperature 
-	\c temper from its density
-    */
-    virtual void calc_density(part_deriv &p, double temper);
+  /** \brief Compute the properties of particle \c p at temperature 
+      \c temper from its chemical potential
+  */
+  virtual void calc_mu(part_deriv &p, fp_t temper) {
+      
+    cl.calc_mu(p,temper);
 
-    /// Return string denoting type ("classical_deriv_thermo")
-    virtual const char *type() { return "classical_deriv_thermo"; };
+    if (temper==0.0) {
+      p.dndT=0.0;
+      p.dndmu=0.0;
+      p.dsdT=0.0;
+      return;
+    }
+
+    p.dndT=-p.nu/temper/temper*p.n+1.5*p.n/temper;
+    p.dndmu=p.n/temper;
+    p.dsdT=2.5*p.dndT-p.nu*p.dndT/temper+p.n*p.nu/temper/temper;
+
+    return;
+  }
+
+
+  /** \brief Compute the properties of particle \c p at temperature 
+      \c temper from its density
+  */
+  virtual void calc_density(part_deriv &p, fp_t temper) {
+
+    cl.calc_density(p,temper);
+
+    // Handle zero density first
+    if (p.n==0.0 || temper==0.0) {
+      p.dndT=0.0;
+      p.dndmu=0.0;
+      p.dsdT=0.0;
+      return;
+    }
+
+    p.dndT=-p.nu/temper/temper*p.n+1.5*p.n/temper;
+    p.dndmu=p.n/temper;
+    p.dsdT=2.5*p.dndT-p.nu*p.dndT/temper+p.n*p.nu/temper/temper;
+  
+    return;
+  }
+
+  /// Return string denoting type ("classical_deriv_thermo")
+  virtual const char *type() { return "classical_deriv_thermo"; };
 
   };
+
+  typedef classical_deriv_thermo_tl<double> classical_deriv_thermo;
 
 #ifndef DOXYGEN_NO_O2NS
 }

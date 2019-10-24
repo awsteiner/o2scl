@@ -103,7 +103,8 @@ namespace o2scl {
     /// 6-th order polylogarithm
     double li6(double x);
 
-    polylog(); 
+    polylog();
+    
     ~polylog();
 
   protected:
@@ -111,13 +112,21 @@ namespace o2scl {
 #ifndef DOXYGEN_NO_O2NS
 
     double *arg;
+    
     double *two;
+    
     double *three;
+    
     double *four;
+    
     double *five;
+    
     double *six;
+    
     double li2neg1;
+    
     double li4neg1;
+    
     double li6neg1;
 
 #endif

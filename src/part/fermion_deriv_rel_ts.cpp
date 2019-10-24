@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
   fermion_eff eff;
   part_calibrate_class pcc;
   part_deriv_calibrate_class pdcc;
-  
+
   // -----------------------------------------------------------------
   // Test the specific heat of degenerate fermions (As a reminder,
   // note that the degenerate specific heat differs for relativistic

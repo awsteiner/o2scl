@@ -254,9 +254,9 @@ namespace o2scl {
   */
   virtual void calc_density_zerot(fermion_deriv &f) {
     if (f.non_interacting) { f.ms=f.m; }
-    f.kf=cbrt(6.0*o2scl_const::pi2/f.g*f.n);
+    f.kf=cbrt(6.0*this->pi2/f.g*f.n);
     f.nu=f.kf*f.kf/2.0/f.ms;
-    f.ed=f.g*pow(f.kf,5.0)/20.0/o2scl_const::pi2/f.ms;
+    f.ed=f.g*pow(f.kf,5.0)/20.0/this->pi2/f.ms;
     if (f.inc_rest_mass) {
       f.ed+=f.n*f.m;
       f.nu+=f.m;
@@ -287,8 +287,8 @@ namespace o2scl {
     } else {
       f.kf=sqrt(2.0*f.ms*f.nu);
     }
-    f.n=f.kf*f.kf*f.kf*f.g/6.0/o2scl_const::pi2;
-    f.ed=f.g*pow(f.kf,5.0)/20.0/o2scl_const::pi2/f.ms;
+    f.n=f.kf*f.kf*f.kf*f.g/6.0/this->pi2;
+    f.ed=f.g*pow(f.kf,5.0)/20.0/this->pi2/f.ms;
     if (f.inc_rest_mass) f.ed+=f.n*f.m;
     f.pr=-f.ed+f.n*f.nu;
     f.en=0.0;
@@ -317,7 +317,7 @@ namespace o2scl {
     }
     if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
-    fp_t pfac2=f.g*pow(f.ms*temper/2.0/o2scl_const::pi,1.5)/temper, y;
+    fp_t pfac2=f.g*pow(f.ms*temper/2.0/this->pi,1.5)/temper, y;
   
     if (f.inc_rest_mass) {
       y=(f.nu-f.m)/temper;
@@ -553,9 +553,9 @@ namespace o2scl {
     // case, as this helps the solver find the right root.
   
     if (((-x)<GSL_LOG_DBL_MIN) || !std::isfinite(x)) nden=0.0;
-    else nden=gsl_sf_fermi_dirac_half(-x)*sqrt(o2scl_const::pi)/2.0;
+    else nden=gsl_sf_fermi_dirac_half(-x)*sqrt(this->pi)/2.0;
   
-    nden*=pow(2.0*msT,1.5)/4.0/o2scl_const::pi2;
+    nden*=pow(2.0*msT,1.5)/4.0/this->pi2;
     return nden/nog-1.0;
   }
 
@@ -578,8 +578,8 @@ namespace o2scl {
       y=f.nu/T;
     }
 
-    nden=gsl_sf_fermi_dirac_half(y)*sqrt(o2scl_const::pi)/2.0;
-    nden*=f.g*pow(2.0*f.ms*T,1.5)/4.0/o2scl_const::pi2;
+    nden=gsl_sf_fermi_dirac_half(y)*sqrt(this->pi)/2.0;
+    nden*=f.g*pow(2.0*f.ms*T,1.5)/4.0/this->pi2;
   
     yy=nden;
 
@@ -589,8 +589,8 @@ namespace o2scl {
       y=-f.nu/T;
     }
   
-    nden=gsl_sf_fermi_dirac_half(y)*sqrt(o2scl_const::pi)/2.0;
-    nden*=f.g*pow(2.0*f.ms*T,1.5)/4.0/o2scl_const::pi2;
+    nden=gsl_sf_fermi_dirac_half(y)*sqrt(this->pi)/2.0;
+    nden*=f.g*pow(2.0*f.ms*T,1.5)/4.0/this->pi2;
   
     yy-=nden;
   

@@ -31,6 +31,9 @@
 #include <fstream>
 #include <cmath>
 
+#include <boost/math/constants/constants.hpp>
+#include <boost/math/special_functions/bessel.hpp>
+
 // For gsl_sf_fermi_dirac_int()
 #include <gsl/gsl_specfunc.h>
 
@@ -127,9 +130,19 @@ namespace o2scl {
   */
   template<class fp_t=double> class fermion_zerot_tl {
 
+  protected:
+
+  /// Desc
+  fp_t pi;
+    
+  /// Desc
+  fp_t pi2;
+    
   public:
 
   fermion_zerot_tl() {
+    pi=boost::math::constants::pi<fp_t>();
+    pi2=boost::math::constants::pi_sqr<fp_t>();
   };
 
   virtual ~fermion_zerot_tl() {
@@ -142,7 +155,7 @@ namespace o2scl {
       Uses the relation \f$ k_F = ( 6 \pi^2 n /g )^{1/3} \f$
   */
   void kf_from_density(fermion_tl<fp_t> &f) {
-    f.kf=cbrt(6.0*o2scl_const::pi2/f.g*f.n);
+    f.kf=cbrt(6.0*pi2/f.g*f.n);
     return;
   }    
 
@@ -158,11 +171,11 @@ namespace o2scl {
     fp_t r,efs;
     if (f.kf>0.0) {
       if (f.ms<=0.0) {
-	f.ed=f.g*(pow(f.kf,4.0)/8.0/o2scl_const::pi2);
+	f.ed=f.g*(pow(f.kf,4.0)/8.0/pi2);
       } else {
 	efs=gsl_hypot(f.kf,f.ms);
 	r=(f.kf+efs)/f.ms;
-	f.ed=f.g/16.0/o2scl_const::pi2*(2.0*f.kf*pow(efs,3.0)-f.kf*efs*f.ms*f.ms
+	f.ed=f.g/16.0/pi2*(2.0*f.kf*pow(efs,3.0)-f.kf*efs*f.ms*f.ms
 					-pow(f.ms,4.0)*log(r));
       }
     } else {
@@ -182,11 +195,11 @@ namespace o2scl {
     fp_t r,efs;
     if (f.kf>0.0) {
       if (f.ms<=0.0) {
-	f.pr=f.g*(pow(f.kf,4.0)/24.0/o2scl_const::pi2);
+	f.pr=f.g*(pow(f.kf,4.0)/24.0/pi2);
       } else {
 	efs=gsl_hypot(f.kf,f.ms);
 	r=(f.kf+efs)/f.ms;
-	f.pr=f.g/48.0/o2scl_const::pi2*(2.0*efs*pow(f.kf,3.0)-
+	f.pr=f.g/48.0/pi2*(2.0*efs*pow(f.kf,3.0)-
 					3.0*f.kf*efs*f.ms*f.ms
 					+3.0*pow(f.ms,4.0)*log(r));
       }
@@ -221,7 +234,7 @@ namespace o2scl {
 	f.kf=0.0;
       }
     }
-    f.n=f.g/6.0/o2scl_const::pi2*pow(f.kf,3.0);
+    f.n=f.g/6.0/pi2*pow(f.kf,3.0);
     energy_density_zerot(f);
     pressure_zerot(f);
     f.en=0.0;
@@ -239,7 +252,7 @@ namespace o2scl {
   virtual void calc_density_zerot(fermion_tl<fp_t> &f) {
     if (f.non_interacting) { f.ms=f.m; }
 
-    f.kf=cbrt(6.0*o2scl_const::pi2/f.g*f.n);
+    f.kf=cbrt(6.0*pi2/f.g*f.n);
     f.nu=gsl_hypot(f.kf,f.ms);
     energy_density_zerot(f);
     pressure_zerot(f);
@@ -322,7 +335,7 @@ namespace o2scl {
     if (inc_antip==false && psi>-1.0) return false;
 
     // Prefactor 'd' in Johns96
-    fp_t prefac=f.g/2.0/o2scl_const::pi2*pow(f.ms,4.0);
+    fp_t prefac=f.g/2.0/this->pi2*pow(f.ms,4.0);
 
     // One term is always used, so only values of max_term greater than
     // 0 are useful.
@@ -342,11 +355,18 @@ namespace o2scl {
 
     // -----------------------------------------------------
     // Return early if the last term is going to be too large.
-  
+    
     // Ratio of last term to first term in the pressure expansion
     fp_t rat;
     fp_t dj1=((fp_t)max_term), jot1=max_term/tt;
     fp_t dj2=1.0, jot2=1.0/tt;
+
+    // fp_t Kn21=boost::math::cyl_bessel_k(2,jot1)*exp(jot1);
+    // fp_t Kn22=boost::math::cyl_bessel_k(2,jot2)*exp(jot2);
+    //std::cout << boost::math::cyl_bessel_k(2,jot1)*exp(jot1) << std::endl;
+    //std::cout << gsl_sf_bessel_Kn_scaled(2.0,jot1) << std::endl;
+    //exit(-1);
+    
     if (inc_antip==false) {
       rat=exp(dj1*psi)/jot1/jot1*gsl_sf_bessel_Kn_scaled(2.0,jot1);
       rat/=exp(dj2*psi)/jot2/jot2*gsl_sf_bessel_Kn_scaled(2.0,jot2);
@@ -446,7 +466,7 @@ namespace o2scl {
     if (psi<0.0) return false;
   
     // Prefactor 'd' in Johns96
-    fp_t prefac=f.g/2.0/o2scl_const::pi2*pow(f.ms,4.0);
+    fp_t prefac=f.g/2.0/this->pi2*pow(f.ms,4.0);
   
     // Define x = psi * t = (mu/m - 1) and related values
     fp_t x=psi*tt;
@@ -464,7 +484,7 @@ namespace o2scl {
     } else {
       pterm1=x2*sx*(29568.0+15840.0*x+1540.0*x2-105.0*x3)/55440.0/sqrt(2.0);
     }
-    fp_t pterm4=-31.0*pow(o2scl_const::pi*tt,6.0)/1008.0*(1.0+x)*
+    fp_t pterm4=-31.0*pow(this->pi*tt,6.0)/1008.0*(1.0+x)*
     sx*s2x/pow(x*(2.0+x),4.0);
 
     // Check if we're going to succeed
@@ -476,23 +496,23 @@ namespace o2scl {
     fp_t nterm1=sx*s2x*x*(2.0+x)/3.0/f.ms;
   
     // Second order terms
-    fp_t pterm2=tt*tt*o2scl_const::pi2/6.0*(1.0+x)*sx*s2x;
-    fp_t nterm2=tt*tt*o2scl_const::pi2/6.0*(1.0+4.0*x+2.0*x2)/
+    fp_t pterm2=tt*tt*this->pi2/6.0*(1.0+x)*sx*s2x;
+    fp_t nterm2=tt*tt*this->pi2/6.0*(1.0+4.0*x+2.0*x2)/
     f.ms/sx/s2x;
-    fp_t enterm2=tt*o2scl_const::pi2/3.0*(1.0+x)*sx*s2x/f.ms;
+    fp_t enterm2=tt*this->pi2/3.0*(1.0+x)*sx*s2x/f.ms;
 
     // Third order terms
-    fp_t pterm3=7.0*pow(o2scl_const::pi*tt,4.0)/360.0*(1.0+x)*
+    fp_t pterm3=7.0*pow(this->pi*tt,4.0)/360.0*(1.0+x)*
     (-1.0+4.0*x+2.0*x2)/pow(x*(2.0+x),1.5);
-    fp_t nterm3=7.0*pow(o2scl_const::pi*tt,4.0)/120.0/sx/s2x/
+    fp_t nterm3=7.0*pow(this->pi*tt,4.0)/120.0/sx/s2x/
     x2/(x+2.0)/(x+2.0)/f.ms;
-    fp_t enterm3=7.0*pow(o2scl_const::pi*tt,4.0)/tt/90.0*(1.0+x)*
+    fp_t enterm3=7.0*pow(this->pi*tt,4.0)/tt/90.0*(1.0+x)*
     (-1.0+4.0*x+2.0*x2)/f.ms/sx/s2x/x/(x+2.0);
 
     // Fourth order terms for density and entropy
-    fp_t nterm4=31.0*pow(o2scl_const::pi*tt,6.0)/1008.0*sx*s2x*
+    fp_t nterm4=31.0*pow(this->pi*tt,6.0)/1008.0*sx*s2x*
     (7.0+12.0*x+6.0*x2)/f.ms/pow(x*(2.0+x),5.0);
-    fp_t enterm4=-31.0*pow(o2scl_const::pi*tt,6.0)/tt/168.0*sx*s2x*
+    fp_t enterm4=-31.0*pow(this->pi*tt,6.0)/tt/168.0*sx*s2x*
     (1.0+x)/pow(x*(2.0+x),4.0);
 
     // Add up all the terms
@@ -634,8 +654,8 @@ namespace o2scl {
     fm2=gsl_sf_fermi_dirac_int(2,f.nu/temper);
     fm3=gsl_sf_fermi_dirac_int(3,f.nu/temper);
   
-    f.n=f.g/o2scl_const::pi2*pow(temper,3.0)*fm2;
-    f.ed=f.g*3.0/o2scl_const::pi2*pow(temper,4.0)*fm3;
+    f.n=f.g/this->pi2*pow(temper,3.0)*fm2;
+    f.ed=f.g*3.0/this->pi2*pow(temper,4.0)*fm3;
     f.pr=f.ed/3.0;
     f.en=(f.ed+f.pr-f.n*f.nu)/temper;
 
@@ -670,16 +690,16 @@ namespace o2scl {
     if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
     if (f.nu==0.0) {
       f.n=0.0;
-      f.ed=f.g/8.0/o2scl_const::pi2*7.0/15.0*
-      pow(o2scl_const::pi*temper,4.0);
+      f.ed=f.g/8.0/this->pi2*7.0/15.0*
+      pow(this->pi*temper,4.0);
       f.pr=f.ed/3.0;
       f.en=(f.ed+f.pr-f.n*f.mu)/temper;
     } else {
       nu2=f.nu*f.nu;
-      pitmu=o2scl_const::pi*temper/f.nu;
+      pitmu=this->pi*temper/f.nu;
       pitmu2=pitmu*pitmu;
-      f.n=f.g*f.nu*nu2/6.0/o2scl_const::pi2*(1.0+pitmu2);
-      f.ed=f.g*nu2*nu2/8.0/o2scl_const::pi2*(1.0+2.0*pitmu2+
+      f.n=f.g*f.nu*nu2/6.0/this->pi2*(1.0+pitmu2);
+      f.ed=f.g*nu2*nu2/8.0/this->pi2*(1.0+2.0*pitmu2+
 					     7.0/15.0*pitmu2*pitmu2);
       f.pr=f.ed/3.0;
       f.en=(f.ed+f.pr-f.n*f.mu)/temper;
@@ -687,7 +707,7 @@ namespace o2scl {
       // Might the following work better for the energy density?
       // pit=pi*temper;
       // pit2=pit*pit;
-      // ed=g/8.0/o2scl_const::pi2*(nu2*nu2+2.0*pit2*nu2+7.0/15.0*pit2*pit2);
+      // ed=g/8.0/pi2*(nu2*nu2+2.0*pit2*nu2+7.0/15.0*pit2*pit2);
     
     }
 
@@ -752,13 +772,13 @@ namespace o2scl {
     if (f.non_interacting) { f.ms=f.m; }
     if (f.n<=0.0) {
       f.nu=0.0;
-      f.ed=f.g/8.0/o2scl_const::pi2*7.0/15.0*pow(o2scl_const::pi*temper,4.0);
+      f.ed=f.g/8.0/this->pi2*7.0/15.0*pow(this->pi*temper,4.0);
       f.pr=f.ed/3.0;
     } else {
-      alpha=f.g*f.g*o2scl_const::pi2*t2*t2*t2/243.0/f.n/f.n;
+      alpha=f.g*f.g*this->pi2*t2*t2*t2/243.0/f.n/f.n;
       if (alpha>1.0e4) {
 	f.nu=(2.0/3.0/sqrt(alpha)-8.0/81.0/pow(alpha,1.5)+
-	      32.0/729.0/pow(alpha,2.5))*o2scl_const::pi*temper/sqrt(3.0);
+	      32.0/729.0/pow(alpha,2.5))*this->pi*temper/sqrt(3.0);
       } else if (alpha<3.0e-4) {
 	two13=cbrt(2.0);
 	alpha16=pow(alpha,1.0/6.0);
@@ -766,15 +786,15 @@ namespace o2scl {
 	      +alpha*alpha16/12.0/two13-alpha*alpha/alpha16/18.0/two13/two13-
 	      5.0*alpha*alpha*alpha16/144.0/two13+
 	      77.0/2592.0*alpha*alpha*alpha/alpha16/two13/two13)*
-	o2scl_const::pi*temper/sqrt(3.0);
+	this->pi*temper/sqrt(3.0);
       } else {
 	cbt=pow(-1.0+sqrt(1.0+alpha),1.0/3.0)/pow(alpha,1.0/6.0);
-	f.nu=o2scl_const::pi*temper/sqrt(3.0)*(1.0/cbt-cbt);
+	f.nu=this->pi*temper/sqrt(3.0)*(1.0/cbt-cbt);
       }
-      pitmu=o2scl_const::pi*temper/f.nu;
+      pitmu=this->pi*temper/f.nu;
       pitmu2=pitmu*pitmu;
       nu2=f.nu*f.nu;
-      f.ed=f.g*nu2*nu2/8.0/o2scl_const::pi2*
+      f.ed=f.g*nu2*nu2/8.0/this->pi2*
       (1.0+2.0*pitmu2+7.0/15.0*pitmu2*pitmu2);
       f.pr=f.ed/3.0;
 
@@ -817,7 +837,11 @@ namespace o2scl {
       
     fp_t dj=((fp_t)j);
     fp_t jot=dj/tt;
-      
+
+    // fp_t Kn1=boost::math::cyl_bessel_k(1,jot1)*exp(jot);
+    // fp_t Kn2=boost::math::cyl_bessel_k(2,jot1)*exp(jot);
+    // fp_t Kn3=boost::math::cyl_bessel_k(2,jot1)*exp(jot);
+    
     if (inc_antip==false) {
       pterm=exp(jot*xx)/jot/jot*gsl_sf_bessel_Kn_scaled(2.0,jot);
       if (j%2==0) pterm*=-1.0;
@@ -857,7 +881,7 @@ namespace o2scl {
   /// Solve for the chemical potential for massless fermions
   fp_t massless_solve_fun(fp_t x, fermion &f, fp_t temper) {
     fp_t fm2=gsl_sf_fermi_dirac_int(2,x/(temper));
-    return f.g*pow(temper,3.0)*fm2/o2scl_const::pi2/f.n-1.0;
+    return f.g*pow(temper,3.0)*fm2/this->pi2/f.n-1.0;
   }    
   
 #endif
