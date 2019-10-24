@@ -21,10 +21,10 @@
     for a relativistic fermion, where we define the chemical
     potential without the rest mass with
     \f$ \bar{\nu}_{\mathrm{R}} \equiv \nu_{\mathrm{R}}-m \f$.
-    When \ref o2scl::part::inc_rest_mass is true, 
+    When \ref o2scl::part_tl::inc_rest_mass is true, 
     \ref o2scl::part::nu is equal to \f$ \nu_{\mathrm{R}} \f$
-    and when \ref o2scl::part::inc_rest_mass is false,
-    \ref o2scl::part::nu is equal to \f$ \bar{\nu}_{\mathrm{R}} \f$ .
+    and when \ref o2scl::part_tl::inc_rest_mass is false,
+    \ref o2scl::part_tl::nu is equal to \f$ \bar{\nu}_{\mathrm{R}} \f$ .
     If we define \f$ \psi_{\mathrm{R}} = (\nu_{\mathrm{R}}-m^{*})/T \f$, 
     \f$ \phi = m^{*}/T \f$, 
     \f$ u \equiv k/T \f$ then
@@ -58,9 +58,9 @@
     \f$ . Taking the nonrelativsitic limit of the relativistic energy
     density shows that \f$ \nu_{\mathrm{R}} - m^{*} =
     \bar{\nu}_{\mathrm{NR}} \f$ . Thus the class \ref
-    o2scl::fermion_nonrel uses the value stored in \ref
-    o2scl::part::nu slightly differently than does \ref
-    o2scl::fermion_rel and \ref o2scl::fermion_eff . The Fermi
+    o2scl::fermion_nonrel_tl uses the value stored in \ref
+    o2scl::part_tl::nu slightly differently than does \ref
+    o2scl::fermion_rel_tl and \ref o2scl::fermion_eff . The Fermi
     momentum is also handled slightly differently, \f$
     k_{F,\mathrm{R}} \equiv \sqrt{\nu_{\mathrm{R}}^2-m^{* 2}} \f$ and
     \f$ k_{F,\mathrm{NR}} \equiv \sqrt{2 \bar{\nu}_{\mathrm{NR}}
@@ -85,7 +85,7 @@
     \f]
     which is now a function of \f$ \psi_{\mathrm{NR}} \f$ and \f$ \phi
     \f$ alone. This is the form used to compute the energy density in
-    \ref o2scl::fermion_nonrel and the definition of \f$
+    \ref o2scl::fermion_nonrel_tl and the definition of \f$
     \psi_{\mathrm{NR}} \f$ used for nonrelativistic fermions in \ref
     o2scl::part_calibrate_class::part_calibrate() .
 
@@ -109,9 +109,9 @@
     \f]
     where the left expression is used when the chemical potential
     includes the rest mass and the energy density includes the rest
-    mass energy density, (\ref o2scl::part::inc_rest_mass is
+    mass energy density, (\ref o2scl::part_tl::inc_rest_mass is
     <tt>true</tt>) and the right expression is used when the rest mass
-    is not included (\ref o2scl::part::inc_rest_mass is
+    is not included (\ref o2scl::part_tl::inc_rest_mass is
     <tt>false</tt>). For convenience, we define
     \f$ E^{*} \equiv \sqrt{k^2+m^{* 2}} \f$ .
 
@@ -509,8 +509,8 @@
     \f}
 
     These expansions are used in 
-    \ref o2scl::fermion_thermo::calc_mu_deg() and
-    \ref o2scl::fermion_deriv_thermo::calc_mu_deg() .
+    \ref o2scl::fermion_thermo_tl::calc_mu_deg() and
+    \ref o2scl::fermion_deriv_thermo_tl::calc_mu_deg() .
 
     \subsection ferm_ndeg_subsect Nondegenerate Expansion
 
@@ -591,6 +591,6 @@
     \f}
 
     These expansions are used in 
-    \ref o2scl::fermion_thermo::calc_mu_ndeg() .
+    \ref o2scl::fermion_thermo_tl::calc_mu_ndeg() .
     
 */

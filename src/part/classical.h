@@ -24,7 +24,7 @@
 #define O2SCL_CLASSICAL_H
 
 /** \file classical.h
-    \brief File defining \ref o2scl::classical_thermo
+    \brief File defining \ref o2scl::classical_thermo_tl
 */
 
 #include <string>
@@ -186,6 +186,8 @@ namespace o2scl {
     
   };
 
+  /** \brief Double-precision version of \ref o2scl::classical_thermo_tl 
+   */
   typedef classical_thermo_tl<double> classical_thermo;
 
 #ifndef DOXYGEN_NO_O2NS

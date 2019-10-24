@@ -53,12 +53,12 @@ namespace o2scl {
       This class can compute the EOS from the quark condensates
       (stored in \ref o2scl::quark::qq) by setting \ref fromqq to
       <tt>true</tt> (this is the default) or from the dynamical masses
-      (stored in \ref o2scl::part::ms) by setting \ref fromqq to
+      (stored in \ref o2scl::part_tl::ms) by setting \ref fromqq to
       <tt>false</tt>.
 
       The Fermi gas-like contribution to the pressure due
       plus the the contribution from the bag pressure is stored in
-      \ref o2scl::part::pr . For the \f$ T=0 \f$ EOS, the 
+      \ref o2scl::part_tl::pr . For the \f$ T=0 \f$ EOS, the 
       energy density for each quark is set so that
       \f$ \varepsilon + P = \mu n \f$ . 
 

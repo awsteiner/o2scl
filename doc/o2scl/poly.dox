@@ -57,7 +57,7 @@
     \cos \left[ \frac{\pi(k-1/2)}{n}\right]
     \f]
     for \f$ k = 1,\ldots,n \f$ These roots are used in
-    \ref o2scl::cheb_approx to approximate functions using 
+    \ref o2scl::cheb_approx_tl to approximate functions using 
     Chebyshev polynomials .
 
     \dontinclude ex_poly.cpp

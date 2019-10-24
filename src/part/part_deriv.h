@@ -24,7 +24,7 @@
 #define O2SCL_PART_DERIV_H
 
 /** \file part_deriv.h
-    \brief File defining \ref o2scl::part_deriv
+    \brief File defining \ref o2scl::part_deriv_tl
 */
 
 #include <string>
@@ -166,6 +166,8 @@ namespace o2scl {
   }
   };
 
+  /** \brief Double-precision version of \ref o2scl::part_deriv_press_tl 
+   */
   typedef part_deriv_press_tl<double> part_deriv_press;
   
   /** \brief A fermion with derivative information
@@ -392,7 +394,7 @@ namespace o2scl {
       \f]
 
       To write this in terms of the three derivatives in 
-      \ref o2scl::part_deriv_press, 
+      \ref o2scl::part_deriv_press_tl, 
       \f[
       \frac{T}{n} \left(\frac{\partial s}{\partial T}\right)_{V,n}
       = \frac{T}{n} \frac{\partial(s,n,V)}{\partial(T,n,V)} = 
@@ -426,7 +428,7 @@ namespace o2scl {
       \f]
 
       To write this in terms of the three derivatives in 
-      \ref o2scl::part_deriv_press, 
+      \ref o2scl::part_deriv_press_tl, 
       \f[
       \frac{T}{N} \left(\frac{\partial S}{\partial T}\right)_{P,N}
       = \frac{T}{N} \frac{\partial(S,N,P)}{\partial(T,N,P)} = 
@@ -476,7 +478,7 @@ namespace o2scl {
       \f$ \chi_S \f$)
 
       To write this in terms of the three derivatives in 
-      \ref o2scl::part_deriv_press, 
+      \ref o2scl::part_deriv_press_tl, 
       \f[
       \left(\frac{\partial V}{\partial P}\right)_{S,N} = 
       \frac{\partial (V,S,N)}{\partial (P,S,N)} =
@@ -525,7 +527,7 @@ namespace o2scl {
       power.
 
       To write this in terms of the three derivatives in 
-      \ref o2scl::part_deriv_press, 
+      \ref o2scl::part_deriv_press_tl, 
       \f{eqnarray*}
       - \frac{1}{V} \left(\frac{\partial V}{\partial P}\right)_{T,N} &=& 
       \frac{\partial (V,T,N)}{\partial (P,T,N)} =
@@ -558,7 +560,7 @@ namespace o2scl {
       in units of length. 
 
       To write this in terms of the three derivatives in 
-      \ref o2scl::part_deriv_press, 
+      \ref o2scl::part_deriv_press_tl, 
       \f{eqnarray*}
       \left(\frac{\partial V}{\partial T}\right)_{P,N} &=&
       \frac{\partial (V,P,N)}{\partial (T,P,N)} =
@@ -613,7 +615,7 @@ namespace o2scl {
       is computed in \ref compress_adiabatic() .
 
       To write \f$ c_s^2 \f$ in terms of the three derivatives in 
-      \ref o2scl::part_deriv_press, 
+      \ref o2scl::part_deriv_press_tl, 
       \f[
       \left(\frac{\partial P}
       {\partial \varepsilon}\right)_{S,N} =
@@ -759,7 +761,7 @@ namespace o2scl {
 
       \future There is some repetition of the code
       for this function and the function
-      \ref o2scl::fermion_thermo::calc_mu_deg() .
+      \ref o2scl::fermion_thermo_tl::calc_mu_deg() .
       which could be avoided.
   */
   virtual bool calc_mu_deg(fermion_deriv &f, fp_t temper,
@@ -830,7 +832,7 @@ namespace o2scl {
 
       \future There is some repetition of the code
       for this function and the function
-      \ref o2scl::fermion_thermo::calc_mu_ndeg() .
+      \ref o2scl::fermion_thermo_tl::calc_mu_ndeg() .
       which could be avoided.
   */
   virtual bool calc_mu_ndeg(fermion_deriv &f, fp_t temper,

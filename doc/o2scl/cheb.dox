@@ -1,11 +1,11 @@
 /** \page gslcheb_section Chebyshev Approximation
 
     A class implementing the Chebyshev approximations based on GSL is
-    given in \ref o2scl::cheb_approx. This class has its own copy
+    given in \ref o2scl::cheb_approx_tl. This class has its own copy
     constructor, so that Chebyshev approximations can be copied and
     passed as arguments to functions. Derivatives and integrals of
-    \ref o2scl::cheb_approx objects are created as new \ref
-    o2scl::cheb_approx objects which can be easily manipulated.
+    \ref o2scl::cheb_approx_tl objects are created as new \ref
+    o2scl::cheb_approx_tl objects which can be easily manipulated.
 
     \section ex_cheb_sect Chebyshev approximation example
 

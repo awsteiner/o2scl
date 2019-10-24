@@ -24,7 +24,7 @@
 #define O2SCL_FERMION_H
 
 /** \file fermion.h
-    \brief File defining \ref o2scl::fermion
+    \brief File defining \ref o2scl::fermion_tl
 */
 #include <string>
 #include <iostream>
@@ -118,7 +118,7 @@ namespace o2scl {
 
       This is a base class for the computation of fermionic statistics
       at zero temperature. The more general case of finite temperature
-      is taken care of by \ref fermion_thermo objects. The
+      is taken care of by \ref fermion_thermo_tl objects. The
       primary functions are calc_mu_zerot() and calc_density_zerot()
       which compute all the thermodynamic quantities as a function of
       the chemical potential, or the density, respectively.
@@ -159,7 +159,8 @@ namespace o2scl {
     return;
   }    
 
-  /** \brief Energy density at T=0 from \ref fermion::kf and \ref part::ms
+  /** \brief Energy density at T=0 from \ref fermion_tl::kf and 
+      \ref part_tl::ms
 
       Calculates the integral 
       \f[
@@ -184,7 +185,8 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Pressure at T=0 from \ref fermion::kf and \ref part::ms
+  /** \brief Pressure at T=0 from \ref fermion_tl::kf and 
+      \ref part_tl::ms
 
       Calculates the integral 
       \f[
@@ -271,6 +273,8 @@ namespace o2scl {
 
   };
 
+  /** \brief Double-precision version of \ref o2scl::fermion_zerot_tl 
+   */
   typedef fermion_zerot_tl<double> fermion_zerot;
   
   /** \brief Fermion with finite-temperature thermodynamics
@@ -278,7 +282,7 @@ namespace o2scl {
 
       This is an abstract base for the computation of
       finite-temperature fermionic statistics. Different children
-      (e.g. \ref fermion_eff and \ref fermion_rel) use different
+      (e.g. \ref fermion_eff and \ref fermion_rel_tl) use different
       techniques to computing the momentum integrations.
 
       Because massless fermions at finite temperature are much
@@ -888,6 +892,8 @@ namespace o2scl {
     
   };
 
+  /** \brief Double-precision version of \ref o2scl::fermion_thermo_tl 
+   */
   typedef fermion_thermo_tl<double> fermion_thermo;
   
 #ifndef DOXYGEN_NO_O2NS

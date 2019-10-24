@@ -23,7 +23,7 @@
 #define O2SCL_FERMION_REL_H
 
 /** \file fermion_rel.h
-    \brief File defining \ref o2scl::fermion_rel
+    \brief File defining \ref o2scl::fermion_rel_tl
 */
 
 #include <string>
@@ -388,7 +388,7 @@ namespace o2scl {
       (template version)
   */
   template<class fermion_t>
-    int nu_from_n_tlate(fermion_t &f, fp_t temper) {
+  int nu_from_n_tlate(fermion_t &f, fp_t temper) {
 
     last_method=0;
       
@@ -538,7 +538,7 @@ namespace o2scl {
       (template version)
   */
   template<class fermion_t>
-    void calc_mu_tlate(fermion_t &f, fp_t temper) {
+  void calc_mu_tlate(fermion_t &f, fp_t temper) {
 
     last_method=0;
       
@@ -735,7 +735,7 @@ namespace o2scl {
       between this function and \ref calc_mu_tlate() .
   */
   template<class fermion_t>
-    int calc_density_tlate(fermion_t &f, fp_t temper) {
+  int calc_density_tlate(fermion_t &f, fp_t temper) {
 
     last_method=0;
       
@@ -918,7 +918,7 @@ namespace o2scl {
       chemical potential (template version)
   */
   template<class fermion_t>
-    void pair_mu_tlate(fermion_t &f, fp_t temper) {
+  void pair_mu_tlate(fermion_t &f, fp_t temper) {
 
     last_method=0;
       
@@ -978,7 +978,7 @@ namespace o2scl {
       from the density (template version)
   */
   template<class fermion_t>
-    int pair_density_tlate(fermion_t &f, fp_t temper) {
+  int pair_density_tlate(fermion_t &f, fp_t temper) {
 
     last_method=0;
       
@@ -1115,7 +1115,7 @@ namespace o2scl {
   }
   //@}
 
- protected:
+  protected:
     
 #ifndef DOXYGEN_INTERNAL
 
@@ -1522,8 +1522,8 @@ namespace o2scl {
 	nden_ap=f.n;
 	if (!std::isfinite(nden_ap)) {
 	  O2SCL_ERR2("Value 'nden_ap' not finite (5) in",
-		    "fermion_rel::pair_fun().",
-		    exc_einval);
+		     "fermion_rel::pair_fun().",
+		     exc_einval);
 	}
       }
     }
@@ -1557,7 +1557,7 @@ namespace o2scl {
 	if (!std::isfinite(nden_ap)) {
 	  O2SCL_ERR2("Value 'nden_ap' not finite (7) in",
 		     "fermion_rel::pair_fun().",
-		    exc_einval);
+		     exc_einval);
 	}
       
       } else {
@@ -1616,9 +1616,12 @@ namespace o2scl {
     
 #endif
 
-};
+  };
 
-typedef fermion_rel_tl<double> fermion_rel;
+  /** \brief Double-precision version of 
+      \ref o2scl::fermion_rel_tl 
+  */
+  typedef fermion_rel_tl<double> fermion_rel;
 
 #ifndef DOXYGEN_NO_O2NS
 }

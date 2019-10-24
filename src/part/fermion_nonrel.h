@@ -24,7 +24,7 @@
 #define O2SCL_NONREL_FERMION_H
 
 /** \file fermion_nonrel.h
-    \brief File defining \ref o2scl::fermion_nonrel
+    \brief File defining \ref o2scl::fermion_nonrel_tl
 */
 
 #include <string>
@@ -48,11 +48,11 @@ namespace o2scl {
   /** \brief Nonrelativistic fermion class
 
       The effective mass computed by this class and stored in \ref
-      part::ms is the Landau mass, not the Dirac mass, as computed by
-      \ref o2scl::fermion_rel .
+      part_tl::ms is the Landau mass, not the Dirac mass, as computed by
+      \ref o2scl::fermion_rel_tl .
 
       This class works with both true and false values for either \ref
-      part::non_interacting or \ref part::inc_rest_mass.
+      part_tl::non_interacting or \ref part_tl::inc_rest_mass.
 
       Pressure is computed with
       \f[
@@ -75,8 +75,8 @@ namespace o2scl {
       calc_density_zerot() which gives the proper chemical potential
       of \f$ mu = m \f$ without calling the error handler.
 
-      \future Implement \ref o2scl::fermion_nonrel::pair_density() and
-      \ref o2scl::fermion_nonrel::pair_mu(). [AWS, 1/23/19: it is not
+      \future Implement \ref o2scl::fermion_nonrel_tl::pair_density() and
+      \ref o2scl::fermion_nonrel_tl::pair_mu(). [AWS, 1/23/19: it is not
       entirely clear to me that antiparticles will be useful.]
 
       \future This could be improved by performing a Chebyshev

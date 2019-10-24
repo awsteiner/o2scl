@@ -39,7 +39,7 @@
 #include <o2scl/hdf_io.h>
 
 /** \file part.h
-    \brief File defining \ref o2scl::thermo and \ref o2scl::part 
+    \brief File defining \ref o2scl::thermo_tl and \ref o2scl::part_tl 
 */
 
 #ifndef DOXYGEN_NO_O2NS

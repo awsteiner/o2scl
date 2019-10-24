@@ -55,11 +55,11 @@ namespace o2scl {
       Based on the fitting method of \ref Johns96 which is an update
       of the method from \ref Eggleton73 . This method is approximate,
       but very fast. For a more accurate (but slower) method, use
-      fermion_rel.
+      o2scl::fermion_rel_tl.
 
       If the temperature is less than or equal to \ref tlimit (which 
       defaults to zero), the zero-temperature expressions
-      from the parent class \ref fermion_zerot are used. 
+      from the parent class \ref fermion_zerot_tl are used. 
       
       Given the chemical potential and the temperature the functions
       calc_mu() and pair_mu() work by solving the equation (c.f. Eq. 15
@@ -101,7 +101,7 @@ namespace o2scl {
       \future Use bracketing to speed up one-dimensional root finding.
       \future Implement the same method of allowing the user to 
       turn on or off the degenerate and nondegenerate expansions
-      as in \ref o2scl::fermion_rel .
+      as in \ref o2scl::fermion_rel_tl .
   */
   class fermion_eff : public fermion_thermo {
 

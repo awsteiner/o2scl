@@ -24,7 +24,7 @@
 #define O2SCL_FERMION_DERIV_REL_H
 
 /** \file fermion_deriv_rel.h
-    \brief File defining \ref o2scl::fermion_deriv_rel
+    \brief File defining \ref o2scl::fermion_deriv_rel_tl
 */
 
 #include <string>
@@ -330,11 +330,11 @@ namespace o2scl {
 
       The function \ref nu_from_n() sets this value equal to
       100 times the value reported by 
-      \ref o2scl::fermion_rel::nu_from_n_tlate() .
+      \ref o2scl::fermion_rel_tl::nu_from_n_tlate() .
 
       The function \ref calc_density() sets this value equal to the
-      value from \ref o2scl::fermion_deriv_rel::nu_from_n() plus the
-      value from \ref o2scl::fermion_deriv_rel::calc_mu() .
+      value from \ref o2scl::fermion_deriv_rel_tl::nu_from_n() plus the
+      value from \ref o2scl::fermion_deriv_rel_tl::calc_mu() .
 
   */
   int last_method;
@@ -890,6 +890,9 @@ namespace o2scl {
 
   };
 
+  /** \brief Double-precision version of 
+      \ref o2scl::fermion_deriv_rel_tl 
+  */
   typedef fermion_deriv_rel_tl<double> fermion_deriv_rel;
   
 #ifndef DOXYGEN_NO_O2NS

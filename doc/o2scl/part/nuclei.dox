@@ -1,7 +1,7 @@
 /** \page nuclei_section Nuclei and nuclear masses
 
     A basic data structure for nuclei, class \ref o2scl::nucleus, is
-    implemented as a child of of \ref o2scl::part. 
+    implemented as a child of of \ref o2scl::part_tl. 
 
     Nuclear masses are given as children of \ref o2scl::nucmass and
     are generally of two types: tables of masses (children of \ref

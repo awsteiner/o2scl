@@ -21,13 +21,12 @@
   -------------------------------------------------------------------
 */
 /** \file cheb_approx.h
-    \brief File for definition of \ref o2scl::cheb_approx
+    \brief File for definition of \ref o2scl::cheb_approx_tl
 */
 #ifndef O2SCL_CHEB_APPROX_H
 #define O2SCL_CHEB_APPROX_H
 
 #include <cmath>
-#include <gsl/gsl_chebyshev.h>
 #include <o2scl/funct.h>
 #include <o2scl/err_hnd.h>
 
@@ -46,8 +45,6 @@ namespace o2scl {
       where \f$ T_n(x)=\cos(n \arccos x) \f$
 
       See also the \ref ex_cheb_sect .
-
-      \future Move non-template functions to .cpp file.
   */
   template<class fp_t=double> class cheb_approx_tl {
 
@@ -228,16 +225,16 @@ namespace o2scl {
     fp_t d1 = 0.0;
     fp_t d2 = 0.0;
       
-    fp_t y = (2*x - a - b) / (b - a);
+    fp_t y = (2*x-a-b)/(b-a);
     fp_t y2 = 2*y;
       
     for (i=order; i >= 1; i--) {
       fp_t temp = d1;
-      d1 = y2*d1 - d2 + c[i];
+      d1 = y2*d1-d2+c[i];
       d2 = temp;
     }
       
-    return y*d1 - d2 + c[0]/2;
+    return y*d1-d2+c[0]/2;
   }
 
   /** \brief Evaluate the approximation
@@ -257,16 +254,16 @@ namespace o2scl {
     if (n<order) eval_order=n;
     else eval_order=order;
       
-    fp_t y = (2*x - a - b) / (b - a);
+    fp_t y = (2*x-a-b)/(b-a);
     fp_t y2 = 2*y;
       
     for (i = eval_order; i >= 1; i--) {
       fp_t temp = d1;
-      d1 = y2*d1 - d2 + c[i];
+      d1 = y2*d1-d2+c[i];
       d2 = temp;
     }
       
-    return y*d1 - d2 + c[0]/2;
+    return y*d1-d2+c[0]/2;
   }
     
   /** \brief Evaluate the approximation and give the uncertainty
@@ -277,30 +274,30 @@ namespace o2scl {
     fp_t d1 = 0.0;
     fp_t d2 = 0.0;
       
-    fp_t y = (2*x - a - b) / (b - a);
+    fp_t y = (2*x-a-b)/(b-a);
     fp_t y2 = 2*y;
       
     fp_t absc = 0.0;
       
     for (i = order; i >= 1; i--) {
       fp_t temp = d1;
-      d1 = y2*d1 - d2 + c[i];
+      d1 = y2*d1-d2+c[i];
       d2 = temp;
     }
       
-    result = y*d1 - d2 + c[0]/2;
+    result = y*d1-d2+c[0]/2;
       
     /* Estimate cumulative numerical error */
       
     for (i = 0; i <= order; i++) {
-      absc += fabs(c[i]);
+      absc += o2scl::o2abs(c[i]);
     }
       
     /* Combine truncation error and numerical error */
       
     fp_t dbl_eps=std::numeric_limits<fp_t>::epsilon();
 
-    abserr = fabs (c[order]) + absc*dbl_eps;
+    abserr = o2scl::o2abs(c[order])+absc*dbl_eps;
       
     return;
   }
@@ -313,7 +310,7 @@ namespace o2scl {
     fp_t d1 = 0.0;
     fp_t d2 = 0.0;
 
-    fp_t y = (2*x - a - b) / (b - a);
+    fp_t y = (2*x-a-b)/(b-a);
     fp_t y2 = 2*y;
 
     fp_t absc = 0.0;
@@ -324,22 +321,22 @@ namespace o2scl {
 
     for (i = eval_order; i >= 1; i--) {
       fp_t temp = d1;
-      d1 = y2*d1 - d2 + c[i];
+      d1 = y2*d1-d2+c[i];
       d2 = temp;
     }
 
-    result = y*d1 - d2 + c[0]/2;
+    result = y*d1-d2+c[0]/2;
 
     /* Estimate cumulative numerical error */
 
     for (i = 0; i <= eval_order; i++) {
-      absc += fabs(c[i]);
+      absc += o2scl::o2abs(c[i]);
     }
 
     fp_t dbl_eps=std::numeric_limits<fp_t>::epsilon();
 
     /* Combine truncation error and numerical error */
-    abserr = fabs(c[eval_order])+absc*dbl_eps;
+    abserr = o2scl::o2abs(c[eval_order])+absc*dbl_eps;
 
     return;
   }
@@ -443,7 +440,7 @@ namespace o2scl {
 
     size_t n=order+1;
       
-    const fp_t con=0.25*(b-a);
+    const fp_t con=(b-a)/4;
       
     gc.init_called=true;
     gc.order=order;
@@ -467,8 +464,8 @@ namespace o2scl {
       fp_t sum=0;
       fp_t fac=1;
 
-      for(size_t i=1; i<=n-2; i++) {
-	gc.c[i]=con*(c[i-1] - c[i+1])/((fp_t)i);
+      for(size_t i=1;i<=n-2;i++) {
+	gc.c[i]=con*(c[i-1]-c[i+1])/((fp_t)i);
 	sum += fac*gc.c[i];
 	fac=-fac;
       }
@@ -483,6 +480,8 @@ namespace o2scl {
     
   };
 
+  /** \brief Double-precision version of \ref o2scl::cheb_approx_tl
+   */
   typedef cheb_approx_tl<double> cheb_approx;
 
 #ifndef DOXYGEN_NO_O2NS

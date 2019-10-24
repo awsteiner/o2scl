@@ -24,7 +24,7 @@
 #define O2SCL_FERMION_DERIV_NR_H
 
 /** \file fermion_deriv_nr.h
-    \brief File defining \ref o2scl::fermion_deriv_nr
+    \brief File defining \ref o2scl::fermion_deriv_nr_tl
 */
 
 #include <string>

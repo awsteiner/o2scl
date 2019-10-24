@@ -49,9 +49,9 @@ double func2(double x) {
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 
 long double func2_ld(long double x) {
-  long double a=1.0/(exp(1.0)-1.0);
-  long double b=1.0/(1.0-exp(1.0));
-  return exp(x)*a+b;
+  long double a=1.0/(expl(1.0)-1.0);
+  long double b=1.0/(1.0-expl(1.0));
+  return expl(x)*a+b;
 }
 
 cpp_dec_float_50 func2_cdf(cpp_dec_float_50 x) {
@@ -140,6 +140,7 @@ int main(void) {
       cout << xx << " " << gc.eval(xx) << " "
 	   << ca.eval(xx) << " " << func2(xx) << " "
 	   << fabs(ca.eval(xx)-func2(xx))/fabs(func2(xx)) << endl;
+      t.test_rel(ca.eval(xx),func2(xx),4.0e-13,"d");
     }
     cout << endl;
     
@@ -151,6 +152,7 @@ int main(void) {
       cout << xx << " " << gc.eval(xx) << " "
 	   << ca_ld.eval(xx) << " " << func2_ld(xx) << " "
 	   << fabs(ca_ld.eval(xx)-func2_ld(xx))/fabs(func2_ld(xx)) << endl;
+      t.test_rel<long double>(ca_ld.eval(xx),func2_ld(xx),1.0e-17,"ld");
     }
     cout << endl;
     
@@ -162,6 +164,8 @@ int main(void) {
       cout << xx << " " << gc.eval((double)xx) << " "
 	   << ca_cdf.eval(xx) << " " << func2_cdf(xx) << " "
 	   << fabs(ca_cdf.eval(xx)-func2_cdf(xx))/fabs(func2_cdf(xx)) << endl;
+      t.test_rel_boost<cpp_dec_float_50>(ca_cdf.eval(xx),func2_cdf(xx),
+					 1.0e-50,"cdf50");
     }
     cout << endl;
     
