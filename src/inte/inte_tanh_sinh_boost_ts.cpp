@@ -42,14 +42,15 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-  funct tf2=test_func_1;
+  funct tf1=test_func_1;
 
   // Compare with the exact result
-  itsb.integ_err(tf2,0.0,1.0,ans,err);
+  itsb.integ_err(tf1,0.0,1.0,ans,err);
   exact=cos(100.0)-cos(1/1.01);
   std::cout << ans << " " << err << std::endl;
   t.test_rel(ans,exact,1.0e-8,"qag test");
 
+  
   t.report();
   return 0;
 }

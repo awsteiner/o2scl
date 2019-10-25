@@ -53,7 +53,6 @@ long double sin_recip_ld(long double x) {
 #ifdef O2SCL_LD_TYPES
 
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
-typedef std::function<cpp_dec_float_50(cpp_dec_float_50)> funct_cdf;
 
 cpp_dec_float_50 testfun_cdf(cpp_dec_float_50 tx, cpp_dec_float_50 &a) {
   cpp_dec_float_50 one=1.0;
@@ -162,7 +161,8 @@ int main(void) {
     // Test qagil_cern with double precision
     
     cout << "iqc, double prec, sin_recip:\n  ";
-    inte_qagil_cern<funct> iqc;
+    inte_il<funct,inte_adapt_cern<>,double> iqc;
+    //inte_qagil_cern<funct> iqc;
     double exact=1.0-cos(100.0/101.0);
     funct tf2=std::bind(sin_recip,std::placeholders::_1);
     iqc.integ_err(tf2,0.0,-1.0,calc,ei);
@@ -175,10 +175,18 @@ int main(void) {
 
     // Test qagil_cern with long double precision
     cout << "iqc, long double prec, sin_recip:\n  ";
-    inte_qagil_cern<funct_ld,
-		    inte_gauss56_cern<funct_ld,long double,
-				      inte_gauss56_coeffs_long_double>,
-		    100,long double> iqc_ld;
+    
+    inte_il<funct_ld,inte_adapt_cern
+	    <funct_ld,inte_gauss56_cern
+	     <funct_ld,long double,
+	      inte_gauss56_coeffs_long_double>,100,
+	     long double>,long double> iqc_ld;
+
+    //inte_qagil_cern<funct_ld,
+    //inte_gauss56_cern<funct_ld,long double,
+    //inte_gauss56_coeffs_long_double>,
+    //100,long double> iqc_ld;
+    
     long double exact_ld=1.0L-cos(100.0L/101.0L);
     funct_ld tf2_ld=std::bind(sin_recip_ld,std::placeholders::_1);
     long double calc_ld, ei_ld;
@@ -193,14 +201,22 @@ int main(void) {
     
     // Test qagil_cern with cpp_dec_float_50 precision
     cout << "iqc, cdf 50 prec, sin_recip:\n  ";
-    inte_qagil_cern<funct_cdf,
-		    inte_gauss56_cern<funct_cdf50,cpp_dec_float_50,
-				      inte_gauss56_coeffs_cpp_dec_float_50>,
-		    1000,cpp_dec_float_50> iqc_cdf;
+    
+    inte_il<funct_cdf50,inte_adapt_cern
+	    <funct_cdf50,inte_gauss56_cern
+	     <funct_cdf50,cpp_dec_float_50,
+	      inte_gauss56_coeffs_cpp_dec_float_50>,100,
+	     cpp_dec_float_50>,cpp_dec_float_50> iqc_cdf;
+
+    //inte_qagil_cern<funct_cdf,
+    //inte_gauss56_cern<funct_cdf50,cpp_dec_float_50,
+    //inte_gauss56_coeffs_cpp_dec_float_50>,
+    //1000,cpp_dec_float_50> iqc_cdf;
+    
     cpp_dec_float_50 one=1.0;
     cpp_dec_float_50 hundred=100.0;
     cpp_dec_float_50 exact_cdf=one-cos(hundred/(hundred+one));
-    funct_cdf tf2_cdf=std::bind(sin_recip_cdf,std::placeholders::_1);
+    funct_cdf50 tf2_cdf=std::bind(sin_recip_cdf,std::placeholders::_1);
     cpp_dec_float_50 calc_cdf, ei_cdf;
     iqc_cdf.def_inte.tol_rel=1.0e-30;
     iqc_cdf.def_inte.tol_abs=1.0e-30;

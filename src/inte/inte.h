@@ -126,7 +126,152 @@ namespace o2scl {
 #endif
   
   };
+  
+  /** \brief Integrate over \f$ (-\infty,b] \f$
+   */
+  template<class func_t, class def_inte_t, class fp_t=double>
+    class inte_il : public inte<func_t,fp_t> {
+    
+  protected:
 
+  /// A pointer to the user-specified function
+  func_t *user_func;
+  
+  /// The upper limit
+  fp_t upper_limit;
+
+  /// Transform to \f$ t \in (0,1] \f$
+  virtual fp_t transform(fp_t t) {
+    fp_t x=upper_limit-(1-t)/t, y;
+    y=(*user_func)(x);
+    return y/t/t;
+  }
+
+  public:
+  
+  inte_il() {
+    it=&def_inte;
+    fo=std::bind(std::mem_fn<fp_t(fp_t)>(&inte_il::transform),
+		 this,std::placeholders::_1);
+  }    
+  
+  /** \brief Internal function type based on floating-point type
+
+      \comment 
+      This type must be public so the user can change the
+      base integration object
+      \endcomment
+  */
+  typedef std::function<fp_t(fp_t)> internal_funct;
+
+  protected:
+
+  /// The base integration object
+  inte<internal_funct,fp_t> *it;
+  
+  /// Function object
+  internal_funct fo;
+  
+  public:  
+  
+  /** \brief Integrate function \c func from \c a to \c b
+      giving result \c res and error \c err
+  */
+  virtual int integ_err(func_t &func, fp_t a, fp_t b,
+			fp_t &res, fp_t &err) {
+    user_func=&func;
+    upper_limit=b;
+    int ret=it->integ_err(fo,0.0,1.0,res,err);
+    return ret;
+  }
+  
+  /// \name Integration object
+  //@{
+  /// Set the base integration object to use
+  int set_inte(inte<internal_funct,fp_t> &i) {
+    it=&i;
+    return 0;
+  }
+      
+  /// Default integration object
+  def_inte_t def_inte;
+  //@}
+
+  };
+  
+  /** \brief Integrate over \f$ [a,-\infty) \f$
+   */
+  template<class func_t, class def_inte_t, class fp_t=double>
+    class inte_iu : public inte<func_t,fp_t> {
+    
+  protected:
+
+  /// A pointer to the user-specified function
+  func_t *user_func;
+  
+  /// The lower limit
+  fp_t lower_limit;
+
+  /// Transform to \f$ t \in (0,1] \f$
+  virtual fp_t transform(fp_t t) {
+    fp_t x=lower_limit+(1-t)/t, y;
+    y=(*user_func)(x);
+    return y/t/t;
+  }
+
+  public:
+  
+  inte_iu() {
+    it=&def_inte;
+    fo=std::bind(std::mem_fn<fp_t(fp_t)>(&inte_iu::transform),
+		 this,std::placeholders::_1);
+  }    
+  
+  /** \brief Internal function type based on floating-point type
+      
+      \comment 
+      This type must be public so the user can change the
+      base integration object
+      \endcomment
+  */
+  typedef std::function<fp_t(fp_t)> internal_funct;
+
+  protected:
+
+  /// The base integration object
+  inte<internal_funct,fp_t> *it;
+  
+  /// Function object
+  internal_funct fo;
+  
+  public:  
+  
+  /** \brief Integrate function \c func from \c a to \c b
+      giving result \c res and error \c err
+  */
+  virtual int integ_err(func_t &func, fp_t a, fp_t b,
+			fp_t &res, fp_t &err) {
+    user_func=&func;
+    lower_limit=a;
+    int ret=it->integ_err(fo,0.0,1.0,res,err);
+    return ret;
+  }
+  
+  /// \name Integration object
+  //@{
+  /// Set the base integration object to use
+  int set_inte(inte<internal_funct,fp_t> &i) {
+    it=&i;
+    return 0;
+  }
+      
+  /// Default integration object
+  def_inte_t def_inte;
+  //@}
+
+  };
+  
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

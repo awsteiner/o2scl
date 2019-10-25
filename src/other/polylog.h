@@ -30,10 +30,14 @@
 #include <fstream>
 #include <string>
 #include <cmath>
+
+#include <gsl/gsl_specfunc.h>
+
 #include <o2scl/constants.h>
 #include <o2scl/err_hnd.h>
 #include <o2scl/lib_settings.h>
-#include <gsl/gsl_sf_dilog.h>
+//#include <gsl/gsl_sf_dilog.h>
+#include <o2scl/inte_adapt_cern.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -133,6 +137,152 @@ namespace o2scl {
 
   };
 
+  /** \brief Fermi-Dirac integral
+
+      This class performs direct computation of the
+      Fermi-Dirac integral
+      \f[
+      F_{a}(\mu) = \int_0^{\infty} \frac{x^a}{1+\exp^{x-\mu}}
+      \f]
+      using \ref o2scl::inte_adapt_cern . 
+   */
+  template<class inte_t, class fp_t=double> class fermi_dirac_integ_tl {
+
+  protected:
+  
+  /// Internal function type
+  typedef std::function<fp_t(fp_t)> func_t;
+  
+  /** \brief The Fermi-Dirac function
+   */
+  fp_t obj_func(fp_t x, fp_t a, fp_t mu) {
+    fp_t res=pow(x,a)/(1.0+exp(x-mu));
+    if (!std::isfinite(res)) {
+      std::cout << x << " " << a << " " << mu << " " << x-mu << " "
+		<< res << std::endl;
+    }
+    return res;
+  }
+
+  public:
+  
+  /** \brief The integrator
+   */
+  inte_t iiu;
+  
+  /** \brief Compute the integral, storing the result in 
+      \c res and the error in \c err
+  */
+  void calc_err(fp_t a, fp_t mu, fp_t &res, fp_t &err) {
+    func_t f=
+    std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
+	      (&fermi_dirac_integ_tl::obj_func),
+	      this,std::placeholders::_1,a,mu);
+    iiu.integ_err(f,0.0,0.0,res,err);
+    return;
+  }
+  
+  };
+  
+  /** \brief Double-precision version of \ref o2scl::fermi_dirac_integ_tl
+   */
+  typedef fermi_dirac_integ_tl
+    <inte_iu<funct,inte_adapt_cern
+    <funct,inte_gauss56_cern<funct,double,
+    inte_gauss56_coeffs_double>,
+    100,double>,double>,double> fermi_dirac_integ_double;
+
+#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
+  
+  /** \brief Long double version of \ref o2scl::fermi_dirac_integ_tl
+   */
+  typedef fermi_dirac_integ_tl
+    <inte_iu<funct_ld,inte_adapt_cern
+    <funct_ld,inte_gauss56_cern<funct_ld,long double,
+    inte_gauss56_coeffs_long_double>,
+    1000,long double>,long double>,long double>
+    fermi_dirac_integ_long_double;
+  
+#endif
+
+  /** \brief Compute the fermion integrals for a non-relativistic
+      particle using the GSL functions
+   */
+  class fermion_nr_integ_gsl {
+
+  public:
+    
+    /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$
+     */
+    double calc_1o2(double y) {
+      return gsl_sf_fermi_dirac_half(y)*sqrt(o2scl_const::pi)/2.0;
+    }
+    
+    /** \brief Fermi-Dirac integral of order \f$ -1/2 \f$
+     */
+    double calc_m1o2(double y) {
+      return gsl_sf_fermi_dirac_mhalf(y)*sqrt(o2scl_const::pi);
+    }
+    
+    /** \brief Fermi-Dirac integral of order \f$ 3/2 \f$
+     */
+    double calc_3o2(double y) {
+      return gsl_sf_fermi_dirac_3half(y)*sqrt(o2scl_const::pi)*0.75;
+    }
+
+  };
+
+#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
+  
+  /** \brief Compute the fermion integrals for a non-relativistic
+      particle by directly integrating in long double precision
+   */
+  class fermion_nr_integ_direct {
+
+  protected:
+    
+    /** \brief The integrator
+     */
+    fermi_dirac_integ_long_double it;
+    
+  public:
+
+    fermion_nr_integ_direct() {
+      // it.iiu is the inte_iu object
+      // it.iiu.def_inte is the inte_adapt_cern object
+      it.iiu.def_inte.tol_rel=1.0e-16;
+      it.iiu.def_inte.tol_abs=1.0e-16;
+      it.iiu.def_inte.verbose=1;
+    }
+    
+    /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$
+     */
+    double calc_1o2(double y) {
+      long double y2=y, res, err;
+      it.calc_err(0.5L,y2,res,err);
+      return ((double)res);
+    }
+    
+    /** \brief Fermi-Dirac integral of order \f$ -1/2 \f$
+     */
+    double calc_m1o2(double y) {
+      long double y2=y, res, err;
+      it.calc_err(-0.5L,y2,res,err);
+      return ((double)res);
+    }
+    
+    /** \brief Fermi-Dirac integral of order \f$ 3/2 \f$
+     */
+    double calc_3o2(double y) {
+      long double y2=y, res, err;
+      it.calc_err(1.5L,y2,res,err);
+      return ((double)res);
+    }
+
+  };
+  
+#endif
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

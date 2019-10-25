@@ -197,7 +197,7 @@ namespace o2scl {
 
       \note The finite temperature code does not attempt to include
       antiparticles and uses \ref
-      o2scl::fermion_nonrel::calc_density(). At finite temperature,
+      o2scl::fermion_nonrel_tl::calc_density(). At finite temperature,
       pure neutron matter implies a zero proton number density which
       means the proton chemical potential is \f$ - \infty \f$ and thus
       set to the additive inverse of the return value of the function

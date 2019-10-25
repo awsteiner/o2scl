@@ -40,6 +40,7 @@
 #include <o2scl/inte_qagiu_gsl.h>
 
 #include <o2scl/fermion.h>
+#include <o2scl/polylog.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -83,11 +84,11 @@ namespace o2scl {
       approximation (for example) to invert the density integral so
       that we don't need to use a solver.
   */
-  template<class fp_t=double>
+  template<class inte_t=class fermion_nr_integ_gsl, class fp_t=double>
     class fermion_nonrel_tl : public fermion_thermo_tl<fp_t> {
 
   public:
-
+  
   /// Create a nonrelativistic fermion with mass 'm' and degeneracy 'g'
   fermion_nonrel_tl() {
     density_root=&def_density_root;
@@ -95,6 +96,9 @@ namespace o2scl {
     
   virtual ~fermion_nonrel_tl() {
   }
+
+  /// Object for Fermi-Dirac integrals
+  inte_t integ;
    
   /** \brief Zero temperature fermions
    */
@@ -166,16 +170,20 @@ namespace o2scl {
     }
 
     // Number density
-    f.n=gsl_sf_fermi_dirac_half(y)*sqrt(o2scl_const::pi)/2.0;
+    
+    //f.n=gsl_sf_fermi_dirac_half(y)*sqrt(o2scl_const::pi)/2.0;
+    f.n=integ.calc_1o2(y);
     f.n*=f.g*pow(2.0*f.ms*temper,1.5)/4.0/o2scl_const::pi2;
     
     // Energy density:
-    f.ed=gsl_sf_fermi_dirac_3half(y)*0.75*sqrt(o2scl_const::pi);
+    
+    //f.ed=gsl_sf_fermi_dirac_3half(y)*0.75*sqrt(o2scl_const::pi);
+    f.ed=integ.calc_3o2(y);
+    f.ed*=f.g*pow(2.0*f.ms*temper,2.5)/8.0/o2scl_const::pi2/f.ms;
     
     if (f.inc_rest_mass) {
       
       // Finish energy density
-      f.ed*=f.g*pow(2.0*f.ms*temper,2.5)/8.0/o2scl_const::pi2/f.ms;
       f.ed+=f.n*f.m;
       
       // entropy density
@@ -185,9 +193,6 @@ namespace o2scl {
       f.pr=2.0*(f.ed-f.n*f.m)/3.0;
       
     } else {
-      
-      // Finish energy density
-      f.ed*=f.g*pow(2.0*f.ms*temper,2.5)/8.0/o2scl_const::pi2/f.ms;
       
       // entropy density
       f.en=(5.0*f.ed/3.0-f.nu*f.n)/temper;
@@ -253,7 +258,8 @@ namespace o2scl {
     }
 
     // energy density
-    f.ed=gsl_sf_fermi_dirac_3half(-y)*sqrt(o2scl_const::pi)*0.75;
+    //f.ed=gsl_sf_fermi_dirac_3half(-y)*sqrt(o2scl_const::pi)*0.75;
+    f.ed=integ.calc_3o2(-y);
 
     if (f.inc_rest_mass) {
     
@@ -314,7 +320,7 @@ namespace o2scl {
     if (nex>-GSL_LOG_DBL_MIN*0.9) nex=-GSL_LOG_DBL_MIN/2.0;
   
     funct mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
-		       (&fermion_nonrel_tl<fp_t>::solve_fun),
+		       (&fermion_nonrel_tl<inte_t,fp_t>::solve_fun),
 		       this,std::placeholders::_1,f.n/f.g,f.ms*temper);
   
     // Turn off convergence errors temporarily, since we'll
@@ -396,13 +402,6 @@ namespace o2scl {
   /// Return string denoting type ("fermion_nonrel")
   virtual const char *type() { return "fermion_nonrel"; }
 
-  protected:
-
-#ifndef DOXYGEN_NO_O2NS
-
-  /// Solver to compute chemical potential from density
-  root<> *density_root;
-    
   /** \brief Function to compute chemical potential from density
 
       Variable \c nog is the target baryon density divided by
@@ -418,14 +417,26 @@ namespace o2scl {
     // an underflow occurs. We just set nden to zero in this 
     // case, as this helps the solver find the right root.
   
-    if (((-x)<GSL_LOG_DBL_MIN) || !std::isfinite(x)) nden=0.0;
-    else nden=gsl_sf_fermi_dirac_half(-x)*sqrt(o2scl_const::pi)/2.0;
+    if (((-x)<GSL_LOG_DBL_MIN) || !std::isfinite(x)) {
+      nden=0.0;
+    } else {
+      //nden=gsl_sf_fermi_dirac_half(-x)*sqrt(o2scl_const::pi)/2.0;
+      nden=integ.calc_1o2(-x);
+      
+    }
   
     nden*=pow(2.0*msT,1.5)/4.0/o2scl_const::pi2;
     fp_t ret=nden/nog-1.0;
     return ret;
   }
 
+  protected:
+
+#ifndef DOXYGEN_NO_O2NS
+
+  /// Solver to compute chemical potential from density
+  root<> *density_root;
+    
   private:
 
   fermion_nonrel_tl(const fermion_nonrel_tl &);
@@ -435,7 +446,7 @@ namespace o2scl {
 
   };
 
-  typedef fermion_nonrel_tl<double> fermion_nonrel;
+  typedef fermion_nonrel_tl<> fermion_nonrel;
 
 #ifndef DOXYGEN_NO_O2NS
 }

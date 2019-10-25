@@ -22,15 +22,26 @@
 */
 
 #include <o2scl/test_mgr.h>
+#include <o2scl/inte_adapt_cern.h>
+#include <o2scl/polylog.h>
 #include <o2scl/polylog.h>
 
 using namespace std;
 using namespace o2scl;
 
+// Fermi function
+double test_func_2(double x, double mu, double a) {
+  return pow(x,a)/(1.0+exp(x-mu));
+}
+
 int main(void) {
-  polylog po;
+
+  cout.setf(ios::scientific);
+  
   test_mgr t;
   t.set_output_level(2);
+  
+  polylog po;
   t.test_rel(po.li1(-0.99)-po.li1(-1.0),po.li1(-1.0)-po.li1(-1.01),
 	     1.e-2,"Li1");
   t.test_rel(po.li2(-0.99)-po.li2(-1.0),po.li2(-1.0)-po.li2(-1.01),
@@ -43,6 +54,32 @@ int main(void) {
 	     1.e-2,"Li5");
   t.test_rel(po.li6(-0.99)-po.li6(-1.0),po.li6(-1.0)-po.li6(-1.01),
 	     1.e-2,"Li6");
+
+#ifdef O2SCL_LD_TYPES
+  
+  fermion_nr_integ_gsl f1;
+  fermion_nr_integ_direct f2;
+
+  cout << f1.calc_1o2(0.5) << endl;
+  cout << f1.calc_m1o2(0.5) << endl;
+  cout << f1.calc_3o2(0.5) << endl;
+  cout << endl;
+  
+  cout << f2.calc_1o2(0.5) << endl;
+  cout << f2.calc_m1o2(0.5) << endl;
+  cout << f2.calc_3o2(0.5) << endl;
+  cout << endl;
+
+  cout << fabs(f2.calc_1o2(0.5)-f1.calc_1o2(0.5))/
+    fabs(f1.calc_1o2(0.5)) << endl;
+  cout << fabs(f2.calc_m1o2(0.5)-f1.calc_m1o2(0.5))/
+    fabs(f1.calc_m1o2(0.5)) << endl;
+  cout << fabs(f2.calc_3o2(0.5)-f1.calc_3o2(0.5))/
+    fabs(f1.calc_3o2(0.5)) << endl;
+  cout << endl;
+  
+#endif
+  
   t.report();
   return 0;
 }
