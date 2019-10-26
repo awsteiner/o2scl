@@ -128,6 +128,10 @@ namespace o2scl {
   };
   
   /** \brief Integrate over \f$ (-\infty,b] \f$
+
+      \note This class only works if the base integration
+      type <tt>def_inte_t</tt> avoids evaluating the function
+      at the left-hand end point.
    */
   template<class func_t, class def_inte_t, class fp_t=double>
     class inte_il : public inte<func_t,fp_t> {
@@ -140,8 +144,12 @@ namespace o2scl {
   /// The upper limit
   fp_t upper_limit;
 
-  /// Transform to \f$ t \in (0,1] \f$
+  /// Transform from \f$ t \in (0,1] \f$ to \f$ x \in (-\infty,b] \f$
   virtual fp_t transform(fp_t t) {
+    if (t==0.0) {
+      O2SCL_ERR2("Function called with t=0 in ",
+		"inte_il::transform().",o2scl::exc_efailed);
+    }
     fp_t x=upper_limit-(1-t)/t, y;
     y=(*user_func)(x);
     return y/t/t;
@@ -177,7 +185,7 @@ namespace o2scl {
   /** \brief Integrate function \c func from \c a to \c b
       giving result \c res and error \c err
   */
-  virtual int integ_err(func_t &func, fp_t a, fp_t b,
+  virtual int integ_err(func_t &func, fp_t b,
 			fp_t &res, fp_t &err) {
     user_func=&func;
     upper_limit=b;
@@ -199,7 +207,11 @@ namespace o2scl {
 
   };
   
-  /** \brief Integrate over \f$ [a,-\infty) \f$
+  /** \brief Integrate over \f$ [a,\infty) \f$
+
+      \note This class only works if the base integration
+      type <tt>def_inte_t</tt> avoids evaluating the function
+      at the right-hand end point.
    */
   template<class func_t, class def_inte_t, class fp_t=double>
     class inte_iu : public inte<func_t,fp_t> {
@@ -212,8 +224,12 @@ namespace o2scl {
   /// The lower limit
   fp_t lower_limit;
 
-  /// Transform to \f$ t \in (0,1] \f$
+  /// Transform from \f$ t \in (0,1] \f$ to \f$ x \in [a,\infty) \f$
   virtual fp_t transform(fp_t t) {
+    if (t==0.0) {
+      O2SCL_ERR2("Function called with t=0 in ",
+		 "inte_ul::transform().",o2scl::exc_efailed);
+    }
     fp_t x=lower_limit+(1-t)/t, y;
     y=(*user_func)(x);
     return y/t/t;
@@ -249,7 +265,7 @@ namespace o2scl {
   /** \brief Integrate function \c func from \c a to \c b
       giving result \c res and error \c err
   */
-  virtual int integ_err(func_t &func, fp_t a, fp_t b,
+  virtual int integ_err(func_t &func, fp_t a, 
 			fp_t &res, fp_t &err) {
     user_func=&func;
     lower_limit=a;

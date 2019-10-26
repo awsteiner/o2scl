@@ -22,7 +22,7 @@
 */
 #include <o2scl/test_mgr.h>
 #include <o2scl/funct.h>
-#include <o2scl/inte_tanh_sinh_boost.h>
+#include <o2scl/inte_double_exp_boost.h>
 
 using namespace std;
 using namespace o2scl;
@@ -48,7 +48,7 @@ int main(void) {
   itsb.integ_err(tf1,0.0,1.0,ans,err);
   exact=cos(100.0)-cos(1/1.01);
   std::cout << ans << " " << err << std::endl;
-  t.test_rel(ans,exact,1.0e-8,"qag test");
+  t.test_rel(ans,exact,1.0e-8,"tanh_sinh test");
 
   
   t.report();
