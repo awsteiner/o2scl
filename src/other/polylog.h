@@ -156,7 +156,9 @@ namespace o2scl {
   /** \brief The Fermi-Dirac function
    */
   fp_t obj_func(fp_t x, fp_t a, fp_t mu) {
-    fp_t res=pow(x,a)/(1.0+exp(x-mu));
+    fp_t res;
+    if (x==0.0) res=0;
+    else res=pow(x,a)/(1.0+exp(x-mu));
     if (!std::isfinite(res)) {
       std::cout << x << " " << a << " " << mu << " " << x-mu << " "
 		<< res << std::endl;
