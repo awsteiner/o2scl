@@ -38,6 +38,7 @@
 #include <o2scl/lib_settings.h>
 //#include <gsl/gsl_sf_dilog.h>
 #include <o2scl/inte_adapt_cern.h>
+#include <o2scl/inte_double_exp_boost.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -180,7 +181,7 @@ namespace o2scl {
     std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
 	      (&fermi_dirac_integ_tl::obj_func),
 	      this,std::placeholders::_1,a,mu);
-    iiu.integ_err(f,0.0,0.0,res,err);
+    iiu.integ_err(f,res,err);
     return;
   }
   
@@ -245,16 +246,13 @@ namespace o2scl {
     
     /** \brief The integrator
      */
-    fermi_dirac_integ_long_double it;
+    fermi_dirac_integ_tl<o2scl::inte_exp_sinh_boost
+      <funct_ld,15,long double>,long double> it;
     
   public:
 
     fermion_nr_integ_direct() {
-      // it.iiu is the inte_iu object
-      // it.iiu.def_inte is the inte_adapt_cern object
-      it.iiu.def_inte.tol_rel=1.0e-16;
-      it.iiu.def_inte.tol_abs=1.0e-16;
-      it.iiu.def_inte.verbose=1;
+      it.iiu.tol_rel=1.0e-18;
     }
     
     /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$
@@ -279,6 +277,16 @@ namespace o2scl {
       long double y2=y, res, err;
       it.calc_err(1.5L,y2,res,err);
       return ((double)res);
+    }
+    
+    /** \brief Polylogarithm
+
+	\warning Doesn't seem to work yet.
+     */
+    double calc_polylog(double s, double y) {
+      long double a=s-1, mu=log(-y), res, err;
+      it.calc_err(a,mu,res,err);
+      return -((double)res);
     }
 
   };

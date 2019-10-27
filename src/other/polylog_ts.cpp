@@ -60,23 +60,9 @@ int main(void) {
   fermion_nr_integ_gsl f1;
   fermion_nr_integ_direct f2;
 
-  cout << f1.calc_1o2(0.5) << endl;
-  cout << f1.calc_m1o2(0.5) << endl;
-  cout << f1.calc_3o2(0.5) << endl;
-  cout << endl;
-  
-  cout << f2.calc_1o2(0.5) << endl;
-  cout << f2.calc_m1o2(0.5) << endl;
-  cout << f2.calc_3o2(0.5) << endl;
-  cout << endl;
-
-  cout << fabs(f2.calc_1o2(0.5)-f1.calc_1o2(0.5))/
-    fabs(f1.calc_1o2(0.5)) << endl;
-  cout << fabs(f2.calc_m1o2(0.5)-f1.calc_m1o2(0.5))/
-    fabs(f1.calc_m1o2(0.5)) << endl;
-  cout << fabs(f2.calc_3o2(0.5)-f1.calc_3o2(0.5))/
-    fabs(f1.calc_3o2(0.5)) << endl;
-  cout << endl;
+  t.test_rel(f1.calc_1o2(0.5),f2.calc_1o2(0.5),4.0e-16,"fd 1");
+  t.test_rel(f1.calc_m1o2(0.5),f2.calc_m1o2(0.5),4.0e-16,"fd 2");
+  t.test_rel(f1.calc_3o2(0.5),f2.calc_3o2(0.5),4.0e-16,"fd 3");
   
 #endif
   

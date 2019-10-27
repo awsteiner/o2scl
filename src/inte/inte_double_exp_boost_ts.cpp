@@ -32,15 +32,20 @@ double test_func_1(double x) {
   return -sin(1.0/(x+0.01))*pow(x+0.01,-2.0);
 }
 
+double test_func_2(double x) {
+  return exp(-x*x);
+}
+
 int main(void) {
+
+  cout.setf(ios::scientific);
+
   test_mgr t;
   t.set_output_level(1);
 
   inte_tanh_sinh_boost<funct,61> itsb;
 
   double ans, exact, err;
-
-  cout.setf(ios::scientific);
 
   funct tf1=test_func_1;
 
@@ -50,6 +55,12 @@ int main(void) {
   std::cout << ans << " " << err << std::endl;
   t.test_rel(ans,exact,1.0e-8,"tanh_sinh test");
 
+  inte_exp_sinh_boost<funct,61> iesb;
+  funct tf2=test_func_2;
+  iesb.integ_err(tf2,ans,err);
+  exact=sqrt(acos(-1.0))/2.0;
+  std::cout << ans << " " << err << std::endl;
+  t.test_rel(ans,exact,1.0e-8,"exp_sinh test");
   
   t.report();
   return 0;

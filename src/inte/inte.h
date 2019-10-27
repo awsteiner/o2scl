@@ -134,7 +134,7 @@ namespace o2scl {
       at the left-hand end point.
    */
   template<class func_t, class def_inte_t, class fp_t=double>
-    class inte_il : public inte<func_t,fp_t> {
+    class inte_il {
     
   protected:
 
@@ -214,7 +214,7 @@ namespace o2scl {
       at the right-hand end point.
    */
   template<class func_t, class def_inte_t, class fp_t=double>
-    class inte_iu : public inte<func_t,fp_t> {
+    class inte_iu {
     
   protected:
 
