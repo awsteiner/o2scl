@@ -97,14 +97,14 @@ namespace o2scl {
     /** \brief Floating point-type agnostic version of
 	\c gsl_root_test_interval() .
      */
-    int test_interval(fp_t x_lower, fp_t x_upper, fp_t epsabs,
+    int test_interval(fp_t xx_lower, fp_t xx_upper, fp_t epsabs,
 		      fp_t epsrel) {
       fp_t abs_lower, abs_upper;
 	
-      if (x_lower<0.0) abs_lower=-x_lower;
-      else abs_lower=x_lower;
-      if (x_upper<0.0) abs_upper=-x_upper;
-      else abs_upper=x_upper;
+      if (xx_lower<0.0) abs_lower=-xx_lower;
+      else abs_lower=xx_lower;
+      if (xx_upper<0.0) abs_upper=-xx_upper;
+      else abs_upper=xx_upper;
       
       fp_t min_abs, tolerance;
       if (epsrel<0.0) {
@@ -115,13 +115,13 @@ namespace o2scl {
 	O2SCL_ERR2("Absolute tolerance is negative in ",
 		   "root_brent_gsl::test_interval().",o2scl::exc_ebadtol);
       }
-      if (x_lower>x_upper) {
+      if (xx_lower>xx_upper) {
 	O2SCL_ERR2("Lower bound larger than upper bound in ",
 		   "root_brent_gsl::test_interval().",o2scl::exc_einval);
       }
 
-      if ((x_lower>0.0 && x_upper>0.0) ||
-	  (x_lower<0.0 && x_upper<0.0)) {
+      if ((xx_lower>0.0 && xx_upper>0.0) ||
+	  (xx_lower<0.0 && xx_upper<0.0)) {
 	if (abs_lower<abs_upper) min_abs=abs_lower;
 	else min_abs=abs_upper;
       } else {
@@ -132,14 +132,14 @@ namespace o2scl {
 
       // AWS: I could combine this if statement but this form ensures
       // success in case floating point problems imply that
-      // x_lower<x_upper and x_lower>=x_upper are both false.
+      // xx_lower<xx_upper and xx_lower>=xx_upper are both false.
       
-      if (x_lower<x_upper) {
-	if (x_upper-x_lower<tolerance) {
+      if (xx_lower<xx_upper) {
+	if (xx_upper-xx_lower<tolerance) {
 	  return o2scl::success;
 	}
       } else {
-	if (x_lower-x_upper<tolerance) {
+	if (xx_lower-xx_upper<tolerance) {
 	  return o2scl::success;
 	}
       }
