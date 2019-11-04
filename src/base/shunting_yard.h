@@ -110,6 +110,11 @@ namespace o2scl {
 
       \future Add functions atan2, cot, csc, ceil, floor, int, max, min,
       and maybe if?
+
+      \warning The nothrow() functions are a naive attempt at 
+      more detailed error handling than Amos' original code. I have
+      tried to make sure they don't create any memory leaks, but 
+      I have not fully tested this. 
    */
   class calculator {
 
@@ -136,6 +141,9 @@ namespace o2scl {
 			    std::map<std::string, double>* vars = 0,
 			    bool debug=false);
     
+    /** \brief Compile and evaluate \c expr using definitions in 
+	\c vars and return an integer to indicate success or failure
+    */
     static int calculate_nothrow(const char* expr,
 				    std::map<std::string, double>* vars,
 				    bool debug, double &result);
@@ -148,6 +156,10 @@ namespace o2scl {
     static double calculate(TokenQueue_t RPN,
 			    std::map<std::string, double>* vars = 0);
     
+    /** \brief Compile and evaluate the expression in \c RPN using
+	definitions in \c vars and return an integer to indicate
+	success or failure
+     */
     static int calculate_nothrow(TokenQueue_t RPN,
 				 std::map<std::string, double>* vars,
 				 double &result);
@@ -166,7 +178,8 @@ namespace o2scl {
 			      bool debug=false,
 			      std::map<std::string, int> opPrec=opPrecedence);
 
-    /** \brief Convert the expression in \c expr to RPN 
+    /** \brief Convert the expression in \c expr to RPN and return an
+	integer to indicate success or failure
      */
     static int toRPN_nothrow(const char* expr,
 			     std::map<std::string, double>* vars,
@@ -197,24 +210,31 @@ namespace o2scl {
 	       std::map<std::string, int> opPrec=opPrecedence);
     
     /** \brief Compile expression \c expr using variables 
-	specified in \c vars
+	specified in \c vars and return an
+	integer to indicate success or failure
     */
     void compile(const char* expr,
 		 std::map<std::string, double> *vars=0,
 		 bool debug=false,
 		 std::map<std::string, int> opPrec=opPrecedence);
     
+    /** \brief Compile expression \c expr using variables 
+	specified in \c vars and return an
+	integer to indicate success or failure
+    */
     int compile_nothrow(const char* expr,
-			 std::map<std::string, double> *vars=0,
-			 bool debug=false,
-			 std::map<std::string, int> opPrec=opPrecedence);
-			 
+			std::map<std::string, double> *vars=0,
+			bool debug=false,
+			std::map<std::string, int> opPrec=opPrecedence);
     
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
      */
     double eval(std::map<std::string, double> *vars=0);
 
+    /** \brief Evalate the previously compiled expression using
+	variables specified in \c vars
+     */
     int eval_nothrow(std::map<std::string, double> *vars, double &result);
     
     /** \brief Convert the RPN expression to a string

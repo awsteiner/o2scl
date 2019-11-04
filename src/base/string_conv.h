@@ -191,6 +191,14 @@ namespace o2scl {
   */
   double function_to_double(std::string s);
 
+  /** \brief Convert a formula to a double and return an integer to
+      indicate success or failure
+      
+      This function removes all quotes and apostrophes from the string
+      and then uses \ref o2scl::calculator to convert strings like
+      "-1.0e-3", "1.0/3.0" and "exp(cos(-1.0e-2))" to floating point
+      numbers.
+  */
   int function_to_double_nothrow(std::string s, double &result);
 
   /** \brief Split a string into words using whitespace for delimiters

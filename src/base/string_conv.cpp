@@ -245,7 +245,7 @@ int o2scl::function_to_double_nothrow(std::string s, double &result) {
     }
   }
   calculator calc;
-  int ret=calc.compile_nothrow(s.c_str(),0,result);
+  int ret=calc.compile_nothrow(s.c_str(),0);
   if (ret!=0) return ret;
   int ret2=calc.eval_nothrow(0,result);
   if (ret2!=0) return ret2;

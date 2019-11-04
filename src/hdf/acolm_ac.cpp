@@ -60,11 +60,17 @@ int acol_manager::comm_assign(std::vector<std::string> &sv, bool itive_com) {
   pr.push_back("Value");
   int ret=get_input(sv,pr,in,"assign",itive_com);
   if (ret!=0) return ret;
-  
+
+  double d;
+  int retx=function_to_double_nothrow(sv[2],d);
+  if (retx!=0) {
+    cerr << "Converting " << sv[2] << " to value failed." << endl;
+    return 1;
+  }
   if (type=="table3d") {
-    table3d_obj.add_constant(sv[1],function_to_double(sv[2]));
+    table3d_obj.add_constant(sv[1],d);
   } else {
-    table_obj.add_constant(sv[1],function_to_double(sv[2]));
+    table_obj.add_constant(sv[1],d);
   }
 
   return ret;
@@ -411,7 +417,12 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     cerr << "No expression to compute in 'calc'." << endl;
     return exc_efailed;
   }
-  double d=o2scl::function_to_double(i1);
+  double d;
+  int retx=o2scl::function_to_double_nothrow(i1,d);
+  if (retx!=0) {
+    cerr << "Converting " << i1 << " to value failed." << endl;
+    return 1;
+  }
   if (scientific) cout.setf(ios::scientific);
   else cout.unsetf(ios::scientific);
   cout.precision(prec);
@@ -686,7 +697,11 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     }
     
     ubvector levs(1);
-    levs[0]=o2scl::function_to_double(svalue);
+    int retx=o2scl::function_to_double_nothrow(svalue,levs[0]);
+    if (retx!=0) {
+      cerr << "Failed to convert " << svalue << " to value." << endl;
+      return 1;
+    }
     size_t nlev=1;
     
     if (frac_mode) {
@@ -855,7 +870,11 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     }
 
     ubvector levs(1);
-    levs[0]=o2scl::function_to_double(svalue);
+    int retx=o2scl::function_to_double_nothrow(svalue,levs[0]);
+    if (retx!=0) {
+      cerr << "Failed to convert " << svalue << " to value." << endl;
+      return 1;
+    }
     size_t nlev=1;
 
     if (frac_mode) {
