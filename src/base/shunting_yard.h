@@ -135,6 +135,10 @@ namespace o2scl {
     static double calculate(const char* expr,
 			    std::map<std::string, double>* vars = 0,
 			    bool debug=false);
+    
+    static int calculate_nothrow(const char* expr,
+				    std::map<std::string, double>* vars,
+				    bool debug, double &result);
 
   private:
 
@@ -143,13 +147,17 @@ namespace o2scl {
      */
     static double calculate(TokenQueue_t RPN,
 			    std::map<std::string, double>* vars = 0);
+    
+    static int calculate_nothrow(TokenQueue_t RPN,
+				 std::map<std::string, double>* vars,
+				 double &result);
 
     /** \brief Empty and free memory associated with \c rpn
 
 	\note This is called by the destructor to free the memory in
 	\ref RPN .
      */
-    static void cleanRPN(TokenQueue_t& rpn);
+    static void cleanRPN(TokenQueue_t &rpn);
     
     /** \brief Convert the expression in \c expr to RPN 
      */
@@ -157,6 +165,14 @@ namespace o2scl {
 			      std::map<std::string, double>* vars,
 			      bool debug=false,
 			      std::map<std::string, int> opPrec=opPrecedence);
+
+    /** \brief Convert the expression in \c expr to RPN 
+     */
+    static int toRPN_nothrow(const char* expr,
+			     std::map<std::string, double>* vars,
+			     bool debug,
+			     std::map<std::string, int> opPrec,
+			     TokenQueue_t &queue2);
 
   private:
 
@@ -188,10 +204,18 @@ namespace o2scl {
 		 bool debug=false,
 		 std::map<std::string, int> opPrec=opPrecedence);
     
+    int compile_nothrow(const char* expr,
+			 std::map<std::string, double> *vars=0,
+			 bool debug=false,
+			 std::map<std::string, int> opPrec=opPrecedence);
+			 
+    
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
      */
     double eval(std::map<std::string, double> *vars=0);
+
+    int eval_nothrow(std::map<std::string, double> *vars, double &result);
     
     /** \brief Convert the RPN expression to a string
 

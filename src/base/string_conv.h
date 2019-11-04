@@ -191,6 +191,8 @@ namespace o2scl {
   */
   double function_to_double(std::string s);
 
+  int function_to_double_nothrow(std::string s, double &result);
+
   /** \brief Split a string into words using whitespace for delimiters
       and (partially) respecting quotes
 

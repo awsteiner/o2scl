@@ -439,7 +439,12 @@ int acol_manager::comm_convert(std::vector<std::string> &sv, bool itive_com) {
   int ret=get_input(sv,pr,in,"convert",itive_com);
   if (ret!=0) return ret;
 
-  double d=function_to_double(in[2]);
+  double d;
+  int ret2=function_to_double_nothrow(in[2],d);
+  if (ret2!=0) {
+    cerr << "Converting " << in[2] << " to value failed." << endl;
+    return 1;
+  }
   double d2=cng.convert(in[0],in[1],d);
 
   cout << d << " in " << in[0] << " = " << d2 << " in " << in[1] << endl;

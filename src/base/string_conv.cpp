@@ -233,6 +233,25 @@ double o2scl::function_to_double(std::string s) {
   return dat;
 }
 
+int o2scl::function_to_double_nothrow(std::string s, double &result) {
+  // Remove quotes and apostrophes
+  for(size_t i=0;i<s.length();i++) {
+    if (s[i]=='\"' || s[i]=='\'') {
+      string t;
+      if (i>0) t+=s.substr(0,i);
+      if (i<s.length()-1) t+=s.substr(i+1,s.length()-i-1);
+      s=t;
+      i=0;
+    }
+  }
+  calculator calc;
+  int ret=calc.compile_nothrow(s.c_str(),0,result);
+  if (ret!=0) return ret;
+  int ret2=calc.eval_nothrow(0,result);
+  if (ret2!=0) return ret2;
+  return 0;
+}
+
 void o2scl::split_string(string str, vector<string> &sv) {
   
   string tmp, tmp2;

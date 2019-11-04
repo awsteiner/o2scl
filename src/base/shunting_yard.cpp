@@ -321,6 +321,215 @@ TokenQueue_t calculator::toRPN(const char* expr,
   return rpnQueue;
 }
 
+int calculator::toRPN_nothrow(const char* expr,
+			      std::map<std::string, double>* vars,
+			      bool debug, std::map<std::string, int> opPrec,
+			      TokenQueue_t &rpnQueue2) {
+
+  TokenQueue_t rpnQueue;
+  std::stack<std::string> operatorStack;
+  bool lastTokenWasOp = true;
+
+  // In one pass, ignore whitespace and parse the expression into RPN
+  // using Dijkstra's Shunting-yard algorithm.
+  while (*expr && isspace(*expr)) ++expr;
+
+  while (*expr) {
+    
+    if (isdigit(*expr)) {
+
+      // If the token is a number, add it to the output queue.
+      char* nextChar = 0;
+      double digit = strtod(expr,&nextChar);
+      if (debug) {
+	std::cout << "digit: " << digit << std::endl;
+      }
+      rpnQueue.push(new Token<double>(digit, NUM));
+      expr = nextChar;
+      lastTokenWasOp = false;
+
+    } else if (isvariablechar(*expr)) {
+
+      // If the function is a variable, resolve it and
+      // add the parsed number to the output queue.
+      std::stringstream ss;
+      ss << *expr;
+      ++expr;
+      while (isvariablechar(*expr) || isdigit(*expr)) {
+        ss << *expr;
+        ++expr;
+      }
+
+      bool found = false;
+      double val;
+
+      std::string key = ss.str();
+
+      if (key=="sin") {
+	operatorStack.push("sin");
+	lastTokenWasOp=true;
+      } else if (key=="cos") {
+	operatorStack.push("cos");
+	lastTokenWasOp=true;
+      } else if (key=="tan") {
+	operatorStack.push("tan");
+	lastTokenWasOp=true;
+      } else if (key=="sqrt") {
+	operatorStack.push("sqrt");
+	lastTokenWasOp=true;
+      } else if (key=="log") {
+	operatorStack.push("log");
+	lastTokenWasOp=true;
+      } else if (key=="exp") {
+	operatorStack.push("exp");
+	lastTokenWasOp=true;
+      } else if (key=="abs") {
+	operatorStack.push("abs");
+	lastTokenWasOp=true;
+      } else if (key=="log10") {
+	operatorStack.push("log10");
+	lastTokenWasOp=true;
+      } else if (key=="asin") {
+	operatorStack.push("asin");
+	lastTokenWasOp=true;
+      } else if (key=="acos") {
+	operatorStack.push("acos");
+	lastTokenWasOp=true;
+      } else if (key=="atan") {
+	operatorStack.push("atan");
+	lastTokenWasOp=true;
+      } else if (key=="sinh") {
+	operatorStack.push("sinh");
+	lastTokenWasOp=true;
+      } else if (key=="cosh") {
+	operatorStack.push("cosh");
+	lastTokenWasOp=true;
+      } else if (key=="tanh") {
+	operatorStack.push("tanh");
+	lastTokenWasOp=true;
+      } else if (key=="asinh") {
+	operatorStack.push("asinh");
+	lastTokenWasOp=true;
+      } else if (key=="acosh") {
+	operatorStack.push("acosh");
+	lastTokenWasOp=true;
+      } else if (key=="atanh") {
+	operatorStack.push("atanh");
+	lastTokenWasOp=true;
+      } else if (key=="floor") {
+	operatorStack.push("floor");
+	lastTokenWasOp=true;
+      } else {
+	
+	if (key == "true") {
+	  found = true;
+	  val = 1;
+	} else if (key == "false") {
+	  found = true;
+	  val = 0;
+	} else if (vars) {
+	  std::map<std::string, double>::iterator it = vars->find(key);
+	  if(it != vars->end()) {
+	    found = true;
+	    val = it->second;
+	  }
+	}
+	
+	if (found) {
+	  // Save the number
+	  if (debug) {
+	    std::cout << "val: " << val << std::endl;
+	  }
+	  rpnQueue.push(new Token<double>(val, NUM));;
+	} else {
+	  // Save the variable name:
+	  if (debug) {
+	    std::cout << "key: " << key << std::endl;
+	  }
+	  rpnQueue.push(new Token<std::string>(key, VAR));
+	}
+	
+	lastTokenWasOp = false;
+	
+      }
+
+    } else {
+
+      // Otherwise, the variable is an operator or parenthesis.
+      switch (*expr) {
+      case '(':
+	operatorStack.push("(");
+	++expr;
+	break;
+      case ')':
+	while (operatorStack.top().compare("(")) {
+	  rpnQueue.push(new Token<std::string>(operatorStack.top(),OP));
+	  operatorStack.pop();
+	}
+	operatorStack.pop();
+	++expr;
+	break;
+
+      default:
+	{
+	  // The token is an operator.
+	  //
+	  // Let p(o) denote the precedence of an operator o.
+	  //
+	  // If the token is an operator, o1, then
+	  //   While there is an operator token, o2, at the top
+	  //       and p(o1) <= p(o2), then
+	  //     pop o2 off the stack onto the output queue.
+	  //   Push o1 on the stack.
+	  std::stringstream ss;
+	  ss << *expr;
+	  ++expr;
+	  while (*expr && !isspace(*expr) && !isdigit(*expr)
+		 && !isvariablechar(*expr) && *expr != '(' &&
+		 *expr != ')') {
+	    ss << *expr;
+	    ++expr;
+	  }
+	  ss.clear();
+	  std::string str;
+	  ss >> str;
+	  if (debug) {
+	    std::cout << "str: " << str << std::endl;
+	  }
+
+	  if (lastTokenWasOp) {
+	    // Convert unary operators to binary in the RPN.
+	    if (!str.compare("-") || !str.compare("+")) {
+	      rpnQueue.push(new Token<double>(0, NUM));
+	    } else {
+	      cleanRPN(rpnQueue);
+	      return 1;
+	    }
+	  }
+
+	  while (!operatorStack.empty() &&
+		 opPrec[str] >= opPrec[operatorStack.top()]) {
+	    rpnQueue.push(new Token<std::string>(operatorStack.top(), OP));
+	    operatorStack.pop();
+	  }
+	  operatorStack.push(str);
+	  lastTokenWasOp = true;
+	}
+      }
+    } while (*expr && isspace(*expr)) ++expr;
+
+    // End of while (*expr)
+  }
+  
+  while (!operatorStack.empty()) {
+    rpnQueue.push(new Token<std::string>(operatorStack.top(), OP));
+    operatorStack.pop();
+  }
+
+  rpnQueue2=rpnQueue;
+  return 0;
+}
+
 double calculator::calculate(const char* expr,
 			     std::map<std::string, double>* vars,
 			     bool debug) {
@@ -333,6 +542,25 @@ double calculator::calculate(const char* expr,
   cleanRPN(rpn);
 
   return ret;
+}
+
+int calculator::calculate_nothrow(const char* expr,
+				  std::map<std::string, double>* vars,
+				  bool debug, double &result) {
+
+  // Convert to RPN with Dijkstra's Shunting-yard algorithm.
+  TokenQueue_t rpn;
+  int ret1=toRPN_nothrow(expr,vars,debug,opPrecedence,rpn);
+  if (ret1!=0) return ret1;
+
+  double ret;
+  int ret2=calculate_nothrow(rpn,0,ret);
+  if (ret2!=0) return 10+ret2;
+
+  cleanRPN(rpn);
+  result=ret;
+
+  return 0;
 }
 
 double calculator::calculate(TokenQueue_t rpn,
@@ -455,6 +683,136 @@ double calculator::calculate(TokenQueue_t rpn,
   return evaluation.top();
 }
 
+int calculator::calculate_nothrow(TokenQueue_t rpn,
+				  std::map<std::string, double>* vars,
+				  double &result) {
+
+  // Evaluate the expression in RPN form.
+  std::stack<double> evaluation;
+  while (!rpn.empty()) {
+    TokenBase* base = rpn.front();
+    rpn.pop();
+
+    // Operator:
+    if (base->type == OP) {
+      Token<std::string>* strTok = static_cast<Token<std::string>*>(base);
+      std::string str = strTok->val;
+      /*
+	if (evaluation.size() < 2) {
+        throw std::domain_error("Invalid equation.");
+	}
+      */
+      double right = evaluation.top();
+      evaluation.pop();
+      if (!str.compare("sin")) {
+	evaluation.push(sin(right));
+      } else if (!str.compare("cos")) {
+	evaluation.push(cos(right));
+      } else if (!str.compare("tan")) {
+	evaluation.push(tan(right));
+      } else if (!str.compare("sqrt")) {
+	evaluation.push(sqrt(right));
+      } else if (!str.compare("log")) {
+	evaluation.push(log(right));
+      } else if (!str.compare("exp")) {
+	evaluation.push(exp(right));
+      } else if (!str.compare("abs")) {
+	evaluation.push(std::abs(right));
+      } else if (!str.compare("log10")) {
+	evaluation.push(log10(right));
+      } else if (!str.compare("asin")) {
+	evaluation.push(asin(right));
+      } else if (!str.compare("acos")) {
+	evaluation.push(acos(right));
+      } else if (!str.compare("atan")) {
+	evaluation.push(atan(right));
+      } else if (!str.compare("sinh")) {
+	evaluation.push(sinh(right));
+      } else if (!str.compare("cosh")) {
+	evaluation.push(cosh(right));
+      } else if (!str.compare("tanh")) {
+	evaluation.push(tanh(right));
+      } else if (!str.compare("asinh")) {
+	evaluation.push(asinh(right));
+      } else if (!str.compare("acosh")) {
+	evaluation.push(acosh(right));
+      } else if (!str.compare("atanh")) {
+	evaluation.push(atanh(right));
+      } else if (!str.compare("floor")) {
+	evaluation.push(floor(right));
+      } else {
+	double left  = evaluation.top();
+	evaluation.pop();
+	if (!str.compare("+")) {
+	  evaluation.push(left + right);
+	} else if (!str.compare("*")) {
+	  evaluation.push(left * right);
+	} else if (!str.compare("-")) {
+	  evaluation.push(left - right);
+	} else if (!str.compare("/")) {
+	  evaluation.push(left / right);
+	} else if (!str.compare("<<")) {
+	  evaluation.push((int) left << (int) right);
+	} else if (!str.compare("^")) {
+	  evaluation.push(pow(left, right));
+	} else if (!str.compare(">>")) {
+	  evaluation.push((int) left >> (int) right);
+	} else if (!str.compare("%")) {
+	  evaluation.push((int) left % (int) right);
+	} else if (!str.compare("<")) {
+	  evaluation.push(left < right);
+	} else if (!str.compare(">")) {
+	  evaluation.push(left > right);
+	} else if (!str.compare("<=")) {
+	  evaluation.push(left <= right);
+	} else if (!str.compare(">=")) {
+	  evaluation.push(left >= right);
+	} else if (!str.compare("==")) {
+	  evaluation.push(left == right);
+	} else if (!str.compare("!=")) {
+	  evaluation.push(left != right);
+	} else if (!str.compare("&&")) {
+	  evaluation.push((int) left && (int) right);
+	} else if (!str.compare("||")) {
+	  evaluation.push((int) left || (int) right);
+	} else {
+	  cleanRPN(rpn);
+	  return 1;
+	  //throw std::domain_error("Unknown operator: '" + str + "'.");
+	}
+      }
+    } else if (base->type == NUM) { // Number
+      Token<double>* doubleTok = static_cast<Token<double>*>(base);
+      evaluation.push(doubleTok->val);
+    } else if (base->type == VAR) { // Variable
+      if (!vars) {
+	cleanRPN(rpn);
+	return 2;
+        //throw std::domain_error
+	//("Detected variable, but the variable map is null.");
+      }
+      
+      Token<std::string>* strTok = static_cast<Token<std::string>*>(base);
+      
+      std::string key = strTok->val;
+      std::map<std::string, double>::iterator it = vars->find(key);
+      
+      if (it == vars->end()) {
+	cleanRPN(rpn);
+	return 3;
+        //throw std::domain_error("Unable to find the variable '" + key + "'.");
+      }
+      evaluation.push(it->second);
+    } else {
+      cleanRPN(rpn);
+      return 4;
+      //throw std::domain_error("Invalid token.");
+    }
+  }
+  result=evaluation.top();
+  return 0;
+}
+
 void calculator::cleanRPN(TokenQueue_t& rpn) {
   while (rpn.size()) {
     delete rpn.front();
@@ -485,8 +843,26 @@ void calculator::compile(const char* expr,
   this->RPN = calculator::toRPN(expr,vars,debug,opPrec);
 }
 
+int calculator::compile_nothrow(const char* expr,
+				std::map<std::string, double>* vars,
+				bool debug,
+				std::map<std::string, int> opPrec) {
+
+  // Make sure it is empty:
+  cleanRPN(this->RPN);
+
+  int ret=calculator::toRPN_nothrow(expr,vars,debug,opPrec,this->RPN);
+  return ret;
+}
+
 double calculator::eval(std::map<std::string, double>* vars) {
   return calculate(this->RPN, vars);
+}
+
+int calculator::eval_nothrow(std::map<std::string, double>* vars,
+				double &result) {
+  int ret=calculate_nothrow(this->RPN,vars,result);
+  return ret;
 }
 
 std::string calculator::RPN_to_string() {
