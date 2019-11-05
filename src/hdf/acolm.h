@@ -300,8 +300,8 @@ namespace o2scl_acol {
     /// Clear the current object
     virtual int comm_clear(std::vector<std::string> &sv, bool itive_com);
 
-    /// Desc
-    virtual int comm_convert(std::vector<std::string> &sv, bool itive_com);
+    // Desc
+    //virtual int comm_convert(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Output the help text
      */

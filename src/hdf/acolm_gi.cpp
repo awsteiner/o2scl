@@ -42,12 +42,18 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
 int acol_manager::comm_get_conv
 (std::vector<std::string> &sv, bool itive_com) {
-  
+
   vector<string> in, pr;
-  pr.push_back("Old unit");
-  pr.push_back("New unit");
-  int ret=get_input(sv,pr,in,"get-conv",itive_com);
-  if (ret!=0) return ret;
+  if (sv.size()==3) {
+    in.push_back(sv[1]);
+    in.push_back(sv[2]);
+  } else {
+    pr.push_back("Old unit");
+    pr.push_back("New unit");
+    pr.push_back("Value");
+    int ret=get_input(sv,pr,in,"get-conv",itive_com);
+    if (ret!=0) return ret;
+  }
   
   if (unit_fname.length()>0) {
     cng.units_cmd_string=((string)"units -f ")+unit_fname;
@@ -68,16 +74,38 @@ int acol_manager::comm_get_conv
     cng.verbose=0;
   }
 
+  double val=1.0;
+  if (in.size()>=3) {
+    int ret2=function_to_double_nothrow(in[2],val);
+    if (ret2!=0) {
+      cerr << "Converting " << in[2] << " to value failed." << endl;
+      return 2;
+    }
+  }
+  
   // If cng.verbose is non-zero, then cng.convert may output
   // verbose information to cout
-  double val;
-  int cret=cng.convert_ret(in[0],in[1],1.0,val);
+  double val_out;
+  int cret=cng.convert_ret(in[0],in[1],val,val_out);
   if (cret!=0) {
     cerr << "Conversion failed." << endl;
     return 1;
   }
   
-  cout << "Conversion factor is: " << val << endl;
+  cout << val << " " << in[0] << " = " << val_out << " " << in[1] << endl;
+  //  cout << "Conversion factor is: " << val << endl;
+
+  /*
+  vector<string> pr, in;
+  pr.push_back("Value");
+  pr.push_back("Original unit");
+  pr.push_back("Destination unit");
+  int ret=get_input(sv,pr,in,"convert",itive_com);
+  if (ret!=0) return ret;
+
+  double d2=cng.convert(in[0],in[1],d);
+
+  */
   
   return 0;
 }

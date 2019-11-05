@@ -441,28 +441,6 @@ int acol_manager::comm_clear(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
-int acol_manager::comm_convert(std::vector<std::string> &sv, bool itive_com) {
-
-  vector<string> pr, in;
-  pr.push_back("Value");
-  pr.push_back("Original unit");
-  pr.push_back("Destination unit");
-  int ret=get_input(sv,pr,in,"convert",itive_com);
-  if (ret!=0) return ret;
-
-  double d;
-  int ret2=function_to_double_nothrow(in[2],d);
-  if (ret2!=0) {
-    cerr << "Converting " << in[2] << " to value failed." << endl;
-    return 1;
-  }
-  double d2=cng.convert(in[0],in[1],d);
-
-  cout << d << " in " << in[0] << " = " << d2 << " in " << in[1] << endl;
-  
-  return 0;
-}
-
 int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
 
   if (sv.size()<2) {
