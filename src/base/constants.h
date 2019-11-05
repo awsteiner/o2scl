@@ -28,6 +28,8 @@
 
 #include <cmath>
 
+#include <boost/math/constants/constants.hpp>
+
 /** \brief Constants
     
     CODATA 2014 values are in \ref Mohr16.
@@ -861,21 +863,22 @@ namespace o2scl_const {
   const double hc_mev_fm=o2scl_mks::plancks_constant_hbar*
     o2scl_mks::speed_of_light/o2scl_mks::electron_volt*1.0e9;
 
-  /// Planck constant in \f$ \mathrm{J}~\mathrm{s} \f$
-  template<class fp_t> planck_f() {
+  /// Planck constant
+  template<class fp_t> fp_t planck_f() {
     fp_t numer=662607015;
     fp_t denom=100000000;
-    fp_t result=numer/denom*1.0e-34;
+    fp_t result=(numer/denom)*1.0e-34;
     return result;
   }
 
-  /// Reduced Planck constant in \f$ \mathrm{J}~\mathrm{s} \f$
-  template<class fp_t> hbar_f() {
+  /// Reduced Planck constant
+  template<class fp_t> fp_t hbar_f() {
     return planck_f<fp_t>()/2/
       boost::math::constants::pi<fp_t>();
   }
-  
-  template<class fp_t> speed_of_light_f(size_t system=1) {
+
+  /** \brief Speed of light */
+  template<class fp_t> fp_t speed_of_light_f(size_t system=1) {
     if (system==2) {
       fp_t result=29979245800;
       return result;
@@ -884,6 +887,23 @@ namespace o2scl_const {
     return result;
   }
 
+  /// Elementary charge
+  template<class fp_t> fp_t elem_charge_f(size_t system=1) {
+    fp_t numer=1602176634;
+    fp_t denom=1000000000;
+    fp_t result=(numer/denom)*1.0e-19;
+    return result;
+  }
+
+  /** \brief Reduced Planck constant times speed of light 
+      in \f$ \mathrm{MeV}~\mathrm{fm} \f$
+  */
+  template<class fp_t> fp_t hc_mev_fm_f() {
+    fp_t hbarc=hbar_f<fp_t>()*speed_of_light_f<fp_t>()/
+      elem_charge_f<fp_t>()*1.0e9;
+    return hbarc;
+  }
+  
   /// \f$ \hbar c \f$ in MeV cm (derived)
   const double hc_mev_cm=hc_mev_fm*1.0e-13;
 
