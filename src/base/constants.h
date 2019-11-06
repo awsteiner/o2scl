@@ -856,7 +856,9 @@ namespace o2scl_mks {
 // Other derived values to add to the namespace
 namespace o2scl_const {
 
+  /// MKS units
   static const size_t o2scl_mks=1;
+  /// CGS units
   static const size_t o2scl_cgs=2;
   
   /// \f$ \hbar c \f$ in MeV fm (derived)
@@ -864,22 +866,26 @@ namespace o2scl_const {
     o2scl_mks::speed_of_light/o2scl_mks::electron_volt*1.0e9;
 
   /// Planck constant
-  template<class fp_t> fp_t planck_f() {
+  template<class fp_t> fp_t planck_f(size_t system=o2scl_mks) {
     fp_t numer=662607015;
     fp_t denom=100000000;
+    if (system==o2scl_cgs) {
+      fp_t result=(numer/denom)*1.0e-27;
+      return result;
+    }
     fp_t result=(numer/denom)*1.0e-34;
     return result;
   }
 
   /// Reduced Planck constant
-  template<class fp_t> fp_t hbar_f() {
-    return planck_f<fp_t>()/2/
+  template<class fp_t> fp_t hbar_f(size_t system=o2scl_mks) {
+    return planck_f<fp_t>(system)/2/
       boost::math::constants::pi<fp_t>();
   }
 
   /** \brief Speed of light */
-  template<class fp_t> fp_t speed_of_light_f(size_t system=1) {
-    if (system==2) {
+  template<class fp_t> fp_t speed_of_light_f(size_t system=o2scl_mks) {
+    if (system==o2scl_cgs) {
       fp_t result=29979245800;
       return result;
     }
@@ -888,7 +894,7 @@ namespace o2scl_const {
   }
 
   /// Elementary charge
-  template<class fp_t> fp_t elem_charge_f(size_t system=1) {
+  template<class fp_t> fp_t elem_charge_f() {
     fp_t numer=1602176634;
     fp_t denom=1000000000;
     fp_t result=(numer/denom)*1.0e-19;

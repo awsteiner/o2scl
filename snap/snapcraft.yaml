@@ -17,6 +17,9 @@
 # 4/29/19: I used to include -libc6 in stage-packages but it
 # doesn't appear to be needed any more
 
+# 11/6/19: Trying an rpath build to simplify the use of acol
+# on snap installations. 
+
   parts:
     o2scl:
       source: https://github.com/awsteiner/o2scl.git
@@ -31,5 +34,5 @@
       - libhdf5-serial-dev
       - libgsl0-dev
       build: |
-        mkdir -p m4 && ./autogen.sh && ./configure --enable-snap --prefix=$PWD/../install && make blank-doc && make && make install
+        mkdir -p m4 && ./autogen.sh && LDFLAGS="-Wl,-rpath -Wl,/snap/o2scl/current/lib/x86_64-linux-gnu" ./configure --enable-snap --prefix=$PWD/../install && make blank-doc && make && make install
   

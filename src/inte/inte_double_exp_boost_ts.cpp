@@ -43,6 +43,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
+#ifndef O2SCL_OLDER_COMPILER
+
   inte_tanh_sinh_boost<funct,61> itsb;
 
   double ans, exact, err;
@@ -61,6 +63,8 @@ int main(void) {
   exact=sqrt(acos(-1.0))/2.0;
   std::cout << ans << " " << err << std::endl;
   t.test_rel(ans,exact,1.0e-8,"exp_sinh test");
+
+#endif
   
   t.report();
   return 0;

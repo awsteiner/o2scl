@@ -30,10 +30,10 @@
 #include <cmath>
 
 #ifndef O2SCL_OLDER_COMPILER
+
 #include <boost/math/quadrature/tanh_sinh.hpp>
 #include <boost/math/quadrature/exp_sinh.hpp>
 #include <boost/math/quadrature/sinh_sinh.hpp>
-#endif
 
 #include <o2scl/inte.h>
 
@@ -188,6 +188,9 @@ namespace o2scl {
   
 #ifndef DOXYGEN_NO_O2NS
 }
+#endif
+
+// End of #ifndef O2SCL_OLDER_COMPILER
 #endif
 
 #endif
