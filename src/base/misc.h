@@ -647,6 +647,8 @@ namespace o2scl {
 
   };
 
+#endif
+  
   /// \name Filesystem wrapper functions in src/base/misc.h
   //@{
   /** \brief Wrapper for the glob() function which
@@ -671,8 +673,6 @@ namespace o2scl {
   void wordexp_single_file(std::string &fname);
   //@}
   
-#endif
-
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif
