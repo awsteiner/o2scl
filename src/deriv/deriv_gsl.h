@@ -292,8 +292,8 @@ namespace o2scl {
 		  << fp1 << std::endl;
       }
       
-      if (!isfinite(fm1) || !isfinite(fp1) ||
-	  !isfinite(fmh) || !isfinite(fph) ||
+      if (!o2isfinite(fm1) || !o2isfinite(fp1) ||
+	  !o2isfinite(fmh) || !o2isfinite(fph) ||
 	  (func_max>0.0 && (o2scl::o2abs(fm1)>func_max ||
 			    o2scl::o2abs(fp1)>func_max ||
 			    o2scl::o2abs(fmh)>func_max ||

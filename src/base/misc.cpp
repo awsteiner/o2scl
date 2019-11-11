@@ -54,13 +54,21 @@ long double o2scl::o2abs(const long double x) {
   return fabsl(x);
 }
 
+bool o2scl::o2isfinite(const double x) {
+  return std::isfinite(x);
+}
+
 #ifdef O2SCL_LD_TYPES
 
 boost::multiprecision::cpp_dec_float_50
 o2scl::o2abs(const boost::multiprecision::cpp_dec_float_50 x) {
   return boost::multiprecision::abs(x);
 }
-  
+
+bool o2scl::o2isfinite(const boost::multiprecision::cpp_dec_float_50 x) {
+  return isfinite(x);
+}
+
 #endif
 
 int o2scl::pipe_cmd_string(std::string cmd, std::string &result,

@@ -71,7 +71,7 @@ namespace o2scl {
   /** \brief Absolute value for double precision numbers
    */
   double o2abs(const double x);
-  
+
   /** \brief Absolute value for long double
    */
   long double o2abs(const long double x);
@@ -83,6 +83,23 @@ namespace o2scl {
   boost::multiprecision::cpp_dec_float_50
     o2abs(const boost::multiprecision::cpp_dec_float_50 x);
   
+#endif
+
+  /** \brief Compatbility function for isfinite()
+
+      AWS, 11/11/19: Older compilers seem to require std::isfinite(),
+      but then this causes problems making generic code which can use
+      boost multiprecision arithmetic, so this function attempts
+      to solve those problems.
+  */
+  bool o2isfinite(const double x);
+
+#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
+
+  /** \brief Compatbility function for isfinite()
+   */
+  bool o2isfinite(const boost::multiprecision::cpp_dec_float_50 x);
+
 #endif
   
   //@}
