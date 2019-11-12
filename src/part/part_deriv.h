@@ -767,7 +767,6 @@ namespace o2scl {
   virtual bool calc_mu_deg(fermion_deriv &f, fp_t temper,
 			   fp_t prec) {
       
-    fermion_rel fr;
     if (fr.calc_mu_deg_tlate<fermion_deriv>(f,temper,prec)==false) {
       return false;
     }
@@ -838,7 +837,6 @@ namespace o2scl {
   virtual bool calc_mu_ndeg(fermion_deriv &f, fp_t temper,
 			    fp_t prec, bool inc_antip=false) {
       
-    fermion_rel fr;
     if (fr.calc_mu_ndeg_tlate<fermion_deriv>(f,temper,prec,
 					     inc_antip)==false) {
       return false;
