@@ -112,7 +112,9 @@ int tov_love::y_derivs(double r, size_t nv, const std::vector<double> &vals,
 
 int tov_love::H_derivs(double r, size_t nv, const std::vector<double> &vals,
 			  std::vector<double> &ders) {
-    
+
+  tab->is_valid();
+  
   double ed=tab->interp("r",r,"ed");
   double pr=tab->interp("r",r,"pr");
   double cs2=tab->interp("r",r,"cs2");
@@ -155,6 +157,11 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
 	       o2scl::exc_eunimpl);
   }
 
+  if (disc.size()>0 && eps>disc[0]) {
+    O2SCL_ERR2("Discontinuity is at smaller radius than eps ",
+	       "in tov_love::calc_y().",o2scl::exc_einval);
+  }
+  
   size_t count;
 
   double R=tab->get_constant("rad");
@@ -163,20 +170,6 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
   double r=eps, h=1.0e-1;
   std::vector<double> y(1), dydx_out(1), yerr(1);
   y[0]=2.0;
-
-  // Storage for 'tabulate' option
-  std::vector<double> rt;
-  typedef boost::numeric::ublas::matrix<double> ubmatrix;
-  ubmatrix yt, dy, ye;
-  size_t n_sol=10000;
-
-  // If 'tabulate' is true, allocate space
-  if (tabulate) {
-    rt.resize(n_sol);
-    yt.resize(n_sol,1);
-    dy.resize(n_sol,1);
-    ye.resize(n_sol,1);
-  }
 
   ode_funct2 od=std::bind
     (std::mem_fn<int(double,size_t,const std::vector<double> &,
@@ -187,21 +180,103 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
 
   if (tabulate) {
     
-    yt(0,0)=2.0;
-    int ois_ret=oisp->solve_store(eps,R,h,1,n_sol,rt,yt,ye,dy,od,0);
-    if (ois_ret!=0) {
-      O2SCL_CONV2_RET("ODE function solve_store() failed ",
-		      " in tov_love::calc_y().",
-		      o2scl::exc_efailed,err_nonconv);
-    }
-    yR=yt(n_sol-1,0);
+    // Storage
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
+    std::vector< std::vector<double> > rt(disc.size()+1);
+    std::vector<ubmatrix> yt(disc.size()+1);
+    std::vector<ubmatrix> dy(disc.size()+1);
+    std::vector<ubmatrix> ye(disc.size()+1);
+    std::vector<size_t> n_sol(disc.size()+1);
     
+    // Loop over intervals between discontinuities and the
+    // r=0 and r=R boundaries
+    double x0=eps, x1;
+
+    for(size_t j=0;j<disc.size()+1;j++) {
+
+      // This will be changed by solve_store() below to reflect
+      // the size of the final solution
+      n_sol[j]=10000;
+      
+      // Allocate space ahead of time, so we can fill the next section
+      // with the previous value from this section
+      if (j==0) {
+	rt[j].resize(n_sol[j]);
+	yt[j].resize(n_sol[j],1);
+	dy[j].resize(n_sol[j],1);
+	ye[j].resize(n_sol[j],1);
+      }
+      if (j<disc.size()+2) {
+	rt[j+1].resize(n_sol[j]);
+	yt[j+1].resize(n_sol[j],1);
+	dy[j+1].resize(n_sol[j],1);
+	ye[j+1].resize(n_sol[j],1);
+      }
+
+      // Set the inner and outer radial boundaries for this interval
+      if (j!=0) {
+	x0=disc[j-1]+delta;
+      } 
+      if (j==disc.size()) {
+	x1=R;
+      } else {
+	// Make sure the discontinuity is not at the neutron
+	// star radius
+	if (disc[j]>=R) {
+	  O2SCL_ERR2("Discontinuity is at or past full radius ",
+		     "in tov_love::calc_y().",o2scl::exc_einval);
+	}
+	x1=disc[j]-delta;
+      }
+
+      // Solve the ODE in this interval
+      if (x0>x1) {
+	O2SCL_CONV2_RET("Discontinuities too close to resolve ",
+			" in tov_love::calc_y().",
+			o2scl::exc_etol,err_nonconv);
+      }
+      
+      yt[j](0,0)=2.0;
+      int ois_ret=oisp->solve_store(x0,x1,h,1,n_sol[j],rt[j],yt[j],ye[j],dy[j],
+				    od,0);
+      if (ois_ret!=0) {
+	O2SCL_CONV2_RET("ODE function solve_store() failed ",
+			" in tov_love::calc_y().",
+			o2scl::exc_efailed,err_nonconv);
+      }
+      yR=yt[j](n_sol[j]-1,0);
+
+      // Add the correction at the discontinuity
+      if (j!=disc.size()) {
+	yt[j+1](0,0)=yR+(tab->interp("r",disc[j]+delta,"ed")-
+			 tab->interp("r",disc[j]-delta,"ed"))/
+	  (tab->interp("r",disc[j],"gm")+4.0*o2scl_const::pi+
+	   disc[j]*disc[j]*disc[j]*tab->interp("r",disc[j],"pr"));
+      }
+      
+    }
+    
+    results.clear();
+    results.line_of_names("r y dydr ye ed pr cs2 gm");
+    results.set_unit("r","km");
+    results.set_unit("dydr","1/km");
+    results.set_unit("ye","km");
+    results.set_unit("ed","Msun/km^3");
+    results.set_unit("pr","Msun/km^3");
+    results.set_unit("gm","Msun");
+    for(size_t j=0;j<disc.size()+1;j++) {
+      for(size_t k=0;k<n_sol[j];k++) {
+	double line[8]={rt[j][k],yt[j](k,0),dy[j](k,0),ye[j](k,0),
+			tab->interp("r",rt[j][k],"ed"),
+			tab->interp("r",rt[j][k],"pr"),
+			tab->interp("r",rt[j][k],"cs2"),
+			tab->interp("r",rt[j][k],"gm")};
+	results.line_of_data(8,line);
+      }
+    }
+      
   } else {
 
-    if (disc.size()>0 && eps>disc[0]) {
-      O2SCL_ERR2("Discontinuity is at smaller radius than eps ",
-		 "in tov_love::calc_y().",o2scl::exc_einval);
-    }
     std::vector<double> yout(1);
 
     // Loop over intervals between discontinuities and the
@@ -271,38 +346,16 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
   beta=schwarz_km/2.0*gm/R;
 
   k2=eval_k2(beta,yR);
-  
+
+  // lambda in km^5
   lambda_km5=2.0/3.0*k2*pow(R,5.0);
 
   // First compute in Msun*km^2*s^2
   lambda_cgs=2.0/3.0*k2*pow(R,5.0)/
     pow(o2scl_mks::speed_of_light/1.0e3,2.0)/schwarz_km;
+
   // Convert to g*cm^2*s^2
   lambda_cgs*=o2scl_cgs::solar_mass*1.0e10;
-  
-  if (tabulate) {
-    results.clear();
-
-    results.add_constant("k2",k2);
-    results.add_constant("lambda_cgs",lambda_cgs);
-    results.add_constant("lambda_km5",lambda_km5);
-
-    results.line_of_names("r y dydr ye ed pr cs2 gm");
-    results.set_unit("r","km");
-    results.set_unit("dydr","1/km");
-    results.set_unit("ye","km");
-    results.set_unit("ed","Msun/km^3");
-    results.set_unit("pr","Msun/km^3");
-    results.set_unit("gm","Msun");
-    for(size_t j=0;j<n_sol;j++) {
-      double line[8]={rt[j],yt(j,0),dy(j,0),ye(j,0),
-		      tab->interp("r",rt[j],"ed"),
-		      tab->interp("r",rt[j],"pr"),
-		      tab->interp("r",rt[j],"cs2"),
-		      tab->interp("r",rt[j],"gm")};
-      results.line_of_data(8,line);
-    }
-  }
 
   return 0;
 }
