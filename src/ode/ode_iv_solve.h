@@ -447,6 +447,8 @@ namespace o2scl {
 	internal point will be written to \c std::cout.  If \ref verbose
 	is greater than one, a character will be required after each
 	point.
+
+	\todo Document \c istart
     */
     template<class mat_t>
     int solve_store(double x0, double x1, double h, size_t n, size_t &n_sol, 

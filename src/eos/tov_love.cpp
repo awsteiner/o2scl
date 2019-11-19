@@ -201,16 +201,17 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
       // Allocate space ahead of time, so we can fill the next section
       // with the previous value from this section
       if (j==0) {
-	rt[j].resize(n_sol[j]);
-	yt[j].resize(n_sol[j],1);
-	dy[j].resize(n_sol[j],1);
-	ye[j].resize(n_sol[j],1);
+	rt[j].resize(10000);
+	yt[j].resize(10000,1);
+	dy[j].resize(10000,1);
+	ye[j].resize(10000,1);
       }
       if (j<disc.size()+2) {
-	rt[j+1].resize(n_sol[j]);
-	yt[j+1].resize(n_sol[j],1);
-	dy[j+1].resize(n_sol[j],1);
-	ye[j+1].resize(n_sol[j],1);
+	n_sol[j+1]=10000;
+	rt[j+1].resize(10000);
+	yt[j+1].resize(10000,1);
+	dy[j+1].resize(10000,1);
+	ye[j+1].resize(10000,1);
       }
 
       // Set the inner and outer radial boundaries for this interval
@@ -228,6 +229,11 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
 	}
 	x1=disc[j]-delta;
       }
+      
+      // Set up initial condition near r=0
+      if (j==0) {
+	yt[0](0,0)=2.0;
+      }
 
       // Solve the ODE in this interval
       if (x0>x1) {
@@ -236,25 +242,26 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
 			o2scl::exc_etol,err_nonconv);
       }
       
-      yt[j](0,0)=2.0;
-      int ois_ret=oisp->solve_store(x0,x1,h,1,n_sol[j],rt[j],yt[j],ye[j],dy[j],
-				    od,0);
+      int ois_ret=oisp->solve_store(x0,x1,h,1,n_sol[j],rt[j],yt[j],
+				    ye[j],dy[j],od,0);
       if (ois_ret!=0) {
 	O2SCL_CONV2_RET("ODE function solve_store() failed ",
 			" in tov_love::calc_y().",
 			o2scl::exc_efailed,err_nonconv);
       }
-      yR=yt[j](n_sol[j]-1,0);
-
+      
       // Add the correction at the discontinuity
       if (j!=disc.size()) {
-	yt[j+1](0,0)=yR+(tab->interp("r",disc[j]+delta,"ed")-
-			 tab->interp("r",disc[j]-delta,"ed"))/
+	yt[j+1](0,0)=yt[j](n_sol[j]-1,0)+(tab->interp("r",disc[j]+delta,"ed")-
+					  tab->interp("r",disc[j]-delta,"ed"))/
 	  (tab->interp("r",disc[j],"gm")+4.0*o2scl_const::pi+
 	   disc[j]*disc[j]*disc[j]*tab->interp("r",disc[j],"pr"));
       }
       
     }
+    
+    // Final value of y at r=R
+    yR=yt[disc.size()-1](n_sol[j]-1,0);
     
     results.clear();
     results.line_of_names("r y dydr ye ed pr cs2 gm");
@@ -282,7 +289,7 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
     // Loop over intervals between discontinuities and the
     // r=0 and r=R boundaries
     double x0=eps, x1;
-
+    
     for(size_t j=0;j<disc.size()+1;j++) {
 
       // Set the inner and outer radial boundaries for this interval
@@ -339,10 +346,10 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
       // Proceed to the next interval
     }
 
-    // Set the final value of yR at the star's radius
+    // Set the final value of y at r=R
     yR=y[0];
   }
-
+  
   beta=schwarz_km/2.0*gm/R;
 
   k2=eval_k2(beta,yR);
@@ -361,8 +368,8 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
 }
 
 int tov_love::calc_H(double &yR, double &beta, double &k2, 
-			 double &lambda_km5, double &lambda_cgs) {
-
+		     double &lambda_km5, double &lambda_cgs) {
+  
   if (disc.size()>0) {
     O2SCL_ERR2("Function tov_love::calc_H() does not yet handle ",
 	       "discontinuities.",o2scl::exc_eunimpl);
