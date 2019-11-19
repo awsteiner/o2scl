@@ -261,7 +261,7 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
     }
     
     // Final value of y at r=R
-    yR=yt[disc.size()-1](n_sol[j]-1,0);
+    yR=yt[disc.size()-1](n_sol[disc.size()-1]-1,0);
     
     results.clear();
     results.line_of_names("r y dydr ye ed pr cs2 gm");
