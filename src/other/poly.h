@@ -52,8 +52,11 @@ namespace o2scl {
 
   /** \brief Solve a quadratic polynomial with real coefficients and 
       real roots [abstract base]
+      
+      \todo Compute discriminant
   */
   class quadratic_real {
+    
   public:
 
     virtual ~quadratic_real() {}
@@ -128,6 +131,8 @@ namespace o2scl {
 
   /** \brief Solve a cubic polynomial with real coefficients and real roots
       [abstract base]
+
+      \todo Compute discriminant
   */
   class cubic_real {
   public:
@@ -235,6 +240,18 @@ namespace o2scl {
 			double &x1, double &x2, 
 			double &x3, double &x4)=0;
 
+
+    /** \brief Compute the discriminant
+
+	The discriminant is zero if and only if at least two roots are
+	equal. If the discriminant is non-zero, the discriminant is
+	negative if there are two real roots and two complex conjugate
+	roots, and it is positive if the roots are either all real or
+	all non-real.
+    */
+    virtual double disc_r(const double a, const double b, const double c, 
+			  const double d, const double e);
+    
     /// Return a string denoting the type ("quartic_real")
     const char *type() { return "quartic_real"; }
   };

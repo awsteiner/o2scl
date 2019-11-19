@@ -53,6 +53,30 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
+double quartic_real::disc_r(const double a, const double b, const double c, 
+			    const double d, const double e) {
+  double a2=a*a;
+  double b2=b*b;
+  double c2=c*c;
+  double d2=d*d;
+  double e2=e*e;
+  
+  double a3=a2*a;
+  double b3=b2*b;
+  double c3=c2*c;
+  double d3=d2*d;
+  double e3=e2*e;
+  
+  double b4=b2*b2;
+  double c4=c2*c2;
+  double d4=d2*d2;
+  
+  return 256.0*a3*e3-192.0*a2*b*d*e2-128.0*a2*c2*e2+144.0*a2*c*d2*e-
+    27.0*a2*d4+144.0*a*b2*c*e2-6.0*a*b2*d2*e-80.0*a*b*c2*d*e+
+    18.0*a*b*c*d3+16.0*a*c4*e-4.0*a*c3*d2-27.0*b4*e2+18.0*b3*c*d*e-
+    4.0*b3*d3-4.0*b2*c3*e+b2*c2*d2;
+}
+
 int quadratic_complex_std::solve_c
 (complex<double> a2, complex<double> b2, complex<double> c2,
  complex<double> &x1, complex<double> &x2) { 
