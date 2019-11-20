@@ -33,10 +33,21 @@
 // For wordexp()
 #include <wordexp.h>
 
+// For stat() in file_exists()
+#include <sys/stat.h>
+
 #include <o2scl/misc.h>
 
 using namespace std;
 using namespace o2scl;
+
+bool o2scl::file_exists(std::string fname) {
+  if (fname.length()==0) return false;
+  struct stat buffer;   
+  int val=stat(fname.c_str(),&buffer);
+  if (val==-1) return false;
+  return true;
+}     
 
 int o2scl_python_test(int x) {
   return x*x;

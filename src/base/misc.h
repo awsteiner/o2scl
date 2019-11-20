@@ -161,7 +161,11 @@ namespace o2scl {
       the end.
   */
   std::string pipe_cmd_string(std::string cmd, int nmax=80);
-  
+
+  /** \brief Return true if file named \c fname exists
+   */
+  bool file_exists(std::string fname);
+
   /** \brief Reformat the columns for output of width \c size 
 
       Given a string array \c in_cols of size \c nin, screenify()
