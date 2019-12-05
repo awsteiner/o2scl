@@ -151,12 +151,6 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
   
   tab->is_valid();
 
-  if (disc.size()>0 && tabulate) {
-    O2SCL_ERR2("Function tov_love::calc_y() does not yet handle ",
-	       "discontinuities when tabulate is true.",
-	       o2scl::exc_eunimpl);
-  }
-
   if (disc.size()>0 && eps>disc[0]) {
     O2SCL_ERR2("Discontinuity is at smaller radius than eps ",
 	       "in tov_love::calc_y().",o2scl::exc_einval);

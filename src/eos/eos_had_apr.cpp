@@ -289,7 +289,7 @@ double eos_had_apr::fesym_diff(double nb) {
   return ret;
 }
 
-double eos_had_apr::fcomp(double nb) {
+double eos_had_apr::fcomp_nuc(double nb) {
 
   if (parent_method) {
     return eos_had_base::fcomp(nb);

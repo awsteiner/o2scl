@@ -189,7 +189,7 @@ double eos_had_skyrme::fmsom(double nb) {
   return ret;
 }
 
-double eos_had_skyrme::fcomp(double nb) {
+double eos_had_skyrme::fcomp_nuc(double nb) {
   double ret, kr23, beta, t3p;
 
   if (parent_method) {
@@ -226,7 +226,7 @@ double eos_had_skyrme::fesym(double nb, double pf) {
   return ret;
 }
 
-double eos_had_skyrme::fkprime(double nb) {
+double eos_had_skyrme::fkprime_nuc(double nb) {
   double ret, kr23, t3p, beta, lmsom;
 
   if (parent_method) {

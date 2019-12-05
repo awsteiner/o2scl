@@ -551,7 +551,7 @@ namespace o2scl {
 	\left(\alpha^2-1\right)
 	\f]
     */
-    virtual double fkprime(double nb);
+    virtual double fkprime_nuc(double nb);
     //@}
 
     /// \name Compute and test Landau parameters
