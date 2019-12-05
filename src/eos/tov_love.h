@@ -151,7 +151,7 @@ namespace o2scl {
       \f[
       y(r_d+\delta) - y(r_d-\delta) =
       \frac{ 
-      \rho(r_d+\delta)-\rho(r_d-\delta)}{m(r_d)/(4 \pi r_d^3) + 
+      \varepsilon(r_d+\delta)-\varepsilon(r_d-\delta)}{m(r_d)/(4 \pi r_d^3) + 
       p}
       \f]
       

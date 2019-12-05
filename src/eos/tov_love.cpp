@@ -200,7 +200,7 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
 	dy[j].resize(10000,1);
 	ye[j].resize(10000,1);
       }
-      if (j<disc.size()+2) {
+      if (j<disc.size()) {
 	n_sol[j+1]=10000;
 	rt[j+1].resize(10000);
 	yt[j+1].resize(10000,1);
@@ -246,16 +246,41 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
       
       // Add the correction at the discontinuity
       if (j!=disc.size()) {
-	yt[j+1](0,0)=yt[j](n_sol[j]-1,0)+(tab->interp("r",disc[j]+delta,"ed")-
-					  tab->interp("r",disc[j]-delta,"ed"))/
-	  (tab->interp("r",disc[j],"gm")+4.0*o2scl_const::pi+
-	   disc[j]*disc[j]*disc[j]*tab->interp("r",disc[j],"pr"));
+	yt[j+1](0,0)=yt[j](n_sol[j]-1,0)+
+	  (tab->interp("r",disc[j]+delta,"ed")-
+	   tab->interp("r",disc[j]-delta,"ed"))/
+	  (tab->interp("r",disc[j],"gm")/
+	   (4.0*o2scl_const::pi*disc[j]*disc[j]*disc[j])+
+	   tab->interp("r",disc[j],"pr"));
+	/*
+	  std::cout << endl;
+	  std::cout << "Here3: "
+	  << tab->interp("r",disc[j]+delta,"ed") << " "
+	  << tab->interp("r",disc[j]-delta,"ed") << " "
+	  << tab->interp("r",disc[j]+delta,"ed") << " "
+	  << disc[j] << std::endl;
+	  std::cout << (tab->interp("r",disc[j]+delta,"ed")-
+	  tab->interp("r",disc[j]-delta,"ed"))/
+	  (tab->interp("r",disc[j],"gm")/(4.0*o2scl_const::pi*
+	  disc[j]*disc[j]*disc[j])+
+	  tab->interp("r",disc[j],"pr")) << std::endl;
+	  std::cout << tab->get_unit("ed") << " "
+	  << tab->get_unit("pr") << std::endl;
+	*/
       }
       
     }
-    
+
     // Final value of y at r=R
-    yR=yt[disc.size()-1](n_sol[disc.size()-1]-1,0);
+    yR=yt[disc.size()](n_sol[disc.size()]-1,0);
+
+    /*
+      for(size_t j=0;j<disc.size()+1;j++) {
+      std::cout << "Here: " << j << " "
+      << yt[j](0,0) << " " << yt[j](n_sol[j]-1,0) << std::endl;
+      }
+      std::cout << "Here2: " << yR << std::endl;
+    */
     
     results.clear();
     results.line_of_names("r y dydr ye ed pr cs2 gm");
@@ -331,8 +356,9 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
       if (j!=disc.size()) {
 	y[0]=yout[0]+(tab->interp("r",disc[j]+delta,"ed")-
 		      tab->interp("r",disc[j]-delta,"ed"))/
-	  (tab->interp("r",disc[j],"gm")+4.0*o2scl_const::pi+
-	   disc[j]*disc[j]*disc[j]*tab->interp("r",disc[j],"pr"));
+	  (tab->interp("r",disc[j],"gm")/
+	   (4.0*o2scl_const::pi*disc[j]*disc[j]*disc[j])+
+	   tab->interp("r",disc[j],"pr"));
       } else {
 	y[0]=yout[0];
       }
