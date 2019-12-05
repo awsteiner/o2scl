@@ -399,7 +399,7 @@ expval_vector &expval_vector::operator=(const expval_vector &ev) {
   return *this;
 }
 
-void expval_vector::set_blocks(size_t n, size_t n_blocks, size_t n_per_block) {
+void expval_vector::set_blocks_vec(size_t n, size_t n_blocks, size_t n_per_block) {
 
   // The parent calls the error handler if reset() has not been
   // called and then calls free()
@@ -497,7 +497,7 @@ expval_matrix &expval_matrix::operator=(const expval_matrix &ev) {
   return *this;
 }
 
-void expval_matrix::set_blocks(size_t nrows, size_t ncols, size_t n_blocks, 
+void expval_matrix::set_blocks_mat(size_t nrows, size_t ncols, size_t n_blocks, 
 			   size_t n_per_block) {
 
   // The parent calls the error handler if reset() has not been

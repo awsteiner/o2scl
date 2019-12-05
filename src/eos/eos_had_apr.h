@@ -180,14 +180,15 @@ namespace o2scl {
     virtual int calc_temp_e(fermion &n, fermion &pr, double temper, 
 			    thermo &th);
     
-    /** \brief Compute the compressibility
+    /** \brief Compute the compressibility in nuclear
+	(isospin-symmetric matter)
 
 	See general notes at eos_had_base::fcomp(). This computes the
 	compressibility (at fixed proton fraction = 0.5) exactly,
 	unless \ref parent_method is true in which case the derivative
 	is taken numerically in eos_had_base::fcomp().
      */
-    double fcomp(double nb);
+    double fcomp_nuc(double nb);
 
     /** \brief Calculate symmetry energy of matter as energy of 
 	neutron matter minus the energy of nuclear matter

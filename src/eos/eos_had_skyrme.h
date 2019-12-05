@@ -515,7 +515,8 @@ namespace o2scl {
     */
     virtual double fmsom(double nb);
 
-    /** \brief Calculate compressibility
+    /** \brief Calculate compressibility in nuclear (isospin-symmetric
+	matter)
 
 	\f[
 	K = 10 C n_B^{2/3} + \frac{27}{4} t_0 n_B + 40 C \beta n_B^{5/3} + 
@@ -524,7 +525,7 @@ namespace o2scl {
 	\frac{9 t_3^{\prime}}{8} \left( \alpha+1 \right) n_B^{1 + \alpha}
 	\f]
     */
-    virtual double fcomp(double nb);
+    virtual double fcomp_nuc(double nb);
 
     /** \brief Calculate symmetry energy
 
@@ -542,7 +543,7 @@ namespace o2scl {
     */
     virtual double fesym(double nb, double alpha=0.0);
 
-    /** \brief skewness
+    /** \brief Skewness in nuclear (isospin-symetric) matter
 
 	\f[
 	2 C n_B^{2/3} \left(9-5/M^{*}/M\right)+

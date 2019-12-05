@@ -342,8 +342,13 @@ namespace o2scl {
 
     /** \brief Set for a vector of size \c n with \c n_blocks blocks
 	and \c n_per_block points block
+
+	\comment
+	This is named differently from expval_base::set_blocks() 
+	because of hiding overloaded virtual function warnings.
+	\endcomment
     */
-    virtual void set_blocks(size_t n, size_t n_blocks, size_t n_per_block);
+    virtual void set_blocks_vec(size_t n, size_t n_blocks, size_t n_per_block);
 
     /** \brief Free allocated data (but do not change the current values
 	of \c n_blocks or \c n_per_block)
@@ -620,9 +625,14 @@ namespace o2scl {
 
     /** \brief Set for a matrix with \c n_blocks blocks and \c
 	n_per_block points block
+
+	\comment
+	This is named differently from expval_base::set_blocks() 
+	because of hiding overloaded virtual function warnings.
+	\endcomment
     */
-    virtual void set_blocks(size_t rows, size_t cols, 
-			    size_t n_blocks, size_t n_per_block);
+    virtual void set_blocks_mat(size_t rows, size_t cols, 
+				size_t n_blocks, size_t n_per_block);
 
     /** \brief Free allocated data (but do not change the current values
 	of \c n_blocks or \c n_per_block)
