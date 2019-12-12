@@ -687,11 +687,13 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "  4. grid:<begin>,<end>,<width>,[\"log\"] - Create a "+
       "vector equal to a\nuniform grid, e.g. use 'grid:1.0,10.0,1.0' "+
       "for a 10-element vector filled with the numbers 1 to 10.\n\n"+
-      "  5. text:<filename>:<column> - Read a text file and extract "+
-      "a vector of\nnumbers from a column of the text file, ignoring "+
+      "  5. text:<filename>:<column index> - Read a text file and extract "+
+      "a vector of\nnumbers from a column of the text file (starting "+
+      "with zero for the first column), ignoring "+
       "any header rows which contain non-numeric values. For "+
       "example 'text:~/temp.dat:2' will construct a vector from the "+
-      "second row of the file 'temp.dat' in the user's home directory.\n\n"+
+      "third column of the file 'temp.dat' in the user's home "+
+      "directory.\n\n"+
       "  6. hdf5:<file name>:<object name>:[addtional spec.] - "+
       "Read an HDF5 file\nand obtain a vector from the object with "+
       "the specified name. The remaining parts of the string contain "+
@@ -735,18 +737,22 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "determines the length of the ith vector, and a function of "+
       "\"i\" and \"j\" which specifies the jth element of the ith "+
       "vector.\n\n"
-      "  2. text:<filename pattern>:<column list> - Read one or\nmore "+
-      "text files and extract "+
+      "  2. text:<filename pattern>:<numeric column list> - "+
+      "Read one or\nmore text files and extract "+
       "vectors of numbers from columns of the text file, ignoring "+
       "any header rows which contain non-numeric values. For "+
-      "example 'text:~/temp.dat:2' will construct a vector from the "+
-      "second row of the file 'temp.dat' in the user's home directory.\n\n"+
+      "example 'text:~/temp.dat:2-4' will construct vectors from the "+
+      "second, third, and fourth columns of the file 'temp.dat' "+
+      "in the user's home directory.\n\n"+
       "  3. hdf5:<filename pattern>:<object name>:[additional spec.] - "+
       "Read one or\nmore HDF5 files and obtain a vector from the object "+
-      "with "+
-      "the specified name. The remaining parts of the string contain "+
+      "with the specified name. The remaining parts of the string contain "+
       "additional information which may be needed depending on the "+
-      "type of object stored in the HDF5 file.";
+      "type of object stored in the HDF5 file.\n"+
+      "                 type: addl. spec.      Description\n"+
+      " --------------------------------------------------\n"+
+      "                table: (no addl. spec.)\n"+
+      "             double[]: (no addl. spec.) Implies only 1 vector\n";
 
     std::vector<std::string> sv;
     o2scl::rewrap_keep_endlines(str,sv);

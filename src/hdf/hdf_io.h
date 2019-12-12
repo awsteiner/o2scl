@@ -406,7 +406,7 @@ namespace o2scl_hdf {
       - list of values: list:\<entry 0\>,\<entry 1\>, ...,\<entry n-1\>
       - function: func:\<N\>:\<function of i\>
       - grid: grid:\<begin\>:\<end\>:\<width\>:["log"]
-      - column in text file: text:\<filename\>:\<column\> 
+      - column in text file: text:\<filename\>:\<column index\> 
       - HDF5 object in file: 
       hdf5:\<file name\>:\<object name\>:[additional specification]
       
@@ -563,33 +563,37 @@ namespace o2scl_hdf {
 	  return 12;
 	}
       }
-      size_t col=o2scl::stoszt(sv[2]);
+
+      // The column index is 'col'
+      int col=o2scl::stoi(sv[2]);
       if (verbose>1) {
 	std::cout << "Filename,column " << sv[1] << " " << col << std::endl;
       }
-      if (col==0) {
+      if (col<0) {
 	if (err_on_fail) {
-	  O2SCL_ERR2("Column is zero for text file ",
+	  O2SCL_ERR2("Column is negative for text file ",
 		     "in vector_spec().",o2scl::exc_einval);
 	} else {
 	  return 13;
 	}
       }
 
-      bool in_header=true;
+      // Open the file
       std::ifstream fin;
-      std::string line, word;
       fin.open(sv[1].c_str());
 
+      // Read the header, if there is any
+      std::string line, word;
+      bool in_header=true;
       do {
 	getline(fin,line);
 	std::istringstream is(line);
-	size_t i=0;
-	for(;i<col && (is >> word) && in_header;i++) {
-	  if (i==col-1 && o2scl::is_number(word)) {
+	int i=0;
+	for(;i<=col && (is >> word) && in_header;i++) {
+	  if (i==col && o2scl::is_number(word)) {
 	    in_header=false;
 	  }
-	  if (i==col-1 && verbose>2) {
+	  if (i==col && verbose>2) {
 	    if (in_header) {
 	      std::cout << "Word: " << word << " header." << std::endl;
 	    } else {
@@ -600,6 +604,8 @@ namespace o2scl_hdf {
 	}
       } while (in_header && !fin.eof());
 
+      // If we got to the end of the file and there wasn't
+      // any data then call the error handler.
       if (in_header) {
 	if (err_on_fail) {
 	  O2SCL_ERR2("Couldn't find a number in text file ",
@@ -609,15 +615,15 @@ namespace o2scl_hdf {
 	}
       }
 
+      // Now store the data in a temporary vector
       std::vector<double> tempv;
-      
       bool end_of_data=false;
       do {
 	tempv.push_back(o2scl::stod(word));
 	
 	getline(fin,line);
 	std::istringstream is(line);
-	for(size_t i=0;i<col;i++) {
+	for(int i=0;i<=col;i++) {
 	  if (!(is >> word)) {
 	    i=col;
 	    end_of_data=true;
@@ -626,9 +632,11 @@ namespace o2scl_hdf {
 	if (!o2scl::is_number(word)) end_of_data=true;
 	
       } while (!end_of_data && !fin.eof());
-      
+
+      // Close the file
       fin.close();
 
+      // Copy the data back to the user-specified vector
       v.resize(tempv.size());
       for(size_t i=0;i<tempv.size();i++) {
 	v[i]=tempv[i];
@@ -804,7 +812,7 @@ namespace o2scl_hdf {
 
       Formats:
       - function: func:\<num\>:\<len(i)\>:\<function of i and j\>
-      - columns in text file: text:\<column list\> 
+      - columns in text file: text:\<column index list\> 
       - HDF5 object(s) in file(s): 
       hdf5:\<file name(s)\>:\<object name(s)\>:[additional specification]
 
@@ -883,6 +891,106 @@ namespace o2scl_hdf {
       }
 	
     } else if (spec.find("text:")==0) {
+
+      // Text
+      if (verbose>1) {
+	std::cout << "mult_vector_spec(): Text " << spec << std::endl;
+      }
+
+      std::vector<std::string> sv;
+      o2scl::split_string_delim(spec,sv,':');
+      
+      if (sv.size()<3) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Not enough information for text file ",
+		     "in mult_vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 12;
+	}
+      }
+
+      std::string col_list=sv[2];
+      if (verbose>1) {
+	std::cout << "Filename,column list: " << sv[1] << " "
+		  << col_list << std::endl;
+      }
+
+      std::vector<size_t> col_list2;
+      o2scl::string_to_uint_list(col_list,col_list2);
+      o2scl::vector_sort<std::vector<size_t>,size_t>(col_list2.size(),
+						     col_list2);
+      
+      if (col_list2.size()<1) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("No column list in ",
+		     "in mult_vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 20;
+	}
+      }
+
+      bool in_header=true;
+      std::ifstream fin;
+      std::string line, word;
+      fin.open(sv[1].c_str());
+
+      std::cout << "Unfinished in mult_vector_spec." << std::endl;
+      exit(-1);
+      
+      /*
+      do {
+	getline(fin,line);
+	std::istringstream is(line);
+	size_t i=0;
+	for(;i<col_list2[col_list2.size()-1] && (is >> word) && in_header;i++) {
+	  if (i==col-1 && o2scl::is_number(word)) {
+	    in_header=false;
+	  }
+	  if (i==col-1 && verbose>2) {
+	    if (in_header) {
+	      std::cout << "Word: " << word << " header." << std::endl;
+	    } else {
+	      std::cout << "Word: " << word << " start of data."
+			<< std::endl;
+	    }
+	  }
+	}
+      } while (in_header && !fin.eof());
+
+      if (in_header) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Couldn't find a number in text file ",
+		     "in vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 13;
+	}
+      }
+
+      std::vector<double> tempv;
+
+      bool end_of_data=false;
+      do {
+	tempv.push_back(o2scl::stod(word));
+	
+	getline(fin,line);
+	std::istringstream is(line);
+	for(size_t i=0;i<col;i++) {
+	  if (!(is >> word)) {
+	    i=col;
+	    end_of_data=true;
+	  }
+	}
+	if (!o2scl::is_number(word)) end_of_data=true;
+	
+      } while (!end_of_data && !fin.eof());
+      
+      fin.close();
+
+      v.resize(tempv.size());
+      for(size_t i=0;i<tempv.size();i++) {
+	v[i]=tempv[i];
+      }
+      */
       
     } else if (spec.find("hdf5:")==0) {
 	
