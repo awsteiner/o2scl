@@ -14,7 +14,8 @@ os:
   - linux
   - osx
 
-dist: xenial
+osx_image: xcode11.2
+dist: bionic
 sudo: required
 
 addons:
