@@ -778,7 +778,7 @@ namespace o2scl {
 		    for(size_t iji=0;iji<n_params;iji++) {
 		      scr_out << current[sindex][iji] << " ";
 		    }
-		    scr_out << endl;
+		    scr_out << std::endl;
 		  }
 		  if (func_ret[it]>=0 && ret_value_counts.size()>it && 
 		      func_ret[it]<((int)ret_value_counts[it].size())) {
