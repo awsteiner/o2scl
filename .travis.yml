@@ -71,8 +71,12 @@ script:
   # 10/11/18: I removed --with-examples from this line because
   # the travis.ci runs were taking too long
   #
+  # 12/13/19: Removing test because it goes beyond the 50 minute limit
+  # 
+  #      brew install o2scl --with-eigen --with-check
+  # --with-fast-test --HEAD -v && acol --version ;
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-      brew install o2scl --with-eigen --with-check --with-fast-test --HEAD -v && acol --version ;
+      brew install o2scl --with-eigen --HEAD -v && acol --version ;
     fi
 
 notifications:
