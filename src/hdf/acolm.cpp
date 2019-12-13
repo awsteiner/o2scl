@@ -1058,7 +1058,7 @@ void acol_manager::command_add(std::string new_type) {
        "Find the minimum weight and print out the location.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
        both},
-      {0,"to-table3d","Convert to a table3d object",0,0,
+      {0,"to-table3d","Convert to a table3d object",-1,-1,
        "<x name> <y name> <weight name>",
        "Convert to a table3d object using the specified names.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_table3d),

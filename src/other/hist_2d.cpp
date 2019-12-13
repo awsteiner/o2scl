@@ -230,6 +230,7 @@ void hist_2d::clear() {
     xrep.resize(0);
     user_yrep.resize(0);
     yrep.resize(0);
+    wgt.resize(0,0);
     hsize_x=0;
     hsize_y=0;
   }

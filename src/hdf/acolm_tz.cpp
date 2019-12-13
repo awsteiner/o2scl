@@ -286,7 +286,6 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     std::string wname=in[2];
 
     hist_2d_obj.copy_to_table3d(table3d_obj,xname,yname,wname);
-    hist_2d_obj.clear();
     
     command_del(type);
     clear_obj();
