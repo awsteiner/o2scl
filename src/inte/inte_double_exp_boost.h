@@ -29,7 +29,7 @@
 
 #include <cmath>
 
-#ifndef O2SCL_OLDER_COMPILER
+#ifdef O2SCL_NEW_BOOST_INTEGRATION
 
 #include <boost/math/quadrature/tanh_sinh.hpp>
 #include <boost/math/quadrature/exp_sinh.hpp>

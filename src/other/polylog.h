@@ -236,7 +236,9 @@ namespace o2scl {
   };
 
 #if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
-  
+
+#ifdef O2SCL_NEW_BOOST_INTEGRATION
+
   /** \brief Compute the fermion integrals for a non-relativistic
       particle by directly integrating in long double precision
    */
@@ -290,6 +292,8 @@ namespace o2scl {
     }
 
   };
+
+#endif
   
 #endif
   

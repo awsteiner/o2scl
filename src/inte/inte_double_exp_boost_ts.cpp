@@ -43,7 +43,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-#ifndef O2SCL_OLDER_COMPILER
+#ifdef O2SCL_NEW_BOOST_INTEGRATION
 
   inte_tanh_sinh_boost<funct,61> itsb;
 

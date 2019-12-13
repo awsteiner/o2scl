@@ -56,6 +56,8 @@ int main(void) {
 	     1.e-2,"Li6");
 
 #ifdef O2SCL_LD_TYPES
+
+#ifdef O2SCL_NEW_BOOST_INTEGRATION
   
   fermion_nr_integ_gsl f1;
   fermion_nr_integ_direct f2;
@@ -63,6 +65,8 @@ int main(void) {
   t.test_rel(f1.calc_1o2(0.5),f2.calc_1o2(0.5),4.0e-16,"fd 1");
   t.test_rel(f1.calc_m1o2(0.5),f2.calc_m1o2(0.5),4.0e-16,"fd 2");
   t.test_rel(f1.calc_3o2(0.5),f2.calc_3o2(0.5),4.0e-16,"fd 3");
+  
+#endif
   
 #endif
   

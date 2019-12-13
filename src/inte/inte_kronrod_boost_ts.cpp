@@ -58,6 +58,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
+#ifdef O2SCL_NEW_BOOST_INTEGRATION
+  
   {
     inte_kronrod_boost<funct,61> ikb;
     
@@ -110,6 +112,7 @@ int main(void) {
     t.test_rel_boost<cpp_dec_float_50>(ans,exact,1.0e-30,"qag test");
   }
 
+#endif
 #endif
   
   t.report();
