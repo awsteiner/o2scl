@@ -269,6 +269,30 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     command_add("table3d");
     type="table3d";
     
+  } else if (type=="hist_2d") {
+    
+    table3d_obj.clear();
+
+    vector<string> in, pr;
+    pr.push_back("Name for x grid");
+    pr.push_back("Name for y grid");
+    pr.push_back("Name for weights");
+
+    int ret=get_input(sv,pr,in,"to-table3d",itive_com);
+    if (ret!=0) return ret;
+
+    std::string xname=in[0];
+    std::string yname=in[1];
+    std::string wname=in[2];
+
+    hist_2d_obj.copy_to_table3d(table3d_obj,xname,yname,wname);
+    hist_2d_obj.clear();
+    
+    command_del(type);
+    clear_obj();
+    command_add("table3d");
+    type="table3d";
+    
   } else if (type=="tensor" || type=="tensor<size_t>" || type=="tensor<int>") {
 
     size_t rank=tensor_obj.get_rank();
@@ -306,7 +330,7 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
       int ret2=get_input(sv,pr2,in2,"to-table3d",itive_com);
       if (ret!=0) return ret2;
     }
-
+    
     uniform_grid<double> ugx, ugy;
     if (type=="tensor") {
       ugx=uniform_grid_end<double>(0,tensor_obj.get_size(ix_x)-1,
@@ -352,13 +376,13 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
       }
     }
     } else {
-    for(size_t i=0;i<table3d_obj.get_nx();i++) {
-      for(size_t j=0;j<table3d_obj.get_ny();j++) {
-	ix[ix_x]=i;
-	ix[ix_y]=j;
-	table3d_obj.set(i,j,in[2],tensor_size_t_obj.get(ix));
+      for(size_t i=0;i<table3d_obj.get_nx();i++) {
+	for(size_t j=0;j<table3d_obj.get_ny();j++) {
+	  ix[ix_x]=i;
+	  ix[ix_y]=j;
+	  table3d_obj.set(i,j,in[2],tensor_size_t_obj.get(ix));
+	}
       }
-    }
     }
 
     command_del(type);

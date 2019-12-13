@@ -165,7 +165,7 @@ namespace o2scl {
     /// Copy from <tt>operator=()</tt>
     hist_2d &operator=(const hist_2d &h);
     
-    /// Create from vectors of data
+    /// Create a 2D histogram from vectors of data
     template<class vec_t, class vec2_t> hist_2d
       (size_t nv, const vec_t &v, const vec2_t &v2, size_t n_bins_x,
        size_t n_bins_y) {
@@ -190,7 +190,9 @@ namespace o2scl {
       return;
     }
     
-    /// Create from vectors of data
+    /** \brief Create a 2D histogram from vectors of data obtaining
+	weights from a third column 
+    */
     template<class vec_t, class vec2_t, class vec3_t> hist_2d
       (size_t nv, const vec_t &v, const vec2_t &v2, const vec3_t &v3,
        size_t n_bins_x, size_t n_bins_y) {
@@ -215,7 +217,8 @@ namespace o2scl {
       return;
     }
     
-    /// Create from vectors of data
+    /** \brief Create a 2D histogram from vectors of data
+     */
     template<class vec_t, class vec2_t> hist_2d
       (const vec_t &v, const vec2_t &v2, size_t n_bins_x,
        size_t n_bins_y) {
@@ -225,7 +228,9 @@ namespace o2scl {
       return;
     }
     
-    /// Create from vectors of data
+    /** \brief Create a 2D histogram from vectors of data, obtaining
+	weights from the third vector
+     */
     template<class vec_t, class vec2_t, class vec3_t> hist_2d
       (const vec_t &v, const vec2_t &v2, const vec3_t &v3, size_t n_bins_x,
        size_t n_bins_y) {
@@ -235,7 +240,8 @@ namespace o2scl {
       return;
     }
     
-    // Create from a table
+    /** \brief Create a 2D histogram object from a table
+     */
     void from_table(o2scl::table<> &t, std::string colx, std::string coly,
 		    size_t n_bins_x, size_t n_bins_y) {
       *this=hist_2d(t.get_nlines(),t.get_column(colx),t.get_column(coly),
@@ -243,7 +249,9 @@ namespace o2scl {
       return;
     }
     
-    // Create from a table
+    /** \brief Create a 2D histogram object from a table, 
+	obtaining weights from the third column
+     */
     void from_table(o2scl::table<> &t, std::string colx, std::string coly,
 		    std::string colz, size_t n_bins_x, size_t n_bins_y) {
       *this=hist_2d(t.get_nlines(),t.get_column(colx),t.get_column(coly),
@@ -568,8 +576,8 @@ namespace o2scl {
     
     /** \brief Create a table3d object based on the histogram data
      */
-    void copy_to_table(table3d &t, std::string xreps_name, 
-		       std::string yreps_name, std::string weights);
+    void copy_to_table3d(table3d &t, std::string xreps_name, 
+			 std::string yreps_name, std::string weights);
     
     friend void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, 
 				      o2scl::hist_2d &h, std::string name);

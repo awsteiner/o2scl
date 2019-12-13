@@ -149,7 +149,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
   }
   {
-    vector<std::string> itmp={"max","min","contours"};
+    vector<std::string> itmp={"max","min","contours","to-table3d"};
     type_comm_list.insert(std::make_pair("hist_2d",itmp));
   }
   {
@@ -1048,7 +1048,7 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="hist_2d") {
 
-    static const size_t narr=3;
+    static const size_t narr=4;
     comm_option_s options_arr[narr]={
       {0,"max","Find the maximum weight.",0,0,"",
        "Find the maximum weight and print out the location.",
@@ -1057,6 +1057,11 @@ void acol_manager::command_add(std::string new_type) {
       {0,"min","Find the minimum weight.",0,0,"",
        "Find the minimum weight and print out the location.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
+       both},
+      {0,"to-table3d","Convert to a table3d object",0,0,
+       "<x name> <y name> <weight name>",
+       "Convert to a table3d object using the specified names.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_table3d),
        both},
       {0,"contours","Create contour lines from a table3d slice.",
        0,4,"[\"frac\"] <value> [output file] [output name]",
