@@ -770,6 +770,16 @@ namespace o2scl {
 		// If we have a good point, update ret_value_counts,
 		// call the measurement function and stop the loop
 		if (func_ret[it]==o2scl::success) {
+		  if (verbose>=2) {
+		    scr_out << "Found initial guess for thread "
+			    << it << ". func_ret,weight,params=\n  "
+			    << func_ret[it] << " "
+			    << w_current[sindex] << " ";
+		    for(size_t iji=0;iji<n_params;iji++) {
+		      scr_out << current[sindex][iji] << " ";
+		    }
+		    scr_out << endl;
+		  }
 		  if (func_ret[it]>=0 && ret_value_counts.size()>it && 
 		      func_ret[it]<((int)ret_value_counts[it].size())) {
 		    ret_value_counts[it][func_ret[it]]++;
