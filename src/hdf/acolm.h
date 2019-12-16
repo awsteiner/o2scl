@@ -466,6 +466,7 @@ namespace o2scl_acol {
     /// Preview the table
     virtual int comm_preview(std::vector<std::string> &sv, bool itive_com);
 
+    /// Send a slack message
     virtual int comm_slack(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Get or set the value 
@@ -593,12 +594,20 @@ extern "C" {
   */
   void o2scl_free_acol_manager(void *vp);
 
+  /** \brief Using the aliases stored in 
+      <tt>(n_entries,sizes,str)</tt> return 
+      <tt>(n_new,s_new)</tt>
+   */
   void o2scl_acol_alias_counts(void *vp, int n_entries, int *sizes, 
 			       char *str, int &n_new, int &s_new);
 
+  /** \brief
+   */
   void o2scl_acol_apply_aliases(void *vp, int n_entries, int *sizes, 
 				char *str, int *sizes_new, char *str_new);
   
+  /** \brief
+   */
   void o2scl_acol_form_arrays(o2scl_acol::acol_manager *amp,
 			      std::vector<std::string> vec, int *&sizes_new,
 			      char *&str_new);
@@ -610,8 +619,13 @@ extern "C" {
 			    int n2, char *short_desc, int n3,
 			    char *env_var);
 
-  /** \brief Convert indices \c i1 and \c i2 to a table3d 
-      object for plotting as a density plot.
+  /** \brief Convert a rank 2 tensor, tensor_grid, tensor<size_t> or
+      tensor<int> object to a table3d object 
+
+      There are two sets of values for \c i1 and \c i2 which
+      are allowed, either <tt>i1=0, i2=1</tt> or 
+      <tt>i1=1, i2=0</tt>, the latter of which corresponds
+      to transposing the two indices.
 
       This function is used in o2graph_plotter::den_plot().
    */
