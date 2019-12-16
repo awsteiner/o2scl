@@ -22,7 +22,9 @@
 */
 #include <o2scl/test_mgr.h>
 #include <o2scl/funct.h>
+#ifdef O2SCL_NEW_BOOST_INTEGRATION
 #include <o2scl/inte_kronrod_boost.h>
+#endif
 
 #ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
