@@ -84,7 +84,7 @@ int main(void) {
 
     // Lookup the central energy density of a 1.4 Msun neutron star
     // in g/cm^3
-    convert_units &cu=o2scl_settings.get_convert_units();
+    convert_units<double> &cu=o2scl_settings.get_convert_units();
     double ed_cent=mvsr->get("ed",mvsr->lookup("gm",1.4));
     ed_cent=cu.convert("1/fm^4","g/cm^3",ed_cent);
 
@@ -170,7 +170,7 @@ int main(void) {
 
     // Lookup the central energy density of a 1.4 Msun neutron star
     // in g/cm^3
-    convert_units &cu=o2scl_settings.get_convert_units();
+    convert_units<double> &cu=o2scl_settings.get_convert_units();
     double ed_cent=mvsr->get("ed",mvsr->lookup("gm",1.4));
     ed_cent=cu.convert("1/fm^4","g/cm^3",ed_cent);
 

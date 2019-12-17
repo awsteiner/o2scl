@@ -857,7 +857,7 @@ namespace o2scl {
     
 
     /// The pointer to the convert units object
-    convert_units *cup;
+    convert_units<double> *cup;
 
     /// \name Unit map iterator types
     //@{

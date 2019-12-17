@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 
   //1 
   {
-    convert_units cu4;
+    convert_units<double> cu4;
     cu4.insert_cache("in","ft",1.0/12.0);
     cu4.insert_cache("in","cm",2.54);
 
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
 
   //2 
   {
-    convert_units cu4;
+    convert_units<double> cu4;
     cu4.insert_cache("ft","in",12.0);
     cu4.insert_cache("in","cm",2.54);
 
@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
 
   //3 
   {
-    convert_units cu4;
+    convert_units<double> cu4;
     cu4.insert_cache("in","ft",1.0/12.0);
     cu4.insert_cache("cm","in",1.0/2.54);
 
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
 
   //4
   {
-    convert_units cu4;
+    convert_units<double> cu4;
     cu4.insert_cache("ft","in",12.0);
     cu4.insert_cache("cm","in",1.0/2.54);
 
@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
 
   //5
   {
-    convert_units cu4;
+    convert_units<double> cu4;
     cu4.insert_cache("in","cm",2.54);
     cu4.insert_cache("in","ft",1.0/12.0);
 
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
 
   //6
   {
-    convert_units cu4;
+    convert_units<double> cu4;
     cu4.insert_cache("in","cm",2.54);
     cu4.insert_cache("ft","in",12.0);
 
@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
 
   //7
   {
-    convert_units cu4;
+    convert_units<double> cu4;
     cu4.insert_cache("cm","in",1.0/2.54);
     cu4.insert_cache("in","ft",1.0/12.0);
 
@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
 
   //8
   {
-    convert_units cu4;
+    convert_units<double> cu4;
     cu4.insert_cache("cm","in",1.0/2.54);
     cu4.insert_cache("ft","in",12.0);
 
@@ -133,19 +133,19 @@ int main(int argc, char *argv[]) {
 
   if (argc>=2 && ((string)argv[1])==((string)"test-cache")) {
     // An exhaustive check not intended for the end-user
-    convert_units &cu=o2scl_settings.get_convert_units();
+    convert_units<double> &cu=o2scl_settings.get_convert_units();
     //cu.units_cmd_string=((std::string)"units -f /home/awsteiner")+
     ///wcs/int4/misc/units_hck.dat ";
     cu.test_cache();
   }
 
   if (argc>=2 && ((string)argv[1])==((string)"make-units")) {
-    convert_units cu;
+    convert_units<double> cu;
     cu.make_units_dat("units.dat");
   }
   
   if (argc>=2 && ((string)argv[1])==((string)"make-units-hck")) {
-    convert_units cu;
+    convert_units<double> cu;
     cu.make_units_dat("units_hck.dat",true,true,true);
   }
   

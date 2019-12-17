@@ -161,15 +161,15 @@ namespace o2scl {
     //@}
 
     /// Default convert units object
-    convert_units def_cu;
+    convert_units<double> def_cu;
     
     /// Get the global convert_units object
-    convert_units &get_convert_units() {
+    convert_units<double> &get_convert_units() {
       return *cup;
     }
 
     /// Set the global convert_units object
-    void set_convert_units(convert_units &cu) {
+    void set_convert_units(convert_units<double> &cu) {
       cup=&cu;
     }
 
@@ -181,7 +181,7 @@ namespace o2scl {
     std::string data_dir;
 
     /// Pointer to current \ref convert_units object
-    convert_units *cup;
+    convert_units<double> *cup;
 
 #endif
   

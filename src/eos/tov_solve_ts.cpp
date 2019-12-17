@@ -117,7 +117,7 @@ int main(void) {
   eos.set_unit("nb","1/fm^3");
   eos.set_unit("mun","MeV");
 
-  convert_units &cu=o2scl_settings.get_convert_units();
+  convert_units<double> &cu=o2scl_settings.get_convert_units();
 
   for(sa.barn=0.1;sa.barn<=2.0001;sa.barn+=0.01) {
     

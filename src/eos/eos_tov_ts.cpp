@@ -180,7 +180,7 @@ int main(void) {
      (&simple_apr::nstarfun),&sa,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3);
 
-  convert_units &cu=o2scl_settings.get_convert_units();
+  convert_units<double> &cu=o2scl_settings.get_convert_units();
 
   gmh.err_nonconv=false;
 

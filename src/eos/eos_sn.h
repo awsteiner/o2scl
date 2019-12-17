@@ -438,7 +438,7 @@ namespace o2scl {
 
     /** \brief Unit conversion object (set automatically in constructor)
      */
-    convert_units &cu;
+    convert_units<double> &cu;
     /// If true, a EOS table was successfully loaded (default false)
     bool loaded;
     /// True if thermodynamics with leptons has been loaded

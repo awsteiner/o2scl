@@ -133,7 +133,7 @@ namespace o2scl_acol {
 #endif
 
     /// Convert units object (initialized by constructor to global object)
-    o2scl::convert_units &cng;
+    o2scl::convert_units<double> &cng;
 
     /// \name Parameters modifiable by the user
     //@{
