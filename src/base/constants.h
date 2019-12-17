@@ -32,7 +32,8 @@
 
 /** \brief Constants
     
-    CODATA 2014 values are in \ref Mohr16.
+    CODATA 2014 values are in \ref Mohr16. CODATA 2018 values are from
+    physics.nist.gov/constants.
 */
 namespace o2scl_const {
 
@@ -61,17 +62,17 @@ namespace o2scl_const {
   const double avogadro=6.02214076e23;
 
   /// \f$ \pi \f$ 
-  const double pi=acos(-1.0);
+  const double pi=boost::math::constants::pi<double>();
   /// \f$ \pi^2 \f$ 
-  const double pi2=pi*pi;
+  const double pi2=boost::math::constants::pi_sqr<double>();
   /// \f$ \zeta(3/2) \f$
   const double zeta32=2.6123753486854883433;
   /// \f$ \zeta(2) \f$
-  const double zeta2=1.6449340668482264365;
+  const double zeta2=boost::math::constants::zeta_two<double>();
   /// \f$ \zeta(5/2) \f$
   const double zeta52=1.3414872572509171798;
   /// \f$ \zeta(3) \f$
-  const double zeta3=1.2020569031595942854;
+  const double zeta3=boost::math::constants::zeta_three<double>();
   /// \f$ \zeta(5) \f$
   const double zeta5=1.0369277551433699263;
   /// \f$ \zeta(7) \f$
@@ -130,12 +131,10 @@ namespace o2scl_const {
     return hbarc;
   }
   
+  /// \f$ \hbar c \f$ in MeV fm (exact)
   const double hc_mev_fm=hc_mev_fm_f<double>();
-  // \f$ \hbar c \f$ in MeV fm (derived)
-  //const double hc_mev_fm=o2scl_mks::plancks_constant_hbar*
-  //o2scl_mks::speed_of_light/o2scl_mks::electron_volt*1.0e9;
 
-  /// \f$ \hbar c \f$ in MeV cm (derived)
+  /// \f$ \hbar c \f$ in MeV cm (exact)
   const double hc_mev_cm=hc_mev_fm*1.0e-13;
 }
 
