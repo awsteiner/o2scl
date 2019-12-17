@@ -79,8 +79,66 @@ namespace o2scl_const {
   
   /// \f$ \sin^2 \theta_W \f$ (PDG 2018 value)
   const double sin2_theta_weak=0.23122;
-}
+
+  /// MKS units
+  static const size_t o2scl_mks=1;
+  /// CGS units
+  static const size_t o2scl_cgs=2;
   
+  /// Planck constant
+  template<class fp_t> fp_t planck_f(size_t system=o2scl_mks) {
+    fp_t numer=662607015;
+    fp_t denom=100000000;
+    if (system==o2scl_cgs) {
+      fp_t result=(numer/denom)*1.0e-27;
+      return result;
+    }
+    fp_t result=(numer/denom)*1.0e-34;
+    return result;
+  }
+
+  /// Reduced Planck constant
+  template<class fp_t> fp_t hbar_f(size_t system=o2scl_mks) {
+    return planck_f<fp_t>(system)/2/
+      boost::math::constants::pi<fp_t>();
+  }
+
+  /** \brief Speed of light */
+  template<class fp_t> fp_t speed_of_light_f(size_t system=o2scl_mks) {
+    if (system==o2scl_cgs) {
+      fp_t result=29979245800;
+      return result;
+    }
+    fp_t result=299792458;
+    return result;
+  }
+
+  /// Elementary charge
+  template<class fp_t> fp_t elem_charge_f() {
+    fp_t numer=1602176634;
+    fp_t denom=1000000000;
+    fp_t result=(numer/denom)*1.0e-19;
+    return result;
+  }
+
+  /** \brief Reduced Planck constant times speed of light 
+      in \f$ \mathrm{MeV}~\mathrm{fm} \f$
+  */
+  template<class fp_t> fp_t hc_mev_fm_f() {
+    fp_t hbarc=hbar_f<fp_t>()*speed_of_light_f<fp_t>()/
+      elem_charge_f<fp_t>()*1.0e9;
+    return hbarc;
+  }
+  
+  const double hc_mev_fm=hc_mev_fm_f<double>();
+  // \f$ \hbar c \f$ in MeV fm (derived)
+  //const double hc_mev_fm=o2scl_mks::plancks_constant_hbar*
+  //o2scl_mks::speed_of_light/o2scl_mks::electron_volt*1.0e9;
+
+  /// \f$ \hbar c \f$ in MeV cm (derived)
+  const double hc_mev_cm=hc_mev_fm*1.0e-13;
+}
+
 /** \brief Constants in CGS units 
 
     CODATA 2018 values are from physics.nist.gov/constants.
@@ -101,12 +159,12 @@ namespace o2scl_cgs {
   /// Planck constant divided by 2 pi in g cm^2 / s (derived)
   const double plancks_constant_hbar=o2scl_cgs::plancks_constant_h/
     2.0/o2scl_const::pi;
-  /// Electron volt in g cm^2 / s^2 (CODATA 2018 value)
+  /// Electron volt in g cm^2 / s^2 (CODATA 2018; exact)
   const double electron_volt=1.602176634e-12;
-  /// Bohr radius in cm (CODATA 2014 value)
-  const double bohr_radius=5.2917721067e-9;
   /// Boltzmann constant in g cm^2 / K s^2 (CODATA 2018; exact)
   const double boltzmann=1.380649e-16;
+  /// Bohr radius in cm (CODATA 2018 value)
+  const double bohr_radius=5.29177210903e-9;
   /// Stefan-Boltzmann constant in g / K^4 s^3 (CODATA 2018; derived; exact)
   const double stefan_boltzmann_constant=o2scl_const::pi*o2scl_const::pi*
     o2scl_cgs::boltzmann*o2scl_cgs::boltzmann*o2scl_cgs::boltzmann*
@@ -863,63 +921,6 @@ namespace o2scl_mks {
 
 // Other derived values to add to the namespace
 namespace o2scl_const {
-
-  /// MKS units
-  static const size_t o2scl_mks=1;
-  /// CGS units
-  static const size_t o2scl_cgs=2;
-  
-  /// \f$ \hbar c \f$ in MeV fm (derived)
-  const double hc_mev_fm=o2scl_mks::plancks_constant_hbar*
-    o2scl_mks::speed_of_light/o2scl_mks::electron_volt*1.0e9;
-
-  /// Planck constant
-  template<class fp_t> fp_t planck_f(size_t system=o2scl_mks) {
-    fp_t numer=662607015;
-    fp_t denom=100000000;
-    if (system==o2scl_cgs) {
-      fp_t result=(numer/denom)*1.0e-27;
-      return result;
-    }
-    fp_t result=(numer/denom)*1.0e-34;
-    return result;
-  }
-
-  /// Reduced Planck constant
-  template<class fp_t> fp_t hbar_f(size_t system=o2scl_mks) {
-    return planck_f<fp_t>(system)/2/
-      boost::math::constants::pi<fp_t>();
-  }
-
-  /** \brief Speed of light */
-  template<class fp_t> fp_t speed_of_light_f(size_t system=o2scl_mks) {
-    if (system==o2scl_cgs) {
-      fp_t result=29979245800;
-      return result;
-    }
-    fp_t result=299792458;
-    return result;
-  }
-
-  /// Elementary charge
-  template<class fp_t> fp_t elem_charge_f() {
-    fp_t numer=1602176634;
-    fp_t denom=1000000000;
-    fp_t result=(numer/denom)*1.0e-19;
-    return result;
-  }
-
-  /** \brief Reduced Planck constant times speed of light 
-      in \f$ \mathrm{MeV}~\mathrm{fm} \f$
-  */
-  template<class fp_t> fp_t hc_mev_fm_f() {
-    fp_t hbarc=hbar_f<fp_t>()*speed_of_light_f<fp_t>()/
-      elem_charge_f<fp_t>()*1.0e9;
-    return hbarc;
-  }
-  
-  /// \f$ \hbar c \f$ in MeV cm (derived)
-  const double hc_mev_cm=hc_mev_fm*1.0e-13;
 
   /** \name Squared electron charge
    */
