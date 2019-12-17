@@ -105,6 +105,8 @@ namespace o2scl_cgs {
   const double electron_volt=1.602176634e-12;
   /// Bohr radius in cm (CODATA 2014 value)
   const double bohr_radius=5.2917721067e-9;
+  /// Boltzmann constant in g cm^2 / K s^2 (CODATA 2018; exact)
+  const double boltzmann=1.380649e-16;
   /// Stefan-Boltzmann constant in g / K^4 s^3 (CODATA 2018; derived; exact)
   const double stefan_boltzmann_constant=o2scl_const::pi*o2scl_const::pi*
     o2scl_cgs::boltzmann*o2scl_cgs::boltzmann*o2scl_cgs::boltzmann*
@@ -120,8 +122,6 @@ namespace o2scl_cgs {
   */
   const double Gfermi=1.1663787e-23/o2scl_cgs::electron_volt/
     o2scl_cgs::electron_volt;
-  /// Boltzmann constant in g cm^2 / K s^2 (CODATA 2018; exact)
-  const double boltzmann=1.380649e-16;
   //@}
 
   /// \name Astrophysical constants
