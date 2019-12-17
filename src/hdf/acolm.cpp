@@ -1277,9 +1277,11 @@ int acol_manager::setup_options() {
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
      both},
     {0,"get-conv","Get a unit conversion factor.",0,2,
-     "<old unit> <new unit>",((string)"This command gets a unit ")+
-     "conversion factor. It only works if the conversion is one of the "
-     "hard-coded O2scl conversions or if HAVE_POPEN is defined and "+
+     "<old unit> <new unit> [value to convert]",
+     ((string)"This command gets a unit ")+
+     "conversion factor and optionally applies than conversion factor "+
+     "to a user-specified value. It only works if the conversion is one of "
+     "the hard-coded O2scl conversions or if HAVE_POPEN is defined and "+
      "the 'units' command is available in the current "+
      "path. For example, 'get-conv MeV erg' returns 1.602177e-6 and 1 MeV "+
      "is equivalent to 1.602177e-6 erg. The conversion factor is output "+

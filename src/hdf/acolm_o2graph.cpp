@@ -81,6 +81,10 @@ std::vector<std::string> o2scl_acol_parse_arrays
   size_t ix=0;
   for(int i=0;i<n_entries;i++) {
     std::string tmp;
+    if (sizes[i]<0) {
+      O2SCL_ERR("Size cannot be negative in o2scl_acol_parse_arrays().",
+		o2scl::exc_einval);
+    }
     for(int j=0;j<sizes[i];j++) {
       tmp+=str[ix];
       ix++;

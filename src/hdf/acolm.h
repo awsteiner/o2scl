@@ -102,7 +102,7 @@ namespace o2scl_acol {
 
   protected:
 
-    /// Desc
+    /// The object which sends Slack messages
     o2scl::slack_messenger smess;
     
     /** \brief A list of all type-specific commands for each type
@@ -299,9 +299,6 @@ namespace o2scl_acol {
 
     /// Clear the current object
     virtual int comm_clear(std::vector<std::string> &sv, bool itive_com);
-
-    // Desc
-    //virtual int comm_convert(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Output the help text
      */
@@ -594,38 +591,59 @@ extern "C" {
   */
   void o2scl_free_acol_manager(void *vp);
 
-  /** \brief Using the aliases stored in 
-      <tt>(n_entries,sizes,str)</tt> return 
-      <tt>(n_new,s_new)</tt>
+  /** \brief Using the commands stored in
+      <tt>(n_entries,sizes,str)</tt>, apply the aliases stored in the
+      \ref o2scl::cli object and return the counts
+      <tt>(n_new,s_new)</tt> for memory allocation
+
+      This function is used in \o2y in
+      <tt>o2graph_plotter::parse_argv()</tt> to process aliases in the
+      \c o2graph executable. It converts the input data to a
+      <tt>vector&lt;string&gt;</tt> object, applies any aliases stored
+      in the \ref o2scl::cli (or \ref o2scl::cli_readline) object, and
+      then counts the new number of arguments (\c n_new) and string
+      length for all arguments (\c s_new). These counts are used to
+      allocate memory in Python in
+      <tt>o2graph_plotter::parse_argv()</tt> in order to prepare for a
+      call to \ref o2scl_acol_apply_aliases() .
    */
   void o2scl_acol_alias_counts(void *vp, int n_entries, int *sizes, 
 			       char *str, int &n_new, int &s_new);
 
-  /** \brief
-   */
+  /** \brief \brief Using the commands stored in
+      <tt>(n_entries,sizes,str)</tt>, apply the aliases stored in the
+      \ref o2scl::cli object and place them in the pre-allocated 
+      arrays \c sizes_new and \c str_new
+
+      This function is used in \o2y in
+      <tt>o2graph_plotter::parse_argv()</tt> to process aliases in the
+      \c o2graph executable. It converts the input data to a
+      <tt>vector&lt;string&gt;</tt> object, applies any aliases stored
+      in the \ref o2scl::cli (or \ref o2scl::cli_readline) object, and
+      then stores the results in \c sizes_new and \c str_new (which
+      are allocated beforehand in Python.
+  */
   void o2scl_acol_apply_aliases(void *vp, int n_entries, int *sizes, 
 				char *str, int *sizes_new, char *str_new);
   
-  /** \brief
-   */
-  void o2scl_acol_form_arrays(o2scl_acol::acol_manager *amp,
-			      std::vector<std::string> vec, int *&sizes_new,
-			      char *&str_new);
-  
   /** \brief Set the command name, the short description,
       and the environment variable name
-   */
+      
+      This function is used in \o2y in
+      <tt>o2graph_plotter::parse_argv()</tt> to communicate three
+      strings which are used in the \ref o2scl::acol_manager class.
+  */
   void o2scl_acol_set_names(void *vp, int n1, char *cmd_name,
 			    int n2, char *short_desc, int n3,
 			    char *env_var);
 
-  /** \brief Convert a rank 2 tensor, tensor_grid, tensor<size_t> or
-      tensor<int> object to a table3d object 
+  /** \brief Convert a rank 2 \ref o2scl::tensor (with data types
+      \c double, \c int, or \c size_t) or \ref o2scl::tensor_grid
+      object to a \ref o2scl::table3d object
 
-      There are two sets of values for \c i1 and \c i2 which
-      are allowed, either <tt>i1=0, i2=1</tt> or 
-      <tt>i1=1, i2=0</tt>, the latter of which corresponds
-      to transposing the two indices.
+      There are two sets of values for \c i1 and \c i2 which are
+      allowed, either <tt>i1=0, i2=1</tt> or <tt>i1=1, i2=0</tt>, the
+      latter of which corresponds to transposing the two indices.
 
       This function is used in o2graph_plotter::den_plot().
    */
@@ -633,16 +651,34 @@ extern "C" {
   
   /** \brief Construct a string vector from the data in 
       \c n_entries, \c sizes, and \c str
+
+      This function operates on an integer \c n_entries, an array \c
+      sizes (which has length \c n_entries) and an array of characters
+      \c str which has a length equal to the sum of the entries in the
+      array \c sizes. The \c sizes array contains the length of each
+      string, and the \c str array contains the characters in multiple
+      strings, concatenated together to form a single combined string.
+      This function takes the data in these three objects and creates
+      an object of type <tt>vector&lt;string&gt;</tt> from it, similar
+      to the way that \ref o2scl::hdf_file::gets_vec() reads a string
+      array from an HDF5 file.
+
+      This function is used in \ref o2scl_acol_parse(), \ref
+      o2scl_acol_alias_counts() and \ref o2scl_acol_apply_aliases() .
   */
   std::vector<std::string> o2scl_acol_parse_arrays
   (int n_entries, int *sizes, char *str);
   
   /** \brief Parse the set of commands in \c n_entries, \c sizes
       and \c str
+      
+      This function uses the executes the commands stored \c
+      n_entries, \c sizes, and \c str using the \ref o2scl::cli object
+      in \ref o2scl::acol_manager as if they were typed on the command
+      line.
 
-      This function is used in o2graph_plotter::set_wrapper(),
-      o2graph_plotter::get_wrapper(), o2graph_plotter::gen(), 
-      o2graph_plotter::plotm(), and o2graph_plotter::plot1m().
+      This function is used in \o2y in o2graph_plotter::set_wrapper(),
+      o2graph_plotter::get_wrapper(), and o2graph_plotter::gen_acol().
    */
   void o2scl_acol_parse(void *vp, int n_entries, int *sizes, 
 			char *str);
@@ -660,8 +696,9 @@ extern "C" {
 
   /** \brief Return the size and a pointer to the row
       with index \c row_index in a \ref o2scl::table object
-
-      This function is apparently currently unused?
+      
+      \note This function is currently unused. It may have been a
+      precursor for a mult-vector-spec?
    */
   int o2scl_acol_get_row_ser(void *vp, char *parttern, int row_index,
 			     int &n, double *&ptr);
