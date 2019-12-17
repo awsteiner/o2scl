@@ -53,12 +53,12 @@ namespace o2scl_const {
   const double zepto=1e-21;
   const double yocto=1e-24;
 
-  /** \brief Fine structure constant (CODATA 2014 value)
+  /** \brief Fine structure constant (CODATA 2018 value)
    */
-  const double fine_structure=7.2973525664e-3;
-  /** \brief Avogadro's number (CODATA 2014 value)
+  const double fine_structure=7.2973525693e-3;
+  /** \brief Avogadro's number (CODATA 2018 value; exact)
    */
-  const double avogadro=6.022140857e23;
+  const double avogadro=6.02214076e23;
 
   /// \f$ \pi \f$ 
   const double pi=acos(-1.0);
@@ -82,7 +82,8 @@ namespace o2scl_const {
 }
   
 /** \brief Constants in CGS units 
-    
+
+    CODATA 2018 values are from physics.nist.gov/constants.
     CODATA 2014 values are from \ref Mohr16 . The solar mass and solar
     mass parameter are from 2018 value at http://asa.usno.navy.mil/ .
 
@@ -93,29 +94,34 @@ namespace o2scl_cgs {
   //@{
   /// Speed of light in \f$ \mathrm{cm}/\mathrm{s} \f$ (exact)
   const double speed_of_light=2.99792458e10;
-  /// Newtonian constant of gravitation in cm^3 / g s^2 (CODATA 2014 value)
-  const double gravitational_constant=6.67408e-8;
-  /// Planck constant in g cm^2 / s (CODATA 2014 value)
-  const double plancks_constant_h=6.62607004e-27;
+  /// Newtonian constant of gravitation in cm^3 / g s^2 (CODATA 2018 value)
+  const double gravitational_constant=6.67430e-8;
+  /// Planck constant in g cm^2 / s (CODATA 2018 value; exact)
+  const double plancks_constant_h=6.62607015e-27;
   /// Planck constant divided by 2 pi in g cm^2 / s (derived)
   const double plancks_constant_hbar=o2scl_cgs::plancks_constant_h/
     2.0/o2scl_const::pi;
-  /// Electron volt in g cm^2 / s^2 (CODATA 2014 value)
-  const double electron_volt=1.6021766208e-12;
+  /// Electron volt in g cm^2 / s^2 (CODATA 2018 value)
+  const double electron_volt=1.602176634e-12;
   /// Bohr radius in cm (CODATA 2014 value)
   const double bohr_radius=5.2917721067e-9;
-  /// Stefan-Boltzmann constant in g / K^4 s^3 (CODATA 2014 value)
-  const double stefan_boltzmann_constant=5.670367e-5;
-  /// Thomson cross section in cm^2 (CODATA 2014 value)
-  const double thomson_cross_section=6.652457158e-25;
+  /// Stefan-Boltzmann constant in g / K^4 s^3 (CODATA 2018; derived; exact)
+  const double stefan_boltzmann_constant=o2scl_const::pi*o2scl_const::pi*
+    o2scl_cgs::boltzmann*o2scl_cgs::boltzmann*o2scl_cgs::boltzmann*
+    o2scl_cgs::boltzmann/60.0/o2scl_cgs::plancks_constant_hbar/
+    o2scl_cgs::plancks_constant_hbar/o2scl_cgs::plancks_constant_hbar/
+    o2scl_cgs::speed_of_light/o2scl_cgs::speed_of_light;
+  
+  /// Thomson cross section in cm^2 (CODATA 2018 value)
+  const double thomson_cross_section=6.6524587321e-25;
   /** \brief Fermi coupling constant in s^4 / cm^4 g^2, 
       defined as \f$ 1.1663787 \times 10^{-5}~\mathrm{GeV}^{-2} \f$
-      (CODATA 2014 value)
+      (CODATA 2018 value)
   */
   const double Gfermi=1.1663787e-23/o2scl_cgs::electron_volt/
     o2scl_cgs::electron_volt;
-  /// Boltzmann constant in g cm^2 / K s^2 (CODATA 2014 value)
-  const double boltzmann=1.38064852e-16;
+  /// Boltzmann constant in g cm^2 / K s^2 (CODATA 2018; exact)
+  const double boltzmann=1.380649e-16;
   //@}
 
   /// \name Astrophysical constants
@@ -124,7 +130,7 @@ namespace o2scl_cgs {
   const double astronomical_unit=1.495978707e13;
   /// Parsec in \f$ \mathrm{cm} \f$ (derived)
   const double parsec=o2scl_cgs::astronomical_unit*648000.0/o2scl_const::pi;
-  /// Acccleration due to gravity in cm / s^2
+  /// Acccleration due to gravity in cm / s^2 (CODATA 2018; now exact)
   const double grav_accel=9.80665e2;
   /** \brief Solar mass times gravitational constant in cm^3 / s^2
       (from navy.mil)
@@ -147,38 +153,40 @@ namespace o2scl_cgs {
 
   /// \name Particle masses
   //@{
-  /// Electron mass in g (CODATA 2014 value)
-  const double mass_electron=9.10938356e-28;
-  /// Muon mass in g (CODATA 2014 value)
-  const double mass_muon=1.883531594e-25;
-  /// Muon mass in g (CODATA 2014 value)
-  const double mass_tau=3.16747e-24;
-  /// Proton mass in g (CODATA 2014 value)
-  const double mass_proton=1.672621898e-24;
-  /// Neutron mass in g (CODATA 2014 value)
-  const double mass_neutron=1.674927471e-24;
+  /// Electron mass in g (CODATA 2018 value)
+  const double mass_electron=9.1093837015e-28;
+  /// Muon mass in g (CODATA 2018 value)
+  const double mass_muon=1.883531627e-25;
+  /// Muon mass in g (CODATA 2018 value)
+  const double mass_tau=3.16754e-24;
+  /// Proton mass in g (CODATA 2018 value)
+  const double mass_proton=1.67262192369e-24;
+  /// Neutron mass in g (CODATA 2018 value)
+  const double mass_neutron=1.67492749804e-24;
   //@}
 
   /// \name Nuclear masses
   //@{
-  /// Deuteron mass in kg (CODATA 2014 value)
-  const double mass_deuteron=3.343583719e-24;
+  /// Deuteron mass in kg (CODATA 2018 value)
+  const double mass_deuteron=3.3435837724e-24;
   /// Triton mass in kg (CODATA 2014 value)
   const double mass_triton=5.007356665e-24;
   /// Helion mass in kg (CODATA 2014 value)
   const double mass_helion=5.006412700e-24;
   /// Alpha particle mass in kg (CODATA 2014 value)
   const double mass_alpha=6.64465723e-24;
-  /// Atomic mass constant in g (CODATA 2014 value)
-  const double unified_atomic_mass=1.66053904e-24;
+  /// Atomic mass constant in g (CODATA 2018 value)
+  const double unified_atomic_mass=1.6605390666e-24;
   //@}
 
   /// \name Chemical constants
   //@{
-  /// Rydberg constant in g cm^2 / s^2 (CODATA 2014 value)
-  const double rydberg=2.179872325e-11;
-  /// Molar gas constant, "R", in g cm^2 / K mol s^2 (CODATA 2014 value)
-  const double molar_gas=8.3144598e7;
+  /// Rydberg constant in g cm^2 / s^2 (CODATA 2018 value)
+  const double rydberg=2.1798723611035e-11;
+  /** \brief Molar gas constant, "R", in g cm^2 / K mol s^2 
+      (CODATA 2018; exact; derived)
+  */
+  const double molar_gas=o2scl_const::avogadro*o2scl_cgs::boltzmann;
   /** \brief Molar volume of ideal gas at standard T and P in 
       cm^3 / mol (CODATA 2014 value)
   */
@@ -580,8 +588,8 @@ namespace o2scl_cgsm {
   const double bohr_magneton=9.274009994e-21;
   /// Nuclear magneton in abamp cm^2 (CODATA 2014 value)
   const double nuclear_magneton=5.050783699e-24;
-  /// Faraday constant in abamp s / mol (CODATA 2014 value)
-  const double faraday=9.648533289e3;
+  /// Faraday constant in abamp s / mol (CODATA 2018 value; derived; exact)
+  const double faraday=o2scl_const::avogadro*o2scl_cgs::electron_volt/1.0e8;
   /// Electron charge in abamp s (derived)
   const double electron_charge=electron_volt*1.0e-8;
   //@}
