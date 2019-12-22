@@ -68,7 +68,7 @@ int main(void) {
   bps_load(bps);
   
   // Ensure that this works without GNU units
-  convert_units &cu=o2scl_settings.get_convert_units();
+  convert_units<double> &cu=o2scl_settings.get_convert_units();
   cu.use_gnu_units=false;
 
   // Cubic spline interpolation doesn't do very well here, so we use
