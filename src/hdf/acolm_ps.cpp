@@ -37,6 +37,59 @@ using namespace o2scl_acol;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
+int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
+
+  vector<string> in, pr;
+  pr.push_back("Index column");
+  pr.push_back("Refinement factor");
+  int ret=get_input(sv,pr,in,"slice",itive_com);
+  if (ret!=0) return ret;
+
+  string index=in[0];
+  size_t factor=o2scl::stoszt(in[1]);
+
+  cout << "Here: " << type << endl;
+  if (type=="table") {
+
+    o2scl::table_units<> table_new;
+
+    // Copy over column names and units
+    for(size_t j=0;j<table_obj.get_ncolumns();j++) {
+      cout << "New column: " << table_obj.get_column_name(j) << endl;
+      table_new.new_column(table_obj.get_column_name(j));
+      table_new.set_unit(table_obj.get_column_name(j),
+			 table_obj.get_unit(table_obj.get_column_name(j)));
+    }
+
+    table_new.set_nlines((table_obj.get_nlines()-1)*factor+1);
+    cout << "New lines: " << table_new.get_nlines() << endl;
+
+    for(size_t k=0;k<table_obj.get_nlines()-1;k++) {
+      for(size_t j=0;j<factor;j++) {
+	table_new.set(index,k*factor+j,table_obj.get(index,k)+
+		      (table_obj.get(index,k+1)-table_obj.get(index,k))/
+		      ((double)factor)*((double)j));
+      }
+    }
+    table_new.set(index,table_new.get_nlines()-1,
+		  table_obj.get(index,table_obj.get_nlines()-1));
+
+    table_new.set_interp_type(table_obj.get_interp_type());
+    cout << "Going to insert_table" << endl;
+    table_new.insert_table(table_obj,index);
+    cout << "Done." << endl;
+
+    table_obj=table_new;
+    
+  } else {
+    cerr << "Refine does not work with " << type << " objects." << endl;
+  }
+    
+
+  
+  return 0;
+}
+
 int acol_manager::comm_slack(std::vector<std::string> &sv, bool itive_com) {
 
   if (smess.url.length()==0) {

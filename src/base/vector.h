@@ -2515,7 +2515,64 @@ namespace o2scl {
     }
     return;
   }
+  
+  /** \brief Trivial index vector
+      
+      This object just returns the index whenever an object in the
+      vector is requested, i.e. <tt>operator[](i)</tt> always returns
+      \c i.
+   */
+  template<class data_t> class vector_index_vector {
+  public:
+    data_t operator[](size_t &i) const {
+      return i;
+    }
+  };
+  
+  /** \brief Index vector with a size method
 
+      This object just returns the index whenever an object in the
+      vector is requested, i.e. <tt>operator[](i)</tt> always returns
+      \c i.
+   */
+  template<class data_t> class vector_index_vector_size {
+
+  protected:
+    
+    /// The vector size
+    size_t n;
+    
+  public:
+
+    /** \brief Create an index vector with size \c n_
+     */
+    vector_index_vector_size(size_t n_) {
+      n=n_;
+    }
+
+    /** \brief Obtain the element with index \c i
+     */
+    data_t operator[](size_t &i) const {
+      if (i>=n) {
+	O2SCL_ERR("Out of bounds.",o2scl::exc_einval);
+      }
+      return i;
+    }
+
+    /** \brief Get the size of the vector
+     */
+    size_t size() const {
+      return n;
+    }
+
+    /** \brief Resize the index vector
+     */
+    void resize(size_t n_) {
+      n=n_;
+    }
+    
+  };
+  
   /** \brief Construct a row of a matrix
 
       This class template works with combinations of ublas

@@ -111,7 +111,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 			      "find-row","fit","function",
 			      "get-row","get-unit","entry","index",
 			      "insert","insert-full","integ","interp",
-			      "list","max","min","nlines","rename",
+			      "list","max","min","nlines","refine","rename",
 			      "select","select-rows","select-rows2",
 			      "set-data","set-unit","sort","stats","sum",
 			      "to-hist","to-hist-2d","to-table3d","wstats"};
@@ -216,7 +216,7 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=37;
+    static const size_t narr=38;
     comm_option_s options_arr[narr]={
       {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
        0,2,"<name> [val]",
@@ -384,6 +384,9 @@ void acol_manager::command_add(std::string new_type) {
        "",((std::string)"Add a constant called 'nlines' to the table and ")+
        "set it equal to the number of lines (rows) in the table",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nlines),
+       both},
+      {0,"refine","Refine the table.",0,2,"<index column> <factor>","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_refine),
        both},
       {0,"rename","Rename a column.",0,2,"<old> <new>",
        "Rename a column from <old> to <new>. ",

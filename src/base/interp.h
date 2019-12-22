@@ -2731,6 +2731,28 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Refine a vector by interpolating with a second
+      index vector
+
+      \warning Untested.
+   */
+  template<class vec_t, class vec2_t, class data_t>
+    void vector_refine(size_t n, const vec_t &index, vec2_t &data,
+		       size_t factor, size_t interp_type=itp_linear) {
+    interp_vec<vec_t,vec2_t> iv(n,index,data,interp_type);
+    vec2_t copy=data;
+    data.resize((n-1)*factor+1);
+    for (size_t j=0;j<n-1;j++) {
+      for(size_t k=0;k<factor;k++) {
+	data[j*factor+k]=iv.eval(index[j]+
+				 ((data_t)k)/((data_t)factor)*
+				 (index[j+1]-index[j]));
+      }
+    }
+    data[data.size()-1]=copy[copy.size()-1];
+    return;
+  }
+  
   /** \brief Attempt to determine if data stored in \c y
       would be better plotted on a semi-log or log-log plot
       

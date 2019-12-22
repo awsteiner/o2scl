@@ -1064,12 +1064,49 @@ namespace o2scl {
 
   /** \brief Insert columns from a source table into the new
       table by interpolation (or extrapolation)
+
+      This takes all of the columns in \c source, and adds them into
+      the current table using interpolation, using the columns \c
+      src_index and \c dest_index as the independent variable. The
+      column named \c src_index is the column of the independent
+      variable in \c source and the column named \c dest_index
+      is the column of the independent variable in the current table.
+      If \c dest_index is empty (the default) then the names in the
+      two tables are taken to be the same.
+
+      If necessary, columns are created in the current table for the
+      dependent variable columns in \c source. Columns in the current
+      table which do not correspond to dependent variable columns in
+      \c source are left unchanged.
+
+      If \c allow_extrap is false, then extrapolation is not allowed,
+      and rows in the current table which have values of the independent
+      variable which are outside the source table are unmodified. 
+
+      If a column for a dependent variable in \c source has the
+      same name as \c dest_index, then it is ignored and not inserted
+      into the current table.
+
+      If the column named \c src_index cannot be found in 
+      \c source or the column names \c dest_index cannot be found
+      in the current table, then the error handler is called.
+
+      If the \c allow_extrap is false and either the minimum or
+      maximum values of the column named \c src_index in the \c source
+      table are not finite, then the error handler is called.
   */
   template<class vec2_t>
   void insert_table(table<vec2_t> &source, std::string src_index,
 		    bool allow_extrap=true, std::string dest_index="") {
 
     if (dest_index=="") dest_index=src_index;
+
+    if (!source.is_column(src_index)) {
+      O2SCL_ERR("Source indep. var. column not found.",o2scl::exc_einval);
+    }
+    if (!is_column(dest_index)) {
+      O2SCL_ERR("Dest. indep. var. column not found.",o2scl::exc_einval);
+    }
 
     // Find limits to avoid extrapolation if necessary
     double min=source.min(src_index);
@@ -1085,15 +1122,14 @@ namespace o2scl {
     std::vector<std::string> col_list;
     for(size_t i=0;i<source.get_ncolumns();i++) {
       std::string col_name=source.get_column_name(i);
-      if (col_name!=src_index && col_name!=dest_index &&
-	  is_column(col_name)==false) {
+      if (col_name!=src_index && col_name!=dest_index) {
 	col_list.push_back(col_name);
       }
     }
 
     // Create new columns and perform interpolation
     for(size_t i=0;i<col_list.size();i++) {
-      new_column(col_list[i]);
+      if (!is_column(col_list[i])) new_column(col_list[i]);
       for(size_t j=0;j<get_nlines();j++) {
 	double val=get(dest_index,j);
 	if (allow_extrap || (val>=min && val<=max)) {
