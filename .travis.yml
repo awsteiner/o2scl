@@ -56,11 +56,10 @@ script:
   # 
   # Perform the installation on linux. Since there is no documentation,
   # 'make blank-doc' is used to create dummy documentation so that
-  # 'make install' does not fail. Note that the GSL installation in
-  # trusty is 1.6, so we leave out --enable-gsl2
+  # 'make install' does not fail. 
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples;
+      CXXFLAGS = "-DO2SCL_FAST_TEST" ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples;
     fi
   #
   # Use homebrew to install the HEAD version on OSX. At the end, 'acol
