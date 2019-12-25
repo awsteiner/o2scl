@@ -18,6 +18,9 @@ osx_image: xcode11.2
 dist: bionic
 sudo: required
 
+env:
+  - CXXFLAGS="-DO2SCL_FAST_TEST" 
+
 addons:
   apt:
     packages:
@@ -59,7 +62,7 @@ script:
   # 'make install' does not fail. 
   # 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      CXXFLAGS = "-DO2SCL_FAST_TEST" ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples;
+      ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples;
     fi
   #
   # Use homebrew to install the HEAD version on OSX. At the end, 'acol
