@@ -1,7 +1,7 @@
-/*
+ /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2008-2019, Julien Garaud and Andrew W. Steiner
+  Copyright (C) 2008-2020, Julien Garaud and Andrew W. Steiner
   
   This file is part of O2scl.
   

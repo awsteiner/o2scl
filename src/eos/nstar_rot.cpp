@@ -3,7 +3,7 @@
   
   This file is part of O2scl. It has been adapted from RNS v1.1d
   written by N. Stergioulas and S. Morsink. The modifications made in
-  this version from the original are copyright (C) 2015-2019, Andrew
+  this version from the original are copyright (C) 2015-2020, Andrew
   W. Steiner.
   
   O2scl is free software; you can redistribute it and/or modify
