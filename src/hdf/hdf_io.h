@@ -804,6 +804,186 @@ namespace o2scl_hdf {
     return 0;
   }
 
+  /** \brief Desc
+   */
+  template<class vec_t> int strings_spec(std::string spec, vec_t &v,
+					 int verbose=0,
+					 bool err_on_fail=true) {
+
+    if (verbose>2) {
+      std::cout << "Function strings_spec is parsing: " << spec << std::endl;
+    }
+      
+    if (spec.find("list:")==0) {
+      
+      // List
+      std::string list=spec.substr(5,spec.length()-5);
+      std::vector<std::string> sv;
+      o2scl::split_string_delim(list,sv,',');
+      size_t n=sv.size();
+      if (n==0) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("String split failed, spec empty? ",
+		     "in strings_spec().",o2scl::exc_einval);
+	} else {
+	  return 10;
+	}
+      }
+      if (verbose>1) {
+	std::cout << "strings_spec(): List " << list << std::endl;
+	std::cout << n << " " << sv[0] << " " << sv[n-1] << std::endl;
+      }
+      v.resize(n);
+      for(size_t i=0;i<n;i++) {
+	v[i]=sv[i];
+      }
+	
+    } else if (spec.find("shell:")==0) {
+      
+      // Result from shell command
+      
+#ifdef HAVE_POPEN
+      
+      std::string cmd=spec.substr(6,spec.length()-6);
+      std::cout << "Using shell command: " << cmd << std::endl;
+      FILE *ps_pipe=popen(cmd.c_str(),"r");
+      if (!ps_pipe) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Pipe could not be opened in ",
+		     "convert_units::convert_gnu_units().",
+		     o2scl::exc_efilenotfound);
+	}
+	return o2scl::exc_efilenotfound;
+      }
+      
+      char line1[255];
+      char *cret=fgets(line1,255,ps_pipe);
+      v.clear();
+      while (cret!=0) {
+	std::string sline1=line1;
+	if (sline1[sline1.length()-1]=='\n') {
+	  sline1=sline1.substr(0,sline1.length()-1);
+	}
+	if (verbose>0) {
+	  std::cout << "Read line "
+		    << sline1 << std::endl;
+	}
+	v.push_back(sline1);
+	cret=fgets(line1,255,ps_pipe);
+      }
+      
+      if (pclose(ps_pipe)!=0) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Pipe could not be closed in ",
+		     "value_spec().",o2scl::exc_efailed);
+	}
+	return o2scl::exc_efailed;
+      }
+
+#endif
+      
+      return o2scl::exc_efailed;
+
+    } else if (spec.find("hdf5:")==0) {
+	
+      // HDF5 object in a file
+      if (verbose>1) {
+	std::cout << "strings_spec(): HDF5 file " << spec << std::endl;
+      }
+      std::string temp=spec.substr(5,spec.length()-5);
+      size_t ncolon=temp.find(':');
+      if (ncolon==std::string::npos) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("No apparent object name specified ",
+		     "in strings_spec().",o2scl::exc_einval);
+	} else {
+	  return 4;
+	}
+      }
+      std::string fname=temp.substr(0,ncolon);
+      if (verbose>1) {
+	std::cout << "Filename " << fname << std::endl;
+      }
+      if (temp.length()<ncolon+1) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("No apparent object name specified ",
+		     "in strings_spec().",o2scl::exc_einval);
+	} else {
+	  return 5;
+	}
+      }
+      std::string obj_name=temp.substr(ncolon+1,temp.length()-ncolon-1);
+      std::string addl_spec;
+      ncolon=obj_name.find(':');
+      if (ncolon!=std::string::npos) {
+	addl_spec=obj_name.substr(ncolon+1,obj_name.length()-ncolon-1);
+	obj_name=obj_name.substr(0,ncolon);
+      } 
+      if (verbose>1) {
+	std::cout << "Object name " << obj_name << std::endl;
+	std::cout << "Additional specification " << addl_spec << std::endl;
+      }
+      o2scl_hdf::hdf_file hf;
+	
+      std::string fname_old=fname;
+      std::vector<std::string> matches;
+      int wret=o2scl::wordexp_wrapper(fname_old,matches);
+      if (matches.size()>1 || matches.size()==0 || wret!=0) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Function wordexp_wrapper() failed ",
+		     "in strings_spec().",o2scl::exc_einval);
+	} else {
+	  return 9;
+	}
+      }
+      fname=matches[0];
+      if (verbose>1) {
+	std::cout << "Filename after wordexp() " << fname << std::endl;
+      }
+	
+      hf.open(fname);
+      std::string type;
+      int find_ret=hf.find_object_by_name(obj_name,type);
+      if (find_ret!=0) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Object not found in file ",
+		     "in strings_spec().",o2scl::exc_einval);
+	} else {
+	  return 11;
+	}
+      }
+      if (verbose>1) {
+	std::cout << "Object type from file: " << type << std::endl;
+      }
+	
+      if (type=="table") {
+	if (addl_spec.length()==0) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("No table column name specified ",
+		       "in strings_spec().",o2scl::exc_einval);
+	  } else {
+	    return 6;
+	  }
+	}
+	o2scl::table_units<> t;
+	o2scl_hdf::hdf_input(hf,t,obj_name);
+	v.resize(t.get_nlines());
+	for(size_t i=0;i<t.get_nlines();i++) {
+	  v[i]=t.get(addl_spec,i);
+	}
+	
+      }
+      
+    } else {
+
+      v.resize(1);
+      v[0]=spec;
+      
+    }
+    
+    return 0;
+  }
+
   /** \brief Return a std vector specified by a string
    */
   std::vector<double> vector_spec(std::string spec);

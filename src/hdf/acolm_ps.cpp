@@ -123,11 +123,22 @@ int acol_manager::comm_slack(std::vector<std::string> &sv, bool itive_com) {
     return 4;
   }
 
+  //template<class vec_t> int strings_spec(std::string spec, vec_t &v,
+  //int verbose=0,
+  //bool err_on_fail=true) {
+
+  std::vector<std::string> slist;
   if (sv.size()>=3) {
-    smess.send(sv[2]);
+    strings_spec(sv[2],slist,3,true);
   } else {
-    smess.send(sv[1]);
+    strings_spec(sv[1],slist,3,true);
   }
+  std::string stmp;
+  for(size_t j=0;j<slist.size();j++) {
+    stmp+=slist[j];
+    if (j!=slist.size()-1) stmp+="\n";
+  }
+  smess.send(stmp);
   
   return 0;
 }
