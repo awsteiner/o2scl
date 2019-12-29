@@ -51,6 +51,7 @@
     o2scl-0.921.tar.gz | bc58909f869cd2931b03cec1d8bb85ea
     o2scl-0.922.tar.gz | 12a531f652d299af213a5f1f9bc46866
     o2scl-0.923.tar.gz | 7896282e992b9be41797d25bb8ac697d
+    o2scl-0.924.tar.gz | not yet set
 
     Release tarball    | SHA256 digest
     -------------------|-----------------------------------------------------------------
@@ -85,6 +86,7 @@
     o2scl-0.921.tar.gz | 972ede93a694d0273230da6b57d73b5e04c4007fd883fcf330e866d7da9bf1f9
     o2scl-0.922.tar.gz | e4e636ae2506231087794b3d0603aeef2eca4409d06902d1b55fc015e5ffba73
     o2scl-0.923.tar.gz | dc98d20cf3943cfc715505d5d2a354607711e9ecd04fd7a442c585ed573cffb2
+    o2scl-0.924.tar.gz | not yet set
 
     Version | Date     | Rev. in Sourceforge SVN | Github repo hash                        
     --------|----------|-------------------------|-----------------------------------------
@@ -118,4 +120,5 @@
     0.921   | 02/09/18 | N/A                     | 2e90c9c372d4d736cf40ce88837f326e5985cdfd
     0.922   | 10/19/18 | N/A                     | 55819b33966f0d17fc7b8860311a09cc6190e305
     0.923   | 04/29/19 | N/A                     | 08436c7f7d869d75d67df6321e2a9a5aa707e604
+    0.924   | ??/??/?? | N/A                     | not yet set
 */

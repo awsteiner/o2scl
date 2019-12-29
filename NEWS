@@ -1,3 +1,43 @@
+Notes for 0.924 release:
+
+Updated second derivatives of the pressure for the particle clases and
+updated the eos_had_skyrme class to compute second derivatives.
+
+Created a new system for OS detection to make compilation a bit
+more user-friendly. HDF5 headers have been reworked a bit
+accordingly. 
+
+Improved integration between acol and o2sclpy. 
+
+Improved the handling of aliases in acol and cli.
+
+Generalized convert_units, several of the integration classes, a few
+derivative and solver classes, and several of the particle classes to
+templates to allow for other floating point types.
+
+Improvements to the ex_mmin example and the example plots. Created
+new example ex_fermion_summ.
+
+Improvements to the ode_iv_solve_grid class.
+
+Improved error handling for calculator class.
+
+Created functions vector_refine(), file_exists(), o2isfinite(), 
+
+Created classes inte_tanh_sinh_boost, inte_sinh_sinh_boost,
+inte_kronrod_boost, inte_exp_tanh_boost, nucmass_gen, and frib_mex.
+
+Created a couple_threads option and an ac_coeffs() function for
+mcmc_para.
+
+Creating strings_spec() for string list specifications and updated
+vector_spec() and mult_vector_spec().
+
+Improved tabulate option for tov_love::calc_y().
+
+Updated constants to CODATA 2018 release.
+
+------------------------------------------------------------------------
 Notes for 0.923 release:
 
 A new function "rearrange_and_copy()" was added to the tensor
