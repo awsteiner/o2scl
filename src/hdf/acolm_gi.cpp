@@ -721,6 +721,29 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
 
+  // Handle the special case 'help strings-spec'
+  if (sv.size()==2 && (sv[1]=="strings-spec" || sv[1]=="strings_spec")) {
+    
+    std::string str=((std::string)"String list specification ")+
+      "description:\n\nSome "+cl->cmd_name+
+      " commands take arguments "+
+      "which are 'string list specifications'. "+
+      "The different parts of the string "+
+      "are separated by a colon, and the first part specifes the type "+
+      "of vector specification. The different types are:\n\n"+
+      "  1. list\n\n"+
+      "  2. shell\n\n"+
+      "  3. hdf5:\n\n";
+
+    std::vector<std::string> sv;
+    o2scl::rewrap_keep_endlines(str,sv);
+    for(size_t i=0;i<sv.size();i++) {
+      cout << sv[i] << endl;
+    }
+      
+    return 0;
+  }
+
   // Handle the special case 'help mult-vector-spec'
   if (sv.size()==2 && (sv[1]=="mult-vector-spec" ||
 		       sv[1]=="mult_vector_spec")) {
@@ -930,7 +953,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   dsc+=line+"\n";
 
   dsc+="List of additional help topics (e.g. \"acol -help <topic>\"): ";
-  dsc+="functions, mult-vector-spec, types, value-spec, and vector-spec.\n\n";
+  dsc+="functions, mult-vector-spec, strings-spec, ";
+  dsc+="types, value-spec, and vector-spec.\n\n";
   
 #ifndef O2SCL_UBUNTU_PKG
   dsc+=((string)"Compiled at ")+((string)__TIME__)+" on "+
