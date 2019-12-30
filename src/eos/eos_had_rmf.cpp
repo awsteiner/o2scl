@@ -395,7 +395,7 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
     x[3]=omega;
     x[4]=rho;
     guess_set=false;
-    
+
     ret=eos_mroot->msolve(5,x,fmf);
 
     int rt=calc_e_solve_fun(5,x,y);

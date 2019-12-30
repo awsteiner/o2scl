@@ -243,7 +243,6 @@ namespace o2scl {
       
     size_t i,j;
     double h,temp;
-    bool success=true;
 
     if (mem_size_x!=nx || mem_size_y!=ny) {
       f.resize(ny);
@@ -306,15 +305,15 @@ namespace o2scl {
 	if (temp!=0.0) nonzero=true;
 	jac(i,j)=temp;
       }
-      if (nonzero==false) success=false;
+      if (nonzero==false) {
+	O2SCL_CONV_RET((((std::string)"Row ")+o2scl::szttos(j)+
+			" of the Jacobian is zero "+
+			"in jacobian_gsl::operator().").c_str(),exc_esing,
+		       this->err_nonconv);
+      }
 
     }
     
-    if (success==false) {
-      O2SCL_CONV2_RET("At least one row of the Jacobian is zero ",
-		      "in jacobian_gsl::operator().",exc_esing,
-		      this->err_nonconv);
-    }
     return 0;
   }
 

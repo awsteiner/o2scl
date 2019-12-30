@@ -336,7 +336,7 @@ int eos_had_rmf_hyp::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 
   ubvector x(nv), y(nv);
   int ret;
-  
+
   ne.non_interacting=false;
   pr.non_interacting=false;
   lambda->non_interacting=false;
@@ -495,6 +495,17 @@ int eos_had_rmf_hyp::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 	rt=calc_e_solve_fun(5,x,y);
       }
 
+      // The initial point has n_n = n_p and thus rho=0, and the
+      // solver has a little problem with the stepsize getting away
+      // from the rho=0 point, so we give rho a small non-zero value
+      if (fabs(x[4])<1.0e-8) {
+	if (neutron->n>proton->n) {
+	  x[4]=-1.0e-8;
+	} else if (neutron->n<proton->n) {
+	  x[4]=1.0e-8;
+	}
+      }
+      
       // If the initial guess failed then we won't be able to solve
       if (rt!=0) {
 	string s=((string)"Initial guess failed at (nn=")+
@@ -502,6 +513,7 @@ int eos_had_rmf_hyp::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 	  "eos_had_rmf_hyp::calc_e().";
 	O2SCL_CONV_RET(s.c_str(),exc_efailed,this->err_nonconv);
       }
+
       ret=eos_mroot->msolve(5,x,fmf);
       if (verbose>0.0) {
 	cout << alpha << " " << n_baryon << " " << n_charge << " "
@@ -534,7 +546,7 @@ int eos_had_rmf_hyp::calc_e(fermion &ne, fermion &pr, thermo &lth) {
     O2SCL_CONV2_RET("Solver failed in eos_had_rmf_hyp::calc_e",
 		    "(fermion,fermion,thermo).",exc_efailed,this->err_nonconv);
   }
-  
+
   return 0;
 }
 
