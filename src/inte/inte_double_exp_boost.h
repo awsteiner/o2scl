@@ -29,7 +29,7 @@
 
 #include <cmath>
 
-#ifdef O2SCL_NEW_BOOST_INTEGRATION
+#if defined(O2SCL_NEW_BOOST_INTEGRATION) || defined(DOXYGEN)
 
 #include <boost/math/quadrature/tanh_sinh.hpp>
 #include <boost/math/quadrature/exp_sinh.hpp>
@@ -190,7 +190,7 @@ namespace o2scl {
 }
 #endif
 
-// End of #ifndef O2SCL_OLDER_COMPILER
+// End of #if defined(O2SCL_NEW_BOOST_INTEGRATION) || defined(DOXYGEN)
 #endif
 
 #endif

@@ -634,7 +634,7 @@ extern "C" {
       
       This function is used in \o2y in
       <tt>o2graph_plotter::parse_argv()</tt> to communicate three
-      strings which are used in the \ref o2scl::acol_manager class.
+      strings which are used in the \ref o2scl_acol::acol_manager class.
   */
   void o2scl_acol_set_names(void *vp, int n1, char *cmd_name,
 			    int n2, char *short_desc, int n3,
@@ -663,7 +663,7 @@ extern "C" {
       strings, concatenated together to form a single combined string.
       This function takes the data in these three objects and creates
       an object of type <tt>vector&lt;string&gt;</tt> from it, similar
-      to the way that \ref o2scl::hdf_file::gets_vec() reads a string
+      to the way that \ref o2scl_hdf::hdf_file::gets_vec() reads a string
       array from an HDF5 file.
 
       This function is used in \ref o2scl_acol_parse(), \ref
@@ -677,7 +677,7 @@ extern "C" {
       
       This function uses the executes the commands stored \c
       n_entries, \c sizes, and \c str using the \ref o2scl::cli object
-      in \ref o2scl::acol_manager as if they were typed on the command
+      in \ref o2scl_acol::acol_manager as if they were typed on the command
       line.
 
       This function is used in \o2y in o2graph_plotter::set_wrapper(),

@@ -53,7 +53,8 @@
     if necessary
     
     <b>o2sclpy release procedure:</b>
-    - Update version numbers in o2sclpy/setup.py and o2sclpy/doc/index.rst
+    - Update version numbers in o2sclpy/__init.py, 
+    doc/conf.py, setup.py, snap/snapcraft.yaml and doc/index.rst
     - Regenerate the o2sclpy documentation using <tt>make doc</tt>
     and upload it to web using <tt>make sync-doc</tt>
     - Remove old dists in o2sclpy by clearing o2sclpy/dist directory
