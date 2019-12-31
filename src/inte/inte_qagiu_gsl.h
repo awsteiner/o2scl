@@ -42,7 +42,7 @@ namespace o2scl {
       \int_a^{\infty} f(x)~dx =
       \int_0^1 f(a + (1-t)/t)t^{-2}~dt,
       \f]
-      and the right hand side is evaluated with \ref inte_qags_gsl.
+      and the right hand side is evaluated with \ref o2scl::inte_qags_gsl.
 
       See \ref gslinte_subsect in the User's guide for general
       information about the GSL integration classes.

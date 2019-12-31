@@ -22,7 +22,7 @@ Improvements to the ode_iv_solve_grid class.
 
 Improved error handling for calculator class.
 
-Created functions vector_refine(), file_exists(), o2isfinite(), 
+Created functions vector_refine(), file_exists(), and o2isfinite().
 
 Created classes inte_tanh_sinh_boost, inte_sinh_sinh_boost,
 inte_kronrod_boost, inte_exp_tanh_boost, nucmass_gen, and frib_mex.
@@ -35,7 +35,7 @@ vector_spec() and mult_vector_spec().
 
 Improved tabulate option for tov_love::calc_y().
 
-Updated constants to CODATA 2018 release.
+Updated constants for CODATA 2018 release.
 
 ------------------------------------------------------------------------
 Notes for 0.923 release:

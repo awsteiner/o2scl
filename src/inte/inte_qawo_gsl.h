@@ -42,10 +42,10 @@ namespace o2scl {
       \int_a^b f(x) \sin (\omega x)~dx
       \f]
       is computed for some frequency parameter \f$ \omega \f$,
-      stored in \ref inte_qawo_gsl_sin::omega .
+      stored in \ref o2scl::inte_qawo_gsl_sin::omega .
       
       An adaptive algorithm together with an series-acceleration
-      method like that of \ref inte_qags_gsl is used. Those
+      method like that of \ref o2scl::inte_qags_gsl is used. Those
       subintervals with "large" widths \f$ d \equiv b-a \f$ where \f$
       d\omega > 4 \f$ are computed using a 25-point Clenshaw-Curtis
       integration rule to handle the oscillatory behavior. In order to
@@ -639,7 +639,7 @@ namespace o2scl {
       \f]
       is computed for some frequency parameter \f$ \omega \f$ .
 
-      This class is exactly analogous to \ref inte_qawo_gsl_sin .
+      This class is exactly analogous to \ref o2scl::inte_qawo_gsl_sin .
       See that class documentation for more details.
   */
   template<class func_t> class inte_qawo_gsl_cos : 

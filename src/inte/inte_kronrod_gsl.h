@@ -602,7 +602,7 @@ namespace o2scl {
       - 6: 61-point rule
       Any value other than 1-6 forces the error handler to be
       called. All classes default to the 15-point rule,
-      except for \ref inte_qags_gsl which defaults to
+      except for \ref o2scl::inte_qags_gsl which defaults to
       the 21-point rule for singularities. 
 
       The integration coefficients for use with this class and

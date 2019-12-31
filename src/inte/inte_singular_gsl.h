@@ -55,7 +55,7 @@ namespace o2scl {
 
   public:
       
-    /** \brief A structure for extrapolation for \ref inte_qags_gsl
+    /** \brief A structure for extrapolation for \ref o2scl::inte_qags_gsl
 
 	\future Move this to a new class, with qelg() as a method
     */
