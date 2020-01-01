@@ -103,8 +103,8 @@ int main(void) {
   nstar_cold nc;
   nc.set_eos(re);
   nc.verbose=1;
-  nc.calc_eos();
-  nc.calc_nstar();
+  //nc.calc_eos();
+  //nc.calc_nstar();
   
   t.report();
 
