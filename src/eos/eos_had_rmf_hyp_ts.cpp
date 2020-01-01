@@ -102,9 +102,9 @@ int main(void) {
   re.inc_cascade=false;
   nstar_cold nc;
   nc.set_eos(re);
-  //nc.verbose=1;
-  //nc.calc_eos();
-  //nc.calc_nstar();
+  nc.verbose=1;
+  nc.calc_eos();
+  nc.calc_nstar();
   
   t.report();
 
