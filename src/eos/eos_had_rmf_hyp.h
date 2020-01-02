@@ -102,7 +102,7 @@ namespace o2scl {
 
     /// If true, include cascade hyperons (default true)
     bool inc_cascade;
-    
+
     /** \brief Equation of state and meson field equations 
 	as a function of chemical potentials
     */
@@ -129,11 +129,94 @@ namespace o2scl {
 	After the call to calc_e(), the final values of the fields
 	can be accessed through get_fields(). 
     */
-    virtual int calc_e(fermion &ne, fermion &pr, thermo &lth);
-    
-#ifndef DOXYGEN_INTERNAL
+    virtual int calc_e(fermion &ne, fermion &pr,
+		       fermion &lam, fermion &sigp, fermion &sigz, 
+		       fermion &sigm, fermion &casz, fermion &casm,
+		       thermo &lth);
 
-  protected:
+#ifdef O2SCL_NEVER_DEFINED
+
+    /** \brief Set the hyperon objects
+     */
+    virtual void set_hyp(fermion &lam, fermion &sigp, fermion &sigz, 
+			 fermion &sigm, fermion &casz, fermion &casm) {
+      lambda=&lam;
+      sigma_p=&sigp;
+      sigma_z=&sigz;
+      sigma_m=&sigm;
+      cascade_z=&casz;
+      cascade_m=&casm;
+      return 0;
+    }
+    
+    /** \brief Compute the EOS in beta-equilibrium at 
+	zero temperature
+    */
+    virtual int beta_eq_T0(double nB, std::vector<double> &guess,
+			   fermion &e, bool include_muons,
+			   fermion &mu, fermion_rel &frel,
+			   std::vector<double> &res) {
+      
+      if (guess[0]<=0.0 || guess[0]>=nB) guess[0]=nB/2.0;
+      this->set_fields(guess[1],guess[2],guess[3]);
+      
+      mm_funct fmf=std::bind
+	(std::mem_fn<int(size_t,const ubvector &, ubvector &, 
+			 const double, fermion &, bool,
+			 fermion &, fermion_rel &)>
+	 (&eos_had_eden_base::solve_beta_eq_T0),
+	 this,std::placeholders::_1,std::placeholders::_2,
+	 std::placeholders::_3,nB,std::ref(e),bool,std::ref(mu),
+	 std::ref(frel));
+      
+      beta_mroot.solve(1,guess,fmf);
+
+      // Final function evaluation to make sure, e.g.
+      // eos_thermo object is correct
+      ubvector y(1);
+      fmf(1,guess,y);
+
+      if (inc_cascade) {
+	if (res.size()<26) res.resize(26);
+      } else {
+	if (res.size()<20) res.resize(20);
+      }
+      
+      res[0]=neutron->n;
+      res[1]=proton->n;
+      res[2]=lambda->n;
+      res[3]=sigma_p->n;
+      res[4]=sigma_z->n;
+      res[5]=sigma_m->n;
+      
+      res[6]=eos_thermo->ed;
+      res[7]=eos_thermo->pr;
+      
+      res[8]=neutron->mu;
+      res[9]=proton->mu;
+      res[10]=lambda->mu;
+      res[11]=sigma_p->mu;
+      res[12]=sigma_z->mu;
+      res[13]=sigma_m->mu;
+      
+      res[14]=neutron->kf;
+      res[15]=proton->kf;
+      res[16]=lambda->kf;
+      res[17]=sigma_p->kf;
+      res[18]=sigma_z->kf;
+      res[19]=sigma_m->kf;
+      
+      if (inc_cascade) {
+	res[20]=cascade_z->n;
+	res[21]=cascade_m->n;
+	res[22]=cascade_z->mu;
+	res[23]=cascade_m->mu;
+	res[24]=cascade_z->kf;
+	res[25]=cascade_m->kf;
+      }
+      
+      return 0;
+    }
 
 #endif
 

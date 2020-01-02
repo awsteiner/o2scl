@@ -331,7 +331,10 @@ int eos_had_rmf_hyp::calc_e_solve_fun(size_t nv, const ubvector &ex,
   return 0;
 }
 
-int eos_had_rmf_hyp::calc_e(fermion &ne, fermion &pr, thermo &lth) {
+int eos_had_rmf_hyp::calc_e(fermion &ne, fermion &pr,
+			    fermion &lam, fermion &sigp, fermion &sigz, 
+			    fermion &sigm, fermion &casz, fermion &casm,
+			    thermo &lth) {
   size_t nv=5;
 
   ubvector x(nv), y(nv);
@@ -339,15 +342,22 @@ int eos_had_rmf_hyp::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 
   ne.non_interacting=false;
   pr.non_interacting=false;
+  
+  set_thermo(lth);
+  set_n_and_p(ne,pr);
+  lambda=&lam;
+  sigma_p=&sigp;
+  sigma_z=&sigz;
+  sigma_m=&sigm;
+  cascade_z=&casz;
+  cascade_m=&casm;
+
   lambda->non_interacting=false;
   sigma_p->non_interacting=false;
   sigma_z->non_interacting=false;
   sigma_m->non_interacting=false;
   cascade_z->non_interacting=false;
   cascade_m->non_interacting=false;
-
-  set_thermo(lth);
-  set_n_and_p(ne,pr);
 
   // If zero-density, then just return rest mass energy
   // Otherwise, set whether we are in neutron or proton matter mode

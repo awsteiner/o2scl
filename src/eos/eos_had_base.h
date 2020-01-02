@@ -878,6 +878,46 @@ namespace o2scl {
 		     double &dqnndnn, double &dqnndnp,
 		     double &dqnpdnn, double &dqnpdnp,
 		     double &dqppdnn, double &dqppdnp);
+
+    /** \brief Compute the EOS in beta-equilibrium at 
+	zero temperature
+    */
+    virtual int beta_eq_T0(double nB, ubvector &guess,
+			   fermion &e, bool include_muons,
+			   fermion &mu, fermion_rel &frel,
+			   std::vector<double> &res) {
+
+      // Ensure initial guess is valid
+      if (guess[0]<=0.0 || guess[0]>=nB) guess[0]=nB/2.0;
+      
+      mm_funct fmf=std::bind
+	(std::mem_fn<int(size_t,const ubvector &, ubvector &, 
+			 const double, fermion &, bool, fermion &,
+			 fermion_rel &)>
+	 (&eos_had_base::solve_beta_eq_T0),
+	 this,std::placeholders::_1,std::placeholders::_2,
+	 std::placeholders::_3,nB,std::ref(e),include_muons,std::ref(mu),
+	 std::ref(frel));
+      
+      beta_mroot.msolve(1,guess,fmf);
+
+      // Final function evaluation to make sure, e.g.
+      // eos_thermo object is correct
+      ubvector y(1);
+      fmf(1,guess,y);
+
+      if (res.size()<8) res.resize(8);
+      res[0]=eos_thermo->ed;
+      res[1]=eos_thermo->pr;
+      res[2]=neutron->n;
+      res[3]=proton->n;
+      res[4]=neutron->mu;
+      res[5]=proton->mu;
+      res[6]=neutron->kf;
+      res[7]=proton->kf;
+      
+      return 0;
+    }
     
     /// Return string denoting type ("eos_had_base")
     virtual const char *type() { return "eos_had_base"; }
@@ -900,7 +940,7 @@ namespace o2scl {
 		   double &nn_deriv, double &np_deriv,
 		   double &nn_err, double &np_err);
     //@}
-      
+
 #ifndef DOXYGEN_INTERNAL
 
   protected:
@@ -929,6 +969,32 @@ namespace o2scl {
     /// The proton object
     fermion *proton;
 
+    /// Beta-equilibrium solver
+    mroot_hybrids<> beta_mroot;
+    
+    /** \brief Equation for solving for beta-equilibrium at T=0
+    */
+    virtual int solve_beta_eq_T0(size_t nv, const ubvector &x,
+				 ubvector &y, const double nB,
+				 fermion &e, bool include_muons,
+				 fermion &mu, fermion_rel &frel) {
+      
+      if (x[0]<0.0) return 1;
+      double n_charge=x[0];
+      proton->n=n_charge;
+      neutron->n=nB-n_charge;
+      if (neutron->n<0.0) return 2;
+      this->calc_e(*neutron,*proton,*eos_thermo);
+      e.mu=neutron->mu-proton->mu;
+      frel.calc_mu_zerot(e);
+      y[0]=n_charge-e.n;
+      if (include_muons) {
+	frel.calc_mu_zerot(mu);
+	y[0]=n_charge-e.n-mu.n;
+      }
+      return 0;
+    }
+    
 #endif
     
   };

@@ -27,6 +27,8 @@
 #define O2SCL_EOS_H
 
 #include <o2scl/part.h>
+#include <o2scl/fermion.h>
+#include <o2scl/fermion_rel.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -55,7 +57,21 @@ namespace o2scl {
 
     /// Return string denoting type ("eos_base")
     virtual const char *type() { return "eos_base"; }
-
+    
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    
+    /** \brief Compute the EOS in beta-equilibrium at 
+	zero temperature
+    */
+    virtual int beta_eq_T0(double nB, ubvector &guess,
+			   fermion &e, bool include_muons,
+			   fermion &mu, fermion_rel &frel,
+			   std::vector<double> &res) {
+      O2SCL_ERR("Function beta_eq_T0() not implemented.",
+		o2scl::exc_eunimpl);
+      return o2scl::exc_eunimpl;
+    }
+    
   protected:
 
 #ifndef DOXYGEN_INTERNAL
