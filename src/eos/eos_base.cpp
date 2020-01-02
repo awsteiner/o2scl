@@ -41,3 +41,11 @@ const thermo &eos_base::get_thermo() {
   return *eos_thermo;
 }
 
+int eos_base::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
+			 fermion &e, bool include_muons,
+			 fermion &mu, fermion_rel &frel,
+			 std::shared_ptr<table_units<> > results) {
+  O2SCL_ERR("Function beta_eq_T0() not implemented.",
+	    o2scl::exc_eunimpl);
+  return o2scl::exc_eunimpl;
+}

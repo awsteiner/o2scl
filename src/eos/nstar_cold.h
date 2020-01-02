@@ -283,11 +283,10 @@ namespace o2scl {
 
     /** \brief Set the EOS table
 
-	In order for the \ref calc_nstar() function to use this 
-	table, it must
-	contain at least the columns <tt>ed, pr</tt>, and
-	<tt>nB</tt> which store the energy density, pressure,
-	and baryon density. 
+	In order for the \ref calc_nstar() function to use this table,
+	it must contain at least the columns <tt>ed, pr</tt>, and
+	<tt>nB</tt> which store the energy density, pressure, and
+	baryon density.
      */
     void set_eos_table(std::shared_ptr<table_units<> > t) {
       eost=t;

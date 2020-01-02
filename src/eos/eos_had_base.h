@@ -885,46 +885,7 @@ namespace o2scl {
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
 			   fermion &e, bool include_muons,
 			   fermion &mu, fermion_rel &frel,
-			   std::shared_ptr<table_units<> > results) {
-
-      // Ensure initial guess is valid
-      if (guess[0]<=0.0 || guess[0]>=nB_grid[0]) guess[0]=nB_grid[0]/2.0;
-
-      double nB_temp;
-      
-      mm_funct fmf=std::bind
-	(std::mem_fn<int(size_t,const ubvector &, ubvector &, 
-			 const double &, fermion &, bool, fermion &,
-			 fermion_rel &)>
-	 (&eos_had_base::solve_beta_eq_T0),
-	 this,std::placeholders::_1,std::placeholders::_2,
-	 std::placeholders::_3,std::cref(nB_temp),std::ref(e),
-	 include_muons,std::ref(mu),std::ref(frel));
-
-      results->clear();
-      results->line_of_names("ed pr nb nn np mun mup kfn kfp");
-      results->line_of_units(((std::string)"1/fm^4 1/fm^4 1/fm^3 1/fm^3 ")+
-			    "1/fm^3 1/fm 1/fm 1/fm 1/fm");
-      
-      for(size_t i=0;i<nB_grid.size();i++) {
-	nB_temp=nB_grid[i];
-	
-	beta_mroot.msolve(1,guess,fmf);
-	
-	// Final function evaluation to make sure, e.g.
-	// eos_thermo object is correct
-	ubvector y(1);
-	fmf(1,guess,y);
-	
-	std::vector<double> line={eos_thermo->ed,eos_thermo->pr,nB_temp,
-			     neutron->n,proton->n,
-			     neutron->mu,proton->mu,
-			     neutron->kf,proton->kf};
-	results->line_of_data(line);
-      }
-      
-      return 0;
-    }
+			   std::shared_ptr<table_units<> > results);
     
     /// Return string denoting type ("eos_had_base")
     virtual const char *type() { return "eos_had_base"; }
@@ -936,8 +897,7 @@ namespace o2scl {
 	derivatives numerically
     */
     void check_mu(fermion &n, fermion &p, thermo &th,
-		  double &mun_deriv, 
-		  double &mup_deriv,
+		  double &mun_deriv, double &mup_deriv,
 		  double &mun_err, double &mup_err);
 
     /** \brief Check the densities by computing the 
@@ -984,23 +944,7 @@ namespace o2scl {
     virtual int solve_beta_eq_T0(size_t nv, const ubvector &x,
 				 ubvector &y, const double &nB,
 				 fermion &e, bool include_muons,
-				 fermion &mu, fermion_rel &frel) {
-      
-      if (x[0]<0.0) return 1;
-      double n_charge=x[0];
-      proton->n=n_charge;
-      neutron->n=nB-n_charge;
-      if (neutron->n<0.0) return 2;
-      this->calc_e(*neutron,*proton,*eos_thermo);
-      e.mu=neutron->mu-proton->mu;
-      frel.calc_mu_zerot(e);
-      y[0]=n_charge-e.n;
-      if (include_muons) {
-	frel.calc_mu_zerot(mu);
-	y[0]=n_charge-e.n-mu.n;
-      }
-      return 0;
-    }
+				 fermion &mu, fermion_rel &frel);
     
 #endif
     

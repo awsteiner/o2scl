@@ -43,6 +43,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
+  // This is the K=240, Mstar/M=0.78 parameter set from GM91
   eos_had_rmf_hyp re;
   re.ms=508.194;
   re.mw=782.501;
@@ -57,6 +58,7 @@ int main(void) {
   re.cr=sqrt(4.791);
   re.b=0.008659;
   re.c=-0.00241;
+  re.inc_cascade=false;
   re.mnuc=(re.def_neutron.m+re.def_proton.m)/2.0;
 
   cout << "GM91: " << endl;
@@ -88,38 +90,44 @@ int main(void) {
   vector<double> xw_dat={0.091,0.233,0.375,0.517,0.658,0.800,
 			 0.942,1.08,1.23};
   size_t j=0;
-  for(re.xs=0.2;re.xs<1.0001;re.xs+=0.1,j++) {
-    re.calc_xw(-28.0/hc_mev_fm);
-    cout << "  " << j << " " << re.xs << " " << re.xw << endl;
-    if (j<7) {
-      t.test_rel(re.xw,xw_dat[j],0.002,"xw");
-    } else {
-      t.test_rel(re.xw,xw_dat[j],0.01,"xw");
-    }
-  }
-  cout << endl;
-
-  re.inc_cascade=false;
-  fermion e;
+  
+  fermion e, mu;
   e.init(o2scl_settings.get_convert_units().convert
 	 ("kg","1/fm",o2scl_mks::mass_electron),2.0);
-  std::shared_ptr<table_units<> > eos_table;
+  mu.init(o2scl_settings.get_convert_units().convert
+	 ("kg","1/fm",o2scl_mks::mass_muon),2.0);
+  std::shared_ptr<table_units<> > eos_table(new table_units<>);
   nstar_cold nc;
-  nc.verbose=1;
+  nc.verbose=0;
+  nc.def_tov.verbose=0;
 
   uniform_grid_end_width<double> nBg(0.04,1.0,0.01);
   ubvector nB_grid;
   nBg.vector(nB_grid);
-  ubvector guess(4);
-  guess[0]=0.0;
-  guess[1]=0.0;
-  guess[2]=0.0;
-  guess[3]=0.0;
+  ubvector guess(5);
   fermion_rel frel;
-  re.beta_eq_T0(nB_grid,guess,e,false,e,frel,eos_table);
-
-  nc.set_eos(eos_table);
-  nc.calc_nstar();
+  
+  for(re.xs=0.2;re.xs<1.0001;re.xs+=0.1,j++) {
+    
+    re.calc_xw(-28.0/hc_mev_fm);
+    
+    cout << j << " " << re.xs << " " << re.xw << " "
+	 << fabs(re.xw-xw_dat[j])/xw_dat[j] << " ";
+    
+    if (j<7) {
+      t.test_rel(re.xw,xw_dat[j],0.002,"xw");
+    } else {
+      t.test_rel(re.xw,xw_dat[j],0.005,"xw");
+    }
+    
+    re.beta_eq_T0(nB_grid,guess,e,true,mu,frel,eos_table);
+    
+    nc.set_eos_table(eos_table);
+    nc.calc_nstar();
+    cout << nc.get_tov_results()->max("gm") << endl;
+    
+  }
+  cout << endl;
   
   t.report();
 

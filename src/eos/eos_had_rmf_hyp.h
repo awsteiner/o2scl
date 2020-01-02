@@ -68,6 +68,13 @@ namespace o2scl {
     virtual int calc_e_solve_fun(size_t nv, const ubvector &ex, 
 			 ubvector &ey);
 
+    /** \brief Equation for solving for beta-equilibrium at T=0
+    */
+    virtual int solve_beta_eq_T0(size_t nv, const ubvector &x,
+				 ubvector &y, const double &nB,
+				 fermion &e, bool include_muons,
+				 fermion &mu, fermion_rel &frel);
+    
   public:
 
     eos_had_rmf_hyp();
@@ -134,20 +141,10 @@ namespace o2scl {
 		       fermion &sigm, fermion &casz, fermion &casm,
 		       thermo &lth);
 
-#ifdef O2SCL_NEVER_DEFINED
-
     /** \brief Set the hyperon objects
      */
     virtual void set_hyp(fermion &lam, fermion &sigp, fermion &sigz, 
-			 fermion &sigm, fermion &casz, fermion &casm) {
-      lambda=&lam;
-      sigma_p=&sigp;
-      sigma_z=&sigz;
-      sigma_m=&sigm;
-      cascade_z=&casz;
-      cascade_m=&casm;
-      return 0;
-    }
+			 fermion &sigm, fermion &casz, fermion &casm);
     
     /** \brief Compute the EOS in beta-equilibrium at 
 	zero temperature
@@ -155,77 +152,8 @@ namespace o2scl {
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
 			   fermion &e, bool include_muons,
 			   fermion &mu, fermion_rel &frel,
-			   std::shared_ptr<table_units<> > results) {
-      
-      if (guess[0]<=0.0 || guess[0]>=nB) guess[0]=nB/2.0;
-      if (guess[1]!=0.0 && guess[2]!=0.0 && guess[3]!=0.0) {
-	this->set_fields(guess[1],guess[2],guess[3]);
-      }
-
-      double nB_temp;
-      
-      mm_funct fmf=std::bind
-	(std::mem_fn<int(size_t,const ubvector &, ubvector &, 
-			 const double &, fermion &, bool,
-			 fermion &, fermion_rel &)>
-	 (&eos_had_eden_base::solve_beta_eq_T0),
-	 this,std::placeholders::_1,std::placeholders::_2,
-	 std::placeholders::_3,std::cref(nB_temp),std::ref(e),
-	 include_muons,std::ref(mu),std::ref(frel));
-      
-      results->clear();
-      results->line_of_names(((std::string)"ed pr nb nn np nlam ")+
-			     "nsigp nsigz nsigm mun mup mulam musigp musigz "+
-			     "musigm kfn kfp kflam kfsigp kfsigz kfsigm");
-      results->line_of_units(((std::string)"1/fm^4 1/fm^4 1/fm^3 ")+
-			     "1/fm^3 1/fm^3 1/fm^3 1/fm^3 1/fm^3 "+
-			     "1/fm^3 1/fm^3 1/fm 1/fm 1/fm 1/fm 1/fm 1/fm "+
-			     "1/fm 1/fm 1/fm 1/fm 1/fm 1/fm");
-      if (inc_cascade) {
-	results->line_of_names("ncasz ncasm mucasz mucasm kfcasz kfcasm");
-	results->set_unit("ncasz","1/fm^3");
-	results->set_unit("ncasz","1/fm^3");
-	results->set_unit("mucasz","1/fm");
-	results->set_unit("mucasm","1/fm");
-	results->set_unit("kfcasz","1/fm");
-	results->set_unit("kfcasm","1/fm");
-      }
-      
-      for(size_t i=0;i<nB_grid.size();i++) {
-	nB_temp=nB_grid[i];
-	
-	beta_mroot.solve(1,guess,fmf);
-	
-	// Final function evaluation to make sure, e.g.
-	// eos_thermo object is correct
-	ubvector y(1);
-	fmf(1,guess,y);
-
-	std::vector<double> line={eos_thermo->ed,eos_thermo->pr,nB_temp,
-				  neutron->n,proton->n,lambda->n,
-				  sigma_p->n,sigma_z->n,sigma_m->n,
-				  neutron->mu,proton->mu,lambda->mu,
-				  sigma_p->mu,sigma_z->mu,sigma_m->mu,
-				  neutron->kf,proton->kf,lambda->kf,
-				  sigma_p->kf,sigma_z->kf,sigma_m->kf};
-	results->line_of_data(line);
-	if (inc_cascade) {
-	  row=results->get_nlines()-1;
-	  results->set("ncasz",row,cascade_z->n);
-	  results->set("ncasm",row,cascade_z->n);
-	  results->set("mucasz",row,cascade_z->mu);
-	  results->set("mucasm",row,cascade_z->mu;
-	  results->set("kfcasz",row,cascade_z->kf);
-	  results->set("kfcasm",row,cascade_z->kf);
-	}
-	  
-      }
-      
-      return 0;
-    }
-
-#endif
-
+			   std::shared_ptr<table_units<> > results);
+    
   };
 
 #ifndef DOXYGENP
