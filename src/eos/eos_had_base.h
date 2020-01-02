@@ -882,39 +882,46 @@ namespace o2scl {
     /** \brief Compute the EOS in beta-equilibrium at 
 	zero temperature
     */
-    virtual int beta_eq_T0(double nB, ubvector &guess,
+    virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
 			   fermion &e, bool include_muons,
 			   fermion &mu, fermion_rel &frel,
-			   std::vector<double> &res) {
+			   std::shared_ptr<table_units<> > results) {
 
       // Ensure initial guess is valid
-      if (guess[0]<=0.0 || guess[0]>=nB) guess[0]=nB/2.0;
+      if (guess[0]<=0.0 || guess[0]>=nB_grid[0]) guess[0]=nB_grid[0]/2.0;
+
+      double nB_temp;
       
       mm_funct fmf=std::bind
 	(std::mem_fn<int(size_t,const ubvector &, ubvector &, 
-			 const double, fermion &, bool, fermion &,
+			 const double &, fermion &, bool, fermion &,
 			 fermion_rel &)>
 	 (&eos_had_base::solve_beta_eq_T0),
 	 this,std::placeholders::_1,std::placeholders::_2,
-	 std::placeholders::_3,nB,std::ref(e),include_muons,std::ref(mu),
-	 std::ref(frel));
+	 std::placeholders::_3,std::cref(nB_temp),std::ref(e),
+	 include_muons,std::ref(mu),std::ref(frel));
+
+      results->clear();
+      results->line_of_names("ed pr nb nn np mun mup kfn kfp");
+      results->line_of_units(((std::string)"1/fm^4 1/fm^4 1/fm^3 1/fm^3 ")+
+			    "1/fm^3 1/fm 1/fm 1/fm 1/fm");
       
-      beta_mroot.msolve(1,guess,fmf);
-
-      // Final function evaluation to make sure, e.g.
-      // eos_thermo object is correct
-      ubvector y(1);
-      fmf(1,guess,y);
-
-      if (res.size()<8) res.resize(8);
-      res[0]=eos_thermo->ed;
-      res[1]=eos_thermo->pr;
-      res[2]=neutron->n;
-      res[3]=proton->n;
-      res[4]=neutron->mu;
-      res[5]=proton->mu;
-      res[6]=neutron->kf;
-      res[7]=proton->kf;
+      for(size_t i=0;i<nB_grid.size();i++) {
+	nB_temp=nB_grid[i];
+	
+	beta_mroot.msolve(1,guess,fmf);
+	
+	// Final function evaluation to make sure, e.g.
+	// eos_thermo object is correct
+	ubvector y(1);
+	fmf(1,guess,y);
+	
+	std::vector<double> line={eos_thermo->ed,eos_thermo->pr,nB_temp,
+			     neutron->n,proton->n,
+			     neutron->mu,proton->mu,
+			     neutron->kf,proton->kf};
+	results->line_of_data(line);
+      }
       
       return 0;
     }
@@ -975,7 +982,7 @@ namespace o2scl {
     /** \brief Equation for solving for beta-equilibrium at T=0
     */
     virtual int solve_beta_eq_T0(size_t nv, const ubvector &x,
-				 ubvector &y, const double nB,
+				 ubvector &y, const double &nB,
 				 fermion &e, bool include_muons,
 				 fermion &mu, fermion_rel &frel) {
       

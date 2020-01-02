@@ -63,10 +63,10 @@ namespace o2scl {
     /** \brief Compute the EOS in beta-equilibrium at 
 	zero temperature
     */
-    virtual int beta_eq_T0(double nB, ubvector &guess,
+    virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
 			   fermion &e, bool include_muons,
 			   fermion &mu, fermion_rel &frel,
-			   std::vector<double> &res) {
+			   std::shared_ptr<table_units<> > results) {
       O2SCL_ERR("Function beta_eq_T0() not implemented.",
 		o2scl::exc_eunimpl);
       return o2scl::exc_eunimpl;

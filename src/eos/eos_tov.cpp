@@ -440,6 +440,20 @@ void eos_tov_interp::read_table(table_units<> &eosat, string s_cole,
     O2SCL_ERR2("Size of table less than 2 rows in ",
 	       "eos_tov_interp::read_table().",exc_einval);
   }
+
+  if (!eosat.is_column(s_cole)) {
+    O2SCL_ERR((((std::string)"Column ")+s_cole+" not found in table in "+
+	       "eos_tov_interp::read_table().").c_str(),o2scl::exc_einval);
+  }
+  if (!eosat.is_column(s_colp)) {
+    O2SCL_ERR((((std::string)"Column ")+s_colp+" not found in table in "+
+	       "eos_tov_interp::read_table().").c_str(),o2scl::exc_einval);
+  }
+  if (s_colnb.length()>0 && !eosat.is_column(s_colnb)) {
+    O2SCL_ERR((((std::string)"Column ")+s_colnb+" not found in table in "+
+	       "eos_tov_interp::read_table().").c_str(),o2scl::exc_einval);
+  }
+  
   if (eosat.get(s_colp,0)>eosat.get(s_colp,core_nlines-1)) {
     eosat.summary(&std::cout);
     cout << core_nlines << " " << s_colp << " ";

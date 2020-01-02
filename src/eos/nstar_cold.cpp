@@ -434,6 +434,18 @@ double nstar_cold::calc_urca(double np_0) {
 }
 
 int nstar_cold::calc_nstar() {
+  if (!eost->is_column("ed")) {
+    O2SCL_ERR2("Column ed not found in table in ",
+	       "eos_tov_interp::read_table().",o2scl::exc_einval);
+  }
+  if (!eost->is_column("pr")) {
+    O2SCL_ERR2("Column pr not found in table in ",
+	       "eos_tov_interp::read_table().",o2scl::exc_einval);
+  }
+  if (!eost->is_column("nb")) {
+    O2SCL_ERR2("Column nb not found in table in ",
+	       "eos_tov_interp::read_table().",o2scl::exc_einval);
+  }
   def_eos_tov.read_table(*eost,"ed","pr","nb");
   
   tp->set_units("1/fm^4","1/fm^4","1/fm^3");

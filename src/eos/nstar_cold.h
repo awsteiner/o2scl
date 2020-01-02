@@ -281,17 +281,20 @@ namespace o2scl {
     /// Verbosity parameter (default 0)
     int verbose;
 
-    /** \brief Return the results data table
+    /** \brief Set the EOS table
 
-	This function immediately adds four constants to the table,
-	<tt>schwarz, Msun, pi</tt> and <tt>mproton</tt>.
+	In order for the \ref calc_nstar() function to use this 
+	table, it must
+	contain at least the columns <tt>ed, pr</tt>, and
+	<tt>nB</tt> which store the energy density, pressure,
+	and baryon density. 
      */
     void set_eos_table(std::shared_ptr<table_units<> > t) {
       eost=t;
       return;
     }
-
-      /** \brief Get the eos table (after having called calc_eos())
+    
+    /** \brief Get the eos table (after having called calc_eos())
      */
     std::shared_ptr<table_units<> > get_eos_results() {
       return eost;

@@ -100,11 +100,26 @@ int main(void) {
   cout << endl;
 
   re.inc_cascade=false;
+  fermion e;
+  e.init(o2scl_settings.get_convert_units().convert
+	 ("kg","1/fm",o2scl_mks::mass_electron),2.0);
+  std::shared_ptr<table_units<> > eos_table;
   nstar_cold nc;
-  nc.set_eos(re);
   nc.verbose=1;
-  //nc.calc_eos();
-  //nc.calc_nstar();
+
+  uniform_grid_end_width<double> nBg(0.04,1.0,0.01);
+  ubvector nB_grid;
+  nBg.vector(nB_grid);
+  ubvector guess(4);
+  guess[0]=0.0;
+  guess[1]=0.0;
+  guess[2]=0.0;
+  guess[3]=0.0;
+  fermion_rel frel;
+  re.beta_eq_T0(nB_grid,guess,e,false,e,frel,eos_table);
+
+  nc.set_eos(eos_table);
+  nc.calc_nstar();
   
   t.report();
 

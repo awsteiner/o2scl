@@ -152,67 +152,73 @@ namespace o2scl {
     /** \brief Compute the EOS in beta-equilibrium at 
 	zero temperature
     */
-    virtual int beta_eq_T0(double nB, std::vector<double> &guess,
+    virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
 			   fermion &e, bool include_muons,
 			   fermion &mu, fermion_rel &frel,
-			   std::vector<double> &res) {
+			   std::shared_ptr<table_units<> > results) {
       
       if (guess[0]<=0.0 || guess[0]>=nB) guess[0]=nB/2.0;
-      this->set_fields(guess[1],guess[2],guess[3]);
+      if (guess[1]!=0.0 && guess[2]!=0.0 && guess[3]!=0.0) {
+	this->set_fields(guess[1],guess[2],guess[3]);
+      }
+
+      double nB_temp;
       
       mm_funct fmf=std::bind
 	(std::mem_fn<int(size_t,const ubvector &, ubvector &, 
-			 const double, fermion &, bool,
+			 const double &, fermion &, bool,
 			 fermion &, fermion_rel &)>
 	 (&eos_had_eden_base::solve_beta_eq_T0),
 	 this,std::placeholders::_1,std::placeholders::_2,
-	 std::placeholders::_3,nB,std::ref(e),bool,std::ref(mu),
-	 std::ref(frel));
+	 std::placeholders::_3,std::cref(nB_temp),std::ref(e),
+	 include_muons,std::ref(mu),std::ref(frel));
       
-      beta_mroot.solve(1,guess,fmf);
-
-      // Final function evaluation to make sure, e.g.
-      // eos_thermo object is correct
-      ubvector y(1);
-      fmf(1,guess,y);
-
+      results->clear();
+      results->line_of_names(((std::string)"ed pr nb nn np nlam ")+
+			     "nsigp nsigz nsigm mun mup mulam musigp musigz "+
+			     "musigm kfn kfp kflam kfsigp kfsigz kfsigm");
+      results->line_of_units(((std::string)"1/fm^4 1/fm^4 1/fm^3 ")+
+			     "1/fm^3 1/fm^3 1/fm^3 1/fm^3 1/fm^3 "+
+			     "1/fm^3 1/fm^3 1/fm 1/fm 1/fm 1/fm 1/fm 1/fm "+
+			     "1/fm 1/fm 1/fm 1/fm 1/fm 1/fm");
       if (inc_cascade) {
-	if (res.size()<26) res.resize(26);
-      } else {
-	if (res.size()<20) res.resize(20);
+	results->line_of_names("ncasz ncasm mucasz mucasm kfcasz kfcasm");
+	results->set_unit("ncasz","1/fm^3");
+	results->set_unit("ncasz","1/fm^3");
+	results->set_unit("mucasz","1/fm");
+	results->set_unit("mucasm","1/fm");
+	results->set_unit("kfcasz","1/fm");
+	results->set_unit("kfcasm","1/fm");
       }
       
-      res[0]=neutron->n;
-      res[1]=proton->n;
-      res[2]=lambda->n;
-      res[3]=sigma_p->n;
-      res[4]=sigma_z->n;
-      res[5]=sigma_m->n;
-      
-      res[6]=eos_thermo->ed;
-      res[7]=eos_thermo->pr;
-      
-      res[8]=neutron->mu;
-      res[9]=proton->mu;
-      res[10]=lambda->mu;
-      res[11]=sigma_p->mu;
-      res[12]=sigma_z->mu;
-      res[13]=sigma_m->mu;
-      
-      res[14]=neutron->kf;
-      res[15]=proton->kf;
-      res[16]=lambda->kf;
-      res[17]=sigma_p->kf;
-      res[18]=sigma_z->kf;
-      res[19]=sigma_m->kf;
-      
-      if (inc_cascade) {
-	res[20]=cascade_z->n;
-	res[21]=cascade_m->n;
-	res[22]=cascade_z->mu;
-	res[23]=cascade_m->mu;
-	res[24]=cascade_z->kf;
-	res[25]=cascade_m->kf;
+      for(size_t i=0;i<nB_grid.size();i++) {
+	nB_temp=nB_grid[i];
+	
+	beta_mroot.solve(1,guess,fmf);
+	
+	// Final function evaluation to make sure, e.g.
+	// eos_thermo object is correct
+	ubvector y(1);
+	fmf(1,guess,y);
+
+	std::vector<double> line={eos_thermo->ed,eos_thermo->pr,nB_temp,
+				  neutron->n,proton->n,lambda->n,
+				  sigma_p->n,sigma_z->n,sigma_m->n,
+				  neutron->mu,proton->mu,lambda->mu,
+				  sigma_p->mu,sigma_z->mu,sigma_m->mu,
+				  neutron->kf,proton->kf,lambda->kf,
+				  sigma_p->kf,sigma_z->kf,sigma_m->kf};
+	results->line_of_data(line);
+	if (inc_cascade) {
+	  row=results->get_nlines()-1;
+	  results->set("ncasz",row,cascade_z->n);
+	  results->set("ncasm",row,cascade_z->n);
+	  results->set("mucasz",row,cascade_z->mu);
+	  results->set("mucasm",row,cascade_z->mu;
+	  results->set("kfcasz",row,cascade_z->kf);
+	  results->set("kfcasm",row,cascade_z->kf);
+	}
+	  
       }
       
       return 0;
