@@ -89,8 +89,6 @@ int main(void) {
   // This corrects an apparent typo, 568 -> 658 in Table I of GM91
   vector<double> xw_dat={0.091,0.233,0.375,0.517,0.658,0.800,
 			 0.942,1.08,1.23};
-  size_t j=0;
-  
   fermion e, mu;
   e.init(o2scl_settings.get_convert_units().convert
 	 ("kg","1/fm",o2scl_mks::mass_electron),2.0);
@@ -106,7 +104,8 @@ int main(void) {
   nBg.vector(nB_grid);
   ubvector guess(5);
   fermion_rel frel;
-  
+
+  size_t j=0;
   for(re.xs=0.2;re.xs<1.0001;re.xs+=0.1,j++) {
     
     re.calc_xw(-28.0/hc_mev_fm);
