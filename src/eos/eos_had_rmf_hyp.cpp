@@ -594,10 +594,10 @@ int eos_had_rmf_hyp::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
      include_muons,std::ref(mu),std::ref(frel));
       
   results->clear();
-  results->line_of_names(((std::string)"ed pr nb nn np nlam ")+
+  results->line_of_names(((std::string)"ed pr nb ne nmu nn np nlam ")+
 			 "nsigp nsigz nsigm mun mup mulam musigp musigz "+
 			 "musigm kfn kfp kflam kfsigp kfsigz kfsigm");
-  results->line_of_units(((std::string)"1/fm^4 1/fm^4 ")+
+  results->line_of_units(((std::string)"1/fm^4 1/fm^4 1/fm^3 1/fm^3 ")+
 			 "1/fm^3 1/fm^3 1/fm^3 1/fm^3 1/fm^3 "+
 			 "1/fm^3 1/fm^3 1/fm 1/fm 1/fm 1/fm 1/fm 1/fm "+
 			 "1/fm 1/fm 1/fm 1/fm 1/fm 1/fm");
@@ -622,6 +622,7 @@ int eos_had_rmf_hyp::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
     fmf(5,guess,y);
 
     std::vector<double> line={eos_thermo->ed,eos_thermo->pr,nB_temp,
+			      e.n,mu.n,
 			      neutron->n,proton->n,lambda->n,
 			      sigma_p->n,sigma_z->n,sigma_m->n,
 			      neutron->mu,proton->mu,lambda->mu,
@@ -666,6 +667,7 @@ int eos_had_rmf_hyp::solve_beta_eq_T0(size_t nv, const ubvector &x,
   
   y[0]=proton->n+sigma_p->n-sigma_m->n-cascade_m->n-e.n;
   if (include_muons) {
+    mu.mu=e.mu;
     frel.calc_mu_zerot(mu);
     y[0]-=mu.n;
   }

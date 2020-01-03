@@ -99,7 +99,7 @@ int main(void) {
   nc.verbose=0;
   nc.def_tov.verbose=0;
 
-  uniform_grid_end_width<double> nBg(0.04,1.0,0.01);
+  uniform_grid_end_width<double> nBg(0.04,1.2,0.01);
   ubvector nB_grid;
   nBg.vector(nB_grid);
   ubvector guess(5);
@@ -107,6 +107,7 @@ int main(void) {
 
   size_t j=0;
   for(re.xs=0.2;re.xs<1.0001;re.xs+=0.1,j++) {
+    re.xr=re.xs;
     
     re.calc_xw(-28.0/hc_mev_fm);
     
@@ -120,14 +121,35 @@ int main(void) {
     }
     
     re.beta_eq_T0(nB_grid,guess,e,true,mu,frel,eos_table);
-    
+
     nc.set_eos_table(eos_table);
     nc.calc_nstar();
-    cout << nc.get_tov_results()->max("gm") << endl;
+    double m_max=nc.get_tov_results()->max("gm");
+    size_t row=nc.get_tov_results()->lookup("gm",m_max);
+    double nb_max=nc.get_tov_results()->get("nb",row);
+					    
+    cout << m_max << " " << nb_max << endl;
+
+    if (false && j==4) {
+      cout << endl;
+      for(size_t i=0;i<eos_table->get_nlines();i++) {
+	cout << eos_table->get("nb",i) << " ";
+	cout << eos_table->get("ne",i) << " ";
+	cout << eos_table->get("nmu",i) << " ";
+	cout << eos_table->get("nn",i) << " ";
+	cout << eos_table->get("np",i) << " ";
+	cout << eos_table->get("nlam",i) << " ";
+	cout << eos_table->get("nsigm",i) << " ";
+	cout << eos_table->get("nsigz",i) << " ";
+	cout << eos_table->get("nsigp",i) << endl;
+      }
+      cout << endl;
+    }      
+    
     
   }
   cout << endl;
-  
+
   t.report();
 
   return 0;

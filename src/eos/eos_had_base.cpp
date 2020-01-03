@@ -1349,6 +1349,7 @@ int eos_had_base::solve_beta_eq_T0(size_t nv, const ubvector &x,
   frel.calc_mu_zerot(e);
   y[0]=n_charge-e.n;
   if (include_muons) {
+    mu.mu=e.mu;
     frel.calc_mu_zerot(mu);
     y[0]=n_charge-e.n-mu.n;
   }
