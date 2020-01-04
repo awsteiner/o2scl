@@ -131,6 +131,15 @@ int eos_had_rmf_hyp::calc_eq_p
   if (inc_cascade) {
     fet->calc_mu_zerot(casz);
     fet->calc_mu_zerot(casm);
+  } else {
+    casz.n=0.0;
+    casm.n=0.0;
+    casz.ms=casz.m;
+    casm.ms=casm.m;
+    casz.ed=0.0;
+    casm.ed=0.0;
+    casz.pr=0.0;
+    casm.pr=0.0;
   }
 
   sig2=sig*sig;
@@ -138,7 +147,7 @@ int eos_had_rmf_hyp::calc_eq_p
   ome2=ome*ome;
   ome4=ome2*ome2;
   rho2=lrho*lrho;
-  
+
   duds=b*ne.m*gs2*gs*sig2+c*gs2*gs2*sig2*sig;
   
   fun=a1*sig+a2*sig2+a3*sig2*sig+a4*sig4+
@@ -187,10 +196,6 @@ int eos_had_rmf_hyp::calc_eq_p
     f3=mr*mr*lrho-gr*(pr.n-ne.n)*0.5+xi*gr2*gr2*rho2*lrho/6.0+
       2.0*gr2*lrho*fun-grs*(sigp.n-sigm.n+0.5*(casz.n-casm.n));
     
-    // The thermodynamic identity could be used instead of 
-    // these explicit expressions, but it's nice to have them
-    // available here.
-    
     lth.pr=-us-0.5*ms*ms*sig2+0.5*mw*mw*ome*ome+0.5*mr*mr*lrho*lrho+
       zeta/24.0*gw2*gw2*ome4+xi/24.0*gr2*gr2*rho2*rho2+gr2*rho2*fun+
       ne.pr+pr.pr+lam.pr+sigp.pr+sigz.pr+sigm.pr+casz.pr+casm.pr;
@@ -205,13 +210,11 @@ int eos_had_rmf_hyp::calc_eq_p
     // Xi- -1/2
     // Xi0 +1/2
 
-    lth.ed=us+0.5*ms*ms*sig2-0.5*mw*mw*ome*ome-0.5*mr*mr*lrho*lrho+
-      ne.ed+pr.ed+lam.ed+sigp.ed+sigz.ed+sigm.ed+casz.ed+casm.ed-
-      zeta/24.0*gw2*gw2*ome4-xi/24.0*gr2*gr2*rho2*rho2-fun*gr2*rho2+
-      gw*ome*(ne.n+pr.n+lam.n+sigp.n+sigz.n+sigm.n+casz.n+casm.n)-
-      0.5*gr*lrho*(ne.n-pr.n)-grs*lrho*(sigm.n-sigp.n-0.5*
-					(casz.n-casm.n));
-    
+    lth.ed=us+0.5*ms*ms*sig2+0.5*mw*mw*ome*ome+0.5*mr*mr*lrho*lrho+
+      ne.ed+pr.ed+lam.ed+sigp.ed+sigz.ed+sigm.ed+casz.ed+casm.ed+
+      zeta/8.0*gw2*gw2*ome4+xi/8.0*gr2*gr2*rho2*rho2+
+      gr2*rho2*(fun+ome*dfdw);
+          
   } else {
 
     f1=ms*ms*sig-gs*(ns_n+ns_p)+duds-gr2*rho2*
@@ -224,19 +227,24 @@ int eos_had_rmf_hyp::calc_eq_p
     f3=mr*mr*lrho-gr*(pr.n-ne.n)*0.5+xi*gr2*gr2*rho2*lrho/6.0+
       2.0*gr2*lrho*fun-grs*0.5*(sigp.n-sigm.n);
 
-    // The thermodynamic identity could be used instead of 
-    // these explicit expressions, but it's nice to have them
-    // available here.
-    
     lth.pr=-us-0.5*ms*ms*sig2+0.5*mw*mw*ome*ome+0.5*mr*mr*lrho*lrho+
       zeta/24.0*gw2*gw2*ome4+xi/24.0*gr2*gr2*rho2*rho2+gr2*rho2*fun+
       ne.pr+pr.pr+lam.pr+sigp.pr+sigz.pr+sigm.pr;
     
-    lth.ed=us+0.5*ms*ms*sig2-0.5*mw*mw*ome*ome-0.5*mr*mr*lrho*lrho+
-      ne.ed+pr.ed+lam.ed+sigp.ed+sigz.ed+sigm.ed-
-      zeta/24.0*gw2*gw2*ome4-xi/24.0*gr2*gr2*rho2*rho2-fun*gr2*rho2+
-      gw*ome*(ne.n+pr.n+lam.n+sigp.n+sigz.n+sigm.n)-
-      0.5*gr*lrho*(ne.n-pr.n)-grs*lrho*(sigm.n-sigp.n);
+    // Isospins
+    // Neutron -1/2
+    // Proton +1/2
+    // Lambda 0
+    // Sigma- -1
+    // Sigma0 0
+    // Sigma+ +1
+    // Xi- -1/2
+    // Xi0 +1/2
+
+    lth.ed=us+0.5*ms*ms*sig2+0.5*mw*mw*ome*ome+0.5*mr*mr*lrho*lrho+
+      ne.ed+pr.ed+lam.ed+sigp.ed+sigz.ed+sigm.ed+
+      zeta/8.0*gw2*gw2*ome4+xi/8.0*gr2*gr2*rho2*rho2+
+      gr2*rho2*(fun+ome*dfdw);
     
   }
 
