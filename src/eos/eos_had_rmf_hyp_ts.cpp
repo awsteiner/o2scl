@@ -40,7 +40,7 @@ using namespace o2scl_const;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-int main(void) {
+int main(int argc, char *argv[]) {
 
   cout.setf(ios::scientific);
   test_mgr t;
@@ -124,8 +124,17 @@ int main(void) {
     } else {
       t.test_rel(re.xw,xw_dat[j],0.005,"xw");
     }
-    
+
+    //cout.precision(10);
     re.beta_eq_T0(nB_grid,guess,e,true,mu,frel,eos_table);
+    /*
+    for(size_t j=0;j<eos_table->get_nlines();j+=10) {
+      cout << j << " ";
+      cout << eos_table->get("nb",j) << " ";
+      cout << eos_table->get("ed",j) << " ";
+      cout << eos_table->get("pr",j) << endl;
+    }
+    */
 
     nc.set_eos_table(eos_table);
     nc.calc_nstar();

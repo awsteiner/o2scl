@@ -483,10 +483,15 @@ namespace o2scl {
     }
 
     if (this->verbose>0) {
-      std::cout << "astep_gsl step:";
+      std::cout << "astep_gsl astep(): ";
       std::cout << x << " ";
       for(size_t j=0;j<n;j++) std::cout << y[j] << " ";
       std::cout << std::endl;
+      if (this->verbose>1) {
+	std::cout << "Press a key and type enter to continue. ";
+	char ch;
+	std::cin >> ch;
+      }
     }
 
     return ret;
@@ -526,10 +531,15 @@ namespace o2scl {
     }
 	
     if (this->verbose>0) {
-      std::cout << "astep_gsl step:";
+      std::cout << "astep_gsl astep_derivs(): ";
       std::cout << x << " ";
       for(size_t j=0;j<n;j++) std::cout << y[j] << " ";
       std::cout << std::endl;
+      if (this->verbose>1) {
+	std::cout << "Press a key and type enter to continue. ";
+	char ch;
+	std::cin >> ch;
+      }
     }
 
     return ret;
@@ -567,10 +577,15 @@ namespace o2scl {
 			 derivs);
     
     if (this->verbose>0) {
-      std::cout << "astep_gsl step:";
+      std::cout << "astep_gsl astep_full(): ";
       std::cout << x_out << " ";
       for(size_t j=0;j<n;j++) std::cout << yout[j] << " ";
       std::cout << std::endl;
+      if (this->verbose>1) {
+	std::cout << "Press a key and type enter to continue. ";
+	char ch;
+	std::cin >> ch;
+      }
     }
 
     return ret;

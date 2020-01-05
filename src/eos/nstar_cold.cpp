@@ -71,6 +71,7 @@ nstar_cold::nstar_cold() : eost(new table_units<>) {
 
   err_nonconv=true;
   well_formed=true;
+
 }
 
 double nstar_cold::solve_fun(double x, thermo &hb) {
@@ -446,6 +447,7 @@ int nstar_cold::calc_nstar() {
     O2SCL_ERR2("Column nb not found in table in ",
 	       "eos_tov_interp::read_table().",o2scl::exc_einval);
   }
+  
   def_eos_tov.read_table(*eost,"ed","pr","nb");
   
   tp->set_units("1/fm^4","1/fm^4","1/fm^3");

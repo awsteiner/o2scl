@@ -549,6 +549,12 @@ void eos_tov_interp::internal_read() {
     full_vecnb.clear();
   }
 
+  if (verbose>1) {
+    cout << "eos_tov_interp::read_internal(): " << endl;
+    cout << "efactor,pfactor,nfactor: "
+	 << efactor << " " << pfactor << " " << nfactor << endl;
+  }
+  
   if (use_crust) {
 
     size_t crust_nlines=crust_vece.size();
@@ -556,7 +562,9 @@ void eos_tov_interp::internal_read() {
     // Verbose output if use_crust is true
     if (verbose>1) {
       cout << "Crust: use_crust = " << use_crust << " crust_nlines = "
-	   << crust_nlines << " core_nlines = " << core_nlines << endl;
+	   << crust_nlines << endl;
+      cout << "ed, pr, nb (internal units), ed, pr, nb (user units)"
+	   << endl;
     }
 
     // Add crust EOS before transition to full_vece, full_vecp, and
@@ -592,6 +600,8 @@ void eos_tov_interp::internal_read() {
 
       if (verbose>1) {
 	cout << "Transition: " << endl;
+	cout << "ed, pr, nb (internal units), ed, pr, nb (user units)"
+	     << endl;
       }
       
       // Add 21 transition points for the transition region
@@ -659,12 +669,13 @@ void eos_tov_interp::internal_read() {
 
     }
 
-  } else {
-    // Verbose output if use_crust is false
-    if (verbose>1) {
-      cout << "Crust: use_crust = " << use_crust 
-	   << " core_nlines = " << core_nlines << endl;
-    }
+  }
+
+  // Verbose output
+  if (verbose>1) {
+    cout << "Core: core_nlines = " << core_nlines << endl;
+    cout << "ed, pr, nb (internal units), ed, pr, nb (user units)"
+	 << endl;
   }
   
   // Add core EOS to full_vece, full_vecp and full_vecnb,
@@ -807,9 +818,9 @@ void eos_tov_interp::default_low_dens_eos() {
 
   // The energy density and pressure are already in Msun/km^3 and the
   // baryon density is in fm^{-3}
-  efactor=1.0;
-  pfactor=1.0;
-  nfactor=1.0;
+  //efactor=1.0;
+  //pfactor=1.0;
+  //nfactor=1.0;
     
   if (verbose>1) {
     cout << "Transition pressure: " << trans_pres << endl;
@@ -919,9 +930,9 @@ void eos_tov_interp::sho11_low_dens_eos() {
     
   // The energy density and pressure are already in Msun/km^3 and the
   // baryon density is in fm^{-3}
-  efactor=1.0;
-  pfactor=1.0;
-  nfactor=1.0;
+  //efactor=1.0;
+  //pfactor=1.0;
+  //nfactor=1.0;
 
   trans_pres=crust_vecp[crust_nlines-1];
     
@@ -1027,9 +1038,9 @@ void eos_tov_interp::ngl13_low_dens_eos(double L, string model,
 
   // The energy density and pressure are already in Msun/km^3 and the
   // baryon density is in fm^{-3}
-  efactor=1.0;
-  pfactor=1.0;
-  nfactor=1.0;
+  //efactor=1.0;
+  //pfactor=1.0;
+  //nfactor=1.0;
 
   // --------------------------------------------------------------
   // Set columns and limiting values
@@ -1152,9 +1163,9 @@ void eos_tov_interp::ngl13_low_dens_eos2(double S, double L, double nt,
   // The energy density and pressure are already in Msun/km^3 and the
   // baryon density is in fm^{-3}
 
-  efactor=1.0;
-  pfactor=1.0;
-  nfactor=1.0;
+  //efactor=1.0;
+  //pfactor=1.0;
+  //nfactor=1.0;
 
   // --------------------------------------------------------------
   // Set columns and limiting values
