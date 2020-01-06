@@ -49,6 +49,23 @@ eos_had_rmf_hyp::eos_had_rmf_hyp() {
   sigma_m=&def_sigma_m;
   cascade_m=&def_cascade_m;
   cascade_z=&def_cascade_z;
+
+  neutron->inc_rest_mass=true;
+  neutron->non_interacting=false;
+  proton->inc_rest_mass=true;
+  proton->non_interacting=false;
+  lambda->inc_rest_mass=true;
+  lambda->non_interacting=false;
+  sigma_p->inc_rest_mass=true;
+  sigma_p->non_interacting=false;
+  sigma_z->inc_rest_mass=true;
+  sigma_z->non_interacting=false;
+  sigma_m->inc_rest_mass=true;
+  sigma_m->non_interacting=false;
+  cascade_z->inc_rest_mass=true;
+  cascade_z->non_interacting=false;
+  cascade_m->inc_rest_mass=true;
+  cascade_m->non_interacting=false;
 }
 
 int eos_had_rmf_hyp::calc_eq_p
@@ -59,6 +76,37 @@ int eos_had_rmf_hyp::calc_eq_p
   double duds,us,fun,gs2,gr2,gw2,gs,gr,gw,sig2,ome2;
   double rho2,sig4,ome4,dfdw,fnn=0.0,fnp=0.0;
 
+#if !O2SCL_NO_RANGE_CHECK
+  if (!std::isfinite(ne.n) || !std::isfinite(ne.n) ||
+      !std::isfinite(lam.n) || !std::isfinite(sigp.n) ||
+      !std::isfinite(sigz.n) || !std::isfinite(sigm.n) ||
+      (inc_cascade==true &&
+       !std::isfinite(casz.n) || !std::isfinite(casm.n))) {
+    O2SCL_ERR2("At least one baryon density not finite in ",
+	       "eos_had_apr::calc_e().",exc_einval);
+  }
+  if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10 ||
+      fabs(lam.g-2.0)>1.0e-10 || fabs(sigp.g-2.0)>1.0e-10 ||
+      fabs(sigz.g-2.0)>1.0e-10 || fabs(sigm.g-2.0)>1.0e-10 ||
+      (inc_cascade==true &&
+       (fabs(casz.g-2.0)>1.0e-10 || fabs(casm.g-2.0)>1.0e-10))) {
+    O2SCL_ERR2("At least one of the baryon spin degeneracies ",
+	       "is wrong in eos_had_apr::calc_e().",exc_einval);
+  }
+  if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
+    O2SCL_ERR2("Neutron or proton masses wrong in ",
+	       "eos_had_apr::calc_e().",exc_einval);
+  }
+  if (ne.non_interacting==true || pr.non_interacting==true ||
+      lam.non_interacting==true || sigp.non_interacting==true ||
+      sigz.non_interacting==true || sigm.non_interacting==true ||
+      (inc_cascade==true && 
+       (casz.non_interacting==true || casm.non_interacting==true))) {
+    O2SCL_ERR2("At least one baryon is non-interacting in ",
+	       "eos_had_apr::calc_e().",exc_einval);
+  }
+#endif
+  
   gs=ms*cs;
   gw=mw*cw;
   gr=mr*cr;
@@ -84,9 +132,10 @@ int eos_had_rmf_hyp::calc_eq_p
     casz.ms=casz.m-gss*sig;
   }
 
-  if (ne.ms<0.0 || pr.ms<0.0 || lam.ms<0.0 || sigp.ms<0.0 || 
-      (inc_cascade && casm.ms<0.0)) {
-    O2SCL_ERR2("Hadron mass negative in ",
+  if (ne.ms<0.0 || pr.ms<0.0 || lam.ms<0.0 || 
+      sigp.ms<0.0 || sigz.ms<0.0 || sigm.ms<0.0 ||
+      (inc_cascade && (casm.ms<0.0 || casz.ms<0.0))) {
+    O2SCL_ERR2("Baryon mass negative in ",
 	       "eos_had_rmf_hyp::calc_eq_p().",o2scl::exc_efailed);
   }
   
@@ -94,7 +143,7 @@ int eos_had_rmf_hyp::calc_eq_p
   pr.nu=pr.mu-gw*ome-0.5*gr*lrho;
   lam.nu=lam.mu-gws*ome;
   sigp.nu=sigp.mu-gws*ome-grs*rho;
-  sigz.nu=sigz.nu-gws*ome;
+  sigz.nu=sigz.mu-gws*ome;
   sigm.nu=sigm.mu-gws*ome+grs*rho;
   if (inc_cascade) {
     casz.nu=casz.mu-gws*ome-0.5*grs*rho;
@@ -131,15 +180,6 @@ int eos_had_rmf_hyp::calc_eq_p
   if (inc_cascade) {
     fet->calc_mu_zerot(casz);
     fet->calc_mu_zerot(casm);
-  } else {
-    casz.n=0.0;
-    casm.n=0.0;
-    casz.ms=casz.m;
-    casm.ms=casm.m;
-    casz.ed=0.0;
-    casm.ed=0.0;
-    casz.pr=0.0;
-    casm.pr=0.0;
   }
 
   sig2=sig*sig;

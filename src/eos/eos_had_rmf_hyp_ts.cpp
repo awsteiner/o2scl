@@ -46,23 +46,25 @@ int main(int argc, char *argv[]) {
   test_mgr t;
   t.set_output_level(1);
 
-  // This is the K=240, Mstar/M=0.78 parameter set ("GM3") from GM91
   eos_had_rmf_hyp re;
-  re.ms=508.194;
-  re.mw=782.501;
-  re.mr=763.0;
-  re.mnuc=939.0;
-  re.ms/=hc_mev_fm; 
-  re.mw/=hc_mev_fm; 
-  re.mr/=hc_mev_fm; 
-  re.mnuc/=hc_mev_fm;
+
+  re.def_neutron.m=939.0/hc_mev_fm;
+  re.def_proton.m=939.0/hc_mev_fm;
+  re.mnuc=939.0/hc_mev_fm; 
+
+  // These masses are just fiducial values, they don't impact
+  // the calculation
+  re.ms=500.0/hc_mev_fm; 
+  re.mw=783.0/hc_mev_fm; 
+  re.mr=763.0/hc_mev_fm; 
+
+  // This is the K=240, Mstar/M=0.78 parameter set ("GM3") from GM91
   re.cs=sqrt(9.927);
   re.cw=sqrt(4.820);
   re.cr=sqrt(4.791);
   re.b=0.008659;
   re.c=-0.00241;
-  re.inc_cascade=false;
-  re.mnuc=(re.def_neutron.m+re.def_proton.m)/2.0;
+  re.inc_cascade=true;
 
   cout << "GM3: " << endl;
   re.saturation();
@@ -81,7 +83,7 @@ int main(int argc, char *argv[]) {
   cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
        << (re.def_thermo.ed/re.n0-re.mnuc)*hc_mev_fm << endl;
   t.test_rel(re.eoa,re.def_thermo.ed/re.n0-re.mnuc,1.0e-6,"eoa");
-  t.test_rel(re.eoa,-16.3/hc_mev_fm,0.1/hc_mev_fm,"eoa");
+  t.test_rel(re.eoa,-16.3/hc_mev_fm,0.2/hc_mev_fm,"eoa 2");
   cout << "  Thermomodynamic identity: " 
        << re.def_thermo.ed+re.def_thermo.pr-
     re.def_neutron.n*re.def_neutron.mu-
@@ -91,9 +93,12 @@ int main(int argc, char *argv[]) {
 	     re.def_proton.n*re.def_proton.mu,0.0,1.0e-9,"TI");
   cout << endl;
 
-  // This corrects an apparent typo, 568 -> 658 in Table I of GM91
+  // Compare with Table I in GM91.
+
+  // This corrects an apparent typo in GM91, 568 -> 658
   vector<double> xw_dat={0.091,0.233,0.375,0.517,0.658,0.800,
 			 0.942,1.08,1.23};
+  
   fermion e, mu;
   e.init(o2scl_settings.get_convert_units().convert
 	 ("kg","1/fm",o2scl_mks::mass_electron),2.0);
@@ -110,6 +115,9 @@ int main(int argc, char *argv[]) {
   ubvector guess(5);
   fermion_rel frel;
 
+  table_units<> xM;
+  xM.line_of_names("xs xw Mmax");
+  
   size_t j=0;
   for(re.xs=0.2;re.xs<1.0001;re.xs+=0.1,j++) {
     re.xr=re.xs;
@@ -144,6 +152,8 @@ int main(int argc, char *argv[]) {
 					    
     cout << m_max << " " << nb_max << endl;
 
+    xM.line_of_data(vector<double>({re.xs,re.xw,m_max}));
+
     if (false && j==4) {
       cout << endl;
       for(size_t i=0;i<eos_table->get_nlines();i++) {
@@ -164,25 +174,26 @@ int main(int argc, char *argv[]) {
   }
   cout << endl;
 
-  // GM2, comparing with Knorren, Prakash, and Ellis, 1995
-  re.cs=sqrt(9.148);
-  re.cw=sqrt(4.820);
-  re.cr=sqrt(4.791);
-  re.b=0.003478;
-  re.c=0.01328;
+  // GM1, to compare with Fig. 3 in GM91
+
+  re.cs=sqrt(11.79);
+  re.cw=sqrt(7.149);
+  re.cr=sqrt(4.411);
+  re.b=0.002947;
+  re.c=-0.001070;
   re.xs=0.6;
   re.xr=0.6;
   re.calc_xw(-28.0/hc_mev_fm);
 
   re.saturation();
   cout << "  Saturation density: " << re.n0 << endl;
-  t.test_rel(re.n0,0.153,1.0e-3,"sat density");
+  t.test_rel(re.n0,0.153,2.0e-3,"sat density");
   cout << "  Effective mass: " << re.msom << " "
        << re.def_neutron.ms/re.def_neutron.m << endl;
   t.test_rel(re.msom,re.def_neutron.ms/re.def_neutron.m,1.0e-6,"msom");
-  t.test_rel(re.msom,0.78,1.0e-2,"msom 2");
+  t.test_rel(re.msom,0.7,1.0e-2,"msom 2");
   cout << "  Compressibility: " << re.comp*hc_mev_fm << endl;
-  t.test_rel(re.comp*hc_mev_fm,240.0,2.0,"comp");
+  t.test_rel(re.comp*hc_mev_fm,300.0,2.0,"comp");
   cout << "  Symmetry energy: " << re.esym*hc_mev_fm << endl;
   t.test_rel(re.esym*hc_mev_fm,32.5,0.1,"esym");
   cout << "  Zero pressure: " << re.def_thermo.pr << endl;
@@ -190,16 +201,17 @@ int main(int argc, char *argv[]) {
   cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
        << (re.def_thermo.ed/re.n0-re.mnuc)*hc_mev_fm << endl;
   t.test_rel(re.eoa,re.def_thermo.ed/re.n0-re.mnuc,1.0e-6,"eoa");
-  t.test_rel(re.eoa,-16.3/hc_mev_fm,0.4/hc_mev_fm,"eoa");
+  t.test_rel(re.eoa,-16.3/hc_mev_fm,0.8/hc_mev_fm,"eoa 2");
   cout << endl;
 
   re.beta_eq_T0(nB_grid,guess,e,true,mu,frel,eos_table);
   
   nc.set_eos_table(eos_table);
   nc.calc_nstar();
-  double m_max=nc.get_tov_results()->max("gm");
-  size_t row=nc.get_tov_results()->lookup("gm",m_max);
-  double nb_max=nc.get_tov_results()->get("nb",row);
+  shared_ptr<table_units<> > tov=nc.get_tov_results();
+  double m_max=tov->max("gm");
+  size_t row=tov->lookup("gm",m_max);
+  double nb_max=tov->get("nb",row);
 
   cout.precision(4);
   for(size_t i=0;i<eos_table->get_nlines();i++) {
@@ -216,48 +228,17 @@ int main(int argc, char *argv[]) {
   cout << endl;
   
   cout << m_max << " " << nb_max << endl;
-  
-  //?
-  re.ms=508.194/hc_mev_fm;
-  re.mw=782.501/hc_mev_fm; 
-  re.mr=763.0/hc_mev_fm; 
-  re.mnuc=939.0/hc_mev_fm; 
-  re.cs=sqrt(9.957);
-  re.cw=sqrt(5.354);
-  re.cr=sqrt(6.2);
-  re.b=1.0*0.00414;
-  re.c=1.0*0.00716;
-  re.inc_cascade=true;
-  re.xs=sqrt(2.0/3.0);
-  re.xw=sqrt(2.0/3.0);
-  re.xr=sqrt(2.0/3.0);
-  re.mnuc=(re.def_neutron.m+re.def_proton.m)/2.0;
 
-  re.saturation();
-  cout << "  Saturation density: " << re.n0 << endl;
-  cout << "  Effective mass: " << re.msom << " "
-       << re.def_neutron.ms/re.def_neutron.m << endl;
-  cout << "  Symmetry energy: " << re.esym*hc_mev_fm << endl;
-  cout << "  Zero pressure: " << re.def_thermo.pr << endl;
-  cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
-       << (re.def_thermo.ed/re.n0-re.mnuc)*hc_mev_fm << endl;
-
-  re.beta_eq_T0(nB_grid,guess,e,true,mu,frel,eos_table);
+  tov->add_col_from_table(*eos_table,"nb","nn","nb");
+  tov->add_col_from_table(*eos_table,"nb","np","nb");
+  tov->add_col_from_table(*eos_table,"nb","nlam","nb");
+  tov->add_col_from_table(*eos_table,"nb","nsigp","nb");
+  tov->add_col_from_table(*eos_table,"nb","nsigz","nb");
+  tov->add_col_from_table(*eos_table,"nb","nsigm","nb");
   
-  for(size_t i=0;i<eos_table->get_nlines();i++) {
-    cout << eos_table->get("nb",i) << " ";
-    cout << eos_table->get("ne",i) << " ";
-    cout << eos_table->get("nmu",i) << " ";
-    cout << eos_table->get("nn",i) << " ";
-    cout << eos_table->get("np",i) << " ";
-    cout << eos_table->get("nlam",i) << " ";
-    cout << eos_table->get("nsigm",i) << " ";
-    cout << eos_table->get("nsigz",i) << " ";
-    cout << eos_table->get("nsigp",i) << endl;
-  }
-  cout << endl;
   /*
-    o2graph -read t.o2 -set xlo 0 -set xhi 1.5 -set ylo 1.0e-3 \
+    o2graph -read eos_had_rmf_hyp_ts.o2 fig3 \
+    -set xlo 0.0 -set xhi 12.0 -set ylo 1.0e-3 \
     -set yhi 1 -set logy 1 \
     -function nlam/nb xlam -plot nb xlam \
     -function nn/nb xn -plot nb xn \
@@ -267,14 +248,14 @@ int main(int argc, char *argv[]) {
     -function nsigp/nb xsigp -plot nb xsigp \
     -function nsigz/nb xsigz -plot nb xsigz \
     -function nsigm/nb xsigm -plot nb xsigm \
-    -function ncasz/nb xcasz -plot nb xcasz \
-    -function ncasm/nb xcasm -plot nb xcasm \
     -show
   */
 
   hdf_file hf;
-  hf.open_or_create("t.o2");
-  hdf_output(hf,*eos_table,"g85");
+  hf.open_or_create("eos_had_rmf_hyp_ts.o2");
+  hdf_output(hf,*eos_table,"fig3_eos");
+  hdf_output(hf,*tov,"fig3");
+  hdf_output(hf,xM,"xM");
   hf.close();
   
   t.report();

@@ -240,8 +240,6 @@ int tov_solve::derivs(double r, size_t nv, const ubvector &y,
   // so there's no need for unit conversion here
   double ed, nb;
   te->ed_nb_from_pr(pres,ed,nb);
-  cout.precision(10);
-  //cout << "eos: " << pres << " " << ed << " " << nb << endl;
   
   if (!std::isfinite(ed)) {
     return exc_efailed;
@@ -293,14 +291,6 @@ int tov_solve::derivs(double r, size_t nv, const ubvector &y,
     ix++;
   }
 
-  /*  cout << "y: ";
-      cout.precision(10);
-      vector_out(cout,y,true);
-      cout << "dydx: ";
-      cout.precision(10);
-      vector_out(cout,dydx,true);
-  */
-  
   return success;
 }
 

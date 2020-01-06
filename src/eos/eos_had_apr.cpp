@@ -79,7 +79,7 @@ int eos_had_apr::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   double gh1, gh2, dgl1, dgl2, dgh1, dgh2;
 
 #if !O2SCL_NO_RANGE_CHECK
-  if (!std::isfinite(ne.n) || !std::isfinite(ne.n)) {
+  if (!std::isfinite(ne.n) || !std::isfinite(pr.n)) {
     O2SCL_ERR2("Nucleon densities not finite in ",
 	       "eos_had_apr::calc_e().",exc_einval);
   }

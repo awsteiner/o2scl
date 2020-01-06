@@ -1076,7 +1076,7 @@ namespace o2scl {
     }
 
     /// Default fermion thermodynamics object
-    fermion_eff def_fet;
+    fermion_rel def_fet;
     //@}
 
     /// \name Liquid-gas transition functions
