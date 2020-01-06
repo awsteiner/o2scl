@@ -1057,14 +1057,26 @@ int tov_solve::max() {
 	       err_nonconv);
     info+=max_minimizer_failed;
   }
+  
+  /*
 
-  // Check that the maximum isn't at the boundaries of the interval
-  // which would indicate failure
-  if (x[0]<=max_begin || x[0]>=max_end) {
-    O2SCL_CONV2("Maximizer returned boundary ",
-	       "in tov_solve::max().",exc_efailed,err_nonconv);
+    AWS: 1/6/20: I'm commenting this out because the min() function
+    above as applied to the default minimizer (of type min_brent_gsl)
+    is not constrained to a range of values (as min_bkt() might be) so
+    this check is not helpful.
+    
+    // Check that the maximum isn't at the boundaries of the interval
+    // which would indicate failure
+
+    if (x[0]<=max_begin || x[0]>=max_end) {
+    O2SCL_CONV((((string)"Maximizer returned ")+o2scl::dtos(x[0])+
+    " which is equal to one of the boundaries ("+
+    o2scl::dtos(max_begin)+","+o2scl::dtos(max_end)+
+    ") in tov_solve::max().").c_str(),exc_efailed,err_nonconv);
     info+=max_minimizer_failed;
-  }
+    }
+
+  */
 
   // --------------------------------------------------------------
   // Final call to integ_star()

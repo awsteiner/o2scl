@@ -106,8 +106,6 @@ int main(int argc, char *argv[]) {
 	 ("kg","1/fm",o2scl_mks::mass_muon),2.0);
   std::shared_ptr<table_units<> > eos_table(new table_units<>);
   nstar_cold nc;
-  nc.verbose=0;
-  nc.def_tov.verbose=0;
 
   uniform_grid_end_width<double> nBg(0.04,1.2,0.01);
   ubvector nB_grid;
@@ -115,6 +113,9 @@ int main(int argc, char *argv[]) {
   ubvector guess(5);
   fermion_rel frel;
 
+  tov_solve ts;
+  eos_tov_interp eti;
+  
   table_units<> xM;
   xM.line_of_names("xs xw Mmax");
   
@@ -144,11 +145,12 @@ int main(int argc, char *argv[]) {
     }
     */
 
-    nc.set_eos_table(eos_table);
-    nc.calc_nstar();
-    double m_max=nc.get_tov_results()->max("gm");
-    size_t row=nc.get_tov_results()->lookup("gm",m_max);
-    double nb_max=nc.get_tov_results()->get("nb",row);
+    eti.read_table(*eos_table,"ed","pr","nb");
+    ts.set_eos(eti);
+    ts.max();
+    shared_ptr<table_units<> > tov_max=ts.get_results();
+    double m_max=tov_max->max("gm");
+    double nb_max=tov_max->get("nb",0);
 					    
     cout << m_max << " " << nb_max << endl;
 
@@ -205,14 +207,14 @@ int main(int argc, char *argv[]) {
   cout << endl;
 
   re.beta_eq_T0(nB_grid,guess,e,true,mu,frel,eos_table);
-  
-  nc.set_eos_table(eos_table);
-  nc.calc_nstar();
-  shared_ptr<table_units<> > tov=nc.get_tov_results();
-  double m_max=tov->max("gm");
-  size_t row=tov->lookup("gm",m_max);
-  double nb_max=tov->get("nb",row);
 
+  eti.read_table(*eos_table,"ed","pr","nb");
+  ts.set_eos(eti);
+  ts.max();
+  shared_ptr<table_units<> > tov_max=ts.get_results();
+  double m_max=tov_max->max("gm");
+  double nb_max=tov_max->get("nb",0);
+    
   cout.precision(4);
   for(size_t i=0;i<eos_table->get_nlines();i++) {
     cout << eos_table->get("nb",i)/re.n0 << " ";
@@ -229,32 +231,34 @@ int main(int argc, char *argv[]) {
   
   cout << m_max << " " << nb_max << endl;
 
-  tov->add_col_from_table(*eos_table,"nb","nn","nb");
-  tov->add_col_from_table(*eos_table,"nb","np","nb");
-  tov->add_col_from_table(*eos_table,"nb","nlam","nb");
-  tov->add_col_from_table(*eos_table,"nb","nsigp","nb");
-  tov->add_col_from_table(*eos_table,"nb","nsigz","nb");
-  tov->add_col_from_table(*eos_table,"nb","nsigm","nb");
+  tov_max->add_col_from_table(*eos_table,"nb","ne");
+  tov_max->add_col_from_table(*eos_table,"nb","nmu");
+  tov_max->add_col_from_table(*eos_table,"nb","nn");
+  tov_max->add_col_from_table(*eos_table,"nb","np");
+  tov_max->add_col_from_table(*eos_table,"nb","nlam");
+  tov_max->add_col_from_table(*eos_table,"nb","nsigp");
+  tov_max->add_col_from_table(*eos_table,"nb","nsigz");
+  tov_max->add_col_from_table(*eos_table,"nb","nsigm");
   
   /*
     o2graph -read eos_had_rmf_hyp_ts.o2 fig3 \
     -set xlo 0.0 -set xhi 12.0 -set ylo 1.0e-3 \
     -set yhi 1 -set logy 1 \
-    -function nlam/nb xlam -plot nb xlam \
-    -function nn/nb xn -plot nb xn \
-    -function np/nb xp -plot nb xp \
-    -function ne/nb xe -plot nb xe \
-    -function nmu/nb xmu -plot nb xmu \
-    -function nsigp/nb xsigp -plot nb xsigp \
-    -function nsigz/nb xsigz -plot nb xsigz \
-    -function nsigm/nb xsigm -plot nb xsigm \
+    -function nlam/nb xlam -plot r xlam \
+    -function nn/nb xn -plot r xn \
+    -function np/nb xp -plot r xp \
+    -function ne/nb xe -plot r xe \
+    -function nmu/nb xmu -plot r xmu \
+    -function nsigp/nb xsigp -plot r xsigp \
+    -function nsigz/nb xsigz -plot r xsigz \
+    -function nsigm/nb xsigm -plot r xsigm \
     -show
   */
 
   hdf_file hf;
   hf.open_or_create("eos_had_rmf_hyp_ts.o2");
   hdf_output(hf,*eos_table,"fig3_eos");
-  hdf_output(hf,*tov,"fig3");
+  hdf_output(hf,*tov_max,"fig3");
   hdf_output(hf,xM,"xM");
   hf.close();
   

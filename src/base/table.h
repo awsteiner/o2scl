@@ -1046,9 +1046,11 @@ namespace o2scl {
   template<class vec2_t>
   void add_col_from_table(table<vec2_t> &source,
 			  std::string src_index, std::string src_col,
-			  std::string dest_index, std::string dest_col="") {
+			  std::string dest_index="",
+			  std::string dest_col="") {
     
     if (dest_col=="") dest_col=src_col;
+    if (dest_index=="") dest_index=src_index;
 
     // Add the new column
     if (!is_column(dest_col)) new_column(dest_col);

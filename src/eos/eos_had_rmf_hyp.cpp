@@ -36,12 +36,12 @@ eos_had_rmf_hyp::eos_had_rmf_hyp() {
   xr=1.0;
   inc_cascade=true;
 
-  def_lambda.init(1115.683/hc_mev_fm,2.0);
-  def_sigma_p.init(1189.37/hc_mev_fm,2.0);
-  def_sigma_z.init(1192.642/hc_mev_fm,2.0);
-  def_sigma_m.init(1197.449/hc_mev_fm,2.0);
-  def_cascade_z.init(1314.83/hc_mev_fm,2.0);
-  def_cascade_m.init(1321.31/hc_mev_fm,2.0);
+  def_lambda.init(mass_lambda_MeV/hc_mev_fm,2.0);
+  def_sigma_p.init(mass_sigma_plus_MeV/hc_mev_fm,2.0);
+  def_sigma_z.init(mass_sigma_zero_MeV/hc_mev_fm,2.0);
+  def_sigma_m.init(mass_sigma_minus_MeV/hc_mev_fm,2.0);
+  def_cascade_z.init(mass_cascade_zero_MeV/hc_mev_fm,2.0);
+  def_cascade_m.init(mass_cascade_minus_MeV/hc_mev_fm,2.0);
   
   lambda=&def_lambda;
   sigma_p=&def_sigma_p;
@@ -81,7 +81,7 @@ int eos_had_rmf_hyp::calc_eq_p
       !std::isfinite(lam.n) || !std::isfinite(sigp.n) ||
       !std::isfinite(sigz.n) || !std::isfinite(sigm.n) ||
       (inc_cascade==true &&
-       !std::isfinite(casz.n) || !std::isfinite(casm.n))) {
+       (!std::isfinite(casz.n) || !std::isfinite(casm.n)))) {
     O2SCL_ERR2("At least one baryon density not finite in ",
 	       "eos_had_apr::calc_e().",exc_einval);
   }
