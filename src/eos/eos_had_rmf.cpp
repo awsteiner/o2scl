@@ -179,6 +179,43 @@ int eos_had_rmf::calc_eq_temp_p
   return success;
 }
 
+int eos_had_rmf::check_derivs
+(double &dPds, double &dPdw, double &dPdr, fermion &ne, fermion &pr,
+ double sig, double ome, double lrho) {
+  
+  deriv_gsl<> dg;
+  double feq1, feq2, feq3;
+
+  funct f1=std::bind
+    (std::mem_fn<int(fermion &,fermion &,double,
+		     double,double,double &, double &, double &,
+		     thermo &)>
+     (&eos_had_rmf::calc_eq_p),this,std::ref(ne),std::ref(pr),
+     std::placeholders::_1,ome,lrho,std::ref(feq1),std::ref(feq2),
+     std::ref(feq3),std::ref(*eos_thermo));
+  funct f2=std::bind
+    (std::mem_fn<int(fermion &,fermion &,double,
+		     double,double,double &, double &, double &,
+		     thermo &)>
+     (&eos_had_rmf::calc_eq_p),this,std::ref(ne),std::ref(pr),
+     sig,std::placeholders::_1,lrho,std::ref(feq1),std::ref(feq2),
+     std::ref(feq3),std::ref(*eos_thermo));
+  funct f3=std::bind
+    (std::mem_fn<int(fermion &,fermion &,double,
+		     double,double,double &, double &, double &,
+		     thermo &)>
+     (&eos_had_rmf::calc_eq_p),this,std::ref(ne),std::ref(pr),
+     sig,ome,std::placeholders::_1,std::ref(feq1),std::ref(feq2),
+     std::ref(feq3),std::ref(*eos_thermo));
+
+  double err;
+  dg.deriv_err(sig,f1,dPds,err);
+  dg.deriv_err(ome,f2,dPdw,err);
+  dg.deriv_err(rho,f3,dPdr,err);
+  
+  return 0;
+}
+
 int eos_had_rmf::field_eqs(size_t nv, const ubvector &x, ubvector &y) {
 #if !O2SCL_NO_RANGE_CHECK
   // This may not be strictly necessary, because it should be clear

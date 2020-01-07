@@ -298,7 +298,11 @@ namespace o2scl {
   class eos_had_rmf : public eos_had_temp_pres_base {
 
   public:
-
+    
+    int check_derivs(double &dPds, double &dPdw, double &dPdr,
+		     fermion &ne, fermion &pr,
+		     double sig, double ome, double lrho);
+    
     /// \name Other data members
     //@{
     /** \brief The number of separate calls to the solver 
