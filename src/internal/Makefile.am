@@ -132,16 +132,13 @@ osni88: osni88.o
 		-lo2scl_hdf -lo2scl -lgsl -lgslcblas -lhdf5
 
 pdg_parse.o: pdg_parse.cpp
-	$(CXX) -O3 -DGSL_RANGE_CHECK=0 -DO2SCL_NO_RANGE_CHECK \
-		-I$(HOME)/install/include/hdf5 \
-		-I$(HOME)/install/include $(INCLUDES) \
+	$(CXX) -O3 $(CXXFLAGS) -I$(prefix)/include \
 		-o pdg_parse.o -c pdg_parse.cpp
 
 pdg_parse: pdg_parse.o 
-	$(CXX) $(LDFLAGS) -O3 -I$(HOME)/install/include \
-		-I$(HOME)/install/include/hdf5 \
-		-L$(HOME)/install/lib -o pdg_parse pdg_parse.o \
-		-lo2scl_hdf -lo2scl -lgsl -lgslcblas -lhdf5
+	$(CXX) $(LDFLAGS) -O3 $(CXXFLAGS) -L$(prefix)/lib \
+		-o pdg_parse pdg_parse.o \
+		-lo2scl_hdf -lo2scl $(LIBS)
 
 make_units.o: make_units.cpp
 	$(CXX) -O3 -DGSL_RANGE_CHECK=0 -DO2SCL_NO_RANGE_CHECK \
