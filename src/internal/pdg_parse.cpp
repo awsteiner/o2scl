@@ -37,20 +37,44 @@ bool has_digit(std::string s) {
   return false;
 }
 
+typedef struct pdg_entry_s {
+  int id;
+  double mass;
+  double mass_errp;
+  double mass_errm;
+  double width;
+  double width_errp;
+  double width_errm;
+  string name;
+  int charge;
+  int isospin;
+  int g_parity;
+  int total_spin;
+  int p_parity;
+  int c_parity;
+  int part_antipart_flag;
+  int rank;
+  char status;
+  string quark_content;
+} pdg_entry;
+
 int main(int argc, char *argv[]) {
 
   cout.precision(10);
+
+  vector<pdg_entry> db1, db2;
   
   string stemp;
   ifstream fin;
   fin.open("../../data/o2scl/pdg_mass_list.txt");
-  
-  for(size_t j=0;j<38;j++) {
+
+  // Find the first line which is not part of the header
+  getline(fin,stemp);
+  while (stemp[0]=='*') {
     getline(fin,stemp);
   }
 
   while (!fin.eof()) {
-    getline(fin,stemp);
 
     // In the 2019 data file, one of the lines had a couple
     // extra spaces at the end.
@@ -68,7 +92,9 @@ int main(int argc, char *argv[]) {
 	cout << stemp.substr(98,8) << "x";
 	cout << stemp.substr(107,21) << endl;
       }
-    
+
+      pdg_entry pe;
+      
       // For the IDs, if there are no numerical values, then its
       // blank so just set it equal to zero
       int id1=o2scl::stoi(stemp.substr(0,8));
@@ -142,8 +168,13 @@ int main(int argc, char *argv[]) {
 	}
       }
     }
+    
+    // Get the next line
+    getline(fin,stemp);
   }
 
+  fin.close();
+  
   return 0;
 }
 
