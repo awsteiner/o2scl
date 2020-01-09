@@ -22,6 +22,7 @@
 */
 #include <o2scl/part_pdg.h>
 
+using namespace std;
 using namespace o2scl;
 
 part_pdg_db::part_pdg_db() {

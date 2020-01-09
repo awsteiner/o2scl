@@ -27,6 +27,7 @@
 #include <iostream>
 #include <cmath>
 #include <o2scl/constants.h>
+#include <o2scl/part.h>
 
 /** \file part_pdg.h
     \brief File defining \ref o2scl::thermo_tl and \ref o2scl::part_pdg_tl 
@@ -40,15 +41,11 @@ namespace o2scl {
    */
   class part_pdg_db {
 
-  protected:
-
-    vector<pdg_entry> db;
-    
   public:
 
     part_pdg_db();
     
-    typedef struct pdg_entry {
+    typedef struct pdg_entry_s {
       int id;
       double mass;
       double mass_errp;
@@ -56,71 +53,76 @@ namespace o2scl {
       double width;
       double width_errp;
       double width_errm;
-      string name;
+      std::string name;
       int charge;
     } pdg_entry;
 
     void output_text();
 
+  protected:
+    
+    std::vector<pdg_entry> db;
+    
   };
   
   /** \brief Particle from the PDG
    */
-  template<class fp_t=double> class part_pdg_tl {
+  template<class fp_t=double> class part_pdg_tl :
+    public o2scl::part_tl<fp_t> {
     
   public:
 
   /// Copy constructor
-  part_tl(const part_tl &p) {
-    g=p.g;
-    m=p.m;
-    ms=p.ms;
-    n=p.n;
-    ed=p.ed;
-    pr=p.pr;
-    mu=p.mu;
-    en=p.en;
-    nu=p.nu;
-    inc_rest_mass=p.inc_rest_mass;
-    non_interacting=p.non_interacting;
+  part_pdg_tl(const part_pdg_tl &p) {
+    this->g=p.g;
+    this->m=p.m;
+    this->ms=p.ms;
+    this->n=p.n;
+    this->ed=p.ed;
+    this->pr=p.pr;
+    this->mu=p.mu;
+    this->en=p.en;
+    this->nu=p.nu;
+    this->inc_rest_mass=p.inc_rest_mass;
+    this->non_interacting=p.non_interacting;
   }
 
   /// Copy construction with operator=()
-  part_tl &operator=(const part_tl &p) {
+  part_pdg_tl &operator=(const part_pdg_tl &p) {
     if (this!=&p) {
-      g=p.g;
-      m=p.m;
-      ms=p.ms;
-      n=p.n;
-      ed=p.ed;
-      pr=p.pr;
-      mu=p.mu;
-      en=p.en;
-      nu=p.nu;
-      inc_rest_mass=p.inc_rest_mass;
-      non_interacting=p.non_interacting;
+      this->g=p.g;
+      this->m=p.m;
+      this->ms=p.ms;
+      this->n=p.n;
+      this->ed=p.ed;
+      this->pr=p.pr;
+      this->mu=p.mu;
+      this->en=p.en;
+      this->nu=p.nu;
+      this->inc_rest_mass=p.inc_rest_mass;
+      this->non_interacting=p.non_interacting;
     }
     return *this;
   }
     
   /// Make a particle of mass \c mass and degeneracy \c dof.
-  part_tl(fp_t mass=0.0, fp_t dof=0.0) {
-    m=mass; 
-    ms=mass; 
-    g=dof;
+  part_pdg_tl(fp_t mass=0.0, fp_t dof=0.0) {
+    this->m=mass; 
+    this->ms=mass; 
+    this->g=dof;
     
-    non_interacting=true;
-    inc_rest_mass=true;
+    this->non_interacting=true;
+    this->inc_rest_mass=true;
   }    
   
-  virtual ~part_tl() {
+  virtual ~part_pdg_tl() {
   }
   
   /// Set the mass \c mass and degeneracy \c dof.
   virtual void init(fp_t mass, fp_t dof) {
-    m=mass; 
-    ms=mass; 
-    g=dof;
+    this->m=mass; 
+    this->ms=mass; 
+    this->g=dof;
     return;
   }
 
