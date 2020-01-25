@@ -388,11 +388,10 @@ namespace o2scl_hdf {
   /** \brief A value specified by a string
       
       Formats:
-      - func: \<function\>
+      - value or function
+      - result of shell command: shell:command 
       - HDF5 object in file: 
       hdf5:\<file name\>:\<object name\>:[additional specification]
-
-      \todo shell: option to use the result of a shell command
 
       \note unfinished.
   */

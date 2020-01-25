@@ -34,7 +34,6 @@ using namespace o2scl_hdf;
 int main(void) {
 
   cout.setf(ios::scientific);
-  cout.precision(10);
 
   test_mgr t;
   t.set_output_level(1);
@@ -97,7 +96,36 @@ int main(void) {
   // Test for vector_spec()
   std::vector<double> v=vector_spec("list:1,2,3,4");
   t.test_gen(v.size()==4,"vector_spec().");
+
+  // Tests for value_spec()
+  double d1, d2, d3, d4, d5;
+  value_spec("sin(2.0)",d1,2);
+  cout << d1 << endl;
+  value_spec("shell:ls -l | awk '{print $5}' | tail -n 1",d2,2);
+  cout << d2 << endl;
+
+  table<> tx;
+  tx.line_of_names("col");
+  for(size_t j=0;j<5;j++) {
+    double line[]={((double)j)*2.1};
+    tx.line_of_data(1,line);
+  }
   
+  hdf_file hf;
+  hf.open_or_create("hdf_io_value_ts.o2");
+  hf.seti("testi",2.0);
+  uniform_grid_end<double> ug(1,10,5);
+  hdf_output(hf,ug,"ug");
+  hdf_output(hf,tx,"tx");
+  hf.close();
+
+  value_spec("hdf5:hdf_io_value_ts.o2:testi",d3,2);
+  cout << d3 << endl;
+  value_spec("hdf5:hdf_io_value_ts.o2:ug:2",d4,2);
+  cout << d4 << endl;
+  value_spec("hdf5:hdf_io_value_ts.o2:tx:col,3",d5,2);
+  cout << d5 << endl;
+
   t.report();
 
   return 0;

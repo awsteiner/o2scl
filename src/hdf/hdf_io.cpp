@@ -45,27 +45,13 @@ int o2scl_hdf::value_spec(std::string spec, double &d,
     }
       
     d=o2scl::function_to_double(spec);
+    
     return 0;
       
-  } else if (spec.find("func:")==0) {
-
-    std::string temp=spec.substr(5,spec.length()-5);
-    if (verbose>1) {
-      std::cout << "value_spec(): single value " << temp
-		<< std::endl;
-    }
-      
-    o2scl::calculator calc;
-    std::map<std::string,double> vars;
-    calc.compile(temp.c_str(),&vars);
-
-    d=calc.eval(&vars);
-    return 0;
-
   } else if (spec.find("shell:")==0) {
 	
     // Result from shell command
-
+    
 #ifdef HAVE_POPEN
     
     std::string cmd=spec.substr(6,spec.length()-6);
@@ -74,7 +60,7 @@ int o2scl_hdf::value_spec(std::string spec, double &d,
     if (!ps_pipe) {
       if (err_on_fail) {
 	O2SCL_ERR2("Pipe could not be opened in ",
-		   "convert_units::convert_gnu_units().",exc_efilenotfound);
+		   "value_spec().",exc_efilenotfound);
       }
       return exc_efilenotfound;
     }
@@ -87,17 +73,16 @@ int o2scl_hdf::value_spec(std::string spec, double &d,
       std::cout << "Shell command output is "
 		<< line1 << std::endl;
     }
-    
+
     if (pclose(ps_pipe)!=0) {
       if (err_on_fail) {
 	O2SCL_ERR2("Pipe could not be closed in ",
 		   "value_spec().",exc_efailed);
       }
-      return exc_efailed;
+      return 1;
     }
   
-    // Read the output from the 'units' command and compute the 
-    // conversion factor
+    // Read the output from the shell command
     std::string s=line1, t1;
     std::istringstream *ins=new std::istringstream(s);
     if (!((*ins) >> t1)) {
@@ -106,11 +91,19 @@ int o2scl_hdf::value_spec(std::string spec, double &d,
     delete ins;
 
     // Finally, take the result string and convert to a double
-    d=o2scl::function_to_double(t1);
+    d=o2scl::stod(t1);
 
-#endif
+    return 0;
     
-    return exc_efailed;
+#else
+    
+    if (err_on_fail) {
+      O2SCL_ERR2("Popen not supported in ",
+		 "value_spec().",exc_efailed);
+    }
+    return 11;
+    
+#endif
 
   } else if (spec.find("hdf5:")==0) {
 	
@@ -187,84 +180,112 @@ int o2scl_hdf::value_spec(std::string spec, double &d,
     if (type=="table") {
       if (addl_spec.length()==0) {
 	if (err_on_fail) {
-	  O2SCL_ERR2("No table column name specified ",
+	  O2SCL_ERR2("No table column name or row index specified ",
 		     "in value_spec().",o2scl::exc_einval);
 	} else {
 	  return 6;
 	}
       }
-      /*
-	o2scl::table_units<> t;
-	o2scl_hdf::hdf_input(hf,t,obj_name);
-	v.resize(t.get_nlines());
-	for(size_t i=0;i<t.get_nlines();i++) {
-	v[i]=t.get(addl_spec,i);
+      size_t ncomma=addl_spec.find(',');
+      if (ncomma==std::string::npos) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("No comma found for hdf5:table ",
+		     "in value_spec().",o2scl::exc_einval);
+	} else {
+	  return 8;
 	}
-      */
+      }
+      std::string col_name=addl_spec.substr(0,ncomma);
+      std::string row_index=addl_spec.substr(ncomma+1,
+					     addl_spec.length()-ncomma-1);
+      if (col_name.length()==0 || row_index.length()==0) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Missing column name or row index in hdf5:table ",
+		     "in value_spec().",o2scl::exc_einval);
+	} else {
+	  return 9;
+	}
+      }
+      o2scl::table_units<> t;
+      o2scl_hdf::hdf_input(hf,t,obj_name);
+      if (t.is_column(col_name)==false) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Can't find column hdf5:table ",
+		     "in value_spec().",o2scl::exc_einval);
+	} else {
+	  return 10;
+	}
+      }
+      if (t.get_nlines()<=o2scl::stoszt(row_index)) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Not enough lines in table in hdf5:table ",
+		     "in value_spec().",o2scl::exc_einval);
+	} else {
+	  return 11;
+	}
+      }
+      d=t.get(col_name,o2scl::stoszt(row_index));
+      
     } else if (type=="double[]") {
-      /*
-	std::vector<double> vtemp;
-	hf.getd_vec(obj_name,vtemp);
-	v.resize(vtemp.size());
-	for(size_t i=0;i<v.size();i++) {
-	v[i]=vtemp[i];
-	}
-      */
-    } else if (type=="hist") {
-      /*
-	o2scl::hist ht;
-	hdf_input(hf,ht,obj_name);
-	typedef boost::numeric::ublas::vector<double> ubvector;
-	const ubvector &wgts=ht.get_wgts();
-	v.resize(wgts.size());
-	for(size_t i=0;i<v.size();i++) {
-	v[i]=wgts[i];
-	}
-      */
+      
+      size_t index=o2scl::stoszt(addl_spec);
+      std::vector<double> vtemp;
+      hf.getd_vec(obj_name,vtemp);
+      d=vtemp[index];
+      
     } else if (type=="int[]") {
-      /*
-	std::vector<int> vtemp;
-	hf.geti_vec(obj_name,vtemp);
-	v.resize(vtemp.size());
-	for(size_t i=0;i<v.size();i++) {
-	v[i]=vtemp[i];
-	}
-      */
+      
+      size_t index=o2scl::stoszt(addl_spec);
+      std::vector<int> vtemp;
+      hf.geti_vec(obj_name,vtemp);
+      d=vtemp[index];
+      
     } else if (type=="size_t[]") {
-      /*
-	std::vector<size_t> vtemp;
-	hf.get_szt_vec(obj_name,vtemp);
-	v.resize(vtemp.size());
-	for(size_t i=0;i<v.size();i++) {
-	v[i]=vtemp[i];
-	}
-      */
+      
+      size_t index=o2scl::stoszt(addl_spec);
+      std::vector<size_t> vtemp;
+      hf.get_szt_vec(obj_name,vtemp);
+      d=vtemp[index];
+      
     } else if (type=="uniform_grid<double>") {
-      /*
-	o2scl::uniform_grid<double> ug;
-	hdf_input(hf,ug,obj_name);
-	std::vector<double> vtemp;
-	ug.vector(vtemp);
-	v.resize(vtemp.size());
-	for(size_t i=0;i<v.size();i++) {
-	v[i]=vtemp[i];
+      
+      if (addl_spec.length()==0) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("No table column name specified ",
+		     "in value_spec().",o2scl::exc_einval);
+	} else {
+	  return 7;
 	}
-      */
+      }
+      size_t index=o2scl::stoszt(addl_spec);
+      o2scl::uniform_grid<double> ug;
+      hdf_input(hf,ug,obj_name);
+      std::vector<double> vtemp;
+      ug.vector(vtemp);
+      d=vtemp[index];
+      
     } else if (type=="int") {
+      
       int itemp;
       hf.geti(obj_name,itemp);
       d=itemp;
+      
     } else if (type=="double") {
+      
       double dtemp;
       hf.getd(obj_name,dtemp);
       d=dtemp;
+      
     } else if (type=="size_t") {
+      
       size_t szttemp;
       hf.get_szt(obj_name,szttemp);
       d=szttemp;
+      
     }
     hf.close();
-	
+
+    return 0;
   }
     
   if (verbose>0) {
