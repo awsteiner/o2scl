@@ -640,8 +640,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "followed by a colon, followed by arguments which depend on "+
       "the type. If no colon is present, then a \"func:\" prefix is "+
       "assumed. The different types for a value specification are:\n\n"+
-      "1. func:<function> - Value equal to the result of <function>, "+
-      "e.g. \"func:7.6\" or \"func:sin(0.5)\". See \""+cl->cmd_name+
+      "1. <numeric value or function> - Value equal to the result of "+
+      "<function>, e.g. \"7.6\" or \"sin(0.5)\". See \""+cl->cmd_name+
       " -help functions\" for a list of functions that can be used.\n\n"+
       "2. hdf5:<object name>:[addl. spec.] - Read an HDF5 value and "+
       "obtain the value from object named <object name>. For some "+
@@ -652,7 +652,12 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       " --------------------------------------------------\n"+
       "               double: (no addl. spec.)\n"+
       "                  int: (no addl. spec.)\n"+
-      "               size_t: (no addl. spec.)\n\n"+
+      "               size_t: (no addl. spec.)\n"+
+      "             double[]: index\n"+
+      "                int[]: index\n"+
+      "             size_t[]: index\n"+
+      " uniform_grid<double>: index\n"+
+      "                table: column name,row index\n\n"+
       "3. shell:<shell command> - Set the value equal to the first "+
       "result obtained using the specified shell command.";
     
