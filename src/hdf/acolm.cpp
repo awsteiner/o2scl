@@ -1206,10 +1206,11 @@ int acol_manager::setup_options() {
      "\"create <type> <value>\": For types char, "+
      "int, size_t, and string, create an object and give it the "+
      "initial value specified.\n\n"+
-     "\"create double <value-spec>\": Create a double object and set "+
-     "it equal to the value specified by <value-spec>. "+
+     "\"create double <value spec.>\": Create a double object and set "+
+     "it equal to the value specified by <value spec.>. "+
      "(See \"acol -help "+
-     "functions\" for help on specifying functions.)\n\n"+
+     "functions\" for help on specifying functions and \"acol -help "+
+     "value-spec\" for help on value specifications.)\n\n"+
      "\"create <type> <size> <function of \"i\">\": For array types "+
      "int[] and size_t[], the user must specify the size of "+
      "the array and a function of the array index 'i' to fill the array.\n\n"+

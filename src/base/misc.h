@@ -693,6 +693,51 @@ namespace o2scl {
    */
   void wordexp_single_file(std::string &fname);
   //@}
+
+  /// \name VT100 strings
+  //@{
+  /// Generate a horizontal rule
+  std::string vt100_hrule(size_t n=78);
+
+  /// Switch to cyan foreground
+  std::string vt100_cyan_fg();
+  
+  /// Switch to magenta foreground
+  std::string vt100_magenta_fg();
+
+  /// Switch to yellow foreground
+  std::string vt100_yellow_fg();
+
+  /// Switch to red foreground
+  std::string vt100_red_fg();
+
+  /// Switch to green foreground
+  std::string vt100_green_fg();
+
+  /// Switch to blue foreground
+  std::string vt100_blue_fg();
+
+  /// Switch to cyan background
+  std::string vt100_cyan_bg();
+
+  /// Switch to magenta background
+  std::string vt100_magenta_bg();
+
+  /// Switch to yellow background
+  std::string vt100_yellow_bg();
+
+  /// Switch to red background
+  std::string vt100_red_bg();
+
+  /// Switch to green background
+  std::string vt100_green_bg();
+
+  /// Switch to blue background
+  std::string vt100_blue_bg();
+
+  /// Switch to default foreground
+  std::string vt100_default_fg();
+  //@}
   
 #ifndef DOXYGEN_NO_O2NS
 }

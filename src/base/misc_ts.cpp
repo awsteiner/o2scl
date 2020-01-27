@@ -138,6 +138,10 @@ int main(void) {
   t.test_gen(matches.size()==4,"glob test");
   
 #endif
+
+  cout << vt100_cyan_fg() << "test" << vt100_default_fg() << "test2"
+       << endl;
+  cout << vt100_hrule() << endl;
   
   t.report();
   return 0;

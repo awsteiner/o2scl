@@ -268,7 +268,7 @@ void o2scl::RGBtoHSV(double r, double g, double b,
 }
 
 /** \brief Convert HSV color to RGB
-*/
+ */
 void o2scl::HSVtoRGB(double h, double s, double v, 
 		     double &r, double &g, double &b) {
 
@@ -381,3 +381,132 @@ void o2scl::wordexp_single_file(std::string &fname) {
   return;
 }
 
+std::string o2scl::vt100_hrule(size_t n) {
+  bool redirected=false;
+  if (!isatty(STDOUT_FILENO)) redirected=true;
+  std::ostringstream oss;
+  if (redirected) {
+    for(size_t i=0;i<n;i++) oss << '-';
+  } else {
+    oss << ((char)27) << '(' << '0';
+    for(size_t i=0;i<n;i++) oss << 'q';
+    oss << ((char)27) << '(' << 'B';
+  }
+  return oss.str();
+}
+  
+std::string o2scl::vt100_cyan_fg() {
+  bool redirected=false;
+  if (!isatty(STDOUT_FILENO)) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[1m";
+  oss << ((char)27) << "[36m";
+  return oss.str();
+}
+
+std::string o2scl::vt100_magenta_fg() {
+  bool redirected=false;
+  if (!isatty(STDOUT_FILENO)) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[1m";
+  oss << ((char)27) << "[35m";
+  return oss.str();
+}
+
+std::string o2scl::vt100_yellow_fg() {
+  bool redirected=false;
+  if (!isatty(STDOUT_FILENO)) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[1m";
+  oss << ((char)27) << "[33m";
+  return oss.str();
+}
+
+std::string o2scl::vt100_red_fg() {
+  bool redirected=false;
+  if (!isatty(STDOUT_FILENO)) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[1m";
+  oss << ((char)27) << "[31m";
+  return oss.str();
+}
+
+std::string o2scl::vt100_green_fg() {
+  bool redirected=false;
+  if (!isatty(STDOUT_FILENO)) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[1m";
+  oss << ((char)27) << "[32m";
+  return oss.str();
+}
+
+std::string o2scl::vt100_blue_fg() {
+  bool redirected=false;
+  if (!isatty(STDOUT_FILENO)) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[1m";
+  oss << ((char)27) << "[34m";
+  return oss.str();
+}
+
+std::string o2scl::vt100_cyan_bg() {
+  bool redirected=false;
+  if (!isatty(STDOUT_FILENO)) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[1m";
+  oss << ((char)27) << "[46m";
+  return oss.str();
+}
+
+std::string o2scl::vt100_magenta_bg() {
+  bool redirected=false;
+  if (!isatty(STDOUT_FILENO)) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[1m";
+  oss << ((char)27) << "[45m";
+  return oss.str();
+}
+
+std::string o2scl::vt100_yellow_bg() {
+  bool redirected=false;
+  if (!isatty(STDOUT_FILENO)) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[1m";
+  oss << ((char)27) << "[43m";
+  return oss.str();
+}
+
+std::string o2scl::vt100_red_bg() {
+  bool redirected=false;
+  if (!isatty(STDOUT_FILENO)) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[1m";
+  oss << ((char)27) << "[41m";
+  return oss.str();
+}
+
+std::string o2scl::vt100_green_bg() {
+  bool redirected=false;
+  if (!isatty(STDOUT_FILENO)) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[1m";
+  oss << ((char)27) << "[42m";
+  return oss.str();
+}
+
+std::string o2scl::vt100_blue_bg() {
+  bool redirected=false;
+  if (!isatty(STDOUT_FILENO)) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[1m";
+  oss << ((char)27) << "[44m";
+  return oss.str();
+}
+
+std::string o2scl::vt100_default_fg() {
+  bool redirected=false;
+  if (!isatty(STDOUT_FILENO)) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[m";
+  return oss.str();
+}

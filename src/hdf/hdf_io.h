@@ -393,7 +393,15 @@ namespace o2scl_hdf {
       - HDF5 object in file: 
       hdf5:\<file name\>:\<object name\>:[additional specification]
 
-      \note unfinished.
+      Additional specifications
+      - double: (none)
+      - int: (none)
+      - size_t: (none)
+      - double[]: \<index\>
+      - int[]: \<index\>
+      - size_t[]: \<index\>
+      - uniform_grid<double>: \<index\>
+      - table: \<column\>,\<row\>
   */
   int value_spec(std::string spec, double &d,
 		 int verbose=0, bool err_on_fail=true);
