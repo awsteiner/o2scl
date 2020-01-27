@@ -52,8 +52,6 @@ namespace o2scl {
 
   /** \brief Solve a quadratic polynomial with real coefficients and 
       real roots [abstract base]
-      
-      \todo Compute discriminant
   */
   class quadratic_real {
     
@@ -67,6 +65,12 @@ namespace o2scl {
     virtual int solve_r(const double a2, const double b2, const double c2, 
 			double &x1, double &x2)=0;
 
+    /** \brief Compute the quadratic discriminant, \f$ b^2-4ac \f$
+     */
+    virtual double disc_r(double a2, double b2, double c2) {
+      return b2*b2-4.0*a2*c2;
+    }
+    
     /// Return a string denoting the type ("quadratic_real")
     const char *type() { return "quadratic_real"; }
   };
@@ -131,8 +135,6 @@ namespace o2scl {
 
   /** \brief Solve a cubic polynomial with real coefficients and real roots
       [abstract base]
-
-      \todo Compute discriminant
   */
   class cubic_real {
   public:
@@ -146,6 +148,15 @@ namespace o2scl {
     virtual int solve_r(const double a3, const double b3, const double c3, 
 			const double d3, double &x1, double &x2, 
 			double &x3)=0;
+
+    /** \brief Compute the cubic discriminant, 
+	\f$ b^2 c^2 - 4 a c^3 - 4 b^3 d - 27 a^2 d^2 + 18 a b c d \f$
+     */
+    virtual double disc_r(const double a3, const double b3, const double c3, 
+			  const double d3) {
+      return b3*b3*c3*c3-4.0*a3*c3*c3*c3-4.0*b3*b3*b3*d3-
+	27.0*a3*a3*d3*d3+18.0*a3*b3*c3*d3;
+    }
 
     /// Return a string denoting the type ("cubic_real")
     const char *type() { return "cubic_real"; }
