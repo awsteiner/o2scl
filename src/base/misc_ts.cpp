@@ -139,9 +139,22 @@ int main(void) {
   
 #endif
 
-  cout << vt100_cyan_fg() << "test" << vt100_default_fg() << "test2"
+  cout << vt100_underline() 
+       << vt100_cyan_fg() << "test" << vt100_default() << "test2"
+       << endl;
+  cout << vt100_bold() 
+       << vt100_8bit_fg(202) << "test" << vt100_default() << "test2"
        << endl;
   cout << vt100_hrule() << endl;
+
+  cout << vt100_3byte_fg(0,51,102) << "test" << vt100_default()
+       << "test2" << endl;
+  cout << vt100_3byte_fg(255,130,0) << "test" << vt100_default()
+       << "test2" << endl;
+  
+  cout << vt100_alt_font() 
+       << "abcdefghijklmnopqrstuvwxyz" << vt100_normal_font() << endl;
+  cout << "abcdefghijklmnopqrstuvwxyz" << endl;
   
   t.report();
   return 0;
