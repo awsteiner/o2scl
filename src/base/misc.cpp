@@ -595,7 +595,7 @@ std::string o2scl::vt100_normal_font() {
   return oss.str();
 }
 
-std::string o2scl::vt100_3byte_summ() {
+std::string o2scl::vt100_3byte_summ_long() {
   bool redirected=false;
   if (!isatty(STDOUT_FILENO)) return "";
   std::ostringstream oss;
@@ -651,6 +651,70 @@ std::string o2scl::vt100_3byte_summ() {
 	oss << ((char)27) << "[m";
 	oss << " ";
 	if (k==51 || k==119 || k==187 || k==255) {
+	  oss << endl;
+	}
+      }
+    }
+  }
+  return oss.str();
+}
+
+std::string o2scl::vt100_3byte_summ() {
+  bool redirected=false;
+  if (!isatty(STDOUT_FILENO)) return "";
+  std::ostringstream oss;
+  for(size_t i=0;i<256;i+=51) {
+    for(size_t j=0;j<256;j+=51) {
+      for(size_t k=0;k<256;k+=51) {
+	oss << ((char)27) << "[38;2;" << i << ";" << j << ";" << k << "m";
+	if (i<10) {
+	  oss << "  " << i;
+	} else if (i<100) {
+	  oss << " " << i;
+	} else {
+	  oss << i;
+	}
+	if (j<10) {
+	  oss << "  " << j;
+	} else if (j<100) {
+	  oss << " " << j;
+	} else {
+	  oss << j;
+	}
+	if (k<10) {
+	  oss << "  " << k;
+	} else if (k<100) {
+	  oss << " " << k;
+	} else {
+	  oss << k;
+	}
+	oss << ((char)27) << "[m";
+	oss << " ";
+	oss << ((char)27) << "[48;2;" << i << ";" << j << ";" << k << "m";
+	if (i<10) {
+	  oss << "  " << i;
+	} else if (i<100) {
+	  oss << " " << i;
+	} else {
+	  oss << i;
+	}
+	if (j<10) {
+	  oss << "  " << j;
+	} else if (j<100) {
+	  oss << " " << j;
+	} else {
+	  oss << j;
+	}
+	if (k<10) {
+	  oss << "  " << k;
+	} else if (k<100) {
+	  oss << " " << k;
+	} else {
+	  oss << k;
+	}
+	oss << ((char)27) << "[m";
+	oss << " ";
+	if (k==102 || k==255) {
 	  oss << endl;
 	}
       }

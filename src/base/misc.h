@@ -773,6 +773,9 @@ namespace o2scl {
 
   /// Summarize 3-byte colors
   std::string vt100_3byte_summ();
+
+  /// Summarize 3-byte colors (long form)
+  std::string vt100_3byte_summ_long();
   //@}
   
 #ifndef DOXYGEN_NO_O2NS

@@ -139,25 +139,31 @@ int main(void) {
   
 #endif
 
+  cout << "Underline and standard color test:" << endl;
   cout << vt100_underline() 
-       << vt100_cyan_fg() << "test" << vt100_default() << "test2"
+       << vt100_cyan_fg() << "test" << vt100_default() << " test"
        << endl;
+  cout << endl;
+  cout << "Bold and 8-bit color test: " << endl;
   cout << vt100_bold() 
        << vt100_8bit_fg(202) << "test" << vt100_default() << "test2"
        << endl;
-  cout << vt100_hrule() << endl;
+  cout << "horizonal_rule: " << vt100_hrule(40) << endl;
+  cout << endl;
 
-  cout << vt100_3byte_fg(0,51,102) << "test" << vt100_default()
-       << "test2" << endl;
-  cout << vt100_3byte_fg(255,130,0) << "test" << vt100_default()
-       << "test2" << endl;
-  
+  cout << "Alternate character font:" << endl;
+  cout << "abcdefghijklmnopqrstuvwxyz" << endl;
   cout << vt100_alt_font() 
        << "abcdefghijklmnopqrstuvwxyz" << vt100_normal_font() << endl;
-  cout << "abcdefghijklmnopqrstuvwxyz" << endl;
+  cout << endl;
 
+  cout << "8-bit color summary:" << endl;
   cout << vt100_8bit_summ() << endl;
+  cout << endl;
+
+  cout << "3-byte color summary: " << endl;
   cout << vt100_3byte_summ() << endl;
+  cout << endl;
   
   t.report();
   return 0;
