@@ -737,16 +737,42 @@ namespace o2scl {
 
   /// Switch to default foreground
   std::string vt100_default();
+
+  /// Switch to bold foreground
   std::string vt100_bold();
+
+  /// Change foreground to an 8-bit color
   std::string vt100_8bit_fg(short col); 
+
+  /// Change background to an 8-bit color
   std::string vt100_8bit_bg(short col); 
-  std::string vt100_3byte_fg(short red, short green, short blue); 
-  std::string vt100_3byte_bg(short red, short green, short blue); 
+
+  /// Change foreground to an 3-byte color
+  std::string vt100_3byte_fg(short red, short green, short blue);
+  
+  /// Change background to an 3-byte color
+  std::string vt100_3byte_bg(short red, short green, short blue);
+
+  /// Switch to low-intensity foreground
   std::string vt100_lowint();
+
+  /// Switch to underline background
   std::string vt100_underline();
+
+  /// Switch to reversed background
   std::string vt100_reverse();
+
+  /// Switch to alternate character set
   std::string vt100_alt_font();
+
+  /// Switch from alternate to normal character set
   std::string vt100_normal_font();
+
+  /// Summarize 8-bit colors
+  std::string vt100_8bit_summ();
+
+  /// Summarize 3-byte colors
+  std::string vt100_3byte_summ();
   //@}
   
 #ifndef DOXYGEN_NO_O2NS

@@ -155,6 +155,9 @@ int main(void) {
   cout << vt100_alt_font() 
        << "abcdefghijklmnopqrstuvwxyz" << vt100_normal_font() << endl;
   cout << "abcdefghijklmnopqrstuvwxyz" << endl;
+
+  cout << vt100_8bit_summ() << endl;
+  cout << vt100_3byte_summ() << endl;
   
   t.report();
   return 0;
