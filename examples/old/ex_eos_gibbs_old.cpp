@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2019-2020, Andrew W. Steiner
+  Copyright (C) 2020, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -35,8 +35,6 @@
 #include <o2scl/mm_funct.h>
 #include <o2scl/tov_solve.h>
 #include <o2scl/test_mgr.h>
-#include <o2scl/eos_quark_bag.h>
-#include <o2scl/eos_quark_njl.h>
 
 using namespace std;
 using namespace o2scl;
@@ -77,33 +75,17 @@ public:
 
   typedef boost::numeric::ublas::vector<double> ubvector;
 
-  /// Hadronic EOS pointer
-  eos_had_base *ptr_h;
-
-  /// Skyrme model
+  /// Hadronic EOS
   eos_had_skyrme sk;
-
-  /// Skyrme model
-  eos_had_rmf rmf;
-
-  /// Quark EOS pointer
-  eos_quark *ptr_q;
-
-  /// NJL model
-  eos_quark_njl njl;
-
-  /// Bag model
-  eos_quark_bag bag;
 
   /// \name Particle objects
   //@{
-  fermion n;
-  fermion p;
+  fermion &n;
+  fermion &p;
   fermion e;
-  fermion mu;
-  quark u;
-  quark d;
-  quark s;
+  fermion u;
+  fermion d;
+  fermion s;
   //@}
   
   /// \name Thermodynamic quantities
@@ -125,47 +107,65 @@ public:
   /// Alternate minimizer (unused)
   anneal_gsl<> mmin2;
 
+  /// \name Parameters
+  //@{
+  /// (default \f$ (150~\mathrm{MeV})/(\hbar c) \f$
+  double ms;
+  /// (default \f$ (1~\mathrm{MeV})/(\hbar c) \f$
+  double sigma;
+  /// (default false)
+  bool alt_quark_model;
+  /// (default 0)
+  double c_quark;
+  /// (default 0.24)
+  double mp_start;
+  //@}
+
   /// Bag constant
   double B;
 
-  /// Surface tension (default \f$ (1~\mathrm{MeV})/(\hbar c) \f$
-  double sigma;
-
-  /// Baryon density for the beginning of the mixed phase (default 0.24)
-  double mp_start;
-  
   /** \brief Determine the bag constant by fixing the density at which
       the mixed phase begins
   */
   int f_bag_constant(size_t nv, const ubvector &x, ubvector &y,
 		     double &nB) {
-
     n.n=x[0];
     p.n=nB-n.n;
+    e.n=p.n;
+    B=x[1];
 
-    if (ptr_q==&bag) {
-      bag.bag_constant=x[1];
-    } else if (ptr_q==&njl) {
-      njl.B=x[1];
+    sk.calc_e(n,p,hth);
+    fzt.calc_density_zerot(e);
+
+    if (alt_quark_model) {
+      u.mu=n.mu/3.0-e.mu*2.0/3.0;
+      d.mu=n.mu/3.0+e.mu/3.0;
+      s.mu=d.mu;
+      fzt.calc_mu_zerot(u);
+      fzt.calc_mu_zerot(d);
+      fzt.calc_mu_zerot(s);
+      qth.pr=u.pr+d.pr+s.pr-B;
+      qth.ed=u.ed+d.ed+s.ed+B;
+    } else {
+      double muQ=n.mu/3.0;
+      double p0=3.0*pow(muQ,4.0)/4.0/pi2*(1.0-c_quark)-B;
+      double aQ=ms*ms*muQ/2.0/pi2;
+      double chiQ=2.0*muQ*muQ/pi2;
+      qth.pr=p0-aQ*e.mu+0.5*chiQ*e.mu*e.mu;
+      
+      double nQ=3.0*pow(muQ,3.0)/pi2*(1.0-c_quark)-ms*ms/2.0/pi2*e.mu+
+	0.5*e.mu*e.mu*4.0*muQ/pi2;
+      double nqch=aQ-chiQ*e.mu;
+
+      // Energy density from quarks, etc.
+      qth.ed=-qth.pr+nQ*muQ-nqch*e.mu;
     }
-
-    ptr_h->calc_e(n,p,hth);
-    
-    e.mu=n.mu-p.mu;
-    fzt.calc_mu_zerot(e);
-    mu.mu=e.mu;
-    fzt.calc_mu_zerot(mu);
-
-    u.mu=n.mu/3.0-e.mu*2.0/3.0;
-    d.mu=n.mu/3.0+e.mu/3.0;
-    s.mu=d.mu;
-    ptr_q->calc_p(u,d,s,qth);
 
     tot.pr=hth.pr;
     tot.ed=hth.ed+e.ed;
     
     y[0]=hth.pr-qth.pr;
-    y[1]=p.n-e.n-mu.n;
+    y[1]=n.mu-p.mu-e.mu;
 
     return 0;
   }
@@ -177,11 +177,9 @@ public:
     n.n=x[0];
     p.n=nB-n.n;
     
-    ptr_h->calc_e(n,p,hth);
+    sk.calc_e(n,p,hth);
     e.mu=n.mu-p.mu;
     fzt.calc_mu_zerot(e);
-    mu.mu=e.mu;
-    fzt.calc_mu_zerot(mu);
 
     y[0]=e.n-p.n;
 
@@ -195,20 +193,38 @@ public:
     n.n=x[0];
     p.n=x[1];
     
-    ptr_h->calc_e(n,p,hth);
+    sk.calc_e(n,p,hth);
     e.mu=n.mu-p.mu;
     fzt.calc_mu_zerot(e);
-    mu.mu=e.mu;
-    fzt.calc_mu_zerot(mu);
 
     double quark_nqch, quark_nQ;
-    u.mu=n.mu/3.0-e.mu*2.0/3.0;
-    d.mu=n.mu/3.0+e.mu/3.0;
-    s.mu=d.mu;
-    ptr_q->calc_p(u,d,s,qth);
-    
-    quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
-    quark_nQ=u.n+d.n+s.n;
+    if (alt_quark_model) {
+      u.mu=n.mu/3.0-e.mu*2.0/3.0;
+      d.mu=n.mu/3.0+e.mu/3.0;
+      s.mu=d.mu;
+      fzt.calc_mu_zerot(u);
+      fzt.calc_mu_zerot(d);
+      fzt.calc_mu_zerot(s);
+      qth.pr=u.pr+d.pr+s.pr-B;
+      qth.ed=u.ed+d.ed+s.ed+B;
+      quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
+      quark_nQ=u.n+d.n+s.n;
+    } else {
+      double muQ=n.mu/3.0;
+      double p0=3.0*pow(muQ,4.0)/4.0/pi2*(1.0-c_quark)-B;
+      double aQ=ms*ms*muQ/2.0/pi2;
+      double chiQ=2.0*muQ*muQ/pi2;
+      qth.pr=p0-aQ*e.mu+0.5*chiQ*e.mu*e.mu;
+      
+      double nQ=3.0*pow(muQ,3.0)/pi2*(1.0-c_quark)-ms*ms/2.0/pi2*e.mu+
+	0.5*e.mu*e.mu*4.0*muQ/pi2;
+      double nqch=aQ-chiQ*e.mu;
+      
+      // Energy density from quarks
+      qth.ed=-qth.pr+nQ*muQ-nqch*e.mu;
+      quark_nqch=nqch;
+      quark_nQ=nQ;
+    }
       
     chi=(e.n-quark_nqch)/(p.n-quark_nqch);
 
@@ -231,17 +247,34 @@ public:
     e.mu=x[1];
     
     fzt.calc_mu_zerot(e);
-    mu.mu=e.mu;
-    fzt.calc_mu_zerot(mu);
     
     double quark_nqch, quark_nQ;
-    u.mu=muQ-e.mu*2.0/3.0;
-    d.mu=muQ+e.mu/3.0;
-    s.mu=d.mu;
-    ptr_q->calc_p(u,d,s,qth);
-    
-    quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
-    quark_nQ=u.n+d.n+s.n;
+    if (alt_quark_model) {
+      u.mu=muQ-e.mu*2.0/3.0;
+      d.mu=muQ+e.mu/3.0;
+      s.mu=d.mu;
+      fzt.calc_mu_zerot(u);
+      fzt.calc_mu_zerot(d);
+      fzt.calc_mu_zerot(s);
+      qth.pr=u.pr+d.pr+s.pr-B;
+      qth.ed=u.ed+d.ed+s.ed+B;
+      quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
+      quark_nQ=u.n+d.n+s.n;
+    } else {
+      double p0=3.0*pow(muQ,4.0)/4.0/pi2*(1.0-c_quark)-B;
+      double aQ=ms*ms*muQ/2.0/pi2;
+      double chiQ=2.0*muQ*muQ/pi2;
+      qth.pr=p0-aQ*e.mu+0.5*chiQ*e.mu*e.mu;
+      
+      double nQ=3.0*pow(muQ,3.0)/pi2*(1.0-c_quark)-ms*ms/2.0/pi2*e.mu+
+	0.5*e.mu*e.mu*4.0*muQ/pi2;
+      double nqch=aQ-chiQ*e.mu;
+      
+      // Energy density from quarks
+      qth.ed=-qth.pr+nQ*muQ-nqch*e.mu;
+      quark_nqch=nqch;
+      quark_nQ=nQ;
+    }
 
     y[0]=e.n-quark_nqch;
     y[1]=quark_nQ/3.0-nB;
@@ -257,20 +290,38 @@ public:
     n.n=x[0];
     p.n=x[1];
     
-    ptr_h->calc_e(n,p,hth);
+    sk.calc_e(n,p,hth);
     e.mu=n.mu-p.mu;
     fzt.calc_mu_zerot(e);
-    mu.mu=e.mu;
-    fzt.calc_mu_zerot(mu);
 
     double quark_nqch, quark_nQ;
-
-    u.mu=n.mu/3.0-e.mu*2.0/3.0;
-    d.mu=n.mu/3.0+e.mu/3.0;
-    s.mu=d.mu;
-    ptr_q->calc_p(u,d,s,qth);
-    quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
-    quark_nQ=u.n+d.n+s.n;
+    if (alt_quark_model) {
+      u.mu=n.mu/3.0-e.mu*2.0/3.0;
+      d.mu=n.mu/3.0+e.mu/3.0;
+      s.mu=d.mu;
+      fzt.calc_mu_zerot(u);
+      fzt.calc_mu_zerot(d);
+      fzt.calc_mu_zerot(s);
+      qth.pr=u.pr+d.pr+s.pr-B;
+      qth.ed=u.ed+d.ed+s.ed+B;
+      quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
+      quark_nQ=u.n+d.n+s.n;
+    } else {
+      double muQ=n.mu/3.0;
+      double p0=3.0*pow(muQ,4.0)/4.0/pi2*(1.0-c_quark)-B;
+      double aQ=ms*ms*muQ/2.0/pi2;
+      double chiQ=2.0*muQ*muQ/pi2;
+      qth.pr=p0-aQ*e.mu+0.5*chiQ*e.mu*e.mu;
+      
+      double nQ=3.0*pow(muQ,3.0)/pi2*(1.0-c_quark)-ms*ms/2.0/pi2*e.mu+
+	0.5*e.mu*e.mu*4.0*muQ/pi2;
+      double nqch=aQ-chiQ*e.mu;
+      
+      // Energy density from quarks
+      qth.ed=-qth.pr+nQ*muQ-nqch*e.mu;
+      quark_nqch=nqch;
+      quark_nQ=nQ;
+    }
     
     chi=(e.n-quark_nqch)/(p.n-quark_nqch);
 
@@ -296,28 +347,40 @@ public:
 
     if (chi<0.0 || p.n<0.0 || n.n<0.0) return 1;
 
-    if (false) {
-      double t1, t2;
-      sk.eff_mass(n,p,t1,t2);
-    }
+    double t1, t2;
+    sk.eff_mass(n,p,t1,t2);
     
     if (n.ms<0.0 || p.ms<0.0) return 2;
 
-    ptr_h->calc_e(n,p,hth);
+    sk.calc_e(n,p,hth);
     e.mu=n.mu-p.mu;
     fzt.calc_mu_zerot(e);
-    mu.mu=e.mu;
-    fzt.calc_mu_zerot(mu);
     
     double quark_nqch, quark_nQ;
-
-    u.mu=n.mu/3.0-e.mu*2.0/3.0;
-    d.mu=n.mu/3.0+e.mu/3.0;
-    s.mu=d.mu;
-    
-    ptr_q->calc_p(u,d,s,qth);
-    quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
-    quark_nQ=u.n+d.n+s.n;
+    if (alt_quark_model) {
+      u.mu=n.mu/3.0-e.mu*2.0/3.0;
+      d.mu=n.mu/3.0+e.mu/3.0;
+      s.mu=d.mu;
+      fzt.calc_mu_zerot(u);
+      fzt.calc_mu_zerot(d);
+      fzt.calc_mu_zerot(s);
+      qth.pr=u.pr+d.pr+s.pr-B;
+      qth.ed=u.ed+d.ed+s.ed+B;
+      quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
+      quark_nQ=u.n+d.n+s.n;
+    } else {
+      double muQ=n.mu/3.0;
+      double p0=3.0*pow(muQ,4.0)/4.0/pi2*(1.0-c_quark)-B;
+      double aQ=ms*ms*muQ/2.0/pi2;
+      double chiQ=2.0*muQ*muQ/pi2;
+      
+      double nQ=3.0*pow(muQ,3.0)/pi2*(1.0-c_quark)-ms*ms/2.0/pi2*e.mu+
+	0.5*e.mu*e.mu*4.0*muQ/pi2;
+      double nqch=aQ-chiQ*e.mu;
+      
+      quark_nqch=nqch;
+      quark_nQ=nQ;
+    }
     
     y[0]=e.n-p.n*chi-quark_nqch*(1.0-chi);
     y[1]=nB-(n.n+p.n)*chi-quark_nQ*(1.0-chi)/3.0;
@@ -346,10 +409,29 @@ public:
     p.n=x2[1];
     f_min_densities(2,x2,y2,nB);
     
-    u.mu=n.mu/3.0-e.mu*2.0/3.0;
-    d.mu=n.mu/3.0+e.mu/3.0;
-    s.mu=d.mu;
-    ptr_q->calc_p(u,d,s,qth);
+    if (alt_quark_model) {
+      u.mu=n.mu/3.0-e.mu*2.0/3.0;
+      d.mu=n.mu/3.0+e.mu/3.0;
+      s.mu=d.mu;
+      fzt.calc_mu_zerot(u);
+      fzt.calc_mu_zerot(d);
+      fzt.calc_mu_zerot(s);
+      qth.pr=u.pr+d.pr+s.pr-B;
+      qth.ed=u.ed+d.ed+s.ed+B;
+    } else {
+      double muQ=n.mu/3.0;
+      double p0=3.0*pow(muQ,4.0)/4.0/pi2*(1.0-c_quark)-B;
+      double aQ=ms*ms*muQ/2.0/pi2;
+      double chiQ=2.0*muQ*muQ/pi2;
+      qth.pr=p0-aQ*e.mu+0.5*chiQ*e.mu*e.mu;
+      
+      double nQ=3.0*pow(muQ,3.0)/pi2*(1.0-c_quark)-ms*ms/2.0/pi2*e.mu+
+	0.5*e.mu*e.mu*4.0*muQ/pi2;
+      double nqch=aQ-chiQ*e.mu;
+      
+      // Energy density from quarks
+      qth.ed=-qth.pr+nQ*muQ-nqch*e.mu;
+    }
 
     // Update the energy density and pressure
     tot.ed=hth.ed*chi+qth.ed*(1.0-chi)+e.ed;
@@ -399,13 +481,33 @@ public:
     f_min_densities(2,x2,y2,nB);
 
     double quark_nqch, quark_nQ;
-    
-    u.mu=n.mu/3.0-e.mu*2.0/3.0;
-    d.mu=n.mu/3.0+e.mu/3.0;
-    s.mu=d.mu;
-    ptr_q->calc_p(u,d,s,qth);
-    quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
-    quark_nQ=u.n+d.n+s.n;
+    if (alt_quark_model) {
+      u.mu=n.mu/3.0-e.mu*2.0/3.0;
+      d.mu=n.mu/3.0+e.mu/3.0;
+      s.mu=d.mu;
+      fzt.calc_mu_zerot(u);
+      fzt.calc_mu_zerot(d);
+      fzt.calc_mu_zerot(s);
+      qth.pr=u.pr+d.pr+s.pr-B;
+      qth.ed=u.ed+d.ed+s.ed+B;
+      quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
+      quark_nQ=u.n+d.n+s.n;
+    } else {
+      double muQ=n.mu/3.0;
+      double p0=3.0*pow(muQ,4.0)/4.0/pi2*(1.0-c_quark)-B;
+      double aQ=ms*ms*muQ/2.0/pi2;
+      double chiQ=2.0*muQ*muQ/pi2;
+      qth.pr=p0-aQ*e.mu+0.5*chiQ*e.mu*e.mu;
+      
+      double nQ=3.0*pow(muQ,3.0)/pi2*(1.0-c_quark)-ms*ms/2.0/pi2*e.mu+
+	0.5*e.mu*e.mu*4.0*muQ/pi2;
+      double nqch=aQ-chiQ*e.mu;
+      
+      // Energy density from quarks
+      qth.ed=-qth.pr+nQ*muQ-nqch*e.mu;
+      quark_nqch=nqch;
+      quark_nQ=nQ;
+    }
 
     // Surface and Coulomb energy
     double xglen=chi;
@@ -441,24 +543,17 @@ public:
     return tot.ed;
   }
   
-  ex_eos_gibbs() {
+  ex_eos_gibbs() : n(sk.def_neutron), p(sk.def_proton) {
 
     skyrme_load(sk,"NRAPR");
-    ptr_h=&sk;
-
-    ptr_q=&bag;
     
-    n.init(o2scl_settings.get_convert_units().convert
-	   ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
-    p.init(o2scl_settings.get_convert_units().convert
-	   ("kg","1/fm",o2scl_mks::mass_proton),2.0);
+    ms=150.0/hc_mev_fm;
+
     e.init(o2scl_settings.get_convert_units().convert
 	   ("kg","1/fm",o2scl_mks::mass_electron),2.0);
-    mu.init(o2scl_settings.get_convert_units().convert
-	    ("kg","1/fm",o2scl_mks::mass_muon),2.0);
     u.init(0.0,6.0);
     d.init(0.0,6.0);
-    s.init(95.0/hc_mev_fm,6.0);
+    s.init(ms,6.0);
 
     // Make the minimizer a bit more accurate
     mmin.tol_rel/=1.0e2;
@@ -471,6 +566,8 @@ public:
 
     sigma=1.0/hc_mev_fm;
     
+    alt_quark_model=false;
+    c_quark=0.0;
     mp_start=0.24;
   }
 
@@ -511,7 +608,11 @@ public:
        std::ref(esurf),std::ref(ecoul));
 
     ubvector x(2), y(2);
-    
+
+    n.m=o2scl_settings.get_convert_units().convert
+      ("kg","1/fm",o2scl_mks::mass_neutron);
+    p.m=o2scl_settings.get_convert_units().convert
+      ("kg","1/fm",o2scl_mks::mass_proton);
     cout << "Masses (n,p,e): " << n.m*hc_mev_fm << " "
 	 << p.m*hc_mev_fm << " " << e.m*hc_mev_fm << " MeV" << endl;
     cout << endl;
