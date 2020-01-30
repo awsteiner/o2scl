@@ -37,6 +37,8 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/eos_quark_bag.h>
 #include <o2scl/eos_quark_njl.h>
+#include <o2scl/eos_had_rmf_hyp.h>
+#include <o2scl/cli.h>
 
 using namespace std;
 using namespace o2scl;
@@ -83,8 +85,11 @@ public:
   /// Skyrme model
   eos_had_skyrme sk;
 
-  /// Skyrme model
+  /// RMF model
   eos_had_rmf rmf;
+
+  /// RMF model with hyperons
+  eos_had_rmf_hyp rmf_hyp;
 
   /// Quark EOS pointer
   eos_quark *ptr_q;
@@ -146,7 +151,7 @@ public:
     if (ptr_q==&bag) {
       bag.bag_constant=x[1];
     } else if (ptr_q==&njl) {
-      njl.B=x[1];
+      njl.B0=x[1];
     }
 
     ptr_h->calc_e(n,p,hth);
@@ -474,7 +479,7 @@ public:
     mp_start=0.24;
   }
 
-  void run() {
+  int run(vector<string> &sv, bool itive_com) {
 
     double mp_end, chi, nB, dim=3.0, esurf, ecoul;
     
@@ -1091,15 +1096,79 @@ public:
     hdf_output(hf,*tov,"tov");
     hf.close();
     
-    return;
+    return 0;
   }
+
+  /** \brief Select a hadronic model
+   */
+  int model_hadrons(vector<string> &sv, bool itive_com) {
+    
+    if (sv.size()<2) {
+      cout << "No model specified in model_hadrons()." << endl;
+      return 1;
+    }
+    
+    if (sv[1]=="sk") {
+      ptr_h=&sk;
+      skyrme_load(sk,sv[2]);
+    } else if (sv[0]=="rmf") {
+      ptr_h=&rmf;
+    } else if (sv[0]=="rmfh") {
+      ptr_h=&rmf_hyp;
+    }
+    return 0;
+  }
+  
+  /** \brief Select a quark model
+   */
+  int model_quarks(vector<string> &sv, bool itive_com) {
+    
+    if (sv.size()<2) {
+      cout << "No model specified in model_quarks()." << endl;
+      return 1;
+    }
+    
+    if (sv[1]=="bag") {
+      ptr_q=&bag;
+    } else if (sv[0]=="njl") {
+      ptr_q=&njl;
+    }
+    
+    return 0;
+  }
+  
 };
 
 int main(void) {
+  
   cout.setf(ios::scientific);
-  test_mgr t;
+
   ex_eos_gibbs ehg;
-  ehg.run();
-  t.report();
+  
+  cli cl;
+  cl.prompt="ex_eos_gibbs>";
+  int comm_option_both=2;
+  
+  static const int narr=3;
+  comm_option_s options_arr[narr]={
+    {0,"hadrons","Select hadronic model.",0,-1,"","",
+     new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::model_hadrons),
+     comm_option_both},
+    {0,"quarks","Select quark model.",0,-1,"","",
+     new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::model_quarks),
+     comm_option_both},
+    {0,"run","Run.",0,-1,"","",
+     new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::run),
+     comm_option_both}
+  };
+  
+  /*
+    test_mgr t;
+    
+    ehg.run();
+    
+    t.report();
+  */
+  
   return 0;
 }
