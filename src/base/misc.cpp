@@ -24,8 +24,8 @@
 #include <config.h>
 #endif
 
-// for STDOUT_FILENO
-#include <cstdio>
+// unistd.h is for isatty()
+#include <unistd.h>
 
 // For gsl_finite()
 #include <gsl/gsl_sys.h>
