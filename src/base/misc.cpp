@@ -24,6 +24,9 @@
 #include <config.h>
 #endif
 
+// for STDOUT_FILENO
+#include <cstdio>
+
 // For gsl_finite()
 #include <gsl/gsl_sys.h>
 
