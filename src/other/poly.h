@@ -363,8 +363,8 @@ namespace o2scl {
 	as co[0] and the constant term as co[n]. The roots are returned
 	in ro[0],...,ro[n-1].
     */
-    virtual int solve_rc(int n, const double co[], 
-			 std::complex<double> ro[])=0;
+    virtual int solve_rc_arr(int n, const double co[], 
+			     std::complex<double> ro[])=0;
 
     /// Return a string denoting the type ("poly_real_coeff")
     const char *type() { return "poly_real_coeff"; }
@@ -386,12 +386,12 @@ namespace o2scl {
 	as co[0] and the constant term as co[n]. The roots are returned
 	in ro[0],...,ro[n-1].
     */
-    virtual int solve_c(int n, const std::complex<double> co[], 
-			std::complex<double> ro[])=0;
+    virtual int solve_c_arr(int n, const std::complex<double> co[], 
+			    std::complex<double> ro[])=0;
     
     /// Polish the roots 
-    virtual int polish_c(int n, const std::complex<double> co[],
-			 std::complex<double> *ro)=0;
+    virtual int polish_c_arr(int n, const std::complex<double> co[],
+			     std::complex<double> *ro)=0;
 
     /// Return a string denoting the type ("poly_complex")
     const char *type() { return "poly_complex"; }
@@ -646,8 +646,8 @@ namespace o2scl {
 	is stored in <tt>co[0]</tt> and the constant term is stored in
 	<tt>co[n]</tt>.
      */
-    virtual int solve_rc(int n, const double co[], 
-			 std::complex<double> ro[]);
+    virtual int solve_rc_arr(int n, const double co[], 
+			     std::complex<double> ro[]);
 
     /** \brief Solve a cubic polynomial with real coefficients
      */

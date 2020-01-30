@@ -160,7 +160,7 @@ void eos_sn_base::output(std::string fname) {
   return;
 }
 
-void eos_sn_base::load(std::string fname) {
+void eos_sn_base::load(std::string fname, size_t mode) {
 
   wordexp_single_file(fname);
   
@@ -727,7 +727,7 @@ double eos_sn_base::check_eg() {
   return sum/count;
 }
 
-void eos_sn_ls::load(std::string fname) {
+void eos_sn_ls::load(std::string fname, size_t mode) {
   
   wordexp_single_file(fname);
 
@@ -1686,7 +1686,7 @@ void eos_sn_sht::load(std::string fname, size_t mode) {
   return;
 }
 
-void eos_sn_hfsl::load(std::string fname) {
+void eos_sn_hfsl::load(std::string fname, size_t mode) {
 
   wordexp_single_file(fname);
 

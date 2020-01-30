@@ -221,8 +221,8 @@ int poly_real_coeff_gsl::solve_rc
   return success;
 }
 
-int poly_real_coeff_gsl::solve_rc(int n, const double co[], 
-				  std::complex<double> ro[]) {
+int poly_real_coeff_gsl::solve_rc_arr(int n, const double co[], 
+				      std::complex<double> ro[]) {
   int j;
   typedef boost::numeric::ublas::vector<double> ubvector;
   ubvector a(n+1), z(2*n);

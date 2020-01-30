@@ -163,7 +163,7 @@ int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
   return calc_temp_e(ne,pr,0.0,locth);
 }
 
-double eos_had_skyrme::feoa(double nb) {
+double eos_had_skyrme::feoa_symm(double nb) {
   double ret, kr23, beta, t3p;
 
   if (parent_method) {
@@ -177,7 +177,7 @@ double eos_had_skyrme::feoa(double nb) {
   return ret;
 }
 
-double eos_had_skyrme::fmsom(double nb) {
+double eos_had_skyrme::fmsom_symm(double nb) {
   double ret, beta;
 
   if (parent_method) {

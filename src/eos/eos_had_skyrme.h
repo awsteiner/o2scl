@@ -498,22 +498,22 @@ namespace o2scl {
 	the neutron and proton masses are equal.
     */
     //@{
-    /** \brief Calculate binding energy
+    /** \brief Calculate binding energy in symmetric matter
       
 	\f[
 	\frac{E}{A} = C n_B^{2/3} \left( 1 + \beta n_B \right) + 
 	\frac{3 t_0}{8} n_B + \frac{t_3^{\prime}}{16} n_B^{\alpha+1} 
 	\f]
     */
-    virtual double feoa(double nb);
+    virtual double feoa_symm(double nb);
   
-    /** \brief Calculate effective mass
+    /** \brief Calculate effective mass in symmetric matter
       
 	\f[
 	M^{*}/M = \left(1+ \beta n_B \right)^{-1} \\
 	\f]
     */
-    virtual double fmsom(double nb);
+    virtual double fmsom_symm(double nb);
 
     /** \brief Calculate compressibility in nuclear (isospin-symmetric
 	matter)

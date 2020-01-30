@@ -330,7 +330,7 @@ namespace o2scl {
        base class format
        \endcomment
     */
-    virtual void load(std::string fname);
+    virtual void load(std::string fname, size_t mode);
 
     /* \brief Output EOS to file named \c file_name
 
@@ -545,7 +545,7 @@ namespace o2scl {
     }
 
     /// Load table from filename \c fname
-    virtual void load(std::string fname);
+    virtual void load(std::string fname, size_t mode);
 
     /** \brief Check electrons and photons
 
@@ -893,7 +893,7 @@ namespace o2scl {
     }
     
     /// Load table from filename \c fname
-    virtual void load(std::string fname);
+    virtual void load(std::string fname, size_t mode);
     
   };
   
