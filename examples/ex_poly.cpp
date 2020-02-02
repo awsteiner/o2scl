@@ -110,7 +110,7 @@ int main(void) {
   // The fifth order polynomial
   cout << "Fifth order roots: " << endl;
   double co[6]={16.0,0.0,-20.0,0.0,5.0,0.0};
-  gen.solve_rc(5,co,ca);
+  gen.solve_rc_arr(5,co,ca);
 
   // Sort the roots and compare with the exact results
   for(size_t i=0;i<5;i++) v[i]=ca[i].real();
