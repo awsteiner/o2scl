@@ -136,7 +136,9 @@ public:
   /// Surface tension (default \f$ (1~\mathrm{MeV})/(\hbar c) \f$
   double sigma;
 
-  /// Baryon density for the beginning of the mixed phase (default 0.24)
+  /** \brief If non-zero, then the bag constant will be adjusted 
+      to ensure this value is the beginning of the mixed phase
+  */
   double mp_start;
   
   /** \brief Determine the bag constant by fixing the density at which
@@ -476,10 +478,10 @@ public:
 
     sigma=1.0/hc_mev_fm;
     
-    mp_start=0.24;
+    mp_start=0.0;
   }
 
-  int run(vector<string> &sv, bool itive_com) {
+  int mvsr(vector<string> &sv, bool itive_com) {
 
     double mp_end, chi, nB, dim=3.0, esurf, ecoul;
     
@@ -524,50 +526,54 @@ public:
     // -----------------------------------------------------------------
     // Determine bag constant
 
-    mm_funct fp_bag_constant=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &,
-		       double &)>
-       (&ex_eos_gibbs::f_bag_constant),this,std::placeholders::_1,
-       std::placeholders::_2, std::placeholders::_3,
-       std::ref(nB));
+    if (mp_start>0 && (ptr_q==&bag || ptr_q==&njl)) {
+      
+      mm_funct fp_bag_constant=std::bind
+	(std::mem_fn<int(size_t,const ubvector &,ubvector &,
+			 double &)>
+	 (&ex_eos_gibbs::f_bag_constant),this,std::placeholders::_1,
+	 std::placeholders::_2, std::placeholders::_3,
+	 std::ref(nB));
 
-    cout << "Determine B by fixing the "
-	 << "beginning of the mixed phase to\n n_B=" << mp_start
-	 << " fm^{-3}:" << endl;
-    nB=mp_start;
-    x[0]=mp_start*0.9;
-    x[1]=1.0;
-    mh.msolve(2,x,fp_bag_constant);
-    B=x[1];
-    cout << "B: " << B*hc_mev_fm << " MeV/fm^3" << endl;
-    cout << "Densities (n,p,e): " << n.n << " " << p.n << " " << e.n
-	 << " fm^{-3}" << endl;
-    cout << "Quark densities (u,d,s): " << u.n << " " << d.n << " "
-	 << s.n << " fm^{-3}" << endl;
-    cout << "Chem pots. (n,p,e): " << n.mu*hc_mev_fm << " "
-	 << p.mu*hc_mev_fm << " " << e.mu*hc_mev_fm << " MeV" << endl;
-    cout << "Quark chem. pots. (u,d,s): " << u.mu*hc_mev_fm << " "
-	 << d.mu*hc_mev_fm << " " << s.mu*hc_mev_fm << " fm^{-3}" << endl;
-    cout << "Electron energy density: " << e.ed*hc_mev_fm << " MeV/fm^3"
-	 << endl;
-    cout << "Total pressure: " << tot.pr*hc_mev_fm << " MeV/fm^3" << endl;
-    cout << "Total energy density: " << tot.ed*hc_mev_fm << " MeV/fm^3" << endl;
-    {
-      cout << "Skyrme energy density: " << hth.ed*hc_mev_fm << " MeV/fm^3"
+      cout << "Determine B by fixing the "
+	   << "beginning of the mixed phase to\n n_B=" << mp_start
+	   << " fm^{-3}:" << endl;
+      nB=mp_start;
+      x[0]=mp_start*0.9;
+      x[1]=1.0;
+      mh.msolve(2,x,fp_bag_constant);
+      B=x[1];
+      cout << "B: " << B*hc_mev_fm << " MeV/fm^3" << endl;
+      cout << "Densities (n,p,e): " << n.n << " " << p.n << " " << e.n
+	   << " fm^{-3}" << endl;
+      cout << "Quark densities (u,d,s): " << u.n << " " << d.n << " "
+	   << s.n << " fm^{-3}" << endl;
+      cout << "Chem pots. (n,p,e): " << n.mu*hc_mev_fm << " "
+	   << p.mu*hc_mev_fm << " " << e.mu*hc_mev_fm << " MeV" << endl;
+      cout << "Quark chem. pots. (u,d,s): " << u.mu*hc_mev_fm << " "
+	   << d.mu*hc_mev_fm << " " << s.mu*hc_mev_fm << " fm^{-3}" << endl;
+      cout << "Electron energy density: " << e.ed*hc_mev_fm << " MeV/fm^3"
 	   << endl;
-      cout << "Skyrme pressure: " << hth.pr*hc_mev_fm << " MeV/fm^3"
-	   << endl;
+      cout << "Total pressure: " << tot.pr*hc_mev_fm << " MeV/fm^3" << endl;
+      cout << "Total energy density: " << tot.ed*hc_mev_fm << " MeV/fm^3" << endl;
+      {
+	cout << "Skyrme energy density: " << hth.ed*hc_mev_fm << " MeV/fm^3"
+	     << endl;
+	cout << "Skyrme pressure: " << hth.pr*hc_mev_fm << " MeV/fm^3"
+	     << endl;
+      }
+      {
+	cout << "Quark energy dens. & pressure: "
+	     << qth.ed*hc_mev_fm << " MeV/fm^3, "
+	     << qth.pr*hc_mev_fm << " MeV/fm^3"
+	     << endl;
+	//cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
+	//cout << "Charge density in quark matter: " << quark_nqch
+	//<< " 1/fm^3" << endl;
+      }
+      cout << endl;
+
     }
-    {
-      cout << "Quark energy dens. & pressure: "
-	   << qth.ed*hc_mev_fm << " MeV/fm^3, "
-	   << qth.pr*hc_mev_fm << " MeV/fm^3"
-	   << endl;
-      //cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
-      //cout << "Charge density in quark matter: " << quark_nqch
-      //<< " 1/fm^3" << endl;
-    }
-    cout << endl;
     
     // -----------------------------------------------------------------
     // Find the end of the mixed phase with fp_end_mixed_phase()
@@ -1102,19 +1108,75 @@ public:
   /** \brief Select a hadronic model
    */
   int model_hadrons(vector<string> &sv, bool itive_com) {
-    
+
     if (sv.size()<2) {
-      cout << "No model specified in model_hadrons()." << endl;
+      cerr << "No model specified in model_hadrons()." << endl;
       return 1;
     }
     
     if (sv[1]=="sk") {
       ptr_h=&sk;
       skyrme_load(sk,sv[2]);
-    } else if (sv[0]=="rmf") {
+    } else if (sv[1]=="rmf") {
       ptr_h=&rmf;
-    } else if (sv[0]=="rmfh") {
+    } else if (sv[1]=="SLB00") {
+      ptr_h=&rmf;
+      rmf.mnuc=939.0/hc_mev_fm;
+      rmf.n0=0.16;
+      rmf.eoa=16.0/hc_mev_fm;
+      rmf.comp=250.0/hc_mev_fm;
+      rmf.msom=0.6;
+      rmf.esym=36.0/hc_mev_fm;
+      rmf.ms=500.0/hc_mev_fm;
+      rmf.mw=763.0/hc_mev_fm;
+      rmf.mr=770.0/hc_mev_fm;
+      rmf.zeta=0.0;
+      rmf.xi=0.0;
+      rmf.a1=0.0;
+      rmf.a2=0.0;
+      rmf.a3=0.0;
+      rmf.a4=0.0;
+      rmf.a5=0.0;
+      rmf.a6=0.0;
+      rmf.b1=0.0;
+      rmf.b2=0.0;
+      rmf.b3=0.0;
+      cout << "Going to fix_saturation()." << endl;
+      rmf.fix_saturation();
+      cout << "Done." << endl;
+      rmf.verbose=2;
+      rmf.saturation();
+      cout << rmf.n0 << " " << rmf.msom << endl;
+      cout << "Selected the RMF model from SLB00 (no hyperons)." << endl;
+      exit(-1);
+    } else if (sv[1]=="SLB00_hyp") {
       ptr_h=&rmf_hyp;
+      rmf_hyp.n0=0.16;
+      rmf_hyp.eoa=16.0/hc_mev_fm;
+      rmf_hyp.comp=250.0/hc_mev_fm;
+      rmf_hyp.msom=0.6;
+      rmf_hyp.esym=36.0/hc_mev_fm;
+      rmf_hyp.zeta=0.0;
+      rmf_hyp.xi=0.0;
+      rmf_hyp.a1=0.0;
+      rmf_hyp.a2=0.0;
+      rmf_hyp.a3=0.0;
+      rmf_hyp.a4=0.0;
+      rmf_hyp.a5=0.0;
+      rmf_hyp.a6=0.0;
+      rmf_hyp.b1=0.0;
+      rmf_hyp.b2=0.0;
+      rmf_hyp.b3=0.0;
+      rmf_hyp.fix_saturation();
+      rmf_hyp.xs=0.8;
+      rmf_hyp.xw=0.895;
+      rmf_hyp.xr=0.8;
+    } else if (sv[1]=="rmfh") {
+      ptr_h=&rmf_hyp;
+    } else {
+      cerr << "Hadronic model specification " << sv[1]
+	   << " not understood." << endl;
+      return 2;
     }
     return 0;
   }
@@ -1124,14 +1186,39 @@ public:
   int model_quarks(vector<string> &sv, bool itive_com) {
     
     if (sv.size()<2) {
-      cout << "No model specified in model_quarks()." << endl;
+      cerr << "No model specified in model_quarks()." << endl;
       return 1;
     }
     
     if (sv[1]=="bag") {
       ptr_q=&bag;
-    } else if (sv[0]=="njl") {
+    } else if (sv[1]=="SLB00_bag") {
+      ptr_q=&bag;
+      u.m=5.5/hc_mev_fm;
+      d.m=5.5/hc_mev_fm;
+      s.m=140.7/hc_mev_fm;
+      bag.bag_constant=200.0/hc_mev_fm;
+      mp_start=0.0;
+      cout << "Selected the bag model from SLB00." << endl;
+    } else if (sv[1]=="SLB00_njl") {
       ptr_q=&njl;
+      njl.L=602.3/hc_mev_fm;
+      njl.G=1.835/njl.L/njl.L;
+      njl.K=12.36/njl.L/njl.L;
+      njl.up_default_mass=5.5/hc_mev_fm;
+      njl.down_default_mass=5.5/hc_mev_fm;
+      njl.strange_default_mass=140.7/hc_mev_fm;
+      u.m=5.5/hc_mev_fm;
+      d.m=5.5/hc_mev_fm;
+      s.m=140.7/hc_mev_fm;
+      bag.bag_constant=200.0/hc_mev_fm;
+      mp_start=0.0;
+    } else if (sv[1]=="njl") {
+      ptr_q=&njl;
+    } else {
+      cerr << "Quark model specification " << sv[1]
+	   << " not understood." << endl;
+      return 2;
     }
     
     return 0;
@@ -1139,7 +1226,7 @@ public:
   
 };
 
-int main(void) {
+int main(int argc, char *argv[]) {
   
   cout.setf(ios::scientific);
 
@@ -1153,22 +1240,19 @@ int main(void) {
   comm_option_s options_arr[narr]={
     {0,"hadrons","Select hadronic model.",0,-1,"","",
      new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::model_hadrons),
-     comm_option_both},
+     cli::comm_option_both},
     {0,"quarks","Select quark model.",0,-1,"","",
      new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::model_quarks),
-     comm_option_both},
-    {0,"run","Run.",0,-1,"","",
-     new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::run),
-     comm_option_both}
+     cli::comm_option_both},
+    {0,"mvsr","Compute EOS and M-R curve",0,-1,"","",
+     new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::mvsr),
+     cli::comm_option_both}
   };
   
-  /*
-    test_mgr t;
-    
-    ehg.run();
-    
-    t.report();
-  */
+  cl.set_comm_option_vec(narr,options_arr);
+  cl.cmd_name="ex_eos_gibbs";
+  
+  cl.run_auto(argc,argv);
   
   return 0;
 }

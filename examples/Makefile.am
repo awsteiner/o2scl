@@ -529,3 +529,5 @@ examples-clean:
 	-rm -f *.o *.out $(EXAMPLE_PRGS) $(BENCHMARK_PRGS) \
 		$(EXTRA_PROGRAMS) examples-summary.txt
 
+slb00:
+	ex_eos_gibbs -hadrons SLB00 -quarks SLB00_bag -mvsr

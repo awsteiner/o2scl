@@ -893,7 +893,7 @@ namespace o2scl {
     }
     
     /// Load table from filename \c fname
-    virtual void load(std::string fname, size_t mode);
+    virtual void load(std::string fname, size_t mode=0);
     
   };
   

@@ -479,6 +479,8 @@ namespace o2scl {
 	
 	\c guess_cs, \c guess_cw, \c guess_b, and \c guess_c are
 	initial guesses for \c cs, \c cw, \c b, and \c c respectively.
+	
+	This function uses the solver \ref sat_mroot .
 
 	\todo 
 	- Fix this for zm_mode=true

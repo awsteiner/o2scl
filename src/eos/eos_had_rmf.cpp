@@ -996,9 +996,10 @@ int eos_had_rmf::saturation() {
     it++;
     if (verbose>0) {
       cout << "eos_had_rmf::saturation() fixing density: " << it 
-	   << "\n\t" << x[0] << " " << x[1] << " " << x[2] << " "
-	   << x[3] << " " << x[4] << "\n\t" << y[0] << " "
-	   << y[1] << " " << y[2] << " " << y[3] << " " << y[4] << endl;
+	   << "\n\tmun=" << x[0] << " mup=" << x[1] << " sig=" << x[2]
+	   << " ome=" << x[3] << " rho=" << x[4] << "\n\ty[0]=" << y[0]
+	   << " y[1]=" << y[1] << " y[2]=" << y[2] << " y[3]="
+	   << y[3] << " y[4]=" << y[4] << endl;
     }
   } 
   if (it==max_it) {
@@ -1031,8 +1032,11 @@ int eos_had_rmf::saturation() {
   msom=neutron->ms/neutron->m;
   eoa=(eos_thermo->ed/n0-(neutron->m+proton->m)/2.0);
 
+  cout << "Here1 " << neutron->n << " " << proton->n << " " << n0 << endl;
   comp=eos_had_base::fcomp(n0);
+  cout << "Here2." << endl;
   kprime=eos_had_base::fkprime(n0);
+  cout << "Here3." << endl;
   esym=eos_had_base::fesym(n0);
 
   // These can't be used because they don't work with unequal
@@ -1241,7 +1245,7 @@ int eos_had_rmf::calc_cr(double sig, double ome, double l_nb) {
 
   up=4.0*kf*kf-24.0*esym*efs;
   dn=fun*(48.0*esym*efs-8.0*kf*kf)-3.0*l_nb*efs;
-  
+
   cr=sqrt(up/dn);
 
   if (!std::isfinite(cr)) {
