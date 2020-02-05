@@ -474,17 +474,25 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 	n_baryon=0.16*(1.0-alpha)+(nn+np)*alpha;
 	n_charge=0.08*(1.0-alpha)+np*alpha;
       }
-    
-      // If the chemical potentials are too small, shift them by
-      // a little more than required to get positive densities. 
+
+      // If the chemical potentials are too small, shift them to
+      // get positive densities
       int rt=calc_e_solve_fun(5,x,y);
+      
       if (!ce_prot_matter && neutron->nu<neutron->ms) {
-	neutron->mu+=(neutron->ms-neutron->mu)*1.01;
-	rt=calc_e_solve_fun(5,x,y);
+	for(size_t j=0;j<5 && !ce_prot_matter && neutron->nu<neutron->ms;
+	    j++) {
+	  x[0]+=0.1;
+	  rt=calc_e_solve_fun(5,x,y);
+	}
       }
+      
       if (!ce_neut_matter && proton->nu<proton->ms) {
-	proton->mu+=(proton->ms-proton->mu)*1.01;
-	rt=calc_e_solve_fun(5,x,y);
+	for(size_t j=0;j<5 && !ce_neut_matter && proton->nu<proton->ms;
+	    j++) {
+	  x[1]+=0.1;
+	  rt=calc_e_solve_fun(5,x,y);
+	}
       }
 
       // The initial point has n_n = n_p and thus rho=0, and the
@@ -795,6 +803,28 @@ int eos_had_rmf::calc_eq_p(fermion &ne, fermion &pr, double sig, double ome,
   return success;
 }
 
+int eos_had_rmf::fix_saturation2_fun(size_t nv, const ubvector &x, 
+				     ubvector &y, double fix_n0,
+				     double fix_eoa, double fix_comp,
+				     double fix_esym, double fix_msom) {
+  
+  cs=x[0];
+  cw=x[1];
+  cr=x[2];
+  b=x[3];
+  c=x[4];
+
+  saturation();
+
+  y[0]=(comp-fix_comp)/fix_comp;
+  y[1]=(esym-fix_esym)/fix_esym;
+  y[2]=(msom-fix_msom)/fix_msom;
+  y[3]=(n0-fix_n0)/fix_n0;
+  y[4]=(eoa-fix_eoa)/fix_comp;
+
+  return 0;
+}
+
 int eos_had_rmf::fix_saturation_fun(size_t nv, const ubvector &x, 
 				    ubvector &y) {
   
@@ -883,6 +913,43 @@ int eos_had_rmf::fix_saturation_fun(size_t nv, const ubvector &x,
     O2SCL_ERR2("Equation not finite in ",
 	       "eos_had_rmf::fix_saturation_fun().",exc_efailed);
   }
+  return 0;
+}
+
+int eos_had_rmf::fix_saturation2(double gcs, double gcw,
+				 double gcr, double gb, double gc) {
+  ubvector x(5);
+
+  x[0]=gcs;
+  x[1]=gcw;
+  x[2]=gcr;
+  x[3]=gb;
+  x[4]=gc;
+
+  double fix_n0=n0, fix_eoa=eoa, fix_comp=comp, fix_esym=esym;
+  double fix_msom=msom;
+  
+  mm_funct fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,double,
+		     double, double, double, double)>
+     (&eos_had_rmf::fix_saturation2_fun),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3,fix_n0,fix_eoa,fix_comp,fix_esym,
+     fix_msom);
+
+  int test=sat_mroot->msolve(5,x,fmf);
+  if (test!=0) {
+    O2SCL_ERR("Solve failed in fix_saturation2().",exc_efailed);
+  }
+
+  cs=x[0];
+  cw=x[1];
+  cr=x[2];
+  b=x[3];
+  c=x[4];
+
+  saturation();
+  
   return 0;
 }
 
@@ -997,8 +1064,8 @@ int eos_had_rmf::saturation() {
     if (verbose>0) {
       cout << "eos_had_rmf::saturation() fixing density: " << it 
 	   << "\n\tmun=" << x[0] << " mup=" << x[1] << " sig=" << x[2]
-	   << " ome=" << x[3] << " rho=" << x[4] << "\n\ty[0]=" << y[0]
-	   << " y[1]=" << y[1] << " y[2]=" << y[2] << " y[3]="
+	   << " ome=" << x[3] << "\n\trho=" << x[4] << " y[0]=" << y[0]
+	   << " y[1]=" << y[1] << "\n\ty[2]=" << y[2] << " y[3]="
 	   << y[3] << " y[4]=" << y[4] << endl;
     }
   } 
@@ -1031,12 +1098,9 @@ int eos_had_rmf::saturation() {
   n0=neutron->n+proton->n;
   msom=neutron->ms/neutron->m;
   eoa=(eos_thermo->ed/n0-(neutron->m+proton->m)/2.0);
-
-  cout << "Here1 " << neutron->n << " " << proton->n << " " << n0 << endl;
+  
   comp=eos_had_base::fcomp(n0);
-  cout << "Here2." << endl;
   kprime=eos_had_base::fkprime(n0);
-  cout << "Here3." << endl;
   esym=eos_had_base::fesym(n0);
 
   // These can't be used because they don't work with unequal
@@ -1057,7 +1121,7 @@ int eos_had_rmf::calc_e_solve_fun(size_t nv, const ubvector &ex,
   sig=ex[2];
   ome=ex[3];
   lrho=ex[4];
-
+  
   calc_eq_p(*neutron,*proton,sig,ome,lrho,f1,f2,f3,*eos_thermo);
   
   // 11/5/08 - We don't want to call the error handler here, because

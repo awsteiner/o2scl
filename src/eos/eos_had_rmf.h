@@ -472,7 +472,10 @@ namespace o2scl {
 	properties
 
 	Note that the meson masses and \ref mnuc must be specified
-	before calling this function.
+	before calling this function. The neutron and proton
+	masses must both be equal to \ref mnuc, and the 
+	neutron and proton objects must have
+	<tt>inc_rest_mass=false</tt>.
 
 	This function does not give correct results when bool zm_mode 
 	is true. 
@@ -489,6 +492,13 @@ namespace o2scl {
     */
     int fix_saturation(double guess_cs=4.0, double guess_cw=3.0, 
 		       double guess_b=0.001, double guess_c=-0.001);
+
+    /** \brief Calculate cs, cw, cr, b, and c from the saturation 
+	properties
+    */
+    int fix_saturation2(double guess_cs=4.0, double guess_cw=3.0,
+			double guess_cr=3.0, double guess_b=0.001,
+			double guess_c=-0.001);
     
     /** \brief Calculate properties of nuclear matter at the
 	saturation density
@@ -809,6 +819,12 @@ namespace o2scl {
     
     /// The function for fix_saturation()
     int fix_saturation_fun(size_t nv, const ubvector &x, ubvector &y);
+
+    /// The function for fix_saturation2()
+    int fix_saturation2_fun(size_t nv, const ubvector &x, 
+			    ubvector &y, double fix_n0,
+			    double fix_eoa, double fix_comp,
+			    double fix_esym, double fix_msom);
     
     /// Compute matter at zero pressure (for saturation())
     virtual int zero_pressure(size_t nv, const ubvector &ex, 

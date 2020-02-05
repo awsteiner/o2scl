@@ -466,7 +466,12 @@ public:
     u.init(0.0,6.0);
     d.init(0.0,6.0);
     s.init(95.0/hc_mev_fm,6.0);
-
+    
+    n.non_interacting=false;
+    p.non_interacting=false;
+    n.inc_rest_mass=true;
+    p.inc_rest_mass=true;
+    
     // Make the minimizer a bit more accurate
     mmin.tol_rel/=1.0e2;
     mmin.tol_abs/=1.0e2;
@@ -1121,6 +1126,12 @@ public:
       ptr_h=&rmf;
     } else if (sv[1]=="SLB00") {
       ptr_h=&rmf;
+
+      n.m=939.0/hc_mev_fm;
+      p.m=939.0/hc_mev_fm;
+      
+      rmf.set_n_and_p(n,p);
+      
       rmf.mnuc=939.0/hc_mev_fm;
       rmf.n0=0.16;
       rmf.eoa=16.0/hc_mev_fm;
@@ -1141,10 +1152,12 @@ public:
       rmf.b1=0.0;
       rmf.b2=0.0;
       rmf.b3=0.0;
+      n.mu=n.m*1.1;
+      p.mu=p.m*1.1;
+      rmf.set_fields(0.2,0.15,-0.001);
       cout << "Going to fix_saturation()." << endl;
       rmf.fix_saturation();
       cout << "Done." << endl;
-      rmf.verbose=2;
       rmf.saturation();
       cout << rmf.n0 << " " << rmf.msom << endl;
       cout << "Selected the RMF model from SLB00 (no hyperons)." << endl;
