@@ -139,7 +139,7 @@ public:
   /** \brief If non-zero, then the bag constant will be adjusted 
       to ensure this value is the beginning of the mixed phase
   */
-  double mp_start;
+  double mp_start_fix;
   
   /** \brief Determine the bag constant by fixing the density at which
       the mixed phase begins
@@ -256,10 +256,39 @@ public:
     return 0;
   }
 
+  /** \brief Solve for the beginning of the mixed phase
+   */
+  int f_beg_mixed_phase(size_t nv, const ubvector &x, ubvector &y,
+			double &nB) {
+
+    n.n=x[0];
+    p.n=x[1];
+    
+    ptr_h->calc_e(n,p,hth);
+    e.mu=n.mu-p.mu;
+    fzt.calc_mu_zerot(e);
+    mu.mu=e.mu;
+    fzt.calc_mu_zerot(mu);
+
+    u.mu=n.mu/3.0-e.mu*2.0/3.0;
+    d.mu=n.mu/3.0+e.mu/3.0;
+    s.mu=d.mu;
+    ptr_q->calc_p(u,d,s,qth);
+    
+    // Compute total baryon density
+    nB=n.n+p.n;
+    
+    y[0]=hth.pr-qth.pr;
+    // Ensure electric neutrality in the hadronic phase
+    y[1]=p.n-e.n-mu.n;
+
+    return 0;
+  }
+  
   /** \brief Solve for the end of the mixed phase
    */
   int f_end_mixed_phase(size_t nv, const ubvector &x, ubvector &y,
-			double &nB, double &chi) {
+			double &nB) {
 
     n.n=x[0];
     p.n=x[1];
@@ -279,10 +308,7 @@ public:
     quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
     quark_nQ=u.n+d.n+s.n;
     
-    chi=(e.n-quark_nqch)/(p.n-quark_nqch);
-
     // Update the energy density and pressure
-    tot.ed=hth.ed*chi+qth.ed*(1.0-chi)+e.ed;
     tot.pr=hth.pr+e.pr;
 
     // Compute total baryon density
@@ -290,7 +316,7 @@ public:
     
     y[0]=hth.pr-qth.pr;
     // Ensure electric neutrality from quarks alone
-    y[1]=quark_nqch-e.n;
+    y[1]=quark_nqch-e.n-mu.n;
 
     return 0;
   }
@@ -483,12 +509,14 @@ public:
 
     sigma=1.0/hc_mev_fm;
     
-    mp_start=0.0;
+    mp_start_fix=0.0;
   }
 
+  /** \brief Compute the EOS and M-R curve at T=0
+   */
   int mvsr(vector<string> &sv, bool itive_com) {
 
-    double mp_end, chi, nB, dim=3.0, esurf, ecoul;
+    double mp_end, chi, nB, dim=3.0, esurf, ecoul, mp_start;
     
     mm_funct fp_had_phase=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,double &)>
@@ -505,12 +533,18 @@ public:
        (&ex_eos_gibbs::f_quark_phase),this,std::placeholders::_1,
        std::placeholders::_2,std::placeholders::_3,
        std::ref(nB));
+    mm_funct fp_beg_mixed_phase=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,
+		       double &)>
+       (&ex_eos_gibbs::f_beg_mixed_phase),this,std::placeholders::_1,
+       std::placeholders::_2,std::placeholders::_3,
+       std::ref(nB));
     mm_funct fp_end_mixed_phase=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,
-		       double &, double &)>
+		       double &)>
        (&ex_eos_gibbs::f_end_mixed_phase),this,std::placeholders::_1,
        std::placeholders::_2,std::placeholders::_3,
-       std::ref(nB),std::ref(chi));
+       std::ref(nB));
     multi_funct fp_mixed_phase_min=std::bind
       (std::mem_fn<double(size_t,const ubvector &, double &, double &)>
        (&ex_eos_gibbs::f_mixed_phase_min),this,std::placeholders::_1,
@@ -531,7 +565,9 @@ public:
     // -----------------------------------------------------------------
     // Determine bag constant
 
-    if (mp_start>0 && (ptr_q==&bag || ptr_q==&njl)) {
+    if (mp_start_fix>0 && (ptr_q==&bag || ptr_q==&njl)) {
+      
+      mp_start=mp_start_fix;
       
       mm_funct fp_bag_constant=std::bind
 	(std::mem_fn<int(size_t,const ubvector &,ubvector &,
@@ -560,7 +596,8 @@ public:
       cout << "Electron energy density: " << e.ed*hc_mev_fm << " MeV/fm^3"
 	   << endl;
       cout << "Total pressure: " << tot.pr*hc_mev_fm << " MeV/fm^3" << endl;
-      cout << "Total energy density: " << tot.ed*hc_mev_fm << " MeV/fm^3" << endl;
+      cout << "Total energy density: " << tot.ed*hc_mev_fm
+	   << " MeV/fm^3" << endl;
       {
 	cout << "Skyrme energy density: " << hth.ed*hc_mev_fm << " MeV/fm^3"
 	     << endl;
@@ -578,8 +615,24 @@ public:
       }
       cout << endl;
 
+    } else {
+
+      // -----------------------------------------------------------------
+      // Find the beginning of the mixed phase with fp_beg_mixed_phase()
+      
+      cout << "Beginning of mixed phase: " << endl;
+      x[0]=0.3;
+      x[1]=0.1;
+      mh.msolve(2,x,fp_beg_mixed_phase);
+      n.n=x[0];
+      p.n=x[1];
+      f_beg_mixed_phase(2,x,y,nB);
+      mp_start=nB;
+      cout << "Baryon density: " << nB << " fm^{-3}" << endl;
+      cout << endl;
+      
     }
-    
+
     // -----------------------------------------------------------------
     // Find the end of the mixed phase with fp_end_mixed_phase()
 
@@ -590,14 +643,9 @@ public:
       mh.msolve(2,x,fp_end_mixed_phase);
       n.n=x[0];
       p.n=x[1];
-      f_end_mixed_phase(2,x,y,nB,chi);
+      f_end_mixed_phase(2,x,y,nB);
       mp_end=nB;
       cout << "Baryon density: " << nB << " fm^{-3}" << endl;
-      cout << "Chem pots. (n,p,e): " << n.mu*hc_mev_fm << " "
-	   << p.mu*hc_mev_fm << " " << e.mu*hc_mev_fm << " MeV" << endl;
-      cout << "Electron energy density: " << e.ed*hc_mev_fm << " MeV/fm^3"
-	   << endl;
-      cout << "Pressure: " << tot.pr*hc_mev_fm << " MeV/fm^3" << endl;
       cout << endl;
     }
 
@@ -653,6 +701,7 @@ public:
       */
     }
     cout << endl;
+      exit(-1);
     
     cout << "Mixed phase at n_B=" << nB << " fm^{-3} from minimizer:" << endl;
     cout << "  Notice this is slightly different from the above" << endl;
@@ -1161,7 +1210,6 @@ public:
       rmf.saturation();
       cout << rmf.n0 << " " << rmf.msom << endl;
       cout << "Selected the RMF model from SLB00 (no hyperons)." << endl;
-      exit(-1);
     } else if (sv[1]=="SLB00_hyp") {
       ptr_h=&rmf_hyp;
       rmf_hyp.n0=0.16;
@@ -1211,21 +1259,21 @@ public:
       d.m=5.5/hc_mev_fm;
       s.m=140.7/hc_mev_fm;
       bag.bag_constant=200.0/hc_mev_fm;
-      mp_start=0.0;
+      mp_start_fix=0.0;
       cout << "Selected the bag model from SLB00." << endl;
     } else if (sv[1]=="SLB00_njl") {
       ptr_q=&njl;
-      njl.L=602.3/hc_mev_fm;
-      njl.G=1.835/njl.L/njl.L;
-      njl.K=12.36/njl.L/njl.L;
-      njl.up_default_mass=5.5/hc_mev_fm;
-      njl.down_default_mass=5.5/hc_mev_fm;
-      njl.strange_default_mass=140.7/hc_mev_fm;
       u.m=5.5/hc_mev_fm;
       d.m=5.5/hc_mev_fm;
       s.m=140.7/hc_mev_fm;
-      bag.bag_constant=200.0/hc_mev_fm;
-      mp_start=0.0;
+      njl.set_quarks(u,d,s);
+      njl.up_default_mass=5.5/hc_mev_fm;
+      njl.down_default_mass=5.5/hc_mev_fm;
+      njl.strange_default_mass=140.7/hc_mev_fm;
+      njl.set_parameters(602.3/hc_mev_fm,
+			 1.835/njl.L/njl.L,
+			 12.36/pow(njl.L,5.0));
+      mp_start_fix=0.0;
     } else if (sv[1]=="njl") {
       ptr_q=&njl;
     } else {
