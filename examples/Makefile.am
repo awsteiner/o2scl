@@ -530,4 +530,4 @@ examples-clean:
 		$(EXTRA_PROGRAMS) examples-summary.txt
 
 slb00:
-	ex_eos_gibbs -hadrons SLB00 -quarks SLB00_bag -mvsr
+	ex_eos_gibbs -hadrons SLB00 -quarks SLB00_bag -mvsr slb00.o2

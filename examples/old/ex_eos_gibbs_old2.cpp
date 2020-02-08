@@ -241,14 +241,18 @@ public:
     mu.mu=e.mu;
     fzt.calc_mu_zerot(mu);
     
+    double quark_nqch, quark_nQ;
     u.mu=muQ-e.mu*2.0/3.0;
     d.mu=muQ+e.mu/3.0;
     s.mu=d.mu;
     ptr_q->calc_p(u,d,s,qth);
     
-    y[0]=(2.0*u.n-d.n-s.n)/3.0-e.n-mu.n;
-    y[1]=(u.n+d.n+s.n)/3.0-nB;
-    
+    quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
+    quark_nQ=u.n+d.n+s.n;
+
+    y[0]=e.n+mu.n-quark_nqch;
+    y[1]=quark_nQ/3.0-nB;
+
     return 0;
   }
 
@@ -512,11 +516,6 @@ public:
    */
   int mvsr(vector<string> &sv, bool itive_com) {
 
-    if (sv.size()<2) {
-      cerr << "File not specified in mvsr()." << endl;
-      return 1;
-    }
-    
     double mp_end, chi, nB, dim=3.0, esurf, ecoul, mp_start;
     
     mm_funct fp_had_phase=std::bind
@@ -651,73 +650,274 @@ public:
     }
 
     // -----------------------------------------------------------------
+    // Test solver and minimizer inside mixed phase
+
+    cout << "Mixed phase at n_B=" << mp_start+0.01
+	 << " fm^{-3} from solver:" << endl;
+    nB=mp_start+0.01;
+    x[0]=nB*0.9;
+    x[1]=0.02;
+    mh.msolve(2,x,fp_mixed_phase);
+    n.n=x[0];
+    p.n=x[1];
+    f_mixed_phase(2,x,y,nB,chi);
+    cout << "Chi: " << chi << endl;
+    cout << "Densities (n,p,e): " << n.n << " " << p.n << " " << e.n 
+	 << " fm^{-3}" << endl;
+    cout << "Chem pots. (n,p,e): " << n.mu*hc_mev_fm << " "
+	 << p.mu*hc_mev_fm << " " << e.mu*hc_mev_fm << " MeV" << endl;
+    cout << "Electron energy density: " << e.ed*hc_mev_fm << " MeV/fm^3"
+	 << endl;
+    cout << "Total pressure: " << tot.pr*hc_mev_fm << " MeV/fm^3" << endl;
+    cout << "Total energy density: " << tot.ed*hc_mev_fm << " MeV/fm^3" << endl;
+    {
+      cout << "Skyrme energy density: " << hth.ed*hc_mev_fm << " MeV/fm^3"
+	   << endl;
+      cout << "Skyrme pressure: " << hth.pr*hc_mev_fm << " MeV/fm^3"
+	   << endl;
+    }
+    {
+      cout << "Quark energy dens. & pressure: "
+	   << qth.ed*hc_mev_fm << " MeV/fm^3, "
+	   << qth.pr*hc_mev_fm << " MeV/fm^3"
+	   << endl;
+      //cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
+      //cout << "Charge density in quark matter: " << quark_nqch
+      //<< " 1/fm^3" << endl;
+    }
+    {
+      cout << "Check thermodynamic identities:" << endl;
+      cout << "\tSkyrme: " << fabs(hth.pr+hth.ed-n.n*n.mu-p.n*p.mu)/
+	(hth.pr) << endl;
+      cout << "\tElectrons: " << fabs(e.pr+e.ed-e.n*e.mu)/e.pr << endl;
+      /*
+	cout << "\tQuarks: " << fabs(qth.pr+qth.ed-quark_nQ*n.mu/3.0+
+	quark_nqch*e.mu)/(qth.pr) << endl;
+	cout << "\tTotal: " << fabs(tot.pr+tot.ed-chi*n.n*n.mu-
+	chi*p.n*p.mu-e.n*e.mu-
+	(1.0-chi)*quark_nQ*n.mu/3.0+
+	(1.0-chi)*quark_nqch*e.mu)/
+	fabs(tot.pr) << endl;
+      */
+    }
+    cout << endl;
+      exit(-1);
+    
+    cout << "Mixed phase at n_B=" << nB << " fm^{-3} from minimizer:" << endl;
+    cout << "  Notice this is slightly different from the above" << endl;
+    cout << "  due to numerical errors." << endl;
+    x[0]=0.31;
+    mmin.mmin(1,x,y[0],fp_mixed_phase_min);
+    cout << "Chi: " << chi << endl;
+    cout << "Densities (n,p,e): " << n.n << " " << p.n << " " << e.n 
+	 << " fm^{-3}" << endl;
+    cout << "Chem pots. (n,p,e): " << n.mu*hc_mev_fm << " "
+	 << p.mu*hc_mev_fm << " " << e.mu*hc_mev_fm << " MeV" << endl;
+    cout << "Electron energy density: " << e.ed*hc_mev_fm << " MeV/fm^3"
+	 << endl;
+    cout << "Total pressure: " << tot.pr*hc_mev_fm << " MeV/fm^3" << endl;
+    cout << "Total energy density: " << tot.ed*hc_mev_fm << " MeV/fm^3" << endl;
+    {
+      cout << "Skyrme energy density: " << hth.ed*hc_mev_fm << " MeV/fm^3"
+	   << endl;
+      cout << "Skyrme pressure: " << hth.pr*hc_mev_fm << " MeV/fm^3"
+	   << endl;
+    }
+    {
+      cout << "Quark energy dens. & pressure: "
+	   << qth.ed*hc_mev_fm << " MeV/fm^3, "
+	   << qth.pr*hc_mev_fm << " MeV/fm^3"
+	   << endl;
+      //cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
+      //cout << "Charge density in quark matter: " << quark_nqch
+      //<< " 1/fm^3" << endl;
+    }
+    {
+      cout << "Check thermodynamic identities:" << endl;
+      cout << "\tSkyrme: " << fabs(hth.pr+hth.ed-n.n*n.mu-p.n*p.mu)/
+	(hth.pr) << endl;
+      cout << "\tElectrons: " << fabs(e.pr+e.ed-e.n*e.mu)/e.pr << endl;
+      /*
+	cout << "\tQuarks: " << fabs(qth.pr+qth.ed-quark_nQ*n.mu/3.0+
+	quark_nqch*e.mu)/(qth.pr) << endl;
+	cout << "\tTotal: " << fabs(tot.pr+tot.ed-chi*n.n*n.mu-
+	chi*p.n*p.mu-e.n*e.mu-
+	(1.0-chi)*quark_nQ*n.mu/3.0+
+	(1.0-chi)*quark_nqch*e.mu)/
+	fabs(tot.pr) << endl;
+      */
+    }
+    cout << endl;
+
+    // -----------------------------------------------------------------
+    // Find the end of the mixed phase with fp_mixed_phase() with
+    // solver and minimizer
+
+    cout << "Mixed phase at n_B=" << mp_end-0.01
+	 << " fm^{-3} from solver:" << endl;
+    nB=mp_end-0.01;
+    x[0]=1.0;
+    x[1]=0.12;
+    mh.msolve(2,x,fp_mixed_phase);
+    n.n=x[0];
+    p.n=x[1];
+    f_mixed_phase(2,x,y,nB,chi);
+    cout << "Chi: " << chi << endl;
+    cout << "Densities (n,p,e): " << n.n << " " << p.n << " " << e.n 
+	 << " fm^{-3}" << endl;
+    cout << "Chem pots. (n,p,e): " << n.mu*hc_mev_fm << " "
+	 << p.mu*hc_mev_fm << " " << e.mu*hc_mev_fm << " MeV" << endl;
+    cout << "Electron energy density: " << e.ed*hc_mev_fm << " MeV/fm^3"
+	 << endl;
+    cout << "Total pressure: " << tot.pr*hc_mev_fm << " MeV/fm^3" << endl;
+    cout << "Total energy density: " << tot.ed*hc_mev_fm << " MeV/fm^3" << endl;
+    {
+      cout << "Skyrme energy density: " << hth.ed*hc_mev_fm << " MeV/fm^3"
+	   << endl;
+      cout << "Skyrme pressure: " << hth.pr*hc_mev_fm << " MeV/fm^3"
+	   << endl;
+    }
+    {
+      cout << "Quark energy dens. & pressure: "
+	   << qth.ed*hc_mev_fm << " MeV/fm^3, "
+	   << qth.pr*hc_mev_fm << " MeV/fm^3"
+	   << endl;
+      //cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
+      //cout << "Charge density in quark matter: " << quark_nqch
+      //<< " 1/fm^3" << endl;
+    }
+    {
+      cout << "Check thermodynamic identities:" << endl;
+      cout << "\tSkyrme: " << fabs(hth.pr+hth.ed-n.n*n.mu-p.n*p.mu)/
+	(hth.pr) << endl;
+      cout << "\tElectrons: " << fabs(e.pr+e.ed-e.n*e.mu)/e.pr << endl;
+      /*
+	cout << "\tQuarks: " << fabs(qth.pr+qth.ed-quark_nQ*n.mu/3.0+
+	quark_nqch*e.mu)/(qth.pr) << endl;
+	cout << "\tTotal: " << fabs(tot.pr+tot.ed-chi*n.n*n.mu-
+	chi*p.n*p.mu-e.n*e.mu-
+	(1.0-chi)*quark_nQ*n.mu/3.0+
+	(1.0-chi)*quark_nqch*e.mu)/
+	fabs(tot.pr) << endl;
+      */
+    }
+    cout << endl;
+
+    nB=mp_end-0.01;
+    chi=0.00572;
+    p.n=0.35748;
+    cout << "Mixed phase at n_B=" << nB
+	 << " fm^{-3} from minimizer:" << endl;
+    x[0]=0.40223;
+    mmin.mmin(1,x,y[0],fp_mixed_phase_min);
+    cout << "Chi: " << chi << endl;
+    cout << "Densities (n,p,e): " << n.n << " " << p.n << " " << e.n 
+	 << " fm^{-3}" << endl;
+    cout << "Chem pots. (n,p,e): " << n.mu*hc_mev_fm << " "
+	 << p.mu*hc_mev_fm << " " << e.mu*hc_mev_fm << " MeV" << endl;
+    cout << "Electron energy density: " << e.ed*hc_mev_fm << " MeV/fm^3"
+	 << endl;
+    cout << "Total pressure: " << tot.pr*hc_mev_fm << " MeV/fm^3" << endl;
+    cout << "Total energy density: " << tot.ed*hc_mev_fm << " MeV/fm^3" << endl;
+    {
+      cout << "Skyrme energy density: " << hth.ed*hc_mev_fm << " MeV/fm^3"
+	   << endl;
+      cout << "Skyrme pressure: " << hth.pr*hc_mev_fm << " MeV/fm^3"
+	   << endl;
+    }
+    {
+      cout << "Quark energy dens. & pressure: "
+	   << qth.ed*hc_mev_fm << " MeV/fm^3, "
+	   << qth.pr*hc_mev_fm << " MeV/fm^3"
+	   << endl;
+      //cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
+      //cout << "Charge density in quark matter: " << quark_nqch
+      //<< " 1/fm^3" << endl;
+    }
+    {
+      cout << "Check thermodynamic identities:" << endl;
+      cout << "\tSkyrme: " << fabs(hth.pr+hth.ed-n.n*n.mu-p.n*p.mu)/
+	(hth.pr) << endl;
+      cout << "\tElectrons: " << fabs(e.pr+e.ed-e.n*e.mu)/e.pr << endl;
+      /*
+	cout << "\tQuarks: " << fabs(qth.pr+qth.ed-quark_nQ*n.mu/3.0+
+	quark_nqch*e.mu)/(qth.pr) << endl;
+	cout << "\tTotal: " << fabs(tot.pr+tot.ed-chi*n.n*n.mu-
+	chi*p.n*p.mu-e.n*e.mu-
+	(1.0-chi)*quark_nQ*n.mu/3.0+
+	(1.0-chi)*quark_nqch*e.mu)/
+	fabs(tot.pr) << endl;
+      */
+    }
+    cout << endl;
+
+    // -----------------------------------------------------------------
     // Tabulate full hadronic phase
 
     table_units<> thad;
     if (true) {
-      thad.line_of_names("nB nn np ne nmu ede edh edt pre prh prt");
+      thad.line_of_names("nB nn np ne ede edh edt pre prh prt");
       cout << "Hadronic phase: " << endl;
       x[0]=0.07;
-      for(nB=0.08;nB<mp_start;nB+=0.01) {
-	cout << nB << endl;
+      for(nB=0.08;nB<1.5001;nB+=0.01) {
 	mh.msolve(1,x,fp_had_phase);
-	std::vector<double> line={nB,n.n,p.n,e.n,mu.n,e.ed*hc_mev_fm,
-				  hth.ed*hc_mev_fm,
-				  (hth.ed+e.ed+mu.ed)*hc_mev_fm,
+	std::vector<double> line={nB,n.n,p.n,e.n,e.ed*hc_mev_fm,
+				  hth.ed*hc_mev_fm,(hth.ed+e.ed)*hc_mev_fm,
 				  e.pr*hc_mev_fm,hth.pr*hc_mev_fm,
-				  (hth.pr+e.pr+mu.pr)*hc_mev_fm};
+				  (hth.pr+e.pr)*hc_mev_fm};
 	thad.line_of_data(line);
       }
-      cout << endl;
+      hdf_file hf;
+      hf.open_or_create("ex_eos_gibbs.o2");
+      hdf_output(hf,thad,"had");
+      hf.close();
     }
 
     // -----------------------------------------------------------------
     // Tabulate full quark phase
 
     table_units<> tq;
-    if (true) {
+    {
       tq.line_of_names("nB muQ mue ede pre edq prq edt prt");
       cout << "Quark phase: " << endl;
       x[0]=1.0;
       x[1]=0.1;
-      for(nB=mp_end;nB<1.5001;nB+=0.01) {
-	cout << nB << endl;
+      for(nB=0.3;nB<1.5001;nB+=0.01) {
 	mh.msolve(2,x,fp_quark_phase);
 	std::vector<double> line={nB,x[0],x[1],e.ed*hc_mev_fm,
 				  e.pr*hc_mev_fm,qth.ed*hc_mev_fm,
-				  qth.pr*hc_mev_fm,
-				  (qth.ed+e.ed+mu.ed)*hc_mev_fm,
-				  (qth.pr+e.pr+mu.pr)*hc_mev_fm};
+				  qth.pr*hc_mev_fm,(e.ed+qth.ed)*hc_mev_fm,
+				  (e.pr+qth.pr)*hc_mev_fm};
 	tq.line_of_data(line);
       }
-      cout << endl;
+      hdf_file hf;
+      hf.open_or_create("ex_eos_gibbs.o2");
+      hdf_output(hf,tq,"quark");
+      hf.close();
     }
 
     // -----------------------------------------------------------------
     // Tabulate full mixed phase without Coulomb or surface
 
-    table<> tmixed;
     if (true) {
       cout << "Mixed phase: " << endl;
-      tmixed.line_of_names(((string)"nB nn np nu nd ns ede pre edt ")+
-			   "prt edh prh edq prq mun mup chi");
+      cout.precision(4);
+      table<> t;
+      t.line_of_names("nB nn ede pre edt prt edh prh edq prq mun mup chi");
+      
+      double nB_start=(mp_start+mp_end)/2.0;
 
-      double delta=1.0e-3;
-      for(nB=mp_start+delta;nB<=mp_end-delta;
-	  nB+=(mp_end-mp_start-2.0*delta)/40.0) {
-	cout << nB << endl;
+      // initial guesses
+      chi=0.5;
+      p.n=nB_start*0.2;
+      x[0]=nB_start*0.8;
 
-	x[0]=thad.interp("nB",mp_start,"nn");
-	x[1]=thad.interp("nB",mp_start,"np");
-	mh.msolve(2,x,fp_mixed_phase);
-	
+      bool high_done=false;
+      for(nB=nB_start;nB<2.0 && high_done==false;nB+=0.01) {
+	mmin.mmin(1,x,y[0],fp_mixed_phase_min);
 	std::vector<double> line;
 	line.push_back(nB);
 	line.push_back(n.n);
-	line.push_back(p.n);
-	line.push_back(u.n);
-	line.push_back(d.n);
-	line.push_back(s.n);
 	line.push_back(e.ed*hc_mev_fm);
 	line.push_back(e.pr*hc_mev_fm);
 	line.push_back(tot.ed*hc_mev_fm);
@@ -733,39 +933,213 @@ public:
 	line.push_back(n.mu*hc_mev_fm);
 	line.push_back(p.mu*hc_mev_fm);
 	line.push_back(chi);
-	tmixed.line_of_data(line.size(),line);
+	t.line_of_data(line.size(),line);
+	if (chi<0.05) high_done=true;
+      }
+
+      // initial guesses
+      chi=0.5;
+      p.n=nB_start*0.2;
+      x[0]=nB_start*0.8;
+
+      bool low_done=false;
+      for(nB=nB_start-0.01;nB>0.0 && low_done==false;nB-=0.01) {
+	mmin.mmin(1,x,y[0],fp_mixed_phase_min);
+	std::vector<double> line;
+	line.push_back(nB);
+	line.push_back(n.n);
+	line.push_back(e.ed*hc_mev_fm);
+	line.push_back(e.pr*hc_mev_fm);
+	line.push_back(tot.ed*hc_mev_fm);
+	line.push_back(tot.pr*hc_mev_fm);
+	{
+	  line.push_back(hth.ed*hc_mev_fm);
+	  line.push_back(hth.pr*hc_mev_fm);
+	}
+	{
+	  line.push_back(qth.ed*hc_mev_fm);
+	  line.push_back(qth.pr*hc_mev_fm);
+	}
+	line.push_back(n.mu*hc_mev_fm);
+	line.push_back(p.mu*hc_mev_fm);
+	line.push_back(chi);
+	t.line_of_data(line.size(),line);
+	if (chi>0.95) low_done=true;
       }
       
+      hdf_file hf;
+      t.sort_table("nB");
+      hf.open_or_create("ex_eos_gibbs.o2");
+      hdf_output(hf,t,"mixed");
+      hf.close();
+
       cout << endl;
     }
 
     // -----------------------------------------------------------------
-    // Construct the neutron star EOS
-    
+    // Tabulate full mixed phase with Coulomb and surface
+
+    table_units<> t[4];
+
+    if (true) {
+      sigma=1.0/hc_mev_fm;
+      for(size_t id=0;id<3;id++) {
+	t[id].line_of_names(((string)"nB nn np ede pre edt prt edh ")+
+			    "prh edq prq mun mup chi r_rare esurf ecoul "+
+			    "nqch ne r_ws");
+	dim=((double)id)+1.0;
+
+	double nB_start=(mp_start+mp_end)/2.0;
+	
+	// initial guesses
+	chi=0.5;
+	p.n=nB_start*0.2;
+	x[0]=nB_start*0.8;
+	x[1]=1.3;
+
+	bool high_done=false;
+	for(nB=nB_start;nB<2.0 && high_done==false;nB+=0.001) {
+	  //cout << "nB: " << id << " " << nB << " " << chi << endl;
+	  
+	  mmin.mmin(2,x,y[0],fp_mixed_phase_min_r);
+	  double r_rare=x[1];
+	  //cout << id << " " << nB << " " << n.n << " " << p.n << " "
+	  //<< x[1] << " " << tot.ed << endl;
+	  double xglen=chi;
+	  if (chi>0.5) xglen=1.0-chi;
+	  double r_ws=r_rare/pow(xglen,1.0/dim);
+	  std::vector<double> line={nB,n.n,p.n,e.ed*hc_mev_fm,
+				    e.pr*hc_mev_fm,tot.ed*hc_mev_fm,
+				    tot.pr*hc_mev_fm,hth.ed*hc_mev_fm,
+				    hth.pr*hc_mev_fm,qth.ed*hc_mev_fm,
+				    qth.pr*hc_mev_fm,n.mu*hc_mev_fm,
+				    p.mu*hc_mev_fm,chi,x[1],
+				    esurf*hc_mev_fm,ecoul*hc_mev_fm,
+				    0.0,e.n,r_ws};
+	  t[id].line_of_data(line);
+	  if (chi<0.05) high_done=true;
+	  
+	}
+
+	// initial guesses
+	chi=0.5;
+	p.n=nB_start*0.2;
+	x[0]=nB_start*0.8;
+	x[1]=1.3;
+
+	bool low_done=false;
+	for(nB=nB_start-0.01;nB>0.0 && low_done==false;nB-=0.001) {
+	  //cout << "nB: " << id << " " << nB << " " << chi << endl;
+	  
+	  mmin.mmin(2,x,y[0],fp_mixed_phase_min_r);
+	  double r_rare=x[1];
+	  //cout << id << " " << nB << " " << n.n << " " << p.n << " "
+	  //<< x[1] << " " << tot.ed << endl;
+	  double xglen=chi;
+	  if (chi>0.5) xglen=1.0-chi;
+	  double r_ws=r_rare/pow(xglen,1.0/dim);
+	  std::vector<double> line={nB,n.n,p.n,e.ed*hc_mev_fm,
+				    e.pr*hc_mev_fm,tot.ed*hc_mev_fm,
+				    tot.pr*hc_mev_fm,hth.ed*hc_mev_fm,
+				    hth.pr*hc_mev_fm,qth.ed*hc_mev_fm,
+				    qth.pr*hc_mev_fm,n.mu*hc_mev_fm,
+				    p.mu*hc_mev_fm,chi,x[1],
+				    esurf*hc_mev_fm,ecoul*hc_mev_fm,
+				    0.0,e.n,r_ws};
+	  t[id].line_of_data(line);
+	  if (chi>0.95) low_done=true;
+	  
+	}
+
+	if (true) {
+	  t[id].sort_table("nB");
+	  hdf_file hf;
+	  hf.open_or_create("ex_eos_gibbs.o2");
+	  hdf_output(hf,t[id],"mixed"+o2scl::itos(id+1));
+	  hf.close();
+	}
+      }
+      
+      if (true) {
+	t[3].line_of_names(((string)"nB nn np ede pre edt prt edh ")+
+			   "prh edq prq mun mup chi r_rare esurf ecoul "+
+			   "nqch ne r_ws");
+	size_t count=0;
+	double nB_start=t[0].min("nB");
+	if (t[1].min("nB")>nB_start) nB_start=t[1].min("nB");
+	if (t[2].min("nB")>nB_start) nB_start=t[2].min("nB");
+	double nB_end=t[0].max("nB");
+	if (t[1].max("nB")<nB_end) nB_end=t[1].max("nB");
+	if (t[2].max("nB")<nB_end) nB_end=t[2].max("nB");
+	for(nB=nB_start;nB<nB_end;nB+=0.001) {
+	  std::vector<double> line;
+	  if (t[0].interp("nB",nB,"edt")<t[1].interp("nB",nB,"edt") &&
+	      t[0].interp("nB",nB,"edt")<t[2].interp("nB",nB,"edt")) {
+	    for(size_t j=0;j<t[3].get_ncolumns();j++) {
+	      line.push_back(t[0].interp("nB",nB,t[3].get_column_name(j)));
+	    }
+	    if (count%20==0) std::cout << nB << " d=1" << std::endl;
+	  } else if (t[1].interp("nB",nB,"edt")<t[0].interp("nB",nB,"edt") &&
+		     t[1].interp("nB",nB,"edt")<t[2].interp("nB",nB,"edt")) {
+	    if (count%20==0) std::cout << nB << " d=2" << std::endl;
+	    for(size_t j=0;j<t[3].get_ncolumns();j++) {
+	      line.push_back(t[1].interp("nB",nB,t[3].get_column_name(j)));
+	    }
+	  } else {
+	    if (count%20==0) std::cout << nB << " d=3" << std::endl;
+	    for(size_t j=0;j<t[3].get_ncolumns();j++) {
+	      line.push_back(t[2].interp("nB",nB,t[3].get_column_name(j)));
+	    }
+	  }
+	  t[3].line_of_data(line.size(),line);
+	  count++;
+	}
+      }
+
+      // Output the mixed phase with optimized dimensionality
+      if (true) {
+	hdf_file hf;
+	hf.open_or_create("ex_eos_gibbs.o2");
+	hdf_output(hf,t[3],"mixed_min");
+	hf.close();
+      }
+      
+    }
+
+    // -----------------------------------------------------------------
+    // Construct the full neutron star EOS
+
+    t[3].set_interp_type(itp_linear);
+    double had_end=t[3].interp("chi",1.05,"nB");
+    double quark_start=t[3].interp("chi",-0.05,"nB");
+    cout << "H: " << had_end << " " << quark_start << endl;
+
     table_units<> ns;
     ns.line_of_names("ed pr");
     ns.set_unit("ed","MeV/fm^3");
     ns.set_unit("pr","MeV/fm^3");
 
-    for(size_t i=0;i<thad.get_nlines();i++) {
-      double line[2]={thad.get("edt",i),
-		      thad.get("prt",i)};
+    for(double nB=0.08;nB<had_end;nB+=0.01) {
+      double line[2]={thad.interp("nB",nB,"edt"),
+		      thad.interp("nB",nB,"prt")};
       ns.line_of_data(2,line);
     }
-    for(size_t i=0;i<tmixed.get_nlines();i++) {
-      double line[2]={tmixed.get("edt",i),
-		      tmixed.get("prt",i)};
+    for(size_t i=0;i<t[3].get_nlines();i++) {
+      double line[2]={t[3].get("edt",i),t[3].get("prt",i)};
       ns.line_of_data(2,line);
     }
-    for(size_t i=0;i<tq.get_nlines();i++) {
-      double line[2]={tq.get("edt",i),
-		      tq.get("prt",i)};
+    for(nB=quark_start;nB<1.4;nB+=0.01) {
+      double line[2]={tq.interp("nB",nB,"edt"),
+		      tq.interp("nB",nB,"prt")};
       ns.line_of_data(2,line);
     }
 
-    // -----------------------------------------------------------------
-    // Solve the TOV equations
-    
+    hdf_file hf;
+    hf.open_or_create("ex_eos_gibbs.o2");
+    hdf_output(hf,ns,"nstar");
+    hf.close();
+
+    // tov solve
     eos_tov_interp eti;
     eti.default_low_dens_eos();
     eti.read_table(ns,"ed","pr");
@@ -778,15 +1152,7 @@ public:
     cout << tov->get_unit("ed") << endl;
     cout << tov->get("ed",tov->lookup("gm",tov->max("gm"))) << endl;
 
-    // -----------------------------------------------------------------
-    // Output results to a file
-
-    hdf_file hf;
-    hf.open_or_create(sv[1]);
-    hdf_output(hf,thad,"hadrons");
-    hdf_output(hf,tmixed,"mixed");
-    hdf_output(hf,tq,"quarks");
-    hdf_output(hf,ns,"nstar");
+    hf.open_or_create("ex_eos_gibbs.o2");
     hdf_output(hf,*tov,"tov");
     hf.close();
     
@@ -939,7 +1305,7 @@ int main(int argc, char *argv[]) {
     {0,"quarks","Select quark model.",0,-1,"","",
      new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::model_quarks),
      cli::comm_option_both},
-    {0,"mvsr","Compute EOS and M-R curve",1,-1,"","",
+    {0,"mvsr","Compute EOS and M-R curve",0,-1,"","",
      new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::mvsr),
      cli::comm_option_both}
   };
