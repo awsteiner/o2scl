@@ -80,7 +80,7 @@ public:
   typedef boost::numeric::ublas::vector<double> ubvector;
 
   /// Hadronic EOS pointer
-  eos_had_base *ptr_h;
+  eos_had_temp_base *ptr_h;
 
   /// Skyrme model
   eos_had_skyrme sk;
@@ -106,6 +106,14 @@ public:
   fermion p;
   fermion e;
   fermion mu;
+  fermion nu_e;
+  fermion nu_mu;
+  fermion lam;
+  fermion sigz;
+  fermion sigm;
+  fermion sigp;
+  fermion casz;
+  fermion casm;
   quark u;
   quark d;
   quark s;
@@ -114,12 +122,13 @@ public:
   /// \name Thermodynamic quantities
   //@{
   thermo hth;
+  thermo lep;
   thermo qth;
   thermo tot;
   //@}
 
   /// Electron EOS
-  fermion_zerot fzt;
+  fermion_rel fr;
 
   /// Solver
   mroot_hybrids<> mh;
@@ -136,17 +145,26 @@ public:
   /// Surface tension (default \f$ (1~\mathrm{MeV})/(\hbar c) \f$
   double sigma;
 
+  /// The entropy per baryon (default 0.0)
+  double sonB;
+
+  /// The electron lepton fraction (default -1.0)
+  double YLe;
+  
+  /// The muon lepton fraction (default -1.0)
+  double YLmu;
+  
   /** \brief If non-zero, then the bag constant will be adjusted 
       to ensure this value is the beginning of the mixed phase
   */
   double mp_start_fix;
   
   /** \brief Determine the bag constant by fixing the density at which
-      the mixed phase begins
+      the mixed phase begins at \f$ T=0 \f$
   */
   int f_bag_constant(size_t nv, const ubvector &x, ubvector &y,
 		     double &nB) {
-
+    
     n.n=x[0];
     p.n=nB-n.n;
 
@@ -159,39 +177,157 @@ public:
     ptr_h->calc_e(n,p,hth);
     
     e.mu=n.mu-p.mu;
-    fzt.calc_mu_zerot(e);
+    fr.calc_mu_zerot(e);
     mu.mu=e.mu;
-    fzt.calc_mu_zerot(mu);
+    fr.calc_mu_zerot(mu);
 
     u.mu=n.mu/3.0-e.mu*2.0/3.0;
     d.mu=n.mu/3.0+e.mu/3.0;
     s.mu=d.mu;
     ptr_q->calc_p(u,d,s,qth);
 
-    tot.pr=hth.pr;
-    tot.ed=hth.ed+e.ed;
-    
     y[0]=hth.pr-qth.pr;
     y[1]=p.n-e.n-mu.n;
 
     return 0;
   }
 
-  /** \brief Solve for the hadronic phase
+  /** \brief Given the current index in the vector \c x,
+      set the neutrino chemical potentials
+   */
+  void leptons_in(size_t &ix, const ubvector &x) {
+    
+    if (YLe>-0.5) {
+      nu_e.mu=x[ix++];
+    } else {
+      nu_e.mu=0.0;
+    }
+    if (YLmu>-0.5) {
+      nu_mu.mu=x[ix++];
+    } else {
+      nu_mu.mu=0.0;
+    }
+
+    return;
+  }
+
+  /** \brief Given the current index in the vector \c y and presuming
+      the electron chemical potential is set, compute all leptons and
+      add two new equations
+   */
+  void leptons_out(size_t &ix, ubvector &y, double T, double nB) {
+
+    fr.pair_mu(e,T);
+    
+    mu.mu=e.mu-nu_e.mu+nu_mu.mu;
+    fr.pair_mu(mu,T);
+    
+    lep.ed=e.ed+mu.ed;
+    lep.pr=e.pr+mu.pr;
+    lep.en=e.en+mu.en;
+    
+    if (nu_e.mu!=0.0) {
+      fr.pair_mu(nu_e,T);
+      lep.ed+=nu_e.ed;
+      lep.pr+=nu_e.pr;
+      lep.en+=nu_e.en;
+    }
+    if (nu_mu.mu!=0.0) {
+      fr.pair_mu(nu_mu,T);
+      lep.ed+=nu_mu.ed;
+      lep.pr+=nu_mu.pr;
+      lep.en+=nu_mu.en;
+    }
+
+    if (YLe>-0.5) {
+      y[ix++]=(e.n+nu_e.n)/nB-YLe;
+    }
+    if (YLmu>-0.5) {
+      y[ix++]=(mu.n+nu_mu.n)/nB-YLmu;
+    }
+    
+    return;
+  }
+  
+  /** \brief Solve for the hadronic phase at \f$ T=0 \f$ or \f$
+      s=\mathrm{constant} \f$
    */
   int f_had_phase(size_t nv, const ubvector &x, ubvector &y,
 		  double &nB) {
-    n.n=x[0];
+
+    size_t ix=0;
+    n.n=x[ix++];
     p.n=nB-n.n;
     
-    ptr_h->calc_e(n,p,hth);
-    e.mu=n.mu-p.mu;
-    fzt.calc_mu_zerot(e);
-    mu.mu=e.mu;
-    fzt.calc_mu_zerot(mu);
+    double T=0.0;
+    if (sonB>0.0) {
+      T=x[ix++];
+    }
+    leptons_in(ix,x);
+    
+    ptr_h->calc_temp_e(n,p,T,hth);
+    
+    e.mu=n.mu-p.mu+nu_e.mu;
 
-    y[0]=e.n+mu.n-p.n;
+    ix=0;
+    leptons_out(ix,y,T,nB);
+    
+    y[ix++]=e.n+mu.n-p.n;
+    if (sonB>0.0) {
+      y[ix++]=sonB-tot.en/nB;
+    }
+    
+    tot=hth+lep;
+    
+    return 0;
+  }
+  
+  /** \brief Solve for the hadronic phase with hyperons
+   */
+  int f_had_phase_hyp(size_t nv, const ubvector &x, ubvector &y,
+		      double &nB) {
 
+    size_t ix=0;
+    n.mu=x[ix++];
+    e.mu=x[ix++];
+    double sigma=x[ix++];
+    double omega=x[ix++];
+    double rho=x[ix++];
+    
+    double T=0.0;
+    if (sonB>0.0) {
+      T=x[ix++];
+    }
+    leptons_in(ix,x);
+
+    p.mu=n.mu-e.mu+nu_e.mu;
+    sigm.mu=n.mu+e.mu-nu_e.mu;
+    sigz.mu=n.mu;
+    sigp.mu=p.mu;
+    casm.mu=sigm.mu;
+    casz.mu=sigz.mu;
+
+    mu.mu=e.mu-nu_e.mu+nu_mu.mu;
+
+    double f1, f2, f3;
+    rmf_hyp.calc_eq_p(n,p,lam,sigp,sigz,sigm,casz,casm,
+		      sigma,omega,rho,f1,f2,f3,hth);
+
+    ix=0;
+    leptons_out(ix,y,T,nB);
+    
+    tot=hth+lep;
+    
+    y[ix++]=n.n+p.n+lam.n+sigp.n+sigz.n+sigm.n+casz.n+casm.n-nB;
+    y[ix++]=p.n+sigp.n-sigm.n-casm.n-e.n-mu.n;
+    y[ix++]=f1;
+    y[ix++]=f2;
+    y[ix++]=f3;
+    
+    if (sonB>0.0) {
+      y[ix++]=sonB-tot.en/nB;
+    }
+    
     return 0;
   }
   
@@ -199,20 +335,26 @@ public:
    */
   int f_mixed_phase(size_t nv, const ubvector &x, ubvector &y,
 		    double &nB, double &chi) {
+    
     n.n=x[0];
     p.n=x[1];
     
-    ptr_h->calc_e(n,p,hth);
+    double T=0.0;
+    if (sonB>0.0) {
+      T=x[2];
+    }
+
+    ptr_h->calc_temp_e(n,p,T,hth);
     e.mu=n.mu-p.mu;
-    fzt.calc_mu_zerot(e);
+    fr.pair_mu(e,T);
     mu.mu=e.mu;
-    fzt.calc_mu_zerot(mu);
+    fr.pair_mu(mu,T);
 
     double quark_nqch, quark_nQ;
     u.mu=n.mu/3.0-e.mu*2.0/3.0;
     d.mu=n.mu/3.0+e.mu/3.0;
     s.mu=d.mu;
-    ptr_q->calc_p(u,d,s,qth);
+    ptr_q->calc_temp_p(u,d,s,T,qth);
     
     quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
     quark_nQ=u.n+d.n+s.n;
@@ -222,10 +364,19 @@ public:
     // Update the energy density and pressure
     tot.ed=hth.ed*chi+qth.ed*(1.0-chi)+e.ed;
     tot.pr=hth.pr+e.pr;
+    if (sonB>0.0) {
+      tot.en=hth.en*chi+qth.en*(1.0-chi)+e.ed;
+    } else {
+      tot.en=0.0;
+    }
 
     y[0]=hth.pr-qth.pr;
     y[1]=nB-(n.n+p.n)*chi-quark_nQ*(1.0-chi)/3.0;
 
+    if (sonB>0.0) {
+      y[2]=sonB-tot.en/nB;
+    }
+    
     return 0;
   }
 
@@ -237,17 +388,28 @@ public:
     double muQ=x[0];
     e.mu=x[1];
     
-    fzt.calc_mu_zerot(e);
+    double T=0.0;
+    if (sonB>0.0) {
+      T=x[2];
+    }
+
+    fr.calc_mu_zerot(e);
     mu.mu=e.mu;
-    fzt.calc_mu_zerot(mu);
+    fr.calc_mu_zerot(mu);
     
     u.mu=muQ-e.mu*2.0/3.0;
     d.mu=muQ+e.mu/3.0;
     s.mu=d.mu;
-    ptr_q->calc_p(u,d,s,qth);
+    ptr_q->calc_temp_p(u,d,s,T,qth);
+
+    tot=hth+e+mu+qth;
     
     y[0]=(2.0*u.n-d.n-s.n)/3.0-e.n-mu.n;
     y[1]=(u.n+d.n+s.n)/3.0-nB;
+    
+    if (sonB>0.0) {
+      y[2]=sonB-tot.en/nB;
+    }
     
     return 0;
   }
@@ -257,26 +419,46 @@ public:
   int f_beg_mixed_phase(size_t nv, const ubvector &x, ubvector &y,
 			double &nB) {
 
-    n.n=x[0];
-    p.n=x[1];
+    cout << "x: ";
+    vector_out(cout,x,true);
     
-    ptr_h->calc_e(n,p,hth);
-    e.mu=n.mu-p.mu;
-    fzt.calc_mu_zerot(e);
-    mu.mu=e.mu;
-    fzt.calc_mu_zerot(mu);
+    size_t ix=0;
+    n.n=x[ix++];
+    p.n=x[ix++];
+    
+    double T=0.0;
+    if (sonB>0.0) {
+      T=x[ix++];
+    }
+    leptons_in(ix,x);
+
+    ptr_h->calc_temp_e(n,p,T,hth);
+
+    // Compute total baryon density
+    nB=n.n+p.n;
+    
+    e.mu=n.mu-p.mu+nu_e.mu;
 
     u.mu=n.mu/3.0-e.mu*2.0/3.0;
     d.mu=n.mu/3.0+e.mu/3.0;
     s.mu=d.mu;
-    ptr_q->calc_p(u,d,s,qth);
+    ptr_q->calc_temp_p(u,d,s,T,qth);
     
-    // Compute total baryon density
-    nB=n.n+p.n;
+    ix=0;
+    leptons_out(ix,y,T,nB);
     
-    y[0]=hth.pr-qth.pr;
+    y[ix++]=hth.pr-qth.pr;
     // Ensure electric neutrality in the hadronic phase
-    y[1]=p.n-e.n-mu.n;
+    y[ix++]=p.n-e.n-mu.n;
+    if (sonB>0.0) {
+      tot.en=hth.en+e.en+mu.en;
+      if (nu_e.mu!=0.0) tot.en+=nu_e.en;
+      if (nu_mu.mu!=0.0) tot.en+=nu_mu.en;
+      y[ix++]=sonB-tot.en/nB;
+    }
+
+    cout << "y: ";
+    vector_out(cout,y,true);
 
     return 0;
   }
@@ -289,18 +471,23 @@ public:
     n.n=x[0];
     p.n=x[1];
     
-    ptr_h->calc_e(n,p,hth);
+    double T=0.0;
+    if (sonB>0.0) {
+      T=x[2];
+    }
+
+    ptr_h->calc_temp_e(n,p,T,hth);
     e.mu=n.mu-p.mu;
-    fzt.calc_mu_zerot(e);
+    fr.calc_mu_zerot(e);
     mu.mu=e.mu;
-    fzt.calc_mu_zerot(mu);
+    fr.calc_mu_zerot(mu);
 
     double quark_nqch, quark_nQ;
 
     u.mu=n.mu/3.0-e.mu*2.0/3.0;
     d.mu=n.mu/3.0+e.mu/3.0;
     s.mu=d.mu;
-    ptr_q->calc_p(u,d,s,qth);
+    ptr_q->calc_temp_p(u,d,s,T,qth);
     quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
     quark_nQ=u.n+d.n+s.n;
     
@@ -316,12 +503,19 @@ public:
 
     return 0;
   }
-  
+
+  /** \brief Desc
+   */
   int f_min_densities(size_t nv, const ubvector &x, ubvector &y,
 		      double &nB) {
     
     double chi=x[0];
     p.n=x[1];
+
+    double T=0.0;
+    if (sonB>0.0) {
+      T=x[2];
+    }
 
     if (chi<0.0 || p.n<0.0 || n.n<0.0) return 1;
 
@@ -332,11 +526,11 @@ public:
     
     if (n.ms<0.0 || p.ms<0.0) return 2;
 
-    ptr_h->calc_e(n,p,hth);
+    ptr_h->calc_temp_e(n,p,T,hth);
     e.mu=n.mu-p.mu;
-    fzt.calc_mu_zerot(e);
+    fr.calc_mu_zerot(e);
     mu.mu=e.mu;
-    fzt.calc_mu_zerot(mu);
+    fr.calc_mu_zerot(mu);
     
     double quark_nqch, quark_nQ;
 
@@ -344,7 +538,7 @@ public:
     d.mu=n.mu/3.0+e.mu/3.0;
     s.mu=d.mu;
     
-    ptr_q->calc_p(u,d,s,qth);
+    ptr_q->calc_temp_p(u,d,s,T,qth);
     quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
     quark_nQ=u.n+d.n+s.n;
     
@@ -352,7 +546,9 @@ public:
     y[1]=nB-(n.n+p.n)*chi-quark_nQ*(1.0-chi)/3.0;
     return 0;
   }
-  
+
+  /** \brief Desc
+   */
   double f_mixed_phase_min(size_t nv, const ubvector &x,
 			   double &nB, double &chi) {
     n.n=x[0];
@@ -400,6 +596,8 @@ public:
     return ret;
   }
 
+  /** \brief Desc
+   */
   double f_mixed_phase_min_r(size_t nv, const ubvector &x,
 			     double &nB, double &chi, double &dim,
 			     double &esurf, double &ecoul) {
@@ -474,25 +672,58 @@ public:
 
     skyrme_load(sk,"NRAPR");
     ptr_h=&sk;
-
+    bag.bag_constant=200.0/hc_mev_fm;
     ptr_q=&bag;
-    
+
+    // Nucleon initialization
     n.init(o2scl_settings.get_convert_units().convert
 	   ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
     p.init(o2scl_settings.get_convert_units().convert
 	   ("kg","1/fm",o2scl_mks::mass_proton),2.0);
-    e.init(o2scl_settings.get_convert_units().convert
-	   ("kg","1/fm",o2scl_mks::mass_electron),2.0);
-    mu.init(o2scl_settings.get_convert_units().convert
-	    ("kg","1/fm",o2scl_mks::mass_muon),2.0);
-    u.init(0.0,6.0);
-    d.init(0.0,6.0);
-    s.init(95.0/hc_mev_fm,6.0);
-    
     n.non_interacting=false;
     p.non_interacting=false;
     n.inc_rest_mass=true;
     p.inc_rest_mass=true;
+
+    // Lepton masses
+    e.init(o2scl_settings.get_convert_units().convert
+	   ("kg","1/fm",o2scl_mks::mass_electron),2.0);
+    mu.init(o2scl_settings.get_convert_units().convert
+	    ("kg","1/fm",o2scl_mks::mass_muon),2.0);
+
+    // For the neutrinos, we set g=1, since we will include
+    // antineutrinos using the fermion_rel::pair_mu() functions which
+    // thus already includes both spin states.
+    nu_e.init(0.0,1.0);
+    nu_mu.init(0.0,1.0);
+
+    // Default quark masses
+    u.init(0.0,6.0);
+    d.init(0.0,6.0);
+    s.init(95.0/hc_mev_fm,6.0);
+    u.inc_rest_mass=true;
+    d.inc_rest_mass=true;
+    s.inc_rest_mass=true;
+
+    // Hyperon initialization
+    lam.init(mass_lambda_MeV/hc_mev_fm,2.0);
+    sigp.init(mass_sigma_plus_MeV/hc_mev_fm,2.0);
+    sigz.init(mass_sigma_zero_MeV/hc_mev_fm,2.0);
+    sigm.init(mass_sigma_minus_MeV/hc_mev_fm,2.0);
+    casz.init(mass_cascade_zero_MeV/hc_mev_fm,2.0);
+    casm.init(mass_cascade_minus_MeV/hc_mev_fm,2.0);
+    lam.non_interacting=false;
+    sigp.non_interacting=false;
+    sigz.non_interacting=false;
+    sigm.non_interacting=false;
+    casz.non_interacting=false;
+    casm.non_interacting=false;
+    lam.inc_rest_mass=true;
+    sigp.inc_rest_mass=true;
+    sigz.inc_rest_mass=true;
+    sigm.inc_rest_mass=true;
+    casz.inc_rest_mass=true;
+    casm.inc_rest_mass=true;
     
     // Make the minimizer a bit more accurate
     mmin.tol_rel/=1.0e2;
@@ -506,6 +737,10 @@ public:
     sigma=1.0/hc_mev_fm;
     
     mp_start_fix=0.0;
+
+    sonB=0.0;
+    YLe=-1.0;
+    YLmu=-1.0;
   }
 
   /** \brief Compute the EOS and M-R curve at T=0
@@ -557,7 +792,7 @@ public:
        std::placeholders::_2,std::ref(nB),std::ref(chi),std::ref(dim),
        std::ref(esurf),std::ref(ecoul));
 
-    ubvector x(2), y(2);
+    ubvector x(8), y(8);
     
     cout << "Masses (n,p,e): " << n.m*hc_mev_fm << " "
 	 << p.m*hc_mev_fm << " " << e.m*hc_mev_fm << " MeV" << endl;
@@ -622,15 +857,29 @@ public:
       // Find the beginning of the mixed phase with fp_beg_mixed_phase()
       
       cout << "Beginning of mixed phase: " << endl;
-      x[0]=0.3;
-      x[1]=0.1;
-      mh.msolve(2,x,fp_beg_mixed_phase);
-      n.n=x[0];
-      p.n=x[1];
-      f_beg_mixed_phase(2,x,y,nB);
+      size_t ix=0;
+      x[ix++]=0.3;
+      x[ix++]=0.1;
+      if (sonB>0.0) {
+	x[ix++]=0.05;
+      }
+      if (YLe>-0.5) {
+	x[ix++]=0.1;
+      }
+      if (YLmu>-0.5) {
+	x[ix++]=0.1;
+      }
+      size_t nvar=ix;
+      mh.verbose=1;
+      cout << "nvar: " << nvar << endl;
+      mh.msolve(nvar,x,fp_beg_mixed_phase);
+      
+      f_beg_mixed_phase(nvar,x,y,nB);
       mp_start=nB;
       cout << "Baryon density: " << nB << " fm^{-3}" << endl;
+      
       cout << endl;
+      return 0;
       
     }
 
@@ -887,11 +1136,17 @@ public:
     
     if (sv[1]=="bag") {
       ptr_q=&bag;
+      u.non_interacting=true;
+      d.non_interacting=true;
+      s.non_interacting=true;
     } else if (sv[1]=="SLB00_bag") {
       ptr_q=&bag;
       u.m=5.5/hc_mev_fm;
       d.m=5.5/hc_mev_fm;
       s.m=140.7/hc_mev_fm;
+      u.non_interacting=true;
+      d.non_interacting=true;
+      s.non_interacting=true;
       bag.bag_constant=200.0/hc_mev_fm;
       mp_start_fix=0.0;
       cout << "Selected the bag model from SLB00." << endl;
@@ -900,6 +1155,9 @@ public:
       u.m=5.5/hc_mev_fm;
       d.m=5.5/hc_mev_fm;
       s.m=140.7/hc_mev_fm;
+      u.non_interacting=false;
+      d.non_interacting=false;
+      s.non_interacting=false;
       njl.set_quarks(u,d,s);
       njl.up_default_mass=5.5/hc_mev_fm;
       njl.down_default_mass=5.5/hc_mev_fm;
@@ -910,6 +1168,8 @@ public:
       mp_start_fix=0.0;
     } else if (sv[1]=="njl") {
       ptr_q=&njl;
+    } else if (sv[1]=="none") {
+      ptr_q=0;
     } else {
       cerr << "Quark model specification " << sv[1]
 	   << " not understood." << endl;
@@ -918,6 +1178,41 @@ public:
     
     return 0;
   }
+  
+  int slb00(vector<string> &sv, bool itive_com) {
+
+    {
+      vector<string> sv2={"hadrons","SLB00"};
+      model_hadrons(sv2,itive_com);
+    }
+    {
+      vector<string> sv2={"quarks","SLB00_bag"};
+      model_quarks(sv2,itive_com);
+    }
+    {
+      vector<string> sv2={"mvsr","ex_eos_gibbs_slb00.o2"};
+      mvsr(sv2,itive_com);
+    }
+
+    sonB=0.5;
+    //YLe=0.4;
+    //YLmu=0.0;
+    {
+      vector<string> sv2={"mvsr","ex_eos_gibbs_slb00.o2"};
+      mvsr(sv2,itive_com);
+    }
+    
+    sonB=2.0;
+    YLe=-1.0;
+    YLmu=-1.0;
+    {
+      vector<string> sv2={"mvsr","ex_eos_gibbs_slb00.o2"};
+      mvsr(sv2,itive_com);
+    }
+    
+    return 0;
+  }
+
   
 };
 
@@ -931,7 +1226,7 @@ int main(int argc, char *argv[]) {
   cl.prompt="ex_eos_gibbs>";
   int comm_option_both=2;
   
-  static const int narr=3;
+  static const int narr=4;
   comm_option_s options_arr[narr]={
     {0,"hadrons","Select hadronic model.",0,-1,"","",
      new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::model_hadrons),
@@ -941,12 +1236,30 @@ int main(int argc, char *argv[]) {
      cli::comm_option_both},
     {0,"mvsr","Compute EOS and M-R curve",1,-1,"","",
      new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::mvsr),
+     cli::comm_option_both},
+    {0,"slb00","Desc",0,-1,"","",
+     new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::slb00),
      cli::comm_option_both}
   };
   
   cl.set_comm_option_vec(narr,options_arr);
   cl.cmd_name="ex_eos_gibbs";
-  
+
+  cli::parameter_double p_sonB;
+  p_sonB.d=&ehg.sonB;
+  p_sonB.help="The entropy per baryon (default 0.0)";
+  cl.par_list.insert(make_pair("sonB",&p_sonB));
+
+  cli::parameter_double p_YLe;
+  p_YLe.d=&ehg.YLe;
+  p_YLe.help="Electron lepton fraction (default is -1 for no neutrinos)";
+  cl.par_list.insert(make_pair("YLe",&p_YLe));
+
+  cli::parameter_double p_YLmu;
+  p_YLmu.d=&ehg.YLmu;
+  p_YLmu.help="Muon lepton fraction (default is -1 for no neutrinos)";
+  cl.par_list.insert(make_pair("YLmu",&p_YLmu));
+
   cl.run_auto(argc,argv);
   
   return 0;
