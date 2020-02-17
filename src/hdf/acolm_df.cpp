@@ -559,6 +559,9 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
       int ret=get_input(sv,pr,in,"entry",itive_com);
       if (ret!=0) return ret;
     } else {
+      // If the user specified enough indices, then interpret the
+      // command as a 'get' request and proceed without prompting for
+      // more information.
       for(size_t i=0;i<sv.size()-1;i++) {
 	in.push_back(sv[i+1]);
       }
@@ -691,15 +694,25 @@ int acol_manager::comm_entry_grid(std::vector<std::string> &sv,
 
     size_t rk=tensor_grid_obj.get_rank();
     
-    // Handle arguments
-    vector<string> in, pr;
-    for(size_t i=0;i<rk;i++) {
-      pr.push_back(((std::string)"Value for index ")+
-		   o2scl::szttos(i));
+    vector<string> in;
+    if (sv.size()<rk+1) {
+      // Handle arguments
+      vector<string> pr;
+      for(size_t i=0;i<rk;i++) {
+	pr.push_back(((std::string)"Value for index ")+
+		     o2scl::szttos(i));
+      }
+      pr.push_back("Enter new value (or \"none\") to keep original value");
+      int ret=get_input(sv,pr,in,"entry-grid",itive_com);
+      if (ret!=0) return ret;
+    } else {
+      // If the user specified enough indices, then interpret the
+      // command as a 'get' request and proceed without prompting for
+      // more information.
+      for(size_t i=0;i<sv.size()-1;i++) {
+	in.push_back(sv[i+1]);
+      }
     }
-    pr.push_back("Enter new value (or \"none\") to keep original value");
-    int ret=get_input(sv,pr,in,"entry-grid",itive_com);
-    if (ret!=0) return ret;
 
     // Parse to array
     vector<double> vals;
