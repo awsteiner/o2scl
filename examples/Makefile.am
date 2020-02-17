@@ -282,7 +282,7 @@ ex_fermion_summ.scr: ex_fermion_summ
 ex_eos_gibbs_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_eos_gibbs_SOURCES = ex_eos_gibbs.cpp
 ex_eos_gibbs.scr: ex_eos_gibbs
-	./ex_eos_gibbs -help > ex_eos_gibbs.scr
+	./ex_eos_gibbs -test > ex_eos_gibbs.scr
 
 ex_hydrogen_LDADD = $(OOLIBS) $(OOLIBSTWO)
 ex_hydrogen_SOURCES = ex_hydrogen.cpp

@@ -1213,6 +1213,11 @@ public:
     return 0;
   }
 
+  int test(vector<string> &sv, bool itive_com) {
+    test_mgr t;
+    t.report();
+    return 0;
+  }
   
 };
 
@@ -1226,7 +1231,7 @@ int main(int argc, char *argv[]) {
   cl.prompt="ex_eos_gibbs>";
   int comm_option_both=2;
   
-  static const int narr=4;
+  static const int narr=5;
   comm_option_s options_arr[narr]={
     {0,"hadrons","Select hadronic model.",0,-1,"","",
      new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::model_hadrons),
@@ -1239,6 +1244,9 @@ int main(int argc, char *argv[]) {
      cli::comm_option_both},
     {0,"slb00","Desc",0,-1,"","",
      new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::slb00),
+     cli::comm_option_both},
+    {0,"test","Desc",0,-1,"","",
+     new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::test),
      cli::comm_option_both}
   };
   
