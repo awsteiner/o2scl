@@ -43,7 +43,6 @@ int acol_manager::comm_correl(std::vector<std::string> &sv, bool itive_com) {
   vector<double> coeffs, abs_coeffs;
   
   size_t n=table_obj.get_ncolumns();
-  vector<size_t> indexes(n);
   for(size_t i=0;i<n;i++) {
     cout << i << "/" << n << endl;
     for(size_t j=i+1;j<n;j++) {
@@ -62,6 +61,7 @@ int acol_manager::comm_correl(std::vector<std::string> &sv, bool itive_com) {
     }
   }
 
+  vector<size_t> indexes(coeffs.size());
   vector_sort_index(n,abs_coeffs,indexes);
   for(size_t j=0;j<n;j++) {
     cout << j << " " << labels[indexes.size()-1-j] << " "
