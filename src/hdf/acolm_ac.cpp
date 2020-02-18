@@ -37,6 +37,40 @@ using namespace o2scl_acol;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
+int acol_manager::comm_correl(std::vector<std::string> &sv, bool itive_com) {
+
+  vector<string> labels;
+  vector<double> coeffs, abs_coeffs;
+  
+  size_t n=table_obj.get_ncolumns();
+  vector<size_t> indexes(n);
+  for(size_t i=0;i<n;i++) {
+    cout << i << "/" << n << endl;
+    for(size_t j=i+1;j<n;j++) {
+      labels.push_back(table_obj.get_column_name(i)+","+
+		       table_obj.get_column_name(j));
+      double c=vector_correlation(n,table_obj[i],
+				  table_obj[j]);
+      if (!std::isfinite(c)) c=0.0;
+      coeffs.push_back(c);
+      abs_coeffs.push_back(fabs(c));
+      /*
+	cout << labels[labels.size()-1] << " " << c << endl;
+	char ch;
+	cin >> ch;
+      */
+    }
+  }
+
+  vector_sort_index(n,abs_coeffs,indexes);
+  for(size_t j=0;j<n;j++) {
+    cout << j << " " << labels[indexes.size()-1-j] << " "
+	 << coeffs[indexes.size()-1-j] << endl;
+  }
+  
+  return 0;
+}
+  
 int acol_manager::comm_assign(std::vector<std::string> &sv, bool itive_com) {
   if (type!="table" && type!="table3d") {
     cerr << "No table/table3d object to add a constant to." << endl;

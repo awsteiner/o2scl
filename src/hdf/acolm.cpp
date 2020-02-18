@@ -114,7 +114,8 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 			      "list","max","min","nlines","refine","rename",
 			      "select","select-rows","select-rows2",
 			      "set-data","set-unit","sort","stats","sum",
-			      "to-hist","to-hist-2d","to-table3d","wstats"};
+			      "to-hist","to-hist-2d","to-table3d","wstats",
+			      "correl"};
     type_comm_list.insert(std::make_pair("table",itmp));
   }
   {
@@ -216,7 +217,7 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=38;
+    static const size_t narr=39;
     comm_option_s options_arr[narr]={
       {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
        0,2,"<name> [val]",
@@ -231,6 +232,9 @@ void acol_manager::command_add(std::string new_type) {
        "second table to the end of the first, creating new columns "+
        "if necessary.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
+       both},
+      {0,"correl","",0,0,"","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_correl),
        both},
       {0,"convert-unit","Convert a column to a new unit.",0,2,
        "<column> <new_unit>",((string)"(This command only works if ")+
@@ -610,7 +614,10 @@ void acol_manager::command_add(std::string new_type) {
        "and the sum over all entries.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
        both},
-      {0,"stats","",0,0,"","",
+      {0,"stats","Show stats for the data in the tensor.",0,0,"",
+       ((string)"The 'stats' command outputs the number of entries, ")+
+       "their mean, standard deviation, minimum and maximum. It also "+
+       "counts the number of infinite or NaN values.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_stats),
        both},
       {0,"diag","Get diagonal elements.",-1,-1,"",
@@ -778,7 +785,10 @@ void acol_manager::command_add(std::string new_type) {
        "and the sum over all entries.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
        both},
-      {0,"stats","",0,0,"","",
+      {0,"stats","Show stats for the data in the tensor.",0,0,"",
+       ((string)"The 'stats' command outputs the number of entries, ")+
+       "their mean, standard deviation, minimum and maximum. It also "+
+       "counts the number of infinite or NaN values.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_stats),
        both},
       {0,"entry","Get a single entry in a tensor_grid object.",
