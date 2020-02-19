@@ -233,7 +233,7 @@ void acol_manager::command_add(std::string new_type) {
        "if necessary.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
        both},
-      {0,"correl","",0,0,"","",
+      {0,"correl","",0,2,"","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_correl),
        both},
       {0,"convert-unit","Convert a column to a new unit.",0,2,

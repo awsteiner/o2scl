@@ -39,37 +39,46 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
 int acol_manager::comm_correl(std::vector<std::string> &sv, bool itive_com) {
 
-  vector<string> labels;
-  vector<double> coeffs, abs_coeffs;
-  
-  size_t n=table_obj.get_ncolumns();
+  if (sv.size()>=3) {
+    
+    double c=vector_correlation(table_obj.get_nlines(),table_obj[sv[1]],
+				table_obj[sv[2]]);
+    cout << "Correlation coefficient: " << c << endl;
 
-  for(size_t i=0;i<n;i++) {
-    cout << i << "/" << n << endl;
-    for(size_t j=i+1;j<n;j++) {
-      labels.push_back(table_obj.get_column_name(i)+","+
-		       table_obj.get_column_name(j));
-      double c=vector_correlation(n,table_obj[i],
-				  table_obj[j]);
-      if (!std::isfinite(c)) c=0.0;
-      coeffs.push_back(c);
-      abs_coeffs.push_back(fabs(c));
-      /*
-	cout << labels[labels.size()-1] << " " << c << endl;
-	char ch;
-	cin >> ch;
-      */
+  } else {
+  
+    vector<string> labels;
+    vector<double> coeffs, abs_coeffs;
+    
+    size_t n=table_obj.get_ncolumns();
+    
+    for(size_t i=0;i<n;i++) {
+      cout << i << "/" << n << endl;
+      for(size_t j=i+1;j<n;j++) {
+	labels.push_back(table_obj.get_column_name(i)+","+
+			 table_obj.get_column_name(j));
+	double c=vector_correlation(table_obj.get_nlines(),
+				    table_obj[i],table_obj[j]);
+	if (!std::isfinite(c)) c=0.0;
+	coeffs.push_back(c);
+	abs_coeffs.push_back(fabs(c));
+	/*
+	  cout << labels[labels.size()-1] << " " << c << endl;
+	  char ch;
+	  cin >> ch;
+	*/
+      }
     }
-  }
-
-  vector<size_t> indexes(coeffs.size());
-  vector_sort_index(coeffs.size(),abs_coeffs,indexes);
-  
-  for(size_t j=0;j<coeffs.size();j++) {
-    size_t k=indexes[coeffs.size()-1-j];
-    cout << j << " ";
-    cout << labels[k] << " "
-	 << coeffs[k] << " " << abs_coeffs[k] << endl;;
+    
+    vector<size_t> indexes(coeffs.size());
+    vector_sort_index(coeffs.size(),abs_coeffs,indexes);
+    
+    for(size_t j=0;j<coeffs.size();j++) {
+      size_t k=indexes[coeffs.size()-1-j];
+      cout << j << " ";
+      cout << labels[k] << " "
+	   << coeffs[k] << " " << abs_coeffs[k] << endl;;
+    }
   }
   
   return 0;
