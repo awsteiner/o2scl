@@ -1142,7 +1142,38 @@ namespace o2scl {
     
     return;
   }
-  
+
+    /** \brief Desc
+     */
+    template<class vec2_t>
+    void add_table(table<vec2_t> &source) {
+      
+      for(size_t i=0;i<source.get_nconsts();i++) {
+	std::string tnam;
+	double tval;
+	source.get_constant(i,tnam,tval);
+	add_constant(tnam,tval);
+      }
+      
+      // ---------------------------------------------------------------------
+      
+      size_t n1=get_nlines();
+      size_t n2=source.get_nlines();
+      set_nlines(n1+n2);
+      for(size_t j=0;j<source.get_ncolumns();j++) {
+	std::string col_name=source.get_column_name(j);
+	if (!is_column(col_name)) {
+	  new_column(col_name);
+	  for(size_t i=0;i<n1+n2;i++) set(col_name,i,0.0);
+	}
+	for(size_t i=0;i<n2;i++) {
+	  set(col_name,i+n1,source.get(col_name,i));
+	}
+      }
+      
+      return;
+    }
+    
   // --------------------------------------------------------
   /** \name Row maninpulation and data input */
   //@{
