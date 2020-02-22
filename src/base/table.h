@@ -1143,36 +1143,52 @@ namespace o2scl {
     return;
   }
 
-    /** \brief Desc
-     */
-    template<class vec2_t>
-    void add_table(table<vec2_t> &source) {
-      
-      for(size_t i=0;i<source.get_nconsts();i++) {
-	std::string tnam;
-	double tval;
-	source.get_constant(i,tnam,tval);
-	add_constant(tnam,tval);
-      }
-      
-      // ---------------------------------------------------------------------
-      
-      size_t n1=get_nlines();
-      size_t n2=source.get_nlines();
-      set_nlines(n1+n2);
-      for(size_t j=0;j<source.get_ncolumns();j++) {
-	std::string col_name=source.get_column_name(j);
-	if (!is_column(col_name)) {
-	  new_column(col_name);
-	  for(size_t i=0;i<n1+n2;i++) set(col_name,i,0.0);
-	}
-	for(size_t i=0;i<n2;i++) {
-	  set(col_name,i+n1,source.get(col_name,i));
-	}
-      }
-      
-      return;
+  /** \brief Add a second table to this one, adding all 
+      constants, columns and data from the source
+   */
+  template<class vec2_t>
+  void add_table(table<vec2_t> &source) {
+
+    // Add constants
+    for(size_t i=0;i<source.get_nconsts();i++) {
+      std::string tnam;
+      double tval;
+      source.get_constant(i,tnam,tval);
+      add_constant(tnam,tval);
     }
+
+    // Increase the size of the new table
+    size_t n1=get_nlines();
+    size_t n2=source.get_nlines();
+    set_nlines(n1+n2);
+
+    // Initialize new rows to zero for columns already in the table
+    for(size_t i=0;i<get_ncolumns();i++) {
+      for(size_t k=n1;k<n1+n2;k++) {
+	table.set(i,k,0.0);
+      }
+    }
+    
+    // Go through each column in the source
+    for(size_t j=0;j<source.get_ncolumns();j++) {
+      
+      std::string col_name=source.get_column_name(j);
+
+      // If the column is not present, add it and
+      // initialize it to zero
+      if (!is_column(col_name)) {
+	new_column(col_name);
+	for(size_t i=0;i<n1+n2;i++) set(col_name,i,0.0);
+      }
+
+      // Copy the source data over for this column
+      for(size_t i=0;i<n2;i++) {
+	set(col_name,i+n1,source.get(col_name,i));
+      }
+    }
+      
+    return;
+  }
     
   // --------------------------------------------------------
   /** \name Row maninpulation and data input */
