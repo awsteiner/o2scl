@@ -1165,7 +1165,7 @@ namespace o2scl {
     // Initialize new rows to zero for columns already in the table
     for(size_t i=0;i<get_ncolumns();i++) {
       for(size_t k=n1;k<n1+n2;k++) {
-	table.set(i,k,0.0);
+	set(i,k,0.0);
       }
     }
     

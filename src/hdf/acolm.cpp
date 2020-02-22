@@ -1290,15 +1290,15 @@ int acol_manager::setup_options() {
      "and y-grids and the names of each slice (in order).",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
      both},
-    {0,"get-conv","Get a unit conversion factor.",0,2,
+    {0,"get-conv","Get a unit conversion factor.",0,3,
      "<old unit> <new unit> [value to convert]",
      ((string)"This command gets a unit ")+
      "conversion factor and optionally applies than conversion factor "+
      "to a user-specified value. It only works if the conversion is one of "
      "the hard-coded O2scl conversions or if HAVE_POPEN is defined and "+
      "the 'units' command is available in the current "+
-     "path. For example, 'get-conv MeV erg' returns 1.602177e-6 and 1 MeV "+
-     "is equivalent to 1.602177e-6 erg. The conversion factor is output "+
+     "path. For example, 'get-conv MeV erg' returns '1.000000e+00 MeV = "+
+     "1.602177e-6 erg. The conversion factor is output "+
      "at the current precision, but is always internally stored with "+
      "full double precision. O2scl has several unit conversions which "+
      "implicitly assume hbar=c=1.",
