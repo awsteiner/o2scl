@@ -634,8 +634,10 @@ namespace o2scl {
   
     // Simple mass/energy conversions with c^2=1
     
-    insert_cache("kg","MeV",pow(sol_mks,2.0)/
-		 elem_charge*1.0e-6);
+    insert_cache("kg","MeV",pow(sol_mks,2.0)/elem_charge*1.0e-6);
+    insert_cache("PeV","eV",1.0e15);
+    insert_cache("TeV","eV",1.0e12);
+    insert_cache("GeV","eV",1.0e9);
     insert_cache("MeV","eV",1.0e6);
     insert_cache("keV","eV",1.0e3);
     insert_cache("meV","eV",1.0e-3);

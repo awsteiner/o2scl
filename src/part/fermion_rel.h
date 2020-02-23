@@ -1122,7 +1122,7 @@ namespace o2scl {
   /// The integrand for the density for non-degenerate fermions
   fp_t density_fun(fp_t u, fermion &f, fp_t T) {
 
-    double ret, y, eta;
+    fp_t ret, y, eta;
 
     if (f.inc_rest_mass) {
       y=f.nu/T;
@@ -1149,7 +1149,7 @@ namespace o2scl {
 
   /// The integrand for the energy density for non-degenerate fermions
   fp_t energy_fun(fp_t u, fermion &f, fp_t T) {
-    double ret, y, eta;
+    fp_t ret, y, eta;
 
     eta=f.ms/T;
 
@@ -1173,7 +1173,7 @@ namespace o2scl {
 
   /// The integrand for the entropy density for non-degenerate fermions
   fp_t entropy_fun(fp_t u, fermion &f, fp_t T) {
-    double ret, y, eta, term1, term2;
+    fp_t ret, y, eta, term1, term2;
 
     if (f.inc_rest_mass) {
       y=f.nu/T;
@@ -1197,7 +1197,7 @@ namespace o2scl {
   /// The integrand for the density for degenerate fermions
   fp_t deg_density_fun(fp_t k, fermion &f, fp_t T) {
       
-    double E=gsl_hypot(k,f.ms), ret;
+    fp_t E=gsl_hypot(k,f.ms), ret;
     if (!f.inc_rest_mass) E-=f.m;
       
     ret=k*k/(1.0+exp((E-f.nu)/T));
@@ -1213,7 +1213,7 @@ namespace o2scl {
   /// The integrand for the energy density for degenerate fermions
   fp_t deg_energy_fun(fp_t k, fermion &f, fp_t T) {
 
-    double E=gsl_hypot(k,f.ms), ret;
+    fp_t E=gsl_hypot(k,f.ms), ret;
     if (!f.inc_rest_mass) E-=f.m;
 
     ret=k*k*E/(1.0+exp((E-f.nu)/T));
@@ -1229,7 +1229,7 @@ namespace o2scl {
   /// The integrand for the entropy density for degenerate fermions
   fp_t deg_entropy_fun(fp_t k, fermion &f, fp_t T) {
   
-    double E=gsl_hypot(k,f.ms), ret;
+    fp_t E=gsl_hypot(k,f.ms), ret;
     if (!f.inc_rest_mass) E-=f.m;
 
     // If the argument to the exponential is really small, then the
@@ -1240,10 +1240,10 @@ namespace o2scl {
       // then addition of 1 makes us lose precision, so we use an
       // alternative:
     } else if (((E-f.nu)/T)<-deg_entropy_fac) {
-      double arg=E/T-f.nu/T;
+      fp_t arg=E/T-f.nu/T;
       ret=-k*k*(-1.0+arg)*exp(arg);
     } else {
-      double nx=1.0/(1.0+exp(E/T-f.nu/T));
+      fp_t nx=1.0/(1.0+exp(E/T-f.nu/T));
       ret=-k*k*(nx*log(nx)+(1.0-nx)*log(1.0-nx));
     }
 
@@ -1257,14 +1257,14 @@ namespace o2scl {
 
   /// Solve for the chemical potential given the density
   fp_t solve_fun(fp_t x, fermion &f, fp_t T) {
-    double nden, yy;
+    fp_t nden, yy;
   
     f.nu=T*x;
 
     if (f.non_interacting) f.mu=f.nu;
 
     bool deg=true;
-    double psi;
+    fp_t psi;
     if (f.inc_rest_mass) {
       psi=(f.nu-f.ms)/T;
     } else {
@@ -1274,7 +1274,7 @@ namespace o2scl {
 
     // Try the non-degenerate expansion if psi is small enough
     if (use_expansions && psi<min_psi) {
-      double ntemp=f.n;
+      fp_t ntemp=f.n;
       bool acc=this->calc_mu_ndeg(f,T,1.0e-14);
       if (acc) {
 	unc.n=f.n*1.0e-14;
@@ -1287,7 +1287,7 @@ namespace o2scl {
 
     // Try the degenerate expansion if psi is large enough
     if (use_expansions && psi>20.0) {
-      double ntemp=f.n;
+      fp_t ntemp=f.n;
       bool acc=this->calc_mu_deg(f,T,1.0e-14);
       if (acc) {
 	unc.n=f.n*1.0e-14;
@@ -1301,7 +1301,7 @@ namespace o2scl {
     // Otherwise, directly perform the integration
     if (!deg) {
 
-      funct mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
+      funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
 			  (&fermion_rel_tl<fp_t>::density_fun),
 			  this,std::placeholders::_1,std::ref(f),T);
     
@@ -1313,18 +1313,18 @@ namespace o2scl {
 
     } else {
     
-      funct mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
+      funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
 			  (&fermion_rel_tl<fp_t>::deg_density_fun),
 			  this,std::placeholders::_1,std::ref(f),T);
     
-      double arg;
+      fp_t arg;
       if (f.inc_rest_mass) {
 	arg=pow(upper_limit_fac*T+f.nu,2.0)-f.ms*f.ms;
       } else {
 	arg=pow(upper_limit_fac*T+f.nu+f.m,2.0)-f.ms*f.ms;
       }
 
-      double ul;
+      fp_t ul;
 
       if (arg>0.0) {
 
@@ -1359,9 +1359,9 @@ namespace o2scl {
   fp_t pair_fun(fp_t x, fermion &f, fp_t T, bool log_mode) {
 
     // Temporary storage for density to match
-    double nn_match=f.n;
+    fp_t nn_match=f.n;
     // Number density of particles and antiparticles
-    double nden_p, nden_ap;
+    fp_t nden_p, nden_ap;
 
     // -----------------------------------------------------------------
 
@@ -1387,7 +1387,7 @@ namespace o2scl {
 
     if (false && use_expansions) {
       if (this->calc_mu_ndeg(f,T,1.0e-8,true) && std::isfinite(f.n)) {
-	double y1=f.n/nn_match-1.0;
+	fp_t y1=f.n/nn_match-1.0;
 	if (!std::isfinite(y1)) {
 	  O2SCL_ERR("Value 'y1' not finite (10) in fermion_rel::pair_fun().",
 		    exc_einval);
@@ -1404,7 +1404,7 @@ namespace o2scl {
     // separately. This is the contribution for particles
 
     bool deg=true;
-    double psi;
+    fp_t psi;
     if (f.inc_rest_mass) {
       psi=(f.nu-f.ms)/T;
     } else {
@@ -1445,7 +1445,7 @@ namespace o2scl {
       
 	// Nondegenerate case
       
-	funct mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
+	funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
 			    (&fermion_rel_tl<fp_t>::density_fun),
 			    this,std::placeholders::_1,std::ref(f),T);
       
@@ -1460,18 +1460,18 @@ namespace o2scl {
       
 	// Degenerate case
       
-	funct mfe=std::bind(std::mem_fn<double(double,fermion &,double)>
+	funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
 			    (&fermion_rel_tl<fp_t>::deg_density_fun),
 			    this,std::placeholders::_1,std::ref(f),T);
       
-	double arg;
+	fp_t arg;
 	if (f.inc_rest_mass) {
 	  arg=pow(upper_limit_fac*T+f.nu,2.0)-f.ms*f.ms;
 	} else {
 	  arg=pow(upper_limit_fac*T+f.nu+f.m,2.0)-f.ms*f.ms;
 	}
       
-	double ul;
+	fp_t ul;
 	if (arg>0.0) {
 	  ul=sqrt(arg);
 	  nden_p=dit->integ(mfe,0.0,ul);
@@ -1548,7 +1548,7 @@ namespace o2scl {
       
 	// Nondegenerate case
       
-	funct mf=std::bind(std::mem_fn<double(double,fermion &,double)>
+	funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
 			   (&fermion_rel_tl<fp_t>::density_fun),
 			   this,std::placeholders::_1,std::ref(f),T);
       
@@ -1564,18 +1564,18 @@ namespace o2scl {
       
 	// Degenerate case
       
-	funct mf=std::bind(std::mem_fn<double(double,fermion &,double)>
+	funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
 			   (&fermion_rel_tl<fp_t>::deg_density_fun),
 			   this,std::placeholders::_1,std::ref(f),T);
       
-	double arg;
+	fp_t arg;
 	if (f.inc_rest_mass) {
 	  arg=pow(upper_limit_fac*T+f.nu,2.0)-f.ms*f.ms;
 	} else {
 	  arg=pow(upper_limit_fac*T+f.nu+f.m,2.0)-f.ms*f.ms;
 	}
       
-	double ul;
+	fp_t ul;
 	if (arg>0.0) {
 	  ul=sqrt(arg);
 	  nden_ap=dit->integ(mf,0.0,ul);
@@ -1594,7 +1594,7 @@ namespace o2scl {
       antiparticles_done=true;
     }
 
-    double y2;
+    fp_t y2;
     // Finish computing the function value
     if (nn_match==0.0) {
       y2=fabs(nden_p-nden_ap)/fabs(nden_p);

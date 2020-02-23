@@ -32,7 +32,7 @@
 
 /** \brief Constants
     
-    CODATA 2014 values are in \ref Mohr16. CODATA 2018 values are from
+    CODATA 2014 values were from \ref Mohr16. CODATA 2018 values are from
     physics.nist.gov/constants.
 */
 namespace o2scl_const {
@@ -141,7 +141,7 @@ namespace o2scl_const {
 /** \brief Constants in CGS units 
 
     CODATA 2018 values are from physics.nist.gov/constants.
-    CODATA 2014 values are from \ref Mohr16 . The solar mass and solar
+    CODATA 2014 values were from \ref Mohr16 . The solar mass and solar
     mass parameter are from 2018 value at http://asa.usno.navy.mil/ .
 
 */
@@ -226,12 +226,12 @@ namespace o2scl_cgs {
   //@{
   /// Deuteron mass in kg (CODATA 2018 value)
   const double mass_deuteron=3.3435837724e-24;
-  /// Triton mass in kg (CODATA 2014 value)
-  const double mass_triton=5.007356665e-24;
-  /// Helion mass in kg (CODATA 2014 value)
-  const double mass_helion=5.006412700e-24;
-  /// Alpha particle mass in kg (CODATA 2014 value)
-  const double mass_alpha=6.64465723e-24;
+  /// Triton mass in kg (CODATA 2018 value)
+  const double mass_triton=5.0073567446e-24;
+  /// Helion mass in kg (CODATA 2018 value)
+  const double mass_helion=5.0064127796e-24;
+  /// Alpha particle mass in kg (CODATA 2018 value)
+  const double mass_alpha=6.6446573357e-24;
   /// Atomic mass constant in g (CODATA 2018 value)
   const double unified_atomic_mass=1.6605390666e-24;
   //@}
@@ -245,9 +245,9 @@ namespace o2scl_cgs {
   */
   const double molar_gas=o2scl_const::avogadro*o2scl_cgs::boltzmann;
   /** \brief Molar volume of ideal gas at standard T and P in 
-      cm^3 / mol (CODATA 2014 value)
+      cm^3 / mol (CODATA 2018 value)
   */
-  const double standard_gas_volume=2.2710947e4;
+  const double standard_gas_volume=2.271095464e4;
   //@}
 
   /// \name Unit conversions
@@ -635,16 +635,16 @@ namespace o2scl_cgsm {
 
   /// \name Electromagnetic constants
   //@{
-  /// Electron magnetic moment in abamp cm^2 (CODATA 2014 value)
-  const double electron_magnetic_moment=9.284764620e-21;
-  /// Proton magnetic moment in abamp cm^2 (CODATA 2014 value)
-  const double proton_magnetic_moment=1.4106067873e-23;
+  /// Electron magnetic moment in abamp cm^2 (CODATA 2018 value)
+  const double electron_magnetic_moment=9.2847647043e-21;
+  /// Proton magnetic moment in abamp cm^2 (CODATA 2018 value)
+  const double proton_magnetic_moment=1.41060679736e-23;
   /// Roentgen abamp s / g
   const double roentgen=o2scl_cgs::roentgen/10.0;
-  /// Bohr magneton in abamp cm^2 (CODATA 2014 value)
-  const double bohr_magneton=9.274009994e-21;
-  /// Nuclear magneton in abamp cm^2 (CODATA 2014 value)
-  const double nuclear_magneton=5.050783699e-24;
+  /// Bohr magneton in abamp cm^2 (CODATA 2018 value)
+  const double bohr_magneton=9.2740100783e-21;
+  /// Nuclear magneton in abamp cm^2 (CODATA 2018 value)
+  const double nuclear_magneton=5.0507837461e-24;
   /// Faraday constant in abamp s / mol (CODATA 2018 value; derived; exact)
   const double faraday=o2scl_const::avogadro*o2scl_cgs::electron_volt/1.0e8;
   /// Electron charge in abamp s (derived)
