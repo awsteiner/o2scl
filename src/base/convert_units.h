@@ -635,6 +635,7 @@ namespace o2scl {
     // Simple mass/energy conversions with c^2=1
     
     insert_cache("kg","MeV",pow(sol_mks,2.0)/elem_charge*1.0e-6);
+    insert_cache("kg","g",1.0e3);
     insert_cache("PeV","eV",1.0e15);
     insert_cache("TeV","eV",1.0e12);
     insert_cache("GeV","eV",1.0e9);
@@ -664,7 +665,15 @@ namespace o2scl {
 		 sol_cgs/o2scl_mks::solar_mass);
     insert_cache("dyne/cm^2","Msun/km^3",1.0e12/sol_cgs/
 		 sol_cgs/o2scl_mks::solar_mass);
+    insert_cache("MeV/fm^3","Msun/km^3",
+		 o2scl_cgs::electron_volt/sol_cgs/
+		 sol_cgs/o2scl_mks::solar_mass*1.0e57);
+    insert_cache("1/fm^4","Msun/km^3",hc*
+		 o2scl_cgs::electron_volt/sol_cgs/
+		 sol_cgs/o2scl_mks::solar_mass*1.0e57);
 
+    // 1/fm^4 conversions using hbar*c
+    
     insert_cache("1/fm^4","MeV/fm^3",hc);
     insert_cache("MeV/fm^3","MeV^2/fm^2",hc);
     insert_cache("MeV^2/fm^2","MeV^3/fm",hc);
@@ -679,6 +688,8 @@ namespace o2scl {
   
     insert_cache("1/fm^4","MeV^4",pow(hc,4.0));
   
+    // 1/fm^3 conversions using hbar*c
+
     insert_cache("1/fm^3","MeV/fm^2",hc);
     insert_cache("MeV/fm^2","MeV^2/fm",hc);
     insert_cache("MeV^2/fm","MeV^3",hc);
@@ -687,25 +698,18 @@ namespace o2scl {
     insert_cache("MeV/fm^2","MeV^3",hc*hc);
 
     insert_cache("1/fm^3","MeV^3",pow(hc,3.0));
-  
-    insert_cache("MeV/fm^3","Msun/km^3",
-		 o2scl_cgs::electron_volt/sol_cgs/
-		 sol_cgs/o2scl_mks::solar_mass*1.0e57);
-    insert_cache("1/fm^4","Msun/km^3",hc*
-		 o2scl_cgs::electron_volt/sol_cgs/
-		 sol_cgs/o2scl_mks::solar_mass*1.0e57);
 
-    // Inverse volume conversions
-  
-    insert_cache("1/fm^3","1/cm^3",1.0e39);
-    insert_cache("1/fm^3","1/m^3",1.0e45);
+    // Simple time conversions
+    
+    insert_cache("yr","s",31556926);
+    insert_cache("wk","s",o2scl_mks::week);
+    insert_cache("d","s",o2scl_mks::day);
+    insert_cache("hr","s",o2scl_mks::hour);
+    insert_cache("min","s",o2scl_mks::minute);
 
-    // Simple mass conversions
-  
-    insert_cache("Msun","g",o2scl_cgs::solar_mass);
-  
     // Simple powers of length conversions 
 
+    insert_cache("AU","m",o2scl_mks::astronomical_unit);
     insert_cache("pc","m",o2scl_mks::parsec);
     insert_cache("kpc","m",o2scl_mks::parsec*1.0e3);
     insert_cache("km","m",1.0e3);
@@ -715,6 +719,7 @@ namespace o2scl {
     insert_cache("nm","m",1.0e-9);
     insert_cache("lyr","m",o2scl_mks::light_year);
   
+    insert_cache("AU^2","m^2",pow(o2scl_mks::astronomical_unit,2.0));
     insert_cache("pc^2","m^2",pow(o2scl_mks::parsec,2.0));
     insert_cache("kpc^2","m^2",pow(o2scl_mks::parsec*1.0e3,2.0));
     insert_cache("km^2","m^2",1.0e6);
@@ -724,6 +729,7 @@ namespace o2scl {
     insert_cache("nm^2","m^2",1.0e-18);
     insert_cache("lyr^2","m^2",pow(o2scl_mks::light_year,2.0));
   
+    insert_cache("AU^3","m^3",pow(o2scl_mks::astronomical_unit,3.0));
     insert_cache("pc^3","m^3",pow(o2scl_mks::parsec,3.0));
     insert_cache("kpc^3","m^3",pow(o2scl_mks::parsec*1.0e3,3.0));
     insert_cache("km^3","m^3",1.0e9);
@@ -732,6 +738,39 @@ namespace o2scl {
     insert_cache("mm^3","m^3",1.0e-9);
     insert_cache("nm^3","m^3",1.0e-27);
     insert_cache("lyr^3","m^3",pow(o2scl_mks::light_year,3.0));
+
+    // Simple inverse powers of length conversions 
+
+    insert_cache("1/m","1/AU",o2scl_mks::astronomical_unit);
+    insert_cache("1/m","1/pc",o2scl_mks::parsec);
+    insert_cache("1/m","1/kpc",o2scl_mks::parsec*1.0e3);
+    insert_cache("1/m","1/km",1.0e3);
+    insert_cache("1/m","1/cm",1.0e-2);
+    insert_cache("1/m","1/fm",1.0e-15);
+    insert_cache("1/m","1/mm",1.0e-3);
+    insert_cache("1/m","1/nm",1.0e-9);
+    insert_cache("1/m","1/lyr",o2scl_mks::light_year);
+    
+    insert_cache("1/m^2","1/AU^2",pow(o2scl_mks::astronomical_unit,2.0));
+    insert_cache("1/m^2","1/pc^2",pow(o2scl_mks::parsec,2.0));
+    insert_cache("1/m^2","1/kpc^2",pow(o2scl_mks::parsec*1.0e3,2.0));
+    insert_cache("1/m^2","1/km^2",1.0e6);
+    insert_cache("1/m^2","1/cm^2",1.0e-4);
+    insert_cache("1/m^2","1/fm^2",1.0e-30);
+    insert_cache("1/m^2","1/mm^2",1.0e-6);
+    insert_cache("1/m^2","1/nm^2",1.0e-18);
+    insert_cache("1/m^2","1/lyr^2",pow(o2scl_mks::light_year,2.0));
+    
+    insert_cache("1/m^3","1/AU^3",pow(o2scl_mks::astronomical_unit,3.0));
+    insert_cache("1/m^3","1/pc^3",pow(o2scl_mks::parsec,3.0));
+    insert_cache("1/m^3","1/kpc^3",pow(o2scl_mks::parsec*1.0e3,3.0));
+    insert_cache("1/m^3","1/km^3",1.0e9);
+    insert_cache("1/m^3","1/cm^3",1.0e-6);
+    insert_cache("1/m^3","1/fm^3",1.0e-45);
+    insert_cache("1/m^3","1/mm^3",1.0e-9);
+    insert_cache("1/m^3","1/nm^3",1.0e-27);
+    insert_cache("1/m^3","1/lyr^3",pow(o2scl_mks::light_year,3.0));
+    
     return;
   }
   
