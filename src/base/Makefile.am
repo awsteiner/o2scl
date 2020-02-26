@@ -8,7 +8,7 @@ BASE_HEADER_VAR =  err_hnd.h misc.h test_mgr.h table.h \
 	cli.h columnify.h convert_units.h string_conv.h \
 	tensor.h vector.h table3d.h cli_readline.h tensor_grid.h \
 	format_float.h table_units.h exception.h uniform_grid.h \
-	shunting_yard.h interp_krige.h
+	shunting_yard.h interp_krige.h find_constants.h
 
 HEADER_VAR = $(BASE_HEADER_VAR)
 
@@ -16,7 +16,7 @@ BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	lib_settings.cpp misc.cpp cli.cpp \
 	test_mgr.cpp convert_units.cpp vector.cpp \
 	string_conv.cpp exception.cpp format_float.cpp \
-	shunting_yard.cpp tensor.cpp
+	shunting_yard.cpp tensor.cpp find_constants.cpp
 
 BASE_SRCS = $(BASE_BASE_SRCS)
 

@@ -37,6 +37,27 @@ using namespace o2scl_acol;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
+int acol_manager::comm_constant(std::vector<std::string> &sv,
+				bool itive_com) {
+
+  if (sv.size()<2) {
+    vector<string> pr, in;
+    pr.push_back("Name or search pattern");
+    pr.push_back("Unit (or 'none' for any)");
+    int ret=get_input(sv,pr,in,"assign",itive_com);
+    if (ret!=0) return ret;
+  }
+
+  if (sv.size()>=3 && sv[2]!="none" && sv[2]!="None") {
+    find_constants fc;
+    fc.find_print(sv[1],sv[2],prec);
+  } else {
+    fc.find_print(sv[1],"",prec);
+  }
+
+  return 0;
+}
+
 int acol_manager::comm_correl(std::vector<std::string> &sv, bool itive_com) {
 
   if (sv.size()>=3) {

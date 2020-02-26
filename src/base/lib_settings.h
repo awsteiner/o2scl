@@ -26,6 +26,7 @@
 #include <string>
 
 #include <o2scl/convert_units.h>
+#include <o2scl/find_constants.h>
 
 /** \file lib_settings.h
     \brief Library settings class and global settings object
@@ -160,12 +161,20 @@ namespace o2scl {
     std::string o2scl_tarname();
     //@}
 
-    /// Default convert units object
+    /// Default convert_units object
     convert_units<double> def_cu;
+
+    /// Default find_constants object
+    find_constants def_fc;
     
     /// Get the global convert_units object
     convert_units<double> &get_convert_units() {
       return *cup;
+    }
+
+    /// Get the global convert_units object
+    find_constants &get_find_constants() {
+      return *fcp;
     }
 
     /// Set the global convert_units object
@@ -182,6 +191,9 @@ namespace o2scl {
 
     /// Pointer to current \ref convert_units object
     convert_units<double> *cup;
+
+    /// Pointer to current \ref find_constants object
+    find_constants *fcp;
 
 #endif
   

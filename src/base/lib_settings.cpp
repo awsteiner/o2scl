@@ -46,7 +46,8 @@ lib_settings_class o2scl::o2scl_settings;
 lib_settings_class::lib_settings_class() {
   data_dir=((std::string)(O2SCL_DATA_DIR));
   cup=&def_cu;
-
+  fcp=&def_fc;
+  
   // Default conversions are given here. Obviously GNU units is better
   // at handling these things, but it's nice to have some of the easy
   // conversions in by default rather than worrying about opening a

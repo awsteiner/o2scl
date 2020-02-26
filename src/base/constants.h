@@ -32,8 +32,9 @@
 
 /** \brief Constants
     
-    CODATA 2014 values were from \ref Mohr16. CODATA 2018 values are from
-    physics.nist.gov/constants.
+    CODATA 2014 values were from \ref Mohr16. CODATA 2018 values are
+    from physics.nist.gov/constants. IAU 2015 values are the nominal
+    values from arXiv:1510.07674 and arXiv:1605.09788 .
 */
 namespace o2scl_const {
 
@@ -185,26 +186,65 @@ namespace o2scl_cgs {
   //@{
   /// Astronomical unit in cm (IAU 2009 value; now exact)
   const double astronomical_unit=1.495978707e13;
-  /// Parsec in \f$ \mathrm{cm} \f$ (derived)
+  /// Parsec in \f$ \mathrm{cm} \f$ (derived; exact)
   const double parsec=o2scl_cgs::astronomical_unit*648000.0/o2scl_const::pi;
   /// Acccleration due to gravity in cm / s^2 (CODATA 2018; now exact)
   const double grav_accel=9.80665e2;
+
   /** \brief Solar mass times gravitational constant in cm^3 / s^2
-      (from navy.mil)
+      (IAU 2015 value)
+
+      Note that this value differs slightly in Barycentric Coordinate
+      Time and Barycentric Dynamical Time. This is the IAU's nominal
+      value.
   */
-  const double solar_mass_parameter=1.32712441e26;
-  /// Mass of the sun in g (from navy.mil)
-  const double solar_mass=1.9884e33;
+  const double solar_mass_parameter=1.3271244e26;
+  /** \brief Earth mass times gravitational constant in cm^3 / s^2
+      (IAU 2015 value)
+  */
+  const double earth_mass_parameter=3.986004e20;
+  /** \brief Jupter mass times gravitational constant in cm^3 / s^2
+      (IAU 2015 value)
+  */
+  const double jupiter_mass_parameter=1.2668653e23;
+  
+  /// Mass of the sun in g (derived)
+  const double solar_mass=solar_mass_parameter/gravitational_constant;
+  /// Radius of the sun in cm (IAU 2015 value)
+  const double solar_radius=6.957e10;
+  /// Temperature of the sun's photosphere in K (IAU 2015 value)
+  const double solar_temperature=5772.0;
+  /// Luminosity of sun in erg/s (IAU 2015 value)
+  const double solar_luminosity=3.828e40;
+  
+  /// Mass of the earth in g (derived)
+  const double earth_mass=solar_mass_parameter/gravitational_constant;
+  /// Equatorial radius of earth in cm (IAU 2015 value)
+  const double earth_radius_equatorial=6.3781e8;
+  /// Polar radius of earth in cm (IAU 2015 value)
+  const double earth_radius_polar=6.3568e8;
+  
+  /// Mass of jupiter in g (derived)
+  const double jupiter_mass=solar_mass_parameter/gravitational_constant;
+  /// Equatorial radius of jupiter in cm (IAU 2015 value)
+  const double jupiter_radius_equatorial=7.1492e9;
+  /// Polar radius of jupiter in cm (IAU 2015 value)
+  const double jupiter_radius_polar=6.6854e9;
+  
   /// Schwarzchild radius in cm (derived)
   const double schwarzchild_radius=2.0*o2scl_cgs::solar_mass_parameter/
     o2scl_cgs::speed_of_light/o2scl_cgs::speed_of_light;
-  /// Sidereal year in s 
+  /** \brief Sidereal year in s 
+      (from http://hpiers.obspm.fr/eop-pc/models/constants.html)
+  */
   const double sidereal_year=365.256363004*8.64e4;
-  /// Tropical year in s 
+  /** \brief Tropical year in s 
+      (from http://hpiers.obspm.fr/eop-pc/models/constants.html)
+  */
   const double tropical_year=365.242190402*8.64e4;
-  /// Julian year in s 
+  /// Julian year in s (exact)
   const double julian_year=365.25*8.64e4;
-  /// Light year in \f$ \mathrm{cm} \f$ (derived)
+  /// Light year in \f$ \mathrm{cm} \f$ (derived; exact)
   const double light_year=o2scl_cgs::julian_year*o2scl_cgs::speed_of_light;
   //@}
 

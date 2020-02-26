@@ -191,6 +191,10 @@ namespace o2scl {
   */
   double function_to_double(std::string s);
 
+  /** \brief Desc
+   */
+  double find_constant(std::string name, std::string unit);
+  
   /** \brief Convert a formula to a double and return an integer to
       indicate success or failure
       

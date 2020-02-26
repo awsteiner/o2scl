@@ -23,24 +23,34 @@
     everything down. The following are the most "top-level" header
     files and their associated dependencies within \o2 (there are
     other dependencies on GSL and the C standard library not listed
-    here).
+    here). Note that not all of the headers in the "base" directory
+    are listed here (because they are less likely to cause problems).
     \code
+    constants.h : (none)
     err_hnd.h : (none)
-    lib_settings.h : (none)
-    fparser.h : (none)
-    array.h: err_hnd.h
-    exception.h: err_hnd.h
-    uniform_grid.h: err_hnd.h
-    vector.h: err_hnd.h uniform_grid.h
-    sring_conv.h : lib_settings.h
-    misc.h : err_hnd.h lib_settings.h
-    test_mgr.h : string_conv.h
-    uvector_tlate.h: err_hnd.h string_conv.h array.h vector.h
-    umatrix_tlate.h: err_hnd.h uvector_tlate.h
-    ovector_tlate.h: err_hnd.h string_conv.h uvector_tlate.h array.h vector.h 
-    omatrix_tlate.h: err_hnd.h ovector_tlate.h omatrix_tlate.h array.h
-    search_vec.h: err_hnd.h ovector_tlate.h vector.h
-    funct.h : fparser.h ovector_tlate.h
+    exception.h : err_hnd.h
+    find_constants.h : constants.h convert_units.h
+    format_float.h : err_hnd.h misc.h string_conv.h
+    funct.h : err_hnd.h shunting_yard.h
+    lib_settings.h : convert_units.h find_constants.h
+    misc.h : err_hnd.h
+    mm_funct.h : shunting_yard.h
+    multi_funct.h : err_hnd.h shunting_yard.h
+    search_vec.h : err_hnd.h vector.h
+    shunting_yard.h : (none)
+    string_conv.h : misc.h
+    uniform_grid.h: err_hnd.h string_conv.h
+    vector.h: uniform_grid.h misc.h vector_special.h
+    \endcode
+
+    The interpolation, testing, and table headers are not
+    as top-level as the ones above because they depend on 
+    tridiagonalization in the linear algebra directory.
+    \code
+    interp.h : search_vec.h tridiag.h vector.h
+    table.h : misc.h interp.h shunting_yard.h
+    table_units.h : table.h lib_settings.h
+    test_mgr.h : string_conv.h misc.h table_units.h
     \endcode
 
     <B>The use of templates</b>

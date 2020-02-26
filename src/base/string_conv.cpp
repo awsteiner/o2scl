@@ -27,6 +27,8 @@
 #include <o2scl/string_conv.h>
 #include <o2scl/err_hnd.h>
 #include <o2scl/shunting_yard.h>
+#include <o2scl/find_constants.h>
+#include <o2scl/lib_settings.h>
 
 using namespace std;
 using namespace o2scl;
@@ -231,6 +233,11 @@ double o2scl::function_to_double(std::string s) {
   calc.compile(s.c_str(),0);
   double dat=calc.eval(0);
   return dat;
+}
+
+double o2scl::find_constant(std::string name, std::string unit) {
+  o2scl::find_constants &fc=o2scl_settings.get_find_constants();
+  return fc.find_unique(name,unit);
 }
 
 int o2scl::function_to_double_nothrow(std::string s, double &result) {
