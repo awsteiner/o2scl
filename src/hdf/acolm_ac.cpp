@@ -48,8 +48,8 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
     if (ret!=0) return ret;
   }
 
+  find_constants fc;
   if (sv.size()>=3 && sv[2]!="none" && sv[2]!="None") {
-    find_constants fc;
     fc.find_print(sv[1],sv[2],prec);
   } else {
     fc.find_print(sv[1],"",prec);
