@@ -1045,7 +1045,7 @@ namespace o2scl {
   bool err_nonconv;
   
   /// Print the progress in the current iteration
-  virtual int print_iter(size_t nv, vec_t &x, vec_t &dx, int iter2,
+  virtual int print_iter_nonlin(size_t nv, vec_t &x, vec_t &dx, int iter2,
 			 double l_epsabs, double l_epsrel) {
 
     if (this->verbose<=0) return 0;
@@ -1410,7 +1410,7 @@ namespace o2scl {
 	status=this->test_gradient_f(nparm,g_,this->tol_abs);
       }
 	
-      this->print_iter(npar,parms,dx_,niter,this->tol_abs,this->tol_rel);
+      this->print_iter_nonlin(npar,parms,dx_,niter,this->tol_abs,this->tol_rel);
 
     } while (status == gsl_continue && niter<this->ntrial);
 
