@@ -141,10 +141,9 @@ namespace o2scl_const {
 
 /** \brief Constants in CGS units 
 
-    CODATA 2018 values are from physics.nist.gov/constants.
-    CODATA 2014 values were from \ref Mohr16 . The solar mass and solar
-    mass parameter are from 2018 value at http://asa.usno.navy.mil/ .
-
+    CODATA 2014 values were from \ref Mohr16. CODATA 2018 values are
+    from physics.nist.gov/constants. IAU 2015 values are the nominal
+    values from arXiv:1510.07674 and arXiv:1605.09788 .
 */
 namespace o2scl_cgs {
 
@@ -171,7 +170,6 @@ namespace o2scl_cgs {
     o2scl_cgs::boltzmann/60.0/o2scl_cgs::plancks_constant_hbar/
     o2scl_cgs::plancks_constant_hbar/o2scl_cgs::plancks_constant_hbar/
     o2scl_cgs::speed_of_light/o2scl_cgs::speed_of_light;
-  
   /// Thomson cross section in cm^2 (CODATA 2018 value)
   const double thomson_cross_section=6.6524587321e-25;
   /** \brief Fermi coupling constant in s^4 / cm^4 g^2, 
@@ -267,6 +265,31 @@ namespace o2scl_cgs {
   const double pluto_radius=1.1883e8;
   //@}
 
+  /// \name Astrophysical constants
+  //@{
+  /// Astronomical unit in cm (IAU 2009 value; now exact)
+  const double astronomical_unit=1.495978707e13;
+  /// Parsec in \f$ \mathrm{cm} \f$ (derived; exact)
+  const double parsec=o2scl_cgs::astronomical_unit*648000.0/o2scl_const::pi;
+  /// Acccleration due to gravity in cm / s^2 (CODATA 2018; now exact)
+  const double grav_accel=9.80665e2;
+  /// Schwarzchild radius in cm (derived)
+  const double schwarzchild_radius=2.0*o2scl_cgs::solar_mass_parameter/
+    o2scl_cgs::speed_of_light/o2scl_cgs::speed_of_light;
+  /** \brief Sidereal year in s 
+      (from http://hpiers.obspm.fr/eop-pc/models/constants.html)
+  */
+  const double sidereal_year=365.256363004*8.64e4;
+  /** \brief Tropical year in s 
+      (from http://hpiers.obspm.fr/eop-pc/models/constants.html)
+  */
+  const double tropical_year=365.242190402*8.64e4;
+  /// Julian year in s (exact)
+  const double julian_year=365.25*8.64e4;
+  /// Light year in \f$ \mathrm{cm} \f$ (derived; exact)
+  const double light_year=o2scl_cgs::julian_year*o2scl_cgs::speed_of_light;
+  //@}
+
   /// \name Particle masses
   //@{
   /// Electron mass in g (CODATA 2018 value)
@@ -293,31 +316,6 @@ namespace o2scl_cgs {
   const double mass_alpha=6.6446573357e-24;
   /// Atomic mass constant in g (CODATA 2018 value)
   const double unified_atomic_mass=1.6605390666e-24;
-  //@}
-
-  /// \name Astrophysical constants
-  //@{
-  /// Astronomical unit in cm (IAU 2009 value; now exact)
-  const double astronomical_unit=1.495978707e13;
-  /// Parsec in \f$ \mathrm{cm} \f$ (derived; exact)
-  const double parsec=o2scl_cgs::astronomical_unit*648000.0/o2scl_const::pi;
-  /// Acccleration due to gravity in cm / s^2 (CODATA 2018; now exact)
-  const double grav_accel=9.80665e2;
-  /// Schwarzchild radius in cm (derived)
-  const double schwarzchild_radius=2.0*o2scl_cgs::solar_mass_parameter/
-    o2scl_cgs::speed_of_light/o2scl_cgs::speed_of_light;
-  /** \brief Sidereal year in s 
-      (from http://hpiers.obspm.fr/eop-pc/models/constants.html)
-  */
-  const double sidereal_year=365.256363004*8.64e4;
-  /** \brief Tropical year in s 
-      (from http://hpiers.obspm.fr/eop-pc/models/constants.html)
-  */
-  const double tropical_year=365.242190402*8.64e4;
-  /// Julian year in s (exact)
-  const double julian_year=365.25*8.64e4;
-  /// Light year in \f$ \mathrm{cm} \f$ (derived; exact)
-  const double light_year=o2scl_cgs::julian_year*o2scl_cgs::speed_of_light;
   //@}
 
   /// \name Chemical constants
@@ -502,6 +500,8 @@ namespace o2scl_cgsm {
   const double plancks_constant_hbar=o2scl_cgs::plancks_constant_hbar;
   /// Electron volt in g cm^2 / s^2
   const double electron_volt=o2scl_cgs::electron_volt;
+  /// Boltzmann constant in g cm^2 / K s^2
+  const double boltzmann=o2scl_cgs::boltzmann;
   /// Bohr radius in cm
   const double bohr_radius=o2scl_cgs::bohr_radius;
   /// Stefan-Boltzmann constant in g / K^4 s^3
@@ -511,34 +511,117 @@ namespace o2scl_cgsm {
   const double thomson_cross_section=o2scl_cgs::thomson_cross_section;
   /// Fermi coupling constant in s^4 / cm^4 g^2
   const double Gfermi=o2scl_cgs::Gfermi;
-  /// Boltzmann constant in g cm^2 / K s^2
-  const double boltzmann=o2scl_cgs::boltzmann;
   //@}
 
+  /// \name Solar system properties
+  //@{
+  /** \brief Solar mass times gravitational constant in cm^3 / s^2
+      (IAU 2015 value)
+
+      Note that this value differs slightly in Barycentric Coordinate
+      Time and Barycentric Dynamical Time. This is the IAU's nominal
+      value.
+  */
+  const double solar_mass_parameter=o2scl_cgs::solar_mass_parameter;
+  /// Mass of the sun in g (derived)
+  const double solar_mass=o2scl_cgs::solar_mass;
+  /// Radius of the sun in cm (IAU 2015 value)
+  const double solar_radius=o2scl_cgs::solar_radius;
+  /// Temperature of the sun's photosphere in K (IAU 2015 value)
+  const double solar_temperature=o2scl_cgs::solar_temperature;
+  /// Luminosity of sun in erg/s (IAU 2015 value)
+  const double solar_luminosity=o2scl_cgs::solar_luminosity;
+  
+  /** \brief Earth mass times gravitational constant in cm^3 / s^2
+      (IAU 2015 value)
+  */
+  const double earth_mass_parameter=o2scl_cgs::earth_mass_parameter;
+  /// Mass of the earth in g (derived)
+  const double earth_mass=o2scl_cgs::earth_mass;
+  /// Equatorial radius of earth in cm (IAU 2015 value)
+  const double earth_radius_equatorial=o2scl_cgs::earth_radius_equatorial;
+  /// Polar radius of earth in cm (IAU 2015 value)
+  const double earth_radius_polar=o2scl_cgs::earth_radius_polar;
+  
+  /** \brief Jupter mass times gravitational constant in cm^3 / s^2
+      (IAU 2015 value)
+  */
+  const double jupiter_mass_parameter=o2scl_cgs::jupiter_mass_parameter;
+  /// Mass of jupiter in g (derived)
+  const double jupiter_mass=o2scl_cgs::jupiter_mass;
+  /// Equatorial radius of jupiter in cm (IAU 2015 value)
+  const double jupiter_radius_equatorial=o2scl_cgs::jupiter_radius_equatorial;
+  /// Polar radius of jupiter in cm (IAU 2015 value)
+  const double jupiter_radius_polar=o2scl_cgs::jupiter_radius_polar;
+  
+  /// Mass of mercury in g
+  const double mercury_mass=o2scl_cgs::mercury_mass;
+  /// Radius of mercury in cm
+  const double mercury_radius=o2scl_cgs::mercury_radius;
+
+  /// Mass of venus in g
+  const double venus_mass=o2scl_cgs::venus_mass;
+  /// Radius of venus in cm
+  const double venus_radius=o2scl_cgs::venus_radius;
+
+  /// Mass of mars in g
+  const double mars_mass=o2scl_cgs::mars_mass;
+  /// Equatorial radius of mars in cm
+  const double mars_radius_equatorial=o2scl_cgs::mars_radius_equatorial;
+  /// Polar radius of mars in cm
+  const double mars_radius_polar=o2scl_cgs::mars_radius_polar;
+
+  /// Mass of saturn in g
+  const double saturn_mass=o2scl_cgs::saturn_mass;
+  /// Equatorial radius of saturn in cm 
+  const double saturn_radius_equatorial=o2scl_cgs::saturn_radius_equatorial;
+  /// Polar radius of saturn in cm
+  const double saturn_radius_polar=o2scl_cgs::saturn_radius_polar;
+
+  /// Mass of uranus in g
+  const double uranus_mass=o2scl_cgs::uranus_mass;
+  /// Equatorial radius of uranus in cm 
+  const double uranus_radius_equatorial=o2scl_cgs::uranus_radius_equatorial;
+  /// Polar radius of uranus in cm
+  const double uranus_radius_polar=o2scl_cgs::uranus_radius_polar;
+
+  /// Mass of neptune in g
+  const double neptune_mass=o2scl_cgs::neptune_mass;
+  /// Equatorial radius of neptune in cm 
+  const double neptune_radius_equatorial=o2scl_cgs::neptune_radius_equatorial;
+  /// Polar radius of neptune in cm
+  const double neptune_radius_polar=o2scl_cgs::neptune_radius_polar;
+
+  /// Mass of pluto in g
+  const double pluto_mass=o2scl_cgs::pluto_mass;
+  /// Radius of pluto in cm 
+  const double pluto_radius=o2scl_cgs::pluto_radius;
+  //@}
+  
   /// \name Astrophysical constants
   //@{
-  /// Astronomical unit in cm
+  /// Astronomical unit in cm (IAU 2009 value; now exact)
   const double astronomical_unit=o2scl_cgs::astronomical_unit;
-  /// Parsec in \f$ \mathrm{cm} \f$
+  /// Parsec in \f$ \mathrm{cm} \f$ (derived; exact)
   const double parsec=o2scl_cgs::parsec;
-  /// Acceleration due to gravity in cm / s^2
+  /// Acccleration due to gravity in cm / s^2 (CODATA 2018; now exact)
   const double grav_accel=o2scl_cgs::grav_accel;
-  /// Solar mass times gravitational constant in cm^3 / s^2
-  const double solar_mass_parameter=o2scl_cgs::solar_mass_parameter;
-  /// Solar mass in g
-  const double solar_mass=o2scl_cgs::solar_mass;
-  /// Schwarzchild radius in cm
+  /// Schwarzchild radius in cm (derived)
   const double schwarzchild_radius=o2scl_cgs::schwarzchild_radius;
-  /// Sidereal year in s 
+  /** \brief Sidereal year in s 
+      (from http://hpiers.obspm.fr/eop-pc/models/constants.html)
+  */
   const double sidereal_year=o2scl_cgs::sidereal_year;
-  /// Tropical year in s 
+  /** \brief Tropical year in s 
+      (from http://hpiers.obspm.fr/eop-pc/models/constants.html)
+  */
   const double tropical_year=o2scl_cgs::tropical_year;
-  /// Julian year in s 
+  /// Julian year in s (exact)
   const double julian_year=o2scl_cgs::julian_year;
-  /// Light year in \f$ \mathrm{cm} \f$
+  /// Light year in \f$ \mathrm{cm} \f$ (derived; exact)
   const double light_year=o2scl_cgs::light_year;
   //@}
-
+  
   /// \name Particle masses
   //@{
   /// Electron mass in g
@@ -756,6 +839,8 @@ namespace o2scl_mks {
   const double plancks_constant_hbar=o2scl_cgs::plancks_constant_hbar/1.0e7;
   /// Electron volt in kg m^2 / s^2
   const double electron_volt=o2scl_cgs::electron_volt/1.0e7;
+  /// Boltzmann constant in kg m^2 / K s^2
+  const double boltzmann=o2scl_cgs::boltzmann/1.0e7;
   /// Bohr radius in m
   const double bohr_radius=o2scl_cgs::bohr_radius/1.0e2;
   /// Stefan-Boltzmann constant in kg / K^4 s^3
@@ -765,34 +850,111 @@ namespace o2scl_mks {
   const double thomson_cross_section=o2scl_cgs::thomson_cross_section/1.0e4;
   /// Fermi coupling constant in s^4 / m^4 kg^2
   const double Gfermi=o2scl_cgs::Gfermi*1.0e14;
-  /// Boltzmann constant in kg m^2 / K s^2
-  const double boltzmann=o2scl_cgs::boltzmann/1.0e7;
   //@{
 
+  /// \name Solar system properties
+  //@{
+  /** \brief Solar mass times gravitational constant in km^3 / s^2
+  */
+  const double solar_mass_parameter=o2scl_cgs::solar_mass_parameter;
+  /// Mass of the sun in kg
+  const double solar_mass=o2scl_cgs::solar_mass/1.0e3;
+  /// Radius of the sun in m
+  const double solar_radius=o2scl_cgs::solar_radius/1.0e2;
+  /// Temperature of the sun's photosphere in K 
+  const double solar_temperature=o2scl_cgs::solar_temperature;
+  /// Luminosity of sun in erg/s
+  const double solar_luminosity=o2scl_cgs::solar_luminosity;
+  
+  /** \brief Earth mass times gravitational constant in m^3 / s^2
+  */
+  const double earth_mass_parameter=o2scl_cgs::earth_mass_parameter;
+  /// Mass of the earth in kg
+  const double earth_mass=o2scl_cgs::earth_mass/1.0e3;
+  /// Equatorial radius of earth in m
+  const double earth_radius_equatorial=o2scl_cgs::earth_radius_equatorial/1.0e2;
+  /// Polar radius of earth in m
+  const double earth_radius_polar=o2scl_cgs::earth_radius_polar/1.0e2;
+  
+  /** \brief Jupter mass times gravitational constant in m^3 / s^2
+  */
+  const double jupiter_mass_parameter=o2scl_cgs::jupiter_mass_parameter;
+  /// Mass of jupiter in kg
+  const double jupiter_mass=o2scl_cgs::jupiter_mass/1.0e3/1.0e2;
+  /// Equatorial radius of jupiter in m
+  const double jupiter_radius_equatorial=o2scl_cgs::jupiter_radius_equatorial;
+  /// Polar radius of jupiter in m
+  const double jupiter_radius_polar=o2scl_cgs::jupiter_radius_polar/1.0e2;
+  
+  /// Mass of mercury in kg
+  const double mercury_mass=o2scl_cgs::mercury_mass/1.0e3;
+  /// Radius of mercury in m
+  const double mercury_radius=o2scl_cgs::mercury_radius/1.0e2;
+
+  /// Mass of venus in kg
+  const double venus_mass=o2scl_cgs::venus_mass/1.0e3;
+  /// Radius of venus in m
+  const double venus_radius=o2scl_cgs::venus_radius/1.0e2;
+
+  /// Mass of mars in kg
+  const double mars_mass=o2scl_cgs::mars_mass/1.0e3;
+  /// Equatorial radius of mars in m
+  const double mars_radius_equatorial=o2scl_cgs::mars_radius_equatorial/1.0e2;
+  /// Polar radius of mars in m
+  const double mars_radius_polar=o2scl_cgs::mars_radius_polar/1.0e2;
+
+  /// Mass of saturn in kg
+  const double saturn_mass=o2scl_cgs::saturn_mass/1.0e3;
+  /// Equatorial radius of saturn in m 
+  const double saturn_radius_equatorial=
+    o2scl_cgs::saturn_radius_equatorial/1.0e2;
+  /// Polar radius of saturn in m
+  const double saturn_radius_polar=o2scl_cgs::saturn_radius_polar/1.0e2;
+
+  /// Mass of uranus in kg
+  const double uranus_mass=o2scl_cgs::uranus_mass/1.0e3;
+  /// Equatorial radius of uranus in m 
+  const double uranus_radius_equatorial=
+    o2scl_cgs::uranus_radius_equatorial/1.0e2;
+  /// Polar radius of uranus in m
+  const double uranus_radius_polar=o2scl_cgs::uranus_radius_polar/1.0e2;
+
+  /// Mass of neptune in kg
+  const double neptune_mass=o2scl_cgs::neptune_mass/1.0e3;
+  /// Equatorial radius of neptune in m 
+  const double neptune_radius_equatorial=
+    o2scl_cgs::neptune_radius_equatorial/1.0e2;
+  /// Polar radius of neptune in m
+  const double neptune_radius_polar=o2scl_cgs::neptune_radius_polar/1.0e2;
+
+  /// Mass of pluto in kg
+  const double pluto_mass=o2scl_cgs::pluto_mass/1.0e3;
+  /// Radius of pluto in m 
+  const double pluto_radius=o2scl_cgs::pluto_radius/1.0e2;
+  //@}
+  
   /// \name Astrophysical constants
   //@{
-  /// Astronomical unit in m 
+  /// Astronomical unit in m
   const double astronomical_unit=o2scl_cgs::astronomical_unit/1.0e2;
-  /// Parsec in m
+  /// Parsec in \f$ \mathrm{m} \f$
   const double parsec=o2scl_cgs::parsec/1.0e2;
-  /// Acceleration due to gravity in m / s^2
+  /// Acccleration due to gravity in m / s^2
   const double grav_accel=o2scl_cgs::grav_accel/1.0e2;
-  /// Solar mass times gravitational constant in m^3 / s^2
-  const double solar_mass_parameter=o2scl_cgs::solar_mass_parameter/1.0e6;
-  /// Mass of the sun in kg 
-  const double solar_mass=o2scl_cgs::solar_mass/1.0e3;
   /// Schwarzchild radius in m
   const double schwarzchild_radius=o2scl_cgs::schwarzchild_radius/1.0e2;
-  /// Sidereal year in s 
+  /** \brief Sidereal year in s 
+  */
   const double sidereal_year=o2scl_cgs::sidereal_year;
-  /// Tropical year in s 
+  /** \brief Tropical year in s 
+   */
   const double tropical_year=o2scl_cgs::tropical_year;
-  /// Julian year in s 
+  /// Julian year in s
   const double julian_year=o2scl_cgs::julian_year;
   /// Light year in \f$ \mathrm{m} \f$
   const double light_year=o2scl_cgs::light_year/1.0e2;
   //@}
-
+  
   /// \name Particle masses
   //@{
   /// Electron mass in kg
