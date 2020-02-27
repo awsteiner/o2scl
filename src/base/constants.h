@@ -191,46 +191,6 @@ namespace o2scl_cgs {
   /// Acccleration due to gravity in cm / s^2 (CODATA 2018; now exact)
   const double grav_accel=9.80665e2;
 
-  /** \brief Solar mass times gravitational constant in cm^3 / s^2
-      (IAU 2015 value)
-
-      Note that this value differs slightly in Barycentric Coordinate
-      Time and Barycentric Dynamical Time. This is the IAU's nominal
-      value.
-  */
-  const double solar_mass_parameter=1.3271244e26;
-  /** \brief Earth mass times gravitational constant in cm^3 / s^2
-      (IAU 2015 value)
-  */
-  const double earth_mass_parameter=3.986004e20;
-  /** \brief Jupter mass times gravitational constant in cm^3 / s^2
-      (IAU 2015 value)
-  */
-  const double jupiter_mass_parameter=1.2668653e23;
-  
-  /// Mass of the sun in g (derived)
-  const double solar_mass=solar_mass_parameter/gravitational_constant;
-  /// Radius of the sun in cm (IAU 2015 value)
-  const double solar_radius=6.957e10;
-  /// Temperature of the sun's photosphere in K (IAU 2015 value)
-  const double solar_temperature=5772.0;
-  /// Luminosity of sun in erg/s (IAU 2015 value)
-  const double solar_luminosity=3.828e40;
-  
-  /// Mass of the earth in g (derived)
-  const double earth_mass=solar_mass_parameter/gravitational_constant;
-  /// Equatorial radius of earth in cm (IAU 2015 value)
-  const double earth_radius_equatorial=6.3781e8;
-  /// Polar radius of earth in cm (IAU 2015 value)
-  const double earth_radius_polar=6.3568e8;
-  
-  /// Mass of jupiter in g (derived)
-  const double jupiter_mass=solar_mass_parameter/gravitational_constant;
-  /// Equatorial radius of jupiter in cm (IAU 2015 value)
-  const double jupiter_radius_equatorial=7.1492e9;
-  /// Polar radius of jupiter in cm (IAU 2015 value)
-  const double jupiter_radius_polar=6.6854e9;
-  
   /// Schwarzchild radius in cm (derived)
   const double schwarzchild_radius=2.0*o2scl_cgs::solar_mass_parameter/
     o2scl_cgs::speed_of_light/o2scl_cgs::speed_of_light;
@@ -246,6 +206,92 @@ namespace o2scl_cgs {
   const double julian_year=365.25*8.64e4;
   /// Light year in \f$ \mathrm{cm} \f$ (derived; exact)
   const double light_year=o2scl_cgs::julian_year*o2scl_cgs::speed_of_light;
+
+  //@}
+
+  /// \name Solar system properties
+  //@{
+  /** \brief Solar mass times gravitational constant in cm^3 / s^2
+      (IAU 2015 value)
+
+      Note that this value differs slightly in Barycentric Coordinate
+      Time and Barycentric Dynamical Time. This is the IAU's nominal
+      value.
+  */
+  const double solar_mass_parameter=1.3271244e26;
+  /// Mass of the sun in g (derived)
+  const double solar_mass=solar_mass_parameter/gravitational_constant;
+  /// Radius of the sun in cm (IAU 2015 value)
+  const double solar_radius=6.957e10;
+  /// Temperature of the sun's photosphere in K (IAU 2015 value)
+  const double solar_temperature=5772.0;
+  /// Luminosity of sun in erg/s (IAU 2015 value)
+  const double solar_luminosity=3.828e40;
+  
+  /** \brief Earth mass times gravitational constant in cm^3 / s^2
+      (IAU 2015 value)
+  */
+  const double earth_mass_parameter=3.986004e20;
+  /// Mass of the earth in g (derived)
+  const double earth_mass=earth_mass_parameter/gravitational_constant;
+  /// Equatorial radius of earth in cm (IAU 2015 value)
+  const double earth_radius_equatorial=6.3781e8;
+  /// Polar radius of earth in cm (IAU 2015 value)
+  const double earth_radius_polar=6.3568e8;
+  
+  /** \brief Jupter mass times gravitational constant in cm^3 / s^2
+      (IAU 2015 value)
+  */
+  const double jupiter_mass_parameter=1.2668653e23;
+  /// Mass of jupiter in g (derived)
+  const double jupiter_mass=jupiter_mass_parameter/gravitational_constant;
+  /// Equatorial radius of jupiter in cm (IAU 2015 value)
+  const double jupiter_radius_equatorial=7.1492e9;
+  /// Polar radius of jupiter in cm (IAU 2015 value)
+  const double jupiter_radius_polar=6.6854e9;
+  
+  /// Mass of mercury in g
+  const double mercury_mass=3.3011e26;
+  /// Radius of mercury in cm
+  const double mercury_radius=2.4397e8;
+
+  /// Mass of venus in g
+  const double venus_mass=7.8675e27;
+  /// Radius of venus in cm
+  const double venus_radius=6.0518e8;
+
+  /// Mass of mars in g
+  const double mars_mass=6.4171e26;
+  /// Equatorial radius of mars in cm
+  const double mars_radius_equatorial=3.3962e8;
+  /// Polar radius of mars in cm
+  const double mars_radius_polar=3.3762e8;
+
+  /// Mass of saturn in g
+  const double saturn_mass=5.6834e29;
+  /// Equatorial radius of saturn in cm 
+  const double saturn_radius_equatorial=6.0268e9;
+  /// Polar radius of saturn in cm
+  const double saturn_radius_polar=5.4364e9;
+
+  /// Mass of uranus in g
+  const double uranus_mass=8.6810e28;
+  /// Equatorial radius of uranus in cm 
+  const double uranus_radius_equatorial=2.5559e9;
+  /// Polar radius of uranus in cm
+  const double uranus_radius_polar=2.4973e9;
+
+  /// Mass of neptune in g
+  const double neptune_mass=1.02413e29;
+  /// Equatorial radius of neptune in cm 
+  const double neptune_radius_equatorial=2.4764e9
+  /// Polar radius of neptune in cm
+  const double neptune_radius_polar=2.4341e9;
+
+  /// Mass of pluto in g
+  const double pluto_mass=1.303e25;
+  /// Radius of pluto in cm 
+  const double pluto_radius=1.1883e8;
   //@}
 
   /// \name Particle masses
