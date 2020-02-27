@@ -182,33 +182,6 @@ namespace o2scl_cgs {
     o2scl_cgs::electron_volt;
   //@}
 
-  /// \name Astrophysical constants
-  //@{
-  /// Astronomical unit in cm (IAU 2009 value; now exact)
-  const double astronomical_unit=1.495978707e13;
-  /// Parsec in \f$ \mathrm{cm} \f$ (derived; exact)
-  const double parsec=o2scl_cgs::astronomical_unit*648000.0/o2scl_const::pi;
-  /// Acccleration due to gravity in cm / s^2 (CODATA 2018; now exact)
-  const double grav_accel=9.80665e2;
-
-  /// Schwarzchild radius in cm (derived)
-  const double schwarzchild_radius=2.0*o2scl_cgs::solar_mass_parameter/
-    o2scl_cgs::speed_of_light/o2scl_cgs::speed_of_light;
-  /** \brief Sidereal year in s 
-      (from http://hpiers.obspm.fr/eop-pc/models/constants.html)
-  */
-  const double sidereal_year=365.256363004*8.64e4;
-  /** \brief Tropical year in s 
-      (from http://hpiers.obspm.fr/eop-pc/models/constants.html)
-  */
-  const double tropical_year=365.242190402*8.64e4;
-  /// Julian year in s (exact)
-  const double julian_year=365.25*8.64e4;
-  /// Light year in \f$ \mathrm{cm} \f$ (derived; exact)
-  const double light_year=o2scl_cgs::julian_year*o2scl_cgs::speed_of_light;
-
-  //@}
-
   /// \name Solar system properties
   //@{
   /** \brief Solar mass times gravitational constant in cm^3 / s^2
@@ -284,7 +257,7 @@ namespace o2scl_cgs {
   /// Mass of neptune in g
   const double neptune_mass=1.02413e29;
   /// Equatorial radius of neptune in cm 
-  const double neptune_radius_equatorial=2.4764e9
+  const double neptune_radius_equatorial=2.4764e9;
   /// Polar radius of neptune in cm
   const double neptune_radius_polar=2.4341e9;
 
@@ -320,6 +293,31 @@ namespace o2scl_cgs {
   const double mass_alpha=6.6446573357e-24;
   /// Atomic mass constant in g (CODATA 2018 value)
   const double unified_atomic_mass=1.6605390666e-24;
+  //@}
+
+  /// \name Astrophysical constants
+  //@{
+  /// Astronomical unit in cm (IAU 2009 value; now exact)
+  const double astronomical_unit=1.495978707e13;
+  /// Parsec in \f$ \mathrm{cm} \f$ (derived; exact)
+  const double parsec=o2scl_cgs::astronomical_unit*648000.0/o2scl_const::pi;
+  /// Acccleration due to gravity in cm / s^2 (CODATA 2018; now exact)
+  const double grav_accel=9.80665e2;
+  /// Schwarzchild radius in cm (derived)
+  const double schwarzchild_radius=2.0*o2scl_cgs::solar_mass_parameter/
+    o2scl_cgs::speed_of_light/o2scl_cgs::speed_of_light;
+  /** \brief Sidereal year in s 
+      (from http://hpiers.obspm.fr/eop-pc/models/constants.html)
+  */
+  const double sidereal_year=365.256363004*8.64e4;
+  /** \brief Tropical year in s 
+      (from http://hpiers.obspm.fr/eop-pc/models/constants.html)
+  */
+  const double tropical_year=365.242190402*8.64e4;
+  /// Julian year in s (exact)
+  const double julian_year=365.25*8.64e4;
+  /// Light year in \f$ \mathrm{cm} \f$ (derived; exact)
+  const double light_year=o2scl_cgs::julian_year*o2scl_cgs::speed_of_light;
   //@}
 
   /// \name Chemical constants
