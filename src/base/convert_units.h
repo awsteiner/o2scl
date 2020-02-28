@@ -159,7 +159,7 @@ namespace o2scl {
     if (use_gnu_units) {
 
       if (verbose>0) {
-	std::cout << "convert_units::convert(): "
+	std::cout << "convert_units::convert_internal(): "
 		  << "Value of use_gnu_units is true." << std::endl;
       }
 
@@ -173,7 +173,7 @@ namespace o2scl {
     } else {
     
       if (verbose>0) {
-	std::cout << "convert_units::convert(): "
+	std::cout << "convert_units::convert_internal(): "
 		  << "Value of use_gnu_units is false." << std::endl;
       }
     
@@ -181,7 +181,7 @@ namespace o2scl {
   
     if (err_on_fail) {
       std::string str=((std::string)"Conversion between ")+from+" and "+to+
-	" not found in convert_units::convert_ret().";
+	" not found in convert_units::convert_internal().";
       O2SCL_ERR(str.c_str(),exc_enotfound);
     }
   
@@ -215,12 +215,16 @@ namespace o2scl {
   
     if (verbose>0) {
       std::cout << "convert_units::convert_gnu_units(): "
-      << "Define constant popen is defined." << std::endl;
+		<< "GNU units command is \"" << cmd
+		<< "\"." << std::endl;
     }
   
-    std::cout << "Using GNU units: " << cmd << std::endl;
     FILE *ps_pipe=popen(cmd.c_str(),"r");
     if (!ps_pipe) {
+      if (verbose>0) {
+	std::cout << "convert_units::convert_gnu_units(): "
+		  << "Pope open failed." << std::endl;
+      }
       if (err_on_fail) {
 	O2SCL_ERR2("Pipe could not be opened in ",
 		   "convert_units::convert_gnu_units().",exc_efilenotfound);
@@ -236,7 +240,7 @@ namespace o2scl {
     char *cret=fgets(line1,80,ps_pipe);
     if (verbose>0) {
       std::cout << "convert_units::convert_gnu_units(): "
-		<< "Units output is " << line1 << std::endl;
+		<< "Units output is \"" << line1 << "\"." << std::endl;
     }
   
     // Read the output from the 'units' command and compute the 
@@ -247,11 +251,15 @@ namespace o2scl {
     delete ins;
     if (verbose>0) {
       std::cout << "convert_units::convert_gnu_units(): "
-		<< "Units string to convert is "
-		<< t2 << std::endl;
+		<< "Second word of output is \""
+		<< t2 << "\"." << std::endl;
     }
     int sret=o2scl::stod_nothrow(t2,factor);
     if (sret!=0) {
+      if (verbose>0) {
+	std::cout << "convert_units::convert_gnu_units(): "
+		  << "GNU unit conversion failed." << std::endl;
+      }
       if (err_on_fail) {
 	std::string str=((std::string)"Conversion between ")+from+" and "+to+
 	  " not found in convert_units::convert_gnu_units().";
@@ -261,12 +269,15 @@ namespace o2scl {
     }
     if (verbose>0) {
       std::cout << "convert_units::convert_gnu_units(): "
-      << "Converted value is "
-      << factor*val << std::endl;
+		<< "Converted value is " << factor*val << std::endl;
     }
   
     // Cleanup
     if (pclose(ps_pipe)!=0) {
+      if (verbose>0) {
+	std::cout << "convert_units::convert_gnu_units(): "
+		  << "Close pipe failed." << std::endl;
+      }
       if (err_on_fail) {
 	O2SCL_ERR2("Pipe could not be closed in ",
 		   "convert_units::convert_gnu_units().",exc_efailed);
