@@ -118,47 +118,46 @@ find_constants::find_constants() {
 	 o2scl_mks::mass_triton},
 	{{"masshelion","helionmass"},"kg",o2scl_const::o2scl_mks,
 	 o2scl_mks::mass_helion},
-	{{"massalpha","alphamass"},"kg",o2scl_const::o2scl_mks,
+	{{"massalpha","alphamass","malpha"},"kg",o2scl_const::o2scl_mks,
 	 o2scl_mks::mass_alpha},
-	{{"masselectron","electronmass"},"g",o2scl_const::o2scl_cgs,
-	 o2scl_cgs::mass_electron},
-	{{"massmuon","muonmass"},"g",o2scl_const::o2scl_cgs,
+	{{"masselectron","electronmass","melectron","melec"},"g",
+	 o2scl_const::o2scl_cgs,o2scl_cgs::mass_electron},
+	{{"massmuon","muonmass","mmuon"},"g",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::mass_muon},
-	{{"masstau","taumass"},"g",o2scl_const::o2scl_cgs,
+	{{"masstau","taumass","mtau"},"g",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::mass_tau},
-	{{"massneutron","neutronmass"},"g",o2scl_const::o2scl_cgs,
+	{{"massneutron","neutronmass","mneutron"},"g",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::mass_neutron},
-	{{"massproton","protonmass"},"g",o2scl_const::o2scl_cgs,
+	{{"massproton","protonmass","mproton"},"g",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::mass_proton},
-	{{"massdeuteron","deuteronmass"},"g",o2scl_const::o2scl_cgs,
+	{{"massdeuteron","deuteronmass","mdeuteron"},"g",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::mass_deuteron},
-	{{"masstriton","tritonmass"},"g",o2scl_const::o2scl_cgs,
+	{{"masstriton","tritonmass","mtriton"},"g",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::mass_triton},
-	{{"masshelion","helionmass"},"g",o2scl_const::o2scl_cgs,
+	{{"masshelion","helionmass","mhelion"},"g",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::mass_helion},
-	{{"massalpha","alphamass"},"g",o2scl_const::o2scl_cgs,
+	{{"massalpha","alphamass","malpha"},"g",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::mass_alpha},
-	{{"masslambda","lambdamass"},"MeV",0,
+	{{"masslambda","lambdamass","mlambda"},"MeV",0,
 	 o2scl_const::mass_lambda_MeV},
-	{{"masssigma minus","sigma minusmass"},"MeV",0,
+	{{"masssigmaminus","sigmaminusmass","msigma-"},"MeV",0,
 	 o2scl_const::mass_sigma_minus_MeV},
-	{{"masssigma zero","sigma zeromass"},"MeV",0,
+	{{"masssigmazero","sigmazeromass","msigma0"},"MeV",0,
 	 o2scl_const::mass_sigma_zero_MeV},
-	{{"masssigma plus","sigma plusmass"},"MeV",0,
+	{{"masssigmaplus","sigmaplusmass","msigma+"},"MeV",0,
 	 o2scl_const::mass_sigma_plus_MeV},
-	{{"masscascade zero","cascade zeromass"},"MeV",0,
-	 o2scl_const::mass_cascade_zero_MeV},
-	{{"masscascade minus","cascade minusmass"},"MeV",0,
-	 o2scl_const::mass_cascade_minus_MeV},
-	{{"massup","upmass"},"MeV",0,
+	{{"masscascadezero","cascadezeromass","mcascade0","mxi0"},
+	 "MeV",0,o2scl_const::mass_cascade_zero_MeV},
+	{{"masscascademinus","cascademinusmass","mcascade-","mxi-"},
+	 "MeV",0,o2scl_const::mass_cascade_minus_MeV},
+	{{"massup","upmass","mup"},"MeV",0,
 	 o2scl_const::mass_up_MeV},
-	{{"massdown","downmass"},"MeV",0,
+	{{"massdown","downmass","mdown"},"MeV",0,
 	 o2scl_const::mass_down_MeV},
-	{{"massstrange","strangemass"},"MeV",0,
+	{{"massstrange","strangemass","mstrange"},"MeV",0,
 	 o2scl_const::mass_strange_MeV},
-	{{"masssolar","solarmass","masssun","sunmass","msun"},
-	 "kg",o2scl_const::o2scl_mks,
-	 o2scl_mks::solar_mass},
+	{{"masssolar","solarmass","masssun","sunmass","msun","modot"},
+	 "kg",o2scl_const::o2scl_mks,o2scl_mks::solar_mass},
 	{{"massmercury","mercurymass","mmercury"},"kg",o2scl_const::o2scl_mks,
 	 o2scl_mks::mercury_mass},
 	{{"massvenus","venusmass","mvenus"},"kg",o2scl_const::o2scl_mks,
@@ -168,8 +167,7 @@ find_constants::find_constants() {
 	{{"massmars","marsmass","mmars"},"kg",o2scl_const::o2scl_mks,
 	 o2scl_mks::mars_mass},
 	{{"massjupiter","jupitermass","mjupiter","mjup"},
-	 "kg",o2scl_const::o2scl_mks,
-	 o2scl_mks::jupiter_mass},
+	 "kg",o2scl_const::o2scl_mks,o2scl_mks::jupiter_mass},
 	{{"masssaturn","saturnmass","msaturn"},"kg",o2scl_const::o2scl_mks,
 	 o2scl_mks::saturn_mass},
 	{{"massuranus","uranusmass"},"kg",o2scl_const::o2scl_mks,
@@ -181,8 +179,7 @@ find_constants::find_constants() {
 	{{"radiussolar","solarradius","radiussun","sunradius","rsun"},
 	 "m",o2scl_const::o2scl_mks,o2scl_mks::solar_radius},
 	{{"radiusmercury","mercuryradius","rmercury"},"m",
-	 o2scl_const::o2scl_mks,
-	 o2scl_mks::mercury_radius},
+	 o2scl_const::o2scl_mks,o2scl_mks::mercury_radius},
 	{{"radiusvenus","venusradius","rvenus"},"m",o2scl_const::o2scl_mks,
 	 o2scl_mks::venus_radius},
 	{{"radiusearthequatorial","earthequatorialradius",
@@ -234,15 +231,17 @@ int find_constants::find_nothrow(std::string name, std::string unit,
   
   o2scl::convert_units<> &cu=o2scl_settings.get_convert_units();
   
-  // Simplify by setting dashes and hyphens to spaces
-  cout << "Before: " << name << endl;
+  // Simplify by removing alphanumerics except + and -,
+  // which we need to distinguish between positive and negative
+  // particle masses
+  //cout << "Before: " << name << endl;
   for(size_t i=0;i<name.length();i++) {
-    if (!isalnum(name[i])) {
+    if (!isalnum(name[i]) && name[i]!='+' && name[i]!='-') {
       name.erase(i,1);
       i=0;
     }
   }
-  cout << "After: " << name << endl;
+  //cout << "After: " << name << endl;
     
   // Start with a fresh list
   matches.clear();
@@ -310,7 +309,6 @@ int find_constants::find_nothrow(std::string name, std::string unit,
       cout << "Trying to convert from "
 	   << list[indexes[0]].unit << " to "
 	   << unit << endl;
-      cu.verbose=1;
       int cret=cu.convert_ret(list[indexes[0]].unit,unit,
 			      list[indexes[0]].val,val2);
       if (cret==0) {
@@ -370,7 +368,6 @@ int find_constants::find_nothrow(std::string name, std::string unit,
 	cout << "Trying to convert from "
 	     << list[indexes[i]].unit << " to "
 	     << unit << endl;
-	cu.verbose=1;
 	int cret=cu.convert_ret(list[indexes[i]].unit,unit,
 				list[indexes[i]].val,val2);
 	if (cret==0) {

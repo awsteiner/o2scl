@@ -192,13 +192,15 @@ namespace o2scl {
 
       This function attempts to open a pipe to GNU units independent
       of the value of \ref use_gnu_units. However, it will always
-      return a non-zero valeu if \c HAVE_POPEN is not defined
+      return a non-zero value if \c HAVE_POPEN is not defined
       signaling that the <tt>popen()</tt> function is not available
       (but does not call the error handler in this case). The
       function returns 0 if the conversion was successful. If
       HAVE_POPEN is defined but the call to GNU units fails
       for some reason, then the error handler is called if
       \ref err_on_fail is true.
+
+      \future Finer control on verbose=1 vs. verbose=2
   */
   int convert_gnu_units(std::string from, std::string to,
 			fp_t val, fp_t &converted,
