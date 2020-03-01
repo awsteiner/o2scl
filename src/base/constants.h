@@ -81,7 +81,11 @@ namespace o2scl_const {
   
   /// \f$ \sin^2 \theta_W \f$ (PDG 2018 value)
   const double sin2_theta_weak=0.23122;
-
+  /** \brief Fermi coupling constant in \f$ \mathrm{GeV}^{-2} \f$
+      (CODATA 2018 value)
+  */
+  const double gfermi_gev2=1.1663787e-5;
+  
   /// MKS units
   static const size_t o2scl_mks=1;
   /// CGS units
@@ -115,6 +119,13 @@ namespace o2scl_const {
     return result;
   }
 
+  /** \brief Reduced Planck's constant times speed of light
+      \f$ \hbar c \f$
+   */
+  template<class fp_t> fp_t hbarc_f(size_t system=o2scl_mks) {
+    return hbar_f<fp_t>(system)*speed_of_light_f<fp_t>(system);
+  }
+  
   /// Elementary charge
   template<class fp_t> fp_t elem_charge_f() {
     fp_t numer=1602176634;
@@ -172,12 +183,11 @@ namespace o2scl_cgs {
     o2scl_cgs::speed_of_light/o2scl_cgs::speed_of_light;
   /// Thomson cross section in cm^2 (CODATA 2018 value)
   const double thomson_cross_section=6.6524587321e-25;
-  /** \brief Fermi coupling constant in s^4 / cm^4 g^2, 
-      defined as \f$ 1.1663787 \times 10^{-5}~\mathrm{GeV}^{-2} \f$
-      (CODATA 2018 value)
+  /** \brief Fermi coupling constant in s^4 / cm^4 g^2
+      (derived from CODATA 2018 value)
   */
-  const double Gfermi=1.1663787e-23/o2scl_cgs::electron_volt/
-    o2scl_cgs::electron_volt;
+  const double gfermi=o2scl_const::gfermi_gev2*1.0e-18/
+    o2scl_cgs::electron_volt/o2scl_cgs::electron_volt;
   //@}
 
   /// \name Solar system properties
@@ -510,7 +520,7 @@ namespace o2scl_cgsm {
   /// Thomson cross section in cm^2
   const double thomson_cross_section=o2scl_cgs::thomson_cross_section;
   /// Fermi coupling constant in s^4 / cm^4 g^2
-  const double Gfermi=o2scl_cgs::Gfermi;
+  const double gfermi=o2scl_cgs::gfermi;
   //@}
 
   /// \name Solar system properties
@@ -849,7 +859,7 @@ namespace o2scl_mks {
   /// Thomson cross section in m^2
   const double thomson_cross_section=o2scl_cgs::thomson_cross_section/1.0e4;
   /// Fermi coupling constant in s^4 / m^4 kg^2
-  const double Gfermi=o2scl_cgs::Gfermi*1.0e14;
+  const double gfermi=o2scl_cgs::gfermi*1.0e14;
   //@{
 
   /// \name Solar system properties

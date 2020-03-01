@@ -712,6 +712,17 @@ namespace o2scl {
 
     insert_cache("1/fm^3","MeV^3",pow(hc,3.0));
 
+    // MeV*fm conversions
+
+    insert_cache("MeV*fm","MeV*cm",1.0e-13);
+    insert_cache("MeV*fm","MeV*m",1.0e-15);
+    insert_cache("MeV*fm","eV*nm",1.0);
+    insert_cache("MeV*fm","MeV*s",1.0e-15/o2scl_mks::speed_of_light);
+    insert_cache("MeV*fm","erg*cm",elem_charge);
+    insert_cache("MeV*fm","erg*s",elem_charge/o2scl_cgs::speed_of_light);
+    insert_cache("MeV*fm","J*m",elem_charge/1.0e9);
+    insert_cache("MeV*fm","J*s",elem_charge/1.0e9/o2scl_mks::speed_of_light);
+
     // Simple time conversions
     
     insert_cache("yr","s",31556926);
