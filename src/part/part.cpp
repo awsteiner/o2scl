@@ -62,4 +62,3 @@ thermo o2scl::operator-(const thermo &left, const part &right) {
   return th;
 }
 
-

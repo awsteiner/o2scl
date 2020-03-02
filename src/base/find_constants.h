@@ -73,12 +73,14 @@ namespace o2scl {
 	\c unit (possibly empty) and store matches in \c indexes
     */
     int find_nothrow(std::string name, std::string unit,
-		     std::vector<find_constants_list> &matches);
+		     std::vector<find_constants_list> &matches,
+		     int verbose=0);
   
     /** \brief Search for constants matching \c name with unit \c unit
 	and output result(s) with precision \c prec
     */
-    void find_print(std::string name, std::string unit="", size_t prec=6);
+    void find_print(std::string name, std::string unit="", size_t prec=6,
+		    int verbose=0);
   
     /** \brief Find a unique match and return the numerical value
      */

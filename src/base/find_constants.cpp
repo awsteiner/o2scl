@@ -23,6 +23,7 @@
 #include <o2scl/find_constants.h>
 #include <o2scl/lib_settings.h>
 #include <o2scl/convert_units.h>
+#include <o2scl/vector.h>
 
 #include <fnmatch.h>
 
@@ -298,21 +299,28 @@ find_constants::find_constants() {
 }
 
 int find_constants::find_nothrow(std::string name, std::string unit,
-				 vector<find_constants_list> &matches) {
+				 vector<find_constants_list> &matches,
+				 int verbose) {
   
   o2scl::convert_units<> &cu=o2scl_settings.get_convert_units();
   
   // Simplify by removing alphanumerics except + and -,
   // which we need to distinguish between positive and negative
   // particle masses
-  //cout << "Before: " << name << endl;
+  if (verbose>1) {
+    std::cout << "find_constants::find_nothrow(): "
+	      << "before: " << name << endl;
+  }
   for(size_t i=0;i<name.length();i++) {
     if (!isalnum(name[i]) && name[i]!='+' && name[i]!='-') {
       name.erase(i,1);
       i=0;
     }
   }
-  //cout << "After: " << name << endl;
+  if (verbose>1) {
+    std::cout << "find_constants::find_nothrow(): "
+	      << "after: " << name << endl;
+  }
     
   // Start with a fresh list
   matches.clear();
@@ -325,6 +333,12 @@ int find_constants::find_nothrow(std::string name, std::string unit,
   // Initial pass, exact matches
   for(size_t i=0;i<list.size();i++) {
     for(size_t j=0;j<list[i].names.size();j++) {
+      if (verbose>2) {
+	std::cout << "find_constants::find_nothrow(): "
+		  << name << " " << i << " " << j << " "
+		  << list[i].names[j]
+		  << " " << boost::iequals(name,list[i].names[j]) << endl;
+      }
       if (boost::iequals(name,list[i].names[j])) {
 	indexes.push_back(i);
 	// Now that we've found a match, don't look in the
@@ -335,14 +349,27 @@ int find_constants::find_nothrow(std::string name, std::string unit,
     }
   }
 
+  if (verbose>1) {
+    std::cout << "find_constants::find_nothrow(): "
+	      << "pass 1 indexes: ";
+    vector_out(std::cout,indexes,true);
+  }
+  
   // No matches, so try wildcard matches
   if (indexes.size()==0) {
       
     string name_wc=((string)"*")+name+"*";
     for(size_t i=0;i<list.size();i++) {
       for(size_t j=0;j<list[i].names.size();j++) {
-	if (fnmatch(name_wc.c_str(),(list[i].names[j]).c_str(),
-		    FNM_CASEFOLD)==0) {
+	int fn_ret=fnmatch(name_wc.c_str(),(list[i].names[j]).c_str(),
+			   FNM_CASEFOLD);
+	if (verbose>2) {
+	  std::cout << "find_constants::find_nothrow(): "
+		    << name_wc << " " << i << " " << j << " "
+		    << list[i].names[j]
+		    << " " << fn_ret << endl;
+	}
+	if (fn_ret==0) {
 	  indexes.push_back(i);
 	  // Now that we've found a match, don't look in the
 	  // other names for this list entry
@@ -354,12 +381,25 @@ int find_constants::find_nothrow(std::string name, std::string unit,
       
   }
 
+  if (verbose>1) {
+    std::cout << "find_constants::find_nothrow(): "
+	      << "pass 2 indexes: ";
+    vector_out(std::cout,indexes,true);
+  }
+  
   // There was only one match
   if (indexes.size()==1) {
 
     // Add to 'matches' list
     matches.push_back(list[indexes[0]]);
-      
+
+    if (verbose>1) {
+      std::cout << "find_constants::find_nothrow(): "
+		<< "one match unit: " << unit << " "
+		<< list[indexes[0]].unit_flag << " "
+		<< list[indexes[0]].unit << std::endl;
+    }
+  
     // Unit unspecified or matching
     if (unit.length()==0 ||
 	(unit=="mks" &&
@@ -377,9 +417,11 @@ int find_constants::find_nothrow(std::string name, std::string unit,
     // Try to convert units
     if (unit.length()>0) {
       double val2;
-      cout << "find_constant::find_nothrow(): Trying to convert from "
-	   << list[indexes[0]].unit << " to "
-	   << unit << endl;
+      if (verbose>0) {
+	cout << "find_constant::find_nothrow(): Trying to convert from "
+	     << list[indexes[0]].unit << " to "
+	     << unit << endl;
+      }
       int cret=cu.convert_ret(list[indexes[0]].unit,unit,
 			      list[indexes[0]].val,val2);
       if (cret==0) {
@@ -419,15 +461,27 @@ int find_constants::find_nothrow(std::string name, std::string unit,
     // We found at least one match, check unit
       
     vector<size_t> indexes2;
-      
+    
     // Look for entries with matching unit
     for(size_t i=0;i<indexes.size();i++) {
+
+      if (verbose>1) {
+	std::cout << "find_constants::find_nothrow(): "
+		  << "many matches unit: " << unit << " "
+		  << list[indexes[i]].unit_flag << " "
+		  << list[indexes[i]].unit << std::endl;
+      }
+      
       if ((unit=="cgs" &&
 	   list[indexes[i]].unit_flag==o2scl_const::o2scl_cgs) ||
 	  (unit=="mks" &&
 	   list[indexes[i]].unit_flag==o2scl_const::o2scl_mks) ||
 	  boost::iequals(list[indexes[i]].unit,unit)) {
 	indexes2.push_back(indexes[i]);
+	if (verbose>2) {
+	  std::cout << "find_constants::find_nothrow(): Added."
+		    << std::endl;
+	}
       }
     }
       
@@ -481,31 +535,34 @@ int find_constants::find_nothrow(std::string name, std::string unit,
       } else {
 	return pattern_matches_unit_diff;
       }
-    }
 
-    /*
-    // Return only the entries with matching units
-    for(size_t i=0;i<indexes2.size();i++) {
-    matches.push_back(list[indexes2[i]]);
-    }
-    if (match_type==match_exact) {
-    return exact_matches_unit_match;
     } else {
-    return pattern_matches_unit_match;
+
+      // There were exact unit matches, so set up the matches list
+      for(size_t i=0;i<indexes2.size();i++) {
+	if (i==0 ||
+	    list[indexes2[i]].names!=matches[matches.size()-1].names) {
+	  matches.push_back(list[indexes2[i]]);
+	}
+      }
+      if (match_type==match_exact) {
+	return exact_matches_unit_match;
+      } else {
+	return pattern_matches_unit_match;
+      }
     }
-    */
   }
 
   return no_matches;
 }
 
 void find_constants::find_print(std::string name, std::string unit,
-				size_t prec) {
+				size_t prec, int verbose) {
 
   cout.precision(prec);
     
   vector<find_constants_list> matches;
-  int ret=find_nothrow(name,unit,matches);
+  int ret=find_nothrow(name,unit,matches,verbose);
   if (ret==no_matches) {
     cout << "find_constant::find_print(): No matches found for name "
 	 << name << endl;

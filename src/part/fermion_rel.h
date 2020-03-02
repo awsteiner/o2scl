@@ -1622,7 +1622,16 @@ namespace o2scl {
       \ref o2scl::fermion_rel_tl 
   */
   typedef fermion_rel_tl<double> fermion_rel;
-
+  
+  extern "C" {
+    
+    void o2scl_acol_fermion_density
+    (double m, double g, double T, double n,
+     double *mu, double *ed, double *pr, double *en);
+     
+    
+  }
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

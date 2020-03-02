@@ -35,3 +35,18 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
+void o2scl_acol_fermion_density(double m, double g,
+				double T, double n,
+				double *mu, double *ed, double *pr,
+				double *en) {
+  fermion_rel fr;
+  fermion f(m,g);
+  f.n=n;
+  fr.calc_density(f,T);
+  *mu=f.mu;
+  *ed=f.ed;
+  *pr=f.pr;
+  *en=f.en;
+
+  return;
+}
