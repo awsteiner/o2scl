@@ -599,285 +599,285 @@ namespace svd_ts {
     //std::cout << "bk,ap: " << bk << " " << ap << std::endl;
   }
 
-int
-gsl_linalg_SV_decomp (gsl_matrix * A, gsl_matrix * V, gsl_vector * S, 
-                      gsl_vector * work)
-{
-  size_t a, b, i, j, iter;
-
-  const size_t M=A->size1;
-  const size_t N=A->size2;
-  size_t K;
-  if (M<N) K=M;
-  else K=N;
-
-  if (M < N)
-    {
-      GSL_ERROR ("svd of MxN matrix, M<N, is not implemented", GSL_EUNIMPL);
-    }
-  else if (V->size1 != N)
-    {
-      GSL_ERROR ("square matrix V must match second dimension of matrix A",
-                 GSL_EBADLEN);
-    }
-  else if (V->size1 != V->size2)
-    {
-      GSL_ERROR ("matrix V must be square", GSL_ENOTSQR);
-    }
-  else if (S->size != N)
-    {
-      GSL_ERROR ("length of vector S must match second dimension of matrix A",
-                 GSL_EBADLEN);
-    }
-  else if (work->size != N)
-    {
-      GSL_ERROR ("length of workspace must match second dimension of matrix A",
-                 GSL_EBADLEN);
-    }
-
-  /* Handle the case of N=1 (SVD of a column vector) */
-
-  if (N == 1)
-    {
-      gsl_vector_view column=gsl_matrix_column (A, 0);
-      double norm=gsl_blas_dnrm2 (&column.vector);
-
-      gsl_vector_set (S, 0, norm); 
-      gsl_matrix_set (V, 0, 0, 1.0);
-      
-      if (norm != 0.0)
-        {
-          gsl_blas_dscal (1.0/norm, &column.vector);
-        }
-
-      return GSL_SUCCESS;
-    }
-  
+  int
+  gsl_linalg_SV_decomp (gsl_matrix * A, gsl_matrix * V, gsl_vector * S, 
+			gsl_vector * work)
   {
-    gsl_vector_view f=gsl_vector_subvector (work, 0, K - 1);
-    
-    /* bidiagonalize matrix A, unpack A into U S V */
-    
-    gsl_linalg_bidiag_decomp (A, S, &f.vector);
+    size_t a, b, i, j, iter;
 
-    //std::cout << "A: " << gsl_matrix_get(A,0,0) << " "
-    //<< gsl_matrix_get(A,M-1,N-1) << std::endl;
-    //std::cout << "S: " << S->data[0] << " " 
-    //<< S->data[S->size-1] 
-    //<< std::endl;
-    
-    gsl_linalg_bidiag_unpack2 (A, S, &f.vector, V);
+    const size_t M=A->size1;
+    const size_t N=A->size2;
+    size_t K;
+    if (M<N) K=M;
+    else K=N;
 
-    //std::cout << "S2: " << S->data[0] << " " 
-    //<< S->data[S->size-1] 
-    //<< std::endl;
-    
-    /* apply reduction steps to B=(S,Sd) */
-    
-    chop_small_elements (S, &f.vector);
-    
-    //std::cout << "S3: " << S->data[0] << " " 
-    //<< S->data[S->size-1] 
-    //<< std::endl;
-    
-    /* Progressively reduce the matrix until it is diagonal */
-    
-    b=N - 1;
-    iter=0;
-
-    while (b > 0)
+    if (M < N)
       {
-        double fbm1=gsl_vector_get (&f.vector, b - 1);
-
-        if (fbm1 == 0.0 || gsl_isnan (fbm1))
-          {
-            b--;
-            continue;
-          }
-
-	//std::cout << "b,fbm1: " << b << " " << fbm1 << std::endl;
-        
-        /* Find the largest unreduced block (a,b) starting from b
-           and working backwards */
-
-        a=b - 1;
-
-        while (a > 0)
-          {
-            double fam1=gsl_vector_get (&f.vector, a - 1);
-
-            if (fam1 == 0.0 || gsl_isnan (fam1))
-              {
-                break;
-              }
-            
-            a--;
-
-	    //std::cout << "a,fam1: " << a << " " << fam1 << std::endl;
-          }
-
-        iter++;
-        
-        if (iter > 100 * N) 
-          {
-            GSL_ERROR("SVD decomposition failed to converge", GSL_EMAXITER);
-          }
-
-        
-        {
-          const size_t n_block=b - a + 1;
-          gsl_vector_view S_block=gsl_vector_subvector (S, a, n_block);
-          gsl_vector_view f_block=gsl_vector_subvector 
-	    (&f.vector, a, n_block - 1);
-          
-          gsl_matrix_view U_block =
-            gsl_matrix_submatrix (A, 0, a, A->size1, n_block);
-          gsl_matrix_view V_block =
-            gsl_matrix_submatrix (V, 0, a, V->size1, n_block);
-          
-          int rescale=0;
-          double scale=1; 
-          double norm=0;
-
-          /* Find the maximum absolute values of the diagonal and subdiagonal */
-
-          for (i=0; i < n_block; i++) 
-            {
-              double s_i=gsl_vector_get (&S_block.vector, i);
-              double a=fabs(s_i);
-              if (a > norm) norm=a;
-	      //std::cout << "aa: " << a << std::endl;
-            }
-
-          for (i=0; i < n_block - 1; i++) 
-            {
-              double f_i=gsl_vector_get (&f_block.vector, i);
-              double a=fabs(f_i);
-              if (a > norm) norm=a;
-	      //std::cout << "aa2: " << a << std::endl;
-            }
-
-          /* Temporarily scale the submatrix if necessary */
-
-          if (norm > GSL_SQRT_DBL_MAX)
-            {
-              scale=(norm / GSL_SQRT_DBL_MAX);
-              rescale=1;
-            }
-          else if (norm < GSL_SQRT_DBL_MIN && norm > 0)
-            {
-              scale=(norm / GSL_SQRT_DBL_MIN);
-              rescale=1;
-            }
-
-	  //std::cout << "rescale: " << rescale << std::endl;
-
-          if (rescale) 
-            {
-              gsl_blas_dscal(1.0 / scale, &S_block.vector);
-              gsl_blas_dscal(1.0 / scale, &f_block.vector);
-            }
-
-          /* Perform the implicit QR step */
-
-	  /*
-	  for(size_t ii=0;ii<M;ii++) {
-	    for(size_t jj=0;jj<N;jj++) {
-	    std::cout << ii << "." << jj << "." 
-	    << gsl_matrix_get(A,ii,jj) << std::endl;
-	    }
-	  }
-	  for(size_t ii=0;ii<N;ii++) {
-	    for(size_t jj=0;jj<N;jj++) {
-	    std::cout << "V: " << ii << "." << jj << "." 
-	    << gsl_matrix_get(V,ii,jj) << std::endl;
-	    }
-	  }
-	  */
-
-          qrstep (&S_block.vector, &f_block.vector, &U_block.matrix, 
-		  &V_block.matrix);
-
-	  /*
-	  for(size_t ii=0;ii<M;ii++) {
-	    for(size_t jj=0;jj<N;jj++) {
-	    std::cout << ii << " " << jj << " " 
-	    << gsl_matrix_get(A,ii,jj) << std::endl;
-	    }
-	  }
-	  for(size_t ii=0;ii<N;ii++) {
-	    for(size_t jj=0;jj<N;jj++) {
-	    std::cout << "V: " << ii << " " << jj << " " 
-	    << gsl_matrix_get(V,ii,jj) << std::endl;
-	    }
-	  }
-	  */
-
-          /* remove any small off-diagonal elements */
-          
-          chop_small_elements (&S_block.vector, &f_block.vector);
-          
-          /* Undo the scaling if needed */
-
-          if (rescale)
-            {
-              gsl_blas_dscal(scale, &S_block.vector);
-              gsl_blas_dscal(scale, &f_block.vector);
-            }
-        }
-        
+	GSL_ERROR ("svd of MxN matrix, M<N, is not implemented", GSL_EUNIMPL);
       }
-  }
+    else if (V->size1 != N)
+      {
+	GSL_ERROR ("square matrix V must match second dimension of matrix A",
+		   GSL_EBADLEN);
+      }
+    else if (V->size1 != V->size2)
+      {
+	GSL_ERROR ("matrix V must be square", GSL_ENOTSQR);
+      }
+    else if (S->size != N)
+      {
+	GSL_ERROR ("length of vector S must match second dimension of matrix A",
+		   GSL_EBADLEN);
+      }
+    else if (work->size != N)
+      {
+	GSL_ERROR ("length of workspace must match second dimension of matrix A",
+		   GSL_EBADLEN);
+      }
 
-  /* Make singular values positive by reflections if necessary */
+    /* Handle the case of N=1 (SVD of a column vector) */
+
+    if (N == 1)
+      {
+	gsl_vector_view column=gsl_matrix_column (A, 0);
+	double norm=gsl_blas_dnrm2 (&column.vector);
+
+	gsl_vector_set (S, 0, norm); 
+	gsl_matrix_set (V, 0, 0, 1.0);
+      
+	if (norm != 0.0)
+	  {
+	    gsl_blas_dscal (1.0/norm, &column.vector);
+	  }
+
+	return GSL_SUCCESS;
+      }
   
-  for (j=0; j < K; j++)
     {
-      double Sj=gsl_vector_get (S, j);
-      
-      if (Sj < 0.0)
-        {
-          for (i=0; i < N; i++)
-            {
-              double Vij=gsl_matrix_get (V, i, j);
-              gsl_matrix_set (V, i, j, -Vij);
-            }
+      gsl_vector_view f=gsl_vector_subvector (work, 0, K - 1);
+    
+      /* bidiagonalize matrix A, unpack A into U S V */
+    
+      gsl_linalg_bidiag_decomp (A, S, &f.vector);
+
+      //std::cout << "A: " << gsl_matrix_get(A,0,0) << " "
+      //<< gsl_matrix_get(A,M-1,N-1) << std::endl;
+      //std::cout << "S: " << S->data[0] << " " 
+      //<< S->data[S->size-1] 
+      //<< std::endl;
+    
+      gsl_linalg_bidiag_unpack2 (A, S, &f.vector, V);
+
+      //std::cout << "S2: " << S->data[0] << " " 
+      //<< S->data[S->size-1] 
+      //<< std::endl;
+    
+      /* apply reduction steps to B=(S,Sd) */
+    
+      chop_small_elements (S, &f.vector);
+    
+      //std::cout << "S3: " << S->data[0] << " " 
+      //<< S->data[S->size-1] 
+      //<< std::endl;
+    
+      /* Progressively reduce the matrix until it is diagonal */
+    
+      b=N - 1;
+      iter=0;
+
+      while (b > 0)
+	{
+	  double fbm1=gsl_vector_get (&f.vector, b - 1);
+
+	  if (fbm1 == 0.0 || gsl_isnan (fbm1))
+	    {
+	      b--;
+	      continue;
+	    }
+
+	  //std::cout << "b,fbm1: " << b << " " << fbm1 << std::endl;
+        
+	  /* Find the largest unreduced block (a,b) starting from b
+	     and working backwards */
+
+	  a=b - 1;
+
+	  while (a > 0)
+	    {
+	      double fam1=gsl_vector_get (&f.vector, a - 1);
+
+	      if (fam1 == 0.0 || gsl_isnan (fam1))
+		{
+		  break;
+		}
+            
+	      a--;
+
+	      //std::cout << "a,fam1: " << a << " " << fam1 << std::endl;
+	    }
+
+	  iter++;
+        
+	  if (iter > 100 * N) 
+	    {
+	      GSL_ERROR("SVD decomposition failed to converge", GSL_EMAXITER);
+	    }
+
+        
+	  {
+	    const size_t n_block=b - a + 1;
+	    gsl_vector_view S_block=gsl_vector_subvector (S, a, n_block);
+	    gsl_vector_view f_block=gsl_vector_subvector 
+	      (&f.vector, a, n_block - 1);
           
-          gsl_vector_set (S, j, -Sj);
-        }
+	    gsl_matrix_view U_block =
+	      gsl_matrix_submatrix (A, 0, a, A->size1, n_block);
+	    gsl_matrix_view V_block =
+	      gsl_matrix_submatrix (V, 0, a, V->size1, n_block);
+          
+	    int rescale=0;
+	    double scale=1; 
+	    double norm=0;
+
+	    /* Find the maximum absolute values of the diagonal and subdiagonal */
+
+	    for (i=0; i < n_block; i++) 
+	      {
+		double s_i=gsl_vector_get (&S_block.vector, i);
+		double a=fabs(s_i);
+		if (a > norm) norm=a;
+		//std::cout << "aa: " << a << std::endl;
+	      }
+
+	    for (i=0; i < n_block - 1; i++) 
+	      {
+		double f_i=gsl_vector_get (&f_block.vector, i);
+		double a=fabs(f_i);
+		if (a > norm) norm=a;
+		//std::cout << "aa2: " << a << std::endl;
+	      }
+
+	    /* Temporarily scale the submatrix if necessary */
+
+	    if (norm > GSL_SQRT_DBL_MAX)
+	      {
+		scale=(norm / GSL_SQRT_DBL_MAX);
+		rescale=1;
+	      }
+	    else if (norm < GSL_SQRT_DBL_MIN && norm > 0)
+	      {
+		scale=(norm / GSL_SQRT_DBL_MIN);
+		rescale=1;
+	      }
+
+	    //std::cout << "rescale: " << rescale << std::endl;
+
+	    if (rescale) 
+	      {
+		gsl_blas_dscal(1.0 / scale, &S_block.vector);
+		gsl_blas_dscal(1.0 / scale, &f_block.vector);
+	      }
+
+	    /* Perform the implicit QR step */
+
+	    /*
+	      for(size_t ii=0;ii<M;ii++) {
+	      for(size_t jj=0;jj<N;jj++) {
+	      std::cout << ii << "." << jj << "." 
+	      << gsl_matrix_get(A,ii,jj) << std::endl;
+	      }
+	      }
+	      for(size_t ii=0;ii<N;ii++) {
+	      for(size_t jj=0;jj<N;jj++) {
+	      std::cout << "V: " << ii << "." << jj << "." 
+	      << gsl_matrix_get(V,ii,jj) << std::endl;
+	      }
+	      }
+	    */
+
+	    qrstep (&S_block.vector, &f_block.vector, &U_block.matrix, 
+		    &V_block.matrix);
+
+	    /*
+	      for(size_t ii=0;ii<M;ii++) {
+	      for(size_t jj=0;jj<N;jj++) {
+	      std::cout << ii << " " << jj << " " 
+	      << gsl_matrix_get(A,ii,jj) << std::endl;
+	      }
+	      }
+	      for(size_t ii=0;ii<N;ii++) {
+	      for(size_t jj=0;jj<N;jj++) {
+	      std::cout << "V: " << ii << " " << jj << " " 
+	      << gsl_matrix_get(V,ii,jj) << std::endl;
+	      }
+	      }
+	    */
+
+	    /* remove any small off-diagonal elements */
+          
+	    chop_small_elements (&S_block.vector, &f_block.vector);
+          
+	    /* Undo the scaling if needed */
+
+	    if (rescale)
+	      {
+		gsl_blas_dscal(scale, &S_block.vector);
+		gsl_blas_dscal(scale, &f_block.vector);
+	      }
+	  }
+        
+	}
     }
+
+    /* Make singular values positive by reflections if necessary */
   
-  /* Sort singular values into decreasing order */
-  
-  for (i=0; i < K; i++)
-    {
-      double S_max=gsl_vector_get (S, i);
-      size_t i_max=i;
+    for (j=0; j < K; j++)
+      {
+	double Sj=gsl_vector_get (S, j);
       
-      for (j=i + 1; j < K; j++)
-        {
-          double Sj=gsl_vector_get (S, j);
+	if (Sj < 0.0)
+	  {
+	    for (i=0; i < N; i++)
+	      {
+		double Vij=gsl_matrix_get (V, i, j);
+		gsl_matrix_set (V, i, j, -Vij);
+	      }
           
-          if (Sj > S_max)
-            {
-              S_max=Sj;
-              i_max=j;
-            }
-        }
-      
-      if (i_max != i)
-        {
-          /* swap eigenvalues */
-          gsl_vector_swap_elements (S, i, i_max);
-          
-          /* swap eigenvectors */
-          gsl_matrix_swap_columns (A, i, i_max);
-          gsl_matrix_swap_columns (V, i, i_max);
-        }
-    }
+	    gsl_vector_set (S, j, -Sj);
+	  }
+      }
   
-  return GSL_SUCCESS;
-}
+    /* Sort singular values into decreasing order */
+  
+    for (i=0; i < K; i++)
+      {
+	double S_max=gsl_vector_get (S, i);
+	size_t i_max=i;
+      
+	for (j=i + 1; j < K; j++)
+	  {
+	    double Sj=gsl_vector_get (S, j);
+          
+	    if (Sj > S_max)
+	      {
+		S_max=Sj;
+		i_max=j;
+	      }
+	  }
+      
+	if (i_max != i)
+	  {
+	    /* swap eigenvalues */
+	    gsl_vector_swap_elements (S, i, i_max);
+          
+	    /* swap eigenvectors */
+	    gsl_matrix_swap_columns (A, i, i_max);
+	    gsl_matrix_swap_columns (V, i, i_max);
+	  }
+      }
+  
+    return GSL_SUCCESS;
+  }
 
 };
 
@@ -887,187 +887,199 @@ int main(int argc, char *argv[]) {
   cout.precision(6);
 
   test_mgr t;
-  t.set_output_level(1);
+  t.set_output_level(2);
 
-  static const size_t arr_size=12;
+  if (false) {
+  
+    static const size_t arr_size=12;
 
-  gsl_matrix *gm1=gsl_matrix_alloc(arr_size,arr_size);
-  gsl_matrix *gm2=gsl_matrix_alloc(arr_size,arr_size);
-  gsl_matrix *gm3=gsl_matrix_alloc(arr_size,arr_size);
-  gsl_matrix *gm4=gsl_matrix_alloc(arr_size,arr_size);
-  gsl_matrix *mat_base=gsl_matrix_alloc(arr_size,arr_size);
-  gsl_vector *gv1=gsl_vector_alloc(arr_size);
-  gsl_vector *gv2=gsl_vector_alloc(arr_size);
-  gsl_vector *gv3=gsl_vector_alloc(arr_size);
-  gsl_vector *gv4=gsl_vector_alloc(arr_size);
-  ubmatrix om1(arr_size,arr_size);
-  ubmatrix om2(arr_size,arr_size);
-  ubmatrix om3(arr_size,arr_size);
-  ubvector ov1(arr_size);
-  ubvector ov2(arr_size);
-  ubvector ov3(arr_size);
-  ubvector ov4(arr_size);
+    gsl_matrix *gm1=gsl_matrix_alloc(arr_size,arr_size);
+    gsl_matrix *gm2=gsl_matrix_alloc(arr_size,arr_size);
+    gsl_matrix *gm3=gsl_matrix_alloc(arr_size,arr_size);
+    gsl_matrix *gm4=gsl_matrix_alloc(arr_size,arr_size);
+    gsl_matrix *mat_base=gsl_matrix_alloc(arr_size,arr_size);
+    gsl_vector *gv1=gsl_vector_alloc(arr_size);
+    gsl_vector *gv2=gsl_vector_alloc(arr_size);
+    gsl_vector *gv3=gsl_vector_alloc(arr_size);
+    gsl_vector *gv4=gsl_vector_alloc(arr_size);
+    ubmatrix om1(arr_size,arr_size);
+    ubmatrix om2(arr_size,arr_size);
+    ubmatrix om3(arr_size,arr_size);
+    ubvector ov1(arr_size);
+    ubvector ov2(arr_size);
+    ubvector ov3(arr_size);
+    ubvector ov4(arr_size);
 
-  // ----------------------------------------------------------
-  // Tests of basic SV decomposition
+    // ----------------------------------------------------------
+    // Tests of basic SV decomposition
 
-  {
+    {
 
-    // Setup arbitrary matrix
-    for(size_t i=0;i<arr_size;i++) {
-      for(size_t j=0;j<arr_size;j++) {
-	gsl_matrix_set(gm1,i,j,sqrt(((double)i))+sin(((double)j)));
+      // Setup arbitrary matrix
+      for(size_t i=0;i<arr_size;i++) {
+	for(size_t j=0;j<arr_size;j++) {
+	  gsl_matrix_set(gm1,i,j,sqrt(((double)i))+sin(((double)j)));
+	}
       }
-    }
 
-    // Compute initial SVD
-    gsl_linalg_SV_decomp(gm1,gm2,gv1,gv2);
+      // Compute initial SVD
+      gsl_linalg_SV_decomp(gm1,gm2,gv1,gv2);
 
-    // Create one with better singular values. Note that because we
-    // are ensuring that the all the singular values are distinct (the
-    // non-degenerate case) then the left- and right-singular vectors
-    // are unique up to a choice in sign.
-    for(size_t j=0;j<arr_size;j++) {
-      gsl_matrix_set(gm3,j,j,((double)(j+1)));
-    }
-
-    // Reconstruct a new matrix, stored in mat_base, for future
-    // SV decompositions
-    gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.0,gm1,gm3,0.0,gm4);
-    gsl_blas_dgemm(CblasNoTrans,CblasTrans,1.0,gm4,gm2,0.0,mat_base);
-
-    // Copy things back over to gm1 and om1
-    for(size_t i=0;i<arr_size;i++) {
+      // Create one with better singular values. Note that because we
+      // are ensuring that the all the singular values are distinct (the
+      // non-degenerate case) then the left- and right-singular vectors
+      // are unique up to a choice in sign.
       for(size_t j=0;j<arr_size;j++) {
-	gsl_matrix_set(gm1,i,j,gsl_matrix_get(mat_base,i,j));
-	om1(i,j)=gsl_matrix_get(mat_base,i,j);
+	gsl_matrix_set(gm3,j,j,((double)(j+1)));
       }
-    }
 
-    // Test decomposition and solve
-    gsl_linalg_SV_decomp(gm1,gm2,gv1,gv2);
-    SV_decomp(arr_size,arr_size,om1,om2,ov1,ov2);
-    gsl_linalg_SV_solve(gm1,gm2,gv1,gv3,gv4);
-    SV_solve(arr_size,arr_size,om1,om2,ov1,ov3,ov4);
+      // Reconstruct a new matrix, stored in mat_base, for future
+      // SV decompositions
+      gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.0,gm1,gm3,0.0,gm4);
+      gsl_blas_dgemm(CblasNoTrans,CblasTrans,1.0,gm4,gm2,0.0,mat_base);
 
-    t.test_abs_mat(arr_size,arr_size,om1,gsl_matrix_wrap(gm1),5.0e-14,"m1");
-    t.test_abs_mat(arr_size,arr_size,om2,gsl_matrix_wrap(gm2),5.0e-14,"m2");
-    t.test_rel_vec(arr_size,ov1,gsl_vector_wrap(gv1),1.0e-12,"v1");
-    t.test_rel_vec(arr_size-1,ov2,gsl_vector_wrap(gv2),1.0e-12,"v2");
-    t.test_rel_vec(arr_size,ov4,gsl_vector_wrap(gv4),1.0e-12,"v4 (solve)");
+      // Copy things back over to gm1 and om1
+      for(size_t i=0;i<arr_size;i++) {
+	for(size_t j=0;j<arr_size;j++) {
+	  gsl_matrix_set(gm1,i,j,gsl_matrix_get(mat_base,i,j));
+	  om1(i,j)=gsl_matrix_get(mat_base,i,j);
+	}
+      }
+
+      // Test decomposition and solve
+      gsl_linalg_SV_decomp(gm1,gm2,gv1,gv2);
+      SV_decomp(arr_size,arr_size,om1,om2,ov1,ov2);
+      gsl_linalg_SV_solve(gm1,gm2,gv1,gv3,gv4);
+      SV_solve(arr_size,arr_size,om1,om2,ov1,ov3,ov4);
+
+      t.test_abs_mat(arr_size,arr_size,om1,gsl_matrix_wrap(gm1),5.0e-14,"m1");
+      t.test_abs_mat(arr_size,arr_size,om2,gsl_matrix_wrap(gm2),5.0e-14,"m2");
+      t.test_rel_vec(arr_size,ov1,gsl_vector_wrap(gv1),1.0e-12,"v1");
+      t.test_rel_vec(arr_size-1,ov2,gsl_vector_wrap(gv2),1.0e-12,"v2");
+      t.test_rel_vec(arr_size,ov4,gsl_vector_wrap(gv4),1.0e-12,"v4 (solve)");
 
 #ifdef O2SCL_ARMA
 
-    arma::mat am1(arr_size,arr_size);
-    arma::mat am2(arr_size,arr_size);
-    arma::mat am3(arr_size,arr_size);
-    arma::colvec av1(arr_size); 
-    for(size_t i=0;i<arr_size;i++) {
-      for(size_t j=0;j<arr_size;j++) {
-	am1(i,j)=gsl_matrix_get(mat_base,i,j);
-      }
-    }
-    svd(am2,av1,am3,am1);
-
-    // The columns are defined only up to a sign. Find which
-    // columns are given with the opposite sign, and flip
-    // their signs back
-    for(size_t j=0;j<arr_size;j++) {
-      if (fabs((om1(0,j)-am2(0,j))/om1(0,j))>1.0) {
-	for(size_t i=0;i<arr_size;i++) {
-	  am2(i,j)*=-1.0;
-	  am3(i,j)*=-1.0;
+      arma::mat am1(arr_size,arr_size);
+      arma::mat am2(arr_size,arr_size);
+      arma::mat am3(arr_size,arr_size);
+      arma::colvec av1(arr_size); 
+      for(size_t i=0;i<arr_size;i++) {
+	for(size_t j=0;j<arr_size;j++) {
+	  am1(i,j)=gsl_matrix_get(mat_base,i,j);
 	}
       }
-    }
+      svd(am2,av1,am3,am1);
 
-    t.test_rel_mat(arr_size,arr_size,om1,am2,1.0e-11,"arma m1");
-    t.test_rel_mat(arr_size,arr_size,om2,am3,1.0e-11,"arma m2");
-    t.test_rel_vec(arr_size,ov1,av1,1.0e-14,"arma v2");
+      // The columns are defined only up to a sign. Find which
+      // columns are given with the opposite sign, and flip
+      // their signs back
+      for(size_t j=0;j<arr_size;j++) {
+	if (fabs((om1(0,j)-am2(0,j))/om1(0,j))>1.0) {
+	  for(size_t i=0;i<arr_size;i++) {
+	    am2(i,j)*=-1.0;
+	    am3(i,j)*=-1.0;
+	  }
+	}
+      }
+
+      t.test_rel_mat(arr_size,arr_size,om1,am2,1.0e-11,"arma m1");
+      t.test_rel_mat(arr_size,arr_size,om2,am3,1.0e-11,"arma m2");
+      t.test_rel_vec(arr_size,ov1,av1,1.0e-14,"arma v2");
 
 #endif
 
 #ifdef O2SCL_EIGEN
 
-    Eigen::MatrixXd em1(arr_size,arr_size);
-    Eigen::MatrixXd em2(arr_size,arr_size);
-    Eigen::MatrixXd em3(arr_size,arr_size);
-    Eigen::VectorXd ev1(arr_size); 
-    for(size_t i=0;i<arr_size;i++) {
-      for(size_t j=0;j<arr_size;j++) {
-	em1(i,j)=gsl_matrix_get(mat_base,i,j);
-      }
-    }
-    
-    Eigen::JacobiSVD<Eigen::MatrixXd> 
-      svd(em1,Eigen::ComputeThinU | Eigen::ComputeThinV);
-    ev1=svd.singularValues();
-    em2=svd.matrixU();
-    em3=svd.matrixV();
-
-    // The columns are defined only up to a sign. Find which
-    // columns are given with the opposite sign, and flip
-    // their signs back
-    for(size_t j=0;j<arr_size;j++) {
-      if (fabs((om1(0,j)-em2(0,j))/om1(0,j))>1.0) {
-	for(size_t i=0;i<arr_size;i++) {
-	  em2(i,j)*=-1.0;
-	  em3(i,j)*=-1.0;
+      Eigen::MatrixXd em1(arr_size,arr_size);
+      Eigen::MatrixXd em2(arr_size,arr_size);
+      Eigen::MatrixXd em3(arr_size,arr_size);
+      Eigen::VectorXd ev1(arr_size); 
+      for(size_t i=0;i<arr_size;i++) {
+	for(size_t j=0;j<arr_size;j++) {
+	  em1(i,j)=gsl_matrix_get(mat_base,i,j);
 	}
       }
-    }
+    
+      Eigen::JacobiSVD<Eigen::MatrixXd> 
+	svd(em1,Eigen::ComputeThinU | Eigen::ComputeThinV);
+      ev1=svd.singularValues();
+      em2=svd.matrixU();
+      em3=svd.matrixV();
 
-    t.test_rel_mat(arr_size,arr_size,om1,em2,1.0e-11,"eigen m1");
-    t.test_rel_mat(arr_size,arr_size,om2,em3,1.0e-11,"eigen m2");
-    t.test_rel_vec(arr_size,ov1,ev1,1.0e-14,"eigen v2");
+      // The columns are defined only up to a sign. Find which
+      // columns are given with the opposite sign, and flip
+      // their signs back
+      for(size_t j=0;j<arr_size;j++) {
+	if (fabs((om1(0,j)-em2(0,j))/om1(0,j))>1.0) {
+	  for(size_t i=0;i<arr_size;i++) {
+	    em2(i,j)*=-1.0;
+	    em3(i,j)*=-1.0;
+	  }
+	}
+      }
+
+      t.test_rel_mat(arr_size,arr_size,om1,em2,1.0e-11,"eigen m1");
+      t.test_rel_mat(arr_size,arr_size,om2,em3,1.0e-11,"eigen m2");
+      t.test_rel_vec(arr_size,ov1,ev1,1.0e-14,"eigen v2");
 
 #endif
 
-  }
-
-  // ----------------------------------------------------------
-  // Testing SV_decomp_mod()
-
-  {
-
-    // Setup original matrix
-    for(size_t i=0;i<arr_size;i++) {
-      for(size_t j=0;j<arr_size;j++) {
-	gsl_matrix_set(gm1,i,j,gsl_matrix_get(mat_base,i,j));
-	om1(i,j)=gsl_matrix_get(mat_base,i,j);
-      }
     }
-    
-    // Test decomposition
-    gsl_linalg_SV_decomp_mod(gm1,gm2,gm3,gv1,gv2);
-    SV_decomp_mod(arr_size,arr_size,om1,om2,om3,ov1,ov2);
 
-    t.test_abs_mat(arr_size,arr_size,om1,gsl_matrix_wrap(gm1),5.0e-14,"mod m1");
-    t.test_abs_mat(arr_size,arr_size,om2,gsl_matrix_wrap(gm2),5.0e-14,"mod m2");
-    t.test_abs_mat(arr_size,arr_size,om3,gsl_matrix_wrap(gm3),5.0e-14,"mod m3");
-    t.test_rel_vec(arr_size,ov1,gsl_vector_wrap(gv1),1.0e-12,"mod v1");
-    t.test_rel_vec(arr_size-1,ov2,gsl_vector_wrap(gv2),1.0e-12,"mod v2");
-  }
+    // ----------------------------------------------------------
+    // Testing SV_decomp_mod()
+
+    {
+
+      // Setup original matrix
+      for(size_t i=0;i<arr_size;i++) {
+	for(size_t j=0;j<arr_size;j++) {
+	  gsl_matrix_set(gm1,i,j,gsl_matrix_get(mat_base,i,j));
+	  om1(i,j)=gsl_matrix_get(mat_base,i,j);
+	}
+      }
+    
+      // Test decomposition
+      gsl_linalg_SV_decomp_mod(gm1,gm2,gm3,gv1,gv2);
+      SV_decomp_mod(arr_size,arr_size,om1,om2,om3,ov1,ov2);
+
+      t.test_abs_mat(arr_size,arr_size,om1,gsl_matrix_wrap(gm1),5.0e-14,
+		     "mod m1");
+      t.test_abs_mat(arr_size,arr_size,om2,gsl_matrix_wrap(gm2),5.0e-14,
+		     "mod m2");
+      t.test_abs_mat(arr_size,arr_size,om3,gsl_matrix_wrap(gm3),5.0e-14,
+		     "mod m3");
+      t.test_rel_vec(arr_size,ov1,gsl_vector_wrap(gv1),1.0e-12,
+		     "mod v1");
+      t.test_rel_vec(arr_size-1,ov2,gsl_vector_wrap(gv2),1.0e-12,
+		     "mod v2");
+    }
   
-  // ----------------------------------------------------------
-  // Testing SV_decomp_jacobi()
+    // ----------------------------------------------------------
+    // Testing SV_decomp_jacobi()
 
-  {
-    // Setup original matrix
-    for(size_t i=0;i<arr_size;i++) {
-      for(size_t j=0;j<arr_size;j++) {
-	gsl_matrix_set(gm1,i,j,gsl_matrix_get(mat_base,i,j));
-	om1(i,j)=gsl_matrix_get(mat_base,i,j);
+    {
+      // Setup original matrix
+      for(size_t i=0;i<arr_size;i++) {
+	for(size_t j=0;j<arr_size;j++) {
+	  gsl_matrix_set(gm1,i,j,gsl_matrix_get(mat_base,i,j));
+	  om1(i,j)=gsl_matrix_get(mat_base,i,j);
+	}
       }
+    
+      // Test decomposition
+      gsl_linalg_SV_decomp_jacobi(gm1,gm2,gv1);
+      SV_decomp_jacobi(arr_size,arr_size,om1,om2,ov1);
+    
+      t.test_abs_mat(arr_size,arr_size,om1,gsl_matrix_wrap(gm1),
+		     5.0e-14,"jacobi m1");
+      t.test_abs_mat(arr_size,arr_size,om2,gsl_matrix_wrap(gm2),
+		     5.0e-14,"jacobi m2");
+      t.test_rel_vec(arr_size,ov1,gsl_vector_wrap(gv1),
+		     1.0e-12,"jacobi v1");
+
     }
-    
-    // Test decomposition
-    gsl_linalg_SV_decomp_jacobi(gm1,gm2,gv1);
-    SV_decomp_jacobi(arr_size,arr_size,om1,om2,ov1);
-    
-    t.test_abs_mat(arr_size,arr_size,om1,gsl_matrix_wrap(gm1),5.0e-14,"jacobi m1");
-    t.test_abs_mat(arr_size,arr_size,om2,gsl_matrix_wrap(gm2),5.0e-14,"jacobi m2");
-    t.test_rel_vec(arr_size,ov1,gsl_vector_wrap(gv1),1.0e-12,"jacobi v1");
 
   }
 
