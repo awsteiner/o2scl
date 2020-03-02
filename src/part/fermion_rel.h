@@ -1625,10 +1625,11 @@ namespace o2scl {
   
   extern "C" {
     
-    void o2scl_acol_fermion_density
-    (double m, double g, double T, double n,
+    void *o2scl_create_fermion_rel();
+    void o2scl_free_fermion_rel(void *vp);
+    void o2scl_fermion_density
+    (void *vp, double m, double g, double T, double n,
      double *mu, double *ed, double *pr, double *en);
-     
     
   }
   

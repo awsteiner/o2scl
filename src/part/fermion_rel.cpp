@@ -35,14 +35,25 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-void o2scl_acol_fermion_density(double m, double g,
+void *o2scl_create_fermion_rel() {
+  fermion_rel *fr=new fermion_rel;
+  return fr;
+}
+
+void o2scl_free_fermion_rel(void *vp) {
+  fermion_rel *fr=(fermion_rel *)vp;
+  delete fr;
+  return;
+}
+
+void o2scl_fermion_density(void *vp, double m, double g,
 				double T, double n,
 				double *mu, double *ed, double *pr,
 				double *en) {
-  fermion_rel fr;
+  fermion_rel *fr=(fermion_rel *)vp;
   fermion f(m,g);
   f.n=n;
-  fr.calc_density(f,T);
+  fr->calc_density(f,T);
   *mu=f.mu;
   *ed=f.ed;
   *pr=f.pr;
