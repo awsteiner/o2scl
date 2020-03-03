@@ -2457,17 +2457,17 @@ namespace o2scl {
 
     return;
   }
-  
-  /** \brief Perform an MCMC simulation
-      
-      Perform an MCMC simulation over \c n_params parameters starting
-      at initial point \c init, limiting the parameters to be between
-      \c low and \c high, using \c func as the objective function and
-      calling the measurement function \c meas at each MC point.
-  */
-  virtual int mcmc(size_t n_params_local, 
-		   vec_t &low, vec_t &high, std::vector<func_t> &func,
-		   std::vector<fill_t> &fill) {
+    
+    /** \brief Perform an MCMC simulation
+	
+	Perform an MCMC simulation over \c n_params parameters starting
+	at initial point \c init, limiting the parameters to be between
+	\c low and \c high, using \c func as the objective function and
+	calling the measurement function \c meas at each MC point.
+    */
+    virtual int mcmc_fill(size_t n_params_local, 
+			  vec_t &low, vec_t &high, std::vector<func_t> &func,
+			  std::vector<fill_t> &fill) {
     
     n_params=n_params_local;
     low_copy=low;

@@ -313,7 +313,7 @@ int main(int argc, char *argv[]) {
   mpc.mct.prefix="mcmct";
   mpc.mct.table_prealloc=N*n_threads;
 
-  mpc.mct.mcmc(1,low,high,gauss_vec,fill_vec);
+  mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec);
 
   std::shared_ptr<o2scl::table_units<> > table=mpc.mct.get_table();
   
@@ -365,7 +365,7 @@ int main(int argc, char *argv[]) {
   mpc.mct.prefix="mcmct_ai";
   mpc.mct.table_prealloc=N*n_threads;
 
-  mpc.mct.mcmc(1,low,high,gauss_vec,fill_vec);
+  mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec);
 
   // Get results
   table=mpc.mct.get_table();
@@ -426,7 +426,7 @@ int main(int argc, char *argv[]) {
     mpc.mct.prefix="mcmct_flat";
     mpc.mct.table_prealloc=N*n_threads;
     
-    mpc.mct.mcmc(1,low,high,flat_vec,fill_vec);
+    mpc.mct.mcmc_fill(1,low,high,flat_vec,fill_vec);
 
     uniform_grid_end<double> ug(low[0],high[0],20);
     size_t hist_ix=0;
@@ -480,7 +480,7 @@ int main(int argc, char *argv[]) {
     mpc.mct.prefix="mcmct_ai_flat";
     mpc.mct.table_prealloc=N*n_threads;
     
-    mpc.mct.mcmc(1,low,high,flat_vec,fill_vec);
+    mpc.mct.mcmc_fill(1,low,high,flat_vec,fill_vec);
 
     uniform_grid_end<double> ug(low[0],high[0],20);
     size_t hist_ix=0;
@@ -539,7 +539,7 @@ int main(int argc, char *argv[]) {
 
     cout << "Going to mcmc." << endl;
     mpc.mct.verbose=1;
-    mpc.mct.mcmc(1,low,high,gauss_vec,fill_vec);
+    mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec);
 
     // Get results
     table=mpc.mct.get_table();
