@@ -568,16 +568,13 @@ void find_constants::find_print(std::string name, std::string unit,
 	 << name << endl;
     return;
   }
-
-  if (unit.length()==0) {
-    cout << "find_constant::find_print(): Matches for " << name;
-  } else {
-    cout << "find_constant::find_print(): Matches for " << name << " in "
-	 << unit;
-  }
+  
+  cout << "find_constant::find_print(): Matches for " << name;
   if (ret==one_exact_match_unit_diff ||
       ret==exact_matches_unit_diff) {
     cout << " (no matching units)" << endl;
+  } else if (unit.length()>0) {
+    cout << " in " << unit;
   }
   cout << ": " << endl;
   for(size_t i=0;i<matches.size();i++) {
