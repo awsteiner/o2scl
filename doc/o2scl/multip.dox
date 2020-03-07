@@ -1,12 +1,28 @@
-/** \page multip_section Multiprecision
+/** \page multip_section Multiprecision Support
 
-    There are a few \o2 classes and functions which allow \c long \c
-    double and/or <tt>boost::multiprecision</tt> floating types. These
-    currently include \ref o2scl::dtos(), \ref o2scl::root_brent_gsl,
-    \ref o2scl::deriv_gsl, \ref
-    o2scl::inte_gauss56_cern, \ref o2scl::inte_gauss_cern, \ref
-    o2scl::inte_adapt_cern, \ref o2scl::inte_kronrod_boost, and \ref
-    o2scl::inte_tanh_sinh_boost . The associated tests 
-    are not included unless <tt>O2SCL_LD_TYPES</tt> is defined during
-    the library configuration. 
+    Some \o2 classes support floating-point types beyond \c double.
+    Generally, these classes support both <tt>long double</tt> and the
+    <tt>boost::multiprecision</tt> types. (Though some of the boost
+    multiprecision types require additional libraries, such as GMP.)
+
+    AWS 3/7/20: I'm still confused by how to effectively use generic
+    std::abs() and std::isfinite() functions for multiprecision types
+    (see https://stackoverflow.com/questions/21392627/
+    abs-vs-stdabs-what-does-the-reference-say) so, I have currently
+    defined new functions o2abs() and o2isfinite() which work with
+    both <tt>long double</tt> and the <tt>boost::multiprecision</tt>
+    types.
+
+    Testing with multiprecision types is enabled by defining
+    O2SCL_LD_TYPES at the time the configure script is run.
+    
+    List of classes which support multiprecision types
+    - Numerical differentiation: \ref o2scl::deriv_gsl
+    - Function approximation: \ref o2scl::cheb_approx_tl
+    - Root-finding: \ref o2scl::root_brent_gsl 
+    - String to double conversion: \ref o2scl::dtos()
+    - Integration: \ref o2scl::inte_gauss56_cern, \ref
+    o2scl::inte_gauss_cern, \ref o2scl::inte_adapt_cern, \ref
+    o2scl::inte_kronrod_boost, and \ref o2scl::inte_tanh_sinh_boost .
+
 */
