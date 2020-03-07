@@ -46,7 +46,6 @@ typedef std::function<int(size_t,const ubvector &,double &,
 
 typedef std::function<int(const ubvector &,double,std::vector<double> &,
 			  std::array<double,1> &)> fill_funct;
-
 /// The MCMC object
 mcmc_para_table<point_funct,fill_funct,std::array<double,1>,ubvector> mct;
 
@@ -132,7 +131,7 @@ int main(int argc, char *argv[]) {
   mct.table_prealloc=mct.max_iters/3;
   
   // Perform MCMC
-  mct.mcmc(1,low_bimodal,high_bimodal,bimodal_vec,fill_vec);
+  mct.mcmc_fill(1,low_bimodal,high_bimodal,bimodal_vec,fill_vec);
 
   // Output acceptance and rejection rate
   cout << "n_accept, n_reject: " << mct.n_accept[0] << " "
