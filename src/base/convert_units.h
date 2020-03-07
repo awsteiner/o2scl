@@ -1338,7 +1338,7 @@ namespace o2scl {
 	}
 	to=m2->second.f;
 	if (from!=to) {
-	  fp_t v=1.0, c, f1, f2;
+	  fp_t v=1.0, c, f1, f2=0.0;
 	  int cret=convert_cache(from,to,v,c,f1);
 	  if (cret==0) {
 	    bool new_conv;
