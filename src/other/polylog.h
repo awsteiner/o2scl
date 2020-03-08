@@ -190,7 +190,7 @@ namespace o2scl {
   /** \brief Double-precision version of \ref o2scl::fermi_dirac_integ_tl
    */
   typedef fermi_dirac_integ_tl
-    <inte_iu<funct,inte_adapt_cern
+    <inte_iu_transform<funct,inte_adapt_cern
     <funct,inte_gauss56_cern<funct,double,
     inte_gauss56_coeffs_double>,
     100,double>,double>,double> fermi_dirac_integ_double;
@@ -200,7 +200,7 @@ namespace o2scl {
   /** \brief Long double version of \ref o2scl::fermi_dirac_integ_tl
    */
   typedef fermi_dirac_integ_tl
-    <inte_iu<funct_ld,inte_adapt_cern
+    <inte_iu_transform<funct_ld,inte_adapt_cern
     <funct_ld,inte_gauss56_cern<funct_ld,long double,
     inte_gauss56_coeffs_long_double>,
     1000,long double>,long double>,long double>

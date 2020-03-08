@@ -45,6 +45,9 @@ namespace o2scl {
       
       This class calls the error handler if the
       error returned by boost is larger than \ref inte::tol_rel .
+
+      Native range is -1 to 1, but supports infinite limits on
+      either (or both) sides.
   */
   template<class func_t=funct, size_t max_refine=15, class fp_t=double>
     class inte_tanh_sinh_boost :
@@ -98,6 +101,9 @@ namespace o2scl {
       
       This class calls the error handler if the
       error returned by boost is larger than \ref inte::tol_rel .
+
+      Native range is 0 to \f$ \infty \f$, but 
+      any semi-infinite range is supported.
   */
   template<class func_t=funct, size_t max_refine=15, class fp_t=double>
     class inte_exp_sinh_boost :
@@ -151,6 +157,8 @@ namespace o2scl {
       
       This class calls the error handler if the
       error returned by boost is larger than \ref inte::tol_rel .
+
+      Only infinite limits (upper and lower) are supported.
   */
   template<class func_t=funct, size_t max_refine=15, class fp_t=double>
     class inte_sinh_sinh_boost {
