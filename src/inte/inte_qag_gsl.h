@@ -78,7 +78,7 @@ namespace o2scl {
       verbosity settings.
   */
   template<class func_t=funct> class inte_qag_gsl : 
-  public inte_kronrod_gsl<func_t> {
+    public inte_kronrod_gsl<func_t> {
     
   public:
 
@@ -90,7 +90,6 @@ namespace o2scl {
     
   /** \brief Integrate function \c func from \c a to \c b and place
       the result in \c res and the error in \c err
-
   */
   virtual int integ_err(func_t &func, double a, double b, 
 			double &res, double &err) {

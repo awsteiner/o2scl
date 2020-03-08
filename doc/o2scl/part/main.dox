@@ -47,8 +47,8 @@
     - \subpage ferm_section
     - \subpage nuclei_section
     - \subpage partref_section
+    - \subpage multip_part_section
     - \ref todo 
     - \ref future
-
 
 */

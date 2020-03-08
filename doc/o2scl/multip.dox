@@ -23,6 +23,7 @@
     - String to double conversion: \ref o2scl::dtos()
     - Integration: \ref o2scl::inte_gauss56_cern, \ref
     o2scl::inte_gauss_cern, \ref o2scl::inte_adapt_cern, \ref
-    o2scl::inte_kronrod_boost, and \ref o2scl::inte_tanh_sinh_boost .
+    o2scl::inte_kronrod_boost, \ref o2scl::inte_tanh_sinh_boost,
+    \ref o2scl::inte_exp_sinh_boost, and \ref o2scl::inte_sinh_sinh_boost.
 
 */

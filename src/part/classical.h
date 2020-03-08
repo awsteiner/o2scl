@@ -85,6 +85,9 @@ namespace o2scl {
 
     if (p.non_interacting==true) { p.nu=p.mu; p.ms=p.m; }
 
+    fp_t three_over_two=3;
+    three_over_two/=2;
+    
     // Handle zero temperature case
     if (temper==0.0) {
       if (p.inc_rest_mass) {
@@ -103,16 +106,16 @@ namespace o2scl {
       if ((p.nu-p.m)/temper<std::numeric_limits<fp_t>::min_exponent10) {
 	p.n=0.0;
       } else {
-	p.n=exp((p.nu-p.m)/temper)*p.g*pow(p.ms*temper/o2scl_const::pi/2.0,1.5);
+	p.n=exp((p.nu-p.m)/temper)*p.g*pow(p.ms*temper/pi/2,three_over_two);
       }
-      p.ed=1.5*temper*p.n+p.n*p.m;
+      p.ed=three_over_two*temper*p.n+p.n*p.m;
     } else {
       if (p.nu/temper<std::numeric_limits<fp_t>::min_exponent10) {
 	p.n=0.0;
       } else {
-	p.n=exp(p.nu/temper)*p.g*pow(p.ms*temper/o2scl_const::pi/2.0,1.5);
+	p.n=exp(p.nu/temper)*p.g*pow(p.ms*temper/pi/2,three_over_two);
       }
-      p.ed=1.5*temper*p.n;
+      p.ed=three_over_two*temper*p.n;
     }
     p.pr=p.n*temper;
     p.en=(p.ed+p.pr-p.n*p.nu)/temper;
@@ -136,6 +139,9 @@ namespace o2scl {
     
     if (p.non_interacting==true) { p.ms=p.m; }
 
+    fp_t three_over_two=3;
+    three_over_two/=2;
+    
     // Handle zero density first
     if (p.n==0.0) {
       if (p.inc_rest_mass) {
@@ -165,11 +171,11 @@ namespace o2scl {
     }
 
     if (p.inc_rest_mass) {
-      p.nu=p.m+temper*log(p.n/p.g*pow(2.0*o2scl_const::pi/p.ms/temper,1.5));
-      p.ed=1.5*temper*p.n+p.n*p.m;
+      p.nu=p.m+temper*log(p.n/p.g*pow(2*pi/p.ms/temper,three_over_two));
+      p.ed=three_over_two*temper*p.n+p.n*p.m;
     } else {
-      p.nu=temper*log(p.n/p.g*pow(2.0*o2scl_const::pi/p.ms/temper,1.5));
-      p.ed=1.5*temper*p.n;
+      p.nu=temper*log(p.n/p.g*pow(2*pi/p.ms/temper,three_over_two));
+      p.ed=three_over_two*temper*p.n;
     }
   
     if (p.non_interacting==true) { p.mu=p.nu; }

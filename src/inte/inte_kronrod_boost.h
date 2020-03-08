@@ -54,46 +54,47 @@ namespace o2scl {
       returned value, then the result is likely to be
       ill-conditioned". It would be nice to test L1 norm in some
       reasonable way.
-   */
+  */
   template<class func_t=funct, size_t rule=15, class fp_t=double>
-  class inte_kronrod_boost :
-    public inte<func_t,fp_t> {
+    class inte_kronrod_boost : public inte<func_t,fp_t> {
     
   protected:
 
-    /// Maximum depth
-    size_t max_depth;
+  /// Maximum depth
+  size_t max_depth;
 
-  /// L1 norm
-  fp_t L1norm;
+  public:
+
+  inte_kronrod_boost() {
+    max_depth=15;
+  }
   
-    public:
+  virtual ~inte_kronrod_boost() {
+  }
 
-    inte_kronrod_boost() {
-      max_depth=15;
-    }
-  
-    virtual ~inte_kronrod_boost() {
-    }
-
+  /** \brief Set the maximum number of interval splittings
+   */
   void set_max_depth(size_t md) {
     max_depth=md;
     return;
   }
     
-    /** \brief Integrate function \c func from \c a to \c b and place
-	the result in \c res and the error in \c err
-    */
-    virtual int integ_err(func_t &func, fp_t a, fp_t b, 
-			  fp_t &res, fp_t &err) {
-      res=boost::math::quadrature::gauss_kronrod<fp_t,rule>::integrate
-	(func,a,b,max_depth,this->tol_rel,&err,&L1norm);
-      if (err>this->tol_rel) {
-	O2SCL_ERR2("Failed to achieve tolerance in ",
-		   "inte_kronrod_boost::integ_err().",o2scl::exc_efailed);
-      }
-      return 0;
+  /** \brief Integrate function \c func from \c a to \c b and place
+      the result in \c res and the error in \c err
+  */
+  virtual int integ_err(func_t &func, fp_t a, fp_t b, 
+			fp_t &res, fp_t &err) {
+    res=boost::math::quadrature::gauss_kronrod<fp_t,rule>::integrate
+    (func,a,b,max_depth,this->tol_rel,&err,&L1norm);
+    if (err>this->tol_rel) {
+      O2SCL_ERR2("Failed to achieve tolerance in ",
+		 "inte_kronrod_boost::integ_err().",o2scl::exc_efailed);
     }
+    return 0;
+  }
+  
+  /// L1 norm
+  fp_t L1norm;
   
   };
   

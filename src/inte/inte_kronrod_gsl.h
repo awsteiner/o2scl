@@ -611,7 +611,7 @@ namespace o2scl {
 
       \future Convert 'double *' objects to ubvector
   */
-  template<class func_t> class inte_kronrod_gsl : public inte_gsl, 
+  template<class func_t> class inte_kronrod_gsl : public inte_gsl,
     public inte<func_t> {
       
   protected:

@@ -36,6 +36,169 @@
 namespace o2scl {
 #endif
 
+#ifdef O2SCL_NEVER_DEFINED
+
+  // AWS 10/8/19: I think these are unnecessary now, so I'm
+  // removing them with the new ifdef given above.
+  
+  /** \brief A simple precision-agnostic Newton-Cotes integrator 
+
+      \note Experimental.
+  */
+  template<class func_t=funct, class fp_t=double>
+    class inte_newton_cotes : public inte<func_t,fp_t> {
+
+  public:
+  
+  /** \brief Integrate function \c func from \c a to \c b
+      giving result \c res and error \c err
+  */
+  virtual int integ_err(func_t &func, fp_t a, fp_t b,
+			fp_t &res, fp_t &err) {
+    
+    std::vector<fp_t> x(8), y(8);
+    fp_t seven=7;
+    fp_t dx=b-a;
+    dx/=seven;
+    for(size_t i=0;i<8;i++) {
+      x[i]=((fp_t)i)*dx+a;
+      y[i]=func(x[i]);
+    }
+    res=o2scl::vector_integ_extended8<std::vector<fp_t>,
+    fp_t>(8,y)*dx;
+    fp_t res2=o2scl::vector_integ_extended4<std::vector<fp_t>,
+    fp_t>(8,y)*dx;
+    err=fabs(res2-res);
+
+    return 0;
+  }
+  
+  };
+  
+  /** \brief A simple precision-agnostic Newton-Cotes integrator 
+
+      \note Experimental.
+  */
+  template<class func_t=funct, class fp_t=double>
+    class inte_newton_cotes2 : public inte<func_t,fp_t> {
+
+  public:
+  
+  /** \brief Integrate function \c func from \c a to \c b
+      giving result \c res and error \c err
+  */
+  virtual int integ_err(func_t &func, fp_t a, fp_t b,
+			fp_t &res, fp_t &err) {
+
+    std::vector<fp_t> x(11), y(11);
+    fp_t ten=10;
+    fp_t dx=b-a;
+    dx/=ten;
+    for(size_t i=0;i<11;i++) {
+      x[i]=((fp_t)i)*dx+a;
+      y[i]=func(x[i]);
+    }
+    fp_t prenum=5;
+    fp_t preden=299376;
+    fp_t c1=16067;
+    fp_t c2=106300;
+    fp_t c3=48525;
+    fp_t c4=272400;
+    fp_t c5=260550;
+    fp_t c6=427368;
+    res=dx*prenum/preden*(c1*(y[0]+y[10])+
+			  c2*(y[1]+y[9])-
+			  c3*(y[2]+y[8])+
+			  c4*(y[3]+y[7])-
+			  c5*(y[4]+y[6])+
+			  c6*y[5]);
+    fp_t nine=9;
+    fp_t dx2=b-a;
+    dx2/=nine;
+    for(size_t i=0;i<10;i++) {
+      x[i]=((fp_t)i)*dx2+a;
+      y[i]=func(x[i]);
+    }
+    prenum=9;
+    preden=89600;
+    c1=2857;
+    c2=15741;
+    c3=1080;
+    c4=19344;
+    c5=5778;
+    fp_t res2=dx2*prenum/preden*(c1*(y[0]+y[9])+
+				 c2*(y[1]+y[8])+
+				 c3*(y[2]+y[7])+
+				 c4*(y[3]+y[6])+
+				 c5*(y[4]+y[5]));
+    err=fabs(res2-res);
+
+    return 0;
+  }
+  
+  };
+  
+  /** \brief A simple precision-agnostic Newton-Cotes integrator 
+
+      \note Experimental.
+  */
+  template<class func_t=funct, class fp_t=double>
+    class inte_newton_cotes_open : public inte<func_t,fp_t> {
+
+  public:
+  
+  /** \brief Integrate function \c func from \c a to \c b
+      giving result \c res and error \c err
+  */
+  virtual int integ_err(func_t &func, fp_t a, fp_t b,
+			fp_t &res, fp_t &err) {
+    
+    std::vector<fp_t> x(7), y(7);
+    fp_t eight=8;
+    fp_t dx=b-a;
+    dx/=eight;
+    //std::cout << a << " " << b << std::endl;
+    for(size_t i=0;i<7;i++) {
+      x[i]=((fp_t)i+1)*dx+a;
+      y[i]=func(x[i]);
+      //std::cout << x[i] << " " << y[i] << std::endl;
+    }
+    fp_t prenum=8;
+    fp_t preden=945;
+    fp_t c1=460;
+    fp_t c2=-954;
+    fp_t c3=2196;
+    fp_t c4=-2459;
+    res=dx*prenum/preden*(c1*y[0]+c2*y[1]+c3*y[2]+c4*y[3]+
+			  c3*y[4]+c2*y[5]+c1*y[6]);
+    //std::cout << res << std::endl;
+    fp_t seven=7;
+    fp_t dx2=b-a;
+    dx2/=seven;
+    for(size_t i=0;i<6;i++) {
+      x[i]=((fp_t)i+1)*dx2+a;
+      y[i]=func(x[i]);
+      //std::cout << x[i] << " " << y[i] << std::endl;
+    }
+    prenum=7;
+    preden=1440;
+    c1=611;
+    c2=-453;
+    c3=562;
+    fp_t res2=dx2*prenum/preden*(c1*(y[0]+y[5])+
+				 c2*(y[1]+y[4])+
+				 c3*(y[2]+y[3]));
+    //std::cout << res2 << std::endl;
+    //exit(-1);
+    err=fabs(res2-res);
+
+    return 0;
+  }
+  
+  };
+  
+#endif
+  
   /** \brief Adaptive integration (CERNLIB)
     
       Uses a base integration object (default is \ref
@@ -307,6 +470,96 @@ namespace o2scl {
 
   };
 
+#ifdef O2SCL_NEVER_DEFINED
+
+  /** \brief An experimental adaptive integrator from 0 to \$ \infty \f$
+      based on \ref o2scl::inte_adapt_cern
+
+      (This class is now replaced by inte_il in inte.h)
+  */
+  template<class func_t=funct, 
+    class def_inte_t=inte_gauss56_cern<funct,double,
+    inte_gauss56_coeffs_double>,
+    size_t nsub=100,
+    class fp_t=double>
+    class inte_qagil_cern : public inte<func_t,fp_t> {
+    
+  protected:
+
+  /// A pointer to the user-specified function
+  func_t *user_func;
+  
+  /// The upper limit
+  fp_t upper_limit;
+
+  /// Transform to \f$ t \in (0,1] \f$
+  virtual fp_t transform(fp_t t) {
+    fp_t x=upper_limit-(1-t)/t, y;
+    y=(*user_func)(x);
+    /*
+      if (false) {
+      std::cout << upper_limit << " " << t << " " << y/t/t << std::endl;
+      char ch;
+      std::cin >> ch;
+      }
+    */
+    return y/t/t;
+  }
+
+  public:
+
+  inte_qagil_cern() {
+    it=&def_inte;
+    fo=std::bind(std::mem_fn<fp_t(fp_t)>(&inte_qagil_cern::transform),
+		 this,std::placeholders::_1);
+  }    
+  
+  /** \brief Internal function type based on floating-point type
+
+      \comment 
+      This type must be public so the user can change the
+      base integration object
+      \endcomment
+  */
+  typedef std::function<fp_t(fp_t)> internal_funct;
+
+  protected:
+
+  /// The base integration object
+  inte<internal_funct,fp_t> *it;
+  
+  /// Function object
+  internal_funct fo;
+  
+  public:  
+  
+  /** \brief Integrate function \c func from \c a to \c b
+      giving result \c res and error \c err
+  */
+  virtual int integ_err(func_t &func, fp_t a, fp_t b,
+			fp_t &res, fp_t &err) {
+    user_func=&func;
+    upper_limit=b;
+    int ret=it->integ_err(fo,0.0,1.0,res,err);
+    return ret;
+  }
+  
+  /// \name Integration object
+  //@{
+  /// Set the base integration object to use
+  int set_inte(inte<internal_funct,fp_t> &i) {
+    it=&i;
+    return 0;
+  }
+      
+  /// Default integration object
+  inte_adapt_cern<internal_funct,def_inte_t,nsub,fp_t> def_inte;
+  //@}
+
+  };
+
+#endif
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

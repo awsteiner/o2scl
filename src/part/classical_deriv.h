@@ -72,10 +72,15 @@ namespace o2scl {
       return;
     }
 
-    p.dndT=-p.nu/temper/temper*p.n+1.5*p.n/temper;
+    fp_t three_over_two=3, five_over_two=5;
+    three_over_two/=2;
+    five_over_two/=2;
+    
+    p.dndT=-p.nu/temper/temper*p.n+three_over_two*p.n/temper;
     p.dndmu=p.n/temper;
-    p.dsdT=2.5*p.dndT-p.nu*p.dndT/temper+p.n*p.nu/temper/temper;
-
+    p.dsdT=five_over_two*p.dndT-p.nu*p.dndT/temper+
+    p.n*p.nu/temper/temper;
+    
     return;
   }
 
@@ -95,10 +100,15 @@ namespace o2scl {
       return;
     }
 
-    p.dndT=-p.nu/temper/temper*p.n+1.5*p.n/temper;
+    fp_t three_over_two=3, five_over_two=5;
+    three_over_two/=2;
+    five_over_two/=2;
+    
+    p.dndT=-p.nu/temper/temper*p.n+three_over_two*p.n/temper;
     p.dndmu=p.n/temper;
-    p.dsdT=2.5*p.dndT-p.nu*p.dndT/temper+p.n*p.nu/temper/temper;
-  
+    p.dsdT=five_over_two*p.dndT-p.nu*p.dndT/temper+
+    p.n*p.nu/temper/temper;
+    
     return;
   }
 

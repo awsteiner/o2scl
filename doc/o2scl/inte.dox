@@ -1,18 +1,27 @@
 /** \page inte_section Integration
 
-    \section onedinte_subsect One-dimensional integration
+    \section onedinte_subsect One-dimensional Integration based on GSL,
+    CERNLIB, and Boost
 
-    Several classes integrate arbitrary one-dimensional functions
+    Several classes integrate arbitrary one-dimensional functions:
     - Integration over a finite interval: \ref o2scl::inte_adapt_cern,
     \ref o2scl::inte_gauss_cern, \ref o2scl::inte_gauss56_cern, 
-    \ref o2scl::inte_qag_gsl, and \ref o2scl::inte_qng_gsl.
-    - Integration from 0 to  \f$ \infty \f$ : \ref o2scl::inte_qagiu_gsl
-    - Integration from  \f$ -\infty \f$ to 0: \ref o2scl::inte_qagil_gsl
+    \ref o2scl::inte_kronrod_boost, \ref o2scl::inte_qag_gsl, 
+    and \ref o2scl::inte_qng_gsl. 
+    - Integration from \f$ a \f$ to \f$ \infty \f$ : 
+    \ref o2scl::inte_qagiu_gsl, \ref o2scl::inte_tanh_sinh_boost,
+    \ref o2scl::inte_exp_sinh_boost, and \ref o2scl::inte_iu_transform.
+    - Integration from  \f$ -\infty \f$ to \f$ b \f$: 
+    \ref o2scl::inte_qagil_gsl, \ref o2scl::inte_tanh_sinh_boost, 
+    \ref o2scl::inte_exp_sinh_boost, and \ref o2scl::inte_il_transform.
     - Integration from  \f$ -\infty \f$ to \f$ \infty \f$ : 
-    \ref o2scl::inte_qagi_gsl
+    \ref o2scl::inte_qagi_gsl, \ref o2scl::inte_tanh_sinh_boost, 
+    \ref o2scl::inte_sinh_sinh_boost, and \ref o2scl::inte_i_transform.
     - Integration over a finite interval for a function with
     singularities: \ref o2scl::inte_qags_gsl 
-    (see also \ref o2scl::inte_qaws_gsl). 
+    (See also \ref o2scl::inte_qaws_gsl.) The 
+    \ref o2scl::inte_tanh_sinh_boost class can also handle 
+    singularities near either endpoint.
     - Cauchy principal value integration over a finite interval:
     \ref o2scl::inte_cauchy_cern and \ref o2scl::inte_qawc_gsl
     - Integration over a function weighted by \c cos(x) or \c sin(x):
@@ -25,10 +34,9 @@
     \f]
     is performed by \ref o2scl::inte_qaws_gsl. 
 
-    All of these classes are children of \ref o2scl::inte, and the
-    relative and absolute tolerances are stored in \ref
-    o2scl::inte::tol_rel and \ref o2scl::inte::tol_abs, respectively.
-    
+    Note that some of the integrators support multiprecision,
+    see \ref multip_section .
+
     There are two competing factors that can slow down an adaptive
     integration algorithm: (1) each evaluation of the integrand can be
     numerically expensive, depending on how the function is defined,
@@ -40,7 +48,17 @@
     integrands with discontinuities or singular derivatives, a
     low-order rule (e.g., 15-point) is often more efficient. 
 
-    \section gslinte_subsect GSL-based integration routines
+    Recent installations of the \c Boost \c C++ libraries include
+    numerical integration routines. Because these are not available
+    yet on all HPC systems, the \o2 interfaces for these integrators
+    are header-only and available only if the \c
+    O2SCL_NEW_BOOST_INTEGRATION define constant is defined when
+    compiling your code with \o2 (this doesn't need to be done during
+    installation or when the \t configure script is run). See \ref
+    o2scl::inte_kronrod_boost, \ref o2scl::inte_tanh_sinh_boost, \ref
+    o2scl::inte_exp_sinh_boost and \ref o2scl::inte_sinh_sinh_boost .
+    
+    \section gslinte_subsect GSL-based Integration Details
 
     For the GSL-based integration routines, the variables \ref
     o2scl::inte::tol_abs and \ref o2scl::inte::tol_rel have the same

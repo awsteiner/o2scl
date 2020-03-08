@@ -48,7 +48,7 @@ namespace o2scl {
       information about the GSL integration classes.
   */
   template<class func_t=funct> class inte_qagiu_gsl : 
-  public inte_transform_gsl<func_t> {
+    public inte_transform_gsl<func_t> {
       
 #ifndef DOXGYEN_INTERNAL
 
@@ -63,15 +63,23 @@ namespace o2scl {
   
   /** \brief Integrate a function over the interval \f$ [a, \infty) \f$ 
       giving result \c res and error \c err
-
-      The value \c b is ignored.
   */
-  virtual int integ_err(func_t &func, double a, double b, 
+  virtual int integ_err(func_t &func, double a,
 			double &res, double &err) {
     lower_limit=a;
     return this->qags(func,0.0,1.0,this->tol_abs,this->tol_rel,&res,&err);
   }
 
+  /** \brief Integrate a function over the interval \f$ [a, \infty) \f$ 
+      giving result \c res and error \c err
+
+      The value \c b is ignored.
+  */
+  virtual int integ_err(func_t &func, double a, double b,
+			double &res, double &err) {
+    return integ_err(func,a,res,err);
+  }
+  
 #ifndef DOXYGEN_INTERNAL
 
   protected:

@@ -139,97 +139,6 @@ namespace o2scl {
 
   };
 
-  /** \brief Integrate over \f$ [a,\infty) \f$
-   */
-  template<class func_t=funct, class fp_t=double> class inte_iu :
-    public inte_base<func_t,fp_t> {
-    
-  public:
-  
-  /** \brief Integrate function \c func from \c a to \c b.
-   */
-  virtual fp_t integ(func_t &func, fp_t a) {
-    fp_t res;
-    int ret=integ_err(func,a,res,this->interror);
-    if (ret!=0) {
-      O2SCL_ERR2("Integration failed in inte::integ(), ",
-		 "but cannot return int.",o2scl::exc_efailed);
-    }
-    return res;
-  }
-
-  /** \brief Integrate function \c func from \c a to \c b and place
-      the result in \c res and the error in \c err
-  */
-  virtual int integ_err(func_t &func, fp_t a, 
-			fp_t &res, fp_t &err)=0;
-  
-  /// Return string denoting type ("inte_iu")
-  virtual const char *type() { return "inte_iu"; }
-
-  };
-
-  /** \brief Integrate over \f$ (-\infty,b] \f$
-   */
-  template<class func_t=funct, class fp_t=double> class inte_il :
-    public inte_base<func_t,fp_t> {
-    
-  public:
-  
-  /** \brief Integrate function \c func from \f$ - \infty \f$ to \c b.
-   */
-  virtual fp_t integ(func_t &func, fp_t b) {
-    fp_t res;
-    int ret=integ_err(func,b,res,this->interror);
-    if (ret!=0) {
-      O2SCL_ERR2("Integration failed in inte_il::integ(), ",
-		 "but cannot return int.",o2scl::exc_efailed);
-    }
-    return res;
-  }
-
-  /** \brief Integrate function \c func from \c a to \c b and place
-      the result in \c res and the error in \c err
-  */
-  virtual int integ_err(func_t &func, fp_t b, 
-			fp_t &res, fp_t &err)=0;
-  
-  /// Return string denoting type ("inte_il")
-  virtual const char *type() { return "inte_il"; }
-
-  };
-
-  /** \brief Integrate over \f$ (-\infty,\infty) \f$
-   */
-  template<class func_t=funct, class fp_t=double> class inte_i :
-    public inte_base<func_t,fp_t> {
-    
-  public:
-  
-  /** \brief Integrate function \c func from \f$ -\infty \f$
-      to \f$ \infty \f$
-   */
-  virtual fp_t integ(func_t &func) {
-    fp_t res;
-    int ret=integ_err(func,res,this->interror);
-    if (ret!=0) {
-      O2SCL_ERR2("Integration failed in inte_i::integ(), ",
-		 "but cannot return int.",o2scl::exc_efailed);
-    }
-    return res;
-  }
-
-  /** \brief Integrate function \c func from \f$ -\infty \f$
-      to \f$ \infty \f$ and place
-      the result in \c res and the error in \c err
-  */
-  virtual int integ_err(func_t &func, fp_t &res, fp_t &err)=0;
-  
-  /// Return string denoting type ("inte_i")
-  virtual const char *type() { return "inte_i"; }
-
-  };
-  
   /** \brief Integrate over \f$ (-\infty,b] \f$
 
       \note This class only works if the base integration
@@ -245,7 +154,7 @@ namespace o2scl {
       \f]
    */
   template<class func_t, class def_inte_t, class fp_t=double>
-    class inte_il_transform : public inte_il<func_t,fp_t> {
+    class inte_il_transform : public inte<func_t,fp_t> {
     
   protected:
 
@@ -303,6 +212,14 @@ namespace o2scl {
     int ret=it->integ_err(fo,0.0,1.0,res,err);
     return ret;
   }
+
+  /** \brief Integrate function \c func from \c a to \c b
+      giving result \c res and error \c err
+  */
+  virtual int integ_err(func_t &func, fp_t a, fp_t b,
+			fp_t &res, fp_t &err) {
+    return integ_err(func,b,res,err);
+  }
   
   /// \name Integration object
   //@{
@@ -337,7 +254,7 @@ namespace o2scl {
       
    */
   template<class func_t, class def_inte_t, class fp_t=double>
-    class inte_iu_transform : public inte_iu<func_t,fp_t> {
+    class inte_iu_transform : public inte<func_t,fp_t> {
     
   protected:
 
@@ -429,7 +346,7 @@ namespace o2scl {
       
    */
   template<class func_t, class def_inte_t, class fp_t=double>
-    class inte_i_transform : public inte_i<func_t,fp_t> {
+    class inte_i_transform : public inte<func_t,fp_t> {
     
   protected:
 

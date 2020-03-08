@@ -63,6 +63,7 @@ int main(void) {
   p_cdf.n=0.1;
   ct_cdf.calc_density(p_cdf,0.1);
   cout << p_cdf.mu << endl;
+  
 #endif
 
   t.report();

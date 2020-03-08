@@ -608,7 +608,7 @@ namespace o2scl {
 			  (&fermion_rel_tl<fp_t>::entropy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
       
-      fp_t prefac=f.g*pow(temper,3.0)/2.0/o2scl_const::pi2;
+      fp_t prefac=f.g*pow(temper,3.0)/2.0/this->pi2;
 
       // Compute the number density
     
@@ -646,7 +646,7 @@ namespace o2scl {
 			  (&fermion_rel_tl<fp_t>::deg_entropy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
 
-      fp_t prefac=f.g/2.0/o2scl_const::pi2;
+      fp_t prefac=f.g/2.0/this->pi2;
     
       // Compute the upper limit for degenerate integrals
 
@@ -833,13 +833,13 @@ namespace o2scl {
 			  this,std::placeholders::_1,std::ref(f),temper);
     
       f.ed=nit->integ(mfe,0.0,0.0);
-      f.ed*=f.g*pow(temper,4.0)/2.0/o2scl_const::pi2;
+      f.ed*=f.g*pow(temper,4.0)/2.0/this->pi2;
       if (!f.inc_rest_mass) f.ed-=f.n*f.m;
-      unc.ed=nit->get_error()*f.g*pow(temper,4.0)/2.0/o2scl_const::pi2;
+      unc.ed=nit->get_error()*f.g*pow(temper,4.0)/2.0/this->pi2;
     
       f.en=nit->integ(mfs,0.0,0.0);
-      f.en*=f.g*pow(temper,3.0)/2.0/o2scl_const::pi2;
-      unc.en=nit->get_error()*f.g*pow(temper,3.0)/2.0/o2scl_const::pi2;
+      f.en*=f.g*pow(temper,3.0)/2.0/this->pi2;
+      unc.en=nit->get_error()*f.g*pow(temper,3.0)/2.0/this->pi2;
       last_method+=3;
 
     } else {
@@ -880,8 +880,8 @@ namespace o2scl {
 	}
       
 	f.ed=dit->integ(mfe,0.0,ul);
-	f.ed*=f.g/2.0/o2scl_const::pi2;
-	unc.ed=dit->get_error()*f.g/2.0/o2scl_const::pi2;
+	f.ed*=f.g/2.0/this->pi2;
+	unc.ed=dit->get_error()*f.g/2.0/this->pi2;
       
 	if (ll>0.0) {
 	  f.en=dit->integ(mfs,ll,ul);
@@ -890,8 +890,8 @@ namespace o2scl {
 	  f.en=dit->integ(mfs,0.0,ul);
 	  last_method+=5;
 	}
-	f.en*=f.g/2.0/o2scl_const::pi2;
-	unc.en=dit->get_error()*f.g/2.0/o2scl_const::pi2;
+	f.en*=f.g/2.0/this->pi2;
+	unc.en=dit->get_error()*f.g/2.0/this->pi2;
       
       } else {
 
@@ -1306,8 +1306,8 @@ namespace o2scl {
 			  this,std::placeholders::_1,std::ref(f),T);
     
       nden=nit->integ(mfe,0.0,0.0);
-      nden*=f.g*pow(T,3.0)/2.0/o2scl_const::pi2;
-      unc.n=nit->get_error()*f.g*pow(T,3.0)/2.0/o2scl_const::pi2;
+      nden*=f.g*pow(T,3.0)/2.0/this->pi2;
+      unc.n=nit->get_error()*f.g*pow(T,3.0)/2.0/this->pi2;
     
       yy=(f.n-nden)/f.n;
 
@@ -1331,8 +1331,8 @@ namespace o2scl {
 	ul=sqrt(arg);
       
 	nden=dit->integ(mfe,0.0,ul);
-	nden*=f.g/2.0/o2scl_const::pi2;
-	unc.n=dit->get_error()*f.g/2.0/o2scl_const::pi2;
+	nden*=f.g/2.0/this->pi2;
+	unc.n=dit->get_error()*f.g/2.0/this->pi2;
       
       } else {
 
@@ -1450,7 +1450,7 @@ namespace o2scl {
 			    this,std::placeholders::_1,std::ref(f),T);
       
 	nden_p=nit->integ(mfe,0.0,0.0);
-	nden_p*=f.g*pow(T,3.0)/2.0/o2scl_const::pi2;
+	nden_p*=f.g*pow(T,3.0)/2.0/this->pi2;
 	if (!std::isfinite(nden_p)) {
 	  O2SCL_ERR("Value 'nden_p' not finite (3) in fermion_rel::pair_fun().",
 		    exc_einval);
@@ -1475,7 +1475,7 @@ namespace o2scl {
 	if (arg>0.0) {
 	  ul=sqrt(arg);
 	  nden_p=dit->integ(mfe,0.0,ul);
-	  nden_p*=f.g/2.0/o2scl_const::pi2;
+	  nden_p*=f.g/2.0/this->pi2;
 	} else {
 	  nden_p=0.0;
 	}
@@ -1553,7 +1553,7 @@ namespace o2scl {
 			   this,std::placeholders::_1,std::ref(f),T);
       
 	nden_ap=nit->integ(mf,0.0,0.0);
-	nden_ap*=f.g*pow(T,3.0)/2.0/o2scl_const::pi2;
+	nden_ap*=f.g*pow(T,3.0)/2.0/this->pi2;
 	if (!std::isfinite(nden_ap)) {
 	  O2SCL_ERR2("Value 'nden_ap' not finite (7) in",
 		     "fermion_rel::pair_fun().",
@@ -1579,7 +1579,7 @@ namespace o2scl {
 	if (arg>0.0) {
 	  ul=sqrt(arg);
 	  nden_ap=dit->integ(mf,0.0,ul);
-	  nden_ap*=f.g/2.0/o2scl_const::pi2;
+	  nden_ap*=f.g/2.0/this->pi2;
 	} else {
 	  nden_ap=0.0;
 	}

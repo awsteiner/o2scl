@@ -46,21 +46,17 @@ namespace o2scl {
       This class calls the error handler if the
       error returned by boost is larger than \ref inte::tol_rel .
 
-      Native range is -1 to 1, but supports infinite limits on
-      either (or both) sides.
+      The native range of the integrator is -1 to 1, but supports
+      infinite limits on either (or both) sides.
   */
   template<class func_t=funct, size_t max_refine=15, class fp_t=double>
-    class inte_tanh_sinh_boost :
-    public inte<func_t, fp_t> {
+    class inte_tanh_sinh_boost : public inte<func_t, fp_t> {
     
   protected:
 
   /// The boost integration object
   boost::math::quadrature::tanh_sinh<fp_t> it;
   
-  /// L1 norm
-  fp_t L1norm;
-
   public:
 
   inte_tanh_sinh_boost() : it(max_refine) {
@@ -82,11 +78,10 @@ namespace o2scl {
     return 0;
   }
   
-  /** \brief Integrate function \c func from \c a to \c b and place
+  /** \brief Integrate function \c func from -1 to 1 and place
       the result in \c res and the error in \c err
   */
-  virtual int integ_err(func_t &func, 
-			fp_t &res, fp_t &err) {
+  virtual int integ_err(func_t &func, fp_t &res, fp_t &err) {
     res=it.integrate(func,this->tol_rel,&err,&L1norm);
     if (err>this->tol_rel) {
       O2SCL_ERR2("Failed to achieve tolerance in ",
@@ -95,6 +90,9 @@ namespace o2scl {
     return 0;
   }
   
+  /// L1 norm
+  fp_t L1norm;
+
   };
   
   /** \brief Exp-sinh integration class (Boost)
@@ -106,17 +104,13 @@ namespace o2scl {
       any semi-infinite range is supported.
   */
   template<class func_t=funct, size_t max_refine=15, class fp_t=double>
-    class inte_exp_sinh_boost :
-    public inte<func_t, fp_t> {
+    class inte_exp_sinh_boost : public inte<func_t, fp_t> {
     
   protected:
 
   /// The boost integration object
   boost::math::quadrature::exp_sinh<fp_t> it;
   
-  /// L1 norm
-  fp_t L1norm;
-
   public:
 
   inte_exp_sinh_boost() : it(max_refine) {
@@ -151,6 +145,9 @@ namespace o2scl {
     return 0;
   }
   
+  /// L1 norm
+  fp_t L1norm;
+
   };
   
   /** \brief Sinh-sinh integration class (Boost)
@@ -161,16 +158,13 @@ namespace o2scl {
       Only infinite limits (upper and lower) are supported.
   */
   template<class func_t=funct, size_t max_refine=15, class fp_t=double>
-    class inte_sinh_sinh_boost {
+    class inte_sinh_sinh_boost : public inte<func_t,fp_t> {
     
   protected:
 
   /// The boost integration object
   boost::math::quadrature::sinh_sinh<fp_t> it;
   
-  /// L1 norm
-  fp_t L1norm;
-
   public:
 
   inte_sinh_sinh_boost() : it(max_refine) {
@@ -179,7 +173,7 @@ namespace o2scl {
   virtual ~inte_sinh_sinh_boost() {
   }
     
-  /** \brief Integrate function \c func from \c a to \c b and place
+  /** \brief Integrate function \c func and place
       the result in \c res and the error in \c err
   */
   virtual int integ_err(func_t &func, 
@@ -191,7 +185,20 @@ namespace o2scl {
     }
     return 0;
   }
+
+  /** \brief Integrate function \c func and place
+      the result in \c res and the error in \c err
+
+      \note The values of \c a and \c b are ignored.
+   */
+  virtual int integ_err(func_t &func, double a, double b,
+			fp_t &res, fp_t &err) {
+    return integ_err(func,res,err);
+  }
   
+  /// L1 norm
+  fp_t L1norm;
+
   };
   
 #ifndef DOXYGEN_NO_O2NS

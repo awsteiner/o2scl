@@ -26,9 +26,17 @@
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/eos_sn.h>
 
+#ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#endif
+
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
+
+#ifdef O2SCL_LD_TYPES
+typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+#endif
 
 int main(void) {
 
@@ -83,6 +91,13 @@ int main(void) {
   inte_qag_gsl<> &qag2=dynamic_cast<inte_qag_gsl<> &>(*fr.dit.get());
   t.test_gen(qag->get_rule()==qag2.get_rule(),"downcast");
   
+  //#ifdef O2SCL_LD_TYPES
+  
+  //fermion_rel_tl<long double> fermion_rel_ld;
+  //fermion_rel_tl<cpp_dec_float_50> fermion_rel_cdf;
+  
+  //#endif
+
   t.report();
 
   return 0;
