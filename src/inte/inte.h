@@ -205,6 +205,8 @@ namespace o2scl {
 
   /** \brief Integrate function \c func from \c a to \c b
       giving result \c res and error \c err
+
+      The value given is \c a is ignored.
   */
   virtual int integ_err(func_t &func, fp_t a, fp_t b,
 			fp_t &res, fp_t &err) {
