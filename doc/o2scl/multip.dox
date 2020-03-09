@@ -19,7 +19,8 @@
     List of classes which support multiprecision types
     - Numerical differentiation: \ref o2scl::deriv_gsl
     - Function approximation: \ref o2scl::cheb_approx_tl
-    - Root-finding: \ref o2scl::root_brent_gsl 
+    - Root-finding: \ref o2scl::root_brent_gsl and
+    \ref o2scl::root_toms748
     - String to double conversion: \ref o2scl::dtos()
     - Integration: \ref o2scl::inte_gauss56_cern, \ref
     o2scl::inte_gauss_cern, \ref o2scl::inte_adapt_cern, \ref

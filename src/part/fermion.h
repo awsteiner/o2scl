@@ -174,7 +174,7 @@ namespace o2scl {
 	if (f.ms<=0.0) {
 	  f.ed=f.g*(pow(f.kf,4.0)/8.0/pi2);
 	} else {
-	  efs=gsl_hypot(f.kf,f.ms);
+	  efs=o2hypot(f.kf,f.ms);
 	  r=(f.kf+efs)/f.ms;
 	  f.ed=f.g/16.0/pi2*(2.0*f.kf*pow(efs,3.0)-f.kf*efs*f.ms*f.ms
 			     -pow(f.ms,4.0)*log(r));
@@ -199,7 +199,7 @@ namespace o2scl {
 	if (f.ms<=0.0) {
 	  f.pr=f.g*(pow(f.kf,4.0)/24.0/pi2);
 	} else {
-	  efs=gsl_hypot(f.kf,f.ms);
+	  efs=o2hypot(f.kf,f.ms);
 	  r=(f.kf+efs)/f.ms;
 	  f.pr=f.g/48.0/pi2*(2.0*efs*pow(f.kf,3.0)-
 			     3.0*f.kf*efs*f.ms*f.ms
@@ -256,7 +256,7 @@ namespace o2scl {
       if (f.non_interacting) { f.ms=f.m; }
 
       f.kf=cbrt(6.0*pi2/f.g*f.n);
-      f.nu=gsl_hypot(f.kf,f.ms);
+      f.nu=o2hypot(f.kf,f.ms);
       energy_density_zerot(f);
       pressure_zerot(f);
       f.en=0.0;

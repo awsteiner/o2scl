@@ -688,7 +688,7 @@ namespace o2scl {
   fp_t density_T_fun(fp_t u, fermion_deriv &f, fp_t T) {
     fp_t k=u*(T), E, ret;
     if (f.inc_rest_mass) {
-      E=gsl_hypot(k,f.ms);
+      E=o2hypot(k,f.ms);
       if (intl_method==direct) {
 	fp_t ff=fermi_function(E,f.nu,T,exp_limit);
 	ret=k*k*(E-f.nu)/T*ff*(1.0-ff);
@@ -697,7 +697,7 @@ namespace o2scl {
 	  T*fermi_function(E,f.nu,T,exp_limit);
       }
     } else {
-      E=gsl_hypot(k,f.ms);
+      E=o2hypot(k,f.ms);
       if (intl_method==direct) {
 	E-=f.m;
 	fp_t ff=fermi_function(E,f.nu,T,exp_limit);
@@ -713,7 +713,7 @@ namespace o2scl {
   fp_t density_mu_fun(fp_t u, fermion_deriv &f, fp_t T) {
     fp_t k=u*(T), E, ret;
     if (f.inc_rest_mass) {
-      E=gsl_hypot(k,f.ms);
+      E=o2hypot(k,f.ms);
       if (intl_method==direct) {
 	fp_t ff=fermi_function(E,f.nu,T,exp_limit);
 	ret=k*k*ff*(1.0-ff);
@@ -721,7 +721,7 @@ namespace o2scl {
 	ret=T*(E*E+k*k)/E*fermi_function(E,f.nu,T,exp_limit);
       }
     } else {
-      E=gsl_hypot(k,f.ms);
+      E=o2hypot(k,f.ms);
       if (intl_method==direct) {
 	E-=f.m;
 	fp_t ff=fermi_function(E,f.nu,T,exp_limit);
@@ -736,7 +736,7 @@ namespace o2scl {
   fp_t entropy_T_fun(fp_t u, fermion_deriv &f, fp_t T) {
     fp_t k=u*T, E, ret;
     if (f.inc_rest_mass) {
-      E=gsl_hypot(k,f.ms);
+      E=o2hypot(k,f.ms);
       if (intl_method==direct) {
 	fp_t ff=fermi_function(E,f.nu,T,exp_limit);
 	ret=T*k*k*ff*(1.0-ff)*pow(E-f.nu,2.0)/pow(T,3.0);
@@ -746,7 +746,7 @@ namespace o2scl {
 	  fermi_function(E,f.nu,T,exp_limit);
       }
     } else {
-      E=gsl_hypot(k,f.ms);
+      E=o2hypot(k,f.ms);
       if (intl_method==direct) {
 	E-=f.m;
 	fp_t ff=fermi_function(E,f.nu,T,exp_limit);
@@ -763,7 +763,7 @@ namespace o2scl {
   fp_t density_ms_fun(fp_t u, fermion_deriv &f, fp_t T) {
     fp_t k=u*T, E, ret;
     if (f.inc_rest_mass) {
-      E=gsl_hypot(k,f.ms);
+      E=o2hypot(k,f.ms);
       if (intl_method==direct) {
 	fp_t ff=fermi_function(E,f.nu,T,exp_limit);
 	ret=-k*k*f.ms/(E)/T*ff*(1.0-ff);
@@ -771,7 +771,7 @@ namespace o2scl {
 	ret=-f.ms*fermi_function(E,f.nu,T,exp_limit);
       }
     } else {
-      E=gsl_hypot(k,f.ms);
+      E=o2hypot(k,f.ms);
       if (intl_method==direct) {
 	E-=f.m;
 	fp_t ff=fermi_function(E,f.nu,T,exp_limit);
@@ -793,7 +793,7 @@ namespace o2scl {
   fp_t deg_density_T_fun(fp_t k, fermion_deriv &f, fp_t T) {
     fp_t E, ret;
     if (f.inc_rest_mass) {
-      E=gsl_hypot(k,f.ms);
+      E=o2hypot(k,f.ms);
       if (intl_method==direct) {
 	fp_t ff=fermi_function(E,f.nu,T,exp_limit);
 	ret=k*k*(E-f.nu)/T/T*ff*(1.0-ff);
@@ -802,7 +802,7 @@ namespace o2scl {
 	  fermi_function(E,f.nu,T,exp_limit);
       }
     } else {
-      E=gsl_hypot(k,f.ms);
+      E=o2hypot(k,f.ms);
       if (intl_method==direct) {
 	E-=f.m;
 	fp_t ff=fermi_function(E,f.nu,T,exp_limit);
@@ -818,7 +818,7 @@ namespace o2scl {
   fp_t deg_density_mu_fun(fp_t k, fermion_deriv &f, fp_t T) {
     fp_t E, ret;
     if (f.inc_rest_mass) {
-      E=gsl_hypot(k,f.ms);
+      E=o2hypot(k,f.ms);
       if (intl_method==direct) {
 	fp_t ff=fermi_function(E,f.nu,T,exp_limit);
 	ret=k*k/T*ff*(1.0-ff);
@@ -826,7 +826,7 @@ namespace o2scl {
 	ret=(E*E+k*k)/E*fermi_function(E,f.nu,T,exp_limit);
       }
     } else {
-      E=gsl_hypot(k,f.ms);
+      E=o2hypot(k,f.ms);
       if (intl_method==direct) {
 	E-=f.m;
 	fp_t ff=fermi_function(E,f.nu,T,exp_limit);
@@ -840,7 +840,7 @@ namespace o2scl {
 
   fp_t deg_entropy_T_fun(fp_t k, fermion_deriv &f, fp_t T) {
     fp_t E, ret;
-    E=gsl_hypot(k,f.ms);
+    E=o2hypot(k,f.ms);
     if (f.inc_rest_mass) {
       fp_t ff=fermi_function(E,f.nu,T,exp_limit);
       if (intl_method==direct) {
@@ -864,7 +864,7 @@ namespace o2scl {
   fp_t deg_density_ms_fun(fp_t k, fermion_deriv &f, fp_t T) {
     fp_t E, ret;
     if (f.inc_rest_mass) {
-      E=gsl_hypot(k,f.ms);
+      E=o2hypot(k,f.ms);
       if (intl_method==direct) {
 	fp_t ff=fermi_function(E,f.nu,T,exp_limit);
 	ret=-k*k*f.ms/E/T*ff*(1.0-ff);
@@ -872,7 +872,7 @@ namespace o2scl {
 	ret=-f.ms*fermi_function(E,f.nu,T,exp_limit);
       }
     } else {
-      E=gsl_hypot(k,f.ms);
+      E=o2hypot(k,f.ms);
       if (intl_method==direct) {
 	E-=f.m;
 	fp_t ff=fermi_function(E,f.nu,T,exp_limit);

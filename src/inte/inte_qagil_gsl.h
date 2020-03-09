@@ -40,7 +40,7 @@ namespace o2scl {
       semi-open interval \f$ (0, 1] \f$ via a variable transformation,
       \f[
       \int_{-\infty}^b f(x)~dx =
-      \int_0^1 f(b - (1-t)/t)t^{-2}~dt,
+      \int_0^1 f\left[b - (1-t)/t\right]t^{-2}~dt,
       \f]
       and the right hand side is evaluated with \ref o2scl::inte_qags_gsl.
 
@@ -63,13 +63,21 @@ namespace o2scl {
     
   /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b
       and place the result in \c res and the error in \c err
-      
-      The value given in \c a is ignored.
   */
   virtual int integ_err(func_t &func, double b, 
 			double &res, double &err) {
     upper_limit=b;
     return this->qags(func,0.0,1.0,this->tol_abs,this->tol_rel,&res,&err);
+  }
+
+  /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b
+      and place the result in \c res and the error in \c err
+      
+      The value given is \c a is ignored.
+  */
+  virtual int integ_err(func_t &func, double a, double b, 
+			double &res, double &err) {
+    return integ_err(func,b,res,err);
   }
 
   protected:

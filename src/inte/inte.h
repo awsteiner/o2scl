@@ -48,11 +48,11 @@ namespace o2scl {
       classes report the number of function evaluations used
       in addition to the number of iterations which were taken.
   */
-  template<class func_t=funct, class fp_t=double> class inte_base {
+  template<class func_t=funct, class fp_t=double> class inte {
     
   public:
   
-  inte_base() {
+  inte() {
     tol_rel=1.0e-8;
     tol_abs=1.0e-8;
     verbose=0;
@@ -60,7 +60,7 @@ namespace o2scl {
     err_nonconv=true;
   }
 
-  virtual ~inte_base() {}
+  virtual ~inte() {}
 
   /** \brief Verbosity
    */
@@ -95,9 +95,6 @@ namespace o2scl {
   */
   fp_t get_error() { return interror; }
   
-  /// Return string denoting type ("inte_base")
-  virtual const char *type() { return "inte_base"; }
-  
 #ifndef DOXYGEN_INTERNAL
   
   protected:
@@ -106,13 +103,6 @@ namespace o2scl {
   fp_t interror;
   
 #endif
-  
-  };
-
-  /** \brief Integrate over \f$ [a,b] \f$
-   */
-  template<class func_t=funct, class fp_t=double> class inte :
-    public inte_base<func_t,fp_t> {
 
   public:
   

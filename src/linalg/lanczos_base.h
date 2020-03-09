@@ -38,7 +38,7 @@ namespace o2scl_linalg {
       allocation type. 
       
       The tridiagonalization routine was rewritten from the EISPACK
-      routines \c imtql1.f (but uses \c gsl_hypot() instead of \c
+      routines \c imtql1.f (but uses \c std::hypot() instead of \c
       pythag.f). 
 
       \future The function eigen_tdiag() automatically sorts the
@@ -216,7 +216,7 @@ namespace o2scl_linalg {
 
 	// Form shift
 	g=(O2SCL_IX(diag,l)-p)/(2.0*O2SCL_IX(off_diag,l-1));
-	r=gsl_hypot(g,1.0);
+	r=std::hypot(g,1.0);
       
 	g=O2SCL_IX(diag,m-1)-p+O2SCL_IX(off_diag,l-1)/
 	  (g+(g>=0.0 ? fabs(r) : -fabs(r)));
@@ -230,7 +230,7 @@ namespace o2scl_linalg {
 	  i=m-ii;
 	  f=s*O2SCL_IX(off_diag,i-1);
 	  b=c*O2SCL_IX(off_diag,i-1);
-	  r=gsl_hypot(f,g);
+	  r=std::hypot(f,g);
 	  O2SCL_IX(off_diag,i)=r;
 	
 	  if (r==0.0) {

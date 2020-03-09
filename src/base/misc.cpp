@@ -39,6 +39,8 @@
 // For stat() in file_exists()
 #include <sys/stat.h>
 
+#include <boost/math/special_functions/hypot.hpp>
+
 #include <o2scl/misc.h>
 
 using namespace std;
@@ -72,6 +74,18 @@ bool o2scl::o2isfinite(const double x) {
   return std::isfinite(x);
 }
 
+float o2scl::o2hypot(const float x, const float y) {
+  return hypotf(x,y);
+}
+
+double o2scl::o2hypot(const double x, const double y) {
+  return hypot(x,y);
+}
+
+long double o2scl::o2hypot(const long double x, const long double y) {
+  return hypotl(x,y);
+}
+
 #ifdef O2SCL_LD_TYPES
 
 boost::multiprecision::cpp_dec_float_50
@@ -81,6 +95,11 @@ o2scl::o2abs(const boost::multiprecision::cpp_dec_float_50 x) {
 
 bool o2scl::o2isfinite(const boost::multiprecision::cpp_dec_float_50 x) {
   return isfinite(x);
+}
+boost::multiprecision::cpp_dec_float_50
+o2scl::o2hypot(const boost::multiprecision::cpp_dec_float_50 x,
+		 const boost::multiprecision::cpp_dec_float_50 y) {
+return boost::math::hypot(x,y);
 }
 
 #endif

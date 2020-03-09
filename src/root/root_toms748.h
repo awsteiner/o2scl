@@ -37,19 +37,19 @@ namespace o2scl {
   /** \brief Convergence test similar to
       <tt>gsl_root_test_interval()</tt> for \ref root_toms748
    */
-  template <class T> class gsl_tolerance {
+  template <class fp_t=double> class gsl_tolerance {
     
   public:
     
-    gsl_tolerance(double tol_abs, double tol_rel) {
+    gsl_tolerance(fp_t tol_abs, fp_t tol_rel) {
       epsabs=tol_abs;
       epsrel=tol_rel;
     }
     
     bool operator()(const T &a, const T &b) {
-      double abs_a=fabs(a);
-      double abs_b=fabs(b);
-      double min_abs;
+      fp_t abs_a=fabs(a);
+      fp_t abs_b=fabs(b);
+      fp_t min_abs;
       if ((a > 0.0 && b > 0.0) || (a < 0.0 && b < 0.0)) {
 	if (abs_a<abs_b) min_abs=abs_a;
 	else min_abs=abs_b;
@@ -57,7 +57,7 @@ namespace o2scl {
 	min_abs=0.0;
       }
       
-      double tolerance = epsabs+epsrel*min_abs;
+      fp_t tolerance = epsabs+epsrel*min_abs;
       
       if (fabs(b-a) < tolerance) {
 	return true;
@@ -67,8 +67,8 @@ namespace o2scl {
     
   private:
     
-    double epsabs;
-    double epsrel;
+    fp_t epsabs;
+    fp_t epsrel;
     
   };
   
@@ -78,8 +78,8 @@ namespace o2scl {
       This class currently uses \ref o2scl::gsl_tolerance as a test,
       since this works even when the root is zero.
    */
-  template<class func_t=funct> class root_toms748 : 
-  public root_bkt<func_t> {
+  template<class func_t=funct, class fp_t=double> class root_toms748 : 
+    public root_bkt<func_t, fp_t> {
     
   public:
     
@@ -92,14 +92,14 @@ namespace o2scl {
   virtual const char *type() { return "root_toms748"; }
   
   /// Solve \c func using \c x as an initial guess, returning \c x.
-  virtual int solve_bkt(double &x1, double x2, func_t &func) {
-    std::pair<double,double> res;
+  virtual int solve_bkt(fp_t &x1, fp_t x2, func_t &func) {
+    std::pair<fp_t,fp_t> res;
     size_t digits;
     if (this->tol_rel>1.0) digits=1;
     else if (this->tol_rel<=0.0) digits=18;
     else digits=((size_t)(-log10(this->tol_rel)));
-    gsl_tolerance<double> tol(this->tol_abs,this->tol_rel);
-    //boost::math::tools::eps_tolerance<double> tol(digits);
+    gsl_tolerance<fp_t> tol(this->tol_abs,this->tol_rel);
+    //boost::math::tools::eps_tolerance<fp_t> tol(digits);
     size_t niter=((size_t)this->ntrial);
     res=boost::math::tools::toms748_solve(func,x1,x2,tol,niter);
     this->last_ntrial=niter;

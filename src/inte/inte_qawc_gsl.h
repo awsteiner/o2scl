@@ -43,7 +43,7 @@ namespace o2scl {
       guide for general information about the GSL integration classes.
   */
   template<class func_t> class inte_cheb_gsl : 
-    public inte_transform_gsl<func_t>, inte<func_t,double> {
+    public inte_transform_gsl<func_t> {
     
   protected:
     

@@ -24,6 +24,10 @@
 #include <o2scl/root_brent_gsl.h>
 #include <o2scl/test_mgr.h>
 
+#ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#endif
+
 using namespace std;
 using namespace o2scl;
 
@@ -41,6 +45,39 @@ public:
     return atan((x-0.2)*4)*(1.0+sin((x-0.2)*50.0)/1.1);
   }
 };
+
+#ifdef O2SCL_LD_TYPES
+
+typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+
+class cl_ld {
+
+  public:
+
+  long double mfn(long double x) {
+    long double one=1;
+    long double five=5;
+    long double ten=10;
+    return atan((x-one/five)*4)*(one+sin((x-one/five)*five*ten)/
+    (one+one/ten));
+  }
+};
+
+class cl_cdf {
+
+  public:
+
+  cpp_dec_float_50 mfn(cpp_dec_float_50 x) {
+    cpp_dec_float_50 one=1;
+    cpp_dec_float_50 five=5;
+    cpp_dec_float_50 ten=10;
+    return atan((x-one/five)*4)*(one+sin((x-one/five)*five*ten)/
+    (one+one/ten));
+  }
+};
+
+
+#endif
 
 int main(void) {
 
@@ -135,6 +172,26 @@ int main(void) {
   grb2.solve_bkt(a,b,fmf);
   t.test_rel(a,0.2,1.0e-10,"1");
   cout << a << " " << gfn(a) << endl;
+
+#ifdef O2SCL_LD_TYPES
+
+  cl_ld acl_ld;
+  funct_ld fmf_ld=std::bind(std::mem_fn<long double(long double)>
+			(&cl_ld::mfn),&acl_ld,std::placeholders::_1);
+  root_brent_gsl<funct_ld,long double> grb2_ld;
+  long double a_ld=-1, b_ld=1;
+  grb2_ld.solve_bkt(a_ld,b_ld,fmf_ld);
+  cout << a_ld << endl;
+
+  cl_cdf acl_cdf;
+  funct_cdf50 fmf_cdf=std::bind(std::mem_fn<cpp_dec_float_50(cpp_dec_float_50)>
+			(&cl_cdf::mfn),&acl_cdf,std::placeholders::_1);
+  root_brent_gsl<funct_cdf50,cpp_dec_float_50> grb2_cdf;
+  cpp_dec_float_50 a_cdf=-1, b_cdf=1;
+  grb2_cdf.solve_bkt(a_cdf,b_cdf,fmf_cdf);
+  cout << a_cdf << endl;
+
+#endif
 
   t.report();
   return 0;

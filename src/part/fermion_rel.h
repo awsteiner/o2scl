@@ -966,10 +966,10 @@ namespace o2scl {
     f.en+=antip.en;
 
     // Add up uncertainties
-    unc.n=gsl_hypot(unc.n,unc_n);
-    unc.ed=gsl_hypot(unc.ed,unc_ed);
-    unc.pr=gsl_hypot(unc.pr,unc_pr);
-    unc.en=gsl_hypot(unc.ed,unc_en);
+    unc.n=o2hypot(unc.n,unc_n);
+    unc.ed=o2hypot(unc.ed,unc_ed);
+    unc.pr=o2hypot(unc.pr,unc_pr);
+    unc.en=o2hypot(unc.ed,unc_en);
 
     return;
   }
@@ -1197,7 +1197,7 @@ namespace o2scl {
   /// The integrand for the density for degenerate fermions
   fp_t deg_density_fun(fp_t k, fermion &f, fp_t T) {
       
-    fp_t E=gsl_hypot(k,f.ms), ret;
+    fp_t E=o2hypot(k,f.ms), ret;
     if (!f.inc_rest_mass) E-=f.m;
       
     ret=k*k/(1.0+exp((E-f.nu)/T));
@@ -1213,7 +1213,7 @@ namespace o2scl {
   /// The integrand for the energy density for degenerate fermions
   fp_t deg_energy_fun(fp_t k, fermion &f, fp_t T) {
 
-    fp_t E=gsl_hypot(k,f.ms), ret;
+    fp_t E=o2hypot(k,f.ms), ret;
     if (!f.inc_rest_mass) E-=f.m;
 
     ret=k*k*E/(1.0+exp((E-f.nu)/T));
@@ -1229,7 +1229,7 @@ namespace o2scl {
   /// The integrand for the entropy density for degenerate fermions
   fp_t deg_entropy_fun(fp_t k, fermion &f, fp_t T) {
   
-    fp_t E=gsl_hypot(k,f.ms), ret;
+    fp_t E=o2hypot(k,f.ms), ret;
     if (!f.inc_rest_mass) E-=f.m;
 
     // If the argument to the exponential is really small, then the

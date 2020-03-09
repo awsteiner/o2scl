@@ -62,7 +62,7 @@ namespace o2scl {
     on Ubuntu. 
   */
   
-  /// \name New abs() function
+  /// \name New compability functions
   //@{
   /** \brief Absolute value for single precision numbers
    */
@@ -99,6 +99,28 @@ namespace o2scl {
   /** \brief Compatbility function for isfinite()
    */
   bool o2isfinite(const boost::multiprecision::cpp_dec_float_50 x);
+
+#endif
+  
+  /** \brief Compatbility function for hypot()
+  */
+  float o2hypot(const float x, const float y);
+  
+  /** \brief Compatbility function for hypot()
+  */
+  double o2hypot(const double x, const double y);
+  
+  /** \brief Compatbility function for hypot()
+  */
+  long double o2hypot(const long double x, const long double y);
+
+#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
+
+  /** \brief Compatbility function for hypot()
+   */
+  boost::multiprecision::cpp_dec_float_50
+    o2hypot(const boost::multiprecision::cpp_dec_float_50 x,
+	    const boost::multiprecision::cpp_dec_float_50 y);
 
 #endif
   
