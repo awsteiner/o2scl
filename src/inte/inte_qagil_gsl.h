@@ -64,7 +64,7 @@ namespace o2scl {
   /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b
       and place the result in \c res and the error in \c err
   */
-  virtual int integ_err(func_t &func, double b, 
+  virtual int integ_il_err(func_t &func, double b, 
 			double &res, double &err) {
     upper_limit=b;
     return this->qags(func,0.0,1.0,this->tol_abs,this->tol_rel,&res,&err);
@@ -77,7 +77,7 @@ namespace o2scl {
   */
   virtual int integ_err(func_t &func, double a, double b, 
 			double &res, double &err) {
-    return integ_err(func,b,res,err);
+    return integ_il_err(func,b,res,err);
   }
 
   protected:

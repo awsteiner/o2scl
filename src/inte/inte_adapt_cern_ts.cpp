@@ -165,7 +165,7 @@ int main(void) {
     //inte_qagil_cern<funct> iqc;
     double exact=1.0-cos(100.0/101.0);
     funct tf2=std::bind(sin_recip,std::placeholders::_1);
-    iqc.integ_err(tf2,-1.0,calc,ei);
+    iqc.integ_il_err(tf2,-1.0,calc,ei);
     diff=fabs(calc-exact);
     cout << calc << " " << exact << " " << diff << " " << ei << endl;
     t.test_rel<double>(calc,exact,1.0e-12,"iqc double");
@@ -192,7 +192,7 @@ int main(void) {
     long double calc_ld, ei_ld;
     iqc_ld.def_inte.tol_rel=1.0e-15;
     iqc_ld.def_inte.tol_abs=1.0e-15;
-    iqc_ld.integ_err(tf2_ld,-1.0,calc_ld,ei_ld);
+    iqc_ld.integ_il_err(tf2_ld,-1.0,calc_ld,ei_ld);
     long double diff_ld=fabs(calc_ld-exact_ld);
     cout << calc_ld << " " << exact_ld << " "
 	 << diff_ld << " " << ei_ld << endl;
@@ -220,7 +220,7 @@ int main(void) {
     cpp_dec_float_50 calc_cdf, ei_cdf;
     iqc_cdf.def_inte.tol_rel=1.0e-30;
     iqc_cdf.def_inte.tol_abs=1.0e-30;
-    iqc_cdf.integ_err(tf2_cdf,-one,calc_cdf,ei_cdf);
+    iqc_cdf.integ_il_err(tf2_cdf,-one,calc_cdf,ei_cdf);
     cpp_dec_float_50 diff_cdf=fabs(calc_cdf-exact_cdf);
     cout << calc_cdf << " " << exact_cdf << " "
 	 << diff_cdf << " " << ei_cdf << endl;

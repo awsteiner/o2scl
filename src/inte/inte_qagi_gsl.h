@@ -1,4 +1,4 @@
- /*
+/*
   -------------------------------------------------------------------
   
   Copyright (C) 2006-2020, Jerry Gagelman and Andrew W. Steiner
@@ -42,33 +42,40 @@ namespace o2scl {
   template<class func_t=funct > class inte_qagi_gsl : 
     public inte_transform_gsl<func_t> {
     
-    public:
+  public:
       
-    /** \brief Integrate function \c func from \f$ \infty \f$ 
-	to \f$ \infty \f$ giving result \c res and error \c err
+  /** \brief Integrate function \c func from \f$ \infty \f$ 
+      to \f$ \infty \f$ giving result \c res and error \c err
+  */
+  virtual int integ_i_err(func_t &func, double &res, double &err) {
+    return this->qags(func,0.0,1.0,this->tol_abs,this->tol_rel,&res,&err);
+  }
+    
+  /** \brief Integrate function \c func from \f$ \infty \f$ 
+      to \f$ \infty \f$ giving result \c res and error \c err
 	
-	The values \c a and \c b are ignored
-    */
-    virtual int integ_err(func_t &func, double a, double b, 
-			  double &res, double &err) {
-      return this->qags(func,0.0,1.0,this->tol_abs,this->tol_rel,&res,&err);
-    }
+      The values \c a and \c b are ignored
+  */
+  virtual int integ_err(func_t &func, double a, double b, 
+			double &res, double &err) {
+    return integ_i_err(func,res,err);
+  }
     
 #ifndef DOXYGEN_INTERNAL
     
-    protected:
+  protected:
     
-    /// Tranformation to \f$ t \in (0,1] \f$ 
-    virtual double transform(double t, func_t &func) {
-      double x=(1-t)/t, y1, y2;
-      y1=func(x);
-      y2=func(-x);
-      return (y1+y2)/t/t;
-    }
+  /// Tranformation to \f$ t \in (0,1] \f$ 
+  virtual double transform(double t, func_t &func) {
+    double x=(1-t)/t, y1, y2;
+    y1=func(x);
+    y2=func(-x);
+    return (y1+y2)/t/t;
+  }
     
 #endif
       
-    };
+  };
   
 #ifndef DOXYGEN_NO_O2NS
 }

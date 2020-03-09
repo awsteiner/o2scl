@@ -195,7 +195,7 @@ namespace o2scl {
   /** \brief Integrate function \c func from \c a to \c b
       giving result \c res and error \c err
   */
-  virtual int integ_err(func_t &func, fp_t b,
+  virtual int integ_il_err(func_t &func, fp_t b,
 			fp_t &res, fp_t &err) {
     user_func=&func;
     upper_limit=b;
@@ -208,7 +208,7 @@ namespace o2scl {
   */
   virtual int integ_err(func_t &func, fp_t a, fp_t b,
 			fp_t &res, fp_t &err) {
-    return integ_err(func,b,res,err);
+    return integ_il_err(func,b,res,err);
   }
   
   /// \name Integration object
@@ -295,7 +295,7 @@ namespace o2scl {
   /** \brief Integrate function \c func from \c a to \c b
       giving result \c res and error \c err
   */
-  virtual int integ_err(func_t &func, fp_t a, 
+  virtual int integ_iu_err(func_t &func, fp_t a, 
 			fp_t &res, fp_t &err) {
     user_func=&func;
     lower_limit=a;
@@ -384,7 +384,7 @@ namespace o2scl {
   /** \brief Integrate function \c func 
       giving result \c res and error \c err
   */
-  virtual int integ_err(func_t &func, 
+  virtual int integ_i_err(func_t &func, 
 			fp_t &res, fp_t &err) {
     user_func=&func;
     int ret=it->integ_err(fo,res,err);

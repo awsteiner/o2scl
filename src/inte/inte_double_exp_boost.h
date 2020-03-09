@@ -77,6 +77,30 @@ namespace o2scl {
     }
     return 0;
   }
+
+  /** \brief Desc
+   */
+  virtual int integ_iu_err(func_t &func, fp_t a, 
+			fp_t &res, fp_t &err) {
+    return integ_err(func,a,std::numeric_limits<double>::infinity(),
+		     res,err);
+  }
+  
+  /** \brief Desc
+   */
+  virtual int integ_il_err(func_t &func, fp_t b, 
+			fp_t &res, fp_t &err) {
+    return integ_err(func,-std::numeric_limits<double>::infinity(),
+		     b,res,err);
+  }
+  
+  /** \brief Desc
+   */
+  virtual int integ_i_err(func_t &func, 
+			fp_t &res, fp_t &err) {
+    return integ_err(func,std::numeric_limits<double>::infinity(),
+		     -std::numeric_limits<double>::infinity(),res,err);
+  }
   
   /** \brief Integrate function \c func from -1 to 1 and place
       the result in \c res and the error in \c err
@@ -132,17 +156,20 @@ namespace o2scl {
     return 0;
   }
   
-  /** \brief Integrate function \c func from \c a to \c b and place
-      the result in \c res and the error in \c err
-  */
-  virtual int integ_err(func_t &func, 
+  /** \brief Desc
+   */
+  virtual int integ_iu_err(func_t &func, fp_t a, 
 			fp_t &res, fp_t &err) {
-    res=it.integrate(func,this->tol_rel,&err,&L1norm);
-    if (err>this->tol_rel) {
-      O2SCL_ERR2("Failed to achieve tolerance in ",
-		 "inte_exp_sinh_boost::integ_err().",o2scl::exc_efailed);
-    }
-    return 0;
+    return integ_err(func,a,std::numeric_limits<double>::infinity(),
+		     res,err);
+  }
+  
+  /** \brief Desc
+   */
+  virtual int integ_il_err(func_t &func, fp_t b, 
+			fp_t &res, fp_t &err) {
+    return integ_err(func,-std::numeric_limits<double>::infinity(),
+		     b,res,err);
   }
   
   /// L1 norm
@@ -176,8 +203,8 @@ namespace o2scl {
   /** \brief Integrate function \c func and place
       the result in \c res and the error in \c err
   */
-  virtual int integ_err(func_t &func, 
-			fp_t &res, fp_t &err) {
+  virtual int integ_i_err(func_t &func, 
+			  fp_t &res, fp_t &err) {
     res=it.integrate(func,this->tol_rel,&err,&L1norm);
     if (err>this->tol_rel) {
       O2SCL_ERR2("Failed to achieve tolerance in ",
@@ -193,7 +220,7 @@ namespace o2scl {
    */
   virtual int integ_err(func_t &func, double a, double b,
 			fp_t &res, fp_t &err) {
-    return integ_err(func,res,err);
+    return integ_i_err(func,res,err);
   }
   
   /// L1 norm

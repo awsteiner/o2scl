@@ -118,7 +118,7 @@ int main(void) {
 
   // exp_sinh integration, native
   cout << "exp-sinh, infinite upper limit:" << endl;
-  iesb.integ_err(tf2,ans,err);
+  iesb.integ_iu_err(tf2,0.0,ans,err);
   exact=sqrt(acos(-1.0))/2.0;
   std::cout << ans << " " << err << " " << exact << " "
 	    << iesb.L1norm << std::endl;
@@ -142,7 +142,7 @@ int main(void) {
   cout << endl;
   
   cout << "sinh-sinh, infinite interval:" << endl;
-  issb.integ_err(tf2,ans,err);
+  issb.integ_i_err(tf2,ans,err);
   exact=sqrt(acos(-1.0));
   std::cout << ans << " " << err << " " << exact << " "
 	    << issb.L1norm << std::endl;

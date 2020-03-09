@@ -138,7 +138,7 @@ namespace o2scl {
 
   };
 
-  /** \brief Fermi-Dirac integral
+  /** \brief Fermi-Dirac integral by integration
 
       This class performs direct computation of the
       Fermi-Dirac integral
@@ -180,7 +180,7 @@ namespace o2scl {
     std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
 	      (&fermi_dirac_integ_tl::obj_func),
 	      this,std::placeholders::_1,a,mu);
-    iiu.integ_err(f,res,err);
+    iiu.integ_iu_err(f,0.0,res,err);
     return;
   }
   

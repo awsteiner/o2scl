@@ -64,8 +64,8 @@ namespace o2scl {
   /** \brief Integrate a function over the interval \f$ [a, \infty) \f$ 
       giving result \c res and error \c err
   */
-  virtual int integ_err(func_t &func, double a,
-			double &res, double &err) {
+  virtual int integ_iu_err(func_t &func, double a,
+			   double &res, double &err) {
     lower_limit=a;
     return this->qags(func,0.0,1.0,this->tol_abs,this->tol_rel,&res,&err);
   }
@@ -77,7 +77,7 @@ namespace o2scl {
   */
   virtual int integ_err(func_t &func, double a, double b,
 			double &res, double &err) {
-    return integ_err(func,a,res,err);
+    return integ_iu_err(func,a,res,err);
   }
   
 #ifndef DOXYGEN_INTERNAL
