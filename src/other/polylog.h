@@ -143,9 +143,8 @@ namespace o2scl {
       This class performs direct computation of the
       Fermi-Dirac integral
       \f[
-      F_{a}(\mu) = \int_0^{\infty} \frac{x^a}{1+\exp^{x-\mu}}
+      F_{a}(\mu) = \int_0^{\infty} \frac{x^a}{1+\exp^{x-\mu}} \, .
       \f]
-      using \ref o2scl::inte_adapt_cern . 
    */
   template<class inte_t, class fp_t=double> class fermi_dirac_integ_tl {
 

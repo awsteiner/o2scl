@@ -5,13 +5,12 @@
     <tt>boost::multiprecision</tt> types. (Though some of the boost
     multiprecision types require additional libraries, such as GMP.)
 
-    AWS 3/7/20: I'm still confused by how to effectively use generic
-    std::abs() and std::isfinite() functions for multiprecision types
-    (see https://stackoverflow.com/questions/21392627/
-    abs-vs-stdabs-what-does-the-reference-say) so, I have currently
-    defined new functions o2abs() and o2isfinite() which work with
-    both <tt>long double</tt> and the <tt>boost::multiprecision</tt>
-    types.
+    AWS 3/7/20: I don't use the boost-supplied std::abs() and
+    std::isfinite() functions for multiprecision types because some
+    HPC compilers don't have recent versions of boost installed. I
+    have currently defined new functions o2abs(), o2isfinite(), and
+    o2hypot() which work with both <tt>long double</tt> and the
+    <tt>boost::multiprecision</tt> types.
 
     Testing with multiprecision types is enabled by defining
     O2SCL_LD_TYPES at the time the configure script is run.

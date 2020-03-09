@@ -50,6 +50,13 @@ namespace o2scl {
       inc_rest_mass=true (more testing should be done, particularly
       for the "pair" functions)
 
+      \note The testing of this class is apparently sensitive to 
+      the difference between gsl_hypot and std::hypot in o2hypot 
+      in misc.cpp. Further testing needs to be done to verify 
+      which is more accurate. This further testing will probably 
+      need to wait until the full multiprecision fermion classes
+      are done.
+
       This implements an equation of state for a relativistic fermion
       using direct integration. After subtracting the rest mass from
       the chemical potentials, the distribution function is
