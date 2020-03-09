@@ -43,6 +43,100 @@
 namespace o2scl {
 #endif
 
+  /** \brief Polylogarithms (approximate) \f$ Li_n(x)\f$ 
+    
+      This class is experimental.
+
+      This gives an approximation to the polylogarithm functions.
+
+      Only works at present for \f$n=0,1,...,6\f$. Uses GSL library
+      for n=2.
+
+      Uses linear interpolation for \f$-1<x<0\f$
+      and a series expansion for \f$x<-1\f$
+
+      \future
+      - Give error estimate? 
+      - Improve accuracy?
+      - Use more sophisticated interpolation?
+      - Add the series \f$Li(n,x)=x+2^{-n} x^2+3^{-n} x^3+...\f$ 
+      for \f$ x \rightarrow 0\f$?
+      - Implement for positive arguments < 1.0
+      - Make another polylog class which implements series acceleration?
+
+      For reference, there are exact relations
+      \f[
+      \mathrm{Li}_2 \left(\frac{1}{2}\right) =
+      \frac{1}{12}\left[\pi^2-6\left(\ln 2\right)^2\right]
+      \f]
+      \f[
+      \mathrm{Li}_3 \left(\frac{1}{2}\right) =
+      \frac{1}{24}\left[ 4\left(\ln 2\right)^3 - 2 \pi^2 \ln 2 +
+      21 \zeta (3) \right]
+      \f]
+      \f[
+      \mathrm{Li}_{-1} (x) = \frac{x}{\left(1-x\right)^2}
+      \f]
+      \f[
+      \mathrm{Li}_{-2} (x) = \frac{x\left(x+1\right)}{\left(1-x\right)^3}
+      \f]
+
+  */
+  class polylog {
+
+  public:
+
+    /// 0-th order polylogarithm = \f$ x/(1-x)\f$
+    double li0(double x);
+
+    /// 1-st order polylogarithm = \f$ -\ln(1-x) \f$
+    double li1(double x);
+
+    /// 2-nd order polylogarithm
+    double li2(double x);
+
+    /// 3-rd order polylogarithm
+    double li3(double x);
+
+    /// 4-th order polylogarithm
+    double li4(double x);
+
+    /// 5-th order polylogarithm
+    double li5(double x);
+
+    /// 6-th order polylogarithm
+    double li6(double x);
+
+    polylog();
+    
+    ~polylog();
+
+  protected:
+
+#ifndef DOXYGEN_NO_O2NS
+
+    double *arg;
+    
+    double *two;
+    
+    double *three;
+    
+    double *four;
+    
+    double *five;
+    
+    double *six;
+    
+    double li2neg1;
+    
+    double li4neg1;
+    
+    double li6neg1;
+
+#endif
+
+  };
+
   /** \brief Fermi-Dirac integral by integration
 
       This class performs direct computation of the
@@ -50,10 +144,6 @@ namespace o2scl {
       \f[
       F_{a}(\mu) = \int_0^{\infty} \frac{x^a}{1+\exp^{x-\mu}} \, .
       \f]
-
-      Note that the GSL definition of the Fermi-Dirac integral
-      includes an additional factor of the Gamma function which is not
-      included here.
    */
   template<class inte_t, class fp_t=double> class fermi_dirac_integ_tl {
 
@@ -67,7 +157,6 @@ namespace o2scl {
   fp_t obj_func(fp_t x, fp_t a, fp_t mu) {
     fp_t res;
     if (x==0.0) res=0;
-    else if (x>std::numeric_limits<fp_t>::max_exponent) res=0;
     else res=pow(x,a)/(1.0+exp(x-mu));
     if (!std::isfinite(res)) {
       std::cout << x << " " << a << " " << mu << " " << x-mu << " "
@@ -96,6 +185,27 @@ namespace o2scl {
   
   };
   
+  /** \brief Double-precision version of \ref o2scl::fermi_dirac_integ_tl
+   */
+  typedef fermi_dirac_integ_tl
+    <inte_iu_transform<funct,inte_adapt_cern
+    <funct,inte_gauss56_cern<funct,double,
+    inte_gauss56_coeffs_double>,
+    100,double>,double>,double> fermi_dirac_integ_double;
+
+#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
+  
+  /** \brief Long double version of \ref o2scl::fermi_dirac_integ_tl
+   */
+  typedef fermi_dirac_integ_tl
+    <inte_iu_transform<funct_ld,inte_adapt_cern
+    <funct_ld,inte_gauss56_cern<funct_ld,long double,
+    inte_gauss56_coeffs_long_double>,
+    1000,long double>,long double>,long double>
+    fermi_dirac_integ_long_double;
+  
+#endif
+
   /** \brief Compute the fermion integrals for a non-relativistic
       particle using the GSL functions
 
@@ -103,7 +213,7 @@ namespace o2scl {
       compute the Fermi-Dirac integrals for non-relativistic
       fermions.
    */
-  class fermi_dirac_integ_gsl {
+  class fermion_nr_integ_gsl {
 
   public:
     
@@ -125,18 +235,6 @@ namespace o2scl {
       return gsl_sf_fermi_dirac_3half(y)*sqrt(o2scl_const::pi)*0.75;
     }
 
-    /** \brief Fermi-Dirac integral of order \f$ 2 \f$
-     */
-    double calc_2(double y) {
-      return gsl_sf_fermi_dirac_int(2,y)*2.0;
-    }
-    
-    /** \brief Fermi-Dirac integral of order \f$ 3 \f$
-     */
-    double calc_3(double y) {
-      return gsl_sf_fermi_dirac_int(3,y)*6.0;
-    }
-    
   };
 
 #if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
@@ -146,7 +244,7 @@ namespace o2scl {
   /** \brief Compute the fermion integrals for a non-relativistic
       particle by directly integrating in long double precision
    */
-  class fermi_dirac_integ_direct {
+  class fermion_nr_integ_direct {
 
   protected:
     
@@ -157,8 +255,8 @@ namespace o2scl {
     
   public:
 
-    fermi_dirac_integ_direct() {
-      it.iiu.tol_rel=1.0e-17;
+    fermion_nr_integ_direct() {
+      it.iiu.tol_rel=1.0e-18;
     }
     
     /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$
@@ -185,27 +283,9 @@ namespace o2scl {
       return ((double)res);
     }
     
-    /** \brief Fermi-Dirac integral of order \f$ 2 \f$
-     */
-    double calc_2(double y) {
-      long double y2=y, res, err;
-      it.calc_err(2.0L,y2,res,err);
-      return ((double)res);
-    }
-    
-    /** \brief Fermi-Dirac integral of order \f$ 3 \f$
-     */
-    double calc_3(double y) {
-      long double y2=y, res, err;
-      it.calc_err(3.0L,y2,res,err);
-      return ((double)res);
-    }
-    
-    /** \brief Polylogarithm function
+    /** \brief Polylogarithm
 
-	\note This currently only works for negative y, even though
-	the polylogarithm functions are well defined for \f$ y \in
-	[0,1] \f$ .
+	\note This currently only works for negative y.
 
 	The relationship between the polylogarithm and the 
 	Fermi-Dirac distribution is:

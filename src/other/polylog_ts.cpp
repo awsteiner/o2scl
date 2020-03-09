@@ -39,13 +39,16 @@ int main(void) {
 
 #ifdef O2SCL_NEW_BOOST_INTEGRATION
   
-  fermion_nr_integ_gsl f1;
-  fermion_nr_integ_direct f2;
+  fermi_dirac_integ_gsl f1;
+  fermi_dirac_integ_direct f2;
 
   t.test_rel(f1.calc_1o2(0.5),f2.calc_1o2(0.5),4.0e-16,"fd 1");
   t.test_rel(f1.calc_m1o2(0.5),f2.calc_m1o2(0.5),4.0e-16,"fd 2");
   t.test_rel(f1.calc_3o2(0.5),f2.calc_3o2(0.5),4.0e-16,"fd 3");
+  t.test_rel(f1.calc_2(0.5),f2.calc_2(0.5),4.0e-16,"fd 4");
+  t.test_rel(f1.calc_3(0.5),f2.calc_3(0.5),4.0e-16,"fd 5");
 
+  // Compare polylog to exact values
   t.test_rel(f2.calc_polylog(2,-0.5),-0.448414206923646,1.0e-14,"pl 1");
   t.test_rel(f2.calc_polylog(2,-2.0),-1.43674636688368,1.0e-14,"pl 2");
   t.test_rel(f2.calc_polylog(3,-0.5),-0.472597844658897,1.0e-14,"pl 3");

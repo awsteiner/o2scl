@@ -84,8 +84,8 @@ namespace o2scl {
       approximation (for example) to invert the density integral so
       that we don't need to use a solver.
   */
-  template<class inte_t=class fermion_nr_integ_gsl, class fp_t=double>
-    class fermion_nonrel_tl : public fermion_thermo_tl<fp_t> {
+  template<class inte_t=class fermi_dirac_integ_gsl, class fp_t=double>
+    class fermion_nonrel_tl : public fermion_thermo_tl<inte_t,fp_t> {
 
   public:
   
@@ -97,9 +97,6 @@ namespace o2scl {
   virtual ~fermion_nonrel_tl() {
   }
 
-  /// Object for Fermi-Dirac integrals
-  inte_t integ;
-   
   /** \brief Zero temperature fermions
    */
   virtual void calc_mu_zerot(fermion &f) {
@@ -171,14 +168,12 @@ namespace o2scl {
 
     // Number density
     
-    //f.n=gsl_sf_fermi_dirac_half(y)*sqrt(o2scl_const::pi)/2.0;
-    f.n=integ.calc_1o2(y);
+    f.n=this->integ.calc_1o2(y);
     f.n*=f.g*pow(2.0*f.ms*temper,1.5)/4.0/o2scl_const::pi2;
     
     // Energy density:
     
-    //f.ed=gsl_sf_fermi_dirac_3half(y)*0.75*sqrt(o2scl_const::pi);
-    f.ed=integ.calc_3o2(y);
+    f.ed=this->integ.calc_3o2(y);
     f.ed*=f.g*pow(2.0*f.ms*temper,2.5)/8.0/o2scl_const::pi2/f.ms;
     
     if (f.inc_rest_mass) {
@@ -258,8 +253,7 @@ namespace o2scl {
     }
 
     // energy density
-    //f.ed=gsl_sf_fermi_dirac_3half(-y)*sqrt(o2scl_const::pi)*0.75;
-    f.ed=integ.calc_3o2(-y);
+    f.ed=this->integ.calc_3o2(-y);
 
     if (f.inc_rest_mass) {
     
@@ -417,16 +411,15 @@ namespace o2scl {
 
     fp_t nden;
 
-    // If the argument to gsl_sf_fermi_dirac_half() is less
-    // than GSL_LOG_DBL_MIN (which is about -708), then 
-    // an underflow occurs. We just set nden to zero in this 
-    // case, as this helps the solver find the right root.
+    // If the argument to calc_1o2() is less than GSL_LOG_DBL_MIN
+    // (which is about -708), then an underflow occurs. We just set
+    // nden to zero in this case, as this helps the solver find the
+    // right root.
   
     if (((-x)<GSL_LOG_DBL_MIN) || !std::isfinite(x)) {
       nden=0.0;
     } else {
-      //nden=gsl_sf_fermi_dirac_half(-x)*sqrt(o2scl_const::pi)/2.0;
-      nden=integ.calc_1o2(-x);
+      nden=this->integ.calc_1o2(-x);
       
     }
   

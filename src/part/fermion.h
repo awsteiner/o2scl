@@ -42,6 +42,7 @@
 #include <o2scl/root.h>
 #include <o2scl/root_cern.h>
 #include <o2scl/part.h>
+#include <o2scl/polylog.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -305,7 +306,7 @@ namespace o2scl {
       \future Create a Chebyshev approximation for inverting the 
       the Fermi functions for massless_calc_density() functions?
   */
-  template<class fp_t=double>
+  template<class inte_t=class fermi_dirac_integ_gsl, class fp_t=double>
   class fermion_thermo_tl : public fermion_zerot_tl<fp_t> {
     
   public:
@@ -316,6 +317,9 @@ namespace o2scl {
   
     virtual ~fermion_thermo_tl() {
     }
+  
+    /// Object for Fermi-Dirac integrals
+    inte_t integ;
   
     /** \brief Calculate thermodynamic properties from the chemical
 	potential using a nondegenerate expansion
@@ -657,6 +661,9 @@ namespace o2scl {
       if (f.non_interacting) { f.nu=f.mu; }
 
       fm2=gsl_sf_fermi_dirac_int(2,f.nu/temper);
+      std::cout << fm2 << "A"
+		<< this->integ.calc_2(f.nu/temper) << std::endl;
+      exit(-1);
       fm3=gsl_sf_fermi_dirac_int(3,f.nu/temper);
   
       f.n=f.g/this->pi2*pow(temper,3.0)*fm2;
@@ -673,7 +680,7 @@ namespace o2scl {
   
       x=f.ms+temper;
       funct mf2=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_thermo_tl<fp_t>::massless_solve_fun),
+			  (&fermion_thermo_tl<inte_t,fp_t>::massless_solve_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
       massless_root->solve(x,mf2);
       f.nu=x;
@@ -895,7 +902,7 @@ namespace o2scl {
 
   /** \brief Double-precision version of \ref o2scl::fermion_thermo_tl 
    */
-  typedef fermion_thermo_tl<double> fermion_thermo;
+  typedef fermion_thermo_tl<> fermion_thermo;
   
 #ifndef DOXYGEN_NO_O2NS
 }
