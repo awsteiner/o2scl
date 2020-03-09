@@ -62,7 +62,7 @@ int main(void) {
 
 #ifdef O2SCL_LD_TYPES
 
-  double a_ld, b_ld;
+  long double a_ld, b_ld;
   funct_ld f_ld=gfn_ld;
 
   root_toms748<funct_ld,long double> rt_ld;
@@ -71,8 +71,8 @@ int main(void) {
   rt_ld.solve_bkt(a_ld,b_ld,f_ld);
   t.test_rel<long double>(a_ld,0.2,1.0e-6,"2");
 
-  double a_cdf, b_cdf;
-  funct_cdf50 f=gfn_cdf;
+  cpp_dec_float_50 a_cdf, b_cdf;
+  funct_cdf50 f_cdf=gfn_cdf;
 
   root_toms748<funct_cdf50,cpp_dec_float_50> rt_cdf;
   a_cdf=1.0e-5;

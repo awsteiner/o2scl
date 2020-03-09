@@ -27,7 +27,7 @@
 // unistd.h is for isatty()
 #include <unistd.h>
 
-// For gsl_finite()
+// For gsl_finite() and gsl_hypot()
 #include <gsl/gsl_sys.h>
 
 // For glob()
@@ -79,7 +79,7 @@ float o2scl::o2hypot(const float x, const float y) {
 }
 
 double o2scl::o2hypot(const double x, const double y) {
-  return hypot(x,y);
+  return gsl_hypot(x,y);
 }
 
 long double o2scl::o2hypot(const long double x, const long double y) {

@@ -16,9 +16,10 @@ deallocated before creating the new object.
 "create <type> <value>": For types char, int, size_t, and string, create an
 object and give it the initial value specified.
 
-"create double <value-spec>": Create a double object and set it equal to the
-value specified by <value-spec>. (See "acol -help functions" for help on
-specifying functions.)
+"create double <value spec.>": Create a double object and set it equal to the
+value specified by <value spec.>. (See "acol -help functions" for help on
+specifying functions and "acol -help value-spec" for help on value
+specifications.)
 
 "create <type> <size> <function of "i">": For array types int[] and size_t[],
 the user must specify the size of the array and a function of the array index
@@ -52,11 +53,11 @@ the x- and y-grid values which are referred to by name.
 > commands
 Command list:
 
-alias       create      get         license     read        slack       
-autocorr    download    get-conv    no-intro    run         type        
-calc        exit        help        output      set         version     
-clear       filelist    interactive preview     shell       warranty    
-commands    generic     internal    quit        show-units  
+alias       constant    generic     internal    quit        show-units  
+autocorr    create      get         license     read        slack       
+calc        download    get-conv    no-intro    run         type        
+clear       exit        help        output      set         version     
+commands    filelist    interactive preview     shell       warranty    
 
 # -----------------------------------------------------------------
 # Use 'create' to create a table with one column

@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
   
   double pc_fdr_dir=pcc.part_calibrate<fermion_deriv,fermion_deriv_rel>
     (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
-  t.test_rel(pc_fr,pc_fdr_dir,1.0e-6,"nonderiv vs. deriv");
+  t.test_rel(pc_fr,pc_fdr_dir,1.0e-6,"nonderiv vs. deriv direct");
   cout << pc_fdr_dir << endl;
   cout << endl;
   
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
   
   double pc_fdr_byp=pcc.part_calibrate<fermion_deriv,fermion_deriv_rel>
     (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
-  t.test_rel(pc_fr,pc_fdr_byp,1.0e-6,"nonderiv vs. deriv");
+  t.test_rel(pc_fr,pc_fdr_byp,1.0e-6,"nonderiv vs. deriv by_parts");
   cout << pc_fdr_byp << endl;
   cout << endl;
 
@@ -160,7 +160,7 @@ int main(int argc, char *argv[]) {
   
   double pc_fdr_auto=pcc.part_calibrate<fermion_deriv,fermion_deriv_rel>
     (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
-  t.test_rel(pc_fr,pc_fdr_auto,1.0e-6,"nonderiv vs. deriv");
+  t.test_rel(pc_fr,pc_fdr_auto,1.0e-6,"nonderiv vs. deriv automatic");
   cout << pc_fdr_auto << endl;
   cout << endl;
 

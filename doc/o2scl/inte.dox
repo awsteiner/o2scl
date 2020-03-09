@@ -54,7 +54,7 @@
     are header-only and available only if the \c
     O2SCL_NEW_BOOST_INTEGRATION define constant is defined when
     compiling your code with \o2 (this doesn't need to be done during
-    installation or when the \t configure script is run). See \ref
+    installation or when the \c configure script is run). See \ref
     o2scl::inte_kronrod_boost, \ref o2scl::inte_tanh_sinh_boost, \ref
     o2scl::inte_exp_sinh_boost and \ref o2scl::inte_sinh_sinh_boost .
     

@@ -46,7 +46,7 @@ namespace o2scl {
       epsrel=tol_rel;
     }
     
-    bool operator()(const T &a, const T &b) {
+    bool operator()(const fp_t &a, const fp_t &b) {
       fp_t abs_a=fabs(a);
       fp_t abs_b=fabs(b);
       fp_t min_abs;
@@ -79,7 +79,7 @@ namespace o2scl {
       since this works even when the root is zero.
    */
   template<class func_t=funct, class fp_t=double> class root_toms748 : 
-    public root_bkt<func_t, fp_t> {
+    public root_bkt<func_t,func_t,fp_t> {
     
   public:
     
