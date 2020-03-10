@@ -69,10 +69,6 @@ namespace o2scl {
     if (x==0.0) res=0;
     else if (x>std::numeric_limits<fp_t>::max_exponent) res=0;
     else res=pow(x,a)/(1.0+exp(x-mu));
-    if (!std::isfinite(res)) {
-      std::cout << x << " " << a << " " << mu << " " << x-mu << " "
-		<< res << std::endl;
-    }
     return res;
   }
 
@@ -95,6 +91,65 @@ namespace o2scl {
   }
   
   };
+
+#ifdef O2SCL_NEVER_DEFINED
+
+  /** \brief Exponentially scaled modified Bessel function of the
+      second kind by integration
+      
+      There is an integral representation of the exponentially
+      scaled modified Bessel function of the second kind
+      \f[
+      K_n(z) \exp^{z} = \sqrt{\frac{\pi}{2 z}} 
+      \frac{1}{(n-\frac{1}{2})!}
+      \int_0^{\infty} e^{-t} t^{n-1/2}
+      \left(1-\frac{t}{2z}\right)^{n-1/2}~dt
+      \f]
+
+      This class uses that representation.
+   */
+  template<class inte_t, class fp_t=double> class bessel_K_exp_integ_tl {
+
+  protected:
+  
+  /// Internal function type
+  typedef std::function<fp_t(fp_t)> func_t;
+  
+  /** \brief The exponentially scaled modified Bessel integrand
+   */
+  fp_t obj_func(fp_t t, size_t n, fp_t z) {
+    fp_t res;
+    if (t==0.0) res=0;
+    else if (t>std::numeric_limits<fp_t>::max_exponent) res=0;
+    else res=exp(-t)*pow(t-t*t/2/z,n-0.5);
+    if (!std::isfinite(res)) {
+      std::cout << x << " " << a << " " << mu << " " << x-mu << " "
+                << res << std::endl;
+    }
+    return res;
+  }
+
+  public:
+  
+  /** \brief The integrator
+   */
+  inte_t iiu;
+  
+  /** \brief Compute the integral, storing the result in 
+      \c res and the error in \c err
+  */
+  void calc_err(size_t n, fp_t z, fp_t &res, fp_t &err) {
+    func_t f=
+      std::bind(std::mem_fn<fp_t(fp_t,size_t,fp_t)>
+              (&bessel_K_exp_tl::obj_func),
+	      this,std::placeholders::_1,n,z);
+    iiu.integ_iu_err(f,0.0,res,err);
+    return;
+  }
+  
+  };
+  
+#endif
   
   /** \brief Compute the fermion integrals for a non-relativistic
       particle using the GSL functions
