@@ -279,9 +279,11 @@ namespace o2scl {
       unless \ref inte::err_nonconv is false, in which case the error
       handler is not called. 
     
-      This function is based on the CERNLIB routines GAUSS and
-      DGAUSS which are documented at
+      This function is based on the CERNLIB routines GAUSS and DGAUSS
+      which are documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d103/top.html
+      . (3/10/2020: The CERNLIB links are apparently dead and haven't
+      been supported since 2003.)
       
       \note Currently \o2 supports only types \c double and
       \c long \c double for the floating point type \c fp_t .

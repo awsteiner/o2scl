@@ -92,40 +92,28 @@ namespace o2scl {
   
   };
 
-#ifdef O2SCL_NEVER_DEFINED
+  /** \brief Bose-Einstein integral by integration
 
-  /** \brief Exponentially scaled modified Bessel function of the
-      second kind by integration
-      
-      There is an integral representation of the exponentially
-      scaled modified Bessel function of the second kind
+      This class performs direct computation of the
+      Bose-Einstein integral
       \f[
-      K_n(z) \exp^{z} = \sqrt{\frac{\pi}{2 z}} 
-      \frac{1}{(n-\frac{1}{2})!}
-      \int_0^{\infty} e^{-t} t^{n-1/2}
-      \left(1-\frac{t}{2z}\right)^{n-1/2}~dt
+      F_{a}(\mu) = \int_0^{\infty} \frac{x^a}{\exp^{x-\mu}-1} \, .
       \f]
-
-      This class uses that representation.
    */
-  template<class inte_t, class fp_t=double> class bessel_K_exp_integ_tl {
-
+  template<class inte_t, class fp_t=double> class bose_einstein_integ_tl {
+    
   protected:
   
   /// Internal function type
   typedef std::function<fp_t(fp_t)> func_t;
   
-  /** \brief The exponentially scaled modified Bessel integrand
+  /** \brief The Bose-Einstein function
    */
-  fp_t obj_func(fp_t t, size_t n, fp_t z) {
+  fp_t obj_func(fp_t x, fp_t a, fp_t mu) {
     fp_t res;
-    if (t==0.0) res=0;
-    else if (t>std::numeric_limits<fp_t>::max_exponent) res=0;
-    else res=exp(-t)*pow(t-t*t/2/z,n-0.5);
-    if (!std::isfinite(res)) {
-      std::cout << x << " " << a << " " << mu << " " << x-mu << " "
-                << res << std::endl;
-    }
+    if (x==0.0) res=0;
+    else if (x>std::numeric_limits<fp_t>::max_exponent) res=0;
+    else res=pow(x,a)/(exp(x-mu)-1.0);
     return res;
   }
 
@@ -138,18 +126,81 @@ namespace o2scl {
   /** \brief Compute the integral, storing the result in 
       \c res and the error in \c err
   */
-  void calc_err(size_t n, fp_t z, fp_t &res, fp_t &err) {
+  void calc_err(fp_t a, fp_t mu, fp_t &res, fp_t &err) {
     func_t f=
-      std::bind(std::mem_fn<fp_t(fp_t,size_t,fp_t)>
-              (&bessel_K_exp_tl::obj_func),
-	      this,std::placeholders::_1,n,z);
+    std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
+	      (&bose_einstein_integ_tl::obj_func),
+	      this,std::placeholders::_1,a,mu);
     iiu.integ_iu_err(f,0.0,res,err);
     return;
   }
   
   };
+
+  /** \brief Exponentially scaled modified Bessel function of the
+      second kind by integration
+      
+      \warning Not working yet. 
+
+      This class uses an integral representation of the exponentially
+      scaled modified Bessel function of the second kind
+      \f[
+      K_n(z) \exp^{z} = \sqrt{\frac{\pi}{2 z}} 
+      \frac{1}{(n-\frac{1}{2})!}
+      \int_0^{\infty} e^{-t} t^{n-1/2}
+      \left(1-\frac{t}{2z}\right)^{n-1/2}~dt
+      \f]
+
+      I got this from 
+      https://mathworld.wolfram.com/ModifiedBesselFunctionoftheSecondKind.html
+      but it appears only to be useful for half-integer n. 
+      I may need a new integral representation.
+      
+  */
+  template<class inte_t, class fp_t=double> class bessel_K_exp_integ_tl {
+
+  protected:
   
-#endif
+  /// Internal function type
+  typedef std::function<fp_t(fp_t)> func_t;
+  
+  /** \brief The exponentially scaled modified Bessel integrand
+   */
+  fp_t obj_func(fp_t t, size_t n, fp_t z) {
+    fp_t res;
+    if (t==0.0) {
+      res=0;
+    } else if (t>std::numeric_limits<fp_t>::max_exponent) {
+      res=0;
+    } else {
+      fp_t arg=t-t*t/2/z;
+      res=exp(-t)*pow(arg,n-0.5);
+    }
+    if (!std::isfinite(res)) {
+      std::cout << t << " x " << n << " " << z << " "
+                << res << " " << t-t*t/2/z << std::endl;
+    }
+    return res;
+  }
+    
+  public:
+    
+    /** \brief The integrator
+     */
+    inte_t iiu;
+    
+    /** \brief Compute the integral, storing the result in 
+	\c res and the error in \c err
+    */
+    void calc_err(size_t n, fp_t z, fp_t &res, fp_t &err) {
+      func_t f=std::bind(std::mem_fn<fp_t(fp_t,size_t,fp_t)>
+			 (&bessel_K_exp_integ_tl::obj_func),
+			 this,std::placeholders::_1,n,z);
+      iiu.integ_iu_err(f,0.0,res,err);
+      return;
+    }
+    
+  };
   
   /** \brief Compute the fermion integrals for a non-relativistic
       particle using the GSL functions
@@ -282,6 +333,71 @@ namespace o2scl {
 
   };
 
+  /** \brief Polylogarithm function
+
+      The relationship between the polylogarithm and the 
+      Fermi-Dirac distribution is:
+      \f[
+      \mathrm{Li}_{1+s}(-e^{\mu}) = - \frac{1}{\Gamma(s+1)} 
+      \int_0^{\infty} \frac{k^{s}}{e^{k-\mu}+1}
+      \f]
+      or 
+      \f[
+      \mathrm{Li}_{s}(z) = - \frac{1}{\Gamma(s)} 
+      \int_0^{\infty} \frac{k^{s-1}}{e^{k-\ln(-z)}+1}
+      \f]
+      The relationship between the polylogarithm and the 
+      Bose-Einstein distribution is:
+      \f[
+      \mathrm{Li}_{1+s}(e^{\mu}) = \frac{1}{\Gamma(s+1)} 
+      \int_0^{\infty} \frac{k^{s}}{e^{k-\mu}-1}
+      \f]
+      or 
+      \f[
+      \mathrm{Li}_{s}(z) = \frac{1}{\Gamma(s)} 
+      \int_0^{\infty} \frac{k^{s-1}}{e^{k-\ln(z)}-1}
+      \f]
+  */
+  class polylog {
+
+  protected:
+    
+    /** \brief The integrator for negative arguments
+     */
+    fermi_dirac_integ_tl<o2scl::inte_exp_sinh_boost
+      <funct_ld,15,long double>,long double> it;
+    
+    /** \brief The integrator for positive arguments
+     */
+    bose_einstein_integ_tl<o2scl::inte_exp_sinh_boost
+      <funct_ld,15,long double>,long double> it2;
+    
+  public:
+    
+    polylog() {
+      it.iiu.tol_rel=1.0e-17;
+      it2.iiu.tol_rel=1.0e-17;
+    }
+    
+    /** \brief Polylogarithm function
+     */
+    double calc(double s, double y) {
+      if (y<0.0) {
+	// Fermi-Dirac integral representation
+	long double a=s-1, mu=log(-y), res, err;
+	it.calc_err(a,mu,res,err);
+	return -((double)res/boost::math::tgamma(s));
+      } else if (y==0.0) {
+	return 0.0;
+      }
+      // Bose-Einstein integral representation
+      long double a=s-1, mu=log(y), res, err;
+      it2.calc_err(a,mu,res,err);
+      return ((double)res/boost::math::tgamma(s));
+    }
+
+  };
+  
 #endif
   
 #endif

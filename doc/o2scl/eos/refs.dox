@@ -5,557 +5,192 @@
     the work referred to directly through <tt>dx.doi.org</tt> for journal
     articles or <tt>worldcat.org</tt> for books.
 
-    \anchor Akmal98eo Akmal98eo:
-    <a href="https://doi.org/10.1103/PhysRevC.58.1805">
-    A. Akmal, V. R. Pandharipande, and D. G. Ravenhall</a>,
-    Phys. Rev. C \b 58 (1998) 1804.
-    \comment
-    Title: Equation of state of nucleon matter and neutron star structure
-    \endcomment
+    \anchor Audi03 Audi03:
+    <a href="https://doi.org/10.1016/j.nuclphysa.2003.11.003">
+    G. Audi, A. H. Wapstra, and C. Thibault</a>,
+    Nucl. Phys. A \b 729 (2003) 337.
 
-    \anchor Glendenning91ro Glendenning91ro:
-    <a href="https://doi.org/10.1103/PhysRevLett.67.2414">
-    N. K. Glendenning and S. A. Moszkowski</a>,
-    Phys. Rev. Lett. \b 67 (1991) 2414.
-    \comment
-    Title: Reconciliation of Neutron-Star Masses and Binding of the $\Lambda$ in
-    Hypernuclei
-    \endcomment
+    \anchor Audi12 Audi12:
+    <a href="https://doi.org/10.1088/1674-1137/36/12/002">
+    G. Audi, M. Wang, A. H. Wapstra, F. G. Kondev, M. MacCormick, X. Xu, and B. Pfeiffer</a>,
+    Chin. Phys. C \b 36 (2012) 1287.
 
-    \anchor Bartel79 Bartel79:
-    <a href="https://doi.org/10.1016/0375-9474(82)90403-1">
-    J. Bartel, P. Quentin, M. Brack, C. Guet, and J.-B. H&aring;kansson</a>,
-    Nucl. Phys. A \b 386 (1982) 79.
-    \comment
-    Title: Towards a better parametrisation of Skyrme-like effective forces: A
-    critical study of the SkM force
-    \endcomment
+    \anchor Audi95 Audi95:
+    <a href="https://doi.org/10.1016/0375-9474(95)00445-9">
+    G. Audi and A. H. Wapstra</a>,
+    Nucl. Phys. A \b 595 (1995) 409.
 
-    \anchor Baym71tg Baym71tg:
-    <a href="https://doi.org/10.1086/151216">
-    G. Baym, C. J. Pethick, and P. Sutherland</a>,
-    Astrophys. J. \b 170 (1971) 299.
-    \comment
-    Title: The Ground State of Matter at High Densities: Equation of State and
-    Stellar Models
-    \endcomment
+    \anchor Broderick00 Broderick00:
+    <a href="https://doi.org/10.1086/309010">
+    A. Broderick, M. Prakash, and J. M. Lattimer</a>,
+    Astrophys. J. \b 537 (2000) 351.
 
-    \anchor Beiner75 Beiner75:
-    <a href="https://doi.org/10.1016/0375-9474(75)90338-3">
-    M. Beiner, H. Flocard, N. van Giai, and P. Quentin</a>,
-    Nucl. Phys. A \b 238 (1975) 29.
+    \anchor Callen85 Callen85:
+    H. B. Callen,
+    <a href="https://www.worldcat.org/isbn/9780471862567">
+    Thermodynamics and an Introduction to
+                  Thermostatistics, 2nd edition.</a>,
+    (1985) Wiley.
 
-    \anchor Bender03 Bender03:
-    <a href="https://doi.org/10.1103/RevModPhys.75.121">
-    M. Bender, P.-H. Heenen, and P.-G. Reinhard</a>,
-    Rev. Mod. Phys. \b 75 (2003) 121.
-    \comment
-    Title: Self-consistent mean-field models for nuclear structure
-    \endcomment
+    \anchor Chandrasekhar10 Chandrasekhar10:
+    S. Chandrasekhar,
+    <a href="https://www.worldcat.org/isbn/9780486604138">
+    An Introduction to the Study of Stellar Structure</a>,
+    (2010) Dover.
 
-    \anchor Bernard88 Bernard88:
-    <a href="https://doi.org/10.1016/0550-3213(88)90127-7">
-    V. Bernard, R. L. Jaffe, and U.-G. Meissner</a>,
-    Nucl. Phys. B \b 308 (1988) 753.
-
-    \anchor Bethe74 Bethe74:
-    <a href="https://doi.org/10.1016/0375-9474(74)90528-4">
-    H. A. Bethe and M. B. Johnson</a>,
-    Nucl. Phys. A \b 230 (1974) 1.
-    \comment
-    Title: Dense baryon matter calculations with realistic potentials
-    \endcomment
-
-    \anchor Bombaci01 Bombaci01:
-    I. Bombaci, "Isospin physics in heavy-ion collisions at
-                  intermediate energies" in
-    <a href="https://www.worldcat.org/isbn/1560728884">
-    Isospin physics in heavy-ion collisions at
-                  intermediate energies</a>,
-    (2001) Nova Science and New York, p. 1.
-
-    \anchor Bonazzola73 Bonazzola73:
-    <a href="https://doi.org/10.1086/152140">
-    S. Bonazzola</a>,
-    Astrophys. J. \b 182 (1973) 335.
-
-    \anchor Bonazzola94 Bonazzola94:
-    <a href="https://doi.org/10.1088/0264-9381/11/7/014">
-    S. Bonazzola and E. Gourgoulhon</a>,
-    Class. Quantum Grav. \b 11 (1994) 1775.
-
-    \anchor Brack85 Brack85:
-    <a href="https://doi.org/10.1016/0370-1573(86)90078-5">
-    M. Brack, C. Guet, and H.-B. H&aring;kansso</a>,
-    Phys. Rep. \b 123 (1985) 275.
-    \comment
-    Title: Self-consistent Semiclassical Description of Average Nuclear
-    Properties - A Link Between Microscopic and Macroscopic Models
-    \endcomment
-
-    \anchor Buballa04 Buballa04:
-    <a href="https://doi.org/10.1016/j.physrep.2004.11.004">
-    M. Buballa</a>,
-    Phys. Rep. \b 407 (2005) 205.
-
-    \anchor Buballa99 Buballa99:
-    <a href="https://doi.org/10.1016/S0370-2693(99)00533-X">
-    M. Buballa and M. Oertel</a>,
-    Phys. Lett. B \b 457 (1999) 261.
-
-    \anchor Chabanat95 Chabanat95:
-    <a href="https://doi.org/10.1088/0031-8949/1995/T56/034">
-    E. Chabanat, P. Bonche, P. Haensel, and R. Meyer J. and Schaeffer</a>,
-    Phys. Scr. \b T56 (1995) 231.
-    \comment
-    Title: New Skyrme effective forces for supernovae and neutron rich nuclei
-    \endcomment
-
-    \anchor Chabanat97 Chabanat97:
-    <a href="https://doi.org/10.1016/S0375-9474(97)00596-4">
-    E. Chabanat, J. Meyer, P. Bonche, R. Schaeffer, and P. Haensel</a>,
-    Nucl. Phys. A \b 627 (1997) 710.
-
-    \anchor Chappert08 Chappert08:
-    <a href="https://doi.org/10.1016/j.physletb.2008.09.017">
-    F. Chappert, M. Girod, and S. Hilaire</a>,
-    Phys. Lett. B \b 668 (2008) 420.
-
-    \anchor Chen05 Chen05:
-    <a href="https://doi.org/10.1103/PhysRevLett.94.032701">
-    L.-W. Chen, C. M. Ko, and B.-A. Li</a>,
-    Phys. Rev. Lett. \b 94 (2005) 032701.
-    \comment
-    Title: Determination of the Stiffness of the Nuclear Symmetry Energy from
-    Isospin Diffusion
-    \endcomment
-
-    \anchor Constantinou17 Constantinou17:
-    <a href="https://doi.org/10.1103/PhysRevC.95.055802">
-    C. Constantinou and M. Prakash</a>,
-    Phys. Rev. C \b 95 (2017) 055802.
-    \comment
-    Title: Enforcing causality in nonrelativistic equations of state at finite
-    temperature
-    \endcomment
-
-    \anchor Cook92 Cook92:
-    <a href="https://doi.org/10.1086/171849">
-    G. Cook, S. Shapiro, and S. Teukolsky</a>,
-    Astrophys. J. \b 398 (1992) 203.
-
-    \anchor Cook94 Cook94:
-    <a href="https://doi.org/10.1086/173721">
-    G. B. Cook, S. L. Shapiro, and S. A. Teukolsky</a>,
-    Astrophys. J. \b 422 (1994) 227.
-
-    \anchor Damour09 Damour09:
-    <a href="https://doi.org/10.1103/PhysRevD.80.084035">
-    T. Damour and A. Nagar</a>,
-    Phys. Rev. D \b 80 (2009) 084035.
-    \comment
-    Title: Relativistic tidal properties of neutron stars
-    \endcomment
-
-    \anchor Danielewicz09 Danielewicz09:
-    <a href="https://doi.org/10.1016/j.nuclphysa.2008.11.007">
-    P. Danielewicz and J. Lee</a>,
-    Nucl. Phys. A \b 818 (2009) 36.
-    \comment
-    Title: Symmetry Energy I: Semi-Infinite Matter
-    \endcomment
-
-    \anchor Das03 Das03:
-    <a href="https://doi.org/10.1103/PhysRevC.67.034611">
-    C. B. Das, S. Das Gupta, C. Gale, and B.-A. Li</a>,
-    Phys. Rev. C \b 67 (2003) 034611.
+    \anchor Delaroche10 Delaroche10:
+    <a href="https://doi.org/10.1103/PhysRevC.81.014303">
+    J. P. Delaroche, M. Girod, J. Libert, H. Goutte, S. Hilaire, S. Peru, N. Pillet, and G. F. Bertsch</a>,
+    Phys. Rev. C \b 81 (2010) 014303.
 
     \anchor Dieperink09 Dieperink09:
     <a href="https://doi.org/10.1140/epja/i2009-10869-3">
     A. E. L. Dieperink and P. van Isacker</a>,
     Eur. Phys. J. A \b 42 (2009) 269.
-
-    \anchor Dobaczewski94 Dobaczewski94:
-    <a href="https://doi.org/10.1016/0375-9474(84)90433-0">
-    J. Dobaczewski, H. Flocard, and J. Treiner</a>,
-    Nucl. Phys. A \b 422 (1984) 103.
-
-    \anchor Dutta86 Dutta86:
-    <a href="https://doi.org/10.1016/0375-9474(86)90283-6">
-    A. K. Dutta, J.-P. Arcoragi, J. M. Pearson, R. Behrman, and F. Tondeur</a>,
-    Nucl. Phys. A \b 458 (1986) 77.
-
-    \anchor Farine01 Farine01:
-    <a href="https://doi.org/10.1016/S0375-9474(01)01136-8">
-    M. Farine, J. M. Pearson, and F. Tondeur</a>,
-    Nucl. Phys. A \b 696 (2001) 396.
-
-    \anchor Friedman88 Friedman88:
-    <a href="https://doi.org/10.1086/166043">
-    J. L. Friedman, J. R. Ipser, and R. D. Sorkin</a>,
-    Astrophys. J \b 325 (1988) 722.
-
-    \anchor Friedrich86 Friedrich86:
-    <a href="https://doi.org/10.1103/PhysRevC.33.335">
-    J. Friedrich and P.-G. Reinhard</a>,
-    Phys. Rev. C \b 33 (1986) 335.
-
-    \anchor Gaitanos04 Gaitanos04:
-    <a href="https://doi.org/10.1016/j.nuclphysa.2003.12.001">
-    T. Gaitanos, M. Di Toro, S. Typel, V. Barana, C. Fuchs, V. Greco, and H. H. Wolter</a>,
-    Nucl. Phys. A \b 732 (2004) 24.
-
-    \anchor Gale87 Gale87:
-    <a href="https://doi.org/10.1103/PhysRevC.35.1666">
-    C. Gale, G. Bertsch, and S. Das Gupta</a>,
-    Phys. Rev. C \b 35 (1986) 1666.
-
-    \anchor Goriely10 Goriely10:
-    <a href="https://doi.org/10.1103/PhysRevC.82.035804">
-    S. Goriely, N. Chamel, and J. M. Pearson</a>,
-    Phys. Rev. C \b 82 (2010) 035804.
-
-    \anchor Gourgoulhon94 Gourgoulhon94:
-    <a href="https://doi.org/10.1088/0264-9381/11/2/015">
-    E. Gourgoulhon and S. Bonazzola</a>,
-    Class. Quantum Grav. \b 11 (1994) 443.
-
-    \anchor Hatsuda94 Hatsuda94:
-    <a href="https://doi.org/10.1016/0370-1573(94)90022-1">
-    T. Hatsuda and T. Kunihiro</a>,
-    Phys. Rep. \b 247 (1994) 221.
-
-    \anchor Hebeler13eo Hebeler13eo:
-    <a href="https://doi.org/10.1088/0004-637X/773/1/11">
-    K. Hebeler, J. M. Lattimer, C. J. Pethick, and A. Schwenk</a>,
-    Astrophys. J. \b 773 (2013) 11.
     \comment
-    Title: Equation of state and neutron star properties constrained by nuclear
-    physics and observation
+    Title: Shell corrections to a liquid-drop description of nuclear masses and
+    radii
     \endcomment
 
-    \anchor Heide94 Heide94:
-    <a href="https://doi.org/10.1016/0375-9474(94)90717-X">
-    E. K. Heide, S. Rudaz, and P. J. Ellis</a>,
-    Nucl. Phys. A \b 571 (1994) 713.
+    \anchor Dobaczewski04 Dobaczewski04:
+    <a href="https://doi.org/10.1063/1.1805914">
+    J. Dobaczewski, M. V. Stoitsov, and W. Nazarewicz</a>,
+    AIP Conf. Proc. \b 726 (2004) 51.
 
-    \anchor Hempel10 Hempel10:
-    <a href="https://doi.org/10.1016/j.nuclphysa.2010.02.010">
-    M. Hempel and J. Schaffner-Bielich</a>,
-    Nucl. Phys. A \b 837 (2010) 210.
+    \anchor Duflo95 Duflo95:
+    <a href="https://doi.org/10.1103/PhysRevC.52.R23">
+    J. Duflo and A. P. Zuker</a>,
+    Phys. Rev. C \b 52 (1995) 23.
+
+    \anchor Eggleton73 Eggleton73:
+    P. P. Eggleton, J. Faulkner, and B. P. Flannery,
+    Astron. Astrophys. \b 23 (1973) 325.
+
+    \anchor Goriely02 Goriely02:
+    <a href="https://doi.org/10.1103/PhysRevC.66.024326">
+    S. Goriely, M. Samyn, P.-H. Heenen, J. M. Pearson, and F. Tondeur</a>,
+    Phys. Rev. C \b 66 (2002) 024326..
+
+    \anchor Goriely07 Goriely07:
+    <a href="https://doi.org/doi/10.1103/PhysRevC.75.064312">
+    S. Goriely, M. Samyn, and J. M. Pearson</a>,
+    Phys. Rev. C \b 75 (2007) 064312.
+
+    \anchor Huang17 Huang17:
+    <a href="https://doi.org/10.1088/1674-1137/41/3/030002">
+    W. J. Huang, G. Audi, M. Wang, F. G. Kondev, S. Naimi, and X. Xu</a>,
+    Chin. Phys. C \b 41 (2017) 030002.
+
+    \anchor Johns96 Johns96:
+    S. M. Johns, P. J. Ellis, and (none) Lattimer J. M.,
+    Astrophys. J. \b 473 (1996) 1020.
+
+    \anchor Koura00 Koura00:
+    <a href="https://doi.org/10.1016/S0375-9474(00)00155-X">
+    H. Koura, M. Uno, T. Tachibana, and M. Yamada</a>,
+    Nucl. Phys. A \b 674 (2000) 47.
+
+    \anchor Koura05 Koura05:
+    H. Koura, T. Tachibana, M. Uno, and M. Yamada,
+    Prog. Theor. Phys. \b 113 (2005) 305.
+
+    \anchor Landau80 Landau80:
+    L. D. Landau,
+    <a href="https://www.worldcat.org/isbn/9780750633727">
+    Statistical Physics: Part 1, 3rd Edition.</a>,
+    (1980) Butterworth-Heinemann.
+
+    \anchor Liu11 Liu11:
+    <a href="https://doi.org/10.1103/PhysRevC.84.014333">
+    M. Liu, N. Wang, Y. Deng, and X. Wu</a>,
+    Phys. Rev. C \b 84 (2011) 014333.
+
+    \anchor Lunney03 Lunney03:
+    <a href="https://doi.org/10.1103/RevModPhys.75.1021">
+    D. Lunney, J. M. Pearson, and C. Thibault</a>,
+    Rev. Mod. Phys. \b 75 (2003) 1021.
+
+    \anchor MendozaTemis10 MendozaTemis10:
+    <a href="https://doi.org/10.1016/j.nuclphysa.2010.05.055">
+    J. Mendoza-Temis, J. G. Hirsch, and A. P. Zuker</a>,
+    Nucl. Phys. A \b 843 (2010) 14.
+
+    \anchor Moller95 Moller95:
+    <a href="https://doi.org/10.1006/adnd.1995.1002">
+    P. N., J. R. M., W. D. Moller and W. J. Switecki</a>,
+    Atom. Data Nucl. Data Tabl. \b 59 (1995) 185.
     \comment
-    Title: A statistical model for a complete supernova equation of state
+    Title: Nuclear {Ground-State} Masses and Deformations
     \endcomment
 
-    \anchor Hempel12 Hempel12:
-    <a href="https://doi.org/10.1088/0004-637X/748/1/70">
-    M. Hempel, T. Fischer, J. Schaffner-Bielich, and M. Liebendorfer</a>,
-    Astrophys. J. \b 748 (2012) 70.
+    \anchor Moller97 Moller97:
+    <a href="https://doi.org/10.1006/adnd.1997.0746">
+    P. Moller, J. R. Nix, and K.-L. Kratz</a>,
+    Atom. Data Nucl. Data Tabl. \b 66 (1997) 131.
     \comment
-    Title: New Equations of State in Simulations of Core-collapse Supernovae
+    Title: Nuclear properties for astrophysical and radioactive-ion-beam
+    applications
     \endcomment
 
-    \anchor Hinderer10 Hinderer10:
-    <a href="https://doi.org/10.1103/PhysRevD.81.123016">
-    T. Hinderer, B. D. Lackey, R. N. Lang, and J. S. Read</a>,
-    Phys. Rev. D \b 81 (2010) 123016.
-
-    \anchor Horowitz01 Horowitz01:
-    <a href="https://doi.org/10.1103/PhysRevLett.86.5647">
-    C. J. Horowitz and J. Piekarewicz</a>,
-    Phys. Rev. Lett. \b 86 (2001) 5647.
-
-    \anchor Horowitz06 Horowitz06:
-    <a href="https://doi.org/10.1016/j.physletb.2006.05.055">
-    C. J. Horowitz and A. Schwenk</a>,
-    Phys. Lett. B \b 638 (2006) 153.
+    \anchor Samyn04 Samyn04:
+    <a href="https://doi.org/10.1103/PhysRevC.70.044309">
+    M. Samyn, S. Goriely, M. Bender, and J. M. Pearson</a>,
+    Phys. Rev. C \b 70 (2004) 044309.
     \comment
-    Title: The virial equation of state of low-density neutron matter
+    Title: Further Explorations of Skyrme-Hartree-Fock-Bogoliubov mass formulas.
+    III. Role of particle-number projection
     \endcomment
 
-    \anchor Horowitz06b Horowitz06b:
-    <a href="https://doi.org/10.1016/j.nuclphysa.2006.05.009">
-    C. J. Horowitz and A. Schwenk</a>,
-    Nucl. Phys. A \b 776 (2006) 55.
+    \anchor Stoitsov03 Stoitsov03:
+    <a href="https://doi.org/10.1103/PhysRevC.68.054312">
+    M. V. Stoitsov, J. Dobaczewski, W. Nazarewicz, S. Pittel, and D. J. Dean</a>,
+    Phys. Rev. C \b 68 (2003) 054312.
 
-    \anchor Horowitz81 Horowitz81:
-    <a href="https://doi.org/10.1016/0375-9474(81)90770-3">
-    C. J. Horowitz and B. D. Serot</a>,
-    Nucl. Phys. A \b 368 (1981) 503.
+    \anchor Tooper69 Tooper69:
+    <a href="https://doi.org/10.1086/150036">
+    R. F. Tooper</a>,
+    Astrophys. J \b 156 (1969) 1075.
 
-    \anchor Komatsu89 Komatsu89:
-    <a href="https://doi.org/10.1093/mnras/237.2.355">
-    H. Komatsu, Y. Eriguchi, and I. Hachisu</a>,
-    Mon. Not. R. Astron. Soc. \b 237 (1989) 355.
-
-    \anchor Kortelainen10 Kortelainen10:
-    <a href="https://doi.org/10.1103/PhysRevC.82.024313">
-    M. Kortelainen, T. Lesinski, J. Mor\'{e}, W. Nazarewicz, J. Sarich, N. Schunck, M. V. Stoitsov, and S. Wild</a>,
-    Phys. Rev. C \b 82 (2010) 024313.
+    \anchor Wang10 Wang10:
+    <a href="https://doi.org/10.1103/PhysRevC.81.044322">
+    N. Wang, M. Liu, and X. Wu</a>,
+    Phys. Rev. C \b 81 (2010) 044322.
     \comment
-    Title: Nuclear energy density optimization
+    Title: Modification of nuclear mass formula by considering isospin effects
     \endcomment
 
-    \anchor Kortelainen14 Kortelainen14:
-    <a href="https://doi.org/10.1103/PhysRevC.89.054314">
-    M. Kortelainen, J. McDonnell, W. Nazarewicz, E. Olsen, P.-G. Reinhard, J. Sarich, N. Schunck, S. M. Wild, D. Davesne, J. Erler, and A. Pastore</a>,
-    Phys. Rev. C \b 89 (2014) 054314.
+    \anchor Wang10b Wang10b:
+    <a href="https://doi.org/10.1103/PhysRevC.82.044304">
+    N. Wang, Z. Liang, M. Liu, and X. Wu</a>,
+    Phys. Rev. C \b 82 (2010) 044304.
     \comment
-    Title: Nuclear energy density optimization: Shell structure
+    Title: Mirror nuclei constraint in nuclear mass formula
     \endcomment
 
-    \anchor Kubis97 Kubis97:
-    <a href="https://doi.org/10.1016/S0370-2693(97)00306-7">
-    S. Kubis and M. Kutschera</a>,
-    Phys. Lett. B \b 399 (1997) 191.
-
-    \anchor Laarakkers99 Laarakkers99:
-    <a href="https://doi.org/10.1086/306732">
-    W. G. Laarakkers and E. Poisson</a>,
-    Astrophys. J. \b 512 (1999) 282.
-
-    \anchor Lattimer01 Lattimer01:
-    <a href="https://doi.org/10.1086/319702">
-    J. M. Lattimer and M. Prakash</a>,
-    Astrophys. J. \b 550 (2001) 426.
-
-    \anchor Lattimer85 Lattimer85:
-    <a href="https://doi.org/10.1016/0375-9474(85)90006-5">
-    J. M. Lattimer, C. J. Pethick, D. G. Ravenhall, and D. Q. Lamb</a>,
-    Nucl. Phys. A \b 432 (1985) 646.
-
-    \anchor Lattimer91 Lattimer91:
-    <a href="https://doi.org/10.1016/0375-9474(91)90452-C">
-    J. M. Lattimer and F. D. Swesty</a>,
-    Nucl. Phys. A \b 535 (1991) 331.
-
-    \anchor Li01 Li01:
-    <a href="https://www.worldcat.org/isbn/1560728884">
-    Isospin physics in heavy-ion collisions at
-                  intermediate energies</a>,
-    (2001) Nova Science and New York.
-
-    \anchor Margueron02 Margueron02:
-    <a href="https://doi.org/10.1103/PhysRevC.66.014303">
-    J. Margueron, J. Navarro, and N. van Giai</a>,
-    Phys. Rev. C \b 66 (2002) 014303.
-
-    \anchor Muller96 Muller96:
-    <a href="https://doi.org/10.1016/0375-9474(96)00187-X">
-    H. Muller and B. D. Serot</a>,
-    Nucl. Phys. A \b 606 (1996) 508.
-
-    \anchor Negele73 Negele73:
-    <a href="https://doi.org/10.1016/0375-9474(73)90349-7">
-    J. W. Negele and D. Vautherin</a>,
-    Nucl. Phys. A \b 207 (1973) 298.
+    \anchor Wang11 Wang11:
+    <a href="https://doi.org/10.1103/PhysRevC.84.051303">
+    N. Wang and M. Liu</a>,
+    Phys. Rev. C \b 84 (2011) 051303(R).
     \comment
-    Title: Neutron star matter at sub-nuclear densities
+    Title: Nuclear mass predictions with a radial basis function approach
     \endcomment
 
-    \anchor Newton13 Newton13:
-    <a href="https://doi.org/10.1088/0067-0049/204/1/9">
-    W. G. Newton, M. Gearheart, and B.-A. Li</a>,
-    Astrophys. J. Suppl. Ser. \b 204 (2013) 9.
+    \anchor Wang12 Wang12:
+    <a href="https://doi.org/10.1088/1674-1137/36/12/003">
+    M. Wang, G. Audi, A. H. Wapstra, F. G. Kondev, M. MacCormick, X. Xu, and B. Pfeiffer</a>,
+    Chin. Phys. C \b 36 (2012) 1603.
+
+    \anchor Wang14 Wang14:
+    <a href="https://doi.org/10.1016/j.physletb.2014.05.049">
+    N. Wang, M. Liu, X. Wu, and J. Meng</a>,
+    Phys. Lett. B \b 734 (2014) 215.
     \comment
-    Title: A Survey of the Parameter Space of the Compressible Liquid Drop Model
-    as Applied to the Neutron Star Inner Crust
+    Title: Surface diffuseness correction in global mass formula
     \endcomment
 
-    \anchor Nozawa98 Nozawa98:
-    <a href="https://doi.org/10.1051/aas:1998304">
-    T. Nozawa, N. Stergioulas, E. Gourgoulhon, and Y. Eriguchi</a>,
-    Astrophys. J. Supp. \b 132 (1998) 431.
-
-    \anchor OConnor10 OConnor10:
-    <a href="https://doi.org/10.1088/0264-9381/27/11/114103">
-    E. O'Connor and C. D. Ott</a>,
-    Class. Quantum Grav. \b 27 (2010) 114103.
-
-    \anchor Onsi94 Onsi94:
-    <a href="https://doi.org/10.1103/PhysRevC.50.460">
-    M. Onsi, H. Przysiezniak, and J. M. Pearson</a>,
-    Phys. Rev. C \b 50 (1994) 460.
-
-    \anchor Pandharipande75 Pandharipande75:
-    <a href="https://doi.org/10.1016/0375-9474(75)90415-7">
-    V. R. Pandharipande and R. A. Smith</a>,
-    Nucl. Phys. A \b 237 (1975) 507.
-
-    \anchor Pearson11 Pearson11:
-    <a href="https://doi.org/10.1103/PhysRevC.83.065810">
-    J. M. Pearson, S. Goriely, and N. Chamel</a>,
-    Phys. Rev. C \b 83 (2011) 065810.
-
-    \anchor Pearson12 Pearson12:
-    <a href="https://doi.org/10.1103/PhysRevC.85.065803">
-    J. M. Pearson, N. Chamel, S. Goriely, and C. Ducoin</a>,
-    Phys. Rev. C \b 85 (2012) 065803.
-
-    \anchor Pethick95 Pethick95:
-    <a href="https://doi.org/10.1016/0375-9474(94)00506-I">
-    C. J. Pethick, D. G. Ravenhall, and C. P. Lorenz</a>,
-    Nucl. Phys. A \b 584 (1995) 675.
-
-    \anchor Piekarewicz09 Piekarewicz09:
-    <a href="https://doi.org/10.1103/PhysRevC.79.054311">
-    J. Piekarewicz and M. Centelles</a>,
-    Phys. Rev. C \b 79 (2009) 054311.
-
-    \anchor Postnikov10 Postnikov10:
-    <a href="https://doi.org/10.1103/PhysRevD.82.024016">
-    S. Postnikov, M. Prakash, and J. M. Lattimer</a>,
-    Phys. Rev. D \b 82 (2010) 024016.
-
-    \anchor Prakash87 Prakash87:
-    Windsurfing the Fermi Sea and Volume and edited by
-                  T.T.S. Kuo and J. Speth,
-    (1987) Elsevier, p. 357.
-
-    \anchor Prakash88 Prakash88:
-    <a href="https://doi.org/10.1103/PhysRevLett.61.2518">
-    M. Prakash, T. L. Ainsworth, and J. M. Lattimer</a>,
-    Phys. Rev. Lett. \b 61 (1988) 2518.
-
-    \anchor Prakash94 Prakash94:
-    <a href="https://doi.org/10.1016/0375-9474(94)90376-X">
-    M. Prakash, P. J. Ellis, E. K. Heide, and S. Rudaz</a>,
-    Nucl. Phys. A \b 575 (1994) 583.
-
-    \anchor Prakash97 Prakash97:
-    <a href="https://doi.org/10.1016/S0370-1573(96)00023-3">
-    M. Prakash, I. Bombaci, M. Prakash, P. J. Ellis, J. M. Lattimer, and R. Knorren</a>,
-    Phys. Rep. \b 280 (1997) 1.
-
-    \anchor Ravenhall83 Ravenhall83:
-    <a href="https://doi.org/10.1103/PhysRevLett.50.2066">
-    D. G. Ravenhall, C. J. Pethick, and J. R. Wilson</a>,
-    Phys. Rev. Lett. \b 50 (1983) 2066.
-
-    \anchor Reinhard95 Reinhard95:
-    <a href="https://doi.org/10.1016/0375-9474(94)00770-N">
-    P.-G. Reinhard and H. Flocard</a>,
-    Nucl. Phys. A \b 584 (1995) 467.
-
-    \anchor Reinhard99 Reinhard99:
-    <a href="https://doi.org/10.1103/PhysRevC.60.014316">
-    P.-G. Reinhard, D. J. Dean, W. Nazrewicz, J. Dobaczewski, J. A. Maruhn, and M. R. Strayer</a>,
-    Phys. Rev. C \b 60 (1999) 014316.
-
-    \anchor Shapiro83 Shapiro83:
-    S. L. Shapiro and S. A. Teukolsky,
-    <a href="https://www.worldcat.org/isbn/0471873179">
-    Black Holes and White Dwarfs and Neutron Stars: The
-                  Physics of Compact Objects</a>,
-    (1983) John Wiley and Sons.
-
-    \anchor Shen10a Shen10a:
-    <a href="https://doi.org/10.1103/PhysRevC.82.015806">
-    G. Shen, C. J. Horowitz, and S. Teige</a>,
-    Phys. Rev. C \b 82 (2010) 015806.
-
-    \anchor Shen10b Shen10b:
-    <a href="https://doi.org/10.1103/PhysRevC.82.045802">
-    G. Shen, C. J. Horowitz, and S. Teige</a>,
-    Phys. Rev. C \b 82 (2010) 045802.
-    \comment
-    Title: Equation of state of nuclear matter in a virial expansion of nucleons
-    and nuclei
-    \endcomment
-
-    \anchor Shen11 Shen11:
-    <a href="https://doi.org/10.1103/PhysRevC.83.035802">
-    G. Shen, C. J. Horowitz, and S. Teige</a>,
-    Phys. Rev. C \b 83 (2011) 035802.
-
-    \anchor Shen11b Shen11b:
-    <a href="https://doi.org/10.1103/PhysRevC.83.065808">
-    G. Shen, C. J. Horowitz, and E. O'Connor</a>,
-    Phys. Rev. C \b 83 (2011) 065808.
-
-    \anchor Shen98 Shen98:
-    <a href="https://doi.org/10.1016/S0375-9474(98)00236-X">
-    H. Shen, H. Toki, K. Oyamatsu, and K. Sumiyoshi</a>,
-    Nucl. Phys. A \b 637 (1998) 435.
-
-    \anchor Shen98b Shen98b:
-    <a href="https://doi.org/10.1143/PTP.100.1013">
-    H. Shen, H. Toki, K. Oyamatsu, and K. Sumiyoshi</a>,
-    Prog. Theor. Phys. \b 100 (1998) 1013.
-
-    \anchor Skyrme59 Skyrme59:
-    <a href="https://doi.org/10.1016/0029-5582(58)90345-6">
-    T. H. R. Skyrme</a>,
-    Nucl. Phys. \b 9 (1959) 615.
-
-    \anchor Souza09 Souza09:
-    <a href="https://doi.org/10.1088/0004-637X/707/2/1495">
-    S. R. Souza, A. W. Steiner, W. G. Lynch, R. Donangelo, and M. A. Famiano</a>,
-    Astrophys. J. \b 707 (2009) 1495.
-
-    \anchor Steiner00 Steiner00:
-    <a href="https://doi.org/10.1016/S0370-2693(00)00780-2">
-    A. W. Steiner, M. Prakash, and J. M. Lattimer</a>,
-    Phys. Lett. B \b 486 (2000) 239.
-
-    \anchor Steiner02 Steiner02:
-    <a href="https://doi.org/10.1103/PhysRevD.66.094007">
-    A. W. Steiner, S. Reddy, and M. Prakash</a>,
-    Phys. Rev. D \b 66 (2002) 094007.
-
-    \anchor Steiner05 Steiner05:
-    <a href="https://doi.org/10.1103/PhysRevD.72.054024">
-    A. W. Steiner</a>,
-    Phys. Rev. D \b 72 (2005) 054024.
-
-    \anchor Steiner05b Steiner05b:
-    <a href="https://doi.org/10.1016/j.physrep.2005.02.004">
-    A. W. Steiner, M. Prakash, J. M. Lattimer, and P. J. Ellis</a>,
-    Phys. Rep. \b 411 (2005) 325.
-
-    \anchor Steiner06 Steiner06:
-    <a href="https://doi.org/10.1103/PhysRevC.74.045808">
-    A. W. Steiner</a>,
-    Phys. Rev. C \b 74 (2006) 045808.
-
-    \anchor Steiner08 Steiner08:
-    <a href="https://doi.org/10.1103/PhysRevC.77.035805">
-    A. W. Steiner</a>,
-    Phys. Rev. C \b 77 (2008) 035805.
-
-    \anchor Steiner12 Steiner12:
-    <a href="https://doi.org/10.1103/PhysRevC.85.055804">
-    A. W. Steiner</a>,
-    Phys. Rev. C \b 85 (2012) 055804.
-
-    \anchor Stergioulas03 Stergioulas03:
-    <a href="https://doi.org/10.12942/lrr-2003-3">
-    N. Stergioulas</a>,
-    Liv. Rev. Rel. \b 6 (2003) 3.
-
-    \anchor Stergioulas95 Stergioulas95:
-    <a href="https://doi.org/10.1086/175605">
-    N. Stergioulas and J. L. Friedman</a>,
-    Astrophys. J. \b 444 (1995) 306.
-
-    \anchor Tondeur84 Tondeur84:
-    <a href="https://doi.org/10.1016/0375-9474(84)90444-5">
-    F. Tondeur, M. Brack, M. Farine, and J. M. Pearson</a>,
-    Nucl. Phys. A \b 420 (1984) 297.
-
-    \anchor Typel99 Typel99:
-    <a href="https://doi.org/10.1016/S0375-9474(99)00310-3">
-    S. Typel and H. H. Wolter</a>,
-    Nucl. Phys. A \b 656 (1999) 331.
-
-    \anchor VanGiai81 VanGiai81:
-    <a href="https://doi.org/10.1016/0370-2693(81)90646-8">
-    N. van Giai and H. H. Sagawa</a>,
-    Phys. Lett. B \b 106 (1981) 379.
-
-    \anchor Zimanyi90 Zimanyi90:
-    <a href="https://doi.org/10.1103/PhysRevC.42.1416">
-    J. Zimanyi and S. A. Moszkowski</a>,
-    Phys. Rev. C \b 42 (1990) 1416.
+    \anchor Wang17 Wang17:
+    <a href="https://doi.org/10.1088/1674-1137/41/3/030003">
+    M. Wang, G. Audi, F. G. Kondev, W. J. Huang, S. Naimi, and X. Xu</a>,
+    Chin. Phys. C \b 41 (2017) 030003.
 
 */

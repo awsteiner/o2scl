@@ -66,12 +66,19 @@ namespace o2scl {
    */
   std::string btos(bool b);
 
-  /** \brief Convert a double to a string 
+  /** \brief Convert a floating-point number to a string 
 
-      If \c auto_prec is false, then the number is converted to 
-      a string in the <tt>ios::scientific</tt> mode, otherwise,
-      neither the scientific or fixed mode flags are set and the
-      number is converted to a string in "automatic" mode.
+      This uses a \c ostringstream object to convert the
+      floating-point number to a string. It uses
+      <tt>std::numeric_limits::digits10</tt> to determine the maximum
+      precision. If \c prec is either less than or equal to zero or a
+      number greater than this maximum value, then the maximum is
+      used.
+      
+      If \c auto_prec is false (the default), then the number is
+      converted to a string in the <tt>ios::scientific</tt> mode,
+      otherwise, neither the scientific or fixed mode flags are set
+      and the number is converted to a string in "automatic" mode.
    */
   template<class fp_t>
     std::string dtos(const fp_t &x, int prec=6, bool auto_prec=false) {
@@ -79,7 +86,7 @@ namespace o2scl {
     std::ostringstream strout;
     
     size_t max=std::numeric_limits<fp_t>::digits10;
-    if (prec<0 || (prec>((int)max) && prec>6)) prec=((int)max);
+    if (prec<=0 || (prec>((int)max) && prec>6)) prec=((int)max);
     
     if (prec!=0) {
       if (!auto_prec) strout.setf(std::ios::scientific);

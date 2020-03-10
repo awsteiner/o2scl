@@ -254,9 +254,11 @@ namespace o2scl {
       the result \f$ \frac{1}{2}(I_5+I_6) \f$ with uncertainty
       \f$ |I_5-I_6| \f$.
 
-      This class is based on the CERNLIB routines RGS56P and
-      DGS56P which are documented at
+      This class is based on the CERNLIB routines RGS56P and DGS56P
+      were originally documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d106/top.html
+      . (3/10/2020: The CERNLIB links are apparently dead and haven't
+      been supported since 2003.)
   */
   template<class func_t=funct, class fp_t=double,
     class weights_t=inte_gauss56_coeffs_double>

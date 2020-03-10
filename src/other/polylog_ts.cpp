@@ -49,10 +49,28 @@ int main(void) {
   t.test_rel(f1.calc_3(0.5),f2.calc_3(0.5),4.0e-16,"fd 5");
 
   // Compare polylog to exact values
-  t.test_rel(f2.calc_polylog(2,-0.5),-0.448414206923646,1.0e-14,"pl 1");
-  t.test_rel(f2.calc_polylog(2,-2.0),-1.43674636688368,1.0e-14,"pl 2");
-  t.test_rel(f2.calc_polylog(3,-0.5),-0.472597844658897,1.0e-14,"pl 3");
-  t.test_rel(f2.calc_polylog(3,-2.0),-1.66828336396657,1.0e-14,"pl 4");
+  t.test_rel(f2.calc_polylog(2,-0.5),-0.448414206923646,4.0e-15,"pl 1");
+  t.test_rel(f2.calc_polylog(2,-2.0),-1.43674636688368,4.0e-15,"pl 2");
+  t.test_rel(f2.calc_polylog(3,-0.5),-0.472597844658897,4.0e-15,"pl 3");
+  t.test_rel(f2.calc_polylog(3,-2.0),-1.66828336396657,4.0e-15,"pl 4");
+
+  polylog p;
+  t.test_rel(p.calc(2,-0.5),-0.448414206923646,4.0e-15,"pl 1");
+  t.test_rel(p.calc(2,-2.0),-1.43674636688368,4.0e-15,"pl 2");
+  t.test_rel(p.calc(3,-0.5),-0.472597844658897,4.0e-15,"pl 3");
+  t.test_rel(p.calc(3,-2.0),-1.66828336396657,4.0e-15,"pl 4");
+  t.test_rel(p.calc(2,0.5),0.5822405264650125,4.0e-15,"pl 5");
+  t.test_rel(p.calc(3,0.5),0.5372131936080402,4.0e-15,"pl 6");
+
+  /*
+    bessel_K_exp_integ_tl<o2scl::inte_exp_sinh_boost
+    <funct_ld,15,long double>,long double> be;
+    long double res, err;
+    be.calc_err(2,2.0,res,err);
+    cout << res << " " << err << endl;
+    be.calc_err(2,20.0,res,err);
+    cout << res << " " << err << endl;
+  */
   
 #endif
   
