@@ -239,6 +239,26 @@ namespace o2scl {
     
   };
 
+  /** \brief Desc
+   */
+  class bessel_K_exp_integ_gsl {
+    
+  public:
+
+    double K1exp(double x) {
+      return gsl_sf_bessel_Kn_scaled(1.0,x);
+    }
+    
+    double K2exp(double x) {
+      return gsl_sf_bessel_Kn_scaled(2.0,x);
+    }
+    
+    double K3exp(double x) {
+      return gsl_sf_bessel_Kn_scaled(3.0,x);
+    }
+    
+  };
+  
 #if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
 
 #ifdef O2SCL_NEW_BOOST_INTEGRATION
@@ -327,6 +347,39 @@ namespace o2scl {
 
   };
 
+  /** \brief Desc
+   */
+  class bessel_K_exp_integ_direct {
+    
+  protected:
+    
+    /** \brief The integrator
+     */
+    bessel_K_exp_integ_tl<o2scl::inte_exp_sinh_boost
+      <funct_ld,15,long double>,long double> it;
+    
+  public:
+
+    double K1exp(double x) {
+      long double x2=x, res, err;
+      it.calc_err(1.0L,x2,res,err);
+      return ((double)res);
+    }
+    
+    double K2exp(double x) {
+      long double x2=x, res, err;
+      it.calc_err(2.0L,x2,res,err);
+      return ((double)res);
+    }
+    
+    double K3exp(double x) {
+      long double x2=x, res, err;
+      it.calc_err(3.0L,x2,res,err);
+      return ((double)res);
+    }
+    
+  };
+  
   /** \brief Polylogarithm function
 
       The relationship between the polylogarithm and the 
