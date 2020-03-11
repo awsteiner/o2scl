@@ -21,7 +21,12 @@
   -------------------------------------------------------------------
 */
 /** \file polylog.h
-    \brief File defining \ref o2scl::polylog
+    \brief File defining \ref o2scl::polylog, \ref
+    o2scl::fermi_dirac_integ_tl, \ref o2scl::fermi_dirac_integ_gsl,
+    \ref o2scl::fermi_dirac_integ_direct, \ref
+    o2scl::bose_einstein_integ_tl, \ref o2scl::bessel_K_exp_integ_tl,
+    \ref o2scl::bessel_K_exp_integ_gsl, and \ref
+    o2scl::bessel_K_exp_integ_direct .
 */
 #ifndef O2SCL_POLYLOG_H
 #define O2SCL_POLYLOG_H
@@ -239,20 +244,27 @@ namespace o2scl {
     
   };
 
-  /** \brief Desc
+  /** \brief Compute exponentially scaled modified bessel function of
+      the second kind using the GSL
    */
   class bessel_K_exp_integ_gsl {
     
   public:
 
+    /** \brief Compute \f$ K_1(x)\exp(x) \f$
+     */
     double K1exp(double x) {
       return gsl_sf_bessel_Kn_scaled(1.0,x);
     }
     
+    /** \brief Compute \f$ K_2(x)\exp(x) \f$
+     */
     double K2exp(double x) {
       return gsl_sf_bessel_Kn_scaled(2.0,x);
     }
     
+    /** \brief Compute \f$ K_3(x)\exp(x) \f$
+     */
     double K3exp(double x) {
       return gsl_sf_bessel_Kn_scaled(3.0,x);
     }
@@ -321,33 +333,10 @@ namespace o2scl {
       return ((double)res);
     }
     
-    /** \brief Polylogarithm function
-
-	\note This currently only works for negative y, even though
-	the polylogarithm functions are well defined for \f$ y \in
-	[0,1] \f$ .
-
-	The relationship between the polylogarithm and the 
-	Fermi-Dirac distribution is:
-	\f[
-	\mathrm{Li}_{1+s}(-e^{\mu}) = - \frac{1}{\Gamma(s+1)} 
-	\int_0^{\infty} \frac{k^{s}}{e^{k-\mu}+1}
-	\f]
-	or 
-	\f[
-	\mathrm{Li}_{s}(z) = - \frac{1}{\Gamma(s)} 
-	\int_0^{\infty} \frac{k^{s-1}}{e^{k-\ln(-z)}+1}
-	\f]
-     */
-    double calc_polylog(double s, double y) {
-      long double a=s-1, mu=log(-y), res, err;
-      it.calc_err(a,mu,res,err);
-      return -((double)res/boost::math::tgamma(s));
-    }
-
   };
 
-  /** \brief Desc
+  /** \brief Compute exponentially scaled modified bessel function of
+      the second kind by direct integration
    */
   class bessel_K_exp_integ_direct {
     
@@ -360,18 +349,24 @@ namespace o2scl {
     
   public:
 
+    /** \brief Compute \f$ K_1(x)\exp(x) \f$
+     */
     double K1exp(double x) {
       long double x2=x, res, err;
       it.calc_err(1.0L,x2,res,err);
       return ((double)res);
     }
     
+    /** \brief Compute \f$ K_2(x)\exp(x) \f$
+     */
     double K2exp(double x) {
       long double x2=x, res, err;
       it.calc_err(2.0L,x2,res,err);
       return ((double)res);
     }
     
+    /** \brief Compute \f$ K_3(x)\exp(x) \f$
+     */
     double K3exp(double x) {
       long double x2=x, res, err;
       it.calc_err(3.0L,x2,res,err);
@@ -380,7 +375,12 @@ namespace o2scl {
     
   };
   
-  /** \brief Polylogarithm function
+  /** \brief Class to compute the polylogarithm function
+
+      \note experimental
+
+      This class uses long double arithmetic and 
+      integral representations to compute the polylog functions.
 
       The relationship between the polylogarithm and the 
       Fermi-Dirac distribution is:
@@ -393,6 +393,8 @@ namespace o2scl {
       \mathrm{Li}_{s}(z) = - \frac{1}{\Gamma(s)} 
       \int_0^{\infty} \frac{k^{s-1}}{e^{k-\ln(-z)}+1}
       \f]
+      this representation works for negative values of \f$ z \f$.
+
       The relationship between the polylogarithm and the 
       Bose-Einstein distribution is:
       \f[
@@ -404,6 +406,7 @@ namespace o2scl {
       \mathrm{Li}_{s}(z) = \frac{1}{\Gamma(s)} 
       \int_0^{\infty} \frac{k^{s-1}}{e^{k-\ln(z)}-1}
       \f]
+      this representation works for positive values of \f$ z \f$.
   */
   class polylog {
 

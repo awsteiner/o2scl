@@ -48,12 +48,6 @@ int main(void) {
   t.test_rel(f1.calc_2(0.5),f2.calc_2(0.5),4.0e-16,"fd 4");
   t.test_rel(f1.calc_3(0.5),f2.calc_3(0.5),4.0e-16,"fd 5");
 
-  // Compare polylog to exact values
-  t.test_rel(f2.calc_polylog(2,-0.5),-0.448414206923646,4.0e-15,"pl 1");
-  t.test_rel(f2.calc_polylog(2,-2.0),-1.43674636688368,4.0e-15,"pl 2");
-  t.test_rel(f2.calc_polylog(3,-0.5),-0.472597844658897,4.0e-15,"pl 3");
-  t.test_rel(f2.calc_polylog(3,-2.0),-1.66828336396657,4.0e-15,"pl 4");
-
   polylog p;
   t.test_rel(p.calc(2,-0.5),-0.448414206923646,4.0e-15,"pl 1");
   t.test_rel(p.calc(2,-2.0),-1.43674636688368,4.0e-15,"pl 2");
@@ -69,6 +63,13 @@ int main(void) {
   t.test_rel<long double>(res,1.875045062139460,2.0e-16,"be 1");
   be.calc_err(2,20.0,res,err);
   t.test_rel<long double>(res,0.3070874263512549,2.0e-16,"be 2");
+
+  bessel_K_exp_integ_gsl beg;
+  bessel_K_exp_integ_direct bed;
+
+  t.test_rel(beg.K1exp(2.0),bed.K1exp(2.0),1.0e-15,"bed 1");
+  t.test_rel(beg.K2exp(2.0),bed.K2exp(2.0),1.0e-15,"bed 2");
+  t.test_rel(beg.K3exp(2.0),bed.K3exp(2.0),1.0e-15,"bed 3");
   
 #endif
   
