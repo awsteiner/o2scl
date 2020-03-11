@@ -62,15 +62,13 @@ int main(void) {
   t.test_rel(p.calc(2,0.5),0.5822405264650125,4.0e-15,"pl 5");
   t.test_rel(p.calc(3,0.5),0.5372131936080402,4.0e-15,"pl 6");
 
-  /*
-    bessel_K_exp_integ_tl<o2scl::inte_exp_sinh_boost
-    <funct_ld,15,long double>,long double> be;
-    long double res, err;
-    be.calc_err(2,2.0,res,err);
-    cout << res << " " << err << endl;
-    be.calc_err(2,20.0,res,err);
-    cout << res << " " << err << endl;
-  */
+  bessel_K_exp_integ_tl<o2scl::inte_exp_sinh_boost
+			<funct_ld,15,long double>,long double> be;
+  long double res, err;
+  be.calc_err(2,2.0,res,err);
+  t.test_rel<long double>(res,1.875045062139460,2.0e-16,"be 1");
+  be.calc_err(2,20.0,res,err);
+  t.test_rel<long double>(res,0.3070874263512549,2.0e-16,"be 2");
   
 #endif
   

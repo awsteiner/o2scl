@@ -145,16 +145,12 @@ namespace o2scl {
       This class uses an integral representation of the exponentially
       scaled modified Bessel function of the second kind
       \f[
-      K_n(z) \exp^{z} = \sqrt{\frac{\pi}{2 z}} 
-      \frac{1}{(n-\frac{1}{2})!}
-      \int_0^{\infty} e^{-t} t^{n-1/2}
-      \left(1-\frac{t}{2z}\right)^{n-1/2}~dt
+      K_n(z) \exp^{z} = \frac{\sqrt{\pi} z^{n}}{2^{n} \Gamma(n+1/2)}
+      \int_1^{\infty} e^{z(1-t)} 
+      \left(t^2-1\right)^{n-1/2}~dt
       \f]
-
-      I got this from 
-      https://mathworld.wolfram.com/ModifiedBesselFunctionoftheSecondKind.html
-      but it appears only to be useful for half-integer n. 
-      I may need a new integral representation.
+      (see
+      http://functions.wolfram.com/Bessel-TypeFunctions/BesselK/07/01/01/)
       
   */
   template<class inte_t, class fp_t=double> class bessel_K_exp_integ_tl {
@@ -168,17 +164,12 @@ namespace o2scl {
    */
   fp_t obj_func(fp_t t, size_t n, fp_t z) {
     fp_t res;
-    if (t==0.0) {
-      res=0;
-    } else if (t>std::numeric_limits<fp_t>::max_exponent) {
-      res=0;
-    } else {
-      fp_t arg=t-t*t/2/z;
-      res=exp(-t)*pow(arg,n-0.5);
-    }
+    fp_t arg=(1-t)*z;
+    if (arg<std::numeric_limits<fp_t>::min_exponent) return 0;
+    res=exp(arg)*pow(t*t-1,n-0.5);
     if (!std::isfinite(res)) {
       std::cout << t << " x " << n << " " << z << " "
-                << res << " " << t-t*t/2/z << std::endl;
+                << res << " " << -t*z+z << " " << t*t-1 << std::endl;
     }
     return res;
   }
@@ -196,7 +187,10 @@ namespace o2scl {
       func_t f=std::bind(std::mem_fn<fp_t(fp_t,size_t,fp_t)>
 			 (&bessel_K_exp_integ_tl::obj_func),
 			 this,std::placeholders::_1,n,z);
-      iiu.integ_iu_err(f,0.0,res,err);
+      iiu.integ_iu_err(f,1.0,res,err);
+      fp_t fact=o2scl_const::root_pi*pow(z/2,n)/boost::math::tgamma(n+0.5);
+      res*=fact;
+      err*=fact;
       return;
     }
     

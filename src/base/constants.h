@@ -66,6 +66,8 @@ namespace o2scl_const {
   const double pi=boost::math::constants::pi<double>();
   /// \f$ \pi^2 \f$ 
   const double pi2=boost::math::constants::pi_sqr<double>();
+  /// \f$ \sqrt{\pi} \f$ 
+  const double root_pi=boost::math::constants::root_pi<double>();
   /// \f$ \zeta(3/2) \f$
   const double zeta32=2.6123753486854883433;
   /// \f$ \zeta(2) \f$
