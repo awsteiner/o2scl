@@ -215,8 +215,10 @@ namespace o2scl {
       \future The function pair_mu() should set the antiparticle
       integrators as done in fermion_deriv_rel.
   */
-  template<class inte_t=class fermi_dirac_integ_gsl, class fp_t=double>
-    class fermion_rel_tl : public fermion_thermo_tl<inte_t,fp_t> {
+  template<class fd_inte_t=class fermi_dirac_integ_gsl,
+    class be_inte_t=bessel_K_exp_integ_gsl, class fp_t=double>
+    class fermion_rel_tl :
+    public fermion_thermo_tl<fd_inte_t,be_inte_t,fp_t> {
 
   public:
 
@@ -439,7 +441,7 @@ namespace o2scl {
 
     // Perform full solution
     funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-		       (&fermion_rel_tl<inte_t,fp_t>::solve_fun),
+		       (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::solve_fun),
 		       this,std::placeholders::_1,std::ref(f),temper);
 
     // The default o2scl::root object is of type root_cern,
@@ -599,13 +601,13 @@ namespace o2scl {
       // If the temperature is large enough, perform the full integral
     
       funct mfd=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<inte_t,fp_t>::density_fun),
+			  (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::density_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
       funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<inte_t,fp_t>::energy_fun),
+			  (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::energy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
       funct mfs=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<inte_t,fp_t>::entropy_fun),
+			  (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::entropy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
       
       fp_t prefac=f.g*pow(temper,3.0)/2.0/this->pi2;
@@ -637,13 +639,13 @@ namespace o2scl {
       // upper integration limit finite
     
       funct mfd=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<inte_t,fp_t>::deg_density_fun),
+			  (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::deg_density_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
       funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<inte_t,fp_t>::deg_energy_fun),
+			  (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::deg_energy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
       funct mfs=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<inte_t,fp_t>::deg_entropy_fun),
+			  (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::deg_entropy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
 
       fp_t prefac=f.g/2.0/this->pi2;
@@ -826,10 +828,10 @@ namespace o2scl {
     if (!deg) {
     
       funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<inte_t,fp_t>::energy_fun),
+			  (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::energy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
       funct mfs=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<inte_t,fp_t>::entropy_fun),
+			  (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::entropy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
     
       f.ed=nit->integ(mfe,0.0,0.0);
@@ -845,10 +847,10 @@ namespace o2scl {
     } else {
 
       funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<inte_t,fp_t>::deg_energy_fun),
+			  (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::deg_energy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
       funct mfs=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<inte_t,fp_t>::deg_entropy_fun),
+			  (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::deg_entropy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
       
       fp_t arg;
@@ -1001,7 +1003,7 @@ namespace o2scl {
     fp_t nex=f.nu/temper;
       
     funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t,bool)>
-		       (&fermion_rel_tl<inte_t,fp_t>::pair_fun),
+		       (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::pair_fun),
 		       this,std::placeholders::_1,std::ref(f),temper,false);
 
     // Begin by trying the user-specified guess
@@ -1056,7 +1058,7 @@ namespace o2scl {
       // Function in log units
       funct lmf=std::bind(std::mem_fn<fp_t(fp_t,fermion &,
 					   fp_t,bool)>
-			  (&fermion_rel_tl<inte_t,fp_t>::pair_fun),
+			  (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::pair_fun),
 			  this,std::placeholders::_1,std::ref(f),
 			  temper,true);
     
@@ -1302,7 +1304,7 @@ namespace o2scl {
     if (!deg) {
 
       funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<inte_t,fp_t>::density_fun),
+			  (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::density_fun),
 			  this,std::placeholders::_1,std::ref(f),T);
     
       nden=nit->integ(mfe,0.0,0.0);
@@ -1314,7 +1316,7 @@ namespace o2scl {
     } else {
     
       funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<inte_t,fp_t>::deg_density_fun),
+			  (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::deg_density_fun),
 			  this,std::placeholders::_1,std::ref(f),T);
     
       fp_t arg;
@@ -1446,7 +1448,7 @@ namespace o2scl {
 	// Nondegenerate case
       
 	funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			    (&fermion_rel_tl<inte_t,fp_t>::density_fun),
+			    (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::density_fun),
 			    this,std::placeholders::_1,std::ref(f),T);
       
 	nden_p=nit->integ(mfe,0.0,0.0);
@@ -1461,7 +1463,7 @@ namespace o2scl {
 	// Degenerate case
       
 	funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			    (&fermion_rel_tl<inte_t,fp_t>::deg_density_fun),
+			    (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::deg_density_fun),
 			    this,std::placeholders::_1,std::ref(f),T);
       
 	fp_t arg;
@@ -1549,7 +1551,7 @@ namespace o2scl {
 	// Nondegenerate case
       
 	funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			   (&fermion_rel_tl<inte_t,fp_t>::density_fun),
+			   (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::density_fun),
 			   this,std::placeholders::_1,std::ref(f),T);
       
 	nden_ap=nit->integ(mf,0.0,0.0);
@@ -1565,7 +1567,7 @@ namespace o2scl {
 	// Degenerate case
       
 	funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			   (&fermion_rel_tl<inte_t,fp_t>::deg_density_fun),
+			   (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::deg_density_fun),
 			   this,std::placeholders::_1,std::ref(f),T);
       
 	fp_t arg;

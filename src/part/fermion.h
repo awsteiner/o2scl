@@ -306,7 +306,8 @@ namespace o2scl {
       \future Create a Chebyshev approximation for inverting the 
       the Fermi functions for massless_calc_density() functions?
   */
-  template<class inte_t=class fermi_dirac_integ_gsl, class fp_t=double>
+  template<class fd_inte_t=fermi_dirac_integ_gsl,
+    class be_inte_t=bessel_K_exp_integ_gsl, class fp_t=double>
     class fermion_thermo_tl : public fermion_zerot_tl<fp_t> {
     
   public:
@@ -319,7 +320,10 @@ namespace o2scl {
   }
   
   /// Object for Fermi-Dirac integrals
-  inte_t integ;
+  fd_inte_t fd_integ;
+  
+  /// Object for Bessel-exp integrals
+  be_inte_t be_integ;
   
   /** \brief Calculate thermodynamic properties from the chemical
       potential using a nondegenerate expansion
@@ -370,31 +374,20 @@ namespace o2scl {
     fp_t dj1=((fp_t)max_term), jot1=max_term/tt;
     fp_t dj2=1.0, jot2=1.0/tt;
 
-    //fp_t Kn21=boost::math::cyl_bessel_k(2,jot1);
-    //fp_t Kn22=boost::math::cyl_bessel_k(2,jot2);
-    //fp_t Knexp21=Kn21*exp(jot1);
-    //fp_t Knexp22=Kn22*exp(jot2);
-      
     if (inc_antip==false) {
-      rat=exp(dj1*psi)/jot1/jot1*gsl_sf_bessel_Kn_scaled(2.0,jot1);
-      rat/=exp(dj2*psi)/jot2/jot2*gsl_sf_bessel_Kn_scaled(2.0,jot2);
-      //rat=exp(dj1*psi)/jot1/jot1*Knexp21;
-      //rat/=exp(dj2*psi)/jot2/jot2*Knexp22;
+      rat=exp(dj1*psi)/jot1/jot1*be_integ.K2exp(jot1);
+      rat/=exp(dj2*psi)/jot2/jot2*be_integ.K2exp(jot2);
     } else {
       if (f.inc_rest_mass) {
 	rat=exp(-jot1)*2.0*cosh(dj1*f.nu/temper)/jot1/jot1*
-	  gsl_sf_bessel_Kn_scaled(2.0,jot1);
+	  be_integ.K2exp(jot1);
 	rat/=exp(-jot2)*2.0*cosh(dj2*f.nu/temper)/jot2/jot2*
-	  gsl_sf_bessel_Kn_scaled(2.0,jot2);
-	//rat=2.0*cosh(dj1*f.nu/temper)/jot1/jot1*Kn21;
-	//rat/=2.0*cosh(dj2*f.nu/temper)/jot2/jot2*Kn22;
+	  be_integ.K2exp(jot2);
       } else {
 	rat=exp(-jot1)*2.0*cosh(dj1*(f.nu+f.m)/temper)/jot1/jot1*
-	  gsl_sf_bessel_Kn_scaled(2.0,jot1);
+	  be_integ.K2exp(jot1);
 	rat/=exp(-jot2)*2.0*cosh(dj2*(f.nu+f.m)/temper)/jot2/jot2*
-	  gsl_sf_bessel_Kn_scaled(2.0,jot2);
-	//rat=2.0*cosh(dj1*(f.nu+f.m)/temper)/jot1/jot1*Kn21;
-	//rat/=2.0*cosh(dj2*(f.nu+f.m)/temper)/jot2/jot2*Kn22;
+	  be_integ.K2exp(jot2);
       }
     }
 
@@ -665,8 +658,8 @@ namespace o2scl {
 
     if (f.non_interacting) { f.nu=f.mu; }
 
-    fm2=this->integ.calc_2(f.nu/temper)/2.0;
-    fm3=this->integ.calc_3(f.nu/temper)/6.0;
+    fm2=this->fd_integ.calc_2(f.nu/temper)/2.0;
+    fm3=this->fd_integ.calc_3(f.nu/temper)/6.0;
   
     f.n=f.g/this->pi2*pow(temper,3.0)*fm2;
     f.ed=f.g*3.0/this->pi2*pow(temper,4.0)*fm3;
@@ -682,7 +675,7 @@ namespace o2scl {
   
     x=f.ms+temper;
     funct mf2=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			(&fermion_thermo_tl<inte_t,fp_t>::massless_solve_fun),
+			(&fermion_thermo_tl<fd_inte_t,be_inte_t,fp_t>::massless_solve_fun),
 			this,std::placeholders::_1,std::ref(f),temper);
     massless_root->solve(x,mf2);
     f.nu=x;
@@ -852,21 +845,12 @@ namespace o2scl {
     fp_t dj=((fp_t)j);
     fp_t jot=dj/tt;
 
-    //fp_t Kn1=boost::math::cyl_bessel_k(1,jot);
-    //fp_t Kn2=boost::math::cyl_bessel_k(2,jot);
-    //fp_t Kn3=boost::math::cyl_bessel_k(2,jot);
-    //fp_t Knexp1=Kn1*exp(jot);
-    //fp_t Knexp2=Kn2*exp(jot);
-    //fp_t Knexp3=Kn3*exp(jot);
-    
     if (inc_antip==false) {
-      pterm=exp(jot*xx)/jot/jot*gsl_sf_bessel_Kn_scaled(2.0,jot);
-      //pterm=exp(jot*xx)/jot/jot*Knexp2;
+      pterm=exp(jot*xx)/jot/jot*be_integ.K2exp(jot);
       if (j%2==0) pterm*=-1.0;
       nterm=pterm*jot/m;
       fp_t enterm1=(4.0*tt-dj*xx-dj)/dj/tt*nterm;
-      fp_t enterm2=exp(jot*xx)/dj*gsl_sf_bessel_Kn_scaled(1.0,jot)/m;
-      //fp_t enterm2=exp(jot*xx)/dj*Knexp1/m;
+      fp_t enterm2=exp(jot*xx)/dj*be_integ.K1exp(jot)/m;
       if (j%2==0) {
 	enterm=enterm1-enterm2;
       } else {
@@ -874,14 +858,12 @@ namespace o2scl {
       }
     } else {
       pterm=exp(-jot)*2.0*cosh(jot*(xx+1.0)/tt)/jot/jot*
-      gsl_sf_bessel_Kn_scaled(2.0,jot);
-      //pterm=2.0*cosh(jot*(xx+1.0)/tt)/jot/jot*Kn2;
+      be_integ.K2exp(jot);
       if (j%2==0) pterm*=-1.0;
       nterm=pterm*tanh(jot*(xx+1.0))*jot;
       fp_t enterm1=-(1.0+xx)/tt*nterm/m;
       fp_t enterm2=2.0*exp(-jot*xx)/dj*cosh(jot*(xx+1.0))*
-      gsl_sf_bessel_Kn_scaled(3.0,jot)/m;
-      //fp_t enterm2=2.0*exp(-jot*xx)/dj*cosh(jot*(xx+1.0))*Knexp3/m;
+      be_integ.K3exp(jot)/m;
       if (j%2==0) {
 	enterm=enterm1-enterm2;
       } else {
@@ -901,7 +883,7 @@ namespace o2scl {
 
   /// Solve for the chemical potential for massless fermions
   fp_t massless_solve_fun(fp_t x, fermion &f, fp_t temper) {
-    fp_t fm2=this->integ.calc_2(x/temper)/2.0;
+    fp_t fm2=this->fd_integ.calc_2(x/temper)/2.0;
     return f.g*pow(temper,3.0)*fm2/this->pi2/f.n-1.0;
   }    
   
