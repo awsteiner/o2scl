@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -e
+
+commit=$(git log -1 --pretty="%H%n%ci") 
+commit_hash=$(echo "$commit" | head -1)
+commit_date=$(echo "$commit" | head -2 | tail -1) 
+
+branch_name=$(git symbolic-ref -q HEAD) 
+branch_name=${branch_name##refs/heads/}
+branch_name=${branch_name:-HEAD} 
+
+# Write it
+echo -e "prev_commit='$commit_hash'\ndate='$commit_date'\nbranch='$branch'\n" > data/o2scl/prev_commit.txt
