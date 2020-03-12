@@ -25,6 +25,7 @@
 #endif
 
 #include <o2scl/lib_settings.h>
+#include <o2scl/prev_commit.h>
 
 #ifdef O2SCL_HDF
 #ifdef O2SCL_PLAIN_HDF5_HEADER
@@ -226,6 +227,9 @@ std::string lib_settings_class::system_type() {
 }
 
 void lib_settings_class::config_h_report() {
+  cout << "Previous commit hash: " << O2SCL_PREV_COMMIT_HASH << endl;
+  cout << "Previous commit date: " << O2SCL_PREV_COMMIT_DATE << endl;
+  cout << "Commit branch: " << O2SCL_BRANCH << endl;
 #ifdef HAVE_ACOSH
   cout << "HAVE_ACOSH: " << HAVE_ACOSH << endl;
 #else

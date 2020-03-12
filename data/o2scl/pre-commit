@@ -10,4 +10,4 @@ branch_name=${branch_name##refs/heads/}
 branch_name=${branch_name:-HEAD} 
 
 # Write it
-echo -e "#define O2SCL_COMMIT_HASH \"$commit_hash\"\n#define O2SCL_COMMIT_DATE \"$commit_date\"\n#define O2SCL_BRANCH\"$branch\"\n" > src/base/prev_commit.h
+echo -e "#define O2SCL_PREV_COMMIT_HASH \"$commit_hash\"\n#define O2SCL_PREV_COMMIT_DATE \"$commit_date\"\n#define O2SCL_BRANCH \"$branch\"\n" > src/base/prev_commit.h
