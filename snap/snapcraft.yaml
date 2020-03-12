@@ -20,7 +20,10 @@
 # 11/6/19: Trying an rpath build to simplify the use of acol
 # on snap installations. The older compiler flag is needed
 # because 16.04 LTS doesn't have the newer boost integration
-# libraries.
+# libraries. The rpath flag doesn't seem to do anything at
+# the moment.
+
+# 3/12/2020: Added O2SCL_HDF5_PRE_1_12 for old HDF5 interface
 
   parts:
     o2scl:
@@ -36,5 +39,5 @@
       - libhdf5-serial-dev
       - libgsl0-dev
       build: |
-        mkdir -p m4 && ./autogen.sh && CXXFLAGS="-DO2SCL_OLDER_COMPILER" LDFLAGS="-Wl,-rpath -Wl,/snap/o2scl/current/lib/x86_64-linux-gnu" ./configure --enable-snap --prefix=$PWD/../install && make blank-doc && make && make install
+        mkdir -p m4 && ./autogen.sh && CXXFLAGS="-DO2SCL_OLDER_COMPILER -DO2SCL_HDF5_PRE_1_12" LDFLAGS="-Wl,-rpath -Wl,/snap/o2scl/current/lib/x86_64-linux-gnu" ./configure --enable-snap --prefix=$PWD/../install && make blank-doc && make && make install
   

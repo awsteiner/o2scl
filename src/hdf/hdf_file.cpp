@@ -3476,7 +3476,15 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
   hid_t top=hf.get_current_id();
 
   H5O_info_t infobuf;
+
+  // AWS, 3/12/2020: modified to support hdf5 v1.12 which deprecates
+  // the 4 parameter form.
+#ifdef O2SCL_HDF5_PRE_1_12
   herr_t status=H5Oget_info_by_name(loc,name,&infobuf,H5P_DEFAULT);
+#else
+  herr_t status=H5Oget_info_by_name(loc,name,&infobuf,H5O_INFO_ALL,
+				    H5P_DEFAULT);
+#endif
 
   ip->found=false;
   

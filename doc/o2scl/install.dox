@@ -16,6 +16,10 @@
     documentation is included in the \o2 release distribution and
     automatically installed by \c make \c install.
 
+    \note If you are trying to install \o2 with a version of HDF5
+    earlier than 1.12 you will need to compile with
+    -DO2SCL_HDF5_PRE_1_12 .
+
     \o2 requires the Boost (any relatively recent version) and the GSL
     libraries (version 1.16 or later). If the <tt>configure</tt>
     script cannot find Boost or GSL, you may have to specify their

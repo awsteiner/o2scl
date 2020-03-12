@@ -17,9 +17,9 @@ osx_image: xcode11.2
 dist: bionic
 sudo: required
 
-# Speed up the tests on linux
+# Speed up the tests on linux and presume old HDF5
 env:
-  - CXXFLAGS="-DO2SCL_FAST_TEST" 
+  - CXXFLAGS="-DO2SCL_FAST_TEST -DO2SCL_HDF5_PRE_1_12" 
 
 addons:
   apt:
