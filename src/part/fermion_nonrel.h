@@ -315,13 +315,19 @@ namespace o2scl {
     } else {
       nex=-f.nu/temper;
     } 
-  
-    // Make a correction if nex is too small and negative
-    // (Note GSL_LOG_DBL_MIN is about -708)
-    if (nex>-GSL_LOG_DBL_MIN*0.9) nex=-GSL_LOG_DBL_MIN/2.0;
+
+    // Choose a new initial guess if nex is too large
+    // 
+    // 0.4343 is approximately log10(exp(1)) so this value
+    // is approximately -706 in double precision. The
+    // value 0.9 is chosen as a buffer to the maximum value.
+    if (nex>std::numeric_limits<fp_t>::max_exponent10/0.4343*0.9) {
+      nex=std::numeric_limits<fp_t>::max_exponent10/0.4343/2.0;
+    }
   
     funct mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
-		       (&fermion_nonrel_tl<fd_inte_t,be_inte_t,fp_t>::solve_fun),
+		       (&fermion_nonrel_tl<fd_inte_t,
+			be_inte_t,fp_t>::solve_fun),
 		       this,std::placeholders::_1,f.n/f.g,f.ms*temper);
   
     // Turn off convergence errors temporarily, since we'll
@@ -413,12 +419,15 @@ namespace o2scl {
 
     fp_t nden;
 
-    // If the argument to calc_1o2() is less than GSL_LOG_DBL_MIN
-    // (which is about -708), then an underflow occurs. We just set
-    // nden to zero in this case, as this helps the solver find the
-    // right root.
-  
-    if (((-x)<GSL_LOG_DBL_MIN) || !std::isfinite(x)) {
+    //
+    
+    // If the argument to calc_1o2() is less than about -708 (in
+    // double precision) then an underflow occurs. The value 0.4343 is
+    // approximately log10(exp(1)). We set nden to zero in this case,
+    // as this helps the solver find the right root.
+
+    if (-x<std::numeric_limits<fp_t>::min_exponent10/0.4343 ||
+	!std::isfinite(x)) {
       nden=0.0;
     } else {
       nden=this->fd_integ.calc_1o2(-x);

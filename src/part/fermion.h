@@ -489,7 +489,8 @@ namespace o2scl {
       pterm1=(x*(1.0+x)*(2.0+x)*(-3.0+2.0*x*(2.0+x))+6.0*sx*s2x*
 	      log((sx+s2x)/sqrt(2.0)))/24.0/sx/s2x;
     } else {
-      pterm1=x2*sx*(29568.0+15840.0*x+1540.0*x2-105.0*x3)/55440.0/sqrt(2.0);
+      pterm1=x2*sx*(29568.0+15840.0*x+1540.0*x2-105.0*x3)/55440.0/
+      sqrt(2.0);
     }
     fp_t pterm4=-31.0*pow(this->pi*tt,6.0)/1008.0*(1.0+x)*
     sx*s2x/pow(x*(2.0+x),4.0);
@@ -675,7 +676,8 @@ namespace o2scl {
   
     x=f.ms+temper;
     funct mf2=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			(&fermion_thermo_tl<fd_inte_t,be_inte_t,fp_t>::massless_solve_fun),
+			(&fermion_thermo_tl<fd_inte_t,
+			 be_inte_t,fp_t>::massless_solve_fun),
 			this,std::placeholders::_1,std::ref(f),temper);
     massless_root->solve(x,mf2);
     f.nu=x;
@@ -733,7 +735,8 @@ namespace o2scl {
       \f]
       and defining the expression
       \f[
-      \mathrm{cbt} = \alpha^{-1/6} \left( -1 + \sqrt{1+\alpha}\right)^{1/3}
+      \mathrm{cbt} = \alpha^{-1/6} \left( -1 + 
+      \sqrt{1+\alpha}\right)^{1/3}
       \f]
       we can write the chemical potential as
       \f[
@@ -789,8 +792,9 @@ namespace o2scl {
       } else if (alpha<3.0e-4) {
 	two13=cbrt(2.0);
 	alpha16=pow(alpha,1.0/6.0);
-	f.nu=(two13/alpha16-alpha16/two13+alpha/alpha16/6.0/two13/two13
-	      +alpha*alpha16/12.0/two13-alpha*alpha/alpha16/18.0/two13/two13-
+	f.nu=(two13/alpha16-alpha16/two13+alpha/alpha16/6.0/two13/two13+
+	      alpha*alpha16/12.0/two13-
+	      alpha*alpha/alpha16/18.0/two13/two13-
 	      5.0*alpha*alpha*alpha16/144.0/two13+
 	      77.0/2592.0*alpha*alpha*alpha/alpha16/two13/two13)*
 	this->pi*temper/sqrt(3.0);

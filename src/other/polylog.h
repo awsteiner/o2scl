@@ -170,7 +170,11 @@ namespace o2scl {
   fp_t obj_func(fp_t t, size_t n, fp_t z) {
     fp_t res;
     fp_t arg=(1-t)*z;
-    if (arg<std::numeric_limits<fp_t>::min_exponent) return 0;
+    // 0.4343 is approximately log10(exp(1)) so this value
+    // is approximately -706 in double precision
+    if (arg<std::numeric_limits<fp_t>::min_exponent10/0.4343) {
+      return 0;
+    }
     res=exp(arg)*pow(t*t-1,n-0.5);
     if (!std::isfinite(res)) {
       std::cout << t << " x " << n << " " << z << " "

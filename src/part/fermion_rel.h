@@ -1448,7 +1448,8 @@ namespace o2scl {
 	// Nondegenerate case
       
 	funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			    (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::density_fun),
+			    (&fermion_rel_tl<fd_inte_t,
+			     be_inte_t,fp_t>::density_fun),
 			    this,std::placeholders::_1,std::ref(f),T);
       
 	nden_p=nit->integ(mfe,0.0,0.0);
@@ -1463,7 +1464,8 @@ namespace o2scl {
 	// Degenerate case
       
 	funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			    (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::deg_density_fun),
+			    (&fermion_rel_tl<fd_inte_t,
+			     be_inte_t,fp_t>::deg_density_fun),
 			    this,std::placeholders::_1,std::ref(f),T);
       
 	fp_t arg;
@@ -1551,7 +1553,8 @@ namespace o2scl {
 	// Nondegenerate case
       
 	funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			   (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::density_fun),
+			   (&fermion_rel_tl<fd_inte_t,
+			    be_inte_t,fp_t>::density_fun),
 			   this,std::placeholders::_1,std::ref(f),T);
       
 	nden_ap=nit->integ(mf,0.0,0.0);
@@ -1567,7 +1570,8 @@ namespace o2scl {
 	// Degenerate case
       
 	funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			   (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::deg_density_fun),
+			   (&fermion_rel_tl<fd_inte_t,
+			    be_inte_t,fp_t>::deg_density_fun),
 			   this,std::placeholders::_1,std::ref(f),T);
       
 	fp_t arg;
