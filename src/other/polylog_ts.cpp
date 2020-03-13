@@ -40,7 +40,7 @@ int main(void) {
 #ifdef O2SCL_NEW_BOOST_INTEGRATION
   
   fermi_dirac_integ_gsl f1;
-  fermi_dirac_integ_direct f2;
+  fermi_dirac_integ_direct<> f2;
 
   t.test_rel(f1.calc_1o2(0.5),f2.calc_1o2(0.5),4.0e-16,"fd 1");
   t.test_rel(f1.calc_m1o2(0.5),f2.calc_m1o2(0.5),4.0e-16,"fd 2");
@@ -65,7 +65,7 @@ int main(void) {
   t.test_rel<long double>(res,0.3070874263512549,2.0e-16,"be 2");
 
   bessel_K_exp_integ_gsl beg;
-  bessel_K_exp_integ_direct bed;
+  bessel_K_exp_integ_direct<> bed;
 
   t.test_rel(beg.K1exp(2.0),bed.K1exp(2.0),1.0e-15,"bed 1");
   t.test_rel(beg.K2exp(2.0),bed.K2exp(2.0),1.0e-15,"bed 2");

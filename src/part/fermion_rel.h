@@ -480,28 +480,28 @@ namespace o2scl {
 	}
       
 	fp_t lg=std::max(fabs(f.nu),f.ms);
-	fp_t bhigh=lg/temper, blow=-bhigh;
-	fp_t yhigh=mf(bhigh), ylow=mf(blow);
+	fp_t bhigh=lg/temper, b_low=-bhigh;
+	fp_t yhigh=mf(bhigh), ylow=mf(b_low);
 	for(size_t j=0;j<5 && yhigh>0.0;j++) {
 	  bhigh*=1.0e2;
 	  yhigh=mf(bhigh);
 	}
 	for(size_t j=0;j<5 && ylow<0.0;j++) {
-	  blow*=1.0e2;
-	  ylow=mf(blow);
+	  b_low*=1.0e2;
+	  ylow=mf(b_low);
 	}
 	if (yhigh<0.0 && ylow>0.0) {
 	  o2scl::root_brent_gsl<> rbg;
 	  rbg.err_nonconv=false;
-	  ret=rbg.solve_bkt(blow,bhigh,mf);
+	  ret=rbg.solve_bkt(b_low,bhigh,mf);
 	  if (ret==0) {
 	    // Bracketing solver worked
 	    last_method=3;
-	    nex=blow;
+	    nex=b_low;
 	  } else {
 	    if (verbose>1) {
 	      std::cout << "nu_from_n(): density_root failed fourth solver "
-			<< blow << std::endl;
+			<< b_low << std::endl;
 	    }
 	  }
 	} else if (verbose>1) {
@@ -1016,22 +1016,22 @@ namespace o2scl {
       last_method=2000;
     } else {
       fp_t lg=std::max(fabs(f.nu),f.ms);
-      fp_t bhigh=lg/temper, blow=-bhigh;
-      fp_t yhigh=mf(bhigh), ylow=mf(blow);
+      fp_t b_high=lg/temper, b_low=-b_high;
+      fp_t yhigh=mf(b_high), ylow=mf(b_low);
       for(size_t j=0;j<5 && yhigh<0.0;j++) {
-	bhigh*=1.0e2;
-	yhigh=mf(bhigh);
+	b_high*=1.0e2;
+	yhigh=mf(b_high);
       }
       for(size_t j=0;j<5 && ylow>0.0;j++) {
-	blow*=1.0e2;
-	ylow=mf(blow);
+	b_low*=1.0e2;
+	ylow=mf(b_low);
       }
       if (yhigh>0.0 && ylow<0.0) {
 	root_brent_gsl<> rbg;
 	rbg.err_nonconv=false;
-	ret=rbg.solve_bkt(blow,bhigh,mf);
+	ret=rbg.solve_bkt(b_low,b_high,mf);
 	if (ret==0) {
-	  nex=blow;
+	  nex=b_low;
 	  last_method=3000;
 	}
       }
@@ -1304,7 +1304,8 @@ namespace o2scl {
     if (!deg) {
 
       funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::density_fun),
+			  (&fermion_rel_tl<fd_inte_t,
+			   be_inte_t,fp_t>::density_fun),
 			  this,std::placeholders::_1,std::ref(f),T);
     
       nden=nit->integ(mfe,0.0,0.0);
@@ -1316,7 +1317,8 @@ namespace o2scl {
     } else {
     
       funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<fd_inte_t,be_inte_t,fp_t>::deg_density_fun),
+			  (&fermion_rel_tl<fd_inte_t,
+			   be_inte_t,fp_t>::deg_density_fun),
 			  this,std::placeholders::_1,std::ref(f),T);
     
       fp_t arg;
@@ -1422,8 +1424,8 @@ namespace o2scl {
 	particles_done=true;
 	nden_p=f.n;
 	if (!std::isfinite(nden_p)) {
-	  O2SCL_ERR("Value 'nden_p' not finite (1) in fermion_rel::pair_fun().",
-		    exc_einval);
+	  O2SCL_ERR2("Value 'nden_p' not finite (1) in ",
+		     "fermion_rel::pair_fun().",exc_einval);
 	}
       }
     }
@@ -1434,8 +1436,8 @@ namespace o2scl {
 	particles_done=true;
 	nden_p=f.n;
 	if (!std::isfinite(nden_p)) {
-	  O2SCL_ERR("Value 'nden_p' not finite (2) in fermion_rel::pair_fun().",
-		    exc_einval);
+	  O2SCL_ERR2("Value 'nden_p' not finite (2) in",
+		     "fermion_rel::pair_fun().",exc_einval);
 	}
       }
     }
@@ -1455,8 +1457,8 @@ namespace o2scl {
 	nden_p=nit->integ(mfe,0.0,0.0);
 	nden_p*=f.g*pow(T,3.0)/2.0/this->pi2;
 	if (!std::isfinite(nden_p)) {
-	  O2SCL_ERR("Value 'nden_p' not finite (3) in fermion_rel::pair_fun().",
-		    exc_einval);
+	  O2SCL_ERR2("Value 'nden_p' not finite (3) in",
+		     "fermion_rel::pair_fun().",exc_einval);
 	}
       
       } else {
@@ -1485,8 +1487,8 @@ namespace o2scl {
 	}
       
 	if (!std::isfinite(nden_p)) {
-	  O2SCL_ERR("Value 'nden_p' not finite (4) in fermion_rel::pair_fun().",
-		    exc_einval);
+	  O2SCL_ERR2("Value 'nden_p' not finite (4) in",
+		     "fermion_rel::pair_fun().",exc_einval);
 	}
 
       }

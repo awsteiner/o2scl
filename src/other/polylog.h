@@ -208,8 +208,9 @@ namespace o2scl {
   /** \brief Compute the fermion integrals for a non-relativistic
       particle using the GSL functions
 
-      This class is used in \o2p in \ref o2scl::fermion_nonrel to
-      compute the Fermi-Dirac integrals for non-relativistic
+      This class is used in \o2p in <tt>o2scl::fermion_tl</tt>
+      and <tt>o2scl::fermion_nonrel_tl</tt>
+      to compute the Fermi-Dirac integrals for non-relativistic
       fermions.
    */
   class fermi_dirac_integ_gsl {
@@ -277,11 +278,12 @@ namespace o2scl {
   
 #if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
 
-#ifdef O2SCL_NEW_BOOST_INTEGRATION
+#if defined(O2SCL_NEW_BOOST_INTEGRATION) || defined(DOXYGEN)
 
   /** \brief Compute the fermion integrals for a non-relativistic
       particle by directly integrating in long double precision
    */
+  template <class fp_t=double, class internal_fp_t=long double>
   class fermi_dirac_integ_direct {
 
   protected:
@@ -289,52 +291,52 @@ namespace o2scl {
     /** \brief The integrator
      */
     fermi_dirac_integ_tl<o2scl::inte_exp_sinh_boost
-      <funct_ld,15,long double>,long double> it;
+      <funct_ld,15,internal_fp_t>,internal_fp_t> it;
     
   public:
 
     fermi_dirac_integ_direct() {
-      it.iiu.tol_rel=1.0e-17;
+      //it.iiu.tol_rel=1.0e-17;
     }
     
     /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$
      */
-    double calc_1o2(double y) {
-      long double y2=y, res, err;
+    fp_t calc_1o2(fp_t y) {
+      internal_fp_t y2=y, res, err;
       it.calc_err(0.5L,y2,res,err);
-      return ((double)res);
+      return ((fp_t)res);
     }
     
     /** \brief Fermi-Dirac integral of order \f$ -1/2 \f$
      */
-    double calc_m1o2(double y) {
-      long double y2=y, res, err;
+    fp_t calc_m1o2(fp_t y) {
+      internal_fp_t y2=y, res, err;
       it.calc_err(-0.5L,y2,res,err);
-      return ((double)res);
+      return ((fp_t)res);
     }
     
     /** \brief Fermi-Dirac integral of order \f$ 3/2 \f$
      */
-    double calc_3o2(double y) {
-      long double y2=y, res, err;
+    fp_t calc_3o2(fp_t y) {
+      internal_fp_t y2=y, res, err;
       it.calc_err(1.5L,y2,res,err);
-      return ((double)res);
+      return ((fp_t)res);
     }
     
     /** \brief Fermi-Dirac integral of order \f$ 2 \f$
      */
-    double calc_2(double y) {
-      long double y2=y, res, err;
+    fp_t calc_2(fp_t y) {
+      internal_fp_t y2=y, res, err;
       it.calc_err(2.0L,y2,res,err);
-      return ((double)res);
+      return ((fp_t)res);
     }
     
     /** \brief Fermi-Dirac integral of order \f$ 3 \f$
      */
-    double calc_3(double y) {
-      long double y2=y, res, err;
+    fp_t calc_3(fp_t y) {
+      internal_fp_t y2=y, res, err;
       it.calc_err(3.0L,y2,res,err);
-      return ((double)res);
+      return ((fp_t)res);
     }
     
   };
@@ -342,6 +344,7 @@ namespace o2scl {
   /** \brief Compute exponentially scaled modified bessel function of
       the second kind by direct integration
    */
+  template <class fp_t=double, class internal_fp_t=long double>
   class bessel_K_exp_integ_direct {
     
   protected:
@@ -349,32 +352,32 @@ namespace o2scl {
     /** \brief The integrator
      */
     bessel_K_exp_integ_tl<o2scl::inte_exp_sinh_boost
-      <funct_ld,15,long double>,long double> it;
+      <funct_ld,15,internal_fp_t>,internal_fp_t> it;
     
   public:
 
     /** \brief Compute \f$ K_1(x)\exp(x) \f$
      */
-    double K1exp(double x) {
-      long double x2=x, res, err;
+    fp_t K1exp(fp_t x) {
+      internal_fp_t x2=x, res, err;
       it.calc_err(1.0L,x2,res,err);
-      return ((double)res);
+      return ((fp_t)res);
     }
     
     /** \brief Compute \f$ K_2(x)\exp(x) \f$
      */
-    double K2exp(double x) {
-      long double x2=x, res, err;
+    fp_t K2exp(fp_t x) {
+      internal_fp_t x2=x, res, err;
       it.calc_err(2.0L,x2,res,err);
-      return ((double)res);
+      return ((fp_t)res);
     }
     
     /** \brief Compute \f$ K_3(x)\exp(x) \f$
      */
-    double K3exp(double x) {
-      long double x2=x, res, err;
+    fp_t K3exp(fp_t x) {
+      internal_fp_t x2=x, res, err;
       it.calc_err(3.0L,x2,res,err);
-      return ((double)res);
+      return ((fp_t)res);
     }
     
   };
