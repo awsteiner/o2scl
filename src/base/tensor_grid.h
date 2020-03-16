@@ -1356,6 +1356,9 @@ namespace o2scl {
 	It then calls \ref interp_linear_power_two() to perform the
 	interpolation in that hypercube.
 
+	This function calls the error handler if the user
+	tries to interpolate an empty tensor.
+
 	\future This starts with a small copy, which can be eliminated
 	by creating a new version of interp_linear_power_two
 	which accepts an offset vector parameter so that the 
@@ -1365,6 +1368,11 @@ namespace o2scl {
     */
     template<class vec2_t> double interp_linear(vec2_t &v) const {
 
+      if (this->rk==0) {
+	O2SCL_ERR2("Tried to interpolate in empty tensor in ",
+		   "tensor_grid::interp_linear().",o2scl::exc_einval);
+      }
+      
       // Find the the corner of the hypercube containing v
       size_t rgs=0;
       std::vector<size_t> loc(this->rk);
