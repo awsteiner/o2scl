@@ -91,12 +91,15 @@ int main(void) {
   inte_qag_gsl<> &qag2=dynamic_cast<inte_qag_gsl<> &>(*fr.dit.get());
   t.test_gen(qag->get_rule()==qag2.get_rule(),"downcast");
   
-  //#ifdef O2SCL_LD_TYPES
+#ifdef O2SCL_LD_TYPES
   
-  //fermion_rel_tl<long double> fermion_rel_ld;
+  /*fermion_rel_tl<fermi_dirac_integ_direct<long double,cpp_dec_float_50>,
+    bessel_K_exp_integ_direct<long double,cpp_dec_float_50>,
+    long double> fermion_rel_ld;
+  */
   //fermion_rel_tl<cpp_dec_float_50> fermion_rel_cdf;
   
-  //#endif
+#endif
 
   t.report();
 
