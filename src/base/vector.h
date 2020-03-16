@@ -109,6 +109,23 @@ namespace o2scl {
     }
   };
 
+  /** \brief Return true if two vectors are equal.
+   */
+  template<class vec_t, class vec2_t> 
+    bool vectors_equal(const vec_t &v1, const vec2_t &v2,
+		       double thresh=1.0e-14) {
+
+    if (v1.size()!=v2.size()) return false;
+
+    for(size_t j=0;j<v1.size();j++) {
+      if (fabs(v1[j]-v2[j])/(fabs(v1[j])+fabs(v2[j]))>thresh) {
+	return false;
+      }
+    }
+
+    return true;
+  }
+  
   /// \name Copying vectors and matrices in src/base/vector.h
   //@{
   /** \brief Simple vector copy
