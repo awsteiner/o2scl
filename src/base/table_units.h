@@ -373,6 +373,27 @@ namespace o2scl {
       return;
     }
 
+    /** \brief Copy all names and units from \c src to
+	the current table
+
+	If a column in the source table is already present
+	in the current table, then its unit is unchanged.
+	If all columns in the source are already present
+	in the current table, then this function silently
+	does nothing.
+    */
+    void copy_names_and_units(table_units &src) {
+      for(size_t i=0;i<src.get_ncolumns();i++) {
+	std::string cname=src.get_column_name(i);
+	if (this->is_column(cname)==false) {
+	  this->new_column(cname);
+	  std::string cunit=get_unit(i);
+	  this->set_unit(cname,cunit);
+	}
+      }
+      return;
+    }
+
     /** \brief Get the unit for column with index i
 	
 	\future Is there a way to make this function have O(1) time

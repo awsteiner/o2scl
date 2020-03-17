@@ -1202,13 +1202,22 @@ namespace o2scl {
       the table.
   */
   void new_row(size_t n) {
+
+    // If we're already at the maximum number of lines,
+    // double it so that we can easily add more data later
     if (nlines>=maxlines) inc_maxlines(maxlines);
-  
+
+    // Increase the nlines parameter
     nlines++;
+
+    // Shift the data if necessary. Note that if n is equal to the
+    // original value of nlines, then n==nlines-1, thus i=nlines-2
+    // means that i<n and thus the loop is bypassed altogether.
     for(int i=((int)nlines)-2;i>=((int)n);i--) {
       copy_row(i,i+1);
     }
 
+    // Reset the interpolation objects
     if (intp_set) {
       intp_set=false;
       delete si;
@@ -1305,6 +1314,26 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Copy row \c ix from table \c src to the end of the
+      current table
+   */
+  template<class vec2_t>
+  void copy_row(table<vec2_t> &src, size_t ix) {
+    if (ix>=src.get_nlines()) {
+      O2SCL_ERR2("Row not present in ",
+		"table::copy_row().",o2scl::exc_einval);
+    }
+    size_t n=this->get_nlines();
+    // Add one new row at the end of the table
+    this->new_row(n);
+    for(size_t i=0;i<src.get_ncolumns() && i<this->get_ncolumns();i++) {
+      this->set(i,n,src[i][ix]);
+    }
+    // The interpolation objects need to be reset, but this
+    // is already done in new_row() above.
+    return;
+  }
+  
   /** \brief Copy all rows matching a particular condition to
       a new table
 
