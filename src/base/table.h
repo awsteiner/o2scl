@@ -373,8 +373,11 @@ namespace o2scl {
 
 #if !O2SCL_NO_RANGE_CHECK
     if (row>=alist[icol]->second.dat.size()) {
-      O2SCL_ERR("Vector size failure in table::set(size_t,size_t,double).",
-		exc_esanity);
+      std::string errs=((std::string)"Vector size failure, row ")+
+      o2scl::szttos(row)+" >= "+
+      o2scl::szttos(alist[icol]->second.dat.size())+
+      "in table::set(size_t,size_t,double).";
+      O2SCL_ERR(errs.c_str(),exc_esanity);
     }
 #endif
     alist[icol]->second.dat[row]=val;
@@ -1205,7 +1208,8 @@ namespace o2scl {
 
     // If we're already at the maximum number of lines,
     // double it so that we can easily add more data later
-    if (nlines>=maxlines) inc_maxlines(maxlines);
+    if (maxlines==0) inc_maxlines(1);
+    else if (nlines>=maxlines) inc_maxlines(maxlines);
 
     // Increase the nlines parameter
     nlines++;
