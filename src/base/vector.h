@@ -60,6 +60,8 @@
 
 namespace o2scl {
 
+  /// \name Wrappers for GSL objects
+  //@{
   /** \brief A simple convenience wrapper for GSL vector objects
 
       \warning This uses typecasts on externally allocated GSL 
@@ -108,8 +110,25 @@ namespace o2scl {
       return sz2;
     }
   };
+  //@}
 
-  /** \brief Return true if two vectors are equal
+  /// \name Equality testing
+  //@{
+  /** \brief Return true if the first \c n elements of 
+      two vectors are equal
+   */
+  template<class vec_t, class vec2_t> 
+    bool vectors_equal(size_t n, const vec_t &v1, const vec2_t &v2) {
+
+    for(size_t j=0;j<n;j++) {
+      if (v1[j]!=v2[j]) return false;
+    }
+
+    return true;
+  }
+  
+  /** \brief Return true if two vectors are equal (tests size 
+      and elements)
    */
   template<class vec_t, class vec2_t> 
     bool vectors_equal(const vec_t &v1, const vec2_t &v2) {
@@ -123,14 +142,35 @@ namespace o2scl {
     return true;
   }
   
-  /** \brief Return true if two vectors are equal within a tolerance
+  /** \brief Return true if the first \c n elements of 
+      two vectors are equal within a specified tolerance
    */
+  template<class vec_t, class vec2_t> 
+    bool vectors_equal_tol(size_t n, const vec_t &v1, const vec2_t &v2,
+			   double tol=1.0e-14) {
+
+    for(size_t j=0;j<n;j++) {
+      if (std::isinf(v1[j])) {
+	if (!std::isinf(v2[j])) return false;
+      } else if (std::isnan(v1[j])) {
+	if (!std::isnan(v2[j])) return false;
+      } else if (fabs(v1[j]-v2[j])/(fabs(v1[j])+fabs(v2[j]))>tol) {
+	return false;
+      }
+    }
+    
+    return true;
+  }
+  
+  /** \brief Return true if two vectors are equal within a 
+      specified tolerance (tests size and element equality)
+  */
   template<class vec_t, class vec2_t> 
     bool vectors_equal_tol(const vec_t &v1, const vec2_t &v2,
 			   double tol=1.0e-14) {
-
+    
     if (v1.size()!=v2.size()) return false;
-
+    
     for(size_t j=0;j<v1.size();j++) {
       if (std::isinf(v1[j])) {
 	if (!std::isinf(v2[j])) return false;
@@ -143,6 +183,7 @@ namespace o2scl {
 
     return true;
   }
+  //@}
   
   /// \name Copying vectors and matrices in src/base/vector.h
   //@{

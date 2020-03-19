@@ -71,6 +71,7 @@
     \ref o2scl::tensor_grid . See more discussion in the tensor 
     section below. 
 
+    \comment
     \section vectype_subsect Template classes for vector objects
 
     <b>Type A: Array semantics</b>
@@ -134,6 +135,7 @@
     throwing exceptions,
     - a <tt>resize</tt> method (possibly destructive), and
     - the usual copy constructors.
+    \endcomment
 
     \section rowcol_subsect Rows and columns vs. x and y
 
@@ -185,6 +187,13 @@
 
     \section genvec_subsection Generic vector and matrix functions
     
+    GSL convenience wrappers: \ref o2scl::gsl_vector_wrap and 
+    \ref o2scl::gsl_matrix_wrap
+    
+    Vector equality testing:
+    - \ref o2scl::vectors_equal(size_t, const vec_t &, const vec2_t &)
+    - \ref o2scl::vectors_equal(const vec_t &, const vec2_t &)
+
     There are a couple functions which operate on generic vectors of
     any type in \ref vector.h . This header contains functions for
     sorting, summing, searching, swapping, reversing, monotonicity
