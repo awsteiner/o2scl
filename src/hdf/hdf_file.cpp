@@ -3464,6 +3464,13 @@ void hdf_file::file_list(int verbose) {
   return;
 }
 
+herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name, 
+				   const H5L_info_t *inf, void *op_data) {
+#ifdef O2SCL_NEVER_DEFINED
+#endif
+  return 0;
+}
+
 herr_t hdf_file::iterate_func(hid_t loc, const char *name, 
 			      const H5L_info_t *inf, void *op_data) {
 
@@ -3562,6 +3569,7 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
       }
     }
 
+    // Output compression information
     if (loc_verbose>1) {
       if (compr==1) {
 	cout << "Compressed with deflate." << endl;
@@ -3577,6 +3585,8 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 	cout << "(1) ";
       } else if (compr==2) {
 	cout << "(2) ";
+      } else {
+	cout << "(3) ";
       }
     }
     
@@ -3604,6 +3614,7 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 	       << "\".";
 	}
       }
+      if (ip->found==true) return 1;
     } else if (H5Tequal(nat_id,H5T_NATIVE_SHORT)) {
       type_process(*ip,mode,ndims,dims,max_dims,"short",name);
       if (ip->found==true) return 1;
@@ -3740,7 +3751,7 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 
     if ((mode==ip_type_from_name || mode==ip_type_from_pattern) &&
 	loc_verbose>1) {
-      cout << "Value of found " << ip->found << " and type "
+      cout << "Value of found is " << ip->found << " and type "
 	   << ip->type << endl;
     }
     
