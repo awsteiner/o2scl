@@ -68,7 +68,7 @@ eos_had_rmf_hyp::eos_had_rmf_hyp() {
   cascade_m->non_interacting=false;
 }
 
-int eos_had_rmf_hyp::calc_eq_p
+int eos_had_rmf_hyp::calc_eq_hyp_p
 (fermion &ne, fermion &pr, fermion &lam, fermion &sigp, fermion &sigz, 
  fermion &sigm, fermion &casz, fermion &casm, double sig, double ome, 
  double lrho, double &f1, double &f2, double &f3, thermo &lth) {
@@ -83,7 +83,7 @@ int eos_had_rmf_hyp::calc_eq_p
       (inc_cascade==true &&
        (!std::isfinite(casz.n) || !std::isfinite(casm.n)))) {
     O2SCL_ERR2("At least one baryon density not finite in ",
-	       "eos_had_apr::calc_e().",exc_einval);
+	       "eos_had_apr::calc_eq_hyp_p().",exc_einval);
   }
   if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10 ||
       fabs(lam.g-2.0)>1.0e-10 || fabs(sigp.g-2.0)>1.0e-10 ||
@@ -91,11 +91,11 @@ int eos_had_rmf_hyp::calc_eq_p
       (inc_cascade==true &&
        (fabs(casz.g-2.0)>1.0e-10 || fabs(casm.g-2.0)>1.0e-10))) {
     O2SCL_ERR2("At least one of the baryon spin degeneracies ",
-	       "is wrong in eos_had_apr::calc_e().",exc_einval);
+	       "is wrong in eos_had_apr::calc_eq_hyp_p().",exc_einval);
   }
   if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
     O2SCL_ERR2("Neutron or proton masses wrong in ",
-	       "eos_had_apr::calc_e().",exc_einval);
+	       "eos_had_apr::calc_eq_hyp_p().",exc_einval);
   }
   if (ne.non_interacting==true || pr.non_interacting==true ||
       lam.non_interacting==true || sigp.non_interacting==true ||
@@ -103,7 +103,7 @@ int eos_had_rmf_hyp::calc_eq_p
       (inc_cascade==true && 
        (casz.non_interacting==true || casm.non_interacting==true))) {
     O2SCL_ERR2("At least one baryon is non-interacting in ",
-	       "eos_had_apr::calc_e().",exc_einval);
+	       "eos_had_apr::calc_eq_hyp_p().",exc_einval);
   }
 #endif
   
@@ -136,7 +136,7 @@ int eos_had_rmf_hyp::calc_eq_p
       sigp.ms<0.0 || sigz.ms<0.0 || sigm.ms<0.0 ||
       (inc_cascade && (casm.ms<0.0 || casz.ms<0.0))) {
     O2SCL_ERR2("Baryon mass negative in ",
-	       "eos_had_rmf_hyp::calc_eq_p().",o2scl::exc_efailed);
+	       "eos_had_rmf_hyp::calc_eq_hyp_p().",o2scl::exc_efailed);
   }
   
   ne.nu=ne.mu-gw*ome+0.5*gr*lrho;
@@ -336,7 +336,7 @@ int eos_had_rmf_hyp::calc_e_solve_fun(size_t nv, const ubvector &ex,
     cascade_m->mu=2.0*neutron->mu-proton->mu;
   }
   
-  calc_eq_p(*neutron,*proton,*lambda,*sigma_p,*sigma_z,
+  calc_eq_hyp_p(*neutron,*proton,*lambda,*sigma_p,*sigma_z,
 	    *sigma_m,*cascade_z,*cascade_m,sig,ome,lrho,f1,f2,f3,*eos_thermo);
   
   // 11/5/08 - We don't want to call the error handler here, because
@@ -379,10 +379,10 @@ int eos_had_rmf_hyp::calc_e_solve_fun(size_t nv, const ubvector &ex,
   return 0;
 }
 
-int eos_had_rmf_hyp::calc_e(fermion &ne, fermion &pr,
-			    fermion &lam, fermion &sigp, fermion &sigz, 
-			    fermion &sigm, fermion &casz, fermion &casm,
-			    thermo &lth) {
+int eos_had_rmf_hyp::calc_hyp_e(fermion &ne, fermion &pr,
+				fermion &lam, fermion &sigp, fermion &sigz, 
+				fermion &sigm, fermion &casz, fermion &casm,
+				thermo &lth) {
   size_t nv=5;
 
   ubvector x(nv), y(nv);
@@ -708,8 +708,8 @@ int eos_had_rmf_hyp::solve_beta_eq_T0(size_t nv, const ubvector &x,
   cascade_m->mu=2.0*neutron->mu-proton->mu;
   
   double f1, f2, f3;
-  calc_eq_p(*neutron,*proton,*lambda,*sigma_p,*sigma_z,*sigma_m,
-	    *cascade_z,*cascade_m,x[0],x[1],x[2],f1,f2,f3,*eos_thermo);
+  calc_eq_hyp_p(*neutron,*proton,*lambda,*sigma_p,*sigma_z,*sigma_m,
+		*cascade_z,*cascade_m,x[0],x[1],x[2],f1,f2,f3,*eos_thermo);
   e.mu=neutron->mu-proton->mu;
   frel.calc_mu_zerot(e);
   

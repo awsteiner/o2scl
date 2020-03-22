@@ -541,8 +541,12 @@ namespace o2scl_acol {
     /// Get a conversion factor
     virtual int comm_get_conv(std::vector<std::string> &sv, bool itive_com);
 
+    /// Desc
+    virtual int comm_h5_copy(std::vector<std::string> &sv, 
+			     bool itive_com);
+    
     virtual int comm_constant(std::vector<std::string> &sv, bool itive_com);
-
+    
     /// Set screen width
     int set_swidth(int ncol) {
       ncols=ncol;

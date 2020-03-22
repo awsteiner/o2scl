@@ -74,7 +74,7 @@ int main(void) {
 
     cfl.set_quarks(u3,d3,s3);
     cfl.set_thermo(th3);
-    cfl.set_parameters();
+    cfl.set_parameters_cfl();
     
     inte_qng_gsl<funct> ngnew;
 

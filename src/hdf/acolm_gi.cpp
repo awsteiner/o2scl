@@ -40,6 +40,35 @@ using namespace o2scl_acol;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
+int acol_manager::comm_h5_copy(std::vector<std::string> &sv, 
+			       bool itive_com) {
+
+  vector<string> in, pr;
+  
+  pr.push_back("Source file");
+  pr.push_back("Destination file");
+  int ret=get_input(sv,pr,in,"h5-copy",itive_com);
+  if (ret!=0) return ret;
+
+  if (in[0]==in[1]) {
+    cerr << "Command 'h5-copy' will not copy a file onto itself." << endl;
+    return 2;
+  }
+
+  // Use hdf_file to open the file
+  hdf_file hf, hf2;
+  int hfret=hf.open(in[0].c_str(),false,false);
+  if (hfret!=0) {
+    cerr << "Failed to read file named " << in[0].c_str() << endl;
+    return exc_efailed;
+  }
+  hf2.open_or_create(in[1].c_str());
+
+  hf.copy(verbose,hf2);
+  
+  return 0;
+}
+
 int acol_manager::comm_get_conv
 (std::vector<std::string> &sv, bool itive_com) {
 

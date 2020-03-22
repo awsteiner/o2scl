@@ -1155,7 +1155,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=18;
+  static const int narr=19;
 
   string type_list_str;
   for(size_t i=0;i<type_list.size()-1;i++) {
@@ -1303,6 +1303,9 @@ int acol_manager::setup_options() {
      "full double precision. O2scl has several unit conversions which "+
      "implicitly assume hbar=c=1.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_conv),
+     both},
+    {0,"h5-copy","copy hdf5 file",-1,-1,"<source> <dist>","",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_h5_copy),
      both},
     {0,"constant","Get constant.",0,2,"<name or pattern> [unit]",
      "Get a hard-coded constant from the library.",

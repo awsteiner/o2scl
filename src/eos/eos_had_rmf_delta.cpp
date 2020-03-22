@@ -139,22 +139,23 @@ int eos_had_rmf_delta::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   del=x[5];
   
   if (ret!=0) {
-    O2SCL_ERR("msolve failed in eos_had_rmf_delta::calc_e(fermion,fermion,thermo).",
-		exc_efailed);
+    O2SCL_ERR2("msolve failed in eos_had_rmf_delta::calc_e",
+	       "(fermion,fermion,thermo).",exc_efailed);
   }
 
   return 0;
 }
 
-int eos_had_rmf_delta::calc_temp_p(fermion& ne, fermion& pr, double temper,
-			       double sig, double ome, double lrho, 
-			       double delta, double &f1, double &f2, 
-			       double &f3, double &f4, thermo& lth) {
+int eos_had_rmf_delta::calc_temp_eqd_p
+(fermion& ne, fermion& pr, double temper, double sig, double ome,
+ double lrho, double delta, double &f1, double &f2, double &f3,
+ double &f4, thermo& lth) {
+  
   double gs2, gs, gr2, gr, gw2, gw, duds, gd, gd2;
   double us, fun, dfdw, fnn=0.0, fnp=0.0, sig2, sig4, ome2, ome4, rho2;
   
   if (temper<=0.0) {
-    calc_p(ne,pr,sig,ome,lrho,delta,f1,f2,f3,f4,lth);
+    calc_eqd_p(ne,pr,sig,ome,lrho,delta,f1,f2,f3,f4,lth);
   }
   
   gs=ms*cs;
@@ -222,7 +223,7 @@ int eos_had_rmf_delta::calc_temp_p(fermion& ne, fermion& pr, double temper,
   return success;
 }
 
-int eos_had_rmf_delta::calc_p(fermion &ne, fermion &pr, 
+int eos_had_rmf_delta::calc_eqd_p(fermion &ne, fermion &pr, 
 			  double sig, double ome, double rhof, double delta,
 			  double &f1, double &f2, double &f3, double &f4,
 			  thermo &th) {
@@ -293,7 +294,7 @@ int eos_had_rmf_delta::calc_p(fermion &ne, fermion &pr,
   
   if (!std::isfinite(th.pr) || !std::isfinite(th.ed)) {
     O2SCL_ERR2("Pressure or energy not finite in ",
-		   "eos_had_rmf_delta::calc_p().",exc_efailed);
+		   "eos_had_rmf_delta::calc_eqd_p().",exc_efailed);
   }
   
   return success;
@@ -318,7 +319,7 @@ int eos_had_rmf_delta::zero_pressure(size_t nv, const ubvector &ex,
     }
   }
   
-  calc_p(*n,*p,sig,ome,lrho,delta,f1,f2,f3,f4,*eos_thermo);
+  calc_eqd_p(*n,*p,sig,ome,lrho,delta,f1,f2,f3,f4,*eos_thermo);
   
   ey[0]=eos_thermo->pr;
   ey[1]=p->n/(n->n+p->n)-0.5;
@@ -347,13 +348,15 @@ int eos_had_rmf_delta::calc_e_solve_fun(size_t nv, const ubvector &ex,
   lrho=ex[4];
   delta=ex[5];
   
-  calc_p(*neutron,*proton,sig,ome,lrho,delta,f1,f2,f3,f4,*eos_thermo);
+  calc_eqd_p(*neutron,*proton,sig,ome,lrho,delta,f1,f2,f3,f4,*eos_thermo);
   
   if (!ce_prot_matter && neutron->nu<neutron->ms) {
-    O2SCL_ERR("ne.nu<ne.ms in eos_had_rmf_delta::calc_e_solve_fun().",exc_efailed);
+    O2SCL_ERR("ne.nu<ne.ms in eos_had_rmf_delta::calc_e_solve_fun().",
+	      exc_efailed);
   }
   if (!ce_neut_matter && proton->nu<proton->ms) {
-    O2SCL_ERR("pr.nu<pr.ms in eos_had_rmf_delta::calc_e_solve_fun().",exc_efailed);
+    O2SCL_ERR("pr.nu<pr.ms in eos_had_rmf_delta::calc_e_solve_fun().",
+	      exc_efailed);
   }
 
   if (ce_neut_matter) {
@@ -374,8 +377,9 @@ int eos_had_rmf_delta::calc_e_solve_fun(size_t nv, const ubvector &ex,
   for(int i=0;i<6;i++) {
     if (!std::isfinite(ex[i]) || !std::isfinite(ey[i])) {
       O2SCL_ERR((((string)"Eq. ")+itos(i)+
-		  " not finite in eos_had_rmf_delta::calc_e_solve_fun().").c_str(),
-		  exc_efailed);
+		 " not finite in eos_had_rmf_delta::"+
+		 "calc_e_solve_fun().").c_str(),
+		exc_efailed);
     }
   }
 

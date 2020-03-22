@@ -124,7 +124,7 @@ namespace o2scl {
     /** \brief Equation of state and meson field equations 
 	as a function of chemical potentials
     */
-    virtual int calc_eq_p
+    virtual int calc_eq_hyp_p
       (fermion &ne, fermion &pr, fermion &lam, fermion &sigp, fermion &sigz, 
        fermion &sigm, fermion &casz, fermion &casm, double sig, double ome, 
        double lrho, double &f1, double &f2, double &f3, thermo &lth);
@@ -147,10 +147,10 @@ namespace o2scl {
 	After the call to calc_e(), the final values of the fields
 	can be accessed through get_fields(). 
     */
-    virtual int calc_e(fermion &ne, fermion &pr,
-		       fermion &lam, fermion &sigp, fermion &sigz, 
-		       fermion &sigm, fermion &casz, fermion &casm,
-		       thermo &lth);
+    virtual int calc_hyp_e(fermion &ne, fermion &pr,
+			   fermion &lam, fermion &sigp, fermion &sigz, 
+			   fermion &sigm, fermion &casz, fermion &casm,
+			   thermo &lth);
 
     /** \brief Set the hyperon objects
      */

@@ -915,7 +915,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     for(size_t i=0;i<total_size;i+=step) {
       tensor_obj.unpack_index(i,ix);
       string stemp="(";
-      for(size_t j=0;j<rk-1;i++) {
+      for(size_t j=0;j<rk-1;j++) {
 	stemp+=o2scl::szttos(ix[j])+",";
       }
       stemp+=o2scl::szttos(ix[rk-1])+"): ";

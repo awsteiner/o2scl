@@ -233,8 +233,8 @@ namespace o2scl {
 	quark and \ref thermo objects.
 	
     */
-    virtual int set_parameters(double lambda=0.0, double fourferm=0.0, 
-			       double sixferm=0.0, double fourgap=0.0);
+    virtual int set_parameters_cfl(double lambda=0.0, double fourferm=0.0, 
+				   double sixferm=0.0, double fourgap=0.0);
     
     /** \brief Calculate the EOS
 	

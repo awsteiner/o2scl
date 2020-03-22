@@ -1085,6 +1085,10 @@ namespace o2scl_hdf {
 	of the file 
     */
     void file_list(int verbose);
+
+    /** \brief Desc
+     */
+    void copy(int verbose, hdf_file &hf2);
     
     /// Parameters for iterate_func()
     typedef struct {
@@ -1100,6 +1104,7 @@ namespace o2scl_hdf {
     typedef struct {
       o2scl_hdf::hdf_file *hf;
       o2scl_hdf::hdf_file *hf2;
+      int verbose;
     } iterate_copy_parms;
 
     /// \name Mode values for \ref iterate_parms
@@ -1121,7 +1126,7 @@ namespace o2scl_hdf {
 
     /// HDF5 object iteration function when copying
     static herr_t iterate_copy_func(hid_t loc, const char *name, 
-      const H5L_info_t *inf, void *op_data);
+				    const H5L_info_t *inf, void *op_data);
     
 #ifndef DOXYGEN_INTERNAL
 

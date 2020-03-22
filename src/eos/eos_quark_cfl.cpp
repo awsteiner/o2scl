@@ -326,7 +326,7 @@ int eos_quark_cfl::integ_err(double a, double b, const size_t nr,
   return exc_etol;
 }
   
-int eos_quark_cfl::set_parameters(double lambda, double fourferm, 
+int eos_quark_cfl::set_parameters_cfl(double lambda, double fourferm, 
 				 double sixferm, double fourgap) {
   int ret;
 
