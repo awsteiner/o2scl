@@ -3524,6 +3524,34 @@ herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name,
       uniform_grid<double> ug;
       hdf_input(hf,ug,name);
       hdf_output(hf2,ug,name);
+    } else if (otype==((string)"tensor")) {
+      tensor<> t;
+      hf.getd_ten(name,t);
+      hf2.setd_ten(name,t);
+    } else if (otype==((string)"tensor<int>")) {
+      tensor<int> t;
+      hf.geti_ten(name,t);
+      hf2.seti_ten(name,t);
+    } else if (otype==((string)"tensor<size_t>")) {
+      tensor<size_t> t;
+      hf.get_szt_ten(name,t);
+      hf2.set_szt_ten(name,t);
+    } else if (otype==((string)"vector<contour_line>")) {
+      vector<contour_line> vcl;
+      hdf_input(hf,vcl,name);
+      hdf_output(hf2,vcl,name);
+    } else if (otype==((string)"hist")) {
+      hist h;
+      hdf_input(hf,h,name);
+      hdf_output(hf2,h,name);
+    } else if (otype==((string)"hist_2d")) {
+      hist_2d h;
+      hdf_input(hf,h,name);
+      hdf_output(hf2,h,name);
+    } else if (otype==((string)"tensor_grid")) {
+      tensor_grid<> tg;
+      hdf_input(hf,tg,name);
+      hdf_output(hf2,tg,name);
     } else {
       cout << "Non O2scl group \"" << name << "\"." << endl;
     }

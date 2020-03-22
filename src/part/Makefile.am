@@ -2,8 +2,8 @@
 # Basic variables
 # ------------------------------------------------------------
 
-PART_SRCS = boson.cpp classical.cpp boson_eff.cpp fermion_eff.cpp \
-	fermion.cpp fermion_nonrel.cpp part.cpp quark.cpp \
+PART_SRCS = boson.cpp boson_eff.cpp fermion_eff.cpp \
+	fermion_nonrel.cpp part.cpp quark.cpp \
 	fermion_rel.cpp fermion_deriv_rel.cpp fermion_deriv_nr.cpp \
 	classical_deriv.cpp boson_rel.cpp fermion_mag_zerot.cpp \
 	part_deriv.cpp part_pdg.cpp

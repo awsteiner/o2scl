@@ -14,7 +14,7 @@ HEADER_VAR = $(BASE_HEADER_VAR)
 
 BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	lib_settings.cpp misc.cpp cli.cpp \
-	test_mgr.cpp convert_units.cpp vector.cpp \
+	test_mgr.cpp vector.cpp \
 	string_conv.cpp exception.cpp format_float.cpp \
 	shunting_yard.cpp tensor.cpp find_constants.cpp
 
