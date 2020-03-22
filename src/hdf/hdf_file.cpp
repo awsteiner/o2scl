@@ -3547,7 +3547,7 @@ herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name,
     } else if (otype==((string)"hist_2d")) {
       hist_2d h;
       hdf_input(hf,h,name);
-      hdf_output(hf2,h,name);
+      hdf_output(hf2,((const hist_2d &)h),name);
     } else if (otype==((string)"tensor_grid")) {
       tensor_grid<> tg;
       hdf_input(hf,tg,name);
