@@ -577,6 +577,26 @@ namespace o2scl_acol {
 
     // End of class acol_manager
   };
+
+  /** \brief Construct a string vector from the data in 
+      \c n_entries, \c sizes, and \c str
+
+      This function operates on an integer \c n_entries, an array \c
+      sizes (which has length \c n_entries) and an array of characters
+      \c str which has a length equal to the sum of the entries in the
+      array \c sizes. The \c sizes array contains the length of each
+      string, and the \c str array contains the characters in multiple
+      strings, concatenated together to form a single combined string.
+      This function takes the data in these three objects and creates
+      an object of type <tt>vector&lt;string&gt;</tt> from it, similar
+      to the way that \ref o2scl_hdf::hdf_file::gets_vec() reads a string
+      array from an HDF5 file.
+
+      This function is used in \ref o2scl_acol_parse(), \ref
+      o2scl_acol_alias_counts() and \ref o2scl_acol_apply_aliases() .
+  */
+  std::vector<std::string> parse_arrays
+    (int n_entries, int *sizes, char *str);
   
 }
 
@@ -660,26 +680,6 @@ extern "C" {
       This function is used in o2graph_plotter::den_plot().
    */
   int o2scl_acol_tensor_to_table3d(void *vp, int i1, int i2);
-  
-  /** \brief Construct a string vector from the data in 
-      \c n_entries, \c sizes, and \c str
-
-      This function operates on an integer \c n_entries, an array \c
-      sizes (which has length \c n_entries) and an array of characters
-      \c str which has a length equal to the sum of the entries in the
-      array \c sizes. The \c sizes array contains the length of each
-      string, and the \c str array contains the characters in multiple
-      strings, concatenated together to form a single combined string.
-      This function takes the data in these three objects and creates
-      an object of type <tt>vector&lt;string&gt;</tt> from it, similar
-      to the way that \ref o2scl_hdf::hdf_file::gets_vec() reads a string
-      array from an HDF5 file.
-
-      This function is used in \ref o2scl_acol_parse(), \ref
-      o2scl_acol_alias_counts() and \ref o2scl_acol_apply_aliases() .
-  */
-  std::vector<std::string> o2scl_acol_parse_arrays
-  (int n_entries, int *sizes, char *str);
   
   /** \brief Parse the set of commands in \c n_entries, \c sizes
       and \c str

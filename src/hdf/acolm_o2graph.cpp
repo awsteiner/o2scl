@@ -75,14 +75,14 @@ void o2scl_acol_set_names(void *vp, int n1, char *cmd_name,
 }
 
 
-std::vector<std::string> o2scl_acol_parse_arrays
+std::vector<std::string> o2scl_acol::parse_arrays
 (int n_entries, int *sizes, char *str) {
   std::vector<std::string> list;
   size_t ix=0;
   for(int i=0;i<n_entries;i++) {
     std::string tmp;
     if (sizes[i]<0) {
-      O2SCL_ERR("Size cannot be negative in o2scl_acol_parse_arrays().",
+      O2SCL_ERR("Size cannot be negative in o2scl_acol::parse_arrays().",
 		o2scl::exc_einval);
     }
     for(int j=0;j<sizes[i];j++) {
@@ -96,7 +96,7 @@ std::vector<std::string> o2scl_acol_parse_arrays
 
 void o2scl_acol_parse(void *vp, int n_entries, int *sizes, 
 		      char *str) {
-  std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
+  std::vector<std::string> args=o2scl_acol::parse_arrays(n_entries,sizes,str);
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
   std::vector<o2scl::cmd_line_arg> ca;
   amp->cl->process_args(args,ca,0);
@@ -113,7 +113,7 @@ void o2scl_acol_alias_counts(void *vp, int n_entries, int *sizes,
     cout << k << " " << sizes[k] << endl;
     }
   */
-  std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
+  std::vector<std::string> args=o2scl_acol::parse_arrays(n_entries,sizes,str);
   /*
     cout << "Before: " << endl;
     for(size_t k=0;k<args.size();k++) {
@@ -139,7 +139,7 @@ void o2scl_acol_apply_aliases(void *vp, int n_entries, int *sizes,
 			      char *str, int *sizes_new,
 			      char *str_new) {
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
-  std::vector<std::string> args=o2scl_acol_parse_arrays(n_entries,sizes,str);
+  std::vector<std::string> args=o2scl_acol::parse_arrays(n_entries,sizes,str);
   amp->cl->apply_aliases(args,0);
   int cnt=0;
   for(size_t i=0;i<args.size();i++) {

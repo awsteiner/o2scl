@@ -3518,11 +3518,12 @@ herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name,
       hdf_output(hf2,t,name);
     } else if (otype==((string)"table")) {
       table<> t;
-      cout << "I1." << endl;
       hdf_input(hf,t,name);
-      cout << "I2." << endl;
       hdf_output(hf2,t,name);
-      cout << "I3." << endl;
+    } else if (otype==((string)"uniform_grid<double>")) {
+      uniform_grid<double> ug;
+      hdf_input(hf,ug,name);
+      hdf_output(hf2,ug,name);
     } else {
       cout << "Non O2scl group \"" << name << "\"." << endl;
     }
@@ -3565,23 +3566,41 @@ herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name,
       H5Dclose(dset);
       if (ndims==1) {
 	if (dims[0]==0) {
-	  cout << "Name " << name << " copy char." << endl;
+	  //cout << "Name " << name << " copy char." << endl;
 	  char ch;
 	  hf.getc(name,ch);
 	  hf2.setc(name,ch);
-	} else {
-	  cout << "Name " << name << " copy string." << endl;
+	} else if (max_dims[0]==H5S_UNLIMITED) {
+	  //cout << "Name " << name << " copy string (unlim)." << endl;
 	  std::string str;
 	  hf.gets(name,str);
 	  hf2.sets(name,str);
+	} else { 
+	  if (dims[0]==1 && max_dims[0]==1) {
+	    //cout << "Name " << name << " copy char (2)." << endl;
+	    char ch;
+	    hf.getc(name,ch);
+	    hf2.setc(name,ch);
+	  } else {
+	    //cout << "Name " << name << " copy string." << endl;
+	    std::string str;
+	    hf.gets(name,str);
+	    hf2.sets(name,str);
+	  }
 	}
+      } else if (ndims==2) {
+	vector<string> vs;
+	hf.gets_vec(name,vs);
+	hf2.sets_vec(name,vs);
+      } else {
+	cout << "FAIL " << name << " copy char[][][]..." << endl;
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_SHORT)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "Name " << name << " copy short." << endl;
+      cout << "FAIL " << name << " copy short." << endl;
     } else if (H5Tequal(nat_id,H5T_NATIVE_INT)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
@@ -3589,65 +3608,109 @@ herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name,
       H5Dclose(dset);
       if (ndims==1) {
 	if (dims[0]==0) {
-	  cout << "Name " << name << " copy int." << endl;
+	  //cout << "Name " << name << " copy int." << endl;
 	  int i;
 	  hf.geti(name,i);
 	  hf2.seti(name,i);
-	} else { 
-	  cout << "Name " << name << " copy int[]." << endl;
+	} else if (max_dims[0]==H5S_UNLIMITED) {
+	  //cout << "Name " << name << " copy int[] (unlim)." << endl;
 	  vector<int> vi;
 	  hf.geti_vec(name,vi);
 	  hf2.seti_vec(name,vi);
+	} else { 
+	  if (dims[0]==1 && max_dims[0]==1) {
+	    //cout << "Name " << name << " copy int (2)." << endl;
+	    int i;
+	    hf.geti(name,i);
+	    hf2.seti(name,i);
+	  } else {
+	    //cout << "Name " << name << " copy int[]." << endl;
+	    vector<int> vi;
+	    hf.geti_vec(name,vi);
+	    hf2.seti_vec(name,vi);
+	  }
 	}
+      } else {
+	tensor<int> ti;
+	hf.geti_ten(name,ti);
+	hf2.seti_ten(name,ti);
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_LONG)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "Name " << name << " copy long." << endl;
+      cout << "FAIL " << name << " copy long." << endl;
     } else if (H5Tequal(nat_id,H5T_NATIVE_LLONG)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "Name " << name << " copy llong." << endl;
+      cout << "FAIL " << name << " copy llong." << endl;
     } else if (H5Tequal(nat_id,H5T_NATIVE_UCHAR)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "Name " << name << " copy uchar." << endl;
+      cout << "FAIL " << name << " copy uchar." << endl;
     } else if (H5Tequal(nat_id,H5T_NATIVE_USHORT)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "Name " << name << " copy ushort." << endl;
+      cout << "FAIL " << name << " copy ushort." << endl;
     } else if (H5Tequal(nat_id,H5T_NATIVE_UINT)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "Name " << name << " copy uint." << endl;
+      cout << "FAIL " << name << " copy uint." << endl;
     } else if (H5Tequal(nat_id,H5T_NATIVE_ULONG)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "Name " << name << " copy ulong." << endl;
+      if (ndims==1) {
+	if (dims[0]==0) {
+	  //cout << "Name " << name << " copy size_t." << endl;
+	  size_t szt;
+	  hf.get_szt(name,szt);
+	  hf2.set_szt(name,szt);
+	} else if (max_dims[0]==H5S_UNLIMITED) {
+	  //cout << "Name " << name << " copy size_t[] (unlim)." << endl;
+	  vector<size_t> vszt;
+	  hf.get_szt_vec(name,vszt);
+	  hf2.set_szt_vec(name,vszt);
+	} else { 
+	  if (dims[0]==1 && max_dims[0]==1) {
+	    //cout << "Name " << name << " copy size_t (2)." << endl;
+	    size_t szt;
+	    hf.get_szt(name,szt);
+	    hf2.set_szt(name,szt);
+	  } else {
+	    //cout << "Name " << name << " copy size_t[]." << endl;
+	    vector<size_t> vszt;
+	    hf.get_szt_vec(name,vszt);
+	    hf2.set_szt_vec(name,vszt);
+	  }
+	}
+      } else {
+	tensor<size_t> tszt;
+	hf.get_szt_ten(name,tszt);
+	hf2.set_szt_ten(name,tszt);
+      }
     } else if (H5Tequal(nat_id,H5T_NATIVE_ULLONG)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "Name " << name << " copy ullong." << endl;
+      cout << "FAIL " << name << " copy ullong." << endl;
     } else if (H5Tequal(nat_id,H5T_NATIVE_FLOAT)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "Name " << name << " copy float." << endl;
+      cout << "FAIL " << name << " copy float." << endl;
     } else if (H5Tequal(nat_id,H5T_NATIVE_DOUBLE)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
@@ -3655,35 +3718,51 @@ herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name,
       H5Dclose(dset);
       if (ndims==1) {
 	if (dims[0]==0) {
-	  cout << "Name " << name << " copy double." << endl;
+	  //cout << "Name " << name << " copy double." << endl;
 	  double d;
 	  hf.getd(name,d);
 	  hf2.setd(name,d);
-	} else {
-	  cout << "Name " << name << " copy double[]." << endl;
+	} else if (max_dims[0]==H5S_UNLIMITED) {
+	  //cout << "Name " << name << " copy size_t[] (unlim)." << endl;
 	  vector<double> vd;
 	  hf.getd_vec(name,vd);
 	  hf2.setd_vec(name,vd);
+	} else { 
+	  if (dims[0]==1 && max_dims[0]==1) {
+	    //cout << "Name " << name << " copy double (2)." << endl;
+	    double d;
+	    hf.getd(name,d);
+	    hf2.setd(name,d);
+	  } else {
+	    //cout << "Name " << name << " copy double[]." << endl;
+	    vector<double> vd;
+	    hf.getd_vec(name,vd);
+	    hf2.setd_vec(name,vd);
+	  }
 	}
+      } else {
+	tensor<double> td;
+	hf.getd_ten(name,td);
+	hf2.setd_ten(name,td);
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_LDOUBLE)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "Name " << name << " copy ldouble." << endl;
+      cout << "FAIL " << name << " copy ldouble." << endl;
     } else {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "Name " << name << " copy other dataset." << endl;
+      cout << "FAIL " << name << " copy other dataset." << endl;
     }
     
   } else if (infobuf.type==H5O_TYPE_NAMED_DATATYPE) {
-    cout << "Named type \"" << name << "\"." << endl;
+    cout << "FAIL named type \"" << name << "\"." << endl;
   } else {
-    cout << "Unexpected HDF type. " << endl;
+    cout << "FAIL unexpected HDF type. " << endl;
   }
 
   return 0;

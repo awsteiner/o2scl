@@ -43,6 +43,8 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 int acol_manager::comm_h5_copy(std::vector<std::string> &sv, 
 			       bool itive_com) {
 
+  cout << "Warning h5-copy is still experimental." << endl;
+  
   vector<string> in, pr;
   
   pr.push_back("Source file");
