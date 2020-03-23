@@ -227,7 +227,7 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_assign),
        both},
       {0,"cat",
-       "Concatenate data from a second table object onto current table.",0,2,
+       "Concatenate a second table object onto current table.",0,2,
        "<file> [name]",((string)"For table objects, add a ")+
        "second table to the end of the first, creating new columns "+
        "if necessary.",
