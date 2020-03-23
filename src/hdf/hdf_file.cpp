@@ -3621,14 +3621,14 @@ herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name,
 	hf.gets_vec(name,vs);
 	hf2.sets_vec(name,vs);
       } else {
-	cout << "FAIL " << name << " copy char[][][]..." << endl;
+	O2SCL_ERR("HDF5 copy char[][][]... failed.",o2scl::exc_einval);
       }
     } else if (H5Tequal(nat_id,H5T_NATIVE_SHORT)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "FAIL " << name << " copy short." << endl;
+      O2SCL_ERR("HDF5 copy short failed.",o2scl::exc_einval);
     } else if (H5Tequal(nat_id,H5T_NATIVE_INT)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
@@ -3668,31 +3668,31 @@ herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name,
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "FAIL " << name << " copy long." << endl;
+      O2SCL_ERR("HDF5 copy long failed.",o2scl::exc_einval);
     } else if (H5Tequal(nat_id,H5T_NATIVE_LLONG)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "FAIL " << name << " copy llong." << endl;
+      O2SCL_ERR("HDF5 copy llong failed.",o2scl::exc_einval);
     } else if (H5Tequal(nat_id,H5T_NATIVE_UCHAR)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "FAIL " << name << " copy uchar." << endl;
+      O2SCL_ERR("HDF5 copy uchar failed.",o2scl::exc_einval);
     } else if (H5Tequal(nat_id,H5T_NATIVE_USHORT)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "FAIL " << name << " copy ushort." << endl;
+      O2SCL_ERR("HDF5 copy ushort failed.",o2scl::exc_einval);
     } else if (H5Tequal(nat_id,H5T_NATIVE_UINT)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "FAIL " << name << " copy uint." << endl;
+      O2SCL_ERR("HDF5 copy uint failed.",o2scl::exc_einval);
     } else if (H5Tequal(nat_id,H5T_NATIVE_ULONG)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
@@ -3732,13 +3732,13 @@ herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name,
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "FAIL " << name << " copy ullong." << endl;
+      O2SCL_ERR("HDF5 copy ullong failed.",o2scl::exc_einval);
     } else if (H5Tequal(nat_id,H5T_NATIVE_FLOAT)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "FAIL " << name << " copy float." << endl;
+      O2SCL_ERR("HDF5 copy float failed.",o2scl::exc_einval);
     } else if (H5Tequal(nat_id,H5T_NATIVE_DOUBLE)) {
       H5Sclose(space_id);
       H5Tclose(nat_id);
@@ -3778,19 +3778,19 @@ herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name,
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "FAIL " << name << " copy ldouble." << endl;
+      O2SCL_ERR("HDF5 copy ldouble failed.",o2scl::exc_einval);
     } else {
       H5Sclose(space_id);
       H5Tclose(nat_id);
       H5Tclose(type_id);
       H5Dclose(dset);
-      cout << "FAIL " << name << " copy other dataset." << endl;
+      O2SCL_ERR("HDF5 copy other dataset failed.",o2scl::exc_einval);
     }
     
   } else if (infobuf.type==H5O_TYPE_NAMED_DATATYPE) {
-    cout << "FAIL named type \"" << name << "\"." << endl;
+    O2SCL_ERR("HDF5 copy named datatype failed.",o2scl::exc_einval);
   } else {
-    cout << "FAIL unexpected HDF type. " << endl;
+    O2SCL_ERR("HDF5 copy unexpected type failed.",o2scl::exc_einval);
   }
 
   return 0;
