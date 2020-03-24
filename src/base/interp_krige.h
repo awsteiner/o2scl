@@ -303,18 +303,18 @@ namespace o2scl {
   }
 
   /// The derivative of the covariance function
-  double deriv(double x1, double x2) {
+  double deriv_covar(double x1, double x2) {
     return -exp(-(x1-x2)*(x1-x2)/len/len/2.0)/len/len*(x1-x2);
   }
 
   /// The second derivative of the covariance function
-  double deriv2(double x1, double x2) {
+  double deriv2_covar(double x1, double x2) {
     return ((x1-x2)*(x1-x2)-len*len)*
     exp(-(x1-x2)*(x1-x2)/len/len/2.0)/len/len/len/len;
   }
 
   /// The integral of the covariance function
-  double integ(double x, double x1, double x2) {
+  double integ_covar(double x, double x1, double x2) {
     exit(-1);
     // This is probably wrong
     //return 0.5*len*sqrt(o2scl_const::pi)*

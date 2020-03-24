@@ -265,7 +265,8 @@ namespace o2scl {
 	ret=test_abs_boost<data_t>(result,expected,rel_error,description);
 	return ret;
       } else {
-	double obs_err=boost::multiprecision::abs(expected-result)/boost::multiprecision::abs(expected);
+	data_t obs_err=boost::multiprecision::abs(expected-result)/
+	boost::multiprecision::abs(expected);
 	ret=(obs_err<rel_error);
 	if (ret) {
 	  description=dtos<data_t>(result)+" vs. "+dtos<data_t>(expected)+
