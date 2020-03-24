@@ -384,7 +384,7 @@ namespace o2scl {
     gradient<multi_funct,boost::numeric::ublas::vector<double> >,
     class def_auto_grad_t=
     gradient_gsl<multi_funct,boost::numeric::ublas::vector<double> > > 
-    class mmin_bfgs2 : public mmin_base<func_t,func_t,vec_t> {
+    class mmin_bfgs2 : public mmin_base<func_t,dfunc_t,vec_t> {
     
 #ifndef DOXYGEN_INTERNAL
     

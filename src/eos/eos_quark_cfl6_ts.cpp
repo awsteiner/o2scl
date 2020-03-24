@@ -50,7 +50,7 @@ int main(void) {
     cfl2.set_thermo(th2);
 
     // Parameters
-    cfl2.set_parameters();
+    cfl2.set_parameters_cfl();
     cfl2.KD=cfl2.K;
 
     // Eigenvalues and derivatives

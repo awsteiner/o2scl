@@ -98,7 +98,7 @@ int main(void) {
   mmin_conf<mmin_fix_params<>,ubvector,grad_funct,
     gradient<mmin_fix_params<>,ubvector>,
     gradient_gsl<mmin_fix_params<>,ubvector> > gmc;
-g.set_mmin(gmc);
+  g.set_mmin(gmc);
 
 #ifdef O2SCL_NEVER_DEFINED
 }{
