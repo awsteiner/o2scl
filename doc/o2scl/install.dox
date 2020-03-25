@@ -75,12 +75,12 @@
     GSL (the <tt>libgsl-dev</tt> package), Boost (the
     <tt>libboost-all-dev</tt> package), GNU readline (the
     <tt>libreadline-dev</tt> and <tt>libncurses-dev</tt> packages),
-    and HDF5 the <tt>libhdf5-dev</tt> package). 
-    You can then install \o2 from one of the
-    release distributions by using the standard GNU
-    <tt>./configure</tt> script and then invoking <tt>make</tt> and
-    <tt>make install</tt>. This installation method is tested by the 
-    Travis CI script. 
+    and HDF5 the <tt>libhdf5-dev</tt> package). You can then install
+    \o2 from one of the release distributions by using the standard
+    GNU <tt>./configure</tt> script and then invoking <tt>make</tt>
+    and <tt>make install</tt> (which sometimes requires
+    <tt>sudo</tt>). This installation method is tested by the Travis
+    CI script.
     
     The HDF5 package for Ubuntu and many other Linux systems is
     installed in <tt>hdf5/serial/hdf5.h</tt> instead of
@@ -95,6 +95,11 @@
     the PSC). On many systems, one can use a parallel HDF5 library
     using <tt>-DO2SCL_HDF5_PLAIN_HEADER</tt> and a <tt>-I</tt> option
     to select the proper location for the parallel HDF5 header files.
+    Finally, if your version of HDF5 is earlier than 1.12,
+    you will need to let \o2 know, using
+    \verbatim
+    CXXFLAGS="-DO2SCL_HDF5_PRE_1_12" ./configure
+    \endverbatim
 
     If you want to install from source (without generating the
     documentation), then you must first install the
@@ -102,6 +107,7 @@
     Then you can use something along the lines of
     \code
     git clone https://github.com/awsteiner/o2scl
+    cd o2scl
     mkdir m4
     autoreconf -i
     ./configure
@@ -109,7 +115,8 @@
     Then, you will either need to generate the documentation from
     doxygen using <tt>make o2scl-doc</tt> or use <tt>make
     blank-doc</tt> to create blank documentation. Then you can proceed
-    using <tt>make</tt> and <tt>make install</tt>.
+    using <tt>make</tt> and <tt>make install</tt> (which sometimes
+    requires <tt>sudo</tt>).
 
     An experimental O2scl "snap" is also being developed on
     snapcraft (see https://snapcraft.io/o2scl) 
