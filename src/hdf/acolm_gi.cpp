@@ -1406,46 +1406,91 @@ int acol_manager::comm_insert_full(std::vector<std::string> &sv,
     return exc_efailed;
   }
 
-  std::string in[3], pr[3]=
-    {"Enter filename of external table (or blank to stop): ",
-     "Enter index column in present table (or blank to stop): ",
-     "Enter index column in external table (or blank to stop): "};
-  if (sv.size()>=3) {
-    in[0]=sv[1];
-    in[1]=sv[2];
-    in[2]=sv[3];
+  vector<string> in, pr;
+    
+  if (sv.size()==2) {
+    
+    cout << "No index columns or table name specified. "
+	 << "Trying without interpolation." << endl;
+    in.push_back(sv[1]);
+    
+  } else if (sv.size()==3) {
+    
+    cout << "No index columns specified. Trying without interpolation."
+	 << endl;
+    in.push_back(sv[1]);
+    in.push_back(sv[2]);
+    
+  } else if (sv.size()==4) {
+    
+    cout << "Presuming index column in source and destination are "
+	 << "the same." << endl;
+    
+    in.push_back(sv[1]);
+    in.push_back(sv[2]);
+    in.push_back(sv[3]);
+    
   } else {
-    if (itive_com) {
-      for(size_t is=0;is<3;is++) {
-	in[is]=cl->cli_gets(pr[is].c_str());
-	if (in[is].length()==0) {
-	  cout << "Command 'insert' cancelled." << endl;
-	  return 0;
-	}
+    
+    pr.push_back("Enter filename of external table");
+    pr.push_back("Enter name of table in file");
+    pr.push_back("Enter index column in current table");
+    pr.push_back("Enter index column in external table");
+    int ret=get_input(sv,pr,in,"insert-full",itive_com);
+    if (ret!=0) return ret;
+
+  }
+
+  // Read table from file
+  hdf_file hf;
+  table_units<> tmp;
+  int hfret=hf.open(in[0],false,false);
+  if (hfret!=0) {
+    cerr << "Failed to read file named " << in[0] << endl;
+    return exc_efailed;
+  }
+
+  std::string tmp_name;
+  if (in.size()>=2) {
+    if (in[1].length()>0) tmp_name=in[1];
+  }
+  hdf_input(hf,tmp,tmp_name);
+  hf.close();
+
+  if (in.size()==1 || in.size()==2) {
+
+    // No index columns were specified, so see if we can avoid
+    // interpolation
+
+    if (table_obj.get_nlines()!=tmp.get_nlines()) {
+      cout << "Number of lines in current table "
+	   << table_obj.get_nlines()
+	   << "\n\tdoes not match number of lines in external table "
+	   << tmp.get_nlines() << endl;
+      return 3;
+    }
+
+    for (size_t j=0;j<tmp.get_ncolumns();j++) {
+      string ty=tmp.get_column_name(j);
+      if (!table_obj.is_column(ty)) table_obj.new_column(ty);
+      for(size_t k=0;k<table_obj.get_nlines();k++) {
+	table_obj.set(ty,k,tmp.get(ty,k));
       }
-    } else {
-      cerr << "Not enough arguments to command 'insert'" << endl;
-      return exc_efailed;
     }
-  }
-
-  cout << "Unimplemented." << endl;
-
-  return 1;
-
-#ifdef O2SCL_NEVER_DEFINED
-
-  for (size_t j=0;j<tmp->get_ncolumns();j++) {
-    string ty=tmp->get_column_name(j);
-    int tret=table_obj.add_col_from_table(in[1],*tmp,in[2],ty,ty);
-    if (tret!=0) {
-      cerr << "Adding column " << ty << " failed." << endl;
-      ret=tret;
-      // We don't return here so that "delete tmp;" is called below
-    }
-  }
+    
+  } else {
   
-#endif
+    for (size_t j=0;j<tmp.get_ncolumns();j++) {
+      string ty=tmp.get_column_name(j);
+      if (in.size()==3) {
+	table_obj.add_col_from_table(tmp,in[2],ty);
+      } else {
+	table_obj.add_col_from_table(tmp,in[2],ty,in[3]);
+      }
+    }
+  }
+
+  return 0;
 }
 
 int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
