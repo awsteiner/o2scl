@@ -1482,10 +1482,12 @@ int acol_manager::comm_insert_full(std::vector<std::string> &sv,
   
     for (size_t j=0;j<tmp.get_ncolumns();j++) {
       string ty=tmp.get_column_name(j);
-      if (in.size()==3) {
-	table_obj.add_col_from_table(tmp,in[2],ty);
-      } else {
-	table_obj.add_col_from_table(tmp,in[2],ty,in[3]);
+      if (ty!=in[2]) {
+	if (in.size()==3) {
+	  table_obj.add_col_from_table(tmp,in[2],ty);
+	} else {
+	  table_obj.add_col_from_table(tmp,in[2],ty,in[3]);
+	}
       }
     }
   }

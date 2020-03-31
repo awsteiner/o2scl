@@ -350,13 +350,23 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_insert),
        both},
       {0,"insert-full",
-       "Interpolate a table from another file.",0,4,
+       "Insert a table from another file.",0,4,
        "<fname> [table name] [old_x new_x]",
-       ((string)"Insert all columns from file <fname> interpolating it ")+
-       "into the current table. ",
-       new comm_option_mfptr<acol_manager>(this,
-					   &acol_manager::comm_insert_full),
-       both},
+       ((string)"Insert all columns from file <fname> ")+
+       "into the current table. The first table is used or the "+
+       "table object named table_name, if specified. "+
+       "If index columns old_x and new_x "+
+       "are not specified, then the insert requires both the current "+
+       "and the source table to have the same number of rows. If they "+
+       "are specified, then interpolation using those index columns "+
+       "is used. If columns in the new table are not present in the "+
+       "current table, then they are added automatically. If a column "+
+       "in the current table has the same name as one in the new table "+
+       "then it is rewritten with new data, with one exception. If "+
+       "a column in the new table has the same name as old_x, then it "+
+       "is left unmodified.",
+       new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_insert_full),both},
       {0,"integ",
        "Integrate a function specified by two columns.",
        0,3,"<x> <y> <name>",
