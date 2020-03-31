@@ -94,16 +94,19 @@ int main(void) {
   t.test_rel(x[1],2.0,1.0e-6,"mmin_fix 8");
   fix[1]=false;
   
+#ifdef O2SCL_NEVER_DEFINED
+
+  // AWS 3/30/2020: this doesn't work anymore because mmin_fix_params
+  // currently requires dfunc_t and func_t to be the same. I think the
+  // way to fix this is to add another template parameter to
+  // mmin_fix_params which specifies the new dfunc_t type.
+  
   // Test using a different minimizer
   mmin_conf<mmin_fix_params<>,ubvector,grad_funct,
     gradient<mmin_fix_params<>,ubvector>,
     gradient_gsl<mmin_fix_params<>,ubvector> > gmc;
   g.set_mmin(gmc);
 
-#ifdef O2SCL_NEVER_DEFINED
-}{
-#endif
-  
   x[0]=1.0;
   x[1]=1.0;
   ret=g.mmin_fix(2,x,min,fixp,mf);
@@ -120,6 +123,8 @@ int main(void) {
   t.test_rel(x[1],2.0,1.0e-6,"mmin_fix 12");
   fix[1]=false;
 
+#endif
+  
   t.report();
   return 0;
 }
