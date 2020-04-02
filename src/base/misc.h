@@ -599,12 +599,10 @@ namespace o2scl {
   }
   //@}
 
-#ifndef O2SCL_OLDER_COMPILER
-  
   /** \brief A class to assign string labels to array indices
    */
   class vec_index {
-
+    
   protected:
 
     /// The map version for string lookup
@@ -625,6 +623,8 @@ namespace o2scl {
       }
     }
     
+#ifndef O2SCL_OLDER_COMPILER
+
     /// Create an assignment based on the strings in \c list
     vec_index(std::initializer_list<std::string> list) {
       size_t ix=0;
@@ -636,13 +636,15 @@ namespace o2scl {
       }
     }
     
+#endif
+    
     /// Return the string of index \c i
-    std::string operator()(size_t i) {
+    std::string operator()(size_t i) const {
       return tvec[i];
     }
 
     /// Return the index of string \c s
-    size_t operator()(std::string s) {
+    size_t operator()(std::string s) const {
       std::map<std::string,size_t,std::greater<std::string> >::iterator it;
       it=tmap.find(s);
       if (it==tmap.end()) {
@@ -654,12 +656,12 @@ namespace o2scl {
     }
 
     /// Return the string of index \c i
-    std::string operator[](size_t i) {
+    std::string operator[](size_t i) const {
       return tvec[i];
     }
 
     /// Return the index of string \c s
-    size_t operator[](std::string s) {
+    size_t operator[](std::string s) const {
       std::map<std::string,size_t,std::greater<std::string> >::iterator it;
       it=tmap.find(s);
       if (it==tmap.end()) {
@@ -678,6 +680,23 @@ namespace o2scl {
     }
     
     /// Add a list of strings
+    void append(std::vector<std::string> &list) {
+      size_t ix=tvec.size();
+      for(i=0;i<list.size();i++) {
+	tmap.insert(std::make_pair(list[i],ix));
+	tvec.push_back(list[i]);
+	ix++;
+      }
+    }
+
+    /// Return the list of strings
+    std::vector<std::string> list() const {
+      return tvec;
+    }
+    
+#ifndef O2SCL_OLDER_COMPILER
+    
+    /// Add a list of strings
     void append(std::initializer_list<std::string> list) {
       size_t ix=tvec.size();
       for(std::initializer_list<std::string>::iterator it=list.begin();
@@ -687,10 +706,11 @@ namespace o2scl {
 	ix++;
       }
     }
+    
+#endif
 
   };
 
-#endif
   
   /// \name Filesystem wrapper functions in src/base/misc.h
   //@{
