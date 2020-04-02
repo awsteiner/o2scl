@@ -105,7 +105,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("string",itmp));
   }
   {
-    vector<std::string> itmp={"assign","delete-col","delete-rows",
+    vector<std::string> itmp={"ac-len","assign","delete-col","delete-rows",
 			      "delete-rows-tol","deriv","deriv2","cat",
 			      "convert-unit","entry-grid",
 			      "find-row","fit","function",
@@ -217,8 +217,11 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=39;
+    static const size_t narr=40;
     comm_option_s options_arr[narr]={
+      {0,"ac-len","",0,1,"<colum>","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_ac_len),
+       both},
       {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
        0,2,"<name> [val]",
        ((string)"Assign a constant value to a name for the present table. ")+

@@ -1986,6 +1986,132 @@ namespace o2scl {
     
     return;
   }
+
+  /** \brief Compute the autocorrelation length using 
+      Goodman's algorithm and the first \c n elements of
+      the vector \c v
+  */
+  template<class vec_t> void vector_acor
+    (int n, vec_t &v, double &mean, double &sigma,
+     double &tau, int verbose=0, int tau_max=2, int win_mult=5,
+     int max_lag=40, int min_fac=5) {
+    
+    // Call error handler if vector is too small
+    if (n<min_fac*max_lag) {
+      // The original 'acor' code said "Autocorrelation time is too long
+      // relative to the variance" but all the code actually does here
+      // is check the vector length.
+      O2SCL_ERR("Vector too small for accurate results in vector_acor().",
+		o2scl::exc_efailed);
+    }
+    
+    // Compute the mean of v
+    mean=0.0;
+    for (size_t i=0;i<n;i++) mean+=v[i];
+    mean/=n;
+    
+    // Subtract the mean from the data
+    for (size_t i=0;i<n;i++) v[i]-=mean;    
+    
+    // AWS: What is this?
+    double C[max_lag+1];
+    
+    // Here, s=0 is the variance, s = max_lag is the last one computed.
+    for (size_t s=0;s<= max_lag;s++) C[s]=0.0;  
+    
+    // To compute the autocovariance function, first compute
+    // the inner products
+    int iMax=n-max_lag;                                 
+    for (size_t i=0;i<iMax;i++) {
+      for (size_t s=0;s<=max_lag;s++) {
+	C[s]+=v[i]*v[i+s];                              
+      }
+    }
+    
+    // Then compute the normalization
+    for (size_t s=0;s<=max_lag;s++) {
+      C[s]=C[s]/iMax;
+    }
+    
+    // The "diffusion coefficient" is the sum of the autocovariances
+    double D=C[0];
+    
+    // The rest of the C[s] are double counted since C[-s] = C[s].
+    for (size_t s=1;s<=max_lag;s++) D+=2*C[s];   
+    
+    if (verbose>0) {
+      std::cout << "Diffusion coefficient: " << D << std::endl;
+    }
+    
+    // The standard error bar formula, if D were the complete sum.
+    sigma=sqrt(D/n);                            
+    
+    // A provisional estimate, since D is only part of the complete sum.
+    tau=D/C[0];
+    
+    if (verbose>0) {
+      std::cout << "sigma, n, tau_0: " << sigma << " " << n << " "
+		<< tau << std::endl;
+    }
+    
+    // Stop if the D sum includes the given multiple of tau.
+    // This is the self consistent window approach.
+    
+    if (tau*win_mult<max_lag) {
+      
+      std::cout << "Stopping. tau: " << tau << std::endl;
+      return;
+      
+    } else {                                             
+      
+      // If the provisional tau is so large that we don't think tau is
+      // accurate, apply the acor procedure to the pairwise sums of X.
+      
+      // The pairwise sequence is half the length (if n is even)
+      int nh=n/2;                                   
+      // The mean of the new sequence, to throw away.
+      double new_mean;                                 
+      size_t j1=0, j2=1;
+      for (size_t i = 0; i < nh; i++ ) {
+	v[i] = v[j1] + v[j2];
+	j1  += 2;
+	j2  += 2;
+      }
+      
+      vector_acor(nh,v,new_mean,sigma,tau,verbose,
+		  tau_max,win_mult,max_lag,min_fac);
+      
+      // Reconstruct the fine time series numbers from the coarse
+      // series numbers.
+      D=0.25*sigma*sigma*n;
+      
+      // As before, but with a corrected D
+      tau=D/C[0];
+      
+      if (verbose>0) {
+	std::cout << "sigma, D, C[0], tau1: " << sigma << " "
+		  << D << " " << C[0] << " " << tau << std::endl;
+      }
+      
+      // As before, again.
+      sigma=sqrt(D/n);                    
+    }
+    
+    return;
+  }
+
+  /** \brief Compute the autocorrelation length using 
+      Goodman's algorithm from \c acor
+      
+      \note This function does not leave the vector \c v unchanged.
+  */
+  template<class vec_t> void vector_acor
+    (vec_t &v, double &mean, double &sigma,
+     double &tau, int verbose=0, int tau_max=2, int win_mult=5,
+     int max_lag=40, int min_fac=5) {
+    return vector_acor(v.size(),v,mean,sigma,tau,verbose,
+		       tau_max,win_mult,max_lag,min_fac);
+  }
   //@}
 
   /// \name Convert a vector to bin edges in src/other/vec_stats.h

@@ -369,9 +369,14 @@ namespace o2scl_acol {
     virtual int comm_to_table3d_sum(std::vector<std::string> &sv,
 				    bool itive_com);
 
-    /** \brief Compute the autocorrelation coefficient
+    /** \brief Compute the autocorrelation coefficients
      */
     virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Compute the autocorrelation coefficient
+     */
+    virtual int comm_ac_len(std::vector<std::string> &sv,
+			    bool itive_com);
 
     /// Create a slice which is the derivative wrt x of another
     virtual int comm_deriv_x(std::vector<std::string> &sv, bool itive_com);
