@@ -29,14 +29,19 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+
 // For stringstream for count_words()
 #include <sstream>
 #include <vector>
+
 // For std::isinf and std::isnan in C++11
 #include <cmath>
+
 // For the vec_index class below
 #include <map>
+#ifndef O2SCL_OLDER_COMPILER
 #include <initializer_list>
+#endif
 
 #ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
@@ -616,7 +621,7 @@ namespace o2scl {
     vec_index() {}
     
     /// Create an assignment based on the strings in \c list
-    vec_index(std::vector<std::string> &list) {
+    vec_index(const std::vector<std::string> &list) {
       for(size_t i=0;i<list.size();i++) {
 	tmap.insert(std::make_pair(list[i],i));
 	tvec.push_back(list[i]);
@@ -638,6 +643,8 @@ namespace o2scl {
     
 #endif
     
+    /// \name Translation between size_t and string
+    //@{
     /// Return the string of index \c i
     std::string operator()(size_t i) const {
       return tvec[i];
@@ -645,7 +652,8 @@ namespace o2scl {
 
     /// Return the index of string \c s
     size_t operator()(std::string s) const {
-      std::map<std::string,size_t,std::greater<std::string> >::iterator it;
+      std::map<std::string,size_t,
+	std::greater<std::string> >::const_iterator it;
       it=tmap.find(s);
       if (it==tmap.end()) {
 	std::string str=((std::string)"Failed to find '")+s+
@@ -662,7 +670,8 @@ namespace o2scl {
 
     /// Return the index of string \c s
     size_t operator[](std::string s) const {
-      std::map<std::string,size_t,std::greater<std::string> >::iterator it;
+      std::map<std::string,size_t,
+	std::greater<std::string> >::const_iterator it;
       it=tmap.find(s);
       if (it==tmap.end()) {
 	std::string str=((std::string)"Failed to find '")+s+
@@ -671,12 +680,23 @@ namespace o2scl {
       }
       return it->second;
     }
+    //@}
 
-    /// Return the total size
-    size_t size() {
+    /// \name Other useful methods
+    //@{
+    /// Return the size
+    size_t size() const {
       return tvec.size();
     }
+
+    /// Return the list of strings
+    std::vector<std::string> list() const {
+      return tvec;
+    }
+    //@}
     
+    /// \name Adding strings
+    //@{
     /// Add string \c s and assign it the next index
     void append(std::string s) {
       tmap.insert(std::make_pair(s,tvec.size()));
@@ -685,20 +705,15 @@ namespace o2scl {
     }
     
     /// Add a list of strings
-    void append(std::vector<std::string> &list) {
+    void append(const std::vector<std::string> &list) {
       size_t ix=tvec.size();
-      for(i=0;i<list.size();i++) {
+      for(size_t i=0;i<list.size();i++) {
 	tmap.insert(std::make_pair(list[i],ix));
 	tvec.push_back(list[i]);
 	ix++;
       }
     }
 
-    /// Return the list of strings
-    std::vector<std::string> list() const {
-      return tvec;
-    }
-    
 #ifndef O2SCL_OLDER_COMPILER
     
     /// Add a list of strings
@@ -714,6 +729,8 @@ namespace o2scl {
     
 #endif
 
+    //@}
+    
   };
 
   
