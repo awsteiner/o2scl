@@ -670,6 +670,11 @@ namespace o2scl {
       return it->second;
     }
 
+    /// Return the total size
+    size_t size() {
+      return tvec.size();
+    }
+    
     /// Add string \c s and assign it the next index
     void append(std::string s) {
       tmap.insert(std::make_pair(s,tvec.size()));
