@@ -1992,9 +1992,9 @@ namespace o2scl {
       the vector \c v
   */
   template<class vec_t> void vector_acor
-    (int n, vec_t &v, double &mean, double &sigma,
-     double &tau, int verbose=0, int tau_max=2, int win_mult=5,
-     int max_lag=40, int min_fac=5) {
+    (size_t n, vec_t &v, double &mean, double &sigma,
+     double &tau, int verbose=0, size_t tau_max=2, size_t win_mult=5,
+     size_t max_lag=40, size_t min_fac=5) {
     
     // Call error handler if vector is too small
     if (n<min_fac*max_lag) {
@@ -2021,7 +2021,11 @@ namespace o2scl {
     
     // To compute the autocovariance function, first compute
     // the inner products
-    int iMax=n-max_lag;                                 
+    if (n<max_lag) {
+      O2SCL_ERR("Negative imax in vector_acor().",
+		o2scl::exc_esanity);
+    }
+    size_t iMax=n-max_lag;                                 
     for (size_t i=0;i<iMax;i++) {
       for (size_t s=0;s<=max_lag;s++) {
 	C[s]+=v[i]*v[i+s];                              
@@ -2068,14 +2072,14 @@ namespace o2scl {
       // accurate, apply the acor procedure to the pairwise sums of X.
       
       // The pairwise sequence is half the length (if n is even)
-      int nh=n/2;                                   
+      size_t nh=n/2;                                   
       // The mean of the new sequence, to throw away.
       double new_mean;                                 
       size_t j1=0, j2=1;
       for (size_t i = 0; i < nh; i++ ) {
-	v[i] = v[j1] + v[j2];
-	j1  += 2;
-	j2  += 2;
+	v[i]=v[j1]+v[j2];
+	j1+=2;
+	j2+=2;
       }
       
       vector_acor(nh,v,new_mean,sigma,tau,verbose,
@@ -2107,8 +2111,8 @@ namespace o2scl {
   */
   template<class vec_t> void vector_acor
     (vec_t &v, double &mean, double &sigma,
-     double &tau, int verbose=0, int tau_max=2, int win_mult=5,
-     int max_lag=40, int min_fac=5) {
+     double &tau, int verbose=0, size_t tau_max=2, size_t win_mult=5,
+     size_t max_lag=40, size_t min_fac=5) {
     return vector_acor(v.size(),v,mean,sigma,tau,verbose,
 		       tau_max,win_mult,max_lag,min_fac);
   }
