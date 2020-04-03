@@ -1657,6 +1657,10 @@ namespace o2scl {
     }
     return *this;
   }
+
+  /// Virtual destructor
+  virtual ~prob_cond_mdim_fixed_step() {
+  }
   
   /** \brief Set the random number generator seed
    */

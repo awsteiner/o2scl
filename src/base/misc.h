@@ -605,6 +605,8 @@ namespace o2scl {
   //@}
 
   /** \brief A class to assign string labels to array indices
+      
+      \future Create a method to remove strings from the list
    */
   class vec_index {
     
@@ -617,6 +619,8 @@ namespace o2scl {
 
   public:
 
+    /// \name Constructors
+    //@{
     /// Create an empty assignment
     vec_index() {}
     
@@ -642,7 +646,14 @@ namespace o2scl {
     }
     
 #endif
-    
+
+    /// Copy constructor
+    vec_index(const vec_index &t) {
+      tmap=t.tmap;
+      tvec=t.tvec;
+    }
+    //@}
+
     /// \name Translation between size_t and string
     //@{
     /// Return the string of index \c i
@@ -693,6 +704,15 @@ namespace o2scl {
     std::vector<std::string> list() const {
       return tvec;
     }
+
+    /// Copy constructor by assignment
+    vec_index &operator=(const vec_index &t) {
+      if (this!=&t) {
+	tmap=t.tmap;
+	tvec=t.tvec;
+      }
+      return *this;
+    }
     //@}
     
     /// \name Adding strings
@@ -728,11 +748,9 @@ namespace o2scl {
     }
     
 #endif
-
     //@}
     
   };
-
   
   /// \name Filesystem wrapper functions in src/base/misc.h
   //@{

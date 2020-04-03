@@ -67,7 +67,7 @@ namespace o2scl {
     set(l,h);
     allow_resampling=true;
   }
-  
+
   /** \brief A hypercube class for \ref o2scl::prob_dens_mdim_amr
    */
   class hypercube {
