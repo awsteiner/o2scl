@@ -57,6 +57,7 @@
 #include <cmath>
 
 #include <o2scl/shunting_yard.h>
+#include <o2scl/err_hnd.h>
 
 using namespace o2scl;
 
@@ -75,9 +76,9 @@ TokenQueue_t calculator::get_RPN() {
   return this->RPN;
 }
 
-vector<string> calculator::get_var_list() {
-  vector<string> list;
-  TokenQueue_t rpn=calc.get_RPN();
+std::vector<std::string> calculator::get_var_list() {
+  std::vector<std::string> list;
+  TokenQueue_t rpn=get_RPN();
   while (rpn.size()) {
     TokenBase *tb=rpn.front();
     if (tb->type==2) {
@@ -86,7 +87,7 @@ vector<string> calculator::get_var_list() {
 	list.push_back(str->val);
       } else {
 	O2SCL_ERR2("Token was of type var but could not convert to ",
-		   "string",o2scl::exc_einva);
+		   "string",o2scl::exc_einval);
       }
     }
     rpn.pop();

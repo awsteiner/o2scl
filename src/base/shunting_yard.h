@@ -243,9 +243,16 @@ namespace o2scl {
     */
     std::string RPN_to_string();
 
+    /** \brief Get a copy of the RPN version
+
+	\warning This copy contains raw pointers which are invalid
+	if the changed.
+     */
     TokenQueue_t get_RPN();
 
-    std::vector<std::string> calculator::get_var_list();
+    /** \brief Get the variable list
+     */
+    std::vector<std::string> get_var_list();
     
   };
 

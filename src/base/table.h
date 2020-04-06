@@ -1030,9 +1030,24 @@ namespace o2scl {
   */
   template<class vec2_t> 
   void copy_to_column(vec2_t &v, std::string scol) {
-    for(size_t i=0;i<nlines;i++) {
-      this->set(scol,i,v[i]);
+
+    aiter it=atree.find(scol);
+    if (it==atree.end()) {
+      O2SCL_ERR((((std::string)"Column '")+scol+
+		 "' not found in table::copy_to_column(0.").c_str(),
+		exc_enotfound);
+      return;
     }
+
+    if ((intp_colx==scol || intp_coly==scol) && intp_set==true) {
+      delete si;
+      intp_set=false;
+    }
+
+    for(size_t i=0;i<nlines;i++) {
+      it->second.dat[i]=v[i];
+    }
+    
     return;
   }
 
