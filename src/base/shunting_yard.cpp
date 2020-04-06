@@ -60,6 +60,40 @@
 
 using namespace o2scl;
 
+calculator::calculator(const char* expr,
+		       std::map<std::string, double>* vars,
+		       bool debug,
+		       std::map<std::string, int> opPrec) {
+  compile(expr,vars,debug,opPrec);
+}
+
+calculator::~calculator() {
+  cleanRPN(this->RPN);
+}
+
+TokenQueue_t calculator::get_RPN() {
+  return this->RPN;
+}
+
+vector<string> calculator::get_var_list() {
+  vector<string> list;
+  TokenQueue_t rpn=calc.get_RPN();
+  while (rpn.size()) {
+    TokenBase *tb=rpn.front();
+    if (tb->type==2) {
+      Token<std::string>* str=dynamic_cast<Token<std::string>*>(tb);
+      if (str!=0) {
+	list.push_back(str->val);
+      } else {
+	O2SCL_ERR2("Token was of type var but could not convert to ",
+		   "string",o2scl::exc_einva);
+      }
+    }
+    rpn.pop();
+  }
+  return list;
+}  
+
 std::map<std::string, int> calculator::buildOpPrecedence() {
   std::map<std::string, int> opp;
 
@@ -819,17 +853,6 @@ void calculator::cleanRPN(TokenQueue_t& rpn) {
     rpn.pop();
   }
   return;
-}
-
-calculator::~calculator() {
-  cleanRPN(this->RPN);
-}
-
-calculator::calculator(const char* expr,
-		       std::map<std::string, double>* vars,
-		       bool debug,
-		       std::map<std::string, int> opPrec) {
-  compile(expr,vars,debug,opPrec);
 }
 
 void calculator::compile(const char* expr,

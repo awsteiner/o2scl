@@ -149,6 +149,33 @@ int main(void) {
   cout << calc.RPN_to_string() << endl;
   t.test_rel(calc.eval(0),0.5,1.0e-14,"calc34");
 
+  // Test RPN
+  calc.compile("-exp(0.2+sin(4+5))*aa",0);
+  TokenQueue_t rpn=calc.get_RPN();
+  while (rpn.size()) {
+    TokenBase *tb=rpn.front();
+    if (tb->type==0) cout << "none" << " ";
+    if (tb->type==1) cout << "op" << " ";
+    if (tb->type==2) cout << "var" << " ";
+    if (tb->type==3) cout << "num" << " ";
+    Token<std::string>* str=dynamic_cast<Token<std::string>*>(tb);
+    if (str!=0) {
+      cout << str->val << endl;
+    }
+    Token<double>* dbl=dynamic_cast<Token<double>*>(tb);
+    if (dbl!=0) {
+      cout << dbl->val << endl;
+    }
+    rpn.pop();
+  }
+
+  /*
+    typedef std::queue<TokenBase *>::const_iterator cit;
+    for(cit=rpn.begin();cit!=rpn.end();cit++) {
+    cout << cit->type << endl;
+    }
+  */
+  
   t.report();
   return 0;
 }

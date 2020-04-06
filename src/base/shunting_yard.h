@@ -242,6 +242,11 @@ namespace o2scl {
 	\note This is mostly useful for debugging
     */
     std::string RPN_to_string();
+
+    TokenQueue_t get_RPN();
+
+    std::vector<std::string> calculator::get_var_list();
+    
   };
 
 }
