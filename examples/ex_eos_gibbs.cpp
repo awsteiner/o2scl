@@ -310,8 +310,8 @@ public:
     mu.mu=e.mu-nu_e.mu+nu_mu.mu;
 
     double f1, f2, f3;
-    rmf_hyp.calc_eq_p(n,p,lam,sigp,sigz,sigm,casz,casm,
-		      sigma,omega,rho,f1,f2,f3,hth);
+    rmf_hyp.calc_eq_hyp_p(n,p,lam,sigp,sigz,sigm,casz,casm,
+			  sigma,omega,rho,f1,f2,f3,hth);
 
     ix=0;
     leptons_out(ix,y,T,nB);
