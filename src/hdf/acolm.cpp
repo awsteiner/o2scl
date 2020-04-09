@@ -426,11 +426,10 @@ void acol_manager::command_add(std::string new_type) {
        (this,&acol_manager::comm_select_rows),both},
       {0,"select-rows2",
        "Select rows, with explicit column specification.",
-       0,-1,"<row_spec> [col1] [col2] ...",
+       0,-1,"<row_spec>",
        ((std::string)"Select the rows from a table for ")+
        "which the row specification in <row_spec> evaluates to a number "+
-       "greater than 0.5 . All of the columns required to compute the row "+
-       "specification must be given in [col1] [col2] ... This can be "+
+       "greater than 0.5 . This command should be equivalent to but "+
        "faster than 'select-rows' for tables with many columns.",
        new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_select_rows2),both},
