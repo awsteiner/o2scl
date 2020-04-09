@@ -1975,23 +1975,39 @@ int acol_manager::comm_select_rows2(std::vector<std::string> &sv,
   // ---------------------------------------------------------------------
 
   calculator calc;
+  calc.compile(i1.c_str(),0);
+  
+  /*
+    vector<string> cols;
+    for(size_t i=2;i<sv.size();i++) {
+    cols.push_back(sv[i]);
+    }
+  */
+
+  vector<string> cols=calc.get_var_list();
+
+  /*
+    cout << "select-rows2a: ";
+    vector_out(cout,cols,true);
+    cout << "select-rows2b: ";
+    vector_out(cout,cols2,true);
+  */
+  
   std::map<std::string,double> vars;
 
-  vector<string> cols;
-  for(size_t i=2;i<sv.size();i++) {
-    cols.push_back(sv[i]);
-  }
-  
   int new_lines=0;
   for(int i=0;i<((int)table_obj.get_nlines());i++) {
+    
     if (verbose>0 && i%10000==0) {
       std::cout << "Finished " << i << " of "
 		<< table_obj.get_nlines() << " lines." << endl;
     }
+    
     for(size_t j=0;j<cols.size();j++) {
       vars[cols[j]]=table_obj.get(cols[j],i);
     }
-    calc.compile(i1.c_str(),&vars);
+    
+    //calc.compile(i1.c_str(),&vars);
     if (calc.eval(&vars)>0.5) {
       // It is important to use set_nlines_auto() here because it
       // increases the table size fast enough to avoid poor scaling
