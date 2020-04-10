@@ -187,7 +187,7 @@ bool o2scl::stob(string s, bool err_on_fail) {
   // If the read into the istringstream failed
   if (err_on_fail) {
     // AWS, 3/26/19: I've tried including the string parameter 's' in
-    // the error message, but it leads to badly formatted error messages
+    // the error message, but it can lead to badly formatted error messages
     // so this version is better.
     O2SCL_ERR("Conversion from string to bool failed in stob().",
 	      exc_einval);

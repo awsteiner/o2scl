@@ -15,7 +15,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License
+  You should have received a coxpy of the GNU General Public License
   along with O2scl. If not, see <http://www.gnu.org/licenses/>.
 
   -------------------------------------------------------------------
@@ -39,7 +39,7 @@
 
 #include <o2scl/misc.h>
 #include <o2scl/interp.h>
-
+#include <o2scl/vec_stats.h>
 #include <o2scl/shunting_yard.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -2631,6 +2631,101 @@ namespace o2scl {
     
   /// \name Miscellaneous methods
   //@{
+  /** \brief Compute the rolling average of column named \c col
+   */
+  virtual void average_col_roll(std::string col, size_t window) {
+    if (window<2) {
+      O2SCL_ERR("Window less than 2 in table::average_rows().",
+		o2scl::exc_einval);
+    }
+
+    size_t nl=get_nlines();
+    size_t k=lookup_column(col);
+
+    // A non-const reference to the data vector
+    vec_t &v=alist[k]->second.dat;
+    
+    o2scl::vector_roll_avg<vec_t,double>(nl,v,window);
+    
+    return;
+  }
+  
+  /** \brief Average nearby rows together over the entire table
+   */
+  virtual void average_rows(size_t window, bool rolling=false) {
+    
+    if (window<2) {
+      O2SCL_ERR("Window less than 2 in table::average_rows().",
+		o2scl::exc_einval);
+    }
+    size_t nl=get_nlines();
+    size_t nc=get_ncolumns();
+
+    int verbose=0;
+    
+    if (rolling==false) {
+      
+      // First pass, combine rows together into the first row
+      // of every group
+      for(size_t i=0;i<nl;i+=window) {
+	for(size_t j=1;j<window;j++) {
+	  for(size_t k=0;k<nc;k++) {
+	    if (i+j<nl) {
+	      set(k,i,get(k,i)+get(k,i+j));
+	      if (k==0 && verbose>0) {
+		std::cout << "Adding row " << i+j << " to row "
+			  << i << std::endl;
+	      }
+	    }
+	  }
+	}
+      }
+      // Variable nw is the number of windows
+      size_t nw=nl/window;
+      // Correctly handle the last window
+      if (nw*window<nl) nw++;
+      if (verbose>0) {
+	std::cout << "nl: " << nl << " window: " << window << " nw: "
+		  << nw << std::endl;
+      }
+
+      // Move the first row of every group to the top of the table
+      for(int i=((int)nw)-1;i>=0;i--) {
+	// The size of the window may be different for the last window
+	// so handle that accordingly
+	int win=window;
+	if (i==((int)nw)-1) {
+	  win=((int)nl)-(((int)nw)-1)*window;
+	} else {
+	  win=window;
+	}
+	if (verbose>0) {
+	  std::cout << "i: " << i << " win: " << win << " i*window: "
+		    << i*window << std::endl;
+	}
+	for(size_t k=0;k<nc;k++) {
+	  set(k,i,get(k,i*window)/((double)win));
+	}
+      }
+
+      // Finally, change the number of lines
+      set_nlines(nw);
+      
+    } else {
+
+      // Proceed one column at a time
+      for(size_t k=0;k<nc;k++) {
+
+	// A non-const reference to the data vector
+	vec_t &v=alist[k]->second.dat;
+	
+	o2scl::vector_roll_avg<vec_t,double>(nl,v,window);
+      }
+      
+    }
+    return;
+  }
+  
   /// Clear the current table and read from a generic data file
   virtual int read_generic(std::istream &fin, int verbose=0) {
 

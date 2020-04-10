@@ -105,6 +105,51 @@ int acol_manager::comm_correl(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
   
+int acol_manager::comm_average_rows(std::vector<std::string> &sv,
+				    bool itive_com) {
+
+  if (type!="table") {
+    cerr << "No table to average_rows." << endl;
+    return exc_efailed;
+  }
+
+  if (sv.size()==3) {
+
+    if (sv[1]=="*") {
+      table_obj.average_rows(o2scl::stoszt(sv[2]));
+    } else {
+      table_obj.average_col_roll(sv[1],o2scl::stoszt(sv[2]));
+    }
+
+  } else {
+    
+    vector<string> pr, in;
+    pr.push_back("Column name, or '*' for all");
+    pr.push_back("Window size (greater than 1)");
+    pr.push_back("True for block average, false for rolling average");
+    int ret=get_input(sv,pr,in,"average-rows",itive_com);
+    if (ret!=0) return ret;
+    
+    if (o2scl::stob(in[2])==true) {
+      if (in[0]=="*") {
+	table_obj.average_rows(o2scl::stoszt(in[1]),true);
+      } else {
+	cerr << "Cannot specify column name with block averages." << endl;
+	return 2;
+      }
+    } else {
+      if (in[0]=="*") {
+	table_obj.average_rows(o2scl::stoszt(in[1]),false);
+      } else {
+	table_obj.average_col_roll(in[0],o2scl::stoszt(in[1]));
+      }
+    }
+
+  }
+  
+  return 0;
+}
+
 int acol_manager::comm_assign(std::vector<std::string> &sv, bool itive_com) {
   if (type!="table" && type!="table3d") {
     cerr << "No table/table3d object to add a constant to." << endl;

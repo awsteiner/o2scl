@@ -199,6 +199,17 @@ int main(void) {
 
   }
 
+  table<> tabx;
+  tabx.line_of_names("x y");
+  for(size_t i=0;i<13;i++) {
+    double line[2]={((double)i),((double)i)*3.0};
+    tabx.line_of_data(2,line);
+  }
+  tabx.average_rows(10);
+  for(size_t i=0;i<tabx.get_nlines();i++) {
+    cout << tabx.get("x",i) << " " << tabx.get("y",i) << endl;
+  }
+  
   t.report();
 
   return 0;

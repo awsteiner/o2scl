@@ -105,7 +105,8 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("string",itmp));
   }
   {
-    vector<std::string> itmp={"ac-len","assign","delete-col","delete-rows",
+    vector<std::string> itmp={"ac-len","average-rows",
+			      "assign","delete-col","delete-rows",
 			      "delete-rows-tol","deriv","deriv2","cat",
 			      "convert-unit","entry-grid",
 			      "find-row","fit","function",
@@ -217,11 +218,18 @@ void acol_manager::command_add(std::string new_type) {
     };
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=40;
+    static const size_t narr=41;
     comm_option_s options_arr[narr]={
-      {0,"ac-len","",0,1,"<colum>","",
+      {0,"ac-len","Autocorrelation length using 'acor'",0,1,"<colum>","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_ac_len),
        both},
+      {0,"average-rows","Average rows of all columns together",
+       0,3,"<column or '*' for all> <window> [block averages]",
+       ((string)"(FIX) The second argument is the size ")+
+       "of the window. If the third argument evaluates to false, then "+
+       "block averages instead of rolling averages are computed",
+       new comm_option_mfptr<acol_manager>
+       (this,&acol_manager::comm_average_rows),both},
       {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
        0,2,"<name> [val]",
        ((string)"Assign a constant value to a name for the present table. ")+
@@ -1733,7 +1741,9 @@ int acol_manager::get_input_one(vector<string> &sv, string directions,
     in=sv[1];
     return 0;
   }
+  
   if (itive_com) {
+
     string temp=directions+" (or blank to stop): ";
     in=cl->cli_gets(temp.c_str());
     if (in.length()==0 || o2scl::count_words(in)==0) {
@@ -1742,6 +1752,7 @@ int acol_manager::get_input_one(vector<string> &sv, string directions,
       }
       return exc_efailed;
     }
+    
   } else {
     cerr << "Not enough arguments to '" << comm_name << "'." << endl;
     return exc_efailed;
@@ -1767,6 +1778,7 @@ int acol_manager::get_input(vector<string> &sv, vector<string> &directions,
 
   // Otherwise, if we're in interactive mode
   if (itive_com) {
+    
     // Prompt the user for the correct arguments
     for(size_t i=0;i<ni;i++) {
       string temp=directions[i]+" (or blank to stop): ";
@@ -1777,6 +1789,7 @@ int acol_manager::get_input(vector<string> &sv, vector<string> &directions,
 	return exc_efailed;
       }
     }
+    
   } else {
     // We don't have enough arguments and we're not in interactive
     // mode, so we fail

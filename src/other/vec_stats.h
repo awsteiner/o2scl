@@ -1076,6 +1076,48 @@ namespace o2scl {
   }
   //@}
 
+  /** \brief Compute rolling averages for the first
+      \c n entries in the vector \c v
+   */
+  template<class vec_t, class data_t> void 
+    vector_roll_avg(size_t n, vec_t &v, size_t window) {
+
+    if (window<2) {
+      O2SCL_ERR("Window less than 2 in table::average_rows().",
+		o2scl::exc_einval);
+    }
+    
+    // First, create a new vector with the rolling averages
+    std::vector<double> avgs(n);
+    for(size_t i=0;i<n;i++) {
+      size_t cnt=0;
+      avgs[i]=0.0;
+      for(size_t j=0;j<window;j++) {
+	int i2=((int)i)-((int)window)/2+j;
+	if (i2>=0 && i2<n) {
+	  avgs[i]+=v[i2];
+	  cnt++;
+	}
+      }
+      avgs[i]/=((double)cnt);
+    }
+    
+    // Second, copy the new vector on top of the old one
+    for(size_t i=0;i<n;i++) {
+      v[i]=avgs[i];
+    }
+    
+    return;
+  }
+
+  /** \brief Compute rolling averages
+   */
+  template<class vec_t, class data_t> void 
+    vector_roll_avg(vec_t &v, size_t window) {
+    vector_roll_avg(v.size(),window);
+    return;
+  }
+  
   /// \name Weighted vector mean, std. dev., etc. in src/other/vec_stats.h
   //@{
   /** \brief Compute the mean of weighted data

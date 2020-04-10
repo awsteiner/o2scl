@@ -295,6 +295,10 @@ namespace o2scl_acol {
     virtual int comm_assign(std::vector<std::string> &sv, bool itive_com);
 
     /// Desc
+    virtual int comm_average_rows(std::vector<std::string> &sv,
+				  bool itive_com);
+
+    /// Desc
     virtual int comm_correl(std::vector<std::string> &sv, bool itive_com);
 
     /// Refine an object
