@@ -1094,7 +1094,7 @@ namespace o2scl {
       avgs[i]=0.0;
       for(size_t j=0;j<window;j++) {
 	int i2=((int)i)-((int)window)/2+j;
-	if (i2>=0 && i2<n) {
+	if (i2>=0 && i2<((int)n)) {
 	  avgs[i]+=v[i2];
 	  cnt++;
 	}
