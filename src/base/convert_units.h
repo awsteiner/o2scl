@@ -35,6 +35,7 @@
 #include <o2scl/misc.h>
 #include <o2scl/constants.h>
 #include <o2scl/string_conv.h>
+#include <o2scl/shunting_yard.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -129,6 +130,41 @@ namespace o2scl {
   typedef typename std::map<std::string,unit_t,
   std::greater<std::string> >::const_iterator mciter;
 
+#ifdef O2SCL_NEVER_DEFINED
+  
+  /// Desc
+  std::map<std::string, double> calc_vars;
+  
+  int convert_calc(std::string from, std::string to,
+		    fp_t val, fp_t &converted,
+		    fp_t &factor) const {
+    
+    /// These have to be inside this function to make it const
+    o2scl::calculator calc;
+    
+    /// Desc
+    o2scl::calculator calc2;
+
+    calc.compile(from.c_str());
+    calc2.compile(to.c_str());
+    double before=calc.eval(&calc_vars);
+    double after=calc2.eval(&calc_vars);
+    factor=before/after;
+    converted=val*factor;
+
+    std::cout << from << " " << to << " " << factor << std::endl;
+
+    // Now, having verified that a conversion is possible,
+    // we need to separately verify the conversion is sensible
+    // by rescaling length, mass, and time separately to make
+    // sure both sides scale the same way. The prevents, e.g.
+    // conversions between m and 1/m. 
+    
+    return 0;
+  }
+  
+#endif
+    
   /** \brief The internal conversion function which tries the
       cache first and, if that failed, tries GNU units.
 
@@ -148,6 +184,12 @@ namespace o2scl {
     // Remove whitespace
     remove_whitespace(from);
     remove_whitespace(to);
+
+#ifdef O2SCL_NEVER_DEFINED
+    convert_calc(from,to,val,converted,factor);
+    
+    exit(-1);
+#endif
 
     int ret_cache=convert_cache(from,to,val,converted,factor);
 
@@ -302,7 +344,6 @@ namespace o2scl {
       
     return 0;
   }
-      
 
   /** \brief Attempt to construct a conversion from the internal
       unit cache
@@ -439,6 +480,10 @@ namespace o2scl {
     units_cmd_string="units";
     err_on_fail=true;
     combine_two_conv=true;
+#ifdef O2SCL_NEVER_DEFINED
+    calc_vars.insert(std::make_pair("fm",1.0e-15));
+    calc_vars.insert(std::make_pair("m",1.0));
+#endif
   }
     
 

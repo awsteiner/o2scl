@@ -62,7 +62,7 @@
 using namespace o2scl;
 
 calculator::calculator(const char* expr,
-		       std::map<std::string, double>* vars,
+		       const std::map<std::string, double>* vars,
 		       bool debug,
 		       std::map<std::string, int> opPrec) {
   compile(expr,vars,debug,opPrec);
@@ -149,7 +149,7 @@ bool calculator::isvariablechar(const char c) {
 }
 
 TokenQueue_t calculator::toRPN(const char* expr,
-			       std::map<std::string, double>* vars,
+			       const std::map<std::string, double>* vars,
 			       bool debug,
 			       std::map<std::string, int> opPrec) {
 
@@ -255,7 +255,7 @@ TokenQueue_t calculator::toRPN(const char* expr,
 	  found = true;
 	  val = 0;
 	} else if (vars) {
-	  std::map<std::string, double>::iterator it = vars->find(key);
+	  std::map<std::string, double>::const_iterator it = vars->find(key);
 	  if(it != vars->end()) {
 	    found = true;
 	    val = it->second;
@@ -357,7 +357,7 @@ TokenQueue_t calculator::toRPN(const char* expr,
 }
 
 int calculator::toRPN_nothrow(const char* expr,
-			      std::map<std::string, double>* vars,
+			      const std::map<std::string, double>* vars,
 			      bool debug, std::map<std::string, int> opPrec,
 			      TokenQueue_t &rpnQueue2) {
 
@@ -463,7 +463,7 @@ int calculator::toRPN_nothrow(const char* expr,
 	  found = true;
 	  val = 0;
 	} else if (vars) {
-	  std::map<std::string, double>::iterator it = vars->find(key);
+	  std::map<std::string, double>::const_iterator it = vars->find(key);
 	  if(it != vars->end()) {
 	    found = true;
 	    val = it->second;
@@ -566,7 +566,7 @@ int calculator::toRPN_nothrow(const char* expr,
 }
 
 double calculator::calculate(const char* expr,
-			     std::map<std::string, double>* vars,
+			     const std::map<std::string, double>* vars,
 			     bool debug) {
 
   // Convert to RPN with Dijkstra's Shunting-yard algorithm.
@@ -580,7 +580,7 @@ double calculator::calculate(const char* expr,
 }
 
 int calculator::calculate_nothrow(const char* expr,
-				  std::map<std::string, double>* vars,
+				  const std::map<std::string, double>* vars,
 				  bool debug, double &result) {
 
   // Convert to RPN with Dijkstra's Shunting-yard algorithm.
@@ -599,7 +599,7 @@ int calculator::calculate_nothrow(const char* expr,
 }
 
 double calculator::calculate(TokenQueue_t rpn,
-			     std::map<std::string, double>* vars) {
+			     const std::map<std::string, double>* vars) {
 
   // Evaluate the expression in RPN form.
   std::stack<double> evaluation;
@@ -705,7 +705,7 @@ double calculator::calculate(TokenQueue_t rpn,
       Token<std::string>* strTok = static_cast<Token<std::string>*>(base);
       
       std::string key = strTok->val;
-      std::map<std::string, double>::iterator it = vars->find(key);
+      std::map<std::string, double>::const_iterator it = vars->find(key);
       
       if (it == vars->end()) {
         throw std::domain_error("Unable to find the variable '" + key + "'.");
@@ -719,7 +719,7 @@ double calculator::calculate(TokenQueue_t rpn,
 }
 
 int calculator::calculate_nothrow(TokenQueue_t rpn,
-				  std::map<std::string, double>* vars,
+				  const std::map<std::string, double>* vars,
 				  double &result) {
 
   // Evaluate the expression in RPN form.
@@ -830,7 +830,7 @@ int calculator::calculate_nothrow(TokenQueue_t rpn,
       Token<std::string>* strTok = static_cast<Token<std::string>*>(base);
       
       std::string key = strTok->val;
-      std::map<std::string, double>::iterator it = vars->find(key);
+      std::map<std::string, double>::const_iterator it = vars->find(key);
       
       if (it == vars->end()) {
 	cleanRPN(rpn);
@@ -857,7 +857,7 @@ void calculator::cleanRPN(TokenQueue_t& rpn) {
 }
 
 void calculator::compile(const char* expr,
-			 std::map<std::string, double>* vars,
+			 const std::map<std::string, double>* vars,
 			 bool debug,
 			 std::map<std::string, int> opPrec) {
 
@@ -868,7 +868,7 @@ void calculator::compile(const char* expr,
 }
 
 int calculator::compile_nothrow(const char* expr,
-				std::map<std::string, double>* vars,
+				const std::map<std::string, double>* vars,
 				bool debug,
 				std::map<std::string, int> opPrec) {
 
@@ -879,12 +879,12 @@ int calculator::compile_nothrow(const char* expr,
   return ret;
 }
 
-double calculator::eval(std::map<std::string, double>* vars) {
+double calculator::eval(const std::map<std::string, double>* vars) {
   return calculate(this->RPN, vars);
 }
 
-int calculator::eval_nothrow(std::map<std::string, double>* vars,
-				double &result) {
+int calculator::eval_nothrow(const std::map<std::string, double>* vars,
+			     double &result) {
   int ret=calculate_nothrow(this->RPN,vars,result);
   return ret;
 }

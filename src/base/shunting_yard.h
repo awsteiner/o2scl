@@ -138,30 +138,30 @@ namespace o2scl {
 	\c vars
      */
     static double calculate(const char* expr,
-			    std::map<std::string, double>* vars = 0,
+			    const std::map<std::string, double>* vars = 0,
 			    bool debug=false);
     
     /** \brief Compile and evaluate \c expr using definitions in 
 	\c vars and return an integer to indicate success or failure
     */
     static int calculate_nothrow(const char* expr,
-				    std::map<std::string, double>* vars,
-				    bool debug, double &result);
-
+				 const std::map<std::string, double>* vars,
+				 bool debug, double &result);
+    
   private:
 
     /** \brief Compile and evaluate the expression in \c RPN
 	using definitions in \c vars
      */
     static double calculate(TokenQueue_t RPN,
-			    std::map<std::string, double>* vars = 0);
+			    const std::map<std::string, double>* vars = 0);
     
     /** \brief Compile and evaluate the expression in \c RPN using
 	definitions in \c vars and return an integer to indicate
 	success or failure
      */
     static int calculate_nothrow(TokenQueue_t RPN,
-				 std::map<std::string, double>* vars,
+				 const std::map<std::string, double>* vars,
 				 double &result);
 
     /** \brief Empty and free memory associated with \c rpn
@@ -174,7 +174,7 @@ namespace o2scl {
     /** \brief Convert the expression in \c expr to RPN 
      */
     static TokenQueue_t toRPN(const char* expr,
-			      std::map<std::string, double>* vars,
+			      const std::map<std::string, double>* vars,
 			      bool debug=false,
 			      std::map<std::string, int> opPrec=opPrecedence);
 
@@ -182,7 +182,7 @@ namespace o2scl {
 	integer to indicate success or failure
      */
     static int toRPN_nothrow(const char* expr,
-			     std::map<std::string, double>* vars,
+			     const std::map<std::string, double>* vars,
 			     bool debug,
 			     std::map<std::string, int> opPrec,
 			     TokenQueue_t &queue2);
@@ -205,7 +205,7 @@ namespace o2scl {
 	specified in \c vars
      */
     calculator(const char* expr,
-	       std::map<std::string, double> *vars=0,
+	       const std::map<std::string, double> *vars=0,
 	       bool debug=false,
 	       std::map<std::string, int> opPrec=opPrecedence);
     
@@ -214,7 +214,7 @@ namespace o2scl {
 	integer to indicate success or failure
     */
     void compile(const char* expr,
-		 std::map<std::string, double> *vars=0,
+		 const std::map<std::string, double> *vars=0,
 		 bool debug=false,
 		 std::map<std::string, int> opPrec=opPrecedence);
     
@@ -223,19 +223,19 @@ namespace o2scl {
 	integer to indicate success or failure
     */
     int compile_nothrow(const char* expr,
-			std::map<std::string, double> *vars=0,
+			const std::map<std::string, double> *vars=0,
 			bool debug=false,
 			std::map<std::string, int> opPrec=opPrecedence);
     
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
      */
-    double eval(std::map<std::string, double> *vars=0);
+    double eval(const std::map<std::string, double> *vars=0);
 
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
      */
-    int eval_nothrow(std::map<std::string, double> *vars, double &result);
+    int eval_nothrow(const std::map<std::string, double> *vars, double &result);
     
     /** \brief Convert the RPN expression to a string
 
