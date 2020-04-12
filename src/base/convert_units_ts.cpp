@@ -148,6 +148,14 @@ int main(int argc, char *argv[]) {
     convert_units<double> cu;
     cu.make_units_dat("units_hck.dat",true,true,true);
   }
+
+  convert_units<double> cux;
+  double d1, d2;
+  int ix;
+  ix=cux.convert_calc("nJ","kg*m^2/s^2",2.0,d1,d2);
+  cout << ix << " " << d1 << " " << d2 << endl;
+  ix=cux.convert_calc("kg","MeV/c^2",2.0,d1,d2);
+  cout << ix << " " << d1 << " " << d2 << endl;
   
   t.report();
   return 0;

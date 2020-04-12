@@ -223,11 +223,15 @@ void acol_manager::command_add(std::string new_type) {
       {0,"ac-len","Autocorrelation length using 'acor'",0,1,"<colum>","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_ac_len),
        both},
-      {0,"average-rows","Average rows of all columns together",
+      {0,"average-rows","Average rows of some or all columns together",
        0,3,"<column or '*' for all> <window> [block averages]",
-       ((string)"(FIX) The second argument is the size ")+
+       ((string)"The first argument is the column to be ")+
+       "modified. If the first argument is '*', then all columns are "+
+       "averaged. The second argument is the size "+
        "of the window. If the third argument evaluates to false, then "+
-       "block averages instead of rolling averages are computed",
+       "block averages instead of rolling averages are computed, and then "+
+       "the number of rows is divided by the window parameter. If block "+
+       "averages are requested, then the first argument must be '*'.",
        new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_average_rows),both},
       {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
@@ -244,9 +248,6 @@ void acol_manager::command_add(std::string new_type) {
        "if necessary.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
        both},
-      {0,"correl","",0,2,"","",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_correl),
-       both},
       {0,"convert-unit","Convert a column to a new unit.",0,2,
        "<column> <new_unit>",((string)"(This command only works if ")+
        "the GNU 'units' command is installed and available in the current "+
@@ -254,6 +255,13 @@ void acol_manager::command_add(std::string new_type) {
        "all entries in that column by the appropriate factor.",
        new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_convert_unit),both},
+      {0,"correl","Compute correlation between two columns",0,2,
+       "<column 1> <column 2>",((string)"Compute the correlation ")+
+       "coefficient between two columns, or, if no arguments are "+
+       "given, then compute the correlation coefficients between all "+
+       "pairs of columns.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_correl),
+       both},
       {0,"delete-col","Delete a column.",0,1,"<name>",
        "Delete the entire column named <name>.",
        new comm_option_mfptr<acol_manager>

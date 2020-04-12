@@ -130,41 +130,118 @@ namespace o2scl {
   typedef typename std::map<std::string,unit_t,
   std::greater<std::string> >::const_iterator mciter;
 
-#ifdef O2SCL_NEVER_DEFINED
+  /** \brief Type of a derived unit
+   */
+  typedef struct der_unit_s {
+    /// Unit label
+    std::string label;
+    /// Power of length
+    int m;
+    /// Power of mass
+    int k;
+    /// Power of time
+    int s;
+    /// Value
+    fp_t val;
+  } der_unit;
+
+  /// Number of SI prefixes
+  static const size_t n_prefixes=24;
+
+  /// SI prefix labels
+  std::vector<std::string> prefixes;
+
+  /// SI prefix factors
+  std::vector<fp_t> prefix_facts;
   
-  /// Desc
-  std::map<std::string, double> calc_vars;
+  /** \brief SI-like units which allow prefixes
+      
+      Set in constructor.
+  */
+  std::vector<der_unit> SI;
+
+  /** \brief Other units which do not allow prefixing
+      
+      Set in constructor.
+  */
+  std::vector<der_unit> other;
+
+  /** \brief Set variables for the calculator object for 
+      \ref convert_calc()
+  */
+  void set_vars(fp_t m, fp_t k, fp_t s,
+		std::map<std::string, fp_t> &vars) const {
+
+    vars.clear();
   
-  int convert_calc(std::string from, std::string to,
-		    fp_t val, fp_t &converted,
-		    fp_t &factor) const {
+    // meters
+    vars.insert(std::make_pair("m",m));
+    for(size_t i=0;i<n_prefixes;i++) {
+      vars.insert(std::make_pair(prefixes[i]+"m",prefix_facts[i]*m));
+    }
     
-    /// These have to be inside this function to make it const
-    o2scl::calculator calc;
+    // kilograms
+    bool hbar_is_1=false;
+    if (hbar_is_1) {
+      double hbarc=o2scl_const::hbarc_f<fp_t>();
+      vars.insert(std::make_pair("g",1.0e-3*k));
+      for(size_t i=0;i<n_prefixes;i++) {
+	vars.insert(std::make_pair(prefixes[i]+"g",
+				   prefix_facts[i]*1.0e-3*k));
+      }
+    } else {
+      vars.insert(std::make_pair("g",1.0e-3*k));
+      for(size_t i=0;i<n_prefixes;i++) {
+	vars.insert(std::make_pair(prefixes[i]+"g",
+				   prefix_facts[i]*1.0e-3*k));
+      }
+    }
+
+    // seconds
+    bool c_is_1=false;
+    if (c_is_1) {
+      double c=o2scl_const::speed_of_light_f<fp_t>();
+      vars.insert(std::make_pair("s",c/s));
+      for(size_t i=0;i<n_prefixes;i++) {
+	vars.insert(std::make_pair(prefixes[i]+"s",c/prefix_facts[i]/s));
+      }
+    } else {
+      // seconds
+      vars.insert(std::make_pair("s",s));
+      for(size_t i=0;i<n_prefixes;i++) {
+	vars.insert(std::make_pair(prefixes[i]+"s",prefix_facts[i]*s));
+      }
+    }
+
+    // For SI-like units, add with all of the various prefixes
+    for(size_t i=0;i<SI.size();i++) {
+      fp_t val=pow(m,SI[i].m)*pow(k,SI[i].k)*pow(s,SI[i].s);
+      vars.insert(std::make_pair(SI[i].label,val));
+      for(size_t j=0;j<n_prefixes;j++) {
+	fp_t val=pow(m,SI[i].m)*pow(k,SI[i].k)*pow(s,SI[i].s)*SI[i].val;
+	vars.insert(std::make_pair(prefixes[j]+SI[i].label,
+				   val*prefix_facts[j]));
+      }
+    }
     
-    /// Desc
-    o2scl::calculator calc2;
+    // For other units, just add the value
+    for(size_t i=0;i<other.size();i++) {
+      fp_t val=pow(m,other[i].m)*pow(k,other[i].k)*pow(s,other[i].s)*
+	other[i].val;
+      vars.insert(std::make_pair(other[i].label,val));
+    }
 
-    calc.compile(from.c_str());
-    calc2.compile(to.c_str());
-    double before=calc.eval(&calc_vars);
-    double after=calc2.eval(&calc_vars);
-    factor=before/after;
-    converted=val*factor;
-
-    std::cout << from << " " << to << " " << factor << std::endl;
-
-    // Now, having verified that a conversion is possible,
-    // we need to separately verify the conversion is sensible
-    // by rescaling length, mass, and time separately to make
-    // sure both sides scale the same way. The prevents, e.g.
-    // conversions between m and 1/m. 
+    /*
+      for (typename std::map<std::string,fp_t>::iterator it=vars.begin();
+      it!=vars.end();it++) {
+      std::cout << it->first << " " << it->second << std::endl;
+      }
+      exit(-1);
+    */
     
-    return 0;
+    return;
   }
   
-#endif
-    
   /** \brief The internal conversion function which tries the
       cache first and, if that failed, tries GNU units.
 
@@ -185,12 +262,6 @@ namespace o2scl {
     remove_whitespace(from);
     remove_whitespace(to);
 
-#ifdef O2SCL_NEVER_DEFINED
-    convert_calc(from,to,val,converted,factor);
-    
-    exit(-1);
-#endif
-
     int ret_cache=convert_cache(from,to,val,converted,factor);
 
     if (ret_cache==0) {
@@ -202,7 +273,7 @@ namespace o2scl {
 
       if (verbose>0) {
 	std::cout << "convert_units::convert_internal(): "
-		  << "Value of use_gnu_units is true." << std::endl;
+	<< "Value of use_gnu_units is true." << std::endl;
       }
 
       int ret_gnu=convert_gnu_units(from,to,val,converted,factor,new_conv);
@@ -216,14 +287,14 @@ namespace o2scl {
     
       if (verbose>0) {
 	std::cout << "convert_units::convert_internal(): "
-		  << "Value of use_gnu_units is false." << std::endl;
+	<< "Value of use_gnu_units is false." << std::endl;
       }
     
     }    
   
     if (err_on_fail) {
       std::string str=((std::string)"Conversion between ")+from+" and "+to+
-	" not found in convert_units::convert_internal().";
+      " not found in convert_units::convert_internal().";
       O2SCL_ERR(str.c_str(),exc_enotfound);
     }
   
@@ -259,8 +330,8 @@ namespace o2scl {
   
     if (verbose>0) {
       std::cout << "convert_units::convert_gnu_units(): "
-		<< "GNU units command is \"" << cmd
-		<< "\"." << std::endl;
+      << "GNU units command is \"" << cmd
+      << "\"." << std::endl;
     }
   
     FILE *ps_pipe=popen(cmd.c_str(),"r");
@@ -313,14 +384,14 @@ namespace o2scl {
     }
     if (verbose>0) {
       std::cout << "convert_units::convert_gnu_units(): "
-		<< "Converted value is " << factor*val << std::endl;
+      << "Converted value is " << factor*val << std::endl;
     }
   
     // Cleanup
     if (pclose(ps_pipe)!=0) {
       if (verbose>0) {
 	std::cout << "convert_units::convert_gnu_units(): "
-		  << "Close pipe failed." << std::endl;
+	<< "Close pipe failed." << std::endl;
       }
       if (err_on_fail) {
 	O2SCL_ERR2("Pipe could not be closed in ",
@@ -480,15 +551,83 @@ namespace o2scl {
     units_cmd_string="units";
     err_on_fail=true;
     combine_two_conv=true;
+
+    prefixes={"Q","R","Y","Z","E","P","T","G","M",
+	      "k","h","da","d","c","m","mu","n",
+	      "p","f","a","z","y","r","q"};
+    
+    prefix_facts={1.0e30,1.0e27,1.0e24,1.0e21,1.0e18,1.0e15,
+		  1.0e12,1.0e9,1.0e6,1.0e3,1.0e2,10.0,0.1,
+		  1.0e-2,1.0e-3,1.0e-6,1.0e-9,1.0e-12,1.0e-15,
+		  1.0e-18,1.0e-21,1.0e-24,1.0e-27,1.0e-30};
+    
+    // SI derived units
+    std::vector<der_unit> SI_={{"J",2,1,-2,1.0},
+			       {"N",1,1,-2,1.0},
+			       {"eV",2,1,-2,o2scl_mks::electron_volt}};
+    SI=SI_;
+    
+    // Other units
+    std::vector<der_unit> other_={{"c",1,0,-1,o2scl_mks::speed_of_light}};
+    other=other_;
+    
 #ifdef O2SCL_NEVER_DEFINED
-    calc_vars.insert(std::make_pair("fm",1.0e-15));
-    calc_vars.insert(std::make_pair("m",1.0));
+
 #endif
+
   }
     
-
   virtual ~convert_units() {}
 
+  /** \brief Attempt automatic unit conversion
+   */
+  int convert_calc(std::string from, std::string to,
+		   fp_t val, fp_t &converted,
+		   fp_t &factor) const {
+    
+    // These calculator objects have to be inside this
+    // function to make the function const
+    o2scl::calculator calc;
+    o2scl::calculator calc2;
+
+    std::map<std::string, fp_t> vars;
+
+    set_vars(1.0,1.0,1.0,vars);
+    
+    calc.compile(from.c_str());
+    calc2.compile(to.c_str());
+    fp_t before=calc.eval(&vars);
+    fp_t after=calc2.eval(&vars);
+    factor=before/after;
+    converted=val*factor;
+
+    std::cout << from << " " << to << " " << factor << std::endl;
+    
+    // Now, having verified that a conversion is possible,
+    // we need to separately verify the conversion is sensible
+    // by rescaling length, mass, and time separately to make
+    // sure both sides scale the same way. The prevents, e.g.
+    // conversions between m and 1/m.
+
+    set_vars(2.0,1.0,1.0,vars);
+    fp_t factor_m=calc.eval(&vars)/calc2.eval(&vars);
+    
+    set_vars(1.0,2.0,1.0,vars);
+    fp_t factor_kg=calc.eval(&vars)/calc2.eval(&vars);
+    
+    set_vars(1.0,1.0,2.0,vars);
+    fp_t factor_s=calc.eval(&vars)/calc2.eval(&vars);
+
+    if (fabs(factor/factor_m)-1.0<1.0e-14 &&
+	fabs(factor/factor_kg)-1.0<1.0e-14 &&
+	fabs(factor/factor_s)-1.0<1.0e-14) {
+      converted=factor*val;
+      return 0;
+    }
+    
+    return 1;
+  }
+  
   /// \name Basic usage
   //@{
   /** \brief Return the value \c val after converting using units \c
@@ -672,7 +811,7 @@ namespace o2scl {
       Where possible, this uses templates from constants.h to define
       the conversions exactly in the user-specified floating-point
       type.
-   */
+  */
   void default_conversions() {
     
     // Default conversions are given here. Obviously GNU units is better
