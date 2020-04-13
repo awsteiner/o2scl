@@ -141,6 +141,14 @@ namespace o2scl {
     int k;
     /// Power of time
     int s;
+    /// Power of temperature
+    int K;
+    /// Power of current
+    int A;
+    /// Power of moles
+    int mol;
+    /// Power of luminous intensity
+    int cd;
     /// Value
     fp_t val;
   } der_unit;
@@ -166,51 +174,39 @@ namespace o2scl {
   */
   std::vector<der_unit> other;
 
+  /// \name Flags for natural units
+  //@{
+  bool c_is_1;
+  bool hbar_is_1;
+  bool kb_is_1;
+  //@}
+  
   /** \brief Set variables for the calculator object for 
       \ref convert_calc()
   */
-  void set_vars(fp_t m, fp_t k, fp_t s,
-		std::map<std::string, fp_t> &vars) const {
+  void set_vars(fp_t m, fp_t k, fp_t s, fp_t K, fp_t A, fp_t mol,
+		fp_t cd, std::map<std::string, fp_t> &vars,
+		int verbose=0) const {
 
     vars.clear();
-  
+
     // meters
     vars.insert(std::make_pair("m",m));
     for(size_t i=0;i<n_prefixes;i++) {
       vars.insert(std::make_pair(prefixes[i]+"m",prefix_facts[i]*m));
     }
     
-    // kilograms
-    bool hbar_is_1=false;
-    if (hbar_is_1) {
-      double hbarc=o2scl_const::hbarc_f<fp_t>();
-      vars.insert(std::make_pair("g",1.0e-3*k));
-      for(size_t i=0;i<n_prefixes;i++) {
-	vars.insert(std::make_pair(prefixes[i]+"g",
-				   prefix_facts[i]*1.0e-3*k));
-      }
-    } else {
-      vars.insert(std::make_pair("g",1.0e-3*k));
-      for(size_t i=0;i<n_prefixes;i++) {
-	vars.insert(std::make_pair(prefixes[i]+"g",
-				   prefix_facts[i]*1.0e-3*k));
-      }
-    }
-
     // seconds
-    bool c_is_1=false;
-    if (c_is_1) {
-      double c=o2scl_const::speed_of_light_f<fp_t>();
-      vars.insert(std::make_pair("s",c/s));
-      for(size_t i=0;i<n_prefixes;i++) {
-	vars.insert(std::make_pair(prefixes[i]+"s",c/prefix_facts[i]/s));
-      }
-    } else {
-      // seconds
-      vars.insert(std::make_pair("s",s));
-      for(size_t i=0;i<n_prefixes;i++) {
-	vars.insert(std::make_pair(prefixes[i]+"s",prefix_facts[i]*s));
-      }
+    vars.insert(std::make_pair("s",s));
+    for(size_t i=0;i<n_prefixes;i++) {
+      vars.insert(std::make_pair(prefixes[i]+"s",prefix_facts[i]*s));
+    }
+    
+    // kilograms
+    vars.insert(std::make_pair("g",1.0e-3*k));
+    for(size_t i=0;i<n_prefixes;i++) {
+      vars.insert(std::make_pair(prefixes[i]+"g",
+				 prefix_facts[i]*1.0e-3*k));
     }
 
     // For SI-like units, add with all of the various prefixes
@@ -231,13 +227,12 @@ namespace o2scl {
       vars.insert(std::make_pair(other[i].label,val));
     }
 
-    /*
+    if (verbose>0) {
       for (typename std::map<std::string,fp_t>::iterator it=vars.begin();
-      it!=vars.end();it++) {
-      std::cout << it->first << " " << it->second << std::endl;
+	   it!=vars.end();it++) {
+	std::cout << it->first << " " << it->second << std::endl;
       }
-      exit(-1);
-    */
+    }
     
     return;
   }
@@ -561,25 +556,68 @@ namespace o2scl {
 		  1.0e-2,1.0e-3,1.0e-6,1.0e-9,1.0e-12,1.0e-15,
 		  1.0e-18,1.0e-21,1.0e-24,1.0e-27,1.0e-30};
     
-    // SI derived units
-    std::vector<der_unit> SI_={{"J",2,1,-2,1.0},
-			       {"N",1,1,-2,1.0},
-			       {"eV",2,1,-2,o2scl_mks::electron_volt}};
+    // SI derived units, in order m kg s K A mol cd
+    std::vector<der_unit> SI_=
+    {{"J",2,1,-2,0,0,0,0,1.0},
+     {"N",1,1,-2,0,0,0,0,1.0},
+     {"Pa",0,1,-2,0,0,0,0,1.0},
+     {"W",2,1,-3,0,0,0,0,1.0},
+     {"C",0,1,0,0,1,0,0,1.0},
+     {"V",2,1,-3,0,-1,0,0,1.0},
+     {"ohm",2,1,-3,0,-2,0,0,1.0},
+     {"S",-2,-1,3,0,2,0,0,1.0},
+     {"F",-2,-1,4,0,2,0,0,1.0},
+     {"Wb",2,1,-2,0,-1,0,0,1.0},
+     {"H",2,1,-2,0,-2,0,0,1.0},
+     {"T",0,1,-2,0,-1,0,0,1.0},
+     {"Hz",0,0,-1,0,0,0,0,1.0},
+     {"eV",2,1,-2,0,0,0,0,o2scl_mks::electron_volt}};
     SI=SI_;
     
-    // Other units
-    std::vector<der_unit> other_={{"c",1,0,-1,o2scl_mks::speed_of_light}};
+    // Other units, in order m kg s K A mol cd
+    std::vector<der_unit> other_=
+    {{"c",1,0,-1,0,0,0,0,o2scl_mks::speed_of_light},
+     {"kB",2,1,-2,-1,0,0,0,o2scl_mks::boltzmann},
+     {"atm",-1,2,-2,0,0,0,0,o2scl_mks::std_atmosphere},
+     {"bar",-1,1,-2,0,0,0,0,o2scl_mks::bar},
+     {"dyne",2,1,-2,0,0,0,0,o2scl_mks::dyne},
+     {"G",0,1,-2,0,-1,0,0,o2scl_mks::gauss},
+     {"yr",0,0,1,0,0,0,0,31556926},
+     {"wk",0,0,1,0,0,0,0,o2scl_mks::week},
+     {"d",0,0,1,0,0,0,0,o2scl_mks::day},
+     {"hr",0,0,1,0,0,0,0,o2scl_mks::hour},
+     {"min",0,0,1,0,0,0,0,o2scl_mks::minute},
+     {"AU",1,0,0,0,0,0,0,o2scl_mks::astronomical_unit},
+     {"ly",1,0,0,0,0,0,0,o2scl_mks::light_year},
+     {"Msun",0,1,0,0,0,0,0,o2scl_mks::solar_mass},
+     {"Msolar",0,1,0,0,0,0,0,o2scl_mks::solar_mass},
+     {"erg",2,1,-2,0,0,0,0,o2scl_mks::erg},
+     // We add common SI-like prefixes
+     {"Gpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e9},
+     {"Mpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e6},
+     {"kpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e3},
+     {"pc",1,0,0,0,0,0,0,o2scl_mks::parsec}};
     other=other_;
     
-#ifdef O2SCL_NEVER_DEFINED
-
-#endif
-
+    c_is_1=false;
+    hbar_is_1=false;
+    kb_is_1=false;
   }
     
   virtual ~convert_units() {}
 
-  /** \brief Attempt automatic unit conversion
+  /** \brief Set natural units
+   */
+  void set_natural_units(bool c_is_one=true, bool hbar_is_one=true,
+			 bool kb_is_one=true) {
+    c_is_1=c_is_one;
+    hbar_is_1=hbar_is_one;
+    kb_is_1=kb_is_one;
+    return;
+  }
+  
+  /** \brief Automatic unit conversion between SI-based units
+      with a \ref o2scl::calculator object
    */
   int convert_calc(std::string from, std::string to,
 		   fp_t val, fp_t &converted,
@@ -592,7 +630,7 @@ namespace o2scl {
 
     std::map<std::string, fp_t> vars;
 
-    set_vars(1.0,1.0,1.0,vars);
+    set_vars(1.0,1.0,1.0,1.0,1.0,1.0,1.0,vars);
     
     calc.compile(from.c_str());
     calc2.compile(to.c_str());
@@ -601,26 +639,71 @@ namespace o2scl {
     factor=before/after;
     converted=val*factor;
 
-    std::cout << from << " " << to << " " << factor << std::endl;
-    
-    // Now, having verified that a conversion is possible,
-    // we need to separately verify the conversion is sensible
-    // by rescaling length, mass, and time separately to make
-    // sure both sides scale the same way. The prevents, e.g.
-    // conversions between m and 1/m.
+    // Now, having verified that a conversion is possible, we need to
+    // separately verify the conversion is sensible by rescaling the
+    // base units to make sure sure both sides scale the same way. The
+    // prevents, e.g. conversions between m and 1/m.
 
-    set_vars(2.0,1.0,1.0,vars);
-    fp_t factor_m=calc.eval(&vars)/calc2.eval(&vars);
-    
-    set_vars(1.0,2.0,1.0,vars);
+    set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
     fp_t factor_kg=calc.eval(&vars)/calc2.eval(&vars);
-    
-    set_vars(1.0,1.0,2.0,vars);
-    fp_t factor_s=calc.eval(&vars)/calc2.eval(&vars);
 
+    fp_t factor_m, factor_s, addl=1;
+    
+    if (c_is_1) {
+      // Scale m and s at the same time
+      set_vars(2.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
+      factor_m=calc.eval(&vars)/calc2.eval(&vars);
+
+      // Separately compute factor_s in order to determine
+      // how many factors of c we need
+      set_vars(1.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
+      factor_s=calc.eval(&vars)/calc2.eval(&vars);
+
+      addl=pow(o2scl_mks::speed_of_light,log(factor_s/factor_m)/log(2.0));
+      std::cout << "Here: " << factor_m << " " << factor_s << " "
+		<< log(factor_m/factor_s)/log(2.0) << std::endl;
+
+      // Then set factor_s equal to factor_m so the test below
+      // succeeds
+      factor_s=factor_m;
+      
+    } else {
+      set_vars(2.0,1.0,1.0,1.0,1.0,1.0,1.0,vars);
+      factor_m=calc.eval(&vars)/calc2.eval(&vars);
+      
+      set_vars(1.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
+      factor_s=calc.eval(&vars)/calc2.eval(&vars);
+    }
+
+    set_vars(1.0,1.0,1.0,2.0,1.0,1.0,1.0,vars);
+    fp_t factor_K=calc.eval(&vars)/calc2.eval(&vars);
+
+    set_vars(1.0,1.0,1.0,1.0,2.0,1.0,1.0,vars);
+    fp_t factor_A=calc.eval(&vars)/calc2.eval(&vars);
+
+    set_vars(1.0,1.0,1.0,1.0,1.0,2.0,1.0,vars);
+    fp_t factor_mol=calc.eval(&vars)/calc2.eval(&vars);
+
+    set_vars(1.0,1.0,1.0,1.0,1.0,1.0,2.0,vars);
+    fp_t factor_cd=calc.eval(&vars)/calc2.eval(&vars);
+
+    if (true) {
+      std::cout << "from: " << from << " to: " << to
+		<< " factor: " << factor << " factor_m: " << factor_m
+		<< "\n\tfactor_kg: " << factor_kg << " factor_s: " << factor_s 
+		<< " factor_K: " << factor_K << "\n\tfactor_A: " << factor_A 
+		<< " factor_mol: " << factor_mol
+		<< " factor_cd: " << factor_cd << std::endl;
+    }    
+    
     if (fabs(factor/factor_m)-1.0<1.0e-14 &&
 	fabs(factor/factor_kg)-1.0<1.0e-14 &&
-	fabs(factor/factor_s)-1.0<1.0e-14) {
+	fabs(factor/factor_s)-1.0<1.0e-14 &&
+	fabs(factor/factor_K)-1.0<1.0e-14 &&
+	fabs(factor/factor_A)-1.0<1.0e-14 &&
+	fabs(factor/factor_mol)-1.0<1.0e-14 &&
+	fabs(factor/factor_cd)-1.0<1.0e-14) {
+      factor*=addl;
       converted=factor*val;
       return 0;
     }

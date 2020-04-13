@@ -149,13 +149,27 @@ int main(int argc, char *argv[]) {
     cu.make_units_dat("units_hck.dat",true,true,true);
   }
 
-  convert_units<double> cux;
-  double d1, d2;
-  int ix;
-  ix=cux.convert_calc("nJ","kg*m^2/s^2",2.0,d1,d2);
-  cout << ix << " " << d1 << " " << d2 << endl;
-  ix=cux.convert_calc("kg","MeV/c^2",2.0,d1,d2);
-  cout << ix << " " << d1 << " " << d2 << endl;
+  {
+    convert_units<double> cux;
+    double d1, d2;
+    int ix;
+    ix=cux.convert_calc("nJ","kg*m^2/s^2",2.0,d1,d2);
+    cout << ix << " " << d1 << " " << d2 << endl;
+    ix=cux.convert_calc("kg","MeV/c^2",2.0,d1,d2);
+    cout << ix << " " << d1 << " " << d2 << endl;
+    ix=cux.convert_calc("s","fm/c",2.0,d1,d2);
+    cout << ix << " " << d1 << " " << d2 << endl;
+
+    // Show how c=1 works
+    cout << "Here2: " << endl;
+    ix=cux.convert_calc("kg","MeV",2.0,d1,d2);
+    cout << ix << " " << d1 << " " << d2 << endl;
+    cux.set_natural_units(1,0,0);
+    ix=cux.convert_calc("kg","MeV",2.0,d1,d2);
+    cout << ix << " " << d1 << " " << d2 << endl;
+    ix=cux.convert_calc("kg*m/s","MeV",2.0,d1,d2);
+    cout << ix << " " << d1 << " " << d2 << endl;
+  }
   
   t.report();
   return 0;
