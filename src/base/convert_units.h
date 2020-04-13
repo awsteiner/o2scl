@@ -644,30 +644,72 @@ namespace o2scl {
     // base units to make sure sure both sides scale the same way. The
     // prevents, e.g. conversions between m and 1/m.
 
-    set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
-    fp_t factor_kg=calc.eval(&vars)/calc2.eval(&vars);
+    fp_t factor_m, factor_s, factor_kg, addl=1;
 
-    fp_t factor_m, factor_s, addl=1;
+    if (!hbar_is_1) {
+      set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
+      factor_kg=calc.eval(&vars)/calc2.eval(&vars);
+    }
     
     if (c_is_1) {
-      // Scale m and s at the same time
-      set_vars(2.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
-      factor_m=calc.eval(&vars)/calc2.eval(&vars);
 
-      // Separately compute factor_s in order to determine
-      // how many factors of c we need
-      set_vars(1.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
-      factor_s=calc.eval(&vars)/calc2.eval(&vars);
+      if (hbar_is_1) {
 
-      addl=pow(o2scl_mks::speed_of_light,log(factor_s/factor_m)/log(2.0));
-      std::cout << "Here: " << factor_m << " " << factor_s << " "
-		<< log(factor_m/factor_s)/log(2.0) << std::endl;
+	// Scale m, kg s at the same time
+	set_vars(2.0,0.5,2.0,1.0,1.0,1.0,1.0,vars);
+	factor_m=calc.eval(&vars)/calc2.eval(&vars);
+	
+	// Separately compute factor_s and factor_kg in order to
+	// determine how many factors of hbar and c we need
+	set_vars(1.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
+	factor_s=calc.eval(&vars)/calc2.eval(&vars);
 
-      // Then set factor_s equal to factor_m so the test below
-      // succeeds
-      factor_s=factor_m;
+	set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
+	factor_kg=calc.eval(&vars)/calc2.eval(&vars);
+
+	double exp1=log(factor_m/factor_s)/log(2.0);
+	double exp2=log(factor_kg*factor_s)/log(2.0);
+	
+	addl=pow(o2scl_const::speed_of_light_f<fp_t>(),
+		 (1-exp1+exp2)/2)/2.0;
+	addl*=pow(o2scl_const::hbar_f<fp_t>(),-exp1-exp2);
+
+	/*
+	  std::cout << "Here3: " << factor_m << " " << factor_kg << " "
+	  << factor_s << std::endl;
+	  std::cout << "\texp1 exp2 c hbar: " << exp1 << " " << exp2 << " "
+	  << (exp1-exp2-1)/2 << " " << exp1+exp2
+	  << std::endl;
+	*/
+
+	factor_s=factor_m;
+	factor_kg=factor_m;
+      
+      } else {
+	
+	// Scale m and s at the same time
+	set_vars(2.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
+	factor_m=calc.eval(&vars)/calc2.eval(&vars);
+	
+	// Separately compute factor_s in order to determine
+	// how many factors of c we need
+	set_vars(1.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
+	factor_s=calc.eval(&vars)/calc2.eval(&vars);
+	//std::cout << "exp1: " << log(factor_s/factor_m)/log(2.0) << std::endl;
+	
+	addl=pow(o2scl_mks::speed_of_light,log(factor_s/factor_m)/
+		 log(2.0))/2.0;
+	//std::cout << "Here: " << factor_m << " " << factor_s << " "
+	//<< log(factor_m/factor_s)/log(2.0) << std::endl;
+	
+	// Then set factor_s equal to factor_m so the test below
+	// succeeds
+	factor_s=factor_m;
+	
+      }
       
     } else {
+      
       set_vars(2.0,1.0,1.0,1.0,1.0,1.0,1.0,vars);
       factor_m=calc.eval(&vars)/calc2.eval(&vars);
       
@@ -687,7 +729,7 @@ namespace o2scl {
     set_vars(1.0,1.0,1.0,1.0,1.0,1.0,2.0,vars);
     fp_t factor_cd=calc.eval(&vars)/calc2.eval(&vars);
 
-    if (true) {
+    if (false) {
       std::cout << "from: " << from << " to: " << to
 		<< " factor: " << factor << " factor_m: " << factor_m
 		<< "\n\tfactor_kg: " << factor_kg << " factor_s: " << factor_s 
@@ -696,13 +738,13 @@ namespace o2scl {
 		<< " factor_cd: " << factor_cd << std::endl;
     }    
     
-    if (fabs(factor/factor_m)-1.0<1.0e-14 &&
-	fabs(factor/factor_kg)-1.0<1.0e-14 &&
-	fabs(factor/factor_s)-1.0<1.0e-14 &&
-	fabs(factor/factor_K)-1.0<1.0e-14 &&
-	fabs(factor/factor_A)-1.0<1.0e-14 &&
-	fabs(factor/factor_mol)-1.0<1.0e-14 &&
-	fabs(factor/factor_cd)-1.0<1.0e-14) {
+    if (fabs(factor/factor_m-1.0)<1.0e-14 &&
+	fabs(factor/factor_kg-1.0)<1.0e-14 &&
+	fabs(factor/factor_s-1.0)<1.0e-14 &&
+	fabs(factor/factor_K-1.0)<1.0e-14 &&
+	fabs(factor/factor_A-1.0)<1.0e-14 &&
+	fabs(factor/factor_mol-1.0)<1.0e-14 &&
+	fabs(factor/factor_cd-1.0)<1.0e-14) {
       factor*=addl;
       converted=factor*val;
       return 0;

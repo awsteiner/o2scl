@@ -153,22 +153,104 @@ int main(int argc, char *argv[]) {
     convert_units<double> cux;
     double d1, d2;
     int ix;
+    cout << "nJ kg*m/^2/s^2: ";
     ix=cux.convert_calc("nJ","kg*m^2/s^2",2.0,d1,d2);
-    cout << ix << " " << d1 << " " << d2 << endl;
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << endl;
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    cout << "kg MeV/c^2: ";
     ix=cux.convert_calc("kg","MeV/c^2",2.0,d1,d2);
-    cout << ix << " " << d1 << " " << d2 << endl;
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << endl;
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    cout << "s fm/c: ";
     ix=cux.convert_calc("s","fm/c",2.0,d1,d2);
-    cout << ix << " " << d1 << " " << d2 << endl;
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << endl;
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    cout << endl;
 
-    // Show how c=1 works
-    cout << "Here2: " << endl;
+    // Check that c=1 works
+    cout << "Checking c=1:" << endl;
+    cout << "kg MeV: ";
     ix=cux.convert_calc("kg","MeV",2.0,d1,d2);
-    cout << ix << " " << d1 << " " << d2 << endl;
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << endl;
+    } else {
+      cout << "conversion failed." << endl;
+    }
     cux.set_natural_units(1,0,0);
+    cout << "kg MeV: ";
     ix=cux.convert_calc("kg","MeV",2.0,d1,d2);
-    cout << ix << " " << d1 << " " << d2 << endl;
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << endl;
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    cout << "kg*m/s MeV: ";
     ix=cux.convert_calc("kg*m/s","MeV",2.0,d1,d2);
-    cout << ix << " " << d1 << " " << d2 << endl;
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << endl;
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    cux.set_natural_units(0,0,0);
+    cout << endl;
+
+    // Check that hbar=c=1 works
+    cout << "Checking hbar=c=1:" << endl;
+    cout << "kg 1/s: ";
+    ix=cux.convert_calc("kg","1/s",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << endl;
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    
+    cux.set_natural_units(1,1,0);
+    
+    // This requires a factor of hbar/c^2
+    cout << "kg 1/s: ";
+    ix=cux.convert_calc("kg","1/s",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << endl;
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    
+    // This requires a factor of hbar/c
+    cout << "kg 1/m: ";
+    ix=cux.convert_calc("kg","1/m",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << endl;
+    } else {
+      cout << "conversion failed." << endl;
+    }
+
+    // This requires a factor of hbar 
+    cout << "kg s/m^2: ";
+    ix=cux.convert_calc("kg","s/m^2",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << endl;
+    } else {
+      cout << "conversion failed." << endl;
+    }
+
+    // This requires a factor of hbar/c^3
+    cout << "kg m/s^2: ";
+    ix=cux.convert_calc("kg","m/s^2",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << endl;
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    cout << endl;
   }
   
   t.report();
