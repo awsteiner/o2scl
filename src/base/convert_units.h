@@ -655,7 +655,7 @@ namespace o2scl {
 
       if (hbar_is_1) {
 
-	// Scale m, kg s at the same time
+	// Scale m, kg, and s at the same time
 	set_vars(2.0,0.5,2.0,1.0,1.0,1.0,1.0,vars);
 	factor_m=calc.eval(&vars)/calc2.eval(&vars);
 	
@@ -671,17 +671,11 @@ namespace o2scl {
 	double exp2=log(factor_kg*factor_s)/log(2.0);
 	
 	addl=pow(o2scl_const::speed_of_light_f<fp_t>(),
-		 (1-exp1+exp2)/2)/2.0;
+		 (1-exp1+exp2)/2);
 	addl*=pow(o2scl_const::hbar_f<fp_t>(),-exp1-exp2);
 
-	/*
-	  std::cout << "Here3: " << factor_m << " " << factor_kg << " "
-	  << factor_s << std::endl;
-	  std::cout << "\texp1 exp2 c hbar: " << exp1 << " " << exp2 << " "
-	  << (exp1-exp2-1)/2 << " " << exp1+exp2
-	  << std::endl;
-	*/
-
+	// Then set factor_s and factor_kg equal to factor_m so the
+	// test below succeeds
 	factor_s=factor_m;
 	factor_kg=factor_m;
       
@@ -695,12 +689,9 @@ namespace o2scl {
 	// how many factors of c we need
 	set_vars(1.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
 	factor_s=calc.eval(&vars)/calc2.eval(&vars);
-	//std::cout << "exp1: " << log(factor_s/factor_m)/log(2.0) << std::endl;
 	
-	addl=pow(o2scl_mks::speed_of_light,log(factor_s/factor_m)/
-		 log(2.0))/2.0;
-	//std::cout << "Here: " << factor_m << " " << factor_s << " "
-	//<< log(factor_m/factor_s)/log(2.0) << std::endl;
+	addl=pow(o2scl_mks::speed_of_light,
+		 log(factor_s/factor_m)/log(2.0));
 	
 	// Then set factor_s equal to factor_m so the test below
 	// succeeds

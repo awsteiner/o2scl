@@ -153,6 +153,8 @@ int main(int argc, char *argv[]) {
     convert_units<double> cux;
     double d1, d2;
     int ix;
+    cout << endl;
+    cout << "Normal conversions:" << endl;
     cout << "nJ kg*m/^2/s^2: ";
     ix=cux.convert_calc("nJ","kg*m^2/s^2",2.0,d1,d2);
     if (ix==0) {
@@ -163,17 +165,21 @@ int main(int argc, char *argv[]) {
     cout << "kg MeV/c^2: ";
     ix=cux.convert_calc("kg","MeV/c^2",2.0,d1,d2);
     if (ix==0) {
-      cout << "ret,converted: " << ix << " " << d1 << endl;
+      cout << "ret,converted: " << ix << " " << d1 << " ";
     } else {
       cout << "conversion failed." << endl;
     }
+    cout << o2scl_settings.get_convert_units().convert
+      ("kg","MeV/c^2",2.0) << endl;
     cout << "s fm/c: ";
     ix=cux.convert_calc("s","fm/c",2.0,d1,d2);
     if (ix==0) {
-      cout << "ret,converted: " << ix << " " << d1 << endl;
+      cout << "ret,converted: " << ix << " " << d1 << " ";
     } else {
       cout << "conversion failed." << endl;
     }
+    cout << o2scl_settings.get_convert_units().convert
+      ("s","fm/c",2.0) << endl;
     cout << endl;
 
     // Check that c=1 works
@@ -186,20 +192,37 @@ int main(int argc, char *argv[]) {
       cout << "conversion failed." << endl;
     }
     cux.set_natural_units(1,0,0);
+    
     cout << "kg MeV: ";
     ix=cux.convert_calc("kg","MeV",2.0,d1,d2);
     if (ix==0) {
-      cout << "ret,converted: " << ix << " " << d1 << endl;
+      cout << "ret,converted: " << ix << " " << d1 << " ";
     } else {
       cout << "conversion failed." << endl;
     }
+    cout << o2scl_settings.get_convert_units().convert
+      ("kg","MeV",2.0) << endl;
+    
     cout << "kg*m/s MeV: ";
     ix=cux.convert_calc("kg*m/s","MeV",2.0,d1,d2);
     if (ix==0) {
-      cout << "ret,converted: " << ix << " " << d1 << endl;
+      cout << "ret,converted: " << ix << " " << d1 << " ";
     } else {
       cout << "conversion failed." << endl;
     }
+    cout << o2scl_settings.get_convert_units().convert
+      ("kg*m/s","MeV/c",2.0) << endl;
+
+    cout << "MeV/fm^3 Msun/km^3: ";
+    ix=cux.convert_calc("MeV/fm^3","Msun/km^3",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << " ";
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    cout << o2scl_settings.get_convert_units().convert
+      ("MeV/fm^3","Msun/km^3",2.0) << endl;
+
     cux.set_natural_units(0,0,0);
     cout << endl;
 
@@ -219,37 +242,46 @@ int main(int argc, char *argv[]) {
     cout << "kg 1/s: ";
     ix=cux.convert_calc("kg","1/s",2.0,d1,d2);
     if (ix==0) {
-      cout << "ret,converted: " << ix << " " << d1 << endl;
+      cout << "ret,converted: " << ix << " " << d1 << " ";
     } else {
       cout << "conversion failed." << endl;
     }
+    cout << o2scl_settings.get_convert_units().convert
+      ("kg","hbar/s/c/c",2.0) << endl;
     
     // This requires a factor of hbar/c
     cout << "kg 1/m: ";
     ix=cux.convert_calc("kg","1/m",2.0,d1,d2);
     if (ix==0) {
-      cout << "ret,converted: " << ix << " " << d1 << endl;
+      cout << "ret,converted: " << ix << " " << d1 << " ";
     } else {
       cout << "conversion failed." << endl;
     }
+    cout << o2scl_settings.get_convert_units().convert
+      ("kg","hbar/m/c",2.0) << endl;
 
     // This requires a factor of hbar 
     cout << "kg s/m^2: ";
     ix=cux.convert_calc("kg","s/m^2",2.0,d1,d2);
     if (ix==0) {
-      cout << "ret,converted: " << ix << " " << d1 << endl;
+      cout << "ret,converted: " << ix << " " << d1 << " ";
     } else {
       cout << "conversion failed." << endl;
     }
+    cout << o2scl_settings.get_convert_units().convert
+      ("kg","hbar*s/m^2",2.0) << endl;
 
     // This requires a factor of hbar/c^3
     cout << "kg m/s^2: ";
     ix=cux.convert_calc("kg","m/s^2",2.0,d1,d2);
     if (ix==0) {
-      cout << "ret,converted: " << ix << " " << d1 << endl;
+      cout << "ret,converted: " << ix << " " << d1 << " ";
     } else {
       cout << "conversion failed." << endl;
     }
+    cout << o2scl_settings.get_convert_units().convert
+      ("kg","hbar*m/s^2/c^3",2.0) << endl;
+
     cout << endl;
   }
   
