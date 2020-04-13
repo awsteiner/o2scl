@@ -282,7 +282,47 @@ int main(int argc, char *argv[]) {
     cout << o2scl_settings.get_convert_units().convert
       ("kg","hbar*m/s^2/c^3",2.0) << endl;
 
+    // This requires a factor of hbar^2/c^2
+    cout << "kg^2 1/m^2: ";
+    ix=cux.convert_calc("kg^2","1/m^2",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << " ";
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    cout << o2scl_settings.get_convert_units().convert
+      ("kg^2","hbar^2/m^2/c^2",2.0) << endl;
+
+    cux.set_natural_units(0,0,0);
     cout << endl;
+    
+    cout << "Checking hbar=c=kb=1:" << endl;
+    
+    // This requires a factor of hbar^2/c/kb
+    cout << "K*kg*s hbar^2/m/c/boltzmann: ";
+    ix=cux.convert_calc("K*kg*s","1/m",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << endl;
+    } else {
+      cout << "conversion failed." << endl;
+    }
+
+    cux.set_natural_units(1,1,1);
+
+    cout << "K*kg*s hbar^2/m/c/boltzmann: ";
+    ix=cux.convert_calc("K*kg*s","1/m",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << endl;
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    
+    cux.set_natural_units(0,0,0);
+    cout << endl;
+
+    cout << "Trying nonsense units: ";
+    ix=cux.convert_calc("notdefined","alsonotdefined",2.0,d1,d2);
+    
   }
   
   t.report();

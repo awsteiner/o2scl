@@ -235,7 +235,8 @@ namespace o2scl {
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
      */
-    int eval_nothrow(const std::map<std::string, double> *vars, double &result);
+    int eval_nothrow(const std::map<std::string, double> *vars,
+		     double &result);
     
     /** \brief Convert the RPN expression to a string
 

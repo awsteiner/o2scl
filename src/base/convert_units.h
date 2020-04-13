@@ -185,8 +185,7 @@ namespace o2scl {
       \ref convert_calc()
   */
   void set_vars(fp_t m, fp_t k, fp_t s, fp_t K, fp_t A, fp_t mol,
-		fp_t cd, std::map<std::string, fp_t> &vars,
-		int verbose=0) const {
+		fp_t cd, std::map<std::string, fp_t> &vars) const {
 
     vars.clear();
 
@@ -206,6 +205,34 @@ namespace o2scl {
     vars.insert(std::make_pair("g",1.0e-3*k));
     for(size_t i=0;i<n_prefixes;i++) {
       vars.insert(std::make_pair(prefixes[i]+"g",
+				 prefix_facts[i]*1.0e-3*k));
+    }
+
+    // Kelvin
+    vars.insert(std::make_pair("K",1.0e-3*k));
+    for(size_t i=0;i<n_prefixes;i++) {
+      vars.insert(std::make_pair(prefixes[i]+"K",
+				 prefix_facts[i]*1.0e-3*k));
+    }
+
+    // Amperes
+    vars.insert(std::make_pair("A",1.0e-3*k));
+    for(size_t i=0;i<n_prefixes;i++) {
+      vars.insert(std::make_pair(prefixes[i]+"A",
+				 prefix_facts[i]*1.0e-3*k));
+    }
+
+    // moles
+    vars.insert(std::make_pair("mol",1.0e-3*k));
+    for(size_t i=0;i<n_prefixes;i++) {
+      vars.insert(std::make_pair(prefixes[i]+"mol",
+				 prefix_facts[i]*1.0e-3*k));
+    }
+
+    // candelas
+    vars.insert(std::make_pair("cd",1.0e-3*k));
+    for(size_t i=0;i<n_prefixes;i++) {
+      vars.insert(std::make_pair(prefixes[i]+"cd",
 				 prefix_facts[i]*1.0e-3*k));
     }
 
@@ -271,7 +298,7 @@ namespace o2scl {
 	<< "Value of use_gnu_units is true." << std::endl;
       }
 
-      int ret_gnu=convert_gnu_units(from,to,val,converted,factor,new_conv);
+      int ret_gnu=convert_gnu_units(from,to,val,converted,factor);
 
       if (ret_gnu==0) {
 	new_conv=true;
@@ -312,7 +339,7 @@ namespace o2scl {
   */
   int convert_gnu_units(std::string from, std::string to,
 			fp_t val, fp_t &converted,
-			fp_t &factor, bool &new_conv) const {
+			fp_t &factor) const {
 
     // Run the GNU 'units' command
     std::string cmd=units_cmd_string+" '"+from+"' '"+to+"'";
@@ -610,6 +637,10 @@ namespace o2scl {
    */
   void set_natural_units(bool c_is_one=true, bool hbar_is_one=true,
 			 bool kb_is_one=true) {
+    if (hbar_is_one && !c_is_one) {
+      O2SCL_ERR2("The convert_units class does not support hbar=1,",
+		 "when c!=1.",o2scl::exc_einval);
+    }
     c_is_1=c_is_one;
     hbar_is_1=hbar_is_one;
     kb_is_1=kb_is_one;
@@ -632,10 +663,17 @@ namespace o2scl {
 
     set_vars(1.0,1.0,1.0,1.0,1.0,1.0,1.0,vars);
     
-    calc.compile(from.c_str());
-    calc2.compile(to.c_str());
-    fp_t before=calc.eval(&vars);
-    fp_t after=calc2.eval(&vars);
+    int cret1=calc.compile_nothrow(from.c_str());
+    if (cret1!=0) return 1;
+    int cret2=calc2.compile_nothrow(to.c_str());
+    if (cret2!=0) return 2;
+    
+    fp_t before, after;
+    int cret3=calc.eval_nothrow(&vars,before);
+    if (cret3!=0) return 3;
+    int cret4=calc2.eval_nothrow(&vars,after);
+    if (cret4!=0) return 4;
+    
     factor=before/after;
     converted=val*factor;
 
@@ -644,7 +682,7 @@ namespace o2scl {
     // base units to make sure sure both sides scale the same way. The
     // prevents, e.g. conversions between m and 1/m.
 
-    fp_t factor_m, factor_s, factor_kg, addl=1;
+    fp_t factor_m, factor_s, factor_kg, factor_K, addl=1;
 
     if (!hbar_is_1) {
       set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
@@ -655,29 +693,66 @@ namespace o2scl {
 
       if (hbar_is_1) {
 
-	// Scale m, kg, and s at the same time
-	set_vars(2.0,0.5,2.0,1.0,1.0,1.0,1.0,vars);
-	factor_m=calc.eval(&vars)/calc2.eval(&vars);
+	if (kb_is_1) {
+
+	  set_vars(2.0,0.5,2.0,1.0,1.0,1.0,1.0,vars);
+	  fp_t factor_3=calc.eval(&vars)/calc2.eval(&vars);
+	  
+	  set_vars(1.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
+	  fp_t factor_4=calc.eval(&vars)/calc2.eval(&vars);
+	  
+	  set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
+	  fp_t factor_5=calc.eval(&vars)/calc2.eval(&vars);
+	  
+	  set_vars(2.0,1.0,1.0,2.0,1.0,1.0,1.0,vars);
+	  fp_t factor_1=calc.eval(&vars)/calc2.eval(&vars);
+	  
+	  set_vars(1.0,1.0,1.0,2.0,1.0,1.0,1.0,vars);
+	  fp_t factor_2=calc.eval(&vars)/calc2.eval(&vars);
+	  
+	  double exp1=log(factor_3/factor_4)/log(2.0);
+	  double exp2=log(factor_5/factor_4)/log(2.0);
+	  double exp3=log(factor_1/factor_2)/log(2.0);
+
+	  std::cout << "\nexps: " << exp1 << " " << exp2 << " "
+	  << exp3 << " " << exp2 << " "
+	  << -exp1-exp2 << std::endl;
+
+	  // Then set factor_s, factor_kg, factor_K equal to factor_m
+	  // so the test below succeeds
+	  factor_s=factor_m;
+	  factor_kg=factor_m;
+	  factor_K=factor_m;
+	  
+	} else {
 	
-	// Separately compute factor_s and factor_kg in order to
-	// determine how many factors of hbar and c we need
-	set_vars(1.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
-	factor_s=calc.eval(&vars)/calc2.eval(&vars);
+	  // Scale m, kg, and s at the same time
+	  set_vars(2.0,0.5,2.0,1.0,1.0,1.0,1.0,vars);
+	  factor_m=calc.eval(&vars)/calc2.eval(&vars);
+	  
+	  // Separately compute factor_s and factor_kg in order to
+	  // determine how many factors of hbar and c we need
+	  set_vars(1.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
+	  factor_s=calc.eval(&vars)/calc2.eval(&vars);
+	  
+	  set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
+	  factor_kg=calc.eval(&vars)/calc2.eval(&vars);
+	  
+	  double exp1=log(factor_m/factor_s)/log(2.0);
+	  double exp2=log(factor_kg*factor_s)/log(2.0);
+	  
+	  addl=pow(o2scl_const::speed_of_light_f<fp_t>(),exp2);
+	  addl*=pow(o2scl_const::hbar_f<fp_t>(),-exp1-exp2);
+	  
+	  //std::cout << "\nexps: " << exp1 << " " << exp2 << " "
+	  //<< exp2 << " " << -exp1-exp2 << std::endl;
+	  
+	  // Then set factor_s and factor_kg equal to factor_m so the
+	  // test below succeeds
+	  factor_s=factor_m;
+	  factor_kg=factor_m;
 
-	set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
-	factor_kg=calc.eval(&vars)/calc2.eval(&vars);
-
-	double exp1=log(factor_m/factor_s)/log(2.0);
-	double exp2=log(factor_kg*factor_s)/log(2.0);
-	
-	addl=pow(o2scl_const::speed_of_light_f<fp_t>(),
-		 (1-exp1+exp2)/2);
-	addl*=pow(o2scl_const::hbar_f<fp_t>(),-exp1-exp2);
-
-	// Then set factor_s and factor_kg equal to factor_m so the
-	// test below succeeds
-	factor_s=factor_m;
-	factor_kg=factor_m;
+	}
       
       } else {
 	
@@ -709,7 +784,7 @@ namespace o2scl {
     }
 
     set_vars(1.0,1.0,1.0,2.0,1.0,1.0,1.0,vars);
-    fp_t factor_K=calc.eval(&vars)/calc2.eval(&vars);
+    factor_K=calc.eval(&vars)/calc2.eval(&vars);
 
     set_vars(1.0,1.0,1.0,1.0,2.0,1.0,1.0,vars);
     fp_t factor_A=calc.eval(&vars)/calc2.eval(&vars);
@@ -720,7 +795,7 @@ namespace o2scl {
     set_vars(1.0,1.0,1.0,1.0,1.0,1.0,2.0,vars);
     fp_t factor_cd=calc.eval(&vars)/calc2.eval(&vars);
 
-    if (false) {
+    if (verbose>1) {
       std::cout << "from: " << from << " to: " << to
 		<< " factor: " << factor << " factor_m: " << factor_m
 		<< "\n\tfactor_kg: " << factor_kg << " factor_s: " << factor_s 
@@ -741,7 +816,7 @@ namespace o2scl {
       return 0;
     }
     
-    return 1;
+    return 5;
   }
   
   /// \name Basic usage
@@ -1621,7 +1696,7 @@ namespace o2scl {
 	  int cret=convert_cache(from,to,v,c,f1);
 	  if (cret==0) {
 	    bool new_conv;
-	    int gret=convert_gnu_units(from,to,v,c,f2,new_conv);
+	    int gret=convert_gnu_units(from,to,v,c,f2);
 	    if (gret==0) {
 	      if (fabs(f1-f2)/f1>1.0e-6) {
 		std::cout << "* ";
@@ -1642,7 +1717,7 @@ namespace o2scl {
 	  int cret=convert_cache(from,to,v,c,f1);
 	  if (cret==0) {
 	    bool new_conv;
-	    int gret=convert_gnu_units(from,to,v,c,f2,new_conv);
+	    int gret=convert_gnu_units(from,to,v,c,f2);
 	    if (gret==0) {
 	      if (fabs(f1-f2)/f1>1.0e-6) {
 		std::cout << "* ";
