@@ -309,19 +309,39 @@ int main(int argc, char *argv[]) {
 
     cux.set_natural_units(1,1,1);
 
-    cout << "K*kg*s hbar^2/m/c/boltzmann: ";
-    ix=cux.convert_calc("K*kg*s","1/m",2.0,d1,d2);
+    cout << "K*s^2/m^2 hbar/m/c/boltzmann: ";
+    ix=cux.convert_calc("K*s^2/m^2","1/m",2.0,d1,d2);
     if (ix==0) {
-      cout << "ret,converted: " << ix << " " << d1 << endl;
+      cout << "ret,converted: " << ix << " " << d1 << " ";
     } else {
       cout << "conversion failed." << endl;
     }
+    cout << 3.924893e+19*2.0 << endl;
     
+    cout << "K*kg*s^2/m hbar^2/m/c^2/boltzmann: ";
+    ix=cux.convert_calc("K*kg*s^2/m","1/m",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << " ";
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    cout << 1.1157641e+62*2.0 << endl;
+    
+    cout << "K^2*s^3/m^2 hbar^2/m/c/boltzmann^2: ";
+    ix=cux.convert_calc("K^2*s^3/m^2","1/m",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << " ";
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    cout << 5.1384833e+30*2.0 << endl;
+
     cux.set_natural_units(0,0,0);
     cout << endl;
 
-    cout << "Trying nonsense units: ";
+    cout << "Trying nonsense units: " << endl;
     ix=cux.convert_calc("notdefined","alsonotdefined",2.0,d1,d2);
+    cout << ix << endl;
     
   }
   

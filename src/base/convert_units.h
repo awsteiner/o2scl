@@ -209,31 +209,31 @@ namespace o2scl {
     }
 
     // Kelvin
-    vars.insert(std::make_pair("K",1.0e-3*k));
+    vars.insert(std::make_pair("K",K));
     for(size_t i=0;i<n_prefixes;i++) {
       vars.insert(std::make_pair(prefixes[i]+"K",
-				 prefix_facts[i]*1.0e-3*k));
+				 prefix_facts[i]*K));
     }
 
     // Amperes
-    vars.insert(std::make_pair("A",1.0e-3*k));
+    vars.insert(std::make_pair("A",A));
     for(size_t i=0;i<n_prefixes;i++) {
       vars.insert(std::make_pair(prefixes[i]+"A",
-				 prefix_facts[i]*1.0e-3*k));
+				 prefix_facts[i]*A));
     }
 
     // moles
-    vars.insert(std::make_pair("mol",1.0e-3*k));
+    vars.insert(std::make_pair("mol",mol));
     for(size_t i=0;i<n_prefixes;i++) {
       vars.insert(std::make_pair(prefixes[i]+"mol",
-				 prefix_facts[i]*1.0e-3*k));
+				 prefix_facts[i]*mol));
     }
 
     // candelas
-    vars.insert(std::make_pair("cd",1.0e-3*k));
+    vars.insert(std::make_pair("cd",cd));
     for(size_t i=0;i<n_prefixes;i++) {
       vars.insert(std::make_pair(prefixes[i]+"cd",
-				 prefix_facts[i]*1.0e-3*k));
+				 prefix_facts[i]*cd));
     }
 
     // For SI-like units, add with all of the various prefixes
@@ -254,7 +254,7 @@ namespace o2scl {
       vars.insert(std::make_pair(other[i].label,val));
     }
 
-    if (verbose>0) {
+    if (false) {
       for (typename std::map<std::string,fp_t>::iterator it=vars.begin();
 	   it!=vars.end();it++) {
 	std::cout << it->first << " " << it->second << std::endl;
@@ -598,12 +598,24 @@ namespace o2scl {
      {"H",2,1,-2,0,-2,0,0,1.0},
      {"T",0,1,-2,0,-1,0,0,1.0},
      {"Hz",0,0,-1,0,0,0,0,1.0},
+     {"lx",-1,0,0,0,0,0,1,1.0},
+     {"Bq",0,0,-1,0,0,0,0,1.0},
+     {"Gy",2,0,-2,0,0,0,0,1.0},
+     {"Sv",2,0,-2,0,0,0,0,1.0},
+     {"kat",0,0,-1,0,0,1,0,1.0},
+     // liters
+     {"l",3,0,0,0,0,0,0,1.0e-3},
+     {"L",3,0,0,0,0,0,0,1.0e-3},
+     // metric tons
+     {"t",0,1,0,0,0,0,0,1.0e3},
+     // Daltons
+     {"Da",0,1,0,0,0,0,0,1.660539040e-27},
      {"eV",2,1,-2,0,0,0,0,o2scl_mks::electron_volt}};
     SI=SI_;
     
     // Other units, in order m kg s K A mol cd
     std::vector<der_unit> other_=
-    {{"c",1,0,-1,0,0,0,0,o2scl_mks::speed_of_light},
+    {{"c",1,0,-1,0,0,0,0,o2scl_const::speed_of_light_f<fp_t>()},
      {"kB",2,1,-2,-1,0,0,0,o2scl_mks::boltzmann},
      {"atm",-1,2,-2,0,0,0,0,o2scl_mks::std_atmosphere},
      {"bar",-1,1,-2,0,0,0,0,o2scl_mks::bar},
@@ -612,14 +624,23 @@ namespace o2scl {
      {"yr",0,0,1,0,0,0,0,31556926},
      {"wk",0,0,1,0,0,0,0,o2scl_mks::week},
      {"d",0,0,1,0,0,0,0,o2scl_mks::day},
+     // hours, "h", and "hr"
+     {"h",0,0,1,0,0,0,0,o2scl_mks::hour},
      {"hr",0,0,1,0,0,0,0,o2scl_mks::hour},
      {"min",0,0,1,0,0,0,0,o2scl_mks::minute},
+     // AU's, "au" and "AU"
      {"AU",1,0,0,0,0,0,0,o2scl_mks::astronomical_unit},
+     {"au",1,0,0,0,0,0,0,o2scl_mks::astronomical_unit},
+     // light years "ly" and "lyr"
      {"ly",1,0,0,0,0,0,0,o2scl_mks::light_year},
+     {"lyr",1,0,0,0,0,0,0,o2scl_mks::light_year},
      {"Msun",0,1,0,0,0,0,0,o2scl_mks::solar_mass},
      {"Msolar",0,1,0,0,0,0,0,o2scl_mks::solar_mass},
      {"erg",2,1,-2,0,0,0,0,o2scl_mks::erg},
-     // We add common SI-like prefixes
+     // hectares, "ha" and "hectare"
+     {"hectare",2,0,0,0,0,0,0,1.0e4},
+     {"ha",2,0,0,0,0,0,0,1.0e4},
+     // We add common SI-like prefixes for non-SI units
      {"Gpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e9},
      {"Mpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e6},
      {"kpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e3},
@@ -680,66 +701,70 @@ namespace o2scl {
     // Now, having verified that a conversion is possible, we need to
     // separately verify the conversion is sensible by rescaling the
     // base units to make sure sure both sides scale the same way. The
-    // prevents, e.g. conversions between m and 1/m.
+    // prevents, e.g. conversions between m and 1/m. We initialize
+    // factor_m to avoid uninitialized warnings.
 
     fp_t factor_m, factor_s, factor_kg, factor_K, addl=1;
 
-    if (!hbar_is_1) {
-      set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
-      factor_kg=calc.eval(&vars)/calc2.eval(&vars);
-    }
-    
     if (c_is_1) {
 
       if (hbar_is_1) {
 
 	if (kb_is_1) {
-
-	  set_vars(2.0,0.5,2.0,1.0,1.0,1.0,1.0,vars);
-	  fp_t factor_3=calc.eval(&vars)/calc2.eval(&vars);
 	  
-	  set_vars(1.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
-	  fp_t factor_4=calc.eval(&vars)/calc2.eval(&vars);
-	  
-	  set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
-	  fp_t factor_5=calc.eval(&vars)/calc2.eval(&vars);
-	  
-	  set_vars(2.0,1.0,1.0,2.0,1.0,1.0,1.0,vars);
+	  set_vars(2.0,1.0,4.0,1.0,1.0,1.0,1.0,vars);
 	  fp_t factor_1=calc.eval(&vars)/calc2.eval(&vars);
 	  
-	  set_vars(1.0,1.0,1.0,2.0,1.0,1.0,1.0,vars);
+	  set_vars(2.0,1.0,1.0,4.0,1.0,1.0,1.0,vars);
 	  fp_t factor_2=calc.eval(&vars)/calc2.eval(&vars);
 	  
-	  double exp1=log(factor_3/factor_4)/log(2.0);
-	  double exp2=log(factor_5/factor_4)/log(2.0);
-	  double exp3=log(factor_1/factor_2)/log(2.0);
+	  set_vars(1.0,1.0,4.0,2.0,1.0,1.0,1.0,vars);
+	  fp_t factor_3=calc.eval(&vars)/calc2.eval(&vars);
 
-	  std::cout << "\nexps: " << exp1 << " " << exp2 << " "
-	  << exp3 << " " << exp2 << " "
-	  << -exp1-exp2 << std::endl;
+	  fp_t exp1=log(factor_1)/log(2.0);
+	  fp_t exp2=log(factor_2)/log(2.0);
+	  fp_t exp3=log(factor_3)/log(2.0);
 
+	  fp_t hbar_fac=-(5*exp1+exp2-2*exp3)/6;
+	  fp_t c_fac=-(-5*exp1+2*exp2+2*exp3)/3;
+	  fp_t boltz_fac=-(exp1-exp2-exp3)/3;
+
+	  std::cout << "\nexps: " << exp1 << " " 
+		    << exp2 << " " << exp3 << " " << std::endl;
+	  std::cout << hbar_fac << " " << c_fac << " "
+		    << boltz_fac << std::endl;
+
+	  addl=pow(o2scl_const::hbar_f<fp_t>(),hbar_fac);
+	  addl*=pow(o2scl_const::speed_of_light_f<fp_t>(),c_fac);
+	  addl*=pow(o2scl_mks::boltzmann,boltz_fac);
+	  
 	  // Then set factor_s, factor_kg, factor_K equal to factor_m
 	  // so the test below succeeds
-	  factor_s=factor_m;
-	  factor_kg=factor_m;
-	  factor_K=factor_m;
+	  factor_m=factor;
+	  factor_s=factor;
+	  factor_kg=factor;
+	  factor_K=factor;
 	  
 	} else {
 	
+	  // Compute factor_K
+	  set_vars(1.0,1.0,1.0,2.0,1.0,1.0,1.0,vars);
+	  factor_K=calc.eval(&vars)/calc2.eval(&vars);
+	
 	  // Scale m, kg, and s at the same time
 	  set_vars(2.0,0.5,2.0,1.0,1.0,1.0,1.0,vars);
-	  factor_m=calc.eval(&vars)/calc2.eval(&vars);
+	  fp_t factor_1=calc.eval(&vars)/calc2.eval(&vars);
 	  
 	  // Separately compute factor_s and factor_kg in order to
 	  // determine how many factors of hbar and c we need
 	  set_vars(1.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
-	  factor_s=calc.eval(&vars)/calc2.eval(&vars);
+	  fp_t factor_2=calc.eval(&vars)/calc2.eval(&vars);
 	  
 	  set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
-	  factor_kg=calc.eval(&vars)/calc2.eval(&vars);
+	  fp_t factor_3=calc.eval(&vars)/calc2.eval(&vars);
 	  
-	  double exp1=log(factor_m/factor_s)/log(2.0);
-	  double exp2=log(factor_kg*factor_s)/log(2.0);
+	  double exp1=log(factor_1/factor_2)/log(2.0);
+	  double exp2=log(factor_3*factor_2)/log(2.0);
 	  
 	  addl=pow(o2scl_const::speed_of_light_f<fp_t>(),exp2);
 	  addl*=pow(o2scl_const::hbar_f<fp_t>(),-exp1-exp2);
@@ -747,14 +772,23 @@ namespace o2scl {
 	  //std::cout << "\nexps: " << exp1 << " " << exp2 << " "
 	  //<< exp2 << " " << -exp1-exp2 << std::endl;
 	  
-	  // Then set factor_s and factor_kg equal to factor_m so the
+	  // Then set factor_s and factor_3 equal to factor_m so the
 	  // test below succeeds
-	  factor_s=factor_m;
-	  factor_kg=factor_m;
+	  factor_m=factor;
+	  factor_s=factor;
+	  factor_kg=factor;
 
 	}
       
       } else {
+
+	// Compute factor_kg
+	set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
+	factor_kg=calc.eval(&vars)/calc2.eval(&vars);
+    
+	// Compute factor_K
+	set_vars(1.0,1.0,1.0,2.0,1.0,1.0,1.0,vars);
+	factor_K=calc.eval(&vars)/calc2.eval(&vars);
 	
 	// Scale m and s at the same time
 	set_vars(2.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
@@ -771,20 +805,26 @@ namespace o2scl {
 	// Then set factor_s equal to factor_m so the test below
 	// succeeds
 	factor_s=factor_m;
-	
+
       }
       
     } else {
+      
+      // Compute factor_kg
+      set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
+      factor_kg=calc.eval(&vars)/calc2.eval(&vars);
       
       set_vars(2.0,1.0,1.0,1.0,1.0,1.0,1.0,vars);
       factor_m=calc.eval(&vars)/calc2.eval(&vars);
       
       set_vars(1.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
       factor_s=calc.eval(&vars)/calc2.eval(&vars);
-    }
 
-    set_vars(1.0,1.0,1.0,2.0,1.0,1.0,1.0,vars);
-    factor_K=calc.eval(&vars)/calc2.eval(&vars);
+      // Compute factor_K
+      set_vars(1.0,1.0,1.0,2.0,1.0,1.0,1.0,vars);
+      factor_K=calc.eval(&vars)/calc2.eval(&vars);
+      
+    }
 
     set_vars(1.0,1.0,1.0,1.0,2.0,1.0,1.0,vars);
     fp_t factor_A=calc.eval(&vars)/calc2.eval(&vars);
