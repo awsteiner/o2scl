@@ -342,6 +342,8 @@ int main(int argc, char *argv[]) {
     cout << "Trying nonsense units: " << endl;
     ix=cux.convert_calc("notdefined","alsonotdefined",2.0,d1,d2);
     cout << ix << endl;
+
+    cux.print_units(cout);
     
   }
   

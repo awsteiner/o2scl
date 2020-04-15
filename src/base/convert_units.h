@@ -99,9 +99,6 @@ namespace o2scl {
 
       \future An in_cache() function to test
       to see if a conversion is currently in the cache. 
-      
-      \future Ideally, a real C++ API for the GNU units command
-      would be better.
   */
   template<class fp_t=double> class convert_units {
 
@@ -180,67 +177,115 @@ namespace o2scl {
   bool hbar_is_1;
   bool kb_is_1;
   //@}
-  
+
   /** \brief Set variables for the calculator object for 
       \ref convert_calc()
   */
   void set_vars(fp_t m, fp_t k, fp_t s, fp_t K, fp_t A, fp_t mol,
-		fp_t cd, std::map<std::string, fp_t> &vars) const {
+		fp_t cd, std::map<std::string, fp_t> &vars,
+		bool test_vars=false) const {
 
     vars.clear();
 
     // meters
     vars.insert(std::make_pair("m",m));
     for(size_t i=0;i<n_prefixes;i++) {
+      if (test_vars && vars.find(prefixes[i]+"m")!=vars.end()) {
+	O2SCL_ERR("m already found in list.",o2scl::exc_esanity);
+      }
       vars.insert(std::make_pair(prefixes[i]+"m",prefix_facts[i]*m));
     }
     
-    // seconds
-    vars.insert(std::make_pair("s",s));
-    for(size_t i=0;i<n_prefixes;i++) {
-      vars.insert(std::make_pair(prefixes[i]+"s",prefix_facts[i]*s));
-    }
-    
     // kilograms
+    if (vars.find("g")!=vars.end()) {
+      O2SCL_ERR("g already found in list.",o2scl::exc_esanity);
+    }
     vars.insert(std::make_pair("g",1.0e-3*k));
     for(size_t i=0;i<n_prefixes;i++) {
+      if (test_vars && vars.find(prefixes[i]+"g")!=vars.end()) {
+	O2SCL_ERR("g already found in list.",o2scl::exc_esanity);
+      }
       vars.insert(std::make_pair(prefixes[i]+"g",
 				 prefix_facts[i]*1.0e-3*k));
     }
 
+    // seconds
+    if (test_vars && vars.find("s")!=vars.end()) {
+      O2SCL_ERR("s already found in list.",o2scl::exc_esanity);
+    }
+    vars.insert(std::make_pair("s",s));
+    for(size_t i=0;i<n_prefixes;i++) {
+      if (test_vars && vars.find(prefixes[i]+"s")!=vars.end()) {
+	O2SCL_ERR("s already found in list.",o2scl::exc_esanity);
+      }
+      vars.insert(std::make_pair(prefixes[i]+"s",prefix_facts[i]*s));
+    }
+    
     // Kelvin
+    if (vars.find("K")!=vars.end()) {
+      O2SCL_ERR("K already found in list.",o2scl::exc_esanity);
+    }
     vars.insert(std::make_pair("K",K));
     for(size_t i=0;i<n_prefixes;i++) {
+      if (test_vars && vars.find(prefixes[i]+"K")!=vars.end()) {
+	O2SCL_ERR("K already found in list.",o2scl::exc_esanity);
+      }
       vars.insert(std::make_pair(prefixes[i]+"K",
 				 prefix_facts[i]*K));
     }
 
     // Amperes
+    if (vars.find("A")!=vars.end()) {
+      O2SCL_ERR("A already found in list.",o2scl::exc_esanity);
+    }
     vars.insert(std::make_pair("A",A));
     for(size_t i=0;i<n_prefixes;i++) {
+      if (test_vars && vars.find(prefixes[i]+"A")!=vars.end()) {
+	O2SCL_ERR("A already found in list.",o2scl::exc_esanity);
+      }
       vars.insert(std::make_pair(prefixes[i]+"A",
 				 prefix_facts[i]*A));
     }
 
     // moles
+    if (vars.find("mol")!=vars.end()) {
+      O2SCL_ERR("mol already found in list.",o2scl::exc_esanity);
+    }
     vars.insert(std::make_pair("mol",mol));
     for(size_t i=0;i<n_prefixes;i++) {
+      if (test_vars && vars.find(prefixes[i]+"mol")!=vars.end()) {
+	O2SCL_ERR("mol already found in list.",o2scl::exc_esanity);
+      }
       vars.insert(std::make_pair(prefixes[i]+"mol",
 				 prefix_facts[i]*mol));
     }
 
     // candelas
+    if (vars.find("cd")!=vars.end()) {
+      O2SCL_ERR("cd already found in list.",o2scl::exc_esanity);
+    }
     vars.insert(std::make_pair("cd",cd));
     for(size_t i=0;i<n_prefixes;i++) {
+      if (test_vars && vars.find(prefixes[i]+"cd")!=vars.end()) {
+	O2SCL_ERR("cd already found in list.",o2scl::exc_esanity);
+      }
       vars.insert(std::make_pair(prefixes[i]+"cd",
 				 prefix_facts[i]*cd));
     }
 
     // For SI-like units, add with all of the various prefixes
     for(size_t i=0;i<SI.size();i++) {
+      if (vars.find(SI[i].label)!=vars.end()) {
+	O2SCL_ERR((((std::string)"SI unit ")+SI[i].label+
+		   " already found in list.").c_str(),o2scl::exc_esanity);
+      }
       fp_t val=pow(m,SI[i].m)*pow(k,SI[i].k)*pow(s,SI[i].s);
       vars.insert(std::make_pair(SI[i].label,val));
       for(size_t j=0;j<n_prefixes;j++) {
+	if (test_vars && vars.find(prefixes[j]+SI[i].label)!=vars.end()) {
+	O2SCL_ERR((((std::string)"SI unit ")+prefixes[j]+SI[i].label+
+		   " already found in list.").c_str(),o2scl::exc_esanity);
+	}
 	fp_t val=pow(m,SI[i].m)*pow(k,SI[i].k)*pow(s,SI[i].s)*SI[i].val;
 	vars.insert(std::make_pair(prefixes[j]+SI[i].label,
 				   val*prefix_facts[j]));
@@ -249,6 +294,10 @@ namespace o2scl {
     
     // For other units, just add the value
     for(size_t i=0;i<other.size();i++) {
+      if (vars.find(other[i].label)!=vars.end()) {
+	O2SCL_ERR((((std::string)"Non SI-unit ")+other[i].label+
+		   " already found in list.").c_str(),o2scl::exc_esanity);
+      }
       fp_t val=pow(m,other[i].m)*pow(k,other[i].k)*pow(s,other[i].s)*
 	other[i].val;
       vars.insert(std::make_pair(other[i].label,val));
@@ -603,24 +652,102 @@ namespace o2scl {
      {"Gy",2,0,-2,0,0,0,0,1.0},
      {"Sv",2,0,-2,0,0,0,0,1.0},
      {"kat",0,0,-1,0,0,1,0,1.0},
-     // liters
+     // liters, "l" and "L"
      {"l",3,0,0,0,0,0,0,1.0e-3},
      {"L",3,0,0,0,0,0,0,1.0e-3},
      // metric tons
      {"t",0,1,0,0,0,0,0,1.0e3},
-     // Daltons
-     {"Da",0,1,0,0,0,0,0,1.660539040e-27},
+     // Daltons (atomic mass units)
+     {"Da",0,1,0,0,0,0,0,o2scl_mks::unified_atomic_mass},
+     // Electron volts
      {"eV",2,1,-2,0,0,0,0,o2scl_mks::electron_volt}};
     SI=SI_;
     
     // Other units, in order m kg s K A mol cd
     std::vector<der_unit> other_=
     {{"c",1,0,-1,0,0,0,0,o2scl_const::speed_of_light_f<fp_t>()},
-     {"kB",2,1,-2,-1,0,0,0,o2scl_mks::boltzmann},
+     // Boltzmann's constant. Could be confused with kilobytes?
+     {"kB",2,1,-2,-1,0,0,0,o2scl_const::boltzmann_f<fp_t>()},
      {"atm",-1,2,-2,0,0,0,0,o2scl_mks::std_atmosphere},
      {"bar",-1,1,-2,0,0,0,0,o2scl_mks::bar},
      {"dyne",2,1,-2,0,0,0,0,o2scl_mks::dyne},
+     // Gauss, and note the possible confusion with the gravitational
+     // constant
      {"G",0,1,-2,0,-1,0,0,o2scl_mks::gauss},
+
+     // Length units
+     // We cannot use 'ft' because the metric ton is a unit "accepted
+     // for use with the SI" and then ft is a "femto-ton", which is a
+     // bit confusing
+     {"foot",1,0,0,0,0,0,0,o2scl_mks::foot},
+     {"in",1,0,0,0,0,0,0,o2scl_mks::inch},
+     {"yd",1,0,0,0,0,0,0,o2scl_mks::yard},
+     {"mi",1,0,0,0,0,0,0,o2scl_mks::mile},
+     {"nmi",1,0,0,0,0,0,0,o2scl_mks::nautical_mile},
+     {"fathom",1,0,0,0,0,0,0,o2scl_mks::fathom},
+     {"angstrom",1,0,0,0,0,0,0,o2scl_mks::angstrom},
+     {"mil",1,0,0,0,0,0,0,o2scl_mks::mil},
+     {"point",1,0,0,0,0,0,0,o2scl_mks::point},
+     {"texpoint",1,0,0,0,0,0,0,o2scl_mks::texpoint},
+     {"micron",1,0,0,0,0,0,0,o2scl_mks::micron},
+     // AU's, "au" and "AU"
+     {"AU",1,0,0,0,0,0,0,o2scl_mks::astronomical_unit},
+     {"au",1,0,0,0,0,0,0,o2scl_mks::astronomical_unit},
+     // light years "ly" and "lyr"
+     {"ly",1,0,0,0,0,0,0,o2scl_mks::light_year},
+     {"lyr",1,0,0,0,0,0,0,o2scl_mks::light_year},
+     // We add common SI-like prefixes for non-SI units
+     {"Gpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e9},
+     {"Mpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e6},
+     {"kpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e3},
+     {"pc",1,0,0,0,0,0,0,o2scl_mks::parsec},
+
+     // Area units
+     // hectares, "ha" and "hectare"
+     {"hectare",2,0,0,0,0,0,0,o2scl_mks::hectare},
+     {"ha",2,0,0,0,0,0,0,1.0e4},
+     // acre
+     {"acre",2,0,0,0,0,0,0,o2scl_mks::acre},
+     // barn
+     {"barn",2,0,0,0,0,0,0,o2scl_mks::barn},
+     
+     // Volume units
+     {"us_gallon",3,0,0,0,0,0,0,o2scl_mks::us_gallon},
+     {"quart",3,0,0,0,0,0,0,o2scl_mks::quart},
+     {"pint",3,0,0,0,0,0,0,o2scl_mks::pint},
+     {"cup",3,0,0,0,0,0,0,o2scl_mks::cup},
+     {"tbsp",3,0,0,0,0,0,0,o2scl_mks::tablespoon},
+     {"tsp",3,0,0,0,0,0,0,o2scl_mks::teaspoon},
+     {"ca_gallon",3,0,0,0,0,0,0,o2scl_mks::canadian_gallon},
+     {"uk_gallon",3,0,0,0,0,0,0,o2scl_mks::uk_gallon},
+
+     // Mass units
+     // Solar masses, "Msun", and "Msolar"
+     {"Msun",0,1,0,0,0,0,0,o2scl_mks::solar_mass},
+     {"Msolar",0,1,0,0,0,0,0,o2scl_mks::solar_mass},
+     {"pound",0,1,0,0,0,0,0,o2scl_mks::pound_mass},
+     {"ounce",0,1,0,0,0,0,0,o2scl_mks::ounce_mass},
+     {"uk_ton",0,1,0,0,0,0,0,o2scl_mks::uk_ton},
+     {"troy_ounce",0,1,0,0,0,0,0,o2scl_mks::troy_ounce},
+     {"carat",0,1,0,0,0,0,0,o2scl_mks::carat},
+     
+     // Velocity units
+     {"knot",1,0,-1,0,0,0,0,o2scl_mks::knot},
+
+     // Energy units
+     {"cal",2,1,-2,0,0,0,0,o2scl_mks::calorie},
+     {"btu",2,1,-2,0,0,0,0,o2scl_mks::btu},
+     {"erg",2,1,-2,0,0,0,0,o2scl_mks::erg},
+
+     // Power units
+     {"therm",2,1,-3,0,0,0,0,o2scl_mks::therm},
+     {"horsepower",2,1,-3,0,0,0,0,o2scl_mks::horsepower},
+
+     // Pressure units
+     {"torr",-1,1,-2,0,0,0,0,o2scl_mks::torr},
+     {"psi",-1,1,-2,0,0,0,0,o2scl_mks::psi},
+
+     // Time units
      {"yr",0,0,1,0,0,0,0,31556926},
      {"wk",0,0,1,0,0,0,0,o2scl_mks::week},
      {"d",0,0,1,0,0,0,0,o2scl_mks::day},
@@ -628,28 +755,17 @@ namespace o2scl {
      {"h",0,0,1,0,0,0,0,o2scl_mks::hour},
      {"hr",0,0,1,0,0,0,0,o2scl_mks::hour},
      {"min",0,0,1,0,0,0,0,o2scl_mks::minute},
-     // AU's, "au" and "AU"
-     {"AU",1,0,0,0,0,0,0,o2scl_mks::astronomical_unit},
-     {"au",1,0,0,0,0,0,0,o2scl_mks::astronomical_unit},
-     // light years "ly" and "lyr"
-     {"ly",1,0,0,0,0,0,0,o2scl_mks::light_year},
-     {"lyr",1,0,0,0,0,0,0,o2scl_mks::light_year},
-     {"Msun",0,1,0,0,0,0,0,o2scl_mks::solar_mass},
-     {"Msolar",0,1,0,0,0,0,0,o2scl_mks::solar_mass},
-     {"erg",2,1,-2,0,0,0,0,o2scl_mks::erg},
-     // hectares, "ha" and "hectare"
-     {"hectare",2,0,0,0,0,0,0,1.0e4},
-     {"ha",2,0,0,0,0,0,0,1.0e4},
-     // We add common SI-like prefixes for non-SI units
-     {"Gpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e9},
-     {"Mpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e6},
-     {"kpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e3},
-     {"pc",1,0,0,0,0,0,0,o2scl_mks::parsec}};
+
+     // Other units
+     {"poise",-1,1,-1,0,0,0,0,o2scl_mks::poise},
+     {"curie",0,0,-1,0,0,0,0,o2scl_mks::curie}
+
+    };
     other=other_;
     
-    c_is_1=false;
-    hbar_is_1=false;
-    kb_is_1=false;
+    c_is_1=true;
+    hbar_is_1=true;
+    kb_is_1=true;
   }
     
   virtual ~convert_units() {}
@@ -665,6 +781,61 @@ namespace o2scl {
     c_is_1=c_is_one;
     hbar_is_1=hbar_is_one;
     kb_is_1=kb_is_one;
+    return;
+  }
+  
+  /** \brief Print the units in the data base
+   */
+  void print_units(std::ostream &out) {
+
+    out << "SI-like:  label  m kg  s  K  A mol cd value" << std::endl;
+    out << "--------------- -- -- -- -- -- --- -- ------------"
+    << std::endl;
+    for(size_t i=0;i<SI.size();i++) {
+      out.width(15);
+      out << SI[i].label << " ";
+      out.width(2);
+      out << SI[i].m << " ";
+      out.width(2);
+      out << SI[i].k << " ";
+      out.width(2);
+      out << SI[i].s << " ";
+      out.width(2);
+      out << SI[i].K << " ";
+      out.width(2);
+      out << SI[i].A << " ";
+      out.width(3);
+      out << SI[i].mol << " ";
+      out.width(2);
+      out << SI[i].cd << " ";
+      out << SI[i].val << std::endl;
+    }
+    out << std::endl;
+    
+    out << "Other:    label  m kg  s  K  A mol cd value:" << std::endl;
+    out << "--------------- -- -- -- -- -- --- -- ------------"
+    << std::endl;
+    
+    for(size_t i=0;i<other.size();i++) {
+      out.width(15);
+      out << other[i].label << " ";
+      out.width(2);
+      out << other[i].m << " ";
+      out.width(2);
+      out << other[i].k << " ";
+      out.width(2);
+      out << other[i].s << " ";
+      out.width(2);
+      out << other[i].K << " ";
+      out.width(2);
+      out << other[i].A << " ";
+      out.width(3);
+      out << other[i].mol << " ";
+      out.width(2);
+      out << other[i].cd << " ";
+      out << other[i].val << std::endl;
+    }
+    
     return;
   }
   
@@ -728,11 +899,6 @@ namespace o2scl {
 	  fp_t hbar_fac=-(5*exp1+exp2-2*exp3)/6;
 	  fp_t c_fac=-(-5*exp1+2*exp2+2*exp3)/3;
 	  fp_t boltz_fac=-(exp1-exp2-exp3)/3;
-
-	  std::cout << "\nexps: " << exp1 << " " 
-		    << exp2 << " " << exp3 << " " << std::endl;
-	  std::cout << hbar_fac << " " << c_fac << " "
-		    << boltz_fac << std::endl;
 
 	  addl=pow(o2scl_const::hbar_f<fp_t>(),hbar_fac);
 	  addl*=pow(o2scl_const::speed_of_light_f<fp_t>(),c_fac);

@@ -121,6 +121,18 @@ namespace o2scl_const {
     return result;
   }
 
+    /** \brief Speed of light */
+  template<class fp_t> fp_t boltzmann_f(size_t system=o2scl_mks) {
+    fp_t numer=1380649;
+    fp_t denom=1000000;
+    if (system==o2scl_cgs) {
+      fp_t result=(numer/denom)*1.0e-16;
+      return result;
+    }
+      fp_t result=(numer/denom)*1.0e-23;
+    return result;
+  }
+
   /** \brief Reduced Planck's constant times speed of light
       \f$ \hbar c \f$
    */
