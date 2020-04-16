@@ -763,9 +763,9 @@ namespace o2scl {
     };
     other=other_;
     
-    c_is_1=true;
-    hbar_is_1=true;
-    kb_is_1=true;
+    c_is_1=false;
+    hbar_is_1=false;
+    kb_is_1=false;
   }
     
   virtual ~convert_units() {}
@@ -781,6 +781,14 @@ namespace o2scl {
     c_is_1=c_is_one;
     hbar_is_1=hbar_is_one;
     kb_is_1=kb_is_one;
+    return;
+  }
+
+  /** \brief Test to make sure all units are unique
+   */
+  void test_unique() {
+    std::map<std::string,fp_t> vars;
+    set_vars(1.0,1.0,1.0,1.0,1.0,1.0,1.0,vars,true);
     return;
   }
   
@@ -900,9 +908,16 @@ namespace o2scl {
 	  fp_t c_fac=-(-5*exp1+2*exp2+2*exp3)/3;
 	  fp_t boltz_fac=-(exp1-exp2-exp3)/3;
 
+	  std::cout << std::endl;
+	  std::cout << "1. " << exp1 << " " << exp2 << " " << exp3
+		    << std::endl;
+	  std::cout << "2. " << hbar_fac << " " << c_fac << " "
+		    << boltz_fac << std::endl;
+
 	  addl=pow(o2scl_const::hbar_f<fp_t>(),hbar_fac);
 	  addl*=pow(o2scl_const::speed_of_light_f<fp_t>(),c_fac);
 	  addl*=pow(o2scl_mks::boltzmann,boltz_fac);
+	  std::cout << "3. " << addl << " " << factor << std::endl;
 	  
 	  // Then set factor_s, factor_kg, factor_K equal to factor_m
 	  // so the test below succeeds
@@ -932,8 +947,16 @@ namespace o2scl {
 	  double exp1=log(factor_1/factor_2)/log(2.0);
 	  double exp2=log(factor_3*factor_2)/log(2.0);
 	  
+	  std::cout << std::endl;
+	  std::cout << "0. " << from << " " << to << std::endl;
+	  std::cout << "0. " << factor_1 << " " << factor_2 << " "
+		    << factor_3 << std::endl;
+	  std::cout << "1. " << exp1 << " " << exp2
+		    << std::endl;
+
 	  addl=pow(o2scl_const::speed_of_light_f<fp_t>(),exp2);
 	  addl*=pow(o2scl_const::hbar_f<fp_t>(),-exp1-exp2);
+	  std::cout << "2. " << addl << " " << factor << std::endl;
 	  
 	  //std::cout << "\nexps: " << exp1 << " " << exp2 << " "
 	  //<< exp2 << " " << -exp1-exp2 << std::endl;
@@ -1180,6 +1203,26 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Desc
+   */
+  void test_cache_calc() const {
+    mciter m;
+    for (m=mcache.begin();m!=mcache.end();m++) {
+      std::cout.setf(std::ios::left);
+      std::cout.width(10);
+      std::cout << m->second.f << " ";
+      std::cout.width(10);
+      std::cout << m->second.t << " ";
+      std::cout.unsetf(std::ios::left);
+      std::cout.precision(6);
+      std::cout << m->second.c << " ";
+      fp_t c, f;
+      int ix=convert_calc(m->second.f,m->second.t,1.0,c,f);
+      std::cout << ix << " " << f << std::endl;
+    }
+    return;
+  }
+  
   /// Manually remove a unit conversion into the cache
   void remove_cache(std::string from, std::string to) {
 
@@ -1886,7 +1929,6 @@ namespace o2scl {
     return;
   }
     
-
   /** \brief Exhaustive test the cache against GNU units
    */
   int test_cache() {

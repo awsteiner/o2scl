@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
     cu.make_units_dat("units_hck.dat",true,true,true);
   }
 
-  {
+  if (false) {
     convert_units<double> cux;
     double d1, d2;
     int ix;
@@ -162,6 +162,7 @@ int main(int argc, char *argv[]) {
     } else {
       cout << "conversion failed." << endl;
     }
+    
     cout << "kg MeV/c^2: ";
     ix=cux.convert_calc("kg","MeV/c^2",2.0,d1,d2);
     if (ix==0) {
@@ -171,6 +172,7 @@ int main(int argc, char *argv[]) {
     }
     cout << o2scl_settings.get_convert_units().convert
       ("kg","MeV/c^2",2.0) << endl;
+    
     cout << "s fm/c: ";
     ix=cux.convert_calc("s","fm/c",2.0,d1,d2);
     if (ix==0) {
@@ -180,6 +182,7 @@ int main(int argc, char *argv[]) {
     }
     cout << o2scl_settings.get_convert_units().convert
       ("s","fm/c",2.0) << endl;
+    
     cout << endl;
 
     // Check that c=1 works
@@ -222,6 +225,26 @@ int main(int argc, char *argv[]) {
     }
     cout << o2scl_settings.get_convert_units().convert
       ("MeV/fm^3","Msun/km^3",2.0) << endl;
+
+    cout << "kg MeV/c^2: ";
+    ix=cux.convert_calc("kg","MeV/c^2",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << " ";
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    cout << o2scl_settings.get_convert_units().convert
+      ("kg","MeV/c^2",2.0) << endl;
+    
+    cout << "s fm/c: ";
+    ix=cux.convert_calc("s","fm/c",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << " ";
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    cout << o2scl_settings.get_convert_units().convert
+      ("s","fm/c",2.0) << endl;
 
     cux.set_natural_units(0,0,0);
     cout << endl;
@@ -293,6 +316,27 @@ int main(int argc, char *argv[]) {
     cout << o2scl_settings.get_convert_units().convert
       ("kg^2","hbar^2/m^2/c^2",2.0) << endl;
 
+    cout << "kg MeV/c^2: ";
+    ix=cux.convert_calc("kg","MeV/c^2",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << " ";
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    cout << o2scl_settings.get_convert_units().convert
+      ("kg","MeV/c^2",2.0) << endl;
+    
+    cout << "s fm/c: ";
+    ix=cux.convert_calc("s","fm/c",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << " ";
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    cout << o2scl_settings.get_convert_units().convert
+      ("s","fm/c",2.0) << endl;
+    exit(-1);
+
     cux.set_natural_units(0,0,0);
     cout << endl;
     
@@ -336,6 +380,16 @@ int main(int argc, char *argv[]) {
     }
     cout << 5.1384833e+30*2.0 << endl;
 
+    cout << "kg MeV/c^2: ";
+    ix=cux.convert_calc("kg","MeV/c^2",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ret,converted: " << ix << " " << d1 << " ";
+    } else {
+      cout << "conversion failed." << endl;
+    }
+    cout << o2scl_settings.get_convert_units().convert
+      ("kg","MeV/c^2",2.0) << endl;
+    
     cux.set_natural_units(0,0,0);
     cout << endl;
 
@@ -344,6 +398,13 @@ int main(int argc, char *argv[]) {
     cout << ix << endl;
 
     cux.print_units(cout);
+    cout << endl;
+    
+    cux.test_unique();
+    
+    cux.set_natural_units(1,1,1);
+    cux.default_conversions();
+    cux.test_cache_calc();
     
   }
   
