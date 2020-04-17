@@ -665,15 +665,7 @@ namespace o2scl {
     
     // Other units, in order m kg s K A mol cd
     std::vector<der_unit> other_=
-    {{"c",1,0,-1,0,0,0,0,o2scl_const::speed_of_light_f<fp_t>()},
-     // Boltzmann's constant. Could be confused with kilobytes?
-     {"kB",2,1,-2,-1,0,0,0,o2scl_const::boltzmann_f<fp_t>()},
-     {"atm",-1,2,-2,0,0,0,0,o2scl_mks::std_atmosphere},
-     {"bar",-1,1,-2,0,0,0,0,o2scl_mks::bar},
-     {"dyne",2,1,-2,0,0,0,0,o2scl_mks::dyne},
-     // Gauss, and note the possible confusion with the gravitational
-     // constant
-     {"G",0,1,-2,0,-1,0,0,o2scl_mks::gauss},
+    {
 
      // Length units
      // We cannot use 'ft' because the metric ton is a unit "accepted
@@ -733,7 +725,8 @@ namespace o2scl {
      
      // Velocity units
      {"knot",1,0,-1,0,0,0,0,o2scl_mks::knot},
-
+     {"c",1,0,-1,0,0,0,0,o2scl_const::speed_of_light_f<fp_t>()},
+     
      // Energy units
      {"cal",2,1,-2,0,0,0,0,o2scl_mks::calorie},
      {"btu",2,1,-2,0,0,0,0,o2scl_mks::btu},
@@ -744,6 +737,8 @@ namespace o2scl {
      {"horsepower",2,1,-3,0,0,0,0,o2scl_mks::horsepower},
 
      // Pressure units
+     {"atm",-1,2,-2,0,0,0,0,o2scl_mks::std_atmosphere},
+     {"bar",-1,1,-2,0,0,0,0,o2scl_mks::bar},
      {"torr",-1,1,-2,0,0,0,0,o2scl_mks::torr},
      {"psi",-1,1,-2,0,0,0,0,o2scl_mks::psi},
 
@@ -751,15 +746,38 @@ namespace o2scl {
      {"yr",0,0,1,0,0,0,0,31556926},
      {"wk",0,0,1,0,0,0,0,o2scl_mks::week},
      {"d",0,0,1,0,0,0,0,o2scl_mks::day},
-     // hours, "h", and "hr"
-     {"h",0,0,1,0,0,0,0,o2scl_mks::hour},
+
+     // Hours, "hr", to avoid confusion with Planck's constant
      {"hr",0,0,1,0,0,0,0,o2scl_mks::hour},
      {"min",0,0,1,0,0,0,0,o2scl_mks::minute},
 
-     // Other units
+     // Inverse time units
+     {"curie",0,0,-1,0,0,0,0,o2scl_mks::curie},
+     
+     // Force units
+     {"dyne",1,1,-2,0,0,0,0,o2scl_mks::dyne},
+     
+     // Viscosity units
      {"poise",-1,1,-1,0,0,0,0,o2scl_mks::poise},
-     {"curie",0,0,-1,0,0,0,0,o2scl_mks::curie}
 
+     // Units of heat capacity or entropy
+     // Boltzmann's constant. Could be confused with kilobytes?
+     {"kB",2,1,-2,-1,0,0,0,o2scl_const::boltzmann_f<fp_t>()},
+     
+     {"hbar",2,1,-1,0,0,0,0,o2scl_const::hbar_f<fp_t>()},
+     // "Planck" instead of "h", to avoid confusing with hours
+     {"Planck",2,1,-1,0,0,0,0,o2scl_const::planck_f<fp_t>()},
+     
+     // Gravitational constant. We cannot use "G" because of
+     // confusion with "Gauss"
+     {"GNewton",3,-1,-2,0,0,0,0,o2scl_mks::gravitational_constant},
+     
+     // Gauss, and note the possible confusion with the gravitational
+     // constant
+     {"G",0,1,-2,0,-1,0,0,o2scl_mks::gauss},
+
+     {"NA",0,0,0,0,0,0,0,o2scl_const::avogadro}
+     
     };
     other=other_;
     
@@ -893,22 +911,28 @@ namespace o2scl {
 	  
 	  set_vars(2.0,1.0,4.0,1.0,1.0,1.0,1.0,vars);
 	  fp_t factor_1=calc.eval(&vars)/calc2.eval(&vars);
+	  std::cout << std::endl;
+	  std::cout << "0. " << calc.eval(&vars) << " "
+		    << calc2.eval(&vars) << std::endl;
 	  
 	  set_vars(2.0,1.0,1.0,4.0,1.0,1.0,1.0,vars);
 	  fp_t factor_2=calc.eval(&vars)/calc2.eval(&vars);
+	  std::cout << "0. " << calc.eval(&vars) << " "
+		    << calc2.eval(&vars) << std::endl;
 	  
 	  set_vars(1.0,1.0,4.0,2.0,1.0,1.0,1.0,vars);
 	  fp_t factor_3=calc.eval(&vars)/calc2.eval(&vars);
+	  std::cout << "0. " << calc.eval(&vars) << " "
+		    << calc2.eval(&vars) << std::endl;
 
-	  fp_t exp1=log(factor_1)/log(2.0);
-	  fp_t exp2=log(factor_2)/log(2.0);
-	  fp_t exp3=log(factor_3)/log(2.0);
+	  fp_t exp1=log(factor_1/factor)/log(2.0);
+	  fp_t exp2=log(factor_2/factor)/log(2.0);
+	  fp_t exp3=log(factor_3/factor)/log(2.0);
 
 	  fp_t hbar_fac=-(5*exp1+exp2-2*exp3)/6;
 	  fp_t c_fac=-(-5*exp1+2*exp2+2*exp3)/3;
 	  fp_t boltz_fac=-(exp1-exp2-exp3)/3;
 
-	  std::cout << std::endl;
 	  std::cout << "1. " << exp1 << " " << exp2 << " " << exp3
 		    << std::endl;
 	  std::cout << "2. " << hbar_fac << " " << c_fac << " "
@@ -916,8 +940,10 @@ namespace o2scl {
 
 	  addl=pow(o2scl_const::hbar_f<fp_t>(),hbar_fac);
 	  addl*=pow(o2scl_const::speed_of_light_f<fp_t>(),c_fac);
+	  std::cout << "3. " << factor << " " << factor_1 << " "
+		    << factor_2 << " " << factor_3 << std::endl;
 	  addl*=pow(o2scl_mks::boltzmann,boltz_fac);
-	  std::cout << "3. " << addl << " " << factor << std::endl;
+	  std::cout << "4. " << addl << " " << factor << std::endl;
 	  
 	  // Then set factor_s, factor_kg, factor_K equal to factor_m
 	  // so the test below succeeds
@@ -930,33 +956,50 @@ namespace o2scl {
 	
 	  // Compute factor_K
 	  set_vars(1.0,1.0,1.0,2.0,1.0,1.0,1.0,vars);
+	  //vars["c"]=1.0;
+	  //vars["hbar"]=1.0;
 	  factor_K=calc.eval(&vars)/calc2.eval(&vars);
 	
 	  // Scale m, kg, and s at the same time
 	  set_vars(2.0,0.5,2.0,1.0,1.0,1.0,1.0,vars);
+	  //vars["c"]=1.0;
+	  //vars["hbar"]=1.0;
 	  fp_t factor_1=calc.eval(&vars)/calc2.eval(&vars);
+
+	  if (false) {
+	    std::cout << std::endl;
+	    std::cout << "1. " << from << " " << to << std::endl;
+	    std::cout << "2. " << vars["kg"] << " "
+		      << vars["MeV"] << " " << vars["c"] << std::endl;
+	    std::cout << "3. " << calc.eval(&vars) << " "
+		      << calc2.eval(&vars) << std::endl;
+	  }
 	  
 	  // Separately compute factor_s and factor_kg in order to
 	  // determine how many factors of hbar and c we need
 	  set_vars(1.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
+	  //vars["c"]=0.5;
+	  //vars["hbar"]=0.5;
 	  fp_t factor_2=calc.eval(&vars)/calc2.eval(&vars);
 	  
 	  set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
 	  fp_t factor_3=calc.eval(&vars)/calc2.eval(&vars);
 	  
 	  double exp1=log(factor_1/factor_2)/log(2.0);
-	  double exp2=log(factor_3*factor_2)/log(2.0);
-	  
-	  std::cout << std::endl;
-	  std::cout << "0. " << from << " " << to << std::endl;
-	  std::cout << "0. " << factor_1 << " " << factor_2 << " "
-		    << factor_3 << std::endl;
-	  std::cout << "1. " << exp1 << " " << exp2
-		    << std::endl;
+	  double exp2=log(factor_3*factor_2/factor/factor)/log(2.0);
+
+	  if (false) {
+	    std::cout << "4. " << factor_1 << " " << factor_2 << " "
+		      << factor_3 << std::endl;
+	    std::cout << "5. " << exp1 << " " << exp2 << " "
+		      << -exp1-exp2 << std::endl;
+		      
+	  }
 
 	  addl=pow(o2scl_const::speed_of_light_f<fp_t>(),exp2);
 	  addl*=pow(o2scl_const::hbar_f<fp_t>(),-exp1-exp2);
-	  std::cout << "2. " << addl << " " << factor << std::endl;
+	  
+	  //std::cout << "6. " << addl << " " << factor << std::endl;
 	  
 	  //std::cout << "\nexps: " << exp1 << " " << exp2 << " "
 	  //<< exp2 << " " << -exp1-exp2 << std::endl;
