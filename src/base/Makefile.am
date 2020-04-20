@@ -26,7 +26,7 @@ BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 	interp.scr columnify.scr convert_units.scr \
 	string_conv.scr tensor.scr shunting_yard.scr \
 	format_float.scr table_units.scr exception.scr uniform_grid.scr \
-	tensor_grid.scr constants.scr
+	tensor_grid.scr constants.scr cursesw.scr
 
 TEST_VAR = $(BASE_TEST_VAR)
 
@@ -123,7 +123,8 @@ CPVAR = err_hnd_ts funct_ts convert_units_ts \
 	multi_funct_ts search_vec_ts table_ts interp_ts \
 	columnify_ts shunting_yard_ts interp_krige_ts \
 	string_conv_ts tensor_ts tensor_grid_ts vector_ts table3d_ts \
-	format_float_ts table_units_ts exception_ts uniform_grid_ts 
+	format_float_ts table_units_ts exception_ts uniform_grid_ts \
+	cursesw_ts
 
 check_PROGRAMS = $(CPVAR)
 
@@ -152,6 +153,7 @@ table3d_ts_LDFLAGS = -fopenmp
 vector_ts_LDFLAGS = -fopenmp
 interp_ts_LDFLAGS = -fopenmp
 columnify_ts_LDFLAGS = -fopenmp
+cursesw_ts_LDFLAGS = -fopenmp
 string_conv_ts_LDFLAGS = -fopenmp
 tensor_ts_LDFLAGS = -fopenmp
 tensor_grid_ts_LDFLAGS = -fopenmp
@@ -177,6 +179,7 @@ table3d_ts_LDADD = $(VCHECK_LIBS)
 vector_ts_LDADD = $(VCHECK_LIBS)
 interp_ts_LDADD = $(VCHECK_LIBS)
 columnify_ts_LDADD = $(VCHECK_LIBS)
+cursesw_ts_LDADD = $(VCHECK_LIBS)
 string_conv_ts_LDADD = $(VCHECK_LIBS)
 tensor_ts_LDADD = $(VCHECK_LIBS)
 tensor_grid_ts_LDADD = $(VCHECK_LIBS)
@@ -217,6 +220,8 @@ interp.scr: interp_ts$(EXEEXT)
 	./interp_ts$(EXEEXT) > interp.scr
 columnify.scr: columnify_ts$(EXEEXT) 
 	./columnify_ts$(EXEEXT) > columnify.scr
+cursesw.scr: cursesw_ts$(EXEEXT) 
+	./cursesw_ts$(EXEEXT) > cursesw.scr
 string_conv.scr: string_conv_ts$(EXEEXT) 
 	./string_conv_ts$(EXEEXT) > string_conv.scr
 tensor.scr: tensor_ts$(EXEEXT) 
@@ -248,6 +253,7 @@ table3d_ts_SOURCES = table3d_ts.cpp
 vector_ts_SOURCES = vector_ts.cpp
 interp_ts_SOURCES = interp_ts.cpp
 columnify_ts_SOURCES = columnify_ts.cpp
+cursesw_ts_SOURCES = cursesw_ts.cpp
 string_conv_ts_SOURCES = string_conv_ts.cpp
 tensor_ts_SOURCES = tensor_ts.cpp
 tensor_grid_ts_SOURCES = tensor_grid_ts.cpp

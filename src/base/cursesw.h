@@ -31,8 +31,6 @@
 #include <string>
 #include <vector>
 
-#include "curses.h"
-
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
