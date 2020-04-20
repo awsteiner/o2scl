@@ -1,0 +1,94 @@
+/*
+  -------------------------------------------------------------------
+  
+  Copyright (C) 2020, Andrew W. Steiner
+  
+  This file is part of O2scl.
+  
+  O2scl is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+  
+  O2scl is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+
+  -------------------------------------------------------------------
+*/
+#ifndef O2SCL_CURSESW_H
+#define O2SCL_CURSESW_H
+
+/** \file cursesw.h
+    \brief Desc
+*/
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+#include "curses.h"
+
+#ifndef DOXYGEN_NO_O2NS
+namespace o2scl {
+#endif
+
+  /** \brief Simple interface for curses
+  */
+  class cursesw {
+
+  protected:
+    
+    /** \brief Desc
+     */
+    typedef struct key_def_s {
+      int key;
+      std::string desc;
+    } key_def;
+    
+    /** \brief Desc
+     */
+    std::vector<key_def> key_list;
+
+    /** \brief Desc
+     */
+    int row, col;
+    
+  public:
+
+    /** \brief Desc
+     */
+    cursesw();
+
+    /** \brief Desc
+     */
+    void init();
+
+    /** \brief Desc
+     */
+    int cw_getch();
+    
+    /** \brief Desc
+     */
+    void finalize();
+
+    /** \brief Desc
+     */
+    std::string identify(int ch);
+
+    /** \brief Desc
+     */
+    void cw_printw(std::string);
+    
+  };
+
+
+#ifndef DOXYGEN_NO_O2NS
+}
+#endif
+
+#endif

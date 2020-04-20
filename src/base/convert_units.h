@@ -176,6 +176,7 @@ namespace o2scl {
   bool c_is_1;
   bool hbar_is_1;
   bool kb_is_1;
+  bool G_is_1;
   //@}
 
   /** \brief Set variables for the calculator object for 
@@ -784,6 +785,7 @@ namespace o2scl {
     c_is_1=false;
     hbar_is_1=false;
     kb_is_1=false;
+    G_is_1=false;
   }
     
   virtual ~convert_units() {}
