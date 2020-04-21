@@ -29,6 +29,8 @@
 using namespace std;
 using namespace o2scl;
 
+#ifdef O2SCL_READLINE
+
 cursesw::cursesw() {
 
   std::vector<key_def> kd={{KEY_BREAK,"break"},
@@ -190,3 +192,5 @@ void cursesw::cw_printw(std::string s) {
   printw(s.c_str());
   return;
 }
+
+#endif

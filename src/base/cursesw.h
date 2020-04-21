@@ -35,6 +35,8 @@
 namespace o2scl {
 #endif
 
+#if defined(O2SCL_READLINE) || defined(DOXYGEN)
+  
   /** \brief Simple interface for curses
   */
   class cursesw {
@@ -84,6 +86,7 @@ namespace o2scl {
     
   };
 
+#endif
 
 #ifndef DOXYGEN_NO_O2NS
 }

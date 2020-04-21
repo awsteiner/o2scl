@@ -31,6 +31,8 @@ int main(int argc, char *argv[]) {
   test_mgr t;
   t.set_output_level(1);
 
+#ifdef O2SCL_READLINE
+  
   cursesw cw;
 
   if (argc>=2 && ((string)argv[1])==((string)"1")) {
@@ -54,6 +56,8 @@ int main(int argc, char *argv[]) {
     cout << "Character was: " << ch2 << endl;
   }
 
+#endif
+  
   t.report();
   return 0;
 }
