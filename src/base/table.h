@@ -2633,14 +2633,14 @@ namespace o2scl {
   //@{
   /** \brief Compute the rolling average of column named \c col
    */
-  virtual void average_col_roll(std::string col, size_t window) {
+  virtual void average_col_roll(std::string col_name, size_t window) {
     if (window<2) {
       O2SCL_ERR("Window less than 2 in table::average_rows().",
 		o2scl::exc_einval);
     }
 
     size_t nl=get_nlines();
-    size_t k=lookup_column(col);
+    size_t k=lookup_column(col_name);
 
     // A non-const reference to the data vector
     vec_t &v=alist[k]->second.dat;

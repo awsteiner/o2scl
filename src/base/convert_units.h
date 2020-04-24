@@ -287,7 +287,7 @@ namespace o2scl {
 	O2SCL_ERR((((std::string)"SI unit ")+prefixes[j]+SI[i].label+
 		   " already found in list.").c_str(),o2scl::exc_esanity);
 	}
-	fp_t val=pow(m,SI[i].m)*pow(k,SI[i].k)*pow(s,SI[i].s)*SI[i].val;
+	val=pow(m,SI[i].m)*pow(k,SI[i].k)*pow(s,SI[i].s)*SI[i].val;
 	vars.insert(std::make_pair(prefixes[j]+SI[i].label,
 				   val*prefix_facts[j]));
       }
