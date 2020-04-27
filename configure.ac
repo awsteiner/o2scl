@@ -29,7 +29,6 @@ AC_C_INLINE
 AC_TYPE_SIZE_T
 
 # Checks for library functions.
-AC_FUNC_MALLOC
 AC_FUNC_SELECT_ARGTYPES
 
 # Check for popen
