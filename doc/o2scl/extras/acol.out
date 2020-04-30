@@ -53,11 +53,12 @@ the x- and y-grid values which are referred to by name.
 > commands
 Command list:
 
-alias       constant    generic     internal    quit        show-units  
-autocorr    create      get         license     read        slack       
-calc        download    get-conv    no-intro    run         type        
-clear       exit        help        output      set         version     
-commands    filelist    interactive preview     shell       warranty    
+alias       create      get-conv    no-intro    set         warranty    
+autocorr    download    h5-copy     output      shell       
+calc        exit        help        preview     show-units  
+clear       filelist    interactive quit        slack       
+commands    generic     internal    read        type        
+constant    get         license     run         version     
 
 # -----------------------------------------------------------------
 # Use 'create' to create a table with one column

@@ -1848,12 +1848,14 @@ namespace o2scl {
       or if all of the first \c n elements in \c x are not finite,
       then the error handler will be called.
       
-      This function works for all classes \c vec_t where an operator[]
-      is defined which returns a double (either as a value or a
-      reference).
+      This function works for all vector types \c vec_t with an
+      <tt>operator[]</tt> method which returns a floating point number
+      of type fp_t (either as a value or a reference), and which is
+      composed of a floating point number of type \c fp_t for which
+      the function \c o2abs() is defined.
   */
-  template<class vec_t>
-    size_t vector_lookup(size_t n, const vec_t &x, double x0) {
+  template<class vec_t, class fp_t>
+    size_t vector_lookup(size_t n, const vec_t &x, fp_t x0) {
     if (n==0) {
       O2SCL_ERR("Empty vector in function vector_lookup().",
 		exc_einval);
@@ -1866,12 +1868,12 @@ namespace o2scl {
 		 "function vector_lookup()",exc_einval);
       return 0;
     }
-    double best=x[i], bdiff=fabs(x[i]-x0);
+    fp_t best=x[i], bdiff=o2abs(x[i]-x0);
     for(;i<n;i++) {
-      if (std::isfinite(x[i]) && fabs(x[i]-x0)<bdiff) {
+      if (std::isfinite(x[i]) && o2abs(x[i]-x0)<bdiff) {
 	row=i;
 	best=x[i];
-	bdiff=fabs(x[i]-x0);
+	bdiff=o2abs(x[i]-x0);
       }
     }
     return row;
@@ -1887,11 +1889,34 @@ namespace o2scl {
       
       This function works for all classes \c vec_t with a
       <tt>size()</tt> method and where an operator[] is defined which
-      returns a double (either as a value or a reference).
+      returns a fp_t (either as a value or a reference), and which is
+      composed of a floating point number of type \c fp_t for which
+      the function \c o2abs() is defined.
   */
-  template<class vec_t>
-    size_t vector_lookup(const vec_t &x, double x0) {
+  template<class vec_t, class fp_t>
+    size_t vector_lookup(const vec_t &x, fp_t x0) {
     return vector_lookup(x.size(),x,x0);
+  }
+
+  /** \brief Search for \c x0 in the first \c n elements of
+      \c x, returning false if not found
+  */
+  template<class vec_t, class data_t>
+    bool vector_search(size_t n, const vec_t &x, data_t x0, size_t &i) {
+    for(size_t j=0;j<n;j++) {
+      if (x[j]==x0) {
+	i=j;
+	return true;
+      }
+    }
+    return false;
+  }
+
+  /** \brief Search for \c x0 in \c x, returning false if not found
+  */
+  template<class vec_t, class data_t>
+    bool vector_search(const vec_t &x, data_t x0, size_t &i) {
+    return vector_search(x.size(),x,x0,i);
   }
 
   /** \brief Lookup an element in the first $(m,n)$ entries in a matrix
