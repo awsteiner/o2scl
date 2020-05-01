@@ -1796,7 +1796,7 @@ namespace o2scl {
       a misalignment between the number of columns in the 
       table and the number of data points in any line, then
       some debugging information is sent to <tt>cout</tt>.
-      When verbose is 2 or larger, 
+      When verbose is 2 or larger, ... (FIXME)
 
       \note This class is experimental.
 
@@ -2786,7 +2786,7 @@ namespace o2scl {
 	  ret_value=this->mcmc_done;
 	  
 	} else {
-	  
+
 	  // First, double check that the table has the right
 	  // number of columns
 	  if (line.size()!=table->get_ncolumns()) {
@@ -2803,6 +2803,13 @@ namespace o2scl {
 	    }
 	    O2SCL_ERR("Table misalignment in mcmc_para_table::add_line().",
 		      exc_einval);
+	  }
+	  
+	  if (this->verbose>=4) {
+	    for(size_t i=0;i<line.size();i++) {
+	      std::cout << table->get_column_name(i) << " "
+	      << line[i] << std::endl;
+	    }
 	  }
 	  
 	  // Set the row
