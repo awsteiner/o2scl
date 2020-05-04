@@ -24,6 +24,7 @@
 
 #include <o2scl/cloud_file.h>
 #include <o2scl/vector_derint.h>
+#include <o2scl/cursesw.h>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
@@ -1648,7 +1649,12 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
   //-------------------------------------------------------------------
   // Try to get screen width
   
-  int ncol=80;
+  int nrow, ncol=80;
+#ifdef O2SCL_READLINE
+  // Use curses
+  get_screen_size_curses(nrow,ncol);
+#else
+  // If not, attempt to obtain the result from the environment
   char *ncstring=getenv("COLUMNS");
   if (ncstring) {
     int nc2;
@@ -1660,6 +1666,7 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
 	   << " as a positive number of columns." << endl;
     }
   }
+#endif
   
   set_swidth(ncol);
 

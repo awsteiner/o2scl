@@ -86,7 +86,13 @@ namespace o2scl {
     
   };
 
+  /** \brief Use curses to determine window size
+   */
+  void get_screen_size_curses(int &row, int &col);
+
 #endif
+
+  void get_screen_size_tput(int &row, int &col);
 
 #ifndef DOXYGEN_NO_O2NS
 }

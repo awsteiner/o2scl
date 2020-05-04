@@ -285,7 +285,9 @@
 
     - O2SCL_READLINE - Internal flag to tell the makefiles if GNU
     readline support should be included in <tt>acol</tt>. The end-user
-    should not need to use this.
+    should not need to use this, as this define constant is automatically
+    defined by the ./configure script unless the --disable-readline
+    argument is given.
 
     - O2SCL_PLAIN_HDF5_HEADER - If true, assume HDF5 include statements 
     should be of the form <tt>#include &lt;hdf5.h&gt;</tt> independent

@@ -56,6 +56,10 @@ int main(int argc, char *argv[]) {
     cout << "Character was: " << ch2 << endl;
   }
 
+  int row, col;
+  o2scl::get_screen_size(row,col);
+  cout << row << " " << col << endl;
+  
 #endif
   
   t.report();

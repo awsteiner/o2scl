@@ -23,6 +23,7 @@
 #include <cctype>
 
 #include <o2scl/cursesw.h>
+#include <o2scl/string_conv.h>
 
 #include "curses.h"
 
@@ -193,4 +194,21 @@ void cursesw::cw_printw(std::string s) {
   return;
 }
 
+void o2scl::get_screen_size_curses(int &row, int &col) {
+  // Use the curses function
+  initscr();
+  getmaxyx(stdscr,row,col);
+  endwin();
+  return;
+}
+
 #endif
+
+void o2scl::get_screen_size_tput(int &row, int &col) {
+  string s_row, s_col;
+  pipe_cmd_string("tput lines",s_row);
+  pipe_cmd_string("tput cols",s_col);
+  row=o2scl::stoi(s_row);
+  col=o2scl::stoi(s_col);
+  return;
+}
