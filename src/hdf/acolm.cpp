@@ -1182,7 +1182,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=19;
+  static const int narr=20;
 
   string type_list_str;
   for(size_t i=0;i<type_list.size()-1;i++) {
@@ -1235,6 +1235,9 @@ int acol_manager::setup_options() {
     {0,"clear","Clear the current object.",0,0,"",
      "Deallocate the memory associated with the current object.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_clear),
+     both},
+    {0,"nrf","",-1,-1,"","",
+     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nrf),
      both},
     {'c',"create","Create an object.",0,-1,"<type> [...]",
      ((string)"Create a new object of type <type>. ")+
