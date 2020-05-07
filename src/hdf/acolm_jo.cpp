@@ -125,7 +125,7 @@ int acol_manager::comm_nrf(std::vector<std::string> &sv,
 
   table3d_obj.clear();
 
-  if (sv.size()<15) {
+  if (sv.size()<12) {
     cerr << "Not enough arguments for nrf()." << endl;
     return 2;
   }
@@ -141,16 +141,17 @@ int acol_manager::comm_nrf(std::vector<std::string> &sv,
   string dfxdy=sv[9];
   string dfydx=sv[10];
   string dfydy=sv[11];
-  string red_func=sv[12];
-  string green_func=sv[13];
-  string blue_func=sv[14];
 
   uniform_grid<double> grid_x=uniform_grid_end<double>(x_min,x_max,n_grid-1);
   uniform_grid<double> grid_y=uniform_grid_end<double>(y_min,y_max,n_grid-1);
 
   table3d_obj.set_xy("x",grid_x,"y",grid_y);
+  table3d_obj.new_slice("it");
+  table3d_obj.new_slice("root");
+  table3d_obj.set_slice_all("it",0.0);
+  table3d_obj.set_slice_all("root",0.0);
 
-  vector<size_t> max_count;
+  vector<size_t> max_count, min_count;
 
   vector<double> x_roots, y_roots;
   calculator c_fx, c_fy, c_dfxdx, c_dfxdy, c_dfydx, c_dfydy;
@@ -162,32 +163,13 @@ int acol_manager::comm_nrf(std::vector<std::string> &sv,
   c_dfydy.compile(dfydy.c_str());
   std::map<std::string, double> vars;
   
-  static const size_t kmax=10000;
+  static const size_t kmax=1000;
 
-  cout.setf(ios::showpos);
-
-  bool debug=false;
-  
   for(size_t i=0;i<n_grid;i++) {
-    cout << i+1 << "/" << n_grid << endl;
+    cout << "nrf progress: " << i+1 << "/" << n_grid << endl;
     for(size_t j=0;j<n_grid;j++) {
       double x=grid_x[i];
       double y=grid_y[j];
-      if (debug) {
-	if (j==0) {
-	  x=1.0+1.0e-4;
-	  y=0.0+1.0e-4;
-	} else if (j==1) {
-	  x=-1.0+1.0e-4;
-	  y=0.0+1.0e-4;
-	} else if (j==2) {
-	  x=0.0+1.0e-4;
-	  y=1.0+1.0e-4;
-	} else if (j==3) {
-	  x=0.0+1.0e-4;
-	  y=-1.0+1.0e-4;
-	}
-      }
       bool found=false;
       for(size_t k=0;k<kmax && found==false;k++) {
 	vars["x"]=x;
@@ -210,10 +192,6 @@ int acol_manager::comm_nrf(std::vector<std::string> &sv,
 	// The NR step
 	double x1=x-ai*fxd-bi*fyd;
 	double y1=y-ci*fxd-di*fyd;
-	if (debug) {
-	  cout << k << " " << x << " " << y << " " << x1 << " " << y1 << endl;
-	}
-	//exit(-1);
 	if (fabs(x1-x)+fabs(y1-y)<1.0e-14) {
 	  found=true;
 	  bool root_found=false;
@@ -221,15 +199,14 @@ int acol_manager::comm_nrf(std::vector<std::string> &sv,
 	    if (fabs(x1-x_roots[m])<1.0e-13 &&
 		fabs(y1-y_roots[m])<1.0e-13) {
 	      root_found=true;
-	      table3d_obj.set(i,j,m,k+1);
-	      if (k+1>max_count[m]) max_count[m]=k+1;
-	      /*
-		cout << "found: " << x_roots[m] << " " << y_roots[m] << " "
-		<< x1 << " " << y1 << " " << k << " "
-		<< max_count[m] << endl;
-		char ch;
-		cin >> ch;
-	      */
+	      table3d_obj.set(i,j,"it",k+1);
+	      table3d_obj.set(i,j,"root",m+1);
+	      if (k+1>max_count[m]) {
+		max_count[m]=k+1;
+	      }
+	      if (k+1<min_count[m]) {
+		min_count[m]=k+1;
+	      }
 	    }
 	  }
 	  if (root_found==false) {
@@ -237,60 +214,30 @@ int acol_manager::comm_nrf(std::vector<std::string> &sv,
 	    x_roots.push_back(x1);
 	    y_roots.push_back(y1);
 	    max_count.push_back(k+1);
-	    table3d_obj.new_slice(((string)"i"+o2scl::szttos(m+1)));
-	    table3d_obj.set_slice_all(((string)"i"+o2scl::szttos(m+1)),0.0);
-	    table3d_obj.set(i,j,m,k+1);
-	    cout << "New root: " << x1 << " " << y1 << std::endl;
-	    //" " << k << " "
-	    //<< max_count[m] << endl;
-	    //char ch;
-	    //cin >> ch;
+	    min_count.push_back(k+1);
+	    table3d_obj.set(i,j,"it",k+1);
+	    table3d_obj.set(i,j,"root",m+1);
 	  }
 	}
 	x=x1;
 	y=y1;
       }
       if (found==false) {
-	//table3d_obj.set(i,j,"conv",-1.0);
+	table3d_obj.set(i,j,"it",kmax);
       }
-      if (debug && j==3) exit(-1);
     }
   }
 
-  calculator f_r, f_g, f_b;
-  f_r.compile(red_func.c_str());
-  f_g.compile(green_func.c_str());
-  f_b.compile(blue_func.c_str());
-  std::map<std::string, double> vars2;
-
-  table3d_obj.new_slice("r");
-  table3d_obj.new_slice("g");
-  table3d_obj.new_slice("b");
-  
   for(size_t m=0;m<max_count.size();m++) {
-    vars2[((string)"m")+o2scl::szttos(m+1)]=max_count[m];
-    table3d_obj.add_constant(((string)"m")+o2scl::szttos(m+1),max_count[m]);
-  }
-  
-  for(size_t i=0;i<n_grid;i++) {
-    cout << i+1 << "/" << n_grid << endl;
-    for(size_t j=0;j<n_grid;j++) {
-      //bool all_zero=true;
-      for(size_t m=0;m<x_roots.size();m++) {
-	if (table3d_obj.get(i,j,m)>0.01) {
-	  //all_zero=false;
-	} else {
-	  table3d_obj.set(i,j,m,max_count[m]);
-	}
-	table3d_obj.set(i,j,m,max_count[m]-table3d_obj.get(i,j,m));
-	vars2[((string)"i")+o2scl::szttos(m+1)]=table3d_obj.get(i,j,m);
-      }
-      table3d_obj.set(i,j,"r",f_r.eval(&vars2));
-      table3d_obj.set(i,j,"g",f_g.eval(&vars2));
-      table3d_obj.set(i,j,"b",f_b.eval(&vars2));
-    }
+    table3d_obj.add_constant(((string)"max_")+o2scl::szttos(m+1),
+			     max_count[m]);
+    table3d_obj.add_constant(((string)"min_")+o2scl::szttos(m+1),
+			     min_count[m]);
   }
 
+  table3d_obj.add_constant("k_max",kmax);
+  table3d_obj.add_constant("n_roots",x_roots.size());
+  
   // Delete previous object
   command_del(type);
   clear_obj();
