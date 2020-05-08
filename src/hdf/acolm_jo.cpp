@@ -167,7 +167,7 @@ int acol_manager::comm_nrf(std::vector<std::string> &sv,
 
   for(size_t i=0;i<n_grid;i++) {
     cout << "nrf progress: " << i+1 << "/" << n_grid << endl;
-    for(size_t j=0;j<n_grid;j++) {
+    for(size_t j=5;j<n_grid;j++) {
       double x=grid_x[i];
       double y=grid_y[j];
       bool found=false;
@@ -177,21 +177,27 @@ int acol_manager::comm_nrf(std::vector<std::string> &sv,
 	// x_{n+1} = x_n - J(x_n)^{-1} f(x_n)
 	double fxd=c_fx.eval(&vars);
 	double fyd=c_fy.eval(&vars);
-	//cout << fx << " " << fy << " " << fxd << " " << fyd << endl;
+	cout << fxd << " " << fyd << endl;
 	// The Jacobian
 	double a=c_dfxdx.eval(&vars);
 	double b=c_dfxdy.eval(&vars);
 	double c=c_dfydx.eval(&vars);
 	double d=c_dfydy.eval(&vars);
+	std::cout << a << " " << b << " " << c << " " << d << std::endl;
 	// The inverse of the Jacobian
 	double det=a*d-b*c;
 	double ai=d/det;
 	double bi=-b/det;
 	double ci=-c/det;
 	double di=a/det;
+	std::cout << ai << " " << bi << " "
+		  << ci << " " << di << std::endl;
 	// The NR step
 	double x1=x-ai*fxd-bi*fyd;
 	double y1=y-ci*fxd-di*fyd;
+	std::cout << x << " " << y << std::endl;
+	std::cout << x1 << " " << y1 << std::endl;
+	exit(-1);
 	if (fabs(x1-x)+fabs(y1-y)<1.0e-14) {
 	  found=true;
 	  bool root_found=false;

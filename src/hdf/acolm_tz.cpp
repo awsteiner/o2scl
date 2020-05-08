@@ -426,10 +426,10 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     size_t i2=0;
     for(size_t i=0;i<rank;i++) {
       if (i!=ix_x && i!=ix_y) {
-	values[i]=o2scl::stod(in2[i2]);
 	if (verbose>0) {
 	  cout << "Fixing value for index " << i << " to " << in2[i2] << endl;
 	}
+	values[i]=o2scl::function_to_double(in2[i2]);
 	i2++;
       }
     }
