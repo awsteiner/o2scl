@@ -49,6 +49,12 @@ namespace o2scl {
     
   public:
 
+    int verbose;
+
+    fract() {
+      verbose=1;
+    }
+    
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
@@ -89,9 +95,12 @@ namespace o2scl {
       vec_t x0(2), x1(2), fx(2);
       mat_t J(2,2);
 
+      //#ifdef O2SCL_OPENMP
+      //#pragma omp parallel for
+      //#endif
       for(size_t i=0;i<t3d.get_nx();i++) {
 
-	if ((i+1)%10==0) {
+	if (verbose>0 && (i+1)%10==0) {
 	  std::cout << "nrf progress: " << i+1 << "/" << t3d.get_nx()
 		    << std::endl;
 	}
