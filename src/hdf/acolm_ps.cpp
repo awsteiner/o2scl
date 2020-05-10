@@ -1135,6 +1135,42 @@ int acol_manager::comm_slice(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
+int acol_manager::comm_slice_hist(std::vector<std::string> &sv,
+				  bool itive_com) {
+
+  if (type=="table3d") {
+
+    if (sv.size()<2) {
+      cerr << "Command 'slice-hist' needs a slice argument." << endl;
+      return 1;
+    }
+
+    double min=matrix_min_value<ubmatrix,double>
+      (table3d_obj.get_slice(sv[1]));
+    double max=matrix_max_value<ubmatrix,double>
+      (table3d_obj.get_slice(sv[1]));
+    uniform_grid<double> grid=uniform_grid_end<double>(min,max,40);
+    hist_obj.set_bin_edges(grid);
+    for(size_t i=0;i<table3d_obj.get_nx();i++) {
+      for(size_t j=0;j<table3d_obj.get_ny();j++) {
+	hist_obj.update(table3d_obj.get(i,j,sv[1]));
+      }
+    }
+
+    command_del(type);
+    clear_obj();
+    command_add("hist");
+    type="hist";
+    
+  } else {
+    cerr << "Command 'slice-hist' does not work with "
+	 << type << " objects." << endl;
+  }
+    
+  
+  return 0;
+}
+
 int acol_manager::comm_set_data(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {

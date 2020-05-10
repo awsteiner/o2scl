@@ -320,7 +320,6 @@ namespace o2scl_acol {
     
     /// Create a table from a column of equally spaced values
     virtual int comm_create(std::vector<std::string> &sv, bool itive_com);
-    virtual int comm_nrf(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Set the grid for a \ref o2scl::tensor_grid object
      */
@@ -426,6 +425,7 @@ namespace o2scl_acol {
 	\ref o2scl::table object
     */
     virtual int comm_slice(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_slice_hist(std::vector<std::string> &sv, bool itive_com);
 
     /// Fit two columns to a function
     virtual int comm_fit(std::vector<std::string> &sv, bool itive_com);

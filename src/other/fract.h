@@ -81,10 +81,22 @@ namespace o2scl {
 	      vec2_size_t &max_count) {
       
       t3d.clear();
-      roots_x.clear();
-      roots_y.clear();
-      min_count.clear();
-      max_count.clear();
+
+      if (roots_x.size()!=roots_y.size()) {
+	O2SCL_ERR("Root coordinate vectors do not have the same size.",
+		  o2scl::exc_einval);
+      }
+
+      if (min_count.size()!=roots_x.size()) {
+	min_count.resize(roots_x.size());
+      } 
+      if (max_count.size()!=roots_x.size()) {
+	max_count.resize(roots_x.size());
+      } 
+      for(size_t i=0;i<roots_x.size();i++) {
+	min_count[i]=kmax;
+	max_count[i]=0;
+      }
 
       t3d.set_xy("x",gx,"y",gy);
       t3d.new_slice("it");

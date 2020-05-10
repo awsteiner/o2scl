@@ -446,12 +446,20 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="table3d") {
 
     vector<string> pr, in;
-    pr.push_back("Enter slice name");
-    pr.push_back("Enter first index");
-    pr.push_back("Enter second index");
-    pr.push_back("Enter new value (or \"none\") to keep original value");
-    int ret=get_input(sv,pr,in,"entry",itive_com);
-    if (ret!=0) return ret;
+    if (sv.size()==4) {
+      // If there are three arguments, then presume a new value
+      // wasn't specified, so we have enough information to proceed
+      in.push_back(sv[1]);
+      in.push_back(sv[2]);
+      in.push_back(sv[3]);
+    } else {
+      pr.push_back("Enter slice name");
+      pr.push_back("Enter first index");
+      pr.push_back("Enter second index");
+      pr.push_back("Enter new value (or \"none\") to keep original value");
+      int ret=get_input(sv,pr,in,"entry",itive_com);
+      if (ret!=0) return ret;
+    }
 
     int xix;
     int ret2=o2scl::stoi_nothrow(in[1],xix);
