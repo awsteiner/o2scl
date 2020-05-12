@@ -744,17 +744,26 @@ extern "C" {
 				  const double *&yg,
 				  const double *&zg, const double *&data);
   
-  /** \brief Return the size and a pointer to the column
-      named \c col_name in a \ref o2scl::table object
+  /** \brief Return the size and a pointer to the histogram
+      representative x values in a \ref o2scl::hist object
 
-      This function is used in o2graph_plotter::plot().
+      This function is used in o2graph_plotter::plot() and
+      o2graph_plotter::hist_plot().
    */
   int o2scl_acol_get_hist_reps(void *vp, int &n, double *&ptr);
 
-  /** \brief Return the size and a pointer to the column
-      named \c col_name in a \ref o2scl::table object
+  /** \brief Return the size and a pointer to the histogram bin edges
+      in a \ref o2scl::hist object
 
-      This function is used in o2graph_plotter::plot().
+      This function is used in o2graph_plotter::hist_plot().
+   */
+  int o2scl_acol_get_hist_bins(void *vp, int &n, double *&ptr);
+
+  /** \brief Return the size and a pointer to the histogram weights in
+      a \ref o2scl::hist object
+
+      This function is used in o2graph_plotter::plot() and
+      o2graph_plotter::hist_plot().
    */
   int o2scl_acol_get_hist_wgts(void *vp, int &n, double *&ptr);
 

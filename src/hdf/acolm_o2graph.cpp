@@ -328,6 +328,20 @@ int o2scl_acol_get_hist_wgts(void *vp, int &n, double *&ptr) {
   return 0;
 }
 
+int o2scl_acol_get_hist_bins(void *vp, int &n, double *&ptr) {
+  o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+  if (amp->type!="hist") return 1;
+  n=amp->hist_obj.size();
+  amp->ytemp.resize(n+1);
+  for(int i=0;i<n;i++) {
+    amp->ytemp[i]=amp->hist_obj.get_bin_low_i(i);
+  }
+  amp->ytemp[n]=amp->hist_obj.get_bin_high_i(n-1);
+  n++;
+  ptr=&(amp->ytemp[0]);
+  return 0;
+}
+
 int o2scl_acol_contours_n(void *vp) {
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
   return amp->cont_obj.size();
