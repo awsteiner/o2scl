@@ -105,6 +105,12 @@ namespace o2scl {
     /// Return true if \o2 was installed with OpenMP support
     bool openmp_support();
 
+    /// Return true if \o2 was installed with readline support
+    bool readline_support();
+
+    /// Return true if \o2 was installed with ncurses support
+    bool ncurses_support();
+
     /// Return true if \o2 was installed with support for GSL V2.0+
     bool gsl2_support();
 

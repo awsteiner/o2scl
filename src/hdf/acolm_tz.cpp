@@ -426,10 +426,10 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     size_t i2=0;
     for(size_t i=0;i<rank;i++) {
       if (i!=ix_x && i!=ix_y) {
-	values[i]=o2scl::stod(in2[i2]);
 	if (verbose>0) {
 	  cout << "Fixing value for index " << i << " to " << in2[i2] << endl;
 	}
+	values[i]=o2scl::function_to_double(in2[i2]);
 	i2++;
       }
     }
@@ -725,6 +725,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << "Python support: " << o2scl_settings.python_support() << endl;
   cout << "GSL V2.0+ support: " << o2scl_settings.gsl2_support() << endl;
   cout << "OpenMP support: " << o2scl_settings.openmp_support() << endl;
+  cout << "Readline support: " << o2scl_settings.readline_support() << endl;
+  cout << "Ncurses support: " << o2scl_settings.ncurses_support() << endl;
   cout << "Data directory: " << o2scl_settings.get_data_dir() << endl;
   cout << "System type: " << o2scl_settings.system_type() << endl;
   cout << endl;

@@ -206,6 +206,22 @@ bool lib_settings_class::openmp_support() {
 #endif
 }
 
+bool lib_settings_class::readline_support() {
+#ifdef O2SCL_READLINE
+  return true;
+#else
+  return false;
+#endif
+}
+
+bool lib_settings_class::ncurses_support() {
+#ifdef O2SCL_NCURSES
+  return true;
+#else
+  return false;
+#endif
+}
+
 bool lib_settings_class::gsl2_support() {
 #ifdef O2SCL_GSL2
   return true;

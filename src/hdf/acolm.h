@@ -320,7 +320,6 @@ namespace o2scl_acol {
     
     /// Create a table from a column of equally spaced values
     virtual int comm_create(std::vector<std::string> &sv, bool itive_com);
-    virtual int comm_nrf(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Set the grid for a \ref o2scl::tensor_grid object
      */
@@ -426,6 +425,7 @@ namespace o2scl_acol {
 	\ref o2scl::table object
     */
     virtual int comm_slice(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_slice_hist(std::vector<std::string> &sv, bool itive_com);
 
     /// Fit two columns to a function
     virtual int comm_fit(std::vector<std::string> &sv, bool itive_com);
@@ -744,17 +744,26 @@ extern "C" {
 				  const double *&yg,
 				  const double *&zg, const double *&data);
   
-  /** \brief Return the size and a pointer to the column
-      named \c col_name in a \ref o2scl::table object
+  /** \brief Return the size and a pointer to the histogram
+      representative x values in a \ref o2scl::hist object
 
-      This function is used in o2graph_plotter::plot().
+      This function is used in o2graph_plotter::plot() and
+      o2graph_plotter::hist_plot().
    */
   int o2scl_acol_get_hist_reps(void *vp, int &n, double *&ptr);
 
-  /** \brief Return the size and a pointer to the column
-      named \c col_name in a \ref o2scl::table object
+  /** \brief Return the size and a pointer to the histogram bin edges
+      in a \ref o2scl::hist object
 
-      This function is used in o2graph_plotter::plot().
+      This function is used in o2graph_plotter::hist_plot().
+   */
+  int o2scl_acol_get_hist_bins(void *vp, int &n, double *&ptr);
+
+  /** \brief Return the size and a pointer to the histogram weights in
+      a \ref o2scl::hist object
+
+      This function is used in o2graph_plotter::plot() and
+      o2graph_plotter::hist_plot().
    */
   int o2scl_acol_get_hist_wgts(void *vp, int &n, double *&ptr);
 

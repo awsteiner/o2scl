@@ -123,9 +123,9 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   {
     vector<std::string> itmp={"cat","contours","deriv-x","deriv-y",
 			      "function","entry","entry-grid","insert",
-			      "interp","stats",
+			      "interp","stats","select",
 			      "list","max","min","rename","set-data",
-			      "slice","sum","x-name","y-name"};
+			      "slice","slice-hist","sum","x-name","y-name"};
     type_comm_list.insert(std::make_pair("table3d",itmp));
   }
   {
@@ -515,8 +515,20 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="table3d") {
     
-    static const size_t narr=19;
+    static const size_t narr=21;
     comm_option_s options_arr[narr]={
+      {'s',"select","Select slices for a new table3d object.",-1,-1,
+       "<slice spec.>",
+       ((string)"Select creates a new table3d from the present table3d, ")+
+       "including only the slices specified in <slice spec.>. The slice "+
+       "specification is a list of slice names, functions, or patterns "+
+       "which match "+
+       "the slice names. Patterns must be preceeded by a colon ':' "+
+       "and can use wildcards like '*' and '?'. All of the rows of data "+
+       "are copied over. If functions are specified, the result can be "+
+       "named using '='. ",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_select),
+       both},
       {0,"cat",
        "Concatenate data from a second table3d onto current table3d.",0,2,
        "<file> [name]",((string)"Add all slices from the ")+
@@ -609,6 +621,10 @@ void acol_manager::command_add(std::string new_type) {
        "slices in the table3d object to create a table with a column "+
        "for each slice.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slice),
+       both},
+      {0,"slice-hist","Construct a histogram from a slice.",1,1,
+       "<slice>","",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slice_hist),
        both},
       {0,"stats","Show slice statistics.",0,1,"<slice>",
        "Output the size, sum, max and min of <slice>. ",
@@ -1182,7 +1198,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=20;
+  static const int narr=19;
 
   string type_list_str;
   for(size_t i=0;i<type_list.size()-1;i++) {
@@ -1235,9 +1251,6 @@ int acol_manager::setup_options() {
     {0,"clear","Clear the current object.",0,0,"",
      "Deallocate the memory associated with the current object.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_clear),
-     both},
-    {0,"nrf","",-1,-1,"","",
-     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nrf),
      both},
     {'c',"create","Create an object.",0,-1,"<type> [...]",
      ((string)"Create a new object of type <type>. ")+
@@ -1653,7 +1666,6 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
   // Try to get screen width
   
   int nrow, ncol=80;
-  //#ifdef O2SCL_READLINE
   // Use curses
   // AWS: this prints out a bunch of crazy characters on Ubuntu
   //get_screen_size_curses(nrow,ncol);

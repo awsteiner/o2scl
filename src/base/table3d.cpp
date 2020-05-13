@@ -1270,9 +1270,12 @@ const vector<boost::numeric::ublas::matrix<double> > &table3d::get_data() {
 }
 
 void table3d::function_slice(string function, string scol) {
-  
-  new_slice(scol);
-  size_t ic=lookup_slice(scol);
+
+  size_t ic;
+  if (is_slice(scol,ic)==false) {
+    new_slice(scol);
+    ic=lookup_slice(scol);
+  }
 
   function_matrix(function,list[ic]);
 

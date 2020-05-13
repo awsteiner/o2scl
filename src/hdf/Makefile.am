@@ -56,6 +56,12 @@ else
 ADDINC = 
 endif
 
+if O2SCL_NCURSES
+ADDINC = -DO2SCL_NCURSES
+else 
+ADDINC = 
+endif
+
 if O2SCL_LINUX
 O2SCL_LINUX_MVAR = -DO2SCL_LINUX
 else 
