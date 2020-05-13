@@ -144,7 +144,7 @@ AC_CHECK_LIB([gsl], [gsl_vector_get], [],
 	],[])
 
 # ----------------------------------------------
-# Check for Readline libraries
+# Check for Readline library
 # ----------------------------------------------
 
 AC_ARG_ENABLE(readline,
@@ -166,6 +166,36 @@ AS_IF([test "x$enable_readline" != "xno"], [
 AC_CHECK_LIB([readline], [add_history], [],
 	[echo ""
         echo "Readline not found. "
+	echo ""
+	echo -n " The present value of LDFLAGS is: "
+	echo $LDFLAGS
+	],[])
+
+])
+
+# ----------------------------------------------
+# Check for ncurses library
+# ----------------------------------------------
+
+AC_ARG_ENABLE(ncurses,
+[  --enable-ncurses        Include ncurses support @<:@default=yes@:>@],
+	[case "${enableval}" in
+	yes) ncurses=true ;;
+	no)  ncurses=false ;;
+	*) AC_MSG_ERROR(bad value ${enableval} for --enable-ncurses) ;;
+	esac],[ncurses=true])
+
+AM_CONDITIONAL(O2SCL_NCURSES, test x$ncurses = xtrue)
+
+# ----------------------------------------------
+# If enabled, check for the ncurses library
+# ----------------------------------------------
+
+AS_IF([test "x$enable_ncurses" != "xno"], [
+
+AC_CHECK_LIB([ncurses], [initscr], [],
+	[echo ""
+        echo "Ncurses not found. "
 	echo ""
 	echo -n " The present value of LDFLAGS is: "
 	echo $LDFLAGS

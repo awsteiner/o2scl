@@ -1666,7 +1666,7 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
   // Try to get screen width
   
   int nrow, ncol=80;
-#ifdef O2SCL_READLINE
+#ifdef O2SCL_NCURSES
   // Use curses
   get_screen_size_curses(nrow,ncol);
 #else

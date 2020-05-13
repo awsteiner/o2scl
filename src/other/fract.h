@@ -33,6 +33,10 @@
 #include <o2scl/err_hnd.h>
 #include <o2scl/table3d.h>
 
+#ifdef O2SCL_OPENMP
+#include <omp.h>
+#endif
+
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
@@ -104,17 +108,23 @@ namespace o2scl {
       t3d.set_slice_all("it",0.0);
       t3d.set_slice_all("root",0.0);
 
-      vec_t x0(2), x1(2), fx(2);
-      mat_t J(2,2);
-
-      //#ifdef O2SCL_OPENMP
-      //#pragma omp parallel for
-      //#endif
+#ifdef O2SCL_OPENMP
+#pragma omp parallel for
+#endif
       for(size_t i=0;i<t3d.get_nx();i++) {
 
+	vec_t x0(2), x1(2), fx(2);
+	mat_t J(2,2);
+	
 	if (verbose>0 && (i+1)%10==0) {
+#ifdef O2SCL_OPENMP
+	  std::cout << "nrf progress: " << i+1 << "/" << t3d.get_nx()
+		    << " (" << omp_get_thread_num() << "/"
+		    << omp_get_num_threads() << " threads)." << std::endl;
+#else
 	  std::cout << "nrf progress: " << i+1 << "/" << t3d.get_nx()
 		    << std::endl;
+#endif
 	}
 	
 	for(size_t j=0;j<t3d.get_ny();j++) {
@@ -163,6 +173,14 @@ namespace o2scl {
 		}
 	      }
 	      if (root_found==false) {
+#ifdef O2SCL_OPENMP
+		std::cout << x0[0] << " " << x0[1] << std::endl;
+		std::cout << x1[0] << " " << x1[1] << std::endl;
+		o2scl::vector_out(std::cout,roots_x,true);
+		o2scl::vector_out(std::cout,roots_y,true);
+		O2SCL_ERR2("Fract cannot handle new roots when ",
+			   "OpenMP is enabled.",o2scl::exc_einval);
+#else
 		size_t m=roots_x.size();
 		roots_x.push_back(x1[0]);
 		roots_y.push_back(x1[1]);
@@ -170,6 +188,7 @@ namespace o2scl {
 		min_count.push_back(k+1);
 		t3d.set(i,j,"it",k+1);
 		t3d.set(i,j,"root",m+1);
+#endif
 	      }
 	    }
 

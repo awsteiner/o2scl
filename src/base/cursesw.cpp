@@ -30,7 +30,7 @@
 using namespace std;
 using namespace o2scl;
 
-#ifdef O2SCL_READLINE
+#ifdef O2SCL_NCURSES
 
 cursesw::cursesw() {
 
