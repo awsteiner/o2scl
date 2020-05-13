@@ -1653,10 +1653,12 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
   // Try to get screen width
   
   int nrow, ncol=80;
-#ifdef O2SCL_READLINE
+  //#ifdef O2SCL_READLINE
   // Use curses
-  get_screen_size_curses(nrow,ncol);
-#else
+  // AWS: this prints out a bunch of crazy characters on Ubuntu
+  //get_screen_size_curses(nrow,ncol);
+  //#else
+  
   // If not, attempt to obtain the result from the environment
   char *ncstring=getenv("COLUMNS");
   if (ncstring) {
@@ -1669,7 +1671,8 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
 	   << " as a positive number of columns." << endl;
     }
   }
-#endif
+  
+  //#endif
   
   set_swidth(ncol);
 
