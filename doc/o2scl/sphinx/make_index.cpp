@@ -16,6 +16,7 @@ int main(void) {
     ifstream fin(fname_in);
     
     std::set<std::string> list;
+    std::set<std::string> list_dup;
     
     while (!fin.eof()) {
       
@@ -57,9 +58,23 @@ int main(void) {
 	}
 	if (list.find(s)!=list.end()) {
 	  cout << "Multiple entry " << s << endl;
-	  return 1;
+	  list_dup.insert(s);
+	} else {
+	  list.insert(s);
 	}
-	list.insert(s);
+
+	// End of 'if (s.length()>0)'
+      }
+      
+      // End of 'while (!fin.eof())'
+    }
+
+    fin.close();
+
+    for (std::set<std::string>::itertor it=list.begin();
+	 it!=list.end();it++) {
+
+      if (list_dup.find(*it)==list_dup.end()) {
 	string fname_out="class/";
 	if (kk==1) fname_out="function/";
 	fname_out+=s+".rst";
@@ -79,6 +94,8 @@ int main(void) {
 	}
 	fout.close();
 
+      } else {
+	cout << "Skipping " << *it << endl;
       }
     }
     
