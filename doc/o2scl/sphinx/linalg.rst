@@ -40,7 +40,7 @@ Specializations for Armadillo and Eigen
 ---------------------------------------
 
 Armadillo and Eigen linear solvers are wrapped to have a consistent
-interface with the fallback \o2 linear solvers. See 
+interface with the fallback O\ :sub:`2`\ scl linear solvers. See 
 \ref o2scl_linalg::linear_solver_arma, 
 \ref o2scl_linalg::linear_solver_eigen_houseQR, 
 \ref o2scl_linalg::linear_solver_eigen_colQR, 
