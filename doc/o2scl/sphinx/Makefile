@@ -14,13 +14,22 @@ help:
 
 .PHONY: help Makefile
 
+function_list: empty
+	grep "kind=\"function\"" ../xml/index.xml | \
+		grep "refid=\"namespaceo2scl" > function_list
+
+clean:
+	rm -rf make_index
+
+class_list: empty
+	grep "kind=\"class\"" ../xml/index.xml > class_list
+
+make_index: empty
+	g++ -o make_index make_index.cpp
+
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
-%: Makefile
+html: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-function_list:
-	grep "kind=\"function\"" ../xml/index.xml > function_list
-
-class_list:
-	grep "kind=\"class\"" ../xml/index.xml > class_list
+empty:

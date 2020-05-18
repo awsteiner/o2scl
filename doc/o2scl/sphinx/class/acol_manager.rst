@@ -1,4 +1,4 @@
-acol_manager
-============
+Class acol_manager
+==================
 
 .. doxygenclass:: o2scl_acol::acol_manager

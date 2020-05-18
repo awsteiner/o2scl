@@ -1,4 +1,4 @@
-gen_test_number
-===============
+Class gen_test_number
+=====================
 
 .. doxygenclass:: o2scl::gen_test_number

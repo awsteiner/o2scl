@@ -1,4 +1,4 @@
-deriv_eqi
-=========
+Class deriv_eqi
+===============
 
 .. doxygenclass:: o2scl::deriv_eqi

@@ -1,4 +1,4 @@
-prob_dens_func
-==============
+Class prob_dens_func
+====================
 
 .. doxygenclass:: o2scl::prob_dens_func
