@@ -1,10 +1,19 @@
-o2scl
-=====
+Object-oriented Scientific Computing Library, O\ :sub:`2`\ scl
+==============================================================
 
-.. autoclass:: o2scl.root
+.. include:: intro_text.rst
 
 .. toctree::
    :maxdepth: 2
+
+   intro
+   download
+   install
+   usage
+   vecmat
+   linalg
+   interp
+   class_root
 
 * :ref:`genindex`
 * :ref:`modindex`

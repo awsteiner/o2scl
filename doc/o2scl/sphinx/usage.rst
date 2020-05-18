@@ -1,0 +1,290 @@
+General Usage
+=============
+
+Namespaces
+----------
+    
+Most of the classes reside in the namespace \c o2scl . Numerical
+constants (many of them based on the GSL constants) are placed in
+separate namespaces (o2scl_cgs, o2scl_cgsm, o2scl_mks, o2scl_mksa,
+and o2scl_const). The \o2 functions and classes for HDF5 output
+are in the \ref o2scl_hdf namespace. There are also two namespaces
+which hold integration coefficients, o2scl_inte_gk_coeffs and
+o2scl_inte_qng_coeffs. There are also some namespaces for the
+linear algebra functions, see \ref linalg_section for more
+information on these.
+
+Documentation conventions
+-------------------------
+
+In the following documentation, function parameters are denoted by
+\c parameter, except when used in mathematical formulas as in \f$
+\mathrm{variable} \f$ .
+
+Basic error handling
+--------------------
+
+Error handling is a hybrid approach combining GSL with C++
+exceptions. An abstract type has been defined which operates as a
+GSL-like error hander. The default error handler is a
+implementation of this abstract type which throws a C++ exception
+when an error is encountered. The various exceptions, and their
+correspondence with the GSL error codes, are given in the \ref
+exc_types_subsect section. By default in \o2, the default GSL
+error handler is replaced with the \o2 default error handler, i.e.
+GSL functions will throw C++ exceptions.
+
+Errors can be set by the user through the macros \ref O2SCL_ERR
+which calls the \o2 error handler. The error handler, \ref
+o2scl::err_hnd is a global pointer to an object of type \ref
+o2scl::err_hnd_type. There is a global default error handler, \ref
+o2scl::def_err_hnd, of type \ref o2scl::err_hnd_cpp, which throws
+C++ exceptions, and an alternate default error handler, \ref
+o2scl::alt_err_hnd, of type \ref o2scl::err_hnd_gsl, which outputs
+an error message and aborts execution. The global error handler
+can be replaced by simply assigning the address of a descendant of
+\ref o2scl::err_hnd_type to \ref o2scl::err_hnd.
+
+\o2 does not support any execution beyond the point at which the
+error handler is called. Many functions which would have had
+integer return values in GSL, now return ``void`` in \o2.
+Object destructors almost never call the error handler.
+Internally, \o2 does not use ``try`` blocks, but these can
+easily be effectively employed by an \o2 user.
+
+The C++ exception classes are also mapped to the list of GSL error
+codes (including a few extra ones for \o2), which is given in the
+documentation for the file \ref err_hnd.h and in \ref
+exc_types_subsect below.
+
+\comment
+Functionality similar to assert() is provided with the macro
+\ref O2SCL_ASSERT, which exits if its argument is non-zero, and 
+\ref O2SCL_BOOL_ASSERT which exits if its argument is false.
+\endcomment
+    
+One can instruct the library to use the GSL-like \o2 error
+handler \ref o2scl::alt_err_hnd by default, by defining the 
+constant ``O2SCL_USE_GSL_HANDLER``. This is also useful
+if one wants to compile without C++ exceptions (which does
+have a small overhead). 
+
+What is an error?
+-----------------
+
+\o2 assumes that errors are events which should happen
+infrequently. Error handling strategies are often time-consuming
+and they are not a replacement for normal code flow. However, even
+with this in mind, one can still distinguish a large spectrum of
+posibillities from "fatal" errors, those likely to corrupt the
+stack and/or cause a dreaded "segmentation fault" and "non-fatal"
+errors, those errors which might cause incorrect results, but
+might be somehow recoverable. One of the purposes of error
+handling is to decide if and how these different types of errors
+should be handled differently.
+
+Sometimes, it is undesirable to abort execution upon a failure to
+reach numerical convergence. While these failures are treated as
+errors (and by default an exception is thrown), some of the
+classes which attempt to reach numerical convergence have an
+option (e.g. \ref o2scl::mroot::err_nonconv) to turn this default
+behavior off for these convergence errors. To set these
+"convergence" errors in code provided by the user, the macros \ref
+O2SCL_CONV and \ref O2SCL_CONV_RET can be used. Functions which
+may have convergence errors sometimes return ``int``, to
+indicate which convergence error was returned when the value of
+``err_nonconv`` has been set to false.
+
+Of course, the standard \c try, \c catch mechanism of error
+handling may also be used for finer-grained control. 
+
+Another related issue is that \o2 often calls functions which are
+supplied by the user, these user-designed functions may create
+errors, and the library needs to decide how to deal with them,
+even though it knows little about what is actually happening
+inside these user-defined functions. For this reason, \o2 does not
+typically try to handle any exceptions or errors occuring in
+user-specified functions.
+
+GSL error codes and C++ exception types
+---------------------------------------
+
+See also the description of the error codes in \ref err_hnd.h .
+
+- o2scl::success=0, (no error thrown) 
+- o2scl::gsl_failure=-1, \ref o2scl::exc_exception 
+- o2scl::gsl_continue=-2, (no error thrown) 
+- o2scl::exc_edom=1, \ref o2scl::exc_range_error 
+- o2scl::exc_erange=2, \ref o2scl::exc_range_error 
+- o2scl::exc_efault=3, \ref o2scl::exc_runtime_error 
+- o2scl::exc_einval=4, \ref o2scl::exc_invalid_argument 
+- o2scl::exc_efailed=5, \ref o2scl::exc_exception 
+- o2scl::exc_efactor=6, \ref o2scl::exc_runtime_error 
+- o2scl::exc_esanity=7, \ref o2scl::exc_exception 
+- o2scl::exc_enomem=8, \ref o2scl::exc_runtime_error 
+- o2scl::exc_ebadfunc=9, \ref o2scl::exc_runtime_error 
+- o2scl::exc_erunaway=10, \ref o2scl::exc_runtime_error 
+- o2scl::exc_emaxiter=11, \ref o2scl::exc_runtime_error 
+- o2scl::exc_ezerodiv=12, \ref o2scl::exc_overflow_error 
+- o2scl::exc_ebadtol=13, \ref o2scl::exc_invalid_argument 
+- o2scl::exc_etol=14, \ref o2scl::exc_runtime_error 
+- o2scl::exc_eundrflw=15, \ref o2scl::exc_range_error 
+- o2scl::exc_eovrflw=16, \ref o2scl::exc_overflow_error 
+- o2scl::exc_eloss=17, \ref o2scl::exc_runtime_error 
+- o2scl::exc_eround=18, \ref o2scl::exc_runtime_error 
+- o2scl::exc_ebadlen=19, \ref o2scl::exc_invalid_argument 
+- o2scl::exc_enotsqr=20, \ref o2scl::exc_invalid_argument 
+- o2scl::exc_esing=21, \ref o2scl::exc_runtime_error 
+- o2scl::exc_ediverge=22, \ref o2scl::exc_runtime_error 
+- o2scl::exc_eunsup=23, \ref o2scl::exc_exception 
+- o2scl::exc_eunimpl=24, \ref o2scl::exc_exception 
+- o2scl::exc_ecache=25, \ref o2scl::exc_runtime_error 
+- o2scl::exc_etable=26, \ref o2scl::exc_runtime_error 
+- o2scl::exc_enoprog=27, \ref o2scl::exc_runtime_error 
+- o2scl::exc_enoprogj=28, \ref o2scl::exc_runtime_error 
+- o2scl::exc_etolf=29, \ref o2scl::exc_runtime_error 
+- o2scl::exc_etolx=30, \ref o2scl::exc_runtime_error 
+- o2scl::exc_etolg=31, \ref o2scl::exc_runtime_error 
+- o2scl::exc_eof=32, \ref o2scl::exc_ios_failure 
+- o2scl::exc_enotfound=33, \ref o2scl::exc_runtime_error 
+- o2scl::exc_ememtype=34, \ref o2scl::exc_logic_error 
+- o2scl::exc_efilenotfound=35, \ref o2scl::exc_ios_failure 
+- o2scl::exc_eindex=36, \ref o2scl::exc_invalid_argument 
+- o2scl::exc_outsidecons=37, \ref o2scl::exc_runtime_error 
+
+Objects and scope
+-----------------
+    
+\o2 objects frequently take inputs which are of the form of a
+reference to a smaller object. This is particularly convenient
+because it allows a lot of flexibility, while providing a certain
+degree of safety. In many cases, the user retains the
+responsibility of ensuring that input objects do not go out of
+scope before they are utilized by objects which require them. This
+is actually no different than the requirements on the user imposed
+by GSL, for example.
+
+Member functions which store pointers to user-specified objects
+should warn that they are doing so in the documentation for the
+class.
+
+For example, say that a user wants to solve several equations
+using a \ref o2scl::mroot_hybrids object and use the functions
+\ref o2scl::mroot_hybrids::set() and \ref
+o2scl::mroot_hybrids::iterate(). Since the function is specified
+by the call to ``set()``, it is important that this function
+object does not go out of scope before the call to
+``iterate()`` occurs.
+
+Reference parameters
+--------------------
+ 
+When a \o2 function contains two reference parameters for objects,
+it is not typically possible to provide the same object to both
+parameters or to provide two objects which share the same memory.
+This is particularly an issue when the associated types are
+template types, since then the \o2 library has no way of knowing
+how memory is organized in these unspecified types. Thread safety
+is also an issue, as care must be taken if two functions which are
+running simultaneously access the same instance of any class.
+
+Define constants
+----------------
+
+Various define constants used in \o2 are listed below. Note
+that, if ``acol`` is installed, ``acol -v`` reports
+several details about how \o2 was compiled.
+
+- O2SCL_ARMA - Flag for Armadillo support. The end-user will
+  also need to define this for code based on \o2 functions which
+  use Armadillo routines. The command ``acol -v`` reports
+  whether or not Armadillo support was enabled during compilation.
+- O2SCL_CBLAS_NAMESPACE - This flag is internally used by some of
+  the headers in the \c src/linalg directory to select between \ref
+  o2scl_cblas and \ref o2scl_cblas_bracket . The end-user should not
+  need to use this.
+- O2SCL_COND_FLAG - Internally used to handle the option of compiling
+  with or without Armadillo or Eigen support. The end-user should not
+  need to use this.
+- O2SCL_DATA_DIR - Used by \o2 classes during installation to
+  refer to the directory where data is stored. After installation,
+  this is accessible through the global object named \ref
+  o2scl::o2scl_settings and the command ``acol -v``. In a
+  typical installation, the end-user should not need to use this.
+- O2SCL_EIGEN - Flag for Eigen support. The end-user will
+  also need to define this for code based on \o2 functions which
+  use Eigen routines. The command ``acol -v`` reports
+  whether or not Eigen support was enabled during compilation.
+- O2SCL_ENABLE_ACOL - Internal flag to tell the makefiles if
+  ``acol`` is to be compiled. This is set by default unless the
+  configure script is specified with ``--disable-acol``.
+- O2SCL_EOS - Internal flag to tell the makefiles if the \o2e
+  library is to be included. The end-user should not
+  need to use this.
+- O2SCL_FAST_TEST - Internal flag to speed up testing so that
+  travis-ci.org builds don't time out. This constant is 
+  defined by the ``--with-fast-test`` option in homebrew.
+- O2SCL_GSL2 - Flag to allow functionality from later GSL versions
+  in \ref o2scl::fit_linear and \ref o2scl::fit_nonlin . This flag
+  is set during compilation if ``--enable-gsl2`` is passed to
+  the configure script. The command ``acol -v`` reports on
+  whether or not GSL V2.0+ support was enabled during installation.
+- O2SCL_HDF - Internal flag to tell the makefiles if HDF5 support
+  is to be included. The end-user should not need to use this.
+- O2SCL_HDF5_COMP - Define this flag when \o2 is compiled and for
+  code which uses \o2 to include support for HDF5 compression. The
+  command ``acol -v`` reports whether or not HDF5 compression
+  support was enabled during compilation.
+- O2SCL_MPI - Flag to allow MPI functionality in O2scl classes
+  which contain MPI code (see also O2SCL_OPENMP). All current
+  MPI functionality in \o2 is header only, thus MPI support does 
+  not need to be specified to the ``configure`` script.
+- O2SCL_NEVER_DEFINED - Used internally to comment out large 
+  sections of code. This should not be used by the end-user. 
+  - O2SCL_NO_EXCEPTIONS - If this is defined, then the error handler
+  calls \ref o2scl::err_hnd_gsl::set() instead of throwing a C++ exception.
+  Used in ``src/base/exception.cpp``. This is useful, for
+  example, with the ``g++`` flag ``-fno-exceptions``.
+- O2SCL_NO_SYSTEM_FUNC - If this is defined, then the \ref o2scl::cli
+  class will never allow shell commands, independent of the 
+  setting of \ref o2scl::cli::shell_cmd_allowed .
+- O2SCL_NO_RANGE_CHECK - If this is defined, range checking is
+  turned off where it is used in \ref o2scl::table, \ref
+  o2scl::tensor, \ref o2scl::permutation and the functions in \ref
+  o2scl_cblas. Some \o2 header files use this define constant and so
+  range checking can be turned off or on separately from the setting
+  that was used during installation.
+- O2SCL_OLDER_COMPILER - A flag which can be defined both during
+  compilation of \o2 and compilation of code using \o2 for compilers
+  which do not have std::initializer_list, std::to_string,
+  std::uniform_distribution and cannot run ``mcmc_para_ts``.
+- O2SCL_OPENMP - Flag to allow OpenMP functionality in O2scl
+  classes which contain OpenMP code (see also O2SCL_MPI). This flag
+  is set during compilation if ``--enable-openmp`` is passed to
+  the configure script. The end-user must also define this flag to
+  enable OpenMP support in their code. While all current OpenMP
+  functionality in \o2 is header only, this may change in the
+  future. The command ``acol -v`` reports on whether or not
+  OpenMP was enabled during installation.
+- O2SCL_PART - Internal flag to tell the makefiles if the \o2p
+  library is to be included. This constant is automatically set by the
+  configure script depending on whether or not 
+  ``--disable-partlib`` is specified. End-user code which uses \o2p 
+  should not need to define this.
+- O2SCL_PYTHON - Doesn't do anything (yet).
+- O2SCL_READLINE - Internal flag to tell the makefiles if GNU
+  readline support should be included in ``acol``. The end-user
+  should not need to use this, as this define constant is automatically
+  defined by the ./configure script unless the --disable-readline
+  argument is given.
+- O2SCL_PLAIN_HDF5_HEADER - If true, assume HDF5 include statements 
+  should be of the form ``#include &lt;hdf5.h&gt;`` independent
+  of the automatically determined operating system type.
+- O2SCL_UBUNTU_PKG - If true, don't use current date and time
+  macros to avoid Ubuntu packaging errors (used in
+  src/base/lib_settings.cpp and src/hdf/acolm.cpp). The end-user
+  should not need to use this macro.
+- O2SCL_USE_BOOST_FILESYSTEM - Doesn't do anything (yet).
+- O2SCL_USE_GSL_HANDLER - If this is defined, then an object
+  of type \ref o2scl::err_hnd_gsl is the default error handler. Used in
+  ``src/base/exception.cpp``

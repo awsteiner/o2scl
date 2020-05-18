@@ -40,6 +40,7 @@ extensions = ['sphinx.ext.autodoc',
 #
 breathe_projects = { "o2scl": os.path.abspath('../xml') }
 breathe_default_project = "o2scl"
+breathe_default_members = ('members', 'private-members')
 #
 
 # Add any paths that contain templates here, relative to this directory.
@@ -86,7 +87,6 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
 
-
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -98,7 +98,10 @@ html_theme = 'alabaster'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+    # Disable showing the sidebar. Defaults to 'false'
+    'nosidebar': True,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
