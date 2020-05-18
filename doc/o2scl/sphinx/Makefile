@@ -18,3 +18,9 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+function_list:
+	grep "kind=\"function\"" ../xml/index.xml > function_list
+
+class_list:
+	grep "kind=\"class\"" ../xml/index.xml > class_list

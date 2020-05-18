@@ -26,8 +26,9 @@ int main(void) {
     string fname="class/";
     fname+=s+".rst";
     ofstream fout(fname);
-    fout << s << endl;
-    for(size_t i=0;i<s.length();i++) {
+    string head="Class "+s;
+    fout << head << endl;
+    for(size_t i=0;i<head.length();i++) {
       fout << "=";
     }
     fout << endl;
