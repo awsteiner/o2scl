@@ -13,7 +13,7 @@ Object-oriented Scientific Computing Library, O\ :sub:`2`\ scl
    vecmat
    linalg
    interp
-   class_root
+   class/root
 
 * :ref:`genindex`
 * :ref:`modindex`
