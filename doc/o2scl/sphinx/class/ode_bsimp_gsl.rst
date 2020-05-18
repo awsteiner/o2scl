@@ -1,0 +1,4 @@
+ode_bsimp_gsl
+=============
+
+.. doxygenclass:: o2scl::ode_bsimp_gsl

@@ -1,0 +1,90 @@
+Function Objects
+================
+
+Lambda functions and std::mem_fn
+--------------------------------
+
+Functions are passed to numerical routines using template-based
+function classes, sometimes called "functors". \o2
+classes which accept functions as parameters generally default to
+types built upon <tt>std::function</tt>. If the
+user would like to use Boost function objects instead, these may
+also be used, simply by specifying the Boost function type in the
+template parameter. 
+
+Some template aliases are defined to save typing of the function
+types, e.g.
+- \ref o2scl::funct : One function of one variable (used in 
+one-dimensional solver and minimizer classes, derivative classes,
+integration classes, etc.)
+- \ref o2scl::funct_ld : One function of one variable using
+long double 
+- \ref o2scl::multi_funct : One function of several variables (used
+in minimizer and integration classes)
+- \ref o2scl::mm_funct : \c n functions of \c n variables (used in 
+solver classes)
+- \ref o2scl::grad_funct : gradient function for minimizer classes
+- \ref o2scl::ode_funct : \c n derivatives as a function of \c n
+function values and the value of the independent variable
+- \ref o2scl::ode_jac_funct : Jacobian function for ODE classes
+- \ref o2scl::ode_it_funct : Function to specify ODEs for
+  iterative solution
+- \ref o2scl::jac_funct : Jacobian function for solver and
+  fitting classes
+- \ref o2scl::fit_funct : Fit function
+- \ref o2scl::ool_hfunct : Hessian matrix function for constrained
+  minimization
+
+Function object example
+-----------------------
+
+The example below demonstrates how C++11
+function objects can be used with the \ref o2scl::root_brent_gsl
+solver.
+
+\dontinclude ex_lambda.cpp
+\skip Example:
+\until End of example
+    
+General comments about function objects
+---------------------------------------
+
+The C++ standard library functors employ copy construction at
+various types, so one must be careful about the types involved in
+creating the functor. Generally, all classes should have
+constructors and structs should be avoided because they can cause
+difficulties with default copy construction.
+
+There is a small overhead associated with the indirection: a "user
+class" accesses the function class which then calls function which
+was specified in the constructor of the function class. In many
+problems, the overhead associated with the indirection is small.
+Some of this overhead can always be avoided by inheriting directly
+from the function class and thus the user class will make a direct
+virtual function call. To eliminate the overhead entirely, one can
+specify a new type for the template parameter in the user class.
+
+Function object example
+-----------------------
+
+This example shows how to provide functions to \o2
+classes by solving the equation
+\f[
+\left\{ 1+\frac{1}{p_2} 
+\sin \left[ 50 \left( x-p_1 \right) \right] \right\}
+\tan^{-1} \left[ 4 \left( x-p_1 \right) \right] = 0
+\f]
+Where \f$ p_1 = 0.01 \f$ and \f$ p_2 = 1.1 \f$. The parameter 
+\f$ p_1 \f$ is stored as member data for the class, and the 
+parameter \f$ p_2 \f$ is an argument to the member function.
+    
+The image below shows how the solver progresses to the 
+solution of the example function.
+\image html ex_fptr_plot.png "Function object example plot"
+\comment
+\image latex ex_fptr_plot.eps "Function object example plot" width=9cm
+\endcomment
+
+\dontinclude ex_fptr.cpp
+\skip Example:
+\until End of examp*/

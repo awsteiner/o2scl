@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <set>
 
 using namespace std;
 
@@ -15,14 +17,13 @@ int main(void) {
       ns=s.substr(0,loc);
       s=s.substr(loc+2,s.length()-loc-2);
     }
-    cout << ns << " " << s << endl;
-    exit(-1);
+    cout << "Namespace: " << ns << " class: " << s << endl;
     if (list.find(s)!=list.end()) {
       cout << "Multiple entry " << s << endl;
       return 1;
     }
     list.insert(s);
-    fname="class/";
+    string fname="class/";
     fname+=s+".rst";
     ofstream fout(fname);
     fout << s << endl;
@@ -31,7 +32,7 @@ int main(void) {
     }
     fout << endl;
     fout << endl;
-    fout << ".. doxygenclass:: " << ns << s << endl;
+    fout << ".. doxygenclass:: " << ns << "::" << s << endl;
     fout.close();
   }
   

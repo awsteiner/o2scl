@@ -1,0 +1,4 @@
+comm_option_funct
+=================
+
+.. doxygenclass:: o2scl::comm_option_funct

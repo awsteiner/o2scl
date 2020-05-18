@@ -1,0 +1,4 @@
+quadratic_complex
+=================
+
+.. doxygenclass:: o2scl::quadratic_complex

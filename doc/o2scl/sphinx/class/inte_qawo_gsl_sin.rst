@@ -1,0 +1,4 @@
+inte_qawo_gsl_sin
+=================
+
+.. doxygenclass:: o2scl::inte_qawo_gsl_sin

@@ -1,0 +1,4 @@
+search_vec_ext
+==============
+
+.. doxygenclass:: o2scl::search_vec_ext

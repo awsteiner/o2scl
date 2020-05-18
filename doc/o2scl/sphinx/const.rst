@@ -1,0 +1,19 @@
+Physical Constants
+==================
+    
+The constants from GSL are reworked with the type \c const \c
+double and placed in namespaces called \ref o2scl_cgs, \ref
+o2scl_cgsm, and \ref o2scl_mks. The GSL MKSA constants are
+identical to the MKS constants and thus are not duplicated here.
+The numerical constants from <tt>gsl_num</tt> and some other
+additional constants are given in the namespace \ref o2scl_const.
+
+Some of the numerical values have been updated from recently
+released data. Electron, neutron, proton, and atomic mass have
+been updated with CODATA 2010 values. Also electron charge,
+gravitational constant, plancks_constant_hbar, are updated. The
+astronomical unit has been updated with the result from \ref
+Luzum11 (and possibly other values need updating as well).
+
+These physical constants are often used to create unit conversion
+factors, described in \ref unitconv_section. 
