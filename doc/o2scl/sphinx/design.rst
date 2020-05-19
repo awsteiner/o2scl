@@ -1,0 +1,216 @@
+Design Considerations
+=====================
+
+The design goal is to create an object-oriented computing library
+with classes that perform common numerical tasks. The most
+important principle is that the library should add functionality
+to the user while at the same time retaining as much freedom for
+the user as possible and allowing for ease of use and extensibility. 
+To that end, 
+- The classes which utilize user-specified functions
+should be able to operate on member functions without requiring
+a particular inheritance structure,
+- The interfaces ought to be generic so that the user
+can create new classes which perform related numerical
+tasks through inheritance.
+- The classes should not use static variables or status functions.
+- Const-correctness and type-safety should be respected wherever possible.
+- The design should be somewhat compatible with GSL.
+
+<b>Header file dependencies</b>
+    
+For reference, it is useful to know how the top-level header files
+depend on each other, since it can be difficult to trace
+everything down. The following are the most "top-level" header
+files and their associated dependencies within \o2 (there are
+other dependencies on GSL and the C standard library not listed
+here). Note that not all of the headers in the "base" directory
+are listed here (because they are less likely to cause problems).
+\code
+constants.h : (none)
+err_hnd.h : (none)
+exception.h : err_hnd.h
+find_constants.h : constants.h convert_units.h
+format_float.h : err_hnd.h misc.h string_conv.h
+funct.h : err_hnd.h shunting_yard.h
+lib_settings.h : convert_units.h find_constants.h
+misc.h : err_hnd.h
+mm_funct.h : shunting_yard.h
+multi_funct.h : err_hnd.h shunting_yard.h
+search_vec.h : err_hnd.h vector.h
+shunting_yard.h : (none)
+string_conv.h : misc.h
+uniform_grid.h: err_hnd.h string_conv.h
+vector.h: uniform_grid.h misc.h vector_special.h
+\endcode
+
+The interpolation, testing, and table headers are not
+as top-level as the ones above because they depend on 
+tridiagonalization in the linear algebra directory.
+\code
+interp.h : search_vec.h tridiag.h vector.h
+table.h : misc.h interp.h shunting_yard.h
+table_units.h : table.h lib_settings.h
+test_mgr.h : string_conv.h misc.h table_units.h
+\endcode
+
+<B>The use of templates</b>
+    
+Templates are used extensively, and this makes for longer
+compilation times so any code that can be removed conveniently
+from the header files should be put into source code files
+instead. 
+
+\section errdesign_subsect Error handling
+
+<b>Thread safety</b>
+
+Two approaches to thread-safe error handling which are worth
+comparing: the first is GSL which uses return codes and global
+function for an error handler, and the second is the Math/Special
+Functions section of Boost, which uses a separate policy type for
+each function. One issue is thread safety: the GSL approach is
+thread safe only in the sense that one can in principle use the
+return codes in different threads to track errors. What one cannot
+do in GSL is use different user-defined error handlers for
+different threads. The Special Functions library allows one to
+choose a different Policy for every special function call, and
+thus allows quite a bit more flexibility in designing
+multi-threaded error handling.
+
+\section memalloc_subsect Memory allocation functions
+
+Several classes have allocate() and free() functions to allocate
+and deallocate memory. If an error occurs in an allocate()
+function, the function should free() the partial memory that was
+allocated and then call the error handler. Functions which
+deallocate memory should never fail and should never be required
+to call the error handler. Similarly, class destructors should
+never be required to call the error handler.
+
+\section vecdesign_subsect Vector design
+
+\o2 vector and matrix types are a hybrid approach: creating
+objects compatibile with GSL, while providing syntactic simplicity
+and object-oriented features common to C++ vector classes. In
+terms of their object-oriented nature, they are not as elegant as
+the ublas vector types from ublas, but for many applications they
+are also faster (and they are always at least as fast).
+
+\section define_subsect Define constants and macros
+
+There are a couple define constants and macros that \o2
+understands, they are all in upper case and begin with the prefix
+<tt>O2SCL_</tt>. 
+
+Range-checking for arrays and matrices is turned on by default,
+but can be turned off by defining <tt>O2SCL_NO_RANGE_CHECK</tt>
+during the initial configuration of the library. To see how the
+library was configured at runtime, use the \ref o2scl::o2scl_settings
+class.
+
+There is a define constant O2SCL_NO_SYSTEM_FUNC which permanently
+disables the shell command <tt>'!'</tt> in \ref o2scl::cli (when the 
+constant is defined, the shell command doesn't work even if 
+\ref o2scl::cli::shell_cmd_allowed is <tt>true</tt>). 
+
+The constant O2SCL_DATA_DIR is defined internally to provide
+the directory which contains the \o2 data files. After installation,
+this can be accessed in \ref o2scl::o2scl_settings. 
+
+All of the header files have their own define constant of
+the form <tt>O2SCL_HEADER_FILE_NAME</tt> which ensures that
+the header file is only included once.
+
+Finally, I sometimes comment out sections of code with 
+\code
+#ifdef O2SCL_NEVER_DEFINED
+...
+#endif
+\endcode
+This constant should not be defined by the user as it will cause
+compilation to fail.
+
+\comment
+These are makefile constants not source code define constants
+
+The two define constants O2SCL_PARTLIB and O2SCL_EOSLIB are used
+internally to control which sublibraries are compiled together
+with the main library (see \ref install_section ). The end-user
+shouldn't have to worry about these.
+\endcomment
+
+\section paramorder_subsection Parameter ordering
+
+In functions where this makes sense, generally input parameters
+will appear first, while output parameters or parameters which
+handle both input and output will appear later.
+    
+\section global_subsect Global objects
+
+There are four global objects that are created in
+libo2scl:
+- \ref o2scl::def_err_hnd is the default error handler
+- \ref o2scl::alt_err_hnd is the GSL-like error handler 
+- \ref o2scl::err_hnd is the pointer to the error handler (points to
+def_err_hnd by default)
+- \ref o2scl::o2scl_settings to control a few library settings
+
+All other global objects are to be avoided.
+
+\section thread_subsect Thread safety
+
+Most of the classes are thread-safe, meaning that two instances of
+the same class will not clash if their methods are called
+concurrently since static variables are only used for compile-time
+constants. However, two threads cannot, in general, safely
+manipulate the same instance of a class. In this respect, \o2 is
+no different from GSL.
+    
+\section docdesign_subsect Documentation design
+    
+The commands \\comment and \\endcomment delineate comments about
+the documentation that are present in the header files but don't
+ever show up in the HTML or LaTeX documentation. 
+
+\section crightfoo_subsect Copyright notices
+
+For files where it is appropriate to do so, I have followed the
+prescription suggested in
+http://lists.gnu.org/archive/html/help-gsl/2008-11/msg00017.html
+retaining the GSL copyright notices and putting the \o2 notices at
+the top. CERNLIB has no such standard, but their licensing information
+is outlined at
+http://cernlib.web.cern.ch/cernlib/conditions.html .
+
+\section futurework_subsect Design plans
+
+<b>Boost and linear algebra:</b> \n I would like to ensure this
+class is compatible with boost, and start integrating things
+accordingly. IMHO object-oriented linear algebra is in a rather
+sad state at the moment. uBlas and MTL are both promising,
+however, and I'd like to start implementing some sort of
+compatibility with uBlas vectors and matrices soon. The uBlas
+documentation is pretty sparse, but that's the pot calling the
+kettle a cheap piece of metal.
+
+<b>Other Improvements:</b> \n I'm particularly interested in
+improving the ODE and fitting classes, as well as updating the
+BFGS2 minimizer. Of course, more examples and better documentation
+are also a must.
+
+<b>Algorithms to include</b>
+- Method of lines for PDEs
+- Some of the MESA interpolation routines.
+- C++ translation of MINUIT (done already by ROOT, but quite difficult). 
+- Creating closed regions from contour lines (I have no idea how to
+do this at the moment, though I'm sure someone has solved this 
+problem already somewhere.)
+
+<b>Complex numbers</b> \n I'm not sure where to go with complex
+numbers. My guess is that <tt>std::complex</tt> is not
+significantly slower (or is faster) than <tt>gsl_complex</tt>, but
+it would be good to check this. Then there's the C99 standard,
+which is altogether different. Unfortunately the interfaces may be
+sufficiently different that it's not easy to make templated
+classes which operate on generic complex number types.

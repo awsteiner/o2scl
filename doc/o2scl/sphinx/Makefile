@@ -1,7 +1,7 @@
 # Minimal makefile for Sphinx documentation
 #
 
-# You can set these variables from the command line.
+# You can set these variables from the command line. 
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = o2scl
@@ -20,6 +20,10 @@ function_list: empty
 
 clean:
 	rm -rf make_index
+
+full_html:
+	$(SPHINXBUILD) -M html "$(SOURCEDIR)" \
+		"$(BUILDDIR)" $(SPHINXOPTS) 
 
 class_list: empty
 	grep "kind=\"class\"" ../xml/index.xml > class_list

@@ -47,11 +47,10 @@ the top of the documentation for these classes.
    unitconv
    hdf
    acol
-   o2scl_python
+   python
    para
    other
    lset
-   team
    design
    license
    related

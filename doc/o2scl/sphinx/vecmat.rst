@@ -39,35 +39,34 @@ accessible with ``operator[][]`` (like two-dimensional
 arrays). See the \ref linalg_section section of the User's guide
 for examples of this.
 
-With ``std::function<>`` and the new lambda function support
-in C++11, it is important to notice that ``std::function<double
-&(size_t,size_t)>`` is also a matrix type (the ampersand is
-important unless the matrix is read-only). This means that some
-matrices (e.g. slices of tensors) can be trivially constructed
-from ``std::bind`` and ``std::mem_fn``. An example
-of this in O\ :sub:`2`\ scle is how ``o2scl::eos_sn_base::slice`` generates
-a matrix from a 3-D tensor.
+With ``std::function<>`` and the new lambda function support in C++11,
+it is important to notice that ``std::function<double
+&(size_t,size_t)>`` is also a matrix type (the ampersand is important
+unless the matrix is read-only). This means that some matrices (e.g.
+slices of tensors) can be trivially constructed from ``std::bind`` and
+``std::mem_fn``. An example of this in O\ :sub:`2`\ scl_eos is how
+``o2scl::eos_sn_base::slice`` generates a matrix from a 3-D tensor.
 
 A matrix type is distinct from a "vector of vectors" or a "list of
 vectors", such as that implied by
 ``std::vector<std::vector<double> >``. In some cases, There
 are places where a vector of vectors is preferable to a matrix,
 and O\ :sub:`2`\ scl expects that elements in a vector of vectors can be
-accessed by ``operator[][]``. A \ref o2scl::table object can
+accessed by ``operator[][]``. A :cpp:class:`o2scl::table` object can
 be thought of as a vector of vectors in this sense. The function
-\ref o2scl::tensor_grid::set_grid() also accepts a vector of
+:cpp:func:`o2scl::tensor_grid::set_grid()` also accepts a vector of
 vectors, and for this function, none of the vectors needs to have
 the same size. A vector of vectors can also be used to specify a
 scattered list of points in a multi-dimensional space. Thus, a
-vector of vectors is what is used for the argument of \ref
-o2scl::interpm_idw.
+vector of vectors is what is used for the argument of 
+:cpp:class:`o2scl::interpm_idw`.
 
-The word "tensor" is used for a generic object which has rank \c n
-and then has \c n associated indices. A vector is just a \tensor
+The word "tensor" is used for a generic object which has rank ``n``
+and then has ``n`` associated indices. A vector is just a \tensor
 of rank 1 and a matrix is just a \tensor of rank 2. Tensors are
-implemented in O\ :sub:`2`\ scl by \ref o2scl::tensor . A multivariate
+implemented in O\ :sub:`2`\ scl by :cpp:class:`o2scl::tensor` . A multivariate
 function specified on a grid can be implemented in O\ :sub:`2`\ scl with
-\ref o2scl::tensor_grid . See more discussion in the tensor 
+:cpp:class:`o2scl::tensor_grid` . See more discussion in the tensor 
 section below. 
 
 Rows and columns vs. x and y
@@ -104,9 +103,9 @@ memory.
 
 Sometimes its useful to think about the rows and columns in a
 matrix as referring to a elements of a grid, and the matrix
-indices refer to points in a grid in \f$ (x,y) \f$. It might seem
-intuitive to think of a matrix as ``A[ix][iy]`` where \c ix
-and \c iy are the \f$ x \f$ and \f$ y \f$ indices because the
+indices refer to points in a grid in :math:`(x,y)`. It might seem
+intuitive to think of a matrix as ``A[ix][iy]`` where ``ix``
+and ``iy`` are the :math:`x` and :math:`y` indices because the
 ordering of the indices is alphabetical. However, it is useful to
 note that because functions like \ref o2scl::matrix_out() print
 the first "row" first rather than the first column, a matrix
@@ -116,8 +115,8 @@ backwards from the usual convention when plotting data.
 
 O\ :sub:`2`\ scl classes which interpret matrix data on a grid (\ref
 o2scl::table3d, \ref o2scl::contour, \ref o2scl::interp2_seq and
-\ref o2scl::interp2_direct) use 'x' to denote the row index and
-'y' to denote the column index by convention.
+\ref o2scl::interp2_direct) use ``x`` to denote the row index and
+``y`` to denote the column index by convention.
 
 Generic vector and matrix functions
 -----------------------------------
