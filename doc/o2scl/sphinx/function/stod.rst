@@ -1,0 +1,4 @@
+Function stod
+=============
+
+.. doxygenfunction:: ::stod

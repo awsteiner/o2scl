@@ -1,0 +1,4 @@
+Function dasum
+==============
+
+.. doxygenfunction:: ::dasum

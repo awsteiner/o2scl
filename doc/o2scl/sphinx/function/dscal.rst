@@ -1,0 +1,4 @@
+Function dscal
+==============
+
+.. doxygenfunction:: ::dscal

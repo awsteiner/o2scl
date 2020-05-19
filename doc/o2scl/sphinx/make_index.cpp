@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <set>
+#include <map>
 
 using namespace std;
 
@@ -9,13 +10,19 @@ int main(void) {
 
   for (size_t kk=0;kk<2;kk++) {
 
+    if (kk==0) {
+      cout << "Parsing class_list:" << endl;
+    } else {
+      cout << "Parsing function_list:" << endl;
+    }
+    
     // Read list
     string fname_in;
     if (kk==0) fname_in="class_list";
     else fname_in="function_list";
     ifstream fin(fname_in);
     
-    std::set<std::string> list;
+    std::map<std::string,std::string> list;
     std::set<std::string> list_dup;
     
     while (!fin.eof()) {
@@ -60,7 +67,7 @@ int main(void) {
 	  cout << "Multiple entry " << s << endl;
 	  list_dup.insert(s);
 	} else {
-	  list.insert(s);
+	  list.insert(std::make_pair(s,ns));
 	}
 
 	// End of 'if (s.length()>0)'
@@ -71,10 +78,15 @@ int main(void) {
 
     fin.close();
 
-    for (std::set<std::string>::itertor it=list.begin();
+    cout << endl;
+    cout << "Creating files:" << endl;
+
+    for (std::map<std::string,std::string>::iterator it=list.begin();
 	 it!=list.end();it++) {
 
-      if (list_dup.find(*it)==list_dup.end()) {
+      string s=it->first, ns=it->second;
+      
+      if (list_dup.find(s)==list_dup.end()) {
 	string fname_out="class/";
 	if (kk==1) fname_out="function/";
 	fname_out+=s+".rst";
@@ -95,10 +107,12 @@ int main(void) {
 	fout.close();
 
       } else {
-	cout << "Skipping " << *it << endl;
+	cout << "Skipping " << it->first << endl;
       }
     }
-    
+
+    cout << endl;
+    cout << "---------------------------------------------------" << endl;
   }
   
   return 0;

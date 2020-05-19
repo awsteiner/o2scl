@@ -1,0 +1,4 @@
+Function stoi
+=============
+
+.. doxygenfunction:: ::stoi

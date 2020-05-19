@@ -1,0 +1,4 @@
+Function stoszt
+===============
+
+.. doxygenfunction:: ::stoszt

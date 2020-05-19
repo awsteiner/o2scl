@@ -1,0 +1,4 @@
+Function dgemv
+==============
+
+.. doxygenfunction:: ::dgemv

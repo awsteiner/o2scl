@@ -1,0 +1,4 @@
+Function dtrmv
+==============
+
+.. doxygenfunction:: ::dtrmv

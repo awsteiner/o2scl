@@ -1,0 +1,4 @@
+Function HSVtoRGB
+=================
+
+.. doxygenfunction:: ::HSVtoRGB

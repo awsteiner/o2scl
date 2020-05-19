@@ -1,0 +1,4 @@
+Function rewrap
+===============
+
+.. doxygenfunction:: ::rewrap

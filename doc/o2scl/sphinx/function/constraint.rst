@@ -1,0 +1,4 @@
+Function constraint
+===================
+
+.. doxygenfunction:: ::constraint

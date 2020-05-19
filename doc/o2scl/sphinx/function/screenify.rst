@@ -1,0 +1,4 @@
+Function screenify
+==================
+
+.. doxygenfunction:: ::screenify

@@ -1,0 +1,4 @@
+Function daxpy
+==============
+
+.. doxygenfunction:: ::daxpy

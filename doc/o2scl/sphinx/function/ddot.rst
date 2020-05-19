@@ -1,0 +1,4 @@
+Function ddot
+=============
+
+.. doxygenfunction:: ::ddot

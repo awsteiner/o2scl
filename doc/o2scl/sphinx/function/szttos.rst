@@ -1,0 +1,4 @@
+Function szttos
+===============
+
+.. doxygenfunction:: ::szttos

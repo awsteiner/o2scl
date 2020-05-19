@@ -18,7 +18,7 @@ distribution and automatically installed by ``make install``.
 .. note::
    If you are trying to install O\ :sub:`2`\ scl with a version of
    HDF5 earlier than 1.12 you will need to compile with
-   -DO2SCL_HDF5_PRE_1_12 .
+   ``-DO2SCL_HDF5_PRE_1_12``.
 
 O\ :sub:`2`\ scl requires the Boost (any relatively recent version)
 and the GSL libraries (version 1.16 or later). If the
