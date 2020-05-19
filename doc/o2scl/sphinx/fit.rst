@@ -1,0 +1,15 @@
+Least-Squares Fitting
+=====================
+
+Linear least-squares fitting is performed by \ref
+o2scl::fit_linear. Non-linear least-squares Fitting is performed
+by descendants of \ref o2scl::fit_base and fitting functions can
+be specified using \ref o2scl::fit_funct. The GSL fitting
+routines (scaled and unscaled) are implemented in \ref
+o2scl::fit_nonlin. A generic fitting routine using a minimizer
+object specified as a child of \ref o2scl::mmin_base is
+implemented in \ref o2scl::fit_min. When the \ref o2scl::mmin_base
+object is (for example) a \ref o2scl::anneal_base object, \ref
+o2scl::fit_min can avoid local minima which can occur when fitting
+noisy data.
+

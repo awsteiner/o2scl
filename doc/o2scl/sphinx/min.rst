@@ -1,0 +1,98 @@
+Minimization
+============
+
+<b>One-dimensional minimizers</b>
+
+One-dimensional minimization is performed by descendants of \ref
+o2scl::min_base . There are two one-dimensional minimization
+algorithms, \ref o2scl::min_cern and \ref o2scl::min_brent_gsl,
+and they are both bracketing algorithms type where an interval and
+an initial guess must be provided. If only an initial guess and no
+bracket is given, these two classes will attempt to find a
+suitable bracket from the initial guess. While the \ref
+o2scl::min_base base class is designed to allow future descendants
+to optionally use derivative information, this is not yet
+supported for any one-dimensional minimizers.
+
+<b>Multi-dimensional minimizers</b>
+
+Multi-dimensional minimization is performed by descendants of \ref
+o2scl::mmin_base . \o2 includes a simplex minimizer (\ref
+o2scl::mmin_simp2), traditional minimizers which use gradient
+information (\ref o2scl::mmin_conp, \ref o2scl::mmin_conf, and
+\ref o2scl::mmin_bfgs2), and differential evolution minimizers
+(\ref o2scl::diff_evo and \ref o2scl::diff_evo_adapt). Minimization by
+simulated annealing is included and described in the \ref
+anneal_section section. Constrained minimization is also
+included and described in separately in \ref conmin_section.
+
+See an example for the usage of the multi-dimensional minimizers
+in the \ref ex_mmin_sect below. 
+
+<b>Simplex minimizer</b>
+    
+The class \ref o2scl::mmin_simp2 minimizes a function using
+the Nelder-Mead simplex algorithm and does not require any
+information about the gradient. It is based on GSL and
+has been updated with the new "simplex2" method
+from GSL-1.12. 
+
+Restarts of the simplex minimizer are sometimes required to find
+the correct minimum, and \ref o2scl::mmin_simp2 can get caught in
+infinite loops, especially for functions which have symmetries
+directly related to one or more of the parameters.
+
+<b>Traditional minimizers with gradient information</b>
+
+Classes \ref o2scl::mmin_conp, \ref o2scl::mmin_conf, and \ref
+o2scl::mmin_bfgs2 are intended for use when the \gradient of the
+function is available, but they can also automaticallly compute
+the \gradient numerically. The standard way to provide the
+\gradient is to use an object of type \ref o2scl::grad_funct .
+The user may specify the automatic gradient object of type \ref
+o2scl::gradient which is used by the minimizer to compute the
+gradient numerically when a function is not specified.
+
+Generally, when a closed expression is available for the gradient,
+\ref o2scl::mmin_bfgs2 is likely the best choice. However, the
+simplex methods can be more robust for sufficiently difficult
+functions. 
+    
+It is important to note that not all of the minimization routines
+test the second derivative to ensure that it doesn't vanish to 
+ensure that we have indeed found a true minimum. 
+
+<b>Fixing Parameters</b>
+
+The class \ref o2scl::mmin_fix_params provides a convenient way of 
+fixing some of the parameters and minimizing over others,
+without requiring a the function interface to be rewritten. An
+example is given in the \ref ex_mmin_fix_sect example below. 
+
+\section ex_mmin_sect Multidimensional minimizer example
+
+This example uses the \o2 minimizers based on GSL to minimize a
+rather complicated three-dimensional function which has constant
+level surfaces which look like springs oriented along the z-axis.
+This example function, originally created here for \o2, was added
+later to the GSL library minimization test functions. 
+
+\dontinclude ex_mmin.cpp
+\skip Example:
+\until End of example
+
+\image html ex_mmin_plot.png "Plot showing minimizer trajectories"
+\image html ex_mmin_plot2.png "Plot showing minimizer trajectories"
+
+\section ex_mmin_fix_sect Minimizer fixing variables 
+
+This example uses the \ref o2scl::mmin_fix_params class to \minimize
+the function
+\f[
+y=\left(x_0-2\right)^2+\left(x_1-1\right)^2+x_2^2
+\f]
+while fixing some of the parameters.
+
+\dontinclude ex_mmin_fix.cpp
+\skip Example:
+\until End of example

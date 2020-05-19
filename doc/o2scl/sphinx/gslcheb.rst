@@ -1,0 +1,28 @@
+Chebyshev Approximation
+=======================
+
+A class implementing the Chebyshev approximations based on GSL is
+given in \ref o2scl::cheb_approx_tl. This class has its own copy
+constructor, so that Chebyshev approximations can be copied and
+passed as arguments to functions. Derivatives and integrals of
+\ref o2scl::cheb_approx_tl objects are created as new \ref
+o2scl::cheb_approx_tl objects which can be easily manipulated.
+
+\section ex_cheb_sect Chebyshev approximation example
+
+This example performs an approximation of the function \f$
+y=\sin\left[ 1/\left(x+0.08 \right) \right] \f$ over \f$ [0,2 \pi] \f$
+. This function oscillates strongly over this interval and 
+requires a high order approximation to be accurate.
+
+The image below shows the approximation for \f$ n=50 \f$
+and \f$ n=25 \f$ . The \f$ n=100 \f$ would be nearly 
+indistinguishable from the exact result on this scale.
+\image html ex_chebapp_plot.png "Chebyshev approximation plot"
+\comment
+\image latex ex_chebapp_plot.eps "Chebyshev approximation plot" width=9cm
+\endcomment
+
+\dontinclude ex_chebapp.cpp
+\skip Example:
+\until End of example
