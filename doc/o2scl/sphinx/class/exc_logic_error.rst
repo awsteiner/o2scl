@@ -1,3 +1,5 @@
+.. _exc_logic_error:
+
 Class exc_logic_error
 =====================
 

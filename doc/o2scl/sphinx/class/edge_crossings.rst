@@ -1,3 +1,5 @@
+.. _edge_crossings:
+
 Class edge_crossings
 ====================
 

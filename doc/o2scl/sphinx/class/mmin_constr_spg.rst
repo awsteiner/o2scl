@@ -1,3 +1,5 @@
+.. _mmin_constr_spg:
+
 Class mmin_constr_spg
 =====================
 

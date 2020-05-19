@@ -1,3 +1,5 @@
+.. _mm_funct_strings:
+
 Class mm_funct_strings
 ======================
 

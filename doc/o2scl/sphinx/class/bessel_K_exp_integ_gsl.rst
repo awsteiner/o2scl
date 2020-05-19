@@ -1,3 +1,5 @@
+.. _bessel_K_exp_integ_gsl:
+
 Class bessel_K_exp_integ_gsl
 ============================
 

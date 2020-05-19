@@ -1,3 +1,5 @@
+.. _mmin_conf:
+
 Class mmin_conf
 ===============
 

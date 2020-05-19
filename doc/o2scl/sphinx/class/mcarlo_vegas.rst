@@ -1,3 +1,5 @@
+.. _mcarlo_vegas:
+
 Class mcarlo_vegas
 ==================
 

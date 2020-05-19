@@ -1,3 +1,5 @@
+.. _inte_multi:
+
 Class inte_multi
 ================
 

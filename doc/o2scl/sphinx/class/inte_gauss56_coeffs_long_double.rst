@@ -1,3 +1,5 @@
+.. _inte_gauss56_coeffs_long_double:
+
 Class inte_gauss56_coeffs_long_double
 =====================================
 

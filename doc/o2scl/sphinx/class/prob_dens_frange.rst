@@ -1,3 +1,5 @@
+.. _prob_dens_frange:
+
 Class prob_dens_frange
 ======================
 

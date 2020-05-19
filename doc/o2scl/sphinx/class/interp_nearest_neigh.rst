@@ -1,3 +1,5 @@
+.. _interp_nearest_neigh:
+
 Class interp_nearest_neigh
 ==========================
 

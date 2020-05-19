@@ -1,3 +1,5 @@
+.. _exc_overflow_error:
+
 Class exc_overflow_error
 ========================
 

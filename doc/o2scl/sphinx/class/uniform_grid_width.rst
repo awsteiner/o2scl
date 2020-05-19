@@ -1,3 +1,5 @@
+.. _uniform_grid_width:
+
 Class uniform_grid_width
 ========================
 

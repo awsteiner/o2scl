@@ -1,3 +1,5 @@
+.. _ode_rkck_gsl:
+
 Class ode_rkck_gsl
 ==================
 

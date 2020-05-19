@@ -1,3 +1,5 @@
+.. _quartic_real_gsl:
+
 Class quartic_real_gsl
 ======================
 

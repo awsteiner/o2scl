@@ -1,3 +1,5 @@
+.. _linear_solver_eigen_fullQR:
+
 Class linear_solver_eigen_fullQR
 ================================
 

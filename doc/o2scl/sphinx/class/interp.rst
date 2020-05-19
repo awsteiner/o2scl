@@ -1,3 +1,5 @@
+.. _interp:
+
 Class interp
 ============
 

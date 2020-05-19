@@ -1,3 +1,5 @@
+.. _interp_vec:
+
 Class interp_vec
 ================
 

@@ -1,3 +1,5 @@
+.. _quadratic_complex_std:
+
 Class quadratic_complex_std
 ===========================
 

@@ -1,3 +1,5 @@
+.. _inte_workspace_gsl:
+
 Class inte_workspace_gsl
 ========================
 

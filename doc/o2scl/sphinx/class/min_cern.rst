@@ -1,3 +1,5 @@
+.. _min_cern:
+
 Class min_cern
 ==============
 

@@ -1,3 +1,5 @@
+.. _cubic_real:
+
 Class cubic_real
 ================
 

@@ -1,3 +1,5 @@
+.. _cli::parameter_int:
+
 Class cli::parameter_int
 ========================
 

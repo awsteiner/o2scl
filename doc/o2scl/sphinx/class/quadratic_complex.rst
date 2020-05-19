@@ -1,3 +1,5 @@
+.. _quadratic_complex:
+
 Class quadratic_complex
 =======================
 

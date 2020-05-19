@@ -1,3 +1,5 @@
+.. _inte_gauss_cern:
+
 Class inte_gauss_cern
 =====================
 

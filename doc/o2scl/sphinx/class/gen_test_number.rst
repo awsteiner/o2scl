@@ -1,3 +1,5 @@
+.. _gen_test_number:
+
 Class gen_test_number
 =====================
 

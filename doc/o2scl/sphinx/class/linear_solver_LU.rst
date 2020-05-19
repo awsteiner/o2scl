@@ -1,3 +1,5 @@
+.. _linear_solver_LU:
+
 Class linear_solver_LU
 ======================
 

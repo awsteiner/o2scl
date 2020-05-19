@@ -1,3 +1,5 @@
+.. _prob_dens_mdim:
+
 Class prob_dens_mdim
 ====================
 

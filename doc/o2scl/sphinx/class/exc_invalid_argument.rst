@@ -1,3 +1,5 @@
+.. _exc_invalid_argument:
+
 Class exc_invalid_argument
 ==========================
 

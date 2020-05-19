@@ -1,3 +1,5 @@
+.. _jacobian_exact:
+
 Class jacobian_exact
 ====================
 

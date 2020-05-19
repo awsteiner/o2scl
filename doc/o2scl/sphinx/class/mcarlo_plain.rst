@@ -1,3 +1,5 @@
+.. _mcarlo_plain:
+
 Class mcarlo_plain
 ==================
 

@@ -1,3 +1,5 @@
+.. _rng_gsl_uniform_real:
+
 Class rng_gsl_uniform_real
 ==========================
 

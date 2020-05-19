@@ -1,3 +1,5 @@
+.. _inte_hcubature::region:
+
 Class inte_hcubature::region
 ============================
 

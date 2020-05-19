@@ -1,3 +1,5 @@
+.. _inte_pcubature::cache:
+
 Class inte_pcubature::cache
 ===========================
 

@@ -1,3 +1,5 @@
+.. _find_constants:
+
 Class find_constants
 ====================
 

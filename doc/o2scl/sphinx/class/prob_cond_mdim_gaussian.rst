@@ -1,3 +1,5 @@
+.. _prob_cond_mdim_gaussian:
+
 Class prob_cond_mdim_gaussian
 =============================
 

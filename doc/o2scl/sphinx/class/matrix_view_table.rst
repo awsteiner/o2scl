@@ -1,3 +1,5 @@
+.. _matrix_view_table:
+
 Class matrix_view_table
 =======================
 

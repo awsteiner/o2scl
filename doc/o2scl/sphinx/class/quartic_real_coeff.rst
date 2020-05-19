@@ -1,3 +1,5 @@
+.. _quartic_real_coeff:
+
 Class quartic_real_coeff
 ========================
 

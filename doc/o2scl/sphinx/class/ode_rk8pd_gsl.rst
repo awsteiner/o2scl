@@ -1,3 +1,5 @@
+.. _ode_rk8pd_gsl:
+
 Class ode_rk8pd_gsl
 ===================
 

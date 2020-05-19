@@ -1,3 +1,5 @@
+.. _anneal_gsl:
+
 Class anneal_gsl
 ================
 

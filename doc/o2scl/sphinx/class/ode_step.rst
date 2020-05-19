@@ -1,3 +1,5 @@
+.. _ode_step:
+
 Class ode_step
 ==============
 

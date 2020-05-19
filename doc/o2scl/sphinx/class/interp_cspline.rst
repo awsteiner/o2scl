@@ -1,3 +1,5 @@
+.. _interp_cspline:
+
 Class interp_cspline
 ====================
 

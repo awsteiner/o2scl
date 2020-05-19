@@ -1,3 +1,5 @@
+.. _mmin_fix_params:
+
 Class mmin_fix_params
 =====================
 

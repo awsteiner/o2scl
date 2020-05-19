@@ -1,3 +1,5 @@
+.. _vector_range_gen:
+
 Class vector_range_gen
 ======================
 

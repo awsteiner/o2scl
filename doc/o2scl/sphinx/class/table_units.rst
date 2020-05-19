@@ -1,3 +1,5 @@
+.. _table_units:
+
 Class table_units
 =================
 

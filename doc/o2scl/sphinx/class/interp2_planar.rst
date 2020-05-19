@@ -1,3 +1,5 @@
+.. _interp2_planar:
+
 Class interp2_planar
 ====================
 

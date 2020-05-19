@@ -1,3 +1,5 @@
+.. _mcarlo_miser:
+
 Class mcarlo_miser
 ==================
 

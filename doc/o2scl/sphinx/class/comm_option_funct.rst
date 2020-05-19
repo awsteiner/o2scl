@@ -1,3 +1,5 @@
+.. _comm_option_funct:
+
 Class comm_option_funct
 =======================
 

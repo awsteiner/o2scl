@@ -1,3 +1,5 @@
+.. _funct_gsl:
+
 Class funct_gsl
 ===============
 

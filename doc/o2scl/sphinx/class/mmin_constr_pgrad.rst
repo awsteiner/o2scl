@@ -1,3 +1,5 @@
+.. _mmin_constr_pgrad:
+
 Class mmin_constr_pgrad
 =======================
 

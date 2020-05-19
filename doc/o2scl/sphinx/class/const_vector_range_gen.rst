@@ -1,3 +1,5 @@
+.. _const_vector_range_gen:
+
 Class const_vector_range_gen
 ============================
 

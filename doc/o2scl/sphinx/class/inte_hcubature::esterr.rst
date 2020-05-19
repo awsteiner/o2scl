@@ -1,3 +1,5 @@
+.. _inte_hcubature::esterr:
+
 Class inte_hcubature::esterr
 ============================
 

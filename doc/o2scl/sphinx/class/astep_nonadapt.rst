@@ -1,3 +1,5 @@
+.. _astep_nonadapt:
+
 Class astep_nonadapt
 ====================
 

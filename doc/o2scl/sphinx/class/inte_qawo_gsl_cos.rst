@@ -1,3 +1,5 @@
+.. _inte_qawo_gsl_cos:
+
 Class inte_qawo_gsl_cos
 =======================
 

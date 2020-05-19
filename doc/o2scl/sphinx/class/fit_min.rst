@@ -1,3 +1,5 @@
+.. _fit_min:
+
 Class fit_min
 =============
 

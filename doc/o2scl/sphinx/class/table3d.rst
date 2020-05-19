@@ -1,3 +1,5 @@
+.. _table3d:
+
 Class table3d
 =============
 

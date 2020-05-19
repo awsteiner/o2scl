@@ -1,3 +1,5 @@
+.. _multi_funct_strings:
+
 Class multi_funct_strings
 =========================
 

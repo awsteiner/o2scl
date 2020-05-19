@@ -1,3 +1,5 @@
+.. _mmin_wrapper_gsl:
+
 Class mmin_wrapper_gsl
 ======================
 

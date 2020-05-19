@@ -1,3 +1,5 @@
+.. _ode_iv_table:
+
 Class ode_iv_table
 ==================
 

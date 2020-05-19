@@ -1,3 +1,5 @@
+.. _series_acc:
+
 Class series_acc
 ================
 

@@ -1,3 +1,5 @@
+.. _vector_index_vector:
+
 Class vector_index_vector
 =========================
 

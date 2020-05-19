@@ -1,3 +1,5 @@
+.. _interp_krige_optim:
+
 Class interp_krige_optim
 ========================
 

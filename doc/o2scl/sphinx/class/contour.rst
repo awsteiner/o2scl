@@ -1,3 +1,5 @@
+.. _contour:
+
 Class contour
 =============
 

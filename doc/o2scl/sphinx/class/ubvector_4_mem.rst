@@ -1,3 +1,5 @@
+.. _ubvector_4_mem:
+
 Class ubvector_4_mem
 ====================
 

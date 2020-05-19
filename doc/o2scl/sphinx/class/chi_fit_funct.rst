@@ -1,3 +1,5 @@
+.. _chi_fit_funct:
+
 Class chi_fit_funct
 ===================
 

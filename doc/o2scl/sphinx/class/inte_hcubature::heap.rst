@@ -1,3 +1,5 @@
+.. _inte_hcubature::heap:
+
 Class inte_hcubature::heap
 ==========================
 

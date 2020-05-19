@@ -1,3 +1,5 @@
+.. _ode_iv_solve_grid:
+
 Class ode_iv_solve_grid
 =======================
 

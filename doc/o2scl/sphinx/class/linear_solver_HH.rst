@@ -1,3 +1,5 @@
+.. _linear_solver_HH:
+
 Class linear_solver_HH
 ======================
 

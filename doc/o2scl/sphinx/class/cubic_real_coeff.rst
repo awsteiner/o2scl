@@ -1,3 +1,5 @@
+.. _cubic_real_coeff:
+
 Class cubic_real_coeff
 ======================
 

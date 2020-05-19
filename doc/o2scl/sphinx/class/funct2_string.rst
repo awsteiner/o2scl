@@ -1,3 +1,5 @@
+.. _funct2_string:
+
 Class funct2_string
 ===================
 

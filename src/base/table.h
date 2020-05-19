@@ -107,14 +107,14 @@ namespace o2scl {
 
       Lookup, differentiation, integration, and interpolation are
       automatically implemented using splines from the class \ref
-      interp_vec. A caching mechanism is implemented so that
+      interp_vec . A caching mechanism is implemented so that
       successive interpolations, derivative evaluations or
       integrations over the same two columns are fast.
 
       <B> Sorting </b>\n
 
       The columns are automatically sorted by name for speed, the
-      results can be accessed from \ref get_sorted_name(). Individual
+      results can be accessed from \ref get_sorted_name() . Individual
       columns can be sorted (\ref sort_column() ), or the entire table
       can be sorted by one column (\ref sort_table() ).
 

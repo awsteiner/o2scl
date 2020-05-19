@@ -1,3 +1,5 @@
+.. _ode_rkf45_gsl:
+
 Class ode_rkf45_gsl
 ===================
 

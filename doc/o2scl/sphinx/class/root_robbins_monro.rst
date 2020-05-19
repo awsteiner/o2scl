@@ -1,3 +1,5 @@
+.. _root_robbins_monro:
+
 Class root_robbins_monro
 ========================
 

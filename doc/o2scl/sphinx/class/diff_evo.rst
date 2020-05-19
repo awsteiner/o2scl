@@ -1,3 +1,5 @@
+.. _diff_evo:
+
 Class diff_evo
 ==============
 

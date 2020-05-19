@@ -1,3 +1,5 @@
+.. _uniform_grid_log_end_width:
+
 Class uniform_grid_log_end_width
 ================================
 

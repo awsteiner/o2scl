@@ -1,3 +1,5 @@
+.. _vec_index:
+
 Class vec_index
 ===============
 

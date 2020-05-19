@@ -22,7 +22,7 @@ clean:
 	rm -rf make_index
 
 full_html:
-	$(SPHINXBUILD) -M html "$(SOURCEDIR)" \
+	$(SPHINXBUILD) -M -a -E html "$(SOURCEDIR)" \
 		"$(BUILDDIR)" $(SPHINXOPTS) 
 
 class_list: empty

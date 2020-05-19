@@ -1,3 +1,5 @@
+.. _cli_readline:
+
 Class cli_readline
 ==================
 

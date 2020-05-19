@@ -1,3 +1,5 @@
+.. _cubic_real_coeff_gsl:
+
 Class cubic_real_coeff_gsl
 ==========================
 

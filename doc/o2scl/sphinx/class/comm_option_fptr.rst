@@ -1,3 +1,5 @@
+.. _comm_option_fptr:
+
 Class comm_option_fptr
 ======================
 

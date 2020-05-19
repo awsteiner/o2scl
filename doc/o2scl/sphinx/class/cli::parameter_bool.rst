@@ -1,3 +1,5 @@
+.. _cli::parameter_bool:
+
 Class cli::parameter_bool
 =========================
 

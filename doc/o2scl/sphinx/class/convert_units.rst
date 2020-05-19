@@ -1,3 +1,5 @@
+.. _convert_units:
+
 Class convert_units
 ===================
 

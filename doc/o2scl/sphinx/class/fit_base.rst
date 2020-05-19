@@ -1,3 +1,5 @@
+.. _fit_base:
+
 Class fit_base
 ==============
 

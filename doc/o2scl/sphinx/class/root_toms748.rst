@@ -1,3 +1,5 @@
+.. _root_toms748:
+
 Class root_toms748
 ==================
 

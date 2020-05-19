@@ -1,3 +1,5 @@
+.. _inte_kronrod_boost:
+
 Class inte_kronrod_boost
 ========================
 

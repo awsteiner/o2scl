@@ -1,3 +1,5 @@
+.. _inte_gsl:
+
 Class inte_gsl
 ==============
 

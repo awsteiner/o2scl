@@ -1,3 +1,5 @@
+.. _rng_gsl:
+
 Class rng_gsl
 =============
 

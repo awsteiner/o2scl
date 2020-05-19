@@ -1,3 +1,5 @@
+.. _fermi_dirac_integ_gsl:
+
 Class fermi_dirac_integ_gsl
 ===========================
 

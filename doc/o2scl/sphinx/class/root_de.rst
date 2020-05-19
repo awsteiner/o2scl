@@ -1,3 +1,5 @@
+.. _root_de:
+
 Class root_de
 =============
 

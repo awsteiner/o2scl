@@ -1,3 +1,5 @@
+.. _prob_dens_gaussian:
+
 Class prob_dens_gaussian
 ========================
 

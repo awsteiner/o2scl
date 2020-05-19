@@ -1,3 +1,5 @@
+.. _uniform_grid_end:
+
 Class uniform_grid_end
 ======================
 

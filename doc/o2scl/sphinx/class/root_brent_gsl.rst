@@ -1,3 +1,5 @@
+.. _root_brent_gsl:
+
 Class root_brent_gsl
 ====================
 

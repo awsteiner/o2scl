@@ -1,3 +1,5 @@
+.. _inte_hcubature:
+
 Class inte_hcubature
 ====================
 

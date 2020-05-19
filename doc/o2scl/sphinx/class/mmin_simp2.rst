@@ -1,3 +1,5 @@
+.. _mmin_simp2:
+
 Class mmin_simp2
 ================
 

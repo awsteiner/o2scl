@@ -1,3 +1,5 @@
+.. _fit_linear:
+
 Class fit_linear
 ================
 

@@ -1,3 +1,5 @@
+.. _calculator:
+
 Class calculator
 ================
 

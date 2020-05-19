@@ -1,3 +1,5 @@
+.. _matrix_row_gen_ctor:
+
 Class matrix_row_gen_ctor
 =========================
 

@@ -1,3 +1,5 @@
+.. _polylog:
+
 Class polylog
 =============
 

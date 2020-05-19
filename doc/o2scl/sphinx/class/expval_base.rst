@@ -1,3 +1,5 @@
+.. _expval_base:
+
 Class expval_base
 =================
 

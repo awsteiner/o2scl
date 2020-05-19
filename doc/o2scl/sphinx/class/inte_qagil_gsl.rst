@@ -1,3 +1,5 @@
+.. _inte_qagil_gsl:
+
 Class inte_qagil_gsl
 ====================
 

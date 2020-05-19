@@ -1,3 +1,5 @@
+.. _matrix_column_gen:
+
 Class matrix_column_gen
 =======================
 

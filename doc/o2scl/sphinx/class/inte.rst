@@ -1,3 +1,5 @@
+.. _inte:
+
 Class inte
 ==========
 

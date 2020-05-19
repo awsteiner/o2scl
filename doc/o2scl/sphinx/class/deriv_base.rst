@@ -1,3 +1,5 @@
+.. _deriv_base:
+
 Class deriv_base
 ================
 

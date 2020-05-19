@@ -1,3 +1,5 @@
+.. _min_brent_boost:
+
 Class min_brent_boost
 =====================
 

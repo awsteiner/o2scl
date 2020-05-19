@@ -1,3 +1,5 @@
+.. _format_float:
+
 Class format_float
 ==================
 

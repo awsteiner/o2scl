@@ -1,3 +1,5 @@
+.. _s:
+
 Class numeric::ublas::vector
 ============================
 

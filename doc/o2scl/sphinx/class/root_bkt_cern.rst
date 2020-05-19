@@ -1,3 +1,5 @@
+.. _root_bkt_cern:
+
 Class root_bkt_cern
 ===================
 

@@ -1,3 +1,5 @@
+.. _err_hnd_cpp:
+
 Class err_hnd_cpp
 =================
 

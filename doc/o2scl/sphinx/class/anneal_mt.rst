@@ -1,3 +1,5 @@
+.. _anneal_mt:
+
 Class anneal_mt
 ===============
 

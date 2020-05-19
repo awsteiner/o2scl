@@ -1,3 +1,5 @@
+.. _tensor4:
+
 Class tensor4
 =============
 

@@ -1,3 +1,5 @@
+.. _err_hnd_type:
+
 Class err_hnd_type
 ==================
 

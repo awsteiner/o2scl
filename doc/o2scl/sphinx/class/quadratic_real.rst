@@ -1,3 +1,5 @@
+.. _quadratic_real:
+
 Class quadratic_real
 ====================
 

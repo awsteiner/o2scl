@@ -1,3 +1,5 @@
+.. _interp_cspline_peri:
+
 Class interp_cspline_peri
 =========================
 

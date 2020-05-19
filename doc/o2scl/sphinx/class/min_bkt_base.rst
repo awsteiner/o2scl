@@ -1,3 +1,5 @@
+.. _min_bkt_base:
+
 Class min_bkt_base
 ==================
 

@@ -53,7 +53,7 @@ int main(void) {
 	size_t len=loc2-loc1-6;
 	s=s.substr(loc1+6,len);
 	string ns;
-	if (s.find("::")!=std::string::npos) {
+	if (kk==0 && s.find("::")!=std::string::npos) {
 	  size_t loc=s.find("::");
 	  ns=s.substr(0,loc);
 	  s=s.substr(loc+2,s.length()-loc-2);
@@ -66,7 +66,7 @@ int main(void) {
 	if (list.find(s)!=list.end()) {
 	  cout << "Multiple entry " << s << endl;
 	  list_dup.insert(s);
-	} else {
+	} else if (ns!=((string)"boost")) {
 	  list.insert(std::make_pair(s,ns));
 	}
 
@@ -91,6 +91,11 @@ int main(void) {
 	if (kk==1) fname_out="function/";
 	fname_out+=s+".rst";
 	ofstream fout(fname_out);
+
+	if (kk==0) {
+	  fout << ".. _" << s << ":\n" << endl;
+	}
+	
 	string head="Class "+s;
 	if (kk==1) head="Function "+s;
 	fout << head << endl;

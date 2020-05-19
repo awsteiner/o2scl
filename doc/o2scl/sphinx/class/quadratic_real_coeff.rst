@@ -1,3 +1,5 @@
+.. _quadratic_real_coeff:
+
 Class quadratic_real_coeff
 ==========================
 

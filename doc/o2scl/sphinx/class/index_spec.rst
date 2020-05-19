@@ -1,3 +1,5 @@
+.. _index_spec:
+
 Class index_spec
 ================
 

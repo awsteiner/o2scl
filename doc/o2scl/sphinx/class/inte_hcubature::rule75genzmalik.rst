@@ -1,3 +1,5 @@
+.. _inte_hcubature::rule75genzmalik:
+
 Class inte_hcubature::rule75genzmalik
 =====================================
 

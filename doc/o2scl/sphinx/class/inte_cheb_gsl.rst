@@ -1,3 +1,5 @@
+.. _inte_cheb_gsl:
+
 Class inte_cheb_gsl
 ===================
 

@@ -1,3 +1,5 @@
+.. _mmin_gsl_base:
+
 Class mmin_gsl_base
 ===================
 

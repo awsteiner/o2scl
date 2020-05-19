@@ -1,3 +1,5 @@
+.. _poly_real_coeff:
+
 Class poly_real_coeff
 =====================
 

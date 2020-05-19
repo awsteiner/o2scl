@@ -1,3 +1,5 @@
+.. _interp_base:
+
 Class interp_base
 =================
 

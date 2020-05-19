@@ -1,3 +1,5 @@
+.. _interp_array:
+
 Class interp_array
 ==================
 

@@ -1,3 +1,5 @@
+.. _mroot_cern:
+
 Class mroot_cern
 ================
 

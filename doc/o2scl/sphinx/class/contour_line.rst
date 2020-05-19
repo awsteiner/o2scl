@@ -1,3 +1,5 @@
+.. _contour_line:
+
 Class contour_line
 ==================
 

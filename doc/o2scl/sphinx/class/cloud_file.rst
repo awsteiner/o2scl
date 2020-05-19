@@ -1,3 +1,5 @@
+.. _cloud_file:
+
 Class cloud_file
 ================
 

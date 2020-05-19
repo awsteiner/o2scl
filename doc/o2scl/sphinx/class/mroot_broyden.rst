@@ -1,3 +1,5 @@
+.. _mroot_broyden:
+
 Class mroot_broyden
 ===================
 

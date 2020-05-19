@@ -1,3 +1,5 @@
+.. _vector_index_vector_size:
+
 Class vector_index_vector_size
 ==============================
 

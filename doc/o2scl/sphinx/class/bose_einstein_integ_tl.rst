@@ -1,3 +1,5 @@
+.. _bose_einstein_integ_tl:
+
 Class bose_einstein_integ_tl
 ============================
 

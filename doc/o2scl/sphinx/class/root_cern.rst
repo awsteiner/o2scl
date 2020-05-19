@@ -1,3 +1,5 @@
+.. _root_cern:
+
 Class root_cern
 ===============
 

@@ -1,3 +1,5 @@
+.. _gsl_tolerance:
+
 Class gsl_tolerance
 ===================
 

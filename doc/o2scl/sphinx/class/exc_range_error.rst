@@ -1,3 +1,5 @@
+.. _exc_range_error:
+
 Class exc_range_error
 =====================
 

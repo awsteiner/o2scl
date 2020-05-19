@@ -1,3 +1,5 @@
+.. _interp_krige:
+
 Class interp_krige
 ==================
 

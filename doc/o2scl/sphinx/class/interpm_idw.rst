@@ -1,3 +1,5 @@
+.. _interpm_idw:
+
 Class interpm_idw
 =================
 

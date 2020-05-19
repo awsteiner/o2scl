@@ -1,3 +1,5 @@
+.. _deriv_eqi:
+
 Class deriv_eqi
 ===============
 

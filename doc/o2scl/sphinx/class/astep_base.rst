@@ -1,3 +1,5 @@
+.. _astep_base:
+
 Class astep_base
 ================
 

@@ -1,3 +1,5 @@
+.. _inte_adapt_cern:
+
 Class inte_adapt_cern
 =====================
 

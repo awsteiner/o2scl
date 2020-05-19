@@ -1,3 +1,5 @@
+.. _cli::parameter_size_t:
+
 Class cli::parameter_size_t
 ===========================
 

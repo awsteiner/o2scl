@@ -1,3 +1,5 @@
+.. _permutation:
+
 Class permutation
 =================
 

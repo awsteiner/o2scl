@@ -1,3 +1,5 @@
+.. _mcmc_para_old_table:
+
 Class mcmc_para_old_table
 =========================
 

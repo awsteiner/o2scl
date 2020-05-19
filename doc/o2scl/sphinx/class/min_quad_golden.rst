@@ -1,3 +1,5 @@
+.. _min_quad_golden:
+
 Class min_quad_golden
 =====================
 

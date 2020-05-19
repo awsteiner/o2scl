@@ -1,3 +1,5 @@
+.. _mcmc_para_cli:
+
 Class mcmc_para_cli
 ===================
 

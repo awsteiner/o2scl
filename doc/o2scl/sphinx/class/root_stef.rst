@@ -1,3 +1,5 @@
+.. _root_stef:
+
 Class root_stef
 ===============
 

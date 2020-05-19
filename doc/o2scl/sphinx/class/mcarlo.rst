@@ -1,3 +1,5 @@
+.. _mcarlo:
+
 Class mcarlo
 ============
 

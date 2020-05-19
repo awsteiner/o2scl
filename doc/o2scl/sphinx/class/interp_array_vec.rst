@@ -1,3 +1,5 @@
+.. _interp_array_vec:
+
 Class interp_array_vec
 ======================
 

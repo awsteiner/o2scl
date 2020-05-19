@@ -1,3 +1,5 @@
+.. _interp_steffen:
+
 Class interp_steffen
 ====================
 

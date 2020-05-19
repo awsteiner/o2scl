@@ -1,3 +1,5 @@
+.. _uniform_prior:
+
 Class uniform_prior
 ===================
 

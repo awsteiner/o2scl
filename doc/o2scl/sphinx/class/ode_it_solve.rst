@@ -1,3 +1,5 @@
+.. _ode_it_solve:
+
 Class ode_it_solve
 ==================
 

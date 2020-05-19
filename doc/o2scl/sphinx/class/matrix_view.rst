@@ -1,3 +1,5 @@
+.. _matrix_view:
+
 Class matrix_view
 =================
 

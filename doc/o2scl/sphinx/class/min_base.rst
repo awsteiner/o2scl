@@ -1,3 +1,5 @@
+.. _min_base:
+
 Class min_base
 ==============
 

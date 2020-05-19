@@ -1,3 +1,5 @@
+.. _smooth_gsl:
+
 Class smooth_gsl
 ================
 

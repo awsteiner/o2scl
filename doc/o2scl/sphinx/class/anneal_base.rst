@@ -1,3 +1,5 @@
+.. _anneal_base:
+
 Class anneal_base
 =================
 

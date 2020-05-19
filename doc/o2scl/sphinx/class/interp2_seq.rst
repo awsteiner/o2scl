@@ -1,3 +1,5 @@
+.. _interp2_seq:
+
 Class interp2_seq
 =================
 

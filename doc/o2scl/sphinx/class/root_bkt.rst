@@ -1,3 +1,5 @@
+.. _root_bkt:
+
 Class root_bkt
 ==============
 

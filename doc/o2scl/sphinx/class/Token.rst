@@ -1,3 +1,5 @@
+.. _Token:
+
 Class Token
 ===========
 

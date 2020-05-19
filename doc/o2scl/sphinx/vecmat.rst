@@ -1,6 +1,12 @@
 Arrays, Vectors, Matrices and Tensors
 =====================================
 
+Test refs: 
+:cpp:class:`o2scl::columnify`
+:cpp:class:`table <template\<class vec_t = std::vector\<double>> o2scl::table>`
+:ref:`Class table`
+:ref:`table`
+
 Because many such vector and matrix objects are defined elsewhere,
 O\ :sub:`2`\ scl no longer includes native vector and matrix classes.
 Internally, O\ :sub:`2`\ scl most often uses Boost uBLAS vector and matrix

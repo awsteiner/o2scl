@@ -1,3 +1,5 @@
+.. _prob_dens_func:
+
 Class prob_dens_func
 ====================
 

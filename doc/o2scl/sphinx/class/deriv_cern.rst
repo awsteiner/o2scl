@@ -1,3 +1,5 @@
+.. _deriv_cern:
+
 Class deriv_cern
 ================
 

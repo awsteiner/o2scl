@@ -1,3 +1,5 @@
+.. _expval_vector:
+
 Class expval_vector
 ===================
 

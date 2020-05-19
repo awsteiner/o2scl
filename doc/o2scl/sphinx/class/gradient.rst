@@ -1,3 +1,5 @@
+.. _gradient:
+
 Class gradient
 ==============
 

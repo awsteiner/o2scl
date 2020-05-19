@@ -1,3 +1,5 @@
+.. _prob_dens_uniform:
+
 Class prob_dens_uniform
 =======================
 

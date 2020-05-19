@@ -1,3 +1,5 @@
+.. _gradient_gsl:
+
 Class gradient_gsl
 ==================
 

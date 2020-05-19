@@ -1,3 +1,5 @@
+.. _poly_complex:
+
 Class poly_complex
 ==================
 

@@ -1,3 +1,5 @@
+.. _pinside:
+
 Class pinside
 =============
 

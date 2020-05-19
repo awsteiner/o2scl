@@ -1,3 +1,5 @@
+.. _ode_bv_solve:
+
 Class ode_bv_solve
 ==================
 

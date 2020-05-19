@@ -1,3 +1,5 @@
+.. _root:
+
 Class root
 ==========
 

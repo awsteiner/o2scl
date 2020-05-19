@@ -1,3 +1,5 @@
+.. _inte_gauss_coeffs_double:
+
 Class inte_gauss_coeffs_double
 ==============================
 

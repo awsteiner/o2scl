@@ -1,3 +1,5 @@
+.. _mmin_constr:
+
 Class mmin_constr
 =================
 

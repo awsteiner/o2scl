@@ -1,3 +1,5 @@
+.. _mcmc_para_base:
+
 Class mcmc_para_base
 ====================
 

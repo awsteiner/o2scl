@@ -1,3 +1,5 @@
+.. _interp_linear:
+
 Class interp_linear
 ===================
 

@@ -1,3 +1,5 @@
+.. _inte_gauss_coeffs_cpp_dec_float_50:
+
 Class inte_gauss_coeffs_cpp_dec_float_50
 ========================================
 

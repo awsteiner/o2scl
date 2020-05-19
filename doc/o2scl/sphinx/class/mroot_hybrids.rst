@@ -1,3 +1,5 @@
+.. _mroot_hybrids:
+
 Class mroot_hybrids
 ===================
 

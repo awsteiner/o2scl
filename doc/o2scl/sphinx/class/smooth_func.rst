@@ -1,3 +1,5 @@
+.. _smooth_func:
+
 Class smooth_func
 =================
 

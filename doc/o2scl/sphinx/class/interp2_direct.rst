@@ -1,3 +1,5 @@
+.. _interp2_direct:
+
 Class interp2_direct
 ====================
 

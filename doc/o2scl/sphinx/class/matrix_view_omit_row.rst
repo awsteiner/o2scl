@@ -1,3 +1,5 @@
+.. _matrix_view_omit_row:
+
 Class matrix_view_omit_row
 ==========================
 

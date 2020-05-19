@@ -1,3 +1,5 @@
+.. _inte_qawf_gsl_sin:
+
 Class inte_qawf_gsl_sin
 =======================
 

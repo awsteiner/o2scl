@@ -1,3 +1,5 @@
+.. _fermi_dirac_integ_tl:
+
 Class fermi_dirac_integ_tl
 ==========================
 

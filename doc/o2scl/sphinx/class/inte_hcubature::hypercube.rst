@@ -1,3 +1,5 @@
+.. _inte_hcubature::hypercube:
+
 Class inte_hcubature::hypercube
 ===============================
 

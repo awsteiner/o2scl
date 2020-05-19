@@ -1,3 +1,5 @@
+.. _interpm_krige_optim:
+
 Class interpm_krige_optim
 =========================
 

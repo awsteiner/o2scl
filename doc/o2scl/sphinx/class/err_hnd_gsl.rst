@@ -1,3 +1,5 @@
+.. _err_hnd_gsl:
+
 Class err_hnd_gsl
 =================
 

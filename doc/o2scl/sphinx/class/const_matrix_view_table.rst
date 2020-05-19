@@ -1,3 +1,5 @@
+.. _const_matrix_view_table:
+
 Class const_matrix_view_table
 =============================
 

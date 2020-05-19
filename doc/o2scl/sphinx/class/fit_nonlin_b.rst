@@ -1,3 +1,5 @@
+.. _fit_nonlin_b:
+
 Class fit_nonlin_b
 ==================
 

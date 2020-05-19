@@ -1,3 +1,5 @@
+.. _cubic_complex_std:
+
 Class cubic_complex_std
 =======================
 

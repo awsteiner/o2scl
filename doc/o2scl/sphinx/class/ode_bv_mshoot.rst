@@ -1,3 +1,5 @@
+.. _ode_bv_mshoot:
+
 Class ode_bv_mshoot
 ===================
 

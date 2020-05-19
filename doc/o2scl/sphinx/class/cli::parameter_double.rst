@@ -1,3 +1,5 @@
+.. _cli::parameter_double:
+
 Class cli::parameter_double
 ===========================
 

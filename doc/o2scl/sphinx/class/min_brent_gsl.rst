@@ -1,3 +1,5 @@
+.. _min_brent_gsl:
+
 Class min_brent_gsl
 ===================
 

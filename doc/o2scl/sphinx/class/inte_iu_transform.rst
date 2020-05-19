@@ -1,3 +1,5 @@
+.. _inte_iu_transform:
+
 Class inte_iu_transform
 =======================
 

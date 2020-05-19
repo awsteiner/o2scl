@@ -1,3 +1,5 @@
+.. _quartic_real:
+
 Class quartic_real
 ==================
 

@@ -1,3 +1,5 @@
+.. _comm_option_mfptr:
+
 Class comm_option_mfptr
 =======================
 

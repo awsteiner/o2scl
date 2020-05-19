@@ -1,3 +1,5 @@
+.. _interp_monotonic:
+
 Class interp_monotonic
 ======================
 

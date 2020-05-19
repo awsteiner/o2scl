@@ -1,3 +1,5 @@
+.. _exc_ios_failure:
+
 Class exc_ios_failure
 =====================
 

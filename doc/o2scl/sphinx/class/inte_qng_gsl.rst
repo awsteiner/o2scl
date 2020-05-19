@@ -1,3 +1,5 @@
+.. _inte_qng_gsl:
+
 Class inte_qng_gsl
 ==================
 

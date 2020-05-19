@@ -1,3 +1,5 @@
+.. _prob_cond_mdim_fixed_step:
+
 Class prob_cond_mdim_fixed_step
 ===============================
 

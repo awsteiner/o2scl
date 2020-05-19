@@ -1,3 +1,5 @@
+.. _inte_qaws_gsl:
+
 Class inte_qaws_gsl
 ===================
 

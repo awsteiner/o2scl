@@ -1,3 +1,5 @@
+.. _inte_transform_gsl:
+
 Class inte_transform_gsl
 ========================
 

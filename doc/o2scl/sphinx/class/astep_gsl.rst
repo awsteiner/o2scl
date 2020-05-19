@@ -1,3 +1,5 @@
+.. _astep_gsl:
+
 Class astep_gsl
 ===============
 

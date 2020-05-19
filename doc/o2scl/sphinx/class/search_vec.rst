@@ -1,3 +1,5 @@
+.. _search_vec:
+
 Class search_vec
 ================
 

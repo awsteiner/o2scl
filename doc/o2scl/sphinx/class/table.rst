@@ -1,3 +1,5 @@
+.. _table:
+
 Class table
 ===========
 

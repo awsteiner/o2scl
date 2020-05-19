@@ -1,3 +1,5 @@
+.. _matrix_view_transpose:
+
 Class matrix_view_transpose
 ===========================
 

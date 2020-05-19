@@ -1,3 +1,5 @@
+.. _cursesw:
+
 Class cursesw
 =============
 

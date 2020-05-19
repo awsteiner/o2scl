@@ -1,3 +1,5 @@
+.. _acol_manager:
+
 Class acol_manager
 ==================
 

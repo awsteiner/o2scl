@@ -1,3 +1,5 @@
+.. _prob_dens_positive:
+
 Class prob_dens_positive
 ========================
 

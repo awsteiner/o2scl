@@ -1,3 +1,5 @@
+.. _poly_real_coeff_gsl:
+
 Class poly_real_coeff_gsl
 =========================
 

@@ -1,3 +1,5 @@
+.. _interp_akima_peri:
+
 Class interp_akima_peri
 =======================
 

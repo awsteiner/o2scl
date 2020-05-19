@@ -1,3 +1,5 @@
+.. _inte_gen:
+
 Class inte_gen
 ==============
 

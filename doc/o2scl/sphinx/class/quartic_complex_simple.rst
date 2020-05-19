@@ -1,3 +1,5 @@
+.. _quartic_complex_simple:
+
 Class quartic_complex_simple
 ============================
 

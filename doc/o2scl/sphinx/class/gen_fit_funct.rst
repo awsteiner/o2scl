@@ -1,3 +1,5 @@
+.. _gen_fit_funct:
+
 Class gen_fit_funct
 ===================
 

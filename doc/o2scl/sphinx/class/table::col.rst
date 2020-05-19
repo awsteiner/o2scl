@@ -1,3 +1,5 @@
+.. _table::col:
+
 Class table::col
 ================
 

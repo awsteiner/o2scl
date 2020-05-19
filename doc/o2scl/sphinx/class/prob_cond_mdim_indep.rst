@@ -1,3 +1,5 @@
+.. _prob_cond_mdim_indep:
+
 Class prob_cond_mdim_indep
 ==========================
 

@@ -1,3 +1,5 @@
+.. _lanczos:
+
 Class lanczos
 =============
 

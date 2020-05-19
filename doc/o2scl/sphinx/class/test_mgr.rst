@@ -1,3 +1,5 @@
+.. _test_mgr:
+
 Class test_mgr
 ==============
 

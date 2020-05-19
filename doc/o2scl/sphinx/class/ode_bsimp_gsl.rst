@@ -1,3 +1,5 @@
+.. _ode_bsimp_gsl:
+
 Class ode_bsimp_gsl
 ===================
 

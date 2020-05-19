@@ -1,3 +1,5 @@
+.. _hdf_file:
+
 Class hdf_file
 ==============
 

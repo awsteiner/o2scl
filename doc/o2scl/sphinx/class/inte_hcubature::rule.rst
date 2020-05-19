@@ -1,3 +1,5 @@
+.. _inte_hcubature::rule:
+
 Class inte_hcubature::rule
 ==========================
 

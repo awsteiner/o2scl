@@ -1,3 +1,5 @@
+.. _cli::parameter:
+
 Class cli::parameter
 ====================
 

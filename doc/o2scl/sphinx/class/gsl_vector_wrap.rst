@@ -1,3 +1,5 @@
+.. _gsl_vector_wrap:
+
 Class gsl_vector_wrap
 =====================
 

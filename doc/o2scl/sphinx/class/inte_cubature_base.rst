@@ -1,3 +1,5 @@
+.. _inte_cubature_base:
+
 Class inte_cubature_base
 ========================
 

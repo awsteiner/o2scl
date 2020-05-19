@@ -1,3 +1,5 @@
+.. _const_matrix_view:
+
 Class const_matrix_view
 =======================
 

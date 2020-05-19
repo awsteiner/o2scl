@@ -1,3 +1,5 @@
+.. _deriv_gsl:
+
 Class deriv_gsl
 ===============
 

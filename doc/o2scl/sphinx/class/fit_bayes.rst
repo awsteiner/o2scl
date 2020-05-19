@@ -1,3 +1,5 @@
+.. _fit_bayes:
+
 Class fit_bayes
 ===============
 

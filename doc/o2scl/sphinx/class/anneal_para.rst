@@ -1,3 +1,5 @@
+.. _anneal_para:
+
 Class anneal_para
 =================
 

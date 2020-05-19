@@ -1,3 +1,5 @@
+.. _prob_dens_mdim_biv_gaussian:
+
 Class prob_dens_mdim_biv_gaussian
 =================================
 

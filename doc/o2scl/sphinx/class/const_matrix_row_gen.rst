@@ -1,3 +1,5 @@
+.. _const_matrix_row_gen:
+
 Class const_matrix_row_gen
 ==========================
 

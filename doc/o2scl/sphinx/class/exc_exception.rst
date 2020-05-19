@@ -1,3 +1,5 @@
+.. _exc_exception:
+
 Class exc_exception
 ===================
 

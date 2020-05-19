@@ -1,3 +1,5 @@
+.. _tensor_grid1:
+
 Class tensor_grid1
 ==================
 

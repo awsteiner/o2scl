@@ -1,3 +1,5 @@
+.. _slack_messenger:
+
 Class slack_messenger
 =====================
 

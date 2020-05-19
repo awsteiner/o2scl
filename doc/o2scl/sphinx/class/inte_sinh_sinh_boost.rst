@@ -1,3 +1,5 @@
+.. _inte_sinh_sinh_boost:
+
 Class inte_sinh_sinh_boost
 ==========================
 

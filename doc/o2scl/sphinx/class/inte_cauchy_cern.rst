@@ -1,3 +1,5 @@
+.. _inte_cauchy_cern:
+
 Class inte_cauchy_cern
 ======================
 
