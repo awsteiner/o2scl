@@ -28,8 +28,9 @@ full_html:
 class_list: empty
 	grep "kind=\"class\"" ../xml/index.xml > class_list
 
-make_index: empty
-	g++ -o make_index make_index.cpp
+rst_files: empty
+	g++ -o make_rst make_rst.cpp
+	./make_rst > make_rst.out
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).

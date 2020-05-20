@@ -7,5 +7,3 @@ Functions matrix_min_value
 
 .. doxygenfunction:: matrix_min_value(const mat_t&)
 
-.. doxygenfunction:: matrix_min_value(const mat_t&)
-

@@ -28,6 +28,10 @@
 
 using namespace std;
 
+/*
+  This code parses 'function_list' and 'class list' to create .rst
+  files for each class and function (or list of overloaded functions).
+*/
 int main(void) {
 
   // kk=0 for classes and kk=1 for functions
@@ -36,6 +40,7 @@ int main(void) {
     // -------------------------------------------------------
     // Parse the list file
 
+    cout << "---------------------------------------------------" << endl;
     if (kk==0) {
       cout << "Parsing class_list:" << endl;
     } else {
@@ -126,7 +131,7 @@ int main(void) {
     // Now create the rst files for the non-duplicate entries
     
     cout << "---------------------------------------------------" << endl;
-    cout << "Creating rst files:" << endl;
+    cout << "Creating rst files for non-duplicate functions:" << endl;
 
     // Proceed through the list
     for (std::map<std::string,std::string>::iterator it=list.begin();
@@ -178,11 +183,22 @@ int main(void) {
 
     cout << endl;
     cout << "---------------------------------------------------" << endl;
-
+    cout << "Creating rst files for duplicate functions:" << endl;
+    
     // -------------------------------------------------------
     // For functions, create the rst files for duplicate entries
     
     if (kk==1) {
+
+      // Open the namespace xml file and read it into memory
+      vector<string> ns_file;
+      ifstream fin("../xml/namespaceo2scl.xml");
+      while (!fin.eof()) {
+	string s2;
+	std::getline(fin,s2);
+	ns_file.push_back(s2);
+      }
+      fin.close();
 
       // Iterate over the list
       for (std::set<std::string>::iterator it=list_dup.begin();
@@ -207,73 +223,137 @@ int main(void) {
 	fout << endl;
 	fout << endl;
 
-	// Now open the namespace xml file and read it to find the various
-	// argument lists
-	ifstream fin("../xml/namespaceo2scl.xml");
-	
-	while (!fin.eof()) {
+	// Iterate through the namespace file
+	for(size_t i=0;i<ns_file.size();i++) {
 	  
-	  string s2;
-	  std::getline(fin,s2);
-
+	  string s2=ns_file[i];
+	  
 	  // Proceed through the file until we find the right
 	  // definition
 	  if (s2.find("<definition>")!=std::string::npos &&
 	      s2.find(s)!=std::string::npos) {
 
-	    // Output the name part of the sphinx directive
-	    fout << ".. doxygenfunction:: " << s << "(";
-
 	    size_t arg_count=0;
+	    
 	    // Skip the argstring
-	    std::getline(fin,s2);
-	    // Skip the name
-	    std::getline(fin,s2);
-	    // Read the param
-	    std::getline(fin,s2);
+	    i++;
+	    s2=ns_file[i];
 	    
-	    cout << s << "(";
+	    // Read the name line
+	    string name;
+	    i++;
+	    name=ns_file[i];
 	    
-	    while (s2.find("<param>")!=std::string::npos) {
-	      string type, declname, end;
-	      std::getline(fin,type);
-	      if (type.length()>23) {
-		type=type.substr(16,type.length()-23);
-	      }
-	      if (type.find(" &amp;")!=std::string::npos) {
-		type.replace(type.find(" &amp;"),6,"&");
-	      }
-	      std::getline(fin,declname);
-	      if (declname.length()>31) {
-		declname=declname.substr(20,declname.length()-31);
-	      }
-	      std::getline(fin,end);
-	      std::getline(fin,s2);
-	      
-	      if (arg_count!=0) {
-		cout << ", " << type;
-	      } else {
-		cout << type;
-	      }
-
-	      if (arg_count!=0) {
-		fout << ", " << type;
-	      } else {
-		fout << type;
-	      }
-	      arg_count++;
-	      //char ch;
-	      //cin >> ch;
+	    // Exit early if there is a parsing error
+	    if (name.find("<name>")==std::string::npos) {
+	      cout << "No <name>" << endl;
+	      cout << s << " " << name << endl;
+	      exit(-1);
+	    }
+	    if (name.find("</name>")==std::string::npos) {
+	      cout << "No </name>" << endl;
+	      cout << s << " " << name << endl;
+	      exit(-1);
 	    }
 	    
-	    cout << ")" << endl;
-	    fout << ")\n" << endl;
+	    // Extract the name
+	    size_t loc1=name.find("<name>");
+	    size_t loc2=name.find("</name>");
+	    size_t loct=loc1+6;
+	    if (loc2<loct) {
+	      cout << "Missing name" << endl;
+	      cout << name << endl;
+	      exit(-1);
+	    }
+	    size_t len=loc2-loc1-6;
+	    name=name.substr(loc1+6,len);
+
+	    // Only proceed if the name and s match
+	    if (name==s) {
+	      
+	      // Output the name part of the sphinx directive
+	      fout << ".. doxygenfunction:: " << s << "(";
+
+	      // Read the line <param> (if present)
+	      i++;
+	      s2=ns_file[i];
+	      
+	      cout << s << "(";
+
+	      // Read all of the parameters
+	      bool params_done=false;
+	      while (params_done==false) {
+
+		string type, declname, end;
+		i++;
+		type=ns_file[i];
+		//cout << "Type: " << type << endl;
+		if (type.length()>23) {
+		  type=type.substr(16,type.length()-23);
+		}
+		if (type.find(" &amp;")!=std::string::npos) {
+		  type.replace(type.find(" &amp;"),6,"&");
+		}
+		i++;
+		declname=ns_file[i];
+		//cout << "Declname: " << declname << endl;
+		if (declname.length()>31) {
+		  declname=declname.substr(20,declname.length()-31);
+		}
+		
+		// Read <defval> (if present) and </param> lines
+		i++;
+		end=ns_file[i];
+		//cout << "End: " << end << endl;
+		if (end.find("<defval>")!=std::string::npos) {
+		  i++;
+		  end=ns_file[i];
+		}
+		
+		// Read the next line
+		i++;
+		s2=ns_file[i];
+		//cout << "s2: " << s2 << endl;
+
+		// Update file and screen output
+		if (arg_count!=0) {
+		  cout << ", " << type;
+		} else {
+		  cout << type;
+		}
+
+		if (arg_count!=0) {
+		  fout << ", " << type;
+		} else {
+		  fout << type;
+		}
+	      
+		arg_count++;
+
+		if (s2.find("<param>")==std::string::npos) {
+		  params_done=true;
+		  //cout << "X " << s2 << endl;
+		}
+		
+		//char ch;
+		//cin >> ch;
+	      }
+
+	      // Output right parenthesis
+	      cout << ")" << endl;
+	      fout << ")\n" << endl;
+	      
+	    } else {
+	      //cout << "No match " << name << " " << s << endl;
+	    }
 	  }
 	    
 	}
-	fin.close();
+
+	// Close this rst file
 	fout.close();
       }
+      
     }
     
   }

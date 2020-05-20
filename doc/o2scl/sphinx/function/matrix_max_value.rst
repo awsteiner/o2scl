@@ -7,5 +7,3 @@ Functions matrix_max_value
 
 .. doxygenfunction:: matrix_max_value(const mat_t&)
 
-.. doxygenfunction:: matrix_max_value(const mat_t&)
-

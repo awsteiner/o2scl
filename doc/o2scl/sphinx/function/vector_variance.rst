@@ -7,23 +7,7 @@ Functions vector_variance
 
 .. doxygenfunction:: vector_variance(const vec_t&, double)
 
-.. doxygenfunction:: vector_variance(size_t, const vec_t&, double)
-
-.. doxygenfunction:: vector_variance(const vec_t&, double)
-
 .. doxygenfunction:: vector_variance(size_t, const vec_t&)
 
 .. doxygenfunction:: vector_variance(const vec_t&)
-
-.. doxygenfunction:: vector_variance(size_t, const vec_t&, const vec2_t&, double)
-
-.. doxygenfunction:: vector_variance(const vec_t&, const vec2_t&, double)
-
-.. doxygenfunction:: vector_variance(size_t, const vec_t&, const vec2_t&, double)
-
-.. doxygenfunction:: vector_variance(const vec_t&, const vec2_t&, double)
-
-.. doxygenfunction:: vector_variance(size_t, const vec_t&, const vec2_t&)
-
-.. doxygenfunction:: vector_variance(const vec_t&, const vec2_t&)
 
