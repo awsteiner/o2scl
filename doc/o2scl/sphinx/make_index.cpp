@@ -93,7 +93,10 @@ int main(void) {
 	ofstream fout(fname_out);
 
 	if (kk==0) {
+	  fout << ":ref:`O2scl <o2scl>` : :ref:`Class List`\n" << endl;
 	  fout << ".. _" << s << ":\n" << endl;
+	} else {
+	  fout << ":ref:`O2scl <o2scl>` : :ref:`Function List`\n" << endl;
 	}
 	
 	string head="Class "+s;

@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>` : :ref:`Class List`
+
 .. _inte_sinh_sinh_boost:
 
 Class inte_sinh_sinh_boost

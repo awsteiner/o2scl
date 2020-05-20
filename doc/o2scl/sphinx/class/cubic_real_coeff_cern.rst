@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>` : :ref:`Class List`
+
 .. _cubic_real_coeff_cern:
 
 Class cubic_real_coeff_cern

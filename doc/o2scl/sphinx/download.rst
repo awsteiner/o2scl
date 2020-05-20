@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>`
+
 Download O\ :sub:`2`\ scl
 =========================
 

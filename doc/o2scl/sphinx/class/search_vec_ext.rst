@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>` : :ref:`Class List`
+
 .. _search_vec_ext:
 
 Class search_vec_ext

@@ -1,0 +1,1165 @@
+Parsing class_list:
+Namespace: o2scl_acol class: acol_manager
+Namespace: o2scl class: anneal_base
+Namespace: o2scl class: anneal_gsl
+Namespace: o2scl class: anneal_mt
+Namespace: o2scl class: anneal_para
+Namespace: o2scl class: astep_base
+Namespace: o2scl class: astep_gsl
+Namespace: o2scl class: astep_nonadapt
+Namespace: o2scl class: bessel_K_exp_integ_direct
+Namespace: o2scl class: bessel_K_exp_integ_gsl
+Namespace: o2scl class: bessel_K_exp_integ_tl
+Namespace: o2scl class: bose_einstein_integ_tl
+Namespace: o2scl class: inte_pcubature::cache
+Namespace: o2scl class: calculator
+Namespace: o2scl class: cheb_approx_tl
+Namespace: o2scl class: chi_fit_funct
+Namespace: o2scl class: cli
+Namespace: o2scl class: cli_readline
+Namespace: o2scl_hdf class: cloud_file
+Namespace: o2scl class: table::col
+Namespace: o2scl class: columnify
+Namespace: o2scl class: comm_option_fptr
+Namespace: o2scl class: comm_option_funct
+Namespace: o2scl class: comm_option_mfptr
+Namespace: o2scl class: const_matrix_column_gen
+Namespace: o2scl class: const_matrix_row_gen
+Namespace: o2scl class: const_matrix_view
+Namespace: o2scl class: const_matrix_view_table
+Namespace: o2scl class: const_matrix_view_table_transpose
+Namespace: o2scl class: const_vector_range_gen
+Namespace: o2scl class: contour
+Namespace: o2scl class: contour_line
+Namespace: o2scl class: convert_units
+Namespace: o2scl class: cubic_complex
+Namespace: o2scl class: cubic_complex_std
+Namespace: o2scl class: cubic_real
+Namespace: o2scl class: cubic_real_coeff
+Namespace: o2scl class: cubic_real_coeff_cern
+Namespace: o2scl class: cubic_real_coeff_gsl
+Namespace: o2scl class: cursesw
+Namespace: o2scl class: deriv_base
+Namespace: o2scl class: deriv_cern
+Namespace: o2scl class: deriv_eqi
+Namespace: o2scl class: deriv_gsl
+Namespace: o2scl class: diff_evo
+Namespace: o2scl class: edge_crossings
+Namespace: o2scl class: err_hnd_cpp
+Namespace: o2scl class: err_hnd_gsl
+Namespace: o2scl class: err_hnd_type
+Namespace: o2scl class: inte_hcubature::esterr
+Namespace: o2scl class: exc_exception
+Namespace: o2scl class: exc_invalid_argument
+Namespace: o2scl class: exc_ios_failure
+Namespace: o2scl class: exc_logic_error
+Namespace: o2scl class: exc_overflow_error
+Namespace: o2scl class: exc_range_error
+Namespace: o2scl class: exc_runtime_error
+Namespace: o2scl class: expval_base
+Namespace: o2scl class: expval_matrix
+Namespace: o2scl class: expval_scalar
+Namespace: o2scl class: expval_vector
+Namespace: o2scl class: fermi_dirac_integ_direct
+Namespace: o2scl class: fermi_dirac_integ_gsl
+Namespace: o2scl class: fermi_dirac_integ_tl
+Namespace: o2scl class: find_constants
+Namespace: o2scl class: fit_base
+Namespace: o2scl class: fit_bayes
+Namespace: o2scl class: fit_fix_pars
+Namespace: o2scl class: fit_funct_strings
+Namespace: o2scl class: fit_linear
+Namespace: o2scl class: fit_min
+Namespace: o2scl class: fit_nonlin
+Namespace: o2scl class: fit_nonlin_b
+Namespace: o2scl class: format_float
+Namespace: o2scl class: fract
+Namespace: o2scl class: funct2_string
+Namespace: o2scl class: funct_gsl
+Namespace: o2scl class: funct_string
+Namespace: o2scl class: gen_fit_funct
+Namespace: o2scl class: gen_test_number
+Namespace: o2scl class: gradient
+Namespace: o2scl class: gradient_gsl
+Namespace: o2scl class: gsl_matrix_wrap
+Namespace: o2scl class: gsl_tolerance
+Namespace: o2scl class: gsl_vector_wrap
+Namespace: o2scl_hdf class: hdf_file
+Namespace: o2scl class: inte_hcubature::heap
+Namespace: o2scl class: hist
+Namespace: o2scl class: hist_2d
+Namespace: o2scl class: prob_dens_mdim_amr::hypercube
+Namespace: o2scl class: inte_hcubature::hypercube
+Namespace: o2scl class: index_spec
+Namespace: o2scl class: inte
+Namespace: o2scl class: inte_adapt_cern
+Namespace: o2scl class: inte_cauchy_cern
+Namespace: o2scl class: inte_cheb_gsl
+Namespace: o2scl class: inte_cubature_base
+Namespace: o2scl class: inte_exp_sinh_boost
+Namespace: o2scl class: inte_gauss56_cern
+Namespace: o2scl class: inte_gauss56_coeffs_cpp_dec_float_50
+Namespace: o2scl class: inte_gauss56_coeffs_double
+Namespace: o2scl class: inte_gauss56_coeffs_long_double
+Namespace: o2scl class: inte_gauss_cern
+Namespace: o2scl class: inte_gauss_coeffs_cpp_dec_float_50
+Namespace: o2scl class: inte_gauss_coeffs_double
+Namespace: o2scl class: inte_gauss_coeffs_long_double
+Namespace: o2scl class: inte_gen
+Namespace: o2scl class: inte_gsl
+Namespace: o2scl class: inte_hcubature
+Namespace: o2scl class: inte_i_transform
+Namespace: o2scl class: inte_il_transform
+Namespace: o2scl class: inte_iu_transform
+Namespace: o2scl class: inte_kronrod_boost
+Namespace: o2scl class: inte_kronrod_gsl
+Namespace: o2scl class: inte_multi
+Namespace: o2scl class: inte_pcubature
+Namespace: o2scl class: inte_qag_gsl
+Namespace: o2scl class: inte_qagi_gsl
+Namespace: o2scl class: inte_qagil_gsl
+Namespace: o2scl class: inte_qagiu_gsl
+Namespace: o2scl class: inte_qags_gsl
+Namespace: o2scl class: inte_qawc_gsl
+Namespace: o2scl class: inte_qawf_gsl_cos
+Namespace: o2scl class: inte_qawf_gsl_sin
+Namespace: o2scl class: inte_qawo_gsl_cos
+Namespace: o2scl class: inte_qawo_gsl_sin
+Namespace: o2scl class: inte_qaws_gsl
+Namespace: o2scl class: inte_qng_gsl
+Namespace: o2scl class: inte_singular_gsl
+Namespace: o2scl class: inte_sinh_sinh_boost
+Namespace: o2scl class: inte_tanh_sinh_boost
+Namespace: o2scl class: inte_transform_gsl
+Namespace: o2scl class: inte_workspace_gsl
+Namespace: o2scl class: interp
+Namespace: o2scl class: interp2_base
+Namespace: o2scl class: interp2_direct
+Namespace: o2scl class: interp2_eqi
+Namespace: o2scl class: interp2_neigh
+Namespace: o2scl class: interp2_planar
+Namespace: o2scl class: interp2_seq
+Namespace: o2scl class: interp_akima
+Namespace: o2scl class: interp_akima_peri
+Namespace: o2scl class: interp_array
+Namespace: o2scl class: interp_array_vec
+Namespace: o2scl class: interp_base
+Namespace: o2scl class: interp_cspline
+Namespace: o2scl class: interp_cspline_peri
+Namespace: o2scl class: interp_krige
+Namespace: o2scl class: interp_krige_optim
+Namespace: o2scl class: interp_linear
+Namespace: o2scl class: interp_monotonic
+Namespace: o2scl class: interp_nearest_neigh
+Namespace: o2scl class: interp_steffen
+Namespace: o2scl class: interp_vec
+Namespace: o2scl class: interpm_idw
+Namespace: o2scl class: interpm_krige
+Namespace: o2scl class: interpm_krige_nn
+Namespace: o2scl class: interpm_krige_optim
+Namespace: o2scl class: jacobian
+Namespace: o2scl class: jacobian_exact
+Namespace: o2scl class: jacobian_gsl
+Namespace: o2scl_linalg class: lanczos
+Namespace: o2scl class: lib_settings_class
+Namespace: o2scl_linalg class: linear_solver
+Namespace: o2scl_linalg class: linear_solver_arma
+Namespace: o2scl_linalg class: linear_solver_eigen_colQR
+Namespace: o2scl_linalg class: linear_solver_eigen_fullLU
+Namespace: o2scl_linalg class: linear_solver_eigen_fullQR
+Namespace: o2scl_linalg class: linear_solver_eigen_houseQR
+Namespace: o2scl_linalg class: linear_solver_eigen_LDLT
+Namespace: o2scl_linalg class: linear_solver_eigen_LLT
+Namespace: o2scl_linalg class: linear_solver_eigen_partLU
+Namespace: o2scl_linalg class: linear_solver_HH
+Namespace: o2scl_linalg class: linear_solver_LU
+Namespace: o2scl_linalg class: linear_solver_QR
+Namespace: boost class: numeric::ublas::matrix
+Namespace: o2scl class: matrix_column_gen
+Namespace: o2scl class: matrix_row_gen
+Namespace: o2scl class: matrix_row_gen_ctor
+Namespace: o2scl class: matrix_swap_table
+Namespace: o2scl class: matrix_view
+Namespace: o2scl class: matrix_view_omit_column
+Namespace: o2scl class: matrix_view_omit_row
+Namespace: o2scl class: matrix_view_table
+Namespace: o2scl class: matrix_view_table_transpose
+Namespace: o2scl class: matrix_view_transpose
+Namespace: o2scl class: matrix_view_vec_vec
+Namespace: o2scl class: mcarlo
+Namespace: o2scl class: mcarlo_miser
+Namespace: o2scl class: mcarlo_plain
+Namespace: o2scl class: mcarlo_vegas
+Namespace: o2scl class: mcmc_para_base
+Namespace: o2scl class: mcmc_para_cli
+Namespace: o2scl class: mcmc_para_old_base
+Namespace: o2scl class: mcmc_para_old_cli
+Namespace: o2scl class: mcmc_para_old_table
+Namespace: o2scl class: mcmc_para_table
+Namespace: o2scl class: min_base
+Namespace: o2scl class: min_bkt_base
+Namespace: o2scl class: min_brent_boost
+Namespace: o2scl class: min_brent_gsl
+Namespace: o2scl class: min_cern
+Namespace: o2scl class: min_de_base
+Namespace: o2scl class: min_quad_golden
+Namespace: o2scl class: mm_funct_strings
+Namespace: o2scl class: mmin_base
+Namespace: o2scl class: mmin_bfgs2
+Namespace: o2scl class: mmin_conf
+Namespace: o2scl class: mmin_conp
+Namespace: o2scl class: mmin_constr
+Namespace: o2scl class: mmin_constr_pgrad
+Namespace: o2scl class: mmin_constr_spg
+Namespace: o2scl class: mmin_fix_params
+Namespace: o2scl class: mmin_gsl_base
+Namespace: o2scl class: mmin_linmin_gsl
+Namespace: o2scl class: mmin_simp2
+Namespace: o2scl class: mmin_wrap_gsl
+Namespace: o2scl class: mmin_wrapper_gsl
+Namespace: o2scl class: mroot
+Namespace: o2scl class: mroot_broyden
+Namespace: o2scl class: mroot_cern
+Namespace: o2scl class: mroot_hybrids
+Namespace: o2scl class: mroot_hybrids_arma_qr_econ
+Namespace: o2scl class: mroot_hybrids_base
+Namespace: o2scl class: mroot_hybrids_eigen
+Namespace: o2scl class: multi_funct_strings
+Namespace: o2scl class: ode_bsimp_gsl
+Namespace: o2scl class: ode_bv_mshoot
+Namespace: o2scl class: ode_bv_multishoot
+Namespace: o2scl class: ode_bv_shoot
+Namespace: o2scl class: ode_bv_shoot_grid
+Namespace: o2scl class: ode_bv_solve
+Namespace: o2scl class: ode_control_gsl
+Namespace: o2scl class: ode_funct_strings
+Namespace: o2scl class: ode_it_solve
+Namespace: o2scl class: ode_iv_solve
+Namespace: o2scl class: ode_iv_solve_grid
+Namespace: o2scl class: ode_iv_table
+Namespace: o2scl class: ode_rk8pd_gsl
+Namespace: o2scl class: ode_rkck_gsl
+Namespace: o2scl class: ode_rkf45_gsl
+Namespace: o2scl class: ode_step
+Namespace: o2scl class: cli::parameter
+Namespace: o2scl class: cli::parameter_bool
+Namespace: o2scl class: cli::parameter_double
+Namespace: o2scl class: cli::parameter_int
+Namespace: o2scl class: cli::parameter_size_t
+Namespace: o2scl class: cli::parameter_string
+Namespace: o2scl class: permutation
+Namespace: o2scl class: pinside
+Namespace: o2scl class: poly_complex
+Namespace: o2scl class: poly_real_coeff
+Namespace: o2scl class: poly_real_coeff_gsl
+Namespace: o2scl class: polylog
+Namespace: o2scl class: prob_cond_mdim
+Namespace: o2scl class: prob_cond_mdim_fixed_step
+Namespace: o2scl class: prob_cond_mdim_gaussian
+Namespace: o2scl class: prob_cond_mdim_indep
+Namespace: o2scl class: prob_dens_frange
+Namespace: o2scl class: prob_dens_func
+Namespace: o2scl class: prob_dens_gaussian
+Namespace: o2scl class: prob_dens_hist
+Namespace: o2scl class: prob_dens_lognormal
+Namespace: o2scl class: prob_dens_mdim
+Namespace: o2scl class: prob_dens_mdim_amr
+Namespace: o2scl class: prob_dens_mdim_biv_gaussian
+Namespace: o2scl class: prob_dens_mdim_bound_gaussian
+Namespace: o2scl class: prob_dens_mdim_factor
+Namespace: o2scl class: prob_dens_mdim_gaussian
+Namespace: o2scl class: prob_dens_positive
+Namespace: o2scl class: prob_dens_uniform
+Namespace: o2scl class: quadratic_complex
+Namespace: o2scl class: quadratic_complex_std
+Namespace: o2scl class: quadratic_real
+Namespace: o2scl class: quadratic_real_coeff
+Namespace: o2scl class: quadratic_real_coeff_gsl
+Namespace: o2scl class: quartic_complex
+Namespace: o2scl class: quartic_complex_simple
+Namespace: o2scl class: quartic_real
+Namespace: o2scl class: quartic_real_coeff
+Namespace: o2scl class: quartic_real_coeff_cern
+Namespace: o2scl class: quartic_real_gsl
+Namespace: o2scl class: quartic_real_gsl2
+Namespace: o2scl class: quartic_real_simple
+Namespace: o2scl class: inte_hcubature::region
+Namespace: o2scl class: rng_gsl
+Namespace: o2scl class: rng_gsl_uniform_real
+Namespace: o2scl class: root
+Namespace: o2scl class: root_bkt
+Namespace: o2scl class: root_bkt_cern
+Namespace: o2scl class: root_brent_gsl
+Namespace: o2scl class: root_cern
+Namespace: o2scl class: root_de
+Namespace: o2scl class: root_robbins_monro
+Namespace: o2scl class: root_stef
+Namespace: o2scl class: root_toms748
+Namespace: o2scl class: inte_hcubature::rule
+Namespace: o2scl class: inte_hcubature::rule75genzmalik
+Namespace: o2scl class: search_vec
+Namespace: o2scl class: search_vec_ext
+Namespace: o2scl class: series_acc
+Namespace: o2scl class: slack_messenger
+Namespace: o2scl class: smooth_func
+Namespace: o2scl class: smooth_gsl
+Namespace: o2scl class: table
+Namespace: o2scl class: table3d
+Namespace: o2scl class: table_units
+Namespace: o2scl class: tensor
+Namespace: o2scl class: tensor1
+Namespace: o2scl class: tensor2
+Namespace: o2scl class: tensor3
+Namespace: o2scl class: tensor4
+Namespace: o2scl class: tensor_grid
+Namespace: o2scl class: tensor_grid1
+Namespace: o2scl class: tensor_grid2
+Namespace: o2scl class: tensor_grid3
+Namespace: o2scl class: tensor_grid4
+Namespace: o2scl class: test_mgr
+Namespace: o2scl class: Token
+Namespace: o2scl_linalg class: ubvector_2_mem
+Namespace: o2scl_linalg class: ubvector_4_mem
+Namespace: o2scl_linalg class: ubvector_5_mem
+Namespace: o2scl class: uniform_grid
+Namespace: o2scl class: uniform_grid_end
+Namespace: o2scl class: uniform_grid_end_width
+Namespace: o2scl class: uniform_grid_log_end
+Namespace: o2scl class: uniform_grid_log_end_width
+Namespace: o2scl class: uniform_grid_log_width
+Namespace: o2scl class: uniform_grid_width
+Namespace: o2scl class: uniform_prior
+Namespace: o2scl class: vec_index
+Namespace: boost class: numeric::ublas::vector
+Namespace: o2scl class: vector_index_vector
+Namespace: o2scl class: vector_index_vector_size
+Namespace: o2scl class: vector_range_gen
+
+Creating files:
+
+---------------------------------------------------
+Parsing function_list:
+Namespace:  function: matrix_out
+Namespace:  function: matrix_out
+Multiple entry matrix_out
+Namespace:  function: matrix_trans_out
+Namespace:  function: matrix_trans_out
+Multiple entry matrix_trans_out
+Namespace:  function: array_2d_out
+Namespace:  function: array_2d_trans_out
+Namespace:  function: set_err_fn
+Namespace:  function: error_update
+Namespace:  function: vector_level_count
+Namespace:  function: vector_deriv_interp
+Namespace:  function: vector_deriv2_interp
+Namespace:  function: vector_deriv_xy_interp
+Namespace:  function: vector_deriv2_xy_interp
+Namespace:  function: vector_integ_interp
+Namespace:  function: vector_integ_xy_interp
+Namespace:  function: vector_integ_xy_interp
+Multiple entry vector_integ_xy_interp
+Namespace:  function: vector_integ_ul_interp
+Namespace:  function: vector_integ_ul_xy_interp
+Namespace:  function: vector_find_level
+Namespace:  function: vector_invert_enclosed_sum
+Namespace:  function: vector_region_int
+Namespace:  function: vector_region_fracint
+Namespace:  function: vector_bound_fracint
+Namespace:  function: vector_bound_int
+Namespace:  function: rebin_xy
+Namespace:  function: rebin_xy
+Multiple entry rebin_xy
+Namespace:  function: linear_or_log_chi2
+Namespace:  function: linear_or_log
+Namespace:  function: vector_refine
+Namespace:  function: linear_or_log
+Multiple entry linear_or_log
+Namespace:  function: o2abs
+Namespace:  function: o2abs
+Multiple entry o2abs
+Namespace:  function: o2abs
+Multiple entry o2abs
+Namespace:  function: o2abs
+Multiple entry o2abs
+Namespace:  function: o2isfinite
+Namespace:  function: o2isfinite
+Multiple entry o2isfinite
+Namespace:  function: o2hypot
+Namespace:  function: o2hypot
+Multiple entry o2hypot
+Namespace:  function: o2hypot
+Multiple entry o2hypot
+Namespace:  function: o2hypot
+Multiple entry o2hypot
+Namespace:  function: fermi_function
+Namespace:  function: bose_function
+Namespace:  function: pipe_cmd_string
+Namespace:  function: pipe_cmd_string
+Multiple entry pipe_cmd_string
+Namespace:  function: file_exists
+Namespace:  function: screenify
+Namespace:  function: count_words
+Namespace:  function: remove_whitespace
+Namespace:  function: binary_to_hex
+Namespace:  function: RGBtoHSV
+Namespace:  function: HSVtoRGB
+Namespace:  function: quadratic_extremum_x
+Namespace:  function: quadratic_extremum_y_full
+Namespace:  function: quadratic_extremum_y
+Namespace:  function: quadratic_extremum_xy
+Namespace:  function: quadratic_extremum_coeffs
+Namespace:  function: glob_wrapper
+Namespace:  function: wordexp_wrapper
+Namespace:  function: wordexp_single_file
+Namespace:  function: vt100_hrule
+Namespace:  function: vt100_cyan_fg
+Namespace:  function: vt100_magenta_fg
+Namespace:  function: vt100_yellow_fg
+Namespace:  function: vt100_red_fg
+Namespace:  function: vt100_green_fg
+Namespace:  function: vt100_blue_fg
+Namespace:  function: vt100_cyan_bg
+Namespace:  function: vt100_magenta_bg
+Namespace:  function: vt100_yellow_bg
+Namespace:  function: vt100_red_bg
+Namespace:  function: vt100_green_bg
+Namespace:  function: vt100_blue_bg
+Namespace:  function: vt100_default
+Namespace:  function: vt100_bold
+Namespace:  function: vt100_8bit_fg
+Namespace:  function: vt100_8bit_bg
+Namespace:  function: vt100_3byte_fg
+Namespace:  function: vt100_3byte_bg
+Namespace:  function: vt100_lowint
+Namespace:  function: vt100_underline
+Namespace:  function: vt100_reverse
+Namespace:  function: vt100_alt_font
+Namespace:  function: vt100_normal_font
+Namespace:  function: vt100_8bit_summ
+Namespace:  function: vt100_3byte_summ
+Namespace:  function: vt100_3byte_summ_long
+Namespace:  function: ptos
+Namespace:  function: itos
+Namespace:  function: szttos
+Namespace:  function: btos
+Namespace:  function: dtos
+Namespace:  function: size_of_exponent
+Namespace:  function: dtos
+Multiple entry dtos
+Namespace:  function: stoi
+Namespace:  function: stoi_nothrow
+Namespace:  function: stoszt
+Namespace:  function: stoszt_nothrow
+Namespace:  function: stob
+Namespace:  function: stod
+Namespace:  function: stod_nothrow
+Namespace:  function: has_minus_sign
+Namespace:  function: is_number
+Namespace:  function: function_to_double
+Namespace:  function: find_constant
+Namespace:  function: function_to_double_nothrow
+Namespace:  function: split_string
+Namespace:  function: split_string_delim
+Namespace:  function: rewrap
+Namespace:  function: rewrap_keep_endlines
+Namespace:  function: string_to_uint_list
+Namespace:  function: ix_index
+Namespace:  function: ix_fixed
+Namespace:  function: ix_sum
+Namespace:  function: ix_trace
+Namespace:  function: ix_reverse
+Namespace:  function: ix_range
+Namespace:  function: ix_interp
+Namespace:  function: ix_grid
+Namespace:  function: ix_gridw
+Namespace:  function: tensor_out
+Namespace:  function: operator==
+Namespace:  function: vectors_equal
+Namespace:  function: vectors_equal
+Multiple entry vectors_equal
+Namespace:  function: vectors_equal_tol
+Namespace:  function: vectors_equal_tol
+Multiple entry vectors_equal_tol
+Namespace:  function: vector_copy
+Namespace:  function: vector_copy
+Multiple entry vector_copy
+Namespace:  function: matrix_copy
+Namespace:  function: matrix_copy
+Multiple entry matrix_copy
+Namespace:  function: matrix_transpose
+Namespace:  function: matrix_transpose
+Multiple entry matrix_transpose
+Namespace:  function: matrix_transpose
+Multiple entry matrix_transpose
+Namespace:  function: matrix_transpose
+Multiple entry matrix_transpose
+Namespace:  function: matrix_is_lower
+Namespace:  function: matrix_is_upper
+Namespace:  function: matrix_make_lower
+Namespace:  function: matrix_make_upper
+Namespace:  function: matrix_is_lower
+Multiple entry matrix_is_lower
+Namespace:  function: matrix_is_upper
+Multiple entry matrix_is_upper
+Namespace:  function: matrix_make_lower
+Multiple entry matrix_make_lower
+Namespace:  function: matrix_make_upper
+Multiple entry matrix_make_upper
+Namespace:  function: vector_swap
+Namespace:  function: vector_swap
+Multiple entry vector_swap
+Namespace:  function: vector_swap_double
+Namespace:  function: vector_swap_double
+Multiple entry vector_swap_double
+Namespace:  function: vector_swap
+Multiple entry vector_swap
+Namespace:  function: vector_swap_double
+Multiple entry vector_swap_double
+Namespace:  function: matrix_swap
+Namespace:  function: matrix_swap_double
+Namespace:  function: matrix_swap
+Multiple entry matrix_swap
+Namespace:  function: matrix_swap_double
+Multiple entry matrix_swap_double
+Namespace:  function: matrix_swap_cols
+Namespace:  function: matrix_swap_cols_double
+Namespace:  function: matrix_swap_rows
+Namespace:  function: matrix_swap_rows_double
+Namespace:  function: sort_downheap
+Namespace:  function: vector_sort
+Namespace:  function: sort_index_downheap
+Namespace:  function: vector_sort_index
+Namespace:  function: vector_sort_index
+Multiple entry vector_sort_index
+Namespace:  function: vector_sort_double
+Namespace:  function: vector_smallest
+Namespace:  function: vector_smallest
+Multiple entry vector_smallest
+Namespace:  function: vector_smallest_index
+Namespace:  function: vector_smallest_index
+Multiple entry vector_smallest_index
+Namespace:  function: vector_largest
+Namespace:  function: vector_largest
+Multiple entry vector_largest
+Namespace:  function: vector_max_value
+Namespace:  function: vector_max_value
+Multiple entry vector_max_value
+Namespace:  function: vector_max_index
+Namespace:  function: vector_max
+Namespace:  function: vector_min_value
+Namespace:  function: vector_min_value
+Multiple entry vector_min_value
+Namespace:  function: vector_min_index
+Namespace:  function: vector_min
+Namespace:  function: vector_minmax_value
+Namespace:  function: vector_minmax_index
+Namespace:  function: vector_minmax
+Namespace:  function: vector_max_quad
+Namespace:  function: vector_max_quad
+Multiple entry vector_max_quad
+Namespace:  function: vector_max_quad_loc
+Namespace:  function: vector_min_quad
+Namespace:  function: vector_min_quad
+Multiple entry vector_min_quad
+Namespace:  function: vector_min_quad_loc
+Namespace:  function: matrix_max_value
+Namespace:  function: matrix_max_value
+Multiple entry matrix_max_value
+Namespace:  function: matrix_max_value_double
+Namespace:  function: matrix_max_index
+Namespace:  function: matrix_max_index
+Multiple entry matrix_max_index
+Namespace:  function: matrix_min_value
+Namespace:  function: matrix_min_value
+Multiple entry matrix_min_value
+Namespace:  function: matrix_min_value_double
+Namespace:  function: matrix_min_index
+Namespace:  function: matrix_min_index
+Multiple entry matrix_min_index
+Namespace:  function: matrix_minmax
+Namespace:  function: matrix_minmax
+Multiple entry matrix_minmax
+Namespace:  function: matrix_minmax_index
+Namespace:  function: matrix_sum
+Namespace:  function: matrix_sum
+Multiple entry matrix_sum
+Namespace:  function: vector_lookup
+Namespace:  function: vector_lookup
+Multiple entry vector_lookup
+Namespace:  function: vector_search
+Namespace:  function: vector_search
+Multiple entry vector_search
+Namespace:  function: matrix_lookup
+Namespace:  function: matrix_lookup
+Multiple entry matrix_lookup
+Namespace:  function: vector_bsearch_inc
+Namespace:  function: vector_bsearch_dec
+Namespace:  function: vector_bsearch
+Namespace:  function: vector_bsearch
+Multiple entry vector_bsearch
+Namespace:  function: vector_is_monotonic
+Namespace:  function: vector_is_monotonic
+Multiple entry vector_is_monotonic
+Namespace:  function: vector_is_strictly_monotonic
+Namespace:  function: vector_is_strictly_monotonic
+Multiple entry vector_is_strictly_monotonic
+Namespace:  function: vector_is_finite
+Namespace:  function: vector_is_finite
+Multiple entry vector_is_finite
+Namespace:  function: vector_sum
+Namespace:  function: vector_diffs
+Namespace:  function: vector_sum
+Multiple entry vector_sum
+Namespace:  function: vector_sum_double
+Namespace:  function: vector_sum_double
+Multiple entry vector_sum_double
+Namespace:  function: vector_norm
+Namespace:  function: vector_norm
+Multiple entry vector_norm
+Namespace:  function: vector_norm_double
+Namespace:  function: vector_norm_double
+Multiple entry vector_norm_double
+Namespace:  function: vector_set_all
+Namespace:  function: vector_set_all
+Multiple entry vector_set_all
+Namespace:  function: matrix_set_all
+Namespace:  function: matrix_set_all
+Multiple entry matrix_set_all
+Namespace:  function: vector_copy_jackknife
+Namespace:  function: vector_copy_jackknife
+Multiple entry vector_copy_jackknife
+Namespace:  function: vector_rotate
+Namespace:  function: vector_reverse
+Namespace:  function: vector_reverse
+Multiple entry vector_reverse
+Namespace:  function: vector_reverse_double
+Namespace:  function: vector_reverse_double
+Multiple entry vector_reverse_double
+Namespace:  function: matrix_row
+Namespace:  function: matrix_column
+Namespace:  function: vector_out
+Namespace:  function: vector_out
+Multiple entry vector_out
+Namespace:  function: vector_grid
+Namespace:  function: matrix_set_identity
+Namespace:  function: matrix_set_identity
+Multiple entry matrix_set_identity
+Namespace:  function: vector_range
+Namespace:  function: const_vector_range
+Namespace:  function: vector_range
+Multiple entry vector_range
+Namespace:  function: const_vector_range
+Multiple entry const_vector_range
+Namespace:  function: const_vector_range
+Multiple entry const_vector_range
+Namespace:  function: vector_range
+Multiple entry vector_range
+Namespace:  function: const_vector_range
+Multiple entry const_vector_range
+Namespace:  function: const_vector_range
+Multiple entry const_vector_range
+Namespace:  function: const_vector_range
+Multiple entry const_vector_range
+Namespace:  function: vector_range
+Multiple entry vector_range
+Namespace:  function: const_vector_range
+Multiple entry const_vector_range
+Namespace:  function: const_vector_range
+Multiple entry const_vector_range
+Namespace:  function: vector_range
+Multiple entry vector_range
+Namespace:  function: const_vector_range
+Multiple entry const_vector_range
+Namespace:  function: const_vector_range
+Multiple entry const_vector_range
+Namespace:  function: const_vector_range
+Multiple entry const_vector_range
+Namespace:  function: vector_range_copy
+Namespace:  function: vector_range_copy
+Multiple entry vector_range_copy
+Namespace:  function: matrix_max
+Namespace:  function: matrix_min
+Namespace:  function: matrix_row&lt; arma::mat, arma::subview_row&lt; double &gt; &gt;
+Namespace:  function: matrix_column&lt; arma::mat, arma::subview_col&lt; double &gt; &gt;
+Namespace:  function: matrix_max
+Multiple entry matrix_max
+Namespace:  function: matrix_min
+Multiple entry matrix_min
+Namespace:  function: matrix_row&lt; Eigen::MatrixXd, Eigen::MatrixXd::RowXpr &gt;
+Namespace:  function: matrix_column&lt; Eigen::MatrixXd, Eigen::MatrixXd::ColXpr &gt;
+Namespace:  function: vector_deriv_threept
+Namespace:  function: vector_deriv_threept_tap
+Namespace:  function: vector_deriv_fivept
+Namespace:  function: vector_deriv_fivept_tap
+Namespace:  function: vector_integ_trap
+Namespace:  function: vector_integ_threept
+Namespace:  function: vector_integ_extended4
+Namespace:  function: vector_integ_durand
+Namespace:  function: vector_integ_extended8
+Namespace:  function: operator&lt;&lt;
+Namespace:  function: constraint
+Namespace:  function: cont_constraint
+Namespace:  function: lower_bound
+Namespace:  function: cont_lower_bound
+Namespace:  function: vector_mean
+Namespace:  function: vector_mean
+Multiple entry vector_mean
+Namespace:  function: vector_variance_fmean
+Namespace:  function: vector_variance_fmean
+Multiple entry vector_variance_fmean
+Namespace:  function: vector_variance
+Namespace:  function: vector_variance
+Multiple entry vector_variance
+Namespace:  function: vector_variance
+Multiple entry vector_variance
+Namespace:  function: vector_variance
+Multiple entry vector_variance
+Namespace:  function: vector_stddev_fmean
+Namespace:  function: vector_stddev_fmean
+Multiple entry vector_stddev_fmean
+Namespace:  function: vector_stddev
+Namespace:  function: vector_stddev
+Multiple entry vector_stddev
+Namespace:  function: vector_stddev
+Multiple entry vector_stddev
+Namespace:  function: vector_stddev
+Multiple entry vector_stddev
+Namespace:  function: vector_absdev
+Namespace:  function: vector_absdev
+Multiple entry vector_absdev
+Namespace:  function: vector_absdev
+Multiple entry vector_absdev
+Namespace:  function: vector_absdev
+Multiple entry vector_absdev
+Namespace:  function: vector_skew
+Namespace:  function: vector_skew
+Multiple entry vector_skew
+Namespace:  function: vector_skew
+Multiple entry vector_skew
+Namespace:  function: vector_skew
+Multiple entry vector_skew
+Namespace:  function: vector_kurtosis
+Namespace:  function: vector_kurtosis
+Multiple entry vector_kurtosis
+Namespace:  function: vector_kurtosis
+Multiple entry vector_kurtosis
+Namespace:  function: vector_kurtosis
+Multiple entry vector_kurtosis
+Namespace:  function: vector_covariance
+Namespace:  function: vector_covariance
+Multiple entry vector_covariance
+Namespace:  function: vector_covariance
+Multiple entry vector_covariance
+Namespace:  function: vector_covariance
+Multiple entry vector_covariance
+Namespace:  function: vector_correlation
+Namespace:  function: vector_correlation
+Multiple entry vector_correlation
+Namespace:  function: vector_pvariance
+Namespace:  function: vector_pvariance
+Multiple entry vector_pvariance
+Namespace:  function: vector_quantile_sorted
+Namespace:  function: vector_quantile_sorted
+Multiple entry vector_quantile_sorted
+Namespace:  function: vector_median_sorted
+Namespace:  function: vector_median_sorted
+Multiple entry vector_median_sorted
+Namespace:  function: vector_chi_squared
+Namespace:  function: vector_chi_squared
+Multiple entry vector_chi_squared
+Namespace:  function: vector_bin_size_scott
+Namespace:  function: vector_bin_size_scott
+Multiple entry vector_bin_size_scott
+Namespace:  function: vector_sorted_quantile
+Namespace:  function: vector_bin_size_freedman
+Namespace:  function: vector_bin_size_freedman
+Multiple entry vector_bin_size_freedman
+Namespace:  function: vector_roll_avg
+Namespace:  function: vector_roll_avg
+Multiple entry vector_roll_avg
+Namespace:  function: wvector_mean
+Namespace:  function: wvector_mean
+Multiple entry wvector_mean
+Namespace:  function: wvector_factor
+Namespace:  function: wvector_factor
+Multiple entry wvector_factor
+Namespace:  function: wvector_variance_fmean
+Namespace:  function: wvector_variance_fmean
+Multiple entry wvector_variance_fmean
+Namespace:  function: wvector_variance
+Namespace:  function: wvector_variance
+Multiple entry wvector_variance
+Namespace:  function: wvector_variance
+Multiple entry wvector_variance
+Namespace:  function: wvector_variance
+Multiple entry wvector_variance
+Namespace:  function: wvector_stddev_fmean
+Namespace:  function: wvector_stddev_fmean
+Multiple entry wvector_stddev_fmean
+Namespace:  function: wvector_stddev
+Namespace:  function: wvector_stddev
+Multiple entry wvector_stddev
+Namespace:  function: wvector_stddev
+Multiple entry wvector_stddev
+Namespace:  function: wvector_stddev
+Multiple entry wvector_stddev
+Namespace:  function: wvector_covariance
+Namespace:  function: wvector_covariance
+Multiple entry wvector_covariance
+Namespace:  function: wvector_sumsq
+Namespace:  function: wvector_sumsq
+Multiple entry wvector_sumsq
+Namespace:  function: wvector_sumsq
+Multiple entry wvector_sumsq
+Namespace:  function: wvector_sumsq
+Multiple entry wvector_sumsq
+Namespace:  function: wvector_absdev
+Namespace:  function: wvector_absdev
+Multiple entry wvector_absdev
+Namespace:  function: wvector_absdev
+Multiple entry wvector_absdev
+Namespace:  function: wvector_absdev
+Multiple entry wvector_absdev
+Namespace:  function: wvector_skew
+Namespace:  function: wvector_skew
+Multiple entry wvector_skew
+Namespace:  function: wvector_skew
+Multiple entry wvector_skew
+Namespace:  function: wvector_skew
+Multiple entry wvector_skew
+Namespace:  function: wvector_kurtosis
+Namespace:  function: wvector_kurtosis
+Multiple entry wvector_kurtosis
+Namespace:  function: wvector_kurtosis
+Multiple entry wvector_kurtosis
+Namespace:  function: wvector_kurtosis
+Multiple entry wvector_kurtosis
+Namespace:  function: vector_lag1_autocorr
+Namespace:  function: vector_lag1_autocorr
+Multiple entry vector_lag1_autocorr
+Namespace:  function: vector_lag1_autocorr
+Multiple entry vector_lag1_autocorr
+Namespace:  function: vector_lag1_autocorr
+Multiple entry vector_lag1_autocorr
+Namespace:  function: vector_lagk_autocorr
+Namespace:  function: vector_lagk_autocorr
+Multiple entry vector_lagk_autocorr
+Namespace:  function: vector_lagk_autocorr
+Multiple entry vector_lagk_autocorr
+Namespace:  function: vector_lagk_autocorr
+Multiple entry vector_lagk_autocorr
+Namespace:  function: vector_autocorr_vector
+Namespace:  function: vector_autocorr_tau
+Namespace:  function: vector_lagk_autocorr_mult
+Namespace:  function: vector_lagk_autocorr_mult
+Multiple entry vector_lagk_autocorr_mult
+Namespace:  function: vector_lagk_autocorr_mult
+Multiple entry vector_lagk_autocorr_mult
+Namespace:  function: vector_lagk_autocorr_mult
+Multiple entry vector_lagk_autocorr_mult
+Namespace:  function: vector_autocorr_vector_mult
+Namespace:  function: vector_autocorr_vector_mult
+Multiple entry vector_autocorr_vector_mult
+Namespace:  function: vector_acor
+Namespace:  function: vector_acor
+Multiple entry vector_acor
+Namespace:  function: vector_to_bins
+Namespace:  function: get_screen_size_curses
+Namespace:  function: get_screen_size_tput
+Namespace:  function: parse_arrays
+Namespace:  function: matrix_is_finite
+Namespace:  function: matrix_is_finite
+Multiple entry matrix_is_finite
+Namespace:  function: dasum
+Namespace:  function: daxpy
+Namespace:  function: ddot
+Namespace:  function: dnrm2
+Namespace:  function: dscal
+Namespace:  function: dgemv
+Namespace:  function: dtrsv
+Namespace:  function: dtrmv
+Namespace:  function: dgemm
+Namespace:  function: dtrsm
+Namespace:  function: daxpy_subvec
+Namespace:  function: ddot_subvec
+Namespace:  function: dnrm2_subvec
+Namespace:  function: dscal_subvec
+Namespace:  function: daxpy_subcol
+Namespace:  function: ddot_subcol
+Namespace:  function: dnrm2_subcol
+Namespace:  function: dscal_subcol
+Namespace:  function: dasum_subcol
+Namespace:  function: daxpy_subrow
+Namespace:  function: ddot_subrow
+Namespace:  function: dnrm2_subrow
+Namespace:  function: dscal_subrow
+Namespace:  function: planck_f
+Namespace:  function: hbar_f
+Namespace:  function: speed_of_light_f
+Namespace:  function: boltzmann_f
+Namespace:  function: hbarc_f
+Namespace:  function: elem_charge_f
+Namespace:  function: hc_mev_fm_f
+Namespace:  function: hdf_input
+Namespace:  function: hdf_output
+Namespace:  function: hdf_input_data
+Namespace:  function: hdf_output_data
+Namespace:  function: hdf_input
+Multiple entry hdf_input
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: hdf_input
+Multiple entry hdf_input
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: hdf_input_data
+Multiple entry hdf_input_data
+Namespace:  function: hdf_output_data
+Multiple entry hdf_output_data
+Namespace:  function: hdf_input
+Multiple entry hdf_input
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: hdf_input
+Multiple entry hdf_input
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: hdf_input
+Multiple entry hdf_input
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: hdf_output_data
+Multiple entry hdf_output_data
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: hdf_output_data
+Multiple entry hdf_output_data
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: hdf_input
+Multiple entry hdf_input
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: hdf_input
+Multiple entry hdf_input
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: hdf_input
+Multiple entry hdf_input
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: hdf_input
+Multiple entry hdf_input
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: hdf_input
+Multiple entry hdf_input
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: hdf_input
+Multiple entry hdf_input
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: hdf_input
+Multiple entry hdf_input
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: hdf_input
+Multiple entry hdf_input
+Namespace:  function: value_spec
+Namespace:  function: vector_spec
+Namespace:  function: strings_spec
+Namespace:  function: vector_spec
+Multiple entry vector_spec
+Namespace:  function: mult_vector_spec
+Namespace:  function: hdf_output
+Multiple entry hdf_output
+Namespace:  function: bidiag_decomp
+Namespace:  function: bidiag_unpack
+Namespace:  function: bidiag_unpack2
+Namespace:  function: bidiag_unpack_B
+Namespace:  function: cholesky_decomp&lt; Eigen::MatrixXd &gt;
+Namespace:  function: cholesky_decomp
+Namespace:  function: cholesky_det
+Namespace:  function: cholesky_lndet
+Namespace:  function: cholesky_solve
+Namespace:  function: cholesky_svx
+Namespace:  function: cholesky_invert
+Namespace:  function: cholesky_decomp_unit
+Namespace:  function: create_givens
+Namespace:  function: apply_givens_qr
+Namespace:  function: apply_givens_lq
+Namespace:  function: apply_givens_vec
+Namespace:  function: HH_svx
+Namespace:  function: HH_solve
+Namespace:  function: householder_transform
+Namespace:  function: householder_transform_subcol
+Namespace:  function: householder_transform_subrow
+Namespace:  function: householder_hm
+Namespace:  function: householder_hm_subcol
+Namespace:  function: householder_hm_subrow
+Namespace:  function: householder_hv
+Namespace:  function: householder_hv_subcol
+Namespace:  function: householder_hm1
+Namespace:  function: householder_hm1_sub
+Namespace:  function: householder_mh
+Namespace:  function: householder_mh_subrow
+Namespace:  function: diagonal_has_zero
+Namespace:  function: LU_decomp
+Namespace:  function: LU_svx
+Namespace:  function: LU_decomp_alt
+Namespace:  function: LU_solve
+Namespace:  function: LU_refine
+Namespace:  function: LU_invert
+Namespace:  function: LU_det
+Namespace:  function: LU_lndet
+Namespace:  function: LU_sgndet
+Namespace:  function: QR_decomp_unpack&lt; arma::mat, arma::mat, arma::mat &gt;
+Namespace:  function: QR_decomp_unpack&lt; Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd &gt;
+Namespace:  function: QR_decomp
+Namespace:  function: QR_QTvec
+Namespace:  function: QR_unpack
+Namespace:  function: QR_svx
+Namespace:  function: QR_solve
+Namespace:  function: QR_update
+Namespace:  function: QR_decomp_unpack
+Namespace:  function: QRPT_decomp
+Namespace:  function: SV_decomp
+Namespace:  function: SV_decomp_mod
+Namespace:  function: SV_solve
+Namespace:  function: SV_decomp_jacobi
+Namespace:  function: balance_columns
+Namespace:  function: chop_small_elements
+Namespace:  function: trailing_eigenvalue
+Namespace:  function: create_schur
+Namespace:  function: svd2
+Namespace:  function: svd2_sub
+Namespace:  function: chase_out_intermediate_zero
+Namespace:  function: chase_out_trailing_zero
+Namespace:  function: chase_out_trailing_zero_sub
+Namespace:  function: qrstep
+Namespace:  function: qrstep_sub
+Namespace:  function: solve_tridiag_sym
+Namespace:  function: solve_tridiag_nonsym
+Namespace:  function: solve_cyc_tridiag_sym
+Namespace:  function: solve_cyc_tridiag_nonsym
+Namespace:  function: solve_tridiag_sym
+Multiple entry solve_tridiag_sym
+Namespace:  function: solve_tridiag_nonsym
+Multiple entry solve_tridiag_nonsym
+Namespace:  function: solve_cyc_tridiag_sym
+Multiple entry solve_cyc_tridiag_sym
+Namespace:  function: solve_cyc_tridiag_nonsym
+Multiple entry solve_cyc_tridiag_nonsym
+Namespace:  function: LU_decomp_array_2d
+
+Creating files:
+Skipping const_vector_range
+Skipping dtos
+Skipping hdf_input
+Skipping hdf_input_data
+Skipping hdf_output
+Skipping hdf_output_data
+Skipping linear_or_log
+Skipping matrix_copy
+Skipping matrix_is_finite
+Skipping matrix_is_lower
+Skipping matrix_is_upper
+Skipping matrix_lookup
+Skipping matrix_make_lower
+Skipping matrix_make_upper
+Skipping matrix_max
+Skipping matrix_max_index
+Skipping matrix_max_value
+Skipping matrix_min
+Skipping matrix_min_index
+Skipping matrix_min_value
+Skipping matrix_minmax
+Skipping matrix_out
+Skipping matrix_set_all
+Skipping matrix_set_identity
+Skipping matrix_sum
+Skipping matrix_swap
+Skipping matrix_swap_double
+Skipping matrix_trans_out
+Skipping matrix_transpose
+Skipping o2abs
+Skipping o2hypot
+Skipping o2isfinite
+Skipping pipe_cmd_string
+Skipping rebin_xy
+Skipping solve_cyc_tridiag_nonsym
+Skipping solve_cyc_tridiag_sym
+Skipping solve_tridiag_nonsym
+Skipping solve_tridiag_sym
+Skipping vector_absdev
+Skipping vector_acor
+Skipping vector_autocorr_vector_mult
+Skipping vector_bin_size_freedman
+Skipping vector_bin_size_scott
+Skipping vector_bsearch
+Skipping vector_chi_squared
+Skipping vector_copy
+Skipping vector_copy_jackknife
+Skipping vector_correlation
+Skipping vector_covariance
+Skipping vector_integ_xy_interp
+Skipping vector_is_finite
+Skipping vector_is_monotonic
+Skipping vector_is_strictly_monotonic
+Skipping vector_kurtosis
+Skipping vector_lag1_autocorr
+Skipping vector_lagk_autocorr
+Skipping vector_lagk_autocorr_mult
+Skipping vector_largest
+Skipping vector_lookup
+Skipping vector_max_quad
+Skipping vector_max_value
+Skipping vector_mean
+Skipping vector_median_sorted
+Skipping vector_min_quad
+Skipping vector_min_value
+Skipping vector_norm
+Skipping vector_norm_double
+Skipping vector_out
+Skipping vector_pvariance
+Skipping vector_quantile_sorted
+Skipping vector_range
+Skipping vector_range_copy
+Skipping vector_reverse
+Skipping vector_reverse_double
+Skipping vector_roll_avg
+Skipping vector_search
+Skipping vector_set_all
+Skipping vector_skew
+Skipping vector_smallest
+Skipping vector_smallest_index
+Skipping vector_sort_index
+Skipping vector_spec
+Skipping vector_stddev
+Skipping vector_stddev_fmean
+Skipping vector_sum
+Skipping vector_sum_double
+Skipping vector_swap
+Skipping vector_swap_double
+Skipping vector_variance
+Skipping vector_variance_fmean
+Skipping vectors_equal
+Skipping vectors_equal_tol
+Skipping wvector_absdev
+Skipping wvector_covariance
+Skipping wvector_factor
+Skipping wvector_kurtosis
+Skipping wvector_mean
+Skipping wvector_skew
+Skipping wvector_stddev
+Skipping wvector_stddev_fmean
+Skipping wvector_sumsq
+Skipping wvector_variance
+Skipping wvector_variance_fmean
+
+---------------------------------------------------

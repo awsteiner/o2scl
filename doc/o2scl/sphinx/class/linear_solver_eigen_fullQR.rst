@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>` : :ref:`Class List`
+
 .. _linear_solver_eigen_fullQR:
 
 Class linear_solver_eigen_fullQR

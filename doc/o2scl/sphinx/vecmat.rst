@@ -1,11 +1,7 @@
+:ref:`O2scl <o2scl>`
+
 Arrays, Vectors, Matrices and Tensors
 =====================================
-
-Test refs: 
-:cpp:class:`o2scl::columnify`
-:cpp:class:`table <template\<class vec_t = std::vector\<double>> o2scl::table>`
-:ref:`Class table`
-:ref:`table`
 
 Because many such vector and matrix objects are defined elsewhere,
 O\ :sub:`2`\ scl no longer includes native vector and matrix classes.
@@ -58,22 +54,22 @@ vectors", such as that implied by
 ``std::vector<std::vector<double> >``. In some cases, There
 are places where a vector of vectors is preferable to a matrix,
 and O\ :sub:`2`\ scl expects that elements in a vector of vectors can be
-accessed by ``operator[][]``. A :cpp:class:`o2scl::table` object can
+accessed by ``operator[][]``. A :ref:`table <table>` object can
 be thought of as a vector of vectors in this sense. The function
 :cpp:func:`o2scl::tensor_grid::set_grid()` also accepts a vector of
 vectors, and for this function, none of the vectors needs to have
 the same size. A vector of vectors can also be used to specify a
 scattered list of points in a multi-dimensional space. Thus, a
 vector of vectors is what is used for the argument of 
-:cpp:class:`o2scl::interpm_idw`.
+:ref:`interpm_idw <interpm_idw>`.
 
 The word "tensor" is used for a generic object which has rank ``n``
-and then has ``n`` associated indices. A vector is just a \tensor
-of rank 1 and a matrix is just a \tensor of rank 2. Tensors are
-implemented in O\ :sub:`2`\ scl by :cpp:class:`o2scl::tensor` . A multivariate
-function specified on a grid can be implemented in O\ :sub:`2`\ scl with
-:cpp:class:`o2scl::tensor_grid` . See more discussion in the tensor 
-section below. 
+and then has ``n`` associated indices. A vector is just a \tensor of
+rank 1 and a matrix is just a \tensor of rank 2. Tensors are
+implemented in O\ :sub:`2`\ scl by :ref:`tensor <tensor>`. A
+multivariate function specified on a grid can be implemented in O\
+:sub:`2`\ scl with :ref:`tensor_grid <tensor_grid>`. See more
+discussion in the tensor section below.
 
 Rows and columns vs. x and y
 ----------------------------

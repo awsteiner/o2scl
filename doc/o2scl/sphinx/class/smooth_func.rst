@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>` : :ref:`Class List`
+
 .. _smooth_func:
 
 Class smooth_func

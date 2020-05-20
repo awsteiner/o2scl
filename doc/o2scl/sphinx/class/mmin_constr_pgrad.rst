@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>` : :ref:`Class List`
+
 .. _mmin_constr_pgrad:
 
 Class mmin_constr_pgrad

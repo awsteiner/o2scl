@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>` : :ref:`Class List`
+
 .. _linear_solver_LU:
 
 Class linear_solver_LU

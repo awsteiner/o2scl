@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>` : :ref:`Class List`
+
 .. _interp_krige_optim:
 
 Class interp_krige_optim

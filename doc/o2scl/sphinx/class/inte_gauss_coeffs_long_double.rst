@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>` : :ref:`Class List`
+
 .. _inte_gauss_coeffs_long_double:
 
 Class inte_gauss_coeffs_long_double

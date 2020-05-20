@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>` : :ref:`Class List`
+
 .. _inte_adapt_cern:
 
 Class inte_adapt_cern

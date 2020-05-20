@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>` : :ref:`Class List`
+
 .. _inte_hcubature::heap:
 
 Class inte_hcubature::heap

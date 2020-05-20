@@ -1,3 +1,5 @@
+.. _o2scl:
+
 Object-oriented Scientific Computing Library
 ============================================
 
@@ -60,5 +62,4 @@ the top of the documentation for these classes.
    function_list
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
