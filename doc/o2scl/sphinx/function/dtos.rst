@@ -1,5 +1,9 @@
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function dtos
-=============
+Functions dtos
+==============
+
+.. doxygenfunction:: dtos(const fp_t&, int)
+
+.. doxygenfunction:: dtos(double, std::ostream&)
 

@@ -1,5 +1,9 @@
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_smallest_index
-==============================
+Functions vector_smallest_index
+===============================
+
+.. doxygenfunction:: vector_smallest_index(size_t, const vec_t&, size_t, vec_size_t&)
+
+.. doxygenfunction:: vector_smallest_index(const vec_t&, size_t, vec_size_t&)
 

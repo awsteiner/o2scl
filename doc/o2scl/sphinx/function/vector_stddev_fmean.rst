@@ -1,5 +1,13 @@
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_stddev_fmean
-============================
+Functions vector_stddev_fmean
+=============================
+
+.. doxygenfunction:: vector_stddev_fmean(size_t, const vec_t&, double)
+
+.. doxygenfunction:: vector_stddev_fmean(const vec_t&, double)
+
+.. doxygenfunction:: vector_stddev_fmean(size_t, const vec_t&, const vec2_t&, double)
+
+.. doxygenfunction:: vector_stddev_fmean(const vec_t&, const vec2_t&, double)
 

@@ -1,5 +1,9 @@
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_sum_double
-==========================
+Functions vector_sum_double
+===========================
+
+.. doxygenfunction:: vector_sum_double(size_t, vec_t&)
+
+.. doxygenfunction:: vector_sum_double(vec_t&)
 

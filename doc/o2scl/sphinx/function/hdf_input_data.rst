@@ -1,5 +1,5 @@
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function hdf_input_data
-=======================
+Functions hdf_input_data
+========================
 

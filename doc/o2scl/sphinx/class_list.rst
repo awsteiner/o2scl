@@ -61,5 +61,4 @@ Class List
    class/Z*
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`

@@ -1,5 +1,13 @@
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_variance_fmean
-==============================
+Functions vector_variance_fmean
+===============================
+
+.. doxygenfunction:: vector_variance_fmean(size_t, const vec_t&, double)
+
+.. doxygenfunction:: vector_variance_fmean(const vec_t&, double)
+
+.. doxygenfunction:: vector_variance_fmean(size_t, const vec_t&, const vec2_t&, double)
+
+.. doxygenfunction:: vector_variance_fmean(const vec_t&, const vec2_t&, double)
 

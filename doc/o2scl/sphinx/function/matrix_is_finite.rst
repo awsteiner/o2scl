@@ -1,5 +1,5 @@
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function matrix_is_finite
-=========================
+Functions matrix_is_finite
+==========================
 

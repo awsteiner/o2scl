@@ -1,5 +1,13 @@
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function wvector_absdev
-=======================
+Functions wvector_absdev
+========================
+
+.. doxygenfunction:: wvector_absdev(size_t, const vec_t&, const vec2_t&, double)
+
+.. doxygenfunction:: wvector_absdev(const vec_t&, const vec2_t&, double)
+
+.. doxygenfunction:: wvector_absdev(size_t, const vec_t&, const vec2_t&)
+
+.. doxygenfunction:: wvector_absdev(const vec_t&, const vec2_t&)
 

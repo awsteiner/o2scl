@@ -61,5 +61,4 @@ Function List
    function/Z*
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`

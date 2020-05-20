@@ -1,5 +1,21 @@
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_kurtosis
-========================
+Functions vector_kurtosis
+=========================
+
+.. doxygenfunction:: vector_kurtosis(size_t, const vec_t&, double, double)
+
+.. doxygenfunction:: vector_kurtosis(const vec_t&, double, double)
+
+.. doxygenfunction:: vector_kurtosis(size_t, const vec_t&)
+
+.. doxygenfunction:: vector_kurtosis(const vec_t&)
+
+.. doxygenfunction:: vector_kurtosis(size_t, const vec_t&, const vec2_t&, double, double)
+
+.. doxygenfunction:: vector_kurtosis(const vec_t&, const vec2_t&, double, double)
+
+.. doxygenfunction:: vector_kurtosis(size_t, const vec_t&, const vec2_t&)
+
+.. doxygenfunction:: vector_kurtosis(const vec_t&, const vec2_t&)
 
