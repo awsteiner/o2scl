@@ -141,10 +141,6 @@ int main(void) {
 	   it!=list_dup.end();it++) {
 
 	string s=*it;
-	string cmd="grep -1 \"";
-	cmd+=s+"</definition>\" ../xml/namespaceo2scl.xml | "+
-	  "grep -i argsstring > /tmp/mi.txt";
-	int ret=system(cmd.c_str());
 
 	string fname_out="function/";
 	fname_out+=s+".rst";
@@ -160,16 +156,44 @@ int main(void) {
 	fout << endl;
 	fout << endl;
 
-	ifstream fin("/tmp/mi.txt");
+	ifstream fin("../xml/namespaceo2scl.xml");
 	while (!fin.eof()) {
 	  string s2;
 	  std::getline(fin,s2);
-	  if (s2.length()>=27) {
-	    s2=s2.substr(20,s2.length()-33);
-	    cout << s << " " << s2 << endl;
+	  if (s2.find("<definition>")!=std::string::npos &&
+	      s2.find(s)!=std::string::npos) {
+	    
+	    cout << "H: " << s << " " << s2 << endl;
+	    
 	    fout << ".. doxygenfunction:: " << s
-		 << s2 << "\n" << endl;
+	      
+	    // argstring
+	    std::getline(fin,s2);
+	    // name
+	    std::getline(fin,s2);
+	    // param
+	    std::getline(fin,s2);
+	    while (s2.find("<param>")!=std::string::npos) {
+	      string type, declname, end;
+	      std::getline(fin,type);
+	      if (type.length()>23) {
+		type=type.substr(16,type.length()-23);
+	      }
+	      if (type.find(" &amp;")!=std::string::npos) {
+		type.replace(type.find(" &amp;"),6,"&");
+	      }
+	      std::getline(fin,declname);
+	      if (declname.length()>31) {
+		declname=declname.substr(20,declname.length()-31);
+	      }
+	      std::getline(fin,end);
+	      std::getline(fin,s2);
+	      cout << "\"" << type << "\" \"" << declname << "\"" << endl;
+	      //char ch;
+	      //cin >> ch;
+	    }
 	  }
+	  //<< s2 << "\n" << endl;
 	}
 	fin.close();
 	fout.close();

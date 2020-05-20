@@ -3,7 +3,3 @@
 Function vector_min_value
 =========================
 
-.. doxygenfunction:: vector_min_value(size_t n, const vec_t &amp;data)
-
-.. doxygenfunction:: vector_min_value(const vec_t &amp;data)
-

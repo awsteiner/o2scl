@@ -3,7 +3,3 @@
 Function matrix_sum
 ===================
 
-.. doxygenfunction:: matrix_sum(size_t m, size_t n, const mat_t &amp;data)
-
-.. doxygenfunction:: matrix_sum(const mat_t &amp;data)
-
