@@ -237,12 +237,6 @@
   <compound refid="classo2scl_1_1ode__rkck__gsl" kind="class"><name>o2scl::ode_rkck_gsl</name>
   <compound refid="classo2scl_1_1ode__rkf45__gsl" kind="class"><name>o2scl::ode_rkf45_gsl</name>
   <compound refid="classo2scl_1_1ode__step" kind="class"><name>o2scl::ode_step</name>
-  <compound refid="classo2scl_1_1cli_1_1parameter" kind="class"><name>o2scl::cli::parameter</name>
-  <compound refid="classo2scl_1_1cli_1_1parameter__bool" kind="class"><name>o2scl::cli::parameter_bool</name>
-  <compound refid="classo2scl_1_1cli_1_1parameter__double" kind="class"><name>o2scl::cli::parameter_double</name>
-  <compound refid="classo2scl_1_1cli_1_1parameter__int" kind="class"><name>o2scl::cli::parameter_int</name>
-  <compound refid="classo2scl_1_1cli_1_1parameter__size__t" kind="class"><name>o2scl::cli::parameter_size_t</name>
-  <compound refid="classo2scl_1_1cli_1_1parameter__string" kind="class"><name>o2scl::cli::parameter_string</name>
   <compound refid="classo2scl_1_1permutation" kind="class"><name>o2scl::permutation</name>
   <compound refid="classo2scl_1_1pinside" kind="class"><name>o2scl::pinside</name>
   <compound refid="classo2scl_1_1poly__complex" kind="class"><name>o2scl::poly_complex</name>

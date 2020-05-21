@@ -3,6 +3,10 @@
 Class List
 ==========
 
+..
+   comment: The globbing gives many warnings for classes that don't
+   exist, but I'd rather have those than miss a class.
+
 .. toctree::
    :maxdepth: 2
    :glob:	      

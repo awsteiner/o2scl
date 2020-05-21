@@ -30,18 +30,27 @@ function_list: empty
 		grep -v arma > function_list
 
 class_list: empty
-	grep "kind=\"class\"" ../xml/index.xml > class_list
+	grep "kind=\"class\"" ../xml/index.xml | grep -v "cli::parameter" \
+		> class_list
+
+variable_list: empty
+	grep "kind=\"variable\"" ../xml/index.xml | \
+		grep -v "<member refid=\"class" | \
+		grep -v "<member refid=\"struct" > variable_list
+
+enum_list: empty
+	grep "kind=\"enum\"" ../xml/index.xml > enum_list
 
 make_rst: empty
-	g++ -o make_rst make_rst.cpp
+	g++ -o ../make_rst ../make_rst.cpp
 
 rst_files: empty
 	cp ref_header ref.rst
 	btmanip -parse ../../../data/o2scl/o2scl.bib -rst temp.rst
 	cat temp.rst >> ref.rst
 	rm -f temp.rst
-	g++ -o make_rst make_rst.cpp
-	./make_rst > make_rst.out
+	g++ -o ../make_rst ../make_rst.cpp
+	../make_rst main > make_rst.out
 
 clean: empty
 	rm -rf rst

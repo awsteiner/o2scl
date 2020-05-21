@@ -1,3 +1,4 @@
+Using context main
 ---------------------------------------------------
 Parsing class_list:
 Namespace: o2scl_acol class: acol_manager
@@ -193,9 +194,6 @@ Namespace: o2scl class: mcarlo_plain
 Namespace: o2scl class: mcarlo_vegas
 Namespace: o2scl class: mcmc_para_base
 Namespace: o2scl class: mcmc_para_cli
-Namespace: o2scl class: mcmc_para_old_base
-Namespace: o2scl class: mcmc_para_old_cli
-Namespace: o2scl class: mcmc_para_old_table
 Namespace: o2scl class: mcmc_para_table
 Namespace: o2scl class: min_base
 Namespace: o2scl class: min_bkt_base
@@ -242,12 +240,6 @@ Namespace: o2scl class: ode_rk8pd_gsl
 Namespace: o2scl class: ode_rkck_gsl
 Namespace: o2scl class: ode_rkf45_gsl
 Namespace: o2scl class: ode_step
-Namespace: o2scl class: cli::parameter
-Namespace: o2scl class: cli::parameter_bool
-Namespace: o2scl class: cli::parameter_double
-Namespace: o2scl class: cli::parameter_int
-Namespace: o2scl class: cli::parameter_size_t
-Namespace: o2scl class: cli::parameter_string
 Namespace: o2scl class: permutation
 Namespace: o2scl class: pinside
 Namespace: o2scl class: poly_complex
@@ -696,7 +688,7 @@ Namespace:  function: vector_integ_threept
 Namespace:  function: vector_integ_extended4
 Namespace:  function: vector_integ_durand
 Namespace:  function: vector_integ_extended8
-Namespace:  function: operator&lt;&lt;
+Namespace:  function: operator<<
 Namespace:  function: constraint
 Namespace:  function: cont_constraint
 Namespace:  function: lower_bound
@@ -1163,22 +1155,62 @@ Skipping wvector_variance_fmean
 ---------------------------------------------------
 Creating rst files for duplicate functions:
 const_vector_range(const dat_t *v, size_t start, size_t last)
-const_vector_range(boost::numeric::ublas::vector&lt; dat_t &gt; &v, size_t start, size_t last)
-const_vector_range(const boost::numeric::ublas::vector&lt; dat_t &gt; &v, size_t start, size_t last)
-const_vector_range(boost::numeric::ublas::vector_range&lt; boost::numeric::ublas::vector&lt; dat_t &gt; &gt; &v, size_t start, size_t last)
-const_vector_range(const boost::numeric::ublas::vector_range&lt; boost::numeric::ublas::vector&lt; dat_t &gt; &gt; &v, size_t start, size_t last)
-const_vector_range(const boost::numeric::ublas::vector_range&lt; const boost::numeric::ublas::vector&lt; dat_t &gt; &gt; &v, size_t start, size_t last)
-const_vector_range(const std::vector&lt; data_t &gt; &v, size_t start, size_t last)
-const_vector_range(std::vector&lt; data_t &gt; &v, size_t start, size_t last)
-const_vector_range(vector_range_gen&lt; vec_t &gt; &v, size_t start, size_t last)
-const_vector_range(const vector_range_gen&lt; vec_t &gt; &v, size_t start, size_t last)
-const_vector_range(const const_vector_range_gen&lt; vec_t &gt; &v, size_t start, size_t last)
+const_vector_range(boost::numeric::ublas::vector< dat_t > &v, size_t start, size_t last)
+const_vector_range(const boost::numeric::ublas::vector< dat_t > &v, size_t start, size_t last)
+const_vector_range(boost::numeric::ublas::vector_range< boost::numeric::ublas::vector< dat_t > > &v, size_t start, size_t last)
+const_vector_range(const boost::numeric::ublas::vector_range< boost::numeric::ublas::vector< dat_t > > &v, size_t start, size_t last)
+const_vector_range(const boost::numeric::ublas::vector_range< const boost::numeric::ublas::vector< dat_t > > &v, size_t start, size_t last)
+const_vector_range(const std::vector< data_t > &v, size_t start, size_t last)
+const_vector_range(std::vector< data_t > &v, size_t start, size_t last)
+const_vector_range(vector_range_gen< vec_t > &v, size_t start, size_t last)
+const_vector_range(const vector_range_gen< vec_t > &v, size_t start, size_t last)
+const_vector_range(const const_vector_range_gen< vec_t > &v, size_t start, size_t last)
 dtos(const fp_t &x, int prec = 6, bool auto_prec = false)
 dtos(double x, std::ostream &format)
+hdf_input(hdf_file &hf, o2scl::table< vec_t > &t, std::string name)
+hdf_input(hdf_file &hf, o2scl::table3d &h, std::string name = "")
+hdf_input(hdf_file &hf, o2scl::table_units< vec_t > &t, std::string name)
+hdf_input(hdf_file &hf, o2scl::tensor_grid< vec_t, vec_size_t > &t, std::string name)
+hdf_input(hdf_file &hf, o2scl::uniform_grid< double > &h, std::string name = "")
+hdf_input(hdf_file &hf, o2scl::prob_dens_mdim_amr< vec_t, mat_t > &p, std::string name)
+hdf_input(hdf_file &hf, o2scl::hist &h, std::string name = "")
+hdf_input(hdf_file &hf, o2scl::hist_2d &h, std::string name = "")
+hdf_input(hdf_file &hf, o2scl::expval_scalar &h, std::string name = "")
+hdf_input(hdf_file &hf, o2scl::expval_vector &h, std::string name = "")
+hdf_input(hdf_file &hf, o2scl::expval_matrix &h, std::string name = "")
+hdf_input(hdf_file &hf, std::vector< o2scl::contour_line > &cl, std::string name = "")
+hdf_input(hdf_file &hf, std::vector< o2scl::edge_crossings > &ec, std::string name = "")
+hdf_input(hdf_file &hf, o2scl::tensor_grid< std::vector< double >, std::vector< size_t > > &t, std::string name = "")
+hdf_input_data(hdf_file &hf, o2scl::table< vec_t > &t)
+hdf_input_data(hdf_file &hf, o2scl::table_units< vec_t > &t)
+hdf_output(hdf_file &hf, o2scl::table< std::vector< double > > &t, std::string name)
+hdf_output(hdf_file &hf, o2scl::table3d &t, std::string name)
+hdf_output(hdf_file &hf, o2scl::table_units< std::vector< double > > &t, std::string name)
+hdf_output(hdf_file &hf, o2scl::tensor_grid< vec_t, vec_size_t > &t, std::string name)
+hdf_output(hdf_file &hf, o2scl::uniform_grid< double > &h, std::string name)
+hdf_output(hdf_file &hf, o2scl::prob_dens_mdim_amr< vec_t, mat_t > &p, std::string name)
+hdf_output(hdf_file &hf, o2scl::table<> &t, std::string name)
+hdf_output(hdf_file &hf, o2scl::table_units<> &t, std::string name)
+hdf_output(hdf_file &hf, o2scl::hist &h, std::string name)
+hdf_output(hdf_file &hf, const o2scl::hist_2d &h, std::string name)
+hdf_output(hdf_file &hf, const o2scl::table3d &h, std::string name)
+hdf_output(hdf_file &hf, o2scl::expval_scalar &h, std::string name)
+hdf_output(hdf_file &hf, o2scl::expval_vector &h, std::string name)
+hdf_output(hdf_file &hf, o2scl::expval_matrix &h, std::string name)
+hdf_output(hdf_file &hf, const std::vector< o2scl::contour_line > &cl, std::string name)
+hdf_output(hdf_file &hf, const std::vector< o2scl::edge_crossings > &ec, std::string name)
+hdf_output(hdf_file &hf, o2scl::tensor_grid< std::vector< double >, std::vector< size_t > > &t, std::string name)
+hdf_output(hdf_file &hf, o2scl::hist_2d &t, std::string name)
+hdf_output_data(hdf_file &hf, o2scl::table< std::vector< double > > &t)
+hdf_output_data(hdf_file &hf, o2scl::table_units< std::vector< double > > &t)
+hdf_output_data(hdf_file &hf, o2scl::table<> &t)
+hdf_output_data(hdf_file &hf, o2scl::table_units<> &t)
 linear_or_log(vec_t &x, vec2_t &y, bool &log_x, bool &log_y)
 linear_or_log(vec_t &y, bool &log_y)
 matrix_copy(mat_t &src, mat2_t &dest)
 matrix_copy(size_t M, size_t N, mat_t &src, mat2_t &dest)
+matrix_is_finite(size_t m, size_t n, mat_t &data)
+matrix_is_finite(mat_t &data)
 matrix_is_lower(mat_t &src)
 matrix_is_lower(size_t m, size_t n, mat_t &src)
 matrix_is_upper(mat_t &src)
@@ -1235,6 +1267,14 @@ pipe_cmd_string(std::string cmd, std::string &result, bool err_on_fail = true, i
 pipe_cmd_string(std::string cmd, int nmax = 80)
 rebin_xy(const vec_t &x, const vec2_t &y, vec3_t &new_x, vec4_t &new_y, size_t n_pts, size_t interp_type)
 rebin_xy(const vec_t &x, const vec2_t &y, vec3_t &new_x, vec4_t &new_y, size_t n_pts, size_t interp_type1, size_t interp_type2, double acc = 1.0e-4)
+solve_cyc_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, const vec3_t &belowdiag, const vec4_t &rhs, vec5_t &x, size_t N, mem_t &m)
+solve_cyc_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, const vec3_t &belowdiag, const vec4_t &rhs, vec5_t &x, size_t N)
+solve_cyc_tridiag_sym(const vec_t &diag, const vec2_t &offdiag, const vec3_t &b, vec4_t &x, size_t N, mem_t &m)
+solve_cyc_tridiag_sym(const vec_t &diag, const vec2_t &offdiag, const vec3_t &b, vec4_t &x, size_t N)
+solve_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, const vec3_t &belowdiag, const vec4_t &rhs, vec5_t &x, size_t N, mem_t &m)
+solve_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, const vec3_t &belowdiag, const vec4_t &rhs, vec5_t &x, size_t N)
+solve_tridiag_sym(const vec_t &diag, const vec2_t &offdiag, const vec3_t &b, vec4_t &x, size_t N, mem_t &m)
+solve_tridiag_sym(const vec_t &diag, const vec2_t &offdiag, const vec3_t &b, vec4_t &x, size_t N)
 vector_absdev(size_t n, const vec_t &data, double mean)
 vector_absdev(const vec_t &data, double mean)
 vector_absdev(size_t n, const vec_t &data)
@@ -1312,12 +1352,12 @@ vector_pvariance(const vec_t &data1, const vec2_t &data2)
 vector_quantile_sorted(size_t n, const vec_t &data, const double f)
 vector_quantile_sorted(const vec_t &data, const double f)
 vector_range(dat_t *v, size_t start, size_t last)
-vector_range(boost::numeric::ublas::vector&lt; dat_t &gt; &v, size_t start, size_t last)
-vector_range(boost::numeric::ublas::vector_range&lt; boost::numeric::ublas::vector&lt; dat_t &gt; &gt; &v, size_t start, size_t last)
-vector_range(std::vector&lt; data_t &gt; &v, size_t start, size_t last)
-vector_range(vector_range_gen&lt; vec_t &gt; &v, size_t start, size_t last)
-vector_range_copy(const std::vector&lt; dat_t &gt; &v, size_t start, size_t last)
-vector_range_copy(const std::vector&lt; dat_t &gt; &v, size_t start, size_t last)
+vector_range(boost::numeric::ublas::vector< dat_t > &v, size_t start, size_t last)
+vector_range(boost::numeric::ublas::vector_range< boost::numeric::ublas::vector< dat_t > > &v, size_t start, size_t last)
+vector_range(std::vector< data_t > &v, size_t start, size_t last)
+vector_range(vector_range_gen< vec_t > &v, size_t start, size_t last)
+vector_range_copy(const std::vector< dat_t > &v, size_t start, size_t last)
+vector_range_copy(const std::vector< dat_t > &v, size_t start, size_t last)
 vector_reverse(size_t n, vec_t &data)
 vector_reverse(vec_t &data)
 vector_reverse_double(size_t n, vec_t &data)
@@ -1338,6 +1378,8 @@ vector_smallest_index(size_t n, const vec_t &data, size_t k, vec_size_t &index)
 vector_smallest_index(const vec_t &data, size_t k, vec_size_t &index)
 vector_sort_index(size_t n, const vec_t &data, vec_size_t &order)
 vector_sort_index(const vec_t &data, vec_size_t &order)
+vector_spec(std::string spec, vec_t &v, int verbose = 0, bool err_on_fail = true)
+vector_spec(std::string spec)
 vector_stddev(size_t n, const vec_t &data)
 vector_stddev(const vec_t &data)
 vector_stddev(size_t n, const vec_t &data, double mean)

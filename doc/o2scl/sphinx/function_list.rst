@@ -3,6 +3,10 @@
 Function List
 =============
 
+..
+   comment: The globbing gives many warnings for functions that don't
+   exist, but I'd rather have those than miss a function.
+   
 .. toctree::
    :maxdepth: 2
    :glob:	      

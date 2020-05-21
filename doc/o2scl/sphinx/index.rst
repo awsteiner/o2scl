@@ -17,6 +17,12 @@ Some of the interfaces may change slightly in future versions. There
 are a few classes which are more experimental, and this is stated at
 the top of the documentation for these classes.
 
+There is also a sub-library for handling thermodynamics of
+particles and nuclei,
+`O2scl_part <../part/html/index.html>`_
+and a sub-library for handling equations of state of dense matter,
+`O2scl_eos <../eos/html/index.html>`_ .
+
 .. toctree::
    :maxdepth: 1
 
@@ -63,3 +69,4 @@ the top of the documentation for these classes.
 
 * :ref:`genindex`
 * :ref:`search`
+

@@ -28,7 +28,10 @@
 
 using namespace std;
 
-int get_tag_element(string s, string tag, string &result) {
+/** \brief Inside string \c s, extract the element inside tag \c tag
+    and store the element in \c result
+*/
+int xml_get_tag_element(string s, string tag, string &result) {
   // Remove enclosing <>
   if (tag[0]=='<') {
     if (tag[tag.length()-1]!='>') {
@@ -67,7 +70,15 @@ int get_tag_element(string s, string tag, string &result) {
   This code parses 'function_list' and 'class list' to create .rst
   files for each class and function (or list of overloaded functions).
 */
-int main(void) {
+int main(int argc, char *argv[]) {
+
+  if (argc<2) {
+    cerr << "Requires context argument." << endl;
+    exit(-1);
+  }
+
+  string context=argv[1];
+  cout << "Using context " << context << endl;
 
   // kk=0 for classes and kk=1 for functions
   for (size_t kk=0;kk<2;kk++) {
@@ -102,7 +113,7 @@ int main(void) {
       // so we skip it
       if (s.length()>0) {
 
-	if (get_tag_element(s,"name",s)!=0) {
+	if (xml_get_tag_element(s,"name",s)!=0) {
 	  cerr << "Failed to find name in " << s << endl;
 	  exit(-1);
 	}
@@ -115,6 +126,11 @@ int main(void) {
 	  s=s.substr(loc+2,s.length()-loc-2);
 	}
 	
+	// Replace &lt; with &
+	while (s.find("&lt;")!=std::string::npos) {
+	  s.replace(s.find("&lt;"),4,"<");
+	}
+      
 	if (kk==0) {
 	  cout << "Namespace: " << ns << " class: " << s << endl;
 	} else {
@@ -165,11 +181,20 @@ int main(void) {
 	ofstream fout(fname_out);
 
 	// Header
-	if (kk==0) {
-	  fout << ":ref:`O2scl <o2scl>` : :ref:`Class List`\n" << endl;
-	  fout << ".. _" << s << ":\n" << endl;
-	} else {
-	  fout << ":ref:`O2scl <o2scl>` : :ref:`Function List`\n" << endl;
+	if (context==((string)"main")) {
+	  if (kk==0) {
+	    fout << ":ref:`O2scl <o2scl>` : :ref:`Class List`\n" << endl;
+	    fout << ".. _" << s << ":\n" << endl;
+	  } else {
+	    fout << ":ref:`O2scl <o2scl>` : :ref:`Function List`\n" << endl;
+	  }
+	} else if (context==((string)"part")) {
+	  if (kk==0) {
+	    fout << ":ref:`O2scl_part <o2sclp>` : :ref:`Class List`\n" << endl;
+	    fout << ".. _" << s << ":\n" << endl;
+	  } else {
+	    fout << ":ref:`O2scl_part <o2sclp>` : :ref:`Function List`\n" << endl;
+	  }
 	}
 	
 	string head="Class "+s;
@@ -208,13 +233,58 @@ int main(void) {
 
       // Open the namespace xml file and read it into memory
       vector<string> ns_file;
-      ifstream fin("../xml/namespaceo2scl.xml");
-      while (!fin.eof()) {
-	string s2;
-	std::getline(fin,s2);
-	ns_file.push_back(s2);
+      if (context==((string)"main")) {
+	ifstream fin("../xml/namespaceo2scl.xml");
+	while (!fin.eof()) {
+	  string s2;
+	  std::getline(fin,s2);
+	  ns_file.push_back(s2);
+	}
+	fin.close();
+	fin.open("../xml/namespaceo2scl__acol.xml");
+	while (!fin.eof()) {
+	  string s2;
+	  std::getline(fin,s2);
+	  ns_file.push_back(s2);
+	}
+	fin.close();
+	fin.open("../xml/namespaceo2scl__cblas.xml");
+	while (!fin.eof()) {
+	  string s2;
+	  std::getline(fin,s2);
+	  ns_file.push_back(s2);
+	}
+	fin.close();
+	fin.open("../xml/namespaceo2scl__hdf.xml");
+	while (!fin.eof()) {
+	  string s2;
+	  std::getline(fin,s2);
+	  ns_file.push_back(s2);
+	}
+	fin.close();
+	fin.open("../xml/namespaceo2scl__linalg.xml");
+	while (!fin.eof()) {
+	  string s2;
+	  std::getline(fin,s2);
+	  ns_file.push_back(s2);
+	}
+	fin.close();
+      } else if (context==((string)"part")) {
+	ifstream fin("../../xml/namespaceo2scl.xml");
+	while (!fin.eof()) {
+	  string s2;
+	  std::getline(fin,s2);
+	  ns_file.push_back(s2);
+	}
+	fin.close();
+	fin.open("../../xml/namespaceo2scl__hdf.xml");
+	while (!fin.eof()) {
+	  string s2;
+	  std::getline(fin,s2);
+	  ns_file.push_back(s2);
+	}
+	fin.close();
       }
-      fin.close();
 
       // Iterate over the list
       for (std::set<std::string>::iterator it=list_dup.begin();
@@ -229,7 +299,11 @@ int main(void) {
 	ofstream fout(fname_out);
 
 	// Header
-	fout << ":ref:`O2scl <o2scl>` : :ref:`Function List`\n" << endl;
+	if (context==((string)"main")) {
+	  fout << ":ref:`O2scl <o2scl>` : :ref:`Function List`\n" << endl;
+	} else if (context==((string)"part")) {
+	  fout << ":ref:`O2scl_part <o2sclp>` : :ref:`Function List`\n" << endl;
+	}
 	
 	string head="Functions "+s;
 	fout << head << endl;
@@ -255,13 +329,25 @@ int main(void) {
 	    // Read the argstring
 	    i++;
 	    argsstring=ns_file[i];
-	    if (get_tag_element(argsstring,"argsstring",argsstring)!=0) {
+	    if (xml_get_tag_element(argsstring,"argsstring",argsstring)!=0) {
 	      cerr << "Failed to find argsstring in " << argsstring << endl;
 	      exit(-1);
 	    }
 	    // Replace &amp; with &
 	    while (argsstring.find("&amp;")!=std::string::npos) {
 	      argsstring.replace(argsstring.find("&amp;"),5,"&");
+	    }
+	    // Replace &lt; with <
+	    while (argsstring.find("&lt;")!=std::string::npos) {
+	      argsstring.replace(argsstring.find("&lt;"),4,"<");
+	    }
+	    // Replace &gt; with >
+	    while (argsstring.find("&gt;")!=std::string::npos) {
+	      argsstring.replace(argsstring.find("&gt;"),4,">");
+	    }
+	    // Replace &quot; with "
+	    while (argsstring.find("&quot;")!=std::string::npos) {
+	      argsstring.replace(argsstring.find("&quot;"),6,"\"");
 	    }
 	    // Replace all = with ' = '
 	    vector<size_t> equal_list;
@@ -277,7 +363,7 @@ int main(void) {
 	    i++;
 	    name=ns_file[i];
 	    
-	    if (get_tag_element(name,"name",name)!=0) {
+	    if (xml_get_tag_element(name,"name",name)!=0) {
 	      cerr << "Failed to find name in " << name << endl;
 	      exit(-1);
 	    }
@@ -303,7 +389,7 @@ int main(void) {
 		string type, declname, end;
 		i++;
 		type=ns_file[i];
-		if (get_tag_element(type,"type",type)!=0) {
+		if (xml_get_tag_element(type,"type",type)!=0) {
 		  cerr << "Failed to find type in " << type << endl;
 		  exit(-1);
 		}
@@ -315,7 +401,7 @@ int main(void) {
 		
 		i++;
 		declname=ns_file[i];
-		if (get_tag_element(declname,"declname",declname)!=0) {
+		if (xml_get_tag_element(declname,"declname",declname)!=0) {
 		  cerr << "Failed to find declname in " << declname << endl;
 		  exit(-1);
 		}
