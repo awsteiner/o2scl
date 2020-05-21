@@ -3,11 +3,11 @@
 Functions wvector_sumsq
 =======================
 
-.. doxygenfunction:: wvector_sumsq(size_t, const vec_t&, const vec2_t&, double)
+.. doxygenfunction:: wvector_sumsq(size_t n, const vec_t &data, const vec2_t &weights, double wmean)
 
-.. doxygenfunction:: wvector_sumsq(const vec_t&, const vec2_t&, double)
+.. doxygenfunction:: wvector_sumsq(const vec_t &data, const vec2_t &weights, double wmean)
 
-.. doxygenfunction:: wvector_sumsq(size_t, const vec_t&, const vec2_t&)
+.. doxygenfunction:: wvector_sumsq(size_t n, const vec_t &data, const vec2_t &weights)
 
-.. doxygenfunction:: wvector_sumsq(const vec_t&, const vec2_t&)
+.. doxygenfunction:: wvector_sumsq(const vec_t &data, const vec2_t &weights)
 

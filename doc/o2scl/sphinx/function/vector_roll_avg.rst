@@ -3,7 +3,7 @@
 Functions vector_roll_avg
 =========================
 
-.. doxygenfunction:: vector_roll_avg(size_t, vec_t&, size_t)
+.. doxygenfunction:: vector_roll_avg(size_t n, vec_t &v, size_t window)
 
-.. doxygenfunction:: vector_roll_avg(vec_t&, size_t)
+.. doxygenfunction:: vector_roll_avg(vec_t &v, size_t window)
 

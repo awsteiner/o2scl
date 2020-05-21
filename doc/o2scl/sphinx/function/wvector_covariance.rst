@@ -3,7 +3,7 @@
 Functions wvector_covariance
 ============================
 
-.. doxygenfunction:: wvector_covariance(size_t, const vec_t&, const vec2_t&, const vec3_t&)
+.. doxygenfunction:: wvector_covariance(size_t n, const vec_t &data1, const vec2_t &data2, const vec3_t &weights)
 
-.. doxygenfunction:: wvector_covariance(const vec_t&, const vec2_t&, const vec3_t&)
+.. doxygenfunction:: wvector_covariance(const vec_t &data1, const vec2_t &data2, const vec3_t &weights)
 

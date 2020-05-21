@@ -3,11 +3,11 @@
 Functions vector_lagk_autocorr
 ==============================
 
-.. doxygenfunction:: vector_lagk_autocorr(size_t, const vec_t&, size_t, double)
+.. doxygenfunction:: vector_lagk_autocorr(size_t n, const vec_t &data, size_t k, double mean)
 
-.. doxygenfunction:: vector_lagk_autocorr(const vec_t&, size_t, double)
+.. doxygenfunction:: vector_lagk_autocorr(const vec_t &data, size_t k, double mean)
 
-.. doxygenfunction:: vector_lagk_autocorr(size_t, const vec_t&, size_t)
+.. doxygenfunction:: vector_lagk_autocorr(size_t n, const vec_t &data, size_t k)
 
-.. doxygenfunction:: vector_lagk_autocorr(const vec_t&, size_t)
+.. doxygenfunction:: vector_lagk_autocorr(const vec_t &data, size_t k)
 

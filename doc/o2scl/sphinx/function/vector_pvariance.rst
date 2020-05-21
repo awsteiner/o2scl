@@ -3,7 +3,7 @@
 Functions vector_pvariance
 ==========================
 
-.. doxygenfunction:: vector_pvariance(size_t, const vec_t&, size_t, const vec2_t&)
+.. doxygenfunction:: vector_pvariance(size_t n1, const vec_t &data1, size_t n2, const vec2_t &data2)
 
-.. doxygenfunction:: vector_pvariance(const vec_t&, const vec2_t&)
+.. doxygenfunction:: vector_pvariance(const vec_t &data1, const vec2_t &data2)
 

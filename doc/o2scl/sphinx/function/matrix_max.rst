@@ -3,7 +3,7 @@
 Functions matrix_max
 ====================
 
-.. doxygenfunction:: matrix_max(const arma::mat&)
+.. doxygenfunction:: matrix_max(const arma::mat &data)
 
-.. doxygenfunction:: matrix_max(const Eigen::MatrixXd&)
+.. doxygenfunction:: matrix_max(const Eigen::MatrixXd &data)
 

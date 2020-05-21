@@ -3,7 +3,7 @@
 Functions matrix_min
 ====================
 
-.. doxygenfunction:: matrix_min(const arma::mat&)
+.. doxygenfunction:: matrix_min(const arma::mat &data)
 
-.. doxygenfunction:: matrix_min(const Eigen::MatrixXd&)
+.. doxygenfunction:: matrix_min(const Eigen::MatrixXd &data)
 

@@ -3,7 +3,7 @@
 Functions matrix_max_value
 ==========================
 
-.. doxygenfunction:: matrix_max_value(size_t, const size_t, const mat_t&)
+.. doxygenfunction:: matrix_max_value(size_t m, const size_t n, const mat_t &data)
 
-.. doxygenfunction:: matrix_max_value(const mat_t&)
+.. doxygenfunction:: matrix_max_value(const mat_t &data)
 

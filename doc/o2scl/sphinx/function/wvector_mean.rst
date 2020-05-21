@@ -3,7 +3,7 @@
 Functions wvector_mean
 ======================
 
-.. doxygenfunction:: wvector_mean(size_t, const vec_t&, const vec2_t&)
+.. doxygenfunction:: wvector_mean(size_t n, const vec_t &data, const vec2_t &weights)
 
-.. doxygenfunction:: wvector_mean(const vec_t&, const vec2_t&)
+.. doxygenfunction:: wvector_mean(const vec_t &data, const vec2_t &weights)
 

@@ -3,11 +3,11 @@
 Functions vector_kurtosis
 =========================
 
-.. doxygenfunction:: vector_kurtosis(size_t, const vec_t&, double, double)
+.. doxygenfunction:: vector_kurtosis(size_t n, const vec_t &data, double mean, double stddev)
 
-.. doxygenfunction:: vector_kurtosis(const vec_t&, double, double)
+.. doxygenfunction:: vector_kurtosis(const vec_t &data, double mean, double stddev)
 
-.. doxygenfunction:: vector_kurtosis(size_t, const vec_t&)
+.. doxygenfunction:: vector_kurtosis(size_t n, const vec_t &data)
 
-.. doxygenfunction:: vector_kurtosis(const vec_t&)
+.. doxygenfunction:: vector_kurtosis(const vec_t &data)
 

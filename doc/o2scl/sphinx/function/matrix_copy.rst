@@ -3,7 +3,7 @@
 Functions matrix_copy
 =====================
 
-.. doxygenfunction:: matrix_copy(mat_t&, mat2_t&)
+.. doxygenfunction:: matrix_copy(mat_t &src, mat2_t &dest)
 
-.. doxygenfunction:: matrix_copy(size_t, size_t, mat_t&, mat2_t&)
+.. doxygenfunction:: matrix_copy(size_t M, size_t N, mat_t &src, mat2_t &dest)
 

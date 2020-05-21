@@ -3,7 +3,7 @@
 Functions vector_variance_fmean
 ===============================
 
-.. doxygenfunction:: vector_variance_fmean(size_t, const vec_t&, double)
+.. doxygenfunction:: vector_variance_fmean(size_t n, const vec_t &data, double mean)
 
-.. doxygenfunction:: vector_variance_fmean(const vec_t&, double)
+.. doxygenfunction:: vector_variance_fmean(const vec_t &data, double mean)
 

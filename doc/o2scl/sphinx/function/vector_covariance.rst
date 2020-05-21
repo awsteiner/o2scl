@@ -3,11 +3,11 @@
 Functions vector_covariance
 ===========================
 
-.. doxygenfunction:: vector_covariance(size_t, const vec_t&, const vec2_t&, double, double)
+.. doxygenfunction:: vector_covariance(size_t n, const vec_t &data1, const vec2_t &data2, double mean1, double mean2)
 
-.. doxygenfunction:: vector_covariance(const vec_t&, const vec2_t&, double, double)
+.. doxygenfunction:: vector_covariance(const vec_t &data1, const vec2_t &data2, double mean1, double mean2)
 
-.. doxygenfunction:: vector_covariance(size_t, const vec_t&, const vec2_t&)
+.. doxygenfunction:: vector_covariance(size_t n, const vec_t &data1, const vec2_t &data2)
 
-.. doxygenfunction:: vector_covariance(const vec_t&, const vec2_t&)
+.. doxygenfunction:: vector_covariance(const vec_t &data1, const vec2_t &data2)
 

@@ -3,7 +3,7 @@
 Functions vector_copy
 =====================
 
-.. doxygenfunction:: vector_copy(const vec_t&, vec2_t&)
+.. doxygenfunction:: vector_copy(const vec_t &src, vec2_t &dest)
 
-.. doxygenfunction:: vector_copy(size_t, const vec_t&, vec2_t&)
+.. doxygenfunction:: vector_copy(size_t N, const vec_t &src, vec2_t &dest)
 

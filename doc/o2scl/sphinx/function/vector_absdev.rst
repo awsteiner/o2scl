@@ -3,11 +3,11 @@
 Functions vector_absdev
 =======================
 
-.. doxygenfunction:: vector_absdev(size_t, const vec_t&, double)
+.. doxygenfunction:: vector_absdev(size_t n, const vec_t &data, double mean)
 
-.. doxygenfunction:: vector_absdev(const vec_t&, double)
+.. doxygenfunction:: vector_absdev(const vec_t &data, double mean)
 
-.. doxygenfunction:: vector_absdev(size_t, const vec_t&)
+.. doxygenfunction:: vector_absdev(size_t n, const vec_t &data)
 
-.. doxygenfunction:: vector_absdev(const vec_t&)
+.. doxygenfunction:: vector_absdev(const vec_t &data)
 

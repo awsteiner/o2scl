@@ -3,7 +3,7 @@
 Functions rebin_xy
 ==================
 
-.. doxygenfunction:: rebin_xy(const vec_t&, const vec2_t&, vec3_t&, vec4_t&, size_t, size_t)
+.. doxygenfunction:: rebin_xy(const vec_t &x, const vec2_t &y, vec3_t &new_x, vec4_t &new_y, size_t n_pts, size_t interp_type)
 
-.. doxygenfunction:: rebin_xy(const vec_t&, const vec2_t&, vec3_t&, vec4_t&, size_t, size_t, size_t, double)
+.. doxygenfunction:: rebin_xy(const vec_t &x, const vec2_t &y, vec3_t &new_x, vec4_t &new_y, size_t n_pts, size_t interp_type1, size_t interp_type2, double acc = 1.0e-4)
 

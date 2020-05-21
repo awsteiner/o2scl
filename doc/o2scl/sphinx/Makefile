@@ -1,3 +1,4 @@
+
 # Minimal makefile for Sphinx documentation
 #
 
@@ -14,27 +15,35 @@ help:
 
 .PHONY: help Makefile
 
-function_list: empty
-	grep "kind=\"function\"" ../xml/index.xml | \
-		grep "refid=\"namespaceo2scl" > function_list
-
-clean:
-	rm -rf make_index
+# Catch-all target: route all unknown targets to Sphinx using the new
+# "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
+html: Makefile
+	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 full_html:
 	$(SPHINXBUILD) -M -a -E html "$(SOURCEDIR)" \
 		"$(BUILDDIR)" $(SPHINXOPTS) 
 
+function_list: empty
+	grep "kind=\"function\"" ../xml/index.xml | \
+		grep "refid=\"namespaceo2scl" | grep -v Eigen | \
+		grep -v arma > function_list
+
 class_list: empty
 	grep "kind=\"class\"" ../xml/index.xml > class_list
 
+make_rst: empty
+	g++ -o make_rst make_rst.cpp
+
 rst_files: empty
+	cp ref_header ref.rst
+	btmanip -parse ../../../data/o2scl/o2scl.bib -rst temp.rst
+	cat temp.rst >> ref.rst
+	rm -f temp.rst
 	g++ -o make_rst make_rst.cpp
 	./make_rst > make_rst.out
 
-# Catch-all target: route all unknown targets to Sphinx using the new
-# "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
-html: Makefile
-	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+clean: empty
+	rm -rf rst
 
 empty:

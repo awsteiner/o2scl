@@ -260,12 +260,8 @@
     <member refid="namespaceo2scl_1aa69306863a1359ed692855e4fc4e4000" kind="function"><name>vector_range_copy</name></member>
     <member refid="namespaceo2scl_1a0f52ef1f2196bfdc7f06a7229a1970f6" kind="function"><name>matrix_max</name></member>
     <member refid="namespaceo2scl_1afd453895c4328fa1bfc09063d1bc186c" kind="function"><name>matrix_min</name></member>
-    <member refid="namespaceo2scl_1abcb2c0f0e2963e3016d8856e51d3af9c" kind="function"><name>matrix_row&lt; arma::mat, arma::subview_row&lt; double &gt; &gt;</name></member>
-    <member refid="namespaceo2scl_1ad59e4f8e12b2d76089bea25feeca45d9" kind="function"><name>matrix_column&lt; arma::mat, arma::subview_col&lt; double &gt; &gt;</name></member>
     <member refid="namespaceo2scl_1a661103a085b6e52f758aee8ccd37bc84" kind="function"><name>matrix_max</name></member>
     <member refid="namespaceo2scl_1a9510690f4dedea6183746bc891230de4" kind="function"><name>matrix_min</name></member>
-    <member refid="namespaceo2scl_1a242ee88fabfddd0415ea9faeb376a0b4" kind="function"><name>matrix_row&lt; Eigen::MatrixXd, Eigen::MatrixXd::RowXpr &gt;</name></member>
-    <member refid="namespaceo2scl_1ab79db31213dfc4dad3fc7486b662f229" kind="function"><name>matrix_column&lt; Eigen::MatrixXd, Eigen::MatrixXd::ColXpr &gt;</name></member>
     <member refid="namespaceo2scl_1a6a3d48860b2c342acbe0e55ea9d17632" kind="function"><name>vector_deriv_threept</name></member>
     <member refid="namespaceo2scl_1a7aabdd89c2f9244a37c48fa536f460f7" kind="function"><name>vector_deriv_threept_tap</name></member>
     <member refid="namespaceo2scl_1a5ea9d6ccc6b5dadcb2fd74aeb525d99b" kind="function"><name>vector_deriv_fivept</name></member>
@@ -462,7 +458,6 @@
     <member refid="namespaceo2scl__linalg_1a3ab3bc3b12150e0a8b158fec36b5320d" kind="function"><name>bidiag_unpack</name></member>
     <member refid="namespaceo2scl__linalg_1a851f79ebab8ed7f2b472712b3496293b" kind="function"><name>bidiag_unpack2</name></member>
     <member refid="namespaceo2scl__linalg_1ad1dda44a1c2252a5ea74747ac0d74fa7" kind="function"><name>bidiag_unpack_B</name></member>
-    <member refid="namespaceo2scl__linalg_1a11be56cd2ee1e3b287a4771c56669ad2" kind="function"><name>cholesky_decomp&lt; Eigen::MatrixXd &gt;</name></member>
     <member refid="namespaceo2scl__linalg_1a4fb33f765a1c7357d67340a2acdaf4dc" kind="function"><name>cholesky_decomp</name></member>
     <member refid="namespaceo2scl__linalg_1a6cc452a174a84e4bb0aea4a40c2fbcef" kind="function"><name>cholesky_det</name></member>
     <member refid="namespaceo2scl__linalg_1a4db331427e68cb35a89ab16cadeca9ae" kind="function"><name>cholesky_lndet</name></member>
@@ -498,8 +493,6 @@
     <member refid="namespaceo2scl__linalg_1a7955241fbd4a975f2206f4a6a7d012ad" kind="function"><name>LU_det</name></member>
     <member refid="namespaceo2scl__linalg_1a1ff6c76948a6ff9e9e5e4d8f3e318a4e" kind="function"><name>LU_lndet</name></member>
     <member refid="namespaceo2scl__linalg_1a5bee71f59276e5382c14d3f55dd3b65d" kind="function"><name>LU_sgndet</name></member>
-    <member refid="namespaceo2scl__linalg_1a93018c00cee28c8c8b9cd5b21ecc682f" kind="function"><name>QR_decomp_unpack&lt; arma::mat, arma::mat, arma::mat &gt;</name></member>
-    <member refid="namespaceo2scl__linalg_1a8813376d2e48c84f134a5880d5b5bc19" kind="function"><name>QR_decomp_unpack&lt; Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd &gt;</name></member>
     <member refid="namespaceo2scl__linalg_1ac9d84ed3a5e0bff52f863d056ba0894b" kind="function"><name>QR_decomp</name></member>
     <member refid="namespaceo2scl__linalg_1a22786228846e8f4ff6d5f9db89d1f699" kind="function"><name>QR_QTvec</name></member>
     <member refid="namespaceo2scl__linalg_1a92d3ef4178dd4cff31de2e3404029957" kind="function"><name>QR_unpack</name></member>

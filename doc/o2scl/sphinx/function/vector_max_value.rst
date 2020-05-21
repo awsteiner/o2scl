@@ -3,7 +3,7 @@
 Functions vector_max_value
 ==========================
 
-.. doxygenfunction:: vector_max_value(size_t, const vec_t&)
+.. doxygenfunction:: vector_max_value(size_t n, const vec_t &data)
 
-.. doxygenfunction:: vector_max_value(const vec_t&)
+.. doxygenfunction:: vector_max_value(const vec_t &data)
 

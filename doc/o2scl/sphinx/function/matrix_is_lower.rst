@@ -3,7 +3,7 @@
 Functions matrix_is_lower
 =========================
 
-.. doxygenfunction:: matrix_is_lower(mat_t&)
+.. doxygenfunction:: matrix_is_lower(mat_t &src)
 
-.. doxygenfunction:: matrix_is_lower(size_t, size_t, mat_t&)
+.. doxygenfunction:: matrix_is_lower(size_t m, size_t n, mat_t &src)
 

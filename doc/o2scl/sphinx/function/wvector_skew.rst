@@ -3,11 +3,11 @@
 Functions wvector_skew
 ======================
 
-.. doxygenfunction:: wvector_skew(size_t, const vec_t&, const vec2_t&, double, double)
+.. doxygenfunction:: wvector_skew(size_t n, const vec_t &data, const vec2_t &weights, double wmean, double wsd)
 
-.. doxygenfunction:: wvector_skew(const vec_t&, const vec2_t&, double, double)
+.. doxygenfunction:: wvector_skew(const vec_t &data, const vec2_t &weights, double wmean, double wsd)
 
-.. doxygenfunction:: wvector_skew(size_t, const vec_t&, const vec2_t&)
+.. doxygenfunction:: wvector_skew(size_t n, const vec_t &data, const vec2_t &weights)
 
-.. doxygenfunction:: wvector_skew(const vec_t&, const vec2_t&)
+.. doxygenfunction:: wvector_skew(const vec_t &data, const vec2_t &weights)
 

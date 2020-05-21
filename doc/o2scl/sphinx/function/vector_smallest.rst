@@ -3,7 +3,7 @@
 Functions vector_smallest
 =========================
 
-.. doxygenfunction:: vector_smallest(size_t, vec_t&, size_t, vec_t&)
+.. doxygenfunction:: vector_smallest(size_t n, vec_t &data, size_t k, vec_t &smallest)
 
-.. doxygenfunction:: vector_smallest(vec_t&, size_t, vec_t&)
+.. doxygenfunction:: vector_smallest(vec_t &data, size_t k, vec_t &smallest)
 

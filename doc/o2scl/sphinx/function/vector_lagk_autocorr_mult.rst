@@ -3,11 +3,11 @@
 Functions vector_lagk_autocorr_mult
 ===================================
 
-.. doxygenfunction:: vector_lagk_autocorr_mult(size_t, const vec_t&, const vec2_t&, size_t, double)
+.. doxygenfunction:: vector_lagk_autocorr_mult(size_t n, const vec_t &data, const vec2_t &mult, size_t k, double mean)
 
-.. doxygenfunction:: vector_lagk_autocorr_mult(size_t, const vec_t&, const vec2_t&, size_t)
+.. doxygenfunction:: vector_lagk_autocorr_mult(size_t n, const vec_t &data, const vec2_t &mult, size_t k)
 
-.. doxygenfunction:: vector_lagk_autocorr_mult(const vec_t&, const vec2_t&, size_t, double)
+.. doxygenfunction:: vector_lagk_autocorr_mult(const vec_t &data, const vec2_t &mult, size_t k, double mean)
 
-.. doxygenfunction:: vector_lagk_autocorr_mult(const vec_t&, const vec2_t&, size_t)
+.. doxygenfunction:: vector_lagk_autocorr_mult(const vec_t &data, const vec2_t &mult, size_t k)
 

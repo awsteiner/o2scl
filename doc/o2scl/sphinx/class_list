@@ -191,9 +191,6 @@
   <compound refid="classo2scl_1_1mcarlo__vegas" kind="class"><name>o2scl::mcarlo_vegas</name>
   <compound refid="classo2scl_1_1mcmc__para__base" kind="class"><name>o2scl::mcmc_para_base</name>
   <compound refid="classo2scl_1_1mcmc__para__cli" kind="class"><name>o2scl::mcmc_para_cli</name>
-  <compound refid="classo2scl_1_1mcmc__para__old__base" kind="class"><name>o2scl::mcmc_para_old_base</name>
-  <compound refid="classo2scl_1_1mcmc__para__old__cli" kind="class"><name>o2scl::mcmc_para_old_cli</name>
-  <compound refid="classo2scl_1_1mcmc__para__old__table" kind="class"><name>o2scl::mcmc_para_old_table</name>
   <compound refid="classo2scl_1_1mcmc__para__table" kind="class"><name>o2scl::mcmc_para_table</name>
   <compound refid="classo2scl_1_1min__base" kind="class"><name>o2scl::min_base</name>
   <compound refid="classo2scl_1_1min__bkt__base" kind="class"><name>o2scl::min_bkt_base</name>

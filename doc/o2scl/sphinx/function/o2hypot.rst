@@ -3,11 +3,11 @@
 Functions o2hypot
 =================
 
-.. doxygenfunction:: o2hypot(const float, const float)
+.. doxygenfunction:: o2hypot(const float x, const float y)
 
-.. doxygenfunction:: o2hypot(const double, const double)
+.. doxygenfunction:: o2hypot(const double x, const double y)
 
-.. doxygenfunction:: o2hypot(const long double, const long double)
+.. doxygenfunction:: o2hypot(const long double x, const long double y)
 
-.. doxygenfunction:: o2hypot(const boost::multiprecision::cpp_dec_float_50, const boost::multiprecision::cpp_dec_float_50)
+.. doxygenfunction:: o2hypot(const boost::multiprecision::cpp_dec_float_50 x, const boost::multiprecision::cpp_dec_float_50 y)
 

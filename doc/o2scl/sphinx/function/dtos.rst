@@ -3,7 +3,7 @@
 Functions dtos
 ==============
 
-.. doxygenfunction:: dtos(const fp_t&, int, bool)
+.. doxygenfunction:: dtos(const fp_t &x, int prec = 6, bool auto_prec = false)
 
-.. doxygenfunction:: dtos(double, std::ostream&)
+.. doxygenfunction:: dtos(double x, std::ostream &format)
 

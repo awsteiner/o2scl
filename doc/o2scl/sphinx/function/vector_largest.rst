@@ -3,7 +3,7 @@
 Functions vector_largest
 ========================
 
-.. doxygenfunction:: vector_largest(size_t, vec_t&, size_t, vec_t&)
+.. doxygenfunction:: vector_largest(size_t n, vec_t &data, size_t k, vec_t &largest)
 
-.. doxygenfunction:: vector_largest(vec_t&, size_t, vec_t&)
+.. doxygenfunction:: vector_largest(vec_t &data, size_t k, vec_t &largest)
 

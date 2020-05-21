@@ -3,7 +3,7 @@
 Functions linear_or_log
 =======================
 
-.. doxygenfunction:: linear_or_log(vec_t&, vec2_t&, bool&, bool&)
+.. doxygenfunction:: linear_or_log(vec_t &x, vec2_t &y, bool &log_x, bool &log_y)
 
-.. doxygenfunction:: linear_or_log(vec_t&, bool&)
+.. doxygenfunction:: linear_or_log(vec_t &y, bool &log_y)
 

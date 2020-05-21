@@ -3,7 +3,7 @@
 Functions vector_is_strictly_monotonic
 ======================================
 
-.. doxygenfunction:: vector_is_strictly_monotonic(size_t, vec_t&)
+.. doxygenfunction:: vector_is_strictly_monotonic(size_t n, vec_t &data)
 
-.. doxygenfunction:: vector_is_strictly_monotonic(vec_t&)
+.. doxygenfunction:: vector_is_strictly_monotonic(vec_t &data)
 

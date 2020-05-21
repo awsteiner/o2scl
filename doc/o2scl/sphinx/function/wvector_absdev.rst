@@ -3,11 +3,11 @@
 Functions wvector_absdev
 ========================
 
-.. doxygenfunction:: wvector_absdev(size_t, const vec_t&, const vec2_t&, double)
+.. doxygenfunction:: wvector_absdev(size_t n, const vec_t &data, const vec2_t &weights, double wmean)
 
-.. doxygenfunction:: wvector_absdev(const vec_t&, const vec2_t&, double)
+.. doxygenfunction:: wvector_absdev(const vec_t &data, const vec2_t &weights, double wmean)
 
-.. doxygenfunction:: wvector_absdev(size_t, const vec_t&, const vec2_t&)
+.. doxygenfunction:: wvector_absdev(size_t n, const vec_t &data, const vec2_t &weights)
 
-.. doxygenfunction:: wvector_absdev(const vec_t&, const vec2_t&)
+.. doxygenfunction:: wvector_absdev(const vec_t &data, const vec2_t &weights)
 

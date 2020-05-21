@@ -3,11 +3,11 @@
 Functions matrix_transpose
 ==========================
 
-.. doxygenfunction:: matrix_transpose(mat_t&, mat2_t&)
+.. doxygenfunction:: matrix_transpose(mat_t &src, mat2_t &dest)
 
-.. doxygenfunction:: matrix_transpose(size_t, size_t, mat_t&, mat2_t&)
+.. doxygenfunction:: matrix_transpose(size_t m, size_t n, mat_t &src, mat2_t &dest)
 
-.. doxygenfunction:: matrix_transpose(mat_t&)
+.. doxygenfunction:: matrix_transpose(mat_t &src)
 
-.. doxygenfunction:: matrix_transpose(size_t, size_t, mat_t&)
+.. doxygenfunction:: matrix_transpose(size_t m, size_t n, mat_t &src)
 

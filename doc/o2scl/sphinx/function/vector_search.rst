@@ -3,7 +3,7 @@
 Functions vector_search
 =======================
 
-.. doxygenfunction:: vector_search(size_t, const vec_t&, data_t, size_t&)
+.. doxygenfunction:: vector_search(size_t n, const vec_t &x, data_t x0, size_t &i)
 
-.. doxygenfunction:: vector_search(const vec_t&, data_t, size_t&)
+.. doxygenfunction:: vector_search(const vec_t &x, data_t x0, size_t &i)
 

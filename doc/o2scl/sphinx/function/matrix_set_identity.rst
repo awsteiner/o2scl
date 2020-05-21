@@ -3,7 +3,7 @@
 Functions matrix_set_identity
 =============================
 
-.. doxygenfunction:: matrix_set_identity(size_t, size_t, mat_t&)
+.. doxygenfunction:: matrix_set_identity(size_t M, size_t N, mat_t &m)
 
-.. doxygenfunction:: matrix_set_identity(mat_t&)
+.. doxygenfunction:: matrix_set_identity(mat_t &m)
 

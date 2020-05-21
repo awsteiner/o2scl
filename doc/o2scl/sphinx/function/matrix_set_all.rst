@@ -3,7 +3,7 @@
 Functions matrix_set_all
 ========================
 
-.. doxygenfunction:: matrix_set_all(size_t, size_t, mat_t&, data_t)
+.. doxygenfunction:: matrix_set_all(size_t M, size_t N, mat_t &src, data_t val)
 
-.. doxygenfunction:: matrix_set_all(mat_t&, data_t)
+.. doxygenfunction:: matrix_set_all(mat_t &src, data_t val)
 

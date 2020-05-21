@@ -28,6 +28,41 @@
 
 using namespace std;
 
+int get_tag_element(string s, string tag, string &result) {
+  // Remove enclosing <>
+  if (tag[0]=='<') {
+    if (tag[tag.length()-1]!='>') {
+      return 1;
+    }
+    tag=tag.substr(1,tag.length()-2);
+  }
+  size_t tag_len=tag.length();
+  string tag_start=((string)"<")+tag+">";
+  string tag_end=((string)"</")+tag+">";
+
+  // Exit early if there is a parsing error
+  size_t istart=s.find(tag_start);
+  if (istart==std::string::npos) {
+    return 2;
+  }
+  size_t iend=s.find(tag_end);
+  if (iend==std::string::npos) {
+    return 3;
+  }
+  if (istart+tag_len+2>iend) return 4;
+  
+  // Extract the name
+  size_t loc1=s.find("<name>");
+  size_t loc2=s.find("</name>");
+  size_t loct=loc1+6;
+  if (loc2<loct) {
+    return 5;
+  }
+  size_t len=iend-istart-tag_len-2;
+  result=s.substr(istart+tag_len+2,len);
+  return 0;
+}
+
 /*
   This code parses 'function_list' and 'class list' to create .rst
   files for each class and function (or list of overloaded functions).
@@ -67,29 +102,10 @@ int main(void) {
       // so we skip it
       if (s.length()>0) {
 
-	// Exit early if there is a parsing error
-	if (s.find("<name>")==std::string::npos) {
-	  cout << "No <name>" << endl;
-	  cout << s << endl;
+	if (get_tag_element(s,"name",s)!=0) {
+	  cerr << "Failed to find name in " << s << endl;
 	  exit(-1);
 	}
-	if (s.find("</name>")==std::string::npos) {
-	  cout << "No </name>" << endl;
-	  cout << s << endl;
-	  exit(-1);
-	}
-
-	// Extract the name
-	size_t loc1=s.find("<name>");
-	size_t loc2=s.find("</name>");
-	size_t loct=loc1+6;
-	if (loc2<loct) {
-	  cout << "Missing name" << endl;
-	  cout << s << endl;
-	  exit(-1);
-	}
-	size_t len=loc2-loc1-6;
-	s=s.substr(loc1+6,len);
 
 	// Extract the namespace
 	string ns;
@@ -234,51 +250,51 @@ int main(void) {
 	      s2.find(s)!=std::string::npos) {
 
 	    size_t arg_count=0;
-	    
-	    // Skip the argstring
+
+	    string argsstring;
+	    // Read the argstring
 	    i++;
-	    s2=ns_file[i];
-	    
+	    argsstring=ns_file[i];
+	    if (get_tag_element(argsstring,"argsstring",argsstring)!=0) {
+	      cerr << "Failed to find argsstring in " << argsstring << endl;
+	      exit(-1);
+	    }
+	    // Replace &amp; with &
+	    while (argsstring.find("&amp;")!=std::string::npos) {
+	      argsstring.replace(argsstring.find("&amp;"),5,"&");
+	    }
+	    // Replace all = with ' = '
+	    vector<size_t> equal_list;
+	    for(size_t j=0;j<argsstring.length();j++) {
+	      if (argsstring[j]=='=') {
+		argsstring.replace(j,1," = ");
+		j++;
+	      }
+	    }
+
 	    // Read the name line
 	    string name;
 	    i++;
 	    name=ns_file[i];
 	    
-	    // Exit early if there is a parsing error
-	    if (name.find("<name>")==std::string::npos) {
-	      cout << "No <name>" << endl;
-	      cout << s << " " << name << endl;
+	    if (get_tag_element(name,"name",name)!=0) {
+	      cerr << "Failed to find name in " << name << endl;
 	      exit(-1);
 	    }
-	    if (name.find("</name>")==std::string::npos) {
-	      cout << "No </name>" << endl;
-	      cout << s << " " << name << endl;
-	      exit(-1);
-	    }
-	    
-	    // Extract the name
-	    size_t loc1=name.find("<name>");
-	    size_t loc2=name.find("</name>");
-	    size_t loct=loc1+6;
-	    if (loc2<loct) {
-	      cout << "Missing name" << endl;
-	      cout << name << endl;
-	      exit(-1);
-	    }
-	    size_t len=loc2-loc1-6;
-	    name=name.substr(loc1+6,len);
 
 	    // Only proceed if the name and s match
 	    if (name==s) {
 	      
-	      // Output the name part of the sphinx directive
-	      fout << ".. doxygenfunction:: " << s << "(";
-
+	      // Output the sphinx directive
+	      fout << ".. doxygenfunction:: " << s << argsstring
+		   << "\n" << endl;
+	      cout << s << argsstring << endl;
+	      
 	      // Read the line <param> (if present)
 	      i++;
 	      s2=ns_file[i];
 	      
-	      cout << s << "(";
+	      //cout << s << "(";
 
 	      // Read all of the parameters
 	      bool params_done=false;
@@ -287,19 +303,23 @@ int main(void) {
 		string type, declname, end;
 		i++;
 		type=ns_file[i];
-		//cout << "Type: " << type << endl;
-		if (type.length()>23) {
-		  type=type.substr(16,type.length()-23);
+		if (get_tag_element(type,"type",type)!=0) {
+		  cerr << "Failed to find type in " << type << endl;
+		  exit(-1);
 		}
+		
+		//cout << "Type: " << type << endl;
 		if (type.find(" &amp;")!=std::string::npos) {
 		  type.replace(type.find(" &amp;"),6,"&");
 		}
+		
 		i++;
 		declname=ns_file[i];
-		//cout << "Declname: " << declname << endl;
-		if (declname.length()>31) {
-		  declname=declname.substr(20,declname.length()-31);
+		if (get_tag_element(declname,"declname",declname)!=0) {
+		  cerr << "Failed to find declname in " << declname << endl;
+		  exit(-1);
 		}
+		//cout << "Declname: " << declname << endl;
 		
 		// Read <defval> (if present) and </param> lines
 		i++;
@@ -315,6 +335,7 @@ int main(void) {
 		s2=ns_file[i];
 		//cout << "s2: " << s2 << endl;
 
+		/*
 		// Update file and screen output
 		if (arg_count!=0) {
 		  cout << ", " << type;
@@ -327,6 +348,7 @@ int main(void) {
 		} else {
 		  fout << type;
 		}
+		*/
 	      
 		arg_count++;
 
@@ -340,8 +362,8 @@ int main(void) {
 	      }
 
 	      // Output right parenthesis
-	      cout << ")" << endl;
-	      fout << ")\n" << endl;
+	      //cout << ")" << endl;
+	      //fout << ")\n" << endl;
 	      
 	    } else {
 	      //cout << "No match " << name << " " << s << endl;

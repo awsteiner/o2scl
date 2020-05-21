@@ -3,7 +3,7 @@
 Functions matrix_make_lower
 ===========================
 
-.. doxygenfunction:: matrix_make_lower(mat_t&)
+.. doxygenfunction:: matrix_make_lower(mat_t &src)
 
-.. doxygenfunction:: matrix_make_lower(size_t, size_t, mat_t&)
+.. doxygenfunction:: matrix_make_lower(size_t m, size_t n, mat_t &src)
 

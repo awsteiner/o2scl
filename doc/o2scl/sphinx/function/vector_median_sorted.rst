@@ -3,7 +3,7 @@
 Functions vector_median_sorted
 ==============================
 
-.. doxygenfunction:: vector_median_sorted(size_t, const vec_t&)
+.. doxygenfunction:: vector_median_sorted(size_t n, const vec_t &data)
 
-.. doxygenfunction:: vector_median_sorted(const vec_t&)
+.. doxygenfunction:: vector_median_sorted(const vec_t &data)
 

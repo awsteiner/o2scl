@@ -3,7 +3,7 @@
 Functions vectors_equal
 =======================
 
-.. doxygenfunction:: vectors_equal(size_t, const vec_t&, const vec2_t&)
+.. doxygenfunction:: vectors_equal(size_t n, const vec_t &v1, const vec2_t &v2)
 
-.. doxygenfunction:: vectors_equal(const vec_t&, const vec2_t&)
+.. doxygenfunction:: vectors_equal(const vec_t &v1, const vec2_t &v2)
 

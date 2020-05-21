@@ -3,7 +3,7 @@
 Functions vector_correlation
 ============================
 
-.. doxygenfunction:: vector_correlation(size_t, const vec_t&, const vec2_t&)
+.. doxygenfunction:: vector_correlation(size_t n, const vec_t &data1, const vec2_t &data2)
 
-.. doxygenfunction:: vector_correlation(const vec_t&, const vec2_t&)
+.. doxygenfunction:: vector_correlation(const vec_t &data1, const vec2_t &data2)
 
