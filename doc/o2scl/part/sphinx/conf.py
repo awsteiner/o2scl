@@ -52,7 +52,8 @@ intersphinx_mapping = {'o2scl':
 
 # Suggested by https://my-favorite-documentation-test.readthedocs.io/en/latest/using_intersphinx.html, but gave more errors when I tried it last
 #primary_domain = 'cpp'
-#highlight_language = 'cpp'
+
+highlight_language = 'cpp'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['templates']

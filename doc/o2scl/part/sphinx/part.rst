@@ -10,266 +10,292 @@ quantum and \classical particles.
 Particle data classes
 ---------------------
 
-The class \ref o2scl::part_tl is the basic structure for a particle:
+The class :cpp:class:`o2scl::part_tl` is the basic structure for
+a particle:
 
-- \ref o2scl::part_tl::m - mass (i.e. rest mass), \f$ m \f$
-- \ref o2scl::part_tl::g - degeneracy factor (e.g. \f$g=2j+1\f$)
-- \ref o2scl::part_tl::n - number density, \f$ n \f$
-- \ref o2scl::part_tl::ed - energy density, \f$ \varepsilon \f$
-- \ref o2scl::part_tl::pr - pressure, \f$ P \f$
-- \ref o2scl::part_tl::en - entropy density, \f$ s \f$
-- \ref o2scl::part_tl::ms - effective mass, \f$ m^{*} \f$
-- \ref o2scl::part_tl::mu - chemical potential, \f$ \mu \f$
-- \ref o2scl::part_tl::nu - effective chemical potential, \f$ \nu \f$
-- \ref o2scl::part_tl::inc_rest_mass - True if the rest mass is included
+- :cpp:class:`o2scl::part_tl::m` - mass (i.e. rest mass), :math:`m`
+- :cpp:class:`o2scl::part_tl::g` - degeneracy factor (e.g. :math:`g=2j+1`)
+- :cpp:class:`o2scl::part_tl::n` - number density, :math:`n`
+- :cpp:class:`o2scl::part_tl::ed` - energy density, :math:`\varepsilon`
+- :cpp:class:`o2scl::part_tl::pr` - pressure, :math:`P`
+- :cpp:class:`o2scl::part_tl::en` - entropy density, :math:`s`
+- :cpp:class:`o2scl::part_tl::ms` - effective mass, :math:`m^{*}`
+- :cpp:class:`o2scl::part_tl::mu` - chemical potential, :math:`\mu`
+- :cpp:class:`o2scl::part_tl::nu` - effective chemical potential, :math:`\nu`
+- :cpp:class:`o2scl::part_tl::inc_rest_mass` - True if the rest mass is included
   (default true)
-- \ref o2scl::part_tl::non_interacting - False if the particle 
+- :cpp:class:`o2scl::part_tl::non_interacting` - False if the particle 
   includes interactions (default true)
 
-The data members \ref o2scl::part_tl::ms and \ref o2scl::part_tl::nu
-allow one to specify modifications to the mass and the chemical
-potential due to interactions. This allows one to calculate the
-properties of particle due to interactions so long as the basic
-form of the free-particle dispersion relation is unchanged, i.e.
-\f[
-\sqrt{k^2+m^2} - \mu \rightarrow \sqrt{k^2+m^{* 2}} - \nu 
-\f]
+The data members :cpp:class:`o2scl::part_tl::ms` and
+:cpp:class:`o2scl::part_tl::nu` allow one to specify modifications to
+the mass and the chemical potential due to interactions. This allows
+one to calculate the properties of particle due to interactions so
+long as the basic form of the free-particle dispersion relation is
+unchanged, i.e.
 
-If the particle is non-interacting, then \ref o2scl::part_tl::nu and
-\ref o2scl::part_tl::ms are sometimes used by O\ :sub:`2`\ scl_part
+.. math::
+
+   \sqrt{k^2+m^2} - \mu \rightarrow \sqrt{k^2+m^{* 2}} - \nu 
+
+If the particle is non-interacting, then :cpp:class:`o2scl::part_tl::nu` and
+:cpp:class:`o2scl::part_tl::ms` are sometimes used by O\ :sub:`2`\ scl_part
 functions for temporary storage.
 
-If \ref o2scl::part_tl::inc_rest_mass is \c true (as is the default
-in all of the classes except \ref o2scl::nucleus), then all
-functions include the rest mass (stored in \ref o2scl::part_tl::m)
-energy density in the energy density, the "mu" functions expect
-that the rest mass is included in \ref o2scl::part_tl::mu or \ref
-o2scl::part_tl::nu as input and the "density" functions output \ref
-o2scl::part_tl::mu or \ref o2scl::part_tl::nu including the rest mass.
-Note that it is assumed that \ref o2scl::part_tl::m contains the rest
-mass even if the particle is interacting and an effective mass is
-stored in \ref o2scl::part_tl::ms . 
+If :cpp:class:`o2scl::part_tl::inc_rest_mass` is \c true (as is the
+default in all of the classes except :cpp:class:`o2scl::nucleus`),
+then all functions include the rest mass (stored in
+:cpp:class:`o2scl::part_tl::m`) energy density in the energy density,
+the "mu" functions expect that the rest mass is included in
+:cpp:class:`o2scl::part_tl::mu` or 
+:cpp:class:`o2scl::part_tl::nu` as input and the "density" functions
+output  :cpp:class:`o2scl::part_tl::mu` or
+:cpp:class:`o2scl::part_tl::nu` including the rest mass. Note that it
+is assumed that :cpp:class:`o2scl::part_tl::m` contains the rest mass
+even if the particle is interacting and an effective mass is stored in
+:cpp:class:`o2scl::part_tl::ms`.
     
-When \ref o2scl::part_tl::inc_rest_mass is true, antiparticles are
+When :cpp:class:`o2scl::part_tl::inc_rest_mass` is true, antiparticles are
 implemented by choosing the antiparticle chemical potential to be
-\f$ - \mu \f$. When \ref o2scl::part_tl::inc_rest_mass is false,
+:math:`- \mu`. When :cpp:class:`o2scl::part_tl::inc_rest_mass` is false,
 there is an ambiguity in the relative definitions of the rest mass
 contribution for the antiparticles and the combination of both
 particles and antiparticles. Define energy density for particles
-including the rest mass contribution as \f$ \varepsilon_+ \f$, and
-the energy density without the rest mass contribution as \f$
-\tilde{\varepsilon}_{+} = \varepsilon_{+} - n_{+} m \f$ .
-Similarly, for antiparticles, we have \f$ \tilde{\varepsilon}_- =
-\varepsilon_- - n_- m \f$. The total energy density including the
-rest mass contribution is then \f$ \varepsilon = \varepsilon_{+} +
-\varepsilon_- \f$ and without the rest mass contribution \f$
-\tilde{\varepsilon} \equiv \varepsilon - (n_{+}-n_-) m \f$. Then,
-\f{eqnarray*}
-\tilde{\varepsilon} & = & 
-\varepsilon_+ - n_{+} m + \varepsilon_- + n_- m \nonumber \\
-& = & \varepsilon_+ - n_{+} m + \varepsilon_- - n_- m + 
-2 n_- m \nonumber \\
-& = & \tilde{\varepsilon}_+ + \tilde{\varepsilon}_- + 2 n_- m 
-\nonumber
-\f}
+including the rest mass contribution as :math:`\varepsilon_+`, and
+the energy density without the rest mass contribution as 
+:math:`\tilde{\varepsilon}_{+} = \varepsilon_{+} - n_{+} m` .
+Similarly, for antiparticles, we have :math:`\tilde{\varepsilon}_- =
+\varepsilon_- - n_- m`. The total energy density including the
+rest mass contribution is then :math:`\varepsilon = \varepsilon_{+} +
+\varepsilon_-` and without the rest mass contribution 
+:math:`\tilde{\varepsilon} \equiv \varepsilon - (n_{+}-n_-) m`. Then,
+
+.. math::
+
+   \begin{eqnarray}
+   \tilde{\varepsilon} & = & 
+   \varepsilon_+ - n_{+} m + \varepsilon_- + n_- m \nonumber \\
+   & = & \varepsilon_+ - n_{+} m + \varepsilon_- - n_- m + 
+   2 n_- m \nonumber \\
+   & = & \tilde{\varepsilon}_+ + \tilde{\varepsilon}_- + 2 n_- m 
+   \nonumber
+   \end{eqnarray}
+   
 Similarly, for the chemical potentials, we have 
-\f[
-\tilde{\mu}_+ \equiv \frac{\partial \tilde{\varepsilon}_+}{n_+} = 
-\mu_+ - m \quad \mathrm{and} \quad 
-\tilde{\mu}_- \equiv \frac{\partial \tilde{\varepsilon}_-}{n_-} = 
-\mu_- - m 
-\f]
-thus \f$ \tilde{\mu}_- = - \tilde{\mu}_+ - 2 m \f$ . This
-bookkeeping is handled by \ref o2scl::part_tl::anti(), the \ref
-o2scl::fermion_thermo::pair_mu(), and the \ref
-o2scl::fermion_thermo::pair_density(), functions.
+
+.. math::
+
+   \tilde{\mu}_+ \equiv \frac{\partial \tilde{\varepsilon}_+}{n_+} = 
+   \mu_+ - m \quad \mathrm{and} \quad 
+   \tilde{\mu}_- \equiv \frac{\partial \tilde{\varepsilon}_-}{n_-} = 
+   \mu_- - m 
+
+thus :math:`\tilde{\mu}_- = - \tilde{\mu}_+ - 2 m` . This bookkeeping
+is handled by :cpp:class:`o2scl::part_tl::anti()`, the
+:cpp:class:`o2scl::fermion_thermo::pair_mu()`, and the
+:cpp:class:`o2scl::fermion_thermo::pair_density()`, functions.
 
 The thermodynamic identity used to compute the pressure for
 interacting particles is
-\f[
-P = -\varepsilon + s T + \nu n
-\f]
-where \ref o2scl::part_tl::nu is used. This way, the particle class
+
+.. math::
+   
+   P = -\varepsilon + s T + \nu n
+
+where :cpp:class:`o2scl::part_tl::nu` is used. This way, the particle class
 doesn't need to know about the structure of the interactions to
 ensure that the thermodynamic identity is satisfied. Note that in
 the \o2e library, where in the equations of state the normal
 thermodynamic identity is used
-\f[
-P = -\varepsilon + s T + \mu n
-\f]
+
+.. math::
+   
+   P = -\varepsilon + s T + \mu n
+
 Frequently, the interactions which create an effective chemical
-potential which is different than \ref o2scl::part_tl::mu thus create
+potential which is different than :cpp:class:`o2scl::part_tl::mu` thus create
 extra terms in the pressure and the energy density for the given
 equation of state.
 
-The \ref o2scl::fermion_tl class is a child of \ref o2scl::part_tl which
-contains data members for the Fermi momentum and energy gap. The
-\ref o2scl::boson class contains an extra data member for the
-condensate. The \ref o2scl::quark class is a descendant of the
-\ref o2scl::fermion_tl class which contains extra data members for
-the quark condensate and the contribution to the bag constant.
-Nuclei are represented by the \ref o2scl::nucleus class and
-documented in \ref nuclei_section.
+The :cpp:class:`o2scl::fermion_tl` class is a child of
+:cpp:class:`o2scl::part_tl` which contains data members for the Fermi
+momentum and energy gap. The :cpp:class:`o2scl::boson` class contains
+an extra data member for the condensate. The :cpp:class:`o2scl::quark`
+class is a descendant of the :cpp:class:`o2scl::fermion_tl` class
+which contains extra data members for the quark condensate and the
+contribution to the bag constant. Nuclei are represented by the
+:cpp:class:`o2scl::nucleus` class and documented in nuclei_section.
 
-<b>Units:</b>
+Units
+-----
 
-Factors of \f$ \hbar, c \f$ and \f$ k_B \f$ have been removed
+Factors of :math:`\hbar, c` and :math:`k_B` have been removed
 everywhere, so that mass, energy, and temperature all have the
 same units. Number and entropy densities have units of mass cubed
 (or energy cubed). The particle classes can be used with any
 system of units which is based on powers of one unit, i.e. 
-\f$ [n] = [T]^3 = [m]^3 = [P]^{3/4} = [\varepsilon]^{3/4}\f$, etc.
+:math:`[n] = [T]^3 = [m]^3 = [P]^{3/4} = [\varepsilon]^{3/4}`, etc.
 
-\hline
-\section part_alg_sect Classes for particle thermodynamics
+Classes for particle thermodynamics
+-----------------------------------
 
 At zero temperature, the thermodynamic properties of fermions can
-be computed using \ref o2scl::fermion_zerot_tl. The class \ref
-o2scl::classical_thermo_tl computes the properties of particles
+be computed using :cpp:class:`o2scl::fermion_zerot_tl`. The class 
+:cpp:class:`o2scl::classical_thermo_tl` computes the properties of particles
 in the classical limit.
 
-At finite temperature, there are different classes corresponding
-to different approaches to computing the integrals over the
-distribution functions. The approximation scheme from \ref Johns96
-is used in \ref o2scl::boson_eff and \ref o2scl::fermion_eff. An
+At finite temperature, there are different classes corresponding to
+different approaches to computing the integrals over the distribution
+functions. The approximation scheme from Johns96 is used in
+:cpp:class:`o2scl::boson_eff` and :cpp:class:`o2scl::fermion_eff`. An
 exact method employing direct integration of the distribution
-functions is used in \ref o2scl::boson_rel and \ref
-o2scl::fermion_rel_tl, but these are necessarily quite a bit slower.
-All of these classes use expansions to give ensure comparably
-accurate results in the degenerate and non-degenerate limits.
+functions is used in :cpp:class:`o2scl::boson_rel` and
+:cpp:class:`o2scl::fermion_rel_tl`, but these are necessarily quite a
+bit slower. All of these classes use expansions to give ensure
+comparably accurate results in the degenerate and non-degenerate
+limits.
 
-The class \ref o2scl::fermion_eff usually works to within about 1
-part in \f$ 10^4 \f$, but can be as bad as 1 part in \f$ 10^2 \f$
-in some more extreme cases. The default settings for \ref
-o2scl::fermion_rel_tl give an accuracy of at least 1 part in \f$ 10^6
-\f$ (and frequently better than this). For \ref
-o2scl::fermion_rel_tl, the accuracy can be improved to 1 part in \f$
-10^{10} \f$ by decreasing the integration tolerances.
+The class :cpp:class:`o2scl::fermion_eff` usually works to within about 1
+part in :math:`10^4`, but can be as bad as 1 part in :math:`10^2`
+in some more extreme cases. The default settings for 
+:cpp:class:`o2scl::fermion_rel_tl` give an accuracy of at least 1 part in
+:math:`10^6` (and frequently better than this). For 
+:cpp:class:`o2scl::fermion_rel_tl`, the accuracy can be improved to 1 part in
+:math:`10^{10}` by decreasing the integration tolerances.
 
-The class \ref o2scl::fermion_nonrel_tl assumes a non-relativistic
+The class :cpp:class:`o2scl::fermion_nonrel_tl` assumes a non-relativistic
 dispersion relation for fermions. It uses an exact method for both
 zero and finite temperatures. The non-relativistic integrands are
-much simpler and \ref o2scl::fermion_nonrel_tl uses the appropriate
+much simpler and :cpp:class:`o2scl::fermion_nonrel_tl` uses the appropriate
 GSL functions (which are nearly exact) to compute them.
 
-\hline
-\section part_deriv_sect Thermodynamics with derivatives
+Thermodynamics with derivatives
+-------------------------------
 
-Sometimes it is useful to know derivatives like \f$ ds/dT \f$ in
+Sometimes it is useful to know derivatives like :math:`ds/dT` in
 addition to the energy and pressure.
-The class \ref o2scl::part_deriv_press_tl stores the three
+The class :cpp:class:`o2scl::part_deriv_press_tl` stores the three
 derivatives which correspond to second derivatives
 of the pressure
-\f[
-\left(\frac{\partial n}{\partial \mu}\right)_{T}, \quad
-\left(\frac{\partial n}{\partial T}\right)_{\mu}, \quad
-\mathrm{and} \quad \left(\frac{\partial s}{\partial
-T}\right)_{\mu} \quad . 
-\f] 
+
+.. math::
+   
+   \left(\frac{\partial n}{\partial \mu}\right)_{T}, \quad
+   \left(\frac{\partial n}{\partial T}\right)_{\mu}, \quad
+   \mathrm{and} \quad \left(\frac{\partial s}{\partial
+   T}\right)_{\mu} \quad . 
+
 All other first derivatives of the thermodynamic functions can be
 written in terms of these three.
 
 The new data classes are 
-\ref o2scl::part_deriv_tl and \ref o2scl::fermion_deriv_tl 
+:cpp:class:`o2scl::part_deriv_tl` and :cpp:class:`o2scl::fermion_deriv_tl` 
 which store the basic particle thermodynamics described
 above with these additional three derivatives.
 
 There are three classes which compute these derivatives for
-fermions and classical particles. The class \ref
-o2scl::classical_deriv_thermo_tl handles the nondegenerate limit,
-\ref o2scl::fermion_deriv_rel_tl handles fermions and \ref
-o2scl::fermion_deriv_nr_tl handles nonrelativistic fermions.
-The class \ref o2scl::fermion_deriv_thermo_tl is a base
-class for \ref o2scl::fermion_deriv_rel_tl and uses
+fermions and classical particles. The class 
+:cpp:class:`o2scl::classical_deriv_thermo_tl` handles the nondegenerate limit,
+:cpp:class:`o2scl::fermion_deriv_rel_tl` handles fermions and 
+:cpp:class:`o2scl::fermion_deriv_nr_tl` handles nonrelativistic fermions.
+The class :cpp:class:`o2scl::fermion_deriv_thermo_tl` is a base
+class for :cpp:class:`o2scl::fermion_deriv_rel_tl` and uses
 degenerate and nondegenerate expansions to evaluate
 both the base thermodynamic quantities and the three 
-derivatives from \ref o2scl::part_deriv_press_tl .
+derivatives from :cpp:class:`o2scl::part_deriv_press_tl` .
 
-The function \ref o2scl::part_deriv_tl::deriv_f() computes
+The function :cpp:class:`o2scl::part_deriv_tl::deriv_f()` computes
 the derivatives which are second derivatives of the
 free energy from the three computed above.
 
-\hline
-\section part_deriv_other_sect Other derivatives
+Other derivatives
+-----------------
     
 For the derivative of the entropy with respect
 to the chemical potential, there is a Maxwell relation
-\f[
-\left(\frac{\partial s}{\partial \mu}\right)_{T,V} =
-\left(\frac{\partial^2 P}{\partial \mu \partial T}\right)_{V} =
-\left(\frac{\partial^2 P}{\partial T \partial \mu}\right)_{T,V} =
-\left(\frac{\partial n}{\partial T}\right)_{\mu,V}
-\f]
+
+.. math::
+   
+   \left(\frac{\partial s}{\partial \mu}\right)_{T,V} =
+   \left(\frac{\partial^2 P}{\partial \mu \partial T}\right)_{V} =
+   \left(\frac{\partial^2 P}{\partial T \partial \mu}\right)_{T,V} =
+   \left(\frac{\partial n}{\partial T}\right)_{\mu,V}
 
 The first derivatives of the energy density can be computed using
 the thermodynamic identity:
-\f[
-\left(\frac{\partial \varepsilon}{\partial \mu}\right)_{T,V}=
-\mu \left(\frac{\partial n}{\partial \mu}\right)_{T,V}+
-T \left(\frac{\partial s}{\partial \mu}\right)_{T,V}
-\f]
-\f[
-\left(\frac{\partial \varepsilon}{\partial T}\right)_{\mu,V}=
-\mu \left(\frac{\partial n}{\partial T}\right)_{\mu,V}+
-T \left(\frac{\partial s}{\partial T}\right)_{\mu,V}
-\f]
+
+.. math::
+
+   \left(\frac{\partial \varepsilon}{\partial \mu}\right)_{T,V}=
+   \mu \left(\frac{\partial n}{\partial \mu}\right)_{T,V}+
+   T \left(\frac{\partial s}{\partial \mu}\right)_{T,V}
+
+.. math::
+
+   \left(\frac{\partial \varepsilon}{\partial T}\right)_{\mu,V}=
+   \mu \left(\frac{\partial n}{\partial T}\right)_{\mu,V}+
+   T \left(\frac{\partial s}{\partial T}\right)_{\mu,V}
     
 Most of the other common derivatives which are used 
 are those which can be obtained by second derivatives
-of the Gibbs free energy, \f$ G = F + P V \f$. 
-\f{eqnarray*}
-\left(\frac{\partial^2 G}{\partial T^2}\right)_{P,\{N_i\}} &=&
--\left( \frac{\partial S}{\partial T} \right)_{P,\{N_i\}}
-= - \frac{N c_P}{T} 
-\nonumber \\
-\left(\frac{\partial^2 G}{\partial T \partial P}\right)_{\{N_i\}} &=&
-\left( \frac{\partial V}{\partial T} \right)_{P,\{N_i\}}
-= V \alpha
-\nonumber \\
-\left(\frac{\partial^2 G}{\partial P^2}\right)_{T,\{N_i\}} &=&
-\left( \frac{\partial V}{\partial P} \right)_{T,\{N_i\}}
-= - V \kappa_T
-\nonumber
-\f}
+of the Gibbs free energy, :math:`G = F + P V`.
+
+.. math::
+   
+   \begin{eqnarray}
+   \left(\frac{\partial^2 G}{\partial T^2}\right)_{P,\{N_i\}} &=&
+   -\left( \frac{\partial S}{\partial T} \right)_{P,\{N_i\}}
+   = - \frac{N c_P}{T} 
+   \nonumber \\
+   \left(\frac{\partial^2 G}{\partial T \partial P}\right)_{\{N_i\}} &=&
+   \left( \frac{\partial V}{\partial T} \right)_{P,\{N_i\}}
+   = V \alpha
+   \nonumber \\
+   \left(\frac{\partial^2 G}{\partial P^2}\right)_{T,\{N_i\}} &=&
+   \left( \frac{\partial V}{\partial P} \right)_{T,\{N_i\}}
+   = - V \kappa_T
+   \nonumber
+   \end{eqnarray}
+
 Other common derivatives are the heat capacity per particle at
-constant volume, \f$ c_V \f$, and the speed of sound, \f$ ( d P /
-d \varepsilon)_{\{N_i\},S} \f$. These derivatives are computed by
-functions in \ref o2scl::deriv_thermo_base_tl from the 
-three second derivatives of the pressure stored in a 
-\ref o2scl::part_deriv_tl or \ref o2scl::fermion_deriv_tl object.
-- \ref o2scl::deriv_thermo_base_tl::heat_cap_ppart_const_vol()
-- \ref o2scl::deriv_thermo_base_tl::heat_cap_ppart_const_press()
-- \ref o2scl::deriv_thermo_base_tl::compress_adiabatic()
-- \ref o2scl::deriv_thermo_base_tl::compress_const_tptr()
-- \ref o2scl::deriv_thermo_base_tl::coeff_thermal_exp()
-- \ref o2scl::deriv_thermo_base_tl::squared_sound_speed()
+constant volume, :math:`c_V`, and the speed of sound, :math:`( d P / d
+\varepsilon)_{\{N_i\},S}`. These derivatives are computed by functions
+in :cpp:class:`o2scl::deriv_thermo_base_tl` from the three second
+derivatives of the pressure stored in a
+:cpp:class:`o2scl::part_deriv_tl` or
+:cpp:class:`o2scl::fermion_deriv_tl` object.
 
-\comment
+- :cpp:class:`o2scl::deriv_thermo_base_tl::heat_cap_ppart_const_vol()`
+- :cpp:class:`o2scl::deriv_thermo_base_tl::heat_cap_ppart_const_press()`
+- :cpp:class:`o2scl::deriv_thermo_base_tl::compress_adiabatic()`
+- :cpp:class:`o2scl::deriv_thermo_base_tl::compress_const_tptr()`
+- :cpp:class:`o2scl::deriv_thermo_base_tl::coeff_thermal_exp()`
+- :cpp:class:`o2scl::deriv_thermo_base_tl::squared_sound_speed()`
 
-I think the expression below only works for fermions? 
-I'm taking this section out until it's better commented
+..
+   (begin comment)
+   I think the expression below only works for fermions? 
+   I'm taking this section out until it's better commented
     
-In the case where the particle is interacting, the 
-derivative of the density with respect to the effective mass is
-\f[
-\left(\frac{dn}{dm^{*}}\right)_{\mu,T} = 
-\left(\frac{3 n}{m^{*}}\right) - 
-\frac{T}{m^{*}} \left(\frac{dn}{dT}\right)_{m^{*},\mu} -
-\frac{\nu}{m^{*}} \left(\frac{dn}{d\mu}\right)_{m^{*},T} 
-\f]
-This relation holds whether or not the mass is included in the
-chemical potential \f$ \nu \f$, as the rest mass is held
-constant even though the effective mass is varying. This
-relation also holds in the case where the particle is
-non-interacting, so long as one does not allow the rest mass in
-the chemical potential to vary. This derivative is useful, for
-example, in models of quark matter where the quark mass is
-dynamically generated.
-\endcomment
+   In the case where the particle is interacting, the 
+   derivative of the density with respect to the effective mass is
+   \f[
+   \left(\frac{dn}{dm^{*}}\right)_{\mu,T} = 
+   \left(\frac{3 n}{m^{*}}\right) - 
+   \frac{T}{m^{*}} \left(\frac{dn}{dT}\right)_{m^{*},\mu} -
+   \frac{\nu}{m^{*}} \left(\frac{dn}{d\mu}\right)_{m^{*},T} 
+   \f]
+   This relation holds whether or not the mass is included in the
+   chemical potential :math:`\nu`, as the rest mass is held
+   constant even though the effective mass is varying. This
+   relation also holds in the case where the particle is
+   non-interacting, so long as one does not allow the rest mass in
+   the chemical potential to vary. This derivative is useful, for
+   example, in models of quark matter where the quark mass is
+   dynamically generated.
+   (end comment)
 
-\hline
-\section ex_part_sect Particle example
+Particle example
+----------------
 
-\dontinclude ex_part.cpp
-\skip Example:
-\until End of example
+.. literalinclude:: ../../../../examples/ex_part.cpp
