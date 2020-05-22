@@ -472,6 +472,7 @@ AC_CONFIG_FILES([Makefile
                  doc/o2scl/eos/html/search/Makefile
                  doc/o2scl/eos/extras/Makefile
                  doc/o2scl/part/Makefile
+                 doc/o2scl/part/sphinx/Makefile
                  doc/o2scl/part/html/Makefile
                  doc/o2scl/part/html/search/Makefile
 		 doc/o2scl/part/extras/Makefile])

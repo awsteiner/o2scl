@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>`
+
 Parallel Programming with O2scl
 ===============================
 

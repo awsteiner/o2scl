@@ -15,9 +15,9 @@ Functions hdf_output
 
 .. doxygenfunction:: hdf_output(hdf_file &hf, o2scl::prob_dens_mdim_amr<vec_t, mat_t> &p, std::string name)
 
-.. doxygenfunction:: hdf_output(hdf_file &hf, o2scl::table&lt;&gt; &t, std::string name)
+.. doxygenfunction:: hdf_output(hdf_file &hf, o2scl::table<> &t, std::string name)
 
-.. doxygenfunction:: hdf_output(hdf_file &hf, o2scl::table_units&lt;&gt; &t, std::string name)
+.. doxygenfunction:: hdf_output(hdf_file &hf, o2scl::table_units<> &t, std::string name)
 
 .. doxygenfunction:: hdf_output(hdf_file &hf, o2scl::hist &h, std::string name)
 

@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>`
+
 File I/O with HDF5
 =================
 

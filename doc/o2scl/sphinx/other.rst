@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>`
+
 Other Classes and Functions
 ===========================
 

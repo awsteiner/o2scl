@@ -1,0 +1,134 @@
+:ref:`O2scl <o2scl>`
+
+Bibliography
+============
+
+.. [Audi03] `G. Audi, A. H. Wapstra, and C. Thibault
+   <https://doi.org/10.1016/j.nuclphysa.2003.11.003>`_,
+   Nucl. Phys. A **729** (2003) 337.
+
+.. [Audi12] `G. Audi, M. Wang, A. H. Wapstra, F. G. Kondev, M. MacCormick, X. Xu, and B. Pfeiffer
+   <https://doi.org/10.1088/1674-1137/36/12/002>`_,
+   Chin. Phys. C **36** (2012) 1287.
+
+.. [Audi95] `G. Audi and A. H. Wapstra
+   <https://doi.org/10.1016/0375-9474(95)00445-9>`_,
+   Nucl. Phys. A **595** (1995) 409.
+
+.. [Broderick00] `A. Broderick, M. Prakash, and J. M. Lattimer
+   <https://doi.org/10.1086/309010>`_,
+   Astrophys. J. **537** (2000) 351.
+
+.. [Callen85]     H. B. Callen,
+    <a href="https://www.worldcat.org/isbn/9780471862567">
+    Thermodynamics and an Introduction to
+                  Thermostatistics, 2nd edition.</a>,
+    (1985) Wiley.
+
+.. [Chandrasekhar10]     S. Chandrasekhar,
+    <a href="https://www.worldcat.org/isbn/9780486604138">
+    An Introduction to the Study of Stellar Structure</a>,
+    (2010) Dover.
+
+.. [Delaroche10] `J. P. Delaroche, M. Girod, J. Libert, H. Goutte, S. Hilaire, S. Peru, N. Pillet, and G. F. Bertsch
+   <https://doi.org/10.1103/PhysRevC.81.014303>`_,
+   Phys. Rev. C **81** (2010) 014303.
+
+.. [Dieperink09] `A. E. L. Dieperink and P. van Isacker
+   <https://doi.org/10.1140/epja/i2009-10869-3>`_,
+   Eur. Phys. J. A **42** (2009) 269.
+
+.. [Dobaczewski04] `J. Dobaczewski, M. V. Stoitsov, and W. Nazarewicz
+   <https://doi.org/10.1063/1.1805914>`_,
+   AIP Conf. Proc. **726** (2004) 51.
+
+.. [Duflo95] `J. Duflo and A. P. Zuker
+   <https://doi.org/10.1103/PhysRevC.52.R23>`_,
+   Phys. Rev. C **52** (1995) 23.
+
+.. [Eggleton73] P. P. Eggleton, J. Faulkner, and B. P. Flannery,
+   Astron. Astrophys. **23** (1973) 325.
+
+.. [Goriely02] `S. Goriely, M. Samyn, P.-H. Heenen, J. M. Pearson, and F. Tondeur
+   <https://doi.org/10.1103/PhysRevC.66.024326>`_,
+   Phys. Rev. C **66** (2002) 024326..
+
+.. [Goriely07] `S. Goriely, M. Samyn, and J. M. Pearson
+   <https://doi.org/doi/10.1103/PhysRevC.75.064312>`_,
+   Phys. Rev. C **75** (2007) 064312.
+
+.. [Huang17] `W. J. Huang, G. Audi, M. Wang, F. G. Kondev, S. Naimi, and X. Xu
+   <https://doi.org/10.1088/1674-1137/41/3/030002>`_,
+   Chin. Phys. C **41** (2017) 030002.
+
+.. [Johns96] S. M. Johns, P. J. Ellis, and (none) Lattimer J. M.,
+   Astrophys. J. **473** (1996) 1020.
+
+.. [Koura00] `H. Koura, M. Uno, T. Tachibana, and M. Yamada
+   <https://doi.org/10.1016/S0375-9474(00)00155-X>`_,
+   Nucl. Phys. A **674** (2000) 47.
+
+.. [Koura05] H. Koura, T. Tachibana, M. Uno, and M. Yamada,
+   Prog. Theor. Phys. **113** (2005) 305.
+
+.. [Landau80]     L. D. Landau,
+    <a href="https://www.worldcat.org/isbn/9780750633727">
+    Statistical Physics: Part 1, 3rd Edition.</a>,
+    (1980) Butterworth-Heinemann.
+
+.. [Liu11] `M. Liu, N. Wang, Y. Deng, and X. Wu
+   <https://doi.org/10.1103/PhysRevC.84.014333>`_,
+   Phys. Rev. C **84** (2011) 014333.
+
+.. [Lunney03] `D. Lunney, J. M. Pearson, and C. Thibault
+   <https://doi.org/10.1103/RevModPhys.75.1021>`_,
+   Rev. Mod. Phys. **75** (2003) 1021.
+
+.. [MendozaTemis10] `J. Mendoza-Temis, J. G. Hirsch, and A. P. Zuker
+   <https://doi.org/10.1016/j.nuclphysa.2010.05.055>`_,
+   Nucl. Phys. A **843** (2010) 14.
+
+.. [Moller95] `P. N., J. R. M., W. D. Moller and W. J. Switecki
+   <https://doi.org/10.1006/adnd.1995.1002>`_,
+   Atom. Data Nucl. Data Tabl. **59** (1995) 185.
+
+.. [Moller97] `P. Moller, J. R. Nix, and K.-L. Kratz
+   <https://doi.org/10.1006/adnd.1997.0746>`_,
+   Atom. Data Nucl. Data Tabl. **66** (1997) 131.
+
+.. [Samyn04] `M. Samyn, S. Goriely, M. Bender, and J. M. Pearson
+   <https://doi.org/10.1103/PhysRevC.70.044309>`_,
+   Phys. Rev. C **70** (2004) 044309.
+
+.. [Stoitsov03] `M. V. Stoitsov, J. Dobaczewski, W. Nazarewicz, S. Pittel, and D. J. Dean
+   <https://doi.org/10.1103/PhysRevC.68.054312>`_,
+   Phys. Rev. C **68** (2003) 054312.
+
+.. [Tooper69] `R. F. Tooper
+   <https://doi.org/10.1086/150036>`_,
+   Astrophys. J **156** (1969) 1075.
+
+.. [Wang10] `N. Wang, M. Liu, and X. Wu
+   <https://doi.org/10.1103/PhysRevC.81.044322>`_,
+   Phys. Rev. C **81** (2010) 044322.
+
+.. [Wang10b] `N. Wang, Z. Liang, M. Liu, and X. Wu
+   <https://doi.org/10.1103/PhysRevC.82.044304>`_,
+   Phys. Rev. C **82** (2010) 044304.
+
+.. [Wang11] `N. Wang and M. Liu
+   <https://doi.org/10.1103/PhysRevC.84.051303>`_,
+   Phys. Rev. C **84** (2011) 051303(R).
+
+.. [Wang12] `M. Wang, G. Audi, A. H. Wapstra, F. G. Kondev, M. MacCormick, X. Xu, and B. Pfeiffer
+   <https://doi.org/10.1088/1674-1137/36/12/003>`_,
+   Chin. Phys. C **36** (2012) 1603.
+
+.. [Wang14] `N. Wang, M. Liu, X. Wu, and J. Meng
+   <https://doi.org/10.1016/j.physletb.2014.05.049>`_,
+   Phys. Lett. B **734** (2014) 215.
+
+.. [Wang17] `M. Wang, G. Audi, F. G. Kondev, W. J. Huang, S. Naimi, and X. Xu
+   <https://doi.org/10.1088/1674-1137/41/3/030003>`_,
+   Chin. Phys. C **41** (2017) 030003.
+

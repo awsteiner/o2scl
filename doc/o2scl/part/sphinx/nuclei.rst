@@ -1,0 +1,64 @@
+:ref:`O2scl_part <o2sclp>`
+
+Nuclei and nuclear masses
+=========================
+
+A basic data structure for nuclei, class \ref o2scl::nucleus, is
+implemented as a child of of \ref o2scl::part_tl. 
+
+Nuclear masses are given as children of \ref o2scl::nucmass and
+are generally of two types: tables of masses (children of \ref
+o2scl::nucmass_table) or formulas which generate masses from a set
+of parameters and can be fit to data (\ref o2scl::nucmass_fit).
+
+There are eleven mass table types currently included.
+- \ref o2scl::nucmass_ame : data from 
+\ref Audi95, \ref Audi03, \ref Audi12 and \ref Wang12, or
+\ref Huang17 and \ref Wang17 .
+- \ref o2scl::nucmass_mnmsk and \ref o2scl::nucmass_mnmsk_exp : 
+masses from \ref Moller95 and \ref Moller97
+- \ref o2scl::nucmass_hfb and \ref o2scl::nucmass_hfb_sp : masses from
+\ref Goriely02, \ref Samyn04, or \ref Goriely07  
+- \ref o2scl::nucmass_dz_table : masses from \ref Duflo95 
+- \ref o2scl::nucmass_ktuy : masses from \ref Koura00 and \ref Koura05
+- \ref o2scl::nucmass_wlw : masses from \ref Wang10, \ref Wang10b,
+\ref Liu11, \ref Wang11, or \ref Wang14
+- \ref o2scl::nucmass_sdnp : masses from \ref Stoitsov03 or \ref
+Dobaczewski04.
+- \ref o2scl::nucmass_dglg : masses from \ref Delaroche10 
+
+The mass formulas which can be fit to data are
+- \ref o2scl::nucmass_semi_empirical : simple 5 parameter 
+semi-empirical method
+- \ref o2scl::nucmass_frdm : macroscopic part of FRDM from \ref Moller95
+- \ref o2scl::nucmass_dz_fit and \ref o2scl::nucmass_dz_fit_33 : 
+10- and 33-parameter mass formulas from \ref Duflo95.
+- \ref o2scl::nucmass_dvi : 10-parameter formula from \ref Dieperink09
+with \ref o2scl::nucmass_ibm_shell for shell effects
+    
+In order to create a set of nuclei stored in a <tt>std::vector</tt>
+object, one can use \ref o2scl_part::nucdist_set().
+
+\section ex_nucmass_fit_sect Nuclear mass fit example
+    
+\dontinclude ex_nucmass_fit.cpp
+\skip Example:
+\until End of example
+
+\section ex_nucmass_sect Nuclear mass example
+
+\dontinclude ex_nucmass.cpp
+\skip Example:
+\until End of example
+
+\image html ex_nucmass_se.png ""
+\image html ex_nucmass_mnmsk.png ""
+\image html ex_nucmass_dz96.png ""
+\image html ex_nucmass_ame03.png ""
+\image html ex_nucmass_hfb14.png ""
+\image html ex_nucmass_hfb21.png ""
+\image html ex_nucmass_hfb27.png ""
+\image html ex_nucmass_ktuy05.png ""
+\image html ex_nucmass_dvi.png ""
+\image html ex_nucmass_ws32.png ""
+\image html ex_nucmass_ws36.png ""

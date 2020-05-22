@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>`
+
 The 'acol' Command-line Utility
 ===============================
 

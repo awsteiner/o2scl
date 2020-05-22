@@ -1,3 +1,5 @@
+:ref:`O2scl <o2scl>`
+
 Probability Distributions and Markov Chain Monte Carlo
 ======================================================
 

@@ -7,7 +7,7 @@ Functions hdf_output_data
 
 .. doxygenfunction:: hdf_output_data(hdf_file &hf, o2scl::table_units<std::vector<double>> &t)
 
-.. doxygenfunction:: hdf_output_data(hdf_file &hf, o2scl::table&lt;&gt; &t)
+.. doxygenfunction:: hdf_output_data(hdf_file &hf, o2scl::table<> &t)
 
-.. doxygenfunction:: hdf_output_data(hdf_file &hf, o2scl::table_units&lt;&gt; &t)
+.. doxygenfunction:: hdf_output_data(hdf_file &hf, o2scl::table_units<> &t)
 

@@ -356,9 +356,13 @@ dist_dochtml_DATA = build/html/*.html build/html/*.js build/html/*.inv
 dist_dochtmlclass_DATA = build/html/class/*.html
 dist_dochtmlfunction_DATA = build/html/function/*.html
 
-# These are the files included in the distribution
-EXTRA_DIST = *.rst conf.py class_list function_list variable_list \
-	enum_list class/*.rst
+# These are the additional files included in the distribution
+# 
+# AWS 5/22/2020: I think all of the files listed for the make install
+# target above are already included so all we need are the 'extra'
+# files
+EXTRA_DIST = conf.py class_list function_list variable_list \
+	enum_list 
 
 
 #SUBDOC_DIRS = eos part 
@@ -851,24 +855,16 @@ html: Makefile
 full-html:
 	sphinx-build -a -E -M html "." build
 
-make-function-list: empty
+rst-files: empty
 	grep "kind=\"function\"" ../xml/index.xml | \
 		grep "refid=\"namespaceo2scl" | grep -v Eigen | \
 		grep -v arma > function_list
-
-make-class-list: empty
 	grep "kind=\"class\"" ../xml/index.xml | grep -v "cli::parameter" \
 		> class_list
-
-make-variable-list: empty
 	grep "kind=\"variable\"" ../xml/index.xml | \
 		grep -v "<member refid=\"class" | \
 		grep -v "<member refid=\"struct" > variable_list
-
-make-enum-list: empty
 	grep "kind=\"enum\"" ../xml/index.xml > enum_list
-
-rst-files: empty
 	cp ref_header ref.rst
 	btmanip -parse ../../../data/o2scl/o2scl.bib -rst temp.rst
 	cat temp.rst >> ref.rst

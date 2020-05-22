@@ -48,34 +48,32 @@ emacs-clean:
 
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
-SPHINXPROJ    = o2scl
+SPHINXPROJ    = o2scl_part
 SOURCEDIR     = .
 BUILDDIR      = build
 
 sphinx-help:
 	sphinx-build --help
 
+sphinx-buildhelp:
+	sphinx-build -M help "." "build"
+
 html: Makefile
 	sphinx-build -M html "." "build"
 
 full-html:
-	sphinx-build -a -E -M html "." build
+	sphinx-build -a -E -M html "." "build"
 
 rst-files: empty
 	grep "kind=\"function\"" ../xml/index.xml | \
-		grep "refid=\"namespaceo2scl" | grep -v Eigen | \
-		grep -v arma > function_list
+		grep "refid=\"namespaceo2scl__part" > function_list
 	grep "kind=\"class\"" ../xml/index.xml | grep -v "cli::parameter" \
 		> class_list
-	grep "kind=\"variable\"" ../xml/index.xml | \
-		grep -v "<member refid=\"class" | \
-		grep -v "<member refid=\"struct" > variable_list
-	grep "kind=\"enum\"" ../xml/index.xml > enum_list
 	cp ref_header ref.rst
-	btmanip -parse ../../../data/o2scl/o2scl.bib -rst temp.rst
+	btmanip -parse ../../../../data/o2scl/o2scl_part.bib -rst temp.rst
 	cat temp.rst >> ref.rst
 	rm -f temp.rst
-	g++ -o ../make_rst ../make_rst.cpp
-	../make_rst main > make_rst.out
+	g++ -o ../../make_rst ../../make_rst.cpp
+	../../make_rst part > make_rst.out
 
 empty:

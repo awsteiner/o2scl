@@ -33,21 +33,26 @@ sys.path.insert(0, os.path.abspath('.'))
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.todo',
               'sphinx.ext.mathjax',
+              'sphinx.ext.intersphinx',
               'sphinx.ext.ifconfig',
               'sphinx.ext.autosectionlabel',
               'breathe']
 
-#
+# Breathe settings
 breathe_projects = { "o2scl_part": os.path.abspath('../xml') }
 breathe_default_project = "o2scl_part"
 breathe_default_members = ('members', 'private-members', 'undoc-members')
-#
 
+# This removes the o2scl:: prefix from index entries
 cpp_index_common_prefix = ['o2scl::']
 
 intersphinx_mapping = {'o2scl':
-                       ('https://neutronstars.utk.edu/code/o2scl/part/html',
+                       ('https://neutronstars.utk.edu/code/o2scl/html',
                         '../../sphinx/build/html/objects.inv')}
+
+# Suggested by https://my-favorite-documentation-test.readthedocs.io/en/latest/using_intersphinx.html, but gave more errors when I tried it last
+#primary_domain = 'cpp'
+#highlight_language = 'cpp'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['templates']
