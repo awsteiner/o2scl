@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
   test_mgr t;
   t.set_output_level(1);
 
-#ifdef O2SCL_READLINE
+#ifdef O2SCL_NCURSES
   
   cursesw cw;
 
