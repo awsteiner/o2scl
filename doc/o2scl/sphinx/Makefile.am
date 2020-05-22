@@ -27,8 +27,12 @@ dist_dochtml_DATA = build/html/*.html build/html/*.js build/html/*.inv
 dist_dochtmlclass_DATA = build/html/class/*.html
 dist_dochtmlfunction_DATA = build/html/function/*.html
 
-# These are the files included in the distribution
-EXTRA_DIST = *.rst conf.py class_list function_list variable_list \
+# These are the additional files included in the distribution
+# 
+# AWS 5/22/2020: I think all of the files listed for the make install
+# target above are already included so all we need are the 'extra'
+# files
+EXTRA_DIST = conf.py class_list function_list variable_list \
 	enum_list 
 
 #SUBDOC_DIRS = eos part 
@@ -49,30 +53,29 @@ SOURCEDIR     = .
 BUILDDIR      = build
 
 sphinx-help:
-	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	sphinx-build --help
 
 html: Makefile
-	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	sphinx-build -M html "." "build"
 
 full-html:
-	$(SPHINXBUILD) -M -a -E html "$(SOURCEDIR)" \
-		"$(BUILDDIR)" $(SPHINXOPTS) 
+	sphinx-build -a -E -M html "." build
 
-function_list: empty
+make-function-list: empty
 	grep "kind=\"function\"" ../xml/index.xml | \
 		grep "refid=\"namespaceo2scl" | grep -v Eigen | \
 		grep -v arma > function_list
 
-class_list: empty
+make-class-list: empty
 	grep "kind=\"class\"" ../xml/index.xml | grep -v "cli::parameter" \
 		> class_list
 
-variable_list: empty
+make-variable-list: empty
 	grep "kind=\"variable\"" ../xml/index.xml | \
 		grep -v "<member refid=\"class" | \
 		grep -v "<member refid=\"struct" > variable_list
 
-enum_list: empty
+make-enum-list: empty
 	grep "kind=\"enum\"" ../xml/index.xml > enum_list
 
 rst-files: empty
