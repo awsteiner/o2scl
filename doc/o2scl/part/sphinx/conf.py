@@ -45,6 +45,10 @@ breathe_default_members = ('members', 'private-members', 'undoc-members')
 
 cpp_index_common_prefix = ['o2scl::']
 
+intersphinx_mapping = {'o2scl':
+                       ('https://neutronstars.utk.edu/code/o2scl/part/html',
+                        '../../sphinx/build/html/objects.inv')}
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['templates']
 

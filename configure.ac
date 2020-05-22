@@ -463,6 +463,9 @@ AC_CONFIG_FILES([Makefile
 		 examples/plot/Makefile
                  doc/Makefile
                  doc/o2scl/Makefile
+                 doc/o2scl/sphinx/Makefile
+                 doc/o2scl/sphinx/class/Makefile
+                 doc/o2scl/sphinx/function/Makefile
                  doc/o2scl/html/Makefile
                  doc/o2scl/html/search/Makefile
 		 doc/o2scl/extras/Makefile

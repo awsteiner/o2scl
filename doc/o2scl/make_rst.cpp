@@ -337,11 +337,19 @@ int main(int argc, char *argv[]) {
 	    while (argsstring.find("&amp;")!=std::string::npos) {
 	      argsstring.replace(argsstring.find("&amp;"),5,"&");
 	    }
-	    // Replace &lt; with <
+	    // Replace "&lt; " with <
+	    while (argsstring.find("&lt; ")!=std::string::npos) {
+	      argsstring.replace(argsstring.find("&lt; "),5,"<");
+	    }
+	    // Replace "&lt;" with <
 	    while (argsstring.find("&lt;")!=std::string::npos) {
 	      argsstring.replace(argsstring.find("&lt;"),4,"<");
 	    }
-	    // Replace &gt; with >
+	    // Replace " &gt;" with >
+	    while (argsstring.find(" &gt;")!=std::string::npos) {
+	      argsstring.replace(argsstring.find(" &gt;"),5,">");
+	    }
+	    // Replace "&gt;" with >
 	    while (argsstring.find("&gt;")!=std::string::npos) {
 	      argsstring.replace(argsstring.find("&gt;"),4,">");
 	    }

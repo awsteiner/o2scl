@@ -26,7 +26,7 @@ EXTRA_DIST = *.dox o2scl.tag refs_head.txt refs_foot.txt dlayout.xml
 
 SUBDOC_DIRS = eos part 
 
-SUBDIRS = extras eos part html 
+SUBDIRS = extras eos part html sphinx
 
 emacs-clean:
 	rm -f *~

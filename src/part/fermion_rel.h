@@ -215,8 +215,8 @@ namespace o2scl {
       \future The function pair_mu() should set the antiparticle
       integrators as done in fermion_deriv_rel.
   */
-  template<class fd_inte_t=class fermi_dirac_integ_gsl,
-    class be_inte_t=bessel_K_exp_integ_gsl, class fp_t=double>
+  template<class fd_inte_t=class o2scl::fermi_dirac_integ_gsl,
+    class be_inte_t=o2scl::bessel_K_exp_integ_gsl, class fp_t=double>
     class fermion_rel_tl :
     public fermion_thermo_tl<fd_inte_t,be_inte_t,fp_t> {
 
