@@ -13,9 +13,19 @@ help:
 	@echo 
 
 docdir = $(prefix)/share/doc/o2scl/
+docclassdir = $(prefix)/share/doc/o2scl/class
+docfunctiondir = $(prefix)/share/doc/o2scl/function
+dochtmldir = $(prefix)/share/doc/o2scl/html
+dochtmlclassdir = $(prefix)/share/doc/o2scl/html/class
+dochtmlfunctiondir = $(prefix)/share/doc/o2scl/html/function
 
 # These are the files installed by 'make install'
 dist_doc_DATA = *.rst
+dist_docclass_DATA = *.rst
+dist_docfunction_DATA = *.rst
+dist_dochtml_DATA = build/html/*.html build/html/*.js build/html/*.inv
+dist_dochtmlclass_DATA = build/html/class/*.html
+dist_dochtmlfunction_DATA = build/html/function/*.html
 
 # These are the files included in the distribution
 EXTRA_DIST = *.rst conf.py class_list function_list variable_list \
@@ -23,7 +33,7 @@ EXTRA_DIST = *.rst conf.py class_list function_list variable_list \
 
 #SUBDOC_DIRS = eos part 
 
-SUBDIRS = class function
+SUBDIRS = 
 
 emacs-clean:
 	rm -f *~

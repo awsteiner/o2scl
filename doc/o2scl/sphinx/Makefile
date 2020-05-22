@@ -97,7 +97,9 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(dist_doc_DATA) \
-	$(am__DIST_COMMON)
+	$(dist_docclass_DATA) $(dist_docfunction_DATA) \
+	$(dist_dochtml_DATA) $(dist_dochtmlclass_DATA) \
+	$(dist_dochtmlfunction_DATA) $(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
@@ -156,8 +158,13 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(docdir)"
-DATA = $(dist_doc_DATA)
+am__installdirs = "$(DESTDIR)$(docdir)" "$(DESTDIR)$(docclassdir)" \
+	"$(DESTDIR)$(docfunctiondir)" "$(DESTDIR)$(dochtmldir)" \
+	"$(DESTDIR)$(dochtmlclassdir)" \
+	"$(DESTDIR)$(dochtmlfunctiondir)"
+DATA = $(dist_doc_DATA) $(dist_docclass_DATA) $(dist_docfunction_DATA) \
+	$(dist_dochtml_DATA) $(dist_dochtmlclass_DATA) \
+	$(dist_dochtmlfunction_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -335,9 +342,19 @@ target_alias =
 top_build_prefix = ../../../
 top_builddir = ../../..
 top_srcdir = ../../..
+docclassdir = $(prefix)/share/doc/o2scl/class
+docfunctiondir = $(prefix)/share/doc/o2scl/function
+dochtmldir = $(prefix)/share/doc/o2scl/html
+dochtmlclassdir = $(prefix)/share/doc/o2scl/html/class
+dochtmlfunctiondir = $(prefix)/share/doc/o2scl/html/function
 
 # These are the files installed by 'make install'
 dist_doc_DATA = *.rst
+dist_docclass_DATA = *.rst
+dist_docfunction_DATA = *.rst
+dist_dochtml_DATA = build/html/*.html build/html/*.js build/html/*.inv
+dist_dochtmlclass_DATA = build/html/class/*.html
+dist_dochtmlfunction_DATA = build/html/function/*.html
 
 # These are the files included in the distribution
 EXTRA_DIST = *.rst conf.py class_list function_list variable_list \
@@ -345,7 +362,7 @@ EXTRA_DIST = *.rst conf.py class_list function_list variable_list \
 
 
 #SUBDOC_DIRS = eos part 
-SUBDIRS = class function
+SUBDIRS = 
 SPHINXOPTS = 
 SPHINXBUILD = sphinx-build
 SPHINXPROJ = o2scl
@@ -410,6 +427,111 @@ uninstall-dist_docDATA:
 	@list='$(dist_doc_DATA)'; test -n "$(docdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(docdir)'; $(am__uninstall_files_from_dir)
+install-dist_docclassDATA: $(dist_docclass_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_docclass_DATA)'; test -n "$(docclassdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(docclassdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(docclassdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(docclassdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(docclassdir)" || exit $$?; \
+	done
+
+uninstall-dist_docclassDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_docclass_DATA)'; test -n "$(docclassdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(docclassdir)'; $(am__uninstall_files_from_dir)
+install-dist_docfunctionDATA: $(dist_docfunction_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_docfunction_DATA)'; test -n "$(docfunctiondir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(docfunctiondir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(docfunctiondir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(docfunctiondir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(docfunctiondir)" || exit $$?; \
+	done
+
+uninstall-dist_docfunctionDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_docfunction_DATA)'; test -n "$(docfunctiondir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(docfunctiondir)'; $(am__uninstall_files_from_dir)
+install-dist_dochtmlDATA: $(dist_dochtml_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_dochtml_DATA)'; test -n "$(dochtmldir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(dochtmldir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(dochtmldir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(dochtmldir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(dochtmldir)" || exit $$?; \
+	done
+
+uninstall-dist_dochtmlDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_dochtml_DATA)'; test -n "$(dochtmldir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(dochtmldir)'; $(am__uninstall_files_from_dir)
+install-dist_dochtmlclassDATA: $(dist_dochtmlclass_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_dochtmlclass_DATA)'; test -n "$(dochtmlclassdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(dochtmlclassdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(dochtmlclassdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(dochtmlclassdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(dochtmlclassdir)" || exit $$?; \
+	done
+
+uninstall-dist_dochtmlclassDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_dochtmlclass_DATA)'; test -n "$(dochtmlclassdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(dochtmlclassdir)'; $(am__uninstall_files_from_dir)
+install-dist_dochtmlfunctionDATA: $(dist_dochtmlfunction_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_dochtmlfunction_DATA)'; test -n "$(dochtmlfunctiondir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(dochtmlfunctiondir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(dochtmlfunctiondir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(dochtmlfunctiondir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(dochtmlfunctiondir)" || exit $$?; \
+	done
+
+uninstall-dist_dochtmlfunctionDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_dochtmlfunction_DATA)'; test -n "$(dochtmlfunctiondir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(dochtmlfunctiondir)'; $(am__uninstall_files_from_dir)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
@@ -573,7 +695,7 @@ check: check-recursive
 all-am: Makefile $(DATA)
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(docdir)"; do \
+	for dir in "$(DESTDIR)$(docdir)" "$(DESTDIR)$(docclassdir)" "$(DESTDIR)$(docfunctiondir)" "$(DESTDIR)$(dochtmldir)" "$(DESTDIR)$(dochtmlclassdir)" "$(DESTDIR)$(dochtmlfunctiondir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -624,7 +746,9 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-dist_docDATA
+install-data-am: install-dist_docDATA install-dist_docclassDATA \
+	install-dist_docfunctionDATA install-dist_dochtmlDATA \
+	install-dist_dochtmlclassDATA install-dist_dochtmlfunctionDATA
 
 install-dvi: install-dvi-recursive
 
@@ -668,7 +792,10 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-dist_docDATA
+uninstall-am: uninstall-dist_docDATA uninstall-dist_docclassDATA \
+	uninstall-dist_docfunctionDATA uninstall-dist_dochtmlDATA \
+	uninstall-dist_dochtmlclassDATA \
+	uninstall-dist_dochtmlfunctionDATA
 
 .MAKE: $(am__recursive_targets) install-am install-strip
 
@@ -677,14 +804,20 @@ uninstall-am: uninstall-dist_docDATA
 	ctags-am distclean distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am \
-	install-dist_docDATA install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs installdirs-am maintainer-clean \
+	install-dist_docDATA install-dist_docclassDATA \
+	install-dist_docfunctionDATA install-dist_dochtmlDATA \
+	install-dist_dochtmlclassDATA install-dist_dochtmlfunctionDATA \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs installdirs-am maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic \
 	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am uninstall-dist_docDATA
+	uninstall-am uninstall-dist_docDATA \
+	uninstall-dist_docclassDATA uninstall-dist_docfunctionDATA \
+	uninstall-dist_dochtmlDATA uninstall-dist_dochtmlclassDATA \
+	uninstall-dist_dochtmlfunctionDATA
 
 .PRECIOUS: Makefile
 
