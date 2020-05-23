@@ -15,9 +15,9 @@ help:
 docdir = $(prefix)/share/doc/o2scl/eos
 docclassdir = $(prefix)/share/doc/o2scl/eos/class
 docfunctiondir = $(prefix)/share/doc/o2scl/eos/function
-dochtmldir = $(prefix)/share/doc/o2scl/eos/html
-dochtmlclassdir = $(prefix)/share/doc/o2scl/eos/html/class
-dochtmlfunctiondir = $(prefix)/share/doc/o2scl/eos/html/function
+dochtmldir = $(prefix)/share/doc/o2scl/eos/html2
+dochtmlclassdir = $(prefix)/share/doc/o2scl/eos/html2/class
+dochtmlfunctiondir = $(prefix)/share/doc/o2scl/eos/html2/function
 
 # These are the files installed by 'make install'
 dist_doc_DATA = *.rst

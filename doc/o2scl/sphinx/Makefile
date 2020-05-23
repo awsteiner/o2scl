@@ -344,9 +344,9 @@ top_builddir = ../../..
 top_srcdir = ../../..
 docclassdir = $(prefix)/share/doc/o2scl/class
 docfunctiondir = $(prefix)/share/doc/o2scl/function
-dochtmldir = $(prefix)/share/doc/o2scl/html
-dochtmlclassdir = $(prefix)/share/doc/o2scl/html/class
-dochtmlfunctiondir = $(prefix)/share/doc/o2scl/html/function
+dochtmldir = $(prefix)/share/doc/o2scl/html2
+dochtmlclassdir = $(prefix)/share/doc/o2scl/html2/class
+dochtmlfunctiondir = $(prefix)/share/doc/o2scl/html2/function
 
 # These are the files installed by 'make install'
 dist_doc_DATA = *.rst
