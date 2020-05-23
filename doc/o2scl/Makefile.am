@@ -64,8 +64,8 @@ prerelease-sync-doc:
 #		$(STATIC_DOC_DIR)/o2scl-dev
 
 o2scl-doc-recursive: o2scl-doc
-	cd eos && $(MAKE) refs o2scl-doc
 	cd part && $(MAKE) refs o2scl-doc
+	cd eos && $(MAKE) refs o2scl-doc
 
 o2scl-doc:
 	doxygen doxyfile > doxygen.scr
