@@ -52,16 +52,16 @@ utk-sync-doc:
 prerelease-sync-doc:
 	rsync -Cavzu -r /usr/local/share/doc/o2scl/* \
 		$(STATIC_DOC_DIR)/o2scl-dev
-	rsync -Cavzu extras/index.html \
-		$(STATIC_DOC_DIR)/o2scl-dev
-	rsync -Cavzu extras/bootstrap.css \
-		$(STATIC_DOC_DIR)/o2scl-dev
-	rsync -Cavzu extras/bootstrap.js \
-		$(STATIC_DOC_DIR)/o2scl-dev
-	rsync -Cavzu extras/bootstrap-responsive.css \
-		$(STATIC_DOC_DIR)/o2scl-dev
-	rsync -Cavzu extras/jquery-2.0.3.min.js \
-		$(STATIC_DOC_DIR)/o2scl-dev
+#	rsync -Cavzu extras/index.html \
+#		$(STATIC_DOC_DIR)/o2scl-dev
+#	rsync -Cavzu extras/bootstrap.css \
+#		$(STATIC_DOC_DIR)/o2scl-dev
+#	rsync -Cavzu extras/bootstrap.js \
+#		$(STATIC_DOC_DIR)/o2scl-dev
+#	rsync -Cavzu extras/bootstrap-responsive.css \
+#		$(STATIC_DOC_DIR)/o2scl-dev
+#	rsync -Cavzu extras/jquery-2.0.3.min.js \
+#		$(STATIC_DOC_DIR)/o2scl-dev
 
 o2scl-doc-recursive: o2scl-doc
 	cd eos && $(MAKE) refs o2scl-doc
