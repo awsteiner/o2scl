@@ -9,7 +9,7 @@ The current version is 0.924. The source distribution can be obtained
 from
 https://github.com/awsteiner/o2scl/releases/download/v0.924/o2scl-0.924.tar.gz
 
-You may also download \o2 from the Github
+You may also download O\ :sub:`2`\ scl from the Github
 repository. To obtain the most recent development version, 
 use something like::
 

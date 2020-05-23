@@ -23,7 +23,7 @@ distribution and automatically installed by ``make install``.
    ``-DO2SCL_HDF5_PRE_1_12``.
 
 O\ :sub:`2`\ scl requires the Boost (any relatively recent version)
-and the GSL libraries (version 1.16 or later). If the
+and the GSL libraries (version 2.0 or later). If the
 ``configure`` script cannot find Boost or GSL, you may have to
 specify their location for the associated header files in the
 ``CXXFLAGS`` variable and the associated libraries in the
@@ -33,33 +33,32 @@ shell, you could do something like::
 
   CXX="g++" CXXFLAGS="-I/dir/to/gsl/include" LDFLAGS="-L/dir/to/gsl/libs" ./configure --prefix=="/dir/to/destination_directory
 
-In order to allow O\ :sub:`2`\ scl to take advantage of new
-functionality in GSL versions 2.0 and later, you can add
-``--enable-gsl2`` to the ``./configure`` script. Along with GSL, a
-CBLAS library is also required, and ``./configure`` will look for
-``libcblas`` first, and if not found then it will look for
-``libgslcblas``. If neither is present, then you may have to manually
-specify a CBLAS library using the ``LIBS`` and ``LDFLAGS`` environment
-variables.
+Along with GSL, a CBLAS library is also required, and ``./configure``
+will look for ``libcblas`` first, and if not found then it will look
+for ``libgslcblas``. If neither is present, then you may have to
+manually specify a CBLAS library using the ``LIBS`` and ``LDFLAGS``
+environment variables.
 
-Compiling with the readline and HDF5 libraries is optional, but they
-are assumed to be present by default. To compile without these
-libraries, you will need to use the arguments ``--disable-readline``
-or ``--disable-hdf`` to ``./configure``, respectively. Note that HDF5
-is currently required for the physics sub-libraries, so
-``--disable-hdf`` should be accompanied by the ``--disable-eoslib``
-and ``--disable-partlib`` flags.
+Compiling with the readline, ncurses, and HDF5 libraries is optional,
+but they are assumed to be present by default. To compile without
+these libraries, you will need to use the arguments
+``--disable-readline``, ``--disable-ncurses`` or ``--disable-hdf`` to
+``./configure``, respectively. Note that HDF5 is currently required
+for the physics sub-libraries, so ``--disable-hdf`` should be
+accompanied by the ``--disable-eoslib`` and ``--disable-partlib``
+flags.
 
-After ``make install``, you may test the library with ``make
-check`` or ``make o2scl-test``. At the end, the phrase ``"All
-O2scl tests passed"`` indicates that the testing was
-successful. You may also run ``make o2scl-test`` in the
-individual subdirectories of the src directory to individually
-test the classes and functions in that part of O\ :sub:`2`\ scl. The testing
-code in ``src/base/lib_settings_ts.cpp`` can be useful in
-finding out how O\ :sub:`2`\ scl was compiled. After ``make o2scl-test``,
-running ``src/base/lib_settings_ts`` will output several of
-the installation settings.
+After ``make install``, you may test the library with ``make check``
+or ``make o2scl-test``. At the end, the phrase ``"All O2scl tests
+passed"`` indicates that the testing was successful. You may also run
+``make o2scl-test`` in the individual subdirectories of the src
+directory to individually test the classes and functions in that part
+of O\ :sub:`2`\ scl. The testing code in
+``src/base/lib_settings_ts.cpp`` can be useful in finding out how O\
+:sub:`2`\ scl was compiled. After ``make o2scl-test``, running
+``src/base/lib_settings_ts`` will output several of the installation
+settings. If HDF5 is enabled, ``acol -v`` also outputs the
+installation settings.
 
 O\ :sub:`2`\ scl uses Travis CI (see
 https://travis-ci.org/awsteiner/o2scl ) to ensure that compilation and
@@ -68,16 +67,15 @@ testing works on standard Ubuntu and Mac OS X environments.
 Compiling on Linux
 ------------------
 
-For example, to install O\ :sub:`2`\ scl on Ubuntu, begin by installing g++,
-GSL (the ``libgsl-dev`` package), Boost (the
-``libboost-all-dev`` package), GNU readline (the
-``libreadline-dev`` and ``libncurses-dev`` packages),
-and HDF5 the ``libhdf5-dev`` package). You can then install
-O\ :sub:`2`\ scl from one of the release distributions by using the standard
-GNU ``./configure`` script and then invoking ``make``
-and ``make install`` (which sometimes requires
-``sudo``). This installation method is tested by the Travis
-CI script.
+For example, to install O\ :sub:`2`\ scl on Ubuntu, begin by
+installing g++, GSL (the ``libgsl-dev`` package), Boost (the
+``libboost-all-dev`` package), GNU readline (the ``libreadline-dev``
+package) ncurses (the ``libncurses-dev`` packages), and HDF5 the
+``libhdf5-dev`` package). You can then install O\ :sub:`2`\ scl from
+one of the release distributions by using the standard GNU
+``./configure`` script and then invoking ``make`` and ``make install``
+(which sometimes requires ``sudo``). This installation method is
+tested by the Travis CI script.
  
 The HDF5 package for Ubuntu and many other Linux systems is
 installed in ``hdf5/serial/hdf5.h`` instead of
@@ -201,12 +199,11 @@ not have privileges to write to ``/usr/local``::
   LDFLAGS="-L/home/asteiner/install/lib" ./configure \
   --prefix=/home/asteiner/install
 
-In this example, specifying
-``-I/home/asteiner/install/include`` and
-``-L/home/asteiner/install/lib`` above ensures that the GSL
-libraries can be found (this is where they are installed on my
-machine). The ``--prefix=/home/asteiner/install`` argument to
-``./configure`` ensures that O\ :sub:`2`\ scl is installed there as well.
+In this example, specifying ``-I/home/asteiner/install/include`` and
+``-L/home/asteiner/install/lib`` above ensures that the GSL libraries
+can be found. The ``--prefix=/home/asteiner/install`` argument to
+``./configure`` ensures that O\ :sub:`2`\ scl is installed there as
+well.
 
 Generation of documentation
 ---------------------------
@@ -218,9 +215,9 @@ requires several external applications not included in the
 distribution.
 
 The most recent release documentation is available at
-https://neutronstars.utk.edu/code/o2scl . The documentation for
-previous releases is not on the web, but still available in the
-release ``.tar.gz`` file.
+https://neutronstars.utk.edu/code/o2scl/html/index.html . The
+documentation for previous releases is not on the web, but still
+available in the release ``.tar.gz`` file.
 
 Uninstallation
 --------------
@@ -228,9 +225,9 @@ Uninstallation
 While there is no explicit "uninstall" makefile target, there are only
 a couple places to check. Installation creates directories named
 ``o2scl`` in the include, doc and shared files directory (which
-default to ``/usr/local/include``, ``/usr/local/doc``, and
+default to ``/usr/local/include``, ``/usr/local/share/doc/``, and
 ``/usr/local/share``) which can be removed. The ``acol`` command-line
 utility is installed to ``/usr/local/bin`` . Finally, all of the
 libraries are named with the prefix ``libo2scl`` and are created by
-default in /usr/local/lib.
+default in ``/usr/local/lib``.
 

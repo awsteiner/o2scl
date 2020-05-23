@@ -51,12 +51,12 @@ AC_SUBST(OLIB_LT_VERSION)
 # ----------------------------------------------
 
 AC_ARG_ENABLE(gsl2,
-[  --enable-gsl2           Include GSL v2.0 support @<:@default=no@:>@],
+[  --enable-gsl2           Include GSL v2.0 support @<:@default=yes@:>@],
    [case "${enableval}" in
    yes) gsl2=true ;;
    no)  gsl2=false ;;
    *) AC_MSG_ERROR(bad value ${enableval} for --enable-gsl2) ;;
-   esac],[gsl2=false])
+   esac],[gsl2=true])
 
 AM_CONDITIONAL(O2SCL_GSL2, test x$gsl2 = xtrue)
 

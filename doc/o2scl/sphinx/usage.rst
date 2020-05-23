@@ -20,21 +20,21 @@ Documentation conventions
 -------------------------
 
 In the following documentation, function parameters are denoted by
-``parameter``, except when used in mathematical formulas as in \f$
-\mathrm{variable} \f$ .
+``parameter``, except when used in mathematical formulas as in 
+:math:`\mathrm{variable}`.
 
 Basic error handling
 --------------------
 
-Error handling is a hybrid approach combining GSL with C++
-exceptions. An abstract type has been defined which operates as a
-GSL-like error hander. The default error handler is a
-implementation of this abstract type which throws a C++ exception
-when an error is encountered. The various exceptions, and their
-correspondence with the GSL error codes, are given in the \ref
-exc_types_subsect section. By default in O\ :sub:`2`\ scl, the default GSL
-error handler is replaced with the O\ :sub:`2`\ scl default error handler, i.e.
-GSL functions will throw C++ exceptions.
+Error handling is a hybrid approach combining GSL with C++ exceptions.
+An abstract type has been defined which operates as a GSL-like error
+hander. The default error handler is a implementation of this abstract
+type which throws a C++ exception when an error is encountered. The
+various exceptions, and their correspondence with the GSL error codes,
+are given in the \ref exc_types_subsect section. By default in O\
+:sub:`2`\ scl, the default GSL error handler is replaced with the O\
+:sub:`2`\ scl default error handler, i.e. GSL functions will throw C++
+exceptions.
 
 Errors can be set by the user through the macros \ref O2SCL_ERR
 which calls the O\ :sub:`2`\ scl error handler. The error handler, \ref
