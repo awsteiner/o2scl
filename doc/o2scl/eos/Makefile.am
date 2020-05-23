@@ -3,7 +3,7 @@ dist_doc_DATA = doxyfile Makefile.am Makefile.in *.html
 
 EXTRA_DIST = *.dox o2scl_eos.tag refs_head.txt refs_foot.txt dlayout.xml
 
-SUBDIRS = html extras sphinx
+SUBDIRS = extras sphinx
 
 clean-doc:
 	cd html; rm -f *.html *.png formula.repository doxygen.css \
@@ -12,7 +12,9 @@ clean-doc:
 
 o2scl-doc:
 	doxygen doxyfile > doxygen.scr
-	cat doxygen.log
+	cd sphinx && $(MAKE) o2scl-doc
+#	doxygen doxyfile > doxygen.scr
+#	cat doxygen.log
 
 refs:
 	cat refs_head.txt > refs.dox

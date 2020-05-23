@@ -15,9 +15,9 @@ help:
 docdir = $(prefix)/share/doc/o2scl/eos
 docclassdir = $(prefix)/share/doc/o2scl/eos/class
 docfunctiondir = $(prefix)/share/doc/o2scl/eos/function
-dochtmldir = $(prefix)/share/doc/o2scl/eos/html2
-dochtmlclassdir = $(prefix)/share/doc/o2scl/eos/html2/class
-dochtmlfunctiondir = $(prefix)/share/doc/o2scl/eos/html2/function
+dochtmldir = $(prefix)/share/doc/o2scl/eos/html
+dochtmlclassdir = $(prefix)/share/doc/o2scl/eos/html/class
+dochtmlfunctiondir = $(prefix)/share/doc/o2scl/eos/html/function
 
 # These are the files installed by 'make install'
 dist_doc_DATA = *.rst
@@ -71,5 +71,7 @@ rst-files: empty
 	rm -f temp.rst
 	g++ -o ../../make_rst ../../make_rst.cpp
 	../../make_rst eos > make_rst.out
+
+o2scl-doc: rst-files html
 
 empty:

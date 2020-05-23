@@ -26,7 +26,7 @@ EXTRA_DIST = *.dox o2scl.tag refs_head.txt refs_foot.txt dlayout.xml
 
 SUBDOC_DIRS = eos part 
 
-SUBDIRS = extras eos part html sphinx
+SUBDIRS = extras eos part sphinx
 
 emacs-clean:
 	rm -f *~
@@ -63,14 +63,16 @@ prerelease-sync-doc:
 	rsync -Cavzu extras/jquery-2.0.3.min.js \
 		$(STATIC_DOC_DIR)/o2scl-dev
 
-o2scl-doc-recursive: refs o2scl-doc
+o2scl-doc-recursive: o2scl-doc
 	cd eos && $(MAKE) refs o2scl-doc
 	cd part && $(MAKE) refs o2scl-doc
 
 o2scl-doc:
-	cd extras; acol -run acol.scr > acol.out
 	doxygen doxyfile > doxygen.scr
-	cat doxygen.log
+	cd sphinx && $(MAKE) o2scl-doc
+#cd extras; acol -run acol.scr > acol.out
+#doxygen doxyfile > doxygen.scr
+#cat doxygen.log
 
 clean-doc-recursive: clean-doc
 	cd eos && $(MAKE) clean-doc

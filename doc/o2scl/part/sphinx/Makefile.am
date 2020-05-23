@@ -15,9 +15,9 @@ help:
 docdir = $(prefix)/share/doc/o2scl/part
 docclassdir = $(prefix)/share/doc/o2scl/part/class
 docfunctiondir = $(prefix)/share/doc/o2scl/part/function
-dochtmldir = $(prefix)/share/doc/o2scl/part/html2
-dochtmlclassdir = $(prefix)/share/doc/o2scl/part/html2/class
-dochtmlfunctiondir = $(prefix)/share/doc/o2scl/part/html2/function
+dochtmldir = $(prefix)/share/doc/o2scl/part/html
+dochtmlclassdir = $(prefix)/share/doc/o2scl/part/html/class
+dochtmlfunctiondir = $(prefix)/share/doc/o2scl/part/html/function
 
 # These are the files installed by 'make install'
 dist_doc_DATA = *.rst
@@ -75,5 +75,7 @@ rst-files: empty
 	rm -f temp.rst
 	g++ -o ../../make_rst ../../make_rst.cpp
 	../../make_rst part > make_rst.out
+
+o2scl-doc: rst-files html
 
 empty:

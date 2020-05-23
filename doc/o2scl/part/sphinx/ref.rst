@@ -1,4 +1,4 @@
-:ref:`O2scl <o2scl>`
+:ref:`O2scl_part <o2sclp>`
 
 Bibliography
 ============
