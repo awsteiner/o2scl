@@ -99,7 +99,10 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 DIST_COMMON = $(srcdir)/Makefile.am $(dist_doc_DATA) \
 	$(dist_docclass_DATA) $(dist_docfunction_DATA) \
 	$(dist_dochtml_DATA) $(dist_dochtmlclass_DATA) \
-	$(dist_dochtmlfunction_DATA) $(am__DIST_COMMON)
+	$(dist_dochtmlfunction_DATA) $(dist_dochtmlsources_DATA) \
+	$(dist_dochtmlsourcesclass_DATA) \
+	$(dist_dochtmlsourcesfunction_DATA) $(dist_dochtmlstatic_DATA) \
+	$(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
@@ -161,10 +164,16 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(docdir)" "$(DESTDIR)$(docclassdir)" \
 	"$(DESTDIR)$(docfunctiondir)" "$(DESTDIR)$(dochtmldir)" \
 	"$(DESTDIR)$(dochtmlclassdir)" \
-	"$(DESTDIR)$(dochtmlfunctiondir)"
+	"$(DESTDIR)$(dochtmlfunctiondir)" \
+	"$(DESTDIR)$(dochtmlsourcesdir)" \
+	"$(DESTDIR)$(dochtmlsourcesclassdir)" \
+	"$(DESTDIR)$(dochtmlsourcesfunctiondir)" \
+	"$(DESTDIR)$(dochtmlstaticdir)"
 DATA = $(dist_doc_DATA) $(dist_docclass_DATA) $(dist_docfunction_DATA) \
 	$(dist_dochtml_DATA) $(dist_dochtmlclass_DATA) \
-	$(dist_dochtmlfunction_DATA)
+	$(dist_dochtmlfunction_DATA) $(dist_dochtmlsources_DATA) \
+	$(dist_dochtmlsourcesclass_DATA) \
+	$(dist_dochtmlsourcesfunction_DATA) $(dist_dochtmlstatic_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -347,6 +356,10 @@ docfunctiondir = $(prefix)/share/doc/o2scl/function
 dochtmldir = $(prefix)/share/doc/o2scl/html
 dochtmlclassdir = $(prefix)/share/doc/o2scl/html/class
 dochtmlfunctiondir = $(prefix)/share/doc/o2scl/html/function
+dochtmlstaticdir = $(prefix)/share/doc/o2scl/html/_static
+dochtmlsourcesdir = $(prefix)/share/doc/o2scl/html/_sources
+dochtmlsourcesclassdir = $(prefix)/share/doc/o2scl/html/_sources/class
+dochtmlsourcesfunctiondir = $(prefix)/share/doc/o2scl/html/_sources/function
 
 # These are the files installed by 'make install'
 dist_doc_DATA = *.rst
@@ -355,6 +368,10 @@ dist_docfunction_DATA = *.rst
 dist_dochtml_DATA = build/html/*.html build/html/*.js build/html/*.inv
 dist_dochtmlclass_DATA = build/html/class/*.html
 dist_dochtmlfunction_DATA = build/html/function/*.html
+dist_dochtmlstatic_DATA = build/html/_static/*
+dist_dochtmlsources_DATA = build/html/_sources/*.txt
+dist_dochtmlsourcesclass_DATA = build/html/_sources/class/*.txt
+dist_dochtmlsourcesfunction_DATA = build/html/_sources/function/*.txt
 
 # These are the additional files included in the distribution
 # 
@@ -536,6 +553,90 @@ uninstall-dist_dochtmlfunctionDATA:
 	@list='$(dist_dochtmlfunction_DATA)'; test -n "$(dochtmlfunctiondir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(dochtmlfunctiondir)'; $(am__uninstall_files_from_dir)
+install-dist_dochtmlsourcesDATA: $(dist_dochtmlsources_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_dochtmlsources_DATA)'; test -n "$(dochtmlsourcesdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(dochtmlsourcesdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(dochtmlsourcesdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(dochtmlsourcesdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(dochtmlsourcesdir)" || exit $$?; \
+	done
+
+uninstall-dist_dochtmlsourcesDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_dochtmlsources_DATA)'; test -n "$(dochtmlsourcesdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(dochtmlsourcesdir)'; $(am__uninstall_files_from_dir)
+install-dist_dochtmlsourcesclassDATA: $(dist_dochtmlsourcesclass_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_dochtmlsourcesclass_DATA)'; test -n "$(dochtmlsourcesclassdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(dochtmlsourcesclassdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(dochtmlsourcesclassdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(dochtmlsourcesclassdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(dochtmlsourcesclassdir)" || exit $$?; \
+	done
+
+uninstall-dist_dochtmlsourcesclassDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_dochtmlsourcesclass_DATA)'; test -n "$(dochtmlsourcesclassdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(dochtmlsourcesclassdir)'; $(am__uninstall_files_from_dir)
+install-dist_dochtmlsourcesfunctionDATA: $(dist_dochtmlsourcesfunction_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_dochtmlsourcesfunction_DATA)'; test -n "$(dochtmlsourcesfunctiondir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(dochtmlsourcesfunctiondir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(dochtmlsourcesfunctiondir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(dochtmlsourcesfunctiondir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(dochtmlsourcesfunctiondir)" || exit $$?; \
+	done
+
+uninstall-dist_dochtmlsourcesfunctionDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_dochtmlsourcesfunction_DATA)'; test -n "$(dochtmlsourcesfunctiondir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(dochtmlsourcesfunctiondir)'; $(am__uninstall_files_from_dir)
+install-dist_dochtmlstaticDATA: $(dist_dochtmlstatic_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_dochtmlstatic_DATA)'; test -n "$(dochtmlstaticdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(dochtmlstaticdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(dochtmlstaticdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(dochtmlstaticdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(dochtmlstaticdir)" || exit $$?; \
+	done
+
+uninstall-dist_dochtmlstaticDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_dochtmlstatic_DATA)'; test -n "$(dochtmlstaticdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(dochtmlstaticdir)'; $(am__uninstall_files_from_dir)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
@@ -699,7 +800,7 @@ check: check-recursive
 all-am: Makefile $(DATA)
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(docdir)" "$(DESTDIR)$(docclassdir)" "$(DESTDIR)$(docfunctiondir)" "$(DESTDIR)$(dochtmldir)" "$(DESTDIR)$(dochtmlclassdir)" "$(DESTDIR)$(dochtmlfunctiondir)"; do \
+	for dir in "$(DESTDIR)$(docdir)" "$(DESTDIR)$(docclassdir)" "$(DESTDIR)$(docfunctiondir)" "$(DESTDIR)$(dochtmldir)" "$(DESTDIR)$(dochtmlclassdir)" "$(DESTDIR)$(dochtmlfunctiondir)" "$(DESTDIR)$(dochtmlsourcesdir)" "$(DESTDIR)$(dochtmlsourcesclassdir)" "$(DESTDIR)$(dochtmlsourcesfunctiondir)" "$(DESTDIR)$(dochtmlstaticdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -752,7 +853,11 @@ info-am:
 
 install-data-am: install-dist_docDATA install-dist_docclassDATA \
 	install-dist_docfunctionDATA install-dist_dochtmlDATA \
-	install-dist_dochtmlclassDATA install-dist_dochtmlfunctionDATA
+	install-dist_dochtmlclassDATA install-dist_dochtmlfunctionDATA \
+	install-dist_dochtmlsourcesDATA \
+	install-dist_dochtmlsourcesclassDATA \
+	install-dist_dochtmlsourcesfunctionDATA \
+	install-dist_dochtmlstaticDATA
 
 install-dvi: install-dvi-recursive
 
@@ -799,7 +904,11 @@ ps-am:
 uninstall-am: uninstall-dist_docDATA uninstall-dist_docclassDATA \
 	uninstall-dist_docfunctionDATA uninstall-dist_dochtmlDATA \
 	uninstall-dist_dochtmlclassDATA \
-	uninstall-dist_dochtmlfunctionDATA
+	uninstall-dist_dochtmlfunctionDATA \
+	uninstall-dist_dochtmlsourcesDATA \
+	uninstall-dist_dochtmlsourcesclassDATA \
+	uninstall-dist_dochtmlsourcesfunctionDATA \
+	uninstall-dist_dochtmlstaticDATA
 
 .MAKE: $(am__recursive_targets) install-am install-strip
 
@@ -811,17 +920,24 @@ uninstall-am: uninstall-dist_docDATA uninstall-dist_docclassDATA \
 	install-dist_docDATA install-dist_docclassDATA \
 	install-dist_docfunctionDATA install-dist_dochtmlDATA \
 	install-dist_dochtmlclassDATA install-dist_dochtmlfunctionDATA \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am uninstall-dist_docDATA \
+	install-dist_dochtmlsourcesDATA \
+	install-dist_dochtmlsourcesclassDATA \
+	install-dist_dochtmlsourcesfunctionDATA \
+	install-dist_dochtmlstaticDATA install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs installdirs-am \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-am uninstall uninstall-am uninstall-dist_docDATA \
 	uninstall-dist_docclassDATA uninstall-dist_docfunctionDATA \
 	uninstall-dist_dochtmlDATA uninstall-dist_dochtmlclassDATA \
-	uninstall-dist_dochtmlfunctionDATA
+	uninstall-dist_dochtmlfunctionDATA \
+	uninstall-dist_dochtmlsourcesDATA \
+	uninstall-dist_dochtmlsourcesclassDATA \
+	uninstall-dist_dochtmlsourcesfunctionDATA \
+	uninstall-dist_dochtmlstaticDATA
 
 .PRECIOUS: Makefile
 

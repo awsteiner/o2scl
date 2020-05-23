@@ -19,6 +19,11 @@ dochtmldir = $(prefix)/share/doc/o2scl/html
 dochtmlclassdir = $(prefix)/share/doc/o2scl/html/class
 dochtmlfunctiondir = $(prefix)/share/doc/o2scl/html/function
 
+dochtmlstaticdir = $(prefix)/share/doc/o2scl/html/_static
+dochtmlsourcesdir = $(prefix)/share/doc/o2scl/html/_sources
+dochtmlsourcesclassdir = $(prefix)/share/doc/o2scl/html/_sources/class
+dochtmlsourcesfunctiondir = $(prefix)/share/doc/o2scl/html/_sources/function
+
 # These are the files installed by 'make install'
 dist_doc_DATA = *.rst
 dist_docclass_DATA = *.rst
@@ -26,6 +31,11 @@ dist_docfunction_DATA = *.rst
 dist_dochtml_DATA = build/html/*.html build/html/*.js build/html/*.inv
 dist_dochtmlclass_DATA = build/html/class/*.html
 dist_dochtmlfunction_DATA = build/html/function/*.html
+
+dist_dochtmlstatic_DATA = build/html/_static/*
+dist_dochtmlsources_DATA = build/html/_sources/*.txt
+dist_dochtmlsourcesclass_DATA = build/html/_sources/class/*.txt
+dist_dochtmlsourcesfunction_DATA = build/html/_sources/function/*.txt
 
 # These are the additional files included in the distribution
 # 

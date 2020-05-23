@@ -19,6 +19,11 @@ dochtmldir = $(prefix)/share/doc/o2scl/part/html
 dochtmlclassdir = $(prefix)/share/doc/o2scl/part/html/class
 dochtmlfunctiondir = $(prefix)/share/doc/o2scl/part/html/function
 
+dochtmlstaticdir = $(prefix)/share/doc/o2scl/part/html/_static
+dochtmlsourcesdir = $(prefix)/share/doc/o2scl/part/html/_sources
+dochtmlsourcesclassdir = $(prefix)/share/doc/o2scl/part/html/_sources/class
+dochtmlsourcesfunctiondir = $(prefix)/share/doc/o2scl/part/html/_sources/function
+
 # These are the files installed by 'make install'
 dist_doc_DATA = *.rst
 dist_docclass_DATA = *.rst
@@ -27,13 +32,17 @@ dist_dochtml_DATA = build/html/*.html build/html/*.js build/html/*.inv
 dist_dochtmlclass_DATA = build/html/class/*.html
 dist_dochtmlfunction_DATA = build/html/function/*.html
 
+dist_dochtmlstatic_DATA = build/html/_static/*
+dist_dochtmlsources_DATA = build/html/_sources/*.txt
+dist_dochtmlsourcesclass_DATA = build/html/_sources/class/*.txt
+dist_dochtmlsourcesfunction_DATA = build/html/_sources/function/*.txt
+
 # These are the additional files included in the distribution
 # 
 # AWS 5/22/2020: I think all of the files listed for the make install
 # target above are already included so all we need are the 'extra'
 # files
-EXTRA_DIST = conf.py class_list function_list variable_list \
-	enum_list 
+EXTRA_DIST = conf.py class_list function_list
 
 #SUBDOC_DIRS = eos part 
 
