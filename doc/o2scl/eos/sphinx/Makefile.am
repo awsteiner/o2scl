@@ -12,12 +12,12 @@ help:
 	@echo "-------------------------------------------------------------"
 	@echo 
 
-docdir = $(prefix)/share/doc/o2scl/part
-docclassdir = $(prefix)/share/doc/o2scl/part/class
-docfunctiondir = $(prefix)/share/doc/o2scl/part/function
-dochtmldir = $(prefix)/share/doc/o2scl/part/html
-dochtmlclassdir = $(prefix)/share/doc/o2scl/part/html/class
-dochtmlfunctiondir = $(prefix)/share/doc/o2scl/part/html/function
+docdir = $(prefix)/share/doc/o2scl/eos
+docclassdir = $(prefix)/share/doc/o2scl/eos/class
+docfunctiondir = $(prefix)/share/doc/o2scl/eos/function
+dochtmldir = $(prefix)/share/doc/o2scl/eos/html
+dochtmlclassdir = $(prefix)/share/doc/o2scl/eos/html/class
+dochtmlfunctiondir = $(prefix)/share/doc/o2scl/eos/html/function
 
 # These are the files installed by 'make install'
 dist_doc_DATA = *.rst
@@ -35,8 +35,6 @@ dist_dochtmlfunction_DATA = build/html/function/*.html
 EXTRA_DIST = conf.py class_list function_list variable_list \
 	enum_list 
 
-#SUBDOC_DIRS = eos part 
-
 SUBDIRS = 
 
 emacs-clean:
@@ -48,7 +46,7 @@ emacs-clean:
 
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
-SPHINXPROJ    = o2scl_part
+SPHINXPROJ    = o2scl_eos
 SOURCEDIR     = .
 BUILDDIR      = build
 
@@ -65,15 +63,13 @@ full-html:
 	sphinx-build -a -E -M html "." "build"
 
 rst-files: empty
-	grep "kind=\"function\"" ../xml/index.xml | \
-		grep "refid=\"namespaceo2scl__part" > function_list
 	grep "kind=\"class\"" ../xml/index.xml | grep -v "cli::parameter" \
 		> class_list
 	cp ref_header ref.rst
-	btmanip -parse ../../../../data/o2scl/o2scl_part.bib -rst temp.rst
+	btmanip -parse ../../../../data/o2scl/o2scl_eos.bib -rst temp.rst
 	cat temp.rst >> ref.rst
 	rm -f temp.rst
 	g++ -o ../../make_rst ../../make_rst.cpp
-	../../make_rst part > make_rst.out
+	../../make_rst eos > make_rst.out
 
 empty:

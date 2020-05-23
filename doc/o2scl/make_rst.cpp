@@ -80,8 +80,11 @@ int main(int argc, char *argv[]) {
   string context=argv[1];
   cout << "Using context " << context << endl;
 
+  size_t kk_max=2;
+  if (context==((string)"eos")) kk_max=1;
+  
   // kk=0 for classes and kk=1 for functions
-  for (size_t kk=0;kk<2;kk++) {
+  for (size_t kk=0;kk<kk_max;kk++) {
 
     // -------------------------------------------------------
     // Parse the list file
@@ -190,10 +193,21 @@ int main(int argc, char *argv[]) {
 	  }
 	} else if (context==((string)"part")) {
 	  if (kk==0) {
-	    fout << ":ref:`O2scl_part <o2sclp>` : :ref:`Class List`\n" << endl;
+	    fout << ":ref:`O2scl_part <o2sclp>` : :ref:`Class List`\n"
+		 << endl;
 	    fout << ".. _" << s << ":\n" << endl;
 	  } else {
-	    fout << ":ref:`O2scl_part <o2sclp>` : :ref:`Function List`\n" << endl;
+	    fout << ":ref:`O2scl_part <o2sclp>` : "
+		 << ":ref:`Function List`\n" << endl;
+	  }
+	} else if (context==((string)"eos")) {
+	  if (kk==0) {
+	    fout << ":ref:`O2scl_eos <o2scle>` : :ref:`Class List`\n"
+		 << endl;
+	    fout << ".. _" << s << ":\n" << endl;
+	  } else {
+	    fout << ":ref:`O2scl_eos <o2scle>` : "
+		 << ":ref:`Function List`\n" << endl;
 	  }
 	}
 	
@@ -284,6 +298,21 @@ int main(int argc, char *argv[]) {
 	  ns_file.push_back(s2);
 	}
 	fin.close();
+      } else if (context==((string)"eos")) {
+	ifstream fin("../../xml/namespaceo2scl.xml");
+	while (!fin.eof()) {
+	  string s2;
+	  std::getline(fin,s2);
+	  ns_file.push_back(s2);
+	}
+	fin.close();
+	fin.open("../../xml/namespaceo2scl__hdf.xml");
+	while (!fin.eof()) {
+	  string s2;
+	  std::getline(fin,s2);
+	  ns_file.push_back(s2);
+	}
+	fin.close();
       }
 
       // Iterate over the list
@@ -302,7 +331,11 @@ int main(int argc, char *argv[]) {
 	if (context==((string)"main")) {
 	  fout << ":ref:`O2scl <o2scl>` : :ref:`Function List`\n" << endl;
 	} else if (context==((string)"part")) {
-	  fout << ":ref:`O2scl_part <o2sclp>` : :ref:`Function List`\n" << endl;
+	  fout << ":ref:`O2scl_part <o2sclp>` : "
+	       << ":ref:`Function List`\n" << endl;
+	} else if (context==((string)"eos")) {
+	  fout << ":ref:`O2scl_eos <o2scle>` : "
+	       << ":ref:`Function List`\n" << endl;
 	}
 	
 	string head="Functions "+s;

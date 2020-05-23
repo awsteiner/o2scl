@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# o2scl_part documentation build configuration file, created by
+# o2scl_eos documentation build configuration file, created by
 # sphinx-quickstart on Thu Apr 20 09:06:02 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -33,17 +33,30 @@ sys.path.insert(0, os.path.abspath('.'))
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.todo',
               'sphinx.ext.mathjax',
+              'sphinx.ext.intersphinx',
               'sphinx.ext.ifconfig',
               'sphinx.ext.autosectionlabel',
               'breathe']
 
-#
-breathe_projects = { "o2scl_part": os.path.abspath('../xml') }
-breathe_default_project = "o2scl_part"
+# Breathe settings
+breathe_projects = { "o2scl_eos": os.path.abspath('../xml') }
+breathe_default_project = "o2scl_eos"
 breathe_default_members = ('members', 'private-members', 'undoc-members')
-#
 
+# This removes the o2scl:: prefix from index entries
 cpp_index_common_prefix = ['o2scl::']
+
+intersphinx_mapping = {'o2scl':
+                       ('https://neutronstars.utk.edu/code/o2scl/html',
+                        '../../sphinx/build/html/objects.inv'),
+                       'o2sclp':
+                       ('https://neutronstars.utk.edu/code/o2scl/part/html',
+                        '../../part/sphinx/build/html/objects.inv')}
+
+# Suggested by https://my-favorite-documentation-test.readthedocs.io/en/latest/using_intersphinx.html, but gave more errors when I tried it last
+#primary_domain = 'cpp'
+
+highlight_language = 'cpp'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['templates']
@@ -58,7 +71,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'o2scl_part'
+project = 'o2scl_eos'
 copyright = '2006-2020, Andrew W. Steiner'
 author = 'Andrew W. Steiner'
 
@@ -117,7 +130,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'o2scl_partdoc'
+htmlhelp_basename = 'o2scl_eosdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -144,7 +157,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'o2scl_part.tex', 'o2scl_part Documentation',
+    (master_doc, 'o2scl_eos.tex', 'o2scl_eos Documentation',
      'Andrew W. Steiner', 'manual'),
 ]
 
@@ -154,7 +167,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'o2scl_part', 'o2scl_part Documentation',
+    (master_doc, 'o2scl_eos', 'o2scl_eos Documentation',
      [author], 1)
 ]
 
@@ -165,8 +178,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'o2scl_part', 'o2scl_part Documentation',
-     author, 'o2scl_part', 'One line description of project.',
+    (master_doc, 'o2scl_eos', 'o2scl_eos Documentation',
+     author, 'o2scl_eos', 'One line description of project.',
      'Miscellaneous'),
 ]
 
