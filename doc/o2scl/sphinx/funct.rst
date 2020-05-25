@@ -1,48 +1,48 @@
-:ref:`O2scl <o2scl>`
-
 Function Objects
 ================
 
-Lambda functions and std::mem_fn
---------------------------------
+:ref:`O2scl <o2scl>`
+
+Lambda functions and ``std::mem_fn``
+------------------------------------
 
 Functions are passed to numerical routines using template-based
-function classes, sometimes called "functors". \o2
+function classes, sometimes called "functors". O\ :sub:`2`\ scl
 classes which accept functions as parameters generally default to
-types built upon <tt>std::function</tt>. If the
+types built upon ``std::function``. If the
 user would like to use Boost function objects instead, these may
 also be used, simply by specifying the Boost function type in the
 template parameter. 
 
 Some template aliases are defined to save typing of the function
 types, e.g.
-- \ref o2scl::funct : One function of one variable (used in 
-one-dimensional solver and minimizer classes, derivative classes,
-integration classes, etc.)
-- \ref o2scl::funct_ld : One function of one variable using
-long double 
-- \ref o2scl::multi_funct : One function of several variables (used
-in minimizer and integration classes)
-- \ref o2scl::mm_funct : \c n functions of \c n variables (used in 
-solver classes)
-- \ref o2scl::grad_funct : gradient function for minimizer classes
-- \ref o2scl::ode_funct : \c n derivatives as a function of \c n
-function values and the value of the independent variable
-- \ref o2scl::ode_jac_funct : Jacobian function for ODE classes
-- \ref o2scl::ode_it_funct : Function to specify ODEs for
+
+- :ref:`funct <funct>` : One function of one variable (used in 
+  one-dimensional solver and minimizer classes, derivative classes,
+  integration classes, etc.)
+- :ref:`funct_ld <funct_ld>` : One function of one variable using
+  long double 
+- :ref:`multi_funct <multi_funct>` : One function of several variables (used
+  in minimizer and integration classes)
+- :ref:`mm_funct <mm_funct>`: \c n functions of \c n variables (used in 
+  solver classes)
+- :ref:`grad_funct <grad_funct>`: gradient function for minimizer classes
+- :ref:`ode_funct <ode_funct>`: \c n derivatives as a function of \c n
+  function values and the value of the independent variable
+- :ref:`ode_jac_funct <ode_jac_funct>`: Jacobian function for ODE classes
+- :ref:`ode_it_funct <ode_it_funct>`: Function to specify ODEs for
   iterative solution
-- \ref o2scl::jac_funct : Jacobian function for solver and
+- :ref:`jac_funct <jac_funct>` : Jacobian function for solver and
   fitting classes
-- \ref o2scl::fit_funct : Fit function
-- \ref o2scl::ool_hfunct : Hessian matrix function for constrained
+- :ref:`fit_funct <fit_funct>`: Fit function
+- :ref:`ool_hfunct <ool_hfunct>`: Hessian matrix function for constrained
   minimization
 
 Function object example
 -----------------------
 
-The example below demonstrates how C++11
-function objects can be used with the \ref o2scl::root_brent_gsl
-solver.
+The example below demonstrates how C++11 function objects can be used
+with the :ref:`root_brent_gsl <root_brent_gsl>` solver.
 
 \dontinclude ex_lambda.cpp
 \skip Example:
@@ -69,24 +69,71 @@ specify a new type for the template parameter in the user class.
 Function object example
 -----------------------
 
-This example shows how to provide functions to \o2
+This example shows how to provide functions to O\ :sub:`2`\ scl
 classes by solving the equation
-\f[
-\left\{ 1+\frac{1}{p_2} 
-\sin \left[ 50 \left( x-p_1 \right) \right] \right\}
-\tan^{-1} \left[ 4 \left( x-p_1 \right) \right] = 0
-\f]
-Where \f$ p_1 = 0.01 \f$ and \f$ p_2 = 1.1 \f$. The parameter 
-\f$ p_1 \f$ is stored as member data for the class, and the 
-parameter \f$ p_2 \f$ is an argument to the member function.
+
+.. math::
+
+   \left\{ 1+\frac{1}{p_2} 
+   \sin \left[ 50 \left( x-p_1 \right) \right] \right\}
+   \tan^{-1} \left[ 4 \left( x-p_1 \right) \right] = 0
+
+Where :math:`p_1 = 0.01` and :math:`p_2 = 1.1`. The parameter 
+:math:`p_1` is stored as member data for the class, and the 
+parameter :math:`p_2` is an argument to the member function.
     
 The image below shows how the solver progresses to the 
 solution of the example function.
-\image html ex_fptr_plot.png "Function object example plot"
-\comment
-\image latex ex_fptr_plot.eps "Function object example plot" width=9cm
-\endcomment
 
-\dontinclude ex_fptr.cpp
-\skip Example:
-\until End of examp*/
+.. image:: ../../../examples/plot/ex_fptr_plot.png
+   :alt: alt text
+
+.. literalinclude:: ../../../examples/ex_fptr.cpp
+
+Function typedefs
+-----------------
+
+.. _funct:
+
+.. doxygentypedef:: funct
+
+.. _funct_ld:
+
+.. doxygentypedef:: funct_ld
+
+.. _multi_funct:
+
+.. doxygentypedef:: multi_funct
+
+.. _mm_funct:
+
+.. doxygentypedef:: mm_funct
+
+.. _grad_funct:
+
+.. doxygentypedef:: grad_funct
+
+.. _ode_funct:
+
+.. doxygentypedef:: ode_funct
+
+.. _ode_jac_funct:
+
+.. doxygentypedef:: ode_jac_funct
+
+.. _ode_it_funct:
+
+.. doxygentypedef:: ode_it_funct
+
+.. _jac_funct:
+
+.. doxygentypedef:: jac_funct
+
+.. _fit_funct:
+
+.. doxygentypedef:: fit_funct
+
+.. _ool_hfunct:
+
+.. doxygentypedef:: ool_hfunct
+

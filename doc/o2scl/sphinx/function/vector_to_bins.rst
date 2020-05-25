@@ -1,6 +1,6 @@
+Function vector_to_bins (o2scl)
+===============================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_to_bins
-=======================
-
-.. doxygenfunction:: ::vector_to_bins
+.. doxygenfunction:: o2scl::vector_to_bins

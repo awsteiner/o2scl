@@ -1,6 +1,6 @@
+Function vector_integ_trap (o2scl)
+==================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_integ_trap
-==========================
-
-.. doxygenfunction:: ::vector_integ_trap
+.. doxygenfunction:: o2scl::vector_integ_trap

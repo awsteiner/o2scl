@@ -1,6 +1,6 @@
+Function vector_find_level (o2scl)
+==================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_find_level
-==========================
-
-.. doxygenfunction:: ::vector_find_level
+.. doxygenfunction:: o2scl::vector_find_level

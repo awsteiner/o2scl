@@ -1,6 +1,6 @@
+Function function_to_double_nothrow (o2scl)
+===========================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function function_to_double_nothrow
-===================================
-
-.. doxygenfunction:: ::function_to_double_nothrow
+.. doxygenfunction:: o2scl::function_to_double_nothrow

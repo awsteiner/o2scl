@@ -1,56 +1,58 @@
-:ref:`O2scl <o2scl>`
-
 Higher-dimensional Interpolation
 ================================
 
-\section tintp_subsect Two-dimensional interpolation
+:ref:`O2scl <o2scl>`
+
+Two-dimensional interpolation
+-----------------------------
 
 There are two types of two-dimensional interpolation classes, the
 first is based on a function defined on a two-dimensional grid
 (though the spacings between grid points need not be equal). The
-class \ref o2scl::interp2_direct implements bilinear or bicubic
+class :ref:`interp2_direct <interp2_direct>` implements bilinear or bicubic
 interpolation, and is based on D. Zaslavsky's routines at
 https://github.com/diazona/interp2d (licensed under GPLv3).
 A slightly slower (but a bit more flexible) alternative is 
-successive use of \ref o2scl::interp_base objects, implemented
-in \ref o2scl::interp2_seq . 
+successive use of :ref:`interp_base <interp_base>` objects, implemented
+in :ref:`interp2_seq <interp2_seq>` . 
 
-If data is arranged without a grid, then \ref o2scl::interp2_neigh
+If data is arranged without a grid, then :ref:`interp2_neigh
 performs nearest-neighbor interpolation. At present, the only way
-to compute \contour lines on data which is not defined on a grid
+to compute :ref:`contour <contour>` lines on data which is not defined on a grid
 is to use this class or one of the multi-dimensional interpolation
-classes described below the data on a grid and then use \ref
-o2scl::contour afterwards.
+classes described below the data on a grid and then use :ref:`contour
+<contour>` afterwards.
 
-\comment 
-7/10/19: I removed the reference to interp2_planar because
-it's unstable and I don't recommend using it. 
-\endcomment
+.. 
+  7/10/19: I removed the reference to interp2_planar because
+  it's unstable and I don't recommend using it. 
 
-\section mintp_subsect Multi-dimensional interpolation
+Multi-dimensional interpolation
+-------------------------------
 
 Multi-dimensional interpolation for table defined on a grid is
-possible with \ref o2scl::tensor_grid. See the documentation for
-\ref o2scl::tensor_grid::interpolate(), \ref
-o2scl::tensor_grid::interp_linear() and \ref
-o2scl::tensor_grid::rearrange_and_copy() . Also, if you want to
-interpolate <tt>rank-1</tt> indices to get a vector result, you
-can use \ref o2scl::tensor_grid::interp_linear_vec() .
+possible with :ref:`tensor_grid <tensor_grid>`. See the documentation
+for :cpp:func:`tensor_grid::interpolate()`,
+:cpp:func:`tensor_grid::interp_linear()` and
+:cpp:func:`tensor_grid::rearrange_and_copy()`. Also, if you want to
+interpolate ``rank-1`` indices to get a vector result, you can use
+:cpp:func:`tensor_grid::interp_linear_vec()` .
 
-If the data is not on a grid, then inverse distance
-weighted interpolation is performed by \ref o2scl::interpm_idw.
+If the data is not on a grid, then inverse distance weighted
+interpolation is performed by :ref:`interpm_idw <interpm_idw>`.
 
 An experimental class for multidimensional-dimensional kriging is also 
-provided in \ref o2scl::interpm_krige .
+provided in :ref:`interpm_krige <interpm_krige>` .
     
-\section ex_interp2_sect Interpolation on a rectangular grid
+Interpolation on a rectangular grid
+-----------------------------------
 
 \dontinclude ex_interp2.cpp
 \skip Example:
 \until End of example
 
 This example creates a sample 3 by 3 grid of data with the 
-function \f$ \left[ \sin \left( x/10 + 3 y/10 \right) \right]^2 \f$
+function :math:`\left[ \sin \left( x/10 + 3 y/10 \right) \right]^2`
 and performs some interpolations and compares them with the 
 exact result.
 \include ex_interp2.scr
@@ -97,7 +99,7 @@ shows the peaks at \f$ (20,5) \f$ and \f$ (70,2) \f$ .
 \image latex ex_contour_plot1.eps "Contour example plot" width=9cm
 \endcomment
 
-The \ref o2scl::contour class can also use interpolation to 
+The :ref:`contour class can also use interpolation to 
 attempt to refine the data grid. The new contours after a 
 refinement of a factor of 5 is given in the figure below.
     

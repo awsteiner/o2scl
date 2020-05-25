@@ -1,20 +1,23 @@
-:ref:`O2scl <o2scl>`
-
 General Usage
 =============
+
+:ref:`O2scl <o2scl>`
 
 Namespaces
 ----------
     
 Most of the classes reside in the namespace ``o2scl``. Numerical
 constants (many of them based on the GSL constants) are placed in
-separate namespaces (o2scl_cgs, o2scl_cgsm, o2scl_mks, o2scl_mksa, and
-o2scl_const). The O\ :sub:`2`\ scl functions and classes for HDF5
-output are in the \ref o2scl_hdf namespace. There are also two
-namespaces which hold integration coefficients, o2scl_inte_gk_coeffs
-and o2scl_inte_qng_coeffs. There are also some namespaces for the
-linear algebra functions, see \ref linalg_section for more information
-on these.
+separate namespaces (:ref:`o2scl_cgs <Namespace o2scl_cgs>`,
+:ref:`o2scl_cgsm <Namespace o2scl_cgsm>`, :ref:`o2scl_mks <Namespace
+o2scl_mks>`, and :ref:`o2scl_const <Namespace o2scl_const>`). The O\
+:sub:`2`\ scl functions and classes for HDF5 output are in the
+``o2scl_hdf`` namespace. There are also two namespaces which hold
+integration coefficients, :ref:`o2scl_inte_gk_coeffs <Gauss-Kronrod
+integration coefficients>` and :ref:`o2scl_inte_qng_coeffs
+<Non-adaptive quadrature integration coefficients>`. There are also
+some namespaces for the linear algebra functions, see :ref:`Linear
+Algebra` for more information on these.
 
 Documentation conventions
 -------------------------
@@ -105,49 +108,70 @@ user-specified functions.
 GSL error codes and C++ exception types
 ---------------------------------------
 
-See also the description of the error codes in \ref err_hnd.h .
+See also the description of the error codes in ``err_hnd.h``
 
-- o2scl::success=0, (no error thrown) 
-- o2scl::gsl_failure=-1, \ref o2scl::exc_exception 
-- o2scl::gsl_continue=-2, (no error thrown) 
-- o2scl::exc_edom=1, \ref o2scl::exc_range_error 
-- o2scl::exc_erange=2, \ref o2scl::exc_range_error 
-- o2scl::exc_efault=3, \ref o2scl::exc_runtime_error 
-- o2scl::exc_einval=4, \ref o2scl::exc_invalid_argument 
-- o2scl::exc_efailed=5, \ref o2scl::exc_exception 
-- o2scl::exc_efactor=6, \ref o2scl::exc_runtime_error 
-- o2scl::exc_esanity=7, \ref o2scl::exc_exception 
-- o2scl::exc_enomem=8, \ref o2scl::exc_runtime_error 
-- o2scl::exc_ebadfunc=9, \ref o2scl::exc_runtime_error 
-- o2scl::exc_erunaway=10, \ref o2scl::exc_runtime_error 
-- o2scl::exc_emaxiter=11, \ref o2scl::exc_runtime_error 
-- o2scl::exc_ezerodiv=12, \ref o2scl::exc_overflow_error 
-- o2scl::exc_ebadtol=13, \ref o2scl::exc_invalid_argument 
-- o2scl::exc_etol=14, \ref o2scl::exc_runtime_error 
-- o2scl::exc_eundrflw=15, \ref o2scl::exc_range_error 
-- o2scl::exc_eovrflw=16, \ref o2scl::exc_overflow_error 
-- o2scl::exc_eloss=17, \ref o2scl::exc_runtime_error 
-- o2scl::exc_eround=18, \ref o2scl::exc_runtime_error 
-- o2scl::exc_ebadlen=19, \ref o2scl::exc_invalid_argument 
-- o2scl::exc_enotsqr=20, \ref o2scl::exc_invalid_argument 
-- o2scl::exc_esing=21, \ref o2scl::exc_runtime_error 
-- o2scl::exc_ediverge=22, \ref o2scl::exc_runtime_error 
-- o2scl::exc_eunsup=23, \ref o2scl::exc_exception 
-- o2scl::exc_eunimpl=24, \ref o2scl::exc_exception 
-- o2scl::exc_ecache=25, \ref o2scl::exc_runtime_error 
-- o2scl::exc_etable=26, \ref o2scl::exc_runtime_error 
-- o2scl::exc_enoprog=27, \ref o2scl::exc_runtime_error 
-- o2scl::exc_enoprogj=28, \ref o2scl::exc_runtime_error 
-- o2scl::exc_etolf=29, \ref o2scl::exc_runtime_error 
-- o2scl::exc_etolx=30, \ref o2scl::exc_runtime_error 
-- o2scl::exc_etolg=31, \ref o2scl::exc_runtime_error 
-- o2scl::exc_eof=32, \ref o2scl::exc_ios_failure 
-- o2scl::exc_enotfound=33, \ref o2scl::exc_runtime_error 
-- o2scl::exc_ememtype=34, \ref o2scl::exc_logic_error 
-- o2scl::exc_efilenotfound=35, \ref o2scl::exc_ios_failure 
-- o2scl::exc_eindex=36, \ref o2scl::exc_invalid_argument 
-- o2scl::exc_outsidecons=37, \ref o2scl::exc_runtime_error 
+.. doxygenenumvalue:: success
+.. doxygenenumvalue:: gsl_continue
 
+Error codes associated with :ref:`exc_exception <exc_exception>`:
+		      
+.. doxygenenumvalue:: gsl_failure
+.. doxygenenumvalue:: exc_efailed
+.. doxygenenumvalue:: exc_esanity
+.. doxygenenumvalue:: exc_eunsup
+.. doxygenenumvalue:: exc_eunimpl
+
+Error codes associated with :ref:`exc_range_error <exc_range_error>`:
+   
+.. doxygenenumvalue:: exc_edom
+.. doxygenenumvalue:: exc_erange
+.. doxygenenumvalue:: exc_eundrflw
+
+Error codes associated with :ref:`exc_runtime_error <exc_runtime_error>`:
+   
+.. doxygenenumvalue:: exc_efault
+.. doxygenenumvalue:: exc_efactor
+.. doxygenenumvalue:: exc_enomem
+.. doxygenenumvalue:: exc_ebadfunc
+.. doxygenenumvalue:: exc_erunaway
+.. doxygenenumvalue:: exc_emaxiter
+.. doxygenenumvalue:: exc_etol
+.. doxygenenumvalue:: exc_eloss
+.. doxygenenumvalue:: exc_eround
+.. doxygenenumvalue:: exc_esing
+.. doxygenenumvalue:: exc_ediverge
+.. doxygenenumvalue:: exc_ecache
+.. doxygenenumvalue:: exc_etable
+.. doxygenenumvalue:: exc_enoprog
+.. doxygenenumvalue:: exc_enoprogj
+.. doxygenenumvalue:: exc_etolf
+.. doxygenenumvalue:: exc_etolx
+.. doxygenenumvalue:: exc_etolg
+.. doxygenenumvalue:: exc_enotfound
+.. doxygenenumvalue:: exc_outsidecons
+
+Error codes associated with :ref:`exc_invalid_argument <exc_invalid_argument>`:
+   
+.. doxygenenumvalue:: exc_einval
+.. doxygenenumvalue:: exc_ebadtol
+.. doxygenenumvalue:: exc_ebadlen
+.. doxygenenumvalue:: exc_enotsqr
+.. doxygenenumvalue:: exc_eindex
+		      
+Error codes associated with :ref:`exc_overflow_error <exc_overflow_error>`:
+
+.. doxygenenumvalue:: exc_ezerodiv
+.. doxygenenumvalue:: exc_eovrflw
+		      
+Error codes associated with :ref:`exc_ios_failure <exc_ios_failure>`:
+
+.. doxygenenumvalue:: exc_eof
+.. doxygenenumvalue:: exc_efilenotfound
+
+Error codes associated with :ref:`exc_logic_error <exc_logic_error>`:
+
+.. doxygenenumvalue:: exc_ememtype
+		      
 Objects and scope
 -----------------
     

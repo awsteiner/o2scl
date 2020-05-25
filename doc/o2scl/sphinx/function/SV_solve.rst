@@ -1,6 +1,6 @@
+Function SV_solve (o2scl_linalg)
+================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function SV_solve
-=================
-
-.. doxygenfunction:: ::SV_solve
+.. doxygenfunction:: o2scl_linalg::SV_solve

@@ -1,6 +1,6 @@
+Function size_of_exponent (o2scl)
+=================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function size_of_exponent
-=========================
-
-.. doxygenfunction:: ::size_of_exponent
+.. doxygenfunction:: o2scl::size_of_exponent

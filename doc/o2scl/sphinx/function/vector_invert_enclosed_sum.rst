@@ -1,6 +1,6 @@
+Function vector_invert_enclosed_sum (o2scl)
+===========================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_invert_enclosed_sum
-===================================
-
-.. doxygenfunction:: ::vector_invert_enclosed_sum
+.. doxygenfunction:: o2scl::vector_invert_enclosed_sum

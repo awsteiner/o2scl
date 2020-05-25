@@ -1,6 +1,6 @@
+Function dnrm2_subcol (o2scl_cblas)
+===================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function dnrm2_subcol
-=====================
-
-.. doxygenfunction:: ::dnrm2_subcol
+.. doxygenfunction:: o2scl_cblas::dnrm2_subcol

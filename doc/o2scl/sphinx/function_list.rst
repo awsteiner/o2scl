@@ -1,7 +1,7 @@
-:ref:`O2scl <o2scl>`
-
 Function List
 =============
+
+:ref:`O2scl <o2scl>`
 
 ..
    comment: The globbing gives many warnings for functions that don't

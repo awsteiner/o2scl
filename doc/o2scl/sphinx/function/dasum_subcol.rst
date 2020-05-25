@@ -1,6 +1,6 @@
+Function dasum_subcol (o2scl_cblas)
+===================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function dasum_subcol
-=====================
-
-.. doxygenfunction:: ::dasum_subcol
+.. doxygenfunction:: o2scl_cblas::dasum_subcol

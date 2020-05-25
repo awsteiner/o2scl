@@ -1,6 +1,6 @@
+Function strings_spec (o2scl_hdf)
+=================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function strings_spec
-=====================
-
-.. doxygenfunction:: ::strings_spec
+.. doxygenfunction:: o2scl_hdf::strings_spec

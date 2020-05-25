@@ -1,7 +1,7 @@
-:ref:`O2scl <o2scl>`
-
 Arrays, Vectors, Matrices and Tensors
 =====================================
+
+:ref:`O2scl <o2scl>`
 
 Because many such vector and matrix objects are defined elsewhere,
 O\ :sub:`2`\ scl no longer includes native vector and matrix classes.
@@ -56,7 +56,7 @@ are places where a vector of vectors is preferable to a matrix,
 and O\ :sub:`2`\ scl expects that elements in a vector of vectors can be
 accessed by ``operator[][]``. A :ref:`table <table>` object can
 be thought of as a vector of vectors in this sense. The function
-:cpp:func:`o2scl::tensor_grid::set_grid()` also accepts a vector of
+:cpp:func:`o2scl::tensor_grid::set_grid` also accepts a vector of
 vectors, and for this function, none of the vectors needs to have
 the same size. A vector of vectors can also be used to specify a
 scattered list of points in a multi-dimensional space. Thus, a
@@ -116,7 +116,7 @@ the "vertical axis" and y on the "horizontal axis", which is
 backwards from the usual convention when plotting data.
 
 O\ :sub:`2`\ scl classes which interpret matrix data on a grid (\ref
-o2scl::table3d, \ref o2scl::contour, \ref o2scl::interp2_seq and
+:ref:`table3d <table3d>`, \ref o2scl::contour, \ref o2scl::interp2_seq and
 \ref o2scl::interp2_direct) use ``x`` to denote the row index and
 ``y`` to denote the column index by convention.
 

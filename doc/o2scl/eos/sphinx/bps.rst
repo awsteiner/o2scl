@@ -1,0 +1,22 @@
+Neutron Star Outer Crust
+========================
+
+The class \ref o2scl::eos_crust computes the composition and EOS
+of the outer crust of a neutron star from \f$
+10^{6}~\mathrm{g}/\mathrm{cm}^3 \f$ up to the neutron drip density
+of \f$ 4 \times 10^{11}~\mathrm{g}/\mathrm{cm}^3 \f$ . It uses a
+simple expression for the lattice energy and works with any
+nuclear mass formula specified as an object of type \ref
+o2scl::nucmass .
+
+\section ex_eos_crust_sect Outer crust example
+
+This example computes the outer crust EOS from the \ref
+o2scl::eos_crust class and then compares it with the numerical
+values from the original paper in \ref Baym71tg as stored in the
+file <tt>examples/ex_bps_input.txt</tt>. Then it computes several
+crusts from \ref Shen11b, \ref Steiner12, and \ref Newton13.
+    
+\dontinclude ex_eos_crust.cpp
+\skip Example:
+\until End of example

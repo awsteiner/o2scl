@@ -1,6 +1,6 @@
+Function QR_decomp_unpack (o2scl_linalg)
+========================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function QR_decomp_unpack
-=========================
-
-.. doxygenfunction:: ::QR_decomp_unpack
+.. doxygenfunction:: o2scl_linalg::QR_decomp_unpack

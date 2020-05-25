@@ -1,6 +1,6 @@
+Function vector_bound_fracint (o2scl)
+=====================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_bound_fracint
-=============================
-
-.. doxygenfunction:: ::vector_bound_fracint
+.. doxygenfunction:: o2scl::vector_bound_fracint

@@ -1,6 +1,6 @@
+Function dtrsm (o2scl_cblas)
+============================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function dtrsm
-==============
-
-.. doxygenfunction:: ::dtrsm
+.. doxygenfunction:: o2scl_cblas::dtrsm

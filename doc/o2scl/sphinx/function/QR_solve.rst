@@ -1,6 +1,6 @@
+Function QR_solve (o2scl_linalg)
+================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function QR_solve
-=================
-
-.. doxygenfunction:: ::QR_solve
+.. doxygenfunction:: o2scl_linalg::QR_solve

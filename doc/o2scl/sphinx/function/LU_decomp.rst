@@ -1,6 +1,6 @@
+Function LU_decomp (o2scl_linalg)
+=================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function LU_decomp
-==================
-
-.. doxygenfunction:: ::LU_decomp
+.. doxygenfunction:: o2scl_linalg::LU_decomp

@@ -1,6 +1,6 @@
+Function create_schur (o2scl_linalg)
+====================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function create_schur
-=====================
-
-.. doxygenfunction:: ::create_schur
+.. doxygenfunction:: o2scl_linalg::create_schur

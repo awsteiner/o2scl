@@ -1,6 +1,6 @@
+Function mult_vector_spec (o2scl_hdf)
+=====================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function mult_vector_spec
-=========================
-
-.. doxygenfunction:: ::mult_vector_spec
+.. doxygenfunction:: o2scl_hdf::mult_vector_spec

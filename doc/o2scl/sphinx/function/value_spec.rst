@@ -1,6 +1,6 @@
+Function value_spec (o2scl_hdf)
+===============================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function value_spec
-===================
-
-.. doxygenfunction:: ::value_spec
+.. doxygenfunction:: o2scl_hdf::value_spec

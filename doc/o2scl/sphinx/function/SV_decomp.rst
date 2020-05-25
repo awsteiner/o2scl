@@ -1,6 +1,6 @@
+Function SV_decomp (o2scl_linalg)
+=================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function SV_decomp
-==================
-
-.. doxygenfunction:: ::SV_decomp
+.. doxygenfunction:: o2scl_linalg::SV_decomp

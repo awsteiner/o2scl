@@ -1,6 +1,6 @@
+Function QR_update (o2scl_linalg)
+=================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function QR_update
-==================
-
-.. doxygenfunction:: ::QR_update
+.. doxygenfunction:: o2scl_linalg::QR_update

@@ -1,6 +1,6 @@
+Function apply_givens_vec (o2scl_linalg)
+========================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function apply_givens_vec
-=========================
-
-.. doxygenfunction:: ::apply_givens_vec
+.. doxygenfunction:: o2scl_linalg::apply_givens_vec

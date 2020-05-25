@@ -404,13 +404,6 @@
     <member refid="namespaceo2scl__cblas_1ab41158c698a37c0e5ffb5fff87e8d3fe" kind="function"><name>ddot_subrow</name></member>
     <member refid="namespaceo2scl__cblas_1a9467f5fb47766763a9eabc50c9d8b324" kind="function"><name>dnrm2_subrow</name></member>
     <member refid="namespaceo2scl__cblas_1acf4291db25341aebafefa720728f3d2a" kind="function"><name>dscal_subrow</name></member>
-    <member refid="namespaceo2scl__const_1a12f6c0c02a681b29ca32ef54828bc2b4" kind="function"><name>planck_f</name></member>
-    <member refid="namespaceo2scl__const_1af612dbf15e10824b52a29c3dd25fb660" kind="function"><name>hbar_f</name></member>
-    <member refid="namespaceo2scl__const_1a8a614d0007a7b363d212a88fef170b9e" kind="function"><name>speed_of_light_f</name></member>
-    <member refid="namespaceo2scl__const_1a1a2f779eeecf0faf3888ea1a6dc76c87" kind="function"><name>boltzmann_f</name></member>
-    <member refid="namespaceo2scl__const_1ad5fb4baad2ab51851a51aeff1d4d14be" kind="function"><name>hbarc_f</name></member>
-    <member refid="namespaceo2scl__const_1ab9ee580d0b84909eef43b2c1274e62d9" kind="function"><name>elem_charge_f</name></member>
-    <member refid="namespaceo2scl__const_1ad5b1ed87e1caa8cee9fa42cf851965bd" kind="function"><name>hc_mev_fm_f</name></member>
     <member refid="namespaceo2scl__hdf_1aae9226e07a61965c0c7e697e389e625b" kind="function"><name>hdf_input</name></member>
     <member refid="namespaceo2scl__hdf_1ae18894d48f3eead314599e1e0d3814e2" kind="function"><name>hdf_output</name></member>
     <member refid="namespaceo2scl__hdf_1a0da877732d7fe66f8302ffc35dde3749" kind="function"><name>hdf_input_data</name></member>

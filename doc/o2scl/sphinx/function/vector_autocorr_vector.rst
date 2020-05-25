@@ -1,6 +1,6 @@
+Function vector_autocorr_vector (o2scl)
+=======================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_autocorr_vector
-===============================
-
-.. doxygenfunction:: ::vector_autocorr_vector
+.. doxygenfunction:: o2scl::vector_autocorr_vector

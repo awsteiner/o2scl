@@ -1,6 +1,6 @@
+Function bidiag_decomp (o2scl_linalg)
+=====================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function bidiag_decomp
-======================
-
-.. doxygenfunction:: ::bidiag_decomp
+.. doxygenfunction:: o2scl_linalg::bidiag_decomp

@@ -1,6 +1,6 @@
+Function rewrap_keep_endlines (o2scl)
+=====================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function rewrap_keep_endlines
-=============================
-
-.. doxygenfunction:: ::rewrap_keep_endlines
+.. doxygenfunction:: o2scl::rewrap_keep_endlines

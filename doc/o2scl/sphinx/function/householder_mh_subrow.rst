@@ -1,6 +1,6 @@
+Function householder_mh_subrow (o2scl_linalg)
+=============================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function householder_mh_subrow
-==============================
-
-.. doxygenfunction:: ::householder_mh_subrow
+.. doxygenfunction:: o2scl_linalg::householder_mh_subrow

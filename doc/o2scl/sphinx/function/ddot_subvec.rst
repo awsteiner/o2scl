@@ -1,6 +1,6 @@
+Function ddot_subvec (o2scl_cblas)
+==================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function ddot_subvec
-====================
-
-.. doxygenfunction:: ::ddot_subvec
+.. doxygenfunction:: o2scl_cblas::ddot_subvec

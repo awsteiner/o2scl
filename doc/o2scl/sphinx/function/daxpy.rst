@@ -1,6 +1,6 @@
+Function daxpy (o2scl_cblas)
+============================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function daxpy
-==============
-
-.. doxygenfunction:: ::daxpy
+.. doxygenfunction:: o2scl_cblas::daxpy

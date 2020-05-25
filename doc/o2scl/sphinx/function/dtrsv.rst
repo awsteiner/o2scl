@@ -1,6 +1,6 @@
+Function dtrsv (o2scl_cblas)
+============================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function dtrsv
-==============
-
-.. doxygenfunction:: ::dtrsv
+.. doxygenfunction:: o2scl_cblas::dtrsv

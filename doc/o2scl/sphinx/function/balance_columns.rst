@@ -1,6 +1,6 @@
+Function balance_columns (o2scl_linalg)
+=======================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function balance_columns
-========================
-
-.. doxygenfunction:: ::balance_columns
+.. doxygenfunction:: o2scl_linalg::balance_columns

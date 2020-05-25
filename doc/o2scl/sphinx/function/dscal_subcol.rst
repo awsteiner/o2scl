@@ -1,6 +1,6 @@
+Function dscal_subcol (o2scl_cblas)
+===================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function dscal_subcol
-=====================
-
-.. doxygenfunction:: ::dscal_subcol
+.. doxygenfunction:: o2scl_cblas::dscal_subcol

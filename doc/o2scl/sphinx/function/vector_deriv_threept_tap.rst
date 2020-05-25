@@ -1,6 +1,6 @@
+Function vector_deriv_threept_tap (o2scl)
+=========================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_deriv_threept_tap
-=================================
-
-.. doxygenfunction:: ::vector_deriv_threept_tap
+.. doxygenfunction:: o2scl::vector_deriv_threept_tap

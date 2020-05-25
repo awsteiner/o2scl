@@ -1,6 +1,6 @@
+Function vector_deriv_xy_interp (o2scl)
+=======================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_deriv_xy_interp
-===============================
-
-.. doxygenfunction:: ::vector_deriv_xy_interp
+.. doxygenfunction:: o2scl::vector_deriv_xy_interp

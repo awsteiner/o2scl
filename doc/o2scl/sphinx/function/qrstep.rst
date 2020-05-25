@@ -1,6 +1,6 @@
+Function qrstep (o2scl_linalg)
+==============================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function qrstep
-===============
-
-.. doxygenfunction:: ::qrstep
+.. doxygenfunction:: o2scl_linalg::qrstep

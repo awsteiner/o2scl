@@ -1,0 +1,94 @@
+Finite-temperature Equation of State Tables
+===========================================
+
+There are several classes designed to provide a consistent
+interface to several EOS tables intended for core-collapse supernovae
+and neutron-star mergers. The abstract base
+class is \ref o2scl::eos_sn_base. The child classes correspond to
+different EOS table formats: 
+- \ref o2scl::eos_sn_ls - The Lattimer-Swesty EOS tables from Jim's
+webpage (\ref Lattimer91)
+- \ref o2scl::eos_sn_stos - The H. Shen et al. EOS tables
+(\ref Shen98 and \ref Shen98b)
+- \ref o2scl::eos_sn_sht - The G. Shen et al. EOS tables 
+(\ref Shen10a, \ref Shen10b, \ref Shen11)
+- \ref o2scl::eos_sn_hfsl - The M. Hempel et al. EOS tables
+(\ref Hempel10 and \ref Hempel12)
+- \ref o2scl::eos_sn_oo - The Lattimer-Swesty and H. Shen et al. tables
+reformatted by O'Connor and Ott (\ref OConnor10)
+
+The \o2 distribution does not contain the tables themselves,
+as they are quite large and most are freely available.
+\o2 includes code which parses these tables and puts them in 
+\ref o2scl::tensor_grid3 objects for analysis by the user. 
+
+The EOSs are stored in a set of \ref o2scl::tensor_grid3 objects on
+grids with baryon density in \f$ \mathrm{fm}^{-3} \f$, electron
+fraction (unitless) and temperature in \f$ \mathrm{MeV} \f$. The
+choice of baryon density is preferred to that of 'rest mass
+density' (commonly denoted \f$ \rho \f$) because the rest mass
+density has no unambiguous definition. This is especially the
+case if dense matter contains deconfined quark matter. On the
+other hand, baryon number is conserved (to a very good
+approximation).
+
+The electron fraction is also a natural variable to use when
+tabulating, because charge is also conserved and the electron has
+one unit of charge but no baryon number. The electron fraction is
+also a sensible choice because of its central role in the relevant
+weak interaction physics. This is also the choice made in \ref
+Lattimer91. Some tables are tabulated for constant "proton
+fraction", which in this case includes all protons whether or not
+they are inside nuclei. Because all baryonic matter in these EOS
+tables is made up of neutrons and protons and because there are no
+muons, one can assume that the electron fraction is equal to the
+proton fraction. The total proton fraction is always larger than
+the number fraction of free protons.
+
+Not all tabulated EOSs contain all of the data, in which case the
+associated \ref o2scl::tensor_grid3 object may be empty. For
+example, EOSs which do not contain the leptonic contributions do
+not provide \ref o2scl::eos_sn_base::E, \ref o2scl::eos_sn_base::F,
+\ref o2scl::eos_sn_base::S, and \ref o2scl::eos_sn_base::P. In these
+case, the grid is set for these objects but the data is set to
+zero. To compute these from the data after loading the EOS table,
+use \ref o2scl::eos_sn_base::compute_eg().
+
+Also, some EOS tables tabulate the 'mass fraction' of the 
+various particles, but this is a slight misnomer. What is
+actually tabulated is 'baryon number fraction', i.e. the
+fraction of baryons which are in particles of type \f$ i \f$.
+These fractions \f$ X_i \f$ are defined by
+\f[
+X_i = A_i n_i n_B^{-1} \, ,
+\f]
+where \f$ A_i \f$ is the number of baryons in particle \f$ i \f$
+and \f$ n_i \f$ is the number of particles per unit volume.
+In the case of the representative heavy nucleus, the 
+baryon number fraction is \f$ X_h = A n_h n_B^{-1} \f$ where
+\f$ A \f$ is the baryon number of the representative heavy
+nucleus in \ref o2scl::eos_sn_base::A .
+
+The functions named <tt>load()</tt> in the children classes load
+the entire EOS into memory. Memory allocation is automatically
+performed, but not deallocated until free() or the destructor is
+called.
+
+After loading, you can interpolate the EOS by using 
+\ref o2scl::tensor_grid3::interp_linear() directly. For example,
+the following returns the mass number at an arbitrary
+baryon density, electron fraction, and temperature
+assuming the table is stored in <tt>skm.dat</tt>:
+\verbatim
+ls_eos ls;
+ls.load("skm.dat");
+double nb=0.01, Ye=0.2, T=10.0;
+cout << ls.A.interp_linear(nb,Ye,T) << endl;
+\endverbatim
+This function performs linear interpolation, however, some
+of the grids are logarithmic, so linear interpolation on a
+logarithmic grid leads to power-laws in between grid points.
+Note also that some grids are not purely linear or purely 
+logarithmic, but a mixture between the two. 
+
+All of these classes are experimental.

@@ -1,6 +1,6 @@
+Function LU_solve (o2scl_linalg)
+================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function LU_solve
-=================
-
-.. doxygenfunction:: ::LU_solve
+.. doxygenfunction:: o2scl_linalg::LU_solve

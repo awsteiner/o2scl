@@ -1,6 +1,6 @@
+Function cholesky_solve (o2scl_linalg)
+======================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function cholesky_solve
-=======================
-
-.. doxygenfunction:: ::cholesky_solve
+.. doxygenfunction:: o2scl_linalg::cholesky_solve

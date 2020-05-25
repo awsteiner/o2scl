@@ -1,6 +1,6 @@
+Function LU_lndet (o2scl_linalg)
+================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function LU_lndet
-=================
-
-.. doxygenfunction:: ::LU_lndet
+.. doxygenfunction:: o2scl_linalg::LU_lndet

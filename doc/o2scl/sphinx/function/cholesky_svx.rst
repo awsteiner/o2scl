@@ -1,6 +1,6 @@
+Function cholesky_svx (o2scl_linalg)
+====================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function cholesky_svx
-=====================
-
-.. doxygenfunction:: ::cholesky_svx
+.. doxygenfunction:: o2scl_linalg::cholesky_svx

@@ -1,6 +1,6 @@
+Function vector_integ_extended8 (o2scl)
+=======================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_integ_extended8
-===============================
-
-.. doxygenfunction:: ::vector_integ_extended8
+.. doxygenfunction:: o2scl::vector_integ_extended8

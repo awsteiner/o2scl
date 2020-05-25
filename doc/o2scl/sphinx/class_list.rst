@@ -1,7 +1,7 @@
-:ref:`O2scl <o2scl>`
-
 Class List
 ==========
+
+:ref:`O2scl <o2scl>`
 
 ..
    comment: The globbing gives many warnings for classes that don't

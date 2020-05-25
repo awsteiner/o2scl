@@ -1,6 +1,6 @@
+Function dnrm2 (o2scl_cblas)
+============================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function dnrm2
-==============
-
-.. doxygenfunction:: ::dnrm2
+.. doxygenfunction:: o2scl_cblas::dnrm2

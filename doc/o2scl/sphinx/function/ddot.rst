@@ -1,6 +1,6 @@
+Function ddot (o2scl_cblas)
+===========================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function ddot
-=============
-
-.. doxygenfunction:: ::ddot
+.. doxygenfunction:: o2scl_cblas::ddot

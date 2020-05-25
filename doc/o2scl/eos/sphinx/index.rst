@@ -11,8 +11,18 @@ Test reference: :ref:`root <o2scl:root>` :ref:`part_tl
 .. toctree::
    :maxdepth: 1
 
-   class_list
+   hadrons
+   quarks
+   tov
+   momi
+   tidal
+   cnstar
+   rot
+   bps
+   nucleus_rmf
+   sneos
    ref
+   class_list
 
 * :ref:`genindex`
 * :ref:`search`

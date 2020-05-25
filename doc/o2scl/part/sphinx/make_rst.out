@@ -69,7 +69,7 @@ Creating rst files for non-duplicate functions:
 Creating rst files for duplicate functions:
 ---------------------------------------------------
 Parsing function_list:
-Namespace:  function: nucdist_set
+Namespace: o2scl function: nucdist_set
 
 ---------------------------------------------------
 Creating rst files for non-duplicate functions:

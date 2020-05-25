@@ -1,6 +1,6 @@
+Function dscal (o2scl_cblas)
+============================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function dscal
-==============
-
-.. doxygenfunction:: ::dscal
+.. doxygenfunction:: o2scl_cblas::dscal

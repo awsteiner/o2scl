@@ -1,7 +1,7 @@
-:ref:`O2scl <o2scl>`
-
 Download O\ :sub:`2`\ scl
 =========================
+
+:ref:`O2scl <o2scl>`
 
 This documentation is from version 0.925.a1.
 

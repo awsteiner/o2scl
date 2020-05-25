@@ -1,6 +1,6 @@
+Function dnrm2_subrow (o2scl_cblas)
+===================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function dnrm2_subrow
-=====================
-
-.. doxygenfunction:: ::dnrm2_subrow
+.. doxygenfunction:: o2scl_cblas::dnrm2_subrow

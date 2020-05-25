@@ -1,6 +1,6 @@
+Function cont_lower_bound (o2scl)
+=================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function cont_lower_bound
-=========================
-
-.. doxygenfunction:: ::cont_lower_bound
+.. doxygenfunction:: o2scl::cont_lower_bound

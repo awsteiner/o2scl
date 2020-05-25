@@ -1,6 +1,6 @@
+Function vector_level_count (o2scl)
+===================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_level_count
-===========================
-
-.. doxygenfunction:: ::vector_level_count
+.. doxygenfunction:: o2scl::vector_level_count

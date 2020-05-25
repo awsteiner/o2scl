@@ -1,6 +1,6 @@
+Function dasum (o2scl_cblas)
+============================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function dasum
-==============
-
-.. doxygenfunction:: ::dasum
+.. doxygenfunction:: o2scl_cblas::dasum

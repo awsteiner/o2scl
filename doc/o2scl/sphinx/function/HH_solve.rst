@@ -1,6 +1,6 @@
+Function HH_solve (o2scl_linalg)
+================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function HH_solve
-=================
-
-.. doxygenfunction:: ::HH_solve
+.. doxygenfunction:: o2scl_linalg::HH_solve

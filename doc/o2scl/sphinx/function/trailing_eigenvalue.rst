@@ -1,6 +1,6 @@
+Function trailing_eigenvalue (o2scl_linalg)
+===========================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function trailing_eigenvalue
-============================
-
-.. doxygenfunction:: ::trailing_eigenvalue
+.. doxygenfunction:: o2scl_linalg::trailing_eigenvalue

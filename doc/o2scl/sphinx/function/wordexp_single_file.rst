@@ -1,6 +1,6 @@
+Function wordexp_single_file (o2scl)
+====================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function wordexp_single_file
-============================
-
-.. doxygenfunction:: ::wordexp_single_file
+.. doxygenfunction:: o2scl::wordexp_single_file

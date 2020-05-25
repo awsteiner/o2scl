@@ -1,6 +1,6 @@
+Function daxpy_subrow (o2scl_cblas)
+===================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function daxpy_subrow
-=====================
-
-.. doxygenfunction:: ::daxpy_subrow
+.. doxygenfunction:: o2scl_cblas::daxpy_subrow

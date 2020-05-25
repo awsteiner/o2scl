@@ -1,6 +1,6 @@
+Function dscal_subrow (o2scl_cblas)
+===================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function dscal_subrow
-=====================
-
-.. doxygenfunction:: ::dscal_subrow
+.. doxygenfunction:: o2scl_cblas::dscal_subrow

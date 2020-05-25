@@ -1,6 +1,6 @@
+Function dtrmv (o2scl_cblas)
+============================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function dtrmv
-==============
-
-.. doxygenfunction:: ::dtrmv
+.. doxygenfunction:: o2scl_cblas::dtrmv

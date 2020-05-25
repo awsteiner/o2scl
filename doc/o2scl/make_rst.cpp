@@ -116,13 +116,38 @@ int main(int argc, char *argv[]) {
       // so we skip it
       if (s.length()>0) {
 
+	string ns;
+	// Extract namespace for a function
+	if (kk==1) {
+	  size_t loc=s.find("namespace")+14;
+	  size_t cnt=0;
+	  for(size_t j=loc;j<s.length();j++) {
+	    if (s[j]=='_') cnt++;
+	    if (cnt==3) {
+	      size_t loc2=j;
+	      string stemp=s.substr(loc,loc2-loc);
+	      if (stemp==((string)"__acol")) {
+		ns="o2scl_acol";
+	      } else if (stemp==((string)"__cblas")) {
+		ns="o2scl_cblas";
+	      } else if (stemp==((string)"__hdf")) {
+		ns="o2scl_hdf";
+	      } else if (stemp==((string)"__linalg")) {
+		ns="o2scl_linalg";
+	      } else {
+		ns="o2scl";
+	      }
+	      j=s.length();
+	    }
+	  }
+	}
+	
 	if (xml_get_tag_element(s,"name",s)!=0) {
 	  cerr << "Failed to find name in " << s << endl;
 	  exit(-1);
 	}
 
-	// Extract the namespace
-	string ns;
+	// Extract the namespace for a class
 	if (kk==0 && s.find("::")!=std::string::npos) {
 	  size_t loc=s.find("::");
 	  ns=s.substr(0,loc);
@@ -183,7 +208,24 @@ int main(int argc, char *argv[]) {
 	fname_out+=s+".rst";
 	ofstream fout(fname_out);
 
-	// Header
+	// Title
+	string head="Class "+s;
+	if (kk==0 && ns.length()>0) {
+	  head+=" ("+ns+")";
+	} else {
+	  head="Function "+s;
+	  if (ns.length()>0) {
+	    head+=" ("+ns+")";
+	  }
+	}
+	fout << head << endl;
+	for(size_t i=0;i<head.length();i++) {
+	  fout << "=";
+	}
+	fout << endl;
+	fout << endl;
+
+	// Links to top-level 
 	if (context==((string)"main")) {
 	  if (kk==0) {
 	    fout << ":ref:`O2scl <o2scl>` : :ref:`Class List`\n" << endl;
@@ -211,15 +253,6 @@ int main(int argc, char *argv[]) {
 	  }
 	}
 	
-	string head="Class "+s;
-	if (kk==1) head="Function "+s;
-	fout << head << endl;
-	for(size_t i=0;i<head.length();i++) {
-	  fout << "=";
-	}
-	fout << endl;
-	fout << endl;
-
 	// Output the class or function directive
 	if (kk==0) {
 	  fout << ".. doxygenclass:: " << ns << "::" << s << endl;

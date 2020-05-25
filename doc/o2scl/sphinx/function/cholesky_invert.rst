@@ -1,6 +1,6 @@
+Function cholesky_invert (o2scl_linalg)
+=======================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function cholesky_invert
-========================
-
-.. doxygenfunction:: ::cholesky_invert
+.. doxygenfunction:: o2scl_linalg::cholesky_invert

@@ -1,6 +1,6 @@
+Function LU_refine (o2scl_linalg)
+=================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function LU_refine
-==================
-
-.. doxygenfunction:: ::LU_refine
+.. doxygenfunction:: o2scl_linalg::LU_refine

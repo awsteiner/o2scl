@@ -1,6 +1,6 @@
+Function vector_sorted_quantile (o2scl)
+=======================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_sorted_quantile
-===============================
-
-.. doxygenfunction:: ::vector_sorted_quantile
+.. doxygenfunction:: o2scl::vector_sorted_quantile

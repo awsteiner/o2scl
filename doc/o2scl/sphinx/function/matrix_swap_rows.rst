@@ -1,6 +1,6 @@
+Function matrix_swap_rows (o2scl)
+=================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function matrix_swap_rows
-=========================
-
-.. doxygenfunction:: ::matrix_swap_rows
+.. doxygenfunction:: o2scl::matrix_swap_rows

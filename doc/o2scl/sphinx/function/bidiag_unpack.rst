@@ -1,6 +1,6 @@
+Function bidiag_unpack (o2scl_linalg)
+=====================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function bidiag_unpack
-======================
-
-.. doxygenfunction:: ::bidiag_unpack
+.. doxygenfunction:: o2scl_linalg::bidiag_unpack

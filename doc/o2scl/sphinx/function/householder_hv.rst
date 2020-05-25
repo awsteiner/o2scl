@@ -1,6 +1,6 @@
+Function householder_hv (o2scl_linalg)
+======================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function householder_hv
-=======================
-
-.. doxygenfunction:: ::householder_hv
+.. doxygenfunction:: o2scl_linalg::householder_hv

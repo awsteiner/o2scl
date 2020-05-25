@@ -1,6 +1,6 @@
+Function cholesky_det (o2scl_linalg)
+====================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function cholesky_det
-=====================
-
-.. doxygenfunction:: ::cholesky_det
+.. doxygenfunction:: o2scl_linalg::cholesky_det

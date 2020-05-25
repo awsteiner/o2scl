@@ -1,6 +1,6 @@
+Function vector_max_index (o2scl)
+=================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vector_max_index
-=========================
-
-.. doxygenfunction:: ::vector_max_index
+.. doxygenfunction:: o2scl::vector_max_index

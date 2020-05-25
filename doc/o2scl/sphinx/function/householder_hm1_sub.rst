@@ -1,6 +1,6 @@
+Function householder_hm1_sub (o2scl_linalg)
+===========================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function householder_hm1_sub
-============================
-
-.. doxygenfunction:: ::householder_hm1_sub
+.. doxygenfunction:: o2scl_linalg::householder_hm1_sub

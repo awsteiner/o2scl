@@ -1,6 +1,6 @@
+Function vt100_8bit_summ (o2scl)
+================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vt100_8bit_summ
-========================
-
-.. doxygenfunction:: ::vt100_8bit_summ
+.. doxygenfunction:: o2scl::vt100_8bit_summ

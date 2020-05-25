@@ -1,6 +1,6 @@
+Function vt100_yellow_bg (o2scl)
+================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vt100_yellow_bg
-========================
-
-.. doxygenfunction:: ::vt100_yellow_bg
+.. doxygenfunction:: o2scl::vt100_yellow_bg

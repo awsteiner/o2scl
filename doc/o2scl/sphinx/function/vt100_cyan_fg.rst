@@ -1,6 +1,6 @@
+Function vt100_cyan_fg (o2scl)
+==============================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function vt100_cyan_fg
-======================
-
-.. doxygenfunction:: ::vt100_cyan_fg
+.. doxygenfunction:: o2scl::vt100_cyan_fg

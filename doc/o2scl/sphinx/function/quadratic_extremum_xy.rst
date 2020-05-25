@@ -1,6 +1,6 @@
+Function quadratic_extremum_xy (o2scl)
+======================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function quadratic_extremum_xy
-==============================
-
-.. doxygenfunction:: ::quadratic_extremum_xy
+.. doxygenfunction:: o2scl::quadratic_extremum_xy

@@ -1,6 +1,6 @@
+Function QRPT_decomp (o2scl_linalg)
+===================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function QRPT_decomp
-====================
-
-.. doxygenfunction:: ::QRPT_decomp
+.. doxygenfunction:: o2scl_linalg::QRPT_decomp

@@ -62,18 +62,25 @@ SPHINXPROJ    = o2scl
 SOURCEDIR     = .
 BUILDDIR      = build
 
+oinv:
+	python3 -msphinx.ext.intersphinx build/html/objects.inv | more
+
 sphinx-help:
 	sphinx-build --help
 
 html: Makefile
-	sphinx-build -M html "." "build"
+	sphinx-build -v -b html "." build/html
+
+html-nit: Makefile
+	sphinx-build -v -n -b html "." build/html
 
 full-html:
-	sphinx-build -a -E -M html "." build
+	sphinx-build -v -a -E -b html "." build/html
 
 rst-files: empty
 	grep "kind=\"function\"" ../xml/index.xml | \
 		grep "refid=\"namespaceo2scl" | grep -v Eigen | \
+		grep -v "refid=\"namespaceo2scl__const" | \
 		grep -v arma > function_list
 	grep "kind=\"class\"" ../xml/index.xml | grep -v "cli::parameter" \
 		> class_list

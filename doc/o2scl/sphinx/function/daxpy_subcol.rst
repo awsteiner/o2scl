@@ -1,6 +1,6 @@
+Function daxpy_subcol (o2scl_cblas)
+===================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function daxpy_subcol
-=====================
-
-.. doxygenfunction:: ::daxpy_subcol
+.. doxygenfunction:: o2scl_cblas::daxpy_subcol

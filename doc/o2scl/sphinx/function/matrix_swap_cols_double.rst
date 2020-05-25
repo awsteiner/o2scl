@@ -1,6 +1,6 @@
+Function matrix_swap_cols_double (o2scl)
+========================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function matrix_swap_cols_double
-================================
-
-.. doxygenfunction:: ::matrix_swap_cols_double
+.. doxygenfunction:: o2scl::matrix_swap_cols_double

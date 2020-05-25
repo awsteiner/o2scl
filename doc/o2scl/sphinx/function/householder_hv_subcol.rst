@@ -1,6 +1,6 @@
+Function householder_hv_subcol (o2scl_linalg)
+=============================================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function householder_hv_subcol
-==============================
-
-.. doxygenfunction:: ::householder_hv_subcol
+.. doxygenfunction:: o2scl_linalg::householder_hv_subcol

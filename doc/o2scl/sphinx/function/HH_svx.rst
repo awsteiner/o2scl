@@ -1,6 +1,6 @@
+Function HH_svx (o2scl_linalg)
+==============================
+
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-Function HH_svx
-===============
-
-.. doxygenfunction:: ::HH_svx
+.. doxygenfunction:: o2scl_linalg::HH_svx
