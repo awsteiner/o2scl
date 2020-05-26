@@ -19,23 +19,24 @@ available, you can use :ref:`root_cern <root_cern>`.
 
 The :ref:`root <root>` base class provides the structure for three
 different solving methods:
-- :cpp:func:`root::solve()` which solves a function given an initial
-guess ``x``
-- :cpp:func:`root::solve_bkt()` which solves a function given a solution
-bracketed between ``x1`` and ``x2``. The values of the function at
-``x1`` and ``x2`` should have different signs.
-- :cpp:func:`root::solve_de()` which solves a function given an initial
-guess ``x`` and the function's derivative.
+
+- :cpp:func:`o2scl::root::solve()` which solves a function given an
+  initial guess ``x``
+- :cpp:func:`o2scl::root::solve_bkt()` which solves a function given a
+  solution bracketed between ``x1`` and ``x2``. The values of the
+  function at ``x1`` and ``x2`` should have different signs.
+- :cpp:func:`o2scl::root::solve_de()` which solves a function given an
+  initial guess ``x`` and the function's derivative.
 
 There is an example using the one-dimensional solver at
 :ref:`Function object example`.
 
-The :ref:`root <root>` base class also contains the relative
-tolerance (:cpp:var:`root::tol_rel`), absolute tolerance (\ref
+The :ref:`root <root>` base class also contains the relative tolerance
+(:cpp:var:`o2scl::root::tol_rel`), absolute tolerance (\ref
 o2scl::root::tol_abs), the number of iterations (\ref
 o2scl::root::ntrial), the verbosity parameter (\ref
-o2scl::root::verbose), and the number of iterations in the last
-solve (:ref:`root::last_ntrial).
+o2scl::root::verbose), and the number of iterations in the last solve
+(:ref:`root::last_ntrial).
 
 If not all of these three functions are overloaded, then the source
 code in the :ref:`root <root>` base class is designed to try to
@@ -44,10 +45,11 @@ of the one-dimensional solving routines, in their original form, are
 written in the second or third form above. For example,
 :ref:`root_brent_gsl <root_brent_gsl>` is originally a bracketing
 routine of the form :cpp:func:`root::solve_bkt()`, but calls to either
-:cpp:func:`root::solve()` or :cpp:func:`root::solve_de()` will attempt
-to automatically bracket the function given the initial guess that is
-provided. Of course, it is frequently most efficient to use the solver
-in the way it was intended.
+:cpp:func:`o2scl::root::solve()` or
+:cpp:func:`o2scl::root::solve_de()` will attempt to automatically
+bracket the function given the initial guess that is provided. Of
+course, it is frequently most efficient to use the solver in the way
+it was intended.
 
 Multi-dimensional solvers
 -------------------------
@@ -56,30 +58,33 @@ Solution of more than one equation is accomplished by descendants
 of the class :ref:`mroot <mroot>`. The higher-level interface is
 provided by the function :cpp:func:`mroot::msolve()`.
 
-For multi-dimensional solving, you can use either \ref
-o2scl::mroot_cern or :ref:`mroot_hybrids. While \ref
-o2scl::mroot_cern cannot utilize user-supplied derivatives, \ref
-o2scl::mroot_hybrids can use user-supplied derivative
-information (as in the GSL hybridsj method) using the function
-:ref:`mroot_hybrids::msolve_de() .
+For multi-dimensional solving, you can use either :ref:`mroot_cern
+<mroot_cern>` or :ref:`mroot_hybrids <mroot_hybrids>`. While
+:ref:`mroot_cern <mroot_cern>` cannot utilize user-supplied
+derivatives, :ref:`mroot_hybrids <mroot_hybrids>` can use
+user-supplied derivative information (as in the GSL ``hybridsj``
+method) using the function
+:cpp:func:`o2scl::mroot_hybrids::msolve_de()` .
 
-A specialization of :ref:`mroot_hybrids for Armadillo is
-given in :ref:`mroot_hybrids_arma_qr_econ where the QR
-decomposition used in the solver is performed by the Armadillo
-library. A similar specialization for Eigen is in \ref
-o2scl::mroot_hybrids_eigen . These specializations will be
-faster than when the number of variables is sufficiently large.
+A specialization of :ref:`mroot_hybrids <mroot_hybrids>` for Armadillo
+is given in :ref:`mroot_hybrids_arma_qr_econ
+<mroot_hybrids_arma_qr_econ>` where the QR decomposition used in the
+solver is performed by the Armadillo library. A similar specialization
+for Eigen is in :ref:`mroot_hybrids_eigen <mroot_hybrids_eigen>` . These
+specializations will be faster than when the number of variables is
+sufficiently large.
 
 Multi-dimensional solver example
 --------------------------------
 
 This demonstrates several ways of using the multi-dimensional
 solvers to solve the equations
-\f{eqnarray*}
-\sin \left( x_0 - \frac{1}{4} \right) &=& 0 \nonumber \\
-\sin \left( x_1 - \frac{1}{5} \right) &=& 0
-\f}
 
-\dontinclude ex_mroot.cpp
-\skip Example:
-\until End of example
+.. math::
+   
+   \begin{eqnarray}
+   \sin \left( x_0 - \frac{1}{4} \right) &=& 0 \nonumber \\
+   \sin \left( x_1 - \frac{1}{5} \right) &=& 0
+   \end{eqnarray}}
+
+.. literalinclude:: ../../../examples/ex_mroot.cpp

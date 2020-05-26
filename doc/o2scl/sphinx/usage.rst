@@ -97,12 +97,12 @@ indicate which convergence error was returned when the value of
 Of course, the standard ``try, catch`` mechanism of error
 handling may also be used for finer-grained control. 
 
-Another related issue is that O\ :sub:`2`\ scl often calls functions which are
-supplied by the user, these user-designed functions may create
-errors, and the library needs to decide how to deal with them,
-even though it knows little about what is actually happening
-inside these user-defined functions. For this reason, O\ :sub:`2`\ scl does not
-typically try to handle any exceptions or errors occuring in
+Another related issue is that O\ :sub:`2`\ scl often calls functions
+which are supplied by the user, these user-designed functions may
+create errors, and the library needs to decide how to deal with them,
+even though it knows little about what is actually happening inside
+these user-defined functions. For this reason, O\ :sub:`2`\ scl does
+not typically try to handle any exceptions or errors occuring in
 user-specified functions.
 
 GSL error codes and C++ exception types

@@ -69,8 +69,8 @@ statistics. If only one (full or partially full) block is available,
 the standard deviation and uncertainty on the average are reported as
 zero. If no data is available, then calls to ``current_avg()`` will
 call the error handler. See, e.g.
-:cpp:func:`expval_scalar::current_avg()` and
-:cpp:func:`expval_scalar::current_avg_stats()`.
+:cpp:func:`o2scl::expval_scalar::current_avg()` and
+:cpp:func:`o2scl::expval_scalar::current_avg_stats()`.
 
 Many of the :ref:`expval_base <expval_base>` children also support HDF
 I/O.

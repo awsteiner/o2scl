@@ -53,6 +53,7 @@ and a sub-library for handling equations of state of dense matter,
    algebraic
    gslcheb
    unitconv
+   multip
    hdf
    acol
    python

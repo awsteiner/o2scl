@@ -86,6 +86,7 @@ The image below shows how the solver progresses to the
 solution of the example function.
 
 .. image:: ../../../examples/plot/ex_fptr_plot.png
+   :width: 60%	   
    :alt: alt text
 
 .. literalinclude:: ../../../examples/ex_fptr.cpp

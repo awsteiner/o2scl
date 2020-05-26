@@ -36,7 +36,8 @@ o2scl::ode_it_solve . A example demonstrating the iterative
 solution of a boundary value problem is given in the \ref
 ex_ode_it_sect .
 
-\section ex_ode_sect Ordinary differential equations example
+Ordinary differential equations example
+---------------------------------------
 
 This example solves the differential equations defining the the
 Bessel and Airy functions with both the Cash-Karp and
@@ -46,22 +47,21 @@ o2scl::astep_gsl, and \ref o2scl::ode_iv_solve and stores the
 results in \ref o2scl::table objects .
 
 The Bessel functions are defined by
-\f[
-y^{\prime\prime} = \frac{1}{x^2} \left[ 
-y \left(\alpha^2 - x^2\right) -x y^{\prime} \right]
-\f]
+
+.. math::
+
+   y^{\prime\prime} = \frac{1}{x^2} \left[ 
+   y \left(\alpha^2 - x^2\right) -x y^{\prime} \right]
+
 The Bessel functions of the first kind, \f$ J_{\alpha}(x) \f$ are 
 finite at the origin, and the example solves the \f$ \alpha=1 \f$ case,
 where \f$ J_1(0) = 0 \f$ and \f$ J_1^{\prime}(0) = 1/2 \f$.
 
-\dontinclude ex_ode.cpp
-\skip Example:
-\until End of Solution 2
+.. literalinclude:: ../../../examples/ex_ode.cpp
 
-\image html ex_ode_bessel.png "Bessel function with non-adaptive steppers"
-\comment
-\image latex ex_ode_bessel.eps "Bessel function with non-adaptive steppers" width=9cm
-\endcomment
+.. image:: ../../../examples/plot/ex_ode_bessel.png
+   :width: 60%	   
+   :alt: alt text
 
 Note that with a Bessel function and a fixed step size, the
 Prince-Dormand stepper (even though of higher order than the
@@ -69,9 +69,11 @@ Cash-Karp stepper) is actually less accurate, and seriously
 underestimates the error.
 
 The Airy functions are defined by
-\f[
-y^{\prime\prime} = y x
-\f]
+
+.. math::
+   
+   y^{\prime\prime} = y x
+
 This example solves for the Airy function of the first kind, 
 \f$ Ai(x) \f$.
 
@@ -80,9 +82,6 @@ This example solves for the Airy function of the first kind,
 \until End of Solution 4
 
 \image html ex_ode_airy.png "Airy function with non-adaptive steppers"
-\comment
-\image latex ex_ode_airy.eps "Airy function with non-adaptive steppers" width=9cm
-\endcomment
 
 Here the higher order stepper is more accurate.
 
@@ -91,19 +90,12 @@ Here the higher order stepper is more accurate.
 \until End of Solution 7
 
 \image html ex_ode_bessel2.png "Bessel function with adaptive steppers"
-\comment
-\image latex ex_ode_bessel2.eps "Bessel function with adaptive steppers" width=9cm
-\endcomment
 
 \dontinclude ex_ode.cpp
 \skip Solution 8:
 \until End of example
 
 \image html ex_ode_bessel3.png "Bessel function with ode_iv_solve"
-\comment
-\image latex ex_ode_bessel3.eps "Bessel function with ode_iv_solve" width=9cm
-
-\endcomment
 
 \section ex_stiff_sect Stiff differential equations example
 
@@ -122,9 +114,6 @@ adaptive stepper \ref o2scl::astep_gsl . The relative error on
 the adaptive stepper is orders of magnitude larger.
 
 \image html ex_stiff.png "Comparison of non-stiff and stiff ODE integrators"
-\comment
-\image latex ex_stiff.eps "Comparison of non-stiff and stiff ODE integrators" width=9cm
-\endcomment
 
 \dontinclude ex_stiff.cpp
 \skip Example:

@@ -4,18 +4,18 @@ Histograms
 ==========
 
 One- and two-dimensional histograms are implemented in 
-\ref o2scl::hist and \ref o2scl::hist_2d .
+:ref:`hist <hist>` and :ref:`hist_2d <hist_2d>`.
     
-\o2 histograms are made up of bins, where the size of the
+O\ :sub:`2`\ scl histograms are made up of bins, where the size of the
 histogram is equal to the number of bins. Each bin has a upper
-boundary and a lower boundary, also called edges. \o2 histograms
-require that the upper edge of each bin is equal to the lower edge of
-the following bin. Each bin stores one value or "weight". Thus if
-a histogram has size \c n, it has \c n bins but <tt>n+1</tt>
-unique edges.
+boundary and a lower boundary, also called edges. O\ :sub:`2`\ scl
+histograms require that the upper edge of each bin is equal to the
+lower edge of the following bin. Each bin stores one value or
+"weight". Thus if a histogram has size ``n``, it has ``n`` bins but
+``n+1`` unique edges.
 
 By convention, most functions which take a bin index as an
-argument have an extra \c "_i" suffix to distinguish them from
+argument have an extra ``"_i"`` suffix to distinguish them from
 functions which take a floating-point value to be binned as their
 argument.
 
@@ -42,5 +42,5 @@ representative values may be set by the user for each individual
 bin.
 
 Histograms can be read and written to HDF files using
-the <tt>hdf_output</tt> and <tt>hdf_input</tt> functions
-in \ref o2scl_hdf*/
+the ``hdf_output`` and ``hdf_input`` functions
+in \ref o2scl_hdf.

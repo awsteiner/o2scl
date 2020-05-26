@@ -3,7 +3,8 @@
 Minimization
 ============
 
-<b>One-dimensional minimizers</b>
+One-dimensional minimizers
+--------------------------
 
 One-dimensional minimization is performed by descendants of \ref
 o2scl::min_base . There are two one-dimensional minimization
@@ -16,7 +17,8 @@ o2scl::min_base base class is designed to allow future descendants
 to optionally use derivative information, this is not yet
 supported for any one-dimensional minimizers.
 
-<b>Multi-dimensional minimizers</b>
+Multi-dimensional minimizers
+----------------------------
 
 Multi-dimensional minimization is performed by descendants of \ref
 o2scl::mmin_base . \o2 includes a simplex minimizer (\ref
@@ -31,7 +33,8 @@ included and described in separately in \ref conmin_section.
 See an example for the usage of the multi-dimensional minimizers
 in the \ref ex_mmin_sect below. 
 
-<b>Simplex minimizer</b>
+Simplex minimizer
+-----------------
     
 The class \ref o2scl::mmin_simp2 minimizes a function using
 the Nelder-Mead simplex algorithm and does not require any
@@ -44,7 +47,8 @@ the correct minimum, and \ref o2scl::mmin_simp2 can get caught in
 infinite loops, especially for functions which have symmetries
 directly related to one or more of the parameters.
 
-<b>Traditional minimizers with gradient information</b>
+Traditional minimizers with gradient information
+------------------------------------------------
 
 Classes \ref o2scl::mmin_conp, \ref o2scl::mmin_conf, and \ref
 o2scl::mmin_bfgs2 are intended for use when the \gradient of the
@@ -64,14 +68,16 @@ It is important to note that not all of the minimization routines
 test the second derivative to ensure that it doesn't vanish to 
 ensure that we have indeed found a true minimum. 
 
-<b>Fixing Parameters</b>
+Fixing Parameters
+-----------------
 
 The class \ref o2scl::mmin_fix_params provides a convenient way of 
 fixing some of the parameters and minimizing over others,
 without requiring a the function interface to be rewritten. An
 example is given in the \ref ex_mmin_fix_sect example below. 
 
-\section ex_mmin_sect Multidimensional minimizer example
+Multidimensional minimizer example
+----------------------------------
 
 This example uses the \o2 minimizers based on GSL to minimize a
 rather complicated three-dimensional function which has constant
@@ -79,22 +85,27 @@ level surfaces which look like springs oriented along the z-axis.
 This example function, originally created here for \o2, was added
 later to the GSL library minimization test functions. 
 
-\dontinclude ex_mmin.cpp
-\skip Example:
-\until End of example
+.. literalinclude:: ../../../examples/ex_mmin.cpp
 
-\image html ex_mmin_plot.png "Plot showing minimizer trajectories"
-\image html ex_mmin_plot2.png "Plot showing minimizer trajectories"
+.. image:: ../../../examples/plot/ex_mmin_plot.png
+   :width: 60%	   
+   :alt: alt text
+	 
+.. image:: ../../../examples/plot/ex_mmin_plot2.png
+   :width: 60%	   
+   :alt: alt text
 
-\section ex_mmin_fix_sect Minimizer fixing variables 
+Minimizer fixing variables
+--------------------------
 
 This example uses the \ref o2scl::mmin_fix_params class to \minimize
 the function
-\f[
-y=\left(x_0-2\right)^2+\left(x_1-1\right)^2+x_2^2
-\f]
+
+.. math::
+   
+   y=\left(x_0-2\right)^2+\left(x_1-1\right)^2+x_2^2
+
 while fixing some of the parameters.
 
-\dontinclude ex_mmin_fix.cpp
-\skip Example:
-\until End of example
+.. literalinclude:: ../../../examples/ex_mmin_fix.cpp
+

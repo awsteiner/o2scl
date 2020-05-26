@@ -32,11 +32,11 @@ Multi-dimensional interpolation
 
 Multi-dimensional interpolation for table defined on a grid is
 possible with :ref:`tensor_grid <tensor_grid>`. See the documentation
-for :cpp:func:`tensor_grid::interpolate()`,
-:cpp:func:`tensor_grid::interp_linear()` and
-:cpp:func:`tensor_grid::rearrange_and_copy()`. Also, if you want to
-interpolate ``rank-1`` indices to get a vector result, you can use
-:cpp:func:`tensor_grid::interp_linear_vec()` .
+for :cpp:func:`o2scl::tensor_grid::interpolate()`,
+:cpp:func:`o2scl::tensor_grid::interp_linear()` and
+:cpp:func:`o2scl::tensor_grid::rearrange_and_copy()`. Also, if you
+want to interpolate ``rank-1`` indices to get a vector result, you can
+use :cpp:func:`o2scl::tensor_grid::interp_linear_vec()` .
 
 If the data is not on a grid, then inverse distance weighted
 interpolation is performed by :ref:`interpm_idw <interpm_idw>`.
@@ -57,25 +57,23 @@ and performs some interpolations and compares them with the
 exact result.
 \include ex_interp2.scr
 
-\comment
+..
+  AWS: 6/6/19: I'm commenting this out because interp2_planar is
+  unstable and probably not recommended.
 
-AWS: 6/6/19: I'm commenting this out because interp2_planar is
-unstable and probably not recommended.
-
-\section ex_interp2_planar_sect Interpolation of randomly spaced points
+  \section ex_interp2_planar_sect Interpolation of randomly spaced points
     
-For example, with 10 random points in the x-y plane with \f$
--1<x<1 \f$ and \f$ -1<y<1 \f$, the figure contains several
-polygonal regions, each of which represents the set of all points
-in the domain which will be mapped to the same plane in order to
-to approximate the original function.
+  For example, with 10 random points in the x-y plane with \f$
+  -1<x<1 \f$ and \f$ -1<y<1 \f$, the figure contains several
+  polygonal regions, each of which represents the set of all points
+  in the domain which will be mapped to the same plane in order to
+  to approximate the original function.
 
-\image html ex_planar_plot.png "Planes from interp2_planar class"
-\image latex ex_planar_plot.pdf "Planes from interp2_planar class" width=9cm
+  \image html ex_planar_plot.png "Planes from interp2_planar class"
+  \image latex ex_planar_plot.pdf "Planes from interp2_planar class" width=9cm
 
-\endcomment
-
-\section ex_contour_sect Contour lines
+Contour lines
+-------------
 
 This example generates contour lines of the function
 \f[
@@ -95,15 +93,9 @@ signs, and the associated generated contours. The figure clearly
 shows the peaks at \f$ (20,5) \f$ and \f$ (70,2) \f$ .
 
 \image html ex_contour_plot1.png "Contour example plot"
-\comment
-\image latex ex_contour_plot1.eps "Contour example plot" width=9cm
-\endcomment
 
 The :ref:`contour class can also use interpolation to 
 attempt to refine the data grid. The new contours after a 
 refinement of a factor of 5 is given in the figure below.
     
 \image html ex_contour_plot2.png "Contours after regrid_data()"
-\comment
-\image latex ex_contour_plot2.eps "Contour after regrid_data()" width=9cm
-\endcomment
