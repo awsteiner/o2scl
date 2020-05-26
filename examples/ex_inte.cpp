@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 
+// sphinx-example-start
 /* Example: ex_inte.cpp
    -------------------------------------------------------------------
    An example to demonstrate numerical integration.
@@ -144,4 +145,3 @@ int main(void) {
   t.report();
   return 0;
 }
-// End of example

@@ -21,6 +21,14 @@
   -------------------------------------------------------------------
 */
 
+// sphinx-example-start
+/* Example: ex_diff.cpp
+   -------------------------------------------------------------------
+   A simple example for showing computation of derivatives with
+   interpolation from the table class and using the deriv_eqi class.
+   This also shows simple I/O with the table.
+*/
+
 #include <iostream>
 
 #include <boost/numeric/ublas/vector.hpp>
@@ -34,13 +42,6 @@
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
 #endif
-
-/* Example: ex_diff.cpp
-   -------------------------------------------------------------------
-   A simple example for showing computation of derivatives with
-   interpolation from the table class and using the deriv_eqi class.
-   This also shows simple I/O with the table.
-*/
 
 using namespace std;
 using namespace o2scl;

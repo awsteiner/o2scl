@@ -38,13 +38,14 @@ types, e.g.
 - :ref:`ool_hfunct <ool_hfunct>`: Hessian matrix function for constrained
   minimization
 
-Function object example
------------------------
+First function object example
+-----------------------------
 
 The example below demonstrates how C++11 function objects can be used
 with the :ref:`root_brent_gsl <root_brent_gsl>` solver.
 
-.. literalinclude:: ../../../examples/ex_fptr.cpp
+.. literalinclude:: ../../../examples/ex_lambda.cpp
+   :language: c++		    
    :start-after: sphinx-example-start
 
 General comments about function objects
@@ -65,8 +66,8 @@ from the function class and thus the user class will make a direct
 virtual function call. To eliminate the overhead entirely, one can
 specify a new type for the template parameter in the user class.
 
-Function object example
------------------------
+Second function object example
+------------------------------
 
 This example shows how to provide functions to O\ :sub:`2`\ scl
 classes by solving the equation
@@ -89,6 +90,7 @@ solution of the example function.
    :alt: alt text
 
 .. literalinclude:: ../../../examples/ex_fptr.cpp
+   :language: c++		    
    :start-after: sphinx-example-start
 
 Function typedefs

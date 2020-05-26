@@ -21,7 +21,8 @@
   -------------------------------------------------------------------
 */
 
-/* Example: ex_string_conv.cpp
+// sphinx-example-start
+/* Example: ex_string.cpp
    -------------------------------------------------------------------
    Demonstrate the string conversion classes and functions
 */
@@ -75,5 +76,4 @@ int main(void) {
   t.report();
   return 0;
 }
-// End of example
 

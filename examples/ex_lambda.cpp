@@ -121,4 +121,3 @@ int main(void) {
   t.report();
   return 0;
 }
-// End of example

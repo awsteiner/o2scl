@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 
+// sphinx-example-start
 /* Example: ex_ode.cpp
    -------------------------------------------------------------------
    An example to demonstrate solving differential equations
@@ -470,4 +471,3 @@ int main(void) {
 
   return 0;
 }
-// End of example

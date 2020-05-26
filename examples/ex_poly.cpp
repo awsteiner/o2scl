@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 
+// sphinx-example-start
 /* Example: ex_poly.cpp
    -------------------------------------------------------------------
    Demonstrate the solution of the Chebyshev polynomials
@@ -125,4 +126,3 @@ int main(void) {
   t.report();
   return 0;
 }
-// End of example
