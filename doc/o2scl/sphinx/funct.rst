@@ -44,10 +44,9 @@ Function object example
 The example below demonstrates how C++11 function objects can be used
 with the :ref:`root_brent_gsl <root_brent_gsl>` solver.
 
-\dontinclude ex_lambda.cpp
-\skip Example:
-\until End of example
-    
+.. literalinclude:: ../../../examples/ex_fptr.cpp
+   :start-after: sphinx-example-start
+
 General comments about function objects
 ---------------------------------------
 
@@ -90,6 +89,7 @@ solution of the example function.
    :alt: alt text
 
 .. literalinclude:: ../../../examples/ex_fptr.cpp
+   :start-after: sphinx-example-start
 
 Function typedefs
 -----------------

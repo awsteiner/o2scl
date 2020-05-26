@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 
+// sphinx-example-start
 /* Example: ex_lambda.cpp
    -------------------------------------------------------------------
    Demonstrate how to use standard library and lambda function objects

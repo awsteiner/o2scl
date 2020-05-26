@@ -48,7 +48,7 @@ Several classes integrate arbitrary one-dimensional functions:
    
   W(x)=(x-a)^{\alpha}(b-x)^{\beta}\log^{\mu}(x-a)\log^{\nu}(b-x)
 
-  is performed by :ref:`inte_qaws_gsl <inte_qaws_gsl>`. 
+is performed by :ref:`inte_qaws_gsl <inte_qaws_gsl>`. 
 
 Note that some of the integrators support multiprecision,
 see :ref:`Multiprecision Support`.
@@ -89,7 +89,7 @@ integration classes attempt to ensure that
   |\mathrm{result}-I| \leq \mathrm{Max}(\mathrm{tol\_abs},
   \mathrm{tol\_rel}|I|)
 
-  and returns an error to attempt to ensure that
+and returns an error to attempt to ensure that
 
 .. math::
   
@@ -177,10 +177,11 @@ errors:
 - ``Maximum number of subdivisions 'value' reached in
   class::function().`` [ :cpp:enumerator:`exc_emaxiter` ] This occurs
   if the refinement algorithm runs out of allocated workspace. The
-  number of iterations required for the most recent call to \ref
-  o2scl::inte::integ() or :ref:`inte::integ_err() is given in
-  :ref:`inte::last_iter. This number will always be less than
-  or equal to the workspace size.
+  number of iterations required for the most recent call to
+  :cpp:func:`o2scl::inte::integ()` or
+  :cpp:func:`o2scl::inte::integ_err()` is given in
+  :cpp:var:`o2scl::inte::last_iter`. This number will always be less
+  than or equal to the workspace size.
 - ``Roundoff error prevents tolerance from being achieved in
   class::function().`` [ :cpp:enumerator:`exc_eround` ] The refinement
   procedure counts round-off errors as they occur and terminates

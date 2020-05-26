@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 
+// sphinx-example-start
 /* Example: ex_fptr.cpp
    -------------------------------------------------------------------
    This gives an example of the how member functions and external
@@ -31,6 +32,7 @@
    to the function.
 */
 
+#include <fstream>
 #include <o2scl/funct.h>
 #include <o2scl/root_brent_gsl.h>
 #include <o2scl/test_mgr.h>
@@ -56,8 +58,8 @@ public:
   
 };
 
-// Simple code to write the function to a file
-int write_file(double sol);
+// This header contains the code for write_file()
+#include "ex_fptr.h"
 
 int main(void) {
   
@@ -110,17 +112,3 @@ int main(void) {
 }
 // End of example
 
-// Simple output function
-int write_file(double x1) {
-  my_class c;
-  c.set_parameter();
-  ofstream fout;
-  double p=1.1;
-  fout.open("ex_fptr.out");
-  fout << "x y" << endl;
-  for(double x=-1.0;x<=2.00001;x+=0.001) {
-    fout << x << " " << c.function_to_solve(x,p) << endl;
-  }
-  fout.close();
-  return 0;
-}
