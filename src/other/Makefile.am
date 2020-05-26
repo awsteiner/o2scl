@@ -117,6 +117,10 @@ else
 VCHECK_LIBS = ../libo2scl.la
 endif
 
+if O2SCL_OPENMP
+fract_ts_LDFLAGS = -fopenmp
+endif
+
 smooth_gsl_ts_LDADD = $(VCHECK_LIBS)
 series_acc_ts_LDADD = $(VCHECK_LIBS)
 interp2_planar_ts_LDADD = $(VCHECK_LIBS)
