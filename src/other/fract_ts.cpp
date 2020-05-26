@@ -58,7 +58,15 @@ int main(void) {
   fract f;
   table3d t3d;
   std::vector<double> roots_x, roots_y, min, max;
-  
+
+  roots_x.push_back(-1.0);
+  roots_x.push_back(1.0);
+  roots_x.push_back(0.0);
+  roots_x.push_back(0.0);
+  roots_y.push_back(0.0);
+  roots_y.push_back(0.0);
+  roots_y.push_back(-1.0);
+  roots_y.push_back(1.0);
   f.nrf(z4m1,grid,grid,1000,1.0e9,t3d,roots_x,roots_y,min,max);
 
   hdf_file hf;
