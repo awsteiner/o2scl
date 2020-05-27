@@ -89,8 +89,7 @@ namespace o2scl {
       set_proposal(). To go back to the default random walk method,
       one can call the function \ref unset_proposal().
 
-      If \ref aff_inv is set to true and the number of walkers, \ref
-      n_walk is set to a number larger than 1, then affine-invariant
+      If \ref aff_inv is set to true, then affine-invariant
       sampling is used. For affine-invariant sampling, the variable 
       \ref step_fac represents the value of \f$ a \f$, the 
       limits of the distribution for \f$ z \f$.
@@ -459,6 +458,14 @@ namespace o2scl {
       }
       n_threads=meas.size();
     }
+    if (aff_inv==true && n_walk<=1) {
+      if (verbose>0) {
+	std::cout << "mcmc_para::mcmc(): Affine-invariant sampling selected "
+		  << "but n_walk is <= 1.\n  Setting n_walk to 3 * n_params."
+		  << std::endl;
+      }
+      n_walk=3*n_params;
+    }
 
     // Set start time if necessary
     if (mpi_start_time==0.0) {
@@ -687,7 +694,7 @@ namespace o2scl {
 #pragma omp for
 #endif
 	for(size_t it=0;it<n_threads;it++) {
-	  
+
 	  // Initialize each walker in turn
 	  for(curr_walker[it]=0;curr_walker[it]<n_walk &&
 		mcmc_done_flag[it]==false;curr_walker[it]++) {
@@ -1023,7 +1030,8 @@ namespace o2scl {
     // sufficiently large.
 
     if (verbose>=3) {
-      std::cout << "Press a key and type enter to continue. ";
+      std::cout << "Initial point done. "
+		<< "Press a key and type enter to continue. ";
       char ch;
       std::cin >> ch;
     }
@@ -1338,7 +1346,7 @@ namespace o2scl {
 #pragma omp for
 #endif
 	  for(size_t it=0;it<n_threads;it++) {
-	  
+
 	    // Choose walker to move
 	    curr_walker[it]=mcmc_iters % n_walk;
 	    
