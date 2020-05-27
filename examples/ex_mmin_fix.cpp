@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 
+// sphinx-example-start
 /* Example: ex_mmin_fix.cpp
    -------------------------------------------------------------------
    Example usage of the mmin_fix class, which fixes some of the
@@ -122,4 +123,3 @@ int main(void) {
   t.report();
   return 0;
 }
-// End of example

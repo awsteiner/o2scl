@@ -245,6 +245,8 @@ e^{-x^2} ~dx` with :ref:`inte_qagi_gsl <inte_qagi_gsl>`, the integral
 results.
 
 .. literalinclude:: ../../../examples/ex_inte.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start
 
 .. 
   Multi-dimensional integration example

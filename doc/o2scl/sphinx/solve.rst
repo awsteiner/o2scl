@@ -29,7 +29,7 @@ different solving methods:
   initial guess ``x`` and the function's derivative.
 
 There is an example using the one-dimensional solver at
-:ref:`Function object example`.
+:ref:`Second function object example`.
 
 The :ref:`root <root>` base class also contains the relative tolerance
 (:cpp:var:`o2scl::root::tol_rel`), absolute tolerance (\ref
@@ -44,8 +44,8 @@ automatically provide the solution using the remaining functions. Most
 of the one-dimensional solving routines, in their original form, are
 written in the second or third form above. For example,
 :ref:`root_brent_gsl <root_brent_gsl>` is originally a bracketing
-routine of the form :cpp:func:`root::solve_bkt()`, but calls to either
-:cpp:func:`o2scl::root::solve()` or
+routine of the form :cpp:func:`o2scl::root::solve_bkt()`, but calls to
+either :cpp:func:`o2scl::root::solve()` or
 :cpp:func:`o2scl::root::solve_de()` will attempt to automatically
 bracket the function given the initial guess that is provided. Of
 course, it is frequently most efficient to use the solver in the way
@@ -56,7 +56,7 @@ Multi-dimensional solvers
 
 Solution of more than one equation is accomplished by descendants
 of the class :ref:`mroot <mroot>`. The higher-level interface is
-provided by the function :cpp:func:`mroot::msolve()`.
+provided by the function :cpp:func:`o2scl::mroot::msolve()`.
 
 For multi-dimensional solving, you can use either :ref:`mroot_cern
 <mroot_cern>` or :ref:`mroot_hybrids <mroot_hybrids>`. While
@@ -85,6 +85,8 @@ solvers to solve the equations
    \begin{eqnarray}
    \sin \left( x_0 - \frac{1}{4} \right) &=& 0 \nonumber \\
    \sin \left( x_1 - \frac{1}{5} \right) &=& 0
-   \end{eqnarray}}
+   \end{eqnarray}
 
 .. literalinclude:: ../../../examples/ex_mroot.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start

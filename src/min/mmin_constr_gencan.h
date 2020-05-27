@@ -612,7 +612,7 @@ namespace o2scl {
 	/* In principle, the current point could be slightly changed
 	 * here, requiring a new function and gradient
 	 * evaluation. But, according to the algorithms authors, this
-	 * is done just to account for points that are "numerically¨
+	 * is done just to account for points that are "numerically"
 	 * at faces already. Thus, no additional evaluations are
 	 * performed. (May 11th, 2005).
 	 */

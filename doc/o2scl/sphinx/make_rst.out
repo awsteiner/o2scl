@@ -46,6 +46,7 @@ Namespace: o2scl class: deriv_cern
 Namespace: o2scl class: deriv_eqi
 Namespace: o2scl class: deriv_gsl
 Namespace: o2scl class: diff_evo
+Namespace: o2scl class: diff_evo_adapt
 Namespace: o2scl class: edge_crossings
 Namespace: o2scl class: err_hnd_cpp
 Namespace: o2scl class: err_hnd_gsl
@@ -208,6 +209,7 @@ Namespace: o2scl class: mmin_bfgs2
 Namespace: o2scl class: mmin_conf
 Namespace: o2scl class: mmin_conp
 Namespace: o2scl class: mmin_constr
+Namespace: o2scl class: mmin_constr_gencan
 Namespace: o2scl class: mmin_constr_pgrad
 Namespace: o2scl class: mmin_constr_spg
 Namespace: o2scl class: mmin_fix_params

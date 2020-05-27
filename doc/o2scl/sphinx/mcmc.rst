@@ -51,3 +51,5 @@ MCMC example
 ------------
 
 .. literalinclude:: ../../../examples/ex_mcmc.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start

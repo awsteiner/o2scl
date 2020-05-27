@@ -74,3 +74,5 @@ for :math:`k = 1,\ldots,n` These roots are used in
 Chebyshev polynomials .
 
 .. literalinclude:: ../../../examples/ex_poly.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start

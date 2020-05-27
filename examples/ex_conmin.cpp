@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 
+// sphinx-example-start
 /* Example: ex_conmin.cpp
    -------------------------------------------------------------------
    This gives an example of the use of a constrained minimizer. This
@@ -112,4 +113,3 @@ int main(void) {
   t.report();
   return 0;
 }
-// End of example

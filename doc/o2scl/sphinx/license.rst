@@ -3,7 +3,8 @@
 License Information
 ===================
     
-\section lic_index_section Licenses
+Licenses
+--------
 
 - License for \o2 , \ref gplv3_section
 - License for HDF5, \ref hdf5_lic_section
@@ -24,7 +25,8 @@ under version 3 of the GPL.
 
 \verbinclude gpl_license.txt
 
-\section hdf5_lic_section HDF5 License
+HDF5 License
+------------
 
 The \o2 library includes classes which manipulate HDF files. The
 NCSA and LLNL licenses for HDF are compatible with GPLv3, as
@@ -37,7 +39,8 @@ PREFIX/doc/extras/hdf_license.txt where the default \c PREFIX is
 
 \verbinclude hdf_license.txt
 
-\section gnu_doc_lic_section GNU Free Documentation License
+GNU Free Documentation License
+------------------------------
 
 This documentation is provided under the GNU Free Documentation
 License, as given below and provided in \c

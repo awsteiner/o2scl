@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 
+// sphinx-example-start
 /* Example: ex_mmin.cpp
    -------------------------------------------------------------------
    Example usage of the multidimensional minimizers with and without
@@ -227,7 +228,6 @@ int main(void) {
   t.report();
   return 0;
 }
-// End of example
 
 /*
   The BFGS minimizer doesn't appear to work for this particular

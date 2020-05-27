@@ -152,7 +152,7 @@ namespace o2scl {
 	  // as from agent x
 	  others = this->pick_unique_agents( 3, x );
 
-	  // Pick a random index R ¿ {1, ..., n}, where the highest 
+	  // Pick a random index R in {1, ..., n}, where the highest 
 	  // possible value n is the dimensionality of the problem 
 	  // to be optimized.
 	  size_t r = floor(this->gr.random()*nvar);

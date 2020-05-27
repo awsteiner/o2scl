@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 
+// sphinx-example-start
 /* Example: ex_mroot.cpp
    -------------------------------------------------------------------
    Several ways to use an O2scl solver to solve a simple function
@@ -330,4 +331,3 @@ int main(void) {
   t.report();
   return 0;
 }
-// End of example

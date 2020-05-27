@@ -43,6 +43,7 @@
   <compound refid="classo2scl_1_1deriv__eqi" kind="class"><name>o2scl::deriv_eqi</name>
   <compound refid="classo2scl_1_1deriv__gsl" kind="class"><name>o2scl::deriv_gsl</name>
   <compound refid="classo2scl_1_1diff__evo" kind="class"><name>o2scl::diff_evo</name>
+  <compound refid="classo2scl_1_1diff__evo__adapt" kind="class"><name>o2scl::diff_evo_adapt</name>
   <compound refid="classo2scl_1_1edge__crossings" kind="class"><name>o2scl::edge_crossings</name>
   <compound refid="classo2scl_1_1err__hnd__cpp" kind="class"><name>o2scl::err_hnd_cpp</name>
   <compound refid="classo2scl_1_1err__hnd__gsl" kind="class"><name>o2scl::err_hnd_gsl</name>
@@ -205,6 +206,7 @@
   <compound refid="classo2scl_1_1mmin__conf" kind="class"><name>o2scl::mmin_conf</name>
   <compound refid="classo2scl_1_1mmin__conp" kind="class"><name>o2scl::mmin_conp</name>
   <compound refid="classo2scl_1_1mmin__constr" kind="class"><name>o2scl::mmin_constr</name>
+  <compound refid="classo2scl_1_1mmin__constr__gencan" kind="class"><name>o2scl::mmin_constr_gencan</name>
   <compound refid="classo2scl_1_1mmin__constr__pgrad" kind="class"><name>o2scl::mmin_constr_pgrad</name>
   <compound refid="classo2scl_1_1mmin__constr__spg" kind="class"><name>o2scl::mmin_constr_spg</name>
   <compound refid="classo2scl_1_1mmin__fix__params" kind="class"><name>o2scl::mmin_fix_params</name>

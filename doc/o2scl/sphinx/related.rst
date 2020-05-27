@@ -50,10 +50,6 @@ library in C++. Eigen is licensed under MPLv2.
 - Armadillo - (http://arma.sourceforge.net) \n A linear algebra
 library in C++. Armadillo is licensed under MPLv2.
 
-- FLENS - (http://flens.sourceforge.net) \n A C++ library with
-object-oriented linear algebra types and an interface to BLAS
-and LAPACK. 
-
 - MESA - Modules for Experiments in Stellar Astrophysics,
 (http://mesa.sourceforge.net) \n An excellent FORTRAN library with
 accurate low-density equations of state, interpolation, opacities

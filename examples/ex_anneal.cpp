@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 
+// sphinx-example-start
 /* Example: ex_anneal.cpp
    -------------------------------------------------------------------
    An example to demonstrate minimization by simulated annealing
@@ -105,7 +106,6 @@ int main(int argc, char *argv[]) {
   
   return 0;
 }
-// End of example
 
 void make_plot_data() {
   table3d t3d;

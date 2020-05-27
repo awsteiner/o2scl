@@ -34,4 +34,6 @@ the minimum obtained by the example program.
    :alt: alt text
 
 .. literalinclude:: ../../../examples/ex_anneal.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start
 
