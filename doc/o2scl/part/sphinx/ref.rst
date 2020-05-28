@@ -1,7 +1,7 @@
-:ref:`O2scl_part <o2sclp>`
-
 Bibliography
 ============
+
+:ref:`O2scl_part <o2sclp>`
 
 .. [Audi03] `G. Audi, A. H. Wapstra, and C. Thibault
    <https://doi.org/10.1016/j.nuclphysa.2003.11.003>`_,

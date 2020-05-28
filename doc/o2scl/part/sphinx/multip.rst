@@ -1,7 +1,7 @@
-:ref:`O2scl_part <o2sclp>`
-
 Multiprecision Support
 ======================
+
+:ref:`O2scl_part <o2sclp>`
 
 Multiprecision support for \o2p classes is in progress. 
 The data classes \ref o2scl::thermo_tl and \ref o2scl::part_tl

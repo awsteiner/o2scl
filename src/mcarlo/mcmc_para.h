@@ -2473,9 +2473,9 @@ namespace o2scl {
 	\c low and \c high, using \c func as the objective function and
 	calling the measurement function \c meas at each MC point.
     */
-    virtual int mcmc_fill(size_t n_params_local, 
-			  vec_t &low, vec_t &high, std::vector<func_t> &func,
-			  std::vector<fill_t> &fill) {
+  virtual int mcmc_fill(size_t n_params_local, 
+			vec_t &low, vec_t &high, std::vector<func_t> &func,
+			std::vector<fill_t> &fill) {
     
     n_params=n_params_local;
     low_copy=low;

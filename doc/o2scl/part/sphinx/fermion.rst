@@ -1,17 +1,16 @@
-:ref:`O2scl_part <o2sclp>`
-
 Fermions
 ========
+
+:ref:`O2scl_part <o2sclp>`
 
 Relativistic and Non-relativistic Fermions
 ------------------------------------------
 
-There are a few distinctions between how relativistic 
-and nonrelativistic fermions are handled in :ref:`o2scl <o2scl:o2scl>` which
-are worth noting. For an interacting relativistic fermion, the 
-effective mass, :math:`m^{*}`, and the effective
-chemical potential, :math:`\nu` are defined so that
-the energy density is
+There are a few distinctions between how relativistic and
+nonrelativistic fermions are handled in :ref:`o2scl_part <o2sclp>`
+which are worth noting. For an interacting relativistic fermion, the
+effective mass, :math:`m^{*}`, and the effective chemical potential,
+:math:`\nu` are defined so that the energy density is
 
 .. math::
 
@@ -24,17 +23,15 @@ the energy density is
    {1+\exp\left[\left(\sqrt{k^2+m^{*2}}-
    \bar{\nu}_{\mathrm{R}}-m\right)/T\right]}
 
-for a relativistic fermion, where we define the chemical
-potential without the rest mass with
-:math:`\bar{\nu}_{\mathrm{R}} \equiv \nu_{\mathrm{R}}-m`.
-When  o2scl::part_tl::inc_rest_mass is true, 
- o2scl::part::nu is equal to :math:`\nu_{\mathrm{R}}`
-and when  o2scl::part_tl::inc_rest_mass is false,
- o2scl::part_tl::nu is equal to :math:`\bar{\nu}_{\mathrm{R}}` .
-If we define :math:`\psi_{\mathrm{R}} = (\nu_{\mathrm{R}}-m^{*})/T`, 
-:math:`\phi = m^{*}/T`, 
-:math:`u \equiv k/T` then
-the energy density is 
+for a relativistic fermion, where we define the chemical potential
+without the rest mass with :math:`\bar{\nu}_{\mathrm{R}} \equiv
+\nu_{\mathrm{R}}-m`. When :cpp:var:`o2scl::part_tl::inc_rest_mass` is
+true, :cpp:var:`o2scl::part_tl::nu` is equal to :math:`\nu_{\mathrm{R}}`
+and when :cpp:var:`o2scl::part_tl::inc_rest_mass` is false,
+:cpp:var:`o2scl::part_tl::nu` is equal to
+:math:`\bar{\nu}_{\mathrm{R}}` . If we define :math:`\psi_{\mathrm{R}}
+= (\nu_{\mathrm{R}}-m^{*})/T`, :math:`\phi = m^{*}/T`, :math:`u \equiv
+k/T` then the energy density is
 
 .. math::
 
@@ -42,11 +39,11 @@ the energy density is
    du~\frac{u^2 \sqrt{u^2+\phi^2}}
    { 1+\exp\left[\sqrt{u^2+\phi^2} - \psi_{\mathrm{R}} - \phi \right]}
 
-This expression is used for 
- o2scl::part_calibrate_class::part_calibrate() 
-because :math:`\varepsilon_{\mathrm{R}}/(g T^4)` depends only on 
-:math:`\psi_{\mathrm{R}}` and :math:`\phi`.
-For a nonrelativistic fermion,
+This expression is used for
+:cpp:var:`o2scl::part_calibrate_class::part_calibrate()` because
+:math:`\varepsilon_{\mathrm{R}}/(g T^4)` depends only on
+:math:`\psi_{\mathrm{R}}` and :math:`\phi`. For a nonrelativistic
+fermion,
 
 .. math::
 
@@ -66,13 +63,14 @@ that the rest mass energy density is
 both cases, but it is included in :math:`\varepsilon_{\mathrm{R}}`
 while it is not included in :math:`\bar{\varepsilon}_{\mathrm{NR}}` .
 Taking the nonrelativsitic limit of the relativistic energy density
-shows that :math:`\nu_{\mathrm{R}} - m^{*} = \bar{\nu}_{\mathrm{NR}}`
-. Thus the class o2scl::fermion_nonrel_tl uses the value stored
-in  o2scl::part_tl::nu slightly differently than does \ref
-o2scl::fermion_rel_tl and  o2scl::fermion_eff . The Fermi momentum
-is also handled slightly differently, :math:` k_{F,\mathrm{R}} \equiv
+shows that :math:`\nu_{\mathrm{R}} - m^{*} = \bar{\nu}_{\mathrm{NR}}`.
+Thus the class :ref:`fermion_nonrel_tl <fermion_nonrel_tl>` uses the
+value stored in :cpp:var:`o2scl::part_tl::nu` slightly differently
+than does :ref:`fermion_rel_tl <fermion_rel_tl>` and :ref:`fermion_eff
+<fermion_eff>` . The Fermi momentum is also handled slightly
+differently, :math:`k_{F,\mathrm{R}} \equiv
 \sqrt{\nu_{\mathrm{R}}^2-m^{* 2}}` and :math:`k_{F,\mathrm{NR}} \equiv
-\sqrt{2 \bar{\nu}_{\mathrm{NR}} m^{*}}` .
+\sqrt{2 \bar{\nu}_{\mathrm{NR}} m^{*}}`.
 
 Now if we define :math:`u_{\mathrm{NR}} \equiv k^2/(2 m^{*} T)` 
 and :math:`\psi_{\mathrm{NR}} \equiv (\nu_{\mathrm{NR}}-m^{*})/T`
@@ -83,11 +81,10 @@ then the argument of the exponential is
    \frac{k^2}{2 m^{*} T } - \frac{\bar{\nu}_{\mathrm{NR}}}{T} = 
    u_{\mathrm{NR}} - \psi_{\mathrm{NR}} + \frac{m}{T}- \phi
 
-which is inconvenient because then :math:`
-\varepsilon_{\mathrm{NR}}/(g T^4)` is no longer a function of
-:math:`\psi_{\mathrm{NR}}` and :math:`\phi` alone. Thus we define
-:math:`\psi_{\mathrm{NR}} \equiv \bar{\nu}_{\mathrm{NR}}/T` and
-then the energy density is
+which is inconvenient because then :math:`\varepsilon_{\mathrm{NR}}/(g
+T^4)` is no longer a function of :math:`\psi_{\mathrm{NR}}` and
+:math:`\phi` alone. Thus we define :math:`\psi_{\mathrm{NR}} \equiv
+\bar{\nu}_{\mathrm{NR}}/T` and then the energy density is
 
 .. math::
 
@@ -95,10 +92,11 @@ then the energy density is
    du_{\mathrm{NR}}~\frac{\sqrt{2}~u_{\mathrm{NR}}^{3/2} \phi^{3/2}}
    { 1+\exp\left[u_{\mathrm{NR}} - \psi_{\mathrm{NR}} \right]}
 
-which is now a function of :math:`\psi_{\mathrm{NR}}` and :math:`\phi`alone. This is the form used to compute the energy density in
- o2scl::fermion_nonrel_tl and the definition of :math:`
-\psi_{\mathrm{NR}}` used for nonrelativistic fermions in \ref
-o2scl::part_calibrate_class::part_calibrate() .
+which is now a function of :math:`\psi_{\mathrm{NR}}` and
+:math:`\phi`alone. This is the form used to compute the energy density
+in :ref:`fermion_nonrel_tl <fermion_nonrel_tl>` and the definition of
+:math:`\psi_{\mathrm{NR}}` used for nonrelativistic fermions in \ref
+:cpp:func:`o2scl::part_calibrate_class::part_calibrate()`.
 
 Fermion integrations
 --------------------
@@ -106,14 +104,12 @@ Fermion integrations
 (Slowly moving the documentation from fermion_rel
 and fermion_deriv_rel to this location.)
 
-In many cases, the non-interacting expressions for
-fermion thermodynamics can be used in interacting
-systems as long as one replaces the mass with an 
-effective mass, :math:`m^{*}` and the chemical potential
-with an effective chemical potential, :math:`\nu` .
-In the case where :math:`\nu` includes the
-rest mass (still denoted :math:`m`), the 
-fermionic distribution function is 
+In many cases, the non-interacting expressions for fermion
+thermodynamics can be used in interacting systems as long as one
+replaces the mass with an effective mass, :math:`m^{*}` and the
+chemical potential with an effective chemical potential, :math:`\nu` .
+In the case where :math:`\nu` includes the rest mass (still denoted
+:math:`m`), the fermionic distribution function is
 
 .. math::
 
@@ -121,13 +117,12 @@ fermionic distribution function is
    \quad ; \quad
    f = \frac{1}{1+e^{(\sqrt{k^2+m^{* 2}}-\nu-m)/T}}
 
-where the left expression is used when the chemical potential
-includes the rest mass and the energy density includes the rest
-mass energy density, ( o2scl::part_tl::inc_rest_mass is
-<tt>true</tt>) and the right expression is used when the rest mass
-is not included ( o2scl::part_tl::inc_rest_mass is
-<tt>false</tt>). For convenience, we define
-:math:`E^{*} \equiv \sqrt{k^2+m^{* 2}}` .
+where the left expression is used when the chemical potential includes
+the rest mass and the energy density includes the rest mass energy
+density, (:cpp:var:`o2scl::part_tl::inc_rest_mass` is ``true``) and
+the right expression is used when the rest mass is not included
+(:cpp:var:`o2scl::part_tl::inc_rest_mass` is ``false``). For
+convenience, we define :math:`E^{*} \equiv \sqrt{k^2+m^{* 2}}`.
 
 Upper limits
 ------------
@@ -190,9 +185,9 @@ the number density is
 
 .. math::
 
-n = \frac{g}{2 \pi^2} \int_0^{\infty} 
-k^2~dk~f \, ,
-\f]
+   n = \frac{g}{2 \pi^2} \int_0^{\infty} 
+   k^2~dk~f \, ,
+
 and the entropy density is
 
 .. math::
@@ -221,9 +216,8 @@ The derivative can also be written
     
 In the degenerate regime, :math:`{\cal S}`, can lose precision when
 :math:`(E^{*} - \nu)/T` is negative and sufficiently large in absolute
-magnitude. Thus when :math:`(E^{*}
-- \nu)/T < \xi` (for :math:`\xi \rightarrow - \infty` ) 
-an alternative expression
+magnitude. Thus when :math:`(E^{*} - \nu)/T < \xi` (for :math:`\xi
+\rightarrow - \infty` ) an alternative expression
 
 .. math::
 
@@ -249,15 +243,13 @@ Non-degenerate integrands
    than the errors made by the integrand at present.
    (end comment)
 
-The integrands in the non-degenerate regime are written
-in a dimensionless form, by defining :math:`u=(E^{*}-m^{*})/T`
-(this choice ensures :math:`k=0` corresponds to :math:`u=0` ),
-:math:`y \equiv \nu/ T` (or :math:`y = (\nu+m)/T` if the
-chemical potential does not include the mass), and 
-:math:`\eta \equiv m^{*}/T`. Then 
-:math:`k/T = \sqrt{u^2+2 u \eta}`, 
-:math:`(1/T) dk = E^{*}/k du = (u+\eta)/\sqrt{u^2+2 u \eta}~du`,
-and :math:`f = 1/(1+e^{u+\eta-y})` .
+The integrands in the non-degenerate regime are written in a
+dimensionless form, by defining :math:`u=(E^{*}-m^{*})/T` (this choice
+ensures :math:`k=0` corresponds to :math:`u=0`), :math:`y \equiv \nu/
+T` (or :math:`y = (\nu+m)/T` if the chemical potential does not
+include the mass), and :math:`\eta \equiv m^{*}/T`. Then :math:`k/T =
+\sqrt{u^2+2 u \eta}`, :math:`(1/T) dk = E^{*}/k du =
+(u+\eta)/\sqrt{u^2+2 u \eta}~du`, and :math:`f = 1/(1+e^{u+\eta-y})` .
 The density is
 
 .. math::
@@ -310,9 +302,9 @@ derivatives of the distribution function are
    \frac{\partial f}{\partial m^{*}}=
    -f(1-f)\frac{m^{*}}{E^{*} T}
     
-The derivatives can be integrated directly 
-direct) or they may be converted to integrals over the
-distribution function through an integration by parts
+The derivatives can be integrated directly direct) or they may be
+converted to integrals over the distribution function through an
+integration by parts
 
 .. math::
 
@@ -606,14 +598,14 @@ is more involved because of the mass-dependent prefactor.
    t \left(\frac{dn}{dT}\right) \right] \nonumber
    \end{eqnarray}
 
-These expansions are used in 
- o2scl::fermion_thermo_tl::calc_mu_deg() and
- o2scl::fermion_deriv_thermo_tl::calc_mu_deg() .
+These expansions are used in
+:cpp:func:`o2scl::fermion_thermo_tl::calc_mu_deg()` and
+:cpp:func:`o2scl::fermion_deriv_thermo_tl::calc_mu_deg()`.
 
 Nondegenerate Expansion
 -----------------------
 
-There is a useful identity ( Chandrasekhar10 and  Tooper69)
+There is a useful identity ([Chandrasekhar10]_ and [Tooper69]_)
 
 .. math::
 
@@ -632,7 +624,7 @@ gives the sum in  Johns96
    \right]
 
 The function :math:`e^{y} K_2(y)` is implemented in GSL as
-<tt>gsl_sf_bessel_Kn_scaled</tt>. In the case that one
+``gsl_sf_bessel_Kn_scaled()``. In the case that one
 wants to include antiparticles, the result is
 similar
 
@@ -708,6 +700,6 @@ required
    \frac{\bar{n}_k}{k t^3}
    \end{eqnarray}
 
-These expansions are used in 
-o2scl::fermion_thermo_tl::calc_mu_ndeg() .
+These expansions are used in
+:cpp:func:`o2scl::fermion_thermo_tl::calc_mu_ndeg()`.
  

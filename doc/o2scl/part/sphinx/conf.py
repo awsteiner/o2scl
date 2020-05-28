@@ -46,8 +46,11 @@ breathe_default_members = ('members', 'private-members', 'undoc-members')
 # This removes the o2scl:: prefix from index entries
 cpp_index_common_prefix = ['o2scl::']
 
+# Because of the html, html/class, html/function, etc. hierarchy,
+# we can't use relative URLs for the intersphinx mapping, thus we
+# use the full absolute URL.
 intersphinx_mapping = {'o2scl':
-                       ('../../html/',
+                       ('https://neutronstars.utk.edu/code/o2scl-dev/html/',
                         '../../sphinx/build/html/objects.inv')}
 
 # Suggested by https://my-favorite-documentation-test.readthedocs.io/en/latest/using_intersphinx.html, but gave more errors when I tried it last

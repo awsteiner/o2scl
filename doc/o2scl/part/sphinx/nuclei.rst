@@ -1,40 +1,43 @@
-:ref:`O2scl_part <o2sclp>`
-
 Nuclei and nuclear masses
 =========================
 
-A basic data structure for nuclei, class \ref o2scl::nucleus, is
-implemented as a child of of \ref o2scl::part_tl. 
+:ref:`O2scl_part <o2sclp>`
 
-Nuclear masses are given as children of \ref o2scl::nucmass and
-are generally of two types: tables of masses (children of \ref
-o2scl::nucmass_table) or formulas which generate masses from a set
-of parameters and can be fit to data (\ref o2scl::nucmass_fit).
+A basic data structure for nuclei, class :ref:`nucleus <nucleus>`, is
+implemented as a child of :ref:`part_tl <part_tl>`.
+
+Nuclear masses are given as children of :ref:`nucmass <nucmass>` and
+are generally of two types: tables of masses (children of
+:ref:`nucmass_table <nucmass_table>`) or formulas which generate
+masses from a set of parameters and can be fit to data (
+:ref:`nucmass_fit <nucmass_fit>`).
 
 There are eleven mass table types currently included.
-- \ref o2scl::nucmass_ame : data from 
-\ref Audi95, \ref Audi03, \ref Audi12 and \ref Wang12, or
-\ref Huang17 and \ref Wang17 .
-- \ref o2scl::nucmass_mnmsk and \ref o2scl::nucmass_mnmsk_exp : 
-masses from \ref Moller95 and \ref Moller97
-- \ref o2scl::nucmass_hfb and \ref o2scl::nucmass_hfb_sp : masses from
-\ref Goriely02, \ref Samyn04, or \ref Goriely07  
-- \ref o2scl::nucmass_dz_table : masses from \ref Duflo95 
-- \ref o2scl::nucmass_ktuy : masses from \ref Koura00 and \ref Koura05
-- \ref o2scl::nucmass_wlw : masses from \ref Wang10, \ref Wang10b,
+
+- :ref:`nucmass_ame <nucmass_ame>`: data from 
+  \ref [Audi95]_, [Audi03]_, [Audi12]_ and [Wang12]_, or
+  [Huang17]_ and [Wang17]_.
+- :ref:`nucmass_mnmsk <nucmass_mnmsk>` and :ref:`nucmass_mnmsk_exp
+  <nucmass_mnmsk_exp>`: masses from [Moller95]_ and [Moller97]_.
+- :ref:`nucmass_hfb <nucmass_hfb>` and :ref:`nucmass_hfb_sp
+  <nucmass_hfb_sp>`: masses from [Goriely02]_, [Samyn04]_, or
+  [Goriely07]_.
+- :ref:`nucmass_dz_table : masses from [Duflo95]_
+- :ref:`nucmass_ktuy : masses from [Koura00]_ and [Koura05]_
+- :ref:`nucmass_wlw : masses from \ref Wang10, \ref Wang10b,
 \ref Liu11, \ref Wang11, or \ref Wang14
-- \ref o2scl::nucmass_sdnp : masses from \ref Stoitsov03 or \ref
+- :ref:`nucmass_sdnp : masses from \ref Stoitsov03 or \ref
 Dobaczewski04.
-- \ref o2scl::nucmass_dglg : masses from \ref Delaroche10 
+- :ref:`nucmass_dglg : masses from \ref Delaroche10 
 
 The mass formulas which can be fit to data are
-- \ref o2scl::nucmass_semi_empirical : simple 5 parameter 
+- :ref:`nucmass_semi_empirical : simple 5 parameter 
 semi-empirical method
-- \ref o2scl::nucmass_frdm : macroscopic part of FRDM from \ref Moller95
-- \ref o2scl::nucmass_dz_fit and \ref o2scl::nucmass_dz_fit_33 : 
+- :ref:`nucmass_frdm : macroscopic part of FRDM from \ref Moller95
+- :ref:`nucmass_dz_fit and :ref:`nucmass_dz_fit_33 : 
 10- and 33-parameter mass formulas from \ref Duflo95.
-- \ref o2scl::nucmass_dvi : 10-parameter formula from \ref Dieperink09
-with \ref o2scl::nucmass_ibm_shell for shell effects
+- :ref:`nucmass_dvi : 10-parameter formula from \ref Dieperink09
+with :ref:`nucmass_ibm_shell for shell effects
     
 In order to create a set of nuclei stored in a <tt>std::vector</tt>
 object, one can use \ref o2scl_part::nucdist_set().
