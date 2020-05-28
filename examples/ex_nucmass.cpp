@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 
+// sphinx-example-start
 /* Example: ex_nucmass.cpp
    -------------------------------------------------------------------
    Demonstrate nuclear mass formulas by comparing them with 

@@ -24,9 +24,9 @@ dist_doc_DATA =
 # These are the files included in the distribution
 EXTRA_DIST = *.dox o2scl.tag refs_head.txt refs_foot.txt dlayout.xml
 
-SUBDOC_DIRS = eos part 
+SUBDOC_DIRS = part eos
 
-SUBDIRS = extras eos part sphinx
+SUBDIRS = extras sphinx part eos
 
 emacs-clean:
 	rm -f *~

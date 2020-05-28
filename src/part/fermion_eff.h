@@ -51,11 +51,14 @@ namespace o2scl {
 #endif
 
   /** \brief Fermion class from fitting method
+
+      \verbatim embed:rst
+      Based on the fitting method of [Johns96]_ which is an update
+      of the method from [Eggleton73]_. 
+      \endverbatim
       
-      Based on the fitting method of \ref Johns96 which is an update
-      of the method from \ref Eggleton73 . This method is approximate,
-      but very fast. For a more accurate (but slower) method, use
-      o2scl::fermion_rel_tl.
+      For a more accurate (but slower) method, use
+      \ref o2scl::fermion_rel_tl.
 
       If the temperature is less than or equal to \ref tlimit (which 
       defaults to zero), the zero-temperature expressions

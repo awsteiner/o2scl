@@ -186,7 +186,9 @@ namespace o2scl {
       14.4381 \times 10^{-6} Z^{2.39} + 1.55468 \times 10^{-12} 
       Z^{5.35}~\mathrm{MeV}
       \f]
-      as in Eq. A4 of \ref Lunney03 . 
+      \verbatim embed:rst
+      as in Eq. A4 of [Lunney03]_ . 
+      \endverbatim
 
       Generally, descendants of this class only need to provide an
       implementation of \ref mass_excess() and \ref mass_excess_d()

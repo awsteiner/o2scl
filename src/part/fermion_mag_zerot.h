@@ -40,6 +40,10 @@ namespace o2scl {
   /** \brief Thermodynamics of fermions in a magnetic field at 
       zero temperature
 
+      \verbatim embed:rst
+      The discussion below uses the notation of [Broderick00]_.
+      \endverbatim
+
       Using the notation of \ref Broderick00, the
       effective mass of a fermion in a magnetic field is 
       \f[
