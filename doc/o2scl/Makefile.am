@@ -64,8 +64,8 @@ prerelease-sync-doc:
 #		$(STATIC_DOC_DIR)/o2scl-dev
 
 o2scl-doc-recursive: o2scl-doc
-	cd eos && $(MAKE) o2scl-doc
 	cd part && $(MAKE) o2scl-doc
+	cd eos && $(MAKE) o2scl-doc
 
 o2scl-doc:
 	doxygen doxyfile > doxygen.scr
@@ -75,8 +75,8 @@ o2scl-doc:
 #cat doxygen.log
 
 clean-doc-recursive: clean-doc
-	cd eos && $(MAKE) clean-doc
 	cd part && $(MAKE) clean-doc
+	cd eos && $(MAKE) clean-doc
 
 clean-doc:
 	cd html; rm -f *.html *.png formula.repository doxygen.css \

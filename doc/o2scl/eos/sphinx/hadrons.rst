@@ -1,28 +1,31 @@
 Equations of State of Hadronic Matter
 =====================================
 
-The hadronic equations of state are all inherited from \ref
-o2scl::eos_had_base : \ref o2scl::eos_had_schematic, \ref
-o2scl::eos_had_skyrme, \ref o2scl::eos_had_rmf, \ref
-o2scl::eos_had_apr, and \ref o2scl::eos_had_potential.
+The hadronic equations of state are all inherited from
+:ref:`eos_had_base <eos_had_base>` : :ref:`eos_had_schematic
+<eos_had_schematic>`, :ref:`eos_had_skyrme <eos_had_skyrme>`,
+:ref:`eos_had_rmf <eos_had_rmf>`, :ref:`eos_had_apr <eos_had_apr>`,
+and :ref:`eos_had_potential <eos_had_potential.>`.
 
-The \ref o2scl::eos_had_base class includes several methods that
-can be used to calculate the saturation properties of nuclear
+The :ref:`eos_had_base <eos_had_base>` class includes several methods
+that can be used to calculate the saturation properties of nuclear
 matter. These methods are sometimes overloaded in descendants when
 exact formulas are available.
 
 There is also a set of classes to modify the quartic term of the
-symmetry energy: \ref o2scl::eos_had_sym4_rmf, \ref
-o2scl::eos_had_sym4_apr, \ref o2scl::eos_had_sym4_skyrme, and \ref
-o2scl::eos_had_sym4_mdi all based on \ref o2scl::eos_had_sym4_base
-which can be used in \ref o2scl::eos_had_sym4.
+symmetry energy: :ref:`eos_had_sym4_rmf <eos_had_sym4_rmf>`,
+:ref:`eos_had_sym4_apr <eos_had_sym4_apr>`, :ref:`eos_had_sym4_skyrme
+<eos_had_sym4_skyrme>`, and :ref:`eos_had_sym4_mdi <eos_had_sym4_mdi>`
+all based on :ref:`eos_had_sym4_base <eos_had_sym4_base>` which can be
+used in :ref:`eos_had_sym4 <eos_had_sym4>`.
 
-\section ex_eos_had_apr_sect Akmal-Pandharipande-Ravenhall EOS example
+Akmal-Pandharipande-Ravenhall EOS example
+-----------------------------------------
     
-This example computes the APR EOS with \ref o2scl::eos_had_apr. It
+This example computes the APR EOS with :ref:`eos_had_apr. It
 computes nuclear and neutron matter and then matter in
 beta-equilibrium with both a Maxwell construction (as done in the
-\ref Akmal98eo) and a Gibbs construction to match the low- and
+[Akmal98eo]_) and a Gibbs construction to match the low- and
 high-density phases. Afterwards it computes the properties of
 neutron stars from the EOS. Most of the data is stored in \ref
 o2scl::table_units objects and then written to HDF files in the
@@ -44,10 +47,11 @@ transition for APR.
 Typical output:
 \verbinclude ex_eos_had_apr.scr
 
-\section ex_eos_had_skyrme_sect Skyrme EOS example
+Skyrme EOS example
+------------------
     
 This example computes the EOS and neutron star 
-properties using \ref o2scl::eos_had_skyrme from a Skyrme model.
+properties using :ref:`eos_had_skyrme from a Skyrme model.
 
 This example is rather lengthy and the full source code is
 not duplicated here. The class created in that example

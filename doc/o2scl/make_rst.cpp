@@ -257,7 +257,11 @@ int main(int argc, char *argv[]) {
 	if (kk==0) {
 	  fout << ".. doxygenclass:: " << ns << "::" << s << endl;
 	} else {
-	  fout << ".. doxygenfunction:: " << ns << "::" << s << endl;
+	  if (context==((string)"part")) {
+	    fout << ".. doxygenfunction:: " << s << endl;
+	  } else {
+	    fout << ".. doxygenfunction:: " << ns << "::" << s << endl;
+	  }
 	}
 
 	// Close the file

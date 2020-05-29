@@ -64,19 +64,19 @@ BUILDDIR      = build
 sphinx-help:
 	sphinx-build --help
 
-sphinx-buildhelp:
-	sphinx-build -M help "." "build"
-
 html: Makefile
-	sphinx-build -M html "." "build"
+	sphinx-build -v -b html "." build/html
+
+html-nit: Makefile
+	sphinx-build -v -n -b html "." build/html
 
 full-html:
-	sphinx-build -a -E -M html "." "build"
+	sphinx-build -v -a -E -b html "." build/html
 
 rst-files: empty
 	grep "kind=\"function\"" ../xml/index.xml | \
 		grep "refid=\"namespaceo2scl__part" > function_list
-	grep "kind=\"class\"" ../xml/index.xml | grep -v "cli::parameter" \
+	grep "kind=\"class\"" ../xml/index.xml | grep -v "::entry" \
 		> class_list
 	cp ref_header ref.rst
 	btmanip -parse ../../../../data/o2scl/o2scl_part.bib -rst temp.rst

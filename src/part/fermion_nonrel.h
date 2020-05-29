@@ -63,8 +63,11 @@ namespace o2scl {
       \f[
       s = \frac{5 \varepsilon}{3 T} - \frac{n \mu}{T}
       \f]
+      \verbatim embed:rst
       These relations can be verified with an integration by
-      parts. See, e.g. \ref Callen85 pg. 403 or \ref Landau80 pg. 164.
+      parts. See, e.g. [Callen85]_ pg. 403 or [Landau80]_.
+      \endverbatim
+
       
       The functions \ref pair_density() and \ref pair_mu() have not 
       been implemented and just call the error handler.

@@ -232,10 +232,11 @@ namespace o2scl {
       
       \todo Document each field.
 
-      Some explanations about the individual terms come from 
-      \ref MendozaTemis10 and the work by 
-      G. Bertsch at 
+      \verbatim embed:rst 
+      Some explanations about the individual terms
+      come from [MendozaTemis10]_ and the work by G. Bertsch at
       http://www.phys.washington.edu/users/bertsch/duflo2.ps
+      \endverbatim
 
       - <tt>a[0]</tt>: "Full master term". Density sqaured divided by
       cube root of A. This is the master term which includes the bulk
