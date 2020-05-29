@@ -22,13 +22,14 @@ used in :ref:`eos_had_sym4 <eos_had_sym4>`.
 Akmal-Pandharipande-Ravenhall EOS example
 -----------------------------------------
     
-This example computes the APR EOS with :ref:`eos_had_apr. It computes
-nuclear and neutron matter and then matter in beta-equilibrium with
-both a Maxwell construction (as done in the [Akmal98eo]_) and a Gibbs
-construction to match the low- and high-density phases. Afterwards it
-computes the properties of neutron stars from the EOS. Most of the
-data is stored in :ref:`table_units <o2scl:table_units>` objects and
-then written to HDF files in the examples directory.
+This example computes the APR EOS with :ref:`eos_had_apr
+<eos_had_apr>`. It computes nuclear and neutron matter and then matter
+in beta-equilibrium with both a Maxwell construction (as done in the
+[Akmal98eo]_) and a Gibbs construction to match the low- and
+high-density phases. Afterwards it computes the properties of neutron
+stars from the EOS. Most of the data is stored in :ref:`table_units
+<o2scl:table_units>` objects and then written to HDF files in the
+examples directory.
 
 This example is rather lengthy and the full source code is not
 duplicated here. The class created in that example is documented at

@@ -70,7 +70,7 @@ full-html:
 	sphinx-build -v -a -E -b html "." build/html
 
 rst-files: empty
-	grep "kind=\"class\"" ../xml/index.xml | grep -v "cli::parameter" \
+	grep "kind=\"class\"" ../xml/index.xml | grep -v "::" \
 		> class_list
 	cp ref_header ref.rst
 	btmanip -parse ../../../../data/o2scl/o2scl_eos.bib -rst temp.rst

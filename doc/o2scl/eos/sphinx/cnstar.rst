@@ -13,7 +13,7 @@ process as a function of density or radius.
 Cold neutron star example
 -------------------------
     
-.. literalinclude:: ../../../examples/ex_nstar_cold.cpp
+.. literalinclude:: ../../../../examples/ex_nstar_cold.cpp
    :language: c++		    
    :start-after: sphinx-example-start
 

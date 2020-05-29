@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 
+// sphinx-example-start
 /* Example: ex_eos_crust.cpp
    -------------------------------------------------------------------
    Compute the Baym-Pethick-Sutherland equation of state

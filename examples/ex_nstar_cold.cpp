@@ -20,6 +20,7 @@
 
   -------------------------------------------------------------------
 */
+// sphinx-example-start
 /* Example: ex_nstar_cold.cpp
    -------------------------------------------------------------------
    This example solves the TOV equations using class nstar_cold using a
