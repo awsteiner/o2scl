@@ -40,7 +40,7 @@ k/T` then the energy density is
    { 1+\exp\left[\sqrt{u^2+\phi^2} - \psi_{\mathrm{R}} - \phi \right]}
 
 This expression is used for
-:cpp:var:`o2scl::part_calibrate_class::part_calibrate()` because
+:cpp:func:`o2scl::part_calibrate_class::part_calibrate()` because
 :math:`\varepsilon_{\mathrm{R}}/(g T^4)` depends only on
 :math:`\psi_{\mathrm{R}}` and :math:`\phi`. For a nonrelativistic
 fermion,

@@ -31,6 +31,7 @@ dist_dochtml_DATA = build/html/*.html build/html/*.js build/html/*.inv
 dist_dochtmlclass_DATA = build/html/class/*.html
 
 dist_dochtmlstatic_DATA = build/html/_static/*
+dist_dochtmlimages_DATA = build/html/_images/*
 dist_dochtmlsources_DATA = build/html/_sources/*.txt
 dist_dochtmlsourcesclass_DATA = build/html/_sources/class/*.txt
 

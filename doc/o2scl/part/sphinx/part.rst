@@ -265,12 +265,12 @@ derivatives of the pressure stored in a
 :cpp:class:`o2scl::part_deriv_tl` or
 :cpp:class:`o2scl::fermion_deriv_tl` object.
 
-- :cpp:class:`o2scl::deriv_thermo_base_tl::heat_cap_ppart_const_vol()`
-- :cpp:class:`o2scl::deriv_thermo_base_tl::heat_cap_ppart_const_press()`
-- :cpp:class:`o2scl::deriv_thermo_base_tl::compress_adiabatic()`
-- :cpp:class:`o2scl::deriv_thermo_base_tl::compress_const_tptr()`
-- :cpp:class:`o2scl::deriv_thermo_base_tl::coeff_thermal_exp()`
-- :cpp:class:`o2scl::deriv_thermo_base_tl::squared_sound_speed()`
+- :cpp:func:`o2scl::deriv_thermo_base_tl::heat_cap_ppart_const_vol()`
+- :cpp:func:`o2scl::deriv_thermo_base_tl::heat_cap_ppart_const_press()`
+- :cpp:func:`o2scl::deriv_thermo_base_tl::compress_adiabatic()`
+- :cpp:func:`o2scl::deriv_thermo_base_tl::compress_const_tptr()`
+- :cpp:func:`o2scl::deriv_thermo_base_tl::coeff_thermal_exp()`
+- :cpp:func:`o2scl::deriv_thermo_base_tl::squared_sound_speed()`
 
 ..
    (begin comment)
