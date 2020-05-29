@@ -115,30 +115,53 @@ clean-doc:
 	cd doc/o2scl && $(MAKE) clean-doc-recursive
 
 blank-doc:
-	touch doc/o2scl/html/blank.html
-	touch doc/o2scl/html/blank.png
-	touch doc/o2scl/html/doxygen.css
-	touch doc/o2scl/html/formula.repository
-	touch doc/o2scl/html/jquery.js
-	touch doc/o2scl/html/tabs.css
-	touch doc/o2scl/html/dynsections.js
-	touch doc/o2scl/html/menu.js
-	touch doc/o2scl/html/menudata.js
-	touch doc/o2scl/eos/html/blank.html
-	touch doc/o2scl/eos/html/blank.png
-	touch doc/o2scl/eos/html/doxygen.css
-	touch doc/o2scl/eos/html/formula.repository
-	touch doc/o2scl/eos/html/jquery.js
-	touch doc/o2scl/eos/html/tabs.css
-	touch doc/o2scl/eos/html/dynsections.js
-	touch doc/o2scl/eos/html/menu.js
-	touch doc/o2scl/eos/html/menudata.js
-	touch doc/o2scl/part/html/blank.html
-	touch doc/o2scl/part/html/blank.png
-	touch doc/o2scl/part/html/doxygen.css
-	touch doc/o2scl/part/html/formula.repository
-	touch doc/o2scl/part/html/jquery.js
-	touch doc/o2scl/part/html/tabs.css
-	touch doc/o2scl/part/html/dynsections.js
-	touch doc/o2scl/part/html/menu.js
-	touch doc/o2scl/part/html/menudata.js
+	mkdir -p doc/o2scl/sphinx/build/html
+	mkdir -p doc/o2scl/eos/sphinx/build/html
+	mkdir -p doc/o2scl/part/sphinx/build/html
+	mkdir -p doc/o2scl/sphinx/build/html/class
+	mkdir -p doc/o2scl/eos/sphinx/build/html/class
+	mkdir -p doc/o2scl/part/sphinx/build/html/class
+	mkdir -p doc/o2scl/sphinx/build/html/function
+	mkdir -p doc/o2scl/eos/sphinx/build/html/function
+	mkdir -p doc/o2scl/part/sphinx/build/html/function
+	mkdir -p doc/o2scl/sphinx/build/html/_sources
+	mkdir -p doc/o2scl/eos/sphinx/build/html/_sources
+	mkdir -p doc/o2scl/part/sphinx/build/html/_sources
+	mkdir -p doc/o2scl/sphinx/build/html/_sources/class
+	mkdir -p doc/o2scl/eos/sphinx/build/html/_sources/class
+	mkdir -p doc/o2scl/part/sphinx/build/html/_sources/class
+	mkdir -p doc/o2scl/sphinx/build/html/_sources/function
+	mkdir -p doc/o2scl/eos/sphinx/build/html/_sources/function
+	mkdir -p doc/o2scl/part/sphinx/build/html/_sources/function
+	mkdir -p doc/o2scl/sphinx/build/html/_static
+	mkdir -p doc/o2scl/eos/sphinx/build/html/_static
+	mkdir -p doc/o2scl/part/sphinx/build/html/_static
+	@echo ""
+	touch doc/o2scl/sphinx/build/html/index.html
+	touch doc/o2scl/part/sphinx/build/html/index.html
+	touch doc/o2scl/eos/sphinx/build/html/index.html
+	touch doc/o2scl/sphinx/build/html/blank.js
+	touch doc/o2scl/part/sphinx/build/html/blank.js
+	touch doc/o2scl/eos/sphinx/build/html/blank.js
+	touch doc/o2scl/sphinx/build/html/blank.inv
+	touch doc/o2scl/part/sphinx/build/html/blank.inv
+	touch doc/o2scl/eos/sphinx/build/html/blank.inv
+	touch doc/o2scl/sphinx/build/html/class/index.html
+	touch doc/o2scl/part/sphinx/build/html/class/index.html
+	touch doc/o2scl/eos/sphinx/build/html/class/index.html
+	touch doc/o2scl/sphinx/build/html/function/index.html
+	touch doc/o2scl/part/sphinx/build/html/function/index.html
+	touch doc/o2scl/eos/sphinx/build/html/function/index.html
+	touch doc/o2scl/sphinx/build/html/_sources/blank.txt
+	touch doc/o2scl/eos/sphinx/build/html/_sources/blank.txt
+	touch doc/o2scl/part/sphinx/build/html/_sources/blank.txt
+	touch doc/o2scl/sphinx/build/html/_sources/class/blank.txt
+	touch doc/o2scl/eos/sphinx/build/html/_sources/class/blank.txt
+	touch doc/o2scl/part/sphinx/build/html/_sources/class/blank.txt
+	touch doc/o2scl/sphinx/build/html/_sources/function/blank.txt
+	touch doc/o2scl/eos/sphinx/build/html/_sources/function/blank.txt
+	touch doc/o2scl/part/sphinx/build/html/_sources/function/blank.txt
+	touch doc/o2scl/sphinx/build/html/_static/blank.png
+	touch doc/o2scl/eos/sphinx/build/html/_static/blank.png
+	touch doc/o2scl/part/sphinx/build/html/_static/blank.png
+
