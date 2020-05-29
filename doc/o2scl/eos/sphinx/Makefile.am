@@ -21,6 +21,7 @@ dochtmlclassdir = $(prefix)/share/doc/o2scl/eos/html/class
 dochtmlstaticdir = $(prefix)/share/doc/o2scl/eos/html/_static
 dochtmlsourcesdir = $(prefix)/share/doc/o2scl/eos/html/_sources
 dochtmlsourcesclassdir = $(prefix)/share/doc/o2scl/eos/html/_sources/class
+dochtmlimagesdir = $(prefix)/share/doc/o2scl/eos/html/_images
 
 # These are the files installed by 'make install'
 dist_doc_DATA = *.rst
@@ -75,6 +76,7 @@ rst-files: empty
 	cat temp.rst >> ref.rst
 	rm -f temp.rst
 	g++ -o ../../make_rst ../../make_rst.cpp
+	rm -f class/*.rst
 	../../make_rst eos > make_rst.out
 
 o2scl-doc: rst-files html

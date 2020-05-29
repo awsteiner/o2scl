@@ -6,9 +6,6 @@
   <compound refid="classo2scl_1_1classical__thermo__tl" kind="class"><name>o2scl::classical_thermo_tl</name>
   <compound refid="classo2scl_1_1dense__matter" kind="class"><name>o2scl::dense_matter</name>
   <compound refid="classo2scl_1_1deriv__thermo__base__tl" kind="class"><name>o2scl::deriv_thermo_base_tl</name>
-  <compound refid="classo2scl_1_1nucmass__dglg_1_1entry" kind="class"><name>o2scl::nucmass_dglg::entry</name>
-  <compound refid="classo2scl_1_1nucmass__sdnp_1_1entry" kind="class"><name>o2scl::nucmass_sdnp::entry</name>
-  <compound refid="classo2scl_1_1nucmass__wlw_1_1entry" kind="class"><name>o2scl::nucmass_wlw::entry</name>
   <compound refid="classo2scl_1_1fermion__deriv__nr__tl" kind="class"><name>o2scl::fermion_deriv_nr_tl</name>
   <compound refid="classo2scl_1_1fermion__deriv__rel__tl" kind="class"><name>o2scl::fermion_deriv_rel_tl</name>
   <compound refid="classo2scl_1_1fermion__deriv__thermo__tl" kind="class"><name>o2scl::fermion_deriv_thermo_tl</name>

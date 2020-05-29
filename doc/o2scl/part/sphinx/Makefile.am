@@ -23,6 +23,7 @@ dochtmlstaticdir = $(prefix)/share/doc/o2scl/part/html/_static
 dochtmlsourcesdir = $(prefix)/share/doc/o2scl/part/html/_sources
 dochtmlsourcesclassdir = $(prefix)/share/doc/o2scl/part/html/_sources/class
 dochtmlsourcesfunctiondir = $(prefix)/share/doc/o2scl/part/html/_sources/function
+dochtmlimagesdir = $(prefix)/share/doc/o2scl/part/html/_images
 
 # These are the files installed by 'make install'
 dist_doc_DATA = *.rst
@@ -83,6 +84,8 @@ rst-files: empty
 	cat temp.rst >> ref.rst
 	rm -f temp.rst
 	g++ -o ../../make_rst ../../make_rst.cpp
+	rm -f class/*.rst
+	rm -f function/*.rst
 	../../make_rst part > make_rst.out
 
 o2scl-doc: rst-files html

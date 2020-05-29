@@ -9,9 +9,6 @@ Namespace: o2scl class: classical_deriv_thermo_tl
 Namespace: o2scl class: classical_thermo_tl
 Namespace: o2scl class: dense_matter
 Namespace: o2scl class: deriv_thermo_base_tl
-Namespace: o2scl class: nucmass_dglg::entry
-Namespace: o2scl class: nucmass_sdnp::entry
-Namespace: o2scl class: nucmass_wlw::entry
 Namespace: o2scl class: fermion_deriv_nr_tl
 Namespace: o2scl class: fermion_deriv_rel_tl
 Namespace: o2scl class: fermion_deriv_thermo_tl
