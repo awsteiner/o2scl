@@ -5,7 +5,8 @@ There are several classes designed to provide a consistent
 interface to several EOS tables intended for core-collapse supernovae
 and neutron-star mergers. The abstract base
 class is \ref o2scl::eos_sn_base. The child classes correspond to
-different EOS table formats: 
+different EOS table formats:
+
 - \ref o2scl::eos_sn_ls - The Lattimer-Swesty EOS tables from Jim's
 webpage (\ref Lattimer91)
 - \ref o2scl::eos_sn_stos - The H. Shen et al. EOS tables

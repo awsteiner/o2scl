@@ -5,7 +5,7 @@ The hadronic equations of state are all inherited from
 :ref:`eos_had_base <eos_had_base>` : :ref:`eos_had_schematic
 <eos_had_schematic>`, :ref:`eos_had_skyrme <eos_had_skyrme>`,
 :ref:`eos_had_rmf <eos_had_rmf>`, :ref:`eos_had_apr <eos_had_apr>`,
-and :ref:`eos_had_potential <eos_had_potential.>`.
+and :ref:`eos_had_potential <eos_had_potential>`.
 
 The :ref:`eos_had_base <eos_had_base>` class includes several methods
 that can be used to calculate the saturation properties of nuclear
@@ -48,7 +48,8 @@ phase transition for APR.
 
 Typical output:
 
-.. literalinclude:: ../../../../examples/ex_eos_had_apr.scr      
+.. literalinclude:: ../../../../examples/ex_eos_had_apr.scr
+   :language: none		    
 
 Skyrme EOS example
 ------------------
@@ -63,4 +64,5 @@ duplicated here. The class created in that example is documented at
 Typical output:
 
 .. literalinclude:: ../../../../examples/ex_eos_had_skyrme.scr      
+   :language: none
 

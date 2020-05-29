@@ -1,21 +1,22 @@
 Cold Neutron Star Structure
 ===========================
 
-The class \ref o2scl::nstar_cold computes the structure of
+The class :ref:`nstar_cold <nstar_cold>` computes the structure of
 non-rotating zero-temperature spherically-symmetric neutron stars,
-given a core hadronic equation of state (of type \ref
-o2scl::eos_had_base) It automatically tabulates the core EOS, adds
-a crust EOS (if necessary) and then uses \ref o2scl::tov_solve to
-compute the mass-radius curve. It also computes the adiabatic
-index, the speed of sound, and determines the possibility of the
-direct Urca process as a function of density or radius.
+given a core hadronic equation of state (of type :ref:`eos_had_base
+<eos_had_base>`) It automatically tabulates the core EOS, adds a crust
+EOS (if necessary) and then uses :ref:`tov_solve <tov_solve>` to
+compute the mass-radius curve. It also computes the adiabatic index,
+the speed of sound, and determines the possibility of the direct Urca
+process as a function of density or radius.
 
-\section ex_nstar_cold_sect Cold neutron star example
+Cold neutron star example
+-------------------------
     
-\dontinclude ex_nstar_cold.cpp
-\skip Example:
-\until End of example
+.. literalinclude:: ../../../examples/ex_nstar_cold.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start
 
-Typical output:
-\verbinclude ex_nstar_cold.scr
+.. literalinclude:: ../../../../examples/ex_nstar_cold.scr      
+   :language: none
 
