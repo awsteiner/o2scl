@@ -3,6 +3,51 @@
 Installation
 ============
 
+Compiling O\ :sub:`2`\ scl on Ubuntu with Snap
+----------------------------------------------
+
+The easiest way to install on Ubuntu is with snap (see
+https://snapcraft.io/o2scl). Use::
+
+  sudo snap install (--edge or --beta) --devmode o2scl
+
+The snap installation includes HDF5 support, the O\ :sub:`2`\ scl_part
+and O\ :sub:`2`\ scl_eos sublibraries, readline support, and uses the
+GSL CBLAS.
+
+Using the command-line utility ``acol`` may require you to set the
+environment variable ``LD_LIBRARY_PATH``. For example, on machines
+where I use snap to install in my ``.bashrc``, I use::
+
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/snap/o2scl/current/usr/lib/x86_64-linux-gnu:/snap/o2scl/current/lib/x86_64-linux-gnu
+
+Compiling O\ :sub:`2`\ scl on Mac OSX with Homebrew
+---------------------------------------------------
+
+The easiest way to install on Mac OSX is with homebrew. Use::
+
+  brew tap awsteiner/science
+  brew install o2scl
+
+to install O\ :sub:`2`\ scl. There are a few options for ``brew
+install``. The option ``--with-check`` performs the build-time tests
+and the option ``--with-examples`` double checks that the examples can
+also be compiled and executed. The homebrew recipe for O\ :sub:`2`\
+scl uses the Mac OS X compiler clang. Homebrew also supports the
+installation of the current version directly from the repository using
+the ``--HEAD`` option to ``brew install``. The homebrew installation
+includes the O\ :sub:`2`\ scl_part and O\ :sub:`2`\ scl_eos
+sublibraries and readline support.
+
+By default, a homebrew installation of O\ :sub:`2`\ scl uses the OSX LLVM
+compiler. However, a homebrew installation of O\ :sub:`2`\ scl will also
+install ``gcc`` because O\ :sub:`2`\ scl requires ``hdf5, and the homebrew
+``hdf5`` package requires ``gcc``. The homebrew installation of 
+O\ :sub:`2`\ scl is tested by Travis CI.
+
+Compiling O\ :sub:`2`\ scl from a release distribution
+------------------------------------------------------
+
 O\ :sub:`2`\ scl installation is generally similar to that for
 GNU-style libraries. The file ``INSTALL`` has some details on this
 procedure. Generally, you should be able to run ``./configure``
@@ -64,8 +109,8 @@ O\ :sub:`2`\ scl uses Travis CI (see
 https://travis-ci.org/awsteiner/o2scl ) to ensure that compilation and
 testing works on standard Ubuntu and Mac OS X environments.
 
-Compiling on Linux
-------------------
+Compiling O\ :sub:`2`\ scl from a release on Linux
+--------------------------------------------------
 
 For example, to install O\ :sub:`2`\ scl on Ubuntu, begin by
 installing g++, GSL (the ``libgsl-dev`` package), Boost (the
@@ -95,10 +140,12 @@ you will need to let O\ :sub:`2`\ scl know, using::
 
   CXXFLAGS="-DO2SCL_HDF5_PRE_1_12" ./configure
  
+Compiling O\ :sub:`2`\ scl from source
+--------------------------------------
+
 If you want to install from source (without generating the
-documentation), then you must first install the
-``autoconf`` and ``libtool`` packages.
-Then you can use something along the lines of::
+documentation), then you must first install the ``autoconf`` and
+``libtool`` packages. Then you can use something along the lines of::
 
   git clone https://github.com/awsteiner/o2scl
   cd o2scl
@@ -106,50 +153,11 @@ Then you can use something along the lines of::
   autoreconf -i
   ./configure
 
-Then, you will either need to generate the documentation from
-doxygen using ``make o2scl-doc`` or use ``make
-blank-doc`` to create blank documentation. Then you can proceed
-using ``make`` and ``make install`` (which sometimes
-requires ``sudo``).
-
-An experimental O2scl "snap" is also being developed on
-snapcraft (see https://snapcraft.io/o2scl) 
-and can be installed using::
-
-  sudo snap install (--edge or --beta) --devmode o2scl
-
-The command-line utility ``acol`` may require you to 
-set the environment variable ``LD_LIBRARY_PATH``.
-For example, in my ``.bashrc``, I use::
-
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/snap/o2scl/current/usr/lib/x86_64-linux-gnu:/snap/o2scl/current/lib/x86_64-linux-gnu
-
-Compiling on Mac OS X
----------------------
-
-The easiest way to perform compilation on Mac OS X is 
-with homebrew. Use::
-
-  brew tap awsteiner/science
-  brew install o2scl
-
-to install O\ :sub:`2`\ scl . There are a few options for ``brew
-install``. The option ``--with-check`` performs the build-time tests
-and the option ``--with-examples`` double checks that the examples can
-also be compiled and executed. The homebrew recipe for O\ :sub:`2`\
-scl uses the Mac OS X compiler clang. Homebrew also supports the
-installation of the current version directly from the repository using
-the ``--HEAD`` option to ``brew install``.
-
-By default, a homebrew installation of O\ :sub:`2`\ scl uses the OSX LLVM
-compiler. However, a homebrew installation of O\ :sub:`2`\ scl will also
-install ``gcc`` because O\ :sub:`2`\ scl requires ``hdf5, and the homebrew
-``hdf5`` package requires ``gcc``. The homebrew installation of 
-O\ :sub:`2`\ scl is tested by Travis CI.
-
-Alternatively, it is also possible to install O\ :sub:`2`\ scl on OSX directly
-from source with the ``./configure`` script as described
-above. 
+Then, you will either need to generate the documentation from doxygen
+using ``make o2scl-doc`` or use ``make blank-doc`` to create blank
+documentation. Then you can proceed using ``make`` and ``make
+install`` (which may require ``sudo`` depending on your
+configuration).
 
 Optional linear algebra libraries
 ---------------------------------
@@ -167,9 +175,9 @@ the options ``--with-eigen`` and ``with-armadillo`` can be used.
 Range-checking
 --------------
 
-Range-checking for vectors and matrices is turned on by default.
-You can disable range-checking by defining -DO2SCL_NO_RANGE_CHECK,
-e.g.::
+Some extra range-checking for vectors and matrices is turned on by
+default. You can disable range-checking by defining
+-DO2SCL_NO_RANGE_CHECK, e.g.::
 
   CXXFLAGS="-DO2SCL_NO_RANGE_CHECK" ./configure
 
@@ -208,11 +216,11 @@ well.
 Generation of documentation
 ---------------------------
 
-The O\ :sub:`2`\ scl documentation is generated with ``doxygen`` and packaged in
-with every release file. In principle, the documentation can be
-regenerated by the end-user, but this is not supported and
-requires several external applications not included in the
-distribution.
+The O\ :sub:`2`\ scl documentation is generated with ``doxygen``,
+``sphinx``, ``breathe``, and ``alabaster`` and packaged in with every
+release file. In principle, the documentation can be regenerated by
+the end-user, but this is not supported and requires several external
+applications not included in the distribution.
 
 The most recent release documentation is available at
 https://neutronstars.utk.edu/code/o2scl/html/index.html . The

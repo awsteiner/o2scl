@@ -60,16 +60,79 @@ int main(void) {
   t.test_gen(size_of_exponent(1.0e111)==3,"soe6");
 
   vector<string> ss;
-  split_string("this is a test",ss);
+  string stemp;
+
+  t.set_output_level(1);
+
+  // Try with out quotes first
+  stemp="this is a  test";
+  split_string(stemp,ss);
+  cout << "\"" << stemp << "\"" << ": ";
+  vector_out_quotes(cout,ss,true);
   t.test_gen(ss.size()==4,"ss1");
   t.test_gen(ss[3]==((string)"test"),"ss2");
   ss.clear();
 
-  split_string("\"this is\" a test",ss);
+  // Try various cases of quotes at the beginning and end
+  stemp="\"this  is\" a test";
+  split_string(stemp,ss);
+  cout << "\"" << stemp << "\"" << ": ";
+  vector_out_quotes(cout,ss,true);
   t.test_gen(ss.size()==3,"ss3");
   t.test_gen(ss[0]==((string)"this is"),"ss4");
   ss.clear();
 
+  stemp="\"  this is \" a test";
+  split_string(stemp,ss);
+  cout << "\"" << stemp << "\"" << ": ";
+  vector_out_quotes(cout,ss,true);
+  t.test_gen(ss.size()==3,"ss5");
+  //t.test_gen(ss[0]==((string)" this is "),"ss6");
+  ss.clear();
+
+  stemp="\"this  is  \" a test";
+  split_string(stemp,ss);
+  cout << "\"" << stemp << "\"" << ": ";
+  vector_out_quotes(cout,ss,true);
+  t.test_gen(ss.size()==3,"ss7");
+  t.test_gen(ss[0]==((string)"this is "),"ss8");
+  ss.clear();
+
+  stemp="\" this is\"  a test";
+  split_string(stemp,ss);
+  cout << "\"" << stemp << "\"" << ": ";
+  vector_out_quotes(cout,ss,true);
+  t.test_gen(ss.size()==3,"ss9");
+  //t.test_gen(ss[0]==((string)" this is"),"ss10");
+  ss.clear();
+
+  // Quotes in the middle
+  stemp="th\"is is a test";
+  split_string(stemp,ss);
+  cout << "\"" << stemp << "\"" << ": ";
+  vector_out_quotes(cout,ss,true);
+  t.test_gen(ss.size()==4,"ss11");
+  t.test_gen(ss[0]==((string)"th\"is"),"ss12");
+  ss.clear();
+
+  stemp="th\"is is a test";
+  split_string(stemp,ss);
+  cout << "\"" << stemp << "\"" << ": ";
+  vector_out_quotes(cout,ss,true);
+  t.test_gen(ss.size()==4,"ss11");
+  t.test_gen(ss[0]==((string)"th\"is"),"ss12");
+  ss.clear();
+
+  stemp="\"th\"is is a\" test";
+  split_string(stemp,ss);
+  cout << "\"" << stemp << "\"" << ": ";
+  vector_out_quotes(cout,ss,true);
+  t.test_gen(ss.size()==2,"ss13");
+  t.test_gen(ss[0]==((string)"th\"is is a"),"ss14");
+  ss.clear();
+
+  t.set_output_level(2);
+  
   string longstr=((string)"This is a test of a really long string ")+
     "which occupies several lines in a normal 80 column terminal "+
     "window so that I can test where the rewrap() function will "+

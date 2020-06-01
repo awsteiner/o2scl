@@ -1348,7 +1348,11 @@ int acol_manager::setup_options() {
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_conv),
      both},
     {0,"h5-copy","Copy hdf5 file (experimental).",-1,-1,
-     "<source> <dist>","",
+     "<source> <destination>",((string)"Copy all O2scl objects from ")+
+     "one HDF5 file to another. This may not work for HDF5 files "+
+     "generated outside of O2scl. The source and destination filenames "+
+     "may not be identical. The destination file may not be the same "+
+     "size as the source, but will contain the same information.",
      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_h5_copy),
      both},
     {0,"constant","Get constant.",0,2,"<name or pattern> [unit]",
@@ -1656,7 +1660,11 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
      "inside square brackets [].",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_help),both},
-    {0,"commands","List available commands.",0,1,"[type]","",
+    {0,"commands",
+     "List available commands for current or specified type.",
+     0,1,"[type]",((string)"Output the commands available for ")+
+     "the current type, or, if the optional type argument is given "+
+     "then output the commands available for that type.",
      new o2scl::comm_option_mfptr<acol_manager>
      (this,&acol_manager::comm_commands),both}
   };

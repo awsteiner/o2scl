@@ -22,4 +22,6 @@ pathname of the file you wish to load.
 Global settings object
 ----------------------
 
+.. _o2scl_settings:
+
 .. doxygenvariable:: o2scl::o2scl_settings

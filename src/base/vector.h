@@ -3258,6 +3258,33 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Output a vector to a stream with quotes and commas
+      
+      No trailing space is output after the last element, and an
+      endline is output only if \c endline is set to \c true.  If the
+      parameter \c n is zero, this function silently does nothing.
+
+      This works with any class <tt>vec_t</tt> which has an operator[]
+      which returns either the value of or a reference to the ith
+      element and the element type has its own output operator which
+      has been defined.
+  */
+  template<class vec_t> 
+    void vector_out_quotes(std::ostream &os, size_t n, const vec_t &v, 
+			   bool endline=false) {
+    
+    // This next line is important since n-1 is not well-defined if n=0
+    if (n==0) {
+      if (endline) os << std::endl;
+      return;
+    }
+
+    for(size_t i=0;i<n-1;i++) os << "\"" << v[i] << "\", ";
+    os << "\"" << v[n-1] << "\"";
+    if (endline) os << std::endl;
+    return;
+  }
+
   /** \brief Output a vector to a stream
       
       No trailing space is output after the last element, and an
@@ -3271,14 +3298,42 @@ namespace o2scl {
   */
   template<class vec_t> 
     void vector_out(std::ostream &os, const vec_t &v, bool endline=false) {
-    
     size_t n=v.size();
-    
     // This next line is important since n-1 is not well-defined if n=0
-    if (n==0) return;
+    if (n==0) {
+      if (endline) os << std::endl;
+      return;
+    }
 
     for(size_t i=0;i<n-1;i++) os << v[i] << " ";
     os << v[n-1];
+    if (endline) os << std::endl;
+    return;
+  }
+  
+  /** \brief Output a vector to a stream with quotes and commas
+      
+      No trailing space is output after the last element, and an
+      endline is output only if \c endline is set to \c true.  If the
+      parameter \c n is zero, this function silently does nothing.
+
+      This works with any class <tt>vec_t</tt> which has an operator[]
+      which returns either the value of or a reference to the ith
+      element and the element type has its own output operator which
+      has been defined.
+  */
+  template<class vec_t> 
+    void vector_out_quotes(std::ostream &os, const vec_t &v,
+			   bool endline=false) {
+    size_t n=v.size();
+    // This next line is important since n-1 is not well-defined if n=0
+    if (n==0) {
+      if (endline) os << std::endl;
+      return;
+    }
+
+    for(size_t i=0;i<n-1;i++) os << "\"" << v[i] << "\", ";
+    os << "\"" << v[n-1] << "\"";
     if (endline) os << std::endl;
     return;
   }

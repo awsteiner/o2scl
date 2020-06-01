@@ -260,7 +260,7 @@ int o2scl::function_to_double_nothrow(std::string s, double &result) {
 }
 
 void o2scl::split_string(string str, vector<string> &sv) {
-  
+
   string tmp, tmp2;
   
   istringstream is(str.c_str());
@@ -271,7 +271,7 @@ void o2scl::split_string(string str, vector<string> &sv) {
     if (tmp[0]=='\"') {
 
       // If it also ends with a quote, just remove them both
-      if (tmp[tmp.length()-1]=='\"') {
+      if (tmp.length()>=2 && tmp[tmp.length()-1]=='\"') {
 
 	// Remove the initial and final quotes
 	tmp2=tmp.substr(1,tmp.size()-2);
@@ -283,7 +283,11 @@ void o2scl::split_string(string str, vector<string> &sv) {
       } else {
 	
 	// Remove the initial quote
-	tmp2=tmp.substr(1,tmp.size()-1);
+	if (tmp.length()>=2) {
+	  tmp2=tmp.substr(1,tmp.size()-1);
+	} else {
+	  tmp2=" ";
+	}
 	
 	// Add entries until a final quote is found
 	bool done=false;
@@ -294,7 +298,11 @@ void o2scl::split_string(string str, vector<string> &sv) {
 	  if (!(is >> tmp)) {
 	    done=true;
 	  } else if (tmp[tmp.size()-1]=='\"') {
-	    tmp=tmp.substr(0,tmp.size()-1);
+	    if (tmp.length()>=2) {
+	      tmp=tmp.substr(0,tmp.size()-1);
+	    } else {
+	      tmp="";
+	    }
 	    done=true;
 	  }
 	  tmp2+=" ";

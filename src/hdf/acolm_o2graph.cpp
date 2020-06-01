@@ -120,7 +120,7 @@ void o2scl_acol_alias_counts(void *vp, int n_entries, int *sizes,
     cout << "args[k]: " << k << " " << args[k] << endl;
     }
   */
-  amp->cl->parse_for_aliases(args);
+  amp->cl->parse_for_aliases(args,false);
   amp->cl->apply_aliases(args,0);
   /*
     cout << "After: " << endl;

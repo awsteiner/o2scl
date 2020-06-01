@@ -34,21 +34,22 @@ An abstract type has been defined which operates as a GSL-like error
 hander. The default error handler is a implementation of this abstract
 type which throws a C++ exception when an error is encountered. The
 various exceptions, and their correspondence with the GSL error codes,
-are given in the \ref exc_types_subsect section. By default in O\
-:sub:`2`\ scl, the default GSL error handler is replaced with the O\
-:sub:`2`\ scl default error handler, i.e. GSL functions will throw C++
-exceptions.
+are given in :ref:`GSL error codes and C++ exception types`. By
+default in O\ :sub:`2`\ scl, the default GSL error handler is replaced
+with the O\ :sub:`2`\ scl default error handler, i.e. GSL functions
+will throw C++ exceptions.
 
-Errors can be set by the user through the macros \ref O2SCL_ERR
-which calls the O\ :sub:`2`\ scl error handler. The error handler, \ref
-o2scl::err_hnd is a global pointer to an object of type \ref
-o2scl::err_hnd_type. There is a global default error handler, \ref
-o2scl::def_err_hnd, of type \ref o2scl::err_hnd_cpp, which throws
-C++ exceptions, and an alternate default error handler, \ref
-o2scl::alt_err_hnd, of type \ref o2scl::err_hnd_gsl, which outputs
-an error message and aborts execution. The global error handler
-can be replaced by simply assigning the address of a descendant of
-\ref o2scl::err_hnd_type to \ref o2scl::err_hnd.
+Errors can be set by the user through the macros ``O2SCL_ERR`` which
+calls the O\ :sub:`2`\ scl error handler. The error handler,
+:ref:`err_hnd <err_hnd>` is a global pointer to an object of type
+:ref:`err_hnd_type <err_hnd_type>`. There is a global default error
+handler, :ref:`def_err_hnd <def_err_hnd>` :ref:`err_hnd_cpp
+<err_hnd_cpp>`, which throws C++ exceptions, and an alternate default
+error handler, :ref:`alt_err_hnd <alt_err_hnd>`, of type
+:ref:`err_hnd_gsl <err_hnd_gsl>`, which outputs an error message and
+aborts execution. The global error handler can be replaced by simply
+assigning the address of a descendant of :ref:`err_hnd_type
+<err_hnd_type>` to :ref:`err_hnd <err_hnd>`.
 
 O\ :sub:`2`\ scl does not support any execution beyond the point at which the
 error handler is called. Many functions which would have had
@@ -58,15 +59,14 @@ Internally, O\ :sub:`2`\ scl does not use ``try`` blocks, but these can
 easily be effectively employed by an O\ :sub:`2`\ scl user.
 
 The C++ exception classes are also mapped to the list of GSL error
-codes (including a few extra ones for O\ :sub:`2`\ scl), which is given in the
-documentation for the file \ref err_hnd.h and in \ref
-exc_types_subsect below.
+codes (including a few extra ones for O\ :sub:`2`\ scl), which is
+given in below in :ref:`GSL error codes and C++ exception types`.
 
-One can instruct the library to use the GSL-like O\ :sub:`2`\ scl error
-handler \ref o2scl::alt_err_hnd by default, by defining the 
-constant ``O2SCL_USE_GSL_HANDLER``. This is also useful
-if one wants to compile without C++ exceptions (which does
-have a small overhead). 
+One can instruct the library to use the GSL-like O\ :sub:`2`\ scl
+error handler :ref:`alt_err_hnd <alt_err_hnd>` by default, by defining
+the constant ``O2SCL_USE_GSL_HANDLER``. This is also useful if one
+wants to compile without C++ exceptions (which does have a small
+overhead).
 
 What is an error?
 -----------------
@@ -84,15 +84,14 @@ should be handled differently.
 
 Sometimes, it is undesirable to abort execution upon a failure to
 reach numerical convergence. While these failures are treated as
-errors (and by default an exception is thrown), some of the
-classes which attempt to reach numerical convergence have an
-option (e.g. \ref o2scl::mroot::err_nonconv) to turn this default
-behavior off for these convergence errors. To set these
-"convergence" errors in code provided by the user, the macros \ref
-O2SCL_CONV and \ref O2SCL_CONV_RET can be used. Functions which
-may have convergence errors sometimes return ``int``, to
-indicate which convergence error was returned when the value of
-``err_nonconv`` has been set to false.
+errors (and by default an exception is thrown), some of the classes
+which attempt to reach numerical convergence have an option (e.g.
+:cpp:var:`o2scl::mroot::err_nonconv`) to turn this default behavior
+off for these convergence errors. To set these "convergence" errors in
+code provided by the user, the macros ``O2SCL_CONV`` and
+``O2SCL_CONV_RET`` can be used. Functions which may have convergence
+errors sometimes return ``int``, to indicate which convergence error
+was returned when the value of ``err_nonconv`` has been set to false.
 
 Of course, the standard ``try, catch`` mechanism of error
 handling may also be used for finer-grained control. 
@@ -175,37 +174,36 @@ Error codes associated with :ref:`exc_logic_error <exc_logic_error>`:
 Objects and scope
 -----------------
     
-O\ :sub:`2`\ scl objects frequently take inputs which are of the form of a
-reference to a smaller object. This is particularly convenient
+O\ :sub:`2`\ scl objects frequently take inputs which are of the form
+of a reference to a smaller object. This is particularly convenient
 because it allows a lot of flexibility, while providing a certain
-degree of safety. In many cases, the user retains the
-responsibility of ensuring that input objects do not go out of
-scope before they are utilized by objects which require them. This
-is actually no different than the requirements on the user imposed
-by GSL, for example.
+degree of safety. In many cases, the user retains the responsibility
+of ensuring that input objects do not go out of scope before they are
+utilized by objects which require them. This is actually no different
+than the requirements on the user imposed by GSL, for example.
 
 Member functions which store pointers to user-specified objects
 should warn that they are doing so in the documentation for the
 class.
 
-For example, say that a user wants to solve several equations
-using a \ref o2scl::mroot_hybrids object and use the functions
-\ref o2scl::mroot_hybrids::set() and \ref
-o2scl::mroot_hybrids::iterate(). Since the function is specified
-by the call to ``set()``, it is important that this function
-object does not go out of scope before the call to
-``iterate()`` occurs.
+For example, say that a user wants to solve several equations using a
+:ref:`mroot_hybrids <mroot_hybrids>` object and use the functions
+:cpp:func:`o2scl::mroot_hybrids::set()` and
+:cpp:func:`o2scl::mroot_hybrids::iterate()`. Since the function is
+specified by the call to ``set()``, it is important that this function
+object does not go out of scope before the call to ``iterate()``
+occurs.
 
 Reference parameters
 --------------------
  
-When a O\ :sub:`2`\ scl function contains two reference parameters for objects,
-it is not typically possible to provide the same object to both
-parameters or to provide two objects which share the same memory.
-This is particularly an issue when the associated types are
-template types, since then the O\ :sub:`2`\ scl library has no way of knowing
-how memory is organized in these unspecified types. Thread safety
-is also an issue, as care must be taken if two functions which are
+When a O\ :sub:`2`\ scl function contains two reference parameters for
+objects, it is not typically possible to provide the same object to
+both parameters or to provide two objects which share the same memory.
+This is particularly an issue when the associated types are template
+types, since then the O\ :sub:`2`\ scl library has no way of knowing
+how memory is organized in these unspecified types. Thread safety is
+also an issue, as care must be taken if two functions which are
 running simultaneously access the same instance of any class.
 
 Define constants
@@ -219,22 +217,23 @@ several details about how O\ :sub:`2`\ scl was compiled.
   also need to define this for code based on O\ :sub:`2`\ scl functions which
   use Armadillo routines. The command ``acol -v`` reports
   whether or not Armadillo support was enabled during compilation.
-- O2SCL_CBLAS_NAMESPACE - This flag is internally used by some of
-  the headers in the ``src/linalg`` directory to select between \ref
-  o2scl_cblas and \ref o2scl_cblas_bracket . The end-user should not
-  need to use this.
+- O2SCL_CBLAS_NAMESPACE - This flag is internally used by some of the
+  headers in the ``src/linalg`` directory to select between
+  :ref:`o2scl_cblas <Namespace o2scl_cblas>` and
+  :ref:`o2scl_cblas_bracket <Namespace o2scl_cblas_bracket>` The
+  end-user should not need to use this.
 - O2SCL_COND_FLAG - Internally used to handle the option of compiling
   with or without Armadillo or Eigen support. The end-user should not
   need to use this.
-- O2SCL_DATA_DIR - Used by O\ :sub:`2`\ scl classes during installation to
-  refer to the directory where data is stored. After installation,
-  this is accessible through the global object named \ref
-  o2scl::o2scl_settings and the command ``acol -v``. In a
-  typical installation, the end-user should not need to use this.
-- O2SCL_EIGEN - Flag for Eigen support. The end-user will
-  also need to define this for code based on O\ :sub:`2`\ scl functions which
-  use Eigen routines. The command ``acol -v`` reports
-  whether or not Eigen support was enabled during compilation.
+- O2SCL_DATA_DIR - Used by O\ :sub:`2`\ scl classes during
+  installation to refer to the directory where data is stored. After
+  installation, this is accessible through the global object named
+  :ref:`o2scl_settings <o2scl_settings>` and the command ``acol -v``.
+  In a typical installation, the end-user should not need to use this.
+- O2SCL_EIGEN - Flag for Eigen support. The end-user will also need to
+  define this for code based on O\ :sub:`2`\ scl functions which use
+  Eigen routines. The command ``acol -v`` reports whether or not Eigen
+  support was enabled during compilation.
 - O2SCL_ENABLE_ACOL - Internal flag to tell the makefiles if
   ``acol`` is to be compiled. This is set by default unless the
   configure script is specified with ``--disable-acol``.
@@ -244,11 +243,11 @@ several details about how O\ :sub:`2`\ scl was compiled.
 - O2SCL_FAST_TEST - Internal flag to speed up testing so that
   travis-ci.org builds don't time out. This constant is 
   defined by the ``--with-fast-test`` option in homebrew.
-- O2SCL_GSL2 - Flag to allow functionality from later GSL versions
-  in \ref o2scl::fit_linear and \ref o2scl::fit_nonlin . This flag
-  is set during compilation if ``--enable-gsl2`` is passed to
-  the configure script. The command ``acol -v`` reports on
-  whether or not GSL V2.0+ support was enabled during installation.
+- O2SCL_GSL2 - Flag to allow functionality from later GSL versions in
+  :ref:`fit_linear <fit_linear>` and :ref:`fit_nonlin <fit_nonlin>` .
+  This flag is set during compilation if ``--enable-gsl2`` is passed
+  to the configure script. The command ``acol -v`` reports on whether
+  or not GSL V2.0+ support was enabled during installation.
 - O2SCL_HDF - Internal flag to tell the makefiles if HDF5 support
   is to be included. The end-user should not need to use this.
 - O2SCL_HDF5_COMP - Define this flag when O\ :sub:`2`\ scl is compiled and for
@@ -261,10 +260,10 @@ several details about how O\ :sub:`2`\ scl was compiled.
   not need to be specified to the ``configure`` script.
 - O2SCL_NEVER_DEFINED - Used internally to comment out large 
   sections of code. This should not be used by the end-user. 
-  - O2SCL_NO_EXCEPTIONS - If this is defined, then the error handler
-  calls \ref o2scl::err_hnd_gsl::set() instead of throwing a C++ exception.
-  Used in ``src/base/exception.cpp``. This is useful, for
-  example, with the ``g++`` flag ``-fno-exceptions``.
+- O2SCL_NO_EXCEPTIONS - If this is defined, then the error handler
+  calls :cpp:func:`o2scl::err_hnd_gsl::set()` instead of throwing a
+  C++ exception. Used in ``src/base/exception.cpp``. This is useful,
+  for example, with the ``g++`` flag ``-fno-exceptions``.
 - O2SCL_NO_SYSTEM_FUNC - If this is defined, then the \ref o2scl::cli
   class will never allow shell commands, independent of the 
   setting of \ref o2scl::cli::shell_cmd_allowed .

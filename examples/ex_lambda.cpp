@@ -41,6 +41,11 @@ double gfn(double x) {
   return sin(x)-0.1;
 }
 
+// A global function with a parameter
+double gfn_param(double x, double a) {
+  return sin(x)-a;
+}
+
 class a_class {
 public:
   // A member function
@@ -49,6 +54,11 @@ public:
   }
   // A member function with a parameter
   double mfn_param(double x, double a) {
+    return sin(x)-a;
+  }
+  // A member function with a const and non-const reference parameter
+  double mfn_param_ref(double x, const double &a, double &b) {
+    b=x*x;
     return sin(x)-a;
   }
 };
@@ -74,13 +84,29 @@ int main(void) {
     t.test_rel(a,asin(0.1),1.0e-12,"Global function");
   }
 
+  // O2scl defines 'funct' as std::function<double(double)>, so this
+  // shorter notation also works. 
+  {
+    a=-0.9, b=0.9;
+    funct f=gfn;
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,"Global function (take 2)");
+  }
+
+  // With a global function
+  {
+    a=-0.9, b=0.9;
+    funct f=std::bind(gfn_param,std::placeholders::_1,0.1);
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,"Global function with parameter");
+  }
+
   // With a member function
   {
     a=-0.9, b=0.9;
     a_class ac;
-    std::function<double(double)> f=
-      std::bind(std::mem_fn<double(double)>(&a_class::mfn),
-		ac,std::placeholders::_1);
+    funct f=std::bind(std::mem_fn<double(double)>(&a_class::mfn),
+		      ac,std::placeholders::_1);
     grb.solve_bkt(a,b,f);
     t.test_rel(a,asin(0.1),1.0e-12,"Member function");
   }
@@ -89,9 +115,9 @@ int main(void) {
   {
     a=-0.9, b=0.9;
     a_class ac;
-    std::function<double(double)> f=
-      std::bind(std::mem_fn<double(double,double)>(&a_class::mfn_param),
-		ac,std::placeholders::_1,0.1);
+    funct f=std::bind(std::mem_fn<double(double,double)>
+		      (&a_class::mfn_param),
+		      ac,std::placeholders::_1,0.1);
     grb.solve_bkt(a,b,f);
     t.test_rel(a,asin(0.1),1.0e-12,"Member function with parameter");
   }
@@ -99,8 +125,7 @@ int main(void) {
   // Inline specification of the function
   {
     a=-0.9, b=0.9;
-    std::function<double(double)> f=
-      [](double x) -> double { double z=sin(x)-0.1; return z; };
+    funct f=[](double x) -> double { double z=sin(x)-0.1; return z; };
     grb.solve_bkt(a,b,f);
     t.test_rel(a,asin(0.1),1.0e-12,"Inline 1");
   }
@@ -108,14 +133,31 @@ int main(void) {
   // A bit of a shorter notation 
   {
     a=-0.9, b=0.9;
-    std::function<double(double)> f=[](double x){ return sin(x)-0.1; };
+    funct f=[](double x){ return sin(x)-0.1; };
     grb.solve_bkt(a,b,f);
     t.test_rel(a,asin(0.1),1.0e-12,"Inline 2");
     // Show copy construction works
     a=-0.9, b=0.9;
-    std::function<double(double)> f2=f;
+    funct f2=f;
     grb.solve_bkt(a,b,f2);
     t.test_rel(a,asin(0.1),1.0e-12,"Inline 3");
+  }
+
+  // With a member function and reference parameters. Note that
+  // we use std::cref for the const reference and std::ref
+  // for the non-const reference
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    double param1=0.1, param2;
+    funct f=std::bind(std::mem_fn<double(double,const double &,double &)>
+		      (&a_class::mfn_param_ref),
+		      ac,std::placeholders::_1,std::cref(param1),
+		      std::ref(param2));
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,"Member function with references");
+    // The last function call isn't always at the final root!
+    t.test_rel(param2,0.01,1.0e-2,"Reference 2");
   }
 
   t.report();

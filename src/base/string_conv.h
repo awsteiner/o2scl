@@ -232,12 +232,18 @@ namespace o2scl {
       read from a file in cli::comm_option_run(), and to process input
       in cli::run_interactive().
 
+      \note The string vector is not emptied before processing,
+      and entries from \c str are added to the end of \c sv. 
+
       \note The parsing algorithm here is simple-minded and can
       produce unexpected results in several ways. For example, it may
       not properly handle nested quotes, like <tt>"""test" test2"
       test3"</tt>.
-      
-      \future Replace with a better algorithm
+
+      \todo The rules surrounding spaces and quotes are 
+      strange and not well documented.
+      \future Replace with a better algorithm. Should quotes be
+      escaped?
       \future Add user-specified delimiters?
   */
   void split_string(std::string str, std::vector<std::string> &sv);

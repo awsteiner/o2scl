@@ -197,35 +197,35 @@ namespace o2scl {
 
       This class is experimental.
 
-      Default commands: help, get/set, quit, exit, '!', verbose, license,
-      warranty, alias, run.
+      Default commands: help, get, set, quit, exit, license, no-intro,
+      commands, warranty, alias, run, shell, and '!'.
 
       Note that if the shell command is allowed (as it is by default)
       there are some potential security issues which are not solved
       here.
       
-      Commands which begin with a '#' character are ignored.
+      Interactive commands which begin with a '#' character are
+      ignored.
 
-      \note In interactive mode, commands are limited to 300 characters.
+      \note In interactive mode, commands are limited to 300 characters,
+      but this limit does not apply when readline is used.
 
-      \future Warn in run_interactive() when extra parameters are given
-      \future Include a "remove command" function
+      \future Warn in run_interactive() when extra parameters are given.
       \future A replace command function, there's already some code
       in cli.cpp for this.
       \future There's some code duplication between comm_option_run()
-      and run_interactive()
-      \future Allow the user to set the tilde string
-      \future Disallow direct access to \ref o2scl::cli::par_list in order to
-      ensure parameter names do not contain whitespace
+      and run_interactive().
+
+      \future Disallow direct access to \ref o2scl::cli::par_list in
+      order to ensure parameter names do not contain whitespace.
 
       <b>Concepts</b>
 
       As a matter of definition, the command-line arguments are simply
-      called arguments. These arguments may be options (in which case
-      they begin with either one dash or two) or parameters to these
-      options.  When run in interactive mode, these options are also
-      commands.
-      
+      called arguments. They are separated in commands (which begin
+      with either one dash or two) and parameters to these commands.
+      The word "parameter" is also used to refer to quantities which
+      are modifiable by <tt>get</tt> and <tt>set</tt>.
   */
   class cli {
 
@@ -326,6 +326,13 @@ namespace o2scl {
     class parameter_int : public parameter {
 
     public:
+
+      parameter_int() {
+	parse_strings=true;
+      }	
+      
+      /// If true, use value_spec() to convert strings to integers
+      bool parse_strings;
       
       virtual ~parameter_int() {}
 
@@ -333,10 +340,7 @@ namespace o2scl {
       int *i;
 
       /// Set from string
-      virtual int set(std::string s) {
-	*i=o2scl::stoi(s);
-	return 0;
-      }
+      virtual int set(std::string s);
 
       /// Convert to string
       virtual std::string get() {
@@ -349,16 +353,21 @@ namespace o2scl {
     class parameter_size_t : public parameter {
 
     public:
+
+      parameter_size_t() {
+	parse_strings=true;
+      }
       
       virtual ~parameter_size_t() {}
+
+      /// If true, use value_spec() to convert strings to integers
+      bool parse_strings;
 
       /// Parameter
       size_t *s;
 
       /// Set from string
-      virtual int set(std::string st) {
-	return o2scl::stoszt_nothrow(st,*s);
-      }
+      virtual int set(std::string st);
 
       /// Convert to string
       virtual std::string get() {
@@ -432,12 +441,11 @@ namespace o2scl {
     int comm_option_warranty(std::vector<std::string> &sv, bool itive_com);
     //@}
 
-    /// Replace all occurences of \c sold with \c snew in \c sv
+    /** \brief Proceed through \c sv, applying all previously
+	defined aliases
+    */
     int apply_aliases(std::vector<std::string> &sv, size_t istart,
 		      bool debug=false);
-
-    /// String to replace tildes with
-    std::string tilde_string;
 
     /** \brief If true, output the usual GNU intro when run_interactive() 
 	is called (default true).
@@ -476,10 +484,12 @@ namespace o2scl {
     comm_option_s c_alias;
     //@}
     
-    /// If true, then sync cli::verbose, with a parameter of the same name
+    /** \brief If true, then sync cli::verbose, with a parameter of 
+	the same name (default true)
+    */
     bool sync_verbose;
 
-    /** \brief If true, allow the user to use ! to execute a shell command 
+    /** \brief If true, allow the user to executeshell commands
 	(default true)
     */
     bool shell_cmd_allowed;
@@ -509,7 +519,6 @@ namespace o2scl {
 	present. You cannot add two commands/options with the same
 	short form, even if they have different long forms, and vice
 	versa.
-
     */
     int set_comm_option(comm_option_s &ic);
 
@@ -517,7 +526,8 @@ namespace o2scl {
      */
     void remove_comm_option(std::string cmd);
     
-    /// Add a vector containing new commands/options
+    /** \brief Add new commands specified in a list
+     */
     template<class vec_t> int set_comm_option_vec
       (size_t list_size, vec_t &option_list) {
 
@@ -561,7 +571,8 @@ namespace o2scl {
       return 0;
     }
 
-    /// Set one-line help text for a parameter named \c param
+    /** \brief Set one-line help text for a parameter named \c param
+     */
     int set_param_help(std::string param, std::string help);
 
     /** \brief Automatically parse arguments to main and 
@@ -593,7 +604,14 @@ namespace o2scl {
 		     std::vector<cmd_line_arg> &ca, int debug=0,
 		     bool also_call_args=false);
 
-    int parse_for_aliases(std::vector<std::string> &svsv);
+    /** \brief Go through the argument list in \c sv and add
+	any alias definitions which appear
+
+	Note, if verbose is greater than 1, then new alias
+	definitions will be output to the screen. 
+     */
+    int parse_for_aliases(std::vector<std::string> &svsv,
+			  bool allow_undashed);
     
     /** \brief Process command-line arguments from a vector of strings
 	

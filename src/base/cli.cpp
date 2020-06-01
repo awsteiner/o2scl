@@ -80,11 +80,33 @@ int cli::parameter_double::set(std::string s) {
     //
     // o2scl_hdf::value_spec(s,*d);
     
-    *d=function_to_double(s);
+    int iret=function_to_double_nothrow(s,*d);
+    return iret;
+    
   } else {
     *d=o2scl::stod(s);
   }
   return 0;
+}
+
+int cli::parameter_int::set(std::string s) {
+  if (parse_strings) {
+    double d;
+    int iret=function_to_double_nothrow(s,d);
+    if (iret==0) *i=((int)d);
+    return iret;
+  }
+  return o2scl::stoi_nothrow(s,*i);
+}
+
+int cli::parameter_size_t::set(std::string st) {
+  if (parse_strings) {
+    double d;
+    int iret=function_to_double_nothrow(st,d);
+    if (iret==0) *s=((size_t)d);
+    return iret;
+  }
+  return o2scl::stoszt_nothrow(st,*s);
 }
 
 cli::cli() {
@@ -102,8 +124,11 @@ cli::cli() {
   c_help.help+="give the documentation for the specified command. ";
   c_help.help+="Note that required arguments are typically given inside ";
   c_help.help+="angled brackes <> while optional arguments are given ";
-  c_help.help+="inside square brackets [].";
-  c_help.parm_desc="[command name]";
+  c_help.help+="inside square brackets []. If an argument is given ";
+  c_help.help+="and it is not a command name but it is a parameter name ";
+  c_help.help+="then output the name, value, and description of that ";
+  c_help.help+="parameter.";
+  c_help.parm_desc="[command name or parameter name]";
   c_help.func=new comm_option_mfptr<cli>(this,&cli::comm_option_help);
   c_help.type=comm_option_both;
   
@@ -112,7 +137,9 @@ cli::cli() {
   c_no_intro.min_parms=0;
   c_no_intro.max_parms=0;
   c_no_intro.desc="Do not print introductory text.";
-  c_no_intro.help="";
+  c_no_intro.help=((string)"If this command is used, then no ")+
+    "introductory text (including the program name and the \"no "+
+    "warranty\" statement) is output in interactive mode.";
   c_no_intro.parm_desc="";
   c_no_intro.func=new comm_option_mfptr<cli>(this,&cli::comm_option_no_intro);
   c_no_intro.type=comm_option_cl_param;
@@ -122,7 +149,7 @@ cli::cli() {
   c_commands.min_parms=0;
   c_commands.max_parms=0;
   c_commands.desc="List all available commands.";
-  c_commands.help="";
+  c_commands.help="This command lists all the available commands";
   c_commands.parm_desc="";
   c_commands.func=new comm_option_mfptr<cli>(this,&cli::comm_option_commands);
   c_commands.type=comm_option_both;
@@ -136,7 +163,13 @@ cli::cli() {
   c_alias.max_parms=-1;
   c_alias.desc="Create a command alias.";
   c_alias.help=((string)"This creates an alias for a command ")+
-    "or arguments or a combination of both.";
+    "or arguments or a combination of both. To list all aliases, use "+
+    "either \"-alias list list\" or \"alias list list\" in "+
+    "interactive mode. In general, aliases are applied only after "+
+    "they are defined. However, aliases given anywhere as arguments on "+
+    "the command line will be applied to the rest of the command line, "+
+    "and if multiple definitions for the same alias are given on the "+
+    "command line, then only the last one applies.";
   c_alias.parm_desc="<alias name> <alias definition>";
   c_alias.func=new comm_option_mfptr<cli>(this,&cli::comm_option_alias);
   c_alias.type=comm_option_both;
@@ -146,7 +179,9 @@ cli::cli() {
   c_get.min_parms=1;
   c_get.max_parms=1;
   c_get.desc="Get the value of a parameter.";
-  c_get.help="";
+  c_get.help=((string)"This command gets the value of a parameter. ")+
+    "A list of parameters can be obtained by e.g. -help get "+
+    "on the command-line or \"help get\" in interactive mode.";
   c_get.parm_desc="<parameter name>";
   c_get.func=new comm_option_mfptr<cli>(this,&cli::comm_option_get);
   c_get.type=comm_option_both;
@@ -157,7 +192,11 @@ cli::cli() {
   c_run.max_parms=1;
   c_run.parm_desc="<file name>";
   c_run.desc="Run a file containing a list of commands.";
-  c_run.help="";
+  c_run.help=((string)"This command executes a series of commands ")+
+    "specified in a file, line by line. Quotes can be used "+
+    "to specify parameters which have single spaces. All whitespace "+
+    "is compressed into a single space. Quotes inside a word with "+
+    "no whitespace are ignored.";
   c_run.func=new comm_option_mfptr<cli>(this,&cli::comm_option_run);
   c_run.type=comm_option_both;
       
@@ -167,7 +206,12 @@ cli::cli() {
   c_shell.max_parms=-1;
   c_shell.parm_desc="<commands>";
   c_shell.desc="Run a shell command.";
-  c_shell.help="";
+  c_shell.help=((string)"This command excutes the specified shell ")+
+    "command. If verbose>0 (the default), then the shell output "+
+    "is preceeded by \"Executing system command: <command>\" and "+
+    "followed by \"Done with system command (returned <return "+
+    "value>).\". In interactive mode, shell commands can also "+
+    "be run using ! instead of \"shell \", i.e. \"!ls\".";
   c_shell.func=new comm_option_mfptr<cli>(this,&cli::comm_option_shell);
   c_shell.type=comm_option_both;
       
@@ -177,7 +221,15 @@ cli::cli() {
   c_set.max_parms=2;
   c_set.parm_desc="<parameter name> <value>";
   c_set.desc="Set the value of a parameter.";
-  c_set.help="";
+  c_set.help=((string)"This command sets the value of a parameter. ")+
+    "A list of parameters can be obtained by e.g. -help set "+
+    "on the command-line or \"help set \" in interactive mode."+
+    "For floating point or integer parameters, constant expressions "+
+    "can be used, e.g. acos(-1). "+
+    "For string-like parameters, quotes can be used "+
+    "to specify parameters which have single spaces. All whitespace "+
+    "is compressed into a single space. Quotes inside a word with "+
+    "no whitespace are ignored.";
   c_set.func=new comm_option_mfptr<cli>(this,&cli::comm_option_set);
   c_set.type=comm_option_both;
       
@@ -186,7 +238,7 @@ cli::cli() {
   c_quit.min_parms=0;
   c_quit.max_parms=0;
   c_quit.desc="Quit (synonymous with 'exit').";
-  c_quit.help="";
+  c_quit.help="Quit the current program.";
   c_quit.parm_desc="";
   c_quit.type=comm_option_both;
       
@@ -195,7 +247,7 @@ cli::cli() {
   c_exit.min_parms=0;
   c_exit.max_parms=0;
   c_exit.desc="Exit (synonymous with 'quit').";
-  c_exit.help="";
+  c_exit.help="Exit the current program.";
   c_exit.parm_desc="";
   c_exit.type=comm_option_both;
   
@@ -205,7 +257,8 @@ cli::cli() {
   // If license has a parameter, it is the file to output the license to
   c_license.max_parms=1;
   c_license.desc="Show license information.";
-  c_license.help=((string)"If a [filename] argument is given, then ")+
+  c_license.help=((string)"This command outputs the GPLv3 license ")+
+    "information. If the optional [filename] argument is given, then "+
     "the license will be written to the specified file.";
   c_license.parm_desc="[filename]";
   c_license.func=new comm_option_mfptr<cli>(this,&cli::comm_option_license);
@@ -216,7 +269,7 @@ cli::cli() {
   c_warranty.min_parms=0;
   c_warranty.max_parms=0;
   c_warranty.desc="Show warranty information.";
-  c_warranty.help="";
+  c_warranty.help="This command shows the GPLv3 no warranty statement.";
   c_warranty.parm_desc="";
   c_warranty.func=new comm_option_mfptr<cli>(this,&cli::comm_option_warranty);
   c_warranty.type=comm_option_both;
@@ -244,8 +297,6 @@ cli::cli() {
   addl_help_cmd="";
   addl_help_cli="";
   shell_cmd_allowed=true;
-
-  tilde_string="";
 }
 
 cli::~cli() {
@@ -265,12 +316,20 @@ int cli::apply_aliases(vector<string> &sv, size_t istart, bool debug) {
 
   // No new alias definitions are allowed, this function
   // only makes the relevant replacements
-  
+
+  // Apply each alias in order
   for(al_it it=als.begin();it!=als.end();it++) {
+
     for(size_t i=istart;i<sv.size();i++) {
-      if (sv[i]==((string)"-alias")) {
+
+      // Skip new alias definitions while applying aliases
+      if (sv[i]==((string)"-alias") ||
+	  sv[i]==((string)"alias") ||
+	  sv[i]==((string)"--alias")) {
 	i+=2;
+	
       } else if (sv[i]==it->first) {
+	
 	if (debug) {
 	  cout << "Replacing " << sv[i] << " with " << it->second << endl;
 	  cout << "Before: " << endl;
@@ -382,14 +441,34 @@ int cli::process_args_str(string s, vector<cmd_line_arg> &ca,
   return ret;
 }
 
-int cli::parse_for_aliases(std::vector<std::string> &svsv) {
+int cli::parse_for_aliases(std::vector<std::string> &svsv,
+			   bool allow_undashed) {
+  
   for (int c2=0;c2<((int)svsv.size());c2++) {
-    if (svsv[c2]==((string)"-alias") && c2+2<((int)svsv.size())) {
-      // Add alias
-      als.insert(std::make_pair(svsv[c2+1],svsv[c2+2]));
-      if (verbose>0) {
-	cout << "New alias \"" << svsv[c2+1] << "\" = \"" << svsv[c2+2]
-	     << "\"" << endl;
+    if ((svsv[c2]==((string)"alias") || svsv[c2]==((string)"-alias") ||
+	 svsv[c2]==((string)"--alias")) && c2+2<((int)svsv.size())) {
+      if (svsv[c2+1]==((string)"list") &&
+	  svsv[c2+2]==((string)"list")) {
+	cout << "Current aliases: " << endl;
+	for (al_it it=als.begin();it!=als.end();it++) {
+	  cout << it->first << " = " << it->second << endl;
+	}
+      } else {
+	if (als.find(svsv[c2+1])==als.end()) {
+	  // Add alias
+	  als.insert(std::make_pair(svsv[c2+1],svsv[c2+2]));
+	  if (verbose>1) {
+	    cout << "New alias \"" << svsv[c2+1] << "\" = \"" << svsv[c2+2]
+		 << "\"" << endl;
+	  }
+	} else {
+	  if (verbose>1) {
+	    cout << "Redefining alias \"" << svsv[c2+1]
+		 << "\" from \"" << als[svsv[c2+1]]
+		 << "\" to \"" << svsv[c2+2] << "\"" << endl;
+	  }
+	  als[svsv[c2+1]]=svsv[c2+2];
+	}
       }
       c2+=2;
     }
@@ -414,10 +493,14 @@ int cli::process_args(std::vector<std::string> &svsv,
   // Index of current argument
   int current=0;
 
-  // Apply aliases. We don't want this to be recursive, so we
+  // Take care of aliases. We don't want this to be recursive, so we
   // loop through to look for new alias definitions, and then
   // afterwards we make all of the alias replacements
-  parse_for_aliases(svsv);
+
+  // Apply all new alias definitions in \c svsv
+  parse_for_aliases(svsv,false);
+
+  // Now apply aliases to \c svsv
   apply_aliases(svsv,current);
   
   bool done=false;
@@ -836,7 +919,12 @@ int cli::comm_option_set(vector<string> &sv, bool itive_com) {
   }
   
   if (user_set_func!=0) {
-    (*user_set_func)(sv,itive_com);
+    int iret=(*user_set_func)(sv,itive_com);
+    if (iret!=success) {
+      cerr << "Setting parameter " << sv[1] << " to value "
+	   << sv[2] << " failed." << endl;
+      return exc_efailed;
+    }
   }
 
   return 0;
@@ -1026,7 +1114,38 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
     // We can't find the argument
     if (ix==-1) {
 
-      comlist=true;
+      // Look for the argument among get/set parameters
+      bool getset_found=false;
+      for(par_t it=par_list.begin();it!=par_list.end() &&
+	    getset_found==false;it++) {
+	
+	if (string_equal_dash(it->first,sv[1])) {
+	  
+	  cout << "Parameter:" << sv[1] << " value: " << (it->second)->get() 
+	       << endl;
+	  
+	  vector<string> desc2;
+	  desc2.push_back("Description:");
+	  split_string(it->second->help,desc2);
+	  
+	  // The fill a buffer 'bufx' with lines with less than 78
+	  // characters. (We need 78 here instead of 79 to accomodate
+	  // the extra space which was already output above.)
+	  string bufx;
+	  for(size_t j=0;j<desc2.size();j++) {
+	    if (j!=0 && bufx.length()+desc2[j].length()>78) {
+	      cout << bufx << endl << " ";
+	      bufx="";
+	    }
+	    bufx+=desc2[j]+" ";
+	  }
+	  if (bufx.length()>0) cout << bufx << endl;
+	  
+	  getset_found=true;
+	}
+      }
+
+      if (getset_found==false) comlist=true;
 
     } else {
 
@@ -1072,6 +1191,8 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
       } else {
 	cout << "Short description: " << clist[ix].desc << endl;
       }
+
+      bool needs_endl=true;
       
       // If 'help set' or 'help get' was requested, output
       // a list of the valid parameters
@@ -1080,12 +1201,13 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	// Output parameter list
 	cout << endl;
 	output_param_list();
+	needs_endl=false;
 
       }
 
       // Output any additional help text specified
       if (clist[ix].help.length()>0) {
-	cout << endl;
+	if (needs_endl) cout << endl;
 
 	cout << "Long description:" << endl;
 	{
@@ -1144,13 +1266,17 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
       cout << ct[i] << endl;
     }
 
-    if (addl_help_cmd.length()>0) {
+    // AWS 5/31/2020: I find this a bit much, so I'm taking
+    // it out for now
+    /*
+      if (addl_help_cmd.length()>0) {
       vector<string> str_rewrap;
       rewrap_keep_endlines(addl_help_cmd,str_rewrap);
       for(size_t j=0;j<str_rewrap.size();j++) {
-	cout << str_rewrap[j] << endl;
+      cout << str_rewrap[j] << endl;
       }
-    }
+      }
+    */
     
   }
 
@@ -1211,12 +1337,23 @@ int cli::comm_option_run(vector<string> &sv, bool itive_com) {
   while(getline(fin,entry)) {
 
     if (entry.length()>0 && entry!="exit" && entry!="quit") {
+
+      // Remove up to two preceeding dashes
+      if (entry[0]=='-' && entry[1]=='-') {
+	entry=entry.substr(2,entry.length()-2);
+      } else if (entry[0]=='-') {
+	entry=entry.substr(1,entry.length()-1);
+      }
       
       split_string(entry,sw);
-      
-      // Apply any aliases
-      for(al_it it=als.begin();it!=als.end();it++) {
-	apply_aliases(sw,0);
+
+      if (sw[0]==((string)"alias")) {
+	parse_for_aliases(sw,true);
+      } else {
+	// Apply any aliases
+	for(al_it it=als.begin();it!=als.end();it++) {
+	  apply_aliases(sw,0);
+	}
       }
 
       if (sw[0][0]=='!') {
@@ -1357,7 +1494,7 @@ int cli::run_interactive() {
   do {
       
     entry=cli_gets(prompt.c_str());
-    
+
     if (entry[0]=='!') {
       
 #ifndef O2SCL_NO_SYSTEM_FUNC
@@ -1390,11 +1527,22 @@ int cli::run_interactive() {
 #endif
 
     } else if (entry.length()>0) {
+
+      // Remove up to two preceeding dashes
+      if (entry[0]=='-' && entry[1]=='-') {
+	entry=entry.substr(2,entry.length()-2);
+      } else if (entry[0]=='-') {
+	entry=entry.substr(1,entry.length()-1);
+      }
       
       split_string(entry,sv);
-      
-      // Apply any aliases
-      apply_aliases(sv,0);
+
+      if (sv[0]==((string)"alias")) {
+	parse_for_aliases(sv,true);
+      } else {
+	// Apply any aliases
+	apply_aliases(sv,0);
+      }
 	  
       if (sv[0][0]!='#') {
 
