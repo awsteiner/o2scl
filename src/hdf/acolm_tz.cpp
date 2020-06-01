@@ -697,11 +697,13 @@ int acol_manager::make_unique_name(string &col, std::vector<string> &cnames) {
 
 int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
 
-  cout << "\nacol: A data table viewing and processing program for O2scl."
-       << endl;
-  cout << (((string)" Compiled at ")+((string)__TIME__)+" on "+
-	   ((string)__DATE__)+" for "+((string)PACKAGE)+", version "+
-	   ((string)VERSION)+".\n") << endl;
+  cout << "\n" << cl->desc << endl;
+
+  if (cl->cmd_name==((string)"acol")) {
+    cout << (((string)" Compiled at ")+((string)__TIME__)+" on "+
+	     ((string)__DATE__)+" for "+((string)PACKAGE)+", version "+
+	     ((string)VERSION)+".\n") << endl;
+  }
 
   cout << "O2scl version: " << o2scl_settings.o2scl_version() << endl;
   cout << "Range checking: " << o2scl_settings.range_check() << endl;
