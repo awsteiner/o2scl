@@ -98,6 +98,8 @@ rst-files: empty
 	rm -f class/*.rst
 	rm -f function/*.rst
 	../make_rst main > make_rst.out
+	cd static; acol -run acol.scr > acol.out
+
 
 o2scl-doc: rst-files html
 

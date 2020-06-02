@@ -136,6 +136,9 @@ blank-doc:
 	mkdir -p doc/o2scl/sphinx/build/html/_static
 	mkdir -p doc/o2scl/eos/sphinx/build/html/_static
 	mkdir -p doc/o2scl/part/sphinx/build/html/_static
+	mkdir -p doc/o2scl/sphinx/build/html/_images
+	mkdir -p doc/o2scl/eos/sphinx/build/html/_images
+	mkdir -p doc/o2scl/part/sphinx/build/html/_images
 	@echo ""
 	touch doc/o2scl/sphinx/build/html/index.html
 	touch doc/o2scl/part/sphinx/build/html/index.html
@@ -164,4 +167,7 @@ blank-doc:
 	touch doc/o2scl/sphinx/build/html/_static/blank.png
 	touch doc/o2scl/eos/sphinx/build/html/_static/blank.png
 	touch doc/o2scl/part/sphinx/build/html/_static/blank.png
+	touch doc/o2scl/sphinx/build/html/_images/blank.png
+	touch doc/o2scl/eos/sphinx/build/html/_images/blank.png
+	touch doc/o2scl/part/sphinx/build/html/_images/blank.png
 

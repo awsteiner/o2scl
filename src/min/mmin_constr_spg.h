@@ -65,11 +65,13 @@ namespace o2scl {
       This class applies a non-monotone line search strategy 
       to the classical projected gradient method. 
       
-      As in \ref Birgin00, this class applies a nonmonotone Armijo
+      \verbatim embed:rst
+      As in [Birgin00]_, this class applies a nonmonotone Armijo
       sufficient decrease condition for accepting trial points as an
       improvement over the classical spectral projected gradient
       method. This method may be competitive with large problems
       because it has low memory requirements.
+      \endverbatim
 
       Default template arguments
       - \c func_t - \ref multi_funct

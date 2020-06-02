@@ -104,7 +104,8 @@ namespace o2scl {
       The errors which are handled with this exception type are
       - \ref o2scl::exc_einval (4) invalid argument supplied by user \n
       - \ref o2scl::exc_ebadtol (13) user specified an invalid tolerance \n
-      - \ref o2scl::exc_ebadlen (19) matrix, vector lengths are not conformant \n
+      - \ref o2scl::exc_ebadlen (19) matrix, vector lengths 
+      are not conformant \n
       - \ref o2scl::exc_enotsqr (20) matrix not square \n
       - \ref o2scl::exc_eindex (36) Invalid index for array or matrix 
   */
@@ -144,12 +145,16 @@ namespace o2scl {
       - \ref o2scl::exc_ediverge (22) integral or series is divergent \n
       - \ref o2scl::exc_ecache (25) cache limit exceeded \n
       - \ref o2scl::exc_etable (26) table limit exceeded \n
-      - \ref o2scl::exc_enoprog (27) iteration is not making progress toward solution \n
+      - \ref o2scl::exc_enoprog (27) iteration is not 
+      making progress toward solution \n
       - \ref o2scl::exc_enoprogj (28) jacobian evaluations are not
       improving the solution \n
-      - \ref o2scl::exc_etolf (29) cannot reach the specified tolerance in f \n
-      - \ref o2scl::exc_etolx (30) cannot reach the specified tolerance in x \n
-      - \ref o2scl::exc_etolg (31) cannot reach the specified tolerance in gradient \n
+      - \ref o2scl::exc_etolf (29) cannot reach the 
+      specified tolerance in f \n
+      - \ref o2scl::exc_etolx (30) cannot reach the 
+      specified tolerance in x \n
+      - \ref o2scl::exc_etolg (31) cannot reach the 
+      specified tolerance in gradient \n
       - \ref o2scl::exc_enotfound (33) Generic "not found" result \n
       - exc_outsidecons (37) Outside constraint region
 

@@ -48,7 +48,9 @@ namespace o2scl {
       of the function to be minimized.
 
       This is an adaptive version of \ref diff_evo as described in
-      \ref Brest06 .
+      \verbatim embed:rst
+      [Brest06]_ .
+      \endverbatim
   */
   template<class func_t=multi_funct, 
     class vec_t=boost::numeric::ublas::vector<double>, 

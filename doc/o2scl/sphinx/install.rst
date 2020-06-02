@@ -1,7 +1,7 @@
-:ref:`O2scl <o2scl>`
-
 Installation
 ============
+
+:ref:`O2scl <o2scl>`
 
 Compiling O\ :sub:`2`\ scl on Ubuntu with Snap
 ----------------------------------------------
@@ -144,8 +144,9 @@ Compiling O\ :sub:`2`\ scl from source
 --------------------------------------
 
 If you want to install from source (without generating the
-documentation), then you must first install the ``autoconf`` and
-``libtool`` packages. Then you can use something along the lines of::
+documentation), then you must first install ``g++``, ``make``,
+``autoconf`` and ``libtool`` packages. Then you can use something
+along the lines of::
 
   git clone https://github.com/awsteiner/o2scl
   cd o2scl
@@ -157,7 +158,9 @@ Then, you will either need to generate the documentation from doxygen
 using ``make o2scl-doc`` or use ``make blank-doc`` to create blank
 documentation. Then you can proceed using ``make`` and ``make
 install`` (which may require ``sudo`` depending on your
-configuration).
+configuration). For a full installation with parallelism, I
+typically also install ``libopenmpi-dev`` and then use
+``./configure --enable-openmp``
 
 Optional linear algebra libraries
 ---------------------------------

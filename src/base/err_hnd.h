@@ -129,6 +129,9 @@ namespace o2scl {
   class err_hnd_type;
 
   /** \brief The global error handler pointer
+
+      This is set by the \ref def_err_hnd constructor to 
+      point to that object.
    */      
   extern err_hnd_type *err_hnd;
 

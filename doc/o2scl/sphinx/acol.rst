@@ -39,4 +39,4 @@ script in the ``extras`` directory of the documentation is
 named ``acol.scr``. The associated output is a useful demonstration
 of the capabilities of ``acol``.
 
-.. literalinclude:: ../acol.out
+.. literalinclude:: static/acol.out

@@ -56,7 +56,9 @@ namespace o2scl {
 
   /** \brief Cash-Karp embedded Runge-Kutta ODE stepper (GSL)
 
-      Based on \ref Cash90 .
+      \verbatim embed:rst
+      Based on [Cash90]_ .
+      \endverbatim
 
       There is an example for the usage of this class in
       <tt>examples/ex_ode.cpp</tt> documented in the \ref ex_ode_sect

@@ -41,15 +41,15 @@ will throw C++ exceptions.
 
 Errors can be set by the user through the macros ``O2SCL_ERR`` which
 calls the O\ :sub:`2`\ scl error handler. The error handler,
-:ref:`err_hnd <err_hnd>` is a global pointer to an object of type
+:cpp:var:`o2scl::err_hnd` is a global pointer to an object of type
 :ref:`err_hnd_type <err_hnd_type>`. There is a global default error
-handler, :ref:`def_err_hnd <def_err_hnd>` :ref:`err_hnd_cpp
+handler, :cpp:var:`o2scl::def_err_hnd` :ref:`err_hnd_cpp
 <err_hnd_cpp>`, which throws C++ exceptions, and an alternate default
-error handler, :ref:`alt_err_hnd <alt_err_hnd>`, of type
+error handler, :cpp:var:`o2scl::alt_err_hnd`, of type
 :ref:`err_hnd_gsl <err_hnd_gsl>`, which outputs an error message and
 aborts execution. The global error handler can be replaced by simply
 assigning the address of a descendant of :ref:`err_hnd_type
-<err_hnd_type>` to :ref:`err_hnd <err_hnd>`.
+<err_hnd_type>` to :cpp:var:`o2scl::err_hnd`.
 
 O\ :sub:`2`\ scl does not support any execution beyond the point at which the
 error handler is called. Many functions which would have had
@@ -63,7 +63,7 @@ codes (including a few extra ones for O\ :sub:`2`\ scl), which is
 given in below in :ref:`GSL error codes and C++ exception types`.
 
 One can instruct the library to use the GSL-like O\ :sub:`2`\ scl
-error handler :ref:`alt_err_hnd <alt_err_hnd>` by default, by defining
+error handler :cpp:var:`o2scl::alt_err_hnd` by default, by defining
 the constant ``O2SCL_USE_GSL_HANDLER``. This is also useful if one
 wants to compile without C++ exceptions (which does have a small
 overhead).
@@ -219,9 +219,8 @@ several details about how O\ :sub:`2`\ scl was compiled.
   whether or not Armadillo support was enabled during compilation.
 - O2SCL_CBLAS_NAMESPACE - This flag is internally used by some of the
   headers in the ``src/linalg`` directory to select between
-  :ref:`o2scl_cblas <Namespace o2scl_cblas>` and
-  :ref:`o2scl_cblas_bracket <Namespace o2scl_cblas_bracket>` The
-  end-user should not need to use this.
+  ``o2scl_cblas`` and ``o2scl_cblas_bracket``. The end-user should not
+  need to use this.
 - O2SCL_COND_FLAG - Internally used to handle the option of compiling
   with or without Armadillo or Eigen support. The end-user should not
   need to use this.
@@ -250,10 +249,10 @@ several details about how O\ :sub:`2`\ scl was compiled.
   or not GSL V2.0+ support was enabled during installation.
 - O2SCL_HDF - Internal flag to tell the makefiles if HDF5 support
   is to be included. The end-user should not need to use this.
-- O2SCL_HDF5_COMP - Define this flag when O\ :sub:`2`\ scl is compiled and for
-  code which uses O\ :sub:`2`\ scl to include support for HDF5 compression. The
-  command ``acol -v`` reports whether or not HDF5 compression
-  support was enabled during compilation.
+- O2SCL_HDF5_COMP - Define this flag when O\ :sub:`2`\ scl is compiled
+  and for code which uses O\ :sub:`2`\ scl to include support for HDF5
+  compression. The command ``acol -v`` reports whether or not HDF5
+  compression support was enabled during compilation.
 - O2SCL_MPI - Flag to allow MPI functionality in O2scl classes
   which contain MPI code (see also O2SCL_OPENMP). All current
   MPI functionality in O\ :sub:`2`\ scl is header only, thus MPI support does 
@@ -267,16 +266,17 @@ several details about how O\ :sub:`2`\ scl was compiled.
 - O2SCL_NO_SYSTEM_FUNC - If this is defined, then the \ref o2scl::cli
   class will never allow shell commands, independent of the 
   setting of \ref o2scl::cli::shell_cmd_allowed .
-- O2SCL_NO_RANGE_CHECK - If this is defined, range checking is
-  turned off where it is used in \ref o2scl::table, \ref
-  o2scl::tensor, \ref o2scl::permutation and the functions in \ref
-  o2scl_cblas. Some O\ :sub:`2`\ scl header files use this define constant and so
-  range checking can be turned off or on separately from the setting
-  that was used during installation.
+- O2SCL_NO_RANGE_CHECK - If this is defined, range checking is turned
+  off where it is used in \ref o2scl::table, \ref o2scl::tensor, \ref
+  o2scl::permutation and the functions in \ref o2scl_cblas. Some O\
+  :sub:`2`\ scl header files use this define constant and so range
+  checking can be turned off or on separately from the setting that
+  was used during installation.
 - O2SCL_OLDER_COMPILER - A flag which can be defined both during
-  compilation of O\ :sub:`2`\ scl and compilation of code using O\ :sub:`2`\ scl for compilers
-  which do not have std::initializer_list, std::to_string,
-  std::uniform_distribution and cannot run ``mcmc_para_ts``.
+  compilation of O\ :sub:`2`\ scl and compilation of code using O\
+  :sub:`2`\ scl for compilers which do not have std::initializer_list,
+  std::to_string, std::uniform_distribution and cannot run
+  ``mcmc_para_ts``.
 - O2SCL_OPENMP - Flag to allow OpenMP functionality in O2scl
   classes which contain OpenMP code (see also O2SCL_MPI). This flag
   is set during compilation if ``--enable-openmp`` is passed to
@@ -285,11 +285,11 @@ several details about how O\ :sub:`2`\ scl was compiled.
   functionality in O\ :sub:`2`\ scl is header only, this may change in the
   future. The command ``acol -v`` reports on whether or not
   OpenMP was enabled during installation.
-- O2SCL_PART - Internal flag to tell the makefiles if the O\ :sub:`2`\ sclp
-  library is to be included. This constant is automatically set by the
-  configure script depending on whether or not 
-  ``--disable-partlib`` is specified. End-user code which uses O\ :sub:`2`\ sclp 
-  should not need to define this.
+- O2SCL_PART - Internal flag to tell the makefiles if the O\ :sub:`2`\
+  sclp library is to be included. This constant is automatically set
+  by the configure script depending on whether or not
+  ``--disable-partlib`` is specified. End-user code which uses O\
+  :sub:`2`\ sclp should not need to define this.
 - O2SCL_PYTHON - Doesn't do anything (yet).
 - O2SCL_READLINE - Internal flag to tell the makefiles if GNU
   readline support should be included in ``acol``. The end-user
@@ -307,3 +307,13 @@ several details about how O\ :sub:`2`\ scl was compiled.
 - O2SCL_USE_GSL_HANDLER - If this is defined, then an object
   of type \ref o2scl::err_hnd_gsl is the default error handler. Used in
   ``src/base/exception.cpp``
+
+Error handler objects
+---------------------
+
+.. doxygenvariable:: o2scl::err_hnd
+
+.. doxygenvariable:: o2scl::def_err_hnd
+
+.. doxygenvariable:: o2scl::alt_err_hnd
+		     

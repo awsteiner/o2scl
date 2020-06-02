@@ -636,8 +636,11 @@ Multiple entry vector_reverse_double
 Namespace:  function: matrix_row
 Namespace:  function: matrix_column
 Namespace:  function: vector_out
+Namespace: o2scl function: vector_out_quotes
 Namespace:  function: vector_out
 Multiple entry vector_out
+Namespace: o2scl function: vector_out_quotes
+Multiple entry vector_out_quotes
 Namespace:  function: vector_grid
 Namespace: o2scl function: matrix_set_identity
 Namespace: o2scl function: matrix_set_identity
@@ -1111,6 +1114,7 @@ Skipping vector_min_value
 Skipping vector_norm
 Skipping vector_norm_double
 Skipping vector_out
+Skipping vector_out_quotes
 Skipping vector_pvariance
 Skipping vector_quantile_sorted
 Skipping vector_range
@@ -1342,6 +1346,8 @@ vector_norm_double(size_t n, const vec_t &x)
 vector_norm_double(const vec_t &x)
 vector_out(std::ostream &os, size_t n, const vec_t &v, bool endline = false)
 vector_out(std::ostream &os, const vec_t &v, bool endline = false)
+vector_out_quotes(std::ostream &os, size_t n, const vec_t &v, bool endline = false)
+vector_out_quotes(std::ostream &os, const vec_t &v, bool endline = false)
 vector_pvariance(size_t n1, const vec_t &data1, size_t n2, const vec2_t &data2)
 vector_pvariance(const vec_t &data1, const vec2_t &data2)
 vector_quantile_sorted(size_t n, const vec_t &data, const double f)

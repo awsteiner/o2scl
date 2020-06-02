@@ -66,9 +66,11 @@ namespace o2scl {
       See the \ref onedsolve_subsect section of the User's guide for
       general information about \o2 solvers. 
 
+      \verbatim embed:rst
       Based on the CERNLIB routines RZEROX and DZEROX, which was 
-      based on \ref Bus75 and is documented at
+      based on [Bus75]_ and is documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/c200/top.html
+      \endverbatim
   */
   template<class func_t=funct> class root_bkt_cern : 
     public root_bkt<func_t> {

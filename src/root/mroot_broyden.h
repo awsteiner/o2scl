@@ -45,7 +45,9 @@ namespace o2scl {
 
       Experimental.
 
-      See \ref Broyden65.
+      \verbatim embed:rst
+      Based on [Broyden65]_.
+      \endverbatim
   */
   template<class func_t=mm_funct, 
     class vec_t=boost::numeric::ublas::vector<double>, 

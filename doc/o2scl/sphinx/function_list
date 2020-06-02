@@ -236,7 +236,9 @@
     <member refid="namespaceo2scl_1ae00ac0006773b47946a7ee79f3c587d0" kind="function"><name>matrix_row</name></member>
     <member refid="namespaceo2scl_1a3e9129657cc37ba282ee22e4fd00401e" kind="function"><name>matrix_column</name></member>
     <member refid="namespaceo2scl_1afd4bc1b029d2511453101e70b220c2fc" kind="function"><name>vector_out</name></member>
+    <member refid="namespaceo2scl_1a13a000c1c7f0b0b1d085e047fa6ae49c" kind="function"><name>vector_out_quotes</name></member>
     <member refid="namespaceo2scl_1a6ff07983c873315033cc9b859fca4636" kind="function"><name>vector_out</name></member>
+    <member refid="namespaceo2scl_1aeeaa364f4897b0def0d97572ee2a2b50" kind="function"><name>vector_out_quotes</name></member>
     <member refid="namespaceo2scl_1a7d642aa06be8ece1c80f237f93b01546" kind="function"><name>vector_grid</name></member>
     <member refid="namespaceo2scl_1ae8795a06ae0f4f0eaa779e3fd39f61bb" kind="function"><name>matrix_set_identity</name></member>
     <member refid="namespaceo2scl_1a5626fcd2c4c514ffd0ab8510b56be4d2" kind="function"><name>matrix_set_identity</name></member>
