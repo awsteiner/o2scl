@@ -72,8 +72,11 @@ html: Makefile
 html-nit: Makefile
 	sphinx-build -v -n -b html "." build/html
 
-full-html:
+html-full:
 	sphinx-build -v -a -E -b html "." build/html
+
+html-full-nit:
+	sphinx-build -v -a -E -n -b html "." build/html
 
 rst-files: empty
 	grep "kind=\"function\"" ../xml/index.xml | \

@@ -43,7 +43,7 @@ The mass formulas which can be fit to data are
   with :ref:`nucmass_ibm_shell <nucmass_ibm_shell>` for shell effects
     
 In order to create a set of nuclei stored in a ``std::vector``
-object, one can use :cpp:func:`o2scl::nucdist_set()`.
+object, one can use :cpp:func:`o2scl_part::nucdist_set()`.
 
 Nuclear mass fit example
 ------------------------

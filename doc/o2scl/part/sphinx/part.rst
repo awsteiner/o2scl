@@ -92,8 +92,8 @@ Similarly, for the chemical potentials, we have
 
 thus :math:`\tilde{\mu}_- = - \tilde{\mu}_+ - 2 m` . This bookkeeping
 is handled by :cpp:func:`o2scl::part_tl::anti()`, the
-:cpp:func:`o2scl::fermion_thermo::pair_mu()`, and the
-:cpp:func:`o2scl::fermion_thermo::pair_density()`, functions.
+:cpp:func:`o2scl::fermion_thermo_tl::pair_mu()`, and the
+:cpp:func:`o2scl::fermion_thermo_tl::pair_density()`, functions.
 
 The thermodynamic identity used to compute the pressure for
 interacting particles is
@@ -204,7 +204,7 @@ degenerate and nondegenerate expansions to evaluate
 both the base thermodynamic quantities and the three 
 derivatives from :cpp:class:`o2scl::part_deriv_press_tl` .
 
-The function :cpp:class:`o2scl::part_deriv_tl::deriv_f()` computes
+The function :cpp:func:`o2scl::part_deriv_tl::deriv_f()` computes
 the derivatives which are second derivatives of the
 free energy from the three computed above.
 
@@ -299,3 +299,5 @@ Particle example
 ----------------
 
 .. literalinclude:: ../../../../examples/ex_part.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start
