@@ -1,7 +1,7 @@
-:ref:`O2scl <o2scl>`
-
 Chebyshev Approximation
 =======================
+
+:ref:`O2scl <o2scl>`
 
 A class implementing the Chebyshev approximations based on GSL is
 given in :ref:`cheb_approx_tl <cheb_approx_tl>`. This class has its own copy

@@ -52,9 +52,11 @@ namespace o2scl {
       can fail, and will call the error handler and return zero with
       zero error.
 
+      \verbatim embed:rst
       Based on the CERNLIB routine DERIV, which was 
-      based on \ref Rutishauser63 and is documented at
+      based on [Rutishauser63]_ and is documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d401/top.html
+      \endverbatim
       
       An example demonstrating the usage of this class is 
       given in <tt>examples/ex_deriv.cpp</tt> and the \ref ex_deriv_sect .

@@ -185,7 +185,9 @@ namespace o2scl {
       \hline
       <b>References:</b>
 
-      Created for \ref Steiner05.
+      \verbatim embed:rst
+      Created for [Steiner05]_.
+      \endverbatim
   */
   class eos_quark_cfl6 : public eos_quark_cfl {
   public:

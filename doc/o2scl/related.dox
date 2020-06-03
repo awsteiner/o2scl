@@ -11,7 +11,7 @@
     classes begin with the \c gsl_ prefix) and \o2 was specifically
     designed to be used with GSL. GSL is a must-have for most serious
     numerical work in C or C++ and is required for installation of
-    \o2. See also \ref Galassi09 .
+    \o2. See also [Galassi09]_.
 
     - HDF - Hierarchical Data Format, (http://www.hdfgroup.org) \n A
     library developed for file I/O of scientific data. Contains C,

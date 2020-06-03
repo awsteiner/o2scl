@@ -333,7 +333,9 @@ namespace o2scl {
 
     /** \brief The line minimization
 	
-	Recommended values from \ref Fletcher87 are
+	\verbatim embed:rst
+	Recommended values from [Fletcher87]_ are
+	\endverbatim
 	<tt>rho=0.01, sigma=0.1, tau1=9, tau2=0.05, 
 	tau3=0.5 </tt>
     */

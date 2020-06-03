@@ -43,8 +43,10 @@ namespace o2scl {
   
   /** \brief Skyrme hadronic equation of state 
 
+      \verbatim embed:rst
       Equation of state of nucleonic matter based on 
-      the Skryme interaction from \ref Skyrme59 .
+      the Skryme interaction from [Skyrme59]_.
+      \endverbatim
 
       \b Hamiltonian
 
@@ -179,13 +181,17 @@ namespace o2scl {
       
       \b Other \b Notes
 
+      \verbatim embed:rst
       The functions for the usual saturation properties are based 
-      partly on \ref Brack85.
+      partly on [Brack85]_.
+      \endverbatim
       
-      Models are taken from the references: \ref Bartel79, \ref
-      Beiner75, \ref Chabanat95, \ref Chabanat97, \ref Danielewicz09,
-      \ref Dobaczewski94, \ref Dutta86, \ref Friedrich86, \ref Onsi94,
-      \ref Reinhard95, and \ref Tondeur84, and \ref VanGiai81 .
+      \verbatim embed:rst
+      Models are taken from the references: [Bartel79]_,
+      [Beiner75]_, [Chabanat95]_, [Chabanat97]_, [Danielewicz09]_,
+      [Dobaczewski94]_, [Dutta86]_, [Friedrich86]_, [Onsi94]_,
+      [Reinhard95]_, and [Tondeur84]_, and [VanGiai81]_ .
+      \endverbatim
       
       The variables \f$ \nu_n \f$ and \f$ \nu_p \f$ contain the
       expressions \f$ (-\mu_n+V_n)/T \f$ and \f$ (-\mu_p+V_p)/T \f$

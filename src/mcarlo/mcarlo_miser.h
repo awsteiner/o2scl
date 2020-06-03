@@ -86,7 +86,9 @@ namespace o2scl {
       boundaries of the current region are also output. Finally, if it
       is greater than 2, a keypress is required after each output.
 
-      Based on \ref Press90 .
+      \verbatim embed:rst
+      Based on \[Press90]_.
+      \endverbatim
   */
   template<class func_t=multi_funct, 
     class vec_t=boost::numeric::ublas::vector<double>,

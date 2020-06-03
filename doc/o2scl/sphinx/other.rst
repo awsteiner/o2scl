@@ -1,7 +1,7 @@
-:ref:`O2scl <o2scl>`
-
 Other Classes and Functions
 ===========================
+
+:ref:`O2scl <o2scl>`
 
 The \o2 library contains several classes which are still under
 development and are to be considered experimental. While it is

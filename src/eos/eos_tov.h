@@ -817,8 +817,12 @@ namespace o2scl {
 
     /** \brief Crust EOS from \ref Steiner12
 
+	\verbatim embed:rst
 	This function uses the neutron star crust models from \ref
-	Steiner12 . The current acceptable values for \c model are
+	[Steiner12]_. 
+	\endverbatim
+
+	The current acceptable values for \c model are
 	<tt>APR</tt>, <tt>Gs</tt>, <tt>Rs</tt> and <tt>SLy4</tt>.
     */
     void s12_low_dens_eos(std::string model="SLy4",
@@ -826,12 +830,18 @@ namespace o2scl {
 
     /** \brief Crust EOS from Goriely, Chamel, and Pearson
 	
-	From \ref Goriely10, \ref Pearson11, and \ref Pearson12 .
+	\verbatim embed:rst
+	From [Goriely10]_, [Pearson11]_, and [Pearson12]_.
+	\endverbatim
      */
     void gcp10_low_dens_eos(std::string model="BSk20",
 			  bool external=false);
 
     /** \brief Crust EOS from \ref Newton13 given L in MeV
+
+	\verbatim embed:rst
+	From [Newton13]_
+	\endverbatim
 
 	Current acceptable values for \c model are <tt>PNM</tt>
 	and <tt>J35</tt>. 
@@ -849,6 +859,10 @@ namespace o2scl {
 	then this function looks for a file named \c newton_SL.o2
 	in the \o2 data directory specified by
 	\ref o2scl::lib_settings_class::get_data_dir() .
+
+	\verbatim embed:rst
+	From [Newton13]_
+	\endverbatim
     */
     void ngl13_low_dens_eos2(double S, double L, double nt,
 			     std::string fname="");

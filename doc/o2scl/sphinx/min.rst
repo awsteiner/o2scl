@@ -1,7 +1,7 @@
-:ref:`O2scl <o2scl>`
-
 Minimization
 ============
+
+:ref:`O2scl <o2scl>`
 
 One-dimensional minimizers
 --------------------------

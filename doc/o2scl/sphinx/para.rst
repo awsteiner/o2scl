@@ -1,7 +1,7 @@
-:ref:`O2scl <o2scl>`
-
 Parallel Programming with O2scl
 ===============================
+
+:ref:`O2scl <o2scl>`
 
 Thread safety
 -------------

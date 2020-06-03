@@ -64,9 +64,11 @@ namespace o2scl {
       throwing on incorrect input.]
       \endcomment
 
+      \verbatim embed:rst
       Based on the CERNLIB routines RMINFC and DMINFC, which was 
-      based on \ref Fletcher87, and \ref Krabs83 and is documented at
+      based on [Fletcher87]_, and [Krabs83]_ and is documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d503/top.html
+      \endverbatim
   */
 #ifdef DOXYGEN_NO_O2NS
   template<class func_t=funct> class min_cern : 

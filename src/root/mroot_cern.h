@@ -86,9 +86,11 @@ namespace o2scl {
       \future It may be that the \o2 native Householder transformations
       should be used here instead of the inline version given here.
 
+      \verbatim embed:rst
       Based on the CERNLIB routines RSNLEQ and DSNLEQ, which was 
-      based on \ref More79 and \ref More80 and is documented at
+      based on [More79]_ and [More80]_ and is documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/c201/top.html
+      \endverbatim
   */
     template<class func_t=mm_funct,
       class vec_t=boost::numeric::ublas::vector<double>, 

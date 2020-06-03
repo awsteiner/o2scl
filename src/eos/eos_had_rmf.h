@@ -177,7 +177,11 @@ namespace o2scl {
       \f$ f(\sigma,\omega) = b_1 \omega^2 + b_2 \omega^4 + b_3 \omega^6 +
       a_1 \sigma + a_2 \sigma^2 + a_3 \sigma^3 + a_4 \sigma^4 +
       a_5 \sigma^5 + a_6 \sigma^6 \f$ 
-      where the notation from \ref Horowitz01 is:
+
+      \verbatim embed:rst
+      where the notation from [Horowitz01]_ is:
+      \endverbatim
+
       \f$ f(\sigma,\omega) = \lambda_4 g_s^2 \sigma^2 + 
       \lambda_v g_w^2 \omega^2 \f$ 
       This implies \f$ b_1=\lambda_v g_w^2 \f$ and 
@@ -185,12 +189,20 @@ namespace o2scl {
 
       The couplings, \c cs, \c cw, and \c cr all have units of \f$
       \mathrm{fm} \f$, and the couplings \c b, \c c, \c zeta and \c xi are
-      unitless. The additional couplings from \ref Steiner05b, \f$ a_i
-      \f$ have units of \f$ \mathrm{fm}^{(i-2)} \f$ and the couplings
-      \f$ b_j \f$ have units of \f$ \mathrm{fm}^{(2j-2)} \f$ .
+      unitless. 
 
-      When the variable \ref zm_mode is true, the effective mass is
-      fixed using the approach of \ref Zimanyi90 .
+      \verbatim embed:rst
+      Additional couplings are from [Steiner05b]_,
+      \endverbatim
+
+      They are: \f$ a_i \f$ have units of \f$ \mathrm{fm}^{(i-2)} \f$
+      and the couplings \f$ b_j \f$ have units of \f$
+      \mathrm{fm}^{(2j-2)} \f$ .
+
+      \verbatim embed:rst
+      When the variable ``zm_mode`` is true, the effective mass is
+      fixed using the approach of [Zimanyi90]_.
+      \endverbatim
     
       The expressions for the energy densities are often simplified in
       the literature using the field equations. These expressions are
@@ -205,7 +217,9 @@ namespace o2scl {
       the user to add gradient terms to the energy density and
       pressure.
 
-      See also \ref Muller96 .
+      \verbatim embed:rst
+      See also [Muller96]_.
+      \endverbatim
 
       \hline
       \b Field \b equations

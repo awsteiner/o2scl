@@ -32,9 +32,13 @@
 
 /** \brief Constants
     
-    CODATA 2014 values were from \ref Mohr16. CODATA 2018 values are
-    from physics.nist.gov/constants. IAU 2015 values are the nominal
-    values from arXiv:1510.07674 and arXiv:1605.09788 .
+    \verbatim embed:rst
+    CODATA 2014 values were from [Mohr16]_.
+    \endverbatim
+
+    CODATA 2018 values are from physics.nist.gov/constants. IAU 2015
+    values are the nominal values from arXiv:1510.07674 and
+    arXiv:1605.09788 .
 */
 namespace o2scl_const {
 

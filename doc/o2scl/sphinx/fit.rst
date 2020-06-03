@@ -1,7 +1,7 @@
-:ref:`O2scl <o2scl>`
-
 Least-Squares Fitting
 =====================
+
+:ref:`O2scl <o2scl>`
 
 Linear least-squares fitting is performed by :ref:`fit_linear
 <fit_linear>`. Non-linear least-squares Fitting is performed by

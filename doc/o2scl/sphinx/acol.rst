@@ -1,7 +1,7 @@
-:ref:`O2scl <o2scl>`
-
 The acol Command-line Utility
 =============================
+
+:ref:`O2scl <o2scl>`
 
 O\ :sub:`2`\ scl contains a command-line utility, \c acol, designed to
 facilitate the manipulation of various objects stored in HDF5 files.

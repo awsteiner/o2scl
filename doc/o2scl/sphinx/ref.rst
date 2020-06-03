@@ -30,20 +30,20 @@ Bibliography
    <https://doi.org/10.1145/79505.79507>`_,
    ACM Trans. Math. Soft.  **16** (1990) 201.
 
-.. [Cormen09]     T. H. Cormen, C. E. Leiserson, R. L. Rivest, and C. Stein,
-    <a href="https://www.worldcat.org/isbn/9780262033848">
-    Introduction to Algorithms, 3rd Edition</a>,
-    (2009) The MIT Press.
+.. [Cormen09] T. H. Cormen, C. E. Leiserson, R. L. Rivest, and C. Stein,
+   <a href="https://www.worldcat.org/isbn/9780262033848">
+   Introduction to Algorithms, 3rd Edition</a>,
+   (2009) The MIT Press.
 
-.. [EngelnMullges96]     G. Engeln-Müllges and F. Uhlig,
-    <a href="https://www.worldcat.org/isbn/9783540605300">
-    Numerical Algorithms in C</a>,
-    (1996) Springer, p. 96.
+.. [EngelnMullges96] G. Engeln-Müllges and F. Uhlig,
+   <a href="https://www.worldcat.org/isbn/9783540605300">
+   Numerical Algorithms in C</a>,
+   (1996) Springer, p. 96.
 
-.. [Fletcher87]     R. Fletcher,
-    <a href="https://www.worldcat.org/isbn/9780471915478">
-    Practical Methods of Optimization</a>,
-    (1987) John Wiley & Sons, Chichester, p. 39.
+.. [Fletcher87] R. Fletcher,
+   <a href="https://www.worldcat.org/isbn/9780471915478">
+   Practical Methods of Optimization</a>,
+   (1987) John Wiley & Sons, Chichester, p. 39.
 
 .. [Freedman81] `D. Freedman and P. Diaconis
    <https://doi.org/10.1007/BF01025868>`_,
@@ -52,15 +52,14 @@ Bibliography
 .. [Fritsch80] F. N. Fritsch and R. E. Carlson,
    SIAM J. Numer. Anal. **17** (1980) 238.
 
-.. [Galassi09]     M. Galassi, J. Davies, J. Theiler, B. Gough, G. Jungman, P. Alken, M. Booth, and F. Rossi,
-    <a href="https://www.worldcat.org/isbn/9780954612078">
-    GNU Scientific Library Reference Manual - Third
-                  Edition</a>,
-    (2009) Network Theory, Bristol.
+.. [Galassi09] M. Galassi, J. Davies, J. Theiler, B. Gough, G. Jungman, P. Alken, M. Booth, and F. Rossi,
+   <a href="https://www.worldcat.org/isbn/9780954612078">
+   GNU Scientific Library Reference Manual - Third Edition</a>,
+   (2009) Network Theory, Bristol.
 
-.. [Garbow80]     B. S. Garbow, K. E. Hillstrom, and J. J. More,
-    MINPACK project,
-    (1980) Argonne Natl. Lab.
+.. [Garbow80] B. S. Garbow, K. E. Hillstrom, and J. J. More,
+   MINPACK project,
+   (1980) Argonne Natl. Lab.
 
 .. [Genz80] `A. C. Genz and A. A. Malik
    <https://doi.org/10.1016/0771-050X(80)90039-X>`_,
@@ -70,36 +69,34 @@ Bibliography
    <https://doi.org/10.1137/0720038>`_,
    SIAM J. Numer. Anal. **20** (1983) 580.
 
-.. [Golub96]     G. H. Golub and C. F. Van Loan,
-    <a href="https://www.worldcat.org/isbn/9780801854149">
-    Matrix Computations (3rd ed)</a>,
-    (1996) Johns Hopkins University Press.
+.. [Golub96] G. H. Golub and C. F. Van Loan,
+   <a href="https://www.worldcat.org/isbn/9780801854149">
+   Matrix Computations (3rd ed)</a>,
+   (1996) Johns Hopkins University Press.
 
-.. [Hairer09]     E. Hairer and G. Norsett S. P. and Wanner,
-    <a href="https://www.worldcat.org/isbn/9783642051630">
-    Solving ordinary differential equations I, Nonstiff
-                  Problems</a>,
-    (2009) Springer, 2nd edition.
+.. [Hairer09] E. Hairer and G. Norsett S. P. and Wanner,
+   <a href="https://www.worldcat.org/isbn/9783642051630">
+   Solving ordinary differential equations I, Nonstiff Problems</a>,
+   (2009) Springer, 2nd edition.
 
-.. [Kelley99]     C. T. Kelley,
-    <a href="https://www.worldcat.org/isbn/9780898714333">
-    Iterative methods for optimization</a>,
-    (1999) SIAM, Philadelphia.
+.. [Kelley99] C. T. Kelley,
+   <a href="https://www.worldcat.org/isbn/9780898714333">
+   Iterative methods for optimization</a>,
+   (1999) SIAM, Philadelphia.
 
-.. [Krabs83]     W. Krabs,
-    <a href="https://www.worldcat.org/isbn/9783519029526">
-    Einführung in die lineare und nichtlineare
-                  Optimierung für Ingenieure</a>,
-    (1983) Teubner, Stuttgart, p. 84.
+.. [Krabs83] W. Krabs,
+   <a href="https://www.worldcat.org/isbn/9783519029526">
+   Einführung in die lineare und nichtlineare Optimierung für Ingenieure</a>,
+   (1983) Teubner, Stuttgart, p. 84.
 
 .. [Lepage78] `G. P. Lepage
    <https://doi.org/10.1016/0021-9991(78)90004-9>`_,
    J. Comp. Phys. **27** (1978) 192.
 
-.. [Lewin81]     L Lewin,
-    <a href="https://www.worldcat.org/isbn/9780444005502">
-    Polylogarithms and Associated Functions</a>,
-    (1981) North Holland, New York.
+.. [Lewin81] L Lewin,
+   <a href="https://www.worldcat.org/isbn/9780444005502">
+   Polylogarithms and Associated Functions</a>,
+   (1981) North Holland, New York.
 
 .. [Longman58] `I. M. Longman
    <https://doi.org/10.2307/2002022>`_,
@@ -128,11 +125,10 @@ Bibliography
 .. [Nelder65] J. A. Nelder and R. Mead,
    Computer Journal **7** (1965) 308.
 
-.. [Piessens83]     R. Piessens, E. de Doncker-Kapenga, C. Uberhuber, and D. Kahaner,
-    <a href="https://www.worldcat.org/isbn/9783540125532">
-    QUADPACK, A Subroutine Package for Automatic
-                  Integration</a>,
-    (1983) Springer-Verlag, Berlin.
+.. [Piessens83] R. Piessens, E. de Doncker-Kapenga, C. Uberhuber, and D. Kahaner,
+   <a href="https://www.worldcat.org/isbn/9783540125532">
+   QUADPACK, A Subroutine Package for Automatic Integration</a>,
+   (1983) Springer-Verlag, Berlin.
 
 .. [Press90] W. H. F., G. R. Press,
    Computers in Physics **4** (1990) 190.
@@ -157,12 +153,10 @@ Bibliography
    <https://doi.org/10.1023/A:1008202821328>`_,
    Jour. of Global Optim. **11** (1997) 341.
 
-.. [Tolstov62]     G. P. Tolstov,
-    Fourier Series,
-    (1962) Prentice Hall, Englewood Cliffs, NJ
-    (I don't have a link for the 1962 version, but a 1976
-                  reprinting is available at
-                  https://www.worldcat.org/isbn/9780486633176).
+.. [Tolstov62] G. P. Tolstov,
+   Fourier Series,
+   (1962) Prentice Hall, Englewood Cliffs, NJ
+   (I don't have a link for the 1962 version, but a 1976 reprinting is available at https://www.worldcat.org/isbn/9780486633176).
 
 .. [Wynn56] `P. Wynn
    <https://doi.org/10.2307/2002183>`_,

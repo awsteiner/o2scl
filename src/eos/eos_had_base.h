@@ -271,7 +271,10 @@ namespace o2scl {
       \eta(n_B) \equiv \frac{E(n_B,1)-E(n_B,1/2)}
       {3 \left[E(n_B,1/2)-E(n_B,0)\right]}
       \f]
-      as described in \ref Steiner06 . This function can be expressed
+      \verbatim embed:rst
+      (see [Steiner06]_).
+      \endverbatim
+      This function can be expressed
       either in terms of \f$ \tilde{S} \f$ or \f$ S_4 \f$
       \f[
       \eta(n_B) = \frac{5 \tilde{S}(n_B) - S(n_B,0)}

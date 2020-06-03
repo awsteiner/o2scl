@@ -1,7 +1,7 @@
-:ref:`O2scl <o2scl>`
-
 Unit Conversions
 ================
+
+:ref:`O2scl <o2scl>`
 
 There is a class which performs conversion between units specified
 with strings in :ref:`convert_units <convert_units>`. If ``popen()``

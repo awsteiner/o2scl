@@ -263,20 +263,20 @@ several details about how O\ :sub:`2`\ scl was compiled.
   calls :cpp:func:`o2scl::err_hnd_gsl::set()` instead of throwing a
   C++ exception. Used in ``src/base/exception.cpp``. This is useful,
   for example, with the ``g++`` flag ``-fno-exceptions``.
-- O2SCL_NO_SYSTEM_FUNC - If this is defined, then the \ref o2scl::cli
+- O2SCL_NO_SYSTEM_FUNC - If this is defined, then the :ref:`cli <cli>`
   class will never allow shell commands, independent of the 
-  setting of \ref o2scl::cli::shell_cmd_allowed .
+  setting of :cpp:var:`o2scl::cli::shell_cmd_allowed`.
 - O2SCL_NO_RANGE_CHECK - If this is defined, range checking is turned
-  off where it is used in \ref o2scl::table, \ref o2scl::tensor, \ref
-  o2scl::permutation and the functions in \ref o2scl_cblas. Some O\
-  :sub:`2`\ scl header files use this define constant and so range
-  checking can be turned off or on separately from the setting that
-  was used during installation.
+  off where it is used in :ref:`table <table>`, :ref:`tensor
+  <tensor>`, :ref:`permutation <permutation>` and the functions in
+  ``o2scl_cblas``. Some O\ :sub:`2`\ scl header files use this define
+  constant and so range checking can be turned off or on separately
+  from the setting that was used during installation.
 - O2SCL_OLDER_COMPILER - A flag which can be defined both during
   compilation of O\ :sub:`2`\ scl and compilation of code using O\
-  :sub:`2`\ scl for compilers which do not have std::initializer_list,
-  std::to_string, std::uniform_distribution and cannot run
-  ``mcmc_para_ts``.
+  :sub:`2`\ scl for compilers which do not have
+  ``std::initializer_list``, ``std::to_string``,
+  ``std::uniform_distribution`` and cannot run ``mcmc_para_ts``.
 - O2SCL_OPENMP - Flag to allow OpenMP functionality in O2scl
   classes which contain OpenMP code (see also O2SCL_MPI). This flag
   is set during compilation if ``--enable-openmp`` is passed to
@@ -297,16 +297,16 @@ several details about how O\ :sub:`2`\ scl was compiled.
   defined by the ./configure script unless the --disable-readline
   argument is given.
 - O2SCL_PLAIN_HDF5_HEADER - If true, assume HDF5 include statements 
-  should be of the form ``#include &lt;hdf5.h&gt;`` independent
+  should be of the form ``#include <hdf5.h>`` independent
   of the automatically determined operating system type.
-- O2SCL_UBUNTU_PKG - If true, don't use current date and time
-  macros to avoid Ubuntu packaging errors (used in
-  src/base/lib_settings.cpp and src/hdf/acolm.cpp). The end-user
-  should not need to use this macro.
+- O2SCL_UBUNTU_PKG - If true, don't use current date and time macros
+  to avoid Ubuntu packaging errors (used in
+  ``src/base/lib_settings.cpp`` and ``src/hdf/acolm.cpp``). The
+  end-user should not need to use this macro.
 - O2SCL_USE_BOOST_FILESYSTEM - Doesn't do anything (yet).
-- O2SCL_USE_GSL_HANDLER - If this is defined, then an object
-  of type \ref o2scl::err_hnd_gsl is the default error handler. Used in
-  ``src/base/exception.cpp``
+- O2SCL_USE_GSL_HANDLER - If this is defined, then an object of type
+  :ref:`err_hnd_gsl <err_hnd_gsl>` is the default error handler. Used
+  in ``src/base/exception.cpp``
 
 Error handler objects
 ---------------------

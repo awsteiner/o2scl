@@ -182,16 +182,36 @@ namespace o2scl {
     /// The modifed GBD form
     static const int bgbd_form=2;
 
-    /// The form from \ref Prakash88 as formulated in \ref Bombaci01
+    /** \brief The form from \ref Prakash88 as formulated in \ref Bombaci01
+
+	\verbatim embed:rst
+	See [Prakash88]_ and [Bombaci01]_
+	\endverbatim
+     */
     static const int bpal_form=3;
 
-    /// The "SL" form. See \ref Bombaci01.
+    /** \brief The "SL" form. See \ref Bombaci01.
+
+	\verbatim embed:rst
+	See [Bombaci01]_
+	\endverbatim
+     */
     static const int sl_form=4;
 
-    /// The Gale, Bertsch, Das Gupta from \ref Gale87.
+    /** \brief The Gale, Bertsch, Das Gupta from \ref Gale87.
+
+	\verbatim embed:rst
+	See [Gale87]_.
+	\endverbatim
+     */
     static const int gbd_form=5;
     
-    /// The form from \ref Prakash88.
+    /** \brief The form from \ref Prakash88
+
+	\verbatim embed:rst
+	See [Prakash88]_.
+	\endverbatim
+     */
     static const int pal_form=6;
 
     /** \brief Set the derivative object to calculate the 

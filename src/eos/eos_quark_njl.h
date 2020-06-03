@@ -41,7 +41,9 @@ namespace o2scl {
 
   /** \brief Nambu Jona-Lasinio EOS
 
-      This class is based on \ref Buballa99 .
+      \verbatim embed:rst
+      This class is based on [Buballa99]_.
+      \endverbatim
 
       The quantities \ref L, \ref G, and \ref K are the coupling
       constants. In order to use the EOS, the user should either (i)

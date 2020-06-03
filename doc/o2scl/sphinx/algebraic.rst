@@ -1,7 +1,7 @@
-:ref:`O2scl <o2scl>`
-
 Algebraic Function Evaluation
 =============================
+
+:ref:`O2scl <o2scl>`
 
 The cpp-expression-parser from Brandon Amos is used in O\ :sub:`2`\
 scl to provide evaluation of functions specified as strings. The

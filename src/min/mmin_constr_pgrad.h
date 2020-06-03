@@ -67,9 +67,11 @@ namespace o2scl {
       performed along the projected gradient direction subject to 
       the specified constraints. 
 
+      \verbatim embed:rst
       This algorithm is likely not ideal for most problems and is
       provided mostly for demonstration and educational purposes.
-      Based on implementation of \ref Kelley99 in OOL. 
+      Based on implementation of [Kelley99]_ in OOL. 
+      \endverbatim
 
       Default template arguments
       - \c func_t - \ref multi_funct

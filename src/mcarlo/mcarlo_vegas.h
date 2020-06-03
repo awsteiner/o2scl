@@ -104,7 +104,11 @@ namespace o2scl {
 
       \future Allow the user to change the maximum number of bins.
 
-      Based on \ref Lepage78 . The current version of the algorithm
+      \verbatim embed:rst
+      Based on [Lepage78]_
+      \endverbatim
+
+      The current version of the algorithm
       was described in the Cornell preprint CLNS-80/447 of March,
       1980. The GSL code follows most closely the C version by D. R.
       Yennie, coded in 1984.

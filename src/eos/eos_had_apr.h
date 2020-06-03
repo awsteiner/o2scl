@@ -38,8 +38,10 @@ namespace o2scl {
 
   /** \brief EOS from Akmal, Pandharipande, and Ravenhall
 
-      The EOS of Akmal, Pandharipande, and Ravenhall, from \ref
-      Akmal98eo (APR).
+      \verbatim embed:rst
+      The EOS of Akmal, Pandharipande, and Ravenhall, from 
+      [Akmal98eo]_ (APR).
+      \endverbatim
 
       The Hamiltonian is:
       \f[

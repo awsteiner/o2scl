@@ -1130,8 +1130,10 @@ namespace o2scl {
 
   /** \brief Steffen's monotonicity-preserving interpolation
 
+      \verbatim embed:rst
       Adapted from the GSL version by J.-F. Caron which
-      was based on \ref Steffen90 .
+      was based on [Steffen90]_.
+      \endverbatim
    */
   template<class vec_t, class vec2_t=vec_t> class interp_steffen : 
   public interp_base<vec_t,vec2_t> {
@@ -1388,7 +1390,9 @@ namespace o2scl {
       and the results of the interpolation will be flat where the data
       is also flat.
 
-      Based on \ref Fritsch80 .
+      \verbatim embed:rst
+      Based on [Fritsch80]_.
+      \endverbatim
 
       \future Convert into fewer loops over the data
   */

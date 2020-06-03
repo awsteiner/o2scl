@@ -1,20 +1,20 @@
-:ref:`O2scl <o2scl>`
-
 Constrained Minimization
 ========================
 
-O\ :sub:`2`\ scl reimplements the Open Optimization Library (OOL) available at
-http://ool.sourceforge.net. The associated classes allow
+:ref:`O2scl <o2scl>`
+
+O\ :sub:`2`\ scl reimplements the Open Optimization Library (OOL)
+available at http://ool.sourceforge.net. The associated classes allow
 constrained minimization when the constraint can be expressed as a
 hyper-cubic constraint on all of the independent variables. The
 routines have been rewritten and reformatted for C++ in order to
-facilitate the use of member functions and user-defined vector
-types as arguments. The base class is mmin_constr and there are
-two different constrained minimzation algorithms implemented in
-\ref o2scl::mmin_constr_pgrad, \ref o2scl::mmin_constr_spg. (The
-\ref o2scl::mmin_constr_gencan minimizer is not yet finished). The
-O\ :sub:`2`\ scl implementation should be essentially identical to the most
-recently released version of OOL.
+facilitate the use of member functions and user-defined vector types
+as arguments. The base class is mmin_constr and there are two
+different constrained minimzation algorithms implemented in \ref
+o2scl::mmin_constr_pgrad, \ref o2scl::mmin_constr_spg. (The \ref
+o2scl::mmin_constr_gencan minimizer is not yet finished). The O\
+:sub:`2`\ scl implementation should be essentially identical to the
+most recently released version of OOL.
 
 The constrained minimization classes operate in a similar way to
 the other multi-dimensional minimization classes (which are

@@ -110,7 +110,9 @@ namespace o2scl {
       - \c func_t - \ref multi_funct
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
 
-      Based on \ref Nelder65 .
+      \verbatim embed:rst
+      Based on [Nelder65]_.
+      \endverbatim
 
       A variable <tt>count</tt> originally defined in the GSL simplex
       state is not present here, because it was unused.

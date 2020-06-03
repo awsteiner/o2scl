@@ -1,7 +1,7 @@
-:ref:`O2scl <o2scl>`
-
 Random Number Generation
 ========================
+
+:ref:`O2scl <o2scl>`
 
 .. note:: The O\ :sub:`2`\ scl random number generators are being
 	  deprecated in favor of the C++11 generators, which are used

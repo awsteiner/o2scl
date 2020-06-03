@@ -157,8 +157,10 @@ namespace o2scl {
 
       <b>References</b>
 
-      Designed for \ref Steiner08 based on \ref Lattimer85 and
-      \ref Lattimer91 .
+      \verbatim embed:rst
+      Designed for [Steiner08]_ based on [Lattimer85]_ and
+      [Lattimer91]_.
+      \endverbatim
 
       \hline
   */
@@ -420,8 +422,10 @@ namespace o2scl {
 
       <b>References</b>
 
-      Designed in \ref Steiner08 and \ref Souza09 based in part
-      on \ref Lattimer85 and \ref Lattimer91 .
+      \verbatim embed:rst
+      Designed in [Steiner08]_ and [Souza09]_ based in part
+      on [Lattimer85]_ and [Lattimer91]_.
+      \endverbatim
 
       \hline
   */

@@ -1,7 +1,7 @@
-:ref:`O2scl <o2scl>`
-
 Histograms
 ==========
+
+:ref:`O2scl <o2scl>`
 
 One- and two-dimensional histograms are implemented in 
 :ref:`hist <hist>` and :ref:`hist_2d <hist_2d>`.

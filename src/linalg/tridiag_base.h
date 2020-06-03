@@ -111,7 +111,9 @@ namespace o2scl_linalg {
       given the \c N diagonal elements in \c diag, \c N-1 diagonal
       elements in \c offdiag, and the \c N elements \c b from the RHS.
 
-      See \ref EngelnMullges96 .
+      \verbatim embed:rst
+      See [EngelnMullges96]_.
+      \endverbatim
   */
   template<class vec_t, class vec2_t, class vec3_t, 
     class vec4_t, class mem_t, class mem_vec_t> 

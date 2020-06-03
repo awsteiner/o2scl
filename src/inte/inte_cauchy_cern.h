@@ -42,9 +42,11 @@ namespace o2scl {
       specified in the argument \c func to integ(). This is different
       from how the \ref inte_qawc_gsl operates.
       
-      The method from \ref Longman58 is used for the decomposition of
+      \verbatim embed:rst
+      The method from [Longman58]_ is used for the decomposition of
       the integral, and the resulting integrals are computed using
       a user-specified base integration object.
+      \endverbatim
       
       The uncertainty in the integral is not calculated, and is always
       given as zero. The default base integration object is of type

@@ -58,8 +58,10 @@ namespace o2scl_linalg {
       transformations in the lower and upper triangular parts of \c A,
       respectively.
 
+      \verbatim embed:rst
       Adapted from the GSL version which was based on algorithm 5.4.2
-      in \ref Golub96.
+      in [Golub96]_.
+      \endverbatim
   */
   template<class mat_t, class vec_t, class vec2_t> 
     int bidiag_decomp(size_t M, size_t N, mat_t &A, 

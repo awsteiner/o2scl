@@ -35,12 +35,10 @@ Bibliography
    <https://doi.org/10.1016/0375-9474(74)90528-4>`_,
    Nucl. Phys. A **230** (1974) 1.
 
-.. [Bombaci01]     I. Bombaci, "Isospin physics in heavy-ion collisions at
-                  intermediate energies" in
+.. [Bombaci01]    I. Bombaci, "Isospin physics in heavy-ion collisions at intermediate energies" in
     <a href="https://www.worldcat.org/isbn/1560728884">
-    Isospin physics in heavy-ion collisions at
-                  intermediate energies</a>,
-    (2001) Nova Science and New York, p. 1.
+   Isospin physics in heavy-ion collisions at intermediate energies</a>,
+   (2001) Nova Science and New York, p. 1.
 
 .. [Bonazzola73] `S. Bonazzola
    <https://doi.org/10.1086/152140>`_,
@@ -214,10 +212,9 @@ Bibliography
    <https://doi.org/10.1016/0375-9474(91)90452-C>`_,
    Nucl. Phys. A **535** (1991) 331.
 
-.. [Li01]     <a href="https://www.worldcat.org/isbn/1560728884">
-    Isospin physics in heavy-ion collisions at
-                  intermediate energies</a>,
-    (2001) Nova Science and New York.
+.. [Li01]    <a href="https://www.worldcat.org/isbn/1560728884">
+   Isospin physics in heavy-ion collisions at intermediate energies</a>,
+   (2001) Nova Science and New York.
 
 .. [Margueron02] `J. Margueron, J. Navarro, and N. van Giai
    <https://doi.org/10.1103/PhysRevC.66.014303>`_,
@@ -271,9 +268,8 @@ Bibliography
    <https://doi.org/10.1103/PhysRevD.82.024016>`_,
    Phys. Rev. D **82** (2010) 024016.
 
-.. [Prakash87]     Windsurfing the Fermi Sea and Volume and edited by
-                  T.T.S. Kuo and J. Speth,
-    (1987) Elsevier, p. 357.
+.. [Prakash87]    Windsurfing the Fermi Sea and Volume and edited by T.T.S. Kuo and J. Speth,
+   (1987) Elsevier, p. 357.
 
 .. [Prakash88] `M. Prakash, T. L. Ainsworth, and J. M. Lattimer
    <https://doi.org/10.1103/PhysRevLett.61.2518>`_,
@@ -299,11 +295,10 @@ Bibliography
    <https://doi.org/10.1103/PhysRevC.60.014316>`_,
    Phys. Rev. C **60** (1999) 014316.
 
-.. [Shapiro83]     S. L. Shapiro and S. A. Teukolsky,
-    <a href="https://www.worldcat.org/isbn/0471873179">
-    Black Holes and White Dwarfs and Neutron Stars: The
-                  Physics of Compact Objects</a>,
-    (1983) John Wiley and Sons.
+.. [Shapiro83] S. L. Shapiro and S. A. Teukolsky,
+   <a href="https://www.worldcat.org/isbn/0471873179">
+   Black Holes and White Dwarfs and Neutron Stars: The Physics of Compact Objects</a>,
+   (1983) John Wiley and Sons.
 
 .. [Shen10a] `G. Shen, C. J. Horowitz, and S. Teige
    <https://doi.org/10.1103/PhysRevC.82.015806>`_,

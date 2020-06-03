@@ -384,6 +384,10 @@ namespace o2scl {
   };
   
   /** \brief Tabulated EOS for \ref nstar_rot from \ref Bethe74
+
+      \verbatim embed:rst
+      From [Bethe74]_
+      \endverbatim
    */
   class eos_nstar_rot_C : public eos_nstar_rot_interp {
   public:
@@ -391,6 +395,10 @@ namespace o2scl {
   };
   
   /** \brief Tabulated EOS for \ref nstar_rot from \ref Pandharipande75
+
+      \verbatim embed:rst
+      From [Pandharipande75]_
+      \endverbatim
    */
   class eos_nstar_rot_L : public eos_nstar_rot_interp {
   public:
@@ -421,10 +429,14 @@ namespace o2scl {
       http://www.gravity.phys.uwm.edu/rns/ , and you may find Nick
       Stergioulas's web page http://www.astro.auth.gr/~niksterg/ , or
       Sharon Morsink's page http://fermi.phys.ualberta.ca/~morsink/
-      useful. See \ref Bonazzola73, \ref Bonazzola94, \ref Cook92,
-      \ref Cook94, \ref Friedman88, \ref Gourgoulhon94, \ref
-      Komatsu89, \ref Laarakkers99, \ref Nozawa98, \ref Stergioulas95,
-      and \ref Stergioulas03 .
+      useful. 
+
+      \verbatim embed:rst
+      See [Bonazzola73]_, [Bonazzola94]_, [Cook92]_,
+      [Cook94]_, [Friedman88]_, [Gourgoulhon94]_, 
+      [Komatsu89]_, [Laarakkers99]_, [Nozawa98]_, [Stergioulas95]_,
+      and [Stergioulas03]_.
+      \endverbatim
 
       \todo Better documentation is needed everywhere.
       \todo Test the resize() function
@@ -462,7 +474,9 @@ namespace o2scl {
 
       <b>Quadrupole moments</b>
 
-      Quadrupole moments computed using the method in \ref Laarakkers99. 
+      \verbatim embed:rst
+      Quadrupole moments computed using the method in [Laarakkers99]_. 
+      \endverbatim
 
       <b>Axisymmetric Instability</b>
 

@@ -49,7 +49,9 @@ namespace o2scl {
       \hline
       <b>References:</b>
 
-      Created for \ref Steiner06.
+      \verbatim embed:rst
+      Created for [Steiner06]_.
+      \endverbatim
 
       \bug Testing hasn't been working recently, especially for
       MDI-like models. 

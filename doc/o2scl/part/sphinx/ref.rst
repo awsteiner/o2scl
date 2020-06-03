@@ -19,16 +19,15 @@ Bibliography
    <https://doi.org/10.1086/309010>`_,
    Astrophys. J. **537** (2000) 351.
 
-.. [Callen85]     H. B. Callen,
-    <a href="https://www.worldcat.org/isbn/9780471862567">
-    Thermodynamics and an Introduction to
-                  Thermostatistics, 2nd edition.</a>,
-    (1985) Wiley.
+.. [Callen85] H. B. Callen,
+   <a href="https://www.worldcat.org/isbn/9780471862567">
+   Thermodynamics and an Introduction to Thermostatistics, 2nd edition.</a>,
+   (1985) Wiley.
 
-.. [Chandrasekhar10]     S. Chandrasekhar,
-    <a href="https://www.worldcat.org/isbn/9780486604138">
-    An Introduction to the Study of Stellar Structure</a>,
-    (2010) Dover.
+.. [Chandrasekhar10] S. Chandrasekhar,
+   <a href="https://www.worldcat.org/isbn/9780486604138">
+   An Introduction to the Study of Stellar Structure</a>,
+   (2010) Dover.
 
 .. [Delaroche10] `J. P. Delaroche, M. Girod, J. Libert, H. Goutte, S. Hilaire, S. Peru, N. Pillet, and G. F. Bertsch
    <https://doi.org/10.1103/PhysRevC.81.014303>`_,
@@ -71,10 +70,10 @@ Bibliography
 .. [Koura05] H. Koura, T. Tachibana, M. Uno, and M. Yamada,
    Prog. Theor. Phys. **113** (2005) 305.
 
-.. [Landau80]     L. D. Landau,
-    <a href="https://www.worldcat.org/isbn/9780750633727">
-    Statistical Physics: Part 1, 3rd Edition.</a>,
-    (1980) Butterworth-Heinemann.
+.. [Landau80] L. D. Landau,
+   <a href="https://www.worldcat.org/isbn/9780750633727">
+   Statistical Physics: Part 1, 3rd Edition.</a>,
+   (1980) Butterworth-Heinemann.
 
 .. [Liu11] `M. Liu, N. Wang, Y. Deng, and X. Wu
    <https://doi.org/10.1103/PhysRevC.84.014333>`_,

@@ -1,8 +1,8 @@
-:ref:`O2scl <o2scl>`
-
 Acknowledgements
 ================
     
+:ref:`O2scl <o2scl>`
+
 Thank you to Jerry Gagelman and Edwin van Leeuwen who 
 contributed to ...
 

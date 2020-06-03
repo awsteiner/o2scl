@@ -105,9 +105,13 @@ namespace o2scl {
 	yields a faster converging series to the same limit. This
 	method of extrapolation applies to some sequences of
 	adaptive-approximation and error-estimation for numerical
-	integration. This function implements the \f$
-	\varepsilon\f$-algorithm (\ref Wynn56, \ref Piessens83) for an
-	extrapolation table stored in \c table.
+	integration. 
+
+	\verbatim embed:rst
+	This function implements the 
+	:math:`\varepsilon`-algorithm ([Wynn56]_, [Piessens83]_) for an
+	extrapolation table stored in table.
+	\endverbatim
 
 	Quadpack documentation
 	\verbatim

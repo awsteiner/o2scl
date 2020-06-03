@@ -1,7 +1,7 @@
-:ref:`O2scl <o2scl>`
-
 Python Integration
 ==================
+
+:ref:`O2scl <o2scl>`
 
 O\ :sub:`2`\ scl has an associated experimental python package, O\
 :sub:`2`\ sclpy, which assists in manipulating and plotting HDF5 files

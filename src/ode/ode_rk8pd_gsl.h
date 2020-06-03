@@ -55,7 +55,9 @@ namespace o2scl {
 
   /** \brief Embedded Runge-Kutta Prince-Dormand ODE stepper (GSL)
 
-      Based on \ref Prince81 .
+      \verbatim embed:rst
+      Based on [Prince81]_.
+      \endverbatim
 
       There is an example for the usage of this class in
       <tt>examples/ex_ode.cpp</tt> documented in the \ref ex_ode_sect

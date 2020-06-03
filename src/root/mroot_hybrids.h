@@ -443,9 +443,13 @@ namespace o2scl {
   /** \brief Multidimensional root-finding algorithm using
       Powell's Hybrid method (GSL)
       
+      \verbatim embed:rst
       This is a recasted version of the GSL routines which use a
       modified version of Powell's Hybrid method as implemented in the
-      HYBRJ algorithm in MINPACK (\ref Garbow80).  Both the scaled and
+      HYBRJ algorithm in MINPACK [Garbow80]_.  
+      \endverbatim
+
+      Both the scaled and
       unscaled options are available by setting \ref int_scaling (the
       scaled version is the default). If derivatives are not provided,
       they will be computed automatically. This class provides the

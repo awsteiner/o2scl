@@ -122,11 +122,11 @@ namespace o2scl {
       
       3) Goto (1).
       
+      \verbatim embed:rst
       The basic algorithm is based on the adaptive cubature described
-      in \ref Genz80 and subsequently extended to integrating a vector
-      of integrands in \ref Berntsen91 .
-
-      \hline      
+      in [Genz80]_ and subsequently extended to integrating a vector
+      of integrands in [Berntsen91]_.
+      \endverbatim
 
   */
   template<class func_t>
@@ -602,9 +602,11 @@ namespace o2scl {
       
   /** \brief Desc
 
-      Based on rule75genzmalik.cpp in HIntLib-0.0.10: An embedded
+      \verbatim embed:rst
+      Based on ``rule75genzmalik.cpp`` in HIntLib-0.0.10: An embedded
       cubature rule of degree 7 (embedded rule degree 5) 
-      from \ref Genz83.
+      from [Genz83]_.
+      \endverbatim
   */
   class rule75genzmalik : public rule {
 
@@ -1000,8 +1002,10 @@ namespace o2scl {
 
     /** \name Binary heap implementation
 	
-	Based on \ref Cormen09 and used as a priority queue of
+	\verbatim embed:rst
+	Based on [Cormen09]_ and used as a priority queue of
 	regions to integrate.
+	\endverbatim
     */
     //@{
     /** \brief Desc

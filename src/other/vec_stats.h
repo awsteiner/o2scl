@@ -997,7 +997,9 @@ namespace o2scl {
       \Delta_b = \frac{3.5 \sigma}{n^{1/3}}
       \f]
 
-      From \ref Scott79 .
+      \verbatim embed:rst
+      From [Scott79]_.
+      \endverbatim
 
       \note If <tt>n</tt> is less than or equal to 1, this
       function returns 0.0 without calling the error handler.
@@ -1065,7 +1067,9 @@ namespace o2scl {
       This function sorts the vector in order to obtain
       the result.
 
-      From \ref Freedman81 .
+      \verbatim embed:rst
+      From [Freedman81]_.
+      \endverbatim
 
       \note If <tt>n</tt> is less than or equal to 1, this
       function returns 0.0 without calling the error handler.
