@@ -574,7 +574,9 @@ namespace o2scl {
       distribution in <tt>doc/o2scl/eos/extras/scollapse_README</tt>
       and is reproduced below
 
-      \verbinclude scollapse_README
+      \verbatim embed:rst
+      .. literalinclude:: static/scollapse_README
+      \endverbatim
 
       See also the documentation at \ref eos_sn_base and the
       \ref sneos_section section of the User's guide.

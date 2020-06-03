@@ -1,7 +1,9 @@
 Solution of the Tolman-Oppenheimer-Volkov Equations
 ===================================================
 
-The class :ref:`tov_solve provides a solution to the
+:ref:`O2scl_eos <o2scle>`
+     
+The class :ref:`tov_solve <tov_solve>` provides a solution to the
 Tolman-Oppenheimer-Volkov (TOV) equations given an equation of state
 (EOS), provided as an object of type :ref:`eos_tov <eos_tov>`. These
 classes are particularly useful for static neutron star structure:
@@ -171,10 +173,10 @@ The baryonic mass is typically defined by
    M_B = \int_0^R 4 \pi r^2 n_B m_B 
    \left(1-\frac{2 G m}{r}\right)^{-1/2} d r
 
-where :math:`n_B(r)` is the baryon number density at radius :math:`r `
+where :math:`n_B(r)` is the baryon number density at radius :math:`r`
 and :math:`m_B` is the mass one baryon (taken to be the mass of the
 proton by default and stored in
 :cpp:var:`o2scl::tov_solve::baryon_mass`). If the EOS specifies the
 baryon density (i.e. if :cpp:var:`o2scl::eos_tov::baryon_column` is
-true), then \ref o2scl::tov_solve will compute the associated baryonic
-mass for you.
+true), then :ref:`tov_solve <tov_solve>` will compute the associated
+baryonic mass for you.

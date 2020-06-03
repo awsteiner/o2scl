@@ -1,6 +1,8 @@
 Cold Neutron Star Structure
 ===========================
 
+:ref:`O2scl_eos <o2scle>`
+     
 The class :ref:`nstar_cold <nstar_cold>` computes the structure of
 non-rotating zero-temperature spherically-symmetric neutron stars,
 given a core hadronic equation of state (of type :ref:`eos_had_base

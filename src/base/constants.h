@@ -33,7 +33,8 @@
 /** \brief Constants
     
     \verbatim embed:rst
-    CODATA 2014 values were from [Mohr16]_.
+    CODATA 2014 values were from [Mohr16]_ and previous versions
+    contained constants from [Luzum11]_ and [Mohr12]_ .
     \endverbatim
 
     CODATA 2018 values are from physics.nist.gov/constants. IAU 2015

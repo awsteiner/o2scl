@@ -1,9 +1,11 @@
 Moment of Inertia in the Slowly-Rotating Approximation
 ======================================================
 
-The differential equations for slow rigid rotation are solved
-by :ref:`tov_solve <tov_solve>` if :cpp:var:`tov_solve::ang_vel` is
-set to ``true``. 
+:ref:`O2scl_eos <o2scle>`
+     
+The differential equations for slow rigid rotation are solved by
+:ref:`tov_solve <tov_solve>` if :cpp:var:`o2scl::tov_solve::ang_vel`
+is set to ``true``.
 
 In the case of slow rigid rotation with angular velocity
 :math:`\Omega`, the moment of inertia is

@@ -1,6 +1,8 @@
 Equations of State of Hadronic Matter
 =====================================
 
+:ref:`O2scl_eos <o2scle>`
+     
 The hadronic equations of state are all inherited from
 :ref:`eos_had_base <eos_had_base>` : :ref:`eos_had_schematic
 <eos_had_schematic>`, :ref:`eos_had_skyrme <eos_had_skyrme>`,
