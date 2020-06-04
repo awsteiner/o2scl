@@ -112,7 +112,9 @@ namespace o2scl {
       larger, but the energy density and pressure are still zero in
       the vacuum. 
 
-      The Feynman-Hellman theorem (\ref Bernard88 ), gives
+      \verbatim embed:rst
+      The Feynman-Hellman theorem ([Bernard88]_), gives
+      \endverbatim
       \f[
       \left< \bar{q} q \right> = \frac{\partial m^{*}}{\partial m}
       \f]

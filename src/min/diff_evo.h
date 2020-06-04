@@ -56,7 +56,11 @@ namespace o2scl {
       
       After the initial population is created the algorithm will
       repeat until a solution is found or the maximum number of
-      iterations is reached. Based on \ref Storn97.
+      iterations is reached. 
+
+      \verbatim embed:rst
+      Based on [Storn97]_.
+      \endverbatim
 
       \note The constructor sets \ref o2scl::mmin_base::ntrial to 1000 .
 

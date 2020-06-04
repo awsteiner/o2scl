@@ -3,6 +3,8 @@ Equation Solving
 
 :ref:`O2scl <o2scl>`
 
+.. contents:: 
+
 One-dimensional solvers
 -----------------------
 
@@ -32,11 +34,11 @@ There is an example using the one-dimensional solver at
 :ref:`Second function object example`.
 
 The :ref:`root <root>` base class also contains the relative tolerance
-(:cpp:var:`o2scl::root::tol_rel`), absolute tolerance (\ref
-o2scl::root::tol_abs), the number of iterations (\ref
-o2scl::root::ntrial), the verbosity parameter (\ref
-o2scl::root::verbose), and the number of iterations in the last solve
-(:ref:`root::last_ntrial).
+(:cpp:var:`o2scl::root::tol_rel`), absolute tolerance
+(:cpp:var:`o2scl::root::tol_abs`), the number of iterations
+(:cpp:var:`o2scl::root::ntrial`), the verbosity parameter
+(:cpp:var:`o2scl::root::verbose`), and the number of iterations in the
+last solve (:cpp:var:`root::last_ntrial`).
 
 If not all of these three functions are overloaded, then the source
 code in the :ref:`root <root>` base class is designed to try to

@@ -3,6 +3,8 @@ Design Considerations
 
 :ref:`O2scl <o2scl>`
 
+.. contents:: 
+
 The design goal is to create an object-oriented computing library
 with classes that perform common numerical tasks. The most
 important principle is that the library should add functionality

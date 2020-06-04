@@ -3,6 +3,8 @@ Monte Carlo Integration
 
 :ref:`O2scl <o2scl>`
 
+.. contents:: 
+
 Monte Carlo integration is performed by descendants of
 :ref:`mcarlo <mcarlo>` (:ref:`mcarlo_plain <mcarlo_plain>`,
 :ref:`mcarlo_miser <mcarlo_miser>`, and :ref:`mcarlo_vegas

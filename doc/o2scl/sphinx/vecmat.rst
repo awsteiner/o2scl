@@ -3,6 +3,8 @@ Arrays, Vectors, Matrices and Tensors
 
 :ref:`O2scl <o2scl>`
 
+.. contents:: 
+
 Because many such vector and matrix objects are defined elsewhere,
 O\ :sub:`2`\ scl no longer includes native vector and matrix classes.
 Internally, O\ :sub:`2`\ scl most often uses Boost uBLAS vector and matrix

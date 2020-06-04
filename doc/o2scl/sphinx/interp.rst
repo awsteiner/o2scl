@@ -3,6 +3,8 @@ Interpolation
 
 :ref:`O2scl <o2scl>`
 
+.. contents:: 
+
 Basic interpolation of generic vector types is performed by
 :ref:`interp <interp>` and :ref:`interp_vec <interp_vec>`. The vector
 representing the independent variable must be monotonic, but need

@@ -655,7 +655,9 @@ namespace o2scl {
 
     /** \brief Set using alternate parameterization
 
-	From \ref Bender03 as in, e.g. \ref Kortelainen14
+	\verbatim embed:rst
+	From [Bender03]_ as in, e.g. [Kortelainen14]_
+	\endverbatim
 	\f{eqnarray*}
         C^{\rho \rho}_{00} &=& 3 t_0/8 \nonumber \\
         C^{\rho \rho}_{10} &=& -t_0/4 \left(\frac{1}{2}+x_0 \right) 

@@ -354,8 +354,10 @@ namespace o2scl {
     
     /** \brief Diquark coupling constant (default 3 G/4)
 	
+	\verbatim embed:rst
 	The default value is the one derived from a Fierz
-	transformation. (\ref Buballa04)
+	transformation. ([Buballa04]_)
+	\endverbatim
     */
     double GD;
 

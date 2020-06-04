@@ -3,6 +3,8 @@ Integration
 
 :ref:`O2scl <o2scl>`
 
+.. contents:: 
+
 One-dimensional Integration based on GSL, CERNLIB, and Boost
 ------------------------------------------------------------
 

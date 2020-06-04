@@ -37,8 +37,10 @@ namespace o2scl {
 
   /** \brief Gogny EOS
       
-      Gogny EOS from \ref Chappert08 with data kindly supplied
+      \verbatim embed:rst
+      Gogny EOS from [Chappert08]_ with data kindly supplied
       by Michel Girod. 
+      \endverbatim
 
       \warning The table might not have a sufficiently dense grid to
       accurately compute derivatives, including compressibility and

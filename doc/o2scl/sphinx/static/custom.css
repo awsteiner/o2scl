@@ -1,5 +1,8 @@
 table.docutils {
     border: 0;
+    -moz-box-shadow: 0;
+    -webkit-box-shadow: 0;
+    box-shadow: 0;
 }
 
 table.docutils td, table.docutils th {

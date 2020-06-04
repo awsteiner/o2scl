@@ -154,6 +154,9 @@ namespace o2scl {
       \varepsilon(r_d+\delta)-\varepsilon(r_d-\delta)}{m(r_d)/(4 \pi r_d^3) + 
       p}
       \f]
+      \verbatim embed:rst
+      (See [Damour09]_ and [Postnikov10]_)
+      \endverbatim
       
       \note The function \ref calc_H() cannot yet handle 
       discontinuities (if there are any then the error handler

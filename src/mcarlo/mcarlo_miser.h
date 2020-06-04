@@ -87,7 +87,7 @@ namespace o2scl {
       is greater than 2, a keypress is required after each output.
 
       \verbatim embed:rst
-      Based on \[Press90]_.
+      Based on [Press90]_.
       \endverbatim
   */
   template<class func_t=multi_funct, 

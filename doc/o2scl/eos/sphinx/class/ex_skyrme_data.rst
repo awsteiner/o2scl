@@ -1,4 +1,4 @@
-Function ex_skyrme_data
+Class ex_skyrme_data ()
 =======================
 
 :ref:`O2scl_eos <o2scle>` : :ref:`Class List`

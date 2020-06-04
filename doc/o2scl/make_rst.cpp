@@ -210,7 +210,8 @@ int main(int argc, char *argv[]) {
 
 	// Title
 	string head="Class "+s;
-	if (kk==0 && ns.length()>0) {
+	// FIXME: document the logic here:
+	if ((kk==0 && ns.length()>0) || context==((string)"eos")) {
 	  head+=" ("+ns+")";
 	} else {
 	  head="Function "+s;

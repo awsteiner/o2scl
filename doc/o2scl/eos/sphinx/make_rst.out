@@ -64,7 +64,6 @@ Namespace: o2scl class: nucmass_ldrop_pair
 Namespace: o2scl class: nucmass_ldrop_shell
 Namespace: o2scl class: nucmass_ldrop_skin
 Namespace: o2scl class: nstar_rot::polytrope_solve
-Namespace: o2scl class: eos_sn_base::slice
 Namespace: o2scl class: tov_love
 Namespace: o2scl class: tov_solve
 

@@ -3,6 +3,8 @@ Function Objects
 
 :ref:`O2scl <o2scl>`
 
+.. contents:: 
+
 Lambda functions and ``std::mem_fn``
 ------------------------------------
 

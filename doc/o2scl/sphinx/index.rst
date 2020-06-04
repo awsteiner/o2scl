@@ -24,9 +24,10 @@ of dense matter, `O2scl_eos <../eos/html/index.html>`_ .
 		     
 .. |nucmass| image:: ../../../examples/plot/ex_nucmass_dz96.png
 
-+--------+----------+-------+-----------+-----------+
-| |fptr| | |anneal| | |ode| | |nucprof| | |nucmass| |
-+--------+----------+-------+-----------+-----------+
+.. csv-table::
+
+   Root finding,Minimization,ODEs,Nuclear Structure,Nuclear masses
+   |fptr|,|anneal|,|ode|,|nucprof|,|nucmass|
 
 .. toctree::
    :maxdepth: 1

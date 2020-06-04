@@ -3,6 +3,8 @@ Differentiation
 
 :ref:`O2scl <o2scl>`
 
+.. contents:: 
+
 Differentiation is performed by descendants of :ref:`deriv_base
 <deriv_base>`. These allow one to calculate either first, second, and
 third derivatives. A GSL-based routine is used in :ref:`deriv_gsl

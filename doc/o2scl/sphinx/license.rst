@@ -3,6 +3,8 @@ License Information
     
 :ref:`O2scl <o2scl>`
 
+.. contents:: 
+
 Licenses
 --------
 

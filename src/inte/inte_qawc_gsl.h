@@ -83,8 +83,11 @@ namespace o2scl {
 	\sum_{k=}^{d-1} a_k^{(d)}T_k(x),
 	\f]
 	are computed for \f$ d=12 \f$ and \f$ d=24 \f$ using an FFT
-	algorithm from \ref Tolstov62 that is adapted so that the both
+	algorithm.
+	\verbatim embed:rst
+	The FFT algorithm, from [Tolstov62]_, is adapted so that the both
 	sets of coefficients are computed simultaneously.
+	\endverbatim
 
 	Given the function specified in \c f, this function computes
 	the 13 Chebyshev coefficients, \f$ C^{12}_{k} \f$ of degree 12

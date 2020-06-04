@@ -3,6 +3,8 @@ General Usage
 
 :ref:`O2scl <o2scl>`
 
+.. contents:: 
+
 Namespaces
 ----------
     

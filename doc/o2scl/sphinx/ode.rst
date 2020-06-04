@@ -3,6 +3,8 @@ Ordinary Differential Equations
 
 :ref:`O2scl <o2scl>`
 
+.. contents:: 
+
 Classes for non-adaptive integration are provided as descendents
 of \ref o2scl::ode_step and classes for adaptive integration are
 descendants of \ref o2scl::astep_base. To specify a set of

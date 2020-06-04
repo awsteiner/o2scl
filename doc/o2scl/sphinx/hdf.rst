@@ -3,6 +3,8 @@ File I/O with HDF5
 
 :ref:`O2scl <o2scl>`
 
+.. contents:: 
+
 The class :ref:`hdf_file <hdf_file>` facilitates I/O of data to hdf
 files. This class implements a simple way to I/O basic data types and
 O\ :sub:`2`\ scl data types. All files created by the 

@@ -3,6 +3,8 @@ Histograms
 
 :ref:`O2scl <o2scl>`
 
+.. contents:: 
+
 One- and two-dimensional histograms are implemented in 
 :ref:`hist <hist>` and :ref:`hist_2d <hist_2d>`.
     

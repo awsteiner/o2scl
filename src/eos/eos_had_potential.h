@@ -89,7 +89,9 @@ namespace o2scl {
       \f]
       where \f$C_{1/2,1/2}=C_{-1/2,-1/2}=C_{\ell}\f$ and
       \f$C_{1/2,-1/2}=C_{-1/2,1/2}=C_{u}\f$. Later 
-      parameterizations in this form are given in \ref Chen05.
+      \verbatim embed:rst
+      parameterizations in this form are given in [Chen05]_.
+      \endverbatim
 
       Otherwise if \ref form is equal to \ref gbd_form, then
       \f[

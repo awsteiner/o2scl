@@ -3,6 +3,8 @@ Installation
 
 :ref:`O2scl <o2scl>`
 
+.. contents:: 
+
 Compiling O\ :sub:`2`\ scl on Ubuntu with Snap
 ----------------------------------------------
 
@@ -12,7 +14,7 @@ https://snapcraft.io/o2scl). Use::
   sudo snap install (--edge or --beta) --devmode o2scl
 
 The snap installation includes HDF5 support, the O\ :sub:`2`\ scl_part
-and O\ :sub:`2`\ scl_eos sublibraries, readline support, and uses the
+and O\ :sub:`2`\ scl_eos sub-libraries, readline support, and uses the
 GSL CBLAS.
 
 Using the command-line utility ``acol`` may require you to set the
@@ -37,7 +39,7 @@ scl uses the Mac OS X compiler clang. Homebrew also supports the
 installation of the current version directly from the repository using
 the ``--HEAD`` option to ``brew install``. The homebrew installation
 includes the O\ :sub:`2`\ scl_part and O\ :sub:`2`\ scl_eos
-sublibraries and readline support.
+sub-libraries and readline support.
 
 By default, a homebrew installation of O\ :sub:`2`\ scl uses the OSX LLVM
 compiler. However, a homebrew installation of O\ :sub:`2`\ scl will also
@@ -140,8 +142,8 @@ you will need to let O\ :sub:`2`\ scl know, using::
 
   CXXFLAGS="-DO2SCL_HDF5_PRE_1_12" ./configure
  
-Compiling O\ :sub:`2`\ scl from source
---------------------------------------
+Compiling O\ :sub:`2`\ scl from the source code
+-----------------------------------------------
 
 If you want to install from source (without generating the
 documentation), then you must first install ``g++``, ``make``,

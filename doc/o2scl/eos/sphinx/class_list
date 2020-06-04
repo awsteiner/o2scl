@@ -61,6 +61,5 @@
   <compound refid="classo2scl_1_1nucmass__ldrop__shell" kind="class"><name>o2scl::nucmass_ldrop_shell</name>
   <compound refid="classo2scl_1_1nucmass__ldrop__skin" kind="class"><name>o2scl::nucmass_ldrop_skin</name>
   <compound refid="classo2scl_1_1nstar__rot_1_1polytrope__solve" kind="class"><name>o2scl::nstar_rot::polytrope_solve</name>
-  <compound refid="classo2scl_1_1eos__sn__base_1_1slice" kind="class"><name>o2scl::eos_sn_base::slice</name>
   <compound refid="classo2scl_1_1tov__love" kind="class"><name>o2scl::tov_love</name>
   <compound refid="classo2scl_1_1tov__solve" kind="class"><name>o2scl::tov_solve</name>
