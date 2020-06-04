@@ -1,0 +1,7 @@
+/** \page todo_section Other Todos
+    
+    \future Right now, the equation of state classes depend on the
+    user to input the correct value of \c non_interacting
+    for the particle inputs. This is not very graceful...
+
+*/

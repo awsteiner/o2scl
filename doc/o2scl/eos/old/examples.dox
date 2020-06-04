@@ -1,0 +1,9 @@
+/** \page eossource_section Example Source Code
+
+    \section ex_bps_eos_sect Baym-Pethick-Sutherland EOS example
+    
+    \dontinclude ex_bps_eos.cpp
+    \skip Example:
+    \until End of example
+
+*/

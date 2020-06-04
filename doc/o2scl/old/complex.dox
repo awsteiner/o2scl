@@ -1,0 +1,30 @@
+/*
+  This section has been removed from the documentation for now
+*/
+/* \page cplxnum_section Complex Numbers
+   
+   Several arithmetic operations for \c gsl_complex are
+   defined in cx_arith.h, but no constructor has been written. The
+   object \c gsl_complex is still a \c struct, not a \c class. For
+   example,
+   \include cx_arith_doc.cpp
+   
+   In case the user needs to convert between \c gsl_complex and \c
+   std::complex<double>, two conversion functions gsl_to_complex()
+   and complex_to_gsl() are also provided in \ref cx_arith.h.
+
+   A short example using complex number arithmetic is
+   given below.
+
+   \section ex_mandel_sect Mandelbrot set
+
+   \dontinclude ex_mandel.cpp
+   \skip Example:
+   \until End of example
+
+   The information stored in the table3d object in ex_mandel.out
+   can be plotted:
+   \image html ex_mandel_plot.png "Mandelbrot example plot"
+   \image latex ex_mandel_plot.pdf "Mandelbrot example plot" width=9cm
+
+*/

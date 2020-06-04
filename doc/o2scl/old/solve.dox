@@ -1,0 +1,81 @@
+/** \page solve_section Equation Solving
+
+    \section onedsolve_subsect One-dimensional solvers
+
+    Solution of one equation in one variable is accomplished by
+    children of the class \ref o2scl::root. 
+
+    For one-dimensional solving, if the root is bracketed, use \ref
+    o2scl::root_bkt_cern or \ref o2scl::root_brent_gsl. The \ref
+    o2scl::root_bkt_cern class is typically faster (for the same accuracy)
+    than \ref o2scl::root_brent_gsl. If a relatively fast derivative
+    is available, use \ref o2scl::root_stef. If neither a bracket
+    nor a derivative is available, you can use \ref
+    o2scl::root_cern.
+
+    The \ref o2scl::root base class provides the structure for three
+    different solving methods:
+    - \ref o2scl::root::solve() which solves a function given an initial
+    guess \c x
+    - \ref o2scl::root::solve_bkt() which solves a function given a solution
+    bracketed between \c x1 and \c x2. The values of the function at
+    \c x1 and \c x2 should have different signs.
+    - \ref o2scl::root::solve_de() which solves a function given an initial
+    guess \c x and the function's derivative.
+
+    There is an example using the one-dimensional solver in the
+    \ref ex_fptr_sect .
+
+    The \ref o2scl::root base class also contains the relative
+    tolerance (\ref o2scl::root::tol_rel), absolute tolerance (\ref
+    o2scl::root::tol_abs), the number of iterations (\ref
+    o2scl::root::ntrial), the verbosity parameter (\ref
+    o2scl::root::verbose), and the number of iterations in the last
+    solve (\ref o2scl::root::last_ntrial).
+
+    If not all of these three functions are overloaded, then the
+    source code in the \ref o2scl::root base class is designed to try
+    to automatically provide the solution using the remaining
+    functions. Most of the one-dimensional solving routines, in their
+    original form, are written in the second or third form above. For
+    example, \ref o2scl::root_brent_gsl is originally a bracketing
+    routine of the form \ref o2scl::root::solve_bkt(), but calls to
+    either \ref o2scl::root::solve() or \ref o2scl::root::solve_de()
+    will attempt to automatically bracket the function given the
+    initial guess that is provided. Of course, it is frequently most
+    efficient to use the solver in the way it was intended.
+
+    \section multisolve_subsect Multi-dimensional solvers
+
+    Solution of more than one equation is accomplished by descendants
+    of the class \ref o2scl::mroot . The higher-level interface is
+    provided by the function \ref o2scl::mroot::msolve() .
+
+    For multi-dimensional solving, you can use either \ref
+    o2scl::mroot_cern or \ref o2scl::mroot_hybrids. While \ref
+    o2scl::mroot_cern cannot utilize user-supplied derivatives, \ref
+    o2scl::mroot_hybrids can use user-supplied derivative
+    information (as in the GSL hybridsj method) using the function
+    \ref o2scl::mroot_hybrids::msolve_de() .
+
+    A specialization of \ref o2scl::mroot_hybrids for Armadillo is
+    given in \ref o2scl::mroot_hybrids_arma_qr_econ where the QR
+    decomposition used in the solver is performed by the Armadillo
+    library. A similar specialization for Eigen is in \ref
+    o2scl::mroot_hybrids_eigen . These specializations will be
+    faster than when the number of variables is sufficiently large.
+
+    \section ex_mroot_sect Multi-dimensional solver example
+
+    This demonstrates several ways of using the multi-dimensional
+    solvers to solve the equations
+    \f{eqnarray*}
+    \sin \left( x_0 - \frac{1}{4} \right) &=& 0 \nonumber \\
+    \sin \left( x_1 - \frac{1}{5} \right) &=& 0
+    \f}
+
+    \dontinclude ex_mroot.cpp
+    \skip Example:
+    \until End of example
+
+*/
