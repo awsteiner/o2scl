@@ -284,7 +284,7 @@ void eos_sn_base::set_interp_type(size_t interp_type) {
 }
 
 void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
-				   thermo &th) {
+				   thermo &th, double &mue) {
   
   photon.massless_calc(T/hc_mev_fm);
   electron.n=nB*Ye;
@@ -327,6 +327,8 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
     th.pr+=muon.pr;
   }
 
+  mue=electron.mu;
+
   return;
 }
 
@@ -354,7 +356,8 @@ void eos_sn_base::compute_eg() {
 	T1=E.get_grid(2,k);
 
 	thermo th;
-	compute_eg_point(nb1,ye1,T1,th);
+	double mue2;
+	compute_eg_point(nb1,ye1,T1,th,mue2);
 	
 	double E_eg=th.ed/nb1*hc_mev_fm;
 	double P_eg=th.pr*hc_mev_fm;

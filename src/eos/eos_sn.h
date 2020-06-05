@@ -253,9 +253,11 @@ namespace o2scl {
     virtual void compute_eg();
 
     /** \brief Compute lepton contribution at one point
+
+	The temperature is to be specified in \c MeV.
      */
     virtual void compute_eg_point(double nB, double Ye, double T,
-				  thermo &th);
+				  thermo &th, double &mue);
 
     /** \brief Check electrons and photons
 	
