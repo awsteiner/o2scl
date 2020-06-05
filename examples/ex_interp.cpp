@@ -42,8 +42,8 @@ using namespace o2scl_hdf;
 typedef boost::numeric::ublas::vector<double> ubvector;
 
 // A function for filling the data and comparing results
-double f(double x) {
-  return sin(1.0/(0.3+x));
+double f(double x, const double &mean, const double &sd) {
+  return (sin(1.0/(0.3+x))-mean)/sd;
 }
 
 double covar(double x1, double x2) {
@@ -63,18 +63,29 @@ int main(void) {
   static const size_t N=20;
   ubvector x(N), y(N);
   x[0]=0.0;
-  y[0]=f(x[0]);
+  y[0]=f(x[0],0.0,1.0);
   for(size_t i=1;i<N;i++) {
     x[i]=x[i-1]+pow(((double)i)/40.0,2.0);
-    y[i]=f(x[i]);
+    y[i]=f(x[i],0.0,1.0);
   }
   
   table<> tdata;
   tdata.line_of_names("x y");
+
+  double y_mean=vector_mean(y);
   for(size_t i=0;i<N;i++) {
+    y[i]-=y_mean;
+  }
+  double y_sd=vector_stddev(y);
+  cout << y_sd << endl;
+  for(size_t i=0;i<N;i++) {
+    y[i]/=y_sd;
     double line[2]={x[i],y[i]};
     tdata.line_of_data(2,line);
   }
+  double y_mean2=vector_mean(y);
+  double y_sd2=vector_stddev(y);
+  cout << y_mean2 << " " << y_sd2 << endl;
 
   interp_vec<ubvector> iv_lin(N,x,y,itp_linear);
   interp_vec<ubvector> iv_csp(N,x,y,itp_cspline);
@@ -104,7 +115,7 @@ int main(void) {
 
   cout << "\nData: " << endl;
   for(size_t i=0;i<N;i++) {
-    cout << x[i] << " " << f(x[i]) << " " << iko.eval(x[i]) << endl;
+    cout << x[i] << " " << f(x[i],y_mean,y_sd) << " " << iko.eval(x[i]) << endl;
   }
   cout << endl;
 
@@ -113,12 +124,12 @@ int main(void) {
   tresult.line_of_names("x y ylin ycsp yaki ymon ystef yiko yiko_lml"); 
   for(size_t i=0;i<=N2;i++) {
     double x=((double)i)/((double)N2)*max;
-    double line[9]={x,f(x),iv_lin.eval(x),iv_csp.eval(x),
+    double line[9]={x,f(x,y_mean,y_sd),iv_lin.eval(x),iv_csp.eval(x),
 		    iv_aki.eval(x),iv_mon.eval(x),iv_stef.eval(x),
 		    iko.eval(x),iko2.eval(x)};
     tresult.line_of_data(9,line);
     if (i%50==0) {
-      cout << x << " " << f(x) << " " << iko.eval(x) << " "
+      cout << x << " " << f(x,y_mean,y_sd) << " " << iko.eval(x) << " "
 	   << iko2.eval(x) << endl;
     }
   }
