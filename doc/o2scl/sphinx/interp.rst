@@ -90,6 +90,17 @@ classes also allow one to to exahaustively search for the index of an
 element in a vector without regard to any kind of ordering, e.g. 
 :cpp:func:`o2scl::search_vec::ordered_lookup()`.
 
+Interpolation example
+---------------------
+
+.. literalinclude:: ../../../examples/ex_interp.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start
+
+.. image ../../../examples/plot/ex_fptr_plot.png
+   width: 60%	   
+   alt: alt text
+
 Two and higher-dimensional interpolation
 ----------------------------------------
 

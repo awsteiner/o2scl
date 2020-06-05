@@ -921,7 +921,6 @@ EXCLUDE_SYMBOLS        =
 EXAMPLE_PATH           = ../../data/o2scl \
                          ../../data/o2scl/rmfdata \
                          ../../data/o2scl/skdata \
-                         extras \
                          ../../data/o2scl/nucmass \
                          . \
                          ../.. \

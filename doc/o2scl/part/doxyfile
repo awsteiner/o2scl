@@ -908,8 +908,7 @@ EXCLUDE_SYMBOLS        =
 # that contain example code fragments that are included (see the \include
 # command).
 
-EXAMPLE_PATH           = extras \
-                         ../../../data/o2scl/rmfdata \
+EXAMPLE_PATH           = ../../../data/o2scl/rmfdata \
                          ../../../data/o2scl/skdata \
                          ../../../examples
 

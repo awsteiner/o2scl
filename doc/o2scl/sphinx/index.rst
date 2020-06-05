@@ -14,6 +14,9 @@ There are sub-libraries for handling thermodynamics of particles and
 nuclei, `O2scl_part <../part/html/index.html>`_ and equations of state
 of dense matter, `O2scl_eos <../eos/html/index.html>`_ .
 
+Gallery
+-------
+
 .. |fptr| image:: ../../../examples/plot/ex_fptr_plot.png
 		  
 .. |anneal| image:: ../../../examples/plot/ex_anneal_plot.png
@@ -29,6 +32,9 @@ of dense matter, `O2scl_eos <../eos/html/index.html>`_ .
    Root finding,Minimization,ODEs,Nuclear Structure,Nuclear masses
    |fptr|,|anneal|,|ode|,|nucprof|,|nucmass|
 
+User's Guide
+------------
+   
 .. toctree::
    :maxdepth: 1
 
