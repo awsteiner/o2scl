@@ -37,11 +37,11 @@ Bibliography
    (2009) The MIT Press.
 
 .. [EngelnMullges96] : G. Engeln-Müllges and F. Uhlig,
-   `Numerical Algorithms in C<https://www.worldcat.org/isbn/9783540605300>`_,
+   `Numerical Algorithms in C <https://www.worldcat.org/isbn/9783540605300>`_,
    (1996) Springer, p. 96.
 
 .. [Fletcher87] : R. Fletcher,
-   `Practical Methods of Optimization<https://www.worldcat.org/isbn/9780471915478>`_,
+   `Practical Methods of Optimization <https://www.worldcat.org/isbn/9780471915478>`_,
    (1987) John Wiley & Sons, Chichester, p. 39.
 
 .. [Freedman81] : `D. Freedman and P. Diaconis
@@ -80,7 +80,7 @@ Bibliography
    (1999) SIAM, Philadelphia.
 
 .. [Krabs83] : W. Krabs,
-   `Einführung in die lineare und nichtlineare Optimierung für Ingenieure<https://www.worldcat.org/isbn/9783519029526>`_,
+   `Einführung in die lineare und nichtlineare Optimierung für Ingenieure <https://www.worldcat.org/isbn/9783519029526>`_,
    (1983) Teubner, Stuttgart, p. 84.
 
 .. [Lepage78] : `G. P. Lepage

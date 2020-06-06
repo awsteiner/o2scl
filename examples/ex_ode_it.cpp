@@ -20,7 +20,7 @@
 
   -------------------------------------------------------------------
 */
-
+// sphinx-example-start
 /* Example: ex_ode_it.cpp
    -------------------------------------------------------------------
    Demonstrate the iterative method for solving ODEs

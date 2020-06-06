@@ -7,7 +7,7 @@ String Manipulation
 
 There are a couple classes and functions to help manipulate
 strings of text. Conversion routines for \c std::string 
-objects are given in \ref string_conv.h and include
+objects are given in ``src/base/string_conv.h`` and include
 
 - :cpp:func:`o2scl::btos()` - boolean value to string
 - :cpp:func:`o2scl::dtos()` - double to string

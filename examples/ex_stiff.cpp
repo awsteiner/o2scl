@@ -20,6 +20,7 @@
 
   -------------------------------------------------------------------
 */
+// sphinx-example-start
 /* Example: ex_stiff.cpp
    -------------------------------------------------------------------
    An example to demonstrate solving stiff differential equations

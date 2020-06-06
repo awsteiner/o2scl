@@ -26,10 +26,11 @@ types, e.g.
   long double 
 - :ref:`multi_funct <multi_funct>` : One function of several variables (used
   in minimizer and integration classes)
-- :ref:`mm_funct <mm_funct>`: \c n functions of \c n variables (used in 
-  solver classes)
+- :ref:`mm_funct <mm_funct>`: :math:`n` functions of :math:`n`
+  variables (used in solver classes)
 - :ref:`grad_funct <grad_funct>`: gradient function for minimizer classes
-- :ref:`ode_funct <ode_funct>`: \c n derivatives as a function of \c n
+- :ref:`ode_funct <ode_funct>`: :math:`n` derivatives as a function of
+  :math:`n`
   function values and the value of the independent variable
 - :ref:`ode_jac_funct <ode_jac_funct>`: Jacobian function for ODE classes
 - :ref:`ode_it_funct <ode_it_funct>`: Function to specify ODEs for

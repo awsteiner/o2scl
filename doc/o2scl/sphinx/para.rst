@@ -42,8 +42,8 @@ ensure that the error handler is valid on each OpenMP thread::
   }
 
 You can test to see if OpenMP support was enabled during installation
-in the \ref o2scl::o2scl_settings object of type \ref
-o2scl::lib_settings_class or with ``acol -v``.
+in the :cpp:var:`o2scl::o2scl_settings` object of type
+:ref:`lib_settings_class <lib_settings_class>` or with ``acol -v``.
 
 MPI and O2scl
 -------------
