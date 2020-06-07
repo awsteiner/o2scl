@@ -146,10 +146,13 @@ namespace o2scl {
       defining a line. If the contour is closed, then the first and
       the last set of coordinates will be equal. 
 
+      \verbatim embed:rst
       The convention used by this class is that the first (row) index
       of the matrix enumerates the x coordinate and that the second
       (column) index enumerates the y coordinate. See the discussion
-      in the User's guide in the section called \ref rowcol_subsect.
+      in the User's guide in the section called 
+      :ref:`Rows and columns vs. x and y`.
+      \endverbatim
 
       The data is copied by set_data(), so changing the data will not
       change the contours unless set_data() is called again. The

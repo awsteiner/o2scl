@@ -44,7 +44,9 @@ namespace o2scl {
       \f]
       where \f$ T_n(x)=\cos(n \arccos x) \f$
 
-      See also the \ref ex_cheb_sect .
+      \verbatim embed:rst
+      See also the :ref:`Chebyshev approximation example`.
+      \endverbatim
   */
   template<class fp_t=double> class cheb_approx_tl {
 

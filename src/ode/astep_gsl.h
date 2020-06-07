@@ -249,9 +249,11 @@ namespace o2scl {
       Note, this has been updated to correspond to the
       <tt>ode-initval2</tt> functions in GSL.
 
+      \verbatim embed:rst
       There is an example for the usage of this class in
-      <tt>examples/ex_ode.cpp</tt> documented in the \ref ex_ode_sect
-      section.
+      ``examples/ex_ode.cpp`` documented in the 
+      :ref:`Ordinary differential equations example`.
+      \endverbatim
 
       \todo Document what happens when the stepper function returns
       a non-zero value, as it's different now with the ode-initval2

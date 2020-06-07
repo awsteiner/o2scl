@@ -3,8 +3,6 @@ Data Tables
     
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
-
 The class :ref:`table <table>` is a container to hold and perform
 operations on related columns of data. It supports column operations,
 interpolation, column reference by either name or index, binary
