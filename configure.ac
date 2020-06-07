@@ -464,13 +464,10 @@ AC_CONFIG_FILES([Makefile
                  doc/Makefile
                  doc/o2scl/Makefile
                  doc/o2scl/sphinx/Makefile
-		 doc/o2scl/extras/Makefile
                  doc/o2scl/eos/Makefile
                  doc/o2scl/eos/sphinx/Makefile
-                 doc/o2scl/eos/extras/Makefile
                  doc/o2scl/part/Makefile
-                 doc/o2scl/part/sphinx/Makefile
-		 doc/o2scl/part/extras/Makefile])
+                 doc/o2scl/part/sphinx/Makefile])
 
 AC_OUTPUT
 

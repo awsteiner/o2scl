@@ -22,11 +22,11 @@ docdir = $(prefix)/share/doc/o2scl
 dist_doc_DATA = 
 
 # These are the files included in the distribution
-EXTRA_DIST = *.dox o2scl.tag refs_head.txt refs_foot.txt dlayout.xml
+EXTRA_DIST = o2scl.tag make_rst.cpp 
 
 SUBDOC_DIRS = part eos
 
-SUBDIRS = extras sphinx part eos
+SUBDIRS = sphinx part eos
 
 emacs-clean:
 	rm -f *~

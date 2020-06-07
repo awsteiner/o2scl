@@ -1,9 +1,9 @@
 docdir = $(prefix)/share/doc/o2scl/eos
-dist_doc_DATA = doxyfile Makefile.am Makefile.in *.html
+dist_doc_DATA = doxyfile Makefile.am Makefile.in
 
-EXTRA_DIST = *.dox o2scl_eos.tag refs_head.txt refs_foot.txt dlayout.xml
+EXTRA_DIST = o2scl_eos.tag
 
-SUBDIRS = extras sphinx
+SUBDIRS = sphinx
 
 clean-doc:
 	cd html; rm -f *.html *.png formula.repository doxygen.css \
