@@ -61,10 +61,6 @@ The Bessel functions of the first kind, :math:`J_{\alpha}(x)` are
 finite at the origin, and the example solves the :math:`\alpha=1` case,
 where :math:`J_1(0) = 0` and :math:`J_1^{\prime}(0) = 1/2`.
 
-.. literalinclude:: ../../../examples/ex_ode.cpp
-   :language: c++		    
-   :start-after: sphinx-example-start
-
 .. image:: ../../../examples/plot/ex_ode_bessel.png
    :width: 60%	   
    :alt: alt text
@@ -83,50 +79,53 @@ The Airy functions are defined by
 This example solves for the Airy function of the first kind, 
 :math:`Ai(x)`.
 
-\dontinclude ex_ode.cpp
-\skip Solution 3:
-\until End of Solution 4
-
 .. image:: ../../../examples/plot/ex_ode_airy.png
    :width: 60%	   
    :alt: alt text
 
 Here the higher order stepper is more accurate.
 
-\dontinclude ex_ode.cpp
-\skip Solution 5:
-\until End of Solution 7
-
 .. image:: ../../../examples/plot/ex_ode_bessel2.png
    :width: 60%	   
    :alt: alt text
-
-\dontinclude ex_ode.cpp
-\skip Solution 8:
-\until End of example
 
 .. image:: ../../../examples/plot/ex_ode_bessel3.png
    :width: 60%	   
    :alt: alt text
 
-\section ex_stiff_sect Stiff differential equations example
+Ordinary differential equations example source code
+---------------------------------------------------
+
+.. literalinclude:: ../../../examples/ex_ode.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start
+
+Stiff differential equations example
+------------------------------------
 
 This example solves the differential equations
-\f{eqnarray*}
-y_0^{\prime} &=& 480 y_0 + 980 y_1 \nonumber \\
-y_1^{\prime} &=& -490 y_0 - 990 y_1
-\f}
+
+.. math::
+
+   \begin{eqnarray*}
+   y_0^{\prime} &=& 480 y_0 + 980 y_1 \nonumber \\
+   y_1^{\prime} &=& -490 y_0 - 990 y_1
+   \end{eqnarray}
+
 which have the exact solution
-\f{eqnarray*}
-y_0 &=& -e^{-500 x} + 2 e^{-10 x} \nonumber \\
-y_1 &=& e^{-500 x} - e^{-10 x}
-\f}
+
+.. math::
+   
+   \begin{eqnarray}
+   y_0 &=& -e^{-500 x} + 2 e^{-10 x} \nonumber \\
+   y_1 &=& e^{-500 x} - e^{-10 x}
+   \end{eqnarray}
 
 using both the stiff stepper :ref:`ode_bsimp_gsl <ode_bsimp_gsl>` and
 the standard adaptive stepper :ref:`astep_gsl <astep_gsl>` . The
 relative error on the adaptive stepper is orders of magnitude larger.
 
-.. image:: ../../../examples/plot/ex_ode_stiff.png
+.. image:: ../../../examples/plot/ex_stiff.png
    :width: 60%	   
    :alt: alt text
 
@@ -134,20 +133,28 @@ relative error on the adaptive stepper is orders of magnitude larger.
    :language: c++		    
    :start-after: sphinx-example-start
 
-\section ex_ode_it_sect Iterative solution of ODEs example
+Iterative solution of ODEs example
+----------------------------------
 
 This example solves the ODEs
-\f{eqnarray*}
-y_0^{\prime\prime} &=& y_1 \nonumber \\
-y_1^{\prime\prime} &=& y_0+y_1\nonumber \\
-y_2^{\prime\prime} &=& y_0+y_2
-\f}
+
+.. math::
+   
+   \begin{eqnarray}
+   y_0^{\prime\prime} &=& y_1 \nonumber \\
+   y_1^{\prime\prime} &=& y_0+y_1\nonumber \\
+   y_2^{\prime\prime} &=& y_0+y_2
+   \end{eqnarray}
+
 given the boundary conditions
-\f{eqnarray*}
-y_0(x=0)&=&1 \nonumber \\
-y_1(x=0)^2+y_2(x=0)^2&=&2 \nonumber \\
-y_1(x=1) &=& 3
-\f}
+
+.. math::
+
+   \begin{eqnarray}
+   y_0(x=0)&=&1 \nonumber \\
+   y_1(x=0)^2+y_2(x=0)^2&=&2 \nonumber \\
+   y_1(x=1) &=& 3
+   \end{eqnarray}
 
 by linearizing the ODEs on a mesh and using an iterative method
 (sometimes called relaxation). The :ref:`ode_it_solve <ode_it_solve>`

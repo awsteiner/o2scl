@@ -32,18 +32,22 @@
     <tt>operator(,)</tt> for matrices. Detailed requirements on the
     template parameters are given in the functions below.
 
-    For a general discussion of vectors and matrices in \o2, see the
-    \ref vecmat_section of the User's Guide.
+    \verbatim embed:rst
+    For a general discussion of vectors and matrices in O\
+    :sub:`2`\ scl, see :ref:`Arrays, Vectors, Matrices and Tensors`
+    in the User's Guide.
 
-    For statistics operations not included here, see \ref vec_stats.h
-    in the directory \c src/other . Also related are the matrix output
-    functions, \ref o2scl::matrix_out(), which is defined in \ref
-    columnify.h because they utilize the class \ref o2scl::columnify to
-    format the output.
+    For statistics operations not included here, see
+    ``src/other/vec_stats.h``. Also related are the matrix output
+    functions, :cpp:func:`o2scl::matrix_out()`, which is defined in
+    ``src/base/columnify.h`` because they utilize the class 
+    :ref:`columnify <columnify>` to format the output.
 
     For functions which search for a value in an ordered (either
-    increasing or decreasing) vector, see the class \ref
-    o2scl::search_vec .
+    increasing or decreasing) vector, see the class 
+    :ref:`search_vec <search_vec>`.
+    \endverbatim
+
 */
 #include <iostream>
 #include <cmath>

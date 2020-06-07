@@ -3,8 +3,6 @@ Least-Squares Fitting
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
-
 Linear least-squares fitting is performed by :ref:`fit_linear
 <fit_linear>`. Non-linear least-squares Fitting is performed by
 descendants of :ref:`fit_base <fit_base>` and fitting functions can be

@@ -100,8 +100,11 @@ namespace o2scl {
       \ref mmin() will print out information and/or request a keypress
       after the function iterations for each temperature.
       
+      \verbatim embed:rst
       An example demonstrating the usage of this class is given in
-      <tt>examples/ex_anneal.cpp</tt> and in the \ref ex_anneal_sect .
+      ``examples/ex_anneal.cpp`` and in the 
+      :ref:`Simulated annealing example`.
+      \endverbatim
 
       \comment
       The form of the user-specified function is as in \ref
