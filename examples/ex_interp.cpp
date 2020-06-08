@@ -77,7 +77,7 @@ int main(void) {
     y[i]-=y_mean;
   }
   double y_sd=vector_stddev(y);
-  cout << y_sd << endl;
+  cout << y_mean << " " << y_sd << endl;
   for(size_t i=0;i<N;i++) {
     y[i]/=y_sd;
     double line[2]={x[i],y[i]};
@@ -113,12 +113,17 @@ int main(void) {
 
   double max=x[x.size()-1];
 
-  cout << "\nData: " << endl;
+  cout << "\nx              y             iko           iko2: " << endl;
   for(size_t i=0;i<N;i++) {
-    cout << x[i] << " " << f(x[i],y_mean,y_sd) << " " << iko.eval(x[i]) << endl;
+    cout.setf(ios::showpos);
+    cout << x[i] << " " << f(x[i],y_mean,y_sd) << " "
+	 << iko.eval(x[i]) << " "
+	 << iko2.eval(x[i]) << endl;
+    cout.unsetf(ios::showpos);
   }
   cout << endl;
 
+  cout << "\nx              y             iko           iko2: " << endl;
   size_t N2=N*100;
   table<> tresult;
   tresult.line_of_names("x y ylin ycsp yaki ymon ystef yiko yiko_lml"); 
@@ -129,8 +134,10 @@ int main(void) {
 		    iko.eval(x),iko2.eval(x)};
     tresult.line_of_data(9,line);
     if (i%50==0) {
+      cout.setf(ios::showpos);
       cout << x << " " << f(x,y_mean,y_sd) << " " << iko.eval(x) << " "
 	   << iko2.eval(x) << endl;
+      cout.unsetf(ios::showpos);
     }
   }
 

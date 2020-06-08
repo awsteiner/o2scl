@@ -210,10 +210,13 @@ int main(int argc, char *argv[]) {
 
 	// Title
 	string head="Class "+s;
-	// FIXME: document the logic here:
-	if ((kk==0 && ns.length()>0) || context==((string)"eos")) {
+	// If we're in "class mode" and the namespace is not empty,
+	// then add the namespace to the header
+	if (kk==0 && ns.length()>0) {
 	  head+=" ("+ns+")";
-	} else {
+	} else if (kk==1) {
+	  // If we're in function mode, then switch the to a
+	  // function header
 	  head="Function "+s;
 	  if (ns.length()>0) {
 	    head+=" ("+ns+")";
@@ -256,7 +259,11 @@ int main(int argc, char *argv[]) {
 	
 	// Output the class or function directive
 	if (kk==0) {
-	  fout << ".. doxygenclass:: " << ns << "::" << s << endl;
+	  if (ns.length()>0) {
+	    fout << ".. doxygenclass:: " << ns << "::" << s << endl;
+	  } else {
+	    fout << ".. doxygenclass:: " << s << endl;
+	  }
 	} else {
 	  if (context==((string)"part")) {
 	    fout << ".. doxygenfunction:: " << s << endl;

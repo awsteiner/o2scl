@@ -499,7 +499,7 @@ namespace o2scl {
     if (full_min) {
 
       if (verbose>1) {
-	std::cout << "interp_krige_optim: full minimization"
+	std::cout << "krige_optim: full minimization"
 		  << std::endl;
       }
       
@@ -525,7 +525,7 @@ namespace o2scl {
     } else {
 
       if (verbose>1) {
-	std::cout << "interp_krige_optim: simple minimization"
+	std::cout << "krige_optim: simple minimization"
 		  << std::endl;
       }
 
@@ -542,8 +542,8 @@ namespace o2scl {
       double len_ratio=len_max/len_min;
 
       if (verbose>1) {
-	std::cout << "len (min,max,ratio): " << len_min << " "
-		  << len_max << " "
+	std::cout << "             len (min,max,ratio): "
+		  << len_min << " " << len_max << " "
 		  << pow(len_ratio,((double)1)/((double)nlen-1))
 		  << std::endl;
       }
@@ -552,7 +552,9 @@ namespace o2scl {
       double min_qual=0.0, len_opt=0.0;
       
       if (verbose>1) {
-	std::cout << "ilen len qual fail min_qual" << std::endl;
+	std::cout << "             "
+		  << "ilen len qual fail min_qual best_len"
+		  << std::endl;
       }
 
       // Loop over the full range, finding the optimum
@@ -570,11 +572,14 @@ namespace o2scl {
 	}
 	
 	if (verbose>1) {
-	  std::cout << "interp_krige_optim: ";
+	  std::cout << "krige_optim: ";
 	  std::cout.width(2);
-	  std::cout << j << " " << len << " " << qual << " "
+	  std::cout << j << " ";
+	  std::cout.setf(std::ios::showpos);
+	  std::cout << len << " " << qual << " "
 		    << success << " " << min_qual << " "
 		    << len_opt << std::endl;
+	  std::cout.unsetf(std::ios::showpos);
 	}
 	  
       }

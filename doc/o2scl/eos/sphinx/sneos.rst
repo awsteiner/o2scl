@@ -79,7 +79,7 @@ performed, but not deallocated until ``free()`` or the destructor is
 called.
 
 After loading, you can interpolate the EOS by using 
-:ref:`o2scl:tensor_grid3::interp_linear()` directly. For example,
+:cpp_func:`o2scl:tensor_grid3::interp_linear()` directly. For example,
 the following returns the mass number at an arbitrary
 baryon density, electron fraction, and temperature
 assuming the table is stored in ``skm.dat``::
