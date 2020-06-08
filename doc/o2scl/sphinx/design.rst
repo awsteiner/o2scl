@@ -25,12 +25,12 @@ Header file dependencies
 ------------------------
     
 For reference, it is useful to know how the top-level header files
-depend on each other, since it can be difficult to trace
-everything down. The following are the most "top-level" header
-files and their associated dependencies within \o2 (there are
-other dependencies on GSL and the C standard library not listed
-here). Note that not all of the headers in the "base" directory
-are listed here (because they are less likely to cause problems)::
+depend on each other, since it can be difficult to trace everything
+down. The following are the most "top-level" header files and their
+associated dependencies within O\ :sub:`2`\ scl (there are other
+dependencies on GSL and the C standard library not listed here). Note
+that not all of the headers in the "base" directory are listed here
+(because they are less likely to cause problems)::
 
   constants.h : (none)
   err_hnd.h : (none)
@@ -68,8 +68,8 @@ instead.
 Error handling
 --------------
 
-Thread safety
--------------
+Thread safety for errors
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 Two approaches to thread-safe error handling which are worth
 comparing: the first is GSL which uses return codes and global
@@ -85,7 +85,7 @@ thus allows quite a bit more flexibility in designing
 multi-threaded error handling.
 
 Memory allocation functions
----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Several classes have allocate() and free() functions to allocate
 and deallocate memory. If an error occurs in an allocate()
@@ -98,24 +98,23 @@ never be required to call the error handler.
 Define constants and macros
 ---------------------------
 
-There are a couple define constants and macros that \o2
+There are a couple define constants and macros that O\ :sub:`2`\ scl
 understands, they are all in upper case and begin with the prefix
-``O2SCL_``. 
+``O2SCL_``.
 
-Range-checking for arrays and matrices is turned on by default,
-but can be turned off by defining ``O2SCL_NO_RANGE_CHECK``
-during the initial configuration of the library. To see how the
-library was configured at runtime, use the \ref o2scl::o2scl_settings
-class.
+Range-checking for arrays and matrices is turned on by default, but
+can be turned off by defining ``O2SCL_NO_RANGE_CHECK`` during the
+initial configuration of the library. To see how the library was
+configured at runtime, use the :cpp:var:`o2scl::o2scl_settings` class.
 
 There is a define constant O2SCL_NO_SYSTEM_FUNC which permanently
-disables the shell command ``'!'`` in \ref o2scl::cli (when the 
-constant is defined, the shell command doesn't work even if 
-\ref o2scl::cli::shell_cmd_allowed is ``true``). 
+disables the shell command ``'!'`` in :ref:`cli <cli>` (when the 
+constant is defined, the shell command doesn't work even if
+:cpp:var:`o2scl::cli::shell_cmd_allowed` is ``true``). 
 
-The constant O2SCL_DATA_DIR is defined internally to provide
-the directory which contains the \o2 data files. After installation,
-this can be accessed in \ref o2scl::o2scl_settings. 
+The constant O2SCL_DATA_DIR is defined internally to provide the
+directory which contains the O\ :sub:`2`\ scl data files. After
+installation, this can be accessed in :cpp:var:`o2scl::o2scl_settings`.
 
 All of the header files have their own define constant of
 the form ``O2SCL_HEADER_FILE_NAME`` which ensures that
@@ -150,11 +149,11 @@ Global objects
 
 There are four global objects that are created in
 libo2scl:
-- \ref o2scl::def_err_hnd is the default error handler
-- \ref o2scl::alt_err_hnd is the GSL-like error handler 
-- \ref o2scl::err_hnd is the pointer to the error handler (points to
-def_err_hnd by default)
-- \ref o2scl::o2scl_settings to control a few library settings
+:cpp:var:`o2scl::def_err_hnd` is the default error handler
+:cpp:var:`o2scl::alt_err_hnd` is the GSL-like error handler 
+:cpp:var:`o2scl::err_hnd` is the pointer to the error handler (points to
+:cpp:var:`o2scl::def_err_hnd` by default)
+- :cpp:var:`o2scl::o2scl_settings` to control a few library settings
 
 All other global objects are to be avoided.
 
@@ -165,7 +164,8 @@ Most of the classes are thread-safe, meaning that two instances of
 the same class will not clash if their methods are called
 concurrently since static variables are only used for compile-time
 constants. However, two threads cannot, in general, safely
-manipulate the same instance of a class. In this respect, \o2 is
+manipulate the same instance of a class. In this respect, O\
+:sub:`2`\ scl is
 no different from GSL.
     
 .. Documentation design
@@ -181,40 +181,9 @@ Copyright notices
 For files where it is appropriate to do so, I have followed the
 prescription suggested in
 http://lists.gnu.org/archive/html/help-gsl/2008-11/msg00017.html
-retaining the GSL copyright notices and putting the \o2 notices at
+retaining the GSL copyright notices and putting the O\
+:sub:`2`\ scl notices at
 the top. CERNLIB has no such standard, but their licensing information
 is outlined at
 http://cernlib.web.cern.ch/cernlib/conditions.html .
 
-Design plans
-------------
-
-<b>Boost and linear algebra:</b> \n I would like to ensure this
-class is compatible with boost, and start integrating things
-accordingly. IMHO object-oriented linear algebra is in a rather
-sad state at the moment. uBlas and MTL are both promising,
-however, and I'd like to start implementing some sort of
-compatibility with uBlas vectors and matrices soon. The uBlas
-documentation is pretty sparse, but that's the pot calling the
-kettle a cheap piece of metal.
-
-<b>Other Improvements:</b> \n I'm particularly interested in
-improving the ODE and fitting classes, as well as updating the
-BFGS2 minimizer. Of course, more examples and better documentation
-are also a must.
-
-<b>Algorithms to include</b>
-- Method of lines for PDEs
-- Some of the MESA interpolation routines.
-- C++ translation of MINUIT (done already by ROOT, but quite difficult). 
-- Creating closed regions from contour lines (I have no idea how to
-do this at the moment, though I'm sure someone has solved this 
-problem already somewhere.)
-
-<b>Complex numbers</b> \n I'm not sure where to go with complex
-numbers. My guess is that ``std::complex`` is not
-significantly slower (or is faster) than ``gsl_complex``, but
-it would be good to check this. Then there's the C99 standard,
-which is altogether different. Unfortunately the interfaces may be
-sufficiently different that it's not easy to make templated
-classes which operate on generic complex number types.

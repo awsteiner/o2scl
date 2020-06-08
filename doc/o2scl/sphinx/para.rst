@@ -5,8 +5,8 @@ Parallel Programming with O2scl
 
 .. contents:: 
 
-Thread safety
--------------
+Thread safety and parallelism
+-----------------------------
 
 Generally, O\ :sub:`2`\ scl objects are thread-safe in the same way that
 classes like ``std::vector<double>`` are thread-safe:
