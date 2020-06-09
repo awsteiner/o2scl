@@ -61,7 +61,7 @@ sphinx-help:
 	sphinx-build --help
 
 html: Makefile
-	sphinx-build -v -b html "." build/html
+	sphinx-build -v -b html "." build/html > sphinx.log 2>&1
 
 html-nit: Makefile
 	sphinx-build -v -n -b html "." build/html
