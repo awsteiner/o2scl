@@ -8,7 +8,8 @@ BASE_HEADER_VAR =  err_hnd.h misc.h test_mgr.h table.h \
 	cli.h columnify.h convert_units.h string_conv.h \
 	tensor.h vector.h table3d.h cli_readline.h tensor_grid.h \
 	format_float.h table_units.h exception.h uniform_grid.h \
-	shunting_yard.h interp_krige.h find_constants.h cursesw.h
+	shunting_yard.h interp_krige.h find_constants.h cursesw.h \
+	prev_commit.h
 
 HEADER_VAR = $(BASE_HEADER_VAR)
 

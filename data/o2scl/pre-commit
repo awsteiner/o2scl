@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+echo "Updating <src/base/prev_commit.h>."
+
 commit=$(git log -1 --pretty="%H%n%ci") 
 commit_hash=$(echo "$commit" | head -1)
 commit_date=$(echo "$commit" | head -2 | tail -1) 
@@ -11,3 +13,5 @@ branch_name=${branch_name:-HEAD}
 
 # Write it
 echo -e "#define O2SCL_PREV_COMMIT_HASH \"$commit_hash\"\n#define O2SCL_PREV_COMMIT_DATE \"$commit_date\"\n#define O2SCL_BRANCH \"$branch\"\n" > src/base/prev_commit.h
+
+echo "Done updating <src/base/prev_commit.h>."
