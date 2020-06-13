@@ -56,10 +56,10 @@ namespace o2scl {
       Based on the CERNLIB routine DERIV, which was 
       based on [Rutishauser63]_ and is documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d401/top.html
-      \endverbatim
-      
+
       An example demonstrating the usage of this class is 
-      given in <tt>examples/ex_deriv.cpp</tt> and the \ref ex_deriv_sect .
+      given in the :ref:`Differentiation example`.
+      \endverbatim
 
       If \ref deriv_base::verbose is greater than zero, at each iteration
       this class prints something similar to

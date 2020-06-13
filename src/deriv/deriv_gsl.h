@@ -114,8 +114,10 @@ namespace o2scl {
       applications of the formula for the first derivative. No
       uncertainty for these derivatives is provided.
       
-      An example demonstrating the usage of this class is given in
-      <tt>examples/ex_deriv.cpp</tt> and the \ref ex_deriv_sect .
+      \verbatim embed:rst
+      An example demonstrating the usage of this class is 
+      given in the :ref:`Differentiation example`.
+      \endverbatim
 
       \future Include the forward and backward GSL derivatives. 
       These would be useful for EOS classes which run in to 
