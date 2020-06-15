@@ -385,8 +385,10 @@ namespace o2scl {
       minimization, or a GSL-like interface using allocate(), free(),
       interate() and set() or set_simplex().
 
-      See an example for the usage of this class
-      in \ref ex_mmin_sect .
+      \verbatim embed:rst
+      See an example for the usage of this class in 
+      :ref:`Multidimensional minimizer example`.
+      \endverbatim
       
       Default template arguments
       - \c func_t - \ref multi_funct

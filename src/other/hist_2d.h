@@ -54,8 +54,10 @@ namespace o2scl {
   
   /** \brief A two-dimensional histogram class
 
-      See discussion in the User's guide in the \ref hist_section 
+      \verbatim embed:rst
+      See discussion in the User's guide in the :ref:`Histograms`
       section.
+      \endverbatim
 
       Typical usage begins with setting the histogram bins using 
       \ref hist_2d::set_bin_edges(). Note that if one attempts to set

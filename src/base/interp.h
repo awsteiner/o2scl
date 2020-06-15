@@ -87,7 +87,10 @@ namespace o2scl {
 
   /** \brief Base low-level interpolation class [abstract base]
 
-      See also the \ref intp_section section of the \o2 User's guide. 
+      \verbatim embed:rst
+      See also the :ref:`Interpolation` section of the 
+      O\ :sub:`2`\ scl User's guide. 
+      \endverbatim
       
       To interpolate a set vectors \c x and \c y, call set() and then
       the interpolation functions eval(), deriv(), deriv2() and
@@ -202,7 +205,10 @@ namespace o2scl {
   
   /** \brief Linear interpolation (GSL) 
 
-      See also the \ref intp_section section of the \o2 User's guide. 
+      \verbatim embed:rst
+      See also the :ref:`Interpolation` section of the 
+      O\ :sub:`2`\ scl User's guide. 
+      \endverbatim
 
       Linear interpolation requires no calls to allocate() or free()
       as there is no internal storage required.
@@ -415,7 +421,10 @@ namespace o2scl {
   
   /** \brief Cubic spline interpolation (GSL)
       
-      See also the \ref intp_section section of the \o2 User's guide. 
+      \verbatim embed:rst
+      See also the :ref:`Interpolation` section of the 
+      O\ :sub:`2`\ scl User's guide. 
+      \endverbatim
 
       By default, this class uses natural boundary conditions, where
       the second derivative vanishes at each end point. Extrapolation
@@ -678,7 +687,10 @@ namespace o2scl {
   /** \brief Cubic spline interpolation with periodic 
       boundary conditions (GSL)
 
-      See also the \ref intp_section section of the \o2 User's guide. 
+      \verbatim embed:rst
+      See also the :ref:`Interpolation` section of the 
+      O\ :sub:`2`\ scl User's guide. 
+      \endverbatim
   */
   template<class vec_t, class vec2_t=vec_t> class interp_cspline_peri : 
   public interp_cspline<vec_t,vec2_t> {
@@ -818,7 +830,10 @@ namespace o2scl {
 
   /** \brief Akima spline interpolation (GSL)
       
-      See also the \ref intp_section section of the \o2 User's guide. 
+      \verbatim embed:rst
+      See also the :ref:`Interpolation` section of the 
+      O\ :sub:`2`\ scl User's guide. 
+      \endverbatim
 
       This class uses natural boundary conditions, where the second
       derivative vanishes at each end point. Extrapolation effectively
@@ -1051,7 +1066,10 @@ namespace o2scl {
   /** \brief Akima spline interpolation with periodic  
       boundary conditions (GSL)
 
-      See also the \ref intp_section section of the \o2 User's guide. 
+      \verbatim embed:rst
+      See also the :ref:`Interpolation` section of the 
+      O\ :sub:`2`\ scl User's guide. 
+      \endverbatim
   */
   template<class vec_t, class vec2_t=vec_t> class interp_akima_peri : 
   public interp_akima<vec_t,vec2_t> {
@@ -1644,7 +1662,10 @@ namespace o2scl {
   
   /** \brief Interpolation class for general vectors
       
-      See also the \ref intp_section section of the \o2 User's guide. 
+      \verbatim embed:rst
+      See also the :ref:`Interpolation` section of the 
+      O\ :sub:`2`\ scl User's guide. 
+      \endverbatim
 
       Interpolation of ublas vector like objects is performed with the
       default template parameters, and \ref interp_array is provided
@@ -1777,7 +1798,10 @@ namespace o2scl {
   
   /** \brief Interpolation class for pre-specified vector
       
-      See also the \ref intp_section section of the \o2 User's guide. 
+      \verbatim embed:rst
+      See also the :ref:`Interpolation` section of the 
+      O\ :sub:`2`\ scl User's guide. 
+      \endverbatim
 
       This interpolation class is intended to be sufficiently general
       to handle any vector type. Interpolation of ublas vector like
@@ -1986,7 +2010,10 @@ namespace o2scl {
   
   /** \brief A specialization of interp for C-style double arrays
 
-      See also the \ref intp_section section of the \o2 User's guide. 
+      \verbatim embed:rst
+      See also the :ref:`Interpolation` section of the 
+      O\ :sub:`2`\ scl User's guide. 
+      \endverbatim
    */
   template<size_t n> class interp_array : 
   public interp<double[n]> {
@@ -2006,7 +2033,10 @@ namespace o2scl {
   
   /** \brief A specialization of \ref o2scl::interp_vec for C-style arrays
 
-      See also the \ref intp_section section of the \o2 User's guide. 
+      \verbatim embed:rst
+      See also the :ref:`Interpolation` section of the 
+      O\ :sub:`2`\ scl User's guide. 
+      \endverbatim
   */
   template<class arr_t> class interp_array_vec : 
   public interp_vec<arr_t> {

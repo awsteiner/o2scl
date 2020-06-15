@@ -102,8 +102,10 @@ namespace o2scl {
       work well any of the parameters in the minimization problem has
       a scale which is not close to 1.
 
-      See an example for the usage of this class
-      in \ref ex_mmin_sect .
+      \verbatim embed:rst
+      See an example for the usage of this class in 
+      :ref:`Multidimensional minimizer example`.
+      \endverbatim
 
       Default template arguments
       - \c param_t - no default

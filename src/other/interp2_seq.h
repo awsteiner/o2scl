@@ -50,10 +50,13 @@ namespace o2scl {
       class is likely a bit slower than \ref interp2_direct but more
       flexible.
 
+      \verbatim embed:rst
       The convention used by this class is that the first (row) index
       of the matrix enumerates the x coordinate and that the second
       (column) index enumerates the y coordinate. See the discussion
-      in the User's guide in the section called \ref rowcol_subsect.
+      in the User's guide in the section called 
+      :ref:`Rows and columns vs. x and y`.
+      \endverbatim
 
       The function set_data() does not copy the data, it stores
       pointers to the data. If the data is modified, then the function

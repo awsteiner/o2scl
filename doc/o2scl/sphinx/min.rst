@@ -101,8 +101,8 @@ later to the GSL library minimization test functions.
    :width: 60%	   
    :alt: alt text
 
-Minimizer fixing variables
---------------------------
+Minimizer fixing variables example
+----------------------------------
 
 This example uses the :ref:`mmin_fix_params <mmin_fix_params>` class
 to minimize the function

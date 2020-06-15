@@ -53,8 +53,10 @@ namespace o2scl {
   
   /** \brief A one-dimensional histogram class
       
-      See discussion in the User's guide in the \ref hist_section 
+      \verbatim embed:rst
+      See discussion in the User's guide in the :ref:`Histograms`
       section.
+      \endverbatim
 
       One may set the histogram bins using \ref set_bin_edges() or one
       may manually set the limit of one bin using the reference

@@ -59,8 +59,10 @@ namespace o2scl {
       associated with the \ref mmin_fix_params object is filled with
       the last number of trials required for the last minimization.
 
-      See an example for the usage of this class in \ref
-      ex_mmin_fix_sect .
+      \verbatim embed:rst
+      See an example for the usage of this class in 
+      :ref:`Minimizer fixing variables example`.
+      \endverbatim
 
       \comment
       We cannot really do a version of mmin_de() for this class

@@ -53,7 +53,10 @@ namespace o2scl {
   /** \brief Interpolation by Kriging with a user-specified 
       covariance function
       
-      See also the \ref intp_section section of the \o2 User's guide. 
+      \verbatim embed:rst
+      See also the :ref:`Interpolation` section of the 
+      O\ :sub:`2`\ scl User's guide. 
+      \endverbatim
 
       \note The function \ref set() stores a pointer to the covariance
       function and its derivatives and integrals so they cannot go out
@@ -273,7 +276,10 @@ namespace o2scl {
   /** \brief One-dimensional interpolation using an 
       optimized covariance function
 
-      See also the \ref intp_section section of the \o2 User's guide. 
+      \verbatim embed:rst
+      See also the :ref:`Interpolation` section of the 
+      O\ :sub:`2`\ scl User's guide. 
+      \endverbatim
 
       \note This class is experimental.
   */

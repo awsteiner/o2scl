@@ -41,8 +41,10 @@ namespace o2scl {
       until the gradient is smaller than the value of mmin::tol_rel
       (which defaults to \f$ 10^{-4} \f$ ).
 
+      \verbatim embed:rst
       See an example for the usage of this class in 
-      \ref ex_mmin_sect .
+      :ref:`Multidimensional minimizer example`.
+      \endverbatim
   */
   template<class func_t = multi_funct, 
     class vec_t = boost::numeric::ublas::vector<double>, 
