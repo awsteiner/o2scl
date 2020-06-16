@@ -206,6 +206,74 @@ nucleus_rmf_ts_LDADD = $(VCHECK_LIBS)
 eos_had_gogny_ts_LDADD = $(VCHECK_LIBS)
 eos_crust_virial_ts_LDADD = $(VCHECK_LIBS)
 
+if O2SCL_OPENMP
+eos_had_apr_ts_LDFLAGS = -fopenmp
+eos_had_hlps_ts_LDFLAGS = -fopenmp
+eos_quark_bag_ts_LDFLAGS = -fopenmp
+nstar_cold_ts_LDFLAGS = -fopenmp
+nucmass_ldrop_ts_LDFLAGS = -fopenmp
+nucmass_ldrop_shell_ts_LDFLAGS = -fopenmp
+eos_base_ts_LDFLAGS = -fopenmp
+eos_had_potential_ts_LDFLAGS = -fopenmp
+eos_had_sym4_ts_LDFLAGS = -fopenmp
+eos_had_base_ts_LDFLAGS = -fopenmp
+eos_quark_njl_ts_LDFLAGS = -fopenmp
+eos_quark_ts_LDFLAGS = -fopenmp
+eos_had_rmf_ts_LDFLAGS = -fopenmp
+eos_had_rmf_hyp_ts_LDFLAGS = -fopenmp
+eos_had_schematic_ts_LDFLAGS = -fopenmp
+eos_had_skyrme_ts_LDFLAGS = -fopenmp
+eos_tov_ts_LDFLAGS = -fopenmp
+eos_cs2_poly_ts_LDFLAGS = -fopenmp
+tov_solve_ts_LDFLAGS = -fopenmp
+tov_love_ts_LDFLAGS = -fopenmp
+nstar_rot_ts_LDFLAGS = -fopenmp
+eos_quark_cfl6_ts_LDFLAGS = -fopenmp
+eos_had_tabulated_ts_LDFLAGS = -fopenmp
+eos_had_rmf_delta_ts_LDFLAGS = -fopenmp
+eos_crust_ts_LDFLAGS = -fopenmp
+eos_had_ddc_ts_LDFLAGS = -fopenmp
+eos_quark_cfl_ts_LDFLAGS = -fopenmp
+eos_nse_ts_LDFLAGS = -fopenmp
+eos_nse_full_ts_LDFLAGS = -fopenmp
+nucleus_rmf_ts_LDFLAGS = -fopenmp
+eos_had_gogny_ts_LDFLAGS = -fopenmp
+eos_crust_virial_ts_LDFLAGS = -fopenmp
+else
+eos_had_apr_ts_LDFLAGS =  
+eos_had_hlps_ts_LDFLAGS =  
+eos_quark_bag_ts_LDFLAGS =  
+nstar_cold_ts_LDFLAGS =  
+nucmass_ldrop_ts_LDFLAGS =  
+nucmass_ldrop_shell_ts_LDFLAGS =  
+eos_base_ts_LDFLAGS =  
+eos_had_potential_ts_LDFLAGS =  
+eos_had_sym4_ts_LDFLAGS =  
+eos_had_base_ts_LDFLAGS =  
+eos_quark_njl_ts_LDFLAGS =  
+eos_quark_ts_LDFLAGS =  
+eos_had_rmf_ts_LDFLAGS =  
+eos_had_rmf_hyp_ts_LDFLAGS =  
+eos_had_schematic_ts_LDFLAGS =  
+eos_had_skyrme_ts_LDFLAGS =  
+eos_tov_ts_LDFLAGS =  
+eos_cs2_poly_ts_LDFLAGS =  
+tov_solve_ts_LDFLAGS =  
+tov_love_ts_LDFLAGS =  
+nstar_rot_ts_LDFLAGS =  
+eos_quark_cfl6_ts_LDFLAGS =  
+eos_had_tabulated_ts_LDFLAGS =  
+eos_had_rmf_delta_ts_LDFLAGS =  
+eos_crust_ts_LDFLAGS =  
+eos_had_ddc_ts_LDFLAGS =  
+eos_quark_cfl_ts_LDFLAGS =  
+eos_nse_ts_LDFLAGS =  
+eos_nse_full_ts_LDFLAGS =  
+nucleus_rmf_ts_LDFLAGS =  
+eos_had_gogny_ts_LDFLAGS =  
+eos_crust_virial_ts_LDFLAGS =  
+endif
+
 eos_had_apr.scr: eos_had_apr_ts$(EXEEXT) 
 	./eos_had_apr_ts$(EXEEXT) > eos_had_apr.scr
 eos_had_hlps.scr: eos_had_hlps_ts$(EXEEXT) 

@@ -119,6 +119,38 @@ boson_rel_ts_LDADD = $(VCHECK_LIBS)
 boson_eff_ts_LDADD = $(VCHECK_LIBS)
 fermion_mag_zerot_ts_LDADD = $(VCHECK_LIBS)
 
+if O2SCL_OPENMP
+classical_ts_LDFLAGS = -fopenmp
+fermion_eff_ts_LDFLAGS = -fopenmp
+fermion_rel_ts_LDFLAGS = -fopenmp
+boson_ts_LDFLAGS = -fopenmp
+fermion_ts_LDFLAGS = -fopenmp
+part_ts_LDFLAGS = -fopenmp
+quark_ts_LDFLAGS = -fopenmp
+classical_deriv_ts_LDFLAGS = -fopenmp
+fermion_nonrel_ts_LDFLAGS = -fopenmp
+fermion_deriv_rel_ts_LDFLAGS = -fopenmp
+fermion_deriv_nr_ts_LDFLAGS = -fopenmp
+boson_rel_ts_LDFLAGS = -fopenmp
+boson_eff_ts_LDFLAGS = -fopenmp
+fermion_mag_zerot_ts_LDFLAGS = -fopenmp
+else
+classical_ts_LDFLAGS =  
+fermion_eff_ts_LDFLAGS =  
+fermion_rel_ts_LDFLAGS =  
+boson_ts_LDFLAGS =  
+fermion_ts_LDFLAGS =  
+part_ts_LDFLAGS =  
+quark_ts_LDFLAGS =  
+classical_deriv_ts_LDFLAGS =  
+fermion_nonrel_ts_LDFLAGS =  
+fermion_deriv_rel_ts_LDFLAGS =  
+fermion_deriv_nr_ts_LDFLAGS =  
+boson_rel_ts_LDFLAGS =  
+boson_eff_ts_LDFLAGS =  
+fermion_mag_zerot_ts_LDFLAGS =  
+endif
+
 classical.scr: classical_ts$(EXEEXT) 
 	./classical_ts$(EXEEXT) > classical.scr
 fermion_eff.scr: fermion_eff_ts$(EXEEXT) 
