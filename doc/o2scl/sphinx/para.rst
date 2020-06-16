@@ -21,8 +21,9 @@ OpenMP and O2scl
 ----------------
 
 OpenMP support may be enabled during installation by
-``--enable-openmp``. All OpenMP functionality is headers only, but
-enabling OpenMP support during installation allows O\ :sub:`2`\ scl to
+``--enable-openmp``. OpenMP support during installation
+allows O\ :sub:`2`\ scl to use parallelism to speed up
+some :ref:`table <table>` functions and to 
 test the multithreaded behavior of :ref:`anneal_para <anneal_para>`,
 :ref:`mcmc_para_base <mcmc_para_base>`, and :ref:`mcmc_para_table
 <mcmc_para_table>`.

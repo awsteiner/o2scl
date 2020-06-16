@@ -170,7 +170,7 @@ namespace o2scl_hdf {
     // Return location to previous value
     hf.set_current_id(top);
 
-    t.check_synchro();
+    t.is_valid();
 
     return;
   }
@@ -251,7 +251,7 @@ namespace o2scl_hdf {
     hf.set_current_id(group);
 
     // Check that input created a valid table
-    t.check_synchro();
+    t.is_valid();
 
     return;
   }
@@ -295,7 +295,7 @@ namespace o2scl_hdf {
     // Return location to previous value
     hf.set_current_id(top);
 
-    t.check_synchro();
+    t.is_valid();
     
     return;
   }

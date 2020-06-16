@@ -499,8 +499,8 @@ namespace o2scl_acol {
     virtual int comm_select(std::vector<std::string> &sv, bool itive_com);
 
     /// Select several rows for a new table
-    virtual int comm_select_rows(std::vector<std::string> &sv,
-				 bool itive_com);
+    //virtual int comm_select_rows(std::vector<std::string> &sv,
+    //bool itive_com);
 
     /** \brief A faster form of select rows which requires one to specify
 	the columns needed for the selection criteria first

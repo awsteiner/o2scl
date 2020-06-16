@@ -115,6 +115,8 @@ int main(void) {
     t.test_rel(at5.get("rcol1",1),2.0,1.0e-12,"ren 2");
     t.test_rel(at5.get("rcol1",2),3.0,1.0e-12,"ren 3");
 
+    // Test swap
+    std::swap(at4,at5);
   }
 
   {

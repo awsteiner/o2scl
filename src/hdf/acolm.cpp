@@ -440,9 +440,9 @@ void acol_manager::command_add(std::string new_type) {
        "which the row specification in <row_spec> evaluates to a number "+
        "greater than 0.5",
        new comm_option_mfptr<acol_manager>
-       (this,&acol_manager::comm_select_rows),both},
+       (this,&acol_manager::comm_select_rows2),both},
       {0,"select-rows2",
-       "Select rows, with explicit column specification.",
+       "Select rows, with explicit column specification (deprecated).",
        0,-1,"<row_spec>",
        ((std::string)"Select the rows from a table for ")+
        "which the row specification in <row_spec> evaluates to a number "+

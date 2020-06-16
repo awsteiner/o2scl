@@ -283,9 +283,8 @@ several details about how O\ :sub:`2`\ scl was compiled.
   classes which contain OpenMP code (see also O2SCL_MPI). This flag
   is set during compilation if ``--enable-openmp`` is passed to
   the configure script. The end-user must also define this flag to
-  enable OpenMP support in their code. While all current OpenMP
-  functionality in O\ :sub:`2`\ scl is header only, this may change in the
-  future. The command ``acol -v`` reports on whether or not
+  enable OpenMP support in their code.
+  The command ``acol -v`` reports on whether or not
   OpenMP was enabled during installation.
 - O2SCL_PART - Internal flag to tell the makefiles if the O\ :sub:`2`\
   sclp library is to be included. This constant is automatically set

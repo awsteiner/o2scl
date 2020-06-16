@@ -185,8 +185,6 @@ namespace o2scl {
       std::vector<col> list and \c std::map<std::string,int> tree
       where the map just stores the index of the the column in the
       list.
-      - Rewrite check_synchro into a full is_valid()-like 
-      sanity check
   */
   template<class vec_t=std::vector<double> > class table {
     
@@ -302,6 +300,40 @@ namespace o2scl {
     is_valid();
     
     return *this;
+  }
+
+  /** \brief Swap method
+   */
+  friend void swap(table &t1, table &t2) {
+    
+    using std::swap;
+
+    // The data
+    swap(t1.maxlines,t2.maxlines);
+    swap(t1.nlines,t2.nlines);
+    swap(t1.atree,t2.atree);
+
+    // Take care of interpolation
+    swap(t1.itype,t2.itype);
+    t1.intp_set=false;
+    t2.intp_set=false;
+    swap(t1.intp_colx,t2.intp_colx);
+    swap(t1.intp_coly,t2.intp_coly);
+
+    // Constants
+    swap(t1.constants,t2.constants);
+
+    // Recreate iterator lists
+    t1.alist.resize(t1.atree.size());
+    t1.reset_list();
+    t2.alist.resize(t2.atree.size());
+    t2.reset_list();
+
+    // Check that it worked
+    t1.is_valid();
+    t2.is_valid();
+    
+    return;
   }
   //@}
 
@@ -2819,32 +2851,6 @@ namespace o2scl {
     return 0;
   }
 
-  /** \brief Check if the tree and list are properly synchronized
-   */
-  void check_synchro() const {
-    if (atree.size()!=alist.size()) {
-      O2SCL_ERR2("Size of table and list do not match in ",
-		 "table::check_synchro().",exc_esanity);
-      return;
-    }
-    for(aciter it=atree.begin();it!=atree.end();it++) {
-      if (it->second.index!=alist[it->second.index]->second.index) {
-	O2SCL_ERR((((std::string)"Problem with iterator for entry '")+
-		   it->first+"' in list in table::check_synchro().").c_str(),
-		  exc_esanity);
-      }
-    }
-    for(int i=0;i<((int)atree.size());i++) {
-      if (alist[i]->second.index!=i) {
-	O2SCL_ERR((((std::string)"Problem with index of entry ")+
-		   itos(i)+" in list in table::check_synchro().").c_str(),
-		  exc_esanity);
-	return;
-      }
-    }
-    return;
-  }
-
   /** \brief Check if the table object appears to be valid
    */
   void is_valid() const {
@@ -3006,6 +3012,10 @@ namespace o2scl {
       hold the number of entries given by \ref get_nlines(), it is
       resized.
 
+      \todo FIXME: there may be a problem with the OpenMP code
+      if an exception is thrown in the calculator class and
+      there is not a unique error handler for each thread.
+
       \comment
       This function must return an int rather than void because
       of the presence of the 'throw_on_err' mechanism
@@ -3014,28 +3024,41 @@ namespace o2scl {
   template<class resize_vec_t>
   int function_vector(std::string function, resize_vec_t &vec,
 		      bool throw_on_err=true) {
+
+    int n_threads=1;
+    int i_thread=0;
     
-    // Parse function
-    calculator calc;
-    std::map<std::string,double> vars;
-    std::map<std::string,double>::const_iterator mit;
-    for(mit=constants.begin();mit!=constants.end();mit++) {
-      vars[mit->first]=mit->second;
-    }
-    calc.compile(function.c_str(),&vars);
-
-    // Resize vector if necessary
+    // Resize vector if necessary (outside the parallel region)
     if (vec.size()<nlines) vec.resize(nlines);
+      
+#ifdef O2SCL_OPENMP
+#pragma omp parallel private(i_thread)
+#endif
+    {
 
-    // Create space for column values
-    std::vector<double> vals(atree.size());
-  
-    // Create column from function
-    for(size_t j=0;j<nlines;j++) {
-      for(aciter it=atree.begin();it!=atree.end();it++) {
-	vars[it->first]=it->second.dat[j];
+#ifdef O2SCL_OPENMP
+      n_threads=omp_get_num_threads();
+      i_thread=omp_get_thread_num();
+#endif
+
+      // Parse function, separate calculator for each thread
+      calculator calc;
+      std::map<std::string,double> vars;
+      std::map<std::string,double>::const_iterator mit;
+      for(mit=constants.begin();mit!=constants.end();mit++) {
+	vars[mit->first]=mit->second;
       }
-      vec[j]=calc.eval(&vars);
+      calc.compile(function.c_str(),&vars);
+      
+      // Create column from function
+      for(int j=i_thread;j<((int)nlines);j+=n_threads) {
+	for(aciter it=atree.begin();it!=atree.end();it++) {
+	  vars[it->first]=it->second.dat[j];
+	}
+	vec[j]=calc.eval(&vars);
+      }
+
+      // End of parallel region
     }
 
     return 0;
@@ -3136,6 +3159,7 @@ namespace o2scl {
     }
     return it->second.dat;
   }
+  
   /** \brief Set the elements of alist with the appropriate 
       iterators from atree. \f$ {\cal O}(C) \f$
 
@@ -3203,13 +3227,17 @@ namespace o2scl {
       columns and need not be instantiated by the casual end-user.
   */
   class col {
+    
   public:
+    
     /// Pointer to column
     vec_t dat;
     /// Column index
     int index;
+    
     col() {
     }
+    
     /** \brief Copy constructor 
      */
     col(const col &c) {
@@ -3224,6 +3252,15 @@ namespace o2scl {
 	index=c.index;
       }
       return *this;
+    }
+    
+    /** \brief Swap method
+     */
+    friend void swap(col &t1, col &t2) {
+      using std::swap;
+      swap(t1.dat,t2.dat);
+      swap(t1.index,t2.index);
+      return;
     }
   };
   

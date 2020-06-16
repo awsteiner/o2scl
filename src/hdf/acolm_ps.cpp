@@ -1874,7 +1874,7 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     }
 
     // Todo: Replace this copy with std::swap
-    table_obj=new_table;
+    std::swap(table_obj,new_table);
 
   }
 
@@ -1886,6 +1886,7 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
+/*
 int acol_manager::comm_select_rows(std::vector<std::string> &sv, 
 				   bool itive_com) {
 
@@ -1953,6 +1954,7 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
 
   return 0;
 }
+*/
 
 int acol_manager::comm_select_rows2(std::vector<std::string> &sv, 
 				    bool itive_com) {
@@ -1985,7 +1987,7 @@ int acol_manager::comm_select_rows2(std::vector<std::string> &sv,
   // Create new table
   // ---------------------------------------------------------------------
   
-  table_units<> *new_table=new table_units<>;
+  table_units<> new_table;
   
   // ---------------------------------------------------------------------
   // Copy constants from old to new table
@@ -1995,7 +1997,7 @@ int acol_manager::comm_select_rows2(std::vector<std::string> &sv,
     string tnam;
     double tval;
     table_obj.get_constant(i,tnam,tval);
-    new_table->add_constant(tnam,tval);
+    new_table.add_constant(tnam,tval);
   }
   
   // ---------------------------------------------------------------------
@@ -2003,7 +2005,7 @@ int acol_manager::comm_select_rows2(std::vector<std::string> &sv,
   // ---------------------------------------------------------------------
 
   for(int i=0;i<((int)table_obj.get_ncolumns());i++) {
-    new_table->new_column(table_obj.get_column_name(i));
+    new_table.new_column(table_obj.get_column_name(i));
   }
 
   // ---------------------------------------------------------------------
@@ -2013,22 +2015,7 @@ int acol_manager::comm_select_rows2(std::vector<std::string> &sv,
   calculator calc;
   calc.compile(i1.c_str(),0);
   
-  /*
-    vector<string> cols;
-    for(size_t i=2;i<sv.size();i++) {
-    cols.push_back(sv[i]);
-    }
-  */
-
   vector<string> cols=calc.get_var_list();
-
-  /*
-    cout << "select-rows2a: ";
-    vector_out(cout,cols,true);
-    cout << "select-rows2b: ";
-    vector_out(cout,cols2,true);
-  */
-  
   std::map<std::string,double> vars;
 
   int new_lines=0;
@@ -2045,20 +2032,32 @@ int acol_manager::comm_select_rows2(std::vector<std::string> &sv,
     
     //calc.compile(i1.c_str(),&vars);
     if (calc.eval(&vars)>0.5) {
+      
       // It is important to use set_nlines_auto() here because it
       // increases the table size fast enough to avoid poor scaling
-      new_table->set_nlines_auto(new_lines+1);
-      for(int j=0;j<((int)table_obj.get_ncolumns());j++) {
-	new_table->set(j,new_lines,table_obj.get(j,i));
+      new_table.set_nlines_auto(new_lines+1);
+
+      // Trivially parallize the assignment over all columns
+#ifdef O2SCL_OPENMP
+#pragma omp parallel
+#endif
+      {
+#ifdef O2SCL_OPENMP
+#pragma omp for
+#endif
+	for(int j=0;j<((int)table_obj.get_ncolumns());j++) {
+	  new_table.set(j,new_lines,table_obj.get(j,i));
+	}
+	
+	// End of parallel region
       }
+      
       new_lines++;
     }
   }
   
-  // Replace the old table with the new one
-  table_obj.clear();
-  table_obj=*new_table;
-  delete new_table;
+  // Swap the old table with the new one
+  std::swap(table_obj,new_table);
   
   return 0;
 }
