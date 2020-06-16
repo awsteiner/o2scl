@@ -143,6 +143,30 @@ nucmass_gen_ts_LDADD = $(VCHECK_LIBS)
 nucmass_dz_ts_LDADD = $(VCHECK_LIBS)
 nucmass_densmat_ts_LDADD = $(VCHECK_LIBS)
 
+if O2SCL_OPENMP
+nucmass_ts_LDFLAGS = -fopenmp
+reaction_lib_ts_LDFLAGS = -fopenmp
+hdf_nucmass_io_ts_LDFLAGS = -fopenmp
+nucdist_ts_LDFLAGS = -fopenmp
+nucleus_ts_LDFLAGS = -fopenmp
+nucmass_fit_ts_LDFLAGS = -fopenmp
+nucmass_frdm_ts_LDFLAGS = -fopenmp
+nucmass_gen_ts_LDFLAGS = -fopenmp
+nucmass_dz_ts_LDFLAGS = -fopenmp
+nucmass_densmat_ts_LDFLAGS = -fopenmp
+else
+nucmass_ts_LDFLAGS =  
+reaction_lib_ts_LDFLAGS =  
+hdf_nucmass_io_ts_LDFLAGS =  
+nucdist_ts_LDFLAGS =  
+nucleus_ts_LDFLAGS =  
+nucmass_fit_ts_LDFLAGS =  
+nucmass_frdm_ts_LDFLAGS =  
+nucmass_gen_ts_LDFLAGS =  
+nucmass_dz_ts_LDFLAGS =  
+nucmass_densmat_ts_LDFLAGS =  
+endif
+
 nucmass.scr: nucmass_ts$(EXEEXT)
 	./nucmass_ts$(EXEEXT) > nucmass.scr
 reaction_lib.scr: reaction_lib_ts$(EXEEXT)

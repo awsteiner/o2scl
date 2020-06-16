@@ -116,6 +116,14 @@ VCHECK_LIBS = ../hdf/libo2scl_hdf.la ../libo2scl.la
 hdf_file_ts_LDADD = $(VCHECK_LIBS)
 hdf_io_ts_LDADD = $(VCHECK_LIBS)
 
+if O2SCL_OPENMP
+hdf_file_ts_LDFLAGS = -fopenmp
+hdf_io_ts_LDFLAGS = -fopenmp
+else
+hdf_file_ts_LDFLAGS = 
+hdf_io_ts_LDFLAGS = 
+endif
+
 hdf_file.scr: hdf_file_ts$(EXEEXT) 
 	./hdf_file_ts$(EXEEXT) > hdf_file.scr
 hdf_io.scr: hdf_io_ts$(EXEEXT) 
