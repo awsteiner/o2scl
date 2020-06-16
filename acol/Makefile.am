@@ -93,10 +93,23 @@ endif
 # However, homebrew's superenv appears to move the libraries around,
 # so we look for them in pkglibdir
 if O2SCL_SNAP
+
+if O2SCL_OPENMP
+acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
+	-Wl,/snap/o2scl/current/lib -fopenmp
+else
 acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
+endif
+
+else
+
+if O2SCL_OPENMP
+acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
 else
 acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir}
+endif
+
 endif
 
 acol_LDADD = -lo2scl_hdf -lo2scl -lgsl -lgslcblas $(RLIB)
