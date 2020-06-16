@@ -109,6 +109,38 @@ cholesky_ts_LDADD = $(VCHECK_LIBS)
 svd_ts_LDADD = $(VCHECK_LIBS)
 bidiag_ts_LDADD = $(VCHECK_LIBS)
 
+if O2SCL_OPENMP
+cblas_ts_LDFLAGS = -fopenmp
+permutation_ts_LDFLAGS = -fopenmp
+lanczos_ts_LDFLAGS = -fopenmp
+tridiag_ts_LDFLAGS = -fopenmp
+lu_ts_LDFLAGS = -fopenmp
+qr_ts_LDFLAGS = -fopenmp
+qrpt_ts_LDFLAGS = -fopenmp
+householder_ts_LDFLAGS = -fopenmp
+hh_ts_LDFLAGS = -fopenmp
+linear_solver_ts_LDFLAGS = -fopenmp
+svdstep_ts_LDFLAGS = -fopenmp
+cholesky_ts_LDFLAGS = -fopenmp
+svd_ts_LDFLAGS = -fopenmp
+bidiag_ts_LDFLAGS = -fopenmp
+else
+cblas_ts_LDFLAGS =  
+permutation_ts_LDFLAGS =  
+lanczos_ts_LDFLAGS =  
+tridiag_ts_LDFLAGS =  
+lu_ts_LDFLAGS =  
+qr_ts_LDFLAGS =  
+qrpt_ts_LDFLAGS =  
+householder_ts_LDFLAGS =  
+hh_ts_LDFLAGS =  
+linear_solver_ts_LDFLAGS =  
+svdstep_ts_LDFLAGS =  
+cholesky_ts_LDFLAGS =  
+svd_ts_LDFLAGS =  
+bidiag_ts_LDFLAGS =  
+endif
+
 cblas.scr: cblas_ts$(EXEEXT) 
 	./cblas_ts$(EXEEXT) > cblas.scr
 permutation.scr: permutation_ts$(EXEEXT) 
