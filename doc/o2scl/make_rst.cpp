@@ -134,6 +134,12 @@ int main(int argc, char *argv[]) {
 		ns="o2scl_hdf";
 	      } else if (stemp==((string)"__linalg")) {
 		ns="o2scl_linalg";
+	      } else if (stemp==((string)"__linalg")) {
+		if (s==((string)"LU_decomp_array_2d")) {
+		  ns="o2scl_linalg_bracket";
+		} else {
+		  ns="o2scl_linalg";
+		}
 	      } else {
 		ns="o2scl";
 	      }
