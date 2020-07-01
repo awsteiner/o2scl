@@ -34,6 +34,10 @@
 #include <sstream>
 #include <map>
 
+#ifdef O2SCL_OPENMP
+#include <omp.h>
+#endif
+
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
