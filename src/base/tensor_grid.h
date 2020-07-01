@@ -1405,7 +1405,7 @@ namespace o2scl {
 	for(size_t j=0;j<this->rk;j++) index_old[j]=index_new[j]+loc[j];
 	tnew.set(index_new,this->get(index_old));
       }
-      
+
       // Now use interp_power_two()
       return tnew.interp_linear_power_two(v);
     }

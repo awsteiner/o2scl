@@ -729,8 +729,7 @@ int acol_manager::comm_entry_grid(std::vector<std::string> &sv,
     }
 
     // Set value if necessary
-    if (in.size()>rk &&
-	in[rk]!="none") {
+    if (in.size()>rk && in[rk]!="none") {
       tensor_grid_obj.set_val
 	(vals,o2scl::stod(in[rk]));
     }
@@ -740,6 +739,10 @@ int acol_manager::comm_entry_grid(std::vector<std::string> &sv,
     vector<size_t> ix(rk);
     tensor_grid_obj.lookup_grid_vec(vals,ix);
 
+    if (scientific) cout.setf(ios::scientific);
+    else cout.unsetf(ios::scientific);
+    cout.precision(prec);
+    
     // Output indices, grid point, value
     cout << "Indices, grid point, value: ";
     vector_out(cout,ix,false);
