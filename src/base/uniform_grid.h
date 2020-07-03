@@ -125,6 +125,7 @@ namespace o2scl {
   */
   uniform_grid(data_t start, data_t end, data_t width, size_t n_bins, 
 	       bool log=false) {
+    
     if (n_bins==0) {
       O2SCL_ERR2("Requested zero bins in ",
 		 "uniform_grid::uniform_grid().",exc_einval);

@@ -93,9 +93,25 @@ int main(void) {
     t.test_gen(tab.get_unit("a")==tab2.get_unit("a"),"unit");
   }
 
-  // Test for vector_spec()
+  // Tests for vector_spec()
   std::vector<double> v=vector_spec("list:1,2,3,4");
   t.test_gen(v.size()==4,"vector_spec().");
+
+  std::vector<double> v2=vector_spec("text:hdf_io_ts_table.txt:0");
+  cout << "v2 ";
+  vector_out(cout,v2,true);
+
+  std::vector<double> v3=vector_spec("grid:1,10,1.1,log");
+  cout << "v3 ";
+  vector_out(cout,v3,true);
+
+  std::vector<double> v3b=vector_spec("grid:1,10,0.99");
+  cout << "v3b ";
+  vector_out(cout,v3b,true);
+
+  std::vector<double> v4=vector_spec("hdf5:table_units.o2:table_test:c");
+  cout << "v4 ";
+  vector_out(cout,v4,true);
 
   // Tests for value_spec()
   double d1, d2, d3, d4, d5;

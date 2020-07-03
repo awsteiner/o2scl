@@ -40,12 +40,14 @@ int main(void) {
   g1.vector(v1);
 
   //cout << v1 << endl;
+  cout << "g1: ";
   for(size_t i=0;i<g1.get_npoints();i++) {
     cout << g1[i] << " ";
   }
   cout << endl;
 
   uniform_grid<> g1b=g1;
+  cout << "g1b: ";
   for(size_t i=0;i<g1.get_npoints();i++) {
     cout << g1b[i] << " ";
   }
@@ -57,6 +59,7 @@ int main(void) {
   ubvector_float v2(g2.get_npoints());
   g2.vector(v2);
 
+  cout << "g2: ";
   for(size_t i=0;i<g2.get_npoints();i++) {
     cout << g2[i] << " ";
   }
@@ -67,6 +70,7 @@ int main(void) {
   ubvector v3(g3.get_npoints());
   g3.vector(v3);
 
+  cout << "g3: ";
   for(size_t i=0;i<g3.get_npoints();i++) {
     cout << g3[i] << " ";
   }
@@ -79,6 +83,7 @@ int main(void) {
   ubvector v4(g4.get_npoints());
   g4.vector(v4);
 
+  cout << "g4: ";
   for(size_t i=0;i<g4.get_npoints();i++) {
     cout << g4[i] << " ";
   }
@@ -87,6 +92,7 @@ int main(void) {
   // Linear decreasing grid
   uniform_grid_end<> g5(1,0,5);
 
+  cout << "g5: ";
   for(size_t i=0;i<g5.get_npoints();i++) {
     cout << g5[i] << " ";
   }
@@ -95,6 +101,7 @@ int main(void) {
   // Logarthmic decreasing grid
   uniform_grid_log_end<> g6(1,0.1,5);
 
+  cout << "g6: ";
   for(size_t i=0;i<g6.get_npoints();i++) {
     cout << g6[i] << " ";
   }
@@ -103,6 +110,7 @@ int main(void) {
   // Logarthmic grid with negative values
   uniform_grid_log_end<> g7(-0.1,-1.0,5);
   
+  cout << "g7: ";
   for(size_t i=0;i<g7.get_npoints() && i<10;i++) {
     cout << g7[i] << " ";
   }
@@ -111,11 +119,46 @@ int main(void) {
   // Logarthmic decreasing grid with negative values
   uniform_grid_log_end<> g8(-1.0,-0.1,5);
 
+  cout << "g8: ";
   for(size_t i=0;i<g8.get_npoints() && i<10;i++) {
     cout << g8[i] << " ";
   }
   cout << endl;
 
+  // Show how end_width handles inexact width parameters
+  
+  uniform_grid_end_width<> g9(0,1,0.2);
+  ubvector v9(g9.get_npoints());
+  g9.vector(v9);
+
+  //cout << v9 << endl;
+  cout << "g9: ";
+  for(size_t i=0;i<g9.get_npoints();i++) {
+    cout << g9[i] << " ";
+  }
+  cout << endl;
+
+  uniform_grid_end_width<> ga(0,1,0.2-1.0e-12);
+  ubvector va(ga.get_npoints());
+  ga.vector(va);
+
+  //cout << va << endl;
+  cout << "ga: ";
+  for(size_t i=0;i<ga.get_npoints();i++) {
+    cout << ga[i] << " ";
+  }
+  cout << endl;
+
+  uniform_grid_end_width<> gb(0,1,0.2+1.0e-12);
+  ubvector vb(gb.get_npoints());
+  gb.vector(vb);
+
+  //cout << vb << endl;
+  cout << "gb: ";
+  for(size_t i=0;i<gb.get_npoints();i++) {
+    cout << gb[i] << " ";
+  }
+  cout << endl;
 
   t.report();
   return 0;

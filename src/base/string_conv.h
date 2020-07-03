@@ -274,7 +274,7 @@ namespace o2scl {
   template<class size_vec_t>
     int string_to_uint_list(const std::string &x,
 			    size_vec_t &list) {
-
+    
     list.clear();
     std::vector<std::string> ranges;
     size_t k=0;

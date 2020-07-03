@@ -423,6 +423,9 @@ namespace o2scl_hdf {
       Additional specifications
       - table: \<column\>
 
+      \note Any data in the vector \c before the function is 
+      called will be lost.
+
       \warning Experimental.
   */
   template<class vec_t> int vector_spec(std::string spec, vec_t &v,
@@ -823,7 +826,7 @@ namespace o2scl_hdf {
       This function is used for the acol slack command.
 
       \warning Experimental.
-   */
+  */
   template<class vec_t> int strings_spec(std::string spec, vec_t &v,
 					 int verbose=0,
 					 bool err_on_fail=true) {
@@ -1002,8 +1005,8 @@ namespace o2scl_hdf {
     return 0;
   }
 
-  /** \brief Convert a vector specification to a standard library
-      vector
+  /** \brief Convert a vector specification to a 
+      \c std::vector
    */
   std::vector<double> vector_spec(std::string spec);
   
@@ -1015,7 +1018,16 @@ namespace o2scl_hdf {
       - HDF5 object(s) in file(s): 
       hdf5:\<file name(s)\>:\<object name(s)\>:[additional specification]
 
+      Also, any vector specification from \ref vector_spec() 
+      (except those beginning with \c hdf5: also works).
+      
+      \note The vector \c v is not cleared and new vector specified
+      in \c spec are added to the end of \c v.
+
       \warning Experimental.
+
+      Used in \ref o2scl_acol_mult_vectors_to_conts() which
+      is used in \c o2graph \c plotv .
   */
   template<class vec_t> int mult_vector_spec(std::string spec,
 					     std::vector<vec_t> &v,
@@ -1040,7 +1052,8 @@ namespace o2scl_hdf {
       std::string temp=spec.substr(5,spec.length()-5);
       std::vector<std::string> sv;
       o2scl::split_string_delim(temp,sv,':');
-      if (sv.size()<3) {
+
+      if (sv.size()<2) {
 	if (err_on_fail) {
 	  O2SCL_ERR2("Less than three parts for function type ",
 		     "in mult_vector_spec().",o2scl::exc_einval);
@@ -1049,27 +1062,28 @@ namespace o2scl_hdf {
 	}
       }
 
-      size_t n;
-      int cret=o2scl::stoszt_nothrow(sv[0],n);
-      if (cret!=0) {
-	if (err_on_fail) {
-	  O2SCL_ERR2("Conversion to size_t failed ",
-		     "in mult_vector_spec().",o2scl::exc_einval);
-	} else {
-	  return 2;
-	}
-      }
-      if (verbose>1) {
-	std::cout << "Size " << n << std::endl;
-      }
-      
-      v.resize(n);
-      
-      for(size_t i=0;i<n;i++) {
+      // There were only two arguments to the func specification,
+      // so presume a normal vector spec
+      if (sv.size()==2) {
 
-	size_t n2;
-	int cret2=o2scl::stoszt_nothrow(sv[1],n2);
-	if (cret2!=0) {
+	if (verbose>1) {
+	  std::cout << "mult_vector_spec(): Only two arguments "
+		    << "to \"func:\", presuming vector spec."
+		    << std::endl;
+	}
+	
+	vec_t v2;
+	vector_spec(spec,v2,verbose,err_on_fail);
+	v.push_back(v2);
+	
+      } else {
+	
+	// Otherwise, there were three arguments to the func
+	// specification, so proceed as normal
+	
+	size_t n;
+	int cret=o2scl::stoszt_nothrow(sv[0],n);
+	if (cret!=0) {
 	  if (err_on_fail) {
 	    O2SCL_ERR2("Conversion to size_t failed ",
 		       "in mult_vector_spec().",o2scl::exc_einval);
@@ -1078,24 +1092,44 @@ namespace o2scl_hdf {
 	  }
 	}
 	if (verbose>1) {
-	  std::cout << "Size of " << n << " is " << n2 << std::endl;
+	  std::cout << "Size " << n << std::endl;
 	}
 	
-	if (verbose>1) {
-	  std::cout << "Function " << sv[2] << std::endl;
+	v.resize(n);
+	
+	for(size_t i=0;i<n;i++) {
+	  
+	  size_t n2;
+	  int cret2=o2scl::stoszt_nothrow(sv[1],n2);
+	  if (cret2!=0) {
+	    if (err_on_fail) {
+	      O2SCL_ERR2("Conversion to size_t failed ",
+			 "in mult_vector_spec().",o2scl::exc_einval);
+	    } else {
+	      return 2;
+	    }
+	  }
+	  if (verbose>1) {
+	    std::cout << "Size of " << n << " is " << n2 << std::endl;
+	  }
+	  
+	  if (verbose>1) {
+	    std::cout << "Function " << sv[2] << std::endl;
+	  }
+	  
+	  o2scl::calculator calc;
+	  std::map<std::string,double> vars;
+	  calc.compile(sv[2].c_str(),&vars);
+	  
+	  v[i].resize(n2);
+	  for(size_t j=0;j<n2;j++) {
+	    vars["i"]=((double)i);
+	    vars["j"]=((double)j);
+	    v[i][j]=calc.eval(&vars);
+	  }
+	  
 	}
-	
-	o2scl::calculator calc;
-	std::map<std::string,double> vars;
-	calc.compile(sv[2].c_str(),&vars);
-	
-	v[i].resize(n2);
-	for(size_t j=0;j<n2;j++) {
-	  vars["i"]=((double)i);
-	  vars["j"]=((double)j);
-	  v[i][j]=calc.eval(&vars);
-	}
-	
+
       }
 	
     } else if (spec.find("text:")==0) {
@@ -1137,68 +1171,65 @@ namespace o2scl_hdf {
 	}
       }
 
-      bool in_header=true;
+      // Open the file
       std::ifstream fin;
-      std::string line, word;
       fin.open(sv[1].c_str());
 
-      std::cout << "Unfinished in mult_vector_spec." << std::endl;
-      exit(-1);
-      
-      /*
+      // Read the header, if there is any
+      std::string line, word;
+      bool in_header=false;
       do {
-	getline(fin,line);
-	std::istringstream is(line);
-	size_t i=0;
-	for(;i<col_list2[col_list2.size()-1] && (is >> word) && in_header;i++) {
-	  if (i==col-1 && o2scl::is_number(word)) {
-	    in_header=false;
-	  }
-	  if (i==col-1 && verbose>2) {
-	    if (in_header) {
-	      std::cout << "Word: " << word << " header." << std::endl;
-	    } else {
-	      std::cout << "Word: " << word << " start of data."
-			<< std::endl;
+        getline(fin,line);
+        std::istringstream is(line);
+        int i=0;
+	while (is >> word && in_header==false) {
+          if (!o2scl::is_number(word)) {
+            in_header=true;
+          }
+        }
+      } while (in_header && !fin.eof());
+      
+      // If we got to the end of the file and there wasn't
+      // any data then call the error handler.
+      if (in_header) {
+        if (err_on_fail) {
+          O2SCL_ERR2("Couldn't find a number in text file ",
+                     "in vector_spec().",o2scl::exc_einval);
+        } else {
+          return 13;
+        }
+      }
+
+      // Now store the data in a temporary object
+      v.resize(col_list2.size());
+      
+      bool end_of_data=false;
+      
+      do {
+	
+        std::istringstream is(line);
+	size_t last_col=o2scl::vector_max_value<std::vector<size_t>,size_t>
+	  (col_list2);
+
+	for(size_t i=0;i<last_col && end_of_data==false;i++) {
+          if (!(is >> word)) {
+	    end_of_data=true;
+	  } else {
+	    size_t ix;
+	    if (o2scl::vector_search(col_list2,i,ix)==true) {
+	      v[ix].push_back(o2scl::stod(word));
 	    }
 	  }
 	}
-      } while (in_header && !fin.eof());
 
-      if (in_header) {
-	if (err_on_fail) {
-	  O2SCL_ERR2("Couldn't find a number in text file ",
-		     "in vector_spec().",o2scl::exc_einval);
-	} else {
-	  return 13;
+	if (end_of_data==false) {
+	  getline(fin,line);
 	}
-      }
-
-      std::vector<double> tempv;
-
-      bool end_of_data=false;
-      do {
-	tempv.push_back(o2scl::stod(word));
-	
-	getline(fin,line);
-	std::istringstream is(line);
-	for(size_t i=0;i<col;i++) {
-	  if (!(is >> word)) {
-	    i=col;
-	    end_of_data=true;
-	  }
-	}
-	if (!o2scl::is_number(word)) end_of_data=true;
-	
+        
       } while (!end_of_data && !fin.eof());
-      
-      fin.close();
 
-      v.resize(tempv.size());
-      for(size_t i=0;i<tempv.size();i++) {
-	v[i]=tempv[i];
-      }
-      */
+      // Close the file
+      fin.close();
       
     } else if (spec.find("hdf5:")==0) {
 	
