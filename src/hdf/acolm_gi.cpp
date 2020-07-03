@@ -746,7 +746,13 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "               size_t: (no addl. spec.) Implies vector of size 1\n"+
       "             size_t[]: (no addl. spec.)\n"+
       "                table: <column>         Selected column from table\n"+
-      " uniform_grid<double>: (no addl. spec.)\n";
+      "            table-row: <row> <col pat>  Selected row and columns  \n"+
+      " uniform_grid<double>: (no addl. spec.)\n"+
+      "\n"+
+      "For table-row, the first additional specification is a row number, "+
+      "which can be negative to refer to counting from the end of the "+
+      "table. The second additional specification is a pattern of "+
+      "column names using either '*' or '?'.";
 
     std::vector<std::string> sv;
     o2scl::rewrap_keep_endlines(str,sv);
@@ -810,8 +816,14 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "type of object stored in the HDF5 file.\n"+
       "                 type: addl. spec.      Description\n"+
       " --------------------------------------------------\n"+
-      "                table: (no addl. spec.)\n"+
-      "             double[]: (no addl. spec.) Implies only 1 vector\n";
+      "                table: column pattern \n"+
+      "\n"+
+      "Also, many normal vector specifications (from 'acol -help "+
+      "vector-spec') also work as multiple vector specifications. "+
+      "These include specifications which begin with 'val:', 'list:', "+
+      "'grid:', and 'table-row:'. Also included are 'hdf5:' specifications "+
+      "which refer to objects of type double, double[], hist, int, "+
+      "int[], size_t, size_t[], and uniform_grid<double>.";
 
     std::vector<std::string> sv;
     o2scl::rewrap_keep_endlines(str,sv);

@@ -422,6 +422,7 @@ namespace o2scl_hdf {
 
       Additional specifications
       - table: \<column\>
+      - table-row: table-row:\<row\>:\<column pattern\>
 
       \note Any data in the vector \c before the function is 
       called will be lost.
@@ -741,14 +742,61 @@ namespace o2scl_hdf {
 	for(size_t i=0;i<t.get_nlines();i++) {
 	  v[i]=t.get(addl_spec,i);
 	}
+	
+      } else if (type=="table-row") {
+	
+	std::vector<std::string> sv2;
+	o2scl::split_string_delim(addl_spec,sv2,':');
+	if (sv2.size()<2) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("Either table row or column pattern not specified ",
+		       "in vector_spec().",o2scl::exc_einval);
+	  } else {
+	    return 6;
+	  }
+	}
+
+	o2scl::calculator calc;
+	calc.compile(sv2[0].c_str(),0);
+	int row=(int)calc.eval(0);
+	
+	o2scl::table_units<> t;
+	o2scl_hdf::hdf_input(hf,t,obj_name);
+
+	if (row<0) row+=t.get_nlines();
+
+	if (row<0 || row>=((int)t.get_nlines())) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("Row specification incorrect in ",
+		       "vector_spec().",o2scl::exc_einval);
+	  } else {
+	    return 6;
+	  }
+	}
+
+	std::vector<std::string> col_list;
+	for(size_t j=0;j<t.get_ncolumns();j++) {
+	  if (fnmatch(sv2[1].c_str(),t.get_column_name(j).c_str(),0)==0) {
+	    col_list.push_back(t.get_column_name(j));
+	  }
+	}
+
+	v.resize(col_list.size());
+	for(size_t i=0;i<t.get_nlines();i++) {
+	  v[i]=t.get(col_list[i],row);
+	}
+	
       } else if (type=="double[]") {
+	
 	std::vector<double> vtemp;
 	hf.getd_vec(obj_name,vtemp);
 	v.resize(vtemp.size());
 	for(size_t i=0;i<v.size();i++) {
 	  v[i]=vtemp[i];
 	}
+	
       } else if (type=="hist") {
+	
 	o2scl::hist ht;
 	hdf_input(hf,ht,obj_name);
 	typedef boost::numeric::ublas::vector<double> ubvector;
@@ -757,21 +805,27 @@ namespace o2scl_hdf {
 	for(size_t i=0;i<v.size();i++) {
 	  v[i]=wgts[i];
 	}
+	
       } else if (type=="int[]") {
+	
 	std::vector<int> vtemp;
 	hf.geti_vec(obj_name,vtemp);
 	v.resize(vtemp.size());
 	for(size_t i=0;i<v.size();i++) {
 	  v[i]=vtemp[i];
 	}
+	
       } else if (type=="size_t[]") {
+	
 	std::vector<size_t> vtemp;
 	hf.get_szt_vec(obj_name,vtemp);
 	v.resize(vtemp.size());
 	for(size_t i=0;i<v.size();i++) {
 	  v[i]=vtemp[i];
 	}
+	
       } else if (type=="uniform_grid<double>") {
+	
 	o2scl::uniform_grid<double> ug;
 	hdf_input(hf,ug,obj_name);
 	std::vector<double> vtemp;
@@ -780,22 +834,30 @@ namespace o2scl_hdf {
 	for(size_t i=0;i<v.size();i++) {
 	  v[i]=vtemp[i];
 	}
+	
       } else if (type=="int") {
+	
 	int itemp;
 	hf.geti(obj_name,itemp);
 	v.resize(1);
 	v[0]=itemp;
+	
       } else if (type=="double") {
+	
 	double dtemp;
 	hf.getd(obj_name,dtemp);
 	v.resize(1);
 	v[0]=dtemp;
+	
       } else if (type=="size_t") {
+	
 	size_t szttemp;
 	hf.get_szt(obj_name,szttemp);
 	v.resize(1);
 	v[0]=szttemp;
+	
       }
+      
       hf.close();
 	
     } else {
@@ -830,7 +892,7 @@ namespace o2scl_hdf {
   template<class vec_t> int strings_spec(std::string spec, vec_t &v,
 					 int verbose=0,
 					 bool err_on_fail=true) {
-
+    
     if (verbose>2) {
       std::cout << "Function strings_spec is parsing: " << spec << std::endl;
     }
@@ -1018,8 +1080,8 @@ namespace o2scl_hdf {
       - HDF5 object(s) in file(s): 
       hdf5:\<file name(s)\>:\<object name(s)\>:[additional specification]
 
-      Also, any vector specification from \ref vector_spec() 
-      (except those beginning with \c hdf5: also works).
+      Also, many vector specifications from \ref vector_spec() 
+      work.
       
       \note The vector \c v is not cleared and new vector specified
       in \c spec are added to the end of \c v.
@@ -1035,7 +1097,7 @@ namespace o2scl_hdf {
 					     bool err_on_fail=true) {
 
     if (spec.find("list:")==0 || spec.find("grid:")==0 ||
-	spec.find("val:")==0) {
+	spec.find("val:")==0 || spec.find("table-row:")==0) {
       
       // If the user specifies a list, grid, or value, then just use
       // the vector_spec() code
@@ -1095,22 +1157,28 @@ namespace o2scl_hdf {
 	  std::cout << "Size " << n << std::endl;
 	}
 	
-	v.resize(n);
-	
 	for(size_t i=0;i<n;i++) {
 	  
-	  size_t n2;
-	  int cret2=o2scl::stoszt_nothrow(sv[1],n2);
+	  o2scl::calculator calc2;
+	  std::map<std::string,double> vars2;
+	  vars2["i"]=((double)i);
+	  
+	  calc2.compile(sv[1].c_str(),&vars2);
+	  /*
 	  if (cret2!=0) {
 	    if (err_on_fail) {
-	      O2SCL_ERR2("Conversion to size_t failed ",
+	      O2SCL_ERR2("Function to get vector size failed ",
 			 "in mult_vector_spec().",o2scl::exc_einval);
 	    } else {
 	      return 2;
 	    }
 	  }
+	  */
+	  
+	  size_t n2=(size_t)calc2.eval(&vars2);
+	  
 	  if (verbose>1) {
-	    std::cout << "Size of " << n << " is " << n2 << std::endl;
+	    std::cout << "Size of vector " << n << " is " << n2 << std::endl;
 	  }
 	  
 	  if (verbose>1) {
@@ -1120,13 +1188,15 @@ namespace o2scl_hdf {
 	  o2scl::calculator calc;
 	  std::map<std::string,double> vars;
 	  calc.compile(sv[2].c_str(),&vars);
+	  std::vector<double> vtemp;
 	  
-	  v[i].resize(n2);
+	  vtemp.resize(n2);
 	  for(size_t j=0;j<n2;j++) {
 	    vars["i"]=((double)i);
 	    vars["j"]=((double)j);
-	    v[i][j]=calc.eval(&vars);
+	    vtemp[j]=calc.eval(&vars);
 	  }
+	  v.push_back(vtemp);
 	  
 	}
 
@@ -1161,6 +1231,10 @@ namespace o2scl_hdf {
       o2scl::string_to_uint_list(col_list,col_list2);
       o2scl::vector_sort<std::vector<size_t>,size_t>(col_list2.size(),
 						     col_list2);
+      if (verbose>1) {
+	std::cout << "Column list: ";
+	o2scl::vector_out(std::cout,col_list2,true);
+      }
       
       if (col_list2.size()<1) {
 	if (err_on_fail) {
@@ -1177,16 +1251,28 @@ namespace o2scl_hdf {
 
       // Read the header, if there is any
       std::string line, word;
-      bool in_header=false;
+      bool in_header;
       do {
+	in_header=false;
         getline(fin,line);
+	if (verbose>2) {
+	  std::cout << "line: " << line << std::endl;
+	}
         std::istringstream is(line);
-        int i=0;
-	while (is >> word && in_header==false) {
+	while ((is >> word) && (in_header==false)) {
+	  if (verbose>2) {
+	    std::cout << "word: " << word << " is_number: "
+		      << o2scl::is_number(word) << " eof: " << fin.eof()
+		      << std::endl;
+	  }
           if (!o2scl::is_number(word)) {
             in_header=true;
           }
         }
+	if (verbose>2) {
+	  std::cout << "in_header: " << in_header << " eof: "
+		    << fin.eof() << std::endl;
+	}
       } while (in_header && !fin.eof());
       
       // If we got to the end of the file and there wasn't
@@ -1194,30 +1280,37 @@ namespace o2scl_hdf {
       if (in_header) {
         if (err_on_fail) {
           O2SCL_ERR2("Couldn't find a number in text file ",
-                     "in vector_spec().",o2scl::exc_einval);
+                     "in mult_vector_spec().",o2scl::exc_einval);
         } else {
           return 13;
         }
       }
 
-      // Now store the data in a temporary object
-      v.resize(col_list2.size());
+      // Compute the last column from the column list so we can skip
+      // the latter entries in the line which we won't use
+      size_t last_col=o2scl::vector_max_value<std::vector<size_t>,size_t>
+	(col_list2);
+      if (verbose>1) {
+	std::cout << "Last column is: " << last_col << std::endl;
+      }
+      
+      // Store the data in a temporary object
+      std::vector<std::vector<double> > vtemp;
+      vtemp.resize(col_list2.size());
       
       bool end_of_data=false;
       
       do {
 	
         std::istringstream is(line);
-	size_t last_col=o2scl::vector_max_value<std::vector<size_t>,size_t>
-	  (col_list2);
 
-	for(size_t i=0;i<last_col && end_of_data==false;i++) {
+	for(size_t i=0;i<=last_col && end_of_data==false;i++) {
           if (!(is >> word)) {
 	    end_of_data=true;
 	  } else {
 	    size_t ix;
 	    if (o2scl::vector_search(col_list2,i,ix)==true) {
-	      v[ix].push_back(o2scl::stod(word));
+	      vtemp[ix].push_back(o2scl::stod(word));
 	    }
 	  }
 	}
@@ -1228,6 +1321,11 @@ namespace o2scl_hdf {
         
       } while (!end_of_data && !fin.eof());
 
+      // Add the temporary data to the vector list
+      for(size_t i=0;i<vtemp.size();i++) {
+	v.push_back(vtemp[i]);
+      }
+      
       // Close the file
       fin.close();
       
@@ -1339,10 +1437,18 @@ namespace o2scl_hdf {
 	      v.push_back(vtemp);
 	    }
 	  }
-	} else if (type=="double[]") {
+	  
+	} else if (type=="double" || type=="double[]" || type=="hist" ||
+		   type=="int" || type=="int[]" || type=="size_t" ||
+		   type=="size_t[]" || type=="uniform_grid") {
+
+	  // If the spec can be interpreted as a single vector spec,
+	  // then just use the vector_spec() function
 	  std::vector<double> vtemp;
-	  hf.getd_vec(obj_name,vtemp);
+	  int iret=vector_spec(spec,vtemp,verbose,err_on_fail);
 	  v.push_back(vtemp);
+
+	  if (iret!=0) return iret;
 	}
 	hf.close();
 

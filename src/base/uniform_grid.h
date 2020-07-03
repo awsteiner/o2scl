@@ -348,6 +348,12 @@ namespace o2scl {
   };
   
   /** \brief Linear grid with fixed number of bins and fixed bin size
+
+      \note If the width does not precisely divide the interval
+      between the start and end, then the last bin will be larger than
+      all of the other bins. If finite-precision is causing the last
+      bin to be too large, then this can sometimes be fixed by
+      decreasing the bin width by a small amount.
    */
   template<class data_t=double> class uniform_grid_width : 
     public uniform_grid<data_t> {
@@ -419,6 +425,12 @@ namespace o2scl {
   };
   
   /** \brief Logarithmic grid with fixed endpoint and fixed bin size
+
+      \note If no integer exponent of the width matches the ratio
+      between the end and the start, then the last bin will be larger than
+      all of the other bins. If finite-precision is causing the last
+      bin to be too large, then this can sometimes be fixed by
+      decreasing the bin width by a small amount.
    */
   template<class data_t=double> class uniform_grid_log_end_width : 
     public uniform_grid<data_t> {

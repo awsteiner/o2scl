@@ -101,17 +101,21 @@ int main(void) {
   cout << "v2 ";
   vector_out(cout,v2,true);
 
-  std::vector<double> v3=vector_spec("grid:1,10,1.1,log");
+  std::vector<double> v3=vector_spec("grid:1,5,1.5,log");
   cout << "v3 ";
   vector_out(cout,v3,true);
 
-  std::vector<double> v3b=vector_spec("grid:1,10,0.99");
+  std::vector<double> v3b=vector_spec("grid:1,5,0.99");
   cout << "v3b ";
   vector_out(cout,v3b,true);
 
   std::vector<double> v4=vector_spec("hdf5:table_units.o2:table_test:c");
   cout << "v4 ";
   vector_out(cout,v4,true);
+
+  std::vector<double> v5=vector_spec("func:5:exp(i)");
+  cout << "v5 ";
+  vector_out(cout,v5,true);
 
   // Tests for value_spec()
   double d1, d2, d3, d4, d5;
@@ -142,6 +146,28 @@ int main(void) {
   value_spec("hdf5:hdf_io_value_ts.o2:tx:col,3",d5,2);
   cout << d5 << endl;
 
+  // Tests for mult_vector_spec()
+  vector<std::vector<double>> vv1;
+  mult_vector_spec("func:3:10+i:sin(i+1)*cos(j)",vv1);
+  for(size_t i=0;i<vv1.size();i++) {
+    cout << "vv1 " << i << " ";
+    vector_out(cout,vv1[i],true);
+  }
+
+  vector<std::vector<double>> vv2;
+  mult_vector_spec("text:hdf_io_ts_table.txt:0,2-3",vv2,3);
+  for(size_t i=0;i<vv2.size();i++) {
+    cout << "vv2 " << i << " ";
+    vector_out(cout,vv2[i],true);
+  }
+  
+  vector<std::vector<double>> vv3;
+  mult_vector_spec("hdf5:table_units.o2:table_test:?",vv3);
+  for(size_t i=0;i<vv3.size();i++) {
+    cout << "vv3 " << i << " ";
+    vector_out(cout,vv3[i],true);
+  }
+  
   t.report();
 
   return 0;
