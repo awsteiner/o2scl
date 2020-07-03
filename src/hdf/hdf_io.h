@@ -422,6 +422,8 @@ namespace o2scl_hdf {
 
       Additional specifications
       - table: \<column\>
+
+      \warning Experimental.
   */
   template<class vec_t> int vector_spec(std::string spec, vec_t &v,
 					int verbose=0,
@@ -811,7 +813,16 @@ namespace o2scl_hdf {
     return 0;
   }
 
-  /** \brief Desc
+  /** \brief Specification of several strings
+
+      The specification types are:
+      - list: list of comma separated entries
+      - shell: read all lines output from a shell command
+      - hdf5: 
+
+      This function is used for the acol slack command.
+
+      \warning Experimental.
    */
   template<class vec_t> int strings_spec(std::string spec, vec_t &v,
 					 int verbose=0,
@@ -991,7 +1002,8 @@ namespace o2scl_hdf {
     return 0;
   }
 
-  /** \brief Return a std vector specified by a string
+  /** \brief Convert a vector specification to a standard library
+      vector
    */
   std::vector<double> vector_spec(std::string spec);
   
@@ -1003,14 +1015,23 @@ namespace o2scl_hdf {
       - HDF5 object(s) in file(s): 
       hdf5:\<file name(s)\>:\<object name(s)\>:[additional specification]
 
-      \note unfinished.
+      \warning Experimental.
   */
   template<class vec_t> int mult_vector_spec(std::string spec,
 					     std::vector<vec_t> &v,
 					     int verbose=0,
 					     bool err_on_fail=true) {
-    
-    if (spec.find("func:")==0) {
+
+    if (spec.find("list:")==0 || spec.find("grid:")==0 ||
+	spec.find("val:")==0) {
+      
+      // If the user specifies a list, grid, or value, then just use
+      // the vector_spec() code
+      vec_t v2;
+      vector_spec(spec,v2,verbose,err_on_fail);
+      v.push_back(v2);
+      
+    } else if (spec.find("func:")==0) {
 	
       // Function
       if (verbose>1) {

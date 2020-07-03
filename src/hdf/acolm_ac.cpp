@@ -1322,6 +1322,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     int vs_ret=vector_spec(in[1],d,verbose,false);
     if (vs_ret!=0) {
       cerr << "Vector specification " << in[1] << " failed." << endl;
+      return 1;
     }
     
     table_obj.clear();
@@ -1331,6 +1332,75 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     for(size_t li=0;li<d.size();li++) {
       table_obj.set(in[0],li,d[li]);
     }
+    command_add("table");
+    type="table";
+    
+  } else if (ctype=="table-mv") {
+    
+    vector<string> in, pr;
+    pr.push_back("Specification of column names");
+    pr.push_back("Multiple vector specification for column data");
+    int ret=get_input(sv2,pr,in,"create",itive_com);
+    if (ret!=0) return ret;
+
+    vector<string> c;
+    int ss_ret=strings_spec(in[0],c,verbose,false);
+    if (ss_ret!=0) {
+      cerr << "String specification " << in[0] << " failed." << endl;
+      return 1;
+    }
+
+    vector<std::vector<double> > d;
+    int vs_ret=mult_vector_spec(in[1],d,verbose,false);
+    if (vs_ret!=0) {
+      cerr << "Multiple vector specification " << in[1] << " failed." << endl;
+      return 2;
+    }
+
+    if (c.size()!=d.size()) {
+      cerr << "Mismatch between number of column names and "
+	   << "number of data vectors." << endl;
+      return 3;
+    }
+    
+    table_obj.clear();
+    for(size_t i=0;i<c.size();i++) {
+      table_obj.new_column(c[i]);
+    }
+
+    size_t max_size=0;
+    for(size_t i=0;i<d.size();i++) {
+      if (d[i].size()>max_size) max_size=d[i].size();
+    }
+
+    if (max_size==0) {
+      cerr << "Data vectors all have size 0." << endl;
+      return 4;
+    }
+    
+    table_obj.set_nlines(max_size);
+
+    for(size_t i=0;i<d.size();i++) {
+      if (d[i].size()==max_size) {
+	// If the vector has enough data, then copy it into
+	// the new table
+	for(size_t li=0;li<d.size();li++) {
+	  table_obj.set(i,li,d[i][li]);
+	}
+      } else {
+	// If the vector size doesn't match, use the internal
+	// interpolation type to expand the vector to fit in the table
+	vector_index_vector<double> viv;
+	interp_vec<vector_index_vector<double>,vector<double> > iv
+	  (d[i].size(),viv,d[i],interp_type);
+	for(size_t li=0;li<max_size;li++) {
+	  double dval=((double)li)/((double)(max_size-1))*
+	    ((double)(d[i].size()-1));
+	  table_obj.set(i,li,iv.eval(dval));
+	}
+      }
+    }
+    
     command_add("table");
     type="table";
     

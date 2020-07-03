@@ -2478,7 +2478,7 @@ namespace o2scl {
   /** \brief From a given vector, create a new vector by removing a
       specified element
 
-      This funciton is used in \ref o2scl::interp_krige_optim::qual_fun() .
+      This function is used in \ref o2scl::interp_krige_optim::qual_fun() .
   */
   template<class vec_t, class vec2_t> 
     void vector_copy_jackknife(const vec_t &src, size_t iout, vec2_t &dest) {
@@ -2629,7 +2629,7 @@ namespace o2scl {
    */
   template<class data_t> class vector_index_vector {
   public:
-    data_t operator[](size_t &i) const {
+    data_t operator[](size_t i) const {
       return i;
     }
   };
@@ -2657,7 +2657,7 @@ namespace o2scl {
 
     /** \brief Obtain the element with index \c i
      */
-    data_t operator[](size_t &i) const {
+    data_t operator[](size_t i) const {
       if (i>=n) {
 	O2SCL_ERR("Out of bounds.",o2scl::exc_einval);
       }

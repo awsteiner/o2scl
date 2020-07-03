@@ -85,8 +85,6 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
     cerr << "Refine does not work with " << type << " objects." << endl;
   }
     
-
-  
   return 0;
 }
 
@@ -122,10 +120,6 @@ int acol_manager::comm_slack(std::vector<std::string> &sv, bool itive_com) {
     cerr << "No slack message given." << endl;
     return 4;
   }
-
-  //template<class vec_t> int strings_spec(std::string spec, vec_t &v,
-  //int verbose=0,
-  //bool err_on_fail=true) {
 
   std::vector<std::string> slist;
   if (sv.size()>=3) {
