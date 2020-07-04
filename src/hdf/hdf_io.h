@@ -739,17 +739,28 @@ namespace o2scl_hdf {
 	}
 
 	if (addl_spec.find(':')!=std::string::npos) {
+
+	  if (verbose>2) {
+	    std::cout << "Found colon, so assuming row:column pattern."
+		      << std::endl;
+	  }
 	  std::vector<std::string> sv2;
 	  o2scl::split_string_delim(addl_spec,sv2,':');
 	  
 	  o2scl::calculator calc;
 	  calc.compile(sv2[0].c_str(),0);
 	  int row=(int)calc.eval(0);
+	  if (verbose>2) {
+	    std::cout << "Row is: " << row << std::endl;
+	  }
 	  
 	  o2scl::table_units<> t;
 	  o2scl_hdf::hdf_input(hf,t,obj_name);
 	  
 	  if (row<0) row+=t.get_nlines();
+	  if (verbose>2) {
+	    std::cout << "Row+nlines is: " << row << std::endl;
+	  }
 	  
 	  if (row<0 || row>=((int)t.get_nlines())) {
 	    if (err_on_fail) {
@@ -764,15 +775,25 @@ namespace o2scl_hdf {
 	  for(size_t j=0;j<t.get_ncolumns();j++) {
 	    if (fnmatch(sv2[1].c_str(),t.get_column_name(j).c_str(),0)==0) {
 	      col_list.push_back(t.get_column_name(j));
+	      if (verbose>2) {
+		std::cout << "Found match: " << t.get_column_name(j)
+			  << std::endl;
+	      }
 	    }
 	  }
 	  
 	  v.resize(col_list.size());
-	  for(size_t i=0;i<t.get_nlines();i++) {
+	  for(size_t i=0;i<col_list.size();i++) {
 	    v[i]=t.get(col_list[i],row);
 	  }
-	  
+
 	} else {
+	  
+	  if (verbose>2) {
+	    std::cout << "No colon, so assuming column name " << addl_spec
+		      << std::endl;
+	  }
+	  
 	  o2scl::table_units<> t;
 	  o2scl_hdf::hdf_input(hf,t,obj_name);
 	  v.resize(t.get_nlines());
@@ -780,8 +801,6 @@ namespace o2scl_hdf {
 	    v[i]=t.get(addl_spec,i);
 	  }
 	}
-	
-      } else if (type=="table-row") {
 	
       } else if (type=="double[]") {
 	
@@ -1408,6 +1427,7 @@ namespace o2scl_hdf {
 	}
 	
 	if (type=="table") {
+	  
 	  if (addl_spec.length()==0) {
 	    if (err_on_fail) {
 	      O2SCL_ERR2("No table column name specified ",
@@ -1416,6 +1436,23 @@ namespace o2scl_hdf {
 	      return 6;
 	    }
 	  }
+
+	  if (addl_spec.find(':')!=std::string::npos) {
+	    if (verbose>1) {
+	      std::cout << "Found colon in addl. spec. Forwarding "
+			<< "as row:column pattern to vector_spec()."
+			<< std::endl;
+	    }
+	    
+	    // If this is a row-column pattern specification, 
+	    // then just use the vector_spec() function
+	    std::vector<double> vtemp;
+	    int iret=vector_spec(spec,vtemp,verbose,err_on_fail);
+	    v.push_back(vtemp);
+	    
+	    if (iret!=0) return iret;
+	  }
+	  
 	  o2scl::table_units<> t;
 	  o2scl_hdf::hdf_input(hf,t,obj_name);
 	  
