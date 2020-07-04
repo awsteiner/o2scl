@@ -746,10 +746,11 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "               size_t: (no addl. spec.) Implies vector of size 1\n"+
       "             size_t[]: (no addl. spec.)\n"+
       "                table: <column>         Selected column from table\n"+
-      "            table-row: <row> <col pat>  Selected row and columns  \n"+
+      "                table: <row> <col pat>  Selected row and columns  \n"+
       " uniform_grid<double>: (no addl. spec.)\n"+
       "\n"+
-      "For table-row, the first additional specification is a row number, "+
+      "For table <row> <col pat>, "+
+      "the first additional specification is a row number, "+
       "which can be negative to refer to counting from the end of the "+
       "table. The second additional specification is a pattern of "+
       "column names using either '*' or '?'.";
@@ -816,7 +817,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "type of object stored in the HDF5 file.\n"+
       "                 type: addl. spec.      Description\n"+
       " --------------------------------------------------\n"+
-      "                table: column pattern \n"+
+      "                table: <column pattern>\n"+
       "\n"+
       "Also, many normal vector specifications (from 'acol -help "+
       "vector-spec') also work as multiple vector specifications. "+

@@ -728,6 +728,7 @@ namespace o2scl_hdf {
       }
 	
       if (type=="table") {
+	
 	if (addl_spec.length()==0) {
 	  if (err_on_fail) {
 	    O2SCL_ERR2("No table column name specified ",
@@ -736,55 +737,51 @@ namespace o2scl_hdf {
 	    return 6;
 	  }
 	}
-	o2scl::table_units<> t;
-	o2scl_hdf::hdf_input(hf,t,obj_name);
-	v.resize(t.get_nlines());
-	for(size_t i=0;i<t.get_nlines();i++) {
-	  v[i]=t.get(addl_spec,i);
+
+	if (addl_spec.find(':')!=std::string::npos) {
+	  std::vector<std::string> sv2;
+	  o2scl::split_string_delim(addl_spec,sv2,':');
+	  
+	  o2scl::calculator calc;
+	  calc.compile(sv2[0].c_str(),0);
+	  int row=(int)calc.eval(0);
+	  
+	  o2scl::table_units<> t;
+	  o2scl_hdf::hdf_input(hf,t,obj_name);
+	  
+	  if (row<0) row+=t.get_nlines();
+	  
+	  if (row<0 || row>=((int)t.get_nlines())) {
+	    if (err_on_fail) {
+	      O2SCL_ERR2("Row specification incorrect in ",
+			 "vector_spec().",o2scl::exc_einval);
+	    } else {
+	      return 6;
+	    }
+	  }
+	  
+	  std::vector<std::string> col_list;
+	  for(size_t j=0;j<t.get_ncolumns();j++) {
+	    if (fnmatch(sv2[1].c_str(),t.get_column_name(j).c_str(),0)==0) {
+	      col_list.push_back(t.get_column_name(j));
+	    }
+	  }
+	  
+	  v.resize(col_list.size());
+	  for(size_t i=0;i<t.get_nlines();i++) {
+	    v[i]=t.get(col_list[i],row);
+	  }
+	  
+	} else {
+	  o2scl::table_units<> t;
+	  o2scl_hdf::hdf_input(hf,t,obj_name);
+	  v.resize(t.get_nlines());
+	  for(size_t i=0;i<t.get_nlines();i++) {
+	    v[i]=t.get(addl_spec,i);
+	  }
 	}
 	
       } else if (type=="table-row") {
-	
-	std::vector<std::string> sv2;
-	o2scl::split_string_delim(addl_spec,sv2,':');
-	if (sv2.size()<2) {
-	  if (err_on_fail) {
-	    O2SCL_ERR2("Either table row or column pattern not specified ",
-		       "in vector_spec().",o2scl::exc_einval);
-	  } else {
-	    return 6;
-	  }
-	}
-
-	o2scl::calculator calc;
-	calc.compile(sv2[0].c_str(),0);
-	int row=(int)calc.eval(0);
-	
-	o2scl::table_units<> t;
-	o2scl_hdf::hdf_input(hf,t,obj_name);
-
-	if (row<0) row+=t.get_nlines();
-
-	if (row<0 || row>=((int)t.get_nlines())) {
-	  if (err_on_fail) {
-	    O2SCL_ERR2("Row specification incorrect in ",
-		       "vector_spec().",o2scl::exc_einval);
-	  } else {
-	    return 6;
-	  }
-	}
-
-	std::vector<std::string> col_list;
-	for(size_t j=0;j<t.get_ncolumns();j++) {
-	  if (fnmatch(sv2[1].c_str(),t.get_column_name(j).c_str(),0)==0) {
-	    col_list.push_back(t.get_column_name(j));
-	  }
-	}
-
-	v.resize(col_list.size());
-	for(size_t i=0;i<t.get_nlines();i++) {
-	  v[i]=t.get(col_list[i],row);
-	}
 	
       } else if (type=="double[]") {
 	
