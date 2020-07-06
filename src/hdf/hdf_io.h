@@ -1055,8 +1055,9 @@ namespace o2scl_hdf {
 	return o2scl::exc_efilenotfound;
       }
       
-      char line1[255];
-      char *cret=fgets(line1,255,ps_pipe);
+      static const size_t cl_max=256;
+      char line1[cl_max];
+      char *cret=fgets(line1,cl_max,ps_pipe);
       while (cret!=0) {
 	std::string sline1=line1;
 	if (sline1[sline1.length()-1]=='\n') {
@@ -1067,7 +1068,7 @@ namespace o2scl_hdf {
 		    << sline1 << std::endl;
 	}
 	v.push_back(sline1);
-	cret=fgets(line1,255,ps_pipe);
+	cret=fgets(line1,cl_max,ps_pipe);
       }
       
       if (pclose(ps_pipe)!=0) {

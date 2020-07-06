@@ -774,10 +774,18 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "The different parts of the string "+
       "are separated by a colon, and the first part specifes the type "+
       "of vector specification. The different types are:\n\n"+
-      "  1. list\n\n"+
-      "  2. shell\n\n"+
-      "  3. pattern:N:x[0][a][A]\n\n"+
-      "  4. hdf5:\n\n";
+      "  1. list:<comma-separated list> - A list of strings\n\n"+
+      "  2. shell:<command> - The lines obtained from the "+
+      "result of a shell command, with a maximum of 256 characters "+
+      "per line.\n\n"+
+      "  3. pattern:N:x[0][a][A] - The N strings obtained from a "+
+      "pattern. Occurrences of [0] are replaced with the integer 'i' "+
+      "where i runs from 0 to N-1. Occurrences of [a] are replaced "+
+      "with 'a' through 'z' from 0 through 25, and 'aa' through "+
+      "'zz' for i from 26 to 701. Occurrences of [A] are replaced "+
+      "with 'A' through 'Z' from 0 through 25, and 'AA' through "+
+      "'ZZ' for i from 26 to 701. \n\n"+
+      "  4. hdf5: - Unfinished.\n\n";
 
     std::vector<std::string> sv;
     o2scl::rewrap_keep_endlines(str,sv);
@@ -803,7 +811,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "Specify the\nnumber of vectors, a function of \"i\" which "+
       "determines the length of the ith vector, and a function of "+
       "\"i\" and \"j\" which specifies the jth element of the ith "+
-      "vector.\n\n"
+      "vector.\n\n"+
       "  2. text:<filename pattern>:<numeric column list> - "+
       "Read one or\nmore text files and extract "+
       "vectors of numbers from columns of the text file, ignoring "+

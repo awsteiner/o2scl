@@ -430,9 +430,14 @@ void acol_manager::command_add(std::string new_type) {
        "specification is a list of column names, functions, or patterns "+
        "which match "+
        "the column names. Patterns must be preceeded by a colon ':' "+
-       "and can use wildcards like '*' and '?'. All of the rows of data "+
+       "and use the rules from the fnmatch() function. A '*' matches "+
+       "everything, and '?' matches any single character. The pattern "+
+       "[list] matches any character in list, and the pattern "+
+       "[!list] matches all characters not in the list. The pattern "+
+       "[*] matches the character '*' and [?] matches the character '?'. "+
+       "All of the rows of data "+
        "are copied over. If functions are specified, the result can be "+
-       "named using '='. ",
+       "named using '='.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_select),
        both},
       {0,"select-rows","Select rows for a new table.",
