@@ -776,7 +776,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "of vector specification. The different types are:\n\n"+
       "  1. list\n\n"+
       "  2. shell\n\n"+
-      "  3. hdf5:\n\n";
+      "  3. pattern:N:x[0][a][A]\n\n"+
+      "  4. hdf5:\n\n";
 
     std::vector<std::string> sv;
     o2scl::rewrap_keep_endlines(str,sv);
@@ -808,7 +809,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "vectors of numbers from columns of the text file, ignoring "+
       "any header rows which contain non-numeric values. For "+
       "example 'text:~/temp.dat:2-4' will construct vectors from the "+
-      "second, third, and fourth columns of the file 'temp.dat' "+
+      "third, fourth, and fifth columns of the file 'temp.dat' "+
       "in the user's home directory.\n\n"+
       "  3. hdf5:<filename pattern>:<object name>:[additional spec.] - "+
       "Read one or\nmore HDF5 files and obtain a vector from the object "+

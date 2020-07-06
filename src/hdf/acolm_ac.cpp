@@ -1338,23 +1338,42 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
   } else if (ctype=="table-mv") {
     
     vector<string> in, pr;
-    pr.push_back("Specification of column names");
-    pr.push_back("Multiple vector specification for column data");
-    int ret=get_input(sv2,pr,in,"create",itive_com);
-    if (ret!=0) return ret;
-
-    vector<string> c;
-    int ss_ret=strings_spec(in[0],c,verbose,false);
-    if (ss_ret!=0) {
-      cerr << "String specification " << in[0] << " failed." << endl;
-      return 1;
+    if (sv2.size()<2) {
+      pr.push_back("Specification of column names");
+      pr.push_back("Multiple vector specification for column data");
+      int ret=get_input(sv2,pr,in,"create",itive_com);
+      if (ret!=0) return ret;
+    } else {
+      for(size_t j=1;j<sv2.size();j++) {
+	in.push_back(sv2[j]);
+      }
     }
 
+    table_obj.clear();
+    
+    size_t nk=sv2.size()/2;
+    
+    if (verbose>2) {
+      std::cout << "nk: " << nk << std::endl;
+    }
+    
+    vector<string> c;
     vector<std::vector<double> > d;
-    int vs_ret=mult_vector_spec(in[1],d,verbose,false);
-    if (vs_ret!=0) {
-      cerr << "Multiple vector specification " << in[1] << " failed." << endl;
-      return 2;
+
+    for(size_t ik=0;ik<nk;ik++) {
+
+      int ss_ret=strings_spec(in[ik*2],c,verbose,false);
+      if (ss_ret!=0) {
+	cerr << "String specification " << in[ik*2] << " failed." << endl;
+	return 1;
+      }
+
+      int vs_ret=mult_vector_spec(in[ik*2+1],d,verbose,false);
+      if (vs_ret!=0) {
+	cerr << "Multiple vector specification "
+	     << in[ik*2+1] << " failed." << endl;
+	return 2;
+      }
     }
 
     if (c.size()!=d.size()) {
@@ -1362,8 +1381,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
 	   << "number of data vectors." << endl;
       return 3;
     }
-    
-    table_obj.clear();
+
     for(size_t i=0;i<c.size();i++) {
       table_obj.new_column(c[i]);
     }
@@ -1381,10 +1399,11 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     table_obj.set_nlines(max_size);
 
     for(size_t i=0;i<d.size();i++) {
+      
       if (d[i].size()==max_size) {
 	// If the vector has enough data, then copy it into
 	// the new table
-	for(size_t li=0;li<d.size();li++) {
+	for(size_t li=0;li<d[i].size();li++) {
 	  table_obj.set(i,li,d[i][li]);
 	}
       } else {

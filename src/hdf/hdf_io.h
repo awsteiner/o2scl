@@ -741,7 +741,7 @@ namespace o2scl_hdf {
 	if (addl_spec.find(':')!=std::string::npos) {
 
 	  if (verbose>2) {
-	    std::cout << "Found colon, so assuming row:column pattern."
+	    std::cout << "Found colon, so assuming row:column patterns."
 		      << std::endl;
 	  }
 	  std::vector<std::string> sv2;
@@ -772,12 +772,25 @@ namespace o2scl_hdf {
 	  }
 	  
 	  std::vector<std::string> col_list;
-	  for(size_t j=0;j<t.get_ncolumns();j++) {
-	    if (fnmatch(sv2[1].c_str(),t.get_column_name(j).c_str(),0)==0) {
-	      col_list.push_back(t.get_column_name(j));
-	      if (verbose>2) {
-		std::cout << "Found match: " << t.get_column_name(j)
-			  << std::endl;
+	  std::vector<std::string> col_patterns;
+	  o2scl::split_string_delim(sv2[1],col_patterns,',');
+	  if (verbose>2) {
+	    std::cout << "Column patterns: ";
+	    o2scl::vector_out(std::cout,col_patterns,true);
+	  }
+	  
+	  for(size_t k=0;k<col_patterns.size();k++) {
+	    if (verbose>2) {
+	      std::cout << "Column pattern " << col_patterns[k] << std::endl;
+	    }
+	    for(size_t j=0;j<t.get_ncolumns();j++) {
+	      if (fnmatch(col_patterns[k].c_str(),
+			  t.get_column_name(j).c_str(),0)==0) {
+		col_list.push_back(t.get_column_name(j));
+		if (verbose>2) {
+		  std::cout << "Found match: " << t.get_column_name(j)
+			    << std::endl;
+		}
 	      }
 	    }
 	  }
@@ -785,6 +798,10 @@ namespace o2scl_hdf {
 	  v.resize(col_list.size());
 	  for(size_t i=0;i<col_list.size();i++) {
 	    v[i]=t.get(col_list[i],row);
+	    if (verbose>2) {
+	      std::cout << "Getting entry at: " << col_list[i] << " "
+			<< row << " " << v[i] << std::endl;
+	    }
 	  }
 
 	} else {
@@ -891,6 +908,7 @@ namespace o2scl_hdf {
       }
 	
     }
+
     return 0;
   }
 
@@ -899,26 +917,31 @@ namespace o2scl_hdf {
       The specification types are:
       - list: list of comma separated entries
       - shell: read all lines output from a shell command
+      - pattern: 
       - hdf5: 
 
       This function is used for the acol slack command.
+
+      \note Previous strings in \c v are left unchanged and
+      new strings are just added to the end.
 
       \warning Experimental.
   */
   template<class vec_t> int strings_spec(std::string spec, vec_t &v,
 					 int verbose=0,
 					 bool err_on_fail=true) {
-    
+
     if (verbose>2) {
       std::cout << "Function strings_spec is parsing: " << spec << std::endl;
     }
       
     if (spec.find("list:")==0) {
-      
+
       // List
       std::string list=spec.substr(5,spec.length()-5);
       std::vector<std::string> sv;
       o2scl::split_string_delim(list,sv,',');
+
       size_t n=sv.size();
       if (n==0) {
 	if (err_on_fail) {
@@ -932,11 +955,88 @@ namespace o2scl_hdf {
 	std::cout << "strings_spec(): List " << list << std::endl;
 	std::cout << n << " " << sv[0] << " " << sv[n-1] << std::endl;
       }
-      v.resize(n);
       for(size_t i=0;i<n;i++) {
-	v[i]=sv[i];
+	v.push_back(sv[i]);
       }
 	
+    } else if (spec.find("pattern:")==0) {
+
+      std::vector<std::string> sv;
+      o2scl::split_string_delim(spec,sv,':');
+      if (sv.size()<3) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Not enough arguments for pattern specification ",
+		     "in strings_spec().",o2scl::exc_einval);
+	} else {
+	  return 1;
+	}
+      }
+
+      size_t np=o2scl::stoszt(sv[1]);
+      std::string pat=sv[2];
+      if (verbose>2) {
+	std::cout << "pattern: np,pat: " << np << " " << pat
+		  << std::endl;
+      }
+      
+      for(size_t i=0;i<np;i++) {
+	std::string cs=pat;
+	while (cs.find("[0]")!=std::string::npos) {
+	  cs=cs.replace(cs.find("[0]"),3,o2scl::szttos(i));
+	}
+	if (i<26) {
+	  int ai='a';
+	  int Ai='A';
+	  char aic=ai+i;
+	  char Aic=Ai+i;
+	  std::string ais;
+	  std::string Ais;
+	  ais+=aic;
+	  Ais+=Aic;
+	  while (cs.find("[a]")!=std::string::npos) {
+	    cs=cs.replace(cs.find("[a]"),3,ais);
+	  }
+	  while (cs.find("[A]")!=std::string::npos) {
+	    cs=cs.replace(cs.find("[A]"),3,Ais);
+	  }
+	} else if (i<26*26+26) {
+	  int ai='a';
+	  int Ai='A';
+	  size_t i2=i-26;
+	  char aic=ai+i2/26;
+	  char Aic=Ai+i2/26;
+	  std::string ais;
+	  std::string Ais;
+	  ais+=aic;
+	  Ais+=Aic;
+	  char aic2=ai+i2%26;
+	  char Aic2=Ai+i2%26;
+	  ais+=aic2;
+	  Ais+=Aic2;
+	  while (cs.find("[a]")!=std::string::npos) {
+	    cs=cs.replace(cs.find("[a]"),3,ais);
+	  }
+	  while (cs.find("[A]")!=std::string::npos) {
+	    cs=cs.replace(cs.find("[A]"),3,Ais);
+	  }
+	} else {
+	  if (cs.find("[a]")!=std::string::npos ||
+	      cs.find("[A]")!=std::string::npos) {
+	    if (err_on_fail) {
+	      O2SCL_ERR2("Ran out of alphabet in ",
+			 "strings_spec().",o2scl::exc_einval);
+	    }
+	    std::cerr << "Ran out of alphabet." << std::endl;
+	    return 1;
+	  }
+	}
+	if (verbose>2) {
+	  std::cout << "String (" << i << "/" << np << ") from pattern "
+		    << pat << " is " << cs << std::endl;
+	}
+	v.push_back(cs);
+      }
+      
     } else if (spec.find("shell:")==0) {
       
       // Result from shell command
@@ -957,7 +1057,6 @@ namespace o2scl_hdf {
       
       char line1[255];
       char *cret=fgets(line1,255,ps_pipe);
-      v.clear();
       while (cret!=0) {
 	std::string sline1=line1;
 	if (sline1[sline1.length()-1]=='\n') {
@@ -1054,7 +1153,8 @@ namespace o2scl_hdf {
       if (verbose>1) {
 	std::cout << "Object type from file: " << type << std::endl;
       }
-	
+
+#ifdef O2SCL_NEVER_DEFINED      
       if (type=="table") {
 	if (addl_spec.length()==0) {
 	  if (err_on_fail) {
@@ -1066,17 +1166,16 @@ namespace o2scl_hdf {
 	}
 	o2scl::table_units<> t;
 	o2scl_hdf::hdf_input(hf,t,obj_name);
-	v.resize(t.get_nlines());
 	for(size_t i=0;i<t.get_nlines();i++) {
-	  v[i]=t.get(addl_spec,i);
+	  v.push_back(t.get(addl_spec,i));
 	}
 	
       }
+#endif
       
     } else {
 
-      v.resize(1);
-      v[0]=spec;
+      v.push_back(spec);
       
     }
     
@@ -1105,7 +1204,13 @@ namespace o2scl_hdf {
       \warning Experimental.
 
       Used in \ref o2scl_acol_mult_vectors_to_conts() which
-      is used in \c o2graph \c plotv .
+      is used in \c o2graph \c plotv . Used in acol create
+      table-mv.
+
+      \future When hdf5 is a single vector spec, it has to
+      close the file so that vector_spec() can open it again.
+      This should be fixed. Maybe the way to improve this is to
+      break it up into several functions.
   */
   template<class vec_t> int mult_vector_spec(std::string spec,
 					     std::vector<vec_t> &v,
@@ -1113,7 +1218,7 @@ namespace o2scl_hdf {
 					     bool err_on_fail=true) {
 
     if (spec.find("list:")==0 || spec.find("grid:")==0 ||
-	spec.find("val:")==0 || spec.find("table-row:")==0) {
+	spec.find("val:")==0) {
       
       // If the user specifies a list, grid, or value, then just use
       // the vector_spec() code
@@ -1155,9 +1260,12 @@ namespace o2scl_hdf {
 	v.push_back(v2);
 	
       } else {
-	
-	// Otherwise, there were three arguments to the func
+
+	// --------------------------------------------------------
+	// Otherwise, there were three arguments to the function
 	// specification, so proceed as normal
+
+	// First determine the number of functions
 	
 	size_t n;
 	int cret=o2scl::stoszt_nothrow(sv[0],n);
@@ -1172,15 +1280,18 @@ namespace o2scl_hdf {
 	if (verbose>1) {
 	  std::cout << "Size " << n << std::endl;
 	}
+
+	// Now, loop through each function
 	
 	for(size_t i=0;i<n;i++) {
+
+	  // Compile the function for the length of the ith vector
 	  
 	  o2scl::calculator calc2;
 	  std::map<std::string,double> vars2;
 	  vars2["i"]=((double)i);
 	  
-	  calc2.compile(sv[1].c_str(),&vars2);
-	  /*
+	  int cret2=calc2.compile_nothrow(sv[1].c_str(),&vars2);
 	  if (cret2!=0) {
 	    if (err_on_fail) {
 	      O2SCL_ERR2("Function to get vector size failed ",
@@ -1189,29 +1300,52 @@ namespace o2scl_hdf {
 	      return 2;
 	    }
 	  }
-	  */
-	  
-	  size_t n2=(size_t)calc2.eval(&vars2);
+
+	  // Evaulate the function for the length of the ith vector
+
+	  double ce;
+	  int cret3=calc2.eval_nothrow(&vars2,ce);
+	  if (cret3!=0) {
+	    if (err_on_fail) {
+	      O2SCL_ERR2("Function to get vector size failed ",
+			 "in mult_vector_spec().",o2scl::exc_einval);
+	    } else {
+	      return 2;
+	    }
+	  }
+	  size_t n2=(size_t)ce;
 	  
 	  if (verbose>1) {
 	    std::cout << "Size of vector " << n << " is " << n2 << std::endl;
-	  }
-	  
-	  if (verbose>1) {
 	    std::cout << "Function " << sv[2] << std::endl;
 	  }
 	  
+	  // Compile the function for the ith vector
+
 	  o2scl::calculator calc;
 	  std::map<std::string,double> vars;
-	  calc.compile(sv[2].c_str(),&vars);
-	  std::vector<double> vtemp;
+	  vars["i"]=((double)i);
 	  
+	  int cret4=calc.compile_nothrow(sv[2].c_str(),&vars);
+	  if (cret4!=0) {
+	    if (err_on_fail) {
+	      O2SCL_ERR2("Function to get vector size failed ",
+			 "in mult_vector_spec().",o2scl::exc_einval);
+	    } else {
+	      return 2;
+	    }
+	  }
+	  
+	  // Evaluate the function for the ith vector
+
+	  std::vector<double> vtemp;
 	  vtemp.resize(n2);
 	  for(size_t j=0;j<n2;j++) {
-	    vars["i"]=((double)i);
 	    vars["j"]=((double)j);
 	    vtemp[j]=calc.eval(&vars);
 	  }
+
+	  // Add the temporary vector to the list
 	  v.push_back(vtemp);
 	  
 	}
@@ -1220,7 +1354,8 @@ namespace o2scl_hdf {
 	
     } else if (spec.find("text:")==0) {
 
-      // Text
+      // Text file specification
+      
       if (verbose>1) {
 	std::cout << "mult_vector_spec(): Text " << spec << std::endl;
       }
@@ -1472,22 +1607,26 @@ namespace o2scl_hdf {
 	    }
 	  }
 	  
+	  hf.close();
+	  
 	} else if (type=="double" || type=="double[]" || type=="hist" ||
 		   type=="int" || type=="int[]" || type=="size_t" ||
-		   type=="size_t[]" || type=="uniform_grid") {
+		   type=="size_t[]" || type=="uniform_grid<double>") {
 
 	  // If the spec can be interpreted as a single vector spec,
-	  // then just use the vector_spec() function
+	  // then just use the vector_spec() function. Close the
+	  // file so vector_spec() can reopen it.
+	  hf.close();
+	  
 	  std::vector<double> vtemp;
 	  int iret=vector_spec(spec,vtemp,verbose,err_on_fail);
 	  v.push_back(vtemp);
 
 	  if (iret!=0) return iret;
 	}
-	hf.close();
 
       }
-	
+
     } else {
 	
       if (err_on_fail) {
@@ -1498,6 +1637,7 @@ namespace o2scl_hdf {
       }
 	
     }
+
     return 0;
   }
   
