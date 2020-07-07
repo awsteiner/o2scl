@@ -48,7 +48,6 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
   string index=in[0];
   size_t factor=o2scl::stoszt(in[1]);
 
-  cout << "Here: " << type << endl;
   if (type=="table") {
 
     o2scl::table_units<> table_new;
@@ -62,7 +61,6 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
     }
 
     table_new.set_nlines((table_obj.get_nlines()-1)*factor+1);
-    cout << "New lines: " << table_new.get_nlines() << endl;
 
     for(size_t k=0;k<table_obj.get_nlines()-1;k++) {
       for(size_t j=0;j<factor;j++) {
@@ -75,10 +73,7 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
 		  table_obj.get(index,table_obj.get_nlines()-1));
 
     table_new.set_interp_type(table_obj.get_interp_type());
-    cout << "Going to insert_table" << endl;
     table_new.insert_table(table_obj,index);
-    cout << "Done." << endl;
-
     table_obj=table_new;
     
   } else {

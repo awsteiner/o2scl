@@ -264,9 +264,12 @@ namespace o2scl {
 
       This function is used to format the help output 
       in \ref o2scl::cli .
+
+      Note that this treats whitespace other than ' ' and 
+      '\n' as it does normal characters.
   */
   void rewrap_keep_endlines(std::string str, std::vector<std::string> &sv,
-			    size_t ncol=79);
+			    size_t ncol=79, int verbose=0);
 
   /** \brief Convert a string-based list of unsigned integers
       to a list

@@ -376,47 +376,93 @@ void o2scl::rewrap(std::string str, std::vector<std::string> &sv,
 
 void o2scl::rewrap_keep_endlines(std::string str,
 				 std::vector<std::string> &sv,
-				 size_t ncol) {
+				 size_t ncol, int verbose) {
 
   if (sv.size()>0) sv.clear();
-    
+
+  // First, split with the endline characters to
+  // create string list "sv_endlines"
   std::vector<std::string> sv_endlines;
   split_string_delim(str,sv_endlines,'\n');
+  
+  if (verbose>1) {
+    std::cout << "sv_endlines: " << sv_endlines.size() << endl;
+    for(size_t k=0;k<sv_endlines.size();k++) {
+      cout << "Q" << sv_endlines[k] << "Q" << endl;
+    }
+    
+  }
 
   for(size_t k=0;k<sv_endlines.size();k++) {
     
     if (sv_endlines[k].length()<ncol) {
-      
+
+      // If the string is not too wide, even if it's empty,
+      // just add it to the final list
       sv.push_back(sv_endlines[k]);
       
     } else {
-      
+
+      // Otherwise, now split this entry in sv_endlines by the space
+      // character
       std::vector<std::string> sv_tmp;
       split_string_delim(sv_endlines[k],sv_tmp,' ');
-      
+
       string stmp;
-      
-      if (sv_tmp.size()==0) {
-	sv.push_back(stmp);
-      } else {
+
+      // Flag if stmp begins with a space
+	bool preceeding_space=false;
+
+	// Iterate through the list
 	for(size_t old_ix=0;old_ix<sv_tmp.size();old_ix++) {
+	  
+	  // Proceed the next addition will not make the string too
+	  // long
 	  if (stmp.length()+sv_tmp[old_ix].length()+1<ncol) {
-	    if (stmp.length()==0) {
-	      stmp+=sv_tmp[old_ix];
+	    
+	    // If this entry in svn_tmp is empty, then that's because
+	    // there were adjacent spaces at the beginning of
+	    // this entry in svn_endlines. Add a space to the
+	    // temporary string and flip the flag
+	    if (sv_tmp[old_ix].length()==0) {
+	      
+	      preceeding_space=true;
+	      stmp+=' ';
+	      
 	    } else {
-	      stmp+=((string)" ")+sv_tmp[old_ix];
+	      
+	      // Add the next entry to the temporary string,
+	      // with or without a space as necessary
+	      if (stmp.length()==0 || preceeding_space) {
+		stmp+=sv_tmp[old_ix];
+	      } else {
+		stmp+=((string)" ")+sv_tmp[old_ix];
+	      }
+	      
+	      // Flip the preceeding space flag since
+	      // we're no longer at the beginning of the string
+	      preceeding_space=false;
 	    }
+	    
 	  } else {
+	    
+	    // Otherwise, the next addition will make the string too
+	    // long, so add the temporary string to sv, reset the
+	    // preceeding_space flag, and start the temporary string
+	    // with the current entry from sv_tmp
+	    
 	    sv.push_back(stmp);
+	    preceeding_space=false;
 	    stmp=sv_tmp[old_ix];
 	  }
 	}
+
+	// Add any remaining text in the temporary string to sv
 	if (stmp.size()>0) {
 	  sv.push_back(stmp);
+	  preceeding_space=false;
 	}
       }
-      
-    }
     
   }
   

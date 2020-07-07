@@ -712,26 +712,26 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "are separated by a colon, and the first part specifes the type "+
       "of vector specification. The different types are:\n\n"+
       "  1. val:<value> - Create a vector with one element equal to "+
-      "<value>, which\nmay be a number or a simple function, e.g. "+
+      "<value>, which may be a number or a simple function, e.g. "+
       "'val:sin(0.5)'.\n\n"+
       "  2. list:<entry 0>,<entry 1>, ..., <entry n-1> - Create a "+
-      "vector with a\nsimple list of numbers or functions, e.g. "+
+      "vector with a simple list of numbers or functions, e.g. "+
       "'list:3.0,1.0e-3,sqrt(2.0)'.\n\n"+
       "  3. func:<N>:<function of i> - Create a vector by specifying "+
-      "the length of\nthe vector and a function used to fill the "+
+      "the length of the vector and a function used to fill the "+
       "elements. For example: 'func:41:sin(i/20.0*acos(-1))'.\n\n"+
       "  4. grid:<begin>,<end>,<width>,[\"log\"] - Create a "+
-      "vector equal to a\nuniform grid, e.g. use 'grid:1.0,10.0,1.0' "+
+      "vector equal to a uniform grid, e.g. use 'grid:1.0,10.0,1.0' "+
       "for a 10-element vector filled with the numbers 1 to 10.\n\n"+
       "  5. text:<filename>:<column index> - Read a text file and extract "+
-      "a vector of\nnumbers from a column of the text file (starting "+
+      "a vector of numbers from a column of the text file (starting "+
       "with zero for the first column), ignoring "+
       "any header rows which contain non-numeric values. For "+
       "example 'text:~/temp.dat:2' will construct a vector from the "+
       "third column of the file 'temp.dat' in the user's home "+
       "directory.\n\n"+
       "  6. hdf5:<file name>:<object name>:[addtional spec.] - "+
-      "Read an HDF5 file\nand obtain a vector from the object with "+
+      "Read an HDF5 file and obtain a vector from the object with "+
       "the specified name. The remaining parts of the string contain "+
       "additional information which may be needed depending on the "+
       "type of object stored in the HDF5 file. A list of object types "+
@@ -784,7 +784,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "with 'a' through 'z' from 0 through 25, and 'aa' through "+
       "'zz' for i from 26 to 701. Occurrences of [A] are replaced "+
       "with 'A' through 'Z' from 0 through 25, and 'AA' through "+
-      "'ZZ' for i from 26 to 701. \n\n"+
+      "'ZZ' for i from 26 to 701.\n\n"+
       "  4. hdf5: - Unfinished.\n\n";
 
     std::vector<std::string> sv;
