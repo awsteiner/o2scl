@@ -2191,7 +2191,9 @@ namespace o2scl {
       values before calling this function. This function requires that
       a table is present in \c fname which stores parameters in a
       block of columns and has columns named \c mult, \c thread, \c
-      walker, and \c log_wgt.
+      walker, and \c log_wgt. This function does not double check
+      that the columns in the file associated with the parameters 
+      have the correct names.
   */
   virtual void initial_points_file_last(std::string fname,
 					size_t n_param_loc,
@@ -2292,7 +2294,9 @@ namespace o2scl {
       o2scl::mcmc_para_base::n_threads, must be set to their correct values
       before calling this function. This function requires that a
       table is present in \c fname which stores parameters in a block
-      of columns.
+      of columns. This function does not double check
+      that the columns in the file associated with the parameters 
+      have the correct names.
   */
   virtual void initial_points_file_dist(std::string fname,
 					size_t n_param_loc,
@@ -2366,6 +2370,9 @@ namespace o2scl {
       before calling this function. This function requires that a
       table is present in \c fname which stores parameters in a block
       of columns and contains a separate column named \c log_wgt .
+      This function does not double check
+      that the columns in the file associated with the parameters 
+      have the correct names.  
   */
   virtual void initial_points_file_best(std::string fname,
 					size_t n_param_loc,
