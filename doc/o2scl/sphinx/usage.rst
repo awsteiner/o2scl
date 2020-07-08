@@ -231,6 +231,12 @@ several details about how O\ :sub:`2`\ scl was compiled.
   installation, this is accessible through the global object named
   :ref:`o2scl_settings <o2scl_settings>` and the command ``acol -v``.
   In a typical installation, the end-user should not need to use this.
+- O2SCL_DOC_DIR - Used by O\ :sub:`2`\ scl classes during
+  installation to refer to the directory where the documentation is
+  stored. After
+  installation, this is accessible through the global object named
+  :ref:`o2scl_settings <o2scl_settings>` and the command ``acol -v``.
+  In a typical installation, the end-user should not need to use this.
 - O2SCL_EIGEN - Flag for Eigen support. The end-user will also need to
   define this for code based on O\ :sub:`2`\ scl functions which use
   Eigen routines. The command ``acol -v`` reports whether or not Eigen

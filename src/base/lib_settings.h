@@ -93,6 +93,17 @@ namespace o2scl {
       return 0;
     }
     
+    /** \brief Return the doc directory */
+    std::string get_doc_dir() {
+      return doc_dir;
+    }
+
+    /** \brief Set the doc directory */
+    int set_doc_dir(std::string dir) {
+      doc_dir=dir;
+      return 0;
+    }
+    
     /// Return true if the EOS library was installed
     bool eos_installed();
 
@@ -194,6 +205,9 @@ namespace o2scl {
 
     /// The present data directory
     std::string data_dir;
+
+    /// The present documentation directory
+    std::string doc_dir;
 
     /// Pointer to current \ref convert_units object
     convert_units<double> *cup;

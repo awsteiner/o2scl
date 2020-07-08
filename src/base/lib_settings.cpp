@@ -46,6 +46,7 @@ lib_settings_class o2scl::o2scl_settings;
 
 lib_settings_class::lib_settings_class() {
   data_dir=((std::string)(O2SCL_DATA_DIR));
+  doc_dir=((std::string)(O2SCL_DOC_DIR));
   cup=&def_cu;
   fcp=&def_fc;
   
