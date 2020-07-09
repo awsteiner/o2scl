@@ -779,6 +779,9 @@ namespace o2scl {
 		      std::vector<std::string> &matches);
   
   /** \brief Use wordexp() to obtain a single file
+      
+      The error handler is called if wordexp() returns either
+      no files or more than one file.
    */
   void wordexp_single_file(std::string &fname);
   //@}

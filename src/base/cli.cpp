@@ -789,8 +789,12 @@ int cli::process_args(std::vector<std::string> &svsv,
      
       // End of loop "if (s[0]=='-')" loop
     } else {
-      
-      if (debug>0) {
+
+      // AWS 7/9/20: Previously this was debug>0, but it's surprising
+      // that acol, for example, silently skips non-options. This
+      // default is good for now, but we could create a new bool class
+      // variable which turned off this message if necessary.
+      if (verbose>0) {
 	cout << "Argument '" << s << "' is not an option. Skipping." << endl;
       }
       

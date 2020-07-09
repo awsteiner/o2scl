@@ -392,6 +392,7 @@ Multiple entry o2hypot
 Namespace:  function: fermi_function
 Namespace:  function: bose_function
 Namespace: o2scl function: pipe_cmd_string
+Namespace: o2scl function: python_cmd_string
 Namespace: o2scl function: pipe_cmd_string
 Multiple entry pipe_cmd_string
 Namespace:  function: file_exists

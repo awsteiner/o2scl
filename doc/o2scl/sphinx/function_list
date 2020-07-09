@@ -41,6 +41,7 @@
     <member refid="namespaceo2scl_1a8a2c69ef08fca5a16ca41dfdebeaa310" kind="function"><name>fermi_function</name></member>
     <member refid="namespaceo2scl_1a664c30f53f2c6379fb8211e0a91f90ce" kind="function"><name>bose_function</name></member>
     <member refid="namespaceo2scl_1a09b56a2b5f7a846d87868ec7d8088bdd" kind="function"><name>pipe_cmd_string</name></member>
+    <member refid="namespaceo2scl_1a1e252280eb590b07c4a5235eb3cbc2ac" kind="function"><name>python_cmd_string</name></member>
     <member refid="namespaceo2scl_1afada3607a1d3d633ee47366431768681" kind="function"><name>pipe_cmd_string</name></member>
     <member refid="namespaceo2scl_1aeae28c1926df5e3819dab5e1a7502bed" kind="function"><name>file_exists</name></member>
     <member refid="namespaceo2scl_1aad3cb142933e460acba6694c6edcaa18" kind="function"><name>screenify</name></member>
@@ -106,7 +107,7 @@
     <member refid="namespaceo2scl_1ade45b50d37f9cb625a865f9176bcdf96" kind="function"><name>split_string</name></member>
     <member refid="namespaceo2scl_1a66cc18968d7fa23b93660694068824cf" kind="function"><name>split_string_delim</name></member>
     <member refid="namespaceo2scl_1a611de09c5a2931e19acaee4e8e2bfba2" kind="function"><name>rewrap</name></member>
-    <member refid="namespaceo2scl_1a59ca3ccf7ffabca008f2c7e40422c82d" kind="function"><name>rewrap_keep_endlines</name></member>
+    <member refid="namespaceo2scl_1aceae1db6bd6c92786c4bd8869c04a95c" kind="function"><name>rewrap_keep_endlines</name></member>
     <member refid="namespaceo2scl_1ac567fa955cd7ab7df93e03b53257520e" kind="function"><name>string_to_uint_list</name></member>
     <member refid="namespaceo2scl_1a5f94ac3f765908f39737a5a4854b0f32" kind="function"><name>ix_index</name></member>
     <member refid="namespaceo2scl_1ad5bfa1e14552179c263660390ece203a" kind="function"><name>ix_fixed</name></member>
