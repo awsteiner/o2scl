@@ -164,7 +164,7 @@ int main(void) {
   cout << "3-byte color summary: " << endl;
   cout << vt100_3byte_summ() << endl;
   cout << endl;
-  
+
   t.report();
   return 0;
 }

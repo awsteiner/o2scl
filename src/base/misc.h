@@ -179,6 +179,13 @@ namespace o2scl {
   int pipe_cmd_string(std::string cmd, std::string &result,
 		      bool err_on_fail=true, int nmax=80);
 
+  /** \brief Desc
+      
+      python_cmd_string("\"print(3+5)\"",result);
+  */
+  int python_cmd_string(std::string cmd, std::string &result,
+		      bool err_on_fail=true, int nmax=80);
+  
   /** \brief Return the first line from the output of the shell
       command \c cmd up to \c nmax characters
 

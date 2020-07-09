@@ -155,6 +155,58 @@ int o2scl::pipe_cmd_string(std::string cmd, std::string &result,
   return 0;
 }
 
+int o2scl::python_cmd_string(std::string cmd, std::string &result,
+			     bool err_on_fail, int nmax) {
+  
+#ifdef HAVE_POPEN
+
+  std::string pycmd="python -c "+cmd;
+  FILE *ps_pipe=popen(pycmd.c_str(),"r");
+  if (!ps_pipe) {
+    if (err_on_fail) {
+      O2SCL_ERR("Pipe could not be opened in o2scl::pipe_cmd_string().",
+		o2scl::exc_efailed);
+    }
+    return 1;
+  }
+  
+  char char_arr[nmax];
+  
+  // Variable 'cret' is unused, but put here to avoid
+  // unused return value errors
+  char *cret=fgets(char_arr,nmax,ps_pipe);
+  if (cret==0) {
+    if (err_on_fail) {
+      O2SCL_ERR("Null pointer returned by fgets in o2scl::pipe_cmd_string().",
+		o2scl::exc_efailed);
+    }
+    return 2;
+  }
+  
+  result=char_arr;
+  
+  int pret=pclose(ps_pipe);
+  if (pret!=0) {
+    if (err_on_fail) {
+      O2SCL_ERR("Close pipe returned non-zero in o2scl::pipe_cmd_string().",
+		o2scl::exc_efailed);
+    }
+    return 4;
+  }
+  
+#else
+  
+  if (err_on_fail) {
+    O2SCL_ERR("Compiled without popen support in o2scl::pipe_cmd_string().",
+	      o2scl::exc_efailed);
+  }
+  return 3;
+  
+#endif
+  
+  return 0;
+}
+
 std::string o2scl::pipe_cmd_string(std::string cmd, int nmax) {
   std::string result;
   pipe_cmd_string(cmd,result,true,nmax);
