@@ -62,14 +62,15 @@ function`` to get more information on these type-specific commands.
 acol Types
 ----------
 
-The O\ :sub:`2`\ scl types which can be handled by ``acol`` are
-``char, double, double[], int, int[], size_t, size_t[], std::string``,
-``std::string[]``, :ref:`hist <hist>`, :ref:`hist_2d <hist_2d>`,
+The types which can be handled by ``acol`` are either related to C++
+internal types: ``char, double, double[], int, int[], size_t,
+size_t[], std::string``, and ``std::string[]``, or O\ :sub:`2`\ scl
+types :ref:`hist <hist>`, :ref:`hist_2d <hist_2d>`,
 :ref:`prob_dens_mdim_amr <prob_dens_mdim_amr>`, :ref:`table <table>`,
 :ref:`table3d <table3d>`, :ref:`tensor <tensor>` (including
 ``double``, ``int``, and ``size_t`` versions), :ref:`tensor_grid
 <tensor_grid>` :ref:`uniform_grid <uniform_grid>`, and
-vector<:ref:`contour_line <contour_line>`>.
+vector<:ref:`contour_line <contour_line>`>. 
 
 Value specifications
 --------------------
@@ -226,11 +227,12 @@ Type                 Additional specification Description
               table  <column pattern>
 ==================== ======================== =======================
 
-Also, many normal vector specifications (from 'acol -help vector-spec') also
-work as multiple vector specifications. These include specifications which
-begin with 'val:', 'list:', 'grid:', and 'table-row:'. Also included are
-'hdf5:' specifications which refer to objects of type double, double[], hist,
-int, int[], size_t, size_t[], and uniform_grid<double>.
+Also, many normal vector specifications (from 'acol -help
+vector-spec') also work as multiple vector specifications. These
+include specifications which begin with 'val:', 'list:', 'grid:', and
+'table-row:'. Also included are 'hdf5:' specifications which refer to
+objects of type double, double[], hist, int, int[], size_t, size_t[],
+and uniform_grid<double>.
      
 acol Example
 ------------

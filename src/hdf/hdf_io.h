@@ -889,6 +889,15 @@ namespace o2scl_hdf {
 	v.resize(1);
 	v[0]=szttemp;
 	
+      } else {
+
+	if (err_on_fail) {
+	  O2SCL_ERR2("Cannot handle type ",
+		     "in vector_spec().",o2scl::exc_einval);
+	} else {
+	  return 1;
+	}
+	
       }
       
       hf.close();
@@ -917,8 +926,10 @@ namespace o2scl_hdf {
       The specification types are:
       - list: list of comma separated entries
       - shell: read all lines output from a shell command
-      - pattern: 
-      - hdf5: 
+      - python: read all lines output from a python command
+      - pattern: create a list of strings from a pattern using
+      [0], [a], and [A]
+      - hdf5: From an HDF5 file using type string or string[]
 
       This function is used for the acol slack command.
 
@@ -1083,6 +1094,52 @@ namespace o2scl_hdf {
       
       return o2scl::exc_efailed;
 
+    } else if (spec.find("python:")==0) {
+      
+      // Result from shell command
+      
+#ifdef HAVE_POPEN
+      
+      std::string cmd=((string)"python -c ")+spec.substr(7,spec.length()-7);
+      std::cout << "Using shell command: " << cmd << std::endl;
+      FILE *ps_pipe=popen(cmd.c_str(),"r");
+      if (!ps_pipe) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Pipe could not be opened in ",
+		     "convert_units::convert_gnu_units().",
+		     o2scl::exc_efilenotfound);
+	}
+	return o2scl::exc_efilenotfound;
+      }
+      
+      static const size_t cl_max=256;
+      char line1[cl_max];
+      char *cret=fgets(line1,cl_max,ps_pipe);
+      while (cret!=0) {
+	std::string sline1=line1;
+	if (sline1[sline1.length()-1]=='\n') {
+	  sline1=sline1.substr(0,sline1.length()-1);
+	}
+	if (verbose>0) {
+	  std::cout << "Read line "
+		    << sline1 << std::endl;
+	}
+	v.push_back(sline1);
+	cret=fgets(line1,cl_max,ps_pipe);
+      }
+      
+      if (pclose(ps_pipe)!=0) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Pipe could not be closed in ",
+		     "value_spec().",o2scl::exc_efailed);
+	}
+	return o2scl::exc_efailed;
+      }
+
+#endif
+      
+      return o2scl::exc_efailed;
+
     } else if (spec.find("hdf5:")==0) {
 	
       // HDF5 object in a file
@@ -1155,24 +1212,30 @@ namespace o2scl_hdf {
 	std::cout << "Object type from file: " << type << std::endl;
       }
 
-#ifdef O2SCL_NEVER_DEFINED      
-      if (type=="table") {
-	if (addl_spec.length()==0) {
-	  if (err_on_fail) {
-	    O2SCL_ERR2("No table column name specified ",
-		       "in strings_spec().",o2scl::exc_einval);
-	  } else {
-	    return 6;
-	  }
+      if (type=="string") {
+	
+	std::string stmp;
+	hf.gets(obj_name,stmp);
+	v.push_back(stmp);
+	
+      } else if (type=="string[]") {
+
+	vector<std::string> vtmp;
+	hf.gets_vec(obj_name,vtmp);
+	for(size_t k=0;k<vtmp.size();k++) {
+	  v.push_back(vtmp[k]);
 	}
-	o2scl::table_units<> t;
-	o2scl_hdf::hdf_input(hf,t,obj_name);
-	for(size_t i=0;i<t.get_nlines();i++) {
-	  v.push_back(t.get(addl_spec,i));
+	
+      } else {
+
+	if (err_on_fail) {
+	  O2SCL_ERR2("Cannot handle type ",
+		     "in strings_spec().",o2scl::exc_einval);
+	} else {
+	  return 1;
 	}
 	
       }
-#endif
       
     } else {
 
@@ -1624,6 +1687,16 @@ namespace o2scl_hdf {
 	  v.push_back(vtemp);
 
 	  if (iret!=0) return iret;
+	  
+	} else {
+	  
+	  if (err_on_fail) {
+	    O2SCL_ERR2("Cannot handle type ",
+		       "in mult_vector_spec().",o2scl::exc_einval);
+	  } else {
+	    return 1;
+	  }
+	  
 	}
 
       }
