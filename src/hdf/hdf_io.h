@@ -1100,7 +1100,8 @@ namespace o2scl_hdf {
       
 #ifdef HAVE_POPEN
       
-      std::string cmd=((string)"python -c ")+spec.substr(7,spec.length()-7);
+      std::string cmd=((std::string)"python -c ")+
+	spec.substr(7,spec.length()-7);
       std::cout << "Using shell command: " << cmd << std::endl;
       FILE *ps_pipe=popen(cmd.c_str(),"r");
       if (!ps_pipe) {
@@ -1220,7 +1221,7 @@ namespace o2scl_hdf {
 	
       } else if (type=="string[]") {
 
-	vector<std::string> vtmp;
+	std::vector<std::string> vtmp;
 	hf.gets_vec(obj_name,vtmp);
 	for(size_t k=0;k<vtmp.size();k++) {
 	  v.push_back(vtmp[k]);
