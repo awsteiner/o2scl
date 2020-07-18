@@ -104,7 +104,7 @@ int main(void) {
     p.set_eos_fm(new_eos.get_nlines(),new_eos["ed"],
 		 new_eos["pr"],new_eos["nb"]);
     nst.set_eos(p);
-  
+
     // Compute the mass of the non-rotating configuration with the
     // same energy density
     nst.fix_cent_eden_non_rot(ed_cent);

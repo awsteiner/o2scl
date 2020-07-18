@@ -76,6 +76,9 @@
 #include <o2scl/tensor.h>
 #include <o2scl/mroot_hybrids.h>
 
+#include <o2scl/hdf_file.h>
+#include <o2scl/hdf_io.h>
+
 namespace o2scl {
   
   /** \brief An EOS for \ref nstar_rot
@@ -143,9 +146,6 @@ namespace o2scl {
      */
     int n_nearest;
     
-    typedef boost::numeric::ublas::vector<double> ubvector;
-    typedef boost::numeric::ublas::matrix<double> ubmatrix;
-
     /** \brief Driver for the interpolation routine. 
 	
 	First we find the tab. point nearest to xb, then we
@@ -170,10 +170,16 @@ namespace o2scl {
   
       n_tab=eden.size();
 
-      for(int i=1;i<=n_tab;i++) {  
+      // Note that conv1*C*C*KSCALE is identical to conv2*KSCALE.
+      
+      for(int i=1;i<=n_tab;i++) {
+	// Convert from g/cm^3 to 1.0e15 grams/cm^3 and take the log
 	log_e_tab[i]=log10(eden[i-1]*C*C*KSCALE);
+	// Convert from dyne/cm^2 to 1.0e15 grams/cm^3 and take the log
 	log_p_tab[i]=log10(pres[i-1]*KSCALE);
+	// Convert from cm^2/s^2 to a unitless quantity and take the log
 	log_h_tab[i]=log10(enth[i-1]/(C*C));
+	// Take the log of a quantity in units of 1/cm^3
 	log_n0_tab[i]=log10(nb[i-1]);
       }
       
@@ -185,7 +191,8 @@ namespace o2scl {
     */
     template<class vec1_t, class vec2_t, class vec3_t>
       void set_eos_fm(size_t n, vec1_t &eden, vec2_t &pres, vec3_t &nb) {
-      
+
+      // The number of points in the hard-coded crust EOS
       static const int n_crust=78;
       
       if (n>200-n_crust) {
@@ -207,6 +214,13 @@ namespace o2scl {
 	 default O2scl crust, and this may have to do with the fact
 	 that the default O2scl crust has decreasing mu with
 	 increasing density at low densities.
+
+	 These columns are:
+	 - energy density in g/cm^3
+	 - pressure in dyne/cm^2
+	 - baryon density in 1/cm^3
+
+	 The first few rows are close to the FMT EOS stored in fmt49.o2.
       */
       double nst_arr[n_crust][3]={
 	{7.800e+00,1.010e+08,4.698795180722962e+24},
@@ -292,8 +306,17 @@ namespace o2scl {
       // Note that there is no c^2 needed in the computation of the
       // enthalpy as the original code removes it.
       for(size_t i=0;i<n_crust;i++) {
+
+	
+	// Convert from g/cm^3 to 1.0e15 grams/cm^3 and take the log
 	log_e_tab[i+1]=log10(nst_arr[i][0]*C*C*KSCALE);
+
+	// Convert from dyne/cm^2 to 1.0e15 grams/cm^3 and take the log
 	log_p_tab[i+1]=log10(nst_arr[i][1]*KSCALE);
+	
+	// Convert the first term from g/cm^3 to 1/fm^4 and the second
+	// term from dyne/cm^2 to 1/fm^4 and then divide by a quantity
+	// in units of 1/fm^3 to obtain mu in units of 1/fm.
 	double mu=(nst_arr[i][0]/conv1+nst_arr[i][1]/conv2)/
 	  nst_arr[i][2]*1.0e39;
 	if (i==0) {
@@ -301,18 +324,27 @@ namespace o2scl {
 	} else {
 	  log_h_tab[i+1]=log10(log(mu/mu_start));
 	}
+	// Take the log of a quantity in units of 1/cm^3
 	log_n0_tab[i+1]=log10(nst_arr[i][2]);
       }
-      // This shift of 8.0 approximately reproduces the results
+
+      // This shift of 8.0 (this number appears to be nearly exact,
+      // and was checked by AWS on 7/18/20) reproduces the results
       // implied by the internal RNS EOSs. It is not clear how
-      // sensitive the code is to the low-density part of the EOS
+      // sensitive the code is to the low-density part of the EOS.
       log_h_tab[1]=log_h_tab[2]-8.0;
 
+      // Note that conv1*C*C*KSCALE is identical to conv2*KSCALE.
+
       for(size_t i=0;i<n;i++) {
+	// Convert from 1/fm^4 to 1.0e15 grams/cm^3 and take the log
 	log_e_tab[i+n_crust+1]=log10(eden[i]*conv1*C*C*KSCALE);
+	// Convert from 1/fm^4 to 1.0e15 grams/cm^3 and take the log
 	log_p_tab[i+n_crust+1]=log10(pres[i]*conv2*KSCALE);
+	// Take the log of a unitless quantity
 	log_h_tab[i+n_crust+1]=log10(log((eden[i]+pres[i])/nb[i]/
 					 mu_start));
+	// Convert from 1/fm^3 to 1/cm^3 and take the log
 	log_n0_tab[i+n_crust+1]=log10(nb[i]*1.0e39);
       }
 
@@ -380,6 +412,23 @@ namespace o2scl {
       std::cout << std::endl;
       return;
     }
+
+    /** \brief Output EOS to an HDF5 file
+     */
+    void output_table(std::string fname) {
+      o2scl_hdf::hdf_file hf;
+      o2scl::table_units<> t;
+      t.line_of_names("log_e log_p log_h log_n0");
+      for(int i=n_tab;i>=1;i--) {
+	double line[4]={log_e_tab[i],log_p_tab[i],log_h_tab[i],
+			log_n0_tab[i]};
+	t.line_of_data(4,line);
+      }
+      hf.open_or_create(fname);
+      hdf_output(hf,t,"eos");
+      hf.close();
+      return;
+    }
     
   };
   
@@ -416,8 +465,6 @@ namespace o2scl {
       been changed and some code has been updated with C++
       equivalents.
 
-      <b>Usage</b>
-
       <b>Initial guess</b>
 
       The original RNS code suggests that the initial guess is
@@ -426,8 +473,8 @@ namespace o2scl {
       <b>References</b> 
 
       The original RNS v1.1d can be obtained from
-      http://www.gravity.phys.uwm.edu/rns/ , and you may find Nick
-      Stergioulas's web page http://www.astro.auth.gr/~niksterg/ , or
+      http://www.gravity.phys.uwm.edu/rns/, and you may find Nick
+      Stergioulas's web page http://www.astro.auth.gr/~niksterg/, or
       Sharon Morsink's page http://fermi.phys.ualberta.ca/~morsink/
       useful. 
 
@@ -440,6 +487,8 @@ namespace o2scl {
 
       \todo Better documentation is needed everywhere.
       \todo Test the resize() function
+      \todo It appears that KAPPA and KSCALE contant an arbitrary constant, 
+      try changing it and see if we get identical results
 
       \future Make a GSL-like set() function
       \future Rework EOS interface and implement better 
@@ -453,16 +502,53 @@ namespace o2scl {
       \future Make the solvers more robust. The ang_vel() and ang_vel_alt()
       functions appear particularly unstable.
 
-      <b>Draft documentation</b> 
+      <b>Equation of State</b> 
 
-      This class retains the definition of the specific enthalpy 
-      from the original code, namely that
+      The thermodynamic enthalpy is 
       \f[
-      h = c^2 \log[\frac{\mu}{\mu(P=0)}] = \int \frac{c^2 dP}{\varepsilon+P}
+      H = E + P V
       \f]
-      but note that the factor of \f$ c^2 \f$ is dropped before
-      taking the log in the internal copy of the EOS table.
-      Typically, \f$ \mu(P=0) \f$ is around 931 MeV. 
+      and the specific enthalpy is often written 
+      \f$ h = H/M \f$ 
+      where \f$ M \f$ is some mass scale. In GR this is often chosen
+      to be a generic "baryon mass", \f$ m_B \f$ so that 
+      \f[
+      h = \frac{\varepsilon + P}{\rho}
+      \f]
+      where \f$ \varepsilon \equiv E/V \f$ and \f$ \rho \equiv m_B/V
+      \f$. The pseudo-enthalpy is typically defined by 
+      \f[ 
+      d\hat{h} = dP/(P+\varepsilon) 
+      \f] 
+      (sometimes denoted as \f$ H \f$ or \f$ h
+      \f$ and called `h` in the code, but referred to here as \f$
+      \hat{h} \f$ to avoid confusion with the enthalpy and
+      specific enthalpy defined
+      above). Additionally, this quantity is sometimes defined
+      with an additional factor of \f$ c^2 \f$.
+      At \f$ T=0 \f$ and presuming only one conserved charge, 
+      one can use the Gibbs-Duhem relation, \f$
+      dP = (\varepsilon + P)/\mu d \mu \f$ to write 
+      \f[ 
+      d \hat{h} = \frac{d \mu}{\mu} = \ln \mu + C
+      \f]
+      The constant \f$ C \f$ is often chosen to be 
+      \f$ C \equiv - \ln \mu(P=0) \f$, so that 
+      \f[
+      \hat{h} = \ln \frac{\mu}{\mu(P=0)}
+      \f]
+      In the RNS code (and also in this version) the pseudo-enthalpy
+      is shifted by an arbitrary constant
+      \f[
+      \hat{h}_{\mathrm{RNS}} = 
+      -8 + \log \left[\frac{\mu}{\mu(P=0)}\right] 
+      \f]
+      Typically, \f$ \mu(P=0) \f$ is around 931 MeV. The \ref
+      eos_nstar_rot_interp class takes an EOS tabulated in powers of
+      \f$ \mathrm{fm}^{-1} \f$ and recasts it into a form which can be
+      used by \ref nstar_rot.
+
+      <b>Draft documentation</b> 
 
       For spherical stars, the isotropic radius \f$ r_{\mathrm{is}}
       \f$ is defined by
@@ -1089,7 +1175,7 @@ namespace o2scl {
      */
     int verbose;
 
-    /** \brief Create an output table
+    /** \brief Create an output table3d object from results
      */
     void output_table(o2scl::table3d &t);
     
@@ -1199,7 +1285,7 @@ namespace o2scl {
 	code
     */
     void constants_rns();
-    /** \brief Use the \o2 values
+    /** \brief Use the O2scl constants (the default)
      */
     void constants_o2scl();
     /** \brief Speed of light in vacuum (in CGS units) */ 
