@@ -98,7 +98,7 @@ namespace o2scl {
     virtual double pr_from_nb(double nb)=0;
 
     /** \brief Given the pressure, produce the energy and number densities
-
+	
 	The arguments \c pr and \c ed should always be in \f$
 	M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
 	in \f$ \mathrm{fm}^{-3} \f$ .

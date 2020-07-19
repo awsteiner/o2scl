@@ -82,25 +82,55 @@
 namespace o2scl {
   
   /** \brief An EOS for \ref nstar_rot
+
+      The \ref nstar_rot class uses the functions
+      - \ref eos_tov::pr_from_ed()
+      - \ref eos_tov::ed_from_pr()
+      - \ref eos_tov::nb_from_ed()
+      - \ref enth_from_pr()
+      - \ref pr_from_enth()
+
+      It is assumed that all of these functions operate with
+      the following unit scheme
+      - \c ed is the energy density in 
+      units of \f$ 10^{15}~\mathrm{g}/\mathrm{cm}^3 \f$
+      - \c pr is the pressure in 
+      units of \f$ 10^{15}~\mathrm{g}/\mathrm{cm}^3 \f$
+      - \c enth is the pseudo-enthalpy defined by
+      \f[
+      \hat{h}_{\mathrm{RNS}} = 
+      10^{-8} \left[\frac{\mu}{\mu(P=0)}\right] 
+      \f]
+      - \c nb is the baryon density in 
+      units of \f$ 1/\mathrm{cm}^3 \f$
    */
   class eos_nstar_rot : public eos_tov {
     
   public:
 
-    /** \brief From the pressure, return the enthalpy
+    /** \brief From the pressure, return the pseudo-enthalpy
      */
     virtual double enth_from_pr(double pr)=0;
 
-    /** \brief From the enthalpy, return the pressure
+    /** \brief From the pseudo-enthalpy, return the pressure
      */
     virtual double pr_from_enth(double enth)=0;
 
-    /** \brief From the baryon density, return the enthalpy
+    /** \brief From the baryon density, return the pseudo-enthalpy
      */
     virtual double enth_from_nb(double nb)=0;
   };
   
   /** \brief Create a tabulated EOS for \ref nstar_rot using interpolation
+
+      The tabulated EOS is stored in the following units
+      - \ref log_e_tab is the log of the energy density in 
+      units of \f$ 10^{15}~\mathrm{g}/\mathrm{cm}^3 \f$
+      - \ref log_p_tab is the log of the pressure in 
+      units of \f$ 10^{15}~\mathrm{g}/\mathrm{cm}^3 \f$
+      - \ref log_h_tab is the log of the pseudo-enthalpy
+      - \ref log_n0_tab is the log of the baryon density in 
+      units of \f$ 1/\mathrm{cm}^3 \f$
 
       \todo Document what the \ref nstar_rot code requirements are
       for the low-density part of the EOS.
@@ -188,6 +218,11 @@ namespace o2scl {
 
     /** \brief Set the EOS from energy density, pressure, and
 	baryon density stored in powers of \f$ \mathrm{fm} \f$ .
+
+	This function appends the default RNS crust and thus
+	the \c eden, \c pres, and \c nb vectors should not
+	contain points corresponding to the EOS for baryon
+	densities smaller than \f$ 0.07463~\mathrm{fm}^{-3} \f$.
     */
     template<class vec1_t, class vec2_t, class vec3_t>
       void set_eos_fm(size_t n, vec1_t &eden, vec2_t &pres, vec3_t &nb) {
@@ -307,7 +342,6 @@ namespace o2scl {
       // enthalpy as the original code removes it.
       for(size_t i=0;i<n_crust;i++) {
 
-	
 	// Convert from g/cm^3 to 1.0e15 grams/cm^3 and take the log
 	log_e_tab[i+1]=log10(nst_arr[i][0]*C*C*KSCALE);
 
@@ -345,6 +379,11 @@ namespace o2scl {
 	log_h_tab[i+n_crust+1]=log10(log((eden[i]+pres[i])/nb[i]/
 					 mu_start));
 	// Convert from 1/fm^3 to 1/cm^3 and take the log
+	if (nb[i]<0.07643) {
+	  O2SCL_ERR2("EOS overlaps with crust in ",
+		     "eos_nstar_rot_interp::set_eos_fm().",
+		     o2scl::exc_einval);
+	}
 	log_n0_tab[i+n_crust+1]=log10(nb[i]*1.0e39);
       }
 
@@ -387,13 +426,7 @@ namespace o2scl {
      */
     virtual double pr_from_enth(double enth);
 
-    /** \brief Given the pressure, produce the energy and number densities
-
-	The arguments \c pr and \c ed should always be in \f$
-	M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
-	in \f$ \mathrm{fm}^{-3} \f$ .
-	
-	If \ref baryon_column is false, then \c nb is unmodified.
+    /** \brief Given the pressure, compute the energy and number densities
     */
     virtual void ed_nb_from_pr(double pr, double &ed, double &nb);
 
@@ -547,6 +580,19 @@ namespace o2scl {
       eos_nstar_rot_interp class takes an EOS tabulated in powers of
       \f$ \mathrm{fm}^{-1} \f$ and recasts it into a form which can be
       used by \ref nstar_rot.
+
+      <b>Coordinate system</b>
+
+      The space is mapped to coordinates \f$ (s,\mu) \f$ where
+      \f[
+      r = r_{\mathrm{eq}} \left( \frac{s}{1-s} \right)
+      \f]
+      and \f$ r_{\mathrm{eq}} \f$ is the equatorial radius,
+      thus 
+      \f[
+      s = \frac{r}{r+r_{\mathrm{eq}}}
+      \f]
+      (This is Eq. 48 in Stergioulas' thesis)
 
       <b>Draft documentation</b> 
 
@@ -743,19 +789,23 @@ namespace o2scl {
 
     /// \name Grid quantities set in make_grid()
     //@{
-    /// \f$ s \f$
+    /** \brief The quantity \f$ s \f$, which runs from 0 to SMAX
+	(which defaults to 0.9999) in steps of DS=SMAX/(SDIV-1)
+    */
     ubvector s_gp;
     /// \f$ s (1-s) \f$
     ubvector s_1_s;
     /// \f$ 1-s \f$
     ubvector one_s;
-    /// \f$ \mu \f$
+    /** \brief The quantity \f$ \mu \f$ which runs from 0 to 1
+	in steps of DM=1/(MDIV-1)
+     */
     ubvector mu;
     /// \f$ 1-\mu^2 \f$
     ubvector one_m2;
     /// \f$ \theta \f$ defined by \f$ \mathrm{acos}~\mu \f$
     ubvector theta;
-    /// \f$ \sin \theta \f$
+    /// \f$ \sin \theta = \sqrt{1-\mu^2}\f$
     ubvector sin_theta;
     //@}
 
@@ -1176,6 +1226,10 @@ namespace o2scl {
     int verbose;
 
     /** \brief Create an output table3d object from results
+
+	This function creates slices named
+	"ed pr h vsq rho gamma omega alpha" on the grid of
+	\f$ s \f$ and \f$ \mu \f$.
      */
     void output_table(o2scl::table3d &t);
     

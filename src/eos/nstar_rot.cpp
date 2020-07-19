@@ -125,6 +125,7 @@ void eos_nstar_rot_interp::ed_nb_from_pr(double pr, double &ed, double &nb) {
 
 double eos_nstar_rot_interp::interp(double xp[], double yp[], int np,
 				    double xb) {
+  
   // index of 1st point
   int k;        
   // degree of interpolation
@@ -627,19 +628,19 @@ double nstar_rot::interp_4_k(ubvector &xp, ubvector &yp, int np, double xb,
 }
 
 double nstar_rot::int_z(ubvector &f, int m) {
-  double x[9];
+  double x[8];
 
-  x[1]=f[m-1];  
-  x[2]=interp(mu,f,MDIV,mu[m-1]+DM/7.0);
-  x[3]=interp(mu,f,MDIV,mu[m-1]+2.0*DM/7.0);
-  x[4]=interp(mu,f,MDIV,mu[m-1]+3.0*DM/7.0);
-  x[5]=interp(mu,f,MDIV,mu[m-1]+4.0*DM/7.0);
-  x[6]=interp(mu,f,MDIV,mu[m-1]+5.0*DM/7.0);
-  x[7]=interp(mu,f,MDIV,mu[m-1]+6.0*DM/7.0);
-  x[8]=f[m];
+  x[0]=f[m-1];  
+  x[1]=interp(mu,f,MDIV,mu[m-1]+DM/7.0);
+  x[2]=interp(mu,f,MDIV,mu[m-1]+2.0*DM/7.0);
+  x[3]=interp(mu,f,MDIV,mu[m-1]+3.0*DM/7.0);
+  x[4]=interp(mu,f,MDIV,mu[m-1]+4.0*DM/7.0);
+  x[5]=interp(mu,f,MDIV,mu[m-1]+5.0*DM/7.0);
+  x[6]=interp(mu,f,MDIV,mu[m-1]+6.0*DM/7.0);
+  x[7]=f[m];
   
-  return((DM/17280.0)*(751.0*x[1]+3577.0*x[2]+1323.0*x[3]+2989.0*x[4]+
-		       2989.0*x[5]+1323.0*x[6]+3577.0*x[7]+751.0*x[8]));
+  return((DM/17280.0)*(751.0*x[0]+3577.0*x[1]+1323.0*x[2]+2989.0*x[3]+
+		       2989.0*x[4]+1323.0*x[5]+3577.0*x[6]+751.0*x[7]));
 }
 
 double nstar_rot::e_at_p(double pp) {
