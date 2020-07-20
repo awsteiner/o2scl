@@ -132,10 +132,11 @@ namespace o2scl {
       - \ref log_n0_tab is the log of the baryon density in 
       units of \f$ 1/\mathrm{cm}^3 \f$
 
-      \todo Document what the \ref nstar_rot code requirements are
-      for the low-density part of the EOS.
+      The user specified EOS must have a monotonically increasing
+      baryon chemical potential, as guaranteed, for example, by 
+      \ref eos_tov::rns_C_low_dens_eos().
 
-      \future Replace arrays with vectors
+      \future Replace arrays with vectors and fix unit-indexing.
    */
   class eos_nstar_rot_interp : public eos_nstar_rot {
     
@@ -396,8 +397,13 @@ namespace o2scl {
       return;
     }
 
-    /** \brief Desc 
-     */
+    /** \brief Set the EOS from energy density, pressure, and
+	baryon density stored in powers of \f$ \mathrm{fm} \f$ .
+
+	This function presumes that the user-specified vectors that
+	contain the crust EOS. Note that the user-specified EOS must
+	have a monotonically increasing baryon chemical potential.
+    */
     template<class vec1_t, class vec2_t, class vec3_t>
       void set_eos_crust_fm(size_t n, vec1_t &eden, vec2_t &pres,
 			    vec3_t &nb) {
@@ -430,6 +436,10 @@ namespace o2scl {
 	  mu_start=mu;
 	} else {
 	  log_h_tab[i+1]=log10(log(mu/mu_start));
+	  if (!std::isfinite(log_h_tab[i+1])) {
+	    O2SCL_ERR2("Non-increasing chemical potential ",
+		      "in set_eos_crust_fm().",o2scl::exc_einval);
+	  }
 	}
 	
 	log_n0_tab[i+1]=log10(nb[i]*1.0e39);
@@ -577,11 +587,13 @@ namespace o2scl {
       \todo Test the resize() function
       \todo It appears that KAPPA and KSCALE contant an arbitrary constant, 
       try changing it and see if we get identical results
+      \todo p_center and h_center can be moved to function 
+      parameters
+      \todo Directly compare spherical_star() output with 
+      tov_solve results
 
-      \future Make a GSL-like set() function
-      \future Rework EOS interface and implement better 
-      integration with the other \o2e EOSs. 
-      \future Remove the unit-indexed arrays.
+      \future Consider moving the int_z() algorithm to vector_derint.h
+      \future Remove the unit-indexed arrays everywhere.
       \future Try moving some of the storage to the heap?
       \future Some of the arrays seem larger than necessary.
       \future The function \ref o2scl::nstar_rot::new_search() is
@@ -664,17 +676,21 @@ namespace o2scl {
 
       <b>Axisymmetric Instability</b>
 
-      \ref Friedman88 shows that a secular axisymmetric instability
+      \verbatim embed:rst
+      [Friedman88]_ shows that a secular axisymmetric instability
       sets in when the mass becomes maximum along a sequence of
-      constant angular momentum. Equivalently, \ref Cook92 shows that
+      constant angular momentum. Equivalently, [Cook92]_ shows that
       the instability occurs when the angular momentum becomes minimum
       along a sequence of constant rest mass.
+      \endverbatim
 
+      \verbatim embed:rst
       A GR virial theorem for a stationary and axisymmetric system was
-      found in \ref Bonazzola73. A more general two-dimensional virial
-      identity was found in \ref Bonazzola94. The three-dimensional
-      virial identity found in \ref Gourgoulhon94 is a generalization
+      found in [Bonazzola73]_. A more general two-dimensional virial
+      identity was found in [Bonazzola94]_. The three-dimensional
+      virial identity found in [Gourgoulhon94]_ is a generalization
       of the Newtonial virial theorem.
+      \endverbatim
 
       Using the stationary and axisymmetric metric ( \f$ G = c = 1 \f$
       )
@@ -701,7 +717,9 @@ namespace o2scl {
       \f]
       for some function \f$ F(\omega) \f$ .
 
-      Using Eq. (27) in \ref Cook92, one can write
+      \verbatim embed:rst
+      Using Eq. (27) in [Cook92]_, one can write
+      \endverbatim
       \f[
       \rho(s,\mu) = - e^{-\gamma/2} \sum_{n=0}^{\infty}
       P_{2n}(\mu) \int_0^{1}~ds^{\prime} \int_0^1~d \mu 
@@ -723,7 +741,9 @@ namespace o2scl {
       \f[
       \Omega_K = \frac{\omega^{\prime}}{2 \psi^{\prime}} ...
       \f]
-      (eq. 31 in \ref Stergioulas03 )
+      \verbatim embed:rst
+      (eq. 31 in [Stergioulas03]_)
+      \endverbatim
       
   */
   class nstar_rot {
@@ -1139,8 +1159,10 @@ namespace o2scl {
 	functions \ref f_rho, \ref f_gamma, \ref f_omega, \ref P_2n,
 	and \ref P1_2n_1 once at the beginning.
 
-	See Eqs. 27-29 of \ref Cook92 and Eqs. 33-35 of \ref
-	Komatsu89. This function is called by the constructor.
+	\verbatim embed:rst
+	See Eqs. 27-29 of [Cook92]_ and Eqs. 33-35 of 
+	[Komatsu89]_. This function is called by the constructor.
+	\endverbatim
     */
     void comp_f_P();
 
@@ -1578,7 +1600,6 @@ namespace o2scl {
      */    
     void test8(o2scl::test_mgr &t);
     //@}
-
 
   };
 
