@@ -317,7 +317,9 @@ namespace o2scl {
   /// Optionally specify step sizes for each parameter
   std::vector<double> step_vec;
 
-  /// If true, couple the walkers across threads (default false)
+  /** \brief If true, couple the walkers across threads during
+      affine-invariant sampling (default false)
+  */
   bool couple_threads;
 
   /** \brief Number of warm up steps (successful steps not
@@ -1347,22 +1349,25 @@ namespace o2scl {
 #endif
 	  for(size_t it=0;it<n_threads;it++) {
 
-	    // Choose walker to move
+	    // Choose walker to move. If the threads are not coupled,
+	    // then each thread maintains its own ensenble, and we
+	    // just loop over all of the walkers
 	    curr_walker[it]=mcmc_iters % n_walk;
 	    
 	    // ---------------------------------------------------
 	    // Select next point
 	  
-	    // Choose jth walker
-	    size_t ij;
-	      
+	    // Total number of walkers
 	    size_t n_tot;
 	    if (couple_threads) {
 	      n_tot=n_walk*n_threads;
 	    } else {
 	      n_tot=n_walk;
 	    }
-	      
+
+	    // Choose jth walker, between 0 and n_tot-1, making
+	    // sure ij != curr_walker[it]
+	    size_t ij;
 	    do {
 	      ij=((size_t)(rg[it].random()*((double)n_tot)));
 	    } while (ij==curr_walker[it] || ij>=n_tot);
@@ -1372,6 +1377,11 @@ namespace o2scl {
 	    double a=step_fac;
 	    smove_z[it]=(1.0-2.0*p+2.0*a*p+p*p-2.0*a*p*p+a*a*p*p)/a;
 
+	    // The variable jt is the thread index of the walker with
+	    // index ij. If couple_threads is true and ij is greater
+	    // than n_walk, then we modify ij and jt to refer to the
+	    // correct walker in the next thread, wrapping around if
+	    // necessary
 	    size_t jt=it;
 	    if (couple_threads && ij>=n_walk) {
 	      jt=(jt+ij/n_walk)%n_threads;
@@ -1380,26 +1390,35 @@ namespace o2scl {
 
 	    if (couple_threads) {
 	      if (jt>=n_threads || ij>=n_walk) {
-		std::cout << "Problem 1." << std::endl;
-		std::cout << jt << " " << n_threads << " " << ij << " "
-			  << n_walk << std::endl;
-		exit(-1);
+		O2SCL_ERR("Variable jt or ij wrong in mcmc_para",
+			  o2scl::exc_esanify);
 	      }
 	    }
+
+	    // At this point, the index of the current walker
+	    //
+	    // is n_walk*it+curr_walker[it]
+	    // 
+	    // and the index of the jth walker for the stretch-move
+	    // 
+	    // is n_walk*jt+ij
 	    
 	    // Create new trial point
 	    for(size_t i=0;i<n_params;i++) {
 	      if (n_walk*jt+ij>=current.size() ||
 		  n_walk*it+curr_walker[it]>=current.size()) {
-		std::cout << "Problem 2." << std::endl;
-		std::cout << jt << " " << ij << " " << it << " "
-			  << curr_walker[it] << std::endl;
-		exit(-1);
+		O2SCL_ERR("Walker arithmetic wrong in mcmc_para",
+			  o2scl::exc_esanify);
 	      }
 	      next[it][i]=current[n_walk*jt+ij][i]+
 		smove_z[it]*(current[n_walk*it+curr_walker[it]][i]-
 			     current[n_walk*jt+ij][i]);
 	    }
+	    std::cout << n_walk << " "
+		      << it << " " << curr_walker[it] << " "
+		      << jt << " " << ij << " "
+		      << smove_z[it] << std::endl;
+	    o2scl::vector_out(std::cout,next[it],true);
 	    
 	    // ---------------------------------------------------
 	    // Compute next weight
