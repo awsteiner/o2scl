@@ -181,6 +181,12 @@ namespace o2scl {
 	
 	First we find the tab. point nearest to xb, then we
 	interpolate using four points around xb.
+
+	 Note that this version, since the EOS arrays are now 0 indexed,
+	 is different than the nstar_rot version. There is also a bit of
+	 extra arithmetic in this function below which is probably
+	 unnecessary which is left over from the shift from unit to
+	 zero-indexing. 
     */
     double interp(double xp[], double yp[], int np, double xb);
 
@@ -586,9 +592,12 @@ namespace o2scl {
       \todo Better documentation is needed everywhere.
       \todo Test the resize() function
       \todo It appears that KAPPA and KSCALE contant an arbitrary constant, 
-      try changing it and see if we get identical results
-      \todo p_center and h_center can be moved to function 
-      parameters
+      try changing it and see if we get identical results. Try to ensure
+      that the values are consistent between the eos_nstar_rot class
+      and the nstar_rot class.
+      \todo Variables r_is_gp, p_center, h_center, and others only
+      occur in spherical_star(), integrate(), and make_center(), and
+      can be moved to function parameters or otherwise reorganized.
       \todo Directly compare spherical_star() output with 
       tov_solve results
 
@@ -702,10 +711,6 @@ namespace o2scl {
       one solves for the four metric functions \f$ \rho(r,\theta) \f$,
       \f$ \gamma(r,\theta) \f$, \f$ \alpha(r,\theta) \f$ and \f$
       \omega(r,\theta) \f$ .
-
-      (AWS: 7/20/20: In spherical_star(), it appears that the notation
-      is changed, and \f$ \gamma=\nu+\lambda \f$ and \f$ \rho = \nu -
-      \lambda \f$ )
 
       It is assumed that matter is a perfect fluid, and the 
       stress-energy tensor is
@@ -985,7 +990,7 @@ namespace o2scl {
     /** \brief Central enthalpy */
     double h_center;                     
 
-    /// \name Desc
+    /// \name Helper functions for Green's function expansion
     //@{
     /** \brief \f$ f_{\rho}(s,n,s') \f$ */
     tensor3<> f_rho;
@@ -1222,7 +1227,7 @@ namespace o2scl {
 
     /** \brief Compute various quantities.
 
-	The main post-processing funciton
+	The main post-processing function
     */
     void comp();
     //@}
@@ -1239,6 +1244,10 @@ namespace o2scl {
 	where \f$ r \f$ is an isotropic radial coordinate 
 	(corresponding to <tt>r_is</tt> in the code).
       
+	\todo AWS: 7/20/20: Better document out how this metric
+	definition leads to \f$ \gamma=\nu+\lambda \f$ and \f$ \rho =
+	\nu - \lambda \f$ and the relationship between r and r_is .
+
 	This function computes \ref r_e_guess, \ref R_e, 
 	\ref Mass, and \ref Z_p .
     */
@@ -1260,9 +1269,12 @@ namespace o2scl {
 		   double &r_is_final);
     //@}
 
+    /// \name Desc
+    //@{
     /** \brief Main iteration function
      */
     int iterate(double r_ratio, double tol_rel);
+    //@}
 
     /// \name EOS member variables
     //@{ 
@@ -1561,8 +1573,8 @@ namespace o2scl {
     
     /** \name Testing functions
 
-	All these compare with hard-coded results obtained with
-	the RNS code. 
+	These functions compare this class with hard-coded results
+	obtained with the RNS code.
     */
     //@{
     /** \brief Test determining configuration with fixed central
