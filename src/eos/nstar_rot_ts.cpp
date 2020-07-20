@@ -96,10 +96,14 @@ int main(void) {
     eos->delete_rows_func("nb<0.08");
     p.set_eos_fm(eos->get_nlines(),(*eos)["ed"],
 		 (*eos)["pr"],(*eos)["nb"]);
+    
+    // This test was originally written to verify the shift to
+    // 0 indexing for the EOS arrays
     cout.precision(10);
     cout << "A: " << p.pr_from_enth(1.0e-10) << endl;
     cout.precision(6);
     t.test_rel(p.pr_from_enth(1.0e-10),9.6081961026e-25,1.0e-9,"eos test A");
+    
     nst.set_eos(p);
 
     // Compute the mass of the non-rotating configuration with the
@@ -195,10 +199,14 @@ int main(void) {
 		       nco.def_eos_tov.full_vece,
 		       nco.def_eos_tov.full_vecp,
 		       nco.def_eos_tov.full_vecnb);
+    
+    // This test was originally written to verify the shift to
+    // 0 indexing for the EOS arrays
     cout.precision(10);
     cout << "B: " << p.pr_from_enth(1.0e-10) << endl;
     cout.precision(6);
     t.test_rel(p.pr_from_enth(1.0e-10),9.6081864387e-25,1.0e-9,"eos test B");
+    
     nst.set_eos(p);
 
     // Compute the mass of the non-rotating configuration with the
@@ -246,10 +254,14 @@ int main(void) {
     }
     p.set_eos_fm(new_eos.get_nlines(),new_eos["ed"],
 		 new_eos["pr"],new_eos["nb"]);
+    
+    // This test was originally written to verify the shift to
+    // 0 indexing for the EOS arrays
     cout.precision(10);
     cout << "C: " << p.pr_from_enth(1.0e-10) << endl;
     cout.precision(6);
     t.test_rel(p.pr_from_enth(1.0e-10),9.6081961026e-25,1.0e-9,"eos test C");
+    
     nst.set_eos(p);
   
     // Compute the mass of the non-rotating configuration with the

@@ -151,13 +151,13 @@ namespace o2scl {
     /** \brief number of tabulated EOS points */
     int n_tab;                           
     /** \brief rho points in tabulated EOS */
-    double log_e_tab[201];               
+    double log_e_tab[200];               
     /** \brief p points in tabulated EOS */
-    double log_p_tab[201];               
+    double log_p_tab[200];               
     /** \brief h points in EOS file */
-    double log_h_tab[201];               
+    double log_h_tab[200];               
     /** \brief number density in EOS file */  
-    double log_n0_tab[201];              
+    double log_n0_tab[200];              
 
     /// \name Constants
     //@{
@@ -203,15 +203,15 @@ namespace o2scl {
 
       // Note that conv1*C*C*KSCALE is identical to conv2*KSCALE.
       
-      for(int i=1;i<=n_tab;i++) {
+      for(int i=0;i<n_tab;i++) {
 	// Convert from g/cm^3 to 1.0e15 grams/cm^3 and take the log
-	log_e_tab[i]=log10(eden[i-1]*C*C*KSCALE);
+	log_e_tab[i]=log10(eden[i]*C*C*KSCALE);
 	// Convert from dyne/cm^2 to 1.0e15 grams/cm^3 and take the log
-	log_p_tab[i]=log10(pres[i-1]*KSCALE);
+	log_p_tab[i]=log10(pres[i]*KSCALE);
 	// Convert from cm^2/s^2 to a unitless quantity and take the log
-	log_h_tab[i]=log10(enth[i-1]/(C*C));
+	log_h_tab[i]=log10(enth[i]/(C*C));
 	// Take the log of a quantity in units of 1/cm^3
-	log_n0_tab[i]=log10(nb[i-1]);
+	log_n0_tab[i]=log10(nb[i]);
       }
       
       return;
@@ -344,10 +344,10 @@ namespace o2scl {
       for(size_t i=0;i<n_crust;i++) {
 
 	// Convert from g/cm^3 to 1.0e15 grams/cm^3 and take the log
-	log_e_tab[i+1]=log10(nst_arr[i][0]*C*C*KSCALE);
+	log_e_tab[i]=log10(nst_arr[i][0]*C*C*KSCALE);
 
 	// Convert from dyne/cm^2 to 1.0e15 grams/cm^3 and take the log
-	log_p_tab[i+1]=log10(nst_arr[i][1]*KSCALE);
+	log_p_tab[i]=log10(nst_arr[i][1]*KSCALE);
 	
 	// Convert the first term from g/cm^3 to 1/fm^4 and the second
 	// term from dyne/cm^2 to 1/fm^4 and then divide by a quantity
@@ -357,28 +357,28 @@ namespace o2scl {
 	if (i==0) {
 	  mu_start=mu;
 	} else {
-	  log_h_tab[i+1]=log10(log(mu/mu_start));
+	  log_h_tab[i]=log10(log(mu/mu_start));
 	}
 	// Take the log of a quantity in units of 1/cm^3
-	log_n0_tab[i+1]=log10(nst_arr[i][2]);
-	//std::cout << "1." << log_e_tab[i+1] << " " 
-	//<< log_p_tab[i+1] << " " << log_n0_tab[i+1] << " " << mu
+	log_n0_tab[i]=log10(nst_arr[i][2]);
+	//std::cout << "1." << log_e_tab[i] << " " 
+	//<< log_p_tab[i] << " " << log_n0_tab[i] << " " << mu
 	//<< std::endl;
       }
 
       // RNS chooses the psuedo-enthalpy at the smallest density
       // to be 1.0
-      log_h_tab[1]=log10(1.0/(C*C));
+      log_h_tab[0]=log10(1.0/(C*C));
 
       // Note that conv1*C*C*KSCALE is identical to conv2*KSCALE.
 
       for(size_t i=0;i<n;i++) {
 	// Convert from 1/fm^4 to 1.0e15 grams/cm^3 and take the log
-	log_e_tab[i+n_crust+1]=log10(eden[i]*conv1*C*C*KSCALE);
+	log_e_tab[i+n_crust]=log10(eden[i]*conv1*C*C*KSCALE);
 	// Convert from 1/fm^4 to 1.0e15 grams/cm^3 and take the log
-	log_p_tab[i+n_crust+1]=log10(pres[i]*conv2*KSCALE);
+	log_p_tab[i+n_crust]=log10(pres[i]*conv2*KSCALE);
 	// Take the log of a unitless quantity
-	log_h_tab[i+n_crust+1]=log10(log((eden[i]+pres[i])/nb[i]/
+	log_h_tab[i+n_crust]=log10(log((eden[i]+pres[i])/nb[i]/
 					 mu_start));
 	// Convert from 1/fm^3 to 1/cm^3 and take the log
 	if (nb[i]<0.07643) {
@@ -386,11 +386,11 @@ namespace o2scl {
 		     "eos_nstar_rot_interp::set_eos_fm().",
 		     o2scl::exc_einval);
 	}
-	log_n0_tab[i+n_crust+1]=log10(nb[i]*1.0e39);
+	log_n0_tab[i+n_crust]=log10(nb[i]*1.0e39);
 	double mu=(eden[i]+pres[i])/nb[i];
-	//std::cout << "1b." << log_e_tab[i+n_crust+1] << " " 
-	//<< log_p_tab[i+n_crust+1] << " "
-	//<< log_n0_tab[i+n_crust+1] << " " << mu
+	//std::cout << "1b." << log_e_tab[i+n_crust] << " " 
+	//<< log_p_tab[i+n_crust] << " "
+	//<< log_n0_tab[i+n_crust] << " " << mu
 	//<< std::endl;
       }
 
@@ -427,30 +427,30 @@ namespace o2scl {
       double mu_start;
       for(size_t i=0;i<n;i++) {
 	// Convert from 1/fm^4 to 1.0e15 grams/cm^3 and take the log
-	log_e_tab[i+1]=log10(eden[i]*conv1*C*C*KSCALE);
+	log_e_tab[i]=log10(eden[i]*conv1*C*C*KSCALE);
 	// Convert from 1/fm^4 to 1.0e15 grams/cm^3 and take the log
-	log_p_tab[i+1]=log10(pres[i]*conv2*KSCALE);
+	log_p_tab[i]=log10(pres[i]*conv2*KSCALE);
 	
 	double mu=(eden[i]+pres[i])/nb[i];
 	if (i==0) {
 	  mu_start=mu;
 	} else {
-	  log_h_tab[i+1]=log10(log(mu/mu_start));
-	  if (!std::isfinite(log_h_tab[i+1])) {
+	  log_h_tab[i]=log10(log(mu/mu_start));
+	  if (!std::isfinite(log_h_tab[i])) {
 	    O2SCL_ERR2("Non-increasing chemical potential ",
 		      "in set_eos_crust_fm().",o2scl::exc_einval);
 	  }
 	}
 	
-	log_n0_tab[i+1]=log10(nb[i]*1.0e39);
-	//std::cout << "2." << log_e_tab[i+1] << " " 
-	//<< log_p_tab[i+1] << " " << log_n0_tab[i+1] << " " << mu
+	log_n0_tab[i]=log10(nb[i]*1.0e39);
+	//std::cout << "2." << log_e_tab[i] << " " 
+	//<< log_p_tab[i] << " " << log_n0_tab[i] << " " << mu
 	//<< std::endl;
       }
       
       // RNS chooses the pseudo-enthalpy at the smallest density
       // to be 1.0
-      log_h_tab[1]=log10(1.0/(C*C));
+      log_h_tab[0]=log10(1.0/(C*C));
       
       return;
     }
@@ -503,7 +503,7 @@ namespace o2scl {
 	\endcomment
      */
     void output() {
-      for(int i=n_tab;i>=1;i--) {
+      for(int i=n_tab-1;i>=0;i--) {
 	std::cout << log_e_tab[i] << " " << log_p_tab[i] << " "
 		  << log_h_tab[i] << " " << log_n0_tab[i] << std::endl;
       }
@@ -517,7 +517,7 @@ namespace o2scl {
       o2scl_hdf::hdf_file hf;
       o2scl::table_units<> t;
       t.line_of_names("log_e log_p log_h log_n0");
-      for(int i=1;i<=n_tab;i++) {
+      for(int i=0;i<n_tab;i++) {
 	double line[4]={log_e_tab[i],log_p_tab[i],log_h_tab[i],
 			log_n0_tab[i]};
 	t.line_of_data(4,line);

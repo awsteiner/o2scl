@@ -61,7 +61,7 @@ eos_nstar_rot_interp::eos_nstar_rot_interp() {
 
 int eos_nstar_rot_interp::new_search(int n, double *x, double val) {
   int ret;
-  double *xnew=x+1;
+  double *xnew=x;
   bool inc=false;
   if (xnew[0]<xnew[n-1]) inc=true;
   if (inc) {
@@ -78,7 +78,7 @@ int eos_nstar_rot_interp::new_search(int n, double *x, double val) {
     }
   }
   sv.set_vec(n,xnew);
-  return sv.find(val)+1;
+  return sv.find(val);
 }
 
 double eos_nstar_rot_interp::ed_from_pr(double pr) {
@@ -125,6 +125,12 @@ void eos_nstar_rot_interp::ed_nb_from_pr(double pr, double &ed, double &nb) {
 
 double eos_nstar_rot_interp::interp(double xp[], double yp[], int np,
 				    double xb) {
+
+  // Note that this version, since the EOS arrays are now 0 indexed,
+  // is different than the nstar_rot version. There is also a bit of
+  // extra arithmetic in this function below which is probably
+  // unnecessary which is left over from the shift from unit to
+  // zero-indexing. 
   
   // index of 1st point
   int k;        
@@ -134,12 +140,14 @@ double eos_nstar_rot_interp::interp(double xp[], double yp[], int np,
   // intermediate value
   double y;     
 
-  n_nearest=new_search(np,xp,xb);
+  n_nearest=new_search(np,xp,xb)+1;
 
   int max=n_nearest-(m-1)/2;
   if (max<1) max=1;
   k=np+1-m;
   if (max<k) k=max;
+
+  k-=1;
 
   if (xb==xp[k] || xb==xp[k+1] || xb==xp[k+2] || xb==xp[k+3]) {
     xb+=1.0e-12;
@@ -264,12 +272,12 @@ eos_nstar_rot_C::eos_nstar_rot_C(bool rns_constants) {
 
   n_tab=96;
 
-  for(int i=1;i<=n_tab;i++) {  
+  for(int i=0;i<n_tab;i++) {  
     
-    double rho=eosC_arr[i-1][0];
-    double p=eosC_arr[i-1][1];
-    double h=eosC_arr[i-1][2];
-    double n0=eosC_arr[i-1][3];
+    double rho=eosC_arr[i][0];
+    double p=eosC_arr[i][1];
+    double h=eosC_arr[i][2];
+    double n0=eosC_arr[i][3];
     
     log_e_tab[i]=log10(rho*C*C*KSCALE);
     log_p_tab[i]=log10(p*KSCALE);
@@ -354,12 +362,12 @@ eos_nstar_rot_L::eos_nstar_rot_L(bool rns_constants) {
 
   n_tab=64;
 
-  for(int i=1;i<=n_tab;i++) {  
+  for(int i=0;i<n_tab;i++) {  
 
-    double rho=eosL_arr[i-1][0];
-    double p=eosL_arr[i-1][1];
-    double h=eosL_arr[i-1][2];
-    double n0=eosL_arr[i-1][3];
+    double rho=eosL_arr[i][0];
+    double p=eosL_arr[i][1];
+    double h=eosL_arr[i][2];
+    double n0=eosL_arr[i][3];
 
     log_e_tab[i]=log10(rho*C*C*KSCALE);
     log_p_tab[i]=log10(p*KSCALE);
@@ -3261,7 +3269,7 @@ int nstar_rot::solve_ang_vel(size_t nv, const ubvector &x,
 			       ubvector &y, double ang_vel) {
   r_ratio=x[0];
   if (r_ratio>1.0 || r_ratio<0.1) {
-    if (verbose>0) {
+    if (verbose>1) {
       cout << "solve_ang_vel: " << r_ratio << endl;
     }
     return 3;
@@ -3269,7 +3277,7 @@ int nstar_rot::solve_ang_vel(size_t nv, const ubvector &x,
   int ret=iterate(r_ratio,alt_tol_rel);
   if (ret!=0) return ret;
   comp_omega();
-  if (verbose>0) {
+  if (verbose>1) {
     cout << "solve_ang_vel: " << r_ratio << " " << Omega << " "
 	 << ang_vel << endl;
   }
@@ -4192,10 +4200,14 @@ void nstar_rot::test5(o2scl::test_mgr &t) {
 
   constants_rns();
   eos_nstar_rot_C p(true);
+  
+  // This test was originally written to verify the shift to
+  // 0 indexing for the EOS arrays
   cout.precision(10);
   cout << "D: " << p.pr_from_enth(1.0e-10) << endl;
   cout.precision(6);
   t.test_rel(p.pr_from_enth(1.0e-10),9.6083487664e-25,1.0e-9,"eos test D");
+  
   set_eos(p);
   fix_cent_eden_ang_vel(1.0e15,5.0e3);
   eos_set=false;
