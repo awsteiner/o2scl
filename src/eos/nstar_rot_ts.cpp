@@ -74,7 +74,9 @@ int main(void) {
     nco.def_tov.verbose=0;
     nco.set_eos(sk);
 
-    // Compute the Skyrme EOS in beta-equilibrium
+    // Compute the Skyrme EOS in beta-equilibrium. The nstar_rot class
+    // cannot handle fine grids, so we increase the grid spacing.
+    nco.dnb=0.02;
     nco.calc_eos();
     std::shared_ptr<table_units<> > eos=nco.get_eos_results();
 
@@ -88,21 +90,12 @@ int main(void) {
     double ed_cent=mvsr->get("ed",mvsr->lookup("gm",1.4));
     ed_cent=cu.convert("1/fm^4","g/cm^3",ed_cent);
 
-    // Send the EOS to the nstar_rot object
+    // This function uses the RNS crust, so we remove any entries
+    // with densities lower than that limit
     eos_nstar_rot_interp p;
-    table_units<> new_eos;
-    new_eos.line_of_names("ed pr nb");
-    new_eos.set_unit("ed","1/fm^4");
-    new_eos.set_unit("pr","1/fm^4");
-    new_eos.set_unit("nb","1/fm^3");
-    for(size_t i=0;i<eos->get_nlines();i+=2) {
-      if (eos->get("nb",i)>0.0801) {
-	double line[3]={eos->get("ed",i),eos->get("pr",i),eos->get("nb",i)};
-	new_eos.line_of_data(3,line);
-      }
-    }
-    p.set_eos_fm(new_eos.get_nlines(),new_eos["ed"],
-		 new_eos["pr"],new_eos["nb"]);
+    eos->delete_rows_func("nb<0.08");
+    p.set_eos_fm(eos->get_nlines(),(*eos)["ed"],
+		 (*eos)["pr"],(*eos)["nb"]);
     nst.set_eos(p);
 
     // Compute the mass of the non-rotating configuration with the
@@ -150,6 +143,62 @@ int main(void) {
     o2scl_hdf::hdf_output(hf,(const table3d &)t,"nstar_rot");
     o2scl_hdf::hdf_output(hf,(const table3d &)t2,"nstar_rot2");
     hf.close();
+  }
+
+  if (true) {
+
+    // A second SLy4 test with rns_C_low_dens_eos() and
+    // using eos_nstar_rot_interp.set_eos_crust_fm()
+    eos_had_skyrme sk;
+    o2scl_hdf::skyrme_load(sk,"../../data/o2scl/skdata/SLy4.o2",1);
+
+    nstar_cold nco;
+    nco.def_tov.verbose=0;
+    nco.set_eos(sk);
+
+    // Compute the Skyrme EOS in beta-equilibrium. The nstar_rot class
+    // cannot handle fine grids, so we increase the grid spacing.
+    nco.dnb=0.02;
+    nco.calc_eos();
+    std::shared_ptr<table_units<> > eos=nco.get_eos_results();
+
+    // Evalulate the mass-radius curve
+    nco.def_eos_tov.rns_C_low_dens_eos();
+    nco.def_eos_tov.read_table(*eos,"ed","pr","nb");
+    nco.def_tov.set_units("1/fm^4","1/fm^4","1/fm^3");
+    nco.def_tov.set_eos(nco.def_eos_tov);
+    nco.def_tov.mvsr();
+    std::shared_ptr<table_units<> > mvsr=nco.get_tov_results();
+
+    // Lookup the central energy density of a 1.4 Msun neutron star
+    // in g/cm^3
+    convert_units<double> &cu=o2scl_settings.get_convert_units();
+    double ed_cent=mvsr->get("ed",mvsr->lookup("gm",1.4));
+    ed_cent=cu.convert("1/fm^4","g/cm^3",ed_cent);
+
+    // The eos_tov object works in units of Msun/km^3, while
+    // the eos_nstar_rot object expects 1/fm^4, so we convert
+    double fac=cu.convert("Msun/km^3","1/fm^4",1.0);
+    for(size_t i=0;i<nco.def_eos_tov.full_vece.size();i++) {
+      nco.def_eos_tov.full_vece[i]*=fac;
+      nco.def_eos_tov.full_vecp[i]*=fac;
+    }
+    
+    // This function uses the RNS crust, so we remove any entries
+    // with densities lower than that limit
+    eos_nstar_rot_interp p;
+    p.set_eos_crust_fm(nco.def_eos_tov.full_vece.size(),
+		       nco.def_eos_tov.full_vece,
+		       nco.def_eos_tov.full_vecp,
+		       nco.def_eos_tov.full_vecnb);
+    nst.set_eos(p);
+
+    // Compute the mass of the non-rotating configuration with the
+    // same energy density
+    nst.fix_cent_eden_non_rot(ed_cent);
+    // Compare with with the answer from nstar_rot
+    t.test_rel(nst.Mass/nst.MSUN,1.4,0.015,"correct mass");
+
   }
 
   {

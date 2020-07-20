@@ -812,6 +812,9 @@ namespace o2scl {
     /// Standard crust EOS from \ref Negele73 and \ref Baym71tg
     void default_low_dens_eos();
 
+    /// Desc
+    void rns_C_low_dens_eos();
+    
     /// Crust EOS from \ref Shen11b
     void sho11_low_dens_eos();
 

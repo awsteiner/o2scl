@@ -57,6 +57,10 @@ int main(void) {
   nco.calc_eos();
   std::shared_ptr<table_units<> > eos=nco.get_eos_results();
 
+  // The set_eos_fm() function adds its own crust, so we make
+  // sure to remove the low-density part of the SLy4 EOS
+  eos->delete_rows_func("nb<0.08");
+
   // Send the EOS to the nstar_rot object
   eos_nstar_rot_interp enri;
   enri.set_eos_fm(eos->get_nlines(),(*eos)["ed"],(*eos)["pr"],(*eos)["nb"]);

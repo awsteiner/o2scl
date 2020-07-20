@@ -276,6 +276,7 @@ eos_nstar_rot_C::eos_nstar_rot_C(bool rns_constants) {
     log_h_tab[i]=log10(h/(C*C));
     log_n0_tab[i]=log10(n0);
   }
+
 }
 
 eos_nstar_rot_L::eos_nstar_rot_L(bool rns_constants) {

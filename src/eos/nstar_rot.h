@@ -244,10 +244,10 @@ namespace o2scl {
 
       n_tab=n+n_crust;
 
-      /* Use the original RNS crust, except for the enthalpy which is
-	 computed by hand below. This appears to work better than the
-	 default O2scl crust, and this may have to do with the fact
-	 that the default O2scl crust has decreasing mu with
+      /* Use the original RNS crust from eosC, except for the enthalpy
+	 which is computed by hand below. This appears to work better
+	 than the default O2scl crust, and this may have to do with
+	 the fact that the default O2scl crust has decreasing mu with
 	 increasing density at low densities.
 
 	 These columns are:
@@ -360,13 +360,14 @@ namespace o2scl {
 	}
 	// Take the log of a quantity in units of 1/cm^3
 	log_n0_tab[i+1]=log10(nst_arr[i][2]);
+	//std::cout << "1." << log_e_tab[i+1] << " " 
+	//<< log_p_tab[i+1] << " " << log_n0_tab[i+1] << " " << mu
+	//<< std::endl;
       }
 
-      // This shift of 8.0 (this number appears to be nearly exact,
-      // and was checked by AWS on 7/18/20) reproduces the results
-      // implied by the internal RNS EOSs. It is not clear how
-      // sensitive the code is to the low-density part of the EOS.
-      log_h_tab[1]=log_h_tab[2]-8.0;
+      // RNS chooses the psuedo-enthalpy at the smallest density
+      // to be 1.0
+      log_h_tab[1]=log10(1.0/(C*C));
 
       // Note that conv1*C*C*KSCALE is identical to conv2*KSCALE.
 
@@ -385,8 +386,62 @@ namespace o2scl {
 		     o2scl::exc_einval);
 	}
 	log_n0_tab[i+n_crust+1]=log10(nb[i]*1.0e39);
+	double mu=(eden[i]+pres[i])/nb[i];
+	//std::cout << "1b." << log_e_tab[i+n_crust+1] << " " 
+	//<< log_p_tab[i+n_crust+1] << " "
+	//<< log_n0_tab[i+n_crust+1] << " " << mu
+	//<< std::endl;
       }
 
+      return;
+    }
+
+    /** \brief Desc 
+     */
+    template<class vec1_t, class vec2_t, class vec3_t>
+      void set_eos_crust_fm(size_t n, vec1_t &eden, vec2_t &pres,
+			    vec3_t &nb) {
+
+      if (n>200) {
+	O2SCL_ERR2("Too many EOS points in ",
+		   "nstar_rot::set_eos().",o2scl::exc_einval);
+      }
+      
+      n_tab=n;
+      
+      // Conversion factor for energy density
+      double conv1=o2scl_settings.get_convert_units().convert
+	("1/fm^4","g/cm^3",1.0);
+      // Conversion factor for pressure
+      double conv2=o2scl_settings.get_convert_units().convert
+	("1/fm^4","dyne/cm^2",1.0);
+      
+      // Note that conv1*C*C*KSCALE is identical to conv2*KSCALE.
+      
+      double mu_start;
+      for(size_t i=0;i<n;i++) {
+	// Convert from 1/fm^4 to 1.0e15 grams/cm^3 and take the log
+	log_e_tab[i+1]=log10(eden[i]*conv1*C*C*KSCALE);
+	// Convert from 1/fm^4 to 1.0e15 grams/cm^3 and take the log
+	log_p_tab[i+1]=log10(pres[i]*conv2*KSCALE);
+	
+	double mu=(eden[i]+pres[i])/nb[i];
+	if (i==0) {
+	  mu_start=mu;
+	} else {
+	  log_h_tab[i+1]=log10(log(mu/mu_start));
+	}
+	
+	log_n0_tab[i+1]=log10(nb[i]*1.0e39);
+	//std::cout << "2." << log_e_tab[i+1] << " " 
+	//<< log_p_tab[i+1] << " " << log_n0_tab[i+1] << " " << mu
+	//<< std::endl;
+      }
+      
+      // RNS chooses the pseudo-enthalpy at the smallest density
+      // to be 1.0
+      log_h_tab[1]=log10(1.0/(C*C));
+      
       return;
     }
 
@@ -452,7 +507,7 @@ namespace o2scl {
       o2scl_hdf::hdf_file hf;
       o2scl::table_units<> t;
       t.line_of_names("log_e log_p log_h log_n0");
-      for(int i=n_tab;i>=1;i--) {
+      for(int i=1;i<=n_tab;i++) {
 	double line[4]={log_e_tab[i],log_p_tab[i],log_h_tab[i],
 			log_n0_tab[i]};
 	t.line_of_data(4,line);
