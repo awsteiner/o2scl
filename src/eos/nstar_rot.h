@@ -618,18 +618,15 @@ namespace o2scl {
       one can use the Gibbs-Duhem relation, \f$
       dP = (\varepsilon + P)/\mu d \mu \f$ to write 
       \f[ 
-      d \hat{h} = \frac{d \mu}{\mu} = \ln \mu + C
+      d \hat{h} = \frac{d \mu}{\mu}
+      \f]
+      \f[
+      \hat{h} = \ln \mu + C
       \f]
       The constant \f$ C \f$ is often chosen to be 
       \f$ C \equiv - \ln \mu(P=0) \f$, so that 
       \f[
       \hat{h} = \ln \frac{\mu}{\mu(P=0)}
-      \f]
-      In the RNS code (and also in this version) the pseudo-enthalpy
-      is shifted by an arbitrary constant
-      \f[
-      \hat{h}_{\mathrm{RNS}} = 
-      -8 + \log \left[\frac{\mu}{\mu(P=0)}\right] 
       \f]
       Typically, \f$ \mu(P=0) \f$ is around 931 MeV. The \ref
       eos_nstar_rot_interp class takes an EOS tabulated in powers of

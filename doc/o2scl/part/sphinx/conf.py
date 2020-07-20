@@ -41,7 +41,8 @@ extensions = ['sphinx.ext.autodoc',
 # Breathe settings
 breathe_projects = { "o2scl_part": os.path.abspath('../xml') }
 breathe_default_project = "o2scl_part"
-breathe_default_members = ('members', 'private-members', 'undoc-members')
+breathe_default_members = ('members', 'protected-members',
+                           'private-members', 'undoc-members')
 
 # This removes the o2scl:: prefix from index entries
 cpp_index_common_prefix = ['o2scl::']
