@@ -2530,9 +2530,9 @@ void nstar_rot::spherical_star() {
       omega_guess(s,m)=0.0; 
     }
  
-    // gamma at \mu=0 
+    // gamma at \mu=0 for all values of s
     gamma_mu_0[s]=gamma(s,1);                   
-    // rho at \mu=0 
+    // rho at \mu=0 for all values of s
     rho_mu_0[s]=rho(s,1);                     
   }
 
@@ -4192,6 +4192,10 @@ void nstar_rot::test5(o2scl::test_mgr &t) {
 
   constants_rns();
   eos_nstar_rot_C p(true);
+  cout.precision(10);
+  cout << "D: " << p.pr_from_enth(1.0e-10) << endl;
+  cout.precision(6);
+  t.test_rel(p.pr_from_enth(1.0e-10),9.6083487664e-25,1.0e-9,"eos test D");
   set_eos(p);
   fix_cent_eden_ang_vel(1.0e15,5.0e3);
   eos_set=false;

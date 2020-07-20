@@ -703,6 +703,10 @@ namespace o2scl {
       \f$ \gamma(r,\theta) \f$, \f$ \alpha(r,\theta) \f$ and \f$
       \omega(r,\theta) \f$ .
 
+      (AWS: 7/20/20: In spherical_star(), it appears that the notation
+      is changed, and \f$ \gamma=\nu+\lambda \f$ and \f$ \rho = \nu -
+      \lambda \f$ )
+
       It is assumed that matter is a perfect fluid, and the 
       stress-energy tensor is
       \f[
