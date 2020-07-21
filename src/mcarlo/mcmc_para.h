@@ -1391,7 +1391,7 @@ namespace o2scl {
 	    if (couple_threads) {
 	      if (jt>=n_threads || ij>=n_walk) {
 		O2SCL_ERR("Variable jt or ij wrong in mcmc_para",
-			  o2scl::exc_esanify);
+			  o2scl::exc_esanity);
 	      }
 	    }
 
@@ -1408,7 +1408,7 @@ namespace o2scl {
 	      if (n_walk*jt+ij>=current.size() ||
 		  n_walk*it+curr_walker[it]>=current.size()) {
 		O2SCL_ERR("Walker arithmetic wrong in mcmc_para",
-			  o2scl::exc_esanify);
+			  o2scl::exc_esanity);
 	      }
 	      next[it][i]=current[n_walk*jt+ij][i]+
 		smove_z[it]*(current[n_walk*it+curr_walker[it]][i]-
@@ -1618,6 +1618,7 @@ namespace o2scl {
 	    scr_out.precision(6);
 	  }
 	}
+	exit(-1);
       
 	// Collect best point
 	for(size_t it=0;it<n_threads;it++) {
