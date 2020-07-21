@@ -1336,6 +1336,8 @@ namespace o2scl {
       bool main_done=false;
       size_t mcmc_iters=0;
 
+      //std::vector<std::string> message(n_threads);
+      
       while (!main_done) {
 
 	std::vector<double> smove_z(n_threads);
@@ -1414,11 +1416,16 @@ namespace o2scl {
 		smove_z[it]*(current[n_walk*it+curr_walker[it]][i]-
 			     current[n_walk*jt+ij][i]);
 	    }
-	    std::cout << n_walk << " "
-		      << it << " " << curr_walker[it] << " "
-		      << jt << " " << ij << " "
-		      << smove_z[it] << std::endl;
-	    o2scl::vector_out(std::cout,next[it],true);
+	    /*
+	      std::ostringstream os;
+	      os << n_walk << " "
+	      << it << " " << curr_walker[it] << " "
+	      << jt << " " << ij << " "
+	      << smove_z[it] << std::endl;
+	      o2scl::vector_out(os,current[n_walk*it+curr_walker[it]],true);
+	      o2scl::vector_out(os,next[it],true);
+	      message[it]=os.str();
+	    */
 	    
 	    // ---------------------------------------------------
 	    // Compute next weight
@@ -1486,6 +1493,8 @@ namespace o2scl {
 
 	if (verbose>=1) {
 	  for(size_t it=0;it<n_threads;it++) {
+	    //std::cout << "thread: " << it << " message: "
+	    //<< message[it] << std::endl;
 	    if (pd_mode) {
 	      scr_out << "it: " << it << " q_prop[it]: "
 		      << q_prop[it] << std::endl;
@@ -1618,7 +1627,6 @@ namespace o2scl {
 	    scr_out.precision(6);
 	  }
 	}
-	exit(-1);
       
 	// Collect best point
 	for(size_t it=0;it<n_threads;it++) {
