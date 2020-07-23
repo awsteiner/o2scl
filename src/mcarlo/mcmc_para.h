@@ -3095,6 +3095,7 @@ namespace o2scl {
   o2scl::cli::parameter_bool p_aff_inv;
   o2scl::cli::parameter_bool p_table_sequence;
   o2scl::cli::parameter_bool p_store_rejects;
+  o2scl::cli::parameter_bool p_couple_threads;
   o2scl::cli::parameter_double p_max_time;
   o2scl::cli::parameter_size_t p_max_iters;
   //o2scl::cli::parameter_int p_max_chain_size;
@@ -3246,6 +3247,10 @@ namespace o2scl {
     p_store_rejects.help=((std::string)"If true, then store MCMC rejections ")+
       "(default false).";
     cl.par_list.insert(std::make_pair("store_rejects",&p_store_rejects));
+
+    p_couple_threads.b=&this->couple_threads;
+    p_couple_threads.help="help";
+    cl.par_list.insert(std::make_pair("couple_threads",&p_couple_threads));
     
     return;
   }
