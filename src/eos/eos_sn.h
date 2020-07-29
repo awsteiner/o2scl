@@ -64,12 +64,10 @@ namespace o2scl {
       \future Create a \ref o2scl::table object, possibly using 
       tensor_grid::vector_slice. 
       \future Show how matrix_slice and vector_slice can be used
-      with this object.
+      with this object (Is this done in ex_eos_sn or is this
+      made obsolete by the tensor rearrange function?)
       \future Add option to load and store a separate lepton/photon
       EOS
-      \future Add pions?
-      \future Create a standard output format? Output to
-      stellarcollapse.org HDF5 format?
 
       \comment
       \future Could this be a child of eos_had_temp_base and
