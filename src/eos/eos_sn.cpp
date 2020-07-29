@@ -1246,6 +1246,7 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
 
   size_t ndat=17;
   if (mode==quark_mode) ndat++;
+  if (mode==fyss_mode) ndat=25;
 
   if (loaded) free();
 
@@ -1261,27 +1262,59 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
   n_Ye=71;
   n_oth=5;
   if (mode==quark_mode) n_oth++;
+  if (mode==fyss_mode) {
+    n_nB=110;
+    n_Ye=65;
+    n_T=91;
+  }
 
   alloc();
 
   std::vector<double> grid;
 
-  for(size_t k=0;k<n_nB;k++) {
-    // We set the density grid later, fill with zeros for now
-    grid.push_back(0.0);
+  if (fyss_mode) {
+    for(size_t k=0;k<n_nB;k++) {
+      double gcm3=pow(10.0,5.1+((double)k)*0.1);
+      // Computed with "acol -set precision 10 -get-conv g/cm^3 MeV/fm^3"
+      double MeVfm3=gcm3*5.6095886038e-13;
+      grid.push_back(MeVfm3/939.0);
+      cout << k << " " << n_nB << " " << gcm3 << endl;
+    }
+  } else {
+    for(size_t k=0;k<n_nB;k++) {
+      // We set the density grid later, fill with zeros for now
+      grid.push_back(0.0);
+    }
   }
 
-  for(size_t j=0;j<n_Ye;j++) {
-    double ye_temp=pow(10.0,((double)j)*0.025-2.0);
-    grid.push_back(ye_temp);
+  if (fyss_mode) {
+    for(size_t j=0;j<n_Ye;j++) {
+      grid.push_back(0.01*((double)j)+0.01);
+      cout << j << " " << n_Ye << " " << 0.01*((double)j)+0.01 << endl;
+    }
+  } else {
+    for(size_t j=0;j<n_Ye;j++) {
+      double ye_temp=pow(10.0,((double)j)*0.025-2.0);
+      grid.push_back(ye_temp);
+    }
   }
 
-  // Temperature grid from Matthias Hempel
-  double temp[31]={0.1,0.12,0.15,0.2,0.25,0.32,0.4,0.5,0.63,0.8,
-		   1.0,1.2,1.5,2.0,2.5,3.2,4.0,5.0,6.3,8.0,10.0,
-		   12.0,15.0,20.0,25.0,32.0,40.0,50.0,63.0,80.0,100.0};
-  for(size_t i=0;i<n_T;i++) {
-    grid.push_back(temp[i]);
+  if (fyss_mode) {
+    for(size_t i=0;i<n_T;i++) {
+      double log10T=-1.0+((double)i)*0.04;
+      grid.push_back(pow(10.0,log10T));
+      cout << i << " " << n_T << " " << log10T << " "
+	   << pow(10.0,log10T) << endl;
+    }
+  } else {
+    // Temperature grid from Matthias Hempel
+    double hempel_temp[31]={0.1,0.12,0.15,0.2,0.25,0.32,0.4,0.5,0.63,0.8,
+			    1.0,1.2,1.5,2.0,2.5,3.2,4.0,5.0,6.3,8.0,10.0,
+			    12.0,15.0,20.0,25.0,32.0,40.0,50.0,63.0,80.0,
+			    100.0};
+    for(size_t i=0;i<n_T;i++) {
+      grid.push_back(hempel_temp[i]);
+    }
   }
 
   for(size_t i=0;i<n_base+n_oth;i++) {
@@ -1309,15 +1342,24 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
   // Read the data
   for(size_t i=0;i<n_T;i++) {
 
-    if (i!=0) {
+    double tptr;
+    if (fyss_mode) {
+      fin >> tstr;
+      fin >> tstr;
+      fin >> tstr;
+      fin >> tstr;
+      fin >> tptr;
+    } else {
+      if (i!=0) {
+	getline(fin,tstr);
+      }
       getline(fin,tstr);
+      fin >> tstr;
+      fin >> tptr;
     }
-    getline(fin,tstr);
-    fin >> tstr;
-    fin >> temp[i];
 
     if (verbose>0) {
-      std::cout << "Reading section for temperature=" << temp[i] << "." 
+      std::cout << "Reading section for temperature=" << tptr << "." 
 		<< std::endl;
     }
 
@@ -1325,13 +1367,53 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
     for(size_t j=0;j<n_Ye;j++) {
       
       for(size_t k=0;k<n_nB;k++) {
-	for(size_t ell=0;ell<ndat;ell++) {
+	if (fyss_mode) {
 	  fin >> dtemp;
-	  t.set(ell,k,dtemp);
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  Fint.set(k,j,i,dtemp);
+	  fin >> dtemp;
+	  Eint.set(k,j,i,dtemp);
+	  fin >> dtemp;
+	  Sint.set(k,j,i,dtemp);
+	  fin >> dtemp;
+	  A.set(k,j,i,dtemp);
+	  fin >> dtemp;
+	  Z.set(k,j,i,dtemp);
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  Xn.set(k,j,i,dtemp);
+	  fin >> dtemp;
+	  Xp.set(k,j,i,dtemp);
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  Pint.set(k,j,i,dtemp);
+	  fin >> dtemp;
+	  mun.set(k,j,i,dtemp);
+	  fin >> dtemp;
+	  mup.set(k,j,i,dtemp);
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  fin >> dtemp;
+	  Xalpha.set(k,j,i,dtemp);
+	  fin >> dtemp;
+	  Xnuclei.set(k,j,i,dtemp);
+	  fin >> dtemp;
+	  fin >> dtemp;
+	} else {
+	  for(size_t ell=0;ell<ndat;ell++) {
+	    fin >> dtemp;
+	    t.set(ell,k,dtemp);
+	  }
 	}
       }
 
-      if (i==0 && j==0) {
+      if (i==0 && j==0 && mode!=fyss_mode) {
 	
 	// Set the density grid from the first section
 	for(size_t k=0;k<n_nB;k++) {
@@ -1342,80 +1424,84 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
 	}
 	    
       } 
-
-      for(size_t ell=0;ell<ndat;ell++) {
-	for(size_t k=0;k<n_nB;k++) {
-
-	  if (ell==0) {
-	    // The first n_nb elements of grid already contains the
-	    // baryon density, so use grid[k] for interpolation.
-	    // other[0] is log(rho)
-	    other[0].set(k,j,i,t.interp(1,grid[k],ell));
-	  } else if (ell==1) {
-	    // Baryon density
-	    other[1].set(k,j,i,t.interp(1,grid[k],ell));
-	  } else if (ell==2) {
-	    // Log of proton fraction
-	    other[2].set(k,j,i,t.interp(1,grid[k],ell));
-	  } else if (ell==3) {
-	    // Proton fraction
-	    other[3].set(k,j,i,t.interp(1,grid[k],ell));
-	  } else if (ell==4) {
-	    // The free energy in the table is stored with respect
-	    // to the proton mass, so we rescale it
-	    double Fint_tmp=t.interp(1,grid[k],ell);
-	    double Ye_tmp=Fint.get_grid(1,j);
-	    double Fint_new=Fint_tmp+o2scl_const::hc_mev_fm*
-	      (cu.convert("kg","1/fm",o2scl_mks::mass_proton)-Ye_tmp*
-	       cu.convert("kg","1/fm",o2scl_mks::mass_proton)-
-	       (1.0-Ye_tmp)*cu.convert("kg","MeV",o2scl_mks::mass_neutron));
-	    Fint.set(k,j,i,Fint_new);
-	  } else if (ell==5) {
-	    // The internal energy in the table is stored with respect
-	    // to the atomic mass, so we rescale it
-	    double Eint_tmp=t.interp(1,grid[k],ell);
-	    double Ye_tmp=Eint.get_grid(1,j);
-	    double Eint_new=Eint_tmp+
-	      (cu.convert("kg","MeV",o2scl_mks::unified_atomic_mass)-
-	       Ye_tmp*cu.convert("kg","MeV",o2scl_mks::mass_proton)-
-	       (1.0-Ye_tmp)*cu.convert("kg","MeV",o2scl_mks::mass_neutron));
-	    Eint.set(k,j,i,Eint_new);
-	  } else if (ell==6) {
-	    Sint.set(k,j,i,t.interp(1,grid[k],ell));
-	  } else if (ell==7) {
-	    A.set(k,j,i,t.interp(1,grid[k],ell));
-	  } else if (ell==8) {
-	    Z.set(k,j,i,t.interp(1,grid[k],ell));
-	  } else if (ell==9) {
-	    // Nucleon effective mass
-	    other[4].set(k,j,i,t.interp(1,grid[k],ell));
-	  } else if (ell==10) {
-	    Xn.set(k,j,i,t.interp(1,grid[k],ell));
-	  } else if (ell==11) {
-	    Xp.set(k,j,i,t.interp(1,grid[k],ell));
-	  } else if (ell==12) {
-	    Xalpha.set(k,j,i,t.interp(1,grid[k],ell));
-	  } else if (ell==13) {
-	    Xnuclei.set(k,j,i,t.interp(1,grid[k],ell));
-	  } else if (ell==14) {
-	    Pint.set(k,j,i,t.interp(1,grid[k],ell));
-	  } else if (ell==15) {
-	    mun.set(k,j,i,t.interp(1,grid[k],ell));
-	  } else if (ell==16) {
-	    mup.set(k,j,i,t.interp(1,grid[k],ell));
-	  } else if (ell==16) {
-	    other[5].set(k,j,i,t.interp(1,grid[k],ell));
-	  } 
-	  if (k>=n_nB || j>=n_Ye || i>=n_T) {
-	    loaded=false;
-	    O2SCL_ERR2("Index problem in ",
-		       "eos_sn_stos::load().",exc_einval);
+      
+      if (mode!=fyss_mode) {
+	for(size_t ell=0;ell<ndat;ell++) {
+	  for(size_t k=0;k<n_nB;k++) {
+	    
+	    if (ell==0) {
+	      // The first n_nb elements of grid already contains the
+	      // baryon density, so use grid[k] for interpolation.
+	      // other[0] is log(rho)
+	      other[0].set(k,j,i,t.interp(1,grid[k],ell));
+	    } else if (ell==1) {
+	      // Baryon density
+	      other[1].set(k,j,i,t.interp(1,grid[k],ell));
+	    } else if (ell==2) {
+	      // Log of proton fraction
+	      other[2].set(k,j,i,t.interp(1,grid[k],ell));
+	    } else if (ell==3) {
+	      // Proton fraction
+	      other[3].set(k,j,i,t.interp(1,grid[k],ell));
+	    } else if (ell==4) {
+	      // The free energy in the table is stored with respect
+	      // to the proton mass, so we rescale it
+	      double Fint_tmp=t.interp(1,grid[k],ell);
+	      double Ye_tmp=Fint.get_grid(1,j);
+	      double Fint_new=Fint_tmp+o2scl_const::hc_mev_fm*
+		(cu.convert("kg","1/fm",o2scl_mks::mass_proton)-Ye_tmp*
+		 cu.convert("kg","1/fm",o2scl_mks::mass_proton)-
+		 (1.0-Ye_tmp)*cu.convert("kg","MeV",o2scl_mks::mass_neutron));
+	      Fint.set(k,j,i,Fint_new);
+	    } else if (ell==5) {
+	      // The internal energy in the table is stored with respect
+	      // to the atomic mass, so we rescale it
+	      double Eint_tmp=t.interp(1,grid[k],ell);
+	      double Ye_tmp=Eint.get_grid(1,j);
+	      double Eint_new=Eint_tmp+
+		(cu.convert("kg","MeV",o2scl_mks::unified_atomic_mass)-
+		 Ye_tmp*cu.convert("kg","MeV",o2scl_mks::mass_proton)-
+		 (1.0-Ye_tmp)*cu.convert("kg","MeV",o2scl_mks::mass_neutron));
+	      Eint.set(k,j,i,Eint_new);
+	    } else if (ell==6) {
+	      Sint.set(k,j,i,t.interp(1,grid[k],ell));
+	    } else if (ell==7) {
+	      A.set(k,j,i,t.interp(1,grid[k],ell));
+	    } else if (ell==8) {
+	      Z.set(k,j,i,t.interp(1,grid[k],ell));
+	    } else if (ell==9) {
+	      // Nucleon effective mass
+	      other[4].set(k,j,i,t.interp(1,grid[k],ell));
+	    } else if (ell==10) {
+	      Xn.set(k,j,i,t.interp(1,grid[k],ell));
+	    } else if (ell==11) {
+	      Xp.set(k,j,i,t.interp(1,grid[k],ell));
+	    } else if (ell==12) {
+	      Xalpha.set(k,j,i,t.interp(1,grid[k],ell));
+	    } else if (ell==13) {
+	      Xnuclei.set(k,j,i,t.interp(1,grid[k],ell));
+	    } else if (ell==14) {
+	      Pint.set(k,j,i,t.interp(1,grid[k],ell));
+	    } else if (ell==15) {
+	      mun.set(k,j,i,t.interp(1,grid[k],ell));
+	    } else if (ell==16) {
+	      mup.set(k,j,i,t.interp(1,grid[k],ell));
+	    } else if (ell==16) {
+	      other[5].set(k,j,i,t.interp(1,grid[k],ell));
+	    } 
+	    if (k>=n_nB || j>=n_Ye || i>=n_T) {
+	      loaded=false;
+	      O2SCL_ERR2("Index problem in ",
+			 "eos_sn_stos::load().",exc_einval);
+	    }
 	  }
 	}
       }
 
-      // Read the blank line between sections
-      getline(fin,tstr);
+      if (mode!=fyss_mode) {
+	// Read the blank line between sections
+	getline(fin,tstr);
+      }
     }
   }
 
@@ -1431,7 +1517,7 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
   set_interp_type(itp_linear);
 
   // Double check the grid 
-  if (check_grid) {
+  if (mode!=fyss_mode && check_grid) {
     if (verbose>0) {
       std::cout << "Checking grid in eos_sn_stos::load(). " << std::endl;
     }

@@ -279,7 +279,7 @@ protected:
     }
     
     ls.verbose=verbose;
-    ls.load(fname);
+    ls.load(fname,0);
     genp=&ls;
     return 0;
 
@@ -316,22 +316,37 @@ protected:
   int stos_fun(std::vector<std::string> &sv, bool itive_com) {
 
     string fname=directory;
-
+    size_t mode=0;
+    
     if (sv[1]=="stos") {
       fname+="eos1.tab";
       name="stos";
-    } else if (sv[1]=="stos") {
+    } else if (sv[1]=="stos2") {
       fname+="eos2.tab";
       name="stos";
-    } else if (sv[1]=="stos") {
+    } else if (sv[1]=="stos3") {
       fname+="eos3.tab";
       name="stos";
+    } else if (sv[1]=="fyss") {
+      cloud_file cf;
+      cf.verbose=2;
+      std::string sha=((std::string)"47d357600d875a2a24fbfb7b8064602")+
+	"5434398a42113ffdf1f9121e32d9bdabb";
+      cf.hash_type=cloud_file::sha256;
+      cf.get_file_hash
+	("FYSS_ver_1_27.tab",
+	 ((string)"https://isospin.roam.utk.edu/")+
+	 "public_data/eos_tables/stos/"+
+	 "FYSS_ver_1_27.tab",sha,directory);
+      name="fyss";
+      mode=eos_sn_stos::fyss_mode;
+      fname=directory+"FYSS_ver_1_27.tab";
     } else {
       O2SCL_ERR("Need EOS type.",exc_efailed);
     }
     
     stos.verbose=verbose;
-    stos.load(fname,0);
+    stos.load(fname,mode);
     genp=&stos;
     
     return 0;
@@ -447,7 +462,8 @@ protected:
       genp->relf.nit->tol_rel=1.0e-11;
       genp->relf.density_root->tol_rel=1.0e-10;
 
-      genp->compute_eg_point(nB,Ye,T,th);
+      double mue;
+      genp->compute_eg_point(nB,Ye,T,th,mue);
     }
 
     if (genp->data_with_leptons()==false) {

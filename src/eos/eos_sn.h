@@ -724,6 +724,7 @@ namespace o2scl {
 
     static const size_t orig_mode=0;
     static const size_t quark_mode=1;
+    static const size_t fyss_mode=2;
 
     /// If true, check the grid after load() (default true)
     bool check_grid;
