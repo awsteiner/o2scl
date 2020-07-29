@@ -24,7 +24,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/lib_settings.h>
-#include <o2scl/hdf_io.h>
+#include <o2scl/cloud_file.h>
 
 using namespace std;
 using namespace o2scl;
@@ -978,6 +978,237 @@ double eos_sn_ls::check_eg() {
   return sum/count;
 }
 
+void eos_sn_oo::load_auto(std::string model, std::string directory) {
+
+  string fname, name;
+
+  // Initialize to zero to prevent uninitialized variable errors
+  size_t mode=0;
+
+  if (model=="fsu17") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"57aec0f5011caf0333fc93ea818c786b0e2")+
+      "180e975425e1f4d90a3458b46f131";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash
+      ("GShenFSU_1.7EOS_rho280_temp180_ye52_version_1.1_20120817.h5",
+       ((string)"https://isospin.roam.utk.edu/")+
+       "public_data/eos_tables/scollapse/GShenFSU_1.7EOS_rho280_"+
+       "temp180_ye52_version_1.1_20120817.h5",sha,directory);
+    name="fsu17";
+    mode=eos_sn_oo::sht_mode;
+    fname=directory+
+      "/GShenFSU_1.7EOS_rho280_temp180_ye52_version_1.1_20120817.h5";
+  } else if (model=="fsu21") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"cdf857d69884f2661c857c6bcce501af75d")+
+      "48e51bb14a5fab89872df5ed834f6";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash(((string)"GShenFSU_2.1EOS_rho280_temp180_")+
+		     "ye52_version_1.1_20120824.h5",
+		     ((string)"https://isospin.roam.utk.edu/public")+
+		     "_data/eos_tables/scollapse/GShenFSU_2.1EOS_"+
+		     "rho280_temp180_ye52_version_1.1_20120824.h5",
+		     sha,directory);
+    name="fsu21";
+    mode=eos_sn_oo::sht_mode;
+    fname=directory+
+      "/GShenFSU_2.1EOS_rho280_temp180_ye52_version_1.1_20120824.h5";
+  } else if (model=="sht_nl3") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"982cd2249e08895a3580dc4969ab79add72")+
+      "d1d7ce4464e946c18f9950edb7bfe";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash(((string)"GShen_NL3EOS_rho280_temp180_ye52_")+
+		     "version_1.1_20120817.h5",
+		     ((string)"https://isospin.roam.utk.edu/")+
+		     "public_data/eos_tables/scollapse/GShen_NL3EOS_"+
+		     "rho280_temp180_ye52_version_1.1_20120817.h5",
+		     sha,directory);
+    name="sht_nl3";
+    mode=eos_sn_oo::sht_mode;
+    fname=directory+
+      "/GShen_NL3EOS_rho280_temp180_ye52_version_1.1_20120817.h5";
+  } else if (model=="stos") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"3b7c598bf56ec12d734e13a97daf1eeb1f5")+
+      "8f59849c5f65c4f9f72dd292b177c";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash("HShenEOS_rho220_temp180_ye65_version_1.1_20120817.h5",
+		     ((string)"https://isospin.roam.utk.edu/")+
+		     "public_data/eos_tables/scollapse/HShenEOS_rho220_"+
+		     "temp180_ye65_version_1.1_20120817.h5",
+		     sha,directory);
+    name="stos";
+    mode=eos_sn_oo::stos_mode;
+    fname=directory+"/HShenEOS_rho220_temp180_ye65_version_1.1_20120817.h5";
+  } else if (model=="stos_hyp") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"");
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash("",
+		     ((string)"https://isospin.roam.utk.edu/")+
+		     "public_data/eos_tables/scollapse/",
+		     sha,directory);
+    name="stos_hyp";
+    mode=eos_sn_oo::stos_mode;
+    fname=directory+
+      "/HShen_HyperonEOS_rho220_temp180_ye65_version_1.1_20131007.h5";
+  } else if (model=="dd2") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"");
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash("",
+		     ((string)"https://isospin.roam.utk.edu/")+
+		     "public_data/eos_tables/scollapse/",
+		     sha,directory);
+    name="dd2";
+    mode=eos_sn_oo::hfsl_mode;
+    fname=directory+
+      "/Hempel_DD2EOS_rho234_temp180_ye60_version_1.1_20120817.h5";
+  } else if (model=="fsg") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"");
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash("",
+		     ((string)"https://isospin.roam.utk.edu/")+
+		     "public_data/eos_tables/scollapse/",
+		     sha,directory);
+    name="fsg";
+    mode=eos_sn_oo::hfsl_mode;
+    fname=directory+
+      "/Hempel_FSGEOS_rho234_temp180_ye60_version_1.1_20120817.h5";
+  } else if (model=="hfsl_nl3") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"");
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash("",
+		     ((string)"https://isospin.roam.utk.edu/")+
+		     "public_data/eos_tables/scollapse/",
+		     sha,directory);
+    name="hfsl_nl3";
+    mode=eos_sn_oo::hfsl_mode;
+    fname=directory+
+      "/Hempel_NL3EOS_rho234_temp180_ye60_version_1.1_20120817.h5";
+  } else if (model=="sfho") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"82a4acd670189917800567f6b75bb2a")+
+      "3605f6ae7f9068215a1eec0acf924cb3d";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash("_",((string)"https://isospin.roam.utk.edu/")+
+		     "public_data/eos_tables/scollapse/Hempel_SFHo"+
+		     "EOS_rho222_temp180_ye60_version_1.1_20120817.h5",
+		     sha,directory);
+    name="sfho";
+    mode=eos_sn_oo::hfsl_mode;
+    fname=directory+
+      "/Hempel_SFHoEOS_rho222_temp180_ye60_version_1.1_20120817.h5";
+  } else if (model=="sfhx") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"8651770ee78fb3dede5af1fe0cec33d6")+
+      "bfc86ef2bd8505ab99db4d31f236fc44";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash(((string)"Hempel_SFHxEOS_rho234_temp180_ye60_")+
+		     "version_1.1_20120817.h5",
+		     ((string)"https://isospin.roam.utk.edu/")+
+		     "public_data/eos_tables/scollapse/Hempel_SFHx"+
+		     "EOS_rho234_temp180_ye60_version_1.1_20120817.h5",
+		     sha,directory);
+    name="sfhx";
+    mode=eos_sn_oo::hfsl_mode;
+    fname=directory+
+      "/Hempel_SFHxEOS_rho234_temp180_ye60_version_1.1_20120817.h5";
+  } else if (model=="tm1") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"");
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash("",
+		     ((string)"https://isospin.roam.utk.edu/")+
+		     "public_data/eos_tables/scollapse/",
+		     sha,directory);
+    name="tm1";
+    mode=eos_sn_oo::hfsl_mode;
+    fname=directory+
+      "/Hempel_TM1EOS_rho234_temp180_ye60_version_1.1_20120817.h5";
+  } else if (model=="tma") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"");
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash("",
+		     ((string)"https://isospin.roam.utk.edu/")+
+		     "public_data/eos_tables/scollapse/",
+		     sha,directory);
+    name="tma";
+    mode=eos_sn_oo::hfsl_mode;
+    fname=directory+
+      "/Hempel_TMAEOS_rho234_temp180_ye60_version_1.1_20120817.h5";
+  } else if (model=="ls180") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"3172f0f7b542fa1bd2e7a46f1b2e62c848f")+
+      "0d9a979e546902ad3f3b6285e27ca";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
+		     ((string)"https://isospin.roam.utk.edu/")+
+		     "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
+		     "analmu_20091212_SVNr26.h5",sha,directory);
+    name="ls180";
+    mode=eos_sn_oo::ls_mode;
+    fname=directory+"/LS180_234r_136t_50y_analmu_20091212_SVNr26.h5";
+  } else if (model=="ls220") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"d8c4d4f1315942a663e96fc6452f66d90fc")+
+      "87f283e0ed552c8141d1ddba34c19";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash("LS220_234r_136t_50y_analmu_20091212_SVNr26.h5",
+		     ((string)"https://isospin.roam.utk.edu/")+
+		     "public_data/eos_tables/scollapse/LS220_234r_136t_50y_"+
+		     "analmu_20091212_SVNr26.h5",sha,directory);
+    name="ls220";
+    mode=eos_sn_oo::ls_mode;
+    fname=directory+"/LS220_234r_136t_50y_analmu_20091212_SVNr26.h5";
+  } else if (model=="ls375") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"13d31df4944b968f1de799e5fc37881eae9")+
+      "8cd3f2d3bc14648698661cef35bdd";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash("LS375_234r_136t_50y_analmu_20091212_SVNr26.h5",
+		     ((string)"https://isospin.roam.utk.edu/")+
+		     "public_data/eos_tables/scollapse/LS375_234r_136t_50y_"+
+		     "analmu_20091212_SVNr26.h5",sha,directory);
+    name="ls375";
+    mode=eos_sn_oo::ls_mode;
+    fname=directory+"/LS375_234r_136t_50y_analmu_20091212_SVNr26.h5";
+  } else if (model=="acmp_apr_sna") {
+    mode=eos_sn_oo::sht_mode;
+    fname="APR_0000_rho393_temp133_ye66_gitM180edd5_20190225.h5";
+  } else if (model=="acmp_apr_nse") {
+    mode=eos_sn_oo::sht_mode;
+    fname="APR_0000_rho393_temp133_ye66_gitM180edd5_20190225.h5";
+  } else {
+    O2SCL_ERR("Need EOS type.",exc_efailed);
+  }
+    
+  load(fname,mode);
+    
+  return;
+
+}
+
 void eos_sn_oo::load(std::string fname, size_t mode) {
   
   wordexp_single_file(fname);
@@ -1235,6 +1466,30 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
   return;
 }
 
+void eos_sn_stos::load_auto(std::string model, std::string directory) {
+  size_t mode;
+  std::string fname;
+  if (model=="fyss") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"47d357600d875a2a24fbfb7b8064602")+
+      "5434398a42113ffdf1f9121e32d9bdabb";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash
+      ("FYSS_ver_1_27.tab",
+       ((string)"https://isospin.roam.utk.edu/")+
+       "public_data/eos_tables/stos/"+
+       "FYSS_ver_1_27.tab",sha,directory);
+    mode=eos_sn_stos::fyss_mode;
+    fname=directory+"FYSS_ver_1_27.tab";
+  } else {
+    O2SCL_ERR("Need EOS type.",exc_efailed);
+  }
+  
+  load(fname,mode);
+  return;
+}
+
 void eos_sn_stos::load(std::string fname, size_t mode) {
 
   wordexp_single_file(fname);
@@ -1275,7 +1530,8 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
   if (fyss_mode) {
     for(size_t k=0;k<n_nB;k++) {
       double gcm3=pow(10.0,5.1+((double)k)*0.1);
-      // Computed with "acol -set precision 10 -get-conv g/cm^3 MeV/fm^3"
+      // AWS 7/28/2020: Computed with "acol -set precision 10
+      // -get-conv g/cm^3 MeV/fm^3"
       double MeVfm3=gcm3*5.6095886038e-13;
       grid.push_back(MeVfm3/939.0);
       cout << k << " " << n_nB << " " << gcm3 << endl;
@@ -1982,3 +2238,83 @@ void eos_sn_hfsl::load(std::string fname, size_t mode) {
 
   return;
 }
+
+void eos_sn_native::load(std::string fname, size_t mode) {
+
+  if (verbose>0) {
+    cout << "eos_sn_native::load(): Load file named '"
+	 << fname << "'." << endl;
+  }
+  
+  hdf_file hf;
+
+  hf.open_or_create(fname);
+
+  // Grid
+  hf.get_szt("n_nB",n_nB);
+  hf.get_szt("n_Ye",n_Ye);
+  hf.get_szt("n_T",n_T);
+  hf.getd_vec("nB_grid",nB_grid);
+  hf.getd_vec("Ye_grid",Ye_grid);
+  hf.getd_vec("T_grid",T_grid);
+
+  // Flags
+  int itmp;
+  hf.geti("baryons_only",itmp);
+  if (itmp>=1) baryons_only_loaded=true;
+  else baryons_only_loaded=false;
+  hf.geti("with_leptons",itmp);
+  if (itmp>=1) with_leptons_loaded=true;
+  else with_leptons_loaded=false;
+  hf.geti("include_muons",itmp);
+  if (itmp>=1) include_muons=true;
+  else include_muons=false;
+  
+  if (with_leptons_loaded) {
+    hdf_input(hf,F,"F");
+    hdf_input(hf,E,"E");
+    hdf_input(hf,P,"P");
+    hdf_input(hf,S,"S");
+  }
+  if (baryons_only_loaded) {
+    hdf_input(hf,Fint,"Fint");
+    hdf_input(hf,Eint,"Eint");
+    hdf_input(hf,Pint,"Pint");
+    hdf_input(hf,Sint,"Sint");
+  }
+
+  // Chemical potentials
+  hdf_input(hf,mun,"mun");
+  hdf_input(hf,mup,"mup");
+
+  // Composition
+  hdf_input(hf,Z,"Z");
+  hdf_input(hf,A,"A");
+  hdf_input(hf,Xn,"Xn");
+  hdf_input(hf,Xp,"Xp");
+  hdf_input(hf,Xnuclei,"Xnuclei");
+  hdf_input(hf,Xalpha,"Xalpha");
+  
+  // Nucleon masses
+  hf.getd("m_neut",m_neut);
+  hf.getd("m_prot",m_prot);
+
+  // Other data 
+  hf.get_szt("n_oth",n_oth);
+  if (n_oth>0) {
+    hf.gets_vec("oth_names",oth_names);
+    hf.gets_vec("oth_units",oth_units);
+    for(size_t i=0;i<n_oth;i++) {
+      hdf_input(hf,other[i],oth_names[i]);
+    }
+  }
+  
+  hf.close();
+
+  if (verbose>0) {
+    cout << "eos_sn_native::load(): Done with load." << endl;
+  }
+
+  return;
+}
+

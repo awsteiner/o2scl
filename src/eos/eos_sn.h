@@ -169,7 +169,7 @@ namespace o2scl {
 
 	By default this is relative to the neutron mass in
 	\ref m_neut .
-     */
+    */
     tensor_grid3<> mun;
     /** \brief Proton chemical potential in MeV
 
@@ -255,7 +255,7 @@ namespace o2scl {
     /** \brief Compute lepton contribution at one point
 
 	The temperature is to be specified in \c MeV.
-     */
+    */
     virtual void compute_eg_point(double nB, double Ye, double T,
 				  thermo &th, double &mue);
 
@@ -291,7 +291,7 @@ namespace o2scl {
 	The temperature is returned in units of MeV.
     */
     virtual void beta_eq_sfixed
-      (double nB, double entr, double &Ye, double &T);
+    (double nB, double entr, double &Ye, double &T);
 
     /** \brief Compute the electron fraction for beta-equilibrium
 	at fixed density and temperature 
@@ -375,61 +375,61 @@ namespace o2scl {
       /** \brief The interpolation object
        */
       interp2_direct<ubvector,data_t,matrix_row_gen<data_t>,
-	matrix_column_gen<data_t> > it;
+		     matrix_column_gen<data_t> > it;
       
       /** \brief Set the slice to correspond to a matrix 
 	  in the form \f$ (n_B,T) \f$
-       */
+      */
       void set_nB_T(tensor_grid3<> &tg3, size_t iYe) {
 	/*
-	data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
-		       (&tensor_grid3<>::get),tg3,std::placeholders::_1,iYe,
-		       std::placeholders::_2);
-	size_t nx=tg3.get_size(0);
-	grid_x.resize(nx);
-	for(size_t i=0;i<nx;i++) grid_x[i]=tg3.get_grid(0,i);
-	size_t ny=tg3.get_size(2);
-	grid_y.resize(ny);
-	for(size_t i=0;i<ny;i++) grid_y[i]=tg3.get_grid(2,i);
-	it.set_data(nx,ny,grid_x,grid_y,data);
+	  data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
+	  (&tensor_grid3<>::get),tg3,std::placeholders::_1,iYe,
+	  std::placeholders::_2);
+	  size_t nx=tg3.get_size(0);
+	  grid_x.resize(nx);
+	  for(size_t i=0;i<nx;i++) grid_x[i]=tg3.get_grid(0,i);
+	  size_t ny=tg3.get_size(2);
+	  grid_y.resize(ny);
+	  for(size_t i=0;i<ny;i++) grid_y[i]=tg3.get_grid(2,i);
+	  it.set_data(nx,ny,grid_x,grid_y,data);
 	*/
 	return;
       }
       
       /** \brief Set the slice to correspond to a matrix 
 	  in the form \f$ (n_B,Y_e) \f$
-       */
+      */
       void set_nB_Ye(tensor_grid3<> &tg3, size_t iT) {
 	/*
-	data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
-		       (&tensor_grid3<>::get),tg3,std::placeholders::_1,
-		       std::placeholders::_2,iT);
-	size_t nx=tg3.get_size(0);
-	grid_x.resize(nx);
-	for(size_t i=0;i<nx;i++) grid_x[i]=tg3.get_grid(0,i);
-	size_t ny=tg3.get_size(1);
-	grid_y.resize(ny);
-	for(size_t i=0;i<ny;i++) grid_y[i]=tg3.get_grid(1,i);
-	it.set_data(nx,ny,grid_x,grid_y,data);
+	  data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
+	  (&tensor_grid3<>::get),tg3,std::placeholders::_1,
+	  std::placeholders::_2,iT);
+	  size_t nx=tg3.get_size(0);
+	  grid_x.resize(nx);
+	  for(size_t i=0;i<nx;i++) grid_x[i]=tg3.get_grid(0,i);
+	  size_t ny=tg3.get_size(1);
+	  grid_y.resize(ny);
+	  for(size_t i=0;i<ny;i++) grid_y[i]=tg3.get_grid(1,i);
+	  it.set_data(nx,ny,grid_x,grid_y,data);
 	*/
 	return;
       }
       
       /** \brief Set the slice to correspond to a matrix 
 	  in the form \f$ (T,Y_e) \f$
-       */
+      */
       void set_T_Ye(tensor_grid3<> &tg3, size_t inB) {
 	/*
-	data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
-		       (&tensor_grid3<>::get),tg3,inB,std::placeholders::_2,
-		       std::placeholders::_1);
-	size_t nx=tg3.get_size(2);
-	grid_x.resize(nx);
-	for(size_t i=0;i<nx;i++) grid_x[i]=tg3.get_grid(2,i);
-	size_t ny=tg3.get_size(1);
-	grid_y.resize(ny);
-	for(size_t i=0;i<ny;i++) grid_y[i]=tg3.get_grid(1,i);
-	it.set_data(nx,ny,grid_x,grid_y,data);
+	  data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
+	  (&tensor_grid3<>::get),tg3,inB,std::placeholders::_2,
+	  std::placeholders::_1);
+	  size_t nx=tg3.get_size(2);
+	  grid_x.resize(nx);
+	  for(size_t i=0;i<nx;i++) grid_x[i]=tg3.get_grid(2,i);
+	  size_t ny=tg3.get_size(1);
+	  grid_y.resize(ny);
+	  for(size_t i=0;i<ny;i++) grid_y[i]=tg3.get_grid(1,i);
+	  it.set_data(nx,ny,grid_x,grid_y,data);
 	*/
 	return;
       }
@@ -532,8 +532,8 @@ namespace o2scl {
     tensor_grid3<> &mu;
     //@}
 
-  eos_sn_ls() :
-    fill(other[0]),
+    eos_sn_ls() :
+      fill(other[0]),
       nb_in(other[1]),
       dPdn(other[2]),
       dPdT(other[3]),
@@ -592,8 +592,8 @@ namespace o2scl {
 
   public:
     
-  eos_sn_oo() :
-    cs2(other[0]),
+    eos_sn_oo() :
+      cs2(other[0]),
       dedt(other[1]),
       dpderho(other[2]),
       dpdrhoe(other[3]),
@@ -654,6 +654,9 @@ namespace o2scl {
     /// Load table from filename \c fname with mode \c mode
     virtual void load(std::string fname, size_t mode);
 
+    /// Desc
+    virtual void load_auto(std::string model, std::string directory);
+    
   };
 
   /** \brief The H. Shen et al. supernova EOS
@@ -710,8 +713,8 @@ namespace o2scl {
     tensor_grid3<> &quark_frac;
     //@}
 
-  eos_sn_stos() :
-    log_rho(other[0]),
+    eos_sn_stos() :
+      log_rho(other[0]),
       nB(other[1]),
       log_Y(other[2]),
       Yp(other[3]),
@@ -731,6 +734,9 @@ namespace o2scl {
 
     /// Load table from filename \c fname with mode \c mode
     virtual void load(std::string fname, size_t mode);
+
+    /// Desc
+    virtual void load_auto(std::string model, std::string directory);
 
   };
 
@@ -804,8 +810,8 @@ namespace o2scl {
     tensor_grid3<> &M_star;
     //@}
     
-  eos_sn_sht() :
-    T(other[0]),
+    eos_sn_sht() :
+      T(other[0]),
       Yp(other[1]),
       nB(other[2]),
       mue(other[3]),
@@ -883,8 +889,8 @@ namespace o2scl {
     /// If true, check the grid after load() (default true)
     bool check_grid;
 
-  eos_sn_hfsl() :
-    log_rho(other[0]),
+    eos_sn_hfsl() :
+      log_rho(other[0]),
       nB(other[1]),
       log_Y(other[2]),
       Yp(other[3]),
@@ -901,6 +907,161 @@ namespace o2scl {
     virtual void load(std::string fname, size_t mode=0);
     
   };
+
+  class eos_sn_compose : public eos_sn_base {
+  
+  public:
+  
+    eos_sn_compose() {
+    }
+  
+    /// Load table from filename \c fname with mode \c mode
+    virtual void load() {
+    
+      //wordexp_single_file(fname);
+
+      std::vector<double> grid;
+    
+      std::ifstream fin("eos.nb");
+      int n_nB;
+      // the first entry is ignored
+      fin >> n_nB >> n_nB;
+      nB_grid.resize(n_nB);
+      for(int j=0;j<n_nB;j++) {
+	fin >> nB_grid[j];
+	grid.push_back(nB_grid[j]);
+      }
+      fin.close();
+    
+      std::ifstream fin2("eos.yq");
+      int n_Ye;
+      // the first entry is ignored
+      fin2 >> n_Ye >> n_Ye;
+      Ye_grid.resize(n_Ye);
+      for(int j=0;j<n_Ye;j++) {
+	fin2 >> Ye_grid[j];
+	grid.push_back(Ye_grid[j]);
+      }
+      fin2.close();
+    
+      std::ifstream fin3("eos.t");
+      int n_T;
+      // the first entry is ignored
+      fin3 >> n_T >> n_T;
+      T_grid.resize(n_T);
+      for(int j=0;j<n_T;j++) {
+	fin3 >> T_grid[j];
+	grid.push_back(T_grid[j]);
+      }
+      fin3.close();
+
+      alloc();
+    
+      for(size_t i=0;i<n_base+n_oth;i++) {
+	arr[i]->set_grid_packed(grid);
+      }
+
+      std::ifstream fin4("eos.thermo");
+      fin4 >> m_neut;
+      fin4 >> m_prot;
+    
+      double dtemp, dtemp2;
+      for(int m=0;m<n_T;m++) {
+	for(int k=0;k<n_Ye;k++) {
+	  for(int j=0;j<n_nB;j++) {
+	  
+	    // Skip the grid points since we know them already
+	    fin4 >> dtemp;
+	    fin4 >> dtemp;
+	    fin4 >> dtemp;
+	  
+	    fin4 >> dtemp;
+	    P.set(j,k,m,dtemp*nB_grid[j]);
+	    fin4 >> dtemp;
+	    S.set(j,k,m,dtemp);
+	  
+	    fin4 >> dtemp;
+	    mun.set(j,k,m,(dtemp+1.0)*m_neut);
+	    fin4 >> dtemp2;
+	    mup.set(j,k,m,dtemp2*m_neut+(dtemp+1.0)*m_neut);
+	    // Skip the lepton chemical potential
+	    fin4 >> dtemp;
+	  
+	    fin4 >> dtemp;
+	    F.set(j,k,m,(dtemp+1.0)*nB_grid[j]*m_neut);
+	    fin4 >> dtemp;
+	    E.set(j,k,m,(dtemp+1.0)*nB_grid[j]*m_neut);
+
+	    // Skip the last column
+	    fin4 >> dtemp;
+	  }
+	}
+      }
+      fin4.close();
+
+      std::ifstream fin5("eos.compo");
+    
+      for(int m=0;m<n_T;m++) {
+	for(int k=0;k<n_Ye;k++) {
+	  for(int j=0;j<n_nB;j++) {
+	  
+	    // Skip the grid points since we know them already
+	    fin5 >> dtemp;
+	    fin5 >> dtemp;
+	    fin5 >> dtemp;
+
+	    fin5 >> dtemp;
+	    fin5 >> dtemp;
+	    fin5 >> dtemp;
+	    fin5 >> dtemp;
+	    fin5 >> dtemp;
+	    fin5 >> dtemp;
+	  
+	    // This isn't right yet
+	    fin5 >> dtemp;
+	    A.set(j,k,m,dtemp);
+	    fin5 >> dtemp;
+	    Z.set(j,k,m,dtemp);
+	  
+	    // Skip the last column
+	    fin5 >> dtemp;
+	  }
+	}
+      }
+      fin5.close();
+
+      // Loaded must be set to true before calling set_interp()
+      n_oth=0;
+      loaded=true;
+      with_leptons_loaded=true;
+      baryons_only_loaded=false;
+    
+      if (n_oth!=oth_names.size()) {
+	O2SCL_ERR2("Number of names does not match number of data sets ",
+		   "in eos_sn_oo::load().",exc_efailed);
+      }
+    
+      // It is important that 'loaded' is set to true before the call to
+      // set_interp_type().
+      set_interp_type(itp_linear);
+    
+      if (verbose>0) {
+	std::cout << "Done in eos_sn_compose::load()." << std::endl;
+      }
+    
+      return;
+    }
+  
+  };
+
+  class eos_sn_native : public eos_sn_base {
+
+  public:
+
+    virtual void load(std::string fname, size_t mode);
+
+  };
+
   
 #ifndef DOXYGEN_NO_O2NS
 }
