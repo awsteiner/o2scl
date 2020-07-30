@@ -1493,9 +1493,24 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
 }
 
 void eos_sn_stos::load_auto(std::string model, std::string directory) {
-  size_t mode;
+  size_t mode=orig_mode;
   std::string fname;
-  if (model=="fyss") {
+  if (model=="stos") {
+    cloud_file cf;
+    cf.verbose=2;
+    //std::string sha=((std::string)"a7c34b355df12adc7aa8ca369e1")+
+    //"6d40cbd7e04a0faf6d80d58e788d1610e45bf";
+    std::string sha=((std::string)"fe0d7dc0940c9a2d5b7cc200f5d6")+
+      "2c49a8e37f42cb51101e7fb7adf466ab2c9a";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash
+      ("eos1.tab",
+       ((string)"https://isospin.roam.utk.edu/")+
+       "public_data/eos_tables/stos/"+
+       "eos1.tab",sha,directory);
+    mode=orig_mode;
+    fname=directory+"/eos1.tab";
+  } else if (model=="fyss") {
     cloud_file cf;
     cf.verbose=2;
     std::string sha=((std::string)"47d357600d875a2a24fbfb7b8064602")+
@@ -1506,7 +1521,7 @@ void eos_sn_stos::load_auto(std::string model, std::string directory) {
        ((string)"https://isospin.roam.utk.edu/")+
        "public_data/eos_tables/stos/"+
        "FYSS_ver_1_27.tab",sha,directory);
-    mode=eos_sn_stos::fyss_mode;
+    mode=fyss_mode;
     fname=directory+"/FYSS_ver_1_27.tab";
   } else {
     O2SCL_ERR("Need EOS type.",exc_efailed);
