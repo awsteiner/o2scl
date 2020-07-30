@@ -144,13 +144,20 @@ void eos_sn_base::output(std::string fname) {
   // Other data 
   hf.set_szt("n_oth",n_oth);
   if (n_oth>0) {
+    if (oth_names.size()!=n_oth ||
+	oth_units.size()!=n_oth) {
+      cout << oth_names.size() << " "
+	   << oth_units.size() << " " << n_oth << endl;
+      O2SCL_ERR("Lists oth_names or oth_units don't match n_oth.",
+		o2scl::exc_einval);
+    }
     hf.sets_vec("oth_names",oth_names);
     hf.sets_vec("oth_units",oth_units);
     for(size_t i=0;i<n_oth;i++) {
       hdf_output(hf,other[i],oth_names[i]);
     }
   }
-  
+
   hf.close();
 
   if (verbose>0) {
@@ -1535,7 +1542,23 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
   n_T=31;
   n_Ye=71;
   n_oth=5;
-  if (mode==quark_mode) n_oth++;
+  oth_names.clear();
+  oth_names.push_back("oth1");
+  oth_names.push_back("oth2");
+  oth_names.push_back("oth3");
+  oth_names.push_back("oth4");
+  oth_names.push_back("oth5");
+  oth_units.clear();
+  oth_units.push_back("");
+  oth_units.push_back("");
+  oth_units.push_back("");
+  oth_units.push_back("");
+  oth_units.push_back("");
+  if (mode==quark_mode) {
+    n_oth++;
+    oth_names.push_back("oth6");
+    oth_units.push_back("");
+  }
   if (mode==fyss_mode) {
     n_nB=110;
     n_Ye=65;
@@ -1546,6 +1569,7 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
 
   std::vector<double> grid;
 
+  nB_grid.clear();
   if (mode==fyss_mode) {
     for(size_t k=0;k<n_nB;k++) {
       double gcm3=pow(10.0,5.1+((double)k)*0.1);
@@ -1553,7 +1577,8 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
       // -get-conv g/cm^3 MeV/fm^3"
       double MeVfm3=gcm3*5.6095886038e-13;
       grid.push_back(MeVfm3/939.0);
-      cout << k << " " << n_nB << " " << gcm3 << endl;
+      nB_grid.push_back(MeVfm3/939.0);
+      //cout << k << " " << n_nB << " " << gcm3 << endl;
     }
   } else {
     for(size_t k=0;k<n_nB;k++) {
@@ -1562,24 +1587,29 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
     }
   }
 
+  Ye_grid.clear();
   if (mode==fyss_mode) {
     for(size_t j=0;j<n_Ye;j++) {
       grid.push_back(0.01*((double)j)+0.01);
-      cout << j << " " << n_Ye << " " << 0.01*((double)j)+0.01 << endl;
+      //cout << j << " " << n_Ye << " " << 0.01*((double)j)+0.01 << endl;
+      Ye_grid.push_back(0.01*((double)j)+0.01);
     }
   } else {
     for(size_t j=0;j<n_Ye;j++) {
       double ye_temp=pow(10.0,((double)j)*0.025-2.0);
       grid.push_back(ye_temp);
+      Ye_grid.push_back(ye_temp);
     }
   }
 
+  T_grid.clear();
   if (mode==fyss_mode) {
     for(size_t i=0;i<n_T;i++) {
       double log10T=-1.0+((double)i)*0.04;
       grid.push_back(pow(10.0,log10T));
-      cout << i << " " << n_T << " " << log10T << " "
-	   << pow(10.0,log10T) << endl;
+      //cout << i << " " << n_T << " " << log10T << " "
+      //<< pow(10.0,log10T) << endl;
+      T_grid.push_back(pow(10.0,log10T));
     }
   } else {
     // Temperature grid from Matthias Hempel
@@ -1620,13 +1650,13 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
     double tptr;
     if (mode==fyss_mode) {
       fin >> tstr;
-      cout << "1. " << tstr << endl;
+      //cout << "1. " << tstr << endl;
       fin >> tstr;
-      cout << "2. " << tstr << endl;
+      //cout << "2. " << tstr << endl;
       fin >> tstr;
-      cout << "3. " << tstr << endl;
+      //cout << "3. " << tstr << endl;
       fin >> tstr;
-      cout << "4. " << tstr << endl;
+      //cout << "4. " << tstr << endl;
       fin >> tptr;
     } else {
       if (i!=0) {
@@ -1645,40 +1675,33 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
     getline(fin,tstr);
     
     for(size_t j=0;j<n_Ye;j++) {
-      cout << "Herej: " << j << endl;
+      //cout << "Herej: " << j << endl;
       
       for(size_t k=0;k<n_nB;k++) {
-	cout << "Herek: " << k << endl;
+	//cout << "Herek: " << k << endl;
 	if (mode==fyss_mode) {
 	  fin >> dtemp;
-	  cout << "first: " << dtemp << endl;
 	  fin >> dtemp;
 	  fin >> dtemp;
 	  fin >> dtemp;
-	  cout << "H1." << endl;
 	  Fint.set(k,j,i,dtemp);
-	  cout << "H2." << endl;
 	  fin >> dtemp;
-	  cout << "H3." << endl;
 	  Eint.set(k,j,i,dtemp);
-	  cout << "H4." << endl;
 	  fin >> dtemp;
-	  cout << "H5." << endl;
 	  Sint.set(k,j,i,dtemp);
-	  cout << "H6." << endl;
 	  fin >> dtemp;
-	  cout << "H7." << endl;
 	  A.set(k,j,i,dtemp);
-	  cout << "H8." << endl;
 	  fin >> dtemp;
-	  cout << "H9." << endl;
 	  Z.set(k,j,i,dtemp);
-	  cout << "H10." << endl;
-	  cout << nB_grid[k] << " " << Ye_grid[j] << " "
-	       << T_grid[i] << " " << A.get(k,j,i) << " "
-	       << Z.get(k,j,i) << endl;
-	  char ch;
-	  cin >> ch;
+	  /*
+	    cout << nB_grid[k] << " ";
+	    cout << Ye_grid[j] << " ";
+	    cout << T_grid[i] << " ";
+	    cout << A.get(k,j,i) << " ";
+	    cout << Z.get(k,j,i) << endl;
+	    char ch;
+	    cin >> ch;
+	  */
 	  fin >> dtemp;
 	  fin >> dtemp;
 	  Xn.set(k,j,i,dtemp);
