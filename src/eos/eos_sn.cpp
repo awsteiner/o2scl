@@ -1193,6 +1193,19 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
     name="ls375";
     mode=eos_sn_oo::ls_mode;
     fname=directory+"/LS375_234r_136t_50y_analmu_20091212_SVNr26.h5";
+  } else if (model=="sro_NRAPR") {
+    cloud_file cf;
+    cf.verbose=2;
+    std::string sha=((std::string)"b5f78141942c5794c47baa53121099f6")+
+      "7b28450263c2591dbd7f64e7d6671264";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash("NRAPR_3335_rho391_temp163_ye66.h5",
+		     ((string)"https://isospin.roam.utk.edu/")+
+		     "public_data/eos_tables/sro/"+
+		     "NRAPR_3335_rho391_temp163_ye66.h5",sha,directory);
+    name="sro_NRAPR";
+    mode=eos_sn_oo::sht_mode;
+    fname=directory+"/NRAPR_3335_rho391_temp163_ye66.h5";
   } else if (model=="acmp_apr_sna") {
     mode=eos_sn_oo::sht_mode;
     fname="APR_0000_rho393_temp133_ye66_gitM180edd5_20190225.h5";
@@ -1269,7 +1282,8 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
   hf.getd_vec("logrho",rho);
   hf.getd_vec("logtemp",t_grid);
   hf.getd_vec("ye",ye_grid);
-  
+
+  nB_grid.clear();
   for(size_t i=0;i<rho.size();i++) {
     // Undo the log
     rho[i]=pow(10.0,rho[i]);
@@ -1277,12 +1291,17 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
     // atomic mass unit
     double nb=rho[i]/o2scl_cgs::unified_atomic_mass/1.0e39;
     grid.push_back(nb);
+    nB_grid.push_back(nb);
   }
+  Ye_grid.clear();
   for(size_t i=0;i<ye_grid.size();i++) {
     grid.push_back(ye_grid[i]);
+    Ye_grid.push_back(ye_grid[i]);
   }
+  T_grid.clear();
   for(size_t i=0;i<t_grid.size();i++) {
     grid.push_back(pow(10.0,t_grid[i]));
+    T_grid.push_back(pow(10.0,t_grid[i]));
   }
 
   for(size_t i=0;i<n_base+n_oth;i++) {
@@ -1481,7 +1500,7 @@ void eos_sn_stos::load_auto(std::string model, std::string directory) {
        "public_data/eos_tables/stos/"+
        "FYSS_ver_1_27.tab",sha,directory);
     mode=eos_sn_stos::fyss_mode;
-    fname=directory+"FYSS_ver_1_27.tab";
+    fname=directory+"/FYSS_ver_1_27.tab";
   } else {
     O2SCL_ERR("Need EOS type.",exc_efailed);
   }
@@ -1527,7 +1546,7 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
 
   std::vector<double> grid;
 
-  if (fyss_mode) {
+  if (mode==fyss_mode) {
     for(size_t k=0;k<n_nB;k++) {
       double gcm3=pow(10.0,5.1+((double)k)*0.1);
       // AWS 7/28/2020: Computed with "acol -set precision 10
@@ -1543,7 +1562,7 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
     }
   }
 
-  if (fyss_mode) {
+  if (mode==fyss_mode) {
     for(size_t j=0;j<n_Ye;j++) {
       grid.push_back(0.01*((double)j)+0.01);
       cout << j << " " << n_Ye << " " << 0.01*((double)j)+0.01 << endl;
@@ -1555,7 +1574,7 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
     }
   }
 
-  if (fyss_mode) {
+  if (mode==fyss_mode) {
     for(size_t i=0;i<n_T;i++) {
       double log10T=-1.0+((double)i)*0.04;
       grid.push_back(pow(10.0,log10T));
@@ -1599,11 +1618,15 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
   for(size_t i=0;i<n_T;i++) {
 
     double tptr;
-    if (fyss_mode) {
+    if (mode==fyss_mode) {
       fin >> tstr;
+      cout << "1. " << tstr << endl;
       fin >> tstr;
+      cout << "2. " << tstr << endl;
       fin >> tstr;
+      cout << "3. " << tstr << endl;
       fin >> tstr;
+      cout << "4. " << tstr << endl;
       fin >> tptr;
     } else {
       if (i!=0) {
@@ -1620,23 +1643,42 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
     }
 
     getline(fin,tstr);
+    
     for(size_t j=0;j<n_Ye;j++) {
+      cout << "Herej: " << j << endl;
       
       for(size_t k=0;k<n_nB;k++) {
-	if (fyss_mode) {
+	cout << "Herek: " << k << endl;
+	if (mode==fyss_mode) {
+	  fin >> dtemp;
+	  cout << "first: " << dtemp << endl;
 	  fin >> dtemp;
 	  fin >> dtemp;
 	  fin >> dtemp;
-	  fin >> dtemp;
+	  cout << "H1." << endl;
 	  Fint.set(k,j,i,dtemp);
+	  cout << "H2." << endl;
 	  fin >> dtemp;
+	  cout << "H3." << endl;
 	  Eint.set(k,j,i,dtemp);
+	  cout << "H4." << endl;
 	  fin >> dtemp;
+	  cout << "H5." << endl;
 	  Sint.set(k,j,i,dtemp);
+	  cout << "H6." << endl;
 	  fin >> dtemp;
+	  cout << "H7." << endl;
 	  A.set(k,j,i,dtemp);
+	  cout << "H8." << endl;
 	  fin >> dtemp;
+	  cout << "H9." << endl;
 	  Z.set(k,j,i,dtemp);
+	  cout << "H10." << endl;
+	  cout << nB_grid[k] << " " << Ye_grid[j] << " "
+	       << T_grid[i] << " " << A.get(k,j,i) << " "
+	       << Z.get(k,j,i) << endl;
+	  char ch;
+	  cin >> ch;
 	  fin >> dtemp;
 	  fin >> dtemp;
 	  Xn.set(k,j,i,dtemp);

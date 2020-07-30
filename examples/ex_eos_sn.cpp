@@ -169,6 +169,11 @@ protected:
    */
   int stos_fun(std::vector<std::string> &sv, bool itive_com) {
 
+    stos.verbose=verbose;
+    stos.load_auto(sv[1],directory);
+    genp=&stos;
+
+    /*
     string fname=directory;
     size_t mode=0;
     
@@ -202,6 +207,7 @@ protected:
     stos.verbose=verbose;
     stos.load(fname,mode);
     genp=&stos;
+    */
     
     return 0;
 
@@ -372,231 +378,8 @@ protected:
    */
   int oo_fun(std::vector<std::string> &sv, bool itive_com) {
 
-    string fname;
-
-    // Initialize to zero to prevent uninitialized variable errors
-    size_t mode=0;
-
-    if (sv[1]=="fsu17") {
-      cloud_file cf;
-      cf.verbose=2;
-      std::string sha=((std::string)"57aec0f5011caf0333fc93ea818c786b0e2")+
-	"180e975425e1f4d90a3458b46f131";
-      cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash
-	("GShenFSU_1.7EOS_rho280_temp180_ye52_version_1.1_20120817.h5",
-	 ((string)"https://isospin.roam.utk.edu/")+
-	 "public_data/eos_tables/scollapse/GShenFSU_1.7EOS_rho280_"+
-	 "temp180_ye52_version_1.1_20120817.h5",sha,directory);
-      name="fsu17";
-      mode=eos_sn_oo::sht_mode;
-      fname=directory+
-	"/GShenFSU_1.7EOS_rho280_temp180_ye52_version_1.1_20120817.h5";
-    } else if (sv[1]=="fsu21") {
-      cloud_file cf;
-      cf.verbose=2;
-      std::string sha=((std::string)"cdf857d69884f2661c857c6bcce501af75d")+
-	"48e51bb14a5fab89872df5ed834f6";
-      cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash(((string)"GShenFSU_2.1EOS_rho280_temp180_")+
-		       "ye52_version_1.1_20120824.h5",
-		       ((string)"https://isospin.roam.utk.edu/public")+
-		       "_data/eos_tables/scollapse/GShenFSU_2.1EOS_"+
-		       "rho280_temp180_ye52_version_1.1_20120824.h5",
-		       sha,directory);
-      name="fsu21";
-      mode=eos_sn_oo::sht_mode;
-      fname=directory+
-	"/GShenFSU_2.1EOS_rho280_temp180_ye52_version_1.1_20120824.h5";
-    } else if (sv[1]=="sht_nl3") {
-      cloud_file cf;
-      cf.verbose=2;
-      std::string sha=((std::string)"982cd2249e08895a3580dc4969ab79add72")+
-	"d1d7ce4464e946c18f9950edb7bfe";
-      cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash(((string)"GShen_NL3EOS_rho280_temp180_ye52_")+
-		       "version_1.1_20120817.h5",
-		       ((string)"https://isospin.roam.utk.edu/")+
-		       "public_data/eos_tables/scollapse/GShen_NL3EOS_"+
-		       "rho280_temp180_ye52_version_1.1_20120817.h5",
-		       sha,directory);
-      name="sht_nl3";
-      mode=eos_sn_oo::sht_mode;
-      fname=directory+
-	"/GShen_NL3EOS_rho280_temp180_ye52_version_1.1_20120817.h5";
-    } else if (sv[1]=="stos") {
-      cloud_file cf;
-      cf.verbose=2;
-      std::string sha=((std::string)"3b7c598bf56ec12d734e13a97daf1eeb1f5")+
-	"8f59849c5f65c4f9f72dd292b177c";
-      cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash("HShenEOS_rho220_temp180_ye65_version_1.1_20120817.h5",
-		       ((string)"https://isospin.roam.utk.edu/")+
-		       "public_data/eos_tables/scollapse/HShenEOS_rho220_"+
-		       "temp180_ye65_version_1.1_20120817.h5",
-		       sha,directory);
-      name="stos";
-      mode=eos_sn_oo::stos_mode;
-      fname=directory+"/HShenEOS_rho220_temp180_ye65_version_1.1_20120817.h5";
-    } else if (sv[1]=="stos_hyp") {
-      cloud_file cf;
-      cf.verbose=2;
-      std::string sha=((std::string)"");
-      cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash("",
-		       ((string)"https://isospin.roam.utk.edu/")+
-		       "public_data/eos_tables/scollapse/",
-		       sha,directory);
-      name="stos_hyp";
-      mode=eos_sn_oo::stos_mode;
-      fname=directory+
-	"/HShen_HyperonEOS_rho220_temp180_ye65_version_1.1_20131007.h5";
-    } else if (sv[1]=="dd2") {
-      cloud_file cf;
-      cf.verbose=2;
-      std::string sha=((std::string)"");
-      cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash("",
-		       ((string)"https://isospin.roam.utk.edu/")+
-		       "public_data/eos_tables/scollapse/",
-		       sha,directory);
-      name="dd2";
-      mode=eos_sn_oo::hfsl_mode;
-      fname=directory+
-	"/Hempel_DD2EOS_rho234_temp180_ye60_version_1.1_20120817.h5";
-    } else if (sv[1]=="fsg") {
-      cloud_file cf;
-      cf.verbose=2;
-      std::string sha=((std::string)"");
-      cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash("",
-		       ((string)"https://isospin.roam.utk.edu/")+
-		       "public_data/eos_tables/scollapse/",
-		       sha,directory);
-      name="fsg";
-      mode=eos_sn_oo::hfsl_mode;
-      fname=directory+
-	"/Hempel_FSGEOS_rho234_temp180_ye60_version_1.1_20120817.h5";
-    } else if (sv[1]=="hfsl_nl3") {
-      cloud_file cf;
-      cf.verbose=2;
-      std::string sha=((std::string)"");
-      cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash("",
-		       ((string)"https://isospin.roam.utk.edu/")+
-		       "public_data/eos_tables/scollapse/",
-		       sha,directory);
-      name="hfsl_nl3";
-      mode=eos_sn_oo::hfsl_mode;
-      fname=directory+
-	"/Hempel_NL3EOS_rho234_temp180_ye60_version_1.1_20120817.h5";
-    } else if (sv[1]=="sfho") {
-      cloud_file cf;
-      cf.verbose=2;
-      std::string sha=((std::string)"82a4acd670189917800567f6b75bb2a")+
-	"3605f6ae7f9068215a1eec0acf924cb3d";
-      cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash("_",((string)"https://isospin.roam.utk.edu/")+
-		       "public_data/eos_tables/scollapse/Hempel_SFHo"+
-		       "EOS_rho222_temp180_ye60_version_1.1_20120817.h5",
-		       sha,directory);
-      name="sfho";
-      mode=eos_sn_oo::hfsl_mode;
-      fname=directory+
-	"/Hempel_SFHoEOS_rho222_temp180_ye60_version_1.1_20120817.h5";
-    } else if (sv[1]=="sfhx") {
-      cloud_file cf;
-      cf.verbose=2;
-      std::string sha=((std::string)"8651770ee78fb3dede5af1fe0cec33d6")+
-	"bfc86ef2bd8505ab99db4d31f236fc44";
-      cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash(((string)"Hempel_SFHxEOS_rho234_temp180_ye60_")+
-		       "version_1.1_20120817.h5",
-		       ((string)"https://isospin.roam.utk.edu/")+
-		       "public_data/eos_tables/scollapse/Hempel_SFHx"+
-		       "EOS_rho234_temp180_ye60_version_1.1_20120817.h5",
-		       sha,directory);
-      name="sfhx";
-      mode=eos_sn_oo::hfsl_mode;
-      fname=directory+
-	"/Hempel_SFHxEOS_rho234_temp180_ye60_version_1.1_20120817.h5";
-    } else if (sv[1]=="tm1") {
-      cloud_file cf;
-      cf.verbose=2;
-      std::string sha=((std::string)"");
-      cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash("",
-		       ((string)"https://isospin.roam.utk.edu/")+
-		       "public_data/eos_tables/scollapse/",
-		       sha,directory);
-      name="tm1";
-      mode=eos_sn_oo::hfsl_mode;
-      fname=directory+
-	"/Hempel_TM1EOS_rho234_temp180_ye60_version_1.1_20120817.h5";
-    } else if (sv[1]=="tma") {
-      cloud_file cf;
-      cf.verbose=2;
-      std::string sha=((std::string)"");
-      cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash("",
-		       ((string)"https://isospin.roam.utk.edu/")+
-		       "public_data/eos_tables/scollapse/",
-		       sha,directory);
-      name="tma";
-      mode=eos_sn_oo::hfsl_mode;
-      fname=directory+
-	"/Hempel_TMAEOS_rho234_temp180_ye60_version_1.1_20120817.h5";
-    } else if (sv[1]=="ls180") {
-      cloud_file cf;
-      cf.verbose=2;
-      std::string sha=((std::string)"3172f0f7b542fa1bd2e7a46f1b2e62c848f")+
-	"0d9a979e546902ad3f3b6285e27ca";
-      cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
-		       ((string)"https://isospin.roam.utk.edu/")+
-		       "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",sha,directory);
-      name="ls180";
-      mode=eos_sn_oo::ls_mode;
-      fname=directory+"/LS180_234r_136t_50y_analmu_20091212_SVNr26.h5";
-    } else if (sv[1]=="ls220") {
-      cloud_file cf;
-      cf.verbose=2;
-      std::string sha=((std::string)"d8c4d4f1315942a663e96fc6452f66d90fc")+
-	"87f283e0ed552c8141d1ddba34c19";
-      cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash("LS220_234r_136t_50y_analmu_20091212_SVNr26.h5",
-		       ((string)"https://isospin.roam.utk.edu/")+
-		       "public_data/eos_tables/scollapse/LS220_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",sha,directory);
-      name="ls220";
-      mode=eos_sn_oo::ls_mode;
-      fname=directory+"/LS220_234r_136t_50y_analmu_20091212_SVNr26.h5";
-    } else if (sv[1]=="ls375") {
-      cloud_file cf;
-      cf.verbose=2;
-      std::string sha=((std::string)"13d31df4944b968f1de799e5fc37881eae9")+
-	"8cd3f2d3bc14648698661cef35bdd";
-      cf.hash_type=cloud_file::sha256;
-      cf.get_file_hash("LS375_234r_136t_50y_analmu_20091212_SVNr26.h5",
-		       ((string)"https://isospin.roam.utk.edu/")+
-		       "public_data/eos_tables/scollapse/LS375_234r_136t_50y_"+
-		       "analmu_20091212_SVNr26.h5",sha,directory);
-      name="ls375";
-      mode=eos_sn_oo::ls_mode;
-      fname=directory+"/LS375_234r_136t_50y_analmu_20091212_SVNr26.h5";
-    } else if (sv[1]=="acmp_apr_sna") {
-      mode=eos_sn_oo::sht_mode;
-      fname="APR_0000_rho393_temp133_ye66_gitM180edd5_20190225.h5";
-    } else if (sv[1]=="acmp_apr_nse") {
-      mode=eos_sn_oo::sht_mode;
-      fname="APR_0000_rho393_temp133_ye66_gitM180edd5_20190225.h5";
-    } else {
-      O2SCL_ERR("Need EOS type.",exc_efailed);
-    }
-    
     oo.verbose=verbose;
-    oo.load(fname,mode);
+    oo.load_auto(sv[1],directory);
     genp=&oo;
     
     return 0;
