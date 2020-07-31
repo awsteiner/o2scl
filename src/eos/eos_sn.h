@@ -323,22 +323,10 @@ namespace o2scl {
     }
 
     /* \brief Load EOS from file named \c file_name
-
-       \comment
-       The native EOS type overriddes this generic function,
-       but this function is for loading other EOSs in the
-       base class format
-       \endcomment
     */
     virtual void load(std::string fname, size_t mode);
 
     /* \brief Output EOS to file named \c file_name
-
-       \comment
-       The native EOS type overriddes this generic function,
-       but this function is for writing other EOSs in the
-       base class format
-       \endcomment
     */
     virtual void output(std::string fname);
 
@@ -1052,15 +1040,6 @@ namespace o2scl {
   
   };
 
-  class eos_sn_native : public eos_sn_base {
-
-  public:
-
-    virtual void load(std::string fname, size_t mode);
-
-  };
-
-  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

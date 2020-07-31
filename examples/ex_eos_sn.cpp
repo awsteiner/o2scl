@@ -60,7 +60,8 @@ protected:
   o2scl::eos_sn_sht sht;  
   o2scl::eos_sn_stos stos;  
   o2scl::eos_sn_hfsl hfsl;  
-  o2scl::eos_sn_oo oo;  
+  o2scl::eos_sn_oo oo;
+  o2scl::eos_sn_base nat;
   //@}
 
   /** \brief Desc
@@ -135,6 +136,19 @@ protected:
     ls.verbose=verbose;
     ls.load(fname,0);
     genp=&ls;
+    return 0;
+
+  }
+
+  /** \brief Desc
+   */
+  int native_fun(std::vector<std::string> &sv, bool itive_com) {
+
+    string fname=directory+"/"+sv[1];
+
+    nat.verbose=verbose;
+    nat.load(fname,0);
+    genp=&nat;
     return 0;
 
   }
@@ -409,12 +423,16 @@ public:
     // ---------------------------------------
     // Set options
     
-    static const int nopt=10;
+    static const int nopt=11;
     comm_option_s options[nopt]={
       {0,"ls","Load an EOS in the Lattimer-Swesty format.",
        1,1,"<model>",((string)"Models \"ls\", \"skm\", \"ska\", ")+
        "or \"sk1\".",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::ls_fun),
+       cli::comm_option_both},
+      {0,"native","Load an EOS in the native format.",
+       1,1,"<filename>","",
+       new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::native_fun),
        cli::comm_option_both},
       {0,"oo","Load an EOS in the O'Connor-Ott format.",
        1,1,"<model>",((string)"Models \"fsu17\", \"fsu21\", \"sht_nl3\", ")+
