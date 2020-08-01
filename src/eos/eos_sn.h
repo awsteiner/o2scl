@@ -894,6 +894,8 @@ namespace o2scl {
     
   };
 
+  /** \brief Dewsc
+   */
   class eos_sn_compose : public eos_sn_base {
   
   public:
@@ -909,33 +911,30 @@ namespace o2scl {
       std::vector<double> grid;
     
       std::ifstream fin("eos.nb");
-      int n_nB;
       // the first entry is ignored
       fin >> n_nB >> n_nB;
       nB_grid.resize(n_nB);
-      for(int j=0;j<n_nB;j++) {
+      for(size_t j=0;j<n_nB;j++) {
 	fin >> nB_grid[j];
 	grid.push_back(nB_grid[j]);
       }
       fin.close();
     
       std::ifstream fin2("eos.yq");
-      int n_Ye;
       // the first entry is ignored
       fin2 >> n_Ye >> n_Ye;
       Ye_grid.resize(n_Ye);
-      for(int j=0;j<n_Ye;j++) {
+      for(size_t j=0;j<n_Ye;j++) {
 	fin2 >> Ye_grid[j];
 	grid.push_back(Ye_grid[j]);
       }
       fin2.close();
     
       std::ifstream fin3("eos.t");
-      int n_T;
       // the first entry is ignored
       fin3 >> n_T >> n_T;
       T_grid.resize(n_T);
-      for(int j=0;j<n_T;j++) {
+      for(size_t j=0;j<n_T;j++) {
 	fin3 >> T_grid[j];
 	grid.push_back(T_grid[j]);
       }
@@ -952,9 +951,9 @@ namespace o2scl {
       fin4 >> m_prot;
     
       double dtemp, dtemp2;
-      for(int m=0;m<n_T;m++) {
-	for(int k=0;k<n_Ye;k++) {
-	  for(int j=0;j<n_nB;j++) {
+      for(size_t m=0;m<n_T;m++) {
+	for(size_t k=0;k<n_Ye;k++) {
+	  for(size_t j=0;j<n_nB;j++) {
 	  
 	    // Skip the grid points since we know them already
 	    fin4 >> dtemp;
@@ -987,9 +986,9 @@ namespace o2scl {
 
       std::ifstream fin5("eos.compo");
     
-      for(int m=0;m<n_T;m++) {
-	for(int k=0;k<n_Ye;k++) {
-	  for(int j=0;j<n_nB;j++) {
+      for(size_t m=0;m<n_T;m++) {
+	for(size_t k=0;k<n_Ye;k++) {
+	  for(size_t j=0;j<n_nB;j++) {
 	  
 	    // Skip the grid points since we know them already
 	    fin5 >> dtemp;
