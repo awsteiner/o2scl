@@ -144,7 +144,7 @@ protected:
    */
   int native_fun(std::vector<std::string> &sv, bool itive_com) {
 
-    string fname=directory+"/"+sv[1];
+    string fname=sv[1];
 
     nat.verbose=verbose;
     nat.load(fname,0);
@@ -324,6 +324,10 @@ protected:
     cout << "nB= " << nB << " 1/fm^3" << endl;
     cout << "Ye= " << Ye << endl;
     cout << "T= " << T << " MeV" << endl;
+    cout << "Baryons only EOS: " << genp->data_baryons_only() << endl;
+    cout << "EOS with leptons: " << genp->data_with_leptons() << endl;
+    cout << "Muons: " << genp->include_muons << endl;
+    cout << endl;
 
     thermo th;
     if (genp->data_with_leptons()==false ||
@@ -338,6 +342,8 @@ protected:
 
       double mue;
       genp->compute_eg_point(nB,Ye,T,th,mue);
+      cout << "Automatically computing electron-photon EOS at "
+	   << "specified point\n." << endl;
     }
 
     if (genp->data_with_leptons()==false) {

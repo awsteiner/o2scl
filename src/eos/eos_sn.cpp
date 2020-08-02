@@ -93,6 +93,8 @@ void eos_sn_base::output(std::string fname) {
   
   hdf_file hf;
 
+  wordexp_single_file(fname);
+
   hf.open_or_create(fname);
 
   // Grid
