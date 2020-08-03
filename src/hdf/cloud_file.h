@@ -52,7 +52,21 @@ namespace o2scl_hdf {
       \note This class uses system calls to <tt>curl</tt> or
       <tt>wget</tt> which must be installed separatley.
 
-      \future Convert to use boost::filesystem .
+      \todo There are some exceptions which are still thrown when
+      throw_on_fail is false, and there are calls to pipe_cmd_string
+      which need to be modified not to throw when throw_on_fail 
+      is false.
+
+      \future Convert to use boost::filesystem?
+
+      \future Automatically handle compressed files? This turns out to
+      be complicated, because does the user specify the compressed
+      hash, the decompressed hash, or both? I suppose it's best that
+      the user specifies both, and you only download if you need to,
+      or uncompress if you need to, but this will require nearly a
+      full reworking of the get_file_hash function (or a completely
+      new function). For the moment, compression has to be handled
+      by the user. 
 
       \warning This class has several potential security issues 
       and should not be used without due care. 
