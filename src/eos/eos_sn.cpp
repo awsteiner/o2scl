@@ -1208,13 +1208,15 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
     std::string sha=((std::string)"f2f211bb93ecc5587c029a741f01bee0")+
       "3e2bc399e188d1d14354c35eed70ad14";
     cf.hash_type=cloud_file::sha256;
-    cf.get_file_hash("NRAPR_3335_rho391_temp163_ye66.h5",
+    cf.get_file_hash("NRAPR_3335_rho391_temp163_ye66.h5.bz2",
 		     ((string)"https://isospin.roam.utk.edu/")+
 		     "public_data/eos_tables/sro/"+
 		     "NRAPR_3335_rho391_temp163_ye66.h5.bz2",sha,directory);
     name="sro_NRAPR";
     mode=eos_sn_oo::sht_mode;
     fname=directory+"/NRAPR_3335_rho391_temp163_ye66.h5";
+    std::string cmd=((string)"bunzip2 -k ")+directory+"/"+
+      "NRAPR_3335_rho391_temp163_ye66.h5.bz2";
   } else if (model=="acmp_apr_sna") {
     mode=eos_sn_oo::sht_mode;
     fname="APR_0000_rho393_temp133_ye66_gitM180edd5_20190225.h5";
