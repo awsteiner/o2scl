@@ -1217,6 +1217,11 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
     fname=directory+"/NRAPR_3335_rho391_temp163_ye66.h5";
     std::string cmd=((string)"bunzip2 -k ")+directory+"/"+
       "NRAPR_3335_rho391_temp163_ye66.h5.bz2";
+    cout << "Decompressing with: " << cmd << endl;
+    int iret=system(cmd.c_str());
+    if (iret!=0) {
+      cout << "Decompression failed." << endl;
+    }
   } else if (model=="acmp_apr_sna") {
     mode=eos_sn_oo::sht_mode;
     fname="APR_0000_rho393_temp133_ye66_gitM180edd5_20190225.h5";
