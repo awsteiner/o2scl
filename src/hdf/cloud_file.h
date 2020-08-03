@@ -52,11 +52,6 @@ namespace o2scl_hdf {
       \note This class uses system calls to <tt>curl</tt> or
       <tt>wget</tt> which must be installed separatley.
 
-      \todo There are some exceptions which are still thrown when
-      throw_on_fail is false, and there are calls to pipe_cmd_string
-      which need to be modified not to throw when throw_on_fail 
-      is false.
-
       \future Convert to use boost::filesystem?
 
       \future Automatically handle compressed files? This turns out to

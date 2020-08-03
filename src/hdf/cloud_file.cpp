@@ -229,14 +229,22 @@ int cloud_file::get_file_hash
       std::cout << "Checking hash with command:\n  " << cmd
 		<< std::endl;
     }
-    std::string hash2=o2scl::pipe_cmd_string(cmd);
-    o2scl::remove_whitespace(hash2);
-    if (hash2==hash) {
-      valid_hash=true;
-      if (verbose>1) {
-	std::cout << "Hash valid." << std::endl;
+    std::string hash2;
+    int pret=o2scl::pipe_cmd_string(cmd,hash2,false);
+    if (pret==0) {
+      o2scl::remove_whitespace(hash2);
+      if (hash2==hash) {
+	valid_hash=true;
+	if (verbose>1) {
+	  std::cout << "Hash valid." << std::endl;
+	}
       }
     } else {
+      if (verbose>0) {
+	std::cout << "Function pipe_cmd_string() failed." << std::endl;
+      }
+    }
+    if (valid_hash==false) {
       if (verbose>1) {
 	std::cout << "File hash " << hash2 << " does not match "
 		  << hash << "." << std::endl;
@@ -311,14 +319,28 @@ int cloud_file::get_file_hash
       std::cout << "Checking hash with command:\n  " << cmd
 		<< std::endl;
     }
-    std::string hash2=o2scl::pipe_cmd_string(cmd);
-    o2scl::remove_whitespace(hash2);
-    if (hash2!=hash) {
-      O2SCL_ERR("Invalid hash after download in cloud_file. Wrong URL?",
+    std::string hash2;
+    int pret=o2scl::pipe_cmd_string(cmd,hash2,false);
+    if (pret==0) {
+      o2scl::remove_whitespace(hash2);
+      if (hash2!=hash) {
+	if (throw_on_fail) {
+	  O2SCL_ERR("Invalid hash after download in cloud_file. Wrong URL?",
+		    o2scl::exc_efailed);
+	} else {
+	  return o2scl::exc_efilenotfound;
+	}
+      }
+    }
+  } else {
+    if (throw_on_fail) {
+      O2SCL_ERR("Function pipe_cmd_string() failed.",
 		o2scl::exc_efailed);
+    } else {
+      return o2scl::exc_efailed;
     }
   }
-
+  
   // -------------------------------------------------------
   // Output full filename
     
@@ -329,6 +351,7 @@ int cloud_file::get_file_hash
 
 #else
 
+  // AWS: I'm debugging the boost filesystem functions here.
   std::cout << "Here0 " << dir << std::endl;
   boost::filesystem::path p(dir.c_str());
   std::cout << "Here1." << std::endl;

@@ -164,7 +164,7 @@ int o2scl::python_cmd_string(std::string cmd, std::string &result,
   FILE *ps_pipe=popen(pycmd.c_str(),"r");
   if (!ps_pipe) {
     if (err_on_fail) {
-      O2SCL_ERR("Pipe could not be opened in o2scl::pipe_cmd_string().",
+      O2SCL_ERR("Pipe could not be opened in o2scl::python_cmd_string().",
 		o2scl::exc_efailed);
     }
     return 1;
@@ -177,7 +177,7 @@ int o2scl::python_cmd_string(std::string cmd, std::string &result,
   char *cret=fgets(char_arr,nmax,ps_pipe);
   if (cret==0) {
     if (err_on_fail) {
-      O2SCL_ERR("Null pointer returned by fgets in o2scl::pipe_cmd_string().",
+      O2SCL_ERR("Null pointer returned by fgets in o2scl::python_cmd_string().",
 		o2scl::exc_efailed);
     }
     return 2;
@@ -188,7 +188,7 @@ int o2scl::python_cmd_string(std::string cmd, std::string &result,
   int pret=pclose(ps_pipe);
   if (pret!=0) {
     if (err_on_fail) {
-      O2SCL_ERR("Close pipe returned non-zero in o2scl::pipe_cmd_string().",
+      O2SCL_ERR("Close pipe returned non-zero in o2scl::python_cmd_string().",
 		o2scl::exc_efailed);
     }
     return 4;
@@ -197,7 +197,7 @@ int o2scl::python_cmd_string(std::string cmd, std::string &result,
 #else
   
   if (err_on_fail) {
-    O2SCL_ERR("Compiled without popen support in o2scl::pipe_cmd_string().",
+    O2SCL_ERR("Compiled without popen support in o2scl::python_cmd_string().",
 	      o2scl::exc_efailed);
   }
   return 3;
