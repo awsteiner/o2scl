@@ -244,12 +244,24 @@ int cloud_file::get_file_hash
     }
   }
       
+  bool decompress=false;
+
   if (sret!=0 || file_present==false || valid_hash==false) {
     // If it couldn't be found, try to download it
     int ret=1;
     if (allow_curl) {
-      std::string cmd=((std::string)"cd ")+dir+"; curl -o "+
-	file+" "+url;
+      std::string cmd;
+      if (url.find(".bz2")==url.length()-4 &&
+	  file.find(".bz2")!=file.length()-4) {
+	cout << "URL ends in .bz2 prefix but file does not. "
+	     << "Decompressing after download." << endl;
+	decompress=true;
+	cmd=((std::string)"cd ")+dir+"; curl -o "+
+	  file+".bz2 "+url;
+      } else {
+	cmd=((std::string)"cd ")+dir+"; curl -o "+
+	  file+" "+url;
+      }
       if (verbose>0) {
 	std::cout << "Trying curl command:\n  "
 		  << cmd << std::endl;
@@ -276,7 +288,11 @@ int cloud_file::get_file_hash
       }
     }
     // Check to see if the file is there
-    sret=stat(fname.c_str(),&sb);
+    if (decompress) {
+      sret=stat((fname+".bz2").c_str(),&sb);
+    } else {
+      sret=stat(fname.c_str(),&sb);
+    }
     if (sret==0) {
       file_present=S_ISREG(sb.st_mode);
     }
@@ -298,8 +314,13 @@ int cloud_file::get_file_hash
   if (hash.length()>0 && valid_hash==false) {
     std::string cmd;
     if (hash_type==sha256) {
-      cmd=((std::string)"openssl dgst -sha256 ")+fname+
-	" | awk '{print $2}'";
+      if (decompress) {
+	cmd=((std::string)"openssl dgst -sha256 ")+fname+
+	  ".bz2 | awk '{print $2}'";
+      } else {
+	cmd=((std::string)"openssl dgst -sha256 ")+fname+
+	  " | awk '{print $2}'";
+      }
     } else if (hash_type==md5sum) {
       cmd=((std::string)"md5sum ")+fname+
 	" | awk '{print $1}'";
@@ -319,6 +340,17 @@ int cloud_file::get_file_hash
     }
   }
 
+  // If necessary, decompress the file
+  if (decompress==true) {
+    std::string cmd=((std::string)"cd ")+dir+"; bunzip2 "+file+".bz2";
+    cout << "Decompressing with command: " << cmd << endl;
+    int ret=system(cmd.c_str());
+    if (ret!=0) {
+      O2SCL_ERR("Decompression filed.",
+		o2scl::exc_efailed);
+    }
+  }
+  
   // -------------------------------------------------------
   // Output full filename
     

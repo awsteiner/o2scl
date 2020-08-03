@@ -1205,13 +1205,13 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
   } else if (model=="sro_NRAPR") {
     cloud_file cf;
     cf.verbose=2;
-    std::string sha=((std::string)"b5f78141942c5794c47baa53121099f6")+
-      "7b28450263c2591dbd7f64e7d6671264";
+    std::string sha=((std::string)"f2f211bb93ecc5587c029a741f01bee0")+
+      "3e2bc399e188d1d14354c35eed70ad14";
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash("NRAPR_3335_rho391_temp163_ye66.h5",
 		     ((string)"https://isospin.roam.utk.edu/")+
 		     "public_data/eos_tables/sro/"+
-		     "NRAPR_3335_rho391_temp163_ye66.h5",sha,directory);
+		     "NRAPR_3335_rho391_temp163_ye66.h5.bz2",sha,directory);
     name="sro_NRAPR";
     mode=eos_sn_oo::sht_mode;
     fname=directory+"/NRAPR_3335_rho391_temp163_ye66.h5";
