@@ -1763,6 +1763,7 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
 	// Set the density grid from the first section
 	for(size_t k=0;k<n_nB;k++) {
 	  grid[k]=t[1][k];
+	  nB_grid[k]=grid[k];
 	}
 	for(size_t k=0;k<n_base+n_oth;k++) {
 	  arr[k]->set_grid_packed(grid);

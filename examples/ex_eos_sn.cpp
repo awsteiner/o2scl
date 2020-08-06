@@ -147,7 +147,9 @@ protected:
     string fname=sv[1];
 
     nat.verbose=verbose;
+    cout << "Going to load." << endl;
     nat.load(fname,0);
+    cout << "Done in load." << endl;
     genp=&nat;
     return 0;
 
@@ -161,23 +163,30 @@ protected:
       cerr << "Not enough arguments for create_ZoA." << endl;
       return 1;
     }
-    
+
     vector<vector<double> > grid={genp->nB_grid,genp->Ye_grid,
 				  genp->T_grid};
     tensor_grid3<vector<double>,vector<size_t> > ZoA;
+    vector<size_t> sz={genp->n_nB,genp->n_Ye,genp->n_T};
+    ZoA.resize(3,sz);
     ZoA.set_grid(grid);
     
     for(size_t iT=0;iT<genp->n_T;iT++) {
+      cout << "iT: " << iT << endl;
       for(size_t iYe=0;iYe<genp->n_Ye;iYe++) {
 	for(size_t inB=0;inB<genp->n_nB;inB++) {
-	  ZoA.get(inB,iYe,iT)=genp->Z.get(inB,iYe,iT)/
-	    genp->A.get(inB,iYe,iT);
+	  if (genp->Xnuclei.get(inB,iYe,iT)>0.1) {
+	    ZoA.get(inB,iYe,iT)=genp->Z.get(inB,iYe,iT)/
+	      genp->A.get(inB,iYe,iT);
+	  } else {
+	    ZoA.get(inB,iYe,iT)=0.0;
+	  }
 	}
       }
     }
-    
+
     hdf_file hf;
-    hf.open(sv[1]);
+    hf.open_or_create(sv[1]);
     hdf_output(hf,ZoA,"ZoA");
     hf.close();
 
