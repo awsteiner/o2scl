@@ -153,6 +153,38 @@ protected:
 
   }
 
+  /** \brief Desc
+   */
+  int create_ZoA(std::vector<std::string> &sv, bool itive_com) {
+
+    if (sv.size()<2) {
+      cerr << "Not enough arguments for create_ZoA." << endl;
+      return 1;
+    }
+    
+    vector<vector<double> > grid={genp->nB_grid,genp->Ye_grid,
+				  genp->T_grid};
+    tensor_grid3<vector<double>,vector<size_t> > ZoA;
+    ZoA.set_grid(grid);
+    
+    for(size_t iT=0;iT<genp->n_T;iT++) {
+      for(size_t iYe=0;iYe<genp->n_Ye;iYe++) {
+	for(size_t inB=0;inB<genp->n_nB;inB++) {
+	  ZoA.get(inB,iYe,iT)=genp->Z.get(inB,iYe,iT)/
+	    genp->A.get(inB,iYe,iT);
+	}
+      }
+    }
+    
+    hdf_file hf;
+    hf.open(sv[1]);
+    hdf_output(hf,ZoA,"ZoA");
+    hf.close();
+
+    return 0;
+
+  }
+
   /** \brief Output to a file in native format
    */
   int output(std::vector<std::string> &sv, bool itive_com) {
@@ -429,7 +461,7 @@ public:
     // ---------------------------------------
     // Set options
     
-    static const int nopt=11;
+    static const int nopt=12;
     comm_option_s options[nopt]={
       {0,"ls","Load an EOS in the Lattimer-Swesty format.",
        1,1,"<model>",((string)"Models \"ls\", \"skm\", \"ska\", ")+
@@ -475,6 +507,10 @@ public:
       {0,"output","Output to a file.",
        1,1,"",((string)"long ")+"desc.",
        new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::output),
+       cli::comm_option_both},
+      {0,"ZoA","",
+       -1,-1,"",((string)"long ")+"desc.",
+       new comm_option_mfptr<ex_eos_sn>(this,&ex_eos_sn::create_ZoA),
        cli::comm_option_both},
       {0,"check","",
        0,0,"",((string)"long ")+"desc.",
