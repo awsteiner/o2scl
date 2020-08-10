@@ -294,11 +294,14 @@ namespace o2scl_acol {
     /// Assign a constant
     virtual int comm_assign(std::vector<std::string> &sv, bool itive_com);
 
-    /// Desc
+    /// Binary function for tensors
+    virtual int comm_binary(std::vector<std::string> &sv, bool itive_com);
+
+    /// Average rows together in a table
     virtual int comm_average_rows(std::vector<std::string> &sv,
 				  bool itive_com);
 
-    /// Desc
+    /// Compute correlation between table columns
     virtual int comm_correl(std::vector<std::string> &sv, bool itive_com);
 
     /// Refine an object

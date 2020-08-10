@@ -148,7 +148,8 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     vector<std::string> itmp={"list","to-table3d","slice","to-table",
 			      "set-grid","max","min","rearrange",
 			      "get-grid","interp","entry","to-tensor",
-			      "entry-grid","function","sum","stats"};
+			      "entry-grid","function","sum","stats",
+			      "binary"};
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
   }
   {
@@ -677,7 +678,7 @@ void acol_manager::command_add(std::string new_type) {
        "",new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_entry),both},
       {'f',"function","Set tensor value from a function.",0,1,
-       "[cond. function] <function of i0, i1, ...>",
+       "[cond. function] <function of v, i0, i1, ...>",
        ((string)"The \"function\" command ")+
        "sets all entries in a tensor equal to a user-specified "+
        "mathematical function of the indices. When the conditional "+
@@ -826,12 +827,17 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor_grid") {
     
-    static const size_t narr=16;
+    static const size_t narr=17;
     comm_option_s options_arr[narr]={
       {0,"sum","Output the sum of all the tensor entries.",0,0,"",
        ((string)"The \"sum\" command outputs the total tensor size ")+
        "and the sum over all entries.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
+       both},
+      {0,"binary","Apply a function to two tensor_grid objects.",0,0,"",
+       ((string)"Long ")+
+       "desc.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_binary),
        both},
       {0,"stats","Show stats for the data in the tensor.",0,0,"",
        ((string)"The 'stats' command outputs the number of entries, ")+
@@ -855,7 +861,7 @@ void acol_manager::command_add(std::string new_type) {
        new comm_option_mfptr<acol_manager>
        (this,&acol_manager::comm_entry_grid),both},
       {'f',"function","Set tensor value from a function.",0,1,
-       "[conditional func.] <func. of i0, i1, ... and x0, x1, ...>",
+       "[conditional func.] <func. of v, i0, i1, ... and x0, x1, ...>",
        ((string)"The \"function\" command sets ")+
        "all the data entries in a tensor_grid equal to a user-specified "+
        "mathematical function of the indices (i0, i1, ...) or grid "+

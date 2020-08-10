@@ -37,120 +37,116 @@ using namespace o2scl_acol;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-int acol_manager::comm_diag(std::vector<std::string> &sv, bool itive_com) {
+/*
+int acol_manager::comm_delete_col
+int acol_manager::comm_delete_rows
+int acol_manager::comm_delete_rows_tol
+int acol_manager::comm_deriv
+int acol_manager::comm_deriv_x
+int acol_manager::comm_deriv_y
+int acol_manager::comm_deriv2
+int acol_manager::comm_diag
+int acol_manager::comm_download
+int acol_manager::comm_entry
+int acol_manager::comm_entry_grid
+int acol_manager::comm_filelist
+int acol_manager::comm_find_row
+int acol_manager::comm_fit
+int acol_manager::comm_function
+*/
 
-  if (type=="tensor") {
+int acol_manager::comm_delete_col(std::vector<std::string> &sv, 
+				  bool itive_com) {
 
-    size_t rk=tensor_obj.get_rank();
-    size_t n=tensor_obj.get_size(0);
-    for(size_t i=1;i<rk;i++) {
-      if (tensor_obj.get_size(i)<n) {
-	n=tensor_obj.get_size(i);
-      }
-    }
+  if (type!="table") {
+    cout << "Not implemented for type " << type << endl;
+    return 0;
+  }
 
-    doublev_obj.clear();
-    vector<size_t> ix(rk);
-    for(size_t i=0;i<n;i++) {
-      for(size_t j=0;j<rk;j++) {
-	ix[j]=i;
-      }
-      doublev_obj.push_back(tensor_obj.get(ix));
-    }
-    
-    command_del(type);
-    clear_obj();
-    command_add("double[]");
-    type="double[]";
-    
-  } else {
-    
-    cerr << "Cannot use command 'diag' for type "
-	 << type << "." << endl;
+  if (table_obj.get_nlines()==0) {
+    cerr << "No table to delete columns from." << endl;
     return exc_efailed;
   }
-  
+
+  std::string i1;
+  int ret=get_input_one(sv,"Column to delete",i1,"delete-col",
+			itive_com);
+  if (ret!=0) return ret;
+    
+  if (table_obj.is_column(i1)==false) {
+    cerr << "Could not find column named '" << i1 << "'." << endl;
+    return exc_efailed;
+  }
+
+  table_obj.delete_column(i1);
+
   return 0;
 }
 
-int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
+int acol_manager::comm_delete_rows(std::vector<std::string> &sv, 
+				   bool itive_com) {
 
-  cloud_file cf;
-  std::string file, hash="", url, fname, dir="";
+  if (type!="table") {
+    cout << "Not implemented for type " << type << endl;
+    return 0;
+  }
 
-  vector<string> in, pr;
+  if (table_obj.get_nlines()==0) {
+    cerr << "No table to delete rows from." << endl;
+    return exc_efailed;
+  }
 
-  // If there aren't enough arguments then prompt the user
-  if (sv.size()<3) {
-    pr.push_back("Destination filename");
-    pr.push_back("URL");
-    pr.push_back("Hash");
-    pr.push_back("Directory");
-    int ret=get_input(sv,pr,in,"download",itive_com);
+  std::string i1;
+  int ret=get_input_one(sv,"Function to specify rows",
+			i1,"delete-rows",itive_com);
+  if (ret!=0) return ret;
+  
+  table_obj.delete_rows_func(i1);
+
+  return 0;
+}
+
+int acol_manager::comm_delete_rows_tol(std::vector<std::string> &sv, 
+				       bool itive_com) {
+
+  if (type!="table") {
+    cout << "Not implemented for type " << type << endl;
+    return 0;
+  }
+
+  if (table_obj.get_nlines()==0) {
+    cerr << "No table to delete rows from." << endl;
+    return exc_efailed;
+  }
+
+  double tr, ta;
+  if (itive_com || sv.size()>=3) {
+    vector<string> in, pr;
+    pr.push_back("Relative tolerance");
+    pr.push_back("Absolute tolerance");
+    int ret=get_input(sv,pr,in,"to-hist",itive_com);
     if (ret!=0) return ret;
-  } else {
-    for(size_t j=1;j<sv.size();j++) {
-      in.push_back(sv[j]);
+    if (o2scl::stod_nothrow(in[0],tr)!=0) {
+      cerr << "Failed to convert " << in[0] << " to number." << endl;
+      return 1;
     }
-  }
-
-  // If a file and URL were specified with no hash, then proceed
-  if (in.size()==2) {
-    
-    file=in[0];
-    url=in[1];
-    if (verbose>0) {
-      cout << "No hash specified, so download will not be verified."
-	   << endl;
+    if (o2scl::stod_nothrow(in[1],ta)!=0) {
+      cerr << "Failed to convert " << in[1] << " to number." << endl;
+      return 2;
     }
-
-  } else if (in.size()==3) {
-    
-    file=in[0];
-    url=in[1];
-    hash=in[2];
-
-  } else {
-    
-    file=in[0];
-    url=in[1];
-    hash=in[2];
-    dir=in[3];
-
-  }
-
-  if (verbose>1) {
-    cout << "acolm 'download' (file,url,hash,dir): " << endl;
-    cout << "  file: " << file << endl;
-    cout << "  url: " << url << endl;
-    cout << "  hash: " << hash << endl;
-    cout << "  dir: " << dir << endl;
-  }
-
-  // If requested, obtain hash from file
-  if ((hash[0]=='f' || hash[0]=='F') &&
-      (hash[1]=='i' || hash[1]=='I') &&
-      (hash[2]=='l' || hash[2]=='L') &&
-      (hash[3]=='e' || hash[3]=='E') &&
-      hash[4]==':') {
-    string hash_file=hash.substr(5,hash.size()-5);
-    ifstream fin;
-    fin.open(hash_file.c_str());
-    fin >> hash;
-    fin.close();
-    if (verbose>0) {
-      cout << "Obtained hash " << hash << " from file " << hash_file << endl;
+  } else if (sv.size()>=2) {
+    if (o2scl::stod_nothrow(sv[1],tr)!=0) {
+      cerr << "Failed to convert " << sv[1] << " to number." << endl;
+      return 3;
     }
-  }
-
-  cf.verbose=verbose;
-  if (hash==((std::string)"None") ||
-      hash==((std::string)"none") || hash.length()==0) {
-    cf.get_file(file,url,dir);
+    ta=1.0e-20;
   } else {
-    cf.get_file_hash(file,url,hash,dir);
+    tr=1.0e-12;
+    ta=1.0e-20;
   }
   
+  table_obj.delete_rows_tolerance(tr,ta,verbose);
+
   return 0;
 }
 
@@ -310,98 +306,120 @@ int acol_manager::comm_deriv2(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
-int acol_manager::comm_delete_rows(std::vector<std::string> &sv, 
-				   bool itive_com) {
+int acol_manager::comm_diag(std::vector<std::string> &sv, bool itive_com) {
 
-  if (type!="table") {
-    cout << "Not implemented for type " << type << endl;
-    return 0;
-  }
+  if (type=="tensor") {
 
-  if (table_obj.get_nlines()==0) {
-    cerr << "No table to delete rows from." << endl;
-    return exc_efailed;
-  }
-
-  std::string i1;
-  int ret=get_input_one(sv,"Function to specify rows",
-			i1,"delete-rows",itive_com);
-  if (ret!=0) return ret;
-  
-  table_obj.delete_rows_func(i1);
-
-  return 0;
-}
-
-int acol_manager::comm_delete_rows_tol(std::vector<std::string> &sv, 
-				       bool itive_com) {
-
-  if (type!="table") {
-    cout << "Not implemented for type " << type << endl;
-    return 0;
-  }
-
-  if (table_obj.get_nlines()==0) {
-    cerr << "No table to delete rows from." << endl;
-    return exc_efailed;
-  }
-
-  double tr, ta;
-  if (itive_com || sv.size()>=3) {
-    vector<string> in, pr;
-    pr.push_back("Relative tolerance");
-    pr.push_back("Absolute tolerance");
-    int ret=get_input(sv,pr,in,"to-hist",itive_com);
-    if (ret!=0) return ret;
-    if (o2scl::stod_nothrow(in[0],tr)!=0) {
-      cerr << "Failed to convert " << in[0] << " to number." << endl;
-      return 1;
+    size_t rk=tensor_obj.get_rank();
+    size_t n=tensor_obj.get_size(0);
+    for(size_t i=1;i<rk;i++) {
+      if (tensor_obj.get_size(i)<n) {
+	n=tensor_obj.get_size(i);
+      }
     }
-    if (o2scl::stod_nothrow(in[1],ta)!=0) {
-      cerr << "Failed to convert " << in[1] << " to number." << endl;
-      return 2;
+
+    doublev_obj.clear();
+    vector<size_t> ix(rk);
+    for(size_t i=0;i<n;i++) {
+      for(size_t j=0;j<rk;j++) {
+	ix[j]=i;
+      }
+      doublev_obj.push_back(tensor_obj.get(ix));
     }
-  } else if (sv.size()>=2) {
-    if (o2scl::stod_nothrow(sv[1],tr)!=0) {
-      cerr << "Failed to convert " << sv[1] << " to number." << endl;
-      return 3;
-    }
-    ta=1.0e-20;
-  } else {
-    tr=1.0e-12;
-    ta=1.0e-20;
-  }
-  
-  table_obj.delete_rows_tolerance(tr,ta,verbose);
-
-  return 0;
-}
-
-int acol_manager::comm_delete_col(std::vector<std::string> &sv, 
-				  bool itive_com) {
-
-  if (type!="table") {
-    cout << "Not implemented for type " << type << endl;
-    return 0;
-  }
-
-  if (table_obj.get_nlines()==0) {
-    cerr << "No table to delete columns from." << endl;
-    return exc_efailed;
-  }
-
-  std::string i1;
-  int ret=get_input_one(sv,"Column to delete",i1,"delete-col",
-			itive_com);
-  if (ret!=0) return ret;
     
-  if (table_obj.is_column(i1)==false) {
-    cerr << "Could not find column named '" << i1 << "'." << endl;
+    command_del(type);
+    clear_obj();
+    command_add("double[]");
+    type="double[]";
+    
+  } else {
+    
+    cerr << "Cannot use command 'diag' for type "
+	 << type << "." << endl;
     return exc_efailed;
   }
+  
+  return 0;
+}
 
-  table_obj.delete_column(i1);
+int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
 
+  cloud_file cf;
+  std::string file, hash="", url, fname, dir="";
+
+  vector<string> in, pr;
+
+  // If there aren't enough arguments then prompt the user
+  if (sv.size()<3) {
+    pr.push_back("Destination filename");
+    pr.push_back("URL");
+    pr.push_back("Hash");
+    pr.push_back("Directory");
+    int ret=get_input(sv,pr,in,"download",itive_com);
+    if (ret!=0) return ret;
+  } else {
+    for(size_t j=1;j<sv.size();j++) {
+      in.push_back(sv[j]);
+    }
+  }
+
+  // If a file and URL were specified with no hash, then proceed
+  if (in.size()==2) {
+    
+    file=in[0];
+    url=in[1];
+    if (verbose>0) {
+      cout << "No hash specified, so download will not be verified."
+	   << endl;
+    }
+
+  } else if (in.size()==3) {
+    
+    file=in[0];
+    url=in[1];
+    hash=in[2];
+
+  } else {
+    
+    file=in[0];
+    url=in[1];
+    hash=in[2];
+    dir=in[3];
+
+  }
+
+  if (verbose>1) {
+    cout << "acolm 'download' (file,url,hash,dir): " << endl;
+    cout << "  file: " << file << endl;
+    cout << "  url: " << url << endl;
+    cout << "  hash: " << hash << endl;
+    cout << "  dir: " << dir << endl;
+  }
+
+  // If requested, obtain hash from file
+  if ((hash[0]=='f' || hash[0]=='F') &&
+      (hash[1]=='i' || hash[1]=='I') &&
+      (hash[2]=='l' || hash[2]=='L') &&
+      (hash[3]=='e' || hash[3]=='E') &&
+      hash[4]==':') {
+    string hash_file=hash.substr(5,hash.size()-5);
+    ifstream fin;
+    fin.open(hash_file.c_str());
+    fin >> hash;
+    fin.close();
+    if (verbose>0) {
+      cout << "Obtained hash " << hash << " from file " << hash_file << endl;
+    }
+  }
+
+  cf.verbose=verbose;
+  if (hash==((std::string)"None") ||
+      hash==((std::string)"none") || hash.length()==0) {
+    cf.get_file(file,url,dir);
+  } else {
+    cf.get_file_hash(file,url,hash,dir);
+  }
+  
   return 0;
 }
 
@@ -759,221 +777,6 @@ int acol_manager::comm_entry_grid(std::vector<std::string> &sv,
   return 0;
 }
 
-int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
-
-  if (type=="table3d") {
-    
-    vector<string> pr, in;
-    pr.push_back("Enter function for new slice");
-    pr.push_back("Enter name for new slice");
-    int ret=get_input(sv,pr,in,"function",itive_com);
-    if (ret!=0) return ret;
-    
-    // Remove single or double quotes just in case
-    if (in[0].size()>=3 && ((in[0][0]=='\'' && in[0][in[0].size()-1]=='\'') ||
-			    (in[0][0]=='\"' && in[0][in[0].size()-1]=='\"'))) {
-      in[0]=in[0].substr(1,in[0].size()-2);
-    }
-    
-    table3d_obj.function_slice(in[0],in[1]);
-    if (ret!=0) {
-      cerr << "Function make_slice() failed." << endl;
-      return exc_efailed;
-    }
-    
-    return 0;
-    
-  } else if (type=="hist") {
-    
-    std::string i1;
-    int ret=get_input_one(sv,"Function",
-			  i1,"function",itive_com);
-    if (ret!=0) return ret;
-
-    ret=hist_obj.function(i1);
-    if (ret!=0) {
-      cerr << "Function hist::function() failed." << endl;
-      return exc_efailed;
-    }
-    
-    return 0;
-
-  } else if (type=="table") {
-    
-    if (table_obj.get_nlines()==0) {
-      cerr << "No table to add a column to." << endl;
-      return exc_efailed;
-    }
-    
-    vector<string> pr, in;
-    pr.push_back("Enter function for new column");
-    pr.push_back("Enter name for new column");
-    int ret=get_input(sv,pr,in,"function",itive_com);
-    if (ret!=0) return ret;
-    
-    // Remove single or double quotes just in case
-    if (in[0].size()>=3 && ((in[0][0]=='\'' && in[0][in[0].size()-1]=='\'') ||
-			    (in[0][0]=='\"' && in[0][in[0].size()-1]=='\"'))) {
-      in[0]=in[0].substr(1,in[0].size()-2);
-    }
-    
-    table_obj.function_column(in[0],in[1]);
-
-  } else if (type=="double[]") {
-
-    std::string function;
-    int ret=get_input_one(sv,"Enter function of index 'i'",
-			  function,"function",itive_com);
-    if (ret!=0) return ret;
-
-    // Parse function
-    calculator calc;
-    std::map<std::string,double> vars;
-    calc.compile(function.c_str(),&vars);
-
-    // Create column from function
-    for(size_t j=0;j<doublev_obj.size();j++) {
-      vars["i"]=((double)j);
-      doublev_obj[j]=calc.eval(&vars);
-    }
-    
-  } else if (type=="int[]") {
-
-    std::string function;
-    int ret=get_input_one(sv,"Enter function of index 'i'",
-			  function,"function",itive_com);
-    if (ret!=0) return ret;
-
-    // Parse function
-    calculator calc;
-    std::map<std::string,double> vars;
-    calc.compile(function.c_str(),&vars);
-
-    // Create column from function
-    for(size_t j=0;j<intv_obj.size();j++) {
-      vars["i"]=((double)j);
-      intv_obj[j]=(int)calc.eval(&vars);
-    }
-    
-  } else if (type=="size_t[]") {
-
-    std::string function;
-    int ret=get_input_one(sv,"Enter function of index 'i'",
-			  function,"function",itive_com);
-    if (ret!=0) return ret;
-
-    // Parse function
-    calculator calc;
-    std::map<std::string,double> vars;
-    calc.compile(function.c_str(),&vars);
-
-    // Create column from function
-    for(size_t j=0;j<size_tv_obj.size();j++) {
-      vars["i"]=((double)j);
-      size_tv_obj[j]=(size_t)calc.eval(&vars);
-    }
-    
-  } else if (type=="tensor") {
-
-    std::string function, cond_func;
-    if (sv.size()==1) {
-      vector<string> pr, in;
-      pr.push_back("Enter function of indices i0, i1, ... or \"none\"");
-      pr.push_back("Enter function of indices i0, i1, ...");
-      int ret=get_input(sv,pr,in,"function",itive_com);
-      function=in[1];
-      if (in[0]!="none") {
-	cond_func=in[0];
-      }
-    } else if (sv.size()==2) {
-      function=sv[1];
-    } else {
-      function=sv[2];
-      if (sv[1]!="none") {
-	cond_func=sv[1];
-      }
-    }
-
-    // Parse function(s)
-    calculator calc, calc_cond;
-    std::map<std::string,double> vars;
-    calc.compile(function.c_str(),&vars);
-    calc_cond.compile(cond_func.c_str(),&vars);
-
-    // Set
-    size_t rk=tensor_obj.get_rank();
-    vector<size_t> ix(rk);
-    for(size_t i=0;i<tensor_obj.total_size();i++) {
-      tensor_obj.unpack_index(i,ix);
-      for(size_t j=0;j<rk;j++) {
-	vars[((string)"i")+szttos(j)]=ix[j];
-      }
-      if (cond_func.length()>0 && calc_cond.eval(&vars)>0.5) {
-	tensor_obj.set(ix,calc.eval(&vars));
-      }
-    }
-    
-  } else if (type=="tensor_grid") {
-
-    std::string function, cond_func;
-    if (sv.size()==1) {
-      vector<string> pr, in;
-      pr.push_back("Enter function of i0,i1,... and x0,x1,... or \"none\"");
-      pr.push_back("Enter function of i0,i1,... and x0,x1,...");
-      int ret=get_input(sv,pr,in,"function",itive_com);
-      function=in[1];
-      if (in[0]!="none") {
-	cond_func=in[0];
-      }
-    } else if (sv.size()==2) {
-      function=sv[1];
-    } else {
-      function=sv[2];
-      if (sv[1]!="none") {
-	cond_func=sv[1];
-      }
-    }
-
-    // Parse function(s)
-    calculator calc, calc_cond;
-    std::map<std::string,double> vars;
-    calc.compile(function.c_str(),&vars);
-    calc_cond.compile(cond_func.c_str(),&vars);
-
-    if (verbose>0) {
-      if (cond_func.length()==0) {
-	cout << "Command \"function\" using " << function
-	     << " to set all entries." << endl;
-      } else {
-	cout << "Command \"function\" using conditional " << cond_func
-	     << " and function " << function
-	     << " to set all entries." << endl;
-      }
-    }
-
-    
-    // Set
-    size_t rk=tensor_grid_obj.get_rank();
-    vector<size_t> ix(rk);
-    for(size_t i=0;i<tensor_grid_obj.total_size();i++) {
-      tensor_grid_obj.unpack_index(i,ix);
-      for(size_t j=0;j<rk;j++) {
-	vars[((string)"i")+szttos(j)]=ix[j];
-	vars[((string)"x")+szttos(j)]=tensor_grid_obj.get_grid(j,ix[j]);
-      }
-      if (cond_func.length()==0 || calc_cond.eval(&vars)>0.5) {
-	tensor_grid_obj.set(ix,calc.eval(&vars));
-      }
-    }
-    
-  } else {
-    cerr << "Not implemented for type " << type << " ." << endl;
-    return exc_efailed;
-  }
-
-  return 0;
-}
-
 int acol_manager::comm_filelist(std::vector<std::string> &sv, 
 				bool itive_com) {
 
@@ -1188,3 +991,221 @@ int acol_manager::comm_fit(std::vector<std::string> &sv, bool itive_com) {
   
   return 0;
 }
+
+int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="table3d") {
+    
+    vector<string> pr, in;
+    pr.push_back("Enter function for new slice");
+    pr.push_back("Enter name for new slice");
+    int ret=get_input(sv,pr,in,"function",itive_com);
+    if (ret!=0) return ret;
+    
+    // Remove single or double quotes just in case
+    if (in[0].size()>=3 && ((in[0][0]=='\'' && in[0][in[0].size()-1]=='\'') ||
+			    (in[0][0]=='\"' && in[0][in[0].size()-1]=='\"'))) {
+      in[0]=in[0].substr(1,in[0].size()-2);
+    }
+    
+    table3d_obj.function_slice(in[0],in[1]);
+    if (ret!=0) {
+      cerr << "Function make_slice() failed." << endl;
+      return exc_efailed;
+    }
+    
+    return 0;
+    
+  } else if (type=="hist") {
+    
+    std::string i1;
+    int ret=get_input_one(sv,"Function",
+			  i1,"function",itive_com);
+    if (ret!=0) return ret;
+
+    ret=hist_obj.function(i1);
+    if (ret!=0) {
+      cerr << "Function hist::function() failed." << endl;
+      return exc_efailed;
+    }
+    
+    return 0;
+
+  } else if (type=="table") {
+    
+    if (table_obj.get_nlines()==0) {
+      cerr << "No table to add a column to." << endl;
+      return exc_efailed;
+    }
+    
+    vector<string> pr, in;
+    pr.push_back("Enter function for new column");
+    pr.push_back("Enter name for new column");
+    int ret=get_input(sv,pr,in,"function",itive_com);
+    if (ret!=0) return ret;
+    
+    // Remove single or double quotes just in case
+    if (in[0].size()>=3 && ((in[0][0]=='\'' && in[0][in[0].size()-1]=='\'') ||
+			    (in[0][0]=='\"' && in[0][in[0].size()-1]=='\"'))) {
+      in[0]=in[0].substr(1,in[0].size()-2);
+    }
+    
+    table_obj.function_column(in[0],in[1]);
+
+  } else if (type=="double[]") {
+
+    std::string function;
+    int ret=get_input_one(sv,"Enter function of index 'i'",
+			  function,"function",itive_com);
+    if (ret!=0) return ret;
+
+    // Parse function
+    calculator calc;
+    std::map<std::string,double> vars;
+    calc.compile(function.c_str(),&vars);
+
+    // Create column from function
+    for(size_t j=0;j<doublev_obj.size();j++) {
+      vars["i"]=((double)j);
+      doublev_obj[j]=calc.eval(&vars);
+    }
+    
+  } else if (type=="int[]") {
+
+    std::string function;
+    int ret=get_input_one(sv,"Enter function of index 'i'",
+			  function,"function",itive_com);
+    if (ret!=0) return ret;
+
+    // Parse function
+    calculator calc;
+    std::map<std::string,double> vars;
+    calc.compile(function.c_str(),&vars);
+
+    // Create column from function
+    for(size_t j=0;j<intv_obj.size();j++) {
+      vars["i"]=((double)j);
+      intv_obj[j]=(int)calc.eval(&vars);
+    }
+    
+  } else if (type=="size_t[]") {
+
+    std::string function;
+    int ret=get_input_one(sv,"Enter function of index 'i'",
+			  function,"function",itive_com);
+    if (ret!=0) return ret;
+
+    // Parse function
+    calculator calc;
+    std::map<std::string,double> vars;
+    calc.compile(function.c_str(),&vars);
+
+    // Create column from function
+    for(size_t j=0;j<size_tv_obj.size();j++) {
+      vars["i"]=((double)j);
+      size_tv_obj[j]=(size_t)calc.eval(&vars);
+    }
+    
+  } else if (type=="tensor") {
+
+    std::string function, cond_func;
+    if (sv.size()==1) {
+      vector<string> pr, in;
+      pr.push_back("Enter function of indices i0, i1, ... or \"none\"");
+      pr.push_back("Enter function of indices i0, i1, ...");
+      int ret=get_input(sv,pr,in,"function",itive_com);
+      function=in[1];
+      if (in[0]!="none") {
+	cond_func=in[0];
+      }
+    } else if (sv.size()==2) {
+      function=sv[1];
+    } else {
+      function=sv[2];
+      if (sv[1]!="none") {
+	cond_func=sv[1];
+      }
+    }
+
+    // Parse function(s)
+    calculator calc, calc_cond;
+    std::map<std::string,double> vars;
+    calc.compile(function.c_str(),&vars);
+    calc_cond.compile(cond_func.c_str(),&vars);
+
+    // Set
+    size_t rk=tensor_obj.get_rank();
+    vector<size_t> ix(rk);
+    for(size_t i=0;i<tensor_obj.total_size();i++) {
+      tensor_obj.unpack_index(i,ix);
+      for(size_t j=0;j<rk;j++) {
+	vars[((string)"i")+szttos(j)]=ix[j];
+      }
+      vars["v"]=tensor_obj.get(ix);
+      if (cond_func.length()>0 && calc_cond.eval(&vars)>0.5) {
+	tensor_obj.set(ix,calc.eval(&vars));
+      }
+    }
+    
+  } else if (type=="tensor_grid") {
+
+    std::string function, cond_func;
+    if (sv.size()==1) {
+      vector<string> pr, in;
+      pr.push_back("Enter function of i0,i1,... and x0,x1,... or \"none\"");
+      pr.push_back("Enter function of i0,i1,... and x0,x1,...");
+      int ret=get_input(sv,pr,in,"function",itive_com);
+      function=in[1];
+      if (in[0]!="none") {
+	cond_func=in[0];
+      }
+    } else if (sv.size()==2) {
+      function=sv[1];
+    } else {
+      function=sv[2];
+      if (sv[1]!="none") {
+	cond_func=sv[1];
+      }
+    }
+
+    // Parse function(s)
+    calculator calc, calc_cond;
+    std::map<std::string,double> vars;
+    calc.compile(function.c_str(),&vars);
+    calc_cond.compile(cond_func.c_str(),&vars);
+
+    if (verbose>0) {
+      if (cond_func.length()==0) {
+	cout << "Command \"function\" using " << function
+	     << " to set all entries." << endl;
+      } else {
+	cout << "Command \"function\" using conditional " << cond_func
+	     << " and function " << function
+	     << " to set all entries." << endl;
+      }
+    }
+
+    
+    // Set
+    size_t rk=tensor_grid_obj.get_rank();
+    vector<size_t> ix(rk);
+    for(size_t i=0;i<tensor_grid_obj.total_size();i++) {
+      tensor_grid_obj.unpack_index(i,ix);
+      for(size_t j=0;j<rk;j++) {
+	vars[((string)"i")+szttos(j)]=ix[j];
+	vars[((string)"x")+szttos(j)]=tensor_grid_obj.get_grid(j,ix[j]);
+      }
+      vars["v"]=tensor_obj.get(ix);
+      if (cond_func.length()==0 || calc_cond.eval(&vars)>0.5) {
+	tensor_grid_obj.set(ix,calc.eval(&vars));
+      }
+    }
+    
+  } else {
+    cerr << "Not implemented for type " << type << " ." << endl;
+    return exc_efailed;
+  }
+
+  return 0;
+}
+

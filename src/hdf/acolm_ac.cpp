@@ -1532,3 +1532,59 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
+int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="tensor_grid") {
+
+    std::string function, fname, oname;
+
+    vector<string> pr, in;
+    pr.push_back("Filename of second object");
+    pr.push_back("Name of second object.");
+    pr.push_back("Enter function of i0,i1,... and x0,x1,...");
+    int ret=get_input(sv,pr,in,"function",itive_com);
+
+    function=in[2];
+    fname=in[0];
+    oname=in[1];
+
+    hdf_file hf;
+    hf.open(fname);
+    tensor_grid<> tg;
+    hdf_input(hf,tg,oname);
+    hf.close();
+
+    if (tg.get_rank()!=tensor_grid_obj.get_rank()) {
+      cerr << "Ranks do not match." << endl;
+      return 2;
+    }
+
+    // Parse function(s)
+    calculator calc;
+    std::map<std::string,double> vars;
+    calc.compile(function.c_str(),&vars);
+
+    // Set
+    size_t rk=tensor_grid_obj.get_rank();
+    vector<size_t> ix(rk);
+    for(size_t i=0;i<tensor_grid_obj.total_size();i++) {
+      tensor_grid_obj.unpack_index(i,ix);
+      vector<double> xa;
+      for(size_t j=0;j<rk;j++) {
+	vars[((string)"i")+szttos(j)]=ix[j];
+	vars[((string)"x")+szttos(j)]=tensor_grid_obj.get_grid(j,ix[j]);
+	xa.push_back(tensor_grid_obj.get_grid(j,ix[j]));
+      }
+      vars["v"]=tensor_obj.get(ix);
+      vars["w"]=tg.interp_linear(xa);
+      tensor_grid_obj.set(ix,calc.eval(&vars));
+    }
+    
+  } else {
+    cerr << "Not implemented for type " << type << " ." << endl;
+    return exc_efailed;
+  }
+
+  return 0;
+}
+
