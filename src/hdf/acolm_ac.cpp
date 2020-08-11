@@ -1544,11 +1544,12 @@ int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
     pr.push_back("Enter function of i0,i1,... and x0,x1,...");
     int ret=get_input(sv,pr,in,"function",itive_com);
 
-    function=in[2];
     fname=in[0];
     oname=in[1];
+    function=in[2];
 
     hdf_file hf;
+    wordexp_single_file(fname);
     hf.open(fname);
     tensor_grid<> tg;
     hdf_input(hf,tg,oname);
@@ -1557,6 +1558,11 @@ int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
     if (tg.get_rank()!=tensor_grid_obj.get_rank()) {
       cerr << "Ranks do not match." << endl;
       return 2;
+    }
+
+    if (tg.total_size()!=tensor_grid_obj.total_size()) {
+      cerr << "Sizes do not match." << endl;
+      return 3;
     }
 
     // Parse function(s)
@@ -1575,7 +1581,7 @@ int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
 	vars[((string)"x")+szttos(j)]=tensor_grid_obj.get_grid(j,ix[j]);
 	xa.push_back(tensor_grid_obj.get_grid(j,ix[j]));
       }
-      vars["v"]=tensor_obj.get(ix);
+      vars["v"]=tensor_grid_obj.get(ix);
       vars["w"]=tg.interp_linear(xa);
       tensor_grid_obj.set(ix,calc.eval(&vars));
     }

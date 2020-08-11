@@ -1559,9 +1559,57 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
     }
     if (ninf>0) {
       cout << ninf << " infinite values." << endl;
+      if (ninf<10) {
+	for(size_t i=0;i<N;i++) {
+	  if (std::isinf(data[i])) {
+	    tensor_grid_obj.unpack_index(i,ix2);
+	    cout << "Value at (";
+	    for(size_t j=0;j<tensor_grid_obj.get_rank();j++) {
+	      if (j!=tensor_grid_obj.get_rank()-1) {
+		cout << ix2[j] << ",";
+	      } else {
+		cout << ix2[j];
+	      }
+	    }
+	    cout << ") (";
+	    for(size_t j=0;j<tensor_grid_obj.get_rank();j++) {
+	      if (j!=tensor_grid_obj.get_rank()-1) {
+		cout << tensor_grid_obj.get_grid(j,ix2[j]) << ",";
+	      } else {
+		cout << tensor_grid_obj.get_grid(j,ix2[j]);
+	      }
+	    }
+	    cout << ") is " << data[i] << endl;
+	  }
+	}
+      }
     }
     if (nnan>0) {
       cout << nnan << " NaN values." << endl;
+      if (nnan<10) {
+	for(size_t i=0;i<N;i++) {
+	  if (std::isnan(data[i])) {
+	    tensor_grid_obj.unpack_index(i,ix2);
+	    cout << "Value at (";
+	    for(size_t j=0;j<tensor_grid_obj.get_rank();j++) {
+	      if (j!=tensor_grid_obj.get_rank()-1) {
+		cout << ix2[j] << ",";
+	      } else {
+		cout << ix2[j];
+	      }
+	    }
+	    cout << ") (";
+	    for(size_t j=0;j<tensor_grid_obj.get_rank();j++) {
+	      if (j!=tensor_grid_obj.get_rank()-1) {
+		cout << tensor_grid_obj.get_grid(j,ix2[j]) << ",";
+	      } else {
+		cout << tensor_grid_obj.get_grid(j,ix2[j]);
+	      }
+	    }
+	    cout << ") is " << data[i] << endl;
+	  }
+	}
+      }
     }
   
   } else {

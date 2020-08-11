@@ -834,7 +834,8 @@ void acol_manager::command_add(std::string new_type) {
        "and the sum over all entries.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
        both},
-      {0,"binary","Apply a function to two tensor_grid objects.",0,0,"",
+      {0,"binary","Apply a binary function to two tensor_grid objects.",-1,-1,
+       "<file> <object name> <function>",
        ((string)"Long ")+
        "desc.",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_binary),
