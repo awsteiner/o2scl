@@ -494,7 +494,39 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
 int acol_manager::comm_to_tensor_grid(std::vector<std::string> &sv,
 				      bool itive_com) {
 
-  if (type=="tensor") {
+  if (type=="table3d") {
+
+    if (sv.size()<2) {
+      cerr << "Need slice name." << endl;
+      return 1;
+    }
+    string name=sv[1];
+
+    vector<size_t> sz;
+    sz.push_back(table3d_obj.get_nx());
+    sz.push_back(table3d_obj.get_ny());
+    tensor_grid_obj.resize(2,sz);
+    vector<double> grid;
+    for(size_t i=0;i<table3d_obj.get_nx();i++) {
+      grid.push_back(table3d_obj.get_grid_x(i));
+    }
+    for(size_t i=0;i<table3d_obj.get_ny();i++) {
+      grid.push_back(table3d_obj.get_grid_y(i));
+    }
+    tensor_grid_obj.set_grid_packed(grid);
+    for(size_t i=0;i<table3d_obj.get_nx();i++) {
+      for(size_t j=0;j<table3d_obj.get_ny();j++) {
+	vector<size_t> ix={i,j};
+	tensor_grid_obj.set(ix,table3d_obj.get(i,j,name));
+      }
+    }
+    
+    command_del(type);
+    clear_obj();
+    command_add("tensor_grid");
+    type="tensor_grid";
+
+  } else if (type=="tensor") {
 
     // Get rank
     size_t rank=tensor_obj.get_rank();

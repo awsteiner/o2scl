@@ -704,6 +704,31 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
   
+  // Handle the special case 'help index-spec'
+  if (sv.size()==2 && (sv[1]=="index-spec" || sv[1]=="index_spec")) {
+    std::string str=((std::string)"Index specification ")+
+      "description:\n\nThe rearrange commands use index "+
+      "specifications:\n\n"+
+      "- index(ix): Retain index ix in the new tensor.\n\n"+
+      "- fixed(ix): Fix the value of index ix.\n\n"+
+      "- sum(ix): Sum over the value of index ix\n\n"+
+      "- trace(ix1,ix2): Trace over indices ix and ix2.\n\n"+
+      "- reverse(ix): Retain index ix but then reverse the order.\n\n"+
+      "- range(ix,start,end): Retain index ix but modify range.\n\n"+
+      "- interp(ix,value) (for tensor_grid): fix index ix by "+
+      "interpolating 'value' into the grid for index ix.\n\n"+
+      "- grid(ix,begin,end,n_bins,log) (for tensor_grid):\n\n"+
+      "- gridw(ix,begin,end,bin_width,log) (for tensor_grid):\n";
+    
+    std::vector<std::string> sv;
+    o2scl::rewrap_keep_endlines(str,sv);
+    for(size_t i=0;i<sv.size();i++) {
+      cout << sv[i] << endl;
+    }
+      
+    return 0;
+  }
+    
   // Handle the special case 'help value-spec'
   if (sv.size()==2 && (sv[1]=="value-spec" || sv[1]=="value_spec")) {
     
