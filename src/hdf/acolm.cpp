@@ -122,8 +122,8 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
   {
     vector<std::string> itmp={"cat","contours","deriv-x","deriv-y",
-			      "function","entry","entry-grid","insert",
-			      "interp","stats","select",
+			      "function","entry","entry-grid","get-grid",
+			      "insert","interp","stats","select",
 			      "list","max","min","rename","set-data",
 			      "slice","slice-hist","sum","x-name","y-name"};
     type_comm_list.insert(std::make_pair("table3d",itmp));
@@ -521,8 +521,12 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="table3d") {
     
-    static const size_t narr=21;
+    static const size_t narr=22;
     comm_option_s options_arr[narr]={
+      {0,"get-grid","Get the table3d grid.",0,0,"",
+       "Output the table3d grid as a series of columns.",
+       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_grid),
+       both},
       {'s',"select","Select slices for a new table3d object.",-1,-1,
        "<slice spec.>",
        ((string)"Select creates a new table3d from the present table3d, ")+

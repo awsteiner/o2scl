@@ -143,7 +143,49 @@ int acol_manager::comm_get_conv
 
 int acol_manager::comm_get_grid(std::vector<std::string> &sv, bool itive_com) {
 
-  if (type=="tensor_grid") {
+  if (type=="table3d") {
+    
+    vector<vector<string> > string_mat(3);
+    vector<int> align_spec(3);
+    
+    size_t max_size=table3d_obj.get_nx();
+    if (table3d_obj.get_ny()>max_size) {
+      max_size=table3d_obj.get_ny();
+    }
+
+    // The first column which enumerates the grid points
+    align_spec[0]=columnify::align_left;
+    string_mat[0].resize(max_size+1);
+    for(size_t ell=0;ell<max_size;ell++) {
+      string_mat[0][ell+1]=o2scl::szttos(ell)+".";
+    }
+
+    // The first row which labels the grids
+    string_mat[1].resize(max_size+1);
+    align_spec[1]=columnify::align_right;
+    string_mat[1][0]=table3d_obj.get_x_name();
+    string_mat[2].resize(max_size+1);
+    align_spec[2]=columnify::align_right;
+    string_mat[2][0]=table3d_obj.get_y_name();
+    
+    // Now the grid data
+    for(size_t ell=0;ell<max_size;ell++) {
+      if (ell<table3d_obj.get_nx()) {
+	string_mat[1][ell+1]=o2scl::dtos(table3d_obj.get_grid_x(ell),prec);
+      }
+      if (ell<table3d_obj.get_ny()) {
+	string_mat[2][ell+1]=o2scl::dtos(table3d_obj.get_grid_y(ell),prec);
+      }
+    }
+
+    columnify col;
+    vector<string> aligned(max_size+1);
+    col.align(string_mat,3,max_size+1,aligned,align_spec);
+    for(size_t i=0;i<aligned.size();i++) {
+      cout << aligned[i] << endl;
+    }
+
+  } else if (type=="tensor_grid") {
 
     size_t rank=tensor_grid_obj.get_rank();
 
@@ -188,11 +230,12 @@ int acol_manager::comm_get_grid(std::vector<std::string> &sv, bool itive_com) {
       cout << aligned[i] << endl;
     }
 
-    return 0;
-  }
+  } else {
 
-  cout << "Not implemented for type " << type << endl;
-  return 1;
+    cout << "Not implemented for type " << type << endl;
+  }
+  
+  return 0;
 }
 
 int acol_manager::comm_get_unit(std::vector<std::string> &sv, bool itive_com) {
