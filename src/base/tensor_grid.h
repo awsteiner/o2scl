@@ -1707,7 +1707,7 @@ namespace o2scl {
       // New grid
       std::vector<double> new_grid;
   
-      // Collect the statistics on the transformationand set the new grid
+      // Collect the statistics on the transformation and set the new grid
       for(size_t i=0;i<spec.size();i++) {
 	if (spec[i].type==index_spec::index ||
 	    spec[i].type==index_spec::reverse) {

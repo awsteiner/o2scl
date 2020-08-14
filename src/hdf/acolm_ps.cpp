@@ -2924,20 +2924,24 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
       } else if (sv2[j].find("grid(")==0 && sv2[j][sv2[j].size()-1]==')') {
 	string spec=sv2[j].substr(5,sv2[j].length()-6);
 	split_string_delim(spec,args,',');
-	if (verbose>1) {
-	  cout << "rearrange, grid, index, begin, end, n_bins [log]: ";
-	  vector_out(cout,args,true);
-	}
 	if (args.size()<4) {
 	  cerr << "Not enough arguments in grid()." << endl;
 	  return 1;
 	}
 	if (args.size()>4 && o2scl::stob(args[4])==true) {
+	  if (verbose>1) {
+	    cout << "rearrange, grid, index, begin, end, n_bins, log: ";
+	    vector_out(cout,args,true);
+	  }
 	  vis.push_back(ix_grid(o2scl::stoszt(args[0]),
 				o2scl::function_to_double(args[1]),
 				o2scl::function_to_double(args[2]),
-				o2scl::stoszt(args[3]),false));
+				o2scl::stoszt(args[3]),true));
 	} else {
+	  if (verbose>1) {
+	    cout << "rearrange, grid, index, begin, end, n_bins, [no log]: ";
+	    vector_out(cout,args,true);
+	  }
 	  vis.push_back(ix_grid(o2scl::stoszt(args[0]),
 				o2scl::function_to_double(args[1]),
 				o2scl::function_to_double(args[2]),
@@ -2946,20 +2950,24 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
       } else if (sv2[j].find("gridw(")==0 && sv2[j][sv2[j].size()-1]==')') {
 	string spec=sv2[j].substr(6,sv2[j].length()-7);
 	split_string_delim(spec,args,',');
-	if (verbose>1) {
-	  cout << "rearrange, gridw, index, begin, end, bin_width [log]: ";
-	  vector_out(cout,args,true);
-	}
 	if (args.size()<4) {
 	  cerr << "Not enough arguments in gridw()." << endl;
 	  return 1;
 	}
 	if (args.size()>4 && o2scl::stob(args[4])==true) {
+	  if (verbose>1) {
+	    cout << "rearrange, gridw, index, begin, end, bin_width, log: ";
+	    vector_out(cout,args,true);
+	  }
 	  vis.push_back(ix_gridw(o2scl::stoszt(args[0]),
 				 o2scl::function_to_double(args[1]),
 				 o2scl::function_to_double(args[2]),
-				 o2scl::function_to_double(args[3]),false));
+				 o2scl::function_to_double(args[3]),true));
 	} else {
+	  if (verbose>1) {
+	    cout << "rearrange, gridw, index, begin, end, bin_width [no log]: ";
+	    vector_out(cout,args,true);
+	  }
 	  vis.push_back(ix_gridw(o2scl::stoszt(args[0]),
 				 o2scl::function_to_double(args[1]),
 				 o2scl::function_to_double(args[2]),
