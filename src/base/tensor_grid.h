@@ -1283,6 +1283,9 @@ namespace o2scl {
 	- The vector \c val should be a list of values to be
 	interpolated and should have a size equal to that of 
 	\c ix_to_interp .
+
+	\todo Double check if the vector "ix_to_interp" needs
+	to be ordered
     */
     template<class vec2_size_t, class vec3_size_t, class vec2_t>
       double interp_linear_partial
@@ -1707,7 +1710,14 @@ namespace o2scl {
       // New grid
       std::vector<double> new_grid;
   
-      // Collect the statistics on the transformation and set the new grid
+      // Loop through the index specifications and add them to
+      // spec_old and spec_new (if necessary). This loop also
+      // determines the rank of the new tensor, "rank_new", and the
+      // sizes of the indices "size_new". Finally, this loop counts
+      // the number of interpolations and modifies n_sum_loop as
+      // needed. No actual copying or summing is done in this loop
+      // yet.
+      
       for(size_t i=0;i<spec.size();i++) {
 	if (spec[i].type==index_spec::index ||
 	    spec[i].type==index_spec::reverse) {
@@ -1979,10 +1989,14 @@ namespace o2scl {
 	    return tensor_grid<>();
 	  }
 	}
+	
+	// End of loop over index specifications
       }
+
+      // Compute the total number of sums to be performed
       size_t n_sums=sum_sizes.size();
 
-      // Call the error handler if the input is invalid
+      // If the new rank is zero, then return an error
       if (rank_new==0) {
 	if (err_on_fail) {
 	  O2SCL_ERR2("Zero new indices in ",
@@ -1996,6 +2010,9 @@ namespace o2scl {
 	  return tensor_grid<>();
 	}
       }
+
+      // If not all indices in the old tensor were accounted for,
+      // then return an error
       for(size_t i=0;i<rank_old;i++) {
 	if (spec_old[i].type==index_spec::empty) {
 	  if (err_on_fail) {
@@ -2012,12 +2029,14 @@ namespace o2scl {
 	}
       }
 
-      // Verbose output if necessary
+      // Verbose output of change in rank
       if (verbose>0) {
 	std::cout << "Using a " << rank_old
 		  << " rank tensor to create a new "
 		  << rank_new << " rank tensor." << std::endl;
       }
+
+      // Verbose output looping over the spec_old list
       if (verbose>1) {
 	for(size_t i=0;i<rank_old;i++) {
 	  std::cout << "Old index " << i;
@@ -2058,8 +2077,12 @@ namespace o2scl {
 	    } else {
 	      std::cout << "." << std::endl;
 	    }
+	    std::cout << "  and placed in new index " << spec_old[i].ix1
+		      << "." << std::endl;
 	  }
 	}
+
+	// Verbose output looping over the spec_new list
 	for(size_t i=0;i<rank_new;i++) {
 	  std::cout << "New index " << i;
 	  if (spec_new[i].type==index_spec::index) {
@@ -2087,8 +2110,16 @@ namespace o2scl {
 	    } else {
 	      std::cout << "." << std::endl;
 	    }
+	    std::cout << "  originally stored in index "
+		      << spec_new[i].ix1 << "." << std::endl;
 	  }
 	}
+
+	// Output sum information
+	std::cout << "n_sums, n_sum_loop: " << n_sums << " "
+		  << n_sum_loop << std::endl;
+	
+	// End of 'if (verbose>1)'
       }
     
       // Create the new tensor object
@@ -2112,7 +2143,9 @@ namespace o2scl {
 	o2scl::vector_out(std::cout,ix_to_interp,true);
       }
     
-      // Index arrays
+      // Index arrays. For indices in the old tensor which we are
+      // interpolating, the value of ix_old is not used, so it
+      // is not set.
       std::vector<size_t> ix_new(rank_new);
       std::vector<size_t> ix_old(rank_old);
       std::vector<size_t> sum_ix(n_sums);
@@ -2123,9 +2156,9 @@ namespace o2scl {
 	// Find the location in the new tensor object
 	t_new.unpack_index(i,ix_new);
 
-	// List of interpolated values
-	std::vector<double> interp_vals;
-	
+	// List of interpolated values (vector of size n_interps)
+	std::vector<double> interp_vals(n_interps);
+
 	// Determine the location in the old tensor object
 	for(size_t j=0;j<rank_old;j++) {
 	  if (spec_old[j].type==index_spec::index) {
@@ -2142,30 +2175,42 @@ namespace o2scl {
 	    ix_old[j]=spec_old[j].ix2;
 	  } else if (spec_old[j].type==index_spec::interp) {
 	    interp_vals.push_back(spec_old[j].val1);
+	    //interp_vals[j]=spec_old[j].val1;
 	  } else if (spec_old[j].type==index_spec::grid) {
 	    if (spec_old[j].ix3==1) {
 	      double val=spec_old[j].val1*
 		pow(spec_old[j].val3,ix_new[spec_old[j].ix1]);
+	      //interp_vals[j]=val;
 	      interp_vals.push_back(val);
 	    } else {
 	      double val=spec_old[j].val1+
 		ix_new[spec_old[j].ix1]*spec_old[j].val3;
 	      interp_vals.push_back(val);
+	      //interp_vals[j]=val;
 	    }
 	  } else if (spec_old[j].type==index_spec::gridw) {
 	    if (spec_old[j].ix3==1) {
 	      double val=spec_old[j].val1*
 		pow(spec_old[j].val3,ix_new[spec_old[j].ix1]);
 	      interp_vals.push_back(val);
+	      //interp_vals[j]=val;
 	    } else {
 	      double val=spec_old[j].val1+
 		ix_new[spec_old[j].ix1]*spec_old[j].val3;
 	      interp_vals.push_back(val);
+	      //interp_vals[j]=val;
 	    }
 	  }
 	  
 	}
 
+	if (verbose>1 && i%(t_new.total_size()/10)==0) {
+	  std::cout << "i: " << i << " ix_old: ";
+	  vector_out(std::cout,ix_old);
+	  std::cout << " ix_new: ";
+	  vector_out(std::cout,ix_new,true);
+	}
+	
 	double val=0;
       
 	for(size_t j=0;j<n_sum_loop;j++) {
@@ -2222,6 +2267,10 @@ namespace o2scl {
 
 	  if (verbose>2) {
 	    std::cout << "Here old: ";
+	    for(size_t j=0;j<rank_old;j++) {
+	      std::cout << ix_old[j] << " ";
+	    }
+	    std::cout << std::endl;
 	    vector_out(std::cout,ix_old,true);
 	    std::cout << "Here new: ";
 	    vector_out(std::cout,ix_new,true);
