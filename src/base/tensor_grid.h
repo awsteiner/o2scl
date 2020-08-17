@@ -2289,8 +2289,8 @@ namespace o2scl {
 
 	  if (verbose>2) {
 	    std::cout << "Here old: ";
-	    for(size_t j=0;j<rank_old;j++) {
-	      std::cout << ix_old[j] << " ";
+	    for(size_t j2=0;j2<rank_old;j2++) {
+	      std::cout << ix_old[j2] << " ";
 	    }
 	    std::cout << std::endl;
 	    vector_out(std::cout,ix_old,true);
