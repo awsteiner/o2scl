@@ -2303,9 +2303,6 @@ namespace o2scl {
       
 	}
       
-	vector_out(std::cout,ix_new,true);
-	std::cout << val << std::endl;
-	
 	// Set the new point by performing the linear interpolation
 	t_new.set(ix_new,val);
       }
