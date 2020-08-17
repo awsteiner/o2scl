@@ -2288,13 +2288,11 @@ namespace o2scl {
 	  }
 
 	  if (verbose>2) {
-	    std::cout << "Here old: ";
-	    for(size_t j2=0;j2<rank_old;j2++) {
-	      std::cout << ix_old[j2] << " ";
+	    std::cout << "Old: ";
+	    for(size_t j3=0;j3<rank_old;j3++) {
+	      std::cout << ix_old[j3] << " ";
 	    }
-	    std::cout << std::endl;
-	    vector_out(std::cout,ix_old,true);
-	    std::cout << "Here new: ";
+	    std::cout << "New: ";
 	    vector_out(std::cout,ix_new,true);
 	  }
 	  if (n_interps>0) {
