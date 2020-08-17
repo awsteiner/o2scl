@@ -163,6 +163,159 @@ namespace o2scl {
 		     bool log=false);
   //@}
 
+#ifdef O2SCL_NEVER_DEFINED
+
+  class index_index2 : public index_spec {
+
+  public:
+
+    index_index2(index_spec &is) {
+      if (ix.type!=index_spec::index) {
+	O2SCL_ERR("Invalid index_spec in index_index2",
+		  o2scl::exc_einval);
+      }
+    }
+    
+  };
+  
+  class index_fixed2 : public index_spec {
+
+  public:
+
+    size_t &fixed_value;
+
+    index_fixed2(index_spec &is) : fixed_value(ix.ix2) {
+      if (ix.type!=index_spec::fixed) {
+	O2SCL_ERR("Invalid index_spec in index_index2",
+		  o2scl::exc_einval);
+      }
+    }
+    
+  };
+  
+  class index_sum2 : public index_spec {
+
+  public:
+
+    index_sum2(index_spec &is) : {
+      if (ix.type!=index_spec::sum) {
+	O2SCL_ERR("Invalid index_spec in index_index2",
+		  o2scl::exc_einval);
+      }
+    }
+    
+  };
+  
+  class index_trace2 : public index_spec {
+
+  public:
+
+    size_t &second_index;
+    
+    index_trace2(index_spec &is) : second_index(ix.ix2) {
+      if (ix.type!=index_spec::trace) {
+	O2SCL_ERR("Invalid index_spec in index_index2",
+		  o2scl::exc_einval);
+      }
+    }
+    
+  };
+  
+  class index_reverse2 : public index_spec {
+
+  public:
+
+    index_reverse2(index_spec &is) {
+      if (ix.type!=index_spec::reverse) {
+	O2SCL_ERR("Invalid index_spec in index_index2",
+		  o2scl::exc_einval);
+      }
+    }
+    
+  };
+  
+  class index_range2 : public index_spec {
+
+  public:
+    
+    double &begin;
+
+    double &end;
+    
+    index_range2(index_spec &is) : begin(is.ix2), end(is.ix3) {
+      if (ix.type!=index_spec::range) {
+	O2SCL_ERR("Invalid index_spec in index_index2",
+		  o2scl::exc_einval);
+      }
+    }
+    
+  };
+
+  class index_interp2 : public index_spec {
+
+  public:
+    
+    double &begin;
+
+    double &end;
+
+    size_t &n_bins;
+
+    index_interp2(index_spec &is) : begin(is.val1), end(is.val2),
+				  n_bins(is.ix2) {
+      if (ix.type!=index_spec::interp) {
+	O2SCL_ERR("Invalid index_spec in index_index2",
+		  o2scl::exc_einval);
+      }
+    }
+    
+  };
+
+  class index_grid2 : public index_spec {
+
+  public:
+    
+    double &begin;
+
+    double &end;
+
+    size_t &n_bins;
+
+    size_t &log_flag;
+
+    index_grid2(index_spec &is) : begin(is.val1), end(is.val2),
+				  n_bins(is.ix2), log_flag(is.ix3) {
+      if (ix.type!=index_spec::grid) {
+	O2SCL_ERR("Invalid index_spec in index_index2",
+		  o2scl::exc_einval);
+      }
+    }
+    
+  };
+
+  class index_gridw2 : public index_spec {
+
+  public:
+    
+    double &begin;
+
+    double &end;
+
+    double &width;
+
+    size_t &log_flag;
+    
+    index_gridw2(index_spec &is) : begin(is.val1), end(is.val2),
+				   width(is.val3), log_flag(is.ix3) {
+      if (ix.type!=index_spec::gridw) {
+	O2SCL_ERR("Invalid index_spec in index_index2",
+		  o2scl::exc_einval);
+      }
+    }
+    
+  };
+#endif
+  
   /** \brief Tensor class with arbitrary dimensions
 
       The elements of a tensor are typically specified as a list of

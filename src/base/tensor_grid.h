@@ -1284,8 +1284,9 @@ namespace o2scl {
 	interpolated and should have a size equal to that of 
 	\c ix_to_interp .
 
-	\todo Double check if the vector "ix_to_interp" needs
-	to be ordered
+	\todo Double check and document if the vector "ix_to_interp"
+	needs to be ordered. I'm pretty sure it doesn't, so long as
+	the ordering in \c val and \c ix_to_interp are consistent.
     */
     template<class vec2_size_t, class vec3_size_t, class vec2_t>
       double interp_linear_partial
@@ -2139,7 +2140,8 @@ namespace o2scl {
 	  }
 	  std::cout << t_new.get_grid(k,t_new.get_size(k)-1) << std::endl;
 	}
-	std::cout << "Interpolations (" << n_interps << "): ";
+	std::cout << "Number of interpolations: " << n_interps
+		  << ", indexes to interpolate: ";
 	o2scl::vector_out(std::cout,ix_to_interp,true);
       }
     
@@ -2149,18 +2151,26 @@ namespace o2scl {
       std::vector<size_t> ix_new(rank_new);
       std::vector<size_t> ix_old(rank_old);
       std::vector<size_t> sum_ix(n_sums);
-    
+
+      // The vector "interp_vals" below is ordered according to the
+      // indices in the old vector, but ix_to_interp isn't always
+      // ordered that way, so we sort ix_to_interp here. This sorting
+      // is important for the call interp_linear_partial() below.
+      //o2scl::vector_sort<std::vector<size_t>,size_t>(ix_to_interp.size(),
+      //ix_to_interp);
+      
       // Loop over the new tensor object
       for(size_t i=0;i<t_new.total_size();i++) {
-      
+
 	// Find the location in the new tensor object
 	t_new.unpack_index(i,ix_new);
 
 	// List of interpolated values (vector of size n_interps)
-	std::vector<double> interp_vals(n_interps);
+	std::vector<double> interp_vals;
 
 	// Determine the location in the old tensor object
 	for(size_t j=0;j<rank_old;j++) {
+	  
 	  if (spec_old[j].type==index_spec::index) {
 	    ix_old[j]=ix_new[spec_old[j].ix1];
 	  } else if (spec_old[j].type==index_spec::range) {
@@ -2175,44 +2185,56 @@ namespace o2scl {
 	    ix_old[j]=spec_old[j].ix2;
 	  } else if (spec_old[j].type==index_spec::interp) {
 	    interp_vals.push_back(spec_old[j].val1);
-	    //interp_vals[j]=spec_old[j].val1;
 	  } else if (spec_old[j].type==index_spec::grid) {
 	    if (spec_old[j].ix3==1) {
 	      double val=spec_old[j].val1*
 		pow(spec_old[j].val3,ix_new[spec_old[j].ix1]);
-	      //interp_vals[j]=val;
 	      interp_vals.push_back(val);
 	    } else {
 	      double val=spec_old[j].val1+
 		ix_new[spec_old[j].ix1]*spec_old[j].val3;
 	      interp_vals.push_back(val);
-	      //interp_vals[j]=val;
 	    }
 	  } else if (spec_old[j].type==index_spec::gridw) {
 	    if (spec_old[j].ix3==1) {
 	      double val=spec_old[j].val1*
 		pow(spec_old[j].val3,ix_new[spec_old[j].ix1]);
 	      interp_vals.push_back(val);
-	      //interp_vals[j]=val;
 	    } else {
 	      double val=spec_old[j].val1+
 		ix_new[spec_old[j].ix1]*spec_old[j].val3;
 	      interp_vals.push_back(val);
-	      //interp_vals[j]=val;
 	    }
 	  }
-	  
-	}
 
-	if (verbose>1 && i%(t_new.total_size()/10)==0) {
-	  std::cout << "i: " << i << " ix_old: ";
-	  vector_out(std::cout,ix_old);
+	}
+	
+	size_t ntmp=t_new.total_size()/10;
+	if (ntmp==0) ntmp++;
+
+	if (verbose>1 && i%ntmp==0) {
+	  for(size_t j=0;j<rank_old;j++) {
+	    size_t k;
+	    if (vector_search(ix_to_interp,j,k)==false) {
+	      if (j>=ix_old.size()) {
+		O2SCL_ERR("Indexing problem.",o2scl::exc_esanity);
+	      } else {
+		std::cout << ix_old[j] << " ";
+	      }
+	    } else {
+	      if (j>=interp_vals.size()) {
+		O2SCL_ERR("Indexing problem.",o2scl::exc_esanity);
+	      } else {
+		std::cout << "(" << interp_vals[j] << ") ";
+	      }
+	    }
+	  }
 	  std::cout << " ix_new: ";
 	  vector_out(std::cout,ix_new,true);
 	}
 	
 	double val=0;
-      
+
 	for(size_t j=0;j<n_sum_loop;j++) {
 
 	  // This code is similar to tensor::unpack_index(), it unpacks
@@ -2283,6 +2305,9 @@ namespace o2scl {
       
 	}
       
+	vector_out(std::cout,ix_new,true);
+	std::cout << val << std::endl;
+	
 	// Set the new point by performing the linear interpolation
 	t_new.set(ix_new,val);
       }
