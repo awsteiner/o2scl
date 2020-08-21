@@ -794,7 +794,7 @@ namespace o2scl {
   void unpack_index(size_t ix, size_vec_t &index) {
     if (ix>=total_size()) {
       O2SCL_ERR((((std::string)"Value of index ")+szttos(ix)+
-		 " greater than or equal to total size"+
+		 " greater than or equal to total size "+
 		 szttos(total_size())+
 		 " in tensor::unpack_index().").c_str(),
 		exc_eindex);
