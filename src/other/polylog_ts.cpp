@@ -25,8 +25,14 @@
 #include <o2scl/inte_adapt_cern.h>
 #include <o2scl/polylog.h>
 
+#ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#endif
+
 using namespace std;
 using namespace o2scl;
+
+typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 
 int main(void) {
 
@@ -70,7 +76,30 @@ int main(void) {
   t.test_rel(beg.K1exp(2.0),bed.K1exp(2.0),1.0e-15,"bed 1");
   t.test_rel(beg.K2exp(2.0),bed.K2exp(2.0),1.0e-15,"bed 2");
   t.test_rel(beg.K3exp(2.0),bed.K3exp(2.0),1.0e-15,"bed 3");
+
+  cout.precision(20);
+
+  // Todo: better testing
   
+  fermi_dirac_integ_direct<long double,funct_cdf50,30,cpp_dec_float_50> f3;
+  long double xx=f3.calc_2(0.5);
+  cout << f1.calc_2(0.5) << endl;
+  cout << xx << endl;
+  
+  bessel_K_exp_integ_direct<long double,funct_cdf50,30,25,
+			    cpp_dec_float_50> bed2;
+  double x=bed.K1exp(2.0);
+  std::cout
+    << std::setprecision(std::numeric_limits<double>::digits10)
+    << x << std::endl;
+  xx=bed2.K1exp(2.0);
+  std::cout
+    << std::setprecision(std::numeric_limits<long double>::digits10)
+    << xx << std::endl;
+  // according to wolframcloud
+  std::cout <<
+    "1.033476847068688573175357105879597425156" << endl;
+
 #endif
   
 #endif

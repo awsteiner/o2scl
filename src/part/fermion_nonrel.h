@@ -88,9 +88,10 @@ namespace o2scl {
       that we don't need to use a solver.
   */
   template<class fd_inte_t=fermi_dirac_integ_gsl,
-    class be_inte_t=bessel_K_exp_integ_gsl, class fp_t=double>
+	   class be_inte_t=bessel_K_exp_integ_gsl, class root_t=root_cern<>,
+	   class fp_t=double>
     class fermion_nonrel_tl :
-    public fermion_thermo_tl<fd_inte_t,be_inte_t,fp_t> {
+    public fermion_thermo_tl<fd_inte_t,be_inte_t,root_t,fp_t> {
 
   public:
   
@@ -330,7 +331,7 @@ namespace o2scl {
   
     funct mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
 		       (&fermion_nonrel_tl<fd_inte_t,
-			be_inte_t,fp_t>::solve_fun),
+			be_inte_t,root_t,fp_t>::solve_fun),
 		       this,std::placeholders::_1,f.n/f.g,f.ms*temper);
   
     // Turn off convergence errors temporarily, since we'll

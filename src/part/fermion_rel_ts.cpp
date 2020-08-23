@@ -92,8 +92,13 @@ int main(void) {
   t.test_gen(qag->get_rule()==qag2.get_rule(),"downcast");
   
 #ifdef O2SCL_LD_TYPES
+
+  // These don't work yet. The next step is to make sure that
+  // bessel_K_exp_integ_direct<long double,cpp_dec_float_50>
+  // is tested in ../other/polylog_ts.cpp
   
-  /*fermion_rel_tl<fermi_dirac_integ_direct<long double,cpp_dec_float_50>,
+  /*
+    fermion_rel_tl<fermi_dirac_integ_direct<long double,cpp_dec_float_50>,
     bessel_K_exp_integ_direct<long double,cpp_dec_float_50>,
     long double> fermion_rel_ld;
   */

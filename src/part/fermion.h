@@ -307,8 +307,9 @@ namespace o2scl {
       the Fermi functions for massless_calc_density() functions?
   */
   template<class fd_inte_t=fermi_dirac_integ_gsl,
-    class be_inte_t=bessel_K_exp_integ_gsl, class fp_t=double>
-    class fermion_thermo_tl : public fermion_zerot_tl<fp_t> {
+	   class be_inte_t=bessel_K_exp_integ_gsl, class root_t=root_cern<>,
+	   class fp_t=double>
+  class fermion_thermo_tl : public fermion_zerot_tl<fp_t> {
     
   public:
   
@@ -677,7 +678,7 @@ namespace o2scl {
     x=f.ms+temper;
     funct mf2=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
 			(&fermion_thermo_tl<fd_inte_t,
-			 be_inte_t,fp_t>::massless_solve_fun),
+			 be_inte_t,root_t,fp_t>::massless_solve_fun),
 			this,std::placeholders::_1,std::ref(f),temper);
     massless_root->solve(x,mf2);
     f.nu=x;
@@ -834,7 +835,7 @@ namespace o2scl {
       We default to a solver of type root_cern here since we
       don't have a bracket or a derivative.
   */
-  root_cern<> def_massless_root;
+    root_t def_massless_root;
 
   /// Return string denoting type ("fermion_thermo")
   virtual const char *type() { return "fermion_thermo"; }
