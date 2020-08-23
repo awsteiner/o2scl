@@ -33,13 +33,21 @@ addons:
     - libreadline-dev
     - libncurses-dev
     - libhdf5-dev
+    
+  # 8/22/20: The o2scl homebrew ruby script should install autotools,
+  # but it doesn't seem to do so right now, so I'm trying to do it
+  # here
+
   homebrew:
     taps: awsteiner/science
     packages:
     - gcc
     - eigen
     - hdf5
-    
+    - automake
+    - autoconf
+    - libtool
+
 # 
 # Prepare autotools and install dependencies before installation
 #
