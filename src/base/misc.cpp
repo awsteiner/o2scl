@@ -96,10 +96,11 @@ o2scl::o2abs(const boost::multiprecision::cpp_dec_float_50 x) {
 bool o2scl::o2isfinite(const boost::multiprecision::cpp_dec_float_50 x) {
   return isfinite(x);
 }
+
 boost::multiprecision::cpp_dec_float_50
 o2scl::o2hypot(const boost::multiprecision::cpp_dec_float_50 x,
-		 const boost::multiprecision::cpp_dec_float_50 y) {
-return boost::math::hypot(x,y);
+	       const boost::multiprecision::cpp_dec_float_50 y) {
+  return boost::math::hypot(x,y);
 }
 
 #endif

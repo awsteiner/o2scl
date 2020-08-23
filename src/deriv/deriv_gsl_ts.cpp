@@ -122,8 +122,8 @@ int main(void) {
   cout << "First derivative: " << endl;
   cout << ld_res << " " << de.get_err() 
        << " " << std::cos(0.5L) << endl;
-  t.test_rel(ld_res,std::cos(0.5L),4.0e-14L,"simple derivative");
-  
+  t.test_rel(ld_res,std::cos(0.5L),4.0e-14L,"simple derivative long double");
+
   deriv_gsl<funct_cdf50,cpp_dec_float_50> de_cdf;
   funct_cdf50 tf_cdf=testfun_cdf;
   cpp_dec_float_50 cdf_res;
@@ -135,9 +135,9 @@ int main(void) {
   cout << "First derivative: " << endl;
   cout << cdf_res << " " << de.get_err() 
        << " " << cos(half) << endl;
-  t.test_rel_boost<cpp_dec_float_50>(cdf_res,cos(half),
-				     4.0e-20,"simple derivative");
-
+  t.test_rel_boost<cpp_dec_float_50>(cdf_res,cos(half),4.0e-20,
+				     "simple derivative cpp_dec_float_50");
+				     
 #endif
   
   t.report();
