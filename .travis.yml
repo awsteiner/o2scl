@@ -1,3 +1,8 @@
+# O2scl Travis script
+#
+# On OSX, homebrew is used to do the installation. On Ubuntu, we use
+# apt to install the dependencies and then do a normal source
+# installation.
 #
 # Todo: Right now, we check only the current version, not the latest dist.
 #
@@ -15,7 +20,6 @@ os:
 
 osx_image: xcode11.2
 dist: bionic
-sudo: required
 
 # Speed up the tests on linux and presume old HDF5
 env:

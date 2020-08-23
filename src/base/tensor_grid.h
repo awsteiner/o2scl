@@ -2213,19 +2213,29 @@ namespace o2scl {
 	if (ntmp==0) ntmp++;
 
 	if (verbose>1 && i%ntmp==0) {
-	  for(size_t j=0;j<rank_old;j++) {
+	  for(size_t j2=0;j2<rank_old;j2++) {
 	    size_t k;
-	    if (vector_search(ix_to_interp,j,k)==false) {
-	      if (j>=ix_old.size()) {
-		O2SCL_ERR("Indexing problem.",o2scl::exc_esanity);
+	    if (vector_search(ix_to_interp,j2,k)==false) {
+	      if (j2>=ix_old.size()) {
+		std::cout << "\n\nj2,ix_old.size(): "
+			  << j2 << " " << ix_old.size() << std::endl;
+		O2SCL_ERR2("Indexing problem 1 in",
+			   "tensor_grid::rearrange_and_copy().",
+			   o2scl::exc_esanity);
 	      } else {
-		std::cout << ix_old[j] << " ";
+		std::cout << ix_old[j2] << " ";
 	      }
 	    } else {
-	      if (j>=interp_vals.size()) {
-		O2SCL_ERR("Indexing problem.",o2scl::exc_esanity);
+	      if (k>=interp_vals.size()) {
+		std::cout << "\n\nk,interp_vals.size(): "
+			  << k << " " << interp_vals.size()
+			  << std::endl;
+		o2scl::vector_out(std::cout,interp_vals,true);
+		O2SCL_ERR2("Indexing problem w in",
+			   "tensor_grid::rearrange_and_copy().",
+			   o2scl::exc_esanity);
 	      } else {
-		std::cout << "(" << interp_vals[j] << ") ";
+		std::cout << "(" << interp_vals[k] << ") ";
 	      }
 	    }
 	  }
