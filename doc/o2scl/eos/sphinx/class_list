@@ -38,6 +38,7 @@
   <compound refid="classo2scl_1_1eos__quark__cfl6" kind="class"><name>o2scl::eos_quark_cfl6</name>
   <compound refid="classo2scl_1_1eos__quark__njl" kind="class"><name>o2scl::eos_quark_njl</name>
   <compound refid="classo2scl_1_1eos__sn__base" kind="class"><name>o2scl::eos_sn_base</name>
+  <compound refid="classo2scl_1_1eos__sn__compose" kind="class"><name>o2scl::eos_sn_compose</name>
   <compound refid="classo2scl_1_1eos__sn__hfsl" kind="class"><name>o2scl::eos_sn_hfsl</name>
   <compound refid="classo2scl_1_1eos__sn__ls" kind="class"><name>o2scl::eos_sn_ls</name>
   <compound refid="classo2scl_1_1eos__sn__oo" kind="class"><name>o2scl::eos_sn_oo</name>

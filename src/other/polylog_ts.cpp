@@ -81,14 +81,16 @@ int main(void) {
 
   // Todo: better testing
   
-  fermi_dirac_integ_direct<long double,funct_cdf50,20,20,
+  fermi_dirac_integ_direct<long double,funct_cdf50,20,
 			   cpp_dec_float_50> f3;
+  f3.set_tol(1.0e-21);
   long double xx=f3.calc_2(0.5);
   cout << f1.calc_2(0.5) << endl;
   cout << xx << endl;
   
-  bessel_K_exp_integ_direct<long double,funct_cdf50,20,20,
+  bessel_K_exp_integ_direct<long double,funct_cdf50,20,
 			    cpp_dec_float_50> bed2;
+  bed2.set_tol(1.0e-21);
   double x=bed.K1exp(2.0);
   std::cout
     << std::setprecision(std::numeric_limits<double>::digits10)
@@ -101,6 +103,15 @@ int main(void) {
   std::cout <<
     "1.033476847068688573175357105879597425156" << endl;
 
+  // Typically, 15 17 18 21 50 80
+  std::cout << std::numeric_limits<double>::digits10 << " ";
+  std::cout << std::numeric_limits<double>::max_digits10 << " ";
+  std::cout << std::numeric_limits<long double>::digits10 << " ";
+  std::cout << std::numeric_limits<long double>::max_digits10 << " ";
+  std::cout << std::numeric_limits<cpp_dec_float_50>::digits10 << " ";
+  std::cout << std::numeric_limits<cpp_dec_float_50>::max_digits10
+	    << std::endl;
+  
 #endif
   
 #endif

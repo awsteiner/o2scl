@@ -41,6 +41,7 @@ Namespace: o2scl class: eos_quark_cfl
 Namespace: o2scl class: eos_quark_cfl6
 Namespace: o2scl class: eos_quark_njl
 Namespace: o2scl class: eos_sn_base
+Namespace: o2scl class: eos_sn_compose
 Namespace: o2scl class: eos_sn_hfsl
 Namespace: o2scl class: eos_sn_ls
 Namespace: o2scl class: eos_sn_oo

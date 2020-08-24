@@ -53,12 +53,12 @@ namespace o2scl {
       This class performs direct computation of the
       Fermi-Dirac integral
       \f[
-      F_{a}(\mu) = \int_0^{\infty} \frac{x^a}{1+\exp^{x-\mu}} \, .
+      F_{a}(\mu) = \int_0^{\infty} \frac{x^a}{1+e^{x-\mu}} \, .
       \f]
 
       Note that the GSL definition of the Fermi-Dirac integral
-      includes an additional factor of the Gamma function which is not
-      included here.
+      includes an additional factor of \f$ 1/\Gamma(a+1) \f$
+      which is not included here.
    */
   template<class inte_t, class fp_t=double> class fermi_dirac_integ_tl {
 
@@ -102,7 +102,7 @@ namespace o2scl {
       This class performs direct computation of the
       Bose-Einstein integral
       \f[
-      F_{a}(\mu) = \int_0^{\infty} \frac{x^a}{\exp^{x-\mu}-1} \, .
+      F_{a}(\mu) = \int_0^{\infty} \frac{x^a}{e^{x-\mu}-1} \, .
       \f]
    */
   template<class inte_t, class fp_t=double> class bose_einstein_integ_tl {
@@ -145,12 +145,10 @@ namespace o2scl {
   /** \brief Exponentially scaled modified Bessel function of the
       second kind by integration
       
-      \warning Not working yet. 
-
       This class uses an integral representation of the exponentially
       scaled modified Bessel function of the second kind
       \f[
-      K_n(z) \exp^{z} = \frac{\sqrt{\pi} z^{n}}{2^{n} \Gamma(n+1/2)}
+      K_n(z) e^{z} = \frac{\sqrt{\pi} z^{n}}{2^{n} \Gamma(n+1/2)}
       \int_1^{\infty} e^{z(1-t)} 
       \left(t^2-1\right)^{n-1/2}~dt
       \f]
@@ -208,8 +206,19 @@ namespace o2scl {
   /** \brief Compute the fermion integrals for a non-relativistic
       particle using the GSL functions
 
-      This class is used in \o2p in <tt>o2scl::fermion_tl</tt>
-      and <tt>o2scl::fermion_nonrel_tl</tt>
+      This class performs direct computation of the
+      Fermi-Dirac integral
+      \f[
+      F_{a}(\mu) = \int_0^{\infty} \frac{x^a}{1+e^{x-\mu}} \, .
+      \f]
+      using the functions from GSL.
+
+      Note that the GSL definition of the Fermi-Dirac integral
+      includes an additional factor of \f$ 1/\Gamma(a+1) \f$
+      which is not included here.
+
+      This class is used in \o2p in <tt>o2scl::fermion_thermo_tl</tt>,
+      <tt>o2scl::fermion_tl</tt> and <tt>o2scl::fermion_nonrel_tl</tt>
       to compute the Fermi-Dirac integrals for non-relativistic
       fermions.
    */
@@ -250,27 +259,32 @@ namespace o2scl {
   };
 
   /** \brief Compute exponentially scaled modified bessel function of
-      the second kind using the GSL
+      the second kind using the GSL functions
 
-      \note This class is used in \ref o2scl::fermion_rel_tl .
+      This class computes \f$ K_n(z) e^z\f$ for \f$ n=1,2,3 \f$.
+
+      \note This class is used in \o2p in
+      <tt>o2scl::fermion_thermo_tl</tt>,
+      <tt>o2scl::fermion_nonrel_tl</tt>, and
+      <tt>o2scl::fermion_rel_tl</tt>
    */
   class bessel_K_exp_integ_gsl {
     
   public:
 
-    /** \brief Compute \f$ K_1(x)\exp(x) \f$
+    /** \brief Compute \f$ K_1(x) e^x \f$
      */
     double K1exp(double x) {
       return gsl_sf_bessel_Kn_scaled(1.0,x);
     }
     
-    /** \brief Compute \f$ K_2(x)\exp(x) \f$
+    /** \brief Compute \f$ K_2(x) e^x \f$
      */
     double K2exp(double x) {
       return gsl_sf_bessel_Kn_scaled(2.0,x);
     }
     
-    /** \brief Compute \f$ K_3(x)\exp(x) \f$
+    /** \brief Compute \f$ K_3(x) e^x \f$
      */
     double K3exp(double x) {
       return gsl_sf_bessel_Kn_scaled(3.0,x);
@@ -282,11 +296,21 @@ namespace o2scl {
 
 #if defined(O2SCL_NEW_BOOST_INTEGRATION) || defined(DOXYGEN)
 
-  /** \brief Compute the fermion integrals for a non-relativistic
-      particle by directly integrating in long double precision
+  /** \brief Compute the Fermi-Dirac integral by directly
+      integrating with a higher precision type
+
+      This class performs direct computation of the
+      Fermi-Dirac integral
+      \f[
+      F_{a}(\mu) = \int_0^{\infty} \frac{x^a}{1+e^{x-\mu}} \, .
+      \f]
+
+      Note that the GSL definition of the Fermi-Dirac integral
+      includes an additional factor of \f$ 1/\Gamma(a+1) \f$
+      which is not included here.
    */
   template <class fp_t=double, class func_t=funct_ld,
-	    size_t max_refine=30, size_t tol_t=17,
+	    size_t max_refine=30, 
 	    class internal_fp_t=long double>
   class fermi_dirac_integ_direct {
 
@@ -300,7 +324,12 @@ namespace o2scl {
   public:
 
     fermi_dirac_integ_direct() {
-      it.iiu.tol_rel=pow(10.0,-((double)tol_t));
+      it.iiu.tol_rel=1.0e-17;
+    }
+
+    void set_tol(const fp_t &tol) {
+      it.iiu.tol_rel=tol;
+      return;
     }
     
     /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$
@@ -348,7 +377,16 @@ namespace o2scl {
   /** \brief Compute exponentially scaled modified bessel function of
       the second kind by direct integration
 
-      This class computes the integral by applying an integrator (of
+      This class computes \f$ K_n(z) e^z\f$ for \f$ n=1,2,3 \f$
+      by directly integrating. It integrates the representation
+      \f[
+      K_n(z) e^{z} = \frac{\sqrt{\pi} z^{n}}{2^{n} \Gamma(n+1/2)}
+      \int_1^{\infty} e^{z(1-t)} 
+      \left(t^2-1\right)^{n-1/2}~dt
+      \f]
+      (see
+      http://functions.wolfram.com/Bessel-TypeFunctions/BesselK/07/01/01/)
+      by applying an integrator (of
       type \ref o2scl::bessel_K_exp_integ_tl) with a larger floating
       point type and then casting the result back to \c fp t. This
       should work with boost multiprecision types but is only
@@ -358,7 +396,7 @@ namespace o2scl {
       results to \ref o2scl::bessel_K_exp_integ_gsl .
   */
   template <class fp_t=double, class func_t=funct_ld, size_t max_refine=15,
-	    size_t tol_t=17, class internal_fp_t=long double>
+	    class internal_fp_t=long double>
   class bessel_K_exp_integ_direct {
     
   protected:
@@ -371,10 +409,15 @@ namespace o2scl {
   public:
 
     bessel_K_exp_integ_direct() {
-      it.iiu.tol_rel=pow(10.0,-((double)tol_t));
+      it.iiu.tol_rel=1.0e-17;
     }
 
-    /** \brief Compute \f$ K_1(x)\exp(x) \f$
+    void set_tol(const fp_t &tol) {
+      it.iiu.tol_rel=tol;
+      return;
+    }
+    
+    /** \brief Compute \f$ K_1(x) e^x \f$
      */
     fp_t K1exp(fp_t x) {
       internal_fp_t x2=x, res, err;
@@ -382,7 +425,7 @@ namespace o2scl {
       return ((fp_t)res);
     }
     
-    /** \brief Compute \f$ K_2(x)\exp(x) \f$
+    /** \brief Compute \f$ K_2(x) e^x \f$
      */
     fp_t K2exp(fp_t x) {
       internal_fp_t x2=x, res, err;
@@ -390,7 +433,7 @@ namespace o2scl {
       return ((fp_t)res);
     }
     
-    /** \brief Compute \f$ K_3(x)\exp(x) \f$
+    /** \brief Compute \f$ K_3(x) e^x \f$
      */
     fp_t K3exp(fp_t x) {
       internal_fp_t x2=x, res, err;
@@ -452,6 +495,12 @@ namespace o2scl {
     polylog() {
       it.iiu.tol_rel=1.0e-17;
       it2.iiu.tol_rel=1.0e-17;
+    }
+    
+    void set_tol(double tol) {
+      it.iiu.tol_rel=tol;
+      it2.iiu.tol_rel=tol;
+      return;
     }
     
     /** \brief Polylogarithm function

@@ -70,10 +70,11 @@ namespace o2scl {
 
       This uses a \c ostringstream object to convert the
       floating-point number to a string. It uses
-      <tt>std::numeric_limits::digits10</tt> to determine the maximum
-      precision. If \c prec is either less than or equal to zero or a
-      number greater than this maximum value, then the maximum is
-      used.
+      <tt>std::numeric_limits::max_digits10</tt> to determine the maximum
+      precision. If \c prec is 
+      greater than this maximum value, then the maximum is
+      used. If \c prec is 0, then 
+      <tt>std::numeric_limits::digits10</tt> is used.
       
       If \c auto_prec is false (the default), then the number is
       converted to a string in the <tt>ios::scientific</tt> mode,
@@ -85,14 +86,15 @@ namespace o2scl {
     
     std::ostringstream strout;
     
-    size_t max=std::numeric_limits<fp_t>::digits10;
-    if (prec<=0 || (prec>((int)max) && prec>6)) prec=((int)max);
+    size_t max=std::numeric_limits<fp_t>::max_digits10;
+    size_t dig=std::numeric_limits<fp_t>::digits10;
+
+    if (prec>((int)max)) prec=((int)max);
+    if (prec<=0) prec=dig;
     
-    if (prec!=0) {
-      if (!auto_prec) strout.setf(std::ios::scientific);
-      strout.precision(prec);
-    }
-    
+    if (!auto_prec) strout.setf(std::ios::scientific);
+    strout.precision(prec);
+
     if (strout << x) {
       return strout.str();
     }
