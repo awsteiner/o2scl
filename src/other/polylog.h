@@ -286,7 +286,8 @@ namespace o2scl {
       particle by directly integrating in long double precision
    */
   template <class fp_t=double, class func_t=funct_ld,
-	    size_t max_refine=30, class internal_fp_t=long double>
+	    size_t max_refine=30, size_t tol_t=17,
+	    class internal_fp_t=long double>
   class fermi_dirac_integ_direct {
 
   protected:
@@ -299,7 +300,7 @@ namespace o2scl {
   public:
 
     fermi_dirac_integ_direct() {
-      //it.iiu.tol_rel=1.0e-17;
+      it.iiu.tol_rel=pow(10.0,-((double)tol_t));
     }
     
     /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$

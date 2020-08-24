@@ -81,12 +81,13 @@ int main(void) {
 
   // Todo: better testing
   
-  fermi_dirac_integ_direct<long double,funct_cdf50,30,cpp_dec_float_50> f3;
+  fermi_dirac_integ_direct<long double,funct_cdf50,20,20,
+			   cpp_dec_float_50> f3;
   long double xx=f3.calc_2(0.5);
   cout << f1.calc_2(0.5) << endl;
   cout << xx << endl;
   
-  bessel_K_exp_integ_direct<long double,funct_cdf50,30,25,
+  bessel_K_exp_integ_direct<long double,funct_cdf50,20,20,
 			    cpp_dec_float_50> bed2;
   double x=bed.K1exp(2.0);
   std::cout

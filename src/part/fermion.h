@@ -836,7 +836,7 @@ namespace o2scl {
       don't have a bracket or a derivative.
   */
     root_t def_massless_root;
-
+    
   /// Return string denoting type ("fermion_thermo")
   virtual const char *type() { return "fermion_thermo"; }
 
@@ -884,13 +884,13 @@ namespace o2scl {
   protected:
     
   /// A pointer to the solver for massless fermions
-  root<> *massless_root;
+    root<> *massless_root;
 
-  /// Solve for the chemical potential for massless fermions
-  fp_t massless_solve_fun(fp_t x, fermion &f, fp_t temper) {
-    fp_t fm2=this->fd_integ.calc_2(x/temper)/2.0;
-    return f.g*pow(temper,3.0)*fm2/this->pi2/f.n-1.0;
-  }    
+    /// Solve for the chemical potential for massless fermions
+    fp_t massless_solve_fun(fp_t x, fermion &f, fp_t temper) {
+      fp_t fm2=this->fd_integ.calc_2(x/temper)/2.0;
+      return f.g*pow(temper,3.0)*fm2/this->pi2/f.n-1.0;
+    }    
   
 #endif
     

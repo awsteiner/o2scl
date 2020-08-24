@@ -93,13 +93,14 @@ int main(void) {
   
 #ifdef O2SCL_LD_TYPES
 
-  // These don't work yet. The next step is to make sure that
-  // bessel_K_exp_integ_direct<long double,cpp_dec_float_50>
-  // is tested in ../other/polylog_ts.cpp
-  
+  // These don't work yet. I need to add a func_t template type to
+  // fermion_eval_thermo
   /*
-    fermion_rel_tl<fermi_dirac_integ_direct<long double,cpp_dec_float_50>,
-    bessel_K_exp_integ_direct<long double,cpp_dec_float_50>,
+    fermion_rel_tl<fermi_dirac_integ_direct<long double,funct_cdf50,20,20,
+    cpp_dec_float_50>,
+    bessel_K_exp_integ_direct<long double,funct_cdf50,20,02,
+    cpp_dec_float_50>,
+    root_brent_gsl<funct_ld,long double>,
     long double> fermion_rel_ld;
   */
   //fermion_rel_tl<cpp_dec_float_50> fermion_rel_cdf;
