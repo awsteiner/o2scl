@@ -1542,7 +1542,7 @@ int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
     pr.push_back("Filename of second object");
     pr.push_back("Name of second object.");
     pr.push_back("Enter function of i0,i1,... and x0,x1,...");
-    int ret=get_input(sv,pr,in,"function",itive_com);
+    int ret=get_input(sv,pr,in,"binary",itive_com);
 
     fname=in[0];
     oname=in[1];
