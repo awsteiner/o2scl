@@ -31,6 +31,7 @@ using namespace o2scl_const;
 using namespace o2scl_hdf;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
+typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
 int main(void) {
   test_mgr t;
@@ -98,6 +99,19 @@ int main(void) {
   cout << res << endl;
   t.test_rel(res,0.894578,1.0e-4,"Moller fit 3");
 
+  mf.fit_method=nucmass_fit::chi_squared_me;
+  double chi2;
+  ubmatrix covar;
+  mf.fit_covar(sem,chi2,covar);
+  cout << "chi2: " << chi2 << endl;
+  ubvector par2(sem.nfit);
+  sem.guess_fun(sem.nfit,par2);
+  cout << "parameters: ";
+  vector_out(cout,par2,true);
+  cout << "covariance matrix: " << endl;
+  matrix_out(cout,covar);
+  
+  
 #endif
   
   t.report();

@@ -52,6 +52,79 @@ double nucmass_fit::min_fun(size_t nv, const ubvector &x) {
   return y;
 }
 
+double nucmass_fit::fit_covar_fun(size_t np, const ubvector &p,
+				  double x, const std::vector<size_t> &Zlist,
+				  const std::vector<size_t> &Nlist) {
+  
+  nmf->fit_fun(np,p);
+  size_t i=((size_t)(x+1.0e-12));
+  if (fit_method==chi_squared_me) {
+    return nmf->mass_excess(Zlist[i],Nlist[i]);
+  } else if (fit_method==chi_squared_be) {
+    return nmf->binding_energy(Zlist[i],Nlist[i]);
+  } else {
+    O2SCL_ERR("Unknown fit method in nucmass_fit::fit_covar_fun().",
+	      exc_einval);
+  }
+  return 0.0;
+}  
+
+void nucmass_fit::fit_covar(nucmass_fit_base &n, 
+			    double &chi2, ubmatrix &covar) {
+
+  fit_nonlin<> gf;
+  
+  std::vector<size_t> Zlist, Nlist;
+  
+  fit_funct ff=std::bind
+    (std::mem_fn<double(size_t,const ubvector &,double,
+			const vector<size_t> &,
+			const vector<size_t> &)>
+     (&nucmass_fit::fit_covar_fun),this,std::placeholders::_1,
+     std::placeholders::_2,std::placeholders::_3,
+     std::cref(Zlist),std::cref(Nlist));
+  
+  std::vector<double> vx, vy, vsig;
+
+  for(size_t i=0;i<dist.size();i++) {
+    nucleus &nuc=dist[i];
+    int Z=nuc.Z;
+    int N=nuc.N;
+    size_t unc_ix=i;
+    if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
+      if (unc_ix>=uncs.size()) unc_ix=0;
+      vx.push_back(vx.size());
+      Zlist.push_back(Z);
+      Nlist.push_back(N);
+      if (fit_method==chi_squared_me) {
+	vy.push_back(nuc.mex*hc_mev_fm);
+      } else if (fit_method==chi_squared_be) {
+	vy.push_back(nuc.be*hc_mev_fm);
+      }
+      vsig.push_back(uncs[unc_ix]);
+    }
+  }
+
+  ubvector vx2, vy2, vsig2;
+  vector_copy(vx,vx2);
+  vector_copy(vy,vy2);
+  vector_copy(vsig,vsig2);
+
+  chi_fit_funct<> cff(vx.size(),vx2,vy2,vsig2,ff);
+  
+  nmf=&n;
+  size_t nv=nmf->nfit;
+  ubvector mx(nv);
+  nmf->guess_fun(nv,mx);
+  covar.resize(nv,nv);
+  
+  gf.fit(nv,mx,covar,chi2,cff);
+
+  nmf->fit_fun(nv,mx);
+  
+  return;
+}
+
 void nucmass_fit::fit(nucmass_fit_base &n, double &fmin) {
   
   if (dist.size()==0) {

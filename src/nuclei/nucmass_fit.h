@@ -36,6 +36,7 @@
 #include <o2scl/nucmass.h>
 #include <o2scl/nucmass_ame.h>
 #include <o2scl/nucdist.h>
+#include <o2scl/fit_nonlin.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -53,6 +54,7 @@ namespace o2scl {
   public:
   
     typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
     typedef boost::numeric::ublas::vector<int> ubvector_int;
     typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
 
@@ -83,6 +85,13 @@ namespace o2scl {
     /// Minimum neutron number to fit (default 8)
     int minN;
 
+    void fit_covar(nucmass_fit_base &n, 
+		   double &chi2, ubmatrix &covar);
+    
+    double fit_covar_fun(size_t np, const ubvector &p,
+			 double x, const std::vector<size_t> &Zlist,
+			 const std::vector<size_t> &Nlist);
+    
     /// Fit the nuclear mass formula
     virtual void fit(nucmass_fit_base &n, double &res);
     
