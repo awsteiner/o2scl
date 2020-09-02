@@ -110,6 +110,15 @@ int main(void) {
   vector_out(cout,par2,true);
   cout << "covariance matrix: " << endl;
   matrix_out(cout,covar);
+
+  for(size_t i=0;i<sem.nfit;i++) {
+    for(size_t j=0;j<sem.nfit;j++) {
+      covar(i,j)/=sqrt(covar(i,i))*sqrt(covar(j,j));
+    }
+  }
+
+  cout << "covariance matrix2: " << endl;
+  matrix_out(cout,covar);
   
   
 #endif
