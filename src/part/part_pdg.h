@@ -37,7 +37,7 @@
 namespace o2scl {
 #endif
 
-  /** \brief Desc
+  /** \brief A particle object compatible with the PDG
    */
   class part_pdg_db {
 

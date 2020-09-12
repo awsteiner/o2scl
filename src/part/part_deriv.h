@@ -719,10 +719,10 @@ namespace o2scl {
   */
   fermion_rel fr;
 
-  /// Desc
+  /// Store \f$ \pi \f$ for convenience
   fp_t pi;
   
-  /// Desc
+  /// Store \f$ \pi^2 \f$ for convenience
   fp_t pi2;
   
   public:

@@ -52,7 +52,7 @@ namespace o2scl {
 
   protected:
 
-  /// Desc
+  /// Store \f$ \pi \f$ for convenience
   fp_t pi;
     
   public:

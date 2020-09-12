@@ -85,13 +85,6 @@ namespace o2scl {
     /// Minimum neutron number to fit (default 8)
     int minN;
 
-    void fit_covar(nucmass_fit_base &n, 
-		   double &chi2, ubmatrix &covar);
-    
-    double fit_covar_fun(size_t np, const ubvector &p,
-			 double x, const std::vector<size_t> &Zlist,
-			 const std::vector<size_t> &Nlist);
-    
     /// Fit the nuclear mass formula
     virtual void fit(nucmass_fit_base &n, double &res);
     
@@ -99,6 +92,23 @@ namespace o2scl {
      */
     virtual void eval(nucmass &n, double &res);
 
+    /** \brief Fit a nuclear mass formula using least squares
+	and report the associated \f$ \chi^2 \f$ and 
+	covariance matrix
+
+	\note This function only works for \ref fit_method equal
+	to \ref chi_squared_me or \ref chi_squared_be .
+     */
+    void fit_covar(nucmass_fit_base &n, 
+		   double &chi2, ubmatrix &covar);
+
+    /** \brief The form of the fitting function which is set
+	for a fitting object of type \ref o2scl::fit_nonlin
+     */
+    double fit_covar_fun(size_t np, const ubvector &p,
+			 double x, const std::vector<size_t> &Zlist,
+			 const std::vector<size_t> &Nlist);
+    
     /** \brief The default minimizer
 
 	The value of def_mmin::ntrial is automatically multiplied by
