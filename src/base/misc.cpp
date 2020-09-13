@@ -88,18 +88,56 @@ long double o2scl::o2hypot(const long double x, const long double y) {
 
 #ifdef O2SCL_LD_TYPES
 
+// cpp_dec_float_35 functions
+
+typedef
+boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+cpp_dec_float_35;
+
+cpp_dec_float_35 o2scl::o2abs(const cpp_dec_float_35 x) {
+  return boost::multiprecision::abs(x);
+}
+
+bool o2scl::o2isfinite(const cpp_dec_float_35 x) {
+  return boost::math::isfinite(x);
+}
+
+cpp_dec_float_35 o2scl::o2hypot(const cpp_dec_float_35 x,
+				const cpp_dec_float_35 y) {
+  return boost::math::hypot(x,y);
+}
+
+// cpp_dec_float_50 functions
+
 boost::multiprecision::cpp_dec_float_50
 o2scl::o2abs(const boost::multiprecision::cpp_dec_float_50 x) {
   return boost::multiprecision::abs(x);
 }
 
 bool o2scl::o2isfinite(const boost::multiprecision::cpp_dec_float_50 x) {
-  return isfinite(x);
+  return boost::math::isfinite(x);
 }
 
 boost::multiprecision::cpp_dec_float_50
 o2scl::o2hypot(const boost::multiprecision::cpp_dec_float_50 x,
 	       const boost::multiprecision::cpp_dec_float_50 y) {
+  return boost::math::hypot(x,y);
+}
+
+// cpp_dec_float_100 functions
+
+boost::multiprecision::cpp_dec_float_100
+o2scl::o2abs(const boost::multiprecision::cpp_dec_float_100 x) {
+  return boost::multiprecision::abs(x);
+}
+
+bool o2scl::o2isfinite(const boost::multiprecision::cpp_dec_float_100 x) {
+  return boost::math::isfinite(x);
+}
+
+boost::multiprecision::cpp_dec_float_100
+o2scl::o2hypot(const boost::multiprecision::cpp_dec_float_100 x,
+	       const boost::multiprecision::cpp_dec_float_100 y) {
   return boost::math::hypot(x,y);
 }
 

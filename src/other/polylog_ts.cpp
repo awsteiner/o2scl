@@ -26,13 +26,18 @@
 #include <o2scl/polylog.h>
 
 #ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #endif
 
 using namespace std;
 using namespace o2scl;
 
+typedef
+boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+cpp_dec_float_35;
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
 
 int main(void) {
 
@@ -103,13 +108,28 @@ int main(void) {
   std::cout <<
     "1.033476847068688573175357105879597425156" << endl;
 
-  // Typically, 15 17 18 21 50 80
+  // Typically,
+  // type              digits10 max_digits10
+  // ---------------------------------------
+  // double            15       17 
+  // long double       18       21 
+  // cpp_dec_float_35  35       64
+  // cpp_dec_float_50  50       80
+  // cpp_dec_float_100 100      128
   std::cout << std::numeric_limits<double>::digits10 << " ";
-  std::cout << std::numeric_limits<double>::max_digits10 << " ";
+  std::cout << std::numeric_limits<double>::max_digits10
+	    << std::endl;
   std::cout << std::numeric_limits<long double>::digits10 << " ";
-  std::cout << std::numeric_limits<long double>::max_digits10 << " ";
+  std::cout << std::numeric_limits<long double>::max_digits10
+	    << std::endl;
+  std::cout << std::numeric_limits<cpp_dec_float_35>::digits10 << " ";
+  std::cout << std::numeric_limits<cpp_dec_float_35>::max_digits10 
+	    << std::endl;
   std::cout << std::numeric_limits<cpp_dec_float_50>::digits10 << " ";
   std::cout << std::numeric_limits<cpp_dec_float_50>::max_digits10
+	    << std::endl;
+  std::cout << std::numeric_limits<cpp_dec_float_100>::digits10 << " ";
+  std::cout << std::numeric_limits<cpp_dec_float_100>::max_digits10
 	    << std::endl;
   
 #endif

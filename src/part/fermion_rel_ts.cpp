@@ -93,17 +93,36 @@ int main(void) {
   
 #ifdef O2SCL_LD_TYPES
 
-  // These don't work yet. I need to add a func_t template type to
-  // fermion_eval_thermo
+  // The long double type isn't that much more precise than double, so
+  // I'm concerned about precision loss in the integrands. Thus, the
+  // plan is to have a particle type which operates in
+  // cpp_dec_float_35 precision, with integrators which internally use
+  // cpp_dec_float_50 precision. For the integrators, the template
+  // parameter is the maximum number of refinements, we try 30.
+
+  // These don't work yet. I need to make sure fermion_tl<fp_t> is
+  // used everywhere instead of fermion_tl<double> I also need to make
+  // sure that the tolerances for the integrators are set somewhere.
+
   /*
-    fermion_rel_tl<fermi_dirac_integ_direct<long double,funct_cdf50,20,20,
-    cpp_dec_float_50>,
-    bessel_K_exp_integ_direct<long double,funct_cdf50,20,02,
-    cpp_dec_float_50>,
-    root_brent_gsl<funct_ld,long double>,
-    long double> fermion_rel_ld;
+  typedef
+    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+    cpp_dec_float_35;
+  
+  fermion_rel_tl<fermi_dirac_integ_direct<long double,funct_cdf35,25,
+					  cpp_dec_float_35>,
+		 bessel_K_exp_integ_direct<long double,funct_cdf35,25,
+					   cpp_dec_float_35>,
+		 root_brent_gsl<funct_ld,long double>,
+		 funct_ld,long double> fermion_rel_ld;
+
+  fermion_rel_tl<fermi_dirac_integ_direct<cpp_dec_float_35,funct_cdf50,30,
+					  cpp_dec_float_50>,
+		 bessel_K_exp_integ_direct<cpp_dec_float_35,funct_cdf50,30,
+					   cpp_dec_float_50>,
+		 root_brent_gsl<funct_cdf35,cpp_dec_float_35>,
+		 funct_cdf35,cpp_dec_float_35> fermion_rel_cdf_35;
   */
-  //fermion_rel_tl<cpp_dec_float_50> fermion_rel_cdf;
   
 #endif
 

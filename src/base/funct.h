@@ -57,9 +57,27 @@ namespace o2scl {
       This typedef is only present if O2SCL_LD_TYPES is
       defined during compilation.
    */
+  typedef std::function<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+			(boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> > )>
+  funct_cdf35;
+  
+  /** \brief One-dimensional function typedef in src/base/funct.h
+      
+      This typedef is only present if O2SCL_LD_TYPES is
+      defined during compilation.
+   */
   typedef std::function<boost::multiprecision::cpp_dec_float_50
 			(boost::multiprecision::cpp_dec_float_50)>
   funct_cdf50;
+  
+  /** \brief One-dimensional function typedef in src/base/funct.h
+      
+      This typedef is only present if O2SCL_LD_TYPES is
+      defined during compilation.
+   */
+  typedef std::function<boost::multiprecision::cpp_dec_float_100
+			(boost::multiprecision::cpp_dec_float_100)>
+  funct_cdf100;
   
 #endif
   

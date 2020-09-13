@@ -44,6 +44,7 @@
 #endif
 
 #ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #endif
 
@@ -83,10 +84,20 @@ namespace o2scl {
 
 #if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
   
+  /** \brief Absolute value for cpp_dec_float_35
+   */
+  boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+    o2abs(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> > x);
+  
   /** \brief Absolute value for cpp_dec_float_50
    */
   boost::multiprecision::cpp_dec_float_50
     o2abs(const boost::multiprecision::cpp_dec_float_50 x);
+  
+  /** \brief Absolute value for cpp_dec_float_100
+   */
+  boost::multiprecision::cpp_dec_float_100
+    o2abs(const boost::multiprecision::cpp_dec_float_100 x);
   
 #endif
 
@@ -103,7 +114,15 @@ namespace o2scl {
 
   /** \brief Compatbility function for isfinite()
    */
+  bool o2isfinite(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> > x);
+
+  /** \brief Compatbility function for isfinite()
+   */
   bool o2isfinite(const boost::multiprecision::cpp_dec_float_50 x);
+
+  /** \brief Compatbility function for isfinite()
+   */
+  bool o2isfinite(const boost::multiprecision::cpp_dec_float_100 x);
 
 #endif
   
@@ -123,9 +142,21 @@ namespace o2scl {
 
   /** \brief Compatbility function for hypot()
    */
+  boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+  o2hypot(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> > x,
+	  const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> > y);
+
+  /** \brief Compatbility function for hypot()
+   */
   boost::multiprecision::cpp_dec_float_50
     o2hypot(const boost::multiprecision::cpp_dec_float_50 x,
 	    const boost::multiprecision::cpp_dec_float_50 y);
+
+  /** \brief Compatbility function for hypot()
+   */
+  boost::multiprecision::cpp_dec_float_100
+    o2hypot(const boost::multiprecision::cpp_dec_float_100 x,
+	    const boost::multiprecision::cpp_dec_float_100 y);
 
 #endif
   
