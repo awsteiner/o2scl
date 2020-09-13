@@ -394,7 +394,7 @@ namespace o2scl {
       
       // If the ratio between the last term and the first term is 
       // not small enough, return false
-      if (std::isfinite(rat) && rat>prec) {
+      if (o2scl::o2isfinite(rat) && rat>prec) {
 	return false;
       }
       

@@ -303,8 +303,11 @@ namespace o2scl {
 	  fp_t y;
 
 	  y=f(root);
-	    
-	  this->print_iter(root,y,iter,o2scl::o2abs(x_upper-x_lower),
+
+	  // This additional temporary seems to be required
+	  // for boost::multiprecision types
+	  fp_t x_diff=x_upper-x_lower;
+	  this->print_iter(root,y,iter,o2scl::o2abs(x_diff),
 			   this->tol_abs,"root_brent_gsl (abs)");
 	}
       }
@@ -352,7 +355,10 @@ namespace o2scl {
 	} else {
 	  if (this->verbose>0) {
 	    fp_t y=f(root);
-	    this->print_iter(root,y,iter,o2scl::o2abs(x_upper-x_lower),
+	    // This additional temporary seems to be required
+	    // for boost::multiprecision types
+	    fp_t x_diff=x_upper-x_lower;
+	    this->print_iter(root,y,iter,o2scl::o2abs(x_diff),
 			     this->tol_abs,"root_brent_gsl (abs)");
 	  }
 	}
