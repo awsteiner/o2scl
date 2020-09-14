@@ -31,13 +31,19 @@
     <member refid="namespaceo2scl_1a23441c78c7e0fb49a83b7dd578bb1398" kind="function"><name>o2abs</name></member>
     <member refid="namespaceo2scl_1a2bb148c4e4a7915314bcb8ab636b85ab" kind="function"><name>o2abs</name></member>
     <member refid="namespaceo2scl_1aca65602554aa888a1df9be7915ce40cb" kind="function"><name>o2abs</name></member>
+    <member refid="namespaceo2scl_1ac09a64817d5b827c1a8070487c7fbf74" kind="function"><name>o2abs</name></member>
     <member refid="namespaceo2scl_1a7ee3118e255e910542eadd3e3f4084ea" kind="function"><name>o2abs</name></member>
+    <member refid="namespaceo2scl_1a93fb81e66bbd551b8ace53c166ca9a58" kind="function"><name>o2abs</name></member>
     <member refid="namespaceo2scl_1af3d76d472a79f5421ca0b283f90bf926" kind="function"><name>o2isfinite</name></member>
+    <member refid="namespaceo2scl_1a305c4ae283404f220e7d0e5281329335" kind="function"><name>o2isfinite</name></member>
     <member refid="namespaceo2scl_1a366d44f22015af5f96873019dc6d0a1f" kind="function"><name>o2isfinite</name></member>
+    <member refid="namespaceo2scl_1aca23858179732c7f738bac2fcaba3693" kind="function"><name>o2isfinite</name></member>
     <member refid="namespaceo2scl_1a3362003b4b195c1e4a069baaa14ebea4" kind="function"><name>o2hypot</name></member>
     <member refid="namespaceo2scl_1a3a1a10347c4d0d3a078df0030d3c2501" kind="function"><name>o2hypot</name></member>
     <member refid="namespaceo2scl_1a19b6a4324149a1fcae89daeec38f2867" kind="function"><name>o2hypot</name></member>
+    <member refid="namespaceo2scl_1afe4dbcb630d82a297b7638390e6fc0cf" kind="function"><name>o2hypot</name></member>
     <member refid="namespaceo2scl_1a8da23af52c77a2e7d018ca3201d80700" kind="function"><name>o2hypot</name></member>
+    <member refid="namespaceo2scl_1ae6cb9d8337971f35d92cab4317fa4dbe" kind="function"><name>o2hypot</name></member>
     <member refid="namespaceo2scl_1a8a2c69ef08fca5a16ca41dfdebeaa310" kind="function"><name>fermi_function</name></member>
     <member refid="namespaceo2scl_1a664c30f53f2c6379fb8211e0a91f90ce" kind="function"><name>bose_function</name></member>
     <member refid="namespaceo2scl_1a09b56a2b5f7a846d87868ec7d8088bdd" kind="function"><name>pipe_cmd_string</name></member>

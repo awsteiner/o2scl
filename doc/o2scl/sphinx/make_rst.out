@@ -379,10 +379,22 @@ Namespace:  function: o2abs
 Multiple entry o2abs
 Namespace:  function: o2abs
 Multiple entry o2abs
+Namespace:  function: o2abs
+Multiple entry o2abs
+Namespace:  function: o2abs
+Multiple entry o2abs
 Namespace:  function: o2isfinite
 Namespace:  function: o2isfinite
 Multiple entry o2isfinite
+Namespace:  function: o2isfinite
+Multiple entry o2isfinite
+Namespace:  function: o2isfinite
+Multiple entry o2isfinite
 Namespace:  function: o2hypot
+Namespace:  function: o2hypot
+Multiple entry o2hypot
+Namespace:  function: o2hypot
+Multiple entry o2hypot
 Namespace:  function: o2hypot
 Multiple entry o2hypot
 Namespace:  function: o2hypot
@@ -1256,13 +1268,19 @@ matrix_transpose(size_t m, size_t n, mat_t &src)
 o2abs(const float x)
 o2abs(const double x)
 o2abs(const long double x)
+o2abs(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> x)
 o2abs(const boost::multiprecision::cpp_dec_float_50 x)
+o2abs(const boost::multiprecision::cpp_dec_float_100 x)
 o2hypot(const float x, const float y)
 o2hypot(const double x, const double y)
 o2hypot(const long double x, const long double y)
+o2hypot(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> x, const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> y)
 o2hypot(const boost::multiprecision::cpp_dec_float_50 x, const boost::multiprecision::cpp_dec_float_50 y)
+o2hypot(const boost::multiprecision::cpp_dec_float_100 x, const boost::multiprecision::cpp_dec_float_100 y)
 o2isfinite(const double x)
+o2isfinite(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> x)
 o2isfinite(const boost::multiprecision::cpp_dec_float_50 x)
+o2isfinite(const boost::multiprecision::cpp_dec_float_100 x)
 pipe_cmd_string(std::string cmd, std::string &result, bool err_on_fail = true, int nmax = 80)
 pipe_cmd_string(std::string cmd, int nmax = 80)
 rebin_xy(const vec_t &x, const vec2_t &y, vec3_t &new_x, vec4_t &new_y, size_t n_pts, size_t interp_type)

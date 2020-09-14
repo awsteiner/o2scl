@@ -9,5 +9,9 @@ Functions o2hypot
 
 .. doxygenfunction:: o2hypot(const long double x, const long double y)
 
+.. doxygenfunction:: o2hypot(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> x, const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> y)
+
 .. doxygenfunction:: o2hypot(const boost::multiprecision::cpp_dec_float_50 x, const boost::multiprecision::cpp_dec_float_50 y)
+
+.. doxygenfunction:: o2hypot(const boost::multiprecision::cpp_dec_float_100 x, const boost::multiprecision::cpp_dec_float_100 y)
 
