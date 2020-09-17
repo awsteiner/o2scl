@@ -297,7 +297,8 @@ namespace o2scl {
     ytmp=func(a+rang*x6[5]);
     e6+=w6[5]*ytmp;
     res=(e6+e5)*rang/2.0;
-    err=o2scl::o2abs(e5-e6)*rang;
+    fp_t diff=e5-e6;
+    err=o2scl::o2abs(diff)*rang;
 
     return success;
   }
