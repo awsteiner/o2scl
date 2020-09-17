@@ -223,7 +223,8 @@ namespace o2scl {
       \int_0^{\infty} u^{1/2} f d u
       \f]
   */
-  template<class fp_t=double>
+  template<class fermion_deriv_t=fermion_deriv_tl<double>,
+	   class fp_t=double>
     class fermion_deriv_nr_tl : public fermion_deriv_thermo_tl<fp_t> {
 
   public:
@@ -252,7 +253,7 @@ namespace o2scl {
   /** \brief Calculate properties as function of density
       at \f$ T=0 \f$
   */
-  virtual void calc_density_zerot(fermion_deriv &f) {
+  virtual void calc_density_zerot(fermion_deriv_t &f) {
     if (f.non_interacting) { f.ms=f.m; }
     f.kf=cbrt(6.0*this->pi2/f.g*f.n);
     f.nu=f.kf*f.kf/2.0/f.ms;
@@ -280,7 +281,7 @@ namespace o2scl {
   /** \brief Calculate properties as function of chemical potential
       at \f$ T=0 \f$
   */
-  virtual void calc_mu_zerot(fermion_deriv &f) {
+  virtual void calc_mu_zerot(fermion_deriv_t &f) {
     if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
     if (f.inc_rest_mass) {
       f.kf=sqrt(2.0*f.ms*(f.nu-f.m));
@@ -306,7 +307,7 @@ namespace o2scl {
     
   /** \brief Calculate properties as function of chemical potential
    */
-  virtual int calc_mu(fermion_deriv &f, fp_t temper) {
+  virtual int calc_mu(fermion_deriv_t &f, fp_t temper) {
 
     if (temper<0.0) {
       O2SCL_ERR("T<0 in fermion_deriv_nr_tl<fp_t>::calc_mu().",exc_einval);
@@ -366,7 +367,7 @@ namespace o2scl {
 
   /** \brief Calculate properties as function of density
    */
-  virtual int calc_density(fermion_deriv &f, fp_t temper) {
+  virtual int calc_density(fermion_deriv_t &f, fp_t temper) {
 
     if (f.m<0.0 || (f.non_interacting==false && f.ms<0.0)) {
       O2SCL_ERR2("Mass negative in ",
@@ -417,7 +418,7 @@ namespace o2scl {
   /** \brief Calculate properties with antiparticles as function of
       chemical potential
   */
-  virtual int pair_mu(fermion_deriv &f, fp_t temper) {
+  virtual int pair_mu(fermion_deriv_t &f, fp_t temper) {
   
     if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
 
@@ -443,7 +444,7 @@ namespace o2scl {
   /** \brief Calculate properties with antiparticles as function of
       density
   */
-  virtual int pair_density(fermion_deriv &f, fp_t temper) {
+  virtual int pair_density(fermion_deriv_t &f, fp_t temper) {
     fp_t nex;
   
     if (temper<=0.0) {
@@ -452,8 +453,8 @@ namespace o2scl {
     if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
   
     nex=f.nu/temper;
-    funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv &,fp_t)>
-		       (&fermion_deriv_nr_tl<fp_t>::pair_fun),
+    funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
+		       (&fermion_deriv_nr_tl<fermion_deriv_t,fp_t>::pair_fun),
 		       this,std::placeholders::_1,std::ref(f),temper);
 
     density_root->solve(nex,mf);
@@ -468,7 +469,7 @@ namespace o2scl {
 
 
   /// Calculate effective chemical potential from density
-  virtual int nu_from_n(fermion_deriv &f, fp_t temper) {
+  virtual int nu_from_n(fermion_deriv_t &f, fp_t temper) {
 
     // Use initial value of nu for initial guess
     fp_t nex;
@@ -483,7 +484,7 @@ namespace o2scl {
     if (nex>-GSL_LOG_DBL_MIN*0.9) nex=-GSL_LOG_DBL_MIN/2.0;
   
     funct mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
-		       (&fermion_deriv_nr_tl<fp_t>::solve_fun),
+		       (&fermion_deriv_nr_tl<fermion_deriv_t,fp_t>::solve_fun),
 		       this,std::placeholders::_1,f.n/f.g,f.ms*temper);
     
     // Turn off convergence errors temporarily, since we'll
@@ -563,7 +564,7 @@ namespace o2scl {
   /** \brief Function to compute chemical potential from density
       when antiparticles are included
   */
-  fp_t pair_fun(fp_t x, fermion_deriv &f, fp_t T) {
+  fp_t pair_fun(fp_t x, fermion_deriv_t &f, fp_t T) {
     
     fp_t nden, y, yy;
 
@@ -604,7 +605,7 @@ namespace o2scl {
 
   };
 
-  typedef fermion_deriv_nr_tl<double> fermion_deriv_nr;
+  typedef fermion_deriv_nr_tl<> fermion_deriv_nr;
 
 #ifndef DOXYGEN_NO_O2NS
 }

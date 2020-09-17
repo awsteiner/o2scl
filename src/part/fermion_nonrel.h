@@ -87,14 +87,17 @@ namespace o2scl {
       approximation (for example) to invert the density integral so
       that we don't need to use a solver.
   */
-  template<class fd_inte_t=fermi_dirac_integ_gsl,
-	   class be_inte_t=bessel_K_exp_integ_gsl, class root_t=root_cern<>,
+  template<class fermion_t=fermion_tl<double>,
+	   class fd_inte_t=fermi_dirac_integ_gsl,
+	   class be_inte_t=bessel_K_exp_integ_gsl,
+	   class root_t=root_cern<>,
 	   class func_t=funct, class fp_t=double>
   class fermion_nonrel_tl :
-    public fermion_thermo_tl<fermion,fd_inte_t,be_inte_t,root_t,func_t,fp_t> {
+    public fermion_thermo_tl<fermion_t,fd_inte_t,be_inte_t,root_t,
+			     func_t,fp_t> {
     
   public:
-  
+    
   /// Create a nonrelativistic fermion with mass 'm' and degeneracy 'g'
   fermion_nonrel_tl() {
     density_root=&def_density_root;
@@ -105,7 +108,7 @@ namespace o2scl {
 
   /** \brief Zero temperature fermions
    */
-  virtual void calc_mu_zerot(fermion &f) {
+  virtual void calc_mu_zerot(fermion_t &f) {
     if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
     if (f.inc_rest_mass) {
       f.kf=sqrt(2.0*f.ms*(f.nu-f.m));
@@ -123,7 +126,7 @@ namespace o2scl {
 
   /** \brief Zero temperature fermions
    */
-  virtual void calc_density_zerot(fermion &f) {
+  virtual void calc_density_zerot(fermion_t &f) {
     if (f.non_interacting) { f.ms=f.m; }
     this->kf_from_density(f);
     f.nu=f.kf*f.kf/2.0/f.ms;
@@ -141,7 +144,7 @@ namespace o2scl {
     
   /** \brief Calculate properties as function of chemical potential
    */
-  virtual void calc_mu(fermion &f, fp_t temper) {
+  virtual void calc_mu(fermion_t &f, fp_t temper) {
 
     if (temper<0.0) {
       O2SCL_ERR("Temperature less than zero in fermion_nonrel::calc_mu().",
@@ -220,7 +223,7 @@ namespace o2scl {
       zero density and finite	temperature, the chemical potentials
       formally are equal to \f$ -\infty \f$). 
   */
-  virtual int calc_density(fermion &f, fp_t temper) {
+  virtual int calc_density(fermion_t &f, fp_t temper) {
 
     if (f.m<0.0 || (f.non_interacting==false && f.ms<0.0)) {
       O2SCL_ERR2("Mass negative in ",
@@ -292,7 +295,7 @@ namespace o2scl {
   /** \brief Compute thermodynamics with antiparticles at fixed
       chemical potential (unimplemented)
    */
-  virtual void pair_mu(fermion &f, fp_t temper) {
+  virtual void pair_mu(fermion_t &f, fp_t temper) {
     O2SCL_ERR2("Function fermion_nonrel::pair_mu() not ",
 	       "implemented.",exc_eunimpl);
     return;
@@ -301,14 +304,14 @@ namespace o2scl {
   /** \brief Compute thermodynamics with antiparticles at fixed
       density (unimplemented)
    */
-  virtual int pair_density(fermion &f, fp_t temper) {
+  virtual int pair_density(fermion_t &f, fp_t temper) {
     O2SCL_ERR2("Function fermion_nonrel::pair_density() not ",
 	       "implemented.",exc_eunimpl);
     return 0;
   }
     
   /// Calculate effective chemical potential from density
-  virtual void nu_from_n(fermion &f, fp_t temper) {
+  virtual void nu_from_n(fermion_t &f, fp_t temper) {
 
     fp_t init_n=f.n, init_m=f.m, init_ms=f.ms, init_nu=f.nu;
   
@@ -330,7 +333,7 @@ namespace o2scl {
     }
   
     funct mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
-		       (&fermion_nonrel_tl<fd_inte_t,
+		       (&fermion_nonrel_tl<fermion_t,fd_inte_t,
 			be_inte_t,root_t,func_t,fp_t>::solve_fun),
 		       this,std::placeholders::_1,f.n/f.g,f.ms*temper);
   
