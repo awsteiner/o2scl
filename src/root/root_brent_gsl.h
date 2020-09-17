@@ -234,10 +234,12 @@ namespace o2scl {
 	p=-p;
       }
       fp_t dtmp;
-      if (3*m*q-o2scl::o2abs(tol*q)<o2scl::o2abs(e*q)) {
-	dtmp=3*m*q-o2scl::o2abs(tol*q);
+      fp_t ptmp=e*q;
+      if (3*m*q-o2scl::o2abs(tol*q)<o2scl::o2abs(ptmp)) {
+	fp_t ptmp2=tol*q;
+	dtmp=3*m*q-o2scl::o2abs(ptmp2);
       } else {
-	dtmp=o2scl::o2abs(e*q);
+	dtmp=o2scl::o2abs(ptmp);
       }
       if (2*p<dtmp) {
 	e=d;

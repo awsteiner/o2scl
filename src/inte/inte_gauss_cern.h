@@ -354,7 +354,8 @@ namespace o2scl {
       loop=false;
       loop2=false;
 
-      if (o2scl::o2abs(s16-c2*s8)<this->tol_rel*
+      fp_t tdiff=s16-c2*s8;
+      if (o2scl::o2abs(tdiff)<this->tol_rel*
 	  (1.0+o2scl::o2abs(s16))) {
 	h+=s16;
 	if (bb!=b) loop=true;
