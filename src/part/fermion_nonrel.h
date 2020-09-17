@@ -91,7 +91,7 @@ namespace o2scl {
 	   class be_inte_t=bessel_K_exp_integ_gsl, class root_t=root_cern<>,
 	   class func_t=funct, class fp_t=double>
   class fermion_nonrel_tl :
-    public fermion_thermo_tl<fd_inte_t,be_inte_t,root_t,func_t,fp_t> {
+    public fermion_thermo_tl<fermion,fd_inte_t,be_inte_t,root_t,func_t,fp_t> {
     
   public:
   

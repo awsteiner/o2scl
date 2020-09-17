@@ -306,7 +306,7 @@ namespace o2scl {
       \future Create a Chebyshev approximation for inverting the 
       the Fermi functions for massless_calc_density() functions?
   */
-  template<class fd_inte_t=fermi_dirac_integ_gsl,
+  template<class fermion_t=fermion, class fd_inte_t=fermi_dirac_integ_gsl,
 	   class be_inte_t=bessel_K_exp_integ_gsl, class root_t=root_cern<>,
 	   class func_t=funct, class fp_t=double>
   class fermion_thermo_tl : public fermion_zerot_tl<fp_t> {
@@ -329,7 +329,6 @@ namespace o2scl {
     /** \brief Calculate thermodynamic properties from the chemical
 	potential using a nondegenerate expansion
     */
-    template<class fermion_t>
     bool calc_mu_ndeg_tlate(fermion_t &f, fp_t temper, 
 			    fp_t prec, bool inc_antip) {
       
@@ -445,7 +444,6 @@ namespace o2scl {
     /** \brief Calculate thermodynamic properties from the chemical
 	potential using a degenerate expansion
     */
-    template<class fermion_t>
     bool calc_mu_deg_tlate(fermion_t &f, fp_t temper, 
 			   fp_t prec) {
       
@@ -600,9 +598,9 @@ namespace o2scl {
 	expansion, which is enough for the default precision of \f$
 	10^{-18} \f$ since \f$ (20/700)^{12} \sim 10^{-19} \f$.
     */
-    virtual bool calc_mu_ndeg(fermion &f, fp_t temper, 
+    virtual bool calc_mu_ndeg(fermion_t &f, fp_t temper, 
 			      fp_t prec=1.0e-18, bool inc_antip=false) {
-      return calc_mu_ndeg_tlate<fermion>(f,temper,prec,inc_antip);
+      return calc_mu_ndeg_tlate(f,temper,prec,inc_antip);
     }
     
     /** \brief Degenerate expansion for fermions
@@ -622,26 +620,26 @@ namespace o2scl {
 	\future Make a function like this for dndm, dsdT, etc. 
 	for fermion_deriv .
     */
-    virtual bool calc_mu_deg(fermion &f, fp_t temper, 
+    virtual bool calc_mu_deg(fermion_t &f, fp_t temper, 
 			     fp_t prec=1.0e-18) {
-      return calc_mu_deg_tlate<fermion>(f,temper,prec);
+      return calc_mu_deg_tlate(f,temper,prec);
     }      
     
     /** \brief Calculate properties as function of chemical potential
      */
-    virtual void calc_mu(fermion &f, fp_t temper)=0;
+    virtual void calc_mu(fermion_t &f, fp_t temper)=0;
     
     /** \brief Calculate properties as function of density
 	
 	\note This function returns an integer value, in contrast to
 	\ref calc_mu(), because of the potential for non-convergence.
     */
-    virtual int calc_density(fermion &f, fp_t temper)=0;
+    virtual int calc_density(fermion_t &f, fp_t temper)=0;
     
     /** \brief Calculate properties with antiparticles as function of
 	chemical potential
     */
-    virtual void pair_mu(fermion &f, fp_t temper)=0;
+    virtual void pair_mu(fermion_t &f, fp_t temper)=0;
     
     /** \brief Calculate properties with antiparticles as function of
 	density
@@ -649,12 +647,11 @@ namespace o2scl {
 	\note This function returns an integer value, in contrast to
 	\ref pair_mu(), because of the potential for non-convergence.
     */
-    virtual int pair_density(fermion &f, fp_t temper)=0;
+    virtual int pair_density(fermion_t &f, fp_t temper)=0;
     
     /// \name Massless fermions
     //@{
     /// Finite temperature massless fermions
-    template<class fermion_t>
     void massless_calc_mu(fermion_t &f, fp_t temper) {
       
       fp_t fm2, fm3;
@@ -673,7 +670,6 @@ namespace o2scl {
     }    
     
     /// Finite temperature massless fermions
-    template<class fermion_t>
     void massless_calc_density(fermion_t &f, fp_t temper) {
       fp_t x, T=temper;
       
@@ -696,7 +692,6 @@ namespace o2scl {
     
     /** \brief Finite temperature massless fermions and antifermions 
      */
-    template<class fermion_t>
     void massless_pair_mu(fermion_t &f, fp_t temper) {
       fp_t pitmu, pitmu2, nu2;
 
@@ -778,7 +773,6 @@ namespace o2scl {
 	\future This could be improved by including more terms
 	in the expansions.
     */
-    template<class fermion_t>
     void massless_pair_density(fermion_t &f, fp_t temper) {
 
       fp_t t2=temper*temper,pitmu,pitmu2,nu2;
@@ -891,7 +885,6 @@ namespace o2scl {
     root<func_t,func_t,fp_t> *massless_root;
 
     /// Solve for the chemical potential for massless fermions
-    template<class fermion_t>
     fp_t massless_solve_fun(fp_t x, fermion_t &f, fp_t temper) {
       fp_t fm2=this->fd_integ.calc_2(x/temper)/2.0;
       return f.g*pow(temper,3.0)*fm2/this->pi2/f.n-1.0;

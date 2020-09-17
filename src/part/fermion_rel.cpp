@@ -47,9 +47,9 @@ void o2scl_free_fermion_rel(void *vp) {
 }
 
 void o2scl_fermion_density(void *vp, double m, double g,
-				double T, double n,
-				double *mu, double *ed, double *pr,
-				double *en) {
+			   double T, double n,
+			   double *mu, double *ed, double *pr,
+			   double *en) {
   fermion_rel *fr=(fermion_rel *)vp;
   fermion f(m,g);
   f.n=n;

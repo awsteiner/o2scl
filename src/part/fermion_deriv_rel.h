@@ -303,7 +303,7 @@ namespace o2scl {
   fermion_deriv unc;
 
   /// Object for computing non-derivative quantities
-  fermion_rel fr;
+  fermion_rel_tl<fermion_deriv> fr;
 
   /** \name Method of computing derivatives
    */
@@ -355,7 +355,7 @@ namespace o2scl {
    */
   virtual int calc_mu(fermion_deriv &f, fp_t temper) {
 
-    fr.calc_mu_tlate<fermion_deriv>(f,temper);
+    fr.calc_mu_tlate(f,temper);
     last_method=fr.last_method*10;
   
     int iret;
@@ -627,14 +627,14 @@ namespace o2scl {
       density
   */
   virtual int pair_density(fermion_deriv &f, fp_t temper) {
-    int ret=fr.pair_density_tlate<fermion_deriv>(f,temper);
+    int ret=fr.pair_density_tlate(f,temper);
     pair_mu(f,temper);
     return 0;
   }
 
   /// Calculate effective chemical potential from density
   virtual int nu_from_n(fermion_deriv &f, fp_t temper) {
-    int ret=fr.nu_from_n_tlate<fermion_deriv>(f,temper);
+    int ret=fr.nu_from_n_tlate(f,temper);
     last_method=fr.last_method*100;
     return ret;
   }

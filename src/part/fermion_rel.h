@@ -216,11 +216,14 @@ namespace o2scl {
       \future The function pair_mu() should set the antiparticle
       integrators as done in fermion_deriv_rel.
   */
-  template<class fd_inte_t=class o2scl::fermi_dirac_integ_gsl,
+  template<class fermion_t=fermion_tl<double>,
+	   class fd_inte_t=class o2scl::fermi_dirac_integ_gsl,
 	   class be_inte_t=o2scl::bessel_K_exp_integ_gsl,
-	   class root_t=root_cern<>, class func_t=funct, class fp_t=double>
+	   class root_t=root_cern<>, class func_t=funct,
+	   class fp_t=double>
   class fermion_rel_tl :
-    public fermion_thermo_tl<fd_inte_t,be_inte_t,root_t,func_t,fp_t> {
+    public fermion_thermo_tl<fermion_t,fd_inte_t,be_inte_t,root_t,
+			     func_t,fp_t> {
     
   public:
 
@@ -257,7 +260,7 @@ namespace o2scl {
   //@}
 
   /// Storage for the uncertainty
-  fermion unc;
+  fermion_t unc;
 
   /// If true, use expansions for extreme conditions (default true)
   bool use_expansions;
@@ -284,8 +287,8 @@ namespace o2scl {
 
   /** \brief Calculate properties as function of chemical potential
    */
-  virtual void calc_mu(fermion &f, fp_t temper) {
-    calc_mu_tlate<fermion>(f,temper);
+  virtual void calc_mu(fermion_t &f, fp_t temper) {
+    calc_mu_tlate(f,temper);
     return;
   }
   
@@ -296,29 +299,29 @@ namespace o2scl {
       the chemical potential. If this guess is too small, then this
       function may fail.
   */
-  virtual int calc_density(fermion &f, fp_t temper) {
-    return calc_density_tlate<fermion>(f,temper);
+  virtual int calc_density(fermion_t &f, fp_t temper) {
+    return calc_density_tlate(f,temper);
   }
 
   /** \brief Calculate properties with antiparticles as function of
       chemical potential
   */
-  virtual void pair_mu(fermion &f, fp_t temper) {
-    pair_mu_tlate<fermion>(f,temper);
+  virtual void pair_mu(fermion_t &f, fp_t temper) {
+    pair_mu_tlate(f,temper);
     return;
   }
 
   /** \brief Calculate properties with antiparticles as function of
       density
   */
-  virtual int pair_density(fermion &f, fp_t temper) {
-    return pair_density_tlate<fermion>(f,temper);
+  virtual int pair_density(fermion_t &f, fp_t temper) {
+    return pair_density_tlate(f,temper);
   }
 
   /** \brief Calculate effective chemical potential from density
    */
-  virtual int nu_from_n(fermion &f, fp_t temper) {
-    return nu_from_n_tlate<fermion>(f,temper);
+  virtual int nu_from_n(fermion_t &f, fp_t temper) {
+    return nu_from_n_tlate(f,temper);
   }
     
   /// The non-degenerate integrator
@@ -391,7 +394,6 @@ namespace o2scl {
   /** \brief Calculate the chemical potential from the density
       (template version)
   */
-  template<class fermion_t>
   int nu_from_n_tlate(fermion_t &f, fp_t temper) {
 
     last_method=0;
@@ -442,8 +444,8 @@ namespace o2scl {
     }
 
     // Perform full solution
-    funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-		       (&fermion_rel_tl<fd_inte_t,be_inte_t,
+    funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+		       (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			root_t,func_t,fp_t>::solve_fun),
 		       this,std::placeholders::_1,std::ref(f),temper);
 
@@ -540,9 +542,7 @@ namespace o2scl {
   }
 
   /** \brief Calculate properties as function of chemical potential
-      (template version)
   */
-  template<class fermion_t>
   void calc_mu_tlate(fermion_t &f, fp_t temper) {
 
     last_method=0;
@@ -603,16 +603,16 @@ namespace o2scl {
     
       // If the temperature is large enough, perform the full integral
     
-      funct mfd=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<fd_inte_t,be_inte_t,
+      funct mfd=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			   root_t,func_t,fp_t>::density_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
-      funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<fd_inte_t,be_inte_t,
+      funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			   root_t,func_t,fp_t>::energy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
-      funct mfs=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<fd_inte_t,be_inte_t,
+      funct mfs=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			   root_t,func_t,fp_t>::entropy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
       
@@ -644,16 +644,16 @@ namespace o2scl {
       // Otherwise, apply a degenerate approximation, by making the
       // upper integration limit finite
     
-      funct mfd=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<fd_inte_t,be_inte_t,
+      funct mfd=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			   root_t,func_t,fp_t>::deg_density_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
-      funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<fd_inte_t,be_inte_t,
+      funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			   root_t,func_t,fp_t>::deg_energy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
-      funct mfs=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<fd_inte_t,be_inte_t,
+      funct mfs=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			   root_t,func_t,fp_t>::deg_entropy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
 
@@ -740,12 +740,10 @@ namespace o2scl {
   }
 
   /** \brief Calculate properties as function of density
-      (template version)
 
       \future There is still quite a bit of code duplication
       between this function and \ref calc_mu_tlate() .
   */
-  template<class fermion_t>
   int calc_density_tlate(fermion_t &f, fp_t temper) {
 
     last_method=0;
@@ -836,12 +834,12 @@ namespace o2scl {
 
     if (!deg) {
     
-      funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<fd_inte_t,be_inte_t,
+      funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			   root_t,func_t,fp_t>::energy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
-      funct mfs=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<fd_inte_t,be_inte_t,
+      funct mfs=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			   root_t,func_t,fp_t>::entropy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
     
@@ -857,12 +855,12 @@ namespace o2scl {
 
     } else {
 
-      funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<fd_inte_t,be_inte_t,
+      funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			   root_t,func_t,fp_t>::deg_energy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
-      funct mfs=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<fd_inte_t,be_inte_t,
+      funct mfs=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			   root_t,func_t,fp_t>::deg_entropy_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
       
@@ -932,7 +930,6 @@ namespace o2scl {
   /** \brief Calculate properties with antiparticles as function of
       chemical potential (template version)
   */
-  template<class fermion_t>
   void pair_mu_tlate(fermion_t &f, fp_t temper) {
 
     last_method=0;
@@ -954,7 +951,7 @@ namespace o2scl {
       }
     }
 
-    fermion antip(f.m,f.g);
+    fermion_t antip(f.m,f.g);
     f.anti(antip);
 
     // Particles
@@ -992,7 +989,6 @@ namespace o2scl {
   /** \brief Calculate thermodynamic properties with antiparticles
       from the density (template version)
   */
-  template<class fermion_t>
   int pair_density_tlate(fermion_t &f, fp_t temper) {
 
     last_method=0;
@@ -1015,8 +1011,8 @@ namespace o2scl {
   
     fp_t nex=f.nu/temper;
       
-    funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t,bool)>
-		       (&fermion_rel_tl<fd_inte_t,be_inte_t,
+    funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t,bool)>
+		       (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			root_t,func_t,fp_t>::pair_fun),
 		       this,std::placeholders::_1,std::ref(f),temper,false);
 
@@ -1070,9 +1066,9 @@ namespace o2scl {
       // If that failed, try working in log units
 
       // Function in log units
-      funct lmf=std::bind(std::mem_fn<fp_t(fp_t,fermion &,
+      funct lmf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,
 					   fp_t,bool)>
-			  (&fermion_rel_tl<fd_inte_t,be_inte_t,
+			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			   root_t,func_t,fp_t>::pair_fun),
 			  this,std::placeholders::_1,std::ref(f),
 			  temper,true);
@@ -1137,7 +1133,7 @@ namespace o2scl {
 #ifndef DOXYGEN_INTERNAL
 
   /// The integrand for the density for non-degenerate fermions
-  fp_t density_fun(fp_t u, fermion &f, fp_t T) {
+  fp_t density_fun(fp_t u, fermion_t &f, fp_t T) {
 
     fp_t ret, y, eta;
 
@@ -1165,7 +1161,7 @@ namespace o2scl {
 
 
   /// The integrand for the energy density for non-degenerate fermions
-  fp_t energy_fun(fp_t u, fermion &f, fp_t T) {
+  fp_t energy_fun(fp_t u, fermion_t &f, fp_t T) {
     fp_t ret, y, eta;
 
     eta=f.ms/T;
@@ -1189,7 +1185,7 @@ namespace o2scl {
   }
 
   /// The integrand for the entropy density for non-degenerate fermions
-  fp_t entropy_fun(fp_t u, fermion &f, fp_t T) {
+  fp_t entropy_fun(fp_t u, fermion_t &f, fp_t T) {
     fp_t ret, y, eta, term1, term2;
 
     if (f.inc_rest_mass) {
@@ -1212,7 +1208,7 @@ namespace o2scl {
 
 
   /// The integrand for the density for degenerate fermions
-  fp_t deg_density_fun(fp_t k, fermion &f, fp_t T) {
+  fp_t deg_density_fun(fp_t k, fermion_t &f, fp_t T) {
       
     fp_t E=o2hypot(k,f.ms), ret;
     if (!f.inc_rest_mass) E-=f.m;
@@ -1228,7 +1224,7 @@ namespace o2scl {
   }
 
   /// The integrand for the energy density for degenerate fermions
-  fp_t deg_energy_fun(fp_t k, fermion &f, fp_t T) {
+  fp_t deg_energy_fun(fp_t k, fermion_t &f, fp_t T) {
 
     fp_t E=o2hypot(k,f.ms), ret;
     if (!f.inc_rest_mass) E-=f.m;
@@ -1244,7 +1240,7 @@ namespace o2scl {
   }
 
   /// The integrand for the entropy density for degenerate fermions
-  fp_t deg_entropy_fun(fp_t k, fermion &f, fp_t T) {
+  fp_t deg_entropy_fun(fp_t k, fermion_t &f, fp_t T) {
   
     fp_t E=o2hypot(k,f.ms), ret;
     if (!f.inc_rest_mass) E-=f.m;
@@ -1273,7 +1269,7 @@ namespace o2scl {
   }
 
   /// Solve for the chemical potential given the density
-  fp_t solve_fun(fp_t x, fermion &f, fp_t T) {
+  fp_t solve_fun(fp_t x, fermion_t &f, fp_t T) {
     fp_t nden, yy;
   
     f.nu=T*x;
@@ -1318,8 +1314,8 @@ namespace o2scl {
     // Otherwise, directly perform the integration
     if (!deg) {
 
-      funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<fd_inte_t,
+      funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+			  (&fermion_rel_tl<fermion_t,fd_inte_t,
 			   be_inte_t,root_t,func_t,fp_t>::density_fun),
 			  this,std::placeholders::_1,std::ref(f),T);
     
@@ -1331,8 +1327,8 @@ namespace o2scl {
 
     } else {
     
-      funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			  (&fermion_rel_tl<fd_inte_t,
+      funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+			  (&fermion_rel_tl<fermion_t,fd_inte_t,
 			   be_inte_t,root_t,func_t,fp_t>::deg_density_fun),
 			  this,std::placeholders::_1,std::ref(f),T);
     
@@ -1375,7 +1371,7 @@ namespace o2scl {
       function which automatically handles the sum of particles and
       antiparticles.
   */
-  fp_t pair_fun(fp_t x, fermion &f, fp_t T, bool log_mode) {
+  fp_t pair_fun(fp_t x, fermion_t &f, fp_t T, bool log_mode) {
 
     // Temporary storage for density to match
     fp_t nn_match=f.n;
@@ -1464,8 +1460,8 @@ namespace o2scl {
       
 	// Nondegenerate case
       
-	funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			    (&fermion_rel_tl<fd_inte_t,
+	funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+			    (&fermion_rel_tl<fermion_t,fd_inte_t,
 			     be_inte_t,root_t,func_t,fp_t>::density_fun),
 			    this,std::placeholders::_1,std::ref(f),T);
       
@@ -1480,8 +1476,8 @@ namespace o2scl {
       
 	// Degenerate case
       
-	funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			    (&fermion_rel_tl<fd_inte_t,
+	funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+			    (&fermion_rel_tl<fermion_t,fd_inte_t,
 			     be_inte_t,root_t,func_t,fp_t>::deg_density_fun),
 			    this,std::placeholders::_1,std::ref(f),T);
       
@@ -1569,8 +1565,8 @@ namespace o2scl {
       
 	// Nondegenerate case
       
-	funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			   (&fermion_rel_tl<fd_inte_t,
+	funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+			   (&fermion_rel_tl<fermion_t,fd_inte_t,
 			    be_inte_t,root_t,func_t,fp_t>::density_fun),
 			   this,std::placeholders::_1,std::ref(f),T);
       
@@ -1586,8 +1582,8 @@ namespace o2scl {
       
 	// Degenerate case
       
-	funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion &,fp_t)>
-			   (&fermion_rel_tl<fd_inte_t,
+	funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+			   (&fermion_rel_tl<fermion_t,fd_inte_t,
 			    be_inte_t,root_t,func_t,fp_t>::deg_density_fun),
 			   this,std::placeholders::_1,std::ref(f),T);
       

@@ -717,7 +717,7 @@ namespace o2scl {
 
       This is for access to fermion_thermo::ndeg_terms().
   */
-  fermion_rel fr;
+    fermion_rel_tl<fermion_deriv> fr;
 
   /// Store \f$ \pi \f$ for convenience
   fp_t pi;
@@ -767,7 +767,7 @@ namespace o2scl {
   virtual bool calc_mu_deg(fermion_deriv &f, fp_t temper,
 			   fp_t prec) {
       
-    if (fr.calc_mu_deg_tlate<fermion_deriv>(f,temper,prec)==false) {
+    if (fr.calc_mu_deg_tlate(f,temper,prec)==false) {
       return false;
     }
       
@@ -837,8 +837,8 @@ namespace o2scl {
   virtual bool calc_mu_ndeg(fermion_deriv &f, fp_t temper,
 			    fp_t prec, bool inc_antip=false) {
       
-    if (fr.calc_mu_ndeg_tlate<fermion_deriv>(f,temper,prec,
-					     inc_antip)==false) {
+    if (fr.calc_mu_ndeg_tlate(f,temper,prec,
+			      inc_antip)==false) {
       return false;
     }
       
