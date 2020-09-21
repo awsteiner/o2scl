@@ -331,13 +331,13 @@ int cloud_file::get_file_hash
 	  return o2scl::exc_efilenotfound;
 	}
       }
-    }
-  } else {
-    if (throw_on_fail) {
-      O2SCL_ERR("Function pipe_cmd_string() failed.",
-		o2scl::exc_efailed);
     } else {
-      return o2scl::exc_efailed;
+      if (throw_on_fail) {
+	O2SCL_ERR("Function pipe_cmd_string() failed.",
+		  o2scl::exc_efailed);
+      } else {
+	return o2scl::exc_efailed;
+      }
     }
   }
   
