@@ -100,7 +100,7 @@ namespace o2scl {
     }
 
     /// Return random integer in \f$[0,\mathrm{max}-1]\f$.
-    unsigned long int random_int(unsigned long int n=0);
+    unsigned long int random_int(unsigned long int max=0);
     
     /// Set the seed
     void set_seed(unsigned long int s) { 
