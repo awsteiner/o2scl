@@ -100,6 +100,10 @@ int main(void) {
   // cpp_dec_float_50 precision. For the integrators, the template
   // parameter is the maximum number of refinements, we try 30.
 
+  // A significant limitation for using multiprecision types
+  // is the lack of a systematic expansion for massless fermions
+  // in fermion.h
+  
   // The fermion_rel constructor explicitly contains
   // various types which aren't compatible with multiprecision,
   // so we need to refactor those somehow in order to make

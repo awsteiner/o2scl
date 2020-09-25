@@ -199,6 +199,11 @@ namespace o2scl {
       \hline 
       <b>Todos:</b>
 
+      \future I had to remove the shared_ptr stuff because
+      the default algorithm types don't support multiprecision,
+      but it might be nice to restore the shared_ptr mechanism
+      somehow.
+
       \future The expressions which appear in in the integrand
       functions density_fun(), etc. could likely be improved,
       especially in the case where \ref o2scl::part::inc_rest_mass is

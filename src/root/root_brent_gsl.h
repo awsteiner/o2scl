@@ -235,8 +235,8 @@ namespace o2scl {
       }
       fp_t dtmp;
       fp_t ptmp=e*q;
-      if (3*m*q-o2scl::o2abs(tol*q)<o2scl::o2abs(ptmp)) {
-	fp_t ptmp2=tol*q;
+      fp_t ptmp2=tol*q;
+      if (3*m*q-o2scl::o2abs(ptmp2)<o2scl::o2abs(ptmp)) {
 	dtmp=3*m*q-o2scl::o2abs(ptmp2);
       } else {
 	dtmp=o2scl::o2abs(ptmp);
