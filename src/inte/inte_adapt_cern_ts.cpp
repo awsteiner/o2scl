@@ -161,7 +161,7 @@ int main(void) {
     // Test qagil_cern with double precision
     
     cout << "iqc, double prec, sin_recip:\n  ";
-    inte_il_transform<funct,inte_adapt_cern<>,double> iqc;
+    inte_transform<funct,inte_adapt_cern<>,double> iqc;
     //inte_qagil_cern<funct> iqc;
     double exact=1.0-cos(100.0/101.0);
     funct tf2=std::bind(sin_recip,std::placeholders::_1);
@@ -176,11 +176,11 @@ int main(void) {
     // Test qagil_cern with long double precision
     cout << "iqc, long double prec, sin_recip:\n  ";
     
-    inte_il_transform<funct_ld,inte_adapt_cern
-		      <funct_ld,inte_gauss56_cern
-		       <funct_ld,long double,
-			inte_gauss56_coeffs_long_double>,100,
-		       long double>,long double> iqc_ld;
+    inte_transform<funct_ld,inte_adapt_cern
+		   <funct_ld,inte_gauss56_cern
+		    <funct_ld,long double,
+		     inte_gauss56_coeffs_long_double>,100,
+		    long double>,long double> iqc_ld;
 
     //inte_qagil_cern<funct_ld,
     //inte_gauss56_cern<funct_ld,long double,
@@ -202,11 +202,11 @@ int main(void) {
     // Test qagil_cern with cpp_dec_float_50 precision
     cout << "iqc, cdf 50 prec, sin_recip:\n  ";
     
-    inte_il_transform<funct_cdf50,inte_adapt_cern
-		      <funct_cdf50,inte_gauss56_cern
-		       <funct_cdf50,cpp_dec_float_50,
-			inte_gauss56_coeffs_cpp_dec_float_50>,100,
-		       cpp_dec_float_50>,cpp_dec_float_50> iqc_cdf;
+    inte_transform<funct_cdf50,inte_adapt_cern
+		   <funct_cdf50,inte_gauss56_cern
+		    <funct_cdf50,cpp_dec_float_50,
+		     inte_gauss56_coeffs_cpp_dec_float_50>,100,
+		    cpp_dec_float_50>,cpp_dec_float_50> iqc_cdf;
     
     //inte_qagil_cern<funct_cdf,
     //inte_gauss56_cern<funct_cdf50,cpp_dec_float_50,

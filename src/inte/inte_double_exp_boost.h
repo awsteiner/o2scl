@@ -20,8 +20,8 @@
   
   -------------------------------------------------------------------
 */
-#ifndef O2SCL_INTE_TANH_SINH_BOOST_H
-#define O2SCL_INTE_TANH_SINH_BOOST_H
+#ifndef O2SCL_INTE_DOUBLE_EXP_BOOST_H
+#define O2SCL_INTE_DOUBLE_EXP_BOOST_H
 
 /** \file inte_tanh_sinh_boost.h
     \brief File defining \ref o2scl::inte_tanh_sinh_boost
@@ -50,72 +50,76 @@ namespace o2scl {
       infinite limits on either (or both) sides.
   */
   template<class func_t=funct, size_t max_refine=15, class fp_t=double>
-    class inte_tanh_sinh_boost : public inte<func_t, fp_t> {
+  class inte_tanh_sinh_boost : public inte<func_t, fp_t> {
     
   protected:
 
-  /// The boost integration object
-  boost::math::quadrature::tanh_sinh<fp_t> it;
+    /// The boost integration object
+    boost::math::quadrature::tanh_sinh<fp_t> it;
   
   public:
 
-  inte_tanh_sinh_boost() : it(max_refine) {
-  }
+    inte_tanh_sinh_boost() : it(max_refine) {
+    }
   
-  virtual ~inte_tanh_sinh_boost() {
-  }
+    virtual ~inte_tanh_sinh_boost() {
+    }
     
-  /** \brief Integrate function \c func from \c a to \c b and place
-      the result in \c res and the error in \c err
-  */
-  virtual int integ_err(func_t &func, fp_t a, fp_t b, 
-			fp_t &res, fp_t &err) {
-    res=it.integrate(func,a,b,this->tol_rel,&err,&L1norm);
-    if (err>this->tol_rel) {
-      O2SCL_ERR2("Failed to achieve tolerance in ",
-		 "inte_tanh_sinh_boost::integ_err().",o2scl::exc_efailed);
+    /** \brief Integrate function \c func from \c a to \c b and place
+	the result in \c res and the error in \c err
+    */
+    virtual int integ_err(func_t &func, fp_t a, fp_t b, 
+			  fp_t &res, fp_t &err) {
+      res=it.integrate(func,a,b,this->tol_rel,&err,&L1norm);
+      if (err>this->tol_rel) {
+	O2SCL_ERR2("Failed to achieve tolerance in ",
+		   "inte_tanh_sinh_boost::integ_err().",o2scl::exc_efailed);
+      }
+      return 0;
     }
-    return 0;
-  }
 
-  /** \brief Desc
-   */
-  virtual int integ_iu_err(func_t &func, fp_t a, 
-			fp_t &res, fp_t &err) {
-    return integ_err(func,a,std::numeric_limits<double>::infinity(),
-		     res,err);
-  }
-  
-  /** \brief Desc
-   */
-  virtual int integ_il_err(func_t &func, fp_t b, 
-			fp_t &res, fp_t &err) {
-    return integ_err(func,-std::numeric_limits<double>::infinity(),
-		     b,res,err);
-  }
-  
-  /** \brief Desc
-   */
-  virtual int integ_i_err(func_t &func, 
-			fp_t &res, fp_t &err) {
-    return integ_err(func,std::numeric_limits<double>::infinity(),
-		     -std::numeric_limits<double>::infinity(),res,err);
-  }
-  
-  /** \brief Integrate function \c func from -1 to 1 and place
-      the result in \c res and the error in \c err
-  */
-  virtual int integ_err(func_t &func, fp_t &res, fp_t &err) {
-    res=it.integrate(func,this->tol_rel,&err,&L1norm);
-    if (err>this->tol_rel) {
-      O2SCL_ERR2("Failed to achieve tolerance in ",
-		 "inte_tanh_sinh_boost::integ_err().",o2scl::exc_efailed);
+    /** \brief Integrate function \c func from \c a to \f$ \infty \f$
+	and place the result in \c res and the error in \c err
+    */
+    virtual int integ_iu_err(func_t &func, fp_t a, 
+			     fp_t &res, fp_t &err) {
+      return integ_err(func,a,std::numeric_limits<double>::infinity(),
+		       res,err);
     }
-    return 0;
-  }
+    
+    /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b
+	and place the result in \c res and the error in \c err
+    */
+    virtual int integ_il_err(func_t &func, fp_t b, 
+			     fp_t &res, fp_t &err) {
+      return integ_err(func,-std::numeric_limits<double>::infinity(),
+		       b,res,err);
+    }
+    
+    /** \brief Integrate function \c func from \f$ -\infty \f$ to \f$
+	\infty \f$ and place the result in \c res and the error in \c
+	err
+    */
+    virtual int integ_i_err(func_t &func, 
+			    fp_t &res, fp_t &err) {
+      return integ_err(func,std::numeric_limits<double>::infinity(),
+		       -std::numeric_limits<double>::infinity(),res,err);
+    }
   
-  /// L1 norm
-  fp_t L1norm;
+    /** \brief Integrate function \c func from -1 to 1 and place
+	the result in \c res and the error in \c err
+    */
+    virtual int integ_err(func_t &func, fp_t &res, fp_t &err) {
+      res=it.integrate(func,this->tol_rel,&err,&L1norm);
+      if (err>this->tol_rel) {
+	O2SCL_ERR2("Failed to achieve tolerance in ",
+		   "inte_tanh_sinh_boost::integ_err().",o2scl::exc_efailed);
+      }
+      return 0;
+    }
+  
+    /// L1 norm
+    fp_t L1norm;
 
   };
   
@@ -128,52 +132,54 @@ namespace o2scl {
       any semi-infinite range is supported.
   */
   template<class func_t=funct, size_t max_refine=15, class fp_t=double>
-    class inte_exp_sinh_boost : public inte<func_t, fp_t> {
+  class inte_exp_sinh_boost : public inte<func_t, fp_t> {
     
   protected:
 
-  /// The boost integration object
-  boost::math::quadrature::exp_sinh<fp_t> it;
+    /// The boost integration object
+    boost::math::quadrature::exp_sinh<fp_t> it;
   
   public:
 
-  inte_exp_sinh_boost() : it(max_refine) {
-  }
-  
-  virtual ~inte_exp_sinh_boost() {
-  }
-    
-  /** \brief Integrate function \c func from \c a to \c b and place
-      the result in \c res and the error in \c err
-  */
-  virtual int integ_err(func_t &func, fp_t a, fp_t b, 
-			fp_t &res, fp_t &err) {
-    res=it.integrate(func,a,b,this->tol_rel,&err,&L1norm);
-    if (err>this->tol_rel) {
-      O2SCL_ERR2("Failed to achieve tolerance in ",
-		 "inte_exp_sinh_boost::integ_err().",o2scl::exc_efailed);
+    inte_exp_sinh_boost() : it(max_refine) {
     }
-    return 0;
-  }
   
-  /** \brief Desc
-   */
-  virtual int integ_iu_err(func_t &func, fp_t a, 
-			fp_t &res, fp_t &err) {
-    return integ_err(func,a,std::numeric_limits<double>::infinity(),
-		     res,err);
-  }
+    virtual ~inte_exp_sinh_boost() {
+    }
+    
+    /** \brief Integrate function \c func from \c a to \c b and place
+	the result in \c res and the error in \c err
+    */
+    virtual int integ_err(func_t &func, fp_t a, fp_t b, 
+			  fp_t &res, fp_t &err) {
+      res=it.integrate(func,a,b,this->tol_rel,&err,&L1norm);
+      if (err>this->tol_rel) {
+	O2SCL_ERR2("Failed to achieve tolerance in ",
+		   "inte_exp_sinh_boost::integ_err().",o2scl::exc_efailed);
+      }
+      return 0;
+    }
   
-  /** \brief Desc
-   */
-  virtual int integ_il_err(func_t &func, fp_t b, 
-			fp_t &res, fp_t &err) {
-    return integ_err(func,-std::numeric_limits<double>::infinity(),
-		     b,res,err);
-  }
+    /** \brief Integrate function \c func from \c a to \f$ \infty \f$
+	and place the result in \c res and the error in \c err
+    */
+    virtual int integ_iu_err(func_t &func, fp_t a, 
+			     fp_t &res, fp_t &err) {
+      return integ_err(func,a,std::numeric_limits<double>::infinity(),
+		       res,err);
+    }
   
-  /// L1 norm
-  fp_t L1norm;
+    /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b
+	and place the result in \c res and the error in \c err
+    */
+    virtual int integ_il_err(func_t &func, fp_t b, 
+			     fp_t &res, fp_t &err) {
+      return integ_err(func,-std::numeric_limits<double>::infinity(),
+		       b,res,err);
+    }
+  
+    /// L1 norm
+    fp_t L1norm;
 
   };
   
@@ -185,46 +191,37 @@ namespace o2scl {
       Only infinite limits (upper and lower) are supported.
   */
   template<class func_t=funct, size_t max_refine=15, class fp_t=double>
-    class inte_sinh_sinh_boost : public inte<func_t,fp_t> {
+  class inte_sinh_sinh_boost : public inte<func_t,fp_t> {
     
   protected:
 
-  /// The boost integration object
-  boost::math::quadrature::sinh_sinh<fp_t> it;
+    /// The boost integration object
+    boost::math::quadrature::sinh_sinh<fp_t> it;
   
   public:
 
-  inte_sinh_sinh_boost() : it(max_refine) {
-  }
-  
-  virtual ~inte_sinh_sinh_boost() {
-  }
-    
-  /** \brief Integrate function \c func and place
-      the result in \c res and the error in \c err
-  */
-  virtual int integ_i_err(func_t &func, 
-			  fp_t &res, fp_t &err) {
-    res=it.integrate(func,this->tol_rel,&err,&L1norm);
-    if (err>this->tol_rel) {
-      O2SCL_ERR2("Failed to achieve tolerance in ",
-		 "inte_sinh_sinh_boost::integ_err().",o2scl::exc_efailed);
+    inte_sinh_sinh_boost() : it(max_refine) {
     }
-    return 0;
-  }
-
-  /** \brief Integrate function \c func and place
-      the result in \c res and the error in \c err
-
-      \note The values of \c a and \c b are ignored.
-   */
-  virtual int integ_err(func_t &func, double a, double b,
-			fp_t &res, fp_t &err) {
-    return integ_i_err(func,res,err);
-  }
   
-  /// L1 norm
-  fp_t L1norm;
+    virtual ~inte_sinh_sinh_boost() {
+    }
+    
+    /** \brief Integrate function \c func from \f$ -\infty \f$ to \f$
+	\infty \f$ and place the result in \c res and the error in \c
+	err
+    */
+    virtual int integ_i_err(func_t &func, 
+			    fp_t &res, fp_t &err) {
+      res=it.integrate(func,this->tol_rel,&err,&L1norm);
+      if (err>this->tol_rel) {
+	O2SCL_ERR2("Failed to achieve tolerance in ",
+		   "inte_sinh_sinh_boost::integ_err().",o2scl::exc_efailed);
+      }
+      return 0;
+    }
+
+    /// L1 norm
+    fp_t L1norm;
 
   };
   

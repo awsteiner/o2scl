@@ -118,11 +118,11 @@ namespace o2scl {
       return res;
     }
 
-    /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b.
+    /** \brief Integrate function \c func from \c a to \f$ \infty \f$ .
      */
-    virtual fp_t integ_iu(func_t &func, fp_t b) {
+    virtual fp_t integ_iu(func_t &func, fp_t a) {
       fp_t res;
-      int ret=integ_iu_err(func,b,res,this->interror);
+      int ret=integ_iu_err(func,a,res,this->interror);
       if (ret!=0) {
 	O2SCL_ERR2("Integration failed in inte::integ(), ",
 		   "but cannot return int.",o2scl::exc_efailed);
@@ -130,11 +130,11 @@ namespace o2scl {
       return res;
     }
 
-    /** \brief Integrate function \c func from \c a to \f$ \infty \f$ .
+    /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b.
      */
-    virtual fp_t integ_il(func_t &func, fp_t a) {
+    virtual fp_t integ_il(func_t &func, fp_t b) {
       fp_t res;
-      int ret=integ_il_err(func,a,res,this->interror);
+      int ret=integ_il_err(func,b,res,this->interror);
       if (ret!=0) {
 	O2SCL_ERR2("Integration failed in inte::integ(), ",
 		   "but cannot return int.",o2scl::exc_efailed);
@@ -164,33 +164,30 @@ namespace o2scl {
 		 "inte::integ_err().",o2scl::exc_eunimpl);
       return 0;
     }
-					       
     
-    /** \brief Integrate function \c func from \f$ -\infty \f$ 
-	to \c b and place
-	the result in \c res and the error in \c err
+    /** \brief Integrate function \c func from \c a to \f$ \infty \f$
+	and place the result in \c res and the error in \c err
     */
-    virtual int integ_iu_err(func_t &func, fp_t b,
+    virtual int integ_iu_err(func_t &func, fp_t a,
 			     fp_t &res, fp_t &err) {
       O2SCL_ERR2("Not implemented in ",
 		 "inte::integ_err().",o2scl::exc_eunimpl);
       return 0;
     }      
     
-    /** \brief Integrate function \c func from \c a to \f$ \infty \f$ 
-	and place
-	the result in \c res and the error in \c err
+    /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b
+	and place the result in \c res and the error in \c err
     */
-    virtual int integ_il_err(func_t &func, fp_t a, 
-			     fp_t &res, fp_t &err){
+    virtual int integ_il_err(func_t &func, fp_t b, 
+			     fp_t &res, fp_t &err) {
       O2SCL_ERR2("Not implemented in ",
 		 "inte::integ_err().",o2scl::exc_eunimpl);
       return 0;
     }    
     
-    /** \brief Integrate function \c func from \f$ -\infty \f$ 
-	to \f$ \infty \f$ and place
-	the result in \c res and the error in \c err
+    /** \brief Integrate function \c func from \f$ -\infty \f$ to \f$
+	\infty \f$ and place the result in \c res and the error in \c
+	err
     */
     virtual int integ_i_err(func_t &func, 
 			    fp_t &res, fp_t &err) {
@@ -204,22 +201,16 @@ namespace o2scl {
 
   };
 
-  /** \brief Integrate over \f$ (-\infty,b] \f$
+  /** \brief Integration using variable transformations
+      for semi-infinite and infinite intervals
 
       \note This class only works if the base integration
       type <tt>def_inte_t</tt> avoids evaluating the function
       at the left-hand end point.
 
-      This class uses the GSL approach, employing the 
-      transformation
-      \f$ x = b - (1-t)/t \f$, and giving
-      \f[
-      \int_{-\infty}^{b}~dx f(x) 
-      = \int_0^1~dt~f[b-(1-t)/t]/t^2
-      \f]
   */
   template<class func_t, class def_inte_t, class fp_t=double>
-  class inte_il_transform : public inte<func_t,fp_t> {
+  class inte_transform : public inte<func_t,fp_t> {
     
   protected:
 
@@ -229,23 +220,60 @@ namespace o2scl {
     /// The upper limit
     fp_t upper_limit;
 
+    /// The lower limit
+    fp_t lower_limit;
+
+    /// Transform from \f$ t \in (0,1] \f$ to \f$ x \in [a,\infty) \f$
+    virtual fp_t iu_transform(fp_t t) {
+      if (t==0.0) {
+	O2SCL_ERR2("Function called with t=0 in ",
+		   "inte_transform::iu_transform().",o2scl::exc_efailed);
+      }
+      fp_t x=lower_limit+(1-t)/t, y;
+      y=(*user_func)(x);
+      return y/t/t;
+    }
+
     /// Transform from \f$ t \in (0,1] \f$ to \f$ x \in (-\infty,b] \f$
     virtual fp_t il_transform(fp_t t) {
       if (t==0.0) {
 	O2SCL_ERR2("Function called with t=0 in ",
-		   "inte_il::il_transform().",o2scl::exc_efailed);
+		   "inte_transform::il_transform().",o2scl::exc_efailed);
       }
       fp_t x=upper_limit-(1-t)/t, y;
       y=(*user_func)(x);
       return y/t/t;
     }
 
+    /// Transform from \f$ t \in (0,1] \f$ to \f$ x \in (-\infty,\infty) \f$
+    virtual fp_t i_transform(fp_t t) {
+      if (t==0.0) {
+	O2SCL_ERR2("Function called with t=0 in ",
+		   "inte_transform::i_transform().",o2scl::exc_efailed);
+      }
+      fp_t x=(1-t)/t, x2=-(1-t)/t, y;
+      y=(*user_func)(x)+(*user_func)(x2);
+      return y/t/t;
+    }
+
+    /// Transform from \f$ t \in (0,1] \f$ to \f$ x \in (-\infty,\infty) \f$
+    virtual fp_t no_transform(fp_t t) {
+      fp_t y=(*user_func)(t);
+      return y;
+    }
+
   public:
   
-    inte_il_transform() {
+    inte_transform() {
       it=&def_inte;
-      fo=std::bind(std::mem_fn<fp_t(fp_t)>(&inte_il_transform::il_transform),
-		   this,std::placeholders::_1);
+      fo_il=std::bind(std::mem_fn<fp_t(fp_t)>(&inte_transform::il_transform),
+		      this,std::placeholders::_1);
+      fo_iu=std::bind(std::mem_fn<fp_t(fp_t)>(&inte_transform::iu_transform),
+		      this,std::placeholders::_1);
+      fo_i=std::bind(std::mem_fn<fp_t(fp_t)>(&inte_transform::i_transform),
+		      this,std::placeholders::_1);
+      fo_no=std::bind(std::mem_fn<fp_t(fp_t)>(&inte_transform::no_transform),
+		      this,std::placeholders::_1);
     }    
   
     /** \brief Internal function type based on floating-point type
@@ -263,18 +291,72 @@ namespace o2scl {
     inte<internal_funct,fp_t> *it;
   
     /// Function object
-    internal_funct fo;
+    internal_funct fo_il;
+  
+    /// Function object
+    internal_funct fo_iu;
+  
+    /// Function object
+    internal_funct fo_i;
+  
+    /// Function object
+    internal_funct fo_no;
   
   public:  
   
-    /** \brief Integrate function \c func from \c a to \c b
-	giving result \c res and error \c err
+    /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b
+	and place the result in \c res and the error in \c err
+	
+	This class uses the GSL approach, employing the 
+	transformation
+	\f$ x = b - (1-t)/t \f$, and giving
+	\f[
+	\int_{-\infty}^{b}~dx f(x) 
+	= \int_0^1~dt~f[b-(1-t)/t]/t^2
+	\f]
     */
     virtual int integ_il_err(func_t &func, fp_t b,
 			     fp_t &res, fp_t &err) {
       user_func=&func;
       upper_limit=b;
-      int ret=it->integ_err(fo,0.0,1.0,res,err);
+      int ret=it->integ_err(fo_il,0.0,1.0,res,err);
+      return ret;
+    }
+
+    /** \brief Integrate function \c func from \c a to \f$ \infty \f$
+	and place the result in \c res and the error in \c err
+	
+	This class uses the GSL approach, employing the 
+	transformation
+	\f$ x = a + (1-t)/t \f$, and giving
+	\f[
+	\int_a^{\infty}~dx f(x) 
+	= \int_0^1~dt~f[a+(1-t)/t]/t^2
+	\f]
+    */
+    virtual int integ_iu_err(func_t &func, fp_t a,
+			     fp_t &res, fp_t &err) {
+      user_func=&func;
+      lower_limit=a;
+      int ret=it->integ_err(fo_iu,0.0,1.0,res,err);
+      return ret;
+    }
+
+    /** \brief Integrate function \c func from \f$ -\infty \f$ to \f$
+	\infty \f$ and place the result in \c res and the error in \c
+	err
+	
+	This class uses the GSL approach, employing the 
+	transformation
+	\f$ x = (1-t)/t \f$, and giving
+	\f[
+	\int_{-\infty}^{\infty}~dx f(x) 
+	= \int_0^1~dt~\left\{f[(1-t)/t] + f[-(1-t)/t]\right\}/t^2
+	\f]
+    */
+    virtual int integ_i_err(func_t &func, fp_t &res, fp_t &err) {
+      user_func=&func;
+      int ret=it->integ_err(fo_i,0.0,1.0,res,err);
       return ret;
     }
 
@@ -285,98 +367,8 @@ namespace o2scl {
     */
     virtual int integ_err(func_t &func, fp_t a, fp_t b,
 			  fp_t &res, fp_t &err) {
-      return integ_il_err(func,b,res,err);
-    }
-  
-    /// \name Integration object
-    //@{
-    /// Set the base integration object to use
-    int set_inte(inte<internal_funct,fp_t> &i) {
-      it=&i;
-      return 0;
-    }
-      
-    /// Default integration object
-    def_inte_t def_inte;
-    //@}
-
-    /// Return string denoting type ("inte_il_transform")
-    virtual const char *type() { return "inte_il_transform"; }
-  
-  };
-  
-  /** \brief Integrate over \f$ [a,\infty) \f$
-
-      \note This class only works if the base integration
-      type <tt>def_inte_t</tt> avoids evaluating the function
-      at the right-hand end point.
-
-      This class uses the GSL approach, employing the 
-      transformation
-      \f$ x = a + (1-t)/t \f$, and giving
-      \f[
-      \int_a^{\infty}~dx f(x) 
-      = \int_0^1~dt~f[a+(1-t)/t]/t^2
-      \f]
-      
-  */
-  template<class func_t, class def_inte_t, class fp_t=double>
-  class inte_iu_transform : public inte<func_t,fp_t> {
-    
-  protected:
-
-    /// A pointer to the user-specified function
-    func_t *user_func;
-  
-    /// The lower limit
-    fp_t lower_limit;
-
-    /// Transform from \f$ t \in (0,1] \f$ to \f$ x \in [a,\infty) \f$
-    virtual fp_t iu_transform(fp_t t) {
-      if (t==0.0) {
-	O2SCL_ERR2("Function called with t=0 in ",
-		   "inte_ul::iu_transform().",o2scl::exc_efailed);
-      }
-      fp_t x=lower_limit+(1-t)/t, y;
-      y=(*user_func)(x);
-      return y/t/t;
-    }
-
-  public:
-  
-    inte_iu_transform() {
-      it=&def_inte;
-      fo=std::bind(std::mem_fn<fp_t(fp_t)>(&inte_iu_transform::iu_transform),
-		   this,std::placeholders::_1);
-    }    
-  
-    /** \brief Internal function type based on floating-point type
-      
-	\comment 
-	This type must be public so the user can change the
-	base integration object
-	\endcomment
-    */
-    typedef std::function<fp_t(fp_t)> internal_funct;
-
-  protected:
-
-    /// The base integration object
-    inte<internal_funct,fp_t> *it;
-  
-    /// Function object
-    internal_funct fo;
-  
-  public:  
-  
-    /** \brief Integrate function \c func from \c a to \c b
-	giving result \c res and error \c err
-    */
-    virtual int integ_iu_err(func_t &func, fp_t a, 
-			     fp_t &res, fp_t &err) {
       user_func=&func;
-      lower_limit=a;
-      int ret=it->integ_err(fo,0.0,1.0,res,err);
+      int ret=it->integ_err(fo_no,a,b,res,err);
       return ret;
     }
   
@@ -392,99 +384,10 @@ namespace o2scl {
     def_inte_t def_inte;
     //@}
 
-    /// Return string denoting type ("inte_iu_transform")
-    virtual const char *type() { return "inte_iu_transform"; }
-
-  };
-  
-  /** \brief Integrate over \f$ (-\infty,\infty) \f$
-
-      \note This class only works if the base integration
-      type <tt>def_inte_t</tt> avoids evaluating the function
-      at the end points
-
-      This class uses the GSL approach, employing the 
-      transformation
-      \f$ x = (1-t)/t \f$, and giving
-      \f[
-      \int_{-\infty}^{\infty}~dx f(x) 
-      = \int_0^1~dt~\left\{f[(1-t)/t] + f[-(1-t)/t]\right\}/t^2
-      \f]
-      
-  */
-  template<class func_t, class def_inte_t, class fp_t=double>
-  class inte_i_transform : public inte<func_t,fp_t> {
-    
-  protected:
-
-    /// A pointer to the user-specified function
-    func_t *user_func;
-  
-    /// Transform from \f$ t \in (0,1] \f$ to \f$ x \in (-\infty,\infty) \f$
-    virtual fp_t i_transform(fp_t t) {
-      if (t==0.0) {
-	O2SCL_ERR2("Function called with t=0 in ",
-		   "inte_ul::i_transform().",o2scl::exc_efailed);
-      }
-      fp_t x=(1-t)/t, x2=-(1-t)/t, y;
-      y=(*user_func)(x)+(*user_func)(x2);
-      return y/t/t;
-    }
-
-  public:
-  
-    inte_i_transform() {
-      it=&def_inte;
-      fo=std::bind(std::mem_fn<fp_t(fp_t)>(&inte_i_transform::i_transform),
-		   this,std::placeholders::_1);
-    }    
-  
-    /** \brief Internal function type based on floating-point type
-      
-	\comment 
-	This type must be public so the user can change the
-	base integration object
-	\endcomment
-    */
-    typedef std::function<fp_t(fp_t)> internal_funct;
-
-  protected:
-
-    /// The base integration object
-    inte<internal_funct,fp_t> *it;
-  
-    /// Function object
-    internal_funct fo;
-  
-  public:  
-  
-    /** \brief Integrate function \c func 
-	giving result \c res and error \c err
-    */
-    virtual int integ_i_err(func_t &func, 
-			    fp_t &res, fp_t &err) {
-      user_func=&func;
-      int ret=it->integ_err(fo,res,err);
-      return ret;
-    }
-  
-    /// \name Integration object
-    //@{
-    /// Set the base integration object to use
-    int set_inte(inte<internal_funct,fp_t> &i) {
-      it=&i;
-      return 0;
-    }
-      
-    /// Default integration object
-    def_inte_t def_inte;
-    //@}
-
-    /// Return string denoting type ("inte_i_transform")
-    virtual const char *type() { return "inte_i_transform"; }
+    /// Return string denoting type ("inte_transform")
+    virtual const char *type() { return "inte_transform"; }
   
   };
-  
   
 #ifndef DOXYGEN_NO_O2NS
 }

@@ -111,9 +111,6 @@ Namespace: o2scl class: inte_gauss_coeffs_long_double
 Namespace: o2scl class: inte_gen
 Namespace: o2scl class: inte_gsl
 Namespace: o2scl class: inte_hcubature
-Namespace: o2scl class: inte_i_transform
-Namespace: o2scl class: inte_il_transform
-Namespace: o2scl class: inte_iu_transform
 Namespace: o2scl class: inte_kronrod_boost
 Namespace: o2scl class: inte_kronrod_gsl
 Namespace: o2scl class: inte_multi
@@ -133,6 +130,7 @@ Namespace: o2scl class: inte_qng_gsl
 Namespace: o2scl class: inte_singular_gsl
 Namespace: o2scl class: inte_sinh_sinh_boost
 Namespace: o2scl class: inte_tanh_sinh_boost
+Namespace: o2scl class: inte_transform
 Namespace: o2scl class: inte_transform_gsl
 Namespace: o2scl class: inte_workspace_gsl
 Namespace: o2scl class: interp

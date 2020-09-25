@@ -108,9 +108,6 @@
   <compound refid="classo2scl_1_1inte__gen" kind="class"><name>o2scl::inte_gen</name>
   <compound refid="classo2scl_1_1inte__gsl" kind="class"><name>o2scl::inte_gsl</name>
   <compound refid="classo2scl_1_1inte__hcubature" kind="class"><name>o2scl::inte_hcubature</name>
-  <compound refid="classo2scl_1_1inte__i__transform" kind="class"><name>o2scl::inte_i_transform</name>
-  <compound refid="classo2scl_1_1inte__il__transform" kind="class"><name>o2scl::inte_il_transform</name>
-  <compound refid="classo2scl_1_1inte__iu__transform" kind="class"><name>o2scl::inte_iu_transform</name>
   <compound refid="classo2scl_1_1inte__kronrod__boost" kind="class"><name>o2scl::inte_kronrod_boost</name>
   <compound refid="classo2scl_1_1inte__kronrod__gsl" kind="class"><name>o2scl::inte_kronrod_gsl</name>
   <compound refid="classo2scl_1_1inte__multi" kind="class"><name>o2scl::inte_multi</name>
@@ -130,6 +127,7 @@
   <compound refid="classo2scl_1_1inte__singular__gsl" kind="class"><name>o2scl::inte_singular_gsl</name>
   <compound refid="classo2scl_1_1inte__sinh__sinh__boost" kind="class"><name>o2scl::inte_sinh_sinh_boost</name>
   <compound refid="classo2scl_1_1inte__tanh__sinh__boost" kind="class"><name>o2scl::inte_tanh_sinh_boost</name>
+  <compound refid="classo2scl_1_1inte__transform" kind="class"><name>o2scl::inte_transform</name>
   <compound refid="classo2scl_1_1inte__transform__gsl" kind="class"><name>o2scl::inte_transform_gsl</name>
   <compound refid="classo2scl_1_1inte__workspace__gsl" kind="class"><name>o2scl::inte_workspace_gsl</name>
   <compound refid="classo2scl_1_1interp" kind="class"><name>o2scl::interp</name>
