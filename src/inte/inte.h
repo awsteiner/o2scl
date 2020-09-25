@@ -52,80 +52,155 @@ namespace o2scl {
     
   public:
   
-  inte() {
-    tol_rel=1.0e-8;
-    tol_abs=1.0e-8;
-    verbose=0;
-    interror=0.0;
-    err_nonconv=true;
-  }
+    inte() {
+      tol_rel=1.0e-8;
+      tol_abs=1.0e-8;
+      verbose=0;
+      interror=0.0;
+      err_nonconv=true;
+    }
 
-  virtual ~inte() {}
+    virtual ~inte() {}
 
-  /** \brief Verbosity
-   */
-  int verbose;
+    /** \brief Verbosity
+     */
+    int verbose;
 
-  /// The most recent number of iterations taken
-  size_t last_iter;
+    /// The most recent number of iterations taken
+    size_t last_iter;
   
-  /** \brief The maximum relative uncertainty 
-      in the value of the integral (default \f$ 10^{-8} \f$)
-  */
-  fp_t tol_rel;
+    /** \brief The maximum relative uncertainty 
+	in the value of the integral (default \f$ 10^{-8} \f$)
+    */
+    fp_t tol_rel;
     
-  /** \brief The maximum absolute uncertainty 
-      in the value of the integral (default \f$ 10^{-8} \f$)
-  */
-  fp_t tol_abs;
+    /** \brief The maximum absolute uncertainty 
+	in the value of the integral (default \f$ 10^{-8} \f$)
+    */
+    fp_t tol_abs;
   
-  /** \brief If true, call the error handler if the routine does not 
-      converge or reach the desired tolerance (default true)
+    /** \brief If true, call the error handler if the routine does not 
+	converge or reach the desired tolerance (default true)
 
-      If this is false, the function proceeds normally and 
-      may provide convergence information in the integer return value.
-  */
-  bool err_nonconv;
+	If this is false, the function proceeds normally and 
+	may provide convergence information in the integer return value.
+    */
+    bool err_nonconv;
   
-  /** \brief Return the numerically estimated error in the result from
-      the last call to integ()
+    /** \brief Return the numerically estimated error in the result from
+	the last call to integ()
       
-      This will quietly return zero if no integrations have been
-      performed or if the integrator does not estimate the error.
-  */
-  fp_t get_error() { return interror; }
+	This will quietly return zero if no integrations have been
+	performed or if the integrator does not estimate the error.
+    */
+    fp_t get_error() { return interror; }
   
 #ifndef DOXYGEN_INTERNAL
   
   protected:
   
-  /// The uncertainty for the last integration computation
-  fp_t interror;
+    /// The uncertainty for the last integration computation
+    fp_t interror;
   
 #endif
 
   public:
   
-  /** \brief Integrate function \c func from \c a to \c b.
-   */
-  virtual fp_t integ(func_t &func, fp_t a, fp_t b) {
-    fp_t res;
-    int ret=integ_err(func,a,b,res,this->interror);
-    if (ret!=0) {
-      O2SCL_ERR2("Integration failed in inte::integ(), ",
-		 "but cannot return int.",o2scl::exc_efailed);
+    /** \brief Integrate function \c func from \c a to \c b.
+     */
+    virtual fp_t integ(func_t &func, fp_t a, fp_t b) {
+      fp_t res;
+      int ret=integ_err(func,a,b,res,this->interror);
+      if (ret!=0) {
+	O2SCL_ERR2("Integration failed in inte::integ(), ",
+		   "but cannot return int.",o2scl::exc_efailed);
+      }
+      return res;
     }
-    return res;
-  }
 
-  /** \brief Integrate function \c func from \c a to \c b and place
-      the result in \c res and the error in \c err
-  */
-  virtual int integ_err(func_t &func, fp_t a, fp_t b, 
-			fp_t &res, fp_t &err)=0;
+    /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b.
+     */
+    virtual fp_t integ_iu(func_t &func, fp_t b) {
+      fp_t res;
+      int ret=integ_iu_err(func,b,res,this->interror);
+      if (ret!=0) {
+	O2SCL_ERR2("Integration failed in inte::integ(), ",
+		   "but cannot return int.",o2scl::exc_efailed);
+      }
+      return res;
+    }
+
+    /** \brief Integrate function \c func from \c a to \f$ \infty \f$ .
+     */
+    virtual fp_t integ_il(func_t &func, fp_t a) {
+      fp_t res;
+      int ret=integ_il_err(func,a,res,this->interror);
+      if (ret!=0) {
+	O2SCL_ERR2("Integration failed in inte::integ(), ",
+		   "but cannot return int.",o2scl::exc_efailed);
+      }
+      return res;
+    }
+
+    /** \brief Integrate function \c func from \f$ -\infty \f$ to 
+	\f$ \infty \f$ .
+     */
+    virtual fp_t integ_i(func_t &func) {
+      fp_t res;
+      int ret=integ_i_err(func,res,this->interror);
+      if (ret!=0) {
+	O2SCL_ERR2("Integration failed in inte::integ(), ",
+		   "but cannot return int.",o2scl::exc_efailed);
+      }
+      return res;
+    }
+
+    /** \brief Integrate function \c func from \c a to \c b and place
+	the result in \c res and the error in \c err
+    */
+    virtual int integ_err(func_t &func, fp_t a, fp_t b, 
+			  fp_t &res, fp_t &err) {
+      O2SCL_ERR2("Not implemented in ",
+		 "inte::integ_err().",o2scl::exc_eunimpl);
+      return 0;
+    }
+					       
     
-  /// Return string denoting type ("inte")
-  virtual const char *type() { return "inte"; }
+    /** \brief Integrate function \c func from \f$ -\infty \f$ 
+	to \c b and place
+	the result in \c res and the error in \c err
+    */
+    virtual int integ_iu_err(func_t &func, fp_t b,
+			     fp_t &res, fp_t &err) {
+      O2SCL_ERR2("Not implemented in ",
+		 "inte::integ_err().",o2scl::exc_eunimpl);
+      return 0;
+    }      
+    
+    /** \brief Integrate function \c func from \c a to \f$ \infty \f$ 
+	and place
+	the result in \c res and the error in \c err
+    */
+    virtual int integ_il_err(func_t &func, fp_t a, 
+			     fp_t &res, fp_t &err){
+      O2SCL_ERR2("Not implemented in ",
+		 "inte::integ_err().",o2scl::exc_eunimpl);
+      return 0;
+    }    
+    
+    /** \brief Integrate function \c func from \f$ -\infty \f$ 
+	to \f$ \infty \f$ and place
+	the result in \c res and the error in \c err
+    */
+    virtual int integ_i_err(func_t &func, 
+			    fp_t &res, fp_t &err) {
+      O2SCL_ERR2("Not implemented in ",
+		 "inte::integ_err().",o2scl::exc_eunimpl);
+      return 0;
+    }    
+    
+    /// Return string denoting type ("inte")
+    virtual const char *type() { return "inte"; }
 
   };
 
@@ -142,91 +217,91 @@ namespace o2scl {
       \int_{-\infty}^{b}~dx f(x) 
       = \int_0^1~dt~f[b-(1-t)/t]/t^2
       \f]
-   */
+  */
   template<class func_t, class def_inte_t, class fp_t=double>
-    class inte_il_transform : public inte<func_t,fp_t> {
+  class inte_il_transform : public inte<func_t,fp_t> {
     
   protected:
 
-  /// A pointer to the user-specified function
-  func_t *user_func;
+    /// A pointer to the user-specified function
+    func_t *user_func;
   
-  /// The upper limit
-  fp_t upper_limit;
+    /// The upper limit
+    fp_t upper_limit;
 
-  /// Transform from \f$ t \in (0,1] \f$ to \f$ x \in (-\infty,b] \f$
-  virtual fp_t transform(fp_t t) {
-    if (t==0.0) {
-      O2SCL_ERR2("Function called with t=0 in ",
-		"inte_il::transform().",o2scl::exc_efailed);
+    /// Transform from \f$ t \in (0,1] \f$ to \f$ x \in (-\infty,b] \f$
+    virtual fp_t il_transform(fp_t t) {
+      if (t==0.0) {
+	O2SCL_ERR2("Function called with t=0 in ",
+		   "inte_il::il_transform().",o2scl::exc_efailed);
+      }
+      fp_t x=upper_limit-(1-t)/t, y;
+      y=(*user_func)(x);
+      return y/t/t;
     }
-    fp_t x=upper_limit-(1-t)/t, y;
-    y=(*user_func)(x);
-    return y/t/t;
-  }
 
   public:
   
-  inte_il_transform() {
-    it=&def_inte;
-    fo=std::bind(std::mem_fn<fp_t(fp_t)>(&inte_il_transform::transform),
-		 this,std::placeholders::_1);
-  }    
+    inte_il_transform() {
+      it=&def_inte;
+      fo=std::bind(std::mem_fn<fp_t(fp_t)>(&inte_il_transform::il_transform),
+		   this,std::placeholders::_1);
+    }    
   
-  /** \brief Internal function type based on floating-point type
+    /** \brief Internal function type based on floating-point type
 
-      \comment 
-      This type must be public so the user can change the
-      base integration object
-      \endcomment
-  */
-  typedef std::function<fp_t(fp_t)> internal_funct;
+	\comment 
+	This type must be public so the user can change the
+	base integration object
+	\endcomment
+    */
+    typedef std::function<fp_t(fp_t)> internal_funct;
 
   protected:
 
-  /// The base integration object
-  inte<internal_funct,fp_t> *it;
+    /// The base integration object
+    inte<internal_funct,fp_t> *it;
   
-  /// Function object
-  internal_funct fo;
+    /// Function object
+    internal_funct fo;
   
   public:  
   
-  /** \brief Integrate function \c func from \c a to \c b
-      giving result \c res and error \c err
-  */
-  virtual int integ_il_err(func_t &func, fp_t b,
-			fp_t &res, fp_t &err) {
-    user_func=&func;
-    upper_limit=b;
-    int ret=it->integ_err(fo,0.0,1.0,res,err);
-    return ret;
-  }
+    /** \brief Integrate function \c func from \c a to \c b
+	giving result \c res and error \c err
+    */
+    virtual int integ_il_err(func_t &func, fp_t b,
+			     fp_t &res, fp_t &err) {
+      user_func=&func;
+      upper_limit=b;
+      int ret=it->integ_err(fo,0.0,1.0,res,err);
+      return ret;
+    }
 
-  /** \brief Integrate function \c func from \c a to \c b
-      giving result \c res and error \c err
+    /** \brief Integrate function \c func from \c a to \c b
+	giving result \c res and error \c err
 
-      The value given is \c a is ignored.
-  */
-  virtual int integ_err(func_t &func, fp_t a, fp_t b,
-			fp_t &res, fp_t &err) {
-    return integ_il_err(func,b,res,err);
-  }
+	The value given is \c a is ignored.
+    */
+    virtual int integ_err(func_t &func, fp_t a, fp_t b,
+			  fp_t &res, fp_t &err) {
+      return integ_il_err(func,b,res,err);
+    }
   
-  /// \name Integration object
-  //@{
-  /// Set the base integration object to use
-  int set_inte(inte<internal_funct,fp_t> &i) {
-    it=&i;
-    return 0;
-  }
+    /// \name Integration object
+    //@{
+    /// Set the base integration object to use
+    int set_inte(inte<internal_funct,fp_t> &i) {
+      it=&i;
+      return 0;
+    }
       
-  /// Default integration object
-  def_inte_t def_inte;
-  //@}
+    /// Default integration object
+    def_inte_t def_inte;
+    //@}
 
-  /// Return string denoting type ("inte_il_transform")
-  virtual const char *type() { return "inte_il_transform"; }
+    /// Return string denoting type ("inte_il_transform")
+    virtual const char *type() { return "inte_il_transform"; }
   
   };
   
@@ -244,81 +319,81 @@ namespace o2scl {
       = \int_0^1~dt~f[a+(1-t)/t]/t^2
       \f]
       
-   */
+  */
   template<class func_t, class def_inte_t, class fp_t=double>
-    class inte_iu_transform : public inte<func_t,fp_t> {
+  class inte_iu_transform : public inte<func_t,fp_t> {
     
   protected:
 
-  /// A pointer to the user-specified function
-  func_t *user_func;
+    /// A pointer to the user-specified function
+    func_t *user_func;
   
-  /// The lower limit
-  fp_t lower_limit;
+    /// The lower limit
+    fp_t lower_limit;
 
-  /// Transform from \f$ t \in (0,1] \f$ to \f$ x \in [a,\infty) \f$
-  virtual fp_t transform(fp_t t) {
-    if (t==0.0) {
-      O2SCL_ERR2("Function called with t=0 in ",
-		 "inte_ul::transform().",o2scl::exc_efailed);
+    /// Transform from \f$ t \in (0,1] \f$ to \f$ x \in [a,\infty) \f$
+    virtual fp_t iu_transform(fp_t t) {
+      if (t==0.0) {
+	O2SCL_ERR2("Function called with t=0 in ",
+		   "inte_ul::iu_transform().",o2scl::exc_efailed);
+      }
+      fp_t x=lower_limit+(1-t)/t, y;
+      y=(*user_func)(x);
+      return y/t/t;
     }
-    fp_t x=lower_limit+(1-t)/t, y;
-    y=(*user_func)(x);
-    return y/t/t;
-  }
 
   public:
   
-  inte_iu_transform() {
-    it=&def_inte;
-    fo=std::bind(std::mem_fn<fp_t(fp_t)>(&inte_iu_transform::transform),
-		 this,std::placeholders::_1);
-  }    
+    inte_iu_transform() {
+      it=&def_inte;
+      fo=std::bind(std::mem_fn<fp_t(fp_t)>(&inte_iu_transform::iu_transform),
+		   this,std::placeholders::_1);
+    }    
   
-  /** \brief Internal function type based on floating-point type
+    /** \brief Internal function type based on floating-point type
       
-      \comment 
-      This type must be public so the user can change the
-      base integration object
-      \endcomment
-  */
-  typedef std::function<fp_t(fp_t)> internal_funct;
+	\comment 
+	This type must be public so the user can change the
+	base integration object
+	\endcomment
+    */
+    typedef std::function<fp_t(fp_t)> internal_funct;
 
   protected:
 
-  /// The base integration object
-  inte<internal_funct,fp_t> *it;
+    /// The base integration object
+    inte<internal_funct,fp_t> *it;
   
-  /// Function object
-  internal_funct fo;
+    /// Function object
+    internal_funct fo;
   
   public:  
   
-  /** \brief Integrate function \c func from \c a to \c b
-      giving result \c res and error \c err
-  */
-  virtual int integ_iu_err(func_t &func, fp_t a, 
-			fp_t &res, fp_t &err) {
-    user_func=&func;
-    lower_limit=a;
-    int ret=it->integ_err(fo,0.0,1.0,res,err);
-    return ret;
-  }
+    /** \brief Integrate function \c func from \c a to \c b
+	giving result \c res and error \c err
+    */
+    virtual int integ_iu_err(func_t &func, fp_t a, 
+			     fp_t &res, fp_t &err) {
+      user_func=&func;
+      lower_limit=a;
+      int ret=it->integ_err(fo,0.0,1.0,res,err);
+      return ret;
+    }
   
-  /// \name Integration object
-  //@{
-  /// Set the base integration object to use
-  int set_inte(inte<internal_funct,fp_t> &i) {
-    it=&i;
-    return 0;
-  }
+    /// \name Integration object
+    //@{
+    /// Set the base integration object to use
+    int set_inte(inte<internal_funct,fp_t> &i) {
+      it=&i;
+      return 0;
+    }
       
-  /// Default integration object
-  def_inte_t def_inte;
-  //@}
+    /// Default integration object
+    def_inte_t def_inte;
+    //@}
 
-  /// Return string denoting type ("inte_iu_transform")
-  virtual const char *type() { return "inte_iu_transform"; }
+    /// Return string denoting type ("inte_iu_transform")
+    virtual const char *type() { return "inte_iu_transform"; }
 
   };
   
@@ -336,77 +411,77 @@ namespace o2scl {
       = \int_0^1~dt~\left\{f[(1-t)/t] + f[-(1-t)/t]\right\}/t^2
       \f]
       
-   */
+  */
   template<class func_t, class def_inte_t, class fp_t=double>
-    class inte_i_transform : public inte<func_t,fp_t> {
+  class inte_i_transform : public inte<func_t,fp_t> {
     
   protected:
 
-  /// A pointer to the user-specified function
-  func_t *user_func;
+    /// A pointer to the user-specified function
+    func_t *user_func;
   
-  /// Transform from \f$ t \in (0,1] \f$ to \f$ x \in (-\infty,\infty) \f$
-  virtual fp_t transform(fp_t t) {
-    if (t==0.0) {
-      O2SCL_ERR2("Function called with t=0 in ",
-		 "inte_ul::transform().",o2scl::exc_efailed);
+    /// Transform from \f$ t \in (0,1] \f$ to \f$ x \in (-\infty,\infty) \f$
+    virtual fp_t i_transform(fp_t t) {
+      if (t==0.0) {
+	O2SCL_ERR2("Function called with t=0 in ",
+		   "inte_ul::i_transform().",o2scl::exc_efailed);
+      }
+      fp_t x=(1-t)/t, x2=-(1-t)/t, y;
+      y=(*user_func)(x)+(*user_func)(x2);
+      return y/t/t;
     }
-    fp_t x=(1-t)/t, x2=-(1-t)/t, y;
-    y=(*user_func)(x)+(*user_func)(x2);
-    return y/t/t;
-  }
 
   public:
   
-  inte_i_transform() {
-    it=&def_inte;
-    fo=std::bind(std::mem_fn<fp_t(fp_t)>(&inte_i_transform::transform),
-		 this,std::placeholders::_1);
-  }    
+    inte_i_transform() {
+      it=&def_inte;
+      fo=std::bind(std::mem_fn<fp_t(fp_t)>(&inte_i_transform::i_transform),
+		   this,std::placeholders::_1);
+    }    
   
-  /** \brief Internal function type based on floating-point type
+    /** \brief Internal function type based on floating-point type
       
-      \comment 
-      This type must be public so the user can change the
-      base integration object
-      \endcomment
-  */
-  typedef std::function<fp_t(fp_t)> internal_funct;
+	\comment 
+	This type must be public so the user can change the
+	base integration object
+	\endcomment
+    */
+    typedef std::function<fp_t(fp_t)> internal_funct;
 
   protected:
 
-  /// The base integration object
-  inte<internal_funct,fp_t> *it;
+    /// The base integration object
+    inte<internal_funct,fp_t> *it;
   
-  /// Function object
-  internal_funct fo;
+    /// Function object
+    internal_funct fo;
   
   public:  
   
-  /** \brief Integrate function \c func 
-      giving result \c res and error \c err
-  */
-  virtual int integ_i_err(func_t &func, 
-			fp_t &res, fp_t &err) {
-    user_func=&func;
-    int ret=it->integ_err(fo,res,err);
-    return ret;
-  }
+    /** \brief Integrate function \c func 
+	giving result \c res and error \c err
+    */
+    virtual int integ_i_err(func_t &func, 
+			    fp_t &res, fp_t &err) {
+      user_func=&func;
+      int ret=it->integ_err(fo,res,err);
+      return ret;
+    }
   
-  /// \name Integration object
-  //@{
-  /// Set the base integration object to use
-  int set_inte(inte<internal_funct,fp_t> &i) {
-    it=&i;
-    return 0;
-  }
+    /// \name Integration object
+    //@{
+    /// Set the base integration object to use
+    int set_inte(inte<internal_funct,fp_t> &i) {
+      it=&i;
+      return 0;
+    }
       
-  /// Default integration object
-  def_inte_t def_inte;
-  //@}
+    /// Default integration object
+    def_inte_t def_inte;
+    //@}
 
-  /// Return string denoting type ("inte_i_transform")
-  virtual const char *type() { return "inte_i_transform"; }
+    /// Return string denoting type ("inte_i_transform")
+    virtual const char *type() { return "inte_i_transform"; }
   
   };
   
@@ -416,7 +491,3 @@ namespace o2scl {
 #endif
 
 #endif
-
-
-
-
