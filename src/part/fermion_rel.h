@@ -219,6 +219,9 @@ namespace o2scl {
   template<class fermion_t=fermion_tl<double>,
 	   class fd_inte_t=class o2scl::fermi_dirac_integ_gsl,
 	   class be_inte_t=o2scl::bessel_K_exp_integ_gsl,
+	   class nit_t=inte_qagiu_gsl<>,
+	   class dit_t=inte_qag_gsl<>,
+	   class density_root_t=root_cern<>,
 	   class root_t=root_cern<>, class func_t=funct,
 	   class fp_t=double>
   class fermion_rel_tl :
@@ -226,7 +229,7 @@ namespace o2scl {
 			     func_t,fp_t> {
     
   public:
-    
+
     /// \name Numerical parameters
     //@{
     /** \brief If true, call the error handler when convergence 
@@ -266,9 +269,8 @@ namespace o2scl {
     bool use_expansions;
 
     /// Create a fermion with mass \c m and degeneracy \c g
-    fermion_rel_tl() : nit(new inte_qagiu_gsl<>), 
-		       dit(new inte_qag_gsl<>), 
-		       density_root(new root_cern<>) {
+    fermion_rel_tl() {
+      
       deg_limit=2.0;
       
       exp_limit=200.0;
@@ -277,9 +279,14 @@ namespace o2scl {
       min_psi=-4.0;
       err_nonconv=true;
       use_expansions=true;
-      density_root->tol_rel=4.0e-7;
       verbose=0;
       last_method=0;
+
+      dit=&def_dit;
+      nit=&def_nit;
+      density_root=&def_density_root;
+      
+      density_root->tol_rel=4.0e-7;
     }
 
     virtual ~fermion_rel_tl() {
@@ -325,13 +332,17 @@ namespace o2scl {
     }
     
     /// The non-degenerate integrator
-    std::shared_ptr<inte<func_t,fp_t> > nit;
+    inte<func_t,fp_t> *nit;
 
     /// The degenerate integrator
-    std::shared_ptr<inte<func_t,fp_t> > dit;
+    inte<func_t,fp_t> *dit;
 
     /// The solver for calc_density()
-    std::shared_ptr<root<func_t,func_t,fp_t> > density_root;
+    root<func_t,func_t,fp_t> *density_root;
+
+    nit_t def_nit;
+    dit_t def_dit;
+    density_root_t def_density_root;
     
     /// Return string denoting type ("fermion_rel")
     virtual const char *type() { return "fermion_rel"; }
@@ -446,6 +457,7 @@ namespace o2scl {
       // Perform full solution
       funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			 (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
+			  nit_t,dit_t,density_root_t,
 			  root_t,func_t,fp_t>::solve_fun),
 			 this,std::placeholders::_1,std::ref(f),temper);
 
@@ -605,14 +617,17 @@ namespace o2scl {
     
 	funct mfd=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			    (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
+			     nit_t,dit_t,density_root_t,
 			     root_t,func_t,fp_t>::density_fun),
 			    this,std::placeholders::_1,std::ref(f),temper);
 	funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			    (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
+			     nit_t,dit_t,density_root_t,
 			     root_t,func_t,fp_t>::energy_fun),
 			    this,std::placeholders::_1,std::ref(f),temper);
 	funct mfs=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			    (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
+			     nit_t,dit_t,density_root_t,
 			     root_t,func_t,fp_t>::entropy_fun),
 			    this,std::placeholders::_1,std::ref(f),temper);
       
@@ -646,14 +661,17 @@ namespace o2scl {
     
 	funct mfd=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			    (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
+			     nit_t,dit_t,density_root_t,
 			     root_t,func_t,fp_t>::deg_density_fun),
 			    this,std::placeholders::_1,std::ref(f),temper);
 	funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			    (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
+			     nit_t,dit_t,density_root_t,
 			     root_t,func_t,fp_t>::deg_energy_fun),
 			    this,std::placeholders::_1,std::ref(f),temper);
 	funct mfs=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			    (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
+			     nit_t,dit_t,density_root_t,
 			     root_t,func_t,fp_t>::deg_entropy_fun),
 			    this,std::placeholders::_1,std::ref(f),temper);
 
@@ -836,10 +854,12 @@ namespace o2scl {
     
 	funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			    (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
+			     nit_t,dit_t,density_root_t,
 			     root_t,func_t,fp_t>::energy_fun),
 			    this,std::placeholders::_1,std::ref(f),temper);
 	funct mfs=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			    (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
+			     nit_t,dit_t,density_root_t,
 			     root_t,func_t,fp_t>::entropy_fun),
 			    this,std::placeholders::_1,std::ref(f),temper);
     
@@ -857,10 +877,12 @@ namespace o2scl {
 
 	funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			    (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
+			     nit_t,dit_t,density_root_t,
 			     root_t,func_t,fp_t>::deg_energy_fun),
 			    this,std::placeholders::_1,std::ref(f),temper);
 	funct mfs=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			    (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
+			     nit_t,dit_t,density_root_t,
 			     root_t,func_t,fp_t>::deg_entropy_fun),
 			    this,std::placeholders::_1,std::ref(f),temper);
       
@@ -1013,6 +1035,7 @@ namespace o2scl {
       
       funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t,bool)>
 			 (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
+			  nit_t,dit_t,density_root_t,
 			  root_t,func_t,fp_t>::pair_fun),
 			 this,std::placeholders::_1,std::ref(f),temper,false);
 
@@ -1069,6 +1092,7 @@ namespace o2scl {
 	funct lmf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,
 					     fp_t,bool)>
 			    (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
+			     nit_t,dit_t,density_root_t,
 			     root_t,func_t,fp_t>::pair_fun),
 			    this,std::placeholders::_1,std::ref(f),
 			    temper,true);
@@ -1316,7 +1340,8 @@ namespace o2scl {
 
 	funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			    (&fermion_rel_tl<fermion_t,fd_inte_t,
-			     be_inte_t,root_t,func_t,fp_t>::density_fun),
+			     be_inte_t,nit_t,dit_t,density_root_t,
+			     root_t,func_t,fp_t>::density_fun),
 			    this,std::placeholders::_1,std::ref(f),T);
     
 	nden=nit->integ(mfe,0.0,0.0);
@@ -1329,7 +1354,8 @@ namespace o2scl {
     
 	funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			    (&fermion_rel_tl<fermion_t,fd_inte_t,
-			     be_inte_t,root_t,func_t,fp_t>::deg_density_fun),
+			     be_inte_t,nit_t,dit_t,density_root_t,
+			     root_t,func_t,fp_t>::deg_density_fun),
 			    this,std::placeholders::_1,std::ref(f),T);
     
 	fp_t arg;
@@ -1462,7 +1488,8 @@ namespace o2scl {
       
 	  funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			      (&fermion_rel_tl<fermion_t,fd_inte_t,
-			       be_inte_t,root_t,func_t,fp_t>::density_fun),
+			       be_inte_t,nit_t,dit_t,density_root_t,
+			       root_t,func_t,fp_t>::density_fun),
 			      this,std::placeholders::_1,std::ref(f),T);
       
 	  nden_p=nit->integ(mfe,0.0,0.0);
@@ -1478,7 +1505,8 @@ namespace o2scl {
       
 	  funct mfe=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			      (&fermion_rel_tl<fermion_t,fd_inte_t,
-			       be_inte_t,root_t,func_t,fp_t>::deg_density_fun),
+			       be_inte_t,nit_t,dit_t,density_root_t,
+			       root_t,func_t,fp_t>::deg_density_fun),
 			      this,std::placeholders::_1,std::ref(f),T);
       
 	  fp_t arg;
@@ -1567,7 +1595,8 @@ namespace o2scl {
       
 	  funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,
-			      be_inte_t,root_t,func_t,fp_t>::density_fun),
+			      be_inte_t,nit_t,dit_t,density_root_t,
+			      root_t,func_t,fp_t>::density_fun),
 			     this,std::placeholders::_1,std::ref(f),T);
       
 	  nden_ap=nit->integ(mf,0.0,0.0);
@@ -1584,7 +1613,8 @@ namespace o2scl {
       
 	  funct mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,
-			      be_inte_t,root_t,func_t,fp_t>::deg_density_fun),
+			      be_inte_t,nit_t,dit_t,density_root_t,
+			      root_t,func_t,fp_t>::deg_density_fun),
 			     this,std::placeholders::_1,std::ref(f),T);
       
 	  fp_t arg;

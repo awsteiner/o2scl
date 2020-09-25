@@ -87,9 +87,9 @@ int main(void) {
   // cast fails and new_type is a reference type, it throws an
   // exception that matches a handler of type std::bad_cast."
   
-  inte_qag_gsl<> *qag=dynamic_cast<inte_qag_gsl<> *>(fr.dit.get());
-  inte_qag_gsl<> &qag2=dynamic_cast<inte_qag_gsl<> &>(*fr.dit.get());
-  t.test_gen(qag->get_rule()==qag2.get_rule(),"downcast");
+  //inte_qag_gsl<> *qag=dynamic_cast<inte_qag_gsl<> *>(fr.dit.get());
+  //inte_qag_gsl<> &qag2=dynamic_cast<inte_qag_gsl<> &>(*fr.dit.get());
+  //t.test_gen(qag->get_rule()==qag2.get_rule(),"downcast");
   
 #ifdef O2SCL_LD_TYPES
 
