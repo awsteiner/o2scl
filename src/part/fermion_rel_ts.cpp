@@ -100,40 +100,36 @@ int main(void) {
   // cpp_dec_float_50 precision. For the integrators, the template
   // parameter is the maximum number of refinements, we try 30.
 
-  // A significant limitation for using multiprecision types
+  // One limitation for using multiprecision types
   // is the lack of a systematic expansion for massless fermions
   // in fermion.h
   
-  // The fermion_rel constructor explicitly contains
-  // various types which aren't compatible with multiprecision,
-  // so we need to refactor those somehow in order to make
-  // sure fermion_rel::density_root and fermion_rel::nit, etc.
-  // will work with multiprecision
-  
-  /*
-    typedef
+  typedef
     boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
     cpp_dec_float_35;
-    
-    fermion_rel_tl<fermion_tl<long double>,
-    fermi_dirac_integ_direct<long double,funct_cdf35,25,
-    cpp_dec_float_35>,
-    bessel_K_exp_integ_direct<long double,funct_cdf35,25,
-    cpp_dec_float_35>,
-    root_brent_gsl<funct_ld,long double>,
-    funct_ld,long double> fermion_rel_ld;
-  */
-
-  /*
-    fermion_rel_tl<fermion_tl<cpp_dec_float_35>,
-    fermi_dirac_integ_direct<cpp_dec_float_35,funct_cdf50,30,
-    cpp_dec_float_50>,
-    bessel_K_exp_integ_direct<cpp_dec_float_35,funct_cdf50,30,
-    cpp_dec_float_50>,
-    root_brent_gsl<funct_cdf35,cpp_dec_float_35>,
-    funct_cdf35,cpp_dec_float_35> fermion_rel_cdf_35;
-  */
   
+  fermion_rel_tl<fermion_tl<long double>,
+		 fermi_dirac_integ_direct<long double,funct_cdf35,25,
+					  cpp_dec_float_35>,
+		 bessel_K_exp_integ_direct<long double,funct_cdf35,25,
+					   cpp_dec_float_35>,
+		 inte_tanh_sinh_boost<funct_ld,25,long double>,
+		 inte_tanh_sinh_boost<funct_ld,25,long double>,
+		 root_brent_gsl<funct_ld,long double>,
+		 root_brent_gsl<funct_ld,long double>,
+		 funct_ld,long double> fermion_rel_ld;
+  
+  fermion_rel_tl<fermion_tl<cpp_dec_float_35>,
+		 fermi_dirac_integ_direct<cpp_dec_float_35,funct_cdf50,30,
+					  cpp_dec_float_50>,
+		 bessel_K_exp_integ_direct<cpp_dec_float_35,funct_cdf50,30,
+					   cpp_dec_float_50>,
+		 inte_tanh_sinh_boost<funct_cdf35,30,cpp_dec_float_35>,
+		 inte_tanh_sinh_boost<funct_cdf35,30,cpp_dec_float_35>,
+		 root_brent_gsl<funct_cdf35,cpp_dec_float_35>,
+		 root_brent_gsl<funct_cdf35,cpp_dec_float_35>,
+		 funct_cdf35,cpp_dec_float_35> fermion_rel_cdf_35;
+    
 #endif
 
   t.report();

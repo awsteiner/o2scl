@@ -424,9 +424,10 @@ namespace o2scl {
 
 	funct density_T_fun_f=
 	  std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
-		    (&fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::density_T_fun),
+		    (&fermion_deriv_rel_tl<fermion_deriv_t,
+		     fp_t>::density_T_fun),
 		    this,std::placeholders::_1,std::ref(f),temper);
-	iret=nit->integ_err(density_T_fun_f,0.0,0.0,f.dndT,unc.dndT);
+	iret=nit->integ_iu_err(density_T_fun_f,0.0,f.dndT,unc.dndT);
 	if (iret!=0) {
 	  O2SCL_ERR2("dndT integration (ndeg) failed in ",
 		     "fermion_deriv_rel::calc_mu().",
@@ -437,9 +438,10 @@ namespace o2scl {
 
 	funct density_mu_fun_f=
 	  std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
-		    (&fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::density_mu_fun),
+		    (&fermion_deriv_rel_tl<fermion_deriv_t,
+		     fp_t>::density_mu_fun),
 		    this,std::placeholders::_1,std::ref(f),temper);
-	iret=nit->integ_err(density_mu_fun_f,0.0,0.0,f.dndmu,unc.dndmu);
+	iret=nit->integ_iu_err(density_mu_fun_f,0.0,f.dndmu,unc.dndmu);
 	if (iret!=0) {
 	  O2SCL_ERR2("dndmu integration (ndeg) failed in ",
 		     "fermion_deriv_rel::calc_mu().",
@@ -450,9 +452,10 @@ namespace o2scl {
     
 	funct entropy_T_fun_f=
 	  std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
-		    (&fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::entropy_T_fun),
+		    (&fermion_deriv_rel_tl<fermion_deriv_t,
+		     fp_t>::entropy_T_fun),
 		    this,std::placeholders::_1,std::ref(f),temper);
-	iret=nit->integ_err(entropy_T_fun_f,0.0,0.0,f.dsdT,unc.dsdT);
+	iret=nit->integ_iu_err(entropy_T_fun_f,0.0,f.dsdT,unc.dsdT);
 	if (iret!=0) {
 	  O2SCL_ERR2("dsdT integration (ndeg) failed in ",
 		     "fermion_deriv_rel_tl<fp_t>::calc_mu().",exc_efailed);

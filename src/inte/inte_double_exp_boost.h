@@ -109,7 +109,7 @@ namespace o2scl {
     /** \brief Integrate function \c func from -1 to 1 and place
 	the result in \c res and the error in \c err
     */
-    virtual int integ_err(func_t &func, fp_t &res, fp_t &err) {
+    virtual int integ_moo_err(func_t &func, fp_t &res, fp_t &err) {
       res=it.integrate(func,this->tol_rel,&err,&L1norm);
       if (err>this->tol_rel) {
 	O2SCL_ERR2("Failed to achieve tolerance in ",
