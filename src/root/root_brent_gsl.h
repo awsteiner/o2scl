@@ -61,10 +61,11 @@ namespace o2scl {
   /** \brief One-dimensional root-finding (GSL)
 
       This class finds the root of a user-specified function. If \ref
-      test_form is 0, then solve_bkt() stops when the size of the
-      bracket is smaller than \ref root::tol_abs. If \ref test_form is
-      1, then the function stops when the residual is less than \ref
-      root::tol_rel. If test_form is 2, then both tests are applied.
+      test_form is 0 (the default), then solve_bkt() stops when the
+      size of the bracket is smaller than \ref root::tol_abs. If \ref
+      test_form is 1, then the function stops when the residual is
+      less than \ref root::tol_rel. If test_form is 2, then both tests
+      are applied.
 
       See the \ref onedsolve_subsect section of the User's guide for
       general information about \o2 solvers. An example demonstrating

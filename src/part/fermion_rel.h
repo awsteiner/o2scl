@@ -30,6 +30,11 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+
+#ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#endif
+
 #include <o2scl/constants.h>
 #include <o2scl/mroot.h>
 #include <o2scl/inte.h>
@@ -194,7 +199,7 @@ namespace o2scl {
       for both the degenerate and non-degenerate integrators and
       improves the accuracy of the solver which determines the
       chemical potential from the density. Of course if these
-      tolerances are too small, the calculation may fail.
+      tolerances are too small, the calculation may fail. 
 
       \hline 
       <b>Todos:</b>
@@ -273,6 +278,9 @@ namespace o2scl {
     /// If true, use expansions for extreme conditions (default true)
     bool use_expansions;
 
+    /// Tolerance for expansions
+    fp_t tol_expan;
+    
     /// Create a fermion with mass \c m and degeneracy \c g
     fermion_rel_tl() {
       
@@ -292,6 +300,8 @@ namespace o2scl {
       density_root=&def_density_root;
       
       density_root->tol_rel=4.0e-7;
+
+      tol_expan=1.0e-14;
     }
 
     virtual ~fermion_rel_tl() {
@@ -336,10 +346,10 @@ namespace o2scl {
       return nu_from_n_tlate(f,temper);
     }
     
-    /// The non-degenerate integrator
+    /// Pointer to the non-degenerate integrator
     inte<func_t,fp_t> *nit;
 
-    /// The degenerate integrator
+    /// Pointer to the degenerate integrator
     inte<func_t,fp_t> *dit;
 
     /// The solver for calc_density()
@@ -409,7 +419,7 @@ namespace o2scl {
 	- 6: bracketing in log units
     */
     int last_method;
-    
+
     /// \name Template versions of base functions
     //@{
     /** \brief Calculate the chemical potential from the density
@@ -601,12 +611,12 @@ namespace o2scl {
   
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
-	bool acc=this->calc_mu_ndeg(f,temper,1.0e-14);
+	bool acc=this->calc_mu_ndeg(f,temper,tol_expan);
 	if (acc) {
-	  unc.n=f.n*1.0e-14;
-	  unc.ed=f.ed*1.0e-14;
-	  unc.pr=f.pr*1.0e-14;
-	  unc.en=f.en*1.0e-14;
+	  unc.n=f.n*tol_expan;
+	  unc.ed=f.ed*tol_expan;
+	  unc.pr=f.pr*tol_expan;
+	  unc.en=f.en*tol_expan;
 	  last_method=4;
 	  return;
 	}
@@ -614,12 +624,12 @@ namespace o2scl {
 
       // Try the degenerate expansion if psi is large enough
       if (use_expansions && psi>20.0) {
-	bool acc=this->calc_mu_deg(f,temper,1.0e-14);
+	bool acc=this->calc_mu_deg(f,temper,tol_expan);
 	if (acc) {
-	  unc.n=f.n*1.0e-14;
-	  unc.ed=f.ed*1.0e-14;
-	  unc.pr=f.pr*1.0e-14;
-	  unc.en=f.en*1.0e-14;
+	  unc.n=f.n*tol_expan;
+	  unc.ed=f.ed*tol_expan;
+	  unc.pr=f.pr*tol_expan;
+	  unc.en=f.en*tol_expan;
 	  last_method=5;
 	  return;
 	}
@@ -839,11 +849,11 @@ namespace o2scl {
 
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
-	bool acc=this->calc_mu_ndeg(f,temper,1.0e-14);
+	bool acc=this->calc_mu_ndeg(f,temper,tol_expan);
 	if (acc) {
-	  unc.ed=f.ed*1.0e-14;
-	  unc.pr=f.pr*1.0e-14;
-	  unc.en=f.en*1.0e-14;
+	  unc.ed=f.ed*tol_expan;
+	  unc.pr=f.pr*tol_expan;
+	  unc.en=f.en*tol_expan;
 	  f.n=density_temp;
 	  last_method+=1;
 	  return 0;
@@ -852,12 +862,12 @@ namespace o2scl {
   
       // Try the degenerate expansion if psi is large enough
       if (use_expansions && psi>20.0) {
-	bool acc=this->calc_mu_deg(f,temper,1.0e-14);
+	bool acc=this->calc_mu_deg(f,temper,tol_expan);
 	if (acc) {
-	  unc.n=f.n*1.0e-14;
-	  unc.ed=f.ed*1.0e-14;
-	  unc.pr=f.pr*1.0e-14;
-	  unc.en=f.en*1.0e-14;
+	  unc.n=f.n*tol_expan;
+	  unc.ed=f.ed*tol_expan;
+	  unc.pr=f.pr*tol_expan;
+	  unc.en=f.en*tol_expan;
 	  f.n=density_temp;
 	  last_method+=2;
 	  return 0;
@@ -977,11 +987,11 @@ namespace o2scl {
       // back in, I need to find a new value for last_method
       // other than 9.
       if (false && use_expansions) {
-	if (this->calc_mu_ndeg(f,temper,1.0e-14,true)) {
-	  unc.n=1.0e-14*f.n;
-	  unc.ed=1.0e-14*f.ed;
-	  unc.en=1.0e-14*f.en;
-	  unc.pr=1.0e-14*f.pr;
+	if (this->calc_mu_ndeg(f,temper,tol_expan,true)) {
+	  unc.n=tol_expan*f.n;
+	  unc.ed=tol_expan*f.ed;
+	  unc.en=tol_expan*f.en;
+	  unc.pr=tol_expan*f.pr;
 	  last_method=9;
 	  return;
 	}
@@ -1202,7 +1212,6 @@ namespace o2scl {
       return ret;
     }
 
-
     /// The integrand for the energy density for non-degenerate fermions
     fp_t energy_fun(fp_t u, fermion_t &f, fp_t T) {
       fp_t ret, y, eta;
@@ -1248,7 +1257,6 @@ namespace o2scl {
 
       return ret;
     }
-
 
     /// The integrand for the density for degenerate fermions
     fp_t deg_density_fun(fp_t k, fermion_t &f, fp_t T) {
@@ -1331,9 +1339,9 @@ namespace o2scl {
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
 	fp_t ntemp=f.n;
-	bool acc=this->calc_mu_ndeg(f,T,1.0e-14);
+	bool acc=this->calc_mu_ndeg(f,T,tol_expan);
 	if (acc) {
-	  unc.n=f.n*1.0e-14;
+	  unc.n=f.n*tol_expan;
 	  yy=(ntemp-f.n)/ntemp;
 	  f.n=ntemp;
 	  return yy;
@@ -1344,9 +1352,9 @@ namespace o2scl {
       // Try the degenerate expansion if psi is large enough
       if (use_expansions && psi>20.0) {
 	fp_t ntemp=f.n;
-	bool acc=this->calc_mu_deg(f,T,1.0e-14);
+	bool acc=this->calc_mu_deg(f,T,tol_expan);
 	if (acc) {
-	  unc.n=f.n*1.0e-14;
+	  unc.n=f.n*tol_expan;
 	  yy=(ntemp-f.n)/ntemp;
 	  f.n=ntemp;
 	  return yy;
@@ -1405,7 +1413,6 @@ namespace o2scl {
   
       return yy;
     }
-
 
     /** \brief Solve for the chemical potential given the density 
 	with antiparticles
@@ -1690,6 +1697,126 @@ namespace o2scl {
       \ref o2scl::fermion_rel_tl 
   */
   typedef fermion_rel_tl<> fermion_rel;
+
+#ifdef O2SCL_LD_TYPES
+
+  /** \brief Equation of state for a relativistic fermion using long 
+      double precision
+   */
+  class fermion_rel_ld : public
+  fermion_rel_tl<
+    fermion_tl<long double>,
+    fermi_dirac_integ_direct<
+      long double,funct_cdf35,25,
+      boost::multiprecision::number<
+	boost::multiprecision::cpp_dec_float<35> > >,
+    bessel_K_exp_integ_direct<
+      long double,funct_cdf35,25,
+      boost::multiprecision::number<
+	boost::multiprecision::cpp_dec_float<35> > >,
+    inte_tanh_sinh_boost<funct_ld,25,long double>,
+    inte_tanh_sinh_boost<funct_ld,25,long double>,
+    root_brent_gsl<funct_ld,long double>,
+    root_brent_gsl<funct_ld,long double>,
+    funct_ld,long double> {
+    
+  public:
+    
+    fermion_rel_ld() {
+      
+      // Tolerance for the integrator for massless fermions
+      this->fd_integ.set_tol(1.0e-21);
+
+      // Tolerance for the integrator for the nondegenerate expansion
+      this->be_integ.set_tol(1.0e-21);
+
+      // Internal function tolerances
+      this->exp_limit=4000.0;
+      this->upper_limit_fac=42.0;
+      this->deg_entropy_fac=42.0;
+
+      // Solver tolerances
+      this->def_density_root.tol_abs=1.0e-18;
+      this->def_massless_root.tol_abs=1.0e-18;
+
+      // Integrator tolerances
+      this->def_dit.tol_abs=1.0e-18;
+      this->def_dit.tol_rel=1.0e-18;
+      this->def_nit.tol_abs=1.0e-18;
+      this->def_nit.tol_rel=1.0e-18;
+      
+    }
+    
+  };
+  
+  /** \brief Equation of state for a relativistic fermion using 
+      35 decimal digit precision
+   */
+  class fermion_rel_cdf35 : public
+  fermion_rel_tl<
+    fermion_tl<
+      boost::multiprecision::number<
+	boost::multiprecision::cpp_dec_float<35> > >,
+    fermi_dirac_integ_direct<
+      boost::multiprecision::number<
+	boost::multiprecision::cpp_dec_float<35> >,
+      funct_cdf50,30,
+      boost::multiprecision::number<
+	boost::multiprecision::cpp_dec_float<50> > >,
+    bessel_K_exp_integ_direct
+    <boost::multiprecision::number<
+       boost::multiprecision::cpp_dec_float<35> >,
+     funct_cdf50,30,
+     boost::multiprecision::number<
+       boost::multiprecision::cpp_dec_float<50> > >,
+    inte_tanh_sinh_boost<
+      funct_cdf35,30,
+      boost::multiprecision::number<
+	boost::multiprecision::cpp_dec_float<35> > >,
+    inte_tanh_sinh_boost<
+      funct_cdf35,30,
+      boost::multiprecision::number<
+	boost::multiprecision::cpp_dec_float<35> > >,
+    root_brent_gsl<
+      funct_cdf35,
+      boost::multiprecision::number<
+	boost::multiprecision::cpp_dec_float<35> > >,
+    root_brent_gsl<
+      funct_cdf35,boost::multiprecision::number<
+		    boost::multiprecision::cpp_dec_float<35> > >,
+    funct_cdf35,boost::multiprecision::number<
+		  boost::multiprecision::cpp_dec_float<35> > > {
+    
+  public:
+    
+    fermion_rel_cdf35() {
+      
+      /*
+      // Tolerance for the integrator for massless fermions
+      this->fd_integ.set_tol(1.0e-21);
+
+      // Tolerance for the integrator for the nondegenerate expansion
+      this->be_integ.set_tol(1.0e-21);
+
+      // Internal function tolerances
+      this->exp_limit=4000.0;
+      this->upper_limit_fac=42.0;
+      this->deg_entropy_fac=42.0;
+
+      // Solver tolerances
+      this->def_density_root.tol_abs=1.0e-18;
+      this->def_massless_root.tol_abs=1.0e-18;
+
+      // Integrator tolerances
+      this->def_dit.tol_abs=1.0e-18;
+      this->def_dit.tol_rel=1.0e-18;
+      this->def_nit.tol_abs=1.0e-18;
+      this->def_nit.tol_rel=1.0e-18;
+      */
+    }
+  };
+  
+#endif
   
   extern "C" {
     
