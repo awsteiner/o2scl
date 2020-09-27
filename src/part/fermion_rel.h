@@ -1741,6 +1741,7 @@ namespace o2scl {
       this->exp_limit=4000.0;
       this->upper_limit_fac=42.0;
       this->deg_entropy_fac=42.0;
+      this->tol_expan=1.0e-17;
 
       // Solver tolerances
       this->def_density_root.tol_abs=1.0e-18;
@@ -1809,6 +1810,7 @@ namespace o2scl {
       this->exp_limit=4000.0;
       this->upper_limit_fac=42.0;
       this->deg_entropy_fac=42.0;
+      this->tol_expan=1.0e-17;
 
       // Solver tolerances
       this->def_density_root.tol_abs=1.0e-18;

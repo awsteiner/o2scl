@@ -670,8 +670,16 @@ The entropy terms (with and without antiparticles) are
    \left[ e^{k/t} K_3(k/t) \right]
    \end{eqnarray}
 
-included. For the derivatives, no additional Bessel functions are
-required
+included. To obtain these expressions, the recurrence relation
+for the modified Bessel function of the second kind has been
+used
+
+.. math::
+
+   K_{\nu+1}(x) = K_{\nu-1}(x) + \frac{2 \nu}{x} K_{\nu}(x)
+
+For the derivatives, no additional Bessel functions are
+required.
    
 .. math::
 

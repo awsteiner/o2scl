@@ -1,4 +1,5 @@
 import sympy
+import time
 
 N1=50
 N2=10
@@ -13,8 +14,11 @@ f=(1/cbt-cbt)
 f2=f.subs(alpha,eta**6)
 
 if True:
+    
     # Compute the series
     ser=sympy.series(f2,eta,0,N1)
+    print(ser)
+    
     # Construct symbolic versions of the cbrt(2) and 2^(2/3)
     to3=sympy.Rational(2,1)**sympy.Rational(1,3)
     tt3=sympy.Rational(2,1)**sympy.Rational(2,3)

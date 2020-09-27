@@ -408,7 +408,7 @@ namespace o2scl {
 	10^{-18} \f$ since \f$ (20/700)^{12} \sim 10^{-19} \f$.
     */
     bool calc_mu_ndeg(fermion_t &f, fp_t temper, 
-			    fp_t prec=1.0e-18, bool inc_antip=false) {
+		      fp_t prec=1.0e-18, bool inc_antip=false) {
       
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
       
