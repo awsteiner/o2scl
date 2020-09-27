@@ -340,11 +340,75 @@ namespace o2scl {
     /// Object for Bessel-exp integrals
     be_inte_t be_integ;
     
-    /** \brief Calculate thermodynamic properties from the chemical
-	potential using a nondegenerate expansion
+    /** \brief Non-degenerate expansion for fermions
+	
+	Attempts to evaluate thermodynamics of a non-degenerate
+	fermion. If the result is accurate to within the requested
+	precision, this function returns <tt>true</tt>, and otherwise
+	this function returns <tt>false</tt> and the values in stored
+	in the <tt>pr</tt>, <tt>n</tt>, <tt>en</tt>, and <tt>ed</tt>
+	field are meaningless.
+	
+	If \f$ \mu \f$ is negative and sufficiently far from zero,
+	then the thermodynamic quantities are smaller than the smallest
+	representable double-precision number. In this case,
+	this function will return <tt>true</tt> and report all
+	quantities as zero.
+	
+	Defining \f$ \psi \equiv (\mu-m)/T \f$, \f$ t \equiv T/m \f$,
+	and \f$ d \equiv g~m^4/(2 \pi^2) \f$ the pressure 
+	in the non-degenerate limit (\f$ \psi \rightarrow - \infty \f$)
+	is (\ref Johns96)
+	\f[
+	P = d \sum_{n=1}^{\infty} P_n
+	\f]
+	where 
+	\f[
+	P_n \equiv \left(-1\right)^{n+1} \left(\frac{t^2}{n^2}\right)
+	e^{n \left(\psi+1/t\right)} K_2 \left( \frac{n}{t} \right)
+	\f]
+	The density is then
+	\f[
+	n = d \sum_{n=1}^{\infty} \frac{n P_n}{T}
+	\f]
+	and the entropy density is
+	\f[
+	s = \frac{d}{m} \sum_{n=1}^{\infty} \left\{ \frac{2 P_n}{t}
+	-\frac{n P_n}{t^2}+ 
+	\frac{\left(-1\right)^{n+1}}{2 n} 
+	e^{n \left(\psi+1/t\right)} \left[ K_1 \left( \frac{n}{t} 
+	\right)+K_3 \left( \frac{n}{t} \right) \right]
+	\right\}
+	\f]
+	
+	This function is accurate over a wide range of conditions
+	when \f$ \psi < -4 \f$.
+	
+	The ratio of the nth term to the first term in the pressure
+	series is
+	\f[
+	R_n \equiv \frac{P_{n}}{P_{1}} = \frac{(-1)^{n+1} 
+	e^{(n-1)(\psi+1/t)} K_2(n/t) }{n^2 K_2(1/t)}
+	\f]
+	This function currently uses 20 terms in the series and
+	immediately returns <tt>false</tt> if \f$ |R_{20}| \f$
+	is greater than <tt>prec</tt>
+	
+	In the nondegenerate and nonrelativistic (\f$ t \rightarrow 0
+	\f$) limit, the argument to the Bessel functions and the
+	exponential becomes too large. In this case, it's better to
+	use the expansions, e.g. for \f$ x \equiv n/t \rightarrow
+	\infty \f$,
+	\f[
+	\sqrt{\frac{2 x}{\pi}} e^{x} K_2(x) \approx
+	1 + \frac{3}{8 x} - \frac{15}{128 x^2} + ...
+	\f]
+	The current code currently goes up to \f$ x^{-12} \f$ in the
+	expansion, which is enough for the default precision of \f$
+	10^{-18} \f$ since \f$ (20/700)^{12} \sim 10^{-19} \f$.
     */
-    bool calc_mu_ndeg_tlate(fermion_t &f, fp_t temper, 
-			    fp_t prec, bool inc_antip) {
+    bool calc_mu_ndeg(fermion_t &f, fp_t temper, 
+			    fp_t prec=1.0e-18, bool inc_antip=false) {
       
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
       
@@ -455,11 +519,25 @@ namespace o2scl {
       return false;
     }
     
-    /** \brief Calculate thermodynamic properties from the chemical
-	potential using a degenerate expansion
+    /** \brief Degenerate expansion for fermions
+	
+	Attempts to evaulate thermodynamics of a degenerate fermion.
+	If the result is accurate to within the requested precision,
+	this function returns <tt>true</tt>, and otherwise this
+	function returns <tt>false</tt> and the values in stored in
+	the <tt>pr</tt>, <tt>n</tt>, <tt>en</tt>, and <tt>ed</tt>
+	field are meaningless.
+	
+	The pressure, density, and energy density, should be accurate
+	to the requested precision, but the first term in the series
+	expansion for the entropy is zero, so the entropy is one order
+	lower in accuracy.
+	
+	\future Make a function like this for dndm, dsdT, etc. 
+	for fermion_deriv .
     */
-    bool calc_mu_deg_tlate(fermion_t &f, fp_t temper, 
-			   fp_t prec) {
+    bool calc_mu_deg(fermion_t &f, fp_t temper, 
+			   fp_t prec=1.0e-18) {
       
       // Handle the zero-temperature limit
       if (temper==0.0) {
@@ -470,7 +548,7 @@ namespace o2scl {
       // Double check to ensure T and mass are positive
       if (temper<0.0 || f.ms<0.0) {
 	O2SCL_ERR2("Temperature or mass negative in fermion_thermo",
-		   "::calc_mu_deg_tlate().",exc_einval);
+		   "::calc_mu_deg().",exc_einval);
       }
       
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
@@ -544,100 +622,6 @@ namespace o2scl {
       
       return true;
     }
-    
-    /** \brief Non-degenerate expansion for fermions
-	
-	Attempts to evaluate thermodynamics of a non-degenerate
-	fermion. If the result is accurate to within the requested
-	precision, this function returns <tt>true</tt>, and otherwise
-	this function returns <tt>false</tt> and the values in stored
-	in the <tt>pr</tt>, <tt>n</tt>, <tt>en</tt>, and <tt>ed</tt>
-	field are meaningless.
-	
-	If \f$ \mu \f$ is negative and sufficiently far from zero,
-	then the thermodynamic quantities are smaller than the smallest
-	representable double-precision number. In this case,
-	this function will return <tt>true</tt> and report all
-	quantities as zero.
-	
-	Defining \f$ \psi \equiv (\mu-m)/T \f$, \f$ t \equiv T/m \f$,
-	and \f$ d \equiv g~m^4/(2 \pi^2) \f$ the pressure 
-	in the non-degenerate limit (\f$ \psi \rightarrow - \infty \f$)
-	is (\ref Johns96)
-	\f[
-	P = d \sum_{n=1}^{\infty} P_n
-	\f]
-	where 
-	\f[
-	P_n \equiv \left(-1\right)^{n+1} \left(\frac{t^2}{n^2}\right)
-	e^{n \left(\psi+1/t\right)} K_2 \left( \frac{n}{t} \right)
-	\f]
-	The density is then
-	\f[
-	n = d \sum_{n=1}^{\infty} \frac{n P_n}{T}
-	\f]
-	and the entropy density is
-	\f[
-	s = \frac{d}{m} \sum_{n=1}^{\infty} \left\{ \frac{2 P_n}{t}
-	-\frac{n P_n}{t^2}+ 
-	\frac{\left(-1\right)^{n+1}}{2 n} 
-	e^{n \left(\psi+1/t\right)} \left[ K_1 \left( \frac{n}{t} 
-	\right)+K_3 \left( \frac{n}{t} \right) \right]
-	\right\}
-	\f]
-	
-	This function is accurate over a wide range of conditions
-	when \f$ \psi < -4 \f$.
-	
-	The ratio of the nth term to the first term in the pressure
-	series is
-	\f[
-	R_n \equiv \frac{P_{n}}{P_{1}} = \frac{(-1)^{n+1} 
-	e^{(n-1)(\psi+1/t)} K_2(n/t) }{n^2 K_2(1/t)}
-	\f]
-	This function currently uses 20 terms in the series and
-	immediately returns <tt>false</tt> if \f$ |R_{20}| \f$
-	is greater than <tt>prec</tt>
-	
-	In the nondegenerate and nonrelativistic (\f$ t \rightarrow 0
-	\f$) limit, the argument to the Bessel functions and the
-	exponential becomes too large. In this case, it's better to
-	use the expansions, e.g. for \f$ x \equiv n/t \rightarrow
-	\infty \f$,
-	\f[
-	\sqrt{\frac{2 x}{\pi}} e^{x} K_2(x) \approx
-	1 + \frac{3}{8 x} - \frac{15}{128 x^2} + ...
-	\f]
-	The current code currently goes up to \f$ x^{-12} \f$ in the
-	expansion, which is enough for the default precision of \f$
-	10^{-18} \f$ since \f$ (20/700)^{12} \sim 10^{-19} \f$.
-    */
-    virtual bool calc_mu_ndeg(fermion_t &f, fp_t temper, 
-			      fp_t prec=1.0e-18, bool inc_antip=false) {
-      return calc_mu_ndeg_tlate(f,temper,prec,inc_antip);
-    }
-    
-    /** \brief Degenerate expansion for fermions
-	
-	Attempts to evaulate thermodynamics of a degenerate fermion.
-	If the result is accurate to within the requested precision,
-	this function returns <tt>true</tt>, and otherwise this
-	function returns <tt>false</tt> and the values in stored in
-	the <tt>pr</tt>, <tt>n</tt>, <tt>en</tt>, and <tt>ed</tt>
-	field are meaningless.
-	
-	The pressure, density, and energy density, should be accurate
-	to the requested precision, but the first term in the series
-	expansion for the entropy is zero, so the entropy is one order
-	lower in accuracy.
-	
-	\future Make a function like this for dndm, dsdT, etc. 
-	for fermion_deriv .
-    */
-    virtual bool calc_mu_deg(fermion_t &f, fp_t temper, 
-			     fp_t prec=1.0e-18) {
-      return calc_mu_deg_tlate(f,temper,prec);
-    }      
     
     /** \brief Calculate properties as function of chemical potential
      */

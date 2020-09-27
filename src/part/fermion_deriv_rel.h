@@ -323,7 +323,7 @@ namespace o2scl {
 
 	The function \ref calc_mu() sets this integer to a two-digit
 	number. It is equal to 10 times the value reported by \ref
-	o2scl::fermion_rel::calc_mu_tlate() plus a value from the list
+	o2scl::fermion_rel::calc_mu() plus a value from the list
 	below corresponding to the method used for the derivatives
 	- 1: nondegenerate expansion
 	- 2: degenerate expansion
@@ -338,7 +338,7 @@ namespace o2scl {
 
 	The function \ref nu_from_n() sets this value equal to
 	100 times the value reported by 
-	\ref o2scl::fermion_rel_tl::nu_from_n_tlate() .
+	\ref o2scl::fermion_rel_tl::nu_from_n() .
 
 	The function \ref calc_density() sets this value equal to the
 	value from \ref o2scl::fermion_deriv_rel_tl::nu_from_n() plus the
@@ -356,7 +356,7 @@ namespace o2scl {
      */
     virtual int calc_mu(fermion_deriv_t &f, fp_t temper) {
 
-      fr.calc_mu_tlate(f,temper);
+      fr.calc_mu(f,temper);
       last_method=fr.last_method*10;
   
       int iret;
@@ -636,14 +636,14 @@ namespace o2scl {
 	density
     */
     virtual int pair_density(fermion_deriv_t &f, fp_t temper) {
-      int ret=fr.pair_density_tlate(f,temper);
+      int ret=fr.pair_density(f,temper);
       pair_mu(f,temper);
       return 0;
     }
 
     /// Calculate effective chemical potential from density
     virtual int nu_from_n(fermion_deriv_t &f, fp_t temper) {
-      int ret=fr.nu_from_n_tlate(f,temper);
+      int ret=fr.nu_from_n(f,temper);
       last_method=fr.last_method*100;
       return ret;
     }

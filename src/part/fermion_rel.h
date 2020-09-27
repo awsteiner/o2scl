@@ -147,28 +147,31 @@ namespace o2scl {
       the relation
       \f$ p = \sqrt{\left(T u + m^{*}\right)^2-m^{* 2}} \f$,
       \f$ y \equiv \nu/ T \f$, and 
-      \f$ \mathrm{mx} \equiv m^{*}/T \f$. 
+      \f$ \eta \equiv m^{*}/T \f$. Then, 
+      \f$ p/T=\sqrt{u^2+2 \eta u} \f$
+      \f$ E/T = \mathrm{mx+u} \f$ and 
+      \f$ p/T^2 dp = 2(\eta+u) du \f$
       The density integrand is 
       \f[
-      \left(\mathrm{mx}+u\right) \sqrt{u^2+2 (\mathrm{mx}) u}
-      \left(\frac{e^{y}}{e^{\mathrm{mx}+u}+e^{y}}\right) \, , 
+      \left(\eta+u\right) \sqrt{u^2+2 (\eta) u}
+      \left(\frac{e^{y}}{e^{\eta+u}+e^{y}}\right) \, , 
       \f]
       the energy integrand is 
       \f[
-      \left(\mathrm{mx}+u\right)^2 \sqrt{u^2+2 (\mathrm{mx}) u}
-      \left(\frac{e^{y}}{e^{\mathrm{mx}+u}+e^{y}}\right) \, ,
+      \left(\eta+u\right)^2 \sqrt{u^2+2 (\eta) u}
+      \left(\frac{e^{y}}{e^{\eta+u}+e^{y}}\right) \, ,
       \f]
       and the entropy integrand is 
       \f[
-      \left(\mathrm{mx}+u\right) \sqrt{u^2+2 (\mathrm{mx}) u} 
+      \left(\eta+u\right) \sqrt{u^2+2 (\eta) u} 
       \left(t_1+t_2\right) \, ,
       \f]
       where 
       \f{eqnarray*}
-      t_1 &=& \log \left(1+e^{y-\mathrm{mx}-u}\right)/
-      \left(1+e^{y-\mathrm{mx}-u}\right) \nonumber \\
-      t_2 &=& \log \left(1+e^{\mathrm{mx}+u-y}\right)/
-      \left(1+e^{\mathrm{mx}+u-y}\right) \, .
+      t_1 &=& \log \left(1+e^{y-\eta-u}\right)/
+      \left(1+e^{y-\eta-u}\right) \nonumber \\
+      t_2 &=& \log \left(1+e^{\eta+u-y}\right)/
+      \left(1+e^{\eta+u-y}\right) \, .
       \f}
 
       \hline 
@@ -307,45 +310,6 @@ namespace o2scl {
     virtual ~fermion_rel_tl() {
     }
 
-    /** \brief Calculate properties as function of chemical potential
-     */
-    virtual void calc_mu(fermion_t &f, fp_t temper) {
-      calc_mu_tlate(f,temper);
-      return;
-    }
-  
-    /** \brief Calculate properties as function of density
-
-	This function uses the current value of \c nu (or \c mu if the
-	particle is non interacting) for an initial guess to solve for
-	the chemical potential. If this guess is too small, then this
-	function may fail.
-    */
-    virtual int calc_density(fermion_t &f, fp_t temper) {
-      return calc_density_tlate(f,temper);
-    }
-
-    /** \brief Calculate properties with antiparticles as function of
-	chemical potential
-    */
-    virtual void pair_mu(fermion_t &f, fp_t temper) {
-      pair_mu_tlate(f,temper);
-      return;
-    }
-
-    /** \brief Calculate properties with antiparticles as function of
-	density
-    */
-    virtual int pair_density(fermion_t &f, fp_t temper) {
-      return pair_density_tlate(f,temper);
-    }
-
-    /** \brief Calculate effective chemical potential from density
-     */
-    virtual int nu_from_n(fermion_t &f, fp_t temper) {
-      return nu_from_n_tlate(f,temper);
-    }
-    
     /// Pointer to the non-degenerate integrator
     inte<func_t,fp_t> *nit;
 
@@ -372,12 +336,12 @@ namespace o2scl {
 	In all functions
 	- 0: no previous calculation or last calculation failed
 
-	In \ref nu_from_n_tlate():
+	In \ref nu_from_n():
 	- 1: default solver
 	- 2: default solver with smaller tolerances
 	- 3: bracketing solver
 
-	In \ref calc_mu_tlate():
+	In \ref calc_mu():
 	- 4: non-degenerate expansion
 	- 5: degenerate expansion
 	- 6: exact integration, non-degenerate integrands
@@ -387,9 +351,9 @@ namespace o2scl {
 	entropy integration
 	- 9: T=0 result
 
-	In \ref calc_density_tlate(), the integer is a two-digit
+	In \ref calc_density(), the integer is a two-digit
 	number. The first digit (1 to 3) is the method used by \ref
-	nu_from_n_tlate() and the second digit is one of
+	nu_from_n() and the second digit is one of
 	- 1: nondegenerate expansion
 	- 2: degenerate expansion
 	- 3: exact integration, non-degenerate integrands
@@ -397,20 +361,20 @@ namespace o2scl {
 	on entropy integration
 	- 5: exact integration, degenerate integrands, full
 	entropy integration
-	If \ref calc_density_tlate() uses the T=0 code, then
+	If \ref calc_density() uses the T=0 code, then
 	last_method is 40. 
 
-	In \ref pair_mu_tlate(), the integer is a three-digit number.
+	In \ref pair_mu(), the integer is a three-digit number.
 	The third digit is always 0 (to ensure a value of last_method
 	which is unique from the other values reported from other
 	functions as described above). The first digit is the method
-	used for particles from \ref calc_mu_tlate() above and the
+	used for particles from \ref calc_mu() above and the
 	second digit is the method used for antiparticles. 
 
-	In \ref pair_density_tlate(), the integer is a four-digit
+	In \ref pair_density(), the integer is a four-digit
 	number. The first digit is from the list below and the
 	remaining three digits, if nonzero, are from \ref
-	pair_mu_tlate().
+	pair_mu().
 	- 1: T=0 result
 	- 2: default solver
 	- 3: bracketing solver
@@ -425,7 +389,7 @@ namespace o2scl {
     /** \brief Calculate the chemical potential from the density
 	(template version)
     */
-    int nu_from_n_tlate(fermion_t &f, fp_t temper) {
+    int nu_from_n(fermion_t &f, fp_t temper) {
 
       last_method=0;
       
@@ -579,7 +543,7 @@ namespace o2scl {
 
     /** \brief Calculate properties as function of chemical potential
      */
-    void calc_mu_tlate(fermion_t &f, fp_t temper) {
+    void calc_mu(fermion_t &f, fp_t temper) {
 
       last_method=0;
       
@@ -588,7 +552,7 @@ namespace o2scl {
 
       if (temper<0.0) {
 	O2SCL_ERR2("Temperature less than zero in ",
-		   "fermion_rel::calc_mu_tlate().",exc_einval);
+		   "fermion_rel::calc_mu().",exc_einval);
       }
       if (temper==0.0) {
 	this->calc_mu_zerot(f);
@@ -783,10 +747,15 @@ namespace o2scl {
 
     /** \brief Calculate properties as function of density
 
+	This function uses the current value of \c nu (or \c mu if the
+	particle is non interacting) for an initial guess to solve for
+	the chemical potential. If this guess is too small, then this
+	function may fail.
+
 	\future There is still quite a bit of code duplication
-	between this function and \ref calc_mu_tlate() .
+	between this function and \ref calc_mu() .
     */
-    int calc_density_tlate(fermion_t &f, fp_t temper) {
+    int calc_density(fermion_t &f, fp_t temper) {
 
       last_method=0;
       
@@ -800,7 +769,7 @@ namespace o2scl {
 
       if (temper<0.0) {
 	O2SCL_ERR2("Temperature less than zero in ",
-		   "fermion_rel::calc_density_tlate().",
+		   "fermion_rel::calc_density().",
 		   exc_einval);
       }
       if (temper==0.0) {
@@ -816,7 +785,7 @@ namespace o2scl {
       // for debugging.
       if (!o2isfinite(f.n)) {
 	O2SCL_ERR2("Density not finite in ",
-		   "fermion_rel::calc_density_tlate().",exc_einval);
+		   "fermion_rel::calc_density().",exc_einval);
       }
 #endif
 
@@ -974,9 +943,9 @@ namespace o2scl {
     }
 
     /** \brief Calculate properties with antiparticles as function of
-	chemical potential (template version)
+	chemical potential
     */
-    void pair_mu_tlate(fermion_t &f, fp_t temper) {
+    void pair_mu(fermion_t &f, fp_t temper) {
 
       last_method=0;
       
@@ -1033,9 +1002,9 @@ namespace o2scl {
     }
 
     /** \brief Calculate thermodynamic properties with antiparticles
-	from the density (template version)
+	from the density
     */
-    int pair_density_tlate(fermion_t &f, fp_t temper) {
+    int pair_density(fermion_t &f, fp_t temper) {
 
       last_method=0;
       
@@ -1212,6 +1181,28 @@ namespace o2scl {
       return ret;
     }
 
+    /// The integrand for the pressure for non-degenerate fermions
+    fp_t pressure_fun(fp_t u, fermion_t &f, fp_t T) {
+
+      fp_t ret, y, eta;
+
+      if (f.inc_rest_mass) {
+	y=f.nu/T;
+      } else {
+	y=(f.nu+f.m)/T;
+      }
+      eta=f.ms/T;
+  
+      ret=sqrt(u*u+2.0*eta*u)*sqrt(u*u+2.0*eta*u)*sqrt(u*u+2.0*eta*u)*
+	exp(y)/(exp(eta+u)+exp(y))/3;
+
+      if (!o2isfinite(ret)) {
+	ret=0.0;
+      }
+
+      return ret;
+    }
+
     /// The integrand for the energy density for non-degenerate fermions
     fp_t energy_fun(fp_t u, fermion_t &f, fp_t T) {
       fp_t ret, y, eta;
@@ -1281,6 +1272,22 @@ namespace o2scl {
       if (!f.inc_rest_mass) E-=f.m;
 
       ret=k*k*E/(1.0+exp((E-f.nu)/T));
+
+      if (!o2isfinite(ret)) {
+	O2SCL_ERR2("Returned not finite result ",
+		   "in fermion_rel::deg_energy_fun().",exc_einval);
+      }
+  
+      return ret;
+    }
+
+    /// The integrand for the energy density for degenerate fermions
+    fp_t deg_pressure_fun(fp_t k, fermion_t &f, fp_t T) {
+
+      fp_t E=o2hypot(k,f.ms), ret;
+      if (!f.inc_rest_mass) E-=f.m;
+
+      ret=k*k*k*k/3/E/(1.0+exp((E-f.nu)/T));
 
       if (!o2isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
