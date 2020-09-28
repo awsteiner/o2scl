@@ -482,10 +482,10 @@ namespace o2scl {
       
       for(size_t j=1;j<=max_term;j++) {
 	
-	fp_t pterm, nterm, enterm;
+	fp_t pterm, nterm, enterm, edterm;
 	
 	ndeg_terms(j,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
-		   pterm,nterm,enterm);
+		   pterm,nterm,enterm,edterm);
 	
 	if (j==1) first_term=pterm;
 	f.pr+=pterm;
@@ -841,35 +841,41 @@ namespace o2scl {
     void ndeg_terms(size_t j, fp_t tt,
 		    fp_t xx, fp_t m, bool inc_rest_mass,
 		    bool inc_antip, fp_t &pterm, fp_t &nterm,
-		    fp_t &enterm) {
+		    fp_t &enterm, fp_t &edterm) {
       
       fp_t dj=((fp_t)j);
       fp_t jot=dj/tt;
 
+      double K2j=be_integ.K2exp(jot);
       if (inc_antip==false) {
-	pterm=exp(jot*xx)/jot/jot*be_integ.K2exp(jot);
-	if (j%2==0) pterm*=-1.0;
+	double K1j=be_integ.K1exp(jot);
+	pterm=exp(jot*xx)/jot/jot*K2j;
+	if (j%2==0) pterm=-pterm;
 	nterm=pterm*jot/m;
 	fp_t enterm1=(4.0*tt-dj*xx-dj)/dj/tt*nterm;
-	fp_t enterm2=exp(jot*xx)/dj*be_integ.K1exp(jot)/m;
+	fp_t enterm2=exp(jot*xx)/dj*K1j/m;
 	if (j%2==0) {
 	  enterm=enterm1-enterm2;
 	} else {
 	  enterm=enterm1+enterm2;
 	}
+	edterm=(dj*dj*K1j+3.0*dj*tt*K2j-2.0*K1j/jot)*
+	  exp(jot*(xx+1.0))/jot/dj/dj;
+	if (j%2==0) edterm=-edterm;
       } else {
-	pterm=exp(-jot)*2.0*cosh(jot*(xx+1.0)/tt)/jot/jot*
-	  be_integ.K2exp(jot);
+	double K3j=be_integ.K3exp(jot);
+	// AWS 9/27/20: should this be cosh(jot*(xx+1.0))??
+	pterm=exp(-jot)*2.0*cosh(jot*(xx+1.0)/tt)/jot/jot*K2j;
 	if (j%2==0) pterm*=-1.0;
 	nterm=pterm*tanh(jot*(xx+1.0))*jot;
 	fp_t enterm1=-(1.0+xx)/tt*nterm/m;
-	fp_t enterm2=2.0*exp(-jot*xx)/dj*cosh(jot*(xx+1.0))*
-	  be_integ.K3exp(jot)/m;
+	fp_t enterm2=2.0*exp(-jot*xx)/dj*cosh(jot*(xx+1.0))*K3j/m;
 	if (j%2==0) {
 	  enterm=enterm1-enterm2;
 	} else {
 	  enterm=enterm1+enterm2;
 	}
+	edterm=0.0;
       }
 		    
       return;

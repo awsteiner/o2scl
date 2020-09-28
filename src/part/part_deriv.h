@@ -880,11 +880,11 @@ namespace o2scl {
 	// Here, we are only computing the derivatives, but we need to
 	// compute the terms in the pressure, density, and entropy because
 	// they are used in computing the terms for the derivatives.
-	fp_t pterm, nterm, enterm;
+	fp_t pterm, nterm, enterm, edterm;
 	fp_t dndmu_term, dndT_term, dsdT_term;
 	
 	fr.ndeg_terms(j,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
-		      pterm,nterm,enterm);
+		      pterm,nterm,enterm,edterm);
 	
 	if (inc_antip==false) {
 	  dndmu_term=nterm*jot;

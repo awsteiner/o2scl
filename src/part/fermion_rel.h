@@ -273,17 +273,23 @@ namespace o2scl {
 
     /// Verbosity parameter (default 0)
     int verbose;
-    //@}
-
-    /// Storage for the uncertainty
-    fermion_t unc;
 
     /// If true, use expansions for extreme conditions (default true)
     bool use_expansions;
 
     /// Tolerance for expansions
     fp_t tol_expan;
+
+    /// If true, verify the thermodynamic identity (default false)
+    bool verify_ti;
     
+    /// Value for verifying the thermodynamic identity
+    fp_t therm_ident;
+    //@}
+
+    /// Storage for the uncertainty
+    fermion_t unc;
+
     /// Create a fermion with mass \c m and degeneracy \c g
     fermion_rel_tl() {
       
@@ -305,6 +311,8 @@ namespace o2scl {
       density_root->tol_rel=4.0e-7;
 
       tol_expan=1.0e-14;
+      verify_ti=false;
+      therm_ident=0.0;
     }
 
     virtual ~fermion_rel_tl() {
