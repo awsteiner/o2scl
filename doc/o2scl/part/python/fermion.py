@@ -93,3 +93,28 @@ t2=t1.subs(sympy.besselk(3,k/t),sympy.Symbol('b3'))
 print('edka = '+str(sympy.simplify(t2).collect('b2')))
 print('')
 
+print('------------------------------------------------------')
+print('Degenerate expansion')
+print('')
+
+z=sympy.Symbol('z',positive=True)
+x=sympy.Symbol('x',positive=True)
+pi=sympy.Symbol('pi',positive=True)
+t=sympy.Symbol('t')
+fz=(z*(2+z))**(sympy.Rational(3,2))/3
+
+fz1=sympy.diff(fz,z)*pi**2*t**2/6
+print(1,sympy.simplify(fz1.subs(z,x)))
+print('')
+
+
+fzt=fz1
+for i in range(0,6):
+    fzt=sympy.diff(fzt,z)
+    fzt=sympy.diff(fzt,z)
+    n=sympy.Rational(i+2,1)
+    term=(fzt.subs(z,x)*pi**(2*n)*t**(2*n)*sympy.bernoulli(2*n)*2*
+          (2**(2*n-1)-1)/sympy.factorial(2*n))
+    term=sympy.simplify(term)
+    print(i+2,term)
+    print('')
