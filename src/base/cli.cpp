@@ -1125,7 +1125,8 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	
 	if (string_equal_dash(it->first,sv[1])) {
 	  
-	  cout << "Parameter:" << sv[1] << " value: " << (it->second)->get() 
+	  cout << "Parameter: " << sv[1]
+	       << " value: " << (it->second)->get() 
 	       << endl;
 	  
 	  vector<string> desc2;
