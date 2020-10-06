@@ -1066,7 +1066,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   
   int ret=cl->comm_option_help(sv,itive_com);
 
-  if (sv[1].size()<2 || cl->is_command(sv[1])==false) {
+  if (sv[1].size()<2 ||
+      (cl->is_valid_option(sv[1])==false && cl->is_parameter(sv[1])==false)) {
     
     terminal ter;
   

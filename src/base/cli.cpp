@@ -937,9 +937,12 @@ int cli::comm_option_set(vector<string> &sv, bool itive_com) {
 int cli::output_param_list() {
 
   terminal ter;
+
+  // One row for each parameter and an additional row for
+  // the header
+  size_t nr=par_list.size()+1;
   
-  size_t nr=par_list.size();
-  if (nr>1) {
+  if (par_list.size()>0) {
 
     cout << "Parameter list:\n" << endl;
 
@@ -953,12 +956,12 @@ int cli::output_param_list() {
     par_t it=par_list.begin();
     tab_names[0][0]="Name";
     tab_values[0][0]="Value";
-    for(size_t i=0;i<nr;i++) {
-      tab_names[0][i]=ter.red_fg()+ter.bold()+it->first+ter.default_fg();
+    for(size_t i=0;i<par_list.size();i++) {
+      tab_names[0][i+1]=ter.red_fg()+ter.bold()+it->first+ter.default_fg();
       string stmp=it->second->get();
       static const size_t nc2=64;
       if (stmp.length()>=nc2) stmp=stmp.substr(0,nc2-3)+"...";
-      tab_values[0][i]=stmp;
+      tab_values[0][i+1]=stmp;
       it++;
     }
     
@@ -972,7 +975,13 @@ int cli::output_param_list() {
     
     // Output the names, values, and also the help description
     for(size_t i=0;i<nr;i++) {
-      cout << col_names[i] << " " << col_values[i] << endl;
+      if (i==0) {
+	// Remove extra space since there are no color charactersx
+	cout << col_names[0].substr(0,col_names[0].length()-12)
+	     << " " << col_values[i] << endl;
+      } else {
+	cout << col_names[i] << " " << col_values[i] << endl;
+      }
       if (i==0) {
 	cout << " Description" << endl;
       } else {
@@ -1022,18 +1031,22 @@ bool cli::is_valid_option(std::string str) {
   return false;
 }
 
-bool cli::is_command(std::string cmd) {
-  int ix=-1;
-  for(size_t i=0;i<clist.size();i++) {
-    if (string_equal_dash(clist[i].lng,cmd)) {
+bool cli::is_parameter(std::string name) {
+  for(par_t it=par_list.begin();it!=par_list.end();it++) {
+    if (string_equal_dash(it->first,name)) {
       return true;
     }
   }
   return false;
-}  
+}
 
 int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 
+  terminal ter;
+  
+  // If not in interactive mode and no arguments are given,
+  // Just output the full command list
+  
   if (itive_com==false && sv.size()==1) {
 
     cout << desc << endl;
@@ -1055,8 +1068,6 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
     // Sort
     sort(c[1].begin(),c[1].end());
 
-    terminal ter;
-    
     // Add the descriptions and the short options
     for(size_t i=0;i<clist.size();i++) {
       for(size_t j=0;j<tot;j++) {
@@ -1165,8 +1176,8 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	
 	if (string_equal_dash(it->first,sv[1])) {
 	  
-	  cout << "Parameter: " << sv[1]
-	       << " value: " << (it->second)->get() 
+	  cout << "Parameter: " << ter.red_fg() << ter.bold() << sv[1]
+	       << ter.default_fg() << " value: " << (it->second)->get() 
 	       << endl;
 	  
 	  vector<string> desc2;
@@ -1218,22 +1229,8 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	cout << "Short description: " << clist[ix].desc << endl;
       }
 
-      bool needs_endl=true;
-      
-      // If 'help set' or 'help get' was requested, output
-      // a list of the valid parameters
-      if ((sv[1]=="set" || sv[1]=="get")) {
-
-	// Output parameter list
-	cout << endl;
-	output_param_list();
-	needs_endl=false;
-
-      }
-
       // Output any additional help text specified
       if (clist[ix].help.length()>0) {
-	if (needs_endl) cout << endl;
 
 	cout << "Long description:" << endl;
 	{
@@ -1247,6 +1244,18 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	}
 
       }
+      
+      // If 'help set' or 'help get' was requested, output
+      // a list of the valid parameters
+      if ((sv[1]=="set" || sv[1]=="get")) {
+
+	// Output parameter list
+	cout << endl;
+	output_param_list();
+	needs_endl=false;
+
+      }
+
 
     }
 

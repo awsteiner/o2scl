@@ -441,7 +441,7 @@ namespace o2scl {
     int comm_option_warranty(std::vector<std::string> &sv, bool itive_com);
     //@}
 
-    bool is_command(std::string cmd);
+    bool is_parameter(std::string cmd);
 
   /** \brief Proceed through \c sv, applying all previously
 	defined aliases
