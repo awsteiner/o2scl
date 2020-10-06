@@ -935,38 +935,44 @@ int cli::comm_option_set(vector<string> &sv, bool itive_com) {
 }
 
 int cli::output_param_list() {
+
+  terminal ter;
   
-  size_t nr=par_list.size()+1;
+  size_t nr=par_list.size();
   if (nr>1) {
 
     cout << "Parameter list:\n" << endl;
 
     // Construct a new array of strings, 'tab' containing 
     // the name and value of each parameter
-    string **tab=new string *[2];
-    for(size_t i=0;i<2;i++) tab[i]=new string[nr+1];
+    vector<vector<string> > tab_names(1);
+    vector<vector<string> > tab_values(1);
+    tab_names[0].resize(nr);
+    tab_values[0].resize(nr);
     
     par_t it=par_list.begin();
-    tab[0][0]="Name";
-    tab[1][0]="Value";
-    for(size_t i=0;i<par_list.size();i++) {
-      tab[0][i+1]=it->first;
+    tab_names[0][0]="Name";
+    tab_values[0][0]="Value";
+    for(size_t i=0;i<nr;i++) {
+      tab_names[0][i]=ter.blue_fg()+ter.bold()+it->first+ter.default_fg();
       string stmp=it->second->get();
       static const size_t nc2=64;
       if (stmp.length()>=nc2) stmp=stmp.substr(0,nc2-3)+"...";
-      tab[1][i+1]=stmp;
+      tab_values[0][i]=stmp;
       it++;
     }
     
     // Reformat 'tab' into columns and store in 'tab2'
     columnify c;
-    string *tab2=new string[nr+1];
-    int align[2]={1,1};
-    c.align<string **,string *,int [2]>(tab,2,nr+1,tab2,align);
+    vector<string> col_names(nr);
+    vector<string> col_values(nr);
+    int align[1]={columnify::align_left};
+    c.align(tab_names,1,nr,col_names,align);
+    c.align(tab_values,1,nr,col_values,align);
     
     // Output the names, values, and also the help description
     for(size_t i=0;i<nr;i++) {
-      cout << tab2[i] << endl;
+      cout << col_names[i] << " " << col_values[i] << endl;
       if (i==0) {
 	cout << " Description" << endl;
       } else {
@@ -1001,10 +1007,6 @@ int cli::output_param_list() {
       cout << endl;
     }
 
-    // Deallocate space for 'tab' and 'tab2'
-    for(size_t i=0;i<2;i++) delete[] tab[i];
-    delete[] tab;
-    delete[] tab2;
   }
 
   return 0;
