@@ -954,7 +954,7 @@ int cli::output_param_list() {
     tab_names[0][0]="Name";
     tab_values[0][0]="Value";
     for(size_t i=0;i<nr;i++) {
-      tab_names[0][i]=ter.blue_fg()+ter.bold()+it->first+ter.default_fg();
+      tab_names[0][i]=ter.red_fg()+ter.bold()+it->first+ter.default_fg();
       string stmp=it->second->get();
       static const size_t nc2=64;
       if (stmp.length()>=nc2) stmp=stmp.substr(0,nc2-3)+"...";
@@ -1022,6 +1022,15 @@ bool cli::is_valid_option(std::string str) {
   return false;
 }
 
+bool cli::is_command(std::string cmd) {
+  int ix=-1;
+  for(size_t i=0;i<clist.size();i++) {
+    if (string_equal_dash(clist[i].lng,cmd)) {
+      return true;
+    }
+  }
+  return false;
+}  
 
 int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 

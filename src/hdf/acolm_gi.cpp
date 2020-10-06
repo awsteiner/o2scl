@@ -127,14 +127,14 @@ int acol_manager::comm_get_conv
   //  cout << "Conversion factor is: " << val << endl;
 
   /*
-  vector<string> pr, in;
-  pr.push_back("Value");
-  pr.push_back("Original unit");
-  pr.push_back("Destination unit");
-  int ret=get_input(sv,pr,in,"convert",itive_com);
-  if (ret!=0) return ret;
+    vector<string> pr, in;
+    pr.push_back("Value");
+    pr.push_back("Original unit");
+    pr.push_back("Destination unit");
+    int ret=get_input(sv,pr,in,"convert",itive_com);
+    if (ret!=0) return ret;
 
-  double d2=cng.convert(in[0],in[1],d);
+    double d2=cng.convert(in[0],in[1],d);
 
   */
   
@@ -1066,52 +1066,56 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   
   int ret=cl->comm_option_help(sv,itive_com);
 
-  terminal ter;
+  if (sv[1].size()<2 || cl->is_command(sv[1])==false) {
+    
+    terminal ter;
   
-  cout << "List of additional type-specific commands" << endl;
-  cout << "(use 'help <type> <command>' for more info):\n" << endl;
+    cout << "List of additional type-specific commands" << endl;
+    cout << "(use 'help <type> <command>' for more info):\n" << endl;
 
-  std::map<std::string,std::vector<std::string> >::iterator it;
-  for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
-    stemp=it->first+": ";
-    std::vector<std::string> &clist=it->second;
-    for(size_t j=0;j<clist.size()-1;j++) {
-      stemp+=clist[j]+", ";
+    std::map<std::string,std::vector<std::string> >::iterator it;
+    for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
+      stemp=it->first+": ";
+      std::vector<std::string> &clist=it->second;
+      for(size_t j=0;j<clist.size()-1;j++) {
+	stemp+=clist[j]+", ";
+      }
+      stemp+=clist[clist.size()-1];
+      vector<std::string> sv2;
+      rewrap_color(stemp,sv2,77);
+      for (size_t j=0;j<sv2.size();j++) {
+	if (j==0) cout << sv2[j] << endl;
+	else cout << "  " << sv2[j] << endl;
+      }
     }
-    stemp+=clist[clist.size()-1];
-    vector<std::string> sv2;
-    rewrap_color(stemp,sv2,77);
-    for (size_t j=0;j<sv2.size();j++) {
-      if (j==0) cout << sv2[j] << endl;
-      else cout << "  " << sv2[j] << endl;
-    }
-  }
-  cout << "\n" << line << endl;
+    cout << "\n" << line << endl;
 
-  cout << "List of additional help topics (e.g. \"acol -help <topic>\"): ";
-  cout << ter.green_fg() << ter.bold() << "functions" << ter.default_fg()
-       << "," << endl;
-  cout << ter.green_fg() << ter.bold() << "mult-vector-spec" << ter.default_fg()
-       << ", ";
-  cout << ter.green_fg() << ter.bold() << "strings-spec" << ter.default_fg()
-       << ", ";
-  cout << ter.green_fg() << ter.bold() << "types" << ter.default_fg()
-       << ", ";
-  cout << ter.green_fg() << ter.bold() << "value-spec" << ter.default_fg()
-       << ", and ";
-  cout << ter.green_fg() << ter.bold() << "vector-spec" << ter.default_fg()
-       << ".\n" << endl;
+    cout << "List of additional help topics (e.g. \"acol -help <topic>\"): ";
+    cout << ter.green_fg() << ter.bold() << "functions" << ter.default_fg()
+	 << "," << endl;
+    cout << ter.green_fg() << ter.bold() << "mult-vector-spec" << ter.default_fg()
+	 << ", ";
+    cout << ter.green_fg() << ter.bold() << "strings-spec" << ter.default_fg()
+	 << ", ";
+    cout << ter.green_fg() << ter.bold() << "types" << ter.default_fg()
+	 << ", ";
+    cout << ter.green_fg() << ter.bold() << "value-spec" << ter.default_fg()
+	 << ", and ";
+    cout << ter.green_fg() << ter.bold() << "vector-spec" << ter.default_fg()
+	 << ".\n" << endl;
 
-  cout << line << "\n" << endl;
+    cout << line << "\n" << endl;
   
 #ifndef O2SCL_UBUNTU_PKG
-  cout << ((string)"Compiled at ")+((string)__TIME__)+" on "+
-    ((string)__DATE__)+" for "+ter.bold()+((string)PACKAGE)+
-    ter.default_fg()+", version "+((string)VERSION)+".\n" << endl;
+    cout << ((string)"Compiled at ")+((string)__TIME__)+" on "+
+      ((string)__DATE__)+" for "+ter.bold()+((string)PACKAGE)+
+      ter.default_fg()+", version "+((string)VERSION)+".\n" << endl;
 #else
-  cout << ((string)"Compiled for ")+ter.bold()+((string)PACKAGE)+
-    ter.default_fg()+", version "+((string)VERSION)+".\n" << endl;
+    cout << ((string)"Compiled for ")+ter.bold()+((string)PACKAGE)+
+      ter.default_fg()+", version "+((string)VERSION)+".\n" << endl;
 #endif
+
+  }
   
   return ret;
 }
