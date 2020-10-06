@@ -1513,9 +1513,10 @@ int acol_manager::setup_cli() {
 int acol_manager::setup_help() {
 
   cl->cmd_name="acol";
-  
-  cl->desc=((string)"acol: A data viewing and ")+
-    "processing program for O2scl.\n";
+
+  terminal ter;
+  cl->desc=((string)"acol: A data viewing and processing ")+
+    "program for "+ter.bold()+"O2scl"+ter.default_fg()+".\n";
 
   ostringstream oss;
   oss << ((char)27) << '(' << '0';

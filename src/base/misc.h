@@ -817,6 +817,108 @@ namespace o2scl {
   void wordexp_single_file(std::string &fname);
   //@}
 
+  /** \brief Desc
+   */
+  class terminal {
+
+  protected:
+    
+    /** \brief Desc
+     */
+    bool redirected;
+    
+  public:
+
+    terminal() {
+      redirected=false;
+      if (!isatty(STDOUT_FILENO)) {
+	redirected=true;
+      }
+    }
+
+    /// Generate a horizontal rule
+    std::string hrule(size_t n=78);
+
+    /// Switch to cyan foreground
+    std::string cyan_fg();
+    
+    /// Switch to magenta foreground
+    std::string magenta_fg();
+    
+    /// Switch to yellow foreground
+    std::string yellow_fg();
+    
+    /// Switch to red foreground
+    std::string red_fg();
+    
+    /// Switch to green foreground
+    std::string green_fg();
+    
+    /// Switch to blue foreground
+    std::string blue_fg();
+    
+    /// Switch to cyan background
+    std::string cyan_bg();
+    
+    /// Switch to magenta background
+    std::string magenta_bg();
+    
+    /// Switch to yellow background
+    std::string yellow_bg();
+    
+    /// Switch to red background
+    std::string red_bg();
+    
+    /// Switch to green background
+    std::string green_bg();
+    
+    /// Switch to blue background
+    std::string blue_bg();
+    
+    /// Switch to default foreground
+    std::string default_fg();
+    
+    /// Switch to bold foreground
+    std::string bold();
+    
+    /// Change foreground to an 8-bit color
+    std::string eight_bit_fg(short col); 
+    
+    /// Change background to an 8-bit color
+    std::string eight_bit_bg(short col); 
+    
+    /// Change foreground to an 3-byte color
+    std::string three_byte_fg(short red, short green, short blue);
+    
+    /// Change background to an 3-byte color
+    std::string three_byte_bg(short red, short green, short blue);
+    
+    /// Switch to low-intensity foreground
+    std::string lowint();
+    
+    /// Switch to underline background
+    std::string underline();
+    
+    /// Switch to reversed background
+    std::string reverse();
+    
+    /// Switch to alternate character set
+    std::string alt_font();
+    
+    /// Switch from alternate to normal character set
+    std::string normal_font();
+    
+    /// Summarize 8-bit colors
+    std::string eight_bit_summ();
+    
+    /// Summarize 3-byte colors
+    std::string three_byte_summ();
+    
+    /// Summarize 3-byte colors (long form)
+    std::string three_byte_summ_long();
+    
+  };
+  
   /// \name VT100 strings
   //@{
   /// Generate a horizontal rule

@@ -261,6 +261,11 @@ namespace o2scl {
   void rewrap(std::string str, std::vector<std::string> &sv,
 	      size_t ncol=79);
 
+  /** \brief Desc
+   */
+  void rewrap_color(std::string str, std::vector<std::string> &sv,
+		    size_t ncol=79);
+  
   /** \brief Rewrap a string into a single column, avoiding
       strings less than a particular number of characters
 

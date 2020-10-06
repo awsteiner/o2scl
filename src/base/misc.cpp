@@ -867,3 +867,349 @@ std::string o2scl::vt100_8bit_summ() {
   }
   return oss.str();
 }
+
+std::string terminal::hrule(size_t n) {
+  std::ostringstream oss;
+  if (redirected) {
+    for(size_t i=0;i<n;i++) oss << '-';
+  } else {
+    oss << ((char)27) << '(' << '0';
+    for(size_t i=0;i<n;i++) oss << 'q';
+    oss << ((char)27) << '(' << 'B';
+  }
+  return oss.str();
+}
+  
+std::string terminal::bold() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[1m";
+  return oss.str();
+}
+
+std::string terminal::eight_bit_fg(short col) {
+  if (col<0 || col>255) {
+    O2SCL_ERR("Color out of range in vt100_eight_bit_fg().",
+	      o2scl::exc_efailed);
+  }
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[38;5;" << col << "m";
+  return oss.str();
+}
+
+std::string terminal::three_byte_fg(short red, short green, short blue) {
+  if (red<0 || red>255 ||green<0 || green>255 ||blue<0 || blue>255) {
+    O2SCL_ERR("Color out of range in vt100_three_byte_bg().",
+	      o2scl::exc_efailed);
+  }
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[38;2;" << red << ";" << green << ";" << blue << "m";
+  return oss.str();
+}
+
+std::string terminal::eight_bit_bg(short col) {
+  if (col<0 || col>255) {
+    O2SCL_ERR("Color out of range in vt100_eight_bit_bg().",
+	      o2scl::exc_efailed);
+  }
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[48;5;" << col << "m";
+  return oss.str();
+}
+
+std::string terminal::three_byte_bg(short red, short green, short blue) {
+  if (red<0 || red>255 ||green<0 || green>255 ||blue<0 || blue>255) {
+    O2SCL_ERR("Color out of range in vt100_three_byte_bg().",
+	      o2scl::exc_efailed);
+  }
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[48;2;" << red << ";" << green << ";" << blue << "m";
+  return oss.str();
+}
+
+std::string terminal::lowint() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[2m";
+  return oss.str();
+}
+
+std::string terminal::underline() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[4m";
+  return oss.str();
+}
+
+std::string terminal::reverse() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[7m";
+  return oss.str();
+}
+
+std::string terminal::cyan_fg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[36m";
+  return oss.str();
+}
+
+std::string terminal::magenta_fg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[35m";
+  return oss.str();
+}
+
+std::string terminal::yellow_fg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[33m";
+  return oss.str();
+}
+
+std::string terminal::red_fg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[31m";
+  return oss.str();
+}
+
+std::string terminal::green_fg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[32m";
+  return oss.str();
+}
+
+std::string terminal::blue_fg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[34m";
+  return oss.str();
+}
+
+std::string terminal::cyan_bg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[46m";
+  return oss.str();
+}
+
+std::string terminal::magenta_bg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[45m";
+  return oss.str();
+}
+
+std::string terminal::yellow_bg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[43m";
+  return oss.str();
+}
+
+std::string terminal::red_bg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[41m";
+  return oss.str();
+}
+
+std::string terminal::green_bg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[42m";
+  return oss.str();
+}
+
+std::string terminal::blue_bg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[44m";
+  return oss.str();
+}
+
+std::string terminal::default_fg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[m";
+  return oss.str();
+}
+
+std::string terminal::alt_font() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "(0";
+  return oss.str();
+}
+
+std::string terminal::normal_font() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "(B";
+  return oss.str();
+}
+
+std::string terminal::three_byte_summ_long() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  for(size_t i=0;i<256;i+=17) {
+    for(size_t j=0;j<256;j+=17) {
+      for(size_t k=0;k<256;k+=17) {
+	oss << ((char)27) << "[38;2;" << i << ";" << j << ";" << k << "m";
+	if (i<10) {
+	  oss << "  " << i;
+	} else if (i<100) {
+	  oss << " " << i;
+	} else {
+	  oss << i;
+	}
+	if (j<10) {
+	  oss << "  " << j;
+	} else if (j<100) {
+	  oss << " " << j;
+	} else {
+	  oss << j;
+	}
+	if (k<10) {
+	  oss << "  " << k;
+	} else if (k<100) {
+	  oss << " " << k;
+	} else {
+	  oss << k;
+	}
+	oss << ((char)27) << "[m";
+	oss << " ";
+	oss << ((char)27) << "[48;2;" << i << ";" << j << ";" << k << "m";
+	if (i<10) {
+	  oss << "  " << i;
+	} else if (i<100) {
+	  oss << " " << i;
+	} else {
+	  oss << i;
+	}
+	if (j<10) {
+	  oss << "  " << j;
+	} else if (j<100) {
+	  oss << " " << j;
+	} else {
+	  oss << j;
+	}
+	if (k<10) {
+	  oss << "  " << k;
+	} else if (k<100) {
+	  oss << " " << k;
+	} else {
+	  oss << k;
+	}
+	oss << ((char)27) << "[m";
+	oss << " ";
+	if (k==51 || k==119 || k==187 || k==255) {
+	  oss << endl;
+	}
+      }
+    }
+  }
+  return oss.str();
+}
+
+std::string terminal::three_byte_summ() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  for(size_t i=0;i<256;i+=51) {
+    for(size_t j=0;j<256;j+=51) {
+      for(size_t k=0;k<256;k+=51) {
+	oss << ((char)27) << "[38;2;" << i << ";" << j << ";" << k << "m";
+	if (i<10) {
+	  oss << "  " << i;
+	} else if (i<100) {
+	  oss << " " << i;
+	} else {
+	  oss << i;
+	}
+	if (j<10) {
+	  oss << "  " << j;
+	} else if (j<100) {
+	  oss << " " << j;
+	} else {
+	  oss << j;
+	}
+	if (k<10) {
+	  oss << "  " << k;
+	} else if (k<100) {
+	  oss << " " << k;
+	} else {
+	  oss << k;
+	}
+	oss << ((char)27) << "[m";
+	oss << " ";
+	oss << ((char)27) << "[48;2;" << i << ";" << j << ";" << k << "m";
+	if (i<10) {
+	  oss << "  " << i;
+	} else if (i<100) {
+	  oss << " " << i;
+	} else {
+	  oss << i;
+	}
+	if (j<10) {
+	  oss << "  " << j;
+	} else if (j<100) {
+	  oss << " " << j;
+	} else {
+	  oss << j;
+	}
+	if (k<10) {
+	  oss << "  " << k;
+	} else if (k<100) {
+	  oss << " " << k;
+	} else {
+	  oss << k;
+	}
+	oss << ((char)27) << "[m";
+	oss << " ";
+	if (k==102 || k==255) {
+	  oss << endl;
+	}
+      }
+    }
+  }
+  return oss.str();
+}
+
+std::string terminal::eight_bit_summ() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  for(size_t i=0;i<256;i++) {
+    oss << ((char)27) << "[38;5;" << i << "m";
+    if (i<10) {
+      oss << "  " << i;
+    } else if (i<100) {
+      oss << " " << i;
+    } else {
+      oss << i;
+    }
+    oss << ((char)27) << "[m";
+    oss << " ";
+    oss << ((char)27) << "[48;5;" << i << "m";
+    if (i<10) {
+      oss << "  " << i;
+    } else if (i<100) {
+      oss << " " << i;
+    } else {
+      oss << i;
+    }
+    oss << ((char)27) << "[m";
+    oss << " ";
+    if (i%10==9) {
+      oss << endl;
+    }
+  }
+  return oss.str();
+}

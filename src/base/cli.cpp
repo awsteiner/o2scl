@@ -1044,6 +1044,8 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
     // Sort
     sort(c[1].begin(),c[1].end());
 
+    terminal ter;
+    
     // Add the descriptions and the short options
     for(size_t i=0;i<clist.size();i++) {
       for(size_t j=0;j<tot;j++) {
@@ -1063,16 +1065,43 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
       c[1][j]=((string)"-")+c[1][j];
     }
 
-    // Reformat into columns
-    columnify cfy;
-    vector<string> ct(tot);    
-    int align[3]={columnify::align_left,columnify::align_left,
-		  columnify::align_left};
-    cfy.align(c,3,tot,ct,align);
-
-    // Print final list
-    for(size_t i=0;i<tot;i++) {
-      cout << ct[i] << endl;
+    if (false) {
+      // Reformat into columns
+      columnify cfy;
+      vector<string> ct(tot);    
+      int align[3]={columnify::align_left,columnify::align_left,
+		    columnify::align_left};
+      cfy.align(c,3,tot,ct,align);
+      
+      // Print final list
+      for(size_t i=0;i<tot;i++) {
+	cout << ct[i] << endl;
+      }
+    } else {
+      size_t maxlen=0;
+      for(size_t i=0;i<tot;i++) {
+	if (c[1][i].length()>=maxlen) maxlen=c[1][i].length();
+      }
+      for(size_t i=0;i<tot;i++) {
+	if (c[0][i].length()>=2 && c[0][i][0]=='-') {
+	  cout << "-" << c[0][i][1] << " ";
+	} else {
+	  cout << "   ";
+	}
+	if (c[1][i].length()>=2 && c[1][i][0]=='-') {
+	  size_t len=c[1][i].length();
+	  cout << "-" << ter.cyan_fg() << ter.bold()
+	       << c[1][i].substr(1,len-1) << ter.default_fg() << " ";
+	  for(size_t j=c[1][i].length();j<maxlen;j++) {
+	    cout << " ";
+	  }
+	} else {
+	  for(size_t j=c[1][i].length();j<maxlen+1;j++) {
+	    cout << " ";
+	  }
+	}
+	cout << c[2][i] << endl;
+      }
     }
 
     // 5/12: I've taken this out because it's too long most of the
@@ -1157,38 +1186,19 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
       // The user has given a command name as an parameter, so 
       // print out usage information for that command
 
+      terminal ter;
+
       bool redirected=false;
       if (!isatty(STDOUT_FILENO)) redirected=true;
       
       if (clist[ix].parm_desc.length()==0) {
-
-	ostringstream oss;
-	oss << "Usage: ";
-	if (!redirected) {
-	  oss << ((char)27) << "[1m";
-	  oss << ((char)27) << "[36m";
-	  oss << clist[ix].lng;
-	  oss << ((char)27) << "[m";
-	} else {
-	  oss << clist[ix].lng;
-	}
-	oss << " (no arguments)" << endl;
-	string s=oss.str();
-	cout << s << endl;
+	cout << "Usage: " << ter.cyan_fg() << ter.bold() 
+	     << clist[ix].lng << ter.default_fg()
+	     << " (no arguments)" << endl;
       } else {
-	ostringstream oss;
-	oss << "Usage: ";
-	if (!redirected) {
-	  oss << ((char)27) << "[1m";
-	  oss << ((char)27) << "[36m";
-	  oss << clist[ix].lng;
-	  oss << ((char)27) << "[m";
-	} else {
-	  oss << clist[ix].lng;
-	}
-	oss << " " << clist[ix].parm_desc << endl;
-	string s=oss.str();
-	cout << s << endl;
+	cout << "Usage: " << ter.cyan_fg() << ter.bold() 
+	     << clist[ix].lng << ter.default_fg()
+	     << " " << clist[ix].parm_desc << endl;
       }
 
       if (clist[ix].desc.length()==0) {

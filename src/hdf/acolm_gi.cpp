@@ -990,7 +990,9 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	  command_add(it->first);
 	  type=it->first;
 
-	  cout << "Type " << it->first << ":" << endl;
+	  terminal ter;
+	  cout << "Type " << ter.magenta_fg() << ter.bold() << it->first
+	       << ter.default_fg() << ":" << endl;
 	  int ret=cl->comm_option_help(sv2,itive_com);
 	  cout << endl;
 
@@ -1058,9 +1060,17 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   }
 
   dsc+=line+"\n";
+
+  cl->addl_help_cmd=dsc;
+  cl->addl_help_cli=dsc;
   
-  dsc+="List of additional type-specific commands\n";
-  dsc+="(use 'help <type> <command>' for more info):\n\n";
+  int ret=cl->comm_option_help(sv,itive_com);
+
+  terminal ter;
+  
+  cout << "List of additional type-specific commands" << endl;
+  cout << "(use 'help <type> <command>' for more info):\n" << endl;
+
   std::map<std::string,std::vector<std::string> >::iterator it;
   for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
     stemp=it->first+": ";
@@ -1070,31 +1080,40 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     }
     stemp+=clist[clist.size()-1];
     vector<std::string> sv2;
-    rewrap(stemp,sv2,77);
-    dsc+=sv2[0]+"\n";
-    for(size_t j=1;j<sv2.size();j++) {
-      dsc+="  "+sv2[j]+"\n";
+    rewrap_color(stemp,sv2,77);
+    for (size_t j=0;j<sv2.size();j++) {
+      if (j==0) cout << sv2[j] << endl;
+      else cout << "  " << sv2[j] << endl;
     }
   }
-  dsc+=line+"\n";
+  cout << "\n" << line << endl;
 
-  dsc+="List of additional help topics (e.g. \"acol -help <topic>\"): ";
-  dsc+="functions, mult-vector-spec, strings-spec, ";
-  dsc+="types, value-spec, and vector-spec.\n\n";
+  cout << "List of additional help topics (e.g. \"acol -help <topic>\"): ";
+  cout << ter.green_fg() << ter.bold() << "functions" << ter.default_fg()
+       << "," << endl;
+  cout << ter.green_fg() << ter.bold() << "mult-vector-spec" << ter.default_fg()
+       << ", ";
+  cout << ter.green_fg() << ter.bold() << "strings-spec" << ter.default_fg()
+       << ", ";
+  cout << ter.green_fg() << ter.bold() << "types" << ter.default_fg()
+       << ", ";
+  cout << ter.green_fg() << ter.bold() << "value-spec" << ter.default_fg()
+       << ", and ";
+  cout << ter.green_fg() << ter.bold() << "vector-spec" << ter.default_fg()
+       << ".\n" << endl;
+
+  cout << line << "\n" << endl;
   
 #ifndef O2SCL_UBUNTU_PKG
-  dsc+=((string)"Compiled at ")+((string)__TIME__)+" on "+
-    ((string)__DATE__)+" for "+((string)PACKAGE)+", version "+
-    ((string)VERSION)+".\n";
+  cout << ((string)"Compiled at ")+((string)__TIME__)+" on "+
+    ((string)__DATE__)+" for "+ter.bold()+((string)PACKAGE)+
+    ter.default_fg()+", version "+((string)VERSION)+".\n" << endl;
 #else
-  dsc+=((string)"Compiled for ")+((string)PACKAGE)+", version "+
-    ((string)VERSION)+".\n";
+  cout << ((string)"Compiled for ")+ter.bold()+((string)PACKAGE)+
+    ter.default_fg()+", version "+((string)VERSION)+".\n" << endl;
 #endif
   
-  cl->addl_help_cmd=dsc;
-  cl->addl_help_cli=dsc;
-
-  return cl->comm_option_help(sv,itive_com);
+  return ret;
 }
 
 /*
