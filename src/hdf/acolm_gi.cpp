@@ -630,15 +630,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   if (!isatty(STDOUT_FILENO)) redirected=true;
 
   // Create a line for separating help text sections
-  ostringstream oss;
-  if (redirected) {
-    for(size_t i=0;i<78;i++) oss << '-';
-  } else {
-    oss << ((char)27) << '(' << '0';
-    for(size_t i=0;i<78;i++) oss << 'q';
-    oss << ((char)27) << '(' << 'B';
-  }
-  string line=oss.str();
+  string line=ter.hrule();
 
   // Handle the 'help type command' case for type-specific commands
   if (sv.size()==3) {

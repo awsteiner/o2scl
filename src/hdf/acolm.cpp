@@ -119,7 +119,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 			      "select","select-rows","select-rows2",
 			      "set-data","set-unit","sort","stats","sum",
 			      "to-hist","to-hist-2d","to-table3d","wstats",
-			      };
+    };
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("table",itmp));
   }
@@ -1256,227 +1256,227 @@ int acol_manager::setup_options() {
   
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
-  comm_option_s options_arr[narr]={
-				   {0,"autocorr","Compute the autocorrelation coefficients.",0,-1,
-				    "[arguments depend on current object type.]",
-				    ((std::string)"The behavior of the autocorr command depends on ")+
-				    "the type of the current object.\n\nNumerical array: "+
-				    "(no arguments)\n\nReplace the current "+
-				    "object with a vector of doubles which contains the autocorrelation "+
-				    "coefficient as a function of the step size.\n\n"+
-				    "table: <ac> <ftom> <column or vec. spec> [column or vec. spec. 2]"+
-				    "\n\nThree arguments are required "+
-				    "A column name <ac>, a column name <ftom>, and arguments which "+
-				    "specify the data. The "
-				    "autocorrelation coefficients are stored in column <ac> and "+
-				    "the quantity '5*tau/M' is stored in "+
-				    "column <ftom>. The data may be either a column "+
-				    "in the table or a vector specification. "+
-				    "Columns <ac> and <ftom> are created "+
-				    "if they are not already present and overwritten if they "+
-				    "already contain data. Also, the autocorrelation length and "+
-				    "estimated sample size are output to the screen. If multiple "+
-				    "data sources are given, then the autocorrelation coefficients "+
-				    "are averaged together. See "+cl->cmd_name+" -help vector-spec"+
-				    " for help on multiple vector specifications.\n\n"+
-				    "no object: <mult. vec. spec. 1> "+
-				    "[mult. vec. spec 2] "+
-				    "...\n\n Compute the autocorrelation coefficient for all vectors "+
-				    "specified as arguments then average those autocorrelation "+
-				    "coefficients together. If there is no current object "+
-				    "then the averaged autocorrelation coefficients are kept "+
-				    "as a double[] object. See "+cl->cmd_name+" -help mult-vector-spec"+
-				    " for help on multiple vector specifications.",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
-				    both},
-				   {0,"calc","Compute the value of a constant expression.",0,1,"<expr>",
-				    ((string)"This computes the value of the constant expression ")+
-				    " <expr>. Examples are \"calc acos(-1)\" or \"calc 2+1/sqrt(2.0e4)\". "+
-				    "Results are given at the current precision. To see valid "+
-				    "expressions type \""+cl->cmd_name+" -help functions\".",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_calc),
-				    both},
-				   {0,"clear","Clear the current object.",0,0,"",
-				    "Deallocate the memory associated with the current object.",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_clear),
-				    both},
-				   {'c',"create","Create an object.",0,-1,"<type> [...]",
-				    ((string)"Create a new object of type <type>. ")+
-				    "If an object is currently in memory, it is deallocated before "+
-				    "creating the new object.\n\n"+
-				    "\"create <type> <value>\": For types char, "+
-				    "int, size_t, and string, create an object and give it the "+
-				    "initial value specified.\n\n"+
-				    "\"create double <value spec.>\": Create a double object and set "+
-				    "it equal to the value specified by <value spec.>. "+
-				    "(See \"acol -help "+
-				    "functions\" for help on specifying functions and \"acol -help "+
-				    "value-spec\" for help on value specifications.)\n\n"+
-				    "\"create <type> <size> <function of \"i\">\": For array types "+
-				    "int[] and size_t[], the user must specify the size of "+
-				    "the array and a function of the array index 'i' to fill the array.\n\n"+
-				    "\"create double[] [<size> <function of \"i\">] or [vector spec.]\": "+
-				    "For double[] the user must either "+
-				    "give a vector specification, or specify the size of "+
-				    "the array and a function of the array index 'i'.\n\n"+
-				    "\"create table <name> <vector spec.>\": "+
-				    "Create a new table object with one column named <name> "+
-				    "from a vector specification (see \"acol -help vector-spec\" "+
-				    "for the syntax).\n\n"+
-				    "\"create tensor <rank> <size 0> <size 1> ...\": Create a tensor "+
-				    "object with the specified rank and sizes. All tensor entries "+
-				    "are initialized to zero.\n\n"+
-				    "\"create tensor_grid <rank> <size 0> <size 1> ...\": Create a "+
-				    "tensor_grid object with the specified rank and sizes. The tensor "+
-				    "grid is initialized to count each index (beginning with zero) and "+
-				    "the entries of the tensor "+
-				    "are initialized to zero. The grid can be specified afterwards "+
-				    "using \"set-grid\".\n\n"+
-				    "\"create table3d <x name> <x vector spec.> <y name> "+
-				    "<y vector spec.>\n  <slice name> <slice function>\": Create "+
-				    "a new table3d object which has one slice. The x and y grids "+
-				    "are given as vector specifications (see \"acol -help vector-spec\" "+
-				    "for the syntax). The slice function can be written in terms "+
-				    "of the x- and y-grid values which are referred to by name.\n\n",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
-				    both},
-				   {0,"download","Download file from specified URL.",0,4,
-				    "<file> <URL> [hash, \"file:\"hash_filename, or \"none\"] [directory]",
-				    ((string)"Check if a file matches a specified hash, and if not, ")+
-				    "attempt to download a fresh copy from the specified URL. If the "+
-				    "filename is \"_\", then the file is extracted from the end of "+
-				    "the URL.",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_download),
-				    both},
-				   {0,"filelist","List objects in a HDF5 file.",0,1,"<file>",
-				    ((string)"This lists all the top-level datasets and groups in a ")+
-				    "HDF5 file and, for those groups which are in the O2scl format, "+
-				    "gives the type and name of the object stored in that HDF5 group.",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_filelist),
-				    both},
-				   {'g',"generic","Read in a generic text file.",0,2,"<type> <file>",
-				    ((string)"Read an object of type <type> from a text file named ")+
-				    "<file>. The allowed text file formats depend on the particular "+
-				    "type specified.\n\nFor int, char, double, or size_t objects, "+
-				    "the file is assumed to begin with the desired object and it is "+
-				    "read using operator>>().\n\nFor string objects, the first line is "
-				    "read using std::getline().\n\nFor array objects, it is assumed "+
-				    "that all array entries are on the first line of the file and no "+
-				    "carriage returns are present between entries.\n\nFor table objects, "
-				    "the first line of the file must either contain numeric "+
-				    "data or column names "+
-				    "separated by white space, without carriage returns, except for "+
-				    "the one at the end of the line. If the first line contains "+
-				    "column names, the second line may optionally contain unit "+
-				    "expressions for each column, enclosed by square brackets. "+
-				    "All remaining lines are assumed "+
-				    "to contain data with the same number of columns as the first line. "+
-				    "\n\nFor table3d objects, the data must be stored in columns "+
-				    "with the first column specifying the x-axis grid point and "+
-				    "the second column specifying the y-axis grid point. The "+
-				    "remaining columns give the data for each slice at that point. "+
-				    "Each grid point must correspond to a row in the file, but "+
-				    "the lines need not be in any particular order. The columns may "+
-				    "have one header line at top which specifies the names of the x- "+
-				    "and y-grids and the names of each slice (in order).",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
-				    both},
-				   {0,"get-conv","Get a unit conversion factor.",0,3,
-				    "<old unit> <new unit> [value to convert]",
-				    ((string)"This command gets a unit ")+
-				    "conversion factor and optionally applies than conversion factor "+
-				    "to a user-specified value. It only works if the conversion is one of "
-				    "the hard-coded O2scl conversions or if HAVE_POPEN is defined and "+
-				    "the 'units' command is available in the current "+
-				    "path. For example, 'get-conv MeV erg' returns '1.000000e+00 MeV = "+
-				    "1.602177e-6 erg. The conversion factor is output "+
-				    "at the current precision, but is always internally stored with "+
-				    "full double precision. O2scl has several unit conversions which "+
-				    "implicitly assume hbar=c=1.",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_conv),
-				    both},
-				   {0,"h5-copy","Copy hdf5 file (experimental).",-1,-1,
-				    "<source> <destination>",((string)"Copy all O2scl objects from ")+
-				    "one HDF5 file to another. This may not work for HDF5 files "+
-				    "generated outside of O2scl. The source and destination filenames "+
-				    "may not be identical. The destination file may not be the same "+
-				    "size as the source, but will contain the same information.",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_h5_copy),
-				    both},
-				   {0,"constant","Get constant.",0,2,"<name or pattern> [unit]",
-				    "Get a hard-coded constant from the library.",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_constant),
-				    both},
-				   /*    
-					 {'H',"html","Create a file in HTML (table3d only).",0,1,"<file>",
-					 "Output the current table in HTML mode to the specified file. ",
-					 new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_html),
-					 both},
-				   */
-				   {'q',"interactive","Toggle the interactive interface.",
-				    0,0,"",((string)"If given as a command-line parameter, 'interactive' ")+
-				    "toggles the execution of the interactive mode after the "+
-				    "command-line parameters are processed. If zero arguments are given "+
-				    "to 'acol' on the command-line then the interactive interface is "+
-				    "automatically turned on.",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interactive),
-				    cl_param},
-				   {'i',"internal","Output current object in the internal HDF5 format.",
-				    0,1,"[file]",
-				    ((string)"Output the current object in the internal HDF5 format. ")+
-				    "If no argument is given, then output is sent to the screen, "+
-				    "otherwise, output is sent to the specified file. ",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_internal),
-				    both},
-				   {'o',"output","Output the current object as text.",0,1,"[file]",
-				    ((string)"Output the object to the screen, or if the [file] ")+
-				    "argument is specified, to a file. This is the same format as "+
-				    "can be read using the 'generic' command.",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_output),
-				    both},
-				   {'P',"preview","Preview the current object.",0,2,
-				    "[number of lines] [number of columns]",
-				    ((string)"Print out all or part of the current object in format ")+
-				    "suitable for the screen.",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_preview),
-				    both},
-				   {'r',"read","Read an object from an O2scl-style HDF5 file.",0,2,
-				    "<file> [object name]",
-				    ((string)"Read an HDF5 file with the specified filename. ")+
-				    "If the [object name] argument is specified, then read the object "+
-				    "with the specified name. Otherwise, look for the first table object, "+
-				    "and if not found, look for the first table3d object, and so on, "+
-				    "attempting to find a readable O2scl object.",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read),
-				    both},
-				   {0,"show-units","Show the unit conversion table.",0,0,"",
-				    ((string)"This command does not show all possible conversions, only ")+
-				    "the conversions which have been previously used and are now stored "+
-				    "in the unit cache.",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_show_units),
-				    both},
-				   {0,"slack","Send a slack message.",0,2,"[\"#channel\"] <strings-spec>",
-				    ((string)"Send a message to slack, using the specified channel. ")+
-				    "If the channel is not specified, it is taken from the "+
-				    "environment variable O2SCL_SLACK_CHANNEL. The '#' sign "+
-				    "should be included with the channel name. "+
-				    "The Slack webhook URL is taken "+
-				    "from the environment variable O2SCL_SLACK_URL and the username "+
-				    "is taken from the environment variable O2SCL_SLACK_USERNAME. "+
-				    "The message is constructed from the string list specification "+
-				    "in <strings-spec> (see 'acol -help strings-spec' for more "+
-				    "information).",
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slack),
-				    both},
-				   {0,"type","Show current object type.",0,0,"",
-				    ((string)"Show the current object type, either table, ")+
-				    type_list_str,
-				    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_type),
-				    both},
-				   {'v',"version","Print version information and O2scl settings.",0,0,"",
-				    "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_version),
-				    both}
-  };
+  comm_option_s options_arr[narr]=
+    {{0,"autocorr","Compute the autocorrelation coefficients.",0,-1,
+      "[arguments depend on current object type.]",
+      ((std::string)"The behavior of the autocorr command depends on ")+
+      "the type of the current object.\n\nNumerical array: "+
+      "(no arguments)\n\nReplace the current "+
+      "object with a vector of doubles which contains the autocorrelation "+
+      "coefficient as a function of the step size.\n\n"+
+      "table: <ac> <ftom> <column or vec. spec> [column or vec. spec. 2]"+
+      "\n\nThree arguments are required "+
+      "A column name <ac>, a column name <ftom>, and arguments which "+
+      "specify the data. The "
+      "autocorrelation coefficients are stored in column <ac> and "+
+      "the quantity '5*tau/M' is stored in "+
+      "column <ftom>. The data may be either a column "+
+      "in the table or a vector specification. "+
+      "Columns <ac> and <ftom> are created "+
+      "if they are not already present and overwritten if they "+
+      "already contain data. Also, the autocorrelation length and "+
+      "estimated sample size are output to the screen. If multiple "+
+      "data sources are given, then the autocorrelation coefficients "+
+      "are averaged together. See "+cl->cmd_name+" -help vector-spec"+
+      " for help on multiple vector specifications.\n\n"+
+      "no object: <mult. vec. spec. 1> "+
+      "[mult. vec. spec 2] "+
+      "...\n\n Compute the autocorrelation coefficient for all vectors "+
+      "specified as arguments then average those autocorrelation "+
+      "coefficients together. If there is no current object "+
+      "then the averaged autocorrelation coefficients are kept "+
+      "as a double[] object. See "+cl->cmd_name+" -help mult-vector-spec"+
+      " for help on multiple vector specifications.",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
+      both},
+     {0,"calc","Compute the value of a constant expression.",0,1,"<expr>",
+      ((string)"This computes the value of the constant expression ")+
+      " <expr>. Examples are \"calc acos(-1)\" or \"calc 2+1/sqrt(2.0e4)\". "+
+      "Results are given at the current precision. To see valid "+
+      "expressions type \""+cl->cmd_name+" -help functions\".",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_calc),
+      both},
+     {0,"clear","Clear the current object.",0,0,"",
+      "Deallocate the memory associated with the current object.",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_clear),
+      both},
+     {'c',"create","Create an object.",0,-1,"<type> [...]",
+      ((string)"Create a new object of type <type>. ")+
+      "If an object is currently in memory, it is deallocated before "+
+      "creating the new object.\n\n"+
+      "\"create <type> <value>\": For types char, "+
+      "int, size_t, and string, create an object and give it the "+
+      "initial value specified.\n\n"+
+      "\"create double <value spec.>\": Create a double object and set "+
+      "it equal to the value specified by <value spec.>. "+
+      "(See \"acol -help "+
+      "functions\" for help on specifying functions and \"acol -help "+
+      "value-spec\" for help on value specifications.)\n\n"+
+      "\"create <type> <size> <function of \"i\">\": For array types "+
+      "int[] and size_t[], the user must specify the size of "+
+      "the array and a function of the array index 'i' to fill the array.\n\n"+
+      "\"create double[] [<size> <function of \"i\">] or [vector spec.]\": "+
+      "For double[] the user must either "+
+      "give a vector specification, or specify the size of "+
+      "the array and a function of the array index 'i'.\n\n"+
+      "\"create table <name> <vector spec.>\": "+
+      "Create a new table object with one column named <name> "+
+      "from a vector specification (see \"acol -help vector-spec\" "+
+      "for the syntax).\n\n"+
+      "\"create tensor <rank> <size 0> <size 1> ...\": Create a tensor "+
+      "object with the specified rank and sizes. All tensor entries "+
+      "are initialized to zero.\n\n"+
+      "\"create tensor_grid <rank> <size 0> <size 1> ...\": Create a "+
+      "tensor_grid object with the specified rank and sizes. The tensor "+
+      "grid is initialized to count each index (beginning with zero) and "+
+      "the entries of the tensor "+
+      "are initialized to zero. The grid can be specified afterwards "+
+      "using \"set-grid\".\n\n"+
+      "\"create table3d <x name> <x vector spec.> <y name> "+
+      "<y vector spec.>\n  <slice name> <slice function>\": Create "+
+      "a new table3d object which has one slice. The x and y grids "+
+      "are given as vector specifications (see \"acol -help vector-spec\" "+
+      "for the syntax). The slice function can be written in terms "+
+      "of the x- and y-grid values which are referred to by name.\n\n",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
+      both},
+     {0,"download","Download file from specified URL.",0,4,
+      "<file> <URL> [hash, \"file:\"hash_filename, or \"none\"] [directory]",
+      ((string)"Check if a file matches a specified hash, and if not, ")+
+      "attempt to download a fresh copy from the specified URL. If the "+
+      "filename is \"_\", then the file is extracted from the end of "+
+      "the URL.",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_download),
+      both},
+     {0,"filelist","List objects in a HDF5 file.",0,1,"<file>",
+      ((string)"This lists all the top-level datasets and groups in a ")+
+      "HDF5 file and, for those groups which are in the O2scl format, "+
+      "gives the type and name of the object stored in that HDF5 group.",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_filelist),
+      both},
+     {'g',"generic","Read in a generic text file.",0,2,"<type> <file>",
+      ((string)"Read an object of type <type> from a text file named ")+
+      "<file>. The allowed text file formats depend on the particular "+
+      "type specified.\n\nFor int, char, double, or size_t objects, "+
+      "the file is assumed to begin with the desired object and it is "+
+      "read using operator>>().\n\nFor string objects, the first line is "
+      "read using std::getline().\n\nFor array objects, it is assumed "+
+      "that all array entries are on the first line of the file and no "+
+      "carriage returns are present between entries.\n\nFor table objects, "
+      "the first line of the file must either contain numeric "+
+      "data or column names "+
+      "separated by white space, without carriage returns, except for "+
+      "the one at the end of the line. If the first line contains "+
+      "column names, the second line may optionally contain unit "+
+      "expressions for each column, enclosed by square brackets. "+
+      "All remaining lines are assumed "+
+      "to contain data with the same number of columns as the first line. "+
+      "\n\nFor table3d objects, the data must be stored in columns "+
+      "with the first column specifying the x-axis grid point and "+
+      "the second column specifying the y-axis grid point. The "+
+      "remaining columns give the data for each slice at that point. "+
+      "Each grid point must correspond to a row in the file, but "+
+      "the lines need not be in any particular order. The columns may "+
+      "have one header line at top which specifies the names of the x- "+
+      "and y-grids and the names of each slice (in order).",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
+      both},
+     {0,"get-conv","Get a unit conversion factor.",0,3,
+      "<old unit> <new unit> [value to convert]",
+      ((string)"This command gets a unit ")+
+      "conversion factor and optionally applies than conversion factor "+
+      "to a user-specified value. It only works if the conversion is one of "
+      "the hard-coded O2scl conversions or if HAVE_POPEN is defined and "+
+      "the 'units' command is available in the current "+
+      "path. For example, 'get-conv MeV erg' returns '1.000000e+00 MeV = "+
+      "1.602177e-6 erg. The conversion factor is output "+
+      "at the current precision, but is always internally stored with "+
+      "full double precision. O2scl has several unit conversions which "+
+      "implicitly assume hbar=c=1.",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_conv),
+      both},
+     {0,"h5-copy","Copy hdf5 file (experimental).",-1,-1,
+      "<source> <destination>",((string)"Copy all O2scl objects from ")+
+      "one HDF5 file to another. This may not work for HDF5 files "+
+      "generated outside of O2scl. The source and destination filenames "+
+      "may not be identical. The destination file may not be the same "+
+      "size as the source, but will contain the same information.",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_h5_copy),
+      both},
+     {0,"constant","Get constant.",0,2,"<name or pattern> [unit]",
+      "Get a hard-coded constant from the library.",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_constant),
+      both},
+     /*    
+	   {'H',"html","Create a file in HTML (table3d only).",0,1,"<file>",
+	   "Output the current table in HTML mode to the specified file. ",
+	   new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_html),
+	   both},
+     */
+     {'q',"interactive","Toggle the interactive interface.",
+      0,0,"",((string)"If given as a command-line parameter, 'interactive' ")+
+      "toggles the execution of the interactive mode after the "+
+      "command-line parameters are processed. If zero arguments are given "+
+      "to 'acol' on the command-line then the interactive interface is "+
+      "automatically turned on.",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interactive),
+      cl_param},
+     {'i',"internal","Output current object in the internal HDF5 format.",
+      0,1,"[file]",
+      ((string)"Output the current object in the internal HDF5 format. ")+
+      "If no argument is given, then output is sent to the screen, "+
+      "otherwise, output is sent to the specified file. ",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_internal),
+      both},
+     {'o',"output","Output the current object as text.",0,1,"[file]",
+      ((string)"Output the object to the screen, or if the [file] ")+
+      "argument is specified, to a file. This is the same format as "+
+      "can be read using the 'generic' command.",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_output),
+      both},
+     {'P',"preview","Preview the current object.",0,2,
+      "[number of lines] [number of columns]",
+      ((string)"Print out all or part of the current object in format ")+
+      "suitable for the screen.",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_preview),
+      both},
+     {'r',"read","Read an object from an O2scl-style HDF5 file.",0,2,
+      "<file> [object name]",
+      ((string)"Read an HDF5 file with the specified filename. ")+
+      "If the [object name] argument is specified, then read the object "+
+      "with the specified name. Otherwise, look for the first table object, "+
+      "and if not found, look for the first table3d object, and so on, "+
+      "attempting to find a readable O2scl object.",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read),
+      both},
+     {0,"show-units","Show the unit conversion table.",0,0,"",
+      ((string)"This command does not show all possible conversions, only ")+
+      "the conversions which have been previously used and are now stored "+
+      "in the unit cache.",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_show_units),
+      both},
+     {0,"slack","Send a slack message.",0,2,"[\"#channel\"] <strings-spec>",
+      ((string)"Send a message to slack, using the specified channel. ")+
+      "If the channel is not specified, it is taken from the "+
+      "environment variable O2SCL_SLACK_CHANNEL. The '#' sign "+
+      "should be included with the channel name. "+
+      "The Slack webhook URL is taken "+
+      "from the environment variable O2SCL_SLACK_URL and the username "+
+      "is taken from the environment variable O2SCL_SLACK_USERNAME. "+
+      "The message is constructed from the string list specification "+
+      "in <strings-spec> (see 'acol -help strings-spec' for more "+
+      "information).",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slack),
+      both},
+     {0,"type","Show current object type.",0,0,"",
+      ((string)"Show the current object type, either table, ")+
+      type_list_str,
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_type),
+      both},
+     {'v',"version","Print version information and O2scl settings.",0,0,"",
+      "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_version),
+      both}
+    };
   /*
     {0,"find-x","Find an entry in the x-grid (3d only)",1,1,"<value>","",
     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_find_x),
