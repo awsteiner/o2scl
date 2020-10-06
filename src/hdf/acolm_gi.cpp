@@ -623,6 +623,8 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
+  terminal ter;
+  
   // Determine if we're being redirected to a file
   bool redirected=false;
   if (!isatty(STDOUT_FILENO)) redirected=true;
@@ -914,7 +916,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   // Handle the case 'help <type>' where <type> is an acol o2scl type
   for(size_t i=0;i<type_list.size();i++) {
-    if (sv[1]==type_list[i]) {
+    if (sv.size()>=2 && sv[1]==type_list[i]) {
       std::string str="Type "+type_list[i]+" is one of the types of "+
 	"objects which can be read, written, or modified by "+
 	cl->cmd_name+".";
@@ -990,7 +992,6 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	  command_add(it->first);
 	  type=it->first;
 
-	  terminal ter;
 	  cout << "Type " << ter.magenta_fg() << ter.bold() << it->first
 	       << ter.default_fg() << ":" << endl;
 	  int ret=cl->comm_option_help(sv2,itive_com);
@@ -1027,7 +1028,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   for(size_t j=1;j<sv2.size();j++) {
     dsc+="   "+sv2[j]+"\n";
   }
-  
+
   stemp="2. Options may also be specified in the environment variable ";
   stemp+=env_var_name+".\n";
   rewrap(stemp,sv2,76);
@@ -1059,6 +1060,16 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     dsc+="   "+sv2[j]+"\n";
   }
 
+  if (ter.is_redirected()==false) {
+    dsc+="6. Types are denoted as "+ter.magenta_fg()+ter.bold()+"char";
+    dsc+=ter.default_fg()+", commands as "+ter.cyan_fg()+ter.bold();
+    dsc+="function"+ter.default_fg()+",\n   get/set parameters as ";
+    dsc+=ter.red_fg()+ter.bold()+"verbose"+ter.default_fg();
+    dsc+=", and help topics as\n   ";
+    dsc+=ter.green_fg()+ter.bold()+"functions"+ter.default_fg();
+    dsc+=".\n";
+  }
+  
   dsc+=line+"\n";
 
   cl->addl_help_cmd=dsc;
@@ -1066,8 +1077,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   
   int ret=cl->comm_option_help(sv,itive_com);
 
-  if (sv[1].size()<2 ||
-      (cl->is_valid_option(sv[1])==false && cl->is_parameter(sv[1])==false)) {
+  if (sv.size()<2 || (cl->is_valid_option(sv[1])==false &&
+		      cl->is_parameter(sv[1])==false)) {
     
     terminal ter;
   
@@ -1094,8 +1105,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     cout << "List of additional help topics (e.g. \"acol -help <topic>\"): ";
     cout << ter.green_fg() << ter.bold() << "functions" << ter.default_fg()
 	 << "," << endl;
-    cout << ter.green_fg() << ter.bold() << "mult-vector-spec" << ter.default_fg()
-	 << ", ";
+    cout << ter.green_fg() << ter.bold() << "mult-vector-spec"
+	 << ter.default_fg() << ", ";
     cout << ter.green_fg() << ter.bold() << "strings-spec" << ter.default_fg()
 	 << ", ";
     cout << ter.green_fg() << ter.bold() << "types" << ter.default_fg()
@@ -1105,7 +1116,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     cout << ter.green_fg() << ter.bold() << "vector-spec" << ter.default_fg()
 	 << ".\n" << endl;
 
-    cout << line << "\n" << endl;
+    cout << line << endl;
   
 #ifndef O2SCL_UBUNTU_PKG
     cout << ((string)"Compiled at ")+((string)__TIME__)+" on "+

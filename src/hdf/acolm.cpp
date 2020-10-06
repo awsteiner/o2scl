@@ -107,9 +107,11 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
   {
     vector<std::string> itmp={"ac-len","average-rows",
-			      "assign","delete-col","delete-rows",
-			      "delete-rows-tol","deriv","deriv2","cat",
-			      "convert-unit","entry-grid",
+			      "assign","cat","convert-unit",
+			      "correl","delete-col",
+			      "delete-rows",
+			      "delete-rows-tol","deriv","deriv2",
+			      "entry-grid",
 			      "find-row","fit","function",
 			      "get-row","get-unit","entry","index",
 			      "insert","insert-full","integ","interp",
@@ -117,7 +119,8 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 			      "select","select-rows","select-rows2",
 			      "set-data","set-unit","sort","stats","sum",
 			      "to-hist","to-hist-2d","to-table3d","wstats",
-			      "correl"};
+			      };
+    vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("table",itmp));
   }
   {
@@ -127,11 +130,13 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 			      "list","max","min","rename","set-data",
 			      "slice","slice-hist","sum",
 			      "to-tensor-grid","x-name","y-name"};
+    vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("table3d",itmp));
   }
   {
     vector<std::string> itmp={"list","min","max","to-table3d",
 			      "rearrange"};
+    vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("tensor<int>",itmp));
     type_comm_list.insert(std::make_pair("tensor<size_t>",itmp));
   }
@@ -139,6 +144,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     vector<std::string> itmp={"list","diag","to-table3d","to-table3d-sum",
 			      "max","min","to-tensor-grid","rearrange",
 			      "entry","function","sum","stats"};
+    vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("tensor",itmp));
   }
   {
@@ -151,19 +157,23 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 			      "get-grid","interp","entry","to-tensor",
 			      "entry-grid","function","sum","stats",
 			      "binary"};
+    vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
   }
   {
     vector<std::string> itmp={"max","min","contours","to-table3d"};
+    vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("hist_2d",itmp));
   }
   {
     vector<std::string> itmp={"to-table","function"};
+    vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("hist",itmp));
   }
   {
     vector<std::string> itmp={"deriv","interp","max","min","sort",
 			      "to-table","function","sum"};
+    vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("double[]",itmp));
     type_comm_list.insert(std::make_pair("int[]",itmp));
     type_comm_list.insert(std::make_pair("size_t[]",itmp));
@@ -228,7 +238,7 @@ void acol_manager::command_add(std::string new_type) {
   } else if (new_type=="table") {
     static const size_t narr=41;
     comm_option_s options_arr[narr]=
-      {{0,"ac-len","Autocorrelation length using 'acor'",0,1,"<colum>","",
+      {{0,"ac-len","Autocorrelation length using 'acor'.",0,1,"<colum>","",
 	new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_ac_len),
 	both},
        {0,"average-rows","Average rows of some or all columns together",
@@ -456,7 +466,7 @@ void acol_manager::command_add(std::string new_type) {
 	new comm_option_mfptr<acol_manager>
 	(this,&acol_manager::comm_select_rows2),both},
        {0,"select-rows2",
-	"Select rows, with explicit column specification (deprecated).",
+	"Select rows, with column specification (deprecated.",
 	0,-1,"<row_spec>",
 	((std::string)"Select the rows from a table for ")+
 	"which the row specification in <row_spec> evaluates to a number "+

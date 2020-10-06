@@ -836,6 +836,11 @@ namespace o2scl {
       }
     }
 
+    /// Desc
+    bool is_redirected() {
+      return redirected;
+    }
+    
     /// Generate a horizontal rule
     std::string hrule(size_t n=78);
 

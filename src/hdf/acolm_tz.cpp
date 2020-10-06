@@ -731,13 +731,15 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
 
   cout << "\n" << cl->desc << endl;
 
+  terminal ter;
   if (cl->cmd_name==((string)"acol")) {
-    cout << (((string)" Compiled at ")+((string)__TIME__)+" on "+
-	     ((string)__DATE__)+" for "+((string)PACKAGE)+", version "+
-	     ((string)VERSION)+".\n") << endl;
+    cout << ((string)"Compiled at ")+((string)__TIME__)+" on "+
+      ((string)__DATE__)+" for "+ter.bold()+((string)PACKAGE)+
+      ter.default_fg()+", version "+((string)VERSION)+".\n" << endl;
   }
 
-  cout << "O2scl version: " << o2scl_settings.o2scl_version() << endl;
+  cout << ter.bold() << "O2scl" << ter.default_fg()
+       << " version: " << o2scl_settings.o2scl_version() << endl;
   cout << "Range checking: " << o2scl_settings.range_check() << endl;
   cout << "EOS library: " << o2scl_settings.eos_installed() << endl;
   cout << "Particle library: " << o2scl_settings.part_installed() << endl;

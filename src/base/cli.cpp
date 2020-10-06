@@ -1252,7 +1252,6 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	// Output parameter list
 	cout << endl;
 	output_param_list();
-	needs_endl=false;
 
       }
 
