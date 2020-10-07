@@ -829,12 +829,7 @@ namespace o2scl {
     
   public:
 
-    terminal() {
-      redirected=false;
-      if (!isatty(STDOUT_FILENO)) {
-	redirected=true;
-      }
-    }
+    terminal();
 
     /// Desc
     bool is_redirected() {

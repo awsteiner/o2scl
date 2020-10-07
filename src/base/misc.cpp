@@ -494,6 +494,13 @@ void o2scl::wordexp_single_file(std::string &fname) {
   return;
 }
 
+terminal::terminal() {
+  redirected=false;
+  if (!isatty(STDOUT_FILENO)) {
+    redirected=true;
+  }
+}
+
 std::string terminal::hrule(size_t n) {
   std::ostringstream oss;
   if (redirected) {
