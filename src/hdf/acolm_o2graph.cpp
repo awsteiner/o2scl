@@ -74,7 +74,6 @@ void o2scl_acol_set_names(void *vp, int n1, char *cmd_name,
   return;
 }
 
-
 std::vector<std::string> o2scl_acol::parse_arrays
 (int n_entries, int *sizes, char *str) {
   std::vector<std::string> list;
@@ -197,6 +196,7 @@ int o2scl_acol_pdma_get_cube(void *vp, int ix,
   return 0;
 }
 
+/*
 int o2scl_acol_get_row_ser(void *vp, char *pattern, int row_index,
 			   int &n, double *&ptr) {
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
@@ -213,6 +213,7 @@ int o2scl_acol_get_row_ser(void *vp, char *pattern, int row_index,
   ptr=(double *)&amp->doublev_obj[0];
   return 0;
 }
+*/
 
 int o2scl_acol_get_double_arr(void *vp, int &n, double *&ptr) {
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;

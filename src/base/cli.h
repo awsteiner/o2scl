@@ -441,9 +441,7 @@ namespace o2scl {
     int comm_option_warranty(std::vector<std::string> &sv, bool itive_com);
     //@}
 
-    bool is_parameter(std::string cmd);
-
-  /** \brief Proceed through \c sv, applying all previously
+    /** \brief Proceed through \c sv, applying all previously
 	defined aliases
     */
     int apply_aliases(std::vector<std::string> &sv, size_t istart,
@@ -659,9 +657,21 @@ namespace o2scl {
      */
     std::string get_alias(std::string alias);
 
-    /** \brief Return true if \c str is a valid option
+    /** \brief Return true if \c str is a valid option or command
      */
     bool is_valid_option(std::string str);
+
+    /** \brief Return true if \c name is a valid parameter name
+     */
+    bool is_parameter(std::string name);
+
+    /** \brief Desc
+     */
+    std::vector<std::string> parameter_list();
+    
+    /** \brief Desc
+     */
+    std::vector<std::string> option_list();
     
   };
 

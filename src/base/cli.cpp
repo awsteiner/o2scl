@@ -1040,6 +1040,22 @@ bool cli::is_parameter(std::string name) {
   return false;
 }
 
+std::vector<std::string> cli::parameter_list() {
+  std::vector<std::string> list;
+  for(par_t it=par_list.begin();it!=par_list.end();it++) {
+    list.push_back(it->first);
+  }
+  return list;
+}
+
+std::vector<std::string> cli::option_list() {
+  std::vector<std::string> list;
+  for(size_t i=0;i<clist.size();i++) {
+    list.push_back(clist[i].lng);
+  }
+  return list;
+}
+
 int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 
   terminal ter;

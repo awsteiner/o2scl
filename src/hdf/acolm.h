@@ -581,11 +581,19 @@ namespace o2scl_acol {
 
   public:
     
-    /// \name Temporary storage for \ref o2scl_acol_get_slice()
+    /** \name Temporary storage 
+
+	These are used in \ref o2scl_acol_get_slice(), \ref
+	o2scl_acol_get_hist_reps(), \ref o2scl_acol_get_hist_wgts(),
+	\ref o2scl_acol_get_hist_bins(), and \ref
+	o2scl_acol_get_hist_2d(),
+    */
     //@{
     std::vector<double> xtemp;
     std::vector<double> ytemp;
     std::vector<double> stemp;
+    std::vector<int> itemp;
+    std::vector<char> ctemp;
     //@}
 
     // End of class acol_manager
@@ -724,9 +732,11 @@ extern "C" {
       
       \note This function is currently unused. It may have been a
       precursor for a mult-vector-spec?
+
+      \note Deprecating this for now.
    */
-  int o2scl_acol_get_row_ser(void *vp, char *parttern, int row_index,
-			     int &n, double *&ptr);
+  //int o2scl_acol_get_row_ser(void *vp, char *parttern, int row_index,
+  //int &n, double *&ptr);
   
   /** \brief Return the size and a pointer to a double array
       corresponding to a <tt>int[]</tt>, <tt>size_t[]</tt>, or
