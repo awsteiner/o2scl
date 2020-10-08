@@ -561,3 +561,41 @@ int o2scl_acol_get_hist_2d(void *vp,
   return 0;
 }
 
+int o2scl_acol_get_cli_parameters(void *vp, int &n, int *&sizes,
+				  char *&chlist) {
+  o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+  n=amp->table_obj.get_nlines();
+  amp->ctemp.clear();
+  amp->itemp.clear();
+  vector<string> params=amp->cl->parameter_list();
+  for(size_t i=0;i<params.size();i++) {
+    amp->itemp.push_back(params[i].length());
+    for(size_t j=0;j<params[i].length();j++) {
+      amp->ctemp.push_back(params[i][j]);
+    }
+  }
+  n=params.size();
+  sizes=&(amp->itemp[0]);
+  chlist=&(amp->ctemp[0]);
+  return 0;
+}
+
+int o2scl_acol_get_cli_options(void *vp, int &n, int *&sizes,
+			       char *&chlist) {
+  o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+  n=amp->table_obj.get_nlines();
+  amp->ctemp.clear();
+  amp->itemp.clear();
+  vector<string> options=amp->cl->option_list();
+  for(size_t i=0;i<options.size();i++) {
+    amp->itemp.push_back(options[i].length());
+    for(size_t j=0;j<options[i].length();j++) {
+      amp->ctemp.push_back(options[i][j]);
+    }
+  }
+  n=options.size();
+  sizes=&(amp->itemp[0]);
+  chlist=&(amp->ctemp[0]);
+  return 0;
+}
+

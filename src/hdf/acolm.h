@@ -852,6 +852,17 @@ extern "C" {
   */
   int o2scl_acol_mult_vectors_to_conts(void *vp, char *str1,
 				       char *str2);
+
+  /** \brief Desc
+   */
+  int o2scl_acol_get_cli_parameters(void *vp, int &n, int *&sizes,
+				    char *&chlist);
+
+  /** \brief Desc
+   */
+  int o2scl_acol_get_cli_options(void *vp, int &n, int *&sizes,
+				 char *&chlist);
+  
   //@}
   
 }

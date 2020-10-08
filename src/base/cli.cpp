@@ -1248,7 +1248,7 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
       // Output any additional help text specified
       if (clist[ix].help.length()>0) {
 
-	cout << "Long description:" << endl;
+	cout << "\nLong description:" << endl;
 	{
 	  // Rewrap to 79 columns before writing additional
 	  // help text
