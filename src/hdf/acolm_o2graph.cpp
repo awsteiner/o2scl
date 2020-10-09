@@ -580,16 +580,31 @@ int o2scl_acol_get_cli_parameters(void *vp, int &n, int *&sizes,
   return 0;
 }
 
-int o2scl_acol_get_cli_param_desc(void *vp, int nin, char *name, int &nout, 
+int o2scl_acol_cli_param_desc(void *vp, char *name, int &ndesc, 
 				  char *&chlist) {
   o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
   amp->ctemp.clear();
   std::string name2=name;
-  std::string desc=amp->cl->parameter_desc(name);
-  nout=desc.length();
-  for(int i=0;i<nout;i++) {
+  std::string desc=amp->cl->parameter_desc(name2);
+  ndesc=desc.length();
+  for(int i=0;i<ndesc;i++) {
     amp->ctemp.push_back(desc[i]);
   }
+  chlist=&(amp->ctemp[0]);
+  return 0;
+}
+
+int o2scl_acol_cli_option_desc(void *vp, char *name, int &ndesc, 
+				  char *&chlist) {
+  o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+  amp->ctemp.clear();
+  std::string name2=name;
+  std::string desc=amp->cl->option_short_desc(name);
+  ndesc=desc.length();
+  for(int i=0;i<ndesc;i++) {
+    amp->ctemp.push_back(desc[i]);
+  }
+  chlist=&(amp->ctemp[0]);
   return 0;
 }
 

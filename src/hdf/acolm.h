@@ -853,20 +853,29 @@ extern "C" {
   int o2scl_acol_mult_vectors_to_conts(void *vp, char *str1,
 				       char *str2);
 
-  /** \brief Desc
+  /** \brief Get the list of parameters from the acol_manager cli
+      object
    */
   int o2scl_acol_get_cli_parameters(void *vp, int &n, int *&sizes,
 				    char *&chlist);
 
-  /** \brief Desc
+  /** \brief Get the list of options/commands from the acol_manager
+      cli object
    */
   int o2scl_acol_get_cli_options(void *vp, int &n, int *&sizes,
 				 char *&chlist);
 
-  /** \brief Desc
+  /** \brief Obtain the description of a parameter from the 
+      acol_manager cli object
    */
-  int o2scl_acol_get_cli_param_desc(void *vp, int nin, char *name, int &nout, 
+  int o2scl_acol_cli_param_desc(void *vp, char *name, int &ndesc, 
 				    char *&chlist);
+  
+  /** \brief Obtain the short description of an option/command from
+      the acol_manager cli object
+   */
+  int o2scl_acol_cli_option_desc(void *vp, char *name, int &ndesc, 
+				     char *&chlist);
   
   //@}
   
