@@ -567,7 +567,7 @@ int o2scl_acol_get_cli_parameters(void *vp, int &n, int *&sizes,
   n=amp->table_obj.get_nlines();
   amp->ctemp.clear();
   amp->itemp.clear();
-  vector<string> params=amp->cl->parameter_list();
+  vector<string> params=amp->cl->get_parameter_list();
   for(size_t i=0;i<params.size();i++) {
     amp->itemp.push_back(params[i].length());
     for(size_t j=0;j<params[i].length();j++) {
@@ -599,7 +599,7 @@ int o2scl_acol_get_cli_options(void *vp, int &n, int *&sizes,
   n=amp->table_obj.get_nlines();
   amp->ctemp.clear();
   amp->itemp.clear();
-  vector<string> options=amp->cl->option_list();
+  vector<string> options=amp->cl->get_option_list();
   for(size_t i=0;i<options.size();i++) {
     amp->itemp.push_back(options[i].length());
     for(size_t j=0;j<options[i].length();j++) {

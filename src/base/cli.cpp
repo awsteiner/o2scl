@@ -1062,10 +1062,18 @@ std::string cli::option_short_desc(std::string name) {
   return "";
 }
 
-std::vector<std::string> cli::option_list() {
+std::vector<std::string> cli::get_option_list() {
   std::vector<std::string> list;
   for(size_t i=0;i<clist.size();i++) {
     list.push_back(clist[i].lng);
+  }
+  return list;
+}
+
+std::vector<std::string> cli::get_parameter_list() {
+  std::vector<std::string> list;
+  for(par_t it=par_list.begin();it!=par_list.end();it++) {
+    list.push_back(it->first);
   }
   return list;
 }

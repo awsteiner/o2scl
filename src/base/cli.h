@@ -665,19 +665,19 @@ namespace o2scl {
      */
     bool is_parameter(std::string name);
 
-    /** \brief Desc
+    /** \brief Get the list of parameters
      */
-    std::vector<std::string> parameter_list();
+    std::vector<std::string> get_parameter_list();
     
-    /** \brief Desc
+    /** \brief Get the list of options/commands
      */
-    std::vector<std::string> option_list();
+    std::vector<std::string> get_option_list();
 
-    /** \brief Desc
+    /** \brief Get the description of parameter named \c name
      */
     std::string parameter_desc(std::string name);
     
-    /** \brief Desc
+    /** \brief Get the short description of option named \c name
      */
     std::string option_short_desc(std::string name);
     
