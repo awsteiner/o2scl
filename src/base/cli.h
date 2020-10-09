@@ -672,6 +672,14 @@ namespace o2scl {
     /** \brief Desc
      */
     std::vector<std::string> option_list();
+
+    /** \brief Desc
+     */
+    std::string parameter_desc(std::string name);
+    
+    /** \brief Desc
+     */
+    std::string option_short_desc(std::string name);
     
   };
 

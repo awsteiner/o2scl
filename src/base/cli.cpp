@@ -1040,12 +1040,26 @@ bool cli::is_parameter(std::string name) {
   return false;
 }
 
-std::vector<std::string> cli::parameter_list() {
-  std::vector<std::string> list;
+std::string cli::parameter_desc(std::string name) {
   for(par_t it=par_list.begin();it!=par_list.end();it++) {
-    list.push_back(it->first);
+    if (string_equal_dash(it->first,name)) {
+      return it->second->help;
+    }
   }
-  return list;
+  O2SCL_ERR("Parameter not found in cli::parameter_desc().",
+	    o2scl::exc_einval);
+  return "";
+}
+
+std::string cli::option_short_desc(std::string name) {
+  for(size_t i=0;i<clist.size();i++) {
+    if (string_equal_dash(clist[i].lng,name)) {
+      return clist[i].desc;
+    }
+  }
+  O2SCL_ERR("Option not found in cli::option_short_desc().",
+	    o2scl::exc_einval);
+  return "";
 }
 
 std::vector<std::string> cli::option_list() {
