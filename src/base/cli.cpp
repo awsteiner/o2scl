@@ -420,7 +420,7 @@ int cli::comm_option_commands(vector<string> &sv, bool itive_com) {
   nout=outs.size();
 
   // Output the command list
-  cout << "Command list:\n" << endl;
+  //cout << "Command list:\n" << endl;
   for(int i=0;i<nout;i++) {
     cout << outs[i] << endl;
   }
@@ -1078,91 +1078,86 @@ std::vector<std::string> cli::get_parameter_list() {
   return list;
 }
 
+int cli::print_option_list() {
+
+  terminal ter;
+  
+  cout << "List of command-line options:\n" << endl;
+  
+  // Repackage the command list
+  vector<string> c[3];
+  size_t tot=0;
+  for(size_t i=0;i<clist.size();i++) {
+    if (clist[i].type!=comm_option_command) {
+      c[0].push_back(" ");
+      c[1].push_back(clist[i].lng);
+      c[2].push_back(" ");
+      tot++;
+    }
+  }
+  
+  // Sort
+  sort(c[1].begin(),c[1].end());
+  
+  // Add the descriptions and the short options
+  for(size_t i=0;i<clist.size();i++) {
+    for(size_t j=0;j<tot;j++) {
+      if (c[1][j]==clist[i].lng) {
+	c[2][j]=clist[i].desc;
+	if (clist[i].shrt!=0) {
+	  c[0][j]=((string)"-")+clist[i].shrt;
+	} else {
+	  c[0][j]=" ";
+	}
+      }
+    }
+  }
+  
+  // Add the dashes to the long options
+  for(size_t j=0;j<tot;j++) {
+    c[1][j]=((string)"-")+c[1][j];
+  }
+  
+  size_t maxlen=0;
+  for(size_t i=0;i<tot;i++) {
+    if (c[1][i].length()>=maxlen) maxlen=c[1][i].length();
+  }
+  for(size_t i=0;i<tot;i++) {
+    if (c[0][i].length()>=2 && c[0][i][0]=='-') {
+      cout << "-" << c[0][i][1] << " ";
+    } else {
+      cout << "   ";
+    }
+    if (c[1][i].length()>=2 && c[1][i][0]=='-') {
+      size_t len=c[1][i].length();
+      cout << "-" << ter.cyan_fg() << ter.bold()
+	   << c[1][i].substr(1,len-1) << ter.default_fg() << " ";
+      for(size_t j=c[1][i].length();j<maxlen;j++) {
+	cout << " ";
+      }
+    } else {
+      for(size_t j=c[1][i].length();j<maxlen+1;j++) {
+	cout << " ";
+      }
+    }
+    cout << c[2][i] << endl;
+  }
+  
+  return 0;
+}
+
 int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 
   terminal ter;
   
   // If not in interactive mode and no arguments are given,
   // Just output the full command list
-  
+
   if (itive_com==false && sv.size()==1) {
 
     cout << desc << endl;
 
-    cout << "List of command-line options:\n" << endl;
-    
-    // Repackage the command list
-    vector<string> c[3];
-    size_t tot=0;
-    for(size_t i=0;i<clist.size();i++) {
-      if (clist[i].type!=comm_option_command) {
-	c[0].push_back(" ");
-	c[1].push_back(clist[i].lng);
-	c[2].push_back(" ");
-	tot++;
-      }
-    }
-
-    // Sort
-    sort(c[1].begin(),c[1].end());
-
-    // Add the descriptions and the short options
-    for(size_t i=0;i<clist.size();i++) {
-      for(size_t j=0;j<tot;j++) {
-	if (c[1][j]==clist[i].lng) {
-	  c[2][j]=clist[i].desc;
-	  if (clist[i].shrt!=0) {
-	    c[0][j]=((string)"-")+clist[i].shrt;
-	  } else {
-	    c[0][j]=" ";
-	  }
-	}
-      }
-    }
-
-    // Add the dashes to the long options
-    for(size_t j=0;j<tot;j++) {
-      c[1][j]=((string)"-")+c[1][j];
-    }
-
-    if (false) {
-      // Reformat into columns
-      columnify cfy;
-      vector<string> ct(tot);    
-      int align[3]={columnify::align_left,columnify::align_left,
-		    columnify::align_left};
-      cfy.align(c,3,tot,ct,align);
-      
-      // Print final list
-      for(size_t i=0;i<tot;i++) {
-	cout << ct[i] << endl;
-      }
-    } else {
-      size_t maxlen=0;
-      for(size_t i=0;i<tot;i++) {
-	if (c[1][i].length()>=maxlen) maxlen=c[1][i].length();
-      }
-      for(size_t i=0;i<tot;i++) {
-	if (c[0][i].length()>=2 && c[0][i][0]=='-') {
-	  cout << "-" << c[0][i][1] << " ";
-	} else {
-	  cout << "   ";
-	}
-	if (c[1][i].length()>=2 && c[1][i][0]=='-') {
-	  size_t len=c[1][i].length();
-	  cout << "-" << ter.cyan_fg() << ter.bold()
-	       << c[1][i].substr(1,len-1) << ter.default_fg() << " ";
-	  for(size_t j=c[1][i].length();j<maxlen;j++) {
-	    cout << " ";
-	  }
-	} else {
-	  for(size_t j=c[1][i].length();j<maxlen+1;j++) {
-	    cout << " ";
-	  }
-	}
-	cout << c[2][i] << endl;
-      }
-    }
+    print_option_list();
 
     // 5/12: I've taken this out because it's too long most of the
     // time. In the future, maybe I should make outputting the
@@ -1239,14 +1234,15 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	}
       }
 
-      if (getset_found==false) comlist=true;
+      if (getset_found==false) {
+	cout << "Command '" << sv[1] << "' not found.\n" << endl;
+	comlist=true;
+      }
 
     } else {
 
       // The user has given a command name as an parameter, so 
       // print out usage information for that command
-
-      terminal ter;
 
       bool redirected=false;
       if (!isatty(STDOUT_FILENO)) redirected=true;
@@ -1304,51 +1300,7 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 
     cout << desc << endl;
 
-    cout << "List of commands:\n" << endl;
-    
-    // Repackage the command list
-    vector<string> c[2];
-    size_t tot=0;
-    for(size_t i=0;i<clist.size();i++) {
-      if (clist[i].type!=comm_option_cl_param) {
-	c[0].push_back(clist[i].lng);
-	c[1].push_back(" ");
-	tot++;
-      }
-    }
-
-    // Sort
-    sort(c[0].begin(),c[0].end());
-
-    // Add the descriptions
-    for(size_t i=0;i<clist.size();i++) {
-      for(size_t j=0;j<tot;j++) {
-	if (c[0][j]==clist[i].lng) c[1][j]=clist[i].desc;
-      }
-    }
-
-    // Reformat into columns
-    columnify cfy;
-    vector<string> ct(tot);    
-    int align[2]={columnify::align_left,columnify::align_left};
-    cfy.align(c,2,tot,ct,align);
-
-    // Print final list
-    for(size_t i=0;i<tot;i++) {
-      cout << ct[i] << endl;
-    }
-
-    // AWS 5/31/2020: I find this a bit much, so I'm taking
-    // it out for now
-    /*
-      if (addl_help_cmd.length()>0) {
-      vector<string> str_rewrap;
-      rewrap_keep_endlines(addl_help_cmd,str_rewrap);
-      for(size_t j=0;j<str_rewrap.size();j++) {
-      cout << str_rewrap[j] << endl;
-      }
-      }
-    */
+    print_option_list();
     
   }
 
@@ -1773,7 +1725,7 @@ int cli::set_comm_option(comm_option_s &ic) {
 int cli::run_auto(int argc, char *argv[], int debug) {
 
   int ret;
-  
+
   std::vector<cmd_line_arg> ca;
   
   // ---------------------------------------

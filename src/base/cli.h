@@ -388,6 +388,9 @@ namespace o2scl {
 #ifndef DOXYGEN_NO_O2NS_INTERNAL
     
   protected:
+
+    /// Desc
+    int print_option_list();
     
     /// Output the parameter list
     int output_param_list();

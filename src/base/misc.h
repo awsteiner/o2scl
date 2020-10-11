@@ -835,7 +835,10 @@ namespace o2scl {
     bool is_redirected() {
       return redirected;
     }
-    
+
+    /// Determine string length, ignoring vt100 terminal sequences
+    size_t str_len(std::string str);
+
     /// Generate a horizontal rule
     std::string hrule(size_t n=78);
 

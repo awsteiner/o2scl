@@ -846,3 +846,24 @@ std::string terminal::eight_bit_summ() {
   }
   return oss.str();
 }
+
+size_t terminal::str_len(std::string str) {
+  size_t cnt=0, len=str.length();
+  for(size_t i=0;i<len;i++) {
+    int ic=((int)str[i]);
+    if (ic!=27) {
+      cnt++;
+    } else if (i+2<len && str[i+1]=='[' && str[i+2]=='m') {
+      i+=2;
+    } else if (i+2<len && str[i+1]=='[' && str[i+3]=='m') {
+      i+=3;
+    } else if (i+2<len && str[i+1]=='[' && str[i+4]=='m') {
+      i+=4;
+    } else if (i+2<len && str[i+1]=='(' && str[i+2]=='0') {
+      i+=2;
+    } else if (i+2<len && str[i+1]=='(' && str[i+2]=='B') {
+      i+=2;
+    }
+  }
+  return cnt;
+}

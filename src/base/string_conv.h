@@ -263,6 +263,12 @@ namespace o2scl {
 
   /** \brief Desc
    */
+  void rewrap_ignore_vt100(std::string str,
+			   std::vector<std::string> &sv,
+			   size_t ncol=79);
+  
+  /** \brief Desc
+   */
   void rewrap_color(std::string str, std::vector<std::string> &sv,
 		    size_t ncol=79);
   

@@ -637,18 +637,63 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     string temp_type=sv[1];
     string cur_type=type;
 
-    command_del(type);
-    command_add(temp_type);
-    
-    std::vector<std::string>::iterator it=sv.begin();
-    it++;
-    sv.erase(it);
-    
-    int ret=cl->comm_option_help(sv,itive_com);
+    bool valid_type=false;
+    for(size_t j=0;j<type_list.size() && valid_type==false;j++) {
+      if (temp_type==type_list[j]) {
+	valid_type=true;
+      }
+    }
 
-    command_del(type);
-    command_add(cur_type);
-    return ret;
+    if (valid_type) {
+      
+      command_del(type);
+      command_add(temp_type);
+      
+      if (cl->is_valid_option(sv[2])) {
+
+	string cmd=sv[2];
+	
+	std::vector<std::string>::iterator it=sv.begin();
+	it++;
+	sv.erase(it);
+	
+	cout << "Help for command " << ter.cyan_fg() << ter.bold()
+	     << cmd << ter.default_fg() << " given object of type "
+	     << ter.magenta_fg() << ter.bold()
+	     << sv[1] << ter.default_fg() << ".\n" << endl;
+	
+	int ret=cl->comm_option_help(sv,itive_com);
+	
+	command_del(temp_type);
+	command_add(cur_type);
+	
+	return ret;
+
+      } else {
+	
+	command_del(temp_type);
+	command_add(cur_type);
+	
+	cout << "Command " << ter.cyan_fg() << ter.bold()
+	     << sv[2] << ter.default_fg() << " not valid for type "
+	     << ter.magenta_fg() << ter.bold()
+	     << sv[1] << ter.default_fg() << ".\n" << endl;
+	
+	vector<string> sv2={"help","help"};
+	cl->comm_option_help(sv2,itive_com);
+	return 1;
+	
+      }
+      
+    } else {
+      cout << "Type " << ter.magenta_fg() << ter.bold()
+	   << sv[1] << ter.default_fg() << " not found.\n" << endl;
+
+      vector<string> sv2={"help","help"};
+      cl->comm_option_help(sv2,itive_com);
+      return 2;
+    }
+    
   }
 
   // Handle the special case 'help functions'
@@ -1009,13 +1054,15 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   string dsc=line+"\nNotes:\n\n";
   vector<std::string> sv2;
   
-  stemp="1. Help for general commands may be obtained with 'help ";
+  stemp="1. Help for commands which apply to the current object ";
+  stemp+="may be obtained with '-help ";
   stemp+="<command>'. Help for type-specific commands can be obtained ";
-  stemp+="by 'help <type> <command>'. A list of commands for each type ";
-  stemp+="can be obtained with 'commands <type>'. Required arguments ";
+  stemp+="by '-help <type> <command>'. A list of commands for each type ";
+  stemp+="can be obtained with 'commands <type>', or for all commands ";
+  stemp+="use '-commands all'. Required arguments ";
   stemp+="are surrounded by ";
   stemp+="<>'s and optional arguments are surrounded by []'s.\n";
-  rewrap(stemp,sv2,76);
+  rewrap_ignore_vt100(stemp,sv2,76);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
     dsc+="   "+sv2[j]+"\n";
@@ -1023,14 +1070,14 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   stemp="2. Options may also be specified in the environment variable ";
   stemp+=env_var_name+".\n";
-  rewrap(stemp,sv2,76);
+  rewrap_ignore_vt100(stemp,sv2,76);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
     dsc+="   "+sv2[j]+"\n";
   }
 
   stemp="3. Long options may be preceeded by two dashes.\n";
-  rewrap(stemp,sv2,76);
+  rewrap_ignore_vt100(stemp,sv2,76);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
     dsc+="   "+sv2[j]+"\n";
@@ -1038,7 +1085,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   stemp="4. In order to avoid confusion between arguments and functions, ";
   stemp+="use parenthesis and quotes, i.e. \"(-x*2)\" instead of -x*2.\n";
-  rewrap(stemp,sv2,76);
+  rewrap_ignore_vt100(stemp,sv2,76);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
     dsc+="   "+sv2[j]+"\n";
@@ -1046,7 +1093,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   stemp="5. Also, do not use a unary minus next to a binary operator, ";
   stemp+="i.e. use \"a>(-1)\" instead of \"a>-1\".\n\n";
-  rewrap(stemp,sv2,76);
+  rewrap_ignore_vt100(stemp,sv2,76);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
     dsc+="   "+sv2[j]+"\n";
@@ -1069,30 +1116,15 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   
   int ret=cl->comm_option_help(sv,itive_com);
 
+  if (sv.size()>=2 && cl->is_valid_option(sv[1])==false &&
+      cl->is_parameter(sv[1])==false) {
+    cout << "\n" << line << endl;
+  }
+  
   if (sv.size()<2 || (cl->is_valid_option(sv[1])==false &&
 		      cl->is_parameter(sv[1])==false)) {
     
     terminal ter;
-  
-    cout << "List of additional type-specific commands" << endl;
-    cout << "(use 'help <type> <command>' for more info):\n" << endl;
-
-    std::map<std::string,std::vector<std::string> >::iterator it;
-    for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
-      stemp=it->first+": ";
-      std::vector<std::string> &clist=it->second;
-      for(size_t j=0;j<clist.size()-1;j++) {
-	stemp+=clist[j]+", ";
-      }
-      stemp+=clist[clist.size()-1];
-      vector<std::string> sv2;
-      rewrap_color(stemp,sv2,77);
-      for (size_t j=0;j<sv2.size();j++) {
-	if (j==0) cout << sv2[j] << endl;
-	else cout << "  " << sv2[j] << endl;
-      }
-    }
-    cout << "\n" << line << endl;
 
     cout << "List of additional help topics (e.g. \"acol -help <topic>\"): ";
     cout << ter.green_fg() << ter.bold() << "functions" << ter.default_fg()

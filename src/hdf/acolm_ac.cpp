@@ -724,24 +724,66 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
 }
 
 int acol_manager::comm_commands(std::vector<std::string> &sv, bool itive_com) {
-  if (sv.size()==2) {
-    cout << "Commands argument: " << sv[1] << endl;
-    string temp_type=sv[1];
-    string cur_type=type;
 
-    command_del(cur_type);
-    command_add(temp_type);
+  terminal ter;
     
-    std::vector<std::string>::iterator it=sv.begin();
-    it++;
-    sv.erase(it);
-    int ret=cl->comm_option_commands(sv,itive_com);
+  if (sv.size()==2) {
 
-    command_del(temp_type);
-    command_add(cur_type);
-    return ret;
+    if (sv[1]=="all") {
+      cout << "Commands which do not require a current object:\n" << endl;
+      std::vector<std::string> comm_list=cl->get_option_list();
+      std::vector<std::string> comm_out;
+      screenify(comm_list.size(),comm_list,comm_out);
+      for(size_t j=0;j<comm_out.size();j++) {
+	cout << comm_out[j] << endl;
+      }
+      cout << endl;
+      std::map<std::string,std::vector<std::string> >::iterator it;
+      for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
+	cout << "Commands for an object of type " << ter.bold()
+	     << ter.magenta_fg() << it->first << ter.default_fg()
+	     << ":\n" << endl;
+	std::vector<std::string> &clist=it->second;
+	comm_out.clear();
+	screenify(clist.size(),clist,comm_out);
+	for(size_t j=0;j<comm_out.size();j++) {
+	  cout << comm_out[j] << endl;
+	}
+	cout << endl;
+      }
+      return 0;
+    } else {   
+      string temp_type=sv[1];
+      string cur_type=type;
+      
+      cout << "Commands for an object of type " << temp_type << ":\n"
+	   << endl;
+      
+      command_del(cur_type);
+      command_add(temp_type);
+      
+      std::vector<std::string>::iterator it=sv.begin();
+      it++;
+      sv.erase(it);
+      int ret=cl->comm_option_commands(sv,itive_com);
+      
+      command_del(temp_type);
+      command_add(cur_type);
+      
+      return ret;
+    }
   }
-  return cl->comm_option_commands(sv,itive_com);
+
+  if (type!="") {
+    cout << "Commands which do not require a current object or "
+	 << "which apply to\n  objects of type " << type << ".\n" << endl;
+  } else {
+    cout << "Commands which do not require a current object:\n" << endl;
+  }
+  int ret=cl->comm_option_commands(sv,itive_com);
+  cout << "Use '-commands all' for a list of all commands "
+       << "for the various types." << endl;
+  return ret;
 }
 
 int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {

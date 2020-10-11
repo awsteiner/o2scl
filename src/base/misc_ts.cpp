@@ -166,6 +166,8 @@ int main(void) {
   cout << ter.three_byte_summ() << endl;
   cout << endl;
 
+  cout << ter.str_len(ter.bold()) << endl;
+  
   t.report();
   return 0;
 }

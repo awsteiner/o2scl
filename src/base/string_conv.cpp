@@ -344,7 +344,6 @@ int o2scl::split_string_delim(string str, vector<string> &list,
   return 0;
 }
 
-  
 void o2scl::rewrap(std::string str, std::vector<std::string> &sv,
 		   size_t ncol) {
 
@@ -358,6 +357,37 @@ void o2scl::rewrap(std::string str, std::vector<std::string> &sv,
   for(size_t old_ix=0;old_ix<sv_tmp.size();old_ix++) {
     if (stmp.length()+sv_tmp[old_ix].length()+1<ncol) {
       if (stmp.length()==0) {
+	stmp+=sv_tmp[old_ix];
+      } else {
+	stmp+=((string)" ")+sv_tmp[old_ix];
+      }
+    } else {
+      sv.push_back(stmp);
+      stmp=sv_tmp[old_ix];
+    }
+  }
+  if (stmp.size()>0) {
+    sv.push_back(stmp);
+  }
+  
+  return;
+}
+
+void o2scl::rewrap_ignore_vt100(std::string str,
+				std::vector<std::string> &sv,
+				size_t ncol) {
+
+  if (sv.size()>0) sv.clear();
+  terminal ter;
+  
+  std::vector<std::string> sv_tmp;
+  split_string(str,sv_tmp);
+
+  string stmp;
+  if (sv.size()>0) sv.clear();
+  for(size_t old_ix=0;old_ix<sv_tmp.size();old_ix++) {
+    if (ter.str_len(stmp)+ter.str_len(sv_tmp[old_ix])+1<ncol) {
+      if (ter.str_len(stmp)==0) {
 	stmp+=sv_tmp[old_ix];
       } else {
 	stmp+=((string)" ")+sv_tmp[old_ix];

@@ -1528,6 +1528,10 @@ int acol_manager::setup_help() {
   cl->desc=((string)"acol: A data viewing and processing ")+
     "program for "+ter.bold()+"O2scl"+ter.default_fg()+".\n";
 
+#ifdef O2SCL_NEVER_DEFINED
+
+  // This code is now moved to acolm_gi.cpp
+  
   ostringstream oss;
   oss << ((char)27) << '(' << '0';
   for(size_t i=0;i<78;i++) oss << 'q';
@@ -1538,13 +1542,14 @@ int acol_manager::setup_help() {
   string dsc=line+"\nNotes:\n\n";
   vector<std::string> sv;
   
-  stemp="1. Help for general commands may be obtained with 'help ";
+  stemp="1. Help for general commands may be obtained with '-help ";
   stemp+="<command>'. Help for type-specific commands can be obtained ";
-  stemp+="by 'help <type> <command>'. A list of commands for each type ";
-  stemp+="can be obtained with 'commands <type>'. Required arguments ";
+  stemp+="by '-help <type> <command>'. A list of commands for each type ";
+  stemp+="can be obtained with '-commands <type>', or for all commands ";
+  stemp+=" use '-commands all'. Required arguments ";
   stemp+="are surrounded by ";
   stemp+="<>'s and optional arguments are surrounded by []'s.\n";
-  rewrap(stemp,sv,76);
+  rewrap_ignore_vt100(stemp,sv,76);
   dsc+=sv[0]+"\n";
   for(size_t j=1;j<sv.size();j++) {
     dsc+="   "+sv[j]+"\n";
@@ -1552,15 +1557,14 @@ int acol_manager::setup_help() {
   
   stemp="2. Options may also be specified in the environment variable ";
   stemp+=env_var_name+".\n";
-  //stemp+="ACOL_DEFAULTS.\n";
-  rewrap(stemp,sv,76);
+  rewrap_ignore_vt100(stemp,sv,76);
   dsc+=sv[0]+"\n";
   for(size_t j=1;j<sv.size();j++) {
     dsc+="   "+sv[j]+"\n";
   }
 
   stemp="3. Long options may be preceeded by two dashes.\n";
-  rewrap(stemp,sv,76);
+  rewrap_ignore_vt100(stemp,sv,76);
   dsc+=sv[0]+"\n";
   for(size_t j=1;j<sv.size();j++) {
     dsc+="   "+sv[j]+"\n";
@@ -1568,7 +1572,7 @@ int acol_manager::setup_help() {
 
   stemp="4. In order to avoid confusion between arguments and functions, ";
   stemp+="use parenthesis and quotes, i.e. \"(-x*2)\" instead of -x*2.\n";
-  rewrap(stemp,sv,76);
+  rewrap_ignore_vt100(stemp,sv,76);
   dsc+=sv[0]+"\n";
   for(size_t j=1;j<sv.size();j++) {
     dsc+="   "+sv[j]+"\n";
@@ -1576,7 +1580,7 @@ int acol_manager::setup_help() {
 
   stemp="5. Also, do not use a unary minus next to a binary operator, ";
   stemp+="i.e. use \"a>(-1)\" instead of \"a>-1\".\n\n";
-  rewrap(stemp,sv,76);
+  rewrap_ignore_vt100(stemp,sv,76);
   dsc+=sv[0]+"\n";
   for(size_t j=1;j<sv.size();j++) {
     dsc+="   "+sv[j]+"\n";
@@ -1584,25 +1588,6 @@ int acol_manager::setup_help() {
 
   dsc+=line+"\n";
   
-  dsc+="List of additional type-specific commands\n";
-  dsc+="(use 'help <type> <command>' for more info):\n\n";
-  std::map<std::string,std::vector<std::string> >::iterator it;
-  for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
-    stemp=it->first+": ";
-    std::vector<std::string> &clist=it->second;
-    for(size_t j=0;j<clist.size()-1;j++) {
-      stemp+=clist[j]+", ";
-    }
-    stemp+=clist[clist.size()-1];
-    vector<std::string> sv;
-    rewrap(stemp,sv,77);
-    dsc+=sv[0]+"\n";
-    for(size_t j=1;j<sv.size();j++) {
-      dsc+="  "+sv[j]+"\n";
-    }
-  }
-  dsc+=line+"\n";
-
   dsc+="List of additional help topics (e.g. \"acol -help <topic>\"): ";
   dsc+="functions, mult-vector-spec, types, value-spec, and vector-spec.\n\n";
   
@@ -1618,6 +1603,8 @@ int acol_manager::setup_help() {
   cl->addl_help_cmd=dsc;
   cl->addl_help_cli=dsc;
 
+#endif
+  
   return 0;
 }
 
@@ -1699,24 +1686,28 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
   cl->remove_comm_option("help");
   cl->remove_comm_option("commands");
   static const size_t narr2=2;
-  comm_option_s options_arr2[narr2]={
-				     {'h',"help","Show help information.",0,2,"[type] <command>",
-				      ((std::string)"Show generic help information, or, if an ")+
-				      "argument is given "+
-				      "give the documentation for the specified command. "+
-				      "Note that required arguments are typically given inside "+
-				      "angled brackes <> while optional arguments are given "+
-				      "inside square brackets [].",
-				      new o2scl::comm_option_mfptr<acol_manager>
-				      (this,&acol_manager::comm_help),both},
-				     {0,"commands",
-				      "List available commands for current or specified type.",
-				      0,1,"[type]",((string)"Output the commands available for ")+
-				      "the current type, or, if the optional type argument is given "+
-				      "then output the commands available for that type.",
-				      new o2scl::comm_option_mfptr<acol_manager>
-				      (this,&acol_manager::comm_commands),both}
-  };
+  comm_option_s options_arr2[narr2]=
+    {
+     {'h',"help","Show help information.",0,2,
+      "[type command] or [command]",
+      ((std::string)"Show generic help information, or, if an ")+
+      "argument is given "+
+      "give the documentation for the specified command. "+
+      "If two arguments are given, show the help for a type-specific "+
+      "command. "+
+      "Note that required arguments are typically given inside "+
+      "angled brackes <> while optional arguments are given "+
+      "inside square brackets [].",
+      new o2scl::comm_option_mfptr<acol_manager>
+      (this,&acol_manager::comm_help),both},
+     {0,"commands",
+      "List available commands for current or specified type.",
+      0,1,"[type]",((string)"Output the commands available for ")+
+      "the current type, or, if the optional type argument is given "+
+      "then output the commands available for that type.",
+      new o2scl::comm_option_mfptr<acol_manager>
+      (this,&acol_manager::comm_commands),both}
+    };
   cl->set_comm_option_vec(narr2,options_arr2);
 
   //-------------------------------------------------------------------
