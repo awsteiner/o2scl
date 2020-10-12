@@ -465,8 +465,11 @@ void o2scl::rewrap_color(std::string str, std::vector<std::string> &sv,
 
 void o2scl::rewrap_keep_endlines(std::string str,
 				 std::vector<std::string> &sv,
-				 size_t ncol, int verbose) {
+				 size_t ncol, int verbose,
+				 bool ignore_vt100) {
 
+  terminal ter;
+  
   if (sv.size()>0) sv.clear();
 
   // First, split with the endline characters to
@@ -485,7 +488,7 @@ void o2scl::rewrap_keep_endlines(std::string str,
 
   for(size_t k=0;k<sv_endlines.size();k++) {
     
-    if (sv_endlines[k].length()<ncol) {
+    if (ter.str_len(sv_endlines[k])<ncol) {
 
       // If the string is not too wide, even if it's empty,
       // just add it to the final list
@@ -508,13 +511,13 @@ void o2scl::rewrap_keep_endlines(std::string str,
 	  
 	// Proceed the next addition will not make the string too
 	// long
-	if (stmp.length()+sv_tmp[old_ix].length()+1<ncol) {
+	if (ter.str_len(stmp)+ter.str_len(sv_tmp[old_ix])+1<ncol) {
 	    
 	  // If this entry in svn_tmp is empty, then that's because
 	  // there were adjacent spaces at the beginning of
 	  // this entry in svn_endlines. Add a space to the
 	  // temporary string and flip the flag
-	  if (sv_tmp[old_ix].length()==0) {
+	  if (ter.str_len(sv_tmp[old_ix])==0) {
 	      
 	    preceeding_space=true;
 	    stmp+=' ';
@@ -523,7 +526,7 @@ void o2scl::rewrap_keep_endlines(std::string str,
 	      
 	    // Add the next entry to the temporary string,
 	    // with or without a space as necessary
-	    if (stmp.length()==0 || preceeding_space) {
+	    if (ter.str_len(stmp)==0 || preceeding_space) {
 	      stmp+=sv_tmp[old_ix];
 	    } else {
 	      stmp+=((string)" ")+sv_tmp[old_ix];

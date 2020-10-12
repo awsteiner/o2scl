@@ -1246,7 +1246,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=19;
+  static const int narr=21;
 
   string type_list_str;
   for(size_t i=0;i<type_list.size()-1;i++) {
@@ -1339,6 +1339,14 @@ int acol_manager::setup_options() {
       "for the syntax). The slice function can be written in terms "+
       "of the x- and y-grid values which are referred to by name.\n\n",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
+      both},
+     {0,"docs","Open local HTML documentation.",0,1,
+      "[topic]","",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_docs),
+      both},
+     {0,"wdocs","Open remote HTML documentation.",0,1,
+      "[topic]","",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_wdocs),
       both},
      {0,"download","Download file from specified URL.",0,4,
       "<file> <URL> [hash, \"file:\"hash_filename, or \"none\"] [directory]",
@@ -1689,10 +1697,10 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
   comm_option_s options_arr2[narr2]=
     {
      {'h',"help","Show help information.",0,2,
-      "[type command] or [command]",
+      "[type command] or [command] or [topic]",
       ((std::string)"Show generic help information, or, if an ")+
       "argument is given "+
-      "give the documentation for the specified command. "+
+      "give the documentation for the specified command or topic. "+
       "If two arguments are given, show the help for a type-specific "+
       "command. "+
       "Note that required arguments are typically given inside "+

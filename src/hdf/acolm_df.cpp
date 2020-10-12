@@ -342,6 +342,28 @@ int acol_manager::comm_diag(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
+int acol_manager::comm_docs(std::vector<std::string> &sv, bool itive_com) {
+
+  string cmd;
+
+#ifdef O2SCL_LINUX
+  cmd="xdg-open ";
+#else
+#ifdef O2SCL_OSX
+  cmd="open "; 
+#else
+  cmd="xdg-open ";
+#endif
+#endif
+
+  cmd+="file://"+o2scl_settings.get_doc_dir()+"html/acol.html &";
+  cout << "Using command: " << cmd << endl;
+
+  system(cmd.c_str());
+  
+  return 0;
+}
+
 int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
 
   cloud_file cf;

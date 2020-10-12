@@ -723,7 +723,8 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
-int acol_manager::comm_commands(std::vector<std::string> &sv, bool itive_com) {
+int acol_manager::comm_commands(std::vector<std::string> &sv,
+				bool itive_com) {
 
   terminal ter;
     
@@ -733,6 +734,9 @@ int acol_manager::comm_commands(std::vector<std::string> &sv, bool itive_com) {
       cout << "Commands which do not require a current object:\n" << endl;
       std::vector<std::string> comm_list=cl->get_option_list();
       std::vector<std::string> comm_out;
+      for(size_t j=0;j<comm_list.size();j++) {
+	comm_list[j]=ter.cyan_fg()+ter.bold()+comm_list[j]+ter.default_fg();
+      }
       screenify(comm_list.size(),comm_list,comm_out);
       for(size_t j=0;j<comm_out.size();j++) {
 	cout << comm_out[j] << endl;
@@ -743,7 +747,10 @@ int acol_manager::comm_commands(std::vector<std::string> &sv, bool itive_com) {
 	cout << "Commands for an object of type " << ter.bold()
 	     << ter.magenta_fg() << it->first << ter.default_fg()
 	     << ":\n" << endl;
-	std::vector<std::string> &clist=it->second;
+	std::vector<std::string> clist=it->second;
+	for(size_t j=0;j<clist.size();j++) {
+	  clist[j]=ter.cyan_fg()+ter.bold()+clist[j]+ter.default_fg();
+	}
 	comm_out.clear();
 	screenify(clist.size(),clist,comm_out);
 	for(size_t j=0;j<comm_out.size();j++) {

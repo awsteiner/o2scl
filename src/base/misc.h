@@ -231,86 +231,6 @@ namespace o2scl {
    */
   bool file_exists(std::string fname);
 
-  /** \brief Reformat the columns for output of width \c size 
-
-      Given a string array \c in_cols of size \c nin, screenify()
-      reformats the array into columns creating a new string array \c
-      out_cols.
-      
-      For example, for an array of 10 strings 
-      \verbatim
-      test1
-      test_of_string2
-      test_of_string3
-      test_of_string4
-      test5
-      test_of_string6
-      test_of_string77
-      test_of_string8
-      test_of_string9
-      test_of_string10
-      \endverbatim
-      screenify() will create an array of 3 new strings:
-      \verbatim
-      test1            test_of_string4  test_of_string77 test_of_string10
-      test_of_string2  test5            test_of_string8
-      test_of_string3  test_of_string6  test_of_string9
-      \endverbatim
-      
-      If the value of \c max_size is less than the length of the
-      longest input string (plus one for a space character), then the
-      output strings may have a larger length than \c max_size.
-  */
-  template<class string_arr_t>
-    void screenify(size_t nin, const string_arr_t &in_cols, 
-		   std::vector<std::string> &out_cols,
-		   size_t max_size=80) {
-
-    if (nin==0) {
-      O2SCL_ERR("No strings specified in screenify().",exc_efailed);
-    }
-        
-    size_t i,j,lmax,itemp;
-    std::string *in_spaces=new std::string[nin];
-    
-    // Determine size of largest string
-    lmax=0;
-    for(i=0;i<nin;i++) {
-      if (lmax<in_cols[i].size()) lmax=in_cols[i].size();
-    }
-
-    // Pad with spaces
-    for(i=0;i<nin;i++) {
-      itemp=in_cols[i].size();
-      in_spaces[i]=in_cols[i];
-      for(j=0;j<lmax+1-itemp;j++) {
-	in_spaces[i]+=' ';
-      }
-    }
-
-    // Determine number of rows and columns
-    size_t row, col;
-    col=max_size/(lmax+1);
-    if (col==0) col=1;
-    if (nin/col*col==nin) row=nin/col;
-    else row=nin/col+1;
-
-    // Create outc
-    out_cols.reserve(row);
-    for(i=0;i<row;i++) {
-      out_cols.push_back("");
-      for(j=0;j<col;j++) {
-	if (i+j*row<nin) {
-	  out_cols[i]+=in_spaces[i+j*row];
-	}
-      }
-    }
-
-    delete[] in_spaces;
-
-    return;
-  }
-
   /** \brief Count the number of words in the string \c str 
    
       Words are defined as groups of characters separated by
@@ -922,6 +842,88 @@ namespace o2scl {
     
   };
   
+  /** \brief Reformat the columns for output of width \c size 
+
+      Given a string array \c in_cols of size \c nin, screenify()
+      reformats the array into columns creating a new string array \c
+      out_cols.
+      
+      For example, for an array of 10 strings 
+      \verbatim
+      test1
+      test_of_string2
+      test_of_string3
+      test_of_string4
+      test5
+      test_of_string6
+      test_of_string77
+      test_of_string8
+      test_of_string9
+      test_of_string10
+      \endverbatim
+      screenify() will create an array of 3 new strings:
+      \verbatim
+      test1            test_of_string4  test_of_string77 test_of_string10
+      test_of_string2  test5            test_of_string8
+      test_of_string3  test_of_string6  test_of_string9
+      \endverbatim
+      
+      If the value of \c max_size is less than the length of the
+      longest input string (plus one for a space character), then the
+      output strings may have a larger length than \c max_size.
+  */
+  template<class string_arr_t>
+    void screenify(size_t nin, const string_arr_t &in_cols, 
+		   std::vector<std::string> &out_cols,
+		   size_t max_size=80) {
+
+    if (nin==0) {
+      O2SCL_ERR("No strings specified in screenify().",exc_efailed);
+    }
+
+    size_t i,j,lmax,itemp;
+    std::vector<std::string> in_spaces(nin);
+
+    terminal ter;
+    
+    // Determine size of largest string
+    lmax=0;
+    for(i=0;i<nin;i++) {
+      if (lmax<ter.str_len(in_cols[i])) {
+	lmax=ter.str_len(in_cols[i]);
+      }
+    }
+
+    // Pad with spaces
+    for(i=0;i<nin;i++) {
+      itemp=ter.str_len(in_cols[i]);
+      in_spaces[i]=in_cols[i];
+      for(j=0;j<lmax+1-itemp;j++) {
+	in_spaces[i]+=' ';
+      }
+    }
+
+    // Determine number of rows and columns
+    size_t row, col;
+    col=max_size/(lmax+1);
+    if (col==0) col=1;
+    if (nin/col*col==nin) row=nin/col;
+    else row=nin/col+1;
+
+    // Create outc
+    out_cols.reserve(row);
+    for(i=0;i<row;i++) {
+      out_cols.push_back("");
+      for(j=0;j<col;j++) {
+	if (i+j*row<nin) {
+	  out_cols[i]+=in_spaces[i+j*row];
+	}
+      }
+    }
+
+    return;
+  }
+
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

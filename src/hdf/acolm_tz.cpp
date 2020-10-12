@@ -747,7 +747,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   if (o2scl_settings.hdf_support()) {
     unsigned maj, min, rel;
     o2scl_settings.hdf5_header_version(maj,min,rel);
-    cout << "  HDF5 version numbers during O2scl compilation: "
+    cout << "  HDF5 version numbers when O2scl was compiled: "
 	 << maj << " " << min << " " << rel << endl;
     o2scl_settings.hdf5_lib_version(maj,min,rel);
     cout << "  HDF5 version numbers in libraries currently linked: "
@@ -767,6 +767,10 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << "Data directory: " << o2scl_settings.get_data_dir() << endl;
   cout << "Documentation directory: "
        << o2scl_settings.get_doc_dir() << endl;
+  cout << "Local documentation URL:\n  file://"
+       << o2scl_settings.get_doc_dir() << "html/index.html" << endl;
+  cout << "Online documentation URL:\n  http://neutronstars.utk.edu/code/o2scl"
+       << "/html/index.html" << endl;
   cout << "System type: " << o2scl_settings.system_type() << endl;
   cout << endl;
   cout << "o2scl_name: " << o2scl_settings.o2scl_name() << endl;
@@ -939,5 +943,27 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
        << endl;
   
   return 1;
+}
+
+int acol_manager::comm_wdocs(std::vector<std::string> &sv, bool itive_com) {
+
+  string cmd;
+
+#ifdef O2SCL_LINUX
+  cmd="xdg-open ";
+#else
+#ifdef O2SCL_OSX
+  cmd="open "; 
+#else
+  cmd="xdg-open ";
+#endif
+#endif
+
+  cmd+="https://neutronstars.utk.edu/code/o2scl/html/acol.html &";
+  cout << "Using command: " << cmd << endl;
+
+  system(cmd.c_str());
+  
+  return 0;
 }
 

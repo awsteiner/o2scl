@@ -335,6 +335,10 @@ namespace o2scl_acol {
     /// Download a file from a specified URL
     virtual int comm_download(std::vector<std::string> &sv, bool itive_com);
 
+    /// Download a file from a specified URL
+    virtual int comm_docs(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_wdocs(std::vector<std::string> &sv, bool itive_com);
+
     /// Delete a column
     virtual int comm_delete_col(std::vector<std::string> &sv, bool itive_com);
 

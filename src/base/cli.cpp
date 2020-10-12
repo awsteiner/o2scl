@@ -405,7 +405,7 @@ int cli::comm_option_no_intro(vector<string> &sv, bool itive_com) {
 int cli::comm_option_commands(vector<string> &sv, bool itive_com) {
 
   // Form a list of the commands
-  string *slist=new string[clist.size()];
+  std::string *slist=new string[clist.size()];
   for(size_t i=0;i<clist.size();i++) {
     slist[i]=clist[i].lng;
   }

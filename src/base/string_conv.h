@@ -282,7 +282,8 @@ namespace o2scl {
       '\n' as it does normal characters.
   */
   void rewrap_keep_endlines(std::string str, std::vector<std::string> &sv,
-			    size_t ncol=79, int verbose=0);
+			    size_t ncol=79, int verbose=0,
+			    bool ignore_vt100=true);
 
   /** \brief Convert a string-based list of unsigned integers
       to a list

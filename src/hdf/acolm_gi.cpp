@@ -1100,13 +1100,18 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   }
 
   if (ter.is_redirected()==false) {
-    dsc+="6. Types are denoted as "+ter.magenta_fg()+ter.bold()+"char";
-    dsc+=ter.default_fg()+", commands as "+ter.cyan_fg()+ter.bold();
-    dsc+="function"+ter.default_fg()+",\n   get/set parameters as ";
-    dsc+=ter.red_fg()+ter.bold()+"verbose"+ter.default_fg();
-    dsc+=", and help topics as\n   ";
-    dsc+=ter.green_fg()+ter.bold()+"functions"+ter.default_fg();
-    dsc+=".\n";
+    stemp="6. Types are denoted as "+ter.magenta_fg()+ter.bold()+"char";
+    stemp+=ter.default_fg()+", commands as "+ter.cyan_fg()+ter.bold();
+    stemp+="function"+ter.default_fg()+",\n   get/set parameters as ";
+    stemp+=ter.red_fg()+ter.bold()+"verbose"+ter.default_fg();
+    stemp+=", and help topics as\n   ";
+    stemp+=ter.green_fg()+ter.bold()+"functions"+ter.default_fg();
+    stemp+=".\n";
+    rewrap_ignore_vt100(stemp,sv2,76);
+    dsc+=sv2[0]+"\n";
+    for(size_t j=1;j<sv2.size();j++) {
+      dsc+="   "+sv2[j]+"\n";
+    }
   }
   
   dsc+=line+"\n";
