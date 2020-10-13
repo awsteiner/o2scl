@@ -356,7 +356,28 @@ int acol_manager::comm_docs(std::vector<std::string> &sv, bool itive_com) {
 #endif
 #endif
 
-  cmd+="file://"+o2scl_settings.get_doc_dir()+"html/acol.html &";
+  if (sv.size()>=2) {
+    if (sv[1].length()>40) {
+      sv[1]=sv[1].substr(0,40);
+    }
+    for(size_t i=0;i<sv[1].length();i++) {
+      // If there is a space, then replace it with "%20"
+      if (sv[1][i]==' ') {
+	sv[1].replace(sv[1].begin()+i,sv[1].begin()+i+1,"%20");
+	i=0;
+      } else if (!isalnum(sv[1][i]) && sv[1][i]!='%') {
+	// If there is some other non-alphanumeric, remove it
+	sv[1].replace(sv[1].begin()+i,sv[1].begin()+i+1,"");
+	i=0;
+      }
+    }
+    cmd+=((string)"\"file://")+
+      o2scl_settings.get_doc_dir()+
+      "html/search.html?q="+sv[1]+"\" &";
+  } else {
+    cmd+="file://"+o2scl_settings.get_doc_dir()+"html/acol.html &";
+  }
+  
   cout << "Using command: " << cmd << endl;
 
   system(cmd.c_str());

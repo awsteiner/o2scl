@@ -1340,12 +1340,26 @@ int acol_manager::setup_options() {
       "of the x- and y-grid values which are referred to by name.\n\n",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
       both},
-     {0,"docs","Open local HTML documentation.",0,1,
-      "[topic]","",
+     {0,"docs","Open local HTML docs for acol or an O2scl topic.",0,1,
+      "[topic]",
+      ((string)"If [topic] is unspecified, this command opens up the ")+
+      "local HTML documentation for acol in the default web browser "+
+      "using 'open' on OSX and "+
+      "'xdg-open' on other systems. If a topic is specified, then "+
+      "the closest O2scl documentation web page is opened. In order "+
+      "to open the remote version of the documentation instead of "+
+      "the local copy, use 'wdocs' instead.",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_docs),
       both},
-     {0,"wdocs","Open remote HTML documentation.",0,1,
-      "[topic]","",
+     {0,"wdocs","Open remote HTML docs for acol or an O2scl topic.",0,1,
+      "[topic]",
+      ((string)"If [topic] is unspecified, this command opens up the ")+
+      "remote HTML documentation for acol in the default web browser "+
+      "using 'open' on OSX and "+
+      "'xdg-open' on other systems. If a topic is specified, then "+
+      "the closest O2scl documentation web page is opened. In order "+
+      "to open the local version of the documentation instead of "+
+      "the remote copy, use 'docs' instead.",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_wdocs),
       both},
      {0,"download","Download file from specified URL.",0,4,
