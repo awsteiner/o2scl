@@ -1351,15 +1351,20 @@ int acol_manager::setup_options() {
       "the local copy, use 'wdocs' instead.",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_docs),
       both},
-     {0,"wdocs","Open remote HTML docs for acol or an O2scl topic.",0,1,
-      "[topic]",
-      ((string)"If [topic] is unspecified, this command opens up the ")+
+     {0,"wdocs","Open remote HTML docs for acol or an O2scl topic.",0,2,
+      "[search_term], [topic] or [section search_term]",
+      ((string)"If no arguments are given, this command opens up the ")+
       "remote HTML documentation for acol in the default web browser "+
       "using 'open' on OSX and "+
-      "'xdg-open' on other systems. If a topic is specified, then "+
-      "the closest O2scl documentation web page is opened. In order "+
+      "'xdg-open' on other systems. If a [topic] is specified, then "+
+      "the associated O2slcl web page is opened. If the argument "+
+      "does not match an already known topic, then the search feature "+
+      "on the O2scl web page is opened using the specified search term. "+
+      "Note that, for search terms, spaces can be included using e.g. "+
+      "'-wdocs \"Simulated annealing\"'. Valid sections are either "+
+      "\"eos\" or \"part\". In order "+
       "to open the local version of the documentation instead of "+
-      "the remote copy, use 'docs' instead.",
+      "the remote copy, use 'docs' instead of 'wdocs'.",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_wdocs),
       both},
      {0,"download","Download file from specified URL.",0,4,

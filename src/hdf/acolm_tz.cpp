@@ -966,22 +966,39 @@ int acol_manager::comm_wdocs(std::vector<std::string> &sv, bool itive_com) {
     }
   */
   if (sv.size()>=2) {
-    if (sv[1].length()>40) {
-      sv[1]=sv[1].substr(0,40);
+    string term=sv[1];
+    string section;
+    if (sv.size()>=3) {
+      term=sv[2];
+      section=sv[1];
+      if (section!="part" && section!="eos") {
+	section="";
+      }
     }
-    for(size_t i=0;i<sv[1].length();i++) {
+    if (term.length()>40) {
+      term=term.substr(0,40);
+    }
+    for(size_t i=0;i<term.length();i++) {
       // If there is a space, then replace it with "%20"
-      if (sv[1][i]==' ') {
-	sv[1].replace(sv[1].begin()+i,sv[1].begin()+i+1,"%20");
+      if (term[i]==' ') {
+	term.replace(term.begin()+i,term.begin()+i+1,"%20");
 	i=0;
-      } else if (!isalnum(sv[1][i]) && sv[1][i]!='%') {
+      } else if (!isalnum(term[i]) && term[i]!='%') {
 	// If there is some other non-alphanumeric, remove it
-	sv[1].replace(sv[1].begin()+i,sv[1].begin()+i+1,"");
+	term.replace(term.begin()+i,term.begin()+i+1,"");
 	i=0;
       }
     }
-    cmd+=((string)"http://neutronstars.utk.edu/code/")+
-      "o2scl-dev/html/search.html?q="+sv[1]+" &";
+    if (section=="part") {
+      cmd+=((string)"http://neutronstars.utk.edu/code/")+
+	"o2scl-dev/part/html/search.html?q="+term+" &";
+    } else if (section=="eos") {
+      cmd+=((string)"http://neutronstars.utk.edu/code/")+
+	"o2scl-dev/eos/html/search.html?q="+term+" &";
+    } else {
+      cmd+=((string)"http://neutronstars.utk.edu/code/")+
+      "o2scl-dev/html/search.html?q="+term+" &";
+    }
   } else {
     cmd+="https://neutronstars.utk.edu/code/o2scl/html/acol.html &";
   }
