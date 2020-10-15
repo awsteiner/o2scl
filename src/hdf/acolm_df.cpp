@@ -1242,12 +1242,12 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
 	vars[((string)"i")+szttos(j)]=ix[j];
 	vars[((string)"x")+szttos(j)]=tensor_grid_obj.get_grid(j,ix[j]);
       }
-      vars["v"]=tensor_obj.get(ix);
+      vars["v"]=tensor_grid_obj.get(ix);
       if (cond_func.length()==0 || calc_cond.eval(&vars)>0.5) {
 	tensor_grid_obj.set(ix,calc.eval(&vars));
       }
     }
-    
+
   } else {
     cerr << "Not implemented for type " << type << " ." << endl;
     return exc_efailed;
