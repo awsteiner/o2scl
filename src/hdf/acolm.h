@@ -121,10 +121,6 @@ namespace o2scl_acol {
      */
     o2scl::comm_option_mfptr<acol_manager> cset;
     
-    /** \brief Add new commands for type \c new_type
-     */
-    void command_add(std::string new_type);
-    
 #ifdef DOXYGEN
     /// The number formatter for html output
     format_float ffl;
@@ -254,15 +250,21 @@ namespace o2scl_acol {
     */
     void clear_obj();
 
-    /** \brief Remove the type-specific commands
-     */
-    void command_del(std::string ltype);
-    
     // Ensure \c col is unique from entries in \c cnames
     //int make_unique_name(std::string &col, std::vector<std::string> &cnames);
 
   public:
 
+    /** \brief Add new commands for type \c new_type
+     */
+    void command_add(std::string new_type);
+    
+    /** \brief Remove the type-specific commands
+
+	\note This needs to be public for the o2graph interface
+     */
+    void command_del(std::string ltype);
+    
     /** \brief Get the verbose parameter
 	
 	This function is used in \ref o2scl_acol_mult_vectors_to_conts() .
@@ -869,6 +871,13 @@ extern "C" {
   int o2scl_acol_get_cli_options(void *vp, int &n, int *&sizes,
 				 char *&chlist);
 
+  /** \brief Get the list of options/commands from the acol_manager
+      cli object
+   */
+  int o2scl_acol_get_cli_options_type(void *vp, char *type,
+				      int &n, int *&sizes,
+				      char *&chlist);
+  
   /** \brief Obtain the description of a parameter from the 
       acol_manager cli object
    */

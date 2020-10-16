@@ -627,3 +627,36 @@ int o2scl_acol_get_cli_options(void *vp, int &n, int *&sizes,
   return 0;
 }
 
+int o2scl_acol_get_cli_options_type(void *vp, char *type,
+				    int &n, int *&sizes,
+				    char *&chlist) {
+
+  string temp_type=type;
+  
+  o2scl_acol::acol_manager *amp=(o2scl_acol::acol_manager *)vp;
+  n=amp->table_obj.get_nlines();
+  amp->ctemp.clear();
+  amp->itemp.clear();
+
+  string cur_type=amp->type;
+  
+  amp->command_del(cur_type);
+  amp->command_add(temp_type);
+  
+  vector<string> options=amp->cl->get_option_list();
+  for(size_t i=0;i<options.size();i++) {
+    amp->itemp.push_back(options[i].length());
+    for(size_t j=0;j<options[i].length();j++) {
+      amp->ctemp.push_back(options[i][j]);
+    }
+  }  
+  n=options.size();
+  sizes=&(amp->itemp[0]);
+  chlist=&(amp->ctemp[0]);
+
+  amp->command_del(temp_type);
+  amp->command_add(cur_type);
+  
+  return 0;
+}
+
