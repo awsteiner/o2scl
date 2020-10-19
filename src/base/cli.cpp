@@ -3019,9 +3019,9 @@ int cli::comm_option_license(vector<string> &sv, bool itive_com) {
     
   } else {
     
-    (*outs) << "To output this information to a file, give the filename\n"
-	    << "as the first argument of the 'license' command. The file,\n"
-	    << "if already present, will be overwritten.\n" << endl;
+    (*outs) << "To output this information to a file, give the filename "
+	    << "as the first\nargument of the 'license' command. The file,"
+	    << "if already present, will be\noverwritten." << endl;
   }
 
   return 0;
