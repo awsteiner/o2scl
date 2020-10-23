@@ -1075,7 +1075,7 @@ namespace o2scl_hdf {
 	  sline1=sline1.substr(0,sline1.length()-1);
 	}
 	if (verbose>0) {
-	  std::cout << "Read line "
+	  std::cout << "Read line: "
 		    << sline1 << std::endl;
 	}
 	v.push_back(sline1);
@@ -1092,7 +1092,7 @@ namespace o2scl_hdf {
 
 #endif
       
-      return o2scl::exc_efailed;
+      return 0;
 
     } else if (spec.find("python:")==0) {
       

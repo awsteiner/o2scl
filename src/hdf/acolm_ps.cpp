@@ -102,6 +102,9 @@ int acol_manager::comm_slack(std::vector<std::string> &sv, bool itive_com) {
       }
     }
   }
+  if (smess.channel[0]!='#') {
+    smess.channel=((string)("#"))+smess.channel;
+  }
   cout << "Set Slack channel to " << smess.channel << endl;
   if (smess.username.length()==0) {
     if (smess.set_username_from_env("O2SCL_SLACK_USERNAME")==false) {
@@ -117,11 +120,16 @@ int acol_manager::comm_slack(std::vector<std::string> &sv, bool itive_com) {
   }
 
   std::vector<std::string> slist;
+  int ss_ret;
   if (sv.size()>=3) {
-    strings_spec(sv[2],slist,3,true);
+    ss_ret=strings_spec(sv[2],slist,3,true);
   } else {
-    strings_spec(sv[1],slist,3,true);
+    ss_ret=strings_spec(sv[1],slist,3,true);
   }
+  if (ss_ret!=0) {
+    cerr << "String specification failed." << endl;
+  }
+  
   std::string stmp;
   for(size_t j=0;j<slist.size();j++) {
     stmp+=slist[j];
