@@ -55,9 +55,9 @@ namespace o2scl {
       object as input?
   */
   class columnify {
-  
+
   public:
-  
+
     columnify() {
     }
 
@@ -230,9 +230,70 @@ namespace o2scl {
 
       return 0;
     }
-  
+
   };
 
+#ifdef O2SCL_NEVER_DEFINED  
+
+  /** \brief Lazy table formatting
+   */
+  class auto_table {
+    
+  protected:
+
+    std::vector<std::string> lines;
+    size_t row_max;
+    std::vector<int> aligns;
+    bool inside_table;
+    
+  public:
+
+    auto_table() {
+      inside_table=false;
+      row_max=100;
+    }      
+    
+    /** \brief Desc
+     */
+    void add_string(std::string s, bool endl=false) {
+      if (inside_table==false) {
+	if (lines.size()<2) {
+	  lines[lines.size()-1]+=s;
+	  if (endl) {
+	    lines.push_back("");
+	  }
+	}
+	if (lines.size()==2) {
+	  std::vector<std::string> vs1, vs2;
+	  split_string(lines[0],vs1);
+	  split_string(lines[1],vs2);
+	  size_t c1=vs1.size();
+	  size_t c2=vs2.size();
+	  if (c1==c2) {
+	    inside_table=true;
+	    aligns.resize(c1);
+	    for(size_t j=0;j<c1;j++) {
+	      if (!is_number(vs2[j])) {
+		aligns[j]=columnify::align_left;
+	      } else {
+		aligns[j]=columnify::align_dp;
+	      }
+	    }
+	  }
+	}
+      }
+      return;
+    }
+
+  };
+
+  auto_table &operator<<(auto_table &c, double d) {
+    std::cout << "Here: " << d << std::endl;
+    return c;
+  }
+
+#endif
+    
   /// \name Matrix output functions from src/base/columnify.h
   //@{
   /** \brief A operator for simple matrix output using \c operator()

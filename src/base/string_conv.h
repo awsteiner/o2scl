@@ -246,7 +246,6 @@ namespace o2scl {
       strange and not well documented.
       \future Replace with a better algorithm. Should quotes be
       escaped?
-      \future Add user-specified delimiters?
   */
   void split_string(std::string str, std::vector<std::string> &sv);
 
