@@ -20,24 +20,27 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/auto_table.h>
+#include <o2scl/auto_format.h>
 #include <o2scl/test_mgr.h>
 
 using namespace std;
 using namespace o2scl;
-using namespace o2scl_auto_table;
+using namespace o2scl_auto_format;
 
 int main(void) {
 
   test_mgr t;
   t.set_output_level(2);
 
-  auto_table at;
+  auto_format at;
+  at.verbose=0;
   double d=3.0;
-  //at << d << o2scl_auto_table::endl << d*d << o2scl_auto_table::endl;
-  at << d << 1.0e-200 << endo;
-  at << 2*d << 2*d*d << endo;
-  at << 4*d << 4*d*d << endo;
+  //at << d << o2scl_auto_format::endl << d*d << o2scl_auto_format::endl;
+  at << d << endo;
+  at << "column_1" << "column_2" << endo;
+  at << 2*d << 'x' << endo;
+  at << 34 << 1.0e-200 << endo;
+  at << 8*d << "blah" << 4*d << endo;
   at.done();
   
   t.report();
