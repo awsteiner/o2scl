@@ -46,7 +46,12 @@ namespace o2scl {
       This is a brute-force approach of order \f$ \mathrm{ncols}
       \times \mathrm{nrows} \f$. The column widths and spacings of are
       computed by exhaustively examining all strings in every column.
-      
+
+      \future Use 
+      \future Create a function which creates the individual columns
+      (in place or copy?) and doesn't paste them together in rows
+      \future Create a function which accepts delimited strings
+      (e.g. like csv) instead of vector<vector<string>>. 
       \future Move the screenify() functionality from misc.h into 
       this class?
       \future It might be better to allow the string table
@@ -59,7 +64,11 @@ namespace o2scl {
   public:
 
     columnify() {
+      table_lines=0;
     }
+
+    /// Desc
+    int table_lines;
 
     /// Align the left-hand sides
     static const int align_left=1;
@@ -96,6 +105,8 @@ namespace o2scl {
       int align(const mat_string_t &table, size_t ncols, size_t nrows, 
 		vec_string_t &ctable, vec_int_t &align_spec) {
 
+      terminal ter;
+      
       // Make space for the size information
       boost::numeric::ublas::vector<size_t> csizes(ncols);
       boost::numeric::ublas::vector<size_t> csizes2(ncols);
@@ -220,6 +231,10 @@ namespace o2scl {
 	    if (i!=ncols-1) tmp+=' ';
 	  }
 
+	  if (table_lines>0 && i+1<ncols) {
+	    tmp+=ter.alt_font()+'x'+ter.normal_font();
+	  }
+	  
 	  // Proceed to the next column
 	}
 

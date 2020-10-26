@@ -75,11 +75,15 @@ int main(void) {
     table[4][i]=dtos(sqrt(2.0)*pow(10.0,((double)(((int)i)-5)*2)),5,true);
   }
 
+  c.table_lines=1;
   c.align(table,5,nr,ctable,align);
-  
+  c.table_lines=0;
+
+  size_t test_size=0;
   for(size_t i=0;i<nr;i++) {
     cout << ctable[i] << endl;
-    t.test_gen(ctable[i].size()==70,"row size");
+    if (i==0) test_size=ctable[i].size();
+    else t.test_gen(ctable[i].size()==test_size,"row size");
   }
 
   ubmatrix om(3,3);
