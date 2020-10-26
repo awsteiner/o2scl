@@ -40,6 +40,7 @@ auto_format::auto_format() {
   verbose=0;
   auto_tables=true;
   n_headers=0;
+  table_lines=0;
 }      
 
 void auto_format::done() {
@@ -308,10 +309,10 @@ void auto_format::add_string(std::string s, bool include_endl) {
 	if (verbose>0) {
 	  cout << "Running columnify::align() " << columns.size() << " "
 	       << columns[0].size()-1 << endl;
+	  cout << "Column sizes: ";
 	  for(size_t k=0;k<columns.size();k++) {
 	    cout << columns[k].size() << " ";
 	  }
-	  cout << endl;
 	}
 	
 	// Now output the table
@@ -321,9 +322,6 @@ void auto_format::add_string(std::string s, bool include_endl) {
 		tab_out,aligns);
 	for(size_t j=0;j<tab_out.size();j++) {
 	  cout << tab_out[j] << endl;
-	}
-	if (verbose>0) {
-	  cout << endl;
 	}
 	
       } else {

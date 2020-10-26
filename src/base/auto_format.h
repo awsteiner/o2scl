@@ -38,7 +38,18 @@ namespace o2scl_auto_format {
 
   /** \brief Automatically format output 
 
-      \future Allow output to files ("fout") in addition to cout
+      \note Experimental.
+
+      \todo The current problem is there is no way to tell between an
+      empty line which is complete and an empty line which is ready
+      for more strings. This demands a new state variable,
+      "next_line".
+      \todo Implement row_max
+      \todo Allow user to change the number of rows which must
+      have the same number of 'words' to verify a table.
+
+      \future Allow output to files ("fout") in addition to cout.
+      \future Make internal algorithm more efficient.
    */
   class auto_format {
     
@@ -85,6 +96,9 @@ namespace o2scl_auto_format {
 
     /// Verbosity parameter (default 0)
     int verbose;
+
+    /// Parameter for table line output
+    int table_lines;
 
   };
 
