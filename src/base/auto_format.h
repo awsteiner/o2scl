@@ -55,14 +55,26 @@ namespace o2scl_auto_format {
     
   protected:
 
+    /// \name Standard buffer
+    //@{
     /// Output line buffer
     std::vector<std::string> lines;
 
-    /// Maximum number of table rows (default 1000)
-    size_t row_max;
+    // Index of line for next output
+    //size_t next_line;
+    
+    //@}
 
-    /// Alignment specifications for table columns
-    std::vector<int> aligns;
+    /// \name Table mode
+    //@{
+    /// If true, try to automatically detect tables (default true)
+    bool auto_tables;
+    
+    /// The number of table header rows
+    size_t n_headers;
+    
+    /// Headers for table mode
+    std::vector<std::vector<std::string> > headers;
 
     /// If true, we are currently inside a table
     bool inside_table;
@@ -73,26 +85,40 @@ namespace o2scl_auto_format {
     /// Index of next column
     size_t next_column;
 
-    /// The number of table header rows
-    size_t n_headers;
-    
-    /// Headers for table mode
-    std::vector<std::vector<std::string> > headers;
+    /// Maximum number of table rows (default 1000)
+    size_t row_max;
 
-    /// If true, try to automatically detect tables (default true)
-    bool auto_tables;
-    
+    /// Alignment specifications for table columns
+    std::vector<int> aligns;
+    //@}
+
   public:
 
     auto_format();
     
     /** \brief Add a string to the output buffer
      */
-    void add_string(std::string s, bool endl=false);
+    void add_string(std::string s);
 
+    /** \brief Add an endline
+     */
+    void endline();
+    
     /** \brief Flush all buffered output to the screen
      */
     void done();
+
+    /** \brief Desc
+     */
+    void start_table();
+
+    /** \brief Desc
+     */
+    void debug_table();
+
+    /** \brief Desc
+     */
+    void end_table();
 
     /// Verbosity parameter (default 0)
     int verbose;

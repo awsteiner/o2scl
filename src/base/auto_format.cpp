@@ -53,24 +53,80 @@ void auto_format::done() {
   return;
 }
 
-void auto_format::add_string(std::string s, bool include_endl) {
+void auto_format::debug_table() {
+  for(size_t j=0;j<headers.size();j++) {
+    for(size_t k=0;k<headers[j].size();k++) {
+      cout << "\"" << headers[j][k] << "\" ";
+    }
+    cout << endl;
+  }
+  for(size_t j=0;j<columns[0].size();j++) {
+    for(size_t k=0;k<columns.size();k++) {
+      cout << "\"" << columns[k][j] << "\" ";
+    }
+    cout << endl;
+  }
+  return;
+}
 
-  // If there is no string and no endline, then there is nothing
-  // to do
-  if (s.length()==0 && include_endl==false) {
+void auto_format::start_table() {
+  if (lines.size()>0) {
+    // If there is still data left in the buffer then output it,
+    // which forces an endl before the table even if not explicitly
+    // given.
+    done();
+  }
+
+  n_headers=1;
+  inside_table=true;
+  
+  vector<string> empty;
+  headers.push_back(empty);
+
+  return;
+}
+
+void auto_format::end_table() {
+
+  if (verbose>0) {
+    cout << "Running columnify::align() " << columns.size() << " "
+	 << columns[0].size() << endl;
+    cout << "Column sizes: ";
+    for(size_t k=0;k<columns.size();k++) {
+      cout << columns[k].size() << " ";
+    }
+  }
+  
+  // Now output the table
+  columnify c;
+  c.table_lines=table_lines;
+  vector<string> tab_out(columns[0].size());
+  c.align(columns,columns.size()-1,columns[0].size(),
+	  tab_out,aligns);
+  for(size_t j=0;j<tab_out.size();j++) {
+    cout << tab_out[j] << " " << columns[columns.size()-1][j] << endl;
+  }
+  
+  inside_table=false;
+  n_headers=0;
+  headers.clear();
+  columns.clear();
+  next_column=0;
+  return;
+}
+
+void auto_format::add_string(std::string s) {
+
+  bool include_endl=false;
+  
+  // If there is no string then there is nothing to do
+  if (s.length()==0) {
     return;
   }
 
   // Easily handle a single carriage return
   if (s=="\n") {
-    if (include_endl==false) {
-      s="";
-      include_endl=true;
-    } else {
-      add_string("",true);
-      add_string("",true);
-      return;
-    }
+    endline();
   }
 
   // If there is a carriage return mid-string, then use recursion to
@@ -80,275 +136,283 @@ void auto_format::add_string(std::string s, bool include_endl) {
     // Split into lines
     std::vector<std::string> vs1;
     split_string_delim(s,vs1,'\n');
-    // If the original string, s, ends in a '\n', then add another
-    // empty string to the end. This ensures that include_endl is set
-    // to true.
-    if (s[s.length()-1]=='\n') {
-      vs1.push_back("");
-    }
+    
     // Iterate through each line
     for(size_t j=0;j<vs1.size();j++) {
-      // Perform the recursion, setting include_endl to true if there
-      // was a '\n' character.
+      // Perform the recursion, calling endline() if there was a '\n'
+      // character.
       if (j!=vs1.size()-1) {
-	add_string(vs1[j],true);
+	add_string(vs1[j]);
+	endline();
       } else {
-	if (vs1[j].length()>0) {
-	  add_string(vs1[j]);
-	}
+	add_string(vs1[j]);
       }
+    }
+
+    return;
+  }
+
+  if (inside_table==false) {
+    
+    if (verbose>0) {
+      cout << "Start add_string(): \"" << s << "\"" << std::endl;
+    }
+  
+    if (lines.size()==0) {
+      lines.push_back("");
+    }
+
+    // If the current line is empty or ends with a space, then
+    // we don't need a space
+    size_t next_line=lines.size()-1;
+    if (lines[next_line].length()==0 ||
+	lines[next_line][lines[next_line].length()-1]==' ') {
+      lines[next_line]+=s;
+    } else {
+      // Otherwise, add a space
+      lines[next_line]+=' '+s;
     }
     
   } else {
-    
+
+    // Inside table=true section
+
     if (verbose>0) {
-      cout << "Start add_string(): \"" << s << "\", "
-	   << include_endl << std::endl;
+      cout << "Start add_string(), inside_table: \"" << s << "\""
+	   << std::endl;
     }
-    if (inside_table==false) {
-      if (lines.size()==0) {
-	if (verbose>1) {
-	  cout << "0 lines, adding " << s << std::endl;
-	}
-	lines.push_back(s);
-	if (include_endl) {
-	  lines.push_back("");
-	}
 
-      } else if (lines.size()==1) {
+    if (headers.size()==0) {
+      O2SCL_ERR("Headers zero in add_string().",o2scl::exc_efailed);
+    }
 
-	if (verbose>1) {
-	  cout << "1 line, adding " << s << std::endl;
-	}
-	// We don't consider adding 's' to the current line unless
-	// it is non-empty
-	if (s.length()>0) {
-	  // If the current line is empty or ends with a space, then
-	  // we don't need a space
-	  if (lines[0].length()==0 || lines[0][lines[0].length()-1]==' ') {
-	    lines[0]+=s;
-	  } else {
-	    // Add a space
-	    lines[0]+=' '+s;
-	  }
-	}
-	if (include_endl) {
-	  lines.push_back("");
-	}
-	
-      } else if (lines.size()==2) {
+    // If columns is empty, then we're in the header section still
+    if (columns.size()==0) {
+    
+      // Add the string to the appropriate header row
+      headers[headers.size()-1].push_back(s);
 
-	if (verbose>1) {
-	  cout << "2 lines, adding \"" << s << "\"" << std::endl;
-	}
-	
-	// We don't consider adding 's' to the current line unless
-	// it is non-empty
-	if (s.length()>0) {
-	  // If the current line is empty or ends with a space, then
-	  // we don't need a space
-	  if (lines[1].length()==0 || lines[1][lines[1].length()-1]==' ') {
-	    lines[1]+=s;
-	  } else {
-	    // Add a space
-	    lines[1]+=' '+s;
-	  }
-	}
+    } else {
 
-	// If an endl is requested, then we need to check if we're
-	// starting a new table
-	if (include_endl) {
+      // Main column section
 
-	  // Count the number of words in the two lines
-	  std::vector<std::string> vs1, vs2;
-	  split_string(lines[0],vs1);
-	  split_string(lines[1],vs2);
-	  size_t c1=vs1.size();
-	  size_t c2=vs2.size();
-	  if (verbose>0) {
-	    std::cout << "First and second line count: " << c1 << " "
-		      << c2 << std::endl;
-	  }
+      columns[next_column].push_back(s);
 
-	  // If they match, then presume we are in a new table
-	  if (c1>0 && c1==c2) {
-	    
-	    if (verbose>0) {
-	      std::cout << "Setting inside_table to true." << std::endl;
-	    }
-	    inside_table=true;
+      size_t n_cols=headers[0].size();
 
-	    // Number of columns
-	    size_t ncol=c1;
-
-	    // Determine alignment specifications
-	    aligns.resize(ncol);
-	    for(size_t j=0;j<ncol;j++) {
-	      if (!is_number(vs2[j])) {
-		aligns[j]=columnify::align_left;
-	      } else {
-		aligns[j]=columnify::align_dp;
-	      }
-	    }
-	    if (verbose>0) {
-	      cout << "Aligns: ";
-	      vector_out(cout,aligns,true);
-	    }
-
-	    // Now fill the columns data 
-	    columns.clear();
-	    columns.resize(ncol);
-	    for(size_t j=0;j<ncol;j++) {
-	      columns[j].push_back(vs1[j]);
-	      columns[j].push_back(vs2[j]);
-	    }
-
-	    // Initialize the next_column counter
-	    next_column=0;
-	    
-	  } else {
-	    
-	    // If we're not in a table, then output the first line in
-	    // the cache and move the second line to the first line
-	    if (verbose>0) {
-	      cout << "Output line: " << lines[0] << std::endl;
-	    } else {
-	      cout << lines[0] << endl;
-	    }
-	    lines[0]=lines[1];
-	    // Variable include_endl is true, so we're ready to
-	    // start a new line
-	    lines[1]="";
-	    
-	  }
-	}
+      if (next_column==n_cols) {
+	next_column=0;
       } else {
-	O2SCL_ERR("More than two lines in auto_format::add_string().",
-		  o2scl::exc_esanity);
+	next_column++;
       }
+      
+    }
+
+#ifdef O2SCL_NEVER_DEFINED
+
+    // There are a couple situations to handle:
+    
+    // 1. We were given a new string in the table, so just add it
+    // to the table,
+    
+    // 2. There is an extra string (s.length()>0 &&
+    // next_column>=columns.size()), and thus we have to end the
+    // table and go back to non-table mode, and
+    
+    // 3. include_endl is true even though there were not enough
+    // strings for a row (next_column<columns.size()-1),
+    // so we have to go back to non-table mode.
+    
+    if ((s.length()>0 && next_column>=columns.size()) ||
+	(include_endl && next_column<columns.size()-1)) {
+      
+      // Cases 2 and 3 above
+      
       if (verbose>0) {
-	std::cout << "Function add_string(), lines object: " << std::endl;
-	for(size_t k=0;k<lines.size();k++) {
-	  cout << "  " << k << ". \"" << lines[k] << "\"" << std::endl;
-	}
-	cout << endl;
+	cout << "Ending table." << endl;
       }
+      inside_table=false;
+      if (verbose>0) {
+	cout << "Setting inside_table to false." << endl;
+      }
+      
+      // First, if there is any non-table data, add it to
+      // the non-table output buffer
+      lines.clear();
+      lines.push_back("");
+      if (columns[0].size()==0) {
+	O2SCL_ERR("Column 0 empty.",o2scl::exc_einval);
+      }
+      size_t last_row=columns[0].size()-1;
+      for(size_t k=0;k<next_column;k++) {
+	if (columns[k].size()>last_row) {
+	  if (verbose>0) {
+	    cout << "Adding " << columns[k][last_row]
+		 << " to lines[0]." << endl;
+	  }
+	  if (k!=next_column-1) {
+	    lines[0]+=columns[k][last_row]+' ';
+	  } else {
+	    lines[0]+=columns[k][last_row];
+	  }
+	}
+      }
+      
+      // If there was a string s, then we need to add it as well
+      if (s.length()>0) {
+	if (verbose>0) {
+	  cout << "Adding " << s << " to lines[0]." << endl;
+	}
+	if (lines[0].length()>0 && lines[0][lines[0].length()-1]!=' ') {
+	  lines[0]+=' '+s;
+	} else {
+	  lines[0]+=s;
+	}
+      }
+      
+      if (verbose>0) {
+	cout << "Running columnify::align() " << columns.size() << " "
+	     << columns[0].size()-1 << endl;
+	cout << "Column sizes: ";
+	for(size_t k=0;k<columns.size();k++) {
+	  cout << columns[k].size() << " ";
+	}
+      }
+      
+      // Now output the table
+      columnify c;
+      vector<string> tab_out(columns[0].size()-1);
+      c.align(columns,columns.size(),columns[0].size()-1,
+	      tab_out,aligns);
+      for(size_t j=0;j<tab_out.size();j++) {
+	cout << tab_out[j] << endl;
+      }
+      
     } else {
       
-      if (verbose>0) {
-	cout << "Function add_string(), inside_table: \"" << s << "\", "
-	     << include_endl << " " << next_column << std::endl;
-	if (false) {
-	  for(size_t k=0;k<columns.size();k++) {
-	    cout << columns[k].size() << " ";
-	  }
-	  cout << endl;
+      // Inside table, case 1 above
+      
+      if (s.length()>0) {
+	if (verbose>1) {
+	  cout << "Adding \"" << s << "\" to table." << endl;
 	}
+	columns[next_column].push_back(s);
+	next_column++;
       }
-
-      // There are a couple situations to handle:
-      
-      // 1. We were given a new string in the table, so just add it
-      // to the table,
-      
-      // 2. There is an extra string (s.length()>0 &&
-      // next_column>=columns.size()), and thus we have to end the
-      // table and go back to non-table mode, and
-      
-      // 3. include_endl is true even though there were not enough
-      // strings for a row (next_column<columns.size()-1),
-      // so we have to go back to non-table mode.
-
-      if ((s.length()>0 && next_column>=columns.size()) ||
-	  (include_endl && next_column<columns.size()-1)) {
-
-	// Cases 2 and 3 above
-	
+      if (include_endl && next_column==columns.size()) {
 	if (verbose>0) {
-	  cout << "Ending table." << endl;
+	  cout << "Resetting next_column." << endl;
 	}
-	inside_table=false;
-	if (verbose>0) {
-	  cout << "Setting inside_table to false." << endl;
-	}
-	
-	// First, if there is any non-table data, add it to
-	// the non-table output buffer
-	lines.clear();
-	lines.push_back("");
-	if (columns[0].size()==0) {
-	  O2SCL_ERR("Column 0 empty.",o2scl::exc_einval);
-	}
-	size_t last_row=columns[0].size()-1;
-	for(size_t k=0;k<next_column;k++) {
-	  if (columns[k].size()>last_row) {
-	    if (verbose>0) {
-	      cout << "Adding " << columns[k][last_row]
-		   << " to lines[0]." << endl;
-	    }
-	    if (k!=next_column-1) {
-	      lines[0]+=columns[k][last_row]+' ';
-	    } else {
-	      lines[0]+=columns[k][last_row];
-	    }
-	  }
-	}
+	next_column=0;
+      }
+      
+    }
+    
+    if (verbose>0) {
+      cout << endl;
+    }
 
-	// If there was a string s, then we need to add it as well
-	if (s.length()>0) {
-	  if (verbose>0) {
-	    cout << "Adding " << s << " to lines[0]." << endl;
-	  }
-	  if (lines[0].length()>0 && lines[0][lines[0].length()-1]!=' ') {
-	    lines[0]+=' '+s;
-	  } else {
-	    lines[0]+=s;
-	  }
-	}
+#endif    
+    
+  }
+  
+  return;
+}
 
-	if (verbose>0) {
-	  cout << "Running columnify::align() " << columns.size() << " "
-	       << columns[0].size()-1 << endl;
-	  cout << "Column sizes: ";
-	  for(size_t k=0;k<columns.size();k++) {
-	    cout << columns[k].size() << " ";
-	  }
-	}
-	
-	// Now output the table
-	columnify c;
-	vector<string> tab_out(columns[0].size()-1);
-	c.align(columns,columns.size(),columns[0].size()-1,
-		tab_out,aligns);
-	for(size_t j=0;j<tab_out.size();j++) {
-	  cout << tab_out[j] << endl;
-	}
-	
+void auto_format::endline() {
+
+  if (inside_table==false) {
+
+    cout << "Output: " << lines[0] << endl;
+    lines[0]="";
+
+  } else {
+
+    // Inside the table section
+
+    if (columns.size()==0) {
+
+      // Header section
+
+      // If necessary, add a new header
+      if (headers.size()<n_headers) {
+	vector<string> empty;
+	headers.push_back(empty);
       } else {
-	
-	// Inside table, case 1 above
-	
-	if (s.length()>0) {
-	  if (verbose>1) {
-	    cout << "Adding \"" << s << "\" to table." << endl;
-	  }
-	  columns[next_column].push_back(s);
-	  next_column++;
+	// Otherwise, move to the body section
+	size_t n_cols=headers[0].size()+1;
+	vector<string> empty;
+	for (size_t j=0;j<n_cols;j++) {
+	  columns.push_back(empty);
 	}
-	if (include_endl && next_column==columns.size()) {
-	  if (verbose>0) {
-	    cout << "Resetting next_column." << endl;
-	  }
-	  next_column=0;
-	}
-	
+	next_column=0;
       }
+      
+    } else {
 
-      if (verbose>0) {
-	cout << endl;
+      if (columns.size()==row_max) {
+	end_table();
       }
+      
+      next_column=0;
+      
     }
   }
+    
+#ifdef NEVER_DEFINED
+  
+    // Count the number of words in the two lines
+    std::vector<std::string> vs1, vs2;
+    split_string(lines[0],vs1);
+    split_string(lines[1],vs2);
+    size_t c1=vs1.size();
+    size_t c2=vs2.size();
+    if (verbose>0) {
+      std::cout << "First and second line count: " << c1 << " "
+		<< c2 << std::endl;
+    }
+    
+    // If they match, then presume we are in a new table
+    if (c1>0 && c1==c2) {
+      
+      if (verbose>0) {
+	std::cout << "Setting inside_table to true." << std::endl;
+      }
+      inside_table=true;
+      
+      // Number of columns
+      size_t ncol=c1;
+      
+      // Determine alignment specifications
+      aligns.resize(ncol);
+      for(size_t j=0;j<ncol;j++) {
+	if (!is_number(vs2[j])) {
+	  aligns[j]=columnify::align_left;
+	} else {
+	  aligns[j]=columnify::align_dp;
+	}
+      }
+      if (verbose>0) {
+	cout << "Aligns: ";
+	vector_out(cout,aligns,true);
+      }
+      
+      // Now fill the columns data 
+      columns.clear();
+      columns.resize(ncol);
+      for(size_t j=0;j<ncol;j++) {
+	columns[j].push_back(vs1[j]);
+	columns[j].push_back(vs2[j]);
+      }
+      
+      // Initialize the next_column counter
+      next_column=0;
+      
+    }
+  }
+
+#endif
+  
   return;
 }
 
