@@ -42,10 +42,17 @@ auto_format::auto_format() {
   n_headers=0;
   table_lines=0;
   enabled=true;
+  precision_=6;
 }      
 
 void auto_format::on() {
   enabled=true;
+  return;
+}
+
+void auto_format::precision(size_t p) {
+  if (p==0) precision_=6;
+  else precision_=p;
   return;
 }
 
@@ -532,10 +539,10 @@ void auto_format::endline() {
 
 auto_format &o2scl_auto_format::operator<<(auto_format &at, double d) {
   string stmp;
-  if (size_of_exponent(d)==3) {
-    stmp=o2scl::dtos(d,5);
+  if (size_of_exponent(d)==3 && at.precision_>1) {
+    stmp=o2scl::dtos(d,at.precision_-1);
   } else {
-    stmp=o2scl::dtos(d,6);
+    stmp=o2scl::dtos(d,at.precision_);
   }
   at.add_string(stmp);
   return at;

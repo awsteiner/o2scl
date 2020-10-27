@@ -36,19 +36,24 @@
 namespace o2scl_auto_format {
 #endif
 
-  /** \brief Automatically format output 
+  // Declarations for friendship
+  class auto_format;
+  auto_format &operator<<(auto_format &at, double d);
+
+  /** \brief Automatically format output
+
+      This class is a wrapper around output streams which performs
+      automatic spacing and table formatting. Only scientific
+      formatting for floating-point numbers is supported at present.
 
       \note Experimental.
 
-      \todo The current problem is there is no way to tell between an
-      empty line which is complete and an empty line which is ready
-      for more strings. This demands a new state variable,
-      "next_line".
       \todo Implement row_max
-      \todo Allow user to change the number of rows which must
-      have the same number of 'words' to verify a table.
+      \todo Allow output to files ("fout") in addition to cout.
 
-      \future Allow output to files ("fout") in addition to cout.
+      \future For automatic table detection: allow user to change the
+      number of rows which must have the same number of 'words' to
+      verify a table.
       \future Make internal algorithm more efficient.
    */
   class auto_format {
@@ -67,7 +72,8 @@ namespace o2scl_auto_format {
     // Index of line for next output
     //size_t next_line;
     //@}
-
+    size_t precision_;
+    
     /// \name Table mode
     //@{
     /// If true, try to automatically detect tables (default true)
@@ -95,6 +101,9 @@ namespace o2scl_auto_format {
     std::vector<int> aligns;
     //@}
 
+    friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
+						      double d);
+    
   public:
 
     auto_format();
@@ -103,6 +112,10 @@ namespace o2scl_auto_format {
      */
     void add_string(std::string s);
 
+    /** \brief Desc
+     */
+    void precision(size_t p);
+    
     /** \brief Disable formatting and send all output 
 	directly to \c cout
      */
