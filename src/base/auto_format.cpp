@@ -41,7 +41,20 @@ auto_format::auto_format() {
   auto_tables=true;
   n_headers=0;
   table_lines=0;
+  enabled=true;
 }      
+
+void auto_format::on() {
+  enabled=true;
+  return;
+}
+
+void auto_format::off() {
+  // Make sure that nothing is left in the cache before turning off
+  done();
+  enabled=false;
+  return;
+}
 
 void auto_format::done() {
   // Output all lines
@@ -79,6 +92,7 @@ void auto_format::debug_table() {
 }
 
 void auto_format::start_table() {
+  if (enabled==false) return;
   if (lines.size()>0) {
     // If there is still data left in the buffer then output it,
     // which forces an endl before the table even if not explicitly
@@ -90,12 +104,14 @@ void auto_format::start_table() {
   inside_table=true;
   
   vector<string> empty;
+  headers.clear();
   headers.push_back(empty);
 
   return;
 }
 
 void auto_format::end_table() {
+  if (enabled==false) return;
 
   if (verbose>0) {
     cout << "Running columnify::align() " << columns.size() << " "
@@ -147,6 +163,11 @@ void auto_format::end_table() {
 
 void auto_format::add_string(std::string s) {
 
+  if (enabled==false) {
+    cout << s;
+    return;
+  }
+  
   bool include_endl=false;
   
   // If there is no string then there is nothing to do
@@ -360,6 +381,11 @@ void auto_format::add_string(std::string s) {
 
 void auto_format::endline() {
 
+  if (enabled==false) {
+    cout << endl;
+    return;
+  }
+  
   if (inside_table==false) {
 
     if (verbose>0) {
@@ -543,6 +569,46 @@ auto_format &o2scl_auto_format::operator<<(auto_format &at, size_t s) {
 
 auto_format &o2scl_auto_format::operator<<(auto_format &at, std::string s) {
   at.add_string(s);
+  return at;
+}
+
+auto_format &o2scl_auto_format::operator<<(auto_format &at,
+					   const std::vector<double> &vd) {
+  for(size_t i=0;i<vd.size();i++) {
+    at << vd[i];
+  }
+  return at;
+}
+
+auto_format &o2scl_auto_format::operator<<(auto_format &at,
+					   const std::vector<int> &vi) {
+  for(size_t i=0;i<vi.size();i++) {
+    at << vi[i];
+  }
+  return at;
+}
+
+auto_format &o2scl_auto_format::operator<<(auto_format &at,
+					   const std::vector<size_t> &vi) {
+  for(size_t i=0;i<vi.size();i++) {
+    at << vi[i];
+  }
+  return at;
+}
+
+auto_format &o2scl_auto_format::operator<<(auto_format &at,
+					   const std::vector<char> &vi) {
+  for(size_t i=0;i<vi.size();i++) {
+    at << vi[i];
+  }
+  return at;
+}
+
+auto_format &o2scl_auto_format::operator<<(auto_format &at,
+					   const std::vector<std::string> &vi) {
+  for(size_t i=0;i<vi.size();i++) {
+    at << vi[i];
+  }
   return at;
 }
 

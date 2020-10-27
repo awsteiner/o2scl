@@ -55,6 +55,10 @@ namespace o2scl_auto_format {
     
   protected:
 
+    /** \brief If true, automatic formatting is enabled (default true)
+     */
+    bool enabled;
+    
     /// \name Standard buffer
     //@{
     /// Output line buffer
@@ -99,6 +103,15 @@ namespace o2scl_auto_format {
      */
     void add_string(std::string s);
 
+    /** \brief Disable formatting and send all output 
+	directly to \c cout
+     */
+    void off();
+    
+    /** \brief Turn on automatic formatting (on by default)
+     */
+    void on();
+    
     /** \brief Add an endline
      */
     void endline();
@@ -107,15 +120,15 @@ namespace o2scl_auto_format {
      */
     void done();
 
-    /** \brief Desc
+    /** \brief Start a table
      */
     void start_table();
 
-    /** \brief Desc
+    /** \brief Debug the table
      */
     void debug_table();
 
-    /** \brief Desc
+    /** \brief End a table
      */
     void end_table();
 
@@ -150,7 +163,28 @@ namespace o2scl_auto_format {
   /** \brief Output a string
    */
   auto_format &operator<<(auto_format &c, std::string s);
-
+  
+  /** \brief Output a vector of doubles
+   */
+  auto_format &operator<<(auto_format &c, const std::vector<double> &vd);
+  
+  /** \brief Output a vector of ints
+   */
+  auto_format &operator<<(auto_format &c, const std::vector<int> &vd);
+  
+  /** \brief Output a vector of size_ts
+   */
+  auto_format &operator<<(auto_format &c, const std::vector<size_t> &vd);
+  
+  /** \brief Output a vector of chars
+   */
+  auto_format &operator<<(auto_format &c, const std::vector<char> &vd);
+  
+  /** \brief Output a vector of std::strings
+   */
+  auto_format &operator<<(auto_format &c,
+			  const std::vector<std::string> &vd);
+  
   /** \brief Desc
    */
   //auto_format &operator<<(auto_format &c, o2scl_auto_format::auto_format &(*f)(o2scl_auto_format::auto_format&));

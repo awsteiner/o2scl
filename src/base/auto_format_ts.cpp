@@ -64,6 +64,12 @@ int main(void) {
   at << 62 << endo;
   at << endo;
   at << 6.0 << endo;
+  vector<double> vd={3,1,4,1};
+  at << vd << endo;
+  vector<int> vi={3,1,4,1};
+  at << vi << endo;
+  vector<std::string> vs={"this","is","a  test"};
+  at << vs << endo;
   at.done();
   
   t.report();
