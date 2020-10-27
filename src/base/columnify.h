@@ -244,6 +244,147 @@ namespace o2scl {
       return 0;
     }
 
+    /** \brief Add enough spaces to ensure all columns have the
+	same width
+     */
+    template<class mat_string_t, class vec_int_t>
+    int add_spaces(const mat_string_t &table_in, size_t ncols, size_t nrows, 
+		   vec_int_t &align_spec, mat_string_t &table_out) {
+
+      // Use this class to avoid counting vt100 sequences
+      terminal ter;
+      
+      // Make space for the size information
+      boost::numeric::ublas::vector<size_t> csizes(ncols);
+      boost::numeric::ublas::vector<size_t> csizes2(ncols);
+      for(size_t i=0;i<ncols;i++) {
+	csizes[i]=0;
+	csizes2[i]=0;
+      }
+  
+      // Compute the sizes of all the entries in all of the columns so
+      // we know how many spaces to add
+      for(size_t i=0;i<ncols;i++) {
+	for(size_t j=0;j<nrows;j++) {
+
+	  // If we're aligning with decimal points, we need to compute
+	  // the maximum width to the left and the right of the 
+	  // decimal point separately
+
+	  if (align_spec[i]==align_dp) {
+	    size_t loc=table_in[i][j].find('.');
+	    std::string left, right;
+	    if (loc!=std::string::npos) {
+	      left=table_in[i][j].substr(0,loc+1);
+	      right=table_in[i][j].substr(loc+1,
+					  ter.str_len(table_in[i][j])-loc-1);
+	    } else {
+	      left=table_in[i][j]+' ';
+	      right="";
+	    }
+	    if (ter.str_len(left)>csizes[i]) csizes[i]=ter.str_len(left);
+	    if (ter.str_len(right)>csizes2[i]) csizes2[i]=ter.str_len(right);
+
+	  } else {
+
+	    // Otherwise just find the maximum width of each column
+	    if (ter.str_len(table_in[i][j])>csizes[i]) {
+	      csizes[i]=ter.str_len(table_in[i][j]);
+	    }
+
+	  }
+
+	}
+      }
+
+      // Go through row by row, adding enough spaces to make one string
+      // per row
+      for(size_t j=0;j<nrows;j++) {
+
+	for(size_t i=0;i<ncols;i++) {
+
+	  std::string tmp="";
+	  
+	  // Handle each alignment case separately
+	  if (align_spec[i]==align_right) {
+
+	    for(size_t k=ter.str_len(table_in[i][j]);k<csizes[i];k++) {
+	      tmp+=' ';
+	    }
+	    tmp+=table_in[i][j];
+
+	  } else if (align_spec[i]==align_left) {
+
+	    tmp+=table_in[i][j];
+	    for(size_t k=ter.str_len(table_in[i][j]);k<csizes[i];k++) {
+	      tmp+=' ';
+	    }
+
+	  } else if (align_spec[i]==align_lmid) {
+
+	    size_t le=(csizes[i]-ter.str_len(table_in[i][j]))/2;
+	    size_t ri=csizes[i]-ter.str_len(table_in[i][j])-le;
+	    for(size_t k=0;k<le;k++) tmp+=' ';
+	    tmp+=table_in[i][j];
+	    for(size_t k=0;k<ri;k++) tmp+=' ';
+
+	  } else if (align_spec[i]==align_rmid) {
+
+	    size_t ri=(csizes[i]-ter.str_len(table_in[i][j]))/2;
+	    size_t le=csizes[i]-ter.str_len(table_in[i][j])-ri;
+	    for(size_t k=0;k<le;k++) tmp+=' ';
+	    tmp+=table_in[i][j];
+	    for(size_t k=0;k<ri;k++) tmp+=' ';
+
+	  } else if (align_spec[i]==align_dp) {
+
+	    size_t loc=table_in[i][j].find('.');
+	    std::string left, right;
+	    if (loc!=std::string::npos) {
+	      left=table_in[i][j].substr(0,loc+1);
+	      right=table_in[i][j].substr(loc+1,
+				       ter.str_len(table_in[i][j])-loc-1);
+	    } else {
+	      left=table_in[i][j]+' ';
+	      right="";
+	    }
+
+	    for(size_t k=ter.str_len(left);k<csizes[i];k++) tmp+=' ';
+	    tmp+=left;
+	    tmp+=right;
+	    for(size_t k=ter.str_len(right);k<csizes2[i];k++) tmp+=' ';
+
+	  } else if (align_spec[i]==align_lnum) {
+
+	    if (ter.str_len(table_in[i][j])==csizes[i]) {
+	      tmp+=table_in[i][j];
+	    } else {
+	      if (table_in[i][j][0]>='0' && table_in[i][j][0]<='9') {
+		tmp+=' ';
+		tmp+=table_in[i][j];
+		for(size_t k=ter.str_len(table_in[i][j]);k<csizes[i]-1;k++) {
+		  tmp+=' ';
+		}
+	      } else {
+		tmp+=table_in[i][j];
+		for(size_t k=ter.str_len(table_in[i][j]);k<csizes[i];k++) {
+		  tmp+=' ';
+		}
+	      }
+	    }
+	  }
+	  
+	  table_out[i][j]=tmp;
+	  
+	  // Proceed to the next column
+	}
+
+	// Proceed to the next row
+      }
+
+      return 0;
+    }
+
   };
     
   /// \name Matrix output functions from src/base/columnify.h

@@ -48,6 +48,12 @@ namespace o2scl_auto_format {
 
       \note Experimental.
 
+      \note This class caches each line before sending to cout,
+      so issuing <tt>cout << std::flush</tt> in the middle of 
+      a line will not output the buffer to the screen.
+
+      \todo Support char *'s, c-style arrays, matrix types, 
+      ublas objects, multiprecision types.
       \todo Implement row_max
       \todo Allow output to files ("fout") in addition to cout.
 
@@ -101,6 +107,7 @@ namespace o2scl_auto_format {
     std::vector<int> aligns;
     //@}
 
+    // Ensure this operator is a friend to access precision_
     friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
 						      double d);
     
