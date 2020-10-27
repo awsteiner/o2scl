@@ -47,9 +47,7 @@ namespace o2scl {
       \times \mathrm{nrows} \f$. The column widths and spacings of are
       computed by exhaustively examining all strings in every column.
 
-      \future Use 
-      \future Create a function which creates the individual columns
-      (in place or copy?) and doesn't paste them together in rows
+      \future Create a single column version of add_spaces().
       \future Create a function which accepts delimited strings
       (e.g. like csv) instead of vector<vector<string>>. 
       \future Move the screenify() functionality from misc.h into 
@@ -67,7 +65,7 @@ namespace o2scl {
       table_lines=0;
     }
 
-    /// Desc
+    /// Specification for table lines (experimental)
     int table_lines;
 
     /// Align the left-hand sides
@@ -141,7 +139,9 @@ namespace o2scl {
 	  } else {
 
 	    // Otherwise just find the maximum width of each column
-	    if (table[i][j].length()>csizes[i]) csizes[i]=table[i][j].length();
+	    if (table[i][j].length()>csizes[i]) {
+	      csizes[i]=table[i][j].length();
+	    }
 
 	  }
 

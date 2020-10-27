@@ -52,6 +52,9 @@ namespace o2scl_auto_format {
       so issuing <tt>cout << std::flush</tt> in the middle of 
       a line will not output the buffer to the screen.
 
+      \todo Allow user-specified table alignments
+      \todo switch to columnify::add_spaces() and add more complicated
+      table line specifications
       \todo Support char *'s, c-style arrays, matrix types, 
       ublas objects, multiprecision types.
       \todo Implement row_max
