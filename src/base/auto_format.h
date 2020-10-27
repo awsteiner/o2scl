@@ -62,7 +62,6 @@ namespace o2scl_auto_format {
 
     // Index of line for next output
     //size_t next_line;
-    
     //@}
 
     /// \name Table mode

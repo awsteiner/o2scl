@@ -33,22 +33,34 @@ int main(void) {
   t.set_output_level(2);
 
   auto_format at;
-  at.verbose=2;
+  at.verbose=0;
   double d=3.0;
 
   //at << d << o2scl_auto_format::endl << d*d << o2scl_auto_format::endl;
 
   at << d << endo;
+  
   at.start_table();
   at << "column_1" << "column_2" << endo;
-  at.debug_table();
+  //at.debug_table();
   at << 2*d << 'x' << endo;
-  at.debug_table();
+  //at.debug_table();
   at << 34 << 1.0e-200 << endo;
-  at << 8*d << "blah" << 4*d << endo;
-  at << 4.0 << "x" << -1.0 << endo;
-  at << 5.0 << "y" << -2.0e-220 << endo;
+  //at.debug_table();
+  at << 8*d << "blah" << 4*d << 5*d << endo;
+  //at.debug_table();
   at.end_table();
+
+  at << endo;
+  
+  at.start_table();
+  at.table_lines=1;
+  at << 4.0 << "x" << -1.0 << endo;
+  //at.debug_table();
+  at << 5.0 << "a b" << -2.0e-220 << "foo" << endo;
+  //at.debug_table();
+  at.end_table();
+  
   at << 62 << endo;
   at << endo;
   at << 6.0 << endo;

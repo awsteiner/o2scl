@@ -54,17 +54,26 @@ void auto_format::done() {
 }
 
 void auto_format::debug_table() {
+  cout << "Headers:" << endl;
   for(size_t j=0;j<headers.size();j++) {
     for(size_t k=0;k<headers[j].size();k++) {
       cout << "\"" << headers[j][k] << "\" ";
     }
     cout << endl;
   }
-  for(size_t j=0;j<columns[0].size();j++) {
-    for(size_t k=0;k<columns.size();k++) {
-      cout << "\"" << columns[k][j] << "\" ";
+  if (columns.size()>0) {
+    cout << "Columns " << columns.size() << endl;
+    cout << "Column sizes: ";
+    for(size_t j=0;j<columns.size();j++) {
+      cout << columns[j].size() << " ";
     }
     cout << endl;
+    for(size_t j=0;j<columns[0].size();j++) {
+      for(size_t k=0;k<columns.size();k++) {
+	cout << "\"" << columns[k][j] << "\" ";
+      }
+      cout << endl;
+    }
   }
   return;
 }
@@ -95,6 +104,18 @@ void auto_format::end_table() {
     for(size_t k=0;k<columns.size();k++) {
       cout << columns[k].size() << " ";
     }
+    cout << endl;
+  }
+
+  // Determine alignments
+  size_t row=n_headers;
+  aligns.resize(columns.size()-1);
+  for(size_t i=0;i<columns.size()-1;i++) {
+    if (!is_number(columns[i][row])) {
+      aligns[i]=columnify::align_left;
+    } else {
+      aligns[i]=columnify::align_dp;
+    }
   }
   
   // Now output the table
@@ -103,8 +124,17 @@ void auto_format::end_table() {
   vector<string> tab_out(columns[0].size());
   c.align(columns,columns.size()-1,columns[0].size(),
 	  tab_out,aligns);
+
   for(size_t j=0;j<tab_out.size();j++) {
-    cout << tab_out[j] << " " << columns[columns.size()-1][j] << endl;
+    if (verbose>0) {
+      cout << "Output: ";
+    }
+    if (columns[columns.size()-1][j].length()>0) {
+      cout << tab_out[j] << " "
+	   << columns[columns.size()-1][j] << endl;
+    } else {
+      cout << tab_out[j] << endl;
+    }
   }
   
   inside_table=false;
@@ -196,14 +226,23 @@ void auto_format::add_string(std::string s) {
 
       // Main column section
 
-      columns[next_column].push_back(s);
+      if (verbose>0) {
+	cout << "Adding \"" << s << "\" to column " << next_column
+	     << std::endl;
+      }
 
       size_t n_cols=headers[0].size();
 
-      if (next_column==n_cols) {
-	next_column=0;
+      if (next_column>n_cols) {
+	size_t n=columns[n_cols].size();
+	columns[n_cols][n-1]+=" "+s;
       } else {
-	next_column++;
+	columns[next_column].push_back(s);
+      }
+      next_column++;
+
+      if (verbose>0) {
+	cout << "Next column is " << next_column << std::endl;
       }
       
     }
@@ -323,8 +362,15 @@ void auto_format::endline() {
 
   if (inside_table==false) {
 
-    cout << "Output: " << lines[0] << endl;
-    lines[0]="";
+    if (verbose>0) {
+      cout << "Output: ";
+    }
+    if (lines.size()>0) {
+      cout << lines[0] << endl;
+    } else {
+      cout << endl;
+    }
+    lines.clear();
 
   } else {
 
@@ -336,25 +382,67 @@ void auto_format::endline() {
 
       // If necessary, add a new header
       if (headers.size()<n_headers) {
+	if (verbose>0) {
+	  std::cout << "Adding a new header row." << std::endl;
+	}
 	vector<string> empty;
 	headers.push_back(empty);
+	
       } else {
+	
 	// Otherwise, move to the body section
-	size_t n_cols=headers[0].size()+1;
+	size_t n_cols=headers[0].size();
+	if (verbose>0) {
+	  std::cout << "Moving to body section, n_cols="
+		    << n_cols << std::endl;
+	}
 	vector<string> empty;
-	for (size_t j=0;j<n_cols;j++) {
+	for (size_t j=0;j<n_cols+1;j++) {
 	  columns.push_back(empty);
 	}
 	next_column=0;
+
+	// Copy headers to the columns
+	for(size_t j=0;j<headers.size();j++) {
+	  //cout << "Here: " << j << " " << n_cols+1 << " "
+	  //<< headers[j].size() << endl;
+	  for(size_t k=0;k<n_cols+1 || k<headers[j].size();k++) {
+	    if (k<n_cols+1) {
+	      if (k<headers[j].size()) {
+		//cout << "Iere: " << k << " " << j << " "
+		//<< headers[j][k] << endl;
+		columns[k].push_back(headers[j][k]);
+	      } else {
+		//cout << "Jere: " << k << endl;
+		columns[k].push_back("");
+	      }
+	    } else {
+	      columns[n_cols][j]+=" "+headers[j][k];
+	    }
+	  }
+	}
       }
       
     } else {
 
       if (columns.size()==row_max) {
+	if (verbose>0) {
+	  std::cout << "Ending table." << std::endl;
+	}
 	end_table();
       }
-      
-      next_column=0;
+
+      if (next_column!=0) {
+	// If some columns were not filled, then fill them
+	// before proceeding to the next line
+	size_t n_cols=headers[0].size();
+	while (next_column<=n_cols) {
+	  columns[next_column].push_back("");
+	  next_column++;
+	}
+	
+	next_column=0;
+      }
       
     }
   }

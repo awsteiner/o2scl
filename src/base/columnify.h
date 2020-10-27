@@ -163,7 +163,6 @@ namespace o2scl {
 	      tmp+=' ';
 	    }
 	    tmp+=table[i][j];
-	    if (i!=ncols-1) tmp+=' ';
 
 	  } else if (align_spec[i]==align_left) {
 
@@ -171,7 +170,6 @@ namespace o2scl {
 	    for(size_t k=table[i][j].length();k<csizes[i];k++) {
 	      tmp+=' ';
 	    }
-	    if (i!=ncols-1) tmp+=' ';
 
 	  } else if (align_spec[i]==align_lmid) {
 
@@ -180,7 +178,6 @@ namespace o2scl {
 	    for(size_t k=0;k<le;k++) tmp+=' ';
 	    tmp+=table[i][j];
 	    for(size_t k=0;k<ri;k++) tmp+=' ';
-	    if (i!=ncols-1) tmp+=' ';
 
 	  } else if (align_spec[i]==align_rmid) {
 
@@ -189,7 +186,6 @@ namespace o2scl {
 	    for(size_t k=0;k<le;k++) tmp+=' ';
 	    tmp+=table[i][j];
 	    for(size_t k=0;k<ri;k++) tmp+=' ';
-	    if (i!=ncols-1) tmp+=' ';
 
 	  } else if (align_spec[i]==align_dp) {
 
@@ -208,7 +204,6 @@ namespace o2scl {
 	    tmp+=left;
 	    tmp+=right;
 	    for(size_t k=right.length();k<csizes2[i];k++) tmp+=' ';
-	    if (i!=ncols-1) tmp+=' ';
 
 	  } else if (align_spec[i]==align_lnum) {
 
@@ -228,13 +223,16 @@ namespace o2scl {
 		}
 	      }
 	    }
-	    if (i!=ncols-1) tmp+=' ';
-	  }
-
-	  if (table_lines>0 && i+1<ncols) {
-	    tmp+=ter.alt_font()+'x'+ter.normal_font();
 	  }
 	  
+	  if (i!=ncols-1) {
+	    if (table_lines>0) {
+	      tmp+=ter.alt_font()+" x "+ter.normal_font();
+	    } else {
+	      tmp+=' ';
+	    }
+	  }
+
 	  // Proceed to the next column
 	}
 
