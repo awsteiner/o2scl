@@ -660,7 +660,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	cout << "Help for command " << ter.cyan_fg() << ter.bold()
 	     << cmd << ter.default_fg() << " given object of type "
 	     << ter.magenta_fg() << ter.bold()
-	     << sv[1] << ter.default_fg() << ".\n" << endl;
+	     << temp_type << ter.default_fg() << ".\n" << endl;
 	
 	int ret=cl->comm_option_help(sv,itive_com);
 	
@@ -698,6 +698,9 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   // Handle the special case 'help functions'
   if (sv.size()==2 && sv[1]=="functions") {
+    cout << "Documentation for help topic: " << ter.green_fg() << ter.bold()
+	 << "functions" << ter.default_fg() << endl;
+    cout << line << "\n" << endl;
     string str=((std::string)"Functions can be created using the ");
     str+="operators and functions listed below. Examples are ";
     str+="\"x==5 && y<1\", \"acos(-1)\", and \"sin(x>5)\". ";
@@ -726,6 +729,9 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   
   // Handle the special case 'help types'
   if (sv.size()==2 && sv[1]=="types") {
+    cout << "Documentation for help topic: " << ter.green_fg() << ter.bold()
+	 << "types" << ter.default_fg() << endl;
+    cout << line << "\n" << endl;
 
     string str="The O2scl types which can be handled by "+cl->cmd_name;
     str+=" are ";
@@ -745,6 +751,9 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   
   // Handle the special case 'help index-spec'
   if (sv.size()==2 && (sv[1]=="index-spec" || sv[1]=="index_spec")) {
+    cout << "Documentation for help topic: " << ter.green_fg() << ter.bold()
+	 << "index-spec" << ter.default_fg() << endl;
+    cout << line << "\n" << endl;
     std::string str=((std::string)"Index specification ")+
       "description:\n\nThe rearrange commands use index "+
       "specifications:\n\n"+
@@ -770,6 +779,9 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     
   // Handle the special case 'help value-spec'
   if (sv.size()==2 && (sv[1]=="value-spec" || sv[1]=="value_spec")) {
+    cout << "Documentation for help topic: " << ter.green_fg() << ter.bold()
+	 << "value-spec" << ter.default_fg() << endl;
+    cout << line << "\n" << endl;
     
     std::string str=((std::string)"Value specification ")+
       "description:\n\nSome "+cl->cmd_name+
@@ -810,6 +822,9 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   // Handle the special case 'help vector-spec'
   if (sv.size()==2 && (sv[1]=="vector-spec" || sv[1]=="vector_spec")) {
+    cout << "Documentation for help topic: " << ter.green_fg() << ter.bold()
+	 << "vector-spec" << ter.default_fg() << endl;
+    cout << line << "\n" << endl;
     
     std::string str=((std::string)"Vector specification ")+
       "description:\n\nSome "+cl->cmd_name+
@@ -873,6 +888,9 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   // Handle the special case 'help strings-spec'
   if (sv.size()==2 && (sv[1]=="strings-spec" || sv[1]=="strings_spec")) {
+    cout << "Documentation for help topic: " << ter.green_fg() << ter.bold()
+	 << "strings-spec" << ter.default_fg() << endl;
+    cout << line << "\n" << endl;
     
     std::string str=((std::string)"String list specification ")+
       "description:\n\nSome "+cl->cmd_name+
@@ -906,6 +924,9 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   // Handle the special case 'help mult-vector-spec'
   if (sv.size()==2 && (sv[1]=="mult-vector-spec" ||
 		       sv[1]=="mult_vector_spec")) {
+    cout << "Documentation for help topic: " << ter.green_fg() << ter.bold()
+	 << "mult-vector-spec" << ter.default_fg() << endl;
+    cout << line << "\n" << endl;
     
     std::string str=((std::string)"Multiple vector specification ")+
       "description:\n\nSome "+cl->cmd_name+
@@ -954,9 +975,12 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   // Handle the case 'help <type>' where <type> is an acol o2scl type
   for(size_t i=0;i<type_list.size();i++) {
     if (sv.size()>=2 && sv[1]==type_list[i]) {
-      std::string str="Type "+type_list[i]+" is one of the types of "+
-	"objects which can be read, written, or modified by "+
-	cl->cmd_name+".";
+      cout << "Documentation for type: " << ter.magenta_fg() << ter.bold()
+	   << type_list[i] << ter.default_fg() << endl;
+      cout << line << "\n" << endl;
+      std::string str="Objects of type "+ter.magenta_fg()+ter.bold()+
+	type_list[i]+ter.default_fg()+
+	" can be read, written, or modified by "+cl->cmd_name+".";
       std::vector<std::string> svx;
       o2scl::rewrap_keep_endlines(str,svx);
       for(size_t j=0;j<svx.size();j++) {
@@ -969,19 +993,23 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	if (it->first==type_list[i]) {
 	  std::vector<std::string> &clist=it->second;
 	  if (clist.size()>1) {
-	    str=((string)"The type-specific commands for \"")+
-	      type_list[i]+"\" are: ";
+	    str=((string)"The type-specific commands for objects ")+
+	      "of type "+type_list[i]+" are: ";
 	    for(size_t j=0;j<clist.size()-1;j++) {
-	      str+=clist[j]+", ";
+	      str+=ter.cyan_fg()+ter.bold()+clist[j]+ter.default_fg()+", ";
 	    }
-	    str+=" and "+clist[clist.size()-1]+".";
-	    o2scl::rewrap_keep_endlines(str,svx);
+	    str+=" and "+ter.cyan_fg()+ter.bold()+
+	      clist[clist.size()-1]+ter.default_fg()+".";
+	    o2scl::rewrap_ignore_vt100(str,svx);
 	    for(size_t j=0;j<svx.size();j++) {
 	      cout << svx[j] << endl;
 	    }
 	  } else {
-	    cout << "The only type-specific command for \""
-		 << type_list[i] << " is " << clist[0] << "." << endl;
+	    cout << "The only type-specific command for objects of type "
+		 << ter.magenta_fg() << ter.bold()
+		 << type_list[i] << ter.default_fg()
+		 << " is " << ter.cyan_fg() << ter.bold()
+		 << clist[0] << ter.default_fg() << "." << endl;
 	  }
 	}
       }
@@ -1134,6 +1162,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     cout << "List of additional help topics (e.g. \"acol -help <topic>\"): ";
     cout << ter.green_fg() << ter.bold() << "functions" << ter.default_fg()
 	 << "," << endl;
+    cout << ter.green_fg() << ter.bold() << "index-spec"
+	 << ter.default_fg() << ", ";
     cout << ter.green_fg() << ter.bold() << "mult-vector-spec"
 	 << ter.default_fg() << ", ";
     cout << ter.green_fg() << ter.bold() << "strings-spec" << ter.default_fg()
