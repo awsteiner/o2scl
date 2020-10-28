@@ -867,7 +867,13 @@ void acol_manager::command_add(std::string new_type) {
 	both},
        {0,"binary","Apply a binary function to two tensor_grid objects.",
 	-1,-1,"<file> <object name> <function>",
-	((string)"Long ")+"desc.",
+	((string)"Read tensor_grid named <object name> from file <file> ")+
+	"and use it along with the function <function> to modify the "+
+	"current tensor_grid object. The <function> parameter should "+
+	"be a mathematical function of the value in the current tensor "+
+	"(v), the value in the tensor named <object name> (w), the "+
+	"indices (i0, i1, ...) or the grid "+
+	"points (x0, x1, ...).",
 	new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_binary),
 	both},
        {0,"stats","Show stats for the data in the tensor.",0,0,"",
@@ -895,7 +901,8 @@ void acol_manager::command_add(std::string new_type) {
 	"[conditional func.] <func. of v, i0, i1, ... and x0, x1, ...>",
 	((string)"The \"function\" command sets ")+
 	"all the data entries in a tensor_grid equal to a user-specified "+
-	"mathematical function of the indices (i0, i1, ...) or grid "+
+	"mathematical function of the value in the tensor (v), the "+
+	"indices (i0, i1, ...) or the grid "+
 	"points (x0, x1, ...). If two function arguments are given and "+
 	"if the first function argument is not \"none\", then "+
 	"the first function specifies which tensor entries are to be "+

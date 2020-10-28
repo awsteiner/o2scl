@@ -1199,8 +1199,8 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
     std::string function, cond_func;
     if (sv.size()==1) {
       vector<string> pr, in;
-      pr.push_back("Enter function of i0,i1,... and x0,x1,... or \"none\"");
-      pr.push_back("Enter function of i0,i1,... and x0,x1,...");
+      pr.push_back("Enter function of v, i0,i1,... and x0,x1,... or \"none\"");
+      pr.push_back("Enter function of v, i0,i1,... and x0,x1,...");
       int ret=get_input(sv,pr,in,"function",itive_com);
       function=in[1];
       if (in[0]!="none") {
