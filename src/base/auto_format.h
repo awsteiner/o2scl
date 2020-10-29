@@ -85,9 +85,6 @@ namespace o2scl_auto_format {
     //size_t next_line;
     //@}
 
-    /// If true, align the output of matrices (default true)
-    bool align_matrices_;
-    
     /// The output precision for floating-point numbers
     size_t precision_;
     
@@ -122,6 +119,16 @@ namespace o2scl_auto_format {
     friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
 						      double d);
 
+    // 
+    template<class data_t>
+    friend auto_format &operator<<(auto_format &at,
+			    const boost::numeric::ublas::matrix<data_t> &vu);
+
+    // 
+    template<class data_t>
+    friend auto_format &operator<<(auto_format &at,
+				   const std::vector<std::vector<data_t> > &vv);
+    
     /// Pointer to the output stream
     std::ostream *outs;
     
@@ -129,6 +136,9 @@ namespace o2scl_auto_format {
 
     auto_format();
 
+    /// If true, align the output of matrices (default true)
+    bool align_matrices;
+    
     /** \brief Desc
      */
     void attach(std::ostream &out);
@@ -246,11 +256,21 @@ namespace o2scl_auto_format {
   template<class data_t>
   auto_format &operator<<(auto_format &at,
 			  const boost::numeric::ublas::matrix<data_t> &vu) {
+
+    bool table_started=false;
+    if (at.align_matrices && !at.inside_table) {
+      at.done();
+      at.start_table();
+      table_started=true;
+    }
     for(size_t i=0;i<vu.size1();i++) {
       for(size_t j=0;j<vu.size2();j++) {
 	at << vu(i,j);
       }
       at << endo;
+    }
+    if (table_started) {
+      at.end_table();
     }
     return at;
   }
@@ -260,11 +280,27 @@ namespace o2scl_auto_format {
   template<class data_t>
   auto_format &operator<<(auto_format &at,
 			  const std::vector<std::vector<data_t> > &vv) {
+    bool table_started=false;
+    if (at.align_matrices && !at.inside_table && vv.size()>0) {
+      size_t nc=vv[0].size();
+      bool cols_match=true;
+      for(size_t i=0;i<vv.size();i++) {
+	if (vv[i].size()!=nc) cols_match=false;
+      }
+      if (cols_match) {
+	at.done();
+	at.start_table();
+	table_started=true;
+      }
+    }
     for(size_t i=0;i<vv.size();i++) {
       for(size_t j=0;j<vv[i].size();j++) {
 	at << vv[i][j];
       }
       at << endo;
+    }
+    if (table_started) {
+      at.end_table();
     }
     return at;
   }

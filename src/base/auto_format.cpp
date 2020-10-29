@@ -44,7 +44,7 @@ auto_format::auto_format() {
   enabled=true;
   precision_=6;
   outs=&std::cout;
-  align_matrices_=true;
+  align_matrices=true;
 }      
 
 void auto_format::attach(std::ostream &out) {
