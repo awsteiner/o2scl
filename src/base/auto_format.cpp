@@ -43,7 +43,20 @@ auto_format::auto_format() {
   table_lines=0;
   enabled=true;
   precision_=6;
+  outs=&std::cout;
+  align_matrices_=true;
 }      
+
+void auto_format::attach(std::ostream &out) {
+  outs=&out;
+  return;
+}
+
+void auto_format::unattach() {
+  done();
+  outs=&std::cout;
+  return;
+}
 
 void auto_format::on() {
   enabled=true;
@@ -66,7 +79,7 @@ void auto_format::off() {
 void auto_format::done() {
   // Output all lines
   for(size_t j=0;j<lines.size();j++) {
-    cout << lines[j] << endl;
+    (*outs) << lines[j] << endl;
   }
   // Clear the output buffer
   lines.clear();
@@ -74,25 +87,25 @@ void auto_format::done() {
 }
 
 void auto_format::debug_table() {
-  cout << "Headers:" << endl;
+  (*outs) << "Headers:" << endl;
   for(size_t j=0;j<headers.size();j++) {
     for(size_t k=0;k<headers[j].size();k++) {
-      cout << "\"" << headers[j][k] << "\" ";
+      (*outs) << "\"" << headers[j][k] << "\" ";
     }
-    cout << endl;
+    (*outs) << endl;
   }
   if (columns.size()>0) {
-    cout << "Columns " << columns.size() << endl;
-    cout << "Column sizes: ";
+    (*outs) << "Columns " << columns.size() << endl;
+    (*outs) << "Column sizes: ";
     for(size_t j=0;j<columns.size();j++) {
-      cout << columns[j].size() << " ";
+      (*outs) << columns[j].size() << " ";
     }
-    cout << endl;
+    (*outs) << endl;
     for(size_t j=0;j<columns[0].size();j++) {
       for(size_t k=0;k<columns.size();k++) {
-	cout << "\"" << columns[k][j] << "\" ";
+	(*outs) << "\"" << columns[k][j] << "\" ";
       }
-      cout << endl;
+      (*outs) << endl;
     }
   }
   return;
@@ -121,13 +134,13 @@ void auto_format::end_table() {
   if (enabled==false) return;
 
   if (verbose>0) {
-    cout << "Running columnify::align() " << columns.size() << " "
+    (*outs) << "Running columnify::align() " << columns.size() << " "
 	 << columns[0].size() << endl;
-    cout << "Column sizes: ";
+    (*outs) << "Column sizes: ";
     for(size_t k=0;k<columns.size();k++) {
-      cout << columns[k].size() << " ";
+      (*outs) << columns[k].size() << " ";
     }
-    cout << endl;
+    (*outs) << endl;
   }
 
   // Determine alignments
@@ -150,13 +163,13 @@ void auto_format::end_table() {
 
   for(size_t j=0;j<tab_out.size();j++) {
     if (verbose>0) {
-      cout << "Output: ";
+      (*outs) << "Output: ";
     }
     if (columns[columns.size()-1][j].length()>0) {
-      cout << tab_out[j] << " "
+      (*outs) << tab_out[j] << " "
 	   << columns[columns.size()-1][j] << endl;
     } else {
-      cout << tab_out[j] << endl;
+      (*outs) << tab_out[j] << endl;
     }
   }
   
@@ -171,7 +184,7 @@ void auto_format::end_table() {
 void auto_format::add_string(std::string s) {
 
   if (enabled==false) {
-    cout << s;
+    (*outs) << s;
     return;
   }
   
@@ -213,7 +226,7 @@ void auto_format::add_string(std::string s) {
   if (inside_table==false) {
     
     if (verbose>0) {
-      cout << "Start add_string(): \"" << s << "\"" << std::endl;
+      (*outs) << "Start add_string(): \"" << s << "\"" << std::endl;
     }
   
     if (lines.size()==0) {
@@ -236,7 +249,7 @@ void auto_format::add_string(std::string s) {
     // Inside table=true section
 
     if (verbose>0) {
-      cout << "Start add_string(), inside_table: \"" << s << "\""
+      (*outs) << "Start add_string(), inside_table: \"" << s << "\""
 	   << std::endl;
     }
 
@@ -255,7 +268,7 @@ void auto_format::add_string(std::string s) {
       // Main column section
 
       if (verbose>0) {
-	cout << "Adding \"" << s << "\" to column " << next_column
+	(*outs) << "Adding \"" << s << "\" to column " << next_column
 	     << std::endl;
       }
 
@@ -270,7 +283,7 @@ void auto_format::add_string(std::string s) {
       next_column++;
 
       if (verbose>0) {
-	cout << "Next column is " << next_column << std::endl;
+	(*outs) << "Next column is " << next_column << std::endl;
       }
       
     }
@@ -296,11 +309,11 @@ void auto_format::add_string(std::string s) {
       // Cases 2 and 3 above
       
       if (verbose>0) {
-	cout << "Ending table." << endl;
+	(*outs) << "Ending table." << endl;
       }
       inside_table=false;
       if (verbose>0) {
-	cout << "Setting inside_table to false." << endl;
+	(*outs) << "Setting inside_table to false." << endl;
       }
       
       // First, if there is any non-table data, add it to
@@ -314,7 +327,7 @@ void auto_format::add_string(std::string s) {
       for(size_t k=0;k<next_column;k++) {
 	if (columns[k].size()>last_row) {
 	  if (verbose>0) {
-	    cout << "Adding " << columns[k][last_row]
+	    (*outs) << "Adding " << columns[k][last_row]
 		 << " to lines[0]." << endl;
 	  }
 	  if (k!=next_column-1) {
@@ -328,7 +341,7 @@ void auto_format::add_string(std::string s) {
       // If there was a string s, then we need to add it as well
       if (s.length()>0) {
 	if (verbose>0) {
-	  cout << "Adding " << s << " to lines[0]." << endl;
+	  (*outs) << "Adding " << s << " to lines[0]." << endl;
 	}
 	if (lines[0].length()>0 && lines[0][lines[0].length()-1]!=' ') {
 	  lines[0]+=' '+s;
@@ -338,11 +351,11 @@ void auto_format::add_string(std::string s) {
       }
       
       if (verbose>0) {
-	cout << "Running columnify::align() " << columns.size() << " "
+	(*outs) << "Running columnify::align() " << columns.size() << " "
 	     << columns[0].size()-1 << endl;
-	cout << "Column sizes: ";
+	(*outs) << "Column sizes: ";
 	for(size_t k=0;k<columns.size();k++) {
-	  cout << columns[k].size() << " ";
+	  (*outs) << columns[k].size() << " ";
 	}
       }
       
@@ -352,7 +365,7 @@ void auto_format::add_string(std::string s) {
       c.align(columns,columns.size(),columns[0].size()-1,
 	      tab_out,aligns);
       for(size_t j=0;j<tab_out.size();j++) {
-	cout << tab_out[j] << endl;
+	(*outs) << tab_out[j] << endl;
       }
       
     } else {
@@ -361,14 +374,14 @@ void auto_format::add_string(std::string s) {
       
       if (s.length()>0) {
 	if (verbose>1) {
-	  cout << "Adding \"" << s << "\" to table." << endl;
+	  (*outs) << "Adding \"" << s << "\" to table." << endl;
 	}
 	columns[next_column].push_back(s);
 	next_column++;
       }
       if (include_endl && next_column==columns.size()) {
 	if (verbose>0) {
-	  cout << "Resetting next_column." << endl;
+	  (*outs) << "Resetting next_column." << endl;
 	}
 	next_column=0;
       }
@@ -376,7 +389,7 @@ void auto_format::add_string(std::string s) {
     }
     
     if (verbose>0) {
-      cout << endl;
+      (*outs) << endl;
     }
 
 #endif    
@@ -389,19 +402,19 @@ void auto_format::add_string(std::string s) {
 void auto_format::endline() {
 
   if (enabled==false) {
-    cout << endl;
+    (*outs) << endl;
     return;
   }
   
   if (inside_table==false) {
 
     if (verbose>0) {
-      cout << "Output: ";
+      (*outs) << "Output: ";
     }
     if (lines.size()>0) {
-      cout << lines[0] << endl;
+      (*outs) << lines[0] << endl;
     } else {
-      cout << endl;
+      (*outs) << endl;
     }
     lines.clear();
 
@@ -416,7 +429,7 @@ void auto_format::endline() {
       // If necessary, add a new header
       if (headers.size()<n_headers) {
 	if (verbose>0) {
-	  std::cout << "Adding a new header row." << std::endl;
+	  (*outs) << "Adding a new header row." << std::endl;
 	}
 	vector<string> empty;
 	headers.push_back(empty);
@@ -426,7 +439,7 @@ void auto_format::endline() {
 	// Otherwise, move to the body section
 	size_t n_cols=headers[0].size();
 	if (verbose>0) {
-	  std::cout << "Moving to body section, n_cols="
+	  (*outs) << "Moving to body section, n_cols="
 		    << n_cols << std::endl;
 	}
 	vector<string> empty;
@@ -460,7 +473,7 @@ void auto_format::endline() {
 
       if (columns.size()==row_max) {
 	if (verbose>0) {
-	  std::cout << "Ending table." << std::endl;
+	  (*outs) << "Ending table." << std::endl;
 	}
 	end_table();
       }
@@ -489,7 +502,7 @@ void auto_format::endline() {
     size_t c1=vs1.size();
     size_t c2=vs2.size();
     if (verbose>0) {
-      std::cout << "First and second line count: " << c1 << " "
+      (*outs) << "First and second line count: " << c1 << " "
 		<< c2 << std::endl;
     }
     
@@ -497,7 +510,7 @@ void auto_format::endline() {
     if (c1>0 && c1==c2) {
       
       if (verbose>0) {
-	std::cout << "Setting inside_table to true." << std::endl;
+	(*outs) << "Setting inside_table to true." << std::endl;
       }
       inside_table=true;
       

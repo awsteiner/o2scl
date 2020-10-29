@@ -32,6 +32,9 @@
 
 #include <o2scl/err_hnd.h>
 
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
+
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl_auto_format {
 #endif
@@ -55,11 +58,11 @@ namespace o2scl_auto_format {
       \todo Allow user-specified table alignments
       \todo switch to columnify::add_spaces() and add more complicated
       table line specifications
-      \todo Support char *'s, c-style arrays, matrix types, 
-      ublas objects, multiprecision types.
+      \todo Support multiprecision types.
       \todo Implement row_max
-      \todo Allow output to files ("fout") in addition to cout.
 
+      \future Create a replacement for std::flush
+      \future Finish automatic table detection
       \future For automatic table detection: allow user to change the
       number of rows which must have the same number of 'words' to
       verify a table.
@@ -81,6 +84,11 @@ namespace o2scl_auto_format {
     // Index of line for next output
     //size_t next_line;
     //@}
+
+    /// If true, align the output of matrices (default true)
+    bool align_matrices_;
+    
+    /// The output precision for floating-point numbers
     size_t precision_;
     
     /// \name Table mode
@@ -113,10 +121,21 @@ namespace o2scl_auto_format {
     // Ensure this operator is a friend to access precision_
     friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
 						      double d);
+
+    /// Pointer to the output stream
+    std::ostream *outs;
     
   public:
 
     auto_format();
+
+    /** \brief Desc
+     */
+    void attach(std::ostream &out);
+    
+    /** \brief Desc
+     */
+    void unattach();
     
     /** \brief Add a string to the output buffer
      */
@@ -163,50 +182,93 @@ namespace o2scl_auto_format {
 
   };
 
+  /// End the current line
+  static const char endo='\n';
+  
   /** \brief Output a double-precision number
    */
-  auto_format &operator<<(auto_format &c, double d);
+  auto_format &operator<<(auto_format &at, double d);
 
   /** \brief Output a single-precision number
    */
-  auto_format &operator<<(auto_format &c, float f);
+  auto_format &operator<<(auto_format &at, float f);
 
   /** \brief Output an integer
    */
-  auto_format &operator<<(auto_format &c, int i);
+  auto_format &operator<<(auto_format &at, int i);
 
   /** \brief Output a character
    */
-  auto_format &operator<<(auto_format &c, char ch);
+  auto_format &operator<<(auto_format &at, char ch);
 
   /** \brief Output a \c size_t
    */
-  auto_format &operator<<(auto_format &c, size_t s);
+  auto_format &operator<<(auto_format &at, size_t s);
 
   /** \brief Output a string
    */
-  auto_format &operator<<(auto_format &c, std::string s);
+  auto_format &operator<<(auto_format &at, std::string s);
   
   /** \brief Output a vector of doubles
    */
-  auto_format &operator<<(auto_format &c, const std::vector<double> &vd);
+  auto_format &operator<<(auto_format &at, const std::vector<double> &vd);
   
   /** \brief Output a vector of ints
    */
-  auto_format &operator<<(auto_format &c, const std::vector<int> &vd);
+  auto_format &operator<<(auto_format &at, const std::vector<int> &vd);
   
   /** \brief Output a vector of size_ts
    */
-  auto_format &operator<<(auto_format &c, const std::vector<size_t> &vd);
+  auto_format &operator<<(auto_format &at, const std::vector<size_t> &vd);
   
   /** \brief Output a vector of chars
    */
-  auto_format &operator<<(auto_format &c, const std::vector<char> &vd);
+  auto_format &operator<<(auto_format &at, const std::vector<char> &vd);
   
   /** \brief Output a vector of std::strings
    */
-  auto_format &operator<<(auto_format &c,
+  auto_format &operator<<(auto_format &at,
 			  const std::vector<std::string> &vd);
+
+  /** \brief Output a ublas vector
+   */
+  template<class data_t>
+  auto_format &operator<<(auto_format &at,
+			  const boost::numeric::ublas::vector<data_t> &vu) {
+    for(size_t i=0;i<vu.size();i++) {
+      at << vu[i];
+    }
+    return at;
+  }
+
+  /** \brief Output a ublas matrix
+   */
+  template<class data_t>
+  auto_format &operator<<(auto_format &at,
+			  const boost::numeric::ublas::matrix<data_t> &vu) {
+    for(size_t i=0;i<vu.size1();i++) {
+      for(size_t j=0;j<vu.size2();j++) {
+	at << vu(i,j);
+      }
+      at << endo;
+    }
+    return at;
+  }
+
+  /** \brief Output a vector of vectors
+   */
+  template<class data_t>
+  auto_format &operator<<(auto_format &at,
+			  const std::vector<std::vector<data_t> > &vv) {
+    for(size_t i=0;i<vv.size();i++) {
+      for(size_t j=0;j<vv[i].size();j++) {
+	at << vv[i][j];
+      }
+      at << endo;
+    }
+    return at;
+  }
+
   
   /** \brief Desc
    */
@@ -216,9 +278,6 @@ namespace o2scl_auto_format {
    */
   //auto_format &endl(auto_format &c);
 
-  /// End the current line
-  static const char endo='\n';
-  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

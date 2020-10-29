@@ -52,7 +52,9 @@ int main(void) {
   at.end_table();
 
   at << endo;
-  
+
+  ofstream fout("auto_format_ts.txt");
+  at.attach(fout);
   at.start_table();
   at.table_lines=1;
   at << 4.0 << "x" << -1.0 << endo;
@@ -60,6 +62,7 @@ int main(void) {
   at << 5.0 << "a b" << -2.0e-220 << "foo" << endo;
   //at.debug_table();
   at.end_table();
+  at.unattach();
   
   at << 62 << endo;
   at << endo;
@@ -71,6 +74,26 @@ int main(void) {
   at << vi << endo;
   vector<std::string> vs={"this","is","a  test"};
   at << vs << endo;
+  at << endo;
+
+  boost::numeric::ublas::vector<double> uv(3);
+  uv[0]=1.0;
+  uv[1]=3.0;
+  uv[2]=2.0;
+  at << uv << endo;
+
+  boost::numeric::ublas::matrix<double> um(2,2);
+  um(0,0)=1.0;
+  um(0,1)=2.0;
+  um(1,0)=3.0;
+  um(1,1)=4.0;
+  at << um << endo;
+
+  std::vector<std::vector<double> > vv;
+  vv.push_back({1,3,4});
+  vv.push_back({2,5});
+  at << vv << endo;
+  
   at.done();
   
   t.report();
