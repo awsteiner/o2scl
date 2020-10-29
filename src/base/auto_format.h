@@ -55,6 +55,10 @@ namespace o2scl_auto_format {
       so issuing <tt>cout << std::flush</tt> in the middle of 
       a line will not output the buffer to the screen.
 
+      \note The attach() function stores a pointer to the output
+      stream, so the user must take care to make sure this pointer is
+      valid.
+
       \todo Allow user-specified table alignments
       \todo switch to columnify::add_spaces() and add more complicated
       table line specifications
@@ -115,22 +119,18 @@ namespace o2scl_auto_format {
     std::vector<int> aligns;
     //@}
 
-    // Ensure this operator is a friend to access precision_
+    /// Pointer to the output stream
+    std::ostream *outs;
+    
+    // Ensure these operators are friends
     friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
 						      double d);
-
-    // 
     template<class data_t>
     friend auto_format &operator<<(auto_format &at,
-			    const boost::numeric::ublas::matrix<data_t> &vu);
-
-    // 
+				   const boost::numeric::ublas::matrix<data_t> &vu);
     template<class data_t>
     friend auto_format &operator<<(auto_format &at,
 				   const std::vector<std::vector<data_t> > &vv);
-    
-    /// Pointer to the output stream
-    std::ostream *outs;
     
   public:
 
@@ -252,6 +252,9 @@ namespace o2scl_auto_format {
   }
 
   /** \brief Output a ublas matrix
+
+      If \ref auto_format::align_matrices is true, then 
+      the output is organized into a table.
    */
   template<class data_t>
   auto_format &operator<<(auto_format &at,
@@ -276,6 +279,10 @@ namespace o2scl_auto_format {
   }
 
   /** \brief Output a vector of vectors
+
+      If \ref auto_format::align_matrices is true and all of
+      the vectors in the list have the same length, then 
+      the output is organized into a table.
    */
   template<class data_t>
   auto_format &operator<<(auto_format &at,
