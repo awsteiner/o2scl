@@ -855,6 +855,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       slice=sv[2];
     } else {
       if (sv[1]=="frac") {
+	frac_mode=true;
 	svalue=sv[2];
 	slice=sv[3];
 	if (sv.size()>4) file=sv[4];
@@ -880,7 +881,11 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     size_t nlev=1;
     
     if (frac_mode) {
+      
       cout << "Fraction mode not implemented with table3d objects." << endl;
+
+      cout << svalue << " " << levs[0] << endl;
+      
       // Get references to the histogram data
       size_t nx=table3d_obj.get_nx();
       size_t ny=table3d_obj.get_ny();
