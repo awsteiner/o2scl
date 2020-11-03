@@ -800,8 +800,6 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     return exc_efailed;
   }
   
-  bool frac_mode=false;
-
   /*
   if (sv.size()>=2 && sv[1]=="frac") {
     cout << "Fraction mode is true." << endl;
@@ -825,21 +823,32 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {
 
+    /*
+      The calculation of fractional integrals is difficult for a 
+      table3d object than for a hist_2d object because one can imagine
+      integrals of complicated regions inside of contour lines. In
+      order to avoid these complications, fractional integrals are now
+      only allowed for hist_2d types. The user may convert a table3d
+      slice to a hist_2d object and then compute the contours from a
+      fractional integral if they need to do so.
+    */
+    
     std::string slice;
 
     if (sv.size()<3) {
       // If not enough arguments were given, then prompt for them
       vector<string> pr, in;
-      pr.push_back("Contour value or \"frac\" and contour value");
+      //pr.push_back("Contour value or \"frac\" and contour value");
+      pr.push_back("Contour value");
       pr.push_back("Slice name");
       pr.push_back("Filename (or \"none\")");
       int ret=get_input(sv,pr,in,"contours",itive_com);
       if (ret!=0) return ret;
       
-      if (in[0].find("frac ")==0) {
-	in[0]=in[0].substr(5,in[0].length()-5);
-	frac_mode=true;
-      }
+      //if (in[0].find("frac ")==0) {
+      //in[0]=in[0].substr(5,in[0].length()-5);
+      //frac_mode=true;
+      //}
 
       if (in[2]!="none") {
 	file=in[2];
@@ -847,29 +856,32 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 	if (name.length()==0) name="contours";
       }
     } else if (sv.size()==3) {
-      if (sv[1].find("frac ")==0) {
-	sv[1]=sv[1].substr(5,sv[1].length()-5);
-	frac_mode=true;
-      }
+      //if (sv[1].find("frac ")==0) {
+      //sv[1]=sv[1].substr(5,sv[1].length()-5);
+      //frac_mode=true;
+      //}
       svalue=sv[1];
       slice=sv[2];
     } else {
-      if (sv[1]=="frac") {
+      /*
+	if (sv[1]=="frac") {
 	frac_mode=true;
 	svalue=sv[2];
 	slice=sv[3];
 	if (sv.size()>4) file=sv[4];
 	if (sv.size()>5) name=sv[5];
-      } else {
+	} else {
+	
 	if (sv[1].find("frac ")==0) {
-	  sv[1]=sv[1].substr(5,sv[1].length()-5);
-	  frac_mode=true;
+	sv[1]=sv[1].substr(5,sv[1].length()-5);
+	frac_mode=true;
 	}
-	svalue=sv[1];
-	slice=sv[2];
-	file=sv[3];
-	if (sv.size()>4) name=sv[4];
-      }
+      */
+      svalue=sv[1];
+      slice=sv[2];
+      file=sv[3];
+      if (sv.size()>4) name=sv[4];
+      //}
     }
     
     ubvector levs(1);
@@ -879,11 +891,12 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       return 1;
     }
     size_t nlev=1;
-    
-    if (frac_mode) {
+
+    /*
+      if (frac_mode) {
       
       cout << "Fraction mode not implemented with table3d objects." << endl;
-
+      
       cout << svalue << " " << levs[0] << endl;
       
       // Get references to the histogram data
@@ -983,6 +996,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       levs[0]=level;
       
     }
+    */
     
     if (file.length()>0) {
       std::vector<contour_line> clines;
@@ -1008,6 +1022,8 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     }
     
   } else if (type=="hist_2d") {
+
+    bool frac_mode=false;
 
     if (sv.size()<2) {
       // If not enough arguments were given, then prompt for them

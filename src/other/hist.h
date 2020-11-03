@@ -68,8 +68,8 @@ namespace o2scl {
       prevents accidental data loss. One may set the bin edges
       either with a generic vector, or as a \ref uniform_grid object.
 
-      To save space, representative vectors are not allocated until
-      they are used.
+      Representative vectors are not allocated and set until they are
+      used.
 
       \note In order to ensure the histogram does not employ
       user-specified representative values that are not defined, the
@@ -107,8 +107,8 @@ namespace o2scl {
       \hline 
 
       Internally, none of the vectors should have memory allocated for
-      them when hsize is zero, and the vector sizes should match the
-      histogram size. These and other checks are performed by \ref
+      them when \ref hsize is zero, and the vector sizes should match
+      the histogram size. These and other checks are performed by \ref
       is_valid() . Also, the function \ref set_reps_auto() should not
       be called when mode is \ref rmode_user.
   */
@@ -275,7 +275,12 @@ namespace o2scl {
       return;
     }
     
-    /// The histogram size
+    /** \brief The histogram size
+
+	This is the number of bins and one less than the number of
+	bin edges. If the size is zero, then the histogram is
+	empty. 
+     */
     size_t size() const {
       return hsize;
     }
@@ -433,7 +438,7 @@ namespace o2scl {
     /** \brief Apply a function
 
 	This function sets the weights equal to a function of
-	five variables:
+	six variables:
 	- i: the bin index
 	- n: the total number of bins
 	- l: the lower edge of the bin
@@ -619,6 +624,9 @@ namespace o2scl {
 	This computes the integral using \ref integ() and so the
 	action of this function depends on the interpolation type.
 	If the histogram is empty, an exception is thrown. 
+
+	\todo Create a version which uses integ_wgts() instead
+	of integ().
     */
     void normalize(double new_sum=1.0);
 

@@ -2575,8 +2575,12 @@ namespace o2scl {
 
   /// \name Binning and log vs. linear in src/base/interp.h
   //@{
-  /** \brief From an (x,y) pair, create a new (x,y) pair using
-      interpolation where the new x vector is uniformly spaced
+  /** \brief From a pair of vectors, \f$ (x,y) \f$
+      create a new pair of vectors, (x,y) where the new x vector is
+      uniformly spaced
+
+      \note The two vectors, x and y, must have the same size, 
+      as reported by their <tt>size()</tt> method.
   */
   template<class vec_t, class vec2_t, class vec3_t, class vec4_t>
     void rebin_xy(const vec_t &x, const vec2_t &y,
@@ -2657,9 +2661,9 @@ namespace o2scl {
   }
 
   /** \brief Rebin, rescale, sort, and match to \f$ y=x \f$
-
+      
       Principally used by \ref linear_or_log() .
-   */
+  */
   template<class vec_t, class vec2_t>
     double linear_or_log_chi2(const vec_t &x, const vec2_t &y) {
 
@@ -2687,14 +2691,18 @@ namespace o2scl {
     return chi2;
   }
 
-  /** \brief Attempt to determine if data represented by (x,y) 
-      would be better plotted on a semi-log or log-log plot
+  /** \brief Attempt to determine if data represented by two arrays,
+      (x,y), would be better plotted on a linear, semi-log, or log-log
+      plot
 
       \note Experimental.
 
       This function attempts to guess whether the data stored in \c x
       and \c y might be best plotted on a log scale. This algorithm
       will fail for poorly sampled or highly oscillatory data.
+
+      \note The two vectors, x and y, must have the same size, 
+      as reported by their <tt>size()</tt> method.
   */
   template<class vec_t, class vec2_t>
     void linear_or_log(vec_t &x, vec2_t &y, bool &log_x, bool &log_y) {
@@ -2722,6 +2730,7 @@ namespace o2scl {
       if (y[i]<=0.0) y_positive=false;
     }
 
+    // If not, presume linear
     if (x_positive==false && y_positive==false) return;
 
     double chi2=linear_or_log_chi2(x,y);

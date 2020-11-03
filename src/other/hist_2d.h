@@ -59,14 +59,25 @@ namespace o2scl {
       section.
       \endverbatim
 
-      Typical usage begins with setting the histogram bins using 
-      \ref hist_2d::set_bin_edges(). Note that if one attempts to set
-      the bins on a histogram where the bins have already been set,
-      one must ensure that the new and old bin settings have the same
-      size (in both x and y directions). This ensures that there is no
-      ambiguity in rebinning the data and also prevents accidental
-      data loss. One may set the bin edges either with generic
-      vectors, or with \ref uniform_grid objects.
+      To create a histogram, one can begin by setting the histogram
+      bins using \ref hist_2d::set_bin_edges() and then filling the
+      data with \ref update(), \ref update_i(), \ref set_wgt() or \ref
+      set_wgt_i() .
+
+      One can also use tabulated data to fill this histogram using,
+      e.g. \ref hist_2d::from_table(o2scl::table<> &, std::string,
+      std::string, size_t, size_t)
+
+      Note that if one attempts to set the bins on a histogram where
+      the bins have already been set, one must ensure that the new and
+      old bin settings have the same size (in both x and y
+      directions). This ensures that there is no ambiguity in
+      rebinning the data and also prevents accidental data loss. One
+      may set the bin edges either with generic vectors, or with \ref
+      uniform_grid objects.
+
+      You can empty all of the histogram bins using \ref clear_wgts()
+      or clear everything using \ref clear() .
 
       \note In order to ensure the histogram does not employ
       user-specified representative values that are not defined, the
@@ -90,6 +101,8 @@ namespace o2scl {
 
       Internally, either \ref hsize_x and \ref hsize_y should
       both be zero or both be non-zero. 
+
+      \future Create a copy_from_table3d() function.
 
       \future Write a function to create a 1-d histogram 
       from a 2-d histogram either by selecting one bin
@@ -279,8 +292,8 @@ namespace o2scl {
 	
 	This function returns the sum of
 	\f[
-	w_{i,j} ( \mathrm{x,high}_i - \mathrm{x,low}_i)
-	( \mathrm{y,high}_j - \mathrm{y,low}_j) \, .
+	w_{i,j} ( \mathrm{x\_high}_i - \mathrm{x\_low}_i)
+	( \mathrm{y\_high}_j - \mathrm{y\_low}_j) \, .
 	\f]
      */
     double integ_wgts();

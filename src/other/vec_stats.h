@@ -2169,11 +2169,16 @@ namespace o2scl {
   /** \brief Take a vector of data and convert it to a vector
       of bin edges automatically adjusting for increasing or
       decreasing and linear or logarithmic spacing
+
+      This function is used in \ref table3d::to_hist_2d() .
+
+      \future Create a version where the user specifies log
+      vs. linear instead of autodetecting.
    */
   template<class vec_t, class vec2_t>
-    void vector_to_bins(const vec_t &v_grid, vec2_t &v_bins,
-			int verbose=1) {
-
+  void vector_to_bins(const vec_t &v_grid, vec2_t &v_bins,
+		      int verbose=1) {
+    
     size_t n=v_grid.size();
     v_bins.resize(n+1);
 
@@ -2190,13 +2195,24 @@ namespace o2scl {
     // Compute quality factor for logarithmic bins (smaller number is
     // better)
     std::vector<double> logs;
-    for(size_t i=0;i<n;i++) logs[i]=log(v_grid[i]);
-    vector_diffs(logs,diffs);
-    mean=vector_mean(diffs);
-    std=vector_stddev(diffs);
-    double qual_log=std/mean;
+    bool positive=true;
+    for(size_t i=0;i<n && positive;i++) {
+      if (v_grid[i]<=0.0) {
+	positive=false;
+      } else {
+	logs[i]=log(v_grid[i]);
+      }
+    }
 
-    if (qual_log<qual_lin) {
+    double qual_log=0.0;
+    if (positive) {
+      vector_diffs(logs,diffs);
+      mean=vector_mean(diffs);
+      std=vector_stddev(diffs);
+      qual_log=std/mean;
+    }
+
+    if (positive && qual_log<qual_lin) {
       if (verbose>0) {
 	std::cout << "Auto-detected log mode in o2scl::vector_to_bins()."
 		  << std::endl;

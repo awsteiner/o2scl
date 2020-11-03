@@ -128,7 +128,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 			      "function","entry","entry-grid","get-grid",
 			      "insert","interp","stats","select",
 			      "list","max","min","rename","set-data",
-			      "slice","slice-hist","sum",
+			      "slice","slice-hist","sum","to-hist-2d",
 			      "to-tensor-grid","x-name","y-name"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("table3d",itmp));
@@ -539,7 +539,7 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="table3d") {
     
-    static const size_t narr=23;
+    static const size_t narr=24;
     comm_option_s options_arr[narr]=
       {{0,"to-tensor-grid",
 	"Convert a slice of the table3d to a tensor_grid object.",
@@ -570,18 +570,15 @@ void acol_manager::command_add(std::string new_type) {
 	new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
 	both},
        {0,"contours","Create contour lines from a table3d slice.",
-	0,5,"[\"frac\"] <value> <slice_name> [output_filename object_name]",
-	((string)"If the argument \"frac\" is not present, the ")+
+	0,5,"<value> <slice_name> [output_filename object_name]",
+	((string)"The ")+
 	"\"contours\" command constructs a set of contour lines using "+
 	"the data in slice named <slice> at the fixed value given in "+
 	"<value>. If two additional arguments are given, then the "+
 	"contour lines are stored in the file named output_filename "+
 	"and the object is named object_name. If the file does not "+
 	"exist, it is created. If no contours are found, then no file "+
-	"I/O is performed and the current table3d object is unmodified. "+
-	"If the argument \"frac\" is present, then the operation is "+
-	"the same except that <value> is interpreted as a fraction of "+
-	"the total integral under the data.",
+	"I/O is performed and the current table3d object is unmodified.",
 	new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_contours),
 	both},
        {0,"deriv-x","Derivative with respect to x.",0,2,
@@ -670,6 +667,12 @@ void acol_manager::command_add(std::string new_type) {
 	"if necessary.",
 	new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
 	both},
+       {0,"to-hist-2d","Convert a table3d slice to a 2d histogram.",0,1,
+	"<slice>",
+	((std::string)"The 'to-hist-2d' command creates a 2D histogram ")+
+	"from slice <slice>.",
+	new comm_option_mfptr<acol_manager>
+	(this,&acol_manager::comm_to_hist_2d),both},
        {0,"x-name","Get or set the 'x' grid name",
 	0,1,"[name]","",
 	new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_x_name),

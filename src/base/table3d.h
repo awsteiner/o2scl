@@ -52,6 +52,8 @@
 // Forward definition of the table3d class for HDF I/O
 namespace o2scl {
   class table3d;
+  // Define for to_hist_2d() function below
+  class hist_2d;
 }
 
 // Forward definition of HDF I/O to extend friendship
@@ -920,6 +922,10 @@ namespace o2scl {
     */
     table3d table_to_uniform_grid(size_t xpts, bool log_x, 
 				  size_t ypts, bool log_y);
+
+    /** \brief Convert slice named \c slice to a \ref hist_2d object
+     */
+    hist_2d to_hist_2d(std::string slice, int verbose=1);
     
 #ifdef O2SCL_NEVER_DEFINED
     

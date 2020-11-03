@@ -25,11 +25,32 @@
 #endif
 
 #include <o2scl/table3d.h>
+#include <o2scl/hist_2d.h>
+#include <o2scl/vec_stats.h>
 
 using namespace std;
 using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
+
+hist_2d table3d::to_hist_2d(std::string slice, int verbose) {
+  hist_2d h;
+  
+  ubvector bin_edges_x, bin_edges_y;
+
+  vector_to_bins(xval,bin_edges_x,verbose);
+  vector_to_bins(yval,bin_edges_y,verbose);
+
+  h.set_bin_edges(numx+1,bin_edges_x,numy+1,bin_edges_y);
+  
+  for(size_t i=0;i<numx;i++) {
+    for(size_t j=0;j<numy;j++) {
+      h.set_wgt_i(i,j,get(i,j,slice));
+    }
+  }
+  
+  return h;
+}
 
 table3d::table3d() {
   xy_set=false;
