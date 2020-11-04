@@ -213,10 +213,10 @@ int main(int argc, char *argv[]) {
       cout << "Creating rst files for classes:" << endl;
     } else if (kk==1) {
       cout << "Creating rst files for non-duplicate functions:" << endl;
+      cout << endl;
     } else {
       cout << "Creating rst files for files:" << endl;
     }
-    cout << endl;
 
     // Proceed through the list
     for (std::map<std::string,std::string>::iterator it=list.begin();

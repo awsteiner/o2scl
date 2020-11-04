@@ -20,17 +20,17 @@ Several classes integrate arbitrary one-dimensional functions:
   :ref:`inte_qagiu_gsl <inte_qagiu_gsl>`,
   :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>`,
   :ref:`inte_exp_sinh_boost <inte_exp_sinh_boost>`,
-  and :ref:`inte_iu_transform <inte_iu_transform>`.
+  and :ref:`inte_transform <inte_transform>`.
 - Integration from  :math:`-\infty` to :math:`b`: 
   :ref:`inte_qagil_gsl <inte_qagil_gsl>`,
   :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>`, 
   :ref:`inte_exp_sinh_boost <inte_exp_sinh_boost>`, and
-  :ref:`inte_il_transform <inte_il_transform>`.
+  :ref:`inte_transform <inte_transform>`.
 - Integration from  :math:`-\infty` to :math:`\infty`: 
   :ref:`inte_qagi_gsl <inte_qagi_gsl>`,
   :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>`, 
   :ref:`inte_sinh_sinh_boost <inte_sinh_sinh_boost>`, and
-  :ref:`inte_i_transform <inte_i_transform>`.
+  :ref:`inte_transform <inte_transform>`.
 - Integration over a finite interval for a function with
   singularities: :ref:`inte_qags_gsl <inte_qags_gsl>` 
   (See also :ref:`inte_qaws_gsl <inte_qaws_gsl>`.) The 

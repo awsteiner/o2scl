@@ -139,7 +139,7 @@ vector of numbers from a column of the text file (starting with zero
 for the first column), ignoring any header rows which contain
 non-numeric values. For example 'text:~/temp.dat:2' will construct a
 vector from the third column of the file 'temp.dat' in the user's home
-directory (using :ref:`wordexp_single_file()` which calls the
+directory (using :cpp:func:`wordexp_single_file()` which calls the
 system ``wordexp()`` function to expand the tilde).
 
 6. ``hdf5:<file name>:<object name>:[addtional spec.]`` - Read an HDF5

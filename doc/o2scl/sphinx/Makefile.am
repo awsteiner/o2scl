@@ -90,7 +90,7 @@ rst-files: empty
 		grep -v "<member refid=\"class" | \
 		grep -v "<member refid=\"struct" > variable_list
 	grep "kind=\"enum\"" ../xml/index.xml > enum_list
-	grep "kind=\"file\"" ../xml/index.xml > file_list
+#	grep "kind=\"file\"" ../xml/index.xml > file_list
 	cp ref_header ref.rst
 	btmanip -parse ../../../data/o2scl/o2scl.bib -rst temp.rst
 	cat temp.rst >> ref.rst

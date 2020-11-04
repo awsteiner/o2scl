@@ -77,7 +77,7 @@ Fixing Parameters
 The class :ref:`mmin_fix_params <mmin_fix_params>` provides a
 convenient way of fixing some of the parameters and minimizing over
 others, without requiring a the function interface to be rewritten. An
-example is given in the :ref:`Minimizer fixing variables` example
+example is given in the :ref:`Minimizer fixing variables example`
 below.
 
 Multidimensional minimizer example

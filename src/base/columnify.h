@@ -405,7 +405,7 @@ namespace o2scl {
       row index and the second index is the column index. For the
       opposite convention, use \ref matrix_trans_out().
   */
-  template<class mat_t> int matrix_out(std::ostream &os, size_t nrows, 
+  template<class mat_t> void matrix_out(std::ostream &os, size_t nrows, 
 				       size_t ncols, const mat_t &A) {
     
     columnify co;
@@ -424,7 +424,7 @@ namespace o2scl {
       os << ctable[i] << std::endl;
     }
 
-    return 0;
+    return;
   }
 
   /** \brief A operator for simple matrix output using \c operator()
@@ -445,7 +445,7 @@ namespace o2scl {
       row index and the second index is the column index. For the
       opposite convention, use \ref matrix_trans_out().
   */
-  template<class mat_t> int matrix_out(std::ostream &os, const mat_t &A) {
+  template<class mat_t> void matrix_out(std::ostream &os, const mat_t &A) {
 
     size_t nrows=A.size1();
     size_t ncols=A.size2();
@@ -466,7 +466,7 @@ namespace o2scl {
       os << ctable[i] << std::endl;
     }
 
-    return 0;
+    return;
   }
 
   /** \brief A operator for simple matrix output using \c operator()
@@ -485,7 +485,7 @@ namespace o2scl {
       column index and the second index is the row index. For the
       opposite convention, use \ref matrix_out().
   */
-  template<class mat_t> int matrix_trans_out(std::ostream &os, size_t nrows, 
+  template<class mat_t> void matrix_trans_out(std::ostream &os, size_t nrows, 
 					     size_t ncols, const mat_t &A) {
    
     columnify co;
@@ -504,7 +504,7 @@ namespace o2scl {
       os << ctable[i] << std::endl;
     }
 
-    return 0;
+    return;
   }
 
   /** \brief A operator for simple matrix output using \c operator()
@@ -525,7 +525,7 @@ namespace o2scl {
       column index and the second index is the row index. For the
       opposite convention, use \ref matrix_out().
   */
-  template<class mat_t> int matrix_trans_out(std::ostream &os,
+  template<class mat_t> void matrix_trans_out(std::ostream &os,
 					     const mat_t &A) {
 
     size_t nrows=A.size1();
@@ -547,7 +547,7 @@ namespace o2scl {
       os << ctable[i] << std::endl;
     }
 
-    return 0;
+    return;
   }
 
   /** \brief A operator for simple matrix output using \c operator[]
@@ -570,7 +570,7 @@ namespace o2scl {
       and scientific mode is not set, then we can avoid printing
       the extra spaces.
   */
-  template<class mat_t> int array_2d_out(std::ostream &os, size_t nrows, 
+  template<class mat_t> void array_2d_out(std::ostream &os, size_t nrows, 
 					 size_t ncols, mat_t &A) {
 
     columnify co;
@@ -591,7 +591,7 @@ namespace o2scl {
     
     delete[] stab;
 
-    return 0;
+    return;
   }
 
   /** \brief A operator for simple matrix output using \c operator[]
@@ -614,7 +614,7 @@ namespace o2scl {
       column index and the second index is the row index. For the
       opposite convention, use \ref array_2d_out().
   */
-  template<class mat_t> int array_2d_trans_out(std::ostream &os, size_t nrows, 
+  template<class mat_t> void array_2d_trans_out(std::ostream &os, size_t nrows, 
 					       size_t ncols, mat_t &A) {
    
     columnify co;
@@ -635,7 +635,7 @@ namespace o2scl {
     
     delete[] stab;
 
-    return 0;
+    return;
   }
   //@}
 
