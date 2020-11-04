@@ -6,6 +6,7 @@
   <compound refid="classo2scl_1_1astep__base" kind="class"><name>o2scl::astep_base</name>
   <compound refid="classo2scl_1_1astep__gsl" kind="class"><name>o2scl::astep_gsl</name>
   <compound refid="classo2scl_1_1astep__nonadapt" kind="class"><name>o2scl::astep_nonadapt</name>
+  <compound refid="classo2scl__auto__format_1_1auto__format" kind="class"><name>o2scl_auto_format::auto_format</name>
   <compound refid="classo2scl_1_1bessel__K__exp__integ__direct" kind="class"><name>o2scl::bessel_K_exp_integ_direct</name>
   <compound refid="classo2scl_1_1bessel__K__exp__integ__gsl" kind="class"><name>o2scl::bessel_K_exp_integ_gsl</name>
   <compound refid="classo2scl_1_1bessel__K__exp__integ__tl" kind="class"><name>o2scl::bessel_K_exp_integ_tl</name>
@@ -306,6 +307,7 @@
   <compound refid="classo2scl_1_1tensor__grid2" kind="class"><name>o2scl::tensor_grid2</name>
   <compound refid="classo2scl_1_1tensor__grid3" kind="class"><name>o2scl::tensor_grid3</name>
   <compound refid="classo2scl_1_1tensor__grid4" kind="class"><name>o2scl::tensor_grid4</name>
+  <compound refid="classo2scl_1_1terminal" kind="class"><name>o2scl::terminal</name>
   <compound refid="classo2scl_1_1test__mgr" kind="class"><name>o2scl::test_mgr</name>
   <compound refid="classo2scl_1_1Token" kind="class"><name>o2scl::Token</name>
   <compound refid="classo2scl__linalg_1_1ubvector__2__mem" kind="class"><name>o2scl_linalg::ubvector_2_mem</name>

@@ -1,6 +1,7 @@
 Using context main
 ---------------------------------------------------
 Parsing class_list:
+
 Namespace: o2scl_acol class: acol_manager
 Namespace: o2scl class: anneal_base
 Namespace: o2scl class: anneal_gsl
@@ -9,6 +10,7 @@ Namespace: o2scl class: anneal_para
 Namespace: o2scl class: astep_base
 Namespace: o2scl class: astep_gsl
 Namespace: o2scl class: astep_nonadapt
+Namespace: o2scl_auto_format class: auto_format
 Namespace: o2scl class: bessel_K_exp_integ_direct
 Namespace: o2scl class: bessel_K_exp_integ_gsl
 Namespace: o2scl class: bessel_K_exp_integ_tl
@@ -309,6 +311,7 @@ Namespace: o2scl class: tensor_grid1
 Namespace: o2scl class: tensor_grid2
 Namespace: o2scl class: tensor_grid3
 Namespace: o2scl class: tensor_grid4
+Namespace: o2scl class: terminal
 Namespace: o2scl class: test_mgr
 Namespace: o2scl class: Token
 Namespace: o2scl_linalg class: ubvector_2_mem
@@ -329,12 +332,15 @@ Namespace: o2scl class: vector_index_vector_size
 Namespace: o2scl class: vector_range_gen
 
 ---------------------------------------------------
-Creating rst files for non-duplicate functions:
+Creating rst files for classes:
+
 
 ---------------------------------------------------
 Creating rst files for duplicate functions:
+
 ---------------------------------------------------
 Parsing function_list:
+
 Namespace:  function: matrix_out
 Namespace:  function: matrix_out
 Multiple entry matrix_out
@@ -406,7 +412,6 @@ Namespace: o2scl function: python_cmd_string
 Namespace: o2scl function: pipe_cmd_string
 Multiple entry pipe_cmd_string
 Namespace:  function: file_exists
-Namespace:  function: screenify
 Namespace:  function: count_words
 Namespace:  function: remove_whitespace
 Namespace: o2scl function: binary_to_hex
@@ -420,33 +425,7 @@ Namespace: o2scl function: quadratic_extremum_coeffs
 Namespace:  function: glob_wrapper
 Namespace:  function: wordexp_wrapper
 Namespace: o2scl function: wordexp_single_file
-Namespace:  function: vt100_hrule
-Namespace: o2scl function: vt100_cyan_fg
-Namespace: o2scl function: vt100_magenta_fg
-Namespace: o2scl function: vt100_yellow_fg
-Namespace: o2scl function: vt100_red_fg
-Namespace: o2scl function: vt100_green_fg
-Namespace: o2scl function: vt100_blue_fg
-Namespace: o2scl function: vt100_cyan_bg
-Namespace: o2scl function: vt100_magenta_bg
-Namespace: o2scl function: vt100_yellow_bg
-Namespace: o2scl function: vt100_red_bg
-Namespace: o2scl function: vt100_green_bg
-Namespace: o2scl function: vt100_blue_bg
-Namespace:  function: vt100_default
-Namespace:  function: vt100_bold
-Namespace: o2scl function: vt100_8bit_fg
-Namespace: o2scl function: vt100_8bit_bg
-Namespace: o2scl function: vt100_3byte_fg
-Namespace: o2scl function: vt100_3byte_bg
-Namespace:  function: vt100_lowint
-Namespace:  function: vt100_underline
-Namespace:  function: vt100_reverse
-Namespace: o2scl function: vt100_alt_font
-Namespace: o2scl function: vt100_normal_font
-Namespace: o2scl function: vt100_8bit_summ
-Namespace: o2scl function: vt100_3byte_summ
-Namespace: o2scl function: vt100_3byte_summ_long
+Namespace:  function: screenify
 Namespace:  function: ptos
 Namespace:  function: itos
 Namespace:  function: szttos
@@ -470,6 +449,8 @@ Namespace: o2scl function: function_to_double_nothrow
 Namespace:  function: split_string
 Namespace: o2scl function: split_string_delim
 Namespace:  function: rewrap
+Namespace: o2scl function: rewrap_ignore_vt100
+Namespace:  function: rewrap_color
 Namespace: o2scl function: rewrap_keep_endlines
 Namespace: o2scl function: string_to_uint_list
 Namespace:  function: ix_index
@@ -1057,6 +1038,7 @@ Namespace: o2scl_linalg function: LU_decomp_array_2d
 
 ---------------------------------------------------
 Creating rst files for non-duplicate functions:
+
 Skipping const_vector_range
 Skipping dtos
 Skipping hdf_input
@@ -1164,6 +1146,7 @@ Skipping wvector_variance_fmean
 
 ---------------------------------------------------
 Creating rst files for duplicate functions:
+
 const_vector_range(const dat_t *v, size_t start, size_t last)
 const_vector_range(boost::numeric::ublas::vector<dat_t> &v, size_t start, size_t last)
 const_vector_range(const boost::numeric::ublas::vector<dat_t> &v, size_t start, size_t last)
@@ -1281,7 +1264,7 @@ o2isfinite(const boost::multiprecision::cpp_dec_float_50 x)
 o2isfinite(const boost::multiprecision::cpp_dec_float_100 x)
 pipe_cmd_string(std::string cmd, std::string &result, bool err_on_fail = true, int nmax = 80)
 pipe_cmd_string(std::string cmd, int nmax = 80)
-rebin_xy(const vec_t &x, const vec2_t &y, vec3_t &new_x, vec4_t &new_y, size_t n_pts, size_t interp_type)
+rebin_xy(const vec_t &x, const vec2_t &y, vec3_t &x_out, vec4_t &y_out, size_t n_pts, size_t interp_type)
 rebin_xy(const vec_t &x, const vec2_t &y, vec3_t &new_x, vec4_t &new_y, size_t n_pts, size_t interp_type1, size_t interp_type2, double acc = 1.0e-4)
 solve_cyc_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, const vec3_t &belowdiag, const vec4_t &rhs, vec5_t &x, size_t N, mem_t &m)
 solve_cyc_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, const vec3_t &belowdiag, const vec4_t &rhs, vec5_t &x, size_t N)
@@ -1458,3 +1441,189 @@ wvector_variance(size_t n, const vec_t &data, const vec2_t &weights)
 wvector_variance(const vec_t &data, const vec2_t &weights)
 wvector_variance_fmean(size_t n, const vec_t &data, const vec2_t &weights, double wmean)
 wvector_variance_fmean(const vec_t &data, const vec2_t &weights, double wmean)
+---------------------------------------------------
+Parsing file_list:
+
+File: anneal.h
+File: anneal_gsl.h
+File: anneal_mt.h
+File: anneal_para.h
+File: auto_format.h
+File: cli.h
+File: cli_readline.h
+File: columnify.h
+File: constants.h
+File: convert_units.h
+File: cursesw.h
+File: err_hnd.h
+File: exception.h
+File: find_constants.h
+File: format_float.h
+File: funct.h
+File: interp.h
+File: interp_krige.h
+File: lib_settings.h
+File: misc.h
+File: mm_funct.h
+File: multi_funct.h
+File: prev_commit.h
+File: search_vec.h
+File: shunting_yard.h
+File: string_conv.h
+File: table.h
+File: table3d.h
+File: table_units.h
+File: tensor.h
+File: tensor_grid.h
+File: test_mgr.h
+File: uniform_grid.h
+File: vector.h
+File: cubature.h
+File: deriv.h
+File: deriv_cern.h
+File: deriv_eqi.h
+File: deriv_gsl.h
+File: vector_derint.h
+File: fit_base.h
+File: fit_bayes.h
+File: fit_fix.h
+File: fit_linear.h
+File: fit_min.h
+File: fit_nonlin.h
+File: acolm.h
+File: cloud_file.h
+File: hdf_file.h
+File: hdf_io.h
+File: inte.h
+File: inte_adapt_cern.h
+File: inte_cauchy_cern.h
+File: inte_double_exp_boost.h
+File: inte_gauss56_cern.h
+File: inte_gauss_cern.h
+File: inte_gen.h
+File: inte_gsl.h
+File: inte_kronrod_boost.h
+File: inte_kronrod_gsl.h
+File: inte_multi.h
+File: inte_qag_gsl.h
+File: inte_qagi_gsl.h
+File: inte_qagil_gsl.h
+File: inte_qagiu_gsl.h
+File: inte_qags_gsl.h
+File: inte_qawc_gsl.h
+File: inte_qawf_gsl.h
+File: inte_qawo_gsl.h
+File: inte_qaws_gsl.h
+File: inte_qng_gsl.h
+File: inte_singular_gsl.h
+File: bidiag.h
+File: bidiag_base.h
+File: cblas.h
+File: cblas_base.h
+File: cholesky.h
+File: cholesky_base.h
+File: givens.h
+File: givens_base.h
+File: hh.h
+File: hh_base.h
+File: householder.h
+File: householder_base.h
+File: lanczos.h
+File: lanczos_base.h
+File: linear_solver.h
+File: lu.h
+File: lu_base.h
+File: permutation.h
+File: qr.h
+File: qr_base.h
+File: qrpt.h
+File: qrpt_base.h
+File: svd.h
+File: svd_base.h
+File: svdstep.h
+File: svdstep_base.h
+File: tridiag.h
+File: tridiag_base.h
+File: expval.h
+File: mcarlo.h
+File: mcarlo_miser.h
+File: mcarlo_plain.h
+File: mcarlo_vegas.h
+File: mcmc_para.h
+File: rng_gsl.h
+File: diff_evo.h
+File: diff_evo_adapt.h
+File: min.h
+File: min_brent_boost.h
+File: min_brent_gsl.h
+File: min_cern.h
+File: min_quad_golden.h
+File: mmin.h
+File: mmin_bfgs2.h
+File: mmin_conf.h
+File: mmin_conp.h
+File: mmin_constr.h
+File: mmin_constr_gencan.h
+File: mmin_constr_pgrad.h
+File: mmin_constr_spg.h
+File: mmin_fix.h
+File: mmin_simp2.h
+File: astep.h
+File: astep_gsl.h
+File: astep_nonadapt.h
+File: ode_bsimp_gsl.h
+File: ode_bv_mshoot.h
+File: ode_bv_multishoot.h
+File: ode_bv_solve.h
+File: ode_funct.h
+File: ode_it_solve.h
+File: ode_iv_solve.h
+File: ode_iv_table.h
+File: ode_jac_funct.h
+File: ode_rk8pd_gsl.h
+File: ode_rkck_gsl.h
+File: ode_rkf45_gsl.h
+File: ode_step.h
+File: cheb_approx.h
+File: contour.h
+File: fract.h
+File: hist.h
+File: hist_2d.h
+File: interp2.h
+File: interp2_direct.h
+File: interp2_eqi.h
+File: interp2_neigh.h
+File: interp2_planar.h
+File: interp2_seq.h
+File: interpm_idw.h
+File: interpm_krige.h
+File: pinside.h
+File: poly.h
+File: polylog.h
+File: prob_dens_func.h
+File: prob_dens_mdim_amr.h
+File: series_acc.h
+File: slack_messenger.h
+File: smooth_func.h
+File: smooth_gsl.h
+File: vec_stats.h
+File: jacobian.h
+File: mroot.h
+File: mroot_broyden.h
+File: mroot_cern.h
+File: mroot_hybrids.h
+File: root.h
+File: root_bkt_cern.h
+File: root_brent_gsl.h
+File: root_cern.h
+File: root_robbins_monro.h
+File: root_stef.h
+File: root_toms748.h
+
+---------------------------------------------------
+Creating rst files for files:
+
+
+---------------------------------------------------
+Creating rst files for duplicate functions:
+

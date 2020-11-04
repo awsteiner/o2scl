@@ -190,3 +190,7 @@ this issue, O\ :sub:`2`\ scl does not currently provide HDF I/O
 functions for :ref:`tensor <tensor>` classes unless it is built upon
 ``std::vector``.
 
+Test
+----
+
+.. doxygenfile:: src/base/vector.h

@@ -71,7 +71,7 @@ sphinx-help:
 	sphinx-build --help
 
 html: Makefile
-	sphinx-build -v -b html "." build/html > sphinx.log 2>&1
+	sphinx-build -v -b html "." build/html 2>&1 | tee sphinx.log 
 
 html-nit: Makefile
 	sphinx-build -v -n -b html "." build/html
@@ -90,6 +90,7 @@ rst-files: empty
 		grep -v "<member refid=\"class" | \
 		grep -v "<member refid=\"struct" > variable_list
 	grep "kind=\"enum\"" ../xml/index.xml > enum_list
+	grep "kind=\"file\"" ../xml/index.xml > file_list
 	cp ref_header ref.rst
 	btmanip -parse ../../../data/o2scl/o2scl.bib -rst temp.rst
 	cat temp.rst >> ref.rst
@@ -97,7 +98,7 @@ rst-files: empty
 	g++ -o ../make_rst ../make_rst.cpp
 	rm -f class/*.rst
 	rm -f function/*.rst
-	../make_rst main > make_rst.out
+	../make_rst main | tee make_rst.out
 	cd static; acol -run acol.scr > acol.out
 
 

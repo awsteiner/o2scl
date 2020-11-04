@@ -82,6 +82,8 @@ int main(int argc, char *argv[]) {
 
   size_t kk_max=2;
   if (context==((string)"eos")) kk_max=1;
+  //if (context==((string)"main")) kk_max=3;
+  if (context==((string)"main")) kk_max=2;
   
   // kk=0 for classes and kk=1 for functions
   for (size_t kk=0;kk<kk_max;kk++) {
@@ -92,14 +94,18 @@ int main(int argc, char *argv[]) {
     cout << "---------------------------------------------------" << endl;
     if (kk==0) {
       cout << "Parsing class_list:" << endl;
-    } else {
+    } else if (kk==1) {
       cout << "Parsing function_list:" << endl;
+    } else {
+      cout << "Parsing file_list:" << endl;
     }
+    cout << endl;
     
     // Open the file of functions or classes
     string fname_in;
     if (kk==0) fname_in="class_list";
-    else fname_in="function_list";
+    else if (kk==1) fname_in="function_list";
+    else fname_in="file_list";
     ifstream fin(fname_in);
 
     // List of items, name as "first" and namespace as "second"
@@ -167,8 +173,10 @@ int main(int argc, char *argv[]) {
       
 	if (kk==0) {
 	  cout << "Namespace: " << ns << " class: " << s << endl;
-	} else {
+	} else if (kk==1) {
 	  cout << "Namespace: " << ns << " function: " << s << endl;
+	} else { 
+	  cout << "File: " << s << endl;
 	}
 
 	// Handle multiple entry or add to the main list
@@ -179,10 +187,14 @@ int main(int argc, char *argv[]) {
 	    cerr << "Duplicate classes not allowed." << endl;
 	    exit(-1);
 	  }
+	  if (kk==2) {
+	    cerr << "Duplicate files not allowed." << endl;
+	    exit(-1);
+	  }
 	} else if (ns!=((string)"boost")) {
 	  list.insert(std::make_pair(s,ns));
 	}
-
+	
 	// End of 'if (s.length()>0)'
       }
       
@@ -197,7 +209,14 @@ int main(int argc, char *argv[]) {
     // Now create the rst files for the non-duplicate entries
     
     cout << "---------------------------------------------------" << endl;
-    cout << "Creating rst files for non-duplicate functions:" << endl;
+    if (kk==0) {
+      cout << "Creating rst files for classes:" << endl;
+    } else if (kk==1) {
+      cout << "Creating rst files for non-duplicate functions:" << endl;
+    } else {
+      cout << "Creating rst files for files:" << endl;
+    }
+    cout << endl;
 
     // Proceed through the list
     for (std::map<std::string,std::string>::iterator it=list.begin();
@@ -211,6 +230,7 @@ int main(int argc, char *argv[]) {
 	// Open the rst file
 	string fname_out="class/";
 	if (kk==1) fname_out="function/";
+	else if (kk==2) fname_out="file/";
 	fname_out+=s+".rst";
 	ofstream fout(fname_out);
 
@@ -227,6 +247,8 @@ int main(int argc, char *argv[]) {
 	  if (ns.length()>0) {
 	    head+=" ("+ns+")";
 	  }
+	} else if (kk==2) {
+	  head="File "+s;
 	}
 	fout << head << endl;
 	for(size_t i=0;i<head.length();i++) {
@@ -240,8 +262,10 @@ int main(int argc, char *argv[]) {
 	  if (kk==0) {
 	    fout << ":ref:`O2scl <o2scl>` : :ref:`Class List`\n" << endl;
 	    fout << ".. _" << s << ":\n" << endl;
-	  } else {
+	  } else if (kk==1) {
 	    fout << ":ref:`O2scl <o2scl>` : :ref:`Function List`\n" << endl;
+	  } else {
+	    fout << ":ref:`O2scl <o2scl>` : :ref:`File List`\n" << endl;
 	  }
 	} else if (context==((string)"part")) {
 	  if (kk==0) {
@@ -270,12 +294,14 @@ int main(int argc, char *argv[]) {
 	  } else {
 	    fout << ".. doxygenclass:: " << s << endl;
 	  }
-	} else {
+	} else if (kk==1) {
 	  if (context==((string)"part")) {
 	    fout << ".. doxygenfunction:: " << s << endl;
 	  } else {
 	    fout << ".. doxygenfunction:: " << ns << "::" << s << endl;
 	  }
+	} else {
+	  fout << ".. doxygenfile:: " << s << endl;
 	}
 
 	// Close the file
@@ -290,6 +316,7 @@ int main(int argc, char *argv[]) {
     cout << endl;
     cout << "---------------------------------------------------" << endl;
     cout << "Creating rst files for duplicate functions:" << endl;
+    cout << endl;
     
     // -------------------------------------------------------
     // For functions, create the rst files for duplicate entries

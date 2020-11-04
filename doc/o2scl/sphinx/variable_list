@@ -2,6 +2,7 @@
     <member refid="namespaceo2scl_1a4e88f03beb8a6bee57ce1cc67fb003e0" kind="variable"><name>alt_err_hnd</name></member>
     <member refid="namespaceo2scl_1adb46f38d30aa221bb7d5bca3dfc7bb92" kind="variable"><name>def_err_hnd</name></member>
     <member refid="namespaceo2scl_1a7d992c6663b22309673c22009e44a942" kind="variable"><name>o2scl_settings</name></member>
+    <member refid="auto__format_8h_1aee4ad154e17328ca5724778c14a82b79" kind="variable"><name>endo</name></member>
     <member refid="namespaceo2scl__cgs_1a621093afbf93826bf77e8e34bde8d273" kind="variable"><name>speed_of_light</name></member>
     <member refid="namespaceo2scl__cgs_1ab6b896fc85e665edf75373e83d21e64c" kind="variable"><name>gravitational_constant</name></member>
     <member refid="namespaceo2scl__cgs_1a45cf7da8a725625becf0406e8f96b4c6" kind="variable"><name>plancks_constant_h</name></member>

@@ -1,6 +1,7 @@
 Using context part
 ---------------------------------------------------
 Parsing class_list:
+
 Namespace: o2scl class: boson
 Namespace: o2scl class: boson_eff
 Namespace: o2scl class: boson_rel
@@ -60,16 +61,21 @@ Namespace: o2scl class: thermo_np_deriv_press_tl
 Namespace: o2scl class: thermo_tl
 
 ---------------------------------------------------
-Creating rst files for non-duplicate functions:
+Creating rst files for classes:
+
 
 ---------------------------------------------------
 Creating rst files for duplicate functions:
+
 ---------------------------------------------------
 Parsing function_list:
+
 Namespace: o2scl function: nucdist_set
 
 ---------------------------------------------------
 Creating rst files for non-duplicate functions:
 
+
 ---------------------------------------------------
 Creating rst files for duplicate functions:
+

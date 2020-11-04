@@ -1,6 +1,7 @@
 Using context eos
 ---------------------------------------------------
 Parsing class_list:
+
 Namespace: o2scl class: eos_base
 Namespace: o2scl class: eos_crust
 Namespace: o2scl class: eos_crust_virial
@@ -69,7 +70,9 @@ Namespace: o2scl class: tov_love
 Namespace: o2scl class: tov_solve
 
 ---------------------------------------------------
-Creating rst files for non-duplicate functions:
+Creating rst files for classes:
+
 
 ---------------------------------------------------
 Creating rst files for duplicate functions:
+

@@ -2575,17 +2575,29 @@ namespace o2scl {
 
   /// \name Binning and log vs. linear in src/base/interp.h
   //@{
-  /** \brief From a pair of vectors, \f$ (x,y) \f$
-      create a new pair of vectors, (x,y) where the new x vector is
-      uniformly spaced
+  /** \brief From a pair of vectors, \f$ (x,y) \f$ create a new pair
+      of vectors, \f$ (x_{\mathrm{out}},y_{\mathrm{out}}) \f$ where
+      \f$ x_{\mathrm{out}} \f$ is uniformly-spaced.
+
+      This function uses interpolation (method determined by
+      \ref interp_type) to create new vectors \c x_out and 
+      \c y_out which will be resized using the <tt>resize()</tt>
+      method to ensure they are of size \c n_pts. This 
+      function creates an object of type \ref o2scl::interp_vec
+      to do the interpolation.
+
+      This function is used in \ref linear_or_log_chi2() .
 
       \note The two vectors, x and y, must have the same size, 
       as reported by their <tt>size()</tt> method.
+
+      \note In order to use interpolation, the input vector 
+      \c x must be either increasing or decreasing.
   */
   template<class vec_t, class vec2_t, class vec3_t, class vec4_t>
-    void rebin_xy(const vec_t &x, const vec2_t &y,
-		  vec3_t &new_x, vec4_t &new_y, size_t n_pts,
-		  size_t interp_type) {
+  void rebin_xy(const vec_t &x, const vec2_t &y,
+		vec3_t &x_out, vec4_t &y_out, size_t n_pts,
+		size_t interp_type) {
     
     if (x.size()!=y.size()) {
       O2SCL_ERR2("The x and y vectors must have the same size ",
@@ -2599,23 +2611,25 @@ namespace o2scl {
     // Vector sizes
     size_t n=x.size();
     
-    // Create the grid and setup new_x
+    // Create the grid and setup x_out
     uniform_grid_end<double> ugx(x[0],x[n-1],n_pts-1);
-    ugx.vector(new_x);
+    ugx.vector(x_out);
     
-    // Allocate space and interpolate into new_y
-    new_y.resize(n_pts);
+    // Allocate space and interpolate into y_out
+    y_out.resize(n_pts);
     interp_vec<vec3_t,vec4_t> itp(n,x,y,interp_type);
     for(size_t i=0;i<n_pts;i++) {
-      new_y[i]=itp.eval(new_x[i]);
+      y_out[i]=itp.eval(x_out[i]);
     }
     
     return;
   }
 
-  /** \brief From an (x,y) pair, create a new (x,y) pair using
-      interpolation where the new x vector is uniformly spaced and
-      test accuracy
+  /** \brief From a pair of vectors, \f$ (x,y) \f$ create a new pair
+      of vectors, \f$ (x_{\mathrm{out}},y_{\mathrm{out}}) \f$ where
+      \f$ x_{\mathrm{out}} \f$ is uniformly-spaced 
+
+      \todo What does this function do???
   */
   template<class vec_t, class vec2_t, class vec3_t, class vec4_t>
     int rebin_xy(const vec_t &x, const vec2_t &y,
@@ -2667,6 +2681,8 @@ namespace o2scl {
   template<class vec_t, class vec2_t>
     double linear_or_log_chi2(const vec_t &x, const vec2_t &y) {
 
+    // Just choose a fiducial number of points so that we
+    // can easily rescale to [0,1]
     static const size_t n2=11;
     
     // Rebin into vectors of length 11
@@ -2680,7 +2696,7 @@ namespace o2scl {
       yn[i]=(yn[i]-min_y)/(max_y-min_y);
     }
     
-    // Sort and match to line
+    // Sort and match to the line y=x
     vector_sort_double(n2,yn);
     double chi2=0.0;
     for(size_t i=0;i<n2;i++) {
