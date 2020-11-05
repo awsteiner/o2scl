@@ -23,7 +23,7 @@
     <member refid="namespaceo2scl_1a0520fb171f3328779d93617699e40f89" kind="function"><name>vector_bound_fracint</name></member>
     <member refid="namespaceo2scl_1aab724b7c07bfd880ffa69ba623dc48cd" kind="function"><name>vector_bound_int</name></member>
     <member refid="namespaceo2scl_1acfb3eed76af55a70619d4d872d28712f" kind="function"><name>rebin_xy</name></member>
-    <member refid="namespaceo2scl_1ad601d950b7c5bdecd0b8d61ee0c17d4e" kind="function"><name>rebin_xy</name></member>
+    <member refid="namespaceo2scl_1ad302877996c7d9cd5fae7fd46c27d87b" kind="function"><name>rebin_xy</name></member>
     <member refid="namespaceo2scl_1a055844f37659de06675f02be4569ac91" kind="function"><name>linear_or_log_chi2</name></member>
     <member refid="namespaceo2scl_1ab3b94815f583abb0baecd56f310eb07d" kind="function"><name>linear_or_log</name></member>
     <member refid="namespaceo2scl_1aebffd28e0ab62f85172dcae4509f2a94" kind="function"><name>vector_refine</name></member>

@@ -2629,11 +2629,19 @@ namespace o2scl {
       of vectors, \f$ (x_{\mathrm{out}},y_{\mathrm{out}}) \f$ where
       \f$ x_{\mathrm{out}} \f$ is uniformly-spaced 
 
-      \todo What does this function do???
+      \note Experimental
+
+      This function rebins the vectors \c x and \c y twice,
+      with two different interpolation types, and 
+      then compares the accuracy of the result to the 
+      user-specified value \c acc. 
+
+      \todo I'm not sure what the purpose of this function
+      was originally.
   */
   template<class vec_t, class vec2_t, class vec3_t, class vec4_t>
     int rebin_xy(const vec_t &x, const vec2_t &y,
-		 vec3_t &new_x, vec4_t &new_y, size_t n_pts,
+		 vec3_t &x_out, vec4_t &y_out, size_t n_pts,
 		 size_t interp_type1, size_t interp_type2,
 		 double acc=1.0e-4) {
     
@@ -2649,24 +2657,24 @@ namespace o2scl {
     // Vector sizes
     size_t n=x.size();
     
-    // Create the grid and setup new_x
+    // Create the grid and setup x_out
     uniform_grid_end<double> ugx(x[0],x[n-1],n_pts-1);
-    ugx.vector(new_x);
+    ugx.vector(x_out);
     
-    // Allocate space and interpolate into new_y
-    std::vector<double> new_y2(n_pts);
-    new_y.resize(n_pts);
+    // Allocate space and interpolate into y_out
+    std::vector<double> y_out2(n_pts);
+    y_out.resize(n_pts);
     interp_vec<vec3_t,vec4_t> itp1(n,x,y,interp_type1);
     interp_vec<vec3_t,vec4_t> itp2(n,x,y,interp_type2);
     for(size_t i=0;i<n_pts;i++) {
-      new_y[i]=itp1.eval(new_x[i]);
-      new_y2[i]=itp2.eval(new_x[i]);
+      y_out[i]=itp1.eval(x_out[i]);
+      y_out2[i]=itp2.eval(x_out[i]);
     }
 
     double max_y, min_y;
-    vector_minmax_value(n_pts,new_y,min_y,max_y);
+    vector_minmax_value(n_pts,y_out,min_y,max_y);
     for(size_t i=0;i<n_pts;i++) {
-      if (fabs(new_y2[i]-new_y[i])/(max_y-min_y)>acc) {
+      if (fabs(y_out2[i]-y_out[i])/(max_y-min_y)>acc) {
 	return 1;
       }
     }
@@ -2676,7 +2684,14 @@ namespace o2scl {
 
   /** \brief Rebin, rescale, sort, and match to \f$ y=x \f$
       
+      This function rebins, rescales, and sorts two vectors \c x and
+      \c y in order to compare them to the line \f$ y=x \f$, returning
+      the value of \f$ \chi^2 \f$.
+
       Principally used by \ref linear_or_log() .
+
+      \future Rename this function. It's a bit confusing because
+      there are no logarithms here. Maybe just rescale_fit_identity()?
   */
   template<class vec_t, class vec2_t>
     double linear_or_log_chi2(const vec_t &x, const vec2_t &y) {
@@ -2719,6 +2734,10 @@ namespace o2scl {
 
       \note The two vectors, x and y, must have the same size, 
       as reported by their <tt>size()</tt> method.
+
+      This uses the \ref linear_log_chi2() function to determine
+      whether a log of x ore y improves the fit to the line \f$ y=x
+      \f$.
   */
   template<class vec_t, class vec2_t>
     void linear_or_log(vec_t &x, vec2_t &y, bool &log_x, bool &log_y) {
@@ -2813,13 +2832,13 @@ namespace o2scl {
   }
   
   /** \brief Attempt to determine if data stored in \c y
-      would be better plotted on a semi-log or log-log plot
+      is more nearly linear or logarithmic
       
       \note Experimental.
 
-      \future There is a bit of extra calculation because the
-      rebin function creates a second new x vector with a 
-      uniform grid, so this could be streamlined.
+      \future There is a bit of extra calculation because the rebin
+      function creates a new x vector with a uniform grid, so this
+      could be streamlined.
   */
   template<class vec_t>
     void linear_or_log(vec_t &y, bool &log_y) {
