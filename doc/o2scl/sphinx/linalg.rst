@@ -3,8 +3,16 @@ Linear Algebra
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
+Contents
+--------
 
+- :ref:`Introduction`
+- :ref:`Specializations for Armadillo and Eigen`
+- :ref:`Linear algebra enums`
+
+Introduction
+------------
+  
 There is a small set of linear algebra routines. These are not
 intended to be a replacement for higher performance linear algebra
 libraries. In the case that O\ :sub:`2`\ scl was compiled with support

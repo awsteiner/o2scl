@@ -3,10 +3,25 @@ Installation
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
+Contents
+--------
+
+- :ref:`Compiling O2scl on Ubuntu with Snap <compile_snap>`
+- :ref:`Compiling O2scl on Mac OSX with Homebrew <compile_homebrew>`
+- :ref:`Compiling O2scl from a release distribution <compile_dist>`
+- :ref:`Compiling O2scl from a release on Linux <compile_release>`
+- :ref:`Compiling O2scl from the source code <compile_source>`
+- :ref:`Optional linear algebra libraries`
+- :ref:`Range-checking`
+- :ref:`Optional physics libraries`
+- :ref:`More configure flags`
+- :ref:`Generation of documentation`
+- :ref:`Uninstallation`
 
 Compiling O\ :sub:`2`\ scl on Ubuntu with Snap
 ----------------------------------------------
+
+.. _compile_snap:
 
 The easiest way to install on Ubuntu is with snap (see
 https://snapcraft.io/o2scl). Use::
@@ -25,6 +40,8 @@ where I use snap to install in my ``.bashrc``, I use::
 
 Compiling O\ :sub:`2`\ scl on Mac OSX with Homebrew
 ---------------------------------------------------
+
+.. _compile_homebrew:
 
 The easiest way to install on Mac OSX is with homebrew. Use::
 
@@ -49,6 +66,8 @@ O\ :sub:`2`\ scl is tested by Travis CI.
 
 Compiling O\ :sub:`2`\ scl from a release distribution
 ------------------------------------------------------
+
+.. _compile_dist:
 
 O\ :sub:`2`\ scl installation is generally similar to that for
 GNU-style libraries. The file ``INSTALL`` has some details on this
@@ -114,6 +133,8 @@ testing works on standard Ubuntu and Mac OS X environments.
 Compiling O\ :sub:`2`\ scl from a release on Linux
 --------------------------------------------------
 
+.. _compile_release:
+
 For example, to install O\ :sub:`2`\ scl on Ubuntu, begin by
 installing g++, GSL (the ``libgsl-dev`` package), Boost (the
 ``libboost-all-dev`` package), GNU readline (the ``libreadline-dev``
@@ -144,6 +165,8 @@ you will need to let O\ :sub:`2`\ scl know, using::
  
 Compiling O\ :sub:`2`\ scl from the source code
 -----------------------------------------------
+
+.. _compile_source:
 
 If you want to install from source (without generating the
 documentation), then you must first install ``g++``, ``make``,

@@ -188,8 +188,8 @@ Vector properties
 -----------------
 
 - :cpp:func:`o2scl::vector_diffs()` [``src/base/vector.h``]
-- :cpp:func:`o2scl::vectors_equal()`[``src/base/vector.h``]
-- :cpp:func:`o2scl::vectors_equal_tol()`[``src/base/vector.h``]
+- :cpp:func:`o2scl::vectors_equal()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::vectors_equal_tol()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_is_finite()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_is_monotonic()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_is_strictly_montonic()` [``src/base/vector.h``]
@@ -284,17 +284,26 @@ Statistics with weighted vectors
 - :cpp:func:`o2scl::wvector_variance()` [``src/other/vec_stats.h``]
 - :cpp:func:`o2scl::wvector_variance_fmean()` [``src/other/vec_stats.h``]
 
-Matrix functions
-----------------
-  
-- :cpp:func:`o2scl::matrix_column()` [``src/base/vector.h``]
+Matrix assignment and copying
+-----------------------------
+
 - :cpp:func:`o2scl::matrix_copy()`
+- :cpp:func:`o2scl::matrix_set_all()`
+- :cpp:func:`o2scl::matrix_set_identity()`
+
+Matrix properties
+-----------------
+
 - :cpp:func:`o2scl::matrix_is_finite()`
 - :cpp:func:`o2scl::matrix_is_lower()`
 - :cpp:func:`o2scl::matrix_is_upper()`
-- :cpp:func:`o2scl::matrix_lookup()`
 - :cpp:func:`o2scl::matrix_make_lower()`
 - :cpp:func:`o2scl::matrix_make_upper()`
+- :cpp:func:`o2scl::matrix_sum()`
+  
+Matrix maximum and minimum functions
+------------------------------------
+
 - :cpp:func:`o2scl::matrix_max()`
 - :cpp:func:`o2scl::matrix_max_index()`
 - :cpp:func:`o2scl::matrix_max_value()`
@@ -305,19 +314,27 @@ Matrix functions
 - :cpp:func:`o2scl::matrix_min_value_double()`
 - :cpp:func:`o2scl::matrix_minmax()`
 - :cpp:func:`o2scl::matrix_minmax_index()`
-- :cpp:func:`o2scl::matrix_out()`
+
+Matrix searching
+----------------
+
+- :cpp:func:`o2scl::matrix_lookup()`
+  
+Matrix rearrangement functions
+------------------------------
+
+- :cpp:func:`o2scl::matrix_column()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::matrix_row()`
-- :cpp:func:`o2scl::matrix_set_all()`
-- :cpp:func:`o2scl::matrix_set_identity()`
-- :cpp:func:`o2scl::matrix_sum()`
 - :cpp:func:`o2scl::matrix_swap()`
 - :cpp:func:`o2scl::matrix_swap_cols()`
 - :cpp:func:`o2scl::matrix_swap_cols_double()`
 - :cpp:func:`o2scl::matrix_swap_double()`
 - :cpp:func:`o2scl::matrix_swap_rows()`
 - :cpp:func:`o2scl::matrix_swap_rows_double()`
-- :cpp:func:`o2scl::matrix_trans_out()`
 - :cpp:func:`o2scl::matrix_transpose()`
+
+- :cpp:func:`o2scl::matrix_out()`
+- :cpp:func:`o2scl::matrix_trans_out()`
 
 Vector and matrix output
 ------------------------

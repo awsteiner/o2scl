@@ -3,7 +3,18 @@ General Usage
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
+Contents
+--------
+
+- :ref:`Namespaces`
+- :ref:`Documentation conventions`
+- :ref:`Basic error handling`
+- :ref:`What is an error?`
+- :ref:`GSL error codes and C++ exception types`
+- :ref:`Objects and scope`
+- :ref:`Reference parameters`
+- :ref:`Define constants`
+- :ref:`Error handler objects`
 
 Namespaces
 ----------
