@@ -2174,6 +2174,8 @@ namespace o2scl {
 
       \future Create a version where the user specifies log
       vs. linear instead of autodetecting.
+      \future Compare this algorithm to linear_or_log() and
+      document the differences.
    */
   template<class vec_t, class vec2_t>
   void vector_to_bins(const vec_t &v_grid, vec2_t &v_bins,
@@ -2194,7 +2196,7 @@ namespace o2scl {
 
     // Compute quality factor for logarithmic bins (smaller number is
     // better)
-    std::vector<double> logs;
+    std::vector<double> logs(n);
     bool positive=true;
     for(size_t i=0;i<n && positive;i++) {
       if (v_grid[i]<=0.0) {
@@ -2226,7 +2228,7 @@ namespace o2scl {
 	v_bins[0]=exp(logs[0]+(logs[0]-logs[1])/2.0);
 	v_bins[n]=exp(logs[n-1]-(logs[n-2]-logs[n-1])/2.0);
       }
-      for(size_t i=1;i<n-1;i++) {
+      for(size_t i=1;i<n;i++) {
 	v_bins[i]=exp((logs[i-1]+logs[i])/2.0);
       }
     } else {
@@ -2239,7 +2241,7 @@ namespace o2scl {
 	v_bins[0]=v_grid[0]+(v_grid[0]-v_grid[1])/2.0;
 	v_bins[n]=v_grid[n-1]-(v_grid[n-2]-v_grid[n-1])/2.0;
       }
-      for(size_t i=1;i<n-1;i++) {
+      for(size_t i=1;i<n;i++) {
 	v_bins[i]=(v_grid[i-1]+v_grid[i])/2.0;
       }
     }

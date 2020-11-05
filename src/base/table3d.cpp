@@ -42,7 +42,7 @@ hist_2d table3d::to_hist_2d(std::string slice, int verbose) {
   vector_to_bins(yval,bin_edges_y,verbose);
 
   h.set_bin_edges(numx+1,bin_edges_x,numy+1,bin_edges_y);
-  
+
   for(size_t i=0;i<numx;i++) {
     for(size_t j=0;j<numy;j++) {
       h.set_wgt_i(i,j,get(i,j,slice));

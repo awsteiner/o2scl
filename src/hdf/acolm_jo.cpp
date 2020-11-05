@@ -49,6 +49,25 @@ int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
     } else {
       table_obj.table<std::vector<double> >::summary(&cout,ncols);
     }
+  } else if (type=="hist_2d") {
+    cout << "hist_2d name: " << obj_name << endl;
+    cout << "x y" << endl;
+    for(size_t i=0;i<hist_2d_obj.size_x()+1 && hist_2d_obj.size_y()+1;i++) {
+      if (i<hist_2d_obj.size_x()) {
+	cout << hist_2d_obj.get_x_low_i(i) << " ";
+      } else if (i==hist_2d_obj.size_x()) {
+	cout << hist_2d_obj.get_x_high_i(i-1) << " ";
+      } else {
+	cout << 0.0 << " ";
+      }
+      if (i<hist_2d_obj.size_y()) {
+	cout << hist_2d_obj.get_y_low_i(i) << endl;
+      } else if (i==hist_2d_obj.size_y()) {
+	cout << hist_2d_obj.get_y_high_i(i-1) << endl;
+      } else {
+	cout << 0.0 << endl;
+      }
+    }
   } else if (type=="tensor") {
     cout << "tensor name: " << obj_name << endl;
     size_t rk=tensor_obj.get_rank();

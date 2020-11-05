@@ -161,7 +161,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
   }
   {
-    vector<std::string> itmp={"max","min","contours","to-table3d"};
+    vector<std::string> itmp={"max","min","contours","list","to-table3d"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("hist_2d",itmp));
   }
@@ -1161,9 +1161,13 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="hist_2d") {
 
-    static const size_t narr=4;
+    static const size_t narr=5;
     comm_option_s options_arr[narr]=
       {
+       {'l',"list","List the bin edges.",
+	0,0,"","List the bin edges.",
+	new comm_option_mfptr<acol_manager>
+	(this,&acol_manager::comm_list),both},
        {0,"max","Find the maximum weight.",0,0,"",
 	"Find the maximum weight and print out the location.",
 	new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),

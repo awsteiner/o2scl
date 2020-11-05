@@ -818,19 +818,20 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     if (i1=="frac") frac_mode=true;
   }
   */
-    
+  
   std::string svalue, file, name="contours";
-
+  
   if (type=="table3d") {
 
     /*
-      The calculation of fractional integrals is difficult for a 
+      The calculation of fractional integrals is more difficult for a
       table3d object than for a hist_2d object because one can imagine
-      integrals of complicated regions inside of contour lines. In
-      order to avoid these complications, fractional integrals are now
-      only allowed for hist_2d types. The user may convert a table3d
-      slice to a hist_2d object and then compute the contours from a
-      fractional integral if they need to do so.
+      integrals of complicated regions inside of contour lines. In the
+      histogram case, this is simpler because we can just count bins.
+      In order to avoid these complications, fractional integrals are
+      now only allowed for hist_2d types. The user may convert a
+      table3d slice to a hist_2d object and then compute the contours
+      from a fractional integral if they need to do so.
     */
     
     std::string slice;
@@ -909,14 +910,14 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       // Construct bin vectors
       ubvector xbins(nx+1);
       if (xd[1]>xd[0]) {
-	xbins[0]=xd[0]-(xd[1]-xd[0])/2.0;
-	xbins[nx]=xd[nx-1]+(xd[nx-1]-xd[nx-2])/2.0;
+      xbins[0]=xd[0]-(xd[1]-xd[0])/2.0;
+      xbins[nx]=xd[nx-1]+(xd[nx-1]-xd[nx-2])/2.0;
       } else {
-	xbins[0]=xd[0]+(xd[0]-xd[1])/2.0;
-	xbins[nx]=xd[nx-1]-(xd[nx-2]-xd[nx-1])/2.0;
+      xbins[0]=xd[0]+(xd[0]-xd[1])/2.0;
+      xbins[nx]=xd[nx-1]-(xd[nx-2]-xd[nx-1])/2.0;
       }
       for(size_t i=1;i<nx-1;i++) {
-	xbins[i]=(xd[i-1]+xd[i])/2.0;
+      xbins[i]=(xd[i-1]+xd[i])/2.0;
       }
       ubvector ybins(ny+1);
       if (yd[1]>yd[0]) {
@@ -1023,7 +1024,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (type=="hist_2d") {
 
-    bool frac_mode=false;
+    int frac_mode=0;
 
     if (sv.size()<2) {
       // If not enough arguments were given, then prompt for them
@@ -1035,7 +1036,10 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       
       if (in[0].find("frac ")==0) {
 	in[0]=in[0].substr(5,in[0].length()-5);
-	frac_mode=true;
+	frac_mode=1;
+      } else if (in[0].find("frac2 ")==0) {
+	in[0]=in[0].substr(6,in[0].length()-6);
+	frac_mode=2;
       }
       
       if (in[1]!="none") {
@@ -1046,7 +1050,10 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     } else if (sv.size()==2) {
       if (sv[1].find("frac ")==0) {
 	sv[1]=sv[1].substr(5,sv[1].length()-5);
-	frac_mode=true;
+	frac_mode=1;
+      } else if (sv[1].find("frac ")==0) {
+	sv[1]=sv[1].substr(6,sv[1].length()-6);
+	frac_mode=2;
       }
       svalue=sv[1];
     } else {
@@ -1054,10 +1061,19 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 	svalue=sv[2];
 	if (sv.size()>3) file=sv[3];
 	if (sv.size()>4) name=sv[4];
+	frac_mode=1;
+      } else if (sv[1]=="frac2") {
+	svalue=sv[2];
+	if (sv.size()>3) file=sv[3];
+	if (sv.size()>4) name=sv[4];
+	frac_mode=2;
       } else {
 	if (sv[1].find("frac ")==0) {
 	  sv[1]=sv[1].substr(5,sv[1].length()-5);
-	  frac_mode=true;
+	  frac_mode=1;
+	} else if (sv[1].find("frac2 ")==0) {
+	  sv[1]=sv[1].substr(6,sv[1].length()-6);
+	  frac_mode=2;
 	}
 	svalue=sv[1];
 	file=sv[2];
@@ -1073,7 +1089,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     }
     size_t nlev=1;
 
-    if (frac_mode) {
+    if (frac_mode>=1) {
 
       // Get references to the histogram data
       size_t nx=hist_2d_obj.size_x();
@@ -1081,21 +1097,23 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       const ubmatrix &m=hist_2d_obj.get_wgts();
       const ubvector &xbins=hist_2d_obj.get_x_bins();
       const ubvector &ybins=hist_2d_obj.get_y_bins();
-
+      
       // Compute the total integral and the target fraction
       double min, max;
       o2scl::matrix_minmax(m,min,max);
       double sum=hist_2d_obj.integ_wgts();
-      for(size_t i=0;i<nx;i++) {
-	for(size_t j=0;j<ny;j++) {
-	  sum-=min*(xbins[i+1]-xbins[i])*(ybins[j+1]-ybins[j]);
+      if (frac_mode==1) {
+	for(size_t i=0;i<nx;i++) {
+	  for(size_t j=0;j<ny;j++) {
+	    sum-=min*(xbins[i+1]-xbins[i])*(ybins[j+1]-ybins[j]);
+	  }
 	}
       }
       double target=levs[0]*sum;
       if (verbose>1) {
 	cout << "sum,target: " << sum << " " << target << endl;
       }
-
+      
       // Setup the vectors to interpolate the target integral
       uniform_grid_end<double> ug(min,max,100);
       ubvector integx, integy;
@@ -1106,15 +1124,20 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 	     << integx[0] << " " << integx[1] << endl;
       }
       integy.resize(N);
-
+      
       // Fill the interpolation vectors
       for(size_t k=0;k<N;k++) {
 	integy[k]=0.0;
 	for(size_t i=0;i<nx;i++) {
 	  for(size_t j=0;j<ny;j++) {
 	    if (m(i,j)>integx[k]) {
-	      integy[k]+=(m(i,j)-min)*(xbins[i+1]-xbins[i])*
-		(ybins[j+1]-ybins[j]);
+	      if (frac_mode==1) {
+		integy[k]+=(m(i,j)-min)*(xbins[i+1]-xbins[i])*
+		  (ybins[j+1]-ybins[j]);
+	      } else {
+		integy[k]+=m(i,j)*(xbins[i+1]-xbins[i])*
+		  (ybins[j+1]-ybins[j]);
+	      }
 	    }
 	  }
 	}
@@ -1122,7 +1145,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 	  cout << k << " " << integx[k] << " " << integy[k] << endl;
 	}
       }
-
+      
       // Perform the interpolation
       bool found=false;
       double level=0.0;
@@ -1138,6 +1161,13 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       if (found==false) {
 	cerr << "Failed to find a level matching requested fraction."
 	     << endl;
+	if (verbose>0) {
+	  cout << "target: " << target << endl;
+	  cout << "k x y: " << endl;
+	  for(size_t k=0;k<N;k++) {
+	    cout << k << " " << integx[k] << " " << integy[k] << endl;
+	  }
+	}
 	return 2;
       }
       
@@ -1148,7 +1178,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       levs[0]=level;
       
     }
-
+    
     contour co;
     co.set_levels(nlev,levs);
     

@@ -887,9 +887,9 @@ int acol_manager::comm_to_hist_2d(std::vector<std::string> &sv,
   } else if (type=="table3d") {
 
     std::string i1;
-    int ret=get_input_one(sv,"Enter slice name",i1,"to-table",itive_com);
+    int ret=get_input_one(sv,"Enter slice name",i1,"to-hist-2d",itive_com);
     if (ret!=0) return ret;
-    
+
     hist_2d_obj=table3d_obj.to_hist_2d(i1);
     
     command_del(type);
@@ -897,6 +897,7 @@ int acol_manager::comm_to_hist_2d(std::vector<std::string> &sv,
     command_add("hist_2d");
     type="hist_2d";
 
+    return 0;
   } 
 
   cerr << "Cannot convert object of type " << type << " to histogram."
