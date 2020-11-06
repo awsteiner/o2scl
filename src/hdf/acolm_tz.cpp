@@ -1018,7 +1018,7 @@ int acol_manager::comm_wdocs(std::vector<std::string> &sv, bool itive_com) {
   
   cout << "Using command: " << cmd << endl;
 
-  system(cmd.c_str());
+  int xret=system(cmd.c_str());
   
   return 0;
 }

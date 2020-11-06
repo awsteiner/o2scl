@@ -6,42 +6,51 @@ This set of guidelines is intended for O2scl developers.
 Release procedure
 -----------------
 
-- Make sure version numbers are updated in configure.ac, 
-  doc/o2scl/doxyfile, doc/o2scl/main.dox, snap/snapcraft.yaml, 
-  and tables in dl_page.dox
-  are updated with "not yet set" for the new version hashes.
+- Make sure version numbers are updated in
+
+  * ``configure.ac``
+  * ``doc/o2scl/doxyfile``
+  * ``doc/o2scl/part/doxyfile``
+  * ``doc/o2scl/eos/doxyfile``
+  * ``doc/o2scl/sphinx/conf.py``
+  * ``doc/o2scl/part/sphinx/conf.py``
+  * ``doc/o2scl/eos/sphinx/conf.py``
+  * ``snap/snapcraft.yaml``
+
+  and the tables in ``doc/o2scl/sphinx/download.rst`` are updated with
+  "not yet set" for the new version hashes.
 - For most recent commit, make sure the tests, examples, and
   documentation all succeed. Check source installs on ubuntu and
   OS X and a homebrew HEAD install.
 - Try a test build on travis-ci.org
 - Make sure snaps are working using 
-  <tt>sudo snapcraft -d cleanbuild</tt>
+  ``sudo snapcraft -d cleanbuild``
 - Update NEWS file with recent changes.
 - Make the final commit targeted for release. 
 - Check the commit succeeds on travis-ci.org
 - Promote the snaps on snapcraft from edge to beta
   at https://snapcraft.io/o2scl/releases .
-- Refresh the documentation using <tt>make o2scl-doc</tt>.
+- Refresh the documentation using ``make o2scl-doc``.
 - Create the new distribution and copy to internal svn repo.
 - Create github release, tagging the recent commit and uploading
   the distribution.
-- Compute hashes with <tt>md5sum</tt> and <tt>openssl dgst -sha256</tt>
+- Compute hashes with ``md5sum`` and ``openssl dgst -sha256``
   and update dl_page.dox with hashes and github
-  release hash. Regenerate documentation with <tt>make o2scl-doc</tt>.
-- Do a 'make install' on isospin so that 'make utk-sync-doc'
+  release hash. Regenerate documentation with ``make o2scl-doc``.
+- Do a ``make install`` on isospin so that ``make utk-sync-doc``
   can copy docs from the post-installation directory
 - Copy the new distribution and the new sha256 hash to 
-https://isospin.roam.utk.edu/public_data/o2scl_dists/
+  https://isospin.roam.utk.edu/public_data/o2scl_dists/
 - Update homebrew recipe with the new version number and new hash.
 - Check installation using homebrew directly.
 - Turn on build pushes in travis-ci.org and commit again since
-  dl_page.dox has changed. 
+  ``doc/o2scl/sphinx/download.rst`` has changed. 
 
 Procedure for moving to new development version
 -----------------------------------------------
 
 - Update to the new development version number and new OLIB numbers
-  in configure.ac .
+  in ``configure.ac``.
 - Update version numbers in doxyfile files and main.dox files
   and in dl_page.dox .
 - Update local configure scripts to refer to new version number
@@ -50,14 +59,14 @@ Procedure for moving to new development version
 o2sclpy release procedure
 -------------------------
 
-- Update version numbers in o2sclpy/__init.py, 
-  doc/conf.py, setup.py, snap/snapcraft.yaml and doc/index.rst
-- Regenerate the o2sclpy documentation using <tt>make doc</tt>
-  and upload it to web using <tt>make sync-doc</tt>
+- Update version numbers in ``o2sclpy/__init.py``, 
+  ``doc/conf.py``, ``setup.py``, ``snap/snapcraft.yaml`` and ``doc/index.rst``
+- Regenerate the o2sclpy documentation using ``make doc``
+  and upload it to web using ``make sync-doc``
 - Remove old dists in o2sclpy by clearing o2sclpy/dist directory
-- Run <tt>python3 setup.py sdist bdist_wheel</tt>
+- Run ``python3 setup.py sdist bdist_wheel``
 - Upload a new version of o2sclpy to pypi using
-  <tt>twine upload dist/*</tt>
+  ``twine upload dist/*``
 
 Coding recommendations and guidelines
 -------------------------------------
@@ -79,7 +88,7 @@ Coding recommendations and guidelines
 - When reasonable, put input parameters first and output
   parameters last. 
 - When possible, templated vector parameters with size_t arguments
-  should appear similar to <tt>size_t &n, vec_t &v</tt>, and in that 
+  should appear similar to ``size_t &n, vec_t &v``, and in that 
   order.
 - All code should be ANSI-compatible, and, inasmuch as is 
   possible, operating system and platform independent.
@@ -109,14 +118,14 @@ Coding recommendations and guidelines
   in the strong sense, that is, different processes should be
   able to read the same instance of a class at any time.
 - Whereever possible, ensure your code compiles without
-  warnings using flags analogous to the gcc string
-  \verbatim
-  -ansi -pedantic -Wno-long-long -Wall -Wno-unused -Wextra 
-  -Wconversion -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings
-  \endverbatim
+  warnings using flags analogous to the gcc string::
+
+    -ansi -pedantic -Wno-long-long -Wall -Wno-unused -Wextra 
+    -Wconversion -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings
+
 - Avoid 'try' blocks, as a goal is that \o2 should compile
   with -fno-exceptions.
-- Functions which return \c void should end with <tt>return;</tt>.
+- Functions which return \c void should end with ``return;``.
 - All functions which are called by the constructor should be
   documented as doing so
 
@@ -147,6 +156,6 @@ Git repository
   developer at whatever time they deem appropriate.
 - Developer-specific files which are not platform-independent
   should not be added to the repository. Sometimes
-  <tt>.gitignore</tt> can be used to ignore these files, but this
+  ``.gitignore`` can be used to ignore these files, but this
   should be done sparingly.
     
