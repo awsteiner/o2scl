@@ -5,9 +5,9 @@ Download O\ :sub:`2`\ scl
 
 This documentation is from version 0.925.
 
-The current version is 0.924. The source distribution can be obtained
+The current version is 0.925. The source distribution can be obtained
 from
-https://github.com/awsteiner/o2scl/releases/download/v0.924/o2scl-0.924.tar.gz
+https://github.com/awsteiner/o2scl/releases/download/v0.925/o2scl-0.925.tar.gz
 
 You may also download O\ :sub:`2`\ scl from the Github
 repository. To obtain the most recent development version, 
