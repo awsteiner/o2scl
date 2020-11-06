@@ -4,15 +4,20 @@ Fixed interpolation bug and log grid bug in
 tensor_grid::rearrange_and_copy().
 
 Improved acol docs everywhere. Created acol table3d to-tensor-grid,
-acol table3d get-grid, acol create table-mv, acol table3d slice-hist,
-acol table3d select, acol h5-copy, acol table correl, acol constant,
-and acol binary.
+acol table3d to-hist-2d, acol table3d get-grid, acol create table-mv,
+acol table3d slice-hist, acol table3d select, acol h5-copy, acol table
+correl, acol constant, acol binary, acol docs, and acol wdocs. The
+acol help documentation has also been reformatted and improved.
+
+The integration routines for semi-infinite intervals have been
+refactored to use \ref integ_iu(), \ref integ_il() and \ref integ_i().
 
 Improved error handling and documentation in cloud_file.
 
 Several updates to eos_sn, nstar_rot, eos_had_rmf, eos_had_rmf_hyp_ts,
 and ex_eos_gibbs. Created new beta-equilibrium functions in some
-EOS classes. 
+EOS classes. Created new function nucmass_fit::fit_covar() to
+fit nuclear masses with a covariance matrix.
 
 Reworked documentation in sphinx/breathe.
 
@@ -33,6 +38,8 @@ vectors_equal_tol().
 
 Fixed hidden virtual function warnings.
 
+Created columnify::add_spaces().
+
 Worked on multiprecision support for several particle classes.
 Cleaned up polylogs and created bessel_K_exp class.
 
@@ -40,7 +47,10 @@ Fixed HDF5 1.12-related deprecation warnings.
 
 Renamed integration classes for infinite or semi-infinite limits.
 
-Created new vt100 string functions.
+Created a new experimental auto_format class.
+
+Created new vt100 string functions and moved them into a new
+terminal class.
 
 Added quadratic and cubic discriminants.
 

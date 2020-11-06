@@ -3,7 +3,7 @@ Download O\ :sub:`2`\ scl
 
 :ref:`O2scl <o2scl>`
 
-This documentation is from version 0.925.a1.
+This documentation is from version 0.925.
 
 The current version is 0.924. The source distribution can be obtained
 from
@@ -54,6 +54,7 @@ o2scl-0.921.tar.gz    bc58909f869cd2931b03cec1d8bb85ea
 o2scl-0.922.tar.gz    12a531f652d299af213a5f1f9bc46866
 o2scl-0.923.tar.gz    7896282e992b9be41797d25bb8ac697d
 o2scl-0.924.tar.gz    1c0175b80a86bcbff8d25294415409f8
+o2scl-0.925.tar.gz    not yet set
 ===================== ================================
 
 ===================== ================================================================
@@ -91,6 +92,7 @@ o2scl-0.921.tar.gz    972ede93a694d0273230da6b57d73b5e04c4007fd883fcf330e866d7da
 o2scl-0.922.tar.gz    e4e636ae2506231087794b3d0603aeef2eca4409d06902d1b55fc015e5ffba73
 o2scl-0.923.tar.gz    dc98d20cf3943cfc715505d5d2a354607711e9ecd04fd7a442c585ed573cffb2
 o2scl-0.924.tar.gz    a9fa7b313566fd49d60fc3e924c207e0d1eb77f324cf982f7062a0451cbfea0b
+o2scl-0.925.tar.gz    not yet set
 ===================== ================================================================
 
 ======== ========== ========================= ==================
@@ -127,5 +129,6 @@ Version   Date       Rev. in Sourceforge SVN   Github repo hash
 0.922     10/19/18   N/A                       55819b33966f0d17fc7b8860311a09cc6190e305
 0.923     04/29/19   N/A                       08436c7f7d869d75d67df6321e2a9a5aa707e604
 0.924     12/30/19   N/A                       5d0314a5daf3b6f87e8dff2eadddbe3a9f80681f
+0.925     11/xx/20   N/A                       not yet set
 ======== ========== ========================= ==================
 

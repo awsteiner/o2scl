@@ -73,6 +73,7 @@ User's Guide
    other
    lset
    design
+   dev_guide
    license
    related
    ack
