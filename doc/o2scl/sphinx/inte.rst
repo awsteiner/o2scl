@@ -3,7 +3,16 @@ Integration
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
+Contents
+--------
+
+- :ref:`One-dimensional Integration based on GSL, CERNLIB, and Boost`
+- :ref:`GSL-based integration details`
+- :ref:`GSL-based integration error messages`
+- :ref:`Multi-dimensional integration routines`
+- :ref:`One-dimensional integration example`
+- :ref:`Gauss-Kronrod integration coefficients`
+- :ref:`Non-adaptive quadrature integration coefficients`
 
 One-dimensional Integration based on GSL, CERNLIB, and Boost
 ------------------------------------------------------------
@@ -78,7 +87,8 @@ scl (this doesn't need to be done during installation or when the
 <inte_exp_sinh_boost>` and :ref:`inte_sinh_sinh_boost
 <inte_sinh_sinh_boost>` .
     
-\section gslinte_subsect GSL-based Integration Details
+GSL-based integration details
+-----------------------------
 
 For the GSL-based integration routines, the variables
 :cpp:var:`o2scl::inte::tol_abs` and :cpp:var:`o2scl::inte::tol_rel`

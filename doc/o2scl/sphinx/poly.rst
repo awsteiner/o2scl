@@ -3,7 +3,14 @@ Roots of Polynomials
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
+Contents
+--------
+
+- :ref:`Introduction`
+- :ref:`Polynomial solver example`
+
+Introduction
+------------
 
 Classes are provided for solving quadratic, cubic, and quartic
 equations as well as general polynomials. There is a standard

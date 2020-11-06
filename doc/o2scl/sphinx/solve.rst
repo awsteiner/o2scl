@@ -3,7 +3,12 @@ Equation Solving
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
+Contents
+--------
+
+- :ref:`One-dimensional solvers`
+- :ref:`Multi-dimensional solvers`
+- :ref:`Multi-dimensional solver example`
 
 One-dimensional solvers
 -----------------------

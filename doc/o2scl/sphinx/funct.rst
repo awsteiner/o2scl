@@ -3,10 +3,19 @@ Function Objects
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
+Contents
+--------
+
+- :ref:`Lambda functions and std::mem_fn <lambda_func>`
+- :ref:`First function object example`
+- :ref:`General comments about function objects`
+- :ref:`Second function object example`
+- :ref:`Function typedefs`
 
 Lambda functions and ``std::mem_fn``
 ------------------------------------
+
+.. _lambda_func:
 
 Functions are passed to numerical routines using template-based
 function classes, sometimes called "functors". O\ :sub:`2`\ scl

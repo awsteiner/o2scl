@@ -3,7 +3,12 @@ Probability Distributions and Markov Chain Monte Carlo
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
+Contents
+--------
+
+- :ref:`Probability distributions`
+- :ref:`Markov chain Monte Carlo`
+- :ref:`MCMC example`
 
 Probability distributions
 -------------------------

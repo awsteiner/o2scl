@@ -33,11 +33,13 @@
 using namespace std;
 using namespace o2scl;
 
+#ifdef O2SCL_LD_TYPES
 typedef
 boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
 cpp_dec_float_35;
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
+#endif
 
 int main(void) {
 

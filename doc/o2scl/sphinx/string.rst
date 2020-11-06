@@ -3,8 +3,6 @@ String Manipulation
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
-
 There are a couple classes and functions to help manipulate
 strings of text. Conversion routines for \c std::string 
 objects are given in ``src/base/string_conv.h`` and include
