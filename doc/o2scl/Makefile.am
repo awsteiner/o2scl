@@ -38,16 +38,16 @@ emacs-clean:
 utk-sync-doc:
 	rsync -Cavzu /usr/local/share/doc/o2scl/* \
 		$(STATIC_DOC_DIR)/o2scl
-	rsync -Cavzu extras/index.html \
-		$(STATIC_DOC_DIR)/o2scl
-	rsync -Cavzu extras/bootstrap.css \
-		$(STATIC_DOC_DIR)/o2scl
-	rsync -Cavzu extras/bootstrap.js \
-		$(STATIC_DOC_DIR)/o2scl
-	rsync -Cavzu extras/bootstrap-responsive.css \
-		$(STATIC_DOC_DIR)/o2scl
-	rsync -Cavzu extras/jquery-2.0.3.min.js \
-		$(STATIC_DOC_DIR)/o2scl
+# rsync -Cavzu extras/index.html \
+# 	$(STATIC_DOC_DIR)/o2scl
+# rsync -Cavzu extras/bootstrap.css \
+# 	$(STATIC_DOC_DIR)/o2scl
+# rsync -Cavzu extras/bootstrap.js \
+# 	$(STATIC_DOC_DIR)/o2scl
+# rsync -Cavzu extras/bootstrap-responsive.css \
+# 	$(STATIC_DOC_DIR)/o2scl
+# rsync -Cavzu extras/jquery-2.0.3.min.js \
+# 	$(STATIC_DOC_DIR)/o2scl
 
 prerelease-sync-doc:
 	rsync -Cavzu -r /usr/local/share/doc/o2scl/* \
