@@ -3,7 +3,7 @@ Download O\ :sub:`2`\ scl
 
 :ref:`O2scl <o2scl>`
 
-This documentation is from version 0.925.
+This documentation is from version 0.926.a1
 
 The current version is 0.925. The source distribution can be obtained
 from

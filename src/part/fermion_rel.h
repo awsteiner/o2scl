@@ -1835,18 +1835,18 @@ namespace o2scl {
   
 #endif
   
-  extern "C" {
-    
-    void *o2scl_create_fermion_rel();
-    void o2scl_free_fermion_rel(void *vp);
-    void o2scl_fermion_density
-    (void *vp, double m, double g, double T, double n,
-     double *mu, double *ed, double *pr, double *en);
-    
-  }
-  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif
+
+extern "C" {
+  
+  void *o2scl_create_fermion_rel();
+  void o2scl_free_fermion_rel(void *vp);
+  void o2scl_fermion_density
+  (void *vp, double m, double g, double T, double n,
+   double *mu, double *ed, double *pr, double *en);
+  
+}
 
 #endif
