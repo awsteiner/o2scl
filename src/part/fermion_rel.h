@@ -863,12 +863,12 @@ namespace o2scl {
 			      nit_t,dit_t,density_root_t,
 			      root_t,func_t,fp_t>::entropy_fun),
 			     this,std::placeholders::_1,std::ref(f),temper);
-    
+	
 	f.ed=nit->integ_iu(mfe,0.0);
 	f.ed*=f.g*pow(temper,4.0)/2.0/this->pi2;
 	if (!f.inc_rest_mass) f.ed-=f.n*f.m;
 	unc.ed=nit->get_error()*f.g*pow(temper,4.0)/2.0/this->pi2;
-    
+	
 	f.en=nit->integ_iu(mfs,0.0);
 	f.en*=f.g*pow(temper,3.0)/2.0/this->pi2;
 	unc.en=nit->get_error()*f.g*pow(temper,3.0)/2.0/this->pi2;
@@ -941,7 +941,7 @@ namespace o2scl {
       
 	}
       }
-
+      
       f.n=density_temp;
       f.pr=-f.ed+temper*f.en+f.nu*f.n;
       unc.pr=sqrt(unc.ed*unc.ed+temper*unc.en*temper*unc.en+
