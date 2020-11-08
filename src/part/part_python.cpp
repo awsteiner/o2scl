@@ -84,6 +84,41 @@ void o2scl_free_fermion_rel(void *vp) {
   return;
 }
 
+void o2scl_free_fermion_nonrel(void *vp) {
+  fermion_nonrel *fr=(fermion_nonrel *)vp;
+  delete fr;
+}
+
+void o2scl_free_fermion_deriv_nr(void *vp) {
+  fermion_deriv_nr *fr=(fermion_deriv_nr *)vp;
+  delete fr;
+}
+
+void o2scl_free_fermion_deriv_rel(void *vp) {
+  fermion_deriv_rel *fr=(fermion_deriv_rel *)vp;
+  delete fr;
+}
+
+void o2scl_free_boson_rel(void *vp) {
+  boson_rel *fr=(boson_rel *)vp;
+  delete fr;
+}
+
+void o2scl_free_classical_thermo(void *vp) {
+  classical_thermo *fr=(classical_thermo *)vp;
+  delete fr;
+}
+
+void o2scl_free_classical_deriv_thermo(void *vp) {
+  classical_deriv_thermo *fr=(classical_deriv_thermo *)vp;
+  delete fr;
+}
+
+void o2scl_free_fermion_mag_zerot(void *vp) {
+  fermion_mag_zerot *fr=(fermion_mag_zerot *)vp;
+  delete fr;
+}
+
 void o2scl_fermion_density(void *vp, double m, double g,
 			   double T, double n,
 			   double *mu, double *ed, double *pr,
@@ -150,3 +185,120 @@ void o2scl_fermion_int_mu(void *vp, double m, double ms, double g,
   return;
 }
 
+void o2scl_fermion_nonrel_density(void *vp, double m, double g,
+			   double T, double n,
+			   double *mu, double *ed, double *pr,
+			   double *en) {
+  fermion_nonrel *fr=(fermion_nonrel *)vp;
+  fermion f(m,g);
+  f.n=n;
+  fr->calc_density(f,T);
+  *mu=f.mu;
+  *ed=f.ed;
+  *pr=f.pr;
+  *en=f.en;
+
+  return;
+}
+
+void o2scl_fermion_nonrel_int_density(void *vp, double m, double ms, double g,
+			       double T, double n,
+			       double *nu, double *ed, double *pr,
+			       double *en) {
+  fermion_nonrel *fr=(fermion_nonrel *)vp;
+  fermion f(m,g);
+  f.non_interacting=false;
+  f.n=n;
+  fr->calc_density(f,T);
+  *nu=f.nu;
+  *ed=f.ed;
+  *pr=f.pr;
+  *en=f.en;
+
+  return;
+}
+
+void o2scl_fermion_nonrel_mu(void *vp, double m, double g,
+		      double T, double mu,
+		      double *n, double *ed, double *pr,
+		      double *en) {
+  fermion_nonrel *fr=(fermion_nonrel *)vp;
+  fermion f(m,g);
+  f.mu=mu;
+  fr->calc_mu(f,T);
+  *n=f.n;
+  *ed=f.ed;
+  *pr=f.pr;
+  *en=f.en;
+
+  return;
+}
+
+void o2scl_fermion_nonrel_int_mu(void *vp, double m, double ms, double g,
+			  double T, double nu,
+			  double *n, double *ed, double *pr,
+			  double *en) {
+  fermion_nonrel *fr=(fermion_nonrel *)vp;
+  fermion f(m,g);
+  f.non_interacting=false;
+  f.nu=nu;
+  fr->calc_mu(f,T);
+  *n=f.n;
+  *ed=f.ed;
+  *pr=f.pr;
+  *en=f.en;
+
+  return;
+}
+
+void o2scl_classical_density(void *vp, double m, double g,
+			   double T, double n,
+			   double *mu, double *ed, double *pr,
+			   double *en) {
+  classical_thermo *cl=(classical_thermo *)vp;
+  fermion f(m,g);
+  f.n=n;
+  cl->calc_density(f,T);
+  *mu=f.mu;
+  *ed=f.ed;
+  *pr=f.pr;
+  *en=f.en;
+
+  return;
+}
+
+void o2scl_classical_mu(void *vp, double m, double g,
+		      double T, double mu,
+		      double *n, double *ed, double *pr,
+		      double *en) {
+  classical_thermo *cl=(classical_thermo *)vp;
+  fermion f(m,g);
+  f.mu=mu;
+  cl->calc_mu(f,T);
+  *n=f.n;
+  *ed=f.ed;
+  *pr=f.pr;
+  *en=f.en;
+
+  return;
+}
+
+void o2scl_fermion_deriv_mu(void *vp, double m, double g,
+			    double T, double mu,
+			    double *n, double *ed, double *pr,
+			    double *en, double *dndT,
+			    double *dsdT, double *dndmu) {
+  fermion_deriv_rel *fr=(fermion_deriv_rel *)vp;
+  fermion_deriv f(m,g);
+  f.mu=mu;
+  fr->calc_mu(f,T);
+  *n=f.n;
+  *ed=f.ed;
+  *pr=f.pr;
+  *en=f.en;
+  *dndT=f.dndT;
+  *dsdT=f.dsdT;
+  *dndmu=f.dndmu;
+
+  return;
+}
