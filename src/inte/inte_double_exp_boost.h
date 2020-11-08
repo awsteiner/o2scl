@@ -72,6 +72,7 @@ namespace o2scl {
 			  fp_t &res, fp_t &err) {
       res=it.integrate(func,a,b,this->tol_rel,&err,&L1norm);
       if (err>this->tol_rel) {
+	std::cout << err << " " << this->tol_rel << std::endl;
 	O2SCL_ERR2("Failed to achieve tolerance in ",
 		   "inte_tanh_sinh_boost::integ_err().",o2scl::exc_efailed);
       }
@@ -112,6 +113,7 @@ namespace o2scl {
     virtual int integ_moo_err(func_t &func, fp_t &res, fp_t &err) {
       res=it.integrate(func,this->tol_rel,&err,&L1norm);
       if (err>this->tol_rel) {
+	std::cout << err << " " << this->tol_rel << std::endl;
 	O2SCL_ERR2("Failed to achieve tolerance in ",
 		   "inte_tanh_sinh_boost::integ_err().",o2scl::exc_efailed);
       }
@@ -154,6 +156,7 @@ namespace o2scl {
 			  fp_t &res, fp_t &err) {
       res=it.integrate(func,a,b,this->tol_rel,&err,&L1norm);
       if (err>this->tol_rel) {
+	std::cout << err << " " << this->tol_rel << std::endl;
 	O2SCL_ERR2("Failed to achieve tolerance in ",
 		   "inte_exp_sinh_boost::integ_err().",o2scl::exc_efailed);
       }
@@ -214,6 +217,7 @@ namespace o2scl {
 			    fp_t &res, fp_t &err) {
       res=it.integrate(func,this->tol_rel,&err,&L1norm);
       if (err>this->tol_rel) {
+	std::cout << err << " " << this->tol_rel << std::endl;
 	O2SCL_ERR2("Failed to achieve tolerance in ",
 		   "inte_sinh_sinh_boost::integ_err().",o2scl::exc_efailed);
       }

@@ -553,6 +553,11 @@ namespace o2scl {
      */
     void calc_mu(fermion_t &f, fp_t temper) {
 
+      if (verbose>1) {
+	std::cout << "calc_mu(): start."
+		  << std::endl;
+      }
+      
       last_method=0;
       
       // -----------------------------------------------------------------
@@ -580,10 +585,18 @@ namespace o2scl {
 	psi=(f.nu+(f.m-f.ms))/temper;
       }
       if (psi<deg_limit) deg=false;
-  
+      
+      if (verbose>1) {
+	std::cout << "calc_mu(): psi,deg_limit,deg: " << psi << " "
+		  << deg << " " << deg_limit << std::endl;
+      }
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
 	bool acc=this->calc_mu_ndeg(f,temper,tol_expan);
+	if (verbose>1) {
+	  std::cout << "calc_mu(): non-deg expan " << acc
+		    << std::endl;
+	}
 	if (acc) {
 	  unc.n=f.n*tol_expan;
 	  unc.ed=f.ed*tol_expan;
@@ -597,6 +610,10 @@ namespace o2scl {
       // Try the degenerate expansion if psi is large enough
       if (use_expansions && psi>20.0) {
 	bool acc=this->calc_mu_deg(f,temper,tol_expan);
+	if (verbose>1) {
+	  std::cout << "calc_mu(): deg expan " << acc
+		    << std::endl;
+	}
 	if (acc) {
 	  unc.n=f.n*tol_expan;
 	  unc.ed=f.ed*tol_expan;
@@ -631,6 +648,11 @@ namespace o2scl {
 
 	// Compute the number density
     
+	if (verbose>1) {
+	  std::cout << "calc_mu(): non-deg integrals."
+		    << std::endl;
+	}
+	
 	f.n=nit->integ_iu(mfd,0.0);
 	f.n*=prefac;
 	unc.n=nit->get_error()*prefac;
@@ -648,6 +670,11 @@ namespace o2scl {
 	f.en*=prefac;
 	unc.en=nit->get_error()*prefac;
 
+	if (verbose>1) {
+	  std::cout << "calc_mu(): non-deg integrals done."
+		    << std::endl;
+	}
+	
 	last_method=6;
 
       } else {
@@ -675,6 +702,11 @@ namespace o2scl {
     
 	// Compute the upper limit for degenerate integrals
 
+	if (verbose>1) {
+	  std::cout << "calc_mu(): deg integrals."
+		    << std::endl;
+	}
+	
 	fp_t arg;
 	if (f.inc_rest_mass) {
 	  arg=pow(upper_limit_fac*temper+f.nu,2.0)-f.ms*f.ms;
@@ -741,7 +773,13 @@ namespace o2scl {
 	}
 	f.en*=prefac;
 	unc.en=dit->get_error()*prefac;
-    
+
+	if (verbose>1) {
+	  std::cout << "calc_mu(): deg integrals done."
+		    << std::endl;
+	}
+	
+	
       }
 
       // Compute the pressure using the thermodynamic identity

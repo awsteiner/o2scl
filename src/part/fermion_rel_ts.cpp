@@ -109,6 +109,16 @@ int main(void) {
   fermion_cdf35 f35;
   fermion_rel_cdf35 fr35;
 
+  /*
+    fld.m=1.0;
+    fld.g=2.0;
+    fld.mu=1.5;
+    frld.verbose=3;
+    frld.calc_mu(fld,0.3);
+    cout << fld.n << " " << fld.ed << " " << fld.pr << " "
+    << fld.en << endl;
+  */
+
   // This doesn't work yet
   //double vx=pcc.part_calibrate<fermion_ld,fermion_rel_ld>
   //(fld,frld,1,"../../data/o2scl/fermion_deriv_cal.o2",false,1,1);
