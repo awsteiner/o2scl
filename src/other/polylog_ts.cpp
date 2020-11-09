@@ -113,7 +113,7 @@ int main(void) {
   // Typically,
   // type              digits10 max_digits10 max          log_prec
   // --------------------------------------------------------------
-  // double            15       17           1.8e38        39.1
+  // double            15       17           1.8e308       39.1
   // long double       18       21           1.2e4932      48.4
   // cpp_dec_float_35  35       64           1.0e67108864 147.4
   // cpp_dec_float_50  50       80           1.0e67108864 184.2
@@ -126,23 +126,27 @@ int main(void) {
   std::cout << std::numeric_limits<double>::max() << " ";
   std::cout << log(pow(10.0,std::numeric_limits<double>::max_digits10))
 	    << std::endl;
+  
   std::cout << std::numeric_limits<long double>::digits10 << " ";
   std::cout << std::numeric_limits<long double>::max_digits10 << " ";
   std::cout << std::numeric_limits<long double>::max() << " ";
   std::cout << log(pow(10.0,std::numeric_limits<long double>::max_digits10))
 	    << std::endl;
+  
   std::cout << std::numeric_limits<cpp_dec_float_35>::digits10 << " ";
   std::cout << std::numeric_limits<cpp_dec_float_35>::max_digits10 << " "; 
   std::cout << std::numeric_limits<cpp_dec_float_35>::max() << " ";
   std::cout << log(pow(10.0,
 		       std::numeric_limits<cpp_dec_float_35>::max_digits10))
 	    << std::endl;
+  
   std::cout << std::numeric_limits<cpp_dec_float_50>::digits10 << " ";
   std::cout << std::numeric_limits<cpp_dec_float_50>::max_digits10 << " ";
   std::cout << std::numeric_limits<cpp_dec_float_50>::max() << " ";
   std::cout << log(pow(10.0,
 		       std::numeric_limits<cpp_dec_float_50>::max_digits10))
 	    << std::endl;
+  
   std::cout << std::numeric_limits<cpp_dec_float_100>::digits10 << " ";
   std::cout << std::numeric_limits<cpp_dec_float_100>::max_digits10 << " ";
   std::cout << std::numeric_limits<cpp_dec_float_100>::max() << " ";

@@ -70,9 +70,13 @@ namespace o2scl {
     */
     virtual int integ_err(func_t &func, fp_t a, fp_t b, 
 			  fp_t &res, fp_t &err) {
-      res=it.integrate(func,a,b,this->tol_rel,&err,&L1norm);
+      // Dropping the tolerance by a factor of 10 seems to help
+      // the boost integrator succeed.
+      res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm);
       if (err>this->tol_rel) {
-	std::cout << err << " " << this->tol_rel << std::endl;
+	std::cout << "err,tol_rel,L1norm: "
+		  << err << " " << this->tol_rel << " "
+		  << L1norm << std::endl;
 	O2SCL_ERR2("Failed to achieve tolerance in ",
 		   "inte_tanh_sinh_boost::integ_err().",o2scl::exc_efailed);
       }
@@ -111,9 +115,13 @@ namespace o2scl {
 	the result in \c res and the error in \c err
     */
     virtual int integ_moo_err(func_t &func, fp_t &res, fp_t &err) {
-      res=it.integrate(func,this->tol_rel,&err,&L1norm);
+      // Dropping the tolerance by a factor of 10 seems to help
+      // the boost integrator succeed.
+      res=it.integrate(func,this->tol_rel/10.0,&err,&L1norm);
       if (err>this->tol_rel) {
-	std::cout << err << " " << this->tol_rel << std::endl;
+	std::cout << "err,tol_rel,L1norm: "
+		  << err << " " << this->tol_rel << " "
+		  << L1norm << std::endl;
 	O2SCL_ERR2("Failed to achieve tolerance in ",
 		   "inte_tanh_sinh_boost::integ_err().",o2scl::exc_efailed);
       }
@@ -154,9 +162,13 @@ namespace o2scl {
     */
     virtual int integ_err(func_t &func, fp_t a, fp_t b, 
 			  fp_t &res, fp_t &err) {
-      res=it.integrate(func,a,b,this->tol_rel,&err,&L1norm);
+      // Dropping the tolerance by a factor of 10 seems to help
+      // the boost integrator succeed.
+      res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm);
       if (err>this->tol_rel) {
-	std::cout << err << " " << this->tol_rel << std::endl;
+	std::cout << "err,tol_rel,L1norm: "
+		  << err << " " << this->tol_rel << " "
+		  << L1norm << std::endl;
 	O2SCL_ERR2("Failed to achieve tolerance in ",
 		   "inte_exp_sinh_boost::integ_err().",o2scl::exc_efailed);
       }
@@ -215,9 +227,13 @@ namespace o2scl {
     */
     virtual int integ_i_err(func_t &func, 
 			    fp_t &res, fp_t &err) {
-      res=it.integrate(func,this->tol_rel,&err,&L1norm);
+      // Dropping the tolerance by a factor of 10 seems to help
+      // the boost integrator succeed.
+      res=it.integrate(func,this->tol_rel/10.0,&err,&L1norm);
       if (err>this->tol_rel) {
-	std::cout << err << " " << this->tol_rel << std::endl;
+	std::cout << "err,tol_rel,L1norm: "
+		  << err << " " << this->tol_rel << " "
+		  << L1norm << std::endl;
 	O2SCL_ERR2("Failed to achieve tolerance in ",
 		   "inte_sinh_sinh_boost::integ_err().",o2scl::exc_efailed);
       }

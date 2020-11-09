@@ -251,24 +251,24 @@ namespace o2scl {
     bool err_nonconv;
     
     /** \brief The smallest value of \f$ (\mu-m)/T \f$ for which 
-	integration is used
+	integration is used (default -4.0)
     */
     fp_t min_psi;
 
     /** \brief The critical degeneracy at which to switch integration 
-	techniques (default 2)
+	techniques (default 2.0)
     */
     fp_t deg_limit;
     
     /** \brief The limit for exponentials to ensure integrals are finite 
-	(default 200)
+	(default 200.0)
     */
     fp_t exp_limit;
 
-    /// The factor for the degenerate upper limits (default 20)
+    /// The factor for the degenerate upper limits (default 20.0)
     fp_t upper_limit_fac;
 
-    /// A factor for the degenerate entropy integration (default 30)
+    /// A factor for the degenerate entropy integration (default 30.0)
     fp_t deg_entropy_fac;
 
     /// Verbosity parameter (default 0)
@@ -277,7 +277,7 @@ namespace o2scl {
     /// If true, use expansions for extreme conditions (default true)
     bool use_expansions;
 
-    /// Tolerance for expansions
+    /// Tolerance for expansions (default \f$ 10^{-14} \f$)
     fp_t tol_expan;
 
     /// If true, verify the thermodynamic identity (default false)
@@ -1776,6 +1776,8 @@ namespace o2scl {
   public:
     
     fermion_rel_ld() {
+
+      // See output of polylog_ts for numeric limit information
       
       // Tolerance for the integrator for massless fermions
       this->fd_integ.set_tol(1.0e-21);
@@ -1784,7 +1786,12 @@ namespace o2scl {
       this->be_integ.set_tol(1.0e-21);
 
       // Internal function tolerances
+
+      // This could be as large as log(1.0e4932)=11400,
+      // but only 200 is used for double, so we try this for now.
       this->exp_limit=4000.0;
+      
+      // log(1.0e18) is 41.4
       this->upper_limit_fac=42.0;
       this->deg_entropy_fac=42.0;
       this->tol_expan=1.0e-17;
@@ -1845,29 +1852,29 @@ namespace o2scl {
     
     fermion_rel_cdf35() {
       
-      /*
+      // See output of polylog_ts for numeric limit information
+
       // Tolerance for the integrator for massless fermions
-      this->fd_integ.set_tol(1.0e-21);
+      this->fd_integ.set_tol(1.0e-60);
 
       // Tolerance for the integrator for the nondegenerate expansion
-      this->be_integ.set_tol(1.0e-21);
+      this->be_integ.set_tol(1.0e-60);
 
       // Internal function tolerances
-      this->exp_limit=4000.0;
-      this->upper_limit_fac=42.0;
-      this->deg_entropy_fac=42.0;
-      this->tol_expan=1.0e-17;
+      this->exp_limit=6.0e7;
+      this->upper_limit_fac=81.0;
+      this->deg_entropy_fac=81.0;
+      this->tol_expan=1.0e-35;
 
       // Solver tolerances
-      this->def_density_root.tol_abs=1.0e-18;
-      this->def_massless_root.tol_abs=1.0e-18;
+      this->def_density_root.tol_abs=1.0e-35;
+      this->def_massless_root.tol_abs=1.0e-35;
 
       // Integrator tolerances
-      this->def_dit.tol_abs=1.0e-18;
-      this->def_dit.tol_rel=1.0e-18;
-      this->def_nit.tol_abs=1.0e-18;
-      this->def_nit.tol_rel=1.0e-18;
-      */
+      this->def_dit.tol_abs=1.0e-35;
+      this->def_dit.tol_rel=1.0e-35;
+      this->def_nit.tol_abs=1.0e-35;
+      this->def_nit.tol_rel=1.0e-35;
     }
   };
   

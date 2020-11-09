@@ -36,6 +36,8 @@ using namespace o2scl_const;
 
 #ifdef O2SCL_LD_TYPES
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+typedef boost::multiprecision::number<
+  boost::multiprecision::cpp_dec_float<35> > cpp_dec_float_35;
 #endif
 
 int main(void) {
@@ -109,15 +111,41 @@ int main(void) {
   fermion_cdf35 f35;
   fermion_rel_cdf35 fr35;
 
+  f.m=1;
+  f.g=2;
+  f.mu=3;
+  f.mu/=2;
+  double T=3;
+  T/=10;
+  fr.calc_mu(f,T);
+  cout << "double:" << endl;
+  cout << dtos(f.n,0) << " " << dtos(f.ed,0) << endl;
+  cout << dtos(f.pr,0) << " " << dtos(f.en,0) << endl;
+
   /*
-    fld.m=1.0;
-    fld.g=2.0;
-    fld.mu=1.5;
-    frld.verbose=3;
-    frld.calc_mu(fld,0.3);
-    cout << fld.n << " " << fld.ed << " " << fld.pr << " "
-    << fld.en << endl;
+  fld.m=1;
+  fld.g=2;
+  fld.mu=3;
+  fld.mu/=2;
+  long double Tld=3;
+  Tld/=10;
+  frld.calc_mu(fld,Tld);
+  cout << "long double:" << endl;
+  cout << dtos(fld.n,0) << " " << dtos(fld.ed,0) << endl;
+  cout << dtos(fld.pr,0) << " " << dtos(fld.en,0) << endl;
+       
+  f35.m=1;
+  f35.g=2;
+  f35.mu=3;
+  f35.mu/=2;
+  cpp_dec_float_35 T35=3;
+  T35/=10;
+  fr35.calc_mu(f35,T35);
+  cout << "cpp_dec_float_35:" << endl;
+  cout << dtos(f35.n,0) << "\n" << dtos(f35.ed,0) << endl;
+  cout << dtos(f35.pr,0) << "\n" << dtos(f35.en,0) << endl;
   */
+       
 
   // This doesn't work yet
   //double vx=pcc.part_calibrate<fermion_ld,fermion_rel_ld>
