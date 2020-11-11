@@ -35,13 +35,31 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
+#ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/number.hpp>
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#endif
+
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl_auto_format {
 #endif
 
+#ifdef O2SCL_LD_TYPES
+  typedef boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+  cpp_dec_float_35;
+  typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+  typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
+#endif
+  
   // Declarations for friendship
   class auto_format;
   auto_format &operator<<(auto_format &at, double d);
+  auto_format &operator<<(auto_format &at, long double d);
+#ifdef O2SCL_LD_TYPES
+  auto_format &operator<<(auto_format &at, const cpp_dec_float_35 &d);
+  auto_format &operator<<(auto_format &at, const cpp_dec_float_50 &d);
+  auto_format &operator<<(auto_format &at, const cpp_dec_float_100 &d);
+#endif
 
   /** \brief Automatically format output
 
@@ -62,7 +80,6 @@ namespace o2scl_auto_format {
       \todo Allow user-specified table alignments
       \todo switch to columnify::add_spaces() and add more complicated
       table line specifications
-      \todo Support multiprecision types.
       \todo Implement row_max
 
       \future Create a replacement for std::flush
@@ -125,6 +142,14 @@ namespace o2scl_auto_format {
     // Ensure these operators are friends
     friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
 						      double d);
+    friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
+						      long double d);
+    friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
+						      const cpp_dec_float_35 &d);
+    friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
+						      const cpp_dec_float_50 &d);
+    friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
+						      const cpp_dec_float_100 &d);
     template<class data_t>
     friend auto_format &operator<<(auto_format &at,
 				   const boost::numeric::ublas::matrix<data_t> &vu);
@@ -199,6 +224,26 @@ namespace o2scl_auto_format {
    */
   auto_format &operator<<(auto_format &at, double d);
 
+  /** \brief Output a double-precision number
+   */
+  auto_format &operator<<(auto_format &at, long double d);
+
+#ifdef O2SCL_LD_TYPES
+  
+  /** \brief Output a double-precision number
+   */
+  auto_format &operator<<(auto_format &at, const cpp_dec_float_35 &d);
+
+  /** \brief Output a double-precision number
+   */
+  auto_format &operator<<(auto_format &at, const cpp_dec_float_50 &d);
+
+  /** \brief Output a double-precision number
+   */
+  auto_format &operator<<(auto_format &at, const cpp_dec_float_100 &d);
+
+#endif
+  
   /** \brief Output a single-precision number
    */
   auto_format &operator<<(auto_format &at, float f);

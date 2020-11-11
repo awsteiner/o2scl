@@ -561,6 +561,42 @@ auto_format &o2scl_auto_format::operator<<(auto_format &at, double d) {
   return at;
 }
 
+auto_format &o2scl_auto_format::operator<<(auto_format &at,
+					   long double d) {
+  string stmp;
+  stmp=o2scl::dtos(d,at.precision_);
+  at.add_string(stmp);
+  return at;
+}
+
+#ifdef O2SCL_LD_TYPES
+
+auto_format &o2scl_auto_format::operator<<(auto_format &at,
+					   const cpp_dec_float_35 &d) {
+  string stmp;
+  stmp=o2scl::dtos(d,at.precision_);
+  at.add_string(stmp);
+  return at;
+}
+
+auto_format &o2scl_auto_format::operator<<(auto_format &at,
+					   const cpp_dec_float_50 &d) {
+  string stmp;
+  stmp=o2scl::dtos(d,at.precision_);
+  at.add_string(stmp);
+  return at;
+}
+
+auto_format &o2scl_auto_format::operator<<(auto_format &at,
+					   const cpp_dec_float_100 &d) {
+  string stmp;
+  stmp=o2scl::dtos(d,at.precision_);
+  at.add_string(stmp);
+  return at;
+}
+
+#endif
+
 auto_format &o2scl_auto_format::operator<<(auto_format &at, float f) {
   string stmp;
   stmp=o2scl::dtos(f,6);
