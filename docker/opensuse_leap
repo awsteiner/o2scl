@@ -1,0 +1,31 @@
+FROM opensuse/leap
+MAINTAINER Andrew W. Steiner (awsteiner@mykolab.com)
+
+# To fix tzdata asking for a timezone during installation
+# can set up later using sudo dpkg-reconfigure tzdata I think.
+# I'm not sure if this is necessary for opensuse.
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN zypper install g++ make libgsl-dev
+RUN zypper install libhdf5-dev libncurses-dev libreadline-dev git
+RUN zypper install libboost-all-dev
+
+# Now install o2scl
+WORKDIR /opt
+RUN git clone https://github.com/awsteiner/o2scl
+WORKDIR /opt/o2scl
+RUN mkdir m4
+RUN autoreconf -i
+RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP" ./configure
+RUN make blank-doc
+RUN make
+RUN make install
+WORKDIR /
+ENV LD_LIBRARY_PATH /usr/local/lib
+RUN acol -v
+
+
+
+
+
+
