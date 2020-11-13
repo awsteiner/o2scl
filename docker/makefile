@@ -1,5 +1,5 @@
 help:
 	@echo "Help."
 
-test:
-	sudo docker 
+build_opensuse_leap:
+	sudo docker build -t opensuse_leap - < opensuse_leap

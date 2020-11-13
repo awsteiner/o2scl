@@ -144,12 +144,16 @@ namespace o2scl_auto_format {
 						      double d);
     friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
 						      long double d);
+    
+#ifdef O2SCL_LD_TYPES
     friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
 						      const cpp_dec_float_35 &d);
     friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
 						      const cpp_dec_float_50 &d);
     friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
 						      const cpp_dec_float_100 &d);
+#endif
+
     template<class data_t>
     friend auto_format &operator<<(auto_format &at,
 				   const boost::numeric::ublas::matrix<data_t> &vu);

@@ -7,14 +7,15 @@ MAINTAINER Andrew W. Steiner (awsteiner@mykolab.com)
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN zypper install -y gcc-c++ make gsl-devel
-RUN zypper install -y hdf5-devel ncurses-devel readline-devel
-RUN zypper install -y boost-devel curl
+RUN zypper install -y hdf5-devel ncurses-devel readline-devel git
+RUN zypper install -y boost-devel autoconf automake libtool
 
 # Now install o2scl
 WORKDIR /opt
-RUN curl https://github.com/awsteiner/o2scl/releases/download/v0.925/o2scl-0.925.tar.gz
-RUN tar xvzf o2scl-0.925.tar.gz
-WORKDIR /opt/o2scl-0.925
+RUN git clone https://github.com/awsteiner/o2scl
+WORKDIR /opt/o2scl
+RUN mkdir m4
+RUN autoreconf -i
 RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_PRE_1_12" ./configure
 RUN make blank-doc
 RUN make
