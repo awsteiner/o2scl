@@ -43,6 +43,7 @@
 #include <o2scl/lib_settings.h>
 #include <o2scl/inte_adapt_cern.h>
 #include <o2scl/inte_double_exp_boost.h>
+#include <o2scl/exception.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -229,31 +230,61 @@ namespace o2scl {
     /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$
      */
     double calc_1o2(double y) {
-      return gsl_sf_fermi_dirac_half(y)*sqrt(o2scl_const::pi)/2.0;
+      double ret;
+      try {
+	ret=gsl_sf_fermi_dirac_half(y)*sqrt(o2scl_const::pi)/2.0;
+      } catch (const o2scl::exc_overflow_error &e) {
+	return std::numeric_limits<double>::infinity();
+      }
+      return ret;
     }
     
     /** \brief Fermi-Dirac integral of order \f$ -1/2 \f$
      */
     double calc_m1o2(double y) {
-      return gsl_sf_fermi_dirac_mhalf(y)*sqrt(o2scl_const::pi);
+      double ret;
+      try {
+	ret=gsl_sf_fermi_dirac_mhalf(y)*sqrt(o2scl_const::pi);
+      } catch (const o2scl::exc_overflow_error &e) {
+	return std::numeric_limits<double>::infinity();
+      }
+      return ret;
     }
     
     /** \brief Fermi-Dirac integral of order \f$ 3/2 \f$
      */
     double calc_3o2(double y) {
-      return gsl_sf_fermi_dirac_3half(y)*sqrt(o2scl_const::pi)*0.75;
+      double ret;
+      try {
+	ret=gsl_sf_fermi_dirac_3half(y)*sqrt(o2scl_const::pi)*0.75;
+      } catch (const o2scl::exc_overflow_error &e) {
+	return std::numeric_limits<double>::infinity();
+      }
+      return ret;
     }
-
+    
     /** \brief Fermi-Dirac integral of order \f$ 2 \f$
      */
     double calc_2(double y) {
-      return gsl_sf_fermi_dirac_int(2,y)*2.0;
+      double ret;
+      try {
+	ret=gsl_sf_fermi_dirac_int(2,y)*2.0;
+      } catch (const o2scl::exc_overflow_error &e) {
+	return std::numeric_limits<double>::infinity();
+      }
+      return ret;
     }
     
     /** \brief Fermi-Dirac integral of order \f$ 3 \f$
      */
     double calc_3(double y) {
-      return gsl_sf_fermi_dirac_int(3,y)*6.0;
+      double ret;
+      try {
+	ret=gsl_sf_fermi_dirac_int(3,y)*6.0;
+      } catch (const o2scl::exc_overflow_error &e) {
+	return std::numeric_limits<double>::infinity();
+      }
+      return ret;
     }
     
   };
