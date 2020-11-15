@@ -218,6 +218,10 @@ namespace o2scl {
       includes an additional factor of \f$ 1/\Gamma(a+1) \f$
       which is not included here.
 
+      The GSL functions internally throw overflow exceptions if the
+      argument is too large. In this class, the value <tt>inf</tt>
+      is returned in those cases instead. 
+
       This class is used in \o2p in <tt>o2scl::fermion_thermo_tl</tt>,
       <tt>o2scl::fermion_tl</tt> and <tt>o2scl::fermion_nonrel_tl</tt>
       to compute the Fermi-Dirac integrals for non-relativistic

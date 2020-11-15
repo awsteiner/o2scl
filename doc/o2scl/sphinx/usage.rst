@@ -64,22 +64,24 @@ aborts execution. The global error handler can be replaced by simply
 assigning the address of a descendant of :ref:`err_hnd_type
 <err_hnd_type>` to :cpp:var:`o2scl::err_hnd`.
 
-O\ :sub:`2`\ scl does not support any execution beyond the point at which the
-error handler is called. Many functions which would have had
-integer return values in GSL, now return ``void`` in O\ :sub:`2`\ scl.
-Object destructors almost never call the error handler.
-Internally, O\ :sub:`2`\ scl does not use ``try`` blocks, but these can
-easily be effectively employed by an O\ :sub:`2`\ scl user.
+..
+  11/14/20: This old text regarding exceptions is now unnecessary.
+
+  O\ :sub:`2`\ scl does not support any execution beyond the point at
+  which the error handler is called. Many functions which would have
+  had integer return values in GSL, now return ``void`` in O\
+  :sub:`2`\ scl. Internally, O\ :sub:`2`\ scl does not use ``try`` blocks,
+  but these can easily be effectively employed by an O\ :sub:`2`\ scl
+  user.
 
 The C++ exception classes are also mapped to the list of GSL error
 codes (including a few extra ones for O\ :sub:`2`\ scl), which is
 given in below in :ref:`GSL error codes and C++ exception types`.
-
 One can instruct the library to use the GSL-like O\ :sub:`2`\ scl
 error handler :cpp:var:`o2scl::alt_err_hnd` by default, by defining
 the constant ``O2SCL_USE_GSL_HANDLER``. This is also useful if one
 wants to compile without C++ exceptions (which does have a small
-overhead).
+overhead). 
 
 What is an error?
 -----------------

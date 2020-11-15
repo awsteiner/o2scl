@@ -128,7 +128,9 @@ Coding recommendations and guidelines
 - Functions which return \c void should end with ``return;``.
 - All functions which are called by the constructor should be
   documented as doing so
-
+- Object destructors should almost never call the error
+  handler.
+  
 Documentation guidelines
 ------------------------
 
