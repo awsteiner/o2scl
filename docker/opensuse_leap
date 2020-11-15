@@ -21,6 +21,7 @@ RUN make install
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
 RUN acol -v
+WORKDIR /opt/o2scl-0.925
 RUN make o2scl-test
 RUN make o2scl-examples
 
