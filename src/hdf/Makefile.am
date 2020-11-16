@@ -125,9 +125,9 @@ hdf_io_ts_LDFLAGS =
 endif
 
 hdf_file.scr: hdf_file_ts$(EXEEXT) 
-	./hdf_file_ts$(EXEEXT) > hdf_file.scr
+	./hdf_file_ts$(EXEEXT) | tee hdf_file.scr
 hdf_io.scr: hdf_io_ts$(EXEEXT) 
-	./hdf_io_ts$(EXEEXT) > hdf_io.scr
+	./hdf_io_ts$(EXEEXT) | tee hdf_io.scr
 
 hdf_file_ts_SOURCES = hdf_file_ts.cpp
 hdf_io_ts_SOURCES = hdf_io_ts.cpp
