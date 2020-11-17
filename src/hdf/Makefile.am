@@ -10,9 +10,6 @@ HDF_SRCS = hdf_file.cpp hdf_io.cpp cloud_file.cpp acolm.cpp acolm_ac.cpp \
 
 TEST_VAR = hdf_file.scr hdf_io.scr
 
-# These are the files included in the distribution
-EXTRA_DIST = hdf_io_ts_table.txt
-
 # ------------------------------------------------------------
 # Includes
 # ------------------------------------------------------------
@@ -150,7 +147,8 @@ am__libo2scl_hdf_la_SOURCES_DIST = $(HDF_SRCS)
 # Misc
 # ------------------------------------------------------------
 
-EXTRA_DIST = *_ts.cpp
+# These are the files included in the distribution
+EXTRA_DIST = *_ts.cpp hdf_io_ts_table.txt
 
 emacs-clean: 
 	-rm *~
