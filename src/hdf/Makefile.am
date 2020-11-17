@@ -10,6 +10,9 @@ HDF_SRCS = hdf_file.cpp hdf_io.cpp cloud_file.cpp acolm.cpp acolm_ac.cpp \
 
 TEST_VAR = hdf_file.scr hdf_io.scr
 
+# These are the files included in the distribution
+EXTRA_DIST = hdf_io_ts_table.txt
+
 # ------------------------------------------------------------
 # Includes
 # ------------------------------------------------------------
