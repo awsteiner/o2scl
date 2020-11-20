@@ -16,6 +16,9 @@ help:
 	@echo "emacs-clean:          Remove tilde files."
 	@echo 
 
+# -----------------------------------------------------------------
+# GNU style variables
+
 docdir = $(prefix)/share/doc/o2scl
 
 # These are the files installed by 'make install'
@@ -35,7 +38,8 @@ emacs-clean:
 	rm -f */*/*/*~
 	rm -f */*/*/*/*~
 
-utk-sync-doc:
+# Publish release documentation 
+release-sync-doc:
 	rsync -Cavzu /usr/local/share/doc/o2scl/* \
 		$(STATIC_DOC_DIR)/o2scl
 # rsync -Cavzu extras/index.html \

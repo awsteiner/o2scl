@@ -1,15 +1,4 @@
-#
 # Makefile.am for O2scl.
-#
-
-ACLOCAL_AMFLAGS = -I m4
-
-# Note that in SUBDIRS below, include must come before src and
-# acol must come after src
-SUBDIRS = include src acol data doc examples 
-
-# Extra files to add to the distribution
-EXTRA_DIST = autogen.sh TODOS README acinclude.m4 m4 README.md .travis.yml
 
 # Output some assistance describing the usual make targets
 help:
@@ -23,47 +12,66 @@ help:
 	@echo "Additional package-specific targets"
 	@echo "-------------------------------------------------------------"
 	@echo "help:             Show this help file"
-	@echo "sinstall:         Install headers and libraries only"
 	@echo "o2scl-test:       Test installation ('make check' works also)"
 	@echo "o2scl-examples:   Compile and run examples"
 	@echo "test-clean:       Clean files created by tests"
 	@echo 
 	@echo "Developer targets"
 	@echo "-------------------------------------------------------------"
+	@echo "sinstall:         Install headers and libraries only"
 	@echo "o2scl-doc:        Make HTML documentation"
 	@echo "clean-doc:        Remove generated documentation files"
 	@echo "blank-doc:        Create blank documentation (used in "
 	@echo "  the homebrew recipe and the travis script)"
-	@echo "utk-sync-doc:     Copy docs from /usr/local on isospin"
+	@echo "release-sync-doc:     Copy docs from /usr/local on isospin"
 	@echo "  to the web page repository for uploading"
 	@echo "prerelease-sync-doc: Copy docs from /usr/local on isospin"
 	@echo "  to the the internal web directory."
 	@echo "emacs-clean:      Remove files ending with a tilde"
-	@echo "move-doc:         Move documentation to a separate directory"
-	@echo "restore-doc:      Restore documentation after move"
-	@echo "o2scl-benchmarks: Compile and run benchmarks (not working)"
-	@echo 
+	@echo
 
-move-doc:
-	cd doc/o2scl/html; mkdir ../htdir; mv -i *.html *.png ../htdir; 
-	cd doc/o2scl/html; touch index.html blank.png
-	cd doc/o2scl/eos/html; mkdir ../htdir; mv -i *.html *.png ../htdir; 
-	cd doc/o2scl/eos/html; touch index.html blank.png
-	cd doc/o2scl/part/html; mkdir ../htdir; mv -i *.html *.png ../htdir; 
-	cd doc/o2scl/part/html; touch index.html blank.png
+# -----------------------------------------------------------------
+# GNU style variables
 
-restore-doc:
-	cd doc/o2scl/html; mv ../htdir/* .; rmdir ../htdir
-	cd doc/o2scl/eos/html; mv ../htdir/* .; rmdir ../htdir
-	cd doc/o2scl/part/html; mv ../htdir/* .; rmdir ../htdir
+ACLOCAL_AMFLAGS = -I m4
+
+# Note that in SUBDIRS below, include must come before src and
+# acol must come after src
+SUBDIRS = include src acol data doc examples 
+
+# Extra files to add to the distribution
+EXTRA_DIST = autogen.sh TODOS README acinclude.m4 m4 README.md .travis.yml
+
+check_SCRIPTS = o2scl-test
+
+# -----------------------------------------------------------------
+# Additional targets
+
+# These don't work anymore
+#	@echo "move-doc:         Move documentation to a separate directory"
+#	@echo "restore-doc:      Restore documentation after move"
+#	@echo "o2scl-benchmarks: Compile and run benchmarks (not working)"
+
+# move-doc:
+# 	cd doc/o2scl/html; mkdir ../htdir; mv -i *.html *.png ../htdir; 
+# 	cd doc/o2scl/html; touch index.html blank.png
+# 	cd doc/o2scl/eos/html; mkdir ../htdir; mv -i *.html *.png ../htdir; 
+# 	cd doc/o2scl/eos/html; touch index.html blank.png
+# 	cd doc/o2scl/part/html; mkdir ../htdir; mv -i *.html *.png ../htdir; 
+# 	cd doc/o2scl/part/html; touch index.html blank.png
+
+# restore-doc:
+# 	cd doc/o2scl/html; mv ../htdir/* .; rmdir ../htdir
+# 	cd doc/o2scl/eos/html; mv ../htdir/* .; rmdir ../htdir
+# 	cd doc/o2scl/part/html; mv ../htdir/* .; rmdir ../htdir
+
+# Compile and run all benchmarks
+# o2scl-benchmarks:
+#	cd examples && $(MAKE) o2scl-benchmarks
 
 # Compile and run all examples
 o2scl-examples:
 	cd examples && $(MAKE) o2scl-examples
-
-# Compile and run all benchmarks
-o2scl-benchmarks:
-	cd examples && $(MAKE) o2scl-benchmarks
 
 # Run the tests and summarize using the tsumm program
 #
@@ -98,9 +106,11 @@ emacs-clean:
 pack-sync:
 	git archive master | tar -x -C /home/awsteiner/pack/o2scl
 
-utk-sync-doc:
-	cd doc/o2scl && $(MAKE) utk-sync-doc
+# Publish release documentation 
+release-sync-doc:
+	cd doc/o2scl && $(MAKE) release-sync-doc
 
+# Publish prerelease documentation 
 prerelease-sync-doc:
 	cd doc/o2scl && $(MAKE) prerelease-sync-doc
 
@@ -108,12 +118,11 @@ prerelease-sync-doc:
 o2scl-doc:
 	cd doc/o2scl && $(MAKE) o2scl-doc-recursive
 
-check_SCRIPTS = o2scl-test
-
 # Clean all generated documentation
 clean-doc:
 	cd doc/o2scl && $(MAKE) clean-doc-recursive
 
+# Create empty documentation
 blank-doc:
 	mkdir -p doc/o2scl/sphinx/build/html
 	mkdir -p doc/o2scl/eos/sphinx/build/html
