@@ -28,6 +28,16 @@
 
 extern "C" {
   
+  void *o2scl_create_part(double *&g, double *&m, double *&ms,
+			  double *&mu, double *&nu,
+			  double *&ed, double *&pr,
+			  double *&en, bool *&inc_rest_mass,
+			  bool *&non_interacting);
+  void *o2scl_create_fermion();
+
+  void o2scl_free_part(void *vp);
+  void o2scl_free_fermion(void *vp);
+
   void *o2scl_create_fermion_rel();
   void *o2scl_create_fermion_nonrel();
   void *o2scl_create_fermion_deriv_rel();
@@ -45,73 +55,15 @@ extern "C" {
   void o2scl_free_classical_thermo(void *vp);
   void o2scl_free_classical_deriv_thermo(void *vp);
   void o2scl_free_fermion_mag_zerot(void *vp);
-
-  void o2scl_fermion_density
-  (void *vp, double m, double g, double T, double n,
-   double *mu, double *ed, double *pr, double *en);
-  void o2scl_fermion_int_density
-  (void *vp, double m, double ms, double g, double T, double n,
-   double *nu, double *ed, double *pr, double *en);
-  void o2scl_fermion_mu
-  (void *vp, double m, double g, double T, double mu,
-   double *n, double *ed, double *pr, double *en);
-  void o2scl_fermion_int_mu
-  (void *vp, double m, double ms, double g, double T, double nu,
-   double *n, double *ed, double *pr, double *en);
-
-  void o2scl_fermion_nonrel_density
-  (void *vp, double m, double g, double T, double n,
-   double *mu, double *ed, double *pr, double *en);
-  void o2scl_fermion_nonrel_int_density
-  (void *vp, double m, double ms, double g, double T, double n,
-   double *nu, double *ed, double *pr, double *en);
-  void o2scl_fermion_nonrel_mu
-  (void *vp, double m, double g, double T, double mu,
-   double *n, double *ed, double *pr, double *en);
-  void o2scl_fermion_nonrel_int_mu
-  (void *vp, double m, double ms, double g, double T, double nu,
-   double *n, double *ed, double *pr, double *en);
-
-  void o2scl_classical_density
-  (void *vp, double m, double g, double T, double n,
-   double *mu, double *ed, double *pr, double *en);
-  void o2scl_classical_mu
-  (void *vp, double m, double ms, double g, double T, double mu,
-   double *n, double *ed, double *pr, double *en);
-
-  void o2scl_fermion_deriv_density
-  (void *vp, double m, double g, double T, double n,
-   double *mu, double *ed, double *pr, double *en,
-   double *dndT, double *dsdT, double *dndmu);
-  void o2scl_fermion_deriv_int_density
-  (void *vp, double m, double ms, double g, double T, double n,
-   double *nu, double *ed, double *pr, double *en,
-   double *dndT, double *dsdT, double *dndmu);
-  void o2scl_fermion_deriv_mu
-  (void *vp, double m, double g, double T, double mu,
-   double *n, double *ed, double *pr, double *en,
-   double *dndT, double *dsdT, double *dndmu);
-  void o2scl_fermion_deriv_int_mu
-  (void *vp, double m, double ms, double g, double T, double nu,
-   double *n, double *ed, double *pr, double *en,
-   double *dndT, double *dsdT, double *dndmu);
   
-  void o2scl_fermion_deriv_nr_density
-  (void *vp, double m, double g, double T, double n,
-   double *mu, double *ed, double *pr, double *en,
-   double *dndT, double *dsdT, double *dndmu);
-  void o2scl_fermion_deriv_nr_int_density
-  (void *vp, double m, double ms, double g, double T, double n,
-   double *nu, double *ed, double *pr, double *en,
-   double *dndT, double *dsdT, double *dndmu);
-  void o2scl_fermion_deriv_nr_mu
-  (void *vp, double m, double g, double T, double mu,
-   double *n, double *ed, double *pr, double *en,
-   double *dndT, double *dsdT, double *dndmu);
-  void o2scl_fermion_deriv_nr_int_mu
-  (void *vp, double m, double ms, double g, double T, double nu,
-   double *n, double *ed, double *pr, double *en,
-   double *dndT, double *dsdT, double *dndmu);
+  void o2scl_fermion_rel_calc_density(void *frp, void *fp, double T);
+  void o2scl_fermion_rel_calc_mu(void *frp, void *fp, double T);
+  void o2scl_classical_calc_density(void *frp, void *fp, double T);
+  void o2scl_classical_calc_mu(void *frp, void *fp, double T);
+  void o2scl_fermion_nonrel_calc_density(void *frp, void *fp, double T);
+  void o2scl_fermion_nonrel_calc_mu(void *frp, void *fp, double T);
+  void o2scl_fermion_deriv_rel_calc_density(void *frp, void *fp, double T);
+  void o2scl_fermion_deriv_rel_calc_mu(void *frp, void *fp, double T);
   
 }
 
