@@ -578,6 +578,8 @@ public:
 
     bool of_old=output_files;
     output_files=true;
+    
+    string file_prefix_old=file_prefix;
     file_prefix="ex_eos_had_skyrme_";
 
     // Just summarize SLy4
@@ -594,6 +596,7 @@ public:
     t.report();
 
     output_files=of_old;
+    file_prefix=file_prefix_old;
 
     return 0;
   }
@@ -1009,7 +1012,10 @@ int main(int argc, char *argv[]) {
     {0,"unedf","Desc.",0,0,"","",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::unedf),
      comm_option_both},
-    {'t',"test","Test ex_eos_had_skyrme.",0,0,"","",
+    {'t',"test","Test ex_eos_had_skyrme.",0,0,"",
+     ((string)"This command temporarily sets output_files to true, ")+
+     "file_prefix to \"ex_eos_had_skyrme_\", and then runs the "+
+     "'summary' command for SLy4.",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::test),
      comm_option_both},
     {'u',"summary","Summarize the properties of a Skyrme model.",
@@ -1036,12 +1042,12 @@ int main(int argc, char *argv[]) {
   cli::parameter_bool p_output_files;
   p_output_files.b=&se.output_files;
   p_output_files.help="Output files (default 0).";
-  cl.par_list.insert(make_pair("output-files",&p_output_files));
+  cl.par_list.insert(make_pair("output_files",&p_output_files));
 
   cli::parameter_string p_file_prefix;
   p_file_prefix.str=&se.file_prefix;
   p_file_prefix.help="File prefix (default \"\").";
-  cl.par_list.insert(make_pair("file-prefix",&p_file_prefix));
+  cl.par_list.insert(make_pair("file_prefix",&p_file_prefix));
 
   cli::parameter_string p_name;
   p_name.str=&se.name;
