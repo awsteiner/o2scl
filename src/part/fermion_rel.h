@@ -408,7 +408,8 @@ namespace o2scl {
       nex=f.nu/temper;
       fp_t y=solve_fun(nex,f,temper);
       if (verbose>1) {
-	std::cout << "nu_from_n(): initial guess " << nex << std::endl;
+	std::cout << "fermion_rel::nu_from_n(): " 
+		  << "initial guess " << nex << std::endl;
       }
 
       if (y>1.0-1.0e-6) {
@@ -421,7 +422,8 @@ namespace o2scl {
 	  if (y<1.0-1.0e-6) i=10;
 	}
 	if (verbose>1) {
-	  std::cout << "nu_from_n(): adjusted guess to " << nex << std::endl;
+	  std::cout << "fermion_rel::nu_from_n(): "
+		    << "adjusted guess to " << nex << std::endl;
 	}
       }
 
@@ -434,7 +436,8 @@ namespace o2scl {
 	}
 	y=solve_fun(nex,f,temper);
 	if (verbose>1) {
-	  std::cout << "nu_from_n(): adjusted guess (try 2) to "
+	  std::cout << "fermion_rel::nu_from_n(): "
+		    << "adjusted guess (try 2) to "
 		    << nex << std::endl;
 	}
       }

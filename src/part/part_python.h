@@ -27,13 +27,20 @@
 */
 
 extern "C" {
+
+  void o2scl_set_err_hnd_gsl();
   
   void *o2scl_create_part(double *&g, double *&m, double *&ms,
 			  double *&mu, double *&nu,
 			  double *&ed, double *&pr,
 			  double *&en, bool *&inc_rest_mass,
 			  bool *&non_interacting);
-  void *o2scl_create_fermion();
+  void *o2scl_create_fermion(double *&g, double *&m, double *&ms,
+			     double *&mu, double *&nu,
+			     double *&ed, double *&pr,
+			     double *&en, bool *&inc_rest_mass,
+			     bool *&non_interacting, double *&kf,
+			     double *&del);
 
   void o2scl_free_part(void *vp);
   void o2scl_free_fermion(void *vp);

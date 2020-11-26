@@ -59,10 +59,15 @@ void err_hnd_gsl::reset() {
 
 void err_hnd_gsl::set(const char *reason, const char *file, 
 		      int line, int lerrno) {
-  a_errno=lerrno;
-  a_file=(char *)file;
-  a_line=line;
-  strncpy(a_reason,reason,200);
+  /*
+    a_errno=lerrno;
+    a_file=(char *)file;
+    a_line=line;
+    strncpy(a_reason,reason,200);
+  */
+  std::cerr << "O2scl error: " << reason << "\n  at line "
+	    << line << " in file " << file << "." << std::endl;
+  std::cerr << "Exiting with code " << lerrno << std::endl;
   exit(lerrno);
   return;
 }

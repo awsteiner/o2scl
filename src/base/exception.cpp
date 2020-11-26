@@ -51,7 +51,7 @@ err_hnd_cpp::err_hnd_cpp() {
 
 void err_hnd_cpp::set(const char *reason, const char *file, 
 		      int line, int lerrno) {
-  
+
 #ifdef O2SCL_NO_EXCEPTIONS
 
   err_hnd_gsl::set(reason,file,line,lerrno);

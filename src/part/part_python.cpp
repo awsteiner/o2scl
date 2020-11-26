@@ -38,6 +38,11 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
+void o2scl_set_err_hnd_gsl() {
+  err_hnd=&alt_err_hnd;
+  return;
+}
+
 void *o2scl_create_part(double *&g, double *&m, double *&ms,
 			double *&mu, double *&nu,
 			double *&ed, double *&pr,
@@ -57,9 +62,27 @@ void *o2scl_create_part(double *&g, double *&m, double *&ms,
   return pp;
 }
 
-void *o2scl_create_fermion() {
-  fermion *fr=new fermion;
-  return fr;
+void *o2scl_create_fermion(double *&g, double *&m, double *&ms,
+			   double *&mu, double *&nu,
+			   double *&ed, double *&pr,
+			   double *&en, bool *&inc_rest_mass,
+			   bool *&non_interacting, double *&kf,
+			   double *&del) {
+  fermion *fp=new fermion;
+  g=&fp->g;
+  ms=&fp->ms;
+  m=&fp->m;
+  mu=&fp->mu;
+  nu=&fp->nu;
+  ed=&fp->ed;
+  pr=&fp->pr;
+  en=&fp->en;
+  inc_rest_mass=&fp->inc_rest_mass;
+  non_interacting=&fp->non_interacting;
+  kf=&fp->kf;
+  del=&fp->del;
+  fp->mu=3.14;
+  return fp;
 }
 
 void *o2scl_create_fermion_rel() {
@@ -103,14 +126,14 @@ void *o2scl_create_fermion_mag_zerot() {
 }
 
 void o2scl_free_part(void *vp) {
-  part *fr=(part *)vp;
-  delete fr;
+  part *pp=(part *)vp;
+  delete pp;
   return;
 }
 
 void o2scl_free_fermion(void *vp) {
-  fermion *fr=(fermion *)vp;
-  delete fr;
+  fermion *fp=(fermion *)vp;
+  delete fp;
   return;
 }
 
@@ -159,6 +182,11 @@ void o2scl_fermion_rel_calc_density(void *frp, void *fp, double T) {
 
   fermion_rel *fr=(fermion_rel *)frp;
   fermion *f=(fermion *)fp;
+  fr->verbose=2;
+  cout << "&f,&fmu: " << f << " " << &(f->mu) << endl;
+  cout << f->inc_rest_mass << " " << f->non_interacting << endl;
+  cout << "mu,n,kf,g: " << f->mu << " " << f->n << " "
+       << f->kf << " " << f->g << endl;
   fr->calc_density(*f,T);
 
   return;
