@@ -727,7 +727,8 @@ namespace o2scl {
 	\future It would be great to add a function which generates
 	a text file in this format as well. 
     */
-    int read_gen3_list(std::istream &fin, int verbose=0, double eps=1.0e-12);
+    int read_gen3_list(std::istream &fin, int verbose=0,
+		       double eps=1.0e-12);
 
     /** \brief Set the current table3d object by reading a 
 	\ref o2scl::table 

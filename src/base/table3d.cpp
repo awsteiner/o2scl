@@ -276,7 +276,7 @@ int table3d::read_gen3_list(std::istream &fin, int verbose, double eps) {
   std::istringstream is(line);
   while (is >> cname) {
     onames.push_back(cname);
-    if (verbose>2) {
+    if (verbose>1) {
       std::cout << "Read possible name: " << cname << std::endl;
     }
   }
@@ -347,22 +347,22 @@ int table3d::read_gen3_list(std::istream &fin, int verbose, double eps) {
     for(size_t i=2;i<onames.size();i++) {
       nnames.push_back(onames[i]);
       if (verbose>0) {
-	std::cout << "Slice " << i-2 << " named " << onames[i]
+	std::cout << "Slice " << i-2 << " name: " << onames[i]
 		  << std::endl;
       }
     }
     
   }
-      
+
   // Read remaining rows
   while ((fin) >> data) {
-    if (verbose>1) {
+    if (verbose>2) {
       std::cout << "data: " << 0 << " " << data << std::endl;
     }
     odata[0].push_back(data);
     for(size_t i=1;i<onames.size();i++) {
       (fin) >> data;
-      if (verbose>1) {
+      if (verbose>2) {
 	std::cout << "data: " << i << " " << data << std::endl;
       }
       odata[i].push_back(data);
@@ -375,28 +375,52 @@ int table3d::read_gen3_list(std::istream &fin, int verbose, double eps) {
   for(size_t i=0;i<odata[0].size();i++) {
     bool found=false;
     for(size_t j=0;j<xgrid.size();j++) {
-      if (fabs(odata[0][i]-xgrid[j])/fabs(xgrid[j])<eps) {
-	found=true;
+      if (xgrid[j]<eps) {
+	if (fabs(odata[0][i]-xgrid[j])<eps) {
+	  found=true;
+	}
+      } else {
+	if (fabs(odata[0][i]-xgrid[j])/fabs(xgrid[j])<eps) {
+	  found=true;
+	}
       }
     }
     if (found==false) {
+      if (verbose>1) {
+	cout << "Adding " << odata[0][i] << " to xgrid." << endl;
+      }
       xgrid.push_back(odata[0][i]);
     }
     found=false;
     for(size_t j=0;j<ygrid.size();j++) {
-      if (fabs(odata[1][i]-ygrid[j])/fabs(ygrid[j])<eps) {
-	found=true;
+      if (ygrid[j]<eps) {
+	if (fabs(odata[1][i]-ygrid[j])<eps) {
+	  found=true;
+	}
+      } else {
+	if (fabs(odata[1][i]-ygrid[j])/fabs(ygrid[j])<eps) {
+	  found=true;
+	}
       }
     }
     if (found==false) {
+      if (verbose>1) {
+	cout << "Adding " << odata[1][i] << " to ygrid." << endl;
+      }
       ygrid.push_back(odata[1][i]);
     }
   }
 
+  // Sort grids
+  vector_sort_double(xgrid.size(),xgrid);
+  vector_sort_double(ygrid.size(),ygrid);
+  
   if (verbose>1) {
+    cout << "x grid (size " << xgrid.size() << "):" << endl;
     for(size_t k=0;k<xgrid.size();k++) {
       std::cout << k << " " << xgrid[k] << std::endl;
     }
+    cout << "y grid (size " << ygrid.size() << "):" << endl;
     for(size_t k=0;k<ygrid.size();k++) {
       std::cout << k << " " << ygrid[k] << std::endl;
     }
@@ -411,12 +435,13 @@ int table3d::read_gen3_list(std::istream &fin, int verbose, double eps) {
       std::cout << "New slice: " << nnames[i] << std::endl;
     }
     new_slice(nnames[i]);
+    set_slice_all(nnames[i],0.0);
   }
 
   // Set the data
   for(size_t j=2;j<odata.size();j++) {
     for(size_t i=0;i<odata[j].size();i++) {
-      if (verbose>1) {
+      if (verbose>2) {
 	std::cout << "Set value: " << odata[j][i] << std::endl;
       }
       set_val(odata[0][i],odata[1][i],nnames[j-2],odata[j][i]);
