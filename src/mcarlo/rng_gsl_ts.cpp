@@ -48,6 +48,11 @@ int main(void) {
 
   rng_gsl nr(10);
 
+  vector<double> arr={3,1,4,1,5,9};
+
+  vector_shuffle<vector<double>,double>(nr,arr.size(),arr);
+  vector_out(cout,arr,true);
+
 #ifdef O2SCL_NEVER_DEFINED
   /*
     AWS 8/19/16: Unfortunately this doesn't work with clang at the

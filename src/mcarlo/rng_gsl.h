@@ -163,7 +163,64 @@ namespace o2scl {
       return (r.type->get_double)(r.state);
     }
   };
-  
+
+  /** \brief Swap function for vector_shuffle()
+   */
+  template<class data_t>
+  void shuffle_swap(data_t *base, size_t size, size_t i, size_t j) {
+    register char * a = size * i + (char *) base ;
+    register char * b = size * j + (char *) base ;
+    register size_t s = size ;
+    
+    if (i == j) {
+      return;
+    }
+    
+    do {                                       
+      char tmp = *a;                            
+      *a++ = *b;                                
+      *b++ = tmp;                               
+    } while (--s > 0);
+    
+    return;
+  }
+
+  /** \brief Copy function for vector_choose()
+   */
+  template<class data_t>
+  void choose_copy(data_t *dest, size_t i, data_t *src, size_t j,
+		    size_t size) {
+    register char * a = size * i + (char *) dest;
+    register char * b = size * j + (char *) src;
+    register size_t s = size ;
+    
+    do {                                          
+      *a++ = *b++;                              
+    } 
+    while (--s > 0);
+
+    return;
+  }
+
+  /** \brief Shuffle the first \c n elements of vector \c data
+
+      \note This function works only on vector types which
+      guarantee adjacent storage, such as <tt>vector<double></tt>.
+      
+      \note If \c n is 0, this function silently does nothing.
+   */
+  template<class vec_t, class data_t>
+  void vector_shuffle(rng_gsl &r, size_t n, vec_t &data) {
+    if (n==0) return;
+    
+    for (size_t i = n - 1; i > 0; i--) {
+      size_t j = r.random_int(i+1);
+      shuffle_swap(&data[0],sizeof(data_t),i,j);
+    }
+    
+    return;
+  }
+
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

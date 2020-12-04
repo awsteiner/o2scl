@@ -2282,7 +2282,7 @@ namespace o2scl {
       an exception.
   */
   template<class vec_t, class data_t>
-    data_t vector_sum(size_t n, vec_t &data) {
+    data_t vector_sum(size_t n, const vec_t &data) {
     
     data_t sum=0.0;
     for(size_t i=0;i<n;i++) {
