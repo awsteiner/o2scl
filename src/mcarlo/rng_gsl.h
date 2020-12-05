@@ -56,6 +56,7 @@ namespace o2scl {
 
   public:
 
+    /// Desc
     typedef unsigned long int result_type;
 
     /** \brief Initialize the random number generator with type \c gtype 
@@ -165,6 +166,9 @@ namespace o2scl {
   };
 
   /** \brief Swap function for vector_shuffle()
+      
+      \note This function is based on the static GSL swap function in
+      <tt>randist/shuffle.c</tt>.
    */
   template<class data_t>
   void shuffle_swap(data_t *base, size_t size, size_t i, size_t j) {
@@ -186,6 +190,9 @@ namespace o2scl {
   }
 
   /** \brief Copy function for vector_choose()
+
+      \note This function is based on the static GSL copy function in
+      <tt>randist/shuffle.c</tt>.
    */
   template<class data_t>
   void choose_copy(data_t *dest, size_t i, data_t *src, size_t j,
@@ -203,6 +210,9 @@ namespace o2scl {
   }
 
   /** \brief Shuffle the first \c n elements of vector \c data
+
+      \note This function is based on the GSL function
+      <tt>gsl_ran_shuffle()</tt> in <tt>randist/shuffle.c</tt>.
 
       \note This function works only on vector types which
       guarantee adjacent storage, such as <tt>vector<double></tt>.
