@@ -244,12 +244,8 @@ namespace o2scl {
       if (this->verbose>0) {
 	this->print_iter(nvar,x0,fmin,iter,T,"anneal_gsl");
 	iter++;
-	if (this->verbose>1) {
-	  char ch;
-	  std::cin >> ch;
-	}
       }
-	  
+      
       // See if we're finished and proceed to the next step
       next(nvar,old_x,old_E,x,E,T,nmoves,x0,fmin,done);
       
@@ -373,7 +369,7 @@ namespace o2scl {
       if (step_i<this->tol_abs*min_step_ratio) {
 	step_i=this->tol_abs*min_step_ratio;
       }
-      
+
       sx[i]=(2.0*u-1.0)*step_i+sx[i];
     }
     return 0;
