@@ -102,6 +102,95 @@ nucmass_info::nucmass_info() {
 
 }
 
+int nucmass_info::spinp_to_int(std::string s) {
+  if (s=="N/A") {
+    return 1000;
+  } else if (s=="0") {
+    return 0;
+  } else if (s.length()==1 && std::isdigit(s[0])) {
+    // Case "9"
+    string stmp=s.substr(0,1);
+    int g=o2scl::stoi(stmp)*2;
+    return g;
+  } else if (s.length()==2 && std::isdigit(s[0]) && std::isdigit(s[1])) {
+    // Case "99"
+    string stmp=s.substr(0,1);
+    int g=o2scl::stoi(stmp+s[1])*2;
+    return g;
+  } else if (std::isdigit(s[0]) && (s[1]=='+' || s[1]=='-')) {
+    // Case "9+"
+    string stmp=s.substr(0,1);
+    int g=o2scl::stoi(stmp)*2;
+    if (s[1]=='-') g=-g;
+    return g;
+  } else if (s.length()==2 && std::isdigit(s[1]) && (s[0]=='+' || s[0]=='-')) {
+    // Case "+9"
+    string stmp=s.substr(1,1);
+    int g=o2scl::stoi(stmp)*2;
+    if (s[0]=='-') g=-g;
+    return g;
+  } else if (std::isdigit(s[0]) && std::isdigit(s[1]) &&
+	     (s[2]=='+' || s[2]=='-')) {
+    // Case "99+"
+    string stmp=s.substr(0,2);
+    int g=o2scl::stoi(stmp)*2;
+    if (s[2]=='-') g=-g;
+    return g;
+  } else if (s.length()==3 && std::isdigit(s[1]) && std::isdigit(s[2]) &&
+	     (s[0]=='+' || s[0]=='-')) {
+    // Case "+99"
+    string stmp=s.substr(1,2);
+    int g=o2scl::stoi(stmp)*2;
+    if (s[0]=='-') g=-g;
+    return g;
+  } else if (std::isdigit(s[0]) && s[1]=='/' && (s[3]=='+' || s[3]=='-')) {
+    // Case "9/2+"
+    string stmp=s.substr(0,1);
+    int g=o2scl::stoi(stmp);
+    if (s[3]=='-') g=-g;
+    return g;
+  } else if (std::isdigit(s[1]) && s[2]=='/' && (s[0]=='+' || s[0]=='-')) {
+    // Case "+9/2"
+    string stmp=s.substr(1,1);
+    int g=o2scl::stoi(stmp);
+    if (s[0]=='-') g=-g;
+    return g;
+  } else if (std::isdigit(s[0]) && std::isdigit(s[1]) &&
+	     s[2]=='/' && (s[4]=='+' || s[4]=='-')) {
+    // Case "99/2+"
+    string stmp=s.substr(0,1);
+    int g=o2scl::stoi(stmp+s[1]);
+    if (s[4]=='-') g=-g;
+    return g;
+  } else if (std::isdigit(s[1]) && std::isdigit(s[2]) &&
+	     s[3]=='/' && (s[0]=='+' || s[0]=='-')) {
+    // Case "+99/2"
+    string stmp=s.substr(1,2);
+    int g=o2scl::stoi(stmp);
+    if (s[0]=='-') g=-g;
+    return g;
+  }
+  O2SCL_ERR("Unparseable string in spin_to_deg().",o2scl::exc_einval);
+  return -1000;
+}
+
+std::string nucmass_info::int_to_spinp(int g) {
+  bool negative=false;
+  std::string ret;
+  if (g<0) {
+    g=-g;
+    negative=true;
+  }
+  if (g%2==0) {
+    ret=o2scl::itos(g/2);
+  } else {
+    ret=o2scl::itos(g)+"/2";
+  }
+  if (negative) ret+='-';
+  else ret+='+';
+  return ret;
+}
+
 int nucmass_info::parse_elstring(std::string ela, int &Z, int &N, 
 				      int &A) {
 

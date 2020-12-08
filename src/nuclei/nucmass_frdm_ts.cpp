@@ -31,36 +31,6 @@
 using namespace std;
 using namespace o2scl;
 
-int spin_to_double(std::string s) {
-  if (s=="NA") return 1000;
-  else if (s=="1/2+") return 1;
-  else if (s=="1/2-") return -1;
-  else if (s=="3/2+") return 3;
-  else if (s=="3/2-") return -3;
-  else if (s=="5/2+") return 5;
-  else if (s=="5/2-") return -5;
-  else if (s=="7/2+") return 7;
-  else if (s=="7/2-") return -7;
-  else if (s=="9/2+") return 9;
-  else if (s=="9/2-") return -9;
-  else if (s=="11/2+") return 11;
-  else if (s=="11/2-") return -11;
-  else if (s=="13/2+") return 13;
-  else if (s=="13/2-") return -13;
-  else if (s=="15/2+") return 15;
-  else if (s=="15/2-") return -15;
-  else if (s=="17/2+") return 17;
-  else if (s=="17/2-") return -17;
-  else if (s=="19/2+") return 19;
-  else if (s=="19/2-") return -19;
-  else if (s=="21/2+") return 21;
-  else if (s=="21/2-") return -21;
-  else if (s=="23/2+") return 23;
-  else if (s=="23/2-") return -23;
-  cout << s << endl;
-  exit(-1);
-}
-
 int main(void) {
 
   cout.setf(ios::scientific);

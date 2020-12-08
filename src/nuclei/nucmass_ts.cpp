@@ -252,6 +252,27 @@ int main(void) {
   cout << N << " " << N_err << endl;
   t.test_rel(N,77.3433,1.0e-8,"nucmass_radius");
 
+  // Test spinp_to_int()
+  nucmass_info nmi;
+  cout << nmi.spinp_to_int("9") << endl;
+  cout << nmi.spinp_to_int("99") << endl;
+  cout << nmi.spinp_to_int("9+") << endl;
+  cout << nmi.spinp_to_int("+9") << endl;
+  cout << nmi.spinp_to_int("99+") << endl;
+  cout << nmi.spinp_to_int("+99") << endl;
+  cout << nmi.spinp_to_int("9/2+") << endl;
+  cout << nmi.spinp_to_int("+9/2") << endl;
+  cout << nmi.spinp_to_int("99/2+") << endl;
+  cout << nmi.spinp_to_int("+99/2") << endl;
+  cout << nmi.spinp_to_int("9-") << endl;
+  cout << nmi.spinp_to_int("-9") << endl;
+  cout << nmi.spinp_to_int("99-") << endl;
+  cout << nmi.spinp_to_int("-99") << endl;
+  cout << nmi.spinp_to_int("9/2-") << endl;
+  cout << nmi.spinp_to_int("-9/2") << endl;
+  cout << nmi.spinp_to_int("99/2-") << endl;
+  cout << nmi.spinp_to_int("-99/2") << endl;
+  
   t.report();
   return 0;
 }

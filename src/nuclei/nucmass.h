@@ -114,6 +114,14 @@ namespace o2scl {
     */
     std::string tostring(size_t Z, size_t N);
 
+    /** \brief Desc
+     */
+    std::string int_to_spinp(int g);
+    
+    /** \brief Desc
+     */
+    int spinp_to_int(std::string s);
+  
 #ifndef DOXYGEN_INTERNAL
 
   protected:
