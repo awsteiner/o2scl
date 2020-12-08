@@ -47,10 +47,10 @@ int main(void) {
 			  "ame12.o2",true);
 
   nucmass_mnmsk mth;
-  o2scl_hdf::mnmsk_load(mth,"../../data/o2scl/nucmass/mnmsk.o2");
+  o2scl_hdf::mnmsk_load(mth,"mnmsk97","../../data/o2scl/nucmass/mnmsk.o2");
 
   nucmass_mnmsk_exp mexp;
-  o2scl_hdf::mnmsk_load(mexp,"../../data/o2scl/nucmass/mnmsk.o2");
+  o2scl_hdf::mnmsk_load(mexp,"mnmsk97","../../data/o2scl/nucmass/mnmsk.o2");
 
   nucmass_ame ame03;
   o2scl_hdf::ame_load_ext(ame03,"../../data/o2scl/nucmass/ame03.o2",

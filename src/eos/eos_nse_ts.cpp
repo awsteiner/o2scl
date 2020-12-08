@@ -44,7 +44,7 @@ int main(void) {
 
   // Load nuclear masses
   nucmass_mnmsk mm;
-  o2scl_hdf::mnmsk_load(mm,"../../data/o2scl/nucmass/mnmsk.o2");
+  o2scl_hdf::mnmsk_load(mm,"mnmsk97","../../data/o2scl/nucmass/mnmsk.o2");
 
   // Set the distribution of nuclei to use
   vector<nucleus> ad;

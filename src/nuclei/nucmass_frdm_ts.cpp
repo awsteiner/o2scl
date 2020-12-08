@@ -37,47 +37,51 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-  nucmass_frdm mo;
+  nucmass_mnmsk mo12;
+  nucmass_mnmsk mo;
+  nucmass_frdm frdm;
   nucmass_ame au;
   nucmass_semi_empirical sm;
 
   o2scl_hdf::ame_load_ext(au,"../../data/o2scl/nucmass/ame12.o2",
 			  "ame12.o2");
+  o2scl_hdf::mnmsk_load(mo,"mnmsk97",
+			"../../data/o2scl/nucmass/mnmsk.o2");
+  o2scl_hdf::mnmsk_load(mo12,"msis16",
+			"../../data/o2scl/nucmass/msis16.o2");
 
   // Show that the nucmass_frdm gives reasonable (but not great)
   // values for the binding energy of Lead 208
-  cout << "AME2003 : ";
+  cout << "AME2003   : ";
   cout << au.mass_excess(82,126) << " ";
   cout << au.binding_energy(82,126) << " ";
   cout << au.total_mass(82,126) << endl;
-  cout << "Simple  : ";
+  cout << "Simple    : ";
   cout << sm.mass_excess(82,126) << " ";
   cout << sm.binding_energy(82,126) << " ";
   cout << sm.total_mass(82,126) << endl;
-  cout << "FRDM    : ";
+  cout << "FRDM      : ";
+  cout << frdm.mass_excess(82,126) << " ";
+  cout << frdm.binding_energy(82,126) << " ";
+  cout << frdm.total_mass(82,126) << endl;
+  cout << "MNMSK '97 : ";
   cout << mo.mass_excess(82,126) << " ";
   cout << mo.binding_energy(82,126) << " ";
   cout << mo.total_mass(82,126) << endl;
+  cout << "MSIS '16  : ";
+  cout << mo12.mass_excess(82,126) << " ";
+  cout << mo12.binding_energy(82,126) << " ";
+  cout << mo12.total_mass(82,126) << endl;
 
-  // What is this for?
-  cout << au.binding_energy_d(32.33,295)/o2scl_const::hc_mev_fm << endl;
-  cout << sm.binding_energy_d(32.33,295)/o2scl_const::hc_mev_fm << endl;
-  cout << mo.binding_energy_d(32.33,295)/o2scl_const::hc_mev_fm << endl;
-  cout << mo.drip_binding_energy_d(32.33,295,0,0,0)/
-    o2scl_const::hc_mev_fm << endl;
-  cout << mo.mass_excess_d(32.33,295)/o2scl_const::hc_mev_fm << endl;
-  cout << mo.drip_mass_excess_d(32.33,295,0,0,0)/o2scl_const::hc_mev_fm 
-       << endl;
-  
   // Explicitly add the microscopic part of the binding energy for 
   // Lead 208 from the table in Moller et al. (1995) 
   // and compare with the theoretical value quoted in that table
-  t.test_rel(mo.mass_excess(82,126)-12.84,-21.15,5.0e-4,"Lead 208");
+  t.test_rel(frdm.mass_excess(82,126)-12.84,-21.15,5.0e-4,"Lead 208");
 
   // Compare nucmass_frdm with the macroscopic parts from
   // nucmass_mnmsk table and show that they're almost the same
   nucmass_mnmsk mm;
-  o2scl_hdf::mnmsk_load(mm,"../../data/o2scl/nucmass/mnmsk.o2");
+  o2scl_hdf::mnmsk_load(mm,"mnmsk97","../../data/o2scl/nucmass/mnmsk.o2");
   nucmass_mnmsk::entry mme;
   double comp=0.0;
   size_t nnuc=0;
@@ -86,7 +90,7 @@ int main(void) {
   for(vector<nucleus>::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
     if (ndi->N>=8 && ndi->Z>=8) {
       mme=mm.get_ZN(ndi->Z,ndi->N);
-      comp+=pow(mo.mass_excess(ndi->Z,ndi->N)-(mme.Mth-mme.Emic),2.0);
+      comp+=pow(frdm.mass_excess(ndi->Z,ndi->N)-(mme.Mth-mme.Emic),2.0);
       nnuc++;
     }
   }
@@ -100,11 +104,11 @@ int main(void) {
   nucdist_set(mf.dist,au);
   //mf.set_exp_mass(au);
   double qual;
-  mf.eval(mo,qual);
+  mf.eval(frdm,qual);
   cout << "Before fit: " << qual << endl;
   t.test_rel(qual,3.1860,1.0e-2,"FRDM pre-fit.");
   mf.def_mmin.ntrial*=10;
-  mf.fit(mo,qual);
+  mf.fit(frdm,qual);
   cout << "After fit: " << qual << endl;
   t.test_rel(qual,2.3836,1.0e-2,"FRDM post-fit.");
 

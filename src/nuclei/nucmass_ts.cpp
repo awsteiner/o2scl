@@ -145,7 +145,7 @@ int main(void) {
 
   nucmass_semi_empirical sm;
   nucmass_mnmsk m95;
-  o2scl_hdf::mnmsk_load(m95,"../../data/o2scl/nucmass/mnmsk.o2");
+  o2scl_hdf::mnmsk_load(m95,"mnmsk97","../../data/o2scl/nucmass/mnmsk.o2");
   
   nucmass_ktuy kt;
   kt.load("../../data/o2scl/nucmass/ktuy04.o2",1);
