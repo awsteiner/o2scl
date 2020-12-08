@@ -2371,6 +2371,15 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       command_add("string");
       type="string";
       return 0;
+    } else if (ip.type=="char[fixed]") {
+      if (true || verbose>2) {
+	cout << "Reading char[fixed] and storing as string." << endl;
+      }
+      hf.gets_fixed(in[1],string_obj);
+      obj_name=in[1];
+      command_add("string");
+      type="string";
+      return 0;
     } else if (ip.type=="double") {
       if (verbose>2) {
 	cout << "Reading double." << endl;
