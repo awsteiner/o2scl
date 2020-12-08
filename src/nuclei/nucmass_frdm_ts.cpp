@@ -31,11 +31,42 @@
 using namespace std;
 using namespace o2scl;
 
+int spin_to_double(std::string s) {
+  if (s=="NA") return 1000;
+  else if (s=="1/2+") return 1;
+  else if (s=="1/2-") return -1;
+  else if (s=="3/2+") return 3;
+  else if (s=="3/2-") return -3;
+  else if (s=="5/2+") return 5;
+  else if (s=="5/2-") return -5;
+  else if (s=="7/2+") return 7;
+  else if (s=="7/2-") return -7;
+  else if (s=="9/2+") return 9;
+  else if (s=="9/2-") return -9;
+  else if (s=="11/2+") return 11;
+  else if (s=="11/2-") return -11;
+  else if (s=="13/2+") return 13;
+  else if (s=="13/2-") return -13;
+  else if (s=="15/2+") return 15;
+  else if (s=="15/2-") return -15;
+  else if (s=="17/2+") return 17;
+  else if (s=="17/2-") return -17;
+  else if (s=="19/2+") return 19;
+  else if (s=="19/2-") return -19;
+  else if (s=="21/2+") return 21;
+  else if (s=="21/2-") return -21;
+  else if (s=="23/2+") return 23;
+  else if (s=="23/2-") return -23;
+  cout << s << endl;
+  exit(-1);
+}
+
 int main(void) {
-  test_mgr t;
-  t.set_output_level(2);
 
   cout.setf(ios::scientific);
+
+  test_mgr t;
+  t.set_output_level(2);
 
   nucmass_mnmsk mo12;
   nucmass_mnmsk mo;
@@ -43,6 +74,7 @@ int main(void) {
   nucmass_ame au;
   nucmass_semi_empirical sm;
 
+  // Load experimental and theoretical masses
   o2scl_hdf::ame_load_ext(au,"../../data/o2scl/nucmass/ame12.o2",
 			  "ame12.o2");
   o2scl_hdf::mnmsk_load(mo,"mnmsk97",
@@ -78,32 +110,83 @@ int main(void) {
   // and compare with the theoretical value quoted in that table
   t.test_rel(frdm.mass_excess(82,126)-12.84,-21.15,5.0e-4,"Lead 208");
 
+  // ----------------------------------------------------------------
   // Compare nucmass_frdm with the macroscopic parts from
   // nucmass_mnmsk table and show that they're almost the same
-  nucmass_mnmsk mm;
-  o2scl_hdf::mnmsk_load(mm,"mnmsk97","../../data/o2scl/nucmass/mnmsk.o2");
-  nucmass_mnmsk::entry mme;
-  double comp=0.0;
+  
+  // Quality of fit
+  double qual=0.0;
+  
+  // Total number of nuclei
   size_t nnuc=0;
+
+  // Create the distribution
   vector<nucleus> fd;
-  nucdist_set(fd,mm);
+  nucdist_set(fd,mo);
+
+  // Old code to make mnmks97 table
+  //ofstream fout;
+  //fout.open("mnmsk97.dat");
   for(vector<nucleus>::iterator ndi=fd.begin();ndi!=fd.end();ndi++) {
+    nucmass_mnmsk::entry mme=mo.get_ZN(ndi->Z,ndi->N);
+    /*
+    if (true) {
+      fout << ((int)(mme.N+1.0e-12)) << " ";
+      fout << ((int)(mme.Z+1.0e-12)) << " ";
+      fout << ((int)(mme.A+1.0e-12)) << " ";
+      fout << mme.eps2 << " ";
+      fout << mme.eps3 << " ";
+      fout << mme.eps4 << " ";
+      fout << mme.eps6 << " ";
+      fout << mme.eps6sym << " ";
+      fout << mme.beta2 << " ";
+      fout << mme.beta3 << " ";
+      fout << mme.beta4 << " ";
+      fout << mme.beta6 << " ";
+      fout << mme.Emic << " ";
+      fout << mme.Mth << " ";
+      fout << mme.Mexp << " ";
+      fout << mme.sigmaexp << " ";
+      fout << mme.EmicFL << " ";
+      fout << mme.MthFL << " ";
+      string stmp(&mme.spinp[0]);
+      fout << spin_to_double(stmp) << " ";
+      string stmp2(&mme.spinn[0]);
+      fout << spin_to_double(stmp2) << " ";
+      fout << mme.gapp << " ";
+      fout << mme.gapn << " ";
+      fout << mme.be << " ";
+      fout << mme.S1n << " ";
+      fout << mme.S2n << " ";
+      fout << mme.PA << " ";
+      fout << mme.PAm1 << " ";
+      fout << mme.PAm2 << " ";
+      fout << mme.Qbeta << " ";
+      fout << mme.Tbeta << " ";
+      fout << mme.S1p << " ";
+      fout << mme.S2p << " ";
+      fout << mme.Qalpha << " ";
+      fout << mme.Talpha << endl;
+    }
+    */
     if (ndi->N>=8 && ndi->Z>=8) {
-      mme=mm.get_ZN(ndi->Z,ndi->N);
-      comp+=pow(frdm.mass_excess(ndi->Z,ndi->N)-(mme.Mth-mme.Emic),2.0);
+      qual+=pow(frdm.mass_excess(ndi->Z,ndi->N)-(mme.Mth-mme.Emic),2.0);
       nnuc++;
     }
   }
-  comp=sqrt(comp/nnuc);
-  t.test_abs(comp,0.0,5.0e-3,"Compare with Mth-Emic from full FRDM");
+  //fout.close();
+  qual=sqrt(qual/nnuc);
+  t.test_abs(qual,0.0,5.0e-3,"Compareare with Mth-Emic from full FRDM");
   
-  cout << nnuc << " " << comp << endl;
+  cout << "Compared " << nnuc << " nuclei from nucmass_frdm and "
+       << "nucmass_mnmsk. Fit quality factor: " << qual << " ." << endl;
 
-  // Fit the macroscopic part to experiment
+  // ----------------------------------------------------------------
+  // Fit the macroscopic part of FRDM in the nucmass_frdm class
+  // to experiment
+  
   nucmass_fit mf;
   nucdist_set(mf.dist,au);
-  //mf.set_exp_mass(au);
-  double qual;
   mf.eval(frdm,qual);
   cout << "Before fit: " << qual << endl;
   t.test_rel(qual,3.1860,1.0e-2,"FRDM pre-fit.");

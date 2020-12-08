@@ -298,6 +298,26 @@ void o2scl_hdf::mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, std::string model,
       m[j].sigmaexp=tab.get("sigmaexp",j);
       m[j].EmicFL=tab.get("EFLmic",j);
       m[j].MthFL=tab.get("MFLth",j);
+      m[j].spinp[0]='N';
+      m[j].spinp[1]='A';
+      m[j].spinp[2]='\0';
+      m[j].spinn[0]='N';
+      m[j].spinn[1]='A';
+      m[j].spinn[2]='\0';
+      m[j].gapp=1.0e99;
+      m[j].gapn=1.0e99;
+      m[j].be=1.0e99;
+      m[j].S1n=1.0e99;
+      m[j].S2n=1.0e99;
+      m[j].PA=1.0e99;
+      m[j].PAm1=1.0e99;
+      m[j].PAm2=1.0e99;
+      m[j].Qbeta=1.0e99;
+      m[j].Tbeta=1.0e99;
+      m[j].S1p=1.0e99;
+      m[j].S2p=1.0e99;
+      m[j].Qalpha=1.0e99;
+      m[j].Talpha=1.0e99;
     }
     string reference="Moller, et al. (2016)";
     mnmsk.set_data(nr,m,reference);
