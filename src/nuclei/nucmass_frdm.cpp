@@ -142,7 +142,7 @@ double nucmass_frdm::mass_excess_d(double Z, double N) {
     +a3*cA*Bk+c1*Z*Z/cA*B3-c2*Z*Z*cA*Br-c4*Z*cZ/cA
     -c5*Z*Z*Bw*Bs/B1+f0*Z*Z/A-ca*(N-Z)+W*(fabs(I)+tm)+tm2
     -ael*pow(Z,2.39);
-      
+
   return ret;
 }
 

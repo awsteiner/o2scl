@@ -45,7 +45,7 @@ int nucmass_gen::load_be(std::string fname, std::string be_col,
   
   std::string dir=o2scl::o2scl_settings.get_data_dir();
   if (!external) {
-    fname=dir+fname;
+    fname=dir+"/nucmass/frib_mex/"+fname;
   }
   
   o2scl_hdf::hdf_file hf;

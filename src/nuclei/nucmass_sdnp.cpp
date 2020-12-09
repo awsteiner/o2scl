@@ -109,17 +109,22 @@ bool nucmass_sdnp::is_included(int l_Z, int l_N) {
     return true;
   }
 
-  // Now look for the right N among all the N's
+  // Now look for the right N among all the N's. The flags "increased"
+  // and "decreased" are necessary when there is a gap in the isotopes
+  // for a particular element, to prevent infinite loops in that case.
+  bool increased=false;
+  bool decreased=false;
   while (mass[mid].Z==l_Z) {
-
     if (mass[mid].N==l_N) {
       return true;
     } else if (mass[mid].N>l_N) {
-      if (mid==0) return false;
+      if (increased || mid==0) return false;
       mid--;
+      decreased=true;
     } else {
-      if (mid==((int)n-1)) return false;
+      if (decreased || mid==((int)n-1)) return false;
       mid++;
+      increased=true;
     }
   }
   
@@ -161,26 +166,32 @@ double nucmass_sdnp::mass_excess(int l_Z, int l_N) {
     return mass[mid].ENERGY-A*m_amu+l_Z*(m_prot+m_elec)+l_N*m_neut;
   }
   
-  // Now look for the right N among all the N's
+  // Now look for the right N among all the N's. The flags "increased"
+  // and "decreased" are necessary when there is a gap in the isotopes
+  // for a particular element, to prevent infinite loops in that case.
+  bool increased=false;
+  bool decreased=false;
   while (mass[mid].Z==l_Z) {
     
     if (mass[mid].N==l_N) {
       int A=l_Z+l_N;
       return mass[mid].ENERGY-A*m_amu+l_Z*(m_prot+m_elec)+l_N*m_neut;
     } else if (mass[mid].N>l_N) {
-      if (mid==0) {
+      if (increased || mid==0) {
 	O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)+
 		   " not found in nucmass_sdnp::mass_excess().").c_str(),
 		  exc_enotfound);
       }
       mid--;
+      decreased=true;
     } else {
-      if (mid==((int)n-1)) {
+      if (decreased || mid==((int)n-1)) {
 	O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)+
 		   " not found in nucmass_sdnp::mass_excess().").c_str(),
 		  exc_enotfound);
       }
       mid++;
+      increased=true;
     }
   }
   
