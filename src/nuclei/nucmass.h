@@ -288,6 +288,30 @@ namespace o2scl {
       return (mass_excess_d(Z,N)+((Z+N)*m_amu-Z*m_elec));
     }
 
+    /** \brief Neutron separation energy
+     */
+    virtual double neutron_sep(int Z, int N) {
+      return binding_energy(Z,N-1)-binding_energy(Z,N);
+    }
+    
+    /** \brief Two neutron separation energy
+     */
+    virtual double two_neutron_sep(int Z, int N) {
+      return binding_energy(Z,N-2)-binding_energy(Z,N);
+    }
+    
+    /** \brief Proton separation energy
+     */
+    virtual double proton_sep(int Z, int N) {
+      return binding_energy(Z-1,N)-binding_energy(Z,N);
+    }
+    
+    /** \brief Two proton separation energy
+     */
+    virtual double two_proton_sep(int Z, int N) {
+      return binding_energy(Z-2,N)-binding_energy(Z,N);
+    }
+    
     /** \brief Return the atomic mass of the nucleus in MeV
 	(includes electrons and their binding energy)
     */

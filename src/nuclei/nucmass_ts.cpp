@@ -43,8 +43,8 @@ int main(void) {
   t.set_output_level(2);
 
   cout.setf(ios::scientific);
-
-  // Test parse_elstring()
+  
+  // Test nuclear_mass_info::parse_elstring()
   {
     nucmass_info nmi;
     int tN, tZ, tA; 
@@ -146,6 +146,10 @@ int main(void) {
   nucmass_semi_empirical sm;
   nucmass_mnmsk m95;
   o2scl_hdf::mnmsk_load(m95,"mnmsk97","../../data/o2scl/nucmass/mnmsk.o2");
+
+  // Test neutron separation energy
+  nucmass_mnmsk::entry nme=m95.get_ZN(82,126);
+  t.test_rel(nme.S1n,m95.neutron_sep(82,126),1.0e-3,"neutron separation");
   
   nucmass_ktuy kt;
   kt.load("../../data/o2scl/nucmass/ktuy04.o2",1);
@@ -252,7 +256,7 @@ int main(void) {
   cout << N << " " << N_err << endl;
   t.test_rel(N,77.3433,1.0e-8,"nucmass_radius");
 
-  // Test spinp_to_int()
+  // Test nuclear_mass_info::spinp_to_int()
   nucmass_info nmi;
   cout << nmi.spinp_to_int("9") << endl;
   cout << nmi.spinp_to_int("99") << endl;
