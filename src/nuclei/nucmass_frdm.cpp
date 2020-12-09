@@ -439,12 +439,18 @@ double nucmass_mnmsk_exp::mass_excess(int Z, int N) {
 }
 
 nucmass_mnmsk::entry nucmass_mnmsk::get_ZN(int l_Z, int l_N) {
+
   int lo=0, hi=0, mid=last;
   
   nucmass_mnmsk::entry ret;
   ret.Z=0;
   ret.A=0;
   ret.N=0;
+
+  if (mid>((int)n)-1) {
+    O2SCL_ERR("Indexing problem in nucmass_mnmsk::get_ZN().",
+	      o2scl::exc_esanity);
+  }
   
   // binary search for the correct Z first
   if (mass[mid].Z!=l_Z) {
@@ -486,8 +492,20 @@ nucmass_mnmsk::entry nucmass_mnmsk::get_ZN(int l_Z, int l_N) {
       last=mid;
       return ret;
     } else if (mass[mid].N>l_N) {
+      if (mid==0) {
+	O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)
+		   +" not found in nucmass_mnmsk::get_ZN().").c_str(),
+		  exc_enotfound);
+	return ret;
+      }
       mid--;
     } else {
+      if (mid==((int)n)-1) {
+	O2SCL_ERR((((string)"Nucleus with Z=")+itos(l_Z)+" and N="+itos(l_N)
+		   +" not found in nucmass_mnmsk::get_ZN().").c_str(),
+		  exc_enotfound);
+	return ret;
+      }
       mid++;
     }
   }
