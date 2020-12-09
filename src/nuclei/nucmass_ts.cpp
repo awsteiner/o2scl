@@ -149,7 +149,7 @@ int main(void) {
 
   // Test neutron separation energy
   nucmass_mnmsk::entry nme=m95.get_ZN(82,126);
-  t.test_rel(nme.S1n,m95.neutron_sep(82,126),1.0e-3,"neutron separation");
+  t.test_rel(nme.S1n,m95.neutron_sep(82,126),3.0e-3,"neutron separation");
   
   nucmass_ktuy kt;
   kt.load("../../data/o2scl/nucmass/ktuy04.o2",1);
