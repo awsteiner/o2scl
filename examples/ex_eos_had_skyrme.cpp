@@ -420,6 +420,17 @@ public:
     std::shared_ptr<table_units<> > te=nst.get_eos_results();
     std::shared_ptr<table_units<> > tr=nst.get_tov_results();
 
+    te->line_of_names("msn msp nun nup");
+    for(size_t i=0;i<te->get_nlines();i++) {
+      n.n=te->get("nn",i);
+      p.n=te->get("np",i);
+      int ret=sk.calc_e(n,p,th);
+      te->set("msn",i,n.ms);
+      te->set("msp",i,p.ms);
+      te->set("nun",i,n.nu);
+      te->set("nup",i,p.nu);
+    }
+    
     if (output_files) {
       // Output EOS and M vs. R curve to file
       string fn=file_prefix+res.name+"_eos.o2";

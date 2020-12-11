@@ -114,6 +114,10 @@ double nucmass_ldrop::drip_binding_energy_d
   nL=n0+n1*delta*delta;
   np=nL*(1.0-delta)/2.0;
   nn=nL*(1.0+delta)/2.0;
+  if (nn>0.20 || np>0.20) {
+    std::cout << "Densities large: " << n0 << " " << n1 << " "
+	      << nn << " " << np << std::endl;
+  }
 
   // Determine radii
   Rn=cbrt(3.0*N/4.0/o2scl_const::pi/nn);
