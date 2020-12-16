@@ -56,13 +56,15 @@ scl uses the Mac OS X compiler clang. Homebrew also supports the
 installation of the current version directly from the repository using
 the ``--HEAD`` option to ``brew install``. The homebrew installation
 includes the O\ :sub:`2`\ scl_part and O\ :sub:`2`\ scl_eos
-sub-libraries and readline support.
+sub-libraries and readline support. The O\ :sub:`2`\ scl homebrew
+recipes are stored at the
+https://github.com/awsteiner/homebrew-science repository.
 
-By default, a homebrew installation of O\ :sub:`2`\ scl uses the OSX LLVM
+(By default, a homebrew installation of O\ :sub:`2`\ scl uses the OSX LLVM
 compiler. However, a homebrew installation of O\ :sub:`2`\ scl will also
-install ``gcc`` because O\ :sub:`2`\ scl requires ``hdf5, and the homebrew
+install ``gcc`` because O\ :sub:`2`\ scl requires ``hdf5``, and the homebrew
 ``hdf5`` package requires ``gcc``. The homebrew installation of 
-O\ :sub:`2`\ scl is tested by Travis CI.
+O\ :sub:`2`\ scl is tested by Travis CI.)
 
 Compiling O\ :sub:`2`\ scl from a release distribution
 ------------------------------------------------------
@@ -71,16 +73,16 @@ Compiling O\ :sub:`2`\ scl from a release distribution
 
 O\ :sub:`2`\ scl installation is generally similar to that for
 GNU-style libraries. The file ``INSTALL`` has some details on this
-procedure. Generally, you should be able to run ``./configure``
-and then type ``make`` and ``make install``. More information on the
-``configure`` command can also be obtained from ``./configure
---help``. O\ :sub:`2`\ scl assumes some C++11 support, typically
-that which was supported in gcc-4.4.7 and higher. The
-``./configure`` script attempts to determine the proper compiler
-flags for C++11 support, e.g. ``-std=gnu++11``. If this fails,
-you may have to add the proper C++11 flag to the ``CXXFLAGS``
-environment variable manually before the ``./configure`` script.
-The documentation is included in the O\ :sub:`2`\ scl release
+procedure. Once the dependencies are installed you should be able to
+run ``./configure`` and then type ``make`` and ``make install``. More
+information on the ``configure`` command can also be obtained from
+``./configure --help``. O\ :sub:`2`\ scl assumes some C++11 support,
+so compilation may be more difficult on compilers released before
+about 2018. The ``./configure`` script attempts to determine the
+proper compiler flags for C++11 support, e.g. ``-std=gnu++11``. If
+this fails, you may have to add the proper C++11 flag to the
+``CXXFLAGS`` environment variable manually before the ``./configure``
+script. The documentation is included in the O\ :sub:`2`\ scl release
 distribution and automatically installed by ``make install``.
 
 .. note::
@@ -136,9 +138,10 @@ Compiling O\ :sub:`2`\ scl from a release on Linux
 .. _compile_release:
 
 For example, to install O\ :sub:`2`\ scl on Ubuntu, begin by
-installing g++, GSL (the ``libgsl-dev`` package), Boost (the
+installing g++ and make (the ``g++`` and ``make`` packages),
+GSL (the ``libgsl-dev`` package), Boost (the
 ``libboost-all-dev`` package), GNU readline (the ``libreadline-dev``
-package) ncurses (the ``libncurses-dev`` packages), and HDF5 the
+package), ncurses (the ``libncurses-dev`` packages), and HDF5 the
 ``libhdf5-dev`` package). You can then install O\ :sub:`2`\ scl from
 one of the release distributions by using the standard GNU
 ``./configure`` script and then invoking ``make`` and ``make install``
@@ -162,6 +165,10 @@ Finally, if your version of HDF5 is earlier than 1.12,
 you will need to let O\ :sub:`2`\ scl know, using::
 
   CXXFLAGS="-DO2SCL_HDF5_PRE_1_12" ./configure
+
+Other Linux distributions are similar. For example, in OpenSUSE, you
+will need to use ``zypper`` to install ``gcc-c++, make, gsl-devel,
+hdf5-devel, ncurses-devel, readline-devel``, and ``boost-devel``.
  
 Compiling O\ :sub:`2`\ scl from the source code
 -----------------------------------------------
@@ -170,8 +177,8 @@ Compiling O\ :sub:`2`\ scl from the source code
 
 If you want to install from source (without generating the
 documentation), then you must first install ``g++``, ``make``,
-``autoconf`` and ``libtool`` packages. Then you can use something
-along the lines of::
+``automake``, ``autoconf``, and ``libtool`` packages. Then you can use
+something along the lines of::
 
   git clone https://github.com/awsteiner/o2scl
   cd o2scl
@@ -186,6 +193,16 @@ install`` (which may require ``sudo`` depending on your
 configuration). For a full installation with parallelism, I
 typically also install ``libopenmpi-dev`` and then use
 ``./configure --enable-openmp``
+
+Compiling on Docker
+-------------------
+
+There are also some experimental dockerfiles which you can use to
+install O\ :sub:`2`\ scl which can be found at
+https://github.com/awsteiner/o2scl/tree/master/docker . For those on
+MacOS, I recommend the guide at
+https://medium.com/crowdbotics/a-complete-one-by-one-guide-to-install-docker-on-your-mac-os-using-homebrew-e818eb4cfc3
+to installing docker.
 
 Optional linear algebra libraries
 ---------------------------------
@@ -251,9 +268,11 @@ the end-user, but this is not supported and requires several external
 applications not included in the distribution.
 
 The most recent release documentation is available at
-https://neutronstars.utk.edu/code/o2scl/html/index.html . The
-documentation for previous releases is not on the web, but still
-available in the release ``.tar.gz`` file.
+https://neutronstars.utk.edu/code/o2scl/html/index.html and the
+current development version documentation is available at
+https://neutronstars.utk.edu/code/o2scl-dev/html/index.html . The
+documentation for previous releases is not on the web, but is still
+stored in the release ``.tar.gz`` file.
 
 Uninstallation
 --------------

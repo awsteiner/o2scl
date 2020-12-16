@@ -19,9 +19,9 @@ Contents
 Namespaces
 ----------
     
-Most of the classes reside in the namespace ``o2scl``. Numerical
-constants (many of them based on the GSL constants) are placed in
-separate namespaces (:ref:`o2scl_cgs <Namespace o2scl_cgs>`,
+Most of the classes and functions reside in the namespace ``o2scl``.
+Numerical constants (many of them based on the GSL constants) are
+placed in separate namespaces (:ref:`o2scl_cgs <Namespace o2scl_cgs>`,
 :ref:`o2scl_cgsm <Namespace o2scl_cgsm>`, :ref:`o2scl_mks <Namespace
 o2scl_mks>`, and :ref:`o2scl_const <Namespace o2scl_const>`). The O\
 :sub:`2`\ scl functions and classes for HDF5 output are in the
@@ -64,6 +64,11 @@ aborts execution. The global error handler can be replaced by simply
 assigning the address of a descendant of :ref:`err_hnd_type
 <err_hnd_type>` to :cpp:var:`o2scl::err_hnd`.
 
+.. note::
+   The alternate error handler is particularly useful to avoid
+   throwing exceptions across DLL boundaries, when O\ :sub:`2`\ scl
+   is loaded as a DLL in python. 
+   
 ..
   11/14/20: This old text regarding exceptions is now unnecessary.
 

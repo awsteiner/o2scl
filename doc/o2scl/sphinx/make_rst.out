@@ -854,6 +854,9 @@ Multiple entry vector_acor
 Namespace: o2scl function: vector_to_bins
 Namespace: o2scl function: get_screen_size_curses
 Namespace: o2scl function: get_screen_size_tput
+Namespace:  function: shuffle_swap
+Namespace:  function: choose_copy
+Namespace:  function: vector_shuffle
 Namespace: o2scl_acol function: parse_arrays
 Namespace: o2scl_cblas function: matrix_is_finite
 Namespace: o2scl_cblas function: matrix_is_finite
@@ -1386,7 +1389,7 @@ vector_stddev(size_t n, const vec_t &data, double mean)
 vector_stddev(const vec_t &data, double mean)
 vector_stddev_fmean(size_t n, const vec_t &data, double mean)
 vector_stddev_fmean(const vec_t &data, double mean)
-vector_sum(size_t n, vec_t &data)
+vector_sum(size_t n, const vec_t &data)
 vector_sum(vec_t &data)
 vector_sum_double(size_t n, vec_t &data)
 vector_sum_double(vec_t &data)

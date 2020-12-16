@@ -3,7 +3,7 @@
 Functions vector_sum
 ====================
 
-.. doxygenfunction:: vector_sum(size_t n, vec_t &data)
+.. doxygenfunction:: vector_sum(size_t n, const vec_t &data)
 
 .. doxygenfunction:: vector_sum(vec_t &data)
 
