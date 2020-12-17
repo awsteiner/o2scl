@@ -427,24 +427,31 @@ public:
     std::shared_ptr<table_units<> > tr=nst.get_tov_results();
 
     // Add new columns
-    te->line_of_names("msn msp nun nup dnndmun dnpdmup ");
+    te->line_of_names("msn msp nun nup dnndnun dnpdnup ");
     te->line_of_names("dmundnn dmudn_mixed dmupdnp");
+    te->set_unit("msn","1/fm");
+    te->set_unit("msp","1/fm");
+    te->set_unit("nun","1/fm");
+    te->set_unit("nup","1/fm");
+    te->set_unit("dnndnun","1/fm^2");
+    te->set_unit("dnpdnup","1/fm^2");
+    te->set_unit("dmundnn","fm^2");
+    te->set_unit("dmudn_mixed","fm^2");
+    te->set_unit("dmupdnp","fm^2");
     for(size_t i=0;i<te->get_nlines();i++) {
       n.n=te->get("nn",i);
       p.n=te->get("np",i);
       int ret=sk.calc_e(n,p,th);
-      cout << th.ed << " " << n.mu << endl;
       nd=n;
       pd=p;
       thermo_np_deriv_helm thd;
       int ret2=sk.calc_deriv_e(nd,pd,th,thd);
-      cout << th.ed << " " << nd.mu << endl;
       te->set("msn",i,n.ms);
       te->set("msp",i,p.ms);
       te->set("nun",i,n.nu);
       te->set("nup",i,p.nu);
-      te->set("dnundnn",i,nd.dndmu);
-      te->set("dnupdnp",i,pd.dndmu);
+      te->set("dnndnun",i,nd.dndmu);
+      te->set("dnpdnup",i,pd.dndmu);
       te->set("dmundnn",i,thd.dmundnn);
       te->set("dmudn_mixed",i,thd.dmudn_mixed);
       te->set("dmupdnp",i,thd.dmupdnp);

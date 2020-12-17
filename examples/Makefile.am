@@ -33,7 +33,12 @@ ein:
 		-den-plot prob_dens_mdim_amr1 \
 		-read ex_interp2_nogrid_1000.o2 tdata \
 		-scatter x y None None color=black,marker=+ \
-		-save pdma.pdf 
+		-save pdma.pdf
+
+nrapr:
+	ex_eos_had_skyrme -set output_files 1 -summary NRAPR
+	acol -read skyrme_NRAPR_eos.o2 -output skyrme_NRAPR_eos.txt
+	acol -read skyrme_NRAPR_mvsr.o2 -output skyrme_NRAPR_mvsr.txt
 
 # -------------------------------------------------------------
 # Help
