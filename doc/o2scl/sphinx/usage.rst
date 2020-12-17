@@ -12,7 +12,6 @@ Contents
 - :ref:`What is an error?`
 - :ref:`GSL error codes and C++ exception types`
 - :ref:`Objects and scope`
-- :ref:`Reference parameters`
 - :ref:`Define constants`
 - :ref:`Error handler objects`
 
@@ -214,17 +213,20 @@ specified by the call to ``set()``, it is important that this function
 object does not go out of scope before the call to ``iterate()``
 occurs.
 
-Reference parameters
---------------------
- 
-When a O\ :sub:`2`\ scl function contains two reference parameters for
-objects, it is not typically possible to provide the same object to
-both parameters or to provide two objects which share the same memory.
-This is particularly an issue when the associated types are template
-types, since then the O\ :sub:`2`\ scl library has no way of knowing
-how memory is organized in these unspecified types. Thread safety is
-also an issue, as care must be taken if two functions which are
-running simultaneously access the same instance of any class.
+..
+  This is now moved to a design requiremet
+
+  Reference parameters
+  --------------------
+   
+  When a O\ :sub:`2`\ scl function contains two reference parameters for
+  objects, it is not typically possible to provide the same object to
+  both parameters or to provide two objects which share the same memory.
+  This is particularly an issue when the associated types are template
+  types, since then the O\ :sub:`2`\ scl library has no way of knowing
+  how memory is organized in these unspecified types. Thread safety is
+  also an issue, as care must be taken if two functions which are
+  running simultaneously access the same instance of any class.
 
 Define constants
 ----------------

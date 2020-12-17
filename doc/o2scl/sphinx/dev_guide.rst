@@ -130,6 +130,9 @@ Coding recommendations and guidelines
   documented as doing so
 - Object destructors should almost never call the error
   handler.
+- All functions which have more than one input reference of the
+  same type should be clear if they allow multiple references
+  to the same object
   
 Documentation guidelines
 ------------------------

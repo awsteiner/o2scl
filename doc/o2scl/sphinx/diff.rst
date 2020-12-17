@@ -21,7 +21,10 @@ abscissas, the class :ref:`deriv_eqi <deriv_eqi>` is provided which
 applies the formulas from Abramowitz and Stegun at a specified order.
 The class :ref:`deriv_cern <deriv_cern>` is slower and sometimes more
 accurate, but also fails more often than :ref:`deriv_gsl <deriv_gsl>`,
-which never calls the error handler.
+which never calls the error handler. The GSL derivative class
+:ref:`deriv_gsl <deriv_gsl>` supports numerical derivatives of
+functions which operate on multiprecision numbers (see also
+:ref:`Multiprecision Support`).
 
 .. warning::
    For :ref:`deriv_gsl <deriv_gsl>` and :ref:`deriv_cern <deriv_cern>`

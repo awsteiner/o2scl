@@ -461,6 +461,12 @@ namespace o2scl {
     */
     virtual int calc_e(fermion &ne, fermion &pr, thermo &lt);
 
+    /** \brief Equation of state as a function of densities at 
+	zero temperature including second derivatives
+    */
+    virtual int calc_deriv_e(fermion_deriv &ne, fermion_deriv &pr,
+			     thermo &th, thermo_np_deriv_helm &thd);
+    
     /// Return string denoting type ("eos_had_skyrme")
     virtual const char *type() { return "eos_had_skyrme"; }
     //@}

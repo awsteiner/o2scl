@@ -8,8 +8,20 @@ Contents
 
 - :ref:`Vector and Matrix Introduction`
 - :ref:`Rows and columns vs. x and y`
-- :ref:`Other vector and matrix functions`
-- :ref:`Vector and matrix output`
+- :ref:`Assignment and copying`
+- :ref:`Differentiation and integration`
+- :ref:`Interpolating vectors`
+- :ref:`Searching`
+- :ref:`Vector properties`
+- :ref:`Maximum and minimum functions`
+- :ref:`Vector rearrangement functions`
+- :ref:`Statistics functions`
+- :ref:`Statistics with weighted vectors`
+- :ref:`Matrix assignment and copying`
+- :ref:`Matrix properties`
+- :ref:`Matrix maximum and minimum functions`
+- :ref:`Matrix searching`
+- :ref:`Matrix rearrangement functions`
 - :ref:`Tensors`
 - :ref:`I/O and contiguous storage`
 
@@ -35,14 +47,14 @@ dimensions in the array, it is a "two-dimensional array", i.e.
 ``double[][]`` . The word "vector" is reserved generic
 objects with array-like semantics.
 
-In general, there are many vector types (STL, Boost, etc.) and
-they can be characterized by whether or not they satisfy certain
-"concepts" like ``DefaultConstructible``. O\ :sub:`2`\ scl classes which
-operate on vector types are designed to be as flexible as
-possible, so that they can be used with almost any vector type.
-Eventually, all O\ :sub:`2`\ scl classes with template vector and matrix types
-will specify exactly which concepts are required to be satisified,
-but this is still in progress.
+In general, there are many vector types (STL, Boost, etc.) and they
+can be characterized by whether or not they satisfy certain "concepts"
+like ``DefaultConstructible``. O\ :sub:`2`\ scl classes which operate
+on vector types are designed to be as flexible as possible, so that
+they can be used with almost any vector type. Eventually, all O\
+:sub:`2`\ scl classes with template vector and matrix types should
+specify exactly which concepts are required to be satisified, but this
+is still in progress.
 
 The word "matrix" is reserved for the a generic object which has
 matrix-like semantics and can be accessed using ``operator(,)``. C++
@@ -149,14 +161,14 @@ Differentiation and integration
 - :cpp:func:`o2scl::vector_deriv2_xy_interp()` [``src/base/interp.h``]
 - :cpp:func:`o2scl::vector_deriv_fivept()` [``src/base/vector_derint.h``]
 - :cpp:func:`o2scl::vector_deriv_fivept_tap()` [``src/base/vector_derint.h``]
-- :cpp:func:`o2scl::vector_deriv_interp()` [``src/base/vector_derint.h``]
+- :cpp:func:`o2scl::vector_deriv_interp()` [``src/base/interp.h``]
 - :cpp:func:`o2scl::vector_deriv_threept()` [``src/base/vector_derint.h``]
 - :cpp:func:`o2scl::vector_deriv_threept_tap()` [``src/base/vector_derint.h``]
 - :cpp:func:`o2scl::vector_deriv_xy_interp()` [``src/base/interp.h``]
 - :cpp:func:`o2scl::vector_integ_durand()` [``src/base/vector_derint.h``]
 - :cpp:func:`o2scl::vector_integ_extended4()` [``src/base/vector_derint.h``]
 - :cpp:func:`o2scl::vector_integ_extended8()` [``src/base/vector_derint.h``]
-- :cpp:func:`o2scl::vector_integ_interp()` [``src/base/vector_derint.h``]
+- :cpp:func:`o2scl::vector_integ_interp()` [``src/base/interp``]
 - :cpp:func:`o2scl::vector_integ_threept()` [``src/base/vector_derint.h``]
 - :cpp:func:`o2scl::vector_integ_trap()` [``src/base/vector_derint.h``]
 - :cpp:func:`o2scl::vector_integ_ul_interp()` [``src/base/interp.h``]

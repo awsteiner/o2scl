@@ -114,6 +114,12 @@ protected:
   /// Proton
   fermion p;
 
+  /// Neutron
+  fermion_deriv nd;
+
+  /// Proton
+  fermion_deriv pd;
+
   /// Thermodynamics
   thermo th;
 
@@ -420,15 +426,28 @@ public:
     std::shared_ptr<table_units<> > te=nst.get_eos_results();
     std::shared_ptr<table_units<> > tr=nst.get_tov_results();
 
-    te->line_of_names("msn msp nun nup");
+    // Add new columns
+    te->line_of_names("msn msp nun nup dnndmun dnpdmup ");
+    te->line_of_names("dmundnn dmudn_mixed dmupdnp");
     for(size_t i=0;i<te->get_nlines();i++) {
       n.n=te->get("nn",i);
       p.n=te->get("np",i);
       int ret=sk.calc_e(n,p,th);
+      cout << th.ed << " " << n.mu << endl;
+      nd=n;
+      pd=p;
+      thermo_np_deriv_helm thd;
+      int ret2=sk.calc_deriv_e(nd,pd,th,thd);
+      cout << th.ed << " " << nd.mu << endl;
       te->set("msn",i,n.ms);
       te->set("msp",i,p.ms);
       te->set("nun",i,n.nu);
       te->set("nup",i,p.nu);
+      te->set("dnundnn",i,nd.dndmu);
+      te->set("dnupdnp",i,pd.dndmu);
+      te->set("dmundnn",i,thd.dmundnn);
+      te->set("dmudn_mixed",i,thd.dmudn_mixed);
+      te->set("dmupdnp",i,thd.dmupdnp);
     }
     
     if (output_files) {

@@ -22,6 +22,7 @@ help:
 	@echo "o2scl-doc:        Make HTML documentation"
 	@echo "clean-doc:        Remove generated documentation files"
 	@echo "blank-doc:        Create blank documentation (used in "
+	@echo "open-doc:         View HTML documentation"
 	@echo "  the homebrew recipe and the travis script)"
 	@echo "release-sync-doc:     Copy docs from /usr/local on isospin"
 	@echo "  to the web page repository for uploading"
@@ -121,6 +122,15 @@ o2scl-doc:
 # Clean all generated documentation
 clean-doc:
 	cd doc/o2scl && $(MAKE) clean-doc-recursive
+
+if O2SCL_OSX
+    BROWSER = open
+else
+    BROWSER = xdg-open
+endif
+
+open-doc:
+	$(BROWSER) doc/o2scl/sphinx/build/html/index.html
 
 # Create empty documentation
 blank-doc:

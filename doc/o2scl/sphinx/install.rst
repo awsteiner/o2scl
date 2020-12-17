@@ -11,6 +11,7 @@ Contents
 - :ref:`Compiling O2scl from a release distribution <compile_dist>`
 - :ref:`Compiling O2scl from a release on Linux <compile_release>`
 - :ref:`Compiling O2scl from the source code <compile_source>`
+- :ref:`Compiling O2scl on Docker <compile_docker>`
 - :ref:`Optional linear algebra libraries`
 - :ref:`Range-checking`
 - :ref:`Optional physics libraries`
@@ -18,10 +19,10 @@ Contents
 - :ref:`Generation of documentation`
 - :ref:`Uninstallation`
 
+.. _compile_snap:
+
 Compiling O\ :sub:`2`\ scl on Ubuntu with Snap
 ----------------------------------------------
-
-.. _compile_snap:
 
 The easiest way to install on Ubuntu is with snap (see
 https://snapcraft.io/o2scl). Use::
@@ -38,10 +39,10 @@ where I use snap to install in my ``.bashrc``, I use::
 
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/snap/o2scl/current/usr/lib/x86_64-linux-gnu:/snap/o2scl/current/lib/x86_64-linux-gnu
 
+.. _compile_homebrew:
+  
 Compiling O\ :sub:`2`\ scl on Mac OSX with Homebrew
 ---------------------------------------------------
-
-.. _compile_homebrew:
 
 The easiest way to install on Mac OSX is with homebrew. Use::
 
@@ -66,10 +67,10 @@ install ``gcc`` because O\ :sub:`2`\ scl requires ``hdf5``, and the homebrew
 ``hdf5`` package requires ``gcc``. The homebrew installation of 
 O\ :sub:`2`\ scl is tested by Travis CI.)
 
+.. _compile_dist:
+
 Compiling O\ :sub:`2`\ scl from a release distribution
 ------------------------------------------------------
-
-.. _compile_dist:
 
 O\ :sub:`2`\ scl installation is generally similar to that for
 GNU-style libraries. The file ``INSTALL`` has some details on this
@@ -132,10 +133,10 @@ O\ :sub:`2`\ scl uses Travis CI (see
 https://travis-ci.org/awsteiner/o2scl ) to ensure that compilation and
 testing works on standard Ubuntu and Mac OS X environments.
 
+.. _compile_release:
+
 Compiling O\ :sub:`2`\ scl from a release on Linux
 --------------------------------------------------
-
-.. _compile_release:
 
 For example, to install O\ :sub:`2`\ scl on Ubuntu, begin by
 installing g++ and make (the ``g++`` and ``make`` packages),
@@ -169,11 +170,11 @@ you will need to let O\ :sub:`2`\ scl know, using::
 Other Linux distributions are similar. For example, in OpenSUSE, you
 will need to use ``zypper`` to install ``gcc-c++, make, gsl-devel,
 hdf5-devel, ncurses-devel, readline-devel``, and ``boost-devel``.
- 
-Compiling O\ :sub:`2`\ scl from the source code
------------------------------------------------
 
 .. _compile_source:
+
+Compiling O\ :sub:`2`\ scl from the source code
+-----------------------------------------------
 
 If you want to install from source (without generating the
 documentation), then you must first install ``g++``, ``make``,
@@ -194,8 +195,10 @@ configuration). For a full installation with parallelism, I
 typically also install ``libopenmpi-dev`` and then use
 ``./configure --enable-openmp``
 
-Compiling on Docker
--------------------
+.. _compile_docker:
+
+Compiling O\ :sub:`2`\ scl on Docker
+------------------------------------
 
 There are also some experimental dockerfiles which you can use to
 install O\ :sub:`2`\ scl which can be found at

@@ -6,8 +6,8 @@ Interpolation
 Contents
 --------
 
-Introduction
-Lookup and binary search
+- :ref:`Introduction`
+- :ref:`Lookup and binary search`
 
 Introduction
 ------------
@@ -108,6 +108,8 @@ Interpolation example
    width: 60%	   
    alt: alt text
 
+.. todo:: Fix the interpolation plot for this example.
+   
 Two and higher-dimensional interpolation
 ----------------------------------------
 
@@ -134,6 +136,18 @@ Derivatives and integrals on a fixed grid
 -----------------------------------------
     
 If the indepedent variable is represented by a uniform
-(equally-spaced) then the functions in \ref vector_derint.h
-can provide faster (and occasionally more accurate) results.
+(equally-spaced) then the functions in ``src/deriv/vector_derint.h``
+can provide faster (and occasionally more accurate) results. See:
+
+- :cpp:func:`o2scl::vector_deriv_fivept()`
+- :cpp:func:`o2scl::vector_deriv_fivept_tap()`
+- :cpp:func:`o2scl::vector_deriv_interp()`
+- :cpp:func:`o2scl::vector_deriv_threept()`
+- :cpp:func:`o2scl::vector_deriv_threept_tap()`
+- :cpp:func:`o2scl::vector_integ_durand()`
+- :cpp:func:`o2scl::vector_integ_extended4()`
+- :cpp:func:`o2scl::vector_integ_extended8()`
+- :cpp:func:`o2scl::vector_integ_threept()`
+- :cpp:func:`o2scl::vector_integ_trap()`
+
 

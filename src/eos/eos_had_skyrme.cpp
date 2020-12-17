@@ -169,6 +169,12 @@ int eos_had_skyrme::calc_e(fermion &ne, fermion &pr, thermo &locth) {
   return calc_temp_e(ne,pr,0.0,locth);
 }
 
+int eos_had_skyrme::calc_deriv_e(fermion_deriv &ne, fermion_deriv &pr,
+				 thermo &locth,
+				 thermo_np_deriv_helm &thd) {
+  return calc_deriv_temp_e(ne,pr,0.0,locth,thd);
+}
+
 double eos_had_skyrme::feoa_symm(double nb) {
   double ret, kr23, beta, t3p;
 
