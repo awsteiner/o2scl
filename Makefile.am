@@ -132,6 +132,12 @@ endif
 open-doc:
 	$(BROWSER) doc/o2scl/sphinx/build/html/index.html
 
+open-eos-doc:
+	$(BROWSER) doc/o2scl/eos/sphinx/build/html/index.html
+
+open-part-doc:
+	$(BROWSER) doc/o2scl/part/sphinx/build/html/index.html
+
 # Create empty documentation
 blank-doc:
 	mkdir -p doc/o2scl/sphinx/build/html

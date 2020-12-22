@@ -413,6 +413,8 @@ namespace o2scl {
 
   protected:
     
+    typedef boost::numeric::ublas::vector<double> ubvector;
+
     /// A pointer to the finite temperature equation of state
     eos_had_temp_base *hepT;
 
@@ -423,6 +425,16 @@ namespace o2scl {
     /** \brief Solve for beta equilibrium at finite temperature
      */
     double solve_fun_T(double x, thermo &hb, double T);
+
+    /** \brief Solve for beta equilibrium at finite temperature
+     */
+    int solve_fun_s(size_t nv, const ubvector &x, ubvector &y,
+		       thermo &hb, double s);
+
+    /** \brief Solve for beta equilibrium at finite temperature
+     */
+    int solve_fun_s_YLe(size_t nv, const ubvector &x, ubvector &y,
+		       thermo &hb, double s, double YLe);
 
     /** \brief If true, then the hadronic EOS has been set
      */
@@ -442,9 +454,19 @@ namespace o2scl {
       return;
     }
     
-    /** \brief Compute the full EOS at finite temperature
+    /** \brief Compute the EOS in betq-equilibrium at finite temperature
      */
     int calc_eos_T(double T, double np_0=0.0);
+    
+    /** \brief Compute the EOS in betq-equilibrium at fixed entropy per baryon
+     */
+    int calc_eos_s(double s, double np_0=0.0);
+    
+    /** \brief Compute the EOS in betq-equilibrium at fixed entropy 
+	per baryon at a fixed number of electron-type leptons per
+	baryon
+    */
+    int calc_eos_s_YLe(double s, double YLe, double np_0=0.0);
     
   };
   

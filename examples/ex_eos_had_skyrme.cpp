@@ -84,11 +84,13 @@ public:
   bool pos_neut;
   /// True if saturation is good
   bool good_sat;
-  /// Desc
+  /** \brief The baryon density at which the beta-equilibrium EOS becomes 
+      pure neutron matter
+  */
   double pure_neut;
   /// Desc
   int other;
-  /// Desc
+  /// If true, the EOS calculation was successful
   bool success;
   /// Alternate description of symmetry energy
   double alt_S;
@@ -100,7 +102,7 @@ public:
 
 /** \brief Class to analyze Skyrme EOSs and output the results
     [Example class]
- */
+*/
 class ex_eos_had_skyrme {
 
 protected:
@@ -285,7 +287,17 @@ public:
     return 0;
   }
   
-  /// Check low-density neutron matter
+  /** \brief Check low-density neutron matter
+
+      I'm not sure where the data originally came from, but it was
+      based on something similar to the left panel of Fig. 1 in
+      Gandolfi et al. (2015). 
+      
+      \todo AWS 12/21/2020: I need to document here what "quality"
+      values are reasonable. I should probably make this optional as
+      well, as many Skyrme interactions are not intended to be used at
+      this density.
+   */
   int low_neutron_mat() {
     
     double g_kf[4]={0.06,0.14,0.26,0.54};
@@ -299,7 +311,7 @@ public:
       p.n=0;
       int ret=sk.calc_e(n,p,th);
 
-      // The APR energy per baryon
+      // The Skyrme energy per baryon
       double epb=(th.ed-n.n*n.m)/nbt*hc_mev_fm;
 
       // The Fermi gas energy per baryon

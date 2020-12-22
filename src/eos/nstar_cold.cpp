@@ -30,6 +30,8 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
+typedef boost::numeric::ublas::vector<double> ubvector;
+
 nstar_cold::nstar_cold() : eost(new table_units<>) {
 
   np.init(o2scl_settings.get_convert_units().convert
@@ -466,17 +468,16 @@ int nstar_cold::fixed(double target_mass) {
 }
 
 double nstar_hot::solve_fun_T(double x, thermo &hb, double T) {
-  double y;
   
   np.n=x;
   
   pp.n=barn-np.n;
   int had_ret=hepT->calc_temp_e(np,pp,T,hb);
-  if (had_ret!=0) return had_ret;
+  if (had_ret!=0) return 10.0;
 
   e.mu=np.mu-pp.mu;
   ft.calc_mu(e,T);
-  y=pp.n-e.n;
+  double y=pp.n-e.n;
   
   if (include_muons) {
     mu.mu=e.mu;
@@ -485,6 +486,54 @@ double nstar_hot::solve_fun_T(double x, thermo &hb, double T) {
   }
   
   return y;
+}
+
+int nstar_hot::solve_fun_s(size_t nv, const ubvector &x, ubvector &y,
+			   thermo &hb, double s) {
+  np.n=x[0];
+  double T=x[1];
+  
+  pp.n=barn-np.n;
+  int had_ret=hepT->calc_temp_e(np,pp,T,hb);
+  if (had_ret!=0) return had_ret;
+
+  e.mu=np.mu-pp.mu;
+  ft.calc_mu(e,T);
+  y[0]=pp.n-e.n;
+  
+  if (include_muons) {
+    mu.mu=e.mu;
+    ft.calc_mu(mu,T);
+    y[0]-=mu.n;
+  }
+
+  y[1]=hb.en/barn-s;
+  
+  return 0;
+}
+
+int nstar_hot::solve_fun_s_YLe(size_t nv, const ubvector &x, ubvector &y,
+			       thermo &hb, double s, double YLe) {
+  np.n=x[0];
+  double T=x[1];
+  
+  pp.n=barn-np.n;
+  int had_ret=hepT->calc_temp_e(np,pp,T,hb);
+  if (had_ret!=0) return had_ret;
+
+  e.mu=np.mu-pp.mu;
+  ft.calc_mu(e,T);
+  y[0]=pp.n-e.n;
+  
+  if (include_muons) {
+    mu.mu=e.mu;
+    ft.calc_mu(mu,T);
+    y[0]-=mu.n;
+  }
+
+  y[1]=hb.en/barn-s;
+  
+  return 0;
 }
 
 int nstar_hot::calc_eos_T(double T, double np_0) {

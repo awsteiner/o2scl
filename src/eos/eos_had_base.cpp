@@ -686,7 +686,8 @@ void eos_had_base::check_den(fermion &n, fermion &p, thermo &th,
   return;
 }
 
-void eos_had_temp_base::check_en(fermion &n, fermion &p, double T, thermo &th,
+void eos_had_temp_base::check_en(fermion &n, fermion &p, double T,
+				 thermo &th,
 				 double &en_deriv, double &en_err) {
 
   set_n_and_p(n,p);
