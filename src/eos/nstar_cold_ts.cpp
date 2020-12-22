@@ -35,6 +35,22 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
+int load_sly4(eos_had_skyrme &sk) {
+  sk.t0=-2488.913/hc_mev_fm;
+  sk.t1=486.818/hc_mev_fm;
+  sk.t2=-546.395/hc_mev_fm;
+  sk.t3=13777.0/hc_mev_fm;
+  sk.x0=0.8340;
+  sk.x1=-0.3438;
+  sk.x2=-1.0; 
+  sk.x3=1.3540;
+  sk.a=0.0;
+  sk.b=1.0;
+  sk.alpha=0.1666666666667;
+  sk.W0=123/hc_mev_fm;
+  return 0;
+}
+
 int main(void) {
 
   cout.setf(ios::scientific);
@@ -71,17 +87,27 @@ int main(void) {
   std::shared_ptr<table_units<> > tr=nst.get_tov_results();
   tr->summary(&cout);
   cout << endl;
-  cout << " M_{max} = " << tr->max("gm") << " R_{max} = "
+  cout << "M_{max} = " << tr->max("gm") << " R_{max} = "
        << tr->get("r",tr->lookup("gm",tr->max("gm"))) << " cent. density = "
        << tr->get("nb",tr->lookup("gm",tr->max("gm"))) << endl;
   t.test_rel(tr->max("gm"),1.90373,2.0e-4,"M_max");
   t.test_rel(tr->get("r",tr->lookup("gm",tr->max("gm"))),
 	     9.956775,1.0e-3,"R_max");
+  cout << endl;
 
   // Check that EOS corresponds to result in M vs. R table
   t.test_rel(ed1,tr->interp("nb",0.16,"ed"),2.0e-3,"ed");
   t.test_rel(pr1,tr->interp("nb",0.16,"pr"),4.0e-3,"pr");
 
+  nstar_hot nh;
+  eos_had_skyrme sk;
+  load_sly4(sk);
+  nh.set_eos_T(sk);
+
+  nh.calc_eos_T(10.0/hc_mev_fm);
+  te=nh.get_eos_results();
+  te->summary(&cout);
+  
   t.report();
   return 0;
 }

@@ -105,9 +105,12 @@ class ex_eos_had_skyrme {
 
 protected:
 
-  /// To compute neutron stars
+  /// To compute cold neutron stars
   nstar_cold nst;
 
+  /// To compute hot neutron stars
+  nstar_hot nh;
+  
   /// Neutron
   fermion n;
 
@@ -197,6 +200,11 @@ public:
     nst.include_muons=true;
     verbose=1;
 
+    nh.set_eos_T(sk);
+    nh.def_eos_tov.verbose=0;
+    nh.def_tov.verbose=0;
+    nh.include_muons=true;
+    
     fd.html_mode();
 
     output_files=false;

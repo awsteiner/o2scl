@@ -3,7 +3,14 @@ Chebyshev Approximation
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
+Contents
+--------
+
+- :ref:`Introduction`
+- :ref:`Chebyshev approximation example`
+     
+Introduction
+------------
 
 A class implementing the Chebyshev approximations based on GSL is
 given in :ref:`cheb_approx_tl <cheb_approx_tl>`. This class has its own copy

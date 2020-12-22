@@ -3,8 +3,17 @@ Minimization
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
+Contents
+--------
 
+- :ref:`One-dimensional minimizers`
+- :ref:`Multi-dimensional minimizers`
+- :ref:`Simplex minimizer`
+- :ref:`Traditional minimizers with gradient information`
+- :ref:`Fixing Parameters`
+- :ref:`Multidimensional minimizer example`
+- :ref:`Minimizer fixing variables example`  
+  
 One-dimensional minimizers
 --------------------------
 

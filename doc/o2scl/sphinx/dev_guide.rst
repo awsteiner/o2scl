@@ -1,7 +1,9 @@
-Developer guidelines
-====================
-    
-This set of guidelines is intended for O2scl developers.
+Developer Notes
+===============
+
+:ref:`O2scl <o2scl>`
+
+This section contains notes for O\ :sub:`2`\ scl developers.
 
 Release procedure
 -----------------

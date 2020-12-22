@@ -3,8 +3,6 @@ File I/O with HDF5
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
-
 The class :ref:`hdf_file <hdf_file>` facilitates I/O of data to hdf
 files. This class implements a simple way to I/O basic data types and
 O\ :sub:`2`\ scl data types. All files created by the 
@@ -40,8 +38,7 @@ written to the HDF file as a group.
 	  C++ standard guarantees this. It is not necessarily possible
 	  for uBlas vector objects (nor desirable for vectors built
 	  upon slices of matrices or tensors), and thus HDF5 I/O with
-	  uBlas vectors or matrices requires an extra copy. See also
-	  the discussion \ref vec_io_cont_subsect in the User's guide.
+	  uBlas vectors or matrices requires an extra copy. 
 
 .. note:: There are some current limitations regarding the matching of
 	  error handling policies between O\ :sub:`2`\ scl and the HDF
@@ -49,5 +46,5 @@ written to the HDF file as a group.
 	  scl error handler and thus do not always throw O\ :sub:`2`\
 	  scl exceptions.
     
-\future Create an HDF file I/O example
+.. todo:: (Future) Create an HDF file I/O example
 

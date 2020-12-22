@@ -3,6 +3,15 @@ Constrained Minimization
 
 :ref:`O2scl <o2scl>`
 
+Contents
+--------
+
+- :ref:`Introduction`
+- :ref:`Constrained minimization example`
+     
+Introduction
+------------
+     
 O\ :sub:`2`\ scl reimplements the Open Optimization Library (OOL)
 available at http://ool.sourceforge.net. The associated classes allow
 constrained minimization when the constraint can be expressed as a

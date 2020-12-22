@@ -3,7 +3,13 @@ Higher-dimensional Interpolation
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
+Contents
+--------
+     
+- :ref:`Two-dimensional interpolation`
+- :ref:`Multi-dimensional interpolation`
+- :ref:`Interpolation on a rectangular grid`
+- :ref:`Contour lines`  
 
 Two-dimensional interpolation
 -----------------------------

@@ -357,7 +357,7 @@ namespace o2scl {
     /// The default proton
     fermion pp;
 
-    /// Zero-temperature fermion thermodynamics
+    /// Zero-temperature fermion thermodynamics (for the leptons)
     fermion_zerot fzt;
 
     /** \brief The default TOV equation solver
@@ -407,6 +407,47 @@ namespace o2scl {
 
   };
 
+  /** \brief Neutron stars at finite temperature and entropy
+   */
+  class nstar_hot : public nstar_cold {
+
+  protected:
+    
+    /// A pointer to the finite temperature equation of state
+    eos_had_temp_base *hepT;
+
+    /** \brief Fermion thermodynamics (for the leptons)
+     */
+    fermion_rel ft;
+
+    /** \brief Solve for beta equilibrium at finite temperature
+     */
+    double solve_fun_T(double x, thermo &hb, double T);
+
+    /** \brief If true, then the hadronic EOS has been set
+     */
+    bool eos_T_set;
+    
+  public:
+
+    nstar_hot() {
+      eos_T_set=false;
+    }
+    
+    /** \brief Set the finite-temperature hadronic EOS
+     */
+    void set_eos_T(eos_had_temp_base &he) {
+      hepT=&he;
+      eos_T_set=true;
+      return;
+    }
+    
+    /** \brief Compute the full EOS at finite temperature
+     */
+    int calc_eos_T(double T, double np_0=0.0);
+    
+  };
+  
 
 #ifndef DOXYGEN_NO_O2NS
 }

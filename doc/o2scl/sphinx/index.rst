@@ -61,9 +61,9 @@ User's Guide
    fit
    ode
    rng
-   tintp
+   multi_interp
    algebraic
-   gslcheb
+   cheb
    unitconv
    multip
    hdf
@@ -80,6 +80,7 @@ User's Guide
    ref
    class_list
    function_list
+   todos
 
 * :ref:`genindex`
 * :ref:`search`
