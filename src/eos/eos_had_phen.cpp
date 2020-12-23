@@ -568,28 +568,8 @@ eos_had_phen::eos_had_phen() {
   qmc_b=2.12;
   qmc_n0=0.16;
 
-  // Temporary string for object names
-  string name;
-
-  // Open the neutron star data file
-  std::string ns_file="data/qmc_twop_10_0_out";
-  o2scl_hdf::hdf_file hf;
-  hf.open(ns_file);
-  o2scl_hdf::hdf_input(hf,nstar_tab,name);
-  hf.close();
-
-  // Open the Skyrme data file
-  std::string UNEDF_file="data/thetaANL-1002x12.o2";
-  hf.open(UNEDF_file);
-  o2scl_hdf::hdf_input(hf,UNEDF_tab,name);
-  hf.close();
-
   use_skalt=false;
-#ifdef O2SCL_CORI
-  o2scl_hdf::skyrme_load(sk_alt,"data/NRAPR.o2",true,1);
-#else
   o2scl_hdf::skyrme_load(sk_alt,"NRAPR");
-#endif
 
   // Skyrme couplings
   sk_Tcorr.t0=5.067286719233e+03;
@@ -609,6 +589,27 @@ eos_had_phen::eos_had_phen() {
 
   eos_Tcorr=&sk_Tcorr;
   eosp_alt=&sk_alt;
+}
+
+void eos_had_phen::load_files() {
+
+  // Temporary string for object names
+  string name;
+
+  // Open the neutron star data file
+  std::string ns_file="data/qmc_twop_10_0_out";
+  o2scl_hdf::hdf_file hf;
+  hf.open(ns_file);
+  o2scl_hdf::hdf_input(hf,nstar_tab,name);
+  hf.close();
+
+  // Open the Skyrme data file
+  std::string UNEDF_file="data/thetaANL-1002x12.o2";
+  hf.open(UNEDF_file);
+  o2scl_hdf::hdf_input(hf,UNEDF_tab,name);
+  hf.close();
+
+  return;
 }
 
 double eos_had_phen::energy_density_qmc(double nn, double np) {

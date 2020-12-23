@@ -22,6 +22,7 @@ state of dense matter.
    sneos
    ref
    class_list
+   todos
 
 * :ref:`genindex`
 * :ref:`search`

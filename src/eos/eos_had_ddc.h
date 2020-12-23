@@ -106,8 +106,11 @@ namespace o2scl {
 	field equations have been solved, \c f1, \c f2, and \c f3 are
 	all zero.
 	
-	\todo Is the thermodynamic identity is satisfied even when the
-	field equations are not solved? Check this.
+	\verbatim embed:rst
+	.. todo:: In eos_had_ddc::calc_eq_e(), is the 
+                  thermodynamic identity is satisfied even 
+	          when the field equations are not solved? Check this.
+	\endverbatim
     */
     virtual int calc_eq_e(fermion &neu, fermion &p, double sig, 
 			  double ome, double rho, double &f1, 

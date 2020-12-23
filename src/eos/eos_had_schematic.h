@@ -106,8 +106,10 @@ namespace o2scl {
 	neutrons and protons have equal mass. The relativistic
 	corrections are around 1 part in \f$ 10^{6} \f$.
 
-	\todo This was computed in schematic_sym.nb, which might be 
-	added to the documentation?
+	\verbatim embed:rst
+	.. todo:: This was computed in schematic_sym.nb, which might 
+	          be added to the documentation?
+        \endverbatim
     */
     virtual int set_a_from_mstar(double u_msom, double mnuc) {
       a=cbrt(n0*n0*o2scl_const::pi2*o2scl_const::pi2/4.0/3.0)/
@@ -131,7 +133,10 @@ namespace o2scl {
     /** \brief Return the baryon number susceptibility, \f$ \partial \mu_B /
 	\partial n_B \f$ in \f$ \mathrm{fm}^{2} \f$. 
 
-	\todo This function is untested.
+	\verbatim embed:rst
+	.. todo:: This function, eos_had_schematic::baryon_suscep() 
+                  is untested.
+        \endverbatim
     */
     virtual double baryon_suscep(double n, double x) {
       double alpha=n*(1.0-2.0*x);

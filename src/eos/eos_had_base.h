@@ -549,8 +549,10 @@ namespace o2scl {
 	function of the chemical potentials, \f$ \partial^2 P /
 	\partial \mu_i \mu_j \f$
 
-	\todo This function should be overloaded for Skyrme 
-	with derivatives
+	\verbatim embed:rst
+	.. todo:: This function, f_number_suscept(), should be overloaded 
+	          for Skyrme with derivatives
+	\endverbatim
     */
     virtual void f_number_suscept(double mun, double mup, double &dPdnn, 
 				  double &dPdnp, double &dPdpp);
@@ -559,8 +561,10 @@ namespace o2scl {
 	susceptibilities as a function of the densities, \f$
 	\partial^2 \varepsilon / \partial n_i n_j \f$
 
-	\todo This function should be overloaded for Skyrme 
-	with derivatives
+	\verbatim embed:rst
+	.. todo:: This function, f_inv_number_suscept(), should be overloaded 
+	          for Skyrme with derivatives
+	\endverbatim
     */
     virtual void f_inv_number_suscept(double mun, double mup, double &dednn, 
 				      double &dednp, double &dedpp);
@@ -1205,9 +1209,9 @@ namespace o2scl {
   /** \brief A hadronic EOS at finite temperature
       based on a function of the densities [abstract base]
 
-      This class provides automatic computation of \ref calc_e() and
-      \ref calc_temp_e() assuming that \ref calc_p() and \ref
-      calc_temp_p() are specified.
+      This class provides automatic computation of \ref calc_p() and
+      \ref calc_temp_p() assuming that \ref calc_e() and \ref
+      calc_temp_e() are specified in the child class.
   */
   class eos_had_temp_eden_base : public eos_had_temp_base {
   public:
@@ -1237,11 +1241,12 @@ namespace o2scl {
   /** \brief A hadronic EOS at finite temperature based on a function
       of the chemical potentials [abstract base]
 
-      This class provides automatic computation of \ref calc_p() and
-      \ref calc_temp_p() assuming that \ref calc_e() and \ref
-      calc_temp_e() are specified.
+      This class provides automatic computation of \ref calc_e() and
+      \ref calc_temp_e() assuming that \ref calc_p() and \ref
+      calc_temp_p() are specified in the child class.
   */
   class eos_had_temp_pres_base : public eos_had_temp_base {
+
   public:
 
     /** \brief Equation of state as a function of the chemical potentials

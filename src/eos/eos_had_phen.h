@@ -108,7 +108,7 @@ namespace o2scl {
 
   /** \brief Phenomenological EOS for homogeneous nucleonic matter
    */
-  class eos_had_phen : public o2scl::eos_had_temp_base {
+  class eos_had_phen : public o2scl::eos_had_temp_eden_base {
   
   protected:
 
@@ -467,6 +467,8 @@ namespace o2scl {
     }
     //@}
 
+    void load_files();
+    
     /// \name Settings [public]
     //@{
     /** \brief If true, use the EOS from the Du et al. (2019) paper
@@ -519,8 +521,9 @@ namespace o2scl {
     bool select_cs2_test;
     //@}
 
-    /** \brief Desc
-     */
+    /** \brief Equation of state as a function of densities at 
+	finite temperature
+    */
     virtual int calc_temp_e(fermion &n, fermion &p, double T, 
 			    thermo &th) {
       double fr=free_energy_density(n,p,T,th);

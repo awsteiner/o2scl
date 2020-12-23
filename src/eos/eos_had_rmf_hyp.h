@@ -42,16 +42,19 @@ namespace o2scl {
       Based on \ref Glendenning91ro, but generalized for higher-order
       couplings as in \ref eos_had_rmf .
       
-      \todo The couplings in the test code match the table but the
-      maximum masses appear much smaller than GM91. I need to
-      check that muons are added correctly, and it might be good to
-      compare with a different reference. This also might be 
-      due to a different crust EOS. 
+      \verbatim embed:rst
+      .. todo:: The interpretation of the calc_e() function is a bit
+                The couplings in the test code match the table but the
+		maximum masses appear much smaller than GM91. I need to
+		check that muons are added correctly, and it might be good 
+		to compare with a different reference. This also might be 
+		due to a different crust EOS. 
 
-      \todo The interpretation of the calc_e() function is a bit
-      unclear, so I need to more clearly figure out what 
-      that function ought to do. I don't think it's really used
-      at the moment. 
+      .. todo:: The interpretation of the calc_e() function is a bit
+                unclear, so I need to more clearly figure out what 
+		that function ought to do. I don't think it's really used
+		at the moment. 
+      \endverbatim
   */
   class eos_had_rmf_hyp : public eos_had_rmf {
     

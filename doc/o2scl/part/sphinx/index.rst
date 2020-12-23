@@ -22,6 +22,7 @@ designed to work with :ref:`O2scl <o2scl>`. It includes
    ref
    class_list
    function_list
+   todos
 
 * :ref:`genindex`
 * :ref:`search`
