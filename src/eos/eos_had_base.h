@@ -336,7 +336,7 @@ namespace o2scl {
 
     /** \brief Binding energy (without the rest mass) in 
 	\f$ \mathrm{fm}^{-1} \f$
-     */
+    */
     double eoa;
 
     /// Compression modulus in \f$ \mathrm{fm}^{-1} \f$
@@ -362,11 +362,11 @@ namespace o2scl {
     /// \name Equation of state
     //@{
     /** \brief Equation of state as a function of the chemical potentials
-    */
+     */
     virtual int calc_p(fermion &n, fermion &p, thermo &th)=0;
 
     /** \brief Equation of state as a function of density
-    */
+     */
     virtual int calc_e(fermion &n, fermion &p, thermo &th)=0;
     //@}
 
@@ -387,7 +387,7 @@ namespace o2scl {
 
 	This function works like \ref fcomp(), except that it also
 	returns the uncertainty in \c unc. 
-     */
+    */
     virtual double fcomp_err(double nb, double delta, double &unc);
 
     /** \brief Calculate the energy per baryon in \f$ \mathrm{fm}^{-1} \f$ 
@@ -535,7 +535,7 @@ namespace o2scl {
 	vector effective masses which are independent of \f$ \delta
 	\f$. For now, we set \f$ \delta =1 \f$ to be the default
 	value, corresponding to neutron matter. 
-     */
+    */
     virtual double f_effm_vector(double nb, double delta=1.0);
 
     /** \brief Calculate saturation density using calc_e()
@@ -545,16 +545,22 @@ namespace o2scl {
     */
     virtual double fn0(double delta, double &leoa);
 
-    /** \brief Compute the number susceptibilities as a function of
-	the chemical potentials, \f$ \partial^2 P / \partial \mu_i
-	\mu_j \f$
+    /** \brief Compute (numerically) the number susceptibilities as a
+	function of the chemical potentials, \f$ \partial^2 P /
+	\partial \mu_i \mu_j \f$
+
+	\todo This function should be overloaded for Skyrme 
+	with derivatives
     */
     virtual void f_number_suscept(double mun, double mup, double &dPdnn, 
 				  double &dPdnp, double &dPdpp);
 
-    /** \brief Compute the 'inverse' number susceptibilities as a
-	function of the densities, \f$ \partial^2 \varepsilon /
-	\partial n_i n_j \f$
+    /** \brief Compute (numerically) the 'inverse' number
+	susceptibilities as a function of the densities, \f$
+	\partial^2 \varepsilon / \partial n_i n_j \f$
+
+	\todo This function should be overloaded for Skyrme 
+	with derivatives
     */
     virtual void f_inv_number_suscept(double mun, double mup, double &dednn, 
 				      double &dednp, double &dedpp);
@@ -729,7 +735,7 @@ namespace o2scl {
 	object, in practice some of the current EOSs require \ref
 	mroot_hybrids because it automatically avoids regions
 	where the equations are undefined.
-     */
+    */
     virtual void set_sat_root(root<> &mr);
     
     /// Set \ref deriv_base object to use to find saturation properties
@@ -755,7 +761,7 @@ namespace o2scl {
 	By default this has a spin degeneracy of 2 and a mass of \ref
 	o2scl_mks::mass_neutron . Also the value of 
 	<tt>part::non_interacting</tt> is set to <tt>false</tt>.
-     */
+    */
     fermion def_neutron;
 
     /** \brief The defaut proton
@@ -763,7 +769,7 @@ namespace o2scl {
 	By default this has a spin degeneracy of 2 and a mass of \ref
 	o2scl_mks::mass_proton . Also the value of 
 	<tt>part::non_interacting</tt> is set to <tt>false</tt>.
-     */
+    */
     fermion def_proton;
 
     /// \name Default solvers and derivative classes
@@ -877,10 +883,10 @@ namespace o2scl {
        
     */
     void gradient_qij(fermion &n, fermion &p, thermo &th, 
-		     double &qnn, double &qnp, double &qpp, 
-		     double &dqnndnn, double &dqnndnp,
-		     double &dqnpdnn, double &dqnpdnp,
-		     double &dqppdnn, double &dqppdnp);
+		      double &qnn, double &qnp, double &qpp, 
+		      double &dqnndnn, double &dqnndnp,
+		      double &dqnpdnn, double &dqnpdnp,
+		      double &dqppdnn, double &dqppdnp);
 
     /** \brief Compute the EOS in beta-equilibrium at 
 	zero temperature
@@ -943,7 +949,7 @@ namespace o2scl {
     mroot_hybrids<> beta_mroot;
     
     /** \brief Equation for solving for beta-equilibrium at T=0
-    */
+     */
     virtual int solve_beta_eq_T0(size_t nv, const ubvector &x,
 				 ubvector &y, const double &nB,
 				 fermion &e, bool include_muons,
@@ -958,11 +964,11 @@ namespace o2scl {
   public:
 
     /** \brief Equation of state as a function of density
-    */
+     */
     virtual int calc_e(fermion &n, fermion &p, thermo &th)=0;
     
     /** \brief Equation of state as a function of the chemical potentials
-    */
+     */
     virtual int calc_p(fermion &n, fermion &p, thermo &th);
 
   };
@@ -974,11 +980,11 @@ namespace o2scl {
   public:
 
     /** \brief Equation of state as a function of the chemical potentials
-    */
+     */
     virtual int calc_p(fermion &n, fermion &p, thermo &th)=0;
     
     /** \brief Equation of state as a function of density
-    */
+     */
     virtual int calc_e(fermion &n, fermion &p, thermo &th);
 
   };
@@ -1005,27 +1011,27 @@ namespace o2scl {
 	a function of the densities
     */
     int liqgas_dens_solve(size_t nv, const ubvector &x, 
-				  ubvector &y, fermion &n1, fermion &p1,
-				  fermion &n2, fermion &p2, double T,
-				  thermo &th1, thermo &th2);
+			  ubvector &y, fermion &n1, fermion &p1,
+			  fermion &n2, fermion &p2, double T,
+			  thermo &th1, thermo &th2);
 
     /** \brief Solve for the liquid-gas phase transition at fixed
 	baryon density and electron fraction
-     */
+    */
     int liqgas_solve(size_t nv, const ubvector &x, 
-			     ubvector &y, fermion &n1, fermion &p1,
-			     fermion &n2, fermion &p2, double nB0,
-			     double Ye0, double T, 
-			     thermo &th1, thermo &th2);
-
+		     ubvector &y, fermion &n1, fermion &p1,
+		     fermion &n2, fermion &p2, double nB0,
+		     double Ye0, double T, 
+		     thermo &th1, thermo &th2);
+    
     /** \brief Solve for the liquid-gas phase transition in 
 	beta-equilibrium
     */
     int liqgas_beta_solve(size_t nv, const ubvector &x, 
-				  ubvector &y, fermion &n1, fermion &p1,
-				  fermion &n2, fermion &p2, 
-				  double nB0, double T, 
-				  thermo &th1, thermo &th2, fermion &e);
+			  ubvector &y, fermion &n1, fermion &p1,
+			  fermion &n2, fermion &p2, 
+			  double nB0, double T, 
+			  thermo &th1, thermo &th2, fermion &e);
 
     /** \brief Compute the entropy
      */
@@ -1033,7 +1039,7 @@ namespace o2scl {
 
     /** \brief Compute the difference between the neutron and 
 	proton chemical potentials
-     */
+    */
     double calc_dmu_delta_T(double delta, double nb, double T);
 
 #endif
@@ -1059,7 +1065,7 @@ namespace o2scl {
 			    thermo &th)=0;
 
     /** \brief Equation of state as a function of the chemical potentials
-    */
+     */
     virtual int calc_p(fermion &n, fermion &p, thermo &th)=0;
 
     /** \brief Equation of state as a function of the chemical potentials
@@ -1069,11 +1075,11 @@ namespace o2scl {
 			    thermo &th)=0;
     //@}
 
-    /// Computing finite-temperature integrals
+    /// \name Computing finite-temperature integrals
     //@{
     /** \brief Set the object for computing finite-temperature fermions
 	(default is \ref def_fet)
-     */
+    */
     virtual void set_fermion_thermo(fermion_thermo &f) {
       fet=&f;
     }
@@ -1094,8 +1100,8 @@ namespace o2scl {
 	each set is stored in \c th1 and \c th2.
     */
     virtual int calc_liqgas_dens_temp_e
-      (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
-       double T, thermo &th1, thermo &th2);
+    (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
+     double T, thermo &th1, thermo &th2);
 
     /** \brief Compute the liquid-gas phase transition using
 	\ref eos_had_temp_base::calc_temp_e() .
@@ -1109,9 +1115,9 @@ namespace o2scl {
 	phase 1 is stored in \c chi.
     */
     virtual int calc_liqgas_temp_e
-      (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
-       double nB, double Ye, double T, thermo &th1, thermo &th2,
-       double &chi);
+    (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
+     double nB, double Ye, double T, thermo &th1, thermo &th2,
+     double &chi);
 
     /** \brief Compute the liquid-gas phase transition in
 	beta-equilibrium using \ref eos_had_temp_base::calc_temp_e() .
@@ -1126,9 +1132,9 @@ namespace o2scl {
 	1 is stored in \c chi.
     */
     virtual int calc_liqgas_beta_temp_e
-      (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
-       double nB, double T, thermo &th1, thermo &th2,
-       double &Ye, double &chi);
+    (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
+     double nB, double T, thermo &th1, thermo &th2,
+     double &Ye, double &chi);
     //@}
 
     /// \name Functions related to the symmetry energy
@@ -1166,16 +1172,16 @@ namespace o2scl {
 	\mu_j \f$ at a fixed temperature
     */
     virtual void f_number_suscept_T
-      (double mun, double mup, double T, double &dPdnn, 
-       double &dPdnp, double &dPdpp);
+    (double mun, double mup, double T, double &dPdnn, 
+     double &dPdnp, double &dPdpp);
 
     /** \brief Compute the 'inverse' number susceptibilities as a
 	function of the densities, \f$ \partial^2 \varepsilon /
 	\partial n_i n_j \f$ at a fixed temperature
     */
     virtual void f_inv_number_suscept_T
-      (double mun, double mup, double T, double &dednn, 
-       double &dednp, double &dedpp);
+    (double mun, double mup, double T, double &dednn, 
+     double &dednp, double &dedpp);
     //@}
 
     /// \name Consistency check
@@ -1207,7 +1213,7 @@ namespace o2scl {
   public:
 
     /** \brief Equation of state as a function of density
-    */
+     */
     virtual int calc_e(fermion &n, fermion &p, thermo &th)=0;
     
     /** \brief Equation of state as a function of densities at 
@@ -1217,7 +1223,7 @@ namespace o2scl {
 			    thermo &th)=0;
 
     /** \brief Equation of state as a function of the chemical potentials
-    */
+     */
     virtual int calc_p(fermion &n, fermion &p, thermo &th);
 
     /** \brief Equation of state as a function of the chemical potentials
@@ -1239,7 +1245,7 @@ namespace o2scl {
   public:
 
     /** \brief Equation of state as a function of the chemical potentials
-    */
+     */
     virtual int calc_p(fermion &n, fermion &p, thermo &th)=0;
 
     /** \brief Equation of state as a function of the chemical potentials
@@ -1249,7 +1255,7 @@ namespace o2scl {
 			    thermo &th)=0;
     
     /** \brief Equation of state as a function of density
-    */
+     */
     virtual int calc_e(fermion &n, fermion &p, thermo &th);
 
     /** \brief Equation of state as a function of densities at 

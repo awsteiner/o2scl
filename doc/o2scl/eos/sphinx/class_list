@@ -1,6 +1,7 @@
   <compound refid="classo2scl_1_1eos__base" kind="class"><name>o2scl::eos_base</name>
   <compound refid="classo2scl_1_1eos__crust" kind="class"><name>o2scl::eos_crust</name>
   <compound refid="classo2scl_1_1eos__crust__virial" kind="class"><name>o2scl::eos_crust_virial</name>
+  <compound refid="classo2scl_1_1eos__crust__virial__v2" kind="class"><name>o2scl::eos_crust_virial_v2</name>
   <compound refid="classo2scl_1_1eos__cs2__const" kind="class"><name>o2scl::eos_cs2_const</name>
   <compound refid="classo2scl_1_1eos__cs2__poly" kind="class"><name>o2scl::eos_cs2_poly</name>
   <compound refid="classo2scl_1_1eos__had__apr" kind="class"><name>o2scl::eos_had_apr</name>
@@ -9,6 +10,7 @@
   <compound refid="classo2scl_1_1eos__had__eden__base" kind="class"><name>o2scl::eos_had_eden_base</name>
   <compound refid="classo2scl_1_1eos__had__gogny" kind="class"><name>o2scl::eos_had_gogny</name>
   <compound refid="classo2scl_1_1eos__had__hlps" kind="class"><name>o2scl::eos_had_hlps</name>
+  <compound refid="classo2scl_1_1eos__had__phen" kind="class"><name>o2scl::eos_had_phen</name>
   <compound refid="classo2scl_1_1eos__had__potential" kind="class"><name>o2scl::eos_had_potential</name>
   <compound refid="classo2scl_1_1eos__had__pres__base" kind="class"><name>o2scl::eos_had_pres_base</name>
   <compound refid="classo2scl_1_1eos__had__rmf" kind="class"><name>o2scl::eos_had_rmf</name>
@@ -26,6 +28,8 @@
   <compound refid="classo2scl_1_1eos__had__temp__base" kind="class"><name>o2scl::eos_had_temp_base</name>
   <compound refid="classo2scl_1_1eos__had__temp__eden__base" kind="class"><name>o2scl::eos_had_temp_eden_base</name>
   <compound refid="classo2scl_1_1eos__had__temp__pres__base" kind="class"><name>o2scl::eos_had_temp_pres_base</name>
+  <compound refid="classo2scl_1_1eos__had__virial" kind="class"><name>o2scl::eos_had_virial</name>
+  <compound refid="classo2scl_1_1eos__had__virial__deriv" kind="class"><name>o2scl::eos_had_virial_deriv</name>
   <compound refid="classo2scl_1_1eos__nse" kind="class"><name>o2scl::eos_nse</name>
   <compound refid="classo2scl_1_1eos__nse__full" kind="class"><name>o2scl::eos_nse_full</name>
   <compound refid="classo2scl_1_1eos__nstar__rot" kind="class"><name>o2scl::eos_nstar_rot</name>
@@ -54,6 +58,7 @@
   <compound refid="classex__eos__had__skyrme" kind="class"><name>ex_eos_had_skyrme</name>
   <compound refid="classex__skyrme__data" kind="class"><name>ex_skyrme_data</name>
   <compound refid="classo2scl_1_1nstar__cold" kind="class"><name>o2scl::nstar_cold</name>
+  <compound refid="classo2scl_1_1nstar__hot" kind="class"><name>o2scl::nstar_hot</name>
   <compound refid="classo2scl_1_1nstar__rot" kind="class"><name>o2scl::nstar_rot</name>
   <compound refid="classo2scl_1_1nucleus__rmf" kind="class"><name>o2scl::nucleus_rmf</name>
   <compound refid="classo2scl_1_1nucmass__frdm__shell" kind="class"><name>o2scl::nucmass_frdm_shell</name>

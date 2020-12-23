@@ -5,6 +5,7 @@ Parsing class_list:
 Namespace: o2scl class: eos_base
 Namespace: o2scl class: eos_crust
 Namespace: o2scl class: eos_crust_virial
+Namespace: o2scl class: eos_crust_virial_v2
 Namespace: o2scl class: eos_cs2_const
 Namespace: o2scl class: eos_cs2_poly
 Namespace: o2scl class: eos_had_apr
@@ -13,6 +14,7 @@ Namespace: o2scl class: eos_had_ddc
 Namespace: o2scl class: eos_had_eden_base
 Namespace: o2scl class: eos_had_gogny
 Namespace: o2scl class: eos_had_hlps
+Namespace: o2scl class: eos_had_phen
 Namespace: o2scl class: eos_had_potential
 Namespace: o2scl class: eos_had_pres_base
 Namespace: o2scl class: eos_had_rmf
@@ -30,6 +32,8 @@ Namespace: o2scl class: eos_had_tabulated
 Namespace: o2scl class: eos_had_temp_base
 Namespace: o2scl class: eos_had_temp_eden_base
 Namespace: o2scl class: eos_had_temp_pres_base
+Namespace: o2scl class: eos_had_virial
+Namespace: o2scl class: eos_had_virial_deriv
 Namespace: o2scl class: eos_nse
 Namespace: o2scl class: eos_nse_full
 Namespace: o2scl class: eos_nstar_rot
@@ -58,6 +62,7 @@ Namespace:  class: ex_eos_had_apr
 Namespace:  class: ex_eos_had_skyrme
 Namespace:  class: ex_skyrme_data
 Namespace: o2scl class: nstar_cold
+Namespace: o2scl class: nstar_hot
 Namespace: o2scl class: nstar_rot
 Namespace: o2scl class: nucleus_rmf
 Namespace: o2scl class: nucmass_frdm_shell
