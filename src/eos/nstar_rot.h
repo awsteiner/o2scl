@@ -166,7 +166,7 @@ namespace o2scl {
     /** \brief Gravitational constant (in CGS units) */ 
     double G;
     /** \brief Square of length scale in CGS units, 
-	\f$ \kappa \equiv 10^{-15} c^2/G \f$
+        \f$ \kappa \equiv 10^{-15} c^2/G \f$
     */
     double KAPPA;
     /** \brief The value \f$ 10^{-15}/c^2 \f$ */
@@ -178,15 +178,15 @@ namespace o2scl {
     int n_nearest;
     
     /** \brief Driver for the interpolation routine. 
-	
-	First we find the tab. point nearest to xb, then we
-	interpolate using four points around xb.
+        
+        First we find the tab. point nearest to xb, then we
+        interpolate using four points around xb.
 
-	 Note that this version, since the EOS arrays are now 0 indexed,
-	 is different than the nstar_rot version. There is also a bit of
-	 extra arithmetic in this function below which is probably
-	 unnecessary which is left over from the shift from unit to
-	 zero-indexing. 
+         Note that this version, since the EOS arrays are now 0 indexed,
+         is different than the nstar_rot version. There is also a bit of
+         extra arithmetic in this function below which is probably
+         unnecessary which is left over from the shift from unit to
+         zero-indexing. 
     */
     double interp(double xp[], double yp[], int np, double xb);
 
@@ -198,7 +198,7 @@ namespace o2scl {
      */
     template<class vec1_t, class vec2_t, class vec3_t, class vec4_t>
       void set_eos_native(vec1_t &eden, vec2_t &pres, vec3_t &enth,
-			  vec4_t &nb) {
+                          vec4_t &nb) {
       
       double C=o2scl_cgs::speed_of_light;
       double G=o2scl_cgs::gravitational_constant;
@@ -210,26 +210,26 @@ namespace o2scl {
       // Note that conv1*C*C*KSCALE is identical to conv2*KSCALE.
       
       for(int i=0;i<n_tab;i++) {
-	// Convert from g/cm^3 to 1.0e15 grams/cm^3 and take the log
-	log_e_tab[i]=log10(eden[i]*C*C*KSCALE);
-	// Convert from dyne/cm^2 to 1.0e15 grams/cm^3 and take the log
-	log_p_tab[i]=log10(pres[i]*KSCALE);
-	// Convert from cm^2/s^2 to a unitless quantity and take the log
-	log_h_tab[i]=log10(enth[i]/(C*C));
-	// Take the log of a quantity in units of 1/cm^3
-	log_n0_tab[i]=log10(nb[i]);
+        // Convert from g/cm^3 to 1.0e15 grams/cm^3 and take the log
+        log_e_tab[i]=log10(eden[i]*C*C*KSCALE);
+        // Convert from dyne/cm^2 to 1.0e15 grams/cm^3 and take the log
+        log_p_tab[i]=log10(pres[i]*KSCALE);
+        // Convert from cm^2/s^2 to a unitless quantity and take the log
+        log_h_tab[i]=log10(enth[i]/(C*C));
+        // Take the log of a quantity in units of 1/cm^3
+        log_n0_tab[i]=log10(nb[i]);
       }
       
       return;
     }
 
     /** \brief Set the EOS from energy density, pressure, and
-	baryon density stored in powers of \f$ \mathrm{fm} \f$ .
+        baryon density stored in powers of \f$ \mathrm{fm} \f$ .
 
-	This function appends the default RNS crust and thus
-	the \c eden, \c pres, and \c nb vectors should not
-	contain points corresponding to the EOS for baryon
-	densities smaller than \f$ 0.07463~\mathrm{fm}^{-3} \f$.
+        This function appends the default RNS crust and thus
+        the \c eden, \c pres, and \c nb vectors should not
+        contain points corresponding to the EOS for baryon
+        densities smaller than \f$ 0.07463~\mathrm{fm}^{-3} \f$.
     */
     template<class vec1_t, class vec2_t, class vec3_t>
       void set_eos_fm(size_t n, vec1_t &eden, vec2_t &pres, vec3_t &nb) {
@@ -238,138 +238,138 @@ namespace o2scl {
       static const int n_crust=78;
       
       if (n>200-n_crust) {
-	O2SCL_ERR2("Too many EOS points in ",
-		   "nstar_rot::set_eos().",o2scl::exc_einval);
+        O2SCL_ERR2("Too many EOS points in ",
+                   "nstar_rot::set_eos().",o2scl::exc_einval);
       }
 
       // Conversion factor for energy density
       double conv1=o2scl_settings.get_convert_units().convert
-	("1/fm^4","g/cm^3",1.0);
+        ("1/fm^4","g/cm^3",1.0);
       // Conversion factor for pressure
       double conv2=o2scl_settings.get_convert_units().convert
-	("1/fm^4","dyne/cm^2",1.0);
+        ("1/fm^4","dyne/cm^2",1.0);
 
       n_tab=n+n_crust;
 
       /* Use the original RNS crust from eosC, except for the enthalpy
-	 which is computed by hand below. This appears to work better
-	 than the default O2scl crust, and this may have to do with
-	 the fact that the default O2scl crust has decreasing mu with
-	 increasing density at low densities.
+         which is computed by hand below. This appears to work better
+         than the default O2scl crust, and this may have to do with
+         the fact that the default O2scl crust has decreasing mu with
+         increasing density at low densities.
 
-	 These columns are:
-	 - energy density in g/cm^3
-	 - pressure in dyne/cm^2
-	 - baryon density in 1/cm^3
+         These columns are:
+         - energy density in g/cm^3
+         - pressure in dyne/cm^2
+         - baryon density in 1/cm^3
 
-	 The first few rows are close to the FMT EOS stored in fmt49.o2.
+         The first few rows are close to the FMT EOS stored in fmt49.o2.
       */
       double nst_arr[n_crust][3]={
-	{7.800e+00,1.010e+08,4.698795180722962e+24},
-	{7.860e+00,1.010e+09,4.734939759036205e+24},
-	{7.900e+00,1.010e+10,4.759036144578364e+24},
-	{8.150e+00,1.010e+11,4.909638554215315e+24},
-	{1.160e+01,1.210e+12,6.987951807098076e+24},
-	{1.640e+01,1.400e+13,9.879518070489597e+24},
-	{4.510e+01,1.700e+14,2.716867462904601e+25},
-	{2.120e+02,5.820e+15,1.277108403508764e+26},
-	{1.150e+03,1.900e+17,6.927709645088004e+26},
-	{1.044e+04,9.744e+18,6.289148562640985e+27},
-	{2.622e+04,4.968e+19,1.579513843816999e+28},
-	{6.587e+04,2.431e+20,3.968050678245718e+28},
-	{1.654e+05,1.151e+21,9.963748410271617e+28},
-	{4.156e+05,5.266e+21,2.503563031417219e+29},
-	{1.044e+06,2.318e+22,6.288917532113082e+29},
-	{2.622e+06,9.755e+22,1.579410809416864e+30},
-	{6.588e+06,3.911e+23,3.968207649843547e+30},
-	{8.293e+06,5.259e+23,4.995116726219748e+30},
-	{1.655e+07,1.435e+24,9.967984755458204e+30},
-	{3.302e+07,3.833e+24,1.988624478073943e+31},
-	{6.589e+07,1.006e+25,3.967807406359445e+31},
-	{1.315e+08,2.604e+25,7.917691186982454e+31},
-	{2.624e+08,6.676e+25,1.579648605894070e+32},
-	{3.304e+08,8.738e+25,1.988876577393412e+32},
-	{5.237e+08,1.629e+26,3.152005155076383e+32},
-	{8.301e+08,3.029e+26,4.995278531652059e+32},
-	{1.045e+09,4.129e+26,6.287859551784352e+32},
-	{1.316e+09,5.036e+26,7.917701445937253e+32},
-	{1.657e+09,6.860e+26,9.968319738044036e+32},
-	{2.626e+09,1.272e+27,1.579408507997411e+33},
-	{4.164e+09,2.356e+27,2.503766293549853e+33},
-	{6.601e+09,4.362e+27,3.967852390467774e+33},
-	{8.312e+09,5.662e+27,4.995474308724729e+33},
-	{1.046e+10,7.702e+27,6.285277578607203e+33},
-	{1.318e+10,1.048e+28,7.918132634568090e+33},
-	{1.659e+10,1.425e+28,9.964646988214994e+33},
-	{2.090e+10,1.938e+28,1.255052800774333e+34},
-	{2.631e+10,2.503e+28,1.579545673652798e+34},
-	{3.313e+10,3.404e+28,1.988488463504033e+34},
-	{4.172e+10,4.628e+28,2.503379640977065e+34},
-	{5.254e+10,5.949e+28,3.151720931652274e+34},
-	{6.617e+10,8.089e+28,3.968151735612910e+34},
-	{8.332e+10,1.100e+29,4.994995310195290e+34},
-	{1.049e+11,1.495e+29,6.286498800006776e+34},
-	{1.322e+11,2.033e+29,7.919521253825185e+34},
-	{1.664e+11,2.597e+29,9.964341016667146e+34},
-	{1.844e+11,2.892e+29,1.104024323001462e+35},
-	{2.096e+11,3.290e+29,1.254619611126682e+35},
-	{2.640e+11,4.473e+29,1.579588892045295e+35},
-	{3.325e+11,5.816e+29,1.988565738933728e+35},
-	{4.188e+11,7.538e+29,2.503561780689725e+35},
-	{4.299e+11,7.805e+29,2.569780082714395e+35},
-	{4.460e+11,7.890e+29,2.665824694449485e+35},
-	{5.228e+11,8.352e+29,3.123946525953616e+35},
-	{6.610e+11,9.098e+29,3.948222384313103e+35},
-	{7.964e+11,9.831e+29,4.755697604312120e+35},
-	{9.728e+11,1.083e+30,5.807556544067428e+35},
-	{1.196e+12,1.218e+30,7.138304213736713e+35},
-	{1.471e+12,1.399e+30,8.777653631971616e+35},
-	{1.805e+12,1.683e+30,1.076837272716171e+36},
-	{2.202e+12,1.950e+30,1.313417953138369e+36},
-	{2.930e+12,2.592e+30,1.747157788902558e+36},
-	{3.833e+12,3.506e+30,2.285004034820638e+36},
-	{4.933e+12,4.771e+30,2.939983642627298e+36},
-	{6.248e+12,6.481e+30,3.722722765704268e+36},
-	{7.801e+12,8.748e+30,4.646805278760175e+36},
-	{9.611e+12,1.170e+31,5.723413975645761e+36},
-	{1.246e+13,1.695e+31,7.417258934884369e+36},
-	{1.496e+13,2.209e+31,8.902909532230595e+36},
-	{1.778e+13,2.848e+31,1.057801059193907e+37},
-	{2.210e+13,3.931e+31,1.314278492046241e+37},
-	{2.988e+13,6.178e+31,1.775810743961577e+37},
-	{3.767e+13,8.774e+31,2.237518046976615e+37},
-	{5.081e+13,1.386e+32,3.015480061626022e+37},
-	{6.193e+13,1.882e+32,3.673108933334910e+37},
-	{7.732e+13,2.662e+32,4.582250451016437e+37},
-	{9.826e+13,3.897e+32,5.817514573447143e+37},
-	{1.262e+14,5.861e+32,7.462854442694524e+37}};
+        {7.800e+00,1.010e+08,4.698795180722962e+24},
+        {7.860e+00,1.010e+09,4.734939759036205e+24},
+        {7.900e+00,1.010e+10,4.759036144578364e+24},
+        {8.150e+00,1.010e+11,4.909638554215315e+24},
+        {1.160e+01,1.210e+12,6.987951807098076e+24},
+        {1.640e+01,1.400e+13,9.879518070489597e+24},
+        {4.510e+01,1.700e+14,2.716867462904601e+25},
+        {2.120e+02,5.820e+15,1.277108403508764e+26},
+        {1.150e+03,1.900e+17,6.927709645088004e+26},
+        {1.044e+04,9.744e+18,6.289148562640985e+27},
+        {2.622e+04,4.968e+19,1.579513843816999e+28},
+        {6.587e+04,2.431e+20,3.968050678245718e+28},
+        {1.654e+05,1.151e+21,9.963748410271617e+28},
+        {4.156e+05,5.266e+21,2.503563031417219e+29},
+        {1.044e+06,2.318e+22,6.288917532113082e+29},
+        {2.622e+06,9.755e+22,1.579410809416864e+30},
+        {6.588e+06,3.911e+23,3.968207649843547e+30},
+        {8.293e+06,5.259e+23,4.995116726219748e+30},
+        {1.655e+07,1.435e+24,9.967984755458204e+30},
+        {3.302e+07,3.833e+24,1.988624478073943e+31},
+        {6.589e+07,1.006e+25,3.967807406359445e+31},
+        {1.315e+08,2.604e+25,7.917691186982454e+31},
+        {2.624e+08,6.676e+25,1.579648605894070e+32},
+        {3.304e+08,8.738e+25,1.988876577393412e+32},
+        {5.237e+08,1.629e+26,3.152005155076383e+32},
+        {8.301e+08,3.029e+26,4.995278531652059e+32},
+        {1.045e+09,4.129e+26,6.287859551784352e+32},
+        {1.316e+09,5.036e+26,7.917701445937253e+32},
+        {1.657e+09,6.860e+26,9.968319738044036e+32},
+        {2.626e+09,1.272e+27,1.579408507997411e+33},
+        {4.164e+09,2.356e+27,2.503766293549853e+33},
+        {6.601e+09,4.362e+27,3.967852390467774e+33},
+        {8.312e+09,5.662e+27,4.995474308724729e+33},
+        {1.046e+10,7.702e+27,6.285277578607203e+33},
+        {1.318e+10,1.048e+28,7.918132634568090e+33},
+        {1.659e+10,1.425e+28,9.964646988214994e+33},
+        {2.090e+10,1.938e+28,1.255052800774333e+34},
+        {2.631e+10,2.503e+28,1.579545673652798e+34},
+        {3.313e+10,3.404e+28,1.988488463504033e+34},
+        {4.172e+10,4.628e+28,2.503379640977065e+34},
+        {5.254e+10,5.949e+28,3.151720931652274e+34},
+        {6.617e+10,8.089e+28,3.968151735612910e+34},
+        {8.332e+10,1.100e+29,4.994995310195290e+34},
+        {1.049e+11,1.495e+29,6.286498800006776e+34},
+        {1.322e+11,2.033e+29,7.919521253825185e+34},
+        {1.664e+11,2.597e+29,9.964341016667146e+34},
+        {1.844e+11,2.892e+29,1.104024323001462e+35},
+        {2.096e+11,3.290e+29,1.254619611126682e+35},
+        {2.640e+11,4.473e+29,1.579588892045295e+35},
+        {3.325e+11,5.816e+29,1.988565738933728e+35},
+        {4.188e+11,7.538e+29,2.503561780689725e+35},
+        {4.299e+11,7.805e+29,2.569780082714395e+35},
+        {4.460e+11,7.890e+29,2.665824694449485e+35},
+        {5.228e+11,8.352e+29,3.123946525953616e+35},
+        {6.610e+11,9.098e+29,3.948222384313103e+35},
+        {7.964e+11,9.831e+29,4.755697604312120e+35},
+        {9.728e+11,1.083e+30,5.807556544067428e+35},
+        {1.196e+12,1.218e+30,7.138304213736713e+35},
+        {1.471e+12,1.399e+30,8.777653631971616e+35},
+        {1.805e+12,1.683e+30,1.076837272716171e+36},
+        {2.202e+12,1.950e+30,1.313417953138369e+36},
+        {2.930e+12,2.592e+30,1.747157788902558e+36},
+        {3.833e+12,3.506e+30,2.285004034820638e+36},
+        {4.933e+12,4.771e+30,2.939983642627298e+36},
+        {6.248e+12,6.481e+30,3.722722765704268e+36},
+        {7.801e+12,8.748e+30,4.646805278760175e+36},
+        {9.611e+12,1.170e+31,5.723413975645761e+36},
+        {1.246e+13,1.695e+31,7.417258934884369e+36},
+        {1.496e+13,2.209e+31,8.902909532230595e+36},
+        {1.778e+13,2.848e+31,1.057801059193907e+37},
+        {2.210e+13,3.931e+31,1.314278492046241e+37},
+        {2.988e+13,6.178e+31,1.775810743961577e+37},
+        {3.767e+13,8.774e+31,2.237518046976615e+37},
+        {5.081e+13,1.386e+32,3.015480061626022e+37},
+        {6.193e+13,1.882e+32,3.673108933334910e+37},
+        {7.732e+13,2.662e+32,4.582250451016437e+37},
+        {9.826e+13,3.897e+32,5.817514573447143e+37},
+        {1.262e+14,5.861e+32,7.462854442694524e+37}};
 
       double mu_start;
       // Note that there is no c^2 needed in the computation of the
       // enthalpy as the original code removes it.
       for(size_t i=0;i<n_crust;i++) {
 
-	// Convert from g/cm^3 to 1.0e15 grams/cm^3 and take the log
-	log_e_tab[i]=log10(nst_arr[i][0]*C*C*KSCALE);
+        // Convert from g/cm^3 to 1.0e15 grams/cm^3 and take the log
+        log_e_tab[i]=log10(nst_arr[i][0]*C*C*KSCALE);
 
-	// Convert from dyne/cm^2 to 1.0e15 grams/cm^3 and take the log
-	log_p_tab[i]=log10(nst_arr[i][1]*KSCALE);
-	
-	// Convert the first term from g/cm^3 to 1/fm^4 and the second
-	// term from dyne/cm^2 to 1/fm^4 and then divide by a quantity
-	// in units of 1/fm^3 to obtain mu in units of 1/fm.
-	double mu=(nst_arr[i][0]/conv1+nst_arr[i][1]/conv2)/
-	  nst_arr[i][2]*1.0e39;
-	if (i==0) {
-	  mu_start=mu;
-	} else {
-	  log_h_tab[i]=log10(log(mu/mu_start));
-	}
-	// Take the log of a quantity in units of 1/cm^3
-	log_n0_tab[i]=log10(nst_arr[i][2]);
-	//std::cout << "1." << log_e_tab[i] << " " 
-	//<< log_p_tab[i] << " " << log_n0_tab[i] << " " << mu
-	//<< std::endl;
+        // Convert from dyne/cm^2 to 1.0e15 grams/cm^3 and take the log
+        log_p_tab[i]=log10(nst_arr[i][1]*KSCALE);
+        
+        // Convert the first term from g/cm^3 to 1/fm^4 and the second
+        // term from dyne/cm^2 to 1/fm^4 and then divide by a quantity
+        // in units of 1/fm^3 to obtain mu in units of 1/fm.
+        double mu=(nst_arr[i][0]/conv1+nst_arr[i][1]/conv2)/
+          nst_arr[i][2]*1.0e39;
+        if (i==0) {
+          mu_start=mu;
+        } else {
+          log_h_tab[i]=log10(log(mu/mu_start));
+        }
+        // Take the log of a quantity in units of 1/cm^3
+        log_n0_tab[i]=log10(nst_arr[i][2]);
+        //std::cout << "1." << log_e_tab[i] << " " 
+        //<< log_p_tab[i] << " " << log_n0_tab[i] << " " << mu
+        //<< std::endl;
       }
 
       // RNS chooses the psuedo-enthalpy at the smallest density
@@ -379,79 +379,79 @@ namespace o2scl {
       // Note that conv1*C*C*KSCALE is identical to conv2*KSCALE.
 
       for(size_t i=0;i<n;i++) {
-	// Convert from 1/fm^4 to 1.0e15 grams/cm^3 and take the log
-	log_e_tab[i+n_crust]=log10(eden[i]*conv1*C*C*KSCALE);
-	// Convert from 1/fm^4 to 1.0e15 grams/cm^3 and take the log
-	log_p_tab[i+n_crust]=log10(pres[i]*conv2*KSCALE);
-	// Take the log of a unitless quantity
-	log_h_tab[i+n_crust]=log10(log((eden[i]+pres[i])/nb[i]/
-					 mu_start));
-	// Convert from 1/fm^3 to 1/cm^3 and take the log
-	if (nb[i]<0.07643) {
-	  O2SCL_ERR2("EOS overlaps with crust in ",
-		     "eos_nstar_rot_interp::set_eos_fm().",
-		     o2scl::exc_einval);
-	}
-	log_n0_tab[i+n_crust]=log10(nb[i]*1.0e39);
-	double mu=(eden[i]+pres[i])/nb[i];
-	//std::cout << "1b." << log_e_tab[i+n_crust] << " " 
-	//<< log_p_tab[i+n_crust] << " "
-	//<< log_n0_tab[i+n_crust] << " " << mu
-	//<< std::endl;
+        // Convert from 1/fm^4 to 1.0e15 grams/cm^3 and take the log
+        log_e_tab[i+n_crust]=log10(eden[i]*conv1*C*C*KSCALE);
+        // Convert from 1/fm^4 to 1.0e15 grams/cm^3 and take the log
+        log_p_tab[i+n_crust]=log10(pres[i]*conv2*KSCALE);
+        // Take the log of a unitless quantity
+        log_h_tab[i+n_crust]=log10(log((eden[i]+pres[i])/nb[i]/
+                                         mu_start));
+        // Convert from 1/fm^3 to 1/cm^3 and take the log
+        if (nb[i]<0.07643) {
+          O2SCL_ERR2("EOS overlaps with crust in ",
+                     "eos_nstar_rot_interp::set_eos_fm().",
+                     o2scl::exc_einval);
+        }
+        log_n0_tab[i+n_crust]=log10(nb[i]*1.0e39);
+        double mu=(eden[i]+pres[i])/nb[i];
+        //std::cout << "1b." << log_e_tab[i+n_crust] << " " 
+        //<< log_p_tab[i+n_crust] << " "
+        //<< log_n0_tab[i+n_crust] << " " << mu
+        //<< std::endl;
       }
 
       return;
     }
 
     /** \brief Set the EOS from energy density, pressure, and
-	baryon density stored in powers of \f$ \mathrm{fm} \f$ .
+        baryon density stored in powers of \f$ \mathrm{fm} \f$ .
 
-	This function presumes that the user-specified vectors that
-	contain the crust EOS. Note that the user-specified EOS must
-	have a monotonically increasing baryon chemical potential.
+        This function presumes that the user-specified vectors that
+        contain the crust EOS. Note that the user-specified EOS must
+        have a monotonically increasing baryon chemical potential.
     */
     template<class vec1_t, class vec2_t, class vec3_t>
       void set_eos_crust_fm(size_t n, vec1_t &eden, vec2_t &pres,
-			    vec3_t &nb) {
+                            vec3_t &nb) {
 
       if (n>200) {
-	O2SCL_ERR2("Too many EOS points in ",
-		   "nstar_rot::set_eos().",o2scl::exc_einval);
+        O2SCL_ERR2("Too many EOS points in ",
+                   "nstar_rot::set_eos().",o2scl::exc_einval);
       }
       
       n_tab=n;
       
       // Conversion factor for energy density
       double conv1=o2scl_settings.get_convert_units().convert
-	("1/fm^4","g/cm^3",1.0);
+        ("1/fm^4","g/cm^3",1.0);
       // Conversion factor for pressure
       double conv2=o2scl_settings.get_convert_units().convert
-	("1/fm^4","dyne/cm^2",1.0);
+        ("1/fm^4","dyne/cm^2",1.0);
       
       // Note that conv1*C*C*KSCALE is identical to conv2*KSCALE.
       
       double mu_start;
       for(size_t i=0;i<n;i++) {
-	// Convert from 1/fm^4 to 1.0e15 grams/cm^3 and take the log
-	log_e_tab[i]=log10(eden[i]*conv1*C*C*KSCALE);
-	// Convert from 1/fm^4 to 1.0e15 grams/cm^3 and take the log
-	log_p_tab[i]=log10(pres[i]*conv2*KSCALE);
-	
-	double mu=(eden[i]+pres[i])/nb[i];
-	if (i==0) {
-	  mu_start=mu;
-	} else {
-	  log_h_tab[i]=log10(log(mu/mu_start));
-	  if (!std::isfinite(log_h_tab[i])) {
-	    O2SCL_ERR2("Non-increasing chemical potential ",
-		      "in set_eos_crust_fm().",o2scl::exc_einval);
-	  }
-	}
-	
-	log_n0_tab[i]=log10(nb[i]*1.0e39);
-	//std::cout << "2." << log_e_tab[i] << " " 
-	//<< log_p_tab[i] << " " << log_n0_tab[i] << " " << mu
-	//<< std::endl;
+        // Convert from 1/fm^4 to 1.0e15 grams/cm^3 and take the log
+        log_e_tab[i]=log10(eden[i]*conv1*C*C*KSCALE);
+        // Convert from 1/fm^4 to 1.0e15 grams/cm^3 and take the log
+        log_p_tab[i]=log10(pres[i]*conv2*KSCALE);
+        
+        double mu=(eden[i]+pres[i])/nb[i];
+        if (i==0) {
+          mu_start=mu;
+        } else {
+          log_h_tab[i]=log10(log(mu/mu_start));
+          if (!std::isfinite(log_h_tab[i])) {
+            O2SCL_ERR2("Non-increasing chemical potential ",
+                      "in set_eos_crust_fm().",o2scl::exc_einval);
+          }
+        }
+        
+        log_n0_tab[i]=log10(nb[i]*1.0e39);
+        //std::cout << "2." << log_e_tab[i] << " " 
+        //<< log_p_tab[i] << " " << log_n0_tab[i] << " " << mu
+        //<< std::endl;
       }
       
       // RNS chooses the pseudo-enthalpy at the smallest density
@@ -503,15 +503,15 @@ namespace o2scl {
 
     /** \brief Output EOS table to screen
 
-	\comment 
-	This is mostly for testing and should be replaced once
-	the arrays are properly replaced with vectors
-	\endcomment
+        \comment 
+        This is mostly for testing and should be replaced once
+        the arrays are properly replaced with vectors
+        \endcomment
      */
     void output() {
       for(int i=n_tab-1;i>=0;i--) {
-	std::cout << log_e_tab[i] << " " << log_p_tab[i] << " "
-		  << log_h_tab[i] << " " << log_n0_tab[i] << std::endl;
+        std::cout << log_e_tab[i] << " " << log_p_tab[i] << " "
+                  << log_h_tab[i] << " " << log_n0_tab[i] << std::endl;
       }
       std::cout << std::endl;
       return;
@@ -524,9 +524,9 @@ namespace o2scl {
       o2scl::table_units<> t;
       t.line_of_names("log_e log_p log_h log_n0");
       for(int i=0;i<n_tab;i++) {
-	double line[4]={log_e_tab[i],log_p_tab[i],log_h_tab[i],
-			log_n0_tab[i]};
-	t.line_of_data(4,line);
+        double line[4]={log_e_tab[i],log_p_tab[i],log_h_tab[i],
+                        log_n0_tab[i]};
+        t.line_of_data(4,line);
       }
       hf.open_or_create(fname);
       hdf_output(hf,t,"eos");
@@ -592,18 +592,20 @@ namespace o2scl {
       \verbatim embed:rst
       .. todo:: 
 
+         In class nstar_rot:
+
          - Better documentation is needed everywhere.
-	 - Test the resize() function
-	 - It appears that KAPPA and KSCALE contant an arbitrary
-	   constant, try changing it and see if we get identical
-	   results. Try to ensure that the values are consistent between
-	   the eos_nstar_rot class and the nstar_rot class.
-	 - Variables r_is_gp, p_center, h_center, and others only
-	   occur in spherical_star(), integrate(), and make_center(),
-	   and can be moved to function parameters or otherwise
-	   reorganized.
-	 - Directly compare spherical_star() output with 
-	   tov_solve results
+         - Test the resize() function
+         - It appears that KAPPA and KSCALE contant an arbitrary
+           constant, try changing it and see if we get identical
+           results. Try to ensure that the values are consistent between
+           the eos_nstar_rot class and the nstar_rot class.
+         - Variables r_is_gp, p_center, h_center, and others only
+           occur in spherical_star(), integrate(), and make_center(),
+           and can be moved to function parameters or otherwise
+           reorganized.
+         - Directly compare spherical_star() output with 
+           tov_solve results
 
       \endverbatim
 
@@ -780,7 +782,7 @@ namespace o2scl {
 
     /// Resize the grid
     void resize(int MDIV_new, int SDIV_new, int LMAX_new,
-		int RDIV_new);
+                int RDIV_new);
     
     /** \brief Default solver
      */
@@ -803,22 +805,22 @@ namespace o2scl {
 
     /// Solve for the gravitational mass
     int solve_grav_mass(size_t nv, const ubvector &x, ubvector &y,
-			double grav_mass);
+                        double grav_mass);
     
     /// Solve for the gravitational mass
     int solve_bar_mass(size_t nv, const ubvector &x, ubvector &y,
-			double bar_mass);
+                        double bar_mass);
     
     /// Solve for the gravitational mass
     int solve_ang_vel(size_t nv, const ubvector &x, ubvector &y,
-			double ang_vel);
+                        double ang_vel);
     
     /// Solve for the gravitational mass
     int solve_ang_mom(size_t nv, const ubvector &x, ubvector &y,
-			double ang_mom);
+                        double ang_mom);
     
     /** \brief Subclass of \ref nstar_rot which specifies the function
-	to invert a polytropic EOS
+        to invert a polytropic EOS
     */
     class polytrope_solve {
 
@@ -835,17 +837,17 @@ namespace o2scl {
     public:
 
       /** \brief Create a function object with specified 
-	  polytropic index and ?
+          polytropic index and ?
       */
       polytrope_solve(double Gamma_P, double ee) {
-	_Gamma_P=Gamma_P;
-	_ee=ee;
+        _Gamma_P=Gamma_P;
+        _ee=ee;
       }
       
       /** \brief The function
        */
       double operator()(double rho0) {
-	return pow(rho0,_Gamma_P)/(_Gamma_P-1.0)+rho0-_ee;
+        return pow(rho0,_Gamma_P)/(_Gamma_P-1.0)+rho0-_ee;
       }
       
     };
@@ -857,14 +859,14 @@ namespace o2scl {
     o2scl::search_vec<ubvector_range> sv_ub;
 
     /** \brief The number of grid points in integration of TOV equations
-	for spherical stars
+        for spherical stars
     */ 
     int RDIV;
   
     /** \brief Maximum value of s-coordinate (default 0.9999) */  
     double SMAX;
     /** \brief Spacing in \f$ s \f$ direction, 
-	\f$ \mathrm{SMAX}/(\mathrm{SDIV}-1) \f$ 
+        \f$ \mathrm{SMAX}/(\mathrm{SDIV}-1) \f$ 
     */
     double DS;
     /** \brief Spacing in \f$ \mu \f$ direction, \f$ 1/(\mathrm{MDIV}-1) \f$ 
@@ -877,7 +879,7 @@ namespace o2scl {
     /// \name Grid quantities set in make_grid()
     //@{
     /** \brief The quantity \f$ s \f$, which runs from 0 to SMAX
-	(which defaults to 0.9999) in steps of DS=SMAX/(SDIV-1)
+        (which defaults to 0.9999) in steps of DS=SMAX/(SDIV-1)
     */
     ubvector s_gp;
     /// \f$ s (1-s) \f$
@@ -885,7 +887,7 @@ namespace o2scl {
     /// \f$ 1-s \f$
     ubvector one_s;
     /** \brief The quantity \f$ \mu \f$ which runs from 0 to 1
-	in steps of DM=1/(MDIV-1)
+        in steps of DM=1/(MDIV-1)
      */
     ubvector mu;
     /// \f$ 1-\mu^2 \f$
@@ -1037,7 +1039,7 @@ namespace o2scl {
     ubmatrix S_omega;
 
     /** \brief The tolerance for the functions with the prefix "fix" 
-	(default \f$ 10^{-4} \f$ )
+        (default \f$ 10^{-4} \f$ )
     */
     double tol_abs;
 
@@ -1070,65 +1072,65 @@ namespace o2scl {
     int new_search(int n, ubvector &x, double val);
 
     /** \brief Driver for the interpolation routine. 
-	
-	First we find the tab. point nearest to xb, then we
-	interpolate using four points around xb.
-	
-	Used by \ref int_z(), \ref e_at_p(), \ref p_at_e(), \ref
-	p_at_h(), \ref h_at_p(), \ref n0_at_e(), \ref comp_omega(),
-	\ref comp_M_J(), \ref comp(), \ref spherical_star(), \ref
-	iterate().
+        
+        First we find the tab. point nearest to xb, then we
+        interpolate using four points around xb.
+        
+        Used by \ref int_z(), \ref e_at_p(), \ref p_at_e(), \ref
+        p_at_h(), \ref h_at_p(), \ref n0_at_e(), \ref comp_omega(),
+        \ref comp_M_J(), \ref comp(), \ref spherical_star(), \ref
+        iterate().
     */  
     double interp(ubvector &xp, ubvector &yp, int np, double xb);
 
     /** \brief Driver for the interpolation routine.
 
-	Four point interpolation at a given offset the index of the
-	first point k.
+        Four point interpolation at a given offset the index of the
+        first point k.
 
-	Used in \ref comp() .
+        Used in \ref comp() .
     */
     double interp_4_k(ubvector &xp, ubvector &yp, int np, double xb, int k);
     //@}
 
     /** \brief Integrate f[mu] from m-1 to m. 
 
-	This implements a 8-point closed Newton-Cotes formula.
-	
-	Used in \ref comp() .
+        This implements a 8-point closed Newton-Cotes formula.
+        
+        Used in \ref comp() .
     */
     double int_z(ubvector &f, int m);
 
     /// \name EOS functions
     //@{
     /** \brief Compute \f$ \varepsilon(P) \f$  
-	
-	Used in \ref dm_dr_is(), \ref dp_dr_is(), \ref integrate()
-	and \ref iterate(). 
+        
+        Used in \ref dm_dr_is(), \ref dp_dr_is(), \ref integrate()
+        and \ref iterate(). 
     */
     double e_at_p(double pp);
 
     /** \brief Compute \f$ P(\varepsilon) \f$  
-	
-	Used in \ref make_center() and \ref integrate().
+        
+        Used in \ref make_center() and \ref integrate().
     */
     double p_at_e(double ee);
 
     /** \brief Pressure at fixed enthalpy
 
-	Used in \ref iterate().
+        Used in \ref iterate().
     */
     double p_at_h(double hh);
 
     /** \brief Enthalpy at fixed pressure 
 
-	Used in \ref make_center() and \ref integrate().
+        Used in \ref make_center() and \ref integrate().
     */
     double h_at_p(double pp);
     
     /** \brief Baryon density at fixed energy density 
 
-	Used in \ref comp_M_J() and \ref comp() .
+        Used in \ref comp_M_J() and \ref comp() .
     */
     double n0_at_e(double ee);
     //@}
@@ -1160,64 +1162,64 @@ namespace o2scl {
     //@{
     /** \brief Returns the Legendre polynomial of degree n, evaluated at x. 
 
-	This uses the recurrence relation and is used in \ref comp_f_P()
-	which is called by the constructor.
+        This uses the recurrence relation and is used in \ref comp_f_P()
+        which is called by the constructor.
     */
     double legendre(int n, double x);
 
     /** \brief Compute two-point functions
-	
-	This function computes the 2-point functions \f$
-	f^m_{2n}(r,r') \f$ used to integrate the potentials \f$ \rho,
-	\gamma \f$ and \f$ \omega \f$ (See \ref Komatsu89 for
-	details). Since the grid points are fixed, we can compute the
-	functions \ref f_rho, \ref f_gamma, \ref f_omega, \ref P_2n,
-	and \ref P1_2n_1 once at the beginning.
+        
+        This function computes the 2-point functions \f$
+        f^m_{2n}(r,r') \f$ used to integrate the potentials \f$ \rho,
+        \gamma \f$ and \f$ \omega \f$ (See \ref Komatsu89 for
+        details). Since the grid points are fixed, we can compute the
+        functions \ref f_rho, \ref f_gamma, \ref f_omega, \ref P_2n,
+        and \ref P1_2n_1 once at the beginning.
 
-	\verbatim embed:rst
-	See Eqs. 27-29 of [Cook92]_ and Eqs. 33-35 of 
-	[Komatsu89]_. This function is called by the constructor.
-	\endverbatim
+        \verbatim embed:rst
+        See Eqs. 27-29 of [Cook92]_ and Eqs. 33-35 of 
+        [Komatsu89]_. This function is called by the constructor.
+        \endverbatim
     */
     void comp_f_P();
 
     /** \brief Create computational mesh. 
 
-	Create the computational mesh for \f$ s=r/(r+r_e) \f$
-	(where \f$ r_e \f$ is the coordinate equatorial radius) 
-	and \f$ \mu = \cos \theta \f$
-	using 
-	\f[
-	s[i]=\mathrm{SMAX}\left(\frac{i-1}{\mathrm{SDIV}-1}\right)
-	\f]
-	\f[
-	\mu[j]=\left(\frac{i-1}{\mathrm{MDIV}-1}\right)
-	\f]
-	When \f$ r=0 \f$, \f$ s=0 \f$, when \f$ r=r_e \f$, 
-	\f$ s=1/2 \f$, and when \f$ r = \infty \f$, \f$ s=1 \f$ .
-	Inverting the relationship between \f$ r \f$ and \f$ s \f$
-	gives \f$ r = r_e s / (1-s) \f$ .
-	\comment
-	(Note that some versions of the manual have a typo,
-	giving \f$ 1-i \f$ rather than \f$ i-1 \f$ above.)
-	\endcomment
-	
-	Points in the mu-direction are stored in the array
-	<tt>mu[i]</tt>. Points in the s-direction are stored in the
-	array <tt>s_gp[j]</tt>.
+        Create the computational mesh for \f$ s=r/(r+r_e) \f$
+        (where \f$ r_e \f$ is the coordinate equatorial radius) 
+        and \f$ \mu = \cos \theta \f$
+        using 
+        \f[
+        s[i]=\mathrm{SMAX}\left(\frac{i-1}{\mathrm{SDIV}-1}\right)
+        \f]
+        \f[
+        \mu[j]=\left(\frac{i-1}{\mathrm{MDIV}-1}\right)
+        \f]
+        When \f$ r=0 \f$, \f$ s=0 \f$, when \f$ r=r_e \f$, 
+        \f$ s=1/2 \f$, and when \f$ r = \infty \f$, \f$ s=1 \f$ .
+        Inverting the relationship between \f$ r \f$ and \f$ s \f$
+        gives \f$ r = r_e s / (1-s) \f$ .
+        \comment
+        (Note that some versions of the manual have a typo,
+        giving \f$ 1-i \f$ rather than \f$ i-1 \f$ above.)
+        \endcomment
+        
+        Points in the mu-direction are stored in the array
+        <tt>mu[i]</tt>. Points in the s-direction are stored in the
+        array <tt>s_gp[j]</tt>.
 
-	This function sets \ref s_gp, \ref s_1_s, \ref one_s,
-	\ref mu, \ref one_m2, \ref theta and \ref sin_theta .
-	All of these arrays are unit-indexed. It is called by
-	the constructor.
+        This function sets \ref s_gp, \ref s_1_s, \ref one_s,
+        \ref mu, \ref one_m2, \ref theta and \ref sin_theta .
+        All of these arrays are unit-indexed. It is called by
+        the constructor.
     */
     void make_grid();
     //@}
 
     /** \brief Compute central pressure and enthalpy from central
-	energy density
+        energy density
 
-	For polytropic EOSs, this also computes <tt>rho0_center</tt> .
+        For polytropic EOSs, this also computes <tt>rho0_center</tt> .
     */
     void make_center(double e_center);
 
@@ -1233,7 +1235,7 @@ namespace o2scl {
 
     /** \brief Compute various quantities.
 
-	The main post-processing function
+        The main post-processing function
     */
     void comp();
     //@}
@@ -1241,26 +1243,26 @@ namespace o2scl {
     /// \name For computing spherical stars
     //@{
     /** \brief Computes a spherically symmetric star 
-	
-	The metric is 
-	\f[
-	ds^2 = -e^{2\nu}dt^2 + e^{2\lambda} dr^2 + r^2 d\theta^2 + 
-	r^2 sin^2\theta d\phi^2
-	\f]
-	where \f$ r \f$ is an isotropic radial coordinate 
-	(corresponding to <tt>r_is</tt> in the code).
+        
+        The metric is 
+        \f[
+        ds^2 = -e^{2\nu}dt^2 + e^{2\lambda} dr^2 + r^2 d\theta^2 + 
+        r^2 sin^2\theta d\phi^2
+        \f]
+        where \f$ r \f$ is an isotropic radial coordinate 
+        (corresponding to <tt>r_is</tt> in the code).
       
-	\todo AWS: 7/20/20: Better document out how this metric
-	definition leads to \f$ \gamma=\nu+\lambda \f$ and \f$ \rho =
-	\nu - \lambda \f$ and the relationship between r and r_is .
+        \todo AWS: 7/20/20: Better document out how this metric
+        definition leads to \f$ \gamma=\nu+\lambda \f$ and \f$ \rho =
+        \nu - \lambda \f$ and the relationship between r and r_is .
 
-	This function computes \ref r_e_guess, \ref R_e, 
-	\ref Mass, and \ref Z_p .
+        This function computes \ref r_e_guess, \ref R_e, 
+        \ref Mass, and \ref Z_p .
     */
     void spherical_star();
 
     /** \brief Derivative of gravitational mass with respect to
-	isotropic radius */
+        isotropic radius */
     double dm_dr_is(double r_is, double r, double m, double p);
  
     /** \brief Derivative of pressure with respect to isotropic radius */
@@ -1270,9 +1272,9 @@ namespace o2scl {
     double dr_dr_is(double r_is, double r, double m);
   
     /** \brief Integrate one of the differential equations for 
-	spherical stars*/
+        spherical stars*/
     void integrate(int i_check, double &r_final, double &m_final,
-		   double &r_is_final);
+                   double &r_is_final);
     //@}
 
     /// \name Desc
@@ -1306,14 +1308,14 @@ namespace o2scl {
     nstar_rot();
 
     /** \brief Relative accuracy for the equatorial radius,
-	\f$ r_e \f$ (default \f$ 10^{-5} \f$) 
+        \f$ r_e \f$ (default \f$ 10^{-5} \f$) 
 
-	Used in \ref iterate() .
+        Used in \ref iterate() .
     */
     double eq_radius_tol_rel;                    
 
     /** \brief Accuracy for equatorial radius using alternate
-	solvers (default \f$ 10^{-9} \f$) 
+        solvers (default \f$ 10^{-9} \f$) 
      */
     double alt_tol_rel;                    
 
@@ -1323,16 +1325,16 @@ namespace o2scl {
 
     /** \brief Create an output table3d object from results
 
-	This function creates slices named
-	"ed pr h vsq rho gamma omega alpha" on the grid of
-	\f$ s \f$ and \f$ \mu \f$.
+        This function creates slices named
+        "ed pr h vsq rho gamma omega alpha" on the grid of
+        \f$ s \f$ and \f$ \mu \f$.
      */
     void output_table(o2scl::table3d &t);
     
     /// \name Output
     //@{
     /** \brief Central energy density (in units of 
-	\f$ 10^{15} \mathrm{g}/\mathrm{cm}^3 \f$) 
+        \f$ 10^{15} \mathrm{g}/\mathrm{cm}^3 \f$) 
     */
     double e_center;                     
     /** \brief Ratio of polar to equatorial radius
@@ -1354,7 +1356,7 @@ namespace o2scl {
     /// The velocity at the equator
     double velocity_equator;              
     /** \brief Circumferential radius in cm (i.e. the radius defined
-	such that \f$ 2 \pi R_e \f$ is the proper circumference) */
+        such that \f$ 2 \pi R_e \f$ is the proper circumference) */
     double R_e;                          
     /// Proper mass (in \f$ \mathrm{g} \f$ )
     double Mass_p;
@@ -1391,15 +1393,15 @@ namespace o2scl {
     /// Desc
     double vel_minus;
     /** \brief Height from surface of last stable co-rotating circular 
-	orbit in equatorial plane
+        orbit in equatorial plane
 
-	If this is zero then all orbits are stable.
+        If this is zero then all orbits are stable.
     */
     double h_plus;
     /** \brief Height from surface of last stable counter-rotating circular 
-	orbit in equatorial plane
-	
-	If this is zero then all orbits are stable.
+        orbit in equatorial plane
+        
+        If this is zero then all orbits are stable.
     */
     double h_minus;
     /// Desc
@@ -1415,7 +1417,7 @@ namespace o2scl {
     /// Desc
     double grv3;
     /** \brief Ratio of potential \f$ \omega \f$ to angular 
-	velocity \f$ \Omega \f$
+        velocity \f$ \Omega \f$
     */
     double om_over_Om;
     /** \brief Mass quadrupole moment
@@ -1432,7 +1434,7 @@ namespace o2scl {
     /// \name Internal constants
     //@{
     /** \brief Use the values of the constants from the original RNS
-	code
+        code
     */
     void constants_rns();
     /** \brief Use the O2scl constants (the default)
@@ -1445,7 +1447,7 @@ namespace o2scl {
     /** \brief Mass of sun (in g) */
     double MSUN;
     /** \brief Square of length scale in CGS units, 
-	\f$ \kappa \equiv 10^{-15} c^2/G \f$
+        \f$ \kappa \equiv 10^{-15} c^2/G \f$
     */
     double KAPPA;
     /** \brief The mass of one baryon (in g)
@@ -1478,143 +1480,143 @@ namespace o2scl {
     }
     
     /** \brief Construct a configuration with a fixed central 
-	energy density and a fixed axis ratio
+        energy density and a fixed axis ratio
 
-	The central energy density should be in \f$
-	\mathrm{g}/\mathrm{cm}^3 \f$ and the axis ratio is unitless.
-	This is fastest of the high-level interface functions as it
-	doesn't require an additional solver.
+        The central energy density should be in \f$
+        \mathrm{g}/\mathrm{cm}^3 \f$ and the axis ratio is unitless.
+        This is fastest of the high-level interface functions as it
+        doesn't require an additional solver.
     */
     int fix_cent_eden_axis_rat(double cent_eden, double axis_rat,
-			       bool use_guess=false);
+                               bool use_guess=false);
     
     /** \brief Construct a configuration with a fixed central 
-	energy density and a fixed gravitational mass
-	
-	The central energy density should be in \f$
-	\mathrm{g}/\mathrm{cm}^3 \f$ and the gravitational 
-	mass should be in solar masses. 
+        energy density and a fixed gravitational mass
+        
+        The central energy density should be in \f$
+        \mathrm{g}/\mathrm{cm}^3 \f$ and the gravitational 
+        mass should be in solar masses. 
     */
     int fix_cent_eden_grav_mass(double cent_eden, double grav_mass);
 
     /** \brief Construct a configuration with a fixed central 
-	energy density and a fixed baryonic mass
-	
-	The central energy density should be in \f$
-	\mathrm{g}/\mathrm{cm}^3 \f$ and the baryonic 
-	mass should be in solar masses. 
+        energy density and a fixed baryonic mass
+        
+        The central energy density should be in \f$
+        \mathrm{g}/\mathrm{cm}^3 \f$ and the baryonic 
+        mass should be in solar masses. 
     */
     int fix_cent_eden_bar_mass(double cent_eden, double bar_mass);
 
     /** \brief Construct a configuration with a fixed central 
-	energy density and the Keplerian rotation rate
-	
-	The central energy density should be in \f$
-	\mathrm{g}/\mathrm{cm}^3 \f$ .
+        energy density and the Keplerian rotation rate
+        
+        The central energy density should be in \f$
+        \mathrm{g}/\mathrm{cm}^3 \f$ .
     */
     int fix_cent_eden_with_kepler(double cent_eden);
 
     /** \brief Experimental alternate form for
-	\ref fix_cent_eden_with_kepler()
+        \ref fix_cent_eden_with_kepler()
     */
     int fix_cent_eden_with_kepler_alt(double cent_eden,
-				      bool use_guess=false);
+                                      bool use_guess=false);
 
     /** \brief Experimental alternate form for
-	\ref fix_cent_eden_grav_mass()
+        \ref fix_cent_eden_grav_mass()
     */
     int fix_cent_eden_grav_mass_alt(double cent_eden, double grav_mass,
-				    bool use_guess=false);
+                                    bool use_guess=false);
     
     /** \brief Experimental alternate form for
-	\ref fix_cent_eden_bar_mass()
+        \ref fix_cent_eden_bar_mass()
     */
     int fix_cent_eden_bar_mass_alt(double cent_eden, double bar_mass,
-				   bool use_guess=false);
+                                   bool use_guess=false);
     
     /** \brief Experimental alternate form for
-	\ref fix_cent_eden_ang_vel()
+        \ref fix_cent_eden_ang_vel()
     */
     int fix_cent_eden_ang_vel_alt(double cent_eden, double ang_vel,
-				  bool use_guess=false);
+                                  bool use_guess=false);
     
     /** \brief Experimental alternate form for
-	\ref fix_cent_eden_ang_mom()
+        \ref fix_cent_eden_ang_mom()
     */
     int fix_cent_eden_ang_mom_alt(double cent_eden, double ang_mom,
-				  bool use_guess=false);
+                                  bool use_guess=false);
     
     /** \brief Construct a non-rotating configuration with a fixed central 
-	energy density
-	
-	The central energy density should be in \f$
-	\mathrm{g}/\mathrm{cm}^3 \f$ .
+        energy density
+        
+        The central energy density should be in \f$
+        \mathrm{g}/\mathrm{cm}^3 \f$ .
     */
     int fix_cent_eden_non_rot(double cent_eden);
 
     /** \brief Construct a configuration with a fixed central 
-	energy density and a fixed angular velocity.
-	
-	The central energy density should be in \f$
-	\mathrm{g}/\mathrm{cm}^3 \f$ and the angular
-	velocity should be in \f$ \mathrm{rad}/\mathrm{s} \f$.
-	The final angular velocity (possibly slightly different
-	than <tt>ang_vel</tt> is stored in \ref Omega .
-	
-	\note In the original RNS code, the <tt>ang_vel</tt> argument
-	is different because it was rescaled by a factor of \f$ 10^{4}
-	\f$.
+        energy density and a fixed angular velocity.
+        
+        The central energy density should be in \f$
+        \mathrm{g}/\mathrm{cm}^3 \f$ and the angular
+        velocity should be in \f$ \mathrm{rad}/\mathrm{s} \f$.
+        The final angular velocity (possibly slightly different
+        than <tt>ang_vel</tt> is stored in \ref Omega .
+        
+        \note In the original RNS code, the <tt>ang_vel</tt> argument
+        is different because it was rescaled by a factor of \f$ 10^{4}
+        \f$.
     */
     int fix_cent_eden_ang_vel(double cent_eden, double ang_vel);
 
     /** \brief Construct a configuration with a fixed central 
-	energy density and a fixed angular momentum.
-	
-	The central energy density should be in \f$
-	\mathrm{g}/\mathrm{cm}^3 \f$. The angular momentum should be
-	in units of \f$ G M_{\odot}^2/C \f$ .
+        energy density and a fixed angular momentum.
+        
+        The central energy density should be in \f$
+        \mathrm{g}/\mathrm{cm}^3 \f$. The angular momentum should be
+        in units of \f$ G M_{\odot}^2/C \f$ .
     */
     int fix_cent_eden_ang_mom(double cent_eden, double ang_mom);
     //@}
     
     /** \name Testing functions
 
-	These functions compare this class with hard-coded results
-	obtained with the RNS code.
+        These functions compare this class with hard-coded results
+        obtained with the RNS code.
     */
     //@{
     /** \brief Test determining configuration with fixed central
-	energy density and fixed radius ratio with EOS C
+        energy density and fixed radius ratio with EOS C
     */    
     void test1(o2scl::test_mgr &t);
     
     /** \brief Test configuration rotating and Keplerian frequency
-	with a fixed central energy density and EOS C
+        with a fixed central energy density and EOS C
     */    
     void test2(o2scl::test_mgr &t);
     
     /** \brief Test fixed central energy density and fixed 
-	gravitational mass with EOS C
+        gravitational mass with EOS C
     */    
     void test3(o2scl::test_mgr &t);
     
     /** \brief Test fixed central energy density and fixed baryonic 
-	mass with EOS C
+        mass with EOS C
     */    
     void test4(o2scl::test_mgr &t);
     
     /** \brief Test fixed central energy density and fixed angular
-	velocity with EOS C
+        velocity with EOS C
     */    
     void test5(o2scl::test_mgr &t);
     
     /** \brief Test fixed central energy density and fixed angular 
-	momentum with EOS C
+        momentum with EOS C
     */    
     void test6(o2scl::test_mgr &t);
 
     /** \brief Test a series of non-rotating stars on a energy density
-	grid with EOS C
+        grid with EOS C
     */    
     void test7(o2scl::test_mgr &t);
     

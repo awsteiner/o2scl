@@ -257,8 +257,9 @@ namespace o2scl {
         \verbatim embed:rst
         .. todo:: 
 
-           - It surprises me that n3 is not -res[11]. Is there 
-             a sign error in the color densities?
+           - In eos_quark_cfl::calc_eq_temp_p(): It surprises me that
+             n3 is not -res[11]. Is there a sign error in the color
+             densities?
 
         \endverbatim
     */
@@ -439,8 +440,8 @@ namespace o2scl {
         \verbatim embed:rst
         .. todo:: 
 
-           - In the code, the equal mass case seems to be commented
-             out. Why?
+           - In eos_quark_cfl::gapped_eigenvalues(): In the code, the
+             equal mass case seems to be commented out. Why?
 
         \endverbatim
     */

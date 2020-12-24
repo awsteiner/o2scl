@@ -53,25 +53,25 @@ namespace o2scl {
   public:
 
     /** \brief The kinetic energy symmetry coefficient in inverse fm 
-	(default \f$ 17~\mathrm{MeV}~/(\hbar c) \f$)
+        (default \f$ 17~\mathrm{MeV}~/(\hbar c) \f$)
 
-	The default value corresponds to an effective mass of about
-	0.7. 
+        The default value corresponds to an effective mass of about
+        0.7. 
     */
     double a;
     
     /** \brief The potential energy symmetry coefficient in inverse 
-	fm (default \f$ 13~\mathrm{MeV}~/(\hbar c) \f$) 
+        fm (default \f$ 13~\mathrm{MeV}~/(\hbar c) \f$) 
     */
     double b;
 
     /** \brief The coefficient of a density to the fourth term in 
-	inverse fm (default 0)
+        inverse fm (default 0)
     */
     double kpp;
     
     /** \brief The exponent of the high-density symmetry energy 
-	(unitless, default 1.0)
+        (unitless, default 1.0)
     */
     double gamma;
     
@@ -84,7 +84,7 @@ namespace o2scl {
     virtual int calc_e(fermion &ln, fermion &lp, thermo &lth);
 
     /** \brief Set kprime so that the energy per baryon of zero-density 
-	matter is zero
+        matter is zero
     */
     virtual int set_kprime_zeroden() {
       kprime=162.0*eoa+9.0*comp;
@@ -92,7 +92,7 @@ namespace o2scl {
     }
     
     /** \brief Set kpp so that the energy per baryon of zero-density 
-	matter is zero
+        matter is zero
     */
     virtual int set_kpp_zeroden() {
       kpp=12.0*kprime-108.0*comp-1944.0*eoa;
@@ -100,59 +100,59 @@ namespace o2scl {
     }
 
     /** \brief Fix the kinetic energy symmetry coefficient from 
-	the reduced nucleon effective mass and the saturation density
+        the reduced nucleon effective mass and the saturation density
 
-	This assumes the nucleons are non-relativistic and that the
-	neutrons and protons have equal mass. The relativistic
-	corrections are around 1 part in \f$ 10^{6} \f$.
+        This assumes the nucleons are non-relativistic and that the
+        neutrons and protons have equal mass. The relativistic
+        corrections are around 1 part in \f$ 10^{6} \f$.
 
-	\verbatim embed:rst
-	.. todo:: 
+        \verbatim embed:rst
+        .. todo:: 
 
-	   - In eos_had_schematic::set_a_from_mstar(): 
-	     This was computed in schematic_sym.nb, which might 
-	     be added to the documentation?
+           - In eos_had_schematic::set_a_from_mstar(): 
+             This was computed in schematic_sym.nb, which might 
+             be added to the documentation?
 
         \endverbatim
     */
     virtual int set_a_from_mstar(double u_msom, double mnuc) {
       a=cbrt(n0*n0*o2scl_const::pi2*o2scl_const::pi2/4.0/3.0)/
-	(2.0*u_msom*mnuc);
+        (2.0*u_msom*mnuc);
       return 0;
     }
 
     /** \brief Return the energy per baryon of matter at zero density
 
-	This is inaccessible from calc_e() so is available separately
-	here. Using set_kprime_zeroden() or set_kpp_zeroden() will 
-	fix kprime or kpp (respectively) to ensure that this is zero.
+        This is inaccessible from calc_e() so is available separately
+        here. Using set_kprime_zeroden() or set_kpp_zeroden() will 
+        fix kprime or kpp (respectively) to ensure that this is zero.
 
-	The result provided here does not include the nucleon mass and
-	is given in \f$ \mathrm{fm}^{-1} \f$.
+        The result provided here does not include the nucleon mass and
+        is given in \f$ \mathrm{fm}^{-1} \f$.
     */
     virtual double eoa_zeroden() {
       return eoa+comp/18.0-kprime/162.0+kpp/1944.0;
     }
     
     /** \brief Return the baryon number susceptibility, \f$ \partial \mu_B /
-	\partial n_B \f$ in \f$ \mathrm{fm}^{2} \f$. 
+        \partial n_B \f$ in \f$ \mathrm{fm}^{2} \f$. 
 
-	\verbatim embed:rst
-	.. todo:: 
+        \verbatim embed:rst
+        .. todo:: 
 
-	   - This function, eos_had_schematic::baryon_suscep() 
-	     is untested.
+           - This function, eos_had_schematic::baryon_suscep() 
+             is untested.
 
         \endverbatim
     */
     virtual double baryon_suscep(double n, double x) {
       double alpha=n*(1.0-2.0*x);
       double ret=(kpp*n*(5.0-2.0*n0)*(n-n0)*(n-n0)+
-		  18.0*n0*(3.0*comp*n*(3.0*n-2.0*n0)*n0)+
-		  kprime*n*(2.0*n*n-3.0*n*n0+n0*n0)+3.0*pow(n0,3.0)*alpha*
-		  (-1.0*a*pow(n/n0,2.0/3.0)*(-6.0+alpha)+
-		   9*b*pow(n/n0,gamma)*(2.0+alpha*(-1.0+gamma))))/
-	(486.0*n*pow(n0,4.0));
+                  18.0*n0*(3.0*comp*n*(3.0*n-2.0*n0)*n0)+
+                  kprime*n*(2.0*n*n-3.0*n*n0+n0*n0)+3.0*pow(n0,3.0)*alpha*
+                  (-1.0*a*pow(n/n0,2.0/3.0)*(-6.0+alpha)+
+                   9*b*pow(n/n0,gamma)*(2.0+alpha*(-1.0+gamma))))/
+        (486.0*n*pow(n0,4.0));
       return ret;
     }
 

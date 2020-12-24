@@ -485,9 +485,10 @@ namespace o2scl {
       \verbatim embed:rst
       .. todo:: 
 
-         - There are still a few points for which the electron/photon
-           EOS seems to be off, but this may be the result of small
-           inaccuracies from finite-differencing the LS table.
+         - In class eos_sn_ls: There are still a few points for which
+           the electron/photon EOS seems to be off, but this may be
+           the result of small inaccuracies from finite-differencing
+           the LS table.
 
       \endverbatim
   */
@@ -681,9 +682,9 @@ namespace o2scl {
       \verbatim embed:rst
       .. todo:: 
 
-         - Add the T=0 and Ye=0 data to this class. Separate
-           tables for these cases have been released, but I don't 
-           think this class can read them yet. 
+         - In class eos_sn_stos: Add the T=0 and Ye=0 data to this
+           class. Separate tables for these cases have been released,
+           but I don't think this class can read them yet.
 
       \endverbatim
   */

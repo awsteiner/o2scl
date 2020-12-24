@@ -151,10 +151,11 @@ namespace o2scl {
       \verbatim embed:rst
       .. todo:: 
 
-         - 12/4/14: This doesn't gracefully handle negative values of
-           n0 and n1 as then the neutron and proton densities become
-           negative. This needs to be addressed. For now, there is a
-           fix at line 246 in nucmass_ldrop.cpp .
+         - In class nucmass_ldrop, 12/4/14: This doesn't gracefully
+           handle negative values of n0 and n1 as then the neutron and
+           proton densities become negative. This needs to be
+           addressed. For now, there is a fix at line 246 in
+           nucmass_ldrop.cpp .
 
       \endverbatim
 

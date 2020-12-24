@@ -4,7 +4,8 @@ O\ :sub:`2`\ scl Equations of State
 ===================================
 
 O\ :sub:`2`\ scl_eos is a sub-library for constructing equations of
-state of dense matter.
+state of dense matter. O\ :sub:`2`\ scl_eos is part of `O2scl
+<../../html/index.html>`_.
 
 
 .. toctree::

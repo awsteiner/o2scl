@@ -11,7 +11,6 @@ densities:
 - :ref:`eos_had_schematic <eos_had_schematic>`,
 - :ref:`eos_had_skyrme <eos_had_skyrme>`,
 - :ref:`eos_had_apr <eos_had_apr>`,
-- :ref:`eos_had_hlps <eos_had_hlps>`,
 - :ref:`eos_had_gogny <eos_had_gogny>`,
 - :ref:`eos_had_potential <eos_had_potential>`,
 - :ref:`eos_had_phen <eos_had_phen>`, and
