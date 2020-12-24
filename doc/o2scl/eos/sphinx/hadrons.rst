@@ -19,10 +19,10 @@ densities:
 and those which are more easily written in terms of the neutron
 and proton chemical potentials:
   
-:ref:`eos_had_rmf <eos_had_rmf>`, 
-:ref:`eos_had_rmf_delta <eos_had_rmf_delta>`, 
-:ref:`eos_had_ddc <eos_had_ddc>`, and
-:ref:`eos_had_virial <eos_had_virial>`.
+- :ref:`eos_had_rmf <eos_had_rmf>`, 
+- :ref:`eos_had_rmf_delta <eos_had_rmf_delta>`, 
+- :ref:`eos_had_ddc <eos_had_ddc>`, and
+- :ref:`eos_had_virial <eos_had_virial>`.
 
 All of these EOSs are built on the base class :ref:`eos_had_base
 <eos_had_base>`, which includes several methods which apply to all of

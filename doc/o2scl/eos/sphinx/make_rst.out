@@ -13,7 +13,6 @@ Namespace: o2scl class: eos_had_base
 Namespace: o2scl class: eos_had_ddc
 Namespace: o2scl class: eos_had_eden_base
 Namespace: o2scl class: eos_had_gogny
-Namespace: o2scl class: eos_had_hlps
 Namespace: o2scl class: eos_had_phen
 Namespace: o2scl class: eos_had_potential
 Namespace: o2scl class: eos_had_pres_base

@@ -51,15 +51,15 @@ namespace o2scl {
     
     /** \brief Create a new mass formula object
 
-	The string \c model is either <tt>"95"</tt>
-	or <tt>"96"</tt>. 
+        The string \c model is either <tt>"95"</tt>
+        or <tt>"96"</tt>. 
     */
     nucmass_dz_table(std::string model="96", bool external=false);
 
     virtual ~nucmass_dz_table();
 
     /** \brief Return false if the mass formula does not include 
-	specified nucleus
+        specified nucleus
     */
     virtual bool is_included(int Z, int N);
     
@@ -106,7 +106,13 @@ namespace o2scl {
       sufficient? Maybe not, in which case there isn't really a
       problem. 
       \endcomment
-      \todo Document each field.
+
+      \verbatim embed:rst
+      .. todo:: 
+
+         In class nucmass_dz_fit: Document each field.
+
+      \endverbatim
   */
   class nucmass_dz_fit : public nucmass_fit_base {
     
@@ -123,12 +129,12 @@ namespace o2scl {
     
     /** \name Workspace vectors used internally
 
-	These are allocated in the class constructor.
+        These are allocated in the class constructor.
     */
     //@{
     /** \brief Desc
-	
-	Note that the first index is already 0 indexed in the DZ version
+        
+        Note that the first index is already 0 indexed in the DZ version
     */
     tensor3<> onp;
 
@@ -178,7 +184,7 @@ namespace o2scl {
     ubvector b;
     
     /** \brief Return false if the mass formula does not include 
-	specified nucleus
+        specified nucleus
     */
     virtual bool is_included(int Z, int N);
 
@@ -192,12 +198,12 @@ namespace o2scl {
     virtual int guess_fun(size_t nv, ubvector &x);
 
     /** \brief Return the binding energy in MeV
-	
-	This function reproduces the original function called
-	<tt>mass10()</tt>, except that, to be consistent
-	with the other \o2 nuclear mass classes, it returns 
-	the binding energy with the opposite sign from the
-	original.
+        
+        This function reproduces the original function called
+        <tt>mass10()</tt>, except that, to be consistent
+        with the other \o2 nuclear mass classes, it returns 
+        the binding energy with the opposite sign from the
+        original.
     */
     virtual double binding_energy(int Z, int N);    
 
@@ -230,7 +236,12 @@ namespace o2scl {
       nucmass::m_prot are adjusted to make sure that the mass
       excesses match the values given in the original.
       
-      \todo Document each field.
+      \verbatim embed:rst
+      .. todo:: 
+
+         In class nucmass_dz_fit_33: Document each field.
+
+      \endverbatim
 
       \verbatim embed:rst 
       Some explanations about the individual terms
@@ -282,7 +293,7 @@ namespace o2scl {
     
     /** \name Workspace vectors used internally
 
-	These are allocated in the class constructor.
+        These are allocated in the class constructor.
     */
     //@{
     ubvector dyda, fyda, fyd0, onps, oei, dei, op2, ym, op1;
@@ -313,17 +324,17 @@ namespace o2scl {
     virtual int guess_fun(size_t nv, ubvector &x);
 
     /** \brief Return false if the mass formula does not include 
-	specified nucleus
+        specified nucleus
     */
     virtual bool is_included(int Z, int N);
 
     /** \brief Return the binding energy in MeV
-	
-	This function reproduces the original function called
-	<tt>EMASSDZ()</tt>, except that, to be consistent
-	with the other \o2 nuclear mass classes, it returns 
-	the binding energy with the opposite sign from the
-	original.
+        
+        This function reproduces the original function called
+        <tt>EMASSDZ()</tt>, except that, to be consistent
+        with the other \o2 nuclear mass classes, it returns 
+        the binding energy with the opposite sign from the
+        original.
     */
     virtual double binding_energy(int Z, int N);
     

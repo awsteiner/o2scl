@@ -39,12 +39,18 @@ namespace o2scl {
     
   /** \brief HFB Mass formula 
 
-      \todo Mg40 is present in some tables but not others. Compare
-      hfb14-plain with hfb14-plain_v0. This may be related to the
-      fact that the mass excess of Mg40 differs significantly between
-      the 2003 and 2013 Audi et al. tables?
+      \verbatim embed:rst
+      .. todo:: 
 
-      \todo Update to include hfb17. 
+         In class nucmass_hfb:
+
+         - Mg40 is present in some tables but not others. Compare
+           hfb14-plain with hfb14-plain_v0. This may be related to the
+           fact that the mass excess of Mg40 differs significantly between
+           the 2003 and 2013 Audi et al. tables?
+         - Update to include hfb17. 
+
+      \endverbatim
   */
   class nucmass_hfb : public nucmass_table {
     
@@ -99,7 +105,7 @@ namespace o2scl {
     virtual ~nucmass_hfb();
 
     /** \brief Return false if the mass formula does not include 
-	specified nucleus
+        specified nucleus
     */
     virtual bool is_included(int Z, int N);
     
@@ -107,10 +113,10 @@ namespace o2scl {
     virtual double mass_excess(int Z, int N);
     
     /** \brief Get the entry for the specified proton and neutron number
-	
-	This method searches the table using a cached binary search
-	algorithm. It is assumed that the table is sorted first by
-	proton number and then by neutron number.
+        
+        This method searches the table using a cached binary search
+        algorithm. It is assumed that the table is sorted first by
+        proton number and then by neutron number.
     */
     nucmass_hfb::entry get_ZN(int l_Z, int l_N);
     
@@ -121,8 +127,8 @@ namespace o2scl {
     virtual const char *type() { return "nucmass_hfb"; }
 
     /** \brief Set data
-	
-	This function is used by the HDF I/O routines.
+        
+        This function is used by the HDF I/O routines.
     */
     int set_data(int n_mass, nucmass_hfb::entry *m, std::string ref);
 
@@ -154,8 +160,8 @@ namespace o2scl {
 
     /** \brief Version of \ref nucmass_hfb::entry with spin and parity
 
-	\note This cannot be a child of nucmass_hfb::entry in order
-	for the HDF I/O preprocessor macros, like HOFFSET, to work
+        \note This cannot be a child of nucmass_hfb::entry in order
+        for the HDF I/O preprocessor macros, like HOFFSET, to work
     */
     struct entry {
     
@@ -210,7 +216,7 @@ namespace o2scl {
     };
 
     /** \brief Return false if the mass formula does not include 
-	specified nucleus
+        specified nucleus
     */
     virtual bool is_included(int Z, int N);
 
@@ -218,10 +224,10 @@ namespace o2scl {
     virtual double mass_excess(int Z, int N);
 
     /** \brief Get the entry for the specified proton and neutron number
-	
-	This method searches the table using a cached binary search
-	algorithm. It is assumed that the table is sorted first by
-	proton number and then by neutron number.
+        
+        This method searches the table using a cached binary search
+        algorithm. It is assumed that the table is sorted first by
+        proton number and then by neutron number.
     */
     nucmass_hfb_sp::entry get_ZN(int l_Z, int l_N);
     
@@ -229,8 +235,8 @@ namespace o2scl {
     virtual const char *type() { return "nucmass_hfb_sp"; }
 
     /** \brief Set data
-	
-	This function is used by the HDF I/O routines.
+        
+        This function is used by the HDF I/O routines.
     */
     int set_data(int n_mass, nucmass_hfb_sp::entry *m, std::string ref);
 

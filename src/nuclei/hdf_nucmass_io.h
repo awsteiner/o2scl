@@ -66,7 +66,7 @@ namespace o2scl_hdf {
       see \ref hdf_nucmass_io.h .
   */
   void ame_load_ext(o2scl::nucmass_ame &ame, std::string file_name, 
-		    std::string table_name, bool exp_only=false);
+    std::string table_name, bool exp_only=false);
 
   /** \brief Read an AME mass table from the \o2 internal data files
 
@@ -88,7 +88,7 @@ namespace o2scl_hdf {
       see \ref hdf_nucmass_io.h .
   */
   void ame_load(o2scl::nucmass_ame &ame, std::string name="16",
-		bool exp_only=false);
+                bool exp_only=false);
   
   /** \brief Read data for \ref o2scl::nucmass_mnmsk from an HDF table
 
@@ -96,7 +96,7 @@ namespace o2scl_hdf {
       see \ref hdf_nucmass_io.h .
    */
   void mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, std::string model="",
-		  std::string filename="");
+                  std::string filename="");
   
   /** \brief Read data for \ref o2scl::nucmass_hfb from an HDF table
       
@@ -109,7 +109,7 @@ namespace o2scl_hdf {
       see \ref hdf_nucmass_io.h .
   */
   void hfb_load(o2scl::nucmass_hfb &hfb, size_t model=14,
-		std::string filename="");
+                std::string filename="");
 
   /** \brief Read data for \ref o2scl::nucmass_hfb from an HDF table
       
@@ -118,13 +118,18 @@ namespace o2scl_hdf {
       (\ref Samyn04). If a number outside this range is given, then 27
       is assumed.
 
-      \todo Document models 22 through 27.
+      \verbatim embed:rst
+      .. todo:: 
+
+         In hfb_sp_load(): Document models 22 through 27.
+
+      \endverbatim
 
       \note This function is in the o2scl_hdf namespace,
       see \ref hdf_nucmass_io.h .
   */
   void hfb_sp_load(o2scl::nucmass_hfb_sp &hfb, size_t model=27, 
-		   std::string filename="");
+                   std::string filename="");
 
 #ifndef DOXYGEN_NO_O2NS
 }

@@ -38,7 +38,12 @@ namespace o2scl {
 
   /** \brief Nuclear structure from Stoitsov et al.
       
-      \todo Unfinished.
+      \verbatim embed:rst
+      .. todo:: 
+
+         Class nucmass_sdnp is unfinished.
+
+      \endverbatim
       
       Models
       - "sdnp03" - from Skyrme model SkM*

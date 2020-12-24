@@ -47,7 +47,12 @@ namespace o2scl {
 
   /** \brief Equation of state for a relativistic boson
       
-      \todo Testing not completely finished.
+      \verbatim embed:rst
+      .. todo:: 
+
+         - In class boson_rel: Testing not completely finished.
+         
+      \endverbatim
   */
   class boson_rel : public boson_thermo {
 

@@ -95,13 +95,20 @@ namespace o2scl {
       with \f$ r_0 = 1.16 \f$ fm, then 
       \f$ n_0 = 0.152946 \mathrm{fm}^{-3} \f$.
 
-      \todo Fix pairing energy and double vs. int
-      \todo Document drip_binding_energy(), etc.
-      \todo Decide on number of fit parameters (10 or 12?) or
-      let the user decide
-      \todo Document the protected variables
-      \todo Set the neutron and proton masses and hbarc to Moller et al.'s 
-      values
+      \verbatim embed:rst
+      .. todo:: 
+
+         In class nucmass_frdm:
+
+         - Fix pairing energy and double vs. int
+         - Document drip_binding_energy(), etc.
+         - Decide on number of fit parameters (10 or 12?) or
+           let the user decide
+         - Document the protected variables
+         - Set the neutron and proton masses and hbarc to Moller et al.'s 
+           values
+
+      \endverbatim
 
       \future Add microscopic part.
   */
@@ -128,7 +135,7 @@ namespace o2scl {
     /// Wigner constant in MeV (default 30)
     double W;
     /** \brief electronic-binding constant in MeV 
-	(default \f$ 1.433 \times 10^{-5} \f$ ).
+        (default \f$ 1.433 \times 10^{-5} \f$ ).
     */
     double ael;
     /// Proton root-mean-square radius in fm (default 0.80)
@@ -144,7 +151,7 @@ namespace o2scl {
     /// Range of Yukawa-plus-exponential potential, 0.68 fm
     double a;
     /** \brief Range of Yukawa function used to generate nuclear 
-	charge distribution, 0.70 fm
+        charge distribution, 0.70 fm
     */
     double aden;
     /// Average pairing-gap constant, 4.80 MeV
@@ -189,21 +196,21 @@ namespace o2scl {
     /** \brief Return the binding energy in MeV
      */
     virtual double drip_binding_energy_d(double Z, double N,
-					 double npout, double nnout,
-					 double chi);
+                                         double npout, double nnout,
+                                         double chi);
 
     /** \brief Given \c Z and \c N, return the mass excess in MeV
-	in a many-body environment
+        in a many-body environment
 
-	This is an experimental version of mass_excess_d which removes
-	pairing, computes nn, np, Rn, and Rp, and attempts to correct
-	the surface. This function probably doesn't work at the
-	moment. It's not currently used by \ref
-	drip_binding_energy_d().
+        This is an experimental version of mass_excess_d which removes
+        pairing, computes nn, np, Rn, and Rp, and attempts to correct
+        the surface. This function probably doesn't work at the
+        moment. It's not currently used by \ref
+        drip_binding_energy_d().
     */
     virtual double drip_mass_excess_d(double Z, double N,
-				      double np_out, double nn_out,
-				      double chi);
+                                      double np_out, double nn_out,
+                                      double chi);
 
   protected:
 
@@ -243,7 +250,7 @@ namespace o2scl {
     double c5;
 
     /** \brief Coefficient for the proton form-factor correction to the 
-	Coulomb energy
+        Coulomb energy
     */
     double f0;
 
@@ -371,7 +378,7 @@ namespace o2scl {
       double S2n;
 
       /** \brief Percentage of daughters generated in beta decay after
-	  beta-delayed neutron emission
+          beta-delayed neutron emission
       */
       double PA;
 
@@ -402,7 +409,7 @@ namespace o2scl {
     };
   
     /** \brief Return false if the mass formula does not include 
-	specified nucleus
+        specified nucleus
     */
     virtual bool is_included(int Z, int N);
     
@@ -410,10 +417,10 @@ namespace o2scl {
     virtual double mass_excess(int Z, int N);
     
     /** \brief Get the entry for the specified proton and neutron number
-	
-	This method searches the table using a cached binary search
-	algorithm. It is assumed that the table is sorted first by
-	proton number and then by neutron number.
+        
+        This method searches the table using a cached binary search
+        algorithm. It is assumed that the table is sorted first by
+        proton number and then by neutron number.
     */
     nucmass_mnmsk::entry get_ZN(int l_Z, int l_N);
     
@@ -440,7 +447,7 @@ namespace o2scl {
     
     /** \brief Set data
 
-	This function is used by the HDF I/O routines.
+        This function is used by the HDF I/O routines.
     */
     int set_data(int n_mass, nucmass_mnmsk::entry *m, std::string ref);
 
@@ -474,7 +481,7 @@ namespace o2scl {
   public:
 
     /** \brief Return false if the mass formula does not include 
-	specified nucleus
+        specified nucleus
     */
     virtual bool is_included(int Z, int N);
 

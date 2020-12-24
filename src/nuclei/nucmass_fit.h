@@ -93,27 +93,27 @@ namespace o2scl {
     virtual void eval(nucmass &n, double &res);
 
     /** \brief Fit a nuclear mass formula using least squares
-	and report the associated \f$ \chi^2 \f$ and 
-	covariance matrix
+        and report the associated \f$ \chi^2 \f$ and 
+        covariance matrix
 
-	\note This function only works for \ref fit_method equal
-	to \ref chi_squared_me or \ref chi_squared_be .
+        \note This function only works for \ref fit_method equal
+        to \ref chi_squared_me or \ref chi_squared_be .
      */
     void fit_covar(nucmass_fit_base &n, 
-		   double &chi2, ubmatrix &covar);
+                   double &chi2, ubmatrix &covar);
 
     /** \brief The form of the fitting function which is set
-	for a fitting object of type \ref o2scl::fit_nonlin
+        for a fitting object of type \ref o2scl::fit_nonlin
      */
     double fit_covar_fun(size_t np, const ubvector &p,
-			 double x, const std::vector<size_t> &Zlist,
-			 const std::vector<size_t> &Nlist);
+                         double x, const std::vector<size_t> &Zlist,
+                         const std::vector<size_t> &Nlist);
     
     /** \brief The default minimizer
 
-	The value of def_mmin::ntrial is automatically multiplied by
-	10 in the constructor because the minimization frequently
-	requires more trials than the default.
+        The value of def_mmin::ntrial is automatically multiplied by
+        10 in the constructor because the minimization frequently
+        requires more trials than the default.
     */
     mmin_simp2<> def_mmin;
     
@@ -136,12 +136,12 @@ namespace o2scl {
     }
 
     /** \brief Set the fit uncertainties (in MeV) from the first \c nv
-	elements of \c u
+        elements of \c u
      */
     template<class vec_t> void set_uncerts(size_t nv, vec_t &u) {
       if (nv==0) {
-	O2SCL_ERR2("Tried to give zero uncertainties in nucmass_fit::",
-		   "set_uncerts().",exc_efailed);
+        O2SCL_ERR2("Tried to give zero uncertainties in nucmass_fit::",
+                   "set_uncerts().",exc_efailed);
       }
       if (uncs.size()>0) uncs.clear();
       uncs.resize(nv);
@@ -150,16 +150,22 @@ namespace o2scl {
     }
     
     /** \brief Evaluate isospin dependence of fit quality
+        
+        \verbatim embed:rst
+        .. todo:: 
 
-	\todo More documentation and compute uncertainty
+           - In nucmass_fit::eval_isospin_beta(): 
+             More documentation and compute uncertainty.
+
+        \endverbatim
      */
     void eval_isospin_beta(nucmass &n, ubvector_int &n_qual,
-			   ubvector &qual, int max_iso=20);
+                           ubvector &qual, int max_iso=20);
     
     /** \brief Evaluate isospin dependence of fit quality
      */
     void eval_isospin(nucmass &n, ubvector_int &n_qual,
-		      ubvector &qual, int min_iso=-8, int max_iso=60);
+                      ubvector &qual, int min_iso=-8, int max_iso=60);
 
     /** \brief The function to minimize
      */
@@ -177,7 +183,7 @@ namespace o2scl {
     
     /** \brief The nuclear mass formula to fit to
 
-	This pointer is set by fit() and eval().
+        This pointer is set by fit() and eval().
      */
     nucmass_fit_base *nmf;
     

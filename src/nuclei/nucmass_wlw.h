@@ -38,7 +38,12 @@ namespace o2scl {
 
   /** \brief Nuclear structure from Wang et al.
 
-      \todo Unfinished.
+      \verbatim embed:rst
+      .. todo:: 
+
+         Class nucmass_wlw is unfinished.
+
+      \endverbatim
 
       Models
       - "WS3.2" in file "wlw10.o2" from \ref Wang10 

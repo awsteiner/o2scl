@@ -9,7 +9,6 @@
   <compound refid="classo2scl_1_1eos__had__ddc" kind="class"><name>o2scl::eos_had_ddc</name>
   <compound refid="classo2scl_1_1eos__had__eden__base" kind="class"><name>o2scl::eos_had_eden_base</name>
   <compound refid="classo2scl_1_1eos__had__gogny" kind="class"><name>o2scl::eos_had_gogny</name>
-  <compound refid="classo2scl_1_1eos__had__hlps" kind="class"><name>o2scl::eos_had_hlps</name>
   <compound refid="classo2scl_1_1eos__had__phen" kind="class"><name>o2scl::eos_had_phen</name>
   <compound refid="classo2scl_1_1eos__had__potential" kind="class"><name>o2scl::eos_had_potential</name>
   <compound refid="classo2scl_1_1eos__had__pres__base" kind="class"><name>o2scl::eos_had_pres_base</name>
