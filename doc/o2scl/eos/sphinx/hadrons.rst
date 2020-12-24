@@ -3,16 +3,33 @@ Equations of State of Hadronic Matter
 
 :ref:`O2scl_eos <o2scle>`
      
-The hadronic equations of state are all inherited from
-:ref:`eos_had_base <eos_had_base>` : :ref:`eos_had_schematic
-<eos_had_schematic>`, :ref:`eos_had_skyrme <eos_had_skyrme>`,
-:ref:`eos_had_rmf <eos_had_rmf>`, :ref:`eos_had_apr <eos_had_apr>`,
-and :ref:`eos_had_potential <eos_had_potential>`.
+The hadronic equations of state (EOSs) treat nucleonic (neutrons
+and protons) matter at zero or finite temperature. There are
+models which are easily written in terms of the neutron and proton
+densities:
 
-The :ref:`eos_had_base <eos_had_base>` class includes several methods
-that can be used to calculate the saturation properties of nuclear
-matter. These methods are sometimes overloaded in descendants when
-exact formulas are available.
+- :ref:`eos_had_schematic <eos_had_schematic>`,
+- :ref:`eos_had_skyrme <eos_had_skyrme>`,
+- :ref:`eos_had_apr <eos_had_apr>`,
+- :ref:`eos_had_hlps <eos_had_hlps>`,
+- :ref:`eos_had_gogny <eos_had_gogny>`,
+- :ref:`eos_had_potential <eos_had_potential>`,
+- :ref:`eos_had_phen <eos_had_phen>`, and
+- :ref:`eos_had_tabulated <eos_had_tabulated>`,
+
+and those which are more easily written in terms of the neutron
+and proton chemical potentials:
+  
+:ref:`eos_had_rmf <eos_had_rmf>`, 
+:ref:`eos_had_rmf_delta <eos_had_rmf_delta>`, 
+:ref:`eos_had_ddc <eos_had_ddc>`, and
+:ref:`eos_had_virial <eos_had_virial>`.
+
+All of these EOSs are built on the base class :ref:`eos_had_base
+<eos_had_base>`, which includes several methods which apply to all of
+these models. For example, methods which calculate the saturation
+properties of nuclear matter. These methods are sometimes overloaded
+in descendants when exact formulas are available.
 
 There is also a set of classes to modify the quartic term of the
 symmetry energy: :ref:`eos_had_sym4_rmf <eos_had_sym4_rmf>`,

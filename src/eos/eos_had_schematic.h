@@ -107,8 +107,12 @@ namespace o2scl {
 	corrections are around 1 part in \f$ 10^{6} \f$.
 
 	\verbatim embed:rst
-	.. todo:: This was computed in schematic_sym.nb, which might 
-	          be added to the documentation?
+	.. todo:: 
+
+	   - In eos_had_schematic::set_a_from_mstar(): 
+	     This was computed in schematic_sym.nb, which might 
+	     be added to the documentation?
+
         \endverbatim
     */
     virtual int set_a_from_mstar(double u_msom, double mnuc) {
@@ -134,8 +138,11 @@ namespace o2scl {
 	\partial n_B \f$ in \f$ \mathrm{fm}^{2} \f$. 
 
 	\verbatim embed:rst
-	.. todo:: This function, eos_had_schematic::baryon_suscep() 
-                  is untested.
+	.. todo:: 
+
+	   - This function, eos_had_schematic::baryon_suscep() 
+	     is untested.
+
         \endverbatim
     */
     virtual double baryon_suscep(double n, double x) {

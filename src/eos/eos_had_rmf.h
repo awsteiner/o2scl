@@ -283,19 +283,24 @@ namespace o2scl {
       \hline
 
       \verbatim embed:rst
-      .. todo:: - The functions fcomp_fields(), fkprime_fields(), 
-                  and fesym_fields() are not quite correct if the 
-                  neutron and proton masses are different. For this 
-		  reason, they are currently unused by saturation().
-		- The fix_saturation() and calc_cr() functions use 
-                  mnuc, and should be modified to allow different 
-		  neutron and proton masses.
-		- Check the formulas in the "Background" section
-		- Make sure that this class properly handles particles 
-                  for which inc_rest_mass is true/false
-		- The calc_e() function fails to converge at lower 
-                  densities. See the testing code which has trouble 
-		  with NL3 and RAPR.
+      .. todo:: 
+
+         In class eos_had_rmf:
+
+         - The functions fcomp_fields(), fkprime_fields(), 
+           and fesym_fields() are not quite correct if the 
+           neutron and proton masses are different. For this 
+           reason, they are currently unused by saturation().
+         - The fix_saturation() and calc_cr() functions use 
+           mnuc, and should be modified to allow different 
+           neutron and proton masses.
+         - Check the formulas in the "Background" section
+         - Make sure that this class properly handles particles 
+           for which inc_rest_mass is true/false
+         - The calc_e() function fails to converge at lower 
+           densities. See the testing code which has trouble 
+           with NL3 and RAPR.
+
       \endverbatim
 
       \future

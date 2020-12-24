@@ -107,9 +107,12 @@ namespace o2scl {
 	all zero.
 	
 	\verbatim embed:rst
-	.. todo:: In eos_had_ddc::calc_eq_e(), is the 
-                  thermodynamic identity is satisfied even 
-	          when the field equations are not solved? Check this.
+	.. todo:: 
+
+	   - In eos_had_ddc::calc_eq_e(): is the thermodynamic identity
+	     is satisfied even when the field equations are not solved?
+	     Check this.
+
 	\endverbatim
     */
     virtual int calc_eq_e(fermion &neu, fermion &p, double sig, 

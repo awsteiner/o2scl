@@ -43,17 +43,20 @@ namespace o2scl {
       couplings as in \ref eos_had_rmf .
       
       \verbatim embed:rst
-      .. todo:: The interpretation of the calc_e() function is a bit
-                The couplings in the test code match the table but the
-		maximum masses appear much smaller than GM91. I need to
-		check that muons are added correctly, and it might be good 
-		to compare with a different reference. This also might be 
-		due to a different crust EOS. 
+      .. todo:: 
 
-      .. todo:: The interpretation of the calc_e() function is a bit
-                unclear, so I need to more clearly figure out what 
-		that function ought to do. I don't think it's really used
-		at the moment. 
+         In class eos_had_rmf_hyp:
+
+         - The couplings in the test code match the table but the
+           maximum masses appear much smaller than GM91. I need to
+           check that muons are added correctly, and it might be good 
+           to compare with a different reference. This also might be 
+           due to a different crust EOS. 
+         - The interpretation of the calc_e() function is a bit
+           unclear, so I need to more clearly figure out what 
+           that function ought to do. I don't think it's really used
+           at the moment. 
+
       \endverbatim
   */
   class eos_had_rmf_hyp : public eos_had_rmf {
@@ -80,14 +83,14 @@ namespace o2scl {
 
     /// The function for calc_e()
     virtual int calc_e_solve_fun(size_t nv, const ubvector &ex, 
-			 ubvector &ey);
+                         ubvector &ey);
 
     /** \brief Equation for solving for beta-equilibrium at T=0
     */
     virtual int solve_beta_eq_T0(size_t nv, const ubvector &x,
-				 ubvector &y, const double &nB,
-				 fermion &e, bool include_muons,
-				 fermion &mu, fermion_rel &frel);
+                                 ubvector &y, const double &nB,
+                                 fermion &e, bool include_muons,
+                                 fermion &mu, fermion_rel &frel);
     
   public:
 
@@ -125,7 +128,7 @@ namespace o2scl {
     bool inc_cascade;
 
     /** \brief Equation of state and meson field equations 
-	as a function of chemical potentials
+        as a function of chemical potentials
     */
     virtual int calc_eq_hyp_p
       (fermion &ne, fermion &pr, fermion &lam, fermion &sigp, fermion &sigz, 
@@ -133,40 +136,40 @@ namespace o2scl {
        double lrho, double &f1, double &f2, double &f3, thermo &lth);
 
     /** \brief Compute xs assuming a fixed value of the \f$ \Lambda \f$
-	binding energy in nuclear matter in \f$ \mathrm{fm}^{-1} \f$
+        binding energy in nuclear matter in \f$ \mathrm{fm}^{-1} \f$
      */
     void calc_xs(double lam_be);
 
     /** \brief Compute xs assuming a fixed value of the \f$ \Lambda \f$
-	binding energy in nuclear matter in \f$ \mathrm{fm}^{-1} \f$
+        binding energy in nuclear matter in \f$ \mathrm{fm}^{-1} \f$
      */
     void calc_xw(double lam_be);
 
     /** \brief Equation of state as a function of density
 
-	Initial guesses for the chemical potentials are taken
-	from the user-given values. Initial guesses for the fields
-	can be set by set_fields(), or default values will be used.
-	After the call to calc_e(), the final values of the fields
-	can be accessed through get_fields(). 
+        Initial guesses for the chemical potentials are taken
+        from the user-given values. Initial guesses for the fields
+        can be set by set_fields(), or default values will be used.
+        After the call to calc_e(), the final values of the fields
+        can be accessed through get_fields(). 
     */
     virtual int calc_hyp_e(fermion &ne, fermion &pr,
-			   fermion &lam, fermion &sigp, fermion &sigz, 
-			   fermion &sigm, fermion &casz, fermion &casm,
-			   thermo &lth);
+                           fermion &lam, fermion &sigp, fermion &sigz, 
+                           fermion &sigm, fermion &casz, fermion &casm,
+                           thermo &lth);
 
     /** \brief Set the hyperon objects
      */
     virtual void set_hyp(fermion &lam, fermion &sigp, fermion &sigz, 
-			 fermion &sigm, fermion &casz, fermion &casm);
+                         fermion &sigm, fermion &casz, fermion &casm);
     
     /** \brief Compute the EOS in beta-equilibrium at 
-	zero temperature
+        zero temperature
     */
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
-			   fermion &e, bool include_muons,
-			   fermion &mu, fermion_rel &frel,
-			   std::shared_ptr<table_units<> > results);
+                           fermion &e, bool include_muons,
+                           fermion &mu, fermion_rel &frel,
+                           std::shared_ptr<table_units<> > results);
     
   };
 

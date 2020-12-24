@@ -217,10 +217,16 @@ namespace o2scl {
 
       \b Todos
       
-      \todo
-      - Convert W0 to b4 and b4p everywhere
-      - Remove use of mnuc in calparfun()?
-      - Update reference list.
+      \verbatim embed:rst
+      .. todo:: 
+
+         In class eos_had_skyrme:
+
+         - Convert W0 to b4 and b4p everywhere
+         - Remove use of mnuc in calparfun()?
+         - Update reference list.
+
+      \endverbatim
 
       \future
       - This EOS typically converges very well. One exception seems
@@ -579,7 +585,12 @@ namespace o2scl {
 	Given \c n0 and \c m, this calculates the Landau parameters in
 	nuclear matter as given in \ref Margueron02
      
-	\todo This needs to be checked.
+	\verbatim embed:rst
+	.. todo:: 
+
+           - This function, eos_had_skyrme::landau_nuclear() needs to 
+	     be checked.
+	\endverbatim
 	
 	(Checked once on 11/05/03)
     */
@@ -593,7 +604,12 @@ namespace o2scl {
 	Given 'n0' and 'm', this calculates the Landau parameters in
 	neutron matter as given in \ref Margueron02
 	
-	\todo This needs to be checked
+	\verbatim embed:rst
+	.. todo:: 
+
+           - This function, eos_had_skyrme::landau_neutron() needs to 
+             be checked.
+	\endverbatim
 	
 	(Checked once on 11/05/03)
     */
@@ -646,9 +662,14 @@ namespace o2scl {
 	eos_had_skyrme::alpha, eos_had_skyrme::t1, and eos_had_skyrme::t2
 	respectively.
       
-	\todo Does this work for both 'a' and 'b' non-zero?
-	
-	\todo Compare to similar formulas in \ref Margueron02
+	\verbatim embed:rst
+	.. todo:: 
+
+	   In function eos_had_skyrme::calpar(): 
+
+	   - Does this work for both 'a' and 'b' non-zero?
+           - Compare to similar formulas in \ref Margueron02
+	\endverbatim
     */
     int calpar(double gt0=-10.0, double gt3=70.0, double galpha=0.2,
 	       double gt1=2.0, double gt2=-1.0);
@@ -696,9 +717,13 @@ namespace o2scl {
 	- <tt>CrnJ1</tt>: \f$ \mathrm{fm}^{-1} \f$
 	- <tt>alpha2</tt>: unitless
 
-	\todo These expressions are not exactly the same
-	as those in \ref Bender03, so I need to find out why
-	and make this more clear.
+	\verbatim embed:rst
+	.. todo:: 
+
+	   - These expressions are not exactly the same
+	     as those in [Bender03]_, so I need to find out why
+	     and make this more clear.
+	\endverbatim
     */
     void alt_params_set
       (double Crr00, double Crr10, double Crr0D, double Crr1D, 

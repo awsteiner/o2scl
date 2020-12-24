@@ -589,17 +589,23 @@ namespace o2scl {
       and [Stergioulas03]_.
       \endverbatim
 
-      \todo Better documentation is needed everywhere.
-      \todo Test the resize() function
-      \todo It appears that KAPPA and KSCALE contant an arbitrary constant, 
-      try changing it and see if we get identical results. Try to ensure
-      that the values are consistent between the eos_nstar_rot class
-      and the nstar_rot class.
-      \todo Variables r_is_gp, p_center, h_center, and others only
-      occur in spherical_star(), integrate(), and make_center(), and
-      can be moved to function parameters or otherwise reorganized.
-      \todo Directly compare spherical_star() output with 
-      tov_solve results
+      \verbatim embed:rst
+      .. todo:: 
+
+         - Better documentation is needed everywhere.
+	 - Test the resize() function
+	 - It appears that KAPPA and KSCALE contant an arbitrary
+	   constant, try changing it and see if we get identical
+	   results. Try to ensure that the values are consistent between
+	   the eos_nstar_rot class and the nstar_rot class.
+	 - Variables r_is_gp, p_center, h_center, and others only
+	   occur in spherical_star(), integrate(), and make_center(),
+	   and can be moved to function parameters or otherwise
+	   reorganized.
+	 - Directly compare spherical_star() output with 
+	   tov_solve results
+
+      \endverbatim
 
       \future Consider moving the int_z() algorithm to vector_derint.h
       \future Remove the unit-indexed arrays everywhere.

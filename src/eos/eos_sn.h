@@ -110,53 +110,53 @@ namespace o2scl {
     /// \name Data
     //@{
     /** \brief Total free energy per baryon in MeV (without 
-	baryon rest masses but including electron rest mass)
+        baryon rest masses but including electron rest mass)
 
-	By default, this energy is relative to 
-	\f[
-	m_n (1-Y_e) + m_p Y_e
-	\f]
-	where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
-	is stored in \ref m_prot .
+        By default, this energy is relative to 
+        \f[
+        m_n (1-Y_e) + m_p Y_e
+        \f]
+        where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
+        is stored in \ref m_prot .
     */
     tensor_grid3<> F;
     /** \brief Free energy per baryon without lepton and photon 
-	contributions in MeV
+        contributions in MeV
 
-	By default, this energy is relative to 
-	\f[
-	m_n (1-Y_e) + m_p Y_e
-	\f]
-	where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
-	is stored in \ref m_prot .
+        By default, this energy is relative to 
+        \f[
+        m_n (1-Y_e) + m_p Y_e
+        \f]
+        where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
+        is stored in \ref m_prot .
     */
     tensor_grid3<> Fint;
     /** \brief Total internal energy per baryon in MeV (without 
-	baryon rest masses but including electron rest mass)
+        baryon rest masses but including electron rest mass)
 
-	By default, this energy is relative to 
-	\f[
-	m_n (1-Y_e) + m_p Y_e
-	\f]
-	where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
-	is stored in \ref m_prot .
+        By default, this energy is relative to 
+        \f[
+        m_n (1-Y_e) + m_p Y_e
+        \f]
+        where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
+        is stored in \ref m_prot .
     */
     tensor_grid3<> E;
     /** \brief Internal energy per baryon without lepton and photon 
-	contributions in MeV
+        contributions in MeV
 
-	By default, this energy is relative to 
-	\f[
-	m_n (1-Y_e) + m_p Y_e
-	\f]
-	where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
-	is stored in \ref m_prot .
+        By default, this energy is relative to 
+        \f[
+        m_n (1-Y_e) + m_p Y_e
+        \f]
+        where \f$ m_n \f$ is stored in \ref m_neut and \f$ m_p \f$
+        is stored in \ref m_prot .
     */
     tensor_grid3<> Eint;
     /// Total pressure in \f$ \mathrm{MeV}/\mathrm{fm}^3 \f$
     tensor_grid3<> P;
     /** \brief Pressure without lepton and photon contributions
-	in \f$ \mathrm{MeV}/\mathrm{fm}^3 \f$
+        in \f$ \mathrm{MeV}/\mathrm{fm}^3 \f$
     */
     tensor_grid3<> Pint;
     /// Total entropy per baryon
@@ -165,14 +165,14 @@ namespace o2scl {
     tensor_grid3<> Sint;
     /** \brief Neutron chemical potential in MeV
 
-	By default this is relative to the neutron mass in
-	\ref m_neut .
+        By default this is relative to the neutron mass in
+        \ref m_neut .
     */
     tensor_grid3<> mun;
     /** \brief Proton chemical potential in MeV
 
-	By default this is relative to the proton mass in
-	\ref m_prot .
+        By default this is relative to the proton mass in
+        \ref m_prot .
     */
     tensor_grid3<> mup;
     /// Proton number
@@ -200,10 +200,10 @@ namespace o2scl {
     /// \name Interpolation
     //@{
     /** \brief Set the interpolation type of all the 
-	\ref o2scl::tensor_grid3 objects to type \c interp_type .
+        \ref o2scl::tensor_grid3 objects to type \c interp_type .
 
-	\note This is used by the constructor to set all tensors
-	to linear interpolation.
+        \note This is used by the constructor to set all tensors
+        to linear interpolation.
     */
     void set_interp_type(size_t interp_type);
     //@}
@@ -211,12 +211,12 @@ namespace o2scl {
     /// \name Nucleon masses
     //@{
     /** \brief Neutron mass in \f$ \mathrm{MeV} \f$ 
-	(defaults to o2scl_mks::mass_neutron times o2scl_const::hc_mev_fm)
+        (defaults to o2scl_mks::mass_neutron times o2scl_const::hc_mev_fm)
     */
     double m_neut;
     
     /** \brief Proton mass in \f$ \mathrm{MeV} \f$ 
-	(defaults to o2scl_mks::mass_proton times o2scl_const::hc_mev_fm)
+        (defaults to o2scl_mks::mass_proton times o2scl_const::hc_mev_fm)
     */
     double m_prot;
     //@}
@@ -234,45 +234,45 @@ namespace o2scl {
     /// Relativistic fermion thermodynamics
     fermion_rel relf;
     /** \brief Compute the electron and photon contribution for the full
-	grid
+        grid
 
-	If \ref baryons_only_loaded is true, this function computes
-	the data for <tt>E, P, S,</tt> and <tt>F</tt> by adding
-	electrons and photons to the baryon contributions stored in
-	<tt>Eint, Pint, Sint,</tt> and <tt>Fint</tt>. Otherwise,
-	this function computes <tt>Eint, Pint, Sint,</tt> and 
-	<tt>Fint</tt> by subtracting electron and photon 
-	contributions from <tt>E, P, S,</tt> and <tt>F</tt>. 
+        If \ref baryons_only_loaded is true, this function computes
+        the data for <tt>E, P, S,</tt> and <tt>F</tt> by adding
+        electrons and photons to the baryon contributions stored in
+        <tt>Eint, Pint, Sint,</tt> and <tt>Fint</tt>. Otherwise,
+        this function computes <tt>Eint, Pint, Sint,</tt> and 
+        <tt>Fint</tt> by subtracting electron and photon 
+        contributions from <tt>E, P, S,</tt> and <tt>F</tt>. 
 
-	The electron contribution to the internal energy and free
-	energy computed by this function includes the electron rest
-	mass.
+        The electron contribution to the internal energy and free
+        energy computed by this function includes the electron rest
+        mass.
     */
     virtual void compute_eg();
 
     /** \brief Compute lepton contribution at one point
 
-	The temperature is to be specified in \c MeV.
+        The temperature is to be specified in \c MeV.
     */
     virtual void compute_eg_point(double nB, double Ye, double T,
-				  thermo &th, double &mue);
+                                  thermo &th, double &mue);
 
     /** \brief Check electrons and photons
-	
-	This checks that the electron and photon thermodynamics
-	generated by \o2 is consistent with the data in 
-	\c E, \c Eint, \c F, \c Fint, \c P, \c Pint, \c S,
-	and \c Sint.
+        
+        This checks that the electron and photon thermodynamics
+        generated by \o2 is consistent with the data in 
+        \c E, \c Eint, \c F, \c Fint, \c P, \c Pint, \c S,
+        and \c Sint.
     */
     virtual double check_eg();
     //@}
 
     /** \brief Test the free energy and store results in \c tm
 
-	This checks that the data in \c Fint is consistent with that
-	in \c Eint and \c Sint (if \ref baryons_only_loaded is true)
-	and that \c F is consistent with that in \c E and \c S (if
-	\ref with_leptons_loaded is true).
+        This checks that the data in \c Fint is consistent with that
+        in \c Eint and \c Sint (if \ref baryons_only_loaded is true)
+        and that \c F is consistent with that in \c E and \c S (if
+        \ref with_leptons_loaded is true).
     */
     void check_free_energy(double &avg);
     
@@ -281,26 +281,26 @@ namespace o2scl {
     int verbose;
 
     /** \brief Compute properties of matter in beta equilibrium
-	at fixed entropy per baryon
+        at fixed entropy per baryon
 
-	This function just does a simple hard-coded linear
-	interpolation.
+        This function just does a simple hard-coded linear
+        interpolation.
 
-	The temperature is returned in units of MeV.
+        The temperature is returned in units of MeV.
     */
     virtual void beta_eq_sfixed
     (double nB, double entr, double &Ye, double &T);
 
     /** \brief Compute the electron fraction for beta-equilibrium
-	at fixed density and temperature 
-	
-	This function just uses linear interpolation to 
-	interpolate in baryon density and temperature and 
-	the uses a quadratic to determine the minimum of the
-	free energy.
+        at fixed density and temperature 
+        
+        This function just uses linear interpolation to 
+        interpolate in baryon density and temperature and 
+        the uses a quadratic to determine the minimum of the
+        free energy.
 
-	If \ref data_with_leptons() is <tt>false</tt>, then 
-	\ref compute_eg() is used to compute the leptons. 
+        If \ref data_with_leptons() is <tt>false</tt>, then 
+        \ref compute_eg() is used to compute the leptons. 
     */
     virtual void beta_eq_Tfixed(double nB, double T, double &Ye);
 
@@ -337,11 +337,11 @@ namespace o2scl {
     std::vector<std::string> oth_units;
 
     /** \brief A slice of data from \ref eos_sn_base for one index fixed
-	
-	This class allows one to easily construct a \ref
-	o2scl::interp2_direct object automatically by fixing one index
-	from one of the \ref o2scl::tensor_grid3 objects in a child of
-	\ref o2scl::eos_sn_base .
+        
+        This class allows one to easily construct a \ref
+        o2scl::interp2_direct object automatically by fixing one index
+        from one of the \ref o2scl::tensor_grid3 objects in a child of
+        \ref o2scl::eos_sn_base .
     */
     class slice {
       
@@ -361,63 +361,63 @@ namespace o2scl {
       /** \brief The interpolation object
        */
       interp2_direct<ubvector,data_t,matrix_row_gen<data_t>,
-		     matrix_column_gen<data_t> > it;
+                     matrix_column_gen<data_t> > it;
       
       /** \brief Set the slice to correspond to a matrix 
-	  in the form \f$ (n_B,T) \f$
+          in the form \f$ (n_B,T) \f$
       */
       void set_nB_T(tensor_grid3<> &tg3, size_t iYe) {
-	/*
-	  data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
-	  (&tensor_grid3<>::get),tg3,std::placeholders::_1,iYe,
-	  std::placeholders::_2);
-	  size_t nx=tg3.get_size(0);
-	  grid_x.resize(nx);
-	  for(size_t i=0;i<nx;i++) grid_x[i]=tg3.get_grid(0,i);
-	  size_t ny=tg3.get_size(2);
-	  grid_y.resize(ny);
-	  for(size_t i=0;i<ny;i++) grid_y[i]=tg3.get_grid(2,i);
-	  it.set_data(nx,ny,grid_x,grid_y,data);
-	*/
-	return;
+        /*
+          data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
+          (&tensor_grid3<>::get),tg3,std::placeholders::_1,iYe,
+          std::placeholders::_2);
+          size_t nx=tg3.get_size(0);
+          grid_x.resize(nx);
+          for(size_t i=0;i<nx;i++) grid_x[i]=tg3.get_grid(0,i);
+          size_t ny=tg3.get_size(2);
+          grid_y.resize(ny);
+          for(size_t i=0;i<ny;i++) grid_y[i]=tg3.get_grid(2,i);
+          it.set_data(nx,ny,grid_x,grid_y,data);
+        */
+        return;
       }
       
       /** \brief Set the slice to correspond to a matrix 
-	  in the form \f$ (n_B,Y_e) \f$
+          in the form \f$ (n_B,Y_e) \f$
       */
       void set_nB_Ye(tensor_grid3<> &tg3, size_t iT) {
-	/*
-	  data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
-	  (&tensor_grid3<>::get),tg3,std::placeholders::_1,
-	  std::placeholders::_2,iT);
-	  size_t nx=tg3.get_size(0);
-	  grid_x.resize(nx);
-	  for(size_t i=0;i<nx;i++) grid_x[i]=tg3.get_grid(0,i);
-	  size_t ny=tg3.get_size(1);
-	  grid_y.resize(ny);
-	  for(size_t i=0;i<ny;i++) grid_y[i]=tg3.get_grid(1,i);
-	  it.set_data(nx,ny,grid_x,grid_y,data);
-	*/
-	return;
+        /*
+          data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
+          (&tensor_grid3<>::get),tg3,std::placeholders::_1,
+          std::placeholders::_2,iT);
+          size_t nx=tg3.get_size(0);
+          grid_x.resize(nx);
+          for(size_t i=0;i<nx;i++) grid_x[i]=tg3.get_grid(0,i);
+          size_t ny=tg3.get_size(1);
+          grid_y.resize(ny);
+          for(size_t i=0;i<ny;i++) grid_y[i]=tg3.get_grid(1,i);
+          it.set_data(nx,ny,grid_x,grid_y,data);
+        */
+        return;
       }
       
       /** \brief Set the slice to correspond to a matrix 
-	  in the form \f$ (T,Y_e) \f$
+          in the form \f$ (T,Y_e) \f$
       */
       void set_T_Ye(tensor_grid3<> &tg3, size_t inB) {
-	/*
-	  data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
-	  (&tensor_grid3<>::get),tg3,inB,std::placeholders::_2,
-	  std::placeholders::_1);
-	  size_t nx=tg3.get_size(2);
-	  grid_x.resize(nx);
-	  for(size_t i=0;i<nx;i++) grid_x[i]=tg3.get_grid(2,i);
-	  size_t ny=tg3.get_size(1);
-	  grid_y.resize(ny);
-	  for(size_t i=0;i<ny;i++) grid_y[i]=tg3.get_grid(1,i);
-	  it.set_data(nx,ny,grid_x,grid_y,data);
-	*/
-	return;
+        /*
+          data=std::bind(std::mem_fn<double &(size_t,size_t,size_t)>
+          (&tensor_grid3<>::get),tg3,inB,std::placeholders::_2,
+          std::placeholders::_1);
+          size_t nx=tg3.get_size(2);
+          grid_x.resize(nx);
+          for(size_t i=0;i<nx;i++) grid_x[i]=tg3.get_grid(2,i);
+          size_t ny=tg3.get_size(1);
+          grid_y.resize(ny);
+          for(size_t i=0;i<ny;i++) grid_y[i]=tg3.get_grid(1,i);
+          it.set_data(nx,ny,grid_x,grid_y,data);
+        */
+        return;
       }
       
     };
@@ -481,10 +481,15 @@ namespace o2scl {
       \ref sneos_section section of the User's guide.
 
       See \ref Lattimer91 and \ref Lattimer85.
+      
+      \verbatim embed:rst
+      .. todo:: 
 
-      \todo There are still a few points for which the electron/photon
-      EOS seems to be off, but this may be the result of small
-      inaccuracies from finite-differencing the LS table.
+         - There are still a few points for which the electron/photon
+           EOS seems to be off, but this may be the result of small
+           inaccuracies from finite-differencing the LS table.
+
+      \endverbatim
   */
   class eos_sn_ls : public eos_sn_base {
 
@@ -513,7 +518,7 @@ namespace o2scl {
     /// Proton fraction outside nuclei
     tensor_grid3<> &x_out;
     /** \brief Out of whackness parameter, 
-	\f$ \mu_n-\mu_p-\mu_e+1.293~\mathrm{MeV} \f$, in MeV
+        \f$ \mu_n-\mu_p-\mu_e+1.293~\mathrm{MeV} \f$, in MeV
     */
     tensor_grid3<> &mu;
     //@}
@@ -537,10 +542,10 @@ namespace o2scl {
 
     /** \brief Check electrons and photons
 
-	This checks that the electron and photon thermodynamics
-	generated by \o2 is consistent with the data in 
-	\c E, \c Eint, \c F, \c Fint, \c P, \c Pint, \c S,
-	and \c Sint.
+        This checks that the electron and photon thermodynamics
+        generated by \o2 is consistent with the data in 
+        \c E, \c Eint, \c F, \c Fint, \c P, \c Pint, \c S,
+        and \c Sint.
     */
     virtual double check_eg();
   };
@@ -673,9 +678,14 @@ namespace o2scl {
       \note Thanks to Matthias Hempel for providing the correct
       temperature grid.
 
-      \todo Add the T=0 and Ye=0 data to this class. Separate
-      tables for these cases have been released, but I don't think
-      this class can read them yet. 
+      \verbatim embed:rst
+      .. todo:: 
+
+         - Add the T=0 and Ye=0 data to this class. Separate
+           tables for these cases have been released, but I don't 
+           think this class can read them yet. 
+
+      \endverbatim
   */
   class eos_sn_stos : public eos_sn_base {
 
@@ -684,7 +694,7 @@ namespace o2scl {
     /// \name Additional data included in this EOS
     //@{
     /** \brief Logarithm of baryon number density in 
-	\f$ \mathrm{g}/\mathrm{cm}^3 \f$
+        \f$ \mathrm{g}/\mathrm{cm}^3 \f$
     */
     tensor_grid3<> &log_rho;
     /// Baryon number density in \f$ \mathrm{fm}^{-3} \f$
@@ -855,7 +865,7 @@ namespace o2scl {
     /// \name Additional data included in this EOS
     //@{
     /** \brief Logarithm of baryon number density in 
-	\f$ \mathrm{g}/\mathrm{cm}^3 \f$
+        \f$ \mathrm{g}/\mathrm{cm}^3 \f$
     */
     tensor_grid3<> &log_rho;
     /// Baryon number density in \f$ 1/\mathrm{fm}^3 \f$
@@ -915,8 +925,8 @@ namespace o2scl {
       fin >> n_nB >> n_nB;
       nB_grid.resize(n_nB);
       for(size_t j=0;j<n_nB;j++) {
-	fin >> nB_grid[j];
-	grid.push_back(nB_grid[j]);
+        fin >> nB_grid[j];
+        grid.push_back(nB_grid[j]);
       }
       fin.close();
     
@@ -925,8 +935,8 @@ namespace o2scl {
       fin2 >> n_Ye >> n_Ye;
       Ye_grid.resize(n_Ye);
       for(size_t j=0;j<n_Ye;j++) {
-	fin2 >> Ye_grid[j];
-	grid.push_back(Ye_grid[j]);
+        fin2 >> Ye_grid[j];
+        grid.push_back(Ye_grid[j]);
       }
       fin2.close();
     
@@ -935,15 +945,15 @@ namespace o2scl {
       fin3 >> n_T >> n_T;
       T_grid.resize(n_T);
       for(size_t j=0;j<n_T;j++) {
-	fin3 >> T_grid[j];
-	grid.push_back(T_grid[j]);
+        fin3 >> T_grid[j];
+        grid.push_back(T_grid[j]);
       }
       fin3.close();
 
       alloc();
     
       for(size_t i=0;i<n_base+n_oth;i++) {
-	arr[i]->set_grid_packed(grid);
+        arr[i]->set_grid_packed(grid);
       }
 
       std::ifstream fin4("eos.thermo");
@@ -952,66 +962,66 @@ namespace o2scl {
     
       double dtemp, dtemp2;
       for(size_t m=0;m<n_T;m++) {
-	for(size_t k=0;k<n_Ye;k++) {
-	  for(size_t j=0;j<n_nB;j++) {
-	  
-	    // Skip the grid points since we know them already
-	    fin4 >> dtemp;
-	    fin4 >> dtemp;
-	    fin4 >> dtemp;
-	  
-	    fin4 >> dtemp;
-	    P.set(j,k,m,dtemp*nB_grid[j]);
-	    fin4 >> dtemp;
-	    S.set(j,k,m,dtemp);
-	  
-	    fin4 >> dtemp;
-	    mun.set(j,k,m,(dtemp+1.0)*m_neut);
-	    fin4 >> dtemp2;
-	    mup.set(j,k,m,dtemp2*m_neut+(dtemp+1.0)*m_neut);
-	    // Skip the lepton chemical potential
-	    fin4 >> dtemp;
-	  
-	    fin4 >> dtemp;
-	    F.set(j,k,m,(dtemp+1.0)*nB_grid[j]*m_neut);
-	    fin4 >> dtemp;
-	    E.set(j,k,m,(dtemp+1.0)*nB_grid[j]*m_neut);
+        for(size_t k=0;k<n_Ye;k++) {
+          for(size_t j=0;j<n_nB;j++) {
+          
+            // Skip the grid points since we know them already
+            fin4 >> dtemp;
+            fin4 >> dtemp;
+            fin4 >> dtemp;
+          
+            fin4 >> dtemp;
+            P.set(j,k,m,dtemp*nB_grid[j]);
+            fin4 >> dtemp;
+            S.set(j,k,m,dtemp);
+          
+            fin4 >> dtemp;
+            mun.set(j,k,m,(dtemp+1.0)*m_neut);
+            fin4 >> dtemp2;
+            mup.set(j,k,m,dtemp2*m_neut+(dtemp+1.0)*m_neut);
+            // Skip the lepton chemical potential
+            fin4 >> dtemp;
+          
+            fin4 >> dtemp;
+            F.set(j,k,m,(dtemp+1.0)*nB_grid[j]*m_neut);
+            fin4 >> dtemp;
+            E.set(j,k,m,(dtemp+1.0)*nB_grid[j]*m_neut);
 
-	    // Skip the last column
-	    fin4 >> dtemp;
-	  }
-	}
+            // Skip the last column
+            fin4 >> dtemp;
+          }
+        }
       }
       fin4.close();
 
       std::ifstream fin5("eos.compo");
     
       for(size_t m=0;m<n_T;m++) {
-	for(size_t k=0;k<n_Ye;k++) {
-	  for(size_t j=0;j<n_nB;j++) {
-	  
-	    // Skip the grid points since we know them already
-	    fin5 >> dtemp;
-	    fin5 >> dtemp;
-	    fin5 >> dtemp;
+        for(size_t k=0;k<n_Ye;k++) {
+          for(size_t j=0;j<n_nB;j++) {
+          
+            // Skip the grid points since we know them already
+            fin5 >> dtemp;
+            fin5 >> dtemp;
+            fin5 >> dtemp;
 
-	    fin5 >> dtemp;
-	    fin5 >> dtemp;
-	    fin5 >> dtemp;
-	    fin5 >> dtemp;
-	    fin5 >> dtemp;
-	    fin5 >> dtemp;
-	  
-	    // This isn't right yet
-	    fin5 >> dtemp;
-	    A.set(j,k,m,dtemp);
-	    fin5 >> dtemp;
-	    Z.set(j,k,m,dtemp);
-	  
-	    // Skip the last column
-	    fin5 >> dtemp;
-	  }
-	}
+            fin5 >> dtemp;
+            fin5 >> dtemp;
+            fin5 >> dtemp;
+            fin5 >> dtemp;
+            fin5 >> dtemp;
+            fin5 >> dtemp;
+          
+            // This isn't right yet
+            fin5 >> dtemp;
+            A.set(j,k,m,dtemp);
+            fin5 >> dtemp;
+            Z.set(j,k,m,dtemp);
+          
+            // Skip the last column
+            fin5 >> dtemp;
+          }
+        }
       }
       fin5.close();
 
@@ -1022,8 +1032,8 @@ namespace o2scl {
       baryons_only_loaded=false;
     
       if (n_oth!=oth_names.size()) {
-	O2SCL_ERR2("Number of names does not match number of data sets ",
-		   "in eos_sn_oo::load().",exc_efailed);
+        O2SCL_ERR2("Number of names does not match number of data sets ",
+                   "in eos_sn_oo::load().",exc_efailed);
       }
     
       // It is important that 'loaded' is set to true before the call to
@@ -1031,7 +1041,7 @@ namespace o2scl {
       set_interp_type(itp_linear);
     
       if (verbose>0) {
-	std::cout << "Done in eos_sn_compose::load()." << std::endl;
+        std::cout << "Done in eos_sn_compose::load()." << std::endl;
       }
     
       return;

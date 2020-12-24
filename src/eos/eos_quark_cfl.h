@@ -215,73 +215,78 @@ namespace o2scl {
     virtual ~eos_quark_cfl();
     
     /** \brief Set the parameters and the bag constant 'B0'
-	
-	This function allows the user to specify the momentum cutoff,
-	\c lambda, the four-fermion coupling \c fourferm, the
-	six-fermion coupling from the 't Hooft interaction \c sixferm,
-	and the color-superconducting coupling, \c fourgap. If 0.0 is
-	given for any of the values, then the default is used (\f$
-	\Lambda=602.3/(\hbar c), G=1.835/\Lambda^2, K=12.36/\Lambda^5
-	\f$).
-	
-	If the four-fermion coupling that produces a gap is not
-	specified, it is automatically set to 3/4 G, which is the
-	value obtained from the Fierz transformation.
-	
-	The value of the shift in the bag constant eos_quark_njl::B0 is
-	automatically calculated to ensure that the vacuum has zero
-	energy density and zero pressure. The functions set_quarks()
-	and set_thermo() must be used before hand to specify the \ref
-	quark and \ref thermo objects.
-	
+        
+        This function allows the user to specify the momentum cutoff,
+        \c lambda, the four-fermion coupling \c fourferm, the
+        six-fermion coupling from the 't Hooft interaction \c sixferm,
+        and the color-superconducting coupling, \c fourgap. If 0.0 is
+        given for any of the values, then the default is used (\f$
+        \Lambda=602.3/(\hbar c), G=1.835/\Lambda^2, K=12.36/\Lambda^5
+        \f$).
+        
+        If the four-fermion coupling that produces a gap is not
+        specified, it is automatically set to 3/4 G, which is the
+        value obtained from the Fierz transformation.
+        
+        The value of the shift in the bag constant eos_quark_njl::B0 is
+        automatically calculated to ensure that the vacuum has zero
+        energy density and zero pressure. The functions set_quarks()
+        and set_thermo() must be used before hand to specify the \ref
+        quark and \ref thermo objects.
+        
     */
     virtual int set_parameters_cfl(double lambda=0.0, double fourferm=0.0, 
-				   double sixferm=0.0, double fourgap=0.0);
+                                   double sixferm=0.0, double fourgap=0.0);
     
     /** \brief Calculate the EOS
-	
-	Calculate the EOS from the quark condensates in \c u.qq, \c
-	d.qq and \c s.qq. Return the mass gap equations in \c qq1, \c
-	qq2, \c qq3, and the normal gap equations in \c gap1, \c gap2,
-	and \c gap3.
-	
-	Using \c fromqq=false as in eos_quark_njl and eos_quark_njl does not
-	work here and will return an error. Also, the quarks must be
-	set through eos_quark::quark_set() before use.
-	
-	If all of the gaps are less than gap_limit, then the
-	eos_quark_njl::calc_temp_p() is used, and \c gap1, \c gap2, and
-	\c gap3 are set to equal \c u.del, \c d.del, and \c s.del,
-	respectively.
+        
+        Calculate the EOS from the quark condensates in \c u.qq, \c
+        d.qq and \c s.qq. Return the mass gap equations in \c qq1, \c
+        qq2, \c qq3, and the normal gap equations in \c gap1, \c gap2,
+        and \c gap3.
+        
+        Using \c fromqq=false as in eos_quark_njl and eos_quark_njl does not
+        work here and will return an error. Also, the quarks must be
+        set through eos_quark::quark_set() before use.
+        
+        If all of the gaps are less than gap_limit, then the
+        eos_quark_njl::calc_temp_p() is used, and \c gap1, \c gap2, and
+        \c gap3 are set to equal \c u.del, \c d.del, and \c s.del,
+        respectively.
 
-	\todo It surprises me that n3 is not -res[11]. Is there 
-	a sign error in the color densities?
+        \verbatim embed:rst
+        .. todo:: 
+
+           - It surprises me that n3 is not -res[11]. Is there 
+             a sign error in the color densities?
+
+        \endverbatim
     */
     virtual int calc_eq_temp_p(quark &u, quark &d, quark &s, double &qq1, 
-			       double &qq2, double &qq3, double &gap1, 
-			       double &gap2, double &gap3, double mu3, 
-			       double mu8, double &n3, double &n8, 
-			       thermo &qb, double temper);
+                               double &qq2, double &qq3, double &gap1, 
+                               double &gap2, double &gap3, double mu3, 
+                               double mu8, double &n3, double &n8, 
+                               thermo &qb, double temper);
     
     /// Check the derivatives specified by eigenvalues()
     virtual int test_derivatives(double lmom, double mu3, double mu8,
-				 test_mgr &t);
+                                 test_mgr &t);
     
     /** \brief Calculate the energy eigenvalues as a function of the
-	momentum
-	
-	Given the momentum \c mom, and the chemical potentials
-	associated with the third and eighth gluons (\c mu3 and \c
-	mu8), the energy eigenvalues are computed in egv[0]
-	... egv[35].
+        momentum
+        
+        Given the momentum \c mom, and the chemical potentials
+        associated with the third and eighth gluons (\c mu3 and \c
+        mu8), the energy eigenvalues are computed in egv[0]
+        ... egv[35].
     */
     virtual int eigenvalues(double lmom, double mu3, double mu8, 
-			    double egv[36], double dedmuu[36], 
-			    double dedmud[36], double dedmus[36], 
-			    double dedmu[36], double dedmd[36], 
-			    double dedms[36], double dedu[36], 
-			    double dedd[36], double deds[36], 
-			    double dedmu3[36], double dedmu8[36]);
+                            double egv[36], double dedmuu[36], 
+                            double dedmud[36], double dedmus[36], 
+                            double dedmu[36], double dedmd[36], 
+                            double dedms[36], double dedu[36], 
+                            double dedd[36], double deds[36], 
+                            double dedmu3[36], double dedmu8[36]);
     
     /// Set the routine for solving quartics
     int set_quartic(quartic_real_coeff &q) { 
@@ -302,50 +307,50 @@ namespace o2scl {
     //gsl_quadratic_real_coeff quad;
 
     /** \brief The default quartic routine
-	
-	Slightly better accuracy (with slower execution times) can be
-	achieved using \ref poly_real_coeff_gsl which polishes the
-	roots of the quartics. For example
+        
+        Slightly better accuracy (with slower execution times) can be
+        achieved using \ref poly_real_coeff_gsl which polishes the
+        roots of the quartics. For example
 
-	\code
-	eos_quark_cfl cfl;
-	poly_real_coeff_gsl gp;
-	cfl.set_quartic(gp);
-	\endcode
+        \code
+        eos_quark_cfl cfl;
+        poly_real_coeff_gsl gp;
+        cfl.set_quartic(gp);
+        \endcode
      */
     quartic_real_coeff_cern def_quartic;
     //@}
     
     /** \brief Test the routine to compute the eigenvalues of 
-	non-superfluid fermions
+        non-superfluid fermions
     */
     int test_normal_eigenvalues(test_mgr &t);
 
     /** \brief Test the routine to compute the eigenvalues of 
-	superfluid fermions
+        superfluid fermions
     */
     int test_gapped_eigenvalues(test_mgr &t);
     
     /** \brief Smallest allowable gap (default 0.0)
-	
-	If any of the gaps are below this value, then it is assumed
-	that they are zero and the equation of state is simplified
-	accordingly. If all of the gaps are less than gap_limit, then
-	the results from eos_quark_njl are used in
-	calc_eq_temp_p(), calc_temp_p() and thd_potential().
+        
+        If any of the gaps are below this value, then it is assumed
+        that they are zero and the equation of state is simplified
+        accordingly. If all of the gaps are less than gap_limit, then
+        the results from eos_quark_njl are used in
+        calc_eq_temp_p(), calc_temp_p() and thd_potential().
     */
     double gap_limit;
     
     /** \brief If this is true, then finite temperature
-	corrections are ignored (default false)
-	
-	This implements some simplifications in the 
-	momentum integration that are not possible at finite temperature.
+        corrections are ignored (default false)
+        
+        This implements some simplifications in the 
+        momentum integration that are not possible at finite temperature.
     */
     bool zerot;
     
     /** \brief Use a fixed quark mass and ignore the quark
-	condensates
+        condensates
     */
     bool fixed_mass;
 
@@ -353,35 +358,35 @@ namespace o2scl {
     bool color_neut;
     
     /** \brief Diquark coupling constant (default 3 G/4)
-	
-	\verbatim embed:rst
-	The default value is the one derived from a Fierz
-	transformation. ([Buballa04]_)
-	\endverbatim
+        
+        \verbatim embed:rst
+        The default value is the one derived from a Fierz
+        transformation. ([Buballa04]_)
+        \endverbatim
     */
     double GD;
 
     /** \brief The absolute precision for the integration
-	(default \f$ 10^{-4} \f$ )
-	
-	This is analogous to gsl_inte::epsabs
+        (default \f$ 10^{-4} \f$ )
+        
+        This is analogous to gsl_inte::epsabs
     */
     double inte_epsabs;
 
     /** \brief The relative precision for the integration 
-	(default \f$ 10^{-4} \f$ )
+        (default \f$ 10^{-4} \f$ )
 
-	This is analogous to gsl_inte::epsrel
+        This is analogous to gsl_inte::epsrel
     */
     double inte_epsrel;
     
     /** \brief The number of points used in the last integration
-	(default 0)
+        (default 0)
 
-	This returns 21, 43, or 87 depending on the number of function
-	evaluations needed to obtain the desired precision. If it
-	the routine failes to obtain the desired precision, then
-	this variable is set to 88.
+        This returns 21, 43, or 87 depending on the number of function
+        evaluations needed to obtain the desired precision. If it
+        the routine failes to obtain the desired precision, then
+        this variable is set to 88.
     */
     size_t inte_npoints;
 
@@ -393,52 +398,57 @@ namespace o2scl {
   protected:
     
     /** \brief The integrands
-	
-	- res[0] is the thermodynamic potential, \f$ \Omega \f$
-	- res[1] is \f$ d -\Omega / d T \f$
-	- res[2] is \f$ d \Omega / d \mu_u \f$
-	- res[3] is \f$ d \Omega / d \mu_d \f$
-	- res[4] is \f$ d \Omega / d \mu_s \f$
-	- res[5] is \f$ d \Omega / d m_u \f$
-	- res[6] is \f$ d \Omega / d m_d \f$
-	- res[7] is \f$ d \Omega / d m_s \f$
-	- res[8] is \f$ d \Omega / d \Delta_{ds} \f$
-	- res[9] is \f$ d \Omega / d \Delta_{us} \f$
-	- res[10] is \f$ d \Omega / d \Delta_{ud} \f$
-	- res[11] is \f$ d \Omega / d \mu_3 \f$
-	- res[12] is \f$ d \Omega / d \mu_8 \f$
+        
+        - res[0] is the thermodynamic potential, \f$ \Omega \f$
+        - res[1] is \f$ d -\Omega / d T \f$
+        - res[2] is \f$ d \Omega / d \mu_u \f$
+        - res[3] is \f$ d \Omega / d \mu_d \f$
+        - res[4] is \f$ d \Omega / d \mu_s \f$
+        - res[5] is \f$ d \Omega / d m_u \f$
+        - res[6] is \f$ d \Omega / d m_d \f$
+        - res[7] is \f$ d \Omega / d m_s \f$
+        - res[8] is \f$ d \Omega / d \Delta_{ds} \f$
+        - res[9] is \f$ d \Omega / d \Delta_{us} \f$
+        - res[10] is \f$ d \Omega / d \Delta_{ud} \f$
+        - res[11] is \f$ d \Omega / d \mu_3 \f$
+        - res[12] is \f$ d \Omega / d \mu_8 \f$
     */
     virtual int integrands(double p, double res[]);
     
     /// Compute ungapped eigenvalues and the appropriate derivatives
     int normal_eigenvalues(double m, double lmom, double mu, 
-			   double lam[2], double dldmu[2], 
-			   double dldm[2]);
+                           double lam[2], double dldmu[2], 
+                           double dldm[2]);
 
     /** \brief Treat the simply gapped quarks in all cases gracefully
 
-	This function uses the quarks \c q1 and \c q2 to construct the
-	eigenvalues of the inverse propagator, properly handling the
-	either zero or finite quark mass and either zero or finite
-	quark gaps. In the case of finite quark mass and finite quark
-	gaps, the quartic solver is used.
-	
-	The chemical potentials are separated so we can add the 
-	color chemical potentials to the quark chemical potentials
-	if necessary.
+        This function uses the quarks \c q1 and \c q2 to construct the
+        eigenvalues of the inverse propagator, properly handling the
+        either zero or finite quark mass and either zero or finite
+        quark gaps. In the case of finite quark mass and finite quark
+        gaps, the quartic solver is used.
+        
+        The chemical potentials are separated so we can add the 
+        color chemical potentials to the quark chemical potentials
+        if necessary.
 
-	This function is used by eigenvalues(). It does not work for
-	the "ur-dg-sb" set of quarks which are paired in a non-trivial
-	way.
+        This function is used by eigenvalues(). It does not work for
+        the "ur-dg-sb" set of quarks which are paired in a non-trivial
+        way.
 
-	\todo In the code, the equal mass case seems to be commented
-	out. Why?
+        \verbatim embed:rst
+        .. todo:: 
+
+           - In the code, the equal mass case seems to be commented
+             out. Why?
+
+        \endverbatim
     */
     int gapped_eigenvalues(double m1, double m2, double lmom,
-			   double mu1, double mu2, double tdelta,
-			   double lam[4], double dldmu1[4], 
-			   double dldmu2[4], double dldm1[4],
-			   double dldm2[4], double dldg[4]);    
+                           double mu1, double mu2, double tdelta,
+                           double lam[4], double dldmu1[4], 
+                           double dldmu2[4], double dldm1[4],
+                           double dldm2[4], double dldg[4]);    
     
     /// Temperature
     double temper;
@@ -486,13 +496,13 @@ namespace o2scl {
     //@{
     /// The error scaling function for integ_err
     double rescale_error(double err, double result_abs, 
-			 double result_asc);
+                         double result_asc);
     
     /** \brief A new version of inte_qng_gsl to integrate several
-	functions at the same time
+        functions at the same time
     */
     int integ_err(double a, double b, const size_t nr,
-		  ubvector &res, double &err2);
+                  ubvector &res, double &err2);
     //@}
 
   private:

@@ -550,8 +550,11 @@ namespace o2scl {
 	\partial \mu_i \mu_j \f$
 
 	\verbatim embed:rst
-	.. todo:: This function, f_number_suscept(), should be overloaded 
-	          for Skyrme with derivatives
+	.. todo:: 
+
+	   - This function, eos_had_base::f_number_suscept(), should
+	     be overloaded for Skyrme with derivatives
+
 	\endverbatim
     */
     virtual void f_number_suscept(double mun, double mup, double &dPdnn, 
@@ -562,8 +565,11 @@ namespace o2scl {
 	\partial^2 \varepsilon / \partial n_i n_j \f$
 
 	\verbatim embed:rst
-	.. todo:: This function, f_inv_number_suscept(), should be overloaded 
-	          for Skyrme with derivatives
+	.. todo:: 
+
+	   - This function, eos_had_base::f_inv_number_suscept(),
+	     should be overloaded for Skyrme with derivatives
+
 	\endverbatim
     */
     virtual void f_inv_number_suscept(double mun, double mup, double &dednn, 

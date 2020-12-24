@@ -148,10 +148,15 @@ namespace o2scl {
       E_{\mathrm{Coul}}/A = 0.76~\mathrm{MeV}~Z^2 A^{-4/3}
       \f]
 
-      \todo 12/4/14: This doesn't gracefully handle negative values of
-      n0 and n1 as then the neutron and proton densities become
-      negative. This needs to be addressed. For now, there is a
-      fix at line 246 in nucmass_ldrop.cpp .
+      \verbatim embed:rst
+      .. todo:: 
+
+         - 12/4/14: This doesn't gracefully handle negative values of
+           n0 and n1 as then the neutron and proton densities become
+           negative. This needs to be addressed. For now, there is a
+           fix at line 246 in nucmass_ldrop.cpp .
+
+      \endverbatim
 
       \hline
 
@@ -176,7 +181,7 @@ namespace o2scl {
     double n1;
     
     /** \brief Saturation density ( The default is \f$ 0.16
-	\mathrm{fm}^{-3} \f$)
+        \mathrm{fm}^{-3} \f$)
     */
     double n0;
     
@@ -231,8 +236,8 @@ namespace o2scl {
         and \c chi.
     */
     virtual double drip_binding_energy_d(double Z, double N,
-					 double npout, double nnout, 
-					 double chi, double T);
+                                         double npout, double nnout, 
+                                         double chi, double T);
 
     /// \name EOS and particle parameters
     //@{
@@ -370,10 +375,17 @@ namespace o2scl {
 
       <b>Todos and Future</b>
 
-      \todo This is based on LPRL, but it's a little different in
-      Lattimer and Swesty. I should document what the difference is.
+      \verbatim embed:rst
+      .. todo:: 
 
-      \todo The testing could be updated.
+         In class nucmass_ldrop_skin: 
+
+         - This is based on LPRL, but it's a little different in
+           Lattimer and Swesty. I should document what the difference
+           is.
+         - The testing could be updated.
+
+      \endverbatim
       
       \future Add translational energy?
 
@@ -445,12 +457,12 @@ namespace o2scl {
     virtual int guess_fun(size_t nv, ubvector &x);
 
     /** \brief If true, properly fix the surface for the pure neutron
-	matter limit (default true)
+        matter limit (default true)
     */
     bool full_surface;
 
     /** \brief If true, separately compute the skin for the bulk energy
-	(default false)
+        (default false)
     */
     bool new_skin_mode;
 
@@ -476,21 +488,21 @@ namespace o2scl {
     //@}
     
     /** \brief If true, define the nuclear mass relative to the vacuum
-	(default true)
+        (default true)
     */
     bool rel_vacuum;
 
     /** \brief The critical temperature of isospin-symmetric matter in 
-	\f$ fm^{-1} \f$ (default \f$ 20.085/(\hbar c)\f$.)
+        \f$ fm^{-1} \f$ (default \f$ 20.085/(\hbar c)\f$.)
     */
     double Tchalf;
     
     /** \brief Return the free binding energy of a \nucleus in a many-body 
-	environment
+        environment
     */
     virtual double drip_binding_energy_d(double Z, double N,
-					 double npout, double nnout,
-					 double chi, double T);
+                                         double npout, double nnout,
+                                         double chi, double T);
   };
 
   /** \brief Liquid drop model with pairing
@@ -531,7 +543,7 @@ namespace o2scl {
     double pair;
 
     /** \brief Return the free binding energy of a \nucleus in a many-body 
-	environment
+        environment
     */
     virtual double drip_binding_energy_d
       (double Z, double N, double npout, double nnout,
