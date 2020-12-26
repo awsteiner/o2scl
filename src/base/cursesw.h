@@ -92,6 +92,8 @@ namespace o2scl {
 
 #endif
 
+  /** \brief Use tput to determine window size
+   */
   void get_screen_size_tput(int &row, int &col);
 
 #ifndef DOXYGEN_NO_O2NS
