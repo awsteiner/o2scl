@@ -21,16 +21,17 @@
   -------------------------------------------------------------------
 */
 #include <cctype>
+#include <sys/ioctl.h>
 
 #include <o2scl/cursesw.h>
 #include <o2scl/string_conv.h>
-
-#include "curses.h"
 
 using namespace std;
 using namespace o2scl;
 
 #ifdef O2SCL_NCURSES
+
+#include "curses.h"
 
 cursesw::cursesw() {
 
@@ -210,5 +211,15 @@ void o2scl::get_screen_size_tput(int &row, int &col) {
   pipe_cmd_string("tput cols",s_col);
   row=o2scl::stoi(s_row);
   col=o2scl::stoi(s_col);
+  return;
+}
+
+void o2scl::get_screen_size_ioctl(int &row, int &col) {
+  struct winsize w;
+  ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+  
+  row=w.ws_row;
+  col=w.ws_col;
+  
   return;
 }

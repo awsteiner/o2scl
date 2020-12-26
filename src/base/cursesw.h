@@ -96,6 +96,10 @@ namespace o2scl {
    */
   void get_screen_size_tput(int &row, int &col);
 
+  /** \brief Use ioctl to determine window size
+   */
+  void get_screen_size_ioctl(int &row, int &col);
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif
