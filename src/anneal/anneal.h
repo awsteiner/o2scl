@@ -58,9 +58,14 @@ namespace o2scl {
       The number of iterations at each temperature is controlled by
       \ref o2scl::mmin_base::ntrial which defaults to 100.
 
-      \todo I'm having trouble with std::uniform_real_distribution
-      on clang at the moment, so this class uses 
-      \ref o2scl::prob_dens_uniform for the moment.
+      \verbatim embed:rst
+      .. todo:: 
+         
+         In class anneal_base: I'm having trouble with
+         std::uniform_real_distribution on clang at the moment, so
+         this class uses \ref o2scl::prob_dens_uniform for the moment.
+
+      \endverbatim
   */
   template<class func_t=multi_funct,
     class vec_t=boost::numeric::ublas::vector<double>,
@@ -81,25 +86,25 @@ namespace o2scl {
     virtual ~anneal_base() {}
       
     /** \brief Calculate the minimum \c fmin of \c func w.r.t the 
-	array \c x of size \c nvar.
+        array \c x of size \c nvar.
     */
     virtual int mmin(size_t nvar, vec_t &x, double &fmin, 
-		     func_t &func)=0;
+                     func_t &func)=0;
     
     /** \brief Print out iteration information.
 
-	Depending on the value of the variable verbose, this prints out
-	the iteration information. If verbose=0, then no information is
-	printed, while if verbose>1, then after each iteration, the
-	present values of x and y are output to std::cout along with the
-	iteration number. If verbose>=2 then each iteration waits for a
-	character.  
+        Depending on the value of the variable verbose, this prints out
+        the iteration information. If verbose=0, then no information is
+        printed, while if verbose>1, then after each iteration, the
+        present values of x and y are output to std::cout along with the
+        iteration number. If verbose>=2 then each iteration waits for a
+        character.  
     */
     virtual int print_iter(size_t nv, vec_t &x, double y, int iter,
-			   double tptr, std::string comment) 
+                           double tptr, std::string comment) 
     {
       if (this->verbose<=0) return 0;
-	
+        
       size_t i;
       char ch;
       
@@ -109,10 +114,10 @@ namespace o2scl {
       std::cout << std::endl;
       (*this->outs) << "y: " << y << " Tptr: " << tptr << std::endl;
       if (this->verbose>1) {
-	(*this->outs) << "Press a key and type enter to continue. ";
-	(*this->ins) >> ch;
+        (*this->outs) << "Press a key and type enter to continue. ";
+        (*this->ins) >> ch;
       }
-	
+        
       return 0;
     }
 
@@ -142,8 +147,8 @@ namespace o2scl {
       (const anneal_base<func_t,vec_t,rng_t> &ab) {
 
       if (this != &ab) {
-	mmin_base<func_t,func_t,vec_t>::operator=(ab);
-	this->rng=ab.rng;
+        mmin_base<func_t,func_t,vec_t>::operator=(ab);
+        this->rng=ab.rng;
       }
       return *this;
     }

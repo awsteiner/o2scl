@@ -905,11 +905,18 @@ namespace o2scl {
       - \c vec_t - \ref boost::numeric::ublas::vector \<double \>
       - \c mat_t - \ref boost::numeric::ublas::matrix \<double \>
       
-      \todo Allow the user to specify the derivatives
-      \todo Fix so that the user can specify automatic
-      scaling of the fitting parameters, where the initial
-      guess are used for scaling so that the fitting parameters
-      are near unity.
+      \verbatim embed:rst
+      .. todo:: 
+
+         In class fit_nonlin:
+
+         - Allow the user to specify the derivatives
+         - Fix so that the user can specify automatic
+           scaling of the fitting parameters, where the initial
+           guess are used for scaling so that the fitting parameters
+           are near unity.
+
+      \endverbatim
       
       \future Some of these member functions (like
       update_diag()) don't depend on member data and could be

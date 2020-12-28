@@ -362,6 +362,7 @@
     <member refid="namespaceo2scl_1a3392076eb53872d55216484b7b18a5a7" kind="function"><name>vector_to_bins</name></member>
     <member refid="namespaceo2scl_1a40876ff9f10152b91bea59638cae4488" kind="function"><name>get_screen_size_curses</name></member>
     <member refid="namespaceo2scl_1a147f08da3917578df305ddf1969aac26" kind="function"><name>get_screen_size_tput</name></member>
+    <member refid="namespaceo2scl_1af9218d0cca25ef9a6db9ae9efe115c23" kind="function"><name>get_screen_size_ioctl</name></member>
     <member refid="namespaceo2scl_1a903bf762b4443f26426abcf658b81856" kind="function"><name>shuffle_swap</name></member>
     <member refid="namespaceo2scl_1ad683de40036dee349ee8523f30a241d7" kind="function"><name>choose_copy</name></member>
     <member refid="namespaceo2scl_1ac6b4675b0e3d04939bc9c49193b2d993" kind="function"><name>vector_shuffle</name></member>

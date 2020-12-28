@@ -3016,9 +3016,15 @@ namespace o2scl {
       hold the number of entries given by \ref get_nlines(), it is
       resized.
 
-      \todo FIXME: there may be a problem with the OpenMP code
-      if an exception is thrown in the calculator class and
-      there is not a unique error handler for each thread.
+      \verbatim embed:rst
+      .. todo:: 
+
+         In table::function_vector(): FIXME: there may be a problem
+         with the OpenMP code if an exception is thrown in the
+         calculator class and there is not a unique error handler for
+         each thread.
+
+      \endverbatim
 
       \comment
       This function must return an int rather than void because

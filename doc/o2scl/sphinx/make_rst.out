@@ -854,6 +854,7 @@ Multiple entry vector_acor
 Namespace: o2scl function: vector_to_bins
 Namespace: o2scl function: get_screen_size_curses
 Namespace: o2scl function: get_screen_size_tput
+Namespace: o2scl function: get_screen_size_ioctl
 Namespace:  function: shuffle_swap
 Namespace:  function: choose_copy
 Namespace:  function: vector_shuffle

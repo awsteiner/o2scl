@@ -14,7 +14,7 @@ Bibliography
 
 .. [Birgin00] : `E. G. Birgin, J. M. Martinez, and M. Raydan
    <https://doi.org/10.1137/S1052623497330963>`_,
-   SIAM J. Optim **10** (2000) 1196.
+   SIAM J. Optim. **10** (2000) 1196.
 
 .. [Brest06] : `J. Brest, S. Greiner, B. Boskovic, M. Mernik, and V. Zumer
    <https://doi.org/10.1109/TEVC.2006.872133>`_,
@@ -85,72 +85,9 @@ Bibliography
 
 .. [Lepage78] : `G. P. Lepage
    <https://doi.org/10.1016/0021-9991(78)90004-9>`_,
-   J. Comp. Phys. **27** (1978) 192.
+   J. Comput. Phys. **27** (1978) 192.
 
 .. [Lewin81] : L Lewin,
    `Polylogarithms and Associated Functions <https://www.worldcat.org/isbn/9780444005502>`_,
    (1981) North Holland, New York.
-
-.. [Longman58] : `I. M. Longman
-   <https://doi.org/10.2307/2002022>`_,
-   Math. Tables Other Aids Comput. **12** (1958) 205.
-
-.. [Luzum11] : `B. Luzum and (none) et al.
-   <https://doi.org/10.1007/s10569-011-9352-4>`_,
-   Celest. Mech. and Dyn. Astron. **110** (2011) 293.
-
-.. [Mohr12] : `P. J. Mohr, B. N. Taylor, and D. B. Newell
-   <https://doi.org/10.1103/RevModPhys.84.1527>`_,
-   Rev. Mod. Phys. **84** (2012) 1527.
-
-.. [Mohr16] : `P. J. Mohr, D. B. Newell, and B. N. Taylor
-   <https://doi.org/10.1103/RevModPhys.88.035009>`_,
-   Rev. Mod. Phys. **88** (2016) 035009.
-
-.. [More79] : `M. Moré J. and Cosnard
-   <https://doi.org/10.1145/355815.355820>`_,
-   ACM Trans. Math. Software **5** (1979) 64.
-
-.. [More80] : `J. Moré and M. Cosnard
-   <https://doi.org/10.1145/355887.355898>`_,
-   ACM Trans. Math. Software **6** (1980) 240.
-
-.. [Nelder65] : J. A. Nelder and R. Mead,
-   Computer Journal **7** (1965) 308.
-
-.. [Piessens83] : R. Piessens, E. de Doncker-Kapenga, C. Uberhuber, and D. Kahaner,
-   `QUADPACK, A Subroutine Package for Automatic Integration <https://www.worldcat.org/isbn/9783540125532>`_,
-   (1983) Springer-Verlag, Berlin.
-
-.. [Press90] : W. H. F., G. R. Press,
-   Computers in Physics **4** (1990) 190.
-
-.. [Prince81] : `P. J. Prince and J. R. Dormand
-   <https://doi.org/10.1016/0771-050X(81)90010-3>`_,
-   J. Comp. Appl. Math. **7** (1981) 67.
-
-.. [Rutishauser63] : `H. Rutishauser
-   <https://doi.org/10.1007/BF01385877>`_,
-   Numer. Math. **5** (1963) 48.
-
-.. [Scott79] : `D. W. Scott
-   <https://doi.org/10.1093/biomet/66.3.605>`_,
-   Biometrika **66** (1979) 605.
-
-.. [Steffen90] : `M. Steffen
-   <https://adsabs.harvard.edu/abs/1990A&A...239..443S>`_,
-   Astron. Astrophys. **239** (1990) 443.
-
-.. [Storn97] : `R. Storn and K. Price
-   <https://doi.org/10.1023/A:1008202821328>`_,
-   Jour. of Global Optim. **11** (1997) 341.
-
-.. [Tolstov62] : G. P. Tolstov,
-   Fourier Series,
-   (1962) Prentice Hall, Englewood Cliffs, NJ
-   (I don't have a link for the 1962 version, but a 1976 reprinting is available at https://www.worldcat.org/isbn/9780486633176).
-
-.. [Wynn56] : `P. Wynn
-   <https://doi.org/10.2307/2002183>`_,
-   Math. Tables Other Aids **10** (1956) 91.
 

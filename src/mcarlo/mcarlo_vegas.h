@@ -93,8 +93,13 @@ namespace o2scl {
       set between 1 and 2. 
       \endverbatim
 
-      \todo Mode = importance only doesn't give the same answer
-      as GSL yet.
+      \verbatim embed:rst
+      .. todo:: 
+      
+         CLass mcarlo_vegas: Mode = importance only doesn't give the
+         same answer as GSL yet.
+
+      \endverbatim
 
       \future Prettify the verbose output
 
@@ -605,9 +610,16 @@ namespace o2scl {
 	loop, so that nothing is changed, and is equivalent to
 	performing additional iterations in a previous call.
 
-	\todo Should stage be passed by reference?
-	\todo There was an update between gsl-1.12 and 1.15 which
-	has not been implemented here yet.
+        \verbatim embed:rst
+        .. todo:: 
+
+           Function mcarlo_vegas::vegas_minteg_err(): 
+
+           - Should stage be passed by reference?
+           - There was an update between gsl-1.12 and 1.15 which
+             has not been implemented here yet.
+
+        \endverbatim
     */
     virtual int vegas_minteg_err(int stage, func_t &func, size_t ndim, 
 				 const vec_t &xl, const vec_t &xu, 

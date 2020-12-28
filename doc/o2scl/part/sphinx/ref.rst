@@ -70,8 +70,8 @@ Bibliography
 .. [Koura05] : H. Koura, T. Tachibana, M. Uno, and M. Yamada,
    Prog. Theor. Phys. **113** (2005) 305.
 
-.. [Landau80] : L. D. Landau,
-   `Statistical Physics: Part 1, 3rd Edition. <https://www.worldcat.org/isbn/9780750633727>`_,
+.. [Landau80] : L. D. Landau and E. M. Lifshitz,
+   `Statistical Physics: Part 1, 3rd Edition <https://www.worldcat.org/isbn/9780750633727>`_,
    (1980) Butterworth-Heinemann.
 
 .. [Liu11] : `M. Liu, N. Wang, Y. Deng, and X. Wu
@@ -86,11 +86,11 @@ Bibliography
    <https://doi.org/10.1016/j.nuclphysa.2010.05.055>`_,
    Nucl. Phys. A **843** (2010) 14.
 
-.. [Moller95] : `P. N., J. R. M., W. D. Moller and W. J. Switecki
+.. [Moller95] : `P. Moller, J. R. Nix, W. D. Myers, and W. J. Swiatecki
    <https://doi.org/10.1006/adnd.1995.1002>`_,
    Atom. Data Nucl. Data Tabl. **59** (1995) 185.
 
-.. [Moller97] : `P. Moller, J. R. Nix, and K.-L. Kratz
+.. [Moller97] : `P. Möller, J. R. Nix, and K.-L. Kratz
    <https://doi.org/10.1006/adnd.1997.0746>`_,
    Atom. Data Nucl. Data Tabl. **66** (1997) 131.
 

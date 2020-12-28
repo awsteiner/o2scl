@@ -136,15 +136,20 @@ namespace o2scl {
       allocated with std::vector-based types, and the \ref
       interpolate() function only works with ublas-based vector types.
 
-      \todo It is possible for the user to create a tensor_grid
-      object, upcast it to a tensor object, and then use
-      tensor::resize() to resize the tensor, failing to resize the
-      grid. Following this, grid access functions will access random
-      parts of memory or segfault. This can be fixed by ensuring that
-      resize functions are virtual and have a version in tensor_grid
-      which ensure that the grid and tensor data are matched. The
-      problem is that the resize functions are templates, so they
-      cannot be virtual.
+      \verbatim embed:rst
+      .. todo:: 
+
+         Class tensor_grid: It is possible for the user to create a
+         tensor_grid object, upcast it to a tensor object, and then
+         use tensor::resize() to resize the tensor, failing to resize
+         the grid. Following this, grid access functions will access
+         random parts of memory or segfault. This can be fixed by
+         ensuring that resize functions are virtual and have a version
+         in tensor_grid which ensure that the grid and tensor data are
+         matched. The problem is that the resize functions are
+         templates, so they cannot be virtual.
+
+      \endverbatim
 
       \future A swap function for the grid similar to the data swap
       function in the parent \ref o2scl::tensor class?
@@ -1284,9 +1289,15 @@ namespace o2scl {
 	interpolated and should have a size equal to that of 
 	\c ix_to_interp .
 
-	\todo Double check and document if the vector "ix_to_interp"
-	needs to be ordered. I'm pretty sure it doesn't, so long as
-	the ordering in \c val and \c ix_to_interp are consistent.
+        \verbatim embed:rst
+        .. todo:: 
+
+           In tensor_grid::interp_linear_partial(): Double check and
+           document if the vector "ix_to_interp" needs to be ordered.
+           I'm pretty sure it doesn't, so long as the ordering in \c
+           val and \c ix_to_interp are consistent.
+
+        \endverbatim
     */
     template<class vec2_size_t, class vec3_size_t, class vec2_t>
       double interp_linear_partial

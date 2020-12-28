@@ -242,8 +242,14 @@ namespace o2scl {
       not properly handle nested quotes, like <tt>"""test" test2"
       test3"</tt>.
 
-      \todo The rules surrounding spaces and quotes are 
-      strange and not well documented.
+      \verbatim embed:rst
+      .. todo:: 
+
+         In function split_string(), the rules surrounding spaces and
+         quotes are not well documented.
+
+      \endverbatim
+
       \future Replace with a better algorithm. Should quotes be
       escaped?
   */

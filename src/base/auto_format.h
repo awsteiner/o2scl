@@ -77,10 +77,17 @@ namespace o2scl_auto_format {
       stream, so the user must take care to make sure this pointer is
       valid.
 
-      \todo Allow user-specified table alignments
-      \todo switch to columnify::add_spaces() and add more complicated
-      table line specifications
-      \todo Implement row_max
+      \verbatim embed:rst
+      .. todo:: 
+
+         In class auto_format:
+
+         - Allow user-specified table alignments
+         - switch to columnify::add_spaces() and add more complicated
+           table line specifications
+         - Implement row_max
+
+      \endverbatim
 
       \future Create a replacement for std::flush
       \future Finish automatic table detection

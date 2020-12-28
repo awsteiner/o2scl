@@ -118,9 +118,9 @@ namespace o2scl {
   protected:
     
     /** \brief To perform binary searches
-	
-	This pointer is set to zero in the constructor and should be
-	non-zero only if it has been allocated with \c new.
+        
+        This pointer is set to zero in the constructor and should be
+        non-zero only if it has been allocated with \c new.
     */
     search_vec<const vec_t> svx;
     
@@ -134,10 +134,10 @@ namespace o2scl {
     size_t sz;
     
     /** \brief An internal function to assist in computing the 
-	integral for both the cspline and Akima types
+        integral for both the cspline and Akima types
     */
     double integ_eval(double ai, double bi, double ci, double di, double xi, 
-		      double a, double b) const {
+                      double a, double b) const {
       
       double r1=a-xi;
       double r2=b-xi;
@@ -162,8 +162,8 @@ namespace o2scl {
 
     /** \brief The minimum size of the vectors to interpolate between
 
-	This variable must be set in the constructor of the children
-	for access by the class user.
+        This variable must be set in the constructor of the children
+        for access by the class user.
     */
     size_t min_size;
 
@@ -182,7 +182,7 @@ namespace o2scl {
     virtual double deriv(double x0) const=0;
     
     /** \brief Give the value of the second derivative 
-	\f$ y^{\prime \prime}(x=x_0) \f$ .
+        \f$ y^{\prime \prime}(x=x_0) \f$ .
     */
     virtual double deriv2(double x0) const=0;
     
@@ -231,9 +231,9 @@ namespace o2scl {
     /// Initialize interpolation routine
     virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
       if (size<this->min_size) {
-	O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
-		   " than "+szttos(this->min_size)+" in interp_linear::"+
-		   "set().").c_str(),exc_einval);
+        O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
+                   " than "+szttos(this->min_size)+" in interp_linear::"+
+                   "set().").c_str(),exc_einval);
       }
       this->svx.set_vec(size,x);
       this->px=&x;
@@ -274,7 +274,7 @@ namespace o2scl {
     }
 
     /** \brief Give the value of the second derivative  
-	\f$ y^{\prime \prime}(x=x_0) \f$ (always zero)
+        \f$ y^{\prime \prime}(x=x_0) \f$ (always zero)
     */
     virtual double deriv2(double x0) const {
       return 0.0;
@@ -288,11 +288,11 @@ namespace o2scl {
       
       bool flip=false;
       if (((*this->px)[0]<(*this->px)[this->sz-1] && a>b) ||
-	  ((*this->px)[0]>(*this->px)[this->sz-1] && a<b)) {
-	double tmp=a;
-	a=b;
-	b=tmp;
-	flip=true;
+          ((*this->px)[0]>(*this->px)[this->sz-1] && a<b)) {
+        double tmp=a;
+        a=b;
+        b=tmp;
+        flip=true;
       }
 
       index_a=this->svx.find_const(a,cache);
@@ -301,30 +301,30 @@ namespace o2scl {
       double result=0.0;
       for(i=index_a; i<=index_b; i++) {
 
-	double x_lo=(*this->px)[i];
-	double x_hi=(*this->px)[i+1];
-	double y_lo=(*this->py)[i];
-	double y_hi=(*this->py)[i+1];
-	double dx=x_hi-x_lo;
-	
-	if(dx != 0.0) {
+        double x_lo=(*this->px)[i];
+        double x_hi=(*this->px)[i+1];
+        double y_lo=(*this->py)[i];
+        double y_hi=(*this->py)[i+1];
+        double dx=x_hi-x_lo;
+        
+        if(dx != 0.0) {
 
-	  if (i == index_a || i == index_b) {
-	    double x1=(i == index_a) ? a : x_lo;
-	    double x2=(i == index_b) ? b : x_hi;
-	    double D=(y_hi-y_lo)/dx;
-	    result += (x2-x1)*(y_lo+0.5*D*((x2-x_lo)+(x1-x_lo)));
-	  } else  {
-	    result += 0.5*dx*(y_lo+y_hi);
-	  }
+          if (i == index_a || i == index_b) {
+            double x1=(i == index_a) ? a : x_lo;
+            double x2=(i == index_b) ? b : x_hi;
+            double D=(y_hi-y_lo)/dx;
+            result += (x2-x1)*(y_lo+0.5*D*((x2-x_lo)+(x1-x_lo)));
+          } else  {
+            result += 0.5*dx*(y_lo+y_hi);
+          }
 
-	} else {
-	  std::string str=((std::string)"Interval of length zero ")+
-	    "between ("+o2scl::dtos(x_lo)+","+o2scl::dtos(y_lo)+
-	    ") and ("+o2scl::dtos(x_hi)+","+o2scl::dtos(y_hi)+
-	    " in interp_linear::integ().";
-	  O2SCL_ERR(str.c_str(),exc_einval);
-	}
+        } else {
+          std::string str=((std::string)"Interval of length zero ")+
+            "between ("+o2scl::dtos(x_lo)+","+o2scl::dtos(y_lo)+
+            ") and ("+o2scl::dtos(x_hi)+","+o2scl::dtos(y_hi)+
+            " in interp_linear::integ().";
+          O2SCL_ERR(str.c_str(),exc_einval);
+        }
       }
       
       if (flip) result=-result;
@@ -368,9 +368,9 @@ namespace o2scl {
     /// Initialize interpolation routine
     virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
       if (size<this->min_size) {
-	O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
-		   " than "+szttos(this->min_size)+" in interp_nearest_neigh::"+
-		   "set().").c_str(),exc_einval);
+        O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
+                   " than "+szttos(this->min_size)+" in interp_nearest_neigh::"+
+                   "set().").c_str(),exc_einval);
       }
       this->svx.set_vec(size,x);
       this->px=&x;
@@ -392,7 +392,7 @@ namespace o2scl {
     }
 
     /** \brief Give the value of the second derivative  
-	\f$ y^{\prime \prime}(x=x_0) \f$ (always zero)
+        \f$ y^{\prime \prime}(x=x_0) \f$ (always zero)
     */
     virtual double deriv2(double x0) const {
       return 0.0;
@@ -463,7 +463,7 @@ namespace o2scl {
     
     /// Compute coefficients for cubic spline interpolation
     void coeff_calc(const ubvector &c_array, double dy, double dx, 
-		    size_t index, double &b, double &c2, double &d) const {
+                    size_t index, double &b, double &c2, double &d) const {
       
       double c_i=c_array[index];
       double c_ip1=c_array[index+1];
@@ -479,7 +479,7 @@ namespace o2scl {
   public:
 
     /** \brief Create a base interpolation object with natural or
-	periodic boundary conditions
+        periodic boundary conditions
     */
     interp_cspline() {
       this->min_size=3;
@@ -493,17 +493,17 @@ namespace o2scl {
     virtual void set(size_t size, const vec_t &xa, const vec2_t &ya) {
 
       if (size<this->min_size) {
-	O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
-		   " than "+szttos(this->min_size)+" in interp_cspline::"+
-		   "set().").c_str(),exc_einval);
+        O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
+                   " than "+szttos(this->min_size)+" in interp_cspline::"+
+                   "set().").c_str(),exc_einval);
       }
 
       if (size!=this->sz) {
-	c.resize(size);
-	g.resize(size);
-	diag.resize(size);
-	offdiag.resize(size);
-	p4m.resize(size);
+        c.resize(size);
+        g.resize(size);
+        diag.resize(size);
+        offdiag.resize(size);
+        p4m.resize(size);
       }
       
       this->px=&xa;
@@ -523,28 +523,28 @@ namespace o2scl {
       c[max_index]=0.0;
 
       for (i=0; i < sys_size; i++) {
-	double h_i=xa[i+1]-xa[i];
-	double h_ip1=xa[i+2]-xa[i+1];
-	double ydiff_i=ya[i+1]-ya[i];
-	double ydiff_ip1=ya[i+2]-ya[i+1];
-	double g_i=(h_i != 0.0) ? 1.0/h_i : 0.0;
-	double g_ip1=(h_ip1 != 0.0) ? 1.0/h_ip1 : 0.0;
-	offdiag[i]=h_ip1;
-	diag[i]=2.0*(h_ip1+h_i);
-	g[i]=3.0*(ydiff_ip1*g_ip1-ydiff_i*g_i);
+        double h_i=xa[i+1]-xa[i];
+        double h_ip1=xa[i+2]-xa[i+1];
+        double ydiff_i=ya[i+1]-ya[i];
+        double ydiff_ip1=ya[i+2]-ya[i+1];
+        double g_i=(h_i != 0.0) ? 1.0/h_i : 0.0;
+        double g_ip1=(h_ip1 != 0.0) ? 1.0/h_ip1 : 0.0;
+        offdiag[i]=h_ip1;
+        diag[i]=2.0*(h_ip1+h_i);
+        g[i]=3.0*(ydiff_ip1*g_ip1-ydiff_i*g_i);
       }
 
       if (sys_size == 1) {
 
-	c[1]=g[0]/diag[0];
+        c[1]=g[0]/diag[0];
 
-	return;
+        return;
       }
 
       ubvector_range cp1(c,range(1,c.size()));
       o2scl_linalg::solve_tridiag_sym<ubvector,ubvector,ubvector,
-	ubvector_range,o2scl_linalg::ubvector_4_mem,ubvector>
-	(diag,offdiag,g,cp1,sys_size,p4m);
+        ubvector_range,o2scl_linalg::ubvector_4_mem,ubvector>
+        (diag,offdiag,g,cp1,sys_size,p4m);
       
       return;
     }
@@ -592,7 +592,7 @@ namespace o2scl {
     }
 
     /** \brief Give the value of the second derivative  
-	\f$ y^{\prime \prime}(x=x_0) \f$ .
+        \f$ y^{\prime \prime}(x=x_0) \f$ .
     */
     virtual double deriv2(double x0) const {
 
@@ -621,11 +621,11 @@ namespace o2scl {
   
       bool flip=false;
       if (((*this->px)[0]<(*this->px)[this->sz-1] && a>b) ||
-	  ((*this->px)[0]>(*this->px)[this->sz-1] && a<b)) {
-	double tmp=a;
-	a=b;
-	b=tmp;
-	flip=true;
+          ((*this->px)[0]>(*this->px)[this->sz-1] && a<b)) {
+        double tmp=a;
+        a=b;
+        b=tmp;
+        flip=true;
       }
 
       size_t cache=0;
@@ -636,31 +636,31 @@ namespace o2scl {
   
       for(i=index_a; i<=index_b; i++) {
 
-	double x_lo=(*this->px)[i];
-	double x_hi=(*this->px)[i+1];
-	double y_lo=(*this->py)[i];
-	double y_hi=(*this->py)[i+1];
-	double dx=x_hi-x_lo;
-	double dy=y_hi-y_lo;
+        double x_lo=(*this->px)[i];
+        double x_hi=(*this->px)[i+1];
+        double y_lo=(*this->py)[i];
+        double y_hi=(*this->py)[i+1];
+        double dx=x_hi-x_lo;
+        double dy=y_hi-y_lo;
 
-	if(dx != 0.0) {
-	  double b_i, c_i, d_i; 
-	  coeff_calc(c,dy,dx,i,b_i,c_i,d_i);
-	  if (i == index_a || i == index_b) {
-	    double x1=(i == index_a) ? a : x_lo;
-	    double x2=(i == index_b) ? b : x_hi;
-	    result += this->integ_eval(y_lo,b_i,c_i,d_i,x_lo,x1,x2);
-	  } else {
-	    result += dx*(y_lo+dx*(0.5*b_i+
-				   dx*(c_i/3.0+0.25*d_i*dx)));
-	  }
-	} else {
-	  std::string str=((std::string)"Interval of length zero ")+
-	    "between ("+o2scl::dtos(x_lo)+","+o2scl::dtos(y_lo)+
-	    ") and ("+o2scl::dtos(x_hi)+","+o2scl::dtos(y_hi)+
-	    " in interp_cspline::integ().";
-	  O2SCL_ERR(str.c_str(),exc_einval);
-	}
+        if(dx != 0.0) {
+          double b_i, c_i, d_i; 
+          coeff_calc(c,dy,dx,i,b_i,c_i,d_i);
+          if (i == index_a || i == index_b) {
+            double x1=(i == index_a) ? a : x_lo;
+            double x2=(i == index_b) ? b : x_hi;
+            result += this->integ_eval(y_lo,b_i,c_i,d_i,x_lo,x1,x2);
+          } else {
+            result += dx*(y_lo+dx*(0.5*b_i+
+                                   dx*(c_i/3.0+0.25*d_i*dx)));
+          }
+        } else {
+          std::string str=((std::string)"Interval of length zero ")+
+            "between ("+o2scl::dtos(x_lo)+","+o2scl::dtos(y_lo)+
+            ") and ("+o2scl::dtos(x_hi)+","+o2scl::dtos(y_hi)+
+            " in interp_cspline::integ().";
+          O2SCL_ERR(str.c_str(),exc_einval);
+        }
 
       }
   
@@ -727,17 +727,17 @@ namespace o2scl {
     virtual void set(size_t size, const vec_t &xa, const vec2_t &ya) {
 
       if (size<this->min_size) {
-	O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
-		   " than "+szttos(this->min_size)+" in interp_cspline"+
-		   "_peri::set().").c_str(),exc_einval);
+        O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
+                   " than "+szttos(this->min_size)+" in interp_cspline"+
+                   "_peri::set().").c_str(),exc_einval);
       }
 
       if (size!=this->sz) {
-	this->c.resize(size);
-	this->g.resize(size);
-	this->diag.resize(size);
-	this->offdiag.resize(size);
-	p5m.resize(size);
+        this->c.resize(size);
+        this->g.resize(size);
+        this->diag.resize(size);
+        this->offdiag.resize(size);
+        p5m.resize(size);
       }
 
       this->px=&xa;
@@ -747,70 +747,70 @@ namespace o2scl {
       this->svx.set_vec(size,xa);
 
       /// Periodic boundary conditions
-	 
+         
       size_t i;
       size_t num_points=size;
       // Engeln-Mullges+Uhlig "n" 
       size_t max_index=num_points-1;  
       // linear system is sys_size x sys_size 
       size_t sys_size=max_index;    
-	
+        
       if (sys_size == 2) {
 
-	// solve 2x2 system 
-	  
-	double h0=xa[1]-xa[0];
-	double h1=xa[2]-xa[1];
-	double h2=xa[3]-xa[2];
-	double A=2.0*(h0+h1);
-	double B=h0+h1;
-	double gx[2];
-	double det;
-	  
-	gx[0]=3.0*((ya[2]-ya[1])/h1-(ya[1]-ya[0])/h0);
-	gx[1]=3.0*((ya[1]-ya[2])/h2-(ya[2]-ya[1])/h1);
-	  
-	det=3.0*(h0+h1)*(h0+h1);
-	this->c[1]=( A*gx[0]-B*gx[1])/det;
-	this->c[2]=(-B*gx[0]+A*gx[1])/det;
-	this->c[0]=this->c[2];
-	  
-	return;
+        // solve 2x2 system 
+          
+        double h0=xa[1]-xa[0];
+        double h1=xa[2]-xa[1];
+        double h2=xa[3]-xa[2];
+        double A=2.0*(h0+h1);
+        double B=h0+h1;
+        double gx[2];
+        double det;
+          
+        gx[0]=3.0*((ya[2]-ya[1])/h1-(ya[1]-ya[0])/h0);
+        gx[1]=3.0*((ya[1]-ya[2])/h2-(ya[2]-ya[1])/h1);
+          
+        det=3.0*(h0+h1)*(h0+h1);
+        this->c[1]=( A*gx[0]-B*gx[1])/det;
+        this->c[2]=(-B*gx[0]+A*gx[1])/det;
+        this->c[0]=this->c[2];
+          
+        return;
 
       } else {
-	  
-	for (i=0; i < sys_size-1; i++) {
-	  double h_i=xa[i+1]-xa[i];
-	  double h_ip1=xa[i+2]-xa[i+1];
-	  double ydiff_i=ya[i+1]-ya[i];
-	  double ydiff_ip1=ya[i+2]-ya[i+1];
-	  double g_i=(h_i != 0.0) ? 1.0/h_i : 0.0;
-	  double g_ip1=(h_ip1 != 0.0) ? 1.0/h_ip1 : 0.0;
-	  this->offdiag[i]=h_ip1;
-	  this->diag[i]=2.0*(h_ip1+h_i);
-	  this->g[i]=3.0*(ydiff_ip1*g_ip1-ydiff_i*g_i);
-	}
-	  
-	i=sys_size-1;
-	{
-	  double h_i=xa[i+1]-xa[i];
-	  double h_ip1=xa[1]-xa[0];
-	  double ydiff_i=ya[i+1]-ya[i];
-	  double ydiff_ip1=ya[1]-ya[0];
-	  double g_i=(h_i != 0.0) ? 1.0/h_i : 0.0;
-	  double g_ip1=(h_ip1 != 0.0) ? 1.0/h_ip1 : 0.0;
-	  this->offdiag[i]=h_ip1;
-	  this->diag[i]=2.0*(h_ip1+h_i);
-	  this->g[i]=3.0*(ydiff_ip1*g_ip1-ydiff_i*g_i);
-	}
-	
-	ubvector_range cp1(this->c,range(1,this->c.size()));
-	o2scl_linalg::solve_cyc_tridiag_sym<ubvector,ubvector,ubvector,
-	  ubvector_range,o2scl_linalg::ubvector_5_mem,ubvector>
-	  (this->diag,this->offdiag,this->g,cp1,sys_size,p5m);
-	this->c[0]=this->c[max_index];
+          
+        for (i=0; i < sys_size-1; i++) {
+          double h_i=xa[i+1]-xa[i];
+          double h_ip1=xa[i+2]-xa[i+1];
+          double ydiff_i=ya[i+1]-ya[i];
+          double ydiff_ip1=ya[i+2]-ya[i+1];
+          double g_i=(h_i != 0.0) ? 1.0/h_i : 0.0;
+          double g_ip1=(h_ip1 != 0.0) ? 1.0/h_ip1 : 0.0;
+          this->offdiag[i]=h_ip1;
+          this->diag[i]=2.0*(h_ip1+h_i);
+          this->g[i]=3.0*(ydiff_ip1*g_ip1-ydiff_i*g_i);
+        }
+          
+        i=sys_size-1;
+        {
+          double h_i=xa[i+1]-xa[i];
+          double h_ip1=xa[1]-xa[0];
+          double ydiff_i=ya[i+1]-ya[i];
+          double ydiff_ip1=ya[1]-ya[0];
+          double g_i=(h_i != 0.0) ? 1.0/h_i : 0.0;
+          double g_ip1=(h_ip1 != 0.0) ? 1.0/h_ip1 : 0.0;
+          this->offdiag[i]=h_ip1;
+          this->diag[i]=2.0*(h_ip1+h_i);
+          this->g[i]=3.0*(ydiff_ip1*g_ip1-ydiff_i*g_i);
+        }
+        
+        ubvector_range cp1(this->c,range(1,this->c.size()));
+        o2scl_linalg::solve_cyc_tridiag_sym<ubvector,ubvector,ubvector,
+          ubvector_range,o2scl_linalg::ubvector_5_mem,ubvector>
+          (this->diag,this->offdiag,this->g,cp1,sys_size,p5m);
+        this->c[0]=this->c[max_index];
 
-	return;
+        return;
       }
 
     }
@@ -866,33 +866,33 @@ namespace o2scl {
 
     /// For initializing the interpolation
     void akima_calc(const vec_t &x_array, size_t size, 
-		    ubvector &umx) {
+                    ubvector &umx) {
       
       for(size_t i=0;i<this->sz-1;i++) {
-	
-	double NE=fabs(umx[3+i]-umx[2+i])+fabs(umx[1+i]-umx[i]);
-	
-	if (NE == 0.0) {
-	  b[i]=umx[2+i];
-	  c[i]=0.0;
-	  d[i]=0.0;
-	} else {
-	  double h_i=(*this->px)[i+1]-(*this->px)[i];
-	  double NE_next=fabs(umx[4+i]-umx[3+i])+
-	    fabs(umx[2+i]-umx[1+i]);
-	  double alpha_i=fabs(umx[1+i]-umx[i])/NE;
-	  double alpha_ip1;
-	  double tL_ip1;
-	  if (NE_next == 0.0) {
-	    tL_ip1=umx[2+i];
-	  } else {
-	    alpha_ip1=fabs(umx[2+i]-umx[1+i])/NE_next;
-	    tL_ip1=(1.0-alpha_ip1)*umx[2+i]+alpha_ip1*umx[3+i];
-	  }
-	  b[i]=(1.0-alpha_i)*umx[1+i]+alpha_i*umx[2+i];
-	  c[i]=(3.0*umx[2+i]-2.0*b[i]-tL_ip1)/h_i;
-	  d[i]=(b[i]+tL_ip1-2.0*umx[2+i])/(h_i*h_i);
-	}
+        
+        double NE=fabs(umx[3+i]-umx[2+i])+fabs(umx[1+i]-umx[i]);
+        
+        if (NE == 0.0) {
+          b[i]=umx[2+i];
+          c[i]=0.0;
+          d[i]=0.0;
+        } else {
+          double h_i=(*this->px)[i+1]-(*this->px)[i];
+          double NE_next=fabs(umx[4+i]-umx[3+i])+
+            fabs(umx[2+i]-umx[1+i]);
+          double alpha_i=fabs(umx[1+i]-umx[i])/NE;
+          double alpha_ip1;
+          double tL_ip1;
+          if (NE_next == 0.0) {
+            tL_ip1=umx[2+i];
+          } else {
+            alpha_ip1=fabs(umx[2+i]-umx[1+i])/NE_next;
+            tL_ip1=(1.0-alpha_ip1)*umx[2+i]+alpha_ip1*umx[3+i];
+          }
+          b[i]=(1.0-alpha_i)*umx[1+i]+alpha_i*umx[2+i];
+          c[i]=(3.0*umx[2+i]-2.0*b[i]-tL_ip1)/h_i;
+          d[i]=(b[i]+tL_ip1-2.0*umx[2+i])/(h_i*h_i);
+        }
       }
     }
     
@@ -901,7 +901,7 @@ namespace o2scl {
   public:
 
     /** \brief Create a base interpolation object with or without
-	periodic boundary conditions
+        periodic boundary conditions
     */
     interp_akima() {
       this->min_size=5;
@@ -915,16 +915,16 @@ namespace o2scl {
     virtual void set(size_t size, const vec_t &xa, const vec2_t &ya) {
       
       if (size<this->min_size) {
-	O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
-		   " than "+szttos(this->min_size)+" in interp_akima::"+
-		   "set().").c_str(),exc_einval);
+        O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
+                   " than "+szttos(this->min_size)+" in interp_akima::"+
+                   "set().").c_str(),exc_einval);
       }
 
       if (size!=this->sz) {
-	b.resize(size);
-	c.resize(size);
-	d.resize(size);
-	um.resize(size+4);
+        b.resize(size);
+        c.resize(size);
+        d.resize(size);
+        um.resize(size+4);
       }
 
       this->px=&xa;
@@ -938,14 +938,14 @@ namespace o2scl {
       ubvector_range m(um,range(2,um.size()));
       size_t i;
       for (i=0;i<=size-2;i++) {
-	m[i]=(ya[i+1]-ya[i])/(xa[i+1]-xa[i]);
+        m[i]=(ya[i+1]-ya[i])/(xa[i+1]-xa[i]);
       }
-	
+        
       um[0]=3.0*m[0]-2.0*m[1];
       um[1]=2.0*m[0]-m[1];
       m[this->sz-1]=2.0*m[size-2]-m[size-3];
       m[size]=3.0*m[size-2]-2.0*m[size-3];
-	
+        
       akima_calc(xa,size,um);
 
       return;
@@ -982,7 +982,7 @@ namespace o2scl {
     }
 
     /** \brief Give the value of the second derivative  
-	\f$ y^{\prime \prime}(x=x_0) \f$ .
+        \f$ y^{\prime \prime}(x=x_0) \f$ .
     */
     virtual double deriv2(double x0) const {
 
@@ -1004,11 +1004,11 @@ namespace o2scl {
   
       bool flip=false;
       if (((*this->px)[0]<(*this->px)[this->sz-1] && aa>bb) ||
-	  ((*this->px)[0]>(*this->px)[this->sz-1] && aa<bb)) {
-	double tmp=aa;
-	aa=bb;
-	bb=tmp;
-	flip=true;
+          ((*this->px)[0]>(*this->px)[this->sz-1] && aa<bb)) {
+        double tmp=aa;
+        aa=bb;
+        bb=tmp;
+        flip=true;
       }
 
       size_t cache=0;
@@ -1019,29 +1019,29 @@ namespace o2scl {
   
       for(i=index_a; i<=index_b; i++) {
 
-	double x_lo=(*this->px)[i];
-	double x_hi=(*this->px)[i+1];
-	double y_lo=(*this->py)[i];
-	double dx=x_hi-x_lo;
+        double x_lo=(*this->px)[i];
+        double x_hi=(*this->px)[i+1];
+        double y_lo=(*this->py)[i];
+        double dx=x_hi-x_lo;
 
-	if (dx != 0.0) {
-	  
-	  if (i==index_a || i==index_b) {
-	    double x1=(i==index_a) ? aa : x_lo;
-	    double x2=(i==index_b) ? bb : x_hi;
-	    result += this->integ_eval(y_lo,b[i],c[i],d[i],x_lo,x1,x2);
-	  } else {
-	    result+=dx*(y_lo+dx*(0.5*b[i]+dx*(c[i]/3.0+0.25*d[i]*dx)));
-	  }
+        if (dx != 0.0) {
+          
+          if (i==index_a || i==index_b) {
+            double x1=(i==index_a) ? aa : x_lo;
+            double x2=(i==index_b) ? bb : x_hi;
+            result += this->integ_eval(y_lo,b[i],c[i],d[i],x_lo,x1,x2);
+          } else {
+            result+=dx*(y_lo+dx*(0.5*b[i]+dx*(c[i]/3.0+0.25*d[i]*dx)));
+          }
 
-	} else {
-	  double y_hi=(*this->py)[i+1];
-	  std::string str=((std::string)"Interval of length zero ")+
-	    "between ("+o2scl::dtos(x_lo)+","+o2scl::dtos(y_lo)+
-	    ") and ("+o2scl::dtos(x_hi)+","+o2scl::dtos(y_hi)+
-	    " in interp_akima::integ().";
-	  O2SCL_ERR(str.c_str(),exc_einval);
-	}
+        } else {
+          double y_hi=(*this->py)[i+1];
+          std::string str=((std::string)"Interval of length zero ")+
+            "between ("+o2scl::dtos(x_lo)+","+o2scl::dtos(y_lo)+
+            ") and ("+o2scl::dtos(x_hi)+","+o2scl::dtos(y_hi)+
+            " in interp_akima::integ().";
+          O2SCL_ERR(str.c_str(),exc_einval);
+        }
       }
   
       if (flip) result*=-1.0;
@@ -1097,16 +1097,16 @@ namespace o2scl {
     virtual void set(size_t size, const vec_t &xa, const vec2_t &ya) {
       
       if (size<this->min_size) {
-	O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
-		   " than "+szttos(this->min_size)+" in interp_akima"+
-		   "_peri::set().").c_str(),exc_einval);
+        O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
+                   " than "+szttos(this->min_size)+" in interp_akima"+
+                   "_peri::set().").c_str(),exc_einval);
       }
       
       if (size!=this->sz) {
-	this->b.resize(size);
-	this->c.resize(size);
-	this->d.resize(size);
-	this->um.resize(size+4);
+        this->b.resize(size);
+        this->c.resize(size);
+        this->d.resize(size);
+        this->um.resize(size+4);
       }
 
       this->px=&xa;
@@ -1121,7 +1121,7 @@ namespace o2scl {
 
       // Form the required set of divided differences
       for (size_t i=0;i<=size-2;i++) {
-	m[i]=(ya[i+1]-ya[i])/(xa[i+1]-xa[i]);
+        m[i]=(ya[i+1]-ya[i])/(xa[i+1]-xa[i]);
       }
       
       this->um[0]=m[this->sz-3];
@@ -1185,7 +1185,7 @@ namespace o2scl {
      */
     double copysign(const double x, const double y) {
       if ((x < 0 && y > 0) || (x > 0 && y < 0)) {
-	return -x;
+        return -x;
       }
       return x;
     }
@@ -1207,17 +1207,17 @@ namespace o2scl {
     virtual void set(size_t size, const vec_t &xa, const vec2_t &ya) {
       
       if (size<this->min_size) {
-	O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
-		   " than "+szttos(this->min_size)+" in interp_steffen::"+
-		   "set().").c_str(),exc_einval);
+        O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
+                   " than "+szttos(this->min_size)+" in interp_steffen::"+
+                   "set().").c_str(),exc_einval);
       }
       
       if (size!=this->sz) {
-	a.resize(size);
-	b.resize(size);
-	c.resize(size);
-	d.resize(size);
-	y_prime.resize(size);
+        a.resize(size);
+        b.resize(size);
+        c.resize(size);
+        d.resize(size);
+        y_prime.resize(size);
       }
       
       this->px=&xa;
@@ -1237,25 +1237,25 @@ namespace o2scl {
       y_prime[0]=s0;
       
       /* Now we calculate all the necessary s, h, p, and y' variables 
-	 from 1 to N-2 (0 to size-2 inclusive) */
+         from 1 to N-2 (0 to size-2 inclusive) */
       for (size_t i=1; i < (size-1); i++) {
-	
-	double pi;
-	
-	/* equation 6 in the paper */
-	double hi=(xa[i+1]-xa[i]);
-	double him1=(xa[i]-xa[i-1]);
-	
-	/* equation 7 in the paper */
-	double si=(ya[i+1]-ya[i]) / hi;
-	double sim1=(ya[i]-ya[i-1]) / him1;
-	
-	/* equation 8 in the paper */
-	pi=(sim1*hi + si*him1) / (him1 + hi);
-	
-	/* This is a C equivalent of the FORTRAN statement below eqn 11 */
-	y_prime[i]=(copysign(1.0,sim1)+copysign(1.0,si))*
-	  std::min(fabs(sim1),std::min(fabs(si),0.5*fabs(pi))); 
+        
+        double pi;
+        
+        /* equation 6 in the paper */
+        double hi=(xa[i+1]-xa[i]);
+        double him1=(xa[i]-xa[i-1]);
+        
+        /* equation 7 in the paper */
+        double si=(ya[i+1]-ya[i]) / hi;
+        double sim1=(ya[i]-ya[i-1]) / him1;
+        
+        /* equation 8 in the paper */
+        pi=(sim1*hi + si*him1) / (him1 + hi);
+        
+        /* This is a C equivalent of the FORTRAN statement below eqn 11 */
+        y_prime[i]=(copysign(1.0,sim1)+copysign(1.0,si))*
+          std::min(fabs(sim1),std::min(fabs(si),0.5*fabs(pi))); 
 
       }
 
@@ -1267,18 +1267,18 @@ namespace o2scl {
        * y'=s_{n-1}
        */
       y_prime[size-1]=(ya[size-1]-ya[size-2])/
-	(xa[size-1]-xa[size-2]);
+        (xa[size-1]-xa[size-2]);
       
       /* Now we can calculate all the coefficients for the whole range. */
       for (size_t i=0; i < (size-1); i++) {
-	double hi=(xa[i+1]-xa[i]);
-	double si=(ya[i+1]-ya[i]) / hi;
-	
-	/* These are from equations 2-5 in the paper. */
-	a[i]=(y_prime[i] + y_prime[i+1]-2*si) / hi / hi;
-	b[i]=(3*si-2*y_prime[i]-y_prime[i+1]) / hi;
-	c[i]=y_prime[i];
-	d[i]=ya[i];
+        double hi=(xa[i+1]-xa[i]);
+        double si=(ya[i+1]-ya[i]) / hi;
+        
+        /* These are from equations 2-5 in the paper. */
+        a[i]=(y_prime[i] + y_prime[i+1]-2*si) / hi / hi;
+        b[i]=(3*si-2*y_prime[i]-y_prime[i+1]) / hi;
+        c[i]=y_prime[i];
+        d[i]=ya[i];
       }
       
       return;
@@ -1310,7 +1310,7 @@ namespace o2scl {
     }
 
     /** \brief Give the value of the second derivative  
-	\f$ y^{\prime \prime}(x=x_0) \f$ .
+        \f$ y^{\prime \prime}(x=x_0) \f$ .
     */
     virtual double deriv2(double x0) const {
 
@@ -1329,11 +1329,11 @@ namespace o2scl {
   
       bool flip=false;
       if (((*this->px)[0]<(*this->px)[this->sz-1] && al>bl) ||
-	  ((*this->px)[0]>(*this->px)[this->sz-1] && al<bl)) {
-	double tmp=al;
-	al=bl;
-	bl=tmp;
-	flip=true;
+          ((*this->px)[0]>(*this->px)[this->sz-1] && al<bl)) {
+        double tmp=al;
+        al=bl;
+        bl=tmp;
+        flip=true;
       }
 
       size_t cache=0;
@@ -1344,27 +1344,27 @@ namespace o2scl {
   
       for(i=index_a; i<=index_b; i++) {
 
-	double x_lo=(*this->px)[i];
-	double x_hi=(*this->px)[i+1];
-	double y_lo=(*this->py)[i];
-	double y_hi=(*this->py)[i+1];
-	double dx=x_hi-x_lo;
+        double x_lo=(*this->px)[i];
+        double x_hi=(*this->px)[i+1];
+        double y_lo=(*this->py)[i];
+        double y_hi=(*this->py)[i+1];
+        double dx=x_hi-x_lo;
 
-	if(dx != 0.0) {
+        if(dx != 0.0) {
 
-	  double x1=(i == index_a) ? al-x_lo : 0.0;
-	  double x2=(i == index_b) ? bl-x_lo : x_hi-x_lo;
-	  result += (1.0/4.0)*a[i]*(x2*x2*x2*x2-x1*x1*x1*x1)+
-	    (1.0/3.0)*b[i]*(x2*x2*x2-x1*x1*x1)+
-	    (1.0/2.0)*c[i]*(x2*x2-x1*x1)+d[i]*(x2-x1);
+          double x1=(i == index_a) ? al-x_lo : 0.0;
+          double x2=(i == index_b) ? bl-x_lo : x_hi-x_lo;
+          result += (1.0/4.0)*a[i]*(x2*x2*x2*x2-x1*x1*x1*x1)+
+            (1.0/3.0)*b[i]*(x2*x2*x2-x1*x1*x1)+
+            (1.0/2.0)*c[i]*(x2*x2-x1*x1)+d[i]*(x2-x1);
 
-	} else {
-	  std::string str=((std::string)"Interval of length zero ")+
-	    "between ("+o2scl::dtos(x_lo)+","+o2scl::dtos(y_lo)+
-	    ") and ("+o2scl::dtos(x_hi)+","+o2scl::dtos(y_hi)+
-	    " in interp_steffen::integ().";
-	  O2SCL_ERR(str.c_str(),exc_einval);
-	}
+        } else {
+          std::string str=((std::string)"Interval of length zero ")+
+            "between ("+o2scl::dtos(x_lo)+","+o2scl::dtos(y_lo)+
+            ") and ("+o2scl::dtos(x_hi)+","+o2scl::dtos(y_hi)+
+            " in interp_steffen::integ().";
+          O2SCL_ERR(str.c_str(),exc_einval);
+        }
 
       }
   
@@ -1450,9 +1450,9 @@ namespace o2scl {
 
       // Verify size
       if (size<this->min_size) {
-	O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
-		   " than "+szttos(this->min_size)+" in interp_monotonic::"+
-		   "set().").c_str(),exc_einval);
+        O2SCL_ERR((((std::string)"Vector size, ")+szttos(size)+", is less"+
+                   " than "+szttos(this->min_size)+" in interp_monotonic::"+
+                   "set().").c_str(),exc_einval);
       }
       
       // Setup search_vec object
@@ -1460,10 +1460,10 @@ namespace o2scl {
 
       // Resize internal vectors
       if (this->sz!=size) {
-	m.resize(size);
-	Delta.resize(size-1);
-	alpha.resize(size-1);
-	beta.resize(size-1);
+        m.resize(size);
+        Delta.resize(size-1);
+        alpha.resize(size-1);
+        beta.resize(size-1);
       }
       
       // Copy pointers
@@ -1475,36 +1475,36 @@ namespace o2scl {
       
       // Compute Delta and m
       for(size_t i=0;i<size-1;i++) {
-	Delta[i]=(y[i+1]-y[i])/(x[i+1]-x[i]);
-	if (i>0) {
-	  m[i]=(Delta[i]+Delta[i-1])/2.0;
-	}
+        Delta[i]=(y[i+1]-y[i])/(x[i+1]-x[i]);
+        if (i>0) {
+          m[i]=(Delta[i]+Delta[i-1])/2.0;
+        }
       }
       m[0]=Delta[0];
       m[size-1]=Delta[size-2];
       
       // Check to see if the data is flat anywhere
       for(size_t i=0;i<size-1;i++) {
-	if (y[i]==y[i+1]) {
-	  m[i]=0.0;
-	  m[i+1]=0.0;
-	}
+        if (y[i]==y[i+1]) {
+          m[i]=0.0;
+          m[i+1]=0.0;
+        }
       }
       
       // Compute alpha and beta
       for(size_t i=0;i<size-1;i++) {
-	alpha[i]=m[i]/Delta[i];
-	beta[i]=m[i+1]/Delta[i];
+        alpha[i]=m[i]/Delta[i];
+        beta[i]=m[i+1]/Delta[i];
       }
 
       // Constrain m to ensure monotonicity
       for(size_t i=0;i<size-1;i++) {
-	double norm2=alpha[i]*alpha[i]+beta[i]*beta[i];
-	if (norm2>9.0) {
-	  double tau=3.0/sqrt(norm2);
-	  m[i]=tau*alpha[i]*Delta[i];
-	  m[i+1]=tau*beta[i]*Delta[i];
-	}
+        double norm2=alpha[i]*alpha[i]+beta[i]*beta[i];
+        if (norm2>9.0) {
+          double tau=3.0/sqrt(norm2);
+          m[i]=tau*alpha[i]*Delta[i];
+          m[i+1]=tau*beta[i]*Delta[i];
+        }
       }
             
       return;
@@ -1552,13 +1552,13 @@ namespace o2scl {
       double dh01=-6.0*t2+6.0*t;
       double dh11=3.0*t2-2.0*t;
       double deriv=(y_lo*dh00+h*m[index]*dh10+y_hi*dh01+
-		    h*m[index+1]*dh11)/h;
+                    h*m[index+1]*dh11)/h;
 
       return deriv;
     }
 
     /** \brief Give the value of the second derivative  
-	\f$ y^{\prime \prime}(x=x_0) \f$
+        \f$ y^{\prime \prime}(x=x_0) \f$
     */
     virtual double deriv2(double x0) const {
 
@@ -1577,7 +1577,7 @@ namespace o2scl {
       double ddh01=-12.0*t+6.0;
       double ddh11=6.0*t-2.0;
       double deriv2=(y_lo*ddh00+h*m[index]*ddh10+y_hi*ddh01+
-		     h*m[index+1]*ddh11)/h/h;
+                     h*m[index+1]*ddh11)/h/h;
 
       return deriv2;
     }
@@ -1589,11 +1589,11 @@ namespace o2scl {
       
       bool flip=false;
       if (((*this->px)[0]<(*this->px)[this->sz-1] && a>b) ||
-	  ((*this->px)[0]>(*this->px)[this->sz-1] && a<b)) {
-	double tmp=a;
-	a=b;
-	b=tmp;
-	flip=true;
+          ((*this->px)[0]>(*this->px)[this->sz-1] && a<b)) {
+        double tmp=a;
+        a=b;
+        b=tmp;
+        flip=true;
       }
 
       size_t cache=0;
@@ -1604,39 +1604,39 @@ namespace o2scl {
   
       for(i=index_a; i<=index_b; i++) {
 
-	double x_hi=(*this->px)[i+1];
-	double x_lo=(*this->px)[i];
-	double y_lo=(*this->py)[i];
-	double y_hi=(*this->py)[i+1];
-	double h=x_hi-x_lo;
-	
-	if (h != 0.0) {
-	  
-	  if (i == index_a) {
-	    x_lo=a;
-	  }
-	  if (i == index_b) {
-	    x_hi=b;
-	  }
+        double x_hi=(*this->px)[i+1];
+        double x_lo=(*this->px)[i];
+        double y_lo=(*this->py)[i];
+        double y_hi=(*this->py)[i+1];
+        double h=x_hi-x_lo;
+        
+        if (h != 0.0) {
+          
+          if (i == index_a) {
+            x_lo=a;
+          }
+          if (i == index_b) {
+            x_hi=b;
+          }
 
-	  double t=(x_hi-x_lo)/h;
-	  double t2=t*t, t3=t2*t, t4=t3*t;
-	  
-	  double ih00=t4/2.0-t3+t;
-	  double ih10=t4/4.0-2.0*t3/3.0+t2/2.0;
-	  double ih01=-t4/2.0+t3;
-	  double ih11=t4/4.0-t3/3.0;
-	  double intres=h*(y_lo*ih00+h*m[i]*ih10+y_hi*ih01+
-			   h*m[i+1]*ih11);
-	  result+=intres;
+          double t=(x_hi-x_lo)/h;
+          double t2=t*t, t3=t2*t, t4=t3*t;
+          
+          double ih00=t4/2.0-t3+t;
+          double ih10=t4/4.0-2.0*t3/3.0+t2/2.0;
+          double ih01=-t4/2.0+t3;
+          double ih11=t4/4.0-t3/3.0;
+          double intres=h*(y_lo*ih00+h*m[i]*ih10+y_hi*ih01+
+                           h*m[i+1]*ih11);
+          result+=intres;
 
-	} else {
-	  std::string str=((std::string)"Interval of length zero ")+
-	    "between ("+o2scl::dtos(x_lo)+","+o2scl::dtos(y_lo)+
-	    ") and ("+o2scl::dtos(x_hi)+","+o2scl::dtos(y_hi)+
-	    " in interp_monotonic::integ().";
-	  O2SCL_ERR(str.c_str(),exc_einval);
-	}
+        } else {
+          std::string str=((std::string)"Interval of length zero ")+
+            "between ("+o2scl::dtos(x_lo)+","+o2scl::dtos(y_lo)+
+            ") and ("+o2scl::dtos(x_hi)+","+o2scl::dtos(y_hi)+
+            " in interp_monotonic::integ().";
+          O2SCL_ERR(str.c_str(),exc_einval);
+        }
 
       }
   
@@ -1709,8 +1709,8 @@ namespace o2scl {
       itp=new interp_nearest_neigh<vec_t,vec2_t>;
     } else {
       O2SCL_ERR((((std::string)"Invalid interpolation type, ")+
-		 o2scl::szttos(interp_type)+", in "+
-		 "interp::interp().").c_str(),exc_einval);
+                 o2scl::szttos(interp_type)+", in "+
+                 "interp::interp().").c_str(),exc_einval);
     }
   }
 
@@ -1722,10 +1722,10 @@ namespace o2scl {
       specified as the first \c n elements of vectors \c x and \c y
    */
   virtual double eval(const double x0, size_t n, const vec_t &x, 
-			const vec2_t &y) {
+                        const vec2_t &y) {
     itp->set(n,x,y);
     return itp->eval(x0);
-  }		      
+  }                   
     
   /** \brief Give the value of the derivative, \f$ y^{\prime}(x=x_0)
       \f$ , where \f$ y(x) \f$ is specified in the first 
@@ -1733,30 +1733,30 @@ namespace o2scl {
       \c y
    */
   virtual double deriv(const double x0, size_t n, const vec_t &x, 
-		       const vec2_t &y) {
+                       const vec2_t &y) {
     itp->set(n,x,y);
     return itp->deriv(x0);
-  }		      
+  }                   
     
   /** \brief Give the value of the second derivative, \f$
       y^{\prime\prime}(x=x_0) \f$ , where \f$ y(x) \f$ is specified in
       the first \c n elements of vectors \c x and \c y
    */
   virtual double deriv2(const double x0, size_t n, const vec_t &x, 
-			const vec2_t &y) {
+                        const vec2_t &y) {
     itp->set(n,x,y);
     return itp->deriv2(x0);
-  }		      
+  }                   
     
   /** \brief Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$
       , where \f$ y(x) \f$ is specified in the first \c n elements of
       vectors \c x and \c y
   */
   virtual double integ(const double x1, const double x2, size_t n, 
-		       const vec_t &x, const vec2_t &y) {
+                       const vec_t &x, const vec2_t &y) {
     itp->set(n,x,y);
     return itp->integ(x1,x2);
-  }		      
+  }                   
     
   /// Set base interpolation type
   void set_type(size_t interp_type) {
@@ -1779,8 +1779,8 @@ namespace o2scl {
       itp=new interp_nearest_neigh<vec_t,vec2_t>;
     } else {
       O2SCL_ERR((((std::string)"Invalid interpolation type, ")+
-		 o2scl::szttos(interp_type)+", in "+
-		 "interp::set().").c_str(),exc_einval);
+                 o2scl::szttos(interp_type)+", in "+
+                 "interp::set().").c_str(),exc_einval);
     }
     return;
   }
@@ -1848,12 +1848,12 @@ namespace o2scl {
       \c x and \c y
   */
   interp_vec(size_t n, const vec_t &x, 
-	     const vec2_t &y, size_t interp_type=itp_cspline) {
+             const vec2_t &y, size_t interp_type=itp_cspline) {
     
     if (x[0]==x[n-1]) {
       O2SCL_ERR((((std::string)"Vector endpoints equal (value=")+
-		 o2scl::dtos(x[0])+") in interp_vec()::"+
-		 "interp_vec().").c_str(),exc_einval);
+                 o2scl::dtos(x[0])+") in interp_vec()::"+
+                 "interp_vec().").c_str(),exc_einval);
     }
 
     if (interp_type==itp_linear) {
@@ -1874,8 +1874,8 @@ namespace o2scl {
       itp=new interp_nearest_neigh<vec_t,vec2_t>;
     } else {
       O2SCL_ERR((((std::string)"Invalid interpolation type, ")+
-		 o2scl::szttos(interp_type)+", in "+
-		 "interp_vec::interp_vec().").c_str(),exc_einval);
+                 o2scl::szttos(interp_type)+", in "+
+                 "interp_vec::interp_vec().").c_str(),exc_einval);
     }
     itype=interp_type;
 
@@ -1899,12 +1899,12 @@ namespace o2scl {
   /** \brief Set a new vector to interpolate
    */
   void set(size_t n, const vec_t &x, 
-	   const vec2_t &y, size_t interp_type) {
+           const vec2_t &y, size_t interp_type) {
     
     if (x[0]==x[n-1]) {
       O2SCL_ERR((((std::string)"Vector endpoints equal (value=")+
-		 o2scl::dtos(x[0])+") in interp_vec()::"+
-		 "interp_vec().").c_str(),exc_einval);
+                 o2scl::dtos(x[0])+") in interp_vec()::"+
+                 "interp_vec().").c_str(),exc_einval);
     }
 
     delete itp;
@@ -1926,8 +1926,8 @@ namespace o2scl {
       itp=new interp_nearest_neigh<vec_t,vec2_t>;
     } else {
       O2SCL_ERR((((std::string)"Invalid interpolation type, ")+
-		 o2scl::szttos(interp_type)+", in "+
-		 "interp_vec::set().").c_str(),exc_einval);
+                 o2scl::szttos(interp_type)+", in "+
+                 "interp_vec::set().").c_str(),exc_einval);
     }
     itype=interp_type;
     
@@ -1948,16 +1948,16 @@ namespace o2scl {
   virtual double eval(const double x0) const {
     if (itp==0) {
       O2SCL_ERR("No vector set in interp_vec::eval().",
-		exc_einval);
+                exc_einval);
     }
     return itp->eval(x0);
-  }		      
+  }                   
     
   /// Give the value of the function \f$ y(x=x_0) \f$ .
   virtual double operator()(double x0) const {
     if (itp==0) {
       O2SCL_ERR("No vector set in interp_vec::operator().",
-		exc_einval);
+                exc_einval);
     }
     return itp->eval(x0);
   }
@@ -1966,10 +1966,10 @@ namespace o2scl {
   virtual double deriv(const double x0) const {
     if (itp==0) {
       O2SCL_ERR("No vector set in interp_vec::deriv().",
-		exc_einval);
+                exc_einval);
     }
     return itp->deriv(x0);
-  }		      
+  }                   
     
   /** \brief Give the value of the second derivative  
       \f$ y^{\prime \prime}(x=x_0) \f$ .
@@ -1977,19 +1977,19 @@ namespace o2scl {
   virtual double deriv2(const double x0) const {
     if (itp==0) {
       O2SCL_ERR("No vector set in interp_vec::deriv2().",
-		exc_einval);
+                exc_einval);
     }
     return itp->deriv2(x0);
-  }		      
+  }                   
     
   /// Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$ .
   virtual double integ(const double x1, const double x2) const {
     if (itp==0) {
       O2SCL_ERR("No vector set in interp_vec::integ().",
-		exc_einval);
+                exc_einval);
     }
     return itp->integ(x1,x2);
-  }		      
+  }                   
   
   /// Return the type, "interp_vec"
   virtual const char *type() const {
@@ -2025,7 +2025,7 @@ namespace o2scl {
     : interp<double[n]>(interp_type) {}
     
     /** \brief Create an interpolator using the default base
-	interpolation objects
+        interpolation objects
     */
   interp_array() : interp<double[n]>() {}
     
@@ -2045,7 +2045,7 @@ namespace o2scl {
     
     /// Create with base interpolation object \c it
   interp_array_vec(size_t nv, const arr_t &x, const arr_t &y,
-	   size_t interp_type) :
+           size_t interp_type) :
     interp_vec<arr_t>(nv,x,y,interp_type) {}
   };
 
@@ -2077,7 +2077,7 @@ namespace o2scl {
 
     if (n<=1) {
       O2SCL_ERR2("Need at least two data points in ",
-		 "vector_find_count().",exc_einval);
+                 "vector_find_count().",exc_einval);
     }
     
     size_t count=0;
@@ -2089,8 +2089,8 @@ namespace o2scl {
     for(size_t i=0;i<n-1;i++) {
 
       if ((y[i]<level && y[i+1]>=level) ||
-	  (y[i]>level && y[i+1]<=level)) {
-	count++;
+          (y[i]>level && y[i+1]<=level)) {
+        count++;
       }
     }
 
@@ -2105,7 +2105,7 @@ namespace o2scl {
    */
   template<class ovec_t, class vec2_t>
     void vector_deriv_interp(size_t n, ovec_t &v, vec2_t &dv, 
-			     size_t interp_type=itp_linear) {
+                             size_t interp_type=itp_linear) {
     ovec_t grid(n);
     for(size_t i=0;i<n;i++) grid[i]=((double)i);
     interp_vec<ovec_t,ovec_t> oi(n,grid,v,interp_type);
@@ -2118,7 +2118,7 @@ namespace o2scl {
    */
   template<class ovec_t, class vec2_t>
     void vector_deriv2_interp(size_t n, ovec_t &v, vec2_t &dv, 
-			     size_t interp_type=itp_linear) {
+                             size_t interp_type=itp_linear) {
     ovec_t grid(n);
     for(size_t i=0;i<n;i++) grid[i]=((double)i);
     interp_vec<ovec_t,ovec_t> oi(n,grid,v,interp_type);
@@ -2131,7 +2131,7 @@ namespace o2scl {
    */
   template<class vec_t, class vec2_t, class vec3_t>
     void vector_deriv_xy_interp(size_t n, vec_t &vx, vec2_t &vy, vec3_t &dv, 
-				size_t interp_type=itp_linear) {
+                                size_t interp_type=itp_linear) {
     interp_vec<vec_t,vec2_t> oi(n,vx,vy,interp_type);
     for(size_t i=0;i<n;i++) dv[i]=oi.deriv(vx[i]);
     return;
@@ -2142,7 +2142,7 @@ namespace o2scl {
    */
   template<class vec_t, class vec2_t, class vec3_t>
     void vector_deriv2_xy_interp(size_t n, vec_t &vx, vec2_t &vy, vec3_t &dv, 
-				 size_t interp_type=itp_linear) {
+                                 size_t interp_type=itp_linear) {
     interp_vec<vec_t,vec2_t> oi(n,vx,vy,interp_type);
     for(size_t i=0;i<n;i++) dv[i]=oi.deriv(vx[i]);
     return;
@@ -2173,7 +2173,7 @@ namespace o2scl {
   */
   template<class vec_t, class vec2_t> 
     double vector_integ_xy_interp(size_t n, const vec_t &x, const vec2_t &y,
-				  size_t interp_type=itp_linear) {
+                                  size_t interp_type=itp_linear) {
     
     // Interpolation object
     interp<vec_t,vec2_t> si(interp_type);
@@ -2189,7 +2189,7 @@ namespace o2scl {
    */
   template<class vec_t, class vec2_t, class vec3_t> 
     void vector_integ_xy_interp(size_t n, const vec_t &x, const vec2_t &y,
-				vec3_t &iy, size_t interp_type=itp_linear) {
+                                vec3_t &iy, size_t interp_type=itp_linear) {
     
     // Interpolation object
     interp<vec_t,vec2_t> si(interp_type);
@@ -2208,7 +2208,7 @@ namespace o2scl {
   */
   template<class ovec_t>
     double vector_integ_ul_interp(size_t n, double x2,
-				  ovec_t &v, size_t interp_type) {
+                                  ovec_t &v, size_t interp_type) {
     ovec_t grid(n);
     for(size_t i=0;i<n;i++) grid[i]=((double)i);
     interp_vec<ovec_t> oi(n,grid,v,interp_type);
@@ -2220,8 +2220,8 @@ namespace o2scl {
   */
   template<class vec_t, class vec2_t> 
     double vector_integ_ul_xy_interp(size_t n, const vec_t &x,
-				     const vec2_t &y, double x2,
-				     size_t interp_type=itp_linear) {
+                                     const vec2_t &y, double x2,
+                                     size_t interp_type=itp_linear) {
     
     // Interpolation object
     interp<vec_t,vec2_t> si(interp_type);
@@ -2260,7 +2260,7 @@ namespace o2scl {
     
     if (n<=1) {
       O2SCL_ERR2("Need at least two data points in ",
-		 "vector_find_level().",exc_einval);
+                 "vector_find_level().",exc_einval);
     }
     
     // Ensure that the location vector is empty
@@ -2275,13 +2275,13 @@ namespace o2scl {
     for(size_t i=0;i<n-1;i++) {
       
       if ((y[i]<level && y[i+1]>level) ||
-	  (y[i]>level && y[i+1]<level)) {
-	// For each intersection, add the location using linear 
-	// interpolation
-	double x0=x[i]+(x[i+1]-x[i])*(level-y[i])/(y[i+1]-y[i]);
-	locs.push_back(x0);
+          (y[i]>level && y[i+1]<level)) {
+        // For each intersection, add the location using linear 
+        // interpolation
+        double x0=x[i]+(x[i+1]-x[i])*(level-y[i])/(y[i+1]-y[i]);
+        locs.push_back(x0);
       } else if (y[i+1]==level) {
-	locs.push_back(x[i+1]);
+        locs.push_back(x[i+1]);
       }
     }
 
@@ -2331,7 +2331,7 @@ namespace o2scl {
     
     if (n<=1) {
       O2SCL_ERR2("Need at least two data points in ",
-		 "vector_invert_enclosed_sum().",exc_einval);
+                 "vector_invert_enclosed_sum().",exc_einval);
     }
 
     typedef boost::numeric::ublas::vector<double> ubvector;
@@ -2341,54 +2341,54 @@ namespace o2scl {
     size_t n2;
     if (boundaries==1) {
       if (verbose>0) {
-	std::cout << "Fix left boundary to zero." << std::endl;
+        std::cout << "Fix left boundary to zero." << std::endl;
       }
       x2.resize(n+1);
       y2.resize(n+1);
       x2[0]=x[0]-(x[1]-x[0])/1.0e6;
       y2[0]=0.0;
       for(size_t i=0;i<n;i++) {
-	x2[i+1]=x[i];
-	y2[i+1]=y[i];
+        x2[i+1]=x[i];
+        y2[i+1]=y[i];
       }
       n2=n+1;
     } else if (boundaries==2) {
       if (verbose>0) {
-	std::cout << "Fix right boundary to zero." << std::endl;
+        std::cout << "Fix right boundary to zero." << std::endl;
       }
       x2.resize(n+1);
       y2.resize(n+1);
       for(size_t i=0;i<n;i++) {
-	x2[i]=x[i];
-	y2[i]=y[i];
+        x2[i]=x[i];
+        y2[i]=y[i];
       }
       x2[n]=x[n-1]+(x[n-1]-x[n-2])/1.0e6;
       y2[n]=0.0;
       n2=n+1;
     } else if (boundaries==3) {
       if (verbose>0) {
-	std::cout << "Fix both boundaries to zero." << std::endl;
+        std::cout << "Fix both boundaries to zero." << std::endl;
       }
       x2.resize(n+2);
       y2.resize(n+2);
       x2[0]=x[0]-(x[1]-x[0])/1.0e6;
       y2[0]=0.0;
       for(size_t i=0;i<n;i++) {
-	x2[i+1]=x[i];
-	y2[i+1]=y[i];
+        x2[i+1]=x[i];
+        y2[i+1]=y[i];
       }
       x2[n+1]=x[n-1]+(x[n-1]-x[n-2])/1.0e6;
       y2[n+1]=0.0;
       n2=n+2;
     } else {
       if (verbose>0) {
-	std::cout << "No boundary extrapolation." << std::endl;
+        std::cout << "No boundary extrapolation." << std::endl;
       }
       x2.resize(n);
       y2.resize(n);
       for(size_t i=0;i<n;i++) {
-	x2[i]=x[i];
-	y2[i]=y[i];
+        x2[i]=x[i];
+        y2[i]=y[i];
       }
       n2=n;
     }
@@ -2405,8 +2405,8 @@ namespace o2scl {
     std::vector<double> ylist;
     for(size_t i=0;i<ysort.size()-1;i++) {
       if (ysort[i]!=ysort[i+1]) {
-	ylist.push_back((ysort[i+1]+3.0*ysort[i])/4.0);
-	ylist.push_back((ysort[i+1]*3.0+ysort[i])/4.0);
+        ylist.push_back((ysort[i+1]+3.0*ysort[i])/4.0);
+        ylist.push_back((ysort[i+1]*3.0+ysort[i])/4.0);
       }
     }
     
@@ -2425,34 +2425,34 @@ namespace o2scl {
       std::vector<double> locs;
       vector_find_level(lev_tmp,n2,x2,y2,locs);
       if ((locs.size()%2)!=0) {
-	nfail++;
-	if (verbose>0) {
-	  std::cout << k << " " << lev_tmp << " " << 0.0 << " "
-		    << locs.size() << " (fail)" << std::endl;
-	}
+        nfail++;
+        if (verbose>0) {
+          std::cout << k << " " << lev_tmp << " " << 0.0 << " "
+                    << locs.size() << " (fail)" << std::endl;
+        }
       } else {
-	double sum_temp=0.0;
-	for(size_t i=0;i<locs.size()/2;i++) {
-	  double x0=locs[2*i];
-	  double x1=locs[2*i+1];
-	  sum_temp+=itp2.integ(x0,x1,n2,x2,y2);
-	}
-	xi.push_back(sum_temp);
-	yi.push_back(lev_tmp);
-	if (verbose>0) {
-	  std::cout << k << " " << lev_tmp << " " << sum_temp << " "
-		    << locs.size() << " ";
-	  for(size_t i=0;i<locs.size();i++) {
-	    std::cout << locs[i] << " ";
-	  }
-	  std::cout << std::endl;
-	}
+        double sum_temp=0.0;
+        for(size_t i=0;i<locs.size()/2;i++) {
+          double x0=locs[2*i];
+          double x1=locs[2*i+1];
+          sum_temp+=itp2.integ(x0,x1,n2,x2,y2);
+        }
+        xi.push_back(sum_temp);
+        yi.push_back(lev_tmp);
+        if (verbose>0) {
+          std::cout << k << " " << lev_tmp << " " << sum_temp << " "
+                    << locs.size() << " ";
+          for(size_t i=0;i<locs.size();i++) {
+            std::cout << locs[i] << " ";
+          }
+          std::cout << std::endl;
+        }
       }
     }
     if (nfail>10) {
       if (err_on_fail) {
-	O2SCL_ERR2("More than 10 failures in ",
-		   "vector_invert_enclosed_sum().",o2scl::exc_efailed);
+        O2SCL_ERR2("More than 10 failures in ",
+                   "vector_invert_enclosed_sum().",o2scl::exc_efailed);
       }
       return o2scl::exc_efailed;
     }
@@ -2480,12 +2480,12 @@ namespace o2scl {
     // Find correct level
     double lev;
     int ret=vector_invert_enclosed_sum(intl,n,x,y,lev,
-				       boundaries,verbose,err_on_fail);
+                                       boundaries,verbose,err_on_fail);
     if (ret!=0) {
       if (err_on_fail) {
-	O2SCL_ERR2("Failed to find a level which enclosed the ",
-		   "specified integral in vector_region_int().",
-		   o2scl::exc_efailed);
+        O2SCL_ERR2("Failed to find a level which enclosed the ",
+                   "specified integral in vector_region_int().",
+                   o2scl::exc_efailed);
       }
       return o2scl::exc_efailed;
     }
@@ -2498,10 +2498,10 @@ namespace o2scl {
     if (verbose>0) {
       std::cout << "Locations from vector_find_level: ";
       for(size_t i=0;i<locs.size();i++) {
-	std::cout << locs[i];
-	if (i!=locs.size()-1) {
-	  std::cout << " ";
-	}
+        std::cout << locs[i];
+        if (i!=locs.size()-1) {
+          std::cout << " ";
+        }
       }
       std::cout << std::endl;
     }
@@ -2515,7 +2515,7 @@ namespace o2scl {
      int boundaries=0, int verbose=0, bool err_on_fail=true) {
     double total=vector_integ_xy_interp(n,x,y,itp_linear);
     return vector_region_int(n,x,y,frac*total,locs,boundaries,
-			     verbose,err_on_fail);
+                             verbose,err_on_fail);
   }
 
   /** \brief Find the boundaries of the region enclosing a integral
@@ -2530,11 +2530,11 @@ namespace o2scl {
     
     std::vector<double> locs;
     int ret=vector_region_fracint(n,x,y,frac,locs,boundaries,
-				  verbose,err_on_fail);
+                                  verbose,err_on_fail);
     if (locs.size()==0 || ret!=0) {
       if (err_on_fail) {
-	O2SCL_ERR2("Zero level crossings or vector_region_fracint() ",
-		   "failed in vector_bound_sigma().",exc_efailed);
+        O2SCL_ERR2("Zero level crossings or vector_region_fracint() ",
+                   "failed in vector_bound_sigma().",exc_efailed);
       }
       return o2scl::exc_efailed;
     }
@@ -2557,11 +2557,11 @@ namespace o2scl {
     
     std::vector<double> locs;
     int ret=vector_region_int(n,x,y,frac,locs,boundaries,
-			      verbose,err_on_fail);
+                              verbose,err_on_fail);
     if (locs.size()==0 || ret!=0) {
       if (err_on_fail) {
-	O2SCL_ERR2("Zero level crossings or vector_region_int() ",
-		   "failed in vector_bound_sigma().",exc_efailed);
+        O2SCL_ERR2("Zero level crossings or vector_region_int() ",
+                   "failed in vector_bound_sigma().",exc_efailed);
       }
       return o2scl::exc_efailed;
     }
@@ -2596,16 +2596,16 @@ namespace o2scl {
   */
   template<class vec_t, class vec2_t, class vec3_t, class vec4_t>
   void rebin_xy(const vec_t &x, const vec2_t &y,
-		vec3_t &x_out, vec4_t &y_out, size_t n_pts,
-		size_t interp_type) {
+                vec3_t &x_out, vec4_t &y_out, size_t n_pts,
+                size_t interp_type) {
     
     if (x.size()!=y.size()) {
       O2SCL_ERR2("The x and y vectors must have the same size ",
-		 "in rebin_xy().",o2scl::exc_einval);
+                 "in rebin_xy().",o2scl::exc_einval);
     }
     if (n_pts<2) {
       O2SCL_ERR2("Number of points must be at least 2 ",
-		 "in rebin_xy().",o2scl::exc_einval);
+                 "in rebin_xy().",o2scl::exc_einval);
     }
 
     // Vector sizes
@@ -2636,22 +2636,27 @@ namespace o2scl {
       then compares the accuracy of the result to the 
       user-specified value \c acc. 
 
-      \todo I'm not sure what the purpose of this function
-      was originally.
+      \verbatim embed:rst
+      .. todo:: 
+      
+         In function rebin_xy(): I'm not sure what the purpose of this
+         function was originally.
+
+      \endverbatim
   */
   template<class vec_t, class vec2_t, class vec3_t, class vec4_t>
     int rebin_xy(const vec_t &x, const vec2_t &y,
-		 vec3_t &x_out, vec4_t &y_out, size_t n_pts,
-		 size_t interp_type1, size_t interp_type2,
-		 double acc=1.0e-4) {
+                 vec3_t &x_out, vec4_t &y_out, size_t n_pts,
+                 size_t interp_type1, size_t interp_type2,
+                 double acc=1.0e-4) {
     
     if (x.size()!=y.size()) {
       O2SCL_ERR2("The x and y vectors must have the same size ",
-		 "in rebin_xy().",o2scl::exc_einval);
+                 "in rebin_xy().",o2scl::exc_einval);
     }
     if (n_pts<2) {
       O2SCL_ERR2("Number of points must be at least 2 ",
-		 "in rebin_xy().",o2scl::exc_einval);
+                 "in rebin_xy().",o2scl::exc_einval);
     }
 
     // Vector sizes
@@ -2675,7 +2680,7 @@ namespace o2scl {
     vector_minmax_value(n_pts,y_out,min_y,max_y);
     for(size_t i=0;i<n_pts;i++) {
       if (fabs(y_out2[i]-y_out[i])/(max_y-min_y)>acc) {
-	return 1;
+        return 1;
       }
     }
     
@@ -2743,14 +2748,14 @@ namespace o2scl {
     void linear_or_log(vec_t &x, vec2_t &y, bool &log_x, bool &log_y) {
     if (x.size()!=y.size()) {
       O2SCL_ERR2("The x and y vectors must have the same size ",
-		 "in linear_or_log().",o2scl::exc_einval);
+                 "in linear_or_log().",o2scl::exc_einval);
     }
     
     // Vector sizes
     size_t n=x.size();
     if (n<2) {
       O2SCL_ERR2("Vector size must be at least 2 ",
-		 "in linear_or_log().",o2scl::exc_einval);
+                 "in linear_or_log().",o2scl::exc_einval);
     }
     
     // Initial values of log_x and log_y
@@ -2774,32 +2779,32 @@ namespace o2scl {
     std::vector<double> lx(n), ly(n);
     if (x_positive) {
       for(size_t i=0;i<n;i++) {
-	lx[i]=log(x[i]);
+        lx[i]=log(x[i]);
       }
     }
     if (y_positive) {
       for(size_t i=0;i<n;i++) {
-	ly[i]=log(y[i]);
+        ly[i]=log(y[i]);
       }
     }
 
     // Depending on whether or not they are positive, find the best match
     if (x_positive) {
       if (y_positive) {
-	double chi2_x=linear_or_log_chi2(lx,y);
-	double chi2_y=linear_or_log_chi2(x,ly);
-	double chi2_xy=linear_or_log_chi2(lx,ly);
-	if (chi2_xy<chi2_x && chi2_xy<chi2_y && chi2_xy<chi2) {
-	  log_x=true;
-	  log_y=true;
-	} else if (chi2_x<chi2_xy && chi2_x<chi2_y && chi2_x<chi2) {
-	  log_x=true;
-	} else if (chi2_y<chi2_xy && chi2_y<chi2_x && chi2_y<chi2) {
-	  log_y=true;
-	}
+        double chi2_x=linear_or_log_chi2(lx,y);
+        double chi2_y=linear_or_log_chi2(x,ly);
+        double chi2_xy=linear_or_log_chi2(lx,ly);
+        if (chi2_xy<chi2_x && chi2_xy<chi2_y && chi2_xy<chi2) {
+          log_x=true;
+          log_y=true;
+        } else if (chi2_x<chi2_xy && chi2_x<chi2_y && chi2_x<chi2) {
+          log_x=true;
+        } else if (chi2_y<chi2_xy && chi2_y<chi2_x && chi2_y<chi2) {
+          log_y=true;
+        }
       } else {
-	double chi2_x=linear_or_log_chi2(lx,y);
-	if (chi2_x<chi2) log_x=true;
+        double chi2_x=linear_or_log_chi2(lx,y);
+        if (chi2_x<chi2) log_x=true;
       }
     } else {
       double chi2_y=linear_or_log_chi2(x,ly);
@@ -2816,15 +2821,15 @@ namespace o2scl {
    */
   template<class vec_t, class vec2_t, class data_t>
     void vector_refine(size_t n, const vec_t &index, vec2_t &data,
-		       size_t factor, size_t interp_type=itp_linear) {
+                       size_t factor, size_t interp_type=itp_linear) {
     interp_vec<vec_t,vec2_t> iv(n,index,data,interp_type);
     vec2_t copy=data;
     data.resize((n-1)*factor+1);
     for (size_t j=0;j<n-1;j++) {
       for(size_t k=0;k<factor;k++) {
-	data[j*factor+k]=iv.eval(index[j]+
-				 ((data_t)k)/((data_t)factor)*
-				 (index[j+1]-index[j]));
+        data[j*factor+k]=iv.eval(index[j]+
+                                 ((data_t)k)/((data_t)factor)*
+                                 (index[j+1]-index[j]));
       }
     }
     data[data.size()-1]=copy[copy.size()-1];

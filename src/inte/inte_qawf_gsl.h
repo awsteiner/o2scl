@@ -89,8 +89,13 @@ namespace o2scl {
       inte_qawo_gsl_sin and the overall integration progress in this
       class.
 
-      \todo More documentation and examples for the
-      qawf, qawo and qawc integrators.
+      \verbatim embed:rst
+      .. todo:: 
+
+         Class inte_qawf_gsl_sin: More documentation and examples for
+         the qawf, qawo and qawc integrators.
+
+      \endverbatim
   */
   template<class func_t> class inte_qawf_gsl_sin : 
   public inte_qawo_gsl_sin<func_t> {

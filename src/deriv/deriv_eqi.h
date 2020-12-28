@@ -288,7 +288,13 @@ namespace o2scl {
 
 	Right now this uses np=5.
 
-	\todo generalize to other values of npoints.
+        \verbatim embed:rst
+        .. todo:: 
+
+	   In deriv_eqi::deriv_vector(): generalize to other values of
+	   npoints.
+
+        \endverbatim
     */
     int deriv_vector(size_t nv, double dx, const vec_t &y, 
 		     vec_t &dydx) 
