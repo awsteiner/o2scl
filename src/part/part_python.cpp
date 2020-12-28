@@ -1,257 +1,270 @@
 /*
-  -------------------------------------------------------------------
-  
-  Copyright (C) 2006-2021, Andrew W. Steiner
-  
-  This file is part of O2scl.
-  
-  O2scl is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 3 of the License, or
-  (at your option) any later version.
-  
-  O2scl is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+-------------------------------------------------------------------
 
-  -------------------------------------------------------------------
+Copyright (C) 2020-2021, Andrew W. Steiner
+
+This file is part of O2scl.
+
+O2scl is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+O2scl is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+-------------------------------------------------------------------
 */
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 
-#include <o2scl/part_python.h>
-#include <o2scl/fermion_rel.h>
-#include <o2scl/fermion_nonrel.h>
-#include <o2scl/fermion_deriv_nr.h>
-#include <o2scl/fermion_deriv_rel.h>
-#include <o2scl/boson_rel.h>
-#include <o2scl/classical.h>
-#include <o2scl/classical_deriv.h>
-#include <o2scl/fermion_mag_zerot.h>
+#include "part_i.h"
 
-using namespace std;
-using namespace o2scl;
-using namespace o2scl_const;
+void *o2scl_create_part() {
+  part *ptr=new part;
+  return ptr;
+}
 
-void o2scl_set_err_hnd_gsl() {
-  err_hnd=&alt_err_hnd;
+void o2scl_free_part(void *vptr) {
+  part *ptr=(part)vptr;
+  delete ptr;
+}
+
+double o2scl_part_get_g(void *vptr) {
+  part *ptr=(part)vptr;
+  return ptr->g;
+}
+
+void o2scl_part_set_g(void *vptr, double v) {
+  part *ptr=(part)vptr;
+  ptr->g=v;
   return;
 }
 
-void *o2scl_create_part(double *&g, double *&m, double *&ms,
-			double *&mu, double *&nu,
-			double *&ed, double *&pr,
-			double *&en, bool *&inc_rest_mass,
-			bool *&non_interacting) {
-  part *pp=new part;
-  g=&pp->g;
-  ms=&pp->ms;
-  m=&pp->m;
-  mu=&pp->mu;
-  nu=&pp->nu;
-  ed=&pp->ed;
-  pr=&pp->pr;
-  en=&pp->en;
-  inc_rest_mass=&pp->inc_rest_mass;
-  non_interacting=&pp->non_interacting;
-  return pp;
+double o2scl_part_get_m(void *vptr) {
+  part *ptr=(part)vptr;
+  return ptr->m;
 }
 
-void *o2scl_create_fermion(double *&g, double *&m, double *&ms,
-			   double *&mu, double *&nu,
-			   double *&ed, double *&pr,
-			   double *&en, bool *&inc_rest_mass,
-			   bool *&non_interacting, double *&kf,
-			   double *&del) {
-  fermion *fp=new fermion;
-  g=&fp->g;
-  ms=&fp->ms;
-  m=&fp->m;
-  mu=&fp->mu;
-  nu=&fp->nu;
-  ed=&fp->ed;
-  pr=&fp->pr;
-  en=&fp->en;
-  inc_rest_mass=&fp->inc_rest_mass;
-  non_interacting=&fp->non_interacting;
-  kf=&fp->kf;
-  del=&fp->del;
-  fp->mu=3.14;
-  return fp;
+void o2scl_part_set_m(void *vptr, double v) {
+  part *ptr=(part)vptr;
+  ptr->m=v;
+  return;
+}
+
+double o2scl_part_get_ms(void *vptr) {
+  part *ptr=(part)vptr;
+  return ptr->ms;
+}
+
+void o2scl_part_set_ms(void *vptr, double v) {
+  part *ptr=(part)vptr;
+  ptr->ms=v;
+  return;
+}
+
+double o2scl_part_get_mu(void *vptr) {
+  part *ptr=(part)vptr;
+  return ptr->mu;
+}
+
+void o2scl_part_set_mu(void *vptr, double v) {
+  part *ptr=(part)vptr;
+  ptr->mu=v;
+  return;
+}
+
+double o2scl_part_get_nu(void *vptr) {
+  part *ptr=(part)vptr;
+  return ptr->nu;
+}
+
+void o2scl_part_set_nu(void *vptr, double v) {
+  part *ptr=(part)vptr;
+  ptr->nu=v;
+  return;
+}
+
+double o2scl_part_get_ed(void *vptr) {
+  part *ptr=(part)vptr;
+  return ptr->ed;
+}
+
+void o2scl_part_set_ed(void *vptr, double v) {
+  part *ptr=(part)vptr;
+  ptr->ed=v;
+  return;
+}
+
+double o2scl_part_get_pr(void *vptr) {
+  part *ptr=(part)vptr;
+  return ptr->pr;
+}
+
+void o2scl_part_set_pr(void *vptr, double v) {
+  part *ptr=(part)vptr;
+  ptr->pr=v;
+  return;
+}
+
+double o2scl_part_get_en(void *vptr) {
+  part *ptr=(part)vptr;
+  return ptr->en;
+}
+
+void o2scl_part_set_en(void *vptr, double v) {
+  part *ptr=(part)vptr;
+  ptr->en=v;
+  return;
+}
+
+bool o2scl_part_get_inc_rest_mass(void *vptr) {
+  part *ptr=(part)vptr;
+  return ptr->inc_rest_mass;
+}
+
+void o2scl_part_set_inc_rest_mass(void *vptr, bool v) {
+  part *ptr=(part)vptr;
+  ptr->inc_rest_mass=v;
+  return;
+}
+
+bool o2scl_part_get_non_interacting(void *vptr) {
+  part *ptr=(part)vptr;
+  return ptr->non_interacting;
+}
+
+void o2scl_part_set_non_interacting(void *vptr, bool v) {
+  part *ptr=(part)vptr;
+  ptr->non_interacting=v;
+  return;
+}
+
+void *o2scl_create_fermion() {
+  fermion *ptr=new fermion;
+  return ptr;
+}
+
+void o2scl_free_fermion(void *vptr) {
+  fermion *ptr=(fermion)vptr;
+  delete ptr;
+}
+
+double o2scl_fermion_get_kf(void *vptr) {
+  fermion *ptr=(fermion)vptr;
+  return ptr->kf;
+}
+
+void o2scl_fermion_set_kf(void *vptr, double v) {
+  fermion *ptr=(fermion)vptr;
+  ptr->kf=v;
+  return;
+}
+
+double o2scl_fermion_get_del(void *vptr) {
+  fermion *ptr=(fermion)vptr;
+  return ptr->del;
+}
+
+void o2scl_fermion_set_del(void *vptr, double v) {
+  fermion *ptr=(fermion)vptr;
+  ptr->del=v;
+  return;
 }
 
 void *o2scl_create_fermion_rel() {
-  fermion_rel *fr=new fermion_rel;
-  return fr;
+  fermion_rel *ptr=new fermion_rel;
+  return ptr;
+}
+
+void o2scl_free_fermion_rel(void *vptr) {
+  fermion_rel *ptr=(fermion_rel)vptr;
+  delete ptr;
+}
+
+int o2scl_fermion_rel_calc_density(void *vptr, void *ptr_f, double T) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  int ret=ptr->calc_density(*f,T);
+  return ret;
+}
+
+int o2scl_fermion_rel_calc_mu(void *vptr, void *ptr_f, double T) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  int ret=ptr->calc_mu(*f,T);
+  return ret;
 }
 
 void *o2scl_create_fermion_nonrel() {
-  fermion_nonrel *fr=new fermion_nonrel;
-  return fr;
+  fermion_nonrel *ptr=new fermion_nonrel;
+  return ptr;
+}
+
+void o2scl_free_fermion_nonrel(void *vptr) {
+  fermion_nonrel *ptr=(fermion_nonrel)vptr;
+  delete ptr;
 }
 
 void *o2scl_create_fermion_deriv_nr() {
-  fermion_deriv_nr *fr=new fermion_deriv_nr;
-  return fr;
+  fermion_deriv_nr *ptr=new fermion_deriv_nr;
+  return ptr;
+}
+
+void o2scl_free_fermion_deriv_nr(void *vptr) {
+  fermion_deriv_nr *ptr=(fermion_deriv_nr)vptr;
+  delete ptr;
 }
 
 void *o2scl_create_fermion_deriv_rel() {
-  fermion_deriv_rel *fr=new fermion_deriv_rel;
-  return fr;
+  fermion_deriv_rel *ptr=new fermion_deriv_rel;
+  return ptr;
+}
+
+void o2scl_free_fermion_deriv_rel(void *vptr) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel)vptr;
+  delete ptr;
 }
 
 void *o2scl_create_boson_rel() {
-  boson_rel *fr=new boson_rel;
-  return fr;
+  boson_rel *ptr=new boson_rel;
+  return ptr;
+}
+
+void o2scl_free_boson_rel(void *vptr) {
+  boson_rel *ptr=(boson_rel)vptr;
+  delete ptr;
 }
 
 void *o2scl_create_classical_thermo() {
-  classical_thermo *fr=new classical_thermo;
-  return fr;
+  classical_thermo *ptr=new classical_thermo;
+  return ptr;
+}
+
+void o2scl_free_classical_thermo(void *vptr) {
+  classical_thermo *ptr=(classical_thermo)vptr;
+  delete ptr;
 }
 
 void *o2scl_create_classical_deriv_thermo() {
-  classical_deriv_thermo *fr=new classical_deriv_thermo;
-  return fr;
+  classical_deriv_thermo *ptr=new classical_deriv_thermo;
+  return ptr;
+}
+
+void o2scl_free_classical_deriv_thermo(void *vptr) {
+  classical_deriv_thermo *ptr=(classical_deriv_thermo)vptr;
+  delete ptr;
 }
 
 void *o2scl_create_fermion_mag_zerot() {
-  fermion_mag_zerot *fr=new fermion_mag_zerot;
-  return fr;
+  fermion_mag_zerot *ptr=new fermion_mag_zerot;
+  return ptr;
 }
 
-void o2scl_free_part(void *vp) {
-  part *pp=(part *)vp;
-  delete pp;
-  return;
-}
-
-void o2scl_free_fermion(void *vp) {
-  fermion *fp=(fermion *)vp;
-  delete fp;
-  return;
-}
-
-void o2scl_free_fermion_rel(void *vp) {
-  fermion_rel *fr=(fermion_rel *)vp;
-  delete fr;
-  return;
-}
-
-void o2scl_free_fermion_nonrel(void *vp) {
-  fermion_nonrel *fr=(fermion_nonrel *)vp;
-  delete fr;
-}
-
-void o2scl_free_fermion_deriv_nr(void *vp) {
-  fermion_deriv_nr *fr=(fermion_deriv_nr *)vp;
-  delete fr;
-}
-
-void o2scl_free_fermion_deriv_rel(void *vp) {
-  fermion_deriv_rel *fr=(fermion_deriv_rel *)vp;
-  delete fr;
-}
-
-void o2scl_free_boson_rel(void *vp) {
-  boson_rel *fr=(boson_rel *)vp;
-  delete fr;
-}
-
-void o2scl_free_classical_thermo(void *vp) {
-  classical_thermo *fr=(classical_thermo *)vp;
-  delete fr;
-}
-
-void o2scl_free_classical_deriv_thermo(void *vp) {
-  classical_deriv_thermo *fr=(classical_deriv_thermo *)vp;
-  delete fr;
-}
-
-void o2scl_free_fermion_mag_zerot(void *vp) {
-  fermion_mag_zerot *fr=(fermion_mag_zerot *)vp;
-  delete fr;
-}
-
-void o2scl_fermion_rel_calc_density(void *frp, void *fp, double T) {
-
-  fermion_rel *fr=(fermion_rel *)frp;
-  fermion *f=(fermion *)fp;
-  fr->verbose=2;
-  cout << "&f,&fmu: " << f << " " << &(f->mu) << endl;
-  cout << f->inc_rest_mass << " " << f->non_interacting << endl;
-  cout << "mu,n,kf,g: " << f->mu << " " << f->n << " "
-       << f->kf << " " << f->g << endl;
-  fr->calc_density(*f,T);
-
-  return;
-}
-
-void o2scl_fermion_rel_calc_mu(void *frp, void *fp, double T) {
-
-  fermion_rel *fr=(fermion_rel *)frp;
-  fermion *f=(fermion *)fp;
-  fr->calc_mu(*f,T);
-
-  return;
-}
-
-void o2scl_classical_calc_density(void *frp, void *fp, double T) {
-
-  classical_thermo *fr=(classical_thermo *)frp;
-  part *f=(part *)fp;
-  fr->calc_density(*f,T);
-
-  return;
-}
-
-void o2scl_classical_calc_mu(void *frp, void *fp, double T) {
-
-  classical_thermo *fr=(classical_thermo *)frp;
-  part *f=(part *)fp;
-  fr->calc_mu(*f,T);
-
-  return;
-}
-
-void o2scl_fermion_nonrel_calc_density(void *frp, void *fp, double T) {
-
-  fermion_nonrel *fr=(fermion_nonrel *)frp;
-  fermion *f=(fermion *)fp;
-  fr->calc_density(*f,T);
-
-  return;
-}
-
-void o2scl_fermion_nonrel_calc_mu(void *frp, void *fp, double T) {
-
-  fermion_nonrel *fr=(fermion_nonrel *)frp;
-  fermion *f=(fermion *)fp;
-  fr->calc_mu(*f,T);
-
-  return;
-}
-
-void o2scl_fermion_deriv_rel_calc_density(void *frp, void *fp, double T) {
-
-  fermion_deriv_rel *fr=(fermion_deriv_rel *)frp;
-  fermion_deriv *f=(fermion_deriv *)fp;
-  fr->calc_density(*f,T);
-
-  return;
-}
-
-void o2scl_fermion_deriv_rel_calc_mu(void *frp, void *fp, double T) {
-
-  fermion_deriv_rel *fr=(fermion_deriv_rel *)frp;
-  fermion_deriv *f=(fermion_deriv *)fp;
-  fr->calc_mu(*f,T);
-
-  return;
+void o2scl_free_fermion_mag_zerot(void *vptr) {
+  fermion_mag_zerot *ptr=(fermion_mag_zerot)vptr;
+  delete ptr;
 }
 

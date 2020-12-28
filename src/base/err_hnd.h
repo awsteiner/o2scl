@@ -361,4 +361,10 @@ namespace o2scl {
 }
 #endif
 
+extern "C" {
+
+  void o2scl_set_err_hnd_gsl();
+  
+}
+
 #endif

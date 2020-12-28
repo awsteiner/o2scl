@@ -179,3 +179,8 @@ string err_hnd_gsl::errno_to_string(int errnox) {
   if (errnox==37) return "outsidecons";
   return "unknown";
 }
+
+void o2scl_set_err_hnd_gsl() {
+  err_hnd=&alt_err_hnd;
+  return;
+}
