@@ -1,5 +1,6 @@
+# Interface file for o2scl part classes
 namespace o2scl
-cpp_include <o2scl/part_python.h>
+# Include statements for header file
 h_include <o2scl/part.h>
 h_include <o2scl/fermion_rel.h>
 h_include <o2scl/fermion_nonrel.h>
@@ -9,6 +10,13 @@ h_include <o2scl/boson_rel.h>
 h_include <o2scl/classical.h>
 h_include <o2scl/classical_deriv.h>
 h_include <o2scl/fermion_mag_zerot.h>
+# Include statement for C++ source code
+cpp_include <o2scl/part_python.h>
+# Namespace to use in C++ source code
+cpp_using std
+cpp_using o2scl
+# 
+# Classes
 class part
 - double g
 - double m
@@ -30,7 +38,7 @@ class fermion_rel
   - fermion &f
   - double T
 - function calc_mu
-  - int
+  - void
   - fermion &f
   - double T
 class fermion_nonrel

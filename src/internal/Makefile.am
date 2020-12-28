@@ -119,6 +119,14 @@ o2comm: o2comm.o
 	$(CXX) $(LDFLAGS) $(CPPFLAGS) -L@libdir@ -o o2comm o2comm.o \
 		-lo2scl_hdf -lo2scl -lgsl -lgslcblas -lhdf5
 
+cpppy.o: cpppy.cpp
+	$(CXX) $(CPPFLAGS) -I../../include -DO2SCL_COND_FLAG \
+		-o cpppy.o -c cpppy.cpp
+
+cpppy: cpppy.o 
+	$(CXX) $(LDFLAGS) $(CPPFLAGS) -L@libdir@ -o cpppy cpppy.o \
+		-lo2scl_hdf -lo2scl -lgsl -lgslcblas -lhdf5
+
 osni88.o: osni88.cpp
 	$(CXX) -O3 -DGSL_RANGE_CHECK=0 -DO2SCL_NO_RANGE_CHECK \
 		-I$(HOME)/install/include/hdf5 \

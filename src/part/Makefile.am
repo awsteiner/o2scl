@@ -197,6 +197,11 @@ boson_eff_ts_SOURCES = boson_eff_ts.cpp
 fermion_mag_zerot_ts_SOURCES = fermion_mag_zerot_ts.cpp
 
 # ------------------------------------------------------------
+
+part_python.cpp: part.i
+	../internal/cpppy part.i part_python ~/wcs/o2sclpy/o2sclpy/part2
+
+# ------------------------------------------------------------
 # Library o2scl_basepart
 # ------------------------------------------------------------
 

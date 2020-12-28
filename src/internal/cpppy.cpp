@@ -30,10 +30,12 @@
 using namespace std;
 using namespace o2scl;
 
+/** \brief Convert all non-alphanumeric characters to underscores
+ */
 std::string underscoreify(std::string s) {
   std::string s2=s;
   for(size_t i=0;i<s2.length();i++) {
-    if (std::isalpha(s2[i])==false) s2[i]=='_';
+    if (std::isalnum(s2[i])==false) s2[i]=='_';
   }
   return s2;
 }
@@ -207,7 +209,7 @@ void next_line(ifstream &fin, std::string &line,
     return;
   }
   getline(fin,line);
-  while (line.length()==0) {
+  while (line.length()==0 || line[0]=='#') {
     if (fin.eof()) {
       done=true;
       return;
@@ -237,26 +239,26 @@ int main(int argc, char *argv[]) {
   cout << endl;
 
   vector<string> header=
-    {"-------------------------------------------------------------------",
+    {"  -------------------------------------------------------------------",
      "",
-     "Copyright (C) 2020-2021, Andrew W. Steiner",
+     "  Copyright (C) 2020-2021, Andrew W. Steiner",
      "",
-     "This file is part of O2scl.",
+     "  This file is part of O2scl.",
      "",
-     "O2scl is free software; you can redistribute it and/or modify",
-     "it under the terms of the GNU General Public License as published by",
-     "the Free Software Foundation; either version 3 of the License, or",
-     "(at your option) any later version.",
+     "  O2scl is free software; you can redistribute it and/or modify",
+     "  it under the terms of the GNU General Public License as published by",
+     "  the Free Software Foundation; either version 3 of the License, or",
+     "  (at your option) any later version.",
      "",
-     "O2scl is distributed in the hope that it will be useful,",
-     "but WITHOUT ANY WARRANTY; without even the implied warranty of",
-     "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
-     "GNU General Public License for more details.",
+     "  O2scl is distributed in the hope that it will be useful,",
+     "  but WITHOUT ANY WARRANTY; without even the implied warranty of",
+     "  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
+     "  GNU General Public License for more details.",
      "",
-     "You should have received a copy of the GNU General Public License",
-     "along with O2scl. If not, see <http://www.gnu.org/licenses/>."
+     "  You should have received a copy of the GNU General Public License",
+     "  along with O2scl. If not, see <http://www.gnu.org/licenses/>."
      "",
-     "-------------------------------------------------------------------"
+     "  -------------------------------------------------------------------"
     };
 
   cout << "Parsing interface " << fname << " ." << endl;
@@ -264,7 +266,11 @@ int main(int argc, char *argv[]) {
   // Current namespace
   std::string ns;
   // Current list of includes
-  std::vector<std::string> includes;
+  std::vector<std::string> h_includes;
+  // Current list of includes
+  std::vector<std::string> cpp_includes;
+  // Current list of includes
+  std::vector<std::string> cpp_using;
   // Current list of classes
   std::vector<if_class> classes;
   // Current list of functions
@@ -298,13 +304,33 @@ int main(int argc, char *argv[]) {
       
       next_line(fin,line,vs,done);
       
-    } else if (vs[0]=="include") {
+    } else if (vs[0]=="h_include") {
       
       if (vs.size()<2) {
-        cerr << "No file for include." << endl;
+        cerr << "No argument for h_include." << endl;
         exit(-1);
       }
-      includes.push_back(vs[1]);
+      h_includes.push_back(vs[1]);
+      
+      next_line(fin,line,vs,done);
+      
+    } else if (vs[0]=="cpp_include") {
+      
+      if (vs.size()<2) {
+        cerr << "No argument for cpp_include." << endl;
+        exit(-1);
+      }
+      cpp_includes.push_back(vs[1]);
+      
+      next_line(fin,line,vs,done);
+      
+    } else if (vs[0]=="cpp_using") {
+      
+      if (vs.size()<2) {
+        cerr << "No argument for cpp_using." << endl;
+        exit(-1);
+      }
+      cpp_using.push_back(vs[1]);
       
       next_line(fin,line,vs,done);
       
@@ -456,8 +482,8 @@ int main(int argc, char *argv[]) {
   fout << "*/" << endl;
   fout << endl;
   
-  for(size_t i=0;i<includes.size();i++) {
-    fout << "#include <" << includes[i] << ">" << endl;
+  for(size_t i=0;i<h_includes.size();i++) {
+    fout << "#include " << h_includes[i] << endl;
   }
   fout << endl;
 
@@ -538,21 +564,21 @@ int main(int argc, char *argv[]) {
   fout << "*/" << endl;
   fout << endl;
   
-  for(size_t i=0;i<includes.size();i++) {
-    fout << "#include \"" << cpp_prefix << ".h\"" << endl;
+  for(size_t i=0;i<cpp_includes.size();i++) {
+    fout << "#include " << cpp_includes[i] << endl;
+  }
+  fout << endl;
+
+  for(size_t i=0;i<cpp_using.size();i++) {
+    fout << "using namespace " << cpp_using[i] << ";" << endl;
   }
   fout << endl;
 
   for(size_t i=0;i<classes.size();i++) {
 
-    // For each class
-    // 1. create pointer
-    // 2. free pointer
-    // 3/4. get and set data
-    // 5. member functions
-    
     if_class &ifc=classes[i];
 
+    // Generate code for the create pointer function
     fout << "void *" << underscoreify(ifc.ns) << "_create_" << ifc.name
          << "() {" << endl;
     fout << "  " << ifc.name << " *ptr=new " << ifc.name << ";" << endl;
@@ -560,9 +586,10 @@ int main(int argc, char *argv[]) {
     fout << "}" << endl;
     fout << endl;
     
+    // Generate code for the free pointer function
     fout << "void " << underscoreify(ifc.ns) << "_free_" << ifc.name
          << "(void *vptr) {" << endl;
-    fout << "  " << ifc.name << " *ptr=(" << ifc.name << ")vptr;" << endl;
+    fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
     fout << "  delete ptr;" << endl;
     fout << "}" << endl;
     fout << endl;
@@ -571,23 +598,26 @@ int main(int argc, char *argv[]) {
 
       if_var &ifv=ifc.members[j];
       
+      // Generate code for the get member data function
       fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
            << ifc.name << "_get_" << ifv.name << "(void *vptr) {" << endl;
-      fout << "  " << ifc.name << " *ptr=(" << ifc.name << ")vptr;" << endl;
+      fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
       fout << "  return ptr->" << ifv.name << ";" << endl;
       fout << "}" << endl;
       fout << endl;
       
+      // Generate code for the set member data function
       fout << "void " << underscoreify(ifc.ns) << "_"
            << ifc.name << "_set_" << ifv.name << "(void *vptr, "
            << ifv.ift.name << " v) {" << endl;
-      fout << "  " << ifc.name << " *ptr=(" << ifc.name << ")vptr;" << endl;
+      fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
       fout << "  ptr->" << ifv.name << "=v;" << endl;
       fout << "  return;" << endl;
       fout << "}" << endl;
       fout << endl;
     }
 
+    // Generate code for the class methods
     for(size_t j=0;j<ifc.methods.size();j++) {
       
       if_func &iff=ifc.methods[j];
@@ -629,12 +659,12 @@ int main(int argc, char *argv[]) {
         fout << "  ptr->" << iff.name << "(";
         for(size_t k=0;k<iff.args.size();k++) {
           if (iff.args[k].ift.suffix=="") {
-            iff.args[k].name;
+            fout << iff.args[k].name;
           } else if (iff.args[k].ift.suffix=="&") {
             fout << "*" << iff.args[k].name;
           }
           if (k!=iff.args.size()-1) {
-            fout << ", ";
+            fout << ",";
           }
         }
         fout << ");" << endl;
