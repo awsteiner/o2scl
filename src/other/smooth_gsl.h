@@ -1,7 +1,7 @@
  /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2009-2020, Marco Cammarata and Andrew W. Steiner
+  Copyright (C) 2009-2021, Marco Cammarata and Andrew W. Steiner
   
   This file is part of O2scl.
   

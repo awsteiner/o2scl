@@ -1,7 +1,7 @@
  /* 
    -------------------------------------------------------------------
    
-   Copyright (C) 2010-2020, Edwin van Leeuwen and Andrew W. Steiner
+   Copyright (C) 2010-2021, Edwin van Leeuwen and Andrew W. Steiner
    
    This file is part of O2scl.
    
