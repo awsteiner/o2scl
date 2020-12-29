@@ -198,8 +198,10 @@ fermion_mag_zerot_ts_SOURCES = fermion_mag_zerot_ts.cpp
 
 # ------------------------------------------------------------
 
-part_python.cpp: part.i
-	../internal/cpppy part.i part_python ~/wcs/o2sclpy/o2sclpy/part2
+part_python.cpp: part.i empty
+	../internal/cpppy part.i part_python ~/wcs/o2sclpy/o2sclpy/part
+
+empty:
 
 # ------------------------------------------------------------
 # Library o2scl_basepart

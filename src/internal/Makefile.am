@@ -168,12 +168,4 @@ tsumm_SOURCES = tsumm.cpp
 
 o2scl-test-rec: tsumm
 
-# ------------------------------------------------
-# Old code no longer used
-# ------------------------------------------------
-
-# partmath: partmath.cpp
-# 	g++ -o partmath -I$(HOME)/install/include \
-# 		-L$(HOME)/install/lib \
-# 		partmath.cpp -lo2scl
 

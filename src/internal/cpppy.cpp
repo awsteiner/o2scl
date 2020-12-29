@@ -734,11 +734,27 @@ int main(int argc, char *argv[]) {
 
     // Define __init__() function
     fout << "    def __init__(self,dll):" << endl;
+    fout << "        \"\"\"" << endl;
+    fout << "        Init function for class " << ifc.name << " ." << endl;
+    fout << "        \"\"\"" << endl;
     fout << endl;
     fout << "        f=dll." << ifc.ns << "_create_" << ifc.name << endl;
     fout << "        f.restype=ctypes.c_void_p" << endl;
     fout << "        f.argtypes=[]" << endl;
     fout << "        self._ptr=f()" << endl;
+    fout << "        self._dll=dll" << endl;
+    fout << "        return" << endl;
+    fout << endl;
+
+    // Define __del__() function
+    fout << "    def __del__(self):" << endl;
+    fout << "        \"\"\"" << endl;
+    fout << "        Delete function for class " << ifc.name << " ." << endl;
+    fout << "        \"\"\"" << endl;
+    fout << endl;
+    fout << "        f=dll." << ifc.ns << "_free_" << ifc.name << endl;
+    fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
+    fout << "        f(self._ptr)" << endl;
     fout << "        self._dll=dll" << endl;
     fout << "        return" << endl;
     fout << endl;
@@ -753,7 +769,11 @@ int main(int argc, char *argv[]) {
       // Getter
       fout << "    @property" << endl;
       fout << "    def " << ifv.name << "(self):" << endl;
-      fout << "        f=dll." << ifc.ns << "_" << ifc.name << "_get_"
+      fout << "        \"\"\"" << endl;
+      fout << "        Getter function for " << ifc.name << "::"
+           << ifv.name << " ." << endl;
+      fout << "        \"\"\"" << endl;
+      fout << "        f=self._dll." << ifc.ns << "_" << ifc.name << "_get_"
            << ifv.name << endl;
       fout << "        f.restype=ctypes.c_" << ifv.ift.name << endl;
       fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
@@ -763,7 +783,10 @@ int main(int argc, char *argv[]) {
       // Setter
       fout << "    @" << ifv.name << ".setter" << endl;
       fout << "    def " << ifv.name << "(self,value):" << endl;
-      fout << "        f=dll." << ifc.ns << "_" << ifc.name << "_set_"
+      fout << "        \"\"\"" << endl;
+      fout << "        Setter function for " << ifc.name << "::"
+           << ifv.name << " ." << endl;
+      fout << "        f=self._dll." << ifc.ns << "_" << ifc.name << "_set_"
            << ifv.name << endl;
       fout << "        f.argtypes=[ctypes.c_void_p,ctypes.c_"
            << ifv.ift.name << "]" << endl;
@@ -771,6 +794,72 @@ int main(int argc, char *argv[]) {
       fout << "        return" << endl;
       fout << endl;
     }
+
+    // Define methods
+    for(size_t j=0;j<ifc.methods.size();j++) {
+      if_func &iff=ifc.methods[j];
+
+      // Function header
+      fout << "    def " << iff.name << "(self,";
+      for(size_t k=0;k<iff.args.size();k++) {
+        fout << iff.args[k].name;
+        if (k!=iff.args.size()-1) {
+          fout << ",";
+        }
+      }
+      fout << "):" << endl;
+
+      // Comment
+      fout << "        \"\"\"" << endl;
+      fout << "        Wrapper for " << ifc.name << "::"
+           << iff.name << "() ." << endl;
+      fout << "        \"\"\"" << endl;
+
+      // Ctypes interface for function
+      fout << "        func=self._dll." << ifc.ns << "_" << ifc.name << "_"
+           << iff.name << endl;
+      if (iff.ret.name!="void") {
+        fout << "        func.restype=ctypes.c_" << iff.ret.name << endl;
+      }
+      fout << "        func.argtypes=[ctypes.c_void_p,";
+      for(size_t k=0;k<iff.args.size();k++) {
+        if (iff.args[k].ift.suffix=="&") {
+          fout << "ctypes.c_void_p";
+        } else {
+          fout << "ctypes.c_" << iff.args[k].ift.name;
+        }
+        if (k!=iff.args.size()-1) {
+          fout << ",";
+        }
+      }
+      fout << "]" << endl;
+      
+      // Call C++ wrapper function
+      if (iff.ret.name=="void") {
+        fout << "        f(self._ptr,";
+      } else {
+        fout << "        ret=f(self._ptr,";
+      }
+      for(size_t k=0;k<iff.args.size();k++) {
+        if (iff.args[k].ift.suffix=="&") {
+          fout << iff.args[k].name << "._ptr";
+        } else {
+          fout << iff.args[k].name;
+        }
+        if (k!=iff.args.size()-1) fout << ",";
+      }
+      fout << ")" << endl;
+
+      // Return
+      if (iff.ret.name=="void") {
+        fout << "        return" << endl;
+      } else {
+        fout << "        return ret" << endl;
+      }
+      fout << endl;
+      
+    }
+    
   }
   
   fout.close();
