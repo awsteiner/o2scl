@@ -343,7 +343,7 @@ int main(int argc, char *argv[]) {
       if_class ifc;
       ifc.name=vs[1];
       ifc.ns=ns;
-      cout << "Starting class named " << ifc.name << " in namespace "
+      cout << "Starting class " << ifc.name << " in namespace "
            << ifc.ns << endl;
       
       next_line(fin,line,vs,done);
@@ -356,8 +356,7 @@ int main(int argc, char *argv[]) {
           
           if_func iff;
           iff.name=vs[2];
-          cout << "Starting member function named " << vs[2]
-               << " in class named " << ifc.name << endl;
+          cout << "  Starting member function named " << vs[2] << endl;
 
           next_line(fin,line,vs,done);
           
@@ -370,7 +369,7 @@ int main(int argc, char *argv[]) {
           
           iff.ret.parse(vs,1,vs.size());
 
-          cout << "Member function named " << iff.name
+          cout << "  Member function named " << iff.name
                << " has return type ("
                << iff.ret.prefix << "," << iff.ret.name << ","
                << iff.ret.suffix << ")" << endl;
@@ -394,7 +393,7 @@ int main(int argc, char *argv[]) {
               ifv.name=last_string;
               ifv.ift.parse(vs,1,vs.size()-1);
             }
-            cout << "Member function named " << iff.name
+            cout << "  Member function named " << iff.name
                  << " has argument named " << ifv.name << " with type ("
                  << ifv.ift.prefix << "," << ifv.ift.name << ","
                  << ifv.ift.suffix << ")" << endl;
@@ -410,7 +409,7 @@ int main(int argc, char *argv[]) {
         } else if (vs.size()>=3 && vs[0]=="-" && vs[1]=="parent") {
           
           ifc.parents.push_back(vs[2]);
-          cout << "Class named " << ifc.name << " has parent "
+          cout << "Class " << ifc.name << " has parent "
                << vs[2] << endl;
           
           next_line(fin,line,vs,done);
@@ -430,7 +429,7 @@ int main(int argc, char *argv[]) {
             ifv.ift.parse(vs,1,2);
           }
           
-          cout << "Class named " << ifc.name << " has member "
+          cout << "  Member "
                << "named " << ifv.name << " with type ("
                << ifv.ift.prefix << "," << ifv.ift.name << ","
                << ifv.ift.suffix << ")" << endl;
@@ -444,7 +443,7 @@ int main(int argc, char *argv[]) {
 
         } else {
           
-          cout << "Class named " << ifc.name << " done." << endl;
+          cout << "Class " << ifc.name << " done." << endl;
           class_done=true;
           classes.push_back(ifc);
           

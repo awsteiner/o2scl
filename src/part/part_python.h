@@ -88,13 +88,45 @@ double o2scl_fermion_get_del(void *vp);
 
 void o2scl_fermion_set_del(void *vp, double v);
 
+void *o2scl_create_fermion_zerot();
+
+void o2scl_free_fermion_zerot(void *vp);
+
+void o2scl_fermion_zerot_kf_from_density(void *vptr, void *ptr_f);
+
+void o2scl_fermion_zerot_energy_density_zerot(void *vptr, void *ptr_f);
+
+void o2scl_fermion_zerot_pressure_zerot(void *vptr, void *ptr_f);
+
+void o2scl_fermion_zerot_calc_mu_zerot(void *vptr, void *ptr_f);
+
+void o2scl_fermion_zerot_calc_density_zerot(void *vptr, void *ptr_f);
+
 void *o2scl_create_fermion_rel();
 
 void o2scl_free_fermion_rel(void *vp);
 
+bool o2scl_fermion_rel_calc_mu_deg(void *vptr, void *ptr_f, double T, double prec);
+
+bool o2scl_fermion_rel_calc_mu_ndeg(void *vptr, void *ptr_f, double T, double prec, bool inc_antip);
+
+void o2scl_fermion_rel_massless_calc_mu(void *vptr, void *ptr_f, double T);
+
+void o2scl_fermion_rel_massless_pair_mu(void *vptr, void *ptr_f, double T);
+
+void o2scl_fermion_rel_massless_calc_density(void *vptr, void *ptr_f, double T);
+
+void o2scl_fermion_rel_massless_pair_density(void *vptr, void *ptr_f, double T);
+
+int o2scl_fermion_rel_nu_from_n(void *vptr, void *ptr_f, double T);
+
 int o2scl_fermion_rel_calc_density(void *vptr, void *ptr_f, double T);
 
+int o2scl_fermion_rel_pair_density(void *vptr, void *ptr_f, double T);
+
 void o2scl_fermion_rel_calc_mu(void *vptr, void *ptr_f, double T);
+
+void o2scl_fermion_rel_pair_mu(void *vptr, void *ptr_f, double T);
 
 void *o2scl_create_fermion_nonrel();
 

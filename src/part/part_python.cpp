@@ -177,6 +177,51 @@ void o2scl_fermion_set_del(void *vptr, double v) {
   return;
 }
 
+void *o2scl_create_fermion_zerot() {
+  fermion_zerot *ptr=new fermion_zerot;
+  return ptr;
+}
+
+void o2scl_free_fermion_zerot(void *vptr) {
+  fermion_zerot *ptr=(fermion_zerot *)vptr;
+  delete ptr;
+}
+
+void o2scl_fermion_zerot_kf_from_density(void *vptr, void *ptr_f) {
+  fermion_zerot *ptr=(fermion_zerot *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  ptr->kf_from_density(*f);
+  return;
+}
+
+void o2scl_fermion_zerot_energy_density_zerot(void *vptr, void *ptr_f) {
+  fermion_zerot *ptr=(fermion_zerot *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  ptr->energy_density_zerot(*f);
+  return;
+}
+
+void o2scl_fermion_zerot_pressure_zerot(void *vptr, void *ptr_f) {
+  fermion_zerot *ptr=(fermion_zerot *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  ptr->pressure_zerot(*f);
+  return;
+}
+
+void o2scl_fermion_zerot_calc_mu_zerot(void *vptr, void *ptr_f) {
+  fermion_zerot *ptr=(fermion_zerot *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  ptr->calc_mu_zerot(*f);
+  return;
+}
+
+void o2scl_fermion_zerot_calc_density_zerot(void *vptr, void *ptr_f) {
+  fermion_zerot *ptr=(fermion_zerot *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  ptr->calc_density_zerot(*f);
+  return;
+}
+
 void *o2scl_create_fermion_rel() {
   fermion_rel *ptr=new fermion_rel;
   return ptr;
@@ -187,6 +232,55 @@ void o2scl_free_fermion_rel(void *vptr) {
   delete ptr;
 }
 
+bool o2scl_fermion_rel_calc_mu_deg(void *vptr, void *ptr_f, double T, double prec) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  bool ret=ptr->calc_mu_deg(*f,T,prec);
+  return ret;
+}
+
+bool o2scl_fermion_rel_calc_mu_ndeg(void *vptr, void *ptr_f, double T, double prec, bool inc_antip) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  bool ret=ptr->calc_mu_ndeg(*f,T,prec,inc_antip);
+  return ret;
+}
+
+void o2scl_fermion_rel_massless_calc_mu(void *vptr, void *ptr_f, double T) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  ptr->massless_calc_mu(*f,T);
+  return;
+}
+
+void o2scl_fermion_rel_massless_pair_mu(void *vptr, void *ptr_f, double T) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  ptr->massless_pair_mu(*f,T);
+  return;
+}
+
+void o2scl_fermion_rel_massless_calc_density(void *vptr, void *ptr_f, double T) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  ptr->massless_calc_density(*f,T);
+  return;
+}
+
+void o2scl_fermion_rel_massless_pair_density(void *vptr, void *ptr_f, double T) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  ptr->massless_pair_density(*f,T);
+  return;
+}
+
+int o2scl_fermion_rel_nu_from_n(void *vptr, void *ptr_f, double T) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  int ret=ptr->nu_from_n(*f,T);
+  return ret;
+}
+
 int o2scl_fermion_rel_calc_density(void *vptr, void *ptr_f, double T) {
   fermion_rel *ptr=(fermion_rel *)vptr;
   fermion *f=(fermion *)ptr_f;
@@ -194,10 +288,24 @@ int o2scl_fermion_rel_calc_density(void *vptr, void *ptr_f, double T) {
   return ret;
 }
 
+int o2scl_fermion_rel_pair_density(void *vptr, void *ptr_f, double T) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  int ret=ptr->pair_density(*f,T);
+  return ret;
+}
+
 void o2scl_fermion_rel_calc_mu(void *vptr, void *ptr_f, double T) {
   fermion_rel *ptr=(fermion_rel *)vptr;
   fermion *f=(fermion *)ptr_f;
   ptr->calc_mu(*f,T);
+  return;
+}
+
+void o2scl_fermion_rel_pair_mu(void *vptr, void *ptr_f, double T) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  ptr->pair_mu(*f,T);
   return;
 }
 

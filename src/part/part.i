@@ -32,12 +32,71 @@ class fermion
 - parent part
 - double kf
 - double del
+class fermion_zerot
+- function kf_from_density
+  - void
+  - fermion &f
+- function energy_density_zerot
+  - void
+  - fermion &f
+- function pressure_zerot
+  - void
+  - fermion &f
+- function calc_mu_zerot
+  - void
+  - fermion &f
+- function calc_density_zerot
+  - void
+  - fermion &f
+# The class fermion_thermo is between fermion_rel and
+# fermion_zerot, but it is abstract, so we just skip over it
+# and add it's associated member functions to fermion_rel for now
 class fermion_rel
+- parent fermion_zerot
+- function calc_mu_deg
+  - bool
+  - fermion &f
+  - double T
+  - double prec
+- function calc_mu_ndeg
+  - bool
+  - fermion &f
+  - double T
+  - double prec
+  - bool inc_antip
+- function massless_calc_mu
+  - void
+  - fermion &f
+  - double T
+- function massless_pair_mu
+  - void
+  - fermion &f
+  - double T
+- function massless_calc_density
+  - void
+  - fermion &f
+  - double T
+- function massless_pair_density
+  - void
+  - fermion &f
+  - double T
+- function nu_from_n
+  - int
+  - fermion &f
+  - double T
 - function calc_density
   - int
   - fermion &f
   - double T
+- function pair_density
+  - int
+  - fermion &f
+  - double T
 - function calc_mu
+  - void
+  - fermion &f
+  - double T
+- function pair_mu
   - void
   - fermion &f
   - double T
