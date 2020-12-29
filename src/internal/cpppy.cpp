@@ -519,8 +519,9 @@ int main(int argc, char *argv[]) {
         fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
              << ifc.name << "_get_" << ifv.name << "(void *vp);" << endl;
       } else {
-        fout << "void *" << underscoreify(ifc.ns) << "_"
-             << ifc.name << "_get_" << ifv.name << "(void *vp);" << endl;
+        fout << "void " << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_get_" << ifv.name
+             << "(void *vp, void *p_v);" << endl;
       }
       fout << endl;
 
@@ -626,10 +627,14 @@ int main(int argc, char *argv[]) {
         fout << "  return ptr->" << ifv.name << ";" << endl;
         fout << "}" << endl;
       } else {
-        fout << "void *" << underscoreify(ifc.ns) << "_"
-             << ifc.name << "_get_" << ifv.name << "(void *vptr) {" << endl;
+        fout << "void " << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_get_" << ifv.name
+             << "(void *vptr, void *p_v) {" << endl;
         fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
-        fout << "  return &ptr->" << ifv.name << ";" << endl;
+        fout << "  " << ifv.ift.name << " *p_t=("
+             << ifv.ift.name << " *)p_v;" << endl;
+        fout << "  *(p_t)=ptr->" << ifv.name << ";" << endl;
+        fout << "  return;" << endl;
         fout << "}" << endl;
       }
       fout << endl;
@@ -809,32 +814,68 @@ int main(int argc, char *argv[]) {
       if (ifv.name=="del") ifv.name="delta";
 
       // Getter
-      fout << "    @property" << endl;
-      fout << "    def " << ifv.name << "(self):" << endl;
-      fout << "        \"\"\"" << endl;
-      fout << "        Getter function for " << ifc.name << "::"
-           << ifv.name << " ." << endl;
-      fout << "        \"\"\"" << endl;
-      fout << "        f=self._dll." << ifc.ns << "_" << ifc.name << "_get_"
-           << ifv.name << endl;
-      fout << "        f.restype=ctypes.c_" << ifv.ift.name << endl;
-      fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
-      fout << "        return f(self._ptr)" << endl;
+      if (ifv.ift.name=="bool" ||
+          ifv.ift.name=="double" ||
+          ifv.ift.name=="int" ||
+          ifv.ift.name=="size_t") {
+        fout << "    @property" << endl;
+        fout << "    def " << ifv.name << "(self):" << endl;
+        fout << "        \"\"\"" << endl;
+        fout << "        Getter function for " << ifc.name << "::"
+             << ifv.name << " ." << endl;
+        fout << "        \"\"\"" << endl;
+        fout << "        func=self._dll." << ifc.ns << "_" << ifc.name
+             << "_get_" << ifv.name << endl;
+        fout << "        func.restype=ctypes.c_" << ifv.ift.name << endl;
+        fout << "        func.argtypes=[ctypes.c_void_p]" << endl;
+        fout << "        return func(self._ptr)" << endl;
+      } else {
+        fout << "    def get_" << ifv.name << "(self," << ifv.name
+             << "):" << endl;
+        fout << "        \"\"\"" << endl;
+        fout << "        Getter function for " << ifc.name << "::"
+             << ifv.name << " ." << endl;
+        fout << "        \"\"\"" << endl;
+        fout << "        func=self._dll." << ifc.ns << "_" << ifc.name
+             << "_get_" << ifv.name << endl;
+        fout << "        func.restype=ctypes.c_" << ifv.ift.name << endl;
+        fout << "        func.argtypes=[ctypes.c_void_p," 
+             << "ctypes.c_void_p]" << endl;
+        fout << "        return func(self._ptr," << ifv.name
+             << "._ptr)" << endl;
+      }
       fout << endl;
 
       // Setter
-      fout << "    @" << ifv.name << ".setter" << endl;
-      fout << "    def " << ifv.name << "(self,value):" << endl;
-      fout << "        \"\"\"" << endl;
-      fout << "        Setter function for " << ifc.name << "::"
-           << ifv.name << " ." << endl;
-      fout << "        \"\"\"" << endl;
-      fout << "        f=self._dll." << ifc.ns << "_" << ifc.name << "_set_"
-           << ifv.name << endl;
-      fout << "        f.argtypes=[ctypes.c_void_p,ctypes.c_"
-           << ifv.ift.name << "]" << endl;
-      fout << "        self._" << ifv.name << "=f(self._ptr,value)" << endl;
-      fout << "        return" << endl;
+      if (ifv.ift.name=="bool" ||
+          ifv.ift.name=="double" ||
+          ifv.ift.name=="int" ||
+          ifv.ift.name=="size_t") {
+        fout << "    @" << ifv.name << ".setter" << endl;
+        fout << "    def " << ifv.name << "(self,value):" << endl;
+        fout << "        \"\"\"" << endl;
+        fout << "        Setter function for " << ifc.name << "::"
+             << ifv.name << " ." << endl;
+        fout << "        \"\"\"" << endl;
+        fout << "        func=self._dll." << ifc.ns << "_" << ifc.name
+             << "_set_" << ifv.name << endl;
+        fout << "        func.argtypes=[ctypes.c_void_p,ctypes.c_"
+             << ifv.ift.name << "]" << endl;
+        fout << "        func(self._ptr,value)" << endl;
+        fout << "        return" << endl;
+      } else {
+        fout << "    def set_" << ifv.name << "(self,value):" << endl;
+        fout << "        \"\"\"" << endl;
+        fout << "        Setter function for " << ifc.name << "::"
+             << ifv.name << " ." << endl;
+        fout << "        \"\"\"" << endl;
+        fout << "        func=self._dll." << ifc.ns << "_"
+             << ifc.name << "_set_" << ifv.name << endl;
+        fout << "        func.argtypes=[ctypes.c_void_p,"
+             << "ctypes.c_void_p]" << endl;
+        fout << "        func(self._ptr,value._ptr)" << endl;
+        fout << "        return" << endl;
+      }
       fout << endl;
     }
 

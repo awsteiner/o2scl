@@ -2,7 +2,7 @@
 # 
 namespace o2scl
 # 
-# Include statements for header file
+# Include statements for C++ header file
 # 
 h_include <o2scl/part.h>
 h_include <o2scl/fermion_rel.h>
@@ -13,6 +13,7 @@ h_include <o2scl/boson_rel.h>
 h_include <o2scl/classical.h>
 h_include <o2scl/classical_deriv.h>
 h_include <o2scl/fermion_mag_zerot.h>
+h_include <o2scl/quark.h>
 # 
 # Include statement for C++ source code
 # 
@@ -57,6 +58,13 @@ class fermion
 - parent part
 - double kf
 - double del
+# 
+# Class quark
+#
+class quark
+- parent fermion
+- double B
+- double qq
 # 
 # Class fermion_zerot
 #

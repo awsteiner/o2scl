@@ -29,6 +29,7 @@
 #include <o2scl/classical.h>
 #include <o2scl/classical_deriv.h>
 #include <o2scl/fermion_mag_zerot.h>
+#include <o2scl/quark.h>
 
 extern "C" {
 
@@ -108,6 +109,18 @@ double o2scl_fermion_get_del(void *vp);
 
 void o2scl_fermion_set_del(void *vp, double v);
 
+void *o2scl_create_quark();
+
+void o2scl_free_quark(void *vp);
+
+double o2scl_quark_get_B(void *vp);
+
+void o2scl_quark_set_B(void *vp, double v);
+
+double o2scl_quark_get_qq(void *vp);
+
+void o2scl_quark_set_qq(void *vp, double v);
+
 void *o2scl_create_fermion_zerot();
 
 void o2scl_free_fermion_zerot(void *vp);
@@ -170,7 +183,7 @@ double o2scl_fermion_rel_get_therm_ident(void *vp);
 
 void o2scl_fermion_rel_set_therm_ident(void *vp, double v);
 
-void *o2scl_fermion_rel_get_unc(void *vp);
+void o2scl_fermion_rel_get_unc(void *vp, void *p_v);
 
 void o2scl_fermion_rel_set_unc(void *vp, void *p_v);
 
@@ -350,7 +363,7 @@ double o2scl_fermion_deriv_rel_get_upper_limit_fac(void *vp);
 
 void o2scl_fermion_deriv_rel_set_upper_limit_fac(void *vp, double v);
 
-void *o2scl_fermion_deriv_rel_get_unc(void *vp);
+void o2scl_fermion_deriv_rel_get_unc(void *vp, void *p_v);
 
 void o2scl_fermion_deriv_rel_set_unc(void *vp, void *p_v);
 
@@ -384,7 +397,7 @@ double o2scl_fermion_deriv_nr_get_flimit(void *vp);
 
 void o2scl_fermion_deriv_nr_set_flimit(void *vp, double v);
 
-void *o2scl_fermion_deriv_nr_get_unc(void *vp);
+void o2scl_fermion_deriv_nr_get_unc(void *vp, void *p_v);
 
 void o2scl_fermion_deriv_nr_set_unc(void *vp, void *p_v);
 
