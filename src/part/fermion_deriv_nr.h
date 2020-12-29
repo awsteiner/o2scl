@@ -414,6 +414,26 @@ namespace o2scl {
     return 0;
   }
 
+  /** \brief Compute thermodynamics with antiparticles at fixed
+      chemical potential (unimplemented)
+   */
+  virtual int pair_mu(fermion_deriv_t &f, fp_t temper) {
+    O2SCL_ERR2("Function fermion_nonrel::pair_mu() not ",
+	       "implemented.",exc_eunimpl);
+    return 0;
+  }
+
+  /** \brief Compute thermodynamics with antiparticles at fixed
+      density (unimplemented)
+   */
+  virtual int pair_density(fermion_deriv_t &f, fp_t temper) {
+    O2SCL_ERR2("Function fermion_nonrel::pair_density() not ",
+	       "implemented.",exc_eunimpl);
+    return 0;
+  }
+    
+    
+    
 #ifdef O2SCL_NEVER_DEFINED
     // AWS, 12/29/2020, commenting this out since they are NR and pair
     // functions are not written for fermion_nonrel either

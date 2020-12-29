@@ -170,9 +170,9 @@ double o2scl_fermion_rel_get_therm_ident(void *vp);
 
 void o2scl_fermion_rel_set_therm_ident(void *vp, double v);
 
-fermion o2scl_fermion_rel_get_unc(void *vp);
+void *o2scl_fermion_rel_get_unc(void *vp);
 
-void o2scl_fermion_rel_set_unc(void *vp, fermion v);
+void o2scl_fermion_rel_set_unc(void *vp, void *p_v);
 
 bool o2scl_fermion_rel_calc_mu_deg(void *vptr, void *ptr_f, double T, double prec);
 
@@ -350,13 +350,9 @@ double o2scl_fermion_deriv_rel_get_upper_limit_fac(void *vp);
 
 void o2scl_fermion_deriv_rel_set_upper_limit_fac(void *vp, double v);
 
-fermion_deriv o2scl_fermion_deriv_rel_get_unc(void *vp);
+void *o2scl_fermion_deriv_rel_get_unc(void *vp);
 
-void o2scl_fermion_deriv_rel_set_unc(void *vp, fermion_deriv v);
-
-fermion_rel o2scl_fermion_deriv_rel_get_fr(void *vp);
-
-void o2scl_fermion_deriv_rel_set_fr(void *vp, fermion_rel v);
+void o2scl_fermion_deriv_rel_set_unc(void *vp, void *p_v);
 
 int o2scl_fermion_deriv_rel_get_method(void *vp);
 
@@ -388,9 +384,9 @@ double o2scl_fermion_deriv_nr_get_flimit(void *vp);
 
 void o2scl_fermion_deriv_nr_set_flimit(void *vp, double v);
 
-fermion_deriv o2scl_fermion_deriv_nr_get_unc(void *vp);
+void *o2scl_fermion_deriv_nr_get_unc(void *vp);
 
-void o2scl_fermion_deriv_nr_set_unc(void *vp, fermion_deriv v);
+void o2scl_fermion_deriv_nr_set_unc(void *vp, void *p_v);
 
 void o2scl_fermion_deriv_nr_calc_density_zerot(void *vptr, void *ptr_f);
 

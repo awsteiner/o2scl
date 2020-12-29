@@ -496,18 +496,14 @@ int main(int argc, char *argv[]) {
   
   for(size_t i=0;i<classes.size();i++) {
 
-    // For each class
-    // 1. create pointer
-    // 2. free pointer
-    // 3/4. get and set data
-    // 5. member functions
-    
     if_class &ifc=classes[i];
 
+    // Always create a void *
     fout << "void *" << underscoreify(ifc.ns) << "_create_" << ifc.name
          << "();" << endl;
     fout << endl;
-    
+
+    // Always free a void *
     fout << "void " << underscoreify(ifc.ns) << "_free_" << ifc.name
          << "(void *vp);" << endl;
     fout << endl;
@@ -515,14 +511,31 @@ int main(int argc, char *argv[]) {
     for(size_t j=0;j<ifc.members.size();j++) {
 
       if_var &ifv=ifc.members[j];
-      
-      fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
-           << ifc.name << "_get_" << ifv.name << "(void *vp);" << endl;
+
+      if (ifv.ift.name=="bool" ||
+          ifv.ift.name=="double" ||
+          ifv.ift.name=="int" ||
+          ifv.ift.name=="size_t") {
+        fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_get_" << ifv.name << "(void *vp);" << endl;
+      } else {
+        fout << "void *" << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_get_" << ifv.name << "(void *vp);" << endl;
+      }
       fout << endl;
 
-      fout << "void " << underscoreify(ifc.ns) << "_"
-           << ifc.name << "_set_" << ifv.name << "(void *vp, "
-           << ifv.ift.name << " v);" << endl;
+      if (ifv.ift.name=="bool" ||
+          ifv.ift.name=="double" ||
+          ifv.ift.name=="int" ||
+          ifv.ift.name=="size_t") {
+        fout << "void " << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_set_" << ifv.name << "(void *vp, "
+             << ifv.ift.name << " v);" << endl;
+      } else {
+        fout << "void " << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_set_" << ifv.name
+             << "(void *vp, void *p_v);" << endl;
+      }
       fout << endl;
     }
 
@@ -603,21 +616,47 @@ int main(int argc, char *argv[]) {
       if_var &ifv=ifc.members[j];
       
       // Generate code for the get member data function
-      fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
-           << ifc.name << "_get_" << ifv.name << "(void *vptr) {" << endl;
-      fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
-      fout << "  return ptr->" << ifv.name << ";" << endl;
-      fout << "}" << endl;
+      if (ifv.ift.name=="bool" ||
+          ifv.ift.name=="double" ||
+          ifv.ift.name=="int" ||
+          ifv.ift.name=="size_t") {
+        fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_get_" << ifv.name << "(void *vptr) {" << endl;
+        fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
+        fout << "  return ptr->" << ifv.name << ";" << endl;
+        fout << "}" << endl;
+      } else {
+        fout << "void *" << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_get_" << ifv.name << "(void *vptr) {" << endl;
+        fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
+        fout << "  return &ptr->" << ifv.name << ";" << endl;
+        fout << "}" << endl;
+      }
       fout << endl;
       
       // Generate code for the set member data function
-      fout << "void " << underscoreify(ifc.ns) << "_"
-           << ifc.name << "_set_" << ifv.name << "(void *vptr, "
-           << ifv.ift.name << " v) {" << endl;
-      fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
-      fout << "  ptr->" << ifv.name << "=v;" << endl;
-      fout << "  return;" << endl;
-      fout << "}" << endl;
+      if (ifv.ift.name=="bool" ||
+          ifv.ift.name=="double" ||
+          ifv.ift.name=="int" ||
+          ifv.ift.name=="size_t") {
+        fout << "void " << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_set_" << ifv.name << "(void *vptr, "
+             << ifv.ift.name << " v) {" << endl;
+        fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
+        fout << "  ptr->" << ifv.name << "=v;" << endl;
+        fout << "  return;" << endl;
+        fout << "}" << endl;
+      } else {
+        fout << "void " << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_set_" << ifv.name
+             << "(void *vptr, void *p_v) {" << endl;
+        fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
+        fout << "  " << ifv.ift.name << " *p_t=("
+             << ifv.ift.name << " *)p_v;" << endl;
+        fout << "  ptr->" << ifv.name << "=*(p_t);" << endl;
+        fout << "  return;" << endl;
+        fout << "}" << endl;
+      }
       fout << endl;
     }
 

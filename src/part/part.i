@@ -282,7 +282,8 @@ class fermion_deriv_rel
 - double deg_limit
 - double upper_limit_fac
 - fermion_deriv unc
-- fermion_rel fr
+# We can't include fr until it has a real copy constructor
+# - fermion_rel fr
 - int method
 - int last_method
 - bool err_nonconv
