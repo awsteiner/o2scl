@@ -752,10 +752,9 @@ int main(int argc, char *argv[]) {
     fout << "        Delete function for class " << ifc.name << " ." << endl;
     fout << "        \"\"\"" << endl;
     fout << endl;
-    fout << "        f=dll." << ifc.ns << "_free_" << ifc.name << endl;
+    fout << "        f=self._dll." << ifc.ns << "_free_" << ifc.name << endl;
     fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
     fout << "        f(self._ptr)" << endl;
-    fout << "        self._dll=dll" << endl;
     fout << "        return" << endl;
     fout << endl;
 
@@ -777,7 +776,7 @@ int main(int argc, char *argv[]) {
            << ifv.name << endl;
       fout << "        f.restype=ctypes.c_" << ifv.ift.name << endl;
       fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
-      fout << "        return f(self._ptr).contents" << endl;
+      fout << "        return f(self._ptr)" << endl;
       fout << endl;
 
       // Setter
@@ -786,6 +785,7 @@ int main(int argc, char *argv[]) {
       fout << "        \"\"\"" << endl;
       fout << "        Setter function for " << ifc.name << "::"
            << ifv.name << " ." << endl;
+      fout << "        \"\"\"" << endl;
       fout << "        f=self._dll." << ifc.ns << "_" << ifc.name << "_set_"
            << ifv.name << endl;
       fout << "        f.argtypes=[ctypes.c_void_p,ctypes.c_"
@@ -836,9 +836,9 @@ int main(int argc, char *argv[]) {
       
       // Call C++ wrapper function
       if (iff.ret.name=="void") {
-        fout << "        f(self._ptr,";
+        fout << "        func(self._ptr,";
       } else {
-        fout << "        ret=f(self._ptr,";
+        fout << "        ret=func(self._ptr,";
       }
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.suffix=="&") {
