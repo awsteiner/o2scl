@@ -670,10 +670,12 @@ namespace o2scl {
     /// Finite temperature massless fermions
     void massless_calc_density(fermion_t &f, fp_t temper) {
       fp_t x, T=temper;
+
+      //fp_t massless_solve_fun(fp_t x, fermion_t &f, fp_t temper)
       
       x=f.ms+temper;
       funct mf2=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
-			  (&fermion_thermo_tl<fd_inte_t,
+			  (&fermion_thermo_tl<fermion_t,fd_inte_t,
 			   be_inte_t,root_t,func_t,fp_t>::massless_solve_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
       massless_root->solve(x,mf2);
@@ -887,7 +889,7 @@ namespace o2scl {
     
     /// A pointer to the solver for massless fermions
     root<func_t,func_t,fp_t> *massless_root;
-
+    
     /// Solve for the chemical potential for massless fermions
     fp_t massless_solve_fun(fp_t x, fermion_t &f, fp_t temper) {
       fp_t fm2=this->fd_integ.calc_2(x/temper)/2.0;

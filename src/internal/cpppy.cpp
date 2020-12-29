@@ -61,6 +61,15 @@ public:
   
   // *, *&, &, etc.
   std::string suffix;
+
+  /** \brief Desc
+   */
+  std::string to_string() {
+    std::string s=this->name;
+    if (prefix.length()>0) s=prefix+" "+s;
+    if (suffix.length()>0) s+=" "+suffix;
+    return s;
+  }
   
   /** \brief Parse a vector string object into the type parts
    */
@@ -356,7 +365,7 @@ int main(int argc, char *argv[]) {
           
           if_func iff;
           iff.name=vs[2];
-          cout << "  Starting member function named " << vs[2] << endl;
+          cout << "  Starting member function " << vs[2] << endl;
 
           next_line(fin,line,vs,done);
           
@@ -369,10 +378,9 @@ int main(int argc, char *argv[]) {
           
           iff.ret.parse(vs,1,vs.size());
 
-          cout << "  Member function named " << iff.name
-               << " has return type ("
-               << iff.ret.prefix << "," << iff.ret.name << ","
-               << iff.ret.suffix << ")" << endl;
+          cout << "    Member function " << iff.name
+               << " has return type "
+               << iff.ret.to_string() << endl;
 
           next_line(fin,line,vs,done);
           
@@ -393,10 +401,9 @@ int main(int argc, char *argv[]) {
               ifv.name=last_string;
               ifv.ift.parse(vs,1,vs.size()-1);
             }
-            cout << "  Member function named " << iff.name
-                 << " has argument named " << ifv.name << " with type ("
-                 << ifv.ift.prefix << "," << ifv.ift.name << ","
-                 << ifv.ift.suffix << ")" << endl;
+            cout << "    Member function " << iff.name
+                 << " has argument " << ifv.name << " with type "
+                 << ifv.ift.to_string() << endl;
 
             iff.args.push_back(ifv);
             
@@ -409,8 +416,7 @@ int main(int argc, char *argv[]) {
         } else if (vs.size()>=3 && vs[0]=="-" && vs[1]=="parent") {
           
           ifc.parents.push_back(vs[2]);
-          cout << "Class " << ifc.name << " has parent "
-               << vs[2] << endl;
+          cout << "  Parent class " << vs[2] << endl;
           
           next_line(fin,line,vs,done);
           if (done) class_done=true;
@@ -429,10 +435,8 @@ int main(int argc, char *argv[]) {
             ifv.ift.parse(vs,1,2);
           }
           
-          cout << "  Member "
-               << "named " << ifv.name << " with type ("
-               << ifv.ift.prefix << "," << ifv.ift.name << ","
-               << ifv.ift.suffix << ")" << endl;
+          cout << "  Member " << ifv.name << " with type "
+               << ifv.ift.to_string() << endl;
 
           ifc.members.push_back(ifv);
 
