@@ -23,6 +23,7 @@ Namespace: o2scl class: cli
 Namespace: o2scl class: cli_readline
 Namespace: o2scl_hdf class: cloud_file
 Namespace: o2scl class: table::col
+Namespace:  class: table< std::vector< double > >::col
 Namespace: o2scl class: columnify
 Namespace: o2scl class: comm_option_fptr
 Namespace: o2scl class: comm_option_funct
@@ -43,12 +44,15 @@ Namespace: o2scl class: cubic_real_coeff
 Namespace: o2scl class: cubic_real_coeff_cern
 Namespace: o2scl class: cubic_real_coeff_gsl
 Namespace: o2scl class: cursesw
+Namespace:  class: convert_units< double >::der_unit_s
 Namespace: o2scl class: deriv_base
 Namespace: o2scl class: deriv_cern
 Namespace: o2scl class: deriv_eqi
 Namespace: o2scl class: deriv_gsl
 Namespace: o2scl class: diff_evo
 Namespace: o2scl class: diff_evo_adapt
+Namespace:  class: deriv_base< funct >::dpars
+Namespace:  class: deriv_base< funct, double >::dpars
 Namespace: o2scl class: edge_crossings
 Namespace: o2scl class: err_hnd_cpp
 Namespace: o2scl class: err_hnd_gsl
@@ -65,6 +69,7 @@ Namespace: o2scl class: expval_base
 Namespace: o2scl class: expval_matrix
 Namespace: o2scl class: expval_scalar
 Namespace: o2scl class: expval_vector
+Namespace:  class: inte_singular_gsl< funct >::extrapolation_table
 Namespace: o2scl class: fermi_dirac_integ_direct
 Namespace: o2scl class: fermi_dirac_integ_gsl
 Namespace: o2scl class: fermi_dirac_integ_tl
@@ -93,8 +98,8 @@ Namespace: o2scl_hdf class: hdf_file
 Namespace: o2scl class: inte_hcubature::heap
 Namespace: o2scl class: hist
 Namespace: o2scl class: hist_2d
-Namespace: o2scl class: prob_dens_mdim_amr::hypercube
 Namespace: o2scl class: inte_hcubature::hypercube
+Namespace: o2scl class: prob_dens_mdim_amr::hypercube
 Namespace: o2scl class: index_spec
 Namespace: o2scl class: inte
 Namespace: o2scl class: inte_adapt_cern
@@ -177,7 +182,7 @@ Namespace: o2scl_linalg class: linear_solver_eigen_partLU
 Namespace: o2scl_linalg class: linear_solver_HH
 Namespace: o2scl_linalg class: linear_solver_LU
 Namespace: o2scl_linalg class: linear_solver_QR
-Namespace: boost class: numeric::ublas::matrix
+Namespace:  class: boost::numeric::ublas::matrix
 Namespace: o2scl class: matrix_column_gen
 Namespace: o2scl class: matrix_row_gen
 Namespace: o2scl class: matrix_row_gen_ctor
@@ -325,8 +330,9 @@ Namespace: o2scl class: uniform_grid_log_end_width
 Namespace: o2scl class: uniform_grid_log_width
 Namespace: o2scl class: uniform_grid_width
 Namespace: o2scl class: uniform_prior
+Namespace:  class: convert_units< double >::unit_t
 Namespace: o2scl class: vec_index
-Namespace: boost class: numeric::ublas::vector
+Namespace:  class: boost::numeric::ublas::vector
 Namespace: o2scl class: vector_index_vector
 Namespace: o2scl class: vector_index_vector_size
 Namespace: o2scl class: vector_range_gen

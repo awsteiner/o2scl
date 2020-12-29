@@ -123,6 +123,7 @@ int main(int argc, char *argv[]) {
       if (s.length()>0) {
 
 	string ns;
+        
 	// Extract namespace for a function
 	if (kk==1) {
 	  size_t loc=s.find("namespace")+14;
@@ -163,12 +164,24 @@ int main(int argc, char *argv[]) {
 	if (kk==0 && s.find("::")!=std::string::npos) {
 	  size_t loc=s.find("::");
 	  ns=s.substr(0,loc);
-	  s=s.substr(loc+2,s.length()-loc-2);
+          if (ns=="o2scl" || ns=="o2scl_auto_format" ||
+              ns=="o2scl_linalg" || ns=="o2scl_hdf" ||
+              ns=="o2scl_const" || ns=="o2scl_acol" ||
+              ns=="o2scl_cgs" || ns=="o2scl_cgsm" ||
+              ns=="o2scl_mks") {
+            s=s.substr(loc+2,s.length()-loc-2);
+          } else {
+            ns="";
+          }
 	}
 	
-	// Replace &lt; with &
+	// Replace &lt; with <
 	while (s.find("&lt;")!=std::string::npos) {
 	  s.replace(s.find("&lt;"),4,"<");
+	}
+	// Replace &gt; with >
+	while (s.find("&gt;")!=std::string::npos) {
+	  s.replace(s.find("&gt;"),4,">");
 	}
       
 	if (kk==0) {

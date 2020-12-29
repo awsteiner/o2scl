@@ -771,8 +771,12 @@ int main(int argc, char *argv[]) {
       fout << "class " << ifc.name << "(" << ifc.parents[0] << "):"
            << endl;
     }
+    fout << "    \"\"\"" << endl;
+    fout << "    Python interface for class :ref:`" << ifc.name
+         << " <o2sclp:" << ifc.name << ">`." << endl;
+    fout << "    \"\"\"" << endl;
     fout << endl;
-
+      
     // Initialize pointer
     if (ifc.parents.size()==0) {
       fout << "    _ptr=0" << endl;
@@ -897,6 +901,8 @@ int main(int argc, char *argv[]) {
       fout << "        \"\"\"" << endl;
       fout << "        Wrapper for " << ifc.name << "::"
            << iff.name << "() ." << endl;
+      fout << "        wrapper for :ref:`o2sclp:" << ifc.name
+           << "::" << iff.name << "()`." << endl;
       fout << "        \"\"\"" << endl;
 
       // Ctypes interface for function
