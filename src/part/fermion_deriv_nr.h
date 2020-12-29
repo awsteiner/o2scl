@@ -414,7 +414,10 @@ namespace o2scl {
     return 0;
   }
 
-
+#ifdef O2SCL_NEVER_DEFINED
+    // AWS, 12/29/2020, commenting this out since they are NR and pair
+    // functions are not written for fermion_nonrel either
+    
   /** \brief Calculate properties with antiparticles as function of
       chemical potential
   */
@@ -467,7 +470,8 @@ namespace o2scl {
     return 0;
   }
 
-
+#endif
+    
   /// Calculate effective chemical potential from density
   virtual int nu_from_n(fermion_deriv_t &f, fp_t temper) {
 

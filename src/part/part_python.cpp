@@ -25,6 +25,49 @@
 using namespace std;
 using namespace o2scl;
 
+void *o2scl_create_thermo() {
+  thermo *ptr=new thermo;
+  return ptr;
+}
+
+void o2scl_free_thermo(void *vptr) {
+  thermo *ptr=(thermo *)vptr;
+  delete ptr;
+}
+
+double o2scl_thermo_get_ed(void *vptr) {
+  thermo *ptr=(thermo *)vptr;
+  return ptr->ed;
+}
+
+void o2scl_thermo_set_ed(void *vptr, double v) {
+  thermo *ptr=(thermo *)vptr;
+  ptr->ed=v;
+  return;
+}
+
+double o2scl_thermo_get_pr(void *vptr) {
+  thermo *ptr=(thermo *)vptr;
+  return ptr->pr;
+}
+
+void o2scl_thermo_set_pr(void *vptr, double v) {
+  thermo *ptr=(thermo *)vptr;
+  ptr->pr=v;
+  return;
+}
+
+double o2scl_thermo_get_en(void *vptr) {
+  thermo *ptr=(thermo *)vptr;
+  return ptr->en;
+}
+
+void o2scl_thermo_set_en(void *vptr, double v) {
+  thermo *ptr=(thermo *)vptr;
+  ptr->en=v;
+  return;
+}
+
 void *o2scl_create_part() {
   part *ptr=new part;
   return ptr;
@@ -145,6 +188,19 @@ void o2scl_part_set_non_interacting(void *vptr, bool v) {
   return;
 }
 
+void o2scl_part_init(void *vptr, double mass, double dof) {
+  part *ptr=(part *)vptr;
+  ptr->init(mass,dof);
+  return;
+}
+
+void o2scl_part_anti(void *vptr, void *ptr_ax) {
+  part *ptr=(part *)vptr;
+  part *ax=(part *)ptr_ax;
+  ptr->anti(*ax);
+  return;
+}
+
 void *o2scl_create_fermion() {
   fermion *ptr=new fermion;
   return ptr;
@@ -230,6 +286,138 @@ void *o2scl_create_fermion_rel() {
 void o2scl_free_fermion_rel(void *vptr) {
   fermion_rel *ptr=(fermion_rel *)vptr;
   delete ptr;
+}
+
+bool o2scl_fermion_rel_get_err_nonconv(void *vptr) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  return ptr->err_nonconv;
+}
+
+void o2scl_fermion_rel_set_err_nonconv(void *vptr, bool v) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  ptr->err_nonconv=v;
+  return;
+}
+
+double o2scl_fermion_rel_get_min_psi(void *vptr) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  return ptr->min_psi;
+}
+
+void o2scl_fermion_rel_set_min_psi(void *vptr, double v) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  ptr->min_psi=v;
+  return;
+}
+
+double o2scl_fermion_rel_get_deg_limit(void *vptr) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  return ptr->deg_limit;
+}
+
+void o2scl_fermion_rel_set_deg_limit(void *vptr, double v) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  ptr->deg_limit=v;
+  return;
+}
+
+double o2scl_fermion_rel_get_exp_limit(void *vptr) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  return ptr->exp_limit;
+}
+
+void o2scl_fermion_rel_set_exp_limit(void *vptr, double v) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  ptr->exp_limit=v;
+  return;
+}
+
+double o2scl_fermion_rel_get_upper_limit_fac(void *vptr) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  return ptr->upper_limit_fac;
+}
+
+void o2scl_fermion_rel_set_upper_limit_fac(void *vptr, double v) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  ptr->upper_limit_fac=v;
+  return;
+}
+
+double o2scl_fermion_rel_get_deg_entropy_fac(void *vptr) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  return ptr->deg_entropy_fac;
+}
+
+void o2scl_fermion_rel_set_deg_entropy_fac(void *vptr, double v) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  ptr->deg_entropy_fac=v;
+  return;
+}
+
+int o2scl_fermion_rel_get_verbose(void *vptr) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  return ptr->verbose;
+}
+
+void o2scl_fermion_rel_set_verbose(void *vptr, int v) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  ptr->verbose=v;
+  return;
+}
+
+bool o2scl_fermion_rel_get_use_expansions(void *vptr) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  return ptr->use_expansions;
+}
+
+void o2scl_fermion_rel_set_use_expansions(void *vptr, bool v) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  ptr->use_expansions=v;
+  return;
+}
+
+double o2scl_fermion_rel_get_tol_expan(void *vptr) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  return ptr->tol_expan;
+}
+
+void o2scl_fermion_rel_set_tol_expan(void *vptr, double v) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  ptr->tol_expan=v;
+  return;
+}
+
+bool o2scl_fermion_rel_get_verify_ti(void *vptr) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  return ptr->verify_ti;
+}
+
+void o2scl_fermion_rel_set_verify_ti(void *vptr, bool v) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  ptr->verify_ti=v;
+  return;
+}
+
+double o2scl_fermion_rel_get_therm_ident(void *vptr) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  return ptr->therm_ident;
+}
+
+void o2scl_fermion_rel_set_therm_ident(void *vptr, double v) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  ptr->therm_ident=v;
+  return;
+}
+
+fermion o2scl_fermion_rel_get_unc(void *vptr) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  return ptr->unc;
+}
+
+void o2scl_fermion_rel_set_unc(void *vptr, fermion v) {
+  fermion_rel *ptr=(fermion_rel *)vptr;
+  ptr->unc=v;
+  return;
 }
 
 bool o2scl_fermion_rel_calc_mu_deg(void *vptr, void *ptr_f, double T, double prec) {
@@ -319,24 +507,46 @@ void o2scl_free_fermion_nonrel(void *vptr) {
   delete ptr;
 }
 
-void *o2scl_create_fermion_deriv_nr() {
-  fermion_deriv_nr *ptr=new fermion_deriv_nr;
+int o2scl_fermion_nonrel_calc_density(void *vptr, void *ptr_f, double T) {
+  fermion_nonrel *ptr=(fermion_nonrel *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  int ret=ptr->calc_density(*f,T);
+  return ret;
+}
+
+void o2scl_fermion_nonrel_calc_mu(void *vptr, void *ptr_f, double T) {
+  fermion_nonrel *ptr=(fermion_nonrel *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  ptr->calc_mu(*f,T);
+  return;
+}
+
+void o2scl_fermion_nonrel_nu_from_n(void *vptr, void *ptr_f, double T) {
+  fermion_nonrel *ptr=(fermion_nonrel *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  ptr->nu_from_n(*f,T);
+  return;
+}
+
+void *o2scl_create_boson() {
+  boson *ptr=new boson;
   return ptr;
 }
 
-void o2scl_free_fermion_deriv_nr(void *vptr) {
-  fermion_deriv_nr *ptr=(fermion_deriv_nr *)vptr;
+void o2scl_free_boson(void *vptr) {
+  boson *ptr=(boson *)vptr;
   delete ptr;
 }
 
-void *o2scl_create_fermion_deriv_rel() {
-  fermion_deriv_rel *ptr=new fermion_deriv_rel;
-  return ptr;
+double o2scl_boson_get_co(void *vptr) {
+  boson *ptr=(boson *)vptr;
+  return ptr->co;
 }
 
-void o2scl_free_fermion_deriv_rel(void *vptr) {
-  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
-  delete ptr;
+void o2scl_boson_set_co(void *vptr, double v) {
+  boson *ptr=(boson *)vptr;
+  ptr->co=v;
+  return;
 }
 
 void *o2scl_create_boson_rel() {
@@ -349,6 +559,41 @@ void o2scl_free_boson_rel(void *vptr) {
   delete ptr;
 }
 
+void o2scl_boson_rel_calc_density(void *vptr, void *ptr_b, double T) {
+  boson_rel *ptr=(boson_rel *)vptr;
+  boson *b=(boson *)ptr_b;
+  ptr->calc_density(*b,T);
+  return;
+}
+
+void o2scl_boson_rel_calc_mu(void *vptr, void *ptr_b, double T) {
+  boson_rel *ptr=(boson_rel *)vptr;
+  boson *b=(boson *)ptr_b;
+  ptr->calc_mu(*b,T);
+  return;
+}
+
+void o2scl_boson_rel_nu_from_n(void *vptr, void *ptr_b, double T) {
+  boson_rel *ptr=(boson_rel *)vptr;
+  boson *b=(boson *)ptr_b;
+  ptr->nu_from_n(*b,T);
+  return;
+}
+
+void o2scl_boson_rel_pair_density(void *vptr, void *ptr_b, double T) {
+  boson_rel *ptr=(boson_rel *)vptr;
+  boson *b=(boson *)ptr_b;
+  ptr->pair_density(*b,T);
+  return;
+}
+
+void o2scl_boson_rel_pair_mu(void *vptr, void *ptr_b, double T) {
+  boson_rel *ptr=(boson_rel *)vptr;
+  boson *b=(boson *)ptr_b;
+  ptr->pair_mu(*b,T);
+  return;
+}
+
 void *o2scl_create_classical_thermo() {
   classical_thermo *ptr=new classical_thermo;
   return ptr;
@@ -357,6 +602,496 @@ void *o2scl_create_classical_thermo() {
 void o2scl_free_classical_thermo(void *vptr) {
   classical_thermo *ptr=(classical_thermo *)vptr;
   delete ptr;
+}
+
+void o2scl_classical_thermo_calc_density(void *vptr, void *ptr_p, double T) {
+  classical_thermo *ptr=(classical_thermo *)vptr;
+  part *p=(part *)ptr_p;
+  ptr->calc_density(*p,T);
+  return;
+}
+
+void o2scl_classical_thermo_calc_mu(void *vptr, void *ptr_p, double T) {
+  classical_thermo *ptr=(classical_thermo *)vptr;
+  part *p=(part *)ptr_p;
+  ptr->calc_mu(*p,T);
+  return;
+}
+
+void *o2scl_create_thermo_np_deriv_press() {
+  thermo_np_deriv_press *ptr=new thermo_np_deriv_press;
+  return ptr;
+}
+
+void o2scl_free_thermo_np_deriv_press(void *vptr) {
+  thermo_np_deriv_press *ptr=(thermo_np_deriv_press *)vptr;
+  delete ptr;
+}
+
+double o2scl_thermo_np_deriv_press_get_dsdT(void *vptr) {
+  thermo_np_deriv_press *ptr=(thermo_np_deriv_press *)vptr;
+  return ptr->dsdT;
+}
+
+void o2scl_thermo_np_deriv_press_set_dsdT(void *vptr, double v) {
+  thermo_np_deriv_press *ptr=(thermo_np_deriv_press *)vptr;
+  ptr->dsdT=v;
+  return;
+}
+
+double o2scl_thermo_np_deriv_press_get_dnndT(void *vptr) {
+  thermo_np_deriv_press *ptr=(thermo_np_deriv_press *)vptr;
+  return ptr->dnndT;
+}
+
+void o2scl_thermo_np_deriv_press_set_dnndT(void *vptr, double v) {
+  thermo_np_deriv_press *ptr=(thermo_np_deriv_press *)vptr;
+  ptr->dnndT=v;
+  return;
+}
+
+double o2scl_thermo_np_deriv_press_get_dnpdT(void *vptr) {
+  thermo_np_deriv_press *ptr=(thermo_np_deriv_press *)vptr;
+  return ptr->dnpdT;
+}
+
+void o2scl_thermo_np_deriv_press_set_dnpdT(void *vptr, double v) {
+  thermo_np_deriv_press *ptr=(thermo_np_deriv_press *)vptr;
+  ptr->dnpdT=v;
+  return;
+}
+
+double o2scl_thermo_np_deriv_press_get_dnndmun(void *vptr) {
+  thermo_np_deriv_press *ptr=(thermo_np_deriv_press *)vptr;
+  return ptr->dnndmun;
+}
+
+void o2scl_thermo_np_deriv_press_set_dnndmun(void *vptr, double v) {
+  thermo_np_deriv_press *ptr=(thermo_np_deriv_press *)vptr;
+  ptr->dnndmun=v;
+  return;
+}
+
+double o2scl_thermo_np_deriv_press_get_dndmu_mixed(void *vptr) {
+  thermo_np_deriv_press *ptr=(thermo_np_deriv_press *)vptr;
+  return ptr->dndmu_mixed;
+}
+
+void o2scl_thermo_np_deriv_press_set_dndmu_mixed(void *vptr, double v) {
+  thermo_np_deriv_press *ptr=(thermo_np_deriv_press *)vptr;
+  ptr->dndmu_mixed=v;
+  return;
+}
+
+double o2scl_thermo_np_deriv_press_get_dnpdmup(void *vptr) {
+  thermo_np_deriv_press *ptr=(thermo_np_deriv_press *)vptr;
+  return ptr->dnpdmup;
+}
+
+void o2scl_thermo_np_deriv_press_set_dnpdmup(void *vptr, double v) {
+  thermo_np_deriv_press *ptr=(thermo_np_deriv_press *)vptr;
+  ptr->dnpdmup=v;
+  return;
+}
+
+void *o2scl_create_thermo_np_deriv_helm() {
+  thermo_np_deriv_helm *ptr=new thermo_np_deriv_helm;
+  return ptr;
+}
+
+void o2scl_free_thermo_np_deriv_helm(void *vptr) {
+  thermo_np_deriv_helm *ptr=(thermo_np_deriv_helm *)vptr;
+  delete ptr;
+}
+
+double o2scl_thermo_np_deriv_helm_get_dsdT(void *vptr) {
+  thermo_np_deriv_helm *ptr=(thermo_np_deriv_helm *)vptr;
+  return ptr->dsdT;
+}
+
+void o2scl_thermo_np_deriv_helm_set_dsdT(void *vptr, double v) {
+  thermo_np_deriv_helm *ptr=(thermo_np_deriv_helm *)vptr;
+  ptr->dsdT=v;
+  return;
+}
+
+double o2scl_thermo_np_deriv_helm_get_dmundT(void *vptr) {
+  thermo_np_deriv_helm *ptr=(thermo_np_deriv_helm *)vptr;
+  return ptr->dmundT;
+}
+
+void o2scl_thermo_np_deriv_helm_set_dmundT(void *vptr, double v) {
+  thermo_np_deriv_helm *ptr=(thermo_np_deriv_helm *)vptr;
+  ptr->dmundT=v;
+  return;
+}
+
+double o2scl_thermo_np_deriv_helm_get_dmupdT(void *vptr) {
+  thermo_np_deriv_helm *ptr=(thermo_np_deriv_helm *)vptr;
+  return ptr->dmupdT;
+}
+
+void o2scl_thermo_np_deriv_helm_set_dmupdT(void *vptr, double v) {
+  thermo_np_deriv_helm *ptr=(thermo_np_deriv_helm *)vptr;
+  ptr->dmupdT=v;
+  return;
+}
+
+double o2scl_thermo_np_deriv_helm_get_dmundnn(void *vptr) {
+  thermo_np_deriv_helm *ptr=(thermo_np_deriv_helm *)vptr;
+  return ptr->dmundnn;
+}
+
+void o2scl_thermo_np_deriv_helm_set_dmundnn(void *vptr, double v) {
+  thermo_np_deriv_helm *ptr=(thermo_np_deriv_helm *)vptr;
+  ptr->dmundnn=v;
+  return;
+}
+
+double o2scl_thermo_np_deriv_helm_get_dmudn_mixed(void *vptr) {
+  thermo_np_deriv_helm *ptr=(thermo_np_deriv_helm *)vptr;
+  return ptr->dmudn_mixed;
+}
+
+void o2scl_thermo_np_deriv_helm_set_dmudn_mixed(void *vptr, double v) {
+  thermo_np_deriv_helm *ptr=(thermo_np_deriv_helm *)vptr;
+  ptr->dmudn_mixed=v;
+  return;
+}
+
+double o2scl_thermo_np_deriv_helm_get_dmupdnp(void *vptr) {
+  thermo_np_deriv_helm *ptr=(thermo_np_deriv_helm *)vptr;
+  return ptr->dmupdnp;
+}
+
+void o2scl_thermo_np_deriv_helm_set_dmupdnp(void *vptr, double v) {
+  thermo_np_deriv_helm *ptr=(thermo_np_deriv_helm *)vptr;
+  ptr->dmupdnp=v;
+  return;
+}
+
+void *o2scl_create_part_deriv_press() {
+  part_deriv_press *ptr=new part_deriv_press;
+  return ptr;
+}
+
+void o2scl_free_part_deriv_press(void *vptr) {
+  part_deriv_press *ptr=(part_deriv_press *)vptr;
+  delete ptr;
+}
+
+double o2scl_part_deriv_press_get_dndmu(void *vptr) {
+  part_deriv_press *ptr=(part_deriv_press *)vptr;
+  return ptr->dndmu;
+}
+
+void o2scl_part_deriv_press_set_dndmu(void *vptr, double v) {
+  part_deriv_press *ptr=(part_deriv_press *)vptr;
+  ptr->dndmu=v;
+  return;
+}
+
+double o2scl_part_deriv_press_get_dndT(void *vptr) {
+  part_deriv_press *ptr=(part_deriv_press *)vptr;
+  return ptr->dndT;
+}
+
+void o2scl_part_deriv_press_set_dndT(void *vptr, double v) {
+  part_deriv_press *ptr=(part_deriv_press *)vptr;
+  ptr->dndT=v;
+  return;
+}
+
+double o2scl_part_deriv_press_get_dsdT(void *vptr) {
+  part_deriv_press *ptr=(part_deriv_press *)vptr;
+  return ptr->dsdT;
+}
+
+void o2scl_part_deriv_press_set_dsdT(void *vptr, double v) {
+  part_deriv_press *ptr=(part_deriv_press *)vptr;
+  ptr->dsdT=v;
+  return;
+}
+
+void o2scl_part_deriv_press_deriv_f(void *vptr, void *ptr_dmudn, void *ptr_dmudT, void *ptr_dsdT_n) {
+  part_deriv_press *ptr=(part_deriv_press *)vptr;
+  double *dmudn=(double *)ptr_dmudn;
+  double *dmudT=(double *)ptr_dmudT;
+  double *dsdT_n=(double *)ptr_dsdT_n;
+  ptr->deriv_f(*dmudn,*dmudT,*dsdT_n);
+  return;
+}
+
+void *o2scl_create_part_deriv() {
+  part_deriv *ptr=new part_deriv;
+  return ptr;
+}
+
+void o2scl_free_part_deriv(void *vptr) {
+  part_deriv *ptr=(part_deriv *)vptr;
+  delete ptr;
+}
+
+void *o2scl_create_fermion_deriv() {
+  fermion_deriv *ptr=new fermion_deriv;
+  return ptr;
+}
+
+void o2scl_free_fermion_deriv(void *vptr) {
+  fermion_deriv *ptr=(fermion_deriv *)vptr;
+  delete ptr;
+}
+
+void *o2scl_create_deriv_thermo_base() {
+  deriv_thermo_base *ptr=new deriv_thermo_base;
+  return ptr;
+}
+
+void o2scl_free_deriv_thermo_base(void *vptr) {
+  deriv_thermo_base *ptr=(deriv_thermo_base *)vptr;
+  delete ptr;
+}
+
+double o2scl_deriv_thermo_base_heat_cap_ppart_const_vol(void *vptr, void *ptr_p, double T) {
+  deriv_thermo_base *ptr=(deriv_thermo_base *)vptr;
+  part_deriv *p=(part_deriv *)ptr_p;
+  double ret=ptr->heat_cap_ppart_const_vol(*p,T);
+  return ret;
+}
+
+double o2scl_deriv_thermo_base_heat_cap_ppart_const_press(void *vptr, void *ptr_p, double T) {
+  deriv_thermo_base *ptr=(deriv_thermo_base *)vptr;
+  part_deriv *p=(part_deriv *)ptr_p;
+  double ret=ptr->heat_cap_ppart_const_press(*p,T);
+  return ret;
+}
+
+double o2scl_deriv_thermo_base_compress_adiabatic(void *vptr, void *ptr_p, double T) {
+  deriv_thermo_base *ptr=(deriv_thermo_base *)vptr;
+  part_deriv *p=(part_deriv *)ptr_p;
+  double ret=ptr->compress_adiabatic(*p,T);
+  return ret;
+}
+
+double o2scl_deriv_thermo_base_compress_const_tptr(void *vptr, void *ptr_p, double T) {
+  deriv_thermo_base *ptr=(deriv_thermo_base *)vptr;
+  part_deriv *p=(part_deriv *)ptr_p;
+  double ret=ptr->compress_const_tptr(*p,T);
+  return ret;
+}
+
+double o2scl_deriv_thermo_base_coeff_thermal_exp(void *vptr, void *ptr_p, double T) {
+  deriv_thermo_base *ptr=(deriv_thermo_base *)vptr;
+  part_deriv *p=(part_deriv *)ptr_p;
+  double ret=ptr->coeff_thermal_exp(*p,T);
+  return ret;
+}
+
+double o2scl_deriv_thermo_base_squared_sound_speed(void *vptr, void *ptr_p, double T) {
+  deriv_thermo_base *ptr=(deriv_thermo_base *)vptr;
+  part_deriv *p=(part_deriv *)ptr_p;
+  double ret=ptr->squared_sound_speed(*p,T);
+  return ret;
+}
+
+void *o2scl_create_fermion_deriv_rel() {
+  fermion_deriv_rel *ptr=new fermion_deriv_rel;
+  return ptr;
+}
+
+void o2scl_free_fermion_deriv_rel(void *vptr) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  delete ptr;
+}
+
+double o2scl_fermion_deriv_rel_get_exp_limit(void *vptr) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  return ptr->exp_limit;
+}
+
+void o2scl_fermion_deriv_rel_set_exp_limit(void *vptr, double v) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  ptr->exp_limit=v;
+  return;
+}
+
+double o2scl_fermion_deriv_rel_get_deg_limit(void *vptr) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  return ptr->deg_limit;
+}
+
+void o2scl_fermion_deriv_rel_set_deg_limit(void *vptr, double v) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  ptr->deg_limit=v;
+  return;
+}
+
+double o2scl_fermion_deriv_rel_get_upper_limit_fac(void *vptr) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  return ptr->upper_limit_fac;
+}
+
+void o2scl_fermion_deriv_rel_set_upper_limit_fac(void *vptr, double v) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  ptr->upper_limit_fac=v;
+  return;
+}
+
+fermion_deriv o2scl_fermion_deriv_rel_get_unc(void *vptr) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  return ptr->unc;
+}
+
+void o2scl_fermion_deriv_rel_set_unc(void *vptr, fermion_deriv v) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  ptr->unc=v;
+  return;
+}
+
+fermion_rel o2scl_fermion_deriv_rel_get_fr(void *vptr) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  return ptr->fr;
+}
+
+void o2scl_fermion_deriv_rel_set_fr(void *vptr, fermion_rel v) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  ptr->fr=v;
+  return;
+}
+
+int o2scl_fermion_deriv_rel_get_method(void *vptr) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  return ptr->method;
+}
+
+void o2scl_fermion_deriv_rel_set_method(void *vptr, int v) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  ptr->method=v;
+  return;
+}
+
+int o2scl_fermion_deriv_rel_get_last_method(void *vptr) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  return ptr->last_method;
+}
+
+void o2scl_fermion_deriv_rel_set_last_method(void *vptr, int v) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  ptr->last_method=v;
+  return;
+}
+
+bool o2scl_fermion_deriv_rel_get_err_nonconv(void *vptr) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  return ptr->err_nonconv;
+}
+
+void o2scl_fermion_deriv_rel_set_err_nonconv(void *vptr, bool v) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  ptr->err_nonconv=v;
+  return;
+}
+
+int o2scl_fermion_deriv_rel_nu_from_n(void *vptr, void *ptr_f, double T) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  fermion_deriv *f=(fermion_deriv *)ptr_f;
+  int ret=ptr->nu_from_n(*f,T);
+  return ret;
+}
+
+int o2scl_fermion_deriv_rel_calc_density(void *vptr, void *ptr_f, double T) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  fermion_deriv *f=(fermion_deriv *)ptr_f;
+  int ret=ptr->calc_density(*f,T);
+  return ret;
+}
+
+int o2scl_fermion_deriv_rel_pair_density(void *vptr, void *ptr_f, double T) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  fermion_deriv *f=(fermion_deriv *)ptr_f;
+  int ret=ptr->pair_density(*f,T);
+  return ret;
+}
+
+int o2scl_fermion_deriv_rel_calc_mu(void *vptr, void *ptr_f, double T) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  fermion_deriv *f=(fermion_deriv *)ptr_f;
+  int ret=ptr->calc_mu(*f,T);
+  return ret;
+}
+
+int o2scl_fermion_deriv_rel_pair_mu(void *vptr, void *ptr_f, double T) {
+  fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
+  fermion_deriv *f=(fermion_deriv *)ptr_f;
+  int ret=ptr->pair_mu(*f,T);
+  return ret;
+}
+
+void *o2scl_create_fermion_deriv_nr() {
+  fermion_deriv_nr *ptr=new fermion_deriv_nr;
+  return ptr;
+}
+
+void o2scl_free_fermion_deriv_nr(void *vptr) {
+  fermion_deriv_nr *ptr=(fermion_deriv_nr *)vptr;
+  delete ptr;
+}
+
+double o2scl_fermion_deriv_nr_get_flimit(void *vptr) {
+  fermion_deriv_nr *ptr=(fermion_deriv_nr *)vptr;
+  return ptr->flimit;
+}
+
+void o2scl_fermion_deriv_nr_set_flimit(void *vptr, double v) {
+  fermion_deriv_nr *ptr=(fermion_deriv_nr *)vptr;
+  ptr->flimit=v;
+  return;
+}
+
+fermion_deriv o2scl_fermion_deriv_nr_get_unc(void *vptr) {
+  fermion_deriv_nr *ptr=(fermion_deriv_nr *)vptr;
+  return ptr->unc;
+}
+
+void o2scl_fermion_deriv_nr_set_unc(void *vptr, fermion_deriv v) {
+  fermion_deriv_nr *ptr=(fermion_deriv_nr *)vptr;
+  ptr->unc=v;
+  return;
+}
+
+void o2scl_fermion_deriv_nr_calc_density_zerot(void *vptr, void *ptr_f) {
+  fermion_deriv_nr *ptr=(fermion_deriv_nr *)vptr;
+  fermion_deriv *f=(fermion_deriv *)ptr_f;
+  ptr->calc_density_zerot(*f);
+  return;
+}
+
+void o2scl_fermion_deriv_nr_calc_mu_zerot(void *vptr, void *ptr_f) {
+  fermion_deriv_nr *ptr=(fermion_deriv_nr *)vptr;
+  fermion_deriv *f=(fermion_deriv *)ptr_f;
+  ptr->calc_mu_zerot(*f);
+  return;
+}
+
+int o2scl_fermion_deriv_nr_nu_from_n(void *vptr, void *ptr_f, double T) {
+  fermion_deriv_nr *ptr=(fermion_deriv_nr *)vptr;
+  fermion_deriv *f=(fermion_deriv *)ptr_f;
+  int ret=ptr->nu_from_n(*f,T);
+  return ret;
+}
+
+int o2scl_fermion_deriv_nr_calc_density(void *vptr, void *ptr_f, double T) {
+  fermion_deriv_nr *ptr=(fermion_deriv_nr *)vptr;
+  fermion_deriv *f=(fermion_deriv *)ptr_f;
+  int ret=ptr->calc_density(*f,T);
+  return ret;
+}
+
+int o2scl_fermion_deriv_nr_calc_mu(void *vptr, void *ptr_f, double T) {
+  fermion_deriv_nr *ptr=(fermion_deriv_nr *)vptr;
+  fermion_deriv *f=(fermion_deriv *)ptr_f;
+  int ret=ptr->calc_mu(*f,T);
+  return ret;
 }
 
 void *o2scl_create_classical_deriv_thermo() {
@@ -369,13 +1104,17 @@ void o2scl_free_classical_deriv_thermo(void *vptr) {
   delete ptr;
 }
 
-void *o2scl_create_fermion_mag_zerot() {
-  fermion_mag_zerot *ptr=new fermion_mag_zerot;
-  return ptr;
+void o2scl_classical_deriv_thermo_calc_density(void *vptr, void *ptr_p, double T) {
+  classical_deriv_thermo *ptr=(classical_deriv_thermo *)vptr;
+  part_deriv *p=(part_deriv *)ptr_p;
+  ptr->calc_density(*p,T);
+  return;
 }
 
-void o2scl_free_fermion_mag_zerot(void *vptr) {
-  fermion_mag_zerot *ptr=(fermion_mag_zerot *)vptr;
-  delete ptr;
+void o2scl_classical_deriv_thermo_calc_mu(void *vptr, void *ptr_p, double T) {
+  classical_deriv_thermo *ptr=(classical_deriv_thermo *)vptr;
+  part_deriv *p=(part_deriv *)ptr_p;
+  ptr->calc_mu(*p,T);
+  return;
 }
 

@@ -120,8 +120,7 @@ namespace o2scl {
 
       \endcomment
   */
-  template<class fp_t=double>
-  class part_deriv_press_tl {
+  template<class fp_t=double> class part_deriv_press_tl {
     
   public:
     

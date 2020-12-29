@@ -701,6 +701,8 @@ namespace o2scl {
 	non-degenerate integrals
     */
     //@{
+    /** \brief Desc
+     */
     fp_t density_T_fun(fp_t u, fermion_deriv_t &f, fp_t T) {
       fp_t k=u*(T), E, ret;
       if (f.inc_rest_mass) {
@@ -726,6 +728,8 @@ namespace o2scl {
       return ret;
     }
 
+    /** \brief Desc
+     */
     fp_t density_mu_fun(fp_t u, fermion_deriv_t &f, fp_t T) {
       fp_t k=u*(T), E, ret;
       if (f.inc_rest_mass) {
@@ -749,6 +753,8 @@ namespace o2scl {
       return ret;
     }
     
+    /** \brief Desc
+     */
     fp_t entropy_T_fun(fp_t u, fermion_deriv_t &f, fp_t T) {
       fp_t k=u*T, E, ret;
       if (f.inc_rest_mass) {
@@ -776,6 +782,8 @@ namespace o2scl {
       return ret;
     }
 
+    /** \brief Desc
+     */
     fp_t density_ms_fun(fp_t u, fermion_deriv_t &f, fp_t T) {
       fp_t k=u*T, E, ret;
       if (f.inc_rest_mass) {
@@ -806,6 +814,8 @@ namespace o2scl {
 	degenerate integrals
     */
     //@{
+    /** \brief Desc
+     */
     fp_t deg_density_T_fun(fp_t k, fermion_deriv_t &f, fp_t T) {
       fp_t E, ret;
       if (f.inc_rest_mass) {
@@ -831,6 +841,8 @@ namespace o2scl {
       return ret;
     }
 
+    /** \brief Desc
+     */
     fp_t deg_density_mu_fun(fp_t k, fermion_deriv_t &f, fp_t T) {
       fp_t E, ret;
       if (f.inc_rest_mass) {
@@ -854,6 +866,8 @@ namespace o2scl {
       return ret;
     }
 
+    /** \brief Desc
+     */
     fp_t deg_entropy_T_fun(fp_t k, fermion_deriv_t &f, fp_t T) {
       fp_t E, ret;
       E=o2hypot(k,f.ms);
@@ -877,6 +891,8 @@ namespace o2scl {
       return ret;
     }
 
+    /** \brief Desc
+     */
     fp_t deg_density_ms_fun(fp_t k, fermion_deriv_t &f, fp_t T) {
       fp_t E, ret;
       if (f.inc_rest_mass) {

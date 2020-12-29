@@ -448,6 +448,7 @@ int main(int argc, char *argv[]) {
         } else {
           
           cout << "Class " << ifc.name << " done." << endl;
+          cout << endl;
           class_done=true;
           classes.push_back(ifc);
           
