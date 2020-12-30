@@ -29,7 +29,7 @@ integration coefficients, :ref:`o2scl_inte_gk_coeffs <Gauss-Kronrod
 integration coefficients>` and :ref:`o2scl_inte_qng_coeffs
 <Non-adaptive quadrature integration coefficients>`. There are also
 some namespaces for the linear algebra functions, see :ref:`Linear
-Algebra` for more information on these.
+Algebra` for more information on these. 
 
 Documentation conventions
 -------------------------

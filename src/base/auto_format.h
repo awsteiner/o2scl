@@ -77,6 +77,9 @@ namespace o2scl_auto_format {
       stream, so the user must take care to make sure this pointer is
       valid.
 
+      \note For now, this class is in its own namespace, 
+      <tt>o2scl_auto_format</tt>
+
       \verbatim embed:rst
       .. todo:: 
 
