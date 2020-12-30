@@ -1,0 +1,147 @@
+Reading interface file nuclei.i .
+Setting C++ output prefix to nuclei_python .
+Setting Python output prefix to /Users/awsteiner/wcs/o2sclpy/o2sclpy/nuclei .
+
+Parsing interface nuclei.i .
+Setting namespace to o2scl.
+Setting py_class_doc_pattern to "Python interface for class :ref:`%name% <o2sclp:%name%>`.".
+Starting class nucleus in namespace o2scl
+  Parent class part
+  Member Z with type int
+  Member N with type int
+  Member A with type int
+  Member mex with type double
+  Member be with type double
+Class nucleus done.
+
+Starting class nucmass_info in namespace o2scl
+  Starting member function parse_elstring
+    Member function parse_elstring has return type int
+    Member function parse_elstring has argument ela with type std::string
+    Member function parse_elstring has argument Z with type int &
+    Member function parse_elstring has argument N with type int &
+    Member function parse_elstring has argument A with type int &
+  Starting member function eltoZ
+    Member function eltoZ has return type int
+    Member function eltoZ has argument el with type std::string
+  Starting member function Ztoel
+    Member function Ztoel has return type std::string
+    Member function Ztoel has argument Z with type size_t
+  Starting member function Ztoname
+    Member function Ztoname has return type std::string
+    Member function Ztoname has argument Z with type size_t
+  Starting member function tostring
+    Member function tostring has return type std::string
+    Member function tostring has argument Z with type size_t
+    Member function tostring has argument N with type size_t
+  Starting member function int_to_spinp
+    Member function int_to_spinp has return type std::string
+    Member function int_to_spinp has argument g with type int
+  Starting member function spinp_to_int
+    Member function spinp_to_int has return type int
+    Member function spinp_to_int has argument s with type std::string
+Class nucmass_info done.
+
+Starting abstract class nucmass in namespace o2scl
+  Member m_prot with type double
+  Member m_neut with type double
+  Member m_elec with type double
+  Member m_amu with type double
+  Starting member function is_included
+    Member function is_included has return type bool
+    Member function is_included has argument Z with type int
+    Member function is_included has argument N with type int
+  Starting member function get_nucleus
+    Member function get_nucleus has return type int
+    Member function get_nucleus has argument Z with type int
+    Member function get_nucleus has argument N with type int
+    Member function get_nucleus has argument n with type nucleus &
+  Starting member function mass_excess
+    Member function mass_excess has return type double
+    Member function mass_excess has argument Z with type int
+    Member function mass_excess has argument N with type int
+  Starting member function mass_excess_d
+    Member function mass_excess_d has return type double
+    Member function mass_excess_d has argument Z with type double
+    Member function mass_excess_d has argument N with type double
+  Starting member function electron_binding
+    Member function electron_binding has return type double
+    Member function electron_binding has argument Z with type double
+  Starting member function binding_energy
+    Member function binding_energy has return type double
+    Member function binding_energy has argument Z with type int
+    Member function binding_energy has argument N with type int
+  Starting member function binding_energy_d
+    Member function binding_energy_d has return type double
+    Member function binding_energy_d has argument Z with type double
+    Member function binding_energy_d has argument N with type double
+  Starting member function total_mass
+    Member function total_mass has return type double
+    Member function total_mass has argument Z with type int
+    Member function total_mass has argument N with type int
+  Starting member function total_mass_d
+    Member function total_mass_d has return type double
+    Member function total_mass_d has argument Z with type double
+    Member function total_mass_d has argument N with type double
+  Starting member function neutron_sep
+    Member function neutron_sep has return type double
+    Member function neutron_sep has argument Z with type int
+    Member function neutron_sep has argument N with type int
+  Starting member function two_neutron_sep
+    Member function two_neutron_sep has return type double
+    Member function two_neutron_sep has argument Z with type int
+    Member function two_neutron_sep has argument N with type int
+  Starting member function proton_sep
+    Member function proton_sep has return type double
+    Member function proton_sep has argument Z with type int
+    Member function proton_sep has argument N with type int
+  Starting member function two_proton_sep
+    Member function two_proton_sep has return type double
+    Member function two_proton_sep has argument Z with type int
+    Member function two_proton_sep has argument N with type int
+  Starting member function atomic_mass
+    Member function atomic_mass has return type double
+    Member function atomic_mass has argument Z with type int
+    Member function atomic_mass has argument N with type int
+  Starting member function atomic_mass_d
+    Member function atomic_mass_d has return type double
+    Member function atomic_mass_d has argument Z with type double
+    Member function atomic_mass_d has argument N with type double
+Class nucmass done.
+
+Starting abstract class nucmass_table in namespace o2scl
+  Parent class nucmass
+  Member n with type size_t
+  Member reference with type std::string
+  Starting member function is_loaded
+    Member function is_loaded has return type bool
+  Starting member function get_nentries
+    Member function get_nentries has return type size_t
+Class nucmass_table done.
+
+Starting abstract class nucmass_fit_base in namespace o2scl
+  Parent class nucmass
+  Member nfit with type size_t
+  Starting member function fit_fun
+    Member function fit_fun has return type int
+    Member function fit_fun has argument x with type const ubvector &
+  Starting member function guess_fun
+    Member function guess_fun has return type int
+    Member function guess_fun has argument x with type ubvector &
+Class nucmass_fit_base done.
+
+Starting class nucmass_semi_empirical in namespace o2scl
+  Parent class nucmass_fit_base
+  Member B with type double
+  Member Sv with type double
+  Member Ss with type double
+  Member Ec with type double
+  Member Epair with type double
+  Starting member function mass_excess
+    Member function mass_excess has return type double
+    Member function mass_excess has argument Z with type int
+    Member function mass_excess has argument N with type int
+  Starting member function mass_excess_d
+    Member function mass_excess_d has return type double
+    Member function mass_excess_d has argument Z with type double
+    Member function mass_excess_d has argument N with type double

@@ -510,6 +510,10 @@ namespace o2scl {
       \int_0^{\infty} \frac{k^{s-1}}{e^{k-\ln(z)}-1}
       \f]
       this representation works for positive values of \f$ z \f$.
+
+      \verbatim embed:rst
+      A classic reference for the polylogarithm function is [Lewin81]_.
+      \endverbatim
   */
   class polylog {
 

@@ -153,7 +153,7 @@ public:
     if (prefix.find("const")!=std::string::npos) return true;
   }
 
-  // End of class if_class
+  // End of class if_type
 };
 
 /** \brief A variable with a type and a name
@@ -190,6 +190,8 @@ class if_class : public if_base {
   
 public:
 
+  std::string py_class_doc_pattern;
+  
   /// True if the class is abstract
   bool is_abstract;
   
@@ -276,11 +278,12 @@ int main(int argc, char *argv[]) {
      "",
      "  -------------------------------------------------------------------"
     };
-
+  
   cout << "Parsing interface " << fname << " ." << endl;
   
   // Current namespace
   std::string ns;
+  std::string py_class_doc_pattern;
   // Current list of includes
   std::vector<std::string> h_includes;
   // Current list of includes
@@ -295,12 +298,12 @@ int main(int argc, char *argv[]) {
   // Open file
   ifstream fin;
   fin.open(fname.c_str());
-
+  
   // Parse file
   std::string line;
   std::vector<std::string> vs;
   bool done=false;
-
+  
   next_line(fin,line,vs,done);
   if (done==true) {
     cerr << "Empty interface file." << endl;
@@ -316,6 +319,27 @@ int main(int argc, char *argv[]) {
       } else {
         ns=vs[1];
         cout << "Setting namespace to " << ns << "." << endl;
+      }
+      
+      next_line(fin,line,vs,done);
+      
+    } else if (vs[0]=="py_class_doc_pattern") {
+      py_class_doc_pattern="";
+      if (vs.size()==1) {
+        cout << "Clearing py_class_doc_pattern." << endl;
+      } else {
+        for(size_t k=1;k<vs.size();k++) {
+          py_class_doc_pattern+=vs[k];
+          if (k!=vs.size()-1) py_class_doc_pattern+=" ";
+        }
+        if (py_class_doc_pattern[0]=='\"' &&
+            py_class_doc_pattern[py_class_doc_pattern.length()-
+                                 1]=='\"') {
+          py_class_doc_pattern=py_class_doc_pattern.substr
+            (1,py_class_doc_pattern.length()-2);
+        }
+        cout << "Setting py_class_doc_pattern to \""
+             << py_class_doc_pattern << "\"." << endl;
       }
       
       next_line(fin,line,vs,done);
@@ -434,8 +458,27 @@ int main(int argc, char *argv[]) {
           next_line(fin,line,vs,done);
           if (done) class_done=true;
           
+        } else if (vs.size()>=3 && vs[0]=="-" &&
+                   vs[1]=="py_class_doc_pattern") {
+          
+          ifc.py_class_doc_pattern=vs[2];
+          for(size_t k=3;k<vs.size();k++) {
+            ifc.py_class_doc_pattern+=" "+vs[k];
+          }
+          if (ifc.py_class_doc_pattern[0]=='\"' &&
+              ifc.py_class_doc_pattern[ifc.py_class_doc_pattern.length()-
+                                       1]=='\"') {
+            ifc.py_class_doc_pattern=ifc.py_class_doc_pattern.substr
+              (1,ifc.py_class_doc_pattern.length()-2);
+          }
+          cout << "  Class py_class_doc_pattern is \""
+               << ifc.py_class_doc_pattern << "\"." << endl;
+          
+          next_line(fin,line,vs,done);
+          if (done) class_done=true;
+          
         } else if (vs.size()>=3 && vs[0]=="-") {
-
+          
           if_var ifv;
           // First, check if there are any & or *'s before the
           // variable name
@@ -488,10 +531,10 @@ int main(int argc, char *argv[]) {
 
   // ----------------------------------------------------------------
   // Create C++ header
-
+  
   ofstream fout;
   fout.open((cpp_prefix+".h").c_str());
-
+  
   fout << "/*" << endl;
   for(size_t i=0;i<header.size();i++) {
     fout << header[i] << endl;
@@ -537,7 +580,7 @@ int main(int argc, char *argv[]) {
              << "(void *vp, void *p_v);" << endl;
       }
       fout << endl;
-
+      
       if (ifv.ift.name=="bool" ||
           ifv.ift.name=="double" ||
           ifv.ift.name=="int" ||
@@ -582,7 +625,7 @@ int main(int argc, char *argv[]) {
   fout << "}" << endl;
   
   fout.close();
-
+  
   // ----------------------------------------------------------------
   // Create C++ source code 
   
@@ -770,15 +813,15 @@ int main(int argc, char *argv[]) {
   }
   fout << "\"\"\"" << endl;
   fout << endl;
-
+  
   fout << "import ctypes" << endl;
   fout << "from abc import abstractmethod" << endl;
   fout << endl;
-
+  
   for(size_t i=0;i<classes.size();i++) {
-
+    
     if_class &ifc=classes[i];
-
+    
     if (ifc.parents.size()==0) {
       fout << "class " << ifc.name << ":" << endl;
     } else {
@@ -786,18 +829,23 @@ int main(int argc, char *argv[]) {
            << endl;
     }
     fout << "    \"\"\"" << endl;
-    fout << "    Python interface for class :ref:`" << ifc.name
-         << " <o2sclp:" << ifc.name << ">`." << endl;
+    if (py_class_doc_pattern.length()>0) {
+      string s=py_class_doc_pattern;
+      while (s.find("%name%")!=std::string::npos) {
+        s.replace(s.find("%name%"),6,ifc.name);
+      }
+      fout << "    " << s << endl;
+    }
     fout << "    \"\"\"" << endl;
     fout << endl;
-      
+    
     // Initialize pointer
     if (ifc.parents.size()==0) {
       fout << "    _ptr=0" << endl;
       fout << "    _dll=0" << endl;
       fout << endl;
     }
-
+    
     // Define __init__() function
     if (ifc.is_abstract) {
       fout << "     @abstractmethod" << endl;
@@ -814,7 +862,7 @@ int main(int argc, char *argv[]) {
     fout << "        self._dll=dll" << endl;
     fout << "        return" << endl;
     fout << endl;
-
+    
     // Define __del__() function
     fout << "    def __del__(self):" << endl;
     fout << "        \"\"\"" << endl;

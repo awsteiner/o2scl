@@ -1,6 +1,7 @@
 # Interface file for o2scl part classes
 # 
 namespace o2scl
+py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%>`."
 # 
 # Include statements for C++ header file
 # 
@@ -27,6 +28,7 @@ cpp_using o2scl
 # Class thermo
 #
 class thermo
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - double ed
 - double pr
 - double en
@@ -34,6 +36,7 @@ class thermo
 # Class part
 #
 class part
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - double g
 - double m
 - double ms
@@ -55,6 +58,7 @@ class part
 # Class fermion
 #
 class fermion
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - parent part
 - double kf
 - double del
@@ -70,6 +74,7 @@ class quark
 # Class fermion_zerot
 #
 class fermion_zerot
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - function kf_from_density
   - void
   - fermion &f
@@ -89,6 +94,7 @@ class fermion_zerot
 # Class fermion_thermo
 #
 class fermion_thermo abstract
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - parent fermion_zerot
 - function calc_mu_deg
   - bool
@@ -121,6 +127,7 @@ class fermion_thermo abstract
 # Class fermion_rel
 #   
 class fermion_rel
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - parent fermion_thermo
 - bool err_nonconv
 - double min_psi
@@ -293,7 +300,7 @@ class fermion_deriv_rel
 - double deg_limit
 - double upper_limit_fac
 - fermion_deriv unc
-# We can't include fr until it has a real copy constructor
+# We cannot include fr until it has a real copy constructor
 # - fermion_rel fr
 - int method
 - int last_method

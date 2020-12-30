@@ -1,6 +1,7 @@
 # Interface file for o2scl nuclei classes
 # 
 namespace o2scl
+py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%>`."
 # 
 # Include statements for C++ header file
 # 

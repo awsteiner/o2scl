@@ -11,13 +11,13 @@ NUCLEI_SRCS = nucmass.cpp nucdist.cpp nucleus.cpp nucmass_fit.cpp \
 	reaction_lib.cpp hdf_nucmass_io.cpp nucmass_frdm.cpp \
 	nucmass_dz.cpp nucmass_ame.cpp nucmass_hfb.cpp nucmass_ktuy.cpp \
 	nucmass_dglg.cpp nucmass_wlw.cpp nucmass_sdnp.cpp \
-	nucmass_densmat.cpp nucmass_gen.cpp
+	nucmass_densmat.cpp nucmass_gen.cpp nuclei_python.cpp
 
 HEADER_VAR = nucmass.h nucdist.h nucleus.h nucmass_fit.h \
 	reaction_lib.h hdf_nucmass_io.h nucmass_frdm.h \
 	nucmass_dz.h nucmass_ame.h nucmass_hfb.h nucmass_ktuy.h \
 	nucmass_dglg.h nucmass_wlw.h nucmass_sdnp.h \
-	nucmass_densmat.h nucmass_gen.h
+	nucmass_densmat.h nucmass_gen.h nuclei_python.h
 
 TEST_VAR = nucmass.scr nucdist.scr nucleus.scr nucmass_fit.scr \
 	reaction_lib.scr hdf_nucmass_io.scr nucmass_frdm.scr \
@@ -29,12 +29,13 @@ NUCLEI_SRCS = nucmass.cpp nucdist.cpp nucleus.cpp nucmass_fit.cpp \
 	reaction_lib.cpp nucmass_frdm.cpp nucmass_dz.cpp \
 	nucmass_ame.cpp nucmass_hfb.cpp nucmass_ktuy.cpp \
 	nucmass_dglg.cpp nucmass_wlw.cpp nucmass_sdnp.cpp \
-	nucmass_densmat.cpp
+	nucmass_densmat.cpp nuclei_python.cpp
 
 HEADER_VAR = nucmass.h nucdist.h nucleus.h nucmass_fit.h reaction_lib.h \
 	nucmass_frdm.h nucmass_dz.h nucmass_ame.h \
 	nucmass_hfb.h nucmass_ktuy.h nucmass_dglg.h \
-	nucmass_wlw.h nucmass_sdnp.h nucmass_densmat.h
+	nucmass_wlw.h nucmass_sdnp.h nucmass_densmat.h \
+	nuclei_python.h
 
 TEST_VAR = nucleus.scr
 
@@ -208,6 +209,14 @@ noinst_LTLIBRARIES = libo2scl_nuclei.la
 libo2scl_nuclei_la_SOURCES = $(NUCLEI_SRCS)
 
 am__libo2scl_nuclei_la_SOURCES_DIST = $(NUCLEI_SRCS)
+
+# ------------------------------------------------------------
+
+interface: empty
+	../internal/cpppy nuclei.i nuclei_python ~/wcs/o2sclpy/o2sclpy/nuclei \
+		| tee nuclei_python.cpppy.out
+
+empty:
 
 # ------------------------------------------------------------
 # Misc
