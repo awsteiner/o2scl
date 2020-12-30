@@ -99,8 +99,9 @@ rst-files: empty
 	rm -f class/*.rst
 	rm -f function/*.rst
 	../make_rst main | tee make_rst.out
+	rm -vf class/tab*.rst
+	rm -vf class/v*.rst
 	cd static; acol -run acol.scr > acol.out
-
 
 o2scl-doc: rst-files html
 
