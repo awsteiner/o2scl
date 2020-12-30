@@ -189,6 +189,9 @@ public:
 class if_class : public if_base {
   
 public:
+
+  /// True if the class is abstract
+  bool is_abstract;
   
   /// Members
   std::vector<if_var> members;
@@ -204,6 +207,10 @@ public:
   
   /// Namespace
   std::string ns;
+
+  if_class() {
+    is_abstract=false;
+  }
   
 };
 
@@ -352,8 +359,14 @@ int main(int argc, char *argv[]) {
       if_class ifc;
       ifc.name=vs[1];
       ifc.ns=ns;
-      cout << "Starting class " << ifc.name << " in namespace "
-           << ifc.ns << endl;
+      if (vs.size()>=3 && vs[2]=="abstract") {
+        ifc.is_abstract=true;
+        cout << "Starting abstract class " << ifc.name << " in namespace "
+             << ifc.ns << endl;
+      } else {
+        cout << "Starting class " << ifc.name << " in namespace "
+             << ifc.ns << endl;
+      }
       
       next_line(fin,line,vs,done);
       
@@ -759,6 +772,7 @@ int main(int argc, char *argv[]) {
   fout << endl;
 
   fout << "import ctypes" << endl;
+  fout << "from abc import abstractmethod" << endl;
   fout << endl;
 
   for(size_t i=0;i<classes.size();i++) {
@@ -785,6 +799,9 @@ int main(int argc, char *argv[]) {
     }
 
     // Define __init__() function
+    if (ifc.is_abstract) {
+      fout << "     @abstractmethod" << endl;
+    }
     fout << "    def __init__(self,dll):" << endl;
     fout << "        \"\"\"" << endl;
     fout << "        Init function for class " << ifc.name << " ." << endl;

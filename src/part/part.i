@@ -58,6 +58,7 @@ class fermion
 - parent part
 - double kf
 - double del
+  - py_name delta
 # 
 # Class quark
 #
@@ -85,25 +86,10 @@ class fermion_zerot
   - void
   - fermion &f
 # 
-# Class fermion_rel
-#   
-# The class fermion_thermo is between fermion_rel and
-# fermion_zerot, but it is abstract, so we just skip over it
-# and add it's associated member functions to fermion_rel for now
-class fermion_rel
+# Class fermion_thermo
+#
+class fermion_thermo abstract
 - parent fermion_zerot
-- bool err_nonconv
-- double min_psi
-- double deg_limit
-- double exp_limit
-- double upper_limit_fac
-- double deg_entropy_fac
-- int verbose
-- bool use_expansions
-- double tol_expan
-- bool verify_ti
-- double therm_ident
-- fermion unc
 - function calc_mu_deg
   - bool
   - fermion &f
@@ -131,6 +117,23 @@ class fermion_rel
   - void
   - fermion &f
   - double T
+# 
+# Class fermion_rel
+#   
+class fermion_rel
+- parent fermion_thermo
+- bool err_nonconv
+- double min_psi
+- double deg_limit
+- double exp_limit
+- double upper_limit_fac
+- double deg_entropy_fac
+- int verbose
+- bool use_expansions
+- double tol_expan
+- bool verify_ti
+- double therm_ident
+- fermion unc
 - function nu_from_n
   - int
   - fermion &f
