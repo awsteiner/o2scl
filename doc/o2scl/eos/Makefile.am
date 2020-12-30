@@ -8,6 +8,7 @@ SUBDIRS = sphinx
 clean-doc:
 	cd html; rm -f *.html *.png formula.repository doxygen.css \
 		_formulas* installdox tab*.gif tabs.css
+	cd sphinx/build; rm -rf html
 	rm -f o2scl_eos.tag
 
 o2scl-doc:
