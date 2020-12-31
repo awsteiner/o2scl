@@ -906,7 +906,7 @@ int main(int argc, char *argv[]) {
     
     // Define __init__() function
     if (ifc.is_abstract) {
-      fout << "     @abstractmethod" << endl;
+      fout << "    @abstractmethod" << endl;
     }
     fout << "    def __init__(self,dll):" << endl;
     fout << "        \"\"\"" << endl;
