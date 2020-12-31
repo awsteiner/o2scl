@@ -28,12 +28,14 @@
 
 using namespace std;
 
-/** \brief Convert all non-alphanumeric characters to underscores
+/** \brief Convert <,>, ,: to _
  */
 std::string underscoreify(std::string s) {
   std::string s2=s;
   for(size_t i=0;i<s2.length();i++) {
-    if (std::isalnum(s2[i])==false && s2[i]!='.' && s2[i]!='/') s2[i]='_';
+    if (s2[i]==' ' || s2[i]=='<' || s2[i]==':' || s2[i]=='>') {
+      s2[i]='_';
+    }
   }
   while (s2.find("__")!=std::string::npos) {
     s2.replace(s2.find("__"),2,"_");

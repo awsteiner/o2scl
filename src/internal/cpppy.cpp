@@ -887,7 +887,13 @@ int main(int argc, char *argv[]) {
            << endl;
     }
     fout << "    \"\"\"" << endl;
-    if (py_class_doc_pattern.length()>0) {
+    if (ifc.py_class_doc_pattern.length()>0) {
+      string s=ifc.py_class_doc_pattern;
+      while (s.find("%name%")!=std::string::npos) {
+        s.replace(s.find("%name%"),6,ifc.name);
+      }
+      fout << "    " << s << endl;
+    } else if (py_class_doc_pattern.length()>0) {
       string s=py_class_doc_pattern;
       while (s.find("%name%")!=std::string::npos) {
         s.replace(s.find("%name%"),6,ifc.name);
@@ -1038,6 +1044,8 @@ int main(int argc, char *argv[]) {
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.suffix=="&") {
           fout << "ctypes.c_void_p";
+        } else if (iff.args[k].ift.name=="std::string") {
+          fout << "ctypes.c_char_p";
         } else {
           fout << "ctypes.c_" << iff.args[k].ift.name;
         }

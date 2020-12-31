@@ -165,6 +165,7 @@ class fermion_rel
 # Class fermion_nonrel
 #
 class fermion_nonrel
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - parent fermion_zerot
 - function calc_density
   - int
@@ -212,6 +213,7 @@ class boson_rel
 # Class classical_thermo
 #
 class classical_thermo
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - function calc_density
   - void
   - part &p
@@ -224,6 +226,7 @@ class classical_thermo
 # Class thermo_np_deriv_press
 #
 class thermo_np_deriv_press
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - double dsdT
 - double dnndT
 - double dnpdT
@@ -234,6 +237,7 @@ class thermo_np_deriv_press
 # Class thermo_np_deriv_helm
 #
 class thermo_np_deriv_helm
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - double dsdT
 - double dmundT
 - double dmupdT
@@ -244,6 +248,7 @@ class thermo_np_deriv_helm
 # Class part_deriv_press
 #
 class part_deriv_press
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - double dndmu
 - double dndT
 - double dsdT
@@ -256,18 +261,21 @@ class part_deriv_press
 # Class part_deriv
 #
 class part_deriv
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - parent part
 - parent part_deriv_press
 # 
 # Class fermion_deriv
 #
 class fermion_deriv
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - parent fermion
 - parent part_deriv_press
 # 
 # Class deriv_thermo_base
 #
 class deriv_thermo_base
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - function heat_cap_ppart_const_vol
   - double
   - part_deriv &p
@@ -296,6 +304,7 @@ class deriv_thermo_base
 # Class fermion_deriv_rel
 #
 class fermion_deriv_rel
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - double exp_limit
 - double deg_limit
 - double upper_limit_fac
@@ -329,6 +338,7 @@ class fermion_deriv_rel
 # Class fermion_deriv_nr
 #
 class fermion_deriv_nr
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - double flimit
 - fermion_deriv unc
 - function calc_density_zerot
@@ -353,6 +363,7 @@ class fermion_deriv_nr
 # Class classical_deriv_thermo
 #
 class classical_deriv_thermo
+- py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%_tl>`."
 - function calc_density
   - void
   - part_deriv &p
