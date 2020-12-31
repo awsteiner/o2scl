@@ -673,8 +673,6 @@ Multiple entry const_vector_range
 Namespace: o2scl function: const_vector_range
 Multiple entry const_vector_range
 Namespace: o2scl function: vector_range_copy
-Namespace: o2scl function: vector_range_copy
-Multiple entry vector_range_copy
 Namespace:  function: matrix_max
 Namespace:  function: matrix_min
 Namespace:  function: matrix_max
@@ -1120,7 +1118,6 @@ Skipping vector_out_quotes
 Skipping vector_pvariance
 Skipping vector_quantile_sorted
 Skipping vector_range
-Skipping vector_range_copy
 Skipping vector_reverse
 Skipping vector_reverse_double
 Skipping vector_roll_avg
@@ -1366,8 +1363,6 @@ vector_range(boost::numeric::ublas::vector<dat_t> &v, size_t start, size_t last)
 vector_range(boost::numeric::ublas::vector_range<boost::numeric::ublas::vector<dat_t>> &v, size_t start, size_t last)
 vector_range(std::vector<data_t> &v, size_t start, size_t last)
 vector_range(vector_range_gen<vec_t> &v, size_t start, size_t last)
-vector_range_copy(const std::vector<dat_t> &v, size_t start, size_t last)
-vector_range_copy(const std::vector<dat_t> &v, size_t start, size_t last)
 vector_reverse(size_t n, vec_t &data)
 vector_reverse(vec_t &data)
 vector_reverse_double(size_t n, vec_t &data)

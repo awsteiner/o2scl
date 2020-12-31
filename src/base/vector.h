@@ -3782,6 +3782,9 @@ namespace o2scl {
     return std::vector<dat_t> (v.begin()+start,v.begin()+last);
   }
 
+#ifdef O2SCL_NEVER_DEFINED
+  // AWS, 12/30/2020, this function is unnecessary
+  
   /** \brief Const vector range function template for <tt>std::vector</tt>
       
       The element with index \c start in the original vector
@@ -3798,6 +3801,8 @@ namespace o2scl {
 		      size_t last) {
     return std::vector<dat_t> (v.begin()+start,v.begin()+last);
   }
+  
+#endif
 
   //@}
   

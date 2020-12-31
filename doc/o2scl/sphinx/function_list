@@ -241,7 +241,6 @@
     <member refid="namespaceo2scl_1a3592261c902618f3a9c32dc18243e141" kind="function"><name>const_vector_range</name></member>
     <member refid="namespaceo2scl_1a1a2e0f764d5c7fced80d8fbcebd26c71" kind="function"><name>const_vector_range</name></member>
     <member refid="namespaceo2scl_1aea3baa635c82e72919d3ec0d3c957f59" kind="function"><name>vector_range_copy</name></member>
-    <member refid="namespaceo2scl_1aa69306863a1359ed692855e4fc4e4000" kind="function"><name>vector_range_copy</name></member>
     <member refid="namespaceo2scl_1a0f52ef1f2196bfdc7f06a7229a1970f6" kind="function"><name>matrix_max</name></member>
     <member refid="namespaceo2scl_1afd453895c4328fa1bfc09063d1bc186c" kind="function"><name>matrix_min</name></member>
     <member refid="namespaceo2scl_1a661103a085b6e52f758aee8ccd37bc84" kind="function"><name>matrix_max</name></member>
