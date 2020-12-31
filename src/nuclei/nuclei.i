@@ -140,12 +140,12 @@ class nucmass_table abstract
 class nucmass_fit_base abstract
 - parent nucmass
 - size_t nfit
-- function fit_fun
-  - int
-  - const ubvector &x
-- function guess_fun
-  - int
-  - ubvector &x
+#- function fit_fun
+#  - int
+#  - const ubvector &x
+#- function guess_fun
+#  - int
+#  - ubvector &x
 # 
 # Class nucmass_semi_empirical
 #

@@ -35,7 +35,7 @@ using namespace o2scl;
 std::string underscoreify(std::string s) {
   std::string s2=s;
   for(size_t i=0;i<s2.length();i++) {
-    if (std::isalnum(s2[i])==false) s2[i]=='_';
+    if (std::isalnum(s2[i])==false) s2[i]='_';
   }
   return s2;
 }
@@ -162,6 +162,8 @@ class if_var : public if_base {
   
 public:
 
+  std::string py_name;
+
   /// The variable type 
   if_type ift;
   
@@ -189,6 +191,8 @@ public:
 class if_class : public if_base {
   
 public:
+
+  std::string py_name;
 
   std::string py_class_doc_pattern;
   
@@ -219,7 +223,7 @@ public:
 /** \brief Read the next line from \c fin, skipping blank
     lines, splitting by spaces into \c vs, and setting \c done
     if done
- */
+*/
 void next_line(ifstream &fin, std::string &line,
                std::vector<std::string> &vs, bool &done) {
   if (fin.eof()) {
@@ -492,14 +496,25 @@ int main(int argc, char *argv[]) {
           }
           
           cout << "  Member " << ifv.name << " with type "
-               << ifv.ift.to_string() << endl;
-
-          ifc.members.push_back(ifv);
+               << ifv.ift.to_string() << " ." << endl;
 
           next_line(fin,line,vs,done);
           if (done) {
             class_done=true;
+          } else {
+            if (line[0]==' ' && line[1]==' ' && line[2]=='-' &&
+                line[3]==' ' && vs[1]=="py_name" && vs.size()>=3) {
+              ifv.py_name=vs[2];
+              cout << "    Member " << ifv.name << " has py_name "
+                   << ifv.py_name << " ." << endl;
+              next_line(fin,line,vs,done);
+              if (done) {
+                class_done=true;
+              }
+            }
           }
+          
+          ifc.members.push_back(ifv);
 
         } else {
           
@@ -554,59 +569,93 @@ int main(int argc, char *argv[]) {
 
     if_class &ifc=classes[i];
 
-    // Always create a void *
-    fout << "void *" << underscoreify(ifc.ns) << "_create_" << ifc.name
-         << "();" << endl;
-    fout << endl;
-
-    // Always free a void *
-    fout << "void " << underscoreify(ifc.ns) << "_free_" << ifc.name
-         << "(void *vp);" << endl;
-    fout << endl;
+    if (ifc.is_abstract==false) {
+      // Always create a void *
+      fout << "void *" << underscoreify(ifc.ns) << "_create_" << ifc.name
+           << "();" << endl;
+      fout << endl;
+      
+      // Always free a void *
+      fout << "void " << underscoreify(ifc.ns) << "_free_" << ifc.name
+           << "(void *vp);" << endl;
+      fout << endl;
+    }
 
     for(size_t j=0;j<ifc.members.size();j++) {
 
       if_var &ifv=ifc.members[j];
 
+      // Get function declaration
       if (ifv.ift.name=="bool" ||
           ifv.ift.name=="double" ||
           ifv.ift.name=="int" ||
           ifv.ift.name=="size_t") {
-        fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
-             << ifc.name << "_get_" << ifv.name << "(void *vp);" << endl;
+        if (ifv.py_name.length()>0) {
+          fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
+               << ifc.name << "_get_" << ifv.py_name << "(void *vp);" << endl;
+        } else {
+          fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
+               << ifc.name << "_get_" << ifv.name << "(void *vp);" << endl;
+        }
       } else {
-        fout << "void " << underscoreify(ifc.ns) << "_"
-             << ifc.name << "_get_" << ifv.name
-             << "(void *vp, void *p_v);" << endl;
+        if (ifv.py_name.length()>0) {
+          fout << "void " << underscoreify(ifc.ns) << "_"
+               << ifc.name << "_get_" << ifv.py_name
+               << "(void *vp, void *p_v);" << endl;
+        } else {
+          fout << "void " << underscoreify(ifc.ns) << "_"
+               << ifc.name << "_get_" << ifv.name
+               << "(void *vp, void *p_v);" << endl;
+        }
       }
       fout << endl;
       
+      // Set function declaration
       if (ifv.ift.name=="bool" ||
           ifv.ift.name=="double" ||
           ifv.ift.name=="int" ||
           ifv.ift.name=="size_t") {
-        fout << "void " << underscoreify(ifc.ns) << "_"
-             << ifc.name << "_set_" << ifv.name << "(void *vp, "
-             << ifv.ift.name << " v);" << endl;
+        if (ifv.py_name.length()>0) {
+          fout << "void " << underscoreify(ifc.ns) << "_"
+               << ifc.name << "_set_" << ifv.py_name << "(void *vp, "
+               << ifv.ift.name << " v);" << endl;
+        } else {
+          fout << "void " << underscoreify(ifc.ns) << "_"
+               << ifc.name << "_set_" << ifv.name << "(void *vp, "
+               << ifv.ift.name << " v);" << endl;
+        }
       } else {
-        fout << "void " << underscoreify(ifc.ns) << "_"
-             << ifc.name << "_set_" << ifv.name
-             << "(void *vp, void *p_v);" << endl;
+        if (ifv.py_name.length()>0) {
+          fout << "void " << underscoreify(ifc.ns) << "_"
+               << ifc.name << "_set_" << ifv.py_name
+               << "(void *vp, void *p_v);" << endl;
+        } else {
+          fout << "void " << underscoreify(ifc.ns) << "_"
+               << ifc.name << "_set_" << ifv.name
+               << "(void *vp, void *p_v);" << endl;
+        }
       }
       fout << endl;
     }
-
+    
     for(size_t j=0;j<ifc.methods.size();j++) {
       
       if_func &iff=ifc.methods[j];
-
+      
       // Function header
       fout << iff.ret.name << " " << underscoreify(ifc.ns) << "_"
-           << ifc.name << "_" << iff.name << "(void *vptr, ";
-
+           << ifc.name << "_" << iff.name << "(void *vptr";
+      if (iff.args.size()>0) {
+        fout << ", ";
+      }
+      
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.suffix=="") {
-          fout << iff.args[k].ift.name << " " << iff.args[k].name;
+          if (iff.args[k].ift.name=="std::string") {
+            fout << "char *" << iff.args[k].name;
+          } else {
+            fout << iff.args[k].ift.name << " " << iff.args[k].name;
+          }
         } else if (iff.args[k].ift.suffix=="&") {
           fout << "void *ptr_" << iff.args[k].name;
         }
@@ -621,7 +670,7 @@ int main(int argc, char *argv[]) {
     }
     
   }
-
+  
   fout << "}" << endl;
   
   fout.close();
@@ -652,21 +701,23 @@ int main(int argc, char *argv[]) {
 
     if_class &ifc=classes[i];
 
-    // Generate code for the create pointer function
-    fout << "void *" << underscoreify(ifc.ns) << "_create_" << ifc.name
-         << "() {" << endl;
-    fout << "  " << ifc.name << " *ptr=new " << ifc.name << ";" << endl;
-    fout << "  return ptr;" << endl;
-    fout << "}" << endl;
-    fout << endl;
-    
-    // Generate code for the free pointer function
-    fout << "void " << underscoreify(ifc.ns) << "_free_" << ifc.name
-         << "(void *vptr) {" << endl;
-    fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
-    fout << "  delete ptr;" << endl;
-    fout << "}" << endl;
-    fout << endl;
+    if (ifc.is_abstract==false) {
+      // Generate code for the create pointer function
+      fout << "void *" << underscoreify(ifc.ns) << "_create_" << ifc.name
+           << "() {" << endl;
+      fout << "  " << ifc.name << " *ptr=new " << ifc.name << ";" << endl;
+      fout << "  return ptr;" << endl;
+      fout << "}" << endl;
+      fout << endl;
+      
+      // Generate code for the free pointer function
+      fout << "void " << underscoreify(ifc.ns) << "_free_" << ifc.name
+           << "(void *vptr) {" << endl;
+      fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
+      fout << "  delete ptr;" << endl;
+      fout << "}" << endl;
+      fout << endl;
+    }
 
     for(size_t j=0;j<ifc.members.size();j++) {
 
@@ -728,11 +779,18 @@ int main(int argc, char *argv[]) {
 
       // Function header
       fout << iff.ret.name << " " << underscoreify(ifc.ns) << "_"
-           << ifc.name << "_" << iff.name << "(void *vptr, ";
+           << ifc.name << "_" << iff.name << "(void *vptr";
+      if (iff.args.size()>0) {
+        fout << ", ";
+      }
 
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.suffix=="") {
-          fout << iff.args[k].ift.name << " " << iff.args[k].name;
+          if (iff.args[k].ift.name=="std::string") {
+            fout << "char *" << iff.args[k].name;
+          } else {
+            fout << iff.args[k].ift.name << " " << iff.args[k].name;
+          }
         } else if (iff.args[k].ift.suffix=="&") {
           fout << "void *ptr_" << iff.args[k].name;
         }

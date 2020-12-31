@@ -28,6 +28,18 @@
 
 using namespace std;
 
+/** \brief Convert all non-alphanumeric characters to underscores
+ */
+std::string underscoreify(std::string s) {
+  std::string s2=s;
+  for(size_t i=0;i<s2.length();i++) {
+    if (std::isalnum(s2[i])==false && s2[i]!='.' && s2[i]!='/') s2[i]='_';
+  }
+  while (s2.find("__")!=std::string::npos) {
+    s2.replace(s2.find("__"),2,"_");
+  }
+  return s2;
+}
 /** \brief Inside string \c s, extract the element inside tag \c tag
     and store the element in \c result
 */
@@ -245,6 +257,7 @@ int main(int argc, char *argv[]) {
 	if (kk==1) fname_out="function/";
 	else if (kk==2) fname_out="file/";
 	fname_out+=s+".rst";
+        fname_out=underscoreify(fname_out);
 	ofstream fout(fname_out);
 
 	// Title
@@ -416,6 +429,7 @@ int main(int argc, char *argv[]) {
 	// Open the rst file
 	string fname_out="function/";
 	fname_out+=s+".rst";
+        fname_out=underscoreify(fname_out);
 	ofstream fout(fname_out);
 
 	// Header

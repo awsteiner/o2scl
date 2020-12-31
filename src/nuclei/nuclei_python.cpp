@@ -100,7 +100,7 @@ void o2scl_free_nucmass_info(void *vptr) {
   delete ptr;
 }
 
-int o2scl_nucmass_info_parse_elstring(void *vptr, std::string ela, void *ptr_Z, void *ptr_N, void *ptr_A) {
+int o2scl_nucmass_info_parse_elstring(void *vptr, char *ela, void *ptr_Z, void *ptr_N, void *ptr_A) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   int *Z=(int *)ptr_Z;
   int *N=(int *)ptr_N;
@@ -109,7 +109,7 @@ int o2scl_nucmass_info_parse_elstring(void *vptr, std::string ela, void *ptr_Z, 
   return ret;
 }
 
-int o2scl_nucmass_info_eltoZ(void *vptr, std::string el) {
+int o2scl_nucmass_info_eltoZ(void *vptr, char *el) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   int ret=ptr->eltoZ(el);
   return ret;
@@ -139,20 +139,10 @@ std::string o2scl_nucmass_info_int_to_spinp(void *vptr, int g) {
   return ret;
 }
 
-int o2scl_nucmass_info_spinp_to_int(void *vptr, std::string s) {
+int o2scl_nucmass_info_spinp_to_int(void *vptr, char *s) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   int ret=ptr->spinp_to_int(s);
   return ret;
-}
-
-void *o2scl_create_nucmass() {
-  nucmass *ptr=new nucmass;
-  return ptr;
-}
-
-void o2scl_free_nucmass(void *vptr) {
-  nucmass *ptr=(nucmass *)vptr;
-  delete ptr;
 }
 
 double o2scl_nucmass_get_m_prot(void *vptr) {
@@ -290,16 +280,6 @@ double o2scl_nucmass_atomic_mass_d(void *vptr, double Z, double N) {
   return ret;
 }
 
-void *o2scl_create_nucmass_table() {
-  nucmass_table *ptr=new nucmass_table;
-  return ptr;
-}
-
-void o2scl_free_nucmass_table(void *vptr) {
-  nucmass_table *ptr=(nucmass_table *)vptr;
-  delete ptr;
-}
-
 size_t o2scl_nucmass_table_get_n(void *vptr) {
   nucmass_table *ptr=(nucmass_table *)vptr;
   return ptr->n;
@@ -325,26 +305,16 @@ void o2scl_nucmass_table_set_reference(void *vptr, void *p_v) {
   return;
 }
 
-bool o2scl_nucmass_table_is_loaded(void *vptr, ) {
+bool o2scl_nucmass_table_is_loaded(void *vptr) {
   nucmass_table *ptr=(nucmass_table *)vptr;
   bool ret=ptr->is_loaded();
   return ret;
 }
 
-size_t o2scl_nucmass_table_get_nentries(void *vptr, ) {
+size_t o2scl_nucmass_table_get_nentries(void *vptr) {
   nucmass_table *ptr=(nucmass_table *)vptr;
   size_t ret=ptr->get_nentries();
   return ret;
-}
-
-void *o2scl_create_nucmass_fit_base() {
-  nucmass_fit_base *ptr=new nucmass_fit_base;
-  return ptr;
-}
-
-void o2scl_free_nucmass_fit_base(void *vptr) {
-  nucmass_fit_base *ptr=(nucmass_fit_base *)vptr;
-  delete ptr;
 }
 
 size_t o2scl_nucmass_fit_base_get_nfit(void *vptr) {
@@ -356,19 +326,5 @@ void o2scl_nucmass_fit_base_set_nfit(void *vptr, size_t v) {
   nucmass_fit_base *ptr=(nucmass_fit_base *)vptr;
   ptr->nfit=v;
   return;
-}
-
-int o2scl_nucmass_fit_base_fit_fun(void *vptr, void *ptr_x) {
-  nucmass_fit_base *ptr=(nucmass_fit_base *)vptr;
-  ubvector *x=(ubvector *)ptr_x;
-  int ret=ptr->fit_fun(*x);
-  return ret;
-}
-
-int o2scl_nucmass_fit_base_guess_fun(void *vptr, void *ptr_x) {
-  nucmass_fit_base *ptr=(nucmass_fit_base *)vptr;
-  ubvector *x=(ubvector *)ptr_x;
-  int ret=ptr->guess_fun(*x);
-  return ret;
 }
 

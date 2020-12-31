@@ -105,13 +105,9 @@ double o2scl_fermion_get_kf(void *vp);
 
 void o2scl_fermion_set_kf(void *vp, double v);
 
-double o2scl_fermion_get_del(void *vp);
+double o2scl_fermion_get_delta(void *vp);
 
-void o2scl_fermion_set_del(void *vp, double v);
-
-void o2scl_fermion_get_delta(void *vp, void *p_v);
-
-void o2scl_fermion_set_delta(void *vp, void *p_v);
+void o2scl_fermion_set_delta(void *vp, double v);
 
 void *o2scl_create_quark();
 
@@ -138,10 +134,6 @@ void o2scl_fermion_zerot_pressure_zerot(void *vptr, void *ptr_f);
 void o2scl_fermion_zerot_calc_mu_zerot(void *vptr, void *ptr_f);
 
 void o2scl_fermion_zerot_calc_density_zerot(void *vptr, void *ptr_f);
-
-void *o2scl_create_fermion_thermo();
-
-void o2scl_free_fermion_thermo(void *vp);
 
 bool o2scl_fermion_thermo_calc_mu_deg(void *vptr, void *ptr_f, double T, double prec);
 

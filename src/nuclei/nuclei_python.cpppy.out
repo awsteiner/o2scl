@@ -7,11 +7,11 @@ Setting namespace to o2scl.
 Setting py_class_doc_pattern to "Python interface for class :ref:`%name% <o2sclp:%name%>`.".
 Starting class nucleus in namespace o2scl
   Parent class part
-  Member Z with type int
-  Member N with type int
-  Member A with type int
-  Member mex with type double
-  Member be with type double
+  Member Z with type int .
+  Member N with type int .
+  Member A with type int .
+  Member mex with type double .
+  Member be with type double .
 Class nucleus done.
 
 Starting class nucmass_info in namespace o2scl
@@ -43,10 +43,10 @@ Starting class nucmass_info in namespace o2scl
 Class nucmass_info done.
 
 Starting abstract class nucmass in namespace o2scl
-  Member m_prot with type double
-  Member m_neut with type double
-  Member m_elec with type double
-  Member m_amu with type double
+  Member m_prot with type double .
+  Member m_neut with type double .
+  Member m_elec with type double .
+  Member m_amu with type double .
   Starting member function is_included
     Member function is_included has return type bool
     Member function is_included has argument Z with type int
@@ -111,8 +111,8 @@ Class nucmass done.
 
 Starting abstract class nucmass_table in namespace o2scl
   Parent class nucmass
-  Member n with type size_t
-  Member reference with type std::string
+  Member n with type size_t .
+  Member reference with type std::string .
   Starting member function is_loaded
     Member function is_loaded has return type bool
   Starting member function get_nentries
@@ -121,22 +121,16 @@ Class nucmass_table done.
 
 Starting abstract class nucmass_fit_base in namespace o2scl
   Parent class nucmass
-  Member nfit with type size_t
-  Starting member function fit_fun
-    Member function fit_fun has return type int
-    Member function fit_fun has argument x with type const ubvector &
-  Starting member function guess_fun
-    Member function guess_fun has return type int
-    Member function guess_fun has argument x with type ubvector &
+  Member nfit with type size_t .
 Class nucmass_fit_base done.
 
 Starting class nucmass_semi_empirical in namespace o2scl
   Parent class nucmass_fit_base
-  Member B with type double
-  Member Sv with type double
-  Member Ss with type double
-  Member Ec with type double
-  Member Epair with type double
+  Member B with type double .
+  Member Sv with type double .
+  Member Ss with type double .
+  Member Ec with type double .
+  Member Epair with type double .
   Starting member function mass_excess
     Member function mass_excess has return type double
     Member function mass_excess has argument Z with type int

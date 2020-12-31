@@ -53,9 +53,9 @@ void *o2scl_create_nucmass_info();
 
 void o2scl_free_nucmass_info(void *vp);
 
-int o2scl_nucmass_info_parse_elstring(void *vptr, std::string ela, void *ptr_Z, void *ptr_N, void *ptr_A);
+int o2scl_nucmass_info_parse_elstring(void *vptr, char *ela, void *ptr_Z, void *ptr_N, void *ptr_A);
 
-int o2scl_nucmass_info_eltoZ(void *vptr, std::string el);
+int o2scl_nucmass_info_eltoZ(void *vptr, char *el);
 
 std::string o2scl_nucmass_info_Ztoel(void *vptr, size_t Z);
 
@@ -65,11 +65,7 @@ std::string o2scl_nucmass_info_tostring(void *vptr, size_t Z, size_t N);
 
 std::string o2scl_nucmass_info_int_to_spinp(void *vptr, int g);
 
-int o2scl_nucmass_info_spinp_to_int(void *vptr, std::string s);
-
-void *o2scl_create_nucmass();
-
-void o2scl_free_nucmass(void *vp);
+int o2scl_nucmass_info_spinp_to_int(void *vptr, char *s);
 
 double o2scl_nucmass_get_m_prot(void *vp);
 
@@ -117,10 +113,6 @@ double o2scl_nucmass_atomic_mass(void *vptr, int Z, int N);
 
 double o2scl_nucmass_atomic_mass_d(void *vptr, double Z, double N);
 
-void *o2scl_create_nucmass_table();
-
-void o2scl_free_nucmass_table(void *vp);
-
 size_t o2scl_nucmass_table_get_n(void *vp);
 
 void o2scl_nucmass_table_set_n(void *vp, size_t v);
@@ -129,20 +121,12 @@ void o2scl_nucmass_table_get_reference(void *vp, void *p_v);
 
 void o2scl_nucmass_table_set_reference(void *vp, void *p_v);
 
-bool o2scl_nucmass_table_is_loaded(void *vptr, );
+bool o2scl_nucmass_table_is_loaded(void *vptr);
 
-size_t o2scl_nucmass_table_get_nentries(void *vptr, );
-
-void *o2scl_create_nucmass_fit_base();
-
-void o2scl_free_nucmass_fit_base(void *vp);
+size_t o2scl_nucmass_table_get_nentries(void *vptr);
 
 size_t o2scl_nucmass_fit_base_get_nfit(void *vp);
 
 void o2scl_nucmass_fit_base_set_nfit(void *vp, size_t v);
-
-int o2scl_nucmass_fit_base_fit_fun(void *vptr, void *ptr_x);
-
-int o2scl_nucmass_fit_base_guess_fun(void *vptr, void *ptr_x);
 
 }

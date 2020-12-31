@@ -233,20 +233,6 @@ void o2scl_fermion_set_del(void *vptr, double v) {
   return;
 }
 
-void o2scl_fermion_get_delta(void *vptr, void *p_v) {
-  fermion *ptr=(fermion *)vptr;
-  py_name *p_t=(py_name *)p_v;
-  *(p_t)=ptr->delta;
-  return;
-}
-
-void o2scl_fermion_set_delta(void *vptr, void *p_v) {
-  fermion *ptr=(fermion *)vptr;
-  py_name *p_t=(py_name *)p_v;
-  ptr->delta=*(p_t);
-  return;
-}
-
 void *o2scl_create_quark() {
   quark *ptr=new quark;
   return ptr;
@@ -322,16 +308,6 @@ void o2scl_fermion_zerot_calc_density_zerot(void *vptr, void *ptr_f) {
   fermion *f=(fermion *)ptr_f;
   ptr->calc_density_zerot(*f);
   return;
-}
-
-void *o2scl_create_fermion_thermo() {
-  fermion_thermo *ptr=new fermion_thermo;
-  return ptr;
-}
-
-void o2scl_free_fermion_thermo(void *vptr) {
-  fermion_thermo *ptr=(fermion_thermo *)vptr;
-  delete ptr;
 }
 
 bool o2scl_fermion_thermo_calc_mu_deg(void *vptr, void *ptr_f, double T, double prec) {
