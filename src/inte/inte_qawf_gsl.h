@@ -81,8 +81,10 @@ namespace o2scl {
       \f]
       where \f$ E_k\f$ is the estimated error on the interval \f$ C_k\f$.
       
-      See \ref gslinte_subsect in the User's guide for general
-      information about the GSL integration classes.
+      \verbatim embed:rst
+      See :ref:`GSL-based integration details` in the User's 
+      guide for general information about the GSL integration classes.
+      \endverbatim
 
       When verbose output is enabled, this class outputs information
       from both the subintegrations performed by \ref

@@ -44,8 +44,10 @@ namespace o2scl {
       \f]
       and the right hand side is evaluated with \ref o2scl::inte_qags_gsl.
 
-      See \ref gslinte_subsect in the User's guide for general
-      information about the GSL integration classes.
+      \verbatim embed:rst
+      See :ref:`GSL-based integration details` in the User's 
+      guide for general information about the GSL integration classes.
+      \endverbatim
   */
   template<class func_t=funct> class inte_qagiu_gsl : 
     public inte_transform_gsl<func_t> {

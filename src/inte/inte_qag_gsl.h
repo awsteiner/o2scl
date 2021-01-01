@@ -65,8 +65,10 @@ namespace o2scl {
       user-specified tolerance. The value returned is the sum of the
       (approximated) integrals over all subintervals.
          
-      See \ref gslinte_subsect in the User's guide for general
-      information about the GSL integration classes.
+      \verbatim embed:rst
+      See :ref:`GSL-based integration details` in the User's 
+      guide for general information about the GSL integration classes.
+      \endverbatim
 
       \future There are a few fine-tuned parameters which should
       be re-expressed as data members in the convergence tests.

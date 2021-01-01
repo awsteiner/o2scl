@@ -336,9 +336,12 @@ namespace o2scl {
       <tt>resize()</tt> methods.
 
       For I/O with tensors, see \ref o2scl_hdf::hdf_file::setd_ten()
-      and \ref o2scl_hdf::hdf_file::getd_ten() . See also
-      the discussion in the sections \ref tensor_subsect and 
-      \ref vec_io_cont_subsect of the user's guide.
+      and \ref o2scl_hdf::hdf_file::getd_ten() . 
+      \verbatim embed:rst
+      See the the discussion in the sections :ref:`Tensors` and
+      :ref:`I/O and contiguous storage` of the User's Guide for more
+      details.
+      \endverbatim
 
       The storage pattern is a generalization of row-major order.
       In the case of a 4-rank tensor, the location of a generic 

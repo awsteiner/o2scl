@@ -36,8 +36,10 @@ namespace o2scl {
   /** \brief Integrate a function over the interval \f$
       (-\infty,\infty) \f$ (GSL)
       
-      See \ref gslinte_subsect in the User's guide for general
-      information about the GSL integration classes.
+      \verbatim embed:rst
+      See :ref:`GSL-based integration details` in the User's 
+      guide for general information about the GSL integration classes.
+      \endverbatim
   */
   template<class func_t=funct > class inte_qagi_gsl : 
     public inte_transform_gsl<func_t> {

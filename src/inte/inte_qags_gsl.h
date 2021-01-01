@@ -43,8 +43,10 @@ namespace o2scl {
       combining the adaptive algorithm with a series-acceleration
       method.
       
-      See \ref gslinte_subsect in the User's guide for general
-      information about the GSL integration classes.
+      \verbatim embed:rst
+      See :ref:`GSL-based integration details` in the User's 
+      guide for general information about the GSL integration classes.
+      \endverbatim
 
       \comment
       Note that it's important that this is separate from

@@ -74,8 +74,10 @@ namespace o2scl {
       used to control the singularities. For subintervals which do not
       include the endpoints, a Gauss-Kronrod integration rule is used.
 
-      See \ref gslinte_subsect in the User's guide for general
-      information about the GSL integration classes.
+      \verbatim embed:rst
+      See :ref:`GSL-based integration details` in the User's 
+      guide for general information about the GSL integration classes.
+      \endverbatim
   */
   template<class func_t=funct> class inte_qaws_gsl : 
   public inte_cheb_gsl<func_t> {

@@ -92,15 +92,37 @@ namespace o2scl {
       represented by a string. Thus for a table object named \c t with
       3 columns (named "colx", "coly" and "colz") and three rows, one
       could do the following:
-      \include table_doc1.cpp
+      \verbatim
+      // Set the 1st row of column "colx" to 1.0
+      t.set("colx",0,1.0);
+      // Set the 2nd row of column "colz" to 2.0
+      t.set("colz",1,2.0);
+      // Set the 3rd row of column "coly" to 4.0
+      t.set("coly",2,4.0);
+      // This will print out 2.0
+      cout << t.get("colz",1) << endl;
+      \endverbatim
       Note that the rows are numbered starting with 0 instead of 
       starting with 1.
       To output all the rows of entire column, one can use
-      \include table_doc2.cpp
+      \verbatim
+      for(size_t i=0;i<t.get_nlines();i++) {
+        cout << i << " " << t.get("colx",i) << endl;
+      }
+      \endverbatim
       To output all the columns of an entire row (in the following
       example it is the second row), labeled by their column name, one
       can use:
-      \include table_doc3.cpp
+      \verbatim
+      for(size_t i=0;i<t.get_ncolumns();i++) {
+        cout << t.get_column_name(i) << " ";
+      }
+      cout << endl;
+      for(size_t i=0;i<t.get_ncolumns();i++) {
+        cout << t.get(i,1) << " ";
+      }
+      cout << endl;
+      \endverbatim
 
       Methods are provided for interpolating columns, sorting 
       columns, finding data points, and several other manipulations
@@ -160,10 +182,13 @@ namespace o2scl {
       The type <tt>vec_t</tt> can be any vector type with
       <tt>operator[]</tt>, <tt>size()</tt> and <tt>resize()</tt>
       methods. HDF5 I/O with vector types other than
-      <tt>std::vector<double> </tt> requires a copy. See the
-      the discussion in the sections \ref tensor_subsect
-      and \ref vec_io_cont_subsect of the user's guide for
-      more details.
+      <tt>std::vector<double> </tt> requires a copy. 
+
+      \verbatim embed:rst
+      See the the discussion in the sections :ref:`Vector and Matrix
+      Introduction` and :ref:`I/O and contiguous storage` of the
+      User's Guide for more details.
+      \endverbatim
 
       <b>Thread-safety</b> \n
 
@@ -175,7 +200,12 @@ namespace o2scl {
       When data from an object of type \ref table is output to a file
       through the <tt>hdf_output() function</tt> in \ref o2scl_hdf,
       the table can be manipulated on the command-line through the \c
-      acol utility (see \ref acol_section).
+      acol utility 
+
+      \verbatim embed:rst
+      See :ref:`The acol Command-line Utility` for more details
+      on `acol`.
+      \endverbatim
 
       There is an example for the usage of this class given
       in <tt>examples/ex_table.cpp</tt>.

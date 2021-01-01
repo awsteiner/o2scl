@@ -52,8 +52,10 @@ namespace o2scl {
       work efficiently, the Chebyshev moments for the particular
       weight function \f$ W \f$ are computed in advance. 
       
-      See \ref gslinte_subsect in the User's guide for general
-      information about the GSL integration classes.
+      \verbatim embed:rst
+      See :ref:`GSL-based integration details` in the User's 
+      guide for general information about the GSL integration classes.
+      \endverbatim
   */
   template<class func_t> class inte_qawo_gsl_sin : 
   public inte_cheb_gsl<func_t> {

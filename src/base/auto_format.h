@@ -312,7 +312,7 @@ namespace o2scl_auto_format {
 
   /** \brief Output a ublas matrix
 
-      If \ref auto_format::align_matrices is true, then 
+      If \ref o2scl_auto_format::auto_format::align_matrices is true, then 
       the output is organized into a table.
    */
   template<class data_t>
@@ -339,7 +339,7 @@ namespace o2scl_auto_format {
 
   /** \brief Output a vector of vectors
 
-      If \ref auto_format::align_matrices is true and all of
+      If \ref o2scl_auto_format::auto_format::align_matrices is true and all of
       the vectors in the list have the same length, then 
       the output is organized into a table.
    */

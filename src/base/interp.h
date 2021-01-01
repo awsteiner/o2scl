@@ -1392,11 +1392,13 @@ namespace o2scl {
 
       \warning This class is experimental. Integrals don't work yet.
 
+      \verbatim embed:rst
       This class uses a method based on cubic Hermite interpolation,
       modifying the slopes to guarantee monotonicity. In the
-      notation of \ref Fritsch80, if 
+      notation of [Fritsch80]_, if 
+      \endverbatim
       \f[
-      \alpha_i^2+\beta_i^2 \geq 9
+      \alpha_i^2+\beta_i^2 \geq 9 \, ,
       \f]
       then \f$ \alpha \f$ and \f$ \beta \f$ are decreased by 
       the factor \f$ \tau \f$ as described at the end of 
@@ -2578,9 +2580,9 @@ namespace o2scl {
   /** \brief From a pair of vectors, \f$ (x,y) \f$ create a new pair
       of vectors, \f$ (x_{\mathrm{out}},y_{\mathrm{out}}) \f$ where
       \f$ x_{\mathrm{out}} \f$ is uniformly-spaced.
-
+      
       This function uses interpolation (method determined by
-      \ref interp_type) to create new vectors \c x_out and 
+      \c interp_type) to create new vectors \c x_out and 
       \c y_out which will be resized using the <tt>resize()</tt>
       method to ensure they are of size \c n_pts. This 
       function creates an object of type \ref o2scl::interp_vec
@@ -2740,7 +2742,7 @@ namespace o2scl {
       \note The two vectors, x and y, must have the same size, 
       as reported by their <tt>size()</tt> method.
 
-      This uses the \ref linear_log_chi2() function to determine
+      This uses the \ref linear_or_log_chi2() function to determine
       whether a log of x ore y improves the fit to the line \f$ y=x
       \f$.
   */

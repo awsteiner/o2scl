@@ -159,47 +159,47 @@ namespace o2scl {
     double xoff;
 
     /** \brief Set the number of points to use for first derivatives 
-	(default 5)
+        (default 5)
 
-	Acceptable values are 2-5 (see above).
+        Acceptable values are 2-5 (see above).
     */
     int set_npoints(int npoints) {
       if (npoints==2) {
-	cap=&deriv_eqi::deriv_vector3;
-	cp=&deriv_eqi::derivp2;
+        cap=&deriv_eqi::deriv_vector3;
+        cp=&deriv_eqi::derivp2;
       } else if (npoints==3) {
-	cap=&deriv_eqi::deriv_vector3;
-	cp=&deriv_eqi::derivp3;
+        cap=&deriv_eqi::deriv_vector3;
+        cp=&deriv_eqi::derivp3;
       } else if (npoints==4) {
-	cap=&deriv_eqi::deriv_vector4;
-	cp=&deriv_eqi::derivp4;
+        cap=&deriv_eqi::deriv_vector4;
+        cp=&deriv_eqi::derivp4;
       } else {
-	cap=&deriv_eqi::deriv_vector5;
-	cp=&deriv_eqi::derivp5;
+        cap=&deriv_eqi::deriv_vector5;
+        cp=&deriv_eqi::derivp5;
       }
       if (npoints<=1 || npoints>5) {
-	O2SCL_ERR("Invalid # of points in set_npoints(). Using default",
-		      exc_einval);
+        O2SCL_ERR("Invalid # of points in set_npoints(). Using default",
+                      exc_einval);
       }
       return 0;
     }
 
     /** \brief Set the number of points to use for second derivatives
-	(default 5)
+        (default 5)
 
-	Acceptable values are 3-5 (see above).
+        Acceptable values are 3-5 (see above).
     */
     int set_npoints2(int npoints) {
       if (npoints==3) {
-	c2p=&deriv_eqi::deriv2p3;
+        c2p=&deriv_eqi::deriv2p3;
       } else if (npoints==4) {
-	c2p=&deriv_eqi::deriv2p4;
+        c2p=&deriv_eqi::deriv2p4;
       } else {
-	c2p=&deriv_eqi::deriv2p5;
+        c2p=&deriv_eqi::deriv2p5;
       }
       if (npoints<=2 || npoints>5) {
-	O2SCL_ERR("Invalid # of points in set_npoints2(). Using default",
-		      exc_einval);
+        O2SCL_ERR("Invalid # of points in set_npoints2(). Using default",
+                      exc_einval);
       }
       return 0;
     }
@@ -207,7 +207,7 @@ namespace o2scl {
     /** \brief Calculate the first derivative of \c func w.r.t. x
     */
     virtual int deriv_err(double x, func_t &func,
-			 double &dfdx, double &err) {
+                         double &dfdx, double &err) {
       double p=xoff/h;
       dfdx=(this->*cp)(x,p,func)/h;
       err=0.0;
@@ -217,7 +217,7 @@ namespace o2scl {
     /** \brief Calculate the second derivative of \c func w.r.t. x
      */
     virtual int deriv2_err(double x, func_t &func,
-			  double &dfdx, double &err) {
+                          double &dfdx, double &err) {
       double p=xoff/h;
       dfdx=(this->*c2p)(x,p,func)/h/h;
       err=0.0;
@@ -227,7 +227,7 @@ namespace o2scl {
     /** \brief Calculate the third derivative of \c func w.r.t. x
      */
     virtual int deriv3_err(double x, func_t &func,
-			  double &dfdx, double &err) {
+                          double &dfdx, double &err) {
       double p=xoff/h;
       dfdx=(this->*c3p)(x,h,p,func)/h;
       err=0.0;
@@ -236,32 +236,32 @@ namespace o2scl {
     
     /** \brief Calculate the derivative at \c x given an array
 
-	This calculates the derivative at \c x given a function
-	specified in an array \c y of size \c nx with equally spaced
-	abscissas. The first abscissa should be given as \c x0
-	and the distance between adjacent abscissas should be
-	given as \c dx. The value \c x need not be one of the
-	abscissas (i.e. it can lie in between an interval). The 
-	appropriate offset is calculated automatically.
+        This calculates the derivative at \c x given a function
+        specified in an array \c y of size \c nx with equally spaced
+        abscissas. The first abscissa should be given as \c x0
+        and the distance between adjacent abscissas should be
+        given as \c dx. The value \c x need not be one of the
+        abscissas (i.e. it can lie in between an interval). The 
+        appropriate offset is calculated automatically.
     */
     double deriv_vector(double x, double x0, double dx, 
-		      size_t nx, const vec_t &y) {
+                      size_t nx, const vec_t &y) {
       size_t ix=(size_t)((x-x0)/dx);
       return (this->*cap)(x,x0,dx,nx,y,ix)/dx;
     }
 
     /** \brief Calculate the second derivative at \c x given an array
 
-	This calculates the second derivative at \c x given a function
-	specified in an array \c y of size \c nx with equally spaced
-	abscissas. The first abscissa should be given as \c x0
-	and the distance between adjacent abscissas should be
-	given as \c dx. The value \c x need not be one of the
-	abscissas (i.e. it can lie in between an interval). The 
-	appropriate offset is calculated automatically.
+        This calculates the second derivative at \c x given a function
+        specified in an array \c y of size \c nx with equally spaced
+        abscissas. The first abscissa should be given as \c x0
+        and the distance between adjacent abscissas should be
+        given as \c dx. The value \c x need not be one of the
+        abscissas (i.e. it can lie in between an interval). The 
+        appropriate offset is calculated automatically.
     */
     double deriv2_vector(double x, double x0, double dx, 
-		       size_t nx, const vec_t &y) 
+                       size_t nx, const vec_t &y) 
     {
       size_t ix=(size_t)((x-x0)/dx);
       return (this->*c2ap)(x,x0,dx,nx,y,ix)/dx;
@@ -269,16 +269,16 @@ namespace o2scl {
 
     /** \brief Calculate the third derivative at \c x given an array
 
-	This calculates the third derivative at \c x given a function
-	specified in an array \c y of size \c nx with equally spaced
-	abscissas. The first abscissa should be given as \c x0 and the
-	distance between adjacent abscissas should be given as \c
-	dx. The value \c x need not be one of the abscissas (i.e. it
-	can lie in between an interval). The appropriate offset is
-	calculated automatically.
+        This calculates the third derivative at \c x given a function
+        specified in an array \c y of size \c nx with equally spaced
+        abscissas. The first abscissa should be given as \c x0 and the
+        distance between adjacent abscissas should be given as \c
+        dx. The value \c x need not be one of the abscissas (i.e. it
+        can lie in between an interval). The appropriate offset is
+        calculated automatically.
     */
     double deriv3_vector(double x, double x0, double dx, 
-		       size_t nx, const vec_t &y) 
+                       size_t nx, const vec_t &y) 
     {
       size_t ix=(size_t)((x-x0)/dx);
       return (this->*c3ap)(x,x0,dx,nx,y,ix)/dx;
@@ -286,29 +286,29 @@ namespace o2scl {
 
     /** \brief Calculate the derivative of an entire array
 
-	Right now this uses np=5.
+        Right now this uses np=5.
 
         \verbatim embed:rst
         .. todo:: 
 
-	   In deriv_eqi::deriv_vector(): generalize to other values of
-	   npoints.
+           In deriv_eqi::deriv_vector(): generalize to other values of
+           npoints.
 
         \endverbatim
     */
     int deriv_vector(size_t nv, double dx, const vec_t &y, 
-		     vec_t &dydx) 
+                     vec_t &dydx) 
     {
       dydx[0]=(-25.0/12.0*y[0]+4.0*y[1]-3.0*y[2]+4.0/3.0*y[3]-0.25*y[4])/dx;
       dydx[1]=(-0.25*y[0]-5.0/6.0*y[1]+1.5*y[2]-0.5*y[3]+1.0/12.0*y[4])/dx;
       for(size_t i=2;i<nv-2;i++) {
-	dydx[i]=(1.0/12.0*y[i-2]-2.0/3.0*y[i-1]+2.0/3.0*y[i+1]-
-		 1.0/12.0*y[i+2])/dx;
+        dydx[i]=(1.0/12.0*y[i-2]-2.0/3.0*y[i-1]+2.0/3.0*y[i+1]-
+                 1.0/12.0*y[i+2])/dx;
       }
       dydx[nv-2]=(-1.0/12.0*y[nv-5]+0.5*y[nv-4]-1.5*y[nv-3]+
-		  5.0/6.0*y[nv-2]+0.25*y[nv-1])/dx;
+                  5.0/6.0*y[nv-2]+0.25*y[nv-1])/dx;
       dydx[nv-1]=(0.25*y[nv-5]-4.0/3.0*y[nv-4]+3.0*y[nv-3]-
-		  4.0*y[nv-2]+25.0/12.0*y[nv-1])/dx;
+                  4.0*y[nv-2]+25.0/12.0*y[nv-1])/dx;
       return 0;
     }
 
@@ -320,10 +320,10 @@ namespace o2scl {
     protected:
 
     /** \brief Calculate the first derivative of \c func w.r.t. x and the
-	uncertainty
+        uncertainty
 
-	This function doesn't do anything, and isn't required for 
-	this class since it computes higher-order derivatives directly.
+        This function doesn't do anything, and isn't required for 
+        this class since it computes higher-order derivatives directly.
     */
     virtual int deriv_err_int
     (double x, funct &func, double &dfdx, double &err) {
@@ -338,49 +338,49 @@ namespace o2scl {
     /// Three-point first derivative
     double derivp3(double x, double p, func_t &func)    {
       if (p==0.0) {
-	return ((-0.5)*func(x-h)+(0.5)*func(x+h));
+        return ((-0.5)*func(x-h)+(0.5)*func(x+h));
       }
       return ((p-0.5)*func(x-h)-2.0*p*func(x)+(p+0.5)*func(x+h));
     }
 
     /// Four-point first derivative
     double derivp4(double x, double p, 
-		  func_t &func) {
+                  func_t &func) {
       double p2=p*p;
       return (-(3.0*p2-6.0*p+2.0)/6.0*func(x-h)+
-	      (1.5*p2-2.0*p-0.5)*func(x)-
-	      (1.5*p2-p-1.0)*func(x+h)+
-	      (3.0*p2-1.0)/6.0*func(x+2.0*h));
+              (1.5*p2-2.0*p-0.5)*func(x)-
+              (1.5*p2-p-1.0)*func(x+h)+
+              (3.0*p2-1.0)/6.0*func(x+2.0*h));
     }
 
     /// Five-point first derivative
     double derivp5(double x, double p, 
-		  func_t &func) {
+                  func_t &func) {
       double p2=p*p, p3=p*p*p;
       if (p==0.0) {
-	return ((1.0)/12.0*func(x-2.0*h)-
-		(4.0)/6.0*func(x-h)-
-		(-4.0)/6.0*func(x+h)+
-		(-1.0)/12.0*func(x+2.0*h));
+        return ((1.0)/12.0*func(x-2.0*h)-
+                (4.0)/6.0*func(x-h)-
+                (-4.0)/6.0*func(x+h)+
+                (-1.0)/12.0*func(x+2.0*h));
       }
       return ((2.0*p3-3.0*p2-p+1.0)/12.0*func(x-2.0*h)-
-	      (4.0*p3-3.0*p2-8.0*p+4.0)/6.0*func(x-h)+
-	      (p3-2.5*p)*func(x)-
-	      (4.0*p3+3.0*p2-8.0*p-4.0)/6.0*func(x+h)+
-	      (2.0*p3+3.0*p2-p-1.0)/12.0*func(x+2.0*h));
+              (4.0*p3-3.0*p2-8.0*p+4.0)/6.0*func(x-h)+
+              (p3-2.5*p)*func(x)-
+              (4.0*p3+3.0*p2-8.0*p-4.0)/6.0*func(x+h)+
+              (2.0*p3+3.0*p2-p-1.0)/12.0*func(x+2.0*h));
     }
 
     
     /// Three-point first derivative for arrays
     double deriv_vector3(double x, double x0, double dx, size_t nx,
-		       const vec_t &y, size_t ix) {
+                       const vec_t &y, size_t ix) {
       double p;
       if (ix>0 && ix<nx-1) {
-	p=x-(x0+ix*dx);
-	return ((p-0.5)*y[ix-1]-2.0*p*y[ix]+(p+0.5)*y[ix+1]);
+        p=x-(x0+ix*dx);
+        return ((p-0.5)*y[ix-1]-2.0*p*y[ix]+(p+0.5)*y[ix+1]);
       } else if (ix==0) {
-	p=x-(x0+dx);
-	return ((p-0.5)*y[0]-2.0*p*y[1]+(p+0.5)*y[2]);
+        p=x-(x0+dx);
+        return ((p-0.5)*y[0]-2.0*p*y[1]+(p+0.5)*y[2]);
       } 
       p=x-(x0+(nx-2)*dx);
       return ((p-0.5)*y[nx-3]-2.0*p*y[nx-2]+(p+0.5)*y[nx-1]);
@@ -388,60 +388,60 @@ namespace o2scl {
 
     /// Four-point first derivative for arrays
     double deriv_vector4(double x, double x0, double dx, size_t nx,
-		       const vec_t &y, size_t ix) {
+                       const vec_t &y, size_t ix) {
       double p, p2;
       if (ix>0 && ix<nx-2) {
-	p=x-(x0+ix*dx);
-	p2=p*p;
-	return (-(3.0*p2-6.0*p+2.0)/6.0*y[ix-1]+
-		(1.5*p2-2.0*p-0.5)*y[ix]-
-		(1.5*p2-p-1.0)*y[ix+1]+
-		(3.0*p2-1.0)/6.0*y[ix+2]);
+        p=x-(x0+ix*dx);
+        p2=p*p;
+        return (-(3.0*p2-6.0*p+2.0)/6.0*y[ix-1]+
+                (1.5*p2-2.0*p-0.5)*y[ix]-
+                (1.5*p2-p-1.0)*y[ix+1]+
+                (3.0*p2-1.0)/6.0*y[ix+2]);
       } else if (ix==0) {
-	p=x-(x0+dx);
-	p2=p*p;
-	return (-(3.0*p2-6.0*p+2.0)/6.0*y[0]+
-		(1.5*p2-2.0*p-0.5)*y[1]-
-		(1.5*p2-p-1.0)*y[2]+
-		(3.0*p2-1.0)/6.0*y[3]);
+        p=x-(x0+dx);
+        p2=p*p;
+        return (-(3.0*p2-6.0*p+2.0)/6.0*y[0]+
+                (1.5*p2-2.0*p-0.5)*y[1]-
+                (1.5*p2-p-1.0)*y[2]+
+                (3.0*p2-1.0)/6.0*y[3]);
       }
       p=x-(x0+(nx-3)*dx);
       p2=p*p;
       return (-(3.0*p2-6.0*p+2.0)/6.0*y[nx-4]+
-	      (1.5*p2-2.0*p-0.5)*y[nx-3]-
-	      (1.5*p2-p-1.0)*y[nx-2]+
-	      (3.0*p2-1.0)/6.0*y[nx-1]);
+              (1.5*p2-2.0*p-0.5)*y[nx-3]-
+              (1.5*p2-p-1.0)*y[nx-2]+
+              (3.0*p2-1.0)/6.0*y[nx-1]);
     }
 
     /// Five-point first derivative for arrays
     double deriv_vector5(double x, double x0, 
-		       double dx, size_t nx,
-		       const vec_t &y, size_t ix) {
+                       double dx, size_t nx,
+                       const vec_t &y, size_t ix) {
       double p, p2, p3;
       if (ix>1 && ix<nx-2) {
-	p=x-(x0+ix*dx);
-	p2=p*p, p3=p*p*p;
-	return ((2.0*p3-3.0*p2-p+1.0)/12.0*y[ix-2]-
-		(4.0*p3-3.0*p2-8.0*p+4.0)/6.0*y[ix-1]+
-		(p3-2.5*p)*y[ix]-
-		(4.0*p3+3.0*p2-8.0*p-4.0)/6.0*y[ix+1]+
-		(2.0*p3+3.0*p2-p-1.0)/12.0*y[ix+2]);
+        p=x-(x0+ix*dx);
+        p2=p*p, p3=p*p*p;
+        return ((2.0*p3-3.0*p2-p+1.0)/12.0*y[ix-2]-
+                (4.0*p3-3.0*p2-8.0*p+4.0)/6.0*y[ix-1]+
+                (p3-2.5*p)*y[ix]-
+                (4.0*p3+3.0*p2-8.0*p-4.0)/6.0*y[ix+1]+
+                (2.0*p3+3.0*p2-p-1.0)/12.0*y[ix+2]);
       } else if (ix<=1) {
-	p=x-(x0+2*dx);
-	p2=p*p, p3=p*p*p;
-	return ((2.0*p3-3.0*p2-p+1.0)/12.0*y[0]-
-		(4.0*p3-3.0*p2-8.0*p+4.0)/6.0*y[1]+
-		(p3-2.5*p)*y[2]-
-		(4.0*p3+3.0*p2-8.0*p-4.0)/6.0*y[3]+
-		(2.0*p3+3.0*p2-p-1.0)/12.0*y[4]);
+        p=x-(x0+2*dx);
+        p2=p*p, p3=p*p*p;
+        return ((2.0*p3-3.0*p2-p+1.0)/12.0*y[0]-
+                (4.0*p3-3.0*p2-8.0*p+4.0)/6.0*y[1]+
+                (p3-2.5*p)*y[2]-
+                (4.0*p3+3.0*p2-8.0*p-4.0)/6.0*y[3]+
+                (2.0*p3+3.0*p2-p-1.0)/12.0*y[4]);
       }
       p=x-(x0+(nx-3)*dx);
       p2=p*p, p3=p*p*p;
       return ((2.0*p3-3.0*p2-p+1.0)/12.0*y[nx-5]-
-	      (4.0*p3-3.0*p2-8.0*p+4.0)/6.0*y[nx-4]+
-	      (p3-2.5*p)*y[nx-3]-
-	      (4.0*p3+3.0*p2-8.0*p-4.0)/6.0*y[nx-2]+
-	      (2.0*p3+3.0*p2-p-1.0)/12.0*y[nx-1]);
+              (4.0*p3-3.0*p2-8.0*p+4.0)/6.0*y[nx-4]+
+              (p3-2.5*p)*y[nx-3]-
+              (4.0*p3+3.0*p2-8.0*p-4.0)/6.0*y[nx-2]+
+              (2.0*p3+3.0*p2-p-1.0)/12.0*y[nx-1]);
     }
 
     /// Three-point second derivative
@@ -452,44 +452,44 @@ namespace o2scl {
     /// Four-point second derivative
     double deriv2p4(double x, double p, func_t &func) {
       return ((1.0-2.0*p)*func(x-h)-(1.0-6.0*p)*func(x)
-	      -(1.0-6.0*p)*func(x+h)+(1.0+2.0*p)*func(x+2.0*h))/2.0;
+              -(1.0-6.0*p)*func(x+h)+(1.0+2.0*p)*func(x+2.0*h))/2.0;
     }
 
     /// Five-point second derivative
     double deriv2p5(double x, double p, func_t &func) {
       return ((1.0-2.0*p)*(1.0-2.0*p)*func(x-2.0*h)
-	      +(8.0*p-16.0*p*p)*func(x-h)
-	      -(2.0-24.0*p*p)*func(x)
-	      -(8.0*p+16.0*p*p)*func(x+h)
-	      +(1.0+2.0*p)*(1.0+2.0*p)*func(x+2.0*h))/4.0;
+              +(8.0*p-16.0*p*p)*func(x-h)
+              -(2.0-24.0*p*p)*func(x)
+              -(8.0*p+16.0*p*p)*func(x+h)
+              +(1.0+2.0*p)*(1.0+2.0*p)*func(x+2.0*h))/4.0;
     }
 
     /// Pointer to the first derivative function
     double (deriv_eqi::*cp)(double x, double p, 
-			    func_t &func);
+                            func_t &func);
 
     /// Pointer to the first derivative for arrays function
     double (deriv_eqi::*cap)(double x, double x0, 
-			     double dx, size_t nx,
-			     const vec_t &y, size_t ix);
+                             double dx, size_t nx,
+                             const vec_t &y, size_t ix);
 
     /// Pointer to the second derivative function
     double (deriv_eqi::*c2p)(double x, double p,
-			     func_t &func);
+                             func_t &func);
 
     /// Pointer to the second derivative for arrays function
     double (deriv_eqi::*c2ap)(double x, double x0, 
-			      double dx, size_t nx,
-			      const vec_t &y, size_t ix);
+                              double dx, size_t nx,
+                              const vec_t &y, size_t ix);
 
     /// Pointer to the third derivative function
     double (deriv_eqi::*c3p)(double x, double h, double p, 
-			     func_t &func);
+                             func_t &func);
 
     /// Pointer to the third derivative for arrays function
     double (deriv_eqi::*c3ap)(double x, double x0, 
-			      double dx, size_t nx,
-			      const vec_t &y, size_t ix);
+                              double dx, size_t nx,
+                              const vec_t &y, size_t ix);
 
 #endif
 

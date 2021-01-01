@@ -43,9 +43,13 @@ namespace o2scl {
       singularity (GSL)
 
       This class contains the extrapolation table mechanics and the
-      base integration function for singular integrals from GSL. The
-      casual end-user should use the classes explained in the
-      \ref inte_section section of the User's guide.
+      base integration function for singular integrals from GSL. 
+      \verbatim embed:rst
+      The
+      casual end-user should use the classes described in the
+      :ref:`One-dimensional Integration based on GSL, CERNLIB, and Boost`
+      section of the User's guide.
+      \endverbatim
 
       \future Some of the functions inside this class could 
       be moved out of header files?
@@ -746,9 +750,14 @@ namespace o2scl {
       [abstract base]
 
       This class contains the GSL-based integration function for 
-      applying transformations to the user-defined integrand. The
-      casual end-user should use the classes explained in the
-      \ref inte_section section of the User's guide.
+      applying transformations to the user-defined integrand. 
+      \verbatim embed:rst
+      The
+      casual end-user should use the classes described in the
+      :ref:`One-dimensional Integration based on GSL, CERNLIB, and Boost`
+      section of the User's guide.
+      \endverbatim
+
   */
   template<class func_t=funct> class inte_transform_gsl : 
   public inte_singular_gsl<func_t> {

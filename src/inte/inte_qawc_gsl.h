@@ -39,8 +39,12 @@ namespace o2scl {
 
       This class provides the basic Chebyshev integration functions
       for use in the GSL-based integration classes which
-      require them. See \ref gslinte_subsect in the User's 
+      require them. 
+
+      \verbatim embed:rst
+      See :ref:`GSL-based integration details` in the User's 
       guide for general information about the GSL integration classes.
+      \endverbatim
   */
   template<class func_t> class inte_cheb_gsl : 
     public inte_transform_gsl<func_t> {
@@ -343,8 +347,10 @@ namespace o2scl {
       be specified in the argument \c func to integ(). Note that this
       is different from how the \ref inte_cauchy_cern operates.
 
-      See \ref gslinte_subsect in the User's guide for general
-      information about the GSL integration classes.
+      \verbatim embed:rst
+      See :ref:`GSL-based integration details` in the User's 
+      guide for general information about the GSL integration classes.
+      \endverbatim
 
       \future Make inte_cauchy_cern and this class consistent in the
       way which they require the user to provide the denominator
