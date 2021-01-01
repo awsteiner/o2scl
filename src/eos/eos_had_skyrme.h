@@ -146,7 +146,7 @@ namespace o2scl {
       b_4^{\prime} = W_0/2 \f$. For example, for SLy4, 
       \f$ b_4 = b_4^{\prime} = W_0/2 = 61.5~\mathrm{MeV} \f$.
 
-      Three quantities are defined in \ref Steiner05b for
+      Three quantities are defined in Steiner et al. (2005b) for
       use in computing the properties of matter at saturation
       \f[
       t_3^{\prime} = \left(a + b\right) t_3 \, ,
@@ -184,9 +184,7 @@ namespace o2scl {
       \verbatim embed:rst
       The functions for the usual saturation properties are based 
       partly on [Brack85]_.
-      \endverbatim
-      
-      \verbatim embed:rst
+
       Models are taken from the references: [Bartel79]_,
       [Beiner75]_, [Chabanat95]_, [Chabanat97]_, [Danielewicz09]_,
       [Dobaczewski94]_, [Dutta86]_, [Friedrich86]_, [Onsi94]_,
@@ -583,9 +581,11 @@ namespace o2scl {
     /** \brief Calculate the Landau parameters for nuclear matter
 
         Given \c n0 and \c m, this calculates the Landau parameters in
-        nuclear matter as given in \ref Margueron02
+        nuclear matter as given in Margueron et al. (2002).
      
         \verbatim embed:rst
+        See [Margueron02]_.
+
         .. todo:: 
 
            - This function, eos_had_skyrme::landau_nuclear() needs to 
@@ -602,9 +602,11 @@ namespace o2scl {
     /** \brief Calculate the Landau parameters for neutron matter
             
         Given 'n0' and 'm', this calculates the Landau parameters in
-        neutron matter as given in \ref Margueron02
+        nuclear matter as given in Margueron et al. (2002).
         
         \verbatim embed:rst
+        See [Margueron02]_.
+
         .. todo:: 
 
            - This function, eos_had_skyrme::landau_neutron() needs to 
@@ -668,7 +670,7 @@ namespace o2scl {
            In function eos_had_skyrme::calpar(): 
 
            - Does this work for both 'a' and 'b' non-zero?
-           - Compare to similar formulas in \ref Margueron02
+           - Compare to similar formulas in [Margueron02]_.
         \endverbatim
     */
     int calpar(double gt0=-10.0, double gt3=70.0, double galpha=0.2,
@@ -757,7 +759,11 @@ namespace o2scl {
         and the function \ref alt_params_set() to set the 
         Skyrme coefficients
 
-        This function uses the relations in \ref Kortelainen10 .
+        \verbatim embed:rst
+        See [Kortelainen10]_.
+        \endverbatim
+
+        This function uses the relations in Kortelainen et al. (2010),
         The parameters should have the following units
         - <tt>n0</tt>: \f$ \mathrm{fm}^{-3} \f$
         - <tt>EoA</tt>: \f$ \mathrm{fm}^{-1} \f$
@@ -771,13 +777,14 @@ namespace o2scl {
         - <tt>CrnJ0</tt>: \f$ \mathrm{fm}^{-3} \f$
         - <tt>CrnJ1</tt>: \f$ \mathrm{fm}^{-3} \f$
 
-        \ref Kortelainen10 assumed equal neutron and proton masses, so
-        this function uses \f$ \hbar^2/(2m) = \hbar^2/(m_n+m_p) \f$
-        and the neutron and proton masses in \ref
-        eos_had_base::def_neutron and \ref eos_had_base::def_proton,
-        respectively. To obtain the results in the original paper, set
-        neutron and proton masses to ensure that \f$ \hbar^2/(2m) =
-        20.73553~\mathrm{MeV}~\mathrm{fm}^2 \f$ .
+        Kortelainen et al. (2010) assumed equal neutron and proton
+        masses, so this function uses \f$ \hbar^2/(2m) =
+        \hbar^2/(m_n+m_p) \f$ and the neutron and proton masses in
+        \ref eos_had_base::def_neutron and \ref
+        eos_had_base::def_proton, respectively. To obtain the results
+        in the original paper, set neutron and proton masses to ensure
+        that \f$ \hbar^2/(2m) = 20.73553~\mathrm{MeV}~\mathrm{fm}^2
+        \f$ .
     */
     void alt_params_saturation
       (double n0, double EoA, double K, double Ms_star, double a, double L,

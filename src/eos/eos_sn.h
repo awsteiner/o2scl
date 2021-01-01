@@ -47,7 +47,8 @@ namespace o2scl {
 
       This class is experimental.
 
-      See also the general description in the \ref sneos_section 
+      See also the general description in the
+      :ref:`Finite-temperature Equation of State Tables`
       section of the User's guide.
 
       \comment 

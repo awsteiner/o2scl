@@ -100,8 +100,8 @@ namespace o2scl {
       where \f$B_0\f$ is a constant defined to ensure that the 
       energy density and the pressure of the vacuum is zero.
 
-      Unlike \ref Buballa99, the bag constant, \f$\Omega_{\mathrm{Int}}/V\f$ is
-      defined without the term
+      Unlike Buballa et al (1999), the bag constant,
+      \f$\Omega_{\mathrm{Int}}/V\f$ is defined without the term
       \f[
       \sum_{i=u,d,s} 2 N_C \int_0^{\Lambda} 
       \frac{d^3 p}{(2 \pi)^3} \sqrt{ m_{0,i}^2+p^2 } ~dp
@@ -125,10 +125,16 @@ namespace o2scl {
 
       <b>References</b>
 
-      Created for \ref Steiner00. See also \ref Buballa99 and 
-      \ref Hatsuda94. 
+      \verbatim embed:rst
+      Created for [Steiner00]_. See also [Buballa99]_ and
+      [Hatsuda94]_.
 
-      \todo Better documentation.
+      .. todo::
+
+         In class eos_quark_njl: better documentation.
+
+      \endverbatim
+
       \future Remove the njtp structure and move the numbers
       there to function parameters. 
       \future Consider rewriting the testing code and making

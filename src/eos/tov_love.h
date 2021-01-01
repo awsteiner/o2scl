@@ -42,7 +42,7 @@ namespace o2scl {
       We use \f$ c=1 \f$ but keep factors of \f$ G \f$, which has
       units \f$ \mathrm{km}/\mathrm{M_{\odot}} \f$.
 
-      Following the notation in \ref Postnikov10, define
+      Following the notation in Postnikov et al. (2010), define
       the function \f$ H(r) \f$, which is the solution of
       \f[
       H^{\prime \prime} (r) + H^{\prime}(r) \left\{
@@ -104,7 +104,8 @@ namespace o2scl {
       \log (1-2 \beta) \right\}^{-1}
       \f}
 
-      \ref Hinderer10 writes the differential equation for \f$ H(r) \f$ 
+      Hinderer et al. (2010) writes the differential equation for 
+      \f$ H(r) \f$ 
       in a slightly different (but equivalent) form,
       \f[
       H^{\prime \prime}(r) = 2 \left( 1 - \frac{2 G m}{r}\right)^{-1} 
@@ -146,8 +147,8 @@ namespace o2scl {
       
       If there is a discontinuity in the EOS (i.e. a jump in 
       the energy density at some radius \f$ r_d \f$), then 
-      the function \f$ y(r) \f$ must satisfy (see \ref Damour09 
-      and \ref Postnikov10)
+      the function \f$ y(r) \f$ must satisfy (see Damour et al. (2009)
+      and Postnikov et al. (2010))
       \f[
       y(r_d+\delta) - y(r_d-\delta) =
       \frac{ 
@@ -155,7 +156,7 @@ namespace o2scl {
       p}
       \f]
       \verbatim embed:rst
-      (See [Damour09]_ and [Postnikov10]_)
+      (See [Damour09]_, [Postnikov10]_, and [Hinderer10]_.)
       \endverbatim
       
       \note The function \ref calc_H() cannot yet handle 
