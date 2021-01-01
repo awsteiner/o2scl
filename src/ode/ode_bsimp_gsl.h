@@ -80,9 +80,11 @@ namespace o2scl {
       the error value without calling the error handler. This behavior
       may change in the future.
 
+      \verbatim embed:rst
       There is an example for the usage of this class in
-      <tt>examples/ex_stiff.cpp</tt> documented in the \ref
-      ex_stiff_sect section.
+      ``examples/ex_stiff.cpp`` documented in the
+      :ref:`Stiff differential equations example`.
+      \endverbatim
 
       \future More detailed documentation about the algorithm
 

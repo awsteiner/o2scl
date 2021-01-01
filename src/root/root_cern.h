@@ -63,19 +63,15 @@ namespace o2scl {
       and returning a non-zero value. Until then, the solution may
       need to be checked explicitly by the caller.
 
-      See the \ref onedsolve_subsect section of the User's guide for
-      general information about \o2 solvers. 
+      \verbatim embed:rst
+      See the :ref:`One-dimensional solvers` section of the User's
+      guide for general information about O2scl solvers.
+      \endverbatim
 
       \future Double-check this class to make sure it cannot fail
       while returning 0 for success.
   */
-#ifdef DOXYGEN_NO_O2NS
-  template<class func_t=funct> class root_cern : public root
-#else
-    template<class func_t=funct> class root_cern : 
-  public root<func_t> 
-#endif
-  {
+  template<class func_t=funct> class root_cern : public root<func_t> {
     
     public:
     

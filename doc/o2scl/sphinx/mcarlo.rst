@@ -36,7 +36,12 @@ and compares the result with the exact value, 1.3932039296.
 
 Analysis of results from numerical simulations
 ----------------------------------------------
-    
+
+.. note::
+
+   Jan 2021: These classes are not well-developed and may be
+   superceded by the new GSL ``running stats`` functions.
+
 The base :ref:`expval_base <expval_base>` and its children form a set
 of classes useful for recording the outputs of several iterations of a
 numerical simulation, and summarizing the average, standard deviation,

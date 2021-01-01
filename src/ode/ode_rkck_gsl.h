@@ -60,9 +60,11 @@ namespace o2scl {
       Based on [Cash90]_ .
       \endverbatim
 
+      \verbatim embed:rst
       There is an example for the usage of this class in
-      <tt>examples/ex_ode.cpp</tt> documented in the \ref ex_ode_sect
-      section.
+      ``examples/ex_ode.cpp<`` documented in the
+      :ref:`Ordinary differential equations example`.
+      \endverbatim
   */
   template<class vec_y_t=boost::numeric::ublas::vector<double>,
     class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 

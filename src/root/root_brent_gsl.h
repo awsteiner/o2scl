@@ -67,10 +67,13 @@ namespace o2scl {
       less than \ref root::tol_rel. If test_form is 2, then both tests
       are applied.
 
-      See the \ref onedsolve_subsect section of the User's guide for
-      general information about \o2 solvers. An example demonstrating
-      the usage of this class is given in
-      <tt>examples/ex_fptr.cpp</tt> and the \ref ex_fptr_sect .
+      \verbatim embed:rst
+      See the :ref:`One-dimensional solvers` section of the User's
+      guide for general information about O2scl solvers. An example
+      demonstrating the usage of this class is given in
+      ``examples/ex_fptr.cpp`` and the :ref:`First function object
+      example`.
+      \endverbatim
 
       \future There is some duplication in the variables \c x_lower, 
       \c x_upper, \c a, and \c b, which could be removed. Some

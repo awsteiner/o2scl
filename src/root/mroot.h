@@ -55,9 +55,11 @@ namespace o2scl {
       functions and their variables is of order unity. The solution
       routines may lose precision if this is not the case.
 
+      \verbatim embed:rst
       There is an example for the usage of the multidimensional solver
-      classes given in <tt>examples/ex_mroot.cpp</tt>, see \ref
-      ex_mroot_sect .
+      classes given in ``examples/ex_mroot.cpp``, see the
+      :ref:`Multi-dimensional solver example`.
+      \endverbatim
 
       \future Change ntrial to size_t?
   */

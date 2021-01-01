@@ -464,11 +464,13 @@ namespace o2scl {
       \sum_i |f_i|<\f$ \ref mroot::tol_rel to determine if the solver has
       succeeded.
       
-      See the \ref multisolve_subsect section of the User's guide for
-      general information about \o2 solvers. 
-      There is an example for the usage of the multidimensional solver
-      classes given in <tt>examples/ex_mroot.cpp</tt>, see the \ref
-      ex_mroot_sect .
+      \verbatim embed:rst
+      See the :ref:`Multi-dimensional solvers` section of the User's
+      guide for general information about the O2scl solvers. There is
+      an example for the usage of the multidimensional solver classes
+      given in ``examples/ex_mroot.cpp``, see the
+      :ref:`Multi-dimensional solver example`.
+      \endverbatim
 
       \note The \ref set() and \ref set_de() functions store a pointer
       to the function object and the user must ensure that the object

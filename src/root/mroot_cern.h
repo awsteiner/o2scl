@@ -71,11 +71,13 @@ namespace o2scl {
       and returning a non-zero value. Until then, the solution may
       need to be checked explicitly by the caller.
 
-      See the \ref multisolve_subsect section of the User's guide for
-      general information about \o2 solvers. 
-      There is an example for the usage of the multidimensional solver
-      classes given in <tt>examples/ex_mroot.cpp</tt>, see \ref
-      ex_mroot_sect .
+      \verbatim embed:rst
+      See the :ref:`Multi-dimensional solvers` section of the User's
+      guide for general information about the O2scl solvers. There is
+      an example for the usage of the multidimensional solver classes
+      given in ``examples/ex_mroot.cpp``, see the
+      :ref:`Multi-dimensional solver example`.
+      \endverbatim
 
       \future Modify this so it handles functions which return
       non-zero values.

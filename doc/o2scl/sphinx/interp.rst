@@ -6,7 +6,7 @@ Interpolation
 Interpolation Contents
 ----------------------
 
-- :ref:`IP Introduction`
+- :ref:`Interpolation Introduction`
 - :ref:`Lookup and binary search`
 
 Interpolation Introduction

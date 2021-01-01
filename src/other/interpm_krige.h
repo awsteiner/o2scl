@@ -381,7 +381,10 @@ namespace o2scl {
   /** \brief One-dimensional interpolation using an 
       optimized covariance function
       
-      See also the \ref intp_section section of the \o2 User's guide. 
+      \verbatim embed:rst
+      See also the :ref:`Higher-dimensional Interpolation` 
+      section of the User's guide. 
+      \endverbatim
 
       \note This class is experimental.
   */

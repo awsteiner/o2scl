@@ -59,8 +59,11 @@ namespace o2scl {
   
   /** \brief Expectation value base class
       
-      See the \ref expval_subsect section of the User's guide for
-      basic information about this class and its children.
+      \verbatim embed:rst
+      See the :ref:`Analysis of results from numerical simulations`
+      section of the User's guide for basic information about this
+      class and its children.
+      \endverbatim
 
       This base class need not be directly instantiated by the casual
       end-user, but provides basic functionality for \ref

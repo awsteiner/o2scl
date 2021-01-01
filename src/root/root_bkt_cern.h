@@ -62,13 +62,12 @@ namespace o2scl {
       After a call to \ref solve_bkt(), \ref root::last_ntrial 
       contains the total number of iterations which were used
       
-    
-      See the \ref onedsolve_subsect section of the User's guide for
-      general information about \o2 solvers. 
-
       \verbatim embed:rst
-      Based on the CERNLIB routines RZEROX and DZEROX, which was 
-      based on [Bus75]_ and is documented at
+      See the :ref:`One-dimensional solvers` section of the User's
+      guide for general information about O2scl solvers.
+
+      This class is Based on the CERNLIB routines RZEROX and DZEROX,
+      which was based on [Bus75]_ and was documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/c200/top.html
       \endverbatim
   */

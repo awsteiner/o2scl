@@ -64,9 +64,11 @@ namespace o2scl {
       of points in the interval for which verbose output will be
       given when \ref o2scl::ode_iv_solve::verbose is greater than zero.
 
+      \verbatim embed:rst
       There is an example for the usage of this class in
-      <tt>examples/ex_ode.cpp</tt> documented in the \ref ex_ode_sect
-      section.
+      ``examples/ex_ode.cpp<`` documented in the
+      :ref:`Ordinary differential equations example`.
+      \endverbatim
 
       <b>Convergence error handling</b>
       
@@ -664,9 +666,11 @@ namespace o2scl {
       taking extra steps to ensure that function values, derivatives,
       and errors are computed at each grid point.
 
+      \verbatim embed:rst
       There is an example for the usage of this class in
-      <tt>examples/ex_ode.cpp</tt> documented in the \ref ex_ode_sect
-      section.
+      ``examples/ex_ode.cpp<`` documented in the
+      :ref:`Ordinary differential equations example`.
+      \endverbatim
    */
   template<class func_t=ode_funct_solve_grid,
     class mat_row_t=solve_grid_mat_row> 

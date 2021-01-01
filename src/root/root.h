@@ -38,8 +38,10 @@ namespace o2scl {
   
   /** \brief One-dimensional solver [abstract base]
       
-      See the \ref onedsolve_subsect section of the User's guide for
-      general information about \o2 solvers. 
+      \verbatim embed:rst
+      See the :ref:`One-dimensional solvers` section of the User's
+      guide for general information about O2scl solvers.
+      \endverbatim
 
       \future Maybe consider allowing the user to specify
       the stream to which 'verbose' information is sent.

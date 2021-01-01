@@ -236,7 +236,9 @@ namespace o2scl_linalg {
       * offdiag[N-1]         ...
       \endverbatim
 
-      See \ref EngelnMullges96 .
+      \verbatim embed:rst
+      See [EngelnMullges96]_.
+      \endverbatim
   */
   template<class vec_t, class vec2_t, class vec3_t, class vec4_t,
     class mem_t, class mem_vec_t> 
