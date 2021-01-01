@@ -3,14 +3,14 @@ Interpolation
 
 :ref:`O2scl <o2scl>`
 
-Contents
---------
+Interpolation Contents
+----------------------
 
-- :ref:`Introduction`
+- :ref:`IP Introduction`
 - :ref:`Lookup and binary search`
 
-Introduction
-------------
+Interpolation Introduction
+--------------------------
 
 Basic interpolation of generic vector types is performed by
 :ref:`interp <interp>` and :ref:`interp_vec <interp_vec>`. The vector

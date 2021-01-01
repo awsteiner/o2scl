@@ -3,17 +3,17 @@ Ordinary Differential Equations
 
 :ref:`O2scl <o2scl>`
 
-Contents
---------
+Ordinary Differential Equations Contents
+----------------------------------------
 
-- :ref:`Introduction`
+- :ref:`Ordinary Differential Equations Introduction`
 - :ref:`Ordinary differential equations example`
 - :ref:`Ordinary differential equations example source code`
 - :ref:`Stiff differential equations example`
 - :ref:`Iterative solution of ODEs example`  
 
-Introduction
-------------
+Ordinary Differential Equations Introduction
+--------------------------------------------
 
 Classes for non-adaptive integration are provided as descendents of
 :ref:`ode_step <ode_step>` and classes for adaptive integration are

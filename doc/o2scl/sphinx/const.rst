@@ -3,17 +3,17 @@ Physical Constants
     
 :ref:`O2scl <o2scl>`
 
-Contents
---------
+CO Contents
+-----------
 
-- :ref:`Introduction`
+- :ref:`CO Introduction`
 - :ref:`Namespace o2scl_const`
 - :ref:`Namespace o2scl_mks`
 - :ref:`Namespace o2scl_cgs`
 - :ref:`Namespace o2scl_cgsm`
 
-Introduction
-------------
+CO Introduction
+---------------
      
 The constants from GSL are reworked with the type ``const double`` and
 placed in namespaces called :ref:`o2scl_mks <Namespace o2scl_mks>`,

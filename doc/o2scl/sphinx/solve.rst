@@ -3,8 +3,8 @@ Equation Solving
 
 :ref:`O2scl <o2scl>`
 
-Contents
---------
+Equation Solving Contents
+-------------------------
 
 - :ref:`One-dimensional solvers`
 - :ref:`Multi-dimensional solvers`

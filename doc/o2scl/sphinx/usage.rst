@@ -3,8 +3,8 @@ General Usage
 
 :ref:`O2scl <o2scl>`
 
-Contents
---------
+General Usage Contents
+----------------------
 
 - :ref:`Namespaces`
 - :ref:`Documentation conventions`

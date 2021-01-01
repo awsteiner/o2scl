@@ -3,14 +3,14 @@ Simulated Annealing
 
 :ref:`O2scl <o2scl>`
 
-Contents
---------
+SA Contents
+-----------
 
-- :ref:`Introduction`
+- :ref:`SA Introduction`
 - :ref:`Simulated annealing example`
      
-Introduction
-------------
+SA Introduction
+---------------
 
 Minimization by simulated annealing is performed by descendants of
 sim_anneal (see :ref:`anneal_gsl <anneal_gsl>`). 

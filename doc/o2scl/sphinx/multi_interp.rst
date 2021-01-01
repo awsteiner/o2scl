@@ -3,8 +3,8 @@ Higher-dimensional Interpolation
 
 :ref:`O2scl <o2scl>`
 
-Contents
---------
+Higher-dimensional Interpolation Contents
+-----------------------------------------
      
 - :ref:`Two-dimensional interpolation`
 - :ref:`Multi-dimensional interpolation`

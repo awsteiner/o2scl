@@ -3,8 +3,8 @@ Installation
 
 :ref:`O2scl <o2scl>`
 
-Contents
---------
+IN Contents
+-----------
 
 - :ref:`Compiling O2scl on Ubuntu with Snap <compile_snap>`
 - :ref:`Compiling O2scl on Mac OSX with Homebrew <compile_homebrew>`

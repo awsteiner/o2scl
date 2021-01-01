@@ -3,15 +3,15 @@ Linear Algebra
 
 :ref:`O2scl <o2scl>`
 
-Contents
---------
+Linear Algebra Contents
+-----------------------
 
-- :ref:`Introduction`
+- :ref:`Linear Algebra Introduction`
 - :ref:`Specializations for Armadillo and Eigen`
 - :ref:`Linear algebra enums`
 
-Introduction
-------------
+Linear Algebra Introduction
+---------------------------
   
 There is a small set of linear algebra routines. These are not
 intended to be a replacement for higher performance linear algebra

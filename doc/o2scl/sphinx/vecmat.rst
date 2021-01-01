@@ -3,8 +3,8 @@ Arrays, Vectors, Matrices and Tensors
 
 :ref:`O2scl <o2scl>`
 
-Contents
---------
+Arrays, Vectors, Matrices and Tensors Contents
+----------------------------------------------
 
 - :ref:`Vector and Matrix Introduction`
 - :ref:`Rows and columns vs. x and y`

@@ -3,15 +3,15 @@ Monte Carlo Integration
 
 :ref:`O2scl <o2scl>`
 
-Contents
---------
+Monte Carlo contents
+--------------------
 
-- :ref:`Introduction`
+- :ref:`Monte Carlo introduction`
 - :ref:`Monte Carlo integration example`
 - :ref:`Analysis of results from numerical simulations`
 
-Introduction
-------------
+Monte Carlo introduction
+------------------------
 
 Monte Carlo integration is performed by descendants of
 :ref:`mcarlo <mcarlo>` (:ref:`mcarlo_plain <mcarlo_plain>`,
