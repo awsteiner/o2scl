@@ -50,7 +50,7 @@ namespace o2scl {
   protected:
     
     /** \brief Set to true if the baryon density is provided in the
-	EOS (default false)
+        EOS (default false)
     */
     bool baryon_column;
 
@@ -69,7 +69,7 @@ namespace o2scl {
     }
     
     /** \brief Check that the baryon density is consistent 
-	with the \f$ P(\varepsilon) \f$
+        with the \f$ P(\varepsilon) \f$
     */
     void check_nb(double &avg_abs_dev, double &max_abs_dev);
 
@@ -98,12 +98,12 @@ namespace o2scl {
     virtual double pr_from_nb(double nb)=0;
 
     /** \brief Given the pressure, produce the energy and number densities
-	
-	The arguments \c pr and \c ed should always be in \f$
-	M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
-	in \f$ \mathrm{fm}^{-3} \f$ .
-	
-	If \ref baryon_column is false, then \c nb is unmodified.
+        
+        The arguments \c pr and \c ed should always be in \f$
+        M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
+        in \f$ \mathrm{fm}^{-3} \f$ .
+        
+        If \ref baryon_column is false, then \c nb is unmodified.
     */
     virtual void ed_nb_from_pr(double pr, double &ed, double &nb)=0;
 
@@ -218,8 +218,8 @@ namespace o2scl {
     virtual ~eos_tov_buchdahl() {}
 
     /** \brief The parameter with units of pressure in units of solar
-	masses per km cubed (default value \f$ 3.2 \times 10^{-5} \f$
-	)
+        masses per km cubed (default value \f$ 3.2 \times 10^{-5} \f$
+        )
     */
     double Pstar;
     
@@ -252,9 +252,9 @@ namespace o2scl {
     virtual double pr_from_nb(double nb);
 
     /** \brief Given the pressure, produce the energy and number densities
-	
-	If the baryon density is not specified, it should be set to
-	zero or \ref baryon_column should be set to false
+        
+        If the baryon density is not specified, it should be set to
+        zero or \ref baryon_column should be set to false
     */
     virtual void ed_nb_from_pr(double pr, double &ed, double &nb);
 
@@ -263,18 +263,18 @@ namespace o2scl {
     virtual double rad_from_gm(double gm);
     
     /** \brief Compute the energy density at radius
-	\c r for a fixed gravitational mass
+        \c r for a fixed gravitational mass
 
-	\future This function is inefficient because it solves
-	for the radius each time. Improve this.
+        \future This function is inefficient because it solves
+        for the radius each time. Improve this.
     */
     virtual double ed_from_r_gm(double r, double gm);
     
     /** \brief Compute the pressure at radius
-	\c r for a fixed gravitational mass
-	
-	\future This function is inefficient because it solves
-	for the radius each time. Improve this.
+        \c r for a fixed gravitational mass
+        
+        \future This function is inefficient because it solves
+        for the radius each time. Improve this.
      */
     virtual double pr_from_r_gm(double r, double gm);
     
@@ -285,7 +285,7 @@ namespace o2scl {
     virtual double solve_rad(double rad, double gm);
 
     /** \brief Solve for \f$ r^{\prime} \f$ as a function of
-	\f$ r \f$ at fixed gravitational mass
+        \f$ r \f$ at fixed gravitational mass
     */
     virtual double solve_rp(double rp, double r, double gm, double rad);
     
@@ -498,7 +498,7 @@ namespace o2scl {
     }
     
     /** \brief Internal function to reset the interpolation
-	with baryon density
+        with baryon density
      */
     void reset_interp_nb(size_t n) {
       reset_interp(n);
@@ -512,13 +512,13 @@ namespace o2scl {
   public:
 
     /** \brief Read the EOS from a set of equal length
-	vectors for energy density, pressure, and baryon density
+        vectors for energy density, pressure, and baryon density
 
-	In this version, the user-specified vectors are swapped
-	with internal storage.
+        In this version, the user-specified vectors are swapped
+        with internal storage.
     */
     void read_vectors_swap(size_t user_n, vec_t &user_ed, vec_t &user_pr,
-			   vec_t &user_nb) {
+                           vec_t &user_nb) {
       std::swap(user_ed,ed_vec);
       std::swap(user_pr,pr_vec);
       std::swap(user_nb,nb_vec);
@@ -528,10 +528,10 @@ namespace o2scl {
     }
     
     /** \brief Read the EOS from a pair of equal length
-	vectors for energy density and pressure
+        vectors for energy density and pressure
 
-	In this version, the user-specified vectors are swapped
-	with internal storage.
+        In this version, the user-specified vectors are swapped
+        with internal storage.
     */
     void read_vectors_swap(size_t user_n, vec_t &user_ed, vec_t &user_pr) {
       std::swap(user_ed,ed_vec);
@@ -542,13 +542,13 @@ namespace o2scl {
     }
 
     /** \brief Read the EOS from a set of equal length
-	vectors for energy density, pressure, and baryon density
+        vectors for energy density, pressure, and baryon density
 
-	In this version, the user-specified vectors are copied
-	to internal storage.
+        In this version, the user-specified vectors are copied
+        to internal storage.
     */
     void read_vectors_copy(size_t user_n, vec_t &user_ed, vec_t &user_pr,
-			   vec_t &user_nb) {
+                           vec_t &user_nb) {
       if (ed_vec.size()!=user_n) ed_vec.resize(user_n);
       if (pr_vec.size()!=user_n) pr_vec.resize(user_n);
       if (nb_vec.size()!=user_n) nb_vec.resize(user_n);
@@ -561,10 +561,10 @@ namespace o2scl {
     }
     
     /** \brief Read the EOS from a pair of equal length
-	vectors for energy density and pressure
+        vectors for energy density and pressure
 
-	In this version, the user-specified vectors are copied
-	to internal storage.
+        In this version, the user-specified vectors are copied
+        to internal storage.
     */
     void read_vectors_copy(size_t user_n, vec_t &user_ed, vec_t &user_pr) {
       if (ed_vec.size()!=user_n) ed_vec.resize(user_n);
@@ -616,16 +616,16 @@ namespace o2scl {
 
     /** \brief Given the pressure, produce the energy and number densities
 
-	The arguments \c pr and \c ed should always be in \f$
-	M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
-	in \f$ \mathrm{fm}^{-3} \f$ .
-	
-	If \ref baryon_column is false, then \c nb is unmodified.
+        The arguments \c pr and \c ed should always be in \f$
+        M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
+        in \f$ \mathrm{fm}^{-3} \f$ .
+        
+        If \ref baryon_column is false, then \c nb is unmodified.
     */
     virtual void ed_nb_from_pr(double pr, double &ed, double &nb) {      
       ed=ed_from_pr(pr);
       if (this->baryon_column) {
-	nb=nb_from_pr(pr);
+        nb=nb_from_pr(pr);
       }
       return;
     }
@@ -754,7 +754,7 @@ namespace o2scl {
     //@}
 
     /** \brief If true, call the error handler if the EOS
-	reports a non-finite value (default true)
+        reports a non-finite value (default true)
     */
     bool err_nonconv;
     
@@ -789,86 +789,96 @@ namespace o2scl {
     //@{
     /** \brief Specify the EOS through a table
 
-	If units are specified for any of the columns, then this
-	function attempts to automatically determine the correct
-	conversion factors using the \ref o2scl::convert_units object
-	returned by \ref o2scl::o2scl_settings . If the units for any
-	of the columns are blank, then they are assumed to be the
-	native units for \ref o2scl::tov_solve .
-	
-	\note The input table must have at least 2 rows and 
-	the pressure column must be strictly increasing.
+        If units are specified for any of the columns, then this
+        function attempts to automatically determine the correct
+        conversion factors using the \ref o2scl::convert_units object
+        returned by \ref o2scl::o2scl_settings . If the units for any
+        of the columns are blank, then they are assumed to be the
+        native units for \ref o2scl::tov_solve .
+        
+        \note The input table must have at least 2 rows and 
+        the pressure column must be strictly increasing.
 
-	This function copies the needed information from the
-	table so if it is modified then this function
-	needs to be called again to read a new table.
+        This function copies the needed information from the
+        table so if it is modified then this function
+        needs to be called again to read a new table.
     */
     void read_table(table_units<> &eosat, std::string s_cole, 
-		    std::string s_colp, std::string s_colnb="");
+                    std::string s_colp, std::string s_colnb="");
     //@}
     
     /// \name Crust EOS functions
     //@{
-    /// Standard crust EOS from \ref Negele73 and \ref Baym71tg
+    /** \brief Negele-Vautherin-Baym-Pethick-Sutherland crust
+
+        \verbatim embed:rst
+        This crust is taken from [Negele73]_ and [Baym71tg]_.
+        \endverbatim
+    */
     void default_low_dens_eos();
 
     /// Desc
     void rns_C_low_dens_eos();
     
-    /// Crust EOS from \ref Shen11b
+    /** \brief Crust EOS from Shen et al. (2011)
+
+        \verbatim embed:rst
+        From [Shen11b]_.
+        \endverbatim
+     */
     void sho11_low_dens_eos();
 
-    /** \brief Crust EOS from \ref Steiner12
+    /** \brief Crust EOS from Steiner (2012)
 
-	\verbatim embed:rst
-	This function uses the neutron star crust models from \ref
-	[Steiner12]_. 
-	\endverbatim
+        \verbatim embed:rst
+        This function uses the neutron star crust models from \ref
+        [Steiner12]_. 
+        \endverbatim
 
-	The current acceptable values for \c model are
-	<tt>APR</tt>, <tt>Gs</tt>, <tt>Rs</tt> and <tt>SLy4</tt>.
+        The current acceptable values for \c model are
+        <tt>APR</tt>, <tt>Gs</tt>, <tt>Rs</tt> and <tt>SLy4</tt>.
     */
     void s12_low_dens_eos(std::string model="SLy4",
-			      bool external=false);
+                              bool external=false);
 
     /** \brief Crust EOS from Goriely, Chamel, and Pearson
-	
-	\verbatim embed:rst
-	From [Goriely10]_, [Pearson11]_, and [Pearson12]_.
-	\endverbatim
+        
+        \verbatim embed:rst
+        From [Goriely10]_, [Pearson11]_, and [Pearson12]_.
+        \endverbatim
      */
     void gcp10_low_dens_eos(std::string model="BSk20",
-			  bool external=false);
+                          bool external=false);
 
-    /** \brief Crust EOS from \ref Newton13 given L in MeV
+    /** \brief Crust EOS from Newton et al. 2013 given L in MeV
 
-	\verbatim embed:rst
-	From [Newton13]_
-	\endverbatim
+        \verbatim embed:rst
+        From [Newton13]_
+        \endverbatim
 
-	Current acceptable values for \c model are <tt>PNM</tt>
-	and <tt>J35</tt>. 
+        Current acceptable values for \c model are <tt>PNM</tt>
+        and <tt>J35</tt>. 
     */
     void ngl13_low_dens_eos(double L, std::string model="PNM",
-			     bool external=false);
+                             bool external=false);
     
-    /** \brief Crust EOS from \ref Newton13 given S and L in MeV
-	and a transition density
+    /** \brief Crust EOS from Newton et al. (2013) given S and L in MeV
+        and a transition density
 
-	Note that this function works only if \f$ 28 < S < 38 \f$ MeV,
-	\f$ 25 < L < 115 \f$ MeV, \f$ 0.01 < n_t < 0.15 \f$, 
-	and \f$ L > 5 S-65~\mathrm{MeV} \f$
-	. If \c fname is a string of length 0 (the default),
-	then this function looks for a file named \c newton_SL.o2
-	in the \o2 data directory specified by
-	\ref o2scl::lib_settings_class::get_data_dir() .
+        Note that this function works only if \f$ 28 < S < 38 \f$ MeV,
+        \f$ 25 < L < 115 \f$ MeV, \f$ 0.01 < n_t < 0.15 \f$, 
+        and \f$ L > 5 S-65~\mathrm{MeV} \f$
+        . If \c fname is a string of length 0 (the default),
+        then this function looks for a file named \c newton_SL.o2
+        in the \o2 data directory specified by
+        \ref o2scl::lib_settings_class::get_data_dir() .
 
-	\verbatim embed:rst
-	From [Newton13]_
-	\endverbatim
+        \verbatim embed:rst
+        From [Newton13]_
+        \endverbatim
     */
     void ngl13_low_dens_eos2(double S, double L, double nt,
-			     std::string fname="");
+                             std::string fname="");
     
     /// Compute with no crust EOS (this is the default)
     void no_low_dens_eos() {
@@ -881,12 +891,12 @@ namespace o2scl {
     //@{
     /** \brief Given the pressure, produce the energy and number densities
 
-	The arguments \c pr and \c ed should always be in \f$
-	M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
-	in \f$ \mathrm{fm}^{-3} \f$ .
-	
-	If the baryon density is not specified, it should be set to
-	zero or \ref baryon_column should be set to false
+        The arguments \c pr and \c ed should always be in \f$
+        M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
+        in \f$ \mathrm{fm}^{-3} \f$ .
+        
+        If the baryon density is not specified, it should be set to
+        zero or \ref baryon_column should be set to false
     */
     virtual void ed_nb_from_pr(double pr, double &ed, double &nb);
     //@}
@@ -894,23 +904,23 @@ namespace o2scl {
     /// \name Other functions
     //@{
     /** \brief Get the energy density from the pressure in the 
-	user-specified unit system
+        user-specified unit system
     */
     virtual void get_eden_user(double pres, double &ed, double &nb);
 
     /** \brief Get the transition pressure (in the user-specified
-	unit system) and width
+        unit system) and width
     */
     void get_transition(double &ptrans, double &pwidth);
     
     /** \brief Set the transition pressure and "width"
 
-	Sets the transition pressure and the width (specified as a
-	number greater than unity in \c pw) of the transition between
-	the two EOSs. The transition should be in the same units of
-	the user-specified EOS. The transition is done smoothly using
-	linear interpolation between \f$ P=\mathrm{ptrans}/pmathrm{pw}
-	\f$ and \f$ P=\mathrm{ptrans} \times pmathrm{pw} \f$.
+        Sets the transition pressure and the width (specified as a
+        number greater than unity in \c pw) of the transition between
+        the two EOSs. The transition should be in the same units of
+        the user-specified EOS. The transition is done smoothly using
+        linear interpolation between \f$ P=\mathrm{ptrans}/pmathrm{pw}
+        \f$ and \f$ P=\mathrm{ptrans} \times pmathrm{pw} \f$.
      */
     void set_transition(double ptrans, double pw);
     //@}
@@ -930,7 +940,7 @@ namespace o2scl {
   protected:
 
     /** \brief Internal function to reinterpolate if if either the
-	core or crust tables are changed
+        core or crust tables are changed
      */
     void internal_read();
 

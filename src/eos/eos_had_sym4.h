@@ -102,7 +102,9 @@ namespace o2scl {
       \hline
       <b>References:</b>
 
-      Created for \ref Steiner06.
+      \verbatim embed:rst
+      Created for [Steiner06]_.
+      \endverbatim
    */
   class eos_had_sym4_rmf : public eos_had_rmf, public eos_had_sym4_base {
 
@@ -122,7 +124,9 @@ namespace o2scl {
       \hline
       <b>References:</b>
 
-      Created for \ref Steiner06.
+      \verbatim embed:rst
+      Created for [Steiner06]_.
+      \endverbatim
   */
   class eos_had_sym4_apr : public eos_had_apr, public eos_had_sym4_base {
     
@@ -141,7 +145,9 @@ namespace o2scl {
       \hline
       <b>References:</b>
 
-      Created for \ref Steiner06.
+      \verbatim embed:rst
+      Created for [Steiner06]_.
+      \endverbatim
   */
   class eos_had_sym4_skyrme : public eos_had_skyrme, public eos_had_sym4_base {
     
@@ -160,7 +166,9 @@ namespace o2scl {
       \hline
       <b>References:</b>
 
-      Created for \ref Steiner06.
+      \verbatim embed:rst
+      Created for [Steiner06]_.
+      \endverbatim
   */
   class eos_had_sym4_mdi : public eos_had_potential, 
     public eos_had_sym4_base {
@@ -196,7 +204,9 @@ namespace o2scl {
       \hline
       <b>References:</b>
 
-      Created for \ref Steiner06.
+      \verbatim embed:rst
+      Created for [Steiner06]_.
+      \endverbatim
   */
   class eos_had_sym4 : public eos_had_eden_base {
 

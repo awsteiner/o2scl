@@ -35,7 +35,9 @@ namespace o2scl {
 
   /** \brief An EOS based on a polynomial speed of sound
 
-      Based on \ref Constantinou17 .
+      \verbatim embed:rst
+      Based on [Constantinou17]_.
+      \endverbatim
       
       This class constructs an EOS based on a speed of sound of the form
       \f[

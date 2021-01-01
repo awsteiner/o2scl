@@ -69,7 +69,7 @@ namespace o2scl {
 
       When \ref form is equal to \ref mdi_form or 
       \ref gbd_form, the potential energy
-      density is given by \ref Das03 :
+      density is given by
       \f[
       V(\rho,\delta) = \frac{Au}{\rho_0} \rho_n \rho_p +
       \frac{A_l}{2 \rho_0} \left(\rho_n^2+\rho_p^2\right)+
@@ -77,6 +77,10 @@ namespace o2scl {
       \left(1-x \delta^2\right)+V_{mom}(\rho,\delta)
       \f]
       where \f$\delta=1-2 \rho_p/(\rho_n+\rho_p)\f$.
+      \verbatim embed:rst
+      This potential energy is from [Das03]_.
+      \endverbatim
+
       If \ref form is equal to \ref mdi_form, then
       \f[
       V_{mom}(\rho,\delta)=
@@ -109,7 +113,7 @@ namespace o2scl {
 
       Otherwise, if \ref form is equal to \ref bgbd_form, \ref bpal_form
       or \ref sl_form, then the potential energy density is
-      given by \ref Bombaci01 :
+      given by:
       \f[
       V(\rho,\delta) = V_A+V_B+V_C
       \f]
@@ -139,6 +143,9 @@ namespace o2scl {
       g_{\tau,i} = \frac{2}{(2 \pi)^3} \int d^3 k f_{\tau}(k,T)
       g_i(k)
       \f]
+      \verbatim embed:rst
+      This potential energy is from [Bombaci01]_.
+      \endverbatim
 
       For \ref form is equal to \ref bgbd_form or \ref form 
       is equal to \ref bpal_form, the form factor is given by
@@ -177,47 +184,52 @@ namespace o2scl {
     int form;
 
     /** \brief The "momentum-dependent-interaction" form from 
-	\ref Das03
+        Das et al. (2003)
+
+        \verbatim embed:rst
+        See [Das03]_.
+        \endverbatim
      */
     static const int mdi_form=1;
 
     /// The modifed GBD form
     static const int bgbd_form=2;
 
-    /** \brief The form from \ref Prakash88 as formulated in \ref Bombaci01
+    /** \brief The form from Prakash et al. (1988) 
+        as formulated in Bombaci et al. (2001)
 
-	\verbatim embed:rst
-	See [Prakash88]_ and [Bombaci01]_
-	\endverbatim
+        \verbatim embed:rst
+        See [Prakash88]_ and [Bombaci01]_.
+        \endverbatim
      */
     static const int bpal_form=3;
 
-    /** \brief The "SL" form. See \ref Bombaci01.
+    /** \brief The "SL" form. See Bombaci et al. (2001)
 
-	\verbatim embed:rst
-	See [Bombaci01]_
-	\endverbatim
+        \verbatim embed:rst
+        See [Bombaci01]_.
+        \endverbatim
      */
     static const int sl_form=4;
 
-    /** \brief The Gale, Bertsch, Das Gupta from \ref Gale87.
+    /** \brief The Gale, Bertsch, Das Gupta from Gale et al. 1987
 
-	\verbatim embed:rst
-	See [Gale87]_.
-	\endverbatim
+        \verbatim embed:rst
+        See [Gale87]_.
+        \endverbatim
      */
     static const int gbd_form=5;
     
-    /** \brief The form from \ref Prakash88
+    /** \brief The form from Prakash et al. 1988
 
-	\verbatim embed:rst
-	See [Prakash88]_.
-	\endverbatim
+        \verbatim embed:rst
+        See [Prakash88]_.
+        \endverbatim
      */
     static const int pal_form=6;
 
     /** \brief Set the derivative object to calculate the 
-	chemical potentials
+        chemical potentials
     */
     int set_mu_deriv(deriv_base<> &de) {
       mu_deriv_set=true;

@@ -105,8 +105,10 @@ namespace o2scl {
       0.16 \f$ \mathrm{fm}^{-3} \f$, and for larger densities to just
       use whichever minimizes the energy.
 
-      The finite temperature approximations from \ref Prakash97 
+      \verbatim embed:rst
+      The finite temperature approximations from [Prakash97]_ 
       are used in testing.
+      \endverbatim
 
       \note Since this EOS uses the effective masses and chemical
       potentials in the fermion class, the values of

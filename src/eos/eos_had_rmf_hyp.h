@@ -39,10 +39,11 @@ namespace o2scl {
   
   /** \brief Relativistic mean field theory EOS with hyperons
       
-      Based on \ref Glendenning91ro, but generalized for higher-order
+      \verbatim embed:rst
+
+      Based on [Glendenning91ro]_, but generalized for higher-order
       couplings as in \ref eos_had_rmf .
       
-      \verbatim embed:rst
       .. todo:: 
 
          In class eos_had_rmf_hyp:

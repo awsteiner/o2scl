@@ -67,14 +67,14 @@ namespace o2scl {
       \f[
       \varepsilon_L = -1.444 Z^{2/3} e^2 n_e^{4/3}
       \f]
-      This is Eq. 2.7.2 in \ref Shapiro83. The rest mass energy of
-      the nucleons is included in the energy density. 
+      This is Eq. 2.7.2 in Shapiro and Teukolsky (1983). The rest mass
+      energy of the nucleons is included in the energy density.
       
-      The original results from \ref Baym71tg are stored as a \ref table
-      in file <tt>data/o2scl/bps.eos</tt>. The testing code for this
-      class compares the calculations to the table and matches to
-      within .2 percent for the energy density and 9 percent for the
-      pressure (for a fixed baryon number density).
+      The original results from Baym et al. (1971) are stored as a
+      \ref table in file <tt>data/o2scl/bps.eos</tt>. The testing code
+      for this class compares the calculations to the table and
+      matches to within .2 percent for the energy density and 9
+      percent for the pressure (for a fixed baryon number density).
 
       \future Can the pressure be made to match more closely?
       \future Convert to a \ref o2scl::eos_had_base object and offer an

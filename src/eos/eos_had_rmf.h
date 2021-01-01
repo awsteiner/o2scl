@@ -647,7 +647,9 @@ namespace o2scl {
         /** \brief Set the coefficients of a eos_had_rmf object to their 
 	limits from naturalness
 
-	As given in \ref Muller96 .
+        \verbatim embed:rst
+        As given in [Muller96]_.
+        \endverbatim
 
 	The definition of the vector-isovector field and coupling
 	matches what is done here. Compare the Lagrangian above

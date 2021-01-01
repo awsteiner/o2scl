@@ -35,15 +35,18 @@ namespace o2scl {
   /** \brief Field-theoretical EOS with scalar-isovector meson, 
       \f$ \delta \f$.
 
-      This essentially follows the notation in \ref Kubis97, except
-      that our definitions of \c b and \c c follow their \f$ \bar{b}
-      \f$ and \f$ \bar{c} \f$, respectively.
+      \verbatim embed:rst
+      See also [Kubis97]_ and [Gaitanos04]_.
+      \endverbatim
 
-      Also discussed in \ref Gaitanos04, where they take
-      \f$ m_{\delta}=980 \f$ MeV.
+      This essentially follows the notation in Kubis et al. (1997),
+      except that our definitions of \c b and \c c follow their \f$
+      \bar{b} \f$ and \f$ \bar{c} \f$, respectively.
+
+      Also discussed in Gaitanos et al. (2004), where they take \f$
+      m_{\delta}=980 \f$ MeV.
 
       The full Lagragian is:
-
       \f[
       {\cal L} = {\cal L}_{Dirac} + {\cal L}_{\sigma} + 
       {\cal L}_{\omega} + {\cal L}_{\rho} + {\cal L}_{\delta}

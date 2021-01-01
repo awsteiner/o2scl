@@ -536,10 +536,10 @@ namespace o2scl {
     
   };
   
-  /** \brief Tabulated EOS for \ref nstar_rot from \ref Bethe74
+  /** \brief Tabulated EOS for \ref nstar_rot from Bethe et al. 1974
 
       \verbatim embed:rst
-      From [Bethe74]_
+      From [Bethe74]_.
       \endverbatim
    */
   class eos_nstar_rot_C : public eos_nstar_rot_interp {
@@ -547,10 +547,10 @@ namespace o2scl {
     eos_nstar_rot_C(bool rns_constants=false);
   };
   
-  /** \brief Tabulated EOS for \ref nstar_rot from \ref Pandharipande75
+  /** \brief Tabulated EOS for \ref nstar_rot from Pandharipande75 et al. 1975
 
       \verbatim embed:rst
-      From [Pandharipande75]_
+      From [Pandharipande75]_.
       \endverbatim
    */
   class eos_nstar_rot_L : public eos_nstar_rot_interp {

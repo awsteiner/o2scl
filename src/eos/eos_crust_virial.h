@@ -39,8 +39,10 @@ namespace o2scl {
 
   /** \brief Virial EOS for neutrons, protons, deuterons, and alpha 
       particles
-      
-      Virial EOS from \ref Horowitz06 and \ref Horowitz06b .
+
+      \verbatim embed:rst
+      Virial EOS from [Horowitz06]_ and [Horowitz06b]_.
+      \endverbatim
 
       \note This class likely fails for temperatures 
       smaller than 1 MeV and larger than 20 MeV.
@@ -90,7 +92,7 @@ namespace o2scl {
 	These functions assume that the temperature is specified in
 	MeV. Note that the temperature derivative functions are
 	multiplied by the temperature after taking the derivative to
-	make them unitless (as in \ref Horowitz06), thus all of
+	make them unitless (as in Horowitz et al. (2006)), thus all of
 	these functions return values without units. 
     */
     //@{

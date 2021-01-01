@@ -51,7 +51,7 @@ namespace o2scl {
       \b Hamiltonian
 
       The Hamiltonian is defined (using the notation of 
-      \ref Steiner05b ) as
+      Steiner et al. (2005b)) as
       \f[
       {\cal H} = 
       {\cal H}_{k1} +
@@ -123,8 +123,8 @@ namespace o2scl {
       \f]
 
       The values \f$ a=0, b=1 \f$ give the standard definition of the
-      Skyrme Hamiltonian \ref Skyrme59, while \f$a=1, b=0\f$ contains
-      the modifications suggested by \ref Onsi94.
+      Skyrme Hamiltonian (Skyrme (1959)), while \f$a=1, b=0\f$
+      contains the modifications suggested by Osni et al. (1994).
 
       The spin-orbit term is (following \ref Steiner05)
       \f[

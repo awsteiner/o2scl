@@ -259,7 +259,10 @@ int main(int argc, char *argv[]) {
 	if (kk==1) fname_out="function/";
 	else if (kk==2) fname_out="file/";
 	fname_out+=s+".rst";
-        fname_out=underscoreify(fname_out);
+        if (s.length()<4 || s[0]!='o' || s[1]!='p' ||
+            s[2]!='e' || s[3]!='r') {
+          fname_out=underscoreify(fname_out);
+        }
 	ofstream fout(fname_out);
 
 	// Title
@@ -431,7 +434,10 @@ int main(int argc, char *argv[]) {
 	// Open the rst file
 	string fname_out="function/";
 	fname_out+=s+".rst";
-        fname_out=underscoreify(fname_out);
+        if (s.length()<4 || s[0]!='o' || s[1]!='p' ||
+            s[2]!='e' || s[3]!='r') {
+          fname_out=underscoreify(fname_out);
+        }
 	ofstream fout(fname_out);
 
 	// Header

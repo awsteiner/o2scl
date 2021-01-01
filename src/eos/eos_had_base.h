@@ -77,7 +77,8 @@ namespace o2scl {
       + \frac{Q_4}{3!} \epsilon^3 \right) \qquad
       \left(\mathrm{Eq.}~2\right)
       \f]
-      (Adapted slightly from \ref Piekarewicz09). From this, one can
+      (Adapted slightly from \ref Piekarewicz et al. (2009)). 
+      From this, one can
       compute the energy density of nuclear matter \f$
       \varepsilon(n_B,\delta) = n_B E(n_B,\delta) \f$, the chemical
       potentials \f$ \mu_i \equiv (\partial \varepsilon) / (\partial
@@ -113,7 +114,7 @@ namespace o2scl {
       We denote \f$ K \equiv K(n_B=n_0,\delta=0) \f$ and similarly for
       \f$ \tilde{K} \f$, the quantity in Eq. 1 above. In nuclear
       matter at saturation, the pressure is zero and \f$ K = \tilde{K}
-      \f$. See \ref Chabanat97 for further discussion of the distinction
+      \f$. See Chabanat et al. (1997) for further discussion of the distinction
       between \f$ K \f$ and \f$ \tilde{K} \f$.
 
       The symmetry energy, \f$ S(n_B,\delta), \f$ can be defined as
@@ -237,7 +238,7 @@ namespace o2scl {
 
       Note that assuming terms of order \f$ \epsilon^3 \f$ and higher
       are zero and solving for the baryon density for which \f$ P=0 \f$
-      gives, to order \f$ \delta^2 \f$ (\ref Piekarewicz09),
+      gives, to order \f$ \delta^2 \f$ (Piekarewicz et al. (2009)),
       \f[
       n_{B,\mathrm{sat}} = n_0 \left[ 1 - \frac{3 L \delta^2}{K} \right]
       \f]
@@ -292,7 +293,7 @@ namespace o2scl {
       \eta(n_0) = \frac{4 S + 5 S_4}{4 S + S_4}
       \f]
       (Note that \f$ S_4 \f$ is referred to as \f$ Q \f$ in 
-      \ref Steiner06). Sometimes it is useful to separate out
+      Steiner (2006)). Sometimes it is useful to separate out
       the kinetic and potential parts of the energy density when
       computing \f$ \eta  \f$, and the class \ref eos_had_sym4_base
       is useful for this purpose. 
@@ -500,10 +501,14 @@ namespace o2scl {
     virtual double f_effm_prot(double nb, double delta=0.0);
 
     /** \brief Scalar effective mass
+        
+        \verbatim embed:rst
+        See e.g. [Farine01]_.
+        \endverbatim
 
 	Given the reduced nucleon effective masses, \f$ m_n^{*} \f$
 	and \f$ m_p^{*} \f$, the scalar and vector effective masses
-	are defined by (see e.g. \ref Farine01)
+	are defined by
 	\f[
 	\frac{1}{m^{*}_n} = (1+\delta) \frac{1}{m^{*}_s} - 
 	\delta \frac{1}{m^{*}_v}
@@ -827,7 +832,12 @@ namespace o2scl {
 	\vec{\nabla} n_i \cdot \vec{\nabla} n_j
 	\f]
 
-	The expression for the \gradient terms from \ref Pethick95 is 
+        \verbatim embed:rst
+        See e.g. [Pethick95]_.
+        \endverbatim
+
+	The expression for the \gradient terms from Pethick et al. 
+        (1995) is 
 	\f{eqnarray*}
 	{\cal H}_{\mathrm{grad}}&=&-\frac{1}{4}
 	\left(2 P_1 + P_{1;f}-P_{2;f}\right) 
