@@ -61,7 +61,7 @@ sphinx-help:
 	sphinx-build --help
 
 html: Makefile
-	sphinx-build -v -b html "." build/html > sphinx.log 2>&1
+	sphinx-build -v -b html "." build/html 2>&1 | tee sphinx.log
 
 html-nit: Makefile
 	sphinx-build -v -n -b html "." build/html
@@ -78,7 +78,7 @@ rst-files: empty
 	rm -f temp.rst
 	g++ -o ../../make_rst ../../make_rst.cpp
 	rm -f class/*.rst
-	../../make_rst eos > make_rst.out
+	../../make_rst eos | tee make_rst.out
 
 o2scl-doc: rst-files html
 

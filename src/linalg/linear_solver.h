@@ -40,9 +40,11 @@ namespace o2scl_linalg {
 
       A generic solver for dense linear systems.
 
+      \verbatim embed:rst
       Those writing production level code should consider calling
-      LAPACK directly using \o2 objects as described in the \ref
-      linalg_section section of the User's Guide.
+      LAPACK directly as described in the
+      :ref:`Linear Algebra` section of the User's Guide.
+      \endverbatim
 
       \future The test code uses a Hilbert matrix, which is known
       to be ill-conditioned, especially for the larger sizes. This

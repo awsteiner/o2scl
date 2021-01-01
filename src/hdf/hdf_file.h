@@ -51,8 +51,10 @@ namespace o2scl_hdf {
 
   /** \brief Store data in an \o2 compatible HDF5 file
 
-      See also the \ref hdf_section section of the \o2
+      \verbatim embed:rst
+      See also the :ref:`File I/O with HDF5` section of the \o2
       User's guide.
+      \endverbatim
 
       The member functions which write or get data from an HDF file
       begin with either <tt>get</tt> or <tt>set</tt>.  Where

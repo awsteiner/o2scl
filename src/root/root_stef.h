@@ -96,8 +96,10 @@ namespace o2scl {
       The original variable \c x_2 has been removed as it was unused
       in the original GSL code.
 
-      See the \ref onedsolve_subsect section of the User's guide for
-      general information about \o2 solvers. 
+      \verbatim embed:rst
+      See the :ref:`One-dimensional solvers` section of the User's
+      guide for general information about O2scl solvers.
+      \endverbatim
 
       \future There's some extra copying here which can probably
       be removed.

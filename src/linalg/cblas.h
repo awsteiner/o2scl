@@ -170,8 +170,11 @@ namespace o2scl_cblas_bracket {
 
 /** \brief The namespace for linear algebra classes and functions
 
-    See \ref linalg_section for more complete information
-    about linear algebra in \o2. 
+    \verbatim embed:rst
+    See the :ref:`Linear Algebra` section of the User's Guide
+    for more complete information
+    about linear algebra in O2scl.
+    \endverbatim
 
     This namespace documentation is in the file 
     <tt>src/base/cblas.h</tt>
@@ -187,8 +190,11 @@ namespace o2scl_linalg {
     with <tt>[][]</tt> rather than <tt>(,)</tt>. See \ref o2scl_linalg
     for the function listing and documentation.
 
-    See \ref linalg_section for more complete information
-    about linear algebra in \o2. 
+    \verbatim embed:rst
+    See the :ref:`Linear Algebra` section of the User's Guide
+    for more complete information
+    about linear algebra in O2scl.
+    \endverbatim
 
     This namespace documentation is in the file 
     <tt>src/base/cblas.h</tt>
