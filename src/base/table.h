@@ -3162,6 +3162,7 @@ namespace o2scl {
   // --------------------------------------------------------
   // Allow HDF5 I/O functions to access table data
   
+#ifndef DOXYGEN  
   friend void o2scl_hdf::hdf_output
   (o2scl_hdf::hdf_file &hf, table<> &t, std::string name);
   
@@ -3179,6 +3180,7 @@ namespace o2scl {
   
   template<typename vecf_t> friend class matrix_view_table;
   template<typename vecf_t> friend class matrix_view_table_transpose;
+#endif
 
   // --------------------------------------------------------
   

@@ -3543,8 +3543,10 @@ namespace o2scl {
       (v,boost::numeric::ublas::range(start,last));
   }
 
+#ifndef DOXYGEN  
   // Forward definition for friendship
   template<class vec_t> class const_vector_range_gen;
+#endif
   
   /** \brief Experimental vector range object
    */
@@ -3552,7 +3554,9 @@ namespace o2scl {
     
   protected:
 
+#ifndef DOXYGEN  
     friend class const_vector_range_gen<vec_t>;
+#endif
 
     /// A reference to the original vector
     vec_t &v_;
