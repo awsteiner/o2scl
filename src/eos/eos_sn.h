@@ -572,11 +572,11 @@ namespace o2scl {
 
       The original README file from O'Connor and Ott's EOSdriver
       code is available in the \o2 
-      distribution in <tt>doc/o2scl/eos/extras/scollapse_README</tt>
+      distribution in <tt>doc/o2scl/eos/sphinx/static/scollapse_README</tt>
       and is reproduced below
 
       \verbatim embed:rst
-      .. literalinclude:: static/scollapse_README
+      .. literalinclude:: ../static/scollapse_README
       \endverbatim
 
       \verbatim embed:rst

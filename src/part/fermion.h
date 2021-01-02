@@ -99,19 +99,19 @@ namespace o2scl {
     /// Copy construction with operator=()
     fermion_tl &operator=(const fermion_tl &f) {
       if (this!=&f) {
-	this->g=f.g;
-	this->m=f.m;
-	this->ms=f.ms;
-	this->n=f.n;
-	this->ed=f.ed;
-	this->pr=f.pr;
-	this->mu=f.mu;
-	this->en=f.en;
-	this->nu=f.nu;
-	this->inc_rest_mass=f.inc_rest_mass;
-	this->non_interacting=f.non_interacting;
-	kf=f.kf;
-	del=f.del;
+        this->g=f.g;
+        this->m=f.m;
+        this->ms=f.ms;
+        this->n=f.n;
+        this->ed=f.ed;
+        this->pr=f.pr;
+        this->mu=f.mu;
+        this->en=f.en;
+        this->nu=f.nu;
+        this->inc_rest_mass=f.inc_rest_mass;
+        this->non_interacting=f.non_interacting;
+        kf=f.kf;
+        del=f.del;
       }
       return *this;
     }
@@ -133,10 +133,10 @@ namespace o2scl {
 
       This is a base class for the computation of fermionic statistics
       at zero temperature. The more general case of finite temperature
-      is taken care of by \ref fermion_thermo_tl objects. The
-      primary functions are calc_mu_zerot() and calc_density_zerot()
-      which compute all the thermodynamic quantities as a function of
-      the chemical potential, or the density, respectively.
+      is taken care of by \ref fermion_thermo_tl objects. The primary
+      functions are calc_mu_zerot() and calc_density_zerot() which
+      compute all the thermodynamic quantities as a function of the
+      chemical potential, or the density, respectively.
       
       \future Use hypot() and other more accurate functions for the
       analytic expressions for the zero temperature integrals. [Progress
@@ -166,8 +166,8 @@ namespace o2scl {
     /// \name Zero-temperature fermions 
     //@{
     /** \brief Calculate the Fermi momentum from the density
-	
-	Uses the relation \f$ k_F = ( 6 \pi^2 n /g )^{1/3} \f$
+        
+        Uses the relation \f$ k_F = ( 6 \pi^2 n /g )^{1/3} \f$
     */
     void kf_from_density(fermion_tl<fp_t> &f) {
       f.kf=cbrt(6.0*pi2/f.g*f.n);
@@ -175,81 +175,81 @@ namespace o2scl {
     }    
     
     /** \brief Energy density at T=0 from \ref o2scl::fermion_tl::kf and 
-	\ref o2scl::part_tl::ms
-	
-	Calculates the integral 
-	\f[
-	\varepsilon = \frac{g}{2 \pi^2} \int_0^{k_F} k^2 
-	\sqrt{k^2+m^{* 2}} d k
-	\f]
+        \ref o2scl::part_tl::ms
+        
+        Calculates the integral 
+        \f[
+        \varepsilon = \frac{g}{2 \pi^2} \int_0^{k_F} k^2 
+        \sqrt{k^2+m^{* 2}} d k
+        \f]
     */
     void energy_density_zerot(fermion_tl<fp_t> &f) {
       fp_t r,efs;
       if (f.kf>0.0) {
-	if (f.ms<=0.0) {
-	  f.ed=f.g*(pow(f.kf,4.0)/8.0/pi2);
-	} else {
-	  efs=o2hypot(f.kf,f.ms);
-	  r=(f.kf+efs)/f.ms;
-	  f.ed=f.g/16.0/pi2*(2.0*f.kf*pow(efs,3.0)-f.kf*efs*f.ms*f.ms
-			     -pow(f.ms,4.0)*log(r));
-	}
+        if (f.ms<=0.0) {
+          f.ed=f.g*(pow(f.kf,4.0)/8.0/pi2);
+        } else {
+          efs=o2hypot(f.kf,f.ms);
+          r=(f.kf+efs)/f.ms;
+          f.ed=f.g/16.0/pi2*(2.0*f.kf*pow(efs,3.0)-f.kf*efs*f.ms*f.ms
+                             -pow(f.ms,4.0)*log(r));
+        }
       } else {
-	f.ed=0.0;
+        f.ed=0.0;
       }
       return;
     }
     
     /** \brief Pressure at T=0 from \ref o2scl::fermion_tl::kf and 
-	\ref o2scl::part_tl::ms
-	
-	Calculates the integral 
-	\f[
-	P=\frac{g}{6 \pi^2} \int_0^{k_F} \frac{k^4}{\sqrt{k^2+m^{* 2}}} d k
-	\f]
+        \ref o2scl::part_tl::ms
+        
+        Calculates the integral 
+        \f[
+        P=\frac{g}{6 \pi^2} \int_0^{k_F} \frac{k^4}{\sqrt{k^2+m^{* 2}}} d k
+        \f]
     */
     void pressure_zerot(fermion_tl<fp_t> &f) {
       fp_t r,efs;
       if (f.kf>0.0) {
-	if (f.ms<=0.0) {
-	  f.pr=f.g*(pow(f.kf,4.0)/24.0/pi2);
-	} else {
-	  efs=o2hypot(f.kf,f.ms);
-	  r=(f.kf+efs)/f.ms;
-	  f.pr=f.g/48.0/pi2*(2.0*efs*pow(f.kf,3.0)-
-			     3.0*f.kf*efs*f.ms*f.ms
-			     +3.0*pow(f.ms,4.0)*log(r));
-	}
+        if (f.ms<=0.0) {
+          f.pr=f.g*(pow(f.kf,4.0)/24.0/pi2);
+        } else {
+          efs=o2hypot(f.kf,f.ms);
+          r=(f.kf+efs)/f.ms;
+          f.pr=f.g/48.0/pi2*(2.0*efs*pow(f.kf,3.0)-
+                             3.0*f.kf*efs*f.ms*f.ms
+                             +3.0*pow(f.ms,4.0)*log(r));
+        }
       } else {
-	f.pr=0.0;
+        f.pr=0.0;
       }
       return;
     }
     
     /** \brief Zero temperature fermions from \ref o2scl::part_tl::mu or 
-	\ref o2scl::part_tl::nu and \ref o2scl::part_tl::ms
+        \ref o2scl::part_tl::nu and \ref o2scl::part_tl::ms
     */
     virtual void calc_mu_zerot(fermion_tl<fp_t> &f) {
       bool nulessthan0;
       if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
       
       if (f.inc_rest_mass) {
-	if (f.nu>f.ms) {
-	  nulessthan0=false;
-	  f.kf=sqrt(f.nu*f.nu-f.ms*f.ms);
-	} else {
-	  nulessthan0=false;
-	  f.kf=0.0;
-	}
+        if (f.nu>f.ms) {
+          nulessthan0=false;
+          f.kf=sqrt(f.nu*f.nu-f.ms*f.ms);
+        } else {
+          nulessthan0=false;
+          f.kf=0.0;
+        }
       } else {
-	fp_t nupm=f.nu+f.m;
-	if ((nupm)>f.ms) {
-	  nulessthan0=false;
-	  f.kf=sqrt(nupm*nupm-f.ms*f.ms);
-	} else {
-	  nulessthan0=false;
-	  f.kf=0.0;
-	}
+        fp_t nupm=f.nu+f.m;
+        if ((nupm)>f.ms) {
+          nulessthan0=false;
+          f.kf=sqrt(nupm*nupm-f.ms*f.ms);
+        } else {
+          nulessthan0=false;
+          f.kf=0.0;
+        }
       }
       f.n=f.g/6.0/pi2*pow(f.kf,3.0);
       energy_density_zerot(f);
@@ -257,15 +257,15 @@ namespace o2scl {
       f.en=0.0;
       if (!f.inc_rest_mass) f.ed-=f.n*f.m;
       if (nulessthan0==true) {
-	f.n*=-1.0;
-	f.kf*=-1.0;
+        f.n*=-1.0;
+        f.kf*=-1.0;
       }
       
       return;
     }
     
     /** \brief Zero temperature fermions from \ref o2scl::part_tl::n 
-	and \ref o2scl::part_tl::ms
+        and \ref o2scl::part_tl::ms
     */
     virtual void calc_density_zerot(fermion_tl<fp_t> &f) {
       if (f.non_interacting) { f.ms=f.m; }
@@ -277,8 +277,8 @@ namespace o2scl {
       f.en=0.0;
       
       if (!f.inc_rest_mass) {
-	f.nu-=f.m;
-	f.ed-=f.n*f.m;
+        f.nu-=f.m;
+        f.ed-=f.n*f.m;
       }
       
       if (f.non_interacting) { f.mu=f.nu; }
@@ -321,8 +321,8 @@ namespace o2scl {
       the Fermi functions for massless_calc_density() functions?
   */
   template<class fermion_t=fermion, class fd_inte_t=fermi_dirac_integ_gsl,
-	   class be_inte_t=bessel_K_exp_integ_gsl, class root_t=root_cern<>,
-	   class func_t=funct, class fp_t=double>
+           class be_inte_t=bessel_K_exp_integ_gsl, class root_t=root_cern<>,
+           class func_t=funct, class fp_t=double>
   class fermion_thermo_tl : public fermion_zerot_tl<fp_t> {
     
   public:
@@ -341,87 +341,87 @@ namespace o2scl {
     be_inte_t be_integ;
     
     /** \brief Non-degenerate expansion for fermions
-	
-	Attempts to evaluate thermodynamics of a non-degenerate
-	fermion. If the result is accurate to within the requested
-	precision, this function returns <tt>true</tt>, and otherwise
-	this function returns <tt>false</tt> and the values in stored
-	in the <tt>pr</tt>, <tt>n</tt>, <tt>en</tt>, and <tt>ed</tt>
-	field are meaningless.
-	
-	If \f$ \mu \f$ is negative and sufficiently far from zero,
-	then the thermodynamic quantities are smaller than the smallest
-	representable double-precision number. In this case,
-	this function will return <tt>true</tt> and report all
-	quantities as zero.
-	
+        
+        Attempts to evaluate thermodynamics of a non-degenerate
+        fermion. If the result is accurate to within the requested
+        precision, this function returns <tt>true</tt>, and otherwise
+        this function returns <tt>false</tt> and the values in stored
+        in the <tt>pr</tt>, <tt>n</tt>, <tt>en</tt>, and <tt>ed</tt>
+        field are meaningless.
+        
+        If \f$ \mu \f$ is negative and sufficiently far from zero,
+        then the thermodynamic quantities are smaller than the smallest
+        representable double-precision number. In this case,
+        this function will return <tt>true</tt> and report all
+        quantities as zero.
+        
         \verbatim embed:rst
         The following uses the notation of [Johns96]_.
         \endverbatim
 
-	Defining \f$ \psi \equiv (\mu-m)/T \f$, \f$ t \equiv T/m \f$,
-	and \f$ d \equiv g~m^4/(2 \pi^2) \f$ the pressure 
-	in the non-degenerate limit (\f$ \psi \rightarrow - \infty \f$)
-	is
-	\f[
-	P = d \sum_{n=1}^{\infty} P_n
-	\f]
-	where 
-	\f[
-	P_n \equiv \left(-1\right)^{n+1} \left(\frac{t^2}{n^2}\right)
-	e^{n \left(\psi+1/t\right)} K_2 \left( \frac{n}{t} \right)
-	\f]
-	The density is then
-	\f[
-	n = d \sum_{n=1}^{\infty} \frac{n P_n}{T}
-	\f]
-	and the entropy density is
-	\f[
-	s = \frac{d}{m} \sum_{n=1}^{\infty} \left\{ \frac{2 P_n}{t}
-	-\frac{n P_n}{t^2}+ 
-	\frac{\left(-1\right)^{n+1}}{2 n} 
-	e^{n \left(\psi+1/t\right)} \left[ K_1 \left( \frac{n}{t} 
-	\right)+K_3 \left( \frac{n}{t} \right) \right]
-	\right\}
-	\f]
-	
-	This function is accurate over a wide range of conditions
-	when \f$ \psi < -4 \f$.
-	
-	The ratio of the nth term to the first term in the pressure
-	series is
-	\f[
-	R_n \equiv \frac{P_{n}}{P_{1}} = \frac{(-1)^{n+1} 
-	e^{(n-1)(\psi+1/t)} K_2(n/t) }{n^2 K_2(1/t)}
-	\f]
-	This function currently uses 20 terms in the series and
-	immediately returns <tt>false</tt> if \f$ |R_{20}| \f$
-	is greater than <tt>prec</tt>
-	
-	In the nondegenerate and nonrelativistic (\f$ t \rightarrow 0
-	\f$) limit, the argument to the Bessel functions and the
-	exponential becomes too large. In this case, it's better to
-	use the expansions, e.g. for \f$ x \equiv n/t \rightarrow
-	\infty \f$,
-	\f[
-	\sqrt{\frac{2 x}{\pi}} e^{x} K_2(x) \approx
-	1 + \frac{3}{8 x} - \frac{15}{128 x^2} + ...
-	\f]
-	The current code currently goes up to \f$ x^{-12} \f$ in the
-	expansion, which is enough for the default precision of \f$
-	10^{-18} \f$ since \f$ (20/700)^{12} \sim 10^{-19} \f$.
+        Defining \f$ \psi \equiv (\mu-m)/T \f$, \f$ t \equiv T/m \f$,
+        and \f$ d \equiv g~m^4/(2 \pi^2) \f$ the pressure 
+        in the non-degenerate limit (\f$ \psi \rightarrow - \infty \f$)
+        is
+        \f[
+        P = d \sum_{n=1}^{\infty} P_n
+        \f]
+        where 
+        \f[
+        P_n \equiv \left(-1\right)^{n+1} \left(\frac{t^2}{n^2}\right)
+        e^{n \left(\psi+1/t\right)} K_2 \left( \frac{n}{t} \right)
+        \f]
+        The density is then
+        \f[
+        n = d \sum_{n=1}^{\infty} \frac{n P_n}{T}
+        \f]
+        and the entropy density is
+        \f[
+        s = \frac{d}{m} \sum_{n=1}^{\infty} \left\{ \frac{2 P_n}{t}
+        -\frac{n P_n}{t^2}+ 
+        \frac{\left(-1\right)^{n+1}}{2 n} 
+        e^{n \left(\psi+1/t\right)} \left[ K_1 \left( \frac{n}{t} 
+        \right)+K_3 \left( \frac{n}{t} \right) \right]
+        \right\}
+        \f]
+        
+        This function is accurate over a wide range of conditions
+        when \f$ \psi < -4 \f$.
+        
+        The ratio of the nth term to the first term in the pressure
+        series is
+        \f[
+        R_n \equiv \frac{P_{n}}{P_{1}} = \frac{(-1)^{n+1} 
+        e^{(n-1)(\psi+1/t)} K_2(n/t) }{n^2 K_2(1/t)}
+        \f]
+        This function currently uses 20 terms in the series and
+        immediately returns <tt>false</tt> if \f$ |R_{20}| \f$
+        is greater than <tt>prec</tt>
+        
+        In the nondegenerate and nonrelativistic (\f$ t \rightarrow 0
+        \f$) limit, the argument to the Bessel functions and the
+        exponential becomes too large. In this case, it's better to
+        use the expansions, e.g. for \f$ x \equiv n/t \rightarrow
+        \infty \f$,
+        \f[
+        \sqrt{\frac{2 x}{\pi}} e^{x} K_2(x) \approx
+        1 + \frac{3}{8 x} - \frac{15}{128 x^2} + ...
+        \f]
+        The current code currently goes up to \f$ x^{-12} \f$ in the
+        expansion, which is enough for the default precision of \f$
+        10^{-18} \f$ since \f$ (20/700)^{12} \sim 10^{-19} \f$.
     */
     bool calc_mu_ndeg(fermion_t &f, fp_t temper, 
-		      fp_t prec=1.0e-18, bool inc_antip=false) {
+                      fp_t prec=1.0e-18, bool inc_antip=false) {
       
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
       
       // Compute psi and tt
       fp_t psi, psi_num;
       if (f.inc_rest_mass) {
-	psi_num=f.nu-f.ms;
+        psi_num=f.nu-f.ms;
       } else {
-	psi_num=f.nu+f.m-f.ms;
+        psi_num=f.nu+f.m-f.ms;
       }
       psi=psi_num/temper;
       fp_t tt=temper/f.ms;
@@ -441,11 +441,11 @@ namespace o2scl {
       
       // Return zero if psi+1/t is too small
       if (psi+1.0/tt<-700.0) {
-	f.n=0.0;
-	f.ed=0.0;
-	f.pr=0.0;
-	f.en=0.0;
-	return true;
+        f.n=0.0;
+        f.ed=0.0;
+        f.pr=0.0;
+        f.en=0.0;
+        return true;
       }
       
       // -----------------------------------------------------
@@ -457,26 +457,26 @@ namespace o2scl {
       fp_t dj2=1.0, jot2=1.0/tt;
       
       if (inc_antip==false) {
-	rat=exp(dj1*psi)/jot1/jot1*be_integ.K2exp(jot1);
-	rat/=exp(dj2*psi)/jot2/jot2*be_integ.K2exp(jot2);
+        rat=exp(dj1*psi)/jot1/jot1*be_integ.K2exp(jot1);
+        rat/=exp(dj2*psi)/jot2/jot2*be_integ.K2exp(jot2);
       } else {
-	if (f.inc_rest_mass) {
-	  rat=exp(-jot1)*2.0*cosh(dj1*f.nu/temper)/jot1/jot1*
-	    be_integ.K2exp(jot1);
-	  rat/=exp(-jot2)*2.0*cosh(dj2*f.nu/temper)/jot2/jot2*
-	    be_integ.K2exp(jot2);
-	} else {
-	  rat=exp(-jot1)*2.0*cosh(dj1*(f.nu+f.m)/temper)/jot1/jot1*
-	    be_integ.K2exp(jot1);
-	  rat/=exp(-jot2)*2.0*cosh(dj2*(f.nu+f.m)/temper)/jot2/jot2*
-	    be_integ.K2exp(jot2);
-	}
+        if (f.inc_rest_mass) {
+          rat=exp(-jot1)*2.0*cosh(dj1*f.nu/temper)/jot1/jot1*
+            be_integ.K2exp(jot1);
+          rat/=exp(-jot2)*2.0*cosh(dj2*f.nu/temper)/jot2/jot2*
+            be_integ.K2exp(jot2);
+        } else {
+          rat=exp(-jot1)*2.0*cosh(dj1*(f.nu+f.m)/temper)/jot1/jot1*
+            be_integ.K2exp(jot1);
+          rat/=exp(-jot2)*2.0*cosh(dj2*(f.nu+f.m)/temper)/jot2/jot2*
+            be_integ.K2exp(jot2);
+        }
       }
       
       // If the ratio between the last term and the first term is 
       // not small enough, return false
       if (o2scl::o2isfinite(rat) && rat>prec) {
-	return false;
+        return false;
       }
       
       fp_t first_term=0.0;
@@ -485,38 +485,38 @@ namespace o2scl {
       f.en=0.0;
       
       for(size_t j=1;j<=max_term;j++) {
-	
-	fp_t pterm, nterm, enterm, edterm;
-	
-	ndeg_terms(j,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
-		   pterm,nterm,enterm,edterm);
-	
-	if (j==1) first_term=pterm;
-	f.pr+=pterm;
-	f.n+=nterm;
-	f.en+=enterm;
-	
-	// If the first term is zero, then the rest of the terms
-	// will be zero so just return early
-	if (first_term==0.0) {
-	  f.pr=0.0;
-	  f.n=0.0;
-	  f.ed=0.0;
-	  f.en=0.0;
-	  return true;
-	}
-	
-	// Stop if the last term is sufficiently small compared to
-	// the first term
-	if (j>1 && fabs(pterm)<prec*fabs(first_term)) {
-	  f.pr*=prefac;
-	  f.n*=prefac;
-	  f.en*=prefac;
-	  f.ed=-f.pr+f.nu*f.n+temper*f.en;
-	  return true;
-	}
-	
-	// End of 'for(size_t j=1;j<=max_term;j++)'
+        
+        fp_t pterm, nterm, enterm, edterm;
+        
+        ndeg_terms(j,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
+                   pterm,nterm,enterm,edterm);
+        
+        if (j==1) first_term=pterm;
+        f.pr+=pterm;
+        f.n+=nterm;
+        f.en+=enterm;
+        
+        // If the first term is zero, then the rest of the terms
+        // will be zero so just return early
+        if (first_term==0.0) {
+          f.pr=0.0;
+          f.n=0.0;
+          f.ed=0.0;
+          f.en=0.0;
+          return true;
+        }
+        
+        // Stop if the last term is sufficiently small compared to
+        // the first term
+        if (j>1 && fabs(pterm)<prec*fabs(first_term)) {
+          f.pr*=prefac;
+          f.n*=prefac;
+          f.en*=prefac;
+          f.ed=-f.pr+f.nu*f.n+temper*f.en;
+          return true;
+        }
+        
+        // End of 'for(size_t j=1;j<=max_term;j++)'
       }
       
       // We failed to add enough terms, so return false
@@ -524,35 +524,35 @@ namespace o2scl {
     }
     
     /** \brief Degenerate expansion for fermions
-	
-	Attempts to evaulate thermodynamics of a degenerate fermion.
-	If the result is accurate to within the requested precision,
-	this function returns <tt>true</tt>, and otherwise this
-	function returns <tt>false</tt> and the values in stored in
-	the <tt>pr</tt>, <tt>n</tt>, <tt>en</tt>, and <tt>ed</tt>
-	field are meaningless.
-	
-	The pressure, density, and energy density, should be accurate
-	to the requested precision, but the first term in the series
-	expansion for the entropy is zero, so the entropy is one order
-	lower in accuracy.
-	
-	\future Make a function like this for dndm, dsdT, etc. 
-	for fermion_deriv .
+        
+        Attempts to evaulate thermodynamics of a degenerate fermion.
+        If the result is accurate to within the requested precision,
+        this function returns <tt>true</tt>, and otherwise this
+        function returns <tt>false</tt> and the values in stored in
+        the <tt>pr</tt>, <tt>n</tt>, <tt>en</tt>, and <tt>ed</tt>
+        field are meaningless.
+        
+        The pressure, density, and energy density, should be accurate
+        to the requested precision, but the first term in the series
+        expansion for the entropy is zero, so the entropy is one order
+        lower in accuracy.
+        
+        \future Make a function like this for dndm, dsdT, etc. 
+        for fermion_deriv .
     */
     bool calc_mu_deg(fermion_t &f, fp_t temper, 
-			   fp_t prec=1.0e-18) {
+                           fp_t prec=1.0e-18) {
       
       // Handle the zero-temperature limit
       if (temper==0.0) {
-	this->calc_mu_zerot(f);
-	return true;
+        this->calc_mu_zerot(f);
+        return true;
       }
       
       // Double check to ensure T and mass are positive
       if (temper<0.0 || f.ms<0.0) {
-	O2SCL_ERR2("Temperature or mass negative in fermion_thermo",
-		   "::calc_mu_deg().",exc_einval);
+        O2SCL_ERR2("Temperature or mass negative in fermion_thermo",
+                   "::calc_mu_deg().",exc_einval);
       }
       
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
@@ -581,18 +581,18 @@ namespace o2scl {
       // Evaluate the first and last term for the pressure
       fp_t pterm1;
       if (x>1.0e-5) {
-	pterm1=(x*(1.0+x)*(2.0+x)*(-3.0+2.0*x*(2.0+x))+6.0*sx*s2x*
-		log((sx+s2x)/sqrt(2.0)))/24.0/sx/s2x;
+        pterm1=(x*(1.0+x)*(2.0+x)*(-3.0+2.0*x*(2.0+x))+6.0*sx*s2x*
+                log((sx+s2x)/sqrt(2.0)))/24.0/sx/s2x;
       } else {
-	pterm1=x2*sx*(29568.0+15840.0*x+1540.0*x2-105.0*x3)/55440.0/
-	  sqrt(2.0);
+        pterm1=x2*sx*(29568.0+15840.0*x+1540.0*x2-105.0*x3)/55440.0/
+          sqrt(2.0);
       }
       fp_t pterm4=-31.0*pow(this->pi*tt,6.0)/1008.0*(1.0+x)*
-	sx*s2x/pow(x*(2.0+x),4.0);
+        sx*s2x/pow(x*(2.0+x),4.0);
       
       // Check if we're going to succeed
       if (fabs(pterm4)/fabs(pterm1)>prec) {
-	return false;
+        return false;
       }
       
       // First order density term (first order entropy term is zero)
@@ -601,22 +601,22 @@ namespace o2scl {
       // Second order terms
       fp_t pterm2=tt*tt*this->pi2/6.0*(1.0+x)*sx*s2x;
       fp_t nterm2=tt*tt*this->pi2/6.0*(1.0+4.0*x+2.0*x2)/
-	f.ms/sx/s2x;
+        f.ms/sx/s2x;
       fp_t enterm2=tt*this->pi2/3.0*(1.0+x)*sx*s2x/f.ms;
       
       // Third order terms
       fp_t pterm3=7.0*pow(this->pi*tt,4.0)/360.0*(1.0+x)*
-	(-1.0+4.0*x+2.0*x2)/pow(x*(2.0+x),1.5);
+        (-1.0+4.0*x+2.0*x2)/pow(x*(2.0+x),1.5);
       fp_t nterm3=7.0*pow(this->pi*tt,4.0)/120.0/sx/s2x/
-	x2/(x+2.0)/(x+2.0)/f.ms;
+        x2/(x+2.0)/(x+2.0)/f.ms;
       fp_t enterm3=7.0*pow(this->pi*tt,4.0)/tt/90.0*(1.0+x)*
-	(-1.0+4.0*x+2.0*x2)/f.ms/sx/s2x/x/(x+2.0);
+        (-1.0+4.0*x+2.0*x2)/f.ms/sx/s2x/x/(x+2.0);
       
       // Fourth order terms for density and entropy
       fp_t nterm4=31.0*pow(this->pi*tt,6.0)/1008.0*sx*s2x*
-	(7.0+12.0*x+6.0*x2)/f.ms/pow(x*(2.0+x),5.0);
+        (7.0+12.0*x+6.0*x2)/f.ms/pow(x*(2.0+x),5.0);
       fp_t enterm4=-31.0*pow(this->pi*tt,6.0)/tt/168.0*sx*s2x*
-	(1.0+x)/pow(x*(2.0+x),4.0);
+        (1.0+x)/pow(x*(2.0+x),4.0);
       
       // Add up all the terms
       f.pr=prefac*(pterm1+pterm2+pterm3+pterm4);
@@ -632,22 +632,22 @@ namespace o2scl {
     virtual void calc_mu(fermion_t &f, fp_t temper)=0;
     
     /** \brief Calculate properties as function of density
-	
-	\note This function returns an integer value, in contrast to
-	\ref calc_mu(), because of the potential for non-convergence.
+        
+        \note This function returns an integer value, in contrast to
+        \ref calc_mu(), because of the potential for non-convergence.
     */
     virtual int calc_density(fermion_t &f, fp_t temper)=0;
     
     /** \brief Calculate properties with antiparticles as function of
-	chemical potential
+        chemical potential
     */
     virtual void pair_mu(fermion_t &f, fp_t temper)=0;
     
     /** \brief Calculate properties with antiparticles as function of
-	density
-	
-	\note This function returns an integer value, in contrast to
-	\ref pair_mu(), because of the potential for non-convergence.
+        density
+        
+        \note This function returns an integer value, in contrast to
+        \ref pair_mu(), because of the potential for non-convergence.
     */
     virtual int pair_density(fermion_t &f, fp_t temper)=0;
     
@@ -679,9 +679,9 @@ namespace o2scl {
       
       x=f.ms+temper;
       funct mf2=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
-			  (&fermion_thermo_tl<fermion_t,fd_inte_t,
-			   be_inte_t,root_t,func_t,fp_t>::massless_solve_fun),
-			  this,std::placeholders::_1,std::ref(f),temper);
+                          (&fermion_thermo_tl<fermion_t,fd_inte_t,
+                           be_inte_t,root_t,func_t,fp_t>::massless_solve_fun),
+                          this,std::placeholders::_1,std::ref(f),temper);
       massless_root->solve(x,mf2);
       f.nu=x;
       
@@ -701,25 +701,25 @@ namespace o2scl {
 
       if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
       if (f.nu==0.0) {
-	f.n=0.0;
-	f.ed=f.g/8.0/this->pi2*7.0/15.0*
-	  pow(this->pi*temper,4.0);
-	f.pr=f.ed/3.0;
-	f.en=(f.ed+f.pr-f.n*f.mu)/temper;
+        f.n=0.0;
+        f.ed=f.g/8.0/this->pi2*7.0/15.0*
+          pow(this->pi*temper,4.0);
+        f.pr=f.ed/3.0;
+        f.en=(f.ed+f.pr-f.n*f.mu)/temper;
       } else {
-	nu2=f.nu*f.nu;
-	pitmu=this->pi*temper/f.nu;
-	pitmu2=pitmu*pitmu;
-	f.n=f.g*f.nu*nu2/6.0/this->pi2*(1.0+pitmu2);
-	f.ed=f.g*nu2*nu2/8.0/this->pi2*(1.0+2.0*pitmu2+
-					7.0/15.0*pitmu2*pitmu2);
-	f.pr=f.ed/3.0;
-	f.en=(f.ed+f.pr-f.n*f.mu)/temper;
+        nu2=f.nu*f.nu;
+        pitmu=this->pi*temper/f.nu;
+        pitmu2=pitmu*pitmu;
+        f.n=f.g*f.nu*nu2/6.0/this->pi2*(1.0+pitmu2);
+        f.ed=f.g*nu2*nu2/8.0/this->pi2*(1.0+2.0*pitmu2+
+                                        7.0/15.0*pitmu2*pitmu2);
+        f.pr=f.ed/3.0;
+        f.en=(f.ed+f.pr-f.n*f.mu)/temper;
     
-	// Might the following work better for the energy density?
-	// pit=pi*temper;
-	// pit2=pit*pit;
-	// ed=g/8.0/pi2*(nu2*nu2+2.0*pit2*nu2+7.0/15.0*pit2*pit2);
+        // Might the following work better for the energy density?
+        // pit=pi*temper;
+        // pit2=pit*pit;
+        // ed=g/8.0/pi2*(nu2*nu2+2.0*pit2*nu2+7.0/15.0*pit2*pit2);
     
       }
 
@@ -728,54 +728,54 @@ namespace o2scl {
 
     /** \brief Finite temperature massless fermions and antifermions 
 
-	In the cases \f$ n^3 \gg T \f$ and \f$ T \gg n^3 \f$ ,
-	expansions are used instead of the exact formulas to avoid
-	loss of precision.
+        In the cases \f$ n^3 \gg T \f$ and \f$ T \gg n^3 \f$ ,
+        expansions are used instead of the exact formulas to avoid
+        loss of precision.
 
-	In particular, using the parameter
-	\f[
-	\alpha = \frac{g^2 \pi^2 T^6}{243 n^2}
-	\f]
-	and defining the expression
-	\f[
-	\mathrm{cbt} = \alpha^{-1/6} \left( -1 + 
-	\sqrt{1+\alpha}\right)^{1/3}
-	\f]
-	we can write the chemical potential as
-	\f[
-	\mu = \frac{\pi T}{\sqrt{3}} \left(\frac{1}{\mathrm{cbt}} -
-	\mathrm{cbt} \right)
-	\f]
-	
-	These expressions, however, do not work well when \f$ \alpha
-	\f$ is very large or very small, so series expansions are
-	used whenever \f$ \alpha > 10^{4} \f$ or 
-	\f$ \alpha < 3 \times 10^{-4} \f$. For small \f$ \alpha \f$, 
-	\f[
-	\left(\frac{1}{\mathrm{cbt}} -
-	\mathrm{cbt} \right) \approx
-	\frac{2^{1/3}}{\alpha^{1/6}} - 
-	\frac{\alpha^{1/6}}{2^{1/3}} +
-	\frac{\alpha^{5/6}}{6{\cdot}2^{2/3}} +
-	\frac{\alpha^{7/6}}{12{\cdot}2^{1/3}} -
-	\frac{\alpha^{11/6}}{18{\cdot}2^{2/3}} -
-	\frac{5 \alpha^{13/6}}{144{\cdot}2^{1/3}} +
-	\frac{77 \alpha^{17/6}}{2592{\cdot}2^{2/3}}
-	\f]
-	and for large \f$ \alpha \f$, 
-	\f[
-	\left(\frac{1}{\mathrm{cbt}} -
-	\mathrm{cbt} \right) \approx
-	\frac{2}{3} \sqrt{\frac{1}{\alpha}} - 
-	\frac{8}{81} \left(\frac{1}{\alpha}\right)^{3/2} +
-	\frac{32}{729} \left(\frac{1}{\alpha}\right)^{5/2}
-	\f]
+        In particular, using the parameter
+        \f[
+        \alpha = \frac{g^2 \pi^2 T^6}{243 n^2}
+        \f]
+        and defining the expression
+        \f[
+        \mathrm{cbt} = \alpha^{-1/6} \left( -1 + 
+        \sqrt{1+\alpha}\right)^{1/3}
+        \f]
+        we can write the chemical potential as
+        \f[
+        \mu = \frac{\pi T}{\sqrt{3}} \left(\frac{1}{\mathrm{cbt}} -
+        \mathrm{cbt} \right)
+        \f]
+        
+        These expressions, however, do not work well when \f$ \alpha
+        \f$ is very large or very small, so series expansions are
+        used whenever \f$ \alpha > 10^{4} \f$ or 
+        \f$ \alpha < 3 \times 10^{-4} \f$. For small \f$ \alpha \f$, 
+        \f[
+        \left(\frac{1}{\mathrm{cbt}} -
+        \mathrm{cbt} \right) \approx
+        \frac{2^{1/3}}{\alpha^{1/6}} - 
+        \frac{\alpha^{1/6}}{2^{1/3}} +
+        \frac{\alpha^{5/6}}{6{\cdot}2^{2/3}} +
+        \frac{\alpha^{7/6}}{12{\cdot}2^{1/3}} -
+        \frac{\alpha^{11/6}}{18{\cdot}2^{2/3}} -
+        \frac{5 \alpha^{13/6}}{144{\cdot}2^{1/3}} +
+        \frac{77 \alpha^{17/6}}{2592{\cdot}2^{2/3}}
+        \f]
+        and for large \f$ \alpha \f$, 
+        \f[
+        \left(\frac{1}{\mathrm{cbt}} -
+        \mathrm{cbt} \right) \approx
+        \frac{2}{3} \sqrt{\frac{1}{\alpha}} - 
+        \frac{8}{81} \left(\frac{1}{\alpha}\right)^{3/2} +
+        \frac{32}{729} \left(\frac{1}{\alpha}\right)^{5/2}
+        \f]
 
-	This approach works to within about 1 \part in \f$ 10^{12} \f$,
-	and is tested in <tt>fermion_ts.cpp</tt>.
-	
-	\future This could be improved by including more terms
-	in the expansions.
+        This approach works to within about 1 \part in \f$ 10^{12} \f$,
+        and is tested in <tt>fermion_ts.cpp</tt>.
+        
+        \future This could be improved by including more terms
+        in the expansions.
     */
     void massless_pair_density(fermion_t &f, fp_t temper) {
 
@@ -784,39 +784,39 @@ namespace o2scl {
 
       if (f.non_interacting) { f.ms=f.m; }
       if (f.n<=0.0) {
-	f.nu=0.0;
-	f.ed=f.g/8.0/this->pi2*7.0/15.0*pow(this->pi*temper,4.0);
-	f.pr=f.ed/3.0;
+        f.nu=0.0;
+        f.ed=f.g/8.0/this->pi2*7.0/15.0*pow(this->pi*temper,4.0);
+        f.pr=f.ed/3.0;
       } else {
-	alpha=f.g*f.g*this->pi2*t2*t2*t2/243.0/f.n/f.n;
-	if (alpha>1.0e4) {
-	  f.nu=(2.0/3.0/sqrt(alpha)-8.0/81.0/pow(alpha,1.5)+
-		32.0/729.0/pow(alpha,2.5))*this->pi*temper/sqrt(3.0);
-	} else if (alpha<3.0e-4) {
-	  two13=cbrt(2.0);
-	  alpha16=pow(alpha,1.0/6.0);
-	  f.nu=(two13/alpha16-alpha16/two13+alpha/alpha16/6.0/two13/two13+
-		alpha*alpha16/12.0/two13-
-		alpha*alpha/alpha16/18.0/two13/two13-
-		5.0*alpha*alpha*alpha16/144.0/two13+
-		77.0/2592.0*alpha*alpha*alpha/alpha16/two13/two13)*
-	    this->pi*temper/sqrt(3.0);
-	} else {
-	  cbt=pow(-1.0+sqrt(1.0+alpha),1.0/3.0)/pow(alpha,1.0/6.0);
-	  f.nu=this->pi*temper/sqrt(3.0)*(1.0/cbt-cbt);
-	}
-	pitmu=this->pi*temper/f.nu;
-	pitmu2=pitmu*pitmu;
-	nu2=f.nu*f.nu;
-	f.ed=f.g*nu2*nu2/8.0/this->pi2*
-	  (1.0+2.0*pitmu2+7.0/15.0*pitmu2*pitmu2);
-	f.pr=f.ed/3.0;
+        alpha=f.g*f.g*this->pi2*t2*t2*t2/243.0/f.n/f.n;
+        if (alpha>1.0e4) {
+          f.nu=(2.0/3.0/sqrt(alpha)-8.0/81.0/pow(alpha,1.5)+
+                32.0/729.0/pow(alpha,2.5))*this->pi*temper/sqrt(3.0);
+        } else if (alpha<3.0e-4) {
+          two13=cbrt(2.0);
+          alpha16=pow(alpha,1.0/6.0);
+          f.nu=(two13/alpha16-alpha16/two13+alpha/alpha16/6.0/two13/two13+
+                alpha*alpha16/12.0/two13-
+                alpha*alpha/alpha16/18.0/two13/two13-
+                5.0*alpha*alpha*alpha16/144.0/two13+
+                77.0/2592.0*alpha*alpha*alpha/alpha16/two13/two13)*
+            this->pi*temper/sqrt(3.0);
+        } else {
+          cbt=pow(-1.0+sqrt(1.0+alpha),1.0/3.0)/pow(alpha,1.0/6.0);
+          f.nu=this->pi*temper/sqrt(3.0)*(1.0/cbt-cbt);
+        }
+        pitmu=this->pi*temper/f.nu;
+        pitmu2=pitmu*pitmu;
+        nu2=f.nu*f.nu;
+        f.ed=f.g*nu2*nu2/8.0/this->pi2*
+          (1.0+2.0*pitmu2+7.0/15.0*pitmu2*pitmu2);
+        f.pr=f.ed/3.0;
 
-	if (!std::isfinite(f.nu)) {
-	  std::string str="Chemical potential not finite ("+dtos(f.nu)+
-	    ") in fermion::massless_pair_density().";
-	  O2SCL_ERR(str.c_str(),exc_efailed);
-	}
+        if (!std::isfinite(f.nu)) {
+          std::string str="Chemical potential not finite ("+dtos(f.nu)+
+            ") in fermion::massless_pair_density().";
+          O2SCL_ERR(str.c_str(),exc_efailed);
+        }
       }
 
       if (f.non_interacting) { f.mu=f.nu; }
@@ -833,9 +833,9 @@ namespace o2scl {
     }
 
     /** \brief The default solver for massless_calc_density()
-	
-	We default to a solver of type root_cern here since we
-	don't have a bracket or a derivative.
+        
+        We default to a solver of type root_cern here since we
+        don't have a bracket or a derivative.
     */
     root_t def_massless_root;
     
@@ -845,45 +845,45 @@ namespace o2scl {
     /** \brief Compute a term in the nondegenerate expansion
      */
     void ndeg_terms(size_t j, fp_t tt,
-		    fp_t xx, fp_t m, bool inc_rest_mass,
-		    bool inc_antip, fp_t &pterm, fp_t &nterm,
-		    fp_t &enterm, fp_t &edterm) {
+                    fp_t xx, fp_t m, bool inc_rest_mass,
+                    bool inc_antip, fp_t &pterm, fp_t &nterm,
+                    fp_t &enterm, fp_t &edterm) {
       
       fp_t dj=((fp_t)j);
       fp_t jot=dj/tt;
 
       double K2j=be_integ.K2exp(jot);
       if (inc_antip==false) {
-	double K1j=be_integ.K1exp(jot);
-	pterm=exp(jot*xx)/jot/jot*K2j;
-	if (j%2==0) pterm=-pterm;
-	nterm=pterm*jot/m;
-	fp_t enterm1=(4.0*tt-dj*xx-dj)/dj/tt*nterm;
-	fp_t enterm2=exp(jot*xx)/dj*K1j/m;
-	if (j%2==0) {
-	  enterm=enterm1-enterm2;
-	} else {
-	  enterm=enterm1+enterm2;
-	}
-	edterm=(dj*dj*K1j+3.0*dj*tt*K2j-2.0*K1j/jot)*
-	  exp(jot*(xx+1.0))/jot/dj/dj;
-	if (j%2==0) edterm=-edterm;
+        double K1j=be_integ.K1exp(jot);
+        pterm=exp(jot*xx)/jot/jot*K2j;
+        if (j%2==0) pterm=-pterm;
+        nterm=pterm*jot/m;
+        fp_t enterm1=(4.0*tt-dj*xx-dj)/dj/tt*nterm;
+        fp_t enterm2=exp(jot*xx)/dj*K1j/m;
+        if (j%2==0) {
+          enterm=enterm1-enterm2;
+        } else {
+          enterm=enterm1+enterm2;
+        }
+        edterm=(dj*dj*K1j+3.0*dj*tt*K2j-2.0*K1j/jot)*
+          exp(jot*(xx+1.0))/jot/dj/dj;
+        if (j%2==0) edterm=-edterm;
       } else {
-	double K3j=be_integ.K3exp(jot);
-	// AWS 9/27/20: should this be cosh(jot*(xx+1.0))??
-	pterm=exp(-jot)*2.0*cosh(jot*(xx+1.0)/tt)/jot/jot*K2j;
-	if (j%2==0) pterm*=-1.0;
-	nterm=pterm*tanh(jot*(xx+1.0))*jot;
-	fp_t enterm1=-(1.0+xx)/tt*nterm/m;
-	fp_t enterm2=2.0*exp(-jot*xx)/dj*cosh(jot*(xx+1.0))*K3j/m;
-	if (j%2==0) {
-	  enterm=enterm1-enterm2;
-	} else {
-	  enterm=enterm1+enterm2;
-	}
-	edterm=0.0;
+        double K3j=be_integ.K3exp(jot);
+        // AWS 9/27/20: should this be cosh(jot*(xx+1.0))??
+        pterm=exp(-jot)*2.0*cosh(jot*(xx+1.0)/tt)/jot/jot*K2j;
+        if (j%2==0) pterm*=-1.0;
+        nterm=pterm*tanh(jot*(xx+1.0))*jot;
+        fp_t enterm1=-(1.0+xx)/tt*nterm/m;
+        fp_t enterm2=2.0*exp(-jot*xx)/dj*cosh(jot*(xx+1.0))*K3j/m;
+        if (j%2==0) {
+          enterm=enterm1-enterm2;
+        } else {
+          enterm=enterm1+enterm2;
+        }
+        edterm=0.0;
       }
-		    
+                    
       return;
     }
     

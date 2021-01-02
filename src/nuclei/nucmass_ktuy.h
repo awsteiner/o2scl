@@ -48,11 +48,11 @@ namespace o2scl {
     int load(std::string model="05", bool external=false);
     
     /** \brief Mass formula entry structure for KTUY mass formula
-	
-	Nuclear masses from Koura et al. (2000) and Koura et al.
-	(2005) as originally specified in the files
-	<tt>KTUY04_m246.dat</tt> and <tt>KTUY05_m246.dat</tt> obtained
-	from http://wwwndc.jaea.go.jp/nucldata/mass/KTUY04_E.html
+        
+        Nuclear masses from Koura et al. (2000) and Koura et al.
+        (2005) as originally specified in the files
+        <tt>KTUY04_m246.dat</tt> and <tt>KTUY05_m246.dat</tt> obtained
+        from http://wwwndc.jaea.go.jp/nucldata/mass/KTUY04_E.html
         
         \verbatim embed:rst
         See [Koura00]_ and [Koura05]_.
@@ -87,7 +87,7 @@ namespace o2scl {
     };
 
     /** \brief Return false if the mass formula does not include 
-	specified nucleus
+        specified nucleus
     */
     virtual bool is_included(int Z, int N);
     
@@ -95,10 +95,10 @@ namespace o2scl {
     virtual double mass_excess(int Z, int N);
     
     /** \brief Get the entry for the specified proton and neutron number
-	
-	This method searches the table using a cached binary search
-	algorithm. It is assumed that the table is sorted first by
-	proton number and then by neutron number.
+        
+        This method searches the table using a cached binary search
+        algorithm. It is assumed that the table is sorted first by
+        proton number and then by neutron number.
     */
     nucmass_ktuy::entry get_ZN(int l_Z, int l_N);
     
