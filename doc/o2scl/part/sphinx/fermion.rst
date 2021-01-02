@@ -1,10 +1,38 @@
-Fermions
-========
+Fermion Details
+===============
 
 :ref:`O2scl_part <o2sclp>`
 
-Relativistic and Non-relativistic Fermions
-------------------------------------------
+Interacting and non-interacting fermions
+----------------------------------------
+
+(Slowly moving the documentation from fermion_rel
+and fermion_deriv_rel to this location.)
+
+In many cases, the non-interacting expressions for fermion
+thermodynamics can be used in interacting systems as long as one
+replaces the mass with an effective mass, :math:`m^{*}` and the
+chemical potential with an effective chemical potential, :math:`\nu` .
+When :math:`\nu` includes the rest mass (denoted
+:math:`m`), :cpp:var:`o2scl::part_tl::inc_rest_mass` should
+be ``true``, and the fermionic distribution function is
+
+.. math::
+
+   f = \frac{1}{1+e^{(\sqrt{k^2+m^{* 2}}-\nu)/T}}
+
+Then the energy density will also include the rest mass energy
+density, :math:`n m`. When :math:`\nu` does not include the rest mass,
+the fermionic distribution function is
+   
+.. math::
+
+   f = \frac{1}{1+e^{(\sqrt{k^2+m^{* 2}}-\nu-m)/T}}
+
+For convenience, we often define :math:`E^{*} \equiv \sqrt{k^2+m^{* 2}}`.
+
+Relativistic versus non-relativistic fermions
+---------------------------------------------
 
 There are a few distinctions between how relativistic and
 nonrelativistic fermions are handled in :ref:`o2scl_part <o2sclp>`
@@ -14,14 +42,16 @@ effective mass, :math:`m^{*}`, and the effective chemical potential,
 
 .. math::
 
-   {\varepsilon}_{\mathrm{R}} = \frac{g}{2 \pi^2} \int
+   \begin{eqnarray}
+   {\varepsilon}_{\mathrm{R}} &=& \frac{g}{2 \pi^2} \int
    dk~\frac{k^2 \sqrt{k^2+m^{* 2}}}
    { 1+\exp\left[\left(\sqrt{k^2+m^{*2}}-
-   \nu_{\mathrm{R}}\right)/T\right]}
-   = \frac{g}{2 \pi^2} \int
+   \nu_{\mathrm{R}}\right)/T\right]} \\
+   &=& \frac{g}{2 \pi^2} \int
    dk~\frac{k^2 \sqrt{k^2+m^{* 2}} }
    {1+\exp\left[\left(\sqrt{k^2+m^{*2}}-
    \bar{\nu}_{\mathrm{R}}-m\right)/T\right]}
+   \end{eqnarray}
 
 for a relativistic fermion, where we define the chemical potential
 without the rest mass with :math:`\bar{\nu}_{\mathrm{R}} \equiv
@@ -47,12 +77,13 @@ fermion,
 
 .. math::
 
-   \bar{\varepsilon}_{\mathrm{NR}} = 
+   \begin{eqnarray}
+   \bar{\varepsilon}_{\mathrm{NR}} &=& 
    \frac{g}{2 \pi^2} \int dk~
    \frac{k^4}{2 m^{*}}
    \left\{ 1+\exp\left[\left(\frac{k^2}{2 m^{*}}-
-   \bar{\nu}_{\mathrm{NR}}\right)/T\right] \right\}^{-1}
-   = \frac{g}{2 \pi^2} \int dk~
+   \bar{\nu}_{\mathrm{NR}}\right)/T\right] \right\}^{-1} \\
+   &=& \frac{g}{2 \pi^2} \int dk~
    \frac{k^4}{2 m^{*}} 
    \left\{ 1+\exp\left[\left(\frac{k^2}{2 m^{*}}-
    \nu_{\mathrm{NR}}+m\right)/T\right] \right\}^{-1}
@@ -97,32 +128,6 @@ which is now a function of :math:`\psi_{\mathrm{NR}}` and
 in :ref:`fermion_nonrel_tl <fermion_nonrel_tl>` and the definition of
 :math:`\psi_{\mathrm{NR}}` used for nonrelativistic fermions in \ref
 :cpp:func:`o2scl::part_calibrate_class::part_calibrate()`.
-
-Fermion integrations
---------------------
-
-(Slowly moving the documentation from fermion_rel
-and fermion_deriv_rel to this location.)
-
-In many cases, the non-interacting expressions for fermion
-thermodynamics can be used in interacting systems as long as one
-replaces the mass with an effective mass, :math:`m^{*}` and the
-chemical potential with an effective chemical potential, :math:`\nu` .
-In the case where :math:`\nu` includes the rest mass (still denoted
-:math:`m`), the fermionic distribution function is
-
-.. math::
-
-   f = \frac{1}{1+e^{(\sqrt{k^2+m^{* 2}}-\nu)/T}}
-   \quad ; \quad
-   f = \frac{1}{1+e^{(\sqrt{k^2+m^{* 2}}-\nu-m)/T}}
-
-where the left expression is used when the chemical potential includes
-the rest mass and the energy density includes the rest mass energy
-density, (:cpp:var:`o2scl::part_tl::inc_rest_mass` is ``true``) and
-the right expression is used when the rest mass is not included
-(:cpp:var:`o2scl::part_tl::inc_rest_mass` is ``false``). For
-convenience, we define :math:`E^{*} \equiv \sqrt{k^2+m^{* 2}}`.
 
 Upper limits
 ------------
@@ -412,7 +417,11 @@ Using :math:`h(k)=k^2 (E^{*}-\nu)^2/T^3`
    \left(\frac{d s}{d T}\right)_{\mu} = 
    \frac{g}{2 \pi^2} \int_0^{\infty} \frac{f(E^{*}-\nu)}{E^{*}T^2} 
    \left[E^{* 3}+3 E^{*} k^2- (E^{* 2}+k^2)\nu\right] d k
-   \quad ; \quad
+
+and
+
+.. math::
+   
    \left(\frac{d s}{d T}\right)_{\mu} = 
    \frac{g}{2 \pi^2} \int_0^{\infty} \frac{f(E^{*}-m-\nu)}{E^{*}T^2} 
    \left[E^{* 3}+3 E^{*} k^2- (E^{* 2}+k^2)(\nu+m)\right] d k
@@ -445,7 +454,7 @@ Using :math:`h(k)=-(k^2 m^{*})/(E^{*} T)` we get
    \f]
    (end comment)
     
-Expansions for Fermions
+Expansions for fermions
 -----------------------
 
 Presuming the chemical potential includes the rest mass,
@@ -602,7 +611,7 @@ These expansions are used in
 :cpp:func:`o2scl::fermion_thermo_tl::calc_mu_deg()` and
 :cpp:func:`o2scl::fermion_deriv_thermo_tl::calc_mu_deg()`.
 
-Nondegenerate Expansion
+Nondegenerate expansion
 -----------------------
 
 There is a useful identity ([Chandrasekhar10]_ and [Tooper69]_)

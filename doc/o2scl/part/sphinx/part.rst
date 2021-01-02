@@ -3,15 +3,18 @@ Particles
     
 :ref:`O2scl_part <o2sclp>`
 
-These classes in the library O\ :sub:`2`\ scl_part calculate the
-thermodynamic properties of interacting and non-interacting
-quantum and \classical particles.
+The classes in the library O\ :sub:`2`\ scl_part described below
+calculate the thermodynamic properties of interacting and
+non-interacting quantum and \classical particles.
 
 Particle data classes
 ---------------------
 
 The class :cpp:class:`o2scl::part_tl` is the basic structure for
-a particle:
+a particle. The classes with a ``_tl`` suffix are templates which
+can handle a variety of floating point types. Typedefs without
+a ``_tl`` suffix specialize these templates for the floating
+point type ``double``. 
 
 - :cpp:var:`o2scl::part_tl::m` - mass (i.e. rest mass), :math:`m`
 - :cpp:var:`o2scl::part_tl::g` - degeneracy factor (e.g. :math:`g=2j+1`)
@@ -146,7 +149,7 @@ in the classical limit.
 
 At finite temperature, there are different classes corresponding to
 different approaches to computing the integrals over the distribution
-functions. The approximation scheme from Johns96 is used in
+functions. The approximation scheme from [Johns96]_ is used in
 :cpp:class:`o2scl::boson_eff` and :cpp:class:`o2scl::fermion_eff`. An
 exact method employing direct integration of the distribution
 functions is used in :cpp:class:`o2scl::boson_rel` and
@@ -162,6 +165,8 @@ in some more extreme cases. The default settings for
 :math:`10^6` (and frequently better than this). For 
 :cpp:class:`o2scl::fermion_rel_tl`, the accuracy can be improved to 1 part in
 :math:`10^{10}` by decreasing the integration tolerances.
+
+See :ref:`Fermion Integrals` for more discussion on the fermion integrals.
 
 The class :cpp:class:`o2scl::fermion_nonrel_tl` assumes a non-relativistic
 dispersion relation for fermions. It uses an exact method for both
@@ -218,7 +223,7 @@ to the chemical potential, there is a Maxwell relation
    
    \left(\frac{\partial s}{\partial \mu}\right)_{T,V} =
    \left(\frac{\partial^2 P}{\partial \mu \partial T}\right)_{V} =
-   \left(\frac{\partial^2 P}{\partial T \partial \mu}\right)_{T,V} =
+   \left(\frac{\partial^2 P}{\partial T \partial \mu}\right)_{V} =
    \left(\frac{\partial n}{\partial T}\right)_{\mu,V}
 
 The first derivatives of the energy density can be computed using

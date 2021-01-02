@@ -45,7 +45,8 @@ Bibliography
    <https://doi.org/10.1103/PhysRevC.52.R23>`_,
    Phys. Rev. C **52** (1995) 23.
 
-.. [Eggleton73] : P. P. Eggleton, J. Faulkner, and B. P. Flannery,
+.. [Eggleton73] : `P. P. Eggleton, J. Faulkner, and B. P. Flannery
+   <https://ui.adsabs.harvard.edu/abs/1973A%26A....23..325E/abstract>`_,
    Astron. Astrophys. **23** (1973) 325.
 
 .. [Goriely02] : `S. Goriely, M. Samyn, P.-H. Heenen, J. M. Pearson, and F. Tondeur
@@ -67,7 +68,8 @@ Bibliography
    <https://doi.org/10.1016/S0375-9474(00)00155-X>`_,
    Nucl. Phys. A **674** (2000) 47.
 
-.. [Koura05] : H. Koura, T. Tachibana, M. Uno, and M. Yamada,
+.. [Koura05] : `H. Koura, T. Tachibana, M. Uno, and M. Yamada
+   <https://doi.org/10.1143/PTP.113.305>`_,
    Prog. Theor. Phys. **113** (2005) 305.
 
 .. [Landau80] : L. D. Landau and E. M. Lifshitz,

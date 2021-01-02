@@ -15,7 +15,7 @@ nuclei, `O2scl_part <../part/html/index.html>`_ and equations of state
 of dense matter, `O2scl_eos <../eos/html/index.html>`_ .
 
 Gallery
--------
+=======
 
 .. |fptr| image:: ../../../examples/plot/ex_fptr_plot.png
 		  
@@ -33,7 +33,7 @@ Gallery
    |fptr|,|anneal|,|ode|,|nucprof|,|nucmass|
 
 User's Guide
-------------
+============
    
 .. toctree::
    :maxdepth: 1

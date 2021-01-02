@@ -12,8 +12,11 @@ designed to work with :ref:`O2scl <o2scl>`. It includes
 - Theoretical nuclear mass models and mass formulas
 - Containers holding distributions of nuclei
 
+User's Guide
+============
+  
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    part
    fermion
@@ -31,4 +34,4 @@ Test sphinx references
 ----------------------
 
 Test reference: :ref:`root <o2scl:root>` .
-    
+
