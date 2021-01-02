@@ -34,7 +34,7 @@ RUN make o2scl-test
 RUN make o2scl-examples
 
 # Python3, and o2sclpy via pip
-RUN apt-get install python3 python3-pip
+RUN apt-get install python3 python3-pip texlive dvipng
 RUN pip3 install o2sclpy
 RUN o2graph -help
 
