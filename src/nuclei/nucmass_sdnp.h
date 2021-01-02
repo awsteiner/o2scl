@@ -50,8 +50,10 @@ namespace o2scl {
       - "sd_skp_04" - from Skyrme model SkP
       - "sd_sly4_04" - from Skyrme model SLy4
 
-      See \ref Stoitsov03 and \ref Dobaczewski04 and
+      \verbatim embed:rst
+      See [Stoitsov03]_ and [Dobaczewski04]_ and
       http://www.fuw.edu.pl/~dobaczew/thodri/thodri.html .
+      \endverbatim
   */
   class nucmass_sdnp : public nucmass_table {
     

@@ -95,7 +95,7 @@ namespace o2scl {
 
       <b>Surface energy contribution</b>
 
-      The surface energy density is (\ref Ravenhall83)
+      The surface energy density is (Ravenhall et al. (1983))
       \f[
       \varepsilon = \frac{\chi d \sigma}{R}
       \f]
@@ -120,9 +120,13 @@ namespace o2scl {
       \f$ n_L = 0.16~\mathrm{fm}^{-3} \f$, gives the standard result,
       \f$ E_{\mathrm{surf}}/A = 18~\mathrm{MeV}~A^{-1/3} \f$. 
 
+      \verbatim embed:rst
+      See also [Ravenhall83]_.
+      \endverbatim
+
       <b>Coulomb energy contribution</b>
 
-      The Coulomb energy density (\ref Ravenhall83) is
+      The Coulomb energy density (Ravenhall et al. (1983)) is
       \f[
       \varepsilon_{\mathrm{Coul}} = \frac{4 \pi}{5} n_p^2 e^2 R_p^2
       \f]
@@ -361,7 +365,7 @@ namespace o2scl {
 
       <b>Coulomb energy</b>
 
-      The Coulomb energy density (\ref Ravenhall83) is
+      The Coulomb energy density (see also Ravenhall et al. (1983)) is
       \f[
       \varepsilon = 2 \pi e^2 R_p^2 n_p^2 f_d(\chi_p)
       \f]

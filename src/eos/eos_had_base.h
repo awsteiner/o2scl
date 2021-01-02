@@ -77,7 +77,7 @@ namespace o2scl {
       + \frac{Q_4}{3!} \epsilon^3 \right) \qquad
       \left(\mathrm{Eq.}~2\right)
       \f]
-      (Adapted slightly from \ref Piekarewicz et al. (2009)). 
+      (Adapted slightly from Piekarewicz et al. (2009)). 
       From this, one can
       compute the energy density of nuclear matter \f$
       \varepsilon(n_B,\delta) = n_B E(n_B,\delta) \f$, the chemical
@@ -336,7 +336,7 @@ namespace o2scl {
     virtual ~eos_had_base() {};
 
     /** \brief Binding energy (without the rest mass) in 
-	\f$ \mathrm{fm}^{-1} \f$
+        \f$ \mathrm{fm}^{-1} \f$
     */
     double eoa;
 
@@ -356,7 +356,7 @@ namespace o2scl {
     double kprime;
     
     /** \brief If true, call the error handler if msolve() or
-	msolve_de() does not converge (default true)
+        msolve_de() does not converge (default true)
     */
     bool err_nonconv;
 
@@ -374,121 +374,121 @@ namespace o2scl {
     /// \name EOS properties
     //@{
     /** \brief Calculate the incompressibility in \f$ \mathrm{fm}^{-1} \f$ 
-	using calc_e()
+        using calc_e()
 
-	This function computes \f$ K (n_B,\delta) = 9 n_B \partial^2
-	\varepsilon /(\partial n_B^2) = 9 \partial P / (\partial n_B)
-	\f$ . The value of \f$ K(n_0,0) \f$, often referred to as the
-	"compressibility", is stored in \ref comp by \ref saturation() 
-	and is about 240 MeV at saturation density.
+        This function computes \f$ K (n_B,\delta) = 9 n_B \partial^2
+        \varepsilon /(\partial n_B^2) = 9 \partial P / (\partial n_B)
+        \f$ . The value of \f$ K(n_0,0) \f$, often referred to as the
+        "compressibility", is stored in \ref comp by \ref saturation() 
+        and is about 240 MeV at saturation density.
     */
     virtual double fcomp(double nb, double delta=0.0);
 
     /** \brief Compute the incompressibility and its uncertainty
 
-	This function works like \ref fcomp(), except that it also
-	returns the uncertainty in \c unc. 
+        This function works like \ref fcomp(), except that it also
+        returns the uncertainty in \c unc. 
     */
     virtual double fcomp_err(double nb, double delta, double &unc);
 
     /** \brief Calculate the energy per baryon in \f$ \mathrm{fm}^{-1} \f$ 
-	using calc_e()
+        using calc_e()
 
-	This function computes the energy per baryon of matter 
-	without the nucleon rest masses at the specified baryon
-	density, \c nb, and isospin asymmetry \c delta. 
+        This function computes the energy per baryon of matter 
+        without the nucleon rest masses at the specified baryon
+        density, \c nb, and isospin asymmetry \c delta. 
     */
     virtual double feoa(double nb, double delta=0.0);
 
     /** \brief Calculate symmetry energy of matter in 
-	\f$ \mathrm{fm}^{-1} \f$ using \ref calc_dmu_delta() .
+        \f$ \mathrm{fm}^{-1} \f$ using \ref calc_dmu_delta() .
 
-	This function computes the symmetry energy,
-	\f[
-	\left(\frac{1}{2 n_B}\frac{d^2 \varepsilon}{d \delta^2}
-	\right) = \frac{1}{4} \frac{\partial}{\partial \delta}
-	\left(\mu_n - \mu_p \right)
-	\f]
-	at the value of \f$ n_B \f$ given in \c nb and \f$ \delta \f$
-	given in \c delta. The symmetry energy at \f$ \delta=0 \f$ at
-	the saturation density and is stored in \ref esym by 
-	\ref saturation().
+        This function computes the symmetry energy,
+        \f[
+        \left(\frac{1}{2 n_B}\frac{d^2 \varepsilon}{d \delta^2}
+        \right) = \frac{1}{4} \frac{\partial}{\partial \delta}
+        \left(\mu_n - \mu_p \right)
+        \f]
+        at the value of \f$ n_B \f$ given in \c nb and \f$ \delta \f$
+        given in \c delta. The symmetry energy at \f$ \delta=0 \f$ at
+        the saturation density and is stored in \ref esym by 
+        \ref saturation().
     */
     virtual double fesym(double nb, double delta=0.0);
 
     /** \brief Calculate symmetry energy of matter and its
-	uncertainty in \f$ \mathrm{fm}^{-1} \f$ 
+        uncertainty in \f$ \mathrm{fm}^{-1} \f$ 
 
-	This estimates the uncertainty due to the numerical
-	differentiation, assuming that difference betwen the neutron
-	and proton chemical potentials is computed exactly by \ref
-	calc_dmu_delta() .
+        This estimates the uncertainty due to the numerical
+        differentiation, assuming that difference betwen the neutron
+        and proton chemical potentials is computed exactly by \ref
+        calc_dmu_delta() .
     */
     virtual double fesym_err(double nb, double delta, double &unc);
     
     /** \brief The symmetry energy slope parameter
-	in \f$ \mathrm{fm}^{-1} \f$ 
-	
-	This returns the value of the "slope parameter" of the
-	symmetry energy as a function of baryon density \c nb and
-	isospin asymmetry \c delta. This ranges between about zero and
-	200 MeV for most equations of state.
+        in \f$ \mathrm{fm}^{-1} \f$ 
+        
+        This returns the value of the "slope parameter" of the
+        symmetry energy as a function of baryon density \c nb and
+        isospin asymmetry \c delta. This ranges between about zero and
+        200 MeV for most equations of state.
     */
     virtual double fesym_slope(double nb, double delta=0.0);
 
     /** \brief The curvature of the symmetry energy
-	in \f$ \mathrm{fm}^{-1} \f$ 
+        in \f$ \mathrm{fm}^{-1} \f$ 
     */
     virtual double fesym_curve(double nb, double delta=0.0);
 
     /** \brief The skewness of the symmetry energy
-	in \f$ \mathrm{fm}^{-1} \f$ 
+        in \f$ \mathrm{fm}^{-1} \f$ 
     */
     virtual double fesym_skew(double nb, double delta=0.0);
 
     /** \brief Calculate symmetry energy of matter as energy of 
-	neutron matter minus the energy of nuclear matter 
-	in \f$ \mathrm{fm}^{-1} \f$ 
+        neutron matter minus the energy of nuclear matter 
+        in \f$ \mathrm{fm}^{-1} \f$ 
 
-	This function returns the energy per baryon of neutron matter
-	minus the energy per baryon of nuclear matter. This will
-	deviate significantly from the results from fesym() only if
-	the dependence of the symmetry energy on \f$ \delta \f$ is not
-	quadratic.
+        This function returns the energy per baryon of neutron matter
+        minus the energy per baryon of nuclear matter. This will
+        deviate significantly from the results from fesym() only if
+        the dependence of the symmetry energy on \f$ \delta \f$ is not
+        quadratic.
     */
     virtual double fesym_diff(double nb);
 
     /** \brief The strength parameter for quartic terms in the 
-	symmetry energy
+        symmetry energy
     */
     virtual double feta(double nb);
 
     /** \brief The derivative of the strength parameter for quartic
-	terms in the symmetry energy
+        terms in the symmetry energy
     */
     virtual double feta_prime(double nb);
 
     /** \brief Calculate skewness of nuclear matter 
-	in \f$ \mathrm{fm}^{-1} \f$ using calc_e()
+        in \f$ \mathrm{fm}^{-1} \f$ using calc_e()
 
-	The skewness is defined to be 
-	\f$ 27 n^3 d^3 (\varepsilon/n)/(d n^3) = 
-	27 n^3 d^2 (P/n^2) / (d n^2) \f$ 
-	and is denoted 'kprime'. This definition seems to be ambiguous
-	for densities other than the saturation density and is not
-	quite analogous to the compression modulus.
+        The skewness is defined to be 
+        \f$ 27 n^3 d^3 (\varepsilon/n)/(d n^3) = 
+        27 n^3 d^2 (P/n^2) / (d n^2) \f$ 
+        and is denoted 'kprime'. This definition seems to be ambiguous
+        for densities other than the saturation density and is not
+        quite analogous to the compression modulus.
     */
     virtual double fkprime(double nb, double delta=0.0);
 
     /** \brief Calculate reduced neutron effective mass using calc_e()
 
-	Neutron effective mass (as stored in <tt>part::ms</tt>)
-	divided by vacuum mass (as stored in <tt>part::m</tt>) in
-	nuclear matter at saturation density. Note that this simply
-	uses the value of n.ms from calc_e(), so that this effective
-	mass could be either the Landau or Dirac mass depending on the
-	context. Note that this may not be equal to the reduced proton
-	effective mass.
+        Neutron effective mass (as stored in <tt>part::ms</tt>)
+        divided by vacuum mass (as stored in <tt>part::m</tt>) in
+        nuclear matter at saturation density. Note that this simply
+        uses the value of n.ms from calc_e(), so that this effective
+        mass could be either the Landau or Dirac mass depending on the
+        context. Note that this may not be equal to the reduced proton
+        effective mass.
     */
     virtual double fmsom(double nb, double delta=0.0);
 
@@ -506,92 +506,92 @@ namespace o2scl {
         See e.g. [Farine01]_.
         \endverbatim
 
-	Given the reduced nucleon effective masses, \f$ m_n^{*} \f$
-	and \f$ m_p^{*} \f$, the scalar and vector effective masses
-	are defined by
-	\f[
-	\frac{1}{m^{*}_n} = (1+\delta) \frac{1}{m^{*}_s} - 
-	\delta \frac{1}{m^{*}_v}
-	\f]
-	\f[
-	\frac{1}{m^{*}_p} = (1-\delta) \frac{1}{m^{*}_s} + 
-	\delta \frac{1}{m^{*}_v}
-	\f]
-	this implies
-	\f[
-	m_{\mathrm{scalar}}^{*} = 
-	\frac{2 m^{*}_n m^{*}_p}{m^{*}_n+m^{*}_p}
-	\f]
-	and 
-	\f[
-	m_{\mathrm{vector}}^{*} = 
-	\frac{2 m^{*}_n m^{*}_p \delta}{m^{*}_n - m^{*}_p
-	+ \delta(m^{*}_n + m^{*}_p)}
-	\f]
+        Given the reduced nucleon effective masses, \f$ m_n^{*} \f$
+        and \f$ m_p^{*} \f$, the scalar and vector effective masses
+        are defined by
+        \f[
+        \frac{1}{m^{*}_n} = (1+\delta) \frac{1}{m^{*}_s} - 
+        \delta \frac{1}{m^{*}_v}
+        \f]
+        \f[
+        \frac{1}{m^{*}_p} = (1-\delta) \frac{1}{m^{*}_s} + 
+        \delta \frac{1}{m^{*}_v}
+        \f]
+        this implies
+        \f[
+        m_{\mathrm{scalar}}^{*} = 
+        \frac{2 m^{*}_n m^{*}_p}{m^{*}_n+m^{*}_p}
+        \f]
+        and 
+        \f[
+        m_{\mathrm{vector}}^{*} = 
+        \frac{2 m^{*}_n m^{*}_p \delta}{m^{*}_n - m^{*}_p
+        + \delta(m^{*}_n + m^{*}_p)}
+        \f]
     */
     virtual double f_effm_scalar(double nb, double delta=0.0);
     
     /** \brief Vector effective mass
-	
-	See documentation for \ref eos_had_base::f_effm_scalar().
+        
+        See documentation for \ref eos_had_base::f_effm_scalar().
 
-	Note that the vector effective mass diverges when \f$ m^{*}_n
-	= m^{*}_p \f$ and \f$ \delta = 0 \f$, but many models have
-	vector effective masses which are independent of \f$ \delta
-	\f$. For now, we set \f$ \delta =1 \f$ to be the default
-	value, corresponding to neutron matter. 
+        Note that the vector effective mass diverges when \f$ m^{*}_n
+        = m^{*}_p \f$ and \f$ \delta = 0 \f$, but many models have
+        vector effective masses which are independent of \f$ \delta
+        \f$. For now, we set \f$ \delta =1 \f$ to be the default
+        value, corresponding to neutron matter. 
     */
     virtual double f_effm_vector(double nb, double delta=1.0);
 
     /** \brief Calculate saturation density using calc_e()
 
-	This function finds the baryon density for which the pressure 
-	vanishes. 
+        This function finds the baryon density for which the pressure 
+        vanishes. 
     */
     virtual double fn0(double delta, double &leoa);
 
     /** \brief Compute (numerically) the number susceptibilities as a
-	function of the chemical potentials, \f$ \partial^2 P /
-	\partial \mu_i \mu_j \f$
+        function of the chemical potentials, \f$ \partial^2 P /
+        \partial \mu_i \mu_j \f$
 
-	\verbatim embed:rst
-	.. todo:: 
+        \verbatim embed:rst
+        .. todo:: 
 
-	   - This function, eos_had_base::f_number_suscept(), should
-	     be overloaded for Skyrme with derivatives
+           - This function, eos_had_base::f_number_suscept(), should
+             be overloaded for Skyrme with derivatives
 
-	\endverbatim
+        \endverbatim
     */
     virtual void f_number_suscept(double mun, double mup, double &dPdnn, 
-				  double &dPdnp, double &dPdpp);
+                                  double &dPdnp, double &dPdpp);
 
     /** \brief Compute (numerically) the 'inverse' number
-	susceptibilities as a function of the densities, \f$
-	\partial^2 \varepsilon / \partial n_i n_j \f$
+        susceptibilities as a function of the densities, \f$
+        \partial^2 \varepsilon / \partial n_i n_j \f$
 
-	\verbatim embed:rst
-	.. todo:: 
+        \verbatim embed:rst
+        .. todo:: 
 
-	   - This function, eos_had_base::f_inv_number_suscept(),
-	     should be overloaded for Skyrme with derivatives
+           - This function, eos_had_base::f_inv_number_suscept(),
+             should be overloaded for Skyrme with derivatives
 
-	\endverbatim
+        \endverbatim
     */
     virtual void f_inv_number_suscept(double mun, double mup, double &dednn, 
-				      double &dednp, double &dedpp);
+                                      double &dednp, double &dedpp);
     
     /** \brief Calculates some of the EOS properties at the saturation 
-	density
-	
-	This computes the saturation density, and the
-	incompressibility, the symmetry energy, the binding energy,
-	the reduced neutron effective mass at the saturation density,
-	and the skewness in isospin-symmetric matter. The results are
-	stored in \ref n0, \ref comp, \ref esym, \ref eoa, \ref msom,
-	and \ref kprime, respectively.
+        density
+        
+        This computes the saturation density, and the
+        incompressibility, the symmetry energy, the binding energy,
+        the reduced neutron effective mass at the saturation density,
+        and the skewness in isospin-symmetric matter. The results are
+        stored in \ref n0, \ref comp, \ref esym, \ref eoa, \ref msom,
+        and \ref kprime, respectively.
 
-	\future It would be great to provide numerical uncertainties
-	in the saturation properties.
+        \future It would be great to provide numerical uncertainties
+        in the saturation properties.
     */
     virtual int saturation();
     //@}
@@ -599,100 +599,100 @@ namespace o2scl {
     /// \name Functions for calculating physical properties
     //@{
     /** \brief Compute the neutron chemical potential at fixed
-	density
-	
-	This function uses \ref neutron, \ref proton, \ref
-	eos_base::eos_thermo, and \ref calc_e() .
+        density
+        
+        This function uses \ref neutron, \ref proton, \ref
+        eos_base::eos_thermo, and \ref calc_e() .
     */
     double calc_mun_e(double nn, double np);
 
     /** \brief Compute the energy density as a function of the nucleon
-	densities
+        densities
     */
     double calc_ed(double nn, double np);
 
     /** \brief Compute the pressure as a function of the nucleon
-	chemical potentials
+        chemical potentials
     */
     double calc_pr(double nn, double np);
 
     /** \brief Compute the proton chemical potential at fixed
-	density
+        density
 
-	This function uses \ref neutron, \ref proton, \ref
-	eos_base::eos_thermo, and \ref calc_e() .
+        This function uses \ref neutron, \ref proton, \ref
+        eos_base::eos_thermo, and \ref calc_e() .
     */
     double calc_mup_e(double nn, double np);
 
     /** \brief Compute the neutron density at fixed
-	chemical potential
-	
-	This function uses \ref neutron, \ref proton, \ref
-	eos_base::eos_thermo, and \ref calc_e() .
+        chemical potential
+        
+        This function uses \ref neutron, \ref proton, \ref
+        eos_base::eos_thermo, and \ref calc_e() .
     */
     double calc_nn_p(double mun, double mup);
 
     /** \brief Compute the proton density at fixed
-	chemical potential
+        chemical potential
 
-	This function uses \ref neutron, \ref proton, \ref
-	eos_base::eos_thermo, and \ref calc_e() .
+        This function uses \ref neutron, \ref proton, \ref
+        eos_base::eos_thermo, and \ref calc_e() .
     */
     double calc_np_p(double mun, double mup);
 
     /** \brief Compute the difference between neutron and proton chemical
-	potentials as a function of the isospin asymmetry
+        potentials as a function of the isospin asymmetry
 
-	This function uses \ref neutron, \ref proton, \ref
-	eos_base::eos_thermo, and \ref calc_e() .
+        This function uses \ref neutron, \ref proton, \ref
+        eos_base::eos_thermo, and \ref calc_e() .
     */
     double calc_dmu_delta(double delta, double nb);
     
     /** \brief Compute the sum of the neutron and proton chemical
-	potentials as a function of the isospin asymmetry
+        potentials as a function of the isospin asymmetry
 
-	This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
-	and \ref calc_e() .
+        This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
+        and \ref calc_e() .
     */
     double calc_musum_delta(double delta, double nb);
 
     /** \brief Compute the pressure as a function of baryon density
-	at fixed isospin asymmetry
+        at fixed isospin asymmetry
 
         Used by fcomp().
     */
     double calc_pressure_nb(double nb, double delta=0.0);
 
     /** \brief Compute the energy density as a function of baryon density
-	at fixed isospin asymmetry
+        at fixed isospin asymmetry
 
-	This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
-	and \ref calc_e() .
+        This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
+        and \ref calc_e() .
     */
     double calc_edensity_nb(double nb, double delta=0.0);
 
     /** \brief Compute derivatives at constant proton fraction
      */
     void const_pf_derivs(double nb, double pf, 
-			 double &dednb_pf, double &dPdnb_pf);
+                         double &dednb_pf, double &dPdnb_pf);
 
     /** \brief Calculate pressure / baryon density squared in nuclear
-	matter as a function of baryon density at fixed isospin asymmetry
-	
-	Used by fkprime().
+        matter as a function of baryon density at fixed isospin asymmetry
+        
+        Used by fkprime().
 
-	This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
-	and \ref calc_e() .
+        This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
+        and \ref calc_e() .
     */
     double calc_press_over_den2(double nb, double delta=0.0);
 
     /** \brief Calculate energy density as a function of the
-	isospin asymmetry at fixed baryon density
+        isospin asymmetry at fixed baryon density
 
         Used by fesym().
 
-	This function calls \ref eos_had_base::calc_e() with the
-	internally stored neutron and proton objects.
+        This function calls \ref eos_had_base::calc_e() with the
+        internally stored neutron and proton objects.
     */
     double calc_edensity_delta(double delta, double nb);
     //@}
@@ -701,55 +701,55 @@ namespace o2scl {
     //@{
     /** \brief Solve for the chemical potentials given the densities
 
-	The neutron and proton chemical potentials should be stored in
-	<tt>x[0]</tt> and <tt>x[1]</tt> and the neutron and proton
-	densities should be stored in <tt>pa[0]</tt> and
-	<tt>pa[1]</tt>.
+        The neutron and proton chemical potentials should be stored in
+        <tt>x[0]</tt> and <tt>x[1]</tt> and the neutron and proton
+        densities should be stored in <tt>pa[0]</tt> and
+        <tt>pa[1]</tt>.
 
-	Because this function is designed to be used in a solver,
-	it returns <tt>exc_efailed</tt> without calling the error 
-	handler if the densities are not finite.
+        Because this function is designed to be used in a solver,
+        it returns <tt>exc_efailed</tt> without calling the error 
+        handler if the densities are not finite.
 
-	This function is used by \ref eos_had_pres_base::calc_e().
+        This function is used by \ref eos_had_pres_base::calc_e().
     */
     int nuc_matter_p(size_t nv, const ubvector &x, ubvector &y, 
-		     double nn0, double np0);
+                     double nn0, double np0);
     
     /** \brief Solve for the densities given the chemical potentials
 
-	The neutron and proton densities should be stored in
-	<tt>x[0]</tt> and <tt>x[1]</tt> and the neutron and proton
-	chemical potentials should be stored in <tt>pa[0]</tt> and
-	<tt>pa[1]</tt>.
+        The neutron and proton densities should be stored in
+        <tt>x[0]</tt> and <tt>x[1]</tt> and the neutron and proton
+        chemical potentials should be stored in <tt>pa[0]</tt> and
+        <tt>pa[1]</tt>.
 
-	Because this function is designed to be used in a solver,
-	it returns <tt>exc_efailed</tt> without calling the error 
-	handler if the chemical potentials are not finite.
+        Because this function is designed to be used in a solver,
+        it returns <tt>exc_efailed</tt> without calling the error 
+        handler if the chemical potentials are not finite.
 
-	This function is used by \ref eos_had_eden_base::calc_p().
+        This function is used by \ref eos_had_eden_base::calc_p().
     */
     int nuc_matter_e(size_t nv, const ubvector &x, ubvector &y, 
-		     double mun0, double mup0);
+                     double mun0, double mup0);
     //@}
 
     /// \name Set auxilliary objects
     //@{
     /** \brief Set class mroot object for use in calculating chemical
-	potentials from densities 
+        potentials from densities 
 
-	\note While in principle this allows one to use any \ref mroot
-	object, in practice some of the current EOSs require \ref
-	mroot_hybrids because it automatically avoids regions
-	where the equations are undefined.
+        \note While in principle this allows one to use any \ref mroot
+        object, in practice some of the current EOSs require \ref
+        mroot_hybrids because it automatically avoids regions
+        where the equations are undefined.
     */
     virtual void set_mroot(mroot<> &mr);
     
     /** \brief Set class mroot object for use calculating saturation density
 
-	\note While in principle this allows one to use any \ref mroot
-	object, in practice some of the current EOSs require \ref
-	mroot_hybrids because it automatically avoids regions
-	where the equations are undefined.
+        \note While in principle this allows one to use any \ref mroot
+        object, in practice some of the current EOSs require \ref
+        mroot_hybrids because it automatically avoids regions
+        where the equations are undefined.
     */
     virtual void set_sat_root(root<> &mr);
     
@@ -757,13 +757,13 @@ namespace o2scl {
     virtual void set_sat_deriv(deriv_base<> &de);
 
     /** \brief Set the second \ref deriv_base object to use to find
-	saturation properties
+        saturation properties
 
-	Computing the slope of the symmetry energy at the saturation
-	density requires two derivative objects, because it has to
-	take an isospin derivative and a density derivative. Thus this
-	second \ref deriv_base object is used in the function
-	fesym_slope().
+        Computing the slope of the symmetry energy at the saturation
+        density requires two derivative objects, because it has to
+        take an isospin derivative and a density derivative. Thus this
+        second \ref deriv_base object is used in the function
+        fesym_slope().
     */
     virtual void set_sat_deriv2(deriv_base<> &de);
     
@@ -773,48 +773,48 @@ namespace o2scl {
 
     /** \brief The defaut neutron
 
-	By default this has a spin degeneracy of 2 and a mass of \ref
-	o2scl_mks::mass_neutron . Also the value of 
-	<tt>part::non_interacting</tt> is set to <tt>false</tt>.
+        By default this has a spin degeneracy of 2 and a mass of \ref
+        o2scl_mks::mass_neutron . Also the value of 
+        <tt>part::non_interacting</tt> is set to <tt>false</tt>.
     */
     fermion def_neutron;
 
     /** \brief The defaut proton
 
-	By default this has a spin degeneracy of 2 and a mass of \ref
-	o2scl_mks::mass_proton . Also the value of 
-	<tt>part::non_interacting</tt> is set to <tt>false</tt>.
+        By default this has a spin degeneracy of 2 and a mass of \ref
+        o2scl_mks::mass_proton . Also the value of 
+        <tt>part::non_interacting</tt> is set to <tt>false</tt>.
     */
     fermion def_proton;
 
     /// \name Default solvers and derivative classes
     //@{
     /** \brief The default object for derivatives
-	
-	The value of deriv_gsl::h is set to \f$ 10^{-3} \f$ in 
-	the eos_had_base constructor.
+        
+        The value of deriv_gsl::h is set to \f$ 10^{-3} \f$ in 
+        the eos_had_base constructor.
     */
     deriv_gsl<> def_deriv;
     
     /** \brief The second default object for derivatives
-	
-	The value of deriv_gsl::h is set to \f$ 10^{-3} \f$ in 
-	the eos_had_base constructor.
+        
+        The value of deriv_gsl::h is set to \f$ 10^{-3} \f$ in 
+        the eos_had_base constructor.
     */
     deriv_gsl<> def_deriv2;
 
     /** \brief The default solver
 
-	Used by calc_e() to solve nuc_matter_p() (2 variables) and by
-	calc_p() to solve nuc_matter_e() (2 variables).
+        Used by calc_e() to solve nuc_matter_p() (2 variables) and by
+        calc_p() to solve nuc_matter_e() (2 variables).
     */
     mroot_hybrids<> def_mroot;
     
     /** \brief The default solver for calculating the saturation 
-	density
+        density
 
-	Used by fn0() (which is called by saturation()) to solve
-	saturation_matter_e() (1 variable).
+        Used by fn0() (which is called by saturation()) to solve
+        saturation_matter_e() (1 variable).
     */
     root_cern<> def_sat_root;
     //@}
@@ -823,98 +823,98 @@ namespace o2scl {
     //@{
     /** \brief Calculate coefficients for \gradient \part of Hamiltonian
 
-	\note This is still somewhat experimental.
+        \note This is still somewhat experimental.
 
-	We want the \gradient \part of the Hamiltonian in the form
-	\f[
-	{\cal H}_{\mathrm{grad}} = \frac{1}{2} \sum_{i=n,p}
-	\sum_{j=n,p} Q_{ij}
-	\vec{\nabla} n_i \cdot \vec{\nabla} n_j
-	\f]
+        We want the \gradient \part of the Hamiltonian in the form
+        \f[
+        {\cal H}_{\mathrm{grad}} = \frac{1}{2} \sum_{i=n,p}
+        \sum_{j=n,p} Q_{ij}
+        \vec{\nabla} n_i \cdot \vec{\nabla} n_j
+        \f]
 
         \verbatim embed:rst
         See e.g. [Pethick95]_.
         \endverbatim
 
-	The expression for the \gradient terms from Pethick et al. 
+        The expression for the \gradient terms from Pethick et al. 
         (1995) is 
-	\f{eqnarray*}
-	{\cal H}_{\mathrm{grad}}&=&-\frac{1}{4}
-	\left(2 P_1 + P_{1;f}-P_{2;f}\right) 
-	\nonumber \\
-	&& +\frac{1}{2} \left( Q_1+Q_2 \right) 
-	\left(n_n \nabla^2 n_n+n_p \nabla^2 n_p\right) \nonumber \\
-	&& + \frac{1}{4}\left( Q_1-Q_2 \right) 
-	\left[\left(\nabla n_n\right)^2+\left(\nabla n_p\right)^2
-	\right] \nonumber \\
-	&& + \frac{1}{2} \frac{d Q_2}{d n} 
-	\left( n_n \nabla n_n + n_p \nabla n_p \right) \cdot \nabla n
-	\f}
-	This can be rewritten
-	\f{eqnarray*}
-	{\cal H}_{\mathrm{grad}}&=&\frac{1}{2}\left(\nabla n\right)^2
-	\left[ \frac{3}{2} P_1+n \frac{d P_1}{d n}\right] \nonumber \\
-	&& - \frac{3}{4} \left[ \left( \nabla n_n\right)^2 + 
-	\left( \nabla n_p \right)^2 \right] \nonumber \\
-	&& -\frac{1}{2} \left[ \right] \cdot \nabla n \frac{d Q_1}{d n}
-	\nonumber \\ && - \frac{1}{4} \left( \nabla n\right)^2 P_2
-	- \frac{1}{4} \left[ \left( \nabla n_n\right)^2 +
-	\left( \nabla n_p \right)^2 \right] Q_2
-	\f}
-	or
-	\f{eqnarray*}
-	{\cal H}_{\mathrm{grad}}&=&\frac{1}{4} \left( \nabla n\right)^2
-	\left[3 P_1 + 2 n \frac{d P_1}{d n}-P_2\right] \nonumber \\
-	&& - \frac{1}{4} \left( 3 Q_1+Q_2 \right)
-	\left[ \left( \nabla n_n\right)^2 + 
-	\left( \nabla n_p \right)^2 \right] \nonumber \\
-	&& - \frac{1}{2} \frac{d Q_1}{d n}
-	\left[ n_n \nabla n_n + n_p \nabla n_p \right]
-	\cdot \nabla n 
-	\f}
-	or
-	\f{eqnarray*}
-	{\cal H}_{\mathrm{grad}}&=&\frac{1}{4} \left( \nabla n\right)^2
-	\left[3 P_1 + 2 n \frac{d P_1}{d n}-P_2\right] \nonumber \\
-	&& - \frac{1}{4} \left( 3 Q_1+Q_2 \right)
-	\left[ \left( \nabla n_n\right)^2 + 
-	\left( \nabla n_p \right)^2 \right] \nonumber \\
-	&& - \frac{1}{2} \frac{d Q_1}{d n}
-	\left[ n_n \left( \nabla n_n \right)^2 +
-	n_p \left( \nabla n_p \right)^2 + n \nabla n_n \cdot
-	\nabla n_p \right]
-	\f}
+        \f{eqnarray*}
+        {\cal H}_{\mathrm{grad}}&=&-\frac{1}{4}
+        \left(2 P_1 + P_{1;f}-P_{2;f}\right) 
+        \nonumber \\
+        && +\frac{1}{2} \left( Q_1+Q_2 \right) 
+        \left(n_n \nabla^2 n_n+n_p \nabla^2 n_p\right) \nonumber \\
+        && + \frac{1}{4}\left( Q_1-Q_2 \right) 
+        \left[\left(\nabla n_n\right)^2+\left(\nabla n_p\right)^2
+        \right] \nonumber \\
+        && + \frac{1}{2} \frac{d Q_2}{d n} 
+        \left( n_n \nabla n_n + n_p \nabla n_p \right) \cdot \nabla n
+        \f}
+        This can be rewritten
+        \f{eqnarray*}
+        {\cal H}_{\mathrm{grad}}&=&\frac{1}{2}\left(\nabla n\right)^2
+        \left[ \frac{3}{2} P_1+n \frac{d P_1}{d n}\right] \nonumber \\
+        && - \frac{3}{4} \left[ \left( \nabla n_n\right)^2 + 
+        \left( \nabla n_p \right)^2 \right] \nonumber \\
+        && -\frac{1}{2} \left[ \right] \cdot \nabla n \frac{d Q_1}{d n}
+        \nonumber \\ && - \frac{1}{4} \left( \nabla n\right)^2 P_2
+        - \frac{1}{4} \left[ \left( \nabla n_n\right)^2 +
+        \left( \nabla n_p \right)^2 \right] Q_2
+        \f}
+        or
+        \f{eqnarray*}
+        {\cal H}_{\mathrm{grad}}&=&\frac{1}{4} \left( \nabla n\right)^2
+        \left[3 P_1 + 2 n \frac{d P_1}{d n}-P_2\right] \nonumber \\
+        && - \frac{1}{4} \left( 3 Q_1+Q_2 \right)
+        \left[ \left( \nabla n_n\right)^2 + 
+        \left( \nabla n_p \right)^2 \right] \nonumber \\
+        && - \frac{1}{2} \frac{d Q_1}{d n}
+        \left[ n_n \nabla n_n + n_p \nabla n_p \right]
+        \cdot \nabla n 
+        \f}
+        or
+        \f{eqnarray*}
+        {\cal H}_{\mathrm{grad}}&=&\frac{1}{4} \left( \nabla n\right)^2
+        \left[3 P_1 + 2 n \frac{d P_1}{d n}-P_2\right] \nonumber \\
+        && - \frac{1}{4} \left( 3 Q_1+Q_2 \right)
+        \left[ \left( \nabla n_n\right)^2 + 
+        \left( \nabla n_p \right)^2 \right] \nonumber \\
+        && - \frac{1}{2} \frac{d Q_1}{d n}
+        \left[ n_n \left( \nabla n_n \right)^2 +
+        n_p \left( \nabla n_p \right)^2 + n \nabla n_n \cdot
+        \nabla n_p \right]
+        \f}
 
-	Generally, for Skyrme-like interactions
-	\f{eqnarray*}
-	P_i &=& \frac{1}{4} t_i \left(1+\frac{1}{2} x_i \right) \nonumber \\
-	Q_i &=& \frac{1}{4} t_i \left(\frac{1}{2} + x_i \right) \, .
-	\f}
-	for \f$ i=1,2 \f$ .
+        Generally, for Skyrme-like interactions
+        \f{eqnarray*}
+        P_i &=& \frac{1}{4} t_i \left(1+\frac{1}{2} x_i \right) \nonumber \\
+        Q_i &=& \frac{1}{4} t_i \left(\frac{1}{2} + x_i \right) \, .
+        \f}
+        for \f$ i=1,2 \f$ .
 
-	This function uses the assumption \f$ x_1=x_2=0 \f$ to 
-	calculate \f$ t_1 \f$ and \f$ t_2 \f$ from the neutron
-	and proton effective masses assuming the Skyrme form. The
-	values of \f$ Q_{ij} \f$ and their derivatives are then computed.
+        This function uses the assumption \f$ x_1=x_2=0 \f$ to 
+        calculate \f$ t_1 \f$ and \f$ t_2 \f$ from the neutron
+        and proton effective masses assuming the Skyrme form. The
+        values of \f$ Q_{ij} \f$ and their derivatives are then computed.
 
-	The functions set_n_and_p() and set_thermo() will be called by
-	gradient_qij(), to facilitate the use of the \c n, \c p, and
-	\c th parameters.
+        The functions set_n_and_p() and set_thermo() will be called by
+        gradient_qij(), to facilitate the use of the \c n, \c p, and
+        \c th parameters.
        
     */
     void gradient_qij(fermion &n, fermion &p, thermo &th, 
-		      double &qnn, double &qnp, double &qpp, 
-		      double &dqnndnn, double &dqnndnp,
-		      double &dqnpdnn, double &dqnpdnp,
-		      double &dqppdnn, double &dqppdnp);
+                      double &qnn, double &qnp, double &qpp, 
+                      double &dqnndnn, double &dqnndnp,
+                      double &dqnpdnn, double &dqnpdnp,
+                      double &dqppdnn, double &dqppdnp);
 
     /** \brief Compute the EOS in beta-equilibrium at 
-	zero temperature
+        zero temperature
     */
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
-			   fermion &e, bool include_muons,
-			   fermion &mu, fermion_rel &frel,
-			   std::shared_ptr<table_units<> > results);
+                           fermion &e, bool include_muons,
+                           fermion &mu, fermion_rel &frel,
+                           std::shared_ptr<table_units<> > results);
     
     /// Return string denoting type ("eos_had_base")
     virtual const char *type() { return "eos_had_base"; }
@@ -923,18 +923,18 @@ namespace o2scl {
     /// \name Consistency checks
     //@{
     /** \brief Check the chemical potentials by computing the 
-	derivatives numerically
+        derivatives numerically
     */
     void check_mu(fermion &n, fermion &p, thermo &th,
-		  double &mun_deriv, double &mup_deriv,
-		  double &mun_err, double &mup_err);
+                  double &mun_deriv, double &mup_deriv,
+                  double &mun_err, double &mup_err);
 
     /** \brief Check the densities by computing the 
-	derivatives numerically
+        derivatives numerically
     */
     void check_den(fermion &n, fermion &p, thermo &th,
-		   double &nn_deriv, double &np_deriv,
-		   double &nn_err, double &np_err);
+                   double &nn_deriv, double &np_deriv,
+                   double &nn_err, double &np_err);
     //@}
 
 #ifndef DOXYGEN_INTERNAL
@@ -971,9 +971,9 @@ namespace o2scl {
     /** \brief Equation for solving for beta-equilibrium at T=0
      */
     virtual int solve_beta_eq_T0(size_t nv, const ubvector &x,
-				 ubvector &y, const double &nB,
-				 fermion &e, bool include_muons,
-				 fermion &mu, fermion_rel &frel);
+                                 ubvector &y, const double &nB,
+                                 fermion &e, bool include_muons,
+                                 fermion &mu, fermion_rel &frel);
     
 #endif
     
@@ -1021,44 +1021,44 @@ namespace o2scl {
 
     /// Solve for nuclear matter at finite temperature given density
     int nuc_matter_temp_e(size_t nv, const ubvector &x, 
-			  ubvector &y, double nn0, double np0, double T);
+                          ubvector &y, double nn0, double np0, double T);
     
     /// Solve for nuclear matter at finite temperature given mu
     int nuc_matter_temp_p(size_t nv, const ubvector &x, 
-			  ubvector &y, double mun0, double mup0, double T);
+                          ubvector &y, double mun0, double mup0, double T);
     
     /** \brief Solve for the liquid gas phase transition as 
-	a function of the densities
+        a function of the densities
     */
     int liqgas_dens_solve(size_t nv, const ubvector &x, 
-			  ubvector &y, fermion &n1, fermion &p1,
-			  fermion &n2, fermion &p2, double T,
-			  thermo &th1, thermo &th2);
+                          ubvector &y, fermion &n1, fermion &p1,
+                          fermion &n2, fermion &p2, double T,
+                          thermo &th1, thermo &th2);
 
     /** \brief Solve for the liquid-gas phase transition at fixed
-	baryon density and electron fraction
+        baryon density and electron fraction
     */
     int liqgas_solve(size_t nv, const ubvector &x, 
-		     ubvector &y, fermion &n1, fermion &p1,
-		     fermion &n2, fermion &p2, double nB0,
-		     double Ye0, double T, 
-		     thermo &th1, thermo &th2);
+                     ubvector &y, fermion &n1, fermion &p1,
+                     fermion &n2, fermion &p2, double nB0,
+                     double Ye0, double T, 
+                     thermo &th1, thermo &th2);
     
     /** \brief Solve for the liquid-gas phase transition in 
-	beta-equilibrium
+        beta-equilibrium
     */
     int liqgas_beta_solve(size_t nv, const ubvector &x, 
-			  ubvector &y, fermion &n1, fermion &p1,
-			  fermion &n2, fermion &p2, 
-			  double nB0, double T, 
-			  thermo &th1, thermo &th2, fermion &e);
+                          ubvector &y, fermion &n1, fermion &p1,
+                          fermion &n2, fermion &p2, 
+                          double nB0, double T, 
+                          thermo &th1, thermo &th2, fermion &e);
 
     /** \brief Compute the entropy
      */
     double calc_entropy_delta(double delta, double nb, double T);
 
     /** \brief Compute the difference between the neutron and 
-	proton chemical potentials
+        proton chemical potentials
     */
     double calc_dmu_delta_T(double delta, double nb, double T);
 
@@ -1079,26 +1079,26 @@ namespace o2scl {
     virtual int calc_e(fermion &n, fermion &p, thermo &th)=0;
     
     /** \brief Equation of state as a function of densities at 
-	finite temperature
+        finite temperature
     */
     virtual int calc_temp_e(fermion &n, fermion &p, double T, 
-			    thermo &th)=0;
+                            thermo &th)=0;
 
     /** \brief Equation of state as a function of the chemical potentials
      */
     virtual int calc_p(fermion &n, fermion &p, thermo &th)=0;
 
     /** \brief Equation of state as a function of the chemical potentials
-	at finite temperature
+        at finite temperature
     */
     virtual int calc_temp_p(fermion &n, fermion &p, double T, 
-			    thermo &th)=0;
+                            thermo &th)=0;
     //@}
 
     /// \name Computing finite-temperature integrals
     //@{
     /** \brief Set the object for computing finite-temperature fermions
-	(default is \ref def_fet)
+        (default is \ref def_fet)
     */
     virtual void set_fermion_thermo(fermion_thermo &f) {
       fet=&f;
@@ -1111,28 +1111,28 @@ namespace o2scl {
     /// \name Liquid-gas transition functions
     //@{
     /** \brief Compute liquid-gas phase transition densities using
-	\ref eos_had_temp_base::calc_temp_e() .
+        \ref eos_had_temp_base::calc_temp_e() .
 
-	At fixed baryon number density for \c n1, this determines the
-	baryon number densities for \c p1, \c n2, and \c p2 which give
-	chemical and mechanical equilibrium at a fixed temperature 
-	\c T. The thermodynamic quantities assuming bulk matter for
-	each set is stored in \c th1 and \c th2.
+        At fixed baryon number density for \c n1, this determines the
+        baryon number densities for \c p1, \c n2, and \c p2 which give
+        chemical and mechanical equilibrium at a fixed temperature 
+        \c T. The thermodynamic quantities assuming bulk matter for
+        each set is stored in \c th1 and \c th2.
     */
     virtual int calc_liqgas_dens_temp_e
     (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
      double T, thermo &th1, thermo &th2);
 
     /** \brief Compute the liquid-gas phase transition using
-	\ref eos_had_temp_base::calc_temp_e() .
+        \ref eos_had_temp_base::calc_temp_e() .
 
-	At fixed baryon number density, \c nB, fixed electron
-	fraction, \c Ye, and fixed temperature, \c T, this function
-	determines the baryon number densities for \c n1, \c p1, \c
-	n2, and \c p2 which give chemical and mechanical equilibrium.
-	The thermodynamic quantities assuming bulk matter for each set
-	is stored in \c th1 and \c th2, and the volume fraction of
-	phase 1 is stored in \c chi.
+        At fixed baryon number density, \c nB, fixed electron
+        fraction, \c Ye, and fixed temperature, \c T, this function
+        determines the baryon number densities for \c n1, \c p1, \c
+        n2, and \c p2 which give chemical and mechanical equilibrium.
+        The thermodynamic quantities assuming bulk matter for each set
+        is stored in \c th1 and \c th2, and the volume fraction of
+        phase 1 is stored in \c chi.
     */
     virtual int calc_liqgas_temp_e
     (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
@@ -1140,16 +1140,16 @@ namespace o2scl {
      double &chi);
 
     /** \brief Compute the liquid-gas phase transition in
-	beta-equilibrium using \ref eos_had_temp_base::calc_temp_e() .
+        beta-equilibrium using \ref eos_had_temp_base::calc_temp_e() .
 
-	At fixed baryon number density, \c nB, and fixed temperature,
-	\c T, this function determines the baryon number densities for
-	\c n1, \c p1, \c n2, and \c p2 which give chemical and
-	mechanical equilibrium assuming beta-equilibrium with
-	electrons. The thermodynamic quantities assuming bulk matter
-	for each set is stored in \c th1 and \c th2, the electron
-	fraction is stored in \c Ye, and the volume fraction of phase
-	1 is stored in \c chi.
+        At fixed baryon number density, \c nB, and fixed temperature,
+        \c T, this function determines the baryon number densities for
+        \c n1, \c p1, \c n2, and \c p2 which give chemical and
+        mechanical equilibrium assuming beta-equilibrium with
+        electrons. The thermodynamic quantities assuming bulk matter
+        for each set is stored in \c th1 and \c th2, the electron
+        fraction is stored in \c Ye, and the volume fraction of phase
+        1 is stored in \c chi.
     */
     virtual int calc_liqgas_beta_temp_e
     (fermion &n1, fermion &p1, fermion &n2, fermion &p2,
@@ -1180,7 +1180,7 @@ namespace o2scl {
     virtual double calc_temp_np_p(double mun, double mup, double T);
 
     /** \brief Compute the free energy as a function of the temperature
-	and the densities
+        and the densities
     */
     double calc_fr(double nn, double np, double T);
     //@}
@@ -1188,16 +1188,16 @@ namespace o2scl {
     /// \name Susceptibilities
     //@{
     /** \brief Compute the number susceptibilities as a function of
-	the chemical potentials, \f$ \partial^2 P / \partial \mu_i
-	\mu_j \f$ at a fixed temperature
+        the chemical potentials, \f$ \partial^2 P / \partial \mu_i
+        \mu_j \f$ at a fixed temperature
     */
     virtual void f_number_suscept_T
     (double mun, double mup, double T, double &dPdnn, 
      double &dPdnp, double &dPdpp);
 
     /** \brief Compute the 'inverse' number susceptibilities as a
-	function of the densities, \f$ \partial^2 \varepsilon /
-	\partial n_i n_j \f$ at a fixed temperature
+        function of the densities, \f$ \partial^2 \varepsilon /
+        \partial n_i n_j \f$ at a fixed temperature
     */
     virtual void f_inv_number_suscept_T
     (double mun, double mup, double T, double &dednn, 
@@ -1207,17 +1207,17 @@ namespace o2scl {
     /// \name Consistency check
     //@{
     /** \brief Check the entropy by computing the 
-	derivative numerically
+        derivative numerically
     */
     void check_en(fermion &n, fermion &p, double T, thermo &th,
-		  double &en_deriv, double &en_err);
+                  double &en_deriv, double &en_err);
 
     /** \brief Check the chemical potentials at finite temperature 
-	by computing the derivative numerically
+        by computing the derivative numerically
     */
     void check_mu_T(fermion &n, fermion &p, double T, thermo &th,
-		    double &mun_deriv, double &mup_deriv, 
-		    double &mun_err, double &mup_err);
+                    double &mun_deriv, double &mup_deriv, 
+                    double &mun_err, double &mup_err);
     //@}
     
   };
@@ -1237,20 +1237,20 @@ namespace o2scl {
     virtual int calc_e(fermion &n, fermion &p, thermo &th)=0;
     
     /** \brief Equation of state as a function of densities at 
-	finite temperature
+        finite temperature
     */
     virtual int calc_temp_e(fermion &n, fermion &p, double T, 
-			    thermo &th)=0;
+                            thermo &th)=0;
 
     /** \brief Equation of state as a function of the chemical potentials
      */
     virtual int calc_p(fermion &n, fermion &p, thermo &th);
 
     /** \brief Equation of state as a function of the chemical potentials
-	at finite temperature
+        at finite temperature
     */
     virtual int calc_temp_p(fermion &n, fermion &p, double T, 
-			    thermo &th);
+                            thermo &th);
     
   };
 
@@ -1270,20 +1270,20 @@ namespace o2scl {
     virtual int calc_p(fermion &n, fermion &p, thermo &th)=0;
 
     /** \brief Equation of state as a function of the chemical potentials
-	at finite temperature
+        at finite temperature
     */
     virtual int calc_temp_p(fermion &n, fermion &p, double T, 
-			    thermo &th)=0;
+                            thermo &th)=0;
     
     /** \brief Equation of state as a function of density
      */
     virtual int calc_e(fermion &n, fermion &p, thermo &th);
 
     /** \brief Equation of state as a function of densities at 
-	finite temperature
+        finite temperature
     */
     virtual int calc_temp_e(fermion &n, fermion &p, double T, 
-			    thermo &th);
+                            thermo &th);
   };
   
 #ifndef DOXYGEN_NO_O2NS

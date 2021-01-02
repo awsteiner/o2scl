@@ -49,10 +49,14 @@ namespace o2scl {
     
     /** \brief Mass formula entry structure for KTUY mass formula
 	
-	Nuclear masses from \ref Koura00 and \ref Koura05
-	as originally specified in the files <tt>KTUY04_m246.dat</tt>
-	and <tt>KTUY05_m246.dat</tt> obtained from
-	http://wwwndc.jaea.go.jp/nucldata/mass/KTUY04_E.html
+	Nuclear masses from Koura et al. (2000) and Koura et al.
+	(2005) as originally specified in the files
+	<tt>KTUY04_m246.dat</tt> and <tt>KTUY05_m246.dat</tt> obtained
+	from http://wwwndc.jaea.go.jp/nucldata/mass/KTUY04_E.html
+        
+        \verbatim embed:rst
+        See [Koura00]_ and [Koura05]_.
+        \endverbatim
     */
     struct entry {
     

@@ -40,9 +40,9 @@ namespace o2scl {
   /** \brief Baym-Pethick-Sutherland equation of state
     
       This calculates the equation of state of electrons and nuclei
-      using the approach of \ref Baym71tg (based on the discussion in
-      \ref Shapiro83) between about \f$8 \times 10^{6}
-      ~\mathrm{g}/\mathrm{cm}^3\f$ and \f$4.3 \times 10^{11}
+      using the approach of Baym et al. (1971; based on the discussion
+      in Shapiro and Teukolsky (1983)) between about \f$8 \times
+      10^{6} ~\mathrm{g}/\mathrm{cm}^3\f$ and \f$4.3 \times 10^{11}
       ~\mathrm{g}/\mathrm{cm}^3\f$. Below these densities, more
       complex Coulomb corrections need to be considered, and above
       these densities, neutron drip is important.

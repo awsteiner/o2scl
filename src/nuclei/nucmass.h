@@ -150,7 +150,9 @@ namespace o2scl {
   
   /** \brief Nuclear mass formula base [abstract base]
 
-      (See also the discussion in \ref nuclei_section.)
+      \verbatim embed:rst
+      (See also the discussion in :ref:`Nuclei and nuclear masses`.)
+      \endverbatim
 
       This is abstract base class for the nuclear mass formulas. Some
       mass formulas are undefined for sufficiently exotic nuclei. You
@@ -455,8 +457,10 @@ namespace o2scl {
       \note The default parameters are arbitrary, and are not
       determined from a fit.
 
+      \verbatim embed:rst
       There is an example of the usage of this class given in 
-      \ref ex_nucmass_fit_sect.
+      the :ref:`Nuclear mass fit example`.
+      \endverbatim
   */
   class nucmass_semi_empirical : public nucmass_fit_base {
 
@@ -503,8 +507,10 @@ namespace o2scl {
   /** \brief An approximation of shell effects in nuclei based on
       the interacting boson model
 
-      Shell effects from \ref Dieperink09 based on the interacting
-      boson model, with corrections as suggested by \ref Duflo95. 
+      \verbatim embed:rst
+      Shell effects from [Dieperink09]_ based on the interacting
+      boson model, with corrections as suggested by [Duflo95]_. 
+      \endverbatim
 
       The default shell correction coefficients -1.39, 0.02, 0.03, and
       0.075 (all in MeV), respectively.

@@ -323,24 +323,24 @@ namespace o2scl {
   public:
     
     int check_derivs(double &dPds, double &dPdw, double &dPdr,
-		     fermion &ne, fermion &pr,
-		     double sig, double ome, double lrho);
+                     fermion &ne, fermion &pr,
+                     double sig, double ome, double lrho);
     
     /// \name Other data members
     //@{
     /** \brief The number of separate calls to the solver 
-	that the <tt>calc_e</tt> functions take (default 20)
+        that the <tt>calc_e</tt> functions take (default 20)
 
-	Values larger than about \f$ 10^4 \f$ are probably
-	not useful. 
+        Values larger than about \f$ 10^4 \f$ are probably
+        not useful. 
     */
     size_t calc_e_steps;
 
     /** \brief If true, solve for relative densities rather than 
-	absolute densities (default false)
+        absolute densities (default false)
 
-	Setting this to true makes \ref calc_temp_e() and \ref
-	calc_e() more accurate at low densities. 
+        Setting this to true makes \ref calc_temp_e() and \ref
+        calc_e() more accurate at low densities. 
     */
     bool calc_e_relative;
 
@@ -349,17 +349,17 @@ namespace o2scl {
     
     /** \brief Verbosity parameter
 
-	If this is greater than zero, then some functions report
-	on their progress.
-	- The function \ref saturation() reports progress towards
-	computing the properties of nuclear matter near saturation.
-	- The functions \ref calc_e() and \ref calc_temp_e() report
-	progress on solving for matter at a fixed density.
+        If this is greater than zero, then some functions report
+        on their progress.
+        - The function \ref saturation() reports progress towards
+        computing the properties of nuclear matter near saturation.
+        - The functions \ref calc_e() and \ref calc_temp_e() report
+        progress on solving for matter at a fixed density.
      */
     int verbose;
 
     /** \brief If true, throw exceptions when the function calc_e()
-	does not converge (default true)
+        does not converge (default true)
     */
     bool err_nonconv;
     //@}
@@ -367,9 +367,9 @@ namespace o2scl {
     /// \name Masses
     //@{
     /** \brief The scale \f$ M \f$
-	
-	This need not be exactly equal to the neutron or proton mass, 
-	but provides the scale for the coupling \c b.
+        
+        This need not be exactly equal to the neutron or proton mass, 
+        but provides the scale for the coupling \c b.
     */
     double mnuc;
 
@@ -402,23 +402,23 @@ namespace o2scl {
     eos_had_rmf();
 
     /* \brief Load parameters for model named 'model'
-	
-	Presently accepted values from file rmfdata/model_list:
-	\include rmfdata/model_list
-	
-	In these files, the nucleon and meson masses are by default
-	specified in MeV, and cs, cw, and cr are given in fm. The
-	parameters b and c are both unitless. If the bool 'oakstyle' is
-	true, then load() assumes that gs, gw, and gr have been given
-	where gs and gw are as usual, but gr is a factor of two smaller
-	than usual, and g2 and g3 have been given where g2 = -b M gs^3
-	and g3 = c gs^4. If tokistyle is true, then it is additionally
-	assumed that c3 is given where c3=zeta/6*gw^4.
-	
-	If \c external is true, then model is the filename (relative
-	to the current directory) of the file containing the model
-	parameters. Otherwise, the model is assumed to be present in
-	the \o2 library data directory.
+        
+        Presently accepted values from file rmfdata/model_list:
+        \include rmfdata/model_list
+        
+        In these files, the nucleon and meson masses are by default
+        specified in MeV, and cs, cw, and cr are given in fm. The
+        parameters b and c are both unitless. If the bool 'oakstyle' is
+        true, then load() assumes that gs, gw, and gr have been given
+        where gs and gw are as usual, but gr is a factor of two smaller
+        than usual, and g2 and g3 have been given where g2 = -b M gs^3
+        and g3 = c gs^4. If tokistyle is true, then it is additionally
+        assumed that c3 is given where c3=zeta/6*gw^4.
+        
+        If \c external is true, then model is the filename (relative
+        to the current directory) of the file containing the model
+        parameters. Otherwise, the model is assumed to be present in
+        the \o2 library data directory.
     */
     //int load(std::string model, bool external=false);
 
@@ -426,178 +426,178 @@ namespace o2scl {
     //@{
     /** \brief Equation of state as a function of density
 
-	Initial guesses for the chemical potentials are taken
-	from the user-given values. Initial guesses for the fields
-	can be set by set_fields(), or default values will be used.
-	After the call to calc_e(), the final values of the fields
-	can be accessed through get_fields(). 
+        Initial guesses for the chemical potentials are taken
+        from the user-given values. Initial guesses for the fields
+        can be set by set_fields(), or default values will be used.
+        After the call to calc_e(), the final values of the fields
+        can be accessed through get_fields(). 
 
-	This is a little more robust than the standard version
-	in the parent \ref eos_had_base.
-	
-	\future Improve the operation of this function when the
-	proton density is zero.
+        This is a little more robust than the standard version
+        in the parent \ref eos_had_base.
+        
+        \future Improve the operation of this function when the
+        proton density is zero.
     */
     virtual int calc_e(fermion &ne, fermion &pr, thermo &lth);
   
     /**  \brief Equation of state as a function of chemical potential
-	 
-	 Solves for the field equations automatically.
-	 
-	 \future It may be possible to make the solver for the
-	 field equations more robust
+         
+         Solves for the field equations automatically.
+         
+         \future It may be possible to make the solver for the
+         field equations more robust
     */
     virtual int calc_p(fermion &ne, fermion &pr, thermo &lth);
 
     /** \brief Equation of state and meson field equations 
-	as a function of chemical potentials
+        as a function of chemical potentials
       
-	This calculates the pressure and energy density as a function of
-	\f$ \mu_n,\mu_p,\sigma,\omega,rho \f$ . When the field equations
-	have been solved, \c f1, \c f2, and \c f3 are all zero. 
-	
-	The thermodynamic identity is satisfied even when the field
-	equations are not solved.
+        This calculates the pressure and energy density as a function of
+        \f$ \mu_n,\mu_p,\sigma,\omega,rho \f$ . When the field equations
+        have been solved, \c f1, \c f2, and \c f3 are all zero. 
+        
+        The thermodynamic identity is satisfied even when the field
+        equations are not solved.
 
-	\future Probably best to have f1, f2, and f3 scaled
-	in some sensible way, i.e. scaled to the fields?
+        \future Probably best to have f1, f2, and f3 scaled
+        in some sensible way, i.e. scaled to the fields?
     */
     virtual int calc_eq_p(fermion &neu, fermion &p, double sig, 
-			  double ome, double rho, double &f1, 
-			  double &f2, double &f3, thermo &th);
+                          double ome, double rho, double &f1, 
+                          double &f2, double &f3, thermo &th);
 
     /** \brief Equation of state and meson field equations as a 
-	function of chemical potentials at finite temperature
+        function of chemical potentials at finite temperature
 
-	Analogous to \ref calc_eq_p() except at finite temperature.
+        Analogous to \ref calc_eq_p() except at finite temperature.
     */
     virtual int calc_eq_temp_p(fermion &ne, fermion &pr, double temper, 
-			       double sig, double ome, double rho, double &f1, 
-			       double &f2, double &f3, thermo &th);
+                               double sig, double ome, double rho, double &f1, 
+                               double &f2, double &f3, thermo &th);
     
     /** \brief Equation of state as a function of chemical potential
-	
-	Solves for the field equations automatically.
+        
+        Solves for the field equations automatically.
     */
     virtual int calc_temp_p(fermion &ne, fermion &pr, double T,
-			    thermo &lth);
+                            thermo &lth);
 
     /** \brief Equation of state as a function of densities at 
-	finite temperature
+        finite temperature
     */
     int calc_temp_e(fermion &ne, fermion &pr, double T, 
-		    thermo &lth);
+                    thermo &lth);
     //@}
 
     /// \name Saturation properties
     //@{
     /** \brief Calculate cs, cw, cr, b, and c from the saturation 
-	properties
+        properties
 
-	Note that the meson masses and \ref mnuc must be specified
-	before calling this function. The neutron and proton
-	masses must both be equal to \ref mnuc, and the 
-	neutron and proton objects must have
-	<tt>inc_rest_mass=false</tt>.
+        Note that the meson masses and \ref mnuc must be specified
+        before calling this function. The neutron and proton
+        masses must both be equal to \ref mnuc, and the 
+        neutron and proton objects must have
+        <tt>inc_rest_mass=false</tt>.
 
-	This function does not give correct results when bool zm_mode 
-	is true. 
-	
-	\c guess_cs, \c guess_cw, \c guess_b, and \c guess_c are
-	initial guesses for \c cs, \c cw, \c b, and \c c respectively.
-	
-	This function uses the solver \ref sat_mroot .
+        This function does not give correct results when bool zm_mode 
+        is true. 
+        
+        \c guess_cs, \c guess_cw, \c guess_b, and \c guess_c are
+        initial guesses for \c cs, \c cw, \c b, and \c c respectively.
+        
+        This function uses the solver \ref sat_mroot .
 
-	\todo 
-	- Fix this for zm_mode=true
-	- Ensure solver is more robust
-	
+        \todo 
+        - Fix this for zm_mode=true
+        - Ensure solver is more robust
+        
     */
     int fix_saturation(double guess_cs=4.0, double guess_cw=3.0, 
-		       double guess_b=0.001, double guess_c=-0.001);
+                       double guess_b=0.001, double guess_c=-0.001);
 
     /** \brief Calculate cs, cw, cr, b, and c from the saturation 
-	properties
+        properties
     */
     int fix_saturation2(double guess_cs=4.0, double guess_cw=3.0,
-			double guess_cr=3.0, double guess_b=0.001,
-			double guess_c=-0.001);
+                        double guess_cr=3.0, double guess_b=0.001,
+                        double guess_c=-0.001);
     
     /** \brief Calculate properties of nuclear matter at the
-	saturation density
+        saturation density
 
-	This function first constructs an initial guess, increasing
-	the chemical potentials if required to ensure the neutron and
-	proton densities are finite, and then uses \ref
-	eos_had_rmf::sat_mroot to solve the field equations and ensure
-	that the neutron and proton densities are equal and the
-	pressure is zero. The quantities \ref eos_had_base::n0, \ref
-	eos_had_base::eoa, and \ref eos_had_base::msom can be computed
-	directly, and the compressibility, the skewness, and the
-	symmetry energy are computed using the functions
-	fkprime_fields() and fesym_fields(). This function overrides
-	the generic version in \ref eos_had_base.
+        This function first constructs an initial guess, increasing
+        the chemical potentials if required to ensure the neutron and
+        proton densities are finite, and then uses \ref
+        eos_had_rmf::sat_mroot to solve the field equations and ensure
+        that the neutron and proton densities are equal and the
+        pressure is zero. The quantities \ref eos_had_base::n0, \ref
+        eos_had_base::eoa, and \ref eos_had_base::msom can be computed
+        directly, and the compressibility, the skewness, and the
+        symmetry energy are computed using the functions
+        fkprime_fields() and fesym_fields(). This function overrides
+        the generic version in \ref eos_had_base.
 
-	If \ref verbose is greater than zero, then then this function
-	reports details on the initial iterations to get the initial
-	guess for the solver.
+        If \ref verbose is greater than zero, then then this function
+        reports details on the initial iterations to get the initial
+        guess for the solver.
     */
     virtual int saturation();
   
     /** \brief Calculate symmetry energy assuming the field
-	equations have already been solved
-	
-	This may only work at saturation density and may assume
-	equal neutron and proton masses.
+        equations have already been solved
+        
+        This may only work at saturation density and may assume
+        equal neutron and proton masses.
     */
     double fesym_fields(double sig, double ome, double nb);
 
     /** \brief Calculate the compressibility assuming the field
-	equations have already been solved
-	
-	This may only work at saturation density and may assume
-	equal neutron and proton masses.
+        equations have already been solved
+        
+        This may only work at saturation density and may assume
+        equal neutron and proton masses.
     */
     double fcomp_fields(double sig, double ome, double nb);
 
     /** \brief Calculate compressibilty and \c kprime assuming the field
-	equations have already been solved
+        equations have already been solved
 
-	This may only work at saturation density and may assume
-	equal neutron and proton masses.
-	
-	\todo This function, \ref o2scl::eos_had_rmf::fkprime_fields() is
-	currently untested.
+        This may only work at saturation density and may assume
+        equal neutron and proton masses.
+        
+        \todo This function, \ref o2scl::eos_had_rmf::fkprime_fields() is
+        currently untested.
     */
     void fkprime_fields(double sig, double ome, double nb,
-		       double &k, double &kprime);
+                       double &k, double &kprime);
     //@}
 
     /// \name Fields and field equations
     //@{
     /** \brief A function for solving the field equations
 
-	The values <tt>x[0], x[1]</tt>, and <tt>x[2]</tt> should be
-	set to \f$ \sigma, \omega \f$ , and \f$ \rho \f$ on input (in
-	\f$ \mathrm{fm}^{-1} \f$ ) and on exit, <tt>y[0], y[1]</tt>
-	and <tt>y[2]</tt> contain the field equations and are zero
-	when the field equations have been solved.
+        The values <tt>x[0], x[1]</tt>, and <tt>x[2]</tt> should be
+        set to \f$ \sigma, \omega \f$ , and \f$ \rho \f$ on input (in
+        \f$ \mathrm{fm}^{-1} \f$ ) and on exit, <tt>y[0], y[1]</tt>
+        and <tt>y[2]</tt> contain the field equations and are zero
+        when the field equations have been solved.
     */
     int field_eqs(size_t nv, const ubvector &x, ubvector &y);
 
     /** \brief A function for solving the field equations at finite 
-	temperature
-	
-	The values <tt>x[0], x[1]</tt>, and <tt>x[2]</tt> should be
-	set to \f$ \sigma, \omega \f$ , and \f$ \rho \f$ on input (in
-	\f$ \mathrm{fm}^{-1} \f$ ) and on exit, <tt>y[0], y[1]</tt>
-	and <tt>y[2]</tt> contain the field equations and are zero
-	when the field equations have been solved.
+        temperature
+        
+        The values <tt>x[0], x[1]</tt>, and <tt>x[2]</tt> should be
+        set to \f$ \sigma, \omega \f$ , and \f$ \rho \f$ on input (in
+        \f$ \mathrm{fm}^{-1} \f$ ) and on exit, <tt>y[0], y[1]</tt>
+        and <tt>y[2]</tt> contain the field equations and are zero
+        when the field equations have been solved.
     */
     int field_eqsT(size_t nv, const ubvector &x, ubvector &y);
 
     /** \brief Set a guess for the fields for the next call to calc_e(), 
-	calc_p(), or saturation()
+        calc_p(), or saturation()
     */
     virtual int set_fields(double sig, double ome, double lrho) {
       sigma=sig;
@@ -608,10 +608,10 @@ namespace o2scl {
     }
 
     /** \brief Return the most recent values of the meson fields 
-	
-	This returns the most recent values of the meson fields set by
-	a call to \ref saturation(), \ref calc_e(), or 
-	\ref calc_p(fermion &, fermion &, thermo &).
+        
+        This returns the most recent values of the meson fields set by
+        a call to \ref saturation(), \ref calc_e(), or 
+        \ref calc_p(fermion &, fermion &, thermo &).
     */
     int get_fields(double &sig, double &ome, double &lrho) {
       sig=sigma;
@@ -634,10 +634,10 @@ namespace o2scl {
     }
 
     /** \brief The default solver for calculating the saturation 
-	density
-	
-	Used by fn0() (which is called by saturation()) to solve
-	saturation_matter_e() (1 variable).
+        density
+        
+        Used by fn0() (which is called by saturation()) to solve
+        saturation_matter_e() (1 variable).
     */
     mroot_hybrids<> def_sat_mroot;
     //@}
@@ -645,100 +645,100 @@ namespace o2scl {
     /// \name Functions dealing with naturalness
     //@{
         /** \brief Set the coefficients of a eos_had_rmf object to their 
-	limits from naturalness
+        limits from naturalness
 
         \verbatim embed:rst
         As given in [Muller96]_.
         \endverbatim
 
-	The definition of the vector-isovector field and coupling
-	matches what is done here. Compare the Lagrangian above
-	with Eq. 10 from the reference.
+        The definition of the vector-isovector field and coupling
+        matches what is done here. Compare the Lagrangian above
+        with Eq. 10 from the reference.
 
-	The following couplings should all be of the same
-	size:
-	\f[
-	\frac{1}{2 c_s^2 M^2}, \frac{1}{2 c_v^2 M^2} 
-	\frac{1}{8 c_{\rho}^2 M^2},~\mathrm{and}~\frac{
-	\bar{a}_{ijk} M^{i+2 j+2 k-4}}{2^{2 k}}
-	\f]
-	which are equivalent to 
-	\f[
-	\frac{m_s^2}{2 g_s^2 M^2}, \frac{m_v^2}{2 g_v^2 M^2} 
-	\frac{m_{\rho}^2}{8 g_{\rho}^2 M^2},~\mathrm{and}~\frac{
-	a_{ijk} M^{i+2 j+2 k-4}}{g_s^i g_v^{2 j} 
-	g_{\rho}^{2 k} 2^{2 k}}
-	\f]
-	
-	The connection the \f$ a_{ijk} \f$ 's and the coefficients 
-	that are used here is 
-	\f{eqnarray*}
-	\frac{b M}{3} g_{\sigma}^3 \sigma^3 &=& a_{300}~\sigma^3
-	\nonumber \\
-	\frac{c}{4} g_{\sigma}^4 \sigma^4 &=& a_{400}~\sigma^4
-	\nonumber \\
-	\frac{\zeta}{24} g_{\omega}^4 \omega^4 &=& a_{020}~\omega^4
-	\nonumber \\
-	\frac{\xi}{24} g_{\rho}^4 \rho^4 &=& a_{002}~\rho^4
-	\nonumber \\
-	b_1 g_{\rho}^2 \omega^2 \rho^2 &=& a_{011}~\omega^2 \rho^2 
-	\nonumber \\
-	b_2 g_{\rho}^2 \omega^4 \rho^2 &=& a_{021}~\omega^4 \rho^2 
-	\nonumber \\
-	b_3 g_{\rho}^2 \omega^6 \rho^2 &=& a_{031}~\omega^6 \rho^2 
-	\nonumber \\
-	a_1 g_{\rho}^2 \sigma^1 \rho^2 &=& a_{101}~\sigma^1 \rho^2 
-	\nonumber \\
-	a_2 g_{\rho}^2 \sigma^2 \rho^2 &=& a_{201}~\sigma^2 \rho^2 
-	\nonumber \\
-	a_3 g_{\rho}^2 \sigma^3 \rho^2 &=& a_{301}~\sigma^3 \rho^2 
-	\nonumber \\
-	a_4 g_{\rho}^2 \sigma^4 \rho^2 &=& a_{401}~\sigma^4 \rho^2 
-	\nonumber \\
-	a_5 g_{\rho}^2 \sigma^5 \rho^2 &=& a_{501}~\sigma^5 \rho^2 
-	\nonumber \\
-	a_6 g_{\rho}^2 \sigma^6 \rho^2 &=& a_{601}~\sigma^6 \rho^2 
-	\nonumber
-	\f}
+        The following couplings should all be of the same
+        size:
+        \f[
+        \frac{1}{2 c_s^2 M^2}, \frac{1}{2 c_v^2 M^2} 
+        \frac{1}{8 c_{\rho}^2 M^2},~\mathrm{and}~\frac{
+        \bar{a}_{ijk} M^{i+2 j+2 k-4}}{2^{2 k}}
+        \f]
+        which are equivalent to 
+        \f[
+        \frac{m_s^2}{2 g_s^2 M^2}, \frac{m_v^2}{2 g_v^2 M^2} 
+        \frac{m_{\rho}^2}{8 g_{\rho}^2 M^2},~\mathrm{and}~\frac{
+        a_{ijk} M^{i+2 j+2 k-4}}{g_s^i g_v^{2 j} 
+        g_{\rho}^{2 k} 2^{2 k}}
+        \f]
+        
+        The connection the \f$ a_{ijk} \f$ 's and the coefficients 
+        that are used here is 
+        \f{eqnarray*}
+        \frac{b M}{3} g_{\sigma}^3 \sigma^3 &=& a_{300}~\sigma^3
+        \nonumber \\
+        \frac{c}{4} g_{\sigma}^4 \sigma^4 &=& a_{400}~\sigma^4
+        \nonumber \\
+        \frac{\zeta}{24} g_{\omega}^4 \omega^4 &=& a_{020}~\omega^4
+        \nonumber \\
+        \frac{\xi}{24} g_{\rho}^4 \rho^4 &=& a_{002}~\rho^4
+        \nonumber \\
+        b_1 g_{\rho}^2 \omega^2 \rho^2 &=& a_{011}~\omega^2 \rho^2 
+        \nonumber \\
+        b_2 g_{\rho}^2 \omega^4 \rho^2 &=& a_{021}~\omega^4 \rho^2 
+        \nonumber \\
+        b_3 g_{\rho}^2 \omega^6 \rho^2 &=& a_{031}~\omega^6 \rho^2 
+        \nonumber \\
+        a_1 g_{\rho}^2 \sigma^1 \rho^2 &=& a_{101}~\sigma^1 \rho^2 
+        \nonumber \\
+        a_2 g_{\rho}^2 \sigma^2 \rho^2 &=& a_{201}~\sigma^2 \rho^2 
+        \nonumber \\
+        a_3 g_{\rho}^2 \sigma^3 \rho^2 &=& a_{301}~\sigma^3 \rho^2 
+        \nonumber \\
+        a_4 g_{\rho}^2 \sigma^4 \rho^2 &=& a_{401}~\sigma^4 \rho^2 
+        \nonumber \\
+        a_5 g_{\rho}^2 \sigma^5 \rho^2 &=& a_{501}~\sigma^5 \rho^2 
+        \nonumber \\
+        a_6 g_{\rho}^2 \sigma^6 \rho^2 &=& a_{601}~\sigma^6 \rho^2 
+        \nonumber
+        \f}
 
-	Note that Muller and Serot use the notation 
-	\f[
-	\frac{\bar{\kappa} g_s^3 }{2} = \frac{\kappa}{2} = b M 
-	g_s^3 \qquad \mathrm{and} \qquad
-	\frac{\bar{\lambda} g_s^4}{6} = \frac{\lambda}{6}
-	= c g_s^4
-	\f]
-	which differs slightly from the "standard" notation above.
+        Note that Muller and Serot use the notation 
+        \f[
+        \frac{\bar{\kappa} g_s^3 }{2} = \frac{\kappa}{2} = b M 
+        g_s^3 \qquad \mathrm{and} \qquad
+        \frac{\bar{\lambda} g_s^4}{6} = \frac{\lambda}{6}
+        = c g_s^4
+        \f]
+        which differs slightly from the "standard" notation above.
 
-	We need to compare the values of
-	\f{eqnarray*}
-	&\frac{m_s^2}{2 g_s^2 M^2}, \frac{m_v^2}{2 g_v^2 M^2} 
-	\frac{m_{\rho}^2}{8 g_{\rho}^2 M^2},\frac{b}{3},
-	\frac{c}{4}
-	&
-	\nonumber \\
-	&\frac{\zeta}{24}, \frac{\xi}{384},
-	\frac{b_1}{4 g_{\omega}^2},
-	\frac{b_2 M^2}{4 g_{\omega}^4},
-	\frac{b_3 M^4}{4 g_{\omega}^6},
-	\frac{a_1}{4 g_{\sigma} M},&
-	\nonumber \\
-	&\frac{a_2}{4 g_{\sigma}^2},
-	\frac{a_3 M}{4 g_{\sigma}^3},
-	\frac{a_4 M^2}{4 g_{\sigma}^4},
-	\frac{a_5 M^3}{4 g_{\sigma}^5},~\mathrm{and}~\frac{a_6 M^4}
-	{4 g_{\sigma}^6}\, .&
-	\f}
+        We need to compare the values of
+        \f{eqnarray*}
+        &\frac{m_s^2}{2 g_s^2 M^2}, \frac{m_v^2}{2 g_v^2 M^2} 
+        \frac{m_{\rho}^2}{8 g_{\rho}^2 M^2},\frac{b}{3},
+        \frac{c}{4}
+        &
+        \nonumber \\
+        &\frac{\zeta}{24}, \frac{\xi}{384},
+        \frac{b_1}{4 g_{\omega}^2},
+        \frac{b_2 M^2}{4 g_{\omega}^4},
+        \frac{b_3 M^4}{4 g_{\omega}^6},
+        \frac{a_1}{4 g_{\sigma} M},&
+        \nonumber \\
+        &\frac{a_2}{4 g_{\sigma}^2},
+        \frac{a_3 M}{4 g_{\sigma}^3},
+        \frac{a_4 M^2}{4 g_{\sigma}^4},
+        \frac{a_5 M^3}{4 g_{\sigma}^5},~\mathrm{and}~\frac{a_6 M^4}
+        {4 g_{\sigma}^6}\, .&
+        \f}
 
-	These values are stored in the variables cs, cw, cr, b, c,
-	zeta, xi, b1, etc. in the specified \ref eos_had_rmf object. All
-	of the numbers should be around 0.001 or 0.002.
+        These values are stored in the variables cs, cw, cr, b, c,
+        zeta, xi, b1, etc. in the specified \ref eos_had_rmf object. All
+        of the numbers should be around 0.001 or 0.002.
 
-	For the scale \f$ M \f$, \ref mnuc is used.
+        For the scale \f$ M \f$, \ref mnuc is used.
 
-	\todo I may have ignored some signs in the above, which are
-	unimportant for this application, but it would be good to fix
-	them for posterity.
+        \todo I may have ignored some signs in the above, which are
+        unimportant for this application, but it would be good to fix
+        them for posterity.
 
     */
     void check_naturalness(eos_had_rmf &re) {
@@ -771,12 +771,12 @@ namespace o2scl {
     }
     
     /** \brief Provide the maximum values of the couplings assuming
-	a limit on naturalness
+        a limit on naturalness
 
-	The limits for the couplings are function of the nucleon and
-	meson masses, except for the limits on \c b, \c c, \c zeta,
-	and \c xi which are independent of the masses because of the
-	way that these four couplings are defined.
+        The limits for the couplings are function of the nucleon and
+        meson masses, except for the limits on \c b, \c c, \c zeta,
+        and \c xi which are independent of the masses because of the
+        way that these four couplings are defined.
     */
     void naturalness_limits(double value, eos_had_rmf &re) {
       
@@ -818,7 +818,7 @@ namespace o2scl {
     
     /** \brief Temporary charge density 
 
-	\future Should use eos_had_base::proton_frac instead?
+        \future Should use eos_had_base::proton_frac instead?
     */
     double n_charge;
 
@@ -847,26 +847,26 @@ namespace o2scl {
 
     /// The function for fix_saturation2()
     int fix_saturation2_fun(size_t nv, const ubvector &x, 
-			    ubvector &y, double fix_n0,
-			    double fix_eoa, double fix_comp,
-			    double fix_esym, double fix_msom);
+                            ubvector &y, double fix_n0,
+                            double fix_eoa, double fix_comp,
+                            double fix_esym, double fix_msom);
     
     /// Compute matter at zero pressure (for saturation())
     virtual int zero_pressure(size_t nv, const ubvector &ex, 
-			      ubvector &ey);
+                              ubvector &ey);
 
     /// The function for calc_e()
     virtual int calc_e_solve_fun(size_t nv, const ubvector &ex, 
-				 ubvector &ey);
+                                 ubvector &ey);
 
     /// The function for calc_temp_e()
     virtual int calc_temp_e_solve_fun(size_t nv, const ubvector &ex, 
-				      ubvector &ey);
+                                      ubvector &ey);
 
     /** \brief Calculate the \c cr coupling given \c sig and \c ome 
-	at the density 'nb'.
-	
-	Used by fix_saturation().
+        at the density 'nb'.
+        
+        Used by fix_saturation().
     */
     int calc_cr(double sig, double ome, double nb);
 

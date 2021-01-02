@@ -44,8 +44,7 @@ namespace o2scl {
       The discussion below uses the notation of [Broderick00]_.
       \endverbatim
 
-      Using the notation of \ref Broderick00, the
-      effective mass of a fermion in a magnetic field is 
+      The effective mass of a fermion in a magnetic field is 
       \f[
       \tilde{m}^2 = m^2 + 2 \left( n + \frac{1}{2} - 
       \frac{q \sigma}{2 |q|} \right) |q| B

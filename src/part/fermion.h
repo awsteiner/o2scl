@@ -355,10 +355,14 @@ namespace o2scl {
 	this function will return <tt>true</tt> and report all
 	quantities as zero.
 	
+        \verbatim embed:rst
+        The following uses the notation of [Johns96]_.
+        \endverbatim
+
 	Defining \f$ \psi \equiv (\mu-m)/T \f$, \f$ t \equiv T/m \f$,
 	and \f$ d \equiv g~m^4/(2 \pi^2) \f$ the pressure 
 	in the non-degenerate limit (\f$ \psi \rightarrow - \infty \f$)
-	is (\ref Johns96)
+	is
 	\f[
 	P = d \sum_{n=1}^{\infty} P_n
 	\f]

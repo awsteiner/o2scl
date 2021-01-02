@@ -39,8 +39,11 @@ namespace o2scl {
 
   /** \brief Class to solve the Tolman-Oppenheimer-Volkov equations
 
-      See the \ref tovtoc section of the User's Guide for
+      \verbatim embed:rst
+      See the :ref:`Solution of the Tolman-Oppenheimer-Volkov Equations`
+      section of the User's Guide for
       the mathematical background. 
+      \endverbatim
 
       This class uses adaptive integration to compute the
       gravitational mass, the radius, the baryonic mass (if the EOS
@@ -237,8 +240,12 @@ namespace o2scl {
       <tt>true</tt>. This adds two more differential equations to
       solve for each central pressure. 
 
-      The differential equation for \f$ \bar{\omega} \f$ (see the
-      section in the User's Guide called \ref momitoc ) is independent
+      \verbatim embed:rst
+      See also the :ref:`Moment of Inertia in the Slowly-Rotating
+      Approximation` section of the User's Guide.
+      \endverbatim
+
+      The differential equation for \f$ \bar{\omega} \f$ is independent
       of the relative scale for \f$ \bar{\omega} \f$ and \f$ j \f$ .
       (Note that \f$ j \f$ is a metric function not simply related to
       the angular momentum, \f$ J \f$ .) First, one rescales \f$
@@ -277,7 +284,7 @@ namespace o2scl {
       One can compute the baryonic mass by integration or by adding
       one additional differential equation, bringing the total to six.
 
-      The moment of inertia is (see \ref tovtoc),
+      The moment of inertia is,
       \f[
       I = \frac{R^4}{6 G} \left.\frac{df}{dr}\right|_{r=R}
       \f]

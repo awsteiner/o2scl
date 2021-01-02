@@ -44,8 +44,10 @@ namespace o2scl {
 
   /** \brief Fit a nuclear mass formula
 
+      \verbatim embed:rst
       There is an example of the usage of this class given in 
-      \ref ex_nucmass_fit_sect.
+      the :ref:`Nuclear mass fit example`.
+      \endverbatim
 
       \future Convert to a real fit with errors and covariance, etc.
    */

@@ -40,8 +40,10 @@ namespace o2scl {
 #endif
 
   /** \brief Relativistic mean field EOS with density dependent couplings
-      
-      Based on \ref Typel99.
+
+      \verbatim embed:rst
+      Based on [Typel99]_.
+      \endverbatim
 
       \future Implement the finite temperature EOS properly.
   */

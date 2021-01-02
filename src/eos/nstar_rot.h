@@ -134,7 +134,7 @@ namespace o2scl {
 
       The user specified EOS must have a monotonically increasing
       baryon chemical potential, as guaranteed, for example, by 
-      \ref eos_tov::rns_C_low_dens_eos().
+      \ref o2scl::eos_nstar_rot_C.
 
       \future Replace arrays with vectors and fix unit-indexing.
    */
@@ -1171,7 +1171,7 @@ namespace o2scl {
         
         This function computes the 2-point functions \f$
         f^m_{2n}(r,r') \f$ used to integrate the potentials \f$ \rho,
-        \gamma \f$ and \f$ \omega \f$ (See \ref Komatsu89 for
+        \gamma \f$ and \f$ \omega \f$ (See Komatsu et al. 1989 for
         details). Since the grid points are fixed, we can compute the
         functions \ref f_rho, \ref f_gamma, \ref f_omega, \ref P_2n,
         and \ref P1_2n_1 once at the beginning.

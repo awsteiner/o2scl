@@ -52,21 +52,24 @@ namespace o2scl {
 
   /** \brief Boson class from fitting method
      
-      Based on the fitting method of \ref Johns96 which is an update
-      of the method from \ref Eggleton73 . This method is approximate,
-      but very fast. For a more accurate (but slower) method, use
-      \ref o2scl::boson_rel.
+      \verbatim embed:rst
+      Based on the fitting method of [Johns96]_ which is an update
+      of the method from [Eggleton73]_. 
+      \endverbatim
+      
+      This method is approximate, but very fast. For a more accurate
+      (but slower) method, use \ref o2scl::boson_rel.
       
       Given the chemical potential and the temperature the functions
       \ref calc_mu() and \ref pair_mu() work by solving the equation
-      (c.f. Eq. 26 in \ref Johns96)
+      (c.f. Eq. 26 in Johns et al. (1996))
       \f[
       \psi = \frac{h}{(h+\sqrt{a})} - \ln \left( 
       \frac{h+\sqrt{a}}{\sqrt{a}}\right)
       \f]
       for \f$ h \f$ given \f$ \psi=(\mu-m)/T \f$. The pressure, energy
       density, and entropy, are determined as polynomials in \f$ h \f$
-      with a set of precomputed coefficients as done in \ref Johns96 .
+      with a set of precomputed coefficients as done in Johns et al. (1996) .
 
       When the density and temperature is given instead (\ref
       calc_density() and \ref pair_density()), then there are two ways
@@ -98,17 +101,17 @@ namespace o2scl {
 	
 	Presently acceptable values of \c fn are: 
 	\c bosejel21, \c bosejel22, \c bosejel34, and
-	\c bosejel34cons from \ref Johns96.
+	\c bosejel34cons from Johns et al. (1996).
     */
     int load_coefficients(int ctype);
-    /// A set of coefficients from \ref Johns96
+    /// A set of coefficients from Johns et al. (1996)
     static const int cf_bosejel21=2;
-    /// A set of coefficients from \ref Johns96
+    /// A set of coefficients from Johns et al. (1996)
     static const int cf_bosejel22=3;
-    /// A set of coefficients from \ref Johns96 (default)
+    /// A set of coefficients from Johns et al. (1996) (default)
     static const int cf_bosejel34=4;
-    /** \brief The set of coefficients from \ref Johns96 which retains 
-	better thermodynamic consistency
+    /** \brief The set of coefficients from Johns et al. (1996) which
+	retains better thermodynamic consistency
      */
     static const int cf_bosejel34cons=5;
   

@@ -66,7 +66,7 @@ namespace o2scl {
       
       Given the chemical potential and the temperature the functions
       calc_mu() and pair_mu() work by solving the equation (c.f. Eq. 15
-      in \ref Johns96)
+      in Johns et al. (1996))
       \f[
       \psi= 2 \sqrt{1+f/a}+\log\left(\frac{\sqrt{1+f/a}-1}
       {\sqrt{1+f/a}+1}\right)
@@ -79,14 +79,14 @@ namespace o2scl {
       \f]
       is used. The pressure, energy density, and entropy, are
       determined as polynomials in \f$ f \f$ with a
-      set of precomputed coefficients as done in \ref Johns96 .
+      set of precomputed coefficients as done in Johns et al. (1996) .
 
       If \f$ \psi \f$ is less than \ref min_psi (which defaults to -4)
       then the non-dengenerate approximation from \ref
       fermion_thermo::calc_mu_ndeg() is used. The value of \ref
       min_psi can be decreased to ensure that the expansion is not
       used, but values of \f$ \psi \f$ less than about -200 can cause
-      the \ref Johns96 procedure outlined above to fail. Values of
+      the Johns et al. (1996) procedure outlined above to fail. Values of
       \ref min_psi larger than -4 are not useful.
 
       When the density and temperature is given instead
@@ -141,11 +141,11 @@ namespace o2scl {
 
     /// A set of coefficients from Jim Lattimer 
     static const int cf_fermilat3=1;
-    /// The smaller set of coefficients from \ref Johns96
+    /// The smaller set of coefficients from Johns et al. (1996)
     static const int cf_fermijel2=2;
-    /// The larger set of coefficients from \ref Johns96
+    /// The larger set of coefficients from Johns et al. (1996)
     static const int cf_fermijel3=3;
-    /** \brief The set of coefficients from \ref Johns96 which retains 
+    /** \brief The set of coefficients from Johns et al. (1996) which retains 
 	better thermodynamic consistency
     */
     static const int cf_fermijel3cons=4;

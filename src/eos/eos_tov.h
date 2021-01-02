@@ -146,7 +146,7 @@ namespace o2scl {
       n m_n = 12 \sqrt{P p_{*}} \left( 1-\frac{1}{3} \sqrt{P/p_{*}} 
       \right)^{3/2}
       \f]
-      c.f. Eq. 10 in \ref Lattimer01. 
+      c.f. Eq. 10 in Lattimer et al. (2001)
 
       The mass-radius curve is the solution of the equation
       \f[
@@ -187,8 +187,10 @@ namespace o2scl {
       \left( 1 - \beta + 3 u/2\right)
       \left[ 8 \pi \left(1 - \beta+u\right)^2\right]^{-1}
       \f]
-
-      Based on \ref Lattimer01 .
+      
+      \verbatim embed:rst
+      Based on [Lattimer01]_.
+      \endverbatim
 
   */
   class eos_tov_buchdahl : public eos_tov {

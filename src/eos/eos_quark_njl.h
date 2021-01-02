@@ -255,13 +255,13 @@ namespace o2scl {
 
     /** \name The default quark masses
 
-	These are the values from \ref Buballa99 which were used to
-	fix the pion and kaon decay constants, and the pion, kaon, and
-	eta prime masses. They are set in the constructor and are in
-	units of \f$ \mathrm{fm}^{-1} \f$ . The default values are 5.5
-	MeV for the up and down quark and 140.7 MeV for the strange
-	quark (then divided by \ref o2scl_const::hc_mev_fm for the
-	conversion).
+	These are the values from Buballa et al. (1999) which were
+	used to fix the pion and kaon decay constants, and the pion,
+	kaon, and eta prime masses. They are set in the constructor
+	and are in units of \f$ \mathrm{fm}^{-1} \f$ . The default
+	values are 5.5 MeV for the up and down quark and 140.7 MeV for
+	the strange quark (then divided by \ref o2scl_const::hc_mev_fm
+	for the conversion).
     */
     //@{
     double up_default_mass;

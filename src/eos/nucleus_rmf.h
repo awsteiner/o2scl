@@ -46,12 +46,14 @@ namespace o2scl {
 
       This code is very experimental.
 
+      \verbatim embed:rst
       This class is based on a code developed by C.J. Horowitz and
-      B.D. Serot, and used in \ref Horowitz81 which was then adapted
-      by P.J. Ellis and used in \ref Heide94 and \ref Prakash94. Ellis
-      and A.W. Steiner adapted it for the parameterization in in \ref
-      eos_had_rmf for \ref Steiner05b, and then converted to C++ by
+      B.D. Serot, and used in [Horowitz81]_ which was then adapted
+      by P.J. Ellis and used in [Heide94]_ and [Prakash94]_. Ellis
+      and A.W. Steiner adapted it for the parameterization in in 
+      eos_had_rmf for [Steiner05b]_, and then converted to C++ by
       Steiner afterwards.
+      \endverbatim
 
       The standard usage is something like:
       \code
@@ -189,7 +191,7 @@ namespace o2scl {
       - \mu |r|\right)
       \f]
       and the parameter \f$ \mu = (0.71)^{1/2}~\mathrm{GeV} \f$ (see
-      Eq. 20b in \ref Horowitz81). The default value of \ref a_proton
+      Eq. 20b in Horowitz et al. (1981)). The default value of \ref a_proton
       is the value of \f$ \mu \f$ converted into \f$ \mathrm{fm}^{-1}
       \f$.
 

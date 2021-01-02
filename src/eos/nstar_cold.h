@@ -53,7 +53,8 @@ namespace o2scl {
       after a conversion to units of \f$ 1/\mathrm{fm} \f$.
 
       There is an example for the usage of this class given
-      in the \ref ex_nstar_cold_sect.
+      in the :ref:`Cold Neutron Star Structure` section
+      of the User's Guide.
 
       If \ref err_nonconv is true and the solver fails,
       the error handler is called. 

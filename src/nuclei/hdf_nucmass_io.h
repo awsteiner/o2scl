@@ -72,13 +72,18 @@ namespace o2scl_hdf {
 
       There are five data sets, selected by the specification of the
       \c version string
-      - "95rmd" - "Recommended" data from \ref Audi95 (ame95rmd.o2)
-      - "95exp" - "Experimental" data from \ref Audi95 (ame95exp.o2)
-      - "03round" - "Rounded" data from \ref Audi03 (ame03round.o2)
-      - "03" - Data from \ref Audi03 (ame03.o2)
-      - "12" - Data from \ref Audi12 and \ref Wang12 (ame12.o2)
-      - "16" - (default) Data from \ref Huang17 and \ref Wang17 (ame16.o2)
-      - "16round" - Data from \ref Huang17 and \ref Wang17 (ame16round.o2)
+      - "95rmd" - "Recommended" data from Audi95 (ame95rmd.o2)
+      - "95exp" - "Experimental" data from Audi95 (ame95exp.o2)
+      - "03round" - "Rounded" data from Audi03 (ame03round.o2)
+      - "03" - Data from Audi03 (ame03.o2)
+      - "12" - Data from Audi12 and Wang12 (ame12.o2)
+      - "16" - (default) Data from Huang17 and Wang17 (ame16.o2)
+      - "16round" - Data from Huang17 and Wang17 (ame16round.o2)
+      
+      \verbatim embed:rst
+      See [Audi95]_, [Audi03]_, [Audi12]_, [Wang12]_, 
+      [Huang17]_, [Wang17]_.
+      \endverbatim
       
       If any string other than these seven is used, the error handler
       is called. If a data file has not been loaded, then
@@ -101,9 +106,13 @@ namespace o2scl_hdf {
   /** \brief Read data for \ref o2scl::nucmass_hfb from an HDF table
       
       Valid values of \c model at present are 2, 8, and 14, corresponding
-      to the HFB2 (\ref Goriely02), HFB8 (\ref Samyn04), and HFB14 
-      (\ref Goriely07). If a number other than these three is given,
+      to the HFB2 (Goriely02), HFB8 (Samyn04), and HFB14 
+      (Goriely07). If a number other than these three is given,
       the error handler is called. 
+
+      \verbatim embed:rst
+      See also [Goriely02]_, [Samyn04]_, and [Goriely07]_.
+      \endverbatim
 
       \note This function is in the o2scl_hdf namespace,
       see \ref hdf_nucmass_io.h .
@@ -114,9 +123,14 @@ namespace o2scl_hdf {
   /** \brief Read data for \ref o2scl::nucmass_hfb from an HDF table
       
       Valid values of \c model at present are 17, and 21 through 27.
-      The first two correspond to the HFB17 (\ref Goriely02) and HFB21
-      (\ref Samyn04). If a number outside this range is given, then 27
+      The first two correspond to the HFB17 (Goriely02) and HFB21
+      (Samyn04). If a number outside this range is given, then 27
       is assumed.
+
+      \verbatim embed:rst
+      See also [Goriely02]_, [Samyn04]_, and [Goriely07]_.
+      \endverbatim
+
 
       \verbatim embed:rst
       .. todo:: 

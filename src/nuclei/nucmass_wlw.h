@@ -43,14 +43,14 @@ namespace o2scl {
 
          Class nucmass_wlw is unfinished.
 
+      Models
+      - "WS3.2" in file "wlw10.o2" from [Wang10]_
+      - "WS3.3" in file "wllw10.o2" from [Wang10b]_
+      - "WS3.6" in file "lwdw11.o2" from [Liu11]_
+      - "WS3_RBF" in file "wl11.o2" from [Wang11]_
+      - "WS4_RBF" in file "wlwm14.o2" from [Wang14]_ 
       \endverbatim
 
-      Models
-      - "WS3.2" in file "wlw10.o2" from \ref Wang10 
-      - "WS3.3" in file "wllw10.o2" from \ref Wang10b
-      - "WS3.6" in file "lwdw11.o2" from \ref Liu11
-      - "WS3_RBF" in file "wl11.o2" from \ref Wang11
-      - "WS4_RBF" in file "wlwm14.o2" from \ref Wang14 
   */
   class nucmass_wlw : public nucmass_table {
     

@@ -36,9 +36,11 @@
 namespace o2scl {
 #endif
 
-  /** \brief Nuclear properties from Delaroche et al. 
+  /** \brief Nuclear properties from Delaroche et al. (2010)
 
-      See \ref Delaroche10 .
+      \verbatim embed:rst
+      See [Delaroche10]_.
+      \endverbatim
   */
   class nucmass_dglg : public nucmass_table {
     

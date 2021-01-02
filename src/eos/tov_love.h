@@ -90,7 +90,7 @@ namespace o2scl {
       is specified in \ref y_derivs() . 
 
       The unitless quantity \f$ k_2[\beta,y_R] \f$ (the Love number) 
-      is defined by (this is the expression from \ref Postnikov10 )
+      is defined by (this is the expression from Postnikov et al. (2010) )
       \f{eqnarray*}
       k_2[\beta,y(r=R)] &\equiv& \frac{8}{5} \beta^5 
       \left(1-2 \beta\right)^2

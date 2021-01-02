@@ -39,11 +39,15 @@ namespace o2scl {
 
   /** \brief Duflo-Zuker mass formula from tables
 
-      The mass formulas from \ref Duflo95 as given in the 
-      files <tt>du_zu_28.feb95</tt> and <tt>du_zu_10.feb96</tt> 
-      as obtained from http://amdc.in2p3.fr/web/dz.html . These
-      data files have been reformatted for \o2 into HDF files
-      with names <tt>du_zu_95.o2</tt> and <tt>du_zu_96.o2</tt>.
+      The mass formulas from Duflo et al. (1995) as given in the files
+      <tt>du_zu_28.feb95</tt> and <tt>du_zu_10.feb96</tt> as obtained
+      from http://amdc.in2p3.fr/web/dz.html . These data files have
+      been reformatted for \o2 into HDF files with names
+      <tt>du_zu_95.o2</tt> and <tt>du_zu_96.o2</tt>.
+
+      \verbatim embed:rst
+      See [Duflo95]_.
+      \endverbatim
   */
   class nucmass_dz_table : public nucmass_table {
     
@@ -85,8 +89,12 @@ namespace o2scl {
 
   /** \brief The 10-parameter Duflo-Zuker mass formula
 
+      \verbatim embed:rst
+      See [Duflo95]_.
+      \endverbatim
+
       This class is designed to provide essentially identical results
-      to the original 10-parameter Duflo-Zuker code (see \ref Duflo95)
+      to the original 10-parameter Duflo-Zuker code
       at
       
       http://amdc.in2p3.fr/theory/du_zu_10.feb96fort
@@ -223,8 +231,12 @@ namespace o2scl {
 
   /** \brief The 33-parameter Duflo-Zuker mass formula
 
+      \verbatim embed:rst
+      See [Duflo95]_.
+      \endverbatim
+
       This class is designed to provide essentially identical results
-      to the original Duflo-Zuker code (see \ref Duflo95) at
+      to the original Duflo-Zuker code at
       
       http://amdc.in2p3.fr/theory/dz31.f
 

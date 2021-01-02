@@ -126,7 +126,7 @@ namespace o2scl {
       Skyrme Hamiltonian (Skyrme (1959)), while \f$a=1, b=0\f$
       contains the modifications suggested by Osni et al. (1994).
 
-      The spin-orbit term is (following \ref Steiner05)
+      The spin-orbit term is (following Steiner et al. (2005b))
       \f[
       {\cal H}_{J} = -\frac{W_0}{2} \left( n_n \vec{\nabla} \cdot 
       \vec{J}_n + n_p \vec{\nabla} \cdot \vec{J}_p + n \vec{\nabla} 

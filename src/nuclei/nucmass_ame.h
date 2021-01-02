@@ -59,9 +59,13 @@ namespace o2scl {
       thus requires HDF support for normal usage.
 
       This class provides an interface to the atomic mass table using
-      data from \ref Audi95, \ref Audi03, \ref Audi12, and \ref
+      data from Audi95, Audi03, Audi12, and
       Wang12. To load data from the \o2 HDF5 data files, use
       <tt>o2scl_hdf::ame_load()</tt> .
+
+      \verbatim embed:rst
+      See [Audi95]_, [Audi03]_, [Audi12]_, and [Wang12]_.
+      \endverbatim
       
       The 1995 data provided the binding energy (stored in
       nucmass_ame::entry::be and nucmass_ame::entry::dbe), while the 2003

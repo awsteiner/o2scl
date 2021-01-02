@@ -40,9 +40,11 @@ namespace o2scl {
   
   /** \brief FRDM semi-empirical mass formula (macroscopic part only
       with no deformation)
-      
+
+      \verbatim embed:rst
       The spherically-symmetric, macroscopic part of the finite-range
-      droplet model from \ref Moller95 .
+      droplet model from [Moller95]_.
+      \endverbatim
   
       Using the relations
       \f[
@@ -270,8 +272,12 @@ namespace o2scl {
   
   /** \brief Mass formula from Moller, Nix, Myers, Swiatecki and Kratz
 
-      This is based on the tables given in \ref Moller95 and \ref
-      Moller97. To load data from the \o2 HDF5 data files, use 
+      \verbatim embed:rst
+      This is based on the tables given in [Moller95]_ and \ref
+      [Moller97]_. 
+      \endverbatim
+
+      To load data from the \o2 HDF5 data files, use 
       <tt>o2scl_hdf::mnmsk_load()</tt>.
 
       The data containing an object of type \ref entry for 8979
@@ -471,7 +477,12 @@ namespace o2scl {
   /** \brief The experimental values from Moller, Nix, Myers and Swiatecki
 
       This mass formula only includes the experimental mass
-      excesses tabulated in \ref Moller95 and \ref Moller97 .
+      excesses tabulated in Moller et al. (1995) and Moller
+      et al. (1997).
+
+      \verbatim embed:rst
+      See [Moller95]_ and \ref [Moller97]_. 
+      \endverbatim
       
       \note This class requires data stored in an HDF file and
       thus requires HDF support for normal usage.
