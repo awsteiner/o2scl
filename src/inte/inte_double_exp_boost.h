@@ -64,6 +64,9 @@ namespace o2scl {
   
     virtual ~inte_tanh_sinh_boost() {
     }
+
+    /// Return string denoting type ("inte_tanh_sinh_boost")
+    virtual const char *type() { return "inte_tanh_sinh_boost"; }
     
     /** \brief Integrate function \c func from \c a to \c b and place
 	the result in \c res and the error in \c err
@@ -72,13 +75,18 @@ namespace o2scl {
 			  fp_t &res, fp_t &err) {
       // Dropping the tolerance by a factor of 10 seems to help
       // the boost integrator succeed.
-      res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm);
+      size_t levels;
+      res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm,&levels);
       if (err>this->tol_rel) {
-	std::cout << "err,tol_rel,L1norm: "
-		  << err << " " << this->tol_rel << " "
-		  << L1norm << std::endl;
-	O2SCL_ERR2("Failed to achieve tolerance in ",
-		   "inte_tanh_sinh_boost::integ_err().",o2scl::exc_efailed);
+        std::cout << "Function inte_tanh_sinh_boost::integ_err() failed."
+                  << std::endl;
+        std::cout << "Values err,tol_rel,L1norm,levels,max: "
+                  << err << " " << this->tol_rel << " "
+                  << L1norm << " " << levels << " " << max_refine
+                  << std::endl;
+        O2SCL_CONV2_RET("Failed to achieve tolerance in ",
+                        "inte_tanh_sinh_boost::integ_err().",
+                        o2scl::exc_efailed,this->err_nonconv);
       }
       return 0;
     }
@@ -117,18 +125,23 @@ namespace o2scl {
     virtual int integ_moo_err(func_t &func, fp_t &res, fp_t &err) {
       // Dropping the tolerance by a factor of 10 seems to help
       // the boost integrator succeed.
-      res=it.integrate(func,this->tol_rel/10.0,&err,&L1norm);
+      size_t levels;
+      res=it.integrate(func,this->tol_rel/10.0,&err,&L1norm,&levels);
       if (err>this->tol_rel) {
-	std::cout << "err,tol_rel,L1norm: "
+	std::cout << "Function inte_tanh_sinh_boost::integ_moo_err() failed."
+                  << std::endl;
+        std::cout << "Values err,tol_rel,L1norm,levels,max: "
 		  << err << " " << this->tol_rel << " "
-		  << L1norm << std::endl;
-	O2SCL_ERR2("Failed to achieve tolerance in ",
-		   "inte_tanh_sinh_boost::integ_err().",o2scl::exc_efailed);
+		  << L1norm << " " << levels << " " << max_refine
+                  << std::endl;
+	O2SCL_CONV2_RET("Failed to achieve tolerance in ",
+                        "inte_tanh_sinh_boost::integ_moo_err().",
+                        o2scl::exc_efailed,this->err_nonconv);
       }
       return 0;
     }
   
-    /// L1 norm
+    /// L1 norm of the last integral computed
     fp_t L1norm;
 
   };
@@ -157,6 +170,9 @@ namespace o2scl {
     virtual ~inte_exp_sinh_boost() {
     }
     
+    /// Return string denoting type ("inte_exp_sinh_boost")
+    virtual const char *type() { return "inte_exp_sinh_boost"; }
+    
     /** \brief Integrate function \c func from \c a to \c b and place
 	the result in \c res and the error in \c err
     */
@@ -164,13 +180,18 @@ namespace o2scl {
 			  fp_t &res, fp_t &err) {
       // Dropping the tolerance by a factor of 10 seems to help
       // the boost integrator succeed.
-      res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm);
+      size_t levels;
+      res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm,&levels);
       if (err>this->tol_rel) {
-	std::cout << "err,tol_rel,L1norm: "
+	std::cout << "Function inte_exp_sinh_boost::integ_err() failed."
+                  << std::endl;
+        std::cout << "Values err,tol_rel,L1norm,levels,max: "
 		  << err << " " << this->tol_rel << " "
-		  << L1norm << std::endl;
-	O2SCL_ERR2("Failed to achieve tolerance in ",
-		   "inte_exp_sinh_boost::integ_err().",o2scl::exc_efailed);
+		  << L1norm << " " << levels << " " << max_refine
+                  << std::endl;
+	O2SCL_CONV2_RET("Failed to achieve tolerance in ",
+                        "inte_exp_sinh_boost::integ_err().",
+                        o2scl::exc_efailed,this->err_nonconv);
       }
       return 0;
     }
@@ -193,7 +214,7 @@ namespace o2scl {
 		       b,res,err);
     }
   
-    /// L1 norm
+    /// L1 norm of the last integral computed
     fp_t L1norm;
 
   };
@@ -221,6 +242,9 @@ namespace o2scl {
     virtual ~inte_sinh_sinh_boost() {
     }
     
+    /// Return string denoting type ("inte_sinh_sinh_boost")
+    virtual const char *type() { return "inte_sinh_sinh_boost"; }
+    
     /** \brief Integrate function \c func from \f$ -\infty \f$ to \f$
 	\infty \f$ and place the result in \c res and the error in \c
 	err
@@ -229,18 +253,23 @@ namespace o2scl {
 			    fp_t &res, fp_t &err) {
       // Dropping the tolerance by a factor of 10 seems to help
       // the boost integrator succeed.
-      res=it.integrate(func,this->tol_rel/10.0,&err,&L1norm);
+      size_t levels;
+      res=it.integrate(func,this->tol_rel/10.0,&err,&L1norm,&levels);
       if (err>this->tol_rel) {
-	std::cout << "err,tol_rel,L1norm: "
+	std::cout << "Function inte_sinh_sinh_boost::integ_err() failed."
+                  << std::endl;
+        std::cout << "Values err,tol_rel,L1norm,levels,max: "
 		  << err << " " << this->tol_rel << " "
-		  << L1norm << std::endl;
-	O2SCL_ERR2("Failed to achieve tolerance in ",
-		   "inte_sinh_sinh_boost::integ_err().",o2scl::exc_efailed);
+		  << L1norm << " " << levels << " " << max_refine
+                  << std::endl;
+	O2SCL_CONV2_RET("Failed to achieve tolerance in ",
+                        "inte_sinh_sinh_boost::integ_err().",
+                        o2scl::exc_efailed,this->err_nonconv);
       }
       return 0;
     }
 
-    /// L1 norm
+    /// L1 norm of the last integral computed
     fp_t L1norm;
 
   };

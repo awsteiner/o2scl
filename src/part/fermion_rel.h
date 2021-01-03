@@ -590,7 +590,7 @@ namespace o2scl {
       if (psi<deg_limit) deg=false;
       
       if (verbose>1) {
-	std::cout << "calc_mu(): psi,deg_limit,deg: " << psi << " "
+	std::cout << "calc_mu(): psi,deg,deg_limit: " << psi << " "
 		  << deg << " " << deg_limit << std::endl;
       }
       // Try the non-degenerate expansion if psi is small enough
@@ -652,7 +652,7 @@ namespace o2scl {
 	// Compute the number density
     
 	if (verbose>1) {
-	  std::cout << "calc_mu(): non-deg integrals."
+	  std::cout << "calc_mu(): non-deg number density:"
 		    << std::endl;
 	}
 	
@@ -662,6 +662,11 @@ namespace o2scl {
 
 	// Compute the energy density
 
+	if (verbose>1) {
+	  std::cout << "calc_mu(): non-deg energy density:"
+		    << std::endl;
+	}
+	
 	f.ed=nit->integ_iu(mfe,0.0);
 	f.ed*=prefac*temper;
 	if (!f.inc_rest_mass) f.ed-=f.n*f.m;
@@ -669,6 +674,11 @@ namespace o2scl {
     
 	// Compute the entropy
 
+	if (verbose>1) {
+	  std::cout << "calc_mu(): non-deg entropy:"
+		    << std::endl;
+	}
+	
 	f.en=nit->integ_iu(mfs,0.0);
 	f.en*=prefac;
 	unc.en=nit->get_error()*prefac;
@@ -1145,9 +1155,9 @@ namespace o2scl {
 			     temper,true);
     
 	if (ret!=0) {
-	  nex=log(nex);
+	  nex=o2log(nex);
 	  ret=density_root->solve(nex,lmf);
-	  nex=exp(nex);
+	  nex=o2exp(nex);
 	  if (ret==0) last_method=5000;
 	}
 	
@@ -1155,9 +1165,9 @@ namespace o2scl {
 	  // If that failed, try a different solver
 	  root_brent_gsl<func_t,fp_t> rbg;
 	  rbg.err_nonconv=false;
-	  nex=log(nex);
+	  nex=o2log(nex);
 	  ret=rbg.solve(nex,lmf);
-	  nex=exp(nex);
+	  nex=o2exp(nex);
 	  if (ret==0) last_method=6000;
 	}
 
@@ -1215,12 +1225,15 @@ namespace o2scl {
       }
       eta=f.ms/T;
   
+      fp_t arg1=u*u+2*eta*u;
+      fp_t arg2=eta+u-y;
+      fp_t arg3=eta+u;
       if (y-eta-u>exp_limit) {
-	ret=(eta+u)*sqrt(u*u+2.0*eta*u);
+	ret=(eta+u)*o2sqrt(arg1);
       } else if (y>u+exp_limit && eta>u+exp_limit) {
-	ret=(eta+u)*sqrt(u*u+2.0*eta*u)/(exp(eta+u-y)+1.0);
+	ret=(eta+u)*o2sqrt(arg1)/(o2exp(arg2)+1.0);
       } else {
-	ret=(eta+u)*sqrt(u*u+2.0*eta*u)*exp(y)/(exp(eta+u)+exp(y));
+	ret=(eta+u)*o2sqrt(arg1)*o2exp(y)/(o2exp(arg3)+o2exp(y));
       }
 
       if (!o2isfinite(ret)) {
@@ -1241,10 +1254,12 @@ namespace o2scl {
 	y=(f.nu+f.m)/T;
       }
       eta=f.ms/T;
-  
-      ret=sqrt(u*u+2.0*eta*u)*sqrt(u*u+2.0*eta*u)*sqrt(u*u+2.0*eta*u)*
-	exp(y)/(exp(eta+u)+exp(y))/3;
-
+      
+      fp_t arg1=u*u+2*eta*u;
+      fp_t term1=o2sqrt(arg1);
+      fp_t arg3=eta+u;
+      ret=term1*term1*term1*o2exp(y)/(o2exp(arg3)+o2exp(y))/3;
+      
       if (!o2isfinite(ret)) {
 	ret=0.0;
       }
@@ -1263,10 +1278,14 @@ namespace o2scl {
       } else {
 	y=(f.nu+f.m)/T;
       }
+      fp_t arg1=u*u+2*eta*u;
+      fp_t arg2=eta+u-y;
+      fp_t arg3=eta+u;
       if (y>u+exp_limit && eta>u+exp_limit) {
-	ret=(eta+u)*(eta+u)*sqrt(u*u+2.0*eta*u)/(exp(eta+u-y)+1.0);
+	ret=(eta+u)*(eta+u)*o2sqrt(arg1)/(o2exp(arg2)+1.0);
       } else {
-	ret=(eta+u)*(eta+u)*sqrt(u*u+2.0*eta*u)*exp(y)/(exp(eta+u)+exp(y));
+	ret=(eta+u)*(eta+u)*o2sqrt(arg1)*o2exp(y)/
+          (o2exp(arg3)+o2exp(y));
       }
  
       if (!o2isfinite(ret)) {
@@ -1278,7 +1297,7 @@ namespace o2scl {
 
     /// The integrand for the entropy density for non-degenerate fermions
     fp_t entropy_fun(fp_t u, fermion_t &f, fp_t T) {
-      fp_t ret, y, eta, term1, term2;
+      fp_t ret, y, eta;
 
       if (f.inc_rest_mass) {
 	y=f.nu/T;
@@ -1287,9 +1306,13 @@ namespace o2scl {
       }
       eta=f.ms/T;
 
-      term1=log(1.0+exp(y-eta-u))/(1.0+exp(y-eta-u));
-      term2=log(1.0+exp(eta+u-y))/(1.0+exp(eta+u-y));
-      ret=(eta+u)*sqrt(u*u+2.0*eta*u)*(term1+term2);
+      fp_t arg1=u*u+2*eta*u;
+      fp_t arg2=eta+u-y;
+      fp_t arg3=eta+u;
+      fp_t arg4=y-eta-u;
+      fp_t term1=o2log(1+o2exp(arg4))/(1+o2exp(arg4));
+      fp_t term2=o2log(1+o2exp(arg2))/(1+o2exp(arg2));
+      ret=(eta+u)*o2sqrt(arg1)*(term1+term2);
   
       if (!o2isfinite(ret)) {
 	return 0.0;
@@ -1303,8 +1326,9 @@ namespace o2scl {
       
       fp_t E=o2hypot(k,f.ms), ret;
       if (!f.inc_rest_mass) E-=f.m;
-      
-      ret=k*k/(1.0+exp((E-f.nu)/T));
+
+      fp_t arg1=(E-f.nu)/T;
+      ret=k*k/(1.0+o2exp(arg1));
       
       if (!o2isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
@@ -1320,7 +1344,8 @@ namespace o2scl {
       fp_t E=o2hypot(k,f.ms), ret;
       if (!f.inc_rest_mass) E-=f.m;
 
-      ret=k*k*E/(1.0+exp((E-f.nu)/T));
+      fp_t arg1=(E-f.nu)/T;
+      ret=k*k*E/(1.0+o2exp(arg1));
 
       if (!o2isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
@@ -1336,7 +1361,8 @@ namespace o2scl {
       fp_t E=o2hypot(k,f.ms), ret;
       if (!f.inc_rest_mass) E-=f.m;
 
-      ret=k*k*k*k/3/E/(1.0+exp((E-f.nu)/T));
+      fp_t arg1=(E-f.nu)/T;
+      ret=k*k*k*k/3/E/(1.0+o2exp(arg1));
 
       if (!o2isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
@@ -1360,11 +1386,13 @@ namespace o2scl {
 	// then addition of 1 makes us lose precision, so we use an
 	// alternative:
       } else if (((E-f.nu)/T)<-deg_entropy_fac) {
-	fp_t arg=E/T-f.nu/T;
-	ret=-k*k*(-1.0+arg)*exp(arg);
+	fp_t arg1=E/T-f.nu/T;
+	ret=-k*k*(-1.0+arg1)*o2exp(arg1);
       } else {
-	fp_t nx=1.0/(1.0+exp(E/T-f.nu/T));
-	ret=-k*k*(nx*log(nx)+(1.0-nx)*log(1.0-nx));
+	fp_t arg1=E/T-f.nu/T;
+	fp_t nx=1.0/(1.0+o2exp(arg1));
+        fp_t arg2=1.0-nx;
+	ret=-k*k*(nx*o2log(nx)+(1.0-nx)*o2log(arg2));
       }
 
       if (!o2isfinite(ret)) {
@@ -1490,7 +1518,7 @@ namespace o2scl {
 
       f.nu=T*x;
       if (log_mode) {
-	f.nu=T*exp(x);
+	f.nu=T*o2exp(x);
       }
 
       // Sometimes the exp() call above causes an overflow, so
@@ -1624,10 +1652,10 @@ namespace o2scl {
 
       if (f.inc_rest_mass) {
 	f.nu=-T*x;
-	if (log_mode) f.nu=-T*exp(x);
+	if (log_mode) f.nu=-T*o2exp(x);
       } else {
 	f.nu=-T*x-2.0*f.m;
-	if (log_mode) f.nu=-T*exp(x)-2.0*f.m;
+	if (log_mode) f.nu=-T*o2exp(x)-2.0*f.m;
       }
       if (f.non_interacting) f.mu=f.nu;
 
@@ -1804,11 +1832,11 @@ namespace o2scl {
       this->def_massless_root.tol_abs=1.0e-18;
 
       // Integrator tolerances
-      this->def_dit.tol_abs=1.0e-18;
-      this->def_dit.tol_rel=1.0e-18;
-      this->def_nit.tol_abs=1.0e-18;
-      this->def_nit.tol_rel=1.0e-18;
-      
+      this->def_dit.tol_abs=1.0e-16;
+      this->def_dit.tol_rel=1.0e-16;
+      this->def_nit.tol_abs=1.0e-15;
+      this->def_nit.tol_rel=1.0e-15;
+     
     }
     
   };
@@ -1876,8 +1904,8 @@ namespace o2scl {
       // Integrator tolerances
       this->def_dit.tol_abs=1.0e-35;
       this->def_dit.tol_rel=1.0e-35;
-      this->def_nit.tol_abs=1.0e-35;
-      this->def_nit.tol_rel=1.0e-35;
+      this->def_nit.tol_abs=1.0e-34;
+      this->def_nit.tol_rel=1.0e-34;
     }
   };
   
