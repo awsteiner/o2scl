@@ -20,7 +20,6 @@
 
   -------------------------------------------------------------------
 */
-
 #include <o2scl/test_mgr.h>
 #include <o2scl/inte_adapt_cern.h>
 #include <o2scl/polylog.h>

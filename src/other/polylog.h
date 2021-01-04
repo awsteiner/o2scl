@@ -60,6 +60,14 @@ namespace o2scl {
       Note that the GSL definition of the Fermi-Dirac integral
       includes an additional factor of \f$ 1/\Gamma(a+1) \f$
       which is not included here.
+
+      \verbatim embed:rst
+
+      .. todo::
+
+         In fermi_dirac_integ_tl, better testing of accuracy.
+
+      \endverbatim
    */
   template<class inte_t, class fp_t=double> class fermi_dirac_integ_tl {
 
@@ -105,6 +113,14 @@ namespace o2scl {
       \f[
       F_{a}(\mu) = \int_0^{\infty} \frac{x^a}{e^{x-\mu}-1} \, .
       \f]
+
+      \verbatim embed:rst
+
+      .. todo::
+
+         In bose_einstein_integ_tl, better testing of accuracy.
+
+      \endverbatim
    */
   template<class inte_t, class fp_t=double> class bose_einstein_integ_tl {
     
@@ -156,6 +172,13 @@ namespace o2scl {
       (see
       http://functions.wolfram.com/Bessel-TypeFunctions/BesselK/07/01/01/)
       
+      \verbatim embed:rst
+
+      .. todo::
+
+         In bessel_K_exp_integ_tl, better testing of accuracy.
+
+      \endverbatim
   */
   template<class inte_t, class fp_t=double> class bessel_K_exp_integ_tl {
 
@@ -512,6 +535,11 @@ namespace o2scl {
       this representation works for positive values of \f$ z \f$.
 
       \verbatim embed:rst
+      .. todo::
+
+         In class polylog, convert this to a template class
+         and then test the accuracy for a range of arguments
+
       A classic reference for the polylogarithm function is [Lewin81]_.
       \endverbatim
   */
