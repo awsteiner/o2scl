@@ -101,6 +101,99 @@ namespace o2scl {
   
 #endif
 
+  /** \brief Exponential for single precision numbers
+   */
+  float o2exp(const float x);
+  
+  /** \brief Exponential for double precision numbers
+   */
+  double o2exp(const double x);
+
+  /** \brief Exponential for long double
+   */
+  long double o2exp(const long double x);
+
+#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
+  
+  /** \brief Exponential for cpp_dec_float_35
+   */
+  boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+    o2exp(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> > x);
+  
+  /** \brief Exponential for cpp_dec_float_50
+   */
+  boost::multiprecision::cpp_dec_float_50
+    o2exp(const boost::multiprecision::cpp_dec_float_50 x);
+  
+  /** \brief Exponential for cpp_dec_float_100
+   */
+  boost::multiprecision::cpp_dec_float_100
+    o2exp(const boost::multiprecision::cpp_dec_float_100 x);
+  
+#endif
+
+  /** \brief Logarithm for single precision numbers
+   */
+  float o2log(const float x);
+  
+  /** \brief Logarithm for double precision numbers
+   */
+  double o2log(const double x);
+
+  /** \brief Logarithm for long double
+   */
+  long double o2log(const long double x);
+
+#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
+  
+  /** \brief Logarithm for cpp_dec_float_35
+   */
+  boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+    o2log(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> > x);
+  
+  /** \brief Logarithm for cpp_dec_float_50
+   */
+  boost::multiprecision::cpp_dec_float_50
+    o2log(const boost::multiprecision::cpp_dec_float_50 x);
+  
+  /** \brief Logarithm for cpp_dec_float_100
+   */
+  boost::multiprecision::cpp_dec_float_100
+    o2log(const boost::multiprecision::cpp_dec_float_100 x);
+  
+#endif
+
+  /** \brief Square root for single precision numbers
+   */
+  float o2sqrt(const float x);
+  
+  /** \brief Square root for double precision numbers
+   */
+  double o2sqrt(const double x);
+
+  /** \brief Square root for long double
+   */
+  long double o2sqrt(const long double x);
+
+#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
+  
+  /** \brief Square root for cpp_dec_float_35
+   */
+  boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+    o2sqrt(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> > x);
+  
+  /** \brief Square root for cpp_dec_float_50
+   */
+  boost::multiprecision::cpp_dec_float_50
+    o2sqrt(const boost::multiprecision::cpp_dec_float_50 x);
+  
+  /** \brief Square root for cpp_dec_float_100
+   */
+  boost::multiprecision::cpp_dec_float_100
+    o2sqrt(const boost::multiprecision::cpp_dec_float_100 x);
+  
+#endif
+
   /** \brief Compatbility function for isfinite()
 
       AWS, 11/11/19: Older compilers seem to require std::isfinite(),

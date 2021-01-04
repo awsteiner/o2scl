@@ -238,14 +238,14 @@ namespace o2scl {
   /** \brief Object to organize calibration of particle classes
       to results stored in a table
   */
-  class part_calibrate_class {
+  template <class fp_t=double> class part_calibrate_class_tl {
     
   public:
 
     /** \brief Set mass and flags from mot, T, and the index k
      */
     template<class part_t>
-      void set_mass_flags(part_t &p, double mot, double T, size_t k) {
+      void set_mass_flags(part_t &p, fp_t mot, fp_t T, size_t k) {
       if (k>=2) {
 	p.non_interacting=false;
 	p.ms=mot*T;
@@ -267,7 +267,7 @@ namespace o2scl {
 	and the flag nr_mode
     */
     template<class part_t>
-      void set_chem_pot(part_t &p, double psi, double T, size_t k,
+      void set_chem_pot(part_t &p, fp_t psi, fp_t T, size_t k,
 			bool nr_mode) {
       if (k%2==0) {
 	if (k>=2) {
@@ -302,10 +302,10 @@ namespace o2scl {
     */
     template<class part1_t, class part2_t, class part3_t>
       void check_density(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
-			 double T, double mot, double psi,
-			 double &mu_bad, double &m_bad,
-			 double &T_bad, double &mot_bad, double &psi_bad,
-			 double &ret_local) {
+			 fp_t T, fp_t mot, fp_t psi,
+			 fp_t &mu_bad, fp_t &m_bad,
+			 fp_t &T_bad, fp_t &mot_bad, fp_t &psi_bad,
+			 fp_t &ret_local) {
       if (fabs((p.n-exact.n)/exact.n)>bad.n) {
 	bad.n=fabs((p.n-exact.n)/exact.n);
 	if (bad.n>ret_local) {
@@ -330,10 +330,10 @@ namespace o2scl {
     */
     template<class part1_t, class part2_t, class part3_t>
       void check_chem_pot(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
-			  double T, double mot, double psi,
-			  double &mu_bad, double &m_bad,
-			  double &T_bad, double &mot_bad, double &psi_bad,
-			  double &ret_local) {
+			  fp_t T, fp_t mot, fp_t psi,
+			  fp_t &mu_bad, fp_t &m_bad,
+			  fp_t &T_bad, fp_t &mot_bad, fp_t &psi_bad,
+			  fp_t &ret_local) {
       if (k>=2) {
 	if (fabs((p.nu-exact.nu)/exact.nu)>bad.mu) {
 	  bad.mu=fabs((p.nu-exact.nu)/exact.nu);
@@ -367,10 +367,10 @@ namespace o2scl {
     */
     template<class part1_t, class part2_t, class part3_t>
       void check_eps(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
-		     double T, double mot, double psi,
-		     double &mu_bad, double &m_bad,
-		     double &T_bad, double &mot_bad, double &psi_bad,
-		     double &ret_local) {
+		     fp_t T, fp_t mot, fp_t psi,
+		     fp_t &mu_bad, fp_t &m_bad,
+		     fp_t &T_bad, fp_t &mot_bad, fp_t &psi_bad,
+		     fp_t &ret_local) {
       if (fabs((p.ed-exact.ed)/exact.ed)>bad.ed) {
 	bad.ed=fabs((p.ed-exact.ed)/exact.ed);
 	if (bad.ed>ret_local) {
@@ -427,10 +427,10 @@ namespace o2scl {
     */
     template<class part1_t, class part2_t, class part3_t>
       void check_derivs(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
-			double T, double mot, double psi,
-			double &mu_bad, double &m_bad,
-			double &T_bad, double &mot_bad, double &psi_bad,
-			double &ret_local) {
+			fp_t T, fp_t mot, fp_t psi,
+			fp_t &mu_bad, fp_t &m_bad,
+			fp_t &T_bad, fp_t &mot_bad, fp_t &psi_bad,
+			fp_t &ret_local) {
       if (fabs((p.dndT-exact.dndT)/exact.dndT)>bad.dndT) {
 	bad.dndT=fabs((p.dndT-exact.dndT)/exact.dndT);
 	if (bad.dndT>ret_local) {
@@ -497,15 +497,15 @@ namespace o2scl {
 	\future Also calibrate massless fermions?
     */
     template<class part_t, class thermo_t>
-      double part_calibrate(part_t &p, thermo_t &th, bool test_pair,
+      fp_t part_calibrate(part_t &p, thermo_t &th, bool test_pair,
 			    std::string file, bool nr_mode=false,
 			    int verbose=0, bool external=false) {
 			  
-      double ret=0;
+      fp_t ret=0;
   
       // ----------------------------------------------------------------
       // Will return to these original values afterwards
-
+      
       part_t orig=p;
 
       // ----------------------------------------------------------------
@@ -549,8 +549,8 @@ namespace o2scl {
       p.g=2.0;
   
       size_t cnt=0;
-      part bad, dev, exact;
-      double m_bad=0.0, mu_bad=0.0, T_bad=0.0, mot_bad=0.0, psi_bad=0.0;
+      part_t bad, dev, exact;
+      fp_t m_bad=0.0, mu_bad=0.0, T_bad=0.0, mot_bad=0.0, psi_bad=0.0;
       p.non_interacting=true;
   
       // ----------------------------------------------------------------
@@ -560,20 +560,20 @@ namespace o2scl {
       // k=0,1 are non-interacting, k=2,3 are interacting
       for(size_t k=0;k<4;k++) {
 
-	double ret_local=0.0;
+	fp_t ret_local=0.0;
       
 	// Initialize storage
 	dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
 	bad.n=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
     
 	// Temperature loop
-	for(double T=1.0e-2;T<=1.001e2;T*=1.0e2) {
+	for(fp_t T=1.0e-2;T<=1.001e2;T*=1.0e2) {
 
 	  // Loop over each point in the data file
 	  for(size_t i=0;i<tab.get_nlines();i++) {
 	
-	    double mot=tab.get("mot",i);
-	    double psi=tab.get("psi",i);
+	    fp_t mot=tab.get("mot",i);
+	    fp_t psi=tab.get("psi",i);
 	    exact.n=tab.get("n",i);
 	    exact.ed=tab.get("ed",i);
 	    exact.pr=tab.get("pr",i);
@@ -586,16 +586,14 @@ namespace o2scl {
 	
 	    exact.n*=pow(T,3.0);
 	    if (nr_mode) {
+              exact.ed*=pow(T,4.0);
 	      if (k%2==0) {
-		exact.ed=exact.ed*pow(T,4.0)+exact.n*p.m;
-	      } else {
-		exact.ed=exact.ed*pow(T,4.0);
+                exact.ed+=exact.n*p.m;
 	      }
 	    } else {
-	      if (k%2==0) {
-		exact.ed*=pow(T,4.0);
-	      } else {
-		exact.ed=exact.ed*pow(T,4.0)-exact.n*p.m;
+              exact.ed*=pow(T,4.0);
+	      if (k%2!=0) {
+		exact.ed-=exact.n*p.m;
 	      }
 	    }
 	    exact.pr*=pow(T,4.0);
@@ -608,11 +606,13 @@ namespace o2scl {
 	
 	    cnt++;
 	  
-	    check_density<part_t>(p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
-				  mot_bad,psi_bad,ret_local);
+	    check_density<part_t,part_t,part_t>
+              (p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
+               mot_bad,psi_bad,ret_local);
 	  
-	    check_eps<part_t>(p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
-			      mot_bad,psi_bad,ret_local);
+	    check_eps<part_t,part_t,part_t>
+              (p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
+               mot_bad,psi_bad,ret_local);
 
 	    if (verbose>1) {
 	      std::cout.precision(5);
@@ -702,20 +702,20 @@ namespace o2scl {
       // k=0,1 are non-interacting, k=2,3 are interacting
       for(size_t k=0;k<4;k++) {
 
-	double ret_local=0.0;
+	fp_t ret_local=0.0;
       
 	// Initialize storage
 	dev.mu=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
 	bad.mu=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
     
 	// Temperature loop
-	for(double T=1.0e-2;T<=1.001e2;T*=1.0e2) {
+	for(fp_t T=1.0e-2;T<=1.001e2;T*=1.0e2) {
       
 	  // Loop over each point in the data file
 	  for(size_t i=0;i<tab.get_nlines();i++) {
 	
-	    double mot=tab.get("mot",i);
-	    double psi=tab.get("psi",i);
+	    fp_t mot=tab.get("mot",i);
+	    fp_t psi=tab.get("psi",i);
 	    p.n=tab.get("n",i)*pow(T,3.0);
 	    exact.ed=tab.get("ed",i);
 	    exact.pr=tab.get("pr",i);
@@ -862,20 +862,20 @@ namespace o2scl {
 	// k=0,1 are non-interacting, k=2,3 are interacting
 	for(size_t k=0;k<4;k++) {
 
-	  double ret_local=0.0;
+	  fp_t ret_local=0.0;
 
 	  // Initialize storage
 	  dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
 	  bad.n=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
     
 	  // Temperature loop
-	  for(double T=1.0e-2;T<=1.001e2;T*=1.0e2) {
+	  for(fp_t T=1.0e-2;T<=1.001e2;T*=1.0e2) {
 
 	    // Loop over each point in the data file
 	    for(size_t i=0;i<tab.get_nlines();i++) {
 	
-	      double mot=tab.get("mot",i);
-	      double psi=tab.get("psi",i);
+	      fp_t mot=tab.get("mot",i);
+	      fp_t psi=tab.get("psi",i);
 	      exact.n=tab.get("pair_n",i);
 	      exact.ed=tab.get("pair_ed",i);
 	      exact.pr=tab.get("pair_pr",i);
@@ -902,12 +902,14 @@ namespace o2scl {
 
 	      cnt++;
 
-	      check_density<part_t>(p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
-				    mot_bad,psi_bad,ret_local);
+	      check_density<part_t,part_t,part_t>
+                (p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
+                 mot_bad,psi_bad,ret_local);
 	    
-	      check_eps<part_t>(p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
-				mot_bad,psi_bad,ret_local);
-
+	      check_eps<part_t,part_t,part_t>
+                (p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
+                 mot_bad,psi_bad,ret_local);
+              
 	      if (verbose>1) {
 		std::cout.precision(5);
 		std::cout << "T,m,mu,psi,mot: " << T << " " << p.m << " "
@@ -988,20 +990,20 @@ namespace o2scl {
 	// k=0,1 are non-interacting, k=2,3 are interacting
 	for(size_t k=0;k<4;k++) {
 
-	  double ret_local=0.0;
+	  fp_t ret_local=0.0;
 	
 	  // Initialize storage
 	  dev.mu=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
 	  bad.mu=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
     
 	  // Temperature loop
-	  for(double T=1.0e-2;T<=1.001e2;T*=1.0e2) {
+	  for(fp_t T=1.0e-2;T<=1.001e2;T*=1.0e2) {
       
 	    // Loop over each point in the data file
 	    for(size_t i=0;i<tab.get_nlines();i++) {
 	
-	      double mot=tab.get("mot",i);
-	      double psi=tab.get("psi",i);
+	      fp_t mot=tab.get("mot",i);
+	      fp_t psi=tab.get("psi",i);
 	      p.n=tab.get("pair_n",i)*pow(T,3.0);	
 	      exact.ed=tab.get("pair_ed",i);
 	      exact.pr=tab.get("pair_pr",i);
@@ -1142,6 +1144,9 @@ namespace o2scl {
     }
 
   };
+
+  typedef part_calibrate_class_tl<double> part_calibrate_class;
+
   
 #ifndef DOXYGEN_NO_O2NS
 }

@@ -121,8 +121,9 @@ int main(void) {
   cout << "double:" << endl;
   cout << dtos(f.n,0) << " " << dtos(f.ed,0) << endl;
   cout << dtos(f.pr,0) << " " << dtos(f.en,0) << endl;
+  cout << endl;
 
-  /*
+  frld.verbose=2;
   fld.m=1;
   fld.g=2;
   fld.mu=3;
@@ -133,7 +134,18 @@ int main(void) {
   cout << "long double:" << endl;
   cout << dtos(fld.n,0) << " " << dtos(fld.ed,0) << endl;
   cout << dtos(fld.pr,0) << " " << dtos(fld.en,0) << endl;
+  cout << endl;
        
+  fld.m=1;
+  fld.g=2;
+  fld.mu=4;
+  frld.calc_mu(fld,Tld);
+  cout << "long double:" << endl;
+  cout << dtos(fld.n,0) << " " << dtos(fld.ed,0) << endl;
+  cout << dtos(fld.pr,0) << " " << dtos(fld.en,0) << endl;
+  cout << endl;
+
+  fr35.verbose=2;
   f35.m=1;
   f35.g=2;
   f35.mu=3;
@@ -144,13 +156,29 @@ int main(void) {
   cout << "cpp_dec_float_35:" << endl;
   cout << dtos(f35.n,0) << "\n" << dtos(f35.ed,0) << endl;
   cout << dtos(f35.pr,0) << "\n" << dtos(f35.en,0) << endl;
-  */
-       
+  cout << endl;
 
-  // This doesn't work yet
-  //double vx=pcc.part_calibrate<fermion_ld,fermion_rel_ld>
+  f35.m=1;
+  f35.g=2;
+  f35.mu=4;
+  fr35.calc_mu(f35,T35);
+  cout << "cpp_dec_float_35:" << endl;
+  cout << dtos(f35.n,0) << "\n" << dtos(f35.ed,0) << endl;
+  cout << dtos(f35.pr,0) << "\n" << dtos(f35.en,0) << endl;
+  cout << endl;
+  
+  // These don't work yet
+  
+  //part_calibrate_class_tl<long double> pcc_ld;
+  //long double vx_ld=pcc_ld.part_calibrate<fermion_ld,fermion_rel_ld>
   //(fld,frld,1,"../../data/o2scl/fermion_deriv_cal.o2",false,1,1);
-  //cout << vx << endl;
+  //cout << vx_ld << endl;
+
+  //part_calibrate_class_tl<cpp_dec_float_35> pcc_cdf35;
+  //cpp_dec_float_35 vx_cdf35=pcc_cdf35.part_calibrate<fermion_cdf35,
+  //fermion_rel_cdf35>
+  //(f35,fr35,1,"../../data/o2scl/fermion_deriv_cal.o2",false,1,1);
+  //cout << vx_cdf35 << endl;
   
 #endif
 
