@@ -1310,8 +1310,10 @@ namespace o2scl {
       fp_t arg2=eta+u-y;
       fp_t arg3=eta+u;
       fp_t arg4=y-eta-u;
-      fp_t term1=o2log(1+o2exp(arg4))/(1+o2exp(arg4));
-      fp_t term2=o2log(1+o2exp(arg2))/(1+o2exp(arg2));
+      fp_t arg5=1+o2exp(arg4);
+      fp_t arg6=1+o2exp(arg2);
+      fp_t term1=o2log(arg5)/(1+o2exp(arg4));
+      fp_t term2=o2log(arg6)/(1+o2exp(arg2));
       ret=(eta+u)*o2sqrt(arg1)*(term1+term2);
   
       if (!o2isfinite(ret)) {
