@@ -21,7 +21,10 @@
   -------------------------------------------------------------------
 */
 #include <cctype>
+// for ioctl
 #include <sys/ioctl.h>
+//for STDOUT_FILENO
+#include <unistd.h>
 
 #include <o2scl/cursesw.h>
 #include <o2scl/string_conv.h>
