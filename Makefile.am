@@ -196,3 +196,5 @@ blank-doc:
 	touch doc/o2scl/eos/sphinx/build/html/_images/blank.png
 	touch doc/o2scl/part/sphinx/build/html/_images/blank.png
 
+snapb:
+	sudo snapcraft cleanbuild 2>&1 > ~/o2scl_snap.out &
