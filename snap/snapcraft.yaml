@@ -13,6 +13,7 @@
 
   grade: devel
   confinement: devmode
+  base: core20
 
 # 4/29/19: I used to include -libc6 in stage-packages but it
 # doesn't appear to be needed any more
@@ -22,6 +23,8 @@
 # because 16.04 LTS doesn't have the newer boost integration
 # libraries. The rpath flag doesn't seem to do anything at
 # the moment.
+
+# 1/6/2021: Removing the rpath stuff for now.
 
 # 3/12/2020: Added O2SCL_HDF5_PRE_1_12 for old HDF5 interface
 
@@ -39,5 +42,5 @@
       - libhdf5-serial-dev
       - libgsl0-dev
       build: |
-        mkdir -p m4 && ./autogen.sh && CXXFLAGS="-DO2SCL_OLDER_COMPILER -DO2SCL_HDF5_PRE_1_12" LDFLAGS="-Wl,-rpath -Wl,/snap/o2scl/current/lib/x86_64-linux-gnu" ./configure --enable-snap --prefix=$PWD/../install && make blank-doc && make && make install
+        mkdir -p m4 && ./autogen.sh && CXXFLAGS="-DO2SCL_OLDER_COMPILER -DO2SCL_HDF5_PRE_1_12" ./configure --enable-snap --prefix=$PWD/../install && make blank-doc && make && make install
   
