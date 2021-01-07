@@ -32,15 +32,26 @@
     o2scl:
       source: https://github.com/awsteiner/o2scl.git
       plugin: autotools
-      install-via: prefix
+      build-environment:
+      - CXXFLAGS: "-DO2SCL_OLDER_COMPILER -DO2SCL_HDF5_PRE_1_12"
       stage-packages:
       - g++
       - make
       - libboost-all-dev
       - libreadline-dev
       - libncurses-dev
-      - libhdf5-serial-dev
+      - libhdf5-dev
       - libgsl0-dev
-      build: |
-        mkdir -p m4 && ./autogen.sh && CXXFLAGS="-DO2SCL_OLDER_COMPILER -DO2SCL_HDF5_PRE_1_12" ./configure --enable-snap --prefix=$PWD/../install && make blank-doc && make && make install
+      autotools-configure-parameters:
+      - --enable-snap
+      - -prefix=$PWD/../install
+  apps:
+    acol:
+      command: src/acol/acol
+      
+#build: |
+#        mkdir -p m4 && ./autogen.sh &&
+#CXXFLAGS="-DO2SCL_OLDER_COMPILER -DO2SCL_HDF5_PRE_1_12"
+#./configure --enable-snap --prefix=$PWD/../install &&
+#make blank-doc && make && make install
   
