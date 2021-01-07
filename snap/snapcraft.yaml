@@ -17,23 +17,21 @@
 
 # 4/29/19: I used to include -libc6 in stage-packages but it
 # doesn't appear to be needed any more
-
+#
 # 11/6/19: Trying an rpath build to simplify the use of acol
 # on snap installations. The older compiler flag is needed
 # because 16.04 LTS doesn't have the newer boost integration
 # libraries. The rpath flag doesn't seem to do anything at
 # the moment.
-
-# 1/6/2021: Removing the rpath stuff for now.
-
+#
 # 3/12/2020: Added O2SCL_HDF5_PRE_1_12 for old HDF5 interface
+#
+# 1/6/2021: Removing the rpath stuff for now.
 
   parts:
     o2scl:
       source: https://github.com/awsteiner/o2scl.git
       plugin: autotools
-      build-environment:
-      - CXXFLAGS: "-DO2SCL_OLDER_COMPILER -DO2SCL_HDF5_PRE_1_12"
       stage-packages:
       - g++
       - make
@@ -42,16 +40,14 @@
       - libncurses-dev
       - libhdf5-dev
       - libgsl0-dev
-      autotools-configure-parameters:
-      - --enable-snap
-      - -prefix=$PWD/../install
+      override-build: |
+        mkdir -p m4 && ./autogen.sh && CXXFLAGS="-DO2SCL_UBUNTU_HDF5 -DO2SCL_OLDER_COMPILER -DO2SCL_HDF5_PRE_1_12" ./configure --enable-snap --prefix=$PWD/../install && make blank-doc && make && make install
+        
   apps:
     acol:
       command: src/acol/acol
       
-#build: |
-#        mkdir -p m4 && ./autogen.sh &&
-#CXXFLAGS="-DO2SCL_OLDER_COMPILER -DO2SCL_HDF5_PRE_1_12"
-#./configure --enable-snap --prefix=$PWD/../install &&
-#make blank-doc && make && make install
-  
+
+#      override-build: |
+#        mkdir -p m4
+#        ./autogen.sh
