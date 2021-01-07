@@ -41,7 +41,7 @@
       - libhdf5-dev
       - libgsl0-dev
       override-build: |
-        mkdir -p m4 && ./autogen.sh && CXXFLAGS="-DO2SCL_UBUNTU_HDF5 -DO2SCL_OLDER_COMPILER -DO2SCL_HDF5_PRE_1_12" ./configure --enable-snap --prefix=$PWD/../install && make blank-doc && make && make install
+        mkdir -p m4 && ./autogen.sh && CXXFLAGS="-DO2SCL_UBUNTU_HDF5 -DO2SCL_OLDER_COMPILER -DO2SCL_HDF5_PRE_1_12" LDFLAGS="-L/usr/lib/x86_64-linux-gnu/hdf5/serial" ./configure --enable-snap --prefix=$PWD/../install && xxx && make blank-doc && make && make install
         
   apps:
     acol:
