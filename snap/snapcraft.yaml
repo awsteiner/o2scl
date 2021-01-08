@@ -15,18 +15,20 @@
   confinement: devmode
   base: core20
 
-# 4/29/19: I used to include -libc6 in stage-packages but it
-# doesn't appear to be needed any more
-#
-# 11/6/19: Trying an rpath build to simplify the use of acol
-# on snap installations. The older compiler flag is needed
-# because 16.04 LTS doesn't have the newer boost integration
-# libraries. The rpath flag doesn't seem to do anything at
-# the moment.
-#
+# 4/29/19: I used to include -libc6 in stage-packages but it doesn't
+# appear to be needed any more
+
+# 11/6/19: Trying an rpath build to simplify the use of acol on snap
+# installations. The older compiler flag is needed because 16.04 LTS
+# doesn't have the newer boost integration libraries. The rpath flag
+# doesn't seem to do anything at the moment.
+
 # 3/12/2020: Added O2SCL_HDF5_PRE_1_12 for old HDF5 interface
-#
-# 1/6/2021: Removing the rpath stuff for now.
+
+# 1/6/2021: Removing the rpath stuff for now. Added base keyword above
+# and reconfigured. Added apps section (I'm not sure if the apps
+# section will work or is useful outside of strict confinement). I had
+# to manually add the hdf5 and compression libraries to LIBS.
 
   parts:
     o2scl:
@@ -41,13 +43,9 @@
       - libhdf5-dev
       - libgsl0-dev
       override-build: |
-        mkdir -p m4 && ./autogen.sh && CXXFLAGS="-DO2SCL_UBUNTU_HDF5 -DO2SCL_OLDER_COMPILER -DO2SCL_HDF5_PRE_1_12" LDFLAGS="-L/usr/lib/x86_64-linux-gnu/hdf5/serial" ./configure --enable-snap --prefix=$PWD/../install && xxx && make blank-doc && make && make install
+        mkdir -p m4 && autoreconf -i && CXXFLAGS="-DO2SCL_UBUNTU_HDF5 -DO2SCL_OLDER_COMPILER -DO2SCL_HDF5_PRE_1_12" LIBS="-lhdf5_serial -lsz -laec" ./configure --enable-snap --prefix=$PWD/../install && make blank-doc && make && make install
         
   apps:
     acol:
       command: src/acol/acol
       
-
-#      override-build: |
-#        mkdir -p m4
-#        ./autogen.sh
