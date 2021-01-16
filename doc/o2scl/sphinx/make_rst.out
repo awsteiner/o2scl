@@ -23,7 +23,6 @@ Namespace: o2scl class: cli
 Namespace: o2scl class: cli_readline
 Namespace: o2scl_hdf class: cloud_file
 Namespace: o2scl class: table::col
-Namespace:  class: table< std::vector< double > >::col
 Namespace: o2scl class: columnify
 Namespace: o2scl class: comm_option_fptr
 Namespace: o2scl class: comm_option_funct
@@ -44,15 +43,12 @@ Namespace: o2scl class: cubic_real_coeff
 Namespace: o2scl class: cubic_real_coeff_cern
 Namespace: o2scl class: cubic_real_coeff_gsl
 Namespace: o2scl class: cursesw
-Namespace:  class: convert_units< double >::der_unit_s
 Namespace: o2scl class: deriv_base
 Namespace: o2scl class: deriv_cern
 Namespace: o2scl class: deriv_eqi
 Namespace: o2scl class: deriv_gsl
 Namespace: o2scl class: diff_evo
 Namespace: o2scl class: diff_evo_adapt
-Namespace:  class: deriv_base< funct >::dpars
-Namespace:  class: deriv_base< funct, double >::dpars
 Namespace: o2scl class: edge_crossings
 Namespace: o2scl class: err_hnd_cpp
 Namespace: o2scl class: err_hnd_gsl
@@ -69,7 +65,6 @@ Namespace: o2scl class: expval_base
 Namespace: o2scl class: expval_matrix
 Namespace: o2scl class: expval_scalar
 Namespace: o2scl class: expval_vector
-Namespace:  class: inte_singular_gsl< funct >::extrapolation_table
 Namespace: o2scl class: fermi_dirac_integ_direct
 Namespace: o2scl class: fermi_dirac_integ_gsl
 Namespace: o2scl class: fermi_dirac_integ_tl
@@ -330,7 +325,6 @@ Namespace: o2scl class: uniform_grid_log_end_width
 Namespace: o2scl class: uniform_grid_log_width
 Namespace: o2scl class: uniform_grid_width
 Namespace: o2scl class: uniform_prior
-Namespace:  class: convert_units< double >::unit_t
 Namespace: o2scl class: vec_index
 Namespace:  class: boost::numeric::ublas::vector
 Namespace: o2scl class: vector_index_vector
@@ -339,10 +333,6 @@ Namespace: o2scl class: vector_range_gen
 
 ---------------------------------------------------
 Creating rst files for classes:
-
----------------------------------------------------
-Creating rst files for duplicate functions:
-
 ---------------------------------------------------
 Parsing function_list:
 
@@ -392,6 +382,39 @@ Namespace:  function: o2abs
 Multiple entry o2abs
 Namespace:  function: o2abs
 Multiple entry o2abs
+Namespace:  function: o2exp
+Namespace:  function: o2exp
+Multiple entry o2exp
+Namespace:  function: o2exp
+Multiple entry o2exp
+Namespace:  function: o2exp
+Multiple entry o2exp
+Namespace:  function: o2exp
+Multiple entry o2exp
+Namespace:  function: o2exp
+Multiple entry o2exp
+Namespace:  function: o2log
+Namespace:  function: o2log
+Multiple entry o2log
+Namespace:  function: o2log
+Multiple entry o2log
+Namespace:  function: o2log
+Multiple entry o2log
+Namespace:  function: o2log
+Multiple entry o2log
+Namespace:  function: o2log
+Multiple entry o2log
+Namespace:  function: o2sqrt
+Namespace:  function: o2sqrt
+Multiple entry o2sqrt
+Namespace:  function: o2sqrt
+Multiple entry o2sqrt
+Namespace:  function: o2sqrt
+Multiple entry o2sqrt
+Namespace:  function: o2sqrt
+Multiple entry o2sqrt
+Namespace:  function: o2sqrt
+Multiple entry o2sqrt
 Namespace:  function: o2isfinite
 Namespace:  function: o2isfinite
 Multiple entry o2isfinite
@@ -688,7 +711,7 @@ Namespace: o2scl function: vector_integ_threept
 Namespace: o2scl function: vector_integ_extended4
 Namespace: o2scl function: vector_integ_durand
 Namespace: o2scl function: vector_integ_extended8
-Namespace:  function: operator<<
+Namespace: o2scl function: operator<<
 Namespace:  function: constraint
 Namespace:  function: cont_constraint
 Namespace:  function: lower_bound
@@ -1041,7 +1064,37 @@ Namespace: o2scl_linalg function: solve_cyc_tridiag_sym
 Multiple entry solve_cyc_tridiag_sym
 Namespace: o2scl_linalg function: solve_cyc_tridiag_nonsym
 Multiple entry solve_cyc_tridiag_nonsym
-Namespace: o2scl_linalg function: LU_decomp_array_2d
+Namespace: o2scl_linalg_bracket function: LU_decomp_array_2d
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
 
 ---------------------------------------------------
 Creating rst files for non-duplicate functions:
@@ -1076,8 +1129,12 @@ Skipping matrix_swap_double
 Skipping matrix_trans_out
 Skipping matrix_transpose
 Skipping o2abs
+Skipping o2exp
 Skipping o2hypot
 Skipping o2isfinite
+Skipping o2log
+Skipping o2sqrt
+Skipping operator<<
 Skipping pipe_cmd_string
 Skipping rebin_xy
 Skipping solve_cyc_tridiag_nonsym
@@ -1153,295 +1210,736 @@ Skipping wvector_variance_fmean
 ---------------------------------------------------
 Creating rst files for duplicate functions:
 
+Herex: const_vector_range const_vector_range
 const_vector_range(const dat_t *v, size_t start, size_t last)
+Herex: const_vector_range const_vector_range
 const_vector_range(boost::numeric::ublas::vector<dat_t> &v, size_t start, size_t last)
+Herex: const_vector_range const_vector_range
 const_vector_range(const boost::numeric::ublas::vector<dat_t> &v, size_t start, size_t last)
+Herex: const_vector_range const_vector_range
 const_vector_range(boost::numeric::ublas::vector_range<boost::numeric::ublas::vector<dat_t>> &v, size_t start, size_t last)
+Herex: const_vector_range const_vector_range
 const_vector_range(const boost::numeric::ublas::vector_range<boost::numeric::ublas::vector<dat_t>> &v, size_t start, size_t last)
+Herex: const_vector_range const_vector_range
 const_vector_range(const boost::numeric::ublas::vector_range<const boost::numeric::ublas::vector<dat_t>> &v, size_t start, size_t last)
+Herex: const_vector_range const_vector_range
 const_vector_range(const std::vector<data_t> &v, size_t start, size_t last)
+Herex: const_vector_range const_vector_range
 const_vector_range(std::vector<data_t> &v, size_t start, size_t last)
+Herex: const_vector_range const_vector_range
 const_vector_range(vector_range_gen<vec_t> &v, size_t start, size_t last)
+Herex: const_vector_range const_vector_range
 const_vector_range(const vector_range_gen<vec_t> &v, size_t start, size_t last)
+Herex: const_vector_range const_vector_range
 const_vector_range(const const_vector_range_gen<vec_t> &v, size_t start, size_t last)
+Herex: dtos dtos
 dtos(const fp_t &x, int prec = 6, bool auto_prec = false)
+Herex: dtos dtos
 dtos(double x, std::ostream &format)
+Herex: hdf_input hdf_input
 hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string name)
+Herex: hdf_input_data hdf_input
+Herex: hdf_input hdf_input
 hdf_input(hdf_file &hf, o2scl::table3d &h, std::string name = "")
+Herex: hdf_input hdf_input
 hdf_input(hdf_file &hf, o2scl::table_units<vec_t> &t, std::string name)
+Herex: hdf_input_data hdf_input
+Herex: hdf_input hdf_input
 hdf_input(hdf_file &hf, o2scl::tensor_grid<vec_t, vec_size_t> &t, std::string name)
+Herex: hdf_input hdf_input
 hdf_input(hdf_file &hf, o2scl::uniform_grid<double> &h, std::string name = "")
+Herex: hdf_input hdf_input
 hdf_input(hdf_file &hf, o2scl::prob_dens_mdim_amr<vec_t, mat_t> &p, std::string name)
+Herex: hdf_input hdf_input
 hdf_input(hdf_file &hf, o2scl::hist &h, std::string name = "")
+Herex: hdf_input hdf_input
 hdf_input(hdf_file &hf, o2scl::hist_2d &h, std::string name = "")
+Herex: hdf_input hdf_input
 hdf_input(hdf_file &hf, o2scl::expval_scalar &h, std::string name = "")
+Herex: hdf_input hdf_input
 hdf_input(hdf_file &hf, o2scl::expval_vector &h, std::string name = "")
+Herex: hdf_input hdf_input
 hdf_input(hdf_file &hf, o2scl::expval_matrix &h, std::string name = "")
+Herex: hdf_input hdf_input
 hdf_input(hdf_file &hf, std::vector<o2scl::contour_line> &cl, std::string name = "")
+Herex: hdf_input hdf_input
 hdf_input(hdf_file &hf, std::vector<o2scl::edge_crossings> &ec, std::string name = "")
+Herex: hdf_input hdf_input
 hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>, std::vector<size_t>> &t, std::string name = "")
+Herex: hdf_input_data hdf_input_data
 hdf_input_data(hdf_file &hf, o2scl::table<vec_t> &t)
+Herex: hdf_input_data hdf_input_data
 hdf_input_data(hdf_file &hf, o2scl::table_units<vec_t> &t)
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, o2scl::table<std::vector<double>> &t, std::string name)
+Herex: hdf_output_data hdf_output
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, o2scl::table3d &t, std::string name)
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, o2scl::table_units<std::vector<double>> &t, std::string name)
+Herex: hdf_output_data hdf_output
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, o2scl::tensor_grid<vec_t, vec_size_t> &t, std::string name)
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, o2scl::uniform_grid<double> &h, std::string name)
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, o2scl::prob_dens_mdim_amr<vec_t, mat_t> &p, std::string name)
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, o2scl::table<> &t, std::string name)
+Herex: hdf_output_data hdf_output
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, o2scl::table_units<> &t, std::string name)
+Herex: hdf_output_data hdf_output
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, o2scl::hist &h, std::string name)
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, const o2scl::hist_2d &h, std::string name)
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, const o2scl::table3d &h, std::string name)
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, o2scl::expval_scalar &h, std::string name)
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, o2scl::expval_vector &h, std::string name)
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, o2scl::expval_matrix &h, std::string name)
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, const std::vector<o2scl::contour_line> &cl, std::string name)
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, const std::vector<o2scl::edge_crossings> &ec, std::string name)
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, o2scl::tensor_grid<std::vector<double>, std::vector<size_t>> &t, std::string name)
+Herex: hdf_output hdf_output
 hdf_output(hdf_file &hf, o2scl::hist_2d &t, std::string name)
+Herex: hdf_output_data hdf_output_data
 hdf_output_data(hdf_file &hf, o2scl::table<std::vector<double>> &t)
+Herex: hdf_output_data hdf_output_data
 hdf_output_data(hdf_file &hf, o2scl::table_units<std::vector<double>> &t)
+Herex: hdf_output_data hdf_output_data
 hdf_output_data(hdf_file &hf, o2scl::table<> &t)
+Herex: hdf_output_data hdf_output_data
 hdf_output_data(hdf_file &hf, o2scl::table_units<> &t)
+Herex: linear_or_log_chi2 linear_or_log
+Herex: linear_or_log linear_or_log
 linear_or_log(vec_t &x, vec2_t &y, bool &log_x, bool &log_y)
+Herex: linear_or_log linear_or_log
 linear_or_log(vec_t &y, bool &log_y)
+Herex: matrix_copy matrix_copy
 matrix_copy(mat_t &src, mat2_t &dest)
+Herex: matrix_copy matrix_copy
 matrix_copy(size_t M, size_t N, mat_t &src, mat2_t &dest)
+Herex: matrix_is_finite matrix_is_finite
 matrix_is_finite(size_t m, size_t n, mat_t &data)
+Herex: matrix_is_finite matrix_is_finite
 matrix_is_finite(mat_t &data)
+Herex: matrix_is_lower matrix_is_lower
 matrix_is_lower(mat_t &src)
+Herex: matrix_is_lower matrix_is_lower
 matrix_is_lower(size_t m, size_t n, mat_t &src)
+Herex: matrix_is_upper matrix_is_upper
 matrix_is_upper(mat_t &src)
+Herex: matrix_is_upper matrix_is_upper
 matrix_is_upper(size_t m, size_t n, mat_t &src)
+Herex: matrix_lookup matrix_lookup
 matrix_lookup(size_t m, size_t n, const mat_t &A, double x0, size_t &i, size_t &j)
+Herex: matrix_lookup matrix_lookup
 matrix_lookup(const mat_t &A, double x0, size_t &i, size_t &j)
+Herex: matrix_make_lower matrix_make_lower
 matrix_make_lower(mat_t &src)
+Herex: matrix_make_lower matrix_make_lower
 matrix_make_lower(size_t m, size_t n, mat_t &src)
+Herex: matrix_make_upper matrix_make_upper
 matrix_make_upper(mat_t &src)
+Herex: matrix_make_upper matrix_make_upper
 matrix_make_upper(size_t m, size_t n, mat_t &src)
+Herex: matrix_max_value matrix_max
+Herex: matrix_max_value matrix_max
+Herex: matrix_max_value_double matrix_max
+Herex: matrix_max_index matrix_max
+Herex: matrix_max_index matrix_max
+Herex: matrix_max matrix_max
 matrix_max(const arma::mat &data)
+Herex: matrix_max matrix_max
 matrix_max(const Eigen::MatrixXd &data)
+Herex: matrix_max_index matrix_max_index
 matrix_max_index(size_t m, size_t n, const mat_t &data, size_t &i_max, size_t &j_max, data_t &max)
+Herex: matrix_max_index matrix_max_index
 matrix_max_index(const mat_t &data, size_t &i_max, size_t &j_max, data_t &max)
+Herex: matrix_max_value matrix_max_value
 matrix_max_value(size_t m, const size_t n, const mat_t &data)
+Herex: matrix_max_value matrix_max_value
 matrix_max_value(const mat_t &data)
+Herex: matrix_max_value_double matrix_max_value
+Herex: matrix_min_value matrix_min
+Herex: matrix_min_value matrix_min
+Herex: matrix_min_value_double matrix_min
+Herex: matrix_min_index matrix_min
+Herex: matrix_min_index matrix_min
+Herex: matrix_minmax matrix_min
+Herex: matrix_minmax matrix_min
+Herex: matrix_minmax_index matrix_min
+Herex: matrix_min matrix_min
 matrix_min(const arma::mat &data)
+Herex: matrix_min matrix_min
 matrix_min(const Eigen::MatrixXd &data)
+Herex: matrix_min_index matrix_min_index
 matrix_min_index(size_t n, size_t m, const mat_t &data, size_t &i_min, size_t &j_min, data_t &min)
+Herex: matrix_min_index matrix_min_index
 matrix_min_index(const mat_t &data, size_t &i_min, size_t &j_min, data_t &min)
+Herex: matrix_min_value matrix_min_value
 matrix_min_value(size_t m, size_t n, const mat_t &data)
+Herex: matrix_min_value matrix_min_value
 matrix_min_value(const mat_t &data)
+Herex: matrix_min_value_double matrix_min_value
+Herex: matrix_minmax matrix_minmax
 matrix_minmax(size_t n, size_t m, const mat_t &data, data_t &min, data_t &max)
+Herex: matrix_minmax matrix_minmax
 matrix_minmax(const mat_t &data, data_t &min, data_t &max)
+Herex: matrix_minmax_index matrix_minmax
+Herex: matrix_out matrix_out
 matrix_out(std::ostream &os, size_t nrows, size_t ncols, const mat_t &A)
+Herex: matrix_out matrix_out
 matrix_out(std::ostream &os, const mat_t &A)
+Herex: matrix_set_all matrix_set_all
 matrix_set_all(size_t M, size_t N, mat_t &src, data_t val)
+Herex: matrix_set_all matrix_set_all
 matrix_set_all(mat_t &src, data_t val)
+Herex: matrix_set_identity matrix_set_identity
 matrix_set_identity(size_t M, size_t N, mat_t &m)
+Herex: matrix_set_identity matrix_set_identity
 matrix_set_identity(mat_t &m)
+Herex: matrix_sum matrix_sum
 matrix_sum(size_t m, size_t n, const mat_t &data)
+Herex: matrix_sum matrix_sum
 matrix_sum(const mat_t &data)
+Herex: matrix_swap matrix_swap
 matrix_swap(size_t M, size_t N, mat_t &v1, mat2_t &v2)
+Herex: matrix_swap_double matrix_swap
+Herex: matrix_swap matrix_swap
 matrix_swap(mat_t &m, size_t i1, size_t j1, size_t i2, size_t j2)
+Herex: matrix_swap_double matrix_swap
+Herex: matrix_swap_cols matrix_swap
+Herex: matrix_swap_cols_double matrix_swap
+Herex: matrix_swap_rows matrix_swap
+Herex: matrix_swap_rows_double matrix_swap
+Herex: matrix_swap_double matrix_swap_double
 matrix_swap_double(size_t M, size_t N, mat_t &m1, mat2_t &m2)
+Herex: matrix_swap_double matrix_swap_double
 matrix_swap_double(mat_t &m, size_t i1, size_t j1, size_t i2, size_t j2)
+Herex: matrix_trans_out matrix_trans_out
 matrix_trans_out(std::ostream &os, size_t nrows, size_t ncols, const mat_t &A)
+Herex: matrix_trans_out matrix_trans_out
 matrix_trans_out(std::ostream &os, const mat_t &A)
+Herex: matrix_transpose matrix_transpose
 matrix_transpose(mat_t &src, mat2_t &dest)
+Herex: matrix_transpose matrix_transpose
 matrix_transpose(size_t m, size_t n, mat_t &src, mat2_t &dest)
+Herex: matrix_transpose matrix_transpose
 matrix_transpose(mat_t &src)
+Herex: matrix_transpose matrix_transpose
 matrix_transpose(size_t m, size_t n, mat_t &src)
+Herex: o2abs o2abs
 o2abs(const float x)
+Herex: o2abs o2abs
 o2abs(const double x)
+Herex: o2abs o2abs
 o2abs(const long double x)
+Herex: o2abs o2abs
 o2abs(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> x)
+Herex: o2abs o2abs
 o2abs(const boost::multiprecision::cpp_dec_float_50 x)
+Herex: o2abs o2abs
 o2abs(const boost::multiprecision::cpp_dec_float_100 x)
+Herex: o2exp o2exp
+o2exp(const float x)
+Herex: o2exp o2exp
+o2exp(const double x)
+Herex: o2exp o2exp
+o2exp(const long double x)
+Herex: o2exp o2exp
+o2exp(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> x)
+Herex: o2exp o2exp
+o2exp(const boost::multiprecision::cpp_dec_float_50 x)
+Herex: o2exp o2exp
+o2exp(const boost::multiprecision::cpp_dec_float_100 x)
+Herex: o2hypot o2hypot
 o2hypot(const float x, const float y)
+Herex: o2hypot o2hypot
 o2hypot(const double x, const double y)
+Herex: o2hypot o2hypot
 o2hypot(const long double x, const long double y)
+Herex: o2hypot o2hypot
 o2hypot(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> x, const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> y)
+Herex: o2hypot o2hypot
 o2hypot(const boost::multiprecision::cpp_dec_float_50 x, const boost::multiprecision::cpp_dec_float_50 y)
+Herex: o2hypot o2hypot
 o2hypot(const boost::multiprecision::cpp_dec_float_100 x, const boost::multiprecision::cpp_dec_float_100 y)
+Herex: o2isfinite o2isfinite
 o2isfinite(const double x)
+Herex: o2isfinite o2isfinite
 o2isfinite(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> x)
+Herex: o2isfinite o2isfinite
 o2isfinite(const boost::multiprecision::cpp_dec_float_50 x)
+Herex: o2isfinite o2isfinite
 o2isfinite(const boost::multiprecision::cpp_dec_float_100 x)
+Herex: o2log o2log
+o2log(const float x)
+Herex: o2log o2log
+o2log(const double x)
+Herex: o2log o2log
+o2log(const long double x)
+Herex: o2log o2log
+o2log(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> x)
+Herex: o2log o2log
+o2log(const boost::multiprecision::cpp_dec_float_50 x)
+Herex: o2log o2log
+o2log(const boost::multiprecision::cpp_dec_float_100 x)
+Herex: o2sqrt o2sqrt
+o2sqrt(const float x)
+Herex: o2sqrt o2sqrt
+o2sqrt(const double x)
+Herex: o2sqrt o2sqrt
+o2sqrt(const long double x)
+Herex: o2sqrt o2sqrt
+o2sqrt(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> x)
+Herex: o2sqrt o2sqrt
+o2sqrt(const boost::multiprecision::cpp_dec_float_50 x)
+Herex: o2sqrt o2sqrt
+o2sqrt(const boost::multiprecision::cpp_dec_float_100 x)
+Herex: pipe_cmd_string pipe_cmd_string
 pipe_cmd_string(std::string cmd, std::string &result, bool err_on_fail = true, int nmax = 80)
+Herex: pipe_cmd_string pipe_cmd_string
 pipe_cmd_string(std::string cmd, int nmax = 80)
+Herex: rebin_xy rebin_xy
 rebin_xy(const vec_t &x, const vec2_t &y, vec3_t &x_out, vec4_t &y_out, size_t n_pts, size_t interp_type)
+Herex: rebin_xy rebin_xy
 rebin_xy(const vec_t &x, const vec2_t &y, vec3_t &x_out, vec4_t &y_out, size_t n_pts, size_t interp_type1, size_t interp_type2, double acc = 1.0e-4)
+Herex: solve_cyc_tridiag_nonsym solve_cyc_tridiag_nonsym
 solve_cyc_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, const vec3_t &belowdiag, const vec4_t &rhs, vec5_t &x, size_t N, mem_t &m)
+Herex: solve_cyc_tridiag_nonsym solve_cyc_tridiag_nonsym
 solve_cyc_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, const vec3_t &belowdiag, const vec4_t &rhs, vec5_t &x, size_t N)
+Herex: solve_cyc_tridiag_sym solve_cyc_tridiag_sym
 solve_cyc_tridiag_sym(const vec_t &diag, const vec2_t &offdiag, const vec3_t &b, vec4_t &x, size_t N, mem_t &m)
+Herex: solve_cyc_tridiag_sym solve_cyc_tridiag_sym
 solve_cyc_tridiag_sym(const vec_t &diag, const vec2_t &offdiag, const vec3_t &b, vec4_t &x, size_t N)
+Herex: solve_tridiag_nonsym solve_tridiag_nonsym
 solve_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, const vec3_t &belowdiag, const vec4_t &rhs, vec5_t &x, size_t N, mem_t &m)
+Herex: solve_tridiag_nonsym solve_tridiag_nonsym
 solve_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, const vec3_t &belowdiag, const vec4_t &rhs, vec5_t &x, size_t N)
+Herex: solve_tridiag_sym solve_tridiag_sym
 solve_tridiag_sym(const vec_t &diag, const vec2_t &offdiag, const vec3_t &b, vec4_t &x, size_t N, mem_t &m)
+Herex: solve_tridiag_sym solve_tridiag_sym
 solve_tridiag_sym(const vec_t &diag, const vec2_t &offdiag, const vec3_t &b, vec4_t &x, size_t N)
+Herex: vector_absdev vector_absdev
 vector_absdev(size_t n, const vec_t &data, double mean)
+Herex: vector_absdev vector_absdev
 vector_absdev(const vec_t &data, double mean)
+Herex: vector_absdev vector_absdev
 vector_absdev(size_t n, const vec_t &data)
+Herex: vector_absdev vector_absdev
 vector_absdev(const vec_t &data)
+Herex: wvector_absdev vector_absdev
+Herex: wvector_absdev vector_absdev
+Herex: wvector_absdev vector_absdev
+Herex: wvector_absdev vector_absdev
+Herex: vector_acor vector_acor
 vector_acor(size_t n, vec_t &v, double &mean, double &sigma, double &tau, int verbose = 0, size_t tau_max = 2, size_t win_mult = 5, size_t max_lag = 40, size_t min_fac = 5)
+Herex: vector_acor vector_acor
 vector_acor(vec_t &v, double &mean, double &sigma, double &tau, int verbose = 0, size_t tau_max = 2, size_t win_mult = 5, size_t max_lag = 40, size_t min_fac = 5)
+Herex: vector_autocorr_vector_mult vector_autocorr_vector_mult
 vector_autocorr_vector_mult(size_t n2, const vec_t &data, const vec2_t &mult, resize_vec_t &ac_vec)
+Herex: vector_autocorr_vector_mult vector_autocorr_vector_mult
 vector_autocorr_vector_mult(const vec_t &data, const vec2_t &mult, resize_vec_t &ac_vec)
+Herex: vector_bin_size_freedman vector_bin_size_freedman
 vector_bin_size_freedman(size_t n, vec_t &v)
+Herex: vector_bin_size_freedman vector_bin_size_freedman
 vector_bin_size_freedman(vec_t &v)
+Herex: vector_bin_size_scott vector_bin_size_scott
 vector_bin_size_scott(size_t n, const vec_t &v)
+Herex: vector_bin_size_scott vector_bin_size_scott
 vector_bin_size_scott(const vec_t &v)
+Herex: vector_bsearch_inc vector_bsearch
+Herex: vector_bsearch_dec vector_bsearch
+Herex: vector_bsearch vector_bsearch
 vector_bsearch(const data_t x0, const vec_t &x, size_t lo, size_t hi)
+Herex: vector_bsearch vector_bsearch
 vector_bsearch(const data_t x0, const vec_t &x)
+Herex: vector_chi_squared vector_chi_squared
 vector_chi_squared(size_t n, const vec_t &obs, const vec2_t &exp, const vec3_t &err)
+Herex: vector_chi_squared vector_chi_squared
 vector_chi_squared(const vec_t &obs, const vec2_t &exp, const vec3_t &err)
+Herex: vector_copy vector_copy
 vector_copy(const vec_t &src, vec2_t &dest)
+Herex: vector_copy vector_copy
 vector_copy(size_t N, const vec_t &src, vec2_t &dest)
+Herex: vector_copy_jackknife vector_copy
+Herex: vector_copy_jackknife vector_copy
+Herex: vector_copy_jackknife vector_copy_jackknife
 vector_copy_jackknife(const vec_t &src, size_t iout, vec2_t &dest)
+Herex: vector_copy_jackknife vector_copy_jackknife
 vector_copy_jackknife(size_t sz, const vec_t &src, size_t iout, vec2_t &dest)
+Herex: vector_correlation vector_correlation
 vector_correlation(size_t n, const vec_t &data1, const vec2_t &data2)
+Herex: vector_correlation vector_correlation
 vector_correlation(const vec_t &data1, const vec2_t &data2)
+Herex: vector_covariance vector_covariance
 vector_covariance(size_t n, const vec_t &data1, const vec2_t &data2, double mean1, double mean2)
+Herex: vector_covariance vector_covariance
 vector_covariance(const vec_t &data1, const vec2_t &data2, double mean1, double mean2)
+Herex: vector_covariance vector_covariance
 vector_covariance(size_t n, const vec_t &data1, const vec2_t &data2)
+Herex: vector_covariance vector_covariance
 vector_covariance(const vec_t &data1, const vec2_t &data2)
+Herex: wvector_covariance vector_covariance
+Herex: wvector_covariance vector_covariance
+Herex: vector_integ_xy_interp vector_integ_xy_interp
 vector_integ_xy_interp(size_t n, const vec_t &x, const vec2_t &y, size_t interp_type = itp_linear)
+Herex: vector_integ_xy_interp vector_integ_xy_interp
 vector_integ_xy_interp(size_t n, const vec_t &x, const vec2_t &y, vec3_t &iy, size_t interp_type = itp_linear)
+Herex: vector_is_finite vector_is_finite
 vector_is_finite(size_t n, vec_t &data)
+Herex: vector_is_finite vector_is_finite
 vector_is_finite(vec_t &data)
+Herex: vector_is_monotonic vector_is_monotonic
 vector_is_monotonic(size_t n, vec_t &data)
+Herex: vector_is_monotonic vector_is_monotonic
 vector_is_monotonic(vec_t &data)
+Herex: vector_is_strictly_monotonic vector_is_strictly_monotonic
 vector_is_strictly_monotonic(size_t n, vec_t &data)
+Herex: vector_is_strictly_monotonic vector_is_strictly_monotonic
 vector_is_strictly_monotonic(vec_t &data)
+Herex: vector_kurtosis vector_kurtosis
 vector_kurtosis(size_t n, const vec_t &data, double mean, double stddev)
+Herex: vector_kurtosis vector_kurtosis
 vector_kurtosis(const vec_t &data, double mean, double stddev)
+Herex: vector_kurtosis vector_kurtosis
 vector_kurtosis(size_t n, const vec_t &data)
+Herex: vector_kurtosis vector_kurtosis
 vector_kurtosis(const vec_t &data)
+Herex: wvector_kurtosis vector_kurtosis
+Herex: wvector_kurtosis vector_kurtosis
+Herex: wvector_kurtosis vector_kurtosis
+Herex: wvector_kurtosis vector_kurtosis
+Herex: vector_lag1_autocorr vector_lag1_autocorr
 vector_lag1_autocorr(size_t n, const vec_t &data, double mean)
+Herex: vector_lag1_autocorr vector_lag1_autocorr
 vector_lag1_autocorr(const vec_t &data, double mean)
+Herex: vector_lag1_autocorr vector_lag1_autocorr
 vector_lag1_autocorr(size_t n, const vec_t &data)
+Herex: vector_lag1_autocorr vector_lag1_autocorr
 vector_lag1_autocorr(const vec_t &data)
+Herex: vector_lagk_autocorr vector_lagk_autocorr
 vector_lagk_autocorr(size_t n, const vec_t &data, size_t k, double mean)
+Herex: vector_lagk_autocorr vector_lagk_autocorr
 vector_lagk_autocorr(const vec_t &data, size_t k, double mean)
+Herex: vector_lagk_autocorr vector_lagk_autocorr
 vector_lagk_autocorr(size_t n, const vec_t &data, size_t k)
+Herex: vector_lagk_autocorr vector_lagk_autocorr
 vector_lagk_autocorr(const vec_t &data, size_t k)
+Herex: vector_lagk_autocorr_mult vector_lagk_autocorr
+Herex: vector_lagk_autocorr_mult vector_lagk_autocorr
+Herex: vector_lagk_autocorr_mult vector_lagk_autocorr
+Herex: vector_lagk_autocorr_mult vector_lagk_autocorr
+Herex: vector_lagk_autocorr_mult vector_lagk_autocorr_mult
 vector_lagk_autocorr_mult(size_t n, const vec_t &data, const vec2_t &mult, size_t k, double mean)
+Herex: vector_lagk_autocorr_mult vector_lagk_autocorr_mult
 vector_lagk_autocorr_mult(size_t n, const vec_t &data, const vec2_t &mult, size_t k)
+Herex: vector_lagk_autocorr_mult vector_lagk_autocorr_mult
 vector_lagk_autocorr_mult(const vec_t &data, const vec2_t &mult, size_t k, double mean)
+Herex: vector_lagk_autocorr_mult vector_lagk_autocorr_mult
 vector_lagk_autocorr_mult(const vec_t &data, const vec2_t &mult, size_t k)
+Herex: vector_largest vector_largest
 vector_largest(size_t n, vec_t &data, size_t k, vec_t &largest)
+Herex: vector_largest vector_largest
 vector_largest(vec_t &data, size_t k, vec_t &largest)
+Herex: vector_lookup vector_lookup
 vector_lookup(size_t n, const vec_t &x, fp_t x0)
+Herex: vector_lookup vector_lookup
 vector_lookup(const vec_t &x, fp_t x0)
+Herex: vector_max_quad vector_max_quad
 vector_max_quad(size_t n, const vec_t &data)
+Herex: vector_max_quad vector_max_quad
 vector_max_quad(size_t n, const vec_t &x, const vec_t &y)
+Herex: vector_max_quad_loc vector_max_quad
+Herex: vector_max_value vector_max_value
 vector_max_value(size_t n, const vec_t &data)
+Herex: vector_max_value vector_max_value
 vector_max_value(const vec_t &data)
+Herex: vector_mean vector_mean
 vector_mean(size_t n, const vec_t &data)
+Herex: vector_mean vector_mean
 vector_mean(const vec_t &data)
+Herex: wvector_mean vector_mean
+Herex: wvector_mean vector_mean
+Herex: vector_median_sorted vector_median_sorted
 vector_median_sorted(size_t n, const vec_t &data)
+Herex: vector_median_sorted vector_median_sorted
 vector_median_sorted(const vec_t &data)
+Herex: vector_min_quad vector_min_quad
 vector_min_quad(size_t n, const vec_t &data)
+Herex: vector_min_quad vector_min_quad
 vector_min_quad(size_t n, const vec_t &x, const vec_t &y)
+Herex: vector_min_quad_loc vector_min_quad
+Herex: vector_min_value vector_min_value
 vector_min_value(size_t n, const vec_t &data)
+Herex: vector_min_value vector_min_value
 vector_min_value(const vec_t &data)
+Herex: vector_norm vector_norm
 vector_norm(size_t n, const vec_t &x)
+Herex: vector_norm vector_norm
 vector_norm(const vec_t &x)
+Herex: vector_norm_double vector_norm
+Herex: vector_norm_double vector_norm
+Herex: vector_norm_double vector_norm_double
 vector_norm_double(size_t n, const vec_t &x)
+Herex: vector_norm_double vector_norm_double
 vector_norm_double(const vec_t &x)
+Herex: vector_out vector_out
 vector_out(std::ostream &os, size_t n, const vec_t &v, bool endline = false)
+Herex: vector_out_quotes vector_out
+Herex: vector_out vector_out
 vector_out(std::ostream &os, const vec_t &v, bool endline = false)
+Herex: vector_out_quotes vector_out
+Herex: vector_out_quotes vector_out_quotes
 vector_out_quotes(std::ostream &os, size_t n, const vec_t &v, bool endline = false)
+Herex: vector_out_quotes vector_out_quotes
 vector_out_quotes(std::ostream &os, const vec_t &v, bool endline = false)
+Herex: vector_pvariance vector_pvariance
 vector_pvariance(size_t n1, const vec_t &data1, size_t n2, const vec2_t &data2)
+Herex: vector_pvariance vector_pvariance
 vector_pvariance(const vec_t &data1, const vec2_t &data2)
+Herex: vector_quantile_sorted vector_quantile_sorted
 vector_quantile_sorted(size_t n, const vec_t &data, const double f)
+Herex: vector_quantile_sorted vector_quantile_sorted
 vector_quantile_sorted(const vec_t &data, const double f)
+Herex: vector_range vector_range
 vector_range(dat_t *v, size_t start, size_t last)
+Herex: const_vector_range vector_range
+Herex: vector_range vector_range
 vector_range(boost::numeric::ublas::vector<dat_t> &v, size_t start, size_t last)
+Herex: const_vector_range vector_range
+Herex: const_vector_range vector_range
+Herex: vector_range vector_range
 vector_range(boost::numeric::ublas::vector_range<boost::numeric::ublas::vector<dat_t>> &v, size_t start, size_t last)
+Herex: const_vector_range vector_range
+Herex: const_vector_range vector_range
+Herex: const_vector_range vector_range
+Herex: vector_range vector_range
 vector_range(std::vector<data_t> &v, size_t start, size_t last)
+Herex: const_vector_range vector_range
+Herex: const_vector_range vector_range
+Herex: vector_range vector_range
 vector_range(vector_range_gen<vec_t> &v, size_t start, size_t last)
+Herex: const_vector_range vector_range
+Herex: const_vector_range vector_range
+Herex: const_vector_range vector_range
+Herex: vector_range_copy vector_range
+Herex: ubvector_range vector_range
+Herex: ubvector_size_t_range vector_range
+Herex: vector_reverse vector_reverse
 vector_reverse(size_t n, vec_t &data)
+Herex: vector_reverse vector_reverse
 vector_reverse(vec_t &data)
+Herex: vector_reverse_double vector_reverse
+Herex: vector_reverse_double vector_reverse
+Herex: vector_reverse_double vector_reverse_double
 vector_reverse_double(size_t n, vec_t &data)
+Herex: vector_reverse_double vector_reverse_double
 vector_reverse_double(vec_t &data)
+Herex: vector_roll_avg vector_roll_avg
 vector_roll_avg(size_t n, vec_t &v, size_t window)
+Herex: vector_roll_avg vector_roll_avg
 vector_roll_avg(vec_t &v, size_t window)
+Herex: vector_search vector_search
 vector_search(size_t n, const vec_t &x, data_t x0, size_t &i)
+Herex: vector_search vector_search
 vector_search(const vec_t &x, data_t x0, size_t &i)
+Herex: vector_set_all vector_set_all
 vector_set_all(size_t N, vec_t &src, data_t val)
+Herex: vector_set_all vector_set_all
 vector_set_all(vec_t &src, data_t val)
+Herex: vector_skew vector_skew
 vector_skew(size_t n, const vec_t &data, double mean, double stddev)
+Herex: vector_skew vector_skew
 vector_skew(const vec_t &data, double mean, double stddev)
+Herex: vector_skew vector_skew
 vector_skew(size_t n, const vec_t &data)
+Herex: vector_skew vector_skew
 vector_skew(const vec_t &data)
+Herex: wvector_skew vector_skew
+Herex: wvector_skew vector_skew
+Herex: wvector_skew vector_skew
+Herex: wvector_skew vector_skew
+Herex: vector_smallest vector_smallest
 vector_smallest(size_t n, vec_t &data, size_t k, vec_t &smallest)
+Herex: vector_smallest vector_smallest
 vector_smallest(vec_t &data, size_t k, vec_t &smallest)
+Herex: vector_smallest_index vector_smallest
+Herex: vector_smallest_index vector_smallest
+Herex: vector_smallest_index vector_smallest_index
 vector_smallest_index(size_t n, const vec_t &data, size_t k, vec_size_t &index)
+Herex: vector_smallest_index vector_smallest_index
 vector_smallest_index(const vec_t &data, size_t k, vec_size_t &index)
+Herex: vector_sort_index vector_sort_index
 vector_sort_index(size_t n, const vec_t &data, vec_size_t &order)
+Herex: vector_sort_index vector_sort_index
 vector_sort_index(const vec_t &data, vec_size_t &order)
+Herex: vector_spec vector_spec
 vector_spec(std::string spec, vec_t &v, int verbose = 0, bool err_on_fail = true)
+Herex: vector_spec vector_spec
 vector_spec(std::string spec)
+Herex: mult_vector_spec vector_spec
+Herex: vector_stddev_fmean vector_stddev
+Herex: vector_stddev_fmean vector_stddev
+Herex: vector_stddev vector_stddev
 vector_stddev(size_t n, const vec_t &data)
+Herex: vector_stddev vector_stddev
 vector_stddev(const vec_t &data)
+Herex: vector_stddev vector_stddev
 vector_stddev(size_t n, const vec_t &data, double mean)
+Herex: vector_stddev vector_stddev
 vector_stddev(const vec_t &data, double mean)
+Herex: wvector_stddev_fmean vector_stddev
+Herex: wvector_stddev_fmean vector_stddev
+Herex: wvector_stddev vector_stddev
+Herex: wvector_stddev vector_stddev
+Herex: wvector_stddev vector_stddev
+Herex: wvector_stddev vector_stddev
+Herex: vector_stddev_fmean vector_stddev_fmean
 vector_stddev_fmean(size_t n, const vec_t &data, double mean)
+Herex: vector_stddev_fmean vector_stddev_fmean
 vector_stddev_fmean(const vec_t &data, double mean)
+Herex: wvector_stddev_fmean vector_stddev_fmean
+Herex: wvector_stddev_fmean vector_stddev_fmean
+Herex: vector_sum vector_sum
 vector_sum(size_t n, const vec_t &data)
+Herex: vector_sum vector_sum
 vector_sum(vec_t &data)
+Herex: vector_sum_double vector_sum
+Herex: vector_sum_double vector_sum
+Herex: wvector_sumsq vector_sum
+Herex: wvector_sumsq vector_sum
+Herex: wvector_sumsq vector_sum
+Herex: wvector_sumsq vector_sum
+Herex: vector_sum_double vector_sum_double
 vector_sum_double(size_t n, vec_t &data)
+Herex: vector_sum_double vector_sum_double
 vector_sum_double(vec_t &data)
+Herex: vector_swap vector_swap
 vector_swap(size_t N, vec_t &v1, vec2_t &v2)
+Herex: vector_swap vector_swap
 vector_swap(vec_t &v1, vec2_t &v2)
+Herex: vector_swap_double vector_swap
+Herex: vector_swap_double vector_swap
+Herex: vector_swap vector_swap
 vector_swap(vec_t &v, size_t i, size_t j)
+Herex: vector_swap_double vector_swap
+Herex: vector_swap_double vector_swap_double
 vector_swap_double(size_t N, vec_t &v1, vec2_t &v2)
+Herex: vector_swap_double vector_swap_double
 vector_swap_double(vec_t &v1, vec2_t &v2)
+Herex: vector_swap_double vector_swap_double
 vector_swap_double(vec_t &v, size_t i, size_t j)
+Herex: vector_variance_fmean vector_variance
+Herex: vector_variance_fmean vector_variance
+Herex: vector_variance vector_variance
 vector_variance(size_t n, const vec_t &data, double mean)
+Herex: vector_variance vector_variance
 vector_variance(const vec_t &data, double mean)
+Herex: vector_variance vector_variance
 vector_variance(size_t n, const vec_t &data)
+Herex: vector_variance vector_variance
 vector_variance(const vec_t &data)
+Herex: wvector_variance_fmean vector_variance
+Herex: wvector_variance_fmean vector_variance
+Herex: wvector_variance vector_variance
+Herex: wvector_variance vector_variance
+Herex: wvector_variance vector_variance
+Herex: wvector_variance vector_variance
+Herex: vector_variance_fmean vector_variance_fmean
 vector_variance_fmean(size_t n, const vec_t &data, double mean)
+Herex: vector_variance_fmean vector_variance_fmean
 vector_variance_fmean(const vec_t &data, double mean)
+Herex: wvector_variance_fmean vector_variance_fmean
+Herex: wvector_variance_fmean vector_variance_fmean
+Herex: vectors_equal vectors_equal
 vectors_equal(size_t n, const vec_t &v1, const vec2_t &v2)
+Herex: vectors_equal vectors_equal
 vectors_equal(const vec_t &v1, const vec2_t &v2)
+Herex: vectors_equal_tol vectors_equal
+Herex: vectors_equal_tol vectors_equal
+Herex: vectors_equal_tol vectors_equal_tol
 vectors_equal_tol(size_t n, const vec_t &v1, const vec2_t &v2, double tol = 1.0e-14)
+Herex: vectors_equal_tol vectors_equal_tol
 vectors_equal_tol(const vec_t &v1, const vec2_t &v2, double tol = 1.0e-14)
+Herex: wvector_absdev wvector_absdev
 wvector_absdev(size_t n, const vec_t &data, const vec2_t &weights, double wmean)
+Herex: wvector_absdev wvector_absdev
 wvector_absdev(const vec_t &data, const vec2_t &weights, double wmean)
+Herex: wvector_absdev wvector_absdev
 wvector_absdev(size_t n, const vec_t &data, const vec2_t &weights)
+Herex: wvector_absdev wvector_absdev
 wvector_absdev(const vec_t &data, const vec2_t &weights)
+Herex: wvector_covariance wvector_covariance
 wvector_covariance(size_t n, const vec_t &data1, const vec2_t &data2, const vec3_t &weights)
+Herex: wvector_covariance wvector_covariance
 wvector_covariance(const vec_t &data1, const vec2_t &data2, const vec3_t &weights)
+Herex: wvector_factor wvector_factor
 wvector_factor(size_t n, const vec_t &weights)
+Herex: wvector_factor wvector_factor
 wvector_factor(const vec_t &weights)
+Herex: wvector_kurtosis wvector_kurtosis
 wvector_kurtosis(size_t n, const vec_t &data, const vec2_t &weights, double wmean, double wsd)
+Herex: wvector_kurtosis wvector_kurtosis
 wvector_kurtosis(const vec_t &data, const vec2_t &weights, double wmean, double wsd)
+Herex: wvector_kurtosis wvector_kurtosis
 wvector_kurtosis(size_t n, const vec_t &data, const vec2_t &weights)
+Herex: wvector_kurtosis wvector_kurtosis
 wvector_kurtosis(const vec_t &data, const vec2_t &weights)
+Herex: wvector_mean wvector_mean
 wvector_mean(size_t n, const vec_t &data, const vec2_t &weights)
+Herex: wvector_mean wvector_mean
 wvector_mean(const vec_t &data, const vec2_t &weights)
+Herex: wvector_skew wvector_skew
 wvector_skew(size_t n, const vec_t &data, const vec2_t &weights, double wmean, double wsd)
+Herex: wvector_skew wvector_skew
 wvector_skew(const vec_t &data, const vec2_t &weights, double wmean, double wsd)
+Herex: wvector_skew wvector_skew
 wvector_skew(size_t n, const vec_t &data, const vec2_t &weights)
+Herex: wvector_skew wvector_skew
 wvector_skew(const vec_t &data, const vec2_t &weights)
+Herex: wvector_stddev_fmean wvector_stddev
+Herex: wvector_stddev_fmean wvector_stddev
+Herex: wvector_stddev wvector_stddev
 wvector_stddev(size_t n, const vec_t &data, const vec2_t &weights)
+Herex: wvector_stddev wvector_stddev
 wvector_stddev(const vec_t &data, const vec2_t &weights)
+Herex: wvector_stddev wvector_stddev
 wvector_stddev(size_t n, const vec_t &data, const vec2_t &weights, double wmean)
+Herex: wvector_stddev wvector_stddev
 wvector_stddev(const vec_t &data, const vec2_t &weights, double wmean)
+Herex: wvector_stddev_fmean wvector_stddev_fmean
 wvector_stddev_fmean(size_t n, const vec_t &data, const vec2_t &weights, double wmean)
+Herex: wvector_stddev_fmean wvector_stddev_fmean
 wvector_stddev_fmean(const vec_t &data, const vec2_t &weights, double wmean)
+Herex: wvector_sumsq wvector_sumsq
 wvector_sumsq(size_t n, const vec_t &data, const vec2_t &weights, double wmean)
+Herex: wvector_sumsq wvector_sumsq
 wvector_sumsq(const vec_t &data, const vec2_t &weights, double wmean)
+Herex: wvector_sumsq wvector_sumsq
 wvector_sumsq(size_t n, const vec_t &data, const vec2_t &weights)
+Herex: wvector_sumsq wvector_sumsq
 wvector_sumsq(const vec_t &data, const vec2_t &weights)
+Herex: wvector_variance_fmean wvector_variance
+Herex: wvector_variance_fmean wvector_variance
+Herex: wvector_variance wvector_variance
 wvector_variance(size_t n, const vec_t &data, const vec2_t &weights, double wmean)
+Herex: wvector_variance wvector_variance
 wvector_variance(const vec_t &data, const vec2_t &weights, double wmean)
+Herex: wvector_variance wvector_variance
 wvector_variance(size_t n, const vec_t &data, const vec2_t &weights)
+Herex: wvector_variance wvector_variance
 wvector_variance(const vec_t &data, const vec2_t &weights)
+Herex: wvector_variance_fmean wvector_variance_fmean
 wvector_variance_fmean(size_t n, const vec_t &data, const vec2_t &weights, double wmean)
+Herex: wvector_variance_fmean wvector_variance_fmean
 wvector_variance_fmean(const vec_t &data, const vec2_t &weights, double wmean)

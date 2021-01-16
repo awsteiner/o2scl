@@ -43,7 +43,7 @@
   <compound refid="classo2scl_1_1nucmass__semi__empirical" kind="class"><name>o2scl::nucmass_semi_empirical</name>
   <compound refid="classo2scl_1_1nucmass__table" kind="class"><name>o2scl::nucmass_table</name>
   <compound refid="classo2scl_1_1nucmass__wlw" kind="class"><name>o2scl::nucmass_wlw</name>
-  <compound refid="classo2scl_1_1part__calibrate__class" kind="class"><name>o2scl::part_calibrate_class</name>
+  <compound refid="classo2scl_1_1part__calibrate__class__tl" kind="class"><name>o2scl::part_calibrate_class_tl</name>
   <compound refid="classo2scl_1_1part__deriv__calibrate__class" kind="class"><name>o2scl::part_deriv_calibrate_class</name>
   <compound refid="classo2scl_1_1part__deriv__press__tl" kind="class"><name>o2scl::part_deriv_press_tl</name>
   <compound refid="classo2scl_1_1part__deriv__tl" kind="class"><name>o2scl::part_deriv_tl</name>

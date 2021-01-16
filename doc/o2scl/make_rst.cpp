@@ -154,13 +154,7 @@ int main(int argc, char *argv[]) {
 	      } else if (stemp==((string)"__hdf")) {
 		ns="o2scl_hdf";
 	      } else if (stemp==((string)"__linalg")) {
-		ns="o2scl_linalg";
-	      } else if (stemp==((string)"__linalg")) {
-		if (s==((string)"LU_decomp_array_2d")) {
-		  ns="o2scl_linalg_bracket";
-		} else {
-		  ns="o2scl_linalg";
-		}
+                ns="o2scl_linalg";
 	      } else {
 		ns="o2scl";
 	      }
@@ -174,6 +168,11 @@ int main(int argc, char *argv[]) {
 	  exit(-1);
 	}
 
+        // Fix parsing for lu_decomp_array_2d()
+        if (s==((string)"LU_decomp_array_2d")) {
+          ns="o2scl_linalg_bracket";
+        }
+        
 	// Extract the namespace for a class
 	if (kk==0 && s.find("::")!=std::string::npos) {
 	  size_t loc=s.find("::");
@@ -198,6 +197,14 @@ int main(int argc, char *argv[]) {
 	  s.replace(s.find("&gt;"),4,">");
 	}
       
+        if (s==((string)"operator<<")) {
+          if (ns=="o2scl") {
+            ns="o2scl_auto_format";
+          } else {
+            ns="o2scl";
+          }
+        }
+        
 	if (kk==0) {
 	  cout << "Namespace: " << ns << " class: " << s << endl;
 	} else if (kk==1) {
@@ -344,16 +351,16 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    cout << endl;
-    cout << "---------------------------------------------------" << endl;
-    cout << "Creating rst files for duplicate functions:" << endl;
-    cout << endl;
-    
     // -------------------------------------------------------
     // For functions, create the rst files for duplicate entries
     
     if (kk==1) {
 
+      cout << endl;
+      cout << "---------------------------------------------------" << endl;
+      cout << "Creating rst files for duplicate functions:" << endl;
+      cout << endl;
+    
       // Open the namespace xml file and read it into memory
       vector<string> ns_file;
       if (context==((string)"main")) {
@@ -379,6 +386,13 @@ int main(int argc, char *argv[]) {
 	}
 	fin.close();
 	fin.open("../xml/namespaceo2scl__hdf.xml");
+	while (!fin.eof()) {
+	  string s2;
+	  std::getline(fin,s2);
+	  ns_file.push_back(s2);
+	}
+	fin.close();
+	fin.open("../xml/namespaceo2scl__auto__format.xml");
 	while (!fin.eof()) {
 	  string s2;
 	  std::getline(fin,s2);
@@ -521,6 +535,8 @@ int main(int argc, char *argv[]) {
 	      cerr << "Failed to find name in " << name << endl;
 	      exit(-1);
 	    }
+
+            cout << "Herex: " << name << " " << s << endl;
 
 	    // Only proceed if the name and s match
 	    if (name==s) {

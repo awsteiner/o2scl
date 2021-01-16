@@ -47,7 +47,7 @@ Namespace: o2scl class: nucmass_sdnp
 Namespace: o2scl class: nucmass_semi_empirical
 Namespace: o2scl class: nucmass_table
 Namespace: o2scl class: nucmass_wlw
-Namespace: o2scl class: part_calibrate_class
+Namespace: o2scl class: part_calibrate_class_tl
 Namespace: o2scl class: part_deriv_calibrate_class
 Namespace: o2scl class: part_deriv_press_tl
 Namespace: o2scl class: part_deriv_tl
@@ -69,6 +69,7 @@ Creating rst files for duplicate functions:
 ---------------------------------------------------
 Parsing function_list:
 
+Here: __part 
 Namespace: o2scl function: nucdist_set
 
 ---------------------------------------------------

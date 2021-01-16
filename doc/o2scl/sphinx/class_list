@@ -19,7 +19,6 @@
   <compound refid="classo2scl_1_1cli__readline" kind="class"><name>o2scl::cli_readline</name>
   <compound refid="classo2scl__hdf_1_1cloud__file" kind="class"><name>o2scl_hdf::cloud_file</name>
   <compound refid="classo2scl_1_1table_1_1col" kind="class"><name>o2scl::table::col</name>
-  <compound refid="classtable_3_01std_1_1vector_3_01double_01_4_01_4_1_1col" kind="class"><name>table&lt; std::vector&lt; double &gt; &gt;::col</name>
   <compound refid="classo2scl_1_1columnify" kind="class"><name>o2scl::columnify</name>
   <compound refid="classo2scl_1_1comm__option__fptr" kind="class"><name>o2scl::comm_option_fptr</name>
   <compound refid="classo2scl_1_1comm__option__funct" kind="class"><name>o2scl::comm_option_funct</name>
@@ -40,15 +39,12 @@
   <compound refid="classo2scl_1_1cubic__real__coeff__cern" kind="class"><name>o2scl::cubic_real_coeff_cern</name>
   <compound refid="classo2scl_1_1cubic__real__coeff__gsl" kind="class"><name>o2scl::cubic_real_coeff_gsl</name>
   <compound refid="classo2scl_1_1cursesw" kind="class"><name>o2scl::cursesw</name>
-  <compound refid="classconvert__units_3_01double_01_4_1_1der__unit__s" kind="class"><name>convert_units&lt; double &gt;::der_unit_s</name>
   <compound refid="classo2scl_1_1deriv__base" kind="class"><name>o2scl::deriv_base</name>
   <compound refid="classo2scl_1_1deriv__cern" kind="class"><name>o2scl::deriv_cern</name>
   <compound refid="classo2scl_1_1deriv__eqi" kind="class"><name>o2scl::deriv_eqi</name>
   <compound refid="classo2scl_1_1deriv__gsl" kind="class"><name>o2scl::deriv_gsl</name>
   <compound refid="classo2scl_1_1diff__evo" kind="class"><name>o2scl::diff_evo</name>
   <compound refid="classo2scl_1_1diff__evo__adapt" kind="class"><name>o2scl::diff_evo_adapt</name>
-  <compound refid="classderiv__base_3_01funct_01_4_1_1dpars" kind="class"><name>deriv_base&lt; funct &gt;::dpars</name>
-  <compound refid="classderiv__base_3_01funct_00_01double_01_4_1_1dpars" kind="class"><name>deriv_base&lt; funct, double &gt;::dpars</name>
   <compound refid="classo2scl_1_1edge__crossings" kind="class"><name>o2scl::edge_crossings</name>
   <compound refid="classo2scl_1_1err__hnd__cpp" kind="class"><name>o2scl::err_hnd_cpp</name>
   <compound refid="classo2scl_1_1err__hnd__gsl" kind="class"><name>o2scl::err_hnd_gsl</name>
@@ -65,7 +61,6 @@
   <compound refid="classo2scl_1_1expval__matrix" kind="class"><name>o2scl::expval_matrix</name>
   <compound refid="classo2scl_1_1expval__scalar" kind="class"><name>o2scl::expval_scalar</name>
   <compound refid="classo2scl_1_1expval__vector" kind="class"><name>o2scl::expval_vector</name>
-  <compound refid="classinte__singular__gsl_3_01funct_01_4_1_1extrapolation__table" kind="class"><name>inte_singular_gsl&lt; funct &gt;::extrapolation_table</name>
   <compound refid="classo2scl_1_1fermi__dirac__integ__direct" kind="class"><name>o2scl::fermi_dirac_integ_direct</name>
   <compound refid="classo2scl_1_1fermi__dirac__integ__gsl" kind="class"><name>o2scl::fermi_dirac_integ_gsl</name>
   <compound refid="classo2scl_1_1fermi__dirac__integ__tl" kind="class"><name>o2scl::fermi_dirac_integ_tl</name>
@@ -326,7 +321,6 @@
   <compound refid="classo2scl_1_1uniform__grid__log__width" kind="class"><name>o2scl::uniform_grid_log_width</name>
   <compound refid="classo2scl_1_1uniform__grid__width" kind="class"><name>o2scl::uniform_grid_width</name>
   <compound refid="classo2scl_1_1uniform__prior" kind="class"><name>o2scl::uniform_prior</name>
-  <compound refid="classconvert__units_3_01double_01_4_1_1unit__t" kind="class"><name>convert_units&lt; double &gt;::unit_t</name>
   <compound refid="classo2scl_1_1vec__index" kind="class"><name>o2scl::vec_index</name>
   <compound refid="classboost_1_1numeric_1_1ublas_1_1vector" kind="class"><name>boost::numeric::ublas::vector</name>
   <compound refid="classo2scl_1_1vector__index__vector" kind="class"><name>o2scl::vector_index_vector</name>

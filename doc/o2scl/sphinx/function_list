@@ -34,6 +34,24 @@
     <member refid="namespaceo2scl_1ac09a64817d5b827c1a8070487c7fbf74" kind="function"><name>o2abs</name></member>
     <member refid="namespaceo2scl_1a7ee3118e255e910542eadd3e3f4084ea" kind="function"><name>o2abs</name></member>
     <member refid="namespaceo2scl_1a93fb81e66bbd551b8ace53c166ca9a58" kind="function"><name>o2abs</name></member>
+    <member refid="namespaceo2scl_1a5557379051562f5343872083de026606" kind="function"><name>o2exp</name></member>
+    <member refid="namespaceo2scl_1a9b77e1dbf224e8d46dc4d95da5975646" kind="function"><name>o2exp</name></member>
+    <member refid="namespaceo2scl_1aedf06fcb3a67a47de22a574d7214edea" kind="function"><name>o2exp</name></member>
+    <member refid="namespaceo2scl_1aa5efbd63a1f16d75a3e3a18518411a26" kind="function"><name>o2exp</name></member>
+    <member refid="namespaceo2scl_1a90b891bcd65716da8363d979c0b4128c" kind="function"><name>o2exp</name></member>
+    <member refid="namespaceo2scl_1ac5f8c49f708e0297f29a8a4bd35a5616" kind="function"><name>o2exp</name></member>
+    <member refid="namespaceo2scl_1ac71b77636b52e68acb18f54a9d13bc1c" kind="function"><name>o2log</name></member>
+    <member refid="namespaceo2scl_1aa71f87e012064bda8a9350570becc8ef" kind="function"><name>o2log</name></member>
+    <member refid="namespaceo2scl_1ab37389ee4f0cdca9b48492cec16fb482" kind="function"><name>o2log</name></member>
+    <member refid="namespaceo2scl_1ab4fb86831b458eb9ceef299638056868" kind="function"><name>o2log</name></member>
+    <member refid="namespaceo2scl_1a9be55274505ddc4cb947a00a835f5f1d" kind="function"><name>o2log</name></member>
+    <member refid="namespaceo2scl_1a6282b639b5a47544bbd32f52df2d482f" kind="function"><name>o2log</name></member>
+    <member refid="namespaceo2scl_1a80468e79a2055fa535664189bf9cc9d3" kind="function"><name>o2sqrt</name></member>
+    <member refid="namespaceo2scl_1a66b2e9c796a8728f4373377b9c16196f" kind="function"><name>o2sqrt</name></member>
+    <member refid="namespaceo2scl_1a80dc0649ad77036ef1cd0848f6738f0b" kind="function"><name>o2sqrt</name></member>
+    <member refid="namespaceo2scl_1a1d7d108349a37a47eaacff0eea6a6191" kind="function"><name>o2sqrt</name></member>
+    <member refid="namespaceo2scl_1a7d0573477eed100497d0afba3f8e0a29" kind="function"><name>o2sqrt</name></member>
+    <member refid="namespaceo2scl_1abe4d2d56504c9aaaf7c0927b16cd1dcd" kind="function"><name>o2sqrt</name></member>
     <member refid="namespaceo2scl_1af3d76d472a79f5421ca0b283f90bf926" kind="function"><name>o2isfinite</name></member>
     <member refid="namespaceo2scl_1a305c4ae283404f220e7d0e5281329335" kind="function"><name>o2isfinite</name></member>
     <member refid="namespaceo2scl_1a366d44f22015af5f96873019dc6d0a1f" kind="function"><name>o2isfinite</name></member>
@@ -505,3 +523,18 @@
     <member refid="namespaceo2scl__linalg_1a831220db53b8904764ff597931b2be4b" kind="function"><name>solve_cyc_tridiag_sym</name></member>
     <member refid="namespaceo2scl__linalg_1af785a50d45ff33ec0f3a6bfd607d8487" kind="function"><name>solve_cyc_tridiag_nonsym</name></member>
     <member refid="namespaceo2scl__linalg__bracket_1ab8dbc08043d530bd1faa7b218fefd7e7" kind="function"><name>LU_decomp_array_2d</name></member>
+    <member refid="auto__format_8h_1ac9525a13caf7f47b7e4f5d98f080e461" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1ab90825de874f510a416bd603551b65d5" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1aaacbf603e9d13508be0a5d5bfc998f1f" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1ab01112f1608334db3d827a858b7711e5" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a0b7a9495ef349b6d18e4d17136a69103" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a74ec0c18de19b4716015907e49346484" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a2319bc9f1e7feb6cd1b0feedb31821bf" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a48f7bd104c4e879cf8b10b7c7ae7a46f" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a45678962c651e5a34d710adc4e9ff006" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a055b4000bca7a951f138fc2d8958d0f4" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1ab5daacd17bf39ba4b4d19c7acd791ba7" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1ac349f7d6d36064471f5e4f8e509cba8f" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a7a8253b9634eafad2af61be779db1da9" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a5e5126695b41cd9246d3aeb524f6c534" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a4def4b6996e758773c170ec087da0ea9" kind="function"><name>operator&lt;&lt;</name></member>

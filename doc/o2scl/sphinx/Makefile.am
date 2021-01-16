@@ -84,6 +84,8 @@ rst-files: empty
 		grep "refid=\"namespaceo2scl" | grep -v Eigen | \
 		grep -v "refid=\"namespaceo2scl__const" | \
 		grep -v arma > function_list
+	grep "refid=\"auto__format" ../xml/index.xml | \
+		grep "operator&lt;" >> function_list
 	grep "kind=\"class\"" ../xml/index.xml | grep -v "cli::parameter" \
 		> class_list
 	grep "kind=\"variable\"" ../xml/index.xml | \
