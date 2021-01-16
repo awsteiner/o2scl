@@ -192,8 +192,10 @@ class if_class : public if_base {
   
 public:
 
+  /// Python name for the class
   std::string py_name;
 
+  /// Pattern for the class documentation in python
   std::string py_class_doc_pattern;
   
   /// True if the class is abstract
@@ -517,12 +519,13 @@ int main(int argc, char *argv[]) {
           ifc.members.push_back(ifv);
 
         } else {
-          
+          class_done=true;
+        }
+
+        if (class_done==true) {
           cout << "Class " << ifc.name << " done." << endl;
           cout << endl;
-          class_done=true;
           classes.push_back(ifc);
-          
         }
 
         // End of 'while (class_done==false)'
