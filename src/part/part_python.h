@@ -73,6 +73,10 @@ double o2scl_part_get_nu(void *vp);
 
 void o2scl_part_set_nu(void *vp, double v);
 
+double o2scl_part_get_n(void *vp);
+
+void o2scl_part_set_n(void *vp, double v);
+
 double o2scl_part_get_ed(void *vp);
 
 void o2scl_part_set_ed(void *vp, double v);
@@ -418,5 +422,25 @@ void o2scl_free_classical_deriv_thermo(void *vp);
 void o2scl_classical_deriv_thermo_calc_density(void *vptr, void *ptr_p, double T);
 
 void o2scl_classical_deriv_thermo_calc_mu(void *vptr, void *ptr_p, double T);
+
+void *o2scl_create_fermion_mag_zerot();
+
+void o2scl_free_fermion_mag_zerot(void *vp);
+
+int o2scl_fermion_mag_zerot_get_nmax_up(void *vp);
+
+void o2scl_fermion_mag_zerot_set_nmax_up(void *vp, int v);
+
+int o2scl_fermion_mag_zerot_get_nmax_dn(void *vp);
+
+void o2scl_fermion_mag_zerot_set_nmax_dn(void *vp, int v);
+
+int o2scl_fermion_mag_zerot_get_sum_limit(void *vp);
+
+void o2scl_fermion_mag_zerot_set_sum_limit(void *vp, int v);
+
+void o2scl_fermion_mag_zerot_calc_mu_zerot_mag(void *vptr, void *ptr_f, double qB, double kappa);
+
+void o2scl_fermion_mag_zerot_calc_density_zerot_mag(void *vptr, void *ptr_f, double qB, double kappa);
 
 }

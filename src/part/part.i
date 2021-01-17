@@ -42,6 +42,7 @@ class part
 - double ms
 - double mu
 - double nu
+- double n
 - double ed
 - double pr
 - double en

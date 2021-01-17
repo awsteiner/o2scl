@@ -133,6 +133,17 @@ void o2scl_part_set_nu(void *vptr, double v) {
   return;
 }
 
+double o2scl_part_get_n(void *vptr) {
+  part *ptr=(part *)vptr;
+  return ptr->n;
+}
+
+void o2scl_part_set_n(void *vptr, double v) {
+  part *ptr=(part *)vptr;
+  ptr->n=v;
+  return;
+}
+
 double o2scl_part_get_ed(void *vptr) {
   part *ptr=(part *)vptr;
   return ptr->ed;
@@ -1145,6 +1156,63 @@ void o2scl_classical_deriv_thermo_calc_mu(void *vptr, void *ptr_p, double T) {
   classical_deriv_thermo *ptr=(classical_deriv_thermo *)vptr;
   part_deriv *p=(part_deriv *)ptr_p;
   ptr->calc_mu(*p,T);
+  return;
+}
+
+void *o2scl_create_fermion_mag_zerot() {
+  fermion_mag_zerot *ptr=new fermion_mag_zerot;
+  return ptr;
+}
+
+void o2scl_free_fermion_mag_zerot(void *vptr) {
+  fermion_mag_zerot *ptr=(fermion_mag_zerot *)vptr;
+  delete ptr;
+}
+
+int o2scl_fermion_mag_zerot_get_nmax_up(void *vptr) {
+  fermion_mag_zerot *ptr=(fermion_mag_zerot *)vptr;
+  return ptr->nmax_up;
+}
+
+void o2scl_fermion_mag_zerot_set_nmax_up(void *vptr, int v) {
+  fermion_mag_zerot *ptr=(fermion_mag_zerot *)vptr;
+  ptr->nmax_up=v;
+  return;
+}
+
+int o2scl_fermion_mag_zerot_get_nmax_dn(void *vptr) {
+  fermion_mag_zerot *ptr=(fermion_mag_zerot *)vptr;
+  return ptr->nmax_dn;
+}
+
+void o2scl_fermion_mag_zerot_set_nmax_dn(void *vptr, int v) {
+  fermion_mag_zerot *ptr=(fermion_mag_zerot *)vptr;
+  ptr->nmax_dn=v;
+  return;
+}
+
+int o2scl_fermion_mag_zerot_get_sum_limit(void *vptr) {
+  fermion_mag_zerot *ptr=(fermion_mag_zerot *)vptr;
+  return ptr->sum_limit;
+}
+
+void o2scl_fermion_mag_zerot_set_sum_limit(void *vptr, int v) {
+  fermion_mag_zerot *ptr=(fermion_mag_zerot *)vptr;
+  ptr->sum_limit=v;
+  return;
+}
+
+void o2scl_fermion_mag_zerot_calc_mu_zerot_mag(void *vptr, void *ptr_f, double qB, double kappa) {
+  fermion_mag_zerot *ptr=(fermion_mag_zerot *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  ptr->calc_mu_zerot_mag(*f,qB,kappa);
+  return;
+}
+
+void o2scl_fermion_mag_zerot_calc_density_zerot_mag(void *vptr, void *ptr_f, double qB, double kappa) {
+  fermion_mag_zerot *ptr=(fermion_mag_zerot *)vptr;
+  fermion *f=(fermion *)ptr_f;
+  ptr->calc_density_zerot_mag(*f,qB,kappa);
   return;
 }
 
