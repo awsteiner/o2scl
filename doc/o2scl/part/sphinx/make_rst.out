@@ -3,62 +3,119 @@ Using context part
 Parsing class_list:
 
 Namespace: o2scl class: boson
+Here4: o2scl boson
 Namespace: o2scl class: boson_eff
+Here4: o2scl boson_eff
 Namespace: o2scl class: boson_rel
+Here4: o2scl boson_rel
 Namespace: o2scl class: boson_thermo
+Here4: o2scl boson_thermo
 Namespace: o2scl class: classical_deriv_thermo_tl
+Here4: o2scl classical_deriv_thermo_tl
 Namespace: o2scl class: classical_thermo_tl
+Here4: o2scl classical_thermo_tl
 Namespace: o2scl class: dense_matter
+Here4: o2scl dense_matter
 Namespace: o2scl class: deriv_thermo_base_tl
+Here4: o2scl deriv_thermo_base_tl
 Namespace: o2scl class: fermion_deriv_nr_tl
+Here4: o2scl fermion_deriv_nr_tl
 Namespace: o2scl class: fermion_deriv_rel_tl
+Here4: o2scl fermion_deriv_rel_tl
 Namespace: o2scl class: fermion_deriv_thermo_tl
+Here4: o2scl fermion_deriv_thermo_tl
 Namespace: o2scl class: fermion_deriv_tl
+Here4: o2scl fermion_deriv_tl
 Namespace: o2scl class: fermion_eff
+Here4: o2scl fermion_eff
 Namespace: o2scl class: fermion_mag_zerot
+Here4: o2scl fermion_mag_zerot
 Namespace: o2scl class: fermion_nonrel_tl
+Here4: o2scl fermion_nonrel_tl
 Namespace: o2scl class: fermion_rel_tl
+Here4: o2scl fermion_rel_tl
 Namespace: o2scl class: fermion_thermo_tl
+Here4: o2scl fermion_thermo_tl
 Namespace: o2scl class: fermion_tl
+Here4: o2scl fermion_tl
 Namespace: o2scl class: fermion_zerot_tl
+Here4: o2scl fermion_zerot_tl
 Namespace: o2scl class: nuclear_reaction
+Here4: o2scl nuclear_reaction
 Namespace: o2scl class: nucleus
+Here4: o2scl nucleus
 Namespace: o2scl class: nucmass
+Here4: o2scl nucmass
 Namespace: o2scl class: nucmass_ame
+Here4: o2scl nucmass_ame
 Namespace: o2scl class: nucmass_densmat
+Here4: o2scl nucmass_densmat
 Namespace: o2scl class: nucmass_dglg
+Here4: o2scl nucmass_dglg
 Namespace: o2scl class: nucmass_dvi
+Here4: o2scl nucmass_dvi
 Namespace: o2scl class: nucmass_dz_fit
+Here4: o2scl nucmass_dz_fit
 Namespace: o2scl class: nucmass_dz_fit_33
+Here4: o2scl nucmass_dz_fit_33
 Namespace: o2scl class: nucmass_dz_table
+Here4: o2scl nucmass_dz_table
 Namespace: o2scl class: nucmass_fit
+Here4: o2scl nucmass_fit
 Namespace: o2scl class: nucmass_fit_base
+Here4: o2scl nucmass_fit_base
 Namespace: o2scl class: nucmass_frdm
+Here4: o2scl nucmass_frdm
 Namespace: o2scl class: nucmass_gen
+Here4: o2scl nucmass_gen
 Namespace: o2scl class: nucmass_hfb
+Here4: o2scl nucmass_hfb
 Namespace: o2scl class: nucmass_hfb_sp
+Here4: o2scl nucmass_hfb_sp
 Namespace: o2scl class: nucmass_ibm_shell
+Here4: o2scl nucmass_ibm_shell
 Namespace: o2scl class: nucmass_info
+Here4: o2scl nucmass_info
 Namespace: o2scl class: nucmass_ktuy
+Here4: o2scl nucmass_ktuy
 Namespace: o2scl class: nucmass_mnmsk
+Here4: o2scl nucmass_mnmsk
 Namespace: o2scl class: nucmass_mnmsk_exp
+Here4: o2scl nucmass_mnmsk_exp
 Namespace: o2scl class: nucmass_radius
+Here4: o2scl nucmass_radius
 Namespace: o2scl class: nucmass_sdnp
+Here4: o2scl nucmass_sdnp
 Namespace: o2scl class: nucmass_semi_empirical
+Here4: o2scl nucmass_semi_empirical
 Namespace: o2scl class: nucmass_table
+Here4: o2scl nucmass_table
 Namespace: o2scl class: nucmass_wlw
+Here4: o2scl nucmass_wlw
 Namespace: o2scl class: part_calibrate_class_tl
+Here4: o2scl part_calibrate_class_tl
 Namespace: o2scl class: part_deriv_calibrate_class
+Here4: o2scl part_deriv_calibrate_class
 Namespace: o2scl class: part_deriv_press_tl
+Here4: o2scl part_deriv_press_tl
 Namespace: o2scl class: part_deriv_tl
+Here4: o2scl part_deriv_tl
 Namespace: o2scl class: part_pdg_db
+Here4: o2scl part_pdg_db
 Namespace: o2scl class: part_pdg_tl
+Here4: o2scl part_pdg_tl
 Namespace: o2scl class: part_tl
+Here4: o2scl part_tl
 Namespace: o2scl class: quark
+Here4: o2scl quark
 Namespace: o2scl class: reaction_lib
+Here4: o2scl reaction_lib
 Namespace: o2scl class: thermo_np_deriv_helm_tl
+Here4: o2scl thermo_np_deriv_helm_tl
 Namespace: o2scl class: thermo_np_deriv_press_tl
+Here4: o2scl thermo_np_deriv_press_tl
 Namespace: o2scl class: thermo_tl
+Here4: o2scl thermo_tl
 
 ---------------------------------------------------
 Creating rst files for classes:
@@ -66,6 +123,7 @@ Creating rst files for classes:
 Parsing function_list:
 
 Namespace: o2scl function: nucdist_set
+Here4: o2scl nucdist_set
 
 ---------------------------------------------------
 Creating rst files for non-duplicate functions:

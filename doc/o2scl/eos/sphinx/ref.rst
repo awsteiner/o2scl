@@ -145,10 +145,6 @@ Bibliography
    <https://doi.org/10.1016/0370-1573(94)90022-1>`_,
    Phys. Rep. **247** (1994) 221.
 
-.. [Hebeler13eo] : `K. Hebeler, J. M. Lattimer, C. J. Pethick, and A. Schwenk
-   <https://doi.org/10.1088/0004-637X/773/1/11>`_,
-   Astrophys. J. **773** (2013) 11.
-
 .. [Heide94] : `E. K. Heide, S. Rudaz, and P. J. Ellis
    <https://doi.org/10.1016/0375-9474(94)90717-X>`_,
    Nucl. Phys. A **571** (1994) 713.
@@ -268,10 +264,6 @@ Bibliography
 .. [Postnikov10] : `S. Postnikov, M. Prakash, and J. M. Lattimer
    <https://doi.org/10.1103/PhysRevD.82.024016>`_,
    Phys. Rev. D **82** (2010) 024016.
-
-.. [Prakash87] : 
-   Windsurfing the Fermi Sea and Volume and edited by T.T.S. Kuo and J. Speth,
-   (1987) Elsevier, p. 357.
 
 .. [Prakash88] : `M. Prakash, T. L. Ainsworth, and J. M. Lattimer
    <https://doi.org/10.1103/PhysRevLett.61.2518>`_,

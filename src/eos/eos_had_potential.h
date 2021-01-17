@@ -67,6 +67,10 @@ namespace o2scl {
       \rho_i = \frac{2}{(2 \pi)^3} \int d^3 k~f_i(k,T)
       \f]
 
+      \verbatim embed:rst
+      See the review in [Li01]_.
+      \endverbatim
+
       When \ref form is equal to \ref mdi_form or 
       \ref gbd_form, the potential energy
       density is given by

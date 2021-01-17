@@ -3,333 +3,661 @@ Using context main
 Parsing class_list:
 
 Namespace: o2scl_acol class: acol_manager
+Here4: o2scl_acol acol_manager
 Namespace: o2scl class: anneal_base
+Here4: o2scl anneal_base
 Namespace: o2scl class: anneal_gsl
+Here4: o2scl anneal_gsl
 Namespace: o2scl class: anneal_mt
+Here4: o2scl anneal_mt
 Namespace: o2scl class: anneal_para
+Here4: o2scl anneal_para
 Namespace: o2scl class: astep_base
+Here4: o2scl astep_base
 Namespace: o2scl class: astep_gsl
+Here4: o2scl astep_gsl
 Namespace: o2scl class: astep_nonadapt
+Here4: o2scl astep_nonadapt
 Namespace: o2scl_auto_format class: auto_format
+Here4: o2scl_auto_format auto_format
 Namespace: o2scl class: bessel_K_exp_integ_direct
+Here4: o2scl bessel_K_exp_integ_direct
 Namespace: o2scl class: bessel_K_exp_integ_gsl
+Here4: o2scl bessel_K_exp_integ_gsl
 Namespace: o2scl class: bessel_K_exp_integ_tl
+Here4: o2scl bessel_K_exp_integ_tl
 Namespace: o2scl class: bose_einstein_integ_tl
+Here4: o2scl bose_einstein_integ_tl
 Namespace: o2scl class: inte_pcubature::cache
+Here4: o2scl inte_pcubature::cache
 Namespace: o2scl class: calculator
+Here4: o2scl calculator
 Namespace: o2scl class: cheb_approx_tl
+Here4: o2scl cheb_approx_tl
 Namespace: o2scl class: chi_fit_funct
+Here4: o2scl chi_fit_funct
 Namespace: o2scl class: cli
+Here4: o2scl cli
 Namespace: o2scl class: cli_readline
+Here4: o2scl cli_readline
 Namespace: o2scl_hdf class: cloud_file
+Here4: o2scl_hdf cloud_file
 Namespace: o2scl class: table::col
+Here4: o2scl table::col
 Namespace: o2scl class: columnify
+Here4: o2scl columnify
 Namespace: o2scl class: comm_option_fptr
+Here4: o2scl comm_option_fptr
 Namespace: o2scl class: comm_option_funct
+Here4: o2scl comm_option_funct
 Namespace: o2scl class: comm_option_mfptr
+Here4: o2scl comm_option_mfptr
 Namespace: o2scl class: const_matrix_column_gen
+Here4: o2scl const_matrix_column_gen
 Namespace: o2scl class: const_matrix_row_gen
+Here4: o2scl const_matrix_row_gen
 Namespace: o2scl class: const_matrix_view
+Here4: o2scl const_matrix_view
 Namespace: o2scl class: const_matrix_view_table
+Here4: o2scl const_matrix_view_table
 Namespace: o2scl class: const_matrix_view_table_transpose
+Here4: o2scl const_matrix_view_table_transpose
 Namespace: o2scl class: const_vector_range_gen
+Here4: o2scl const_vector_range_gen
 Namespace: o2scl class: contour
+Here4: o2scl contour
 Namespace: o2scl class: contour_line
+Here4: o2scl contour_line
 Namespace: o2scl class: convert_units
+Here4: o2scl convert_units
 Namespace: o2scl class: cubic_complex
+Here4: o2scl cubic_complex
 Namespace: o2scl class: cubic_complex_std
+Here4: o2scl cubic_complex_std
 Namespace: o2scl class: cubic_real
+Here4: o2scl cubic_real
 Namespace: o2scl class: cubic_real_coeff
+Here4: o2scl cubic_real_coeff
 Namespace: o2scl class: cubic_real_coeff_cern
+Here4: o2scl cubic_real_coeff_cern
 Namespace: o2scl class: cubic_real_coeff_gsl
+Here4: o2scl cubic_real_coeff_gsl
 Namespace: o2scl class: cursesw
+Here4: o2scl cursesw
 Namespace: o2scl class: deriv_base
+Here4: o2scl deriv_base
 Namespace: o2scl class: deriv_cern
+Here4: o2scl deriv_cern
 Namespace: o2scl class: deriv_eqi
+Here4: o2scl deriv_eqi
 Namespace: o2scl class: deriv_gsl
+Here4: o2scl deriv_gsl
 Namespace: o2scl class: diff_evo
+Here4: o2scl diff_evo
 Namespace: o2scl class: diff_evo_adapt
+Here4: o2scl diff_evo_adapt
 Namespace: o2scl class: edge_crossings
+Here4: o2scl edge_crossings
 Namespace: o2scl class: err_hnd_cpp
+Here4: o2scl err_hnd_cpp
 Namespace: o2scl class: err_hnd_gsl
+Here4: o2scl err_hnd_gsl
 Namespace: o2scl class: err_hnd_type
+Here4: o2scl err_hnd_type
 Namespace: o2scl class: inte_hcubature::esterr
+Here4: o2scl inte_hcubature::esterr
 Namespace: o2scl class: exc_exception
+Here4: o2scl exc_exception
 Namespace: o2scl class: exc_invalid_argument
+Here4: o2scl exc_invalid_argument
 Namespace: o2scl class: exc_ios_failure
+Here4: o2scl exc_ios_failure
 Namespace: o2scl class: exc_logic_error
+Here4: o2scl exc_logic_error
 Namespace: o2scl class: exc_overflow_error
+Here4: o2scl exc_overflow_error
 Namespace: o2scl class: exc_range_error
+Here4: o2scl exc_range_error
 Namespace: o2scl class: exc_runtime_error
+Here4: o2scl exc_runtime_error
 Namespace: o2scl class: expval_base
+Here4: o2scl expval_base
 Namespace: o2scl class: expval_matrix
+Here4: o2scl expval_matrix
 Namespace: o2scl class: expval_scalar
+Here4: o2scl expval_scalar
 Namespace: o2scl class: expval_vector
+Here4: o2scl expval_vector
 Namespace: o2scl class: fermi_dirac_integ_direct
+Here4: o2scl fermi_dirac_integ_direct
 Namespace: o2scl class: fermi_dirac_integ_gsl
+Here4: o2scl fermi_dirac_integ_gsl
 Namespace: o2scl class: fermi_dirac_integ_tl
+Here4: o2scl fermi_dirac_integ_tl
 Namespace: o2scl class: find_constants
+Here4: o2scl find_constants
 Namespace: o2scl class: fit_base
+Here4: o2scl fit_base
 Namespace: o2scl class: fit_bayes
+Here4: o2scl fit_bayes
 Namespace: o2scl class: fit_fix_pars
+Here4: o2scl fit_fix_pars
 Namespace: o2scl class: fit_funct_strings
+Here4: o2scl fit_funct_strings
 Namespace: o2scl class: fit_linear
+Here4: o2scl fit_linear
 Namespace: o2scl class: fit_min
+Here4: o2scl fit_min
 Namespace: o2scl class: fit_nonlin
+Here4: o2scl fit_nonlin
 Namespace: o2scl class: fit_nonlin_b
+Here4: o2scl fit_nonlin_b
 Namespace: o2scl class: format_float
+Here4: o2scl format_float
 Namespace: o2scl class: fract
+Here4: o2scl fract
 Namespace: o2scl class: funct2_string
+Here4: o2scl funct2_string
 Namespace: o2scl class: funct_gsl
+Here4: o2scl funct_gsl
 Namespace: o2scl class: funct_string
+Here4: o2scl funct_string
 Namespace: o2scl class: gen_fit_funct
+Here4: o2scl gen_fit_funct
 Namespace: o2scl class: gen_test_number
+Here4: o2scl gen_test_number
 Namespace: o2scl class: gradient
+Here4: o2scl gradient
 Namespace: o2scl class: gradient_gsl
+Here4: o2scl gradient_gsl
 Namespace: o2scl class: gsl_matrix_wrap
+Here4: o2scl gsl_matrix_wrap
 Namespace: o2scl class: gsl_tolerance
+Here4: o2scl gsl_tolerance
 Namespace: o2scl class: gsl_vector_wrap
+Here4: o2scl gsl_vector_wrap
 Namespace: o2scl_hdf class: hdf_file
+Here4: o2scl_hdf hdf_file
 Namespace: o2scl class: inte_hcubature::heap
+Here4: o2scl inte_hcubature::heap
 Namespace: o2scl class: hist
+Here4: o2scl hist
 Namespace: o2scl class: hist_2d
+Here4: o2scl hist_2d
 Namespace: o2scl class: inte_hcubature::hypercube
+Here4: o2scl inte_hcubature::hypercube
 Namespace: o2scl class: prob_dens_mdim_amr::hypercube
+Here4: o2scl prob_dens_mdim_amr::hypercube
 Namespace: o2scl class: index_spec
+Here4: o2scl index_spec
 Namespace: o2scl class: inte
+Here4: o2scl inte
 Namespace: o2scl class: inte_adapt_cern
+Here4: o2scl inte_adapt_cern
 Namespace: o2scl class: inte_cauchy_cern
+Here4: o2scl inte_cauchy_cern
 Namespace: o2scl class: inte_cheb_gsl
+Here4: o2scl inte_cheb_gsl
 Namespace: o2scl class: inte_cubature_base
+Here4: o2scl inte_cubature_base
 Namespace: o2scl class: inte_exp_sinh_boost
+Here4: o2scl inte_exp_sinh_boost
 Namespace: o2scl class: inte_gauss56_cern
+Here4: o2scl inte_gauss56_cern
 Namespace: o2scl class: inte_gauss56_coeffs_cpp_dec_float_50
+Here4: o2scl inte_gauss56_coeffs_cpp_dec_float_50
 Namespace: o2scl class: inte_gauss56_coeffs_double
+Here4: o2scl inte_gauss56_coeffs_double
 Namespace: o2scl class: inte_gauss56_coeffs_long_double
+Here4: o2scl inte_gauss56_coeffs_long_double
 Namespace: o2scl class: inte_gauss_cern
+Here4: o2scl inte_gauss_cern
 Namespace: o2scl class: inte_gauss_coeffs_cpp_dec_float_50
+Here4: o2scl inte_gauss_coeffs_cpp_dec_float_50
 Namespace: o2scl class: inte_gauss_coeffs_double
+Here4: o2scl inte_gauss_coeffs_double
 Namespace: o2scl class: inte_gauss_coeffs_long_double
+Here4: o2scl inte_gauss_coeffs_long_double
 Namespace: o2scl class: inte_gen
+Here4: o2scl inte_gen
 Namespace: o2scl class: inte_gsl
+Here4: o2scl inte_gsl
 Namespace: o2scl class: inte_hcubature
+Here4: o2scl inte_hcubature
 Namespace: o2scl class: inte_kronrod_boost
+Here4: o2scl inte_kronrod_boost
 Namespace: o2scl class: inte_kronrod_gsl
+Here4: o2scl inte_kronrod_gsl
 Namespace: o2scl class: inte_multi
+Here4: o2scl inte_multi
 Namespace: o2scl class: inte_pcubature
+Here4: o2scl inte_pcubature
 Namespace: o2scl class: inte_qag_gsl
+Here4: o2scl inte_qag_gsl
 Namespace: o2scl class: inte_qagi_gsl
+Here4: o2scl inte_qagi_gsl
 Namespace: o2scl class: inte_qagil_gsl
+Here4: o2scl inte_qagil_gsl
 Namespace: o2scl class: inte_qagiu_gsl
+Here4: o2scl inte_qagiu_gsl
 Namespace: o2scl class: inte_qags_gsl
+Here4: o2scl inte_qags_gsl
 Namespace: o2scl class: inte_qawc_gsl
+Here4: o2scl inte_qawc_gsl
 Namespace: o2scl class: inte_qawf_gsl_cos
+Here4: o2scl inte_qawf_gsl_cos
 Namespace: o2scl class: inte_qawf_gsl_sin
+Here4: o2scl inte_qawf_gsl_sin
 Namespace: o2scl class: inte_qawo_gsl_cos
+Here4: o2scl inte_qawo_gsl_cos
 Namespace: o2scl class: inte_qawo_gsl_sin
+Here4: o2scl inte_qawo_gsl_sin
 Namespace: o2scl class: inte_qaws_gsl
+Here4: o2scl inte_qaws_gsl
 Namespace: o2scl class: inte_qng_gsl
+Here4: o2scl inte_qng_gsl
 Namespace: o2scl class: inte_singular_gsl
+Here4: o2scl inte_singular_gsl
 Namespace: o2scl class: inte_sinh_sinh_boost
+Here4: o2scl inte_sinh_sinh_boost
 Namespace: o2scl class: inte_tanh_sinh_boost
+Here4: o2scl inte_tanh_sinh_boost
 Namespace: o2scl class: inte_transform
+Here4: o2scl inte_transform
 Namespace: o2scl class: inte_transform_gsl
+Here4: o2scl inte_transform_gsl
 Namespace: o2scl class: inte_workspace_gsl
+Here4: o2scl inte_workspace_gsl
 Namespace: o2scl class: interp
+Here4: o2scl interp
 Namespace: o2scl class: interp2_base
+Here4: o2scl interp2_base
 Namespace: o2scl class: interp2_direct
+Here4: o2scl interp2_direct
 Namespace: o2scl class: interp2_eqi
+Here4: o2scl interp2_eqi
 Namespace: o2scl class: interp2_neigh
+Here4: o2scl interp2_neigh
 Namespace: o2scl class: interp2_planar
+Here4: o2scl interp2_planar
 Namespace: o2scl class: interp2_seq
+Here4: o2scl interp2_seq
 Namespace: o2scl class: interp_akima
+Here4: o2scl interp_akima
 Namespace: o2scl class: interp_akima_peri
+Here4: o2scl interp_akima_peri
 Namespace: o2scl class: interp_array
+Here4: o2scl interp_array
 Namespace: o2scl class: interp_array_vec
+Here4: o2scl interp_array_vec
 Namespace: o2scl class: interp_base
+Here4: o2scl interp_base
 Namespace: o2scl class: interp_cspline
+Here4: o2scl interp_cspline
 Namespace: o2scl class: interp_cspline_peri
+Here4: o2scl interp_cspline_peri
 Namespace: o2scl class: interp_krige
+Here4: o2scl interp_krige
 Namespace: o2scl class: interp_krige_optim
+Here4: o2scl interp_krige_optim
 Namespace: o2scl class: interp_linear
+Here4: o2scl interp_linear
 Namespace: o2scl class: interp_monotonic
+Here4: o2scl interp_monotonic
 Namespace: o2scl class: interp_nearest_neigh
+Here4: o2scl interp_nearest_neigh
 Namespace: o2scl class: interp_steffen
+Here4: o2scl interp_steffen
 Namespace: o2scl class: interp_vec
+Here4: o2scl interp_vec
 Namespace: o2scl class: interpm_idw
+Here4: o2scl interpm_idw
 Namespace: o2scl class: interpm_krige
+Here4: o2scl interpm_krige
 Namespace: o2scl class: interpm_krige_nn
+Here4: o2scl interpm_krige_nn
 Namespace: o2scl class: interpm_krige_optim
+Here4: o2scl interpm_krige_optim
 Namespace: o2scl class: jacobian
+Here4: o2scl jacobian
 Namespace: o2scl class: jacobian_exact
+Here4: o2scl jacobian_exact
 Namespace: o2scl class: jacobian_gsl
+Here4: o2scl jacobian_gsl
 Namespace: o2scl_linalg class: lanczos
+Here4: o2scl_linalg lanczos
 Namespace: o2scl class: lib_settings_class
+Here4: o2scl lib_settings_class
 Namespace: o2scl_linalg class: linear_solver
+Here4: o2scl_linalg linear_solver
 Namespace: o2scl_linalg class: linear_solver_arma
+Here4: o2scl_linalg linear_solver_arma
 Namespace: o2scl_linalg class: linear_solver_eigen_colQR
+Here4: o2scl_linalg linear_solver_eigen_colQR
 Namespace: o2scl_linalg class: linear_solver_eigen_fullLU
+Here4: o2scl_linalg linear_solver_eigen_fullLU
 Namespace: o2scl_linalg class: linear_solver_eigen_fullQR
+Here4: o2scl_linalg linear_solver_eigen_fullQR
 Namespace: o2scl_linalg class: linear_solver_eigen_houseQR
+Here4: o2scl_linalg linear_solver_eigen_houseQR
 Namespace: o2scl_linalg class: linear_solver_eigen_LDLT
+Here4: o2scl_linalg linear_solver_eigen_LDLT
 Namespace: o2scl_linalg class: linear_solver_eigen_LLT
+Here4: o2scl_linalg linear_solver_eigen_LLT
 Namespace: o2scl_linalg class: linear_solver_eigen_partLU
+Here4: o2scl_linalg linear_solver_eigen_partLU
 Namespace: o2scl_linalg class: linear_solver_HH
+Here4: o2scl_linalg linear_solver_HH
 Namespace: o2scl_linalg class: linear_solver_LU
+Here4: o2scl_linalg linear_solver_LU
 Namespace: o2scl_linalg class: linear_solver_QR
+Here4: o2scl_linalg linear_solver_QR
 Namespace:  class: boost::numeric::ublas::matrix
+Here4:  boost::numeric::ublas::matrix
 Namespace: o2scl class: matrix_column_gen
+Here4: o2scl matrix_column_gen
 Namespace: o2scl class: matrix_row_gen
+Here4: o2scl matrix_row_gen
 Namespace: o2scl class: matrix_row_gen_ctor
+Here4: o2scl matrix_row_gen_ctor
 Namespace: o2scl class: matrix_swap_table
+Here4: o2scl matrix_swap_table
 Namespace: o2scl class: matrix_view
+Here4: o2scl matrix_view
 Namespace: o2scl class: matrix_view_omit_column
+Here4: o2scl matrix_view_omit_column
 Namespace: o2scl class: matrix_view_omit_row
+Here4: o2scl matrix_view_omit_row
 Namespace: o2scl class: matrix_view_table
+Here4: o2scl matrix_view_table
 Namespace: o2scl class: matrix_view_table_transpose
+Here4: o2scl matrix_view_table_transpose
 Namespace: o2scl class: matrix_view_transpose
+Here4: o2scl matrix_view_transpose
 Namespace: o2scl class: matrix_view_vec_vec
+Here4: o2scl matrix_view_vec_vec
 Namespace: o2scl class: mcarlo
+Here4: o2scl mcarlo
 Namespace: o2scl class: mcarlo_miser
+Here4: o2scl mcarlo_miser
 Namespace: o2scl class: mcarlo_plain
+Here4: o2scl mcarlo_plain
 Namespace: o2scl class: mcarlo_vegas
+Here4: o2scl mcarlo_vegas
 Namespace: o2scl class: mcmc_para_base
+Here4: o2scl mcmc_para_base
 Namespace: o2scl class: mcmc_para_cli
+Here4: o2scl mcmc_para_cli
 Namespace: o2scl class: mcmc_para_table
+Here4: o2scl mcmc_para_table
 Namespace: o2scl class: min_base
+Here4: o2scl min_base
 Namespace: o2scl class: min_bkt_base
+Here4: o2scl min_bkt_base
 Namespace: o2scl class: min_brent_boost
+Here4: o2scl min_brent_boost
 Namespace: o2scl class: min_brent_gsl
+Here4: o2scl min_brent_gsl
 Namespace: o2scl class: min_cern
+Here4: o2scl min_cern
 Namespace: o2scl class: min_de_base
+Here4: o2scl min_de_base
 Namespace: o2scl class: min_quad_golden
+Here4: o2scl min_quad_golden
 Namespace: o2scl class: mm_funct_strings
+Here4: o2scl mm_funct_strings
 Namespace: o2scl class: mmin_base
+Here4: o2scl mmin_base
 Namespace: o2scl class: mmin_bfgs2
+Here4: o2scl mmin_bfgs2
 Namespace: o2scl class: mmin_conf
+Here4: o2scl mmin_conf
 Namespace: o2scl class: mmin_conp
+Here4: o2scl mmin_conp
 Namespace: o2scl class: mmin_constr
+Here4: o2scl mmin_constr
 Namespace: o2scl class: mmin_constr_gencan
+Here4: o2scl mmin_constr_gencan
 Namespace: o2scl class: mmin_constr_pgrad
+Here4: o2scl mmin_constr_pgrad
 Namespace: o2scl class: mmin_constr_spg
+Here4: o2scl mmin_constr_spg
 Namespace: o2scl class: mmin_fix_params
+Here4: o2scl mmin_fix_params
 Namespace: o2scl class: mmin_gsl_base
+Here4: o2scl mmin_gsl_base
 Namespace: o2scl class: mmin_linmin_gsl
+Here4: o2scl mmin_linmin_gsl
 Namespace: o2scl class: mmin_simp2
+Here4: o2scl mmin_simp2
 Namespace: o2scl class: mmin_wrap_gsl
+Here4: o2scl mmin_wrap_gsl
 Namespace: o2scl class: mmin_wrapper_gsl
+Here4: o2scl mmin_wrapper_gsl
 Namespace: o2scl class: mroot
+Here4: o2scl mroot
 Namespace: o2scl class: mroot_broyden
+Here4: o2scl mroot_broyden
 Namespace: o2scl class: mroot_cern
+Here4: o2scl mroot_cern
 Namespace: o2scl class: mroot_hybrids
+Here4: o2scl mroot_hybrids
 Namespace: o2scl class: mroot_hybrids_arma_qr_econ
+Here4: o2scl mroot_hybrids_arma_qr_econ
 Namespace: o2scl class: mroot_hybrids_base
+Here4: o2scl mroot_hybrids_base
 Namespace: o2scl class: mroot_hybrids_eigen
+Here4: o2scl mroot_hybrids_eigen
 Namespace: o2scl class: multi_funct_strings
+Here4: o2scl multi_funct_strings
 Namespace: o2scl class: ode_bsimp_gsl
+Here4: o2scl ode_bsimp_gsl
 Namespace: o2scl class: ode_bv_mshoot
+Here4: o2scl ode_bv_mshoot
 Namespace: o2scl class: ode_bv_multishoot
+Here4: o2scl ode_bv_multishoot
 Namespace: o2scl class: ode_bv_shoot
+Here4: o2scl ode_bv_shoot
 Namespace: o2scl class: ode_bv_shoot_grid
+Here4: o2scl ode_bv_shoot_grid
 Namespace: o2scl class: ode_bv_solve
+Here4: o2scl ode_bv_solve
 Namespace: o2scl class: ode_control_gsl
+Here4: o2scl ode_control_gsl
 Namespace: o2scl class: ode_funct_strings
+Here4: o2scl ode_funct_strings
 Namespace: o2scl class: ode_it_solve
+Here4: o2scl ode_it_solve
 Namespace: o2scl class: ode_iv_solve
+Here4: o2scl ode_iv_solve
 Namespace: o2scl class: ode_iv_solve_grid
+Here4: o2scl ode_iv_solve_grid
 Namespace: o2scl class: ode_iv_table
+Here4: o2scl ode_iv_table
 Namespace: o2scl class: ode_rk8pd_gsl
+Here4: o2scl ode_rk8pd_gsl
 Namespace: o2scl class: ode_rkck_gsl
+Here4: o2scl ode_rkck_gsl
 Namespace: o2scl class: ode_rkf45_gsl
+Here4: o2scl ode_rkf45_gsl
 Namespace: o2scl class: ode_step
+Here4: o2scl ode_step
 Namespace: o2scl class: permutation
+Here4: o2scl permutation
 Namespace: o2scl class: pinside
+Here4: o2scl pinside
 Namespace: o2scl class: poly_complex
+Here4: o2scl poly_complex
 Namespace: o2scl class: poly_real_coeff
+Here4: o2scl poly_real_coeff
 Namespace: o2scl class: poly_real_coeff_gsl
+Here4: o2scl poly_real_coeff_gsl
 Namespace: o2scl class: polylog
+Here4: o2scl polylog
 Namespace: o2scl class: prob_cond_mdim
+Here4: o2scl prob_cond_mdim
 Namespace: o2scl class: prob_cond_mdim_fixed_step
+Here4: o2scl prob_cond_mdim_fixed_step
 Namespace: o2scl class: prob_cond_mdim_gaussian
+Here4: o2scl prob_cond_mdim_gaussian
 Namespace: o2scl class: prob_cond_mdim_indep
+Here4: o2scl prob_cond_mdim_indep
 Namespace: o2scl class: prob_dens_frange
+Here4: o2scl prob_dens_frange
 Namespace: o2scl class: prob_dens_func
+Here4: o2scl prob_dens_func
 Namespace: o2scl class: prob_dens_gaussian
+Here4: o2scl prob_dens_gaussian
 Namespace: o2scl class: prob_dens_hist
+Here4: o2scl prob_dens_hist
 Namespace: o2scl class: prob_dens_lognormal
+Here4: o2scl prob_dens_lognormal
 Namespace: o2scl class: prob_dens_mdim
+Here4: o2scl prob_dens_mdim
 Namespace: o2scl class: prob_dens_mdim_amr
+Here4: o2scl prob_dens_mdim_amr
 Namespace: o2scl class: prob_dens_mdim_biv_gaussian
+Here4: o2scl prob_dens_mdim_biv_gaussian
 Namespace: o2scl class: prob_dens_mdim_bound_gaussian
+Here4: o2scl prob_dens_mdim_bound_gaussian
 Namespace: o2scl class: prob_dens_mdim_factor
+Here4: o2scl prob_dens_mdim_factor
 Namespace: o2scl class: prob_dens_mdim_gaussian
+Here4: o2scl prob_dens_mdim_gaussian
 Namespace: o2scl class: prob_dens_positive
+Here4: o2scl prob_dens_positive
 Namespace: o2scl class: prob_dens_uniform
+Here4: o2scl prob_dens_uniform
 Namespace: o2scl class: quadratic_complex
+Here4: o2scl quadratic_complex
 Namespace: o2scl class: quadratic_complex_std
+Here4: o2scl quadratic_complex_std
 Namespace: o2scl class: quadratic_real
+Here4: o2scl quadratic_real
 Namespace: o2scl class: quadratic_real_coeff
+Here4: o2scl quadratic_real_coeff
 Namespace: o2scl class: quadratic_real_coeff_gsl
+Here4: o2scl quadratic_real_coeff_gsl
 Namespace: o2scl class: quartic_complex
+Here4: o2scl quartic_complex
 Namespace: o2scl class: quartic_complex_simple
+Here4: o2scl quartic_complex_simple
 Namespace: o2scl class: quartic_real
+Here4: o2scl quartic_real
 Namespace: o2scl class: quartic_real_coeff
+Here4: o2scl quartic_real_coeff
 Namespace: o2scl class: quartic_real_coeff_cern
+Here4: o2scl quartic_real_coeff_cern
 Namespace: o2scl class: quartic_real_gsl
+Here4: o2scl quartic_real_gsl
 Namespace: o2scl class: quartic_real_gsl2
+Here4: o2scl quartic_real_gsl2
 Namespace: o2scl class: quartic_real_simple
+Here4: o2scl quartic_real_simple
 Namespace: o2scl class: inte_hcubature::region
+Here4: o2scl inte_hcubature::region
 Namespace: o2scl class: rng_gsl
+Here4: o2scl rng_gsl
 Namespace: o2scl class: rng_gsl_uniform_real
+Here4: o2scl rng_gsl_uniform_real
 Namespace: o2scl class: root
+Here4: o2scl root
 Namespace: o2scl class: root_bkt
+Here4: o2scl root_bkt
 Namespace: o2scl class: root_bkt_cern
+Here4: o2scl root_bkt_cern
 Namespace: o2scl class: root_brent_gsl
+Here4: o2scl root_brent_gsl
 Namespace: o2scl class: root_cern
+Here4: o2scl root_cern
 Namespace: o2scl class: root_de
+Here4: o2scl root_de
 Namespace: o2scl class: root_robbins_monro
+Here4: o2scl root_robbins_monro
 Namespace: o2scl class: root_stef
+Here4: o2scl root_stef
 Namespace: o2scl class: root_toms748
+Here4: o2scl root_toms748
 Namespace: o2scl class: inte_hcubature::rule
+Here4: o2scl inte_hcubature::rule
 Namespace: o2scl class: inte_hcubature::rule75genzmalik
+Here4: o2scl inte_hcubature::rule75genzmalik
 Namespace: o2scl class: search_vec
+Here4: o2scl search_vec
 Namespace: o2scl class: search_vec_ext
+Here4: o2scl search_vec_ext
 Namespace: o2scl class: series_acc
+Here4: o2scl series_acc
 Namespace: o2scl class: slack_messenger
+Here4: o2scl slack_messenger
 Namespace: o2scl class: smooth_func
+Here4: o2scl smooth_func
 Namespace: o2scl class: smooth_gsl
+Here4: o2scl smooth_gsl
 Namespace: o2scl class: table
+Here4: o2scl table
 Namespace: o2scl class: table3d
+Here4: o2scl table3d
 Namespace: o2scl class: table_units
+Here4: o2scl table_units
 Namespace: o2scl class: tensor
+Here4: o2scl tensor
 Namespace: o2scl class: tensor1
+Here4: o2scl tensor1
 Namespace: o2scl class: tensor2
+Here4: o2scl tensor2
 Namespace: o2scl class: tensor3
+Here4: o2scl tensor3
 Namespace: o2scl class: tensor4
+Here4: o2scl tensor4
 Namespace: o2scl class: tensor_grid
+Here4: o2scl tensor_grid
 Namespace: o2scl class: tensor_grid1
+Here4: o2scl tensor_grid1
 Namespace: o2scl class: tensor_grid2
+Here4: o2scl tensor_grid2
 Namespace: o2scl class: tensor_grid3
+Here4: o2scl tensor_grid3
 Namespace: o2scl class: tensor_grid4
+Here4: o2scl tensor_grid4
 Namespace: o2scl class: terminal
+Here4: o2scl terminal
 Namespace: o2scl class: test_mgr
+Here4: o2scl test_mgr
 Namespace: o2scl class: Token
+Here4: o2scl Token
 Namespace: o2scl_linalg class: ubvector_2_mem
+Here4: o2scl_linalg ubvector_2_mem
 Namespace: o2scl_linalg class: ubvector_4_mem
+Here4: o2scl_linalg ubvector_4_mem
 Namespace: o2scl_linalg class: ubvector_5_mem
+Here4: o2scl_linalg ubvector_5_mem
 Namespace: o2scl class: uniform_grid
+Here4: o2scl uniform_grid
 Namespace: o2scl class: uniform_grid_end
+Here4: o2scl uniform_grid_end
 Namespace: o2scl class: uniform_grid_end_width
+Here4: o2scl uniform_grid_end_width
 Namespace: o2scl class: uniform_grid_log_end
+Here4: o2scl uniform_grid_log_end
 Namespace: o2scl class: uniform_grid_log_end_width
+Here4: o2scl uniform_grid_log_end_width
 Namespace: o2scl class: uniform_grid_log_width
+Here4: o2scl uniform_grid_log_width
 Namespace: o2scl class: uniform_grid_width
+Here4: o2scl uniform_grid_width
 Namespace: o2scl class: uniform_prior
+Here4: o2scl uniform_prior
 Namespace: o2scl class: vec_index
+Here4: o2scl vec_index
 Namespace:  class: boost::numeric::ublas::vector
+Here4:  boost::numeric::ublas::vector
 Namespace: o2scl class: vector_index_vector
+Here4: o2scl vector_index_vector
 Namespace: o2scl class: vector_index_vector_size
+Here4: o2scl vector_index_vector_size
 Namespace: o2scl class: vector_range_gen
+Here4: o2scl vector_range_gen
 
 ---------------------------------------------------
 Creating rst files for classes:
@@ -337,769 +665,1312 @@ Creating rst files for classes:
 Parsing function_list:
 
 Namespace:  function: matrix_out
+Here4:  matrix_out
 Namespace:  function: matrix_out
+Here4:  matrix_out
 Multiple entry matrix_out
 Namespace: o2scl function: matrix_trans_out
+Here4: o2scl matrix_trans_out
 Namespace: o2scl function: matrix_trans_out
+Here4: o2scl matrix_trans_out
 Multiple entry matrix_trans_out
 Namespace: o2scl function: array_2d_out
+Here4: o2scl array_2d_out
 Namespace: o2scl function: array_2d_trans_out
+Here4: o2scl array_2d_trans_out
 Namespace: o2scl function: set_err_fn
+Here4: o2scl set_err_fn
 Namespace:  function: error_update
+Here4:  error_update
 Namespace: o2scl function: vector_level_count
+Here4: o2scl vector_level_count
 Namespace: o2scl function: vector_deriv_interp
+Here4: o2scl vector_deriv_interp
 Namespace: o2scl function: vector_deriv2_interp
+Here4: o2scl vector_deriv2_interp
 Namespace: o2scl function: vector_deriv_xy_interp
+Here4: o2scl vector_deriv_xy_interp
 Namespace: o2scl function: vector_deriv2_xy_interp
+Here4: o2scl vector_deriv2_xy_interp
 Namespace: o2scl function: vector_integ_interp
+Here4: o2scl vector_integ_interp
 Namespace: o2scl function: vector_integ_xy_interp
+Here4: o2scl vector_integ_xy_interp
 Namespace: o2scl function: vector_integ_xy_interp
+Here4: o2scl vector_integ_xy_interp
 Multiple entry vector_integ_xy_interp
 Namespace: o2scl function: vector_integ_ul_interp
+Here4: o2scl vector_integ_ul_interp
 Namespace: o2scl function: vector_integ_ul_xy_interp
+Here4: o2scl vector_integ_ul_xy_interp
 Namespace: o2scl function: vector_find_level
+Here4: o2scl vector_find_level
 Namespace: o2scl function: vector_invert_enclosed_sum
+Here4: o2scl vector_invert_enclosed_sum
 Namespace: o2scl function: vector_region_int
+Here4: o2scl vector_region_int
 Namespace: o2scl function: vector_region_fracint
+Here4: o2scl vector_region_fracint
 Namespace: o2scl function: vector_bound_fracint
+Here4: o2scl vector_bound_fracint
 Namespace: o2scl function: vector_bound_int
+Here4: o2scl vector_bound_int
 Namespace:  function: rebin_xy
+Here4:  rebin_xy
 Namespace:  function: rebin_xy
+Here4:  rebin_xy
 Multiple entry rebin_xy
 Namespace: o2scl function: linear_or_log_chi2
+Here4: o2scl linear_or_log_chi2
 Namespace: o2scl function: linear_or_log
+Here4: o2scl linear_or_log
 Namespace:  function: vector_refine
+Here4:  vector_refine
 Namespace: o2scl function: linear_or_log
+Here4: o2scl linear_or_log
 Multiple entry linear_or_log
 Namespace:  function: o2abs
+Here4:  o2abs
 Namespace:  function: o2abs
+Here4:  o2abs
 Multiple entry o2abs
 Namespace:  function: o2abs
+Here4:  o2abs
 Multiple entry o2abs
 Namespace:  function: o2abs
+Here4:  o2abs
 Multiple entry o2abs
 Namespace:  function: o2abs
+Here4:  o2abs
 Multiple entry o2abs
 Namespace:  function: o2abs
+Here4:  o2abs
 Multiple entry o2abs
 Namespace:  function: o2exp
+Here4:  o2exp
 Namespace:  function: o2exp
+Here4:  o2exp
 Multiple entry o2exp
 Namespace:  function: o2exp
+Here4:  o2exp
 Multiple entry o2exp
 Namespace:  function: o2exp
+Here4:  o2exp
 Multiple entry o2exp
 Namespace:  function: o2exp
+Here4:  o2exp
 Multiple entry o2exp
 Namespace:  function: o2exp
+Here4:  o2exp
 Multiple entry o2exp
 Namespace:  function: o2log
+Here4:  o2log
 Namespace:  function: o2log
+Here4:  o2log
 Multiple entry o2log
 Namespace:  function: o2log
+Here4:  o2log
 Multiple entry o2log
 Namespace:  function: o2log
+Here4:  o2log
 Multiple entry o2log
 Namespace:  function: o2log
+Here4:  o2log
 Multiple entry o2log
 Namespace:  function: o2log
+Here4:  o2log
 Multiple entry o2log
 Namespace:  function: o2sqrt
+Here4:  o2sqrt
 Namespace:  function: o2sqrt
+Here4:  o2sqrt
 Multiple entry o2sqrt
 Namespace:  function: o2sqrt
+Here4:  o2sqrt
 Multiple entry o2sqrt
 Namespace:  function: o2sqrt
+Here4:  o2sqrt
 Multiple entry o2sqrt
 Namespace:  function: o2sqrt
+Here4:  o2sqrt
 Multiple entry o2sqrt
 Namespace:  function: o2sqrt
+Here4:  o2sqrt
 Multiple entry o2sqrt
 Namespace:  function: o2isfinite
+Here4:  o2isfinite
 Namespace:  function: o2isfinite
+Here4:  o2isfinite
 Multiple entry o2isfinite
 Namespace:  function: o2isfinite
+Here4:  o2isfinite
 Multiple entry o2isfinite
 Namespace:  function: o2isfinite
+Here4:  o2isfinite
 Multiple entry o2isfinite
 Namespace:  function: o2hypot
+Here4:  o2hypot
 Namespace:  function: o2hypot
+Here4:  o2hypot
 Multiple entry o2hypot
 Namespace:  function: o2hypot
+Here4:  o2hypot
 Multiple entry o2hypot
 Namespace:  function: o2hypot
+Here4:  o2hypot
 Multiple entry o2hypot
 Namespace:  function: o2hypot
+Here4:  o2hypot
 Multiple entry o2hypot
 Namespace:  function: o2hypot
+Here4:  o2hypot
 Multiple entry o2hypot
 Namespace:  function: fermi_function
+Here4:  fermi_function
 Namespace:  function: bose_function
+Here4:  bose_function
 Namespace: o2scl function: pipe_cmd_string
+Here4: o2scl pipe_cmd_string
 Namespace: o2scl function: python_cmd_string
+Here4: o2scl python_cmd_string
 Namespace: o2scl function: pipe_cmd_string
+Here4: o2scl pipe_cmd_string
 Multiple entry pipe_cmd_string
 Namespace:  function: file_exists
+Here4:  file_exists
 Namespace:  function: count_words
+Here4:  count_words
 Namespace:  function: remove_whitespace
+Here4:  remove_whitespace
 Namespace: o2scl function: binary_to_hex
+Here4: o2scl binary_to_hex
 Namespace:  function: RGBtoHSV
+Here4:  RGBtoHSV
 Namespace:  function: HSVtoRGB
+Here4:  HSVtoRGB
 Namespace: o2scl function: quadratic_extremum_x
+Here4: o2scl quadratic_extremum_x
 Namespace: o2scl function: quadratic_extremum_y_full
+Here4: o2scl quadratic_extremum_y_full
 Namespace: o2scl function: quadratic_extremum_y
+Here4: o2scl quadratic_extremum_y
 Namespace: o2scl function: quadratic_extremum_xy
+Here4: o2scl quadratic_extremum_xy
 Namespace: o2scl function: quadratic_extremum_coeffs
+Here4: o2scl quadratic_extremum_coeffs
 Namespace:  function: glob_wrapper
+Here4:  glob_wrapper
 Namespace:  function: wordexp_wrapper
+Here4:  wordexp_wrapper
 Namespace: o2scl function: wordexp_single_file
+Here4: o2scl wordexp_single_file
 Namespace:  function: screenify
+Here4:  screenify
 Namespace:  function: ptos
+Here4:  ptos
 Namespace:  function: itos
+Here4:  itos
 Namespace:  function: szttos
+Here4:  szttos
 Namespace:  function: btos
+Here4:  btos
 Namespace:  function: dtos
+Here4:  dtos
 Namespace: o2scl function: size_of_exponent
+Here4: o2scl size_of_exponent
 Namespace:  function: dtos
+Here4:  dtos
 Multiple entry dtos
 Namespace:  function: stoi
+Here4:  stoi
 Namespace:  function: stoi_nothrow
+Here4:  stoi_nothrow
 Namespace:  function: stoszt
+Here4:  stoszt
 Namespace:  function: stoszt_nothrow
+Here4:  stoszt_nothrow
 Namespace:  function: stob
+Here4:  stob
 Namespace:  function: stod
+Here4:  stod
 Namespace:  function: stod_nothrow
+Here4:  stod_nothrow
 Namespace: o2scl function: has_minus_sign
+Here4: o2scl has_minus_sign
 Namespace:  function: is_number
+Here4:  is_number
 Namespace: o2scl function: function_to_double
+Here4: o2scl function_to_double
 Namespace:  function: find_constant
+Here4:  find_constant
 Namespace: o2scl function: function_to_double_nothrow
+Here4: o2scl function_to_double_nothrow
 Namespace:  function: split_string
+Here4:  split_string
 Namespace: o2scl function: split_string_delim
+Here4: o2scl split_string_delim
 Namespace:  function: rewrap
+Here4:  rewrap
 Namespace: o2scl function: rewrap_ignore_vt100
+Here4: o2scl rewrap_ignore_vt100
 Namespace:  function: rewrap_color
+Here4:  rewrap_color
 Namespace: o2scl function: rewrap_keep_endlines
+Here4: o2scl rewrap_keep_endlines
 Namespace: o2scl function: string_to_uint_list
+Here4: o2scl string_to_uint_list
 Namespace:  function: ix_index
+Here4:  ix_index
 Namespace:  function: ix_fixed
+Here4:  ix_fixed
 Namespace:  function: ix_sum
+Here4:  ix_sum
 Namespace:  function: ix_trace
+Here4:  ix_trace
 Namespace:  function: ix_reverse
+Here4:  ix_reverse
 Namespace:  function: ix_range
+Here4:  ix_range
 Namespace:  function: ix_interp
+Here4:  ix_interp
 Namespace:  function: ix_grid
+Here4:  ix_grid
 Namespace:  function: ix_gridw
+Here4:  ix_gridw
 Namespace:  function: tensor_out
+Here4:  tensor_out
 Namespace:  function: operator==
+Here4:  operator==
 Namespace:  function: vectors_equal
+Here4:  vectors_equal
 Namespace:  function: vectors_equal
+Here4:  vectors_equal
 Multiple entry vectors_equal
 Namespace: o2scl function: vectors_equal_tol
+Here4: o2scl vectors_equal_tol
 Namespace: o2scl function: vectors_equal_tol
+Here4: o2scl vectors_equal_tol
 Multiple entry vectors_equal_tol
 Namespace:  function: vector_copy
+Here4:  vector_copy
 Namespace:  function: vector_copy
+Here4:  vector_copy
 Multiple entry vector_copy
 Namespace:  function: matrix_copy
+Here4:  matrix_copy
 Namespace:  function: matrix_copy
+Here4:  matrix_copy
 Multiple entry matrix_copy
 Namespace:  function: matrix_transpose
+Here4:  matrix_transpose
 Namespace:  function: matrix_transpose
+Here4:  matrix_transpose
 Multiple entry matrix_transpose
 Namespace:  function: matrix_transpose
+Here4:  matrix_transpose
 Multiple entry matrix_transpose
 Namespace:  function: matrix_transpose
+Here4:  matrix_transpose
 Multiple entry matrix_transpose
 Namespace: o2scl function: matrix_is_lower
+Here4: o2scl matrix_is_lower
 Namespace: o2scl function: matrix_is_upper
+Here4: o2scl matrix_is_upper
 Namespace: o2scl function: matrix_make_lower
+Here4: o2scl matrix_make_lower
 Namespace: o2scl function: matrix_make_upper
+Here4: o2scl matrix_make_upper
 Namespace: o2scl function: matrix_is_lower
+Here4: o2scl matrix_is_lower
 Multiple entry matrix_is_lower
 Namespace: o2scl function: matrix_is_upper
+Here4: o2scl matrix_is_upper
 Multiple entry matrix_is_upper
 Namespace: o2scl function: matrix_make_lower
+Here4: o2scl matrix_make_lower
 Multiple entry matrix_make_lower
 Namespace: o2scl function: matrix_make_upper
+Here4: o2scl matrix_make_upper
 Multiple entry matrix_make_upper
 Namespace:  function: vector_swap
+Here4:  vector_swap
 Namespace:  function: vector_swap
+Here4:  vector_swap
 Multiple entry vector_swap
 Namespace: o2scl function: vector_swap_double
+Here4: o2scl vector_swap_double
 Namespace: o2scl function: vector_swap_double
+Here4: o2scl vector_swap_double
 Multiple entry vector_swap_double
 Namespace:  function: vector_swap
+Here4:  vector_swap
 Multiple entry vector_swap
 Namespace: o2scl function: vector_swap_double
+Here4: o2scl vector_swap_double
 Multiple entry vector_swap_double
 Namespace:  function: matrix_swap
+Here4:  matrix_swap
 Namespace: o2scl function: matrix_swap_double
+Here4: o2scl matrix_swap_double
 Namespace:  function: matrix_swap
+Here4:  matrix_swap
 Multiple entry matrix_swap
 Namespace: o2scl function: matrix_swap_double
+Here4: o2scl matrix_swap_double
 Multiple entry matrix_swap_double
 Namespace: o2scl function: matrix_swap_cols
+Here4: o2scl matrix_swap_cols
 Namespace: o2scl function: matrix_swap_cols_double
+Here4: o2scl matrix_swap_cols_double
 Namespace: o2scl function: matrix_swap_rows
+Here4: o2scl matrix_swap_rows
 Namespace: o2scl function: matrix_swap_rows_double
+Here4: o2scl matrix_swap_rows_double
 Namespace:  function: sort_downheap
+Here4:  sort_downheap
 Namespace:  function: vector_sort
+Here4:  vector_sort
 Namespace: o2scl function: sort_index_downheap
+Here4: o2scl sort_index_downheap
 Namespace: o2scl function: vector_sort_index
+Here4: o2scl vector_sort_index
 Namespace: o2scl function: vector_sort_index
+Here4: o2scl vector_sort_index
 Multiple entry vector_sort_index
 Namespace: o2scl function: vector_sort_double
+Here4: o2scl vector_sort_double
 Namespace:  function: vector_smallest
+Here4:  vector_smallest
 Namespace:  function: vector_smallest
+Here4:  vector_smallest
 Multiple entry vector_smallest
 Namespace: o2scl function: vector_smallest_index
+Here4: o2scl vector_smallest_index
 Namespace: o2scl function: vector_smallest_index
+Here4: o2scl vector_smallest_index
 Multiple entry vector_smallest_index
 Namespace:  function: vector_largest
+Here4:  vector_largest
 Namespace:  function: vector_largest
+Here4:  vector_largest
 Multiple entry vector_largest
 Namespace: o2scl function: vector_max_value
+Here4: o2scl vector_max_value
 Namespace: o2scl function: vector_max_value
+Here4: o2scl vector_max_value
 Multiple entry vector_max_value
 Namespace: o2scl function: vector_max_index
+Here4: o2scl vector_max_index
 Namespace:  function: vector_max
+Here4:  vector_max
 Namespace: o2scl function: vector_min_value
+Here4: o2scl vector_min_value
 Namespace: o2scl function: vector_min_value
+Here4: o2scl vector_min_value
 Multiple entry vector_min_value
 Namespace: o2scl function: vector_min_index
+Here4: o2scl vector_min_index
 Namespace:  function: vector_min
+Here4:  vector_min
 Namespace: o2scl function: vector_minmax_value
+Here4: o2scl vector_minmax_value
 Namespace: o2scl function: vector_minmax_index
+Here4: o2scl vector_minmax_index
 Namespace:  function: vector_minmax
+Here4:  vector_minmax
 Namespace: o2scl function: vector_max_quad
+Here4: o2scl vector_max_quad
 Namespace: o2scl function: vector_max_quad
+Here4: o2scl vector_max_quad
 Multiple entry vector_max_quad
 Namespace: o2scl function: vector_max_quad_loc
+Here4: o2scl vector_max_quad_loc
 Namespace: o2scl function: vector_min_quad
+Here4: o2scl vector_min_quad
 Namespace: o2scl function: vector_min_quad
+Here4: o2scl vector_min_quad
 Multiple entry vector_min_quad
 Namespace: o2scl function: vector_min_quad_loc
+Here4: o2scl vector_min_quad_loc
 Namespace: o2scl function: matrix_max_value
+Here4: o2scl matrix_max_value
 Namespace: o2scl function: matrix_max_value
+Here4: o2scl matrix_max_value
 Multiple entry matrix_max_value
 Namespace: o2scl function: matrix_max_value_double
+Here4: o2scl matrix_max_value_double
 Namespace: o2scl function: matrix_max_index
+Here4: o2scl matrix_max_index
 Namespace: o2scl function: matrix_max_index
+Here4: o2scl matrix_max_index
 Multiple entry matrix_max_index
 Namespace: o2scl function: matrix_min_value
+Here4: o2scl matrix_min_value
 Namespace: o2scl function: matrix_min_value
+Here4: o2scl matrix_min_value
 Multiple entry matrix_min_value
 Namespace: o2scl function: matrix_min_value_double
+Here4: o2scl matrix_min_value_double
 Namespace: o2scl function: matrix_min_index
+Here4: o2scl matrix_min_index
 Namespace: o2scl function: matrix_min_index
+Here4: o2scl matrix_min_index
 Multiple entry matrix_min_index
 Namespace:  function: matrix_minmax
+Here4:  matrix_minmax
 Namespace:  function: matrix_minmax
+Here4:  matrix_minmax
 Multiple entry matrix_minmax
 Namespace: o2scl function: matrix_minmax_index
+Here4: o2scl matrix_minmax_index
 Namespace:  function: matrix_sum
+Here4:  matrix_sum
 Namespace:  function: matrix_sum
+Here4:  matrix_sum
 Multiple entry matrix_sum
 Namespace:  function: vector_lookup
+Here4:  vector_lookup
 Namespace:  function: vector_lookup
+Here4:  vector_lookup
 Multiple entry vector_lookup
 Namespace:  function: vector_search
+Here4:  vector_search
 Namespace:  function: vector_search
+Here4:  vector_search
 Multiple entry vector_search
 Namespace:  function: matrix_lookup
+Here4:  matrix_lookup
 Namespace:  function: matrix_lookup
+Here4:  matrix_lookup
 Multiple entry matrix_lookup
 Namespace: o2scl function: vector_bsearch_inc
+Here4: o2scl vector_bsearch_inc
 Namespace: o2scl function: vector_bsearch_dec
+Here4: o2scl vector_bsearch_dec
 Namespace:  function: vector_bsearch
+Here4:  vector_bsearch
 Namespace:  function: vector_bsearch
+Here4:  vector_bsearch
 Multiple entry vector_bsearch
 Namespace: o2scl function: vector_is_monotonic
+Here4: o2scl vector_is_monotonic
 Namespace: o2scl function: vector_is_monotonic
+Here4: o2scl vector_is_monotonic
 Multiple entry vector_is_monotonic
 Namespace: o2scl function: vector_is_strictly_monotonic
+Here4: o2scl vector_is_strictly_monotonic
 Namespace: o2scl function: vector_is_strictly_monotonic
+Here4: o2scl vector_is_strictly_monotonic
 Multiple entry vector_is_strictly_monotonic
 Namespace: o2scl function: vector_is_finite
+Here4: o2scl vector_is_finite
 Namespace: o2scl function: vector_is_finite
+Here4: o2scl vector_is_finite
 Multiple entry vector_is_finite
 Namespace:  function: vector_sum
+Here4:  vector_sum
 Namespace:  function: vector_diffs
+Here4:  vector_diffs
 Namespace:  function: vector_sum
+Here4:  vector_sum
 Multiple entry vector_sum
 Namespace: o2scl function: vector_sum_double
+Here4: o2scl vector_sum_double
 Namespace: o2scl function: vector_sum_double
+Here4: o2scl vector_sum_double
 Multiple entry vector_sum_double
 Namespace:  function: vector_norm
+Here4:  vector_norm
 Namespace:  function: vector_norm
+Here4:  vector_norm
 Multiple entry vector_norm
 Namespace: o2scl function: vector_norm_double
+Here4: o2scl vector_norm_double
 Namespace: o2scl function: vector_norm_double
+Here4: o2scl vector_norm_double
 Multiple entry vector_norm_double
 Namespace: o2scl function: vector_set_all
+Here4: o2scl vector_set_all
 Namespace: o2scl function: vector_set_all
+Here4: o2scl vector_set_all
 Multiple entry vector_set_all
 Namespace: o2scl function: matrix_set_all
+Here4: o2scl matrix_set_all
 Namespace: o2scl function: matrix_set_all
+Here4: o2scl matrix_set_all
 Multiple entry matrix_set_all
 Namespace: o2scl function: vector_copy_jackknife
+Here4: o2scl vector_copy_jackknife
 Namespace: o2scl function: vector_copy_jackknife
+Here4: o2scl vector_copy_jackknife
 Multiple entry vector_copy_jackknife
 Namespace:  function: vector_rotate
+Here4:  vector_rotate
 Namespace:  function: vector_reverse
+Here4:  vector_reverse
 Namespace:  function: vector_reverse
+Here4:  vector_reverse
 Multiple entry vector_reverse
 Namespace: o2scl function: vector_reverse_double
+Here4: o2scl vector_reverse_double
 Namespace: o2scl function: vector_reverse_double
+Here4: o2scl vector_reverse_double
 Multiple entry vector_reverse_double
 Namespace:  function: matrix_row
+Here4:  matrix_row
 Namespace:  function: matrix_column
+Here4:  matrix_column
 Namespace:  function: vector_out
+Here4:  vector_out
 Namespace: o2scl function: vector_out_quotes
+Here4: o2scl vector_out_quotes
 Namespace:  function: vector_out
+Here4:  vector_out
 Multiple entry vector_out
 Namespace: o2scl function: vector_out_quotes
+Here4: o2scl vector_out_quotes
 Multiple entry vector_out_quotes
 Namespace:  function: vector_grid
+Here4:  vector_grid
 Namespace: o2scl function: matrix_set_identity
+Here4: o2scl matrix_set_identity
 Namespace: o2scl function: matrix_set_identity
+Here4: o2scl matrix_set_identity
 Multiple entry matrix_set_identity
 Namespace:  function: vector_range
+Here4:  vector_range
 Namespace: o2scl function: const_vector_range
+Here4: o2scl const_vector_range
 Namespace:  function: vector_range
+Here4:  vector_range
 Multiple entry vector_range
 Namespace: o2scl function: const_vector_range
+Here4: o2scl const_vector_range
 Multiple entry const_vector_range
 Namespace: o2scl function: const_vector_range
-Multiple entry const_vector_range
-Namespace:  function: vector_range
-Multiple entry vector_range
-Namespace: o2scl function: const_vector_range
-Multiple entry const_vector_range
-Namespace: o2scl function: const_vector_range
-Multiple entry const_vector_range
-Namespace: o2scl function: const_vector_range
+Here4: o2scl const_vector_range
 Multiple entry const_vector_range
 Namespace:  function: vector_range
+Here4:  vector_range
 Multiple entry vector_range
 Namespace: o2scl function: const_vector_range
+Here4: o2scl const_vector_range
 Multiple entry const_vector_range
 Namespace: o2scl function: const_vector_range
+Here4: o2scl const_vector_range
+Multiple entry const_vector_range
+Namespace: o2scl function: const_vector_range
+Here4: o2scl const_vector_range
 Multiple entry const_vector_range
 Namespace:  function: vector_range
+Here4:  vector_range
 Multiple entry vector_range
 Namespace: o2scl function: const_vector_range
+Here4: o2scl const_vector_range
 Multiple entry const_vector_range
 Namespace: o2scl function: const_vector_range
+Here4: o2scl const_vector_range
+Multiple entry const_vector_range
+Namespace:  function: vector_range
+Here4:  vector_range
+Multiple entry vector_range
+Namespace: o2scl function: const_vector_range
+Here4: o2scl const_vector_range
 Multiple entry const_vector_range
 Namespace: o2scl function: const_vector_range
+Here4: o2scl const_vector_range
+Multiple entry const_vector_range
+Namespace: o2scl function: const_vector_range
+Here4: o2scl const_vector_range
 Multiple entry const_vector_range
 Namespace: o2scl function: vector_range_copy
+Here4: o2scl vector_range_copy
 Namespace:  function: matrix_max
+Here4:  matrix_max
 Namespace:  function: matrix_min
+Here4:  matrix_min
 Namespace:  function: matrix_max
+Here4:  matrix_max
 Multiple entry matrix_max
 Namespace:  function: matrix_min
+Here4:  matrix_min
 Multiple entry matrix_min
 Namespace: o2scl function: vector_deriv_threept
+Here4: o2scl vector_deriv_threept
 Namespace: o2scl function: vector_deriv_threept_tap
+Here4: o2scl vector_deriv_threept_tap
 Namespace: o2scl function: vector_deriv_fivept
+Here4: o2scl vector_deriv_fivept
 Namespace: o2scl function: vector_deriv_fivept_tap
+Here4: o2scl vector_deriv_fivept_tap
 Namespace: o2scl function: vector_integ_trap
+Here4: o2scl vector_integ_trap
 Namespace: o2scl function: vector_integ_threept
+Here4: o2scl vector_integ_threept
 Namespace: o2scl function: vector_integ_extended4
+Here4: o2scl vector_integ_extended4
 Namespace: o2scl function: vector_integ_durand
+Here4: o2scl vector_integ_durand
 Namespace: o2scl function: vector_integ_extended8
+Here4: o2scl vector_integ_extended8
 Namespace: o2scl function: operator<<
+Here4: o2scl operator<<
 Namespace:  function: constraint
+Here4:  constraint
 Namespace:  function: cont_constraint
+Here4:  cont_constraint
 Namespace:  function: lower_bound
+Here4:  lower_bound
 Namespace: o2scl function: cont_lower_bound
+Here4: o2scl cont_lower_bound
 Namespace:  function: vector_mean
+Here4:  vector_mean
 Namespace:  function: vector_mean
+Here4:  vector_mean
 Multiple entry vector_mean
 Namespace: o2scl function: vector_variance_fmean
+Here4: o2scl vector_variance_fmean
 Namespace: o2scl function: vector_variance_fmean
+Here4: o2scl vector_variance_fmean
 Multiple entry vector_variance_fmean
 Namespace:  function: vector_variance
+Here4:  vector_variance
 Namespace:  function: vector_variance
+Here4:  vector_variance
 Multiple entry vector_variance
 Namespace:  function: vector_variance
+Here4:  vector_variance
 Multiple entry vector_variance
 Namespace:  function: vector_variance
+Here4:  vector_variance
 Multiple entry vector_variance
 Namespace: o2scl function: vector_stddev_fmean
+Here4: o2scl vector_stddev_fmean
 Namespace: o2scl function: vector_stddev_fmean
+Here4: o2scl vector_stddev_fmean
 Multiple entry vector_stddev_fmean
 Namespace:  function: vector_stddev
+Here4:  vector_stddev
 Namespace:  function: vector_stddev
+Here4:  vector_stddev
 Multiple entry vector_stddev
 Namespace:  function: vector_stddev
+Here4:  vector_stddev
 Multiple entry vector_stddev
 Namespace:  function: vector_stddev
+Here4:  vector_stddev
 Multiple entry vector_stddev
 Namespace:  function: vector_absdev
+Here4:  vector_absdev
 Namespace:  function: vector_absdev
+Here4:  vector_absdev
 Multiple entry vector_absdev
 Namespace:  function: vector_absdev
+Here4:  vector_absdev
 Multiple entry vector_absdev
 Namespace:  function: vector_absdev
+Here4:  vector_absdev
 Multiple entry vector_absdev
 Namespace:  function: vector_skew
+Here4:  vector_skew
 Namespace:  function: vector_skew
+Here4:  vector_skew
 Multiple entry vector_skew
 Namespace:  function: vector_skew
+Here4:  vector_skew
 Multiple entry vector_skew
 Namespace:  function: vector_skew
+Here4:  vector_skew
 Multiple entry vector_skew
 Namespace:  function: vector_kurtosis
+Here4:  vector_kurtosis
 Namespace:  function: vector_kurtosis
+Here4:  vector_kurtosis
 Multiple entry vector_kurtosis
 Namespace:  function: vector_kurtosis
+Here4:  vector_kurtosis
 Multiple entry vector_kurtosis
 Namespace:  function: vector_kurtosis
+Here4:  vector_kurtosis
 Multiple entry vector_kurtosis
 Namespace:  function: vector_covariance
+Here4:  vector_covariance
 Namespace:  function: vector_covariance
+Here4:  vector_covariance
 Multiple entry vector_covariance
 Namespace:  function: vector_covariance
+Here4:  vector_covariance
 Multiple entry vector_covariance
 Namespace:  function: vector_covariance
+Here4:  vector_covariance
 Multiple entry vector_covariance
 Namespace:  function: vector_correlation
+Here4:  vector_correlation
 Namespace:  function: vector_correlation
+Here4:  vector_correlation
 Multiple entry vector_correlation
 Namespace:  function: vector_pvariance
+Here4:  vector_pvariance
 Namespace:  function: vector_pvariance
+Here4:  vector_pvariance
 Multiple entry vector_pvariance
 Namespace: o2scl function: vector_quantile_sorted
+Here4: o2scl vector_quantile_sorted
 Namespace: o2scl function: vector_quantile_sorted
+Here4: o2scl vector_quantile_sorted
 Multiple entry vector_quantile_sorted
 Namespace: o2scl function: vector_median_sorted
+Here4: o2scl vector_median_sorted
 Namespace: o2scl function: vector_median_sorted
+Here4: o2scl vector_median_sorted
 Multiple entry vector_median_sorted
 Namespace: o2scl function: vector_chi_squared
+Here4: o2scl vector_chi_squared
 Namespace: o2scl function: vector_chi_squared
+Here4: o2scl vector_chi_squared
 Multiple entry vector_chi_squared
 Namespace: o2scl function: vector_bin_size_scott
+Here4: o2scl vector_bin_size_scott
 Namespace: o2scl function: vector_bin_size_scott
+Here4: o2scl vector_bin_size_scott
 Multiple entry vector_bin_size_scott
 Namespace: o2scl function: vector_sorted_quantile
+Here4: o2scl vector_sorted_quantile
 Namespace: o2scl function: vector_bin_size_freedman
+Here4: o2scl vector_bin_size_freedman
 Namespace: o2scl function: vector_bin_size_freedman
+Here4: o2scl vector_bin_size_freedman
 Multiple entry vector_bin_size_freedman
 Namespace: o2scl function: vector_roll_avg
+Here4: o2scl vector_roll_avg
 Namespace: o2scl function: vector_roll_avg
+Here4: o2scl vector_roll_avg
 Multiple entry vector_roll_avg
 Namespace:  function: wvector_mean
+Here4:  wvector_mean
 Namespace:  function: wvector_mean
+Here4:  wvector_mean
 Multiple entry wvector_mean
 Namespace:  function: wvector_factor
+Here4:  wvector_factor
 Namespace:  function: wvector_factor
+Here4:  wvector_factor
 Multiple entry wvector_factor
 Namespace: o2scl function: wvector_variance_fmean
+Here4: o2scl wvector_variance_fmean
 Namespace: o2scl function: wvector_variance_fmean
+Here4: o2scl wvector_variance_fmean
 Multiple entry wvector_variance_fmean
 Namespace:  function: wvector_variance
+Here4:  wvector_variance
 Namespace:  function: wvector_variance
+Here4:  wvector_variance
 Multiple entry wvector_variance
 Namespace:  function: wvector_variance
+Here4:  wvector_variance
 Multiple entry wvector_variance
 Namespace:  function: wvector_variance
+Here4:  wvector_variance
 Multiple entry wvector_variance
 Namespace: o2scl function: wvector_stddev_fmean
+Here4: o2scl wvector_stddev_fmean
 Namespace: o2scl function: wvector_stddev_fmean
+Here4: o2scl wvector_stddev_fmean
 Multiple entry wvector_stddev_fmean
 Namespace:  function: wvector_stddev
+Here4:  wvector_stddev
 Namespace:  function: wvector_stddev
+Here4:  wvector_stddev
 Multiple entry wvector_stddev
 Namespace:  function: wvector_stddev
+Here4:  wvector_stddev
 Multiple entry wvector_stddev
 Namespace:  function: wvector_stddev
+Here4:  wvector_stddev
 Multiple entry wvector_stddev
 Namespace:  function: wvector_covariance
+Here4:  wvector_covariance
 Namespace:  function: wvector_covariance
+Here4:  wvector_covariance
 Multiple entry wvector_covariance
 Namespace:  function: wvector_sumsq
+Here4:  wvector_sumsq
 Namespace:  function: wvector_sumsq
+Here4:  wvector_sumsq
 Multiple entry wvector_sumsq
 Namespace:  function: wvector_sumsq
+Here4:  wvector_sumsq
 Multiple entry wvector_sumsq
 Namespace:  function: wvector_sumsq
+Here4:  wvector_sumsq
 Multiple entry wvector_sumsq
 Namespace:  function: wvector_absdev
+Here4:  wvector_absdev
 Namespace:  function: wvector_absdev
+Here4:  wvector_absdev
 Multiple entry wvector_absdev
 Namespace:  function: wvector_absdev
+Here4:  wvector_absdev
 Multiple entry wvector_absdev
 Namespace:  function: wvector_absdev
+Here4:  wvector_absdev
 Multiple entry wvector_absdev
 Namespace:  function: wvector_skew
+Here4:  wvector_skew
 Namespace:  function: wvector_skew
+Here4:  wvector_skew
 Multiple entry wvector_skew
 Namespace:  function: wvector_skew
+Here4:  wvector_skew
 Multiple entry wvector_skew
 Namespace:  function: wvector_skew
+Here4:  wvector_skew
 Multiple entry wvector_skew
 Namespace:  function: wvector_kurtosis
+Here4:  wvector_kurtosis
 Namespace:  function: wvector_kurtosis
+Here4:  wvector_kurtosis
 Multiple entry wvector_kurtosis
 Namespace:  function: wvector_kurtosis
+Here4:  wvector_kurtosis
 Multiple entry wvector_kurtosis
 Namespace:  function: wvector_kurtosis
+Here4:  wvector_kurtosis
 Multiple entry wvector_kurtosis
 Namespace: o2scl function: vector_lag1_autocorr
+Here4: o2scl vector_lag1_autocorr
 Namespace: o2scl function: vector_lag1_autocorr
+Here4: o2scl vector_lag1_autocorr
 Multiple entry vector_lag1_autocorr
 Namespace: o2scl function: vector_lag1_autocorr
+Here4: o2scl vector_lag1_autocorr
 Multiple entry vector_lag1_autocorr
 Namespace: o2scl function: vector_lag1_autocorr
+Here4: o2scl vector_lag1_autocorr
 Multiple entry vector_lag1_autocorr
 Namespace: o2scl function: vector_lagk_autocorr
+Here4: o2scl vector_lagk_autocorr
 Namespace: o2scl function: vector_lagk_autocorr
+Here4: o2scl vector_lagk_autocorr
 Multiple entry vector_lagk_autocorr
 Namespace: o2scl function: vector_lagk_autocorr
+Here4: o2scl vector_lagk_autocorr
 Multiple entry vector_lagk_autocorr
 Namespace: o2scl function: vector_lagk_autocorr
+Here4: o2scl vector_lagk_autocorr
 Multiple entry vector_lagk_autocorr
 Namespace: o2scl function: vector_autocorr_vector
+Here4: o2scl vector_autocorr_vector
 Namespace: o2scl function: vector_autocorr_tau
+Here4: o2scl vector_autocorr_tau
 Namespace: o2scl function: vector_lagk_autocorr_mult
+Here4: o2scl vector_lagk_autocorr_mult
 Namespace: o2scl function: vector_lagk_autocorr_mult
+Here4: o2scl vector_lagk_autocorr_mult
 Multiple entry vector_lagk_autocorr_mult
 Namespace: o2scl function: vector_lagk_autocorr_mult
+Here4: o2scl vector_lagk_autocorr_mult
 Multiple entry vector_lagk_autocorr_mult
 Namespace: o2scl function: vector_lagk_autocorr_mult
+Here4: o2scl vector_lagk_autocorr_mult
 Multiple entry vector_lagk_autocorr_mult
 Namespace: o2scl function: vector_autocorr_vector_mult
+Here4: o2scl vector_autocorr_vector_mult
 Namespace: o2scl function: vector_autocorr_vector_mult
+Here4: o2scl vector_autocorr_vector_mult
 Multiple entry vector_autocorr_vector_mult
 Namespace:  function: vector_acor
+Here4:  vector_acor
 Namespace:  function: vector_acor
+Here4:  vector_acor
 Multiple entry vector_acor
 Namespace: o2scl function: vector_to_bins
+Here4: o2scl vector_to_bins
 Namespace: o2scl function: get_screen_size_curses
+Here4: o2scl get_screen_size_curses
 Namespace: o2scl function: get_screen_size_tput
+Here4: o2scl get_screen_size_tput
 Namespace: o2scl function: get_screen_size_ioctl
+Here4: o2scl get_screen_size_ioctl
 Namespace:  function: shuffle_swap
+Here4:  shuffle_swap
 Namespace:  function: choose_copy
+Here4:  choose_copy
 Namespace:  function: vector_shuffle
+Here4:  vector_shuffle
 Namespace: o2scl_acol function: parse_arrays
+Here4: o2scl_acol parse_arrays
 Namespace: o2scl_cblas function: matrix_is_finite
+Here4: o2scl_cblas matrix_is_finite
 Namespace: o2scl_cblas function: matrix_is_finite
+Here4: o2scl_cblas matrix_is_finite
 Multiple entry matrix_is_finite
 Namespace: o2scl_cblas function: dasum
+Here4: o2scl_cblas dasum
 Namespace: o2scl_cblas function: daxpy
+Here4: o2scl_cblas daxpy
 Namespace: o2scl_cblas function: ddot
+Here4: o2scl_cblas ddot
 Namespace: o2scl_cblas function: dnrm2
+Here4: o2scl_cblas dnrm2
 Namespace: o2scl_cblas function: dscal
+Here4: o2scl_cblas dscal
 Namespace: o2scl_cblas function: dgemv
+Here4: o2scl_cblas dgemv
 Namespace: o2scl_cblas function: dtrsv
+Here4: o2scl_cblas dtrsv
 Namespace: o2scl_cblas function: dtrmv
+Here4: o2scl_cblas dtrmv
 Namespace: o2scl_cblas function: dgemm
+Here4: o2scl_cblas dgemm
 Namespace: o2scl_cblas function: dtrsm
+Here4: o2scl_cblas dtrsm
 Namespace: o2scl_cblas function: daxpy_subvec
+Here4: o2scl_cblas daxpy_subvec
 Namespace: o2scl_cblas function: ddot_subvec
+Here4: o2scl_cblas ddot_subvec
 Namespace: o2scl_cblas function: dnrm2_subvec
+Here4: o2scl_cblas dnrm2_subvec
 Namespace: o2scl_cblas function: dscal_subvec
+Here4: o2scl_cblas dscal_subvec
 Namespace: o2scl_cblas function: daxpy_subcol
+Here4: o2scl_cblas daxpy_subcol
 Namespace: o2scl_cblas function: ddot_subcol
+Here4: o2scl_cblas ddot_subcol
 Namespace: o2scl_cblas function: dnrm2_subcol
+Here4: o2scl_cblas dnrm2_subcol
 Namespace: o2scl_cblas function: dscal_subcol
+Here4: o2scl_cblas dscal_subcol
 Namespace: o2scl_cblas function: dasum_subcol
+Here4: o2scl_cblas dasum_subcol
 Namespace: o2scl_cblas function: daxpy_subrow
+Here4: o2scl_cblas daxpy_subrow
 Namespace: o2scl_cblas function: ddot_subrow
+Here4: o2scl_cblas ddot_subrow
 Namespace: o2scl_cblas function: dnrm2_subrow
+Here4: o2scl_cblas dnrm2_subrow
 Namespace: o2scl_cblas function: dscal_subrow
+Here4: o2scl_cblas dscal_subrow
 Namespace: o2scl_hdf function: hdf_input
+Here4: o2scl_hdf hdf_input
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Namespace: o2scl_hdf function: hdf_input_data
+Here4: o2scl_hdf hdf_input_data
 Namespace: o2scl_hdf function: hdf_output_data
+Here4: o2scl_hdf hdf_output_data
 Namespace: o2scl_hdf function: hdf_input
+Here4: o2scl_hdf hdf_input
 Multiple entry hdf_input
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_hdf function: hdf_input
+Here4: o2scl_hdf hdf_input
 Multiple entry hdf_input
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_hdf function: hdf_input_data
+Here4: o2scl_hdf hdf_input_data
 Multiple entry hdf_input_data
 Namespace: o2scl_hdf function: hdf_output_data
+Here4: o2scl_hdf hdf_output_data
 Multiple entry hdf_output_data
 Namespace: o2scl_hdf function: hdf_input
+Here4: o2scl_hdf hdf_input
 Multiple entry hdf_input
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_hdf function: hdf_input
+Here4: o2scl_hdf hdf_input
 Multiple entry hdf_input
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_hdf function: hdf_input
+Here4: o2scl_hdf hdf_input
 Multiple entry hdf_input
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_hdf function: hdf_output_data
+Here4: o2scl_hdf hdf_output_data
 Multiple entry hdf_output_data
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_hdf function: hdf_output_data
+Here4: o2scl_hdf hdf_output_data
 Multiple entry hdf_output_data
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_hdf function: hdf_input
+Here4: o2scl_hdf hdf_input
 Multiple entry hdf_input
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_hdf function: hdf_input
+Here4: o2scl_hdf hdf_input
 Multiple entry hdf_input
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_hdf function: hdf_input
+Here4: o2scl_hdf hdf_input
 Multiple entry hdf_input
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_hdf function: hdf_input
+Here4: o2scl_hdf hdf_input
 Multiple entry hdf_input
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_hdf function: hdf_input
+Here4: o2scl_hdf hdf_input
 Multiple entry hdf_input
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_hdf function: hdf_input
+Here4: o2scl_hdf hdf_input
 Multiple entry hdf_input
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_hdf function: hdf_input
+Here4: o2scl_hdf hdf_input
 Multiple entry hdf_input
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_hdf function: hdf_input
+Here4: o2scl_hdf hdf_input
 Multiple entry hdf_input
 Namespace: o2scl_hdf function: value_spec
+Here4: o2scl_hdf value_spec
 Namespace: o2scl_hdf function: vector_spec
+Here4: o2scl_hdf vector_spec
 Namespace: o2scl_hdf function: strings_spec
+Here4: o2scl_hdf strings_spec
 Namespace: o2scl_hdf function: vector_spec
+Here4: o2scl_hdf vector_spec
 Multiple entry vector_spec
 Namespace: o2scl_hdf function: mult_vector_spec
+Here4: o2scl_hdf mult_vector_spec
 Namespace: o2scl_hdf function: hdf_output
+Here4: o2scl_hdf hdf_output
 Multiple entry hdf_output
 Namespace: o2scl_linalg function: bidiag_decomp
+Here4: o2scl_linalg bidiag_decomp
 Namespace: o2scl_linalg function: bidiag_unpack
+Here4: o2scl_linalg bidiag_unpack
 Namespace: o2scl_linalg function: bidiag_unpack2
+Here4: o2scl_linalg bidiag_unpack2
 Namespace: o2scl_linalg function: bidiag_unpack_B
+Here4: o2scl_linalg bidiag_unpack_B
 Namespace: o2scl_linalg function: cholesky_decomp
+Here4: o2scl_linalg cholesky_decomp
 Namespace: o2scl_linalg function: cholesky_det
+Here4: o2scl_linalg cholesky_det
 Namespace: o2scl_linalg function: cholesky_lndet
+Here4: o2scl_linalg cholesky_lndet
 Namespace: o2scl_linalg function: cholesky_solve
+Here4: o2scl_linalg cholesky_solve
 Namespace: o2scl_linalg function: cholesky_svx
+Here4: o2scl_linalg cholesky_svx
 Namespace: o2scl_linalg function: cholesky_invert
+Here4: o2scl_linalg cholesky_invert
 Namespace: o2scl_linalg function: cholesky_decomp_unit
+Here4: o2scl_linalg cholesky_decomp_unit
 Namespace: o2scl_linalg function: create_givens
+Here4: o2scl_linalg create_givens
 Namespace: o2scl_linalg function: apply_givens_qr
+Here4: o2scl_linalg apply_givens_qr
 Namespace: o2scl_linalg function: apply_givens_lq
+Here4: o2scl_linalg apply_givens_lq
 Namespace: o2scl_linalg function: apply_givens_vec
+Here4: o2scl_linalg apply_givens_vec
 Namespace: o2scl_linalg function: HH_svx
+Here4: o2scl_linalg HH_svx
 Namespace: o2scl_linalg function: HH_solve
+Here4: o2scl_linalg HH_solve
 Namespace: o2scl_linalg function: householder_transform
+Here4: o2scl_linalg householder_transform
 Namespace: o2scl_linalg function: householder_transform_subcol
+Here4: o2scl_linalg householder_transform_subcol
 Namespace: o2scl_linalg function: householder_transform_subrow
+Here4: o2scl_linalg householder_transform_subrow
 Namespace: o2scl_linalg function: householder_hm
+Here4: o2scl_linalg householder_hm
 Namespace: o2scl_linalg function: householder_hm_subcol
+Here4: o2scl_linalg householder_hm_subcol
 Namespace: o2scl_linalg function: householder_hm_subrow
+Here4: o2scl_linalg householder_hm_subrow
 Namespace: o2scl_linalg function: householder_hv
+Here4: o2scl_linalg householder_hv
 Namespace: o2scl_linalg function: householder_hv_subcol
+Here4: o2scl_linalg householder_hv_subcol
 Namespace: o2scl_linalg function: householder_hm1
+Here4: o2scl_linalg householder_hm1
 Namespace: o2scl_linalg function: householder_hm1_sub
+Here4: o2scl_linalg householder_hm1_sub
 Namespace: o2scl_linalg function: householder_mh
+Here4: o2scl_linalg householder_mh
 Namespace: o2scl_linalg function: householder_mh_subrow
+Here4: o2scl_linalg householder_mh_subrow
 Namespace: o2scl_linalg function: diagonal_has_zero
+Here4: o2scl_linalg diagonal_has_zero
 Namespace: o2scl_linalg function: LU_decomp
+Here4: o2scl_linalg LU_decomp
 Namespace: o2scl_linalg function: LU_svx
+Here4: o2scl_linalg LU_svx
 Namespace: o2scl_linalg function: LU_decomp_alt
+Here4: o2scl_linalg LU_decomp_alt
 Namespace: o2scl_linalg function: LU_solve
+Here4: o2scl_linalg LU_solve
 Namespace: o2scl_linalg function: LU_refine
+Here4: o2scl_linalg LU_refine
 Namespace: o2scl_linalg function: LU_invert
+Here4: o2scl_linalg LU_invert
 Namespace: o2scl_linalg function: LU_det
+Here4: o2scl_linalg LU_det
 Namespace: o2scl_linalg function: LU_lndet
+Here4: o2scl_linalg LU_lndet
 Namespace: o2scl_linalg function: LU_sgndet
+Here4: o2scl_linalg LU_sgndet
 Namespace: o2scl_linalg function: QR_decomp
+Here4: o2scl_linalg QR_decomp
 Namespace: o2scl_linalg function: QR_QTvec
+Here4: o2scl_linalg QR_QTvec
 Namespace: o2scl_linalg function: QR_unpack
+Here4: o2scl_linalg QR_unpack
 Namespace: o2scl_linalg function: QR_svx
+Here4: o2scl_linalg QR_svx
 Namespace: o2scl_linalg function: QR_solve
+Here4: o2scl_linalg QR_solve
 Namespace: o2scl_linalg function: QR_update
+Here4: o2scl_linalg QR_update
 Namespace: o2scl_linalg function: QR_decomp_unpack
+Here4: o2scl_linalg QR_decomp_unpack
 Namespace: o2scl_linalg function: QRPT_decomp
+Here4: o2scl_linalg QRPT_decomp
 Namespace: o2scl_linalg function: SV_decomp
+Here4: o2scl_linalg SV_decomp
 Namespace: o2scl_linalg function: SV_decomp_mod
+Here4: o2scl_linalg SV_decomp_mod
 Namespace: o2scl_linalg function: SV_solve
+Here4: o2scl_linalg SV_solve
 Namespace: o2scl_linalg function: SV_decomp_jacobi
+Here4: o2scl_linalg SV_decomp_jacobi
 Namespace: o2scl_linalg function: balance_columns
+Here4: o2scl_linalg balance_columns
 Namespace: o2scl_linalg function: chop_small_elements
+Here4: o2scl_linalg chop_small_elements
 Namespace: o2scl_linalg function: trailing_eigenvalue
+Here4: o2scl_linalg trailing_eigenvalue
 Namespace: o2scl_linalg function: create_schur
+Here4: o2scl_linalg create_schur
 Namespace: o2scl_linalg function: svd2
+Here4: o2scl_linalg svd2
 Namespace: o2scl_linalg function: svd2_sub
+Here4: o2scl_linalg svd2_sub
 Namespace: o2scl_linalg function: chase_out_intermediate_zero
+Here4: o2scl_linalg chase_out_intermediate_zero
 Namespace: o2scl_linalg function: chase_out_trailing_zero
+Here4: o2scl_linalg chase_out_trailing_zero
 Namespace: o2scl_linalg function: chase_out_trailing_zero_sub
+Here4: o2scl_linalg chase_out_trailing_zero_sub
 Namespace: o2scl_linalg function: qrstep
+Here4: o2scl_linalg qrstep
 Namespace: o2scl_linalg function: qrstep_sub
+Here4: o2scl_linalg qrstep_sub
 Namespace: o2scl_linalg function: solve_tridiag_sym
+Here4: o2scl_linalg solve_tridiag_sym
 Namespace: o2scl_linalg function: solve_tridiag_nonsym
+Here4: o2scl_linalg solve_tridiag_nonsym
 Namespace: o2scl_linalg function: solve_cyc_tridiag_sym
+Here4: o2scl_linalg solve_cyc_tridiag_sym
 Namespace: o2scl_linalg function: solve_cyc_tridiag_nonsym
+Here4: o2scl_linalg solve_cyc_tridiag_nonsym
 Namespace: o2scl_linalg function: solve_tridiag_sym
+Here4: o2scl_linalg solve_tridiag_sym
 Multiple entry solve_tridiag_sym
 Namespace: o2scl_linalg function: solve_tridiag_nonsym
+Here4: o2scl_linalg solve_tridiag_nonsym
 Multiple entry solve_tridiag_nonsym
 Namespace: o2scl_linalg function: solve_cyc_tridiag_sym
+Here4: o2scl_linalg solve_cyc_tridiag_sym
 Multiple entry solve_cyc_tridiag_sym
 Namespace: o2scl_linalg function: solve_cyc_tridiag_nonsym
+Here4: o2scl_linalg solve_cyc_tridiag_nonsym
 Multiple entry solve_cyc_tridiag_nonsym
 Namespace: o2scl_linalg_bracket function: LU_decomp_array_2d
+Here4: o2scl_linalg_bracket LU_decomp_array_2d
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
+Here4: o2scl_auto_format operator<<
 Multiple entry operator<<
 
 ---------------------------------------------------

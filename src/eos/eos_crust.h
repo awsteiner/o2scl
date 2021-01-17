@@ -69,6 +69,10 @@ namespace o2scl {
       \f]
       This is Eq. 2.7.2 in Shapiro and Teukolsky (1983). The rest mass
       energy of the nucleons is included in the energy density.
+
+      \verbatim embed:rst
+      See [Shapiro83]_.
+      \endverbatim
       
       The original results from Baym et al. (1971) are stored as a
       \ref table in file <tt>data/o2scl/bps.eos</tt>. The testing code

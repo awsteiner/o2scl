@@ -188,7 +188,7 @@ namespace o2scl {
       Models are taken from the references: [Bartel79]_,
       [Beiner75]_, [Chabanat95]_, [Chabanat97]_, [Danielewicz09]_,
       [Dobaczewski94]_, [Dutta86]_, [Friedrich86]_, [Onsi94]_,
-      [Reinhard95]_, and [Tondeur84]_, and [VanGiai81]_ .
+      [Reinhard95]_, [Reinhard99]_, [Tondeur84]_, and [VanGiai81]_ .
       \endverbatim
       
       The variables \f$ \nu_n \f$ and \f$ \nu_p \f$ contain the

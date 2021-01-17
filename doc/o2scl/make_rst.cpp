@@ -213,21 +213,30 @@ int main(int argc, char *argv[]) {
 	  cout << "File: " << s << endl;
 	}
 
-	// Handle multiple entry or add to the main list
-	if (list.find(s)!=list.end()) {
-	  cout << "Multiple entry " << s << endl;
-	  list_dup.insert(s);
-	  if (kk==0) {
-	    cerr << "Duplicate classes not allowed." << endl;
-	    exit(-1);
-	  }
-	  if (kk==2) {
-	    cerr << "Duplicate files not allowed." << endl;
-	    exit(-1);
-	  }
-	} else if (ns!=((string)"boost")) {
-	  list.insert(std::make_pair(s,ns));
-	}
+        //cout << "Here4: " << ns << " " << s << endl;
+
+        // Polytrope solve is already documented as part of the
+        // nstar_rot class, so we don't need to duplicate the
+        // documentation.
+        if (s!="nstar_rot::polytrope_solve") {
+          
+          // Handle multiple entry or add to the main list
+          if (list.find(s)!=list.end()) {
+            cout << "Multiple entry " << s << endl;
+            list_dup.insert(s);
+            if (kk==0) {
+              cerr << "Duplicate classes not allowed." << endl;
+              exit(-1);
+            }
+            if (kk==2) {
+              cerr << "Duplicate files not allowed." << endl;
+              exit(-1);
+            }
+          } else if (ns!=((string)"boost")) {
+            list.insert(std::make_pair(s,ns));
+          }
+          
+        }
 	
 	// End of 'if (s.length()>0)'
       }
@@ -537,8 +546,6 @@ int main(int argc, char *argv[]) {
                 cerr << "Failed to find name in " << name << endl;
                 exit(-1);
               }
-
-              cout << "Herex: " << name << " " << s << endl;
 
               // Only proceed if the name and s match
               if (name==s) {
