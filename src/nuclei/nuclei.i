@@ -16,6 +16,10 @@ cpp_include <o2scl/nuclei_python.h>
 # 
 cpp_using std
 cpp_using o2scl
+#
+# Additional python headers
+#
+py_header from o2sclpy.part import *
 # 
 # Class nucleus
 #

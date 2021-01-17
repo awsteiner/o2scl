@@ -295,6 +295,8 @@ int main(int argc, char *argv[]) {
   // Current list of includes
   std::vector<std::string> cpp_includes;
   // Current list of includes
+  std::vector<std::string> py_headers;
+  // Current list of includes
   std::vector<std::string> cpp_using;
   // Current list of classes
   std::vector<if_class> classes;
@@ -357,6 +359,20 @@ int main(int argc, char *argv[]) {
         exit(-1);
       }
       h_includes.push_back(vs[1]);
+      
+      next_line(fin,line,vs,done);
+      
+    } else if (vs[0]=="py_header") {
+      
+      if (vs.size()<2) {
+        cerr << "No argument for py_header." << endl;
+        exit(-1);
+      }
+      std::string pyh=vs[1];
+      for(size_t j=2;j<vs.size();j++) {
+        pyh+=" "+vs[j];
+      }
+      py_headers.push_back(pyh);
       
       next_line(fin,line,vs,done);
       
@@ -741,6 +757,13 @@ int main(int argc, char *argv[]) {
         fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
         fout << "  return ptr->" << ifv.name << ";" << endl;
         fout << "}" << endl;
+      } else if (ifv.ift.name=="std::string") {
+        fout << "const char *" << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_get_" << ifv.name << "(void *vptr) {" << endl;
+        fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
+        fout << "  python_temp_string=ptr->" << ifv.name << ";" << endl;
+        fout << "  return python_temp_string.c_str();" << endl;
+        fout << "}" << endl;
       } else {
         fout << "void " << underscoreify(ifc.ns) << "_"
              << ifc.name << "_get_" << ifv.name
@@ -894,6 +917,11 @@ int main(int argc, char *argv[]) {
   fout << "from abc import abstractmethod" << endl;
   fout << endl;
   
+  for(size_t i=0;i<py_headers.size();i++) {
+    fout << py_headers[i] << endl;
+  }
+  fout << endl;
+  
   for(size_t i=0;i<classes.size();i++) {
     
     if_class &ifc=classes[i];
@@ -989,7 +1017,12 @@ int main(int argc, char *argv[]) {
         fout << "        \"\"\"" << endl;
         fout << "        func=self._dll." << ifc.ns << "_" << ifc.name
              << "_get_" << ifv.name << endl;
-        fout << "        func.restype=ctypes.c_" << ifv.ift.name << endl;
+        if (ifv.ift.name=="std::string") {
+          fout << "        func.restype=ctypes.c_char_p" << endl;
+        } else {
+          fout << "        func.restype=ctypes.c_" << ifv.ift.name
+               << endl;
+        }
         fout << "        func.argtypes=[ctypes.c_void_p," 
              << "ctypes.c_void_p]" << endl;
         fout << "        return func(self._ptr," << ifv.name
@@ -1057,9 +1090,9 @@ int main(int argc, char *argv[]) {
            << iff.name << endl;
       if (iff.ret.name!="void") {
         if (iff.ret.name=="std::string") {
-          fout << "        func.restype=ctypes.c_" << iff.ret.name << endl;
-        } else {
           fout << "        func.restype=ctypes.c_char_p" << endl;
+        } else {
+          fout << "        func.restype=ctypes.c_" << iff.ret.name << endl;
         }
       }
       fout << "        func.argtypes=[ctypes.c_void_p,";

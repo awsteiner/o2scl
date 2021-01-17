@@ -295,11 +295,10 @@ void o2scl_nucmass_table_set_n(void *vptr, size_t v) {
   return;
 }
 
-void o2scl_nucmass_table_get_reference(void *vptr, void *p_v) {
+const char *o2scl_nucmass_table_get_reference(void *vptr) {
   nucmass_table *ptr=(nucmass_table *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  *(p_t)=ptr->reference;
-  return;
+  python_temp_string=ptr->reference;
+  return python_temp_string.c_str();
 }
 
 void o2scl_nucmass_table_set_reference(void *vptr, void *p_v) {
