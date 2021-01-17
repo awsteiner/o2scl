@@ -814,7 +814,7 @@ namespace o2scl {
     /** \brief Negele-Vautherin-Baym-Pethick-Sutherland crust
 
         \verbatim embed:rst
-        This crust is taken from [Negele73]_ and [Baym71tg]_.
+        This crust is taken from [Negele73ns]_ and [Baym71tg]_.
         \endverbatim
     */
     void default_low_dens_eos();

@@ -273,7 +273,7 @@ namespace o2scl {
       {3 \left[E(n_B,1/2)-E(n_B,0)\right]}
       \f]
       \verbatim embed:rst
-      (see [Steiner06]_).
+      (see [Piekarewicz09]_ and [Steiner06]_).
       \endverbatim
       This function can be expressed
       either in terms of \f$ \tilde{S} \f$ or \f$ S_4 \f$
@@ -833,7 +833,7 @@ namespace o2scl {
         \f]
 
         \verbatim embed:rst
-        See e.g. [Pethick95]_.
+        See e.g. [Pethick95ti]_.
         \endverbatim
 
         The expression for the \gradient terms from Pethick et al. 

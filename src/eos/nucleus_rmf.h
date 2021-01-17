@@ -49,7 +49,7 @@ namespace o2scl {
       \verbatim embed:rst
       This class is based on a code developed by C.J. Horowitz and
       B.D. Serot, and used in [Horowitz81]_ which was then adapted
-      by P.J. Ellis and used in [Heide94]_ and [Prakash94]_. Ellis
+      by P.J. Ellis and used in [Heide94]_ and [Prakash94ns]_. Ellis
       and A.W. Steiner adapted it for the parameterization in in 
       eos_had_rmf for [Steiner05b]_, and then converted to C++ by
       Steiner afterwards.

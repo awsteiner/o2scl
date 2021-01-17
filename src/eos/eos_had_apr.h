@@ -106,7 +106,7 @@ namespace o2scl {
       use whichever minimizes the energy.
 
       \verbatim embed:rst
-      The finite temperature approximations from [Prakash97]_ 
+      The finite temperature approximations from [Prakash97ca]_ 
       are used in testing.
       \endverbatim
 
