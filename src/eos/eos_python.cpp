@@ -345,11 +345,10 @@ void o2scl_eos_had_skyrme_set_parent_method(void *vptr, bool v) {
   return;
 }
 
-void o2scl_eos_had_skyrme_get_reference(void *vptr, void *p_v) {
+const char *o2scl_eos_had_skyrme_get_reference(void *vptr) {
   eos_had_skyrme *ptr=(eos_had_skyrme *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  *(p_t)=ptr->reference;
-  return;
+  python_temp_string=ptr->reference;
+  return python_temp_string.c_str();
 }
 
 void o2scl_eos_had_skyrme_set_reference(void *vptr, void *p_v) {
