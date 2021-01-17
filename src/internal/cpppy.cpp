@@ -646,8 +646,13 @@ int main(int argc, char *argv[]) {
       if_func &iff=ifc.methods[j];
       
       // Function header
-      fout << iff.ret.name << " " << underscoreify(ifc.ns) << "_"
-           << ifc.name << "_" << iff.name << "(void *vptr";
+      if (iff.ret.name=="std::string") {
+        fout << "const char *" << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_" << iff.name << "(void *vptr";
+      } else {
+        fout << iff.ret.name << " " << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_" << iff.name << "(void *vptr";
+      }
       if (iff.args.size()>0) {
         fout << ", ";
       }
@@ -781,8 +786,13 @@ int main(int argc, char *argv[]) {
       if_func &iff=ifc.methods[j];
 
       // Function header
-      fout << iff.ret.name << " " << underscoreify(ifc.ns) << "_"
-           << ifc.name << "_" << iff.name << "(void *vptr";
+      if (iff.ret.name=="std::string") {
+        fout << "const char *" << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_" << iff.name << "(void *vptr";
+      } else {
+        fout << iff.ret.name << " " << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_" << iff.name << "(void *vptr";
+      }
       if (iff.args.size()>0) {
         fout << ", ";
       }
@@ -850,8 +860,13 @@ int main(int argc, char *argv[]) {
           }
         }
         fout << ");" << endl;
-        
-        fout << "  return ret;" << endl;
+
+        if (iff.ret.name=="std::string") {
+          fout << "  python_temp_string=ret;" << endl;
+          fout << "  return python_temp_string.c_str();" << endl;
+        } else {
+          fout << "  return ret;" << endl;
+        }
       }
 
       // Ending function brace
@@ -1041,7 +1056,11 @@ int main(int argc, char *argv[]) {
       fout << "        func=self._dll." << ifc.ns << "_" << ifc.name << "_"
            << iff.name << endl;
       if (iff.ret.name!="void") {
-        fout << "        func.restype=ctypes.c_" << iff.ret.name << endl;
+        if (iff.ret.name=="std::string") {
+          fout << "        func.restype=ctypes.c_" << iff.ret.name << endl;
+        } else {
+          fout << "        func.restype=ctypes.c_char_p" << endl;
+        }
       }
       fout << "        func.argtypes=[ctypes.c_void_p,";
       for(size_t k=0;k<iff.args.size();k++) {

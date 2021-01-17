@@ -43,6 +43,8 @@
 namespace o2scl {
 #endif
 
+  extern std::string python_temp_string;
+  
   /// \name Functions in src/base/string_conv.h
   //@{
   /** \brief Convert a pointer to a string 
