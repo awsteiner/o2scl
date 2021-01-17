@@ -55,15 +55,16 @@ provided in :ref:`interpm_krige <interpm_krige>` .
 Interpolation on a rectangular grid
 -----------------------------------
 
-\dontinclude ex_interp2.cpp
-\skip Example:
-\until End of example
+.. literalinclude:: ../../../examples/ex_interp2.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start
 
 This example creates a sample 3 by 3 grid of data with the 
 function :math:`\left[ \sin \left( x/10 + 3 y/10 \right) \right]^2`
 and performs some interpolations and compares them with the 
 exact result.
-\include ex_interp2.scr
+
+.. literalinclude:: ../../../examples/ex_interp2.scr
 
 ..
   AWS: 6/6/19: I'm commenting this out because interp2_planar is
@@ -84,26 +85,32 @@ Contour lines
 -------------
 
 This example generates contour lines of the function
-\f[
-z = f(x,y) = 15 \exp \left[ - \frac{1}{20^2}\left( x-20 \right)^2 
-- \frac{1}{5^2}\left(y-5\right)^2\right] + 
-40 \exp \left[ - \frac{1}{500}\left( x-70 \right)^2 
-- \frac{1}{2^2}\left(y-2\right)^2\right] 
-\f]
 
-\dontinclude ex_contour.cpp
-\skip Example:
-\until End of example
+.. math::
 
-The figure below shows contour lines in the region \f$
-x\in(0,121), y\in(0,9) \f$. The data grid is represented by plus
-signs, and the associated generated contours. The figure clearly
-shows the peaks at \f$ (20,5) \f$ and \f$ (70,2) \f$ .
+   z = f(x,y) = 15 \exp \left[ - \frac{1}{20^2}\left( x-20 \right)^2 
+   - \frac{1}{5^2}\left(y-5\right)^2\right] + 
+   40 \exp \left[ - \frac{1}{500}\left( x-70 \right)^2 
+   - \frac{1}{2^2}\left(y-2\right)^2\right]
 
-\image html ex_contour_plot1.png "Contour example plot"
+.. literalinclude:: ../../../examples/ex_contour.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start
 
-The :ref:`contour class can also use interpolation to 
+The figure below shows contour lines in the region :math:`x\in(0,121),
+y\in(0,9)`. The data grid is represented by plus signs, and the
+associated generated contours. The figure clearly shows the peaks at
+:math:`(20,5)` and :math:`(70,2)`.
+
+.. image:: ../../../examples/plot/ex_contour_plot1.png
+   :width: 60%	   
+   :alt: alt text
+
+The :ref:`contour` class can also use interpolation to 
 attempt to refine the data grid. The new contours after a 
 refinement of a factor of 5 is given in the figure below.
     
-\image html ex_contour_plot2.png "Contours after regrid_data()"
+.. image:: ../../../examples/plot/ex_contour_plot2.png
+   :width: 60%	   
+   :alt: alt text
+

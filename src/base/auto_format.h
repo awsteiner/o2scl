@@ -242,7 +242,7 @@ namespace o2scl_auto_format {
    */
   auto_format &operator<<(auto_format &at, long double d);
 
-#ifdef O2SCL_LD_TYPES
+#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
   
   /** \brief Output a double-precision number
    */

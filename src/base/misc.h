@@ -83,7 +83,7 @@ namespace o2scl {
   long double o2abs(const long double x);
 
 #if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
-  
+
   /** \brief Absolute value for cpp_dec_float_35
    */
   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >

@@ -525,6 +525,9 @@
     <member refid="namespaceo2scl__linalg__bracket_1ab8dbc08043d530bd1faa7b218fefd7e7" kind="function"><name>LU_decomp_array_2d</name></member>
     <member refid="auto__format_8h_1ac9525a13caf7f47b7e4f5d98f080e461" kind="function"><name>operator&lt;&lt;</name></member>
     <member refid="auto__format_8h_1ab90825de874f510a416bd603551b65d5" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1ab60b62447dfcb43efceff1583b8e9998" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a83f975d09c62ae107bbb73556d3ffb5a" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1aa698f50b7aebef35832d7fdafeadcadf" kind="function"><name>operator&lt;&lt;</name></member>
     <member refid="auto__format_8h_1aaacbf603e9d13508be0a5d5bfc998f1f" kind="function"><name>operator&lt;&lt;</name></member>
     <member refid="auto__format_8h_1ab01112f1608334db3d827a858b7711e5" kind="function"><name>operator&lt;&lt;</name></member>
     <member refid="auto__format_8h_1a0b7a9495ef349b6d18e4d17136a69103" kind="function"><name>operator&lt;&lt;</name></member>

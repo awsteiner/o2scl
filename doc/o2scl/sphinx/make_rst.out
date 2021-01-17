@@ -1095,6 +1095,12 @@ Namespace: o2scl_auto_format function: operator<<
 Multiple entry operator<<
 Namespace: o2scl_auto_format function: operator<<
 Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
+Namespace: o2scl_auto_format function: operator<<
+Multiple entry operator<<
 
 ---------------------------------------------------
 Creating rst files for non-duplicate functions:

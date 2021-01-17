@@ -62,14 +62,9 @@ Namespace: o2scl class: thermo_tl
 
 ---------------------------------------------------
 Creating rst files for classes:
-
----------------------------------------------------
-Creating rst files for duplicate functions:
-
 ---------------------------------------------------
 Parsing function_list:
 
-Here: __part 
 Namespace: o2scl function: nucdist_set
 
 ---------------------------------------------------

@@ -40,6 +40,7 @@ Function List
    function/n*
    function/N*
    function/o*
+   operator<<
    function/O*
    function/p*
    function/P*

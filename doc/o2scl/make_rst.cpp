@@ -445,191 +445,196 @@ int main(int argc, char *argv[]) {
 	// The function name
 	string s=*it;
 
-	// Open the rst file
-	string fname_out="function/";
-	fname_out+=s+".rst";
-        if (s.length()<4 || s[0]!='o' || s[1]!='p' ||
-            s[2]!='e' || s[3]!='r') {
-          fname_out=underscoreify(fname_out);
-        }
-	ofstream fout(fname_out);
+        if (s!="operator<<") {
+        
+          // Open the rst file
+          string fname_out="function/";
+          fname_out+=s+".rst";
+          if (s.length()<4 || s[0]!='o' || s[1]!='p' ||
+              s[2]!='e' || s[3]!='r') {
+            fname_out=underscoreify(fname_out);
+          }
+          ofstream fout(fname_out);
 
-	// Header
-	if (context==((string)"main")) {
-	  fout << ":ref:`O2scl <o2scl>` : :ref:`Function List`\n" << endl;
-	} else if (context==((string)"part")) {
-	  fout << ":ref:`O2scl_part <o2sclp>` : "
-	       << ":ref:`Function List`\n" << endl;
-	} else if (context==((string)"eos")) {
-	  fout << ":ref:`O2scl_eos <o2scle>` : "
-	       << ":ref:`Function List`\n" << endl;
-	}
+          // Header
+          if (context==((string)"main")) {
+            fout << ":ref:`O2scl <o2scl>` : :ref:`Function List`\n" << endl;
+          } else if (context==((string)"part")) {
+            fout << ":ref:`O2scl_part <o2sclp>` : "
+                 << ":ref:`Function List`\n" << endl;
+          } else if (context==((string)"eos")) {
+            fout << ":ref:`O2scl_eos <o2scle>` : "
+                 << ":ref:`Function List`\n" << endl;
+          }
 	
-	string head="Functions "+s;
-	fout << head << endl;
-	for(size_t i=0;i<head.length();i++) {
-	  fout << "=";
-	}
-	fout << endl;
-	fout << endl;
+          string head="Functions "+s;
+          fout << head << endl;
+          for(size_t i=0;i<head.length();i++) {
+            fout << "=";
+          }
+          fout << endl;
+          fout << endl;
 
-	// Iterate through the namespace file
-	for(size_t i=0;i<ns_file.size();i++) {
+          // Iterate through the namespace file
+          for(size_t i=0;i<ns_file.size();i++) {
 	  
-	  string s2=ns_file[i];
+            string s2=ns_file[i];
 	  
-	  // Proceed through the file until we find the right
-	  // definition
-	  if (s2.find("<definition>")!=std::string::npos &&
-	      s2.find(s)!=std::string::npos) {
+            // Proceed through the file until we find the right
+            // definition
+            if (s2.find("<definition>")!=std::string::npos &&
+                s2.find(s)!=std::string::npos) {
 
-	    size_t arg_count=0;
+              size_t arg_count=0;
 
-	    string argsstring;
-	    // Read the argstring
-	    i++;
-	    argsstring=ns_file[i];
-	    if (xml_get_tag_element(argsstring,"argsstring",argsstring)!=0) {
-	      cerr << "Failed to find argsstring in " << argsstring << endl;
-	      exit(-1);
-	    }
-	    // Replace &amp; with &
-	    while (argsstring.find("&amp;")!=std::string::npos) {
-	      argsstring.replace(argsstring.find("&amp;"),5,"&");
-	    }
-	    // Replace "&lt; " with <
-	    while (argsstring.find("&lt; ")!=std::string::npos) {
-	      argsstring.replace(argsstring.find("&lt; "),5,"<");
-	    }
-	    // Replace "&lt;" with <
-	    while (argsstring.find("&lt;")!=std::string::npos) {
-	      argsstring.replace(argsstring.find("&lt;"),4,"<");
-	    }
-	    // Replace " &gt;" with >
-	    while (argsstring.find(" &gt;")!=std::string::npos) {
-	      argsstring.replace(argsstring.find(" &gt;"),5,">");
-	    }
-	    // Replace "&gt;" with >
-	    while (argsstring.find("&gt;")!=std::string::npos) {
-	      argsstring.replace(argsstring.find("&gt;"),4,">");
-	    }
-	    // Replace &quot; with "
-	    while (argsstring.find("&quot;")!=std::string::npos) {
-	      argsstring.replace(argsstring.find("&quot;"),6,"\"");
-	    }
-	    // Replace all = with ' = '
-	    vector<size_t> equal_list;
-	    for(size_t j=0;j<argsstring.length();j++) {
-	      if (argsstring[j]=='=') {
-		argsstring.replace(j,1," = ");
-		j++;
-	      }
-	    }
+              string argsstring;
+              // Read the argstring
+              i++;
+              argsstring=ns_file[i];
+              if (xml_get_tag_element(argsstring,"argsstring",argsstring)!=0) {
+                cerr << "Failed to find argsstring in " << argsstring << endl;
+                exit(-1);
+              }
+              // Replace &amp; with &
+              while (argsstring.find("&amp;")!=std::string::npos) {
+                argsstring.replace(argsstring.find("&amp;"),5,"&");
+              }
+              // Replace "&lt; " with <
+              while (argsstring.find("&lt; ")!=std::string::npos) {
+                argsstring.replace(argsstring.find("&lt; "),5,"<");
+              }
+              // Replace "&lt;" with <
+              while (argsstring.find("&lt;")!=std::string::npos) {
+                argsstring.replace(argsstring.find("&lt;"),4,"<");
+              }
+              // Replace " &gt;" with >
+              while (argsstring.find(" &gt;")!=std::string::npos) {
+                argsstring.replace(argsstring.find(" &gt;"),5,">");
+              }
+              // Replace "&gt;" with >
+              while (argsstring.find("&gt;")!=std::string::npos) {
+                argsstring.replace(argsstring.find("&gt;"),4,">");
+              }
+              // Replace &quot; with "
+              while (argsstring.find("&quot;")!=std::string::npos) {
+                argsstring.replace(argsstring.find("&quot;"),6,"\"");
+              }
+              // Replace all = with ' = '
+              vector<size_t> equal_list;
+              for(size_t j=0;j<argsstring.length();j++) {
+                if (argsstring[j]=='=') {
+                  argsstring.replace(j,1," = ");
+                  j++;
+                }
+              }
 
-	    // Read the name line
-	    string name;
-	    i++;
-	    name=ns_file[i];
+              // Read the name line
+              string name;
+              i++;
+              name=ns_file[i];
 	    
-	    if (xml_get_tag_element(name,"name",name)!=0) {
-	      cerr << "Failed to find name in " << name << endl;
-	      exit(-1);
-	    }
+              if (xml_get_tag_element(name,"name",name)!=0) {
+                cerr << "Failed to find name in " << name << endl;
+                exit(-1);
+              }
 
-            cout << "Herex: " << name << " " << s << endl;
+              cout << "Herex: " << name << " " << s << endl;
 
-	    // Only proceed if the name and s match
-	    if (name==s) {
+              // Only proceed if the name and s match
+              if (name==s) {
 	      
-	      // Output the sphinx directive
-	      fout << ".. doxygenfunction:: " << s << argsstring
-		   << "\n" << endl;
-	      cout << s << argsstring << endl;
+                // Output the sphinx directive
+                fout << ".. doxygenfunction:: " << s << argsstring
+                     << "\n" << endl;
+                cout << s << argsstring << endl;
 	      
-	      // Read the line <param> (if present)
-	      i++;
-	      s2=ns_file[i];
+                // Read the line <param> (if present)
+                i++;
+                s2=ns_file[i];
 	      
-	      //cout << s << "(";
+                //cout << s << "(";
 
-	      // Read all of the parameters
-	      bool params_done=false;
-	      while (params_done==false) {
+                // Read all of the parameters
+                bool params_done=false;
+                while (params_done==false) {
 
-		string type, declname, end;
-		i++;
-		type=ns_file[i];
-		if (xml_get_tag_element(type,"type",type)!=0) {
-		  cerr << "Failed to find type in " << type << endl;
-		  exit(-1);
-		}
+                  string type, declname, end;
+                  i++;
+                  type=ns_file[i];
+                  if (xml_get_tag_element(type,"type",type)!=0) {
+                    cerr << "Failed to find type in " << type << endl;
+                    exit(-1);
+                  }
 		
-		//cout << "Type: " << type << endl;
-		if (type.find(" &amp;")!=std::string::npos) {
-		  type.replace(type.find(" &amp;"),6,"&");
-		}
+                  //cout << "Type: " << type << endl;
+                  if (type.find(" &amp;")!=std::string::npos) {
+                    type.replace(type.find(" &amp;"),6,"&");
+                  }
 		
-		i++;
-		declname=ns_file[i];
-		if (xml_get_tag_element(declname,"declname",declname)!=0) {
-		  cerr << "Failed to find declname in " << declname << endl;
-		  exit(-1);
-		}
-		//cout << "Declname: " << declname << endl;
+                  i++;
+                  declname=ns_file[i];
+                  if (xml_get_tag_element(declname,"declname",declname)!=0) {
+                    cerr << "Failed to find declname in " << declname << endl;
+                    exit(-1);
+                  }
+                  //cout << "Declname: " << declname << endl;
 		
-		// Read <defval> (if present) and </param> lines
-		i++;
-		end=ns_file[i];
-		//cout << "End: " << end << endl;
-		if (end.find("<defval>")!=std::string::npos) {
-		  i++;
-		  end=ns_file[i];
-		}
+                  // Read <defval> (if present) and </param> lines
+                  i++;
+                  end=ns_file[i];
+                  //cout << "End: " << end << endl;
+                  if (end.find("<defval>")!=std::string::npos) {
+                    i++;
+                    end=ns_file[i];
+                  }
 		
-		// Read the next line
-		i++;
-		s2=ns_file[i];
-		//cout << "s2: " << s2 << endl;
+                  // Read the next line
+                  i++;
+                  s2=ns_file[i];
+                  //cout << "s2: " << s2 << endl;
 
-		/*
-		// Update file and screen output
-		if (arg_count!=0) {
+                  /*
+                  // Update file and screen output
+                  if (arg_count!=0) {
 		  cout << ", " << type;
-		} else {
+                  } else {
 		  cout << type;
-		}
+                  }
 
-		if (arg_count!=0) {
+                  if (arg_count!=0) {
 		  fout << ", " << type;
-		} else {
+                  } else {
 		  fout << type;
-		}
-		*/
+                  }
+                  */
 	      
-		arg_count++;
+                  arg_count++;
 
-		if (s2.find("<param>")==std::string::npos) {
-		  params_done=true;
-		  //cout << "X " << s2 << endl;
-		}
+                  if (s2.find("<param>")==std::string::npos) {
+                    params_done=true;
+                    //cout << "X " << s2 << endl;
+                  }
 		
-		//char ch;
-		//cin >> ch;
-	      }
+                  //char ch;
+                  //cin >> ch;
+                }
 
-	      // Output right parenthesis
-	      //cout << ")" << endl;
-	      //fout << ")\n" << endl;
+                // Output right parenthesis
+                //cout << ")" << endl;
+                //fout << ")\n" << endl;
 	      
-	    } else {
-	      //cout << "No match " << name << " " << s << endl;
-	    }
-	  }
+              } else {
+                //cout << "No match " << name << " " << s << endl;
+              }
+            }
 	    
-	}
+          }
 
-	// Close this rst file
-	fout.close();
+          // Close this rst file
+          fout.close();
+
+        }
+        
       }
       
     }
