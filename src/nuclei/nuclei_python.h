@@ -22,6 +22,8 @@
 
 #include <o2scl/nucleus.h>
 #include <o2scl/nucmass.h>
+#include <o2scl/nucmass_ame.h>
+#include <o2scl/hdf_nucmass_io.h>
 
 extern "C" {
 
@@ -156,5 +158,11 @@ void o2scl_nucmass_semi_empirical_set_Epair(void *vp, double v);
 double o2scl_nucmass_semi_empirical_mass_excess(void *vptr, int Z, int N);
 
 double o2scl_nucmass_semi_empirical_mass_excess_d(void *vptr, double Z, double N);
+
+void *o2scl_create_nucmass_ame();
+
+void o2scl_free_nucmass_ame(void *vp);
+
+void o2scl_ame_load_wrapper(void *ptr_ame, char *name, bool exp_only);
 
 }

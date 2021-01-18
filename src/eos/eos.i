@@ -23,16 +23,22 @@ cpp_include <o2scl/fermion_deriv_nr.h>
 # 
 cpp_using std
 cpp_using o2scl
+#
+# ------------------------------------------------------
 # 
 # Class eos_base
 #
 class eos_base
 - o2scl::thermo def_thermo
-- function set_thermo
-  - void
-  - o2scl::thermo &th
-- function get_thermo
-  - const o2scl::thermo &
+# 1/17/2021 removing set_thermo and get_thermo for now, as cpppy does
+# not yet handle these kind of functions.
+# - function set_thermo
+#  - void
+#  - o2scl::thermo &th
+# - function get_thermo
+#   - const o2scl::thermo &
+#
+# ------------------------------------------------------
 # 
 # Class eos_had_base
 #
@@ -47,6 +53,11 @@ class eos_had_base abstract
 - bool err_nonconv
 - o2scl::fermion def_neutron
 - o2scl::fermion def_proton
+- function calc_e
+  - int
+  - o2scl::fermion &n
+  - o2scl::fermion &p
+  - o2scl::thermo &th
 # 
 # Class eos_had_eden_base
 #

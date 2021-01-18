@@ -52,19 +52,6 @@ void o2scl_eos_base_set_def_thermo(void *vptr, void *p_v) {
   return;
 }
 
-void o2scl_eos_base_set_thermo(void *vptr, void *ptr_th) {
-  eos_base *ptr=(eos_base *)vptr;
-  o2scl::thermo *th=(o2scl::thermo *)ptr_th;
-  ptr->set_thermo(*th);
-  return;
-}
-
-o2scl::thermo o2scl_eos_base_get_thermo(void *vptr) {
-  eos_base *ptr=(eos_base *)vptr;
-  o2scl::thermo ret=ptr->get_thermo();
-  return ret;
-}
-
 double o2scl_eos_had_base_get_eoa(void *vptr) {
   eos_had_base *ptr=(eos_had_base *)vptr;
   return ptr->eoa;
@@ -168,6 +155,15 @@ void o2scl_eos_had_base_set_def_proton(void *vptr, void *p_v) {
   o2scl::fermion *p_t=(o2scl::fermion *)p_v;
   ptr->def_proton=*(p_t);
   return;
+}
+
+int o2scl_eos_had_base_calc_e(void *vptr, void *ptr_n, void *ptr_p, void *ptr_th) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  o2scl::fermion *n=(o2scl::fermion *)ptr_n;
+  o2scl::fermion *p=(o2scl::fermion *)ptr_p;
+  o2scl::thermo *th=(o2scl::thermo *)ptr_th;
+  int ret=ptr->calc_e(*n,*p,*th);
+  return ret;
 }
 
 void *o2scl_create_eos_had_skyrme() {

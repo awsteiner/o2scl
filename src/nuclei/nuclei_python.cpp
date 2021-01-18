@@ -24,6 +24,7 @@
 
 using namespace std;
 using namespace o2scl;
+using namespace o2scl_hdf;
 
 void *o2scl_create_nucleus() {
   nucleus *ptr=new nucleus;
@@ -406,5 +407,21 @@ double o2scl_nucmass_semi_empirical_mass_excess_d(void *vptr, double Z, double N
   nucmass_semi_empirical *ptr=(nucmass_semi_empirical *)vptr;
   double ret=ptr->mass_excess_d(Z,N);
   return ret;
+}
+
+void *o2scl_create_nucmass_ame() {
+  nucmass_ame *ptr=new nucmass_ame;
+  return ptr;
+}
+
+void o2scl_free_nucmass_ame(void *vptr) {
+  nucmass_ame *ptr=(nucmass_ame *)vptr;
+  delete ptr;
+}
+
+void o2scl_ame_load_wrapper(void *ptr_ame, char *name, bool exp_only) {
+  nucmass_ame *ame=(nucmass_ame *)ptr_ame;
+  ame_load(*ame,name,exp_only);
+  return;
 }
 

@@ -30,6 +30,14 @@
 using namespace std;
 using namespace o2scl;
 
+/*
+  Get and set methods for C++ class members always imply a copy. Right
+  now cpppy does not yet support, for example, obtaining a reference
+  or a pointer to a c++ class member.
+
+  Todos: need to fix function names in case where there is no namespace.
+*/
+
 /** \brief Convert all non-alphanumeric characters to underscores
  */
 std::string underscoreify(std::string s) {
@@ -301,7 +309,7 @@ int main(int argc, char *argv[]) {
   // Current list of classes
   std::vector<if_class> classes;
   // Current list of functions
-  std::vector<if_class> functions;
+  std::vector<if_func> functions;
   
   // Open file
   ifstream fin;
@@ -548,8 +556,61 @@ int main(int argc, char *argv[]) {
       }
       
     } else if (vs[0]=="function") {
-      cerr << "Unsupported." << endl;
-      exit(-1);
+
+      if_func iff;
+      iff.name=vs[1];
+      iff.ns=ns;
+      cout << "Starting function " << vs[1] << endl;
+      
+      next_line(fin,line,vs,done);
+          
+      if (done==true || vs.size()<2 || vs[0]!="-" || line[0]!='-' ||
+          line[1]!=' ') {
+        cerr << "Could not get return value for function "
+             << iff.name << endl;
+        exit(-1);
+      }
+          
+      iff.ret.parse(vs,1,vs.size());
+      
+      cout << "  Member function " << iff.name
+           << " has return type "
+           << iff.ret.to_string() << endl;
+      
+      next_line(fin,line,vs,done);
+      
+      bool function_done=false;
+      
+      while (vs.size()>=2 && line[0]=='-' && line[1]==' ' &&
+             vs[0]=="-") {
+        
+        if_var ifv;
+        string last_string=vs[vs.size()-1];
+        if (last_string[0]=='&' || last_string[0]=='*') {
+          vs[vs.size()-1]="";
+          while (last_string[0]=='&' || last_string[0]=='*') {
+            vs[vs.size()-1]=last_string[0]+vs[vs.size()-1];
+            last_string=last_string.substr(1,last_string.length()-1);
+          }
+          ifv.name=last_string;
+          ifv.ift.parse(vs,1,vs.size());
+        } else {
+          ifv.name=last_string;
+          ifv.ift.parse(vs,1,vs.size()-1);
+        }
+        cout << "  Function " << iff.name
+             << " has argument " << ifv.name << " with type "
+             << ifv.ift.to_string() << endl;
+        
+        iff.args.push_back(ifv);
+        
+        next_line(fin,line,vs,done);
+        if (done) function_done=true;
+      }
+      
+      cout << "Function " << iff.name << " done." << endl;
+      cout << endl;
+      functions.push_back(iff);
     }
 
     if (false) {
@@ -665,8 +726,15 @@ int main(int argc, char *argv[]) {
       if (iff.ret.name=="std::string") {
         fout << "const char *" << underscoreify(ifc.ns) << "_"
              << ifc.name << "_" << iff.name << "(void *vptr";
-      } else {
+      } else if (iff.ret.name=="void" ||
+                 iff.ret.name=="bool" ||
+                 iff.ret.name=="double" ||
+                 iff.ret.name=="int" ||
+                 iff.ret.name=="size_t") {
         fout << iff.ret.name << " " << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_" << iff.name << "(void *vptr";
+      } else {
+        fout << "void *" << underscoreify(ifc.ns) << "_"
              << ifc.name << "_" << iff.name << "(void *vptr";
       }
       if (iff.args.size()>0) {
@@ -695,6 +763,47 @@ int main(int argc, char *argv[]) {
     
   }
   
+  for(size_t i=0;i<functions.size();i++) {
+    
+    if_func &iff=functions[i];
+    
+    // Function header
+    if (iff.ret.name=="std::string") {
+      fout << "const char *" << underscoreify(iff.ns) << "_"
+           << iff.name << "(";
+    } else if (iff.ret.name=="void" ||
+               iff.ret.name=="bool" ||
+               iff.ret.name=="double" ||
+               iff.ret.name=="int" ||
+               iff.ret.name=="size_t") {
+      fout << iff.ret.name << " " << underscoreify(iff.ns) << "_"
+           << iff.name << "_wrapper(";
+    } else {
+      fout << "void *" << underscoreify(iff.ns) << "_"
+           << iff.name << "_wrapper(";
+    }
+    
+    for(size_t k=0;k<iff.args.size();k++) {
+      if (iff.args[k].ift.suffix=="") {
+        if (iff.args[k].ift.name=="std::string") {
+          fout << "char *" << iff.args[k].name;
+        } else {
+          fout << iff.args[k].ift.name << " " << iff.args[k].name;
+        }
+      } else if (iff.args[k].ift.suffix=="&") {
+        fout << "void *ptr_" << iff.args[k].name;
+      }
+      if (k!=iff.args.size()-1) {
+        fout << ", ";
+      }
+    }
+    
+    fout << ");" << endl;
+    fout << endl;
+    
+  }
+
+  // End of the extern C section
   fout << "}" << endl;
   
   fout.close();
@@ -812,8 +921,15 @@ int main(int argc, char *argv[]) {
       if (iff.ret.name=="std::string") {
         fout << "const char *" << underscoreify(ifc.ns) << "_"
              << ifc.name << "_" << iff.name << "(void *vptr";
-      } else {
+      } else if (iff.ret.name=="void" ||
+                 iff.ret.name=="bool" ||
+                 iff.ret.name=="double" ||
+                 iff.ret.name=="int" ||
+                 iff.ret.name=="size_t") {
         fout << iff.ret.name << " " << underscoreify(ifc.ns) << "_"
+             << ifc.name << "_" << iff.name << "(void *vptr";
+      } else {
+        fout << "void *" << underscoreify(ifc.ns) << "_"
              << ifc.name << "_" << iff.name << "(void *vptr";
       }
       if (iff.args.size()>0) {
@@ -899,6 +1015,100 @@ int main(int argc, char *argv[]) {
     
   }
 
+  for(size_t i=0;i<functions.size();i++) {
+    
+    if_func &iff=functions[i];
+    
+    // Function header
+    if (iff.ret.name=="std::string") {
+      fout << "const char *" << underscoreify(iff.ns) << "_"
+           << iff.name << "_wrapper(";
+    } else if (iff.ret.name=="void" ||
+               iff.ret.name=="bool" ||
+               iff.ret.name=="double" ||
+               iff.ret.name=="int" ||
+               iff.ret.name=="size_t") {
+      fout << iff.ret.name << " " << underscoreify(iff.ns) << "_"
+           << iff.name << "_wrapper(";
+    } else {
+      fout << "void *" << underscoreify(iff.ns) << "_"
+           << iff.name << "_wrapper(";
+    }
+    
+    for(size_t k=0;k<iff.args.size();k++) {
+      if (iff.args[k].ift.suffix=="") {
+        if (iff.args[k].ift.name=="std::string") {
+          fout << "char *" << iff.args[k].name;
+        } else {
+          fout << iff.args[k].ift.name << " " << iff.args[k].name;
+        }
+      } else if (iff.args[k].ift.suffix=="&") {
+        fout << "void *ptr_" << iff.args[k].name;
+      }
+      if (k!=iff.args.size()-1) {
+        fout << ", ";
+      }
+    }
+    
+    fout << ") {" << endl;
+    
+    // Pointer assignments for arguments
+    for(size_t k=0;k<iff.args.size();k++) {
+      if (iff.args[k].ift.suffix=="&") {
+        fout << "  " << iff.args[k].ift.name << " *"
+             << iff.args[k].name << "=("
+             << iff.args[k].ift.name << " *)ptr_" << iff.args[k].name
+             << ";" << endl;
+      }
+    }
+    
+    // Now generate code for actual function call and the
+    // return statement
+    if (iff.ret.name=="void") {
+      
+      fout << "  " << iff.name << "(";
+      for(size_t k=0;k<iff.args.size();k++) {
+        if (iff.args[k].ift.suffix=="") {
+          fout << iff.args[k].name;
+        } else if (iff.args[k].ift.suffix=="&") {
+          fout << "*" << iff.args[k].name;
+        }
+        if (k!=iff.args.size()-1) {
+          fout << ",";
+        }
+      }
+      fout << ");" << endl;
+      
+      fout << "  return;" << endl;
+      
+    } else {
+      
+      fout << "  " << iff.ret.name << " ret=ptr->" << iff.name << "(";
+      for(size_t k=0;k<iff.args.size();k++) {
+        if (iff.args[k].ift.suffix=="") {
+          fout << iff.args[k].name;
+        } else if (iff.args[k].ift.suffix=="&") {
+          fout << "*" << iff.args[k].name;
+        }
+        if (k!=iff.args.size()-1) {
+          fout << ",";
+        }
+      }
+      fout << ");" << endl;
+      
+      if (iff.ret.name=="std::string") {
+        fout << "  python_temp_string=ret;" << endl;
+        fout << "  return python_temp_string.c_str();" << endl;
+      } else {
+        fout << "  return ret;" << endl;
+      }
+    }
+    
+    fout << "}" << endl;
+    fout << endl;
+    
+  }
+  
   fout.close();
   
   // ----------------------------------------------------------------
@@ -915,6 +1125,7 @@ int main(int argc, char *argv[]) {
   
   fout << "import ctypes" << endl;
   fout << "from abc import abstractmethod" << endl;
+  fout << "from o2sclpy.utils import force_bytes" << endl;
   fout << endl;
   
   for(size_t i=0;i<py_headers.size();i++) {
@@ -1017,16 +1228,17 @@ int main(int argc, char *argv[]) {
         fout << "        \"\"\"" << endl;
         fout << "        func=self._dll." << ifc.ns << "_" << ifc.name
              << "_get_" << ifv.name << endl;
+        
+        // If it's not a string, then we don't need a return type
         if (ifv.ift.name=="std::string") {
           fout << "        func.restype=ctypes.c_char_p" << endl;
-        } else {
-          fout << "        func.restype=ctypes.c_" << ifv.ift.name
-               << endl;
         }
+        
         fout << "        func.argtypes=[ctypes.c_void_p," 
              << "ctypes.c_void_p]" << endl;
-        fout << "        return func(self._ptr," << ifv.name
+        fout << "        func(self._ptr," << ifv.name
              << "._ptr)" << endl;
+        fout << "        return" << endl;
       }
       fout << endl;
 
@@ -1065,6 +1277,7 @@ int main(int argc, char *argv[]) {
 
     // Define methods
     for(size_t j=0;j<ifc.methods.size();j++) {
+
       if_func &iff=ifc.methods[j];
 
       // Function header
@@ -1109,7 +1322,7 @@ int main(int argc, char *argv[]) {
         }
       }
       fout << "]" << endl;
-      
+
       // Call C++ wrapper function
       if (iff.ret.name=="void") {
         fout << "        func(self._ptr,";
@@ -1135,6 +1348,88 @@ int main(int argc, char *argv[]) {
       fout << endl;
       
     }
+    
+  }
+
+  // Define methods
+  for(size_t j=0;j<functions.size();j++) {
+    
+    if_func &iff=functions[j];
+    
+    // Function header
+    fout << "def " << iff.name << "(dll,";
+    for(size_t k=0;k<iff.args.size();k++) {
+      fout << iff.args[k].name;
+      if (k!=iff.args.size()-1) {
+        fout << ",";
+      }
+    }
+    fout << "):" << endl;
+    
+    // Comment
+    fout << "    \"\"\"" << endl;
+    fout << "    Wrapper for " 
+         << iff.name << "() ." << endl;
+    fout << "    \"\"\"" << endl;
+    
+    // Perform necessary conversions
+    for(size_t k=0;k<iff.args.size();k++) {
+      if (iff.args[k].ift.name=="std::string") {
+        fout << "    " << iff.args[k].name << "_=ctypes.c_char_p(force_bytes("
+             << iff.args[k].name << "))" << endl;
+      }
+    }
+      
+    // Ctypes interface for function
+    fout << "    func=dll." << iff.ns << "_" << iff.name
+         << "_wrapper" << endl;
+    if (iff.ret.name!="void") {
+      if (iff.ret.name=="std::string") {
+        fout << "    func.restype=ctypes.c_char_p" << endl;
+      } else {
+        fout << "    func.restype=ctypes.c_" << iff.ret.name << endl;
+      }
+    }
+    fout << "    func.argtypes=[";
+    for(size_t k=0;k<iff.args.size();k++) {
+      if (iff.args[k].ift.suffix=="&") {
+        fout << "ctypes.c_void_p";
+      } else if (iff.args[k].ift.name=="std::string") {
+        fout << "ctypes.c_char_p";
+      } else {
+        fout << "ctypes.c_" << iff.args[k].ift.name;
+      }
+      if (k!=iff.args.size()-1) {
+        fout << ",";
+      }
+    }
+    fout << "]" << endl;
+    
+    // Call C++ wrapper function
+    if (iff.ret.name=="void") {
+      fout << "    func(";
+    } else {
+      fout << "    ret=func(";
+    }
+    for(size_t k=0;k<iff.args.size();k++) {
+      if (iff.args[k].ift.suffix=="&") {
+        fout << iff.args[k].name << "._ptr";
+      } else if (iff.args[k].ift.name=="std::string") {
+        fout << iff.args[k].name << "_";
+      } else {
+        fout << iff.args[k].name;
+      }
+      if (k!=iff.args.size()-1) fout << ",";
+    }
+    fout << ")" << endl;
+    
+    // Return
+    if (iff.ret.name=="void") {
+      fout << "    return" << endl;
+    } else {
+      fout << "    return ret" << endl;
+    }
+    fout << endl;
     
   }
   

@@ -7,6 +7,8 @@ py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%>`."
 # 
 h_include <o2scl/nucleus.h>
 h_include <o2scl/nucmass.h>
+h_include <o2scl/nucmass_ame.h>
+h_include <o2scl/hdf_nucmass_io.h>
 # 
 # Include statement for C++ source code
 # 
@@ -16,6 +18,7 @@ cpp_include <o2scl/nuclei_python.h>
 # 
 cpp_using std
 cpp_using o2scl
+cpp_using o2scl_hdf
 #
 # Additional python headers
 #
@@ -168,3 +171,16 @@ class nucmass_semi_empirical
   - double
   - double Z
   - double N
+# 
+# Class nucmass_ame
+#
+class nucmass_ame
+- parent nucmass_table
+# 
+# HDF functions
+#
+function ame_load
+- void
+- nucmass_ame &ame
+- std::string name
+- bool exp_only

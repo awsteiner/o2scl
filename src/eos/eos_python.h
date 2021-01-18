@@ -37,10 +37,6 @@ void o2scl_eos_base_get_def_thermo(void *vp, void *p_v);
 
 void o2scl_eos_base_set_def_thermo(void *vp, void *p_v);
 
-void o2scl_eos_base_set_thermo(void *vptr, void *ptr_th);
-
-o2scl::thermo o2scl_eos_base_get_thermo(void *vptr);
-
 double o2scl_eos_had_base_get_eoa(void *vp);
 
 void o2scl_eos_had_base_set_eoa(void *vp, double v);
@@ -76,6 +72,8 @@ void o2scl_eos_had_base_set_def_neutron(void *vp, void *p_v);
 void o2scl_eos_had_base_get_def_proton(void *vp, void *p_v);
 
 void o2scl_eos_had_base_set_def_proton(void *vp, void *p_v);
+
+int o2scl_eos_had_base_calc_e(void *vptr, void *ptr_n, void *ptr_p, void *ptr_th);
 
 void *o2scl_create_eos_had_skyrme();
 
