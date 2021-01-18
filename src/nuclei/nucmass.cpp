@@ -486,7 +486,7 @@ double nucmass_ibm_shell::shell_energy(int Z, int N) {
     }
     if (done==false) {
       O2SCL_ERR2("Failed to do shell model correction ",
-		     "in ldrop_shell::shell_energy().",exc_esanity);
+                 "in ldrop_shell::shell_energy().",exc_esanity);
     }
   }
 
@@ -510,10 +510,10 @@ double nucmass_ibm_shell::shell_energy(int Z, int N) {
     }
     if (done==false) {
       O2SCL_ERR2("Failed to do shell model correction ",
-		     "in ldrop_shell::shell_energy().",exc_esanity);
+                 "in ldrop_shell::shell_energy().",exc_esanity);
     }
   }
-      
+
   double nvbar=Dn-nv;
   double zvbar=Dz-zv;
   double S2=nv*nvbar/Dn+zv*zvbar/Dz;
@@ -522,6 +522,8 @@ double nucmass_ibm_shell::shell_energy(int Z, int N) {
   double ret=s_a1*S2+s_a2*S2*S2+s_a3*S3+s_anp*Snp;
 
   if (!std::isfinite(ret)) {
+    cout << Z << " " << N << " " << zv << " " << nv << endl;
+    cout << Dz << " " << Dn << endl;
     cout << S2 << " " << S3 << " " << Snp << " " << ret << endl;
     O2SCL_ERR("Not finite in nucmass_ibm_shell.",exc_efailed);
   }

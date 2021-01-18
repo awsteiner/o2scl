@@ -39,7 +39,13 @@ double nucmass_ldrop_shell::drip_binding_energy_d
 
   if (inc_shell==false) return ret;
 
-  shell=shell_energy_interp(Z,N);
+  // The interpolation uses information from neighboring
+  // nuclei so we use 406-2=404 to be safe
+  if (Z<404.0 && N<404.0) {
+    shell=shell_energy_interp(Z,N);
+  } else {
+    shell=0.0;
+  }
 
   return ret-shell;
 }
@@ -81,7 +87,11 @@ nucmass_frdm_shell::nucmass_frdm_shell() {
 double nucmass_frdm_shell::mass_excess_d(double Z, double N) {
   
   double ret=nucmass_frdm::mass_excess_d(Z,N);
-  ret-=shell_energy_interp(Z,N);
+  // The interpolation uses information from neighboring
+  // nuclei so we use 406-2=404 to be safe
+  if (Z<404.0 && N<404.0) {
+    ret-=shell_energy_interp(Z,N);
+  }
       
   return ret;
 }
