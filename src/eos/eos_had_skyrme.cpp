@@ -70,7 +70,7 @@ int eos_had_skyrme::calc_deriv_temp_e(fermion_deriv &ne, fermion_deriv &pr,
       o2scl::dtos(ne.ms)+" and m^{*}_p="+o2scl::dtos(pr.ms)+
       ") at densities n_n="+o2scl::dtos(ne.n)+" and n_p="+
       o2scl::dtos(pr.n)+" in eos_had_skyrme::calc_deriv_temp_e().";
-    std::cout << "Densities: " << ne.n << " " << pr.n << std::endl;
+    std::cout << err << std::endl;
     O2SCL_CONV_RET(err.c_str(),exc_einval,this->err_nonconv);
   }
 
@@ -122,8 +122,8 @@ int eos_had_skyrme::calc_temp_e(fermion &ne, fermion &pr,
     string err=((string)"Effective masses negative (m^{*}_n=")+
       o2scl::dtos(ne.ms)+" and m^{*}_p="+o2scl::dtos(pr.ms)+
       ") at densities n_n="+o2scl::dtos(ne.n)+" and n_p="+
-      o2scl::dtos(pr.n)+" in eos_had_skyrme::calc_deriv_temp_e().";
-    std::cout << "Densities: " << ne.n << " " << pr.n << std::endl;
+      o2scl::dtos(pr.n)+" in eos_had_skyrme::calc_temp_e().";
+    std::cout << err << std::endl;
     O2SCL_CONV_RET(err.c_str(),exc_einval,this->err_nonconv);
   }
 

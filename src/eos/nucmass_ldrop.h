@@ -220,6 +220,11 @@ namespace o2scl {
     /// Coulomb \part of energy
     double coul;
     //@}
+
+    /** \brief If true, then return large mass excesses when
+        unphysical parameters are selected (default false)
+    */
+    bool large_vals_unphys;
     
     /** \brief Given \c Z and \c N, return the mass excess in MeV
  

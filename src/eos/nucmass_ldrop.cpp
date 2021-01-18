@@ -84,6 +84,8 @@ nucmass_ldrop::nucmass_ldrop() {
   coul_coeff=1.0;
       
   nfit=4;
+
+  large_vals_unphys=false;
 }
 
 double nucmass_ldrop::mass_excess_d(double Z, double N) {
@@ -115,8 +117,13 @@ double nucmass_ldrop::drip_binding_energy_d
   np=nL*(1.0-delta)/2.0;
   nn=nL*(1.0+delta)/2.0;
   if (nn>0.20 || np>0.20) {
-    std::cout << "Densities large: " << n0 << " " << n1 << " "
+    if (large_vals_unphys) return 1.0e99;
+    std::cout << "Densities too large (n0,n1,nn,np): "
+              << n0 << " " << n1 << " "
 	      << nn << " " << np << std::endl;
+    O2SCL_ERR2("Densities too large in ",
+               "nucmass_ldrop::drip_binding_energy_d().",
+               o2scl::exc_efailed);
   }
 
   // Determine radii
@@ -224,6 +231,16 @@ double nucmass_ldrop_skin::drip_binding_energy_d
   delta=I*doi;
   np=nL*(1.0-delta)/2.0;
   nn=nL*(1.0+delta)/2.0;
+  if (nn>0.20 || np>0.20) {
+    if (large_vals_unphys) return 1.0e99;
+    std::cout << "Densities too large (n0,n1,nn,np):\n  "
+              << n0 << " " << n1 << " "
+	      << nn << " " << np << std::endl;
+    std::cout << "nL,delta,I: " << nL << " " << delta << " " << I << endl;
+    O2SCL_ERR2("Densities too large in ",
+               "nucmass_ldrop::drip_binding_energy_d().",
+               o2scl::exc_efailed);
+  }
 
   if (!std::isfinite(nn) || !std::isfinite(np)) {
     O2SCL_ERR2("Neutron or proton density not finite in ",
@@ -246,7 +263,7 @@ double nucmass_ldrop_skin::drip_binding_energy_d
     p->n=np;
     n->mu=n->m;
     p->mu=p->m;
-
+    
     if (n->n<0.0) n->n=1.0e-3;
     if (p->n<0.0) p->n=1.0e-3;
 
