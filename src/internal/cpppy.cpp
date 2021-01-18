@@ -1281,7 +1281,10 @@ int main(int argc, char *argv[]) {
       if_func &iff=ifc.methods[j];
 
       // Function header
-      fout << "    def " << iff.name << "(self,";
+      fout << "    def " << iff.name << "(self";
+      if (iff.args.size()>0) {
+        fout << ",";
+      }
       for(size_t k=0;k<iff.args.size();k++) {
         fout << iff.args[k].name;
         if (k!=iff.args.size()-1) {
