@@ -368,3 +368,427 @@ void o2scl_eos_had_skyrme_set_nrfd(void *vptr, void *p_v) {
   return;
 }
 
+void *o2scl_create_eos_had_apr() {
+  eos_had_apr *ptr=new eos_had_apr;
+  return ptr;
+}
+
+void o2scl_free_eos_had_apr(void *vptr) {
+  eos_had_apr *ptr=(eos_had_apr *)vptr;
+  delete ptr;
+}
+
+int o2scl_eos_had_apr_get_pion(void *vptr) {
+  eos_had_apr *ptr=(eos_had_apr *)vptr;
+  return ptr->pion;
+}
+
+void o2scl_eos_had_apr_set_pion(void *vptr, int v) {
+  eos_had_apr *ptr=(eos_had_apr *)vptr;
+  ptr->pion=v;
+  return;
+}
+
+bool o2scl_eos_had_apr_get_parent_method(void *vptr) {
+  eos_had_apr *ptr=(eos_had_apr *)vptr;
+  return ptr->parent_method;
+}
+
+void o2scl_eos_had_apr_set_parent_method(void *vptr, bool v) {
+  eos_had_apr *ptr=(eos_had_apr *)vptr;
+  ptr->parent_method=v;
+  return;
+}
+
+void *o2scl_create_eos_had_rmf() {
+  eos_had_rmf *ptr=new eos_had_rmf;
+  return ptr;
+}
+
+void o2scl_free_eos_had_rmf(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  delete ptr;
+}
+
+size_t o2scl_eos_had_rmf_get_calc_e_steps(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->calc_e_steps;
+}
+
+void o2scl_eos_had_rmf_set_calc_e_steps(void *vptr, size_t v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->calc_e_steps=v;
+  return;
+}
+
+bool o2scl_eos_had_rmf_get_calc_e_relative(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->calc_e_relative;
+}
+
+void o2scl_eos_had_rmf_set_calc_e_relative(void *vptr, bool v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->calc_e_relative=v;
+  return;
+}
+
+bool o2scl_eos_had_rmf_get_zm_mode(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->zm_mode;
+}
+
+void o2scl_eos_had_rmf_set_zm_mode(void *vptr, bool v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->zm_mode=v;
+  return;
+}
+
+int o2scl_eos_had_rmf_get_verbose(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->verbose;
+}
+
+void o2scl_eos_had_rmf_set_verbose(void *vptr, int v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->verbose=v;
+  return;
+}
+
+bool o2scl_eos_had_rmf_get_err_nonconv(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->err_nonconv;
+}
+
+void o2scl_eos_had_rmf_set_err_nonconv(void *vptr, bool v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->err_nonconv=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_mnuc(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->mnuc;
+}
+
+void o2scl_eos_had_rmf_set_mnuc(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->mnuc=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_ms(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->ms;
+}
+
+void o2scl_eos_had_rmf_set_ms(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->ms=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_mw(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->mw;
+}
+
+void o2scl_eos_had_rmf_set_mw(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->mw=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_mr(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->mr;
+}
+
+void o2scl_eos_had_rmf_set_mr(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->mr=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_cs(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->cs;
+}
+
+void o2scl_eos_had_rmf_set_cs(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->cs=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_cw(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->cw;
+}
+
+void o2scl_eos_had_rmf_set_cw(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->cw=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_cr(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->cr;
+}
+
+void o2scl_eos_had_rmf_set_cr(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->cr=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_b(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->b;
+}
+
+void o2scl_eos_had_rmf_set_b(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->b=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_c(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->c;
+}
+
+void o2scl_eos_had_rmf_set_c(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->c=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_zeta(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->zeta;
+}
+
+void o2scl_eos_had_rmf_set_zeta(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->zeta=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_xi(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->xi;
+}
+
+void o2scl_eos_had_rmf_set_xi(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->xi=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_a1(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->a1;
+}
+
+void o2scl_eos_had_rmf_set_a1(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->a1=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_a2(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->a2;
+}
+
+void o2scl_eos_had_rmf_set_a2(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->a2=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_a3(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->a3;
+}
+
+void o2scl_eos_had_rmf_set_a3(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->a3=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_a4(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->a4;
+}
+
+void o2scl_eos_had_rmf_set_a4(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->a4=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_a5(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->a5;
+}
+
+void o2scl_eos_had_rmf_set_a5(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->a5=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_a6(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->a6;
+}
+
+void o2scl_eos_had_rmf_set_a6(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->a6=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_b1(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->b1;
+}
+
+void o2scl_eos_had_rmf_set_b1(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->b1=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_b2(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->b2;
+}
+
+void o2scl_eos_had_rmf_set_b2(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->b2=v;
+  return;
+}
+
+double o2scl_eos_had_rmf_get_b3(void *vptr) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  return ptr->b3;
+}
+
+void o2scl_eos_had_rmf_set_b3(void *vptr, double v) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  ptr->b3=v;
+  return;
+}
+
+void *o2scl_create_eos_quark() {
+  eos_quark *ptr=new eos_quark;
+  return ptr;
+}
+
+void o2scl_free_eos_quark(void *vptr) {
+  eos_quark *ptr=(eos_quark *)vptr;
+  delete ptr;
+}
+
+void *o2scl_create_eos_quark_bag() {
+  eos_quark_bag *ptr=new eos_quark_bag;
+  return ptr;
+}
+
+void o2scl_free_eos_quark_bag(void *vptr) {
+  eos_quark_bag *ptr=(eos_quark_bag *)vptr;
+  delete ptr;
+}
+
+double o2scl_eos_quark_bag_get_bag_constant(void *vptr) {
+  eos_quark_bag *ptr=(eos_quark_bag *)vptr;
+  return ptr->bag_constant;
+}
+
+void o2scl_eos_quark_bag_set_bag_constant(void *vptr, double v) {
+  eos_quark_bag *ptr=(eos_quark_bag *)vptr;
+  ptr->bag_constant=v;
+  return;
+}
+
+void *o2scl_create_eos_quark_njl() {
+  eos_quark_njl *ptr=new eos_quark_njl;
+  return ptr;
+}
+
+void o2scl_free_eos_quark_njl(void *vptr) {
+  eos_quark_njl *ptr=(eos_quark_njl *)vptr;
+  delete ptr;
+}
+
+double o2scl_eos_quark_njl_get_B0(void *vptr) {
+  eos_quark_njl *ptr=(eos_quark_njl *)vptr;
+  return ptr->B0;
+}
+
+void o2scl_eos_quark_njl_set_B0(void *vptr, double v) {
+  eos_quark_njl *ptr=(eos_quark_njl *)vptr;
+  ptr->B0=v;
+  return;
+}
+
+double o2scl_eos_quark_njl_get_L(void *vptr) {
+  eos_quark_njl *ptr=(eos_quark_njl *)vptr;
+  return ptr->L;
+}
+
+void o2scl_eos_quark_njl_set_L(void *vptr, double v) {
+  eos_quark_njl *ptr=(eos_quark_njl *)vptr;
+  ptr->L=v;
+  return;
+}
+
+double o2scl_eos_quark_njl_get_G(void *vptr) {
+  eos_quark_njl *ptr=(eos_quark_njl *)vptr;
+  return ptr->G;
+}
+
+void o2scl_eos_quark_njl_set_G(void *vptr, double v) {
+  eos_quark_njl *ptr=(eos_quark_njl *)vptr;
+  ptr->G=v;
+  return;
+}
+
+double o2scl_eos_quark_njl_get_K(void *vptr) {
+  eos_quark_njl *ptr=(eos_quark_njl *)vptr;
+  return ptr->K;
+}
+
+void o2scl_eos_quark_njl_set_K(void *vptr, double v) {
+  eos_quark_njl *ptr=(eos_quark_njl *)vptr;
+  ptr->K=v;
+  return;
+}
+
+double o2scl_eos_quark_njl_get_limit(void *vptr) {
+  eos_quark_njl *ptr=(eos_quark_njl *)vptr;
+  return ptr->limit;
+}
+
+void o2scl_eos_quark_njl_set_limit(void *vptr, double v) {
+  eos_quark_njl *ptr=(eos_quark_njl *)vptr;
+  ptr->limit=v;
+  return;
+}
+
+bool o2scl_eos_quark_njl_get_fromqq(void *vptr) {
+  eos_quark_njl *ptr=(eos_quark_njl *)vptr;
+  return ptr->fromqq;
+}
+
+void o2scl_eos_quark_njl_set_fromqq(void *vptr, bool v) {
+  eos_quark_njl *ptr=(eos_quark_njl *)vptr;
+  ptr->fromqq=v;
+  return;
+}
+

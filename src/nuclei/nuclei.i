@@ -8,6 +8,15 @@ py_class_doc_pattern "Python interface for class :ref:`%name% <o2sclp:%name%>`."
 h_include <o2scl/nucleus.h>
 h_include <o2scl/nucmass.h>
 h_include <o2scl/nucmass_ame.h>
+h_include <o2scl/nucmass_dz.h>
+h_include <o2scl/nucmass_frdm.h>
+h_include <o2scl/nucmass_dglg.h>
+h_include <o2scl/nucmass_sdnp.h>
+h_include <o2scl/nucmass_wlw.h>
+h_include <o2scl/nucmass_hfb.h>
+h_include <o2scl/nucmass_ktuy.h>
+h_include <o2scl/nucmass_fit.h>
+h_include <o2scl/nucmass_gen.h>
 h_include <o2scl/hdf_nucmass_io.h>
 # 
 # Include statement for C++ source code
@@ -177,6 +186,97 @@ class nucmass_semi_empirical
 class nucmass_ame
 - parent nucmass_table
 # 
+# Class nucmass_dz_table
+#
+class nucmass_dz_table
+- parent nucmass_table
+# 
+# Class nucmass_dz_fit
+#
+class nucmass_dz_fit
+- parent nucmass_fit_base
+# 
+# Class nucmass_dz_fit_33
+#
+class nucmass_dz_fit_33
+- parent nucmass_fit_base
+# 
+# Class nucmass_frdm
+#
+class nucmass_frdm
+- parent nucmass_fit_base
+- double a1
+- double J
+- double K
+- double a2
+- double Q
+- double a3
+- double ca
+- double W
+- double ael
+- double rp
+- double r0
+- double MH
+- double Mn
+- double e2
+- double a
+- double aden
+- double rmac
+- double h
+- double L
+- double C
+- double gamma
+- double amu
+- double nn
+- double np
+- double Rn
+- double Rp
+# 
+# Class nucmass_mnmsk
+#
+class nucmass_mnmsk
+- parent nucmass_table
+# 
+# Class nucmass_mnmsk_exp
+#
+class nucmass_mnmsk_exp
+- parent nucmass_mnmsk
+# 
+# Class nucmass_gen
+#
+class nucmass_gen
+- parent nucmass_table
+# 
+# Class nucmass_dglg
+#
+class nucmass_dglg
+- parent nucmass_table
+# 
+# Class nucmass_hfb
+#
+class nucmass_hfb
+- parent nucmass_table
+# 
+# Class nucmass_hfb_sp
+#
+class nucmass_hfb_sp
+- parent nucmass_table
+# 
+# Class nucmass_ktuy
+#
+class nucmass_ktuy
+- parent nucmass_table
+# 
+# Class nucmass_sdnp
+#
+class nucmass_sdnp
+- parent nucmass_table
+# 
+# Class nucmass_wlw
+#
+class nucmass_wlw
+- parent nucmass_table
+# 
 # HDF functions
 #
 function ame_load
@@ -184,3 +284,25 @@ function ame_load
 - nucmass_ame &ame
 - std::string name
 - bool exp_only
+function ame_load_ext
+- void
+- nucmass_ame &ame
+- std::string file_name
+- std::string table_name
+- bool exp_only
+function mnmsk_load
+- void
+- nucmass_mnmsk &mnmsk
+- std::string model
+- std::string filename
+function hfb_load
+- void
+- nucmass_hfb &hfb
+- size_t model
+- std::string filename
+function hfb_sp_load
+- void
+- nucmass_hfb_sp &hfb
+- size_t model
+- std::string filename
+

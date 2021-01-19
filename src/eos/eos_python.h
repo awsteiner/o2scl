@@ -23,6 +23,10 @@
 #include <o2scl/eos_base.h>
 #include <o2scl/eos_had_base.h>
 #include <o2scl/eos_had_skyrme.h>
+#include <o2scl/eos_had_apr.h>
+#include <o2scl/eos_had_rmf.h>
+#include <o2scl/eos_quark_bag.h>
+#include <o2scl/eos_quark_njl.h>
 #include <o2scl/part.h>
 #include <o2scl/fermion_nonrel.h>
 #include <o2scl/fermion_deriv_nr.h>
@@ -146,5 +150,161 @@ void o2scl_eos_had_skyrme_set_reference(void *vp, void *p_v);
 void o2scl_eos_had_skyrme_get_nrfd(void *vp, void *p_v);
 
 void o2scl_eos_had_skyrme_set_nrfd(void *vp, void *p_v);
+
+void *o2scl_create_eos_had_apr();
+
+void o2scl_free_eos_had_apr(void *vp);
+
+int o2scl_eos_had_apr_get_pion(void *vp);
+
+void o2scl_eos_had_apr_set_pion(void *vp, int v);
+
+bool o2scl_eos_had_apr_get_parent_method(void *vp);
+
+void o2scl_eos_had_apr_set_parent_method(void *vp, bool v);
+
+void *o2scl_create_eos_had_rmf();
+
+void o2scl_free_eos_had_rmf(void *vp);
+
+size_t o2scl_eos_had_rmf_get_calc_e_steps(void *vp);
+
+void o2scl_eos_had_rmf_set_calc_e_steps(void *vp, size_t v);
+
+bool o2scl_eos_had_rmf_get_calc_e_relative(void *vp);
+
+void o2scl_eos_had_rmf_set_calc_e_relative(void *vp, bool v);
+
+bool o2scl_eos_had_rmf_get_zm_mode(void *vp);
+
+void o2scl_eos_had_rmf_set_zm_mode(void *vp, bool v);
+
+int o2scl_eos_had_rmf_get_verbose(void *vp);
+
+void o2scl_eos_had_rmf_set_verbose(void *vp, int v);
+
+bool o2scl_eos_had_rmf_get_err_nonconv(void *vp);
+
+void o2scl_eos_had_rmf_set_err_nonconv(void *vp, bool v);
+
+double o2scl_eos_had_rmf_get_mnuc(void *vp);
+
+void o2scl_eos_had_rmf_set_mnuc(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_ms(void *vp);
+
+void o2scl_eos_had_rmf_set_ms(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_mw(void *vp);
+
+void o2scl_eos_had_rmf_set_mw(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_mr(void *vp);
+
+void o2scl_eos_had_rmf_set_mr(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_cs(void *vp);
+
+void o2scl_eos_had_rmf_set_cs(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_cw(void *vp);
+
+void o2scl_eos_had_rmf_set_cw(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_cr(void *vp);
+
+void o2scl_eos_had_rmf_set_cr(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_b(void *vp);
+
+void o2scl_eos_had_rmf_set_b(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_c(void *vp);
+
+void o2scl_eos_had_rmf_set_c(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_zeta(void *vp);
+
+void o2scl_eos_had_rmf_set_zeta(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_xi(void *vp);
+
+void o2scl_eos_had_rmf_set_xi(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_a1(void *vp);
+
+void o2scl_eos_had_rmf_set_a1(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_a2(void *vp);
+
+void o2scl_eos_had_rmf_set_a2(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_a3(void *vp);
+
+void o2scl_eos_had_rmf_set_a3(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_a4(void *vp);
+
+void o2scl_eos_had_rmf_set_a4(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_a5(void *vp);
+
+void o2scl_eos_had_rmf_set_a5(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_a6(void *vp);
+
+void o2scl_eos_had_rmf_set_a6(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_b1(void *vp);
+
+void o2scl_eos_had_rmf_set_b1(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_b2(void *vp);
+
+void o2scl_eos_had_rmf_set_b2(void *vp, double v);
+
+double o2scl_eos_had_rmf_get_b3(void *vp);
+
+void o2scl_eos_had_rmf_set_b3(void *vp, double v);
+
+void *o2scl_create_eos_quark();
+
+void o2scl_free_eos_quark(void *vp);
+
+void *o2scl_create_eos_quark_bag();
+
+void o2scl_free_eos_quark_bag(void *vp);
+
+double o2scl_eos_quark_bag_get_bag_constant(void *vp);
+
+void o2scl_eos_quark_bag_set_bag_constant(void *vp, double v);
+
+void *o2scl_create_eos_quark_njl();
+
+void o2scl_free_eos_quark_njl(void *vp);
+
+double o2scl_eos_quark_njl_get_B0(void *vp);
+
+void o2scl_eos_quark_njl_set_B0(void *vp, double v);
+
+double o2scl_eos_quark_njl_get_L(void *vp);
+
+void o2scl_eos_quark_njl_set_L(void *vp, double v);
+
+double o2scl_eos_quark_njl_get_G(void *vp);
+
+void o2scl_eos_quark_njl_set_G(void *vp, double v);
+
+double o2scl_eos_quark_njl_get_K(void *vp);
+
+void o2scl_eos_quark_njl_set_K(void *vp, double v);
+
+double o2scl_eos_quark_njl_get_limit(void *vp);
+
+void o2scl_eos_quark_njl_set_limit(void *vp, double v);
+
+bool o2scl_eos_quark_njl_get_fromqq(void *vp);
+
+void o2scl_eos_quark_njl_set_fromqq(void *vp, bool v);
 
 }
