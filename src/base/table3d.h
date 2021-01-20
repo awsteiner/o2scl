@@ -889,7 +889,7 @@ namespace o2scl {
         xval.resize(numx);
         o2scl::vector_copy(numx,grid,xval);
         
-        numy=bin_grid.get_nbins();
+        numy=bin_grid.size();
         yname=bin_name;
         yval.resize(numy);
         o2scl::vector_copy(numy,bin_grid,yval);
