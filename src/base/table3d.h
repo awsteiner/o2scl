@@ -904,7 +904,7 @@ namespace o2scl {
         for(size_t i=0;i<numx;i++) {
           // Create the histogram for this x-coordinate
           hist h;
-          h.set_bin_edges(bin_edges);
+          h.set_bin_edges(bin_edges.size(),bin_edges);
           h.update_vec(t[matched[i]]);
           // Now copy the histogram to the table3d object
           for(size_t j=0;j<h.size();j++) {
@@ -934,7 +934,7 @@ namespace o2scl {
         for(size_t i=0;i<numy;i++) {
           // Create the histogram for this x-coordinate
           hist h;
-          h.set_bin_edges(bin_edges);
+          h.set_bin_edges(bin_edges.size(),bin_edges);
           h.update_vec(t[matched[i]]);
           // Now copy the histogram to the table3d object
           for(size_t j=0;j<h.size();j++) {
