@@ -37,6 +37,40 @@ using namespace o2scl_acol;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
+int acol_manager::comm_ser_hist_t3d(std::vector<std::string> &sv,
+                                    bool itive_com) {
+
+  vector<string> in, pr;
+  pr.push_back("Vector spec. for grid");
+  pr.push_back("Direction (x or y)");
+  pr.push_back("Grid name");
+  pr.push_back("Number of bins");
+  pr.push_back("Bin name");
+  pr.push_back("Pattern");
+  pr.push_back("New slice name");
+  int ret=get_input(sv,pr,in,"ser-hist-t3d",itive_com);
+  if (ret!=0) return ret;
+  
+  std::vector<double> vtemp;
+  int ret2=vector_spec(in[0],vtemp,0,false);
+  
+  //create_table_hist_set(vec_t &grid, std::string direction,
+  //std::string name, size_t n_bins,
+  //std::string bin_name,
+  //o2scl::table_units<> &t, std::string pattern,
+  //std::string slice) {
+  
+  table3d_obj.create_table_hist_set(vtemp,in[1],in[2],o2scl::stoszt(in[3]),
+                                    in[4],table_obj,in[5],in[6]);
+  
+  command_del(type);
+  clear_obj();
+  command_add("table3d");
+  type="table3d";
+  
+  return 0;
+}
+
 int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
 
   vector<string> in, pr;

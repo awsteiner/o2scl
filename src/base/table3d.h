@@ -34,6 +34,8 @@
 #include <cmath>
 #include <sstream>
 
+#include <fnmatch.h>
+
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
@@ -48,6 +50,7 @@
 #include <o2scl/contour.h>
 #include <o2scl/shunting_yard.h>
 #include <o2scl/vector.h>
+#include <o2scl/hist.h>
 
 // Forward definition of the table3d class for HDF I/O
 namespace o2scl {
@@ -105,7 +108,7 @@ namespace o2scl {
     
     /// Copy constructor
     table3d &operator=(const table3d &t);
-    
+
     /// \name Initialization
     //@{
     /** \brief Initialize the x-y grid
@@ -850,6 +853,153 @@ namespace o2scl {
       return 0;
     }
     
+    /** \brief Create a table3d object by histogramming a series of
+        columns from a \ref o2scl::table_units object
+    */
+    template<class vec_t, class vec2_t, class vec3_t>
+    void create_table_hist_set(vec_t &grid, std::string direction,
+                               std::string name, vec2_t &bin_edges,
+                               vec3_t &bin_grid, std::string bin_name,
+                               o2scl::table_units<> &t, std::string pattern,
+                               std::string slice) {
+
+      clear();
+      
+      // First, get all the columns which match the pattern
+      std::vector<std::string> matched;
+      
+      for(size_t j=0;j<t.get_ncolumns();j++) {
+        if (fnmatch(pattern.c_str(),
+                    t.get_column_name(j).c_str(),0)==0) {
+          matched.push_back(t.get_column_name(j));
+        }
+      }
+
+      if (grid.size()!=matched.size()) {
+        std::cout << matched.size() << " columns matched, but the grid had "
+                  << "size " << grid.size() << "." << std::endl;
+        O2SCL_ERR2("Columns and grid size do not match in ",
+                   "table3d::table3d().",o2scl::exc_efailed);
+      }
+          
+      if (direction=="x") {
+
+        numx=grid.size();
+        xname=name;
+        xval.resize(numx);
+        o2scl::vector_copy(numx,grid,xval);
+        
+        numy=bin_grid.get_nbins();
+        yname=bin_name;
+        yval.resize(numy);
+        o2scl::vector_copy(numy,bin_grid,yval);
+
+        xy_set=true;
+        size_set=true;
+        has_slice=false;
+
+        new_slice(slice);
+
+        // Create the data
+        for(size_t i=0;i<numx;i++) {
+          // Create the histogram for this x-coordinate
+          hist h;
+          h.set_bin_edges(bin_edges);
+          h.update_vec(t[matched[i]]);
+          // Now copy the histogram to the table3d object
+          for(size_t j=0;j<h.size();j++) {
+            this->set(i,j,slice,h[j]);
+          }
+        }
+        
+      } else if (direction=="y") {
+
+        numx=bin_grid.get_nbins();
+        xname=bin_name;
+        xval.resize(numx);
+        o2scl::vector_copy(numx,bin_grid,xval);
+
+        numy=grid.size();
+        yname=name;
+        yval.resize(numy);
+        o2scl::vector_copy(numy,grid,yval);
+        
+        xy_set=true;
+        size_set=true;
+        has_slice=false;
+
+        new_slice(slice);
+
+        // Create the data
+        for(size_t i=0;i<numy;i++) {
+          // Create the histogram for this x-coordinate
+          hist h;
+          h.set_bin_edges(bin_edges);
+          h.update_vec(t[matched[i]]);
+          // Now copy the histogram to the table3d object
+          for(size_t j=0;j<h.size();j++) {
+            this->set(j,i,slice,h[j]);
+          }
+        }
+        
+      } else {
+        O2SCL_ERR2("Direction must be \"x\" or \"y\" in ",
+                   "table3d::table3d().",o2scl::exc_efailed);
+      }
+      
+      return;
+    }
+    
+    /** \brief Create a table3d object by histogramming a series of
+        columns from a \ref o2scl::table_units object
+    */
+    template<class vec_t>
+    void create_table_hist_set(vec_t &grid, std::string direction,
+                          std::string name, size_t n_bins,
+                          std::string bin_name,
+                          o2scl::table_units<> &t, std::string pattern,
+                          std::string slice) {
+
+      // First, get all the columns which match the pattern
+      std::vector<std::string> matched;
+      
+      for(size_t j=0;j<t.get_ncolumns();j++) {
+        if (fnmatch(pattern.c_str(),
+                    t.get_column_name(j).c_str(),0)==0) {
+          matched.push_back(t.get_column_name(j));
+        }
+      }
+
+      if (matched.size()==0) {
+        O2SCL_ERR("No columns matched in create_table_hist_set().",
+                  o2scl::exc_einval);
+      }
+      
+      double min=t.get(matched[0],0);
+      double max=min;
+      for(size_t j=0;j<matched.size();j++) {
+        for(size_t i=0;i<t.get_nlines();i++) {
+          double val=t.get(matched[j],i);
+          if (val<min) min=val;
+          else if (val>max) max=val;
+        }
+      }
+
+      double delta=(max-min)/n_bins;
+      
+      uniform_grid_end<double> ug(min-delta/2.0,max+delta/2.0,n_bins);
+      std::vector<double> bin_edges(n_bins+1), bin_grid(n_bins);
+      ug.vector(bin_edges);
+      for(size_t i=0;i<n_bins;i++) {
+        bin_grid[i]=(bin_edges[i]+bin_edges[i+1])/2.0;
+      }
+      
+      create_table_hist_set(grid,direction,name,bin_edges,bin_grid,
+                            bin_name,t,pattern,slice);
+      
+      return;
+    }
+
     /// Return the type, \c "table3d".
     virtual const char *type() { return "table3d"; }
     //@}
@@ -927,7 +1077,7 @@ namespace o2scl {
     /** \brief Convert slice named \c slice to a \ref hist_2d object
      */
     hist_2d to_hist_2d(std::string slice, int verbose=1);
-    
+
 #ifdef O2SCL_NEVER_DEFINED
     
     /** \brief Desc

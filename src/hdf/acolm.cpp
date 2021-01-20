@@ -118,7 +118,8 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 			      "list","max","min","nlines","refine","rename",
 			      "select","select-rows","select-rows2",
 			      "set-data","set-unit","sort","stats","sum",
-			      "to-hist","to-hist-2d","to-table3d","wstats",
+			      "to-hist","to-hist-2d","to-table3d","wstats"
+                              "ser-hist-t3d",
     };
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("table",itmp));
@@ -236,7 +237,7 @@ void acol_manager::command_add(std::string new_type) {
       };
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=41;
+    static const size_t narr=42;
     comm_option_s options_arr[narr]=
       {{0,"ac-len","Autocorrelation length using 'acor'.",0,1,"<colum>","",
 	new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_ac_len),
@@ -500,6 +501,10 @@ void acol_manager::command_add(std::string new_type) {
        {0,"wstats","Show weighted column statistics.",0,2,"<col> <weights>",
 	"Output the average, std. dev, max and min of <col>. ",
 	new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_wstats),
+	both},
+       {0,"ser-hist-t3d","",7,7,"","",
+	new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_ser_hist_t3d),
 	both},
        {0,"sum","Add data from a second table object to current table.",
 	0,2,"<file> [name]",((string)"Add all columns ")+

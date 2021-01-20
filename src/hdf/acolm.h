@@ -295,6 +295,9 @@ namespace o2scl_acol {
 
     /// Assign a constant
     virtual int comm_assign(std::vector<std::string> &sv, bool itive_com);
+    
+    virtual int comm_ser_hist_t3d(std::vector<std::string> &sv,
+                                  bool itive_com);
 
     /// Binary function for tensors
     virtual int comm_binary(std::vector<std::string> &sv, bool itive_com);

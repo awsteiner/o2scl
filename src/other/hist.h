@@ -349,6 +349,15 @@ namespace o2scl {
       return;
     }
 
+    /** \brief Update from a vector of values
+     */
+    template<class vec_t> void update_vec(const vec_t &v) {
+      for(size_t i=0;i<v.size();i++) {
+        update(v[i]);
+      }
+      return;
+    }
+    
     /// Return contents of bin with index \c i
     const double &get_wgt_i(size_t i) const;
 

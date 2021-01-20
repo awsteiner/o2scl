@@ -251,7 +251,7 @@ namespace o2scl {
 		exc_einval);
     }
 
-    if (v.size()<g_n_bins+1) {
+    if (v.size()!=g_n_bins+1) {
       v.resize(g_n_bins+1);
     }
 
