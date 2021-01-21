@@ -62,12 +62,12 @@ int acol_manager::comm_ser_hist_t3d(std::vector<std::string> &sv,
   
   table3d_obj.create_table_hist_set(vtemp,in[1],in[2],o2scl::stoszt(in[3]),
                                     in[4],table_obj,in[5],in[6]);
-  
+
   command_del(type);
   clear_obj();
   command_add("table3d");
   type="table3d";
-  
+
   return 0;
 }
 

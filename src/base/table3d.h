@@ -890,7 +890,7 @@ namespace o2scl {
         O2SCL_ERR2("Columns and grid size do not match in ",
                    "table3d::table3d().",o2scl::exc_efailed);
       }
-          
+
       if (direction=="x") {
 
         numx=grid.size();
@@ -915,8 +915,6 @@ namespace o2scl {
 
         new_slice(slice);
 
-        std::cout << "new slice: " << slice << std::endl;
-
         // Create the data
         for(size_t i=0;i<numx;i++) {
           // Create the histogram for this x-coordinate
@@ -930,17 +928,21 @@ namespace o2scl {
         }
         
       } else if (direction=="y") {
-        
+
         numx=bin_grid.size();
         xname=bin_name;
         xval.resize(numx);
         o2scl::vector_copy(numx,bin_grid,xval);
+
+        //o2scl::vector_out(std::cout,xval,true);
 
         numy=grid.size();
         yname=name;
         yval.resize(numy);
         o2scl::vector_copy(numy,grid,yval);
         
+        //o2scl::vector_out(std::cout,yval,true);
+
         xy_set=true;
         size_set=true;
         has_slice=false;
@@ -963,7 +965,7 @@ namespace o2scl {
         O2SCL_ERR2("Direction must be \"x\" or \"y\" in ",
                    "table3d::table3d().",o2scl::exc_efailed);
       }
-      
+
       return;
     }
     
@@ -1003,13 +1005,23 @@ namespace o2scl {
       }
 
       double delta=(max-min)/n_bins;
+
+      std::cout << "matched: ";
+      o2scl::vector_out(std::cout,matched,true);
+      std::cout << "min,max,n_bins,delta: "
+                << min << " " << max << " " << n_bins << " "
+                << delta << std::endl;
       
-      uniform_grid_end<double> ug(min-delta/2.0,max+delta/2.0,n_bins);
+      uniform_grid_end<double> ug(min-delta/100.0,max+delta/100.0,n_bins);
       std::vector<double> bin_edges(n_bins+1), bin_grid(n_bins);
       ug.vector(bin_edges);
       for(size_t i=0;i<n_bins;i++) {
         bin_grid[i]=(bin_edges[i]+bin_edges[i+1])/2.0;
       }
+      std::cout << "bin_grid: ";
+      o2scl::vector_out(std::cout,bin_grid,true);
+      std::cout << "bin_edges: ";
+      o2scl::vector_out(std::cout,bin_edges,true);
       
       create_table_hist_set(grid,direction,name,bin_edges,bin_grid,
                             bin_name,t,pattern,slice);

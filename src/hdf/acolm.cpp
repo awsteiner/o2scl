@@ -118,7 +118,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 			      "list","max","min","nlines","refine","rename",
 			      "select","select-rows","select-rows2",
 			      "set-data","set-unit","sort","stats","sum",
-			      "to-hist","to-hist-2d","to-table3d","wstats"
+			      "to-hist","to-hist-2d","to-table3d","wstats",
                               "ser-hist-t3d",
     };
     vector_sort<vector<string>,string>(itmp.size(),itmp);
