@@ -864,6 +864,12 @@ namespace o2scl {
                                std::string slice) {
 
       clear();
+
+      if (bin_grid.size()+1!=bin_edges.size()) {
+        O2SCL_ERR2("bin_grid and bin_edges vectors not properly sized ",
+                   "in table3d::create_table_hist_set().",
+                   o2scl::exc_einval);
+      }
       
       // First, get all the columns which match the pattern
       std::vector<std::string> matched;
@@ -874,6 +880,9 @@ namespace o2scl {
           matched.push_back(t.get_column_name(j));
         }
       }
+
+      std::cout << "matched: " << std::endl;
+      o2scl::vector_out(std::cout,matched,true);
 
       if (grid.size()!=matched.size()) {
         std::cout << matched.size() << " columns matched, but the grid had "
@@ -888,17 +897,25 @@ namespace o2scl {
         xname=name;
         xval.resize(numx);
         o2scl::vector_copy(numx,grid,xval);
+
+        std::cout << numx << " " << xname << " ";
+        o2scl::vector_out(std::cout,xval,true);
         
         numy=bin_grid.size();
         yname=bin_name;
         yval.resize(numy);
         o2scl::vector_copy(numy,bin_grid,yval);
 
+        std::cout << numy << " " << yname << " ";
+        o2scl::vector_out(std::cout,yval,true);
+        
         xy_set=true;
         size_set=true;
         has_slice=false;
 
         new_slice(slice);
+
+        std::cout << "new slice: " << slice << std::endl;
 
         // Create the data
         for(size_t i=0;i<numx;i++) {
@@ -913,8 +930,8 @@ namespace o2scl {
         }
         
       } else if (direction=="y") {
-
-        numx=bin_grid.get_nbins();
+        
+        numx=bin_grid.size();
         xname=bin_name;
         xval.resize(numx);
         o2scl::vector_copy(numx,bin_grid,xval);

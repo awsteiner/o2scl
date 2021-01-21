@@ -475,6 +475,12 @@ void acol_manager::command_add(std::string new_type) {
 	"faster than 'select-rows' for tables with many columns.",
 	new comm_option_mfptr<acol_manager>
 	(this,&acol_manager::comm_select_rows2),both},
+       {0,"ser-hist-t3d","Histogram series in a table3d",0,7,
+        ((std::string)"<grid vector spec.> <direction (\"x\" or \"y\")> ")+
+        "<grid name> <n bins> <bin name> <pattern> <new slice>","",
+	new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_ser_hist_t3d),
+	both},
        {0,"set-data","Set the entries of a column.",3,4,
 	"<row_spec> <col> <val_spec>",
 	((string)"Set the value of rows specifed by the ")+
@@ -497,14 +503,6 @@ void acol_manager::command_add(std::string new_type) {
        {0,"stats","Show column statistics.",0,1,"<col>",
 	"Output the average, std. dev, max and min of <col>. ",
 	new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_stats),
-	both},
-       {0,"wstats","Show weighted column statistics.",0,2,"<col> <weights>",
-	"Output the average, std. dev, max and min of <col>. ",
-	new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_wstats),
-	both},
-       {0,"ser-hist-t3d","",7,7,"","",
-	new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_ser_hist_t3d),
 	both},
        {0,"sum","Add data from a second table object to current table.",
 	0,2,"<file> [name]",((string)"Add all columns ")+
@@ -538,7 +536,11 @@ void acol_manager::command_add(std::string new_type) {
 	"by the table. If 'eps' is specified, then use that value as the "+
 	"minimum value between grid points.",
 	new comm_option_mfptr<acol_manager>
-	(this,&acol_manager::comm_to_table3d),both}
+	(this,&acol_manager::comm_to_table3d),both},
+       {0,"wstats","Show weighted column statistics.",0,2,"<col> <weights>",
+	"Output the average, std. dev, max and min of <col>. ",
+	new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_wstats),
+	both}
       };
     cl->set_comm_option_vec(narr,options_arr);
 
