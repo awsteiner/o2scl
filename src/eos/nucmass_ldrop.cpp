@@ -118,7 +118,7 @@ double nucmass_ldrop::drip_binding_energy_d
   nn=nL*(1.0+delta)/2.0;
   if (nn>0.20 || np>0.20) {
     if (large_vals_unphys) return 1.0e99;
-    std::cout << "Densities too large (n0,n1,nn,np): "
+    std::cout << "Densities too large 1 (n0,n1,nn,np): "
               << n0 << " " << n1 << " "
 	      << nn << " " << np << std::endl;
     O2SCL_ERR2("Densities too large in ",
@@ -233,7 +233,7 @@ double nucmass_ldrop_skin::drip_binding_energy_d
   nn=nL*(1.0+delta)/2.0;
   if (nn>0.20 || np>0.20) {
     if (large_vals_unphys) return 1.0e99;
-    std::cout << "Densities too large (n0,n1,nn,np):\n  "
+    std::cout << "Densities too large 2 (n0,n1,nn,np):\n  "
               << n0 << " " << n1 << " "
 	      << nn << " " << np << std::endl;
     std::cout << "nL,delta,I: " << nL << " " << delta << " " << I << endl;

@@ -99,6 +99,7 @@ int main(void) {
   mf.even_even=false;
   mf.def_mmin.ntrial*=10;
 
+  ld.large_vals_unphys=true;
   ld.n0=0.16;
   ld.n1=0.0;
   ld.surften=1.1;
@@ -110,18 +111,19 @@ int main(void) {
   
   mf.fit(ld,qual);
   mf.eval(ld,qual);
-  cout << "Paramters after: ";
+  cout << "Parameters after: ";
   cout << ld.n1 << " " << ld.n0 << " " << ld.surften << " " 
        << ld.coul_coeff << " " << ld.doi << "\n "
        << ld.ss << " " << ld.Epair << endl;
   cout << "Quality: " << qual << endl;
 
-  t.test_rel(qual,2.4675,1.0e-2,"pair qual");
+  t.test_rel(qual,2.5007,1.0e-2,"pair qual");
   
   cout << endl;
   
   cout << "-------------------------------------------------\n" << endl;
   
+  ld2.large_vals_unphys=true;
   ld2.n1=ld.n1;
   ld2.n0=ld.n0;
   ld2.surften=ld.surften;
@@ -155,7 +157,7 @@ int main(void) {
     cout << "Quality: " << qual << endl;
 
   }
-  t.test_rel(qual,1.1353,2.0e-2,"nucmass_ldrop_shell qual");
+  t.test_rel(qual,1.1643,2.0e-2,"nucmass_ldrop_shell qual");
   cout << endl;
 
   cout << "-------------------------------------------------\n" << endl;
