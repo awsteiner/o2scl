@@ -322,7 +322,8 @@ namespace o2scl {
 	table3d object
     */
     void add_slice_from_table(table3d &source, std::string slice,
-			      std::string dest_slice="");
+			      std::string dest_slice="",
+                              int verbose=0);
     
     /** \brief Set elements in the first <tt>nv</tt> slices at the
 	nearest location to <tt>x,y</tt> to values \c vals

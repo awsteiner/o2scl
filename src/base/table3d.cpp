@@ -494,11 +494,14 @@ bool table3d::is_xy_set() const {
 }
 
 void table3d::add_slice_from_table(table3d &source, std::string slice,
-				   std::string dest_slice) {
+				   std::string dest_slice, int verbose) {
       
   if (dest_slice.length()==0) dest_slice=slice;
 
   if (xy_set==false) {
+    if (verbose>2) {
+      std::cout << "Here1" << endl;
+    }
     set_xy(source.get_x_name(),source.get_nx(),source.get_x_data(),
 	   source.get_y_name(),source.get_ny(),source.get_y_data());
     new_slice(dest_slice);
@@ -510,12 +513,24 @@ void table3d::add_slice_from_table(table3d &source, std::string slice,
     return;
   }
 
+  if (verbose>2) {
+    std::cout << "Here2" << endl;
+  }
+  
   size_t szt_tmp;
+  
+  if (verbose>2) {
+    std::cout << "Creating new slice: " << dest_slice << endl;
+  }
+  
   if (!is_slice(dest_slice,szt_tmp)) new_slice(dest_slice);
   for(size_t i=0;i<numx;i++) {
-    for(size_t j=0;j<numx;j++) {
-      set(i,j,dest_slice,source.interp(get_grid_x(i),get_grid_y(j),
-				       slice));
+    for(size_t j=0;j<numy;j++) {
+      double val=source.interp(get_grid_x(i),get_grid_y(j),slice);
+      if (verbose>2) {
+        //std::cout << i << " " << j << " " << val << std::endl;
+      }
+      set(i,j,dest_slice,val);
     }
   }
   return;

@@ -1490,7 +1490,8 @@ int acol_manager::comm_insert(std::vector<std::string> &sv, bool itive_com) {
     }
 
     if (true || verbose>2) {
-      cout << "Read table3d  named " << in[1] << " from file " << in[0] << endl;
+      cout << "Read table3d named " << in[1] << " from file "
+           << in[0] << endl;
       cout << "old slice, new slice: " << in[2] << " " << in[3] << endl;
     }
 
@@ -1508,7 +1509,16 @@ int acol_manager::comm_insert(std::vector<std::string> &sv, bool itive_com) {
     hdf_input(hf,tmp,tmp_name);
     hf.close();
 
-    table3d_obj.add_slice_from_table(tmp,in[2],in[3]);
+    if (verbose>2) {
+      cout << "Original table3d object numx,numy: "
+           << table3d_obj.get_nx() << " "
+           << table3d_obj.get_ny() << endl;
+      cout << "New table3d object numx,numy: "
+           << tmp.get_nx() << " "
+           << tmp.get_ny() << endl;
+    }
+
+    table3d_obj.add_slice_from_table(tmp,in[2],in[3],3);
 
     return 0;
   }
