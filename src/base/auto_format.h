@@ -150,26 +150,33 @@ namespace o2scl_auto_format {
     std::ostream *outs;
     
     // Ensure these operators are friends
-    friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
-						      double d);
-    friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
-						      long double d);
+    friend auto_format &o2scl_auto_format::operator<<
+    (auto_format &at, double d);
+     
+    friend auto_format &o2scl_auto_format::operator<<
+    (auto_format &at, long double d);
     
 #ifdef O2SCL_LD_TYPES
-    friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
-						      const cpp_dec_float_35 &d);
-    friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
-						      const cpp_dec_float_50 &d);
-    friend auto_format &o2scl_auto_format::operator<<(auto_format &at,
-						      const cpp_dec_float_100 &d);
+    friend auto_format &o2scl_auto_format::operator<<
+    (auto_format &at, const cpp_dec_float_35 &d);
+     
+    friend auto_format &o2scl_auto_format::operator<<
+    (auto_format &at, const cpp_dec_float_50 &d);
+     
+    friend auto_format &o2scl_auto_format::operator<<
+    (auto_format &at, const cpp_dec_float_100 &d);
+     
 #endif
 
     template<class data_t>
-    friend auto_format &operator<<(auto_format &at,
-				   const boost::numeric::ublas::matrix<data_t> &vu);
+    friend auto_format &operator<<
+    (auto_format &at,
+     const boost::numeric::ublas::matrix<data_t> &vu);
+    
     template<class data_t>
-    friend auto_format &operator<<(auto_format &at,
-				   const std::vector<std::vector<data_t> > &vv);
+    friend auto_format &operator<<
+    (auto_format &at,
+     const std::vector<std::vector<data_t> > &vv);
     
   public:
 
@@ -178,11 +185,13 @@ namespace o2scl_auto_format {
     /// If true, align the output of matrices (default true)
     bool align_matrices;
     
-    /** \brief Desc
+    /** \brief Attach an ostream, so that all future output goes
+        there
      */
     void attach(std::ostream &out);
     
-    /** \brief Desc
+    /** \brief Clear the buffer and put all future output to 
+        \c std::cout 
      */
     void unattach();
     
@@ -190,7 +199,7 @@ namespace o2scl_auto_format {
      */
     void add_string(std::string s);
 
-    /** \brief Desc
+    /** \brief Set the precision of floating-point values
      */
     void precision(size_t p);
     
@@ -371,12 +380,13 @@ namespace o2scl_auto_format {
     return at;
   }
 
+  // Attempts to create an 'endl' similar to that for cout
   
-  /** \brief Desc
+  /* \brief Desc
    */
   //auto_format &operator<<(auto_format &c, o2scl_auto_format::auto_format &(*f)(o2scl_auto_format::auto_format&));
 
-  /** \brief Desc
+  /* \brief Desc
    */
   //auto_format &endl(auto_format &c);
 
