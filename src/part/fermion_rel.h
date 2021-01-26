@@ -715,11 +715,6 @@ namespace o2scl {
     
 	// Compute the upper limit for degenerate integrals
 
-	if (verbose>1) {
-	  std::cout << "calc_mu(): deg integrals."
-		    << std::endl;
-	}
-	
 	fp_t arg;
 	if (f.inc_rest_mass) {
 	  arg=pow(upper_limit_fac*temper+f.nu,2.0)-f.ms*f.ms;
@@ -746,12 +741,22 @@ namespace o2scl {
     
 	// Compute the number density
 
+	if (verbose>1) {
+	  std::cout << "calc_mu(): deg number density."
+		    << std::endl;
+	}
+
 	f.n=dit->integ(mfd,0.0,ul);
 	f.n*=prefac;
 	unc.n=dit->get_error()*prefac;
     
 	// Compute the energy density
 
+	if (verbose>1) {
+	  std::cout << "calc_mu(): deg energy density."
+		    << std::endl;
+	}
+	
 	f.ed=dit->integ(mfe,0.0,ul);
 	f.ed*=prefac;
 	unc.ed=dit->get_error()*prefac;
@@ -777,6 +782,11 @@ namespace o2scl {
 
 	// Compute the entropy
 
+	if (verbose>1) {
+	  std::cout << "calc_mu(): deg entropy."
+		    << std::endl;
+	}
+	
 	if (ll>0.0) {
 	  f.en=dit->integ(mfs,ll,ul);
 	  last_method=7;
@@ -1325,7 +1335,7 @@ namespace o2scl {
 
     /// The integrand for the density for degenerate fermions
     fp_t deg_density_fun(fp_t k, fermion_t &f, fp_t T) {
-      
+
       fp_t E=o2hypot(k,f.ms), ret;
       if (!f.inc_rest_mass) E-=f.m;
 
@@ -1336,7 +1346,6 @@ namespace o2scl {
 	O2SCL_ERR2("Returned not finite result ",
 		   "in fermion_rel::deg_density_fun().",exc_einval);
       }
-      
       return ret;
     }
 

@@ -581,7 +581,19 @@ namespace o2scl {
 
 	    set_mass_flags(p,mot,T,k);
 	    set_chem_pot(p,psi,T,k,nr_mode);
-	
+
+	    if (verbose>1) {
+	      std::cout.precision(5);
+	      if (k>=2) {
+		std::cout << "T,ms,nu,psi,mot: " << T << " "
+			  << p.ms << " " << p.nu << " "
+			  << psi << " " << mot << std::endl;
+	      } else {
+		std::cout << "T,m,mu,psi,mot: " << T << " "
+			  << p.m << " " << p.mu << " " 
+			  << psi << " " << mot << std::endl;
+	      }
+            }
 	    th.calc_mu(p,T);
 	
 	    exact.n*=pow(T,3.0);

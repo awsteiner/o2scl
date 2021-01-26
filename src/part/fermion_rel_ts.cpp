@@ -166,18 +166,36 @@ int main(void) {
   cout << dtos(f35.n,0) << "\n" << dtos(f35.ed,0) << endl;
   cout << dtos(f35.pr,0) << "\n" << dtos(f35.en,0) << endl;
   cout << endl;
+
+  // -------------
+  
+  f35.g=2;
+  f35.m=1;
+  f35.m/=100000;
+  f35.mu=10001;
+  f35.mu/=100000;
+  T35=1;
+  T35/=100;
+  cout << dtos(f35.m,0) << endl;
+  cout << dtos(f35.mu,0) << endl;
+  cout << dtos(T35,0) << endl;
+  fr35.calc_mu(f35,T35);
+  cout << "cpp_dec_float_35:" << endl;
+  cout << dtos(f35.n,0) << "\n" << dtos(f35.ed,0) << endl;
+  cout << dtos(f35.pr,0) << "\n" << dtos(f35.en,0) << endl;
+  cout << endl;
   
   // These don't work yet
   
   //part_calibrate_class_tl<long double> pcc_ld;
   //long double vx_ld=pcc_ld.part_calibrate<fermion_ld,fermion_rel_ld>
-  //(fld,frld,1,"../../data/o2scl/fermion_deriv_cal.o2",false,1,1);
+  //(fld,frld,1,"../../data/o2scl/fermion_deriv_cal.o2",false,2,true);
   //cout << vx_ld << endl;
 
   //part_calibrate_class_tl<cpp_dec_float_35> pcc_cdf35;
   //cpp_dec_float_35 vx_cdf35=pcc_cdf35.part_calibrate<fermion_cdf35,
   //fermion_rel_cdf35>
-  //(f35,fr35,1,"../../data/o2scl/fermion_deriv_cal.o2",false,1,1);
+  //(f35,fr35,1,"../../data/o2scl/fermion_deriv_cal.o2",false,3,true);
   //cout << vx_cdf35 << endl;
   
 #endif
