@@ -168,7 +168,10 @@ int main(void) {
   cout << endl;
 
   // -------------
-  
+
+  // This doesn't work yet
+
+  if (false) {
   f35.g=2;
   f35.m=1;
   f35.m/=100000;
@@ -184,6 +187,7 @@ int main(void) {
   cout << dtos(f35.n,0) << "\n" << dtos(f35.ed,0) << endl;
   cout << dtos(f35.pr,0) << "\n" << dtos(f35.en,0) << endl;
   cout << endl;
+  }
   
   // These don't work yet
   
