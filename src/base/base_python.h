@@ -79,9 +79,9 @@ void o2scl_convert_units___get_units_cmd_string(void *vp, void *p_v);
 
 void o2scl_convert_units___set_units_cmd_string(void *vp, void *p_v);
 
-double o2scl_convert_units___convert(void *vptr, char *from, char *to, double val);
+double o2scl_convert_units___convert(void *vptr, char *frm, char *to, double val);
 
-int o2scl_convert_units___convert_ret(void *vptr, char *from, char *to, double val, double converted);
+int o2scl_convert_units___convert_ret(void *vptr, char *frm, char *to, double val, double converted);
 
 void o2scl_convert_units___print_cache(void *vptr);
 

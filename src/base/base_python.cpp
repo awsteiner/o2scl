@@ -167,15 +167,15 @@ void o2scl_convert_units___set_units_cmd_string(void *vptr, void *p_v) {
   return;
 }
 
-double o2scl_convert_units___convert(void *vptr, char *from, char *to, double val) {
+double o2scl_convert_units___convert(void *vptr, char *frm, char *to, double val) {
   convert_units<> *ptr=(convert_units<> *)vptr;
-  double ret=ptr->convert(from,to,val);
+  double ret=ptr->convert(frm,to,val);
   return ret;
 }
 
-int o2scl_convert_units___convert_ret(void *vptr, char *from, char *to, double val, double converted) {
+int o2scl_convert_units___convert_ret(void *vptr, char *frm, char *to, double val, double converted) {
   convert_units<> *ptr=(convert_units<> *)vptr;
-  int ret=ptr->convert_ret(from,to,val,converted);
+  int ret=ptr->convert_ret(frm,to,val,converted);
   return ret;
 }
 

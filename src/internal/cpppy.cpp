@@ -1157,9 +1157,9 @@ int main(int argc, char *argv[]) {
     
     if (ifc.parents.size()==0) {
       if (ifc.py_name!="") {
-        fout << "class " << ifc.name << ":" << endl;
-      } else {
         fout << "class " << ifc.py_name << ":" << endl;
+      } else {
+        fout << "class " << ifc.name << ":" << endl;
       }
     } else {
       if (ifc.py_name!="") {
@@ -1333,6 +1333,15 @@ int main(int argc, char *argv[]) {
            << "::" << iff.name << "()`." << endl;
       fout << "        \"\"\"" << endl;
 
+      // Perform necessary conversions
+      for(size_t k=0;k<iff.args.size();k++) {
+        if (iff.args[k].ift.name=="std::string") {
+          fout << "        " << iff.args[k].name
+               << "_=ctypes.c_char_p(force_bytes("
+               << iff.args[k].name << "))" << endl;
+        }
+      }
+      
       // Ctypes interface for function
       fout << "        func=self._dll." << ifc.ns << "_"
            << underscoreify(ifc.name) << "_"
@@ -1368,6 +1377,8 @@ int main(int argc, char *argv[]) {
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.suffix=="&") {
           fout << iff.args[k].name << "._ptr";
+        } else if (iff.args[k].ift.name=="std::string") {
+          fout << iff.args[k].name << "_";
         } else {
           fout << iff.args[k].name;
         }
@@ -1387,7 +1398,7 @@ int main(int argc, char *argv[]) {
     
   }
 
-  // Define methods
+  // Define functions
   for(size_t j=0;j<functions.size();j++) {
     
     if_func &iff=functions[j];
@@ -1468,7 +1479,7 @@ int main(int argc, char *argv[]) {
     fout << endl;
     
   }
-  
+
   fout.close();
   
   return 0;

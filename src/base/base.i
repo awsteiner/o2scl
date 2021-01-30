@@ -72,12 +72,12 @@ class convert_units<>
 - py_name convert_units
 - function convert
   - double
-  - std::string from
+  - std::string frm
   - std::string to
   - double val
 - function convert_ret
   - int
-  - std::string from
+  - std::string frm
   - std::string to
   - double val
   - double converted
