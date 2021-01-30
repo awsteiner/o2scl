@@ -390,5 +390,3 @@ class fermion_mag_zerot
   - fermion &f
   - double qB
   - double kappa
-
-

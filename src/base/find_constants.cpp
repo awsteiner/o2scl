@@ -596,4 +596,16 @@ double find_constants::find_unique(std::string name, std::string unit) {
   }
   return matches[0].val;
 }
-  
+
+void find_constants::output_list(std::ostream &os) {
+  for(size_t i=0;i<list.size();i++) {
+    os << list[i].names[0] << " ";
+    os << list[i].unit << " ";
+    os << list[i].unit_flag << " ";
+    os << list[i].val << endl;
+    for(size_t j=1;j<list[i].names.size();j++) {
+      os << "  " << list[i].names[j] << endl;
+    }
+  }
+  return;
+}

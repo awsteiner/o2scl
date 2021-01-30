@@ -27,6 +27,7 @@
 
 using namespace std;
 using namespace o2scl;
+using namespace o2scl_hdf;
 
 void *o2scl_create_eos_base() {
   eos_base *ptr=new eos_base;
@@ -163,6 +164,210 @@ int o2scl_eos_had_base_calc_e(void *vptr, void *ptr_n, void *ptr_p, void *ptr_th
   o2scl::fermion *p=(o2scl::fermion *)ptr_p;
   o2scl::thermo *th=(o2scl::thermo *)ptr_th;
   int ret=ptr->calc_e(*n,*p,*th);
+  return ret;
+}
+
+int o2scl_eos_had_base_calc_p(void *vptr, void *ptr_n, void *ptr_p, void *ptr_th) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  o2scl::fermion *n=(o2scl::fermion *)ptr_n;
+  o2scl::fermion *p=(o2scl::fermion *)ptr_p;
+  o2scl::thermo *th=(o2scl::thermo *)ptr_th;
+  int ret=ptr->calc_p(*n,*p,*th);
+  return ret;
+}
+
+double o2scl_eos_had_base_fcomp(void *vptr, double nb, double delta) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->fcomp(nb,delta);
+  return ret;
+}
+
+double o2scl_eos_had_base_fcomp_err(void *vptr, double nb, double delta, void *ptr_unc) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double *unc=(double *)ptr_unc;
+  double ret=ptr->fcomp_err(nb,delta,*unc);
+  return ret;
+}
+
+double o2scl_eos_had_base_feoa(void *vptr, double nb, double delta) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->feoa(nb,delta);
+  return ret;
+}
+
+double o2scl_eos_had_base_fesym(void *vptr, double nb, double delta) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->fesym(nb,delta);
+  return ret;
+}
+
+double o2scl_eos_had_base_fesym_err(void *vptr, double nb, double delta, void *ptr_unc) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double *unc=(double *)ptr_unc;
+  double ret=ptr->fesym_err(nb,delta,*unc);
+  return ret;
+}
+
+double o2scl_eos_had_base_fesym_slope(void *vptr, double nb, double delta) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->fesym_slope(nb,delta);
+  return ret;
+}
+
+double o2scl_eos_had_base_fesym_curve(void *vptr, double nb, double delta) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->fesym_curve(nb,delta);
+  return ret;
+}
+
+double o2scl_eos_had_base_fesym_skew(void *vptr, double nb, double delta) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->fesym_skew(nb,delta);
+  return ret;
+}
+
+double o2scl_eos_had_base_fesym_diff(void *vptr, double nb) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->fesym_diff(nb);
+  return ret;
+}
+
+double o2scl_eos_had_base_feta(void *vptr, double nb) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->feta(nb);
+  return ret;
+}
+
+double o2scl_eos_had_base_feta_prime(void *vptr, double nb) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->feta_prime(nb);
+  return ret;
+}
+
+double o2scl_eos_had_base_fkprime(void *vptr, double nb, double delta) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->fkprime(nb,delta);
+  return ret;
+}
+
+double o2scl_eos_had_base_fmsom(void *vptr, double nb, double delta) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->fmsom(nb,delta);
+  return ret;
+}
+
+double o2scl_eos_had_base_f_effm_neut(void *vptr, double nb, double delta) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->f_effm_neut(nb,delta);
+  return ret;
+}
+
+double o2scl_eos_had_base_f_effm_prot(void *vptr, double nb, double delta) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->f_effm_prot(nb,delta);
+  return ret;
+}
+
+double o2scl_eos_had_base_f_effm_scalar(void *vptr, double nb, double delta) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->f_effm_scalar(nb,delta);
+  return ret;
+}
+
+double o2scl_eos_had_base_f_effm_vector(void *vptr, double nb, double delta) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->f_effm_vector(nb,delta);
+  return ret;
+}
+
+double o2scl_eos_had_base_fn0(void *vptr, double delta, void *ptr_leoa) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double *leoa=(double *)ptr_leoa;
+  double ret=ptr->fn0(delta,*leoa);
+  return ret;
+}
+
+void o2scl_eos_had_base_f_number_suscept(void *vptr, double mun, double mup, void *ptr_dPdnn, void *ptr_dPdnp, void *ptr_dPdpp) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double *dPdnn=(double *)ptr_dPdnn;
+  double *dPdnp=(double *)ptr_dPdnp;
+  double *dPdpp=(double *)ptr_dPdpp;
+  ptr->f_number_suscept(mun,mup,*dPdnn,*dPdnp,*dPdpp);
+  return;
+}
+
+void o2scl_eos_had_base_f_inv_number_suscept(void *vptr, double mun, double mup, void *ptr_dednn, void *ptr_dednp, void *ptr_dedpp) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double *dednn=(double *)ptr_dednn;
+  double *dednp=(double *)ptr_dednp;
+  double *dedpp=(double *)ptr_dedpp;
+  ptr->f_inv_number_suscept(mun,mup,*dednn,*dednp,*dedpp);
+  return;
+}
+
+int o2scl_eos_had_base_saturation(void *vptr) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  int ret=ptr->saturation();
+  return ret;
+}
+
+double o2scl_eos_had_base_calc_mun_e(void *vptr, double nn, double np) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->calc_mun_e(nn,np);
+  return ret;
+}
+
+double o2scl_eos_had_base_calc_mup_e(void *vptr, double nn, double np) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->calc_mup_e(nn,np);
+  return ret;
+}
+
+double o2scl_eos_had_base_calc_ed(void *vptr, double nn, double np) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->calc_ed(nn,np);
+  return ret;
+}
+
+double o2scl_eos_had_base_calc_pr(void *vptr, double nn, double np) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->calc_pr(nn,np);
+  return ret;
+}
+
+double o2scl_eos_had_base_calc_nn_p(void *vptr, double mun, double mup) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->calc_nn_p(mun,mup);
+  return ret;
+}
+
+double o2scl_eos_had_base_calc_np_p(void *vptr, double nn, double mup) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->calc_np_p(nn,mup);
+  return ret;
+}
+
+double o2scl_eos_had_base_calc_dmu_delta(void *vptr, double nb, double delta) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->calc_dmu_delta(nb,delta);
+  return ret;
+}
+
+double o2scl_eos_had_base_calc_musum_delta(void *vptr, double nb, double delta) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->calc_musum_delta(nb,delta);
+  return ret;
+}
+
+double o2scl_eos_had_base_calc_pressure_nb(void *vptr, double nb, double delta) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->calc_pressure_nb(nb,delta);
+  return ret;
+}
+
+double o2scl_eos_had_base_calc_edensity_nb(void *vptr, double nb, double delta) {
+  eos_had_base *ptr=(eos_had_base *)vptr;
+  double ret=ptr->calc_edensity_nb(nb,delta);
   return ret;
 }
 
@@ -789,6 +994,18 @@ bool o2scl_eos_quark_njl_get_fromqq(void *vptr) {
 void o2scl_eos_quark_njl_set_fromqq(void *vptr, bool v) {
   eos_quark_njl *ptr=(eos_quark_njl *)vptr;
   ptr->fromqq=v;
+  return;
+}
+
+void o2scl_skyrme_load_wrapper(void *ptr_sk, char *model, bool external, int verbose) {
+  eos_had_skyrme *sk=(eos_had_skyrme *)ptr_sk;
+  skyrme_load(*sk,model,external,verbose);
+  return;
+}
+
+void o2scl_rmf_load_wrapper(void *ptr_rmf, char *model, bool external) {
+  eos_had_rmf *rmf=(eos_had_rmf *)ptr_rmf;
+  rmf_load(*rmf,model,external);
   return;
 }
 

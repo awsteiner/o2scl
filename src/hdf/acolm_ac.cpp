@@ -51,6 +51,8 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
   find_constants fc;
   if (sv.size()>=3 && sv[2]!="none" && sv[2]!="None") {
     fc.find_print(sv[1],sv[2],prec,verbose);
+  } else if (sv[1]=="list") {
+    fc.output_list(cout);
   } else {
     fc.find_print(sv[1],"",prec,verbose);
   }

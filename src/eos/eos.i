@@ -15,6 +15,7 @@ h_include <o2scl/eos_quark_njl.h>
 h_include <o2scl/part.h>
 h_include <o2scl/fermion_nonrel.h>
 h_include <o2scl/fermion_deriv_nr.h>
+h_include <o2scl/hdf_eos_io.h>
 # 
 # Include statement for C++ source code
 # 
@@ -27,6 +28,7 @@ cpp_include <o2scl/fermion_deriv_nr.h>
 # 
 cpp_using std
 cpp_using o2scl
+cpp_using o2scl_hdf
 #
 # ------------------------------------------------------
 # 
@@ -62,6 +64,138 @@ class eos_had_base abstract
   - o2scl::fermion &n
   - o2scl::fermion &p
   - o2scl::thermo &th
+- function calc_p
+  - int
+  - o2scl::fermion &n
+  - o2scl::fermion &p
+  - o2scl::thermo &th
+- function fcomp
+  - double
+  - double nb
+  - double delta
+- function fcomp_err
+  - double
+  - double nb
+  - double delta
+  - double &unc
+- function feoa
+  - double
+  - double nb
+  - double delta
+- function fesym
+  - double
+  - double nb
+  - double delta
+- function fesym_err
+  - double
+  - double nb
+  - double delta
+  - double &unc
+- function fesym_slope
+  - double
+  - double nb
+  - double delta
+- function fesym_curve
+  - double
+  - double nb
+  - double delta
+- function fesym_skew
+  - double
+  - double nb
+  - double delta
+- function fesym_diff
+  - double
+  - double nb
+- function feta
+  - double
+  - double nb
+- function feta_prime
+  - double
+  - double nb
+- function fkprime
+  - double
+  - double nb
+  - double delta
+- function fmsom
+  - double
+  - double nb
+  - double delta
+- function f_effm_neut
+  - double
+  - double nb
+  - double delta
+- function f_effm_prot
+  - double
+  - double nb
+  - double delta
+- function f_effm_scalar
+  - double
+  - double nb
+  - double delta
+- function f_effm_vector
+  - double
+  - double nb
+  - double delta
+- function fn0
+  - double
+  - double delta
+  - double &leoa
+- function f_number_suscept
+  - void
+  - double mun
+  - double mup
+  - double &dPdnn
+  - double &dPdnp
+  - double &dPdpp
+- function f_inv_number_suscept
+  - void
+  - double mun
+  - double mup
+  - double &dednn
+  - double &dednp
+  - double &dedpp
+- function saturation
+  - int
+- function calc_mun_e
+  - double
+  - double nn
+  - double np
+- function calc_mup_e
+  - double
+  - double nn
+  - double np
+- function calc_ed
+  - double
+  - double nn
+  - double np
+- function calc_pr
+  - double
+  - double nn
+  - double np
+- function calc_nn_p
+  - double
+  - double mun
+  - double mup
+- function calc_np_p
+  - double
+  - double nn
+  - double mup
+- function calc_dmu_delta
+  - double
+  - double nb
+  - double delta
+- function calc_musum_delta
+  - double
+  - double nb
+  - double delta
+- function calc_pressure_nb
+  - double
+  - double nb
+  - double delta
+- function calc_edensity_nb
+  - double
+  - double nb
+  - double delta
 # 
 # Class eos_had_eden_base
 #
@@ -171,4 +305,19 @@ class eos_quark_njl
 # - o2scl::quark def_up
 # - o2scl::quark def_down
 # - o2scl::quark def_strange
+
+# 
+# HDF functions
+#
+function skyrme_load
+- void
+- eos_had_skyrme &sk
+- std::string model
+- bool external
+- int verbose
+function rmf_load
+- void
+- eos_had_rmf &rmf
+- std::string model
+- bool external
 

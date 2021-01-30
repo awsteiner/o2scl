@@ -147,7 +147,7 @@ namespace o2scl {
       direct Urca process turns on, and \ref deny_urca is the smallest
       density for which the direct Urca process turns off.
       
-      The squared speed of sound (in units of  \f$ c \f$ )
+      The squared speed of sound (in units of \f$ c \f$ )
       is calculated by 
       \f[
       c_s^2 = \frac{ d P }{d \varepsilon}

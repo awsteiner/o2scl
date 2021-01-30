@@ -30,6 +30,7 @@
 #include <o2scl/part.h>
 #include <o2scl/fermion_nonrel.h>
 #include <o2scl/fermion_deriv_nr.h>
+#include <o2scl/hdf_eos_io.h>
 
 extern "C" {
 
@@ -78,6 +79,70 @@ void o2scl_eos_had_base_get_def_proton(void *vp, void *p_v);
 void o2scl_eos_had_base_set_def_proton(void *vp, void *p_v);
 
 int o2scl_eos_had_base_calc_e(void *vptr, void *ptr_n, void *ptr_p, void *ptr_th);
+
+int o2scl_eos_had_base_calc_p(void *vptr, void *ptr_n, void *ptr_p, void *ptr_th);
+
+double o2scl_eos_had_base_fcomp(void *vptr, double nb, double delta);
+
+double o2scl_eos_had_base_fcomp_err(void *vptr, double nb, double delta, void *ptr_unc);
+
+double o2scl_eos_had_base_feoa(void *vptr, double nb, double delta);
+
+double o2scl_eos_had_base_fesym(void *vptr, double nb, double delta);
+
+double o2scl_eos_had_base_fesym_err(void *vptr, double nb, double delta, void *ptr_unc);
+
+double o2scl_eos_had_base_fesym_slope(void *vptr, double nb, double delta);
+
+double o2scl_eos_had_base_fesym_curve(void *vptr, double nb, double delta);
+
+double o2scl_eos_had_base_fesym_skew(void *vptr, double nb, double delta);
+
+double o2scl_eos_had_base_fesym_diff(void *vptr, double nb);
+
+double o2scl_eos_had_base_feta(void *vptr, double nb);
+
+double o2scl_eos_had_base_feta_prime(void *vptr, double nb);
+
+double o2scl_eos_had_base_fkprime(void *vptr, double nb, double delta);
+
+double o2scl_eos_had_base_fmsom(void *vptr, double nb, double delta);
+
+double o2scl_eos_had_base_f_effm_neut(void *vptr, double nb, double delta);
+
+double o2scl_eos_had_base_f_effm_prot(void *vptr, double nb, double delta);
+
+double o2scl_eos_had_base_f_effm_scalar(void *vptr, double nb, double delta);
+
+double o2scl_eos_had_base_f_effm_vector(void *vptr, double nb, double delta);
+
+double o2scl_eos_had_base_fn0(void *vptr, double delta, void *ptr_leoa);
+
+void o2scl_eos_had_base_f_number_suscept(void *vptr, double mun, double mup, void *ptr_dPdnn, void *ptr_dPdnp, void *ptr_dPdpp);
+
+void o2scl_eos_had_base_f_inv_number_suscept(void *vptr, double mun, double mup, void *ptr_dednn, void *ptr_dednp, void *ptr_dedpp);
+
+int o2scl_eos_had_base_saturation(void *vptr);
+
+double o2scl_eos_had_base_calc_mun_e(void *vptr, double nn, double np);
+
+double o2scl_eos_had_base_calc_mup_e(void *vptr, double nn, double np);
+
+double o2scl_eos_had_base_calc_ed(void *vptr, double nn, double np);
+
+double o2scl_eos_had_base_calc_pr(void *vptr, double nn, double np);
+
+double o2scl_eos_had_base_calc_nn_p(void *vptr, double mun, double mup);
+
+double o2scl_eos_had_base_calc_np_p(void *vptr, double nn, double mup);
+
+double o2scl_eos_had_base_calc_dmu_delta(void *vptr, double nb, double delta);
+
+double o2scl_eos_had_base_calc_musum_delta(void *vptr, double nb, double delta);
+
+double o2scl_eos_had_base_calc_pressure_nb(void *vptr, double nb, double delta);
+
+double o2scl_eos_had_base_calc_edensity_nb(void *vptr, double nb, double delta);
 
 void *o2scl_create_eos_had_skyrme();
 
@@ -306,5 +371,9 @@ void o2scl_eos_quark_njl_set_limit(void *vp, double v);
 bool o2scl_eos_quark_njl_get_fromqq(void *vp);
 
 void o2scl_eos_quark_njl_set_fromqq(void *vp, bool v);
+
+void o2scl_skyrme_load_wrapper(void *ptr_sk, char *model, bool external, int verbose);
+
+void o2scl_rmf_load_wrapper(void *ptr_rmf, char *model, bool external);
 
 }

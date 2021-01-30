@@ -85,7 +85,12 @@ namespace o2scl {
     /** \brief Find a unique match and return the numerical value
      */
     double find_unique(std::string name, std::string unit="");
-  
+
+    /** \brief Output the full list of constants to 
+        \c os 
+    */
+    void output_list(std::ostream &os);
+    
   };
 
 }
