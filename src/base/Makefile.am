@@ -9,7 +9,7 @@ BASE_HEADER_VAR =  err_hnd.h misc.h test_mgr.h table.h \
 	tensor.h vector.h table3d.h cli_readline.h tensor_grid.h \
 	format_float.h table_units.h exception.h uniform_grid.h \
 	shunting_yard.h interp_krige.h find_constants.h cursesw.h \
-	prev_commit.h auto_format.h
+	prev_commit.h auto_format.h base_python.h
 
 HEADER_VAR = $(BASE_HEADER_VAR)
 
@@ -17,7 +17,8 @@ BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	lib_settings.cpp misc.cpp cli.cpp \
 	test_mgr.cpp vector.cpp auto_format.cpp \
 	string_conv.cpp exception.cpp format_float.cpp \
-	shunting_yard.cpp tensor.cpp find_constants.cpp cursesw.cpp
+	shunting_yard.cpp tensor.cpp find_constants.cpp cursesw.cpp \
+	base_python.cpp
 
 BASE_SRCS = $(BASE_BASE_SRCS)
 
@@ -298,6 +299,14 @@ noinst_LTLIBRARIES = libo2scl_base.la
 libo2scl_base_la_SOURCES = $(BASE_SRCS)
 
 am__libo2scl_base_la_SOURCES_DIST = $(BASE_SRCS)
+
+# ------------------------------------------------------------
+
+interface: empty
+	../internal/cpppy base.i base_python ~/wcs/o2sclpy/o2sclpy/base \
+		| tee base_python.cpppy.out
+
+empty:
 
 # ------------------------------------------------------------
 # Misc
