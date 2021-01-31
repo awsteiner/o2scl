@@ -78,6 +78,127 @@ const char *o2scl_table___get_column_name(void *vptr, size_t icol) {
   return python_temp_string.c_str();
 }
 
+void o2scl_table___clear(void *vptr) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->clear();
+  return;
+}
+
+void o2scl_table___clear_data(void *vptr) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->clear_data();
+  return;
+}
+
+void o2scl_table___clear_table(void *vptr) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->clear_table();
+  return;
+}
+
+void o2scl_table___clear_constants(void *vptr) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->clear_constants();
+  return;
+}
+
+void *o2scl_create_table_units__() {
+  table_units<> *ptr=new table_units<>;
+  return ptr;
+}
+
+void o2scl_free_table_units__(void *vptr) {
+  table_units<> *ptr=(table_units<> *)vptr;
+  delete ptr;
+}
+
+const char *o2scl_table_units___get_unit(void *vptr, char *col) {
+  table_units<> *ptr=(table_units<> *)vptr;
+  std::string ret=ptr->get_unit(col);
+  python_temp_string=ret;
+  return python_temp_string.c_str();
+}
+
+void o2scl_table_units___set_unit(void *vptr, char *col, char *unit) {
+  table_units<> *ptr=(table_units<> *)vptr;
+  ptr->set_unit(col,unit);
+  return;
+}
+
+int o2scl_table_units___convert_to_unit(void *vptr, char *col, char *unit, bool err_on_fail) {
+  table_units<> *ptr=(table_units<> *)vptr;
+  int ret=ptr->convert_to_unit(col,unit,err_on_fail);
+  return ret;
+}
+
+void o2scl_table_units___clear_table(void *vptr) {
+  table_units<> *ptr=(table_units<> *)vptr;
+  ptr->clear_table();
+  return;
+}
+
+void *o2scl_create_table3d() {
+  table3d *ptr=new table3d;
+  return ptr;
+}
+
+void o2scl_free_table3d(void *vptr) {
+  table3d *ptr=(table3d *)vptr;
+  delete ptr;
+}
+
+void o2scl_table3d_set(void *vptr, size_t ix, size_t iy, char *name, double val) {
+  table3d *ptr=(table3d *)vptr;
+  ptr->set(ix,iy,name,val);
+  return;
+}
+
+double o2scl_table3d_get(void *vptr, size_t ix, size_t iy, char *name) {
+  table3d *ptr=(table3d *)vptr;
+  double ret=ptr->get(ix,iy,name);
+  return ret;
+}
+
+void o2scl_table3d_new_slice(void *vptr, char *slice) {
+  table3d *ptr=(table3d *)vptr;
+  ptr->new_slice(slice);
+  return;
+}
+
+size_t o2scl_table3d_get_nx(void *vptr) {
+  table3d *ptr=(table3d *)vptr;
+  size_t ret=ptr->get_nx();
+  return ret;
+}
+
+size_t o2scl_table3d_get_ny(void *vptr) {
+  table3d *ptr=(table3d *)vptr;
+  size_t ret=ptr->get_ny();
+  return ret;
+}
+
+size_t o2scl_table3d_get_nslices(void *vptr) {
+  table3d *ptr=(table3d *)vptr;
+  size_t ret=ptr->get_nslices();
+  return ret;
+}
+
+void *o2scl_create_tensor__() {
+  tensor<> *ptr=new tensor<>;
+  return ptr;
+}
+
+void o2scl_free_tensor__(void *vptr) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  delete ptr;
+}
+
+void o2scl_tensor___clear(void *vptr) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  ptr->clear();
+  return;
+}
+
 void *o2scl_create_find_constants() {
   find_constants *ptr=new find_constants;
   return ptr;
@@ -183,5 +304,21 @@ void o2scl_convert_units___print_cache(void *vptr) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   ptr->print_cache();
   return;
+}
+
+void *o2scl_create_shared_ptr_table_units__() {
+  table_units<> *ptr=new table_units<>;
+  return ptr;
+}
+
+void o2scl_free_shared_ptr_table_units__(void *vptr) {
+  table_units<> *ptr=(table_units<> *)vptr;
+  delete ptr;
+}
+
+void *o2scl_shared_ptr_table_units___ptr(void *vp) {
+  std::shared_ptr<table_units<> > *p=(std::shared_ptr<table_units<> > *)vp;
+  table_units<> *ref=p->get();
+  return ref;
 }
 

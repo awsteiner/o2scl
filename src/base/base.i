@@ -80,6 +80,11 @@ class table_units<>
 - function clear_table
   - void
 # 
+# Shared pointer for table_units<> objects
+#
+shared_ptr table_units<>
+- py_name table_units
+# 
 # Class table3d
 #
 class table3d
@@ -95,13 +100,14 @@ class table3d
   - size_t iy
   - std::string name
 - function new_slice
+  - void
   - std::string slice
 - function get_nx
   - size_t
 - function get_ny
   - size_t
 - function get_nslices
-  - std::string
+  - size_t
 # 
 # Class tensor
 #
@@ -125,6 +131,9 @@ class find_constants
   - std::string unit
 # 
 # Class convert_units<>
+#
+# Note that 'from' is a reserved keyword in python so we
+# rename it to 'frm' instead
 #
 class convert_units<>
 - py_name convert_units

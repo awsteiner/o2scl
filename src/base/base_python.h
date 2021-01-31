@@ -47,6 +47,48 @@ void o2scl_table___new_column(void *vptr, char *col);
 
 const char *o2scl_table___get_column_name(void *vptr, size_t icol);
 
+void o2scl_table___clear(void *vptr);
+
+void o2scl_table___clear_data(void *vptr);
+
+void o2scl_table___clear_table(void *vptr);
+
+void o2scl_table___clear_constants(void *vptr);
+
+void *o2scl_create_table_units__();
+
+void o2scl_free_table_units__(void *vp);
+
+const char *o2scl_table_units___get_unit(void *vptr, char *col);
+
+void o2scl_table_units___set_unit(void *vptr, char *col, char *unit);
+
+int o2scl_table_units___convert_to_unit(void *vptr, char *col, char *unit, bool err_on_fail);
+
+void o2scl_table_units___clear_table(void *vptr);
+
+void *o2scl_create_table3d();
+
+void o2scl_free_table3d(void *vp);
+
+void o2scl_table3d_set(void *vptr, size_t ix, size_t iy, char *name, double val);
+
+double o2scl_table3d_get(void *vptr, size_t ix, size_t iy, char *name);
+
+void o2scl_table3d_new_slice(void *vptr, char *slice);
+
+size_t o2scl_table3d_get_nx(void *vptr);
+
+size_t o2scl_table3d_get_ny(void *vptr);
+
+size_t o2scl_table3d_get_nslices(void *vptr);
+
+void *o2scl_create_tensor__();
+
+void o2scl_free_tensor__(void *vp);
+
+void o2scl_tensor___clear(void *vptr);
+
 void *o2scl_create_find_constants();
 
 void o2scl_free_find_constants(void *vp);
@@ -84,5 +126,11 @@ double o2scl_convert_units___convert(void *vptr, char *frm, char *to, double val
 int o2scl_convert_units___convert_ret(void *vptr, char *frm, char *to, double val, double converted);
 
 void o2scl_convert_units___print_cache(void *vptr);
+
+void *o2scl_create_shared_ptr_table_units__();
+
+void o2scl_free_shared_ptr_table_units__(void *vp);
+
+void *o2scl_shared_ptr_table_units___ptr(void *vp);
 
 }

@@ -58,6 +58,20 @@ public:
   
 };
 
+/** \brief Interface for shared pointer
+ */
+class if_shared_ptr : public if_base {
+
+public:
+
+  /// Namespace
+  std::string ns;
+  
+  /// Python name for the shared pointer type
+  std::string py_name;
+  
+};
+
 /** \brief Interface type
  */
 class if_type : public if_base {
@@ -298,6 +312,7 @@ int main(int argc, char *argv[]) {
   
   // Current namespace
   std::string ns;
+  /// Python documentation pattern
   std::string py_class_doc_pattern;
   // Current list of includes
   std::vector<std::string> h_includes;
@@ -311,6 +326,8 @@ int main(int argc, char *argv[]) {
   std::vector<if_class> classes;
   // Current list of functions
   std::vector<if_func> functions;
+  // Current list of shared pointers
+  std::vector<if_shared_ptr> sps;
   
   // Open file
   ifstream fin;
@@ -394,6 +411,28 @@ int main(int argc, char *argv[]) {
       cpp_includes.push_back(vs[1]);
       
       next_line(fin,line,vs,done);
+      
+    } else if (vs[0]=="shared_ptr") {
+      
+      if (vs.size()<2) {
+        cerr << "No argument for shared_ptr." << endl;
+        exit(-1);
+      }
+      if_shared_ptr ifss;
+      ifss.ns=ns;
+      ifss.name=vs[1];
+      
+      cout << "Shared pointer for type " << vs[1] << endl;
+      
+      next_line(fin,line,vs,done);
+      
+      if (line[0]=='-' && line[1]==' ' && vs[1]=="py_name" && vs.size()==3) {
+        ifss.py_name=vs[2];
+        cout << "  with python name " << vs[2] << endl;
+        next_line(fin,line,vs,done);
+      }
+      sps.push_back(ifss);
+      cout << endl;
       
     } else if (vs[0]=="cpp_using") {
       
@@ -774,8 +813,30 @@ int main(int argc, char *argv[]) {
       fout << endl;
       
     }
-    
+
   }
+  
+  for(size_t i=0;i<sps.size();i++) {
+    
+    if_shared_ptr &ifsp=sps[i];
+
+    // Always create a void *
+    fout << "void *" << underscoreify(ifsp.ns) << "_create_shared_ptr_"
+         << underscoreify(ifsp.name) << "();" << endl;
+    fout << endl;
+    
+    // Always free a void *
+    fout << "void " << underscoreify(ifsp.ns) << "_free_shared_ptr_"
+         << underscoreify(ifsp.name) << "(void *vp);" << endl;
+    fout << endl;
+
+    // Function to allow python to create a raw pointer from the
+    // shared pointer
+    fout << "void *" << underscoreify(ifsp.ns) << "_shared_ptr_"
+         << underscoreify(ifsp.name) << "_ptr(void *vp);" << endl;
+    fout << endl;
+      
+  }    
   
   for(size_t i=0;i<functions.size();i++) {
     
@@ -853,7 +914,8 @@ int main(int argc, char *argv[]) {
       fout << "void *" << underscoreify(ifc.ns) << "_create_"
            << underscoreify(ifc.name)
            << "() {" << endl;
-      fout << "  " << ifc.name << " *ptr=new " << ifc.name << ";" << endl;
+      fout << "  " << ifc.name << " *ptr=new " << ifc.name
+           << ";" << endl;
       fout << "  return ptr;" << endl;
       fout << "}" << endl;
       fout << endl;
@@ -862,7 +924,8 @@ int main(int argc, char *argv[]) {
       fout << "void " << underscoreify(ifc.ns) << "_free_"
            << underscoreify(ifc.name)
            << "(void *vptr) {" << endl;
-      fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
+      fout << "  " << ifc.name << " *ptr=(" << ifc.name
+           << " *)vptr;" << endl;
       fout << "  delete ptr;" << endl;
       fout << "}" << endl;
       fout << endl;
@@ -880,21 +943,26 @@ int main(int argc, char *argv[]) {
         fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
              << underscoreify(ifc.name) << "_get_" << ifv.name
              << "(void *vptr) {" << endl;
-        fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
+        fout << "  " << ifc.name << " *ptr=(" << ifc.name
+             << " *)vptr;" << endl;
         fout << "  return ptr->" << ifv.name << ";" << endl;
         fout << "}" << endl;
       } else if (ifv.ift.name=="std::string") {
         fout << "const char *" << underscoreify(ifc.ns) << "_"
-             << underscoreify(ifc.name) << "_get_" << ifv.name << "(void *vptr) {" << endl;
-        fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
-        fout << "  python_temp_string=ptr->" << ifv.name << ";" << endl;
+             << underscoreify(ifc.name) << "_get_" << ifv.name
+             << "(void *vptr) {" << endl;
+        fout << "  " << ifc.name << " *ptr=(" << ifc.name
+             << " *)vptr;" << endl;
+        fout << "  python_temp_string=ptr->" << ifv.name
+             << ";" << endl;
         fout << "  return python_temp_string.c_str();" << endl;
         fout << "}" << endl;
       } else {
         fout << "void " << underscoreify(ifc.ns) << "_"
              << underscoreify(ifc.name) << "_get_" << ifv.name
              << "(void *vptr, void *p_v) {" << endl;
-        fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
+        fout << "  " << ifc.name << " *ptr=(" << ifc.name
+             << " *)vptr;" << endl;
         fout << "  " << ifv.ift.name << " *p_t=("
              << ifv.ift.name << " *)p_v;" << endl;
         fout << "  *(p_t)=ptr->" << ifv.name << ";" << endl;
@@ -912,7 +980,8 @@ int main(int argc, char *argv[]) {
              << underscoreify(ifc.name) << "_set_"
              << ifv.name << "(void *vptr, "
              << ifv.ift.name << " v) {" << endl;
-        fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
+        fout << "  " << ifc.name << " *ptr=(" << ifc.name
+             << " *)vptr;" << endl;
         fout << "  ptr->" << ifv.name << "=v;" << endl;
         fout << "  return;" << endl;
         fout << "}" << endl;
@@ -920,7 +989,8 @@ int main(int argc, char *argv[]) {
         fout << "void " << underscoreify(ifc.ns) << "_"
              << underscoreify(ifc.name) << "_set_" << ifv.name
              << "(void *vptr, void *p_v) {" << endl;
-        fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
+        fout << "  " << ifc.name << " *ptr=(" << ifc.name
+             << " *)vptr;" << endl;
         fout << "  " << ifv.ift.name << " *p_t=("
              << ifv.ift.name << " *)p_v;" << endl;
         fout << "  ptr->" << ifv.name << "=*(p_t);" << endl;
@@ -1033,6 +1103,41 @@ int main(int argc, char *argv[]) {
     
   }
 
+  for(size_t i=0;i<sps.size();i++) {
+    
+    if_shared_ptr &ifsp=sps[i];
+
+    // Generate code for the create pointer function
+    fout << "void *" << underscoreify(ifsp.ns) << "_create_shared_ptr_"
+         << underscoreify(ifsp.name)
+         << "() {" << endl;
+    fout << "  " << ifsp.name << " *ptr=new " << ifsp.name << ";" << endl;
+    fout << "  return ptr;" << endl;
+    fout << "}" << endl;
+    fout << endl;
+    
+    // Generate code for the free pointer function
+    fout << "void " << underscoreify(ifsp.ns) << "_free_shared_ptr_"
+         << underscoreify(ifsp.name)
+         << "(void *vptr) {" << endl;
+    fout << "  " << ifsp.name << " *ptr=(" << ifsp.name << " *)vptr;" << endl;
+    fout << "  delete ptr;" << endl;
+    fout << "}" << endl;
+    fout << endl;
+
+    // Function to allow python to create a raw pointer from the
+    // shared pointer
+    fout << "void *" << underscoreify(ifsp.ns) << "_shared_ptr_"
+         << underscoreify(ifsp.name) << "_ptr(void *vp) {" << endl;
+    fout << "  std::shared_ptr<" << ifsp.name
+         << " > *p=(std::shared_ptr<" << ifsp.name << " > *)vp;" << endl;
+    fout << "  " << ifsp.name << " *ref=p->get();" << endl;
+    fout << "  return ref;" << endl;
+    fout << "}" << endl;
+    fout << endl;
+      
+  }    
+  
   for(size_t i=0;i<functions.size();i++) {
     
     if_func &iff=functions[i];
@@ -1398,6 +1503,68 @@ int main(int argc, char *argv[]) {
     
   }
 
+  // Python code for shared pointers
+  for(size_t i=0;i<sps.size();i++) {
+    
+    if_shared_ptr &ifsp=sps[i];
+    
+    if (ifsp.py_name!="") {
+      fout << "class shared_ptr_" << ifsp.py_name << "("
+           << ifsp.py_name << "):" << endl;
+    } else {
+      fout << "class shared_ptr_" << ifsp.name << "("
+           << ifsp.name << "):" << endl;
+    }
+    
+    fout << endl;
+    
+    // Initialize pointer
+    fout << "    _s_ptr=0" << endl;
+    fout << "    _ptr=0" << endl;
+    fout << "    _dll=0" << endl;
+    fout << endl;
+    
+    // Define __init__() function
+    fout << "    def __init__(self,dll):" << endl;
+    fout << "        \"\"\"" << endl;
+    fout << "        Init function for sp " << ifsp.name << " ." << endl;
+    fout << "        \"\"\"" << endl;
+    fout << endl;
+    fout << "        self._s_ptr=0" << endl;
+    fout << "        self._ptr=0" << endl;
+    fout << "        self._dll=dll" << endl;
+    fout << "        return" << endl;
+    fout << endl;
+    
+    // Define __del__() function
+    fout << "    def __del__(self):" << endl;
+    fout << "        \"\"\"" << endl;
+    fout << "        Delete function for sp " << ifsp.name << " ." << endl;
+    fout << "        \"\"\"" << endl;
+    fout << endl;
+    fout << "        f=self._dll." << ifsp.ns << "_free_shared_ptr_"
+         << underscoreify(ifsp.name) << endl;
+    fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
+    fout << "        f(self._ptr)" << endl;
+    fout << "        return" << endl;
+    fout << endl;
+
+    // Define __set_ptr() function
+    fout << "    def __set_ptr(self):" << endl;
+    fout << "        \"\"\"" << endl;
+    fout << "        Set pointer function for sp " << ifsp.name << " ." << endl;
+    fout << "        \"\"\"" << endl;
+    fout << endl;
+    fout << "        f=self._dll." << ifsp.ns << "_shared_ptr_"
+         << underscoreify(ifsp.name) << "_ptr" << endl;
+    fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
+    fout << "        f.restype=ctypes.c_void_p" << endl;
+    fout << "        self._ptr=f(self._s_ptr)" << endl;
+    fout << "        return" << endl;
+    fout << endl;
+
+  }
+  
   // Define functions
   for(size_t j=0;j<functions.size();j++) {
     
