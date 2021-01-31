@@ -309,7 +309,7 @@ int find_constants::find_nothrow(std::string name, std::string unit,
   // particle masses
   if (verbose>1) {
     std::cout << "find_constants::find_nothrow(): "
-	      << "before: " << name << endl;
+	      << "before simplify: " << name << endl;
   }
   for(size_t i=0;i<name.length();i++) {
     if (!isalnum(name[i]) && name[i]!='+' && name[i]!='-') {
@@ -319,7 +319,7 @@ int find_constants::find_nothrow(std::string name, std::string unit,
   }
   if (verbose>1) {
     std::cout << "find_constants::find_nothrow(): "
-	      << "after: " << name << endl;
+	      << "after simplify: " << name << endl;
   }
     
   // Start with a fresh list
@@ -445,6 +445,12 @@ int find_constants::find_nothrow(std::string name, std::string unit,
   }
 
   if (indexes.size()>0 && unit=="") {
+    
+    if (verbose>1) {
+      std::cout << "find_constants::find_nothrow(): "
+		<< "Multiple matches found. No unit given." << std::endl;
+    }
+
     // No unit string was given, so just return
     for(size_t i=0;i<indexes.size();i++) {
       matches.push_back(list[indexes[i]]);
@@ -458,6 +464,11 @@ int find_constants::find_nothrow(std::string name, std::string unit,
     
   if (indexes.size()>0) {
 
+    if (verbose>1) {
+      std::cout << "find_constants::find_nothrow(): "
+		<< "Multiple name matches found. Checking units." << std::endl;
+    }
+    
     // We found at least one match, check unit
       
     vector<size_t> indexes2;
@@ -467,7 +478,7 @@ int find_constants::find_nothrow(std::string name, std::string unit,
 
       if (verbose>1) {
 	std::cout << "find_constants::find_nothrow(): "
-		  << "many matches unit: " << unit << " "
+		  << "many name matches unit: " << unit << " "
 		  << list[indexes[i]].unit_flag << " "
 		  << list[indexes[i]].unit << std::endl;
       }
@@ -487,6 +498,13 @@ int find_constants::find_nothrow(std::string name, std::string unit,
       
     if (indexes2.size()==0) {
 
+      if (verbose>1) {
+	std::cout << "find_constants::find_nothrow(): "
+		  << "many name matches and unit " << unit
+                  << " specified, "
+                  << "but no unit matches." << std::endl;
+      }
+      
       // No matching unit, try to convert
       for(size_t i=0;i<indexes.size();i++) {
 	double val2;
@@ -538,6 +556,10 @@ int find_constants::find_nothrow(std::string name, std::string unit,
 
     } else {
 
+      if (verbose>1) {
+        std::cout << "At least one exact unit match was found." << std::endl;
+      }
+
       // There were exact unit matches, so set up the matches list
       for(size_t i=0;i<indexes2.size();i++) {
 	if (i==0 ||
@@ -546,9 +568,17 @@ int find_constants::find_nothrow(std::string name, std::string unit,
 	}
       }
       if (match_type==match_exact) {
-	return exact_matches_unit_match;
+        if (matches.size()==1) {
+          return one_exact_match_unit_match;
+        } else {
+          return exact_matches_unit_match;
+        }
       } else {
-	return pattern_matches_unit_match;
+        if (matches.size()==1) {
+          return one_pattern_match_unit_match;
+        } else {
+          return pattern_matches_unit_match;
+        }
       }
     }
   }
@@ -591,8 +621,10 @@ double find_constants::find_unique(std::string name, std::string unit) {
   int ret=find_nothrow(name,unit,matches);
   if (ret!=one_exact_match_unit_match &&
       ret!=one_pattern_match_unit_match) {
-    O2SCL_ERR2("Failed to find unique match in ",
-	       "find_constants::find_unique().",o2scl::exc_einval);
+    std::string err=((std::string)"Failed to find unique match for name ")+
+      name+" and unit "+unit+" in find_constants::find_unique(). "+
+      "Returned "+o2scl::itos(ret)+".";
+    O2SCL_ERR(err.c_str(),o2scl::exc_einval);
   }
   return matches[0].val;
 }

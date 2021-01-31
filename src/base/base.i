@@ -51,6 +51,64 @@ class table<>
 - function get_column_name
   - std::string
   - size_t icol
+- function clear
+  - void
+- function clear_data
+  - void
+- function clear_table
+  - void
+- function clear_constants
+  - void
+# 
+# Class table_units<>
+#
+class table_units<>
+- parent table<>
+- py_name table_units
+- function get_unit
+  - std::string
+  - std::string col
+- function set_unit
+  - void
+  - std::string col
+  - std::string unit
+- function convert_to_unit
+  - int
+  - std::string col
+  - std::string unit
+  - bool err_on_fail
+- function clear_table
+  - void
+# 
+# Class table3d
+#
+class table3d
+- function set
+  - void
+  - size_t ix
+  - size_t iy
+  - std::string name
+  - double val
+- function get
+  - double
+  - size_t ix
+  - size_t iy
+  - std::string name
+- function new_slice
+  - std::string slice
+- function get_nx
+  - size_t
+- function get_ny
+  - size_t
+- function get_nslices
+  - std::string
+# 
+# Class tensor
+#
+class tensor<>
+- py_name tensor
+- function clear
+  - void
 # 
 # Class find_constants
 #
