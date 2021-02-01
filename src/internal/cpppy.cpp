@@ -78,18 +78,32 @@ class if_type : public if_base {
   
 public:
   
-  // Const, static, etc.
+  /** \brief Type qualifiers
+
+      For example
+      - const
+      - static 
+      - static const
+
+      and 
+
+      The shared_ptr is also used as a prefix to indicate a 
+      shared pointer of a particular type.
+  */
   std::string prefix;
   
-  // *, *&, &, etc.
+  /// Ampersands and asterisks, *, *&, &, etc.
   std::string suffix;
 
-  /** \brief Desc
+  /** \brief Convert the type to a string for output
+      
+      Prefix and suffix are surrounded in parenthesis to make
+      them more clear
    */
   std::string to_string() {
     std::string s=this->name;
-    if (prefix.length()>0) s=prefix+" "+s;
-    if (suffix.length()>0) s+=" "+suffix;
+    if (prefix.length()>0) s=((std::string)"(")+prefix+") "+s;
+    if (suffix.length()>0) s+=" ("+suffix+")";
     return s;
   }
   
@@ -1005,8 +1019,9 @@ int main(int argc, char *argv[]) {
       
       if_func &iff=ifc.methods[j];
 
-      // Function header
+      // Function header. We always need a void pointer for the class
       if (iff.ret.name=="std::string") {
+        // For a string, we return a "const char *"
         fout << "const char *" << underscoreify(ifc.ns) << "_"
              << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
       } else if (iff.ret.name=="void" ||
@@ -1014,9 +1029,11 @@ int main(int argc, char *argv[]) {
                  iff.ret.name=="double" ||
                  iff.ret.name=="int" ||
                  iff.ret.name=="size_t") {
+        // If we're returning a normal C type
         fout << iff.ret.name << " " << underscoreify(ifc.ns) << "_"
              << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
       } else {
+        // If we're returning an object, then return a pointer to it
         fout << "void *" << underscoreify(ifc.ns) << "_"
              << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
       }
@@ -1042,7 +1059,8 @@ int main(int argc, char *argv[]) {
       fout << ") {" << endl;
 
       // Pointer assignment for class
-      fout << "  " << ifc.name << " *ptr=(" << ifc.name << " *)vptr;" << endl;
+      fout << "  " << ifc.name << " *ptr=("
+           << ifc.name << " *)vptr;" << endl;
       
       // Pointer assignments for arguments
       for(size_t k=0;k<iff.args.size();k++) {
@@ -1056,44 +1074,40 @@ int main(int argc, char *argv[]) {
 
       // Now generate code for actual function call and the
       // return statement
-      if (iff.ret.name=="void") {
-
+      if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
+          iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
+        // If we're returning a shared pointer, then we actually
+        // need to create a pointer to the shared pointer first
+        fout << "  std::shared_ptr<" << iff.ret.name << " > *ret=new"
+             << " std::shared_ptr<" << iff.ret.name << " >;" << endl;
+        // Then we set the shared pointer using the class
+        // member function
+        fout << "  *ret=ptr->" << iff.name << "(";
+      } else if (iff.ret.name=="void") {
         fout << "  ptr->" << iff.name << "(";
-        for(size_t k=0;k<iff.args.size();k++) {
-          if (iff.args[k].ift.suffix=="") {
-            fout << iff.args[k].name;
-          } else if (iff.args[k].ift.suffix=="&") {
-            fout << "*" << iff.args[k].name;
-          }
-          if (k!=iff.args.size()-1) {
-            fout << ",";
-          }
-        }
-        fout << ");" << endl;
-        
-        fout << "  return;" << endl;
-        
       } else {
-        
         fout << "  " << iff.ret.name << " ret=ptr->" << iff.name << "(";
-        for(size_t k=0;k<iff.args.size();k++) {
-          if (iff.args[k].ift.suffix=="") {
-            fout << iff.args[k].name;
-          } else if (iff.args[k].ift.suffix=="&") {
-            fout << "*" << iff.args[k].name;
-          }
-          if (k!=iff.args.size()-1) {
-            fout << ",";
-          }
+      }
+      
+      for(size_t k=0;k<iff.args.size();k++) {
+        if (iff.args[k].ift.suffix=="") {
+          fout << iff.args[k].name;
+        } else if (iff.args[k].ift.suffix=="&") {
+          fout << "*" << iff.args[k].name;
         }
-        fout << ");" << endl;
-
-        if (iff.ret.name=="std::string") {
-          fout << "  python_temp_string=ret;" << endl;
-          fout << "  return python_temp_string.c_str();" << endl;
-        } else {
-          fout << "  return ret;" << endl;
+        if (k!=iff.args.size()-1) {
+          fout << ",";
         }
+      }
+      fout << ");" << endl;
+        
+      if (iff.ret.name=="std::string") {
+        fout << "  python_temp_string=ret;" << endl;
+        fout << "  return python_temp_string.c_str();" << endl;
+      } else if (iff.ret.name=="void") {
+        fout << "  return;" << endl;
+      } else {
+        fout << "  return ret;" << endl;
       }
 
       // Ending function brace
@@ -1267,11 +1281,20 @@ int main(int argc, char *argv[]) {
         fout << "class " << ifc.name << ":" << endl;
       }
     } else {
+      // Go through all the classes to see if the
+      // parent class also has a py_name
+      string parent_py_name=ifc.parents[0];
+      for(size_t j=0;j<classes.size();j++) {
+        if_class &jfc=classes[j];
+        if (jfc.name==ifc.parents[0] && jfc.py_name!="") {
+          parent_py_name=jfc.py_name;
+        }
+      }
       if (ifc.py_name!="") {
-        fout << "class " << ifc.py_name << "(" << ifc.parents[0] << "):"
+        fout << "class " << ifc.py_name << "(" << parent_py_name << "):"
              << endl;
       } else {
-        fout << "class " << ifc.name << "(" << ifc.parents[0] << "):"
+        fout << "class " << ifc.name << "(" << parent_py_name << "):"
              << endl;
       }
     }

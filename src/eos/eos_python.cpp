@@ -997,6 +997,823 @@ void o2scl_eos_quark_njl_set_fromqq(void *vptr, bool v) {
   return;
 }
 
+int o2scl_eos_tov_get_verbose(void *vptr) {
+  eos_tov *ptr=(eos_tov *)vptr;
+  return ptr->verbose;
+}
+
+void o2scl_eos_tov_set_verbose(void *vptr, int v) {
+  eos_tov *ptr=(eos_tov *)vptr;
+  ptr->verbose=v;
+  return;
+}
+
+bool o2scl_eos_tov_has_baryons(void *vptr) {
+  eos_tov *ptr=(eos_tov *)vptr;
+  bool ret=ptr->has_baryons();
+  return ret;
+}
+
+void *o2scl_create_eos_tov_buchdahl() {
+  eos_tov_buchdahl *ptr=new eos_tov_buchdahl;
+  return ptr;
+}
+
+void o2scl_free_eos_tov_buchdahl(void *vptr) {
+  eos_tov_buchdahl *ptr=(eos_tov_buchdahl *)vptr;
+  delete ptr;
+}
+
+double o2scl_eos_tov_buchdahl_get_Pstar(void *vptr) {
+  eos_tov_buchdahl *ptr=(eos_tov_buchdahl *)vptr;
+  return ptr->Pstar;
+}
+
+void o2scl_eos_tov_buchdahl_set_Pstar(void *vptr, double v) {
+  eos_tov_buchdahl *ptr=(eos_tov_buchdahl *)vptr;
+  ptr->Pstar=v;
+  return;
+}
+
+void *o2scl_create_eos_tov_polytrope() {
+  eos_tov_polytrope *ptr=new eos_tov_polytrope;
+  return ptr;
+}
+
+void o2scl_free_eos_tov_polytrope(void *vptr) {
+  eos_tov_polytrope *ptr=(eos_tov_polytrope *)vptr;
+  delete ptr;
+}
+
+void o2scl_eos_tov_polytrope_set_coeff_index(void *vptr, double coeff, double index) {
+  eos_tov_polytrope *ptr=(eos_tov_polytrope *)vptr;
+  ptr->set_coeff_index(coeff,index);
+  return;
+}
+
+void *o2scl_create_eos_tov_linear() {
+  eos_tov_linear *ptr=new eos_tov_linear;
+  return ptr;
+}
+
+void o2scl_free_eos_tov_linear(void *vptr) {
+  eos_tov_linear *ptr=(eos_tov_linear *)vptr;
+  delete ptr;
+}
+
+void o2scl_eos_tov_linear_set_cs2_eps0(void *vptr, double cs2, double eps0) {
+  eos_tov_linear *ptr=(eos_tov_linear *)vptr;
+  ptr->set_cs2_eps0(cs2,eps0);
+  return;
+}
+
+void *o2scl_create_eos_tov_interp() {
+  eos_tov_interp *ptr=new eos_tov_interp;
+  return ptr;
+}
+
+void o2scl_free_eos_tov_interp(void *vptr) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  delete ptr;
+}
+
+bool o2scl_eos_tov_interp_get_err_nonconv(void *vptr) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  return ptr->err_nonconv;
+}
+
+void o2scl_eos_tov_interp_set_err_nonconv(void *vptr, bool v) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  ptr->err_nonconv=v;
+  return;
+}
+
+void o2scl_eos_tov_interp_read_table(void *vptr, void *ptr_eos, char *s_cole, char *s_colp, char *s_colnb) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  table_units<> *eos=(table_units<> *)ptr_eos;
+  ptr->read_table(*eos,s_cole,s_colp,s_colnb);
+  return;
+}
+
+void o2scl_eos_tov_interp_default_low_dens_eos(void *vptr) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  ptr->default_low_dens_eos();
+  return;
+}
+
+void o2scl_eos_tov_interp_sho11_low_dens_eos(void *vptr) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  ptr->sho11_low_dens_eos();
+  return;
+}
+
+void o2scl_eos_tov_interp_s12_low_dens_eos(void *vptr, char *model, bool external) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  ptr->s12_low_dens_eos(model,external);
+  return;
+}
+
+void o2scl_eos_tov_interp_gcp10_low_dens_eos(void *vptr, char *model, bool external) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  ptr->gcp10_low_dens_eos(model,external);
+  return;
+}
+
+void o2scl_eos_tov_interp_ngl13_low_dens_eos(void *vptr, double L, char *model, bool external) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  ptr->ngl13_low_dens_eos(L,model,external);
+  return;
+}
+
+void o2scl_eos_tov_interp_ngl13_low_dens_eos2(void *vptr, double S, double L, double nt, char *fname) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  ptr->ngl13_low_dens_eos2(S,L,nt,fname);
+  return;
+}
+
+void o2scl_eos_tov_interp_no_low_dens_eos(void *vptr) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  ptr->no_low_dens_eos();
+  return;
+}
+
+void *o2scl_create_tov_solve() {
+  tov_solve *ptr=new tov_solve;
+  return ptr;
+}
+
+void o2scl_free_tov_solve(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  delete ptr;
+}
+
+size_t o2scl_tov_solve_get_buffer_size(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->buffer_size;
+}
+
+void o2scl_tov_solve_set_buffer_size(void *vptr, size_t v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->buffer_size=v;
+  return;
+}
+
+size_t o2scl_tov_solve_get_max_table_size(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->max_table_size;
+}
+
+void o2scl_tov_solve_set_max_table_size(void *vptr, size_t v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->max_table_size=v;
+  return;
+}
+
+double o2scl_tov_solve_get_mass(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->mass;
+}
+
+void o2scl_tov_solve_set_mass(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->mass=v;
+  return;
+}
+
+double o2scl_tov_solve_get_rad(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->rad;
+}
+
+void o2scl_tov_solve_set_rad(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->rad=v;
+  return;
+}
+
+double o2scl_tov_solve_get_bmass(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->bmass;
+}
+
+void o2scl_tov_solve_set_bmass(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->bmass=v;
+  return;
+}
+
+double o2scl_tov_solve_get_gpot(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->gpot;
+}
+
+void o2scl_tov_solve_set_gpot(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->gpot=v;
+  return;
+}
+
+double o2scl_tov_solve_get_last_rjw(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->last_rjw;
+}
+
+void o2scl_tov_solve_set_last_rjw(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->last_rjw=v;
+  return;
+}
+
+double o2scl_tov_solve_get_last_f(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->last_f;
+}
+
+void o2scl_tov_solve_set_last_f(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->last_f=v;
+  return;
+}
+
+double o2scl_tov_solve_get_domega_rat(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->domega_rat;
+}
+
+void o2scl_tov_solve_set_domega_rat(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->domega_rat=v;
+  return;
+}
+
+double o2scl_tov_solve_get_pcent_max(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->pcent_max;
+}
+
+void o2scl_tov_solve_set_pcent_max(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->pcent_max=v;
+  return;
+}
+
+bool o2scl_tov_solve_get_reformat_results(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->reformat_results;
+}
+
+void o2scl_tov_solve_set_reformat_results(void *vptr, bool v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->reformat_results=v;
+  return;
+}
+
+double o2scl_tov_solve_get_baryon_mass(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->baryon_mass;
+}
+
+void o2scl_tov_solve_set_baryon_mass(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->baryon_mass=v;
+  return;
+}
+
+bool o2scl_tov_solve_get_ang_vel(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->ang_vel;
+}
+
+void o2scl_tov_solve_set_ang_vel(void *vptr, bool v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->ang_vel=v;
+  return;
+}
+
+bool o2scl_tov_solve_get_gen_rel(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->gen_rel;
+}
+
+void o2scl_tov_solve_set_gen_rel(void *vptr, bool v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->gen_rel=v;
+  return;
+}
+
+bool o2scl_tov_solve_get_calc_gpot(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->calc_gpot;
+}
+
+void o2scl_tov_solve_set_calc_gpot(void *vptr, bool v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->calc_gpot=v;
+  return;
+}
+
+double o2scl_tov_solve_get_step_min(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->step_min;
+}
+
+void o2scl_tov_solve_set_step_min(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->step_min=v;
+  return;
+}
+
+double o2scl_tov_solve_get_step_max(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->step_max;
+}
+
+void o2scl_tov_solve_set_step_max(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->step_max=v;
+  return;
+}
+
+double o2scl_tov_solve_get_step_start(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->step_start;
+}
+
+void o2scl_tov_solve_set_step_start(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->step_start=v;
+  return;
+}
+
+int o2scl_tov_solve_get_verbose(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->verbose;
+}
+
+void o2scl_tov_solve_set_verbose(void *vptr, int v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->verbose=v;
+  return;
+}
+
+size_t o2scl_tov_solve_get_max_integ_steps(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->max_integ_steps;
+}
+
+void o2scl_tov_solve_set_max_integ_steps(void *vptr, size_t v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->max_integ_steps=v;
+  return;
+}
+
+bool o2scl_tov_solve_get_err_nonconv(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->err_nonconv;
+}
+
+void o2scl_tov_solve_set_err_nonconv(void *vptr, bool v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->err_nonconv=v;
+  return;
+}
+
+double o2scl_tov_solve_get_pmax_default(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->pmax_default;
+}
+
+void o2scl_tov_solve_set_pmax_default(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->pmax_default=v;
+  return;
+}
+
+double o2scl_tov_solve_get_prbegin(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->prbegin;
+}
+
+void o2scl_tov_solve_set_prbegin(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->prbegin=v;
+  return;
+}
+
+double o2scl_tov_solve_get_prend(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->prend;
+}
+
+void o2scl_tov_solve_set_prend(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->prend=v;
+  return;
+}
+
+double o2scl_tov_solve_get_princ(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->princ;
+}
+
+void o2scl_tov_solve_set_princ(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->princ=v;
+  return;
+}
+
+double o2scl_tov_solve_get_fixed_pr_guess(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->fixed_pr_guess;
+}
+
+void o2scl_tov_solve_set_fixed_pr_guess(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->fixed_pr_guess=v;
+  return;
+}
+
+double o2scl_tov_solve_get_max_begin(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->max_begin;
+}
+
+void o2scl_tov_solve_set_max_begin(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->max_begin=v;
+  return;
+}
+
+double o2scl_tov_solve_get_max_end(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->max_end;
+}
+
+void o2scl_tov_solve_set_max_end(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->max_end=v;
+  return;
+}
+
+double o2scl_tov_solve_get_max_inc(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  return ptr->max_inc;
+}
+
+void o2scl_tov_solve_set_max_inc(void *vptr, double v) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  ptr->max_inc=v;
+  return;
+}
+
+void o2scl_tov_solve_set_eos(void *vptr, void *ptr_eos) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  eos_tov *eos=(eos_tov *)ptr_eos;
+  ptr->set_eos(*eos);
+  return;
+}
+
+int o2scl_tov_solve_mvsr(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  int ret=ptr->mvsr();
+  return ret;
+}
+
+int o2scl_tov_solve_fixed(void *vptr, double mass) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  int ret=ptr->fixed(mass);
+  return ret;
+}
+
+int o2scl_tov_solve_max(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  int ret=ptr->max();
+  return ret;
+}
+
+void *o2scl_tov_solve_get_results(void *vptr) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  std::shared_ptr<table_units<> > *ret=new std::shared_ptr<table_units<> >;
+  *ret=ptr->get_results();
+  return ret;
+}
+
+void *o2scl_create_tov_love() {
+  tov_love *ptr=new tov_love;
+  return ptr;
+}
+
+void o2scl_free_tov_love(void *vptr) {
+  tov_love *ptr=(tov_love *)vptr;
+  delete ptr;
+}
+
+int o2scl_tov_love_get_show_ode(void *vptr) {
+  tov_love *ptr=(tov_love *)vptr;
+  return ptr->show_ode;
+}
+
+void o2scl_tov_love_set_show_ode(void *vptr, int v) {
+  tov_love *ptr=(tov_love *)vptr;
+  ptr->show_ode=v;
+  return;
+}
+
+bool o2scl_tov_love_get_addl_testing(void *vptr) {
+  tov_love *ptr=(tov_love *)vptr;
+  return ptr->addl_testing;
+}
+
+void o2scl_tov_love_set_addl_testing(void *vptr, bool v) {
+  tov_love *ptr=(tov_love *)vptr;
+  ptr->addl_testing=v;
+  return;
+}
+
+bool o2scl_tov_love_get_err_nonconv(void *vptr) {
+  tov_love *ptr=(tov_love *)vptr;
+  return ptr->err_nonconv;
+}
+
+void o2scl_tov_love_set_err_nonconv(void *vptr, bool v) {
+  tov_love *ptr=(tov_love *)vptr;
+  ptr->err_nonconv=v;
+  return;
+}
+
+void o2scl_tov_love_get_results(void *vptr, void *p_v) {
+  tov_love *ptr=(tov_love *)vptr;
+  table_units<> *p_t=(table_units<> *)p_v;
+  *(p_t)=ptr->results;
+  return;
+}
+
+void o2scl_tov_love_set_results(void *vptr, void *p_v) {
+  tov_love *ptr=(tov_love *)vptr;
+  table_units<> *p_t=(table_units<> *)p_v;
+  ptr->results=*(p_t);
+  return;
+}
+
+double o2scl_tov_love_get_delta(void *vptr) {
+  tov_love *ptr=(tov_love *)vptr;
+  return ptr->delta;
+}
+
+void o2scl_tov_love_set_delta(void *vptr, double v) {
+  tov_love *ptr=(tov_love *)vptr;
+  ptr->delta=v;
+  return;
+}
+
+double o2scl_tov_love_get_eps(void *vptr) {
+  tov_love *ptr=(tov_love *)vptr;
+  return ptr->eps;
+}
+
+void o2scl_tov_love_set_eps(void *vptr, double v) {
+  tov_love *ptr=(tov_love *)vptr;
+  ptr->eps=v;
+  return;
+}
+
+int o2scl_tov_love_calc_y(void *vptr, void *ptr_yR, void *ptr_beta, void *ptr_k2, void *ptr_lambda_km5, void *ptr_lambda_cgs, bool tabulate) {
+  tov_love *ptr=(tov_love *)vptr;
+  double *yR=(double *)ptr_yR;
+  double *beta=(double *)ptr_beta;
+  double *k2=(double *)ptr_k2;
+  double *lambda_km5=(double *)ptr_lambda_km5;
+  double *lambda_cgs=(double *)ptr_lambda_cgs;
+  int ret=ptr->calc_y(*yR,*beta,*k2,*lambda_km5,*lambda_cgs,tabulate);
+  return ret;
+}
+
+void o2scl_tov_love_add_disc(void *vptr, double rd) {
+  tov_love *ptr=(tov_love *)vptr;
+  ptr->add_disc(rd);
+  return;
+}
+
+void o2scl_tov_love_clear_discs(void *vptr) {
+  tov_love *ptr=(tov_love *)vptr;
+  ptr->clear_discs();
+  return;
+}
+
+int o2scl_tov_love_calc_H(void *vptr, void *ptr_yR, void *ptr_beta, void *ptr_k2, void *ptr_lambda_km5, void *ptr_lambda_cgs) {
+  tov_love *ptr=(tov_love *)vptr;
+  double *yR=(double *)ptr_yR;
+  double *beta=(double *)ptr_beta;
+  double *k2=(double *)ptr_k2;
+  double *lambda_km5=(double *)ptr_lambda_km5;
+  double *lambda_cgs=(double *)ptr_lambda_cgs;
+  int ret=ptr->calc_H(*yR,*beta,*k2,*lambda_km5,*lambda_cgs);
+  return ret;
+}
+
+void *o2scl_create_nstar_cold() {
+  nstar_cold *ptr=new nstar_cold;
+  return ptr;
+}
+
+void o2scl_free_nstar_cold(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  delete ptr;
+}
+
+bool o2scl_nstar_cold_get_well_formed(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->well_formed;
+}
+
+void o2scl_nstar_cold_set_well_formed(void *vptr, bool v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->well_formed=v;
+  return;
+}
+
+double o2scl_nstar_cold_get_pressure_dec(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->pressure_dec;
+}
+
+void o2scl_nstar_cold_set_pressure_dec(void *vptr, double v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->pressure_dec=v;
+  return;
+}
+
+double o2scl_nstar_cold_get_allow_urca(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->allow_urca;
+}
+
+void o2scl_nstar_cold_set_allow_urca(void *vptr, double v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->allow_urca=v;
+  return;
+}
+
+double o2scl_nstar_cold_get_deny_urca(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->deny_urca;
+}
+
+void o2scl_nstar_cold_set_deny_urca(void *vptr, double v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->deny_urca=v;
+  return;
+}
+
+double o2scl_nstar_cold_get_acausal(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->acausal;
+}
+
+void o2scl_nstar_cold_set_acausal(void *vptr, double v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->acausal=v;
+  return;
+}
+
+double o2scl_nstar_cold_get_acausal_ed(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->acausal_ed;
+}
+
+void o2scl_nstar_cold_set_acausal_ed(void *vptr, double v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->acausal_ed=v;
+  return;
+}
+
+double o2scl_nstar_cold_get_acausal_pr(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->acausal_pr;
+}
+
+void o2scl_nstar_cold_set_acausal_pr(void *vptr, double v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->acausal_pr=v;
+  return;
+}
+
+double o2scl_nstar_cold_get_solver_tol(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->solver_tol;
+}
+
+void o2scl_nstar_cold_set_solver_tol(void *vptr, double v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->solver_tol=v;
+  return;
+}
+
+int o2scl_nstar_cold_get_verbose(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->verbose;
+}
+
+void o2scl_nstar_cold_set_verbose(void *vptr, int v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->verbose=v;
+  return;
+}
+
+double o2scl_nstar_cold_get_nb_start(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->nb_start;
+}
+
+void o2scl_nstar_cold_set_nb_start(void *vptr, double v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->nb_start=v;
+  return;
+}
+
+double o2scl_nstar_cold_get_nb_end(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->nb_end;
+}
+
+void o2scl_nstar_cold_set_nb_end(void *vptr, double v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->nb_end=v;
+  return;
+}
+
+double o2scl_nstar_cold_get_dnb(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->dnb;
+}
+
+void o2scl_nstar_cold_set_dnb(void *vptr, double v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->dnb=v;
+  return;
+}
+
+bool o2scl_nstar_cold_get_include_muons(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->include_muons;
+}
+
+void o2scl_nstar_cold_set_include_muons(void *vptr, bool v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->include_muons=v;
+  return;
+}
+
+bool o2scl_nstar_cold_get_err_nonconv(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->err_nonconv;
+}
+
+void o2scl_nstar_cold_set_err_nonconv(void *vptr, bool v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->err_nonconv=v;
+  return;
+}
+
+void o2scl_nstar_cold_set_eos(void *vptr, void *ptr_eos) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  eos_had_base *eos=(eos_had_base *)ptr_eos;
+  ptr->set_eos(*eos);
+  return;
+}
+
+int o2scl_nstar_cold_calc_eos(void *vptr, double np_0) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  int ret=ptr->calc_eos(np_0);
+  return ret;
+}
+
+int o2scl_nstar_cold_calc_nstar(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  int ret=ptr->calc_nstar();
+  return ret;
+}
+
+int o2scl_nstar_cold_fixed(void *vptr, double target_mass) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  int ret=ptr->fixed(target_mass);
+  return ret;
+}
+
+void *o2scl_nstar_cold_get_eos_results(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  std::shared_ptr<table_units<> > *ret=new std::shared_ptr<table_units<> >;
+  *ret=ptr->get_eos_results();
+  return ret;
+}
+
+void *o2scl_nstar_cold_get_tov_results(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  std::shared_ptr<table_units<> > *ret=new std::shared_ptr<table_units<> >;
+  *ret=ptr->get_tov_results();
+  return ret;
+}
+
 void o2scl_skyrme_load_wrapper(void *ptr_sk, char *model, bool external, int verbose) {
   eos_had_skyrme *sk=(eos_had_skyrme *)ptr_sk;
   skyrme_load(*sk,model,external,verbose);

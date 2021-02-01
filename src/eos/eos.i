@@ -16,6 +16,9 @@ h_include <o2scl/part.h>
 h_include <o2scl/fermion_nonrel.h>
 h_include <o2scl/fermion_deriv_nr.h>
 h_include <o2scl/hdf_eos_io.h>
+h_include <o2scl/nstar_cold.h>
+h_include <o2scl/tov_love.h>
+h_include <o2scl/eos_tov.h>
 # 
 # Include statement for C++ source code
 # 
@@ -305,7 +308,182 @@ class eos_quark_njl
 # - o2scl::quark def_up
 # - o2scl::quark def_down
 # - o2scl::quark def_strange
-
+# 
+# Class eos_tov
+#
+class eos_tov abstract
+- int verbose
+- function has_baryons
+  - bool
+# 
+# Class eos_tov_buchdahl
+#
+class eos_tov_buchdahl
+- parent eos_tov
+- double Pstar
+# 
+# Class eos_tov_polytrope
+#
+class eos_tov_polytrope
+- parent eos_tov
+- function set_coeff_index
+  - void
+  - double coeff
+  - double index
+# 
+# Class eos_tov_linear
+#
+class eos_tov_linear
+- parent eos_tov
+- function set_cs2_eps0
+  - void
+  - double cs2
+  - double eps0
+# 
+# Class eos_tov_interp
+#
+class eos_tov_interp
+- parent eos_tov
+- bool err_nonconv
+- function read_table
+  - void
+  - table_units<> &eos
+  - std::string s_cole
+  - std::string s_colp
+  - std::string s_colnb
+- function default_low_dens_eos
+  - void
+- function sho11_low_dens_eos
+  - void
+- function s12_low_dens_eos
+  - void
+  - std::string model
+  - bool external
+- function gcp10_low_dens_eos
+  - void
+  - std::string model
+  - bool external
+- function ngl13_low_dens_eos
+  - void
+  - double L
+  - std::string model
+  - bool external
+- function ngl13_low_dens_eos2
+  - void
+  - double S
+  - double L
+  - double nt
+  - std::string fname
+- function no_low_dens_eos
+  - void
+# 
+# Class tov_solve
+#
+class tov_solve
+- size_t buffer_size
+- size_t max_table_size
+- double mass
+- double rad
+- double bmass
+- double gpot
+- double last_rjw
+- double last_f
+- double domega_rat
+- double pcent_max
+- bool reformat_results
+- double baryon_mass
+- bool ang_vel
+- bool gen_rel
+- bool calc_gpot
+- double step_min
+- double step_max
+- double step_start
+- int verbose
+- size_t max_integ_steps
+- bool err_nonconv
+- double pmax_default
+- double prbegin
+- double prend
+- double princ
+- double fixed_pr_guess
+- double max_begin
+- double max_end
+- double max_inc
+- function set_eos
+  - void
+  - eos_tov &eos
+- function mvsr
+  - int
+- function fixed
+  - int
+  - double mass
+- function max
+  - int
+- function get_results
+  - shared_ptr table_units<>
+# 
+# Class tov_love
+#
+class tov_love
+- int show_ode
+- bool addl_testing
+- bool err_nonconv
+- table_units<> results
+- double delta
+- double eps
+- function calc_y
+  - int
+  - double &yR
+  - double &beta
+  - double &k2
+  - double &lambda_km5
+  - double &lambda_cgs
+  - bool tabulate
+- function add_disc
+  - void
+  - double rd
+- function clear_discs
+  - void
+- function calc_H
+  - int
+  - double &yR
+  - double &beta
+  - double &k2
+  - double &lambda_km5
+  - double &lambda_cgs
+# 
+# Class nstar_cold
+#
+class nstar_cold
+- function set_eos
+  - void
+  - eos_had_base &eos
+- function calc_eos
+  - int
+  - double np_0
+- function calc_nstar
+  - int
+- function fixed
+  - int
+  - double target_mass
+- bool well_formed
+- double pressure_dec
+- double allow_urca
+- double deny_urca
+- double acausal
+- double acausal_ed
+- double acausal_pr
+- double solver_tol
+- int verbose
+- function get_eos_results
+  - shared_ptr table_units<>
+- function get_tov_results
+  - shared_ptr table_units<>
+- double nb_start
+- double nb_end
+- double dnb
+- bool include_muons
+- bool err_nonconv
 # 
 # HDF functions
 #

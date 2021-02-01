@@ -31,6 +31,9 @@
 #include <o2scl/fermion_nonrel.h>
 #include <o2scl/fermion_deriv_nr.h>
 #include <o2scl/hdf_eos_io.h>
+#include <o2scl/nstar_cold.h>
+#include <o2scl/tov_love.h>
+#include <o2scl/eos_tov.h>
 
 extern "C" {
 
@@ -371,6 +374,294 @@ void o2scl_eos_quark_njl_set_limit(void *vp, double v);
 bool o2scl_eos_quark_njl_get_fromqq(void *vp);
 
 void o2scl_eos_quark_njl_set_fromqq(void *vp, bool v);
+
+int o2scl_eos_tov_get_verbose(void *vp);
+
+void o2scl_eos_tov_set_verbose(void *vp, int v);
+
+bool o2scl_eos_tov_has_baryons(void *vptr);
+
+void *o2scl_create_eos_tov_buchdahl();
+
+void o2scl_free_eos_tov_buchdahl(void *vp);
+
+double o2scl_eos_tov_buchdahl_get_Pstar(void *vp);
+
+void o2scl_eos_tov_buchdahl_set_Pstar(void *vp, double v);
+
+void *o2scl_create_eos_tov_polytrope();
+
+void o2scl_free_eos_tov_polytrope(void *vp);
+
+void o2scl_eos_tov_polytrope_set_coeff_index(void *vptr, double coeff, double index);
+
+void *o2scl_create_eos_tov_linear();
+
+void o2scl_free_eos_tov_linear(void *vp);
+
+void o2scl_eos_tov_linear_set_cs2_eps0(void *vptr, double cs2, double eps0);
+
+void *o2scl_create_eos_tov_interp();
+
+void o2scl_free_eos_tov_interp(void *vp);
+
+bool o2scl_eos_tov_interp_get_err_nonconv(void *vp);
+
+void o2scl_eos_tov_interp_set_err_nonconv(void *vp, bool v);
+
+void o2scl_eos_tov_interp_read_table(void *vptr, void *ptr_eos, char *s_cole, char *s_colp, char *s_colnb);
+
+void o2scl_eos_tov_interp_default_low_dens_eos(void *vptr);
+
+void o2scl_eos_tov_interp_sho11_low_dens_eos(void *vptr);
+
+void o2scl_eos_tov_interp_s12_low_dens_eos(void *vptr, char *model, bool external);
+
+void o2scl_eos_tov_interp_gcp10_low_dens_eos(void *vptr, char *model, bool external);
+
+void o2scl_eos_tov_interp_ngl13_low_dens_eos(void *vptr, double L, char *model, bool external);
+
+void o2scl_eos_tov_interp_ngl13_low_dens_eos2(void *vptr, double S, double L, double nt, char *fname);
+
+void o2scl_eos_tov_interp_no_low_dens_eos(void *vptr);
+
+void *o2scl_create_tov_solve();
+
+void o2scl_free_tov_solve(void *vp);
+
+size_t o2scl_tov_solve_get_buffer_size(void *vp);
+
+void o2scl_tov_solve_set_buffer_size(void *vp, size_t v);
+
+size_t o2scl_tov_solve_get_max_table_size(void *vp);
+
+void o2scl_tov_solve_set_max_table_size(void *vp, size_t v);
+
+double o2scl_tov_solve_get_mass(void *vp);
+
+void o2scl_tov_solve_set_mass(void *vp, double v);
+
+double o2scl_tov_solve_get_rad(void *vp);
+
+void o2scl_tov_solve_set_rad(void *vp, double v);
+
+double o2scl_tov_solve_get_bmass(void *vp);
+
+void o2scl_tov_solve_set_bmass(void *vp, double v);
+
+double o2scl_tov_solve_get_gpot(void *vp);
+
+void o2scl_tov_solve_set_gpot(void *vp, double v);
+
+double o2scl_tov_solve_get_last_rjw(void *vp);
+
+void o2scl_tov_solve_set_last_rjw(void *vp, double v);
+
+double o2scl_tov_solve_get_last_f(void *vp);
+
+void o2scl_tov_solve_set_last_f(void *vp, double v);
+
+double o2scl_tov_solve_get_domega_rat(void *vp);
+
+void o2scl_tov_solve_set_domega_rat(void *vp, double v);
+
+double o2scl_tov_solve_get_pcent_max(void *vp);
+
+void o2scl_tov_solve_set_pcent_max(void *vp, double v);
+
+bool o2scl_tov_solve_get_reformat_results(void *vp);
+
+void o2scl_tov_solve_set_reformat_results(void *vp, bool v);
+
+double o2scl_tov_solve_get_baryon_mass(void *vp);
+
+void o2scl_tov_solve_set_baryon_mass(void *vp, double v);
+
+bool o2scl_tov_solve_get_ang_vel(void *vp);
+
+void o2scl_tov_solve_set_ang_vel(void *vp, bool v);
+
+bool o2scl_tov_solve_get_gen_rel(void *vp);
+
+void o2scl_tov_solve_set_gen_rel(void *vp, bool v);
+
+bool o2scl_tov_solve_get_calc_gpot(void *vp);
+
+void o2scl_tov_solve_set_calc_gpot(void *vp, bool v);
+
+double o2scl_tov_solve_get_step_min(void *vp);
+
+void o2scl_tov_solve_set_step_min(void *vp, double v);
+
+double o2scl_tov_solve_get_step_max(void *vp);
+
+void o2scl_tov_solve_set_step_max(void *vp, double v);
+
+double o2scl_tov_solve_get_step_start(void *vp);
+
+void o2scl_tov_solve_set_step_start(void *vp, double v);
+
+int o2scl_tov_solve_get_verbose(void *vp);
+
+void o2scl_tov_solve_set_verbose(void *vp, int v);
+
+size_t o2scl_tov_solve_get_max_integ_steps(void *vp);
+
+void o2scl_tov_solve_set_max_integ_steps(void *vp, size_t v);
+
+bool o2scl_tov_solve_get_err_nonconv(void *vp);
+
+void o2scl_tov_solve_set_err_nonconv(void *vp, bool v);
+
+double o2scl_tov_solve_get_pmax_default(void *vp);
+
+void o2scl_tov_solve_set_pmax_default(void *vp, double v);
+
+double o2scl_tov_solve_get_prbegin(void *vp);
+
+void o2scl_tov_solve_set_prbegin(void *vp, double v);
+
+double o2scl_tov_solve_get_prend(void *vp);
+
+void o2scl_tov_solve_set_prend(void *vp, double v);
+
+double o2scl_tov_solve_get_princ(void *vp);
+
+void o2scl_tov_solve_set_princ(void *vp, double v);
+
+double o2scl_tov_solve_get_fixed_pr_guess(void *vp);
+
+void o2scl_tov_solve_set_fixed_pr_guess(void *vp, double v);
+
+double o2scl_tov_solve_get_max_begin(void *vp);
+
+void o2scl_tov_solve_set_max_begin(void *vp, double v);
+
+double o2scl_tov_solve_get_max_end(void *vp);
+
+void o2scl_tov_solve_set_max_end(void *vp, double v);
+
+double o2scl_tov_solve_get_max_inc(void *vp);
+
+void o2scl_tov_solve_set_max_inc(void *vp, double v);
+
+void o2scl_tov_solve_set_eos(void *vptr, void *ptr_eos);
+
+int o2scl_tov_solve_mvsr(void *vptr);
+
+int o2scl_tov_solve_fixed(void *vptr, double mass);
+
+int o2scl_tov_solve_max(void *vptr);
+
+void *o2scl_tov_solve_get_results(void *vptr);
+
+void *o2scl_create_tov_love();
+
+void o2scl_free_tov_love(void *vp);
+
+int o2scl_tov_love_get_show_ode(void *vp);
+
+void o2scl_tov_love_set_show_ode(void *vp, int v);
+
+bool o2scl_tov_love_get_addl_testing(void *vp);
+
+void o2scl_tov_love_set_addl_testing(void *vp, bool v);
+
+bool o2scl_tov_love_get_err_nonconv(void *vp);
+
+void o2scl_tov_love_set_err_nonconv(void *vp, bool v);
+
+void o2scl_tov_love_get_results(void *vp, void *p_v);
+
+void o2scl_tov_love_set_results(void *vp, void *p_v);
+
+double o2scl_tov_love_get_delta(void *vp);
+
+void o2scl_tov_love_set_delta(void *vp, double v);
+
+double o2scl_tov_love_get_eps(void *vp);
+
+void o2scl_tov_love_set_eps(void *vp, double v);
+
+int o2scl_tov_love_calc_y(void *vptr, void *ptr_yR, void *ptr_beta, void *ptr_k2, void *ptr_lambda_km5, void *ptr_lambda_cgs, bool tabulate);
+
+void o2scl_tov_love_add_disc(void *vptr, double rd);
+
+void o2scl_tov_love_clear_discs(void *vptr);
+
+int o2scl_tov_love_calc_H(void *vptr, void *ptr_yR, void *ptr_beta, void *ptr_k2, void *ptr_lambda_km5, void *ptr_lambda_cgs);
+
+void *o2scl_create_nstar_cold();
+
+void o2scl_free_nstar_cold(void *vp);
+
+bool o2scl_nstar_cold_get_well_formed(void *vp);
+
+void o2scl_nstar_cold_set_well_formed(void *vp, bool v);
+
+double o2scl_nstar_cold_get_pressure_dec(void *vp);
+
+void o2scl_nstar_cold_set_pressure_dec(void *vp, double v);
+
+double o2scl_nstar_cold_get_allow_urca(void *vp);
+
+void o2scl_nstar_cold_set_allow_urca(void *vp, double v);
+
+double o2scl_nstar_cold_get_deny_urca(void *vp);
+
+void o2scl_nstar_cold_set_deny_urca(void *vp, double v);
+
+double o2scl_nstar_cold_get_acausal(void *vp);
+
+void o2scl_nstar_cold_set_acausal(void *vp, double v);
+
+double o2scl_nstar_cold_get_acausal_ed(void *vp);
+
+void o2scl_nstar_cold_set_acausal_ed(void *vp, double v);
+
+double o2scl_nstar_cold_get_acausal_pr(void *vp);
+
+void o2scl_nstar_cold_set_acausal_pr(void *vp, double v);
+
+double o2scl_nstar_cold_get_solver_tol(void *vp);
+
+void o2scl_nstar_cold_set_solver_tol(void *vp, double v);
+
+int o2scl_nstar_cold_get_verbose(void *vp);
+
+void o2scl_nstar_cold_set_verbose(void *vp, int v);
+
+double o2scl_nstar_cold_get_nb_start(void *vp);
+
+void o2scl_nstar_cold_set_nb_start(void *vp, double v);
+
+double o2scl_nstar_cold_get_nb_end(void *vp);
+
+void o2scl_nstar_cold_set_nb_end(void *vp, double v);
+
+double o2scl_nstar_cold_get_dnb(void *vp);
+
+void o2scl_nstar_cold_set_dnb(void *vp, double v);
+
+bool o2scl_nstar_cold_get_include_muons(void *vp);
+
+void o2scl_nstar_cold_set_include_muons(void *vp, bool v);
+
+bool o2scl_nstar_cold_get_err_nonconv(void *vp);
+
+void o2scl_nstar_cold_set_err_nonconv(void *vp, bool v);
+
+void o2scl_nstar_cold_set_eos(void *vptr, void *ptr_eos);
+
+int o2scl_nstar_cold_calc_eos(void *vptr, double np_0);
+
+int o2scl_nstar_cold_calc_nstar(void *vptr);
+
+int o2scl_nstar_cold_fixed(void *vptr, double target_mass);
+
+void *o2scl_nstar_cold_get_eos_results(void *vptr);
+
+void *o2scl_nstar_cold_get_tov_results(void *vptr);
 
 void o2scl_skyrme_load_wrapper(void *ptr_sk, char *model, bool external, int verbose);
 
