@@ -326,6 +326,8 @@ int main(int argc, char *argv[]) {
   
   // Current namespace
   std::string ns;
+  // Current dll_name
+  std::string dll_name;
   /// Python documentation pattern
   std::string py_class_doc_pattern;
   // Current list of includes
@@ -367,6 +369,18 @@ int main(int argc, char *argv[]) {
       } else {
         ns=vs[1];
         cout << "Setting namespace to " << ns << "." << endl;
+      }
+      
+      next_line(fin,line,vs,done);
+      
+    } else if (vs[0]=="dll_name") {
+      
+      if (vs.size()==1) {
+        dll_name="";
+        cout << "Clearing dll_name." << endl;
+      } else {
+        dll_name=vs[1];
+        cout << "Setting dll_name to " << dll_name << "." << endl;
       }
       
       next_line(fin,line,vs,done);
@@ -1318,7 +1332,7 @@ int main(int argc, char *argv[]) {
     // Initialize pointer
     if (ifc.parents.size()==0) {
       fout << "    _ptr=0" << endl;
-      fout << "    _dll=0" << endl;
+      fout << "    _link=0" << endl;
       fout << endl;
     }
     
@@ -1326,17 +1340,17 @@ int main(int argc, char *argv[]) {
     if (ifc.is_abstract) {
       fout << "    @abstractmethod" << endl;
     }
-    fout << "    def __init__(self,dll):" << endl;
+    fout << "    def __init__(self,link):" << endl;
     fout << "        \"\"\"" << endl;
     fout << "        Init function for class " << ifc.name << " ." << endl;
     fout << "        \"\"\"" << endl;
     fout << endl;
-    fout << "        f=dll." << ifc.ns << "_create_"
+    fout << "        f=link." << dll_name << "." << ifc.ns << "_create_"
          << underscoreify(ifc.name) << endl;
     fout << "        f.restype=ctypes.c_void_p" << endl;
     fout << "        f.argtypes=[]" << endl;
     fout << "        self._ptr=f()" << endl;
-    fout << "        self._dll=dll" << endl;
+    fout << "        self._link=link" << endl;
     fout << "        return" << endl;
     fout << endl;
     
@@ -1346,7 +1360,7 @@ int main(int argc, char *argv[]) {
     fout << "        Delete function for class " << ifc.name << " ." << endl;
     fout << "        \"\"\"" << endl;
     fout << endl;
-    fout << "        f=self._dll." << ifc.ns << "_free_"
+    fout << "        f=self._link." << dll_name << "." << ifc.ns << "_free_"
          << underscoreify(ifc.name) << endl;
     fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
     fout << "        f(self._ptr)" << endl;
@@ -1371,7 +1385,7 @@ int main(int argc, char *argv[]) {
         fout << "        Getter function for " << ifc.name << "::"
              << ifv.name << " ." << endl;
         fout << "        \"\"\"" << endl;
-        fout << "        func=self._dll." << ifc.ns << "_"
+        fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
              << underscoreify(ifc.name)
              << "_get_" << ifv.name << endl;
         fout << "        func.restype=ctypes.c_" << ifv.ift.name << endl;
@@ -1384,7 +1398,7 @@ int main(int argc, char *argv[]) {
         fout << "        Getter function for " << ifc.name << "::"
              << ifv.name << " ." << endl;
         fout << "        \"\"\"" << endl;
-        fout << "        func=self._dll." << ifc.ns << "_"
+        fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
              << underscoreify(ifc.name)
              << "_get_" << ifv.name << endl;
         
@@ -1412,7 +1426,7 @@ int main(int argc, char *argv[]) {
         fout << "        Setter function for " << ifc.name << "::"
              << ifv.name << " ." << endl;
         fout << "        \"\"\"" << endl;
-        fout << "        func=self._dll." << ifc.ns << "_"
+        fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
              << underscoreify(ifc.name)
              << "_set_" << ifv.name << endl;
         fout << "        func.argtypes=[ctypes.c_void_p,ctypes.c_"
@@ -1425,7 +1439,7 @@ int main(int argc, char *argv[]) {
         fout << "        Setter function for " << ifc.name << "::"
              << ifv.name << " ." << endl;
         fout << "        \"\"\"" << endl;
-        fout << "        func=self._dll." << ifc.ns << "_"
+        fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
              << underscoreify(ifc.name) << "_set_" << ifv.name << endl;
         fout << "        func.argtypes=[ctypes.c_void_p,"
              << "ctypes.c_void_p]" << endl;
@@ -1481,11 +1495,11 @@ int main(int argc, char *argv[]) {
             iff.ret.name[len-1]=='>') {
           tmps=iff.ret.name.substr(0,len-2);
         }
-        fout << "        sp=shared_ptr_"+tmps+"()" << endl;
+        fout << "        sp=shared_ptr_"+tmps+"(link)" << endl;
       }
       
       // Ctypes interface for function
-      fout << "        func=self._dll." << ifc.ns << "_"
+      fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
            << underscoreify(ifc.name) << "_"
            << iff.name << endl;
       if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
@@ -1567,18 +1581,18 @@ int main(int argc, char *argv[]) {
     // Initialize pointer
     fout << "    _s_ptr=0" << endl;
     fout << "    _ptr=0" << endl;
-    fout << "    _dll=0" << endl;
+    fout << "    _link=0" << endl;
     fout << endl;
     
     // Define __init__() function
-    fout << "    def __init__(self,dll):" << endl;
+    fout << "    def __init__(self,link):" << endl;
     fout << "        \"\"\"" << endl;
     fout << "        Init function for sp " << ifsp.name << " ." << endl;
     fout << "        \"\"\"" << endl;
     fout << endl;
     fout << "        self._s_ptr=0" << endl;
     fout << "        self._ptr=0" << endl;
-    fout << "        self._dll=dll" << endl;
+    fout << "        self._link=link" << endl;
     fout << "        return" << endl;
     fout << endl;
     
@@ -1588,7 +1602,7 @@ int main(int argc, char *argv[]) {
     fout << "        Delete function for sp " << ifsp.name << " ." << endl;
     fout << "        \"\"\"" << endl;
     fout << endl;
-    fout << "        f=self._dll." << ifsp.ns << "_free_shared_ptr_"
+    fout << "        f=self._link." << dll_name << "." << ifsp.ns << "_free_shared_ptr_"
          << underscoreify(ifsp.name) << endl;
     fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
     fout << "        f(self._ptr)" << endl;
@@ -1601,7 +1615,7 @@ int main(int argc, char *argv[]) {
     fout << "        Set pointer function for sp " << ifsp.name << " ." << endl;
     fout << "        \"\"\"" << endl;
     fout << endl;
-    fout << "        f=self._dll." << ifsp.ns << "_shared_ptr_"
+    fout << "        f=self._link." << dll_name << "." << ifsp.ns << "_shared_ptr_"
          << underscoreify(ifsp.name) << "_ptr" << endl;
     fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
     fout << "        f.restype=ctypes.c_void_p" << endl;
@@ -1617,7 +1631,7 @@ int main(int argc, char *argv[]) {
     if_func &iff=functions[j];
     
     // Function header
-    fout << "def " << iff.name << "(dll,";
+    fout << "def " << iff.name << "(link,";
     for(size_t k=0;k<iff.args.size();k++) {
       fout << iff.args[k].name;
       if (k!=iff.args.size()-1) {
@@ -1641,7 +1655,7 @@ int main(int argc, char *argv[]) {
     }
       
     // Ctypes interface for function
-    fout << "    func=dll." << iff.ns << "_" << iff.name
+    fout << "    func=link." << dll_name << "." << iff.ns << "_" << iff.name
          << "_wrapper" << endl;
     if (iff.ret.name!="void") {
       if (iff.ret.name=="std::string") {

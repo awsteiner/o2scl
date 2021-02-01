@@ -2,6 +2,7 @@
 #
 namespace o2scl
 py_class_doc_pattern "Python interface for class :ref:`%name% <o2scle:%name%>`."
+dll_name o2scl_eos
 # 
 # Include statements for C++ header file
 # 
