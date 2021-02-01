@@ -33,6 +33,12 @@ cpp_using std
 cpp_using o2scl
 cpp_using o2scl_hdf
 #
+# Additional python headers
+#
+# We need shared_ptr_table_units from base
+#
+py_header from o2sclpy.base import *
+#
 # ------------------------------------------------------
 # 
 # Class eos_base

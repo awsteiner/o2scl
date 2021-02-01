@@ -1476,6 +1476,7 @@ int main(int argc, char *argv[]) {
           iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
         size_t len=iff.ret.name.length();
         std::string tmps=iff.ret.name;
+        // Manually remove '<>' from the typename if necessary
         if (len>2 && iff.ret.name[len-2]=='<' &&
             iff.ret.name[len-1]=='>') {
           tmps=iff.ret.name.substr(0,len-2);
