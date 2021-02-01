@@ -1469,53 +1469,75 @@ int main(int argc, char *argv[]) {
                << iff.args[k].name << "))" << endl;
         }
       }
+
+      // If we're returning a shared pointer, first create
+      // the python version of the shared pointer object
+      if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
+          iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
+        size_t len=iff.ret.name.length();
+        std::string tmps=iff.ret.name;
+        if (len>2 && iff.ret.name[len-2]=='<' &&
+            iff.ret.name[len-1]=='>') {
+          tmps=iff.ret.name.substr(0,len-2);
+        }
+        fout << "        sp=shared_ptr_"+tmps+"()" << endl;
+      }
       
       // Ctypes interface for function
       fout << "        func=self._dll." << ifc.ns << "_"
            << underscoreify(ifc.name) << "_"
            << iff.name << endl;
-      if (iff.ret.name!="void") {
+      if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
+          iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
+        fout << "        func.restype=ctypes.c_void_p" << endl;
+      } else if (iff.ret.name!="void") {
         if (iff.ret.name=="std::string") {
           fout << "        func.restype=ctypes.c_char_p" << endl;
         } else {
           fout << "        func.restype=ctypes.c_" << iff.ret.name << endl;
         }
       }
-      fout << "        func.argtypes=[ctypes.c_void_p,";
+      fout << "        func.argtypes=[ctypes.c_void_p";
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.suffix=="&") {
-          fout << "ctypes.c_void_p";
+          fout << ",ctypes.c_void_p";
         } else if (iff.args[k].ift.name=="std::string") {
-          fout << "ctypes.c_char_p";
+          fout << ",ctypes.c_char_p";
         } else {
-          fout << "ctypes.c_" << iff.args[k].ift.name;
-        }
-        if (k!=iff.args.size()-1) {
-          fout << ",";
+          fout << ",ctypes.c_" << iff.args[k].ift.name;
         }
       }
       fout << "]" << endl;
 
       // Call C++ wrapper function
-      if (iff.ret.name=="void") {
-        fout << "        func(self._ptr,";
+      if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
+          iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
+        fout << "        sp._s_ptr=f(self._ptr)" << endl;
+        fout << "        sp.__set_ptr()" << endl;
       } else {
-        fout << "        ret=func(self._ptr,";
-      }
-      for(size_t k=0;k<iff.args.size();k++) {
-        if (iff.args[k].ift.suffix=="&") {
-          fout << iff.args[k].name << "._ptr";
-        } else if (iff.args[k].ift.name=="std::string") {
-          fout << iff.args[k].name << "_";
+        if (iff.ret.name=="void") {
+          fout << "        func(self._ptr,";
         } else {
-          fout << iff.args[k].name;
+          fout << "        ret=func(self._ptr,";
         }
-        if (k!=iff.args.size()-1) fout << ",";
+        for(size_t k=0;k<iff.args.size();k++) {
+          if (iff.args[k].ift.suffix=="&") {
+            fout << iff.args[k].name << "._ptr";
+          } else if (iff.args[k].ift.name=="std::string") {
+            fout << iff.args[k].name << "_";
+          } else {
+            fout << iff.args[k].name;
+          }
+          if (k!=iff.args.size()-1) fout << ",";
+        }
+        fout << ")" << endl;
       }
-      fout << ")" << endl;
 
       // Return
-      if (iff.ret.name=="void") {
+      if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
+          iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
+        fout << "        return sp" << endl;
+      } else if (iff.ret.name=="void") {
         fout << "        return" << endl;
       } else {
         fout << "        return ret" << endl;
