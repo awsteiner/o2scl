@@ -1495,7 +1495,7 @@ int main(int argc, char *argv[]) {
             iff.ret.name[len-1]=='>') {
           tmps=iff.ret.name.substr(0,len-2);
         }
-        fout << "        sp=shared_ptr_"+tmps+"(link)" << endl;
+        fout << "        sp=shared_ptr_"+tmps+"(self._link)" << endl;
       }
       
       // Ctypes interface for function
@@ -1527,8 +1527,8 @@ int main(int argc, char *argv[]) {
       // Call C++ wrapper function
       if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
           iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
-        fout << "        sp._s_ptr=f(self._ptr)" << endl;
-        fout << "        sp.__set_ptr()" << endl;
+        fout << "        sp._s_ptr=func(self._ptr)" << endl;
+        fout << "        sp.set_pointer()" << endl;
       } else {
         if (iff.ret.name=="void") {
           fout << "        func(self._ptr,";
@@ -1609,8 +1609,8 @@ int main(int argc, char *argv[]) {
     fout << "        return" << endl;
     fout << endl;
 
-    // Define __set_ptr() function
-    fout << "    def __set_ptr(self):" << endl;
+    // Define set_pointer() function
+    fout << "    def set_pointer(self):" << endl;
     fout << "        \"\"\"" << endl;
     fout << "        Set pointer function for sp " << ifsp.name << " ." << endl;
     fout << "        \"\"\"" << endl;
