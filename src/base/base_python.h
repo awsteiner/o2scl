@@ -55,6 +55,8 @@ void o2scl_table___clear_table(void *vptr);
 
 void o2scl_table___clear_constants(void *vptr);
 
+void o2scl_table___index_operator(void *vptr, char *col, double **dptr, int *n);
+
 void *o2scl_create_table_units__();
 
 void o2scl_free_table_units__(void *vp);

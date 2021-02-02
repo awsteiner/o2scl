@@ -353,6 +353,8 @@ int main(int argc, char *argv[]) {
   std::string line;
   std::vector<std::string> vs;
   bool done=false;
+
+  bool import_numpy=false;
   
   next_line(fin,line,vs,done);
   if (done==true) {
@@ -500,6 +502,9 @@ int main(int argc, char *argv[]) {
           
           if_func iff;
           iff.name=vs[2];
+          if (iff.name=="operator[]") {
+            iff.name="index_operator";
+          }
           cout << "  Starting member function " << vs[2] << endl;
 
           next_line(fin,line,vs,done);
@@ -516,6 +521,11 @@ int main(int argc, char *argv[]) {
           cout << "    Member function " << iff.name
                << " has return type "
                << iff.ret.to_string() << endl;
+          if ((iff.ret.name=="vector<double>" ||
+               iff.ret.name=="std::vector<double>") &&
+              iff.ret.suffix=="&") {
+            import_numpy=true;
+          }
 
           next_line(fin,line,vs,done);
           
@@ -807,6 +817,13 @@ int main(int argc, char *argv[]) {
       if (iff.ret.name=="std::string") {
         fout << "const char *" << underscoreify(ifc.ns) << "_"
              << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
+      } else if ((iff.ret.name=="vector<double>" ||
+                  iff.ret.name=="std::vector<double>") &&
+                 iff.ret.suffix=="&") {
+        // For a std::vector<double> &, we return a void, but add
+        // double pointer and integer output parameters
+        fout << "void " << underscoreify(ifc.ns) << "_"
+             << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
       } else if (iff.ret.name=="void" ||
                  iff.ret.name=="bool" ||
                  iff.ret.name=="double" ||
@@ -835,6 +852,12 @@ int main(int argc, char *argv[]) {
         if (k!=iff.args.size()-1) {
           fout << ", ";
         }
+      }
+
+      if ((iff.ret.name=="vector<double>" ||
+           iff.ret.name=="std::vector<double>") &&
+          iff.ret.suffix=="&") {
+        fout << ", double **dptr, int *n";
       }
       
       fout << ");" << endl;
@@ -1038,6 +1061,11 @@ int main(int argc, char *argv[]) {
         // For a string, we return a "const char *"
         fout << "const char *" << underscoreify(ifc.ns) << "_"
              << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
+      } else if ((iff.ret.name=="vector<double>" ||
+                  iff.ret.name=="std::vector<double>") &&
+                 iff.ret.suffix=="&") {
+        fout << "void " << underscoreify(ifc.ns) << "_"
+             << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
       } else if (iff.ret.name=="void" ||
                  iff.ret.name=="bool" ||
                  iff.ret.name=="double" ||
@@ -1070,6 +1098,12 @@ int main(int argc, char *argv[]) {
         }
       }
       
+      if ((iff.ret.name=="vector<double>" ||
+           iff.ret.name=="std::vector<double>") &&
+          iff.ret.suffix=="&") {
+        fout << ", double **dptr, int *n";
+      }
+      
       fout << ") {" << endl;
 
       // Pointer assignment for class
@@ -1097,6 +1131,15 @@ int main(int argc, char *argv[]) {
         // Then we set the shared pointer using the class
         // member function
         fout << "  *ret=ptr->" << iff.name << "(";
+      } else if ((iff.ret.name=="vector<double>" ||
+                  iff.ret.name=="std::vector<double>") &&
+                 iff.ret.suffix=="&") {
+        // For a std::vector<double> &, just return a pointer
+        if (iff.name=="index_operator") {
+          fout << "  *dptr=&(ptr->operator[](";
+        } else {
+          fout << "  *dptr=ptr->" << iff.name << "(";
+        }
       } else if (iff.ret.name=="void") {
         fout << "  ptr->" << iff.name << "(";
       } else {
@@ -1113,15 +1156,24 @@ int main(int argc, char *argv[]) {
           fout << ",";
         }
       }
-      fout << ");" << endl;
-        
-      if (iff.ret.name=="std::string") {
-        fout << "  python_temp_string=ret;" << endl;
-        fout << "  return python_temp_string.c_str();" << endl;
-      } else if (iff.ret.name=="void") {
+      
+      if ((iff.ret.name=="vector<double>" ||
+           iff.ret.name=="std::vector<double>") &&
+          iff.ret.suffix=="&") {
+        fout << ")[0]);" << endl;
+        fout << "  *n=ptr->get_nlines();" << endl;
         fout << "  return;" << endl;
       } else {
-        fout << "  return ret;" << endl;
+        fout << ");" << endl;
+        
+        if (iff.ret.name=="std::string") {
+          fout << "  python_temp_string=ret;" << endl;
+          fout << "  return python_temp_string.c_str();" << endl;
+        } else if (iff.ret.name=="void") {
+          fout << "  return;" << endl;
+        } else {
+          fout << "  return ret;" << endl;
+        }
       }
 
       // Ending function brace
@@ -1277,6 +1329,9 @@ int main(int argc, char *argv[]) {
   fout << "import ctypes" << endl;
   fout << "from abc import abstractmethod" << endl;
   fout << "from o2sclpy.utils import force_bytes" << endl;
+  if (import_numpy) {
+    fout << "import numpy" << endl;
+  }
   fout << endl;
   
   for(size_t i=0;i<py_headers.size();i++) {
@@ -1455,7 +1510,11 @@ int main(int argc, char *argv[]) {
       if_func &iff=ifc.methods[j];
 
       // Function header
-      fout << "    def " << iff.name << "(self";
+      if (iff.name=="index_operator") {
+        fout << "    def __getitem__(self";
+      } else {
+        fout << "    def " << iff.name << "(self";
+      }
       if (iff.args.size()>0) {
         fout << ",";
       }
@@ -1502,7 +1561,12 @@ int main(int argc, char *argv[]) {
       fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
            << underscoreify(ifc.name) << "_"
            << iff.name << endl;
-      if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
+      if ((iff.ret.name=="vector<double>" ||
+           iff.ret.name=="std::vector<double>") &&
+          iff.ret.suffix=="&") {
+        fout << "        func.restype=ctypes.POINTER(ctypes.c_double)"
+             << endl;
+      } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
           iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
         fout << "        func.restype=ctypes.c_void_p" << endl;
       } else if (iff.ret.name!="void") {
@@ -1547,15 +1611,22 @@ int main(int argc, char *argv[]) {
         }
         fout << ")" << endl;
       }
-
-      // Return
-      if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
-          iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
-        fout << "        return sp" << endl;
-      } else if (iff.ret.name=="void") {
-        fout << "        return" << endl;
+      
+      if ((iff.ret.name=="vector<double>" ||
+           iff.ret.name=="std::vector<double>") &&
+          iff.ret.suffix=="&") {
+        fout << "        ret2=numpy.ctypeslib.as_array(ret,shape=(n,))" << endl;
+        fout << "        return ret2" << endl;
       } else {
-        fout << "        return ret" << endl;
+        // Return
+        if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
+            iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
+          fout << "        return sp" << endl;
+        } else if (iff.ret.name=="void") {
+          fout << "        return" << endl;
+        } else {
+          fout << "        return ret" << endl;
+        }
       }
       fout << endl;
       

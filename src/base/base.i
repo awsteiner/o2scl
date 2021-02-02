@@ -60,6 +60,9 @@ class table<>
   - void
 - function clear_constants
   - void
+- function operator[]
+  - vector<double> &
+  - std::string col
 # 
 # Class table_units<>
 #
