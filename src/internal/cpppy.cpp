@@ -1136,7 +1136,8 @@ int main(int argc, char *argv[]) {
                  iff.ret.suffix=="&") {
         // For a std::vector<double> &, just return a pointer
         if (iff.name=="index_operator") {
-          fout << "  *dptr=&(ptr->operator[](";
+          // In case it's const, we have to explicitly typecast
+          fout << "  *dptr=(double *)(&(ptr->operator[](";
         } else {
           fout << "  *dptr=ptr->" << iff.name << "(";
         }
@@ -1160,7 +1161,7 @@ int main(int argc, char *argv[]) {
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
           iff.ret.suffix=="&") {
-        fout << ")[0]);" << endl;
+        fout << ")[0]));" << endl;
         fout << "  *n=ptr->get_nlines();" << endl;
         fout << "  return;" << endl;
       } else {
@@ -1564,8 +1565,8 @@ int main(int argc, char *argv[]) {
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
           iff.ret.suffix=="&") {
-        fout << "        func.restype=ctypes.POINTER(ctypes.c_double)"
-             << endl;
+        fout << "        n_=ctypes.c_int(0)" << endl;
+        fout << "        ptr_=ctypes.POINTER(ctypes.c_double)()" << endl;
       } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
           iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
         fout << "        func.restype=ctypes.c_void_p" << endl;
@@ -1586,10 +1587,30 @@ int main(int argc, char *argv[]) {
           fout << ",ctypes.c_" << iff.args[k].ift.name;
         }
       }
+      if ((iff.ret.name=="vector<double>" ||
+           iff.ret.name=="std::vector<double>") &&
+          iff.ret.suffix=="&") {
+        fout << ",ctypes.POINTER(ctypes.POINTER(ctypes.c_double)),";
+        fout << "ctypes.POINTER(ctypes.c_int)";
+      }
       fout << "]" << endl;
 
       // Call C++ wrapper function
-      if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
+      if ((iff.ret.name=="vector<double>" ||
+           iff.ret.name=="std::vector<double>") &&
+          iff.ret.suffix=="&") {
+        fout << "        func(self._ptr";
+        for(size_t k=0;k<iff.args.size();k++) {
+          if (iff.args[k].ift.suffix=="&") {
+            fout << "," << iff.args[k].name << "._ptr";
+          } else if (iff.args[k].ift.name=="std::string") {
+            fout << "," << iff.args[k].name << "_";
+          } else {
+            fout << "," << iff.args[k].name;
+          }
+        }
+        fout << ",ctypes.byref(ptr_),ctypes.byref(n_))" << endl;;
+      } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
           iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
         fout << "        sp._s_ptr=func(self._ptr)" << endl;
         fout << "        sp.set_pointer()" << endl;
@@ -1615,8 +1636,9 @@ int main(int argc, char *argv[]) {
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
           iff.ret.suffix=="&") {
-        fout << "        ret2=numpy.ctypeslib.as_array(ret,shape=(n,))" << endl;
-        fout << "        return ret2" << endl;
+        fout << "        ret=numpy.ctypeslib.as_array(ptr_,shape=(n_.value,))"
+             << endl;
+        fout << "        return ret" << endl;
       } else {
         // Return
         if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||

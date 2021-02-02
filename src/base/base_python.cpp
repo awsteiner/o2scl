@@ -104,7 +104,7 @@ void o2scl_table___clear_constants(void *vptr) {
 
 void o2scl_table___index_operator(void *vptr, char *col, double **dptr, int *n) {
   table<> *ptr=(table<> *)vptr;
-  *dptr=&(ptr->operator[](col)[0]);
+  *dptr=(double *)(&(ptr->operator[](col)[0]));
   *n=ptr->get_nlines();
   return;
 }
