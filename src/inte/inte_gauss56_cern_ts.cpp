@@ -31,8 +31,6 @@ using namespace o2scl;
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 #endif
 
-double testfun(double tx, double &pa);
-
 double testfun(double tx, double &pa) {
   return (pa*sin(tx)/(tx+0.01));
 }

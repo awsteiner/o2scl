@@ -594,6 +594,7 @@ namespace o2scl {
 			  << psi << " " << mot << std::endl;
 	      }
             }
+            
 	    th.calc_mu(p,T);
 	
 	    exact.n*=pow(T,3.0);
@@ -760,6 +761,19 @@ namespace o2scl {
 	      p.mu=p.m;
 	    }
 
+	    if (verbose>1) {
+	      std::cout.precision(5);
+	      if (k>=2) {
+		std::cout << "T,ms,n,psi,mot: " << T << " "
+			  << p.ms << " " << p.n << " "
+			  << psi << " " << mot << std::endl;
+	      } else {
+		std::cout << "T,m,n,psi,mot: " << T << " "
+			  << p.m << " " << p.n << " "
+			  << psi << " " << mot << std::endl;
+	      }
+            }
+            
 	    th.calc_density(p,T);
 	
 	    if (k>=2) {
@@ -780,16 +794,6 @@ namespace o2scl {
 			      mot_bad,psi_bad,ret_local);
 
 	    if (verbose>1) {
-	      std::cout.precision(5);
-	      if (k>=2) {
-		std::cout << "T,ms,n,psi,mot: " << T << " "
-			  << p.ms << " " << p.n << " "
-			  << psi << " " << mot << std::endl;
-	      } else {
-		std::cout << "T,m,n,psi,mot: " << T << " "
-			  << p.m << " " << p.n << " "
-			  << psi << " " << mot << std::endl;
-	      }
 	      std::cout.precision(6);
 	      if (k>=2) {
 		std::cout << "nu,ed,pr,en: " << std::endl;
@@ -896,6 +900,12 @@ namespace o2scl {
 	      set_mass_flags(p,mot,T,k);
 	      set_chem_pot(p,psi,T,k,nr_mode);
 	
+	      if (verbose>1) {
+		std::cout.precision(5);
+		std::cout << "T,m,mu,psi,mot: " << T << " " << p.m << " "
+			  << p.mu << " " << psi << " " << mot << std::endl;
+              }
+              
 	      th.pair_mu(p,T);
 	
 	      exact.n*=pow(T,3.0);
@@ -923,9 +933,6 @@ namespace o2scl {
                  mot_bad,psi_bad,ret_local);
               
 	      if (verbose>1) {
-		std::cout.precision(5);
-		std::cout << "T,m,mu,psi,mot: " << T << " " << p.m << " "
-			  << p.mu << " " << psi << " " << mot << std::endl;
 		std::cout.precision(6);
 		std::cout << i << " " << exact.m << " " << exact.ms << " "
 			  << exact.mu << " " << exact.nu << std::endl;
@@ -1036,6 +1043,17 @@ namespace o2scl {
 	      // Give it a guess for the chemical potential
 	      p.mu=p.m;
 
+	      if (verbose>1) {
+		std::cout.precision(5);
+		if (k>=2) {
+		  std::cout << "T,ms,n,psi,mot: " << T << " " << p.ms << " " 
+			    << p.n << " " << psi << " " << mot << std::endl;
+		} else {
+		  std::cout << "T,m,n,psi,mot: " << T << " " << p.m << " " 
+			    << p.n << " " << psi << " " << mot << std::endl;
+		}
+              }
+              
 	      th.pair_density(p,T);
 
 	      if (k>=2) {
@@ -1057,14 +1075,6 @@ namespace o2scl {
 	    
 	    
 	      if (verbose>1) {
-		std::cout.precision(5);
-		if (k>=2) {
-		  std::cout << "T,ms,n,psi,mot: " << T << " " << p.ms << " " 
-			    << p.n << " " << psi << " " << mot << std::endl;
-		} else {
-		  std::cout << "T,m,n,psi,mot: " << T << " " << p.m << " " 
-			    << p.n << " " << psi << " " << mot << std::endl;
-		}
 		std::cout.precision(6);
 		if (k>=2) {
 		  std::cout << "nu,ed,pr,en: " << std::endl;

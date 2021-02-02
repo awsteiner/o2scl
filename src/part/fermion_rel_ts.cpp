@@ -107,6 +107,7 @@ int main(void) {
 
   fermion_ld fld;
   fermion_rel_ld frld;
+  fermion_rel_ld2 frld2;
   
   fermion_cdf35 f35;
   fermion_rel_cdf35 fr35;
@@ -172,29 +173,46 @@ int main(void) {
   // This doesn't work yet
 
   if (false) {
-  f35.g=2;
-  f35.m=1;
-  f35.m/=100000;
-  f35.mu=10001;
-  f35.mu/=100000;
-  T35=1;
-  T35/=100;
-  cout << dtos(f35.m,0) << endl;
-  cout << dtos(f35.mu,0) << endl;
-  cout << dtos(T35,0) << endl;
-  fr35.calc_mu(f35,T35);
-  cout << "cpp_dec_float_35:" << endl;
-  cout << dtos(f35.n,0) << "\n" << dtos(f35.ed,0) << endl;
-  cout << dtos(f35.pr,0) << "\n" << dtos(f35.en,0) << endl;
-  cout << endl;
+    f35.g=2;
+    f35.m=1;
+    f35.m/=100000;
+    f35.mu=10001;
+    f35.mu/=100000;
+    T35=1;
+    T35/=100;
+    cout << dtos(f35.m,0) << endl;
+    cout << dtos(f35.mu,0) << endl;
+    cout << dtos(T35,0) << endl;
+    fr35.calc_mu(f35,T35);
+    cout << "cpp_dec_float_35:" << endl;
+    cout << dtos(f35.n,0) << "\n" << dtos(f35.ed,0) << endl;
+    cout << dtos(f35.pr,0) << "\n" << dtos(f35.en,0) << endl;
+    cout << endl;
   }
-  
+
+  if (false) {
+    Tld=0.01L;
+    fld.m=1.0e-5L;
+    fld.g=2;
+    fld.mu=1.0001e-1L;
+    frld2.pair_mu(fld,Tld);
+    cout << "long double:" << endl;
+    cout << dtos(fld.n,0) << " " << dtos(fld.ed,0) << endl;
+    cout << dtos(fld.pr,0) << " " << dtos(fld.en,0) << endl;
+    cout << endl;
+  }
+
   // These don't work yet
   
   //part_calibrate_class_tl<long double> pcc_ld;
   //long double vx_ld=pcc_ld.part_calibrate<fermion_ld,fermion_rel_ld>
   //(fld,frld,1,"../../data/o2scl/fermion_deriv_cal.o2",false,2,true);
   //cout << vx_ld << endl;
+
+  //part_calibrate_class_tl<long double> pcc_ld;
+  //long double vx_ld2=pcc_ld.part_calibrate<fermion_ld,fermion_rel_ld2>
+  //(fld,frld2,1,"../../data/o2scl/fermion_deriv_cal.o2",false,2,true);
+  //cout << vx_ld2 << endl;
 
   //part_calibrate_class_tl<cpp_dec_float_35> pcc_cdf35;
   //cpp_dec_float_35 vx_cdf35=pcc_cdf35.part_calibrate<fermion_cdf35,

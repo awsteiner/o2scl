@@ -86,7 +86,7 @@ void test_iac(test_mgr &t, func_t &f, fp_t acc,
   diff=fabs(calc-exact);
   cout << calc << " " << exact << " " << diff << " "
        << ei << endl;
-  cout << "subdivisions: ";
+  cout << "  subdivisions: ";
   cout << iac.get_nsubdivisions() << endl;
   cout << endl;
 
@@ -95,10 +95,10 @@ void test_iac(test_mgr &t, func_t &f, fp_t acc,
     typedef boost::numeric::ublas::vector<fp_t> ubvector;
     ubvector xlo(n), xhi(n), val(n), err(n);
     iac.get_subdivisions(xlo,xhi,val,err);
-    cout << "xlo              xhi               ";
+    cout << "  xlo              xhi               ";
     cout << "val              err              " << endl;;
     for(size_t i=0;i<n;i+=10) {
-      cout << xlo[i] << " " << xhi[i] << " ";
+      cout << "  " << xlo[i] << " " << xhi[i] << " ";
       cout.setf(ios::showpos);
       cout << val[i] << " ";
       cout.unsetf(ios::showpos);
@@ -119,6 +119,8 @@ int main(void) {
   cout.precision(10);
 
   {
+    cout << "inte_adapt_cern, double, testfun:\n  ";
+    
     double a=0.01, diff;
     funct tf=std::bind(testfun,std::placeholders::_1,a);
     test_iac<funct,double,
@@ -129,7 +131,7 @@ int main(void) {
 
 #ifdef O2SCL_LD_TYPES
     
-    cout << "iac, long double, testfun:\n  ";
+    cout << "inte_adapt_cern, long double, testfun:\n  ";
     
     long double a_ld=0.01L, diff_ld;
     funct_ld tf_ld=std::bind(testfun_ld,std::placeholders::_1,a_ld);
@@ -139,7 +141,8 @@ int main(void) {
       (t,tf_ld,1.0e-15,"iac, long double, testfun",diff_ld);
     t.test_abs<long double>(diff_ld,0.0,1.0e-14,"inte_adapt_cern_ld");
 
-    cout << "iac, cpp_dec_float_50, testfun:\n  ";
+    cout << "inte_adapt_cern, cpp_dec_float_50, testfun:\n  ";
+    
     cpp_dec_float_50 one=1.0, diff_cdf;
     cpp_dec_float_50 hundred=100.0;
     cpp_dec_float_50 a_cdf=one/hundred;
@@ -156,76 +159,66 @@ int main(void) {
   }
 
   if (true) {
+
+    cout << "inte_transform with inte_adapt_cern, double precision, "
+         << "sin_recip:\n  " << endl;
     
     double calc, ei, diff;
-    // Test qagil_cern with double precision
-    
-    cout << "iqc, double prec, sin_recip:\n  ";
-    inte_transform<funct,inte_adapt_cern<>,double> iqc;
-    //inte_qagil_cern<funct> iqc;
+
+    inte_transform<funct,inte_adapt_cern<>,double> it_iac;
     double exact=1.0-cos(100.0/101.0);
     funct tf2=std::bind(sin_recip,std::placeholders::_1);
-    iqc.integ_il_err(tf2,-1.0,calc,ei);
+    it_iac.integ_il_err(tf2,-1.0,calc,ei);
     diff=fabs(calc-exact);
     cout << calc << " " << exact << " " << diff << " " << ei << endl;
-    t.test_rel<double>(calc,exact,1.0e-12,"iqc double");
+    t.test_rel<double>(calc,exact,1.0e-12,"it_iac double");
     cout << endl;
   
 #ifdef O2SCL_LD_TYPES
 
-    // Test qagil_cern with long double precision
-    cout << "iqc, long double prec, sin_recip:\n  ";
+    cout << "inte_transform with inte_adapt_cern, long double precision, "
+         << "sin_recip:\n  " << endl;
     
     inte_transform<funct_ld,inte_adapt_cern
 		   <funct_ld,inte_gauss56_cern
 		    <funct_ld,long double,
 		     inte_gauss56_coeffs_long_double>,100,
-		    long double>,long double> iqc_ld;
+		    long double>,long double> it_iac_ld;
 
-    //inte_qagil_cern<funct_ld,
-    //inte_gauss56_cern<funct_ld,long double,
-    //inte_gauss56_coeffs_long_double>,
-    //100,long double> iqc_ld;
-    
     long double exact_ld=1.0L-cos(100.0L/101.0L);
     funct_ld tf2_ld=std::bind(sin_recip_ld,std::placeholders::_1);
     long double calc_ld, ei_ld;
-    iqc_ld.def_inte.tol_rel=1.0e-15;
-    iqc_ld.def_inte.tol_abs=1.0e-15;
-    iqc_ld.integ_il_err(tf2_ld,-1.0,calc_ld,ei_ld);
+    it_iac_ld.def_inte.tol_rel=1.0e-15;
+    it_iac_ld.def_inte.tol_abs=1.0e-15;
+    it_iac_ld.integ_il_err(tf2_ld,-1.0,calc_ld,ei_ld);
     long double diff_ld=fabs(calc_ld-exact_ld);
     cout << calc_ld << " " << exact_ld << " "
 	 << diff_ld << " " << ei_ld << endl;
-    t.test_rel<double>(calc_ld,exact_ld,1.0e-15,"iqc double");
+    t.test_rel<double>(calc_ld,exact_ld,1.0e-15,"it_iac double");
     cout << endl;
     
-    // Test qagil_cern with cpp_dec_float_50 precision
-    cout << "iqc, cdf 50 prec, sin_recip:\n  ";
+    cout << "inte_transform with inte_adapt_cern, cpp_dec_float_50 precision, "
+         << "sin_recip:\n  " << endl;
     
     inte_transform<funct_cdf50,inte_adapt_cern
 		   <funct_cdf50,inte_gauss56_cern
 		    <funct_cdf50,cpp_dec_float_50,
 		     inte_gauss56_coeffs_cpp_dec_float_50>,100,
-		    cpp_dec_float_50>,cpp_dec_float_50> iqc_cdf;
-    
-    //inte_qagil_cern<funct_cdf,
-    //inte_gauss56_cern<funct_cdf50,cpp_dec_float_50,
-    //inte_gauss56_coeffs_cpp_dec_float_50>,
-    //1000,cpp_dec_float_50> iqc_cdf;
+		    cpp_dec_float_50>,cpp_dec_float_50> it_iac_cdf;
     
     cpp_dec_float_50 one=1.0;
     cpp_dec_float_50 hundred=100.0;
     cpp_dec_float_50 exact_cdf=one-cos(hundred/(hundred+one));
     funct_cdf50 tf2_cdf=std::bind(sin_recip_cdf,std::placeholders::_1);
     cpp_dec_float_50 calc_cdf, ei_cdf;
-    iqc_cdf.def_inte.tol_rel=1.0e-30;
-    iqc_cdf.def_inte.tol_abs=1.0e-30;
-    iqc_cdf.integ_il_err(tf2_cdf,-one,calc_cdf,ei_cdf);
+    it_iac_cdf.def_inte.tol_rel=1.0e-30;
+    it_iac_cdf.def_inte.tol_abs=1.0e-30;
+    it_iac_cdf.integ_il_err(tf2_cdf,-one,calc_cdf,ei_cdf);
     cpp_dec_float_50 diff_cdf=fabs(calc_cdf-exact_cdf);
     cout << calc_cdf << " " << exact_cdf << " "
 	 << diff_cdf << " " << ei_cdf << endl;
     t.test_rel_boost<cpp_dec_float_50>(calc_cdf,exact_cdf,1.0e-29,
-				       "iqc cpp_dec_float_50");
+				       "it_iac cpp_dec_float_50");
     cout << endl;
 
 #endif

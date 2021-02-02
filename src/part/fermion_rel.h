@@ -1800,20 +1800,30 @@ namespace o2scl {
    */
   class fermion_rel_ld : public
   fermion_rel_tl<
+    // the fermion type
     fermion_tl<long double>,
+    // the Fermi-Dirac integrator
     fermi_dirac_integ_direct<
       long double,funct_cdf35,25,
       boost::multiprecision::number<
 	boost::multiprecision::cpp_dec_float<35> > >,
+    // the Bessel-exp integrator
     bessel_K_exp_integ_direct<
       long double,funct_cdf35,25,
       boost::multiprecision::number<
 	boost::multiprecision::cpp_dec_float<35> > >,
+    // The non-degenerate integrator
     inte_tanh_sinh_boost<funct_ld,25,long double>,
+    // The degenerate integrator
     inte_tanh_sinh_boost<funct_ld,25,long double>,
+    // The density solver
     root_brent_gsl<funct_ld,long double>,
+    // The parent solver for massless fermions
     root_brent_gsl<funct_ld,long double>,
-    funct_ld,long double> {
+    // The function type
+    funct_ld,
+    // The floating-point type
+    long double> {
     
   public:
     
@@ -1851,44 +1861,122 @@ namespace o2scl {
     }
     
   };
+
+  class fermion_rel_ld2 : public
+  fermion_rel_tl<
+    // the fermion type
+    fermion_tl<long double>,
+    // the Fermi-Dirac integrator
+    fermi_dirac_integ_direct<
+      long double,funct_cdf35,25,
+      boost::multiprecision::number<
+	boost::multiprecision::cpp_dec_float<35> > >,
+    // the Bessel-exp integrator
+    bessel_K_exp_integ_direct<
+      long double,funct_cdf35,25,
+      boost::multiprecision::number<
+	boost::multiprecision::cpp_dec_float<35> > >,
+    // The non-degenerate integrator
+    inte_transform<funct_ld,inte_adapt_cern
+		   <funct_ld,inte_gauss56_cern
+		    <funct_ld,long double,
+		     inte_gauss56_coeffs_long_double>,1000,
+		    long double>,long double>,
+    // The degenerate integrator
+    inte_adapt_cern<funct_ld,inte_gauss56_cern<funct_ld,long double,
+                                               inte_gauss56_coeffs_long_double>,
+                    1000,long double>,
+    // The density solver
+    root_brent_gsl<funct_ld,long double>,
+    // The parent solver for massless fermions
+    root_brent_gsl<funct_ld,long double>,
+    // The function type
+    funct_ld,
+    // The floating-point type
+    long double> {
+
+  public:
+
+    fermion_rel_ld2() {
+      // See output of polylog_ts for numeric limit information
+      
+      // Tolerance for the integrator for massless fermions
+      this->fd_integ.set_tol(1.0e-21);
+
+      // Tolerance for the integrator for the nondegenerate expansion
+      this->be_integ.set_tol(1.0e-21);
+
+      // Internal function tolerances
+
+      // This could be as large as log(1.0e4932)=11400,
+      // but only 200 is used for double, so we try this for now.
+      this->exp_limit=4000.0;
+      
+      // log(1.0e18) is 41.4
+      this->upper_limit_fac=42.0;
+      this->deg_entropy_fac=42.0;
+      this->tol_expan=1.0e-17;
+
+      // Solver tolerances
+      this->def_density_root.tol_abs=1.0e-18;
+      this->def_massless_root.tol_abs=1.0e-18;
+
+      // Integrator tolerances
+      this->def_dit.tol_abs=1.0e-16;
+      this->def_dit.tol_rel=1.0e-16;
+      this->def_nit.tol_abs=1.0e-15;
+      this->def_nit.tol_rel=1.0e-15;
+    }
+    
+  };
   
   /** \brief Equation of state for a relativistic fermion using 
       35 decimal digit precision
    */
   class fermion_rel_cdf35 : public
   fermion_rel_tl<
+    // the fermion type
     fermion_tl<
       boost::multiprecision::number<
 	boost::multiprecision::cpp_dec_float<35> > >,
+    // the Fermi-Dirac integrator
     fermi_dirac_integ_direct<
       boost::multiprecision::number<
 	boost::multiprecision::cpp_dec_float<35> >,
       funct_cdf50,30,
       boost::multiprecision::number<
 	boost::multiprecision::cpp_dec_float<50> > >,
+    // the Bessel-exp integrator
     bessel_K_exp_integ_direct
     <boost::multiprecision::number<
        boost::multiprecision::cpp_dec_float<35> >,
      funct_cdf50,30,
      boost::multiprecision::number<
        boost::multiprecision::cpp_dec_float<50> > >,
+    // The non-degenerate integrator
     inte_tanh_sinh_boost<
       funct_cdf35,30,
       boost::multiprecision::number<
 	boost::multiprecision::cpp_dec_float<35> > >,
+    // The degenerate integrator
     inte_tanh_sinh_boost<
       funct_cdf35,30,
       boost::multiprecision::number<
 	boost::multiprecision::cpp_dec_float<35> > >,
+    // The density solver
     root_brent_gsl<
       funct_cdf35,
       boost::multiprecision::number<
 	boost::multiprecision::cpp_dec_float<35> > >,
+    // The parent solver for massless fermions
     root_brent_gsl<
       funct_cdf35,boost::multiprecision::number<
 		    boost::multiprecision::cpp_dec_float<35> > >,
-    funct_cdf35,boost::multiprecision::number<
-		  boost::multiprecision::cpp_dec_float<35> > > {
+    // The function type
+    funct_cdf35,
+    // The floating-point type
+    boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<35> > > {
     
   public:
     
