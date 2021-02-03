@@ -597,14 +597,14 @@ void eos_had_phen::load_files() {
   string name;
 
   // Open the neutron star data file
-  std::string ns_file="data/qmc_twop_10_0_out";
+  std::string ns_file=o2scl_settings.get_data_dir()+"/qmc_twop_10_0_out";
   o2scl_hdf::hdf_file hf;
   hf.open(ns_file);
   o2scl_hdf::hdf_input(hf,nstar_tab,name);
   hf.close();
 
   // Open the Skyrme data file
-  std::string UNEDF_file="data/thetaANL-1002x12.o2";
+  std::string UNEDF_file=o2scl_settings.get_data_dir()+"/thetaANL-1002x12.o2";
   hf.open(UNEDF_file);
   o2scl_hdf::hdf_input(hf,UNEDF_tab,name);
   hf.close();
@@ -2889,8 +2889,7 @@ int eos_had_phen::mcarlo_data(std::vector<std::string> &sv, bool itive_com) {
   static const int N=10000;
   for(int j=0;j<N;j++){
     
-    std::vector<std::string> obj;
-    random(obj,false);
+    random();
 
     vector<double> line={((double)j),eos_S,eos_L,qmc_a,qmc_b,qmc_alpha,
 			 qmc_beta,((double)i_ns),((double)i_skyrme),phi,
@@ -2950,8 +2949,7 @@ int eos_had_phen::vir_comp(std::vector<std::string> &sv, bool itive_com) {
   t2.line_of_names("log_nB zn F_vir");
 
   for(int j=0;j<1000;j++){
-    std::vector<std::string> obj;
-    random(obj,false);
+    random();
 
     for(double nb=1.0e-4;nb<4.001e-1;nb*=pow(4000.0,1.0/99.0)) {
       neutron.n=nb/2.0;
@@ -3296,7 +3294,7 @@ int eos_had_phen::select_internal(int i_ns_loc, int i_skyrme_loc,
   return 0;
 }
 
-int eos_had_phen::random(std::vector<std::string> &sv, bool itive_com) {
+int eos_had_phen::random() {
 
   // This function never fails, and it requires a call to
   // free_energy_density(), so we set this to true

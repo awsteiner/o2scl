@@ -548,7 +548,7 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
   
   eost->clear();
   eost->line_of_names(((string)"ed pr nb mun mup mue nn np ne kfn ")+
-		      "kfp kfe fcs2 dednb_Ye dPdnb_Ye");
+		      "kfp kfe");
   eost->set_unit("ed","1/fm^4");
   eost->set_unit("pr","1/fm^4");
   eost->set_unit("nb","1/fm^3");
@@ -561,16 +561,6 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
   eost->set_unit("kfn","1/fm");
   eost->set_unit("kfp","1/fm");
   eost->set_unit("kfe","1/fm");
-  eost->set_unit("dednb_Ye","1/fm");
-  eost->set_unit("dPdnb_Ye","1/fm");
-  if (include_muons) {
-    eost->new_column("mumu");
-    eost->new_column("nmu");
-    eost->new_column("kfmu");
-    eost->set_unit("mumu","1/fm");
-    eost->set_unit("nmu","1/fm^3");
-    eost->set_unit("kfmu","1/fm");
-  }
   
   double x;
   if (fabs(np_0)<1.0e-12) x=nb_start/3.0;
@@ -621,28 +611,6 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
     }
 
     // ------------------------------------------------------------
-    // Compute dP/de at fixed Ye and Ymu. This code uses np.n and
-    // pp.n, so we'll have to recompute them below.
-
-    // Compute the hadronic part
-    double dednb_Yp, dPdnb_Yp;
-    hepT->const_pf_derivs(barn,pp.n/barn,dednb_Yp,dPdnb_Yp);
-    // Compute the leptonic part
-    double dne_dmue=sqrt(e.mu*e.mu-e.m*e.m)*e.mu/pi2;
-    double dP_dne=e.n/dne_dmue;
-    // Put them together
-    double numer=dPdnb_Yp+dP_dne*e.n/barn;
-    double denom=dednb_Yp+e.mu*e.n/barn;
-    // Add the muon contribution
-    if (include_muons && mu.n>0.0) {
-      double dnmu_dmumu=sqrt(mu.mu*mu.mu-mu.m*mu.m)*mu.mu/pi2;
-      double dP_dnmu=mu.n/dnmu_dmumu;
-      numer+=dP_dnmu*mu.n/barn;
-      denom+=mu.mu*mu.n/barn;
-    }
-    double fcs2=numer/denom;
-
-    // ------------------------------------------------------------
 
     // Recompute np.n and pp.n
     y=solve_fun_T(x,hb,T);
@@ -651,17 +619,17 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
 
       h=hb+e+mu;
       
-      double line[18]={h.ed,h.pr,barn,np.mu,pp.mu,e.mu,np.n,pp.n,e.n,
-		       np.kf,pp.kf,e.kf,fcs2,denom,numer,mu.mu,mu.n,mu.kf};
-      eost->line_of_data(18,line);
+      double line[12]={h.ed,h.pr,barn,np.mu,pp.mu,e.mu,np.n,pp.n,e.n,
+		       np.kf,pp.kf,e.kf};
+      eost->line_of_data(12,line);
 
     } else {
 
       h=hb+e;
 
-      double line[15]={h.ed,h.pr,barn,np.mu,pp.mu,e.mu,np.n,pp.n,e.n,
-		       np.kf,pp.kf,e.kf,fcs2,denom,numer};
-      eost->line_of_data(15,line);
+      double line[12]={h.ed,h.pr,barn,np.mu,pp.mu,e.mu,np.n,pp.n,e.n,
+		       np.kf,pp.kf,e.kf};
+      eost->line_of_data(12,line);
 
     }
     
@@ -680,115 +648,8 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
     // Proceed to next baryon density
   }
 
-  // Calculate the squared speed of sound. If the EOS becomes acausal,
-  // calculate the density and pressure at which this happens
-
-  well_formed=true;
-  if (eost->get("ed",0)<=0.0) {
-    well_formed=false;
-    if (verbose>0) {
-      cout << "Initial energy density is negative." << endl;
-    }
-  }
-  if (pressure_dec>nb_start) {
-    if (verbose>0) {
-      cout << "Pressure is flat near a baryon density of " << pressure_dec
-	   << " 1/fm^3." << endl;
-    }
-    well_formed=false;
-  }
-  for(size_t i=0;i<eost->get_nlines()-1;i++) {
-    if (eost->get("ed",i)>eost->get("ed",i+1) ||
-	eost->get("pr",i)>eost->get("pr",i+1) ||
-	eost->get("pr",i)<0.0) {
-      if (verbose>0) {
-	cout << "Pressure is negative, the energy density is decreasing, "
-	     << "or the pressure is decreasing" << endl;
-	cout << " near a baryon density of " << eost->get("nb",i) 
-	     << " 1/fm^3." << endl;
-      }
-      well_formed=false;
-    }
-  }
-
   if (verbose>0) {
-    cout << "well_formed: " << well_formed << endl;
-  }
-
-  if (well_formed==false) {
-    // We don't use the CONV macro here because we
-    // want to return only if err_nonconv is true
-    if (err_nonconv) {
-      O2SCL_ERR("EOS not well-formed in nstar_hot::calc_eos().",
-		    exc_efailed);
-    }
-  }
-
-  acausal=0.0;
-  acausal_pr=0.0;
-  acausal_ed=0.0;
-
-  if (well_formed) {
-    eost->deriv("ed","pr","cs2");
-    for(size_t i=0;i<eost->get_nlines()-1;i++) {
-      if (eost->get("cs2",i)>=0.99) {
-	acausal=eost->interp("cs2",1.0,"nb");
-	acausal_pr=eost->interp("cs2",1.0,"pr");
-	acausal_ed=eost->interp("cs2",1.0,"ed");
-	i=eost->get_nlines();
-      }
-    }
-  } else {
-    eost->new_column("cs2");
-    for(size_t i=0;i<eost->get_nlines();i++) {
-      eost->set("cs2",i,0.0);
-    }
-  }
-
-  if (verbose>0) {
-    cout << "The EOS is acausal at nb=" << acausal << ", ed="
-	 << acausal_ed << ", pr="
-	 << acausal_pr << " ." << endl;
-  }
-    
-  // Naively fix the equation of state so that it is not acausal
-
-  if (false) {
-    for(size_t i=0;i<eost->get_nlines()-1;i++) {
-      if (eost->get("ed",i)>acausal_ed) {
-	eost->set("pr",i,eost->get("ed",i)+acausal_pr-acausal_ed);
-      }
-    }
-  }
-
-  // Calculate the adiabatic index and the Urca threshold
-
-  eost->new_column("logp");
-  eost->new_column("loge");
-
-  if (verbose>0) {
-    cout << "Computing adiabatic index: " << endl;
-  }
-  
-  if (well_formed) {
-    for(size_t i=0;i<eost->get_nlines();i++) {
-      eost->set("logp",i,log(eost->get("pr",i)));
-      eost->set("loge",i,log(eost->get("ed",i))); 
-    }
-    eost->deriv("loge","logp","ad_index");
-  } else {
-    for(size_t i=0;i<eost->get_nlines();i++) {
-      eost->set("logp",i,0.0);
-      eost->set("loge",i,0.0);
-    }
-    eost->new_column("ad_index");
-    for(size_t i=0;i<eost->get_nlines();i++) {
-      eost->set("ad_index",i,0.0);
-    }
-  }
-
-  if (verbose>0) {
-    cout << "Done with calc_eos()." << endl;
+    cout << "Done with nstar_hot::calc_eos()." << endl;
   }
   
   return 0;

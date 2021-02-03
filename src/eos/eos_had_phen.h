@@ -530,6 +530,14 @@ namespace o2scl {
       return 0;
     }
     
+    /** \brief Equation of state as a function of densities at 
+	zero temperature
+    */
+    virtual int calc_e(fermion &n, fermion &p, 
+                       thermo &th) {
+      return calc_temp_e(n,p,0.0,th);
+    }
+    
     /// \name Command-line interface functions [public]
     //@{
     /** \brief Construct a table at fixed electron fraction
@@ -569,7 +577,7 @@ namespace o2scl {
 
     /** \brief Select a random model
      */
-    int random(std::vector<std::string> &sv, bool itive_com);
+    int random();
 
     /** \brief Compute the data for the comparison figures
      */
