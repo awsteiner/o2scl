@@ -853,26 +853,35 @@ int main(int argc, char *argv[]) {
             ifv.ift.name=="double" ||
             ifv.ift.name=="int" ||
             ifv.ift.name=="size_t") {
-          if (ifv.py_name.length()>0) {
-            fout << "void " << underscoreify(ifc.ns) << "_"
-                 << underscoreify(ifc.name) << "_set_" << ifv.py_name
-                 << "(void *vp, "
-                 << ifv.ift.name << " v);" << endl;
+          fout << "void " << underscoreify(ifc.ns) << "_"
+               << underscoreify(ifc.name) << "_set_"
+               << ifv.name << "(void *vptr, "
+               << ifv.ift.name << " v)";
+          if (header) {
+            fout << ";" << endl;
           } else {
-            fout << "void " << underscoreify(ifc.ns) << "_"
-                 << underscoreify(ifc.name) << "_set_" << ifv.name
-                 << "(void *vp, "
-                 << ifv.ift.name << " v);" << endl;
+            fout << " {" << endl;
+            fout << "  " << ifc.name << " *ptr=(" << ifc.name
+                 << " *)vptr;" << endl;
+            fout << "  ptr->" << ifv.name << "=v;" << endl;
+            fout << "  return;" << endl;
+            fout << "}" << endl;
           }
         } else {
-          if (ifv.py_name.length()>0) {
-            fout << "void " << underscoreify(ifc.ns) << "_"
-                 << underscoreify(ifc.name) << "_set_" << ifv.py_name
-                 << "(void *vp, void *p_v);" << endl;
+          fout << "void " << underscoreify(ifc.ns) << "_"
+               << underscoreify(ifc.name) << "_set_" << ifv.name
+               << "(void *vptr, void *p_v)";
+          if (header) {
+            fout << ";" << endl;
           } else {
-            fout << "void " << underscoreify(ifc.ns) << "_"
-                 << underscoreify(ifc.name) << "_set_" << ifv.name
-                 << "(void *vp, void *p_v);" << endl;
+            fout << " {" << endl;
+            fout << "  " << ifc.name << " *ptr=(" << ifc.name
+                 << " *)vptr;" << endl;
+            fout << "  " << ifv.ift.name << " *p_t=("
+                 << ifv.ift.name << " *)p_v;" << endl;
+            fout << "  ptr->" << ifv.name << "=*(p_t);" << endl;
+            fout << "  return;" << endl;
+            fout << "}" << endl;
           }
         }
         fout << endl;
@@ -881,33 +890,37 @@ int main(int argc, char *argv[]) {
       for(size_t j=0;j<ifc.methods.size();j++) {
       
         if_func &iff=ifc.methods[j];
-      
-        // Function header
+
+        string ret_type;
+        string extra_args;
+        
+        // Function header, first determine return type and
+        // any extra arguments
         if (iff.ret.name=="std::string") {
-          fout << "const char *" << underscoreify(ifc.ns) << "_"
-               << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
+          ret_type="const char *";
         } else if ((iff.ret.name=="vector<double>" ||
                     iff.ret.name=="std::vector<double>") &&
                    iff.ret.suffix=="&") {
           // For a std::vector<double> &, we return a void, but add
           // double pointer and integer output parameters
-          fout << "void " << underscoreify(ifc.ns) << "_"
-               << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
+          ret_type="void ";
+          extra_args=", double **dptr, int *n";
         } else if (iff.ret.name=="void" ||
                    iff.ret.name=="bool" ||
                    iff.ret.name=="double" ||
                    iff.ret.name=="int" ||
                    iff.ret.name=="size_t") {
-          fout << iff.ret.name << " " << underscoreify(ifc.ns) << "_"
-               << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
+          ret_type=iff.ret.name+" ";
         } else {
-          fout << "void *" << underscoreify(ifc.ns) << "_"
-               << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
+          ret_type="void *";
         }
+
+        // Now generate the actual code
+        fout << ret_type << underscoreify(ifc.ns) << "_"
+             << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
         if (iff.args.size()>0) {
           fout << ", ";
         }
-      
         for(size_t k=0;k<iff.args.size();k++) {
           if (iff.args[k].ift.suffix=="") {
             if (iff.args[k].ift.name=="std::string") {
@@ -922,16 +935,91 @@ int main(int argc, char *argv[]) {
             fout << ", ";
           }
         }
-
-        if ((iff.ret.name=="vector<double>" ||
-             iff.ret.name=="std::vector<double>") &&
-            iff.ret.suffix=="&") {
-          fout << ", double **dptr, int *n";
+        
+        if (header) {
+          fout << extra_args << ");" << endl;
+          
+        } else {
+          
+          fout << extra_args << ") {" << endl;
+          
+          // Pointer assignment for class
+          fout << "  " << ifc.name << " *ptr=("
+               << ifc.name << " *)vptr;" << endl;
+          
+          // Pointer assignments for arguments
+          for(size_t k=0;k<iff.args.size();k++) {
+            if (iff.args[k].ift.suffix=="&") {
+              fout << "  " << iff.args[k].ift.name << " *"
+                   << iff.args[k].name << "=("
+                   << iff.args[k].ift.name << " *)ptr_" << iff.args[k].name
+                   << ";" << endl;
+            }
+          }
+          
+          // Now generate code for actual function call and the
+          // return statement
+          if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
+              iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
+            // If we're returning a shared pointer, then we actually
+            // need to create a pointer to the shared pointer first
+            fout << "  std::shared_ptr<" << iff.ret.name << " > *ret=new"
+                 << " std::shared_ptr<" << iff.ret.name << " >;" << endl;
+            // Then we set the shared pointer using the class
+            // member function
+            fout << "  *ret=ptr->" << iff.name << "(";
+          } else if ((iff.ret.name=="vector<double>" ||
+                      iff.ret.name=="std::vector<double>") &&
+                     iff.ret.suffix=="&") {
+            // For a std::vector<double> &, just return a pointer
+            if (iff.name=="index_operator") {
+              // In case it's const, we have to explicitly typecast
+              fout << "  *dptr=(double *)(&(ptr->operator[](";
+            } else {
+              fout << "  *dptr=ptr->" << iff.name << "(";
+            }
+          } else if (iff.ret.name=="void") {
+            fout << "  ptr->" << iff.name << "(";
+          } else {
+            fout << "  " << iff.ret.name << " ret=ptr->" << iff.name << "(";
+          }
+          
+          for(size_t k=0;k<iff.args.size();k++) {
+            if (iff.args[k].ift.suffix=="") {
+              fout << iff.args[k].name;
+            } else if (iff.args[k].ift.suffix=="&") {
+              fout << "*" << iff.args[k].name;
+            }
+            if (k!=iff.args.size()-1) {
+              fout << ",";
+            }
+          }
+          
+          // Extra code for array types
+          if ((iff.ret.name=="vector<double>" ||
+               iff.ret.name=="std::vector<double>") &&
+              iff.ret.suffix=="&") {
+            fout << ")[0]));" << endl;
+            fout << "  *n=ptr->get_nlines();" << endl;
+            fout << "  return;" << endl;
+          } else {
+            fout << ");" << endl;
+            
+            if (iff.ret.name=="std::string") {
+              fout << "  python_temp_string=ret;" << endl;
+              fout << "  return python_temp_string.c_str();" << endl;
+            } else if (iff.ret.name=="void") {
+              fout << "  return;" << endl;
+            } else {
+              fout << "  return ret;" << endl;
+            }
+          }
+          
+          // Ending function brace
+          fout << "}" << endl;          
         }
-      
-        fout << ");" << endl;
         fout << endl;
-      
+        
       }
 
     }

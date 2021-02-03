@@ -110,25 +110,25 @@ void *o2scl_create_convert_units__();
 
 void o2scl_free_convert_units__(void *vp);
 
-int o2scl_convert_units___get_verbose(void *vp);
+int o2scl_convert_units___get_verbose(void *vptr);
 
-void o2scl_convert_units___set_verbose(void *vp, int v);
+void o2scl_convert_units___set_verbose(void *vptr, int v);
 
-bool o2scl_convert_units___get_use_gnu_units(void *vp);
+bool o2scl_convert_units___get_use_gnu_units(void *vptr);
 
-void o2scl_convert_units___set_use_gnu_units(void *vp, bool v);
+void o2scl_convert_units___set_use_gnu_units(void *vptr, bool v);
 
-bool o2scl_convert_units___get_err_on_fail(void *vp);
+bool o2scl_convert_units___get_err_on_fail(void *vptr);
 
-void o2scl_convert_units___set_err_on_fail(void *vp, bool v);
+void o2scl_convert_units___set_err_on_fail(void *vptr, bool v);
 
-bool o2scl_convert_units___get_combine_two_conv(void *vp);
+bool o2scl_convert_units___get_combine_two_conv(void *vptr);
 
-void o2scl_convert_units___set_combine_two_conv(void *vp, bool v);
+void o2scl_convert_units___set_combine_two_conv(void *vptr, bool v);
 
 const char *o2scl_convert_units___get_units_cmd_string(void *vptr);
 
-void o2scl_convert_units___set_units_cmd_string(void *vp, void *p_v);
+void o2scl_convert_units___set_units_cmd_string(void *vptr, void *p_v);
 
 double o2scl_convert_units___convert(void *vptr, char *frm, char *to, double val);
 
