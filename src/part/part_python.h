@@ -35,7 +35,7 @@ extern "C" {
 
 void *o2scl_create_thermo();
 
-void o2scl_free_thermo(void *vp);
+void o2scl_free_thermo(void *vptr);
 
 double o2scl_thermo_get_ed(void *vptr);
 
@@ -51,7 +51,7 @@ void o2scl_thermo_set_en(void *vptr, double v);
 
 void *o2scl_create_part();
 
-void o2scl_free_part(void *vp);
+void o2scl_free_part(void *vptr);
 
 double o2scl_part_get_g(void *vptr);
 
@@ -103,7 +103,7 @@ void o2scl_part_anti(void *vptr, void *ptr_ax);
 
 void *o2scl_create_fermion();
 
-void o2scl_free_fermion(void *vp);
+void o2scl_free_fermion(void *vptr);
 
 double o2scl_fermion_get_kf(void *vptr);
 
@@ -115,7 +115,7 @@ void o2scl_fermion_set_del(void *vptr, double v);
 
 void *o2scl_create_quark();
 
-void o2scl_free_quark(void *vp);
+void o2scl_free_quark(void *vptr);
 
 double o2scl_quark_get_B(void *vptr);
 
@@ -127,7 +127,7 @@ void o2scl_quark_set_qq(void *vptr, double v);
 
 void *o2scl_create_fermion_zerot();
 
-void o2scl_free_fermion_zerot(void *vp);
+void o2scl_free_fermion_zerot(void *vptr);
 
 void o2scl_fermion_zerot_kf_from_density(void *vptr, void *ptr_f);
 
@@ -153,7 +153,7 @@ void o2scl_fermion_thermo_massless_pair_density(void *vptr, void *ptr_f, double 
 
 void *o2scl_create_fermion_rel();
 
-void o2scl_free_fermion_rel(void *vp);
+void o2scl_free_fermion_rel(void *vptr);
 
 bool o2scl_fermion_rel_get_err_nonconv(void *vptr);
 
@@ -215,7 +215,7 @@ void o2scl_fermion_rel_pair_mu(void *vptr, void *ptr_f, double T);
 
 void *o2scl_create_fermion_nonrel();
 
-void o2scl_free_fermion_nonrel(void *vp);
+void o2scl_free_fermion_nonrel(void *vptr);
 
 int o2scl_fermion_nonrel_calc_density(void *vptr, void *ptr_f, double T);
 
@@ -225,7 +225,7 @@ void o2scl_fermion_nonrel_nu_from_n(void *vptr, void *ptr_f, double T);
 
 void *o2scl_create_boson();
 
-void o2scl_free_boson(void *vp);
+void o2scl_free_boson(void *vptr);
 
 double o2scl_boson_get_co(void *vptr);
 
@@ -233,7 +233,7 @@ void o2scl_boson_set_co(void *vptr, double v);
 
 void *o2scl_create_boson_rel();
 
-void o2scl_free_boson_rel(void *vp);
+void o2scl_free_boson_rel(void *vptr);
 
 void o2scl_boson_rel_calc_density(void *vptr, void *ptr_b, double T);
 
@@ -247,7 +247,7 @@ void o2scl_boson_rel_pair_mu(void *vptr, void *ptr_b, double T);
 
 void *o2scl_create_classical_thermo();
 
-void o2scl_free_classical_thermo(void *vp);
+void o2scl_free_classical_thermo(void *vptr);
 
 void o2scl_classical_thermo_calc_density(void *vptr, void *ptr_p, double T);
 
@@ -255,7 +255,7 @@ void o2scl_classical_thermo_calc_mu(void *vptr, void *ptr_p, double T);
 
 void *o2scl_create_thermo_np_deriv_press();
 
-void o2scl_free_thermo_np_deriv_press(void *vp);
+void o2scl_free_thermo_np_deriv_press(void *vptr);
 
 double o2scl_thermo_np_deriv_press_get_dsdT(void *vptr);
 
@@ -283,7 +283,7 @@ void o2scl_thermo_np_deriv_press_set_dnpdmup(void *vptr, double v);
 
 void *o2scl_create_thermo_np_deriv_helm();
 
-void o2scl_free_thermo_np_deriv_helm(void *vp);
+void o2scl_free_thermo_np_deriv_helm(void *vptr);
 
 double o2scl_thermo_np_deriv_helm_get_dsdT(void *vptr);
 
@@ -311,7 +311,7 @@ void o2scl_thermo_np_deriv_helm_set_dmupdnp(void *vptr, double v);
 
 void *o2scl_create_part_deriv_press();
 
-void o2scl_free_part_deriv_press(void *vp);
+void o2scl_free_part_deriv_press(void *vptr);
 
 double o2scl_part_deriv_press_get_dndmu(void *vptr);
 
@@ -329,15 +329,15 @@ void o2scl_part_deriv_press_deriv_f(void *vptr, void *ptr_dmudn, void *ptr_dmudT
 
 void *o2scl_create_part_deriv();
 
-void o2scl_free_part_deriv(void *vp);
+void o2scl_free_part_deriv(void *vptr);
 
 void *o2scl_create_fermion_deriv();
 
-void o2scl_free_fermion_deriv(void *vp);
+void o2scl_free_fermion_deriv(void *vptr);
 
 void *o2scl_create_deriv_thermo_base();
 
-void o2scl_free_deriv_thermo_base(void *vp);
+void o2scl_free_deriv_thermo_base(void *vptr);
 
 double o2scl_deriv_thermo_base_heat_cap_ppart_const_vol(void *vptr, void *ptr_p, double T);
 
@@ -353,7 +353,7 @@ double o2scl_deriv_thermo_base_squared_sound_speed(void *vptr, void *ptr_p, doub
 
 void *o2scl_create_fermion_deriv_rel();
 
-void o2scl_free_fermion_deriv_rel(void *vp);
+void o2scl_free_fermion_deriv_rel(void *vptr);
 
 double o2scl_fermion_deriv_rel_get_exp_limit(void *vptr);
 
@@ -395,7 +395,7 @@ int o2scl_fermion_deriv_rel_pair_mu(void *vptr, void *ptr_f, double T);
 
 void *o2scl_create_fermion_deriv_nr();
 
-void o2scl_free_fermion_deriv_nr(void *vp);
+void o2scl_free_fermion_deriv_nr(void *vptr);
 
 double o2scl_fermion_deriv_nr_get_flimit(void *vptr);
 
@@ -417,7 +417,7 @@ int o2scl_fermion_deriv_nr_calc_mu(void *vptr, void *ptr_f, double T);
 
 void *o2scl_create_classical_deriv_thermo();
 
-void o2scl_free_classical_deriv_thermo(void *vp);
+void o2scl_free_classical_deriv_thermo(void *vptr);
 
 void o2scl_classical_deriv_thermo_calc_density(void *vptr, void *ptr_p, double T);
 
@@ -425,7 +425,7 @@ void o2scl_classical_deriv_thermo_calc_mu(void *vptr, void *ptr_p, double T);
 
 void *o2scl_create_fermion_mag_zerot();
 
-void o2scl_free_fermion_mag_zerot(void *vp);
+void o2scl_free_fermion_mag_zerot(void *vptr);
 
 int o2scl_fermion_mag_zerot_get_nmax_up(void *vptr);
 

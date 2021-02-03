@@ -32,13 +32,13 @@ extern "C" {
 
 void *o2scl_create_lib_settings_class();
 
-void o2scl_free_lib_settings_class(void *vp);
+void o2scl_free_lib_settings_class(void *vptr);
 
 bool o2scl_lib_settings_class_eos_installed(void *vptr);
 
 void *o2scl_create_table__();
 
-void o2scl_free_table__(void *vp);
+void o2scl_free_table__(void *vptr);
 
 void o2scl_table___set(void *vptr, char *col, size_t row, double val);
 
@@ -66,7 +66,7 @@ void o2scl_table___index_operator(void *vptr, char *col, double **dptr, int *n);
 
 void *o2scl_create_table_units__();
 
-void o2scl_free_table_units__(void *vp);
+void o2scl_free_table_units__(void *vptr);
 
 const char *o2scl_table_units___get_unit(void *vptr, char *col);
 
@@ -78,7 +78,7 @@ void o2scl_table_units___clear_table(void *vptr);
 
 void *o2scl_create_table3d();
 
-void o2scl_free_table3d(void *vp);
+void o2scl_free_table3d(void *vptr);
 
 void o2scl_table3d_set(void *vptr, size_t ix, size_t iy, char *name, double val);
 
@@ -94,13 +94,13 @@ size_t o2scl_table3d_get_nslices(void *vptr);
 
 void *o2scl_create_tensor__();
 
-void o2scl_free_tensor__(void *vp);
+void o2scl_free_tensor__(void *vptr);
 
 void o2scl_tensor___clear(void *vptr);
 
 void *o2scl_create_find_constants();
 
-void o2scl_free_find_constants(void *vp);
+void o2scl_free_find_constants(void *vptr);
 
 void o2scl_find_constants_find_print(void *vptr, char *name, char *unit, size_t prec, int verbose);
 
@@ -108,7 +108,7 @@ double o2scl_find_constants_find_unique(void *vptr, char *name, char *unit);
 
 void *o2scl_create_convert_units__();
 
-void o2scl_free_convert_units__(void *vp);
+void o2scl_free_convert_units__(void *vptr);
 
 int o2scl_convert_units___get_verbose(void *vptr);
 
@@ -138,7 +138,7 @@ void o2scl_convert_units___print_cache(void *vptr);
 
 void *o2scl_create_shared_ptr_table_units__();
 
-void o2scl_free_shared_ptr_table_units__(void *vp);
+void o2scl_free_shared_ptr_table_units__(void *vptr);
 
 void *o2scl_shared_ptr_table_units___ptr(void *vp);
 

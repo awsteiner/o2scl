@@ -39,7 +39,7 @@ extern "C" {
 
 void *o2scl_create_eos_base();
 
-void o2scl_free_eos_base(void *vp);
+void o2scl_free_eos_base(void *vptr);
 
 void o2scl_eos_base_get_def_thermo(void *vptr, void *p_v);
 
@@ -149,7 +149,7 @@ double o2scl_eos_had_base_calc_edensity_nb(void *vptr, double nb, double delta);
 
 void *o2scl_create_eos_had_skyrme();
 
-void o2scl_free_eos_had_skyrme(void *vp);
+void o2scl_free_eos_had_skyrme(void *vptr);
 
 double o2scl_eos_had_skyrme_get_t0(void *vptr);
 
@@ -221,7 +221,7 @@ void o2scl_eos_had_skyrme_set_nrfd(void *vptr, void *p_v);
 
 void *o2scl_create_eos_had_apr();
 
-void o2scl_free_eos_had_apr(void *vp);
+void o2scl_free_eos_had_apr(void *vptr);
 
 int o2scl_eos_had_apr_get_pion(void *vptr);
 
@@ -233,7 +233,7 @@ void o2scl_eos_had_apr_set_parent_method(void *vptr, bool v);
 
 void *o2scl_create_eos_had_rmf();
 
-void o2scl_free_eos_had_rmf(void *vp);
+void o2scl_free_eos_had_rmf(void *vptr);
 
 size_t o2scl_eos_had_rmf_get_calc_e_steps(void *vptr);
 
@@ -337,11 +337,11 @@ void o2scl_eos_had_rmf_set_b3(void *vptr, double v);
 
 void *o2scl_create_eos_quark();
 
-void o2scl_free_eos_quark(void *vp);
+void o2scl_free_eos_quark(void *vptr);
 
 void *o2scl_create_eos_quark_bag();
 
-void o2scl_free_eos_quark_bag(void *vp);
+void o2scl_free_eos_quark_bag(void *vptr);
 
 double o2scl_eos_quark_bag_get_bag_constant(void *vptr);
 
@@ -349,7 +349,7 @@ void o2scl_eos_quark_bag_set_bag_constant(void *vptr, double v);
 
 void *o2scl_create_eos_quark_njl();
 
-void o2scl_free_eos_quark_njl(void *vp);
+void o2scl_free_eos_quark_njl(void *vptr);
 
 double o2scl_eos_quark_njl_get_B0(void *vptr);
 
@@ -383,7 +383,7 @@ bool o2scl_eos_tov_has_baryons(void *vptr);
 
 void *o2scl_create_eos_tov_buchdahl();
 
-void o2scl_free_eos_tov_buchdahl(void *vp);
+void o2scl_free_eos_tov_buchdahl(void *vptr);
 
 double o2scl_eos_tov_buchdahl_get_Pstar(void *vptr);
 
@@ -391,19 +391,19 @@ void o2scl_eos_tov_buchdahl_set_Pstar(void *vptr, double v);
 
 void *o2scl_create_eos_tov_polytrope();
 
-void o2scl_free_eos_tov_polytrope(void *vp);
+void o2scl_free_eos_tov_polytrope(void *vptr);
 
 void o2scl_eos_tov_polytrope_set_coeff_index(void *vptr, double coeff, double index);
 
 void *o2scl_create_eos_tov_linear();
 
-void o2scl_free_eos_tov_linear(void *vp);
+void o2scl_free_eos_tov_linear(void *vptr);
 
 void o2scl_eos_tov_linear_set_cs2_eps0(void *vptr, double cs2, double eps0);
 
 void *o2scl_create_eos_tov_interp();
 
-void o2scl_free_eos_tov_interp(void *vp);
+void o2scl_free_eos_tov_interp(void *vptr);
 
 bool o2scl_eos_tov_interp_get_err_nonconv(void *vptr);
 
@@ -427,7 +427,7 @@ void o2scl_eos_tov_interp_no_low_dens_eos(void *vptr);
 
 void *o2scl_create_tov_solve();
 
-void o2scl_free_tov_solve(void *vp);
+void o2scl_free_tov_solve(void *vptr);
 
 size_t o2scl_tov_solve_get_buffer_size(void *vptr);
 
@@ -557,7 +557,7 @@ void *o2scl_tov_solve_get_results(void *vptr);
 
 void *o2scl_create_tov_love();
 
-void o2scl_free_tov_love(void *vp);
+void o2scl_free_tov_love(void *vptr);
 
 int o2scl_tov_love_get_show_ode(void *vptr);
 
@@ -593,7 +593,7 @@ int o2scl_tov_love_calc_H(void *vptr, void *ptr_yR, void *ptr_beta, void *ptr_k2
 
 void *o2scl_create_nstar_cold();
 
-void o2scl_free_nstar_cold(void *vp);
+void o2scl_free_nstar_cold(void *vptr);
 
 bool o2scl_nstar_cold_get_well_formed(void *vptr);
 
