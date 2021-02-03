@@ -126,7 +126,7 @@ bool o2scl_convert_units___get_combine_two_conv(void *vp);
 
 void o2scl_convert_units___set_combine_two_conv(void *vp, bool v);
 
-void o2scl_convert_units___get_units_cmd_string(void *vp, void *p_v);
+const char *o2scl_convert_units___get_units_cmd_string(void *vptr);
 
 void o2scl_convert_units___set_units_cmd_string(void *vp, void *p_v);
 

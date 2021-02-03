@@ -41,7 +41,7 @@ void *o2scl_create_eos_base();
 
 void o2scl_free_eos_base(void *vp);
 
-void o2scl_eos_base_get_def_thermo(void *vp, void *p_v);
+void o2scl_eos_base_get_def_thermo(void *vptr, void *p_v);
 
 void o2scl_eos_base_set_def_thermo(void *vp, void *p_v);
 
@@ -73,11 +73,11 @@ bool o2scl_eos_had_base_get_err_nonconv(void *vp);
 
 void o2scl_eos_had_base_set_err_nonconv(void *vp, bool v);
 
-void o2scl_eos_had_base_get_def_neutron(void *vp, void *p_v);
+void o2scl_eos_had_base_get_def_neutron(void *vptr, void *p_v);
 
 void o2scl_eos_had_base_set_def_neutron(void *vp, void *p_v);
 
-void o2scl_eos_had_base_get_def_proton(void *vp, void *p_v);
+void o2scl_eos_had_base_get_def_proton(void *vptr, void *p_v);
 
 void o2scl_eos_had_base_set_def_proton(void *vp, void *p_v);
 
@@ -211,11 +211,11 @@ bool o2scl_eos_had_skyrme_get_parent_method(void *vp);
 
 void o2scl_eos_had_skyrme_set_parent_method(void *vp, bool v);
 
-void o2scl_eos_had_skyrme_get_reference(void *vp, void *p_v);
+const char *o2scl_eos_had_skyrme_get_reference(void *vptr);
 
 void o2scl_eos_had_skyrme_set_reference(void *vp, void *p_v);
 
-void o2scl_eos_had_skyrme_get_nrfd(void *vp, void *p_v);
+void o2scl_eos_had_skyrme_get_nrfd(void *vptr, void *p_v);
 
 void o2scl_eos_had_skyrme_set_nrfd(void *vp, void *p_v);
 
@@ -571,7 +571,7 @@ bool o2scl_tov_love_get_err_nonconv(void *vp);
 
 void o2scl_tov_love_set_err_nonconv(void *vp, bool v);
 
-void o2scl_tov_love_get_results(void *vp, void *p_v);
+void o2scl_tov_love_get_results(void *vptr, void *p_v);
 
 void o2scl_tov_love_set_results(void *vp, void *p_v);
 

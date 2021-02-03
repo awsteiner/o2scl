@@ -155,6 +155,17 @@ libo2scl_part_la_SOURCES =
 libo2scl_part_la_LIBADD = nuclei/libo2scl_nuclei.la part/libo2scl_basepart.la
 libo2scl_part_la_LDFLAGS = -version-info $(OLIB_LT_VERSION)
 
+# ------------------------------------------------------------
+
+interface: empty
+	cd base; $(MAKE) interface
+	cd eos; $(MAKE) interface
+	cd nuclei; $(MAKE) interface
+	cd part; $(MAKE) interface
+
+empty:
+
+
 # ------------------------------------------------------------      
 # Testing targets
 # -------------------------------------------------------------

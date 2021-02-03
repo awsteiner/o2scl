@@ -109,7 +109,7 @@ double o2scl_fermion_get_kf(void *vp);
 
 void o2scl_fermion_set_kf(void *vp, double v);
 
-double o2scl_fermion_get_delta(void *vp);
+double o2scl_fermion_get_del(void *vp);
 
 void o2scl_fermion_set_delta(void *vp, double v);
 
@@ -199,7 +199,7 @@ double o2scl_fermion_rel_get_therm_ident(void *vp);
 
 void o2scl_fermion_rel_set_therm_ident(void *vp, double v);
 
-void o2scl_fermion_rel_get_unc(void *vp, void *p_v);
+void o2scl_fermion_rel_get_unc(void *vptr, void *p_v);
 
 void o2scl_fermion_rel_set_unc(void *vp, void *p_v);
 
@@ -367,7 +367,7 @@ double o2scl_fermion_deriv_rel_get_upper_limit_fac(void *vp);
 
 void o2scl_fermion_deriv_rel_set_upper_limit_fac(void *vp, double v);
 
-void o2scl_fermion_deriv_rel_get_unc(void *vp, void *p_v);
+void o2scl_fermion_deriv_rel_get_unc(void *vptr, void *p_v);
 
 void o2scl_fermion_deriv_rel_set_unc(void *vp, void *p_v);
 
@@ -401,7 +401,7 @@ double o2scl_fermion_deriv_nr_get_flimit(void *vp);
 
 void o2scl_fermion_deriv_nr_set_flimit(void *vp, double v);
 
-void o2scl_fermion_deriv_nr_get_unc(void *vp, void *p_v);
+void o2scl_fermion_deriv_nr_get_unc(void *vptr, void *p_v);
 
 void o2scl_fermion_deriv_nr_set_unc(void *vp, void *p_v);
 

@@ -128,7 +128,7 @@ size_t o2scl_nucmass_table_get_n(void *vp);
 
 void o2scl_nucmass_table_set_n(void *vp, size_t v);
 
-void o2scl_nucmass_table_get_reference(void *vp, void *p_v);
+const char *o2scl_nucmass_table_get_reference(void *vptr);
 
 void o2scl_nucmass_table_set_reference(void *vp, void *p_v);
 

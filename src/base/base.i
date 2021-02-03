@@ -32,6 +32,8 @@ cpp_using o2scl
 class lib_settings_class
 - function eos_installed
   - bool
+#- function get_convert_units
+#  - convert_units<> &
 # 
 # Class table
 #

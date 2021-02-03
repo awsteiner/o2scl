@@ -299,7 +299,7 @@ int main(int argc, char *argv[]) {
   cout << "Setting Python output prefix to " << py_prefix << " ." << endl;
   cout << endl;
 
-  vector<string> header=
+  vector<string> header_strings=
     {"  -------------------------------------------------------------------",
      "",
      "  Copyright (C) 2020-2021, Andrew W. Steiner",
@@ -711,134 +711,273 @@ int main(int argc, char *argv[]) {
   fin.close();
 
   // ----------------------------------------------------------------
-  // Create C++ header
-  
-  ofstream fout;
-  fout.open((cpp_prefix+".h").c_str());
-  
-  fout << "/*" << endl;
-  for(size_t i=0;i<header.size();i++) {
-    fout << header[i] << endl;
-  }
-  fout << "*/" << endl;
-  fout << endl;
-  
-  for(size_t i=0;i<h_includes.size();i++) {
-    fout << "#include " << h_includes[i] << endl;
-  }
-  fout << endl;
+  // Create C++ header/source
 
-  fout << "extern \"C\" {" << endl;
-  fout << endl;
-  
-  for(size_t i=0;i<classes.size();i++) {
-
-    if_class &ifc=classes[i];
-
-    if (ifc.is_abstract==false) {
-      // Always create a void *
-      fout << "void *" << underscoreify(ifc.ns) << "_create_"
-           << underscoreify(ifc.name) << "();" << endl;
-           
-      fout << endl;
-      
-      // Always free a void *
-      fout << "void " << underscoreify(ifc.ns) << "_free_"
-           << underscoreify(ifc.name) << "(void *vp);" << endl;
-      fout << endl;
-    }
-
-    for(size_t j=0;j<ifc.members.size();j++) {
-
-      if_var &ifv=ifc.members[j];
-
-      // Get function declaration
-      if (ifv.ift.name=="bool" ||
-          ifv.ift.name=="double" ||
-          ifv.ift.name=="int" ||
-          ifv.ift.name=="size_t") {
-        if (ifv.py_name.length()>0) {
-          fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
-               << underscoreify(ifc.name) << "_get_" << ifv.py_name
-               << "(void *vp);" << endl;
-        } else {
-          fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
-               << underscoreify(ifc.name) << "_get_" << ifv.name
-               << "(void *vp);" << endl;
-        }
-      } else {
-        if (ifv.py_name.length()>0) {
-          fout << "void " << underscoreify(ifc.ns) << "_"
-               << underscoreify(ifc.name) << "_get_" << ifv.py_name
-               << "(void *vp, void *p_v);" << endl;
-        } else {
-          fout << "void " << underscoreify(ifc.ns) << "_"
-               << underscoreify(ifc.name) << "_get_" << ifv.name
-               << "(void *vp, void *p_v);" << endl;
-        }
-      }
-      fout << endl;
-      
-      // Set function declaration
-      if (ifv.ift.name=="bool" ||
-          ifv.ift.name=="double" ||
-          ifv.ift.name=="int" ||
-          ifv.ift.name=="size_t") {
-        if (ifv.py_name.length()>0) {
-          fout << "void " << underscoreify(ifc.ns) << "_"
-               << underscoreify(ifc.name) << "_set_" << ifv.py_name
-               << "(void *vp, "
-               << ifv.ift.name << " v);" << endl;
-        } else {
-          fout << "void " << underscoreify(ifc.ns) << "_"
-               << underscoreify(ifc.name) << "_set_" << ifv.name
-               << "(void *vp, "
-               << ifv.ift.name << " v);" << endl;
-        }
-      } else {
-        if (ifv.py_name.length()>0) {
-          fout << "void " << underscoreify(ifc.ns) << "_"
-               << underscoreify(ifc.name) << "_set_" << ifv.py_name
-               << "(void *vp, void *p_v);" << endl;
-        } else {
-          fout << "void " << underscoreify(ifc.ns) << "_"
-               << underscoreify(ifc.name) << "_set_" << ifv.name
-               << "(void *vp, void *p_v);" << endl;
-        }
-      }
-      fout << endl;
+  for(size_t kk=0;kk<2;kk++) {
+    bool header=true, source=false;
+    if (kk==1) {
+      source=true;
+      header=false;
     }
     
-    for(size_t j=0;j<ifc.methods.size();j++) {
+    ofstream fout;
+    if (header) {
+      fout.open((cpp_prefix+".h").c_str());
+    } else {
+      fout.open((cpp_prefix+".cpp").c_str());
+    }
+    
+    fout << "/*" << endl;
+    for(size_t i=0;i<header_strings.size();i++) {
+      fout << header_strings[i] << endl;
+    }
+    fout << "*/" << endl;
+    fout << endl;
+
+    if (header) {
       
-      if_func &iff=ifc.methods[j];
+      for(size_t i=0;i<h_includes.size();i++) {
+        fout << "#include " << h_includes[i] << endl;
+      }
+      fout << endl;
       
+      fout << "extern \"C\" {" << endl;
+      fout << endl;
+      
+    } else {
+      
+      for(size_t i=0;i<cpp_includes.size();i++) {
+        fout << "#include " << cpp_includes[i] << endl;
+      }
+      fout << endl;
+      
+      for(size_t i=0;i<cpp_using.size();i++) {
+        fout << "using namespace " << cpp_using[i] << ";" << endl;
+      }
+      fout << endl;
+      
+    }
+
+    for(size_t i=0;i<classes.size();i++) {
+
+      if_class &ifc=classes[i];
+
+      if (ifc.is_abstract==false) {
+        // The create pointer function
+        fout << "void *" << underscoreify(ifc.ns) << "_create_"
+             << underscoreify(ifc.name) << "()";
+        if (header) {
+          fout << ";" << endl;
+        } else {
+          fout << " {" << endl;
+          fout << "  " << ifc.name << " *ptr=new " << ifc.name
+               << ";" << endl;
+          fout << "  return ptr;" << endl;
+          fout << "}" << endl;
+        }
+        fout << endl;
+      
+        // The free pointer function
+        fout << "void " << underscoreify(ifc.ns) << "_free_"
+             << underscoreify(ifc.name) << "(void *vp)";
+        if (header) {
+          fout << ";" << endl;
+        } else {
+          fout << " {" << endl;
+          fout << "  " << ifc.name << " *ptr=(" << ifc.name
+               << " *)vptr;" << endl;
+          fout << "  delete ptr;" << endl;
+          fout << "}" << endl;
+        }
+        fout << endl;
+      }
+
+      for(size_t j=0;j<ifc.members.size();j++) {
+
+        if_var &ifv=ifc.members[j];
+
+        // Get function
+        
+        if (ifv.ift.name=="bool" ||
+            ifv.ift.name=="double" ||
+            ifv.ift.name=="int" ||
+            ifv.ift.name=="size_t") {
+          fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
+               << underscoreify(ifc.name) << "_get_" << ifv.name
+               << "(void *vptr)";
+          if (header) {
+            fout << ";" << endl;
+          } else {
+            fout << " {" << endl;
+            fout << "  " << ifc.name << " *ptr=(" << ifc.name
+                 << " *)vptr;" << endl;
+            fout << "  return ptr->" << ifv.name << ";" << endl;
+          }
+        } else if (ifv.ift.name=="std::string") {
+          fout << "const char *" << underscoreify(ifc.ns) << "_"
+               << underscoreify(ifc.name) << "_get_" << ifv.name
+               << "(void *vptr)";
+          if (header) {
+            fout << ";" << endl;
+          } else {
+            fout << " {" << endl;
+            fout << "  " << ifc.name << " *ptr=(" << ifc.name
+                 << " *)vptr;" << endl;
+            fout << "  python_temp_string=ptr->" << ifv.name
+                 << ";" << endl;
+            fout << "  return python_temp_string.c_str();" << endl;
+            fout << "}" << endl;
+          }
+          
+        } else {
+          fout << "void " << underscoreify(ifc.ns) << "_"
+               << underscoreify(ifc.name) << "_get_" << ifv.name
+               << "(void *vptr, void *p_v)";
+          if (header) {
+            fout << ";" << endl;
+          } else {
+            fout << " {" << endl;
+            fout << "  " << ifc.name << " *ptr=(" << ifc.name
+                 << " *)vptr;" << endl;
+            fout << "  " << ifv.ift.name << " *p_t=("
+                 << ifv.ift.name << " *)p_v;" << endl;
+            fout << "  *(p_t)=ptr->" << ifv.name << ";" << endl;
+            fout << "  return;" << endl;
+            fout << "}" << endl;
+          }
+        }
+        fout << endl;
+      
+        // Set function declaration
+        if (ifv.ift.name=="bool" ||
+            ifv.ift.name=="double" ||
+            ifv.ift.name=="int" ||
+            ifv.ift.name=="size_t") {
+          if (ifv.py_name.length()>0) {
+            fout << "void " << underscoreify(ifc.ns) << "_"
+                 << underscoreify(ifc.name) << "_set_" << ifv.py_name
+                 << "(void *vp, "
+                 << ifv.ift.name << " v);" << endl;
+          } else {
+            fout << "void " << underscoreify(ifc.ns) << "_"
+                 << underscoreify(ifc.name) << "_set_" << ifv.name
+                 << "(void *vp, "
+                 << ifv.ift.name << " v);" << endl;
+          }
+        } else {
+          if (ifv.py_name.length()>0) {
+            fout << "void " << underscoreify(ifc.ns) << "_"
+                 << underscoreify(ifc.name) << "_set_" << ifv.py_name
+                 << "(void *vp, void *p_v);" << endl;
+          } else {
+            fout << "void " << underscoreify(ifc.ns) << "_"
+                 << underscoreify(ifc.name) << "_set_" << ifv.name
+                 << "(void *vp, void *p_v);" << endl;
+          }
+        }
+        fout << endl;
+      }
+    
+      for(size_t j=0;j<ifc.methods.size();j++) {
+      
+        if_func &iff=ifc.methods[j];
+      
+        // Function header
+        if (iff.ret.name=="std::string") {
+          fout << "const char *" << underscoreify(ifc.ns) << "_"
+               << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
+        } else if ((iff.ret.name=="vector<double>" ||
+                    iff.ret.name=="std::vector<double>") &&
+                   iff.ret.suffix=="&") {
+          // For a std::vector<double> &, we return a void, but add
+          // double pointer and integer output parameters
+          fout << "void " << underscoreify(ifc.ns) << "_"
+               << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
+        } else if (iff.ret.name=="void" ||
+                   iff.ret.name=="bool" ||
+                   iff.ret.name=="double" ||
+                   iff.ret.name=="int" ||
+                   iff.ret.name=="size_t") {
+          fout << iff.ret.name << " " << underscoreify(ifc.ns) << "_"
+               << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
+        } else {
+          fout << "void *" << underscoreify(ifc.ns) << "_"
+               << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
+        }
+        if (iff.args.size()>0) {
+          fout << ", ";
+        }
+      
+        for(size_t k=0;k<iff.args.size();k++) {
+          if (iff.args[k].ift.suffix=="") {
+            if (iff.args[k].ift.name=="std::string") {
+              fout << "char *" << iff.args[k].name;
+            } else {
+              fout << iff.args[k].ift.name << " " << iff.args[k].name;
+            }
+          } else if (iff.args[k].ift.suffix=="&") {
+            fout << "void *ptr_" << iff.args[k].name;
+          }
+          if (k!=iff.args.size()-1) {
+            fout << ", ";
+          }
+        }
+
+        if ((iff.ret.name=="vector<double>" ||
+             iff.ret.name=="std::vector<double>") &&
+            iff.ret.suffix=="&") {
+          fout << ", double **dptr, int *n";
+        }
+      
+        fout << ");" << endl;
+        fout << endl;
+      
+      }
+
+    }
+  
+    for(size_t i=0;i<sps.size();i++) {
+    
+      if_shared_ptr &ifsp=sps[i];
+
+      // Always create a void *
+      fout << "void *" << underscoreify(ifsp.ns) << "_create_shared_ptr_"
+           << underscoreify(ifsp.name) << "();" << endl;
+      fout << endl;
+    
+      // Always free a void *
+      fout << "void " << underscoreify(ifsp.ns) << "_free_shared_ptr_"
+           << underscoreify(ifsp.name) << "(void *vp);" << endl;
+      fout << endl;
+
+      // Function to allow python to create a raw pointer from the
+      // shared pointer
+      fout << "void *" << underscoreify(ifsp.ns) << "_shared_ptr_"
+           << underscoreify(ifsp.name) << "_ptr(void *vp);" << endl;
+      fout << endl;
+      
+    }    
+  
+    for(size_t i=0;i<functions.size();i++) {
+    
+      if_func &iff=functions[i];
+    
       // Function header
       if (iff.ret.name=="std::string") {
-        fout << "const char *" << underscoreify(ifc.ns) << "_"
-             << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
-      } else if ((iff.ret.name=="vector<double>" ||
-                  iff.ret.name=="std::vector<double>") &&
-                 iff.ret.suffix=="&") {
-        // For a std::vector<double> &, we return a void, but add
-        // double pointer and integer output parameters
-        fout << "void " << underscoreify(ifc.ns) << "_"
-             << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
+        fout << "const char *" << underscoreify(iff.ns) << "_"
+             << iff.name << "(";
       } else if (iff.ret.name=="void" ||
                  iff.ret.name=="bool" ||
                  iff.ret.name=="double" ||
                  iff.ret.name=="int" ||
                  iff.ret.name=="size_t") {
-        fout << iff.ret.name << " " << underscoreify(ifc.ns) << "_"
-             << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
+        fout << iff.ret.name << " " << underscoreify(iff.ns) << "_"
+             << iff.name << "_wrapper(";
       } else {
-        fout << "void *" << underscoreify(ifc.ns) << "_"
-             << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
+        fout << "void *" << underscoreify(iff.ns) << "_"
+             << iff.name << "_wrapper(";
       }
-      if (iff.args.size()>0) {
-        fout << ", ";
-      }
-      
+    
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.suffix=="") {
           if (iff.args[k].ift.name=="std::string") {
@@ -853,95 +992,28 @@ int main(int argc, char *argv[]) {
           fout << ", ";
         }
       }
-
-      if ((iff.ret.name=="vector<double>" ||
-           iff.ret.name=="std::vector<double>") &&
-          iff.ret.suffix=="&") {
-        fout << ", double **dptr, int *n";
-      }
-      
+    
       fout << ");" << endl;
       fout << endl;
-      
+    
     }
+
+    // End of the extern C section
+    fout << "}" << endl;
+  
+    fout.close();
 
   }
-  
-  for(size_t i=0;i<sps.size();i++) {
-    
-    if_shared_ptr &ifsp=sps[i];
-
-    // Always create a void *
-    fout << "void *" << underscoreify(ifsp.ns) << "_create_shared_ptr_"
-         << underscoreify(ifsp.name) << "();" << endl;
-    fout << endl;
-    
-    // Always free a void *
-    fout << "void " << underscoreify(ifsp.ns) << "_free_shared_ptr_"
-         << underscoreify(ifsp.name) << "(void *vp);" << endl;
-    fout << endl;
-
-    // Function to allow python to create a raw pointer from the
-    // shared pointer
-    fout << "void *" << underscoreify(ifsp.ns) << "_shared_ptr_"
-         << underscoreify(ifsp.name) << "_ptr(void *vp);" << endl;
-    fout << endl;
-      
-  }    
-  
-  for(size_t i=0;i<functions.size();i++) {
-    
-    if_func &iff=functions[i];
-    
-    // Function header
-    if (iff.ret.name=="std::string") {
-      fout << "const char *" << underscoreify(iff.ns) << "_"
-           << iff.name << "(";
-    } else if (iff.ret.name=="void" ||
-               iff.ret.name=="bool" ||
-               iff.ret.name=="double" ||
-               iff.ret.name=="int" ||
-               iff.ret.name=="size_t") {
-      fout << iff.ret.name << " " << underscoreify(iff.ns) << "_"
-           << iff.name << "_wrapper(";
-    } else {
-      fout << "void *" << underscoreify(iff.ns) << "_"
-           << iff.name << "_wrapper(";
-    }
-    
-    for(size_t k=0;k<iff.args.size();k++) {
-      if (iff.args[k].ift.suffix=="") {
-        if (iff.args[k].ift.name=="std::string") {
-          fout << "char *" << iff.args[k].name;
-        } else {
-          fout << iff.args[k].ift.name << " " << iff.args[k].name;
-        }
-      } else if (iff.args[k].ift.suffix=="&") {
-        fout << "void *ptr_" << iff.args[k].name;
-      }
-      if (k!=iff.args.size()-1) {
-        fout << ", ";
-      }
-    }
-    
-    fout << ");" << endl;
-    fout << endl;
-    
-  }
-
-  // End of the extern C section
-  fout << "}" << endl;
-  
-  fout.close();
   
   // ----------------------------------------------------------------
   // Create C++ source code 
-  
+
+  ofstream fout;
   fout.open((cpp_prefix+".cpp").c_str());
 
   fout << "/*" << endl;
-  for(size_t i=0;i<header.size();i++) {
-    fout << header[i] << endl;
+  for(size_t i=0;i<header_strings.size();i++) {
+    fout << header_strings[i] << endl;
   }
   fout << "*/" << endl;
   fout << endl;
@@ -1321,8 +1393,8 @@ int main(int argc, char *argv[]) {
   fout.open((py_prefix+".py").c_str());
 
   fout << "\"\"\"" << endl;
-  for(size_t i=0;i<header.size();i++) {
-    fout << header[i] << endl;
+  for(size_t i=0;i<header_strings.size();i++) {
+    fout << header_strings[i] << endl;
   }
   fout << "\"\"\"" << endl;
   fout << endl;
@@ -1574,7 +1646,7 @@ int main(int argc, char *argv[]) {
         fout << "        n_=ctypes.c_int(0)" << endl;
         fout << "        ptr_=ctypes.POINTER(ctypes.c_double)()" << endl;
       } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
-          iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
+                 iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
         fout << "        func.restype=ctypes.c_void_p" << endl;
       } else if (iff.ret.name!="void") {
         if (iff.ret.name=="std::string") {
@@ -1617,7 +1689,7 @@ int main(int argc, char *argv[]) {
         }
         fout << ",ctypes.byref(ptr_),ctypes.byref(n_))" << endl;;
       } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
-          iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
+                 iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
         fout << "        sp._s_ptr=func(self._ptr)" << endl;
         fout << "        sp.set_pointer()" << endl;
       } else {
