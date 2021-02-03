@@ -12,6 +12,7 @@ h_include <o2scl/tensor.h>
 h_include <o2scl/tensor_grid.h>
 h_include <o2scl/find_constants.h>
 h_include <o2scl/convert_units.h>
+h_include <o2scl/lib_settings.h>
 # 
 # Include statement for C++ source code
 # 
@@ -25,6 +26,12 @@ cpp_using o2scl
 # Additional python headers
 #
 # py_header from o2sclpy.part import *
+# 
+# Class lib_settings_class
+#
+class lib_settings_class
+- function eos_installed
+  - bool
 # 
 # Class table
 #

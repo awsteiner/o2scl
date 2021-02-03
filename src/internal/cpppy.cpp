@@ -1389,6 +1389,7 @@ int main(int argc, char *argv[]) {
     if (ifc.parents.size()==0) {
       fout << "    _ptr=0" << endl;
       fout << "    _link=0" << endl;
+      fout << "    _owner=True" << endl;
       fout << endl;
     }
     
@@ -1396,16 +1397,20 @@ int main(int argc, char *argv[]) {
     if (ifc.is_abstract) {
       fout << "    @abstractmethod" << endl;
     }
-    fout << "    def __init__(self,link):" << endl;
+    fout << "    def __init__(self,link,pointer=0):" << endl;
     fout << "        \"\"\"" << endl;
     fout << "        Init function for class " << ifc.name << " ." << endl;
     fout << "        \"\"\"" << endl;
     fout << endl;
-    fout << "        f=link." << dll_name << "." << ifc.ns << "_create_"
+    fout << "        if pointer==0:" << endl;
+    fout << "            f=link." << dll_name << "." << ifc.ns << "_create_"
          << underscoreify(ifc.name) << endl;
-    fout << "        f.restype=ctypes.c_void_p" << endl;
-    fout << "        f.argtypes=[]" << endl;
-    fout << "        self._ptr=f()" << endl;
+    fout << "            f.restype=ctypes.c_void_p" << endl;
+    fout << "            f.argtypes=[]" << endl;
+    fout << "            self._ptr=f()" << endl;
+    fout << "        else:" << endl;
+    fout << "            self._ptr=pointer" << endl;
+    fout << "            self._owner=False" << endl;
     fout << "        self._link=link" << endl;
     fout << "        return" << endl;
     fout << endl;
@@ -1416,10 +1421,11 @@ int main(int argc, char *argv[]) {
     fout << "        Delete function for class " << ifc.name << " ." << endl;
     fout << "        \"\"\"" << endl;
     fout << endl;
-    fout << "        f=self._link." << dll_name << "." << ifc.ns << "_free_"
+    fout << "        if self._owner==True:" << endl;
+    fout << "            f=self._link." << dll_name << "." << ifc.ns << "_free_"
          << underscoreify(ifc.name) << endl;
-    fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
-    fout << "        f(self._ptr)" << endl;
+    fout << "            f.argtypes=[ctypes.c_void_p]" << endl;
+    fout << "            f(self._ptr)" << endl;
     fout << "        return" << endl;
     fout << endl;
 

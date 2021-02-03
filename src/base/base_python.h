@@ -26,8 +26,15 @@
 #include <o2scl/tensor_grid.h>
 #include <o2scl/find_constants.h>
 #include <o2scl/convert_units.h>
+#include <o2scl/lib_settings.h>
 
 extern "C" {
+
+void *o2scl_create_lib_settings_class();
+
+void o2scl_free_lib_settings_class(void *vp);
+
+bool o2scl_lib_settings_class_eos_installed(void *vptr);
 
 void *o2scl_create_table__();
 

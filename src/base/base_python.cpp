@@ -25,6 +25,22 @@
 using namespace std;
 using namespace o2scl;
 
+void *o2scl_create_lib_settings_class() {
+  lib_settings_class *ptr=new lib_settings_class;
+  return ptr;
+}
+
+void o2scl_free_lib_settings_class(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  delete ptr;
+}
+
+bool o2scl_lib_settings_class_eos_installed(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  bool ret=ptr->eos_installed();
+  return ret;
+}
+
 void *o2scl_create_table__() {
   table<> *ptr=new table<>;
   return ptr;

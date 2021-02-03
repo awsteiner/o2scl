@@ -231,4 +231,8 @@ namespace o2scl {
 }
 #endif
 
+extern "C" {
+  void *o2scl_get_o2scl_settings();
+}
+
 #endif

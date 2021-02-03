@@ -23,8 +23,8 @@
 /** \file nstar_cold.h
     \brief File defining \ref o2scl::nstar_cold
 */
-#ifndef O2SCL_COLD_NSTAR_H
-#define O2SCL_COLD_NSTAR_H
+#ifndef O2SCL_NSTAR_COLD_H
+#define O2SCL_NSTAR_COLD_H
 
 #include <o2scl/eos_had_base.h>
 #include <o2scl/tov_solve.h>
@@ -108,15 +108,18 @@ namespace o2scl {
 
       If the energy density is always positive and increasing, and the
       pressure is always positive and increasing, then the EOS is
-      well-formed and \ref well_formed is \c true. The variable \ref
+      "well-formed" and \ref well_formed is \c true. Note that an EOS
+      which is not "well-formed" could still be reasonable, so long as
+      the pressure decreases above the central pressure of the maximum
+      mass neutron star. Thus, the function \ref calc_eos() returns
+      zero even if \ref well_formed is false. The variable \ref
       pressure_dec records the lowest baryon density where the
-      pressure decreases with increasing density. 
-      If \ref err_nonconv is true and the EOS is not well
-      formed, the error handler is called, and the remaining
-      columns below are not computed. 
+      pressure decreases with increasing density. If \ref err_nonconv
+      is true and the EOS is not well formed, the error handler is
+      called, and the remaining columns below are not computed.
       
-      After computing the equation of state, \ref calc_eos()
-      also adds the following columns
+      After computing the equation of state, if well_formed is true, 
+      then \ref calc_eos() also adds the following columns
       - \c cs2 (unitless), the squared speed of sound divided by \f$ c^2 \f$
       - \c logp, the natural logarithm of the pressure stored in \c pr
       - \c loge, the natural logarithm of the energy density 

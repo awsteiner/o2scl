@@ -399,3 +399,7 @@ void lib_settings_class::config_h_report() {
 #endif
   return;
 }
+
+void *o2scl_get_o2scl_settings() {
+  return &o2scl::o2scl_settings;
+}
