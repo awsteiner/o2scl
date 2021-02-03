@@ -982,7 +982,13 @@ int main(int argc, char *argv[]) {
           } else if (iff.ret.name=="void") {
             fout << "  ptr->" << iff.name << "(";
           } else {
-            fout << "  " << iff.ret.name << " ret=ptr->" << iff.name << "(";
+            // If the function returns a reference, return a pointer
+            // instead
+            if (iff.ret.suffix=="&") {
+              fout << "  " << iff.ret.name << " *ret=&ptr->" << iff.name << "(";
+            } else {
+              fout << "  " << iff.ret.name << " ret=ptr->" << iff.name << "(";
+            }
           }
           
           for(size_t k=0;k<iff.args.size();k++) {
@@ -1451,6 +1457,8 @@ int main(int argc, char *argv[]) {
       } else if (iff.ret.name!="void") {
         if (iff.ret.name=="std::string") {
           fout << "        func.restype=ctypes.c_char_p" << endl;
+        } else if (iff.ret.suffix=="&") {
+          fout << "        func.restype=ctypes.c_void_p" << endl;
         } else {
           fout << "        func.restype=ctypes.c_" << iff.ret.name << endl;
         }
@@ -1494,19 +1502,18 @@ int main(int argc, char *argv[]) {
         fout << "        sp.set_pointer()" << endl;
       } else {
         if (iff.ret.name=="void") {
-          fout << "        func(self._ptr,";
+          fout << "        func(self._ptr";
         } else {
-          fout << "        ret=func(self._ptr,";
+          fout << "        ret=func(self._ptr";
         }
         for(size_t k=0;k<iff.args.size();k++) {
           if (iff.args[k].ift.suffix=="&") {
-            fout << iff.args[k].name << "._ptr";
+            fout << "," << iff.args[k].name << "._ptr";
           } else if (iff.args[k].ift.name=="std::string") {
-            fout << iff.args[k].name << "_";
+            fout << "," << iff.args[k].name << "_";
           } else {
-            fout << iff.args[k].name;
+            fout << "," << iff.args[k].name;
           }
-          if (k!=iff.args.size()-1) fout << ",";
         }
         fout << ")" << endl;
       }
@@ -1517,6 +1524,18 @@ int main(int argc, char *argv[]) {
         fout << "        ret=numpy.ctypeslib.as_array(ptr_,shape=(n_.value,))"
              << endl;
         fout << "        return ret" << endl;
+      } else if (iff.ret.suffix=="&") {
+        std::string tmps=iff.ret.name;
+        size_t len=iff.ret.name.length();
+        // Manually remove '<>' from the typename if necessary
+        if (len>2 && iff.ret.name[len-2]=='<' &&
+            iff.ret.name[len-1]=='>') {
+          tmps=iff.ret.name.substr(0,len-2);
+        }
+        fout << "        ret2=" 
+             << underscoreify(tmps) << "(self._link,ret)"
+             << endl;
+        fout << "        return ret2" << endl;
       } else {
         // Return
         if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||

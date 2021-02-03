@@ -36,6 +36,8 @@ void o2scl_free_lib_settings_class(void *vptr);
 
 bool o2scl_lib_settings_class_eos_installed(void *vptr);
 
+void *o2scl_lib_settings_class_get_convert_units(void *vptr);
+
 void *o2scl_create_table__();
 
 void o2scl_free_table__(void *vptr);

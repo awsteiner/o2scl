@@ -41,6 +41,12 @@ bool o2scl_lib_settings_class_eos_installed(void *vptr) {
   return ret;
 }
 
+void *o2scl_lib_settings_class_get_convert_units(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  convert_units<> *ret=&ptr->get_convert_units();
+  return ret;
+}
+
 void *o2scl_create_table__() {
   table<> *ptr=new table<>;
   return ptr;
