@@ -467,6 +467,8 @@ namespace o2scl {
     }
     //@}
 
+    /** \brief Load the required data files
+     */
     void load_files();
     
     /// \name Settings [public]

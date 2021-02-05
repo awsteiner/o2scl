@@ -328,6 +328,8 @@ int main(int argc, char *argv[]) {
   std::string ns;
   // Current dll_name
   std::string dll_name;
+  // Current rst_name
+  std::string rst_name;
   /// Python documentation pattern
   std::string py_class_doc_pattern;
   // Current list of includes
@@ -383,6 +385,18 @@ int main(int argc, char *argv[]) {
       } else {
         dll_name=vs[1];
         cout << "Setting dll_name to " << dll_name << "." << endl;
+      }
+      
+      next_line(fin,line,vs,done);
+      
+    } else if (vs[0]=="rst_name") {
+      
+      if (vs.size()==1) {
+        rst_name="";
+        cout << "Clearing rst_name." << endl;
+      } else {
+        rst_name=vs[1];
+        cout << "Setting rst_name to " << rst_name << "." << endl;
       }
       
       next_line(fin,line,vs,done);
@@ -1415,8 +1429,6 @@ int main(int argc, char *argv[]) {
       fout << "        \"\"\"" << endl;
       fout << "        Wrapper for " << ifc.name << "::"
            << iff.name << "() ." << endl;
-      fout << "        wrapper for :ref:`o2sclp:" << ifc.name
-           << "::" << iff.name << "()`." << endl;
       fout << "        \"\"\"" << endl;
 
       // Perform necessary conversions
@@ -1698,6 +1710,34 @@ int main(int argc, char *argv[]) {
   }
 
   fout.close();
+
+  // ----------------------------------------------------------------
+  // Create rst file for python documentation
+
+  ofstream fout2;
+  fout2.open((py_prefix+".rst").c_str());
+
+  fout2 << "  .. _" << rst_name << ":\n" << endl;
+  fout2 << rst_name << " classes" << endl;
+  for(size_t j=0;j<rst_name.length()+8;j++) {
+    fout2 << "=";
+  }
+  fout2 << "\n" << endl;
+  
+  for(size_t i=0;i<classes.size();i++) {
+
+    if_class &ifc=classes[i];
+
+    if (ifc.py_name=="") {
+      fout2 << ".. autoclass:: o2sclpy." << ifc.name << endl;
+    } else {
+      fout2 << ".. autoclass:: o2sclpy." << ifc.py_name << endl;
+    }
+    fout2 << "        :members:" << endl;
+    fout2 << "        :undoc-members:\n" << endl;
+  }
+  
+  fout2.close();
   
   return 0;
 }
