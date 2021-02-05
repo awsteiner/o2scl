@@ -433,7 +433,7 @@ x:
 
 interface: empty
 	../internal/cpppy eos.i eos_python ~/wcs/o2sclpy/o2sclpy/eos \
-		| tee eos_python.cpppy.out
+		~/wcs/o2sclpy/doc/eos | tee eos_python.cpppy.out
 
 empty:
 

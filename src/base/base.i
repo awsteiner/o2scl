@@ -1,9 +1,14 @@
 # Interface file for o2scl base classes
 # 
 namespace o2scl
-py_class_doc_pattern "Python interface for O\ :sub:`2`\ scl class :ref:`%name% <o2scl:%name%>`."
+py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class :ref:`%name% <o2scl:%name%>`.
 dll_name o2scl
-rst_name Base
+rst_header |
+| .. _base:
+|
+| Base classes from O2scl
+| =======================
 # 
 # Include statements for C++ header file
 # 

@@ -48,6 +48,83 @@ std::string underscoreify(std::string s) {
   return s2;
 }
 
+/** \brief Read the next line from \c fin, skipping blank
+    lines, splitting by spaces into \c vs, and setting \c done
+    if done
+*/
+void next_line(ifstream &fin, std::string &line,
+               std::vector<std::string> &vs, bool &done) {
+  if (fin.eof()) {
+    done=true;
+    return;
+  }
+  getline(fin,line);
+  while (line.length()==0 || line[0]=='#') {
+    if (fin.eof()) {
+      done=true;
+      return;
+    } else {
+      getline(fin,line);
+    }
+  }
+  vs.clear();
+  split_string(line,vs);
+  return;
+}
+
+/** \brief Parse a potentially multi-line string in the interface
+    file
+ */
+void parse_vector_string(ifstream &fin, std::string type, std::string &line,
+                         std::vector<std::string> &vs, bool &done,
+                         std::vector<std::string> &output) {
+
+  //cout << "Here0 " << line << endl;
+  if (vs.size()==1) {
+    cout << "Clearing " << type << "." << endl;
+    output.clear();
+    next_line(fin,line,vs,done);
+  } else if ((vs[0]==type && vs[1]=="|") ||
+             (vs.size()>=3 && vs[1]==type && vs[2]=="|")) {
+    //cout << "Here " << line << endl;
+    next_line(fin,line,vs,done);
+    while (line.length()>0 && line[0]=='|') {
+      if (line[1]==' ' && line.length()>2) {
+        line=line.substr(2,line.length()-2);
+      } else {
+        line=line.substr(1,line.length()-1);
+      }
+      output.push_back(line);
+      next_line(fin,line,vs,done);
+    }
+  } else {
+    //cout << "Here2 " << line << endl;
+    output.clear();
+    output.push_back("");
+    for(size_t k=1;k<vs.size();k++) {
+      output[0]+=vs[k];
+      if (k!=vs.size()-1) output[0]+=" ";
+    }
+    next_line(fin,line,vs,done);
+  }
+  /*
+    Remove surrounding quotes
+    
+    if (output[0]=='\"' &&
+    output[output.length()-
+    1]=='\"') {
+    output=output.substr
+    (1,output.length()-2);
+    }
+  */
+  cout << "Setting " << type << " to:" << endl;
+  for(size_t i=0;i<output.size();i++) {
+    cout << i << ": " << output[i] << endl;
+  }
+  
+  return;
+}
+
 /** \brief Interface base
  */
 class if_base {
@@ -233,7 +310,7 @@ public:
   std::string py_name;
 
   /// Pattern for the class documentation in python
-  std::string py_class_doc_pattern;
+  std::vector<std::string> py_class_doc;
   
   /// True if the class is abstract
   bool is_abstract;
@@ -259,40 +336,17 @@ public:
   
 };
 
-/** \brief Read the next line from \c fin, skipping blank
-    lines, splitting by spaces into \c vs, and setting \c done
-    if done
-*/
-void next_line(ifstream &fin, std::string &line,
-               std::vector<std::string> &vs, bool &done) {
-  if (fin.eof()) {
-    done=true;
-    return;
-  }
-  getline(fin,line);
-  while (line.length()==0 || line[0]=='#') {
-    if (fin.eof()) {
-      done=true;
-      return;
-    } else {
-      getline(fin,line);
-    }
-  }
-  vs.clear();
-  split_string(line,vs);
-  return;
-}
-
 int main(int argc, char *argv[]) {
 
-  if (argc<4) {
+  if (argc<5) {
     cerr << "Args: <interface file> <c++ output prefix> "
-         << "<python prefix>" << endl;
+         << "<python prefix> <rst prefix>" << endl;
     exit(-1);
   }
   std::string fname=argv[1];
   std::string cpp_prefix=argv[2];
   std::string py_prefix=argv[3];
+  std::string rst_prefix=argv[4];
 
   cout << "Reading interface file " << fname << " ." << endl;
   cout << "Setting C++ output prefix to " << cpp_prefix << " ." << endl;
@@ -328,10 +382,10 @@ int main(int argc, char *argv[]) {
   std::string ns;
   // Current dll_name
   std::string dll_name;
-  // Current rst_name
-  std::string rst_name;
+  // Current rst_header
+  std::vector<std::string> rst_header;
   /// Python documentation pattern
-  std::string py_class_doc_pattern;
+  std::vector<std::string> py_class_doc;
   // Current list of includes
   std::vector<std::string> h_includes;
   // Current list of includes
@@ -389,38 +443,13 @@ int main(int argc, char *argv[]) {
       
       next_line(fin,line,vs,done);
       
-    } else if (vs[0]=="rst_name") {
+    } else if (vs[0]=="rst_header") {
       
-      if (vs.size()==1) {
-        rst_name="";
-        cout << "Clearing rst_name." << endl;
-      } else {
-        rst_name=vs[1];
-        cout << "Setting rst_name to " << rst_name << "." << endl;
-      }
+      parse_vector_string(fin,"rst_header",line,vs,done,rst_header);
       
-      next_line(fin,line,vs,done);
+    } else if (vs[0]=="py_class_doc") {
       
-    } else if (vs[0]=="py_class_doc_pattern") {
-      py_class_doc_pattern="";
-      if (vs.size()==1) {
-        cout << "Clearing py_class_doc_pattern." << endl;
-      } else {
-        for(size_t k=1;k<vs.size();k++) {
-          py_class_doc_pattern+=vs[k];
-          if (k!=vs.size()-1) py_class_doc_pattern+=" ";
-        }
-        if (py_class_doc_pattern[0]=='\"' &&
-            py_class_doc_pattern[py_class_doc_pattern.length()-
-                                 1]=='\"') {
-          py_class_doc_pattern=py_class_doc_pattern.substr
-            (1,py_class_doc_pattern.length()-2);
-        }
-        cout << "Setting py_class_doc_pattern to \""
-             << py_class_doc_pattern << "\"." << endl;
-      }
-      
-      next_line(fin,line,vs,done);
+      parse_vector_string(fin,"py_class_doc",line,vs,done,py_class_doc);
       
     } else if (vs[0]=="h_include") {
       
@@ -589,22 +618,10 @@ int main(int argc, char *argv[]) {
           if (done) class_done=true;
           
         } else if (vs.size()>=3 && vs[0]=="-" &&
-                   vs[1]=="py_class_doc_pattern") {
+                   vs[1]=="py_class_doc") {
+
+          parse_vector_string(fin,"py_class_doc",line,vs,done,ifc.py_class_doc);
           
-          ifc.py_class_doc_pattern=vs[2];
-          for(size_t k=3;k<vs.size();k++) {
-            ifc.py_class_doc_pattern+=" "+vs[k];
-          }
-          if (ifc.py_class_doc_pattern[0]=='\"' &&
-              ifc.py_class_doc_pattern[ifc.py_class_doc_pattern.length()-
-                                       1]=='\"') {
-            ifc.py_class_doc_pattern=ifc.py_class_doc_pattern.substr
-              (1,ifc.py_class_doc_pattern.length()-2);
-          }
-          cout << "  Class py_class_doc_pattern is \""
-               << ifc.py_class_doc_pattern << "\"." << endl;
-          
-          next_line(fin,line,vs,done);
           if (done) class_done=true;
           
         } else if (vs.size()>=3 && vs[0]=="-") {
@@ -1261,18 +1278,22 @@ int main(int argc, char *argv[]) {
       }
     }
     fout << "    \"\"\"" << endl;
-    if (ifc.py_class_doc_pattern.length()>0) {
-      string s=ifc.py_class_doc_pattern;
-      while (s.find("%name%")!=std::string::npos) {
-        s.replace(s.find("%name%"),6,ifc.name);
+    if (ifc.py_class_doc.size()>0) {
+      for(size_t j=0;j<ifc.py_class_doc.size();j++) {
+        string s=ifc.py_class_doc[j];
+        while (s.find("%name%")!=std::string::npos) {
+          s.replace(s.find("%name%"),6,ifc.name);
+        }
+        fout << "    " << s << endl;
       }
-      fout << "    " << s << endl;
-    } else if (py_class_doc_pattern.length()>0) {
-      string s=py_class_doc_pattern;
-      while (s.find("%name%")!=std::string::npos) {
-        s.replace(s.find("%name%"),6,ifc.name);
+    } else if (py_class_doc.size()>0) {
+      for(size_t j=0;j<py_class_doc.size();j++) {
+        string s=py_class_doc[j];
+        while (s.find("%name%")!=std::string::npos) {
+          s.replace(s.find("%name%"),6,ifc.name);
+        }
+        fout << "    " << s << endl;
       }
-      fout << "    " << s << endl;
     }
     fout << "    \"\"\"" << endl;
     fout << endl;
@@ -1427,8 +1448,42 @@ int main(int argc, char *argv[]) {
 
       // Comment
       fout << "        \"\"\"" << endl;
-      fout << "        Wrapper for " << ifc.name << "::"
-           << iff.name << "() ." << endl;
+      //fout << "        Wrapper for " << ifc.name << "::"
+      //<< iff.name << "() ." << endl;
+      if ((iff.ret.name=="vector<double>" ||
+           iff.ret.name=="std::vector<double>") &&
+          iff.ret.suffix=="&") {
+        fout << "        This function returns a numpy array." << endl;
+      } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
+                 iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
+        size_t len=iff.ret.name.length();
+        std::string tmps=iff.ret.name;
+        // Manually remove '<>' from the typename if necessary
+        if (len>2 && iff.ret.name[len-2]=='<' &&
+            iff.ret.name[len-1]=='>') {
+          tmps=iff.ret.name.substr(0,len-2);
+        }
+        fout << "        This function returns an object of type :class:`"
+             << "shared_ptr_" << tmps << "`." << endl;
+      } else if (iff.ret.suffix=="&") {
+        size_t len=iff.ret.name.length();
+        std::string tmps=iff.ret.name;
+        // Manually remove '<>' from the typename if necessary
+        if (len>2 && iff.ret.name[len-2]=='<' &&
+            iff.ret.name[len-1]=='>') {
+          tmps=iff.ret.name.substr(0,len-2);
+        }
+        fout << "        This function returns an object of type :class:`"
+             << tmps << "`." << endl;
+      } else if (iff.ret.name=="std::string") {
+        fout << "        This function returns a python bytes object."
+             << endl;
+      } else if (iff.ret.name!="void") {
+        fout << "        This function returns a ctypes.c_"
+             << iff.ret.name << " object." << endl;
+      }
+        
+
       fout << "        \"\"\"" << endl;
 
       // Perform necessary conversions
@@ -1715,12 +1770,10 @@ int main(int argc, char *argv[]) {
   // Create rst file for python documentation
 
   ofstream fout2;
-  fout2.open((py_prefix+".rst").c_str());
+  fout2.open((rst_prefix+".rst").c_str());
 
-  fout2 << "  .. _" << rst_name << ":\n" << endl;
-  fout2 << rst_name << " classes" << endl;
-  for(size_t j=0;j<rst_name.length()+8;j++) {
-    fout2 << "=";
+  for(size_t j=0;j<rst_header.size();j++) {
+    fout2 << rst_header[j] << endl;
   }
   fout2 << "\n" << endl;
   

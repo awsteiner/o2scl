@@ -304,7 +304,7 @@ am__libo2scl_base_la_SOURCES_DIST = $(BASE_SRCS)
 
 interface: empty
 	../internal/cpppy base.i base_python ~/wcs/o2sclpy/o2sclpy/base \
-		| tee base_python.cpppy.out
+		~/wcs/o2sclpy/doc/base | tee base_python.cpppy.out
 
 empty:
 

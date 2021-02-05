@@ -1,9 +1,14 @@
 # Interface file for o2scl nuclei classes
 # 
 namespace o2scl
-py_class_doc_pattern "Python interface for O\ :sub:`2`\ scl class :ref:`%name% <o2sclp:%name%>`."
+py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class :ref:`%name% <o2sclp:%name%>`.
 dll_name o2scl_part
-rst_name Nuclei
+rst_header |
+| .. _nuclei:
+|
+| Nuclei and nuclear mass classes
+| ===============================
 # 
 # Include statements for C++ header file
 # 

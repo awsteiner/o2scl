@@ -1,9 +1,14 @@
 # Interface file for o2scl eos classes
 #
 namespace o2scl
-py_class_doc_pattern "Python interface for O\ :sub:`2`\ scl class :ref:`%name% <o2scle:%name%>`."
+py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class :ref:`%name% <o2scle:%name%>`.
 dll_name o2scl_eos
-rst_name EOS
+rst_header |
+| .. _eos:
+|
+| EOS classes
+| ===========
 # 
 # Include statements for C++ header file
 # 
