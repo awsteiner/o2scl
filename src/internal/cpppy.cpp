@@ -1494,20 +1494,6 @@ int main(int argc, char *argv[]) {
         }
       }
 
-      // If we're returning a shared pointer, first create
-      // the python version of the shared pointer object
-      if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
-          iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
-        size_t len=iff.ret.name.length();
-        std::string tmps=iff.ret.name;
-        // Manually remove '<>' from the typename if necessary
-        if (len>2 && iff.ret.name[len-2]=='<' &&
-            iff.ret.name[len-1]=='>') {
-          tmps=iff.ret.name.substr(0,len-2);
-        }
-        fout << "        sp=shared_ptr_"+tmps+"(self._link)" << endl;
-      }
-      
       // Ctypes interface for function
       fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
            << underscoreify(ifc.name) << "_"
@@ -1562,11 +1548,22 @@ int main(int argc, char *argv[]) {
           }
         }
         fout << ",ctypes.byref(ptr_),ctypes.byref(n_))" << endl;;
+        
       } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
                  iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
-        fout << "        sp._s_ptr=func(self._ptr)" << endl;
-        fout << "        sp.set_pointer()" << endl;
+        
+        size_t len=iff.ret.name.length();
+        std::string tmps=iff.ret.name;
+        // Manually remove '<>' from the typename if necessary
+        if (len>2 && iff.ret.name[len-2]=='<' &&
+            iff.ret.name[len-1]=='>') {
+          tmps=iff.ret.name.substr(0,len-2);
+        }
+        fout << "        sp=shared_ptr_"+tmps+
+          "(self._link,func(self._ptr))" << endl;
+        
       } else {
+        
         if (iff.ret.name=="void") {
           fout << "        func(self._ptr";
         } else {
@@ -1638,45 +1635,38 @@ int main(int argc, char *argv[]) {
     fout << "    _s_ptr=0" << endl;
     fout << "    _ptr=0" << endl;
     fout << "    _link=0" << endl;
+    fout << "    _owner=True" << endl;
     fout << endl;
     
     // Define __init__() function
-    fout << "    def __init__(self,link):" << endl;
+    fout << "    def __init__(self,link,shared_ptr):" << endl;
     fout << "        \"\"\"" << endl;
-    fout << "        Init function for sp " << ifsp.name << " ." << endl;
+    fout << "        Init function for shared_ptr_"
+         << ifsp.name << " ." << endl;
     fout << "        \"\"\"" << endl;
     fout << endl;
-    fout << "        self._s_ptr=0" << endl;
-    fout << "        self._ptr=0" << endl;
     fout << "        self._link=link" << endl;
-    fout << "        return" << endl;
-    fout << endl;
-    
-    // Define __del__() function
-    fout << "    def __del__(self):" << endl;
-    fout << "        \"\"\"" << endl;
-    fout << "        Delete function for sp " << ifsp.name << " ." << endl;
-    fout << "        \"\"\"" << endl;
-    fout << endl;
-    fout << "        f=self._link." << dll_name << "." << ifsp.ns << "_free_shared_ptr_"
-         << underscoreify(ifsp.name) << endl;
-    fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
-    fout << "        f(self._ptr)" << endl;
-    fout << "        return" << endl;
-    fout << endl;
-
-    // Define set_pointer() function
-    fout << "    def set_pointer(self):" << endl;
-    fout << "        \"\"\"" << endl;
-    fout << "        Function to obtain the internal raw pointer from "
-         << "the shared pointer." << endl;
-    fout << "        \"\"\"" << endl;
+    fout << "        self._s_ptr=shared_ptr" << endl;
     fout << endl;
     fout << "        f=self._link." << dll_name << "." << ifsp.ns << "_shared_ptr_"
          << underscoreify(ifsp.name) << "_ptr" << endl;
     fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
     fout << "        f.restype=ctypes.c_void_p" << endl;
     fout << "        self._ptr=f(self._s_ptr)" << endl;
+    fout << "        return" << endl;
+    fout << endl;
+    
+    // Define __del__() function
+    fout << "    def __del__(self):" << endl;
+    fout << "        \"\"\"" << endl;
+    fout << "        Delete function for shared_ptr_"
+         << ifsp.name << " ." << endl;
+    fout << "        \"\"\"" << endl;
+    fout << endl;
+    fout << "        f=self._link." << dll_name << "." << ifsp.ns << "_free_shared_ptr_"
+         << underscoreify(ifsp.name) << endl;
+    fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
+    fout << "        f(self._ptr)" << endl;
     fout << "        return" << endl;
     fout << endl;
 
