@@ -448,7 +448,7 @@ int main(int argc, char *argv[]) {
       parse_vector_string(fin,"rst_header",line,vs,done,rst_header);
       
     } else if (vs[0]=="py_class_doc") {
-      
+
       parse_vector_string(fin,"py_class_doc",line,vs,done,py_class_doc);
       
     } else if (vs[0]=="h_include") {
@@ -1447,12 +1447,33 @@ int main(int argc, char *argv[]) {
 
       // Comment
       fout << "        \"\"\"" << endl;
+      
       //fout << "        Wrapper for " << ifc.name << "::"
       //<< iff.name << "() ." << endl;
+      if (iff.args.size()>0) {
+        fout << "        | Parameters:" << endl;
+      }
+      for(size_t k=0;k<iff.args.size();k++) {
+        if (iff.args[k].ift.name=="bool" ||
+            iff.args[k].ift.name=="int" ||
+            iff.args[k].ift.name=="size_t" ||
+            iff.args[k].ift.name=="double") {
+          fout << "        | *" << iff.args[k].name
+               << "*: ``" << iff.args[k].ift.name << "``" << endl;
+        } else if (iff.args[k].ift.suffix=="&") {
+          fout << "        | *" << iff.args[k].name
+               << "*: :ref:`" << iff.args[k].ift.name << "` object"
+               << endl;
+        } else if (iff.args[k].ift.name=="std::string") {
+          fout << "        | *" << iff.args[k].name
+               << "*: string" << endl;
+        }
+      }
+      
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
           iff.ret.suffix=="&") {
-        fout << "        This function returns a numpy array." << endl;
+        fout << "        | Returns: ``numpy`` array" << endl;
       } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
                  iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
         size_t len=iff.ret.name.length();
@@ -1462,7 +1483,7 @@ int main(int argc, char *argv[]) {
             iff.ret.name[len-1]=='>') {
           tmps=iff.ret.name.substr(0,len-2);
         }
-        fout << "        This function returns an object of type :class:`"
+        fout << "        | Returns: :class:`"
              << "shared_ptr_" << tmps << "`." << endl;
       } else if (iff.ret.suffix=="&") {
         size_t len=iff.ret.name.length();
@@ -1472,17 +1493,16 @@ int main(int argc, char *argv[]) {
             iff.ret.name[len-1]=='>') {
           tmps=iff.ret.name.substr(0,len-2);
         }
-        fout << "        This function returns an object of type :class:`"
-             << tmps << "`." << endl;
+        fout << "        | Returns: :class:`"
+             << tmps << "`" << endl;
       } else if (iff.ret.name=="std::string") {
-        fout << "        This function returns a python bytes object."
+        fout << "        | Returns: python bytes object"
              << endl;
       } else if (iff.ret.name!="void") {
-        fout << "        This function returns a ctypes.c_"
-             << iff.ret.name << " object." << endl;
+        fout << "        | Returns: ``ctypes.c_"
+             << iff.ret.name << "`` object" << endl;
       }
-        
-
+      
       fout << "        \"\"\"" << endl;
 
       // Perform necessary conversions
@@ -1765,12 +1785,26 @@ int main(int argc, char *argv[]) {
   for(size_t j=0;j<rst_header.size();j++) {
     fout2 << rst_header[j] << endl;
   }
-  fout2 << "\n" << endl;
+  fout2 << endl;
   
   for(size_t i=0;i<classes.size();i++) {
 
     if_class &ifc=classes[i];
 
+    size_t len=6;
+    fout2 << "Class ";
+    if (ifc.py_name=="") {
+      fout2 << ifc.name << endl;
+      len+=ifc.name.length();
+    } else {
+      fout2 << ifc.py_name << endl;
+      len+=ifc.py_name.length();
+    }
+    for(size_t kk=0;kk<len;kk++) {
+      fout2 << "-";
+    }
+    fout2 << "\n" << endl;
+    
     if (ifc.py_name=="") {
       fout2 << ".. autoclass:: o2sclpy." << ifc.name << endl;
     } else {

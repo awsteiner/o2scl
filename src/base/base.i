@@ -45,6 +45,8 @@ class lib_settings_class
 #
 class table<>
 - py_name table
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class :ref:`table <o2scl:table>`.
 - function set
   - void
   - std::string col
@@ -83,6 +85,9 @@ class table<>
 #
 class table_units<>
 - parent table<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class
+| :ref:`table_units <o2scl:table_units>`.
 - py_name table_units
 - function get_unit
   - std::string
@@ -132,6 +137,9 @@ class table3d
 #
 class tensor<>
 - py_name tensor
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class
+| :ref:`tensor <o2scl:tensor>`.
 - function clear
   - void
 # 
@@ -156,6 +164,9 @@ class find_constants
 #
 class convert_units<>
 - py_name convert_units
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class
+| :ref:`convert_units <o2scl:convert_units>`.
 - function convert
   - double
   - std::string frm
