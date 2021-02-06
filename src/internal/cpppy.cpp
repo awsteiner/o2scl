@@ -1357,7 +1357,8 @@ int main(int argc, char *argv[]) {
         fout << "    @property" << endl;
         fout << "    def " << ifv.name << "(self):" << endl;
         fout << "        \"\"\"" << endl;
-        fout << "        Property of type ctypes.c_" << ifv.ift.name << endl;
+        fout << "        Property of type ``ctypes.c_" << ifv.ift.name
+             << "``" << endl;
         fout << "        \"\"\"" << endl;
         fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
              << underscoreify(ifc.name)
@@ -1462,7 +1463,7 @@ int main(int argc, char *argv[]) {
                << "*: ``" << iff.args[k].ift.name << "``" << endl;
         } else if (iff.args[k].ift.suffix=="&") {
           fout << "        | *" << iff.args[k].name
-               << "*: :ref:`" << iff.args[k].ift.name << "` object"
+               << "*: :class:`" << iff.args[k].ift.name << "` object"
                << endl;
         } else if (iff.args[k].ift.name=="std::string") {
           fout << "        | *" << iff.args[k].name
@@ -1494,7 +1495,7 @@ int main(int argc, char *argv[]) {
           tmps=iff.ret.name.substr(0,len-2);
         }
         fout << "        | Returns: :class:`"
-             << tmps << "`" << endl;
+             << tmps << "` object" << endl;
       } else if (iff.ret.name=="std::string") {
         fout << "        | Returns: python bytes object"
              << endl;
@@ -1815,7 +1816,24 @@ int main(int argc, char *argv[]) {
   }
 
   for(size_t i=0;i<sps.size();i++) {
+
     if_shared_ptr &ifsp=sps[i];
+
+    size_t len=17;
+    fout2 << "Class shared_ptr_";
+    
+    if (ifsp.py_name=="") {
+      fout2 << ifsp.name << endl;
+      len+=ifsp.name.length();
+    } else {
+      fout2 << ifsp.py_name << endl;
+      len+=ifsp.py_name.length();
+    }
+    for(size_t kk=0;kk<len;kk++) {
+      fout2 << "-";
+    }
+    fout2 << "\n" << endl;
+    
     
     if (ifsp.py_name!="") {
       size_t len=ifsp.name.length();

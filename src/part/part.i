@@ -5,7 +5,7 @@ py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class :ref:`%name% <o2sclp:%name%>`.
 dll_name o2scl_part
 rst_header |
-| .. _part:
+| .. _particle:
 |
 | Particle classes
 | ===============================
