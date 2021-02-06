@@ -1357,8 +1357,7 @@ int main(int argc, char *argv[]) {
         fout << "    @property" << endl;
         fout << "    def " << ifv.name << "(self):" << endl;
         fout << "        \"\"\"" << endl;
-        fout << "        Getter function for " << ifc.name << "::"
-             << ifv.name << " ." << endl;
+        fout << "        Property of type ctypes.c_" << ifv.ift.name << endl;
         fout << "        \"\"\"" << endl;
         fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
              << underscoreify(ifc.name)
@@ -1370,8 +1369,8 @@ int main(int argc, char *argv[]) {
         fout << "    def get_" << ifv.name << "(self," << ifv.name
              << "):" << endl;
         fout << "        \"\"\"" << endl;
-        fout << "        Getter function for " << ifc.name << "::"
-             << ifv.name << " ." << endl;
+        fout << "        Object of type :class:`"
+             << ifv.ift.name << "`" << endl;
         fout << "        \"\"\"" << endl;
         fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
              << underscoreify(ifc.name)
@@ -1669,7 +1668,8 @@ int main(int argc, char *argv[]) {
     // Define set_pointer() function
     fout << "    def set_pointer(self):" << endl;
     fout << "        \"\"\"" << endl;
-    fout << "        Set pointer function for sp " << ifsp.name << " ." << endl;
+    fout << "        Function to obtain the internal raw pointer from "
+         << "the shared pointer." << endl;
     fout << "        \"\"\"" << endl;
     fout << endl;
     fout << "        f=self._link." << dll_name << "." << ifsp.ns << "_shared_ptr_"
@@ -1788,6 +1788,37 @@ int main(int argc, char *argv[]) {
     }
     fout2 << "        :members:" << endl;
     fout2 << "        :undoc-members:\n" << endl;
+  }
+
+  for(size_t i=0;i<sps.size();i++) {
+    if_shared_ptr &ifsp=sps[i];
+    
+    if (ifsp.py_name!="") {
+      size_t len=ifsp.name.length();
+      std::string tmps=ifsp.name;
+      // Manually remove '<>' from the typename if necessary
+      if (len>2 && ifsp.name[len-2]=='<' &&
+          ifsp.name[len-1]=='>') {
+        tmps=ifsp.name.substr(0,len-2);
+      }
+      fout2 << ".. autoclass:: o2sclpy.shared_ptr_" << tmps << endl;
+      fout2 << "        :members:" << endl;
+      fout2 << "        :undoc-members:\n" << endl;
+    } else {
+      /*
+      size_t len=ifsp.py_name.length();
+      std::string tmps=ifsp.py_name;
+      // Manually remove '<>' from the typename if necessary
+      if (len>2 && ifsp.py_name[len-2]=='<' &&
+          ifsp.py_name[len-1]=='>') {
+        tmps=ifsp.py_name.substr(0,len-2);
+      }
+      */
+      fout2 << ".. autoclass:: o2sclpy.shared_ptr_" << ifsp.py_name << endl;
+      fout2 << "        :members:" << endl;
+      fout2 << "        :undoc-members:\n" << endl;
+    }
+    
   }
   
   fout2.close();

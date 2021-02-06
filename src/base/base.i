@@ -7,8 +7,8 @@ dll_name o2scl
 rst_header |
 | .. _base:
 |
-| Base classes from O2scl
-| =======================
+| Base classes from O\ :sub:`2`\ scl
+| ==================================
 # 
 # Include statements for C++ header file
 # 
