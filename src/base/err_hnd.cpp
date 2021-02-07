@@ -180,7 +180,8 @@ string err_hnd_gsl::errno_to_string(int errnox) {
   return "unknown";
 }
 
-void o2scl_set_err_hnd_gsl() {
+void o2scl_python_prep() {
   err_hnd=&alt_err_hnd;
+  cout.setf(ios::scientific);
   return;
 }

@@ -363,7 +363,7 @@ namespace o2scl {
 
 extern "C" {
 
-  void o2scl_set_err_hnd_gsl();
+  void o2scl_python_prep();
   
 }
 
