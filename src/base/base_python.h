@@ -34,7 +34,49 @@ void *o2scl_create_lib_settings_class();
 
 void o2scl_free_lib_settings_class(void *vptr);
 
+const char *o2scl_lib_settings_class_get_data_dir(void *vptr);
+
+int o2scl_lib_settings_class_set_data_dir(void *vptr, char *dir);
+
+const char *o2scl_lib_settings_class_get_doc_dir(void *vptr);
+
+int o2scl_lib_settings_class_set_doc_dir(void *vptr, char *dir);
+
 bool o2scl_lib_settings_class_eos_installed(void *vptr);
+
+bool o2scl_lib_settings_class_part_installed(void *vptr);
+
+bool o2scl_lib_settings_class_hdf_support(void *vptr);
+
+bool o2scl_lib_settings_class_openmp_support(void *vptr);
+
+bool o2scl_lib_settings_class_readline_support(void *vptr);
+
+bool o2scl_lib_settings_class_ncurses_support(void *vptr);
+
+bool o2scl_lib_settings_class_gsl2_support(void *vptr);
+
+bool o2scl_lib_settings_class_armadillo_support(void *vptr);
+
+bool o2scl_lib_settings_class_eigen_support(void *vptr);
+
+bool o2scl_lib_settings_class_fftw_support(void *vptr);
+
+bool o2scl_lib_settings_class_python_support(void *vptr);
+
+bool o2scl_lib_settings_class_hdf5_compression_support(void *vptr);
+
+const char *o2scl_lib_settings_class_system_type(void *vptr);
+
+bool o2scl_lib_settings_class_range_check(void *vptr);
+
+const char *o2scl_lib_settings_class_time_compiled(void *vptr);
+
+const char *o2scl_lib_settings_class_date_compiled(void *vptr);
+
+const char *o2scl_lib_settings_class_o2scl_version(void *vptr);
+
+void o2scl_lib_settings_class_config_h_report(void *vptr);
 
 void *o2scl_lib_settings_class_get_convert_units(void *vptr);
 
@@ -52,9 +94,45 @@ size_t o2scl_table___get_nlines(void *vptr);
 
 void o2scl_table___set_nlines(void *vptr, size_t lines);
 
+size_t o2scl_table___get_maxlines(void *vptr);
+
+void o2scl_table___set_maxlines(void *vptr, size_t llines);
+
+void o2scl_table___set_nlines_auto(void *vptr, size_t il);
+
+void o2scl_table___inc_maxlines(void *vptr, size_t llines);
+
 void o2scl_table___new_column(void *vptr, char *col);
 
 const char *o2scl_table___get_column_name(void *vptr, size_t icol);
+
+void o2scl_table___rename_column(void *vptr, char *src, char *dest);
+
+void o2scl_table___delete_column(void *vptr, char *col);
+
+const char *o2scl_table___get_sorted_name(void *vptr, size_t icol);
+
+bool o2scl_table___is_column(void *vptr, char *scol);
+
+size_t o2scl_table___lookup_column(void *vptr, char *scol);
+
+void o2scl_table___copy_column(void *vptr, char *src, char *dest);
+
+void o2scl_table___add_col_from_table(void *vptr, void *ptr_source, char *src_index, char *src_col, char *dest_index, char *dest_col);
+
+void o2scl_table___insert_table(void *vptr, void *ptr_source, char *src_index, bool allow_extrap, char *dest_index);
+
+void o2scl_table___add_table(void *vptr, void *ptr_source);
+
+void o2scl_table___new_row(void *vptr, size_t n);
+
+void o2scl_table___copy_row(void *vptr, size_t src, size_t dest);
+
+void o2scl_table___delete_row(void *vptr, char *scol, double val);
+
+void o2scl_table___delete_rows_func(void *vptr, char *func);
+
+void o2scl_table___line_of_names(void *vptr, char *names);
 
 void o2scl_table___clear(void *vptr);
 

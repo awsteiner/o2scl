@@ -1313,6 +1313,11 @@ int main(int argc, char *argv[]) {
     fout << "    def __init__(self,link,pointer=0):" << endl;
     fout << "        \"\"\"" << endl;
     fout << "        Init function for class " << ifc.name << " ." << endl;
+    fout << endl;
+    fout << "        | Parameters:" << endl;
+    fout << "        | *link* :class:`linker` object" << endl;
+    fout << "        | *pointer* ``ctypes.c_void_p`` pointer" << endl;
+    fout << endl;
     fout << "        \"\"\"" << endl;
     fout << endl;
     fout << "        if pointer==0:" << endl;
@@ -1410,10 +1415,10 @@ int main(int argc, char *argv[]) {
         fout << "        return" << endl;
       } else {
         fout << "    def set_" << ifv.name << "(self,value):" << endl;
-        fout << "        \"\"\"" << endl;
-        fout << "        Setter function for " << ifc.name << "::"
-             << ifv.name << " ." << endl;
-        fout << "        \"\"\"" << endl;
+        //fout << "        \"\"\"" << endl;
+        //fout << "        Setter function for " << ifc.name << "::"
+        //<< ifv.name << " ." << endl;
+        //fout << "        \"\"\"" << endl;
         fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
              << underscoreify(ifc.name) << "_set_" << ifv.name << endl;
         fout << "        func.argtypes=[ctypes.c_void_p,"
@@ -1710,8 +1715,59 @@ int main(int argc, char *argv[]) {
     
     // Comment
     fout << "    \"\"\"" << endl;
-    fout << "    Wrapper for " 
-         << iff.name << "() ." << endl;
+    
+    fout << "        | Parameters:" << endl;
+    fout << "        | *link* :class:`linker` object" << endl;
+    for(size_t k=0;k<iff.args.size();k++) {
+      if (iff.args[k].ift.name=="bool" ||
+          iff.args[k].ift.name=="int" ||
+          iff.args[k].ift.name=="size_t" ||
+          iff.args[k].ift.name=="double") {
+        fout << "        | *" << iff.args[k].name
+             << "*: ``" << iff.args[k].ift.name << "``" << endl;
+      } else if (iff.args[k].ift.suffix=="&") {
+        fout << "        | *" << iff.args[k].name
+             << "*: :class:`" << iff.args[k].ift.name << "` object"
+             << endl;
+      } else if (iff.args[k].ift.name=="std::string") {
+        fout << "        | *" << iff.args[k].name
+             << "*: string" << endl;
+      }
+    }
+    
+    if ((iff.ret.name=="vector<double>" ||
+         iff.ret.name=="std::vector<double>") &&
+        iff.ret.suffix=="&") {
+      fout << "        | Returns: ``numpy`` array" << endl;
+    } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
+               iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
+      size_t len=iff.ret.name.length();
+      std::string tmps=iff.ret.name;
+      // Manually remove '<>' from the typename if necessary
+      if (len>2 && iff.ret.name[len-2]=='<' &&
+          iff.ret.name[len-1]=='>') {
+        tmps=iff.ret.name.substr(0,len-2);
+      }
+      fout << "        | Returns: :class:`"
+           << "shared_ptr_" << tmps << "`." << endl;
+    } else if (iff.ret.suffix=="&") {
+      size_t len=iff.ret.name.length();
+      std::string tmps=iff.ret.name;
+      // Manually remove '<>' from the typename if necessary
+      if (len>2 && iff.ret.name[len-2]=='<' &&
+          iff.ret.name[len-1]=='>') {
+        tmps=iff.ret.name.substr(0,len-2);
+      }
+      fout << "        | Returns: :class:`"
+           << tmps << "` object" << endl;
+    } else if (iff.ret.name=="std::string") {
+      fout << "        | Returns: python bytes object"
+           << endl;
+    } else if (iff.ret.name!="void") {
+      fout << "        | Returns: ``ctypes.c_"
+           << iff.ret.name << "`` object" << endl;
+    }
+      
     fout << "    \"\"\"" << endl;
     
     // Perform necessary conversions
@@ -1813,6 +1869,7 @@ int main(int argc, char *argv[]) {
     }
     fout2 << "        :members:" << endl;
     fout2 << "        :undoc-members:\n" << endl;
+    fout2 << "        .. automethod:: __init__\n" << endl;
   }
 
   for(size_t i=0;i<sps.size();i++) {
@@ -1833,8 +1890,7 @@ int main(int argc, char *argv[]) {
       fout2 << "-";
     }
     fout2 << "\n" << endl;
-    
-    
+        
     if (ifsp.py_name!="") {
       size_t len=ifsp.name.length();
       std::string tmps=ifsp.name;
@@ -1862,6 +1918,33 @@ int main(int argc, char *argv[]) {
     }
     
   }
+
+  // RST help for functions
+  for(size_t j=0;j<functions.size();j++) {
+    
+    if_func &iff=functions[j];
+    
+    size_t len=9;
+    fout2 << "Function ";
+    
+    fout2 << iff.name << endl;
+    len+=iff.name.length();
+    for(size_t kk=0;kk<len;kk++) {
+      fout2 << "-";
+    }
+    fout2 << "\n" << endl;
+    
+    // Function header
+    fout2 << ".. autofunction:: o2sclpy." << iff.name << "(link,";
+    for(size_t k=0;k<iff.args.size();k++) {
+      fout2 << iff.args[k].name;
+      if (k!=iff.args.size()-1) {
+        fout2 << ",";
+      }
+    }
+    fout2 << ")\n" << endl;
+    
+  }    
   
   fout2.close();
   

@@ -36,8 +36,52 @@ cpp_using o2scl
 # Class lib_settings_class
 #
 class lib_settings_class
+- function get_data_dir
+  - std::string
+- function set_data_dir
+  - int
+  - std::string dir
+- function get_doc_dir
+  - std::string
+- function set_doc_dir
+  - int
+  - std::string dir
 - function eos_installed
   - bool
+- function part_installed
+  - bool
+- function hdf_support
+  - bool
+- function openmp_support
+  - bool
+- function readline_support
+  - bool
+- function ncurses_support
+  - bool
+- function gsl2_support
+  - bool
+- function armadillo_support
+  - bool
+- function eigen_support
+  - bool
+- function fftw_support
+  - bool
+- function python_support
+  - bool
+- function hdf5_compression_support
+  - bool
+- function system_type
+  - std::string
+- function range_check
+  - bool
+- function time_compiled
+  - std::string
+- function date_compiled
+  - std::string
+- function o2scl_version
+  - std::string
+- function config_h_report
+  - void
 - function get_convert_units
   - convert_units<> &
 # 
@@ -63,12 +107,82 @@ class table<>
 - function set_nlines
   - void
   - size_t lines
+- function get_maxlines
+  - size_t
+- function set_maxlines
+  - void
+  - size_t llines
+- function set_nlines_auto
+  - void
+  - size_t il
+- function inc_maxlines
+  - void
+  - size_t llines
 - function new_column
   - void
   - std::string col
+# - function get_column
+#  - vector<double> &
+# - std::string col
 - function get_column_name
   - std::string
   - size_t icol
+- function rename_column
+  - void
+  - std::string src
+  - std::string dest
+- function delete_column
+  - void
+  - std::string col
+- function get_sorted_name
+  - std::string
+  - size_t icol
+# - function init_column
+#  - void
+#  - std::string scol
+- function is_column
+  - bool
+  - std::string scol
+- function lookup_column
+  - size_t
+  - std::string scol
+- function copy_column
+  - void
+  - std::string src
+  - std::string dest
+- function add_col_from_table
+  - void
+  - table<> &source
+  - std::string src_index
+  - std::string src_col
+  - std::string dest_index
+  - std::string dest_col
+- function insert_table
+  - void
+  - table<> &source
+  - std::string src_index
+  - bool allow_extrap
+  - std::string dest_index
+- function add_table
+  - void
+  - table<> &source
+- function new_row
+  - void
+  - size_t n
+- function copy_row
+  - void
+  - size_t src
+  - size_t dest
+- function delete_row
+  - void
+  - std::string scol
+  - double val
+- function delete_rows_func
+  - void
+  - std::string func
+- function line_of_names
+  - void
+  - std::string names
 - function clear
   - void
 - function clear_data

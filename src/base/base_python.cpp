@@ -35,10 +35,142 @@ void o2scl_free_lib_settings_class(void *vptr) {
   delete ptr;
 }
 
+const char *o2scl_lib_settings_class_get_data_dir(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  std::string ret=ptr->get_data_dir();
+  python_temp_string=ret;
+  return python_temp_string.c_str();
+}
+
+int o2scl_lib_settings_class_set_data_dir(void *vptr, char *dir) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  int ret=ptr->set_data_dir(dir);
+  return ret;
+}
+
+const char *o2scl_lib_settings_class_get_doc_dir(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  std::string ret=ptr->get_doc_dir();
+  python_temp_string=ret;
+  return python_temp_string.c_str();
+}
+
+int o2scl_lib_settings_class_set_doc_dir(void *vptr, char *dir) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  int ret=ptr->set_doc_dir(dir);
+  return ret;
+}
+
 bool o2scl_lib_settings_class_eos_installed(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   bool ret=ptr->eos_installed();
   return ret;
+}
+
+bool o2scl_lib_settings_class_part_installed(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  bool ret=ptr->part_installed();
+  return ret;
+}
+
+bool o2scl_lib_settings_class_hdf_support(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  bool ret=ptr->hdf_support();
+  return ret;
+}
+
+bool o2scl_lib_settings_class_openmp_support(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  bool ret=ptr->openmp_support();
+  return ret;
+}
+
+bool o2scl_lib_settings_class_readline_support(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  bool ret=ptr->readline_support();
+  return ret;
+}
+
+bool o2scl_lib_settings_class_ncurses_support(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  bool ret=ptr->ncurses_support();
+  return ret;
+}
+
+bool o2scl_lib_settings_class_gsl2_support(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  bool ret=ptr->gsl2_support();
+  return ret;
+}
+
+bool o2scl_lib_settings_class_armadillo_support(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  bool ret=ptr->armadillo_support();
+  return ret;
+}
+
+bool o2scl_lib_settings_class_eigen_support(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  bool ret=ptr->eigen_support();
+  return ret;
+}
+
+bool o2scl_lib_settings_class_fftw_support(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  bool ret=ptr->fftw_support();
+  return ret;
+}
+
+bool o2scl_lib_settings_class_python_support(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  bool ret=ptr->python_support();
+  return ret;
+}
+
+bool o2scl_lib_settings_class_hdf5_compression_support(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  bool ret=ptr->hdf5_compression_support();
+  return ret;
+}
+
+const char *o2scl_lib_settings_class_system_type(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  std::string ret=ptr->system_type();
+  python_temp_string=ret;
+  return python_temp_string.c_str();
+}
+
+bool o2scl_lib_settings_class_range_check(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  bool ret=ptr->range_check();
+  return ret;
+}
+
+const char *o2scl_lib_settings_class_time_compiled(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  std::string ret=ptr->time_compiled();
+  python_temp_string=ret;
+  return python_temp_string.c_str();
+}
+
+const char *o2scl_lib_settings_class_date_compiled(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  std::string ret=ptr->date_compiled();
+  python_temp_string=ret;
+  return python_temp_string.c_str();
+}
+
+const char *o2scl_lib_settings_class_o2scl_version(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  std::string ret=ptr->o2scl_version();
+  python_temp_string=ret;
+  return python_temp_string.c_str();
+}
+
+void o2scl_lib_settings_class_config_h_report(void *vptr) {
+  lib_settings_class *ptr=(lib_settings_class *)vptr;
+  ptr->config_h_report();
+  return;
 }
 
 void *o2scl_lib_settings_class_get_convert_units(void *vptr) {
@@ -87,6 +219,30 @@ void o2scl_table___set_nlines(void *vptr, size_t lines) {
   return;
 }
 
+size_t o2scl_table___get_maxlines(void *vptr) {
+  table<> *ptr=(table<> *)vptr;
+  size_t ret=ptr->get_maxlines();
+  return ret;
+}
+
+void o2scl_table___set_maxlines(void *vptr, size_t llines) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->set_maxlines(llines);
+  return;
+}
+
+void o2scl_table___set_nlines_auto(void *vptr, size_t il) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->set_nlines_auto(il);
+  return;
+}
+
+void o2scl_table___inc_maxlines(void *vptr, size_t llines) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->inc_maxlines(llines);
+  return;
+}
+
 void o2scl_table___new_column(void *vptr, char *col) {
   table<> *ptr=(table<> *)vptr;
   ptr->new_column(col);
@@ -98,6 +254,94 @@ const char *o2scl_table___get_column_name(void *vptr, size_t icol) {
   std::string ret=ptr->get_column_name(icol);
   python_temp_string=ret;
   return python_temp_string.c_str();
+}
+
+void o2scl_table___rename_column(void *vptr, char *src, char *dest) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->rename_column(src,dest);
+  return;
+}
+
+void o2scl_table___delete_column(void *vptr, char *col) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->delete_column(col);
+  return;
+}
+
+const char *o2scl_table___get_sorted_name(void *vptr, size_t icol) {
+  table<> *ptr=(table<> *)vptr;
+  std::string ret=ptr->get_sorted_name(icol);
+  python_temp_string=ret;
+  return python_temp_string.c_str();
+}
+
+bool o2scl_table___is_column(void *vptr, char *scol) {
+  table<> *ptr=(table<> *)vptr;
+  bool ret=ptr->is_column(scol);
+  return ret;
+}
+
+size_t o2scl_table___lookup_column(void *vptr, char *scol) {
+  table<> *ptr=(table<> *)vptr;
+  size_t ret=ptr->lookup_column(scol);
+  return ret;
+}
+
+void o2scl_table___copy_column(void *vptr, char *src, char *dest) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->copy_column(src,dest);
+  return;
+}
+
+void o2scl_table___add_col_from_table(void *vptr, void *ptr_source, char *src_index, char *src_col, char *dest_index, char *dest_col) {
+  table<> *ptr=(table<> *)vptr;
+  table<> *source=(table<> *)ptr_source;
+  ptr->add_col_from_table(*source,src_index,src_col,dest_index,dest_col);
+  return;
+}
+
+void o2scl_table___insert_table(void *vptr, void *ptr_source, char *src_index, bool allow_extrap, char *dest_index) {
+  table<> *ptr=(table<> *)vptr;
+  table<> *source=(table<> *)ptr_source;
+  ptr->insert_table(*source,src_index,allow_extrap,dest_index);
+  return;
+}
+
+void o2scl_table___add_table(void *vptr, void *ptr_source) {
+  table<> *ptr=(table<> *)vptr;
+  table<> *source=(table<> *)ptr_source;
+  ptr->add_table(*source);
+  return;
+}
+
+void o2scl_table___new_row(void *vptr, size_t n) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->new_row(n);
+  return;
+}
+
+void o2scl_table___copy_row(void *vptr, size_t src, size_t dest) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->copy_row(src,dest);
+  return;
+}
+
+void o2scl_table___delete_row(void *vptr, char *scol, double val) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->delete_row(scol,val);
+  return;
+}
+
+void o2scl_table___delete_rows_func(void *vptr, char *func) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->delete_rows_func(func);
+  return;
+}
+
+void o2scl_table___line_of_names(void *vptr, char *names) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->line_of_names(names);
+  return;
 }
 
 void o2scl_table___clear(void *vptr) {
