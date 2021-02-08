@@ -856,13 +856,37 @@ namespace o2scl {
     
     /** \brief Create a table3d object by histogramming a series of
         columns from a \ref o2scl::table_units object
+
+        Create a new table3d object from a histogram a series of
+        columns from a \ref table_units object. If \c direction is
+        "x", then arrange these histograms "vertically", so that the
+        x-coordinate (named \c name) of the ith column is taken from
+        the ith entry of \c grid. If \c direction is "y", then arrange
+        these histograms "horizontally", so that the y-coordinate
+        (named \c name) of the ith column is taken from the ith entry
+        of \c grid. The histograms (in either case) are all created
+        using the bin edges from \c bin_edges. When \c direction is
+        "x" ("y"), \c bin_grid is used for the y-coordinate
+        (x-coordinate) of the new table3d object. This coordinate is
+        named \c bin_name. The columns are taken from all those
+        columns in \c t which match \c pattern, using the C function
+        <tt>fnmatch()</tt>. All of the new histogram data is imported
+        into a slice named \c slide in a new \ref table3d object. one
+
+        The vector \c bin_grid must have a size which is exactly 1
+        smaller than the size of the vector \c bin_edges. The number
+        of columns matched from table \c t by the pattern specified in
+        \c pattern must be exactly equal to the size of the vector \c
+        grid.
+
+        Any data in the current table3d object is destroyed.
     */
     template<class vec_t, class vec2_t, class vec3_t>
     void create_table_hist_set(vec_t &grid, std::string direction,
                                std::string name, vec2_t &bin_edges,
                                vec3_t &bin_grid, std::string bin_name,
                                o2scl::table_units<> &t, std::string pattern,
-                               std::string slice) {
+                               std::string slice, int verbose=0) {
 
       clear();
 
@@ -882,14 +906,17 @@ namespace o2scl {
         }
       }
 
-      std::cout << "matched: " << std::endl;
-      o2scl::vector_out(std::cout,matched,true);
+      if (verbose>0) {
+        std::cout << "In table3d::create_table_hist_set(), "
+                  << "columns matched: " << std::endl;
+        o2scl::vector_out(std::cout,matched,true);
+      }
 
       if (grid.size()!=matched.size()) {
-        std::cout << matched.size() << " columns matched, but the grid had "
-                  << "size " << grid.size() << "." << std::endl;
-        O2SCL_ERR2("Columns and grid size do not match in ",
-                   "table3d::table3d().",o2scl::exc_efailed);
+        std::string errs=o2scl::szttos(matched.size())+
+          " columns matched, but the grid had size "+
+          o2scl::szttos(grid.size)+" in table3d::create_table_hist_set().";
+        O2SCL_ERR(errs.c_str(),o2scl::exc_efailed);
       }
 
       if (direction=="x") {
@@ -899,16 +926,22 @@ namespace o2scl {
         xval.resize(numx);
         o2scl::vector_copy(numx,grid,xval);
 
-        std::cout << numx << " " << xname << " ";
-        o2scl::vector_out(std::cout,xval,true);
+        if (verbose>0) {
+          std::cout << "In table3d::create_table_hist_set(), x grid: ";
+          std::cout << numx << " " << xname << " ";
+          o2scl::vector_out(std::cout,xval,true);
+        }
         
         numy=bin_grid.size();
         yname=bin_name;
         yval.resize(numy);
         o2scl::vector_copy(numy,bin_grid,yval);
 
-        std::cout << numy << " " << yname << " ";
-        o2scl::vector_out(std::cout,yval,true);
+        if (verbose>0) {
+          std::cout << "In table3d::create_table_hist_set(), y grid: ";
+          std::cout << numy << " " << yname << " ";
+          o2scl::vector_out(std::cout,yval,true);
+        }
         
         xy_set=true;
         size_set=true;
@@ -935,14 +968,22 @@ namespace o2scl {
         xval.resize(numx);
         o2scl::vector_copy(numx,bin_grid,xval);
 
-        //o2scl::vector_out(std::cout,xval,true);
+        if (verbose>0) {
+          std::cout << "In table3d::create_table_hist_set(), x grid: ";
+          std::cout << numx << " " << xname << " ";
+          o2scl::vector_out(std::cout,xval,true);
+        }
 
         numy=grid.size();
         yname=name;
         yval.resize(numy);
         o2scl::vector_copy(numy,grid,yval);
         
-        //o2scl::vector_out(std::cout,yval,true);
+        if (verbose>0) {
+          std::cout << "In table3d::create_table_hist_set(), y grid: ";
+          std::cout << numy << " " << yname << " ";
+          o2scl::vector_out(std::cout,yval,true);
+        }
 
         xy_set=true;
         size_set=true;
@@ -972,13 +1013,19 @@ namespace o2scl {
     
     /** \brief Create a table3d object by histogramming a series of
         columns from a \ref o2scl::table_units object
+
+        This function works very similarly to the more detailed
+        function with the same name, but it uses the minimum
+        and maximum values of the table columns in order to
+        set the \c bin_grid and \c bin_edges objects.
     */
     template<class vec_t>
     void create_table_hist_set(vec_t &grid, std::string direction,
-                          std::string name, size_t n_bins,
-                          std::string bin_name,
-                          o2scl::table_units<> &t, std::string pattern,
-                          std::string slice) {
+                               std::string name, size_t n_bins,
+                               std::string bin_name,
+                               o2scl::table_units<> &t, std::string pattern,
+                               std::string slice, double factor=1.0e-10,
+                               int verbose=0) {
 
       // First, get all the columns which match the pattern
       std::vector<std::string> matched;
@@ -1006,23 +1053,28 @@ namespace o2scl {
       }
 
       double delta=(max-min)/n_bins;
-
-      std::cout << "matched: ";
-      o2scl::vector_out(std::cout,matched,true);
-      std::cout << "min,max,n_bins,delta: "
-                << min << " " << max << " " << n_bins << " "
-                << delta << std::endl;
       
-      uniform_grid_end<double> ug(min-delta/100.0,max+delta/100.0,n_bins);
+      if (verbose>0) {
+        std::cout << "In table3d::create_table_hist_set(), matched: ";
+        o2scl::vector_out(std::cout,matched,true);
+        std::cout << "  min,max,n_bins,delta: "
+                  << min << " " << max << " " << n_bins << " "
+                  << delta << std::endl;
+      }
+        
+      uniform_grid_end<double> ug(min-delta*factor,max+delta*factor,n_bins);
       std::vector<double> bin_edges(n_bins+1), bin_grid(n_bins);
       ug.vector(bin_edges);
       for(size_t i=0;i<n_bins;i++) {
         bin_grid[i]=(bin_edges[i]+bin_edges[i+1])/2.0;
       }
-      std::cout << "bin_grid: ";
-      o2scl::vector_out(std::cout,bin_grid,true);
-      std::cout << "bin_edges: ";
-      o2scl::vector_out(std::cout,bin_edges,true);
+      if (verbose>0) {
+        std::cout << "In table3d::create_table_hist_set(): " << std::endl;
+        std::cout << "  bin_grid: ";
+        o2scl::vector_out(std::cout,bin_grid,true);
+        std::cout << "  bin_edges: ";
+        o2scl::vector_out(std::cout,bin_edges,true);
+      }
       
       create_table_hist_set(grid,direction,name,bin_edges,bin_grid,
                             bin_name,t,pattern,slice);
@@ -1030,6 +1082,50 @@ namespace o2scl {
       return;
     }
 
+    /** \brief Create a table3d object by histogramming a series of
+        columns from a \ref o2scl::table_units object
+
+        This function works very similarly to the more detailed
+        function with the same name, but it uses \c bin_edges to
+        automatically compute the \c bin_grid argument. If \c
+        bin_edges appears logarithmic, it uses the geometric mean of
+        adjacent edges, otherwise it uses the arithmetic mean.
+     */
+    template<class vec_t, class vec2_t>
+    void create_table_hist_set(vec_t &grid, std::string direction,
+                               std::string name, vec2_t &bin_edges,
+                               std::string bin_name,
+                               o2scl::table_units<> &t, std::string pattern,
+                               std::string slice, int verbose=0) {
+
+      bool log=false;
+      linear_or_log(bin_edges,log);
+      std::vector<double> bin_grid(bin_edges.size()-1);
+      if (log) {
+        for(size_t i=0;i<bin_edges.size()-1;i++) {
+          bin_grid[i]=sqrt(bin_edges[i]*bin_edges[i+1]);
+        }
+      } else {
+        for(size_t i=0;i<bin_edges.size()-1;i++) {
+          bin_grid[i]=(bin_edges[i]+bin_edges[i+1])/2.0;
+        }
+      }
+
+      if (verbose>0) {
+        std::cout << "In table3d::create_table_hist_set(), log: "
+                  << log << std::endl;
+        std::cout << "  bin_grid: ";
+        o2scl::vector_out(std::cout,bin_grid,true);
+        std::cout << "  bin_edges: ";
+        o2scl::vector_out(std::cout,bin_edges,true);
+      }
+
+      create_table_hist_set(grid,direction,name,bin_edges,bin_grid,
+                            bin_name,t,pattern,slice,verbose);
+      
+      return;
+    }
+    
     /// Return the type, \c "table3d".
     virtual const char *type() { return "table3d"; }
     //@}
