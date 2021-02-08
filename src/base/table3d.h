@@ -1016,9 +1016,11 @@ namespace o2scl {
         columns from a \ref o2scl::table_units object
 
         This function works very similarly to the more detailed
-        function with the same name, but it uses the minimum
-        and maximum values of the table columns in order to
-        set the \c bin_grid and \c bin_edges objects.
+        function with the same name, but it uses the minimum and
+        maximum values of the table columns in order to automatically
+        create the histogram bin edges from a set of \c n_bins bins.
+        It uses these bin edges to create the \c bin_grid and \c
+        bin_edges objects.
     */
     template<class vec_t>
     void create_table_hist_set(vec_t &grid, std::string direction,

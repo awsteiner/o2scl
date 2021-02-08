@@ -475,9 +475,10 @@ void acol_manager::command_add(std::string new_type) {
 	"faster than 'select-rows' for tables with many columns.",
 	new comm_option_mfptr<acol_manager>
 	(this,&acol_manager::comm_select_rows2),both},
-       {0,"ser-hist-t3d","Histogram series in a table3d",0,7,
+       {0,"ser-hist-t3d","Histogram series in a table3d",0,8,
         ((std::string)"<grid vector spec.> <direction (\"x\" or \"y\")> ")+
-        "<grid name> <n bins> <bin name> <pattern> <new slice>","",
+        "<grid name> <n bins> <bin name> <bin edges vector spec.> "+
+        "<bin grid vector spec.> <pattern> <new slice>","",
 	new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_ser_hist_t3d),
 	both},
