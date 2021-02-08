@@ -915,7 +915,8 @@ namespace o2scl {
       if (grid.size()!=matched.size()) {
         std::string errs=o2scl::szttos(matched.size())+
           " columns matched, but the grid had size "+
-          o2scl::szttos(grid.size)+" in table3d::create_table_hist_set().";
+          o2scl::szttos(grid.size())+
+          " in table3d::create_table_hist_set().";
         O2SCL_ERR(errs.c_str(),o2scl::exc_efailed);
       }
 
