@@ -477,8 +477,8 @@ void acol_manager::command_add(std::string new_type) {
 	(this,&acol_manager::comm_select_rows2),both},
        {0,"ser-hist-t3d","Histogram series in a table3d",0,8,
         ((std::string)"<grid vector spec.> <direction (\"x\" or \"y\")> ")+
-        "<grid name> <n bins> <bin name> <bin edges vector spec.> "+
-        "<bin grid vector spec.> <pattern> <new slice>","",
+        "<grid name> <bin edges vector spec.> "+
+        "<bin grid vector spec.> <bin name> <pattern> <new slice>","",
 	new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_ser_hist_t3d),
 	both},

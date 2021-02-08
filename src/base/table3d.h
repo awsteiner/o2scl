@@ -950,12 +950,20 @@ namespace o2scl {
 
         new_slice(slice);
 
+        double hist_min=bin_edges[0];
+        double hist_max=bin_edges[bin_edges.size()-1];
+        
         // Create the data
         for(size_t i=0;i<numx;i++) {
           // Create the histogram for this x-coordinate
           hist h;
           h.set_bin_edges(bin_edges.size(),bin_edges);
-          h.update_vec(t[matched[i]]);
+          for(size_t j=0;j<t.get_nlines();j++) {
+            double val=t[matched[i]][j];
+            if (val>=hist_min && val<=hist_max) {
+              h.update(val);
+            }
+          }
           // Now copy the histogram to the table3d object
           for(size_t j=0;j<h.size();j++) {
             this->set(i,j,slice,h[j]);
@@ -992,12 +1000,20 @@ namespace o2scl {
 
         new_slice(slice);
 
+        double hist_min=bin_edges[0];
+        double hist_max=bin_edges[bin_edges.size()-1];
+
         // Create the data
         for(size_t i=0;i<numy;i++) {
           // Create the histogram for this x-coordinate
           hist h;
           h.set_bin_edges(bin_edges.size(),bin_edges);
-          h.update_vec(t[matched[i]]);
+          for(size_t j=0;j<t.get_nlines();j++) {
+            double val=t[matched[i]][j];
+            if (val>=hist_min && val<=hist_max) {
+              h.update(val);
+            }
+          }
           // Now copy the histogram to the table3d object
           for(size_t j=0;j<h.size();j++) {
             this->set(j,i,slice,h[j]);
