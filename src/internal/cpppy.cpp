@@ -79,14 +79,21 @@ void parse_vector_string(ifstream &fin, std::string type, std::string &line,
                          std::vector<std::string> &vs, bool &done,
                          std::vector<std::string> &output) {
 
-  //cout << "Here0 " << line << endl;
+  bool debug=true;
+  if (debug) {
+    cout << "parse_vector_string() start: " << line << endl;
+  }
   if (vs.size()==1) {
-    cout << "Clearing " << type << "." << endl;
+    if (debug) {
+      cout << "Clearing " << type << "." << endl;
+    }
     output.clear();
     next_line(fin,line,vs,done);
   } else if ((vs[0]==type && vs[1]=="|") ||
              (vs.size()>=3 && vs[1]==type && vs[2]=="|")) {
-    //cout << "Here " << line << endl;
+    if (debug) {
+      cout << "Here " << line << endl;
+    }
     next_line(fin,line,vs,done);
     while (line.length()>0 && line[0]=='|') {
       if (line[1]==' ' && line.length()>2) {
@@ -98,7 +105,9 @@ void parse_vector_string(ifstream &fin, std::string type, std::string &line,
       next_line(fin,line,vs,done);
     }
   } else {
-    //cout << "Here2 " << line << endl;
+    if (debug) {
+      cout << "Here2 " << line << endl;
+    }
     output.clear();
     output.push_back("");
     for(size_t k=1;k<vs.size();k++) {
@@ -419,7 +428,6 @@ int main(int argc, char *argv[]) {
   }
   
   while (done==false) {
-
     if (vs[0]=="namespace") {
       if (vs.size()==1) {
         ns="";
