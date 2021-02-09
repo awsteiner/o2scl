@@ -1427,8 +1427,7 @@ int main(int argc, char *argv[]) {
              << "_get_" << ifv.name << endl;
         fout << "        func.argtypes=[ctypes.c_void_p," 
              << "ctypes.c_void_p]" << endl;
-        fout << "        func(self._ptr,sp._ptr" << ifv.name
-             << "._ptr)" << endl;
+        fout << "        func(self._ptr,sp._s_ptr)" << endl;
         fout << "        return" << endl;
       } else {
         fout << "    def get_" << ifv.name << "(self," << ifv.name
@@ -1482,7 +1481,12 @@ int main(int argc, char *argv[]) {
              << underscoreify(ifc.name) << "_set_" << ifv.name << endl;
         fout << "        func.argtypes=[ctypes.c_void_p,"
              << "ctypes.c_void_p]" << endl;
-        fout << "        func(self._ptr,value._ptr)" << endl;
+        if (ifv.ift.prefix.find("shared_ptr")!=std::string::npos ||
+            ifv.ift.prefix.find("std::shared_ptr")!=std::string::npos) {
+          fout << "        func(self._ptr,value._s_ptr)" << endl;
+        } else {
+          fout << "        func(self._ptr,value._ptr)" << endl;
+        }
         fout << "        return" << endl;
       }
       fout << endl;
@@ -1724,17 +1728,23 @@ int main(int argc, char *argv[]) {
     fout << endl;
     
     // Define __init__() function
-    fout << "    def __init__(self,link,shared_ptr):" << endl;
+    fout << "    def __init__(self,link,shared_ptr=0):" << endl;
     fout << "        \"\"\"" << endl;
     fout << "        Init function for shared_ptr_"
          << ifsp.name << " ." << endl;
     fout << "        \"\"\"" << endl;
     fout << endl;
     fout << "        self._link=link" << endl;
-    fout << "        self._s_ptr=shared_ptr" << endl;
+    fout << "        if shared_ptr==0:" << endl;
+    fout << "            f2=self._link." << dll_name << "." << ifsp.ns
+         << "create_shared_ptr_" << underscoreify(ifsp.name) << endl;
+    fout << "            f2.restype=ctypes.c_void_p" << endl;
+    fout << "            self._s_ptr=f2()" << endl;
+    fout << "        else:" << endl;
+    fout << "            self._s_ptr=shared_ptr" << endl;
     fout << endl;
-    fout << "        f=self._link." << dll_name << "." << ifsp.ns << "_shared_ptr_"
-         << underscoreify(ifsp.name) << "_ptr" << endl;
+    fout << "        f=self._link." << dll_name << "." << ifsp.ns
+         << "_shared_ptr_" << underscoreify(ifsp.name) << "_ptr" << endl;
     fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
     fout << "        f.restype=ctypes.c_void_p" << endl;
     fout << "        self._ptr=f(self._s_ptr)" << endl;
