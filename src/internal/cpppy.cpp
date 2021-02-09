@@ -1352,6 +1352,8 @@ int main(int argc, char *argv[]) {
          << underscoreify(ifc.name) << endl;
     fout << "            f.argtypes=[ctypes.c_void_p]" << endl;
     fout << "            f(self._ptr)" << endl;
+    fout << "            self._owner=False" << endl;
+    fout << "            self._ptr=0" << endl;
     fout << "        return" << endl;
     fout << endl;
 
