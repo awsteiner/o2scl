@@ -1577,6 +1577,20 @@ void o2scl_tov_love_set_eps(void *vptr, double v) {
   return;
 }
 
+void o2scl_tov_love_get_tab(void *vptr, void *p_v) {
+  tov_love *ptr=(tov_love *)vptr;
+  std::shared_ptr<table_units<> > *p_t=(std::shared_ptr<table_units<> > *)p_v;
+  *(p_t)=ptr->tab;
+  return;
+}
+
+void o2scl_tov_love_set_tab(void *vptr, void *p_v) {
+  tov_love *ptr=(tov_love *)vptr;
+  std::shared_ptr<table_units<> > *p_t=(std::shared_ptr<table_units<> > *)p_v;
+  ptr->tab=*(p_t);
+  return;
+}
+
 int o2scl_tov_love_calc_y(void *vptr, void *ptr_yR, void *ptr_beta, void *ptr_k2, void *ptr_lambda_km5, void *ptr_lambda_cgs, bool tabulate) {
   tov_love *ptr=(tov_love *)vptr;
   double *yR=(double *)ptr_yR;

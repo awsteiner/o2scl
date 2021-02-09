@@ -446,6 +446,7 @@ class tov_love
 - table_units<> results
 - double delta
 - double eps
+- shared_ptr table_units<> tab
 - function calc_y
   - int
   - double &yR

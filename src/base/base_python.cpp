@@ -580,16 +580,14 @@ void o2scl_convert_units___print_cache(void *vptr) {
 }
 
 void *o2scl_create_shared_ptr_table_units__() {
-  table_units<> *ptr=new table_units<>;
+  std::shared_ptr<table_units<> > *ptr=new std::shared_ptr<table_units<> >;
   return ptr;
 }
 
-
 void o2scl_free_shared_ptr_table_units__(void *vptr) {
-  table_units<> *ptr=(table_units<> *)vptr;
+  std::shared_ptr<table_units<> > *ptr=(std::shared_ptr<table_units<> > *)vptr;
   delete ptr;
 }
-
 
 void *o2scl_shared_ptr_table_units___ptr(void *vp) {
   std::shared_ptr<table_units<> > *p=(std::shared_ptr<table_units<> > *)vp;

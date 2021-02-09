@@ -120,7 +120,8 @@ o2comm: o2comm.o
 		-lo2scl_hdf -lo2scl -lgsl -lgslcblas -lhdf5
 
 cpppy.o: cpppy.cpp
-	$(CXX) $(CPPFLAGS) -I../../include -DO2SCL_COND_FLAG \
+	$(CXX) $(CPPFLAGS) -I../../include -I/usr/local/include \
+		-DO2SCL_COND_FLAG \
 		-o cpppy.o -c cpppy.cpp
 
 cpppy: cpppy.o 

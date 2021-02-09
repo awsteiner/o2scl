@@ -26,6 +26,7 @@
 #include <vector>
 
 #include <o2scl/string_conv.h>
+#include <o2scl/vector.h>
 
 using namespace std;
 using namespace o2scl;
@@ -196,13 +197,13 @@ public:
   /** \brief Parse a vector string object into the type parts
    */
   void parse(std::vector<std::string> &vs, size_t start, size_t end) {
-    
+
     // Create a new vector string object for convenience
     std::vector<std::string> vs2;
     for(size_t i=start;i<end;i++) {
       vs2.push_back(vs[i]);
     }
-    
+
     // Handle according to the number of arguments
     if (vs2.size()==1) {
       prefix="";
@@ -221,17 +222,23 @@ public:
         name=vs2[1];
       }
     } else if (vs2.size()==3) {
-      bool symb_only=true;
-      for(size_t i=0;i<vs2[2].length();i++) {
-        if (vs2[2][i]!='*' && vs2[2][i]!='&') symb_only=false;
-      }
-      if (symb_only) {
+      if (vs2[0]=="shared_ptr" || vs2[0]=="std::shared_ptr") {
         prefix=vs2[0];
         name=vs2[1];
         suffix=vs2[2];
       } else {
-        prefix=vs2[0]+" "+vs2[1];
-        name=vs2[2];
+        bool symb_only=true;
+        for(size_t i=0;i<vs2[2].length();i++) {
+          if (vs2[2][i]!='*' && vs2[2][i]!='&') symb_only=false;
+        }
+        if (symb_only) {
+          prefix=vs2[0];
+          name=vs2[1];
+          suffix=vs2[2];
+        } else {
+          prefix=vs2[0]+" "+vs2[1];
+          name=vs2[2];
+        }
       }
     } else {
       cerr << "Unsupported number of type arguments." << endl;
@@ -633,7 +640,7 @@ int main(int argc, char *argv[]) {
           if (done) class_done=true;
           
         } else if (vs.size()>=3 && vs[0]=="-") {
-          
+
           if_var ifv;
           // First, check if there are any & or *'s before the
           // variable name
@@ -642,8 +649,8 @@ int main(int argc, char *argv[]) {
             vs[2]=vs[2].substr(0,1);
             ifv.ift.parse(vs,1,3);
           } else {
-            ifv.name=vs[2];
-            ifv.ift.parse(vs,1,2);
+            ifv.name=vs[vs.size()-1];
+            ifv.ift.parse(vs,1,vs.size()-1);
           }
           
           cout << "  Member " << ifv.name << " with type "
@@ -835,8 +842,7 @@ int main(int argc, char *argv[]) {
 
         if_var &ifv=ifc.members[j];
 
-        // Get function
-        
+        // Get function for a class data member
         if (ifv.ift.name=="bool" ||
             ifv.ift.name=="double" ||
             ifv.ift.name=="int" ||
@@ -868,7 +874,6 @@ int main(int argc, char *argv[]) {
             fout << "  return python_temp_string.c_str();" << endl;
             fout << "}" << endl;
           }
-          
         } else {
           fout << "void " << underscoreify(ifc.ns) << "_"
                << underscoreify(ifc.name) << "_get_" << ifv.name
@@ -876,11 +881,18 @@ int main(int argc, char *argv[]) {
           if (header) {
             fout << ";" << endl;
           } else {
-            fout << " {" << endl;
+            fout << " {" << endl;            
             fout << "  " << ifc.name << " *ptr=(" << ifc.name
                  << " *)vptr;" << endl;
-            fout << "  " << ifv.ift.name << " *p_t=("
-                 << ifv.ift.name << " *)p_v;" << endl;
+            if (ifv.ift.prefix.find("shared_ptr")!=std::string::npos ||
+                ifv.ift.prefix.find("std::shared_ptr")!=std::string::npos) {
+              fout << "  std::shared_ptr<" << ifv.ift.name
+                   << " > *p_t=(std::shared_ptr<"
+                   << ifv.ift.name << " > *)p_v;" << endl;
+            } else {
+              fout << "  " << ifv.ift.name << " *p_t=("
+                   << ifv.ift.name << " *)p_v;" << endl;
+            }
             fout << "  *(p_t)=ptr->" << ifv.name << ";" << endl;
             fout << "  return;" << endl;
             fout << "}" << endl;
@@ -888,7 +900,7 @@ int main(int argc, char *argv[]) {
         }
         fout << endl;
       
-        // Set function declaration
+        // Set function for a class data member
         if (ifv.ift.name=="bool" ||
             ifv.ift.name=="double" ||
             ifv.ift.name=="int" ||
@@ -917,8 +929,15 @@ int main(int argc, char *argv[]) {
             fout << " {" << endl;
             fout << "  " << ifc.name << " *ptr=(" << ifc.name
                  << " *)vptr;" << endl;
-            fout << "  " << ifv.ift.name << " *p_t=("
-                 << ifv.ift.name << " *)p_v;" << endl;
+            if (ifv.ift.prefix.find("shared_ptr")!=std::string::npos ||
+                ifv.ift.prefix.find("std::shared_ptr")!=std::string::npos) {
+              fout << "  std::shared_ptr<" << ifv.ift.name
+                   << " > *p_t=(std::shared_ptr<"
+                   << ifv.ift.name << " > *)p_v;" << endl;
+            } else {
+              fout << "  " << ifv.ift.name << " *p_t=("
+                   << ifv.ift.name << " *)p_v;" << endl;
+            }
             fout << "  ptr->" << ifv.name << "=*(p_t);" << endl;
             fout << "  return;" << endl;
             fout << "}" << endl;
@@ -1082,10 +1101,10 @@ int main(int argc, char *argv[]) {
         fout << ";" << endl;
       } else {
         fout << " {" << endl;
-        fout << "  " << ifsp.name << " *ptr=new " << ifsp.name << ";" << endl;
+        fout << "  std::shared_ptr<" << ifsp.name
+             << " > *ptr=new std::shared_ptr<" << ifsp.name << " >;" << endl;
         fout << "  return ptr;" << endl;
         fout << "}" << endl;
-        fout << endl;        
       }
       fout << endl;
       
@@ -1097,11 +1116,11 @@ int main(int argc, char *argv[]) {
         fout << ";" << endl;
       } else {
         fout << " {" << endl;
-        fout << "  " << ifsp.name << " *ptr=(" << ifsp.name
-             << " *)vptr;" << endl;
+        fout << "  std::shared_ptr<" << ifsp.name
+             << " > *ptr=(std::shared_ptr<" << ifsp.name
+             << " > *)vptr;" << endl;
         fout << "  delete ptr;" << endl;
         fout << "}" << endl;
-        fout << endl;        
       }
       fout << endl;
       
@@ -1381,11 +1400,41 @@ int main(int argc, char *argv[]) {
         fout << "        func.restype=ctypes.c_" << ifv.ift.name << endl;
         fout << "        func.argtypes=[ctypes.c_void_p]" << endl;
         fout << "        return func(self._ptr)" << endl;
-      } else {
+        
+      } else if (ifv.ift.prefix.find("shared_ptr")!=std::string::npos ||
+                 ifv.ift.prefix.find("std::shared_ptr")!=std::string::npos) {
+        
         fout << "    def get_" << ifv.name << "(self," << ifv.name
              << "):" << endl;
         fout << "        \"\"\"" << endl;
         fout << "        Object of type :class:`"
+             << ifv.ift.name << "`" << endl;
+        fout << "        \"\"\"" << endl;
+
+        // Create a new shared pointer object
+        size_t len=ifv.ift.name.length();
+        std::string tmps=ifv.ift.name;
+        // Manually remove '<>' from the typename if necessary
+        if (len>2 && ifv.ift.name[len-2]=='<' &&
+            ifv.ift.name[len-1]=='>') {
+          tmps=ifv.ift.name.substr(0,len-2);
+        }
+        fout << "        sp=shared_ptr_"+tmps+
+          "(self._link)" << endl;
+        
+        fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
+             << underscoreify(ifc.name)
+             << "_get_" << ifv.name << endl;
+        fout << "        func.argtypes=[ctypes.c_void_p," 
+             << "ctypes.c_void_p]" << endl;
+        fout << "        func(self._ptr,sp._ptr" << ifv.name
+             << "._ptr)" << endl;
+        fout << "        return" << endl;
+      } else {
+        fout << "    def get_" << ifv.name << "(self," << ifv.name
+             << "):" << endl;
+        fout << "        \"\"\"" << endl;
+        fout << "        Get object of type :class:`"
              << ifv.ift.name << "`" << endl;
         fout << "        \"\"\"" << endl;
         fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
@@ -1425,10 +1474,10 @@ int main(int argc, char *argv[]) {
         fout << "        return" << endl;
       } else {
         fout << "    def set_" << ifv.name << "(self,value):" << endl;
-        //fout << "        \"\"\"" << endl;
-        //fout << "        Setter function for " << ifc.name << "::"
-        //<< ifv.name << " ." << endl;
-        //fout << "        \"\"\"" << endl;
+        fout << "        \"\"\"" << endl;
+        fout << "        Set object of type :class:`"
+             << ifv.ift.name << "`" << endl;
+        fout << "        \"\"\"" << endl;
         fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
              << underscoreify(ifc.name) << "_set_" << ifv.name << endl;
         fout << "        func.argtypes=[ctypes.c_void_p,"
@@ -1702,7 +1751,7 @@ int main(int argc, char *argv[]) {
     fout << "        f=self._link." << dll_name << "." << ifsp.ns << "_free_shared_ptr_"
          << underscoreify(ifsp.name) << endl;
     fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
-    fout << "        f(self._ptr)" << endl;
+    fout << "        f(self._s_ptr)" << endl;
     fout << "        return" << endl;
     fout << endl;
 

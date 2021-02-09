@@ -583,6 +583,10 @@ double o2scl_tov_love_get_eps(void *vptr);
 
 void o2scl_tov_love_set_eps(void *vptr, double v);
 
+void o2scl_tov_love_get_tab(void *vptr, void *p_v);
+
+void o2scl_tov_love_set_tab(void *vptr, void *p_v);
+
 int o2scl_tov_love_calc_y(void *vptr, void *ptr_yR, void *ptr_beta, void *ptr_k2, void *ptr_lambda_km5, void *ptr_lambda_cgs, bool tabulate);
 
 void o2scl_tov_love_add_disc(void *vptr, double rd);
