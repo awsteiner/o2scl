@@ -1782,7 +1782,7 @@ namespace o2scl {
 		 "table::lookup().").c_str(),exc_enotfound);
       return exc_enotfound;
     }
-    return get(scol2,it->second.dat->lookup(val));
+    return get(scol2,this->lookup(scol,val));
   }
 
   /** \brief Exhaustively search column \c col for the value \c val

@@ -380,13 +380,13 @@ double o2scl_table___interp(void *vptr, char *sx, double x0, char *sy) {
   return ret;
 }
 
-double o2scl_table___interp(void *vptr, size_t ix, double x0, size_t iy) {
+double o2scl_table___interp_index(void *vptr, size_t ix, double x0, size_t iy) {
   table<> *ptr=(table<> *)vptr;
   double ret=ptr->interp(ix,x0,iy);
   return ret;
 }
 
-void o2scl_table___deriv(void *vptr, char *x, char *y, char *yp) {
+void o2scl_table___deriv_col(void *vptr, char *x, char *y, char *yp) {
   table<> *ptr=(table<> *)vptr;
   ptr->deriv(x,y,yp);
   return;

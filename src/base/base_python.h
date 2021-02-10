@@ -146,9 +146,9 @@ size_t o2scl_table___get_interp_type(void *vptr);
 
 double o2scl_table___interp(void *vptr, char *sx, double x0, char *sy);
 
-double o2scl_table___interp(void *vptr, size_t ix, double x0, size_t iy);
+double o2scl_table___interp_index(void *vptr, size_t ix, double x0, size_t iy);
 
-void o2scl_table___deriv(void *vptr, char *x, char *y, char *yp);
+void o2scl_table___deriv_col(void *vptr, char *x, char *y, char *yp);
 
 double o2scl_table___deriv(void *vptr, char *sx, double x0, char *sy);
 

@@ -723,47 +723,46 @@ int main(int argc, char *argv[]) {
           
       iff.ret.parse(vs,1,vs.size());
       
-      cout << "  Member function " << iff.name
+      cout << "  Function " << iff.name
            << " has return type "
            << iff.ret.to_string() << endl;
       
       next_line(fin,line,vs,done);
+      
+      if (vs[1]=="py_name" && vs.size()>=3) {
+        
+        iff.py_name=vs[2];
+        
+        cout << "  Function " << iff.name
+             << " has py_name " << iff.py_name << endl;
+        next_line(fin,line,vs,done);
+        
+      }
       
       bool function_done=false;
       
       while (vs.size()>=2 && line[0]=='-' && line[1]==' ' &&
              vs[0]=="-") {
 
-        if (vs[1]=="py_name" && vs.size()>=3) {
-
-          iff.py_name=vs[2];
-
-          cout << "  Function " << iff.name
-               << " has py_name " << iff.py_name << endl;
-          
-        } else {
-        
-          if_var ifv;
-          string last_string=vs[vs.size()-1];
-          if (last_string[0]=='&' || last_string[0]=='*') {
-            vs[vs.size()-1]="";
-            while (last_string[0]=='&' || last_string[0]=='*') {
-              vs[vs.size()-1]=last_string[0]+vs[vs.size()-1];
-              last_string=last_string.substr(1,last_string.length()-1);
-            }
-            ifv.name=last_string;
-            ifv.ift.parse(vs,1,vs.size());
-          } else {
-            ifv.name=last_string;
-            ifv.ift.parse(vs,1,vs.size()-1);
+        if_var ifv;
+        string last_string=vs[vs.size()-1];
+        if (last_string[0]=='&' || last_string[0]=='*') {
+          vs[vs.size()-1]="";
+          while (last_string[0]=='&' || last_string[0]=='*') {
+            vs[vs.size()-1]=last_string[0]+vs[vs.size()-1];
+            last_string=last_string.substr(1,last_string.length()-1);
           }
-          cout << "  Function " << iff.name
-               << " has argument " << ifv.name << " with type "
-               << ifv.ift.to_string() << endl;
-          
-          iff.args.push_back(ifv);
-          
+          ifv.name=last_string;
+          ifv.ift.parse(vs,1,vs.size());
+        } else {
+          ifv.name=last_string;
+          ifv.ift.parse(vs,1,vs.size()-1);
         }
+        cout << "  Function " << iff.name
+             << " has argument " << ifv.name << " with type "
+             << ifv.ift.to_string() << endl;
+        
+        iff.args.push_back(ifv);
         
         next_line(fin,line,vs,done);
         if (done) function_done=true;
@@ -1033,8 +1032,15 @@ int main(int argc, char *argv[]) {
         }
 
         // Now generate the actual code
-        fout << ret_type << underscoreify(ifc.ns) << "_"
-             << underscoreify(ifc.name) << "_" << iff.name << "(void *vptr";
+        if (iff.overloaded) {
+          fout << ret_type << underscoreify(ifc.ns) << "_"
+               << underscoreify(ifc.name) << "_" << iff.py_name
+               << "(void *vptr";
+        } else {
+          fout << ret_type << underscoreify(ifc.ns) << "_"
+               << underscoreify(ifc.name) << "_" << iff.name
+               << "(void *vptr";
+        }
         if (iff.args.size()>0) {
           fout << ", ";
         }
