@@ -134,6 +134,24 @@ void o2scl_table___delete_rows_func(void *vptr, char *func);
 
 void o2scl_table___line_of_names(void *vptr, char *names);
 
+size_t o2scl_table___ordered_lookup(void *vptr, char *scol, double val);
+
+size_t o2scl_table___lookup(void *vptr, char *scol, double val);
+
+size_t o2scl_table___lookup_val(void *vptr, char *scol, double val, char *scol2);
+
+void o2scl_table___set_interp_type(void *vptr, size_t interp_type);
+
+size_t o2scl_table___get_interp_type(void *vptr);
+
+double o2scl_table___interp(void *vptr, char *sx, double x0, char *sy);
+
+double o2scl_table___interp(void *vptr, size_t ix, double x0, size_t iy);
+
+void o2scl_table___deriv(void *vptr, char *x, char *y, char *yp);
+
+double o2scl_table___deriv(void *vptr, char *sx, double x0, char *sy);
+
 void o2scl_table___clear(void *vptr);
 
 void o2scl_table___clear_data(void *vptr);

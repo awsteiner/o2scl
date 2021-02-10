@@ -344,6 +344,60 @@ void o2scl_table___line_of_names(void *vptr, char *names) {
   return;
 }
 
+size_t o2scl_table___ordered_lookup(void *vptr, char *scol, double val) {
+  table<> *ptr=(table<> *)vptr;
+  size_t ret=ptr->ordered_lookup(scol,val);
+  return ret;
+}
+
+size_t o2scl_table___lookup(void *vptr, char *scol, double val) {
+  table<> *ptr=(table<> *)vptr;
+  size_t ret=ptr->lookup(scol,val);
+  return ret;
+}
+
+size_t o2scl_table___lookup_val(void *vptr, char *scol, double val, char *scol2) {
+  table<> *ptr=(table<> *)vptr;
+  size_t ret=ptr->lookup_val(scol,val,scol2);
+  return ret;
+}
+
+void o2scl_table___set_interp_type(void *vptr, size_t interp_type) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->set_interp_type(interp_type);
+  return;
+}
+
+size_t o2scl_table___get_interp_type(void *vptr) {
+  table<> *ptr=(table<> *)vptr;
+  size_t ret=ptr->get_interp_type();
+  return ret;
+}
+
+double o2scl_table___interp(void *vptr, char *sx, double x0, char *sy) {
+  table<> *ptr=(table<> *)vptr;
+  double ret=ptr->interp(sx,x0,sy);
+  return ret;
+}
+
+double o2scl_table___interp(void *vptr, size_t ix, double x0, size_t iy) {
+  table<> *ptr=(table<> *)vptr;
+  double ret=ptr->interp(ix,x0,iy);
+  return ret;
+}
+
+void o2scl_table___deriv(void *vptr, char *x, char *y, char *yp) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->deriv(x,y,yp);
+  return;
+}
+
+double o2scl_table___deriv(void *vptr, char *sx, double x0, char *sy) {
+  table<> *ptr=(table<> *)vptr;
+  double ret=ptr->deriv(sx,x0,sy);
+  return ret;
+}
+
 void o2scl_table___clear(void *vptr) {
   table<> *ptr=(table<> *)vptr;
   ptr->clear();

@@ -203,31 +203,25 @@ class table<>
   - size_t
 - function interp
   - double
-  - std::string sx
-  - double x0
-  - std::string sy
-- function interp_const
-  - double
+  - py_name interp
   - std::string sx
   - double x0
   - std::string sy
 - function interp
   - double
-  - size_t ix
-  - double x0
-  - size_t iy
-- function interp_const
-  - double
+  - py_name interp_index
   - size_t ix
   - double x0
   - size_t iy
 - function deriv
   - void
+  - py_name deriv_col    
   - std::string x    
   - std::string y
   - std::string yp    
 - function deriv
   - double
+  - py_name deriv
   - std::string sx
   - double x0
   - std::string sy   

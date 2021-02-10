@@ -313,7 +313,12 @@ public:
   
   /// Namespace
   std::string ns;
-  
+
+  /// Python name for the function
+  std::string py_name;
+
+  /// If true, then another function has the same name
+  bool overloaded;
 };
 
 /** \brief Interface class
@@ -587,6 +592,18 @@ int main(int argc, char *argv[]) {
 
           next_line(fin,line,vs,done);
           
+          if (vs[1]=="py_name" && vs.size()>=3) {
+            
+            iff.py_name=vs[2];
+
+            cout << "    Member function " << iff.name
+                 << " has py_name " << iff.py_name << endl;
+
+            next_line(fin,line,vs,done);
+            if (done) class_done=true;
+            
+          }
+          
           while (vs.size()>=2 && line[0]==' ' && line[1]==' ' &&
                  vs[0]=="-") {
             
@@ -607,7 +624,7 @@ int main(int argc, char *argv[]) {
             cout << "    Member function " << iff.name
                  << " has argument " << ifv.name << " with type "
                  << ifv.ift.to_string() << endl;
-
+            
             iff.args.push_back(ifv);
             
             next_line(fin,line,vs,done);
@@ -627,7 +644,8 @@ int main(int argc, char *argv[]) {
         } else if (vs.size()>=3 && vs[0]=="-" && vs[1]=="py_name") {
           
           ifc.py_name=vs[2];
-          cout << "  Class has python name " << vs[2] << endl;
+          cout << "  Class " << ifc.name
+               << " has python name " << vs[2] << endl;
           
           next_line(fin,line,vs,done);
           if (done) class_done=true;
@@ -715,26 +733,37 @@ int main(int argc, char *argv[]) {
       
       while (vs.size()>=2 && line[0]=='-' && line[1]==' ' &&
              vs[0]=="-") {
-        
-        if_var ifv;
-        string last_string=vs[vs.size()-1];
-        if (last_string[0]=='&' || last_string[0]=='*') {
-          vs[vs.size()-1]="";
-          while (last_string[0]=='&' || last_string[0]=='*') {
-            vs[vs.size()-1]=last_string[0]+vs[vs.size()-1];
-            last_string=last_string.substr(1,last_string.length()-1);
-          }
-          ifv.name=last_string;
-          ifv.ift.parse(vs,1,vs.size());
+
+        if (vs[1]=="py_name" && vs.size()>=3) {
+
+          iff.py_name=vs[2];
+
+          cout << "  Function " << iff.name
+               << " has py_name " << iff.py_name << endl;
+          
         } else {
-          ifv.name=last_string;
-          ifv.ift.parse(vs,1,vs.size()-1);
-        }
-        cout << "  Function " << iff.name
-             << " has argument " << ifv.name << " with type "
-             << ifv.ift.to_string() << endl;
         
-        iff.args.push_back(ifv);
+          if_var ifv;
+          string last_string=vs[vs.size()-1];
+          if (last_string[0]=='&' || last_string[0]=='*') {
+            vs[vs.size()-1]="";
+            while (last_string[0]=='&' || last_string[0]=='*') {
+              vs[vs.size()-1]=last_string[0]+vs[vs.size()-1];
+              last_string=last_string.substr(1,last_string.length()-1);
+            }
+            ifv.name=last_string;
+            ifv.ift.parse(vs,1,vs.size());
+          } else {
+            ifv.name=last_string;
+            ifv.ift.parse(vs,1,vs.size()-1);
+          }
+          cout << "  Function " << iff.name
+               << " has argument " << ifv.name << " with type "
+               << ifv.ift.to_string() << endl;
+          
+          iff.args.push_back(ifv);
+          
+        }
         
         next_line(fin,line,vs,done);
         if (done) function_done=true;
@@ -756,6 +785,35 @@ int main(int argc, char *argv[]) {
   // Close file
   fin.close();
 
+  // ----------------------------------------------------------------
+  // Post-process to handle function overloading
+  
+  for(size_t i=0;i<classes.size();i++) {
+    if_class &ifc=classes[i];
+    for(size_t j=0;j<ifc.methods.size();j++) {
+      if_func &iff=ifc.methods[j];
+      iff.overloaded=false;
+    }
+    for(size_t j=0;j<ifc.methods.size();j++) {
+      if_func &iff=ifc.methods[j];
+      for(size_t k=j+1;k<ifc.methods.size();k++) {
+        if_func &iff2=ifc.methods[k];
+        if (iff.name==iff2.name) {
+          if (iff.py_name==iff2.py_name) {
+            O2SCL_ERR("Member functions with same name and same py_name.",
+                      o2scl::exc_einval);
+          }
+          iff.overloaded=true;
+          iff2.overloaded=true;
+          cout << "In class " << ifc.name << ", member functions "
+               << iff.name << " are overloaded and will use names\n  "
+               << iff.py_name << " and " << iff2.py_name
+               << "." << endl;
+        }
+      }
+    }
+  }
+  
   // ----------------------------------------------------------------
   // Create C++ header/source
 
