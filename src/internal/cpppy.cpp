@@ -80,7 +80,7 @@ void parse_vector_string(ifstream &fin, std::string type, std::string &line,
                          std::vector<std::string> &vs, bool &done,
                          std::vector<std::string> &output) {
 
-  bool debug=true;
+  bool debug=false;
   if (debug) {
     cout << "parse_vector_string() start: " << line << endl;
   }
@@ -1102,7 +1102,8 @@ int main(int argc, char *argv[]) {
       } else {
         fout << " {" << endl;
         fout << "  std::shared_ptr<" << ifsp.name
-             << " > *ptr=new std::shared_ptr<" << ifsp.name << " >;" << endl;
+             << " > *ptr=new std::shared_ptr<" << ifsp.name
+             << " >(new " << ifsp.name << ");" << endl;
         fout << "  return ptr;" << endl;
         fout << "}" << endl;
       }
@@ -1527,8 +1528,14 @@ int main(int argc, char *argv[]) {
             iff.args[k].ift.name=="int" ||
             iff.args[k].ift.name=="size_t" ||
             iff.args[k].ift.name=="double") {
-          fout << "        | *" << iff.args[k].name
-               << "*: ``" << iff.args[k].ift.name << "``" << endl;
+          if (iff.args[k].ift.suffix=="&") {
+            fout << "        | *" << iff.args[k].name
+                 << "*: ``ctypes.POINTER(ctypes.c_"
+                 << iff.args[k].ift.name << ")``" << endl;
+          } else {
+            fout << "        | *" << iff.args[k].name
+                 << "*: ``" << iff.args[k].ift.name << "``" << endl;
+          }
         } else if (iff.args[k].ift.suffix=="&") {
           fout << "        | *" << iff.args[k].name
                << "*: :class:`" << iff.args[k].ift.name << "` object"
@@ -1607,7 +1614,15 @@ int main(int argc, char *argv[]) {
       fout << "        func.argtypes=[ctypes.c_void_p";
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.suffix=="&") {
-          fout << ",ctypes.c_void_p";
+          if (iff.args[k].ift.name=="bool" ||
+              iff.args[k].ift.name=="int" ||
+              iff.args[k].ift.name=="size_t" ||
+              iff.args[k].ift.name=="double") {
+            fout << ",ctypes.POINTER(ctypes.c_"
+                 << iff.args[k].ift.name << ")";
+          } else {
+            fout << ",ctypes.c_void_p";
+          }
         } else if (iff.args[k].ift.name=="std::string") {
           fout << ",ctypes.c_char_p";
         } else {
@@ -1660,7 +1675,14 @@ int main(int argc, char *argv[]) {
         }
         for(size_t k=0;k<iff.args.size();k++) {
           if (iff.args[k].ift.suffix=="&") {
-            fout << "," << iff.args[k].name << "._ptr";
+            if (iff.args[k].ift.name=="bool" ||
+                iff.args[k].ift.name=="int" ||
+                iff.args[k].ift.name=="size_t" ||
+                iff.args[k].ift.name=="double") {
+              fout << "," << iff.args[k].name;
+            } else {
+              fout << "," << iff.args[k].name << "._ptr";
+            }
           } else if (iff.args[k].ift.name=="std::string") {
             fout << "," << iff.args[k].name << "_";
           } else {
@@ -1737,7 +1759,7 @@ int main(int argc, char *argv[]) {
     fout << "        self._link=link" << endl;
     fout << "        if shared_ptr==0:" << endl;
     fout << "            f2=self._link." << dll_name << "." << ifsp.ns
-         << "create_shared_ptr_" << underscoreify(ifsp.name) << endl;
+         << "_create_shared_ptr_" << underscoreify(ifsp.name) << endl;
     fout << "            f2.restype=ctypes.c_void_p" << endl;
     fout << "            self._s_ptr=f2()" << endl;
     fout << "        else:" << endl;

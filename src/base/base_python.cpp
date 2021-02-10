@@ -580,7 +580,7 @@ void o2scl_convert_units___print_cache(void *vptr) {
 }
 
 void *o2scl_create_shared_ptr_table_units__() {
-  std::shared_ptr<table_units<> > *ptr=new std::shared_ptr<table_units<> >;
+  std::shared_ptr<table_units<> > *ptr=new std::shared_ptr<table_units<> >(new table_units<>);
   return ptr;
 }
 

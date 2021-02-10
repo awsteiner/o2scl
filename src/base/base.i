@@ -183,6 +183,54 @@ class table<>
 - function line_of_names
   - void
   - std::string names
+- function ordered_lookup
+  - size_t
+  - std::string scol
+  - double val
+- function lookup
+  - size_t
+  - std::string scol
+  - double val                             
+- function lookup_val
+  - size_t
+  - std::string scol
+  - double val                             
+  - std::string scol2
+- function set_interp_type
+  - void
+  - size_t interp_type
+- function get_interp_type
+  - size_t
+- function interp
+  - double
+  - std::string sx
+  - double x0
+  - std::string sy
+- function interp_const
+  - double
+  - std::string sx
+  - double x0
+  - std::string sy
+- function interp
+  - double
+  - size_t ix
+  - double x0
+  - size_t iy
+- function interp_const
+  - double
+  - size_t ix
+  - double x0
+  - size_t iy
+- function deriv
+  - void
+  - std::string x    
+  - std::string y
+  - std::string yp    
+- function deriv
+  - double
+  - std::string sx
+  - double x0
+  - std::string sy   
 - function clear
   - void
 - function clear_data
