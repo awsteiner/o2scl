@@ -261,7 +261,7 @@ namespace o2scl {
       http://www.phys.washington.edu/users/bertsch/duflo2.ps
       \endverbatim
 
-      - <tt>a[0]</tt>: "Full master term". Density sqaured divided by
+      - <tt>a[0]</tt>: "Full master term". Density squared divided by
       cube root of A. This is the master term which includes the bulk
       energy from the liquid droplet model and the harmonic oscillator
       effects

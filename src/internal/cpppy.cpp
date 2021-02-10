@@ -335,6 +335,9 @@ public:
   
   /// True if the class is abstract
   bool is_abstract;
+
+  /// If true, the standard copy constructors are included
+  bool std_cc;
   
   /// Members
   std::vector<if_var> members;
@@ -544,6 +547,7 @@ int main(int argc, char *argv[]) {
         exit(-1);
       }
       if_class ifc;
+      ifc.std_cc=false;
       ifc.name=vs[1];
       ifc.ns=ns;
       if (vs.size()>=3 && vs[2]=="abstract") {
@@ -637,6 +641,15 @@ int main(int argc, char *argv[]) {
           
           ifc.parents.push_back(vs[2]);
           cout << "  Parent class " << vs[2] << endl;
+          
+          next_line(fin,line,vs,done);
+          if (done) class_done=true;
+          
+        } else if (vs.size()>=2 && vs[0]=="-" && vs[1]=="std_cc") {
+          
+          ifc.std_cc=true;
+          cout << "  Class " << ifc.name << " has the standard "
+               << "copy constructors." << endl;
           
           next_line(fin,line,vs,done);
           if (done) class_done=true;
@@ -1441,6 +1454,38 @@ int main(int argc, char *argv[]) {
     fout << "        return" << endl;
     fout << endl;
 
+    // Define copy() function
+    fout << "    def copy(self,src):" << endl;
+    fout << "        \"\"\"" << endl;
+    fout << "        Shallow copy function for class "
+         << ifc.name << " ." << endl;
+    fout << "        \"\"\"" << endl;
+    fout << endl;
+    fout << "        self._link=x._link" << endl;
+    fout << "        self._ptr=x._ptr" << endl;
+    fout << "        self._owner=False" << endl;
+    fout << "        return" << endl;
+    fout << endl;
+
+    /*
+
+    // Define deepcopy() function
+    // This only works if the class has a copy constructor, 
+    // which isn't parsed yet
+
+    fout << "    def deepcopy(self,src):" << endl;
+    fout << "        \"\"\"" << endl;
+    fout << "        Deep copy function for class "
+    << ifc.name << " ." << endl;
+    fout << "        \"\"\"" << endl;
+    fout << endl;
+    fout << "        self._link=x._link" << endl;
+    fout << "        self._ptr=x._ptr" << endl;
+    fout << "        self._owner=False" << endl;
+    fout << "        return" << endl;
+    fout << endl;
+    */
+
     // Define member get and set properties
     for(size_t j=0;j<ifc.members.size();j++) {
       if_var &ifv=ifc.members[j];
@@ -1565,6 +1610,8 @@ int main(int argc, char *argv[]) {
       // Function header
       if (iff.name=="index_operator") {
         fout << "    def __getitem__(self";
+      } else if (iff.py_name!="") {
+        fout << "    def " << iff.py_name << "(self";
       } else {
         fout << "    def " << iff.name << "(self";
       }
@@ -1655,9 +1702,15 @@ int main(int argc, char *argv[]) {
       }
 
       // Ctypes interface for function
-      fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
-           << underscoreify(ifc.name) << "_"
-           << iff.name << endl;
+      if (iff.overloaded) {
+        fout << "        func=self._link." << dll_name << "."
+             << ifc.ns << "_" << underscoreify(ifc.name) << "_"
+             << iff.py_name << endl;
+      } else {
+        fout << "        func=self._link." << dll_name << "."
+             << ifc.ns << "_" << underscoreify(ifc.name) << "_"
+             << iff.name << endl;
+      }
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
           iff.ret.suffix=="&") {
