@@ -91,6 +91,7 @@ class lib_settings_class
 #
 class table<>
 - py_name table
+- std_cc                             
 - function set
   - void
   - std::string col

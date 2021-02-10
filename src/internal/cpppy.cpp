@@ -908,6 +908,24 @@ int main(int argc, char *argv[]) {
         fout << endl;
       }
 
+      if (ifc.std_cc) {
+        // The deep copy function
+        fout << "void " << underscoreify(ifc.ns) << "_copy_"
+             << underscoreify(ifc.name) << "(void *vsrc, void *vdest)";
+        if (header) {
+          fout << ";" << endl;
+        } else {
+          fout << " {" << endl;
+          fout << "  " << ifc.name << " *src=(" << ifc.name
+               << " *)vsrc;" << endl;
+          fout << "  " << ifc.name << " *dest=(" << ifc.name
+               << " *)vdest;" << endl;
+          fout << "  *dest=*src;" << endl;
+          fout << "}" << endl;
+        }
+        fout << endl;
+      }
+
       for(size_t j=0;j<ifc.members.size();j++) {
 
         if_var &ifv=ifc.members[j];
@@ -1461,30 +1479,36 @@ int main(int argc, char *argv[]) {
          << ifc.name << " ." << endl;
     fout << "        \"\"\"" << endl;
     fout << endl;
-    fout << "        self._link=x._link" << endl;
-    fout << "        self._ptr=x._ptr" << endl;
+    fout << "        self._link=src._link" << endl;
+    fout << "        self._ptr=src._ptr" << endl;
     fout << "        self._owner=False" << endl;
     fout << "        return" << endl;
     fout << endl;
-
-    /*
 
     // Define deepcopy() function
-    // This only works if the class has a copy constructor, 
-    // which isn't parsed yet
-
-    fout << "    def deepcopy(self,src):" << endl;
-    fout << "        \"\"\"" << endl;
-    fout << "        Deep copy function for class "
-    << ifc.name << " ." << endl;
-    fout << "        \"\"\"" << endl;
-    fout << endl;
-    fout << "        self._link=x._link" << endl;
-    fout << "        self._ptr=x._ptr" << endl;
-    fout << "        self._owner=False" << endl;
-    fout << "        return" << endl;
-    fout << endl;
-    */
+    if (ifc.std_cc) {
+      fout << "    def deepcopy(self,src):" << endl;
+      fout << "        \"\"\"" << endl;
+      fout << "        Deep copy function for class "
+           << ifc.name << " ." << endl;
+      fout << "        \"\"\"" << endl;
+      fout << endl;
+      // Create the new object
+      fout << "        self._link=src._link" << endl;
+      fout << "        f=self._link." << dll_name << "." << ifc.ns
+           << "_create_" << underscoreify(ifc.name) << endl;
+      fout << "        f.restype=ctypes.c_void_p" << endl;
+      fout << "        f.argtypes=[]" << endl;
+      fout << "        self._ptr=f()" << endl;
+      fout << "        self._owner=True" << endl;
+      fout << "        f2=self._link." << dll_name << "." << ifc.ns
+           << "_copy_" << underscoreify(ifc.name) << endl;
+      fout << "        f2.argtypes=[ctypes.c_void_p,ctypes.c_void_p]"
+           << endl;
+      fout << "        f2(src._ptr,self._ptr)" << endl;
+      fout << "        return" << endl;
+      fout << endl;
+    }
 
     // Define member get and set properties
     for(size_t j=0;j<ifc.members.size();j++) {

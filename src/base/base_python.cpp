@@ -189,6 +189,12 @@ void o2scl_free_table__(void *vptr) {
   delete ptr;
 }
 
+void o2scl_copy_table__(void *vsrc, void *vdest) {
+  table<> *src=(table<> *)vsrc;
+  table<> *dest=(table<> *)vdest;
+  *dest=*src;
+}
+
 void o2scl_table___set(void *vptr, char *col, size_t row, double val) {
   table<> *ptr=(table<> *)vptr;
   ptr->set(col,row,val);

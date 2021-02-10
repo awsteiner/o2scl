@@ -84,6 +84,8 @@ void *o2scl_create_table__();
 
 void o2scl_free_table__(void *vptr);
 
+void o2scl_copy_table__(void *vsrc, void *vdest);
+
 void o2scl_table___set(void *vptr, char *col, size_t row, double val);
 
 double o2scl_table___get(void *vptr, char *col, size_t row);
