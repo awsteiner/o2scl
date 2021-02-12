@@ -1483,6 +1483,28 @@ void eos_tov_interp::ed_nb_from_pr(double pr, double &ed, double &nb) {
 
   if (err_nonconv) {
     if (!std::isfinite(ed) || (baryon_column && !std::isfinite(nb))) {
+      cout << "Energy density or baryon density not finite at pressure "
+           << pr << " in eos_tov_interp::ed_nb_from_pr()." << endl;
+      cout << "Full EOS:" << endl;
+      if (baryon_column) {
+        cout << "index ed [Msun/km^3] pr [Msun/km^3] nb [1/fm^3]" << endl;
+      } else {
+        cout << "index ed [Msun/km^3] pr [Msun/km^3]" << endl;
+      }
+      for(size_t k=0;k<full_vece.size();k++) {
+        if (baryon_column) {
+          cout << k << " " << full_vece[k] << " "
+               << full_vecp[k] << " " << full_vecnb[k] << endl;
+        } else {
+          cout << k << " " << full_vece[k] << " "
+               << full_vecp[k] << endl;
+        }
+      }
+      if (baryon_column) {
+        cout << "pr, ed, nb: " << pr << " " << ed << " " << nb << endl;
+      } else {
+        cout << "pr, ed: " << pr << " " << ed << endl;
+      }
       string s="Energy density or baryon density not finite at pressure ";
       s+=dtos(pr)+" in eos_tov_interp::ed_nb_from_pr().";
       O2SCL_ERR(s.c_str(),exc_efailed);
