@@ -92,6 +92,9 @@ class lib_settings_class
 class table<>
 - py_name table
 - std_cc                             
+- function operator[]
+  - vector<double> &
+  - std::string col
 - function set
   - void
   - std::string col
@@ -226,6 +229,58 @@ class table<>
   - std::string sx
   - double x0
   - std::string sy   
+- function deriv
+  - double
+  - py_name deriv_index
+  - size_t ix
+  - double x0
+  - size_t iy
+- function deriv2
+  - void
+  - py_name deriv2_col    
+  - std::string x    
+  - std::string y
+  - std::string yp    
+- function deriv2
+  - double
+  - py_name deriv2
+  - std::string sx
+  - double x0
+  - std::string sy   
+- function deriv2
+  - double
+  - py_name deriv2_index
+  - size_t ix
+  - double x0
+  - size_t iy
+- function integ
+  - double
+  - py_name integ
+  - std::string sx
+  - double x1
+  - double x2                             
+  - std::string sy   
+- function integ
+  - double
+  - py_name integ_index
+  - size_t ix
+  - double x1
+  - double x2                             
+  - size_t iy
+- function integ
+  - void
+  - py_name integ_col    
+  - std::string x    
+  - std::string y
+  - std::string yi
+- function max
+  - double
+  - std::string max    
+- function min
+  - double
+  - std::string min    
+- function zero_table
+  - void
 - function clear
   - void
 - function clear_data
@@ -234,29 +289,61 @@ class table<>
   - void
 - function clear_constants
   - void
-- function operator[]
-  - vector<double> &
-  - std::string col
+- function sort_table
+  - void
+  - std::string scol    
+- function sort_column
+  - void
+  - std::string scol
+- function average_col_roll
+  - void
+  - std::string col_name
+  - size_t window
+- function average_rows
+  - void
+  - size_t window
+  - bool rolling
+- function is_valid
+  - void
+- function functions_columns
+  - void
+  - std::string list    
+- function function_column
+  - void
+  - std::string function
+  - std::string scol
+- function row_function
+  - double
+  - std::string scol
+  - size_t row
+- function function_find_row
+  - size_t
+  - std::string function
 # 
 # Class table_units<>
 #
 class table_units<>
 - parent table<>
+- std_cc                             
 - py_name table_units
-- function get_unit
-  - std::string
-  - std::string col
 - function set_unit
   - void
   - std::string col
   - std::string unit
+- function get_unit
+  - std::string
+  - std::string col
+- function line_of_units
+  - void
+  - std::string unit_line    
+- function remove_unit
+  - void
+  - std::string col
 - function convert_to_unit
   - int
   - std::string col
   - std::string unit
   - bool err_on_fail
-- function clear_table
-  - void
 # 
 # Shared pointer for table_units<> objects
 #
@@ -266,6 +353,15 @@ shared_ptr table_units<>
 # Class table3d
 #
 class table3d
+- std_cc
+#- function set_xy
+#  - void
+#  - std::string x_name
+#  - size_t nx
+#  - vector &x
+#  - std::string y_name
+#  - size_t ny
+#  - vector &y
 - function set
   - void
   - size_t ix
@@ -290,6 +386,7 @@ class table3d
 # Class tensor
 #
 class tensor<>
+- std_cc                             
 - py_name tensor
 - function clear
   - void

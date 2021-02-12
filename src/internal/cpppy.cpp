@@ -1083,7 +1083,14 @@ int main(int argc, char *argv[]) {
               fout << iff.args[k].ift.name << " " << iff.args[k].name;
             }
           } else if (iff.args[k].ift.suffix=="&") {
-            fout << "void *ptr_" << iff.args[k].name;
+            if (iff.args[k].ift.name=="std::string") {
+              fout << "void *ptr_" << iff.args[k].name;
+            } else if (iff.args[k].ift.name=="vector") {
+              fout << "double *ptr_" << iff.args[k].name;
+            } else {
+              cout << "Other kind of reference." << endl;
+              exit(-1);
+            }
           }
           if (k!=iff.args.size()-1) {
             fout << ", ";
@@ -1104,10 +1111,15 @@ int main(int argc, char *argv[]) {
           // Pointer assignments for arguments
           for(size_t k=0;k<iff.args.size();k++) {
             if (iff.args[k].ift.suffix=="&") {
-              fout << "  " << iff.args[k].ift.name << " *"
-                   << iff.args[k].name << "=("
-                   << iff.args[k].ift.name << " *)ptr_" << iff.args[k].name
-                   << ";" << endl;
+              if (iff.args[k].ift.name=="std::string") {
+                fout << "  " << iff.args[k].ift.name << " *"
+                     << iff.args[k].name << "=("
+                     << iff.args[k].ift.name << " *)ptr_" << iff.args[k].name
+                     << ";" << endl;
+              } else {
+                // Future vector reference code. 
+                //fout << "  "
+              }
             }
           }
           
