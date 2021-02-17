@@ -474,12 +474,30 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table") {
 
+    cout << "Herey: " << sv.size() << " " << itive_com << endl;
+    
+    // If we have no 'value' entry and we're not in interactive mode,
+    // then just presume that the user is asking us to just output
+    // the current value
     vector<string> pr, in;
-    pr.push_back("Enter column name");
-    pr.push_back("Enter row index");
-    pr.push_back("Enter new value (or \"none\") to keep original value");
-    int ret=get_input(sv,pr,in,"entry",itive_com);
-    if (ret!=0) return ret;
+    if (itive_com==true || sv.size()<3) {
+    
+      pr.push_back("Enter column name");
+      pr.push_back("Enter row index");
+      pr.push_back("Enter new value (or \"none\") to keep original value");
+      int ret=get_input(sv,pr,in,"entry",itive_com);
+      if (ret!=0) return ret;
+
+    } else if (sv.size()>=4) {
+      in.resize(3);
+      in[0]=sv[1];
+      in[1]=sv[2];
+      in[2]=sv[3];
+    } else {
+      in.resize(2);
+      in[0]=sv[1];
+      in[1]=sv[2];
+    }
 
     int row;
     int ret2=o2scl::stoi_nothrow(in[1],row);
@@ -494,8 +512,12 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
       return exc_efailed;
     }
 
-    // Convert in[2] to lower case
-    std::transform(in[2].begin(),in[2].end(),in[2].begin(),::tolower);
+    if (in.size()>=3) {
+      // Convert in[2] to lower case
+      std::transform(in[2].begin(),in[2].end(),in[2].begin(),::tolower);
+    }
+
+    cout << "Herex: " << in.size() << endl;
     
     if (in.size()<=2 || in[2]=="none") {
       cout << "Entry for column " << in[0] << " at row " << in[1] << " is "
