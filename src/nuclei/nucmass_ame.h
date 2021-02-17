@@ -58,15 +58,14 @@ namespace o2scl {
       \note This class requires data stored in an HDF file and
       thus requires HDF support for normal usage.
 
+      \verbatim embed:rst
       This class provides an interface to the atomic mass table using
-      data from Audi95, Audi03, Audi12, and
-      Wang12. To load data from the \o2 HDF5 data files, use
+      data from [Audi95]_, [Audi03]_, [Audi12]_, and [Wang12]_.
+      \endverbatim
+
+      To load data from the \o2 HDF5 data files, use
       <tt>o2scl_hdf::ame_load()</tt> .
 
-      \verbatim embed:rst
-      See [Audi95]_, [Audi03]_, [Audi12]_, and [Wang12]_.
-      \endverbatim
-      
       The 1995 data provided the binding energy (stored in
       nucmass_ame::entry::be and nucmass_ame::entry::dbe), while the 2003
       data provided the binding energy divided by the mass number
@@ -112,9 +111,10 @@ namespace o2scl {
       positive sign, so that lead has a binding energy of +8 MeV and
       this is what is stored in \ref o2scl::nucmass_ame::entry::be.
       However, for consistency with the other mass formulas, \ref
-      o2scl::nucmass_ame::binding_energy() gives -8 MeV for lead. See
-      also the documentation for the class structure for each table
-      entry in \ref o2scl::nucmass_ame::entry.
+      o2scl::nucmass_ame::binding_energy() gives, e.g., about \f$ -8
+      \f$ MeV for lead. See also the documentation for the class
+      structure for each table entry in \ref
+      o2scl::nucmass_ame::entry.
       
       \future Create a caching and more intelligent search system for
       the table. The table is sorted by A and then N, so we could
