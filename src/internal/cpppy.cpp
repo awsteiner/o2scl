@@ -140,7 +140,8 @@ void parse_vector_string(ifstream &fin, std::string type, std::string &line,
 class if_base {
   
 public:
-  
+
+  /// Object name
   std::string name;
   
 };
@@ -279,7 +280,7 @@ public:
   
   /// Return true if the type is static
   bool is_static() {
-    if (prefix.find("const")!=std::string::npos) return true;
+    if (prefix.find("static")!=std::string::npos) return true;
   }
 
   // End of class if_type
@@ -434,16 +435,21 @@ int main(int argc, char *argv[]) {
   std::vector<std::string> vs;
   bool done=false;
 
+  // If true, import numpy
   bool import_numpy=false;
-  
+
+  // Read the first line
   next_line(fin,line,vs,done);
   if (done==true) {
     cerr << "Empty interface file." << endl;
     exit(-1);
   }
-  
+
+  // Continue parsing, line by line, until 'done' is true
   while (done==false) {
+    
     if (vs[0]=="namespace") {
+      
       if (vs.size()==1) {
         ns="";
         cout << "Clearing namespace." << endl;
@@ -522,7 +528,8 @@ int main(int argc, char *argv[]) {
       
       next_line(fin,line,vs,done);
       
-      if (line[0]=='-' && line[1]==' ' && vs[1]=="py_name" && vs.size()==3) {
+      if (line[0]=='-' && line[1]==' ' && vs[1]=="py_name" &&
+          vs.size()==3) {
         ifss.py_name=vs[2];
         cout << "  with python name " << vs[2] << endl;
         next_line(fin,line,vs,done);
@@ -636,6 +643,44 @@ int main(int argc, char *argv[]) {
           }
 
           ifc.methods.push_back(iff);
+          
+        } else if (vs.size()>=3 && vs[0]=="-" && vs[1]=="cons") {
+          
+          if_func iff;
+          iff.name=vs[2];
+          cout << "  Starting constructor to be named " << iff.name
+               << " ." << endl;
+
+          next_line(fin,line,vs,done);
+
+          while (vs.size()>=2 && line[0]==' ' && line[1]==' ' &&
+                 vs[0]=="-") {
+            
+            if_var ifv;
+            string last_string=vs[vs.size()-1];
+            if (last_string[0]=='&' || last_string[0]=='*') {
+              vs[vs.size()-1]="";
+              while (last_string[0]=='&' || last_string[0]=='*') {
+                vs[vs.size()-1]=last_string[0]+vs[vs.size()-1];
+                last_string=last_string.substr(1,last_string.length()-1);
+              }
+              ifv.name=last_string;
+              ifv.ift.parse(vs,1,vs.size());
+            } else {
+              ifv.name=last_string;
+              ifv.ift.parse(vs,1,vs.size()-1);
+            }
+            cout << "    Member function " << iff.name
+                 << " has argument " << ifv.name << " with type "
+                 << ifv.ift.to_string() << endl;
+            
+            iff.args.push_back(ifv);
+            
+            next_line(fin,line,vs,done);
+            if (done) class_done=true;
+          }
+
+          ifc.cons.push_back(iff);
           
         } else if (vs.size()>=3 && vs[0]=="-" && vs[1]=="parent") {
           
@@ -1103,6 +1148,136 @@ int main(int argc, char *argv[]) {
         } else {
           
           fout << extra_args << ") {" << endl;
+          
+          // Pointer assignment for class
+          fout << "  " << ifc.name << " *ptr=("
+               << ifc.name << " *)vptr;" << endl;
+          
+          // Pointer assignments for arguments
+          for(size_t k=0;k<iff.args.size();k++) {
+            if (iff.args[k].ift.suffix=="&") {
+              if (iff.args[k].ift.name=="std::string") {
+                fout << "  " << iff.args[k].ift.name << " *"
+                     << iff.args[k].name << "=("
+                     << iff.args[k].ift.name << " *)ptr_" << iff.args[k].name
+                     << ";" << endl;
+              } else {
+                // Future vector reference code. 
+                //fout << "  "
+              }
+            }
+          }
+          
+          // Now generate code for actual function call and the
+          // return statement
+          if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
+              iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
+            // If we're returning a shared pointer, then we actually
+            // need to create a pointer to the shared pointer first
+            fout << "  std::shared_ptr<" << iff.ret.name << " > *ret=new"
+                 << " std::shared_ptr<" << iff.ret.name << " >;" << endl;
+            // Then we set the shared pointer using the class
+            // member function
+            fout << "  *ret=ptr->" << iff.name << "(";
+          } else if ((iff.ret.name=="vector<double>" ||
+                      iff.ret.name=="std::vector<double>") &&
+                     iff.ret.suffix=="&") {
+            // For a std::vector<double> &, just return a pointer
+            if (iff.name=="index_operator") {
+              // In case it's const, we have to explicitly typecast
+              fout << "  *dptr=(double *)(&(ptr->operator[](";
+            } else {
+              fout << "  *dptr=ptr->" << iff.name << "(";
+            }
+          } else if (iff.ret.name=="void") {
+            fout << "  ptr->" << iff.name << "(";
+          } else {
+            // If the function returns a reference, return a pointer
+            // instead
+            if (iff.ret.suffix=="&") {
+              fout << "  " << iff.ret.name << " *ret=&ptr->" << iff.name << "(";
+            } else {
+              fout << "  " << iff.ret.name << " ret=ptr->" << iff.name << "(";
+            }
+          }
+          
+          for(size_t k=0;k<iff.args.size();k++) {
+            if (iff.args[k].ift.suffix=="") {
+              fout << iff.args[k].name;
+            } else if (iff.args[k].ift.suffix=="&") {
+              fout << "*" << iff.args[k].name;
+            }
+            if (k!=iff.args.size()-1) {
+              fout << ",";
+            }
+          }
+          
+          // Extra code for array types
+          if ((iff.ret.name=="vector<double>" ||
+               iff.ret.name=="std::vector<double>") &&
+              iff.ret.suffix=="&") {
+            fout << ")[0]));" << endl;
+            fout << "  *n=ptr->get_nlines();" << endl;
+            fout << "  return;" << endl;
+          } else {
+            fout << ");" << endl;
+            
+            if (iff.ret.name=="std::string") {
+              fout << "  python_temp_string=ret;" << endl;
+              fout << "  return python_temp_string.c_str();" << endl;
+            } else if (iff.ret.name=="void") {
+              fout << "  return;" << endl;
+            } else {
+              fout << "  return ret;" << endl;
+            }
+          }
+          
+          // Ending function brace
+          fout << "}" << endl;          
+        }
+        fout << endl;
+        
+      }
+
+      for(size_t j=0;j<ifc.cons.size();j++) {
+      
+        if_func &iff=ifc.cons[j];
+
+        // Now generate the actual code
+        fout << "void " << underscoreify(ifc.ns) << "_"
+             << underscoreify(ifc.name) << "_" << iff.name
+             << "(void *vptr";
+        if (iff.args.size()>0) {
+          fout << ", ";
+        }
+        for(size_t k=0;k<iff.args.size();k++) {
+          if (iff.args[k].ift.suffix=="") {
+            if (iff.args[k].ift.name=="std::string") {
+              fout << "char *" << iff.args[k].name;
+            } else {
+              fout << iff.args[k].ift.name << " " << iff.args[k].name;
+            }
+          } else if (iff.args[k].ift.suffix=="&") {
+            if (iff.args[k].ift.name=="std::string") {
+              fout << "void *ptr_" << iff.args[k].name;
+            } else if (iff.args[k].ift.name=="vector") {
+              fout << "double *ptr_" << iff.args[k].name;
+            } else {
+              cout << "Other kind of reference." << endl;
+              exit(-1);
+            }
+          }
+          if (k!=iff.args.size()-1) {
+            fout << ", ";
+          }
+        }
+        
+        if (header) {
+          fout << ");" << endl;
+          
+        } else {
+          
+          fout << ") {" << endl;
           
           // Pointer assignment for class
           fout << "  " << ifc.name << " *ptr=("
