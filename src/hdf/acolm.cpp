@@ -1670,6 +1670,7 @@ int acol_manager::setup_parameters() {
   p_scientific.b=&scientific;
   p_pretty.b=&pretty;
   p_names_out.b=&names_out;
+  p_num_threads.s=&o2scl::o2scl_settings.omp_num_threads;
   
   p_obj_name.help="The current object name.";
   p_unit_fname.help="The unit filename.";
@@ -1686,6 +1687,7 @@ int acol_manager::setup_parameters() {
   p_names_out.help="If true, output column names at top.";
   p_pretty.help="If true, make the output more readable.";
   p_scientific.help="If true, output in scientific mode.";
+  p_num_threads.help="Number of OpenMP threads.";
   
   cl->par_list.insert(make_pair("obj_name",&p_obj_name));
   cl->par_list.insert(make_pair("unit_fname",&p_unit_fname));
@@ -1698,6 +1700,7 @@ int acol_manager::setup_parameters() {
   cl->par_list.insert(make_pair("names_out",&p_names_out));
   cl->par_list.insert(make_pair("pretty",&p_pretty));
   cl->par_list.insert(make_pair("scientific",&p_scientific));
+  cl->par_list.insert(make_pair("num_threads",&p_num_threads));
 
   return 0;
 }

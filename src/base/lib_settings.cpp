@@ -56,6 +56,9 @@ lib_settings_class::lib_settings_class() {
   // pipe, etc.
   def_cu.default_conversions();
 
+  // When this is zero, O2scl functions just use the value returned by
+  // omp_get_num_threads()
+  omp_num_threads=0;
 }
 
 lib_settings_class::~lib_settings_class() {

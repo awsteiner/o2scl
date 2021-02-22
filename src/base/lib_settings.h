@@ -199,6 +199,9 @@ namespace o2scl {
       cup=&cu;
     }
 
+    /// Desc
+    size_t omp_num_threads;
+    
   protected:
 
 #ifndef DOXYGEN_INTERNAL

@@ -45,6 +45,7 @@
 #include <o2scl/interp.h>
 #include <o2scl/vec_stats.h>
 #include <o2scl/shunting_yard.h>
+#include <o2scl/lib_settings.h>
 
 #ifndef DOXYGEN_NO_O2NS
 
@@ -3077,7 +3078,11 @@ namespace o2scl {
     {
 
 #ifdef O2SCL_OPENMP
-      n_threads=omp_get_num_threads();
+      if (o2scl::o2scl_settings.omp_num_threads==0) {
+        n_threads=omp_get_num_threads();
+      } else {
+        n_threads=o2scl::o2scl_settings.omp_num_threads;
+      }
       i_thread=omp_get_thread_num();
 #endif
 
