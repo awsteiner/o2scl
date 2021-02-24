@@ -33,6 +33,7 @@ void *o2scl_create_vector_double_() {
 void o2scl_free_vector_double_(void *vptr) {
   vector<double> *ptr=(vector<double> *)vptr;
   delete ptr;
+  return;
 }
 
 void o2scl_vector_double__resize(void *vptr, size_t n) {
@@ -61,6 +62,7 @@ void *o2scl_create_lib_settings_class() {
 void o2scl_free_lib_settings_class(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   delete ptr;
+  return;
 }
 
 const char *o2scl_lib_settings_class_get_data_dir(void *vptr) {
@@ -215,6 +217,7 @@ void *o2scl_create_table__() {
 void o2scl_free_table__(void *vptr) {
   table<> *ptr=(table<> *)vptr;
   delete ptr;
+  return;
 }
 
 void o2scl_copy_table__(void *vsrc, void *vdest) {
@@ -598,6 +601,7 @@ void *o2scl_create_table_units__() {
 void o2scl_free_table_units__(void *vptr) {
   table_units<> *ptr=(table_units<> *)vptr;
   delete ptr;
+  return;
 }
 
 void o2scl_copy_table_units__(void *vsrc, void *vdest) {
@@ -645,6 +649,7 @@ void *o2scl_create_uniform_grid__() {
 void o2scl_free_uniform_grid__(void *vptr) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
   delete ptr;
+  return;
 }
 
 size_t o2scl_uniform_grid___get_nbins(void *vptr) {
@@ -689,40 +694,70 @@ double o2scl_uniform_grid___index_operator(void *vptr, size_t n) {
   return ret;
 }
 
-void o2scl_uniform_grid_end___init(void *vptr, double start, double end, size_t n_bins) {/*
+void o2scl_free_uniform_grid_end__(void *vptr) {
   uniform_grid_end<> *ptr=(uniform_grid_end<> *)vptr;
-  ret=xptr->init(start,end,n_bins);
-  return ret;*/ return;
+  delete ptr;
+  return;
 }
 
-void o2scl_uniform_grid_width___init(void *vptr, double start, double width, size_t n_bins) {/*
+void *o2scl_uniform_grid_end___init(double start, double end, size_t n_bins) {
+  uniform_grid_end<> *ptr=new uniform_grid_end<>(start,end,n_bins);
+  return ptr;
+}
+
+void o2scl_free_uniform_grid_width__(void *vptr) {
   uniform_grid_width<> *ptr=(uniform_grid_width<> *)vptr;
-  ret=xptr->init(start,width,n_bins);
-  return ret;*/ return;
+  delete ptr;
+  return;
 }
 
-void o2scl_uniform_grid_end_width___init(void *vptr, double start, double end, double width) {/*
+void *o2scl_uniform_grid_width___init(double start, double width, size_t n_bins) {
+  uniform_grid_width<> *ptr=new uniform_grid_width<>(start,width,n_bins);
+  return ptr;
+}
+
+void o2scl_free_uniform_grid_end_width__(void *vptr) {
   uniform_grid_end_width<> *ptr=(uniform_grid_end_width<> *)vptr;
-  ret=xptr->init(start,end,width);
-  return ret;*/ return;
+  delete ptr;
+  return;
 }
 
-void o2scl_uniform_grid_log_end___init(void *vptr, double start, double end, size_t n_bins) {/*
+void *o2scl_uniform_grid_end_width___init(double start, double end, double width) {
+  uniform_grid_end_width<> *ptr=new uniform_grid_end_width<>(start,end,width);
+  return ptr;
+}
+
+void o2scl_free_uniform_grid_log_end__(void *vptr) {
   uniform_grid_log_end<> *ptr=(uniform_grid_log_end<> *)vptr;
-  ret=xptr->init(start,end,n_bins);
-  return ret;*/ return;
+  delete ptr;
+  return;
 }
 
-void o2scl_uniform_grid_log_width___init(void *vptr, double start, double width, size_t n_bins) {/*
+void *o2scl_uniform_grid_log_end___init(double start, double end, size_t n_bins) {
+  uniform_grid_log_end<> *ptr=new uniform_grid_log_end<>(start,end,n_bins);
+  return ptr;
+}
+
+void o2scl_free_uniform_grid_log_width__(void *vptr) {
   uniform_grid_log_width<> *ptr=(uniform_grid_log_width<> *)vptr;
-  ret=xptr->init(start,width,n_bins);
-  return ret;*/ return;
+  delete ptr;
+  return;
 }
 
-void o2scl_uniform_grid_log_end_width___init(void *vptr, double start, double end, double width) {/*
+void *o2scl_uniform_grid_log_width___init(double start, double width, size_t n_bins) {
+  uniform_grid_log_width<> *ptr=new uniform_grid_log_width<>(start,width,n_bins);
+  return ptr;
+}
+
+void o2scl_free_uniform_grid_log_end_width__(void *vptr) {
   uniform_grid_log_end_width<> *ptr=(uniform_grid_log_end_width<> *)vptr;
-  ret=xptr->init(start,end,width);
-  return ret;*/ return;
+  delete ptr;
+  return;
+}
+
+void *o2scl_uniform_grid_log_end_width___init(double start, double end, double width) {
+  uniform_grid_log_end_width<> *ptr=new uniform_grid_log_end_width<>(start,end,width);
+  return ptr;
 }
 
 void *o2scl_create_table3d() {
@@ -733,6 +768,7 @@ void *o2scl_create_table3d() {
 void o2scl_free_table3d(void *vptr) {
   table3d *ptr=(table3d *)vptr;
   delete ptr;
+  return;
 }
 
 void o2scl_copy_table3d(void *vsrc, void *vdest) {
@@ -793,6 +829,7 @@ void *o2scl_create_tensor__() {
 void o2scl_free_tensor__(void *vptr) {
   tensor<> *ptr=(tensor<> *)vptr;
   delete ptr;
+  return;
 }
 
 void o2scl_copy_tensor__(void *vsrc, void *vdest) {
@@ -815,6 +852,7 @@ void *o2scl_create_find_constants() {
 void o2scl_free_find_constants(void *vptr) {
   find_constants *ptr=(find_constants *)vptr;
   delete ptr;
+  return;
 }
 
 void o2scl_find_constants_find_print(void *vptr, char *name, char *unit, size_t prec, int verbose) {
@@ -837,6 +875,7 @@ void *o2scl_create_convert_units__() {
 void o2scl_free_convert_units__(void *vptr) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   delete ptr;
+  return;
 }
 
 int o2scl_convert_units___get_verbose(void *vptr) {

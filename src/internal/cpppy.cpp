@@ -36,7 +36,11 @@ using namespace o2scl;
   now cpppy does not yet support, for example, obtaining a reference
   or a pointer to a c++ class member.
 
-  Todos: need to fix function names in case where there is no namespace.
+  Todos: 
+  * Need to fix function names in case where there is no namespace.
+  * Simplify code duplication in parsing: reading global and member
+    functions should be the same
+  * Allow use of numpy.arange for uniform_grid
 */
 
 /** \brief Convert all non-alphanumeric characters to underscores
@@ -143,6 +147,10 @@ public:
 
   /// Object name
   std::string name;
+
+  /// Python name for the object
+  std::string py_name;
+
   
 };
 
@@ -154,9 +162,6 @@ public:
 
   /// Namespace
   std::string ns;
-  
-  /// Python name for the shared pointer type
-  std::string py_name;
   
 };
 
@@ -180,7 +185,7 @@ public:
   */
   std::string prefix;
   
-  /// Ampersands and asterisks, *, *&, &, etc.
+  /// Ampersands and asterisks, *, *&, &, **, etc.
   std::string suffix;
 
   /** \brief Convert the type to a string for output
@@ -242,8 +247,11 @@ public:
         }
       }
     } else {
-      cerr << "Unsupported number of type arguments." << endl;
+      cerr << "Unsupported number of type arguments, " << vs2.size()
+           << ", in if_type::parse()." << endl;
+      cout << "vs: ";
       vector_out(cout,vs,true);
+      cout << "vs2: ";
       vector_out(cout,vs2,true);
       exit(-1);
     }
@@ -268,21 +276,34 @@ public:
   /// Return true if the type is a pointer
   bool is_pointer() {
     if (suffix=="*") return true;
+    return false;
   }
   
   /// Return true if the type is a reference
   bool is_reference() {
     if (suffix=="&") return true;
+    return false;
   }
   
   /// Return true if the type is const
   bool is_const() {
     if (prefix.find("const")!=std::string::npos) return true;
+    return false;
+  }
+  
+  /// Return true if the type is const
+  bool is_shared_ptr() {
+    if (prefix.find("shared_ptr")!=std::string::npos ||
+        prefix.find("std::shared_ptr")!=std::string::npos) {
+      return true;
+    }
+    return false;
   }
   
   /// Return true if the type is static
   bool is_static() {
     if (prefix.find("static")!=std::string::npos) return true;
+    return false;
   }
 
   // End of class if_type
@@ -293,9 +314,6 @@ public:
 class if_var : public if_base {
   
 public:
-
-  /// Python name for the variable
-  std::string py_name;
 
   /// The variable type 
   if_type ift;
@@ -317,9 +335,6 @@ public:
   /// Namespace
   std::string ns;
 
-  /// Python name for the function
-  std::string py_name;
-
   /// If true, then another function has the same name
   bool overloaded;
 };
@@ -329,9 +344,6 @@ public:
 class if_class : public if_base {
   
 public:
-
-  /// Python name for the class
-  std::string py_name;
 
   /// Pattern for the class documentation in python
   std::vector<std::string> py_class_doc;
@@ -362,6 +374,8 @@ public:
 
   if_class() {
     is_abstract=false;
+    std_cc=false;
+    def_cons=true;
   }
   
 };
@@ -525,6 +539,7 @@ int main(int argc, char *argv[]) {
         cerr << "No argument for shared_ptr." << endl;
         exit(-1);
       }
+      
       if_shared_ptr ifss;
       ifss.ns=ns;
       ifss.name=vs[1];
@@ -539,6 +554,7 @@ int main(int argc, char *argv[]) {
         cout << "  with python name " << vs[2] << endl;
         next_line(fin,line,vs,done);
       }
+      
       sps.push_back(ifss);
       cout << endl;
       
@@ -559,8 +575,6 @@ int main(int argc, char *argv[]) {
         exit(-1);
       }
       if_class ifc;
-      ifc.def_cons=true;
-      ifc.std_cc=false;
       ifc.name=vs[1];
       ifc.ns=ns;
       if (vs.size()>=3 && vs[2]=="abstract") {
@@ -784,6 +798,8 @@ int main(int argc, char *argv[]) {
       iff.name=vs[1];
       iff.ns=ns;
       cout << "Starting function " << vs[1] << endl;
+
+      // Read and parse function return type
       
       next_line(fin,line,vs,done);
           
@@ -799,8 +815,12 @@ int main(int argc, char *argv[]) {
       cout << "  Function " << iff.name
            << " has return type "
            << iff.ret.to_string() << endl;
+
+      // Read next line
       
       next_line(fin,line,vs,done);
+
+      // Determine if a python name is specified
       
       if (vs[1]=="py_name" && vs.size()>=3) {
         
@@ -811,6 +831,8 @@ int main(int argc, char *argv[]) {
         next_line(fin,line,vs,done);
         
       }
+
+      // Read function arguments
       
       bool function_done=false;
       
@@ -890,6 +912,7 @@ int main(int argc, char *argv[]) {
   // Create C++ header/source
 
   for(size_t kk=0;kk<2;kk++) {
+    
     bool header=true, source=false;
     if (kk==1) {
       source=true;
@@ -938,8 +961,10 @@ int main(int argc, char *argv[]) {
 
       if_class &ifc=classes[i];
 
+      // Generate an object creation function as long as its not
+      // abstract and has a default constructor
+      
       if (ifc.is_abstract==false && ifc.def_cons==true) {
-        // The create pointer function
         fout << "void *" << underscoreify(ifc.ns) << "_create_"
              << underscoreify(ifc.name) << "()";
         if (header) {
@@ -952,8 +977,12 @@ int main(int argc, char *argv[]) {
           fout << "}" << endl;
         }
         fout << endl;
+      }
       
-        // The free pointer function
+      // Generate a destructor function as long as its not
+      // abstract
+      
+      if (ifc.is_abstract==false) {
         fout << "void " << underscoreify(ifc.ns) << "_free_"
              << underscoreify(ifc.name) << "(void *vptr)";
         if (header) {
@@ -963,13 +992,17 @@ int main(int argc, char *argv[]) {
           fout << "  " << ifc.name << " *ptr=(" << ifc.name
                << " *)vptr;" << endl;
           fout << "  delete ptr;" << endl;
+          fout << "  return;" << endl;
           fout << "}" << endl;
         }
         fout << endl;
       }
 
+      // If the standard copy constructors are included,
+      // create a _copy_ method on the C side which we can
+      // use to create a deep_copy method in python
+      
       if (ifc.std_cc) {
-        // The deep copy function
         fout << "void " << underscoreify(ifc.ns) << "_copy_"
              << underscoreify(ifc.name) << "(void *vsrc, void *vdest)";
         if (header) {
@@ -990,11 +1023,12 @@ int main(int argc, char *argv[]) {
 
         if_var &ifv=ifc.members[j];
 
-        // Get function for a class data member
+        // Get functions for class data
         if (ifv.ift.name=="bool" ||
             ifv.ift.name=="double" ||
             ifv.ift.name=="int" ||
             ifv.ift.name=="size_t") {
+          // Get function for a C data type
           fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
                << underscoreify(ifc.name) << "_get_" << ifv.name
                << "(void *vptr)";
@@ -1007,7 +1041,9 @@ int main(int argc, char *argv[]) {
             fout << "  return ptr->" << ifv.name << ";" << endl;
             fout << "}" << endl;
           }
-        } else if (ifv.ift.name=="std::string") {
+        } else if (ifv.ift.name=="std::string" ||
+                   ifv.ift.name=="string") {
+          // Get function for string data
           fout << "const char *" << underscoreify(ifc.ns) << "_"
                << underscoreify(ifc.name) << "_get_" << ifv.name
                << "(void *vptr)";
@@ -1023,6 +1059,7 @@ int main(int argc, char *argv[]) {
             fout << "}" << endl;
           }
         } else {
+          // Get function for other types
           fout << "void " << underscoreify(ifc.ns) << "_"
                << underscoreify(ifc.name) << "_get_" << ifv.name
                << "(void *vptr, void *p_v)";
@@ -1032,12 +1069,13 @@ int main(int argc, char *argv[]) {
             fout << " {" << endl;            
             fout << "  " << ifc.name << " *ptr=(" << ifc.name
                  << " *)vptr;" << endl;
-            if (ifv.ift.prefix.find("shared_ptr")!=std::string::npos ||
-                ifv.ift.prefix.find("std::shared_ptr")!=std::string::npos) {
+            if (ifv.ift.is_shared_ptr()) {
+              // Shared pointers
               fout << "  std::shared_ptr<" << ifv.ift.name
                    << " > *p_t=(std::shared_ptr<"
                    << ifv.ift.name << " > *)p_v;" << endl;
             } else {
+              // Other types
               fout << "  " << ifv.ift.name << " *p_t=("
                    << ifv.ift.name << " *)p_v;" << endl;
             }
@@ -1048,11 +1086,12 @@ int main(int argc, char *argv[]) {
         }
         fout << endl;
       
-        // Set function for a class data member
+        // Set functions for class data
         if (ifv.ift.name=="bool" ||
             ifv.ift.name=="double" ||
             ifv.ift.name=="int" ||
             ifv.ift.name=="size_t") {
+          // Set function for a C data type
           fout << "void " << underscoreify(ifc.ns) << "_"
                << underscoreify(ifc.name) << "_set_"
                << ifv.name << "(void *vptr, "
@@ -1068,6 +1107,7 @@ int main(int argc, char *argv[]) {
             fout << "}" << endl;
           }
         } else {
+          // Set function for other types
           fout << "void " << underscoreify(ifc.ns) << "_"
                << underscoreify(ifc.name) << "_set_" << ifv.name
                << "(void *vptr, void *p_v)";
@@ -1077,12 +1117,13 @@ int main(int argc, char *argv[]) {
             fout << " {" << endl;
             fout << "  " << ifc.name << " *ptr=(" << ifc.name
                  << " *)vptr;" << endl;
-            if (ifv.ift.prefix.find("shared_ptr")!=std::string::npos ||
-                ifv.ift.prefix.find("std::shared_ptr")!=std::string::npos) {
+            if (ifv.ift.is_shared_ptr()) {
+              // Shared pointers
               fout << "  std::shared_ptr<" << ifv.ift.name
                    << " > *p_t=(std::shared_ptr<"
                    << ifv.ift.name << " > *)p_v;" << endl;
             } else {
+              // Other types
               fout << "  " << ifv.ift.name << " *p_t=("
                    << ifv.ift.name << " *)p_v;" << endl;
             }
@@ -1098,7 +1139,9 @@ int main(int argc, char *argv[]) {
       
         if_func &iff=ifc.methods[j];
 
+        // The C code for the return type 
         string ret_type;
+        // Extra arguments for the current method
         string extra_args;
         
         // Function header, first determine return type and
@@ -1275,13 +1318,10 @@ int main(int argc, char *argv[]) {
       
         if_func &iff=ifc.cons[j];
 
-        // Now generate the actual code
-        fout << "void " << underscoreify(ifc.ns) << "_"
+        // Now generate the actual code for the constructor
+        fout << "void *" << underscoreify(ifc.ns) << "_"
              << underscoreify(ifc.name) << "_" << iff.name
-             << "(void *vptr";
-        if (iff.args.size()>0) {
-          fout << ", ";
-        }
+             << "(";
         for(size_t k=0;k<iff.args.size();k++) {
           if (iff.args[k].ift.suffix=="") {
             if (iff.args[k].ift.name=="std::string") {
@@ -1309,55 +1349,11 @@ int main(int argc, char *argv[]) {
           
         } else {
           
-          fout << ") {/*" << endl;
+          fout << ") {" << endl;
           
           // Pointer assignment for class
-          fout << "  " << ifc.name << " *ptr=("
-               << ifc.name << " *)vptr;" << endl;
-          
-          // Pointer assignments for arguments
-          for(size_t k=0;k<iff.args.size();k++) {
-            if (iff.args[k].ift.suffix=="&") {
-              if (iff.args[k].ift.name=="std::string") {
-                fout << "  " << iff.args[k].ift.name << " *"
-                     << iff.args[k].name << "=("
-                     << iff.args[k].ift.name << " *)ptr_" << iff.args[k].name
-                     << ";" << endl;
-              } else {
-                // Future vector reference code. 
-                //fout << "  "
-              }
-            }
-          }
-          
-          // Now generate code for actual function call and the
-          // return statement
-          if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
-              iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
-            // If we're returning a shared pointer, then we actually
-            // need to create a pointer to the shared pointer first
-            fout << "  std::shared_ptr<" << iff.ret.name << " > *ret=new"
-                 << " std::shared_ptr<" << iff.ret.name << " >;" << endl;
-            // Then we set the shared pointer using the class
-            // member function
-            fout << "  *ret=ptr->" << iff.name << "(";
-          } else if ((iff.ret.name=="vector<double>" ||
-                      iff.ret.name=="std::vector<double>") &&
-                     iff.ret.suffix=="&") {
-            // For a std::vector<double> &, just return a pointer
-            if (iff.name=="index_operator") {
-              // In case it's const, we have to explicitly typecast
-              fout << "  *dptr=(double *)(&(ptr->operator[](";
-            } else {
-              fout << "  *dptr=ptr->" << iff.name << "(";
-            }
-          } else if (iff.ret.name=="void") {
-            fout << "  ptr->" << iff.name << "(";
-          } else {
-            // If the function returns a reference, return a pointer
-            // instead
-            fout << "  ret=xptr->" << iff.name << "(";
-          }
+          fout << "  " << ifc.name << " *ptr=new "
+               << ifc.name << "(";
           
           for(size_t k=0;k<iff.args.size();k++) {
             if (iff.args[k].ift.suffix=="") {
@@ -1370,25 +1366,8 @@ int main(int argc, char *argv[]) {
             }
           }
           
-          // Extra code for array types
-          if ((iff.ret.name=="vector<double>" ||
-               iff.ret.name=="std::vector<double>") &&
-              iff.ret.suffix=="&") {
-            fout << ")[0]));" << endl;
-            fout << "  *n=ptr->get_nlines();" << endl;
-            fout << "  return;" << endl;
-          } else {
-            fout << ");" << endl;
-            
-            if (iff.ret.name=="std::string") {
-              fout << "  python_temp_string=ret;" << endl;
-              fout << "  return python_temp_string.c_str();" << endl;
-            } else if (iff.ret.name=="void") {
-              fout << "  return;" << endl;
-            } else {
-              fout << "  return ret;*/ return;" << endl;
-            }
-          }
+          fout << ");" << endl;
+          fout << "  return ptr;" << endl;
           
           // Ending function brace
           fout << "}" << endl;          
