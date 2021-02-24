@@ -243,6 +243,8 @@ public:
       }
     } else {
       cerr << "Unsupported number of type arguments." << endl;
+      vector_out(cout,vs,true);
+      vector_out(cout,vs2,true);
       exit(-1);
     }
     
@@ -339,6 +341,9 @@ public:
 
   /// If true, the standard copy constructors are included
   bool std_cc;
+
+  /// If true, then the default constructor is included (default true)
+  bool def_cons;
   
   /// Members
   std::vector<if_var> members;
@@ -554,6 +559,7 @@ int main(int argc, char *argv[]) {
         exit(-1);
       }
       if_class ifc;
+      ifc.def_cons=true;
       ifc.std_cc=false;
       ifc.name=vs[1];
       ifc.ns=ns;
@@ -686,6 +692,15 @@ int main(int argc, char *argv[]) {
           
           ifc.parents.push_back(vs[2]);
           cout << "  Parent class " << vs[2] << endl;
+          
+          next_line(fin,line,vs,done);
+          if (done) class_done=true;
+          
+        } else if (vs.size()>=2 && vs[0]=="-" && vs[1]=="no_def_cons") {
+
+          ifc.def_cons=false;
+          cout << "  Parent class does not have a default constructor."
+               << endl;
           
           next_line(fin,line,vs,done);
           if (done) class_done=true;
@@ -923,7 +938,7 @@ int main(int argc, char *argv[]) {
 
       if_class &ifc=classes[i];
 
-      if (ifc.is_abstract==false) {
+      if (ifc.is_abstract==false && ifc.def_cons==true) {
         // The create pointer function
         fout << "void *" << underscoreify(ifc.ns) << "_create_"
              << underscoreify(ifc.name) << "()";
@@ -1128,14 +1143,20 @@ int main(int argc, char *argv[]) {
               fout << iff.args[k].ift.name << " " << iff.args[k].name;
             }
           } else if (iff.args[k].ift.suffix=="&") {
-            if (iff.args[k].ift.name=="std::string") {
-              fout << "void *ptr_" << iff.args[k].name;
-            } else if (iff.args[k].ift.name=="vector") {
-              fout << "double *ptr_" << iff.args[k].name;
-            } else {
+            //if (iff.args[k].ift.name=="vector<double>") {            
+              //if (iff.args[k].ift.name=="std::string") {
+            //fout << "vector<double> *ptr_" << iff.args[k].name;
+            //} else {
+            fout << "void *ptr_" << iff.args[k].name;
+            //} else {
+            /*
+              } else {
+              cout << ifc.name << " " << iff.name << endl;
+              cout << iff.args[k].ift.to_string() << endl;
               cout << "Other kind of reference." << endl;
               exit(-1);
-            }
+            */
+            //}
           }
           if (k!=iff.args.size()-1) {
             fout << ", ";
@@ -1143,6 +1164,7 @@ int main(int argc, char *argv[]) {
         }
         
         if (header) {
+          
           fout << extra_args << ");" << endl;
           
         } else {
@@ -1156,15 +1178,19 @@ int main(int argc, char *argv[]) {
           // Pointer assignments for arguments
           for(size_t k=0;k<iff.args.size();k++) {
             if (iff.args[k].ift.suffix=="&") {
-              if (iff.args[k].ift.name=="std::string") {
-                fout << "  " << iff.args[k].ift.name << " *"
-                     << iff.args[k].name << "=("
-                     << iff.args[k].ift.name << " *)ptr_" << iff.args[k].name
-                     << ";" << endl;
-              } else {
-                // Future vector reference code. 
-                //fout << "  "
+              std::string type_temp=iff.args[k].ift.name;
+              if (type_temp=="vector") {
+                type_temp="vector<double>";
               }
+              //if (iff.args[k].ift.name=="std::string") {
+              fout << "  " << type_temp << " *"
+                   << iff.args[k].name << "=("
+                   << type_temp << " *)ptr_" << iff.args[k].name
+                   << ";" << endl;
+              //} else {
+              // Future vector reference code. 
+              //fout << "  "
+              //}
             }
           }
           
@@ -1183,12 +1209,14 @@ int main(int argc, char *argv[]) {
                       iff.ret.name=="std::vector<double>") &&
                      iff.ret.suffix=="&") {
             // For a std::vector<double> &, just return a pointer
-            if (iff.name=="index_operator") {
-              // In case it's const, we have to explicitly typecast
-              fout << "  *dptr=(double *)(&(ptr->operator[](";
-            } else {
-              fout << "  *dptr=ptr->" << iff.name << "(";
-            }
+            //if (iff.name=="index_operator") {
+            // In case it's const, we have to explicitly typecast
+            fout << "  *dptr=(double *)(&(ptr->operator[](";
+            //} else {
+            //fout << "  *dptr=&(ptr->" << iff.name << "(";
+            //}
+          } else if (iff.name=="index_operator") {
+            fout << "  double ret=ptr->operator[](";
           } else if (iff.ret.name=="void") {
             fout << "  ptr->" << iff.name << "(";
           } else {
@@ -1216,7 +1244,11 @@ int main(int argc, char *argv[]) {
           if ((iff.ret.name=="vector<double>" ||
                iff.ret.name=="std::vector<double>") &&
               iff.ret.suffix=="&") {
+            //if (iff.name=="index_operator") {
             fout << ")[0]));" << endl;
+            //} else {
+            //fout << ")[0]);" << endl;
+            //}
             fout << "  *n=ptr->get_nlines();" << endl;
             fout << "  return;" << endl;
           } else {
@@ -1277,7 +1309,7 @@ int main(int argc, char *argv[]) {
           
         } else {
           
-          fout << ") {" << endl;
+          fout << ") {/*" << endl;
           
           // Pointer assignment for class
           fout << "  " << ifc.name << " *ptr=("
@@ -1324,11 +1356,7 @@ int main(int argc, char *argv[]) {
           } else {
             // If the function returns a reference, return a pointer
             // instead
-            if (iff.ret.suffix=="&") {
-              fout << "  " << iff.ret.name << " *ret=&ptr->" << iff.name << "(";
-            } else {
-              fout << "  " << iff.ret.name << " ret=ptr->" << iff.name << "(";
-            }
+            fout << "  ret=xptr->" << iff.name << "(";
           }
           
           for(size_t k=0;k<iff.args.size();k++) {
@@ -1358,7 +1386,7 @@ int main(int argc, char *argv[]) {
             } else if (iff.ret.name=="void") {
               fout << "  return;" << endl;
             } else {
-              fout << "  return ret;" << endl;
+              fout << "  return ret;*/ return;" << endl;
             }
           }
           

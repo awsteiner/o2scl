@@ -25,6 +25,34 @@
 using namespace std;
 using namespace o2scl;
 
+void *o2scl_create_vector_double_() {
+  vector<double> *ptr=new vector<double>;
+  return ptr;
+}
+
+void o2scl_free_vector_double_(void *vptr) {
+  vector<double> *ptr=(vector<double> *)vptr;
+  delete ptr;
+}
+
+void o2scl_vector_double__resize(void *vptr, size_t n) {
+  vector<double> *ptr=(vector<double> *)vptr;
+  ptr->resize(n);
+  return;
+}
+
+size_t o2scl_vector_double__size(void *vptr) {
+  vector<double> *ptr=(vector<double> *)vptr;
+  size_t ret=ptr->size();
+  return ret;
+}
+
+double o2scl_vector_double__index_operator(void *vptr, size_t n) {
+  vector<double> *ptr=(vector<double> *)vptr;
+  double ret=ptr->operator[](n);
+  return ret;
+}
+
 void *o2scl_create_lib_settings_class() {
   lib_settings_class *ptr=new lib_settings_class;
   return ptr;
@@ -195,6 +223,13 @@ void o2scl_copy_table__(void *vsrc, void *vdest) {
   *dest=*src;
 }
 
+void o2scl_table___index_operator(void *vptr, char *col, double **dptr, int *n) {
+  table<> *ptr=(table<> *)vptr;
+  *dptr=(double *)(&(ptr->operator[](col)[0]));
+  *n=ptr->get_nlines();
+  return;
+}
+
 void o2scl_table___set(void *vptr, char *col, size_t row, double val) {
   table<> *ptr=(table<> *)vptr;
   ptr->set(col,row,val);
@@ -255,6 +290,13 @@ void o2scl_table___new_column(void *vptr, char *col) {
   return;
 }
 
+void o2scl_table___get_column(void *vptr, char *col, double **dptr, int *n) {
+  table<> *ptr=(table<> *)vptr;
+  *dptr=(double *)(&(ptr->operator[](col)[0]));
+  *n=ptr->get_nlines();
+  return;
+}
+
 const char *o2scl_table___get_column_name(void *vptr, size_t icol) {
   table<> *ptr=(table<> *)vptr;
   std::string ret=ptr->get_column_name(icol);
@@ -279,6 +321,12 @@ const char *o2scl_table___get_sorted_name(void *vptr, size_t icol) {
   std::string ret=ptr->get_sorted_name(icol);
   python_temp_string=ret;
   return python_temp_string.c_str();
+}
+
+void o2scl_table___init_column(void *vptr, char *scol, double val) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->init_column(scol,val);
+  return;
 }
 
 bool o2scl_table___is_column(void *vptr, char *scol) {
@@ -404,6 +452,66 @@ double o2scl_table___deriv(void *vptr, char *sx, double x0, char *sy) {
   return ret;
 }
 
+double o2scl_table___deriv_index(void *vptr, size_t ix, double x0, size_t iy) {
+  table<> *ptr=(table<> *)vptr;
+  double ret=ptr->deriv(ix,x0,iy);
+  return ret;
+}
+
+void o2scl_table___deriv2_col(void *vptr, char *x, char *y, char *yp) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->deriv2(x,y,yp);
+  return;
+}
+
+double o2scl_table___deriv2(void *vptr, char *sx, double x0, char *sy) {
+  table<> *ptr=(table<> *)vptr;
+  double ret=ptr->deriv2(sx,x0,sy);
+  return ret;
+}
+
+double o2scl_table___deriv2_index(void *vptr, size_t ix, double x0, size_t iy) {
+  table<> *ptr=(table<> *)vptr;
+  double ret=ptr->deriv2(ix,x0,iy);
+  return ret;
+}
+
+double o2scl_table___integ(void *vptr, char *sx, double x1, double x2, char *sy) {
+  table<> *ptr=(table<> *)vptr;
+  double ret=ptr->integ(sx,x1,x2,sy);
+  return ret;
+}
+
+double o2scl_table___integ_index(void *vptr, size_t ix, double x1, double x2, size_t iy) {
+  table<> *ptr=(table<> *)vptr;
+  double ret=ptr->integ(ix,x1,x2,iy);
+  return ret;
+}
+
+void o2scl_table___integ_col(void *vptr, char *x, char *y, char *yi) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->integ(x,y,yi);
+  return;
+}
+
+double o2scl_table___max(void *vptr, char *max) {
+  table<> *ptr=(table<> *)vptr;
+  double ret=ptr->max(max);
+  return ret;
+}
+
+double o2scl_table___min(void *vptr, char *min) {
+  table<> *ptr=(table<> *)vptr;
+  double ret=ptr->min(min);
+  return ret;
+}
+
+void o2scl_table___zero_table(void *vptr) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->zero_table();
+  return;
+}
+
 void o2scl_table___clear(void *vptr) {
   table<> *ptr=(table<> *)vptr;
   ptr->clear();
@@ -428,11 +536,58 @@ void o2scl_table___clear_constants(void *vptr) {
   return;
 }
 
-void o2scl_table___index_operator(void *vptr, char *col, double **dptr, int *n) {
+void o2scl_table___sort_table(void *vptr, char *scol) {
   table<> *ptr=(table<> *)vptr;
-  *dptr=(double *)(&(ptr->operator[](col)[0]));
-  *n=ptr->get_nlines();
+  ptr->sort_table(scol);
   return;
+}
+
+void o2scl_table___sort_column(void *vptr, char *scol) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->sort_column(scol);
+  return;
+}
+
+void o2scl_table___average_col_roll(void *vptr, char *col_name, size_t window) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->average_col_roll(col_name,window);
+  return;
+}
+
+void o2scl_table___average_rows(void *vptr, size_t window, bool rolling) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->average_rows(window,rolling);
+  return;
+}
+
+void o2scl_table___is_valid(void *vptr) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->is_valid();
+  return;
+}
+
+void o2scl_table___functions_columns(void *vptr, char *list) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->functions_columns(list);
+  return;
+}
+
+void o2scl_table___function_column(void *vptr, char *function, char *scol) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->function_column(function,scol);
+  return;
+}
+
+double o2scl_table___row_function(void *vptr, char *scol, size_t row) {
+  table<> *ptr=(table<> *)vptr;
+  double ret=ptr->row_function(scol,row);
+  return ret;
+}
+
+size_t o2scl_table___function_find_row(void *vptr, char *function) {
+  table<> *ptr=(table<> *)vptr;
+  size_t ret=ptr->function_find_row(function);
+  return ret;
 }
 
 void *o2scl_create_table_units__() {
@@ -445,6 +600,18 @@ void o2scl_free_table_units__(void *vptr) {
   delete ptr;
 }
 
+void o2scl_copy_table_units__(void *vsrc, void *vdest) {
+  table_units<> *src=(table_units<> *)vsrc;
+  table_units<> *dest=(table_units<> *)vdest;
+  *dest=*src;
+}
+
+void o2scl_table_units___set_unit(void *vptr, char *col, char *unit) {
+  table_units<> *ptr=(table_units<> *)vptr;
+  ptr->set_unit(col,unit);
+  return;
+}
+
 const char *o2scl_table_units___get_unit(void *vptr, char *col) {
   table_units<> *ptr=(table_units<> *)vptr;
   std::string ret=ptr->get_unit(col);
@@ -452,9 +619,15 @@ const char *o2scl_table_units___get_unit(void *vptr, char *col) {
   return python_temp_string.c_str();
 }
 
-void o2scl_table_units___set_unit(void *vptr, char *col, char *unit) {
+void o2scl_table_units___line_of_units(void *vptr, char *unit_line) {
   table_units<> *ptr=(table_units<> *)vptr;
-  ptr->set_unit(col,unit);
+  ptr->line_of_units(unit_line);
+  return;
+}
+
+void o2scl_table_units___remove_unit(void *vptr, char *col) {
+  table_units<> *ptr=(table_units<> *)vptr;
+  ptr->remove_unit(col);
   return;
 }
 
@@ -464,10 +637,92 @@ int o2scl_table_units___convert_to_unit(void *vptr, char *col, char *unit, bool 
   return ret;
 }
 
-void o2scl_table_units___clear_table(void *vptr) {
-  table_units<> *ptr=(table_units<> *)vptr;
-  ptr->clear_table();
-  return;
+void *o2scl_create_uniform_grid__() {
+  uniform_grid<> *ptr=new uniform_grid<>;
+  return ptr;
+}
+
+void o2scl_free_uniform_grid__(void *vptr) {
+  uniform_grid<> *ptr=(uniform_grid<> *)vptr;
+  delete ptr;
+}
+
+size_t o2scl_uniform_grid___get_nbins(void *vptr) {
+  uniform_grid<> *ptr=(uniform_grid<> *)vptr;
+  size_t ret=ptr->get_nbins();
+  return ret;
+}
+
+size_t o2scl_uniform_grid___get_npoints(void *vptr) {
+  uniform_grid<> *ptr=(uniform_grid<> *)vptr;
+  size_t ret=ptr->get_npoints();
+  return ret;
+}
+
+bool o2scl_uniform_grid___is_log(void *vptr) {
+  uniform_grid<> *ptr=(uniform_grid<> *)vptr;
+  bool ret=ptr->is_log();
+  return ret;
+}
+
+double o2scl_uniform_grid___get_start(void *vptr) {
+  uniform_grid<> *ptr=(uniform_grid<> *)vptr;
+  double ret=ptr->get_start();
+  return ret;
+}
+
+double o2scl_uniform_grid___get_end(void *vptr) {
+  uniform_grid<> *ptr=(uniform_grid<> *)vptr;
+  double ret=ptr->get_end();
+  return ret;
+}
+
+double o2scl_uniform_grid___get_width(void *vptr) {
+  uniform_grid<> *ptr=(uniform_grid<> *)vptr;
+  double ret=ptr->get_width();
+  return ret;
+}
+
+double o2scl_uniform_grid___index_operator(void *vptr, size_t n) {
+  uniform_grid<> *ptr=(uniform_grid<> *)vptr;
+  double ret=ptr->operator[](n);
+  return ret;
+}
+
+void o2scl_uniform_grid_end___init(void *vptr, double start, double end, size_t n_bins) {/*
+  uniform_grid_end<> *ptr=(uniform_grid_end<> *)vptr;
+  ret=xptr->init(start,end,n_bins);
+  return ret;*/ return;
+}
+
+void o2scl_uniform_grid_width___init(void *vptr, double start, double width, size_t n_bins) {/*
+  uniform_grid_width<> *ptr=(uniform_grid_width<> *)vptr;
+  ret=xptr->init(start,width,n_bins);
+  return ret;*/ return;
+}
+
+void o2scl_uniform_grid_end_width___init(void *vptr, double start, double end, double width) {/*
+  uniform_grid_end_width<> *ptr=(uniform_grid_end_width<> *)vptr;
+  ret=xptr->init(start,end,width);
+  return ret;*/ return;
+}
+
+void o2scl_uniform_grid_log_end___init(void *vptr, double start, double end, size_t n_bins) {/*
+  uniform_grid_log_end<> *ptr=(uniform_grid_log_end<> *)vptr;
+  ret=xptr->init(start,end,n_bins);
+  return ret;*/ return;
+}
+
+void o2scl_uniform_grid_log_width___init(void *vptr, double start, double width, size_t n_bins) {/*
+  uniform_grid_log_width<> *ptr=(uniform_grid_log_width<> *)vptr;
+  ret=xptr->init(start,width,n_bins);
+  return ret;*/ return;
+}
+
+void o2scl_uniform_grid_log_end_width___init(void *vptr, double start, double end, double width) {/*
+  uniform_grid_log_end_width<> *ptr=(uniform_grid_log_end_width<> *)vptr;
+  ret=xptr->init(start,end,width);
+  return ret;*/ return;
 }
 
 void *o2scl_create_table3d() {
@@ -478,6 +733,20 @@ void *o2scl_create_table3d() {
 void o2scl_free_table3d(void *vptr) {
   table3d *ptr=(table3d *)vptr;
   delete ptr;
+}
+
+void o2scl_copy_table3d(void *vsrc, void *vdest) {
+  table3d *src=(table3d *)vsrc;
+  table3d *dest=(table3d *)vdest;
+  *dest=*src;
+}
+
+void o2scl_table3d_set_xy(void *vptr, char *x_name, size_t nx, void *ptr_x, char *y_name, size_t ny, void *ptr_y) {
+  table3d *ptr=(table3d *)vptr;
+  vector<double> *x=(vector<double> *)ptr_x;
+  vector<double> *y=(vector<double> *)ptr_y;
+  ptr->set_xy(x_name,nx,*x,y_name,ny,*y);
+  return;
 }
 
 void o2scl_table3d_set(void *vptr, size_t ix, size_t iy, char *name, double val) {
@@ -524,6 +793,12 @@ void *o2scl_create_tensor__() {
 void o2scl_free_tensor__(void *vptr) {
   tensor<> *ptr=(tensor<> *)vptr;
   delete ptr;
+}
+
+void o2scl_copy_tensor__(void *vsrc, void *vdest) {
+  tensor<> *src=(tensor<> *)vsrc;
+  tensor<> *dest=(tensor<> *)vdest;
+  *dest=*src;
 }
 
 void o2scl_tensor___clear(void *vptr) {

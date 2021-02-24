@@ -35,6 +35,22 @@ cpp_using o2scl
 #
 # py_header from o2sclpy.part import *
 # 
+# Class vector<double>
+#                              
+# Create a python interface to std::vector<double> for vector
+# arguments to O2scl functions                             
+#
+class vector<double>
+- py_name vector                             
+- function resize
+  - void
+  - size_t n                             
+- function size
+  - size_t
+- function operator[]
+  - double
+  - size_t n
+# 
 # Class lib_settings_class
 #
 class lib_settings_class
@@ -125,9 +141,9 @@ class table<>
 - function new_column
   - void
   - std::string col
-# - function get_column
-#  - vector<double> &
-# - std::string col
+- function get_column
+  - vector<double> &
+  - std::string col
 - function get_column_name
   - std::string
   - size_t icol
@@ -141,9 +157,10 @@ class table<>
 - function get_sorted_name
   - std::string
   - size_t icol
-# - function init_column
-#  - void
-#  - std::string scol
+- function init_column
+  - void
+  - std::string scol
+  - double val                             
 - function is_column
   - bool
   - std::string scol
@@ -350,18 +367,104 @@ class table_units<>
 shared_ptr table_units<>
 - py_name table_units
 # 
+# Class uniform_grid
+#
+class uniform_grid<>
+- py_name uniform_grid                             
+- function get_nbins
+  - size_t                             
+- function get_npoints
+  - size_t                             
+- function is_log
+  - bool                             
+- function get_start
+  - double                             
+- function get_end
+  - double                             
+- function get_width
+  - double
+- function operator[]
+  - double
+  - size_t n
+# 
+# Class uniform_grid_end
+#
+class uniform_grid_end<>
+- py_name uniform_grid_end                             
+- parent uniform_grid<>
+- no_def_cons                             
+- cons init
+  - double start
+  - double end
+  - size_t n_bins                             
+# 
+# Class uniform_grid_width
+#
+class uniform_grid_width<>
+- py_name uniform_grid_width
+- parent uniform_grid<>
+- no_def_cons                             
+- cons init
+  - double start
+  - double width
+  - size_t n_bins                             
+# 
+# Class uniform_grid_end_width
+#
+class uniform_grid_end_width<>
+- py_name uniform_grid_end_width                             
+- parent uniform_grid<>
+- no_def_cons                             
+- cons init
+  - double start
+  - double end
+  - double width
+# 
+# Class uniform_grid_log_end
+#
+class uniform_grid_log_end<>
+- py_name uniform_grid_log_end
+- parent uniform_grid<>
+- no_def_cons                             
+- cons init
+  - double start
+  - double end
+  - size_t n_bins                             
+# 
+# Class uniform_grid_log_width
+#
+class uniform_grid_log_width<>
+- py_name uniform_grid_log_width
+- parent uniform_grid<>
+- no_def_cons                             
+- cons init
+  - double start
+  - double width
+  - size_t n_bins                             
+# 
+# Class uniform_grid_log_end_width
+#
+class uniform_grid_log_end_width<>
+- py_name uniform_grid_log_end_width
+- parent uniform_grid<>
+- no_def_cons                             
+- cons init
+  - double start
+  - double end
+  - double width
+# 
 # Class table3d
 #
 class table3d
 - std_cc
-#- function set_xy
-#  - void
-#  - std::string x_name
-#  - size_t nx
-#  - vector &x
-#  - std::string y_name
-#  - size_t ny
-#  - vector &y
+- function set_xy
+  - void
+  - std::string x_name
+  - size_t nx
+  - vector &x
+  - std::string y_name
+  - size_t ny
+  - vector &y
 - function set
   - void
   - size_t ix
