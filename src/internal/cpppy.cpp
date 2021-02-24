@@ -40,7 +40,7 @@ using namespace o2scl;
   * Need to fix function names in case where there is no namespace.
   * Simplify code duplication in parsing: reading global and member
     functions should be the same
-  * Allow use of numpy.arange for uniform_grid
+  * Allow use of numpy.arange for uniform_grid arguments
 */
 
 /** \brief Convert all non-alphanumeric characters to underscores
@@ -1624,7 +1624,7 @@ int main(int argc, char *argv[]) {
     }
     
     // Define __init__() function
-    if (ifc.is_abstract) {
+    if (ifc.is_abstract || ifc.def_cons==false) {
       fout << "    @abstractmethod" << endl;
     }
     fout << "    def __init__(self,link,pointer=0):" << endl;
@@ -2060,6 +2060,67 @@ int main(int argc, char *argv[]) {
       
     }
     
+    for(size_t j=0;j<ifc.cons.size();j++) {
+      
+      if_func &iff=ifc.cons[j];
+
+      fout << "    @classmethod" << endl;
+      fout << "    def " << iff.name << "(cls,link,";
+      for(size_t k=0;k<iff.args.size();k++) {
+        fout << iff.args[k].name;
+        if (k!=iff.args.size()-1) {
+          fout << ",";
+        }
+      }
+      fout << "):" << endl;
+      fout << "        \"\"\"" << endl;
+      fout << "        Constructor-like class method for "
+           << ifc.name << " ." << endl;
+      fout << endl;
+      fout << "        | Parameters:" << endl;
+      fout << endl;
+      fout << "        \"\"\"" << endl;
+      fout << endl;
+      fout << "        f=link." << dll_name << "." << ifc.ns << "_create_"
+           << underscoreify(ifc.name) << "_" << iff.name << endl;
+      fout << "        f.restype=ctypes.c_void_p" << endl;
+
+      // Set up constructor argument types
+      fout << "        f.argtypes=[";
+      for(size_t k=0;k<iff.args.size();k++) {
+        if (iff.args[k].ift.suffix=="&") {
+          fout << "ctypes.c_void_p";
+        } else if (iff.args[k].ift.name=="std::string") {
+          fout << "ctypes.c_char_p";
+        } else {
+          fout << "ctypes.c_" << iff.args[k].ift.name;
+        }
+        if (k!=iff.args.size()-1) {
+          fout << ",";
+        }
+      }
+      fout << "]" << endl;
+
+      // Set up constructor function call
+      fout << "        cls._ptr=f(";
+      // Arguments 
+      for(size_t k=0;k<iff.args.size();k++) {
+        if (iff.args[k].ift.suffix=="&") {
+          fout << iff.args[k].name << "._ptr";
+        } else if (iff.args[k].ift.name=="std::string") {
+          fout << iff.args[k].name << "_";
+        } else {
+          fout << iff.args[k].name;
+        }
+        if (k!=iff.args.size()-1) fout << ",";
+      }
+      fout << ")" << endl;
+      fout << "        cls._link=link" << endl;
+      fout << "        return" << endl;
+      fout << endl;
+      
+    }    
+    
   }
 
   // Python code for shared pointers
@@ -2115,7 +2176,8 @@ int main(int argc, char *argv[]) {
          << ifsp.name << " ." << endl;
     fout << "        \"\"\"" << endl;
     fout << endl;
-    fout << "        f=self._link." << dll_name << "." << ifsp.ns << "_free_shared_ptr_"
+    fout << "        f=self._link." << dll_name << "." << ifsp.ns
+         << "_free_shared_ptr_"
          << underscoreify(ifsp.name) << endl;
     fout << "        f.argtypes=[ctypes.c_void_p]" << endl;
     fout << "        f(self._s_ptr)" << endl;
