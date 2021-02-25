@@ -54,6 +54,64 @@ double o2scl_vector_double__index_operator(void *vptr, size_t n) {
   return ret;
 }
 
+void *o2scl_create_vector_int_() {
+  vector<int> *ptr=new vector<int>;
+  return ptr;
+}
+
+void o2scl_free_vector_int_(void *vptr) {
+  vector<int> *ptr=(vector<int> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_vector_int__resize(void *vptr, size_t n) {
+  vector<int> *ptr=(vector<int> *)vptr;
+  ptr->resize(n);
+  return;
+}
+
+size_t o2scl_vector_int__size(void *vptr) {
+  vector<int> *ptr=(vector<int> *)vptr;
+  size_t ret=ptr->size();
+  return ret;
+}
+
+int o2scl_vector_int__index_operator(void *vptr, size_t n) {
+  vector<int> *ptr=(vector<int> *)vptr;
+  double ret=ptr->operator[](n);
+  return ret;
+}
+
+void *o2scl_create_vector_size_t_() {
+  vector<size_t> *ptr=new vector<size_t>;
+  return ptr;
+}
+
+void o2scl_free_vector_size_t_(void *vptr) {
+  vector<size_t> *ptr=(vector<size_t> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_vector_size_t__resize(void *vptr, size_t n) {
+  vector<size_t> *ptr=(vector<size_t> *)vptr;
+  ptr->resize(n);
+  return;
+}
+
+size_t o2scl_vector_size_t__size(void *vptr) {
+  vector<size_t> *ptr=(vector<size_t> *)vptr;
+  size_t ret=ptr->size();
+  return ret;
+}
+
+size_t o2scl_vector_size_t__index_operator(void *vptr, size_t n) {
+  vector<size_t> *ptr=(vector<size_t> *)vptr;
+  double ret=ptr->operator[](n);
+  return ret;
+}
+
 void *o2scl_create_lib_settings_class() {
   lib_settings_class *ptr=new lib_settings_class;
   return ptr;
@@ -398,6 +456,13 @@ void o2scl_table___delete_rows_func(void *vptr, char *func) {
 void o2scl_table___line_of_names(void *vptr, char *names) {
   table<> *ptr=(table<> *)vptr;
   ptr->line_of_names(names);
+  return;
+}
+
+void o2scl_table___line_of_data(void *vptr, void *ptr_data) {
+  table<> *ptr=(table<> *)vptr;
+  vector<double> *data=(vector<double> *)ptr_data;
+  ptr->line_of_data(*data);
   return;
 }
 

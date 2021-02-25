@@ -33,6 +33,7 @@ void *o2scl_create_thermo() {
 void o2scl_free_thermo(void *vptr) {
   thermo *ptr=(thermo *)vptr;
   delete ptr;
+  return;
 }
 
 double o2scl_thermo_get_ed(void *vptr) {
@@ -76,6 +77,7 @@ void *o2scl_create_part() {
 void o2scl_free_part(void *vptr) {
   part *ptr=(part *)vptr;
   delete ptr;
+  return;
 }
 
 double o2scl_part_get_g(void *vptr) {
@@ -220,6 +222,7 @@ void *o2scl_create_fermion() {
 void o2scl_free_fermion(void *vptr) {
   fermion *ptr=(fermion *)vptr;
   delete ptr;
+  return;
 }
 
 double o2scl_fermion_get_kf(void *vptr) {
@@ -252,6 +255,7 @@ void *o2scl_create_quark() {
 void o2scl_free_quark(void *vptr) {
   quark *ptr=(quark *)vptr;
   delete ptr;
+  return;
 }
 
 double o2scl_quark_get_B(void *vptr) {
@@ -284,6 +288,7 @@ void *o2scl_create_fermion_zerot() {
 void o2scl_free_fermion_zerot(void *vptr) {
   fermion_zerot *ptr=(fermion_zerot *)vptr;
   delete ptr;
+  return;
 }
 
 void o2scl_fermion_zerot_kf_from_density(void *vptr, void *ptr_f) {
@@ -371,6 +376,7 @@ void *o2scl_create_fermion_rel() {
 void o2scl_free_fermion_rel(void *vptr) {
   fermion_rel *ptr=(fermion_rel *)vptr;
   delete ptr;
+  return;
 }
 
 bool o2scl_fermion_rel_get_err_nonconv(void *vptr) {
@@ -551,6 +557,7 @@ void *o2scl_create_fermion_nonrel() {
 void o2scl_free_fermion_nonrel(void *vptr) {
   fermion_nonrel *ptr=(fermion_nonrel *)vptr;
   delete ptr;
+  return;
 }
 
 int o2scl_fermion_nonrel_calc_density(void *vptr, void *ptr_f, double T) {
@@ -582,6 +589,7 @@ void *o2scl_create_boson() {
 void o2scl_free_boson(void *vptr) {
   boson *ptr=(boson *)vptr;
   delete ptr;
+  return;
 }
 
 double o2scl_boson_get_co(void *vptr) {
@@ -603,6 +611,7 @@ void *o2scl_create_boson_rel() {
 void o2scl_free_boson_rel(void *vptr) {
   boson_rel *ptr=(boson_rel *)vptr;
   delete ptr;
+  return;
 }
 
 void o2scl_boson_rel_calc_density(void *vptr, void *ptr_b, double T) {
@@ -648,6 +657,7 @@ void *o2scl_create_classical_thermo() {
 void o2scl_free_classical_thermo(void *vptr) {
   classical_thermo *ptr=(classical_thermo *)vptr;
   delete ptr;
+  return;
 }
 
 void o2scl_classical_thermo_calc_density(void *vptr, void *ptr_p, double T) {
@@ -672,6 +682,7 @@ void *o2scl_create_thermo_np_deriv_press() {
 void o2scl_free_thermo_np_deriv_press(void *vptr) {
   thermo_np_deriv_press *ptr=(thermo_np_deriv_press *)vptr;
   delete ptr;
+  return;
 }
 
 double o2scl_thermo_np_deriv_press_get_dsdT(void *vptr) {
@@ -748,6 +759,7 @@ void *o2scl_create_thermo_np_deriv_helm() {
 void o2scl_free_thermo_np_deriv_helm(void *vptr) {
   thermo_np_deriv_helm *ptr=(thermo_np_deriv_helm *)vptr;
   delete ptr;
+  return;
 }
 
 double o2scl_thermo_np_deriv_helm_get_dsdT(void *vptr) {
@@ -824,6 +836,7 @@ void *o2scl_create_part_deriv_press() {
 void o2scl_free_part_deriv_press(void *vptr) {
   part_deriv_press *ptr=(part_deriv_press *)vptr;
   delete ptr;
+  return;
 }
 
 double o2scl_part_deriv_press_get_dndmu(void *vptr) {
@@ -876,6 +889,7 @@ void *o2scl_create_part_deriv() {
 void o2scl_free_part_deriv(void *vptr) {
   part_deriv *ptr=(part_deriv *)vptr;
   delete ptr;
+  return;
 }
 
 void *o2scl_create_fermion_deriv() {
@@ -886,6 +900,7 @@ void *o2scl_create_fermion_deriv() {
 void o2scl_free_fermion_deriv(void *vptr) {
   fermion_deriv *ptr=(fermion_deriv *)vptr;
   delete ptr;
+  return;
 }
 
 void *o2scl_create_deriv_thermo_base() {
@@ -896,6 +911,7 @@ void *o2scl_create_deriv_thermo_base() {
 void o2scl_free_deriv_thermo_base(void *vptr) {
   deriv_thermo_base *ptr=(deriv_thermo_base *)vptr;
   delete ptr;
+  return;
 }
 
 double o2scl_deriv_thermo_base_heat_cap_ppart_const_vol(void *vptr, void *ptr_p, double T) {
@@ -948,6 +964,7 @@ void *o2scl_create_fermion_deriv_rel() {
 void o2scl_free_fermion_deriv_rel(void *vptr) {
   fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
   delete ptr;
+  return;
 }
 
 double o2scl_fermion_deriv_rel_get_exp_limit(void *vptr) {
@@ -1073,6 +1090,7 @@ void *o2scl_create_fermion_deriv_nr() {
 void o2scl_free_fermion_deriv_nr(void *vptr) {
   fermion_deriv_nr *ptr=(fermion_deriv_nr *)vptr;
   delete ptr;
+  return;
 }
 
 double o2scl_fermion_deriv_nr_get_flimit(void *vptr) {
@@ -1143,6 +1161,7 @@ void *o2scl_create_classical_deriv_thermo() {
 void o2scl_free_classical_deriv_thermo(void *vptr) {
   classical_deriv_thermo *ptr=(classical_deriv_thermo *)vptr;
   delete ptr;
+  return;
 }
 
 void o2scl_classical_deriv_thermo_calc_density(void *vptr, void *ptr_p, double T) {
@@ -1167,6 +1186,7 @@ void *o2scl_create_fermion_mag_zerot() {
 void o2scl_free_fermion_mag_zerot(void *vptr) {
   fermion_mag_zerot *ptr=(fermion_mag_zerot *)vptr;
   delete ptr;
+  return;
 }
 
 int o2scl_fermion_mag_zerot_get_nmax_up(void *vptr) {

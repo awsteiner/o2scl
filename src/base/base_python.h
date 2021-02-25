@@ -40,6 +40,26 @@ size_t o2scl_vector_double__size(void *vptr);
 
 double o2scl_vector_double__index_operator(void *vptr, size_t n);
 
+void *o2scl_create_vector_int_();
+
+void o2scl_free_vector_int_(void *vptr);
+
+void o2scl_vector_int__resize(void *vptr, size_t n);
+
+size_t o2scl_vector_int__size(void *vptr);
+
+int o2scl_vector_int__index_operator(void *vptr, size_t n);
+
+void *o2scl_create_vector_size_t_();
+
+void o2scl_free_vector_size_t_(void *vptr);
+
+void o2scl_vector_size_t__resize(void *vptr, size_t n);
+
+size_t o2scl_vector_size_t__size(void *vptr);
+
+size_t o2scl_vector_size_t__index_operator(void *vptr, size_t n);
+
 void *o2scl_create_lib_settings_class();
 
 void o2scl_free_lib_settings_class(void *vptr);
@@ -151,6 +171,8 @@ void o2scl_table___delete_row(void *vptr, char *scol, double val);
 void o2scl_table___delete_rows_func(void *vptr, char *func);
 
 void o2scl_table___line_of_names(void *vptr, char *names);
+
+void o2scl_table___line_of_data(void *vptr, void *ptr_data);
 
 size_t o2scl_table___ordered_lookup(void *vptr, char *scol, double val);
 
