@@ -7,7 +7,7 @@ py_class_doc |
 | https://neutronstars.utk.edu/code/o2scl-dev/html/class/%name%.html .
 dll_name o2scl_hdf
 rst_header |
-| .. _base:
+| .. _hdf:
 |
 | HDF5 classes from O\ :sub:`2`\ scl
 | ==================================

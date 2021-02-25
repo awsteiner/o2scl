@@ -162,6 +162,7 @@ interface: empty
 	cd eos; $(MAKE) interface
 	cd nuclei; $(MAKE) interface
 	cd part; $(MAKE) interface
+	cd hdf; $(MAKE) interface
 
 empty:
 
