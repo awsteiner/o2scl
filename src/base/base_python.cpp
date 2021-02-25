@@ -593,6 +593,12 @@ size_t o2scl_table___function_find_row(void *vptr, char *function) {
   return ret;
 }
 
+void o2scl_table___summary(void *vptr) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->summary();
+  return;
+}
+
 void *o2scl_create_table_units__() {
   table_units<> *ptr=new table_units<>;
   return ptr;

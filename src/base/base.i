@@ -336,6 +336,8 @@ class table<>
 - function function_find_row
   - size_t
   - std::string function
+- function summary
+  - void                             
 # 
 # Class table_units<>
 #

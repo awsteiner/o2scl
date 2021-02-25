@@ -216,6 +216,8 @@ double o2scl_table___row_function(void *vptr, char *scol, size_t row);
 
 size_t o2scl_table___function_find_row(void *vptr, char *function);
 
+void o2scl_table___summary(void *vptr);
+
 void *o2scl_create_table_units__();
 
 void o2scl_free_table_units__(void *vptr);
