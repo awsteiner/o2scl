@@ -165,9 +165,6 @@ namespace o2scl_acol {
     
     /// True for scientific output mode
     bool scientific;
-
-    /// Number of threads for OpenMP
-    size_t num_threads;
     //@}
 
     /// \name The parameter objects
@@ -176,7 +173,6 @@ namespace o2scl_acol {
     o2scl::cli::parameter_string p_unit_fname;
     o2scl::cli::parameter_string p_def_args;
     o2scl::cli::parameter_int p_verbose;
-    o2scl::cli::parameter_size_t p_num_threads;
     o2scl::cli::parameter_int p_compress;
     o2scl::cli::parameter_int p_prec;
     o2scl::cli::parameter_int p_ncols;

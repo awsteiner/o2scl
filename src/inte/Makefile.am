@@ -116,6 +116,25 @@ inte_gauss56_cern_ts_LDADD = $(VCHECK_LIBS)
 inte_kronrod_boost_ts_LDADD = $(VCHECK_LIBS)
 inte_double_exp_boost_ts_LDADD = $(VCHECK_LIBS)
 
+if O2SCL_OPENMP
+inte_adapt_cern_ts_LDFLAGS = -fopenmp
+inte_cauchy_cern_ts_LDFLAGS = -fopenmp
+inte_gauss_cern_ts_LDFLAGS = -fopenmp
+inte_qng_gsl_ts_LDFLAGS = -fopenmp
+inte_qag_gsl_ts_LDFLAGS = -fopenmp
+inte_qags_gsl_ts_LDFLAGS = -fopenmp
+inte_qagi_gsl_ts_LDFLAGS = -fopenmp
+inte_qagil_gsl_ts_LDFLAGS = -fopenmp
+inte_qagiu_gsl_ts_LDFLAGS = -fopenmp
+inte_qawc_gsl_ts_LDFLAGS = -fopenmp
+inte_qawo_gsl_ts_LDFLAGS = -fopenmp
+inte_qawf_gsl_ts_LDFLAGS = -fopenmp
+inte_qaws_gsl_ts_LDFLAGS = -fopenmp
+inte_gauss56_cern_ts_LDFLAGS = -fopenmp
+inte_kronrod_boost_ts_LDFLAGS = -fopenmp
+inte_double_exp_boost_ts_LDFLAGS = -fopenmp
+endif
+
 inte_adapt_cern.scr: inte_adapt_cern_ts$(EXEEXT) 
 	./inte_adapt_cern_ts$(EXEEXT) > inte_adapt_cern.scr
 inte_cauchy_cern.scr: inte_cauchy_cern_ts$(EXEEXT) 

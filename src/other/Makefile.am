@@ -117,10 +117,6 @@ else
 VCHECK_LIBS = ../libo2scl.la
 endif
 
-if O2SCL_OPENMP
-fract_ts_LDFLAGS = -fopenmp
-endif
-
 smooth_gsl_ts_LDADD = $(VCHECK_LIBS)
 series_acc_ts_LDADD = $(VCHECK_LIBS)
 interp2_planar_ts_LDADD = $(VCHECK_LIBS)
@@ -141,6 +137,29 @@ hist_ts_LDADD = $(VCHECK_LIBS)
 hist_2d_ts_LDADD = $(VCHECK_LIBS)
 prob_dens_func_ts_LDADD = $(VCHECK_LIBS)
 vec_stats_ts_LDADD = $(VCHECK_LIBS)
+
+if O2SCL_OPENMP
+smooth_gsl_ts_LDFLAGS = -fopenmp
+series_acc_ts_LDFLAGS = -fopenmp
+interp2_planar_ts_LDFLAGS = -fopenmp
+interp2_neigh_ts_LDFLAGS = -fopenmp
+interpm_idw_ts_LDFLAGS = -fopenmp
+smooth_func_ts_LDFLAGS = -fopenmp
+interpm_krige_ts_LDFLAGS = -fopenmp
+contour_ts_LDFLAGS = -fopenmp
+poly_ts_LDFLAGS = -fopenmp
+polylog_ts_LDFLAGS = -fopenmp
+fract_ts_LDFLAGS = -fopenmp
+interp2_seq_ts_LDFLAGS = -fopenmp
+prob_dens_mdim_amr_ts_LDFLAGS = -fopenmp
+interp2_direct_ts_LDFLAGS = -fopenmp
+cheb_approx_ts_LDFLAGS = -fopenmp
+pinside_ts_LDFLAGS = -fopenmp
+hist_ts_LDFLAGS = -fopenmp
+hist_2d_ts_LDFLAGS = -fopenmp
+prob_dens_func_ts_LDFLAGS = -fopenmp
+vec_stats_ts_LDFLAGS = -fopenmp
+endif
 
 smooth_gsl.scr: smooth_gsl_ts$(EXEEXT) 
 	./smooth_gsl_ts$(EXEEXT) > smooth_gsl.scr

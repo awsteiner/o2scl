@@ -110,6 +110,23 @@ diff_evo_ts_LDADD = $(VCHECK_LIBS)
 diff_evo_adapt_ts_LDADD = $(VCHECK_LIBS)
 min_ts_LDADD = $(VCHECK_LIBS)
 
+if O2SCL_OPENMP
+min_cern_ts_LDFLAGS = -fopenmp
+min_brent_gsl_ts_LDFLAGS = -fopenmp
+min_brent_boost_ts_LDFLAGS = -fopenmp
+min_quad_golden_ts_LDFLAGS = -fopenmp
+mmin_simp2_ts_LDFLAGS = -fopenmp
+mmin_conf_ts_LDFLAGS = -fopenmp
+mmin_conp_ts_LDFLAGS = -fopenmp
+mmin_bfgs2_ts_LDFLAGS = -fopenmp
+mmin_fix_ts_LDFLAGS = -fopenmp
+mmin_constr_pgrad_ts_LDFLAGS = -fopenmp
+mmin_constr_spg_ts_LDFLAGS = -fopenmp
+diff_evo_ts_LDFLAGS = -fopenmp
+diff_evo_adapt_ts_LDFLAGS = -fopenmp
+min_ts_LDFLAGS = -fopenmp
+endif
+
 min_cern.scr: min_cern_ts$(EXEEXT) 
 	./min_cern_ts$(EXEEXT) > min_cern.scr
 min_brent_gsl.scr: min_brent_gsl_ts$(EXEEXT) 

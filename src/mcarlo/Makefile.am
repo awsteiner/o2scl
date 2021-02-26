@@ -112,8 +112,16 @@ rng_gsl_ts_LDADD = $(VCHECK_LIBS)
 mcarlo_plain_ts_LDADD = $(VCHECK_LIBS)
 mcarlo_vegas_ts_LDADD = $(VCHECK_LIBS)
 expval_ts_LDADD = $(VCHECK_LIBS)
-mcmc_para_ts_LDFLAGS = $(O2SCL_OPENMP_MVAR)
 mcmc_para_ts_LDADD = $(VCHECK_LIBS)
+
+if O2SCL_OPENMP
+mcarlo_miser_ts_LDFLAGS = -fopenmp
+rng_gsl_ts_LDFLAGS = -fopenmp
+mcarlo_plain_ts_LDFLAGS = -fopenmp
+mcarlo_vegas_ts_LDFLAGS = -fopenmp
+expval_ts_LDFLAGS = -fopenmp
+mcmc_para_ts_LDFLAGS = -fopenmp
+endif
 
 mcarlo_miser.scr: mcarlo_miser_ts$(EXEEXT)
 	./mcarlo_miser_ts$(EXEEXT) > mcarlo_miser.scr
