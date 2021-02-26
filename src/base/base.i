@@ -59,9 +59,15 @@ class std::string
 | def init_bytes(self,s):
 |     # Initialize the string from a Python bytes object
 |     resize(len(s))
-|     for i in range(0,s):
-|         self[i]=s[i]
+|     for i in range(0,len(s)):
+|         self.__setitem__(i,s[i])
 |     return
+|
+| def to_bytes(self):
+|     ret=b''
+|     for i in range(0,self.length()):
+|         ret=ret+self.__getitem__(i)
+|     return ret
 class vector<double>
 - py_name std_vector
 - function resize
@@ -75,6 +81,12 @@ class vector<double>
 - extra_py |
 | def __len__(self):
 |     return size()
+|
+| def to_numpy(self):
+|     ret=numpy.zeros((self.size()))
+|     for i in range(0,self.length()):
+|         ret[i]=self.__getitem__(i)
+|     return ret
 class vector<int>
 - py_name std_vector_int
 - function resize
@@ -88,6 +100,12 @@ class vector<int>
 - extra_py |
 | def __len__(self):
 |     return size()
+|
+| def to_numpy(self):
+|     ret=numpy.zeros((self.size()),dtype=numpy.int32_t)
+|     for i in range(0,self.length()):
+|         ret[i]=self.__getitem__(i)
+|     return ret
 class vector<size_t>
 - py_name std_vector_size_t
 - function resize
@@ -101,6 +119,12 @@ class vector<size_t>
 - extra_py |
 | def __len__(self):
 |     return size()
+|
+| def to_numpy(self):
+|     ret=numpy.zeros((self.size()),dtype=numpy.uint64_t)
+|     for i in range(0,self.length()):
+|         ret[i]=self.__getitem__(i)
+|     return ret
 #class vector<string>
 #- py_name std_vector_string
 #- function resize

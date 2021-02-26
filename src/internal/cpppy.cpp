@@ -41,6 +41,7 @@ using namespace o2scl;
   * Simplify code duplication in parsing: reading global and member
     functions should be the same
   * Allow use of numpy.arange for uniform_grid arguments
+
 */
 
 /** \brief Convert all non-alphanumeric characters to underscores
@@ -53,9 +54,8 @@ std::string underscoreify(std::string s) {
   return s2;
 }
 
-/** \brief Read the next line from \c fin, skipping blank
-    lines, splitting by spaces into \c vs, and setting \c done
-    if done
+/** \brief Read the next line from \c fin, skip blank and comment 
+    lines, split by spaces into \c vs, and set \c done if done
 */
 void next_line(ifstream &fin, std::string &line,
                std::vector<std::string> &vs, bool &done) {
@@ -79,7 +79,7 @@ void next_line(ifstream &fin, std::string &line,
 
 /** \brief Parse a potentially multi-line string in the interface
     file
- */
+*/
 void parse_vector_string(ifstream &fin, std::string type, std::string &line,
                          std::vector<std::string> &vs, bool &done,
                          std::vector<std::string> &output) {
@@ -150,7 +150,6 @@ public:
 
   /// Python name for the object
   std::string py_name;
-
   
 };
 
@@ -317,6 +316,40 @@ public:
 
   /// The variable type 
   if_type ift;
+
+  /// Parse a list to this variable
+  void parse(vector<string> &vs) {
+    
+    // Check if ampersands or asterisks are on the LHS
+    // of the variable name. If so, include them in
+    // the variable type instead
+
+    // Temporarily store the last string in the list
+    string last_string=vs[vs.size()-1];
+    
+    if (last_string[0]=='&' || last_string[0]=='*') {
+
+      // Clear the last list entry so we can fill it with the
+      // ampersands and asterisks we find in 'last_string'
+      vs[vs.size()-1]="";
+
+      // Progressively move ampersands and asterisks from last_string
+      // to the last string in the list
+      while (last_string[0]=='&' || last_string[0]=='*') {
+        vs[vs.size()-1]=last_string[0]+vs[vs.size()-1];
+        last_string=last_string.substr(1,last_string.length()-1);
+      }
+      
+      name=last_string;
+      ift.parse(vs,1,vs.size());
+      
+    } else {
+      name=last_string;
+      ift.parse(vs,1,vs.size()-1);
+    }
+    
+    return;
+  }
   
 };
 
@@ -337,6 +370,10 @@ public:
 
   /// If true, then another function has the same name
   bool overloaded;
+
+  if_func() {
+    overloaded=false;
+  }
 };
 
 /** \brief Interface class
@@ -550,7 +587,8 @@ int main(int argc, char *argv[]) {
       cout << "Shared pointer for type " << vs[1] << endl;
       
       next_line(fin,line,vs,done);
-      
+
+      // If present, record the python name of the shared pointer
       if (line[0]=='-' && line[1]==' ' && vs[1]=="py_name" &&
           vs.size()==3) {
         ifss.py_name=vs[2];
@@ -577,9 +615,12 @@ int main(int argc, char *argv[]) {
         cerr << "No name for class." << endl;
         exit(-1);
       }
+      
       if_class ifc;
       ifc.name=vs[1];
       ifc.ns=ns;
+
+      // Determine if the class is abstract
       if (vs.size()>=3 && vs[2]=="abstract") {
         ifc.is_abstract=true;
         cout << "Starting abstract class " << ifc.name << " in namespace "
@@ -588,22 +629,24 @@ int main(int argc, char *argv[]) {
         cout << "Starting class " << ifc.name << " in namespace "
              << ifc.ns << endl;
       }
-      
+
+      // Read the next line
       next_line(fin,line,vs,done);
-      
+
+      // Loop until the class definition is finished
       bool class_done=false;
-      
       while (class_done==false) {
 
         if (vs.size()>=3 && vs[0]=="-" && vs[1]=="function") {
           
+          // Section for a member function
+          
           if_func iff;
           iff.name=vs[2];
-          if (iff.name=="operator[]") {
-            iff.name="getitem";
-          }
           cout << "  Starting member function " << vs[2] << endl;
 
+          // Read the return value
+          
           next_line(fin,line,vs,done);
           
           if (done==true || vs.size()<2 || vs[0]!="-" || line[0]!=' ' ||
@@ -618,14 +661,19 @@ int main(int argc, char *argv[]) {
           cout << "    Member function " << iff.name
                << " has return type "
                << iff.ret.to_string() << endl;
+
+          // If it returns a vector<double>, then we need to
+          // import numpy so we can return a numpy array
           if ((iff.ret.name=="vector<double>" ||
                iff.ret.name=="std::vector<double>") &&
               iff.ret.suffix=="&") {
             import_numpy=true;
           }
 
+          // Next line after return type
           next_line(fin,line,vs,done);
-          
+
+          // Check for a python name for this member function
           if (vs[1]=="py_name" && vs.size()>=3) {
             
             iff.py_name=vs[2];
@@ -637,24 +685,15 @@ int main(int argc, char *argv[]) {
             if (done) class_done=true;
             
           }
-          
+
+          // Read the member function arguments if present
           while (vs.size()>=2 && line[0]==' ' && line[1]==' ' &&
                  vs[0]=="-") {
             
             if_var ifv;
-            string last_string=vs[vs.size()-1];
-            if (last_string[0]=='&' || last_string[0]=='*') {
-              vs[vs.size()-1]="";
-              while (last_string[0]=='&' || last_string[0]=='*') {
-                vs[vs.size()-1]=last_string[0]+vs[vs.size()-1];
-                last_string=last_string.substr(1,last_string.length()-1);
-              }
-              ifv.name=last_string;
-              ifv.ift.parse(vs,1,vs.size());
-            } else {
-              ifv.name=last_string;
-              ifv.ift.parse(vs,1,vs.size()-1);
-            }
+
+            ifv.parse(vs);
+            
             cout << "    Member function " << iff.name
                  << " has argument " << ifv.name << " with type "
                  << ifv.ift.to_string() << endl;
@@ -666,34 +705,31 @@ int main(int argc, char *argv[]) {
           }
 
           ifc.methods.push_back(iff);
+
+          // End of member function section
           
         } else if (vs.size()>=3 && vs[0]=="-" && vs[1]=="cons") {
+
+          // Section for a constructor
           
           if_func iff;
           iff.name=vs[2];
           cout << "  Starting constructor to be named " << iff.name
                << " ." << endl;
 
+          // Read the next line
           next_line(fin,line,vs,done);
 
+          // Constructors don't have return values, so just
+          // look for constructor arguments
           while (vs.size()>=2 && line[0]==' ' && line[1]==' ' &&
                  vs[0]=="-") {
             
             if_var ifv;
-            string last_string=vs[vs.size()-1];
-            if (last_string[0]=='&' || last_string[0]=='*') {
-              vs[vs.size()-1]="";
-              while (last_string[0]=='&' || last_string[0]=='*') {
-                vs[vs.size()-1]=last_string[0]+vs[vs.size()-1];
-                last_string=last_string.substr(1,last_string.length()-1);
-              }
-              ifv.name=last_string;
-              ifv.ift.parse(vs,1,vs.size());
-            } else {
-              ifv.name=last_string;
-              ifv.ift.parse(vs,1,vs.size()-1);
-            }
-            cout << "    Member function " << iff.name
+
+            ifv.parse(vs);
+            
+            cout << "    Constructor with name " << iff.name
                  << " has argument " << ifv.name << " with type "
                  << ifv.ift.to_string() << endl;
             
@@ -704,8 +740,12 @@ int main(int argc, char *argv[]) {
           }
 
           ifc.cons.push_back(iff);
+
+          // End of constructor section
           
         } else if (vs.size()>=3 && vs[0]=="-" && vs[1]=="parent") {
+
+          // Parent class 
           
           ifc.parents.push_back(vs[2]);
           cout << "  Parent class " << vs[2] << endl;
@@ -715,6 +755,8 @@ int main(int argc, char *argv[]) {
           
         } else if (vs.size()>=2 && vs[0]=="-" && vs[1]=="no_def_cons") {
 
+          // No default constructor flag
+          
           ifc.def_cons=false;
           cout << "  Parent class does not have a default constructor."
                << endl;
@@ -723,6 +765,8 @@ int main(int argc, char *argv[]) {
           if (done) class_done=true;
           
         } else if (vs.size()>=2 && vs[0]=="-" && vs[1]=="std_cc") {
+
+          // Standard copy constructor flag
           
           ifc.std_cc=true;
           cout << "  Class " << ifc.name << " has the standard "
@@ -732,6 +776,8 @@ int main(int argc, char *argv[]) {
           if (done) class_done=true;
           
         } else if (vs.size()>=3 && vs[0]=="-" && vs[1]=="py_name") {
+
+          // Python name for the class
           
           ifc.py_name=vs[2];
           cout << "  Class " << ifc.name
@@ -743,12 +789,17 @@ int main(int argc, char *argv[]) {
         } else if (vs.size()>=3 && vs[0]=="-" &&
                    vs[1]=="py_class_doc") {
 
-          parse_vector_string(fin,"py_class_doc",line,vs,done,ifc.py_class_doc);
+          // Python documentation for this class
+          
+          parse_vector_string(fin,"py_class_doc",line,vs,done,
+                              ifc.py_class_doc);
           
           if (done) class_done=true;
           
         } else if (vs.size()>=3 && vs[0]=="-" &&
                    vs[1]=="extra_py") {
+
+          // Extra python code for this class
 
           parse_vector_string(fin,"extra_py",line,vs,done,ifc.extra_py);
           
@@ -756,30 +807,29 @@ int main(int argc, char *argv[]) {
           
         } else if (vs.size()>=3 && vs[0]=="-") {
 
+          // Member data section
+          
           if_var ifv;
-          // First, check if there are any & or *'s before the
-          // variable name
-          if (vs[2][0]=='&' || vs[2][0]=='*') {
-            ifv.name=vs[2].substr(1,vs[2].length()-1);
-            vs[2]=vs[2].substr(0,1);
-            ifv.ift.parse(vs,1,3);
-          } else {
-            ifv.name=vs[vs.size()-1];
-            ifv.ift.parse(vs,1,vs.size()-1);
-          }
+          
+          ifv.parse(vs);
           
           cout << "  Member " << ifv.name << " with type "
                << ifv.ift.to_string() << " ." << endl;
 
           next_line(fin,line,vs,done);
+          
           if (done) {
             class_done=true;
           } else {
+
+            // Check if the member data has a py_name
             if (line[0]==' ' && line[1]==' ' && line[2]=='-' &&
                 line[3]==' ' && vs[1]=="py_name" && vs.size()>=3) {
+              
               ifv.py_name=vs[2];
               cout << "    Member " << ifv.name << " has py_name "
                    << ifv.py_name << " ." << endl;
+              
               next_line(fin,line,vs,done);
               if (done) {
                 class_done=true;
@@ -789,8 +839,14 @@ int main(int argc, char *argv[]) {
           
           ifc.members.push_back(ifv);
 
+          // End of member data section
+
         } else {
+
+          // If it failed to match a part of the class, then the
+          // class is done
           class_done=true;
+          
         }
 
         if (class_done==true) {
@@ -850,19 +906,9 @@ int main(int argc, char *argv[]) {
              vs[0]=="-") {
 
         if_var ifv;
-        string last_string=vs[vs.size()-1];
-        if (last_string[0]=='&' || last_string[0]=='*') {
-          vs[vs.size()-1]="";
-          while (last_string[0]=='&' || last_string[0]=='*') {
-            vs[vs.size()-1]=last_string[0]+vs[vs.size()-1];
-            last_string=last_string.substr(1,last_string.length()-1);
-          }
-          ifv.name=last_string;
-          ifv.ift.parse(vs,1,vs.size());
-        } else {
-          ifv.name=last_string;
-          ifv.ift.parse(vs,1,vs.size()-1);
-        }
+
+        ifv.parse(vs);
+        
         cout << "  Function " << iff.name
              << " has argument " << ifv.name << " with type "
              << ifv.ift.to_string() << endl;
@@ -891,13 +937,9 @@ int main(int argc, char *argv[]) {
 
   // ----------------------------------------------------------------
   // Post-process to handle function overloading
-  
+
   for(size_t i=0;i<classes.size();i++) {
     if_class &ifc=classes[i];
-    for(size_t j=0;j<ifc.methods.size();j++) {
-      if_func &iff=ifc.methods[j];
-      iff.overloaded=false;
-    }
     for(size_t j=0;j<ifc.methods.size();j++) {
       if_func &iff=ifc.methods[j];
       for(size_t k=j+1;k<ifc.methods.size();k++) {
@@ -1008,8 +1050,7 @@ int main(int argc, char *argv[]) {
         fout << endl;
       }
       
-      // Generate a destructor function as long as its not
-      // abstract
+      // Generate a destructor function as long as its not abstract
       
       if (ifc.is_abstract==false) {
         fout << "void " << underscoreify(ifc.ns) << "_free_"
@@ -1027,9 +1068,11 @@ int main(int argc, char *argv[]) {
         fout << endl;
       }
 
-      // If the standard copy constructors are included,
-      // create a _copy_ method on the C side which we can
-      // use to create a deep_copy method in python
+      // If the standard copy constructors are included, create a
+      // _copy_ method on the C side which we can use to create a
+      // deep_copy method in python. This function presumes that the
+      // source and destination pointers already point to a valid
+      // object.
       
       if (ifc.std_cc) {
         fout << "void " << underscoreify(ifc.ns) << "_copy_"
@@ -1287,7 +1330,7 @@ int main(int argc, char *argv[]) {
             //} else {
             //fout << "  *dptr=&(ptr->" << iff.name << "(";
             //}
-          } else if (iff.name=="getitem") {
+          } else if (iff.name=="operator[]") {
             fout << "  double ret=ptr->operator[](";
           } else if (iff.ret.name=="void") {
             fout << "  ptr->" << iff.name << "(";
@@ -1857,7 +1900,7 @@ int main(int argc, char *argv[]) {
       if_func &iff=ifc.methods[j];
 
       // Function header
-      if (iff.name=="getitem") {
+      if (iff.name=="operator[]") {
         fout << "    def __getitem__(self";
       } else if (iff.py_name!="") {
         fout << "    def " << iff.py_name << "(self";
