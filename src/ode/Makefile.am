@@ -107,6 +107,20 @@ ode_it_solve_ts_LDADD = $(VCHECK_LIBS)
 #ode_bv_solve_ts_LDADD = $(VCHECK_LIBS)
 ode_rk8pd_gsl_ts_LDADD = $(VCHECK_LIBS)
 
+if O2SCL_OPENMP
+astep_gsl_ts_LDFLAGS = -fopenmp
+ode_rkf45_gsl_ts_LDFLAGS = -fopenmp
+ode_rkck_gsl_ts_LDFLAGS = -fopenmp
+ode_bsimp_gsl_ts_LDFLAGS = -fopenmp
+astep_nonadapt_ts_LDFLAGS = -fopenmp
+ode_iv_solve_ts_LDFLAGS = -fopenmp
+#ode_iv_table_ts_LDFLAGS = -fopenmp
+#ode_bv_mshoot_ts_LDFLAGS = -fopenmp
+ode_it_solve_ts_LDFLAGS = -fopenmp
+#ode_bv_solve_ts_LDFLAGS = -fopenmp
+ode_rk8pd_gsl_ts_LDFLAGS = -fopenmp
+endif
+
 astep_gsl.scr: astep_gsl_ts$(EXEEXT)
 	./astep_gsl_ts$(EXEEXT) > astep_gsl.scr
 ode_rkck_gsl.scr: ode_rkck_gsl_ts$(EXEEXT)

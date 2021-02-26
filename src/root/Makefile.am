@@ -104,6 +104,18 @@ root_brent_gsl_ts_LDADD = $(VCHECK_LIBS)
 root_toms748_ts_LDADD = $(VCHECK_LIBS)
 jacobian_ts_LDADD = $(VCHECK_LIBS)
 
+if O2SCL_OPENMP
+root_bkt_cern_ts_LDFLAGS = -fopenmp
+mroot_cern_ts_LDFLAGS = -fopenmp
+mroot_hybrids_ts_LDFLAGS = -fopenmp
+mroot_broyden_ts_LDFLAGS = -fopenmp
+root_stef_ts_LDFLAGS = -fopenmp
+root_cern_ts_LDFLAGS = -fopenmp
+root_brent_gsl_ts_LDFLAGS = -fopenmp
+root_toms748_ts_LDFLAGS = -fopenmp
+jacobian_ts_LDFLAGS = -fopenmp
+endif
+
 root_bkt_cern.scr: root_bkt_cern_ts$(EXEEXT) 
 	./root_bkt_cern_ts$(EXEEXT) > root_bkt_cern.scr
 mroot_cern.scr: mroot_cern_ts$(EXEEXT) 

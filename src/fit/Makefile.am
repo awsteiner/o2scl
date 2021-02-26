@@ -97,6 +97,15 @@ fit_nonlin_ts_LDADD = $(VCHECK_LIBS)
 fit_min_ts_LDADD = $(VCHECK_LIBS)
 fit_fix_ts_LDADD = $(VCHECK_LIBS)
 fit_linear_ts_LDADD = $(VCHECK_LIBS)
+
+if O2SCL_OPENMP
+fit_base_ts_LDFLAGS = -fopenmp
+fit_nonlin_ts_LDFLAGS = -fopenmp
+fit_min_ts_LDFLAGS = -fopenmp
+fit_fix_ts_LDFLAGS = -fopenmp
+fit_linear_ts_LDFLAGS = -fopenmp
+endif
+
 #fit_bayes_ts_LDADD = $(VCHECK_LIBS)
 
 #fit_bayes.scr: fit_bayes_ts$(EXEEXT)

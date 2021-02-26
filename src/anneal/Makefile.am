@@ -100,6 +100,8 @@ anneal_gsl_ts_SOURCES = anneal_gsl_ts.cpp
 
 if O2SCL_OPENMP
 
+anneal_gsl_ts_LDFLAGS = -fopenmp
+
 anneal_para_ts_LDADD = $(VCHECK_LIBS)
 anneal_para_ts_LDFLAGS = -fopenmp
 anneal_para_ts_CFLAGS = -DO2SCL_OPENMP

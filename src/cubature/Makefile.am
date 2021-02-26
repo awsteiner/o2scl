@@ -97,6 +97,11 @@ cubature_orig.scr: cubature_orig_ts$(EXEEXT)
 
 cubature_orig_ts_SOURCES = cubature_orig_ts.cpp
 
+if O2SCL_OPENMP
+cubature_ts_LDFLAGS = -fopenmp
+cubature_orig_ts_LDFLAGS = -fopenmp
+endif
+
 # ------------------------------------------------------------
 # No library o2scl_cubature
 # ------------------------------------------------------------

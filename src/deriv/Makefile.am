@@ -103,6 +103,14 @@ deriv_gsl_ts_SOURCES = deriv_gsl_ts.cpp
 deriv_eqi_ts_SOURCES = deriv_eqi_ts.cpp
 vector_derint_ts_SOURCES = vector_derint_ts.cpp
 
+if O2SCL_OPENMP
+
+deriv_cern_ts_LDFLAGS = -fopenmp
+deriv_gsl_ts_LDFLAGS = -fopenmp
+deriv_eqi_ts_LDFLAGS = -fopenmp
+vector_derint_ts_LDFLAGS = -fopenmp
+
+endif
 # ------------------------------------------------------------
 # No library o2scl_deriv
 # ------------------------------------------------------------
