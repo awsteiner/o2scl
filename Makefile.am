@@ -138,6 +138,12 @@ open-eos-doc:
 open-part-doc:
 	$(BROWSER) doc/o2scl/part/sphinx/build/html/index.html
 
+interface: empty
+	cd src/internal; $(MAKE) cpppy
+	cd src; $(MAKE) interface
+
+empty:
+
 # Create empty documentation
 blank-doc:
 	mkdir -p doc/o2scl/sphinx/build/html

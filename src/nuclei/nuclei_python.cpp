@@ -34,6 +34,7 @@ void *o2scl_create_nucleus() {
 void o2scl_free_nucleus(void *vptr) {
   nucleus *ptr=(nucleus *)vptr;
   delete ptr;
+  return;
 }
 
 int o2scl_nucleus_get_Z(void *vptr) {
@@ -99,6 +100,7 @@ void *o2scl_create_nucmass_info() {
 void o2scl_free_nucmass_info(void *vptr) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   delete ptr;
+  return;
 }
 
 int o2scl_nucmass_info_parse_elstring(void *vptr, char *ela, void *ptr_Z, void *ptr_N, void *ptr_A) {
@@ -340,6 +342,7 @@ void *o2scl_create_nucmass_semi_empirical() {
 void o2scl_free_nucmass_semi_empirical(void *vptr) {
   nucmass_semi_empirical *ptr=(nucmass_semi_empirical *)vptr;
   delete ptr;
+  return;
 }
 
 double o2scl_nucmass_semi_empirical_get_B(void *vptr) {
@@ -417,6 +420,7 @@ void *o2scl_create_nucmass_ame() {
 void o2scl_free_nucmass_ame(void *vptr) {
   nucmass_ame *ptr=(nucmass_ame *)vptr;
   delete ptr;
+  return;
 }
 
 void *o2scl_create_nucmass_dz_table() {
@@ -427,6 +431,7 @@ void *o2scl_create_nucmass_dz_table() {
 void o2scl_free_nucmass_dz_table(void *vptr) {
   nucmass_dz_table *ptr=(nucmass_dz_table *)vptr;
   delete ptr;
+  return;
 }
 
 void *o2scl_create_nucmass_dz_fit() {
@@ -437,6 +442,7 @@ void *o2scl_create_nucmass_dz_fit() {
 void o2scl_free_nucmass_dz_fit(void *vptr) {
   nucmass_dz_fit *ptr=(nucmass_dz_fit *)vptr;
   delete ptr;
+  return;
 }
 
 void *o2scl_create_nucmass_dz_fit_33() {
@@ -447,6 +453,7 @@ void *o2scl_create_nucmass_dz_fit_33() {
 void o2scl_free_nucmass_dz_fit_33(void *vptr) {
   nucmass_dz_fit_33 *ptr=(nucmass_dz_fit_33 *)vptr;
   delete ptr;
+  return;
 }
 
 void *o2scl_create_nucmass_frdm() {
@@ -457,6 +464,7 @@ void *o2scl_create_nucmass_frdm() {
 void o2scl_free_nucmass_frdm(void *vptr) {
   nucmass_frdm *ptr=(nucmass_frdm *)vptr;
   delete ptr;
+  return;
 }
 
 double o2scl_nucmass_frdm_get_a1(void *vptr) {
@@ -753,6 +761,7 @@ void *o2scl_create_nucmass_mnmsk() {
 void o2scl_free_nucmass_mnmsk(void *vptr) {
   nucmass_mnmsk *ptr=(nucmass_mnmsk *)vptr;
   delete ptr;
+  return;
 }
 
 void *o2scl_create_nucmass_mnmsk_exp() {
@@ -763,6 +772,7 @@ void *o2scl_create_nucmass_mnmsk_exp() {
 void o2scl_free_nucmass_mnmsk_exp(void *vptr) {
   nucmass_mnmsk_exp *ptr=(nucmass_mnmsk_exp *)vptr;
   delete ptr;
+  return;
 }
 
 void *o2scl_create_nucmass_gen() {
@@ -773,6 +783,7 @@ void *o2scl_create_nucmass_gen() {
 void o2scl_free_nucmass_gen(void *vptr) {
   nucmass_gen *ptr=(nucmass_gen *)vptr;
   delete ptr;
+  return;
 }
 
 void *o2scl_create_nucmass_dglg() {
@@ -783,6 +794,7 @@ void *o2scl_create_nucmass_dglg() {
 void o2scl_free_nucmass_dglg(void *vptr) {
   nucmass_dglg *ptr=(nucmass_dglg *)vptr;
   delete ptr;
+  return;
 }
 
 void *o2scl_create_nucmass_hfb() {
@@ -793,6 +805,7 @@ void *o2scl_create_nucmass_hfb() {
 void o2scl_free_nucmass_hfb(void *vptr) {
   nucmass_hfb *ptr=(nucmass_hfb *)vptr;
   delete ptr;
+  return;
 }
 
 void *o2scl_create_nucmass_hfb_sp() {
@@ -803,6 +816,7 @@ void *o2scl_create_nucmass_hfb_sp() {
 void o2scl_free_nucmass_hfb_sp(void *vptr) {
   nucmass_hfb_sp *ptr=(nucmass_hfb_sp *)vptr;
   delete ptr;
+  return;
 }
 
 void *o2scl_create_nucmass_ktuy() {
@@ -813,6 +827,7 @@ void *o2scl_create_nucmass_ktuy() {
 void o2scl_free_nucmass_ktuy(void *vptr) {
   nucmass_ktuy *ptr=(nucmass_ktuy *)vptr;
   delete ptr;
+  return;
 }
 
 void *o2scl_create_nucmass_sdnp() {
@@ -823,6 +838,7 @@ void *o2scl_create_nucmass_sdnp() {
 void o2scl_free_nucmass_sdnp(void *vptr) {
   nucmass_sdnp *ptr=(nucmass_sdnp *)vptr;
   delete ptr;
+  return;
 }
 
 void *o2scl_create_nucmass_wlw() {
@@ -833,6 +849,7 @@ void *o2scl_create_nucmass_wlw() {
 void o2scl_free_nucmass_wlw(void *vptr) {
   nucmass_wlw *ptr=(nucmass_wlw *)vptr;
   delete ptr;
+  return;
 }
 
 void o2scl_ame_load_wrapper(void *ptr_ame, char *name, bool exp_only) {

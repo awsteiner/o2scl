@@ -33,23 +33,87 @@ cpp_using o2scl
 #
 # Additional python headers
 #
-# py_header from o2sclpy.part import *
+# (none)
 # 
 # Class vector<double>
 #                              
 # Create a python interface to std::vector<double> for vector
 # arguments to O2scl functions                             
 #
+class std::string
+- py_name std_string
+- function length
+  - size_t
+- function operator[]
+  - char &
+  - size_t n
+- function resize
+  - void
+  - size_t n
+- function c_str
+  - char *
+- extra_py |
+| def __len__(self):
+|     return length()
+| 
+| def init_bytes(self,s):
+|     # Initialize the string from a Python bytes object
+|     resize(len(s))
+|     for i in range(0,s):
+|         self[i]=s[i]
+|     return
 class vector<double>
-- py_name vector                             
+- py_name std_vector
 - function resize
   - void
   - size_t n                             
 - function size
   - size_t
 - function operator[]
-  - double
+  - double &
   - size_t n
+- extra_py |
+| def __len__(self):
+|     return size()
+class vector<int>
+- py_name std_vector_int
+- function resize
+  - void
+  - size_t n                             
+- function size
+  - size_t
+- function operator[]
+  - int &
+  - size_t n
+- extra_py |
+| def __len__(self):
+|     return size()
+class vector<size_t>
+- py_name std_vector_size_t
+- function resize
+  - void
+  - size_t n                             
+- function size
+  - size_t
+- function operator[]
+  - size_t &
+  - size_t n
+- extra_py |
+| def __len__(self):
+|     return size()
+#class vector<string>
+#- py_name std_vector_string
+#- function resize
+#  - void
+#  - size_t n                             
+#- function size
+#  - size_t
+#- function operator[]
+#  - string
+#  - size_t n
+#- extra_py |
+#| def __len__(self):
+#|     return size()
 # 
 # Class lib_settings_class
 #
@@ -204,6 +268,10 @@ class table<>
 - function line_of_names
   - void
   - std::string names
+- function line_of_data
+  - void
+  - py_name line_of_data_vector                             
+  - std_vector &data
 - function ordered_lookup
   - size_t
   - std::string scol
@@ -336,6 +404,17 @@ class table<>
 - function function_find_row
   - size_t
   - std::string function
+- function summary
+  - void                             
+- extra_py |
+| def line_of_data(self,v):
+|     # Create a std_vector object and copy the data over
+|     vec=o2sclpy.std_vector(self._link)
+|     vec.resize(len(v))
+|     for i in range(0,len(v)):
+|         vec[i]=v[i]
+|     line_of_data_vector(vec)
+|     return
 # 
 # Class table_units<>
 #
@@ -461,10 +540,10 @@ class table3d
   - void
   - std::string x_name
   - size_t nx
-  - vector &x
+  - std_vector &x
   - std::string y_name
   - size_t ny
-  - vector &y
+  - std_vector &y
 - function set
   - void
   - size_t ix

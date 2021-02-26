@@ -2,11 +2,11 @@
 # Basic variables
 # ------------------------------------------------------------
 
-HEADER_VAR = hdf_file.h hdf_io.h cloud_file.h acolm.h
+HEADER_VAR = hdf_file.h hdf_io.h cloud_file.h acolm.h hdf_python.h
 
 HDF_SRCS = hdf_file.cpp hdf_io.cpp cloud_file.cpp acolm.cpp acolm_ac.cpp \
 	acolm_o2graph.cpp acolm_df.cpp acolm_gi.cpp acolm_jo.cpp \
-	acolm_ps.cpp acolm_tz.cpp
+	acolm_ps.cpp acolm_tz.cpp hdf_python.cpp
 
 TEST_VAR = hdf_file.scr hdf_io.scr
 
@@ -142,6 +142,14 @@ libo2scl_hdf_la_SOURCES = $(HDF_SRCS)
 libo2scl_hdf_la_LDFLAGS = -version-info $(OLIB_LT_VERSION)
 
 am__libo2scl_hdf_la_SOURCES_DIST = $(HDF_SRCS)
+
+# ------------------------------------------------------------
+
+interface: empty
+	../internal/cpppy hdf.i hdf_python ~/wcs/o2sclpy/o2sclpy/hdf \
+		~/wcs/o2sclpy/doc/hdf | tee hdf_python.cpppy.out
+
+empty:
 
 # ------------------------------------------------------------
 # Misc

@@ -2559,8 +2559,11 @@ namespace o2scl {
       a list of the column names, and the number of lines of
       data.
   */
-  virtual void summary(std::ostream *out, size_t ncol=79) const {
+  virtual void summary(std::ostream *out=0, size_t ncol=79) const {
 
+    if (out==0) {
+      out=&std::cout;
+    }
     if (constants.size()==1) {
       (*out) << "1 constant:" << std::endl;
     } else {
