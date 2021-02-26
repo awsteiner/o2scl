@@ -55,16 +55,30 @@ void o2scl_hdf_hdf_file_close(void *vptr) {
   return;
 }
 
-void o2scl_hdf_hdf_input_wrapper(void *ptr_hf, void *ptr_t, char *name) {
+void o2scl_hdf_hdf_input_table_wrapper(void *ptr_hf, void *ptr_t, char *name) {
   hdf_file *hf=(hdf_file *)ptr_hf;
   table<> *t=(table<> *)ptr_t;
   hdf_input(*hf,*t,name);
   return;
 }
 
-void o2scl_hdf_hdf_output_wrapper(void *ptr_hf, void *ptr_t, char *name) {
+void o2scl_hdf_hdf_output_table_wrapper(void *ptr_hf, void *ptr_t, char *name) {
   hdf_file *hf=(hdf_file *)ptr_hf;
   table<> *t=(table<> *)ptr_t;
+  hdf_output(*hf,*t,name);
+  return;
+}
+
+void o2scl_hdf_hdf_input_table_units_wrapper(void *ptr_hf, void *ptr_t, char *name) {
+  hdf_file *hf=(hdf_file *)ptr_hf;
+  table_units<> *t=(table_units<> *)ptr_t;
+  hdf_input(*hf,*t,name);
+  return;
+}
+
+void o2scl_hdf_hdf_output_table_units_wrapper(void *ptr_hf, void *ptr_t, char *name) {
+  hdf_file *hf=(hdf_file *)ptr_hf;
+  table_units<> *t=(table_units<> *)ptr_t;
   hdf_output(*hf,*t,name);
   return;
 }

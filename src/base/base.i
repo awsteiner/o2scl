@@ -40,6 +40,28 @@ cpp_using o2scl
 # Create a python interface to std::vector<double> for vector
 # arguments to O2scl functions                             
 #
+class std::string
+- py_name std_string
+- function length
+  - size_t
+- function operator[]
+  - char &
+  - size_t n
+- function resize
+  - void
+  - size_t n
+- function c_str
+  - char *
+- extra_py |
+| def __len__(self):
+|     return length()
+| 
+| def init_bytes(self,s):
+|     # Initialize the string from a Python bytes object
+|     resize(len(s))
+|     for i in range(0,s):
+|         self[i]=s[i]
+|     return
 class vector<double>
 - py_name std_vector
 - function resize
@@ -48,8 +70,11 @@ class vector<double>
 - function size
   - size_t
 - function operator[]
-  - double
+  - double &
   - size_t n
+- extra_py |
+| def __len__(self):
+|     return size()
 class vector<int>
 - py_name std_vector_int
 - function resize
@@ -58,8 +83,11 @@ class vector<int>
 - function size
   - size_t
 - function operator[]
-  - int
+  - int &
   - size_t n
+- extra_py |
+| def __len__(self):
+|     return size()
 class vector<size_t>
 - py_name std_vector_size_t
 - function resize
@@ -68,8 +96,11 @@ class vector<size_t>
 - function size
   - size_t
 - function operator[]
-  - size_t
+  - size_t &
   - size_t n
+- extra_py |
+| def __len__(self):
+|     return size()
 #class vector<string>
 #- py_name std_vector_string
 #- function resize
@@ -80,6 +111,9 @@ class vector<size_t>
 #- function operator[]
 #  - string
 #  - size_t n
+#- extra_py |
+#| def __len__(self):
+#|     return size()
 # 
 # Class lib_settings_class
 #

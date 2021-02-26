@@ -600,7 +600,7 @@ int main(int argc, char *argv[]) {
           if_func iff;
           iff.name=vs[2];
           if (iff.name=="operator[]") {
-            iff.name="index_operator";
+            iff.name="getitem";
           }
           cout << "  Starting member function " << vs[2] << endl;
 
@@ -1281,13 +1281,13 @@ int main(int argc, char *argv[]) {
                       iff.ret.name=="std::vector<double>") &&
                      iff.ret.suffix=="&") {
             // For a std::vector<double> &, just return a pointer
-            //if (iff.name=="index_operator") {
+            //if (iff.name=="getitem") {
             // In case it's const, we have to explicitly typecast
             fout << "  *dptr=(double *)(&(ptr->operator[](";
             //} else {
             //fout << "  *dptr=&(ptr->" << iff.name << "(";
             //}
-          } else if (iff.name=="index_operator") {
+          } else if (iff.name=="getitem") {
             fout << "  double ret=ptr->operator[](";
           } else if (iff.ret.name=="void") {
             fout << "  ptr->" << iff.name << "(";
@@ -1316,7 +1316,7 @@ int main(int argc, char *argv[]) {
           if ((iff.ret.name=="vector<double>" ||
                iff.ret.name=="std::vector<double>") &&
               iff.ret.suffix=="&") {
-            //if (iff.name=="index_operator") {
+            //if (iff.name=="getitem") {
             fout << ")[0]));" << endl;
             //} else {
             //fout << ")[0]);" << endl;
@@ -1466,19 +1466,21 @@ int main(int argc, char *argv[]) {
       if_func &iff=functions[i];
     
       // Function header
+      string func_name=iff.name;
+      if (iff.overloaded) func_name=iff.py_name;
       if (iff.ret.name=="std::string") {
         fout << "const char *" << underscoreify(iff.ns) << "_"
-             << iff.name << "(";
+             << func_name << "(";
       } else if (iff.ret.name=="void" ||
                  iff.ret.name=="bool" ||
                  iff.ret.name=="double" ||
                  iff.ret.name=="int" ||
                  iff.ret.name=="size_t") {
         fout << iff.ret.name << " " << underscoreify(iff.ns) << "_"
-             << iff.name << "_wrapper(";
+             << func_name << "_wrapper(";
       } else {
         fout << "void *" << underscoreify(iff.ns) << "_"
-             << iff.name << "_wrapper(";
+             << func_name << "_wrapper(";
       }
     
       for(size_t k=0;k<iff.args.size();k++) {
@@ -1855,7 +1857,7 @@ int main(int argc, char *argv[]) {
       if_func &iff=ifc.methods[j];
 
       // Function header
-      if (iff.name=="index_operator") {
+      if (iff.name=="getitem") {
         fout << "    def __getitem__(self";
       } else if (iff.py_name!="") {
         fout << "    def " << iff.py_name << "(self";
@@ -2226,7 +2228,11 @@ int main(int argc, char *argv[]) {
     if_func &iff=functions[j];
     
     // Function header
-    fout << "def " << iff.name << "(link,";
+    if (iff.overloaded) {
+      fout << "def " << iff.py_name << "(link,";
+    } else {
+      fout << "def " << iff.name << "(link,";
+    }
     for(size_t k=0;k<iff.args.size();k++) {
       fout << iff.args[k].name;
       if (k!=iff.args.size()-1) {
@@ -2301,8 +2307,13 @@ int main(int argc, char *argv[]) {
     }
       
     // Ctypes interface for function
-    fout << "    func=link." << dll_name << "." << iff.ns << "_" << iff.name
-         << "_wrapper" << endl;
+    if (iff.overloaded) {
+      fout << "    func=link." << dll_name << "." << iff.ns << "_"
+           << iff.py_name << "_wrapper" << endl;
+    } else {
+      fout << "    func=link." << dll_name << "." << iff.ns << "_" << iff.name
+           << "_wrapper" << endl;
+    }
     if (iff.ret.name!="void") {
       if (iff.ret.name=="std::string") {
         fout << "    func.restype=ctypes.c_char_p" << endl;
