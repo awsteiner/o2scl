@@ -3078,11 +3078,7 @@ namespace o2scl {
     {
 
 #ifdef O2SCL_OPENMP
-      if (o2scl::o2scl_settings.omp_num_threads==0) {
-        n_threads=omp_get_num_threads();
-      } else {
-        n_threads=o2scl::o2scl_settings.omp_num_threads;
-      }
+      n_threads=omp_get_num_threads();
       i_thread=omp_get_thread_num();
 #endif
 

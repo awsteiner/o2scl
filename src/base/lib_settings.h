@@ -199,8 +199,10 @@ namespace o2scl {
       cup=&cu;
     }
 
-    /// Desc
-    size_t omp_num_threads;
+    // AWS: 2/22/21: I was originally thinking of using this to
+    // control OpenMP threads, but I think for now the best is just to
+    // use export OMP_NUM_THREADS to control this
+    //size_t omp_num_threads;
     
   protected:
 

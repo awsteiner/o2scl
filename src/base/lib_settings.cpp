@@ -56,9 +56,13 @@ lib_settings_class::lib_settings_class() {
   // pipe, etc.
   def_cu.default_conversions();
 
+  // AWS: 2/22/21: I was originally thinking of using this to
+  // control OpenMP threads, but I think for now the best is just to
+  // use export OMP_NUM_THREADS to control this
+  //
   // When this is zero, O2scl functions just use the value returned by
   // omp_get_num_threads()
-  omp_num_threads=0;
+  //omp_num_threads=0;
 }
 
 lib_settings_class::~lib_settings_class() {
