@@ -64,19 +64,19 @@ void *o2scl_create_nucmass_info();
 
 void o2scl_free_nucmass_info(void *vptr);
 
-int o2scl_nucmass_info_parse_elstring(void *vptr, char *ela, void *ptr_Z, void *ptr_N, void *ptr_A);
+ int o2scl_nucmass_info_parse_elstring(void *vptr, char *ela, void *ptr_Z, void *ptr_N, void *ptr_A);
 
-int o2scl_nucmass_info_eltoZ(void *vptr, char *el);
+ int o2scl_nucmass_info_eltoZ(void *vptr, char *el);
 
-const char *o2scl_nucmass_info_Ztoel(void *vptr, size_t Z);
+void *o2scl_nucmass_info_Ztoel(void *vptr, size_t Z);
 
-const char *o2scl_nucmass_info_Ztoname(void *vptr, size_t Z);
+void *o2scl_nucmass_info_Ztoname(void *vptr, size_t Z);
 
-const char *o2scl_nucmass_info_tostring(void *vptr, size_t Z, size_t N);
+void *o2scl_nucmass_info_tostring(void *vptr, size_t Z, size_t N);
 
-const char *o2scl_nucmass_info_int_to_spinp(void *vptr, int g);
+void *o2scl_nucmass_info_int_to_spinp(void *vptr, int g);
 
-int o2scl_nucmass_info_spinp_to_int(void *vptr, char *s);
+ int o2scl_nucmass_info_spinp_to_int(void *vptr, char *s);
 
 double o2scl_nucmass_get_m_prot(void *vptr);
 
@@ -94,47 +94,47 @@ double o2scl_nucmass_get_m_amu(void *vptr);
 
 void o2scl_nucmass_set_m_amu(void *vptr, double v);
 
-bool o2scl_nucmass_is_included(void *vptr, int Z, int N);
+ bool o2scl_nucmass_is_included(void *vptr, int Z, int N);
 
-int o2scl_nucmass_get_nucleus(void *vptr, int Z, int N, void *ptr_n);
+ int o2scl_nucmass_get_nucleus(void *vptr, int Z, int N, void *ptr_n);
 
-double o2scl_nucmass_mass_excess(void *vptr, int Z, int N);
+ double o2scl_nucmass_mass_excess(void *vptr, int Z, int N);
 
-double o2scl_nucmass_mass_excess_d(void *vptr, double Z, double N);
+ double o2scl_nucmass_mass_excess_d(void *vptr, double Z, double N);
 
-double o2scl_nucmass_electron_binding(void *vptr, double Z);
+ double o2scl_nucmass_electron_binding(void *vptr, double Z);
 
-double o2scl_nucmass_binding_energy(void *vptr, int Z, int N);
+ double o2scl_nucmass_binding_energy(void *vptr, int Z, int N);
 
-double o2scl_nucmass_binding_energy_d(void *vptr, double Z, double N);
+ double o2scl_nucmass_binding_energy_d(void *vptr, double Z, double N);
 
-double o2scl_nucmass_total_mass(void *vptr, int Z, int N);
+ double o2scl_nucmass_total_mass(void *vptr, int Z, int N);
 
-double o2scl_nucmass_total_mass_d(void *vptr, double Z, double N);
+ double o2scl_nucmass_total_mass_d(void *vptr, double Z, double N);
 
-double o2scl_nucmass_neutron_sep(void *vptr, int Z, int N);
+ double o2scl_nucmass_neutron_sep(void *vptr, int Z, int N);
 
-double o2scl_nucmass_two_neutron_sep(void *vptr, int Z, int N);
+ double o2scl_nucmass_two_neutron_sep(void *vptr, int Z, int N);
 
-double o2scl_nucmass_proton_sep(void *vptr, int Z, int N);
+ double o2scl_nucmass_proton_sep(void *vptr, int Z, int N);
 
-double o2scl_nucmass_two_proton_sep(void *vptr, int Z, int N);
+ double o2scl_nucmass_two_proton_sep(void *vptr, int Z, int N);
 
-double o2scl_nucmass_atomic_mass(void *vptr, int Z, int N);
+ double o2scl_nucmass_atomic_mass(void *vptr, int Z, int N);
 
-double o2scl_nucmass_atomic_mass_d(void *vptr, double Z, double N);
+ double o2scl_nucmass_atomic_mass_d(void *vptr, double Z, double N);
 
 size_t o2scl_nucmass_table_get_n(void *vptr);
 
 void o2scl_nucmass_table_set_n(void *vptr, size_t v);
 
-const char *o2scl_nucmass_table_get_reference(void *vptr);
+void *o2scl_nucmass_table_get_reference(void *vptr);
 
 void o2scl_nucmass_table_set_reference(void *vptr, void *p_v);
 
-bool o2scl_nucmass_table_is_loaded(void *vptr);
+ bool o2scl_nucmass_table_is_loaded(void *vptr);
 
-size_t o2scl_nucmass_table_get_nentries(void *vptr);
+ size_t o2scl_nucmass_table_get_nentries(void *vptr);
 
 size_t o2scl_nucmass_fit_base_get_nfit(void *vptr);
 
@@ -164,9 +164,9 @@ double o2scl_nucmass_semi_empirical_get_Epair(void *vptr);
 
 void o2scl_nucmass_semi_empirical_set_Epair(void *vptr, double v);
 
-double o2scl_nucmass_semi_empirical_mass_excess(void *vptr, int Z, int N);
+ double o2scl_nucmass_semi_empirical_mass_excess(void *vptr, int Z, int N);
 
-double o2scl_nucmass_semi_empirical_mass_excess_d(void *vptr, double Z, double N);
+ double o2scl_nucmass_semi_empirical_mass_excess_d(void *vptr, double Z, double N);
 
 void *o2scl_create_nucmass_ame();
 

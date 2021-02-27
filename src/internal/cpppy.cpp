@@ -2037,10 +2037,14 @@ int main(int argc, char *argv[]) {
         fout << "        func=self._link." << dll_name << "."
              << ifc.ns << "_" << underscoreify(ifc.name) << "_"
              << iff.py_name << endl;
-      } else {
+      } else if (iff.name=="operator[]") {
         fout << "        func=self._link." << dll_name << "."
              << ifc.ns << "_" << underscoreify(ifc.name) << "_"
              << iff.name << endl;
+      } else {
+        fout << "        func=self._link." << dll_name << "."
+             << ifc.ns << "_" << underscoreify(ifc.name) << "_getitem"
+             << endl;
       }
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&

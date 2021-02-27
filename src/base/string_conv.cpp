@@ -33,8 +33,6 @@
 using namespace std;
 using namespace o2scl;
 
-std::string o2scl::python_temp_string;
-
 std::string o2scl::btos(bool b) {
   if (b) return "1";
   return "0";

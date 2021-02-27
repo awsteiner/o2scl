@@ -81,71 +81,71 @@ void o2scl_eos_had_base_get_def_proton(void *vptr, void *p_v);
 
 void o2scl_eos_had_base_set_def_proton(void *vptr, void *p_v);
 
-int o2scl_eos_had_base_calc_e(void *vptr, void *ptr_n, void *ptr_p, void *ptr_th);
+ int o2scl_eos_had_base_calc_e(void *vptr, void *ptr_n, void *ptr_p, void *ptr_th);
 
-int o2scl_eos_had_base_calc_p(void *vptr, void *ptr_n, void *ptr_p, void *ptr_th);
+ int o2scl_eos_had_base_calc_p(void *vptr, void *ptr_n, void *ptr_p, void *ptr_th);
 
-double o2scl_eos_had_base_fcomp(void *vptr, double nb, double delta);
+ double o2scl_eos_had_base_fcomp(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_fcomp_err(void *vptr, double nb, double delta, void *ptr_unc);
+ double o2scl_eos_had_base_fcomp_err(void *vptr, double nb, double delta, void *ptr_unc);
 
-double o2scl_eos_had_base_feoa(void *vptr, double nb, double delta);
+ double o2scl_eos_had_base_feoa(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_fesym(void *vptr, double nb, double delta);
+ double o2scl_eos_had_base_fesym(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_fesym_err(void *vptr, double nb, double delta, void *ptr_unc);
+ double o2scl_eos_had_base_fesym_err(void *vptr, double nb, double delta, void *ptr_unc);
 
-double o2scl_eos_had_base_fesym_slope(void *vptr, double nb, double delta);
+ double o2scl_eos_had_base_fesym_slope(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_fesym_curve(void *vptr, double nb, double delta);
+ double o2scl_eos_had_base_fesym_curve(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_fesym_skew(void *vptr, double nb, double delta);
+ double o2scl_eos_had_base_fesym_skew(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_fesym_diff(void *vptr, double nb);
+ double o2scl_eos_had_base_fesym_diff(void *vptr, double nb);
 
-double o2scl_eos_had_base_feta(void *vptr, double nb);
+ double o2scl_eos_had_base_feta(void *vptr, double nb);
 
-double o2scl_eos_had_base_feta_prime(void *vptr, double nb);
+ double o2scl_eos_had_base_feta_prime(void *vptr, double nb);
 
-double o2scl_eos_had_base_fkprime(void *vptr, double nb, double delta);
+ double o2scl_eos_had_base_fkprime(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_fmsom(void *vptr, double nb, double delta);
+ double o2scl_eos_had_base_fmsom(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_f_effm_neut(void *vptr, double nb, double delta);
+ double o2scl_eos_had_base_f_effm_neut(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_f_effm_prot(void *vptr, double nb, double delta);
+ double o2scl_eos_had_base_f_effm_prot(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_f_effm_scalar(void *vptr, double nb, double delta);
+ double o2scl_eos_had_base_f_effm_scalar(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_f_effm_vector(void *vptr, double nb, double delta);
+ double o2scl_eos_had_base_f_effm_vector(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_fn0(void *vptr, double delta, void *ptr_leoa);
+ double o2scl_eos_had_base_fn0(void *vptr, double delta, void *ptr_leoa);
 
-void o2scl_eos_had_base_f_number_suscept(void *vptr, double mun, double mup, void *ptr_dPdnn, void *ptr_dPdnp, void *ptr_dPdpp);
+ void o2scl_eos_had_base_f_number_suscept(void *vptr, double mun, double mup, void *ptr_dPdnn, void *ptr_dPdnp, void *ptr_dPdpp);
 
-void o2scl_eos_had_base_f_inv_number_suscept(void *vptr, double mun, double mup, void *ptr_dednn, void *ptr_dednp, void *ptr_dedpp);
+ void o2scl_eos_had_base_f_inv_number_suscept(void *vptr, double mun, double mup, void *ptr_dednn, void *ptr_dednp, void *ptr_dedpp);
 
-int o2scl_eos_had_base_saturation(void *vptr);
+ int o2scl_eos_had_base_saturation(void *vptr);
 
-double o2scl_eos_had_base_calc_mun_e(void *vptr, double nn, double np);
+ double o2scl_eos_had_base_calc_mun_e(void *vptr, double nn, double np);
 
-double o2scl_eos_had_base_calc_mup_e(void *vptr, double nn, double np);
+ double o2scl_eos_had_base_calc_mup_e(void *vptr, double nn, double np);
 
-double o2scl_eos_had_base_calc_ed(void *vptr, double nn, double np);
+ double o2scl_eos_had_base_calc_ed(void *vptr, double nn, double np);
 
-double o2scl_eos_had_base_calc_pr(void *vptr, double nn, double np);
+ double o2scl_eos_had_base_calc_pr(void *vptr, double nn, double np);
 
-double o2scl_eos_had_base_calc_nn_p(void *vptr, double mun, double mup);
+ double o2scl_eos_had_base_calc_nn_p(void *vptr, double mun, double mup);
 
-double o2scl_eos_had_base_calc_np_p(void *vptr, double nn, double mup);
+ double o2scl_eos_had_base_calc_np_p(void *vptr, double nn, double mup);
 
-double o2scl_eos_had_base_calc_dmu_delta(void *vptr, double nb, double delta);
+ double o2scl_eos_had_base_calc_dmu_delta(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_calc_musum_delta(void *vptr, double nb, double delta);
+ double o2scl_eos_had_base_calc_musum_delta(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_calc_pressure_nb(void *vptr, double nb, double delta);
+ double o2scl_eos_had_base_calc_pressure_nb(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_calc_edensity_nb(void *vptr, double nb, double delta);
+ double o2scl_eos_had_base_calc_edensity_nb(void *vptr, double nb, double delta);
 
 void *o2scl_create_eos_had_skyrme();
 
@@ -211,7 +211,7 @@ bool o2scl_eos_had_skyrme_get_parent_method(void *vptr);
 
 void o2scl_eos_had_skyrme_set_parent_method(void *vptr, bool v);
 
-const char *o2scl_eos_had_skyrme_get_reference(void *vptr);
+void *o2scl_eos_had_skyrme_get_reference(void *vptr);
 
 void o2scl_eos_had_skyrme_set_reference(void *vptr, void *p_v);
 
@@ -379,7 +379,7 @@ int o2scl_eos_tov_get_verbose(void *vptr);
 
 void o2scl_eos_tov_set_verbose(void *vptr, int v);
 
-bool o2scl_eos_tov_has_baryons(void *vptr);
+ bool o2scl_eos_tov_has_baryons(void *vptr);
 
 void *o2scl_create_eos_tov_buchdahl();
 
@@ -393,13 +393,13 @@ void *o2scl_create_eos_tov_polytrope();
 
 void o2scl_free_eos_tov_polytrope(void *vptr);
 
-void o2scl_eos_tov_polytrope_set_coeff_index(void *vptr, double coeff, double index);
+ void o2scl_eos_tov_polytrope_set_coeff_index(void *vptr, double coeff, double index);
 
 void *o2scl_create_eos_tov_linear();
 
 void o2scl_free_eos_tov_linear(void *vptr);
 
-void o2scl_eos_tov_linear_set_cs2_eps0(void *vptr, double cs2, double eps0);
+ void o2scl_eos_tov_linear_set_cs2_eps0(void *vptr, double cs2, double eps0);
 
 void *o2scl_create_eos_tov_interp();
 
@@ -409,21 +409,21 @@ bool o2scl_eos_tov_interp_get_err_nonconv(void *vptr);
 
 void o2scl_eos_tov_interp_set_err_nonconv(void *vptr, bool v);
 
-void o2scl_eos_tov_interp_read_table(void *vptr, void *ptr_eos, char *s_cole, char *s_colp, char *s_colnb);
+ void o2scl_eos_tov_interp_read_table(void *vptr, void *ptr_eos, char *s_cole, char *s_colp, char *s_colnb);
 
-void o2scl_eos_tov_interp_default_low_dens_eos(void *vptr);
+ void o2scl_eos_tov_interp_default_low_dens_eos(void *vptr);
 
-void o2scl_eos_tov_interp_sho11_low_dens_eos(void *vptr);
+ void o2scl_eos_tov_interp_sho11_low_dens_eos(void *vptr);
 
-void o2scl_eos_tov_interp_s12_low_dens_eos(void *vptr, char *model, bool external);
+ void o2scl_eos_tov_interp_s12_low_dens_eos(void *vptr, char *model, bool external);
 
-void o2scl_eos_tov_interp_gcp10_low_dens_eos(void *vptr, char *model, bool external);
+ void o2scl_eos_tov_interp_gcp10_low_dens_eos(void *vptr, char *model, bool external);
 
-void o2scl_eos_tov_interp_ngl13_low_dens_eos(void *vptr, double L, char *model, bool external);
+ void o2scl_eos_tov_interp_ngl13_low_dens_eos(void *vptr, double L, char *model, bool external);
 
-void o2scl_eos_tov_interp_ngl13_low_dens_eos2(void *vptr, double S, double L, double nt, char *fname);
+ void o2scl_eos_tov_interp_ngl13_low_dens_eos2(void *vptr, double S, double L, double nt, char *fname);
 
-void o2scl_eos_tov_interp_no_low_dens_eos(void *vptr);
+ void o2scl_eos_tov_interp_no_low_dens_eos(void *vptr);
 
 void *o2scl_create_tov_solve();
 
@@ -545,13 +545,13 @@ double o2scl_tov_solve_get_max_inc(void *vptr);
 
 void o2scl_tov_solve_set_max_inc(void *vptr, double v);
 
-void o2scl_tov_solve_set_eos(void *vptr, void *ptr_eos);
+ void o2scl_tov_solve_set_eos(void *vptr, void *ptr_eos);
 
-int o2scl_tov_solve_mvsr(void *vptr);
+ int o2scl_tov_solve_mvsr(void *vptr);
 
-int o2scl_tov_solve_fixed(void *vptr, double mass);
+ int o2scl_tov_solve_fixed(void *vptr, double mass);
 
-int o2scl_tov_solve_max(void *vptr);
+ int o2scl_tov_solve_max(void *vptr);
 
 void *o2scl_tov_solve_get_results(void *vptr);
 
@@ -587,13 +587,13 @@ void o2scl_tov_love_get_tab(void *vptr, void *p_v);
 
 void o2scl_tov_love_set_tab(void *vptr, void *p_v);
 
-int o2scl_tov_love_calc_y(void *vptr, void *ptr_yR, void *ptr_beta, void *ptr_k2, void *ptr_lambda_km5, void *ptr_lambda_cgs, bool tabulate);
+ int o2scl_tov_love_calc_y(void *vptr, void *ptr_yR, void *ptr_beta, void *ptr_k2, void *ptr_lambda_km5, void *ptr_lambda_cgs, bool tabulate);
 
-void o2scl_tov_love_add_disc(void *vptr, double rd);
+ void o2scl_tov_love_add_disc(void *vptr, double rd);
 
-void o2scl_tov_love_clear_discs(void *vptr);
+ void o2scl_tov_love_clear_discs(void *vptr);
 
-int o2scl_tov_love_calc_H(void *vptr, void *ptr_yR, void *ptr_beta, void *ptr_k2, void *ptr_lambda_km5, void *ptr_lambda_cgs);
+ int o2scl_tov_love_calc_H(void *vptr, void *ptr_yR, void *ptr_beta, void *ptr_k2, void *ptr_lambda_km5, void *ptr_lambda_cgs);
 
 void *o2scl_create_nstar_cold();
 
@@ -655,13 +655,13 @@ bool o2scl_nstar_cold_get_err_nonconv(void *vptr);
 
 void o2scl_nstar_cold_set_err_nonconv(void *vptr, bool v);
 
-void o2scl_nstar_cold_set_eos(void *vptr, void *ptr_eos);
+ void o2scl_nstar_cold_set_eos(void *vptr, void *ptr_eos);
 
-int o2scl_nstar_cold_calc_eos(void *vptr, double np_0);
+ int o2scl_nstar_cold_calc_eos(void *vptr, double np_0);
 
-int o2scl_nstar_cold_calc_nstar(void *vptr);
+ int o2scl_nstar_cold_calc_nstar(void *vptr);
 
-int o2scl_nstar_cold_fixed(void *vptr, double target_mass);
+ int o2scl_nstar_cold_fixed(void *vptr, double target_mass);
 
 void *o2scl_nstar_cold_get_eos_results(void *vptr);
 

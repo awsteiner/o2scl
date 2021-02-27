@@ -103,52 +103,52 @@ void o2scl_free_nucmass_info(void *vptr) {
   return;
 }
 
-int o2scl_nucmass_info_parse_elstring(void *vptr, char *ela, void *ptr_Z, void *ptr_N, void *ptr_A) {
+ int o2scl_nucmass_info_parse_elstring(void *vptr, char *ela, void *ptr_Z, void *ptr_N, void *ptr_A) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   int *Z=(int *)ptr_Z;
   int *N=(int *)ptr_N;
   int *A=(int *)ptr_A;
-  int ret=ptr->parse_elstring(ela,*Z,*N,*A);
+   int ret=ptr->parse_elstring(ela,*Z,*N,*A);
   return ret;
 }
 
-int o2scl_nucmass_info_eltoZ(void *vptr, char *el) {
+ int o2scl_nucmass_info_eltoZ(void *vptr, char *el) {
   nucmass_info *ptr=(nucmass_info *)vptr;
-  int ret=ptr->eltoZ(el);
+   int ret=ptr->eltoZ(el);
   return ret;
 }
 
-const char *o2scl_nucmass_info_Ztoel(void *vptr, size_t Z) {
+void *o2scl_nucmass_info_Ztoel(void *vptr, size_t Z) {
   nucmass_info *ptr=(nucmass_info *)vptr;
-  std::string ret=ptr->Ztoel(Z);
-  python_temp_string=ret;
-  return python_temp_string.c_str();
+  std::string *sptr=new std::string;
+  *sptr=ptr->Ztoel(Z);
+  return sptr;
 }
 
-const char *o2scl_nucmass_info_Ztoname(void *vptr, size_t Z) {
+void *o2scl_nucmass_info_Ztoname(void *vptr, size_t Z) {
   nucmass_info *ptr=(nucmass_info *)vptr;
-  std::string ret=ptr->Ztoname(Z);
-  python_temp_string=ret;
-  return python_temp_string.c_str();
+  std::string *sptr=new std::string;
+  *sptr=ptr->Ztoname(Z);
+  return sptr;
 }
 
-const char *o2scl_nucmass_info_tostring(void *vptr, size_t Z, size_t N) {
+void *o2scl_nucmass_info_tostring(void *vptr, size_t Z, size_t N) {
   nucmass_info *ptr=(nucmass_info *)vptr;
-  std::string ret=ptr->tostring(Z,N);
-  python_temp_string=ret;
-  return python_temp_string.c_str();
+  std::string *sptr=new std::string;
+  *sptr=ptr->tostring(Z,N);
+  return sptr;
 }
 
-const char *o2scl_nucmass_info_int_to_spinp(void *vptr, int g) {
+void *o2scl_nucmass_info_int_to_spinp(void *vptr, int g) {
   nucmass_info *ptr=(nucmass_info *)vptr;
-  std::string ret=ptr->int_to_spinp(g);
-  python_temp_string=ret;
-  return python_temp_string.c_str();
+  std::string *sptr=new std::string;
+  *sptr=ptr->int_to_spinp(g);
+  return sptr;
 }
 
-int o2scl_nucmass_info_spinp_to_int(void *vptr, char *s) {
+ int o2scl_nucmass_info_spinp_to_int(void *vptr, char *s) {
   nucmass_info *ptr=(nucmass_info *)vptr;
-  int ret=ptr->spinp_to_int(s);
+   int ret=ptr->spinp_to_int(s);
   return ret;
 }
 
@@ -196,94 +196,94 @@ void o2scl_nucmass_set_m_amu(void *vptr, double v) {
   return;
 }
 
-bool o2scl_nucmass_is_included(void *vptr, int Z, int N) {
+ bool o2scl_nucmass_is_included(void *vptr, int Z, int N) {
   nucmass *ptr=(nucmass *)vptr;
-  bool ret=ptr->is_included(Z,N);
+   bool ret=ptr->is_included(Z,N);
   return ret;
 }
 
-int o2scl_nucmass_get_nucleus(void *vptr, int Z, int N, void *ptr_n) {
+ int o2scl_nucmass_get_nucleus(void *vptr, int Z, int N, void *ptr_n) {
   nucmass *ptr=(nucmass *)vptr;
   nucleus *n=(nucleus *)ptr_n;
-  int ret=ptr->get_nucleus(Z,N,*n);
+   int ret=ptr->get_nucleus(Z,N,*n);
   return ret;
 }
 
-double o2scl_nucmass_mass_excess(void *vptr, int Z, int N) {
+ double o2scl_nucmass_mass_excess(void *vptr, int Z, int N) {
   nucmass *ptr=(nucmass *)vptr;
-  double ret=ptr->mass_excess(Z,N);
+   double ret=ptr->mass_excess(Z,N);
   return ret;
 }
 
-double o2scl_nucmass_mass_excess_d(void *vptr, double Z, double N) {
+ double o2scl_nucmass_mass_excess_d(void *vptr, double Z, double N) {
   nucmass *ptr=(nucmass *)vptr;
-  double ret=ptr->mass_excess_d(Z,N);
+   double ret=ptr->mass_excess_d(Z,N);
   return ret;
 }
 
-double o2scl_nucmass_electron_binding(void *vptr, double Z) {
+ double o2scl_nucmass_electron_binding(void *vptr, double Z) {
   nucmass *ptr=(nucmass *)vptr;
-  double ret=ptr->electron_binding(Z);
+   double ret=ptr->electron_binding(Z);
   return ret;
 }
 
-double o2scl_nucmass_binding_energy(void *vptr, int Z, int N) {
+ double o2scl_nucmass_binding_energy(void *vptr, int Z, int N) {
   nucmass *ptr=(nucmass *)vptr;
-  double ret=ptr->binding_energy(Z,N);
+   double ret=ptr->binding_energy(Z,N);
   return ret;
 }
 
-double o2scl_nucmass_binding_energy_d(void *vptr, double Z, double N) {
+ double o2scl_nucmass_binding_energy_d(void *vptr, double Z, double N) {
   nucmass *ptr=(nucmass *)vptr;
-  double ret=ptr->binding_energy_d(Z,N);
+   double ret=ptr->binding_energy_d(Z,N);
   return ret;
 }
 
-double o2scl_nucmass_total_mass(void *vptr, int Z, int N) {
+ double o2scl_nucmass_total_mass(void *vptr, int Z, int N) {
   nucmass *ptr=(nucmass *)vptr;
-  double ret=ptr->total_mass(Z,N);
+   double ret=ptr->total_mass(Z,N);
   return ret;
 }
 
-double o2scl_nucmass_total_mass_d(void *vptr, double Z, double N) {
+ double o2scl_nucmass_total_mass_d(void *vptr, double Z, double N) {
   nucmass *ptr=(nucmass *)vptr;
-  double ret=ptr->total_mass_d(Z,N);
+   double ret=ptr->total_mass_d(Z,N);
   return ret;
 }
 
-double o2scl_nucmass_neutron_sep(void *vptr, int Z, int N) {
+ double o2scl_nucmass_neutron_sep(void *vptr, int Z, int N) {
   nucmass *ptr=(nucmass *)vptr;
-  double ret=ptr->neutron_sep(Z,N);
+   double ret=ptr->neutron_sep(Z,N);
   return ret;
 }
 
-double o2scl_nucmass_two_neutron_sep(void *vptr, int Z, int N) {
+ double o2scl_nucmass_two_neutron_sep(void *vptr, int Z, int N) {
   nucmass *ptr=(nucmass *)vptr;
-  double ret=ptr->two_neutron_sep(Z,N);
+   double ret=ptr->two_neutron_sep(Z,N);
   return ret;
 }
 
-double o2scl_nucmass_proton_sep(void *vptr, int Z, int N) {
+ double o2scl_nucmass_proton_sep(void *vptr, int Z, int N) {
   nucmass *ptr=(nucmass *)vptr;
-  double ret=ptr->proton_sep(Z,N);
+   double ret=ptr->proton_sep(Z,N);
   return ret;
 }
 
-double o2scl_nucmass_two_proton_sep(void *vptr, int Z, int N) {
+ double o2scl_nucmass_two_proton_sep(void *vptr, int Z, int N) {
   nucmass *ptr=(nucmass *)vptr;
-  double ret=ptr->two_proton_sep(Z,N);
+   double ret=ptr->two_proton_sep(Z,N);
   return ret;
 }
 
-double o2scl_nucmass_atomic_mass(void *vptr, int Z, int N) {
+ double o2scl_nucmass_atomic_mass(void *vptr, int Z, int N) {
   nucmass *ptr=(nucmass *)vptr;
-  double ret=ptr->atomic_mass(Z,N);
+   double ret=ptr->atomic_mass(Z,N);
   return ret;
 }
 
-double o2scl_nucmass_atomic_mass_d(void *vptr, double Z, double N) {
+ double o2scl_nucmass_atomic_mass_d(void *vptr, double Z, double N) {
   nucmass *ptr=(nucmass *)vptr;
-  double ret=ptr->atomic_mass_d(Z,N);
+   double ret=ptr->atomic_mass_d(Z,N);
   return ret;
 }
 
@@ -298,10 +298,11 @@ void o2scl_nucmass_table_set_n(void *vptr, size_t v) {
   return;
 }
 
-const char *o2scl_nucmass_table_get_reference(void *vptr) {
+void *o2scl_nucmass_table_get_reference(void *vptr) {
   nucmass_table *ptr=(nucmass_table *)vptr;
-  python_temp_string=ptr->reference;
-  return python_temp_string.c_str();
+  std::string *sptr=new std::string;
+  *sptr=ptr->reference;
+  return sptr;
 }
 
 void o2scl_nucmass_table_set_reference(void *vptr, void *p_v) {
@@ -311,15 +312,15 @@ void o2scl_nucmass_table_set_reference(void *vptr, void *p_v) {
   return;
 }
 
-bool o2scl_nucmass_table_is_loaded(void *vptr) {
+ bool o2scl_nucmass_table_is_loaded(void *vptr) {
   nucmass_table *ptr=(nucmass_table *)vptr;
-  bool ret=ptr->is_loaded();
+   bool ret=ptr->is_loaded();
   return ret;
 }
 
-size_t o2scl_nucmass_table_get_nentries(void *vptr) {
+ size_t o2scl_nucmass_table_get_nentries(void *vptr) {
   nucmass_table *ptr=(nucmass_table *)vptr;
-  size_t ret=ptr->get_nentries();
+   size_t ret=ptr->get_nentries();
   return ret;
 }
 
@@ -400,15 +401,15 @@ void o2scl_nucmass_semi_empirical_set_Epair(void *vptr, double v) {
   return;
 }
 
-double o2scl_nucmass_semi_empirical_mass_excess(void *vptr, int Z, int N) {
+ double o2scl_nucmass_semi_empirical_mass_excess(void *vptr, int Z, int N) {
   nucmass_semi_empirical *ptr=(nucmass_semi_empirical *)vptr;
-  double ret=ptr->mass_excess(Z,N);
+   double ret=ptr->mass_excess(Z,N);
   return ret;
 }
 
-double o2scl_nucmass_semi_empirical_mass_excess_d(void *vptr, double Z, double N) {
+ double o2scl_nucmass_semi_empirical_mass_excess_d(void *vptr, double Z, double N) {
   nucmass_semi_empirical *ptr=(nucmass_semi_empirical *)vptr;
-  double ret=ptr->mass_excess_d(Z,N);
+   double ret=ptr->mass_excess_d(Z,N);
   return ret;
 }
 
