@@ -34,12 +34,9 @@ cpp_using o2scl
 # Additional python headers
 #
 # (none)
-# 
-# Class vector<double>
-#                              
-# Create a python interface to std::vector<double> for vector
-# arguments to O2scl functions                             
 #
+# Class string
+# 
 class std::string
 - py_name std_string
 - function length
@@ -51,7 +48,7 @@ class std::string
   - void
   - size_t n
 - function c_str
-  - char *
+  - const char *
 - extra_py |
 | def __len__(self):
 |     return length()
@@ -68,7 +65,13 @@ class std::string
 |     for i in range(0,self.length()):
 |         ret=ret+self.__getitem__(i)
 |     return ret
-class vector<double>
+#
+# Class vector<double>
+#                              
+# Create a python interface to std::vector<double> for vector
+# arguments to O2scl functions                             
+#
+class std::vector<double>
 - py_name std_vector
 - function resize
   - void
@@ -197,7 +200,7 @@ class table<>
 - py_name table
 - std_cc                             
 - function operator[]
-  - vector<double> &
+  - const std::vector<double> &
   - std::string col
 - function set
   - void

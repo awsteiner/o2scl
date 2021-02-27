@@ -1116,7 +1116,7 @@ int main(int argc, char *argv[]) {
         } else if (ifv.ift.name=="std::string" ||
                    ifv.ift.name=="string") {
           // Get function for string data
-          fout << "const char *" << underscoreify(ifc.ns) << "_"
+          fout << "void *" << underscoreify(ifc.ns) << "_"
                << underscoreify(ifc.name) << "_get_" << ifv.name
                << "(void *vptr)";
           if (header) {
@@ -1125,9 +1125,9 @@ int main(int argc, char *argv[]) {
             fout << " {" << endl;
             fout << "  " << ifc.name << " *ptr=(" << ifc.name
                  << " *)vptr;" << endl;
-            fout << "  python_temp_string=ptr->" << ifv.name
-                 << ";" << endl;
-            fout << "  return python_temp_string.c_str();" << endl;
+            fout << "  std::string *sptr=new std::string;" << endl;
+            fout << "  *sptr=ptr->" << ifv.name << ";" << endl;
+            fout << "  return sptr;" << endl;
             fout << "}" << endl;
           }
         } else {
@@ -1219,7 +1219,7 @@ int main(int argc, char *argv[]) {
         // Function header, first determine return type and
         // any extra arguments
         if (iff.ret.name=="std::string") {
-          ret_type="const char *";
+          ret_type="void *";
         } else if ((iff.ret.name=="vector<double>" ||
                     iff.ret.name=="std::vector<double>") &&
                    iff.ret.suffix=="&") {
@@ -1234,9 +1234,9 @@ int main(int argc, char *argv[]) {
                    iff.ret.name=="char" ||
                    iff.ret.name=="size_t") {
           if (iff.ret.suffix=="*") {
-            ret_type=iff.ret.name+" *";
+            ret_type=iff.ret.prefix+" "+iff.ret.name+" *";
           } else {
-            ret_type=iff.ret.name+" ";
+            ret_type=iff.ret.prefix+" "+iff.ret.name+" ";
           }
         } else {
           ret_type="void *";
@@ -1306,7 +1306,7 @@ int main(int argc, char *argv[]) {
             if (iff.args[k].ift.suffix=="&") {
               std::string type_temp=iff.args[k].ift.name;
               if (type_temp=="std_vector") {
-                type_temp="vector<double>";
+                type_temp="std::vector<double>";
               }
               //if (iff.args[k].ift.name=="std::string") {
               fout << "  " << type_temp << " *"
@@ -1345,18 +1345,21 @@ int main(int argc, char *argv[]) {
             fout << "  double ret=ptr->operator[](";
           } else if (iff.ret.name=="void") {
             fout << "  ptr->" << iff.name << "(";
+          } else if (iff.ret.name=="std::string") {
+            fout << "  std::string *sptr=new std::string;" << endl;
+            fout << "  *sptr=ptr->" << iff.name << "(";
           } else {
             // If the function returns a reference, return a pointer
             // instead
             if (iff.ret.suffix=="&") {
-              fout << "  " << iff.ret.name << " *ret=&ptr->"
-                   << iff.name << "(";
+              fout << "  " << iff.ret.prefix << " " << iff.ret.name
+                   << " *ret=&ptr->" << iff.name << "(";
             } else if (iff.ret.suffix=="*") {
-              fout << "  " << iff.ret.name << " *ret=ptr->"
-                   << iff.name << "(";
+              fout << "  " << iff.ret.prefix << " " << iff.ret.name
+                   << " *ret=ptr->" << iff.name << "(";
             } else {
-              fout << "  " << iff.ret.name << " ret=ptr->"
-                   << iff.name << "(";
+              fout << "  " << iff.ret.prefix << " " << iff.ret.name
+                   << " ret=ptr->" << iff.name << "(";
             }
           }
           
@@ -1386,8 +1389,7 @@ int main(int argc, char *argv[]) {
             fout << ");" << endl;
             
             if (iff.ret.name=="std::string") {
-              fout << "  python_temp_string=ret;" << endl;
-              fout << "  return python_temp_string.c_str();" << endl;
+              fout << "  return sptr;" << endl;
             } else if (iff.ret.name=="void") {
               fout << "  return;" << endl;
             } else {
@@ -1414,7 +1416,7 @@ int main(int argc, char *argv[]) {
           } else {
             fout << " {" << endl;
             fout << "  " << ifc.name << " *ptr=(" << ifc.name
-                 << ")vptr;" << endl;
+                 << " *)vptr;" << endl;
             fout << "  ptr->operator[](n)=val;" << endl;
             fout << "}" << endl;
           }
@@ -1549,7 +1551,7 @@ int main(int argc, char *argv[]) {
       string func_name=iff.name;
       if (iff.overloaded) func_name=iff.py_name;
       if (iff.ret.name=="std::string") {
-        fout << "const char *" << underscoreify(iff.ns) << "_"
+        fout << "void *" << underscoreify(iff.ns) << "_"
              << func_name << "(";
       } else if (iff.ret.name=="void" ||
                  iff.ret.name=="bool" ||
