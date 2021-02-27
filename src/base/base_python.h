@@ -30,6 +30,20 @@
 
 extern "C" {
 
+void *o2scl_create_std__string();
+
+void o2scl_free_std__string(void *vptr);
+
+size_t o2scl_std__string_length(void *vptr);
+
+char o2scl_std__string_getitem(void *vptr, size_t n);
+
+void o2scl_std__string_setitem(void *vptr, size_t n, char val);
+
+void o2scl_std__string_resize(void *vptr, size_t n);
+
+char *o2scl_std__string_c_str(void *vptr);
+
 void *o2scl_create_vector_double_();
 
 void o2scl_free_vector_double_(void *vptr);
@@ -38,7 +52,9 @@ void o2scl_vector_double__resize(void *vptr, size_t n);
 
 size_t o2scl_vector_double__size(void *vptr);
 
-double o2scl_vector_double__index_operator(void *vptr, size_t n);
+double o2scl_vector_double__getitem(void *vptr, size_t n);
+
+void o2scl_vector_double__setitem(void *vptr, size_t n, double val);
 
 void *o2scl_create_vector_int_();
 
@@ -48,7 +64,9 @@ void o2scl_vector_int__resize(void *vptr, size_t n);
 
 size_t o2scl_vector_int__size(void *vptr);
 
-int o2scl_vector_int__index_operator(void *vptr, size_t n);
+int o2scl_vector_int__getitem(void *vptr, size_t n);
+
+void o2scl_vector_int__setitem(void *vptr, size_t n, int val);
 
 void *o2scl_create_vector_size_t_();
 
@@ -58,7 +76,9 @@ void o2scl_vector_size_t__resize(void *vptr, size_t n);
 
 size_t o2scl_vector_size_t__size(void *vptr);
 
-size_t o2scl_vector_size_t__index_operator(void *vptr, size_t n);
+size_t o2scl_vector_size_t__getitem(void *vptr, size_t n);
+
+void o2scl_vector_size_t__setitem(void *vptr, size_t n, size_t val);
 
 void *o2scl_create_lib_settings_class();
 
@@ -116,7 +136,9 @@ void o2scl_free_table__(void *vptr);
 
 void o2scl_copy_table__(void *vsrc, void *vdest);
 
-void o2scl_table___index_operator(void *vptr, char *col, double **dptr, int *n);
+void o2scl_table___getitem(void *vptr, char *col, double **dptr, int *n);
+
+void o2scl_table___setitem(void *vptr, size_t n, vector<double> val);
 
 void o2scl_table___set(void *vptr, char *col, size_t row, double val);
 
@@ -272,7 +294,7 @@ double o2scl_uniform_grid___get_end(void *vptr);
 
 double o2scl_uniform_grid___get_width(void *vptr);
 
-double o2scl_uniform_grid___index_operator(void *vptr, size_t n);
+double o2scl_uniform_grid___getitem(void *vptr, size_t n);
 
 void o2scl_free_uniform_grid_end__(void *vptr);
 

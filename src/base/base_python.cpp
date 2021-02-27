@@ -25,6 +25,46 @@
 using namespace std;
 using namespace o2scl;
 
+void *o2scl_create_std__string() {
+  std::string *ptr=new std::string;
+  return ptr;
+}
+
+void o2scl_free_std__string(void *vptr) {
+  std::string *ptr=(std::string *)vptr;
+  delete ptr;
+  return;
+}
+
+size_t o2scl_std__string_length(void *vptr) {
+  std::string *ptr=(std::string *)vptr;
+  size_t ret=ptr->length();
+  return ret;
+}
+
+char o2scl_std__string_getitem(void *vptr, size_t n) {
+  std::string *ptr=(std::string *)vptr;
+  double ret=ptr->operator[](n);
+  return ret;
+}
+
+void o2scl_std__string_setitem(void *vptr, size_t n, char val) {
+  std::string *ptr=(std::string)vptr;
+  ptr->operator[](n)=val;
+}
+
+void o2scl_std__string_resize(void *vptr, size_t n) {
+  std::string *ptr=(std::string *)vptr;
+  ptr->resize(n);
+  return;
+}
+
+char *o2scl_std__string_c_str(void *vptr) {
+  std::string *ptr=(std::string *)vptr;
+  char *ret=ptr->c_str();
+  return ret;
+}
+
 void *o2scl_create_vector_double_() {
   vector<double> *ptr=new vector<double>;
   return ptr;
@@ -48,10 +88,15 @@ size_t o2scl_vector_double__size(void *vptr) {
   return ret;
 }
 
-double o2scl_vector_double__index_operator(void *vptr, size_t n) {
+double o2scl_vector_double__getitem(void *vptr, size_t n) {
   vector<double> *ptr=(vector<double> *)vptr;
   double ret=ptr->operator[](n);
   return ret;
+}
+
+void o2scl_vector_double__setitem(void *vptr, size_t n, double val) {
+  vector<double> *ptr=(vector<double>)vptr;
+  ptr->operator[](n)=val;
 }
 
 void *o2scl_create_vector_int_() {
@@ -77,10 +122,15 @@ size_t o2scl_vector_int__size(void *vptr) {
   return ret;
 }
 
-int o2scl_vector_int__index_operator(void *vptr, size_t n) {
+int o2scl_vector_int__getitem(void *vptr, size_t n) {
   vector<int> *ptr=(vector<int> *)vptr;
   double ret=ptr->operator[](n);
   return ret;
+}
+
+void o2scl_vector_int__setitem(void *vptr, size_t n, int val) {
+  vector<int> *ptr=(vector<int>)vptr;
+  ptr->operator[](n)=val;
 }
 
 void *o2scl_create_vector_size_t_() {
@@ -106,10 +156,15 @@ size_t o2scl_vector_size_t__size(void *vptr) {
   return ret;
 }
 
-size_t o2scl_vector_size_t__index_operator(void *vptr, size_t n) {
+size_t o2scl_vector_size_t__getitem(void *vptr, size_t n) {
   vector<size_t> *ptr=(vector<size_t> *)vptr;
   double ret=ptr->operator[](n);
   return ret;
+}
+
+void o2scl_vector_size_t__setitem(void *vptr, size_t n, size_t val) {
+  vector<size_t> *ptr=(vector<size_t>)vptr;
+  ptr->operator[](n)=val;
 }
 
 void *o2scl_create_lib_settings_class() {
@@ -284,11 +339,16 @@ void o2scl_copy_table__(void *vsrc, void *vdest) {
   *dest=*src;
 }
 
-void o2scl_table___index_operator(void *vptr, char *col, double **dptr, int *n) {
+void o2scl_table___getitem(void *vptr, char *col, double **dptr, int *n) {
   table<> *ptr=(table<> *)vptr;
   *dptr=(double *)(&(ptr->operator[](col)[0]));
   *n=ptr->get_nlines();
   return;
+}
+
+void o2scl_table___setitem(void *vptr, size_t n, vector<double> val) {
+  table<> *ptr=(table<>)vptr;
+  ptr->operator[](n)=val;
 }
 
 void o2scl_table___set(void *vptr, char *col, size_t row, double val) {
@@ -759,7 +819,7 @@ double o2scl_uniform_grid___get_width(void *vptr) {
   return ret;
 }
 
-double o2scl_uniform_grid___index_operator(void *vptr, size_t n) {
+double o2scl_uniform_grid___getitem(void *vptr, size_t n) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
   double ret=ptr->operator[](n);
   return ret;

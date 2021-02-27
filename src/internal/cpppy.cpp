@@ -1231,8 +1231,13 @@ int main(int argc, char *argv[]) {
                    iff.ret.name=="bool" ||
                    iff.ret.name=="double" ||
                    iff.ret.name=="int" ||
+                   iff.ret.name=="char" ||
                    iff.ret.name=="size_t") {
-          ret_type=iff.ret.name+" ";
+          if (iff.ret.suffix=="*") {
+            ret_type=iff.ret.name+" *";
+          } else {
+            ret_type=iff.ret.name+" ";
+          }
         } else {
           ret_type="void *";
         }
@@ -1243,9 +1248,15 @@ int main(int argc, char *argv[]) {
                << underscoreify(ifc.name) << "_" << iff.py_name
                << "(void *vptr";
         } else {
-          fout << ret_type << underscoreify(ifc.ns) << "_"
-               << underscoreify(ifc.name) << "_" << iff.name
-               << "(void *vptr";
+          if (iff.name=="operator[]") {
+            fout << ret_type << underscoreify(ifc.ns) << "_"
+                 << underscoreify(ifc.name) << "_getitem"
+                 << "(void *vptr";
+          } else {
+            fout << ret_type << underscoreify(ifc.ns) << "_"
+                 << underscoreify(ifc.name) << "_" << iff.name
+                 << "(void *vptr";
+          }
         }
         if (iff.args.size()>0) {
           fout << ", ";
@@ -1338,9 +1349,14 @@ int main(int argc, char *argv[]) {
             // If the function returns a reference, return a pointer
             // instead
             if (iff.ret.suffix=="&") {
-              fout << "  " << iff.ret.name << " *ret=&ptr->" << iff.name << "(";
+              fout << "  " << iff.ret.name << " *ret=&ptr->"
+                   << iff.name << "(";
+            } else if (iff.ret.suffix=="*") {
+              fout << "  " << iff.ret.name << " *ret=ptr->"
+                   << iff.name << "(";
             } else {
-              fout << "  " << iff.ret.name << " ret=ptr->" << iff.name << "(";
+              fout << "  " << iff.ret.name << " ret=ptr->"
+                   << iff.name << "(";
             }
           }
           
@@ -1383,6 +1399,27 @@ int main(int argc, char *argv[]) {
           fout << "}" << endl;          
         }
         fout << endl;
+
+        // Generate setitem code for operator[] if it returns a
+        // non-const reference. Presume ifc.name is something like
+        // std_vector and iff.name is "operator[]" and iff.ret.name is
+        // "double"
+        if (iff.name=="operator[]" && !iff.ret.is_const() &&
+            iff.ret.suffix=="&") {
+          fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
+               << "_setitem(void *vptr, size_t n, " << iff.ret.name
+               << " val)";
+          if (header) {
+            fout << ";" << endl;
+          } else {
+            fout << " {" << endl;
+            fout << "  " << ifc.name << " *ptr=(" << ifc.name
+                 << ")vptr;" << endl;
+            fout << "  ptr->operator[](n)=val;" << endl;
+            fout << "}" << endl;
+          }
+          fout << endl;
+        }
         
       }
 
