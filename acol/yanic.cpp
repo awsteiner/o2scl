@@ -31,20 +31,6 @@
 using namespace std;
 using namespace o2scl;
 
-/*
-  Get and set methods for C++ class members always imply a copy. Right
-  now cpppy does not yet support, for example, obtaining a reference
-  or a pointer to a c++ class member.
-
-  Todos: 
-  * Need to fix function names in case where there is no namespace.
-  * Simplify code duplication in parsing: reading global and member
-    functions should be the same
-  * Allow use of numpy.arange for uniform_grid arguments
-  * Document .i format
-  
-*/
-
 /** \brief Convert all non-alphanumeric characters to underscores
  */
 std::string underscoreify(std::string s) {
@@ -100,6 +86,7 @@ void parse_vector_string(ifstream &fin, std::string type, std::string &line,
     if (debug) {
       cout << "Here " << line << endl;
     }
+    output.clear();
     next_line(fin,line,vs,done);
     while (line.length()>0 && line[0]=='|') {
       if (line[1]==' ' && line.length()>2) {
@@ -428,6 +415,7 @@ int main(int argc, char *argv[]) {
          << "<python prefix> <rst prefix>" << endl;
     exit(-1);
   }
+  
   std::string fname=argv[1];
   std::string cpp_prefix=argv[2];
   std::string py_prefix=argv[3];
@@ -1689,6 +1677,9 @@ int main(int argc, char *argv[]) {
   for(size_t i=0;i<classes.size();i++) {
     
     if_class &ifc=classes[i];
+
+    // The first line of the class definition, including the class
+    // and the parent class
     
     if (ifc.parents.size()==0) {
       if (ifc.py_name!="") {
@@ -1714,6 +1705,8 @@ int main(int argc, char *argv[]) {
              << endl;
       }
     }
+
+    // The class documentation
     fout << "    \"\"\"" << endl;
     if (ifc.py_class_doc.size()>0) {
       for(size_t j=0;j<ifc.py_class_doc.size();j++) {
@@ -1735,7 +1728,7 @@ int main(int argc, char *argv[]) {
     fout << "    \"\"\"" << endl;
     fout << endl;
     
-    // Initialize pointer
+    // List and initialize class data members
     if (ifc.parents.size()==0) {
       fout << "    _ptr=0" << endl;
       fout << "    _link=0" << endl;
@@ -1869,7 +1862,9 @@ int main(int argc, char *argv[]) {
              << "ctypes.c_void_p]" << endl;
         fout << "        func(self._ptr,sp._s_ptr)" << endl;
         fout << "        return" << endl;
+        
       } else {
+        
         fout << "    def get_" << ifv.name << "(self," << ifv.name
              << "):" << endl;
         fout << "        \"\"\"" << endl;
@@ -1890,6 +1885,7 @@ int main(int argc, char *argv[]) {
         fout << "        func(self._ptr," << ifv.name
              << "._ptr)" << endl;
         fout << "        return" << endl;
+        
       }
       fout << endl;
 
@@ -1898,6 +1894,7 @@ int main(int argc, char *argv[]) {
           ifv.ift.name=="double" ||
           ifv.ift.name=="int" ||
           ifv.ift.name=="size_t") {
+        
         fout << "    @" << ifv.name << ".setter" << endl;
         fout << "    def " << ifv.name << "(self,value):" << endl;
         fout << "        \"\"\"" << endl;
@@ -1911,7 +1908,9 @@ int main(int argc, char *argv[]) {
              << ifv.ift.name << "]" << endl;
         fout << "        func(self._ptr,value)" << endl;
         fout << "        return" << endl;
+        
       } else {
+        
         fout << "    def set_" << ifv.name << "(self,value):" << endl;
         fout << "        \"\"\"" << endl;
         fout << "        Set object of type :class:`"
@@ -1928,6 +1927,7 @@ int main(int argc, char *argv[]) {
           fout << "        func(self._ptr,value._ptr)" << endl;
         }
         fout << "        return" << endl;
+        
       }
       fout << endl;
     }
@@ -1956,70 +1956,69 @@ int main(int argc, char *argv[]) {
       }
       fout << "):" << endl;
 
-      // Comment
+      // Begin documentation for member function
       fout << "        \"\"\"" << endl;
-      
-      //fout << "        Wrapper for " << ifc.name << "::"
-      //<< iff.name << "() ." << endl;
+
+      // Parameter list
       if (iff.args.size()>0) {
         fout << "        | Parameters:" << endl;
       }
       for(size_t k=0;k<iff.args.size();k++) {
+        fout << "        | *" << iff.args[k].name;
         if (iff.args[k].ift.name=="bool" ||
             iff.args[k].ift.name=="int" ||
             iff.args[k].ift.name=="size_t" ||
             iff.args[k].ift.name=="double") {
           if (iff.args[k].ift.suffix=="&") {
-            fout << "        | *" << iff.args[k].name
-                 << "*: ``ctypes.POINTER(ctypes.c_"
+            fout << "*: ``ctypes.POINTER(ctypes.c_"
                  << iff.args[k].ift.name << ")``" << endl;
           } else {
-            fout << "        | *" << iff.args[k].name
-                 << "*: ``" << iff.args[k].ift.name << "``" << endl;
+            fout << "*: ``" << iff.args[k].ift.name << "``" << endl;
           }
         } else if (iff.args[k].ift.suffix=="&") {
-          fout << "        | *" << iff.args[k].name
-               << "*: :class:`" << iff.args[k].ift.name << "` object"
+          fout << "*: :class:`" << iff.args[k].ift.name << "` object"
                << endl;
         } else if (iff.args[k].ift.name=="std::string") {
-          fout << "        | *" << iff.args[k].name
-               << "*: string" << endl;
+          fout << "*: string" << endl;
         }
       }
+
+      // Reformat return type 
+      size_t len=iff.ret.name.length();
+      std::string reformat_ret_type=iff.ret.name;
+      // Manually remove '<>' from the typename if necessary
+      if (len>2 && iff.ret.name[len-2]=='<' &&
+          iff.ret.name[len-1]=='>') {
+        reformat_ret_type=iff.ret.name.substr(0,len-2);
+      }
       
+      // Depending on return type, set return document string
+      // and return python code
+      std::string return_docs, restype_string;
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
           iff.ret.suffix=="&") {
-        fout << "        | Returns: ``numpy`` array" << endl;
+        return_docs="``numpy`` array";
+        restype_string="";
       } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
                  iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
-        size_t len=iff.ret.name.length();
-        std::string tmps=iff.ret.name;
-        // Manually remove '<>' from the typename if necessary
-        if (len>2 && iff.ret.name[len-2]=='<' &&
-            iff.ret.name[len-1]=='>') {
-          tmps=iff.ret.name.substr(0,len-2);
-        }
-        fout << "        | Returns: :class:`"
-             << "shared_ptr_" << tmps << "`." << endl;
+        return_docs=((string)":class:`shared_ptr_")+reformat_ret_type+"`.";
+        restype_string=="ctypes.c_void_p";
       } else if (iff.ret.suffix=="&") {
-        size_t len=iff.ret.name.length();
-        std::string tmps=iff.ret.name;
-        // Manually remove '<>' from the typename if necessary
-        if (len>2 && iff.ret.name[len-2]=='<' &&
-            iff.ret.name[len-1]=='>') {
-          tmps=iff.ret.name.substr(0,len-2);
-        }
-        fout << "        | Returns: :class:`"
-             << tmps << "` object" << endl;
+        return_docs=((string)":class:`")+reformat_ret_type+"` object";
+        restype_string=="ctypes.c_void_p";
       } else if (iff.ret.name=="std::string") {
-        fout << "        | Returns: python bytes object"
-             << endl;
+        return_docs="std_string object";
+        restype_string=="ctypes.c_void_p";
       } else if (iff.ret.name!="void") {
-        fout << "        | Returns: ``ctypes.c_"
-             << iff.ret.name << "`` object" << endl;
+        return_docs=((string)"``ctypes.c_")+reformat_ret_type+"`` object";
+        restype_string=((string)"ctypes.c_")+reformat_ret_type;
       }
-      
+
+      // Output return value documentation
+      fout << "        | Returns: " << return_docs << endl;
+
+      // End of member function documentation
       fout << "        \"\"\"" << endl;
 
       // Perform necessary conversions

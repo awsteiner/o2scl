@@ -139,6 +139,7 @@ open-part-doc:
 	$(BROWSER) doc/o2scl/part/sphinx/build/html/index.html
 
 interface: empty
+	cd acol; $(MAKE) yanic
 	cd src; $(MAKE) interface
 
 empty:

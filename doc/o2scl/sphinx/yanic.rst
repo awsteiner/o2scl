@@ -1,8 +1,10 @@
 Yet ANother Interface between C++ and python
 ============================================
 
-.. warning:: Very experimental.
-
+.. warning:: Very experimental. I probably shouldn't have written my
+             own code to interface python and C++, but I did anyway,
+             and here it is.
+             
 ``yanic: <interface file> <c++ output prefix> <python prefix> <rst
 prefix>``
              
@@ -87,6 +89,14 @@ Classes
 
     class <class name> ["abstract"]
 
+  If the ``abstract`` label is appended, then ``__init__()`` is tagged
+  as an ``@abstractmethod`` in python. If the class is not abstract and the
+  ``no_def_cons`` tag is not given (see below), then a ``create``
+  function is created to create an object. A ``free`` function is
+  always created to destroy an object. If ``std_cc`` is specified,
+  then a C function named ``copy`` is created along with an analogous
+  ``__deepcopy__`` python method.
+    
 - Python name of class (optional)::
 
     - py_name <name>
@@ -102,7 +112,7 @@ Classes
   
   - no_def_cons
 
-- Parent class::
+- Parent class (multiple parents not currently supported)::
 
     - parent <parent class name>
 
@@ -121,15 +131,19 @@ Classes
 - Class member data::
 
   - {type} <name>
+
+  Get and set methods for class member data are generated and always
+  imply a copy. (Obtaining a pointer or reference to a class data
+  member is not supported.) 
   
 - Class member function definitions are of the following form.
   The return type and parameter specifications must begin with
   two spaces::
 
-  - function <function name>
-    - {return type}
-    - {parameter type} <parameter name>
-    ...
+    - function <function name>
+      - {return type}
+      - {parameter type} <parameter name>
+      ...
     
 - Extra python code for the class::
 
@@ -141,6 +155,9 @@ Classes
     | {}
     | {}
     ...
+
+  The extra python code is prepended by four spaces to conform
+  with the indentation style used by yanic.
 
 - Class constructor with parameters. The parameter specifications must
   begin with two spaces::
@@ -156,8 +173,31 @@ Other objects
 
     - shared_ptr <class name>
 
-  * Python name of class for the shared pointer::
+  Shared pointers imply the creation of a ``create`` function to
+  create a shared pointer to a default object, a ``free`` function to
+  free the memory associated with the shared pointer (which may or may
+  not free the underlying object), and a pointer function which gets a
+  raw pointer to the underlying object. Using shared pointers for
+  objects which do not have a default constructor is not yet
+  supported.
+
+  * Python name of class for the shared pointer (must begin with
+    two spaces)::
 
       - py_name <name>
 
+Todos
+-----
 
+.. todo:: 
+
+   In yanic:
+
+   - Need to fix function names in case where there is no namespace.
+   - Simplify code duplication in parsing: reading global and member
+     functions should be the same
+   - Allow use of numpy.arange for uniform_grid arguments
+   - Document .i format
+   - Make sure data members named 'del' are properly renamed without
+     hacking, e.g. with a py_name argument
+     
