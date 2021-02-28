@@ -1409,7 +1409,7 @@ int main(int argc, char *argv[]) {
         if (iff.name=="operator[]" && !iff.ret.is_const() &&
             iff.ret.suffix=="&") {
           fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
-               << "_setitem(void *vptr, size_t n, " << iff.ret.name
+               << "_setitem(void *vptr, size_t i, " << iff.ret.name
                << " val)";
           if (header) {
             fout << ";" << endl;
@@ -1417,7 +1417,8 @@ int main(int argc, char *argv[]) {
             fout << " {" << endl;
             fout << "  " << ifc.name << " *ptr=(" << ifc.name
                  << " *)vptr;" << endl;
-            fout << "  ptr->operator[](n)=val;" << endl;
+            fout << "  (*ptr)[i]=val;" << endl;
+            fout << "  return;" << endl;
             fout << "}" << endl;
           }
           fout << endl;
@@ -1631,8 +1632,10 @@ int main(int argc, char *argv[]) {
           fout << ");" << endl;
           
           if (iff.ret.name=="std::string") {
-            fout << "  python_temp_string=ret;" << endl;
-            fout << "  return python_temp_string.c_str();" << endl;
+            cout << "Here." << endl;
+            exit(-1);
+            //fout << "  python_temp_string=ret;" << endl;
+            //fout << "  return python_temp_string.c_str();" << endl;
           } else {
             fout << "  return ret;" << endl;
           }
@@ -2049,6 +2052,8 @@ int main(int argc, char *argv[]) {
       } else if (iff.ret.name!="void") {
         if (iff.ret.name=="std::string") {
           fout << "        func.restype=ctypes.c_char_p" << endl;
+        } else if (iff.name=="operator[]") {
+          fout << "        func.restype=ctypes.c_" << iff.ret.name << endl;
         } else if (iff.ret.suffix=="&") {
           fout << "        func.restype=ctypes.c_void_p" << endl;
         } else {
@@ -2142,7 +2147,7 @@ int main(int argc, char *argv[]) {
         fout << "        ret=numpy.ctypeslib.as_array(ptr_,shape=(n_.value,))"
              << endl;
         fout << "        return ret" << endl;
-      } else if (iff.ret.suffix=="&") {
+      } else if (iff.ret.suffix=="&" && iff.name!="operator[]") {
         std::string tmps=iff.ret.name;
         size_t len=iff.ret.name.length();
         // Manually remove '<>' from the typename if necessary
@@ -2172,13 +2177,13 @@ int main(int argc, char *argv[]) {
       // code.
       if (iff.name=="operator[]" && !iff.ret.is_const() &&
           iff.ret.suffix=="&") {
-        fout << "    def __setitem__(self,n,value):" << endl;
+        fout << "    def __setitem__(self,i,value):" << endl;
         fout << "        func=self._link." << dll_name << "."
              << ifc.ns << "_" << underscoreify(ifc.name) << "_setitem"
              << endl;
         fout << "        func.argtypes=[ctypes.c_void_p,"
              << "ctypes.c_size_t,ctypes.c_" << iff.ret.name << "]" << endl;
-        fout << "        func(self._ptr,n,val)" << endl;
+        fout << "        func(self._ptr,i,value)" << endl;
         fout << "        return" << endl;
         fout << endl;
       }

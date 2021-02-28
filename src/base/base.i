@@ -55,7 +55,7 @@ class std::string
 | 
 | def init_bytes(self,s):
 |     # Initialize the string from a Python bytes object
-|     resize(len(s))
+|     self.resize(len(s))
 |     for i in range(0,len(s)):
 |         self.__setitem__(i,s[i])
 |     return
@@ -87,7 +87,7 @@ class std::vector<double>
 |
 | def to_numpy(self):
 |     ret=numpy.zeros((self.size()))
-|     for i in range(0,self.length()):
+|     for i in range(0,self.size()):
 |         ret[i]=self.__getitem__(i)
 |     return ret
 class vector<int>
@@ -106,7 +106,7 @@ class vector<int>
 |
 | def to_numpy(self):
 |     ret=numpy.zeros((self.size()),dtype=numpy.int32_t)
-|     for i in range(0,self.length()):
+|     for i in range(0,self.size()):
 |         ret[i]=self.__getitem__(i)
 |     return ret
 class vector<size_t>
@@ -125,7 +125,7 @@ class vector<size_t>
 |
 | def to_numpy(self):
 |     ret=numpy.zeros((self.size()),dtype=numpy.uint64_t)
-|     for i in range(0,self.length()):
+|     for i in range(0,self.size()):
 |         ret[i]=self.__getitem__(i)
 |     return ret
 #class vector<string>
