@@ -3,21 +3,25 @@ Yet ANother Interface between C++ and python
 
 .. warning:: Very experimental.
 
-Interface guide
+``yanic: <interface file> <c++ output prefix> <python prefix> <rst
+prefix>``
+             
+Guide for interface files
+-------------------------
  
-- [] arguments are optional
-- <> arguments are required and do not have any whitespace
-- {} arguments can have whitespace but no carriage returns
+- ``[]`` arguments are optional
+- ``<>`` arguments are required and do not have any whitespace
+- ``{}`` arguments can have whitespace but no carriage returns
 
 Types, e.g. {type}, {parameter type}, {return type} are specified in
-the following way:
+the following way::
 
-.. [static] [const] [std::shared_ptr] <type name> [*] [&] [**]
+  [static] [const] [std::shared_ptr] <type name> [*] [&] [**]
 
 Non-alphabetic characters in class names are always converted to
 underscores.
 
-Comments (all lines beginning with '#' are comments). Comments # may
+Comments (all lines beginning with ``#`` are comments). Comments may
 appear anywhere, including inside a class or function definition.
 
 Header items
@@ -27,17 +31,20 @@ Header items
 
     namespace <name>
 
-- Template for class documentation, using %name% to refer to the
-class name. Specified either as::
+  The namespace is used to name the automatically name the ``extern
+  C`` functions which access the class.
+    
+- Template for class documentation, using ``%name%`` to refer to the
+  class name. Specified either as::
 
-  py_class_doc {}
+    py_class_doc {}
 
-or as::
+  or as::
 
-  py_class_doc |
-  | {}
-  | {} 
-  ...
+    py_class_doc |
+    | {}
+    | {} 
+    ...
 
 - Name of dll to load::
 
@@ -47,12 +54,12 @@ or as::
 
     rst_header {}
 
-or::
+  or::
 
-  rst_header |
-  | {}
-  | {} 
-  ...
+    rst_header |
+    | {}
+    | {} 
+    ...
 
 - Include statements for C++ header file::
     
@@ -70,6 +77,12 @@ or::
 
     py_header {}
 
+Functions
+---------
+    
+Classes
+-------
+    
 - Class definitions::
 
     class <class name> ["abstract"]
@@ -78,14 +91,14 @@ or::
 
     - py_name <name>
 
-- Optional line which should be specified if the class defines both 
-class (const class &) and class &operator=(const class &) . This
-allows one to define the python __deepcopy__ method::
+- Optional line which should be specified if the class defines both
+  ``class (const class &)`` and ``class &operator=(const class &)``.
+  This allows one to define the python ``__deepcopy__`` method::
   
   - std_cc                             
 
 - Optional line which should be specified if the class has no default
-constructor::
+  constructor::
   
   - no_def_cons
 
@@ -94,24 +107,24 @@ constructor::
     - parent <parent class name>
 
 - Python documentation for this class (overrides template
-specification above)::
+  specification above)::
 
-  - py_class_doc {}
+    - py_class_doc {}
 
-or::
+  or::
 
-  - py_class_doc |
-  | {}
-  | {} 
-  ...
+    - py_class_doc |
+    | {}
+    | {} 
+    ...
 
 - Class member data::
 
   - {type} <name>
   
 - Class member function definitions are of the following form.
-The return type and parameter specifications must begin with
-two spaces::
+  The return type and parameter specifications must begin with
+  two spaces::
 
   - function <function name>
     - {return type}
@@ -122,20 +135,23 @@ two spaces::
 
     - extra_py {}
 
-or::
+  or::
 
-  - extra_py |
-  | {}
-  | {}
-  ...
-
-- Class constructor with parameters. The parameter specifications must
-begin with two spaces::
-
-  - cons <python constructor name>
-    - {parameter type} <parameter name>
+    - extra_py |
+    | {}
+    | {}
     ...
 
+- Class constructor with parameters. The parameter specifications must
+  begin with two spaces::
+
+    - cons <python constructor name>
+      - {parameter type} <parameter name>
+      ...
+
+Other objects
+-------------
+      
 - Specification of a shared pointer::
 
     - shared_ptr <class name>
