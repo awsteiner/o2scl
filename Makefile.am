@@ -139,7 +139,6 @@ open-part-doc:
 	$(BROWSER) doc/o2scl/part/sphinx/build/html/index.html
 
 interface: empty
-	cd src/internal; $(MAKE) cpppy
 	cd src; $(MAKE) interface
 
 empty:

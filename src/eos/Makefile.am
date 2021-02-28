@@ -432,8 +432,8 @@ x:
 # ------------------------------------------------------------
 
 interface: empty
-	../internal/cpppy eos.i eos_python ~/wcs/o2sclpy/o2sclpy/eos \
-		~/wcs/o2sclpy/doc/eos | tee eos_python.cpppy.out
+	yanic eos.i eos_python ~/wcs/o2sclpy/o2sclpy/eos \
+		~/wcs/o2sclpy/doc/eos | tee eos_python.yanic.out
 
 empty:
 

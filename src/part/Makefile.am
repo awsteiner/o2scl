@@ -199,8 +199,8 @@ fermion_mag_zerot_ts_SOURCES = fermion_mag_zerot_ts.cpp
 # ------------------------------------------------------------
 
 interface: empty
-	../internal/cpppy part.i part_python ~/wcs/o2sclpy/o2sclpy/part \
-		~/wcs/o2sclpy/doc/part | tee part_python.cpppy.out
+	yanic part.i part_python ~/wcs/o2sclpy/o2sclpy/part \
+		~/wcs/o2sclpy/doc/part | tee part_python.yanic.out
 
 empty:
 

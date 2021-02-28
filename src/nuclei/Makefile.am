@@ -213,8 +213,8 @@ am__libo2scl_nuclei_la_SOURCES_DIST = $(NUCLEI_SRCS)
 # ------------------------------------------------------------
 
 interface: empty
-	../internal/cpppy nuclei.i nuclei_python ~/wcs/o2sclpy/o2sclpy/nuclei \
-		~/wcs/o2sclpy/doc/nuclei | tee nuclei_python.cpppy.out
+	yanic nuclei.i nuclei_python ~/wcs/o2sclpy/o2sclpy/nuclei \
+		~/wcs/o2sclpy/doc/nuclei | tee nuclei_python.yanic.out
 
 empty:
 

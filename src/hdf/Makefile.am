@@ -146,8 +146,8 @@ am__libo2scl_hdf_la_SOURCES_DIST = $(HDF_SRCS)
 # ------------------------------------------------------------
 
 interface: empty
-	../internal/cpppy hdf.i hdf_python ~/wcs/o2sclpy/o2sclpy/hdf \
-		~/wcs/o2sclpy/doc/hdf | tee hdf_python.cpppy.out
+	yanic hdf.i hdf_python ~/wcs/o2sclpy/o2sclpy/hdf \
+		~/wcs/o2sclpy/doc/hdf | tee hdf_python.yanic.out
 
 empty:
 
