@@ -1234,9 +1234,12 @@ int main(int argc, char *argv[]) {
                    iff.ret.name=="char" ||
                    iff.ret.name=="size_t") {
           if (iff.ret.suffix=="*") {
-            ret_type=iff.ret.prefix+" "+iff.ret.name+" *";
+            ret_type=iff.ret.name+" *";
           } else {
-            ret_type=iff.ret.prefix+" "+iff.ret.name+" ";
+            ret_type=iff.ret.name+" ";
+          }
+          if (iff.ret.prefix.length()>0) {
+            ret_type=iff.ret.prefix+" "+ret_type;
           }
         } else {
           ret_type="void *";
@@ -1795,19 +1798,19 @@ int main(int argc, char *argv[]) {
 
     // Define deepcopy() function
     if (ifc.std_cc) {
-      fout << "    def __deepcopy__(self):" << endl;
+      fout << "    def __deepcopy__(self,memo):" << endl;
       fout << "        \"\"\"" << endl;
       fout << "        Deep copy function for class "
            << ifc.name << " ." << endl;
       fout << "        \"\"\"" << endl;
       fout << endl;
       // Create the new object
-      fout << "        new_obj=type(self)(self._link,self._ptr)" << endl;
-      fout << "        f=self._link." << dll_name << "." << ifc.ns
+      fout << "        new_obj=type(self)(self._link)" << endl;
+      fout << "        f2=self._link." << dll_name << "." << ifc.ns
            << "_copy_" << underscoreify(ifc.name) << endl;
-      fout << "        f.argtypes=[ctypes.c_void_p,ctypes.c_void_p]"
+      fout << "        f2.argtypes=[ctypes.c_void_p,ctypes.c_void_p]"
            << endl;
-      fout << "        f(src._ptr,new_obj._ptr)" << endl;
+      fout << "        f2(self._ptr,new_obj._ptr)" << endl;
       fout << "        return new_obj" << endl;
       fout << endl;
     }

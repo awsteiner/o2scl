@@ -37,19 +37,19 @@ void o2scl_hdf_free_hdf_file(void *vptr) {
   return;
 }
 
- void o2scl_hdf_hdf_file_open(void *vptr, char *fname, bool write_access, bool err_on_fail) {
+void o2scl_hdf_hdf_file_open(void *vptr, char *fname, bool write_access, bool err_on_fail) {
   hdf_file *ptr=(hdf_file *)vptr;
   ptr->open(fname,write_access,err_on_fail);
   return;
 }
 
- void o2scl_hdf_hdf_file_open_or_create(void *vptr, char *fname) {
+void o2scl_hdf_hdf_file_open_or_create(void *vptr, char *fname) {
   hdf_file *ptr=(hdf_file *)vptr;
   ptr->open_or_create(fname);
   return;
 }
 
- void o2scl_hdf_hdf_file_close(void *vptr) {
+void o2scl_hdf_hdf_file_close(void *vptr) {
   hdf_file *ptr=(hdf_file *)vptr;
   ptr->close();
   return;

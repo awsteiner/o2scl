@@ -47,8 +47,6 @@ class std::string
 - function resize
   - void
   - size_t n
-- function c_str
-  - const char *
 - extra_py |
 | def __len__(self):
 |     return length()
