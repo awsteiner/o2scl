@@ -79,9 +79,11 @@ if O2SCL_ENABLE_ACOL
 
 if O2SCL_HDF
 
-bin_PROGRAMS = acol 
+bin_PROGRAMS = acol yanic
 
-acol_SOURCES = acol.cpp 
+acol_SOURCES = acol.cpp
+
+yanic_SOURCES = yanic.cpp
 
 if O2SCL_READLINE
 RLIB = -lreadline -lncurses
@@ -97,8 +99,12 @@ if O2SCL_SNAP
 if O2SCL_OPENMP
 acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib -fopenmp
+yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
+	-Wl,/snap/o2scl/current/lib -fopenmp
 else
 acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
+	-Wl,/snap/o2scl/current/lib
+yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
 endif
 
@@ -106,13 +112,16 @@ else
 
 if O2SCL_OPENMP
 acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
+yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
 else
 acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir}
+yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir}
 endif
 
 endif
 
 acol_LDADD = -lo2scl_hdf -lo2scl -lgsl -lgslcblas $(RLIB)
+yanic_LDADD = -lo2scl_hdf -lo2scl -lgsl -lgslcblas $(RLIB)
 
 endif
 

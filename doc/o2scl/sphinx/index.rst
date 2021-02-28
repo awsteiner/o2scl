@@ -72,6 +72,7 @@ User's Guide
    para
    other
    lset
+   yanic
    design
    dev_guide
    license

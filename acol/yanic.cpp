@@ -42,7 +42,6 @@ using namespace o2scl;
     functions should be the same
   * Allow use of numpy.arange for uniform_grid arguments
   * Document .i format
-
   
 */
 
