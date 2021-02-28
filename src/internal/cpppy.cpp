@@ -1780,40 +1780,32 @@ int main(int argc, char *argv[]) {
     fout << endl;
 
     // Define copy() function
-    fout << "    def copy(self,src):" << endl;
+    fout << "    def __copy__(self):" << endl;
     fout << "        \"\"\"" << endl;
     fout << "        Shallow copy function for class "
          << ifc.name << " ." << endl;
     fout << "        \"\"\"" << endl;
     fout << endl;
-    fout << "        self._link=src._link" << endl;
-    fout << "        self._ptr=src._ptr" << endl;
-    fout << "        self._owner=False" << endl;
-    fout << "        return" << endl;
+    fout << "        new_obj=type(self)(self._link,self._ptr)" << endl;
+    fout << "        return new_obj" << endl;
     fout << endl;
 
     // Define deepcopy() function
     if (ifc.std_cc) {
-      fout << "    def deepcopy(self,src):" << endl;
+      fout << "    def __deepcopy__(self):" << endl;
       fout << "        \"\"\"" << endl;
       fout << "        Deep copy function for class "
            << ifc.name << " ." << endl;
       fout << "        \"\"\"" << endl;
       fout << endl;
       // Create the new object
-      fout << "        self._link=src._link" << endl;
+      fout << "        new_obj=type(self)(self._link,self._ptr)" << endl;
       fout << "        f=self._link." << dll_name << "." << ifc.ns
-           << "_create_" << underscoreify(ifc.name) << endl;
-      fout << "        f.restype=ctypes.c_void_p" << endl;
-      fout << "        f.argtypes=[]" << endl;
-      fout << "        self._ptr=f()" << endl;
-      fout << "        self._owner=True" << endl;
-      fout << "        f2=self._link." << dll_name << "." << ifc.ns
            << "_copy_" << underscoreify(ifc.name) << endl;
-      fout << "        f2.argtypes=[ctypes.c_void_p,ctypes.c_void_p]"
+      fout << "        f.argtypes=[ctypes.c_void_p,ctypes.c_void_p]"
            << endl;
-      fout << "        f2(src._ptr,self._ptr)" << endl;
-      fout << "        return" << endl;
+      fout << "        f(src._ptr,new_obj._ptr)" << endl;
+      fout << "        return new_obj" << endl;
       fout << endl;
     }
 
@@ -2039,12 +2031,12 @@ int main(int argc, char *argv[]) {
              << iff.py_name << endl;
       } else if (iff.name=="operator[]") {
         fout << "        func=self._link." << dll_name << "."
-             << ifc.ns << "_" << underscoreify(ifc.name) << "_"
-             << iff.name << endl;
-      } else {
-        fout << "        func=self._link." << dll_name << "."
              << ifc.ns << "_" << underscoreify(ifc.name) << "_getitem"
              << endl;
+      } else {
+        fout << "        func=self._link." << dll_name << "."
+             << ifc.ns << "_" << underscoreify(ifc.name) << "_"
+             << iff.name << endl;
       }
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
@@ -2174,6 +2166,22 @@ int main(int argc, char *argv[]) {
         }
       }
       fout << endl;
+
+      // For operator[] functions, __getitem__ python code was already
+      // taken care of. Here, we take care of the __setitem__ python
+      // code.
+      if (iff.name=="operator[]" && !iff.ret.is_const() &&
+          iff.ret.suffix=="&") {
+        fout << "    def __setitem__(self,n,value):" << endl;
+        fout << "        func=self._link." << dll_name << "."
+             << ifc.ns << "_" << underscoreify(ifc.name) << "_setitem"
+             << endl;
+        fout << "        func.argtypes=[ctypes.c_void_p,"
+             << "ctypes.c_size_t,ctypes.c_" << iff.ret.name << "]" << endl;
+        fout << "        func(self._ptr,n,val)" << endl;
+        fout << "        return" << endl;
+        fout << endl;
+      }
       
     }
     
