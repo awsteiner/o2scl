@@ -41,7 +41,9 @@ using namespace o2scl;
   * Simplify code duplication in parsing: reading global and member
     functions should be the same
   * Allow use of numpy.arange for uniform_grid arguments
+  * Document .i format
 
+  
 */
 
 /** \brief Convert all non-alphanumeric characters to underscores
