@@ -2030,7 +2030,7 @@ int main(int argc, char *argv[]) {
         }
       }
 
-      // Ctypes interface for function
+      // Ctypes function alias
       if (iff.overloaded) {
         fout << "        func=self._link." << dll_name << "."
              << ifc.ns << "_" << underscoreify(ifc.name) << "_"
@@ -2044,6 +2044,8 @@ int main(int argc, char *argv[]) {
              << ifc.ns << "_" << underscoreify(ifc.name) << "_"
              << iff.name << endl;
       }
+      
+      // Ctypes function return type
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
           iff.ret.suffix=="&") {
@@ -2054,7 +2056,7 @@ int main(int argc, char *argv[]) {
         fout << "        func.restype=ctypes.c_void_p" << endl;
       } else if (iff.ret.name!="void") {
         if (iff.ret.name=="std::string") {
-          fout << "        func.restype=ctypes.c_char_p" << endl;
+          fout << "        func.restype=ctypes.c_void_p" << endl;
         } else if (iff.name=="operator[]") {
           fout << "        func.restype=ctypes.c_" << iff.ret.name << endl;
         } else if (iff.ret.suffix=="&") {
@@ -2063,6 +2065,8 @@ int main(int argc, char *argv[]) {
           fout << "        func.restype=ctypes.c_" << iff.ret.name << endl;
         }
       }
+
+      // Ctypes function argument types
       fout << "        func.argtypes=[ctypes.c_void_p";
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.suffix=="&") {
@@ -2089,7 +2093,7 @@ int main(int argc, char *argv[]) {
       }
       fout << "]" << endl;
 
-      // Call C++ wrapper function
+      // Python code to call ctypes function
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
           iff.ret.suffix=="&") {
@@ -2118,6 +2122,28 @@ int main(int argc, char *argv[]) {
         fout << "        sp=shared_ptr_"+tmps+
           "(self._link,func(self._ptr))" << endl;
         
+      } else if (iff.ret.name=="std::string" || iff.ret.name=="string") {
+        
+        fout << "        ret=func(self._ptr";
+        for(size_t k=0;k<iff.args.size();k++) {
+          if (iff.args[k].ift.suffix=="&") {
+            if (iff.args[k].ift.name=="bool" ||
+                iff.args[k].ift.name=="int" ||
+                iff.args[k].ift.name=="size_t" ||
+                iff.args[k].ift.name=="double") {
+              fout << "," << iff.args[k].name;
+            } else {
+              fout << "," << iff.args[k].name << "._ptr";
+            }
+          } else if (iff.args[k].ift.name=="std::string") {
+            fout << "," << iff.args[k].name << "_";
+          } else {
+            fout << "," << iff.args[k].name;
+          }
+        }
+        fout << ")" << endl;
+        fout << "        strt=std_string(self._link,ret)" << endl;
+        fout << "        strt._owner=True" << endl;
       } else {
         
         if (iff.ret.name=="void") {
@@ -2143,13 +2169,16 @@ int main(int argc, char *argv[]) {
         }
         fout << ")" << endl;
       }
-      
+
+      // Python code to set up the return value
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
           iff.ret.suffix=="&") {
         fout << "        ret=numpy.ctypeslib.as_array(ptr_,shape=(n_.value,))"
              << endl;
         fout << "        return ret" << endl;
+      } else if (iff.ret.name=="std::string" || iff.ret.name=="string") {
+        fout << "        return strt" << endl;
       } else if (iff.ret.suffix=="&" && iff.name!="operator[]") {
         std::string tmps=iff.ret.name;
         size_t len=iff.ret.name.length();
