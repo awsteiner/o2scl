@@ -2,9 +2,7 @@
 # 
 namespace o2scl
 py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``%name%``,
-| See
-| https://neutronstars.utk.edu/code/o2scl-dev/html/class/%name%.html .
+| Python interface for C++ class ``%name%``.
 dll_name o2scl
 rst_header |
 | .. _base:
@@ -52,13 +50,18 @@ class std::string
 |     return length()
 | 
 | def init_bytes(self,s):
-|     # Initialize the string from a Python bytes object
+|     """
+|     Initialize the string from a Python bytes object
+|     """
 |     self.resize(len(s))
 |     for i in range(0,len(s)):
 |         self.__setitem__(i,s[i])
 |     return
 |
 | def to_bytes(self):
+|     """
+|     Copy the string to a Python bytes object
+|     """
 |     ret=b''
 |     for i in range(0,self.length()):
 |         ret=ret+self.__getitem__(i)
@@ -103,6 +106,9 @@ class vector<int>
 |     return size()
 |
 | def to_numpy(self):
+|     """
+|     Copy the string to a numpy array
+|     """
 |     ret=numpy.zeros((self.size()),dtype=numpy.int32_t)
 |     for i in range(0,self.size()):
 |         ret[i]=self.__getitem__(i)
@@ -119,9 +125,15 @@ class vector<size_t>
   - size_t n
 - extra_py |
 | def __len__(self):
+|     """
+|     Test
+|     """
 |     return size()
 |
 | def to_numpy(self):
+|     """
+|     Copy the string to a numpy array
+|     """
 |     ret=numpy.zeros((self.size()),dtype=numpy.uint64_t)
 |     for i in range(0,self.size()):
 |         ret[i]=self.__getitem__(i)
@@ -139,6 +151,15 @@ class vector<size_t>
 #- extra_py |
 #| def __len__(self):
 #|     return size()
+#
+# -------------------------------------------------------------------
+#
+# Set the python class documentation for the following classes
+# 
+py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``%name%``,
+| see
+| https://neutronstars.utk.edu/code/o2scl-dev/html/class/%name%.html .
 # 
 # Class lib_settings_class
 #
@@ -195,6 +216,10 @@ class lib_settings_class
 # Class table
 #
 class table<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``table``,
+| see
+| https://neutronstars.utk.edu/code/o2scl-dev/html/class/table.html .
 - py_name table
 - std_cc                             
 - function operator[]
@@ -444,6 +469,10 @@ class table<>
 # Class table_units<>
 #
 class table_units<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``table_units``,
+| see
+| https://neutronstars.utk.edu/code/o2scl-dev/html/class/table_units.html .
 - parent table<>
 - std_cc                             
 - py_name table_units
@@ -474,6 +503,10 @@ shared_ptr table_units<>
 # Class uniform_grid
 #
 class uniform_grid<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``uniform_grid``,
+| see
+| https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid.html .
 - py_name uniform_grid                             
 - function get_nbins
   - size_t                             
@@ -494,6 +527,10 @@ class uniform_grid<>
 # Class uniform_grid_end
 #
 class uniform_grid_end<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_end``,
+| see
+| https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_end.html .
 - py_name uniform_grid_end                             
 - parent uniform_grid<>
 - no_def_cons                             
@@ -505,6 +542,10 @@ class uniform_grid_end<>
 # Class uniform_grid_width
 #
 class uniform_grid_width<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_width``,
+| see
+| https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_width.html .
 - py_name uniform_grid_width
 - parent uniform_grid<>
 - no_def_cons                             
@@ -516,6 +557,10 @@ class uniform_grid_width<>
 # Class uniform_grid_end_width
 #
 class uniform_grid_end_width<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_end_width``,
+| see
+| https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_end_width.html .
 - py_name uniform_grid_end_width                             
 - parent uniform_grid<>
 - no_def_cons                             
@@ -527,6 +572,10 @@ class uniform_grid_end_width<>
 # Class uniform_grid_log_end
 #
 class uniform_grid_log_end<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_log_end``,
+| see
+| https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_log_end.html .
 - py_name uniform_grid_log_end
 - parent uniform_grid<>
 - no_def_cons                             
@@ -538,6 +587,10 @@ class uniform_grid_log_end<>
 # Class uniform_grid_log_width
 #
 class uniform_grid_log_width<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_log_width``,
+| see
+| https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_log_width.html .
 - py_name uniform_grid_log_width
 - parent uniform_grid<>
 - no_def_cons                             
@@ -549,6 +602,10 @@ class uniform_grid_log_width<>
 # Class uniform_grid_log_end_width
 #
 class uniform_grid_log_end_width<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_log_end_width``,
+| see
+| https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_log_end_width.html .
 - py_name uniform_grid_log_end_width
 - parent uniform_grid<>
 - no_def_cons                             
@@ -593,6 +650,10 @@ class table3d
 # Class tensor
 #
 class tensor<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``tensor``,
+| see
+| https://neutronstars.utk.edu/code/o2scl-dev/html/class/tensor.html .
 - std_cc                             
 - py_name tensor
 - function clear
@@ -618,6 +679,10 @@ class find_constants
 # rename it to 'frm' instead
 #
 class convert_units<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``convert_units``,
+| see
+| https://neutronstars.utk.edu/code/o2scl-dev/html/class/convert_units.html .
 - py_name convert_units
 - function convert
   - double

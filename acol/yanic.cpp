@@ -608,6 +608,7 @@ int main(int argc, char *argv[]) {
       if_class ifc;
       ifc.name=vs[1];
       ifc.ns=ns;
+      ifc.py_class_doc=py_class_doc;
 
       // Determine if the class is abstract
       if (vs.size()>=3 && vs[2]=="abstract") {
@@ -1566,7 +1567,11 @@ int main(int argc, char *argv[]) {
             fout << iff.args[k].ift.name << " " << iff.args[k].name;
           }
         } else if (iff.args[k].ift.suffix=="&") {
-          fout << "void *ptr_" << iff.args[k].name;
+          if (iff.args[k].ift.name=="std::string") {
+            fout << "void *&ptr_" << iff.args[k].name;
+          } else {
+            fout << "void *ptr_" << iff.args[k].name;
+          }
         }
         if (k!=iff.args.size()-1) {
           fout << ", ";
@@ -1582,10 +1587,16 @@ int main(int argc, char *argv[]) {
         // Pointer assignments for arguments
         for(size_t k=0;k<iff.args.size();k++) {
           if (iff.args[k].ift.suffix=="&") {
-            fout << "  " << iff.args[k].ift.name << " *"
-                 << iff.args[k].name << "=("
-                 << iff.args[k].ift.name << " *)ptr_" << iff.args[k].name
-                 << ";" << endl;
+            if (iff.args[k].ift.name=="std::string") {
+              fout << "  std::string *"
+                   << iff.args[k].name
+                   << "=new std::string;" << endl;
+            } else {
+              fout << "  " << iff.args[k].ift.name << " *"
+                   << iff.args[k].name << "=("
+                   << iff.args[k].ift.name << " *)ptr_" << iff.args[k].name
+                   << ";" << endl;
+            }
           }
         }
         
@@ -1594,11 +1605,18 @@ int main(int argc, char *argv[]) {
         if (iff.ret.name=="void") {
           
           fout << "  " << iff.name << "(";
+          
+          vector<std::string> addl_code;
+
           for(size_t k=0;k<iff.args.size();k++) {
             if (iff.args[k].ift.suffix=="") {
               fout << iff.args[k].name;
             } else if (iff.args[k].ift.suffix=="&") {
               fout << "*" << iff.args[k].name;
+              if (iff.args[k].ift.name=="std::string") {
+                addl_code.push_back(((string)"ptr_")+iff.args[k].name+
+                                    "=(void *)"+iff.args[k].name+";");
+              }
             }
             if (k!=iff.args.size()-1) {
               fout << ",";
@@ -1606,11 +1624,16 @@ int main(int argc, char *argv[]) {
           }
           fout << ");" << endl;
           
+          for(size_t k=0;k<addl_code.size();k++) {
+            fout << "  " << addl_code[k] << endl;
+          }
+
           fout << "  return;" << endl;
           
         } else {
           
           fout << "  " << iff.ret.name << " ret=ptr->" << iff.name << "(";
+
           for(size_t k=0;k<iff.args.size();k++) {
             if (iff.args[k].ift.suffix=="") {
               fout << iff.args[k].name;
@@ -1622,15 +1645,8 @@ int main(int argc, char *argv[]) {
             }
           }
           fout << ");" << endl;
-          
-          if (iff.ret.name=="std::string") {
-            cout << "Here." << endl;
-            exit(-1);
-            //fout << "  python_temp_string=ret;" << endl;
-            //fout << "  return python_temp_string.c_str();" << endl;
-          } else {
-            fout << "  return ret;" << endl;
-          }
+
+          fout << "  return ret;" << endl;
         }
         fout << "}" << endl;
         
@@ -1995,9 +2011,12 @@ int main(int argc, char *argv[]) {
       // Depending on return type, set return document string
       // and return python code
       std::string return_docs, restype_string;
-      if ((iff.ret.name=="vector<double>" ||
-           iff.ret.name=="std::vector<double>") &&
-          iff.ret.suffix=="&") {
+      if (iff.name=="operator[]") {
+        return_docs="";
+        restype_string="ctypes.c_"+iff.ret.name;
+      } else if ((iff.ret.name=="vector<double>" ||
+                  iff.ret.name=="std::vector<double>") &&
+                 iff.ret.suffix=="&") {
         return_docs="``numpy`` array";
         restype_string="";
       } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
@@ -2016,7 +2035,9 @@ int main(int argc, char *argv[]) {
       }
 
       // Output return value documentation
-      fout << "        | Returns: " << return_docs << endl;
+      if (return_docs.length()>0) {
+        fout << "        | Returns: " << return_docs << endl;
+      }
 
       // End of member function documentation
       fout << "        \"\"\"" << endl;
@@ -2045,25 +2066,17 @@ int main(int argc, char *argv[]) {
              << iff.name << endl;
       }
       
-      // Ctypes function return type
+      // Additional code for returning vector<double> objects
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
           iff.ret.suffix=="&") {
         fout << "        n_=ctypes.c_int(0)" << endl;
         fout << "        ptr_=ctypes.POINTER(ctypes.c_double)()" << endl;
-      } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
-                 iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
-        fout << "        func.restype=ctypes.c_void_p" << endl;
-      } else if (iff.ret.name!="void") {
-        if (iff.ret.name=="std::string") {
-          fout << "        func.restype=ctypes.c_void_p" << endl;
-        } else if (iff.name=="operator[]") {
-          fout << "        func.restype=ctypes.c_" << iff.ret.name << endl;
-        } else if (iff.ret.suffix=="&") {
-          fout << "        func.restype=ctypes.c_void_p" << endl;
-        } else {
-          fout << "        func.restype=ctypes.c_" << iff.ret.name << endl;
-        }
+      }
+
+      // Specify C interface return type
+      if (restype_string.length()>0) {
+        fout << "        func.restype=" << restype_string << endl;
       }
 
       // Ctypes function argument types
@@ -2097,7 +2110,9 @@ int main(int argc, char *argv[]) {
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
           iff.ret.suffix=="&") {
+        
         fout << "        func(self._ptr";
+        
         for(size_t k=0;k<iff.args.size();k++) {
           if (iff.args[k].ift.suffix=="&") {
             fout << "," << iff.args[k].name << "._ptr";
@@ -2112,14 +2127,7 @@ int main(int argc, char *argv[]) {
       } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
                  iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
         
-        size_t len=iff.ret.name.length();
-        std::string tmps=iff.ret.name;
-        // Manually remove '<>' from the typename if necessary
-        if (len>2 && iff.ret.name[len-2]=='<' &&
-            iff.ret.name[len-1]=='>') {
-          tmps=iff.ret.name.substr(0,len-2);
-        }
-        fout << "        sp=shared_ptr_"+tmps+
+        fout << "        sp=shared_ptr_"+reformat_ret_type+
           "(self._link,func(self._ptr))" << endl;
         
       } else if (iff.ret.name=="std::string" || iff.ret.name=="string") {
@@ -2180,15 +2188,8 @@ int main(int argc, char *argv[]) {
       } else if (iff.ret.name=="std::string" || iff.ret.name=="string") {
         fout << "        return strt" << endl;
       } else if (iff.ret.suffix=="&" && iff.name!="operator[]") {
-        std::string tmps=iff.ret.name;
-        size_t len=iff.ret.name.length();
-        // Manually remove '<>' from the typename if necessary
-        if (len>2 && iff.ret.name[len-2]=='<' &&
-            iff.ret.name[len-1]=='>') {
-          tmps=iff.ret.name.substr(0,len-2);
-        }
         fout << "        ret2=" 
-             << underscoreify(tmps) << "(self._link,ret)"
+             << underscoreify(reformat_ret_type) << "(self._link,ret)"
              << endl;
         fout << "        return ret2" << endl;
       } else {
@@ -2219,8 +2220,11 @@ int main(int argc, char *argv[]) {
         fout << "        return" << endl;
         fout << endl;
       }
-      
+
+      // End of python code generation for this method
     }
+
+    // Python code generation for additional constructors
     
     for(size_t j=0;j<ifc.cons.size();j++) {
       
@@ -2302,6 +2306,10 @@ int main(int argc, char *argv[]) {
       fout << "class shared_ptr_" << ifsp.name << "("
            << ifsp.name << "):" << endl;
     }
+    fout << "    \"\"\"" << endl;
+    fout << "    Python interface for a shared pointer to a class of "
+         << "type ``" << ifsp.name << "``" << endl;
+    fout << "    \"\"\"" << endl;
     
     fout << endl;
     
@@ -2315,8 +2323,13 @@ int main(int argc, char *argv[]) {
     // Define __init__() function
     fout << "    def __init__(self,link,shared_ptr=0):" << endl;
     fout << "        \"\"\"" << endl;
-    fout << "        Init function for shared_ptr_"
-         << ifsp.name << " ." << endl;
+    if (ifsp.py_name!="") {
+      fout << "        Init function for shared_ptr_"
+           << ifsp.py_name << " ." << endl;
+    } else {
+      fout << "        Init function for shared_ptr_"
+           << ifsp.name << " ." << endl;
+    }
     fout << "        \"\"\"" << endl;
     fout << endl;
     fout << "        self._link=link" << endl;
@@ -2339,8 +2352,13 @@ int main(int argc, char *argv[]) {
     // Define __del__() function
     fout << "    def __del__(self):" << endl;
     fout << "        \"\"\"" << endl;
-    fout << "        Delete function for shared_ptr_"
-         << ifsp.name << " ." << endl;
+    if (ifsp.py_name!="") {
+      fout << "        Delete function for shared_ptr_"
+           << ifsp.py_name << " ." << endl;
+    } else {
+      fout << "        Delete function for shared_ptr_"
+           << ifsp.name << " ." << endl;
+    }
     fout << "        \"\"\"" << endl;
     fout << endl;
     fout << "        f=self._link." << dll_name << "." << ifsp.ns
@@ -2432,8 +2450,13 @@ int main(int argc, char *argv[]) {
     // Perform necessary conversions
     for(size_t k=0;k<iff.args.size();k++) {
       if (iff.args[k].ift.name=="std::string") {
-        fout << "    " << iff.args[k].name << "_=ctypes.c_char_p(force_bytes("
-             << iff.args[k].name << "))" << endl;
+        if (iff.args[k].ift.suffix=="&") {
+          fout << "    " << iff.args[k].name << ".__del__()" << endl;
+        } else {
+          fout << "    " << iff.args[k].name
+               << "_=ctypes.c_char_p(force_bytes("
+               << iff.args[k].name << "))" << endl;
+        }
       }
     }
       
@@ -2455,7 +2478,11 @@ int main(int argc, char *argv[]) {
     fout << "    func.argtypes=[";
     for(size_t k=0;k<iff.args.size();k++) {
       if (iff.args[k].ift.suffix=="&") {
-        fout << "ctypes.c_void_p";
+        if (iff.args[k].ift.name=="std::string") {
+          fout << "ctypes.POINTER(ctypes.c_void_p)";
+        } else {
+          fout << "ctypes.c_void_p";
+        }
       } else if (iff.args[k].ift.name=="std::string") {
         fout << "ctypes.c_char_p";
       } else {
@@ -2475,7 +2502,11 @@ int main(int argc, char *argv[]) {
     }
     for(size_t k=0;k<iff.args.size();k++) {
       if (iff.args[k].ift.suffix=="&") {
-        fout << iff.args[k].name << "._ptr";
+        if (iff.args[k].ift.name=="std::string") {
+          fout << "ctypes.byref(" << iff.args[k].name << "._ptr)";
+        } else {
+          fout << iff.args[k].name << "._ptr";
+        }
       } else if (iff.args[k].ift.name=="std::string") {
         fout << iff.args[k].name << "_";
       } else {
@@ -2484,6 +2515,14 @@ int main(int argc, char *argv[]) {
       if (k!=iff.args.size()-1) fout << ",";
     }
     fout << ")" << endl;
+
+    for(size_t k=0;k<iff.args.size();k++) {
+      if (iff.args[k].ift.suffix=="&") {
+        if (iff.args[k].ift.name=="std::string") {
+          fout << "    " << iff.args[k].name << "._owner=True" << endl;
+        }
+      }
+    }
     
     // Return
     if (iff.ret.name=="void") {
@@ -2532,8 +2571,18 @@ int main(int argc, char *argv[]) {
       fout2 << ".. autoclass:: o2sclpy." << ifc.py_name << endl;
     }
     fout2 << "        :members:" << endl;
-    fout2 << "        :undoc-members:\n" << endl;
-    fout2 << "        .. automethod:: __init__\n" << endl;
+    fout2 << "        :undoc-members:" << endl;
+    fout2 << endl;
+    fout2 << "        .. automethod:: __init__" << endl;
+    fout2 << "        .. automethod:: __del__" << endl;
+    fout2 << "        .. automethod:: __copy__" << endl;
+    for(size_t k=0;k<ifc.methods.size();k++) {
+      if (ifc.methods[k].name=="operator[]") {
+        fout2 << "        .. automethod:: __getitem__" << endl;
+        k=ifc.methods.size();
+      }
+    }
+    fout2 << endl;
   }
 
   for(size_t i=0;i<sps.size();i++) {
@@ -2566,6 +2615,9 @@ int main(int argc, char *argv[]) {
       fout2 << ".. autoclass:: o2sclpy.shared_ptr_" << tmps << endl;
       fout2 << "        :members:" << endl;
       fout2 << "        :undoc-members:\n" << endl;
+      fout2 << "        .. automethod:: __init__" << endl;
+      fout2 << "        .. automethod:: __del__" << endl;
+      fout2 << endl;
     } else {
       /*
       size_t len=ifsp.py_name.length();
@@ -2587,19 +2639,28 @@ int main(int argc, char *argv[]) {
   for(size_t j=0;j<functions.size();j++) {
     
     if_func &iff=functions[j];
-    
+
     size_t len=9;
     fout2 << "Function ";
-    
-    fout2 << iff.name << endl;
-    len+=iff.name.length();
+
+    if (iff.overloaded) {
+      fout2 << iff.py_name << endl;
+      len+=iff.py_name.length();
+    } else {
+      fout2 << iff.name << endl;
+      len+=iff.name.length();
+    }
     for(size_t kk=0;kk<len;kk++) {
       fout2 << "-";
     }
     fout2 << "\n" << endl;
     
     // Function header
-    fout2 << ".. autofunction:: o2sclpy." << iff.name << "(link,";
+    if (iff.overloaded) {
+      fout2 << ".. autofunction:: o2sclpy." << iff.py_name << "(link,";
+    } else {
+      fout2 << ".. autofunction:: o2sclpy." << iff.name << "(link,";
+    }      
     for(size_t k=0;k<iff.args.size();k++) {
       fout2 << iff.args[k].name;
       if (k!=iff.args.size()-1) {

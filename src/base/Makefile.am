@@ -303,7 +303,7 @@ am__libo2scl_base_la_SOURCES_DIST = $(BASE_SRCS)
 # ------------------------------------------------------------
 
 interface: empty
-	yanic base.i base_python ~/wcs/o2sclpy/o2sclpy/base \
+	../../acol/yanic base.i base_python ~/wcs/o2sclpy/o2sclpy/base \
 		~/wcs/o2sclpy/doc/base | tee base_python.yanic.out
 
 empty:

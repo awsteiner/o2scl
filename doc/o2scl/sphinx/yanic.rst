@@ -81,7 +81,20 @@ Header items
 
 Functions
 ---------
-    
+
+- Function definitions::
+
+    function <function name>
+    - {return type}
+    - py_name <python name>      
+    - {parameter type} <parameter name>
+    ...
+
+  For each function, an ``extern C`` wrapper is created with the
+  suffix ``_wrapper`` and then a python function is created to call
+  that wrapper. The python name is optional, but when present must
+  be after the return type and before the variable list.
+
 Classes
 -------
     
