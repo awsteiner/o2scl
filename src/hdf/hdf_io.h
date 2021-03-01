@@ -52,7 +52,7 @@ namespace o2scl_hdf {
   template<class vec_t, class mat_t> 
     void hdf_input(hdf_file &hf,
 		   o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
-		   std::string name) {
+		   std::string &name) {
       
     // If no name specified, find name of first group of specified type
     if (name.length()==0) {
@@ -145,7 +145,7 @@ namespace o2scl_hdf {
       \endcomment
   */
   template<class vec_t> 
-    void hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string name) {
+    void hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string &name) {
       
     // If no name specified, find name of first group of specified type
     if (name.length()==0) {
@@ -270,7 +270,7 @@ namespace o2scl_hdf {
   */
   template<class vec_t> 
     void hdf_input(hdf_file &hf, o2scl::table_units<vec_t> &t, 
-		   std::string name) {
+		   std::string &name) {
       
     // If no name specified, find name of first group of specified type
     if (name.length()==0) {
@@ -335,55 +335,55 @@ namespace o2scl_hdf {
   /// Output a \ref o2scl::hist object to a \ref hdf_file
   void hdf_output(hdf_file &hf, o2scl::hist &h, std::string name);
   /// Input a \ref o2scl::hist object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::hist &h, std::string name="");
+  void hdf_input(hdf_file &hf, o2scl::hist &h, std::string &name);
   /// Output a \ref o2scl::hist_2d object to a \ref hdf_file
   void hdf_output(hdf_file &hf, const o2scl::hist_2d &h, std::string name);
   /// Input a \ref o2scl::hist_2d object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::hist_2d &h, std::string name="");
+  void hdf_input(hdf_file &hf, o2scl::hist_2d &h, std::string &name);
   /// Output a \ref o2scl::table3d object to a \ref hdf_file
   void hdf_output(hdf_file &hf, const o2scl::table3d &h, std::string name);
   /// Input a \ref o2scl::table3d object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::table3d &h, std::string name="");
+  void hdf_input(hdf_file &hf, o2scl::table3d &h, std::string &name);
   /// Output a \ref o2scl::expval_scalar object to a \ref hdf_file
   void hdf_output(hdf_file &hf, o2scl::expval_scalar &h,
 		  std::string name);
   /// Input a \ref o2scl::expval_scalar object from a \ref hdf_file
   void hdf_input(hdf_file &hf, o2scl::expval_scalar &h,
-		 std::string name="");
+		 std::string &name);
   /// Output a \ref o2scl::expval_vector object to a \ref hdf_file
   void hdf_output(hdf_file &hf, o2scl::expval_vector &h,
 		  std::string name);
   /// Input a \ref o2scl::expval_vector object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::expval_vector &h, std::string name="");
+  void hdf_input(hdf_file &hf, o2scl::expval_vector &h, std::string &name);
   /// Output a \ref o2scl::expval_matrix object to a \ref hdf_file
   void hdf_output(hdf_file &hf, o2scl::expval_matrix &h,
 		  std::string name);
   /// Input a \ref o2scl::expval_matrix object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::expval_matrix &h, std::string name="");
+  void hdf_input(hdf_file &hf, o2scl::expval_matrix &h, std::string &name);
   /// Output a \ref o2scl::uniform_grid object to a \ref hdf_file
   void hdf_output(hdf_file &hf, o2scl::uniform_grid<double> &h, 
 		  std::string name);
   /// Input a \ref o2scl::uniform_grid object from a \ref hdf_file
   void hdf_input(hdf_file &hf, o2scl::uniform_grid<double> &h, 
-		 std::string name="");
+		 std::string &name);
   /// Output a vector of \ref o2scl::contour_line objects to a \ref hdf_file
   void hdf_output(hdf_file &hf, const std::vector<o2scl::contour_line> &cl, 
 		  std::string name);
   /// Input a vector of \ref o2scl::contour_line objects from a \ref hdf_file
   void hdf_input(hdf_file &hf, std::vector<o2scl::contour_line> &cl, 
-		 std::string name="");
+		 std::string &name);
   /// Output a vector of \ref o2scl::edge_crossings objects to a \ref hdf_file
   void hdf_output(hdf_file &hf, const std::vector<o2scl::edge_crossings> &ec, 
 		  std::string name);
   /// Input a vector of \ref o2scl::edge_crossings objects from a \ref hdf_file
   void hdf_input(hdf_file &hf, std::vector<o2scl::edge_crossings> &ec, 
-		 std::string name="");
+		 std::string &name);
   /// Output a \ref o2scl::tensor_grid object to a \ref hdf_file
   void hdf_output(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
 		  std::vector<size_t> > &t, std::string name);
   /// Input a \ref o2scl::tensor_grid object from a \ref hdf_file
   void hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
-		 std::vector<size_t> > &t, std::string name="");
+		 std::vector<size_t> > &t, std::string &name);
 
   /** \brief A value specified by a string
       

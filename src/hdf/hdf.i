@@ -48,7 +48,7 @@ function hdf_input
 - py_name hdf_input_table
 - hdf_file &hf
 - table<> &t
-- std::string name  
+- std::string &name  
 function hdf_output
 - void                             
 - py_name hdf_output_table
@@ -60,7 +60,7 @@ function hdf_input
 - py_name hdf_input_table_units
 - hdf_file &hf
 - table_units<> &t
-- std::string name  
+- std::string &name  
 function hdf_output
 - void                             
 - py_name hdf_output_table_units

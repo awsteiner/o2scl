@@ -3507,6 +3507,8 @@ herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name,
     hf.close_group(group);
     hf.set_current_id(top);
 
+    std::string name2=name;
+    
     // An o2scl group
     if (otype==((string)"string[]")) {
       vector<string> s;
@@ -3514,15 +3516,15 @@ herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name,
       hf2.sets_vec(name,s);
     } else if (otype==((string)"table_units")) {
       table_units<> t;
-      hdf_input(hf,t,name);
+      hdf_input(hf,t,name2);
       hdf_output(hf2,t,name);
     } else if (otype==((string)"table")) {
       table<> t;
-      hdf_input(hf,t,name);
+      hdf_input(hf,t,name2);
       hdf_output(hf2,t,name);
     } else if (otype==((string)"uniform_grid<double>")) {
       uniform_grid<double> ug;
-      hdf_input(hf,ug,name);
+      hdf_input(hf,ug,name2);
       hdf_output(hf2,ug,name);
     } else if (otype==((string)"tensor")) {
       tensor<> t;
@@ -3538,19 +3540,19 @@ herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name,
       hf2.set_szt_ten(name,t);
     } else if (otype==((string)"vector<contour_line>")) {
       vector<contour_line> vcl;
-      hdf_input(hf,vcl,name);
+      hdf_input(hf,vcl,name2);
       hdf_output(hf2,vcl,name);
     } else if (otype==((string)"hist")) {
       hist h;
-      hdf_input(hf,h,name);
+      hdf_input(hf,h,name2);
       hdf_output(hf2,h,name);
     } else if (otype==((string)"hist_2d")) {
       hist_2d h;
-      hdf_input(hf,h,name);
+      hdf_input(hf,h,name2);
       hdf_output(hf2,((const hist_2d &)h),name);
     } else if (otype==((string)"tensor_grid")) {
       tensor_grid<> tg;
-      hdf_input(hf,tg,name);
+      hdf_input(hf,tg,name2);
       hdf_output(hf2,tg,name);
     } else {
       cout << "Non O2scl group \"" << name << "\"." << endl;

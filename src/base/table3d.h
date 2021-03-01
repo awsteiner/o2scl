@@ -62,7 +62,7 @@ namespace o2scl {
 // Forward definition of HDF I/O to extend friendship
 namespace o2scl_hdf { 
   class hdf_file; 
-  void hdf_input(hdf_file &hf, o2scl::table3d &t, std::string name);
+  void hdf_input(hdf_file &hf, o2scl::table3d &t, std::string &name);
   void hdf_output(hdf_file &hf, o2scl::table3d &t, std::string name);
 }
 
@@ -646,7 +646,7 @@ namespace o2scl {
 				      std::string name);
     
     friend void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, table3d &t, 
-				     std::string name);
+				     std::string &name);
     
     // --------------------------------------------------------
     /// \name Contour lines method

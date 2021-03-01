@@ -173,7 +173,8 @@ int main(void) {
     hdf_output(hf,(const table3d &)bt,"table3d_test");
     hf.close();
     hf.open("table3d.o2");
-    hdf_input(hf,bt2,"table3d_test");
+    std::string name_temp="table3d_test";
+    hdf_input(hf,bt2,name_temp);
     hf.close();
 
     t.test_gen(bt.get_nx()==bt2.get_nx(),"nx");

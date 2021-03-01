@@ -481,7 +481,7 @@ void o2scl_hdf::hdf_output(hdf_file &hf, hist &h, std::string name) {
   return;
 }
 
-void o2scl_hdf::hdf_input(hdf_file &hf, hist &h, std::string name) {
+void o2scl_hdf::hdf_input(hdf_file &hf, hist &h, std::string &name) {
   
   // If no name specified, find name of first group of specified type
   if (name.length()==0) {
@@ -612,7 +612,7 @@ void o2scl_hdf::hdf_output(hdf_file &hf, const hist_2d &h, std::string name) {
   return;
 }
 
-void o2scl_hdf::hdf_input(hdf_file &hf, hist_2d &h, std::string name) {
+void o2scl_hdf::hdf_input(hdf_file &hf, hist_2d &h, std::string &name) {
 
   h.clear();
 
@@ -779,7 +779,7 @@ void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, const table3d &t,
 }
 
 void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, table3d &t, 
-			  std::string name) {
+			  std::string &name) {
 
   typedef std::vector<double> ubvector;
 
@@ -1132,7 +1132,7 @@ void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf,
 }
 
 void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug,
-			  std::string hdf_name) {
+			  std::string &hdf_name) {
   
   // If no name specified, find name of first group of specified type
   if (hdf_name.length()==0) {
@@ -1218,7 +1218,7 @@ void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf,
 }
 
 void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, vector<contour_line> &cl,
-			  std::string hdf_name) {
+			  std::string &hdf_name) {
   
   // If no name specified, find name of first group of specified type
   if (hdf_name.length()==0) {
@@ -1317,7 +1317,7 @@ void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf,
 }
 
 void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, vector<edge_crossings> &ec,
-			  std::string hdf_name) {
+			  std::string &hdf_name) {
   
   // If no name specified, find name of first group of specified type
   if (hdf_name.length()==0) {
@@ -1428,7 +1428,7 @@ void o2scl_hdf::hdf_output(hdf_file &hf,
 }
   
 void o2scl_hdf::hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
-			  std::vector<size_t>> &t, std::string name) {
+			  std::vector<size_t>> &t, std::string &name) {
     
   // If no name specified, find name of first group of specified type
   if (name.length()==0) {

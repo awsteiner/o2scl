@@ -1238,8 +1238,10 @@ void eos_tov_interp::ngl13_low_dens_eos2(double S, double L, double nt,
   hdf_file hf;
   string name;
   hf.open(fname);
-  hdf_input(hf,nlow,((string)"S")+itos(iSlow));
-  hdf_input(hf,nhigh,((string)"S")+itos(iShigh));
+  string name_low=((string)"S")+itos(iSlow);
+  string name_high=((string)"S")+itos(iShigh);
+  hdf_input(hf,nlow,name_low);
+  hdf_input(hf,nhigh,name_high);
   hf.close();
 
   nlow.set_interp_type(itp_linear);
