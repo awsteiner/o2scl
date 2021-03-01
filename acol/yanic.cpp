@@ -1344,15 +1344,17 @@ int main(int argc, char *argv[]) {
           } else {
             // If the function returns a reference, return a pointer
             // instead
-            if (iff.ret.suffix=="&") {
-              fout << "  " << iff.ret.prefix << " " << iff.ret.name
-                   << " *ret=&ptr->" << iff.name << "(";
-            } else if (iff.ret.suffix=="*") {
-              fout << "  " << iff.ret.prefix << " " << iff.ret.name
-                   << " *ret=ptr->" << iff.name << "(";
+            if (iff.ret.prefix.length()>0) {
+              fout << "  " << iff.ret.prefix << " ";
             } else {
-              fout << "  " << iff.ret.prefix << " " << iff.ret.name
-                   << " ret=ptr->" << iff.name << "(";
+              fout << "  ";
+            }
+            if (iff.ret.suffix=="&") {
+              fout << iff.ret.name << " *ret=&ptr->" << iff.name << "(";
+            } else if (iff.ret.suffix=="*") {
+              fout << iff.ret.name << " *ret=ptr->" << iff.name << "(";
+            } else {
+              fout << iff.ret.name << " ret=ptr->" << iff.name << "(";
             }
           }
           
@@ -2012,8 +2014,15 @@ int main(int argc, char *argv[]) {
       // and return python code
       std::string return_docs, restype_string;
       if (iff.name=="operator[]") {
-        return_docs="";
-        restype_string="ctypes.c_"+iff.ret.name;
+        if ((iff.ret.name!="vector<double>" &&
+             iff.ret.name!="std::vector<double>") ||
+            iff.ret.suffix!="&") {
+          return_docs="";
+          restype_string="ctypes.c_"+iff.ret.name;
+        } else if (iff.ret.suffix=="&") {
+          return_docs=((string)":class:`")+reformat_ret_type+"` object";
+          restype_string="ctypes.c_void_p";
+        }
       } else if ((iff.ret.name=="vector<double>" ||
                   iff.ret.name=="std::vector<double>") &&
                  iff.ret.suffix=="&") {
@@ -2022,13 +2031,13 @@ int main(int argc, char *argv[]) {
       } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
                  iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
         return_docs=((string)":class:`shared_ptr_")+reformat_ret_type+"`.";
-        restype_string=="ctypes.c_void_p";
+        restype_string="ctypes.c_void_p";
       } else if (iff.ret.suffix=="&") {
         return_docs=((string)":class:`")+reformat_ret_type+"` object";
-        restype_string=="ctypes.c_void_p";
+        restype_string="ctypes.c_void_p";
       } else if (iff.ret.name=="std::string") {
         return_docs="std_string object";
-        restype_string=="ctypes.c_void_p";
+        restype_string="ctypes.c_void_p";
       } else if (iff.ret.name!="void") {
         return_docs=((string)"``ctypes.c_")+reformat_ret_type+"`` object";
         restype_string=((string)"ctypes.c_")+reformat_ret_type;

@@ -38,7 +38,7 @@ void o2scl_free_std__string(void *vptr) {
 
 size_t o2scl_std__string_length(void *vptr) {
   std::string *ptr=(std::string *)vptr;
-   size_t ret=ptr->length();
+  size_t ret=ptr->length();
   return ret;
 }
 
@@ -79,7 +79,7 @@ void o2scl_std__vector_double__resize(void *vptr, size_t n) {
 
 size_t o2scl_std__vector_double__size(void *vptr) {
   std::vector<double> *ptr=(std::vector<double> *)vptr;
-   size_t ret=ptr->size();
+  size_t ret=ptr->size();
   return ret;
 }
 
@@ -114,7 +114,7 @@ void o2scl_vector_int__resize(void *vptr, size_t n) {
 
 size_t o2scl_vector_int__size(void *vptr) {
   vector<int> *ptr=(vector<int> *)vptr;
-   size_t ret=ptr->size();
+  size_t ret=ptr->size();
   return ret;
 }
 
@@ -149,7 +149,7 @@ void o2scl_vector_size_t__resize(void *vptr, size_t n) {
 
 size_t o2scl_vector_size_t__size(void *vptr) {
   vector<size_t> *ptr=(vector<size_t> *)vptr;
-   size_t ret=ptr->size();
+  size_t ret=ptr->size();
   return ret;
 }
 
@@ -185,7 +185,7 @@ void *o2scl_lib_settings_class_get_data_dir(void *vptr) {
 
 int o2scl_lib_settings_class_set_data_dir(void *vptr, char *dir) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-   int ret=ptr->set_data_dir(dir);
+  int ret=ptr->set_data_dir(dir);
   return ret;
 }
 
@@ -198,79 +198,79 @@ void *o2scl_lib_settings_class_get_doc_dir(void *vptr) {
 
 int o2scl_lib_settings_class_set_doc_dir(void *vptr, char *dir) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-   int ret=ptr->set_doc_dir(dir);
+  int ret=ptr->set_doc_dir(dir);
   return ret;
 }
 
 bool o2scl_lib_settings_class_eos_installed(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-   bool ret=ptr->eos_installed();
+  bool ret=ptr->eos_installed();
   return ret;
 }
 
 bool o2scl_lib_settings_class_part_installed(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-   bool ret=ptr->part_installed();
+  bool ret=ptr->part_installed();
   return ret;
 }
 
 bool o2scl_lib_settings_class_hdf_support(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-   bool ret=ptr->hdf_support();
+  bool ret=ptr->hdf_support();
   return ret;
 }
 
 bool o2scl_lib_settings_class_openmp_support(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-   bool ret=ptr->openmp_support();
+  bool ret=ptr->openmp_support();
   return ret;
 }
 
 bool o2scl_lib_settings_class_readline_support(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-   bool ret=ptr->readline_support();
+  bool ret=ptr->readline_support();
   return ret;
 }
 
 bool o2scl_lib_settings_class_ncurses_support(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-   bool ret=ptr->ncurses_support();
+  bool ret=ptr->ncurses_support();
   return ret;
 }
 
 bool o2scl_lib_settings_class_gsl2_support(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-   bool ret=ptr->gsl2_support();
+  bool ret=ptr->gsl2_support();
   return ret;
 }
 
 bool o2scl_lib_settings_class_armadillo_support(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-   bool ret=ptr->armadillo_support();
+  bool ret=ptr->armadillo_support();
   return ret;
 }
 
 bool o2scl_lib_settings_class_eigen_support(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-   bool ret=ptr->eigen_support();
+  bool ret=ptr->eigen_support();
   return ret;
 }
 
 bool o2scl_lib_settings_class_fftw_support(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-   bool ret=ptr->fftw_support();
+  bool ret=ptr->fftw_support();
   return ret;
 }
 
 bool o2scl_lib_settings_class_python_support(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-   bool ret=ptr->python_support();
+  bool ret=ptr->python_support();
   return ret;
 }
 
 bool o2scl_lib_settings_class_hdf5_compression_support(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-   bool ret=ptr->hdf5_compression_support();
+  bool ret=ptr->hdf5_compression_support();
   return ret;
 }
 
@@ -283,7 +283,7 @@ void *o2scl_lib_settings_class_system_type(void *vptr) {
 
 bool o2scl_lib_settings_class_range_check(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-   bool ret=ptr->range_check();
+  bool ret=ptr->range_check();
   return ret;
 }
 
@@ -316,7 +316,7 @@ void o2scl_lib_settings_class_config_h_report(void *vptr) {
 
 void *o2scl_lib_settings_class_get_convert_units(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-   convert_units<> *ret=&ptr->get_convert_units();
+  convert_units<> *ret=&ptr->get_convert_units();
   return ret;
 }
 
@@ -352,19 +352,19 @@ void o2scl_table___set(void *vptr, char *col, size_t row, double val) {
 
 double o2scl_table___get(void *vptr, char *col, size_t row) {
   table<> *ptr=(table<> *)vptr;
-   double ret=ptr->get(col,row);
+  double ret=ptr->get(col,row);
   return ret;
 }
 
 size_t o2scl_table___get_ncolumns(void *vptr) {
   table<> *ptr=(table<> *)vptr;
-   size_t ret=ptr->get_ncolumns();
+  size_t ret=ptr->get_ncolumns();
   return ret;
 }
 
 size_t o2scl_table___get_nlines(void *vptr) {
   table<> *ptr=(table<> *)vptr;
-   size_t ret=ptr->get_nlines();
+  size_t ret=ptr->get_nlines();
   return ret;
 }
 
@@ -376,7 +376,7 @@ void o2scl_table___set_nlines(void *vptr, size_t lines) {
 
 size_t o2scl_table___get_maxlines(void *vptr) {
   table<> *ptr=(table<> *)vptr;
-   size_t ret=ptr->get_maxlines();
+  size_t ret=ptr->get_maxlines();
   return ret;
 }
 
@@ -445,13 +445,13 @@ void o2scl_table___init_column(void *vptr, char *scol, double val) {
 
 bool o2scl_table___is_column(void *vptr, char *scol) {
   table<> *ptr=(table<> *)vptr;
-   bool ret=ptr->is_column(scol);
+  bool ret=ptr->is_column(scol);
   return ret;
 }
 
 size_t o2scl_table___lookup_column(void *vptr, char *scol) {
   table<> *ptr=(table<> *)vptr;
-   size_t ret=ptr->lookup_column(scol);
+  size_t ret=ptr->lookup_column(scol);
   return ret;
 }
 
@@ -521,19 +521,19 @@ void o2scl_table___line_of_data(void *vptr, void *ptr_data) {
 
 size_t o2scl_table___ordered_lookup(void *vptr, char *scol, double val) {
   table<> *ptr=(table<> *)vptr;
-   size_t ret=ptr->ordered_lookup(scol,val);
+  size_t ret=ptr->ordered_lookup(scol,val);
   return ret;
 }
 
 size_t o2scl_table___lookup(void *vptr, char *scol, double val) {
   table<> *ptr=(table<> *)vptr;
-   size_t ret=ptr->lookup(scol,val);
+  size_t ret=ptr->lookup(scol,val);
   return ret;
 }
 
 size_t o2scl_table___lookup_val(void *vptr, char *scol, double val, char *scol2) {
   table<> *ptr=(table<> *)vptr;
-   size_t ret=ptr->lookup_val(scol,val,scol2);
+  size_t ret=ptr->lookup_val(scol,val,scol2);
   return ret;
 }
 
@@ -545,19 +545,19 @@ void o2scl_table___set_interp_type(void *vptr, size_t interp_type) {
 
 size_t o2scl_table___get_interp_type(void *vptr) {
   table<> *ptr=(table<> *)vptr;
-   size_t ret=ptr->get_interp_type();
+  size_t ret=ptr->get_interp_type();
   return ret;
 }
 
 double o2scl_table___interp(void *vptr, char *sx, double x0, char *sy) {
   table<> *ptr=(table<> *)vptr;
-   double ret=ptr->interp(sx,x0,sy);
+  double ret=ptr->interp(sx,x0,sy);
   return ret;
 }
 
 double o2scl_table___interp_index(void *vptr, size_t ix, double x0, size_t iy) {
   table<> *ptr=(table<> *)vptr;
-   double ret=ptr->interp(ix,x0,iy);
+  double ret=ptr->interp(ix,x0,iy);
   return ret;
 }
 
@@ -569,13 +569,13 @@ void o2scl_table___deriv_col(void *vptr, char *x, char *y, char *yp) {
 
 double o2scl_table___deriv(void *vptr, char *sx, double x0, char *sy) {
   table<> *ptr=(table<> *)vptr;
-   double ret=ptr->deriv(sx,x0,sy);
+  double ret=ptr->deriv(sx,x0,sy);
   return ret;
 }
 
 double o2scl_table___deriv_index(void *vptr, size_t ix, double x0, size_t iy) {
   table<> *ptr=(table<> *)vptr;
-   double ret=ptr->deriv(ix,x0,iy);
+  double ret=ptr->deriv(ix,x0,iy);
   return ret;
 }
 
@@ -587,25 +587,25 @@ void o2scl_table___deriv2_col(void *vptr, char *x, char *y, char *yp) {
 
 double o2scl_table___deriv2(void *vptr, char *sx, double x0, char *sy) {
   table<> *ptr=(table<> *)vptr;
-   double ret=ptr->deriv2(sx,x0,sy);
+  double ret=ptr->deriv2(sx,x0,sy);
   return ret;
 }
 
 double o2scl_table___deriv2_index(void *vptr, size_t ix, double x0, size_t iy) {
   table<> *ptr=(table<> *)vptr;
-   double ret=ptr->deriv2(ix,x0,iy);
+  double ret=ptr->deriv2(ix,x0,iy);
   return ret;
 }
 
 double o2scl_table___integ(void *vptr, char *sx, double x1, double x2, char *sy) {
   table<> *ptr=(table<> *)vptr;
-   double ret=ptr->integ(sx,x1,x2,sy);
+  double ret=ptr->integ(sx,x1,x2,sy);
   return ret;
 }
 
 double o2scl_table___integ_index(void *vptr, size_t ix, double x1, double x2, size_t iy) {
   table<> *ptr=(table<> *)vptr;
-   double ret=ptr->integ(ix,x1,x2,iy);
+  double ret=ptr->integ(ix,x1,x2,iy);
   return ret;
 }
 
@@ -617,13 +617,13 @@ void o2scl_table___integ_col(void *vptr, char *x, char *y, char *yi) {
 
 double o2scl_table___max(void *vptr, char *max) {
   table<> *ptr=(table<> *)vptr;
-   double ret=ptr->max(max);
+  double ret=ptr->max(max);
   return ret;
 }
 
 double o2scl_table___min(void *vptr, char *min) {
   table<> *ptr=(table<> *)vptr;
-   double ret=ptr->min(min);
+  double ret=ptr->min(min);
   return ret;
 }
 
@@ -701,13 +701,13 @@ void o2scl_table___function_column(void *vptr, char *function, char *scol) {
 
 double o2scl_table___row_function(void *vptr, char *scol, size_t row) {
   table<> *ptr=(table<> *)vptr;
-   double ret=ptr->row_function(scol,row);
+  double ret=ptr->row_function(scol,row);
   return ret;
 }
 
 size_t o2scl_table___function_find_row(void *vptr, char *function) {
   table<> *ptr=(table<> *)vptr;
-   size_t ret=ptr->function_find_row(function);
+  size_t ret=ptr->function_find_row(function);
   return ret;
 }
 
@@ -761,7 +761,7 @@ void o2scl_table_units___remove_unit(void *vptr, char *col) {
 
 int o2scl_table_units___convert_to_unit(void *vptr, char *col, char *unit, bool err_on_fail) {
   table_units<> *ptr=(table_units<> *)vptr;
-   int ret=ptr->convert_to_unit(col,unit,err_on_fail);
+  int ret=ptr->convert_to_unit(col,unit,err_on_fail);
   return ret;
 }
 
@@ -778,37 +778,37 @@ void o2scl_free_uniform_grid__(void *vptr) {
 
 size_t o2scl_uniform_grid___get_nbins(void *vptr) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
-   size_t ret=ptr->get_nbins();
+  size_t ret=ptr->get_nbins();
   return ret;
 }
 
 size_t o2scl_uniform_grid___get_npoints(void *vptr) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
-   size_t ret=ptr->get_npoints();
+  size_t ret=ptr->get_npoints();
   return ret;
 }
 
 bool o2scl_uniform_grid___is_log(void *vptr) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
-   bool ret=ptr->is_log();
+  bool ret=ptr->is_log();
   return ret;
 }
 
 double o2scl_uniform_grid___get_start(void *vptr) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
-   double ret=ptr->get_start();
+  double ret=ptr->get_start();
   return ret;
 }
 
 double o2scl_uniform_grid___get_end(void *vptr) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
-   double ret=ptr->get_end();
+  double ret=ptr->get_end();
   return ret;
 }
 
 double o2scl_uniform_grid___get_width(void *vptr) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
-   double ret=ptr->get_width();
+  double ret=ptr->get_width();
   return ret;
 }
 
@@ -917,7 +917,7 @@ void o2scl_table3d_set(void *vptr, size_t ix, size_t iy, char *name, double val)
 
 double o2scl_table3d_get(void *vptr, size_t ix, size_t iy, char *name) {
   table3d *ptr=(table3d *)vptr;
-   double ret=ptr->get(ix,iy,name);
+  double ret=ptr->get(ix,iy,name);
   return ret;
 }
 
@@ -929,19 +929,19 @@ void o2scl_table3d_new_slice(void *vptr, char *slice) {
 
 size_t o2scl_table3d_get_nx(void *vptr) {
   table3d *ptr=(table3d *)vptr;
-   size_t ret=ptr->get_nx();
+  size_t ret=ptr->get_nx();
   return ret;
 }
 
 size_t o2scl_table3d_get_ny(void *vptr) {
   table3d *ptr=(table3d *)vptr;
-   size_t ret=ptr->get_ny();
+  size_t ret=ptr->get_ny();
   return ret;
 }
 
 size_t o2scl_table3d_get_nslices(void *vptr) {
   table3d *ptr=(table3d *)vptr;
-   size_t ret=ptr->get_nslices();
+  size_t ret=ptr->get_nslices();
   return ret;
 }
 
@@ -987,7 +987,7 @@ void o2scl_find_constants_find_print(void *vptr, char *name, char *unit, size_t 
 
 double o2scl_find_constants_find_unique(void *vptr, char *name, char *unit) {
   find_constants *ptr=(find_constants *)vptr;
-   double ret=ptr->find_unique(name,unit);
+  double ret=ptr->find_unique(name,unit);
   return ret;
 }
 
@@ -1062,13 +1062,13 @@ void o2scl_convert_units___set_units_cmd_string(void *vptr, void *p_v) {
 
 double o2scl_convert_units___convert(void *vptr, char *frm, char *to, double val) {
   convert_units<> *ptr=(convert_units<> *)vptr;
-   double ret=ptr->convert(frm,to,val);
+  double ret=ptr->convert(frm,to,val);
   return ret;
 }
 
 int o2scl_convert_units___convert_ret(void *vptr, char *frm, char *to, double val, double converted) {
   convert_units<> *ptr=(convert_units<> *)vptr;
-   int ret=ptr->convert_ret(frm,to,val,converted);
+  int ret=ptr->convert_ret(frm,to,val,converted);
   return ret;
 }
 
