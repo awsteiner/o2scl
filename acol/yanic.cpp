@@ -2461,6 +2461,8 @@ int main(int argc, char *argv[]) {
       if (iff.args[k].ift.name=="std::string") {
         if (iff.args[k].ift.suffix=="&") {
           fout << "    " << iff.args[k].name << ".__del__()" << endl;
+          fout << "    " << iff.args[k].name
+               << "._ptr=ctypes.c_void_p()" << endl;
         } else {
           fout << "    " << iff.args[k].name
                << "_=ctypes.c_char_p(force_bytes("

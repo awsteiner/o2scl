@@ -55,12 +55,10 @@ void o2scl_hdf_hdf_file_close(void *vptr) {
   return;
 }
 
-void o2scl_hdf_hdf_input_table_wrapper(void *ptr_hf, void *ptr_t, void *&ptr_name) {
+void o2scl_hdf_hdf_input_table_wrapper(void *ptr_hf, void *ptr_t, char *name) {
   hdf_file *hf=(hdf_file *)ptr_hf;
   table<> *t=(table<> *)ptr_t;
-  std::string *name=new std::string;
-  hdf_input(*hf,*t,*name);
-  ptr_name=(void *)name;
+  hdf_input(*hf,*t,name);
   return;
 }
 
@@ -71,12 +69,10 @@ void o2scl_hdf_hdf_output_table_wrapper(void *ptr_hf, void *ptr_t, char *name) {
   return;
 }
 
-void o2scl_hdf_hdf_input_table_units_wrapper(void *ptr_hf, void *ptr_t, void *&ptr_name) {
+void o2scl_hdf_hdf_input_table_units_wrapper(void *ptr_hf, void *ptr_t, char *name) {
   hdf_file *hf=(hdf_file *)ptr_hf;
   table_units<> *t=(table_units<> *)ptr_t;
-  std::string *name=new std::string;
-  hdf_input(*hf,*t,*name);
-  ptr_name=(void *)name;
+  hdf_input(*hf,*t,name);
   return;
 }
 

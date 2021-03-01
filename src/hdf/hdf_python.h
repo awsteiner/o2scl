@@ -36,11 +36,11 @@ void o2scl_hdf_hdf_file_open_or_create(void *vptr, char *fname);
 
 void o2scl_hdf_hdf_file_close(void *vptr);
 
-void o2scl_hdf_hdf_input_table_wrapper(void *ptr_hf, void *ptr_t, void *&ptr_name);
+void o2scl_hdf_hdf_input_table_wrapper(void *ptr_hf, void *ptr_t, char *name);
 
 void o2scl_hdf_hdf_output_table_wrapper(void *ptr_hf, void *ptr_t, char *name);
 
-void o2scl_hdf_hdf_input_table_units_wrapper(void *ptr_hf, void *ptr_t, void *&ptr_name);
+void o2scl_hdf_hdf_input_table_units_wrapper(void *ptr_hf, void *ptr_t, char *name);
 
 void o2scl_hdf_hdf_output_table_units_wrapper(void *ptr_hf, void *ptr_t, char *name);
 
