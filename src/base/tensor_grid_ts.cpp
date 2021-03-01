@@ -390,7 +390,8 @@ int main(void) {
     // Read that file into a new tensor object
     tensor_grid3<> tg2;
     hf.open("tens_grid.o2");
-    hdf_input(hf,tg2,"tens_grid_test");
+    string name_temp="tens_grid_test";
+    hdf_input(hf,tg2,name_temp);
     hf.close();
 
     // Check that the second tensor is the same as the first
