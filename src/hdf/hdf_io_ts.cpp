@@ -55,7 +55,8 @@ int main(void) {
     hf.close();
 
     hf.open("table.o2");
-    hdf_input(hf,tab2,"table_test");
+    std::string name_temp="table_test";
+    hdf_input(hf,tab2,name_temp);
     hf.close();
 
     t.test_gen(tab.get_nlines()==tab2.get_nlines(),"lines");
@@ -84,7 +85,8 @@ int main(void) {
     hf.close();
 
     hf.open("table_units.o2");
-    hdf_input(hf,tab2,"table_test");
+    std::string name_temp="table_test";
+    hdf_input(hf,tab2,name_temp);
     hf.close();
 
     t.test_gen(tab.get_nlines()==tab2.get_nlines(),"lines");

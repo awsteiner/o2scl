@@ -51,7 +51,7 @@ namespace o2scl_hdf {
   class hdf_file; 
   template<class vec_t, class vec_size_t>
     void hdf_input(hdf_file &hf, o2scl::tensor_grid<vec_t,vec_size_t> &t, 
-                   std::string name);
+                   std::string &name);
   template<class vec_t, class vec_size_t>
     void hdf_output(hdf_file &hf, o2scl::tensor_grid<vec_t,vec_size_t> &t, 
                     std::string name);
@@ -1683,7 +1683,7 @@ namespace o2scl {
     
     template<class vecf_t, class vecf_size_t> friend void o2scl_hdf::hdf_input
       (o2scl_hdf::hdf_file &hf, tensor_grid<vecf_t,vecf_size_t> &t, 
-       std::string name);
+       std::string &name);
     
     /** \brief Rearrange, sum and copy current tensor to a new tensor
 

@@ -1054,7 +1054,7 @@ namespace o2scl_hdf {
     /// \name Find a group
     //@{
     /** \brief Look in hdf_file \c hf for an \o2 object of type \c
-	type and if found, set \c group_name to the associated object
+	type and if found, set \c name to the associated object
 	name
 
 	This function returns 0 if an object of type \c type is found
