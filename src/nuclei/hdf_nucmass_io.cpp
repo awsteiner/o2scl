@@ -275,7 +275,7 @@ void o2scl_hdf::mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, std::string model,
     hf.open(filename);
     std::string name;
     table_units<> tab;
-    hdf_input(hf,tab,name);
+    hdf_input_n(hf,tab,name);
     hf.close();
     size_t nr=tab.get_nlines();
     o2scl::nucmass_mnmsk::entry *m=new o2scl::nucmass_mnmsk::entry[nr];

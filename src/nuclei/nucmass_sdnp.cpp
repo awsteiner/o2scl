@@ -56,7 +56,7 @@ int nucmass_sdnp::load(std::string model, bool external) {
   hf.open(fname);
   string name;
 #ifndef O2SCL_NO_HDF_INPUT  
-  hdf_input(hf,data,name);
+  hdf_input_n(hf,data,name);
 #endif
   hf.close();
   

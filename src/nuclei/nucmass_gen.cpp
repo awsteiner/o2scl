@@ -51,7 +51,7 @@ int nucmass_gen::load_be(std::string fname, std::string be_col,
   o2scl_hdf::hdf_file hf;
   hf.open(fname);
   string name;
-  hdf_input(hf,data,name);
+  hdf_input_n(hf,data,name);
   hf.close();
 
   if (data.is_column("N")==false) {

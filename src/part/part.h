@@ -527,7 +527,7 @@ namespace o2scl {
       hf.open(fname);
       std::string name;
 #ifndef O2SCL_NO_HDF_INPUT  
-      hdf_input(hf,tab,name);
+      hdf_input_n(hf,tab,name);
 #endif
       hf.close();
   
