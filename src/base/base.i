@@ -87,6 +87,9 @@ class std::vector<double>
 |     return size()
 |
 | def to_numpy(self):
+|     """
+|     Copy the vector to a numpy array
+|     """
 |     ret=numpy.zeros((self.size()))
 |     for i in range(0,self.size()):
 |         ret[i]=self.__getitem__(i)
@@ -107,7 +110,7 @@ class vector<int>
 |
 | def to_numpy(self):
 |     """
-|     Copy the string to a numpy array
+|     Copy the vector to a numpy array
 |     """
 |     ret=numpy.zeros((self.size()),dtype=numpy.int32_t)
 |     for i in range(0,self.size()):
@@ -132,7 +135,7 @@ class vector<size_t>
 |
 | def to_numpy(self):
 |     """
-|     Copy the string to a numpy array
+|     Copy the vector to a numpy array
 |     """
 |     ret=numpy.zeros((self.size()),dtype=numpy.uint64_t)
 |     for i in range(0,self.size()):
@@ -318,9 +321,13 @@ class table<>
 - function line_of_names
   - void
   - std::string names
+#
+# This version requires a std_vector as an argument. An alternate
+# version below takes any python array but requires a copy.
+# 
 - function line_of_data
   - void
-  - py_name line_of_data
+  - py_name line_of_data_vector
   - std_vector &data
 - function ordered_lookup
   - size_t
@@ -458,12 +465,16 @@ class table<>
   - void                             
 - extra_py |
 | def line_of_data(self,v):
+|     """
+|     Copy ``v`` to an :class:`std_vector` object and add the line of
+|     data to the table
+|     """
 |     # Create a std_vector object and copy the data over
-|     vec=o2sclpy.std_vector(self._link)
+|     vec=std_vector(self._link)
 |     vec.resize(len(v))
 |     for i in range(0,len(v)):
 |         vec[i]=v[i]
-|     line_of_data_vector(vec)
+|     self.line_of_data_vector(vec)
 |     return
 # 
 # Class table_units<>
