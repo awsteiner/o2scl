@@ -320,7 +320,7 @@ class table<>
   - std::string names
 - function line_of_data
   - void
-  - py_name line_of_data_vector                             
+  - py_name line_of_data
   - std_vector &data
 - function ordered_lookup
   - size_t
