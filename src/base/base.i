@@ -19,6 +19,8 @@ h_include <o2scl/tensor_grid.h>
 h_include <o2scl/find_constants.h>
 h_include <o2scl/convert_units.h>
 h_include <o2scl/lib_settings.h>
+h_include <boost/numeric/ublas/vector.hpp>
+h_include <boost/numeric/ublas/matrix.hpp>
 # 
 # Include statement for C++ source code
 # 
@@ -154,6 +156,36 @@ class vector<size_t>
 #- extra_py |
 #| def __len__(self):
 #|     return size()
+#
+# Class ublas_vector
+# 
+class boost::numeric::ublas::vector<double>
+- py_name ublas_vector
+- function size
+  - size_t
+- function resize
+  - void
+  - size_t n
+- function operator[]
+  - double &
+  - size_t i
+#
+# Class ublas_matrix
+# 
+class boost::numeric::ublas::matrix<double>
+- py_name ublas_matrix
+- function size1
+  - size_t
+- function size2
+  - size_t
+- function resize
+  - void
+  - size_t m
+  - size_t n
+- function operator()
+  - double &
+  - size_t m
+  - size_t n    
 #
 # -------------------------------------------------------------------
 #
@@ -629,6 +661,10 @@ class uniform_grid_log_end_width<>
 #
 class table3d
 - std_cc
+- function set_size
+  - void
+  - size_t nx
+  - size_t ny
 - function set_xy
   - void
   - std::string x_name
@@ -648,15 +684,142 @@ class table3d
   - size_t ix
   - size_t iy
   - std::string name
-- function new_slice
+- function get
+  - double
+  - py_name get_i
+  - size_t ix
+  - size_t iy
+  - size_t iz
+- function set
+  - double
+  - py_name set_i
+  - size_t ix
+  - size_t iy
+  - size_t iz
+  - double val
+- function set_val
   - void
-  - std::string slice
+  - double x
+  - double y
+  - std::string name
+  - double val
+- function get_val
+  - double
+  - double x
+  - double y
+  - std::string name
+- function set_grid_x
+  - void
+  - size_t ix
+  - double val    
+- function set_grid_y
+  - void
+  - size_t iy
+  - double val    
+- function get_grid_x
+  - double
+  - size_t ix
+- function get_grid_y
+  - double
+  - size_t iy
+- function get_size
+  - void
+  - size_t &nx
+  - size_t &ny
 - function get_nx
   - size_t
 - function get_ny
   - size_t
 - function get_nslices
   - size_t
+- function is_size_set
+  - bool
+- function is_xy_set
+  - bool
+- function get_slice_name
+  - std::string
+  - size_t i
+- function new_slice
+  - void
+  - std::string slice
+- function set_slice_all
+  - void
+  - std::string name
+  - double val
+- function lookup_slice
+  - size_t
+  - std::string name
+- function is_slice
+  - bool
+  - std::string name
+- function rename_slice
+  - void
+  - std::string name1
+  - std::string name2
+- function copy_slice
+  - bool
+  - std::string name1
+  - std::string name2
+- function get_slice
+  - boost::numeric::ublas::matrix<double> &
+  - std::string slice
+- function get_slice
+  - boost::numeric::ublas::matrix<double> &
+  - py_name get_slice_i    
+  - std::string slice
+- function lookup_x
+  - void
+  - double val
+  - size_t ix
+- function lookup_y
+  - void
+  - double val
+  - size_t iy
+- function interp
+  - double
+  - double x
+  - double y
+  - std::string name
+- function deriv_x
+  - double
+  - double x
+  - double y
+  - std::string name
+- function deriv_y
+  - double
+  - double x
+  - double y
+  - std::string name
+- function deriv_xy
+  - double
+  - double x
+  - double y
+  - std::string name
+- function integ_x
+  - double
+  - double x1
+  - double x2    
+  - double y
+  - std::string name
+- function integ_y
+  - double
+  - double x
+  - double y1
+  - double y2    
+  - std::string name
+- function zero_table()
+  void
+- function clear()
+  - void
+- function function_matrix 
+  - int
+  - std::string function
+  - boost::numeric::ublas::matrix<double> &mat
+  - bool throw_on_err
+- function function_slice
+  - void
+  - std::string function
+  - std::string slice
 # 
 # Class tensor
 #

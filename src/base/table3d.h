@@ -464,16 +464,16 @@ namespace o2scl {
 	\note This will call the error handler if the value \c val is
 	not finite (i.e. either <tt>Inf</tt> or <tt>NaN</tt>).
     */
-    void init_slice(std::string scol, double val);
+    void init_slice(std::string slice, double val);
 
     /// Return a constant reference to a slice
-    const ubmatrix &get_slice(std::string scol) const;
+    const ubmatrix &get_slice(std::string slice) const;
 
     /// Return a constant reference to a slice
     const ubmatrix &get_slice(size_t iz) const;
 
     /// Return a constant reference to a slice
-    ubmatrix &get_slice(std::string scol);
+    ubmatrix &get_slice(std::string slice);
     
     /// Return a constant reference to a slice
     ubmatrix &get_slice(size_t iz);

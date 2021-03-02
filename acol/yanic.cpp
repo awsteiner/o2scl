@@ -1241,7 +1241,7 @@ int main(int argc, char *argv[]) {
                << underscoreify(ifc.name) << "_" << iff.py_name
                << "(void *vptr";
         } else {
-          if (iff.name=="operator[]") {
+          if (iff.name=="operator[]" || iff.name=="operator()") {
             fout << ret_type << underscoreify(ifc.ns) << "_"
                  << underscoreify(ifc.name) << "_getitem"
                  << "(void *vptr";
@@ -1334,8 +1334,8 @@ int main(int argc, char *argv[]) {
             //} else {
             //fout << "  *dptr=&(ptr->" << iff.name << "(";
             //}
-          } else if (iff.name=="operator[]") {
-            fout << "  double ret=ptr->operator[](";
+          } else if (iff.name=="operator[]" || iff.name=="operator()") {
+            fout << "  double ret=ptr->" << iff.name << "(";
           } else if (iff.ret.name=="void") {
             fout << "  ptr->" << iff.name << "(";
           } else if (iff.ret.name=="std::string") {
@@ -1413,6 +1413,28 @@ int main(int argc, char *argv[]) {
             fout << "  " << ifc.name << " *ptr=(" << ifc.name
                  << " *)vptr;" << endl;
             fout << "  (*ptr)[i]=val;" << endl;
+            fout << "  return;" << endl;
+            fout << "}" << endl;
+          }
+          fout << endl;
+        }
+        
+        // Generate setitem code for operator() if it returns a
+        // non-const reference. Presume ifc.name is something like
+        // std_vector and iff.name is "operator()" and iff.ret.name is
+        // "double"
+        if (iff.name=="operator()" && !iff.ret.is_const() &&
+            iff.ret.suffix=="&") {
+          fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
+               << "_setitem(void *vptr, size_t i, size_t j, " << iff.ret.name
+               << " val)";
+          if (header) {
+            fout << ";" << endl;
+          } else {
+            fout << " {" << endl;
+            fout << "  " << ifc.name << " *ptr=(" << ifc.name
+                 << " *)vptr;" << endl;
+            fout << "  (*ptr)(i,j)=val;" << endl;
             fout << "  return;" << endl;
             fout << "}" << endl;
           }
@@ -1956,7 +1978,7 @@ int main(int argc, char *argv[]) {
       if_func &iff=ifc.methods[j];
 
       // Function header
-      if (iff.name=="operator[]") {
+      if (iff.name=="operator[]" || iff.name=="operator()") {
         fout << "    def __getitem__(self";
       } else if (iff.py_name!="") {
         fout << "    def " << iff.py_name << "(self";
@@ -2013,7 +2035,7 @@ int main(int argc, char *argv[]) {
       // Depending on return type, set return document string
       // and return python code
       std::string return_docs, restype_string;
-      if (iff.name=="operator[]") {
+      if (iff.name=="operator[]" || iff.name=="operator()") {
         if ((iff.ret.name!="vector<double>" &&
              iff.ret.name!="std::vector<double>") ||
             iff.ret.suffix!="&") {
@@ -2065,7 +2087,7 @@ int main(int argc, char *argv[]) {
         fout << "        func=self._link." << dll_name << "."
              << ifc.ns << "_" << underscoreify(ifc.name) << "_"
              << iff.py_name << endl;
-      } else if (iff.name=="operator[]") {
+      } else if (iff.name=="operator[]" || iff.name=="operator()") {
         fout << "        func=self._link." << dll_name << "."
              << ifc.ns << "_" << underscoreify(ifc.name) << "_getitem"
              << endl;
@@ -2196,7 +2218,8 @@ int main(int argc, char *argv[]) {
         fout << "        return ret" << endl;
       } else if (iff.ret.name=="std::string" || iff.ret.name=="string") {
         fout << "        return strt" << endl;
-      } else if (iff.ret.suffix=="&" && iff.name!="operator[]") {
+      } else if (iff.ret.suffix=="&" && iff.name!="operator[]" &&
+                 iff.name!="operator()") {
         fout << "        ret2=" 
              << underscoreify(reformat_ret_type) << "(self._link,ret)"
              << endl;
@@ -2226,6 +2249,23 @@ int main(int argc, char *argv[]) {
         fout << "        func.argtypes=[ctypes.c_void_p,"
              << "ctypes.c_size_t,ctypes.c_" << iff.ret.name << "]" << endl;
         fout << "        func(self._ptr,i,value)" << endl;
+        fout << "        return" << endl;
+        fout << endl;
+      }
+
+      // For operator() functions, __getitem__ python code was already
+      // taken care of. Here, we take care of the __setitem__ python
+      // code.
+      if (iff.name=="operator()" && !iff.ret.is_const() &&
+          iff.ret.suffix=="&") {
+        fout << "    def __setitem__(self,i,j,value):" << endl;
+        fout << "        func=self._link." << dll_name << "."
+             << ifc.ns << "_" << underscoreify(ifc.name) << "_setitem"
+             << endl;
+        fout << "        func.argtypes=[ctypes.c_void_p,"
+             << "ctypes.c_size_t,ctypes.c_size_t,ctypes.c_"
+             << iff.ret.name << "]" << endl;
+        fout << "        func(self._ptr,i,j,value)" << endl;
         fout << "        return" << endl;
         fout << endl;
       }
@@ -2587,8 +2627,11 @@ int main(int argc, char *argv[]) {
     fout2 << "        .. automethod:: __init__" << endl;
     fout2 << "        .. automethod:: __del__" << endl;
     fout2 << "        .. automethod:: __copy__" << endl;
+    // If the class contains an operator[] or an operator(), then ensure
+    // that the __getitem__ method is documented.
     for(size_t k=0;k<ifc.methods.size();k++) {
-      if (ifc.methods[k].name=="operator[]") {
+      if (ifc.methods[k].name=="operator[]" ||
+          ifc.methods[k].name=="operator()") {
         fout2 << "        .. automethod:: __getitem__" << endl;
         k=ifc.methods.size();
       }

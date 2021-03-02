@@ -27,6 +27,8 @@
 #include <o2scl/find_constants.h>
 #include <o2scl/convert_units.h>
 #include <o2scl/lib_settings.h>
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
 
 extern "C" {
 
@@ -77,6 +79,20 @@ size_t o2scl_vector_size_t__size(void *vptr);
 size_t o2scl_vector_size_t__getitem(void *vptr, size_t n);
 
 void o2scl_vector_size_t__setitem(void *vptr, size_t i, size_t val);
+
+void *o2scl_create_boost__numeric__ublas__matrix_double_();
+
+void o2scl_free_boost__numeric__ublas__matrix_double_(void *vptr);
+
+size_t o2scl_boost__numeric__ublas__matrix_double__size1(void *vptr);
+
+size_t o2scl_boost__numeric__ublas__matrix_double__size2(void *vptr);
+
+void o2scl_boost__numeric__ublas__matrix_double__resize(void *vptr, size_t m, size_t n);
+
+double o2scl_boost__numeric__ublas__matrix_double__getitem(void *vptr, size_t m, size_t n);
+
+void o2scl_boost__numeric__ublas__matrix_double__setitem(void *vptr, size_t i, size_t j, double val);
 
 void *o2scl_create_lib_settings_class();
 
