@@ -44,7 +44,7 @@ namespace o2scl {
 // Forward definition of HDF I/O to extend friendship
 namespace o2scl_hdf { 
   class hdf_file; 
-  void hdf_input(hdf_file &hf, o2scl::hist_2d &t, std::string &name);
+  void hdf_input(hdf_file &hf, o2scl::hist_2d &t, std::string name);
   void hdf_output(hdf_file &hf, o2scl::hist_2d &t, std::string name);
 }
 
@@ -597,7 +597,7 @@ namespace o2scl {
     friend void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, 
 				      o2scl::hist_2d &h, std::string name);
     friend void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, 
-				     o2scl::hist_2d &h, std::string &name);
+				     o2scl::hist_2d &h, std::string name);
 
   };
 

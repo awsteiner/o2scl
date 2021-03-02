@@ -42,7 +42,7 @@ namespace o2scl {
 namespace o2scl_hdf { 
   class hdf_file; 
   void hdf_input(hdf_file &hf, o2scl::uniform_grid<double> &t, 
-		 std::string &name);
+		 std::string name);
   void hdf_output(hdf_file &hf, o2scl::uniform_grid<double> &t, 
 		  std::string name);
 }
@@ -61,7 +61,7 @@ namespace o2scl {
   namespace o2scl_hdf { 
     class hdf_file; 
     void hdf_input(hdf_file &hf, o2scl::uniform_grid<double> &t, 
-		   std::string &name);
+		   std::string name);
     void hdf_output(hdf_file &hf, o2scl::uniform_grid<double> &t, 
 		    std::string name);
   }
@@ -97,7 +97,7 @@ namespace o2scl {
   (o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug, std::string name);
   
   friend void o2scl_hdf::hdf_input
-  (o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug, std::string &name);
+  (o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug, std::string name);
 
   protected:
   

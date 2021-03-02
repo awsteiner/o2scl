@@ -48,6 +48,12 @@ function hdf_input
 - py_name hdf_input_table
 - hdf_file &hf
 - table<> &t
+- std::string name  
+function hdf_input_n
+- void                             
+- py_name hdf_input_table
+- hdf_file &hf
+- table<> &t
 - std::string &name  
 function hdf_output
 - void                             
@@ -58,6 +64,12 @@ function hdf_output
 function hdf_input
 - void                             
 - py_name hdf_input_table_units
+- hdf_file &hf
+- table_units<> &t
+- std::string name  
+function hdf_input_n
+- void                             
+- py_name hdf_input_n_table_units
 - hdf_file &hf
 - table_units<> &t
 - std::string &name  
