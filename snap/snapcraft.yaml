@@ -44,8 +44,9 @@
       - libgsl0-dev
       override-build: |
         mkdir -p m4 && autoreconf -i && CXXFLAGS="-DO2SCL_UBUNTU_HDF5 -DO2SCL_OLDER_COMPILER -DO2SCL_HDF5_PRE_1_12" LIBS="-lhdf5_serial -lsz -laec" ./configure --enable-snap --prefix=$PWD/../install && make blank-doc && make && make install
-        
-  apps:
-    acol:
-      command: src/acol/acol
+
+# 3/2/21: This didn't work
+#  apps:
+#    acol:
+#      command: src/acol/acol
       
