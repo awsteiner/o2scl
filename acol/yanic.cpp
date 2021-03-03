@@ -1464,6 +1464,8 @@ int main(int argc, char *argv[]) {
             } else if (iff.args[k].ift.name=="std_vector") {
               fout << "double *ptr_" << iff.args[k].name;
             } else {
+              cout << "Error: " << endl;
+              cout << ifc.name << " " << iff.name << endl;
               cout << "Other kind of reference." << endl;
               exit(-1);
             }

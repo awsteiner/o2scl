@@ -143,6 +143,15 @@ class vector<size_t>
 |     for i in range(0,self.size()):
 |         ret[i]=self.__getitem__(i)
 |     return ret
+| 
+| def init_py(self,v):
+|     """
+|     Initialize the vector from a python array
+|     """
+|     self.resize(len(v))
+|     for i in range(0,len(v)):
+|         self.__setitem__(i,v[i])
+|     return
 #class vector<string>
 #- py_name std_vector_string
 #- function resize
@@ -673,30 +682,30 @@ class table3d
   - std::string y_name
   - size_t ny
   - std_vector &y
-- function set
-  - void
-  - size_t ix
-  - size_t iy
-  - std::string name
-  - double val
-- function get
-  - double
-  - size_t ix
-  - size_t iy
-  - std::string name
-- function get
-  - double
-  - py_name get_i
-  - size_t ix
-  - size_t iy
-  - size_t iz
-- function set
-  - double
-  - py_name set_i
-  - size_t ix
-  - size_t iy
-  - size_t iz
-  - double val
+#- function set
+#  - void
+#  - size_t ix
+#  - size_t iy
+#  - std::string name
+#  - double val
+#- function get
+#  - double
+#  - size_t ix
+#  - size_t iy
+#  - std::string name
+#- function get
+#  - double
+#  - py_name get_i
+#  - size_t ix
+#  - size_t iy
+#  - size_t iz
+#- function set
+#  - double
+#  - py_name set_i
+#  - size_t ix
+#  - size_t iy
+#  - size_t iz
+#  - double val
 - function set_val
   - void
   - double x
@@ -749,17 +758,17 @@ class table3d
 - function lookup_slice
   - size_t
   - std::string name
-- function is_slice
-  - bool
-  - std::string name
+#- function is_slice
+#  - bool
+#  - std::string name
 - function rename_slice
   - void
   - std::string name1
   - std::string name2
-- function copy_slice
-  - bool
-  - std::string name1
-  - std::string name2
+#- function copy_slice
+#  - bool
+#  - std::string name1
+#  - std::string name2
 - function get_slice
   - boost::numeric::ublas::matrix<double> &
   - std::string slice
@@ -807,9 +816,9 @@ class table3d
   - double y1
   - double y2    
   - std::string name
-- function zero_table()
-  void
-- function clear()
+- function zero_table
+  - void
+- function clear
   - void
 - function function_matrix 
   - int
@@ -821,6 +830,20 @@ class table3d
   - std::string function
   - std::string slice
 # 
+# Class index_spec
+#
+class index_spec
+- size_t type
+- size_t ix1
+- size_t ix2
+- size_t ix3
+- double val1
+- double val2
+- double val3
+#- function ix_index
+#  - index_spec
+#  - size_t ix
+# 
 # Class tensor
 #
 class tensor<>
@@ -830,8 +853,73 @@ class tensor<>
 | https://neutronstars.utk.edu/code/o2scl-dev/html/class/tensor.html .
 - std_cc                             
 - py_name tensor
+#- cons create_size
+#  - size_t rank
+#  - vector<size_t> &sizes
+- function is_valid
+  - void
 - function clear
   - void
+- function set
+  - void
+  - py_name set_vector
+  - vector<size_t> &index
+  - double val
+- function set_all
+  - void
+  - double x
+- function get
+  - double
+  - py_name get_vector
+  - vector<size_t> &index
+#- function resize
+#  - void
+#  - py_name resize_vector
+#  - vector<size_t> &index
+- function get_rank
+  - size_t
+- function get_size
+  - size_t
+  - size_t i
+#- function get_data
+#  - const vector<double> &
+- function total_size
+  - size_t
+- function min_value
+  - double
+- function max_value
+  - double
+- function total_sum
+  - double
+- extra_py |
+| def set(self,index,val):
+|     """
+|     Copy ``index`` to an :class:`std_vector_size_t` object and add the 
+|     data to the table
+|     """
+|     svst=o2sclpy.std_vector_size_t(self._link)
+|     syst.init_py(index)
+|     self.set_vector(syst,val)
+|     return
+| 
+| def get(self,index):
+|     """
+|     Copy ``index`` to an :class:`std_vector_size_t` object and get the 
+|     data from the table
+|     """
+|     svst=o2sclpy.std_vector_size_t(self._link)
+|     syst.init_py(index)
+|     return self.get_vector(syst)
+|
+| def resize(self,index):
+|     """
+|     Copy ``index`` to an :class:`std_vector_size_t` object 
+|     and resize
+|     """
+|     svst=o2sclpy.std_vector_size_t(self._link)
+|     syst.init_py(index)
+|     self.resize_vector(syst)
+|     return
 # 
 # Class find_constants
 #
