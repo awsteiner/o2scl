@@ -413,7 +413,7 @@
     <member refid="namespaceo2scl__hdf_1ae18894d48f3eead314599e1e0d3814e2" kind="function"><name>hdf_output</name></member>
     <member refid="namespaceo2scl__hdf_1a0da877732d7fe66f8302ffc35dde3749" kind="function"><name>hdf_input_data</name></member>
     <member refid="namespaceo2scl__hdf_1a0cf7f358cc56db445e78cc7d99bf1956" kind="function"><name>hdf_output_data</name></member>
-    <member refid="namespaceo2scl__hdf_1a49af35294bef5f02a943958b18196bae" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1a20249b163e77a5ed191f3fb47b5c1be0" kind="function"><name>hdf_input</name></member>
     <member refid="namespaceo2scl__hdf_1aadd5735e8c1368463cfca0ecccbac9cd" kind="function"><name>hdf_output</name></member>
     <member refid="namespaceo2scl__hdf_1af2c365ffa07987243ca245242c940c13" kind="function"><name>hdf_input</name></member>
     <member refid="namespaceo2scl__hdf_1a3a0f6fbf2270ee6ae4f167bef371c3b0" kind="function"><name>hdf_output</name></member>
@@ -421,31 +421,44 @@
     <member refid="namespaceo2scl__hdf_1a95e60a26b74e36bfcba6b0372ac2f1d2" kind="function"><name>hdf_output_data</name></member>
     <member refid="namespaceo2scl__hdf_1addc5e316b52aa58f14d30ce1a61fb163" kind="function"><name>hdf_input</name></member>
     <member refid="namespaceo2scl__hdf_1a7b20baa66bb3eaa45fdf141885c4dd07" kind="function"><name>hdf_output</name></member>
-    <member refid="namespaceo2scl__hdf_1acf5f40501d2269e2b85dfa270357fa1b" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1ad40695419e4a9240897f795dadc5e365" kind="function"><name>hdf_input</name></member>
     <member refid="namespaceo2scl__hdf_1a7d95e5b5f57b42434d378bcc55fc53c1" kind="function"><name>hdf_output</name></member>
     <member refid="namespaceo2scl__hdf_1aefeb028633ff9a653a4f79dbbff4b0fe" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1a7bcb1ff4d76795eb660754114d774051" kind="function"><name>hdf_input_n</name></member>
     <member refid="namespaceo2scl__hdf_1a51d8b60f301b939862a589e0cb48321d" kind="function"><name>hdf_output</name></member>
     <member refid="namespaceo2scl__hdf_1abd830d5c186299a64040f72705e0306e" kind="function"><name>hdf_output</name></member>
+    <member refid="namespaceo2scl__hdf_1ad493492d5eb0d120efbae727774574d7" kind="function"><name>hdf_input_n</name></member>
     <member refid="namespaceo2scl__hdf_1a27b6dda62410f777411383ba310f513c" kind="function"><name>hdf_output_data</name></member>
     <member refid="namespaceo2scl__hdf_1aa3a4081c11e9aaf213c5dcd52babe91f" kind="function"><name>hdf_output</name></member>
+    <member refid="namespaceo2scl__hdf_1a95fc63a43232a74d5bbcffbd54b7934d" kind="function"><name>hdf_input_n</name></member>
     <member refid="namespaceo2scl__hdf_1a9983b693add8f38fc4283d84580f23f5" kind="function"><name>hdf_output_data</name></member>
     <member refid="namespaceo2scl__hdf_1a5b18e2127b22f45d52504fa00bb24496" kind="function"><name>hdf_output</name></member>
-    <member refid="namespaceo2scl__hdf_1a789bc780042cd6858e3b1f6ee2514816" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1a253e73c11a781642432881cef8126397" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1a4aa410bcaf3f87fb6ac3a7c0b02ca11f" kind="function"><name>hdf_input_n</name></member>
     <member refid="namespaceo2scl__hdf_1acb66dd0a0a89673b58748e5514532849" kind="function"><name>hdf_output</name></member>
-    <member refid="namespaceo2scl__hdf_1a0f5c3df81ab877b01e86a7e830dbf6d8" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1a1544c15532ee5c478218b303c152457a" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1aa866006ca3fba0962439b4c77e3923b4" kind="function"><name>hdf_input_n</name></member>
     <member refid="namespaceo2scl__hdf_1a64e04d43fef95868c82f2102eef25541" kind="function"><name>hdf_output</name></member>
+    <member refid="namespaceo2scl__hdf_1a6d231940fc5d771ccb2a00a37df50c1b" kind="function"><name>hdf_input_n</name></member>
     <member refid="namespaceo2scl__hdf_1a2370961ca64035b8bc93af1246dba8d8" kind="function"><name>hdf_output</name></member>
-    <member refid="namespaceo2scl__hdf_1aca3eff9daa63ebbe984f89aa3486cfaa" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1a989532c99716ff69fd75bc587bb60da7" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1af4ddad4affb48ade859e340b1569b3ae" kind="function"><name>hdf_input_n</name></member>
     <member refid="namespaceo2scl__hdf_1af7cd54cc0c5b0768919f53cf83daa945" kind="function"><name>hdf_output</name></member>
-    <member refid="namespaceo2scl__hdf_1a6f6d97b59ee5e3992e263ff8054a538d" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1a02626c1bf2c86d6ede944e28992fa046" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1a910a79743ca18cb16737219420a2b608" kind="function"><name>hdf_input_n</name></member>
     <member refid="namespaceo2scl__hdf_1a2fb02b265514faa208d5645531e1d222" kind="function"><name>hdf_output</name></member>
-    <member refid="namespaceo2scl__hdf_1ad27e35092fe6ac4956c7912cb7575c09" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1a49215f01e7fc8c8121c4668d633b9aed" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1a361e946edc066aa25cf099fcb3bc0e7b" kind="function"><name>hdf_input_n</name></member>
+    <member refid="namespaceo2scl__hdf_1afbaf61076facd3fd13233b5411424185" kind="function"><name>hdf_input_n</name></member>
     <member refid="namespaceo2scl__hdf_1ac3705c0648e439da4298c892c0eeaad8" kind="function"><name>hdf_output</name></member>
-    <member refid="namespaceo2scl__hdf_1a93144c546054d3f468ee5f31a675c986" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1ac107a50042377dd79e6e61bf9c347763" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1ac3c9038c8ebee6dcf8fcf902a6bab205" kind="function"><name>hdf_input_n</name></member>
     <member refid="namespaceo2scl__hdf_1ab3ec81fdf59bfc26310605293e07d105" kind="function"><name>hdf_output</name></member>
-    <member refid="namespaceo2scl__hdf_1aa19e5b64017b67ef14c6a474555c4216" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1a702061556d2875e060f0d6b678aa0f79" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1a7bd989e8d4441a1575bad13aea044835" kind="function"><name>hdf_input_n</name></member>
     <member refid="namespaceo2scl__hdf_1a53f46a4d66824a54f5a6cc234f1aaec7" kind="function"><name>hdf_output</name></member>
-    <member refid="namespaceo2scl__hdf_1a71b9ba58a6ee2d6e5440f0de74cffa00" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1ae292c32df82449110aff3e7a11cb9f28" kind="function"><name>hdf_input</name></member>
+    <member refid="namespaceo2scl__hdf_1aa3877a0082ee477b57c970ce3b67f546" kind="function"><name>hdf_input_n</name></member>
     <member refid="namespaceo2scl__hdf_1aa75b1755878b4856bd08aac06cbf7e3b" kind="function"><name>value_spec</name></member>
     <member refid="namespaceo2scl__hdf_1aed3f93e319668741e0482077f89ec2c6" kind="function"><name>vector_spec</name></member>
     <member refid="namespaceo2scl__hdf_1aa799e6da229d2646e2d65212a49f74e3" kind="function"><name>strings_spec</name></member>
