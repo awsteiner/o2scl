@@ -53,7 +53,12 @@ namespace o2scl_hdf {
     void hdf_input(hdf_file &hf,
 		   o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
 		   std::string name) {
-      
+
+    if (name.length()==0) {
+      O2SCL_ERR("Name not specified in hdf_input(). Use hdf_input_n()?",
+                o2scl::exc_einval);
+    }
+    
     // Open main group
     hid_t top=hf.get_current_id();
     hid_t group=hf.open_group(name);
@@ -157,6 +162,11 @@ namespace o2scl_hdf {
   template<class vec_t> 
     void hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string name) {
       
+    if (name.length()==0) {
+      O2SCL_ERR("Name not specified in hdf_input(). Use hdf_input_n()?",
+                o2scl::exc_einval);
+    }
+    
     // Open main group
     hid_t top=hf.get_current_id();
     hid_t group=hf.open_group(name);
@@ -288,6 +298,11 @@ namespace o2scl_hdf {
     void hdf_input(hdf_file &hf, o2scl::table_units<vec_t> &t, 
 		   std::string name) {
       
+    if (name.length()==0) {
+      O2SCL_ERR("Name not specified in hdf_input(). Use hdf_input_n()?",
+                o2scl::exc_einval);
+    }
+    
     // Open main group
     hid_t top=hf.get_current_id();
     hid_t group=hf.open_group(name);
