@@ -894,6 +894,13 @@ double o2scl_uniform_grid___getitem(void *vptr, size_t n) {
   return ret;
 }
 
+void o2scl_uniform_grid___vector(void *vptr, void *ptr_v) {
+  uniform_grid<> *ptr=(uniform_grid<> *)vptr;
+  std::vector<double> *v=(std::vector<double> *)ptr_v;
+  ptr->vector(*v);
+  return;
+}
+
 void o2scl_free_uniform_grid_end__(void *vptr) {
   uniform_grid_end<> *ptr=(uniform_grid_end<> *)vptr;
   delete ptr;
@@ -1352,6 +1359,81 @@ double o2scl_tensor___total_sum(void *vptr) {
   tensor<> *ptr=(tensor<> *)vptr;
   double ret=ptr->total_sum();
   return ret;
+}
+
+void *o2scl_create_tensor_grid__() {
+  tensor_grid<> *ptr=new tensor_grid<>;
+  return ptr;
+}
+
+void o2scl_free_tensor_grid__(void *vptr) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_copy_tensor_grid__(void *vsrc, void *vdest) {
+  tensor_grid<> *src=(tensor_grid<> *)vsrc;
+  tensor_grid<> *dest=(tensor_grid<> *)vdest;
+  *dest=*src;
+}
+
+void o2scl_tensor_grid___is_valid(void *vptr) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  ptr->is_valid();
+  return;
+}
+
+void o2scl_tensor_grid___set_val(void *vptr, void *ptr_grid_point, double val) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  vector<double> *grid_point=(vector<double> *)ptr_grid_point;
+  ptr->set_val(*grid_point,val);
+  return;
+}
+
+double o2scl_tensor_grid___get_val(void *vptr, void *ptr_grid_point) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  vector<double> *grid_point=(vector<double> *)ptr_grid_point;
+  double ret=ptr->get_val(*grid_point);
+  return ret;
+}
+
+bool o2scl_tensor_grid___is_grid_set(void *vptr) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  bool ret=ptr->is_grid_set();
+  return ret;
+}
+
+void o2scl_tensor_grid___set_grid_packed(void *vptr, void *ptr_grid) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  vector<double> *grid=(vector<double> *)ptr_grid;
+  ptr->set_grid_packed(*grid);
+  return;
+}
+
+void o2scl_tensor_grid___default_grid(void *vptr) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  ptr->default_grid();
+  return;
+}
+
+void o2scl_tensor_grid___set_grid_i_vec(void *vptr, size_t i, void *ptr_grid) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  vector<double> *grid=(vector<double> *)ptr_grid;
+  ptr->set_grid_i_vec(i,*grid);
+  return;
+}
+
+double o2scl_tensor_grid___get_grid(void *vptr, size_t i, size_t j) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  double ret=ptr->get_grid(i,j);
+  return ret;
+}
+
+void o2scl_tensor_grid___set_grid(void *vptr, size_t i, size_t j, double val) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  ptr->set_grid(i,j,val);
+  return;
 }
 
 void *o2scl_create_find_constants() {

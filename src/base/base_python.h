@@ -320,6 +320,8 @@ double o2scl_uniform_grid___get_width(void *vptr);
 
 double o2scl_uniform_grid___getitem(void *vptr, size_t n);
 
+void o2scl_uniform_grid___vector(void *vptr, void *ptr_v);
+
 void o2scl_free_uniform_grid_end__(void *vptr);
 
 void *o2scl_uniform_grid_end___init(double start, double end, size_t n_bins);
@@ -475,6 +477,30 @@ double o2scl_tensor___min_value(void *vptr);
 double o2scl_tensor___max_value(void *vptr);
 
 double o2scl_tensor___total_sum(void *vptr);
+
+void *o2scl_create_tensor_grid__();
+
+void o2scl_free_tensor_grid__(void *vptr);
+
+void o2scl_copy_tensor_grid__(void *vsrc, void *vdest);
+
+void o2scl_tensor_grid___is_valid(void *vptr);
+
+void o2scl_tensor_grid___set_val(void *vptr, void *ptr_grid_point, double val);
+
+double o2scl_tensor_grid___get_val(void *vptr, void *ptr_grid_point);
+
+bool o2scl_tensor_grid___is_grid_set(void *vptr);
+
+void o2scl_tensor_grid___set_grid_packed(void *vptr, void *ptr_grid);
+
+void o2scl_tensor_grid___default_grid(void *vptr);
+
+void o2scl_tensor_grid___set_grid_i_vec(void *vptr, size_t i, void *ptr_grid);
+
+double o2scl_tensor_grid___get_grid(void *vptr, size_t i, size_t j);
+
+void o2scl_tensor_grid___set_grid(void *vptr, size_t i, size_t j, double val);
 
 void *o2scl_create_find_constants();
 

@@ -575,6 +575,9 @@ class uniform_grid<>
 - function operator[]
   - double
   - size_t n
+- function vector
+  - void
+  - std::vector<double> &v
 # 
 # Class uniform_grid_end
 #
@@ -920,6 +923,50 @@ class tensor<>
 |     syst.init_py(index)
 |     self.resize_vector(syst)
 |     return
+# 
+# Class tensor_grid
+#
+class tensor_grid<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``tensor_grid``,
+| see
+| https://neutronstars.utk.edu/code/o2scl-dev/html/class/tensor_grid.html .
+- std_cc                             
+- py_name tensor_grid
+#- cons create_size
+#  - size_t rank
+#  - vector<size_t> &sizes
+- function is_valid
+  - void
+- function set_val
+  - void
+  - py_name set_val_vector
+  - vector<double> &grid_point
+  - double val
+- function get_val
+  - double
+  - py_name get_val_vector
+  - vector<double> &grid_point
+- function is_grid_set
+  - bool
+- function set_grid_packed
+  - void
+  - vector<double> &grid
+- function default_grid
+  - void
+- function set_grid_i_vec    
+  - void
+  - size_t i
+  - vector<double> &grid
+- function get_grid
+  - double
+  - size_t i
+  - size_t j
+- function set_grid
+  - void
+  - size_t i
+  - size_t j
+  - double val
 # 
 # Class find_constants
 #
