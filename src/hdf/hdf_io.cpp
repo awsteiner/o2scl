@@ -481,13 +481,17 @@ void o2scl_hdf::hdf_output(hdf_file &hf, hist &h, std::string name) {
   return;
 }
 
-void o2scl_hdf::hdf_input(hdf_file &hf, hist &h, std::string name) {
-
+void o2scl_hdf::hdf_input_n(hdf_file &hf, hist &h, std::string &name) {
+  
+  // If no name specified, find name of first group of specified type
+  if (name.length()==0) {
+    hf.find_object_by_type("hist",name);
     if (name.length()==0) {
-      O2SCL_ERR("Name not specified in hdf_input(). Use hdf_input_n()?",
-                o2scl::exc_einval);
+      O2SCL_ERR2("No object of type hist found in o2scl_hdf::hdf_",
+		 "input(hdf_file &,hist &,string &).",exc_efailed);
     }
-    
+  }
+  
   // Open main group
   hid_t top=hf.get_current_id();
   hid_t group=hf.open_group(name);
@@ -565,16 +569,8 @@ void o2scl_hdf::hdf_input(hdf_file &hf, hist &h, std::string name) {
   return;
 }
 
-void o2scl_hdf::hdf_input_n(hdf_file &hf, hist &h, std::string &name) {
-  // If no name specified, find name of first group of specified type
-  if (name.length()==0) {
-    hf.find_object_by_type("hist",name);
-    if (name.length()==0) {
-      O2SCL_ERR2("No object of type hist found in o2scl_hdf::hdf_",
-		 "input(hdf_file &,hist &,string &).",exc_efailed);
-    }
-  }
-  hdf_input(hf,h,name);
+void o2scl_hdf::hdf_input(hdf_file &hf, hist &h, std::string name) {
+  hdf_input_n(hf,h,name);
   return;
 }
 
@@ -622,13 +618,17 @@ void o2scl_hdf::hdf_output(hdf_file &hf, const hist_2d &h, std::string name) {
   return;
 }
 
-void o2scl_hdf::hdf_input(hdf_file &hf, hist_2d &h, std::string name) {
+void o2scl_hdf::hdf_input_n(hdf_file &hf, hist_2d &h, std::string &name) {
 
+  // If no name specified, find name of first group of specified type
+  if (name.length()==0) {
+    hf.find_object_by_type("hist_2d",name);
     if (name.length()==0) {
-      O2SCL_ERR("Name not specified in hdf_input(). Use hdf_input_n()?",
-                o2scl::exc_einval);
+      O2SCL_ERR2("No object of type hist_2d found in o2scl_hdf::hdf_",
+		 "input(hdf_file &,hist_2d &,string &).",exc_efailed);
     }
-    
+  }
+  
   h.clear();
 
   // Open main group
@@ -699,16 +699,8 @@ void o2scl_hdf::hdf_input(hdf_file &hf, hist_2d &h, std::string name) {
   return;
 }
 
-void o2scl_hdf::hdf_input_n(hdf_file &hf, hist_2d &h, std::string &name) {
-  // If no name specified, find name of first group of specified type
-  if (name.length()==0) {
-    hf.find_object_by_type("hist_2d",name);
-    if (name.length()==0) {
-      O2SCL_ERR2("No object of type hist_2d found in o2scl_hdf::hdf_",
-		 "input(hdf_file &,hist_2d &,string &).",exc_efailed);
-    }
-  }
-  hdf_input(hf,h,name);
+void o2scl_hdf::hdf_input(hdf_file &hf, hist_2d &h, std::string name) {
+  hdf_input_n(hf,h,name);
   return;
 }
 
@@ -797,14 +789,18 @@ void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, const table3d &t,
   return;
 }
 
-void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, table3d &t, 
-			  std::string name) {
+void o2scl_hdf::hdf_input_n(o2scl_hdf::hdf_file &hf, table3d &t, 
+                            std::string &name) {
 
+  // If no name specified, find name of first group of specified type
+  if (name.length()==0) {
+    hf.find_object_by_type("table3d",name);
     if (name.length()==0) {
-      O2SCL_ERR("Name not specified in hdf_input(). Use hdf_input_n()?",
-                o2scl::exc_einval);
+      O2SCL_ERR2("No object of type table3d found in o2scl_hdf::hdf_",
+		 "input(hdf_file &,table3d &,string &).",exc_efailed);
     }
-    
+  }
+  
   typedef std::vector<double> ubvector;
 
   // Clear previous data
@@ -902,16 +898,8 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, table3d &t,
   return;
 }
 
-void o2scl_hdf::hdf_input_n(hdf_file &hf, table3d &h, std::string &name) {
-  // If no name specified, find name of first group of specified type
-  if (name.length()==0) {
-    hf.find_object_by_type("table3d",name);
-    if (name.length()==0) {
-      O2SCL_ERR2("No object of type table3d found in o2scl_hdf::hdf_",
-		 "input(hdf_file &,table3d &,string &).",exc_efailed);
-    }
-  }
-  hdf_input(hf,h,name);
+void o2scl_hdf::hdf_input(hdf_file &hf, table3d &h, std::string name) {
+  hdf_input_n(hf,h,name);
   return;
 }
 
@@ -948,14 +936,18 @@ void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, expval_scalar &sev,
   return;
 }
 
-void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, expval_scalar &sev,
-			  std::string hdf_name) {
+void o2scl_hdf::hdf_input_n(o2scl_hdf::hdf_file &hf, expval_scalar &sev,
+                            std::string &hdf_name) {
   
+  // If no name specified, find name of first group of specified type
   if (hdf_name.length()==0) {
-    O2SCL_ERR("Name not specified in hdf_input(). Use hdf_input_n()?",
-              o2scl::exc_einval);
+    hf.find_object_by_type("expval_scalar",hdf_name);
+    if (hdf_name.length()==0) {
+      O2SCL_ERR2("No object of type expval_scalar found in o2scl_hdf::hdf_",
+		 "input(hdf_file &,expval_scalar &,string &).",exc_efailed);
+    }
   }
-    
+  
   // Open main group
   hid_t top=hf.get_current_id();
   hid_t group=hf.open_group(hdf_name);
@@ -978,17 +970,9 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, expval_scalar &sev,
   return;
 }
 
-void o2scl_hdf::hdf_input_n(hdf_file &hf, expval_scalar &h,
-                            std::string &name) {
-  // If no name specified, find name of first group of specified type
-  if (name.length()==0) {
-    hf.find_object_by_type("expval_scalar",name);
-    if (name.length()==0) {
-      O2SCL_ERR2("No object of type expval_scalar found in o2scl_hdf::hdf_",
-		 "input(hdf_file &,expval_scalar &,string &).",exc_efailed);
-    }
-  }
-  hdf_input(hf,h,name);
+void o2scl_hdf::hdf_input(hdf_file &hf, expval_scalar &h,
+                            std::string name) {
+  hdf_input_n(hf,h,name);
   return;
 }
 
@@ -1026,14 +1010,18 @@ void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, expval_vector &vev,
   return;
 }
 
-void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, expval_vector &vev,
-			  std::string hdf_name) {
+void o2scl_hdf::hdf_input_n(o2scl_hdf::hdf_file &hf, expval_vector &vev,
+                            std::string &hdf_name) {
   
+  // If no name specified, find name of first group of specified type
   if (hdf_name.length()==0) {
-    O2SCL_ERR("Name not specified in hdf_input(). Use hdf_input_n()?",
-              o2scl::exc_einval);
+    hf.find_object_by_type("expval_vector",hdf_name);
+    if (hdf_name.length()==0) {
+      O2SCL_ERR2("No object of type expval_vector found in o2scl_hdf::hdf_",
+		 "input(hdf_file &,expval_vector &,string &).",exc_efailed);
+    }
   }
-    
+  
   // Open main group
   hid_t top=hf.get_current_id();
   hid_t group=hf.open_group(hdf_name);
@@ -1057,18 +1045,9 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, expval_vector &vev,
   return;
 }
 
-void o2scl_hdf::hdf_input_n(hdf_file &hf, expval_vector &h,
-                            std::string &name) {
-  
-  // If no name specified, find name of first group of specified type
-  if (name.length()==0) {
-    hf.find_object_by_type("expval_vector",name);
-    if (name.length()==0) {
-      O2SCL_ERR2("No object of type expval_vector found in o2scl_hdf::hdf_",
-		 "input(hdf_file &,expval_vector &,string &).",exc_efailed);
-    }
-  }
-  hdf_input(hf,h,name);
+void o2scl_hdf::hdf_input(hdf_file &hf, expval_vector &h,
+                            std::string name) {
+  hdf_input_n(hf,h,name);
   return;
 }
 
@@ -1107,14 +1086,18 @@ void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, expval_matrix &mev,
   return;
 }
 
-void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, expval_matrix &mev,
-			  std::string hdf_name) {
-  
+void o2scl_hdf::hdf_input_n(o2scl_hdf::hdf_file &hf, expval_matrix &mev,
+                            std::string &hdf_name) {
+
+  // If no name specified, find name of first group of specified type
   if (hdf_name.length()==0) {
-    O2SCL_ERR("Name not specified in hdf_input(). Use hdf_input_n()?",
-              o2scl::exc_einval);
+    hf.find_object_by_type("expval_matrix",hdf_name);
+    if (hdf_name.length()==0) {
+      O2SCL_ERR2("No object of type expval_matrix found in o2scl_hdf::hdf_",
+		 "input(hdf_file &,expval_matrix &,string &).",exc_efailed);
+    }
   }
-    
+  
   // Open main group
   hid_t top=hf.get_current_id();
   hid_t group=hf.open_group(hdf_name);
@@ -1139,18 +1122,10 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, expval_matrix &mev,
   return;
 }
 
-void o2scl_hdf::hdf_input_n(hdf_file &hf, expval_matrix &h,
-                            std::string &name) {
+void o2scl_hdf::hdf_input(hdf_file &hf, expval_matrix &h,
+                            std::string name) {
   
-  // If no name specified, find name of first group of specified type
-  if (name.length()==0) {
-    hf.find_object_by_type("expval_matrix",name);
-    if (name.length()==0) {
-      O2SCL_ERR2("No object of type expval_matrix found in o2scl_hdf::hdf_",
-		 "input(hdf_file &,expval_matrix &,string &).",exc_efailed);
-    }
-  }
-  hdf_input(hf,h,name);
+  hdf_input_n(hf,h,name);
   return;
 }
 
@@ -1191,14 +1166,19 @@ void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf,
   return;
 }
 
-void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug,
-			  std::string hdf_name) {
-  
+void o2scl_hdf::hdf_input_n(o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug,
+                            std::string &hdf_name) {
+
+  // If no name specified, find name of first group of specified type
   if (hdf_name.length()==0) {
-    O2SCL_ERR("Name not specified in hdf_input(). Use hdf_input_n()?",
-              o2scl::exc_einval);
+    hf.find_object_by_type("uniform_grid<double>",hdf_name);
+    if (hdf_name.length()==0) {
+      O2SCL_ERR2("No object of type uniform_grid found in o2scl_hdf::hdf_",
+		 "input(hdf_file &,uniform_grid<double> &,string &).",
+                 exc_efailed);
+    }
   }
-    
+  
   // Open main group
   hid_t top=hf.get_current_id();
   hid_t group=hf.open_group(hdf_name);
@@ -1226,19 +1206,10 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug,
   return;
 }
 
-void o2scl_hdf::hdf_input_n(hdf_file &hf, uniform_grid<double> &h,
-                            std::string &name) {
+void o2scl_hdf::hdf_input(hdf_file &hf, uniform_grid<double> &h,
+                            std::string name) {
   
-  // If no name specified, find name of first group of specified type
-  if (name.length()==0) {
-    hf.find_object_by_type("uniform_grid<double>",name);
-    if (name.length()==0) {
-      O2SCL_ERR2("No object of type uniform_grid found in o2scl_hdf::hdf_",
-		 "input(hdf_file &,uniform_grid<double> &,string &).",
-                 exc_efailed);
-    }
-  }
-  hdf_input(hf,h,name);
+  hdf_input_n(hf,h,name);
   return;
 }
 
@@ -1289,20 +1260,15 @@ void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf,
   return;
 }
 
-void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, vector<contour_line> &cl,
-			  std::string hdf_name) {
-  
-  if (hdf_name.length()==0) {
-    O2SCL_ERR("Name not specified in hdf_input(). Use hdf_input_n()?",
-              o2scl::exc_einval);
-  }
+void o2scl_hdf::hdf_input_n(o2scl_hdf::hdf_file &hf, vector<contour_line> &cl,
+                            std::string &hdf_name) {
   
   // If no name specified, find name of first group of specified type
   if (hdf_name.length()==0) {
     hf.find_object_by_type("vector<contour_line>",hdf_name);
     if (hdf_name.length()==0) {
       O2SCL_ERR2("No object of type vector<contour_line> found in ",
-		 "o2scl_hdf::hdf_input().",exc_efailed);
+		 "o2scl_hdf::hdf_input_n().",exc_efailed);
     }
   }
 
@@ -1347,19 +1313,10 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, vector<contour_line> &cl,
   return;
 }
 
-void o2scl_hdf::hdf_input_n(hdf_file &hf, vector<contour_line> &h,
-                            std::string &name) {
+void o2scl_hdf::hdf_input(hdf_file &hf, vector<contour_line> &h,
+                            std::string name) {
   
-  // If no name specified, find name of first group of specified type
-  if (name.length()==0) {
-    hf.find_object_by_type("vector<contour_line>",name);
-    if (name.length()==0) {
-      O2SCL_ERR2("No object of type vector<contour_line> found in o2scl_hdf::hdf_",
-		 "input(hdf_file &,vector<contour_line> &,string &).",
-                 exc_efailed);
-    }
-  }
-  hdf_input(hf,h,name);
+  hdf_input_n(hf,h,name);
   return;
 }
 
@@ -1409,14 +1366,19 @@ void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf,
   return;
 }
 
-void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, vector<edge_crossings> &ec,
-			  std::string hdf_name) {
-  
+void o2scl_hdf::hdf_input_n(o2scl_hdf::hdf_file &hf, vector<edge_crossings> &ec,
+                            std::string &hdf_name) {
+
+  // If no name specified, find name of first group of specified type
   if (hdf_name.length()==0) {
-    O2SCL_ERR("Name not specified in hdf_input(). Use hdf_input_n()?",
-              o2scl::exc_einval);
+    hf.find_object_by_type("vector<edge_crossings>",hdf_name);
+    if (hdf_name.length()==0) {
+      O2SCL_ERR2("No object of type vector<edge_crossings> found in ",
+		 "o2scl_hdf::hdf_input().",
+                 exc_efailed);
+    }
   }
-    
+  
   // Open main group
   hid_t top=hf.get_current_id();
   hid_t group=hf.open_group(hdf_name);
@@ -1457,19 +1419,10 @@ void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, vector<edge_crossings> &ec,
   return;
 }
 
-void o2scl_hdf::hdf_input_n(hdf_file &hf, vector<edge_crossings> &h,
-                            std::string &name) {
+void o2scl_hdf::hdf_input(hdf_file &hf, vector<edge_crossings> &h,
+                            std::string name) {
   
-  // If no name specified, find name of first group of specified type
-  if (name.length()==0) {
-    hf.find_object_by_type("vector<edge_crossings>",name);
-    if (name.length()==0) {
-      O2SCL_ERR2("No object of type vector<edge_crossings> found in o2scl_hdf::hdf_",
-		 "input(hdf_file &,vector<edge_crossings> &,string &).",
-                 exc_efailed);
-    }
-  }
-  hdf_input(hf,h,name);
+  hdf_input_n(hf,h,name);
   return;
 }
 
@@ -1532,14 +1485,20 @@ void o2scl_hdf::hdf_output(hdf_file &hf,
   return;
 }
   
-void o2scl_hdf::hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
-			  std::vector<size_t>> &t, std::string name) {
+void o2scl_hdf::hdf_input_n(hdf_file &hf,
+                            o2scl::tensor_grid<std::vector<double>,
+                            std::vector<size_t>> &t, std::string &name) {
     
+  // If no name specified, find name of first group of specified type
+  if (name.length()==0) {
+    hf.find_object_by_type("tensor_grid",name);
     if (name.length()==0) {
-      O2SCL_ERR("Name not specified in hdf_input(). Use hdf_input_n()?",
-                o2scl::exc_einval);
+      O2SCL_ERR2("No object of type tensor_grid found in o2scl_hdf::hdf_",
+		 "input(hdf_file &,tensor_grid<vector<double> > &,string &).",
+                 exc_efailed);
     }
-      
+  }
+  
   // Open main group
   hid_t top=hf.get_current_id();
   hid_t group=hf.open_group(name);
@@ -1612,19 +1571,10 @@ void o2scl_hdf::hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
   return;
 }
 
-void o2scl_hdf::hdf_input_n(hdf_file &hf, tensor_grid<vector<double> > &h,
-                            std::string &name) {
+void o2scl_hdf::hdf_input(hdf_file &hf, tensor_grid<vector<double> > &h,
+                          std::string name) {
   
-  // If no name specified, find name of first group of specified type
-  if (name.length()==0) {
-    hf.find_object_by_type("tensor_grid",name);
-    if (name.length()==0) {
-      O2SCL_ERR2("No object of type tensor_grid found in o2scl_hdf::hdf_",
-		 "input(hdf_file &,tensor_grid<vector<double> > &,string &).",
-                 exc_efailed);
-    }
-  }
-  hdf_input(hf,h,name);
+  hdf_input_n(hf,h,name);
   
   return;
 }

@@ -46,11 +46,11 @@ namespace o2scl {
 namespace o2scl_hdf { 
 
   class hdf_file; 
-
+  
   template<class vec_t>
-    void hdf_input(hdf_file &hf, o2scl::table_units<vec_t> &t, 
-		   std::string name);
-
+  void hdf_input(hdf_file &hf, o2scl::table_units<vec_t> &t, 
+                 std::string name);
+  
   void hdf_output
     (hdf_file &hf, 
      o2scl::table_units<std::vector<double> > &t, 

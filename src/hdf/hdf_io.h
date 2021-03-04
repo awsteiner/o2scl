@@ -50,13 +50,17 @@ namespace o2scl_hdf {
       \ref hdf_file
   */
   template<class vec_t, class mat_t> 
-    void hdf_input(hdf_file &hf,
-		   o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
-		   std::string name) {
+    void hdf_input_n(hdf_file &hf,
+                     o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
+                     std::string &name) {
 
+    // If no name specified, find name of first group of specified type
     if (name.length()==0) {
-      O2SCL_ERR("Name not specified in hdf_input(). Use hdf_input_n()?",
-                o2scl::exc_einval);
+      hf.find_object_by_type("prob_dens_mdim_amr",name);
+      if (name.length()==0) {
+	O2SCL_ERR2("No object of type prob_dens_mdim_amr found in ",
+		   "o2scl_hdf::hdf_input().",o2scl::exc_efailed);
+      }
     }
     
     // Open main group
@@ -86,21 +90,10 @@ namespace o2scl_hdf {
   }
   
   template<class vec_t, class mat_t> 
-    void hdf_input_n(hdf_file &hf,
+    void hdf_input(hdf_file &hf,
 		   o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
-		   std::string &name) {
-      
-    // If no name specified, find name of first group of specified type
-    if (name.length()==0) {
-      hf.find_object_by_type("prob_dens_mdim_amr",name);
-      if (name.length()==0) {
-	O2SCL_ERR2("No object of type prob_dens_mdim_amr found in ",
-		   "o2scl_hdf::hdf_input().",o2scl::exc_efailed);
-      }
-    }
-
-    hdf_input<vec_t,mat_t>(hf,p,name);
-
+		   std::string name="") {
+    hdf_input_n<vec_t,mat_t>(hf,p,name);
     return;
   }
   
@@ -160,11 +153,15 @@ namespace o2scl_hdf {
       \endcomment
   */
   template<class vec_t> 
-    void hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string name) {
+    void hdf_input_n(hdf_file &hf, o2scl::table<vec_t> &t, std::string &name) {
       
+    // If no name specified, find name of first group of specified type
     if (name.length()==0) {
-      O2SCL_ERR("Name not specified in hdf_input(). Use hdf_input_n()?",
-                o2scl::exc_einval);
+      hf.find_object_by_type("table",name);
+      if (name.length()==0) {
+	O2SCL_ERR2("No object of type table found in ",
+		   "o2scl_hdf::hdf_input().",o2scl::exc_efailed);
+      }
     }
     
     // Open main group
@@ -188,18 +185,10 @@ namespace o2scl_hdf {
 #endif
 
   template<class vec_t> 
-    void hdf_input_n(hdf_file &hf, o2scl::table<vec_t> &t, std::string &name) {
+    void hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string name) {
       
-    // If no name specified, find name of first group of specified type
-    if (name.length()==0) {
-      hf.find_object_by_type("table",name);
-      if (name.length()==0) {
-	O2SCL_ERR2("No object of type table found in ",
-		   "o2scl_hdf::hdf_input().",o2scl::exc_efailed);
-      }
-    }
-
-    hdf_input<vec_t>(hf,t,name);
+    hdf_input_n<vec_t>(hf,t,name);
+    
     return;
   }
   /** \brief Internal function for outputting a \ref o2scl::table object
@@ -295,12 +284,16 @@ namespace o2scl_hdf {
       \endcomment
   */
   template<class vec_t> 
-    void hdf_input(hdf_file &hf, o2scl::table_units<vec_t> &t, 
-		   std::string name) {
-      
+  void hdf_input_n(hdf_file &hf, o2scl::table_units<vec_t> &t, 
+                   std::string &name) {
+
+    // If no name specified, find name of first group of specified type
     if (name.length()==0) {
-      O2SCL_ERR("Name not specified in hdf_input(). Use hdf_input_n()?",
-                o2scl::exc_einval);
+      hf.find_object_by_type("table",name);
+      if (name.length()==0) {
+	O2SCL_ERR2("No object of type table found in ",
+		   "o2scl_hdf::hdf_input().",o2scl::exc_efailed);
+      }
     }
     
     // Open main group
@@ -323,22 +316,14 @@ namespace o2scl_hdf {
   }
 
   template<class vec_t> 
-    void hdf_input_n(hdf_file &hf, o2scl::table_units<vec_t> &t, 
-		   std::string &name) {
-      
-    // If no name specified, find name of first group of specified type
-    if (name.length()==0) {
-      hf.find_object_by_type("table",name);
-      if (name.length()==0) {
-	O2SCL_ERR2("No object of type table found in ",
-		   "o2scl_hdf::hdf_input().",o2scl::exc_efailed);
-      }
-    }
-
-    hdf_input<vec_t>(hf,t,name);
+  void hdf_input(hdf_file &hf, o2scl::table_units<vec_t> &t, 
+                 std::string name) {
+    
+    hdf_input_n<vec_t>(hf,t,name);
     
     return;
   }
+  
   /** \brief Internal function for outputting a \ref o2scl::table_units object
    */
   void hdf_output_data(hdf_file &hf, o2scl::table_units<> &t);
@@ -374,19 +359,19 @@ namespace o2scl_hdf {
   /// Output a \ref o2scl::hist object to a \ref hdf_file
   void hdf_output(hdf_file &hf, o2scl::hist &h, std::string name);
   /// Input a \ref o2scl::hist object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::hist &h, std::string name);
+  void hdf_input(hdf_file &hf, o2scl::hist &h, std::string name="");
   /// Input a \ref o2scl::hist object from a \ref hdf_file
   void hdf_input_n(hdf_file &hf, o2scl::hist &h, std::string &name);
   /// Output a \ref o2scl::hist_2d object to a \ref hdf_file
   void hdf_output(hdf_file &hf, const o2scl::hist_2d &h, std::string name);
   /// Input a \ref o2scl::hist_2d object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::hist_2d &h, std::string name);
+  void hdf_input(hdf_file &hf, o2scl::hist_2d &h, std::string name="");
   /// Input a \ref o2scl::hist_2d object from a \ref hdf_file
   void hdf_input_n(hdf_file &hf, o2scl::hist_2d &h, std::string &name);
   /// Output a \ref o2scl::table3d object to a \ref hdf_file
   void hdf_output(hdf_file &hf, const o2scl::table3d &h, std::string name);
   /// Input a \ref o2scl::table3d object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::table3d &h, std::string name);
+  void hdf_input(hdf_file &hf, o2scl::table3d &h, std::string name="");
   /// Input a \ref o2scl::table3d object from a \ref hdf_file
   void hdf_input_n(hdf_file &hf, o2scl::table3d &h, std::string &name);
   /// Output a \ref o2scl::expval_scalar object to a \ref hdf_file
@@ -394,22 +379,22 @@ namespace o2scl_hdf {
 		  std::string name);
   /// Input a \ref o2scl::expval_scalar object from a \ref hdf_file
   void hdf_input(hdf_file &hf, o2scl::expval_scalar &h,
-		 std::string name);
+		 std::string name="");
   /// Input a \ref o2scl::expval_scalar object from a \ref hdf_file
   void hdf_input_n(hdf_file &hf, o2scl::expval_scalar &h,
-		 std::string &name);
+                   std::string &name);
   /// Output a \ref o2scl::expval_vector object to a \ref hdf_file
   void hdf_output(hdf_file &hf, o2scl::expval_vector &h,
 		  std::string name);
   /// Input a \ref o2scl::expval_vector object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::expval_vector &h, std::string name);
+  void hdf_input(hdf_file &hf, o2scl::expval_vector &h, std::string name="");
   /// Input a \ref o2scl::expval_vector object from a \ref hdf_file
   void hdf_input_n(hdf_file &hf, o2scl::expval_vector &h, std::string &name);
   /// Output a \ref o2scl::expval_matrix object to a \ref hdf_file
   void hdf_output(hdf_file &hf, o2scl::expval_matrix &h,
 		  std::string name);
   /// Input a \ref o2scl::expval_matrix object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::expval_matrix &h, std::string name);
+  void hdf_input(hdf_file &hf, o2scl::expval_matrix &h, std::string name="");
   /// Input a \ref o2scl::expval_matrix object from a \ref hdf_file
   void hdf_input_n(hdf_file &hf, o2scl::expval_matrix &h, std::string &name);
   /// Output a \ref o2scl::uniform_grid object to a \ref hdf_file
@@ -417,7 +402,7 @@ namespace o2scl_hdf {
 		  std::string name);
   /// Input a \ref o2scl::uniform_grid object from a \ref hdf_file
   void hdf_input(hdf_file &hf, o2scl::uniform_grid<double> &h, 
-		 std::string name);
+		 std::string name="");
   /// Input a \ref o2scl::uniform_grid object from a \ref hdf_file
   void hdf_input_n(hdf_file &hf, o2scl::uniform_grid<double> &h, 
 		 std::string &name);
@@ -426,7 +411,7 @@ namespace o2scl_hdf {
 		  std::string name);
   /// Input a vector of \ref o2scl::contour_line objects from a \ref hdf_file
   void hdf_input(hdf_file &hf, std::vector<o2scl::contour_line> &cl, 
-		 std::string name);
+		 std::string name="");
   /// Input a vector of \ref o2scl::contour_line objects from a \ref hdf_file
   void hdf_input_n(hdf_file &hf, std::vector<o2scl::contour_line> &cl, 
 		 std::string &name);
@@ -435,7 +420,7 @@ namespace o2scl_hdf {
 		  std::string name);
   /// Input a vector of \ref o2scl::edge_crossings objects from a \ref hdf_file
   void hdf_input(hdf_file &hf, std::vector<o2scl::edge_crossings> &ec, 
-		 std::string name);
+		 std::string name="");
   /// Input a vector of \ref o2scl::edge_crossings objects from a \ref hdf_file
   void hdf_input_n(hdf_file &hf, std::vector<o2scl::edge_crossings> &ec, 
 		 std::string &name);
@@ -444,10 +429,10 @@ namespace o2scl_hdf {
 		  std::vector<size_t> > &t, std::string name);
   /// Input a \ref o2scl::tensor_grid object from a \ref hdf_file
   void hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
-		 std::vector<size_t> > &t, std::string name);
+		 std::vector<size_t> > &t, std::string name="");
   /// Input a \ref o2scl::tensor_grid object from a \ref hdf_file
   void hdf_input_n(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
-		 std::vector<size_t> > &t, std::string &name);
+                   std::vector<size_t> > &t, std::string &name);
 
   /** \brief A value specified by a string
       

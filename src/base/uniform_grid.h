@@ -41,8 +41,8 @@ namespace o2scl {
 // Forward definition of HDF I/O to extend friendship
 namespace o2scl_hdf { 
   class hdf_file; 
-  void hdf_input(hdf_file &hf, o2scl::uniform_grid<double> &t, 
-		 std::string name);
+  void hdf_input_n(hdf_file &hf, o2scl::uniform_grid<double> &t, 
+		 std::string &name);
   void hdf_output(hdf_file &hf, o2scl::uniform_grid<double> &t, 
 		  std::string name);
 }
@@ -60,8 +60,8 @@ namespace o2scl {
   // Forward definition of HDF I/O to extend friendship
   namespace o2scl_hdf { 
     class hdf_file; 
-    void hdf_input(hdf_file &hf, o2scl::uniform_grid<double> &t, 
-		   std::string name);
+    void hdf_input_n(hdf_file &hf, o2scl::uniform_grid<double> &t, 
+		   std::string &name);
     void hdf_output(hdf_file &hf, o2scl::uniform_grid<double> &t, 
 		    std::string name);
   }
@@ -96,8 +96,8 @@ namespace o2scl {
   friend void o2scl_hdf::hdf_output
   (o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug, std::string name);
   
-  friend void o2scl_hdf::hdf_input
-  (o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug, std::string name);
+  friend void o2scl_hdf::hdf_input_n
+  (o2scl_hdf::hdf_file &hf, uniform_grid<double> &ug, std::string &name);
 
   protected:
   
