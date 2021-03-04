@@ -2331,7 +2331,7 @@ int main(int argc, char *argv[]) {
         }
         if (k!=iff.args.size()-1) fout << ",";
       }
-      fout << ")" << endl;
+      fout << "))" << endl;
       fout << endl;
       
     }    
