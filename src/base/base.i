@@ -588,7 +588,6 @@ class uniform_grid_end<>
 | https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_end.html .
 - py_name uniform_grid_end                             
 - parent uniform_grid<>
-- no_def_cons                             
 - cons init
   - double start
   - double end
@@ -603,7 +602,6 @@ class uniform_grid_width<>
 | https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_width.html .
 - py_name uniform_grid_width
 - parent uniform_grid<>
-- no_def_cons                             
 - cons init
   - double start
   - double width
@@ -618,7 +616,6 @@ class uniform_grid_end_width<>
 | https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_end_width.html .
 - py_name uniform_grid_end_width                             
 - parent uniform_grid<>
-- no_def_cons                             
 - cons init
   - double start
   - double end
@@ -633,7 +630,6 @@ class uniform_grid_log_end<>
 | https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_log_end.html .
 - py_name uniform_grid_log_end
 - parent uniform_grid<>
-- no_def_cons                             
 - cons init
   - double start
   - double end
@@ -648,7 +644,6 @@ class uniform_grid_log_width<>
 | https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_log_width.html .
 - py_name uniform_grid_log_width
 - parent uniform_grid<>
-- no_def_cons                             
 - cons init
   - double start
   - double width
@@ -663,7 +658,6 @@ class uniform_grid_log_end_width<>
 | https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_log_end_width.html .
 - py_name uniform_grid_log_end_width
 - parent uniform_grid<>
-- no_def_cons                             
 - cons init
   - double start
   - double end

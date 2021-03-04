@@ -322,25 +322,37 @@ double o2scl_uniform_grid___getitem(void *vptr, size_t n);
 
 void o2scl_uniform_grid___vector(void *vptr, void *ptr_v);
 
+void *o2scl_create_uniform_grid_end__();
+
 void o2scl_free_uniform_grid_end__(void *vptr);
 
 void *o2scl_uniform_grid_end___init(double start, double end, size_t n_bins);
+
+void *o2scl_create_uniform_grid_width__();
 
 void o2scl_free_uniform_grid_width__(void *vptr);
 
 void *o2scl_uniform_grid_width___init(double start, double width, size_t n_bins);
 
+void *o2scl_create_uniform_grid_end_width__();
+
 void o2scl_free_uniform_grid_end_width__(void *vptr);
 
 void *o2scl_uniform_grid_end_width___init(double start, double end, double width);
+
+void *o2scl_create_uniform_grid_log_end__();
 
 void o2scl_free_uniform_grid_log_end__(void *vptr);
 
 void *o2scl_uniform_grid_log_end___init(double start, double end, size_t n_bins);
 
+void *o2scl_create_uniform_grid_log_width__();
+
 void o2scl_free_uniform_grid_log_width__(void *vptr);
 
 void *o2scl_uniform_grid_log_width___init(double start, double width, size_t n_bins);
+
+void *o2scl_create_uniform_grid_log_end_width__();
 
 void o2scl_free_uniform_grid_log_end_width__(void *vptr);
 

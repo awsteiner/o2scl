@@ -36,9 +36,10 @@ help:
 
 ACLOCAL_AMFLAGS = -I m4
 
-# Note that in SUBDIRS below, include must come before src and
-# acol must come after src
-SUBDIRS = include src acol data doc examples 
+# Note that in SUBDIRS below, include must come before src (so that
+# the necessary include files can be found) and bin must come after
+# src (so that the libraries can be found for the executables)
+SUBDIRS = include src bin data doc examples 
 
 # Extra files to add to the distribution
 EXTRA_DIST = autogen.sh TODOS README acinclude.m4 m4 README.md .travis.yml
@@ -87,7 +88,7 @@ o2scl-test:
 sinstall:
 	cd include && $(MAKE) install
 	cd src && $(MAKE) install
-	cd acol && $(MAKE) install
+	cd bin && $(MAKE) install
 
 # Clean o2scl-test targets
 test-clean:
@@ -139,7 +140,7 @@ open-part-doc:
 	$(BROWSER) doc/o2scl/part/sphinx/build/html/index.html
 
 interface: empty
-	cd acol; $(MAKE) yanic
+	cd bin; $(MAKE) yanic
 	cd src; $(MAKE) interface
 
 empty:

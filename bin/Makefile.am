@@ -1,5 +1,5 @@
 help:
-	@echo "This the O2scl makefile for the acol subdirectory."
+	@echo "This the O2scl makefile for the bin subdirectory."
 	@echo
 	@echo "The traditional GNU-style targets apply."
 	@echo 

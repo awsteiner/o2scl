@@ -2298,7 +2298,7 @@ int main(int argc, char *argv[]) {
       fout << endl;
       fout << "        \"\"\"" << endl;
       fout << endl;
-      fout << "        f=link." << dll_name << "." << ifc.ns << "_create_"
+      fout << "        f=link." << dll_name << "." << ifc.ns << "_"
            << underscoreify(ifc.name) << "_" << iff.name << endl;
       fout << "        f.restype=ctypes.c_void_p" << endl;
 
@@ -2319,7 +2319,7 @@ int main(int argc, char *argv[]) {
       fout << "]" << endl;
 
       // Set up constructor function call
-      fout << "        cls._ptr=f(";
+      fout << "        return cls(link,f(";
       // Arguments 
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.suffix=="&") {
@@ -2332,8 +2332,6 @@ int main(int argc, char *argv[]) {
         if (k!=iff.args.size()-1) fout << ",";
       }
       fout << ")" << endl;
-      fout << "        cls._link=link" << endl;
-      fout << "        return" << endl;
       fout << endl;
       
     }    
