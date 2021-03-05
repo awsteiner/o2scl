@@ -713,6 +713,10 @@ void eos_had_temp_base::check_mu_T(fermion &n, fermion &p, double T, thermo &th,
   double nn=n.n;
   double np=p.n;
 
+  // In order to help ensure the derivatives don't cause
+  // negative densities
+  def_deriv.h=n.n/10.0;
+  
   funct fn=std::bind
     (std::mem_fn<double(double,double,double)>
      (&eos_had_temp_base::calc_fr),this,std::placeholders::_1,p.n,T);
@@ -721,6 +725,10 @@ void eos_had_temp_base::check_mu_T(fermion &n, fermion &p, double T, thermo &th,
   n.n=nn;
   p.n=np;
 
+  // In order to help ensure the derivatives don't cause
+  // negative densities
+  def_deriv.h=p.n/10.0;
+  
   funct fp=std::bind
     (std::mem_fn<double(double,double,double)>
      (&eos_had_temp_base::calc_fr),this,n.n,std::placeholders::_1,T);

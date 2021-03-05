@@ -1232,16 +1232,18 @@ namespace o2scl {
   class eos_had_temp_eden_base : public eos_had_temp_base {
   public:
 
-    /** \brief Equation of state as a function of density
-     */
-    virtual int calc_e(fermion &n, fermion &p, thermo &th)=0;
-    
     /** \brief Equation of state as a function of densities at 
         finite temperature
     */
     virtual int calc_temp_e(fermion &n, fermion &p, double T, 
                             thermo &th)=0;
 
+    /** \brief Equation of state as a function of density
+     */
+    virtual int calc_e(fermion &n, fermion &p, thermo &th) {
+      return calc_temp_e(n,p,0.0,th);
+    }
+    
     /** \brief Equation of state as a function of the chemical potentials
      */
     virtual int calc_p(fermion &n, fermion &p, thermo &th);
