@@ -95,7 +95,7 @@ function hdf_output
 - void                             
 - py_name hdf_output_table3d
 - hdf_file &hf
-- table3d &t
+- const table3d &t
 - std::string name  
 function hdf_input
 - void                             

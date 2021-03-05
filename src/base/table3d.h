@@ -63,7 +63,7 @@ namespace o2scl {
 namespace o2scl_hdf { 
   class hdf_file; 
   void hdf_input(hdf_file &hf, o2scl::table3d &t, std::string name);
-  void hdf_output(hdf_file &hf, o2scl::table3d &t, std::string name);
+  void hdf_output(hdf_file &hf, const o2scl::table3d &t, std::string name);
 }
 
 #ifndef DOXYGEN_NO_O2NS
@@ -642,7 +642,7 @@ namespace o2scl {
     // Allow HDF I/O functions to access table3d data
 
     friend void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf,
-				      table3d &t, 
+				      const table3d &t, 
 				      std::string name);
     
     friend void o2scl_hdf::hdf_input(o2scl_hdf::hdf_file &hf, table3d &t, 
