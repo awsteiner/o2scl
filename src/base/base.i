@@ -673,36 +673,46 @@ class table3d
   - size_t ny
 - function set_xy
   - void
+  - py_name set_xy
   - std::string x_name
   - size_t nx
   - std_vector &x
   - std::string y_name
   - size_t ny
   - std_vector &y
-#- function set
-#  - void
-#  - size_t ix
-#  - size_t iy
-#  - std::string name
-#  - double val
-#- function get
-#  - double
-#  - size_t ix
-#  - size_t iy
-#  - std::string name
-#- function get
-#  - double
-#  - py_name get_i
-#  - size_t ix
-#  - size_t iy
-#  - size_t iz
-#- function set
-#  - double
-#  - py_name set_i
-#  - size_t ix
-#  - size_t iy
-#  - size_t iz
-#  - double val
+- function set_xy
+  - void
+  - py_name set_xy_grid
+  - std::string x_name
+  - uniform_grid<double> &x_grid
+  - std::string y_name
+  - uniform_grid<double> &y_grid
+- function set
+  - void
+  - py_name set
+  - size_t ix
+  - size_t iy
+  - std::string name
+  - double val
+- function get
+  - double
+  - py_name get
+  - size_t ix
+  - size_t iy
+  - std::string name
+- function get
+  - double
+  - py_name get_i
+  - size_t ix
+  - size_t iy
+  - size_t iz
+- function set
+  - void
+  - py_name set_i
+  - size_t ix
+  - size_t iy
+  - size_t iz
+  - double val
 - function set_val
   - void
   - double x
@@ -755,17 +765,18 @@ class table3d
 - function lookup_slice
   - size_t
   - std::string name
-#- function is_slice
-#  - bool
-#  - std::string name
+- function is_slice
+  - bool
+  - std::string name
+  - size_t &ix
 - function rename_slice
   - void
   - std::string name1
   - std::string name2
-#- function copy_slice
-#  - bool
-#  - std::string name1
-#  - std::string name2
+- function copy_slice
+  - void
+  - std::string name1
+  - std::string name2
 - function get_slice
   - boost::numeric::ublas::matrix<double> &
   - std::string slice

@@ -1028,6 +1028,38 @@ void o2scl_table3d_set_xy(void *vptr, char *x_name, size_t nx, void *ptr_x, char
   return;
 }
 
+void o2scl_table3d_set_xy_grid(void *vptr, char *x_name, void *ptr_x_grid, char *y_name, void *ptr_y_grid) {
+  table3d *ptr=(table3d *)vptr;
+  uniform_grid<double> *x_grid=(uniform_grid<double> *)ptr_x_grid;
+  uniform_grid<double> *y_grid=(uniform_grid<double> *)ptr_y_grid;
+  ptr->set_xy(x_name,*x_grid,y_name,*y_grid);
+  return;
+}
+
+void o2scl_table3d_set(void *vptr, size_t ix, size_t iy, char *name, double val) {
+  table3d *ptr=(table3d *)vptr;
+  ptr->set(ix,iy,name,val);
+  return;
+}
+
+double o2scl_table3d_get(void *vptr, size_t ix, size_t iy, char *name) {
+  table3d *ptr=(table3d *)vptr;
+  double ret=ptr->get(ix,iy,name);
+  return ret;
+}
+
+double o2scl_table3d_get_i(void *vptr, size_t ix, size_t iy, size_t iz) {
+  table3d *ptr=(table3d *)vptr;
+  double ret=ptr->get(ix,iy,iz);
+  return ret;
+}
+
+void o2scl_table3d_set_i(void *vptr, size_t ix, size_t iy, size_t iz, double val) {
+  table3d *ptr=(table3d *)vptr;
+  ptr->set(ix,iy,iz,val);
+  return;
+}
+
 void o2scl_table3d_set_val(void *vptr, double x, double y, char *name, double val) {
   table3d *ptr=(table3d *)vptr;
   ptr->set_val(x,y,name,val);
@@ -1127,9 +1159,22 @@ size_t o2scl_table3d_lookup_slice(void *vptr, char *name) {
   return ret;
 }
 
+bool o2scl_table3d_is_slice(void *vptr, char *name, void *ptr_ix) {
+  table3d *ptr=(table3d *)vptr;
+  size_t *ix=(size_t *)ptr_ix;
+  bool ret=ptr->is_slice(name,*ix);
+  return ret;
+}
+
 void o2scl_table3d_rename_slice(void *vptr, char *name1, char *name2) {
   table3d *ptr=(table3d *)vptr;
   ptr->rename_slice(name1,name2);
+  return;
+}
+
+void o2scl_table3d_copy_slice(void *vptr, char *name1, char *name2) {
+  table3d *ptr=(table3d *)vptr;
+  ptr->copy_slice(name1,name2);
   return;
 }
 

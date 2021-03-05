@@ -368,6 +368,16 @@ void o2scl_table3d_set_size(void *vptr, size_t nx, size_t ny);
 
 void o2scl_table3d_set_xy(void *vptr, char *x_name, size_t nx, void *ptr_x, char *y_name, size_t ny, void *ptr_y);
 
+void o2scl_table3d_set_xy_grid(void *vptr, char *x_name, void *ptr_x_grid, char *y_name, void *ptr_y_grid);
+
+void o2scl_table3d_set(void *vptr, size_t ix, size_t iy, char *name, double val);
+
+double o2scl_table3d_get(void *vptr, size_t ix, size_t iy, char *name);
+
+double o2scl_table3d_get_i(void *vptr, size_t ix, size_t iy, size_t iz);
+
+void o2scl_table3d_set_i(void *vptr, size_t ix, size_t iy, size_t iz, double val);
+
 void o2scl_table3d_set_val(void *vptr, double x, double y, char *name, double val);
 
 double o2scl_table3d_get_val(void *vptr, double x, double y, char *name);
@@ -400,7 +410,11 @@ void o2scl_table3d_set_slice_all(void *vptr, char *name, double val);
 
 size_t o2scl_table3d_lookup_slice(void *vptr, char *name);
 
+bool o2scl_table3d_is_slice(void *vptr, char *name, void *ptr_ix);
+
 void o2scl_table3d_rename_slice(void *vptr, char *name1, char *name2);
+
+void o2scl_table3d_copy_slice(void *vptr, char *name1, char *name2);
 
 void *o2scl_table3d_(void *vptr, char *slice);
 
