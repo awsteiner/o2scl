@@ -444,6 +444,8 @@ int o2scl_table3d_function_matrix(void *vptr, char *function, void *ptr_mat, boo
 
 void o2scl_table3d_function_slice(void *vptr, char *function, char *slice);
 
+void o2scl_table3d_summary(void *vptr);
+
 void *o2scl_create_index_spec();
 
 void o2scl_free_index_spec(void *vptr);

@@ -101,3 +101,49 @@ void o2scl_hdf_hdf_output_table_units_wrapper(void *ptr_hf, void *ptr_t, char *n
   return;
 }
 
+void o2scl_hdf_hdf_input_table3d_wrapper(void *ptr_hf, void *ptr_t, char *name) {
+  hdf_file *hf=(hdf_file *)ptr_hf;
+  table3d *t=(table3d *)ptr_t;
+  hdf_input(*hf,*t,name);
+  return;
+}
+
+void o2scl_hdf_hdf_input_n_table3d_wrapper(void *ptr_hf, void *ptr_t, void *&ptr_name) {
+  hdf_file *hf=(hdf_file *)ptr_hf;
+  table3d *t=(table3d *)ptr_t;
+  std::string *name=new std::string;
+  hdf_input_n(*hf,*t,*name);
+  ptr_name=(void *)name;
+  return;
+}
+
+void o2scl_hdf_hdf_output_table3d_wrapper(void *ptr_hf, void *ptr_t, char *name) {
+  hdf_file *hf=(hdf_file *)ptr_hf;
+  table3d *t=(table3d *)ptr_t;
+  hdf_output(*hf,*t,name);
+  return;
+}
+
+void o2scl_hdf_hdf_input_uniform_grid_wrapper(void *ptr_hf, void *ptr_t, char *name) {
+  hdf_file *hf=(hdf_file *)ptr_hf;
+  uniform_grid<> *t=(uniform_grid<> *)ptr_t;
+  hdf_input(*hf,*t,name);
+  return;
+}
+
+void o2scl_hdf_hdf_input_n_uniform_grid_wrapper(void *ptr_hf, void *ptr_t, void *&ptr_name) {
+  hdf_file *hf=(hdf_file *)ptr_hf;
+  uniform_grid<> *t=(uniform_grid<> *)ptr_t;
+  std::string *name=new std::string;
+  hdf_input_n(*hf,*t,*name);
+  ptr_name=(void *)name;
+  return;
+}
+
+void o2scl_hdf_hdf_output_uniform_grid_wrapper(void *ptr_hf, void *ptr_t, char *name) {
+  hdf_file *hf=(hdf_file *)ptr_hf;
+  uniform_grid<> *t=(uniform_grid<> *)ptr_t;
+  hdf_output(*hf,*t,name);
+  return;
+}
+

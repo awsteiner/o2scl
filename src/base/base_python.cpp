@@ -1263,6 +1263,12 @@ void o2scl_table3d_function_slice(void *vptr, char *function, char *slice) {
   return;
 }
 
+void o2scl_table3d_summary(void *vptr) {
+  table3d *ptr=(table3d *)vptr;
+  ptr->summary();
+  return;
+}
+
 void *o2scl_create_index_spec() {
   index_spec *ptr=new index_spec;
   return ptr;

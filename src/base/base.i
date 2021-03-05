@@ -837,6 +837,8 @@ class table3d
   - void
   - std::string function
   - std::string slice
+- function summary
+  - void                             
 # 
 # Class index_spec
 #

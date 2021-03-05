@@ -79,3 +79,39 @@ function hdf_output
 - hdf_file &hf
 - table_units<> &t
 - std::string name  
+function hdf_input
+- void                             
+- py_name hdf_input_table3d
+- hdf_file &hf
+- table3d &t
+- std::string name  
+function hdf_input_n
+- void                             
+- py_name hdf_input_n_table3d
+- hdf_file &hf
+- table3d &t
+- std::string &name  
+function hdf_output
+- void                             
+- py_name hdf_output_table3d
+- hdf_file &hf
+- table3d &t
+- std::string name  
+function hdf_input
+- void                             
+- py_name hdf_input_uniform_grid
+- hdf_file &hf
+- uniform_grid<> &t
+- std::string name  
+function hdf_input_n
+- void                             
+- py_name hdf_input_n_uniform_grid
+- hdf_file &hf
+- uniform_grid<> &t
+- std::string &name  
+function hdf_output
+- void                             
+- py_name hdf_output_uniform_grid
+- hdf_file &hf
+- uniform_grid<> &t
+- std::string name  

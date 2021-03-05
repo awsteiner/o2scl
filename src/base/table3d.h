@@ -635,7 +635,7 @@ namespace o2scl {
 	Outputs the number of constants, the grid information,
 	and a list of the slice names
     */
-    void summary(std::ostream *out, int ncol=79) const;
+    void summary(std::ostream *out=0, int ncol=79) const;
     //@}
 
     // ---------

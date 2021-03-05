@@ -1126,7 +1126,9 @@ void table3d::clear_data() {
 }
 
 void table3d::summary(std::ostream *out, int ncol) const {
-      
+
+  if (out==0) out=&std::cout;
+  
   if (constants.size()==1) {
     (*out) << "1 constant:" << std::endl;
   } else {
