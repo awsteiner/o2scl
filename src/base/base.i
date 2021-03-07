@@ -195,6 +195,16 @@ class boost::numeric::ublas::matrix<double>
   - double &
   - size_t m
   - size_t n    
+- extra_py |
+| def to_numpy(self):
+|     """
+|     Copy the vector to a numpy matrix
+|     """
+|     ret=numpy.zeros((self.size1(),self.size2()))
+|     for i in range(0,self.size1()):
+|         for j in range(0,self.size2()):
+|             ret[i][j]=self.__getitem__(i,j)
+|     return ret
 #
 # -------------------------------------------------------------------
 #
