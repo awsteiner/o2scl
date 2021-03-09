@@ -489,7 +489,7 @@ class nstar_cold
 - double acausal_ed
 - double acausal_pr
 - double solver_tol
-- bool eos_neg  
+- bool eos_neg
 - int verbose
 - function get_eos_results
   - shared_ptr table_units<>
@@ -498,6 +498,7 @@ class nstar_cold
 - double nb_start
 - double nb_end
 - double dnb
+- bool remove_rows  
 - bool include_muons
 - bool err_nonconv
 # 

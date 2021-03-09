@@ -228,12 +228,6 @@ namespace o2scl {
 
     /// \name Output 
     //@{
-    /* \brief If true, the energy density and pressure 
-	of the EOS is monotonically 
-	increasing and the pressure is always positive
-    */
-    //bool well_formed;
-
     /** \brief If true, the pressure or energy density became negative
         at some point
      */
@@ -319,6 +313,13 @@ namespace o2scl {
     /** \name Configuration
      */
     //@{
+    /** \brief If true, remove rows beyond the maximum mass (default true)
+
+        Note that if the M-R curve has multiple branches, this class will
+        not remove all unstable configurations.
+     */
+    bool remove_rows;
+    
     /** \brief The starting baryon density (default 0.05)
      */
     double nb_start;

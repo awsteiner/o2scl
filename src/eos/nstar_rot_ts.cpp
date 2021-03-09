@@ -54,21 +54,13 @@ int main(void) {
     // Perform the RNS tests
     nst.constants_rns();
     nst.test1(t);
-    cout << "H2." << endl;
     nst.test2(t);
-    cout << "H3." << endl;
     nst.test3(t);
-    cout << "H4." << endl;
     nst.test4(t);
-    cout << "H5." << endl;
     nst.test5(t);
-    cout << "H6." << endl;
     nst.test6(t);
-    cout << "H7." << endl;
     nst.test7(t);
-    cout << "H8." << endl;
     nst.test8(t);
-    cout << "H9." << endl;
     nst.constants_o2scl();
   }
 
@@ -242,8 +234,10 @@ int main(void) {
     nco.calc_eos();
     std::shared_ptr<table_units<> > eos=nco.get_eos_results();
 
-    // Evalulate the mass-radius curve
-    cout << "Here2." << Endl;
+    // Evalulate the mass-radius curve. For some reason this
+    // gives better results if the M-R curve contains results
+    // beyond the maximum mass configuration
+    nco.remove_rows=false;
     nco.calc_nstar();
     std::shared_ptr<table_units<> > mvsr=nco.get_tov_results();
 

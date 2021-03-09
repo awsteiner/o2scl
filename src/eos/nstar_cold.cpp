@@ -76,6 +76,7 @@ nstar_cold::nstar_cold() : eost(new table_units<>) {
   verbose=0;
 
   err_nonconv=true;
+  remove_rows=true;
 }
 
 double nstar_cold::solve_fun(double x, thermo &hb) {
@@ -290,8 +291,16 @@ int nstar_cold::calc_eos(double np_0) {
   // Compute the speed of sound
   
   eost->deriv("ed","pr","cs2");
+  if (verbose>1) {
+    cout << " ix ed           pr           cs2" << endl;
+  }
   for(size_t i=0;i<eost->get_nlines()-1;i++) {
     double cs2_temp=eost->get("cs2",i);
+    if (verbose>1) {
+      cout.width(3);
+      cout << i << " " << eost->get("ed",i) << " " << eost->get("pr",i) << " "
+           << eost->get("cs2",i) << endl;
+    }
     if (!std::isfinite(cs2_temp)) {
       O2SCL_CONV2_RET("Speed of sound infinite in ",
                       "nstar_cold::calc_eos().",
@@ -306,9 +315,13 @@ int nstar_cold::calc_eos(double np_0) {
   }
   
   if (verbose>0) {
-    cout << "The EOS is acausal at nb=" << acausal_nb << ", ed="
-	 << acausal_ed << ", pr="
-	 << acausal_pr << " ." << endl;
+    if (acausal_nb>0.0) {
+      cout << "The EOS is acausal at nb=" << acausal_nb << ", ed="
+           << acausal_ed << ", pr="
+           << acausal_pr << " ." << endl;
+    } else {
+      cout << "The EOS is causal." << endl;
+    }
   }
     
   // -----------------------------------------------------------------
@@ -382,9 +395,18 @@ int nstar_cold::calc_eos(double np_0) {
   }
 
   if (verbose>0) {
-    cout << "Urca allowed at " << allow_urca_nb
-         << " fm^{-3} and disallowed at " << deny_urca_nb
-         << " fm^{-3}." << endl;
+    if (allow_urca_nb>0.0) {
+      if (deny_urca_nb>0.0) {
+        cout << "Urca allowed at " << allow_urca_nb
+             << " fm^{-3} and disallowed at " << deny_urca_nb
+             << " fm^{-3}." << endl;
+      } else {
+        cout << "Urca allowed at " << allow_urca_nb
+             << " fm^{-3}." << endl;
+      }
+    } else {
+      cout << "Urca process is never allowed." << endl;
+    }
     cout << "Done with calc_eos()." << endl;
   }
   
@@ -465,12 +487,25 @@ int nstar_cold::calc_nstar() {
 
   double pr_max=mvsrt->get("pr",max_row);
   double nb_max=mvsrt->get("ed",max_row);
-  if (nb_max>acausal_nb) {
+
+  if (remove_rows) {
+    mvsrt->set_nlines(max_row+1);
+  }
+  
+  if (acausal_nb>0.0 && nb_max>acausal_nb) {
+    if (verbose>0) {
+      cout << "Acausal (acausal_nb,nb_max): "
+           << acausal_nb << " " << nb_max << endl;
+    }
     O2SCL_CONV2_RET("EOS acausal at densities below central density ",
                     "of maximum mass star in nstar_cold::calc_nstar().",
                     o2scl::exc_einval,err_nonconv);
   }
-  if (nb_max>pressure_dec_nb) {
+  if (pressure_dec_nb>0.0 && nb_max>pressure_dec_nb) {
+    if (verbose>0) {
+      cout << "Pressure decreasing (pressure_dec_nb,nb_max): "
+           << pressure_dec_nb << " " << nb_max << endl;
+    }
     O2SCL_CONV2_RET("Pressure descreasing in ",
                     "maximum mass star in nstar_cold::calc_nstar().",
                     o2scl::exc_einval,err_nonconv);
