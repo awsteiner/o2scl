@@ -49,6 +49,9 @@ class std::string
   - size_t n
 - extra_py |
 | def __len__(self):
+|     """
+|     Return the length of the vector
+|     """
 |     return length()
 | 
 | def init_bytes(self,s):
@@ -86,6 +89,9 @@ class std::vector<double>
   - size_t n
 - extra_py |
 | def __len__(self):
+|     """
+|     Return the length of the vector
+|     """
 |     return size()
 |
 | def to_numpy(self):
@@ -108,6 +114,9 @@ class vector<int>
   - size_t n
 - extra_py |
 | def __len__(self):
+|     """
+|     Return the length of the vector
+|     """
 |     return size()
 |
 | def to_numpy(self):
@@ -131,7 +140,7 @@ class vector<size_t>
 - extra_py |
 | def __len__(self):
 |     """
-|     Test
+|     Return the length of the vector
 |     """
 |     return size()
 |
@@ -153,19 +162,21 @@ class vector<size_t>
 |         self.__setitem__(i,v[i])
 |     return
 #class vector<string>
-#- py_name std_vector_string
-#- function resize
-#  - void
-#  - size_t n                             
-#- function size
-#  - size_t
+- py_name std_vector_string
+- function resize
+  - void
+  - size_t n                             
+- function size
+  - size_t
 #- function operator[]
 #  - string
 #  - size_t n
-#- extra_py |
-#| def __len__(self):
-#|     return size()
-#
+- extra_py |
+| def __len__(self):
+|     """
+|     Return the length of the vector
+|     """
+|     return size()
 # Class ublas_vector
 # 
 class boost::numeric::ublas::vector<double>

@@ -113,7 +113,7 @@ namespace o2scl {
       the pressure decreases above the central pressure of the maximum
       mass neutron star. Thus, the function \ref calc_eos() returns
       zero even if \ref well_formed is false. The variable \ref
-      pressure_dec records the lowest baryon density where the
+      pressure_dec_nb records the lowest baryon density where the
       pressure decreases with increasing density. If \ref err_nonconv
       is true and the EOS is not well formed, the error handler is
       called, and the remaining columns below are not computed.
@@ -146,8 +146,8 @@ namespace o2scl {
       \f]
       The column in the eos \ref table labeled \c urca is \f$ a^2 \f$
       . If this quantity is positive, then direct Urca is allowed. The
-      variable \ref allow_urca is the smallest density for which the
-      direct Urca process turns on, and \ref deny_urca is the smallest
+      variable \ref allow_urca_nb is the smallest density for which the
+      direct Urca process turns on, and \ref deny_urca_nb is the smallest
       density for which the direct Urca process turns off.
       
       The squared speed of sound (in units of \f$ c \f$ )
@@ -196,7 +196,8 @@ namespace o2scl {
     //@{
     /** \brief Set the equation of state
 	
-        This should be set before calling calc_eos().
+        This function stores a pointer to the EOS object and
+        should be called before calling calc_eos().
     */
     void set_eos(eos_had_base &he) {
       hep=&he;
@@ -227,11 +228,16 @@ namespace o2scl {
 
     /// \name Output 
     //@{
-    /** \brief If true, the energy density and pressure 
+    /* \brief If true, the energy density and pressure 
 	of the EOS is monotonically 
 	increasing and the pressure is always positive
     */
-    bool well_formed;
+    //bool well_formed;
+
+    /** \brief If true, the pressure or energy density became negative
+        at some point
+     */
+    bool eos_neg;
 
     /** \brief The smallest baryon density where the pressure starts 
 	to decrease
@@ -240,14 +246,14 @@ namespace o2scl {
 	the pressure does not decrease in the specified range
 	of baryon density
      */
-    double pressure_dec;
+    double pressure_dec_nb;
 
     /** \brief The smallest density where Urca becomes allowed
 
         If this is zero after calling calc_eos(), then direct
 	Urca is never allowed.
      */
-    double allow_urca;
+    double allow_urca_nb;
 
     /** \brief The smallest density where Urca becomes disallowed
 	
@@ -255,14 +261,14 @@ namespace o2scl {
 	Urca is not disallowed at a higher density than 
 	it becomes allowed.
      */
-    double deny_urca;
+    double deny_urca_nb;
 
     /** \brief The density at which the EOS becomes acausal
 
         If this is zero, then the EOS is causal at all baryon densities
 	in the specified range
      */
-    double acausal;
+    double acausal_nb;
 
     /** \brief The pressure at which the EOS becomes acausal
 
@@ -356,10 +362,10 @@ namespace o2scl {
     /** \name Default objects */
     //@{
     /// The default neutron
-    fermion np;
+    fermion neut;
 
     /// The default proton
-    fermion pp;
+    fermion prot;
 
     /// Zero-temperature fermion thermodynamics (for the leptons)
     fermion_zerot fzt;
@@ -380,7 +386,14 @@ namespace o2scl {
 
   protected:
 
-    /// Solve to ensure zero charge in \f$ \beta \f$-equilibrium
+    /** \brief Solve to ensure zero charge in \f$ \beta \f$-equilibrium
+
+        This function returns the net charge density in
+        beta-equilibrium, i.e. 
+        \f[
+        n_p - n_e - n_{\mu}
+        \f]
+     */
     double solve_fun(double x, thermo &hb);
 
     /// True if equation of state has been set

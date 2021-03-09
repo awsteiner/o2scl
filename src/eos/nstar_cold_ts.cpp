@@ -75,7 +75,12 @@ int main(void) {
   nstar_cold nst;
   nst.set_eos(go);
   nst.calc_eos();
+
+  // This EOS is actually acausal at some point, so we temporarily
+  // turn off the associated error
+  nst.err_nonconv=false;
   nst.calc_nstar();
+  nst.err_nonconv=true;
   
   std::shared_ptr<table_units<> > te=nst.get_eos_results();
   cout << "EOS results: " << endl;

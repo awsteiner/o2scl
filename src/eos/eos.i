@@ -482,14 +482,14 @@ class nstar_cold
 - function fixed
   - int
   - double target_mass
-- bool well_formed
-- double pressure_dec
-- double allow_urca
-- double deny_urca
-- double acausal
+- double pressure_dec_nb
+- double allow_urca_nb
+- double deny_urca_nb
+- double acausal_nb
 - double acausal_ed
 - double acausal_pr
 - double solver_tol
+- bool eos_neg  
 - int verbose
 - function get_eos_results
   - shared_ptr table_units<>

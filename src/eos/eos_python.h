@@ -599,25 +599,21 @@ void *o2scl_create_nstar_cold();
 
 void o2scl_free_nstar_cold(void *vptr);
 
-bool o2scl_nstar_cold_get_well_formed(void *vptr);
+double o2scl_nstar_cold_get_pressure_dec_nb(void *vptr);
 
-void o2scl_nstar_cold_set_well_formed(void *vptr, bool v);
+void o2scl_nstar_cold_set_pressure_dec_nb(void *vptr, double v);
 
-double o2scl_nstar_cold_get_pressure_dec(void *vptr);
+double o2scl_nstar_cold_get_allow_urca_nb(void *vptr);
 
-void o2scl_nstar_cold_set_pressure_dec(void *vptr, double v);
+void o2scl_nstar_cold_set_allow_urca_nb(void *vptr, double v);
 
-double o2scl_nstar_cold_get_allow_urca(void *vptr);
+double o2scl_nstar_cold_get_deny_urca_nb(void *vptr);
 
-void o2scl_nstar_cold_set_allow_urca(void *vptr, double v);
+void o2scl_nstar_cold_set_deny_urca_nb(void *vptr, double v);
 
-double o2scl_nstar_cold_get_deny_urca(void *vptr);
+double o2scl_nstar_cold_get_acausal_nb(void *vptr);
 
-void o2scl_nstar_cold_set_deny_urca(void *vptr, double v);
-
-double o2scl_nstar_cold_get_acausal(void *vptr);
-
-void o2scl_nstar_cold_set_acausal(void *vptr, double v);
+void o2scl_nstar_cold_set_acausal_nb(void *vptr, double v);
 
 double o2scl_nstar_cold_get_acausal_ed(void *vptr);
 

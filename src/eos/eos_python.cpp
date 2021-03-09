@@ -1650,58 +1650,47 @@ void o2scl_free_nstar_cold(void *vptr) {
   return;
 }
 
-bool o2scl_nstar_cold_get_well_formed(void *vptr) {
+double o2scl_nstar_cold_get_pressure_dec_nb(void *vptr) {
   nstar_cold *ptr=(nstar_cold *)vptr;
-  return ptr->well_formed;
+  return ptr->pressure_dec_nb;
 }
 
-void o2scl_nstar_cold_set_well_formed(void *vptr, bool v) {
+void o2scl_nstar_cold_set_pressure_dec_nb(void *vptr, double v) {
   nstar_cold *ptr=(nstar_cold *)vptr;
-  ptr->well_formed=v;
+  ptr->pressure_dec_nb=v;
   return;
 }
 
-double o2scl_nstar_cold_get_pressure_dec(void *vptr) {
+double o2scl_nstar_cold_get_allow_urca_nb(void *vptr) {
   nstar_cold *ptr=(nstar_cold *)vptr;
-  return ptr->pressure_dec;
+  return ptr->allow_urca_nb;
 }
 
-void o2scl_nstar_cold_set_pressure_dec(void *vptr, double v) {
+void o2scl_nstar_cold_set_allow_urca_nb(void *vptr, double v) {
   nstar_cold *ptr=(nstar_cold *)vptr;
-  ptr->pressure_dec=v;
+  ptr->allow_urca_nb=v;
   return;
 }
 
-double o2scl_nstar_cold_get_allow_urca(void *vptr) {
+double o2scl_nstar_cold_get_deny_urca_nb(void *vptr) {
   nstar_cold *ptr=(nstar_cold *)vptr;
-  return ptr->allow_urca;
+  return ptr->deny_urca_nb;
 }
 
-void o2scl_nstar_cold_set_allow_urca(void *vptr, double v) {
+void o2scl_nstar_cold_set_deny_urca_nb(void *vptr, double v) {
   nstar_cold *ptr=(nstar_cold *)vptr;
-  ptr->allow_urca=v;
+  ptr->deny_urca_nb=v;
   return;
 }
 
-double o2scl_nstar_cold_get_deny_urca(void *vptr) {
+double o2scl_nstar_cold_get_acausal_nb(void *vptr) {
   nstar_cold *ptr=(nstar_cold *)vptr;
-  return ptr->deny_urca;
+  return ptr->acausal_nb;
 }
 
-void o2scl_nstar_cold_set_deny_urca(void *vptr, double v) {
+void o2scl_nstar_cold_set_acausal_nb(void *vptr, double v) {
   nstar_cold *ptr=(nstar_cold *)vptr;
-  ptr->deny_urca=v;
-  return;
-}
-
-double o2scl_nstar_cold_get_acausal(void *vptr) {
-  nstar_cold *ptr=(nstar_cold *)vptr;
-  return ptr->acausal;
-}
-
-void o2scl_nstar_cold_set_acausal(void *vptr, double v) {
-  nstar_cold *ptr=(nstar_cold *)vptr;
-  ptr->acausal=v;
+  ptr->acausal_nb=v;
   return;
 }
 
