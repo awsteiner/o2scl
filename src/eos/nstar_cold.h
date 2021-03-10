@@ -88,6 +88,8 @@ namespace o2scl {
       momentum, \f$ k_{F,p} \f$
       - \c kfe in units of \f$ 1/\mathrm{fm} \f$, the electron 
       Fermi momentum, \f$ k_{F,e} \f$
+
+      \comment
       - \c dednb_Ye in units of \f$ 1/\mathrm{fm} \f$, 
       \f$ ( d \varepsilon / d n_B )_{Y_e} \f$ where
       \f$ Y_e = n_e / n_B \f$ is the electron fraction
@@ -96,6 +98,7 @@ namespace o2scl {
       \f$ ( d P / d n_B )_{Y_e} \f$ .
       - \c fcs2, the squared speed of sound at fixed electron
       fraction, the ratio of the previous two quantities
+      \endcomment
 
       If \ref include_muons is true, the table has 
       additional columns
@@ -105,20 +108,8 @@ namespace o2scl {
       density, \f$ n_{\mu} \f$
       - \c kfmu in units of \f$ 1/\mathrm{fm} \f$, the muon Fermi 
       momentum, \f$ k_{F,\mu} \f$
-
-      If the energy density is always positive and increasing, and the
-      pressure is always positive and increasing, then the EOS is
-      "well-formed" and \ref well_formed is \c true. Note that an EOS
-      which is not "well-formed" could still be reasonable, so long as
-      the pressure decreases above the central pressure of the maximum
-      mass neutron star. Thus, the function \ref calc_eos() returns
-      zero even if \ref well_formed is false. The variable \ref
-      pressure_dec_nb records the lowest baryon density where the
-      pressure decreases with increasing density. If \ref err_nonconv
-      is true and the EOS is not well formed, the error handler is
-      called, and the remaining columns below are not computed.
       
-      After computing the equation of state, if well_formed is true, 
+      After computing the equation of state,
       then \ref calc_eos() also adds the following columns
       - \c cs2 (unitless), the squared speed of sound divided by \f$ c^2 \f$
       - \c logp, the natural logarithm of the pressure stored in \c pr
@@ -129,9 +120,14 @@ namespace o2scl {
       - \c urca in units of \f$ 1/\mathrm{fm}^4 \f$, 
       the squared area of the Urca triangle
       - \c ad_index, the adiabatic index, \f$ \Gamma \f$
+
+      \comment
       If the eos is not well-formed and \ref well_formed is <tt>false</tt>,
       then the columns <tt>cs2</tt>, <tt>logp</tt>, and <tt>loge</tt> 
-      are set to zero. The columns \c cs2 and \c ad_indes are computing
+      are set to zero. 
+      \endcomment
+
+      The columns \c cs2 and \c ad_index are computing
       from derivatives using the current table interpolation type. 
 
       The condition for the direct Urca process is the area of the
@@ -155,8 +151,7 @@ namespace o2scl {
       \f[
       c_s^2 = \frac{ d P }{d \varepsilon}
       \f]
-      and this is placed in the column labeled \c cs2. If the
-      EOS is not well-formed, then this column is set to zero. If 
+      and this is placed in the column labeled \c cs2. If 
       \c cs2 is larger than 1, the EOS is said to be "acausal". The
       variables \ref acausal, \ref acausal_ed, and \ref acausal_pr
       record the baryon density, energy density, and pressure where
@@ -166,8 +161,7 @@ namespace o2scl {
       \f]
       Note that \f$ \Gamma \f$ must be greater than \f$ 4/3 \f$ 
       at the center of the neutron star for stability. (This
-      is a necessary, but not sufficient condition.)  If
-      the EOS is not well-formed then this column is set to zero.
+      is a necessary, but not sufficient condition.)  
 
       \hline
       \b TOV \b Output
@@ -278,13 +272,9 @@ namespace o2scl {
      */
     double acausal_ed;
 
-    /** \brief Solver tolerance (default \f$ 10^{-4} \f$)
-    */
-    double solver_tol;
-
-    /// Verbosity parameter (default 0)
-    int verbose;
-
+    /// Desc
+    size_t max_row;
+    
     /** \brief Set the EOS table
 
 	In order for the \ref calc_nstar() function to use this table,
@@ -313,6 +303,13 @@ namespace o2scl {
     /** \name Configuration
      */
     //@{
+    /** \brief Solver tolerance (default \f$ 10^{-4} \f$)
+    */
+    double solver_tol;
+
+    /// Verbosity parameter (default 0)
+    int verbose;
+
     /** \brief If true, remove rows beyond the maximum mass (default true)
 
         Note that if the M-R curve has multiple branches, this class will
@@ -337,7 +334,7 @@ namespace o2scl {
     bool include_muons;
 
     /** \brief If true, throw an exception if the solver fails
-	or if the EOS is not well-formed (default true)
+	or if the EOS is unphysical (default true)
     */
     bool err_nonconv;
 

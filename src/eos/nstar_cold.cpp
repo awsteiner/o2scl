@@ -61,6 +61,7 @@ nstar_cold::nstar_cold() : eost(new table_units<>) {
   eos_neg=false;
   deny_urca_nb=0.0;
   allow_urca_nb=0.0;
+  max_row=0;
 
   nb_start=0.05;
   nb_end=2.0;
@@ -141,11 +142,11 @@ int nstar_cold::calc_eos(double np_0) {
     eost->set_unit("nmu","1/fm^3");
     eost->set_unit("kfmu","1/fm");
   }
-  
+
+  // Get the initial guess for the proton fraction at nb_start
   double x;
   if (fabs(np_0)<1.0e-12) x=nb_start/3.0;
   else x=np_0;
-  double oldpr=0.0;
 
   // Initialize diagnostic quantities
   pressure_dec_nb=0.0;
@@ -155,10 +156,15 @@ int nstar_cold::calc_eos(double np_0) {
   eos_neg=false;
   deny_urca_nb=0.0;
   allow_urca_nb=0.0;
+  max_row=0;
   
   /// Thermodynamic quantities
   thermo h, hb;
+
+  // Store the previous pressure so we can track if it decreases
+  double oldpr=0.0;
   
+  // The function object for the solver
   funct sf=std::bind(std::mem_fn<double(double, thermo &)>
 		     (&nstar_cold::solve_fun),
 		     this,std::placeholders::_1,std::ref(hb));
@@ -186,9 +192,11 @@ int nstar_cold::calc_eos(double np_0) {
   // Loop over the density range, and also determine pressure_dec_nb
   for(barn=nb_start;barn<=nb_end+dnb/10.0;barn+=dnb) {
 
+    // Solve for charge neutrality in beta-equilibrum
     int ret=rp->solve(x,sf);
     double y=solve_fun(x,hb);
-    
+
+    // Check that the solver succeeded
     if (ret!=0 || fabs(y)>solver_tol) {
       O2SCL_CONV_RET("Solver failed in nstar_cold::calc_eos().",
                      exc_efailed,err_nonconv);
@@ -224,12 +232,12 @@ int nstar_cold::calc_eos(double np_0) {
         denom+=mu.mu*mu.n/barn;
       }
       double fcs2=numer/denom;
+
+      // ------------------------------------------------------------
+      // Recompute neut.n and prot.n
+      y=solve_fun(x,hb);
+      
     }
-
-    // ------------------------------------------------------------
-
-    // Recompute neut.n and prot.n
-    y=solve_fun(x,hb);
 
     if (include_muons) {
 
@@ -268,18 +276,9 @@ int nstar_cold::calc_eos(double np_0) {
     // Proceed to next baryon density
   }
 
-  // Calculate the squared speed of sound. If the EOS becomes acausal,
-  // calculate the density and pressure at which this haprotens
+  // -----------------------------------------------------------------
+  // Report if the pressure decreases
 
-  /*
-  well_formed=true;
-  if (eost->get("ed",0)<=0.0) {
-    well_formed=false;
-    if (verbose>0) {
-      cout << "Initial energy density is negative." << endl;
-    }
-  }
-  */
   if (pressure_dec_nb>nb_start) {
     if (verbose>0) {
       cout << "Pressure is flat near a baryon density of " << pressure_dec_nb
@@ -302,11 +301,11 @@ int nstar_cold::calc_eos(double np_0) {
            << eost->get("cs2",i) << endl;
     }
     if (!std::isfinite(cs2_temp)) {
-      O2SCL_CONV2_RET("Speed of sound infinite in ",
+      O2SCL_CONV2_RET("Speed of sound not finite in ",
                       "nstar_cold::calc_eos().",
                       exc_efailed,err_nonconv);
     }
-    if (cs2_temp>=1.0 && acausal_nb==0.0) {
+    if (cs2_temp>=1.0) {
       acausal_nb=eost->interp("cs2",1.0,"nb");
       acausal_pr=eost->interp("cs2",1.0,"pr");
       acausal_ed=eost->interp("cs2",1.0,"ed");
@@ -457,6 +456,8 @@ double nstar_cold::calc_urca(double np_0) {
 }
 
 int nstar_cold::calc_nstar() {
+
+  // Check to make sure required columns are present
   if (!eost->is_column("ed")) {
     O2SCL_ERR2("Column ed not found in table in ",
 	       "eos_tov_interp::read_table().",o2scl::exc_einval);
@@ -469,29 +470,33 @@ int nstar_cold::calc_nstar() {
     O2SCL_ERR2("Column nb not found in table in ",
 	       "eos_tov_interp::read_table().",o2scl::exc_einval);
   }
-  
+
+  // Read the table and set the EOS
   def_eos_tov.read_table(*eost,"ed","pr","nb");
-  
   tp->set_units("1/fm^4","1/fm^4","1/fm^3");
   tp->set_eos(def_eos_tov);
 
+  // Compute the M-R curve
   int mret=tp->mvsr();
   if (mret!=0) {
     O2SCL_CONV2_RET("TOV solver failed in ",
                     "nstar_cold::calc_nstar().",mret,err_nonconv);
   }
 
-  // Remove rows beyond maximum mass
+  // Find row containing maximum mass
   std::shared_ptr<table_units<> > mvsrt=tp->get_results();
-  double max_row=mvsrt->lookup("gm",mvsrt->max("gm"));
+  max_row=mvsrt->lookup("gm",mvsrt->max("gm"));
 
+  // Compute central pressure and baryon density of maximum mass star
   double pr_max=mvsrt->get("pr",max_row);
   double nb_max=mvsrt->get("ed",max_row);
 
+  // Remove rows beyond maximum mass
   if (remove_rows) {
     mvsrt->set_nlines(max_row+1);
   }
-  
+
+  // Report problems
   if (acausal_nb>0.0 && nb_max>acausal_nb) {
     if (verbose>0) {
       cout << "Acausal (acausal_nb,nb_max): "
@@ -528,7 +533,6 @@ double nstar_hot::solve_fun_T(double x, thermo &hb, double T) {
   neut.n=x;
   
   prot.n=barn-neut.n;
-  //cout << "Ix: " << neut.n << " " << prot.n << endl;
   int had_ret=hepT->calc_temp_e(neut,prot,T,hb);
   if (had_ret!=0) {
     O2SCL_ERR("EOS failed in nstar_cold::solve_fun_T().",
@@ -638,8 +642,8 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
 		     this,std::placeholders::_1,std::ref(hb),T);
   
   if (verbose>0) {
-    cout << "baryon dens neutrons    protons     electrons   " 
-	 << "energy dens pressure" << endl;
+    cout << "n_B         n_n         n_p         n_e         "
+         << "eps         P" << endl;
     cout << "[1/fm^3]    [1/fm^3]    [1/fm^3]    [1/fm^3]    "
 	 << "[1/fm^4]    [1/fm^4]" << endl;
   }
@@ -663,13 +667,8 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
     double y=solve_fun_T(x,hb,T);
     
     if (ret!=0 || fabs(y)>solver_tol) {
-      // We don't use the CONV macro here because we
-      // want to return only if err_nonconv is true
-      if (err_nonconv) {
-	O2SCL_ERR("Solver failed in nstar_hot::calc_eos().",
-		      exc_efailed);
-      }
-      return o2scl::exc_efailed;
+      O2SCL_CONV_RET("Solver failed in nstar_hot::calc_eos_T().",
+                     exc_efailed,err_nonconv);
     }
 
     // ------------------------------------------------------------
@@ -681,18 +680,17 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
 
       h=hb+e+mu;
       
-      double line[12]={h.ed,h.pr,barn,neut.mu,prot.mu,e.mu,neut.n,prot.n,e.n,
-		       neut.kf,prot.kf,e.kf};
+      double line[12]={h.ed,h.pr,barn,neut.mu,prot.mu,e.mu,neut.n,
+                       prot.n,e.n,neut.kf,prot.kf,e.kf};
       eost->line_of_data(12,line);
 
     } else {
 
       h=hb+e;
 
-      double line[12]={h.ed,h.pr,barn,neut.mu,prot.mu,e.mu,neut.n,prot.n,e.n,
-		       neut.kf,prot.kf,e.kf};
+      double line[12]={h.ed,h.pr,barn,neut.mu,prot.mu,e.mu,neut.n,
+                       prot.n,e.n,neut.kf,prot.kf,e.kf};
       eost->line_of_data(12,line);
-
     }
     
     if (verbose>0) {
@@ -711,7 +709,7 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
   }
 
   if (verbose>0) {
-    cout << "Done with nstar_hot::calc_eos()_T." << endl;
+    cout << "Done with nstar_hot::calc_eos_T()." << endl;
   }
   
   return 0;

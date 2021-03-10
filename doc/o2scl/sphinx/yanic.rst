@@ -214,3 +214,23 @@ Todos
    - Make sure data members named 'del' are properly renamed without
      hacking, e.g. with a py_name argument
      
+Details
+-------
+
+Handling of function arguments:
+
+- C type (bool, char, double, float, int, size_t): just pass
+  ``ctypes.c_<type>``
+- reference to C-type: convert from using ``void *`` to
+  using ``ctypes.byref(c_types.c_<type>)`` (e.g. in
+  table3d::get_size())
+- pointer to C-type: not yet implemented
+- ``std::string``: Use ``char *`` in C the wrapper. Convert python
+  string to bytes object and then to char * in python code.
+- reference to ``std::string``: Use ``void *&`` in the C wrapper ...
+
+Return values  
+
+- C type (bool, char, double, float, int, size_t): 
+- ``std::string``: 
+

@@ -627,6 +627,10 @@ double o2scl_nstar_cold_get_solver_tol(void *vptr);
 
 void o2scl_nstar_cold_set_solver_tol(void *vptr, double v);
 
+bool o2scl_nstar_cold_get_eos_neg(void *vptr);
+
+void o2scl_nstar_cold_set_eos_neg(void *vptr, bool v);
+
 int o2scl_nstar_cold_get_verbose(void *vptr);
 
 void o2scl_nstar_cold_set_verbose(void *vptr, int v);
@@ -642,6 +646,14 @@ void o2scl_nstar_cold_set_nb_end(void *vptr, double v);
 double o2scl_nstar_cold_get_dnb(void *vptr);
 
 void o2scl_nstar_cold_set_dnb(void *vptr, double v);
+
+size_t o2scl_nstar_cold_get_max_row(void *vptr);
+
+void o2scl_nstar_cold_set_max_row(void *vptr, size_t v);
+
+bool o2scl_nstar_cold_get_remove_rows(void *vptr);
+
+void o2scl_nstar_cold_set_remove_rows(void *vptr, bool v);
 
 bool o2scl_nstar_cold_get_include_muons(void *vptr);
 

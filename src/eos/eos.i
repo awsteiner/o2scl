@@ -498,6 +498,7 @@ class nstar_cold
 - double nb_start
 - double nb_end
 - double dnb
+- size_t max_row  
 - bool remove_rows  
 - bool include_muons
 - bool err_nonconv

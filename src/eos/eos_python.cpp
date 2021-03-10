@@ -1727,6 +1727,17 @@ void o2scl_nstar_cold_set_solver_tol(void *vptr, double v) {
   return;
 }
 
+bool o2scl_nstar_cold_get_eos_neg(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->eos_neg;
+}
+
+void o2scl_nstar_cold_set_eos_neg(void *vptr, bool v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->eos_neg=v;
+  return;
+}
+
 int o2scl_nstar_cold_get_verbose(void *vptr) {
   nstar_cold *ptr=(nstar_cold *)vptr;
   return ptr->verbose;
@@ -1768,6 +1779,28 @@ double o2scl_nstar_cold_get_dnb(void *vptr) {
 void o2scl_nstar_cold_set_dnb(void *vptr, double v) {
   nstar_cold *ptr=(nstar_cold *)vptr;
   ptr->dnb=v;
+  return;
+}
+
+size_t o2scl_nstar_cold_get_max_row(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->max_row;
+}
+
+void o2scl_nstar_cold_set_max_row(void *vptr, size_t v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->max_row=v;
+  return;
+}
+
+bool o2scl_nstar_cold_get_remove_rows(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return ptr->remove_rows;
+}
+
+void o2scl_nstar_cold_set_remove_rows(void *vptr, bool v) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  ptr->remove_rows=v;
   return;
 }
 
