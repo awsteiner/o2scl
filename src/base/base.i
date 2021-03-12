@@ -161,7 +161,7 @@ class vector<size_t>
 |     for i in range(0,len(v)):
 |         self.__setitem__(i,v[i])
 |     return
-#class vector<string>
+class vector<string>
 - py_name std_vector_string
 - function resize
   - void

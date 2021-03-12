@@ -221,9 +221,12 @@ Handling of function arguments:
 
 - C type (bool, char, double, float, int, size_t): just pass
   ``ctypes.c_<type>``
-- reference to C-type: convert from using ``void *`` to
-  using ``ctypes.byref(c_types.c_<type>)`` (e.g. in
-  table3d::get_size())
+- reference to C-type: pass a pointer to the C-type in the C wrapper
+  and pass a ``ctypes.c_<type>`` object in python (e.g. in
+  table3d::get_size()). We could allow the python
+  user to specify a normal python int, but then since the C function
+  might change it we'd have to convert it to a ctypes.c_int and then
+  convert back to a python int.
 - pointer to C-type: not yet implemented
 - ``std::string``: Use ``char *`` in C the wrapper. Convert python
   string to bytes object and then to char * in python code.
@@ -231,6 +234,8 @@ Handling of function arguments:
 
 Return values  
 
-- C type (bool, char, double, float, int, size_t): 
+- C type (bool, char, double, float, int, size_t):
+- reference to C type: (should be getitem(), but this does not seem to
+  work properly)
 - ``std::string``: 
 

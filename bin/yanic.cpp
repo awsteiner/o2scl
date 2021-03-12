@@ -160,10 +160,11 @@ public:
   
   /** \brief Type qualifiers
 
-      For example
+      Includes either
       - const
       - static 
-      - static const
+      - short
+      - long
 
       and 
 
@@ -290,6 +291,15 @@ public:
   /// Return true if the type is static
   bool is_static() {
     if (prefix.find("static")!=std::string::npos) return true;
+    return false;
+  }
+
+  /// Return true if the type is a standard C type
+  bool is_ctype() {
+    if (name=="bool" || name=="double" || name=="int" ||
+        name=="char" || name=="size_t" || name=="float") {
+      return true;
+    }
     return false;
   }
 
@@ -936,6 +946,13 @@ int main(int argc, char *argv[]) {
         if_func &iff2=ifc.methods[k];
         if (iff.name==iff2.name) {
           if (iff.py_name==iff2.py_name) {
+            cout << j << " " << k << " " << ifc.methods.size() << endl;
+            cout << "In class: " << ifc.name << endl;
+            cout << "Function names: '" << iff.name << "' and '"
+                 << iff2.name << "'." << endl;
+            cout << "Function python names: '"
+                 << iff.py_name << "' and '" << iff2.py_name
+                 << "'." << endl;
             O2SCL_ERR("Member functions with same name and same py_name.",
                       o2scl::exc_einval);
           }
@@ -1235,7 +1252,7 @@ int main(int argc, char *argv[]) {
           ret_type="void *";
         }
 
-        // Now generate the actual code
+        // Generate the code for the function declaration part
         if (iff.overloaded) {
           fout << ret_type << underscoreify(ifc.ns) << "_"
                << underscoreify(ifc.name) << "_" << iff.py_name
@@ -1262,20 +1279,12 @@ int main(int argc, char *argv[]) {
               fout << iff.args[k].ift.name << " " << iff.args[k].name;
             }
           } else if (iff.args[k].ift.suffix=="&") {
-            //if (iff.args[k].ift.name=="vector<double>") {            
-              //if (iff.args[k].ift.name=="std::string") {
-            //fout << "vector<double> *ptr_" << iff.args[k].name;
-            //} else {
-            fout << "void *ptr_" << iff.args[k].name;
-            //} else {
-            /*
-              } else {
-              cout << ifc.name << " " << iff.name << endl;
-              cout << iff.args[k].ift.to_string() << endl;
-              cout << "Other kind of reference." << endl;
-              exit(-1);
-            */
-            //}
+            if (iff.args[k].ift.is_ctype()) {
+              fout << iff.args[k].ift.name << " *"
+                   << iff.args[k].name;
+            } else {
+              fout << "void *ptr_" << iff.args[k].name;
+            }
           }
           if (k!=iff.args.size()-1) {
             fout << ", ";
@@ -1294,27 +1303,25 @@ int main(int argc, char *argv[]) {
           fout << "  " << ifc.name << " *ptr=("
                << ifc.name << " *)vptr;" << endl;
           
-          // Pointer assignments for arguments
+          // If the argument is a reference and not a standard C type,
+          // then we'll need to convert from a void *
           for(size_t k=0;k<iff.args.size();k++) {
-            if (iff.args[k].ift.suffix=="&") {
+            if (iff.args[k].ift.suffix=="&" && !iff.args[k].ift.is_ctype()) {
               std::string type_temp=iff.args[k].ift.name;
               if (type_temp=="std_vector") {
                 type_temp="std::vector<double>";
               }
-              //if (iff.args[k].ift.name=="std::string") {
               fout << "  " << type_temp << " *"
                    << iff.args[k].name << "=("
                    << type_temp << " *)ptr_" << iff.args[k].name
                    << ";" << endl;
-              //} else {
-              // Future vector reference code. 
-              //fout << "  "
-              //}
             }
           }
           
-          // Now generate code for actual function call and the
-          // return statement
+          // Now generate code to call the member function from
+          // inside the wrapper function. Also generate the code
+          // for the return
+          
           if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
               iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
             // If we're returning a shared pointer, then we actually
@@ -2012,8 +2019,8 @@ int main(int argc, char *argv[]) {
             iff.args[k].ift.name=="size_t" ||
             iff.args[k].ift.name=="double") {
           if (iff.args[k].ift.suffix=="&") {
-            fout << "*: ``ctypes.POINTER(ctypes.c_"
-                 << iff.args[k].ift.name << ")``" << endl;
+            fout << "*: ``ctypes.c_" << iff.args[k].ift.name
+                 << "``" << endl;
           } else {
             fout << "*: ``" << iff.args[k].ift.name << "``" << endl;
           }
@@ -2112,14 +2119,22 @@ int main(int argc, char *argv[]) {
         fout << "        func.restype=" << restype_string << endl;
       }
 
+      // Extra code before and after the ctypes function call
+      vector<string> pre_func_code, post_func_code;
+      
       // Ctypes function argument types
       fout << "        func.argtypes=[ctypes.c_void_p";
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.suffix=="&") {
-          if (iff.args[k].ift.name=="bool" ||
-              iff.args[k].ift.name=="int" ||
-              iff.args[k].ift.name=="size_t" ||
-              iff.args[k].ift.name=="double") {
+          if (iff.args[k].ift.is_ctype()) {
+            // If it's a C type, then we will convert from a python
+            // object to a ctypes object and then convert back
+            // afterwards
+            pre_func_code.push_back(iff.args[k].name+"_conv=ctypes.c_"+
+                                    iff.args[k].ift.name+
+                                    "("+iff.args[k].name+")");
+            post_func_code.push_back(iff.args[k].name+"="+
+                                     iff.args[k].name+"_conv.value()");
             fout << ",ctypes.POINTER(ctypes.c_"
                  << iff.args[k].ift.name << ")";
           } else {
@@ -2131,6 +2146,8 @@ int main(int argc, char *argv[]) {
           fout << ",ctypes.c_" << iff.args[k].ift.name;
         }
       }
+      // Instead of returning an array, we send a pointer to the
+      // C wrapper
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
           iff.ret.suffix=="&") {
@@ -2139,78 +2156,66 @@ int main(int argc, char *argv[]) {
       }
       fout << "]" << endl;
 
-      // Python code to call ctypes function
+      // Set up the variables which formulate the ctypes function call
+      string function_start, function_end;
+      
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
           iff.ret.suffix=="&") {
         
-        fout << "        func(self._ptr";
-        
-        for(size_t k=0;k<iff.args.size();k++) {
-          if (iff.args[k].ift.suffix=="&") {
-            fout << "," << iff.args[k].name << "._ptr";
-          } else if (iff.args[k].ift.name=="std::string") {
-            fout << "," << iff.args[k].name << "_";
-          } else {
-            fout << "," << iff.args[k].name;
-          }
-        }
-        fout << ",ctypes.byref(ptr_),ctypes.byref(n_))" << endl;;
+        function_start="func(self._ptr";
+        function_end=",ctypes.byref(ptr_),ctypes.byref(n_))";
         
       } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
                  iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
-        
-        fout << "        sp=shared_ptr_"+reformat_ret_type+
-          "(self._link,func(self._ptr))" << endl;
+
+        function_start="sp=shared_ptr_"+reformat_ret_type+
+          "(self._link,func(self._ptr)";
+        function_end=")";
         
       } else if (iff.ret.name=="std::string" || iff.ret.name=="string") {
         
-        fout << "        ret=func(self._ptr";
-        for(size_t k=0;k<iff.args.size();k++) {
-          if (iff.args[k].ift.suffix=="&") {
-            if (iff.args[k].ift.name=="bool" ||
-                iff.args[k].ift.name=="int" ||
-                iff.args[k].ift.name=="size_t" ||
-                iff.args[k].ift.name=="double") {
-              fout << "," << iff.args[k].name;
-            } else {
-              fout << "," << iff.args[k].name << "._ptr";
-            }
-          } else if (iff.args[k].ift.name=="std::string") {
-            fout << "," << iff.args[k].name << "_";
-          } else {
-            fout << "," << iff.args[k].name;
-          }
-        }
-        fout << ")" << endl;
-        fout << "        strt=std_string(self._link,ret)" << endl;
-        fout << "        strt._owner=True" << endl;
-      } else {
+        function_start="ret=func(self._ptr";
+        function_end=")";
+        post_func_code.push_back("strt=std_string(self._link,ret)");
+        post_func_code.push_back("strt._owner=True");
         
-        if (iff.ret.name=="void") {
-          fout << "        func(self._ptr";
-        } else {
-          fout << "        ret=func(self._ptr";
-        }
-        for(size_t k=0;k<iff.args.size();k++) {
-          if (iff.args[k].ift.suffix=="&") {
-            if (iff.args[k].ift.name=="bool" ||
-                iff.args[k].ift.name=="int" ||
-                iff.args[k].ift.name=="size_t" ||
-                iff.args[k].ift.name=="double") {
-              fout << "," << iff.args[k].name;
-            } else {
-              fout << "," << iff.args[k].name << "._ptr";
-            }
-          } else if (iff.args[k].ift.name=="std::string") {
-            fout << "," << iff.args[k].name << "_";
-          } else {
-            fout << "," << iff.args[k].name;
-          }
-        }
-        fout << ")" << endl;
+      } else if (iff.ret.name=="void") {
+        function_start="func(self._ptr";
+        function_end=")";
+      } else {
+        function_start="ret=func(self._ptr";
+        function_end=")";
       }
 
+      // Write the code for the actual ctypes function call
+      
+      for(size_t iii=0;iii<pre_func_code.size();iii++) {
+        fout << "        " << pre_func_code[iii] << endl;
+      }
+      
+      fout << "        " << function_start;
+
+      for(size_t k=0;k<iff.args.size();k++) {
+        if (iff.args[k].ift.suffix=="&") {
+          if (iff.args[k].ift.is_ctype()) {
+            fout << "," << iff.args[k].name;
+          } else {
+            fout << "," << iff.args[k].name << "._ptr";
+          }
+        } else if (iff.args[k].ift.name=="std::string") {
+          fout << "," << iff.args[k].name << "_";
+        } else {
+          fout << "," << iff.args[k].name;
+        }
+      }
+
+      fout << function_end << endl;
+      
+      for(size_t iii=0;iii<post_func_code.size();iii++) {
+        fout << "        " << post_func_code[iii] << endl;
+      }
+      
       // Python code to set up the return value
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
@@ -2226,16 +2231,13 @@ int main(int argc, char *argv[]) {
              << underscoreify(reformat_ret_type) << "(self._link,ret)"
              << endl;
         fout << "        return ret2" << endl;
+      } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
+                 iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
+        fout << "        return sp" << endl;
+      } else if (iff.ret.name=="void") {
+        fout << "        return" << endl;
       } else {
-        // Return
-        if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
-            iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
-          fout << "        return sp" << endl;
-        } else if (iff.ret.name=="void") {
-          fout << "        return" << endl;
-        } else {
-          fout << "        return ret" << endl;
-        }
+        fout << "        return ret" << endl;
       }
       fout << endl;
 
@@ -2282,6 +2284,8 @@ int main(int argc, char *argv[]) {
       if_func &iff=ifc.cons[j];
 
       fout << "    @classmethod" << endl;
+
+      // The function header
       fout << "    def " << iff.name << "(cls,link,";
       for(size_t k=0;k<iff.args.size();k++) {
         fout << iff.args[k].name;
@@ -2290,6 +2294,8 @@ int main(int argc, char *argv[]) {
         }
       }
       fout << "):" << endl;
+
+      // The function documentation
       fout << "        \"\"\"" << endl;
       fout << "        Constructor-like class method for "
            << ifc.name << " ." << endl;
@@ -2298,11 +2304,15 @@ int main(int argc, char *argv[]) {
       fout << endl;
       fout << "        \"\"\"" << endl;
       fout << endl;
+
+      // The C wrapper function from the DLL
       fout << "        f=link." << dll_name << "." << ifc.ns << "_"
            << underscoreify(ifc.name) << "_" << iff.name << endl;
+
+      // Output the constructor return type
       fout << "        f.restype=ctypes.c_void_p" << endl;
 
-      // Set up constructor argument types
+      // Output the constructor argument types
       fout << "        f.argtypes=[";
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.suffix=="&") {
@@ -2318,7 +2328,7 @@ int main(int argc, char *argv[]) {
       }
       fout << "]" << endl;
 
-      // Set up constructor function call
+      // Output the constructor function call
       fout << "        return cls(link,f(";
       // Arguments 
       for(size_t k=0;k<iff.args.size();k++) {
@@ -2336,11 +2346,13 @@ int main(int argc, char *argv[]) {
       
     }    
 
+    // Output any additional python code for this class
     for(size_t j=0;j<ifc.extra_py.size();j++) {
       fout << "    " << ifc.extra_py[j] << endl;
     }
     fout << endl;
-    
+
+    // End of loop over classes
   }
 
   // Python code for shared pointers

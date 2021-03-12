@@ -165,6 +165,29 @@ void o2scl_vector_size_t__setitem(void *vptr, size_t i, size_t val) {
   return;
 }
 
+void *o2scl_create_vector_string_() {
+  vector<string> *ptr=new vector<string>;
+  return ptr;
+}
+
+void o2scl_free_vector_string_(void *vptr) {
+  vector<string> *ptr=(vector<string> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_vector_string__resize(void *vptr, size_t n) {
+  vector<string> *ptr=(vector<string> *)vptr;
+  ptr->resize(n);
+  return;
+}
+
+size_t o2scl_vector_string__size(void *vptr) {
+  vector<string> *ptr=(vector<string> *)vptr;
+  size_t ret=ptr->size();
+  return ret;
+}
+
 void *o2scl_create_boost__numeric__ublas__vector_double_() {
   boost::numeric::ublas::vector<double> *ptr=new boost::numeric::ublas::vector<double>;
   return ptr;
@@ -1096,10 +1119,8 @@ double o2scl_table3d_get_grid_y(void *vptr, size_t iy) {
   return ret;
 }
 
-void o2scl_table3d_get_size(void *vptr, void *ptr_nx, void *ptr_ny) {
+void o2scl_table3d_get_size(void *vptr, size_t *nx, size_t *ny) {
   table3d *ptr=(table3d *)vptr;
-  size_t *nx=(size_t *)ptr_nx;
-  size_t *ny=(size_t *)ptr_ny;
   ptr->get_size(*nx,*ny);
   return;
 }
@@ -1159,9 +1180,8 @@ size_t o2scl_table3d_lookup_slice(void *vptr, char *name) {
   return ret;
 }
 
-bool o2scl_table3d_is_slice(void *vptr, char *name, void *ptr_ix) {
+bool o2scl_table3d_is_slice(void *vptr, char *name, size_t *ix) {
   table3d *ptr=(table3d *)vptr;
-  size_t *ix=(size_t *)ptr_ix;
   bool ret=ptr->is_slice(name,*ix);
   return ret;
 }

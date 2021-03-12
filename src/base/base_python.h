@@ -80,6 +80,14 @@ size_t o2scl_vector_size_t__getitem(void *vptr, size_t n);
 
 void o2scl_vector_size_t__setitem(void *vptr, size_t i, size_t val);
 
+void *o2scl_create_vector_string_();
+
+void o2scl_free_vector_string_(void *vptr);
+
+void o2scl_vector_string__resize(void *vptr, size_t n);
+
+size_t o2scl_vector_string__size(void *vptr);
+
 void *o2scl_create_boost__numeric__ublas__vector_double_();
 
 void o2scl_free_boost__numeric__ublas__vector_double_(void *vptr);
@@ -390,7 +398,7 @@ double o2scl_table3d_get_grid_x(void *vptr, size_t ix);
 
 double o2scl_table3d_get_grid_y(void *vptr, size_t iy);
 
-void o2scl_table3d_get_size(void *vptr, void *ptr_nx, void *ptr_ny);
+void o2scl_table3d_get_size(void *vptr, size_t *nx, size_t *ny);
 
 size_t o2scl_table3d_get_nx(void *vptr);
 
@@ -410,7 +418,7 @@ void o2scl_table3d_set_slice_all(void *vptr, char *name, double val);
 
 size_t o2scl_table3d_lookup_slice(void *vptr, char *name);
 
-bool o2scl_table3d_is_slice(void *vptr, char *name, void *ptr_ix);
+bool o2scl_table3d_is_slice(void *vptr, char *name, size_t *ix);
 
 void o2scl_table3d_rename_slice(void *vptr, char *name1, char *name2);
 
