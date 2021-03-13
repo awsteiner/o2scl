@@ -9,6 +9,10 @@ rst_header |
 |
 | Base classes from O\ :sub:`2`\ scl
 | ==================================
+|
+| Note that these classes are experimental. They are not intended
+| to provide the full functionality
+| of the corresponding C++ class.
 # 
 # Include statements for C++ header file
 # 
@@ -51,12 +55,17 @@ class std::string
 | def __len__(self):
 |     """
 |     Return the length of the vector
+|
+|     Returns: an int
 |     """
 |     return self.length()
 | 
 | def init_bytes(self,s):
 |     """
 |     Initialize the string from a Python bytes object
+|
+|     | Parameters:
+|     | *s* a Python bytes string
 |     """
 |     self.resize(len(s))
 |     for i in range(0,len(s)):
@@ -66,6 +75,8 @@ class std::string
 | def to_bytes(self):
 |     """
 |     Copy the string to a Python bytes object
+|
+|     Returns: a Python bytes string
 |     """
 |     ret=b''
 |     for i in range(0,self.length()):
@@ -91,12 +102,16 @@ class std::vector<double>
 | def __len__(self):
 |     """
 |     Return the length of the vector
+|
+|     Returns: a Python int
 |     """
 |     return self.size()
 |
 | def to_numpy(self):
 |     """
 |     Copy the vector to a numpy array
+|
+|     Returns: a one-dimensional ``numpy`` array
 |     """
 |     ret=numpy.zeros((self.size()))
 |     for i in range(0,self.size()):
@@ -116,12 +131,16 @@ class std::vector<int>
 | def __len__(self):
 |     """
 |     Return the length of the vector
+|
+|     Returns: a Python int
 |     """
 |     return self.size()
 |
 | def to_numpy(self):
 |     """
 |     Copy the vector to a numpy array
+|
+|     Returns: a one-dimensional ``numpy`` array with dtype ``int32``
 |     """
 |     ret=numpy.zeros((self.size()),dtype=numpy.int32)
 |     for i in range(0,self.size()):
@@ -141,12 +160,16 @@ class std::vector<size_t>
 | def __len__(self):
 |     """
 |     Return the length of the vector
+|
+|     Returns: a Python int
 |     """
 |     return self.size()
 |
 | def to_numpy(self):
 |     """
 |     Copy the vector to a numpy array
+|
+|     Returns: a one-dimensional ``numpy`` array with dtype ``uint64``
 |     """
 |     ret=numpy.zeros((self.size()),dtype=numpy.uint64)
 |     for i in range(0,self.size()):
@@ -175,6 +198,8 @@ class std::vector<std::string>
 | def __len__(self):
 |     """
 |     Return the length of the vector
+|
+|     Returns: a Python int
 |     """
 |     return self.size()
 # Class ublas_vector
@@ -193,12 +218,16 @@ class boost::numeric::ublas::vector<double>
 | def __len__(self):
 |     """
 |     Return the length of the vector
+|
+|     Returns: a Python int
 |     """
 |     return self.size()
 |
 | def to_numpy(self):
 |     """
 |     Copy the vector to a numpy array
+|
+|     Returns: a one-dimensional ``numpy`` array
 |     """
 |     ret=numpy.zeros((self.size()))
 |     for i in range(0,self.size()):
@@ -225,6 +254,9 @@ class boost::numeric::ublas::matrix<double>
 | def to_numpy(self):
 |     """
 |     Copy the vector to a numpy matrix
+|
+|     Returns: a two-dimensional ``numpy`` array, with dimension
+|     ``size1(),size2()``.
 |     """
 |     ret=numpy.zeros((self.size1(),self.size2()))
 |     for i in range(0,self.size1()):
@@ -239,7 +271,7 @@ class boost::numeric::ublas::matrix<double>
 py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class ``%name%``,
 | see
-| https://neutronstars.utk.edu/code/o2scl-dev/html/class/%name%.html .
+| https://neutronstars.utk.edu/code/o2scl/html/class/%name%.html .
 # 
 # Class lib_settings_class
 #
@@ -299,7 +331,7 @@ class table<>
 - py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class ``table``,
 | see
-| https://neutronstars.utk.edu/code/o2scl-dev/html/class/table.html .
+| https://neutronstars.utk.edu/code/o2scl/html/class/table.html .
 - py_name table
 - std_cc                             
 - function operator[]
@@ -560,7 +592,7 @@ class table_units<>
 - py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class ``table_units``,
 | see
-| https://neutronstars.utk.edu/code/o2scl-dev/html/class/table_units.html .
+| https://neutronstars.utk.edu/code/o2scl/html/class/table_units.html .
 - parent table<>
 - std_cc                             
 - py_name table_units
@@ -594,7 +626,7 @@ class uniform_grid<>
 - py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class ``uniform_grid``,
 | see
-| https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid.html .
+| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid.html .
 - py_name uniform_grid                             
 - function get_nbins
   - size_t                             
@@ -621,7 +653,7 @@ class uniform_grid_end<>
 - py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class ``uniform_grid_end``,
 | see
-| https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_end.html .
+| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_end.html .
 - py_name uniform_grid_end                             
 - parent uniform_grid<>
 - cons init
@@ -635,7 +667,7 @@ class uniform_grid_width<>
 - py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class ``uniform_grid_width``,
 | see
-| https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_width.html .
+| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_width.html .
 - py_name uniform_grid_width
 - parent uniform_grid<>
 - cons init
@@ -649,7 +681,7 @@ class uniform_grid_end_width<>
 - py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class ``uniform_grid_end_width``,
 | see
-| https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_end_width.html .
+| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_end_width.html .
 - py_name uniform_grid_end_width                             
 - parent uniform_grid<>
 - cons init
@@ -663,7 +695,7 @@ class uniform_grid_log_end<>
 - py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class ``uniform_grid_log_end``,
 | see
-| https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_log_end.html .
+| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_log_end.html .
 - py_name uniform_grid_log_end
 - parent uniform_grid<>
 - cons init
@@ -677,7 +709,7 @@ class uniform_grid_log_width<>
 - py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class ``uniform_grid_log_width``,
 | see
-| https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_log_width.html .
+| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_log_width.html .
 - py_name uniform_grid_log_width
 - parent uniform_grid<>
 - cons init
@@ -691,7 +723,7 @@ class uniform_grid_log_end_width<>
 - py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class ``uniform_grid_log_end_width``,
 | see
-| https://neutronstars.utk.edu/code/o2scl-dev/html/class/uniform_grid_log_end_width.html .
+| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_log_end_width.html .
 - py_name uniform_grid_log_end_width
 - parent uniform_grid<>
 - cons init
@@ -896,7 +928,7 @@ class tensor<>
 - py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class ``tensor``,
 | see
-| https://neutronstars.utk.edu/code/o2scl-dev/html/class/tensor.html .
+| https://neutronstars.utk.edu/code/o2scl/html/class/tensor.html .
 - std_cc                             
 - py_name tensor
 #- cons create_size
@@ -973,7 +1005,7 @@ class tensor_grid<>
 - py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class ``tensor_grid``,
 | see
-| https://neutronstars.utk.edu/code/o2scl-dev/html/class/tensor_grid.html .
+| https://neutronstars.utk.edu/code/o2scl/html/class/tensor_grid.html .
 - std_cc                             
 - py_name tensor_grid
 #- cons create_size
@@ -1034,7 +1066,7 @@ class convert_units<>
 - py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class ``convert_units``,
 | see
-| https://neutronstars.utk.edu/code/o2scl-dev/html/class/convert_units.html .
+| https://neutronstars.utk.edu/code/o2scl/html/class/convert_units.html .
 - py_name convert_units
 - function convert
   - double

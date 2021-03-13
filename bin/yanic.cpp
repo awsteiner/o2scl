@@ -1816,7 +1816,12 @@ int main(int argc, char *argv[]) {
     }
     fout << "    def __init__(self,link,pointer=0):" << endl;
     fout << "        \"\"\"" << endl;
-    fout << "        Init function for class " << ifc.name << " ." << endl;
+    fout << "        Init function for class ";
+    if (ifc.py_name!="") {
+      fout << ifc.py_name << endl;
+    } else {
+      fout << ifc.name << endl;
+    }
     fout << endl;
     fout << "        | Parameters:" << endl;
     fout << "        | *link* :class:`linker` object" << endl;
@@ -1825,8 +1830,8 @@ int main(int argc, char *argv[]) {
     fout << "        \"\"\"" << endl;
     fout << endl;
     fout << "        if pointer==0:" << endl;
-    fout << "            f=link." << dll_name << "." << ifc.ns << "_create_"
-         << underscoreify(ifc.name) << endl;
+    fout << "            f=link." << dll_name << "." << ifc.ns
+         << "_create_" << underscoreify(ifc.name) << endl;
     fout << "            f.restype=ctypes.c_void_p" << endl;
     fout << "            f.argtypes=[]" << endl;
     fout << "            self._ptr=f()" << endl;
@@ -1840,12 +1845,17 @@ int main(int argc, char *argv[]) {
     // Define __del__() function
     fout << "    def __del__(self):" << endl;
     fout << "        \"\"\"" << endl;
-    fout << "        Delete function for class " << ifc.name << " ." << endl;
+    fout << "        Delete function for class ";
+    if (ifc.py_name!="") {
+      fout << ifc.py_name << endl;
+    } else {
+      fout << ifc.name << endl;
+    }
     fout << "        \"\"\"" << endl;
     fout << endl;
     fout << "        if self._owner==True:" << endl;
-    fout << "            f=self._link." << dll_name << "." << ifc.ns << "_free_"
-         << underscoreify(ifc.name) << endl;
+    fout << "            f=self._link." << dll_name << "." << ifc.ns
+         << "_free_" << underscoreify(ifc.name) << endl;
     fout << "            f.argtypes=[ctypes.c_void_p]" << endl;
     fout << "            f(self._ptr)" << endl;
     fout << "            self._owner=False" << endl;
@@ -1856,8 +1866,20 @@ int main(int argc, char *argv[]) {
     // Define copy() function
     fout << "    def __copy__(self):" << endl;
     fout << "        \"\"\"" << endl;
-    fout << "        Shallow copy function for class "
-         << ifc.name << " ." << endl;
+    fout << "        Shallow copy function for class ";
+    if (ifc.py_name!="") {
+      fout << ifc.py_name << endl;
+    } else {
+      fout << ifc.name << endl;
+    }
+    fout << "        " << endl;
+    fout << "        Returns: a ";
+    if (ifc.py_name!="") {
+      fout << ifc.py_name << " object" <<  endl;
+    } else {
+      fout << ifc.name << " object" << endl;
+    }
+    
     fout << "        \"\"\"" << endl;
     fout << endl;
     fout << "        new_obj=type(self)(self._link,self._ptr)" << endl;
@@ -1868,8 +1890,19 @@ int main(int argc, char *argv[]) {
     if (ifc.std_cc) {
       fout << "    def __deepcopy__(self,memo):" << endl;
       fout << "        \"\"\"" << endl;
-      fout << "        Deep copy function for class "
-           << ifc.name << " ." << endl;
+      fout << "        Deep copy function for class ";
+      if (ifc.py_name!="") {
+        fout << ifc.py_name << endl;
+      } else {
+        fout << ifc.name << endl;
+      }
+      fout << "        " << endl;
+      fout << "        Returns: a new ";
+      if (ifc.py_name!="") {
+        fout << ifc.py_name << " object" <<  endl;
+      } else {
+        fout << ifc.name << " object" << endl;
+      }
       fout << "        \"\"\"" << endl;
       fout << endl;
       // Create the new object
@@ -2095,6 +2128,12 @@ int main(int argc, char *argv[]) {
       } else if (iff.ret.name=="std::string") {
         return_docs="std_string object";
         restype_string="ctypes.c_void_p";
+      } else if (iff.ret.name=="size_t" || iff.ret.name=="int") {
+        return_docs="a Python int";
+        restype_string=((string)"ctypes.c_")+reformat_ret_type;
+      } else if (iff.ret.name=="float" || iff.ret.name=="double") {
+        return_docs="a Python float";
+        restype_string=((string)"ctypes.c_")+reformat_ret_type;
       } else if (iff.ret.name!="void") {
         return_docs=((string)"``ctypes.c_")+reformat_ret_type+"`` object";
         restype_string=((string)"ctypes.c_")+reformat_ret_type;
@@ -2680,6 +2719,9 @@ int main(int argc, char *argv[]) {
     fout2 << "        .. automethod:: __init__" << endl;
     fout2 << "        .. automethod:: __del__" << endl;
     fout2 << "        .. automethod:: __copy__" << endl;
+    if (ifc.std_cc) {
+      fout2 << "        .. automethod:: __deepcopy__" << endl;
+    }
     // If the class contains an operator[] or an operator(), then ensure
     // that the __getitem__ method is documented.
     for(size_t k=0;k<ifc.methods.size();k++) {

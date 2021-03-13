@@ -220,6 +220,7 @@ Todos
    - Document .i format
    - Make sure data members named 'del' are properly renamed without
      hacking, e.g. with a py_name argument
+   - Make sure negative size_t arguments are rejected in python
      
 Details
 -------
