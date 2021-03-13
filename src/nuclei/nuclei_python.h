@@ -64,7 +64,7 @@ void *o2scl_create_nucmass_info();
 
 void o2scl_free_nucmass_info(void *vptr);
 
-int o2scl_nucmass_info_parse_elstring(void *vptr, char *ela, void *ptr_Z, void *ptr_N, void *ptr_A);
+int o2scl_nucmass_info_parse_elstring(void *vptr, char *ela, int *Z, int *N, int *A);
 
 int o2scl_nucmass_info_eltoZ(void *vptr, char *el);
 

@@ -103,11 +103,8 @@ void o2scl_free_nucmass_info(void *vptr) {
   return;
 }
 
-int o2scl_nucmass_info_parse_elstring(void *vptr, char *ela, void *ptr_Z, void *ptr_N, void *ptr_A) {
+int o2scl_nucmass_info_parse_elstring(void *vptr, char *ela, int *Z, int *N, int *A) {
   nucmass_info *ptr=(nucmass_info *)vptr;
-  int *Z=(int *)ptr_Z;
-  int *N=(int *)ptr_N;
-  int *A=(int *)ptr_A;
   int ret=ptr->parse_elstring(ela,*Z,*N,*A);
   return ret;
 }

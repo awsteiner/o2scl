@@ -145,9 +145,10 @@ Classes
 
   - {type} <name>
 
-  Get and set methods for class member data are generated and always
-  imply a copy. (Obtaining a pointer or reference to a class data
-  member is not supported.) 
+  Get and set methods for class member data are generated. For
+  standard C types, the get and set methods pass by value. For
+  classes from the interface, the get and set methods pass by
+  reference.
   
 - Class member function definitions are of the following form.
   The return type and parameter specifications must begin with
@@ -199,6 +200,12 @@ Other objects
 
       - py_name <name>
 
+Constraints
+-----------
+
+- Global functions and member functions may be overloaded, but
+  only if they are given different python names.
+
 Todos
 -----
 
@@ -237,5 +244,9 @@ Return values
 - C type (bool, char, double, float, int, size_t):
 - reference to C type: (should be getitem(), but this does not seem to
   work properly)
-- ``std::string``: 
+- ``std::string``:
+- std_vector & - table::line_of_data: convert to an
+  std::vector<double>
+- std::vector<double> & - uniform_grid::vector
+  
 

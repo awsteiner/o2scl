@@ -183,9 +183,8 @@ double o2scl_eos_had_base_fcomp(void *vptr, double nb, double delta) {
   return ret;
 }
 
-double o2scl_eos_had_base_fcomp_err(void *vptr, double nb, double delta, void *ptr_unc) {
+double o2scl_eos_had_base_fcomp_err(void *vptr, double nb, double delta, double *unc) {
   eos_had_base *ptr=(eos_had_base *)vptr;
-  double *unc=(double *)ptr_unc;
   double ret=ptr->fcomp_err(nb,delta,*unc);
   return ret;
 }
@@ -202,9 +201,8 @@ double o2scl_eos_had_base_fesym(void *vptr, double nb, double delta) {
   return ret;
 }
 
-double o2scl_eos_had_base_fesym_err(void *vptr, double nb, double delta, void *ptr_unc) {
+double o2scl_eos_had_base_fesym_err(void *vptr, double nb, double delta, double *unc) {
   eos_had_base *ptr=(eos_had_base *)vptr;
-  double *unc=(double *)ptr_unc;
   double ret=ptr->fesym_err(nb,delta,*unc);
   return ret;
 }
@@ -281,27 +279,20 @@ double o2scl_eos_had_base_f_effm_vector(void *vptr, double nb, double delta) {
   return ret;
 }
 
-double o2scl_eos_had_base_fn0(void *vptr, double delta, void *ptr_leoa) {
+double o2scl_eos_had_base_fn0(void *vptr, double delta, double *leoa) {
   eos_had_base *ptr=(eos_had_base *)vptr;
-  double *leoa=(double *)ptr_leoa;
   double ret=ptr->fn0(delta,*leoa);
   return ret;
 }
 
-void o2scl_eos_had_base_f_number_suscept(void *vptr, double mun, double mup, void *ptr_dPdnn, void *ptr_dPdnp, void *ptr_dPdpp) {
+void o2scl_eos_had_base_f_number_suscept(void *vptr, double mun, double mup, double *dPdnn, double *dPdnp, double *dPdpp) {
   eos_had_base *ptr=(eos_had_base *)vptr;
-  double *dPdnn=(double *)ptr_dPdnn;
-  double *dPdnp=(double *)ptr_dPdnp;
-  double *dPdpp=(double *)ptr_dPdpp;
   ptr->f_number_suscept(mun,mup,*dPdnn,*dPdnp,*dPdpp);
   return;
 }
 
-void o2scl_eos_had_base_f_inv_number_suscept(void *vptr, double mun, double mup, void *ptr_dednn, void *ptr_dednp, void *ptr_dedpp) {
+void o2scl_eos_had_base_f_inv_number_suscept(void *vptr, double mun, double mup, double *dednn, double *dednp, double *dedpp) {
   eos_had_base *ptr=(eos_had_base *)vptr;
-  double *dednn=(double *)ptr_dednn;
-  double *dednp=(double *)ptr_dednp;
-  double *dedpp=(double *)ptr_dedpp;
   ptr->f_inv_number_suscept(mun,mup,*dednn,*dednp,*dedpp);
   return;
 }
@@ -1605,13 +1596,8 @@ void o2scl_tov_love_set_tab(void *vptr, void *p_v) {
   return;
 }
 
-int o2scl_tov_love_calc_y(void *vptr, void *ptr_yR, void *ptr_beta, void *ptr_k2, void *ptr_lambda_km5, void *ptr_lambda_cgs, bool tabulate) {
+int o2scl_tov_love_calc_y(void *vptr, double *yR, double *beta, double *k2, double *lambda_km5, double *lambda_cgs, bool tabulate) {
   tov_love *ptr=(tov_love *)vptr;
-  double *yR=(double *)ptr_yR;
-  double *beta=(double *)ptr_beta;
-  double *k2=(double *)ptr_k2;
-  double *lambda_km5=(double *)ptr_lambda_km5;
-  double *lambda_cgs=(double *)ptr_lambda_cgs;
   int ret=ptr->calc_y(*yR,*beta,*k2,*lambda_km5,*lambda_cgs,tabulate);
   return ret;
 }
@@ -1628,13 +1614,8 @@ void o2scl_tov_love_clear_discs(void *vptr) {
   return;
 }
 
-int o2scl_tov_love_calc_H(void *vptr, void *ptr_yR, void *ptr_beta, void *ptr_k2, void *ptr_lambda_km5, void *ptr_lambda_cgs) {
+int o2scl_tov_love_calc_H(void *vptr, double *yR, double *beta, double *k2, double *lambda_km5, double *lambda_cgs) {
   tov_love *ptr=(tov_love *)vptr;
-  double *yR=(double *)ptr_yR;
-  double *beta=(double *)ptr_beta;
-  double *k2=(double *)ptr_k2;
-  double *lambda_km5=(double *)ptr_lambda_km5;
-  double *lambda_cgs=(double *)ptr_lambda_cgs;
   int ret=ptr->calc_H(*yR,*beta,*k2,*lambda_km5,*lambda_cgs);
   return ret;
 }

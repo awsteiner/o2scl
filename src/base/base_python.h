@@ -56,37 +56,37 @@ double o2scl_std__vector_double__getitem(void *vptr, size_t n);
 
 void o2scl_std__vector_double__setitem(void *vptr, size_t i, double val);
 
-void *o2scl_create_vector_int_();
+void *o2scl_create_std__vector_int_();
 
-void o2scl_free_vector_int_(void *vptr);
+void o2scl_free_std__vector_int_(void *vptr);
 
-void o2scl_vector_int__resize(void *vptr, size_t n);
+void o2scl_std__vector_int__resize(void *vptr, size_t n);
 
-size_t o2scl_vector_int__size(void *vptr);
+size_t o2scl_std__vector_int__size(void *vptr);
 
-int o2scl_vector_int__getitem(void *vptr, size_t n);
+int o2scl_std__vector_int__getitem(void *vptr, size_t n);
 
-void o2scl_vector_int__setitem(void *vptr, size_t i, int val);
+void o2scl_std__vector_int__setitem(void *vptr, size_t i, int val);
 
-void *o2scl_create_vector_size_t_();
+void *o2scl_create_std__vector_size_t_();
 
-void o2scl_free_vector_size_t_(void *vptr);
+void o2scl_free_std__vector_size_t_(void *vptr);
 
-void o2scl_vector_size_t__resize(void *vptr, size_t n);
+void o2scl_std__vector_size_t__resize(void *vptr, size_t n);
 
-size_t o2scl_vector_size_t__size(void *vptr);
+size_t o2scl_std__vector_size_t__size(void *vptr);
 
-size_t o2scl_vector_size_t__getitem(void *vptr, size_t n);
+size_t o2scl_std__vector_size_t__getitem(void *vptr, size_t n);
 
-void o2scl_vector_size_t__setitem(void *vptr, size_t i, size_t val);
+void o2scl_std__vector_size_t__setitem(void *vptr, size_t i, size_t val);
 
-void *o2scl_create_vector_string_();
+void *o2scl_create_std__vector_std__string_();
 
-void o2scl_free_vector_string_(void *vptr);
+void o2scl_free_std__vector_std__string_(void *vptr);
 
-void o2scl_vector_string__resize(void *vptr, size_t n);
+void o2scl_std__vector_std__string__resize(void *vptr, size_t n);
 
-size_t o2scl_vector_string__size(void *vptr);
+size_t o2scl_std__vector_std__string__size(void *vptr);
 
 void *o2scl_create_boost__numeric__ublas__vector_double_();
 

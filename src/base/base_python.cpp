@@ -95,95 +95,95 @@ void o2scl_std__vector_double__setitem(void *vptr, size_t i, double val) {
   return;
 }
 
-void *o2scl_create_vector_int_() {
-  vector<int> *ptr=new vector<int>;
+void *o2scl_create_std__vector_int_() {
+  std::vector<int> *ptr=new std::vector<int>;
   return ptr;
 }
 
-void o2scl_free_vector_int_(void *vptr) {
-  vector<int> *ptr=(vector<int> *)vptr;
+void o2scl_free_std__vector_int_(void *vptr) {
+  std::vector<int> *ptr=(std::vector<int> *)vptr;
   delete ptr;
   return;
 }
 
-void o2scl_vector_int__resize(void *vptr, size_t n) {
-  vector<int> *ptr=(vector<int> *)vptr;
+void o2scl_std__vector_int__resize(void *vptr, size_t n) {
+  std::vector<int> *ptr=(std::vector<int> *)vptr;
   ptr->resize(n);
   return;
 }
 
-size_t o2scl_vector_int__size(void *vptr) {
-  vector<int> *ptr=(vector<int> *)vptr;
+size_t o2scl_std__vector_int__size(void *vptr) {
+  std::vector<int> *ptr=(std::vector<int> *)vptr;
   size_t ret=ptr->size();
   return ret;
 }
 
-int o2scl_vector_int__getitem(void *vptr, size_t n) {
-  vector<int> *ptr=(vector<int> *)vptr;
+int o2scl_std__vector_int__getitem(void *vptr, size_t n) {
+  std::vector<int> *ptr=(std::vector<int> *)vptr;
   double ret=ptr->operator[](n);
   return ret;
 }
 
-void o2scl_vector_int__setitem(void *vptr, size_t i, int val) {
-  vector<int> *ptr=(vector<int> *)vptr;
+void o2scl_std__vector_int__setitem(void *vptr, size_t i, int val) {
+  std::vector<int> *ptr=(std::vector<int> *)vptr;
   (*ptr)[i]=val;
   return;
 }
 
-void *o2scl_create_vector_size_t_() {
-  vector<size_t> *ptr=new vector<size_t>;
+void *o2scl_create_std__vector_size_t_() {
+  std::vector<size_t> *ptr=new std::vector<size_t>;
   return ptr;
 }
 
-void o2scl_free_vector_size_t_(void *vptr) {
-  vector<size_t> *ptr=(vector<size_t> *)vptr;
+void o2scl_free_std__vector_size_t_(void *vptr) {
+  std::vector<size_t> *ptr=(std::vector<size_t> *)vptr;
   delete ptr;
   return;
 }
 
-void o2scl_vector_size_t__resize(void *vptr, size_t n) {
-  vector<size_t> *ptr=(vector<size_t> *)vptr;
+void o2scl_std__vector_size_t__resize(void *vptr, size_t n) {
+  std::vector<size_t> *ptr=(std::vector<size_t> *)vptr;
   ptr->resize(n);
   return;
 }
 
-size_t o2scl_vector_size_t__size(void *vptr) {
-  vector<size_t> *ptr=(vector<size_t> *)vptr;
+size_t o2scl_std__vector_size_t__size(void *vptr) {
+  std::vector<size_t> *ptr=(std::vector<size_t> *)vptr;
   size_t ret=ptr->size();
   return ret;
 }
 
-size_t o2scl_vector_size_t__getitem(void *vptr, size_t n) {
-  vector<size_t> *ptr=(vector<size_t> *)vptr;
+size_t o2scl_std__vector_size_t__getitem(void *vptr, size_t n) {
+  std::vector<size_t> *ptr=(std::vector<size_t> *)vptr;
   double ret=ptr->operator[](n);
   return ret;
 }
 
-void o2scl_vector_size_t__setitem(void *vptr, size_t i, size_t val) {
-  vector<size_t> *ptr=(vector<size_t> *)vptr;
+void o2scl_std__vector_size_t__setitem(void *vptr, size_t i, size_t val) {
+  std::vector<size_t> *ptr=(std::vector<size_t> *)vptr;
   (*ptr)[i]=val;
   return;
 }
 
-void *o2scl_create_vector_string_() {
-  vector<string> *ptr=new vector<string>;
+void *o2scl_create_std__vector_std__string_() {
+  std::vector<std::string> *ptr=new std::vector<std::string>;
   return ptr;
 }
 
-void o2scl_free_vector_string_(void *vptr) {
-  vector<string> *ptr=(vector<string> *)vptr;
+void o2scl_free_std__vector_std__string_(void *vptr) {
+  std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
   delete ptr;
   return;
 }
 
-void o2scl_vector_string__resize(void *vptr, size_t n) {
-  vector<string> *ptr=(vector<string> *)vptr;
+void o2scl_std__vector_std__string__resize(void *vptr, size_t n) {
+  std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
   ptr->resize(n);
   return;
 }
 
-size_t o2scl_vector_string__size(void *vptr) {
-  vector<string> *ptr=(vector<string> *)vptr;
+size_t o2scl_std__vector_std__string__size(void *vptr) {
+  std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
   size_t ret=ptr->size();
   return ret;
 }

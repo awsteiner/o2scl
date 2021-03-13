@@ -342,6 +342,7 @@ public:
       ift.parse(vs,1,vs.size());
       
     } else {
+      
       name=last_string;
       ift.parse(vs,1,vs.size()-1);
     }
@@ -460,6 +461,10 @@ int main(int argc, char *argv[]) {
     };
   
   cout << "Parsing interface " << fname << " ." << endl;
+
+  // The internal version of the C++/python interface is stored in
+  // these data structures. The parser reads the interface file into
+  // this data
   
   // Current namespace
   std::string ns;
@@ -483,6 +488,26 @@ int main(int argc, char *argv[]) {
   std::vector<if_func> functions;
   // Current list of shared pointers
   std::vector<if_shared_ptr> sps;
+
+  // Mapping classes to python names for internal classes
+  std::map<std::string,std::string,std::less<std::string>> class_py_names;
+  typedef
+    std::map<std::string,std::string,std::less<std::string>>::iterator
+    cpn_it;
+  class_py_names.insert(std::make_pair("std::vector<double>",
+                                       "std_vector"));
+  class_py_names.insert(std::make_pair("std::vector<int>",
+                                       "std_vector_int"));
+  class_py_names.insert(std::make_pair("std::vector<size_t>",
+                                       "std_vector_size_t"));
+  class_py_names.insert(std::make_pair("std::vector<std::string>",
+                                       "std_vector_string"));
+  class_py_names.insert(std::make_pair
+                        ("boost::numeric::ublas::vector<double>",
+                         "ublas_vector"));
+  class_py_names.insert(std::make_pair
+                        ("boost::numeric::ublas::matrix<double>",
+                         "ublas_matrix"));
   
   // Open file
   ifstream fin;
@@ -757,6 +782,11 @@ int main(int argc, char *argv[]) {
 
           // No default constructor flag
           
+          if (ifc.std_cc==true) {
+            O2SCL_ERR2("Standard copy constructor without default ",
+                       "constructor not implemented.",o2scl::exc_eunimpl);
+          }
+          
           ifc.def_cons=false;
           cout << "  Parent class does not have a default constructor."
                << endl;
@@ -767,6 +797,11 @@ int main(int argc, char *argv[]) {
         } else if (vs.size()>=2 && vs[0]=="-" && vs[1]=="std_cc") {
 
           // Standard copy constructor flag
+
+          if (ifc.def_cons==false) {
+            O2SCL_ERR2("Standard copy constructor without default ",
+                       "constructor not implemented.",o2scl::exc_eunimpl);
+          }
           
           ifc.std_cc=true;
           cout << "  Class " << ifc.name << " has the standard "
@@ -938,6 +973,8 @@ int main(int argc, char *argv[]) {
   // ----------------------------------------------------------------
   // Post-process to handle function overloading
 
+  // For each class, manually examine each pair of member functions to
+  // see if they have the same name
   for(size_t i=0;i<classes.size();i++) {
     if_class &ifc=classes[i];
     for(size_t j=0;j<ifc.methods.size();j++) {
@@ -945,6 +982,7 @@ int main(int argc, char *argv[]) {
       for(size_t k=j+1;k<ifc.methods.size();k++) {
         if_func &iff2=ifc.methods[k];
         if (iff.name==iff2.name) {
+          // They must have different python names
           if (iff.py_name==iff2.py_name) {
             cout << j << " " << k << " " << ifc.methods.size() << endl;
             cout << "In class: " << ifc.name << endl;
@@ -956,6 +994,7 @@ int main(int argc, char *argv[]) {
             O2SCL_ERR("Member functions with same name and same py_name.",
                       o2scl::exc_einval);
           }
+          // Set the overloaded flag
           iff.overloaded=true;
           iff2.overloaded=true;
           cout << "In class " << ifc.name << ", member functions "
@@ -967,11 +1006,14 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  // Manually examine each pair of global functions to see if they
+  // have the same name
   for(size_t i=0;i<functions.size();i++) {
     if_func &iff=functions[i];
     for(size_t j=i+1;j<functions.size();j++) {
       if_func &iff2=functions[j];
       if (iff.name==iff2.name) {
+        // They must have different python names
         if (iff.py_name==iff2.py_name) {
           O2SCL_ERR("Functions with same name and same py_name.",
                     o2scl::exc_einval);
@@ -986,6 +1028,7 @@ int main(int argc, char *argv[]) {
     }
   }
   
+  // End of interface file parsing code
   // ----------------------------------------------------------------
   // Create C++ header/source
 
@@ -1039,8 +1082,8 @@ int main(int argc, char *argv[]) {
 
       if_class &ifc=classes[i];
 
-      // Generate an object creation function as long as its not
-      // abstract and has a default constructor
+      // Generate an object creation function as long as the class is
+      // not abstract and has a default constructor
       
       if (ifc.is_abstract==false && ifc.def_cons==true) {
         fout << "void *" << underscoreify(ifc.ns) << "_create_"
@@ -1057,7 +1100,8 @@ int main(int argc, char *argv[]) {
         fout << endl;
       }
       
-      // Generate a destructor function as long as its not abstract
+      // Generate a destructor function as long as the class is not
+      // abstract
       
       if (ifc.is_abstract==false) {
         fout << "void " << underscoreify(ifc.ns) << "_free_"
@@ -1103,10 +1147,7 @@ int main(int argc, char *argv[]) {
         if_var &ifv=ifc.members[j];
 
         // Get functions for class data
-        if (ifv.ift.name=="bool" ||
-            ifv.ift.name=="double" ||
-            ifv.ift.name=="int" ||
-            ifv.ift.name=="size_t") {
+        if (ifv.ift.is_ctype()) {
           // Get function for a C data type
           fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
                << underscoreify(ifc.name) << "_get_" << ifv.name
@@ -1166,10 +1207,7 @@ int main(int argc, char *argv[]) {
         fout << endl;
       
         // Set functions for class data
-        if (ifv.ift.name=="bool" ||
-            ifv.ift.name=="double" ||
-            ifv.ift.name=="int" ||
-            ifv.ift.name=="size_t") {
+        if (ifv.ift.is_ctype()) {
           // Set function for a C data type
           fout << "void " << underscoreify(ifc.ns) << "_"
                << underscoreify(ifc.name) << "_set_"
@@ -1234,12 +1272,7 @@ int main(int argc, char *argv[]) {
           // double pointer and integer output parameters
           ret_type="void ";
           extra_args=", double **dptr, int *n";
-        } else if (iff.ret.name=="void" ||
-                   iff.ret.name=="bool" ||
-                   iff.ret.name=="double" ||
-                   iff.ret.name=="int" ||
-                   iff.ret.name=="char" ||
-                   iff.ret.name=="size_t") {
+        } else if (iff.ret.name=="void" || iff.ret.is_ctype()) {
           if (iff.ret.suffix=="*") {
             ret_type=iff.ret.name+" *";
           } else {
@@ -1334,13 +1367,8 @@ int main(int argc, char *argv[]) {
           } else if ((iff.ret.name=="vector<double>" ||
                       iff.ret.name=="std::vector<double>") &&
                      iff.ret.suffix=="&") {
-            // For a std::vector<double> &, just return a pointer
-            //if (iff.name=="getitem") {
             // In case it's const, we have to explicitly typecast
             fout << "  *dptr=(double *)(&(ptr->operator[](";
-            //} else {
-            //fout << "  *dptr=&(ptr->" << iff.name << "(";
-            //}
           } else if (iff.name=="operator[]" || iff.name=="operator()") {
             fout << "  double ret=ptr->" << iff.name << "(";
           } else if (iff.ret.name=="void") {
@@ -1580,11 +1608,7 @@ int main(int argc, char *argv[]) {
       if (iff.ret.name=="std::string") {
         fout << "void *" << underscoreify(iff.ns) << "_"
              << func_name << "(";
-      } else if (iff.ret.name=="void" ||
-                 iff.ret.name=="bool" ||
-                 iff.ret.name=="double" ||
-                 iff.ret.name=="int" ||
-                 iff.ret.name=="size_t") {
+      } else if (iff.ret.name=="void" || iff.ret.is_ctype()) {
         fout << iff.ret.name << " " << underscoreify(iff.ns) << "_"
              << func_name << "_wrapper(";
       } else {
@@ -1866,10 +1890,7 @@ int main(int argc, char *argv[]) {
       if (ifv.name=="del") ifv.name="delta";
 
       // Getter
-      if (ifv.ift.name=="bool" ||
-          ifv.ift.name=="double" ||
-          ifv.ift.name=="int" ||
-          ifv.ift.name=="size_t") {
+      if (ifv.ift.is_ctype()) {
         fout << "    @property" << endl;
         fout << "    def " << ifv.name << "(self):" << endl;
         fout << "        \"\"\"" << endl;
@@ -1939,10 +1960,7 @@ int main(int argc, char *argv[]) {
       fout << endl;
 
       // Setter
-      if (ifv.ift.name=="bool" ||
-          ifv.ift.name=="double" ||
-          ifv.ift.name=="int" ||
-          ifv.ift.name=="size_t") {
+      if (ifv.ift.is_ctype()) {
         
         fout << "    @" << ifv.name << ".setter" << endl;
         fout << "    def " << ifv.name << "(self,value):" << endl;
@@ -2014,10 +2032,7 @@ int main(int argc, char *argv[]) {
       }
       for(size_t k=0;k<iff.args.size();k++) {
         fout << "        | *" << iff.args[k].name;
-        if (iff.args[k].ift.name=="bool" ||
-            iff.args[k].ift.name=="int" ||
-            iff.args[k].ift.name=="size_t" ||
-            iff.args[k].ift.name=="double") {
+        if (iff.args[k].ift.is_ctype()) {
           if (iff.args[k].ift.suffix=="&") {
             fout << "*: ``ctypes.c_" << iff.args[k].ift.name
                  << "``" << endl;
@@ -2025,7 +2040,12 @@ int main(int argc, char *argv[]) {
             fout << "*: ``" << iff.args[k].ift.name << "``" << endl;
           }
         } else if (iff.args[k].ift.suffix=="&") {
-          fout << "*: :class:`" << iff.args[k].ift.name << "` object"
+          std::string type_temp=iff.args[k].ift.name;
+          for(cpn_it it=class_py_names.begin();
+              it!=class_py_names.end();it++) {
+            if (it->first==type_temp) type_temp=it->second;
+          }
+          fout << "*: :class:`" << type_temp << "` object"
                << endl;
         } else if (iff.args[k].ift.name=="std::string") {
           fout << "*: string" << endl;
@@ -2124,7 +2144,13 @@ int main(int argc, char *argv[]) {
       
       // Ctypes function argument types
       fout << "        func.argtypes=[ctypes.c_void_p";
+
+      // This is set to true if we need to pass the argument by
+      // reference and convert it to a python object
+      vector<bool> needs_conv(iff.args.size());
+      
       for(size_t k=0;k<iff.args.size();k++) {
+        needs_conv[k]=false;
         if (iff.args[k].ift.suffix=="&") {
           if (iff.args[k].ift.is_ctype()) {
             // If it's a C type, then we will convert from a python
@@ -2135,6 +2161,7 @@ int main(int argc, char *argv[]) {
                                     "("+iff.args[k].name+")");
             post_func_code.push_back(iff.args[k].name+"="+
                                      iff.args[k].name+"_conv.value()");
+            needs_conv[k]=true;
             fout << ",ctypes.POINTER(ctypes.c_"
                  << iff.args[k].ift.name << ")";
           } else {
@@ -2199,7 +2226,11 @@ int main(int argc, char *argv[]) {
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.suffix=="&") {
           if (iff.args[k].ift.is_ctype()) {
-            fout << "," << iff.args[k].name;
+            if (needs_conv[k]) {
+              fout << ",ctypes.byref(" << iff.args[k].name << "_conv)";
+            } else {
+              fout << "," << iff.args[k].name;
+            }
           } else {
             fout << "," << iff.args[k].name << "._ptr";
           }
@@ -2457,10 +2488,7 @@ int main(int argc, char *argv[]) {
     fout << "        | Parameters:" << endl;
     fout << "        | *link* :class:`linker` object" << endl;
     for(size_t k=0;k<iff.args.size();k++) {
-      if (iff.args[k].ift.name=="bool" ||
-          iff.args[k].ift.name=="int" ||
-          iff.args[k].ift.name=="size_t" ||
-          iff.args[k].ift.name=="double") {
+      if (iff.args[k].ift.is_ctype()) {
         fout << "        | *" << iff.args[k].name
              << "*: ``" << iff.args[k].ift.name << "``" << endl;
       } else if (iff.args[k].ift.suffix=="&") {

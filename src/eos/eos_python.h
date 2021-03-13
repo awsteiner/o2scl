@@ -87,13 +87,13 @@ int o2scl_eos_had_base_calc_p(void *vptr, void *ptr_n, void *ptr_p, void *ptr_th
 
 double o2scl_eos_had_base_fcomp(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_fcomp_err(void *vptr, double nb, double delta, void *ptr_unc);
+double o2scl_eos_had_base_fcomp_err(void *vptr, double nb, double delta, double *unc);
 
 double o2scl_eos_had_base_feoa(void *vptr, double nb, double delta);
 
 double o2scl_eos_had_base_fesym(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_fesym_err(void *vptr, double nb, double delta, void *ptr_unc);
+double o2scl_eos_had_base_fesym_err(void *vptr, double nb, double delta, double *unc);
 
 double o2scl_eos_had_base_fesym_slope(void *vptr, double nb, double delta);
 
@@ -119,11 +119,11 @@ double o2scl_eos_had_base_f_effm_scalar(void *vptr, double nb, double delta);
 
 double o2scl_eos_had_base_f_effm_vector(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_fn0(void *vptr, double delta, void *ptr_leoa);
+double o2scl_eos_had_base_fn0(void *vptr, double delta, double *leoa);
 
-void o2scl_eos_had_base_f_number_suscept(void *vptr, double mun, double mup, void *ptr_dPdnn, void *ptr_dPdnp, void *ptr_dPdpp);
+void o2scl_eos_had_base_f_number_suscept(void *vptr, double mun, double mup, double *dPdnn, double *dPdnp, double *dPdpp);
 
-void o2scl_eos_had_base_f_inv_number_suscept(void *vptr, double mun, double mup, void *ptr_dednn, void *ptr_dednp, void *ptr_dedpp);
+void o2scl_eos_had_base_f_inv_number_suscept(void *vptr, double mun, double mup, double *dednn, double *dednp, double *dedpp);
 
 int o2scl_eos_had_base_saturation(void *vptr);
 
@@ -587,13 +587,13 @@ void o2scl_tov_love_get_tab(void *vptr, void *p_v);
 
 void o2scl_tov_love_set_tab(void *vptr, void *p_v);
 
-int o2scl_tov_love_calc_y(void *vptr, void *ptr_yR, void *ptr_beta, void *ptr_k2, void *ptr_lambda_km5, void *ptr_lambda_cgs, bool tabulate);
+int o2scl_tov_love_calc_y(void *vptr, double *yR, double *beta, double *k2, double *lambda_km5, double *lambda_cgs, bool tabulate);
 
 void o2scl_tov_love_add_disc(void *vptr, double rd);
 
 void o2scl_tov_love_clear_discs(void *vptr);
 
-int o2scl_tov_love_calc_H(void *vptr, void *ptr_yR, void *ptr_beta, void *ptr_k2, void *ptr_lambda_km5, void *ptr_lambda_cgs);
+int o2scl_tov_love_calc_H(void *vptr, double *yR, double *beta, double *k2, double *lambda_km5, double *lambda_cgs);
 
 void *o2scl_create_nstar_cold();
 

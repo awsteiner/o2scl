@@ -102,7 +102,7 @@ class std::vector<double>
 |     for i in range(0,self.size()):
 |         ret[i]=self.__getitem__(i)
 |     return ret
-class vector<int>
+class std::vector<int>
 - py_name std_vector_int
 - function resize
   - void
@@ -127,7 +127,7 @@ class vector<int>
 |     for i in range(0,self.size()):
 |         ret[i]=self.__getitem__(i)
 |     return ret
-class vector<size_t>
+class std::vector<size_t>
 - py_name std_vector_size_t
 - function resize
   - void
@@ -161,7 +161,7 @@ class vector<size_t>
 |     for i in range(0,len(v)):
 |         self.__setitem__(i,v[i])
 |     return
-class vector<string>
+class std::vector<std::string>
 - py_name std_vector_string
 - function resize
   - void
@@ -390,7 +390,7 @@ class table<>
 - function line_of_data
   - void
   - py_name line_of_data_vector
-  - std_vector &data
+  - std::vector<double> &data
 - function ordered_lookup
   - size_t
   - std::string scol

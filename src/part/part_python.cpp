@@ -872,11 +872,8 @@ void o2scl_part_deriv_press_set_dsdT(void *vptr, double v) {
   return;
 }
 
-void o2scl_part_deriv_press_deriv_f(void *vptr, void *ptr_dmudn, void *ptr_dmudT, void *ptr_dsdT_n) {
+void o2scl_part_deriv_press_deriv_f(void *vptr, double *dmudn, double *dmudT, double *dsdT_n) {
   part_deriv_press *ptr=(part_deriv_press *)vptr;
-  double *dmudn=(double *)ptr_dmudn;
-  double *dmudT=(double *)ptr_dmudT;
-  double *dsdT_n=(double *)ptr_dsdT_n;
   ptr->deriv_f(*dmudn,*dmudT,*dsdT_n);
   return;
 }
