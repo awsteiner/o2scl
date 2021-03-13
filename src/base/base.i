@@ -52,7 +52,7 @@ class std::string
 |     """
 |     Return the length of the vector
 |     """
-|     return length()
+|     return self.length()
 | 
 | def init_bytes(self,s):
 |     """
@@ -92,7 +92,7 @@ class std::vector<double>
 |     """
 |     Return the length of the vector
 |     """
-|     return size()
+|     return self.size()
 |
 | def to_numpy(self):
 |     """
@@ -117,13 +117,13 @@ class std::vector<int>
 |     """
 |     Return the length of the vector
 |     """
-|     return size()
+|     return self.size()
 |
 | def to_numpy(self):
 |     """
 |     Copy the vector to a numpy array
 |     """
-|     ret=numpy.zeros((self.size()),dtype=numpy.int32_t)
+|     ret=numpy.zeros((self.size()),dtype=numpy.int32)
 |     for i in range(0,self.size()):
 |         ret[i]=self.__getitem__(i)
 |     return ret
@@ -142,13 +142,13 @@ class std::vector<size_t>
 |     """
 |     Return the length of the vector
 |     """
-|     return size()
+|     return self.size()
 |
 | def to_numpy(self):
 |     """
 |     Copy the vector to a numpy array
 |     """
-|     ret=numpy.zeros((self.size()),dtype=numpy.uint64_t)
+|     ret=numpy.zeros((self.size()),dtype=numpy.uint64)
 |     for i in range(0,self.size()):
 |         ret[i]=self.__getitem__(i)
 |     return ret
@@ -176,7 +176,7 @@ class std::vector<std::string>
 |     """
 |     Return the length of the vector
 |     """
-|     return size()
+|     return self.size()
 # Class ublas_vector
 # 
 class boost::numeric::ublas::vector<double>
@@ -189,6 +189,21 @@ class boost::numeric::ublas::vector<double>
 - function operator[]
   - double &
   - size_t i
+- extra_py |
+| def __len__(self):
+|     """
+|     Return the length of the vector
+|     """
+|     return self.size()
+|
+| def to_numpy(self):
+|     """
+|     Copy the vector to a numpy array
+|     """
+|     ret=numpy.zeros((self.size()))
+|     for i in range(0,self.size()):
+|         ret[i]=self.__getitem__(i)
+|     return ret
 #
 # Class ublas_matrix
 # 

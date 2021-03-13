@@ -494,6 +494,7 @@ int main(int argc, char *argv[]) {
   typedef
     std::map<std::string,std::string,std::less<std::string>>::iterator
     cpn_it;
+  class_py_names.insert(std::make_pair("std::string","std_string"));
   class_py_names.insert(std::make_pair("std::vector<double>",
                                        "std_vector"));
   class_py_names.insert(std::make_pair("std::vector<int>",
