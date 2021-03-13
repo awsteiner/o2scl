@@ -2017,9 +2017,14 @@ int main(int argc, char *argv[]) {
         fout << ",";
       }
       for(size_t k=0;k<iff.args.size();k++) {
-        fout << iff.args[k].name;
-        if (k!=iff.args.size()-1) {
-          fout << ",";
+        if (k==0 && iff.name=="operator()") {
+          fout << "tup";
+          k++;
+        } else {
+          fout << iff.args[k].name;
+          if (k!=iff.args.size()-1) {
+            fout << ",";
+          }
         }
       }
       fout << "):" << endl;
@@ -2174,6 +2179,12 @@ int main(int argc, char *argv[]) {
           fout << ",ctypes.c_" << iff.args[k].ift.name;
         }
       }
+
+      //
+      if (iff.name=="operator()") {
+        pre_func_code.push_back("m,n=tup");
+      }
+      
       // Instead of returning an array, we send a pointer to the
       // C wrapper
       if ((iff.ret.name=="vector<double>" ||
@@ -2223,7 +2234,7 @@ int main(int argc, char *argv[]) {
       }
       
       fout << "        " << function_start;
-
+      
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.suffix=="&") {
           if (iff.args[k].ift.is_ctype()) {
@@ -2294,14 +2305,15 @@ int main(int argc, char *argv[]) {
       // code.
       if (iff.name=="operator()" && !iff.ret.is_const() &&
           iff.ret.suffix=="&") {
-        fout << "    def __setitem__(self,i,j,value):" << endl;
+        fout << "    def __setitem__(self,tup,value):" << endl;
+        fout << "        m,n=tup" << endl;
         fout << "        func=self._link." << dll_name << "."
              << ifc.ns << "_" << underscoreify(ifc.name) << "_setitem"
              << endl;
         fout << "        func.argtypes=[ctypes.c_void_p,"
              << "ctypes.c_size_t,ctypes.c_size_t,ctypes.c_"
              << iff.ret.name << "]" << endl;
-        fout << "        func(self._ptr,i,j,value)" << endl;
+        fout << "        func(self._ptr,m,n,value)" << endl;
         fout << "        return" << endl;
         fout << endl;
       }

@@ -229,7 +229,7 @@ class boost::numeric::ublas::matrix<double>
 |     ret=numpy.zeros((self.size1(),self.size2()))
 |     for i in range(0,self.size1()):
 |         for j in range(0,self.size2()):
-|             ret[i][j]=self.__getitem__(i,j)
+|             ret[i,j]=self.__getitem__((i,j))
 |     return ret
 #
 # -------------------------------------------------------------------
