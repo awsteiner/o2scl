@@ -2098,6 +2098,9 @@ int main(int argc, char *argv[]) {
           iff.ret.name[len-1]=='>') {
         reformat_ret_type=iff.ret.name.substr(0,len-2);
       }
+      if (reformat_ret_type=="boost::numeric::ublas::matrix<double>") {
+        reformat_ret_type="ublas_matrix";
+      }
       
       // Depending on return type, set return document string
       // and return python code
@@ -2116,6 +2119,10 @@ int main(int argc, char *argv[]) {
                   iff.ret.name=="std::vector<double>") &&
                  iff.ret.suffix=="&") {
         return_docs="``numpy`` array";
+        restype_string="";
+      } else if (iff.ret.name=="boost::numeric::ublas::vector<double>" &&
+                 iff.ret.suffix=="&") {
+        return_docs="ublas_matrix object";
         restype_string="";
       } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
                  iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
