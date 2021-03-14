@@ -58,9 +58,9 @@ class nucmass_info
 - function parse_elstring
   - int
   - std::string ela
-  - int &Z
-  - int &N
-  - int &A
+  - out int &Z
+  - out int &N
+  - out int &A
 - function eltoZ
   - int
   - std::string el

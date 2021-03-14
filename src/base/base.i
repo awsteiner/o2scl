@@ -840,7 +840,7 @@ class table3d
 - function is_slice
   - bool
   - std::string name
-  - size_t &ix
+  - out size_t &ix
 - function rename_slice
   - void
   - std::string name1

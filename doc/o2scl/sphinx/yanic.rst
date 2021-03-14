@@ -227,27 +227,30 @@ Details
 
 Handling of function arguments:
 
-- C type (bool, char, double, float, int, size_t): just pass
-  ``ctypes.c_<type>``
-- reference to C-type: pass a pointer to the C-type in the C wrapper
-  and pass a ``ctypes.c_<type>`` object in python (e.g. in
-  table3d::get_size()). We could allow the python
-  user to specify a normal python int, but then since the C function
-  might change it we'd have to convert it to a ctypes.c_int and then
-  convert back to a python int.
+- C type (bool, char, double, float, int, size_t): Convert from
+  a Python object to ``ctypes.c_<type>`` in the Python wrapper.
+- reference to C-type: The handling of these references depends
+  on whether the reference is labeled as ``io`` (input and output)
+  or ``out`` (output only). These references are included in
+  return values in the python wrapper function, and if
+  the label ``io`` is given, then they are also input parameters.
 - pointer to C-type: not yet implemented
 - ``std::string``: Use ``char *`` in C the wrapper. Convert python
   string to bytes object and then to char * in python code.
 - reference to ``std::string``: Use ``void *&`` in the C wrapper ...
-
-Return values  
-
-- C type (bool, char, double, float, int, size_t):
-- reference to C type: (should be getitem(), but this does not seem to
-  work properly)
-- ``std::string``:
 - std_vector & - table::line_of_data: convert to an
   std::vector<double>
 - std::vector<double> & - uniform_grid::vector
+
+Return values  
+
+- C type bool: return Python ``True`` or ``False``
+- C type char: return a one-character bytes object
+- C type double or float: return a Python float
+- C type int or size_t: return a Python int  
+- reference to C type: this is supported currently only for operator[]
+  and operator()
+- ``std::string``: Return a Python bytes object
+- ``std::string &``: Return a std_string object
   
 

@@ -165,6 +165,8 @@ public:
       - static 
       - short
       - long
+      - io (yanic-specific)
+      - out (yanic-specific)
 
       and 
 
@@ -257,7 +259,7 @@ public:
         last_ch=name[name.length()-1];
       }
     }
-    
+
     return;
   }
 
@@ -291,6 +293,18 @@ public:
   /// Return true if the type is static
   bool is_static() {
     if (prefix.find("static")!=std::string::npos) return true;
+    return false;
+  }
+
+  /// Return true if the type is an input/output reference
+  bool is_io() {
+    if (prefix.find("io")!=std::string::npos) return true;
+    return false;
+  }
+
+  /// Return true if the type is an output reference
+  bool is_out() {
+    if (prefix.find("out")!=std::string::npos) return true;
     return false;
   }
 
@@ -723,6 +737,16 @@ int main(int argc, char *argv[]) {
             cout << "    Member function " << iff.name
                  << " has argument " << ifv.name << " with type "
                  << ifv.ift.to_string() << endl;
+
+            // Check that C type references which are not return values
+            // are marked 'out' or 'io'
+            if (iff.name!="operator[]" && iff.name!="operator()" &&
+                ifv.ift.is_ctype() && ifv.ift.is_reference()) {
+              if (!ifv.ift.is_out() && !ifv.ift.is_io()) {
+                O2SCL_ERR("C type reference must be marked 'out' or 'io'",
+                          o2scl::exc_einval);
+              }
+            }
             
             iff.args.push_back(ifv);
             
@@ -2192,6 +2216,7 @@ int main(int argc, char *argv[]) {
 
       // Extra code before and after the ctypes function call
       vector<string> pre_func_code, post_func_code;
+      string addl_ret;
       
       // Ctypes function argument types
       fout << "        func.argtypes=[ctypes.c_void_p";
@@ -2212,6 +2237,7 @@ int main(int argc, char *argv[]) {
                                     "("+iff.args[k].name+")");
             post_func_code.push_back(iff.args[k].name+"="+
                                      iff.args[k].name+"_conv.value");
+            addl_ret=addl_ret+","+iff.args[k].ift.name;
             needs_conv[k]=true;
             fout << ",ctypes.POINTER(ctypes.c_"
                  << iff.args[k].ift.name << ")";

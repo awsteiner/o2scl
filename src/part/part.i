@@ -278,9 +278,9 @@ class part_deriv_press
 - double dsdT
 - function deriv_f
   - void
-  - double &dmudn
-  - double &dmudT
-  - double &dsdT_n
+  - out double &dmudn
+  - out double &dmudT
+  - out double &dsdT_n
 # 
 # Class part_deriv
 #

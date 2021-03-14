@@ -95,7 +95,7 @@ class eos_had_base abstract
   - double
   - double nb
   - double delta
-  - double &unc
+  - out double &unc
 - function feoa
   - double
   - double nb
@@ -108,7 +108,7 @@ class eos_had_base abstract
   - double
   - double nb
   - double delta
-  - double &unc
+  - out double &unc
 - function fesym_slope
   - double
   - double nb
@@ -157,21 +157,21 @@ class eos_had_base abstract
 - function fn0
   - double
   - double delta
-  - double &leoa
+  - out double &leoa
 - function f_number_suscept
   - void
   - double mun
   - double mup
-  - double &dPdnn
-  - double &dPdnp
-  - double &dPdpp
+  - out double &dPdnn
+  - out double &dPdnp
+  - out double &dPdpp
 - function f_inv_number_suscept
   - void
   - double mun
   - double mup
-  - double &dednn
-  - double &dednp
-  - double &dedpp
+  - out double &dednn
+  - out double &dednp
+  - out double &dedpp
 - function saturation
   - int
 - function calc_mun_e
@@ -449,11 +449,11 @@ class tov_love
 - shared_ptr table_units<> tab
 - function calc_y
   - int
-  - double &yR
-  - double &beta
-  - double &k2
-  - double &lambda_km5
-  - double &lambda_cgs
+  - out double &yR
+  - out double &beta
+  - out double &k2
+  - out double &lambda_km5
+  - out double &lambda_cgs
   - bool tabulate
 - function add_disc
   - void
@@ -462,11 +462,11 @@ class tov_love
   - void
 - function calc_H
   - int
-  - double &yR
-  - double &beta
-  - double &k2
-  - double &lambda_km5
-  - double &lambda_cgs
+  - out double &yR
+  - out double &beta
+  - out double &k2
+  - out double &lambda_km5
+  - out double &lambda_cgs
 # 
 # Class nstar_cold
 #
