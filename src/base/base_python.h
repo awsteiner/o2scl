@@ -398,8 +398,6 @@ double o2scl_table3d_get_grid_x(void *vptr, size_t ix);
 
 double o2scl_table3d_get_grid_y(void *vptr, size_t iy);
 
-void o2scl_table3d_get_size(void *vptr, size_t *nx, size_t *ny);
-
 size_t o2scl_table3d_get_nx(void *vptr);
 
 size_t o2scl_table3d_get_ny(void *vptr);

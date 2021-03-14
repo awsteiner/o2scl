@@ -806,10 +806,14 @@ class table3d
 - function get_grid_y
   - double
   - size_t iy
-- function get_size
-  - void
-  - size_t &nx
-  - size_t &ny
+# The get_size() function requires a more complicated pythonization,
+# but it's a duplication of what is actually done by get_nx() and
+# get_ny() anyway, so for now we just leave it out of the python
+# interface.
+#- function get_size
+#  - void
+#  - size_t &nx
+#  - size_t &ny
 - function get_nx
   - size_t
 - function get_ny

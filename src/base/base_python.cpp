@@ -1119,12 +1119,6 @@ double o2scl_table3d_get_grid_y(void *vptr, size_t iy) {
   return ret;
 }
 
-void o2scl_table3d_get_size(void *vptr, size_t *nx, size_t *ny) {
-  table3d *ptr=(table3d *)vptr;
-  ptr->get_size(*nx,*ny);
-  return;
-}
-
 size_t o2scl_table3d_get_nx(void *vptr) {
   table3d *ptr=(table3d *)vptr;
   size_t ret=ptr->get_nx();

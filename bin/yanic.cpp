@@ -2211,7 +2211,7 @@ int main(int argc, char *argv[]) {
                                     iff.args[k].ift.name+
                                     "("+iff.args[k].name+")");
             post_func_code.push_back(iff.args[k].name+"="+
-                                     iff.args[k].name+"_conv.value()");
+                                     iff.args[k].name+"_conv.value");
             needs_conv[k]=true;
             fout << ",ctypes.POINTER(ctypes.c_"
                  << iff.args[k].ift.name << ")";
