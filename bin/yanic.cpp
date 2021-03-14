@@ -984,7 +984,8 @@ int main(int argc, char *argv[]) {
         if_func &iff2=ifc.methods[k];
         if (iff.name==iff2.name) {
           // They must have different python names
-          if (iff.py_name==iff2.py_name) {
+          if (iff.py_name==iff2.py_name || iff.py_name.length()==0 ||
+              iff2.py_name.length()==0) {
             cout << j << " " << k << " " << ifc.methods.size() << endl;
             cout << "In class: " << ifc.name << endl;
             cout << "Function names: '" << iff.name << "' and '"
@@ -992,8 +993,9 @@ int main(int argc, char *argv[]) {
             cout << "Function python names: '"
                  << iff.py_name << "' and '" << iff2.py_name
                  << "'." << endl;
-            O2SCL_ERR("Member functions with same name and same py_name.",
-                      o2scl::exc_einval);
+            O2SCL_ERR2("Member functions with same name and same ",
+                       "py_name or with empty py_name.",
+                       o2scl::exc_einval);
           }
           // Set the overloaded flag
           iff.overloaded=true;
@@ -1015,9 +1017,10 @@ int main(int argc, char *argv[]) {
       if_func &iff2=functions[j];
       if (iff.name==iff2.name) {
         // They must have different python names
-        if (iff.py_name==iff2.py_name) {
-          O2SCL_ERR("Functions with same name and same py_name.",
-                    o2scl::exc_einval);
+        if (iff.py_name==iff2.py_name || iff.py_name.length()==0 ||
+            iff2.py_name.length()==0) {
+          O2SCL_ERR2("Functions with same name and same py_name or ",
+                     "empty py_name.",o2scl::exc_einval);
         }
         iff.overloaded=true;
         iff2.overloaded=true;
@@ -1409,11 +1412,7 @@ int main(int argc, char *argv[]) {
           if ((iff.ret.name=="vector<double>" ||
                iff.ret.name=="std::vector<double>") &&
               iff.ret.suffix=="&") {
-            //if (iff.name=="getitem") {
             fout << ")[0]));" << endl;
-            //} else {
-            //fout << ")[0]);" << endl;
-            //}
             fout << "  *n=ptr->get_nlines();" << endl;
             fout << "  return;" << endl;
           } else {
@@ -1897,7 +1896,7 @@ int main(int argc, char *argv[]) {
         fout << ifc.name << endl;
       }
       fout << "        " << endl;
-      fout << "        Returns: a new ";
+      fout << "        Returns: a new copy of the ";
       if (ifc.py_name!="") {
         fout << ifc.py_name << " object" <<  endl;
       } else {
@@ -2229,8 +2228,8 @@ int main(int argc, char *argv[]) {
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
           iff.ret.suffix=="&") {
-        fout << ",ctypes.POINTER(ctypes.POINTER(ctypes.c_double)),";
-        fout << "ctypes.POINTER(ctypes.c_int)";
+        fout << ",ctypes.POINTER(ctypes.POINTER(ctypes.c_double))";
+        fout << ",ctypes.POINTER(ctypes.c_int)";
       }
       fout << "]" << endl;
 

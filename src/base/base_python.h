@@ -424,7 +424,7 @@ void o2scl_table3d_rename_slice(void *vptr, char *name1, char *name2);
 
 void o2scl_table3d_copy_slice(void *vptr, char *name1, char *name2);
 
-void *o2scl_table3d_(void *vptr, char *slice);
+void *o2scl_table3d_get_slice(void *vptr, char *slice);
 
 void *o2scl_table3d_get_slice_i(void *vptr, char *slice);
 

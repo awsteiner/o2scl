@@ -1198,7 +1198,7 @@ void o2scl_table3d_copy_slice(void *vptr, char *name1, char *name2) {
   return;
 }
 
-void *o2scl_table3d_(void *vptr, char *slice) {
+void *o2scl_table3d_get_slice(void *vptr, char *slice) {
   table3d *ptr=(table3d *)vptr;
   boost::numeric::ublas::matrix<double> *ret=&ptr->get_slice(slice);
   return ret;

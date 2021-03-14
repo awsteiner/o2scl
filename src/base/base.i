@@ -847,6 +847,7 @@ class table3d
   - std::string name2
 - function get_slice
   - boost::numeric::ublas::matrix<double> &
+  - py_name get_slice
   - std::string slice
 - function get_slice
   - boost::numeric::ublas::matrix<double> &
