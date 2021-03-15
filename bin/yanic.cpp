@@ -1765,11 +1765,13 @@ int main(int argc, char *argv[]) {
     fout << "import numpy" << endl;
   }
   fout << endl;
-  
-  for(size_t i=0;i<py_headers.size();i++) {
-    fout << py_headers[i] << endl;
+
+  if (py_headers.size()>0) {
+    for(size_t i=0;i<py_headers.size();i++) {
+      fout << py_headers[i] << endl;
+    }
+    fout << endl;
   }
-  fout << endl;
   
   for(size_t i=0;i<classes.size();i++) {
     
@@ -2069,18 +2071,18 @@ int main(int argc, char *argv[]) {
       } else {
         fout << "    def " << iff.name << "(self";
       }
-      if (iff.args.size()>0) {
-        fout << ",";
-      }
       for(size_t k=0;k<iff.args.size();k++) {
         if (k==0 && iff.name=="operator()") {
-          fout << "tup";
+          fout << ",tup";
           k++;
+        } else if (iff.args[k].ift.is_ctype() &&
+                   iff.args[k].ift.is_reference() &&
+                   iff.args[k].ift.is_out()) {
+          // Don't do anything here because it is only an output
+          // parameter
+          ;
         } else {
-          fout << iff.args[k].name;
-          if (k!=iff.args.size()-1) {
-            fout << ",";
-          }
+          fout << "," << iff.args[k].name;
         }
       }
       fout << "):" << endl;
@@ -2093,12 +2095,15 @@ int main(int argc, char *argv[]) {
         fout << "        | Parameters:" << endl;
       }
       for(size_t k=0;k<iff.args.size();k++) {
-        fout << "        | *" << iff.args[k].name;
         if (iff.args[k].ift.is_ctype()) {
           if (iff.args[k].ift.suffix=="&") {
-            fout << "*: ``ctypes.c_" << iff.args[k].ift.name
-                 << "``" << endl;
+            if (iff.args[k].ift.is_io()) {
+              fout << "        | *" << iff.args[k].name;
+              fout << "*: ``ctypes.c_" << iff.args[k].ift.name
+                   << "``" << endl;
+            }
           } else {
+            fout << "        | *" << iff.args[k].name;
             fout << "*: ``" << iff.args[k].ift.name << "``" << endl;
           }
         } else if (iff.args[k].ift.suffix=="&") {
@@ -2107,9 +2112,11 @@ int main(int argc, char *argv[]) {
               it!=class_py_names.end();it++) {
             if (it->first==type_temp) type_temp=it->second;
           }
+          fout << "        | *" << iff.args[k].name;
           fout << "*: :class:`" << type_temp << "` object"
                << endl;
         } else if (iff.args[k].ift.name=="std::string") {
+          fout << "        | *" << iff.args[k].name;
           fout << "*: string" << endl;
         }
       }
@@ -2156,8 +2163,13 @@ int main(int argc, char *argv[]) {
         return_docs=((string)":class:`")+reformat_ret_type+"` object";
         restype_string="ctypes.c_void_p";
       } else if (iff.ret.name=="std::string") {
-        return_docs="std_string object";
-        restype_string="ctypes.c_void_p";
+        if (iff.ret.is_reference()) {
+          return_docs="std_string object";
+          restype_string="ctypes.c_void_p";
+        } else {
+          return_docs="Python bytes object";
+          restype_string="ctypes.c_void_p";
+        }
       } else if (iff.ret.name=="size_t" || iff.ret.name=="int") {
         return_docs="a Python int";
         restype_string=((string)"ctypes.c_")+reformat_ret_type;
@@ -2168,7 +2180,22 @@ int main(int argc, char *argv[]) {
         return_docs=((string)"``ctypes.c_")+reformat_ret_type+"`` object";
         restype_string=((string)"ctypes.c_")+reformat_ret_type;
       }
-
+      for(size_t k=0;k<iff.args.size();k++) {
+        if (iff.args[k].ift.is_ctype()) {
+          if (iff.args[k].ift.suffix=="&") {
+            if (iff.args[k].ift.name=="double" ||
+                iff.args[k].ift.name=="float") {
+              return_docs+=", a Python float";
+            } else if (iff.args[k].ift.name=="size_t" ||
+                       iff.args[k].ift.name=="int") {
+              return_docs+=", a Python int";
+            } else {
+              return_docs+=", a Python obj";
+            }
+          }
+        }
+      }
+                            
       // Output return value documentation
       if (return_docs.length()>0) {
         fout << "        | Returns: " << return_docs << endl;
@@ -2216,6 +2243,7 @@ int main(int argc, char *argv[]) {
 
       // Extra code before and after the ctypes function call
       vector<string> pre_func_code, post_func_code;
+      // Extra return values (for C-type references)
       string addl_ret;
       
       // Ctypes function argument types
@@ -2232,12 +2260,22 @@ int main(int argc, char *argv[]) {
             // If it's a C type, then we will convert from a python
             // object to a ctypes object and then convert back
             // afterwards
-            pre_func_code.push_back(iff.args[k].name+"_conv=ctypes.c_"+
-                                    iff.args[k].ift.name+
-                                    "("+iff.args[k].name+")");
-            post_func_code.push_back(iff.args[k].name+"="+
-                                     iff.args[k].name+"_conv.value");
-            addl_ret=addl_ret+","+iff.args[k].ift.name;
+            if (iff.args[k].ift.is_io()) {
+              pre_func_code.push_back(iff.args[k].name+"_conv=ctypes.c_"+
+                                      iff.args[k].ift.name+
+                                      "("+iff.args[k].name+")");
+            } else {
+              pre_func_code.push_back(iff.args[k].name+"_conv=ctypes.c_"+
+                                      iff.args[k].ift.name+
+                                      "(0)");
+            }
+            //post_func_code.push_back(iff.args[k].name+"="+
+            //iff.args[k].name+"_conv.value");
+            if (addl_ret.length()==0) {
+              addl_ret=iff.args[k].name+"_conv.value";
+            } else {
+              addl_ret+=","+iff.args[k].name+"_conv.value";
+            }
             needs_conv[k]=true;
             fout << ",ctypes.POINTER(ctypes.c_"
                  << iff.args[k].ift.name << ")";
@@ -2334,24 +2372,42 @@ int main(int argc, char *argv[]) {
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
           iff.ret.suffix=="&") {
-        fout << "        ret=numpy.ctypeslib.as_array(ptr_,shape=(n_.value,))"
-             << endl;
-        fout << "        return ret" << endl;
+        fout << "        ret=numpy.ctypeslib.as_array"
+             << "(ptr_,shape=(n_.value,))" << endl;
+        fout << "        return ret";
+        if (addl_ret.length()>0) fout << "," << addl_ret << endl;
+        else fout << endl;
       } else if (iff.ret.name=="std::string" || iff.ret.name=="string") {
-        fout << "        return strt" << endl;
+        if (iff.ret.is_reference()) {
+          fout << "        return strt";
+          if (addl_ret.length()>0) fout << "," << addl_ret << endl;
+          else fout << endl;
+        } else {
+          fout << "        return strt.to_bytes()";
+          if (addl_ret.length()>0) fout << "," << addl_ret << endl;
+          else fout << endl;
+        }
       } else if (iff.ret.suffix=="&" && iff.name!="operator[]" &&
                  iff.name!="operator()") {
         fout << "        ret2=" 
              << underscoreify(reformat_ret_type) << "(self._link,ret)"
              << endl;
-        fout << "        return ret2" << endl;
+        fout << "        return ret2";
+        if (addl_ret.length()>0) fout << "," << addl_ret << endl;
+        else fout << endl;
       } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
                  iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
-        fout << "        return sp" << endl;
+        fout << "        return sp";
+        if (addl_ret.length()>0) fout << "," << addl_ret << endl;
+        else fout << endl;
       } else if (iff.ret.name=="void") {
-        fout << "        return" << endl;
+        fout << "        return";
+        if (addl_ret.length()>0) fout << " " << addl_ret << endl;
+        else fout << endl;
       } else {
-        fout << "        return ret" << endl;
+        fout << "        return ret";
+        if (addl_ret.length()>0) fout << "," << addl_ret << endl;
+        else fout << endl;
       }
       fout << endl;
 
