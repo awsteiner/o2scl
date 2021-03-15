@@ -489,7 +489,7 @@ int nstar_cold::calc_nstar() {
 
   // Compute central pressure and baryon density of maximum mass star
   double pr_max=mvsrt->get("pr",max_row);
-  double nb_max=mvsrt->get("ed",max_row);
+  double nb_max=mvsrt->get("nb",max_row);
 
   // Remove rows beyond maximum mass
   if (remove_rows) {
