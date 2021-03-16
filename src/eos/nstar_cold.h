@@ -58,6 +58,13 @@ namespace o2scl {
 
       If \ref err_nonconv is true and the solver fails,
       the error handler is called. 
+
+      Note that not all equations of state lead to physical neutron
+      stars, and the function \ref calc_eos() will not warn you about
+      this. However, the function \ref calc_nstar() will call the
+      error handler if the speed of sound becomes negative or becomes
+      larger than the speed of light at a density smaller than the
+      central density of the maximum mass star.
       
       \hline
       \b EOS \b Output
@@ -120,12 +127,6 @@ namespace o2scl {
       - \c urca in units of \f$ 1/\mathrm{fm}^4 \f$, 
       the squared area of the Urca triangle
       - \c ad_index, the adiabatic index, \f$ \Gamma \f$
-
-      \comment
-      If the eos is not well-formed and \ref well_formed is <tt>false</tt>,
-      then the columns <tt>cs2</tt>, <tt>logp</tt>, and <tt>loge</tt> 
-      are set to zero. 
-      \endcomment
 
       The columns \c cs2 and \c ad_index are computing
       from derivatives using the current table interpolation type. 

@@ -74,6 +74,7 @@ void eos_tov::check_nb(double &avg_abs_dev, double &max_abs_dev) {
 
 eos_tov_buchdahl::eos_tov_buchdahl() {
   Pstar=3.2e-5;
+  G_km_Msun=o2scl_cgs::schwarzchild_radius/2.0e5;
 }
 
 void eos_tov_buchdahl::set_baryon_density(double nb, double ed) {
@@ -118,73 +119,55 @@ double eos_tov_buchdahl::rad_from_gm(double gm) {
 }
 
 double eos_tov_buchdahl::solve_rad(double rad, double gm) {
-  // G in units of km/Msun
-  static const double G=o2scl_cgs::schwarzchild_radius/2.0e5;
-  double beta=G*gm/rad;
+  double beta=G_km_Msun*gm/rad;
   // The expression has units of km^(3/2)/Msun^(1/2) so
   // we multiply by G^{-3/2} to get units of Msun
   double rhs=sqrt(o2scl_const::pi/288.0/Pstar/(1.0-2.0*beta))*
-    beta*(1.0-beta)/sqrt(G)/G;
+    beta*(1.0-beta)/sqrt(G_km_Msun)/G_km_Msun;
   double ret=gm-rhs;
   return ret;
 }
 
-double eos_tov_buchdahl::solve_rp(double rp, double r, double gm,
-				  double rad) {
-  // G in units of km/Msun
-  static const double G=o2scl_cgs::schwarzchild_radius/2.0e5;
-  double beta=G*gm/rad;
-  double A=sqrt(288.0*o2scl_const::pi*Pstar*G/(1.0-2.0*beta));
+double eos_tov_buchdahl::solve_rp(double rp, double r, double beta) {
+  double A=sqrt(288.0*o2scl_const::pi*Pstar*G_km_Msun/(1.0-2.0*beta));
   double u=beta*sin(A*rp)/A/rp;
   double rhs=rp*(1.0-beta+u)/(1.0-2.0*beta);
   double ret=r-rhs;
   return ret;
 }
 
-double eos_tov_buchdahl::pr_from_r_gm(double r, double gm) {
-
-  // Determine radius and constants G, beta and A
-  double rad=rad_from_gm(gm);
-  // G in units of km/Msun
-  static const double G=o2scl_cgs::schwarzchild_radius/2.0e5;
-  double beta=G*gm/rad;
-  double A=sqrt(288.0*o2scl_const::pi*Pstar*G/(1.0-2.0*beta));
+double eos_tov_buchdahl::pr_from_r_gm(double r, double beta) {
+  double A=sqrt(288.0*o2scl_const::pi*Pstar*G_km_Msun/(1.0-2.0*beta));
 
   // Solve for r prime
   funct fx=std::bind
-    (std::mem_fn<double(double,double,double,double)>
-     (&eos_tov_buchdahl::solve_rp),this,std::placeholders::_1,r,gm,rad);
+    (std::mem_fn<double(double,double,double)>
+     (&eos_tov_buchdahl::solve_rp),this,std::placeholders::_1,r,beta);
   double rp=r;
   rbg.solve(rp,fx);
 
   // Now compute pressure
   double u=beta*sin(A*rp)/A/rp;
   double pr=A*A*(1.0-2.0*beta)*u*u/
-    (8.0*o2scl_const::pi*pow(1.0-beta+u,2.0))/G;
+    (8.0*o2scl_const::pi*pow(1.0-beta+u,2.0))/G_km_Msun;
   
   return pr;
 }
 
-double eos_tov_buchdahl::ed_from_r_gm(double r, double gm) {
-
-  // Determine radius and constants G, beta and A
-  double rad=rad_from_gm(gm);
-  // G in units of km/Msun
-  static const double G=o2scl_cgs::schwarzchild_radius/2.0e5;
-  double beta=G*gm/rad;
-  double A=sqrt(288.0*o2scl_const::pi*Pstar*G/(1.0-2.0*beta));
+double eos_tov_buchdahl::ed_from_r_gm(double r, double beta) {
+  double A=sqrt(288.0*o2scl_const::pi*Pstar*G_km_Msun/(1.0-2.0*beta));
 
   // Solve for r prime
   funct fx=std::bind
-    (std::mem_fn<double(double,double,double,double)>
-     (&eos_tov_buchdahl::solve_rp),this,std::placeholders::_1,r,gm,rad);
+    (std::mem_fn<double(double,double,double)>
+     (&eos_tov_buchdahl::solve_rp),this,std::placeholders::_1,r,beta);
   double rp=r;
   rbg.solve(rp,fx);
 
   // Now compute pressure
   double u=beta*sin(A*rp)/A/rp;
   double ed=2.0*A*A*(1.0-2.0*beta)*u*(1.0-beta-1.5*u)/
-    (8.0*o2scl_const::pi*pow(1.0-beta+u,2.0))/G;
+    (8.0*o2scl_const::pi*pow(1.0-beta+u,2.0))/G_km_Msun;
 
   return ed;
 }

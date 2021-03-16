@@ -161,16 +161,22 @@ namespace o2scl {
       
       \note The function \ref calc_H() cannot yet handle 
       discontinuities (if there are any then the error handler
-      is called).
+      is called). 
 
       \note This class does not yet handle strange quark
       stars which have an energy discontinuity at the surface
       (this currently causes the error handler to be called).
+
+      \future Improve calc_H() to handle discontinuities and to 
+      tabulate the EOS.
+      \future Improve the handling at small r using an expansion,
+      similar to that used in e.g. Detweiler and Lindblom (1985).
   */
   class tov_love {
 
   public:
 
+    /// The ODE function type
     typedef std::function<int(double,size_t,
 			      const std::vector<double> &,
 			      std::vector<double> &)> ode_funct2;
@@ -179,7 +185,7 @@ namespace o2scl {
   
   protected:
 
-    /// The ODE integrator
+    /// A pointer to the ODE integrator
     o2scl::ode_iv_solve<ode_funct2,std::vector<double> > *oisp;
 
     /** \brief The derivative \f$ y^{\prime}(r) \f$
@@ -226,7 +232,12 @@ namespace o2scl {
     */
     bool err_nonconv;
     
-    /// A table containing the solution to the differential equation(s)
+    /** \brief A table containing the solution to the differential 
+        equation 
+
+        This table is filled when \ref calc_y() is called with 
+        <tt>tabulate=true</tt>.
+    */
     o2scl::table_units<> results;
 
     /** \brief The radial step for resolving discontinuities in km 
@@ -249,7 +260,20 @@ namespace o2scl {
       oisp=&ois_new;
     }
     
-    /** \brief Compute the love number using y
+    /** \brief Compute the Love number using y
+        
+        The initial values of \c yR, \c beta, \c k2, \c lambda_km5,
+        and \c lambda_cgs are ignored. 
+
+        If \c tabulate is true, then the results of the ODE
+        integration are stored in \ref results . The \ref
+        o2scl::table::clear() function is called beforehand, so any
+        data stored in in \ref results is destroyed.
+
+        \note The final results for the tidal deformability may differ
+        when \c tabulate is true versus when \c tabulate is false.
+        This difference is likely within the uncertainty of the ODE
+        integration.
      */
     int calc_y(double &yR, double &beta, double &k2, double &lambda_km5,
 		double &lambda_cgs, bool tabulate=false);
@@ -267,6 +291,9 @@ namespace o2scl {
     }
     
     /** \brief Compute the love number using H
+
+        The initial values of \c yR, \c beta, \c k2, \c lambda_km5,
+        and \c lambda_cgs are ignored. 
      */
     int calc_H(double &yR, double &beta, double &k2, double &lambda_km5,
 		double &lambda_cgs);

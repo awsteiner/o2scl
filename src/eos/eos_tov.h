@@ -140,7 +140,7 @@ namespace o2scl {
       \f]
 
       In the case that one
-      assumes \f$ \mu_1 = m_n \f$ and \f$ P_1 = 0 \f$, the baryon
+      assumes \f$ \mu_1 = m_n \f$ at \f$ P_1 = 0 \f$, the baryon
       density can be simplified to
       \f[
       n m_n = 12 \sqrt{P p_{*}} \left( 1-\frac{1}{3} \sqrt{P/p_{*}} 
@@ -150,13 +150,17 @@ namespace o2scl {
 
       The mass-radius curve is the solution of the equation
       \f[
-      R=\pi (1-\beta)(1-2 \beta)^{-1} A^{-1}
+      M = \left[ \frac{\pi}{288 p_{*} \left(1-2 \beta)\right]^{1/2} 
+      \beta(1-\beta)
       \f]
       where \f$ \beta = GM/R \f$ and \f$ A \f$ (which
       has units of inverse km) is defined by
       \f[
       A^2 = \frac{288 \pi G P^{*}}{1-2 \beta}
       \f]
+      For a fixed gravitational mass, this equation is solved (given
+      \ref Pstar) to obtain the radius by the function \ref
+      rad_from_gm() .
 
       The central pressure and energy density are
       \f[
@@ -224,6 +228,17 @@ namespace o2scl {
         )
     */
     double Pstar;
+
+    /** \brief The gravitational constant in kilometers per solar mass
+
+        \note Make this static
+        
+        \comment
+        This is useful because the user needs to specify beta=G*M/R
+        for some of the functions below.
+        \endcomment
+     */
+    double G_km_Msun;
     
     /** \brief Set the baryon density
      */
@@ -261,24 +276,28 @@ namespace o2scl {
     virtual void ed_nb_from_pr(double pr, double &ed, double &nb);
 
     /** \brief Given the gravitational mass, compute the radius
+
+        This function solves Eq. 10.67 in Schutz' GR book 
+        (see also Eq. 7 in Lattimer01)
+        \f[
+        M = \left[ \frac{\pi}{288 p_{*} \left(1-2 \beta)\right]^{1/2} 
+        \beta(1-\beta)
+        \f]
+
+        This function can be used to determine the full mass-radius 
+        given \c Pstar.
      */
     virtual double rad_from_gm(double gm);
     
     /** \brief Compute the energy density at radius
-        \c r for a fixed gravitational mass
-
-        \future This function is inefficient because it solves
-        for the radius each time. Improve this.
+        \c r given the compactness (unitless)
     */
-    virtual double ed_from_r_gm(double r, double gm);
+    virtual double ed_from_r_gm(double r, double beta);
     
     /** \brief Compute the pressure at radius
-        \c r for a fixed gravitational mass
-        
-        \future This function is inefficient because it solves
-        for the radius each time. Improve this.
-     */
-    virtual double pr_from_r_gm(double r, double gm);
+        \c r given the compactness (unitless)
+    */
+    virtual double pr_from_r_gm(double r, double beta);
     
   protected:
 
@@ -289,7 +308,7 @@ namespace o2scl {
     /** \brief Solve for \f$ r^{\prime} \f$ as a function of
         \f$ r \f$ at fixed gravitational mass
     */
-    virtual double solve_rp(double rp, double r, double gm, double rad);
+    virtual double solve_rp(double rp, double r, double beta);
     
   };
 

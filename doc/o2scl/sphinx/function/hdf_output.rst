@@ -5,7 +5,7 @@ Functions hdf_output
 
 .. doxygenfunction:: hdf_output(hdf_file &hf, o2scl::table<std::vector<double>> &t, std::string name)
 
-.. doxygenfunction:: hdf_output(hdf_file &hf, o2scl::table3d &t, std::string name)
+.. doxygenfunction:: hdf_output(hdf_file &hf, const o2scl::table3d &h, std::string name)
 
 .. doxygenfunction:: hdf_output(hdf_file &hf, o2scl::table_units<std::vector<double>> &t, std::string name)
 
@@ -22,8 +22,6 @@ Functions hdf_output
 .. doxygenfunction:: hdf_output(hdf_file &hf, o2scl::hist &h, std::string name)
 
 .. doxygenfunction:: hdf_output(hdf_file &hf, const o2scl::hist_2d &h, std::string name)
-
-.. doxygenfunction:: hdf_output(hdf_file &hf, const o2scl::table3d &h, std::string name)
 
 .. doxygenfunction:: hdf_output(hdf_file &hf, o2scl::expval_scalar &h, std::string name)
 

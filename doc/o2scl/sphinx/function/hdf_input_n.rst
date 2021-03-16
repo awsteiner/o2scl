@@ -3,6 +3,8 @@
 Functions hdf_input_n
 =====================
 
+.. doxygenfunction:: hdf_input_n(hdf_file &hf, o2scl::uniform_grid<double> &h, std::string &name)
+
 .. doxygenfunction:: hdf_input_n(hdf_file &hf, o2scl::prob_dens_mdim_amr<vec_t, mat_t> &p, std::string &name)
 
 .. doxygenfunction:: hdf_input_n(hdf_file &hf, o2scl::table<vec_t> &t, std::string &name)
@@ -20,8 +22,6 @@ Functions hdf_input_n
 .. doxygenfunction:: hdf_input_n(hdf_file &hf, o2scl::expval_vector &h, std::string &name)
 
 .. doxygenfunction:: hdf_input_n(hdf_file &hf, o2scl::expval_matrix &h, std::string &name)
-
-.. doxygenfunction:: hdf_input_n(hdf_file &hf, o2scl::uniform_grid<double> &h, std::string &name)
 
 .. doxygenfunction:: hdf_input_n(hdf_file &hf, std::vector<o2scl::contour_line> &cl, std::string &name)
 

@@ -356,11 +356,12 @@ int main(void) {
   // For now, don't test the point at r=0 and the points very
   // close to r=R
   for(size_t i=1;i<tab->get_nlines()-10;i+=10) {
+    double beta=buch.G_km_Msun*at.mass/buch.rad_from_gm(at.mass);
     t.test_rel(tab->get("pr",i),
-	       buch.pr_from_r_gm(tab->get("r",i),at.mass),1.0e-10,
+	       buch.pr_from_r_gm(tab->get("r",i),beta),1.0e-10,
 	       "Buch pr profile");
     t.test_rel(tab->get("ed",i),
-	       buch.ed_from_r_gm(tab->get("r",i),at.mass),1.0e-10,
+	       buch.ed_from_r_gm(tab->get("r",i),beta),1.0e-10,
 	       "Buch ed profile");
   }
   
