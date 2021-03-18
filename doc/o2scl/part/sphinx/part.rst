@@ -45,7 +45,7 @@ If the particle is non-interacting, then :cpp:var:`o2scl::part_tl::nu` and
 :cpp:var:`o2scl::part_tl::ms` are sometimes used by O\ :sub:`2`\ scl_part
 functions for temporary storage.
 
-If :cpp:var:`o2scl::part_tl::inc_rest_mass` is \c true (as is the
+If :cpp:var:`o2scl::part_tl::inc_rest_mass` is \c true (this is the
 default in all of the classes except :cpp:class:`o2scl::nucleus`),
 then all functions include the rest mass (stored in
 :cpp:var:`o2scl::part_tl::m`) energy density in the energy density,
@@ -88,9 +88,11 @@ Similarly, for the chemical potentials, we have
 
 .. math::
 
-   \tilde{\mu}_+ \equiv \frac{\partial \tilde{\varepsilon}_+}{n_+} = 
+   \tilde{\mu}_+ \equiv \frac{\partial \tilde{\varepsilon}_+}
+   {\partial n_+} = 
    \mu_+ - m \quad \mathrm{and} \quad 
-   \tilde{\mu}_- \equiv \frac{\partial \tilde{\varepsilon}_-}{n_-} = 
+   \tilde{\mu}_- \equiv \frac{\partial \tilde{\varepsilon}_-}
+   {\partial n_-} = 
    \mu_- - m 
 
 thus :math:`\tilde{\mu}_- = - \tilde{\mu}_+ - 2 m` . This bookkeeping
@@ -105,11 +107,11 @@ interacting particles is
    
    P = -\varepsilon + s T + \nu n
 
-where :cpp:var:`o2scl::part_tl::nu` is used. This way, the particle class
-doesn't need to know about the structure of the interactions to
-ensure that the thermodynamic identity is satisfied. Note that in
-the \o2e library, where in the equations of state the normal
-thermodynamic identity is used
+where :cpp:var:`o2scl::part_tl::nu` is used. This way, the particle
+class doesn't need to know about the structure of the interactions to
+ensure that the thermodynamic identity is satisfied. Note that in the
+O\ :sub:`2`\ scl_eos library, where in the equations of state the
+normal thermodynamic identity is used
 
 .. math::
    
@@ -133,11 +135,12 @@ Units
 -----
 
 Factors of :math:`\hbar, c` and :math:`k_B` have been removed
-everywhere, so that mass, energy, and temperature all have the
-same units. Number and entropy densities have units of mass cubed
-(or energy cubed). The particle classes can be used with any
-system of units which is based on powers of one unit, i.e. 
-:math:`[n] = [T]^3 = [m]^3 = [P]^{3/4} = [\varepsilon]^{3/4}`, etc.
+everywhere, so that mass, energy, and temperature all have the same
+units. Number and entropy densities have units of mass cubed (or
+energy cubed). The particle classes can be used with any system of
+units which is based on powers of one unit, i.e. :math:`[n] = [T]^3 =
+[m]^3 = [P]^{3/4} = [\varepsilon]^{3/4}`, etc. For O\ :sub:`2`\
+scl_eos classes, powers of :math:`\mathrm{fm}^{-1}` are often chosen.
 
 Classes for particle thermodynamics
 -----------------------------------
@@ -166,7 +169,7 @@ in some more extreme cases. The default settings for
 :cpp:class:`o2scl::fermion_rel_tl`, the accuracy can be improved to 1 part in
 :math:`10^{10}` by decreasing the integration tolerances.
 
-See :ref:`Fermion Integrals` for more discussion on the fermion integrals.
+See :ref:`Fermion Details` for more discussion on the fermion integrals.
 
 The class :cpp:class:`o2scl::fermion_nonrel_tl` assumes a non-relativistic
 dispersion relation for fermions. It uses an exact method for both

@@ -190,10 +190,11 @@ namespace o2scl {
       \rho_{\mathrm{prot}}(r) = \frac{\mu^3}{8 \pi} \exp \left(
       - \mu |r|\right)
       \f]
-      and the parameter \f$ \mu = (0.71)^{1/2}~\mathrm{GeV} \f$ (see
-      Eq. 20b in Horowitz et al. (1981)). The default value of \ref a_proton
-      is the value of \f$ \mu \f$ converted into \f$ \mathrm{fm}^{-1}
-      \f$.
+      \verbatim embed:rst
+      and the parameter :math:`\mu = (0.71)^{1/2}~\mathrm{GeV}` (see
+      Eq. 20b in [Horowitz81]_). The default value of \ref a_proton
+      is the value of :math:`\mu` converted into :math:`\mathrm{fm}^{-1}`.
+      \endverbatim
 
       Generally, the first array index associated with a function
       is not the value at \f$ r=0 \f$, but at \f$ r=\Delta r \f$
@@ -263,7 +264,7 @@ namespace o2scl {
       int kappa;
       /// Energy eigenvalue
       double energy;
-      /// Isospin ( \f$ +1/2 \f$ or \f$ -1/2 \f$ .
+      /// Isospin ( \f$ +1/2 \f$ or \f$ -1/2 \f$ ).
       double isospin;
       /// Angular momentum-spin state \f$ ^{2s+1} \ell_{j} \f$ 
       std::string state;
@@ -493,7 +494,7 @@ namespace o2scl {
 
     /** \brief Parameters for initial guess
 
-	Default is {310,240,-6,25.9,6.85,0.6}
+	Default is <tt>{310,240,-6,25.9,6.85,0.6}</tt>
     */
     initial_guess ig;
 

@@ -154,7 +154,7 @@ namespace o2scl {
       \f]
       and this is placed in the column labeled \c cs2. If 
       \c cs2 is larger than 1, the EOS is said to be "acausal". The
-      variables \ref acausal, \ref acausal_ed, and \ref acausal_pr
+      variables \ref acausal_nb, \ref acausal_ed, and \ref acausal_pr
       record the baryon density, energy density, and pressure where
       the EOS becomes acausal. The adabatic index is calculated by
       \f[

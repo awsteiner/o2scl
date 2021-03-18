@@ -6,9 +6,6 @@ Fermion Details
 Interacting and non-interacting fermions
 ----------------------------------------
 
-(Slowly moving the documentation from fermion_rel
-and fermion_deriv_rel to this location.)
-
 In many cases, the non-interacting expressions for fermion
 thermodynamics can be used in interacting systems as long as one
 replaces the mass with an effective mass, :math:`m^{*}` and the
@@ -70,7 +67,7 @@ k/T` then the energy density is
    { 1+\exp\left[\sqrt{u^2+\phi^2} - \psi_{\mathrm{R}} - \phi \right]}
 
 This expression is used for
-:cpp:func:`o2scl::part_calibrate_class::part_calibrate()` because
+:cpp:func:`o2scl::part_calibrate_class_tl::part_calibrate()` because
 :math:`\varepsilon_{\mathrm{R}}/(g T^4)` depends only on
 :math:`\psi_{\mathrm{R}}` and :math:`\phi`. For a nonrelativistic
 fermion,
@@ -87,6 +84,7 @@ fermion,
    \frac{k^4}{2 m^{*}} 
    \left\{ 1+\exp\left[\left(\frac{k^2}{2 m^{*}}-
    \nu_{\mathrm{NR}}+m\right)/T\right] \right\}^{-1}
+   \end{eqnarray}
 
 where :math:`\bar{\nu}_{\mathrm{NR}} = \nu_{\mathrm{NR}} - m` . Note
 that the rest mass energy density is
@@ -127,7 +125,7 @@ which is now a function of :math:`\psi_{\mathrm{NR}}` and
 :math:`\phi`alone. This is the form used to compute the energy density
 in :ref:`fermion_nonrel_tl <fermion_nonrel_tl>` and the definition of
 :math:`\psi_{\mathrm{NR}}` used for nonrelativistic fermions in \ref
-:cpp:func:`o2scl::part_calibrate_class::part_calibrate()`.
+:cpp:func:`o2scl::part_calibrate_class_tl::part_calibrate()`.
 
 Upper limits
 ------------

@@ -37,16 +37,18 @@ namespace o2scl {
   /** \brief Schematic hadronic equation of state
 
       A schematic equation of state defined by the energy density:
-      \f[
-      \epsilon = n_n m_n + n_p m_p + 
+      \f{eqnarray*}
+      \varepsilon &=& n_n m_n + n_p m_p + 
       n \left\{ eoa+\frac{comp}{18}(n/n0-1)^2+
       \frac{kprime}{162}(n/n0-1)^3+
-      \frac{kpp}{1944}(n/n0-1)^4+(1- 2 x)^2 
+      \frac{kpp}{1944}(n/n0-1)^4 \right.
+      \nonumber \\ && \left. +
+      (1- 2 x)^2 
       \left[a \left(\frac{n}{n0}\right)^{2/3}+
       b \left(\frac{n}{n0}\right)^{\gamma} \right] \right\}
-      \f]
+      \f}
 
-      Symmetry energy at nuclear matter density is \f$ a+b \f$. 
+      The symmetry energy at nuclear matter density is \f$ a+b \f$. 
   */
   class eos_had_schematic : public eos_had_eden_base {
 

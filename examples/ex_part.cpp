@@ -97,7 +97,7 @@ int main(void) {
   t.test_rel(e.pr,e2.pr,1.0e-2,"EFF vs. exact");
 
   // Now add the contribution to the pressure from positrons using the
-  // implmentation of part::pair_density()
+  // implementation of part::pair_density()
   e.n=0.0001;
   eff.pair_density(e,10.0/hc_mev_fm);
   e2.n=0.0001;

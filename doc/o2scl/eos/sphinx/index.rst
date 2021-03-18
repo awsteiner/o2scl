@@ -4,7 +4,9 @@ O\ :sub:`2`\ scl Equations of State
 ===================================
 
 O\ :sub:`2`\ scl_eos is a sub-library for constructing equations of
-state of dense matter. O\ :sub:`2`\ scl_eos is part of `O2scl
+state of dense matter, computing the structure of rotating and
+non-rotating neutron stars, and computing the of structure of nuclei
+in the Hartree approximation. O\ :sub:`2`\ scl_eos is part of `O2scl
 <../../html/index.html>`_.
 
 

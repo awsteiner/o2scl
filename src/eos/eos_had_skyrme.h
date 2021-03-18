@@ -50,8 +50,10 @@ namespace o2scl {
 
       \b Hamiltonian
 
+      \verbatim embed:rst
       The Hamiltonian is defined (using the notation of 
-      Steiner et al. (2005b)) as
+      [Steiner05b]_ as
+      \endverbatim
       \f[
       {\cal H} = 
       {\cal H}_{k1} +
@@ -122,11 +124,15 @@ namespace o2scl {
       \nabla n_n \nabla n_p
       \f]
 
-      The values \f$ a=0, b=1 \f$ give the standard definition of the
-      Skyrme Hamiltonian (Skyrme (1959)), while \f$a=1, b=0\f$
-      contains the modifications suggested by Osni et al. (1994).
+      \verbatim embed:rst
+      The values :math:`a=0, b=1` give the standard definition of the
+      Skyrme Hamiltonian [Skyrme59]_, while :math:`a=1, b=0`
+      contains the modifications suggested by [Onsi94]_.
+      \endverbatim
 
-      The spin-orbit term is (following Steiner et al. (2005b))
+      \verbatim embed:rst
+      The spin-orbit term is (following [Steiner05b]_)
+      \endverbatim
       \f[
       {\cal H}_{J} = -\frac{W_0}{2} \left( n_n \vec{\nabla} \cdot 
       \vec{J}_n + n_p \vec{\nabla} \cdot \vec{J}_p + n \vec{\nabla} 
@@ -146,8 +152,10 @@ namespace o2scl {
       b_4^{\prime} = W_0/2 \f$. For example, for SLy4, 
       \f$ b_4 = b_4^{\prime} = W_0/2 = 61.5~\mathrm{MeV} \f$.
 
-      Three quantities are defined in Steiner et al. (2005b) for
+      \verbatim embed:rst
+      Three quantities are defined in [Steiner05b]_ for
       use in computing the properties of matter at saturation
+      \endverbatim
       \f[
       t_3^{\prime} = \left(a + b\right) t_3 \, ,
       \f]
@@ -208,9 +216,9 @@ namespace o2scl {
       <tt>numeric_limits<double>::infinity()</tt> The case of pure
       proton matter is handled similarly. Negative densities result in
       calling the error handler.
-
-      Skyrme models are loaded using \ref o2scl_hdf::skyrme_load() .
-      The full list is given in the \o2 repository in 
+      
+      Skyrme models can be loaded using \ref o2scl_hdf::skyrme_load() .
+      The full list is given in the \o2 repository in
       <tt>o2scl/data/o2scl/skdata/model_list</tt>.
 
       \b Todos
@@ -580,16 +588,15 @@ namespace o2scl {
 
     /** \brief Calculate the Landau parameters for nuclear matter
 
-        Given \c n0 and \c m, this calculates the Landau parameters in
-        nuclear matter as given in Margueron et al. (2002).
-     
         \verbatim embed:rst
-        See [Margueron02]_.
+        Given ``n0`` and ``m``, this calculates the Landau parameters in
+        nuclear matter as given in [Margueron02]_.
 
         .. todo:: 
 
            - This function, eos_had_skyrme::landau_nuclear() needs to 
              be checked.
+
         \endverbatim
         
         (Checked once on 11/05/03)
@@ -601,12 +608,10 @@ namespace o2scl {
 
     /** \brief Calculate the Landau parameters for neutron matter
             
-        Given 'n0' and 'm', this calculates the Landau parameters in
-        nuclear matter as given in Margueron et al. (2002).
-        
         \verbatim embed:rst
-        See [Margueron02]_.
-
+        Given ``n0`` and ``m``, this calculates the Landau parameters in
+        nuclear matter as given in [Margueron02]_.
+        
         .. todo:: 
 
            - This function, eos_had_skyrme::landau_neutron() needs to 

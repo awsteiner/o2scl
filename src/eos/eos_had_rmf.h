@@ -106,11 +106,11 @@ namespace o2scl {
       The part for the nucleon fields is
       \f[
       {\cal L}_{\mathrm{Dirac}} = 
-      \bar{\Psi}_i \left[ i {{\partial}\!\!\!{\slash}} - 
-      g_{\omega} {{\omega}\!\!\!{\slash}} - \frac{g_{\rho}}{2} 
-      {{\vec{\rho}}\!\!\!{\slash}}
+      \bar{\Psi}_i \left[ i {{\partial}\!\!\!{\backslash}} - 
+      g_{\omega} {{\omega}\!\!\!{\backslash}} - \frac{g_{\rho}}{2} 
+      {{\vec{\rho}}\!\!\!{\backslash}}
       \vec{\tau} - M_i + g_{\sigma} \sigma - 
-      e q_i A\!\!\!{\slash} \right] \Psi_i 
+      e q_i A\!\!\!{\backslash} \right] \Psi_i 
       \f]
       where \f$ \Psi \f$ is the nucleon field and \f$ \sigma, \omega
       \f$ and \f$ \rho \f$ are the meson fields. The meson masses

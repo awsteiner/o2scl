@@ -194,6 +194,14 @@ public:
    */
   void parse(std::vector<std::string> &vs, size_t start, size_t end) {
 
+    if (start<=end) {
+      O2SCL_ERR("if_var::parse() called with start<=end.",
+                o2scl::exc_einval);
+    }
+    if (vs[end-1][0]=='[' &&
+        vs[end-1][vs[end-1].length()-1]==']') {
+    }
+    
     // Create a new vector string object for convenience
     std::vector<std::string> vs2;
     for(size_t i=start;i<end;i++) {
@@ -328,6 +336,9 @@ public:
 
   /// The variable type 
   if_type ift;
+
+  /// The value (used for default function values)
+  std::string value;
 
   /// Parse a list to this variable
   void parse(vector<string> &vs) {

@@ -42,8 +42,10 @@ namespace o2scl {
       We use \f$ c=1 \f$ but keep factors of \f$ G \f$, which has
       units \f$ \mathrm{km}/\mathrm{M_{\odot}} \f$.
 
-      Following the notation in Postnikov et al. (2010), define
-      the function \f$ H(r) \f$, which is the solution of
+      \verbatim embed:rst
+      Following the notation in [Postnikov10]_, define
+      the function :math:`H(r)`, which is the solution of
+      \endverbatim
       \f[
       H^{\prime \prime} (r) + H^{\prime}(r) \left\{
       \frac{2}{r} + e^{\lambda(r)} \left[ \frac{2 G m(r)}{r^2} +
@@ -104,19 +106,23 @@ namespace o2scl {
       \log (1-2 \beta) \right\}^{-1}
       \f}
 
-      Hinderer et al. (2010) writes the differential equation for 
-      \f$ H(r) \f$ 
+      \verbatim embed:rst
+      [Hinderer10]_ writes the differential equation for 
+      :math:`H(r)`
       in a slightly different (but equivalent) form,
-      \f[
-      H^{\prime \prime}(r) = 2 \left( 1 - \frac{2 G m}{r}\right)^{-1} 
+      \endverbatim
+      \f{eqnarray*}
+      H^{\prime \prime}(r) &=& 2 \left( 1 - \frac{2 G m}{r}\right)^{-1} 
       H(r) \left\{ - 2 \pi G \left[ 5 \varepsilon + 9 P + \frac{\left(
-      \varepsilon+P\right)}{c_s^2} \right] + \frac{3}{r^2} + 
+      \varepsilon+P\right)}{c_s^2} \right] + \frac{3}{r^2}
+      \right. \nonumber \\ && \left. + 
       2 \left( 1 - \frac{2 G m}{r}\right)^{-1} 
       \left(\frac{G m}{r^2}+4 \pi G r P\right)^2 \right\}
       +\frac{2 H^{\prime}(r)}{r} \left( 1 - \frac{2 G m}{r}\right)^{-1}
+      \nonumber \\ && \times
       \left[ -1+\frac{G m}{r} + 2 \pi G r^2 \left(\varepsilon-P\right)
       \right] \, .
-      \f]
+      \f}
       This is the form given in \ref H_derivs() .
       
       The tidal deformability is then 
@@ -145,19 +151,18 @@ namespace o2scl {
       non-zero radius stored in \ref eps instead of at \f$ r=0 \f$. The
       value of \ref eps defaults to 0.2 km.
       
+      \verbatim embed:rst
       If there is a discontinuity in the EOS (i.e. a jump in 
-      the energy density at some radius \f$ r_d \f$), then 
-      the function \f$ y(r) \f$ must satisfy (see Damour et al. (2009)
-      and Postnikov et al. (2010))
+      the energy density at some radius :math:`r_d`), then 
+      the function :math:`y(r)` must satisfy (see [Damour09]_,
+      [Postnikov10]_, and [Hinderer10]_).
+      \endverbatim
       \f[
       y(r_d+\delta) - y(r_d-\delta) =
       \frac{ 
       \varepsilon(r_d+\delta)-\varepsilon(r_d-\delta)}{m(r_d)/(4 \pi r_d^3) + 
       p}
       \f]
-      \verbatim embed:rst
-      (See [Damour09]_, [Postnikov10]_, and [Hinderer10]_.)
-      \endverbatim
       
       \note The function \ref calc_H() cannot yet handle 
       discontinuities (if there are any then the error handler
@@ -170,7 +175,7 @@ namespace o2scl {
       \future Improve calc_H() to handle discontinuities and to 
       tabulate the EOS.
       \future Improve the handling at small r using an expansion,
-      similar to that used in e.g. Detweiler and Lindblom (1985).
+      similar to that used in e.g. Detweiler and Lindblom (1985)?
   */
   class tov_love {
 

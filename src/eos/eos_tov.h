@@ -150,8 +150,9 @@ namespace o2scl {
 
       The mass-radius curve is the solution of the equation
       \f[
-      M = \left[ \frac{\pi}{288 p_{*} \left(1-2 \beta)\right]^{1/2} 
-      \beta(1-\beta)
+      M = \left[ \frac{\pi}{288 p_{*} 
+      \left(1-2 \beta\right)}\right]^{1/2} 
+      \beta\left(1-\beta\right)
       \f]
       where \f$ \beta = GM/R \f$ and \f$ A \f$ (which
       has units of inverse km) is defined by
@@ -231,7 +232,7 @@ namespace o2scl {
 
     /** \brief The gravitational constant in kilometers per solar mass
 
-        \note Make this static
+        \note Make this static const
         
         \comment
         This is useful because the user needs to specify beta=G*M/R
@@ -280,8 +281,9 @@ namespace o2scl {
         This function solves Eq. 10.67 in Schutz' GR book 
         (see also Eq. 7 in Lattimer01)
         \f[
-        M = \left[ \frac{\pi}{288 p_{*} \left(1-2 \beta)\right]^{1/2} 
-        \beta(1-\beta)
+        M = \left[ \frac{\pi}{288 p_{*} 
+        \left(1-2 \beta\right)}\right]^{1/2} 
+        \beta\left(1-\beta\right)
         \f]
 
         This function can be used to determine the full mass-radius 
