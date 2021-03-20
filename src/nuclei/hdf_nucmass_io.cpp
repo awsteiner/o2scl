@@ -153,6 +153,12 @@ void o2scl_hdf::ame_load(o2scl::nucmass_ame &ame, std::string name,
   } else if (name==((string)"16round")) { 
     file_name+="/ame16round.o2";
     table_name="ame16round.o2";
+  } else if (name==((string)"20")) { 
+    file_name+="/ame20.o2";
+    table_name="ame20.o2";
+  } else if (name==((string)"20round")) { 
+    file_name+="/ame20round.o2";
+    table_name="ame20round.o2";
   } else {
     std::string s=((std::string)"Invalid name '")+name+
       "' in o2scl_hdf::ame_load().";

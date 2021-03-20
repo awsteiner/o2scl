@@ -119,8 +119,18 @@ int parse(string s1, string s2, double &d1, double &d2, int &acc) {
   } else {
     acc=nucmass_ame::measured;
   }
-  d1=o2scl::stod(s1);
-  d2=o2scl::stod(s2);
+  cout << "Ha: '" << s1 << "'." << endl;
+  int ret1=o2scl::stod_nothrow(s1,d1);
+  if (ret1!=0) {
+    cerr << "Failed to convert: '" << s1 << "'." << endl;
+    exit(-1);
+  }
+  cout << "Hb: '" << s2 << "'." << endl;
+  int ret2=o2scl::stod_nothrow(s2,d2);
+  if (ret2!=0) {
+    cerr << "Failed to convert: '" << s2 << "'." << endl;
+    exit(-1);
+  }
   return 0;
 }
 
@@ -221,7 +231,7 @@ int main(int argc, char *argv[]) {
 
     ae.N=o2scl::stoi(tmp.substr(4,5));
     ae.Z=o2scl::stoi(tmp.substr(9,5));
-    if (ik!=3 && ik!=6) {
+    if (ik!=3 && ik!=6 && ik!=9) {
       ae.NMZ=o2scl::stoi(tmp.substr(1,3));
       ae.A=o2scl::stoi(tmp.substr(14,5));
       if (ae.NMZ!=ae.N-ae.Z) {
@@ -273,7 +283,7 @@ int main(int argc, char *argv[]) {
     if (count%output==0) {
       cout << "el,orig: '" << ae.el << "' '" << ae.orig << "'" << endl;
     }
-      
+
     if (ik<2) {
 	
       // 1995 format
@@ -323,9 +333,9 @@ int main(int argc, char *argv[]) {
       ae.dbeoa=ae.dbe/ae.A;
       ae.beoa_acc=nucmass_ame::intl_computed;
 	
-    } else {
+    } else if (ik<=7) {
 
-      // 2003, 2012, 2016, and 2020 format
+      // 2003, 2012, and 2016 format
       parse(tmp.substr(28,13),tmp.substr(41,11),ae.mass,ae.dmass,
             ae.mass_acc);
       if (count%output==0) {
@@ -364,6 +374,58 @@ int main(int argc, char *argv[]) {
       if (count%output==0) {
         cout << "amass: '" << tmp.substr(100,12) << "' '" 
              << tmp.substr(112,11) 
+             << "' " << ae.amass << " " << ae.damass << " " 
+             << ae.amass_acc << endl;
+        cout << endl;
+      }
+
+      ae.be=ae.beoa*ae.A;
+      ae.dbe=ae.dbeoa*ae.A;
+      ae.be_acc=nucmass_ame::intl_computed;
+
+    } else if (ik<=7) {
+
+      //format    :  a1,i3,i5,i5,i5,1x,a3,a4,1x,f14.6,f12.6,f15.5,f11.5,1x,a2,f13.5,f11.5,1x,i3,1x,f13.6,f12.6
+      
+      // 2020 format
+      parse(tmp.substr(28,14),tmp.substr(42,12),ae.mass,ae.dmass,
+            ae.mass_acc);
+      if (count%output==0) {
+        cout << "mass: '" << tmp.substr(28,14) << "' '" << tmp.substr(42,12) 
+             << "' " << ae.mass << " " << ae.dmass << " " 
+             << ae.mass_acc << endl;
+      }
+      parse(tmp.substr(54,15),tmp.substr(69,11),ae.beoa,ae.dbeoa,ae.beoa_acc);
+      if (count%output==0) {
+        cout << "binding: '" << tmp.substr(54,15) << "' '" 
+             << tmp.substr(69,11) 
+             << "' " << ae.beoa << " " << ae.dbeoa << " " 
+             << ae.beoa_acc << endl;
+      }
+	
+      tmp2=tmp.substr(81,2);
+      remove_whitespace(tmp2);
+      if (tmp2.length()>0) { ae.bdmode[0]=tmp2[0]; ae.bdmode[1]='\0'; }
+      if (tmp2.length()>1) { ae.bdmode[1]=tmp2[1]; ae.bdmode[2]='\0'; }
+	
+      if (count%output==0) {
+        cout << "bdmode: '" << ae.bdmode << "'" << endl;
+      }
+
+      parse(tmp.substr(83,13),tmp.substr(96,11),ae.bde,ae.dbde,ae.bde_acc);
+      if (count%output==0) {
+        cout << "beta: '" << tmp.substr(83,13) << "' '" 
+             << tmp.substr(96,11) 
+             << "' " << ae.bde << " " << ae.dbde << " " 
+             << ae.bde_acc << endl;
+      }
+	
+      ae.A2=o2scl::stoi(tmp.substr(108,3));
+      parse(tmp.substr(112,13),tmp.substr(125,12),ae.amass,ae.damass,
+            ae.amass_acc);
+      if (count%output==0) {
+        cout << "amass: '" << tmp.substr(112,13) << "' '" 
+             << tmp.substr(125,12) 
              << "' " << ae.amass << " " << ae.damass << " " 
              << ae.amass_acc << endl;
         cout << endl;
