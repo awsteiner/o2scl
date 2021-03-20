@@ -137,8 +137,8 @@ int main(int argc, char *argv[]) {
                           "ame16/mass16.txt",
                           "ame16/mass16round.txt",
                           "ame16/nubase2016.txt",
-                          "ame20/mass20.txt",
-                          "ame20/mass20round.txt",
+                          "ame20/mass.mas20.txt",
+                          "ame20/massround.mas20.txt",
                           "ame20/nubase2020.txt"};
   string outnames[n_files]={"ame95exp.o2",
                             "ame95rmd.o2",
@@ -276,7 +276,7 @@ int main(int argc, char *argv[]) {
       
     if (ik<2) {
 	
-      // 95 format
+      // 1995 format
       parse(tmp.substr(28,11),tmp.substr(39,9),ae.mass,ae.dmass,ae.mass_acc);
       if (count%output==0) {
         cout << "mass: '" << tmp.substr(28,11) << "' '" << tmp.substr(39,9) 
@@ -325,7 +325,7 @@ int main(int argc, char *argv[]) {
 	
     } else {
 
-      // 03 and 2012 format
+      // 2003, 2012, 2016, and 2020 format
       parse(tmp.substr(28,13),tmp.substr(41,11),ae.mass,ae.dmass,
             ae.mass_acc);
       if (count%output==0) {
@@ -393,6 +393,7 @@ int main(int argc, char *argv[]) {
 
     count++;
   }
+  
   cout << "count: " << count << endl;
 
   // Directly compare the new file to the o2scl version
@@ -732,9 +733,11 @@ int main(int argc, char *argv[]) {
   }
     
   //}
-  
-  system((((string)"h5diff ")+outnames[ik]+
-          " ../data/o2scl/nucmass/"+outnames[ik]).c_str());
+
+  if (ik<7) {
+    system((((string)"h5diff ")+outnames[ik]+
+            " ../data/o2scl/nucmass/"+outnames[ik]).c_str());
+  }
   
   return 0;
 }
