@@ -321,8 +321,7 @@ int main(int argc, char *argv[]) {
 
       ae.beoa=ae.be/ae.A;
       ae.dbeoa=ae.dbe/ae.A;
-      ae.beoa_acc=0;
-      //nucmass_ame::intl_computed;
+      ae.beoa_acc=nucmass_ame::intl_computed;
 	
     } else {
 
@@ -372,8 +371,7 @@ int main(int argc, char *argv[]) {
 
       ae.be=ae.beoa*ae.A;
       ae.dbe=ae.dbeoa*ae.A;
-      ae.be_acc=1;
-      //nucmass_ame::intl_computed;
+      ae.be_acc=nucmass_ame::intl_computed;
 
     }
 
