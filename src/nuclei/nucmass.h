@@ -57,6 +57,7 @@ namespace o2scl {
 
   */
   class nucmass_info {
+    
   public:
     
     nucmass_info();

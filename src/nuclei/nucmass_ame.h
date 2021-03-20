@@ -152,7 +152,7 @@ namespace o2scl {
     /// Value computed by \o2
     static const int intl_computed=3;
     //@}
-    
+
     /** \brief Atomic mass entry structure
 
 	Atomic mass entry data object for \ref o2scl::nucmass_ame.
@@ -234,7 +234,51 @@ namespace o2scl {
       int amass_acc;
 
     };
-  
+    
+    struct entry_nubase_16 {
+
+    public:
+      
+      /// Mass number
+      int A;
+      /// Proton number
+      int Z;
+      /// Note
+      char Znote;
+      /// Element name
+      char el[6];
+      /// Mass excess (in keV)
+      double mass;
+      /// Mass excess uncertainty (in keV)
+      double dmass;
+      /// Excitation energy
+      double eenergy;
+      /// Excitation energy uncertainty
+      double deenergy;
+      /// Excitation energy origin
+      char origin[3];
+      /// Half-life
+      double hlife;
+      /// Half-life unit
+      char hl_unit[2];
+      /// Half-life uncertainty
+      double dhlife;
+      /// Spin
+      int spin;
+      /// Parity
+      bool parity;
+      /// Isospin multiplet
+      int isospin;
+      /// Year appeared on archive
+      int archive_year;
+      /// Reference
+      char reference[9];
+      /// Discovery year
+      int discovery_year;
+      /// Decay mode and intensity
+      char decay[76];
+    };
+    
     /// Return the type, \c "nucmass_ame".
     virtual const char *type() { return "nucmass_ame"; }
 
