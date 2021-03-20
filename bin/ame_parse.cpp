@@ -95,7 +95,60 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
 
-nucmass_ame::entry ae;
+void to_char(std::string s, char x[], int len) {
+  if (((int)s.length())+1>len) {
+    cerr << "Not enough space." << endl;
+    cerr << s << endl;
+    exit(-1);
+  }
+  for(size_t j=0;j<s.length();j++) {
+    x[j]=s[j];
+  }
+  x[s.length()]='\0';
+  return;
+}
+
+void parse_fortran_format(std::string line,
+                          std::string format,
+                          vector<string> &entries) {
+
+  bool debug=false;
+  
+  entries.clear();
+  vector<string> format_list;
+  split_string_delim(format,format_list,',');
+  int index=0;
+  for(size_t j=0;j<format_list.size();j++) {
+    // For entries not ending in 'x'
+    int size;
+    if (format_list[j][format_list[j].length()-1]!='x') {
+      if (format_list[j].find('.')!=std::string::npos) {
+        // Get string from second character to the '.'
+        size=o2scl::stoi(format_list[j].substr
+                         (1,format_list[j].find('.')-1));
+      } else {
+        // Remove the character at the front and convert
+        // to an integer
+        size=o2scl::stoi(format_list[j].substr
+                         (1,format_list[j].length()-1));
+      }
+      entries.push_back(line.substr(index,size));
+    } else {
+      // Remove the 'x' at the end and convert to an integer
+      size=o2scl::stoi(format_list[j].substr
+                       (0,format_list[j].length()-1));
+    }
+    if (debug) {
+      cout << "format_list[j],size: " << format_list[j] << " "
+           << size << " " << entries.size() << " " << index << endl;
+      char ch;
+      cin >> ch;
+    }
+    index+=size;
+  }
+  
+  return;
+}
 
 /** \brief Parse strings \c s1 and \c s2 from the AME into a value,
     \c d1, an uncertainty, \c d2, and an accuracy flag, \c acc
@@ -119,13 +172,11 @@ int parse(string s1, string s2, double &d1, double &d2, int &acc) {
   } else {
     acc=nucmass_ame::measured;
   }
-  cout << "Ha: '" << s1 << "'." << endl;
   int ret1=o2scl::stod_nothrow(s1,d1);
   if (ret1!=0) {
     cerr << "Failed to convert: '" << s1 << "'." << endl;
     exit(-1);
   }
-  cout << "Hb: '" << s2 << "'." << endl;
   int ret2=o2scl::stod_nothrow(s2,d2);
   if (ret2!=0) {
     cerr << "Failed to convert: '" << s2 << "'." << endl;
@@ -223,217 +274,246 @@ int main(int argc, char *argv[]) {
   cout << "Filename: " << fname << endl;
   cout << endl;
     
+  nucmass_ame::entry ae;
+    
   while (getline(fin,tmp)) {
 
-    ae.el[0]='\0';
-    ae.orig[0]='\0';
-    ae.bdmode[0]='\0';
+    if (ik==8) {
 
-    ae.N=o2scl::stoi(tmp.substr(4,5));
-    ae.Z=o2scl::stoi(tmp.substr(9,5));
-    if (ik!=3 && ik!=6 && ik!=9) {
-      ae.NMZ=o2scl::stoi(tmp.substr(1,3));
-      ae.A=o2scl::stoi(tmp.substr(14,5));
-      if (ae.NMZ!=ae.N-ae.Z) {
-        cout << "N-Z not correct. N=" << ae.N << " Z=" << ae.Z << endl;
-        exit(-1);
-      }
-      if (ae.A!=ae.N+ae.Z) {
-        cout << "N+Z not correct. N=" << ae.N << " Z=" << ae.Z << endl;
-        exit(-1);
-      }
+      vector<string> entries;
+      parse_fortran_format(tmp,((string)"a1,i3,i5,i5,i5,1x,a3,a4,")+
+                           "1x,f14.6,f12.6,f15.5,f11.5,1x,a2,"+
+                           "f13.5,f11.5,1x,i3,1x,f13.6,f12.6",entries);
+      
+      // We skip the line feed character
+      ae.NMZ=o2scl::stoi(entries[1]);
+      ae.N=o2scl::stoi(entries[2]);
+      ae.Z=o2scl::stoi(entries[3]);
+      ae.A=o2scl::stoi(entries[4]);
+      to_char(entries[5],ae.el,4);
+      to_char(entries[6],ae.orig,5);
+      parse(entries[7],entries[8],ae.mass,ae.dmass,
+            ae.mass_acc);
+      parse(entries[9],entries[10],ae.beoa,ae.dbeoa,
+            ae.beoa_acc);
+      to_char(entries[11],ae.bdmode,3);
+      parse(entries[12],entries[13],ae.bde,ae.dbde,ae.bde_acc);
+	
+      ae.A2=o2scl::stoi(entries[14]);
+      parse(entries[15],entries[16],ae.amass,ae.damass,
+            ae.amass_acc);
+      
     } else {
-      ae.NMZ=ae.N-ae.Z;
-      ae.A=ae.N+ae.Z;
-    }
+    
+      ae.el[0]='\0';
+      ae.orig[0]='\0';
+      ae.bdmode[0]='\0';
 
-    if (count%output==0) {
-      cout << "Z, N, A, N-Z: ";
-      cout.width(3);
-      cout << ae.Z << " ";
-      cout.width(3);
-      cout << ae.N << " ";
-      cout.width(3);
-      cout << ae.A << " ";
-      cout.width(3);
-      cout << ae.NMZ << endl;
-    }
+      ae.N=o2scl::stoi(tmp.substr(4,5));
+      ae.Z=o2scl::stoi(tmp.substr(9,5));
+      if (ik!=3 && ik!=6 && ik!=9) {
+        ae.NMZ=o2scl::stoi(tmp.substr(1,3));
+        ae.A=o2scl::stoi(tmp.substr(14,5));
+        if (ae.NMZ!=ae.N-ae.Z) {
+          cout << "N-Z not correct. N=" << ae.N << " Z=" << ae.Z << endl;
+          exit(-1);
+        }
+        if (ae.A!=ae.N+ae.Z) {
+          cout << "N+Z not correct. N=" << ae.N << " Z=" << ae.Z << endl;
+          exit(-1);
+        }
+      } else {
+        ae.NMZ=ae.N-ae.Z;
+        ae.A=ae.N+ae.Z;
+      }
+
+      if (count%output==0) {
+        cout << "Z, N, A, N-Z: ";
+        cout.width(3);
+        cout << ae.Z << " ";
+        cout.width(3);
+        cout << ae.N << " ";
+        cout.width(3);
+        cout << ae.A << " ";
+        cout.width(3);
+        cout << ae.NMZ << endl;
+      }
       
-    tmp2=tmp.substr(20,3);
-    remove_whitespace(tmp2);
-    if (tmp2.length()>0) { ae.el[0]=tmp2[0]; ae.el[1]='\0'; }
-    if (tmp2.length()>1) { ae.el[1]=tmp2[1]; ae.el[2]='\0'; }
-    if (tmp2.length()>2) { ae.el[1]=tmp2[2]; ae.el[3]='\0'; }
+      tmp2=tmp.substr(20,3);
+      remove_whitespace(tmp2);
+      if (tmp2.length()>0) { ae.el[0]=tmp2[0]; ae.el[1]='\0'; }
+      if (tmp2.length()>1) { ae.el[1]=tmp2[1]; ae.el[2]='\0'; }
+      if (tmp2.length()>2) { ae.el[1]=tmp2[2]; ae.el[3]='\0'; }
       
-    if ((ik<2 && ae.Z<103) || (ik>=2 && ik<4 && ae.Z<110) || 
-        (ik==4 && ae.Z<113)) {
-      if (((string)ae.el)!=nmi.Ztoel(ae.Z)) {
-        cout << "Element name incorrect: " << ae.el << " " << ae.Z << endl;
-        exit(-1);
+      if ((ik<2 && ae.Z<103) || (ik>=2 && ik<4 && ae.Z<110) || 
+          (ik==4 && ae.Z<113)) {
+        if (((string)ae.el)!=nmi.Ztoel(ae.Z)) {
+          cout << "Element name incorrect: " << ae.el << " " << ae.Z << endl;
+          exit(-1);
+        }
       }
-    }
 
-    tmp2=tmp.substr(23,4);
-    remove_whitespace(tmp2);
-    if (tmp2.length()>0) { ae.orig[0]=tmp2[0]; ae.orig[1]='\0'; }
-    if (tmp2.length()>1) { ae.orig[1]=tmp2[1]; ae.orig[2]='\0'; }
-    if (tmp2.length()>2) { ae.orig[2]=tmp2[2]; ae.orig[3]='\0'; }
-    if (tmp2.length()>3) { ae.orig[3]=tmp2[3]; ae.orig[4]='\0'; }
-
-    if (count%output==0) {
-      cout << "el,orig: '" << ae.el << "' '" << ae.orig << "'" << endl;
-    }
-
-    if (ik<2) {
-	
-      // 1995 format
-      parse(tmp.substr(28,11),tmp.substr(39,9),ae.mass,ae.dmass,ae.mass_acc);
-      if (count%output==0) {
-        cout << "mass: '" << tmp.substr(28,11) << "' '" << tmp.substr(39,9) 
-             << "' " << ae.mass << " " << ae.dmass << " " 
-             << ae.mass_acc << endl;
-      }
-      parse(tmp.substr(48,11),tmp.substr(59,9),ae.be,ae.dbe,ae.be_acc);
-      if (count%output==0) {
-        cout << "binding: '" << tmp.substr(48,11) << "' '" 
-             << tmp.substr(59,9) 
-             << "' " << ae.beoa << " " << ae.dbeoa << " " 
-             << ae.beoa_acc << endl;
-      }
-	
-      tmp2=tmp.substr(72,2);
+      tmp2=tmp.substr(23,4);
       remove_whitespace(tmp2);
-      if (tmp2.length()>0) { ae.bdmode[0]=tmp2[0]; ae.bdmode[1]='\0'; }
-      if (tmp2.length()>1) { ae.bdmode[1]=tmp2[1]; ae.bdmode[2]='\0'; }
+      if (tmp2.length()>0) { ae.orig[0]=tmp2[0]; ae.orig[1]='\0'; }
+      if (tmp2.length()>1) { ae.orig[1]=tmp2[1]; ae.orig[2]='\0'; }
+      if (tmp2.length()>2) { ae.orig[2]=tmp2[2]; ae.orig[3]='\0'; }
+      if (tmp2.length()>3) { ae.orig[3]=tmp2[3]; ae.orig[4]='\0'; }
+
+      if (count%output==0) {
+        cout << "el,orig: '" << ae.el << "' '" << ae.orig << "'" << endl;
+      }
+
+      if (ik<2) {
 	
-      if (count%output==0) {
-        cout << "bdmode: '" << ae.bdmode << "'" << endl;
-      }
-
-      parse(tmp.substr(74,11),tmp.substr(85,9),ae.bde,ae.dbde,ae.bde_acc);
-      if (count%output==0) {
-        cout << "beta: '" << tmp.substr(74,11) << "' '" 
-             << tmp.substr(85,9) 
-             << "' " << ae.bde << " " << ae.dbde << " " 
-             << ae.bde_acc << endl;
-      }
-
-      ae.A2=o2scl::stoi(tmp.substr(96,3));
-      parse(tmp.substr(100,10),tmp.substr(110,9),ae.amass,ae.damass,
-            ae.amass_acc);
-      if (count%output==0) {
-        cout << "amass: '" << tmp.substr(100,10) << "' '" 
-             << tmp.substr(110,9) 
-             << "' " << ae.amass << " " << ae.damass << " " 
-             << ae.amass_acc << endl;
-        cout << endl;
-      }
-
-      ae.beoa=ae.be/ae.A;
-      ae.dbeoa=ae.dbe/ae.A;
-      ae.beoa_acc=nucmass_ame::intl_computed;
+        // 1995 format
+        parse(tmp.substr(28,11),tmp.substr(39,9),ae.mass,ae.dmass,ae.mass_acc);
+        if (count%output==0) {
+          cout << "mass: '" << tmp.substr(28,11) << "' '" << tmp.substr(39,9) 
+               << "' " << ae.mass << " " << ae.dmass << " " 
+               << ae.mass_acc << endl;
+        }
+        parse(tmp.substr(48,11),tmp.substr(59,9),ae.be,ae.dbe,ae.be_acc);
+        if (count%output==0) {
+          cout << "binding: '" << tmp.substr(48,11) << "' '" 
+               << tmp.substr(59,9) 
+               << "' " << ae.beoa << " " << ae.dbeoa << " " 
+               << ae.beoa_acc << endl;
+        }
 	
-    } else if (ik<=7) {
-
-      // 2003, 2012, and 2016 format
-      parse(tmp.substr(28,13),tmp.substr(41,11),ae.mass,ae.dmass,
-            ae.mass_acc);
-      if (count%output==0) {
-        cout << "mass: '" << tmp.substr(28,13) << "' '" << tmp.substr(41,11) 
-             << "' " << ae.mass << " " << ae.dmass << " " 
-             << ae.mass_acc << endl;
-      }
-      parse(tmp.substr(52,11),tmp.substr(63,9),ae.beoa,ae.dbeoa,ae.beoa_acc);
-      if (count%output==0) {
-        cout << "binding: '" << tmp.substr(52,11) << "' '" 
-             << tmp.substr(63,9) 
-             << "' " << ae.beoa << " " << ae.dbeoa << " " 
-             << ae.beoa_acc << endl;
-      }
+        tmp2=tmp.substr(72,2);
+        remove_whitespace(tmp2);
+        if (tmp2.length()>0) { ae.bdmode[0]=tmp2[0]; ae.bdmode[1]='\0'; }
+        if (tmp2.length()>1) { ae.bdmode[1]=tmp2[1]; ae.bdmode[2]='\0'; }
 	
-      tmp2=tmp.substr(73,2);
-      remove_whitespace(tmp2);
-      if (tmp2.length()>0) { ae.bdmode[0]=tmp2[0]; ae.bdmode[1]='\0'; }
-      if (tmp2.length()>1) { ae.bdmode[1]=tmp2[1]; ae.bdmode[2]='\0'; }
+        if (count%output==0) {
+          cout << "bdmode: '" << ae.bdmode << "'" << endl;
+        }
+
+        parse(tmp.substr(74,11),tmp.substr(85,9),ae.bde,ae.dbde,ae.bde_acc);
+        if (count%output==0) {
+          cout << "beta: '" << tmp.substr(74,11) << "' '" 
+               << tmp.substr(85,9) 
+               << "' " << ae.bde << " " << ae.dbde << " " 
+               << ae.bde_acc << endl;
+        }
+
+        ae.A2=o2scl::stoi(tmp.substr(96,3));
+        parse(tmp.substr(100,10),tmp.substr(110,9),ae.amass,ae.damass,
+              ae.amass_acc);
+        if (count%output==0) {
+          cout << "amass: '" << tmp.substr(100,10) << "' '" 
+               << tmp.substr(110,9) 
+               << "' " << ae.amass << " " << ae.damass << " " 
+               << ae.amass_acc << endl;
+          cout << endl;
+        }
+
+        ae.beoa=ae.be/ae.A;
+        ae.dbeoa=ae.dbe/ae.A;
+        ae.beoa_acc=nucmass_ame::intl_computed;
 	
-      if (count%output==0) {
-        cout << "bdmode: '" << ae.bdmode << "'" << endl;
-      }
+      } else if (ik<=7) {
 
-      parse(tmp.substr(75,11),tmp.substr(86,9),ae.bde,ae.dbde,ae.bde_acc);
-      if (count%output==0) {
-        cout << "beta: '" << tmp.substr(75,11) << "' '" 
-             << tmp.substr(86,9) 
-             << "' " << ae.bde << " " << ae.dbde << " " 
-             << ae.bde_acc << endl;
-      }
+        // 2003, 2012, and 2016 format
+        parse(tmp.substr(28,13),tmp.substr(41,11),ae.mass,ae.dmass,
+              ae.mass_acc);
+        if (count%output==0) {
+          cout << "mass: '" << tmp.substr(28,13) << "' '" << tmp.substr(41,11) 
+               << "' " << ae.mass << " " << ae.dmass << " " 
+               << ae.mass_acc << endl;
+        }
+        parse(tmp.substr(52,11),tmp.substr(63,9),ae.beoa,ae.dbeoa,ae.beoa_acc);
+        if (count%output==0) {
+          cout << "binding: '" << tmp.substr(52,11) << "' '" 
+               << tmp.substr(63,9) 
+               << "' " << ae.beoa << " " << ae.dbeoa << " " 
+               << ae.beoa_acc << endl;
+        }
 	
-      ae.A2=o2scl::stoi(tmp.substr(96,3));
-      parse(tmp.substr(100,12),tmp.substr(112,11),ae.amass,ae.damass,
-            ae.amass_acc);
-      if (count%output==0) {
-        cout << "amass: '" << tmp.substr(100,12) << "' '" 
-             << tmp.substr(112,11) 
-             << "' " << ae.amass << " " << ae.damass << " " 
-             << ae.amass_acc << endl;
-        cout << endl;
-      }
-
-      ae.be=ae.beoa*ae.A;
-      ae.dbe=ae.dbeoa*ae.A;
-      ae.be_acc=nucmass_ame::intl_computed;
-
-    } else if (ik<=7) {
-
-      //format    :  a1,i3,i5,i5,i5,1x,a3,a4,1x,f14.6,f12.6,f15.5,f11.5,1x,a2,f13.5,f11.5,1x,i3,1x,f13.6,f12.6
-      
-      // 2020 format
-      parse(tmp.substr(28,14),tmp.substr(42,12),ae.mass,ae.dmass,
-            ae.mass_acc);
-      if (count%output==0) {
-        cout << "mass: '" << tmp.substr(28,14) << "' '" << tmp.substr(42,12) 
-             << "' " << ae.mass << " " << ae.dmass << " " 
-             << ae.mass_acc << endl;
-      }
-      parse(tmp.substr(54,15),tmp.substr(69,11),ae.beoa,ae.dbeoa,ae.beoa_acc);
-      if (count%output==0) {
-        cout << "binding: '" << tmp.substr(54,15) << "' '" 
-             << tmp.substr(69,11) 
-             << "' " << ae.beoa << " " << ae.dbeoa << " " 
-             << ae.beoa_acc << endl;
-      }
+        tmp2=tmp.substr(73,2);
+        remove_whitespace(tmp2);
+        if (tmp2.length()>0) { ae.bdmode[0]=tmp2[0]; ae.bdmode[1]='\0'; }
+        if (tmp2.length()>1) { ae.bdmode[1]=tmp2[1]; ae.bdmode[2]='\0'; }
 	
-      tmp2=tmp.substr(81,2);
-      remove_whitespace(tmp2);
-      if (tmp2.length()>0) { ae.bdmode[0]=tmp2[0]; ae.bdmode[1]='\0'; }
-      if (tmp2.length()>1) { ae.bdmode[1]=tmp2[1]; ae.bdmode[2]='\0'; }
-	
-      if (count%output==0) {
-        cout << "bdmode: '" << ae.bdmode << "'" << endl;
-      }
+        if (count%output==0) {
+          cout << "bdmode: '" << ae.bdmode << "'" << endl;
+        }
 
-      parse(tmp.substr(83,13),tmp.substr(96,11),ae.bde,ae.dbde,ae.bde_acc);
-      if (count%output==0) {
-        cout << "beta: '" << tmp.substr(83,13) << "' '" 
-             << tmp.substr(96,11) 
-             << "' " << ae.bde << " " << ae.dbde << " " 
-             << ae.bde_acc << endl;
-      }
+        parse(tmp.substr(75,11),tmp.substr(86,9),ae.bde,ae.dbde,ae.bde_acc);
+        if (count%output==0) {
+          cout << "beta: '" << tmp.substr(75,11) << "' '" 
+               << tmp.substr(86,9) 
+               << "' " << ae.bde << " " << ae.dbde << " " 
+               << ae.bde_acc << endl;
+        }
 	
-      ae.A2=o2scl::stoi(tmp.substr(108,3));
-      parse(tmp.substr(112,13),tmp.substr(125,12),ae.amass,ae.damass,
-            ae.amass_acc);
-      if (count%output==0) {
-        cout << "amass: '" << tmp.substr(112,13) << "' '" 
-             << tmp.substr(125,12) 
-             << "' " << ae.amass << " " << ae.damass << " " 
-             << ae.amass_acc << endl;
-        cout << endl;
-      }
+        ae.A2=o2scl::stoi(tmp.substr(96,3));
+        parse(tmp.substr(100,12),tmp.substr(112,11),ae.amass,ae.damass,
+              ae.amass_acc);
+        if (count%output==0) {
+          cout << "amass: '" << tmp.substr(100,12) << "' '" 
+               << tmp.substr(112,11) 
+               << "' " << ae.amass << " " << ae.damass << " " 
+               << ae.amass_acc << endl;
+          cout << endl;
+        }
 
-      ae.be=ae.beoa*ae.A;
-      ae.dbe=ae.dbeoa*ae.A;
-      ae.be_acc=nucmass_ame::intl_computed;
+        ae.be=ae.beoa*ae.A;
+        ae.dbe=ae.dbeoa*ae.A;
+        ae.be_acc=nucmass_ame::intl_computed;
+
+      } else {
+
+        // 2020 format
+        parse(tmp.substr(28,14),tmp.substr(42,12),ae.mass,ae.dmass,
+              ae.mass_acc);
+        if (count%output==0) {
+          cout << "mass: '" << tmp.substr(28,14) << "' '" << tmp.substr(42,12) 
+               << "' " << ae.mass << " " << ae.dmass << " " 
+               << ae.mass_acc << endl;
+        }
+        parse(tmp.substr(54,15),tmp.substr(69,11),ae.beoa,ae.dbeoa,ae.beoa_acc);
+        if (count%output==0) {
+          cout << "binding: '" << tmp.substr(54,15) << "' '" 
+               << tmp.substr(69,11) 
+               << "' " << ae.beoa << " " << ae.dbeoa << " " 
+               << ae.beoa_acc << endl;
+        }
+	
+        tmp2=tmp.substr(81,2);
+        remove_whitespace(tmp2);
+        if (tmp2.length()>0) { ae.bdmode[0]=tmp2[0]; ae.bdmode[1]='\0'; }
+        if (tmp2.length()>1) { ae.bdmode[1]=tmp2[1]; ae.bdmode[2]='\0'; }
+	
+        if (count%output==0) {
+          cout << "bdmode: '" << ae.bdmode << "'" << endl;
+        }
+
+        parse(tmp.substr(83,13),tmp.substr(96,11),ae.bde,ae.dbde,ae.bde_acc);
+        if (count%output==0) {
+          cout << "beta: '" << tmp.substr(83,13) << "' '" 
+               << tmp.substr(96,11) 
+               << "' " << ae.bde << " " << ae.dbde << " " 
+               << ae.bde_acc << endl;
+        }
+	
+        ae.A2=o2scl::stoi(tmp.substr(108,3));
+        parse(tmp.substr(112,13),tmp.substr(125,12),ae.amass,ae.damass,
+              ae.amass_acc);
+        if (count%output==0) {
+          cout << "amass: '" << tmp.substr(112,13) << "' '" 
+               << tmp.substr(125,12) 
+               << "' " << ae.amass << " " << ae.damass << " " 
+               << ae.amass_acc << endl;
+          cout << endl;
+        }
+
+        ae.be=ae.beoa*ae.A;
+        ae.dbe=ae.dbeoa*ae.A;
+        ae.be_acc=nucmass_ame::intl_computed;
+
+      }
 
     }
 
@@ -459,7 +539,7 @@ int main(int argc, char *argv[]) {
   cout << "count: " << count << endl;
 
   // Directly compare the new file to the o2scl version
-  if (ik<7) {
+  if (true) {
     
     cout << "Checking: " << endl;
     nucmass_ame ame_o2scl;
@@ -471,6 +551,8 @@ int main(int argc, char *argv[]) {
     else if (ik==4) stmp2="12";
     else if (ik==5) stmp2="16";
     else if (ik==6) stmp2="16round";
+    else if (ik==8) stmp2="20";
+    else if (ik==9) stmp2="20round";
     ame_load(ame_o2scl,stmp2,false);
     
     for(size_t i=0;i<list.size();i++) {
