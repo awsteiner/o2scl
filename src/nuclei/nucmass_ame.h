@@ -151,6 +151,8 @@ namespace o2scl {
     static const int not_calculable=2;
     /// Value computed by \o2
     static const int intl_computed=3;
+    /// Value computed by \o2
+    static const int unc_less_than_half_eV=4;
     //@}
 
     /** \brief Atomic mass entry structure

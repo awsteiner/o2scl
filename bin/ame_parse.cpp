@@ -95,12 +95,13 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
 
-void to_char(std::string s, char x[], int len) {
+void to_char(std::string s, char *x, int len) {
   if (((int)s.length())+1>len) {
     cerr << "Not enough space." << endl;
     cerr << s << endl;
     exit(-1);
   }
+  remove_whitespace(s);
   for(size_t j=0;j<s.length();j++) {
     x[j]=s[j];
   }
@@ -177,10 +178,14 @@ int parse(string s1, string s2, double &d1, double &d2, int &acc) {
     cerr << "Failed to convert: '" << s1 << "'." << endl;
     exit(-1);
   }
-  int ret2=o2scl::stod_nothrow(s2,d2);
-  if (ret2!=0) {
-    cerr << "Failed to convert: '" << s2 << "'." << endl;
-    exit(-1);
+  if (s2.find('a')!=string::npos) {
+    acc=nucmass_ame::unc_less_than_half_eV;
+  } else {
+    int ret2=o2scl::stod_nothrow(s2,d2);
+    if (ret2!=0) {
+      cerr << "Failed to convert: '" << s2 << "'." << endl;
+      exit(-1);
+    }
   }
   return 0;
 }
@@ -214,18 +219,24 @@ int main(int argc, char *argv[]) {
                             "nubase20.o2"};
 		      
   if (argc<3) {
-    cout << "Usage: ame_parse <dir> <index>, where <dir> is the\n"
-	 << "directory containing the original data files and \n"
-         << "<index> is the index from 0 to 10.\n" << endl;
+    cout << "Usage: ame_parse <dir> <index>, where <dir> is the "
+	 << "directory containing the\noriginal data files (inside "
+         << "their respective subdirectories and <index> is \n"
+         << "the index from 0 to 10.\n" << endl;
     cout << "ix ";
-    cout.width(22);
+    cout.width(27);
     cout << "input filename" << " ";
     cout.width(15);
     cout << "output file" << endl;
+    cout << "-- ";
+    cout.width(27);
+    cout << "--------------" << " ";
+    cout.width(15);
+    cout << "-----------" << endl;
     for(size_t i=0;i<n_files;i++) {
       cout.width(2);
       cout << i << " ";
-      cout.width(22);
+      cout.width(27);
       cout << fnames[i] << " ";
       cout.width(15);
       cout << outnames[i] << endl;
@@ -240,7 +251,8 @@ int main(int argc, char *argv[]) {
   int count=0;
 
   // Output every 1000 lines
-  const size_t output=1000;
+  //const size_t output=1000;
+  const size_t output=1;
 
   /*
     if (true) {
@@ -269,253 +281,114 @@ int main(int argc, char *argv[]) {
   system((((string)"rm -f ")+outnames[ik]).c_str());
   
   vector<nucmass_ame::entry> list;
-  
-  for(size_t i=0;i<39;i++) getline(fin,tmp);
+
+  if (ik==8) {
+    for(size_t i=0;i<36;i++) getline(fin,tmp);
+  } else if (ik==9) {
+    for(size_t i=0;i<34;i++) getline(fin,tmp);
+  } else {
+    for(size_t i=0;i<39;i++) getline(fin,tmp);
+  }
   cout << "Filename: " << fname << endl;
   cout << endl;
     
   nucmass_ame::entry ae;
     
   while (getline(fin,tmp)) {
-
-    if (ik==8) {
-
-      vector<string> entries;
+    
+    vector<string> entries;
+    
+    if (ik==0 || ik==1) {
+      
+      // 1995 format
+      parse_fortran_format(tmp,((string)"a1,i3,i5,i5,i5,1x,a3,a4,")+
+                           "1x,f11.3,f9.3,f11.3,f9.3,4x,a2,"+
+                           "f11.3,f9.3,2x,i3,1x,f10.3,f9.3",entries);
+        
+    } else if (ik==2 || ik==3) {
+        
+      // 2003 format
+      parse_fortran_format(tmp,((string)"a1,i3,i5,i5,i5,1x,a3,a4,")+
+                           "1x,f13.5,f11.5,f11.3,f9.3,1x,a2,"+
+                           "f11.3,f9.3,1x,i3,1x,f12.5,f11.3,1x",entries);
+        
+    } else if (ik==4 || ik==5 || ik==6) {
+        
+      // 2012 and 2016 format
+      parse_fortran_format(tmp,((string)"a1,i3,i5,i5,i5,1x,a3,a4,")+
+                           "1x,f13.5,f11.5,f11.3,f9.3,1x,a2,"+
+                           "f11.3,f9.3,1x,i3,1x,f12.5,f11.5",entries);
+        
+        
+    } else if (ik==7) {
+        
+    } else if (ik==8) {
+        
+      // 2020 experimental format
       parse_fortran_format(tmp,((string)"a1,i3,i5,i5,i5,1x,a3,a4,")+
                            "1x,f14.6,f12.6,f15.5,f11.5,1x,a2,"+
                            "f13.5,f11.5,1x,i3,1x,f13.6,f12.6",entries);
+        
+    } else if (ik==9) {
+        
+      // 2020 recommended format
+      parse_fortran_format(tmp,((string)"a1,i3,i5,i5,i5,1x,a3,a4,")+
+                           "1x,f13.5,f11.5,f11.3,f9.3,1x,a2,"+
+                           "f11.3,f9.3,1x,i3,1x,f12.5,f11.5",entries);
+        
+    } else if (ik==10) {
+        
+      // 2020 Nubase format
+      parse_fortran_format(tmp,((string)"a3,1x,a4,3x,a5,a1,1x,f13.6,")+
+                           "f11.6,f12.6,f11.6,a2,a1,a1,f9.4,"+
+                           "a2,1x,a7,a14,a2,15x,a4,a90",entries);
+        
+    }
       
-      // We skip the line feed character
-      ae.NMZ=o2scl::stoi(entries[1]);
+    if (ik<7 || ik==8 || ik==9) {
+        
+      // The line feed character is not read
+
+      // Read N and Z first to compute NMZ and A
       ae.N=o2scl::stoi(entries[2]);
       ae.Z=o2scl::stoi(entries[3]);
-      ae.A=o2scl::stoi(entries[4]);
+      if (ik==3 || ik==6 || ik==9) {
+        ae.NMZ=ae.N-ae.Z;
+        ae.A=ae.N+ae.Z;
+      } else {
+        ae.NMZ=o2scl::stoi(entries[1]);
+        ae.A=o2scl::stoi(entries[4]);
+      }
       to_char(entries[5],ae.el,4);
       to_char(entries[6],ae.orig,5);
       parse(entries[7],entries[8],ae.mass,ae.dmass,
             ae.mass_acc);
-      parse(entries[9],entries[10],ae.beoa,ae.dbeoa,
-            ae.beoa_acc);
+        
+      if (ik<2) {
+        parse(entries[9],entries[10],ae.be,ae.dbe,
+              ae.be_acc);
+        // The 1995 files tabulate the binding energy
+        // rather than the binding energy per nucleon
+        ae.beoa=ae.be/ae.A;
+        ae.dbeoa=ae.dbe/ae.A;
+        ae.beoa_acc=nucmass_ame::intl_computed;
+      } else {
+        parse(entries[9],entries[10],ae.beoa,ae.dbeoa,
+              ae.beoa_acc);
+        ae.be=ae.beoa*ae.A;
+        ae.dbe=ae.dbeoa*ae.A;
+        ae.be_acc=nucmass_ame::intl_computed;
+      }
+        
       to_char(entries[11],ae.bdmode,3);
       parse(entries[12],entries[13],ae.bde,ae.dbde,ae.bde_acc);
 	
       ae.A2=o2scl::stoi(entries[14]);
       parse(entries[15],entries[16],ae.amass,ae.damass,
             ae.amass_acc);
-      
-    } else {
-    
-      ae.el[0]='\0';
-      ae.orig[0]='\0';
-      ae.bdmode[0]='\0';
-
-      ae.N=o2scl::stoi(tmp.substr(4,5));
-      ae.Z=o2scl::stoi(tmp.substr(9,5));
-      if (ik!=3 && ik!=6 && ik!=9) {
-        ae.NMZ=o2scl::stoi(tmp.substr(1,3));
-        ae.A=o2scl::stoi(tmp.substr(14,5));
-        if (ae.NMZ!=ae.N-ae.Z) {
-          cout << "N-Z not correct. N=" << ae.N << " Z=" << ae.Z << endl;
-          exit(-1);
-        }
-        if (ae.A!=ae.N+ae.Z) {
-          cout << "N+Z not correct. N=" << ae.N << " Z=" << ae.Z << endl;
-          exit(-1);
-        }
-      } else {
-        ae.NMZ=ae.N-ae.Z;
-        ae.A=ae.N+ae.Z;
-      }
-
-      if (count%output==0) {
-        cout << "Z, N, A, N-Z: ";
-        cout.width(3);
-        cout << ae.Z << " ";
-        cout.width(3);
-        cout << ae.N << " ";
-        cout.width(3);
-        cout << ae.A << " ";
-        cout.width(3);
-        cout << ae.NMZ << endl;
-      }
-      
-      tmp2=tmp.substr(20,3);
-      remove_whitespace(tmp2);
-      if (tmp2.length()>0) { ae.el[0]=tmp2[0]; ae.el[1]='\0'; }
-      if (tmp2.length()>1) { ae.el[1]=tmp2[1]; ae.el[2]='\0'; }
-      if (tmp2.length()>2) { ae.el[1]=tmp2[2]; ae.el[3]='\0'; }
-      
-      if ((ik<2 && ae.Z<103) || (ik>=2 && ik<4 && ae.Z<110) || 
-          (ik==4 && ae.Z<113)) {
-        if (((string)ae.el)!=nmi.Ztoel(ae.Z)) {
-          cout << "Element name incorrect: " << ae.el << " " << ae.Z << endl;
-          exit(-1);
-        }
-      }
-
-      tmp2=tmp.substr(23,4);
-      remove_whitespace(tmp2);
-      if (tmp2.length()>0) { ae.orig[0]=tmp2[0]; ae.orig[1]='\0'; }
-      if (tmp2.length()>1) { ae.orig[1]=tmp2[1]; ae.orig[2]='\0'; }
-      if (tmp2.length()>2) { ae.orig[2]=tmp2[2]; ae.orig[3]='\0'; }
-      if (tmp2.length()>3) { ae.orig[3]=tmp2[3]; ae.orig[4]='\0'; }
-
-      if (count%output==0) {
-        cout << "el,orig: '" << ae.el << "' '" << ae.orig << "'" << endl;
-      }
-
-      if (ik<2) {
-	
-        // 1995 format
-        parse(tmp.substr(28,11),tmp.substr(39,9),ae.mass,ae.dmass,ae.mass_acc);
-        if (count%output==0) {
-          cout << "mass: '" << tmp.substr(28,11) << "' '" << tmp.substr(39,9) 
-               << "' " << ae.mass << " " << ae.dmass << " " 
-               << ae.mass_acc << endl;
-        }
-        parse(tmp.substr(48,11),tmp.substr(59,9),ae.be,ae.dbe,ae.be_acc);
-        if (count%output==0) {
-          cout << "binding: '" << tmp.substr(48,11) << "' '" 
-               << tmp.substr(59,9) 
-               << "' " << ae.beoa << " " << ae.dbeoa << " " 
-               << ae.beoa_acc << endl;
-        }
-	
-        tmp2=tmp.substr(72,2);
-        remove_whitespace(tmp2);
-        if (tmp2.length()>0) { ae.bdmode[0]=tmp2[0]; ae.bdmode[1]='\0'; }
-        if (tmp2.length()>1) { ae.bdmode[1]=tmp2[1]; ae.bdmode[2]='\0'; }
-	
-        if (count%output==0) {
-          cout << "bdmode: '" << ae.bdmode << "'" << endl;
-        }
-
-        parse(tmp.substr(74,11),tmp.substr(85,9),ae.bde,ae.dbde,ae.bde_acc);
-        if (count%output==0) {
-          cout << "beta: '" << tmp.substr(74,11) << "' '" 
-               << tmp.substr(85,9) 
-               << "' " << ae.bde << " " << ae.dbde << " " 
-               << ae.bde_acc << endl;
-        }
-
-        ae.A2=o2scl::stoi(tmp.substr(96,3));
-        parse(tmp.substr(100,10),tmp.substr(110,9),ae.amass,ae.damass,
-              ae.amass_acc);
-        if (count%output==0) {
-          cout << "amass: '" << tmp.substr(100,10) << "' '" 
-               << tmp.substr(110,9) 
-               << "' " << ae.amass << " " << ae.damass << " " 
-               << ae.amass_acc << endl;
-          cout << endl;
-        }
-
-        ae.beoa=ae.be/ae.A;
-        ae.dbeoa=ae.dbe/ae.A;
-        ae.beoa_acc=nucmass_ame::intl_computed;
-	
-      } else if (ik<=7) {
-
-        // 2003, 2012, and 2016 format
-        parse(tmp.substr(28,13),tmp.substr(41,11),ae.mass,ae.dmass,
-              ae.mass_acc);
-        if (count%output==0) {
-          cout << "mass: '" << tmp.substr(28,13) << "' '" << tmp.substr(41,11) 
-               << "' " << ae.mass << " " << ae.dmass << " " 
-               << ae.mass_acc << endl;
-        }
-        parse(tmp.substr(52,11),tmp.substr(63,9),ae.beoa,ae.dbeoa,ae.beoa_acc);
-        if (count%output==0) {
-          cout << "binding: '" << tmp.substr(52,11) << "' '" 
-               << tmp.substr(63,9) 
-               << "' " << ae.beoa << " " << ae.dbeoa << " " 
-               << ae.beoa_acc << endl;
-        }
-	
-        tmp2=tmp.substr(73,2);
-        remove_whitespace(tmp2);
-        if (tmp2.length()>0) { ae.bdmode[0]=tmp2[0]; ae.bdmode[1]='\0'; }
-        if (tmp2.length()>1) { ae.bdmode[1]=tmp2[1]; ae.bdmode[2]='\0'; }
-	
-        if (count%output==0) {
-          cout << "bdmode: '" << ae.bdmode << "'" << endl;
-        }
-
-        parse(tmp.substr(75,11),tmp.substr(86,9),ae.bde,ae.dbde,ae.bde_acc);
-        if (count%output==0) {
-          cout << "beta: '" << tmp.substr(75,11) << "' '" 
-               << tmp.substr(86,9) 
-               << "' " << ae.bde << " " << ae.dbde << " " 
-               << ae.bde_acc << endl;
-        }
-	
-        ae.A2=o2scl::stoi(tmp.substr(96,3));
-        parse(tmp.substr(100,12),tmp.substr(112,11),ae.amass,ae.damass,
-              ae.amass_acc);
-        if (count%output==0) {
-          cout << "amass: '" << tmp.substr(100,12) << "' '" 
-               << tmp.substr(112,11) 
-               << "' " << ae.amass << " " << ae.damass << " " 
-               << ae.amass_acc << endl;
-          cout << endl;
-        }
-
-        ae.be=ae.beoa*ae.A;
-        ae.dbe=ae.dbeoa*ae.A;
-        ae.be_acc=nucmass_ame::intl_computed;
-
-      } else {
-
-        // 2020 format
-        parse(tmp.substr(28,14),tmp.substr(42,12),ae.mass,ae.dmass,
-              ae.mass_acc);
-        if (count%output==0) {
-          cout << "mass: '" << tmp.substr(28,14) << "' '" << tmp.substr(42,12) 
-               << "' " << ae.mass << " " << ae.dmass << " " 
-               << ae.mass_acc << endl;
-        }
-        parse(tmp.substr(54,15),tmp.substr(69,11),ae.beoa,ae.dbeoa,ae.beoa_acc);
-        if (count%output==0) {
-          cout << "binding: '" << tmp.substr(54,15) << "' '" 
-               << tmp.substr(69,11) 
-               << "' " << ae.beoa << " " << ae.dbeoa << " " 
-               << ae.beoa_acc << endl;
-        }
-	
-        tmp2=tmp.substr(81,2);
-        remove_whitespace(tmp2);
-        if (tmp2.length()>0) { ae.bdmode[0]=tmp2[0]; ae.bdmode[1]='\0'; }
-        if (tmp2.length()>1) { ae.bdmode[1]=tmp2[1]; ae.bdmode[2]='\0'; }
-	
-        if (count%output==0) {
-          cout << "bdmode: '" << ae.bdmode << "'" << endl;
-        }
-
-        parse(tmp.substr(83,13),tmp.substr(96,11),ae.bde,ae.dbde,ae.bde_acc);
-        if (count%output==0) {
-          cout << "beta: '" << tmp.substr(83,13) << "' '" 
-               << tmp.substr(96,11) 
-               << "' " << ae.bde << " " << ae.dbde << " " 
-               << ae.bde_acc << endl;
-        }
-	
-        ae.A2=o2scl::stoi(tmp.substr(108,3));
-        parse(tmp.substr(112,13),tmp.substr(125,12),ae.amass,ae.damass,
-              ae.amass_acc);
-        if (count%output==0) {
-          cout << "amass: '" << tmp.substr(112,13) << "' '" 
-               << tmp.substr(125,12) 
-               << "' " << ae.amass << " " << ae.damass << " " 
-               << ae.amass_acc << endl;
-          cout << endl;
-        }
-
-        ae.be=ae.beoa*ae.A;
-        ae.dbe=ae.dbeoa*ae.A;
-        ae.be_acc=nucmass_ame::intl_computed;
-
-      }
-
+          
     }
+      
 
     list.push_back(ae);
 
