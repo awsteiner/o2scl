@@ -481,6 +481,7 @@ Namespace: o2scl function: rewrap_ignore_vt100
 Namespace:  function: rewrap_color
 Namespace: o2scl function: rewrap_keep_endlines
 Namespace: o2scl function: string_to_uint_list
+Namespace: o2scl function: parse_fortran_format
 Namespace:  function: ix_index
 Namespace:  function: ix_fixed
 Namespace:  function: ix_sum

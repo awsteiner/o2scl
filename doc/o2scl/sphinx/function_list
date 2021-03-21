@@ -108,6 +108,7 @@
     <member refid="namespaceo2scl_1a1c4122906805198bc4121294614f7246" kind="function"><name>rewrap_color</name></member>
     <member refid="namespaceo2scl_1a56c706d99cb9fe6d07f1cf307dc3b646" kind="function"><name>rewrap_keep_endlines</name></member>
     <member refid="namespaceo2scl_1ac567fa955cd7ab7df93e03b53257520e" kind="function"><name>string_to_uint_list</name></member>
+    <member refid="namespaceo2scl_1adc050b23cb5ae89cea44b86f970f180d" kind="function"><name>parse_fortran_format</name></member>
     <member refid="namespaceo2scl_1a5f94ac3f765908f39737a5a4854b0f32" kind="function"><name>ix_index</name></member>
     <member refid="namespaceo2scl_1ad5bfa1e14552179c263660390ece203a" kind="function"><name>ix_fixed</name></member>
     <member refid="namespaceo2scl_1a076963b0e5331f34bdccfb380086062a" kind="function"><name>ix_sum</name></member>
