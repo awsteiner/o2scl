@@ -337,6 +337,12 @@ namespace o2scl {
   }
   //@}
 
+  /** \brief Parse \c line into \c entries using the FORTRAN
+      format string \c format
+   */
+  void parse_fortran_format(std::string line, std::string format,
+                            std::vector<std::string> &entries);
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

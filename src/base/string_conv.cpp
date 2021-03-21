@@ -562,3 +562,45 @@ void o2scl::rewrap_keep_endlines(std::string str,
   return;
 }
 
+void o2scl::parse_fortran_format(std::string line,
+                                 std::string format,
+                                 vector<string> &entries) {
+
+  bool debug=false;
+  
+  entries.clear();
+  vector<string> format_list;
+  split_string_delim(format,format_list,',');
+  int index=0;
+  for(size_t j=0;j<format_list.size();j++) {
+    // For entries not ending in 'x'
+    int size;
+    if (format_list[j][format_list[j].length()-1]!='x') {
+      if (format_list[j].find('.')!=std::string::npos) {
+        // Get string from second character to the '.'
+        size=o2scl::stoi(format_list[j].substr
+                         (1,format_list[j].find('.')-1));
+      } else {
+        // Remove the character at the front and convert
+        // to an integer
+        size=o2scl::stoi(format_list[j].substr
+                         (1,format_list[j].length()-1));
+      }
+      entries.push_back(line.substr(index,size));
+    } else {
+      // Remove the 'x' at the end and convert to an integer
+      size=o2scl::stoi(format_list[j].substr
+                       (0,format_list[j].length()-1));
+    }
+    if (debug) {
+      cout << "format_list[j],size: " << format_list[j] << " "
+           << size << " " << entries.size() << " " << index << endl;
+      char ch;
+      cin >> ch;
+    }
+    index+=size;
+  }
+  
+  return;
+}
+

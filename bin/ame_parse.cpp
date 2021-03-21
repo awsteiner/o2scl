@@ -109,57 +109,20 @@ void to_char(std::string s, char *x, int len) {
   return;
 }
 
-void parse_fortran_format(std::string line,
-                          std::string format,
-                          vector<string> &entries) {
-
-  bool debug=false;
-  
-  entries.clear();
-  vector<string> format_list;
-  split_string_delim(format,format_list,',');
-  int index=0;
-  for(size_t j=0;j<format_list.size();j++) {
-    // For entries not ending in 'x'
-    int size;
-    if (format_list[j][format_list[j].length()-1]!='x') {
-      if (format_list[j].find('.')!=std::string::npos) {
-        // Get string from second character to the '.'
-        size=o2scl::stoi(format_list[j].substr
-                         (1,format_list[j].find('.')-1));
-      } else {
-        // Remove the character at the front and convert
-        // to an integer
-        size=o2scl::stoi(format_list[j].substr
-                         (1,format_list[j].length()-1));
-      }
-      entries.push_back(line.substr(index,size));
-    } else {
-      // Remove the 'x' at the end and convert to an integer
-      size=o2scl::stoi(format_list[j].substr
-                       (0,format_list[j].length()-1));
-    }
-    if (debug) {
-      cout << "format_list[j],size: " << format_list[j] << " "
-           << size << " " << entries.size() << " " << index << endl;
-      char ch;
-      cin >> ch;
-    }
-    index+=size;
-  }
-  
-  return;
-}
-
 /** \brief Parse strings \c s1 and \c s2 from the AME into a value,
     \c d1, an uncertainty, \c d2, and an accuracy flag, \c acc
     
     - If string \c s1 has an asterisk, then \c d1 and \c d2 are
     set to zero and \c acc is set to \ref nucmass_ame::not_calculable.
+    - If string \c s2 contains the letter 'a', then \c d2 is set to
+    zero and \c ass is set to \ref nucmass_ame::unc_less_than_half_eV.
+    The value of d1 is computed from <tt>stod_nothrow()</tt>.
     - Otherwise, if string \c s1 has a pound sign, then \c acc is set
     to \ref nucmass_ame::estimated, otherwise, \c acc is set to \ref
     nucmass_ame::measured. The values of \c d1 and \c d2 are computed
-    from \c s1 and \c s2 using <tt>stod()</tt>.
+    from \c s1 and \c s2 using <tt>stod_nothrow()</tt>.
+    - If either of the stod_nothrow() calls returns a non-zero value,
+    then the error handler is called.
 */
 int parse(string s1, string s2, double &d1, double &d2, int &acc) {
   if (s1.find('*')!=string::npos) {
@@ -176,15 +139,18 @@ int parse(string s1, string s2, double &d1, double &d2, int &acc) {
   int ret1=o2scl::stod_nothrow(s1,d1);
   if (ret1!=0) {
     cerr << "Failed to convert: '" << s1 << "'." << endl;
-    exit(-1);
+    O2SCL_ERR("Failed to convert first string in parse().",
+              o2scl::exc_einval);
   }
   if (s2.find('a')!=string::npos) {
+    d2=0.0;
     acc=nucmass_ame::unc_less_than_half_eV;
   } else {
     int ret2=o2scl::stod_nothrow(s2,d2);
     if (ret2!=0) {
       cerr << "Failed to convert: '" << s2 << "'." << endl;
-      exit(-1);
+      O2SCL_ERR("Failed to convert second string in parse().",
+                o2scl::exc_einval);
     }
   }
   return 0;
