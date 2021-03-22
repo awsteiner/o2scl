@@ -311,6 +311,8 @@ namespace o2scl {
     static const int intl_computed=3;
     /// Value computed by \o2
     static const int unc_less_than_half_eV=4;
+    /// Value computed by \o2
+    static const int blank=5;
     //@}
 
     /** \brief Data structure for a row in the NUBASE file
@@ -332,10 +334,14 @@ namespace o2scl {
       double mass;
       /// Mass excess uncertainty (in keV)
       double dmass;
+      /// 
+      int mass_acc;
       /// Excitation energy
       double exc_energy;
       /// Excitation energy uncertainty
       double dexc_energy;
+      /// 
+      int exc_energy_acc;
       /// Excitation energy origin
       char origin[3];
       /// Isomer uncertainty
@@ -497,6 +503,12 @@ namespace o2scl {
     */
     int parse(std::string s1, std::string s2, double &d1, double &d2,
               int &acc) {
+      if (count_words(s1)==0) {
+        d1=0.0;
+        d2=0.0;
+        acc=nucmass_ame2::blank;
+        return 0;
+      }
       if (s1.find('*')!=std::string::npos) {
         d1=0.0;
         d2=0.0;

@@ -457,6 +457,7 @@ AC_CONFIG_FILES([Makefile
                  data/o2scl/Makefile
                  data/o2scl/nucmass/Makefile
                  data/o2scl/nucmass/frib_mex/Makefile
+                 data/o2scl/nucmass/ame20/Makefile
                  data/o2scl/rmfdata/Makefile
                  data/o2scl/skdata/Makefile
 		 examples/Makefile

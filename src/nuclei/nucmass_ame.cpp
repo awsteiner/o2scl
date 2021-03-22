@@ -404,21 +404,27 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
   int count=0;
 
   mass.clear();
+
+  cout << "Hx: " << filename << endl;
+
+  if (model=="20") {
+    for(size_t i=0;i<36;i++) getline(fin,line);
+  } else if (model=="20round") {
+    for(size_t i=0;i<34;i++) getline(fin,line);
+  }
   
   while (getline(fin,line)) {
+    cout << "Here: " << line << " " << count << endl;
 
     vector<string> entries;
     
     if (model=="20") {
-      for(size_t i=0;i<36;i++) getline(fin,line);
       
       parse_fortran_format(line,((string)"a1,i3,i5,i5,i5,1x,a3,a4,")+
                            "1x,f14.6,f12.6,f15.5,f11.5,1x,a2,"+
                            "f13.5,f11.5,1x,i3,1x,f13.6,f12.6",entries);
       
     } else if (model=="20round") {
-      
-      for(size_t i=0;i<34;i++) getline(fin,line);
       
     }
 
@@ -452,7 +458,7 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
       ae.dbe=ae.dbeoa*ae.A;
       ae.be_acc=nucmass_ame::intl_computed;
     }
-    
+
     string_to_char_array(entries[11],ae.bdmode,3);
     parse(entries[12],entries[13],ae.bde,ae.dbde,ae.bde_acc);
     
@@ -467,6 +473,7 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
   }
 
   cout << "count: " << count << endl;
+  n=count;
 
   last=mass.size()/2;
 
@@ -478,7 +485,6 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
       "M. Wang, W. J. Huang, F. G. Kondev, "+
       "G. Audi, and S. Naimi, "
       "Chin. Phys. C, 41 (2021) 030003.";
-    
   }
 
   fin.close();
@@ -488,14 +494,24 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
     fin.open(nubase_file.c_str());
     
     count=0;
+
+    if (model=="20") {
+      for(size_t i=0;i<25;i++) getline(fin,line);
+    }
     
     while (getline(fin,line)) {
+      cout << "Here2: " << line << endl;
 
       vector<string> entries;
       
       parse_fortran_format(line,((string)"a3,1x,a4,3x,a5,a1,1x,f13.6,")+
                            "f11.6,f12.6,f11.6,a2,a1,a1,f9.4,"+
                            "a2,1x,a7,a14,a2,10x,a4,1x,a90",entries);
+
+      cout << "Entries:" << endl;
+      for(size_t k=0;k<entries.size();k++) {
+        cout << k << " '" << entries[k] << "'." << endl;
+      }
 
       int A=o2scl::stoi(entries[0]);
       int Z;
@@ -518,18 +534,18 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
       }
 
       entry_nubase_20 enu20;
-      if (entries[1].length()>3) {
+      if (entries[1].length()>3 && entries[1][3]!=' ') {
         enu20.Znote=entries[1][3];
       } else {
         enu20.Znote='\0';
       }
+      cout << "Znote: " << ((int)enu20.Znote) << endl;
       string_to_char_array(entries[2],enu20.A_el,6);
-      enu20.mass=o2scl::stod(entries[3]);
       enu20.isomer=entries[4][0];
-      enu20.mass=o2scl::stod(entries[5]);
-      enu20.dmass=o2scl::stod(entries[6]);
-      enu20.exc_energy=o2scl::stod(entries[7]);
-      enu20.dexc_energy=o2scl::stod(entries[8]);
+      parse(entries[5],entries[6],enu20.mass,enu20.dmass,
+            enu20.mass_acc);
+      parse(entries[7],entries[8],enu20.exc_energy,enu20.dexc_energy,
+            enu20.exc_energy_acc);
       string_to_char_array(entries[9],enu20.origin,3);
       enu20.isomer_unc=entries[10][0];
       enu20.isomer_inv=entries[11][0];

@@ -21,7 +21,7 @@ HEADER_VAR = nucmass.h nucdist.h nucleus.h nucmass_fit.h \
 
 TEST_VAR = nucmass.scr nucdist.scr nucleus.scr nucmass_fit.scr \
 	reaction_lib.scr hdf_nucmass_io.scr nucmass_frdm.scr \
-	nucmass_dz.scr nucmass_densmat.scr nucmass_gen.scr
+	nucmass_dz.scr nucmass_densmat.scr nucmass_gen.scr nucmass_ame.scr
 
 else
 
@@ -122,7 +122,7 @@ pkginclude_HEADERS = $(HEADER_VAR)
 
 check_PROGRAMS = nucmass_ts nucdist_ts nucleus_ts \
 	nucmass_fit_ts reaction_lib_ts hdf_nucmass_io_ts nucmass_frdm_ts \
-	nucmass_dz_ts nucmass_densmat_ts nucmass_gen_ts
+	nucmass_dz_ts nucmass_densmat_ts nucmass_gen_ts nucmass_ame_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -141,6 +141,7 @@ nucleus_ts_LDADD = $(VCHECK_LIBS)
 nucmass_fit_ts_LDADD = $(VCHECK_LIBS)
 nucmass_frdm_ts_LDADD = $(VCHECK_LIBS)
 nucmass_gen_ts_LDADD = $(VCHECK_LIBS)
+nucmass_ame_ts_LDADD = $(VCHECK_LIBS)
 nucmass_dz_ts_LDADD = $(VCHECK_LIBS)
 nucmass_densmat_ts_LDADD = $(VCHECK_LIBS)
 
@@ -153,6 +154,7 @@ nucleus_ts_LDFLAGS = -fopenmp
 nucmass_fit_ts_LDFLAGS = -fopenmp
 nucmass_frdm_ts_LDFLAGS = -fopenmp
 nucmass_gen_ts_LDFLAGS = -fopenmp
+nucmass_ame_ts_LDFLAGS = -fopenmp
 nucmass_dz_ts_LDFLAGS = -fopenmp
 nucmass_densmat_ts_LDFLAGS = -fopenmp
 else
@@ -164,6 +166,7 @@ nucleus_ts_LDFLAGS =
 nucmass_fit_ts_LDFLAGS =  
 nucmass_frdm_ts_LDFLAGS =  
 nucmass_gen_ts_LDFLAGS =  
+nucmass_ame_ts_LDFLAGS =  
 nucmass_dz_ts_LDFLAGS =  
 nucmass_densmat_ts_LDFLAGS =  
 endif
@@ -184,6 +187,8 @@ nucmass_frdm.scr: nucmass_frdm_ts$(EXEEXT)
 	./nucmass_frdm_ts$(EXEEXT) > nucmass_frdm.scr
 nucmass_gen.scr: nucmass_gen_ts$(EXEEXT)
 	./nucmass_gen_ts$(EXEEXT) > nucmass_gen.scr
+nucmass_ame.scr: nucmass_ame_ts$(EXEEXT)
+	./nucmass_ame_ts$(EXEEXT) > nucmass_ame.scr
 nucmass_dz.scr: nucmass_dz_ts$(EXEEXT)
 	./nucmass_dz_ts$(EXEEXT) > nucmass_dz.scr
 nucmass_densmat.scr: nucmass_densmat_ts$(EXEEXT)
@@ -197,6 +202,7 @@ nucleus_ts_SOURCES = nucleus_ts.cpp
 nucmass_fit_ts_SOURCES = nucmass_fit_ts.cpp
 nucmass_frdm_ts_SOURCES = nucmass_frdm_ts.cpp
 nucmass_gen_ts_SOURCES = nucmass_gen_ts.cpp
+nucmass_ame_ts_SOURCES = nucmass_ame_ts.cpp
 nucmass_dz_ts_SOURCES = nucmass_dz_ts.cpp
 nucmass_densmat_ts_SOURCES = nucmass_densmat_ts.cpp
 
