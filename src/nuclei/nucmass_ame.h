@@ -237,50 +237,6 @@ namespace o2scl {
 
     };
     
-    struct entry_nubase_20 {
-
-    public:
-      
-      /// Mass number
-      int A;
-      /// Proton number
-      int Z;
-      /// Note
-      char Znote;
-      /// Element name
-      char A_el[5];
-      /// Type field (isomer, resonance, etc.)
-      char isomer;
-      /// Mass excess (in keV)
-      double mass;
-      /// Mass excess uncertainty (in keV)
-      double dmass;
-      /// Excitation energy
-      double exc_energy;
-      /// Excitation energy uncertainty
-      double dexc_eenergy;
-      /// Excitation energy origin
-      char origin[2];
-      /// Isomer uncertainty
-      char isomer_unc;
-      /// Isomer inversion
-      char isomer_inv;
-      /// Half-life
-      double hlife;
-      /// Half-life unit
-      char hl_unit[2];
-      /// Half-life uncertainty
-      double dhlife;
-      /// Spin and parity
-      char spinp[14];
-      /// Isospin multiplet
-      int ENSDF_year;
-      /// Year of discovery
-      int discovery;
-      /// Decay mode and intensity
-      char decay_intensity[90];
-    };
-    
     /// Return the type, \c "nucmass_ame".
     virtual const char *type() { return "nucmass_ame"; }
 
@@ -326,6 +282,297 @@ namespace o2scl {
 	\endcomment
      */
     entry *mass;
+    
+    /// The last table index for caching
+    int last;
+    
+#endif
+
+  };
+
+  class nucmass_ame2 : public nucmass_table {
+    
+  public:
+
+    /// Create an AME mass object
+    nucmass_ame2();
+
+    virtual ~nucmass_ame2();
+    
+    /// \name Accuracy modes
+    //@{
+    /// Measured value from source data
+    static const int measured=0;
+    /// Value estimated in source data
+    static const int estimated=1;
+    /// Value listed in data as not calculable
+    static const int not_calculable=2;
+    /// Value computed by \o2
+    static const int intl_computed=3;
+    /// Value computed by \o2
+    static const int unc_less_than_half_eV=4;
+    //@}
+
+    /** \brief Data structure for a row in the NUBASE file
+
+        \note All character arrays have space for an extra terminating
+        character
+     */
+    class entry_nubase_20 {
+
+    public:
+      
+      /// Note
+      char Znote;
+      /// Element name
+      char A_el[6];
+      /// Type field (isomer, resonance, etc.)
+      char isomer;
+      /// Mass excess (in keV)
+      double mass;
+      /// Mass excess uncertainty (in keV)
+      double dmass;
+      /// Excitation energy
+      double exc_energy;
+      /// Excitation energy uncertainty
+      double dexc_energy;
+      /// Excitation energy origin
+      char origin[3];
+      /// Isomer uncertainty
+      char isomer_unc;
+      /// Isomer inversion
+      char isomer_inv;
+      /// Half-life
+      double hlife;
+      /// Half-life unit
+      char hl_unit[3];
+      /// Half-life uncertainty
+      char dhlife[8];
+      /// Spin and parity
+      char spinp[15];
+      /// Isospin multiplet
+      int ENSDF_year;
+      /// Year of discovery
+      int discovery;
+      /// Decay mode and intensity
+      char decay_intensity[91];
+      
+    };
+
+    /** \brief Atomic mass entry structure
+
+	Atomic mass entry data object for \ref o2scl::nucmass_ame.
+
+	This has to be a struct, not a class, so that it can
+	be processed by the HDF5 make table functions.
+    */
+    class entry {
+
+    public:
+
+      /// N-Z
+      int NMZ;
+    
+      /// Neutron number
+      int N;
+    
+      /// Proton number
+      int Z;
+    
+      /// Mass number
+      int A;
+    
+      /// Element name
+      char el[4];
+    
+      /// Data origin
+      char orig[5];
+    
+      /// Mass excess (in keV)
+      double mass;
+    
+      /// Mass excess uncertainty (in keV)
+      double dmass;
+
+      /// Mass accuracy flag 
+      int mass_acc;
+    
+      /// Binding energy (in keV, given in the '95 data)
+      double be;
+    
+      /// Binding energy uncertainty (in keV, given in the '95 data)
+      double dbe;
+
+      /// Binding energy accuracy flag
+      int be_acc;
+    
+      /// Binding energy / A (in keV, given in the '03 data)
+      double beoa;
+    
+      /// Binding energy / A uncertainty (in keV, given in the '03 data)
+      double dbeoa;
+    
+      /// Binding energy / A accuracy flag
+      int beoa_acc;
+
+      /// Beta decay mode
+      char bdmode[3];
+    
+      /// Beta-decay energy (in keV)
+      double bde;
+
+      /// Beta-decay energy uncertainty (in keV)
+      double dbde;
+    
+      /// Beta-decay energy accuracy flag
+      int bde_acc;
+
+      /// Mass number (reported twice in original table)
+      int A2;
+    
+      /// Atomic mass (in keV)
+      double amass;
+    
+      /// Atomic mass uncertainty (in keV)
+      double damass;
+    
+      /// Atomic mass accuracy flag
+      int amass_acc;
+
+      /// NUBASE properties
+      std::vector<entry_nubase_20> props;
+      
+    };
+    
+    void load(std::string name="20", bool exp_only=false) {
+      std::string file_name, nubase_name;
+      file_name=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
+      if (name=="95exp") {
+        file_name+="/ame95exp.o2";
+      } else if (name=="95rmd") {
+        file_name+="/ame95rmd.o2";
+      } else if (name=="03round") {
+        file_name+="/ame03round.o2";
+      } else if (name=="03") {
+        file_name+="/ame03.o2";
+      } else if (name==((std::string)"12")) { 
+        file_name+="/ame12.o2";
+      } else if (name==((std::string)"16")) { 
+        file_name+="/ame16.o2";
+      } else if (name==((std::string)"16round")) { 
+        file_name+="/ame16round.o2";
+      } else if (name==((std::string)"20")) { 
+        nubase_name=file_name;
+        file_name+="/mass.mas20.txt";
+        nubase_name+="/nubase_1.mas20.txt";
+      } else if (name==((std::string)"20round")) { 
+        file_name+="/massround.mas20.txt";
+      } else {
+        std::string s=((std::string)"Invalid name '")+name+
+          "' in o2scl_hdf::ame_load().";
+        O2SCL_ERR(s.c_str(),exc_einval);
+      }
+      
+      load_ext(name,file_name,nubase_name,exp_only);
+      return;
+    }
+    
+    void load_ext(std::string name, std::string filename,
+                  std::string nubase_file, bool exp_only=false);
+    
+    /** \brief Parse strings \c s1 and \c s2 from the AME into a value,
+        \c d1, an uncertainty, \c d2, and an accuracy flag, \c acc
+        
+        - If string \c s1 has an asterisk, then \c d1 and \c d2 are
+        set to zero and \c acc is set to \ref nucmass_ame::not_calculable.
+        - If string \c s2 contains the letter 'a', then \c d2 is set to
+        zero and \c ass is set to \ref nucmass_ame::unc_less_than_half_eV.
+        The value of d1 is computed from <tt>stod_nothrow()</tt>.
+        - Otherwise, if string \c s1 has a pound sign, then \c acc is set
+        to \ref nucmass_ame::estimated, otherwise, \c acc is set to \ref
+        nucmass_ame::measured. The values of \c d1 and \c d2 are computed
+        from \c s1 and \c s2 using <tt>stod_nothrow()</tt>.
+        - If either of the stod_nothrow() calls returns a non-zero value,
+        then the error handler is called.
+    */
+    int parse(std::string s1, std::string s2, double &d1, double &d2,
+              int &acc) {
+      if (s1.find('*')!=std::string::npos) {
+        d1=0.0;
+        d2=0.0;
+        acc=nucmass_ame2::not_calculable;
+        return 0;
+      } 
+      if (s1.find('#')!=std::string::npos) {
+        acc=nucmass_ame2::estimated;
+      } else {
+        acc=nucmass_ame2::measured;
+      }
+      int ret1=o2scl::stod_nothrow(s1,d1);
+      if (ret1!=0) {
+        std::cerr << "Failed to convert: '" << s1 << "'." << std::endl;
+        O2SCL_ERR("Failed to convert first string in parse().",
+                  o2scl::exc_einval);
+      }
+      if (s2.find('a')!=std::string::npos) {
+        d2=0.0;
+        acc=nucmass_ame2::unc_less_than_half_eV;
+      } else {
+        int ret2=o2scl::stod_nothrow(s2,d2);
+        if (ret2!=0) {
+          std::cerr << "Failed to convert: '" << s2 << "'." << std::endl;
+          O2SCL_ERR("Failed to convert second string in parse().",
+                    o2scl::exc_einval);
+        }
+      }
+      return 0;
+    }
+    
+    /// Return the type, \c "nucmass_ame2".
+    virtual const char *type() { return "nucmass_ame2"; }
+
+    /** \brief Return false if the mass formula does not include 
+	specified nucleus
+    */
+    virtual bool is_included(int Z, int N);
+
+    /// Given \c Z and \c N, return the mass excess in MeV
+    virtual double mass_excess(int Z, int N);
+    
+    /// Get element with Z=l_Z and N=l_N (e.g. 82,126).
+    entry get_ZN(int l_Z, int l_N);
+    
+    /// Get element with Z=l_Z and A=l_A (e.g. 82,208).
+    entry get_ZA(int l_Z, int l_A);
+    
+    /// Get element with name l_el and A=l_A (e.g. "Pb",208).
+    entry get_elA(std::string l_el, int l_A);
+    
+    /// Get element with string (e.g. "Pb208")
+    entry get(std::string nucleus);
+    
+    /// Returns true if data has been loaded
+    bool is_loaded() { return (mass.size()>0); }
+
+    /// Return number of entries
+    size_t get_nentries() { return mass.size(); }
+
+    /// Return the reference
+    std::string get_reference() { return reference; }
+    
+#ifndef DOXYGEN_INTERNAL
+
+  protected:
+
+    /** \brief The array containing the mass data of length ame::n
+	
+	\comment
+	Ideally I'd prefer to store a vector<entry> rather than 
+	a pointer, but the pointer is required to read the
+	HDF5 table.
+	\endcomment
+     */
+    std::vector<entry> mass;
     
     /// The last table index for caching
     int last;
