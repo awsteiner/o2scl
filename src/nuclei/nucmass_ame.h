@@ -237,7 +237,7 @@ namespace o2scl {
 
     };
     
-    struct entry_nubase_16 {
+    struct entry_nubase_20 {
 
     public:
       
@@ -248,37 +248,37 @@ namespace o2scl {
       /// Note
       char Znote;
       /// Element name
-      char el[6];
+      char A_el[5];
+      /// Type field (isomer, resonance, etc.)
+      char isomer;
       /// Mass excess (in keV)
       double mass;
       /// Mass excess uncertainty (in keV)
       double dmass;
       /// Excitation energy
-      double eenergy;
+      double exc_energy;
       /// Excitation energy uncertainty
-      double deenergy;
+      double dexc_eenergy;
       /// Excitation energy origin
-      char origin[3];
+      char origin[2];
+      /// Isomer uncertainty
+      char isomer_unc;
+      /// Isomer inversion
+      char isomer_inv;
       /// Half-life
       double hlife;
       /// Half-life unit
       char hl_unit[2];
       /// Half-life uncertainty
       double dhlife;
-      /// Spin
-      int spin;
-      /// Parity
-      bool parity;
+      /// Spin and parity
+      char spinp[14];
       /// Isospin multiplet
-      int isospin;
-      /// Year appeared on archive
-      int archive_year;
-      /// Reference
-      char reference[9];
-      /// Discovery year
-      int discovery_year;
+      int ENSDF_year;
+      /// Year of discovery
+      int discovery;
       /// Decay mode and intensity
-      char decay[76];
+      char decay_intensity[90];
     };
     
     /// Return the type, \c "nucmass_ame".

@@ -342,6 +342,9 @@ namespace o2scl {
    */
   void parse_fortran_format(std::string line, std::string format,
                             std::vector<std::string> &entries);
+
+  /// Copy string \c s to character array \c x of length \c len
+  void string_to_char_array(std::string s, char *x, int len);
   
 #ifndef DOXYGEN_NO_O2NS
 }

@@ -604,3 +604,17 @@ void o2scl::parse_fortran_format(std::string line,
   return;
 }
 
+void o2scl::string_to_char_array(std::string s, char *x, int len) {
+  if (((int)s.length())+1>len) {
+    cerr << "Not enough space." << endl;
+    cerr << s << endl;
+    exit(-1);
+  }
+  remove_whitespace(s);
+  for(size_t j=0;j<s.length();j++) {
+    x[j]=s[j];
+  }
+  x[s.length()]='\0';
+  return;
+}
+

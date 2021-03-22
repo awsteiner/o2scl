@@ -6,7 +6,7 @@ dist_ndata_DATA = ame03.o2 ame03round.o2 ame95exp.o2 hfb*.o2 \
 			ame12.o2 wl11.o2 wllw10.o2 wlw10.o2 \
 			wlwm14.o2 lwdw11.o2 sd*.o2 dglg10.o2 \
 			ame16.o2 ame16round.o2 msis16.o2 ame20.o2 \
-			ame20round.o2
+			ame20round.o2 nubase20.txt
 
 SUBDIRS = frib_mex
 

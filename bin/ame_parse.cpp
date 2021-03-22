@@ -95,20 +95,6 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
 
-void to_char(std::string s, char *x, int len) {
-  if (((int)s.length())+1>len) {
-    cerr << "Not enough space." << endl;
-    cerr << s << endl;
-    exit(-1);
-  }
-  remove_whitespace(s);
-  for(size_t j=0;j<s.length();j++) {
-    x[j]=s[j];
-  }
-  x[s.length()]='\0';
-  return;
-}
-
 /** \brief Parse strings \c s1 and \c s2 from the AME into a value,
     \c d1, an uncertainty, \c d2, and an accuracy flag, \c acc
     
@@ -303,11 +289,11 @@ int main(int argc, char *argv[]) {
                            "f11.3,f9.3,1x,i3,1x,f12.5,f11.5",entries);
         
     } else if (ik==10) {
-        
+
       // 2020 Nubase format
       parse_fortran_format(tmp,((string)"a3,1x,a4,3x,a5,a1,1x,f13.6,")+
                            "f11.6,f12.6,f11.6,a2,a1,a1,f9.4,"+
-                           "a2,1x,a7,a14,a2,15x,a4,a90",entries);
+                           "a2,1x,a7,a14,a2,10x,a4,1x,a90",entries);
         
     }
       
@@ -325,8 +311,8 @@ int main(int argc, char *argv[]) {
         ae.NMZ=o2scl::stoi(entries[1]);
         ae.A=o2scl::stoi(entries[4]);
       }
-      to_char(entries[5],ae.el,4);
-      to_char(entries[6],ae.orig,5);
+      string_to_char_array(entries[5],ae.el,4);
+      string_to_char_array(entries[6],ae.orig,5);
       parse(entries[7],entries[8],ae.mass,ae.dmass,
             ae.mass_acc);
         
@@ -346,30 +332,31 @@ int main(int argc, char *argv[]) {
         ae.be_acc=nucmass_ame::intl_computed;
       }
         
-      to_char(entries[11],ae.bdmode,3);
+      string_to_char_array(entries[11],ae.bdmode,3);
       parse(entries[12],entries[13],ae.bde,ae.dbde,ae.bde_acc);
 	
       ae.A2=o2scl::stoi(entries[14]);
       parse(entries[15],entries[16],ae.amass,ae.damass,
             ae.amass_acc);
           
-    }
+      list.push_back(ae);
       
-
-    list.push_back(ae);
-
-    if (false) {
-      cout << ae.NMZ << ", ," << ae.N << ", ," << ae.Z << ", ," 
-           << ae.A << ", ," << ae.el << ", ," << ae.orig << ", ," 
-           << ae.mass << ", ," << ae.dmass << ", ," 
-           << ae.mass_acc << ", ," << ae.beoa << ", ,"
-           << ae.dbeoa << ", ," << ae.beoa_acc << ", ," 
-           << ae.bdmode << ", ," << ae.bde << ", ," 
-           << ae.dbde << ", ," << ae.bde_acc << ", ,"
-           << ae.amass << ", ," << ae.damass << ", ," 
-           << ae.amass_acc << endl;
-      //char ch;
-      //cin >> ch;
+      if (false) {
+        cout << ae.NMZ << ", ," << ae.N << ", ," << ae.Z << ", ," 
+             << ae.A << ", ," << ae.el << ", ," << ae.orig << ", ," 
+             << ae.mass << ", ," << ae.dmass << ", ," 
+             << ae.mass_acc << ", ," << ae.beoa << ", ,"
+             << ae.dbeoa << ", ," << ae.beoa_acc << ", ," 
+             << ae.bdmode << ", ," << ae.bde << ", ," 
+             << ae.dbde << ", ," << ae.bde_acc << ", ,"
+             << ae.amass << ", ," << ae.damass << ", ," 
+             << ae.amass_acc << endl;
+        //char ch;
+        //cin >> ch;
+      }
+      
+    } else if (ik==10) {
+      
     }
 
     count++;
