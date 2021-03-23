@@ -309,10 +309,20 @@ namespace o2scl {
     static const int not_calculable=2;
     /// Value computed by \o2
     static const int intl_computed=3;
-    /// Value computed by \o2
+    /// 
     static const int unc_less_than_half_eV=4;
-    /// Value computed by \o2
+    /// 
     static const int blank=5;
+    /// 
+    static const int blank_unc=6;
+    /// 
+    static const int unstable=7;
+    /// 
+    static const int part_unstable=8;
+    /// 
+    static const int lower_limit=8;
+    /// 
+    static const int upper_limit=8;
     //@}
 
     /** \brief Data structure for a row in the NUBASE file
@@ -334,13 +344,13 @@ namespace o2scl {
       double mass;
       /// Mass excess uncertainty (in keV)
       double dmass;
-      /// 
+      /// Desc
       int mass_acc;
       /// Excitation energy
       double exc_energy;
       /// Excitation energy uncertainty
       double dexc_energy;
-      /// 
+      /// Desc
       int exc_energy_acc;
       /// Excitation energy origin
       char origin[3];
@@ -350,6 +360,8 @@ namespace o2scl {
       char isomer_inv;
       /// Half-life
       double hlife;
+      /// Desc
+      int hlife_acc;
       /// Half-life unit
       char hl_unit[3];
       /// Half-life uncertainty
@@ -503,6 +515,7 @@ namespace o2scl {
     */
     int parse(std::string s1, std::string s2, double &d1, double &d2,
               int &acc) {
+      std::cout << "Hx: '" << s1 << "' '" << s2 << "'." << std::endl;
       if (count_words(s1)==0) {
         d1=0.0;
         d2=0.0;
@@ -526,7 +539,10 @@ namespace o2scl {
         O2SCL_ERR("Failed to convert first string in parse().",
                   o2scl::exc_einval);
       }
-      if (s2.find('a')!=std::string::npos) {
+      if (count_words(s2)==0) {
+        d2=0.0;
+        acc=nucmass_ame2::blank_unc;
+      } else if (s2.find('a')!=std::string::npos) {
         d2=0.0;
         acc=nucmass_ame2::unc_less_than_half_eV;
       } else {

@@ -586,7 +586,9 @@ void o2scl::parse_fortran_format(std::string line,
         size=o2scl::stoi(format_list[j].substr
                          (1,format_list[j].length()-1));
       }
-      entries.push_back(line.substr(index,size));
+      if (((int)line.length())>index+size) {
+        entries.push_back(line.substr(index,size));
+      }
     } else {
       // Remove the 'x' at the end and convert to an integer
       size=o2scl::stoi(format_list[j].substr
