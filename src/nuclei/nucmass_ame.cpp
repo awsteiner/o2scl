@@ -403,11 +403,9 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
 
   int count=0;
 
-  int verbose=2;
+  int verbose=0;
 
   mass.clear();
-
-  cout << "Hx: " << filename << endl;
 
   if (model=="20") {
     for(size_t i=0;i<36;i++) getline(fin,line);
@@ -416,7 +414,6 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
   }
   
   while (getline(fin,line)) {
-    cout << "Here: " << line << " " << count << endl;
 
     vector<string> entries;
     
@@ -426,10 +423,19 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
                            "1x,f14.6,f12.6,f15.5,f11.5,1x,a2,"+
                            "f13.5,f11.5,1x,i3,1x,f13.6,f12.6",entries);
       
-    } else if (model=="20round") {
+      //} else if (model=="20round") {
       
     }
 
+    /*
+      if (verbose>2) {
+      cout << "Entries:" << endl;
+      for(size_t k=0;k<entries.size();k++) {
+      cout << k << " " << entries[k].size() << " '" << entries[k] << "'." << endl;
+      }
+      }
+    */
+      
     // Read N and Z first to compute NMZ and A
     ae.N=o2scl::stoi(entries[2]);
     ae.Z=o2scl::stoi(entries[3]);
@@ -505,14 +511,15 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
 
       vector<string> entries;
 
-      cout << "AAA: " << endl;
       parse_fortran_format(line,((string)"a3,1x,a4,3x,a5,a1,1x,f13.6,")+
                            "f11.6,f12.6,f11.6,a2,a1,a1,f9.4,"+
                            "a2,1x,a7,a14,a2,10x,a4,1x,a90",entries);
 
-      cout << "Entries:" << endl;
-      for(size_t k=0;k<entries.size();k++) {
-        cout << k << " '" << entries[k] << "'." << endl;
+      if (verbose>2) {
+        cout << "Entries:" << endl;
+        for(size_t k=0;k<entries.size();k++) {
+          cout << k << " '" << entries[k] << "'." << endl;
+        }
       }
 
       int A=o2scl::stoi(entries[0]);
@@ -554,29 +561,38 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
             enu20.mass_acc);
       if (verbose>1) cout << "mass: " << enu20.mass << " " << enu20.dmass << " "
            << enu20.mass_acc << endl;
-      parse(entries[6],entries[7],enu20.exc_energy,enu20.dexc_energy,
-            enu20.exc_energy_acc);
+      remove_whitespace(entries[6]);
+      if (entries[6]=="non-exist") {
+        enu20.exc_energy=0.0;
+        enu20.dexc_energy=0.0;
+        enu20.exc_energy_acc=nucmass_ame2::does_not_exist;
+      } else {
+        parse(entries[6],entries[7],enu20.exc_energy,enu20.dexc_energy,
+              enu20.exc_energy_acc);
+      }
       if (verbose>1) cout << "exc_energy: " << enu20.exc_energy << " "
-           << enu20.dexc_energy << " "
-           << enu20.exc_energy_acc << endl;
-      string_to_char_array(entries[8],enu20.origin,3);
+                          << enu20.dexc_energy << " "
+                          << enu20.exc_energy_acc << endl;
+      if (entries.size()>8) {
+        string_to_char_array(entries[8],enu20.origin,3);
+      } else {
+        enu20.origin[0]='\0';
+      }
       if (verbose>1) cout << "origin: " << enu20.origin << endl;
-      if (entries[9].length()>0 && entries[9][0]!=' ') {
+      if (entries.size()>9 && entries[9].length()>0 && entries[9][0]!=' ') {
         enu20.isomer_unc=entries[9][0];
       } else {
         enu20.isomer_unc='\0';
       }
       if (verbose>1) cout << "isomer_unc: '" << enu20.isomer_unc << "'" << endl;
-      if (entries[10].length()>0 && entries[10][0]!=' ') {
+      if (entries.size()>10 && entries[10].length()>0 && entries[10][0]!=' ') {
         enu20.isomer_inv=entries[10][0];
       } else {
         enu20.isomer_inv='\0';
       }
       if (verbose>1) cout << "isomer_inv: '" << enu20.isomer_inv << "'" << endl;
-      cout << "Here: '" << entries[11] << "'" << endl;
-      if (count_words(entries[11])>0) {
+      if (entries.size()>11 && count_words(entries[11])>0) {
         remove_whitespace(entries[11]);
-        cout << "Here2x: '" << entries[11] << "'" << endl;
         if (entries[11]=="stbl") {
           enu20.hlife=0.0;
           enu20.hlife_acc=nucmass_ame2::unstable;
@@ -586,15 +602,18 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
         } else if (entries[11][0]=='>') {
           entries[11]=entries[11].substr
             (1,entries[11].length()-1);
-          cout << "Here3x: '" << entries[11] << "'" << endl;
           enu20.hlife=o2scl::stod(entries[11]);
           enu20.hlife_acc=nucmass_ame2::lower_limit;
         } else if (entries[11][0]=='<') {
           entries[11]=entries[11].substr
             (1,entries[11].length()-1);
-          cout << "Here4x: '" << entries[11] << "'" << endl;
           enu20.hlife=o2scl::stod(entries[11]);
           enu20.hlife_acc=nucmass_ame2::upper_limit;
+        } else if (entries[11][0]=='~') {
+          entries[11]=entries[11].substr
+            (1,entries[11].length()-1);
+          enu20.hlife=o2scl::stod(entries[11]);
+          enu20.hlife_acc=nucmass_ame2::approximate;
         } else {
           enu20.hlife=o2scl::stod(entries[11]);
           enu20.hlife_acc=0;
@@ -607,25 +626,44 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
         cout << "hlife: " << enu20.hlife << " "
              << enu20.hlife_acc << endl;
       }
-      string_to_char_array(entries[12],enu20.hl_unit,3);
+      if (entries.size()>12) {
+        string_to_char_array(entries[12],enu20.hl_unit,3);
+      } else {
+        enu20.hl_unit[0]='\0';
+      }
       if (verbose>1) cout << "hl_unit: " << enu20.hl_unit << endl;
-      string_to_char_array(entries[13],enu20.dhlife,8);
+      if (entries.size()>13) {
+        string_to_char_array(entries[13],enu20.dhlife,8);
+      } else {
+        enu20.dhlife[0]='\0';
+      }
       if (verbose>1) cout << "dhlife: " << enu20.dhlife << endl;
-      string_to_char_array(entries[14],enu20.spinp,15);
+      if (entries.size()>14) {
+        string_to_char_array(entries[14],enu20.spinp,15);
+      } else {
+        enu20.spinp[0]='\0';
+      }
       if (verbose>1) cout << "spinp: " << enu20.spinp << endl;
-      if (count_words(entries[15])>0) {
+      if (entries.size()>15 && count_words(entries[15])>0) {
         enu20.ENSDF_year=o2scl::stoi(entries[15]);
       } else {
         enu20.ENSDF_year=0;
       }
-      if (verbose>1) cout << "ENSDF_year: " << enu20.ENSDF_year << endl;
-      if (count_words(entries[16])>0) {
+      if (verbose>1) {
+        cout << "ENSDF_year: " << enu20.ENSDF_year << endl;
+        cout << entries.size() << endl;
+      }
+      if (entries.size()>16 && count_words(entries[16])>0) {
         enu20.discovery=o2scl::stoi(entries[16]);
       } else {
         enu20.discovery=0;
       }
       if (verbose>1) cout << "discovery: " << enu20.discovery << endl;
-      string_to_char_array(entries[17],enu20.decay_intensity,91);
+      if (entries.size()>17) {
+        string_to_char_array(entries[17],enu20.decay_intensity,91);
+      } else {
+        enu20.decay_intensity[0]='\0';
+      }
       if (verbose>1) {
         cout << "decay_intensity: "
              << enu20.decay_intensity << endl;
@@ -635,7 +673,12 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
     }
 
     fin.close();
-  }    
+
+    //for(size_t i=0;i<n;i++) {
+    //cout << i << " " << mass[i].props.size() << endl;
+    //}
+    
+  }
   
   return;
 }

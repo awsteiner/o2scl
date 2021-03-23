@@ -68,28 +68,8 @@ namespace o2scl_hdf {
   void ame_load_ext(o2scl::nucmass_ame &ame, std::string file_name, 
     std::string table_name, bool exp_only=false);
 
-  /** \brief Read an AME mass table from the \o2 internal data files
-
-      There are five data sets, selected by the specification of the
-      \c version string
-      - "95rmd" - "Recommended" data from Audi95 (ame95rmd.o2)
-      - "95exp" - "Experimental" data from Audi95 (ame95exp.o2)
-      - "03round" - "Rounded" data from Audi03 (ame03round.o2)
-      - "03" - Data from Audi03 (ame03.o2)
-      - "12" - Data from Audi12 and Wang12 (ame12.o2)
-      - "16" - Data from Huang17 and Wang17 (ame16.o2)
-      - "16round" - Data from Huang17 and Wang17 (ame16round.o2)
-      - "20" - (default) Data from Huang21 and Wang21 (ame20.o2)
-      - "20round" - Data from Huang21 and Wang21 (ame20round.o2)
-      
-      \verbatim embed:rst
-      See [Audi95]_, [Audi03]_, [Audi12]_, [Wang12]_, 
-      [Huang17]_, [Wang17]_.
-      \endverbatim
-      
-      If any string other than these seven is used, the error handler
-      is called. If a data file has not been loaded, then
-      nucmass_ame::is_loaded() returns false.
+  /** \brief Read data for \ref o2scl::nucmass_ame from an HDF table
+      specified in a file
       
       \note This function is in the o2scl_hdf namespace,
       see \ref hdf_nucmass_io.h .

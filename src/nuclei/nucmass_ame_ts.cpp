@@ -38,8 +38,8 @@ int main(void) {
   t.set_output_level(2);
 
   nucmass_ame2 ame;
-  //ame.load_ext("20","../../data/o2scl/nucmass/ame20/mass20.txt",
-  //"../../data/o2scl/nucmass/ame20/nubase20.txt",false);
+  ame.load_ext("20","../../data/o2scl/nucmass/ame20/mass20.txt",
+               "../../data/o2scl/nucmass/ame20/nubase20.txt",false);
   
   t.report();
   return 0;

@@ -320,9 +320,13 @@ namespace o2scl {
     /// 
     static const int part_unstable=8;
     /// 
-    static const int lower_limit=8;
+    static const int lower_limit=9;
     /// 
-    static const int upper_limit=8;
+    static const int upper_limit=10;
+    /// 
+    static const int does_not_exist=11;
+    /// 
+    static const int approximate=12;
     //@}
 
     /** \brief Data structure for a row in the NUBASE file
@@ -462,6 +466,12 @@ namespace o2scl {
       
     };
     
+    /** \brief Read data for \ref o2scl::nucmass_ame from an HDF table
+        specified in a file
+        
+        \note This function is in the o2scl_hdf namespace,
+        see \ref hdf_nucmass_io.h .
+    */
     void load(std::string name="20", bool exp_only=false) {
       std::string file_name, nubase_name;
       file_name=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
@@ -495,6 +505,12 @@ namespace o2scl {
       return;
     }
     
+    /** \brief Read data for \ref o2scl::nucmass_ame from an HDF table
+        specified in a file
+        
+        \note This function is in the o2scl_hdf namespace,
+        see \ref hdf_nucmass_io.h .
+    */
     void load_ext(std::string name, std::string filename,
                   std::string nubase_file, bool exp_only=false);
     
@@ -515,7 +531,7 @@ namespace o2scl {
     */
     int parse(std::string s1, std::string s2, double &d1, double &d2,
               int &acc) {
-      std::cout << "Hx: '" << s1 << "' '" << s2 << "'." << std::endl;
+      //std::cout << "Hx: '" << s1 << "' '" << s2 << "'." << std::endl;
       if (count_words(s1)==0) {
         d1=0.0;
         d2=0.0;
@@ -533,6 +549,7 @@ namespace o2scl {
       } else {
         acc=nucmass_ame2::measured;
       }
+      //std::cout << "Hz: '" << s1 << "'" << std::endl;
       int ret1=o2scl::stod_nothrow(s1,d1);
       if (ret1!=0) {
         std::cerr << "Failed to convert: '" << s1 << "'." << std::endl;
@@ -546,7 +563,9 @@ namespace o2scl {
         d2=0.0;
         acc=nucmass_ame2::unc_less_than_half_eV;
       } else {
+        //std::cout << "Hy: '" << s2 << "'" << std::endl;
         int ret2=o2scl::stod_nothrow(s2,d2);
+        //std::cout << "ret2: " << ret2 << std::endl;
         if (ret2!=0) {
           std::cerr << "Failed to convert: '" << s2 << "'." << std::endl;
           O2SCL_ERR("Failed to convert second string in parse().",

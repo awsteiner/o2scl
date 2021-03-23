@@ -586,7 +586,9 @@ void o2scl::parse_fortran_format(std::string line,
         size=o2scl::stoi(format_list[j].substr
                          (1,format_list[j].length()-1));
       }
-      if (((int)line.length())>index+size) {
+      // If there is at least one character left in the line, then go
+      // ahead and add the rest of the string to the entries array
+      if (((int)line.length())>index+1) {
         entries.push_back(line.substr(index,size));
       }
     } else {
