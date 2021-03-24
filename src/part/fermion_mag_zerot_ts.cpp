@@ -94,9 +94,13 @@ int main(void) {
     cout << e.n << " " << e.mu << " " << e.ed+e.n*e.m << " " << e.pr << endl;
   }
 
+  cout << endl;
+  cout << o2scl_const::ec_gauss_fm2 << endl;
   e.g=2.0;
   e.m=0.511/o2scl_const::hc_mev_fm;
   e.mu=0.5;
+  mfz.calc_mu_zerot_mag(e,-1.0e18*o2scl_const::ec_gauss_fm2,0.0);
+  cout << e.n << endl;
   mfz.calc_mu_zerot_mag(e,-1.0e16*o2scl_const::ec_gauss_fm2,0.0);
   cout << e.n << endl;
   mfz.calc_mu_zerot_mag(e,-1.0e12*o2scl_const::ec_gauss_fm2,0.0);
