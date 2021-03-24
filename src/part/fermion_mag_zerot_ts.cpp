@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 #include <o2scl/fermion_mag_zerot.h>
+#include <o2scl/fermion_rel.h>
 #include <o2scl/test_mgr.h>
 
 using namespace std;
@@ -31,6 +32,8 @@ int main(void) {
 
   test_mgr t;
   t.set_output_level(1);
+
+  fermion_rel frel;
 
   cout.setf(ios::scientific);
 
@@ -90,6 +93,19 @@ int main(void) {
     mfz.calc_density_zerot_mag(e,-mag_field*o2scl_const::ec_gauss_fm2,0.0);
     cout << e.n << " " << e.mu << " " << e.ed+e.n*e.m << " " << e.pr << endl;
   }
+
+  e.g=2.0;
+  e.m=0.511/o2scl_const::hc_mev_fm;
+  e.mu=0.5;
+  mfz.calc_mu_zerot_mag(e,-1.0e16*o2scl_const::ec_gauss_fm2,0.0);
+  cout << e.n << endl;
+  mfz.calc_mu_zerot_mag(e,-1.0e12*o2scl_const::ec_gauss_fm2,0.0);
+  cout << e.n << endl;
+  mfz.calc_mu_zerot_mag(e,-1.0e9*o2scl_const::ec_gauss_fm2,0.0);
+  cout << e.n << endl;
+  frel.calc_mu_zerot(e);
+  cout << e.n << endl;
+  
 
   t.report();
 
