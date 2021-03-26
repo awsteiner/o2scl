@@ -27,7 +27,7 @@ using namespace o2scl;
 using namespace o2scl_const;
 
 int fermion_mag_zerot::calc_mu_mag(fermion &f, double T, double qB,
-                                   double kappa=0.0) {
+                                   double kappa) {
   
   if (qB==0.0) {
     calc_mu(f,T);
