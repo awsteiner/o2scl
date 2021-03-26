@@ -30,6 +30,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/fermion.h>
+#include <o2scl/fermion_rel.h>
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/root_brent_gsl.h>
 
@@ -41,18 +42,19 @@ namespace o2scl {
       zero temperature
 
       \verbatim embed:rst
-      The discussion below uses the notation of [Broderick00]_.
+      Following [Broderick00]_,
+      We define the 
+      magnetic effective mass of a fermion in a magnetic field as
       \endverbatim
-
-      The effective mass of a fermion in a magnetic field is 
       \f[
-      \tilde{m}^2 = m^2 + 2 \left( n + \frac{1}{2} - 
+      \tilde{m}^2 = m^{*2} + 2 \left( n + \frac{1}{2} - 
       \frac{q \sigma}{2 |q|} \right) |q| B
       \f]
-      where \f$ m \f$ is the bare mass, \f$ q \f$ is the charge,
-      and \f$ \sigma \f$ is the z-component of the spin along
-      the axis of the magnetic field (for spin 1/2 fermions, for example,
-      either +1 or -1). 
+      where \f$ m^{*} \f$ is the effective mass which includes
+      interactions unrelated to the magnetic field, \f$ q \f$ is the
+      charge, and \f$ \sigma \f$ is the z-component of the spin along
+      the axis of the magnetic field (for spin 1/2 fermions, for
+      example, \f$ \sigma_z \f$ is either +1 or -1).
 
       \note This only works for spin 1/2 particles at the moment,
       so the discussion below assumes this is the case.
@@ -98,7 +100,7 @@ namespace o2scl {
       brief comparison of various E&M unit systems.
 
   */
-  class fermion_mag_zerot : public fermion_zerot {
+  class fermion_mag_zerot : public fermion_rel {
 
   public:
 
@@ -145,8 +147,8 @@ namespace o2scl {
     virtual ~fermion_mag_zerot() {
     }
     
-    /**	\brief Thermodynamics in a magnetic field using the chemical 
-	potential
+    /**	\brief Thermodynamics in a magnetic field as a function of 
+        the chemical potential at zero temperature
 	
 	The parameter \c qB is the charge (in units of the positron
 	charge) times the magnetic field strength. Thus, for example,
@@ -154,10 +156,29 @@ namespace o2scl {
     */
     virtual void calc_mu_zerot_mag(fermion &f, double qB, double kappa=0.0);
 
-    /** \brief Thermodynamics in a magnetic field using the density
+    /** \brief Thermodynamics in a magnetic field as a function of
+        the density at zero temperature
     */
     virtual void calc_density_zerot_mag(fermion &f, double qB, 
 					double kappa=0.0);
+
+    /**	\brief Thermodynamics in a magnetic field as a function of 
+        the chemical potential at finite temperature
+	
+	The parameter \c qB is the charge (in units of the positron
+	charge) times the magnetic field strength. Thus, for example,
+	\c qB should be negative for electrons.
+    */
+    virtual int calc_mu_mag(fermion &f, double T, double qB, double kappa=0.0);
+
+    /** \brief Thermodynamics in a magnetic field as a function of
+        the density at zero temperature
+    */
+    virtual int calc_density_mag(fermion &f, double T, double qB, 
+                                 double kappa=0.0) {
+      O2SCL_ERR("Not yet implemented.",o2scl::exc_eunimpl);
+      return 0;
+    }
 
     /** \brief Set the solver for use in calculating the chemical
         potential from the density 

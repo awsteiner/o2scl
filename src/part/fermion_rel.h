@@ -593,6 +593,7 @@ namespace o2scl {
 	std::cout << "calc_mu(): psi,deg,deg_limit: " << psi << " "
 		  << deg << " " << deg_limit << std::endl;
       }
+      
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
 	bool acc=this->calc_mu_ndeg(f,temper,tol_expan);

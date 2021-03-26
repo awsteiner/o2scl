@@ -26,6 +26,26 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
+int fermion_mag_zerot::calc_mu_mag(fermion &f, double T, double qB,
+                                   double kappa=0.0) {
+  
+  if (qB==0.0) {
+    calc_mu(f,T);
+    return 0;
+  }
+
+  double sign=1.0;
+  // If qB<0, then q<0, so set sign to -1 and use qB=|qB|
+  if (qB<0.0) {
+    qB=-qB;
+    sign=-1.0;
+  }
+
+  if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
+    
+  return 0;
+}
+
 void fermion_mag_zerot::calc_mu_zerot_mag(fermion &f, double qB, 
 					  double kappa) {
 
