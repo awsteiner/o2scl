@@ -21,6 +21,7 @@
   <compound refid="classo2scl_1_1nucleus" kind="class"><name>o2scl::nucleus</name>
   <compound refid="classo2scl_1_1nucmass" kind="class"><name>o2scl::nucmass</name>
   <compound refid="classo2scl_1_1nucmass__ame" kind="class"><name>o2scl::nucmass_ame</name>
+  <compound refid="classo2scl_1_1nucmass__ame2" kind="class"><name>o2scl::nucmass_ame2</name>
   <compound refid="classo2scl_1_1nucmass__densmat" kind="class"><name>o2scl::nucmass_densmat</name>
   <compound refid="classo2scl_1_1nucmass__dglg" kind="class"><name>o2scl::nucmass_dglg</name>
   <compound refid="classo2scl_1_1nucmass__dvi" kind="class"><name>o2scl::nucmass_dvi</name>

@@ -26,7 +26,11 @@ the fermionic distribution function is
 
    f = \frac{1}{1+e^{(\sqrt{k^2+m^{* 2}}-\nu-m)/T}}
 
-For convenience, we often define :math:`E^{*} \equiv \sqrt{k^2+m^{* 2}}`.
+For convenience, we often define :math:`E^{*} \equiv \sqrt{k^2+m^{*
+2}}`. In the documentation below, expressions to the left of
+the semicolon apply when ``inc_rest_mass`` is true, and
+expressions to the right of the semicolon apply when ``inc_rest_mass``
+is false.
 
 Relativistic versus non-relativistic fermions
 ---------------------------------------------
@@ -276,8 +280,8 @@ and the entropy density is
    s = -\frac{g T^3}{2 \pi^2} \int_0^{\infty}~du~
    \sqrt{u^2+2 u \eta} (u+\eta) {\cal S}
     
-Evaluation of the derivatives
------------------------------
+Distribution function derivatives
+---------------------------------
     
 The relevant
 derivatives of the distribution function are
@@ -305,7 +309,7 @@ derivatives of the distribution function are
    \frac{\partial f}{\partial m^{*}}=
    -f(1-f)\frac{m^{*}}{E^{*} T}
     
-The derivatives can be integrated directly direct) or they may be
+The derivatives can be integrated directly or they may be
 converted to integrals over the distribution function through an
 integration by parts
 
@@ -371,11 +375,17 @@ Using :math:`h(k)=k^2(E^{*}-\nu)/T^2` we get
    \frac{g}{2 \pi^2} \int_0^{\infty} \frac{f}{T} 
    \left[2 k^2+E^{*2}-E^{*} \nu -
    k^2 \left(\frac{\nu}{E^{*}}\right)\right] dk
-   \quad ; \quad
+
+when the rest mass is included in the chemical potential and
+   
+.. math::
+   
    \left(\frac{d n}{d T}\right)_{\mu} = 
    \frac{g}{2 \pi^2} \int_0^{\infty} \frac{f}{T} 
    \left[2 k^2+E^{*2}-E^{*}\left(\nu+m\right)-
    k^2 \left(\frac{\nu+m}{E^{*}}\right)\right] dk
+
+when the rest mass is not included in the chemical potential.   
     
 3) The derivative of the entropy wrt the chemical potential
 
@@ -416,13 +426,15 @@ Using :math:`h(k)=k^2 (E^{*}-\nu)^2/T^3`
    \frac{g}{2 \pi^2} \int_0^{\infty} \frac{f(E^{*}-\nu)}{E^{*}T^2} 
    \left[E^{* 3}+3 E^{*} k^2- (E^{* 2}+k^2)\nu\right] d k
 
-and
+when the rest mass is included in the chemical potential and
 
 .. math::
    
    \left(\frac{d s}{d T}\right)_{\mu} = 
    \frac{g}{2 \pi^2} \int_0^{\infty} \frac{f(E^{*}-m-\nu)}{E^{*}T^2} 
    \left[E^{* 3}+3 E^{*} k^2- (E^{* 2}+k^2)(\nu+m)\right] d k
+
+when the rest mass is not included in the chemical potential.
     
 5) The derivative of the density wrt the effective mass
 
@@ -467,8 +479,8 @@ the pressure for non-interacting fermions with degeneracy :math:`g` is
    \frac{1}{1 + e^{(E-\mu)/T}} \, ,
 
 where the second form is obtained with an integration by parts. We use
-units where :math:`\hbar=c=1`. The variable substitutions from \ref
-Johns96 are :math:`\ell = k/m`, :math:`\psi = (\mu-m)/T`, and
+units where :math:`\hbar=c=1`. The variable substitutions from 
+[Johns96]_ are :math:`\ell = k/m`, :math:`\psi = (\mu-m)/T`, and
 :math:`t=T/m`. (Presumably this choice of variables gives better
 results for non-relativistic fermions because the mass is separated
 from the chemical potential in the definition of :math:`\psi`, but I
@@ -696,7 +708,12 @@ required.
    \left(\frac{d\bar{n}}{d\mu}\right)_k &=&
    \frac{k}{t}{\bar{n}_k} \\
    \left(\frac{dn}{dT}\right)_k &=& 
-   \frac{k}{t} s_k - \frac{1}{t} n_k \\
+   \frac{k}{t} s_k - \frac{1}{t} n_k 
+   \end{eqnarray}
+   
+.. math::
+
+   \begin{eqnarray}
    \left(\frac{d\bar{n}}{dT}\right)_k &=& 
    \frac{k}{t} \bar{s}_k \mathrm{tanh}\left[k(x+1)/t\right]
    - \left\{ t+2 k (1+x) \mathrm{csch}\left[k(x+1)/t\right]

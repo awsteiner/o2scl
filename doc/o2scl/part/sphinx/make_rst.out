@@ -25,6 +25,7 @@ Namespace: o2scl class: nuclear_reaction
 Namespace: o2scl class: nucleus
 Namespace: o2scl class: nucmass
 Namespace: o2scl class: nucmass_ame
+Namespace: o2scl class: nucmass_ame2
 Namespace: o2scl class: nucmass_densmat
 Namespace: o2scl class: nucmass_dglg
 Namespace: o2scl class: nucmass_dvi
