@@ -709,7 +709,8 @@ namespace o2scl {
     virtual int solve_c(const std::complex<double> a2, 
 			const std::complex<double> b2, 
 			const std::complex<double> c2, 
-			std::complex<double> &x1, std::complex<double> &x2);
+			std::complex<double> &x1,
+                        std::complex<double> &x2);
 
     /// Return a string denoting the type ("quadratic_complex_std")
     const char *type() { return "quadratic_complex_std"; }
@@ -717,24 +718,98 @@ namespace o2scl {
 
   /** \brief Solve a cubic with complex coefficients and complex roots
    */
-  class cubic_complex_std : public cubic_complex {
+  template<class fp_t=double> class cubic_complex_std : public cubic_complex {
 
   public:
 
     virtual ~cubic_complex_std() {}
-
+    
     /** \brief Solves the complex polynomial 
 	\f$ a_3 x^3 + b_3 x^2 + c_3 x + d_3= 0 \f$ 
 	giving the three complex solutions \f$ x=x_1 \f$ , 
 	\f$ x=x_2 \f$ , and \f$ x=x_3 \f$ .
     */
-    virtual int solve_c(const std::complex<double> a3, 
-			const std::complex<double> b3, 
-			const std::complex<double> c3, 
-			const std::complex<double> d3, 
-			std::complex<double> &x1, std::complex<double> &x2, 
-			std::complex<double> &x3);
+    virtual int solve_c(const std::complex<fp_t> a3, 
+			const std::complex<fp_t> b3, 
+			const std::complex<fp_t> c3, 
+			const std::complex<fp_t> d3, 
+			std::complex<fp_t> &x1, std::complex<fp_t> &x2, 
+			std::complex<fp_t> &x3) {
+      
+      if (a3==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in cubic_std::complex::solve_c().",
+           exc_einval);
+      }
+      
+      std::complex<fp_t> p3, q3, mo;
+      std::complex<fp_t> alpha, beta, cbrta, cbrtb;
+      std::complex<fp_t> e2, e4, cacb;
+      fp_t test, re_p3;
+      
+      if (a3==0.0) {
+        quadratic_complex_std qsc;
+        qsc.solve_c(b3,c3,d3,x1,x2);
+        x3=0.0;
+        return success;
+      }
+      
+      mo=-1.0;
+      mo=sqrt(mo);
+      
+      p3=(3.0*a3*c3-b3*b3)/9.0/a3/a3;
+      q3=(2.0*b3*b3*b3-9.0*a3*b3*c3+27.0*a3*a3*d3)/27.0/a3/a3/a3;
+      
+      alpha=(-q3+sqrt(q3*q3+4.0*p3*p3*p3))/2.0;
+      beta=(q3+sqrt(q3*q3+4.0*p3*p3*p3))/2.0;
+      
+      if (alpha.real()==0.0) cbrta=0.0;
+      else cbrta=pow(alpha,1.0/3.0);
+      if (beta.real()==0.0) cbrtb=0.0;
+      else cbrtb=pow(beta,1.0/3.0);
 
+      fp_t pi=boost::math::constants::pi<fp_t>();
+      
+      // It seems that if the real part of alpha is < 0 and the imaginary
+      // part is zero, then cbrta is NaN (esp. w/Cygwin). We fix this
+      // here:
+      if (!std::isfinite(cbrta.real())) {
+        cbrta=pow(-alpha,1.0/3.0)*exp(mo*pi/3.0);
+      }
+      if (!std::isfinite(cbrtb.real())) {
+        cbrtb=pow(-beta,1.0/3.0)*exp(mo*pi/3.0);
+      }
+      
+      e2=exp(mo*2.0*pi/3.0);
+      e4=exp(mo*4.0*pi/3.0);
+      
+      // This next section is nessary to ensure that the code
+      // selects the correct cube roots of alpha and beta.
+      // I changed this because I wanted code that had no chance
+      // of accidentally falling into an infinite loop.
+      re_p3=p3.real();
+      cacb=cbrta*cbrtb;
+      test=fabs((cacb.real()-re_p3)/re_p3);
+      if (fabs(((cacb*e2).real()-re_p3)/re_p3)<test) {
+        cbrta*=e2;
+        cacb=cbrta*cbrtb;
+        test=fabs((cacb.real()-re_p3)/re_p3);
+        if (fabs(((cacb*e2).real()-re_p3)/re_p3)<test) {
+          cbrta*=e2;
+        }
+      } else {
+        if (fabs(((cacb*e2*e2).real()-re_p3)/re_p3)<test) {
+          cbrta*=e2*e2;
+        }
+      }
+      
+      x1=cbrta-cbrtb-b3/3.0/a3;
+      x2=cbrta*e2-cbrtb*e4-b3/3.0/a3;
+      x3=cbrta*e4-cbrtb*e2-b3/3.0/a3;
+      
+      return success;
+    }      
+    
     /// Return a string denoting the type ("cubic_complex_std")
     const char *type() { return "cubic_complex_std"; }
   };
@@ -766,7 +841,8 @@ namespace o2scl {
   
   /** \brief Solve a quartic with complex coefficients and complex roots
    */
-  class quartic_complex_simple : public quartic_complex {
+  template <class fp_t=double> class quartic_complex_simple :
+    public quartic_complex {
 
   public:
 
@@ -777,15 +853,64 @@ namespace o2scl {
 	giving the four complex solutions \f$ x=x_1 \f$ , \f$ x=x_2 \f$ ,
 	\f$ x=x_3 \f$ , and \f$ x=x_4 \f$ .
     */
-    virtual int solve_c(const std::complex<double> a4, 
-			const std::complex<double> b4, 
-			const std::complex<double> c4, 
-			const std::complex<double> d4, 
-			const std::complex<double> e4, 
-			std::complex<double> &x1, 
-			std::complex<double> &x2, 
-			std::complex<double> &x3,
-			std::complex<double> &x4);
+    virtual int solve_c(const std::complex<fp_t> a4, 
+			const std::complex<fp_t> b4, 
+			const std::complex<fp_t> c4, 
+			const std::complex<fp_t> d4, 
+			const std::complex<fp_t> e4, 
+			std::complex<fp_t> &x1, 
+			std::complex<fp_t> &x2, 
+			std::complex<fp_t> &x3,
+			std::complex<fp_t> &x4) {
+      std::complex<fp_t> p4, q4, r4;
+      std::complex<fp_t> a3, b3, c3, d3;
+      std::complex<fp_t> b2a, c2a, b2b, c2b;
+      std::complex<fp_t> u4, u41, u42;
+      
+      if (a4==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in quartic_complex_simple::solve_c().",
+           exc_einval);
+      }
+      
+      p4=(8.0*a4*c4-3.0*b4*b4)/8.0/a4/a4;
+      q4=(b4*b4*b4-4.0*a4*b4*c4+8.0*a4*a4*d4)/8.0/(a4*a4*a4);
+      r4=(16.0*a4*b4*b4*c4+256.0*a4*a4*a4*e4-3.0*b4*b4*b4*b4-64.0*a4*a4*b4*d4)/
+        256.0/(a4*a4*a4*a4);
+      
+      //---------------------------------------
+      // Solve the resolvent cubic:
+      
+      a3=1.0;
+      b3=-p4;
+      c3=-4.0*r4;
+      d3=4.0*p4*r4-q4*q4;
+      
+      cub_obj.solve_c(a3,b3,c3,d3,u4,u41,u42);
+      
+      //---------------------------------------
+      
+      // What to do when u4==p4?
+      // Temporary hack:
+      if (u4==p4) {
+        b2a=0.0;
+        b2b=0.0;
+        c2a=u4/2.0;
+        c2b=u4/2.0;
+      } else {
+        b2a=sqrt(u4-p4);
+        b2b=-sqrt(u4-p4);
+        c2a=-sqrt(u4-p4)*q4/2.0/(u4-p4)+u4/2.0;
+        c2b=sqrt(u4-p4)*q4/2.0/(u4-p4)+u4/2.0;
+      }
+      
+      x1=(-b2a+sqrt(b2a*b2a-4.0*c2a))/2.0-b4/4.0/a4;
+      x2=(-b2a-sqrt(b2a*b2a-4.0*c2a))/2.0-b4/4.0/a4;
+      x3=(-b2b+sqrt(b2b*b2b-4.0*c2b))/2.0-b4/4.0/a4;
+      x4=(-b2b-sqrt(b2b*b2b-4.0*c2b))/2.0-b4/4.0/a4;
+      
+      return success;
+    }
 
     /// Return a string denoting the type ("quartic_complex_simple")
     const char *type() { return "quartic_complex_simple"; }
@@ -795,7 +920,7 @@ namespace o2scl {
   protected:
 
     /// The object to solve for the associated cubic
-    cubic_complex_std cub_obj;
+    cubic_complex_std<> cub_obj;
     
 #endif
 

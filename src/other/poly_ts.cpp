@@ -784,14 +784,14 @@ int main(void) {
   // cubic solvers
   cubic_real_coeff_cern c1;
   cubic_real_coeff_gsl c2;
-  cubic_complex_std c3;
+  cubic_complex_std<> c3;
   
   // quartic solvers
   quartic_real_coeff_cern q1;
   quartic_real_gsl q2;
   quartic_real_gsl2 q3;
   quartic_real_simple q4;
-  quartic_complex_simple q5;
+  quartic_complex_simple<> q5;
 
   // I think this number is no longer used, except to 
   // give an overall scale for the timings
