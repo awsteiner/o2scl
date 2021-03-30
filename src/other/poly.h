@@ -251,7 +251,6 @@ namespace o2scl {
 			double &x1, double &x2, 
 			double &x3, double &x4)=0;
 
-
     /** \brief Compute the discriminant
 
 	The discriminant is zero if and only if at least two roots are
@@ -261,7 +260,28 @@ namespace o2scl {
 	all non-real.
     */
     virtual double disc_r(const double a, const double b, const double c, 
-			  const double d, const double e);
+			  const double d, const double e) {
+      double a2=a*a;
+      double b2=b*b;
+      double c2=c*c;
+      double d2=d*d;
+      double e2=e*e;
+      
+      double a3=a2*a;
+      double b3=b2*b;
+      double c3=c2*c;
+      double d3=d2*d;
+      double e3=e2*e;
+      
+      double b4=b2*b2;
+      double c4=c2*c2;
+      double d4=d2*d2;
+      
+      return 256.0*a3*e3-192.0*a2*b*d*e2-128.0*a2*c2*e2+144.0*a2*c*d2*e-
+        27.0*a2*d4+144.0*a*b2*c*e2-6.0*a*b2*d2*e-80.0*a*b*c2*d*e+
+        18.0*a*b*c*d3+16.0*a*c4*e-4.0*a*c3*d2-27.0*b4*e2+18.0*b3*c*d*e-
+        4.0*b3*d3-4.0*b2*c3*e+b2*c2*d2;
+    }
     
     /// Return a string denoting the type ("quartic_real")
     const char *type() { return "quartic_real"; }
@@ -404,7 +424,8 @@ namespace o2scl {
       the same name, but differs slightly. See the documentation of
       that function for details.
   */
-  class cubic_real_coeff_cern : public cubic_real_coeff {
+  template<class fp_t=double> class cubic_real_coeff_cern :
+    public cubic_real_coeff {
 
   public:
 
@@ -415,10 +436,10 @@ namespace o2scl {
     }
 
     /// Numerical tolerance (default \f$ 10^{-6} \f$)
-    double eps;
+    fp_t eps;
 
     /// Numerical tolerance (default \f$ 10^{-15} \f$)
-    double delta;
+    fp_t delta;
 
     /// Improve algorithm for poorly-scaled roots (default true)
     bool improve_scale;
@@ -430,9 +451,37 @@ namespace o2scl {
 	solution \f$ x=x_1 \f$ and two complex solutions 
 	\f$ x=x_2 \f$ , and \f$ x=x_3 \f$ .
     */
-    virtual int solve_rc(const double a3, const double b3, const double c3, 
-			 const double d3, double &x1, 
-			 std::complex<double> &x2, std::complex<double> &x3);
+    virtual int solve_rc(const fp_t a3, const fp_t b3, const fp_t c3, 
+			 const fp_t d3, fp_t &r1, 
+			 std::complex<fp_t> &r2,
+                         std::complex<fp_t> &r3) {
+      if (a3==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in cubic_real_coeff_cern::solve_rc().",
+           exc_einval);
+      }
+      
+      fp_t x[3],d;
+      std::complex<fp_t> i(0.0,1.0);
+      
+      rrteq3(b3/a3,c3/a3,d3/a3,x,d);
+      if (d>0.0) {
+        r1=x[0];
+        r2=x[1]+i*x[2];
+        r3=x[1]-i*x[2];
+      } else {
+        r1=x[0];
+        r2=x[1];
+        r3=x[2];
+      }
+      
+      return success;
+    }
+    
+    inline double sign(double a, double b) {
+      if (b>=0.0) return fabs(a);
+      return -fabs(a);
+    }
 
     /** \brief The CERNLIB-like interface
 
@@ -455,8 +504,133 @@ namespace o2scl {
 	of order unity. The default CERNLIB behavior can be restored
 	by setting improve_scale to \c false.
     */	
-    virtual int rrteq3(double r, double s, double t, double x[], double &d);
-
+    virtual int rrteq3(fp_t r, fp_t s, fp_t t, fp_t x[],
+                       fp_t &d) {
+      fp_t delta2=delta;
+      fp_t r1=2.0/27.0, r2=0.5, r3=1.0/3.0;
+      fp_t w3=sqrt(3.0), r4=w3/2.0;
+      fp_t q1=2.0/27.0, q2=0.5, q3=1.0/3.0;
+      fp_t y[3];
+      std::complex<fp_t> z[3], i(0.0,1.0);
+      fp_t h2, h3;
+      int j,k;
+      
+      if (s==0.0 && t==0.0) {
+        x[0]=-r;
+        x[1]=0.0;
+        x[2]=0.0;
+        d=0;
+        return success;
+      }
+      fp_t p=s-r3*r*r;
+      fp_t q=(r1*r*r-r3*s)*r+t;
+      d=r2*r2*q*q+r3*p*r3*p*r3*p;
+      if (fabs(d)<=eps) {
+        fp_t pp=s-q3*r*r;
+        fp_t qq=(q1*r*r-q3*s)*r+t;
+        d=q2*q2*qq*qq+q3*pp*q3*pp*q3*pp;
+        p=pp;
+        q=qq;
+      }
+      fp_t h=r3*r;
+      fp_t h1=r2*q;
+      fp_t u,v,d_new;
+      
+      // The discriminant in 'd' has units of [x]^6 so it is very
+      // sensitive to the absolute magnitude of the roots. We attempt to
+      // fix this by using the ratio instead of the sum.
+      if (improve_scale) {
+        fp_t da=r2*r2*q*q;
+        fp_t db=r3*p*r3*p*r3*p;
+        if (db==0.0) {
+          delta2=0.0;
+          d_new=da;
+        } else if (db>0.0) {
+          d_new=da/db+1.0;
+        } else {
+          d_new=-da/db-1.0;
+        }
+      } else {
+        d_new=d;
+      }
+      
+      if (d_new>delta2) {
+        h2=sqrt(d);
+        fp_t u0=-h1+h2;
+        fp_t v0=-h1-h2;
+        if (fabs(u0)==0.0) u=sign(0.0,u0);
+        else u=sign(pow(fabs(u0),r3),u0);
+        if (fabs(v0)==0.0) v=sign(0.0,v0);
+        else v=sign(pow(fabs(v0),r3),v0);
+        x[0]=u+v-h;
+        x[1]=-r2*(u+v)-h;
+        x[2]=r4*fabs(u-v);
+        if (fabs(u0)<=eps || fabs(v0)<=eps) {
+          y[0]=x[0];
+          for(k=0;k<=1;k++) {
+            y[k+1]=y[k]-(((y[k]+r)*y[k]+s)*y[k]+t)/((3.0*y[k]+2.0*r)*y[k]+s);
+          }
+          x[0]=y[2];
+          z[0]=x[1]+i*x[2];
+          for(k=0;k<=1;k++) {
+            z[k+1]=z[k]-(((z[k]+r)*z[k]+s)*z[k]+t)/((3.0*z[k]+2.0*r)*z[k]+s);
+          }
+          x[1]=z[2].real();
+          x[2]=z[2].imag();
+        }
+        
+      } else if (fabs(d_new)<=delta2) {
+        
+        d=0.0;
+        if (fabs(h1)==0.0) u=sign(0.0,-h1);
+        else u=sign(pow(fabs(h1),r3),-h1);
+        x[0]=u+u-h;
+        x[1]=-u-h;
+        x[2]=x[1];
+        if (fabs(h1)<=eps) {
+          y[0]=x[0];
+          for(k=0;k<=1;k++) {
+            h1=(3.0*y[k]+2.0*r)*y[k]+s;
+            if (fabs(h1)>delta2) {
+              y[k+1]=y[k]-(((y[k]+r)*y[k]+s)*y[k]+t)/h1;
+            } else {
+              x[0]=-r3*r;
+              x[1]=x[0];
+              x[2]=x[0];
+              return success;
+            }
+          }
+          x[0]=y[2];
+          x[1]=-r2*(r+x[0]);
+          x[2]=x[1];
+        }
+        
+      } else {
+        
+        h3=fabs(r3*p);
+        h3=sqrt(h3*h3*h3);
+        h2=r3*acos(-h1/h3);
+        if (h3==0.0) h1=0.0;
+        else h1=pow(h3,r3);
+        u=h1*cos(h2);
+        v=w3*h1*sin(h2);
+        x[0]=u+u-h;
+        x[1]=-u-v-h;
+        x[2]=-u+v-h;
+        if (h3<=eps || x[0]<=eps || x[1]<=eps || x[2]<=eps) {
+          for(j=0;j<3;j++) {
+            y[0]=x[j];
+            for(k=0;k<=1;k++) {
+              y[k+1]=y[k]-(((y[k]+r)*y[k]+s)*y[k]+t)/((3.0*y[k]+2.0*r)*y[k]+s);
+            }
+            x[j]=y[2];
+          }
+        }
+      }
+      
+      return success;
+    }
+    
     /// Return a string denoting the type ("cubic_real_coeff_cern")
     const char *type() { return "cubic_real_coeff_cern"; }
   };
@@ -492,7 +666,7 @@ namespace o2scl {
   protected:
 
     /// The object to solve for the associated cubic
-    cubic_real_coeff_cern cub_obj;
+    cubic_real_coeff_cern<> cub_obj;
 
 #endif
 
@@ -697,7 +871,8 @@ namespace o2scl {
 
   /** \brief Solve a quadratic with complex coefficients and complex roots
    */
-  class quadratic_complex_std : public quadratic_complex {
+  template<class fp_t=double> class quadratic_complex_std :
+    public quadratic_complex {
 
   public:
 
@@ -706,11 +881,20 @@ namespace o2scl {
     /** \brief Solves the complex polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
 	giving the two complex solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ 
     */
-    virtual int solve_c(const std::complex<double> a2, 
-			const std::complex<double> b2, 
-			const std::complex<double> c2, 
-			std::complex<double> &x1,
-                        std::complex<double> &x2);
+    virtual int solve_c(const std::complex<fp_t> a2, 
+			const std::complex<fp_t> b2, 
+			const std::complex<fp_t> c2, 
+			std::complex<fp_t> &x1,
+                        std::complex<fp_t> &x2) {
+      if (a2==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in quadratic_complex_std::solve_c().",
+           exc_einval);
+      }
+      x1=(-b2+sqrt(b2*b2-4.0*a2*c2))/2.0/a2;
+      x2=(-b2-sqrt(b2*b2-4.0*a2*c2))/2.0/a2;
+      return success;
+    }
 
     /// Return a string denoting the type ("quadratic_complex_std")
     const char *type() { return "quadratic_complex_std"; }
@@ -718,7 +902,8 @@ namespace o2scl {
 
   /** \brief Solve a cubic with complex coefficients and complex roots
    */
-  template<class fp_t=double> class cubic_complex_std : public cubic_complex {
+  template<class fp_t=double> class cubic_complex_std :
+    public cubic_complex {
 
   public:
 
@@ -748,7 +933,7 @@ namespace o2scl {
       fp_t test, re_p3;
       
       if (a3==0.0) {
-        quadratic_complex_std qsc;
+        quadratic_complex_std<> qsc;
         qsc.solve_c(b3,c3,d3,x1,x2);
         x3=0.0;
         return success;

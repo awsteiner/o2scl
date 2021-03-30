@@ -779,10 +779,10 @@ int main(void) {
   
   // quadratic solvers
   quadratic_real_coeff_gsl t1;
-  quadratic_complex_std t2;
+  quadratic_complex_std<> t2;
   
   // cubic solvers
-  cubic_real_coeff_cern c1;
+  cubic_real_coeff_cern<> c1;
   cubic_real_coeff_gsl c2;
   cubic_complex_std<> c3;
   
