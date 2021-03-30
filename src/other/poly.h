@@ -388,6 +388,7 @@ namespace o2scl {
 
     /// Return a string denoting the type ("poly_real_coeff")
     const char *type() { return "poly_real_coeff"; }
+    
   };
 
   /** \brief Solve a general polynomial with complex
@@ -413,8 +414,33 @@ namespace o2scl {
     virtual int polish_c_arr(int n, const std::complex<double> co[],
 			     std::complex<double> *ro)=0;
 
+#ifdef O2SCL_NEVER_DEFINED
+    {
+      mroot_hybrids<> mh;
+      ubvector x(2), y(2);
+      // Polish all each one of n roots
+      for(size_t j=0;j<n;j++) {
+        x[0]=ro[0].real();
+        x[1]=ro[0].imag();
+        mh.msolve(2,x);
+      }
+      return 0;
+    }
+    
+    virtual int polish_fun(size_t nv, const ubvector &x,
+                           double ubvector &y,
+                           std::complex<double> *co,
+                           std::complex<double> *ro) {
+      
+      // Inside here use horner's method following, e.g. GSL
+      return 0;
+    }
+    
+#endif
+
     /// Return a string denoting the type ("poly_complex")
     const char *type() { return "poly_complex"; }
+    
   };
 
   /** \brief Solve a cubic with real coefficients and complex roots 
@@ -506,6 +532,7 @@ namespace o2scl {
     */	
     virtual int rrteq3(fp_t r, fp_t s, fp_t t, fp_t x[],
                        fp_t &d) {
+      
       fp_t delta2=delta;
       fp_t r1=2.0/27.0, r2=0.5, r3=1.0/3.0;
       fp_t w3=sqrt(3.0), r4=w3/2.0;
@@ -638,7 +665,8 @@ namespace o2scl {
   /** \brief Solve a quartic with real coefficients and complex 
       roots (CERNLIB)
   */
-  class quartic_real_coeff_cern : public quartic_real_coeff {
+  template<class fp_t=double> class quartic_real_coeff_cern :
+    public quartic_real_coeff {
 
   public:
 
@@ -648,16 +676,158 @@ namespace o2scl {
 	d_4 x + e_4= 0 \f$ giving the four complex solutions \f$ x=x_1
 	\f$ , \f$ x=x_2 \f$ , \f$ x=x_3 \f$ , and \f$ x=x_4 \f$ .
     */
-    virtual int solve_rc(const double a4, const double b4, const double c4, 
-			 const double d4, const double e4, 
-			 std::complex<double> &x1, std::complex<double> &x2, 
-			 std::complex<double> &x3, std::complex<double> &x4);
+    virtual int solve_rc(const fp_t a4, const fp_t b4, const fp_t c4, 
+			 const fp_t d4, const fp_t e4, 
+			 std::complex<fp_t> &x1, std::complex<fp_t> &x2, 
+			 std::complex<fp_t> &x3, std::complex<fp_t> &x4) {
+      
+      if (a4==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in quartic_real_coeff_cern::solve_rc().",
+           exc_einval);
+      }
+      
+      int mt;
+      fp_t dc;
+      std::complex<fp_t> x[4];
+      
+      rrteq4(b4/a4,c4/a4,d4/a4,e4/a4,x,dc,mt);
+      x1=x[0];
+      x2=x[1];
+      x3=x[2];
+      x4=x[3];
+      
+      return success;
+    }      
 
-    /// The CERNLIB-like interface
-    virtual int rrteq4(double a, double b, double c, double d, 
-		       std::complex<double> z[], double &dc, 
-		       int &mt);
+    /** \brief The CERNLIB-like interface
 
+        There are a couple differences with the original routine.
+        The arrays z[] and u[] are now zero-indexed.
+    */
+    virtual int rrteq4(fp_t a, fp_t b, fp_t c, fp_t d, 
+		       std::complex<fp_t> z[], fp_t &dc, 
+		       int &mt) {
+      
+      std::complex<fp_t> i(0.0,1.0), z0[5];
+      std::complex<fp_t> w1(0.0,0.0), w2(0.0,0.0), w3;
+      fp_t r4=1.0/4.0, r12=1.0/12.0;
+      fp_t q2=1.0/2.0, q4=1.0/4.0, q8=1.0/8.0;
+      fp_t q1=3.0/8.0, q3=3.0/16.0;
+      fp_t u[3], v[4], v1, v2;
+      int j, k1=0, k2=0;
+      
+      // degenerate cases
+      if (b==0 && c==0) {
+        if (d==0) {
+          mt=1;
+          z[0]=-a;
+          z[1]=0;
+          z[2]=0;
+          z[3]=0;
+          dc=0;
+          return success;
+        } else if (a==0) {
+          if (d>0) {
+            mt=2;
+            z[0]=sqrt(i*sqrt(d));
+            z[1]=-z[0];
+            z[3]=sqrt(-z[0]*z[0]);
+            z[2]=-z[3];
+          } else {
+            mt=3;
+            z[0]=sqrt(sqrt(-d));
+            z[1]=-z[0];
+            z[2]=sqrt(-z[0]*z[0]);
+            z[3]=-z[2];
+          }
+          dc=-r12*d*r12*d*r12*d;
+          return success;
+        }
+      }
+      
+      // Solve the resolvant cubic
+      fp_t aa=a*a;
+      fp_t pp=b-q1*aa;
+      fp_t qq=c-q2*a*(b-q4*aa);
+      fp_t rr=d-q4*(a*c-q4*aa*(b-q3*aa));
+      fp_t rc=q2*pp;
+      fp_t sc=q4*(q4*pp*pp-rr);
+      fp_t tc=-(q8*qq*q8*qq);
+      
+      cub_obj.rrteq3(rc,sc,tc,u,dc);
+      
+      fp_t q=qq;
+      fp_t h=r4*a;
+      if (dc==0) u[2]=u[1];
+      if (dc<=0) {
+        mt=2;
+        v[1]=fabs(u[0]);
+        v[2]=fabs(u[1]);
+        v[3]=fabs(u[2]);
+        v1=std::max(std::max(v[1],v[2]),v[3]);
+        if (v1==v[1]) {
+          k1=0;
+          v2=std::max(v[2],v[3]);
+        } else if (v1==v[2]) {
+          k1=1;
+          v2=std::max(v[1],v[3]);
+        } else {
+          k1=2;
+          v2=std::max(v[1],v[2]);
+        }
+        if (v2==v[1]) {
+          k2=0;
+        } else if (v2==v[2]) {
+          k2=1;
+        } else {
+          k2=2;
+        }
+        w1=sqrt(((std::complex<fp_t>)(u[k1])));
+        w2=sqrt(((std::complex<fp_t>)(u[k2])));
+      } else {
+        mt=3;
+        w1=sqrt(u[1]+i*u[2]);
+        w2=sqrt(u[1]-i*u[2]);
+      }
+      w3=0;
+      if (w1*w2!=0.0) w3=-q/(8.0*w1*w2);
+      z0[1]=w1+w2+w3-h;
+      z0[2]=-w1-w2+w3-h;
+      z0[3]=-w1+w2-w3-h;
+      z0[4]=w1-w2-w3-h;
+      if (mt==2) {
+        if (u[k1]>=0 && u[k2]>=0) {
+          mt=1;
+          for(j=1;j<=4;j++) {
+            z[j-1]=z0[j].real();
+          }
+        } else if (u[k1]>=0 && u[k2]<0) {
+          z[0]=z0[1];
+          z[1]=z0[4];
+          z[2]=z0[3];
+          z[3]=z0[2];
+        } else if (u[k1]<0 && u[k2]>=0) {
+          z[0]=z0[1];
+          z[1]=z0[3];
+          z[2]=z0[4];
+          z[3]=z0[2];
+        } else if (u[k1]<0 && u[k2]<0) {
+          z[0]=z0[1];
+          z[1]=z0[2];
+          z[2]=z0[4];
+          z[3]=z0[3];
+        }
+      } else if (mt==3) {
+        for(j=1;j<=2;j++) {
+          z[j-1]=z0[j].real();
+        }
+        z[2]=z0[4];
+        z[3]=z0[3];
+      }
+      return success;
+    }
+    
     /// Return a string denoting the type ("quartic_real_coeff_cern")
     const char *type() { return "quartic_real_coeff_cern"; }
 
@@ -666,7 +836,7 @@ namespace o2scl {
   protected:
 
     /// The object to solve for the associated cubic
-    cubic_real_coeff_cern<> cub_obj;
+    cubic_real_coeff_cern<fp_t> cub_obj;
 
 #endif
 

@@ -205,7 +205,7 @@ int main(void) {
     // Now compare the Delta=0 code with the NJL model at T!=0
 
     double gap1, gap2, gap3, n3, n8;
-    quartic_real_coeff_cern cq;
+    quartic_real_coeff_cern<> cq;
 
     u3.mu=2.5;
     d3.mu=2.5;

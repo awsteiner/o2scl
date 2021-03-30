@@ -787,7 +787,7 @@ int main(void) {
   cubic_complex_std<> c3;
   
   // quartic solvers
-  quartic_real_coeff_cern q1;
+  quartic_real_coeff_cern<> q1;
   quartic_real_gsl q2;
   quartic_real_gsl2 q3;
   quartic_real_simple q4;

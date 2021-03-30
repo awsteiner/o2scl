@@ -319,7 +319,7 @@ namespace o2scl {
         cfl.set_quartic(gp);
         \endcode
      */
-    quartic_real_coeff_cern def_quartic;
+    quartic_real_coeff_cern<> def_quartic;
     //@}
     
     /** \brief Test the routine to compute the eigenvalues of 
