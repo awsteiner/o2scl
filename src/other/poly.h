@@ -78,8 +78,8 @@ namespace o2scl {
   /** \brief Solve a quadratic polynomial with real coefficients and 
       complex roots [abstract base]
   */
-  template<class fp_t=double> class quadratic_real_coeff :
-    public quadratic_real<fp_t> {
+  template<class fp_t=double, class cx_t=std::complex<fp_t> >
+  class quadratic_real_coeff : public quadratic_real<fp_t> {
 
   public:
 
@@ -96,7 +96,7 @@ namespace o2scl {
            exc_einval);
       }
       
-      std::complex<fp_t> r1,r2;
+      cx_t r1,r2;
       int ret=solve_rc(a2,b2,c2,r1,r2);
       x1=r1.real();
       x2=r2.real();
@@ -106,9 +106,8 @@ namespace o2scl {
     /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
 	giving the two complex solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ 
     */
-    virtual int solve_rc(const double a2, const double b2, const double c2, 
-			 std::complex<double> &x1, 
-			 std::complex<double> &x2)=0;
+    virtual int solve_rc(const fp_t a2, const fp_t b2, const fp_t c2, 
+			 cx_t &x1, cx_t &x2)=0;
 
     /// Return a string denoting the type ("quadratic_real_coeff")
     const char *type() { return "quadratic_real_coeff"; }
@@ -995,7 +994,8 @@ namespace o2scl {
 
   /** \brief Solve a quadratic with real coefficients and complex roots (GSL)
    */
-  class quadratic_real_coeff_gsl : public quadratic_real_coeff<double> {
+  template<class fp_t=double, class cx_t=std::complex<double> >
+  class quadratic_real_coeff_gsl : public quadratic_real_coeff<fp_t,cx_t> {
 
   public:
 
@@ -1004,8 +1004,67 @@ namespace o2scl {
     /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
 	giving the two complex solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ 
     */
-    virtual int solve_rc(const double a2, const double b2, const double c2, 
-			 std::complex<double> &x1, std::complex<double> &x2);
+    virtual int solve_rc(const fp_t a, const fp_t b, const fp_t c,
+                         cx_t &x1, cx_t &x2) {
+      
+      double disc=b*b-4*a*c;
+      if (a == 0) {
+        if (b == 0) {
+          O2SCL_ERR2("No solution because a=b=0 in ",
+                     "quadratic_real_coeff::solve_rc().",o2scl::exc_einval);
+        } else {
+          x1.real(-c/b);
+          x1.imag(0);
+          return 1;
+        };
+      }
+      
+      if (disc > 0) {
+        if (b == 0) {
+          double s=fabs(sqrt(disc)/a/2);
+          x1.real(-s);
+          x1.imag(0);
+          x2.real(s);
+          x2.imag(0);
+        } else {
+          double sgnb=(b > 0 ? 1 : -1);
+          double temp=-(b+sgnb*sqrt(disc))/2;
+          double r1=temp/a;
+          double r2=c/temp;
+          
+          if (r1 < r2) {
+            x1.real(r1);
+            x1.imag(0);
+            x2.real(r2);
+            x2.imag(0);
+          } else {
+            x1.real(r2);
+            x1.imag(0);
+            x2.real(r1);
+            x2.imag(0);
+          }
+        }
+        return 2;
+        
+      } else if (disc == 0) {
+        
+        x1.real(-b/a/2);
+        x1.imag(0);
+        x2.real(-b/a/2);
+        x2.imag(0);
+        
+        return 2;
+        
+      }
+      
+      double s=fabs(sqrt(-disc)/a/2);
+      x1.real(-b/a/2);
+      x1.imag(-s);
+      x2.real(-b/a/2);
+      x2.imag(s);
+      
+      return 2;
+    }
 
     /// Return a string denoting the type ("quadratic_real_coeff_gsl")
     const char *type() { return "quadratic_real_coeff_gsl"; }

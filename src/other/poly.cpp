@@ -53,19 +53,6 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-int quadratic_real_coeff_gsl::solve_rc
-(double a2, double b2, double c2,
- complex<double> &x1, complex<double> &x2) { 
-  gsl_complex r1, r2;
-
-  gsl_poly_complex_solve_quadratic(a2,b2,c2,&r1,&r2);
-  
-  x1=complex<double>(GSL_REAL(r1),GSL_IMAG(r1));
-  x2=complex<double>(GSL_REAL(r2),GSL_IMAG(r2));
-
-  return success;
-}
-
 inline double max(double a, double b) {
   if (a>b) return a;
   return b;

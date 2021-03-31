@@ -620,15 +620,13 @@ void test_quartic_real(size_t ne, quartic_real<double> *po,
   return;
 }
 
-template<class fp_t=double>
-void test_quartic_real_coeff(size_t ne, quartic_real_coeff<fp_t> *po,
-                             string str, fp_t e1, fp_t e2, fp_t e3,
-                             fp_t e4) {
-			     
-  fp_t s1,s2,m1,m2;
-  clock_t lt1, lt2;
-  complex<fp_t> cr1,cr2,cr3,cr4,czo1,czo2,czo3,czo4;  
-  complex<fp_t> i(0.0,1.0),cap,cbp,ccp,cdp,cep;
+template<class fp_t=double, class cx_t=std::complex<fp_t> >
+void test_quartic_real_coeff_base(size_t ne, quartic_real_coeff<fp_t,cx_t> *po,
+                                  string str, fp_t &s1, fp_t &s2, fp_t &m1,
+                                  fp_t &m2, clock_t &lt1, clock_t &lt2) {
+
+  cx_t cr1,cr2,cr3,cr4,czo1,czo2,czo3,czo4;  
+  cx_t i(0.0,1.0),cap,cbp,ccp,cdp,cep;
   fp_t ca,cb,cc,cd,ce;
   size_t j;
   fp_t q1,q2;
@@ -682,12 +680,49 @@ void test_quartic_real_coeff(size_t ne, quartic_real_coeff<fp_t> *po,
   lt2=clock();
   s1/=((fp_t)ne);
   s2/=((fp_t)ne);
+  
+  return;
+}
+
+template<class fp_t=double, class cx_t=std::complex<fp_t> >
+void test_quartic_real_coeff(size_t ne, quartic_real_coeff<fp_t,cx_t> *po,
+                             string str, fp_t e1, fp_t e2, fp_t e3,
+                             fp_t e4) {
+  
+  fp_t s1,s2,m1,m2;
+  clock_t lt1, lt2;
+  
+  test_quartic_real_coeff_base<fp_t,cx_t>(ne,po,str,
+                                          s1,s2,m1,m2,lt1,lt2);
+  
   cout.width(wid);
   cout << str.c_str();
-  tst.test_abs(s1,0.0,e1,"quartic_real_coeff s1");
-  tst.test_abs(s2,0.0,e2,"quartic_real_coeff s2");
-  tst.test_abs(m1,0.0,e3,"quartic_real_coeff m1");
-  tst.test_abs(m2,0.0,e4,"quartic_real_coeff m2");
+  tst.test_abs<fp_t>(s1,0.0,e1,"quartic_real_coeff s1");
+  tst.test_abs<fp_t>(s2,0.0,e2,"quartic_real_coeff s2");
+  tst.test_abs<fp_t>(m1,0.0,e3,"quartic_real_coeff m1");
+  tst.test_abs<fp_t>(m2,0.0,e4,"quartic_real_coeff m2");
+  cout << ": " << s1 << " " << s2 << " " << m1 << " " 
+       << m2 << " " << ((double)(lt2-lt1))/CLOCKS_PER_SEC << endl;
+  return;
+}
+
+template<class fp_t=double, class cx_t=std::complex<fp_t> >
+void test_quartic_real_coeff_boost(size_t ne, quartic_real_coeff<fp_t,cx_t> *po,
+                             string str, fp_t e1, fp_t e2, fp_t e3,
+                             fp_t e4) {
+  
+  fp_t s1,s2,m1,m2;
+  clock_t lt1, lt2;
+  
+  test_quartic_real_coeff_base<fp_t,cx_t>(ne,po,str,
+                                          s1,s2,m1,m2,lt1,lt2);
+  
+  cout.width(wid);
+  cout << str.c_str();
+  tst.test_abs_boost<fp_t>(s1,0.0,e1,"quartic_real_coeff s1");
+  tst.test_abs_boost<fp_t>(s2,0.0,e2,"quartic_real_coeff s2");
+  tst.test_abs_boost<fp_t>(m1,0.0,e3,"quartic_real_coeff m1");
+  tst.test_abs_boost<fp_t>(m2,0.0,e4,"quartic_real_coeff m2");
   cout << ": " << s1 << " " << s2 << " " << m1 << " " 
        << m2 << " " << ((double)(lt2-lt1))/CLOCKS_PER_SEC << endl;
   return;
@@ -791,7 +826,7 @@ int main(void) {
   poly_real_coeff_gsl p3;
   
   // quadratic solvers
-  quadratic_real_coeff_gsl t1;
+  quadratic_real_coeff_gsl<> t1;
   quadratic_complex_std<> t2;
   
   // cubic solvers
@@ -807,6 +842,7 @@ int main(void) {
   quartic_complex_simple<> q5;
 
 #ifdef O2SCL_LD_TYPES
+  quartic_real_coeff_gsl<cpp_bin_float_50,cpp_complex_50> t1_cdf50;
   quartic_real_coeff_cern<cpp_bin_float_50,cpp_complex_50> q1_cdf50;
 #endif
   
@@ -926,6 +962,11 @@ int main(void) {
 			  1.0e1,1.0e1,1.0e3,1.0e4);
   test_quartic_real_coeff(ne,&p3,"poly_real_coeff_gsl",
 			  1.0e-13,1.0e-6,1.0e-10,1.0e-4);
+#ifdef O2SCL_LD_TYPES
+  test_quartic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
+    (ne,&q1_cdf50,"cern_real_coeff_50",
+     1.0e0,1.0e4,1.0e2,1.0e5);
+#endif
   cout << endl;
   
   cout << "Quartics with complex coefficients and complex roots:" << endl;
