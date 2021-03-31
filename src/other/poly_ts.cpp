@@ -177,34 +177,17 @@ gsl_poly_complex_solve_cubic_lm(double a, double b, double c,
     }
 }
 
-
-void test_quadratic_real_coeff(size_t ne, quadratic_real_coeff<> *po, 
-			       string str, double alpha, double e1, 
-			       double e2, double e3, double e4,
-			       double &time_taken);
-void test_quadratic_complex(size_t ne, quadratic_complex<> *po, string str, 
-			    double e1, double e2, double e3, double e4);
-void test_cubic_real_coeff(size_t ne, cubic_real_coeff<double> *po, string str, 
-			   double alpha, double e1, double e2, double e3, 
-			   double e4);
-void test_cubic_complex(size_t ne, cubic_complex<> *po, string str, double e1, 
-			double e2, double e3, double e4);
-void test_quartic_real(size_t ne, quartic_real<double> *po, string str,
-                       double alpha, 
-		       double e1, double e2, double e3, double e4);
-void test_quartic_complex(size_t ne, quartic_complex<> *po, string str, 
-			  double e1, double e2, double e3, double e4);
-
-void test_quadratic_real_coeff(size_t ne, quadratic_real_coeff<> *po, 
-			       string str, double alpha, double e1, double e2, 
-			       double e3, double e4, double &time_taken) {
-  double s1,s2,m1,m2;
-  clock_t lt1, lt2;
-  complex<double> cr2,cr3,czo2,czo3,cap,cbp,ccp,cdp,cr1,czo1;
-  double ca,cb,cc;
-  complex<double> i(0.0,1.0);
+template<class fp_t=double, class cx_t=std::complex<fp_t> >
+void test_quadratic_real_coeff_base
+(size_t ne, quadratic_real_coeff<fp_t,cx_t> *po, 
+ string str, fp_t alpha, fp_t &s1, fp_t &s2, fp_t &m1,
+ fp_t &m2, clock_t &lt1, clock_t &lt2) {
+  
+  cx_t cr2,cr3,czo2,czo3,cap,cbp,ccp,cdp,cr1,czo1;
+  fp_t ca,cb,cc;
+  cx_t i(0.0,1.0);
   size_t j;
-  double q1,q2;
+  fp_t q1,q2;
   s1=0.0;
   s2=0.0;
   m1=0.0;
@@ -238,7 +221,7 @@ void test_quadratic_real_coeff(size_t ne, quadratic_real_coeff<> *po,
 	  s2+=q2;
 	  if (q2>m2) m2=q2;
 
-	  if (!std::isfinite(q1) || !std::isfinite(q2) || 
+	  if (!o2isfinite(q1) || !o2isfinite(q2) || 
 	      fabs(q1)>1.0e-10 || fabs(q2)>1.0e-10) {
 	    O2SCL_ERR("Failure in test_quadratic_real_coeff().",
 		      exc_esanity);
@@ -251,8 +234,24 @@ void test_quadratic_real_coeff(size_t ne, quadratic_real_coeff<> *po,
   }
 
   lt2=clock();
-  s1/=((double)ne);
-  s2/=((double)ne);
+  s1/=((fp_t)ne);
+  s2/=((fp_t)ne);
+
+  return;
+}
+
+template<class fp_t=double, class cx_t=std::complex<fp_t> >
+void test_quadratic_real_coeff
+(size_t ne, quadratic_real_coeff<fp_t,cx_t> *po, 
+ string str, fp_t alpha, fp_t e1, fp_t e2, 
+ fp_t e3, fp_t e4) {
+
+  fp_t s1,s2,m1,m2;
+  clock_t lt1, lt2;
+  
+  test_quadratic_real_coeff_base<fp_t,cx_t>(ne,po,str,alpha,s1,s2,
+                                            m1,m2,lt1,lt2);
+  
   cout.width(wid);
   cout << str.c_str();
   tst.test_abs(s1,0.0,e1,"quadratic_real_coeff s1");
@@ -261,7 +260,31 @@ void test_quadratic_real_coeff(size_t ne, quadratic_real_coeff<> *po,
   tst.test_abs(m2,0.0,e4,"quadratic_real_coeff m2");
   cout << ": " << s1 << " " << s2 << " " << m1 << " " 
        << m2 << " ";
-  time_taken=((double)(lt2-lt1))/CLOCKS_PER_SEC;
+  cout << ((double)(lt2-lt1))/CLOCKS_PER_SEC << endl;
+
+  return;
+}
+
+template<class fp_t=double, class cx_t=std::complex<fp_t> >
+void test_quadratic_real_coeff_boost
+(size_t ne, quadratic_real_coeff<fp_t,cx_t> *po, 
+ string str, fp_t alpha, fp_t e1, fp_t e2, 
+ fp_t e3, fp_t e4) {
+
+  fp_t s1,s2,m1,m2;
+  clock_t lt1, lt2;
+  
+  test_quadratic_real_coeff_base<fp_t,cx_t>(ne,po,str,alpha,s1,s2,
+                                            m1,m2,lt1,lt2);
+  
+  cout.width(wid);
+  cout << str.c_str();
+  tst.test_abs_boost<fp_t>(s1,0.0,e1,"quadratic_real_coeff s1");
+  tst.test_abs_boost<fp_t>(s2,0.0,e2,"quadratic_real_coeff s2");
+  tst.test_abs_boost<fp_t>(m1,0.0,e3,"quadratic_real_coeff m1");
+  tst.test_abs_boost<fp_t>(m2,0.0,e4,"quadratic_real_coeff m2");
+  cout << ": " << s1 << " " << s2 << " " << m1 << " " 
+       << m2 << " ";
   cout << ((double)(lt2-lt1))/CLOCKS_PER_SEC << endl;
 
   return;
@@ -842,25 +865,27 @@ int main(void) {
   quartic_complex_simple<> q5;
 
 #ifdef O2SCL_LD_TYPES
-  quartic_real_coeff_gsl<cpp_bin_float_50,cpp_complex_50> t1_cdf50;
+  quadratic_real_coeff_gsl<cpp_bin_float_50,cpp_complex_50> t1_cdf50;
   quartic_real_coeff_cern<cpp_bin_float_50,cpp_complex_50> q1_cdf50;
+  quadratic_complex_std<cpp_bin_float_50,cpp_complex_50> t2_cdf50;
 #endif
   
   // I think this number is no longer used, except to 
   // give an overall scale for the timings
   size_t ne=10000;
 
-  double tt;
-  
   cout << "Quadratics with real coefficients and complex roots:" << endl;
   cout << "type                   Avg 1      Avg 2      Max 1"
        << "      Max 2      time" << endl;
-  test_quadratic_real_coeff(ne,&t1,"gsl_quad_real_coeff",1.0,
-			    1.0e-15,1.0e-13,1.0e-15,1.0e-9,tt);
-  test_quadratic_real_coeff(ne,&t2,"quadratic_complex_std",1.0,
-			    1.0e-13,1.0e-12,1.0e-9,1.0e-9,tt);
+  test_quadratic_real_coeff(ne,&t1,"quad_real_coeff_gsl",1.0,
+			    1.0e-15,1.0e-13,1.0e-15,1.0e-9);
+  test_quadratic_real_coeff(ne,&t2,"quad_complex_std",1.0,
+			    1.0e-13,1.0e-12,1.0e-9,1.0e-9);
   test_quadratic_real_coeff(ne,&p3,"poly_real_coeff_gsl",1.0,
-			    1.0e-13,1.0e-12,1.0e-9,1.0e-9,tt);
+			    1.0e-13,1.0e-12,1.0e-9,1.0e-9);
+  test_quadratic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
+    (ne,&t1_cdf50,"quad_rc_gsl_50",1.0,
+     1.0e-49,1.0e-46,1.0e-48,1.0e-45);
   cout << endl;
 
   cout << "Quadratics with real coefficients and complex roots -\n"
@@ -868,11 +893,14 @@ int main(void) {
   cout << "type                   Avg 1      Avg 2      Max 1"
        << "      Max 2      time" << endl;
   test_quadratic_real_coeff(ne,&t1,"gsl_quad_real_coeff",1.0e-5,
-			    1.0e-15,1.0e-15,1.0e-15,1.0e-15,tt);
+			    1.0e-15,1.0e-15,1.0e-15,1.0e-15);
   test_quadratic_real_coeff(ne,&t2,"quadratic_complex_std",1.0e-5,
-			    1.0e-15,1.0e-15,1.0e-15,5.0e-15,tt);
+			    1.0e-15,1.0e-15,1.0e-15,5.0e-15);
   test_quadratic_real_coeff(ne,&p3,"poly_real_coeff_gsl",1.0e-5,
-			    1.0e-15,1.0e-15,1.0e-15,1.0e-15,tt);
+			    1.0e-15,1.0e-15,1.0e-15,1.0e-15);
+  test_quadratic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
+    (ne,&t1_cdf50,"quad_rc_gsl_50",1.0e-5,
+     1.0e-49,1.0e-48,1.0e-48,1.0e-48);
   cout << endl;
 
   cout << "Quadratic with complex coefficients and complex roots:" << endl;

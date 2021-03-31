@@ -116,8 +116,8 @@ namespace o2scl {
   /** \brief Solve a quadratic polynomial with complex coefficients and 
       complex roots [abstract base]
   */
-  template<class fp_t=double> class quadratic_complex :
-    public quadratic_real_coeff<fp_t> {
+  template<class fp_t=double, class cx_t=std::complex<fp_t> >
+  class quadratic_complex :  public quadratic_real_coeff<fp_t,cx_t> {
     
   public:
 
@@ -134,7 +134,7 @@ namespace o2scl {
            exc_einval);
       }
       
-      std::complex<fp_t> r1,r2;
+      cx_t r1,r2;
       int ret=solve_c(a2,b2,c2,r1,r2);
       x1=r1.real();
       x2=r2.real();
@@ -146,7 +146,7 @@ namespace o2scl {
 	giving the two complex solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ 
     */
     virtual int solve_rc(const fp_t a2, const fp_t b2, const fp_t c2, 
-			 std::complex<fp_t> &x1, std::complex<fp_t> &x2) {
+			 cx_t &x1, cx_t &x2) {
       if (a2==0.0) {
         O2SCL_ERR
           ("Leading coefficient zero in quadratic_complex::solve_rc().",
@@ -160,10 +160,8 @@ namespace o2scl {
     /** \brief Solves the complex polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
 	giving the two complex solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ 
     */
-    virtual int solve_c(const std::complex<fp_t> a2, 
-			const std::complex<fp_t> b2, 
-			const std::complex<fp_t> c2, 
-			std::complex<fp_t> &x1, std::complex<fp_t> &x2)=0;
+    virtual int solve_c(const cx_t a2, const cx_t b2, 
+			const cx_t c2, cx_t &x1, cx_t &x2)=0;
 
     /// Return a string denoting the type ("quadratic_complex")
     const char *type() { return "quadratic_complex"; }
@@ -1007,7 +1005,7 @@ namespace o2scl {
     virtual int solve_rc(const fp_t a, const fp_t b, const fp_t c,
                          cx_t &x1, cx_t &x2) {
       
-      double disc=b*b-4*a*c;
+      fp_t disc=b*b-4*a*c;
       if (a == 0) {
         if (b == 0) {
           O2SCL_ERR2("No solution because a=b=0 in ",
@@ -1021,16 +1019,16 @@ namespace o2scl {
       
       if (disc > 0) {
         if (b == 0) {
-          double s=fabs(sqrt(disc)/a/2);
+          fp_t s=fabs(sqrt(disc)/a/2);
           x1.real(-s);
           x1.imag(0);
           x2.real(s);
           x2.imag(0);
         } else {
-          double sgnb=(b > 0 ? 1 : -1);
-          double temp=-(b+sgnb*sqrt(disc))/2;
-          double r1=temp/a;
-          double r2=c/temp;
+          fp_t sgnb=(b > 0 ? 1 : -1);
+          fp_t temp=-(b+sgnb*sqrt(disc))/2;
+          fp_t r1=temp/a;
+          fp_t r2=c/temp;
           
           if (r1 < r2) {
             x1.real(r1);
@@ -1057,7 +1055,7 @@ namespace o2scl {
         
       }
       
-      double s=fabs(sqrt(-disc)/a/2);
+      fp_t s=fabs(sqrt(-disc)/a/2);
       x1.real(-b/a/2);
       x1.imag(-s);
       x2.real(-b/a/2);
@@ -1251,8 +1249,8 @@ namespace o2scl {
 
   /** \brief Solve a quadratic with complex coefficients and complex roots
    */
-  template<class fp_t=double> class quadratic_complex_std :
-    public quadratic_complex<fp_t> {
+  template<class fp_t=double, class cx_t=std::complex<fp_t> >
+  class quadratic_complex_std : public quadratic_complex<fp_t,cx_t> {
 
   public:
 
@@ -1261,11 +1259,9 @@ namespace o2scl {
     /** \brief Solves the complex polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
 	giving the two complex solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ 
     */
-    virtual int solve_c(const std::complex<fp_t> a2, 
-			const std::complex<fp_t> b2, 
-			const std::complex<fp_t> c2, 
-			std::complex<fp_t> &x1,
-                        std::complex<fp_t> &x2) {
+    virtual int solve_c(const cx_t a2, const cx_t b2, 
+			const cx_t c2, cx_t &x1, cx_t &x2) {
+      
       if (a2==0.0) {
         O2SCL_ERR
           ("Leading coefficient zero in quadratic_complex_std::solve_c().",

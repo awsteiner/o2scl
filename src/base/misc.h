@@ -45,6 +45,7 @@
 
 #ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/number.hpp>
+#include <boost/multiprecision/cpp_bin_float.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #endif
 
@@ -216,6 +217,14 @@ namespace o2scl {
   /** \brief Compatbility function for isfinite()
    */
   bool o2isfinite(const boost::multiprecision::cpp_dec_float_100 x);
+
+  /** \brief Compatbility function for isfinite()
+   */
+  bool o2isfinite(const boost::multiprecision::cpp_bin_float_50 x);
+
+  /** \brief Compatbility function for isfinite()
+   */
+  bool o2isfinite(const boost::multiprecision::cpp_bin_float_100 x);
 
 #endif
   

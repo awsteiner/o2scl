@@ -219,6 +219,18 @@ o2scl::o2hypot(const boost::multiprecision::cpp_dec_float_100 x,
   return boost::math::hypot(x,y);
 }
 
+// cpp_bin_float_50 functions
+
+bool o2scl::o2isfinite(const boost::multiprecision::cpp_bin_float_50 x) {
+  return boost::math::isfinite(x);
+}
+
+// cpp_bin_float_100 functions
+
+bool o2scl::o2isfinite(const boost::multiprecision::cpp_bin_float_100 x) {
+  return boost::math::isfinite(x);
+}
+
 #endif
 
 int o2scl::pipe_cmd_string(std::string cmd, std::string &result,
