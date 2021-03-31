@@ -136,7 +136,7 @@ namespace o2scl {
   /** \brief Solve a cubic polynomial with real coefficients and real roots
       [abstract base]
   */
-  class cubic_real {
+  template<class fp_t=double> class cubic_real {
   public:
 
     virtual ~cubic_real() {}
@@ -145,15 +145,15 @@ namespace o2scl {
 	\f$ a_3 x^3 + b_3 x^2 + c_3 x + d_3= 0 \f$ giving the three 
 	solutions \f$ x=x_1 \f$ , \f$ x=x_2 \f$ , and \f$ x=x_3 \f$ .
     */
-    virtual int solve_r(const double a3, const double b3, const double c3, 
-			const double d3, double &x1, double &x2, 
-			double &x3)=0;
+    virtual int solve_r(const fp_t a3, const fp_t b3, const fp_t c3, 
+			const fp_t d3, fp_t &x1, fp_t &x2, 
+			fp_t &x3)=0;
 
     /** \brief Compute the cubic discriminant, 
 	\f$ b^2 c^2 - 4 a c^3 - 4 b^3 d - 27 a^2 d^2 + 18 a b c d \f$
      */
-    virtual double disc_r(const double a3, const double b3, const double c3, 
-			  const double d3) {
+    virtual fp_t disc_r(const fp_t a3, const fp_t b3, const fp_t c3, 
+			  const fp_t d3) {
       return b3*b3*c3*c3-4.0*a3*c3*c3*c3-4.0*b3*b3*b3*d3-
 	27.0*a3*a3*d3*d3+18.0*a3*b3*c3*d3;
     }
@@ -165,7 +165,8 @@ namespace o2scl {
   /** \brief Solve a cubic polynomial with real coefficients and 
       complex roots [abstract base]
   */
-  class cubic_real_coeff : public cubic_real {
+  template<class fp_t=double> class cubic_real_coeff :
+    public cubic_real<fp_t> {
 
   public:
 
@@ -175,17 +176,31 @@ namespace o2scl {
 	\f$ a_3 x^3 + b_3 x^2 + c_3 x + d_3= 0 \f$ giving the three 
 	solutions \f$ x=x_1 \f$ , \f$ x=x_2 \f$ , and \f$ x=x_3 \f$ .
     */
-    virtual int solve_r(const double a3, const double b3, const double c3, 
-			const double d3, double &x1, double &x2, double &x3);
+    virtual int solve_r(const fp_t a3, const fp_t b3, const fp_t c3, 
+			const fp_t d3, fp_t &x1, fp_t &x2, fp_t &x3) {
+      
+      std::complex<fp_t> r2,r3;
+  
+      if (a3==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in cubic_real_coeff::solve_r().",
+           exc_einval);
+      }
+      
+      int ret=solve_rc(a3,b3,c3,d3,x1,r2,r3);
+      x2=r2.real();
+      x3=r3.real();
+      return ret;
+    }
 
     /** \brief Solves the polynomial 
 	\f$ a_3 x^3 + b_3 x^2 + c_3 x + d_3= 0 \f$ 
 	giving the real solution \f$ x=x_1 \f$ and two complex solutions 
 	\f$ x=x_2 \f$ and \f$ x=x_3 \f$ .
     */
-    virtual int solve_rc(const double a3, const double b3, const double c3, 
-			 const double d3, double &x1, std::complex<double> &x2,
-			 std::complex<double> &x3)=0;
+    virtual int solve_rc(const fp_t a3, const fp_t b3, const fp_t c3, 
+			 const fp_t d3, fp_t &x1, std::complex<fp_t> &x2,
+			 std::complex<fp_t> &x3)=0;
 
     /// Return a string denoting the type ("cubic_real_coeff")
     const char *type() { return "cubic_real_coeff"; }
@@ -194,7 +209,7 @@ namespace o2scl {
   /** \brief Solve a cubic polynomial with complex coefficients and 
       complex roots [abstract base]
   */
-  class cubic_complex : public cubic_real_coeff {
+  class cubic_complex : public cubic_real_coeff<double> {
 
   public:
 
@@ -262,7 +277,7 @@ namespace o2scl {
   /** \brief Solve a quartic polynomial with real coefficients and 
       real roots [abstract base]
   */
-  class quartic_real {
+  template<class fp_t=double> class quartic_real {
 
   public:
 
@@ -273,10 +288,10 @@ namespace o2scl {
 	giving the four solutions \f$ x=x_1 \f$ , \f$ x=x_2 \f$ ,
 	\f$ x=x_3 \f$ , and \f$ x=x_4 \f$ .
     */
-    virtual int solve_r(const double a4, const double b4, const double c4, 
-			const double d4, const double e4, 
-			double &x1, double &x2, 
-			double &x3, double &x4)=0;
+    virtual int solve_r(const fp_t a4, const fp_t b4, const fp_t c4, 
+			const fp_t d4, const fp_t e4, 
+			fp_t &x1, fp_t &x2, 
+			fp_t &x3, fp_t &x4)=0;
 
     /** \brief Compute the discriminant
 
@@ -286,23 +301,23 @@ namespace o2scl {
 	roots, and it is positive if the roots are either all real or
 	all non-real.
     */
-    virtual double disc_r(const double a, const double b, const double c, 
-			  const double d, const double e) {
-      double a2=a*a;
-      double b2=b*b;
-      double c2=c*c;
-      double d2=d*d;
-      double e2=e*e;
+    virtual fp_t disc_r(const fp_t a, const fp_t b, const fp_t c, 
+			  const fp_t d, const fp_t e) {
+      fp_t a2=a*a;
+      fp_t b2=b*b;
+      fp_t c2=c*c;
+      fp_t d2=d*d;
+      fp_t e2=e*e;
       
-      double a3=a2*a;
-      double b3=b2*b;
-      double c3=c2*c;
-      double d3=d2*d;
-      double e3=e2*e;
+      fp_t a3=a2*a;
+      fp_t b3=b2*b;
+      fp_t c3=c2*c;
+      fp_t d3=d2*d;
+      fp_t e3=e2*e;
       
-      double b4=b2*b2;
-      double c4=c2*c2;
-      double d4=d2*d2;
+      fp_t b4=b2*b2;
+      fp_t c4=c2*c2;
+      fp_t d4=d2*d2;
       
       return 256.0*a3*e3-192.0*a2*b*d*e2-128.0*a2*c2*e2+144.0*a2*c*d2*e-
         27.0*a2*d4+144.0*a*b2*c*e2-6.0*a*b2*d2*e-80.0*a*b*c2*d*e+
@@ -317,7 +332,8 @@ namespace o2scl {
   /** \brief Solve a quartic polynomial with real coefficients and 
       complex roots [abstract base]
   */
-  class quartic_real_coeff : public quartic_real {
+  template<class fp_t=double> class quartic_real_coeff :
+    public quartic_real<fp_t> {
 
   public:
 
@@ -328,16 +344,16 @@ namespace o2scl {
 	giving the four solutions \f$ x=x_1 \f$ , \f$ x=x_2 \f$ ,
 	\f$ x=x_3 \f$ , and \f$ x=x_4 \f$ .
     */
-    virtual int solve_r(const double a4, const double b4, const double c4, 
-			const double d4, const double e4, double &x1, 
-			double &x2, double &x3, double &x4) {
+    virtual int solve_r(const fp_t a4, const fp_t b4, const fp_t c4, 
+			const fp_t d4, const fp_t e4, fp_t &x1, 
+			fp_t &x2, fp_t &x3, fp_t &x4) {
       if (a4==0.0) {
         O2SCL_ERR
           ("Leading coefficient zero in quartic_real_coeff::solve_r().",
            exc_einval);
       }
       
-      std::complex<double> r1,r2,r3,r4;
+      std::complex<fp_t> r1,r2,r3,r4;
       int ret=solve_rc(a4,b4,c4,d4,e4,r1,r2,r3,r4);
       x1=r1.real();
       x2=r2.real();
@@ -351,11 +367,11 @@ namespace o2scl {
 	 giving the four complex solutions \f$ x=x_1 \f$ , \f$ x=x_2 \f$ ,
 	 \f$ x=x_3 \f$ , and \f$ x=x_4 \f$ .
     */
-    virtual int solve_rc(const double a4, const double b4, const double c4, 
-			 const double d4, const double e4, 
-			 std::complex<double> &x1, std::complex<double> &x2, 
-			 std::complex<double> &x3, 
-			 std::complex<double> &x4)=0;
+    virtual int solve_rc(const fp_t a4, const fp_t b4, const fp_t c4, 
+			 const fp_t d4, const fp_t e4, 
+			 std::complex<fp_t> &x1, std::complex<fp_t> &x2, 
+			 std::complex<fp_t> &x3, 
+			 std::complex<fp_t> &x4)=0;
 
     /// Return a string denoting the type ("quartic_real_coeff")
     const char *type() { return "quartic_real_coeff"; }
@@ -364,7 +380,7 @@ namespace o2scl {
   /** \brief Solve a quartic polynomial with complex coefficients and 
       complex roots [abstract base]
   */
-  class quartic_complex : public quartic_real_coeff {
+  class quartic_complex : public quartic_real_coeff<double> {
 
   public:
 
@@ -434,7 +450,8 @@ namespace o2scl {
       coefficients and complex roots [abstract base]
   */
   class poly_real_coeff : public quadratic_real_coeff,
-    public cubic_real_coeff, public quartic_real_coeff {
+                          public cubic_real_coeff<double>,
+                          public quartic_real_coeff<double> {
 
   public:
     
@@ -521,7 +538,7 @@ namespace o2scl {
       that function for details.
   */
   template<class fp_t=double> class cubic_real_coeff_cern :
-    public cubic_real_coeff {
+    public cubic_real_coeff<fp_t> {
 
   public:
 
@@ -736,7 +753,7 @@ namespace o2scl {
       roots (CERNLIB)
   */
   template<class fp_t=double> class quartic_real_coeff_cern :
-    public quartic_real_coeff {
+    public quartic_real_coeff<fp_t> {
 
   public:
 
@@ -781,9 +798,16 @@ namespace o2scl {
       
       std::complex<fp_t> i(0.0,1.0), z0[5];
       std::complex<fp_t> w1(0.0,0.0), w2(0.0,0.0), w3;
-      fp_t r4=1.0/4.0, r12=1.0/12.0;
-      fp_t q2=1.0/2.0, q4=1.0/4.0, q8=1.0/8.0;
-      fp_t q1=3.0/8.0, q3=3.0/16.0;
+
+      fp_t q2=1.0;
+      q2/=2.0;
+      fp_t r4=q2/2.0;
+      fp_t q4=r4;
+      fp_t q8=r4/2.0;
+      fp_t r12=r4/3.0;
+      fp_t q1=q8*3.0;
+      fp_t q3=q1/2.0;
+        
       fp_t u[3], v[4], v1, v2;
       int j, k1=0, k2=0;
       
@@ -933,7 +957,7 @@ namespace o2scl {
 
   /** \brief Solve a cubic with real coefficients and complex roots (GSL)
    */
-  class cubic_real_coeff_gsl : public cubic_real_coeff {
+  class cubic_real_coeff_gsl : public cubic_real_coeff<double> {
 
   public:
 
@@ -977,7 +1001,7 @@ namespace o2scl {
       \future Optimize value of \c cube_root_tol and compare
       more clearly to \ref o2scl::quartic_real_gsl2
   */
-  class quartic_real_gsl : public quartic_real {
+  class quartic_real_gsl : public quartic_real<double> {
     
   public:
     
@@ -1014,7 +1038,7 @@ namespace o2scl {
       \future Optimize value of \c cube_root_tol and compare
       more clearly to \ref o2scl::quartic_real_gsl
   */
-  class quartic_real_gsl2 : public quartic_real {
+  class quartic_real_gsl2 : public quartic_real<double> {
 
   public:
 
@@ -1241,7 +1265,7 @@ namespace o2scl {
 
   /** \brief Solve a quartic with real coefficients and real roots
    */
-  class quartic_real_simple : public quartic_real {
+  class quartic_real_simple : public quartic_real<double> {
 
   public:
 

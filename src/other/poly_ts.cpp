@@ -29,6 +29,13 @@
 using namespace std;
 using namespace o2scl;
 
+#ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/cpp_dec_float.hpp>
+
+typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+#endif
+
+
 test_mgr tst;
 int wid=21;
 
@@ -37,9 +44,9 @@ int wid=21;
 // Test patch suggested by Lorenzo Moneta
 
 int
-gsl_poly_complex_solve_cubic_lm (double a, double b, double c, 
-				 gsl_complex *z0, gsl_complex *z1, 
-				 gsl_complex *z2)
+gsl_poly_complex_solve_cubic_lm(double a, double b, double c, 
+                                gsl_complex *z0, gsl_complex *z1, 
+                                gsl_complex *z2)
 {
   double q = (a * a - 3 * b);
   double r = (2 * a * a * a - 9 * a * b + 27 * c);
@@ -174,15 +181,13 @@ void test_quadratic_real_coeff(size_t ne, quadratic_real_coeff *po,
 			       double &time_taken);
 void test_quadratic_complex(size_t ne, quadratic_complex *po, string str, 
 			    double e1, double e2, double e3, double e4);
-void test_cubic_real_coeff(size_t ne, cubic_real_coeff *po, string str, 
+void test_cubic_real_coeff(size_t ne, cubic_real_coeff<double> *po, string str, 
 			   double alpha, double e1, double e2, double e3, 
 			   double e4);
 void test_cubic_complex(size_t ne, cubic_complex *po, string str, double e1, 
 			double e2, double e3, double e4);
-void test_quartic_real(size_t ne, quartic_real *po, string str, double alpha, 
+void test_quartic_real(size_t ne, quartic_real<double> *po, string str, double alpha, 
 		       double e1, double e2, double e3, double e4);
-void test_quartic_real_coeff(size_t ne, quartic_real_coeff *po, string str, 
-			     double e1, double e2, double e3, double e4);
 void test_quartic_complex(size_t ne, quartic_complex *po, string str, 
 			  double e1, double e2, double e3, double e4);
 
@@ -329,7 +334,7 @@ void test_quadratic_complex(size_t ne, quadratic_complex *po, string str,
   return;
 }
 
-void test_cubic_real_coeff(size_t ne, cubic_real_coeff *po, string str, 
+void test_cubic_real_coeff(size_t ne, cubic_real_coeff<double> *po, string str, 
 			   double alpha, double e1, double e2, double e3, 
 			   double e4) {
   double s1,s2,m1,m2;
@@ -549,7 +554,7 @@ void test_cubic_complex(size_t ne, cubic_complex *po, string str, double e1,
   return;
 }
 
-void test_quartic_real(size_t ne, quartic_real *po, string str, double alpha, 
+void test_quartic_real(size_t ne, quartic_real<double> *po, string str, double alpha, 
 		       double e1, double e2, double e3, double e4) {
   double s1,s2,m1,m2;
   clock_t lt1, lt2;
@@ -610,15 +615,18 @@ void test_quartic_real(size_t ne, quartic_real *po, string str, double alpha,
   return;
 }
 
-void test_quartic_real_coeff(size_t ne, quartic_real_coeff *po, string str, 
-			     double e1, double e2, double e3, double e4) {
-  double s1,s2,m1,m2;
+template<class fp_t=double>
+void test_quartic_real_coeff(size_t ne, quartic_real_coeff<fp_t> *po,
+                             string str, fp_t e1, fp_t e2, fp_t e3,
+                             fp_t e4) {
+			     
+  fp_t s1,s2,m1,m2;
   clock_t lt1, lt2;
-  complex<double> cr1,cr2,cr3,cr4,czo1,czo2,czo3,czo4;  
-  complex<double> i(0.0,1.0),cap,cbp,ccp,cdp,cep;
-  double ca,cb,cc,cd,ce;
+  complex<fp_t> cr1,cr2,cr3,cr4,czo1,czo2,czo3,czo4;  
+  complex<fp_t> i(0.0,1.0),cap,cbp,ccp,cdp,cep;
+  fp_t ca,cb,cc,cd,ce;
   size_t j;
-  double q1,q2;
+  fp_t q1,q2;
   s1=0.0;
   s2=0.0;
   m1=0.0;
@@ -667,8 +675,8 @@ void test_quartic_real_coeff(size_t ne, quartic_real_coeff *po, string str,
     }
   }
   lt2=clock();
-  s1/=((double)ne);
-  s2/=((double)ne);
+  s1/=((fp_t)ne);
+  s2/=((fp_t)ne);
   cout.width(wid);
   cout << str.c_str();
   tst.test_abs(s1,0.0,e1,"quartic_real_coeff s1");
@@ -793,6 +801,10 @@ int main(void) {
   quartic_real_simple q4;
   quartic_complex_simple<> q5;
 
+#ifdef O2SCL_LD_TYPES
+  //quartic_real_coeff_cern<cpp_dec_float_50> q1_cdf50;
+#endif
+  
   // I think this number is no longer used, except to 
   // give an overall scale for the timings
   size_t ne=10000;

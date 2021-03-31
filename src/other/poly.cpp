@@ -678,23 +678,6 @@ int quadratic_complex::solve_rc
   return ret;
 }
 
-int cubic_real_coeff::solve_r
-(const double a3, const double b3, const double c3, 
- const double d3, double &x1, double &x2, double &x3) {
-  complex<double> r2,r3;
-
-  if (a3==0.0) {
-    O2SCL_ERR
-      ("Leading coefficient zero in cubic_real_coeff::solve_r().",
-       exc_einval);
-  }
-
-  int ret=solve_rc(a3,b3,c3,d3,x1,r2,r3);
-  x2=r2.real();
-  x3=r3.real();
-  return ret;
-}
-
 int cubic_complex::solve_r
 (const double a3, const double b3, const double c3, 
  const double d3, double &x1, double &x2, double &x3) {

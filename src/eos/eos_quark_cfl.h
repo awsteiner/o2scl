@@ -290,7 +290,7 @@ namespace o2scl {
                             double dedmu3[36], double dedmu8[36]);
     
     /// Set the routine for solving quartics
-    int set_quartic(quartic_real_coeff &q) { 
+    int set_quartic(quartic_real_coeff<> &q) { 
       quartic=&q; 
       return 0;
     }
@@ -463,7 +463,7 @@ namespace o2scl {
     /// \name Numerical methods
     //@{
     /// The routine to solve quartics
-    quartic_real_coeff *quartic;
+    quartic_real_coeff<> *quartic;
     
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::vector<std::complex<double> > 
