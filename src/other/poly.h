@@ -214,7 +214,34 @@ namespace o2scl {
     */
     virtual int solve_rc(const double a3, const double b3, const double c3, 
 			 const double d3, double &x1, std::complex<double> &x2,
-			 std::complex<double> &x3);
+			 std::complex<double> &x3) {
+      if (a3==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in cubic_complex::solve_rc().",
+           exc_einval);
+      }
+      
+      std::complex<double> r1,r2,r3;
+      int ret=solve_c(a3,b3,c3,d3,r1,r2,r3);
+      double s1,s2,s3;
+      s1=fabs(r1.imag()/r1.real());
+      s2=fabs(r2.imag()/r2.real());
+      s3=fabs(r3.imag()/r3.real());
+      if (s1<s2 && s1<s3) {
+        x1=r1.real();
+        x2=r2;
+        x3=r3;
+      } else if (s2<s1 && s2<s3) {
+        x1=r2.real();
+        x2=r1;
+        x3=r3;
+      } else {
+        x1=r3.real();
+        x2=r1;
+        x3=r2;
+      }
+      return ret;
+    }
     
     /** \brief Solves the complex polynomial 
 	\f$ a_3 x^3 + b_3 x^2 + c_3 x + d_3= 0 \f$ 
@@ -303,7 +330,21 @@ namespace o2scl {
     */
     virtual int solve_r(const double a4, const double b4, const double c4, 
 			const double d4, const double e4, double &x1, 
-			double &x2, double &x3, double &x4);
+			double &x2, double &x3, double &x4) {
+      if (a4==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in quartic_real_coeff::solve_r().",
+           exc_einval);
+      }
+      
+      std::complex<double> r1,r2,r3,r4;
+      int ret=solve_rc(a4,b4,c4,d4,e4,r1,r2,r3,r4);
+      x1=r1.real();
+      x2=r2.real();
+      x3=r3.real();
+      x4=r4.real();
+      return ret;
+    }
 
     /**  \brief Solves the polynomial 
 	 \f$ a_4 x^4 + b_4 x^3 + c_4 x^2 + d_4 x + e_4 = 0 \f$ 
@@ -336,8 +377,22 @@ namespace o2scl {
     */
     virtual int solve_r(const double a4, const double b4, const double c4, 
 			const double d4, const double e4, double &x1, 
-			double &x2, 
-			double &x3, double &x4);
+			double &x2, double &x3, double &x4) {
+			      
+      if (a4==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in quartic_complex::solve_r().",
+           exc_einval);
+      }
+      
+      std::complex<double> r1,r2,r3,r4;
+      int ret=solve_c(a4,b4,c4,d4,e4,r1,r2,r3,r4);
+      x1=r1.real();
+      x2=r2.real();
+      x3=r3.real();
+      x4=r4.real();
+      return ret;
+    }
 
     /**  \brief Solves the polynomial 
 	 \f$ a_4 x^4 + b_4 x^3 + c_4 x^2 + d_4 x + e_4 = 0 \f$ 
@@ -347,7 +402,15 @@ namespace o2scl {
     virtual int solve_rc(const double a4, const double b4, const double c4, 
 			 const double d4, const double e4, 
 			 std::complex<double> &x1, std::complex<double> &x2, 
-			 std::complex<double> &x3, std::complex<double> &x4);
+			 std::complex<double> &x3, std::complex<double> &x4) {
+      if (a4==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in std::complex<double> &x4) {().",
+           exc_einval);
+      }
+      
+      return solve_c(a4,b4,c4,d4,e4,x1,x2,x3,x4);
+    }      
 
     /** \brief Solves the complex polynomial 
 	\f$ a_4 x^4 + b_4 x^3 + c_4 x^2 + d_4 x + e_4 = 0 \f$ 
@@ -432,7 +495,14 @@ namespace o2scl {
                            std::complex<double> *co,
                            std::complex<double> *ro) {
       
-      // Inside here use horner's method following, e.g. GSL
+      // Using horner's method following, e.g. GSL
+      y[0]=co[nv-1];
+      y[1]=0.0;
+      for(int i=nv-1; i>0; i--) {
+        double tmp=co[i-1]+x[0]*y[0]-x[1]*y[1];
+        y[1]=x[1]*y[0]+x[0]*y[1];
+        y[0]=tmp;
+      }
       return 0;
     }
     
@@ -1217,6 +1287,7 @@ namespace o2scl {
 			std::complex<fp_t> &x2, 
 			std::complex<fp_t> &x3,
 			std::complex<fp_t> &x4) {
+      
       std::complex<fp_t> p4, q4, r4;
       std::complex<fp_t> a3, b3, c3, d3;
       std::complex<fp_t> b2a, c2a, b2b, c2b;
