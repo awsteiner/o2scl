@@ -31,10 +31,13 @@ using namespace o2scl;
 
 #ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
+#include <boost/multiprecision/cpp_bin_float.hpp>
+#include <boost/multiprecision/cpp_complex.hpp>
 
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+typedef boost::multiprecision::cpp_bin_float_50 cpp_bin_float_50;
+typedef boost::multiprecision::cpp_complex_50 cpp_complex_50;
 #endif
-
 
 test_mgr tst;
 int wid=21;
@@ -804,7 +807,7 @@ int main(void) {
   quartic_complex_simple<> q5;
 
 #ifdef O2SCL_LD_TYPES
-  //quartic_real_coeff_cern<cpp_dec_float_50> q1_cdf50;
+  quartic_real_coeff_cern<cpp_bin_float_50,cpp_complex_50> q1_cdf50;
 #endif
   
   // I think this number is no longer used, except to 

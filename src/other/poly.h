@@ -202,8 +202,8 @@ namespace o2scl {
   /** \brief Solve a cubic polynomial with real coefficients and 
       complex roots [abstract base]
   */
-  template<class fp_t=double> class cubic_real_coeff :
-    public cubic_real<fp_t> {
+  template<class fp_t=double, class cx_t=std::complex<fp_t> >
+  class cubic_real_coeff : public cubic_real<fp_t> {
 
   public:
 
@@ -216,7 +216,7 @@ namespace o2scl {
     virtual int solve_r(const fp_t a3, const fp_t b3, const fp_t c3, 
 			const fp_t d3, fp_t &x1, fp_t &x2, fp_t &x3) {
       
-      std::complex<fp_t> r2,r3;
+      cx_t r2,r3;
   
       if (a3==0.0) {
         O2SCL_ERR
@@ -236,8 +236,8 @@ namespace o2scl {
 	\f$ x=x_2 \f$ and \f$ x=x_3 \f$ .
     */
     virtual int solve_rc(const fp_t a3, const fp_t b3, const fp_t c3, 
-			 const fp_t d3, fp_t &x1, std::complex<fp_t> &x2,
-			 std::complex<fp_t> &x3)=0;
+			 const fp_t d3, fp_t &x1, cx_t &x2,
+			 cx_t &x3)=0;
 
     /// Return a string denoting the type ("cubic_real_coeff")
     const char *type() { return "cubic_real_coeff"; }
@@ -383,8 +383,8 @@ namespace o2scl {
   /** \brief Solve a quartic polynomial with real coefficients and 
       complex roots [abstract base]
   */
-  template<class fp_t=double> class quartic_real_coeff :
-    public quartic_real<fp_t> {
+  template<class fp_t=double, class cx_t=std::complex<fp_t> >
+  class quartic_real_coeff : public quartic_real<fp_t> {
 
   public:
 
@@ -404,7 +404,7 @@ namespace o2scl {
            exc_einval);
       }
       
-      std::complex<fp_t> r1,r2,r3,r4;
+      cx_t r1,r2,r3,r4;
       int ret=solve_rc(a4,b4,c4,d4,e4,r1,r2,r3,r4);
       x1=r1.real();
       x2=r2.real();
@@ -420,9 +420,9 @@ namespace o2scl {
     */
     virtual int solve_rc(const fp_t a4, const fp_t b4, const fp_t c4, 
 			 const fp_t d4, const fp_t e4, 
-			 std::complex<fp_t> &x1, std::complex<fp_t> &x2, 
-			 std::complex<fp_t> &x3, 
-			 std::complex<fp_t> &x4)=0;
+			 cx_t &x1, cx_t &x2, 
+			 cx_t &x3, 
+			 cx_t &x4)=0;
 
     /// Return a string denoting the type ("quartic_real_coeff")
     const char *type() { return "quartic_real_coeff"; }
@@ -593,8 +593,7 @@ namespace o2scl {
       that function for details.
   */
   template<class fp_t=double, class cx_t=std::complex<fp_t> >
-  class cubic_real_coeff_cern :
-    public cubic_real_coeff<fp_t> {
+  class cubic_real_coeff_cern : public cubic_real_coeff<fp_t,cx_t> {
 
   public:
 
@@ -646,8 +645,9 @@ namespace o2scl {
       
       return success;
     }
-    
-    inline double sign(double a, double b) {
+
+    // Generic sign function
+    inline fp_t sign(fp_t a, fp_t b) {
       if (b>=0.0) return fabs(a);
       return -fabs(a);
     }
@@ -728,7 +728,9 @@ namespace o2scl {
         h2=sqrt(d);
         fp_t u0=-h1+h2;
         fp_t v0=-h1-h2;
-        if (fabs(u0)==0.0) u=sign(0.0,u0);
+        if (fabs(u0)==0.0) {
+          u=sign(0.0,u0);
+        }
         else u=sign(pow(fabs(u0),r3),u0);
         if (fabs(v0)==0.0) v=sign(0.0,v0);
         else v=sign(pow(fabs(v0),r3),v0);
@@ -809,7 +811,7 @@ namespace o2scl {
       roots (CERNLIB)
   */
   template<class fp_t=double, class cx_t=std::complex<fp_t> >
-  class quartic_real_coeff_cern : public quartic_real_coeff<fp_t> {
+  class quartic_real_coeff_cern : public quartic_real_coeff<fp_t,cx_t> {
     
   public:
 
