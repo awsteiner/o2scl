@@ -175,23 +175,24 @@ gsl_poly_complex_solve_cubic_lm(double a, double b, double c,
 }
 
 
-void test_quadratic_real_coeff(size_t ne, quadratic_real_coeff *po, 
+void test_quadratic_real_coeff(size_t ne, quadratic_real_coeff<> *po, 
 			       string str, double alpha, double e1, 
 			       double e2, double e3, double e4,
 			       double &time_taken);
-void test_quadratic_complex(size_t ne, quadratic_complex *po, string str, 
+void test_quadratic_complex(size_t ne, quadratic_complex<> *po, string str, 
 			    double e1, double e2, double e3, double e4);
 void test_cubic_real_coeff(size_t ne, cubic_real_coeff<double> *po, string str, 
 			   double alpha, double e1, double e2, double e3, 
 			   double e4);
-void test_cubic_complex(size_t ne, cubic_complex *po, string str, double e1, 
+void test_cubic_complex(size_t ne, cubic_complex<> *po, string str, double e1, 
 			double e2, double e3, double e4);
-void test_quartic_real(size_t ne, quartic_real<double> *po, string str, double alpha, 
+void test_quartic_real(size_t ne, quartic_real<double> *po, string str,
+                       double alpha, 
 		       double e1, double e2, double e3, double e4);
-void test_quartic_complex(size_t ne, quartic_complex *po, string str, 
+void test_quartic_complex(size_t ne, quartic_complex<> *po, string str, 
 			  double e1, double e2, double e3, double e4);
 
-void test_quadratic_real_coeff(size_t ne, quadratic_real_coeff *po, 
+void test_quadratic_real_coeff(size_t ne, quadratic_real_coeff<> *po, 
 			       string str, double alpha, double e1, double e2, 
 			       double e3, double e4, double &time_taken) {
   double s1,s2,m1,m2;
@@ -263,7 +264,7 @@ void test_quadratic_real_coeff(size_t ne, quadratic_real_coeff *po,
   return;
 }
 
-void test_quadratic_complex(size_t ne, quadratic_complex *po, string str, 
+void test_quadratic_complex(size_t ne, quadratic_complex<> *po, string str, 
 			    double e1, double e2, double e3, double e4) {
   double s1,s2,m1,m2;
   clock_t lt1, lt2;
@@ -481,7 +482,7 @@ void compare_gsl_cubic(size_t ne, string str,
   return;
 }
 
-void test_cubic_complex(size_t ne, cubic_complex *po, string str, double e1, 
+void test_cubic_complex(size_t ne, cubic_complex<> *po, string str, double e1, 
 			double e2, double e3, double e4) {
   double s1,s2,m1,m2;
   clock_t lt1, lt2;
@@ -554,7 +555,8 @@ void test_cubic_complex(size_t ne, cubic_complex *po, string str, double e1,
   return;
 }
 
-void test_quartic_real(size_t ne, quartic_real<double> *po, string str, double alpha, 
+void test_quartic_real(size_t ne, quartic_real<double> *po,
+                       string str, double alpha, 
 		       double e1, double e2, double e3, double e4) {
   double s1,s2,m1,m2;
   clock_t lt1, lt2;
@@ -688,7 +690,7 @@ void test_quartic_real_coeff(size_t ne, quartic_real_coeff<fp_t> *po,
   return;
 }
 
-void test_quartic_complex(size_t ne, quartic_complex *po, string str, 
+void test_quartic_complex(size_t ne, quartic_complex<> *po, string str, 
 			  double e1, double e2, double e3, double e4) {
   double s1,s2,m1,m2;
   clock_t lt1, lt2;

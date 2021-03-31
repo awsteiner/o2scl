@@ -53,7 +53,7 @@ namespace o2scl {
   /** \brief Solve a quadratic polynomial with real coefficients and 
       real roots [abstract base]
   */
-  class quadratic_real {
+  template<class fp_t=double> class quadratic_real {
     
   public:
 
@@ -62,12 +62,12 @@ namespace o2scl {
     /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
 	giving the two solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ .
     */
-    virtual int solve_r(const double a2, const double b2, const double c2, 
-			double &x1, double &x2)=0;
+    virtual int solve_r(const fp_t a2, const fp_t b2, const fp_t c2, 
+			fp_t &x1, fp_t &x2)=0;
 
     /** \brief Compute the quadratic discriminant, \f$ b^2-4ac \f$
      */
-    virtual double disc_r(double a2, double b2, double c2) {
+    virtual fp_t disc_r(fp_t a2, fp_t b2, fp_t c2) {
       return b2*b2-4.0*a2*c2;
     }
     
@@ -78,7 +78,8 @@ namespace o2scl {
   /** \brief Solve a quadratic polynomial with real coefficients and 
       complex roots [abstract base]
   */
-  class quadratic_real_coeff : public quadratic_real {
+  template<class fp_t=double> class quadratic_real_coeff :
+    public quadratic_real<fp_t> {
 
   public:
 
@@ -87,8 +88,20 @@ namespace o2scl {
     /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
 	giving the two solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ .
     */
-    virtual int solve_r(const double a2, const double b2, const double c2, 
-			double &x1, double &x2);
+    virtual int solve_r(const fp_t a2, const fp_t b2, const fp_t c2, 
+			fp_t &x1, fp_t &x2) {
+      if (a2==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in quadratic_real_coeff::solve_r().",
+           exc_einval);
+      }
+      
+      std::complex<fp_t> r1,r2;
+      int ret=solve_rc(a2,b2,c2,r1,r2);
+      x1=r1.real();
+      x2=r2.real();
+      return ret;
+    }
 
     /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
 	giving the two complex solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ 
@@ -104,7 +117,9 @@ namespace o2scl {
   /** \brief Solve a quadratic polynomial with complex coefficients and 
       complex roots [abstract base]
   */
-  class quadratic_complex : public quadratic_real_coeff {
+  template<class fp_t=double> class quadratic_complex :
+    public quadratic_real_coeff<fp_t> {
+    
   public:
 
     virtual ~quadratic_complex() {}
@@ -112,22 +127,44 @@ namespace o2scl {
     /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
 	giving the two solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ .
     */
-    virtual int solve_r(const double a2, const double b2, const double c2, 
-			double &x1, double &x2);
+    virtual int solve_r(const fp_t a2, const fp_t b2, const fp_t c2, 
+			fp_t &x1, fp_t &x2) {
+      if (a2==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in quadratic_complex::solve_r().",
+           exc_einval);
+      }
+      
+      std::complex<fp_t> r1,r2;
+      int ret=solve_c(a2,b2,c2,r1,r2);
+      x1=r1.real();
+      x2=r2.real();
+      return ret;
+    }
+      
 
     /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
 	giving the two complex solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ 
     */
-    virtual int solve_rc(const double a2, const double b2, const double c2, 
-			 std::complex<double> &x1, std::complex<double> &x2);
+    virtual int solve_rc(const fp_t a2, const fp_t b2, const fp_t c2, 
+			 std::complex<fp_t> &x1, std::complex<fp_t> &x2) {
+      if (a2==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in quadratic_complex::solve_rc().",
+           exc_einval);
+      }
+      
+      int ret=solve_c(a2,b2,c2,x1,x2);
+      return ret;
+    }
 
     /** \brief Solves the complex polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
 	giving the two complex solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ 
     */
-    virtual int solve_c(const std::complex<double> a2, 
-			const std::complex<double> b2, 
-			const std::complex<double> c2, 
-			std::complex<double> &x1, std::complex<double> &x2)=0;
+    virtual int solve_c(const std::complex<fp_t> a2, 
+			const std::complex<fp_t> b2, 
+			const std::complex<fp_t> c2, 
+			std::complex<fp_t> &x1, std::complex<fp_t> &x2)=0;
 
     /// Return a string denoting the type ("quadratic_complex")
     const char *type() { return "quadratic_complex"; }
@@ -209,7 +246,8 @@ namespace o2scl {
   /** \brief Solve a cubic polynomial with complex coefficients and 
       complex roots [abstract base]
   */
-  class cubic_complex : public cubic_real_coeff<double> {
+  template<class fp_t=double> class cubic_complex :
+    public cubic_real_coeff<fp_t> {
 
   public:
 
@@ -219,26 +257,39 @@ namespace o2scl {
 	\f$ a_3 x^3 + b_3 x^2 + c_3 x + d_3= 0 \f$ giving the three 
 	solutions \f$ x=x_1 \f$ , \f$ x=x_2 \f$ , and \f$ x=x_3 \f$ .
     */
-    virtual int solve_r(const double a3, const double b3, const double c3, 
-			const double d3, double &x1, double &x2, double &x3);
+    virtual int solve_r(const fp_t a3, const fp_t b3, const fp_t c3, 
+			const fp_t d3, fp_t &x1, fp_t &x2, fp_t &x3) {
+      if (a3==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in cubic_complex::solve_r().",
+           exc_einval);
+      }
+      
+      std::complex<fp_t> r1,r2,r3;
+      int ret=solve_c(a3,b3,c3,d3,r1,r2,r3);
+      x1=r1.real();
+      x2=r2.real();
+      x3=r3.real();
+      return ret;
+    }
 
     /** \brief Solves the polynomial 
 	\f$ a_3 x^3 + b_3 x^2 + c_3 x + d_3= 0 \f$ giving the real 
 	solution \f$ x=x_1 \f$ and two complex solutions 
 	\f$ x=x_2 \f$ and \f$ x=x_3 \f$ .
     */
-    virtual int solve_rc(const double a3, const double b3, const double c3, 
-			 const double d3, double &x1, std::complex<double> &x2,
-			 std::complex<double> &x3) {
+    virtual int solve_rc(const fp_t a3, const fp_t b3, const fp_t c3, 
+			 const fp_t d3, fp_t &x1, std::complex<fp_t> &x2,
+			 std::complex<fp_t> &x3) {
       if (a3==0.0) {
         O2SCL_ERR
           ("Leading coefficient zero in cubic_complex::solve_rc().",
            exc_einval);
       }
       
-      std::complex<double> r1,r2,r3;
+      std::complex<fp_t> r1,r2,r3;
       int ret=solve_c(a3,b3,c3,d3,r1,r2,r3);
-      double s1,s2,s3;
+      fp_t s1,s2,s3;
       s1=fabs(r1.imag()/r1.real());
       s2=fabs(r2.imag()/r2.real());
       s3=fabs(r3.imag()/r3.real());
@@ -380,7 +431,8 @@ namespace o2scl {
   /** \brief Solve a quartic polynomial with complex coefficients and 
       complex roots [abstract base]
   */
-  class quartic_complex : public quartic_real_coeff<double> {
+  template<class fp_t=double> class quartic_complex :
+    public quartic_real_coeff<double> {
 
   public:
 
@@ -391,9 +443,9 @@ namespace o2scl {
 	giving the four solutions \f$ x=x_1 \f$ , \f$ x=x_2 \f$ ,
 	\f$ x=x_3 \f$ , and \f$ x=x_4 \f$ .
     */
-    virtual int solve_r(const double a4, const double b4, const double c4, 
-			const double d4, const double e4, double &x1, 
-			double &x2, double &x3, double &x4) {
+    virtual int solve_r(const fp_t a4, const fp_t b4, const fp_t c4, 
+			const fp_t d4, const fp_t e4, fp_t &x1, 
+			fp_t &x2, fp_t &x3, fp_t &x4) {
 			      
       if (a4==0.0) {
         O2SCL_ERR
@@ -401,7 +453,7 @@ namespace o2scl {
            exc_einval);
       }
       
-      std::complex<double> r1,r2,r3,r4;
+      std::complex<fp_t> r1,r2,r3,r4;
       int ret=solve_c(a4,b4,c4,d4,e4,r1,r2,r3,r4);
       x1=r1.real();
       x2=r2.real();
@@ -415,13 +467,13 @@ namespace o2scl {
 	 giving the four complex solutions \f$ x=x_1 \f$ , \f$ x=x_2 \f$ ,
 	 \f$ x=x_3 \f$ , and \f$ x=x_4 \f$ .
     */
-    virtual int solve_rc(const double a4, const double b4, const double c4, 
-			 const double d4, const double e4, 
-			 std::complex<double> &x1, std::complex<double> &x2, 
-			 std::complex<double> &x3, std::complex<double> &x4) {
+    virtual int solve_rc(const fp_t a4, const fp_t b4, const fp_t c4, 
+			 const fp_t d4, const fp_t e4, 
+			 std::complex<fp_t> &x1, std::complex<fp_t> &x2, 
+			 std::complex<fp_t> &x3, std::complex<fp_t> &x4) {
       if (a4==0.0) {
         O2SCL_ERR
-          ("Leading coefficient zero in std::complex<double> &x4) {().",
+          ("Leading coefficient zero in std::complex<fp_t> &x4) {().",
            exc_einval);
       }
       
@@ -433,14 +485,14 @@ namespace o2scl {
 	giving the four complex solutions \f$ x=x_1 \f$ , \f$ x=x_2 \f$ ,
 	\f$ x=x_3 \f$ , and \f$ x=x_4 \f$ .
     */
-    virtual int solve_c(const std::complex<double> a4, 
-			const std::complex<double> b4, 
-			const std::complex<double> c4, 
-			const std::complex<double> d4, 
-			const std::complex<double> e4, 
-			std::complex<double> &x1, 
-			std::complex<double> &x2, std::complex<double> &x3,
-			std::complex<double> &x4)=0;
+    virtual int solve_c(const std::complex<fp_t> a4, 
+			const std::complex<fp_t> b4, 
+			const std::complex<fp_t> c4, 
+			const std::complex<fp_t> d4, 
+			const std::complex<fp_t> e4, 
+			std::complex<fp_t> &x1, 
+			std::complex<fp_t> &x2, std::complex<fp_t> &x3,
+			std::complex<fp_t> &x4)=0;
 
     /// Return a string denoting the type ("quartic_complex")
     const char *type() { return "quartic_complex"; }
@@ -449,10 +501,11 @@ namespace o2scl {
   /** \brief Solve a general polynomial with real
       coefficients and complex roots [abstract base]
   */
-  class poly_real_coeff : public quadratic_real_coeff,
-                          public cubic_real_coeff<double>,
-                          public quartic_real_coeff<double> {
-
+  template<class fp_t>
+  class poly_real_coeff : public quadratic_real_coeff<fp_t>,
+                          public cubic_real_coeff<fp_t>,
+                          public quartic_real_coeff<fp_t> {
+    
   public:
     
     virtual ~poly_real_coeff() {}
@@ -474,8 +527,10 @@ namespace o2scl {
   /** \brief Solve a general polynomial with complex
       coefficients [abstract base]
   */
-  class poly_complex : public quadratic_complex,
-    public cubic_complex, public quartic_complex {
+  template<class fp_t=double>
+  class poly_complex : public quadratic_complex<fp_t>,
+                       public cubic_complex<fp_t>,
+                       public quartic_complex<fp_t> {
 
   public:
 
@@ -487,12 +542,12 @@ namespace o2scl {
 	as co[0] and the constant term as co[n]. The roots are returned
 	in ro[0],...,ro[n-1].
     */
-    virtual int solve_c_arr(int n, const std::complex<double> co[], 
-			    std::complex<double> ro[])=0;
+    virtual int solve_c_arr(int n, const std::complex<fp_t> co[], 
+			    std::complex<fp_t> ro[])=0;
     
     /// Polish the roots 
-    virtual int polish_c_arr(int n, const std::complex<double> co[],
-			     std::complex<double> *ro)=0;
+    virtual int polish_c_arr(int n, const std::complex<fp_t> co[],
+			     std::complex<fp_t> *ro)=0;
 
 #ifdef O2SCL_NEVER_DEFINED
     {
@@ -508,15 +563,15 @@ namespace o2scl {
     }
     
     virtual int polish_fun(size_t nv, const ubvector &x,
-                           double ubvector &y,
-                           std::complex<double> *co,
-                           std::complex<double> *ro) {
+                           fp_t ubvector &y,
+                           std::complex<fp_t> *co,
+                           std::complex<fp_t> *ro) {
       
       // Using horner's method following, e.g. GSL
       y[0]=co[nv-1];
       y[1]=0.0;
       for(int i=nv-1; i>0; i--) {
-        double tmp=co[i-1]+x[0]*y[0]-x[1]*y[1];
+        fp_t tmp=co[i-1]+x[0]*y[0]-x[1]*y[1];
         y[1]=x[1]*y[0]+x[0]*y[1];
         y[0]=tmp;
       }
@@ -537,7 +592,8 @@ namespace o2scl {
       the same name, but differs slightly. See the documentation of
       that function for details.
   */
-  template<class fp_t=double> class cubic_real_coeff_cern :
+  template<class fp_t=double, class cx_t=std::complex<fp_t> >
+  class cubic_real_coeff_cern :
     public cubic_real_coeff<fp_t> {
 
   public:
@@ -566,8 +622,8 @@ namespace o2scl {
     */
     virtual int solve_rc(const fp_t a3, const fp_t b3, const fp_t c3, 
 			 const fp_t d3, fp_t &r1, 
-			 std::complex<fp_t> &r2,
-                         std::complex<fp_t> &r3) {
+			 cx_t &r2,
+                         cx_t &r3) {
       if (a3==0.0) {
         O2SCL_ERR
           ("Leading coefficient zero in cubic_real_coeff_cern::solve_rc().",
@@ -575,7 +631,7 @@ namespace o2scl {
       }
       
       fp_t x[3],d;
-      std::complex<fp_t> i(0.0,1.0);
+      cx_t i(0.0,1.0);
       
       rrteq3(b3/a3,c3/a3,d3/a3,x,d);
       if (d>0.0) {
@@ -625,7 +681,7 @@ namespace o2scl {
       fp_t w3=sqrt(3.0), r4=w3/2.0;
       fp_t q1=2.0/27.0, q2=0.5, q3=1.0/3.0;
       fp_t y[3];
-      std::complex<fp_t> z[3], i(0.0,1.0);
+      cx_t z[3], i(0.0,1.0);
       fp_t h2, h3;
       int j,k;
       
@@ -752,9 +808,9 @@ namespace o2scl {
   /** \brief Solve a quartic with real coefficients and complex 
       roots (CERNLIB)
   */
-  template<class fp_t=double> class quartic_real_coeff_cern :
-    public quartic_real_coeff<fp_t> {
-
+  template<class fp_t=double, class cx_t=std::complex<fp_t> >
+  class quartic_real_coeff_cern : public quartic_real_coeff<fp_t> {
+    
   public:
 
     virtual ~quartic_real_coeff_cern() {}
@@ -765,8 +821,7 @@ namespace o2scl {
     */
     virtual int solve_rc(const fp_t a4, const fp_t b4, const fp_t c4, 
 			 const fp_t d4, const fp_t e4, 
-			 std::complex<fp_t> &x1, std::complex<fp_t> &x2, 
-			 std::complex<fp_t> &x3, std::complex<fp_t> &x4) {
+			 cx_t &x1, cx_t &x2, cx_t &x3, cx_t &x4) {
       
       if (a4==0.0) {
         O2SCL_ERR
@@ -776,7 +831,7 @@ namespace o2scl {
       
       int mt;
       fp_t dc;
-      std::complex<fp_t> x[4];
+      cx_t x[4];
       
       rrteq4(b4/a4,c4/a4,d4/a4,e4/a4,x,dc,mt);
       x1=x[0];
@@ -793,11 +848,11 @@ namespace o2scl {
         The arrays z[] and u[] are now zero-indexed.
     */
     virtual int rrteq4(fp_t a, fp_t b, fp_t c, fp_t d, 
-		       std::complex<fp_t> z[], fp_t &dc, 
+		       cx_t z[], fp_t &dc, 
 		       int &mt) {
       
-      std::complex<fp_t> i(0.0,1.0), z0[5];
-      std::complex<fp_t> w1(0.0,0.0), w2(0.0,0.0), w3;
+      cx_t i(0.0,1.0), z0[5];
+      cx_t w1(0.0,0.0), w2(0.0,0.0), w3;
 
       fp_t q2=1.0;
       q2/=2.0;
@@ -877,8 +932,8 @@ namespace o2scl {
         } else {
           k2=2;
         }
-        w1=sqrt(((std::complex<fp_t>)(u[k1])));
-        w2=sqrt(((std::complex<fp_t>)(u[k2])));
+        w1=sqrt(((cx_t)(u[k1])));
+        w2=sqrt(((cx_t)(u[k2])));
       } else {
         mt=3;
         w1=sqrt(u[1]+i*u[2]);
@@ -930,7 +985,7 @@ namespace o2scl {
   protected:
 
     /// The object to solve for the associated cubic
-    cubic_real_coeff_cern<fp_t> cub_obj;
+    cubic_real_coeff_cern<fp_t,cx_t> cub_obj;
 
 #endif
 
@@ -938,7 +993,7 @@ namespace o2scl {
 
   /** \brief Solve a quadratic with real coefficients and complex roots (GSL)
    */
-  class quadratic_real_coeff_gsl : public quadratic_real_coeff {
+  class quadratic_real_coeff_gsl : public quadratic_real_coeff<double> {
 
   public:
 
@@ -1068,7 +1123,7 @@ namespace o2scl {
 
   /** \brief Solve a general polynomial with real coefficients (GSL)
    */
-  class poly_real_coeff_gsl : public poly_real_coeff {
+  class poly_real_coeff_gsl : public poly_real_coeff<double> {
 
   public:
 
@@ -1136,7 +1191,7 @@ namespace o2scl {
   /** \brief Solve a quadratic with complex coefficients and complex roots
    */
   template<class fp_t=double> class quadratic_complex_std :
-    public quadratic_complex {
+    public quadratic_complex<fp_t> {
 
   public:
 
@@ -1167,7 +1222,7 @@ namespace o2scl {
   /** \brief Solve a cubic with complex coefficients and complex roots
    */
   template<class fp_t=double> class cubic_complex_std :
-    public cubic_complex {
+    public cubic_complex<fp_t> {
 
   public:
 
@@ -1291,7 +1346,7 @@ namespace o2scl {
   /** \brief Solve a quartic with complex coefficients and complex roots
    */
   template <class fp_t=double> class quartic_complex_simple :
-    public quartic_complex {
+    public quartic_complex<fp_t> {
 
   public:
 
