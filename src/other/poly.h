@@ -243,8 +243,8 @@ namespace o2scl {
   /** \brief Solve a cubic polynomial with complex coefficients and 
       complex roots [abstract base]
   */
-  template<class fp_t=double> class cubic_complex :
-    public cubic_real_coeff<fp_t> {
+  template<class fp_t=double, class cx_t=std::complex<fp_t> >
+  class cubic_complex : public cubic_real_coeff<fp_t,cx_t> {
 
   public:
 
@@ -262,7 +262,7 @@ namespace o2scl {
            exc_einval);
       }
       
-      std::complex<fp_t> r1,r2,r3;
+      cx_t r1,r2,r3;
       int ret=solve_c(a3,b3,c3,d3,r1,r2,r3);
       x1=r1.real();
       x2=r2.real();
@@ -276,15 +276,15 @@ namespace o2scl {
 	\f$ x=x_2 \f$ and \f$ x=x_3 \f$ .
     */
     virtual int solve_rc(const fp_t a3, const fp_t b3, const fp_t c3, 
-			 const fp_t d3, fp_t &x1, std::complex<fp_t> &x2,
-			 std::complex<fp_t> &x3) {
+			 const fp_t d3, fp_t &x1, cx_t &x2,
+			 cx_t &x3) {
       if (a3==0.0) {
         O2SCL_ERR
           ("Leading coefficient zero in cubic_complex::solve_rc().",
            exc_einval);
       }
       
-      std::complex<fp_t> r1,r2,r3;
+      cx_t r1,r2,r3;
       int ret=solve_c(a3,b3,c3,d3,r1,r2,r3);
       fp_t s1,s2,s3;
       s1=fabs(r1.imag()/r1.real());
@@ -311,12 +311,12 @@ namespace o2scl {
 	giving the three complex solutions \f$ x=x_1 \f$ , 
 	\f$ x=x_2 \f$ , and \f$ x=x_3 \f$ .
     */
-    virtual int solve_c(const std::complex<double> a3, 
-			const std::complex<double> b3, 
-			const std::complex<double> c3, 
-			const std::complex<double> d3, 
-			std::complex<double> &x1, std::complex<double> &x2, 
-			std::complex<double> &x3)=0;
+    virtual int solve_c(const cx_t a3, 
+			const cx_t b3, 
+			const cx_t c3, 
+			const cx_t d3, 
+			cx_t &x1, cx_t &x2, 
+			cx_t &x3)=0;
 
     /// Return a string denoting the type ("cubic_complex")
     const char *type() { return "cubic_complex"; }
@@ -674,13 +674,28 @@ namespace o2scl {
                        fp_t &d) {
       
       fp_t delta2=delta;
-      fp_t r1=2.0/27.0, r2=0.5, r3=1.0/3.0;
-      fp_t w3=sqrt(3.0), r4=w3/2.0;
-      fp_t q1=2.0/27.0, q2=0.5, q3=1.0/3.0;
+      fp_t r1=2.0;
+      r1/=27.0;
+      fp_t r2=1.0;
+      r2/=2.0;
+      fp_t r3=1.0;
+      r3/=3.0;
+      fp_t w3=3.0;
+      w3=sqrt(w3);
+      fp_t r4=w3/2.0;
+      fp_t q1=2.0;
+      q1/=27.0;
+      fp_t q2=r2;
+      fp_t q3=r3;
       fp_t y[3];
       cx_t z[3], i(0.0,1.0);
       fp_t h2, h3;
       int j,k;
+
+      // AWS 4/1/21: These temporaries fix compiling for long double
+      // and complex<long double> types
+      fp_t two=2.0;
+      fp_t three=3.0;
       
       if (s==0.0 && t==0.0) {
         x[0]=-r;
@@ -737,12 +752,12 @@ namespace o2scl {
         if (fabs(u0)<=eps || fabs(v0)<=eps) {
           y[0]=x[0];
           for(k=0;k<=1;k++) {
-            y[k+1]=y[k]-(((y[k]+r)*y[k]+s)*y[k]+t)/((3.0*y[k]+2.0*r)*y[k]+s);
+            y[k+1]=y[k]-(((y[k]+r)*y[k]+s)*y[k]+t)/((three*y[k]+two*r)*y[k]+s);
           }
           x[0]=y[2];
           z[0]=x[1]+i*x[2];
           for(k=0;k<=1;k++) {
-            z[k+1]=z[k]-(((z[k]+r)*z[k]+s)*z[k]+t)/((3.0*z[k]+2.0*r)*z[k]+s);
+            z[k+1]=z[k]-(((z[k]+r)*z[k]+s)*z[k]+t)/((three*z[k]+two*r)*z[k]+s);
           }
           x[1]=z[2].real();
           x[2]=z[2].imag();
@@ -759,7 +774,7 @@ namespace o2scl {
         if (fabs(h1)<=eps) {
           y[0]=x[0];
           for(k=0;k<=1;k++) {
-            h1=(3.0*y[k]+2.0*r)*y[k]+s;
+            h1=(three*y[k]+two*r)*y[k]+s;
             if (fabs(h1)>delta2) {
               y[k+1]=y[k]-(((y[k]+r)*y[k]+s)*y[k]+t)/h1;
             } else {
@@ -790,7 +805,8 @@ namespace o2scl {
           for(j=0;j<3;j++) {
             y[0]=x[j];
             for(k=0;k<=1;k++) {
-              y[k+1]=y[k]-(((y[k]+r)*y[k]+s)*y[k]+t)/((3.0*y[k]+2.0*r)*y[k]+s);
+              y[k+1]=y[k]-(((y[k]+r)*y[k]+s)*y[k]+t)/
+                ((three*y[k]+two*r)*y[k]+s);
             }
             x[j]=y[2];
           }
@@ -1269,13 +1285,17 @@ namespace o2scl {
     virtual int solve_c(const cx_t a2, const cx_t b2, 
 			const cx_t c2, cx_t &x1, cx_t &x2) {
       
-      if (a2==0.0) {
+      if (a2.real()==0.0 && a2.imag()==0.0) {
         O2SCL_ERR
           ("Leading coefficient zero in quadratic_complex_std::solve_c().",
            exc_einval);
       }
-      x1=(-b2+sqrt(b2*b2-4.0*a2*c2))/2.0/a2;
-      x2=(-b2-sqrt(b2*b2-4.0*a2*c2))/2.0/a2;
+      // AWS 4/1/21: These temporaries fix compiling for long double
+      // and complex<long double> types
+      fp_t two=2.0;
+      fp_t four=4.0;
+      x1=(-b2+sqrt(b2*b2-four*a2*c2))/two/a2;
+      x2=(-b2-sqrt(b2*b2-four*a2*c2))/two/a2;
       return success;
     }
 
@@ -1285,8 +1305,8 @@ namespace o2scl {
 
   /** \brief Solve a cubic with complex coefficients and complex roots
    */
-  template<class fp_t=double> class cubic_complex_std :
-    public cubic_complex<fp_t> {
+  template<class fp_t=double, class cx_t=std::complex<fp_t> >
+  class cubic_complex_std : public cubic_complex<fp_t,cx_t> {
 
   public:
 
@@ -1297,39 +1317,39 @@ namespace o2scl {
 	giving the three complex solutions \f$ x=x_1 \f$ , 
 	\f$ x=x_2 \f$ , and \f$ x=x_3 \f$ .
     */
-    virtual int solve_c(const std::complex<fp_t> a3, 
-			const std::complex<fp_t> b3, 
-			const std::complex<fp_t> c3, 
-			const std::complex<fp_t> d3, 
-			std::complex<fp_t> &x1, std::complex<fp_t> &x2, 
-			std::complex<fp_t> &x3) {
-      
-      if (a3==0.0) {
-        O2SCL_ERR
-          ("Leading coefficient zero in cubic_std::complex::solve_c().",
-           exc_einval);
-      }
-      
-      std::complex<fp_t> p3, q3, mo;
-      std::complex<fp_t> alpha, beta, cbrta, cbrtb;
-      std::complex<fp_t> e2, e4, cacb;
-      fp_t test, re_p3;
-      
-      if (a3==0.0) {
-        quadratic_complex_std<> qsc;
+    virtual int solve_c(const cx_t a3, 
+			const cx_t b3, 
+			const cx_t c3, 
+			const cx_t d3, 
+			cx_t &x1, cx_t &x2, 
+			cx_t &x3) {
+
+      if (a3.real()==0.0 && a3.imag()==0.0) {
+        quadratic_complex_std<fp_t,cx_t> qsc;
         qsc.solve_c(b3,c3,d3,x1,x2);
         x3=0.0;
         return success;
       }
       
+      cx_t p3, q3, mo;
+      cx_t alpha, beta, cbrta, cbrtb;
+      cx_t e2, e4, cacb;
+      fp_t test, re_p3;
+
+      fp_t two=2.0;
+      fp_t three=3.0;
+      fp_t four=4.0;
+      fp_t nine=9.0;
+      fp_t twoseven=27.0;
+            
       mo=-1.0;
       mo=sqrt(mo);
       
-      p3=(3.0*a3*c3-b3*b3)/9.0/a3/a3;
-      q3=(2.0*b3*b3*b3-9.0*a3*b3*c3+27.0*a3*a3*d3)/27.0/a3/a3/a3;
+      p3=(three*a3*c3-b3*b3)/nine/a3/a3;
+      q3=(two*b3*b3*b3-nine*a3*b3*c3+twoseven*a3*a3*d3)/twoseven/a3/a3/a3;
       
-      alpha=(-q3+sqrt(q3*q3+4.0*p3*p3*p3))/2.0;
-      beta=(q3+sqrt(q3*q3+4.0*p3*p3*p3))/2.0;
+      alpha=(-q3+sqrt(q3*q3+four*p3*p3*p3))/two;
+      beta=(q3+sqrt(q3*q3+four*p3*p3*p3))/two;
       
       if (alpha.real()==0.0) cbrta=0.0;
       else cbrta=pow(alpha,1.0/3.0);
@@ -1341,15 +1361,15 @@ namespace o2scl {
       // It seems that if the real part of alpha is < 0 and the imaginary
       // part is zero, then cbrta is NaN (esp. w/Cygwin). We fix this
       // here:
-      if (!std::isfinite(cbrta.real())) {
-        cbrta=pow(-alpha,1.0/3.0)*exp(mo*pi/3.0);
+      if (!o2isfinite(cbrta.real())) {
+        cbrta=pow(-alpha,1.0/3.0)*exp(mo*pi/three);
       }
-      if (!std::isfinite(cbrtb.real())) {
-        cbrtb=pow(-beta,1.0/3.0)*exp(mo*pi/3.0);
+      if (!o2isfinite(cbrtb.real())) {
+        cbrtb=pow(-beta,1.0/3.0)*exp(mo*pi/three);
       }
       
-      e2=exp(mo*2.0*pi/3.0);
-      e4=exp(mo*4.0*pi/3.0);
+      e2=exp(mo*two*pi/three);
+      e4=exp(mo*four*pi/three);
       
       // This next section is nessary to ensure that the code
       // selects the correct cube roots of alpha and beta.
@@ -1371,9 +1391,9 @@ namespace o2scl {
         }
       }
       
-      x1=cbrta-cbrtb-b3/3.0/a3;
-      x2=cbrta*e2-cbrtb*e4-b3/3.0/a3;
-      x3=cbrta*e4-cbrtb*e2-b3/3.0/a3;
+      x1=cbrta-cbrtb-b3/three/a3;
+      x2=cbrta*e2-cbrtb*e4-b3/three/a3;
+      x3=cbrta*e4-cbrtb*e2-b3/three/a3;
       
       return success;
     }      
