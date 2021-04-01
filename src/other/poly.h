@@ -1001,9 +1001,16 @@ namespace o2scl {
 
     /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
 	giving the two complex solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ 
+
+        This function returns the number of complex roots (either
+        1 or 2). This function calls the error handler if 
+        \f$ a=b=0 \f$.
     */
     virtual int solve_rc(const fp_t a, const fp_t b, const fp_t c,
                          cx_t &x1, cx_t &x2) {
+
+      // AWS, 3/31/21: This is equivalent to the GSL code from v2.6,
+      // but rewritten in a C++/multiprecision compatible form
       
       fp_t disc=b*b-4*a*c;
       if (a == 0) {
