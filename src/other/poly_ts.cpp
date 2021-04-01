@@ -936,19 +936,22 @@ int main(void) {
   quartic_complex_simple<> q5;
 
 #ifdef O2SCL_LD_TYPES
+  
   quadratic_real_coeff_gsl<long double,std::complex<long double> > t1_ld;
   quadratic_real_coeff_gsl<cpp_bin_float_50,cpp_complex_50> t1_cdf50;
 
-  quadratic_complex_std<cpp_bin_float_50,cpp_complex_50> t2_cdf50;
   quadratic_complex_std<long double,std::complex<long double> > t2_ld;
+  quadratic_complex_std<cpp_bin_float_50,cpp_complex_50> t2_cdf50;
   
-  cubic_real_coeff_cern<cpp_bin_float_50,cpp_complex_50> c1_cdf50;
   cubic_real_coeff_cern<long double,std::complex<long double> > c1_ld;
+  cubic_real_coeff_cern<cpp_bin_float_50,cpp_complex_50> c1_cdf50;
   
-  cubic_complex_std<cpp_bin_float_50,cpp_complex_50> c3_cdf50;
   cubic_complex_std<long double,std::complex<long double> > c3_ld;
+  cubic_complex_std<cpp_bin_float_50,cpp_complex_50> c3_cdf50;
   
+  quartic_real_coeff_cern<long double,std::complex<long double> > q1_ld;
   quartic_real_coeff_cern<cpp_bin_float_50,cpp_complex_50> q1_cdf50;
+  
 #endif
   
   // I think this number is no longer used, except to 
@@ -1045,11 +1048,11 @@ int main(void) {
 			1.0e-5,1.0e-3,1.0e-2,1.0e-2);
 #ifdef O2SCL_LD_TYPES
   test_cubic_real_coeff<long double,std::complex<long double> >
-    (ne,&c1_ld,"cubic_rc_cern_50",
-     1.0e-3,1.0e-13,1.0e-12,1.0e-12,1.0e-10);
+    (ne,&c1_ld,"cubic_rc_cern_ld",
+     1.0e-3,1.0e-6,1.0e-5,1.0e-5,1.0e-4);
   test_cubic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
     (ne,&c1_cdf50,"cubic_rc_cern_50",
-     1.0e-3,1.0e-44,1.0e-42,1.0e-43,1.0e-41);
+     1.0e-3,1.0e-7,1.0e-6,1.0e-5,1.0e-4);
 #endif
   cout << endl;
   

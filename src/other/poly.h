@@ -877,6 +877,7 @@ namespace o2scl {
       fp_t r12=r4/3.0;
       fp_t q1=q8*3.0;
       fp_t q3=q1/2.0;
+      fp_t eight=8.0;
         
       fp_t u[3], v[4], v1, v2;
       int j, k1=0, k2=0;
@@ -918,6 +919,7 @@ namespace o2scl {
       fp_t rc=q2*pp;
       fp_t sc=q4*(q4*pp*pp-rr);
       fp_t tc=-(q8*qq*q8*qq);
+      fp_t zero=0.0;
       
       cub_obj.rrteq3(rc,sc,tc,u,dc);
       
@@ -955,7 +957,7 @@ namespace o2scl {
         w2=sqrt(u[1]-i*u[2]);
       }
       w3=0;
-      if (w1*w2!=0.0) w3=-q/(8.0*w1*w2);
+      if (w1*w2!=zero) w3=-q/(eight*w1*w2);
       z0[1]=w1+w2+w3-h;
       z0[2]=-w1-w2+w3-h;
       z0[3]=-w1+w2-w3-h;
