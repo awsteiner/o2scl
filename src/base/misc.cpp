@@ -106,6 +106,18 @@ long double o2scl::o2sqrt(const long double x) {
   return sqrtl(x);
 }
 
+float o2scl::o2pow(const float x, const float y) {
+  return powf(x,y);
+}
+
+double o2scl::o2pow(const double x, const double y) {
+  return pow(x,y);
+}
+
+long double o2scl::o2pow(const long double x, const long double y) {
+  return powl(x,y);
+}
+
 bool o2scl::o2isfinite(const double x) {
   return std::isfinite(x);
 }
@@ -146,6 +158,11 @@ cpp_dec_float_35 o2scl::o2sqrt(const cpp_dec_float_35 x) {
   return boost::multiprecision::sqrt(x);
 }
 
+cpp_dec_float_35 o2scl::o2pow(const cpp_dec_float_35 x,
+                              const cpp_dec_float_35 y) {
+  return boost::multiprecision::pow(x,y);
+}
+
 bool o2scl::o2isfinite(const cpp_dec_float_35 x) {
   return boost::math::isfinite(x);
 }
@@ -175,6 +192,12 @@ o2scl::o2log(const boost::multiprecision::cpp_dec_float_50 x) {
 boost::multiprecision::cpp_dec_float_50
 o2scl::o2sqrt(const boost::multiprecision::cpp_dec_float_50 x) {
   return boost::multiprecision::sqrt(x);
+}
+
+boost::multiprecision::cpp_dec_float_50
+o2scl::o2pow(const boost::multiprecision::cpp_dec_float_50 x,
+             const boost::multiprecision::cpp_dec_float_50 y) {
+  return boost::multiprecision::pow(x,y);
 }
 
 bool o2scl::o2isfinite(const boost::multiprecision::cpp_dec_float_50 x) {
@@ -209,6 +232,12 @@ o2scl::o2sqrt(const boost::multiprecision::cpp_dec_float_100 x) {
   return boost::multiprecision::sqrt(x);
 }
 
+boost::multiprecision::cpp_dec_float_100
+o2scl::o2pow(const boost::multiprecision::cpp_dec_float_100 x,
+             const boost::multiprecision::cpp_dec_float_100 y) {
+  return boost::multiprecision::pow(x,y);
+}
+
 bool o2scl::o2isfinite(const boost::multiprecision::cpp_dec_float_100 x) {
   return boost::math::isfinite(x);
 }
@@ -221,14 +250,46 @@ o2scl::o2hypot(const boost::multiprecision::cpp_dec_float_100 x,
 
 // cpp_bin_float_50 functions
 
+boost::multiprecision::cpp_bin_float_50
+o2scl::o2abs(const boost::multiprecision::cpp_bin_float_50 x) {
+  return boost::multiprecision::abs(x);
+}
+
 bool o2scl::o2isfinite(const boost::multiprecision::cpp_bin_float_50 x) {
   return boost::math::isfinite(x);
 }
 
+boost::multiprecision::cpp_bin_float_50
+o2scl::o2sqrt(const boost::multiprecision::cpp_bin_float_50 x) {
+  return boost::multiprecision::sqrt(x);
+}
+
+boost::multiprecision::cpp_bin_float_50
+o2scl::o2pow(const boost::multiprecision::cpp_bin_float_50 x,
+             const boost::multiprecision::cpp_bin_float_50 y) {
+  return boost::multiprecision::pow(x,y);
+}
+
 // cpp_bin_float_100 functions
+
+boost::multiprecision::cpp_bin_float_100
+o2scl::o2abs(const boost::multiprecision::cpp_bin_float_100 x) {
+  return boost::multiprecision::abs(x);
+}
 
 bool o2scl::o2isfinite(const boost::multiprecision::cpp_bin_float_100 x) {
   return boost::math::isfinite(x);
+}
+
+boost::multiprecision::cpp_bin_float_100
+o2scl::o2sqrt(const boost::multiprecision::cpp_bin_float_100 x) {
+  return boost::multiprecision::sqrt(x);
+}
+
+boost::multiprecision::cpp_bin_float_100
+o2scl::o2pow(const boost::multiprecision::cpp_bin_float_100 x,
+             const boost::multiprecision::cpp_bin_float_100 y) {
+  return boost::multiprecision::pow(x,y);
 }
 
 #endif

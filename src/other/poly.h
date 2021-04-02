@@ -140,7 +140,6 @@ namespace o2scl {
       x2=r2.real();
       return ret;
     }
-      
 
     /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
 	giving the two complex solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ 
@@ -216,9 +215,8 @@ namespace o2scl {
       cx_t r2,r3;
   
       if (a3==0.0) {
-        O2SCL_ERR
-          ("Leading coefficient zero in cubic_real_coeff::solve_r().",
-           exc_einval);
+        O2SCL_ERR2("Leading coefficient zero in",
+                   "cubic_real_coeff::solve_r().",exc_einval);
       }
       
       int ret=solve_rc(a3,b3,c3,d3,x1,r2,r3);
@@ -257,9 +255,8 @@ namespace o2scl {
     virtual int solve_r(const fp_t a3, const fp_t b3, const fp_t c3, 
 			const fp_t d3, fp_t &x1, fp_t &x2, fp_t &x3) {
       if (a3==0.0) {
-        O2SCL_ERR
-          ("Leading coefficient zero in cubic_complex::solve_r().",
-           exc_einval);
+        O2SCL_ERR2("Leading coefficient zero in",
+                   "cubic_complex::solve_r().",exc_einval);
       }
       
       cx_t r1,r2,r3;
@@ -279,9 +276,8 @@ namespace o2scl {
 			 const fp_t d3, fp_t &x1, cx_t &x2,
 			 cx_t &x3) {
       if (a3==0.0) {
-        O2SCL_ERR
-          ("Leading coefficient zero in cubic_complex::solve_rc().",
-           exc_einval);
+        O2SCL_ERR2("Leading coefficient zero in",
+                   "cubic_complex::solve_rc().",exc_einval);
       }
       
       cx_t r1,r2,r3;
@@ -428,8 +424,8 @@ namespace o2scl {
   /** \brief Solve a quartic polynomial with complex coefficients and 
       complex roots [abstract base]
   */
-  template<class fp_t=double> class quartic_complex :
-    public quartic_real_coeff<double> {
+  template<class fp_t=double, class cx_t=std::complex<fp_t> >
+  class quartic_complex : public quartic_real_coeff<fp_t,cx_t> {
 
   public:
 
@@ -450,7 +446,7 @@ namespace o2scl {
            exc_einval);
       }
       
-      std::complex<fp_t> r1,r2,r3,r4;
+      cx_t r1,r2,r3,r4;
       int ret=solve_c(a4,b4,c4,d4,e4,r1,r2,r3,r4);
       x1=r1.real();
       x2=r2.real();
@@ -466,11 +462,11 @@ namespace o2scl {
     */
     virtual int solve_rc(const fp_t a4, const fp_t b4, const fp_t c4, 
 			 const fp_t d4, const fp_t e4, 
-			 std::complex<fp_t> &x1, std::complex<fp_t> &x2, 
-			 std::complex<fp_t> &x3, std::complex<fp_t> &x4) {
+			 cx_t &x1, cx_t &x2, cx_t &x3, cx_t &x4) {
+			 
       if (a4==0.0) {
         O2SCL_ERR
-          ("Leading coefficient zero in std::complex<fp_t> &x4) {().",
+          ("Leading coefficient zero in cx_t &x4) {().",
            exc_einval);
       }
       
@@ -482,14 +478,10 @@ namespace o2scl {
 	giving the four complex solutions \f$ x=x_1 \f$ , \f$ x=x_2 \f$ ,
 	\f$ x=x_3 \f$ , and \f$ x=x_4 \f$ .
     */
-    virtual int solve_c(const std::complex<fp_t> a4, 
-			const std::complex<fp_t> b4, 
-			const std::complex<fp_t> c4, 
-			const std::complex<fp_t> d4, 
-			const std::complex<fp_t> e4, 
-			std::complex<fp_t> &x1, 
-			std::complex<fp_t> &x2, std::complex<fp_t> &x3,
-			std::complex<fp_t> &x4)=0;
+    virtual int solve_c(const cx_t a4, const cx_t b4, 
+			const cx_t c4, const cx_t d4, 
+			const cx_t e4, cx_t &x1, 
+			cx_t &x2, cx_t &x3, cx_t &x4)=0;
 
     /// Return a string denoting the type ("quartic_complex")
     const char *type() { return "quartic_complex"; }
@@ -621,9 +613,8 @@ namespace o2scl {
 			 cx_t &r2,
                          cx_t &r3) {
       if (a3==0.0) {
-        O2SCL_ERR
-          ("Leading coefficient zero in cubic_real_coeff_cern::solve_rc().",
-           exc_einval);
+        O2SCL_ERR2("Leading coefficient zero in ",
+                   "cubic_real_coeff_cern::solve_rc().",exc_einval);
       }
       
       fp_t x[3],d;
@@ -694,6 +685,7 @@ namespace o2scl {
 
       // AWS 4/1/21: These temporaries fix compiling for long double
       // and complex<long double> types
+      fp_t one=1.0;
       fp_t two=2.0;
       fp_t three=3.0;
       
@@ -707,7 +699,7 @@ namespace o2scl {
       fp_t p=s-r3*r*r;
       fp_t q=(r1*r*r-r3*s)*r+t;
       d=r2*r2*q*q+r3*p*r3*p*r3*p;
-      if (fabs(d)<=eps) {
+      if (o2abs(d)<=eps) {
         fp_t pp=s-q3*r*r;
         fp_t qq=(q1*r*r-q3*s)*r+t;
         d=q2*q2*qq*qq+q3*pp*q3*pp*q3*pp;
@@ -728,9 +720,9 @@ namespace o2scl {
           delta2=0.0;
           d_new=da;
         } else if (db>0.0) {
-          d_new=da/db+1.0;
+          d_new=da/db+one;
         } else {
-          d_new=-da/db-1.0;
+          d_new=-da/db-one;
         }
       } else {
         d_new=d;
@@ -740,42 +732,44 @@ namespace o2scl {
         h2=sqrt(d);
         fp_t u0=-h1+h2;
         fp_t v0=-h1-h2;
-        if (fabs(u0)==0.0) {
+        if (o2abs(u0)==0.0) {
           u=sign(0.0,u0);
         }
-        else u=sign(pow(fabs(u0),r3),u0);
-        if (fabs(v0)==0.0) v=sign(0.0,v0);
-        else v=sign(pow(fabs(v0),r3),v0);
+        else u=sign(o2pow(o2abs(u0),r3),u0);
+        if (o2abs(v0)==0.0) v=sign(0.0,v0);
+        else v=sign(o2pow(o2abs(v0),r3),v0);
         x[0]=u+v-h;
         x[1]=-r2*(u+v)-h;
-        x[2]=r4*fabs(u-v);
-        if (fabs(u0)<=eps || fabs(v0)<=eps) {
+        x[2]=r4*o2abs(u-v);
+        if (o2abs(u0)<=eps || o2abs(v0)<=eps) {
           y[0]=x[0];
           for(k=0;k<=1;k++) {
-            y[k+1]=y[k]-(((y[k]+r)*y[k]+s)*y[k]+t)/((three*y[k]+two*r)*y[k]+s);
+            y[k+1]=y[k]-(((y[k]+r)*y[k]+s)*y[k]+t)/
+              ((three*y[k]+two*r)*y[k]+s);
           }
           x[0]=y[2];
           z[0]=x[1]+i*x[2];
           for(k=0;k<=1;k++) {
-            z[k+1]=z[k]-(((z[k]+r)*z[k]+s)*z[k]+t)/((three*z[k]+two*r)*z[k]+s);
+            z[k+1]=z[k]-(((z[k]+r)*z[k]+s)*z[k]+t)/
+              ((three*z[k]+two*r)*z[k]+s);
           }
           x[1]=z[2].real();
           x[2]=z[2].imag();
         }
         
-      } else if (fabs(d_new)<=delta2) {
+      } else if (o2abs(d_new)<=delta2) {
         
         d=0.0;
-        if (fabs(h1)==0.0) u=sign(0.0,-h1);
-        else u=sign(pow(fabs(h1),r3),-h1);
+        if (o2abs(h1)==0.0) u=sign(0.0,-h1);
+        else u=sign(o2pow(o2abs(h1),r3),-h1);
         x[0]=u+u-h;
         x[1]=-u-h;
         x[2]=x[1];
-        if (fabs(h1)<=eps) {
+        if (o2abs(h1)<=eps) {
           y[0]=x[0];
           for(k=0;k<=1;k++) {
             h1=(three*y[k]+two*r)*y[k]+s;
-            if (fabs(h1)>delta2) {
+            if (o2abs(h1)>delta2) {
               y[k+1]=y[k]-(((y[k]+r)*y[k]+s)*y[k]+t)/h1;
             } else {
               x[0]=-r3*r;
@@ -791,11 +785,11 @@ namespace o2scl {
         
       } else {
         
-        h3=fabs(r3*p);
-        h3=sqrt(h3*h3*h3);
+        h3=o2abs(r3*p);
+        h3=o2sqrt(h3*h3*h3);
         h2=r3*acos(-h1/h3);
         if (h3==0.0) h1=0.0;
-        else h1=pow(h3,r3);
+        else h1=o2pow(h3,r3);
         u=h1*cos(h2);
         v=w3*h1*sin(h2);
         x[0]=u+u-h;
@@ -928,9 +922,9 @@ namespace o2scl {
       if (dc==0) u[2]=u[1];
       if (dc<=0) {
         mt=2;
-        v[1]=fabs(u[0]);
-        v[2]=fabs(u[1]);
-        v[3]=fabs(u[2]);
+        v[1]=o2abs(u[0]);
+        v[2]=o2abs(u[1]);
+        v[3]=o2abs(u[2]);
         v1=std::max(std::max(v[1],v[2]),v[3]);
         if (v1==v[1]) {
           k1=0;
@@ -1427,12 +1421,13 @@ namespace o2scl {
 	(default \f$ 10^{-6} \f$ )
     */
     double cube_root_tol;
+    
   };
   
   /** \brief Solve a quartic with complex coefficients and complex roots
    */
-  template <class fp_t=double> class quartic_complex_simple :
-    public quartic_complex<fp_t> {
+  template <class fp_t=double, class cx_t=std::complex<fp_t> >
+  class quartic_complex_simple : public quartic_complex<fp_t,cx_t> {
 
   public:
 
@@ -1443,39 +1438,42 @@ namespace o2scl {
 	giving the four complex solutions \f$ x=x_1 \f$ , \f$ x=x_2 \f$ ,
 	\f$ x=x_3 \f$ , and \f$ x=x_4 \f$ .
     */
-    virtual int solve_c(const std::complex<fp_t> a4, 
-			const std::complex<fp_t> b4, 
-			const std::complex<fp_t> c4, 
-			const std::complex<fp_t> d4, 
-			const std::complex<fp_t> e4, 
-			std::complex<fp_t> &x1, 
-			std::complex<fp_t> &x2, 
-			std::complex<fp_t> &x3,
-			std::complex<fp_t> &x4) {
+    virtual int solve_c(const cx_t a4, const cx_t b4, 
+			const cx_t c4, const cx_t d4, 
+			const cx_t e4, cx_t &x1, cx_t &x2, 
+			cx_t &x3, cx_t &x4) {
       
-      std::complex<fp_t> p4, q4, r4;
-      std::complex<fp_t> a3, b3, c3, d3;
-      std::complex<fp_t> b2a, c2a, b2b, c2b;
-      std::complex<fp_t> u4, u41, u42;
+      cx_t p4, q4, r4;
+      cx_t a3, b3, c3, d3;
+      cx_t b2a, c2a, b2b, c2b;
+      cx_t u4, u41, u42;
       
-      if (a4==0.0) {
+      if (a4.real()==0.0 && a4.imag()==0.0) {
         O2SCL_ERR
           ("Leading coefficient zero in quartic_complex_simple::solve_c().",
            exc_einval);
       }
+
+      fp_t two=2.0;
+      fp_t eight=8.0;
+      fp_t four=4.0;
+      fp_t sixteen=16.0;
+      fp_t sixfour=64.0;
+      fp_t twofivesix=256.0;
+      fp_t three=3.0;
       
-      p4=(8.0*a4*c4-3.0*b4*b4)/8.0/a4/a4;
-      q4=(b4*b4*b4-4.0*a4*b4*c4+8.0*a4*a4*d4)/8.0/(a4*a4*a4);
-      r4=(16.0*a4*b4*b4*c4+256.0*a4*a4*a4*e4-3.0*b4*b4*b4*b4-64.0*a4*a4*b4*d4)/
-        256.0/(a4*a4*a4*a4);
+      p4=(eight*a4*c4-three*b4*b4)/eight/a4/a4;
+      q4=(b4*b4*b4-four*a4*b4*c4+eight*a4*a4*d4)/eight/(a4*a4*a4);
+      r4=(sixteen*a4*b4*b4*c4+twofivesix*a4*a4*a4*e4-three*b4*b4*b4*b4-
+          sixfour*a4*a4*b4*d4)/twofivesix/(a4*a4*a4*a4);
       
       //---------------------------------------
       // Solve the resolvent cubic:
       
       a3=1.0;
       b3=-p4;
-      c3=-4.0*r4;
-      d3=4.0*p4*r4-q4*q4;
+      c3=-four*r4;
+      d3=four*p4*r4-q4*q4;
       
       cub_obj.solve_c(a3,b3,c3,d3,u4,u41,u42);
       
@@ -1486,19 +1484,19 @@ namespace o2scl {
       if (u4==p4) {
         b2a=0.0;
         b2b=0.0;
-        c2a=u4/2.0;
-        c2b=u4/2.0;
+        c2a=u4/two;
+        c2b=u4/two;
       } else {
         b2a=sqrt(u4-p4);
         b2b=-sqrt(u4-p4);
-        c2a=-sqrt(u4-p4)*q4/2.0/(u4-p4)+u4/2.0;
-        c2b=sqrt(u4-p4)*q4/2.0/(u4-p4)+u4/2.0;
+        c2a=-sqrt(u4-p4)*q4/two/(u4-p4)+u4/two;
+        c2b=sqrt(u4-p4)*q4/two/(u4-p4)+u4/two;
       }
       
-      x1=(-b2a+sqrt(b2a*b2a-4.0*c2a))/2.0-b4/4.0/a4;
-      x2=(-b2a-sqrt(b2a*b2a-4.0*c2a))/2.0-b4/4.0/a4;
-      x3=(-b2b+sqrt(b2b*b2b-4.0*c2b))/2.0-b4/4.0/a4;
-      x4=(-b2b-sqrt(b2b*b2b-4.0*c2b))/2.0-b4/4.0/a4;
+      x1=(-b2a+sqrt(b2a*b2a-four*c2a))/two-b4/four/a4;
+      x2=(-b2a-sqrt(b2a*b2a-four*c2a))/two-b4/four/a4;
+      x3=(-b2b+sqrt(b2b*b2b-four*c2b))/two-b4/four/a4;
+      x4=(-b2b-sqrt(b2b*b2b-four*c2b))/two-b4/four/a4;
       
       return success;
     }
@@ -1511,7 +1509,7 @@ namespace o2scl {
   protected:
 
     /// The object to solve for the associated cubic
-    cubic_complex_std<> cub_obj;
+    cubic_complex_std<fp_t,cx_t> cub_obj;
     
 #endif
 

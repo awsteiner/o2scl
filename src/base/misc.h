@@ -100,6 +100,16 @@ namespace o2scl {
   boost::multiprecision::cpp_dec_float_100
     o2abs(const boost::multiprecision::cpp_dec_float_100 x);
   
+  /** \brief Absolute value for cpp_bin_float_50
+   */
+  boost::multiprecision::cpp_bin_float_50
+    o2abs(const boost::multiprecision::cpp_bin_float_50 x);
+  
+  /** \brief Absolute value for cpp_bin_float_100
+   */
+  boost::multiprecision::cpp_bin_float_100
+    o2abs(const boost::multiprecision::cpp_bin_float_100 x);
+  
 #endif
 
   /** \brief Exponential for single precision numbers
@@ -192,6 +202,62 @@ namespace o2scl {
    */
   boost::multiprecision::cpp_dec_float_100
     o2sqrt(const boost::multiprecision::cpp_dec_float_100 x);
+  
+  /** \brief Square root for cpp_bin_float_50
+   */
+  boost::multiprecision::cpp_bin_float_50
+    o2sqrt(const boost::multiprecision::cpp_bin_float_50 x);
+  
+  /** \brief Square root for cpp_bin_float_100
+   */
+  boost::multiprecision::cpp_bin_float_100
+    o2sqrt(const boost::multiprecision::cpp_bin_float_100 x);
+  
+#endif
+  
+  /** \brief Exponential for single precision numbers
+   */
+  float o2pow(const float x, const float y);
+  
+  /** \brief Exponential for double precision numbers
+   */
+  double o2pow(const double x, const double y);
+
+  /** \brief Exponential for long double
+   */
+  long double o2pow(const long double x, const long double y);
+
+#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
+  
+  /** \brief Exponential for cpp_dec_float_35
+   */
+  boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+  o2pow(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> > x,
+        const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> > y);
+  
+  /** \brief Exponential for cpp_dec_float_50
+   */
+  boost::multiprecision::cpp_dec_float_50
+  o2pow(const boost::multiprecision::cpp_dec_float_50 x,
+        const boost::multiprecision::cpp_dec_float_50 y);
+  
+  /** \brief Exponential for cpp_dec_float_100
+   */
+  boost::multiprecision::cpp_dec_float_100
+  o2pow(const boost::multiprecision::cpp_dec_float_100 x,
+        const boost::multiprecision::cpp_dec_float_100 y);
+  
+  /** \brief Exponential for cpp_bin_float_50
+   */
+  boost::multiprecision::cpp_bin_float_50
+  o2pow(const boost::multiprecision::cpp_bin_float_50 x,
+        const boost::multiprecision::cpp_bin_float_50 y);
+  
+  /** \brief Exponential for cpp_bin_float_100
+   */
+  boost::multiprecision::cpp_bin_float_100
+  o2pow(const boost::multiprecision::cpp_bin_float_100 x,
+        const boost::multiprecision::cpp_bin_float_100 y);
   
 #endif
 
