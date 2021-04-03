@@ -15,3 +15,7 @@ Functions o2sqrt
 
 .. doxygenfunction:: o2sqrt(const boost::multiprecision::cpp_dec_float_100 x)
 
+.. doxygenfunction:: o2sqrt(const boost::multiprecision::cpp_bin_float_50 x)
+
+.. doxygenfunction:: o2sqrt(const boost::multiprecision::cpp_bin_float_100 x)
+

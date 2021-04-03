@@ -15,3 +15,7 @@ Functions o2abs
 
 .. doxygenfunction:: o2abs(const boost::multiprecision::cpp_dec_float_100 x)
 
+.. doxygenfunction:: o2abs(const boost::multiprecision::cpp_bin_float_50 x)
+
+.. doxygenfunction:: o2abs(const boost::multiprecision::cpp_bin_float_100 x)
+

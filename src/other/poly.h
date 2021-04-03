@@ -45,6 +45,7 @@
 #include <gsl/gsl_poly.h>
 #include <o2scl/constants.h>
 #include <o2scl/err_hnd.h>
+#include <o2scl/misc.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -1313,12 +1314,9 @@ namespace o2scl {
 	giving the three complex solutions \f$ x=x_1 \f$ , 
 	\f$ x=x_2 \f$ , and \f$ x=x_3 \f$ .
     */
-    virtual int solve_c(const cx_t a3, 
-			const cx_t b3, 
-			const cx_t c3, 
-			const cx_t d3, 
-			cx_t &x1, cx_t &x2, 
-			cx_t &x3) {
+    virtual int solve_c(const cx_t a3, const cx_t b3, 
+			const cx_t c3, const cx_t d3, 
+			cx_t &x1, cx_t &x2, cx_t &x3) {
 
       if (a3.real()==0.0 && a3.imag()==0.0) {
         quadratic_complex_std<fp_t,cx_t> qsc;
@@ -1327,7 +1325,7 @@ namespace o2scl {
         return success;
       }
       
-      cx_t p3, q3, mo;
+      cx_t p3, q3, mo(0,1);
       cx_t alpha, beta, cbrta, cbrtb;
       cx_t e2, e4, cacb;
       fp_t test, re_p3;
@@ -1337,59 +1335,90 @@ namespace o2scl {
       fp_t four=4.0;
       fp_t nine=9.0;
       fp_t twoseven=27.0;
-            
-      mo=-1.0;
-      mo=sqrt(mo);
+      fp_t onethird=nine/twoseven;
       
-      p3=(three*a3*c3-b3*b3)/nine/a3/a3;
-      q3=(two*b3*b3*b3-nine*a3*b3*c3+twoseven*a3*a3*d3)/twoseven/a3/a3/a3;
-      
-      alpha=(-q3+sqrt(q3*q3+four*p3*p3*p3))/two;
-      beta=(q3+sqrt(q3*q3+four*p3*p3*p3))/two;
-      
-      if (alpha.real()==0.0) cbrta=0.0;
-      else cbrta=pow(alpha,1.0/3.0);
-      if (beta.real()==0.0) cbrtb=0.0;
-      else cbrtb=pow(beta,1.0/3.0);
-
       fp_t pi=boost::math::constants::pi<fp_t>();
-      
-      // It seems that if the real part of alpha is < 0 and the imaginary
-      // part is zero, then cbrta is NaN (esp. w/Cygwin). We fix this
-      // here:
-      if (!o2isfinite(cbrta.real())) {
-        cbrta=pow(-alpha,1.0/3.0)*exp(mo*pi/three);
-      }
-      if (!o2isfinite(cbrtb.real())) {
-        cbrtb=pow(-beta,1.0/3.0)*exp(mo*pi/three);
-      }
-      
-      e2=exp(mo*two*pi/three);
-      e4=exp(mo*four*pi/three);
-      
-      // This next section is nessary to ensure that the code
-      // selects the correct cube roots of alpha and beta.
-      // I changed this because I wanted code that had no chance
-      // of accidentally falling into an infinite loop.
-      re_p3=p3.real();
-      cacb=cbrta*cbrtb;
-      test=fabs((cacb.real()-re_p3)/re_p3);
-      if (fabs(((cacb*e2).real()-re_p3)/re_p3)<test) {
-        cbrta*=e2;
+
+      if (true) {
+        
+        p3=(three*a3*c3-b3*b3)/nine/a3/a3;
+        q3=(two*b3*b3*b3-nine*a3*b3*c3+twoseven*a3*a3*d3)/twoseven/a3/a3/a3;
+        
+        alpha=(-q3+sqrt(q3*q3+four*p3*p3*p3))/two;
+        beta=(q3+sqrt(q3*q3+four*p3*p3*p3))/two;
+        
+        if (alpha.real()==0.0) cbrta=0.0;
+        else cbrta=pow(alpha,onethird);
+        if (beta.real()==0.0) cbrtb=0.0;
+        else cbrtb=pow(beta,onethird);
+        
+        cx_t exp_i_pi_three=exp(mo*pi/three);
+        
+        // It seems that if the real part of alpha is < 0 and the imaginary
+        // part is zero, then cbrta is NaN (esp. w/Cygwin). We fix this
+        // here:
+        if (!o2isfinite(cbrta.real())) {
+          cbrta=pow(-alpha,onethird)*exp_i_pi_three;
+        }
+        if (!o2isfinite(cbrtb.real())) {
+          cbrtb=pow(-beta,onethird)*exp_i_pi_three;
+        }
+        
+        e2=exp_i_pi_three*exp_i_pi_three;
+        e4=e2*e2;
+        
+        // This next section is nessary to ensure that the code
+        // selects the correct cube roots of alpha and beta.
+        // I changed this because I wanted code that had no chance
+        // of accidentally falling into an infinite loop.
+        re_p3=p3.real();
         cacb=cbrta*cbrtb;
         test=fabs((cacb.real()-re_p3)/re_p3);
         if (fabs(((cacb*e2).real()-re_p3)/re_p3)<test) {
           cbrta*=e2;
+          cacb=cbrta*cbrtb;
+          test=fabs((cacb.real()-re_p3)/re_p3);
+          if (fabs(((cacb*e2).real()-re_p3)/re_p3)<test) {
+            cbrta*=e2;
+          }
+        } else {
+          if (fabs(((cacb*e2*e2).real()-re_p3)/re_p3)<test) {
+            cbrta*=e2*e2;
+          }
         }
-      } else {
-        if (fabs(((cacb*e2*e2).real()-re_p3)/re_p3)<test) {
-          cbrta*=e2*e2;
-        }
+        
+        x1=cbrta-cbrtb-b3/three/a3;
+        x2=cbrta*e2-cbrtb*e4-b3/three/a3;
+        x3=cbrta*e4-cbrtb*e2-b3/three/a3;
+        
       }
-      
-      x1=cbrta-cbrtb-b3/three/a3;
-      x2=cbrta*e2-cbrtb*e4-b3/three/a3;
-      x3=cbrta*e4-cbrtb*e2-b3/three/a3;
+
+      if (false) {
+
+        // Write the cubic into the standard form, x^3+px=q
+        cx_t p=(three*a3*c3-b3*b3)/three/a3/a3;
+        cx_t q=(two*b3*b3*b3-nine*a3*b3*c3+twoseven*a3*a3*d3)/
+          twoseven/a3/a3/a3;
+
+        cx_t W=-q/two+sqrt(p*p*p/twoseven+q*q/four);
+        // This code fails when W=0
+        std::cout << "W: " << W << std::endl;
+        // Construct the roots from the solution of the quadratic
+        cx_t w1=pow(W,onethird);
+        cx_t exp_i_pi_three=exp(mo*pi*two/three);
+        cx_t w2=w1*exp_i_pi_three;
+        cx_t w3=w2*exp_i_pi_three;
+
+        // Vieta's substitution
+        cx_t r1=w1-p/three/w1;
+        cx_t r2=w2-p/three/w2;
+        cx_t r3=w3-p/three/w3;
+
+        x1=r1-b3/three/a3;
+        x2=r2-b3/three/a3;
+        x3=r3-b3/three/a3;
+
+      }
       
       return success;
     }      

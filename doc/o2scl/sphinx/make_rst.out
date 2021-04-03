@@ -382,6 +382,10 @@ Namespace:  function: o2abs
 Multiple entry o2abs
 Namespace:  function: o2abs
 Multiple entry o2abs
+Namespace:  function: o2abs
+Multiple entry o2abs
+Namespace:  function: o2abs
+Multiple entry o2abs
 Namespace:  function: o2exp
 Namespace:  function: o2exp
 Multiple entry o2exp
@@ -415,7 +419,30 @@ Namespace:  function: o2sqrt
 Multiple entry o2sqrt
 Namespace:  function: o2sqrt
 Multiple entry o2sqrt
+Namespace:  function: o2sqrt
+Multiple entry o2sqrt
+Namespace:  function: o2sqrt
+Multiple entry o2sqrt
+Namespace:  function: o2pow
+Namespace:  function: o2pow
+Multiple entry o2pow
+Namespace:  function: o2pow
+Multiple entry o2pow
+Namespace:  function: o2pow
+Multiple entry o2pow
+Namespace:  function: o2pow
+Multiple entry o2pow
+Namespace:  function: o2pow
+Multiple entry o2pow
+Namespace:  function: o2pow
+Multiple entry o2pow
+Namespace:  function: o2pow
+Multiple entry o2pow
 Namespace:  function: o2isfinite
+Namespace:  function: o2isfinite
+Multiple entry o2isfinite
+Namespace:  function: o2isfinite
+Multiple entry o2isfinite
 Namespace:  function: o2isfinite
 Multiple entry o2isfinite
 Namespace:  function: o2isfinite
@@ -1165,6 +1192,7 @@ Skipping o2exp
 Skipping o2hypot
 Skipping o2isfinite
 Skipping o2log
+Skipping o2pow
 Skipping o2sqrt
 Skipping operator<<
 Skipping pipe_cmd_string
@@ -1359,6 +1387,8 @@ o2abs(const long double x)
 o2abs(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> x)
 o2abs(const boost::multiprecision::cpp_dec_float_50 x)
 o2abs(const boost::multiprecision::cpp_dec_float_100 x)
+o2abs(const boost::multiprecision::cpp_bin_float_50 x)
+o2abs(const boost::multiprecision::cpp_bin_float_100 x)
 o2exp(const float x)
 o2exp(const double x)
 o2exp(const long double x)
@@ -1375,18 +1405,30 @@ o2isfinite(const double x)
 o2isfinite(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> x)
 o2isfinite(const boost::multiprecision::cpp_dec_float_50 x)
 o2isfinite(const boost::multiprecision::cpp_dec_float_100 x)
+o2isfinite(const boost::multiprecision::cpp_bin_float_50 x)
+o2isfinite(const boost::multiprecision::cpp_bin_float_100 x)
 o2log(const float x)
 o2log(const double x)
 o2log(const long double x)
 o2log(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> x)
 o2log(const boost::multiprecision::cpp_dec_float_50 x)
 o2log(const boost::multiprecision::cpp_dec_float_100 x)
+o2pow(const float x, const float y)
+o2pow(const double x, const double y)
+o2pow(const long double x, const long double y)
+o2pow(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> x, const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> y)
+o2pow(const boost::multiprecision::cpp_dec_float_50 x, const boost::multiprecision::cpp_dec_float_50 y)
+o2pow(const boost::multiprecision::cpp_dec_float_100 x, const boost::multiprecision::cpp_dec_float_100 y)
+o2pow(const boost::multiprecision::cpp_bin_float_50 x, const boost::multiprecision::cpp_bin_float_50 y)
+o2pow(const boost::multiprecision::cpp_bin_float_100 x, const boost::multiprecision::cpp_bin_float_100 y)
 o2sqrt(const float x)
 o2sqrt(const double x)
 o2sqrt(const long double x)
 o2sqrt(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35>> x)
 o2sqrt(const boost::multiprecision::cpp_dec_float_50 x)
 o2sqrt(const boost::multiprecision::cpp_dec_float_100 x)
+o2sqrt(const boost::multiprecision::cpp_bin_float_50 x)
+o2sqrt(const boost::multiprecision::cpp_bin_float_100 x)
 pipe_cmd_string(std::string cmd, std::string &result, bool err_on_fail = true, int nmax = 80)
 pipe_cmd_string(std::string cmd, int nmax = 80)
 rebin_xy(const vec_t &x, const vec2_t &y, vec3_t &x_out, vec4_t &y_out, size_t n_pts, size_t interp_type)

@@ -34,6 +34,8 @@
     <member refid="namespaceo2scl_1ac09a64817d5b827c1a8070487c7fbf74" kind="function"><name>o2abs</name></member>
     <member refid="namespaceo2scl_1a7ee3118e255e910542eadd3e3f4084ea" kind="function"><name>o2abs</name></member>
     <member refid="namespaceo2scl_1a93fb81e66bbd551b8ace53c166ca9a58" kind="function"><name>o2abs</name></member>
+    <member refid="namespaceo2scl_1a4a0ed28986c24c0a0d05fe3f372ede09" kind="function"><name>o2abs</name></member>
+    <member refid="namespaceo2scl_1a507d19ea672d8d7ef393a2412c6aa49f" kind="function"><name>o2abs</name></member>
     <member refid="namespaceo2scl_1a5557379051562f5343872083de026606" kind="function"><name>o2exp</name></member>
     <member refid="namespaceo2scl_1a9b77e1dbf224e8d46dc4d95da5975646" kind="function"><name>o2exp</name></member>
     <member refid="namespaceo2scl_1aedf06fcb3a67a47de22a574d7214edea" kind="function"><name>o2exp</name></member>
@@ -52,10 +54,22 @@
     <member refid="namespaceo2scl_1a1d7d108349a37a47eaacff0eea6a6191" kind="function"><name>o2sqrt</name></member>
     <member refid="namespaceo2scl_1a7d0573477eed100497d0afba3f8e0a29" kind="function"><name>o2sqrt</name></member>
     <member refid="namespaceo2scl_1abe4d2d56504c9aaaf7c0927b16cd1dcd" kind="function"><name>o2sqrt</name></member>
+    <member refid="namespaceo2scl_1a4a1bc3f95164f04c8b0bafbb8d97b55a" kind="function"><name>o2sqrt</name></member>
+    <member refid="namespaceo2scl_1a6d10692c38ba3216771164c2ff65f34d" kind="function"><name>o2sqrt</name></member>
+    <member refid="namespaceo2scl_1a9f43bf63343ab525a2ce5473a0d82fe8" kind="function"><name>o2pow</name></member>
+    <member refid="namespaceo2scl_1abd4d319c1abb508a1d6e131910a25d37" kind="function"><name>o2pow</name></member>
+    <member refid="namespaceo2scl_1a463f240fe9027d13d3c68bc90cd6e83b" kind="function"><name>o2pow</name></member>
+    <member refid="namespaceo2scl_1ae350b26c498133688de57b9ebc4ec523" kind="function"><name>o2pow</name></member>
+    <member refid="namespaceo2scl_1aada9c8540bb3377c138924173261fbe6" kind="function"><name>o2pow</name></member>
+    <member refid="namespaceo2scl_1a7718f8eb9fa26409aa6328b4341f0221" kind="function"><name>o2pow</name></member>
+    <member refid="namespaceo2scl_1a0a1225682f9c33a7c542faac593266c7" kind="function"><name>o2pow</name></member>
+    <member refid="namespaceo2scl_1acd368e0bcd6e47f868c4a1cdb6675fe6" kind="function"><name>o2pow</name></member>
     <member refid="namespaceo2scl_1af3d76d472a79f5421ca0b283f90bf926" kind="function"><name>o2isfinite</name></member>
     <member refid="namespaceo2scl_1a305c4ae283404f220e7d0e5281329335" kind="function"><name>o2isfinite</name></member>
     <member refid="namespaceo2scl_1a366d44f22015af5f96873019dc6d0a1f" kind="function"><name>o2isfinite</name></member>
     <member refid="namespaceo2scl_1aca23858179732c7f738bac2fcaba3693" kind="function"><name>o2isfinite</name></member>
+    <member refid="namespaceo2scl_1a6156614695933f0b20fc29dd59cc9f97" kind="function"><name>o2isfinite</name></member>
+    <member refid="namespaceo2scl_1a2aa7d4b97a32b8f400f7135ac0626b75" kind="function"><name>o2isfinite</name></member>
     <member refid="namespaceo2scl_1a3362003b4b195c1e4a069baaa14ebea4" kind="function"><name>o2hypot</name></member>
     <member refid="namespaceo2scl_1a3a1a10347c4d0d3a078df0030d3c2501" kind="function"><name>o2hypot</name></member>
     <member refid="namespaceo2scl_1a19b6a4324149a1fcae89daeec38f2867" kind="function"><name>o2hypot</name></member>

@@ -49,11 +49,11 @@ int main(void) {
   typedef boost::numeric::ublas::vector<double> ubvector;
 
   // Quadratic solver
-  quadratic_real_coeff_gsl quad;
+  quadratic_real_coeff_gsl<> quad;
   // Cubic solver
-  cubic_real_coeff_cern cubic;
+  cubic_real_coeff_cern<> cubic;
   // Quartic solver
-  quartic_real_coeff_cern quart;
+  quartic_real_coeff_cern<> quart;
   // Generic polynomial solver
   poly_real_coeff_gsl gen;
 
