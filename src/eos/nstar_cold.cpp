@@ -367,6 +367,7 @@ int nstar_cold::calc_eos(double np_0) {
   if (eos_neg==false) {
     eost->deriv("loge","logp","ad_index");
   } else {
+    eost->new_column("ad_index");
     for(size_t i=0;i<eost->get_nlines();i++) {
       eost->set("ad_index",i,0.0);
     }
