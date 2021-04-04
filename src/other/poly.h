@@ -1339,13 +1339,19 @@ namespace o2scl {
       
       fp_t pi=boost::math::constants::pi<fp_t>();
 
-      if (true) {
+      if (false) {
+
+        // AWS 4/4/21: This code appeared to be slightly more accurate
+        // on average than the code below, but it occasionally gave
+        // incorrect roots. 
         
         p3=(three*a3*c3-b3*b3)/nine/a3/a3;
         q3=(two*b3*b3*b3-nine*a3*b3*c3+twoseven*a3*a3*d3)/twoseven/a3/a3/a3;
+        std::cout << "p,q: " << p3 << " " << q3 << std::endl;
         
         alpha=(-q3+sqrt(q3*q3+four*p3*p3*p3))/two;
         beta=(q3+sqrt(q3*q3+four*p3*p3*p3))/two;
+        std::cout << "alpha,beta: " << alpha << " " << beta << std::endl;
         
         if (alpha.real()==0.0) cbrta=0.0;
         else cbrta=pow(alpha,onethird);
@@ -1367,6 +1373,8 @@ namespace o2scl {
         e2=exp_i_pi_three*exp_i_pi_three;
         e4=e2*e2;
         
+        std::cout << "alpha,beta: " << cbrta << " " << cbrtb << std::endl;
+        
         // This next section is nessary to ensure that the code
         // selects the correct cube roots of alpha and beta.
         // I changed this because I wanted code that had no chance
@@ -1380,44 +1388,77 @@ namespace o2scl {
           test=fabs((cacb.real()-re_p3)/re_p3);
           if (fabs(((cacb*e2).real()-re_p3)/re_p3)<test) {
             cbrta*=e2;
+            std::cout << "1" << std::endl;
           }
+          std::cout << "2" << std::endl;
         } else {
           if (fabs(((cacb*e2*e2).real()-re_p3)/re_p3)<test) {
             cbrta*=e2*e2;
+            std::cout << "3" << std::endl;
           }
         }
         
         x1=cbrta-cbrtb-b3/three/a3;
         x2=cbrta*e2-cbrtb*e4-b3/three/a3;
         x3=cbrta*e4-cbrtb*e2-b3/three/a3;
+        std::cout << "x1,x2,x3: " << x1 << " " << x2 << " " << x3
+                  << std::endl;
         
       }
 
-      if (false) {
+      if (true) {
 
-        // Write the cubic into the standard form, x^3+px=q
+        // Following
+        // https://en.wikipedia.org/wiki/Cubic_equation#Vieta's_substitution
+
+        // Write the cubic as a "depressed" cubic: x^3+px+q=0
         cx_t p=(three*a3*c3-b3*b3)/three/a3/a3;
         cx_t q=(two*b3*b3*b3-nine*a3*b3*c3+twoseven*a3*a3*d3)/
           twoseven/a3/a3/a3;
 
+        // Formulate into a quadratic and then W is one of
+        // the roots of the quadratic
         cx_t W=-q/two+sqrt(p*p*p/twoseven+q*q/four);
         // This code fails when W=0
-        std::cout << "W: " << W << std::endl;
-        // Construct the roots from the solution of the quadratic
+        //std::cout << "W: " << W << std::endl;
+        
+        // Construct the roots of the depressed cubic from the
+        // solution of the quadratic
         cx_t w1=pow(W,onethird);
         cx_t exp_i_pi_three=exp(mo*pi*two/three);
         cx_t w2=w1*exp_i_pi_three;
         cx_t w3=w2*exp_i_pi_three;
+        //std::cout << "p: " << p << std::endl;
 
         // Vieta's substitution
-        cx_t r1=w1-p/three/w1;
-        cx_t r2=w2-p/three/w2;
-        cx_t r3=w3-p/three/w3;
+        cx_t r1, r2, r3;
+        if (W.real()==0.0 && W.imag()==0.0) {
+          // If W=0, then there are three identical roots of the
+          // cubic, and they are all -b3/a3/3
+          r1=0;
+          r2=0;
+          r3=0;
+        } else {
+          //std::cout << "Here " << W.real() << " " << W.imag() << std::endl;
+          r1=w1-p/three/w1;
+          r2=w2-p/three/w2;
+          r3=w3-p/three/w3;
+        }
+        //std::cout << "b3: " << b3 << std::endl;
+        //std::cout << "a3: " << a3 << std::endl;
 
+        // Construct the roots of the original cubic from those of the
+        // depressed cubic
         x1=r1-b3/three/a3;
         x2=r2-b3/three/a3;
         x3=r3-b3/three/a3;
 
+        //std::cout << "x1,x2,x3: " << x1 << " " << x2 << " " << x3
+        //<< std::endl;
+        //if (!o2isfinite(x1.real()) || !o2isfinite(x1.imag())) {
+        //exit(-1);
+        //}
+        
       }
       
       return success;

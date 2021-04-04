@@ -1225,7 +1225,7 @@ int main(void) {
   test_cubic_real_coeff(ne,&c2,"cubic_rc_gsl",1.0,
 			1.0e-1,1.0e-2,1.0e1,8.0e0);
   test_cubic_real_coeff(ne,&c3,"cubic_complex_std",1.0,
-			1.0e-1,1.0e-2,1.0e1,1.0e1);
+			1.0e-1,1.0e-1,1.0e1,1.0e1);
   test_cubic_real_coeff(ne,&p3,"poly_real_coeff_gsl",1.0,
 			1.0e-1,4.0e-2,1.0e1,1.0e1);
 #ifdef O2SCL_LD_TYPES
@@ -1247,7 +1247,7 @@ int main(void) {
   test_cubic_real_coeff(ne,&c2,"cubic_rc_gsl",1.0e-3,
 			1.0e-4,5.0e-4,1.0e-3,1.0e-3);
   test_cubic_real_coeff(ne,&c3,"cubic_complex_std",1.0e-3,
-			1.0e-4,1.0e+2,1.0e-2,1.0e+5);
+			1.0e-1,1.0e+2,4.0e0,1.0e+5);
   test_cubic_real_coeff(ne,&p3,"poly_real_coeff_gsl",1.0e-3,
 			1.0e-5,1.0e-3,1.0e-2,1.0e-2);
 #ifdef O2SCL_LD_TYPES
@@ -1264,7 +1264,7 @@ int main(void) {
   cout << "type                   Avg 1      Avg 2      Max 1"
        << "      Max 2      time" << endl;
   test_cubic_complex(ne,&c3,"cubic_complex_std",
-		     1.0e1,1.0e1,1.0e1,1.0e1);
+                     1.0e1,1.0e1,1.0e1,1.0e1);
 #ifdef O2SCL_LD_TYPES
   test_cubic_complex<long double,std::complex<long double> >
     (ne,&c3_ld,"cubic_complex_std_ld",

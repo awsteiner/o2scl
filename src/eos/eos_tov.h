@@ -197,6 +197,12 @@ namespace o2scl {
       Based on [Lattimer01]_.
       \endverbatim
 
+      \note The default tov_solve beginning and ending pressures
+      work well for physical EOSs, but not for the Buchdahl EOS,
+      so if you use this EOS in a tov_solve object and try to 
+      compute the M-R curve you will need to change prbegin
+      and prend.
+
   */
   class eos_tov_buchdahl : public eos_tov {
     
