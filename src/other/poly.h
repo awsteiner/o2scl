@@ -76,8 +76,29 @@ namespace o2scl {
     const char *type() { return "quadratic_real"; }
   };
 
+  /** \brief Solve a quadratic polynomial with real coefficients to
+      get the real roots (GSL)
+
+      This is just a wrapper for gsl_poly_complex_solve_quadratic().
+  */
+  class quadratic_real_gsl : public quadratic_real<> {
+    
+  public:
+
+    /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
+	giving the two solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ .
+    */
+    virtual int solve_r(const double a2, const double b2, const double c2, 
+			double &x1, double &x2);
+    
+  };
+  
   /** \brief Solve a quadratic polynomial with real coefficients and 
       complex roots [abstract base]
+
+      This class is designed to be identical to the GSL code in
+      gsl_poly_complex_solve_quadratic(), but generalized to generic
+      floating point types.
   */
   template<class fp_t=double, class cx_t=std::complex<fp_t> >
   class quadratic_real_coeff : public quadratic_real<fp_t> {
@@ -109,7 +130,166 @@ namespace o2scl {
     */
     virtual int solve_rc(const fp_t a2, const fp_t b2, const fp_t c2, 
 			 cx_t &x1, cx_t &x2)=0;
+    
+    /** \brief Desc
+     */
+    void test_quadratic_real_coeff_base
+    (fp_t alpha, fp_t &s1, fp_t &s2, fp_t &m1,
+     fp_t &m2, clock_t &lt1, clock_t &lt2, size_t n=40) {
+      
+      s1=0.0;
+      s2=0.0;
+      m1=0.0;
+      m2=0.0;
+      lt1=clock();
+      
+      o2scl::gen_test_number<40> ga, gb, gc;
+      o2scl::gen_test_number<80> gd, ge;
+      
+      size_t count=0;
+      
+      // First pick random coefficients
+      for(int j1=0;j1<n;j1++) {
+        fp_t ca=ga.gen();
+        for(int j2=0;j2<n;j2++) {
+          fp_t cb=gb.gen()*alpha;
+          for(int j3=0;j3<n;j3++) {
+            
+            // Ensure that several quadratics near b^2=4*a*c are tested
+            fp_t cc=cb*cb/4.0/ca+gc.gen();
+            
+            // Ensure there is a solution
+            if (fabs(ca)>0.0) {
 
+              cx_t cr1, cr2;
+              solve_rc(ca,cb,cc,cr1,cr2);
+              
+              cx_t cbp=-(cr1+cr2)*ca;
+              cx_t ccp=(cr1*cr2)*ca;
+              
+              cx_t czo1=(ca*cr1+cb)*cr1+cc;
+              cx_t czo2=(ca*cr2+cb)*cr2+cc;
+              fp_t q1=sqrt(fabs(cb-cbp.real())*fabs(cb-cbp.real())+
+                           fabs(cc-ccp.real())*fabs(cc-ccp.real()));
+              fp_t q2=sqrt(abs(czo1)*abs(czo1)+abs(czo2)*abs(czo2));
+              
+              s1+=q1;
+              if (q1>m1) m1=q1;
+              s2+=q2;
+              if (q2>m2) m2=q2;
+              count++;
+              
+              if (!o2isfinite(q1) || !o2isfinite(q2) || 
+                  fabs(q1)>1.0e-10 || fabs(q2)>1.0e-10) {
+                O2SCL_ERR("Failure in test_quadratic_real_coeff().",
+                          exc_esanity);
+              }
+              
+            }
+            
+          }
+        }
+      }
+      
+      // Next, pick random roots which are complex conjugates
+      for(int j1=0;j1<n*2;j1++) {
+        cx_t cr1, cr2;
+        cr1.real(gd.gen());
+        for(int j2=0;j2<n*2;j2++) {
+          cr1.imag(ge.gen());
+          cr2.real(cr1.real());
+          cr2.imag(-cr1.imag());
+          
+          fp_t ca=1.0;
+          fp_t cb=(-cr1-cr2).real();
+          fp_t cc=(cr1*cr2).real();
+
+          cx_t cr1p, cr2p;
+          solve_rc(ca,cb,cc,cr1p,cr2p);
+          
+          // If the roots are flipped
+          if (fabs(cr1.imag()-cr2p.imag())<fabs(cr1.imag()-cr1p.imag())) {
+            cx_t temp=cr1p;
+            cr1p=cr2p;
+            cr2p=temp;
+          } 
+          
+          fp_t q1=sqrt(fabs(cr1.real()-cr1p.real())*
+                       fabs(cr1.real()-cr1p.real())+
+                       fabs(cr2.real()-cr2p.real())*
+                       fabs(cr2.real()-cr2p.real()));
+          fp_t q2=sqrt(fabs(cr1.imag()-cr1p.imag())*
+                       fabs(cr1.imag()-cr1p.imag())+
+                       fabs(cr2.imag()-cr2p.imag())*
+                       fabs(cr2.imag()-cr2p.imag()));
+          
+          s1+=q1;
+          if (q1>m1) m1=q1;
+          s2+=q2;
+          if (q2>m2) m2=q2;
+          count++;
+          
+          if (!o2isfinite(q1) || !o2isfinite(q2) ||
+              fabs(q1)>1.0e-10 || fabs(q2)>1.0e-10) {
+            O2SCL_ERR("Failure in test_quadratic_real_coeff().",
+                      exc_esanity);
+          }
+        }
+      }
+      
+      // Next, pick random roots which are both real
+      for(int j1=0;j1<n*2;j1++) {
+        cx_t cr1, cr2;
+        cr1.real(gd.gen());
+        for(int j2=0;j2<n*2;j2++) {
+          cr2.real(ge.gen());
+          cr1.imag(0.0);
+          cr2.imag(0.0);
+          
+          fp_t ca=1.0;
+          fp_t cb=(-cr1-cr2).real();
+          fp_t cc=(cr1*cr2).real();
+
+          cx_t cr1p, cr2p;
+          solve_rc(ca,cb,cc,cr1p,cr2p);
+          
+          // If the roots are flipped
+          if (fabs(cr1.real()-cr2p.real())<fabs(cr1.real()-cr1p.real())) {
+            cx_t temp=cr1p;
+            cr1p=cr2p;
+            cr2p=temp;
+          } 
+          
+          fp_t q1=sqrt(fabs(cr1.real()-cr1p.real())*
+                       fabs(cr1.real()-cr1p.real())+
+                       fabs(cr2.real()-cr2p.real())*
+                       fabs(cr2.real()-cr2p.real()));
+          fp_t q2=sqrt(fabs(cr1.imag()-cr1p.imag())*
+                       fabs(cr1.imag()-cr1p.imag())+
+                       fabs(cr2.imag()-cr2p.imag())*
+                       fabs(cr2.imag()-cr2p.imag()));
+          
+          s1+=q1;
+          if (q1>m1) m1=q1;
+          s2+=q2;
+          if (q2>m2) m2=q2;
+          count++;
+          
+          if (!o2isfinite(q1) || !o2isfinite(q2) ||
+              fabs(q1)>1.0e-10 || fabs(q2)>1.0e-10) {
+            O2SCL_ERR("Failure in test_quadratic_real_coeff().",
+                      exc_esanity);
+          }
+        }
+      }
+      
+      lt2=clock();
+      s1/=count;
+      s2/=count;
+      
+      return;
+    }
+    
     /// Return a string denoting the type ("quadratic_real_coeff")
     const char *type() { return "quadratic_real_coeff"; }
   };
@@ -1005,12 +1185,30 @@ namespace o2scl {
 
   /** \brief Solve a quadratic with real coefficients and complex roots (GSL)
    */
+  class quadratic_real_coeff_gsl : public quadratic_real_coeff<> {
+    
+  public:
+    
+    /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
+	giving the two complex solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ 
+    */
+    virtual int solve_rc(const double a, const double b, const double c,
+                         std::complex<double> &x1, std::complex<double> &x2);
+    
+  };
+
+  /** \brief Solve a quadratic with real coefficients and complex roots 
+      (C++ rewrite of GSL algorithm)
+      
+      This code was based on GSL v2.6's function
+      gsl_poly_complex_solve_quadratic().
+   */
   template<class fp_t=double, class cx_t=std::complex<double> >
-  class quadratic_real_coeff_gsl : public quadratic_real_coeff<fp_t,cx_t> {
+  class quadratic_real_coeff_gsl2 : public quadratic_real_coeff<fp_t,cx_t> {
 
   public:
 
-    virtual ~quadratic_real_coeff_gsl() {}
+    virtual ~quadratic_real_coeff_gsl2() {}
 
     /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
 	giving the two complex solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ 
@@ -1084,18 +1282,42 @@ namespace o2scl {
       return 2;
     }
 
-    /// Return a string denoting the type ("quadratic_real_coeff_gsl")
-    const char *type() { return "quadratic_real_coeff_gsl"; }
+    /// Return a string denoting the type ("quadratic_real_coeff_gsl2")
+    const char *type() { return "quadratic_real_coeff_gsl2"; }
 
   };
 
   /** \brief Solve a cubic with real coefficients and complex roots (GSL)
+
+      This is just a wrapper for gsl_poly_complex_solve_cubic().
    */
   class cubic_real_coeff_gsl : public cubic_real_coeff<double> {
 
   public:
 
-    virtual ~cubic_real_coeff_gsl() {}
+    /** \brief Solves the polynomial 
+	\f$ a_3 x^3 + b_3 x^2 + c_3 x + d_3= 0 \f$ 
+	giving the real solution \f$ x=x_1 \f$ and two complex solutions 
+	\f$ x=x_2 \f$ and \f$ x=x_3 \f$ .
+    */
+    virtual int solve_rc(const double a3, const double b3, const double c3, 
+			 const double d3, double &x1, 
+			 std::complex<double> &x2, std::complex<double> &x3);
+    
+  };
+
+  /** \brief Solve a cubic with real coefficients and complex roots
+      (C++ rewrite of GSL algorithm)
+
+      This class is designed to be identical to the GSL code in
+      gsl_poly_complex_solve_cubic(), but generalized to generic
+      floating point types.
+   */
+  class cubic_real_coeff_gsl2 : public cubic_real_coeff<double> {
+
+  public:
+
+    virtual ~cubic_real_coeff_gsl2() {}
 
     /** \brief Solves the polynomial 
 	\f$ a_3 x^3 + b_3 x^2 + c_3 x + d_3= 0 \f$ 
@@ -1106,11 +1328,11 @@ namespace o2scl {
 			 const double d3, double &x1, 
 			 std::complex<double> &x2, std::complex<double> &x3);
 
-    /// Return a string denoting the type ("cubic_real_coeff_gsl")
-    const char *type() { return "cubic_real_coeff_gsl"; }
+    /// Return a string denoting the type ("cubic_real_coeff_gsl2")
+    const char *type() { return "cubic_real_coeff_gsl2"; }
 
     /** \brief An alternative to \c gsl_poly_complex_solve_cubic()
-	
+        
 	This is an alternative to the function
 	<tt>gsl_poly_complex_solve_cubic()</tt> with some small
 	corrections to ensure finite values for some cubics. See

@@ -65,6 +65,57 @@ inline void swap(double &a, double &b) {
   return;
 }
 
+int quadratic_real_gsl::solve_r(const double a2, const double b2,
+                                const double c2, 
+                                double &x1, double &x2) {
+  return gsl_poly_solve_quadratic(a2,b2,c2,&x1,&x2);
+}
+
+int quadratic_real_coeff_gsl::solve_rc(const double a2, const double b2,
+                                       const double c2, 
+                                       std::complex<double> &x1,
+                                       std::complex<double> &x2) {
+  gsl_complex z0, z1;
+  int ret=gsl_poly_complex_solve_quadratic(a2,b2,c2,&z0,&z1);
+  x1.real(GSL_REAL(z0));
+  x1.imag(GSL_IMAG(z0));
+  x2.real(GSL_REAL(z1));
+  x2.imag(GSL_IMAG(z1));
+  return ret;
+}
+
+int cubic_real_coeff_gsl::solve_rc(const double a3, const double b3,
+                                   const double c3, const double d3,
+                                   double &x1,
+                                   std::complex<double> &x2,
+                                   std::complex<double> &x3) {
+  
+  gsl_complex z0, z1, z2;
+  int ret=gsl_poly_complex_solve_cubic(b3/a3,c3/a3,d3/a3,&z0,&z1,&z2);
+  if (GSL_IMAG(z0)==0.0) {
+    x1=GSL_REAL(z0);
+    x2.real(GSL_REAL(z1));
+    x2.imag(GSL_IMAG(z1));
+    x3.real(GSL_REAL(z2));
+    x3.imag(GSL_IMAG(z2));
+  } else if (GSL_IMAG(z1)==0.0) {
+    x1=GSL_REAL(z1);
+    x2.real(GSL_REAL(z0));
+    x2.imag(GSL_IMAG(z0));
+    x3.real(GSL_REAL(z2));
+    x3.imag(GSL_IMAG(z2));
+  } else if (GSL_IMAG(z2)==0.0) {
+    x1=GSL_REAL(z2);
+    x2.real(GSL_REAL(z0));
+    x2.imag(GSL_IMAG(z0));
+    x3.real(GSL_REAL(z1));
+    x3.imag(GSL_IMAG(z1));
+  } else {
+    O2SCL_ERR("GSL returned three complex roots.",o2scl::exc_einval);
+  }
+  return ret;
+}
+
 poly_real_coeff_gsl::poly_real_coeff_gsl() {
   w2=gsl_poly_complex_workspace_alloc(3);
   w3=gsl_poly_complex_workspace_alloc(4);
@@ -196,7 +247,7 @@ int poly_real_coeff_gsl::solve_rc_arr(int n, const double co[],
   return success;
 }
 
-int cubic_real_coeff_gsl::gsl_poly_complex_solve_cubic2
+int cubic_real_coeff_gsl2::gsl_poly_complex_solve_cubic2
 (double a, double b, double c, gsl_complex *z0, gsl_complex *z1, 
  gsl_complex *z2) {
   
@@ -330,7 +381,7 @@ int cubic_real_coeff_gsl::gsl_poly_complex_solve_cubic2
   }
 }
 
-int cubic_real_coeff_gsl::solve_rc
+int cubic_real_coeff_gsl2::solve_rc
 (const double a3, const double b3, const double c3, 
  const double d3, double &x1, std::complex<double> &x2, 
  std::complex<double> &x3) {
@@ -340,7 +391,7 @@ int cubic_real_coeff_gsl::solve_rc
 
   if (a3==0.0) {
     O2SCL_ERR
-      ("Leading coefficient zero in cubic_real_coeff_gsl::solve_rc().",
+      ("Leading coefficient zero in cubic_real_coeff_gsl2::solve_rc().",
        exc_einval);
   }
 
