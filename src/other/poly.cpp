@@ -58,13 +58,6 @@ inline double max(double a, double b) {
   return b;
 }
 
-inline void swap(double &a, double &b) {
-  double tmp=b;
-  b=a;
-  a=tmp;
-  return;
-}
-
 int quadratic_real_gsl::solve_r(const double a2, const double b2,
                                 const double c2, 
                                 double &x1, double &x2) {
@@ -116,357 +109,61 @@ int cubic_real_coeff_gsl::solve_rc(const double a3, const double b3,
   return ret;
 }
 
-poly_real_coeff_gsl::poly_real_coeff_gsl() {
-  w2=gsl_poly_complex_workspace_alloc(3);
-  w3=gsl_poly_complex_workspace_alloc(4);
-  w4=gsl_poly_complex_workspace_alloc(5);
-  gen_size=0;
-}
-
-poly_real_coeff_gsl::~poly_real_coeff_gsl() {
-  gsl_poly_complex_workspace_free(w2);
-  gsl_poly_complex_workspace_free(w3);
-  gsl_poly_complex_workspace_free(w4);
-  if (gen_size>0) {
-    gsl_poly_complex_workspace_free(wgen);
-  }
-}
-
-int poly_real_coeff_gsl::solve_rc(const double a2, const double b2, 
-				  const double c2, complex<double> &r1, 
-				  complex<double> &r2) {
-  
-  if (a2==0.0) {
-    O2SCL_ERR2("Leading coefficient zero in ",
-		   "poly_real_coeff_gsl::solve_rc().",
-		   exc_einval);
-  }
-
-  double a[3]={c2,b2,a2};
-  double z[4];
-  complex<double> i(0.0,1.0);
-
-  gsl_poly_complex_solve(a,3,w2,z);
-  
-  r1=z[0]+i*z[1];
-  r2=z[2]+i*z[3];
-
-  return success;
-}
-
-int poly_real_coeff_gsl::solve_rc(const double a3, const double b3, 
-				  const double c3, const double d3, 
-				  double &r1, 
-				  complex<double> &r2, complex<double> &r3) {
-  
-  if (a3==0.0) {
-    O2SCL_ERR2("Leading coefficient zero in ",
-		   "poly_real_coeff_gsl::solve_rc().",
-		   exc_einval);
-  }
-
-  double a[4]={d3,c3,b3,a3};  
-  double z[6],s1,s2,s3;
-  complex<double> i(0.0,1.0);
-
-  gsl_poly_complex_solve(a,4,w3,z);
-  
-  s1=fabs(z[1]/z[0]);
-  s2=fabs(z[3]/z[2]);
-  s3=fabs(z[5]/z[4]);
-  if (s1<s2 && s1<s3) {
-    r1=z[0];
-    r2=z[2]+i*z[3];
-    r3=z[4]+i*z[5];
-  } else if (s2<s1 && s2<s3) {
-    r1=z[2];
-    r2=z[0]+i*z[1];
-    r3=z[4]+i*z[5];
-  } else {
-    r1=z[4];
-    r2=z[0]+i*z[1];
-    r3=z[2]+i*z[3];
-  }
-
-  return success;
-}
-
-int poly_real_coeff_gsl::solve_rc
-(const double a4, const double b4, const double c4, const double d4, 
- const double e4, complex<double> &r1, complex<double> &r2, 
- complex<double> &r3, complex<double> &r4) {
-  
-  if (a4==0.0) {
-    O2SCL_ERR2("Leading coefficient zero in ",
-		  "poly_real_coeff_gsl::solve_rc().",
-		  exc_einval);
-  }
-
-  double a[5]={e4,d4,c4,b4,a4};
-  double z[8];
-  complex<double> i(0.0,1.0);
-
-  gsl_poly_complex_solve(a,5,w4,z);
-  
-  r1=z[0]+i*z[1];
-  r2=z[2]+i*z[3];
-  r3=z[4]+i*z[5];
-  r4=z[6]+i*z[7];
-
-  return success;
-}
-
-int poly_real_coeff_gsl::solve_rc_arr(int n, const double co[], 
-				      std::complex<double> ro[]) {
-  int j;
-  typedef boost::numeric::ublas::vector<double> ubvector;
-  ubvector a(n+1), z(2*n);
-  complex<double> i(0.0,1.0);
-  
-  for(j=0;j<n+1;j++) {
-    a[j]=co[n-j];
-  }  
-  if (gen_size!=n) {
-    if (gen_size>0) {
-      gsl_poly_complex_workspace_free(wgen);
-    }
-    wgen=gsl_poly_complex_workspace_alloc(n+1);
-    gen_size=n;
-  }
-  if (a[n]==0.0) {
-    O2SCL_ERR2("Leading coefficient zero in ",
-	       "poly_real_coeff_gsl::solve_rc().",
-	       exc_einval);
-  }
-  gsl_poly_complex_solve(&a[0],n+1,wgen,&z[0]);
-  
-  for(j=0;j<n;j++) {
-    ro[j]=z[2*j]+i*z[2*j+1];
-  }
-
-  return success;
-}
-
-int cubic_real_coeff_gsl2::gsl_poly_complex_solve_cubic2
-(double a, double b, double c, gsl_complex *z0, gsl_complex *z1, 
- gsl_complex *z2) {
-  
-  double q=(a*a-3*b);
-  double r=(2*a*a*a-9*a*b+27*c);
-  
-  double Q=q/9;
-  double R=r/54;
-
-  double Q3=Q*Q*Q;
-  double R2=R*R;
-
-  double CR2=729*r*r;
-  double CQ3=2916*q*q*q;
-
-  if (R == 0 && Q == 0) {
-    GSL_REAL(*z0)=-a/3;
-    GSL_IMAG(*z0)=0;
-    GSL_REAL(*z1)=-a/3;
-    GSL_IMAG(*z1)=0;
-    GSL_REAL(*z2)=-a/3;
-    GSL_IMAG(*z2)=0;
-    return 3;
-  } else if (CR2 == CQ3)  {
-
-    /* this test is actually R2 == Q3, written in a form suitable
-       for exact computation with integers */
-    
-    /* Due to finite precision some double roots may be missed, and
-       will be considered to be a pair of complex roots z=x +/-
-       epsilon i close to the real axis. */
-    
-    double sqrtQ=sqrt(Q);
-
-    if (R > 0) {
-      GSL_REAL(*z0)=-2*sqrtQ-a/3;
-      GSL_IMAG(*z0)=0;
-      GSL_REAL(*z1)=sqrtQ-a/3;
-      GSL_IMAG(*z1)=0;
-      GSL_REAL(*z2)=sqrtQ-a/3;
-      GSL_IMAG(*z2)=0;
-    } else {
-      GSL_REAL(*z0)=-sqrtQ-a/3;
-      GSL_IMAG(*z0)=0;
-      GSL_REAL(*z1)=-sqrtQ-a/3;
-      GSL_IMAG(*z1)=0;
-      GSL_REAL(*z2)=2*sqrtQ-a/3;
-      GSL_IMAG(*z2)=0;
-    }
-    return 3;
-
-  } else if (CR2 < CQ3)  {
-
-    /* equivalent to R2 < Q3 */
-
-    double sqrtQ=sqrt(Q);
-    double sqrtQ3=sqrtQ*sqrtQ*sqrtQ;
-    double theta=acos(R/sqrtQ3);
-    
-    // Modified from the original GSL routine
-    // Sometimes R/sqrtQ3 is slightly larger than one
-    // when the coefficients are arranged just right
-    // so theta becomes not finite.
-
-    if (R/sqrtQ3>=1.0) theta=0.0;
-    if (R/sqrtQ3<=-1.0) theta=o2scl_const::pi;
-
-    double norm=-2*sqrtQ;
-    double r0=norm*cos(theta/3)-a/3;
-    double r1=norm*cos((theta+2.0*M_PI)/3)-a/3;
-    double r2=norm*cos((theta-2.0*M_PI)/3)-a/3;
-
-    /* Sort r0, r1, r2 into increasing order */
-
-    if (r0 > r1)
-      swap(r0,r1);
-    if (r1 > r2) {
-      swap(r1,r2);
-      if (r0 > r1)
-	swap(r0,r1);
-    }
-    
-    GSL_REAL(*z0)=r0;
-    GSL_IMAG(*z0)=0;
-    
-    GSL_REAL(*z1)=r1;
-    GSL_IMAG(*z1)=0;
-    
-    GSL_REAL(*z2)=r2;
-    GSL_IMAG(*z2)=0;
-    
-    return 3;
-
-  } else {
-
-    double sgnR=(R>=0?1:-1);
-    
-    double A;
-    if (fabs(R)+sqrt(R2-Q3)<0.0) A=0.0;
-    else A=-sgnR*pow(fabs(R)+sqrt(R2-Q3),1.0/3.0);
-    
-    // Modification from original GSL behavior: Just in case R2=Q3,
-    // finite precision can cause the argument of the sqrt() function
-    // to be negative. We correct for this here.
-    if (R2<=Q3) {
-      A=-sgnR*pow(fabs(R),1.0/3.0);
-    }
-
-    double B=Q/A;
-
-    if (A+B < 0) {
-      GSL_REAL(*z0)=A+B-a/3;
-      GSL_IMAG(*z0)=0;
-      
-      GSL_REAL(*z1)=-0.5*(A+B)-a/3;
-      GSL_IMAG(*z1)=-(sqrt(3.0)/2.0)*fabs(A-B);
-      
-      GSL_REAL(*z2)=-0.5*(A+B)-a/3;
-      GSL_IMAG(*z2)=(sqrt(3.0)/2.0)*fabs(A-B);
-    } else {
-      GSL_REAL(*z0)=-0.5*(A+B)-a/3;
-      GSL_IMAG(*z0)=-(sqrt(3.0)/2.0)*fabs(A-B);
-      
-      GSL_REAL(*z1)=-0.5*(A+B)-a/3;
-      GSL_IMAG(*z1)=(sqrt(3.0)/2.0)*fabs(A-B);
-      
-      GSL_REAL(*z2)=A+B-a/3;
-      GSL_IMAG(*z2)=0;
-    }   
-    return 3;
-  }
-}
-
-int cubic_real_coeff_gsl2::solve_rc
-(const double a3, const double b3, const double c3, 
- const double d3, double &x1, std::complex<double> &x2, 
- std::complex<double> &x3) {
-  double s1, s2, s3;
-  gsl_complex r1, r2, r3;
-  complex<double> i(0.0,1.0);
-
-  if (a3==0.0) {
-    O2SCL_ERR
-      ("Leading coefficient zero in cubic_real_coeff_gsl2::solve_rc().",
-       exc_einval);
-  }
-
-  gsl_poly_complex_solve_cubic2(b3/a3,c3/a3,d3/a3,&r1,&r2,&r3);
-  s1=fabs(GSL_IMAG(r1)/GSL_REAL(r1));
-  s2=fabs(GSL_IMAG(r2)/GSL_REAL(r2));
-  s3=fabs(GSL_IMAG(r3)/GSL_REAL(r3));
-  if (s1<s2 && s1<s3) {
-    x1=GSL_REAL(r1);
-    x2=GSL_REAL(r2)+i*GSL_IMAG(r2);
-    x3=GSL_REAL(r3)+i*GSL_IMAG(r3);
-  } else if (s2<s1 && s2<s3) {
-    x1=GSL_REAL(r2);
-    x2=GSL_REAL(r1)+i*GSL_IMAG(r1);
-    x3=GSL_REAL(r3)+i*GSL_IMAG(r3);
-  } else {
-    x1=GSL_REAL(r3);
-    x2=GSL_REAL(r1)+i*GSL_IMAG(r1);
-    x3=GSL_REAL(r2)+i*GSL_IMAG(r2);
-  }
-
-  return success;
-}
-
-int quartic_real_simple::solve_r
+int quartic_real_std::solve_r
 (const double a4, const double b4, const double c4, const double d4, 
  const double e4, double &x1, double &x2, double &x3, double &x4) {
 
   if (a4==0.0) {
     O2SCL_ERR
-      ("Leading coefficient zero in quartic_real_simple::solve_r().",
+      ("Leading coefficient zero in quartic_real_std::solve_r().",
        exc_einval);
   }
 
-  double a34, a24, a14, a04, a23, a13, a03;
-  double u1, u2, u3;
-  double u4, t1;
-  double b2a, b2b, c2a, c2b;
-  
-  a34=b4/a4;
-  a24=c4/a4;
-  a14=d4/a4;
-  a04=e4/a4;
+  double a34=b4/a4;
+  double a24=c4/a4;
+  double a14=d4/a4;
+  double a04=e4/a4;
   
   //---------------------------------------
   // Solve the resolvent cubic:
   
-  a23=-a24;
-  a13=(a14*a34-4.0*a04);
-  a03=-(a14*a14+a04*a34*a34-4.0*a04*a24);
+  double a23=-a24;
+  double a13=(a14*a34-4.0*a04);
+  double a03=-(a14*a14+a04*a34*a34-4.0*a04*a24);
+
+  double u1, u2, u3;
+  cub2.solve_r(1,a23,a13,a03,&u1,&u2,&u3);
+  //gsl_poly_solve_cubic(a23,a13,a03,&u1,&u2,&u3);
   
-  gsl_poly_solve_cubic(a23,a13,a03,&u1,&u2,&u3);
-  
-  u4=u2;
+  double u4=u2;
   
   //---------------------------------------
   // Now construct the two quadratics:
   
-  t1=u4+a34*a34/4.0-a24;
+  double t1=u4+a34*a34/4.0-a24;
   t1=sqrt(t1);
   
-  b2a=-t1+a34/2.0;
-  b2b=t1+a34/2.0;
+  double b2a=-t1+a34/2.0;
+  double b2b=t1+a34/2.0;
   t1=u4*u4/4.0;
   
   // A temporary hack that fixes problems when numerical errors
   // make t1 slightly smaller that a04.
+  /*
   if (fabs((u4*u4/4.0-a04)/a04)<cube_root_tol) {
     t1=0.0;
   } else {
     t1=sqrt(t1-a04);
   }
+  */
+  if (t1>a04) {
+    t1=sqrt(t1-a04);
+  } else {
+    t1=0;
+  }
   
-  c2a=u4/2.0-t1;
-  c2b=u4/2.0+t1;
+  double c2a=u4/2.0-t1;
+  double c2b=u4/2.0+t1;
   
   if (fabs((b2a*c2b+c2a*b2b-d4)/d4)>1.0e-4) {
     t1=u4+a34*a34/4.0-a24;
@@ -487,9 +184,12 @@ int quartic_real_simple::solve_r
   
   //---------------------------------------
   // The solutions to the two quadratics:
+
+  quad2.solve_r(1,b2a,c2a,&x1,&x2);
+  quad2.solve_r(1,b2b,c2b,&x3,&x4);
   
-  gsl_poly_solve_quadratic(1.0,b2a,c2a,&x1,&x2);
-  gsl_poly_solve_quadratic(1.0,b2b,c2b,&x3,&x4);
+  //gsl_poly_solve_quadratic(1.0,b2a,c2a,&x1,&x2);
+  //gsl_poly_solve_quadratic(1.0,b2b,c2b,&x3,&x4);
 
   return success;
 }

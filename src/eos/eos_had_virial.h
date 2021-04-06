@@ -58,7 +58,7 @@ namespace o2scl {
     o2scl::quartic_real_coeff_cern<> quart;
 
     // Generic polynomial solver
-    o2scl::poly_real_coeff_gsl quart2;
+    o2scl::poly_real_coeff_gsl<> quart2;
   
     /// Storage for the four roots
     std::complex<double> res_zp[4],res_zn[4]; 
@@ -478,7 +478,7 @@ namespace o2scl {
   protected:
   
     // Generic polynomial solver
-    o2scl::poly_real_coeff_gsl quart;
+    o2scl::poly_real_coeff_gsl<> quart;
   
     /// Storage for the four roots
     std::complex<double> res[4];

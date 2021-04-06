@@ -42,141 +42,6 @@ typedef boost::multiprecision::cpp_complex_50 cpp_complex_50;
 test_mgr tst;
 int wid=21;
 
-#define SWAP(a,b) do { double tmp=b ; b=a ; a=tmp ; } while(0)
-
-// Test patch suggested by Lorenzo Moneta
-
-int
-gsl_poly_complex_solve_cubic_lm(double a, double b, double c, 
-                                gsl_complex *z0, gsl_complex *z1, 
-                                gsl_complex *z2)
-{
-  double q = (a * a - 3 * b);
-  double r = (2 * a * a * a - 9 * a * b + 27 * c);
-
-  double Q = q / 9;
-  double R = r / 54;
-
-  double Q3 = Q * Q * Q;
-  double R2 = R * R;
-
-  //  double CR2 = 729 * r * r;
-  //  double CQ3 = 2916 * q * q * q;
-
-  if (R == 0 && Q == 0)
-    {
-      GSL_REAL (*z0) = -a / 3;
-      GSL_IMAG (*z0) = 0;
-      GSL_REAL (*z1) = -a / 3;
-      GSL_IMAG (*z1) = 0;
-      GSL_REAL (*z2) = -a / 3;
-      GSL_IMAG (*z2) = 0;
-      return 3;
-    }
-  else if (R2 == Q3) 
-    {
-      /* this test is actually R2 == Q3, written in a form suitable
-         for exact computation with integers */
-
-      /* Due to finite precision some double roots may be missed, and
-         will be considered to be a pair of complex roots z = x +/-
-         epsilon i close to the real axis. */
-
-      double sqrtQ = sqrt (Q);
-
-      if (R > 0)
-        {
-          GSL_REAL (*z0) = -2 * sqrtQ - a / 3;
-          GSL_IMAG (*z0) = 0;
-          GSL_REAL (*z1) = sqrtQ - a / 3;
-          GSL_IMAG (*z1) = 0;
-          GSL_REAL (*z2) = sqrtQ - a / 3;
-          GSL_IMAG (*z2) = 0;
-        }
-      else
-        {
-          GSL_REAL (*z0) = -sqrtQ - a / 3;
-          GSL_IMAG (*z0) = 0;
-          GSL_REAL (*z1) = -sqrtQ - a / 3;
-          GSL_IMAG (*z1) = 0;
-          GSL_REAL (*z2) = 2 * sqrtQ - a / 3;
-          GSL_IMAG (*z2) = 0;
-        }
-      return 3;
-    }
-  else if (R2 < Q3)  /* equivalent to R2 < Q3 */
-    {
-      double sqrtQ = sqrt (Q);
-      double sqrtQ3 = sqrtQ * sqrtQ * sqrtQ;
-      double ctheta = R / sqrtQ3;
-      double theta = 0; 
-      if ( ctheta <= -1.0) 
-        theta = M_PI;
-      else if ( ctheta < 1.0) 
-        theta = acos (R / sqrtQ3);
-      
-      double norm = -2 * sqrtQ;
-      double r0 = norm * cos (theta / 3) - a / 3;
-      double r1 = norm * cos ((theta + 2.0 * M_PI) / 3) - a / 3;
-      double r2 = norm * cos ((theta - 2.0 * M_PI) / 3) - a / 3;
-
-      /* Sort r0, r1, r2 into increasing order */
-
-      if (r0 > r1)
-        SWAP (r0, r1);
-
-      if (r1 > r2)
-        {
-          SWAP (r1, r2);
-
-          if (r0 > r1)
-            SWAP (r0, r1);
-        }
-
-      GSL_REAL (*z0) = r0;
-      GSL_IMAG (*z0) = 0;
-
-      GSL_REAL (*z1) = r1;
-      GSL_IMAG (*z1) = 0;
-
-      GSL_REAL (*z2) = r2;
-      GSL_IMAG (*z2) = 0;
-
-      return 3;
-    }
-  else
-    {
-      double sgnR = (R >= 0 ? 1 : -1);
-      double A = -sgnR * pow (fabs (R) + sqrt (R2 - Q3), 1.0 / 3.0);
-      double B = Q / A;
-
-      if (A + B < 0)
-        {
-          GSL_REAL (*z0) = A + B - a / 3;
-          GSL_IMAG (*z0) = 0;
-
-          GSL_REAL (*z1) = -0.5 * (A + B) - a / 3;
-          GSL_IMAG (*z1) = -(sqrt (3.0) / 2.0) * fabs(A - B);
-
-          GSL_REAL (*z2) = -0.5 * (A + B) - a / 3;
-          GSL_IMAG (*z2) = (sqrt (3.0) / 2.0) * fabs(A - B);
-        }
-      else
-        {
-          GSL_REAL (*z0) = -0.5 * (A + B) - a / 3;
-          GSL_IMAG (*z0) = -(sqrt (3.0) / 2.0) * fabs(A - B);
-
-          GSL_REAL (*z1) = -0.5 * (A + B) - a / 3;
-          GSL_IMAG (*z1) = (sqrt (3.0) / 2.0) * fabs(A - B);
-
-          GSL_REAL (*z2) = A + B - a / 3;
-          GSL_IMAG (*z2) = 0;
-        }
-      
-      return 3;
-    }
-}
-
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_quadratic_real_coeff_base
 (size_t ne, quadratic_real_coeff<fp_t,cx_t> *po, 
@@ -648,88 +513,6 @@ void test_cubic_real_coeff_boost(size_t ne, cubic_real_coeff<fp_t,cx_t> *po,
   return;
 }
 
-void compare_gsl_cubic(size_t ne, string str, 
-		       double alpha, int sw, cubic_real_coeff_gsl2 &gcrc) {
-  double s1,s2,m1,m2;
-  clock_t lt1, lt2;
-  complex<double> czo2,czo3,cap,cbp,ccp,cdp,czo1;
-  double ca,cb,cc,cd;
-  complex<double> i(0.0,1.0);
-  gsl_complex z0,z1,z2;
-  size_t j;
-  double q1,q2;
-  s1=0.0;
-  s2=0.0;
-  m1=0.0;
-  m2=0.0;
-  lt1=clock();
-
-  size_t nfails=0;
-  const int ntest=16;
-
-  gen_test_number<ntest> ga, gb, gc, gd;
-  for(int j2=0;j2<ntest;j2++) {
-    cb=gb.gen();
-    for(int j3=0;j3<ntest;j3++) {
-      cc=gc.gen()*alpha;
-      for(int j4=0;j4<ntest;j4++) {
-	cd=gd.gen();
-	
-	if (sw==0) {
-	  gsl_poly_complex_solve_cubic(cb,cc,cd,&z0,&z1,&z2);
-	} else if (sw==1) {
-	  gcrc.gsl_poly_complex_solve_cubic2(cb,cc,cd,&z0,&z1,&z2);
-	} else {
-	  gsl_poly_complex_solve_cubic_lm(cb,cc,cd,&z0,&z1,&z2);
-	}
-	if (!std::isfinite(GSL_REAL(z0)) ||
-	    !std::isfinite(GSL_IMAG(z0)) ||
-	    !std::isfinite(GSL_REAL(z1)) ||
-	    !std::isfinite(GSL_IMAG(z1)) ||
-	    !std::isfinite(GSL_REAL(z2)) ||
-	    !std::isfinite(GSL_IMAG(z2))) {
-	  nfails++;
-	}
-	std::complex<double> cr1(GSL_REAL(z0),GSL_IMAG(z0));
-	std::complex<double> cr2(GSL_REAL(z2),GSL_IMAG(z1));
-	std::complex<double> cr3(GSL_REAL(z2),GSL_IMAG(z1));
-	
-	cbp=-(cr1+cr2+cr3);
-	ccp=(cr1*cr2+cr1*cr3+cr2*cr3);
-	cdp=-(cr1*cr2*cr3);
-	
-	czo1=((cr1+cb)*cr1+cc)*cr1+cd;
-	czo2=((cr2+cb)*cr2+cc)*cr2+cd;
-	czo3=((cr3+cb)*cr3+cc)*cr3+cd;
-	q1=sqrt(fabs(cb-cbp.real())*fabs(cb-cbp.real())+
-		fabs(cc-ccp.real())*fabs(cc-ccp.real())+
-		fabs(cd-cdp.real())*fabs(cd-cdp.real()));
-	q2=sqrt(abs(czo1)*abs(czo1)+abs(czo2)*abs(czo2)+
-		abs(czo3)*abs(czo3));
-
-	if (std::isfinite(q1)) {
-	  s1+=q1;
-	  if (q1>m1) m1=q1;
-	} 
-	if (std::isfinite(q2)) {
-	  s2+=q2;
-	  if (q2>m2) m2=q2;
-	}
-	
-      }
-    }
-  }
-  lt2=clock();
-  s1/=((double)ne);
-  s2/=((double)ne);
-  cout.width(wid-4);
-  cout << str.c_str();
-  cout << ": " << s1 << " " << s2 << " " << m1 << " " 
-       << m2 << " " << ((double)(lt2-lt1))/CLOCKS_PER_SEC << " "
-       << nfails << endl;
-  return;
-}
-
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_cubic_complex_base(size_t ne, cubic_complex<fp_t,cx_t> *po,
                              string str, fp_t &s1, fp_t &s2,
@@ -1108,25 +891,25 @@ int main(void) {
   cout.precision(4);
 
   // Generic polynomial solvers
-  poly_real_coeff_gsl p3;
+  poly_real_coeff_gsl<> p3;
   
-  // quadratic solvers
+  // Quadratic solvers
   quadratic_real_coeff_gsl t3;
   quadratic_real_coeff_gsl2<> t1;
   quadratic_complex_std<> t2;
   
-  // cubic solvers
+  // Cubic solvers
   cubic_real_coeff_cern<> c1;
   cubic_real_coeff_gsl c4;
-  cubic_real_coeff_gsl2 c2;
+  cubic_real_coeff_gsl2<> c2;
   cubic_complex_std<> c3;
   
-  // quartic solvers
+  // Quartic solvers
   quartic_real_coeff_cern<> q1;
   quartic_real_gsl q2;
   quartic_real_gsl2 q3;
-  quartic_real_simple q4;
-  quartic_complex_simple<> q5;
+  quartic_real_std<> q4;
+  quartic_complex_std<> q5;
 
 #ifdef O2SCL_LD_TYPES
   
@@ -1149,8 +932,8 @@ int main(void) {
   quartic_real_coeff_cern<long double,std::complex<long double> > q1_ld;
   quartic_real_coeff_cern<cpp_bin_float_50,cpp_complex_50> q1_cdf50;
 
-  quartic_complex_simple<long double,std::complex<long double> > q4_ld;
-  quartic_complex_simple<cpp_bin_float_50,cpp_complex_50> q4_cdf50;
+  quartic_complex_std<long double,std::complex<long double> > q4_ld;
+  quartic_complex_std<cpp_bin_float_50,cpp_complex_50> q4_cdf50;
   
 #endif
 
@@ -1240,9 +1023,15 @@ int main(void) {
   test_cubic_real_coeff<long double,std::complex<long double> >
     (ne,&c1_ld,"cubic_rc_cern_ld",
      1.0,1.0e-13,1.0e-12,1.0e-12,1.0e-10);
+  test_cubic_real_coeff<long double,std::complex<long double> >
+    (ne,&c3_ld,"cubic_c_std_ld",
+     1.0,1.0e-1,1.0e-1,1.0e1,1.0e1);
   test_cubic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
     (ne,&c1_cdf50,"cubic_rc_cern_50",
      1.0,1.0e-40,1.0e-40,1.0e-38,1.0e-37);
+  test_cubic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
+    (ne,&c3_cdf50,"cubic_c_std_50",
+     1.0,1.0e-1,1.0e-1,1.0e1,1.0e1);
 #endif
   cout << endl;
   
@@ -1264,9 +1053,15 @@ int main(void) {
   test_cubic_real_coeff<long double,std::complex<long double> >
     (ne,&c1_ld,"cubic_rc_cern_ld",
      1.0e-3,1.0e-7,1.0e-5,1.0e-6,1.0e-4);
+  test_cubic_real_coeff<long double,std::complex<long double> >
+    (ne,&c3_ld,"cubic_c_std_ld",
+     1.0e-3,1.0e-2,1.0e-1,1.0e1,1.0e1);
   test_cubic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
     (ne,&c1_cdf50,"cubic_rc_cern_50",
      1.0e-3,1.0e-38,1.0e-36,1.0e-37,1.0e-35);
+  test_cubic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
+    (ne,&c3_cdf50,"cubic_c_std_50",
+     1.0e-3,1.0e-2,1.0e-1,1.0e1,1.0e1);
 #endif
   cout << endl;
   
@@ -1295,9 +1090,9 @@ int main(void) {
 		    5.0e-2,1.0,1.0e2,1.0);
   test_quartic_real(ne,&q3,"quartic_real_gsl2",1.0,
 		    1.0e-2,1.0,1.0e1,1.0);
-  test_quartic_real(ne,&q4,"quartic_real_simple",1.0,
+  test_quartic_real(ne,&q4,"quartic_real_std",1.0,
 		    2.0e5,1.0,3.0e7,1.0);
-  test_quartic_real(ne,&q5,"quartic_c_simple",1.0,
+  test_quartic_real(ne,&q5,"quartic_c_std",1.0,
 		    1.0e-1,1.0,1.0e2,1.0);
   test_quartic_real(ne,&p3,"poly_real_coeff_gsl",1.0,
 		    1.0e-14,1.0,1.0e-13,1.0);
@@ -1314,9 +1109,9 @@ int main(void) {
 		    1.0e-3,1.0,1.0e1,1.0);
   test_quartic_real(ne,&q3,"quartic_real_gsl2",1.0e-5,
 		    1.0e-5,1.0,1.0e-3,1.0);
-  test_quartic_real(ne,&q4,"quartic_real_simple",3.0e-4,
+  test_quartic_real(ne,&q4,"quartic_real_std",3.0e-4,
 		    2.0e5,1.0,3.0e7,1.0);
-  test_quartic_real(ne,&q5,"quartic_c_simple",1.0e-5,
+  test_quartic_real(ne,&q5,"quartic_c_std",1.0e-5,
 		    1.0e-1,1.0,5.0,1.0);
   test_quartic_real(ne,&p3,"poly_real_coeff_gsl",1.0e-5,
 		    1.0e-15,1.0,1.0e-14,1.0);
@@ -1327,7 +1122,7 @@ int main(void) {
        << "      Max 2      time" << endl;
   test_quartic_real_coeff(ne,&q1,"cern_real_coeff",
 			  1.0e0,1.0e4,1.0e2,1.0e5);
-  test_quartic_real_coeff(ne,&q5,"quartic_c_simple",
+  test_quartic_real_coeff(ne,&q5,"quartic_c_std",
 			  1.0e1,1.0e1,1.0e3,1.0e4);
   test_quartic_real_coeff(ne,&p3,"poly_real_coeff_gsl",
 			  1.0e-13,1.0e-6,1.0e-10,1.0e-4);
@@ -1344,17 +1139,10 @@ int main(void) {
   cout << "Quartics with complex coefficients and complex roots:" << endl;
   cout << "type                   Avg 1      Avg 2      Max 1"
        << "      Max 2      time" << endl;
-  test_quartic_complex(ne,&q5,"quartic_c_simple",
+  test_quartic_complex(ne,&q5,"quartic_c_std",
 		       1.0e-2,1.0e-2,1.0e1,1.0e2);
   cout << endl;
   
-  cout << "Compare gsl cubic functions:" << endl;
-  cout << "On some systems, the GSL version gives solutions which are not" 
-       << " finite:" << endl;
-  compare_gsl_cubic(ne,"GSL",1.0e-9,0,c2);
-  compare_gsl_cubic(ne,"Revised",1.0e-9,1,c2);
-  compare_gsl_cubic(ne,"LM",1.0e-9,2,c2);
-
   tst.report();
 
   return 0;

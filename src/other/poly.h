@@ -671,10 +671,12 @@ namespace o2scl {
   /** \brief Solve a general polynomial with real
       coefficients and complex roots [abstract base]
   */
-  template<class fp_t>
-  class poly_real_coeff : public quadratic_real_coeff<fp_t>,
-                          public cubic_real_coeff<fp_t>,
-                          public quartic_real_coeff<fp_t> {
+  template<class fp_t=double, class cx_t=std::complex<fp_t>,
+           class coeff_vec_t=std::vector<fp_t>,
+           class root_vec_t=std::vector<cx_t> >
+  class poly_real_coeff : public quadratic_real_coeff<fp_t,cx_t>,
+                          public cubic_real_coeff<fp_t,cx_t>,
+                          public quartic_real_coeff<fp_t,cx_t> {
     
   public:
     
@@ -686,38 +688,13 @@ namespace o2scl {
 	as co[0] and the constant term as co[n]. The roots are returned
 	in ro[0],...,ro[n-1].
     */
-    virtual int solve_rc_arr(int n, const double co[], 
-			     std::complex<double> ro[])=0;
+    virtual int solve_rc_arr(int n, const coeff_vec_t &co, 
+                             root_vec_t &ro)=0;
 
-    /// Return a string denoting the type ("poly_real_coeff")
-    const char *type() { return "poly_real_coeff"; }
-    
-  };
-
-  /** \brief Solve a general polynomial with complex
-      coefficients [abstract base]
-  */
-  template<class fp_t=double>
-  class poly_complex : public quadratic_complex<fp_t>,
-                       public cubic_complex<fp_t>,
-                       public quartic_complex<fp_t> {
-
-  public:
-
-    virtual ~poly_complex() {}
-    
-    /** \brief Solve the n-th order polynomial
-	
-        The coefficients are stored in co[], with the leading coefficient
-	as co[0] and the constant term as co[n]. The roots are returned
-	in ro[0],...,ro[n-1].
-    */
-    virtual int solve_c_arr(int n, const std::complex<fp_t> co[], 
-			    std::complex<fp_t> ro[])=0;
-    
-    /// Polish the roots 
-    virtual int polish_c_arr(int n, const std::complex<fp_t> co[],
-			     std::complex<fp_t> *ro)=0;
+    virtual int polish_rc_arr(int n, const coeff_vec_t &co, 
+                              root_vec_t &ro) {
+      return 0;
+    }
 
 #ifdef O2SCL_NEVER_DEFINED
     {
@@ -731,11 +708,12 @@ namespace o2scl {
       }
       return 0;
     }
-    
+
+    /** \brief Desc
+     */
     virtual int polish_fun(size_t nv, const ubvector &x,
-                           fp_t ubvector &y,
-                           std::complex<fp_t> *co,
-                           std::complex<fp_t> *ro) {
+                           fp_t ubvector &y, const coeff_vec_t &co,
+                           root_vec_t &ro) {
       
       // Using horner's method following, e.g. GSL
       y[0]=co[nv-1];
@@ -749,6 +727,39 @@ namespace o2scl {
     }
     
 #endif
+
+    
+    /// Return a string denoting the type ("poly_real_coeff")
+    const char *type() { return "poly_real_coeff"; }
+    
+  };
+
+  /** \brief Solve a general polynomial with complex
+      coefficients [abstract base]
+  */
+  template<class fp_t=double, class cx_t=std::complex<fp_t>,
+           class coeff_vec_t=std::vector<fp_t>,
+           class root_vec_t=std::vector<cx_t> >
+  class poly_complex : public quadratic_complex<fp_t, cx_t>,
+                       public cubic_complex<fp_t, cx_t>,
+                       public quartic_complex<fp_t, cx_t> {
+
+  public:
+
+    virtual ~poly_complex() {}
+    
+    /** \brief Solve the n-th order polynomial
+	
+        The coefficients are stored in co[], with the leading coefficient
+	as co[0] and the constant term as co[n]. The roots are returned
+	in ro[0],...,ro[n-1].
+    */
+    virtual int solve_c_arr(int n, const coeff_vec_t &co,
+                            root_vec_t &ro)=0;
+    
+    /// Polish the roots 
+    virtual int polish_c_arr(int n, const coeff_vec_t &co,
+                             root_vec_t &ro)=0;
 
     /// Return a string denoting the type ("poly_complex")
     const char *type() { return "poly_complex"; }
@@ -1313,38 +1324,176 @@ namespace o2scl {
       gsl_poly_complex_solve_cubic(), but generalized to generic
       floating point types.
    */
-  class cubic_real_coeff_gsl2 : public cubic_real_coeff<double> {
+  template<class fp_t=double, class cx_t=std::complex<fp_t> >
+  class cubic_real_coeff_gsl2 : public cubic_real_coeff<fp_t,cx_t> {
 
+  protected:
+    
+    inline void swap(double &a, double &b) {
+      double tmp=b;
+      b=a;
+      a=tmp;
+      return;
+    }
+    
   public:
 
     virtual ~cubic_real_coeff_gsl2() {}
 
-    /** \brief Solves the polynomial 
+    /** \brief solves the polynomial 
 	\f$ a_3 x^3 + b_3 x^2 + c_3 x + d_3= 0 \f$ 
 	giving the real solution \f$ x=x_1 \f$ and two complex solutions 
 	\f$ x=x_2 \f$ and \f$ x=x_3 \f$ .
     */
-    virtual int solve_rc(const double a3, const double b3, const double c3, 
-			 const double d3, double &x1, 
-			 std::complex<double> &x2, std::complex<double> &x3);
+    virtual int solve_rc(const fp_t a3, const fp_t b3, const fp_t c3, 
+			 const fp_t d3, fp_t &x1, 
+			 std::complex<fp_t> &x2, std::complex<fp_t> &x3) {
+      
+      if (a3==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in cubic_real_coeff_gsl2::solve_rc().",
+           exc_einval);
+      }
+      
+      fp_t a=b3/a3;
+      fp_t b=c3/a3;
+      fp_t c=d3/a3;
+      
+      fp_t q=(a*a-3*b);
+      fp_t r=(2*a*a*a-9*a*b+27*c);
+      
+      fp_t Q=q/9;
+      fp_t R=r/54;
+      
+      fp_t Q3=Q*Q*Q;
+      fp_t R2=R*R;
+      
+      fp_t CR2=729*r*r;
+      fp_t CQ3=2916*q*q*q;
+      
+      if (R == 0 && Q == 0) {
+        
+        x1=-a/3;
+        x2.real(-a/3);
+        x2.imag(0);
+        x3.real(-a/3);
+        x3.imag(0);
+
+        if (!std::isfinite(x1) || !std::isfinite(x2.real()) ||
+            !std::isfinite(x2.imag())) {
+          std::cout << "1. " << x1 << " " << x2 << " " << x3 << std::endl;
+          exit(-1);
+        }
+        return 3;
+        
+      } else if (CR2 == CQ3)  {
+
+        /* [GSL] This test is actually r2 == q3, written in a form suitable
+           for exact computation with integers */
+        
+        /* [GSL] Due to finite precision some double roots may be
+           missed, and will be considered to be a pair of complex
+           roots z=x +/- epsilon i close to the real axis. */
+        
+        fp_t sqrtQ=sqrt(Q);
+        
+        if (R > 0) {
+          x1=-2*sqrtQ-a/3;
+          x2.real(sqrtQ-a/3);
+          x2.imag(0);
+          x3.real(sqrtQ-a/3);
+          x3.imag(0);
+        } else {
+          x1=-sqrtQ-a/3;
+          x2.real(-sqrtQ-a/3);
+          x2.imag(0);
+          x3.real(2*sqrtQ-a/3);
+          x3.imag(0);
+        }
+        
+        if (!std::isfinite(x1) || !std::isfinite(x2.real()) ||
+            !std::isfinite(x2.imag())) {
+          std::cout << "2. " << x1 << " " << x2 << " " << x3 << std::endl;
+          exit(-1);
+        }
+        return 3;
+        
+      } else if (CR2 < CQ3)  {
+
+        /* [GSL] equivalent to R2 < Q3 */
+        
+        fp_t sqrtQ=sqrt(Q);
+        fp_t sqrtQ3=sqrtQ*sqrtQ*sqrtQ;
+        fp_t theta=acos(R/sqrtQ3);
+        
+        // [AWS] Modified from the original GSL routine
+        // sometimes R/sqrtQ3 is slightly larger than one
+        // when the coefficients are arranged just right
+        // so theta becomes not finite.
+        
+        if (R/sqrtQ3>=1.0) theta=0.0;
+        if (R/sqrtQ3<=-1.0) theta=o2scl_const::pi;
+        
+        fp_t norm=-2*sqrtQ;
+        
+        fp_t r0=norm*cos(theta/3)-a/3;
+        fp_t r1=norm*cos((theta+2.0*M_PI)/3)-a/3;
+        fp_t r2=norm*cos((theta-2.0*M_PI)/3)-a/3;
+        
+        x1=r0;
+        x2.real(r1);
+        x2.imag(0);
+        x3.real(r2);
+        x3.imag(0);
+        
+        if (!std::isfinite(x1) || !std::isfinite(x2.real()) ||
+            !std::isfinite(x2.imag())) {
+          std::cout << "3. " << x1 << " " << x2 << " " << x3 << std::endl;
+          std::cout << Q << std::endl;
+          std::cout << norm << " " << sqrtQ << " " << theta << std::endl;
+          std::cout << r0 << " " << r1 << " " << r2 << std::endl;
+          exit(-1);
+        }
+        return 3;
+        
+      }
+        
+      fp_t sgnR=(R>=0?1:-1);
+      fp_t A;
+      
+      // [AWS] Modification from original GSL behavior: Just in case
+      // R2=Q3, finite precision can cause the argument of the sqrt()
+      // function to be negative. We correct for this here.
+      if (R2<=Q3) {
+        A=-sgnR*pow(fabs(R),1.0/3.0);
+      } else {
+        A=-sgnR*pow(fabs(R)+sqrt(R2-Q3),1.0/3.0);
+      }
+      
+      fp_t B=Q/A;
+      
+      x1=A+B-a/3;
+      x2.real(-0.5*(A+B)-a/3);
+      x2.imag(-(sqrt(3.0)/2.0)*fabs(A-B));
+      x3.real(-0.5*(A+B)-a/3);
+      x3.imag((sqrt(3.0)/2.0)*fabs(A-B));
+      
+      if (!std::isfinite(x1) || !std::isfinite(x2.real()) ||
+          !std::isfinite(x2.imag())) {
+        std::cout << R2-Q3 << std::endl;
+        std::cout << fabs(R)+sqrt(R2-Q3) << std::endl;
+        std::cout << "4. " << x1 << " " << x2 << " " << x3 << std::endl;
+        std::cout << sgnR << " " << R2 << " " << Q3 << " " << R << " "
+                  << B << " " << Q << " " << A << " " << a << std::endl;
+        exit(-1);
+      }
+        
+      return 3;
+    }
 
     /// Return a string denoting the type ("cubic_real_coeff_gsl2")
     const char *type() { return "cubic_real_coeff_gsl2"; }
 
-    /** \brief An alternative to \c gsl_poly_complex_solve_cubic()
-        
-	This is an alternative to the function
-	<tt>gsl_poly_complex_solve_cubic()</tt> with some small
-	corrections to ensure finite values for some cubics. See
-	<tt>src/other/poly_ts.cpp</tt> for more.
-
-	\future I think the GSL function is now fixed, so we
-	can fall back to the original GSL function here. 
-    */
-    int gsl_poly_complex_solve_cubic2(double a, double b, double c, 
-				      gsl_complex *z0, gsl_complex *z1, 
-				      gsl_complex *z2);
-    
   };
 
   /** \brief Solve a quartic with real coefficients and real roots (GSL)
@@ -1424,13 +1573,28 @@ namespace o2scl {
 
   /** \brief Solve a general polynomial with real coefficients (GSL)
    */
-  class poly_real_coeff_gsl : public poly_real_coeff<double> {
+  template<class fp_t=double, class cx_t=std::complex<fp_t>,
+           class coeff_vec_t=std::vector<double>,
+           class root_vec_t=std::vector<std::complex<double> > >
+  class poly_real_coeff_gsl : public poly_real_coeff<fp_t,cx_t> {
 
   public:
 
-    poly_real_coeff_gsl();
+    poly_real_coeff_gsl() {
+      w2=gsl_poly_complex_workspace_alloc(3);
+      w3=gsl_poly_complex_workspace_alloc(4);
+      w4=gsl_poly_complex_workspace_alloc(5);
+      gen_size=0;
+    }
 
-    virtual ~poly_real_coeff_gsl();
+    virtual ~poly_real_coeff_gsl() {
+      gsl_poly_complex_workspace_free(w2);
+      gsl_poly_complex_workspace_free(w3);
+      gsl_poly_complex_workspace_free(w4);
+      if (gen_size>0) {
+        gsl_poly_complex_workspace_free(wgen);
+      }
+    }
 
     /** \brief Solve a generic polynomial given <tt>n+1</tt> coefficients
 
@@ -1440,28 +1604,123 @@ namespace o2scl {
 	is stored in <tt>co[0]</tt> and the constant term is stored in
 	<tt>co[n]</tt>.
      */
-    virtual int solve_rc_arr(int n, const double co[], 
-			     std::complex<double> ro[]);
-
-    /** \brief Solve a cubic polynomial with real coefficients
-     */
-    virtual int solve_rc(const double a3, const double b3, const double c3, 
-			 const double d3, double &x1, 
-			 std::complex<double> &x2, 
-			 std::complex<double> &x3);
+    virtual int solve_rc_arr(int n, const coeff_vec_t &co,
+                             root_vec_t &ro) {
+      
+      int j;
+      typedef boost::numeric::ublas::vector<fp_t> ubvector;
+      ubvector a(n+1), z(2*n);
+      cx_t i(0.0,1.0);
+      
+      for(j=0;j<n+1;j++) {
+        a[j]=co[n-j];
+      }  
+      if (gen_size!=n) {
+        if (gen_size>0) {
+          gsl_poly_complex_workspace_free(wgen);
+        }
+        wgen=gsl_poly_complex_workspace_alloc(n+1);
+        gen_size=n;
+      }
+      if (a[n]==0.0) {
+        O2SCL_ERR2("Leading coefficient zero in ",
+                   "poly_real_coeff_gsl::solve_rc().",
+                   exc_einval);
+      }
+      gsl_poly_complex_solve(&a[0],n+1,wgen,&z[0]);
+      
+      for(j=0;j<n;j++) {
+        ro[j]=z[2*j]+i*z[2*j+1];
+      }
+      
+      return success;
+    }      
 
     /** \brief Solve a quadratic polynomial with real coefficients
      */
-    virtual int solve_rc(const double a2, const double b2, const double c2, 
-			 std::complex<double> &x1, 
-			 std::complex<double> &x2);
+    virtual int solve_rc(const fp_t a2, const fp_t b2, const fp_t c2, 
+			 cx_t &r1, cx_t &r2) {
+			 
+      if (a2==0.0) {
+        O2SCL_ERR2("Leading coefficient zero in ",
+		   "poly_real_coeff_gsl::solve_rc().",
+		   exc_einval);
+      }
+      
+      fp_t a[3]={c2,b2,a2};
+      fp_t z[4];
+      cx_t i(0.0,1.0);
 
+      gsl_poly_complex_solve(a,3,w2,z);
+      
+      r1=z[0]+i*z[1];
+      r2=z[2]+i*z[3];
+      
+      return success;
+    }
+    
+    /** \brief Solve a cubic polynomial with real coefficients
+     */
+    virtual int solve_rc(const fp_t a3, const fp_t b3, const fp_t c3, 
+			 const fp_t d3, fp_t &r1, cx_t &r2, 
+			 cx_t &r3) {
+      if (a3==0.0) {
+        O2SCL_ERR2("Leading coefficient zero in ",
+		   "poly_real_coeff_gsl::solve_rc().",
+		   exc_einval);
+      }
+      
+      fp_t a[4]={d3,c3,b3,a3};  
+      fp_t z[6],s1,s2,s3;
+      cx_t i(0.0,1.0);
+      
+      gsl_poly_complex_solve(a,4,w3,z);
+      
+      s1=fabs(z[1]/z[0]);
+      s2=fabs(z[3]/z[2]);
+      s3=fabs(z[5]/z[4]);
+      if (s1<s2 && s1<s3) {
+        r1=z[0];
+        r2=z[2]+i*z[3];
+        r3=z[4]+i*z[5];
+      } else if (s2<s1 && s2<s3) {
+        r1=z[2];
+        r2=z[0]+i*z[1];
+        r3=z[4]+i*z[5];
+      } else {
+        r1=z[4];
+        r2=z[0]+i*z[1];
+        r3=z[2]+i*z[3];
+      }
+      
+      return success;
+    }
+    
     /** \brief Solve a quartic polynomial with real coefficients
      */
-    virtual int solve_rc(const double a4, const double b4, const double c4, 
-			 const double d4, const double e4, 
-			 std::complex<double> &x1, std::complex<double> &x2, 
-			 std::complex<double> &x3, std::complex<double> &x4);
+    virtual int solve_rc(const fp_t a4, const fp_t b4, const fp_t c4, 
+			 const fp_t d4, const fp_t e4, 
+			 cx_t &r1, cx_t &r2, 
+			 cx_t &r3, cx_t &r4) {
+      if (a4==0.0) {
+        O2SCL_ERR2("Leading coefficient zero in ",
+                   "poly_real_coeff_gsl::solve_rc().",
+                   exc_einval);
+      }
+      
+      fp_t a[5]={e4,d4,c4,b4,a4};
+      fp_t z[8];
+      cx_t i(0.0,1.0);
+      
+      gsl_poly_complex_solve(a,5,w4,z);
+      
+      r1=z[0]+i*z[1];
+      r2=z[2]+i*z[3];
+      r3=z[4]+i*z[5];
+      r4=z[6]+i*z[7];
+      
+      return success;
+    }
 
     /// Return a string denoting the type ("poly_real_coeff_gsl")
     const char *type() { return "poly_real_coeff_gsl"; }
@@ -1692,38 +1951,121 @@ namespace o2scl {
 
   /** \brief Solve a quartic with real coefficients and real roots
    */
-  class quartic_real_simple : public quartic_real<double> {
+  template<class fp_t=double> 
+  class quartic_real_std : public quartic_real<fp_t> {
+    
+  protected:
 
+    cubic_real_coeff_gsl2<fp_t,std::complex<fp_t> > cub2;
+    quadratic_real_coeff_gsl2<fp_t,std::complex<fp_t> > quad2;
+    
   public:
 
-    quartic_real_simple() {
-      cube_root_tol=1.0e-6;
+    quartic_real_std() {
     }
 
-    virtual ~quartic_real_simple() {}
+    virtual ~quartic_real_std() {}
 
-    virtual int solve_r(const double a4, const double b4, const double c4, 
-			const double d4, const double e4, double &x1, 
-			double &x2, double &x3, double &x4);
+    virtual int solve_r(const fp_t a4, const fp_t b4, const fp_t c4, 
+			const fp_t d4, const fp_t e4, fp_t &x1, 
+			fp_t &x2, fp_t &x3, fp_t &x4) {
+      if (a4==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in quartic_real_std::solve_r().",
+           exc_einval);
+      }
+      
+      fp_t a34=b4/a4;
+      fp_t a24=c4/a4;
+      fp_t a14=d4/a4;
+      fp_t a04=e4/a4;
+      
+      //---------------------------------------
+      // Solve the resolvent cubic:
+      
+      fp_t a23=-a24;
+      fp_t a13=(a14*a34-4.0*a04);
+      fp_t a03=-(a14*a14+a04*a34*a34-4.0*a04*a24);
+      
+      fp_t u1, u2, u3;
+      cub2.solve_r(1,a23,a13,a03,u1,u2,u3);
+      
+      fp_t u4=u2;
+      
+      //---------------------------------------
+      // Now construct the two quadratics:
+      
+      fp_t t1=u4+a34*a34/4.0-a24;
+      if (t1>0.0) {
+        t1=sqrt(t1);
+      } else {
+        t1=0.0;
+      }
+      
+      fp_t b2a=-t1+a34/2.0;
+      fp_t b2b=t1+a34/2.0;
+      t1=u4*u4/4.0;
+      
+      // When numerical errors make t1 slightly smaller than a04.
+      if (t1>a04) {
+        t1=sqrt(t1-a04);
+      } else {
+        t1=0;
+      }
+      
+      fp_t c2a=u4/2.0-t1;
+      fp_t c2b=u4/2.0+t1;
+      
+      if (fabs((b2a*c2b+c2a*b2b-d4)/d4)>1.0e-4) {
+        t1=u4+a34*a34/4.0-a24;
+        t1=-sqrt(t1);
+        
+        b2a=-t1+a34/2.0;
+        b2b=t1+a34/2.0;
+        
+        t1=u4*u4/4.0;
+        if (fabs((u4*u4/4.0-a04)/a04)<1.0e-6) {
+          t1=0.0;
+        } else {
+          t1=sqrt(t1-a04);
+        }
+        c2a=u4/2.0-t1;
+        c2b=u4/2.0+t1;
+      }
+      
+      //---------------------------------------
+      // The solutions to the two quadratics:
+      
+      quad2.solve_r(1,b2a,c2a,x1,x2);
+      quad2.solve_r(1,b2b,c2b,x3,x4);
 
-    /// Return a string denoting the type ("quartic_real_simple")
-    const char *type() { return "quartic_real_simple"; }
+      if (!std::isfinite(x1) || !std::isfinite(x2) ||
+          !std::isfinite(x3) || !std::isfinite(x4)) {
+        std::cout << u1 << " " << u2 << " " << u3 << std::endl;
+        std::cout << t1 << " " << a34 << std::endl;
+        std::cout << b2a << " " << b2b << std::endl;
+        std::cout << c2a << " " << c2b << std::endl;
+        std::cout << x1 << " " << x2 << std::endl;
+        std::cout << x3 << " " << x4 << std::endl;
+        exit(-1);
+      }
+      
+      return success;
+    }
 
-    /** \brief A tolerance for determining the proper cube root 
-	(default \f$ 10^{-6} \f$ )
-    */
-    double cube_root_tol;
-    
+    /// Return a string denoting the type ("quartic_real_std")
+    const char *type() { return "quartic_real_std"; }
+
   };
   
   /** \brief Solve a quartic with complex coefficients and complex roots
    */
   template <class fp_t=double, class cx_t=std::complex<fp_t> >
-  class quartic_complex_simple : public quartic_complex<fp_t,cx_t> {
+  class quartic_complex_std : public quartic_complex<fp_t,cx_t> {
 
   public:
 
-    virtual ~quartic_complex_simple() {}
+    virtual ~quartic_complex_std() {}
 
     /** \brief Solves the complex polynomial 
 	\f$ a_4 x^4 + b_4 x^3 + c_4 x^2 + d_4 x + e_4 = 0 \f$ 
@@ -1742,7 +2084,7 @@ namespace o2scl {
       
       if (a4.real()==0.0 && a4.imag()==0.0) {
         O2SCL_ERR
-          ("Leading coefficient zero in quartic_complex_simple::solve_c().",
+          ("Leading coefficient zero in quartic_complex_std::solve_c().",
            exc_einval);
       }
 
@@ -1793,8 +2135,8 @@ namespace o2scl {
       return success;
     }
 
-    /// Return a string denoting the type ("quartic_complex_simple")
-    const char *type() { return "quartic_complex_simple"; }
+    /// Return a string denoting the type ("quartic_complex_std")
+    const char *type() { return "quartic_complex_std"; }
 
 #ifndef DOXYGEN_NO_O2NS
 
