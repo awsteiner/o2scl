@@ -493,7 +493,7 @@ namespace o2scl {
 
       \future Document what happens if \c tot is pathologically small.
   */
-  template<size_t tot> class gen_test_number {
+  class gen_test_number {
 
 #ifndef DOXYGEN_INTERNAL
 
@@ -507,34 +507,55 @@ namespace o2scl {
     */
     double fact;
 
+    /// Total number of distinct values
+    int total;
+
 #endif
 
   public:
 
     gen_test_number() {
       n=0;
-      fact=((double)tot)/20.0;
+      total=0;
+    }
+    
+    gen_test_number(int total_) {
+      n=0;
+      total=total_;
+      fact=((double)n)/20.0;
     }
 
+    void reset(int total_=0) {
+      if (total_>0) {
+        total=total_;
+      }
+      n=0;
+      return;
+    }
+    
     /// Return the next number in the sequence
     double gen() {
-      double x, dtot=((double)tot), dn=((double)n);
+      if (total==0) {
+        O2SCL_ERR("No total specified in gen_test_number().",
+                  o2scl::exc_einval);
+      }
+      double x, dtotal=((double)total), dn=((double)n);
       if (n==0) {
 	x=-1.0;
-      } else if (n==tot/2) {
+      } else if (n==total/2) {
 	x=0.0;
-      } else if (n==tot-1) {
+      } else if (n==total-1) {
 	x=1.0;
-      } else if (n==tot) {
+      } else if (n==total) {
 	// Start the sequence over
 	x=-1.0;
 	n=0;
-      } else if (n<((int)tot)/2) {
+      } else if (n<((int)total)/2) {
 	// Since we're in the o2scl namespace, we explicitly
 	// specify std::tanh() here
-	x=(std::tanh((dn-dtot/4.0)/fact)-1.0)/2.0;
+	x=(std::tanh((dn-dtotal/4.0)/fact)-1.0)/2.0;
       } else {
-	x=(std::tanh((dn-0.75*dtot)/fact)+1.0)/2.0;
+	x=(std::tanh((dn-0.75*dtotal)/fact)+1.0)/2.0;
       }
       n++;
       return x;

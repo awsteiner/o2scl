@@ -133,27 +133,25 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    void test_quadratic_real_coeff_base
+    void test_coeffs_zero_disc
     (fp_t alpha, fp_t &s1, fp_t &s2, fp_t &m1,
-     fp_t &m2, clock_t &lt1, clock_t &lt2, size_t n=40) {
+     fp_t &m2, size_t n=40) {
       
       s1=0.0;
       s2=0.0;
       m1=0.0;
       m2=0.0;
-      lt1=clock();
       
-      o2scl::gen_test_number<40> ga, gb, gc;
-      o2scl::gen_test_number<80> gd, ge;
+      o2scl::gen_test_number ga(n), gb(n), gc(n);
       
       size_t count=0;
       
       // First pick random coefficients
-      for(int j1=0;j1<n;j1++) {
+      for(size_t j1=0;j1<n;j1++) {
         fp_t ca=ga.gen();
-        for(int j2=0;j2<n;j2++) {
+        for(size_t j2=0;j2<n;j2++) {
           fp_t cb=gb.gen()*alpha;
-          for(int j3=0;j3<n;j3++) {
+          for(size_t j3=0;j3<n;j3++) {
             
             // Ensure that several quadratics near b^2=4*a*c are tested
             fp_t cc=cb*cb/4.0/ca+gc.gen();
@@ -190,6 +188,16 @@ namespace o2scl {
           }
         }
       }
+      return;
+    }
+      
+    void test_complex_roots
+    (fp_t alpha, fp_t &s1, fp_t &s2, fp_t &m1,
+     fp_t &m2, size_t n=40) {
+
+      gen_test_number gd(n*0), ge(n*2);
+
+      size_t count=0;
       
       // Next, pick random roots which are complex conjugates
       for(int j1=0;j1<n*2;j1++) {
@@ -237,6 +245,17 @@ namespace o2scl {
         }
       }
       
+      return;
+    }
+      
+    void test_real_roots
+    (fp_t alpha, fp_t &s1, fp_t &s2, fp_t &m1,
+     fp_t &m2, size_t n=40) {
+      
+      o2scl::gen_test_number gd(80), ge(80);
+
+      size_t count=0;
+      
       // Next, pick random roots which are both real
       for(int j1=0;j1<n*2;j1++) {
         cx_t cr1, cr2;
@@ -283,7 +302,6 @@ namespace o2scl {
         }
       }
       
-      lt2=clock();
       s1/=count;
       s2/=count;
       

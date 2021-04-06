@@ -60,7 +60,7 @@ void test_quadratic_real_coeff_base
   m2=0.0;
   lt1=clock();
 
-  gen_test_number<40> ga, gb, gc;
+  gen_test_number ga(40), gb(40), gc(40);
 
   size_t count=0;
   
@@ -106,7 +106,7 @@ void test_quadratic_real_coeff_base
     }
   }
 
-  gen_test_number<80> gd, ge;
+  gen_test_number gd(80), ge(80);
 
   // Next, pick random roots which are complex conjugates
   for(int j1=0;j1<80;j1++) {
@@ -199,6 +199,10 @@ void test_quadratic_real_coeff
 
   fp_t s1,s2,m1,m2;
   clock_t lt1, lt2;
+
+  if (false) {
+    po->test_coeffs_zero_disc(alpha,s1,s2,m1,m2);
+  }
   
   test_quadratic_real_coeff_base<fp_t,cx_t>(ne,po,str,alpha,s1,s2,
                                             m1,m2,lt1,lt2);
@@ -259,7 +263,7 @@ void test_quadratic_complex_base(size_t ne, quadratic_complex<fp_t,cx_t> *po,
 
   int count=0;
   
-  gen_test_number<9> ga, gb, gc, gd, ge, gf;
+  gen_test_number ga(9), gb(9), gc(9), gd(9), ge(9), gf(9);
   fp_t rca, rcb, rcc, rcd, rce, rcf;
 
   // Test random coefficients
@@ -306,7 +310,7 @@ void test_quadratic_complex_base(size_t ne, quadratic_complex<fp_t,cx_t> *po,
     }
   }
 
-  gen_test_number<20> gg, gh, gi, gj;
+  gen_test_number gg(20), gh(20), gi(20), gj(20);
 
   // Test random roots
   for(int j1=0;j1<20;j1++) {
@@ -427,7 +431,7 @@ void test_cubic_real_coeff_base(size_t ne, cubic_real_coeff<fp_t,cx_t> *po,
   m2=0.0;
   lt1=clock();
   
-  gen_test_number<16> ga, gb, gc, gd;
+  gen_test_number ga(16), gb(16), gc(16), gd(16);
   for(int j1=0;j1<16;j1++) {
     ca=ga.gen()*alpha;
     for(int j2=0;j2<16;j2++) {
@@ -528,7 +532,7 @@ void test_cubic_complex_base(size_t ne, cubic_complex<fp_t,cx_t> *po,
   m1=0.0;
   m2=0.0;
   lt1=clock();
-  gen_test_number<9> ga, gb, gc, gd;
+  gen_test_number ga(9), gb(9), gc(9), gd(9);
   fp_t rca, rcb, rcc, rcd;
   for(int it=0;it<2;it++) {
     for(int j1=0;j1<9;j1++) {
@@ -642,7 +646,7 @@ void test_quartic_real(size_t ne, quartic_real<double> *po,
   m2=0.0;
   lt1=clock();
 
-  gen_test_number<9> ga, gb, gc, gd;
+  gen_test_number ga(9), gb(9), gc(9), gd(9);
   for(int j1=0;j1<9;j1++) {
     r1=ga.gen();
     for(int j2=0;j2<9;j2++) {
@@ -704,7 +708,7 @@ void test_quartic_real_coeff_base(size_t ne, quartic_real_coeff<fp_t,cx_t> *po,
   m2=0.0;
   lt1=clock();
 
-  gen_test_number<9> ga, gb, gc, gd, ge;
+  gen_test_number ga(9), gb(9), gc(9), gd(9), ge(9);
   for(int j1=0;j1<9;j1++) {
     ca=ga.gen();
     for(int j2=0;j2<9;j2++) {
@@ -810,7 +814,7 @@ void test_quartic_complex(size_t ne, quartic_complex<> *po, string str,
   m2=0.0;
   lt1=clock();
 
-  gen_test_number<9> ga, gb, gc, gd, ge;
+  gen_test_number ga(9), gb(9), gc(9), gd(9), ge(9);
   double rca, rcb, rcc, rcd, rce;
   for(int it=0;it<2;it++) {
     for(int j1=0;j1<9;j1++) {
