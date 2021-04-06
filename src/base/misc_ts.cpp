@@ -67,7 +67,7 @@ int main(void) {
   // This generates a list of numbers for the gen_test_number
   // class documentation
   cout.setf(ios::scientific);
-  gen_test_number<10> gn;
+  gen_test_number gn;
   for(size_t ij=0;ij<15;ij++) {
     cout.width(2);
     cout.setf(ios::left);
@@ -168,7 +168,14 @@ int main(void) {
 
   cout << ter.str_len(ter.bold()) << endl;
   
+  gen_test_number gx;
+
+  for(size_t i=0;i<100;i++) {
+    cout << gx.gen() << endl;
+  }
+  
   t.report();
+
   return 0;
 }
 

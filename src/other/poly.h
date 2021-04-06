@@ -131,18 +131,14 @@ namespace o2scl {
     virtual int solve_rc(const fp_t a2, const fp_t b2, const fp_t c2, 
 			 cx_t &x1, cx_t &x2)=0;
     
-    /** \brief Desc
+    /** \brief Test quadratics with coefficients near a 
+        zero discriminant
      */
-    void test_coeffs_zero_disc
+    size_t test_coeffs_zero_disc
     (fp_t alpha, fp_t &s1, fp_t &s2, fp_t &m1,
      fp_t &m2, size_t n=40) {
-      
-      s1=0.0;
-      s2=0.0;
-      m1=0.0;
-      m2=0.0;
-      
-      o2scl::gen_test_number ga(n), gb(n), gc(n);
+
+      o2scl::gen_test_number ga, gb, gc;
       
       size_t count=0;
       
@@ -188,22 +184,24 @@ namespace o2scl {
           }
         }
       }
-      return;
+      
+      return count;
     }
       
-    void test_complex_roots
-    (fp_t alpha, fp_t &s1, fp_t &s2, fp_t &m1,
-     fp_t &m2, size_t n=40) {
+    /** \brief Test quadratics with complex roots
+     */
+    size_t test_complex_roots
+    (fp_t &s1, fp_t &s2, fp_t &m1, fp_t &m2, size_t n=40) {
 
-      gen_test_number gd(n*0), ge(n*2);
+      gen_test_number gd(n*2), ge(n*2);
 
       size_t count=0;
       
       // Next, pick random roots which are complex conjugates
-      for(int j1=0;j1<n*2;j1++) {
+      for(size_t j1=0;j1<n*2;j1++) {
         cx_t cr1, cr2;
         cr1.real(gd.gen());
-        for(int j2=0;j2<n*2;j2++) {
+        for(size_t j2=0;j2<n*2;j2++) {
           cr1.imag(ge.gen());
           cr2.real(cr1.real());
           cr2.imag(-cr1.imag());
@@ -245,22 +243,23 @@ namespace o2scl {
         }
       }
       
-      return;
+      return count;
     }
       
-    void test_real_roots
-    (fp_t alpha, fp_t &s1, fp_t &s2, fp_t &m1,
-     fp_t &m2, size_t n=40) {
+    /** \brief Test quadratics with real roots
+     */
+    size_t test_real_roots(fp_t &s1, fp_t &s2, fp_t &m1,
+                         fp_t &m2, size_t n=40) {
       
-      o2scl::gen_test_number gd(80), ge(80);
+      o2scl::gen_test_number gd(n*2), ge(n*2);
 
       size_t count=0;
       
       // Next, pick random roots which are both real
-      for(int j1=0;j1<n*2;j1++) {
+      for(size_t j1=0;j1<n*2;j1++) {
         cx_t cr1, cr2;
         cr1.real(gd.gen());
-        for(int j2=0;j2<n*2;j2++) {
+        for(size_t j2=0;j2<n*2;j2++) {
           cr2.real(ge.gen());
           cr1.imag(0.0);
           cr2.imag(0.0);
@@ -302,10 +301,7 @@ namespace o2scl {
         }
       }
       
-      s1/=count;
-      s2/=count;
-      
-      return;
+      return count;
     }
     
     /// Return a string denoting the type ("quadratic_real_coeff")
