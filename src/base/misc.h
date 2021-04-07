@@ -500,7 +500,9 @@ namespace o2scl {
       This function is used in <tt>src/other/poly_ts.cpp</tt> which
       tests the polynomial solvers.
 
-      \future Document what happens if \c tot is pathologically small.
+      \note With the default radix and double precision, this only
+      gives about 400 unique values before some repetition is 
+      encountered. Smaller radices enable more unique values.
   */
   class gen_test_number {
 
@@ -521,6 +523,11 @@ namespace o2scl {
     gen_test_number() {
       n=0;
       radix=2.0;
+    }
+
+    void reset() {
+      n=0;
+      return;
     }
 
     /** \brief The base for the number generation sequences

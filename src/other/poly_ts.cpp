@@ -65,9 +65,6 @@ void test_quadratic_real_coeff
 
   double time=((double)(lt2-lt1))/CLOCKS_PER_SEC;
   
-  //test_quadratic_real_coeff_base<fp_t,cx_t>(10,po,str,alpha,s1,s2,
-  //m1,m2,lt1,lt2);
-  
   cout.width(wid);
   cout << str.c_str();
   tst.test_abs<fp_t>(s1,0.0,e1,"quadratic_real_coeff s1");
@@ -116,142 +113,24 @@ void test_quadratic_real_coeff_boost
 }
 
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
-void test_quadratic_complex_base(size_t ne, quadratic_complex<fp_t,cx_t> *po,
-                                 string str, fp_t &s1, fp_t &s2,
-                                 fp_t &m1, fp_t &m2, clock_t &lt1,
-                                 clock_t &lt2) {
-  
-  cx_t ca,cb,cc,cd,cr1,cr2,cr3,czo1,czo2,czo3,cap,cbp,ccp,cdp;
-  cx_t i(0.0,1.0);
-  size_t j;
-  fp_t q1,q2;
-  s1=0.0;
-  s2=0.0;
-  m1=0.0;
-  m2=0.0;
-  lt1=clock();
-
-  int count=0;
-  
-  gen_test_number ga(9), gb(9), gc(9), gd(9), ge(9), gf(9);
-  fp_t rca, rcb, rcc, rcd, rce, rcf;
-
-  // Test random coefficients
-  for(int j1=0;j1<9;j1++) {
-    rca=ga.gen();
-    for(int j2=0;j2<9;j2++) {
-      rcb=gb.gen();
-      for(int j3=0;j3<9;j3++) {
-	rcc=gc.gen();
-	for(int j4=0;j4<9;j4++) {
-	  rcd=gd.gen();
-	  for(int j5=0;j5<9;j5++) {
-	    rce=ge.gen();
-	    for(int j6=0;j6<9;j6++) {
-	      rcf=gf.gen();
-	      
-	      if (fabs(rca)>0.0 || fabs(rcb)>0.0) {
-                ca=rca+i*rcb;
-                cb=rcc+i*rcd;
-                cc=rce+i*rcf;
-    
-		po->solve_c(ca,cb,cc,cr1,cr2);
-	      
-		cbp=-(cr1+cr2)*ca;
-		ccp=(cr1*cr2)*ca;
-	      
-		czo1=((ca*cr1+cb)*cr1+cc)*cr1+cd;
-		czo2=((ca*cr2+cb)*cr2+cc)*cr2+cd;
-		q1=sqrt(abs(cb-cbp)*abs(cb-cbp)+
-			abs(cc-ccp)*abs(cc-ccp));
-		q2=sqrt(abs(czo1)*abs(czo1)+abs(czo2)*abs(czo2));
-		s1+=q1;
-		if (q1>m1) m1=q1;
-		s2+=q2;
-		if (q2>m2) m2=q2;
-                count++;
-	      
-	      }
-
-	    }
-	  }
-	}
-      }
-    }
-  }
-
-  gen_test_number gg(20), gh(20), gi(20), gj(20);
-
-  // Test random roots
-  for(int j1=0;j1<20;j1++) {
-    rca=gg.gen();
-    for(int j2=0;j2<20;j2++) {
-      rcb=gh.gen();
-      for(int j3=0;j3<20;j3++) {
-	rcc=gi.gen();
-	for(int j4=0;j4<20;j4++) {
-	  rcd=gj.gen();
-	  
-          if (fabs(rca)>0.0 || fabs(rcb)>0.0) {
-            cx_t cr1p=rca+i*rcb;
-            cx_t cr2p=rcc+i*rcd;
-
-            ca=1.0;
-            cb=-cr1p-cr2p;
-            cc=cr1p*cr2p;
-            
-            po->solve_c(ca,cb,cc,cr1,cr2);
-
-            // If the roots are flipped
-            if (fabs(cr1.real()-cr2p.real())+fabs(cr1.imag()-cr2p.imag())<
-                fabs(cr1.real()-cr1p.real())+fabs(cr1.imag()-cr1p.imag())) {
-              cx_t temp=cr1;
-              cr1=cr2;
-              cr2=temp;
-            } 
-            
-            q1=sqrt(fabs(cr1.real()-cr1p.real())*
-                    fabs(cr1.real()-cr1p.real())+
-                    fabs(cr2.real()-cr2p.real())*
-                    fabs(cr2.real()-cr2p.real()));
-            q2=sqrt(fabs(cr1.imag()-cr1p.imag())*
-                    fabs(cr1.imag()-cr1p.imag())+
-                    fabs(cr2.imag()-cr2p.imag())*
-                    fabs(cr2.imag()-cr2p.imag()));
-            if (fabs(q1)>1.0e-10 || fabs(q2)>1.0e-10) {
-              cout << cr1p << " " << cr2p << endl;
-              cout << cr1 << " " << cr2 << endl;
-              cout << ca << " " << cb << " " << cc << endl;
-              cout << q1 << " " << q2 << endl;
-              exit(-1);
-            }
-      
-            s1+=q1;
-            if (q1>m1) m1=q1;
-            s2+=q2;
-            if (q2>m2) m2=q2;
-            count++;
-	    
-          }
-          
-	}
-      }
-    }
-  }
-  
-  lt2=clock();
-  s1/=((fp_t)count);
-  s2/=((fp_t)count);
-  return;
-}
-
-template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_quadratic_complex(size_t ne, quadratic_complex<fp_t,cx_t> *po,
                             string str, fp_t e1, fp_t e2, fp_t e3, fp_t e4) {
                             
-  fp_t s1,s2,m1,m2;
-  clock_t lt1, lt2;
-  test_quadratic_complex_base(ne,po,str,s1,s2,m1,m2,lt1,lt2);
+  fp_t s1=0, s2=0, m1=0, m2=0;
+  
+  clock_t lt1=clock();
+  
+  size_t count=0;
+  
+  count+=po->test_complex_coeffs(s1,s2,m1,m2);
+  count+=po->test_complex_roots(s1,s2,m1,m2);
+  
+  clock_t lt2=clock();
+  
+  s1/=count;
+  s2/=count;
+
+  double time=((double)(lt2-lt1))/CLOCKS_PER_SEC;
   
   tst.test_abs<fp_t>(s1,0.0,e1,"quadratic_complex s1");
   tst.test_abs<fp_t>(s2,0.0,e2,"quadratic_complex s2");
@@ -260,7 +139,7 @@ void test_quadratic_complex(size_t ne, quadratic_complex<fp_t,cx_t> *po,
   cout.width(wid);
   cout << str.c_str();
   cout << ": " << s1 << " " << s2 << " " << m1 << " " 
-       << m2 << " " << ((double)(lt2-lt1))/CLOCKS_PER_SEC << endl;
+       << m2 << " " << time << endl;
   return;
 }
 
@@ -269,8 +148,20 @@ void test_quadratic_complex_boost(size_t ne, quadratic_complex<fp_t,cx_t> *po,
                                   string str, 
                                   double e1, double e2, double e3, double e4) {
   fp_t s1,s2,m1,m2;
-  clock_t lt1, lt2;
-  test_quadratic_complex_base(ne,po,str,s1,s2,m1,m2,lt1,lt2);
+
+  clock_t lt1=clock();
+  
+  size_t count=0;
+  
+  count+=po->test_complex_coeffs(s1,s2,m1,m2);
+  count+=po->test_complex_roots(s1,s2,m1,m2);
+  
+  clock_t lt2=clock();
+  
+  s1/=count;
+  s2/=count;
+
+  double time=((double)(lt2-lt1))/CLOCKS_PER_SEC;
   
   tst.test_abs_boost<fp_t>(s1,0.0,e1,"quadratic_complex s1");
   tst.test_abs_boost<fp_t>(s2,0.0,e2,"quadratic_complex s2");
@@ -279,7 +170,7 @@ void test_quadratic_complex_boost(size_t ne, quadratic_complex<fp_t,cx_t> *po,
   cout.width(wid);
   cout << str.c_str();
   cout << ": " << s1 << " " << s2 << " " << m1 << " " 
-       << m2 << " " << ((double)(lt2-lt1))/CLOCKS_PER_SEC << endl;
+       << m2 << " " << time << endl;
   return;
 }
 
@@ -301,13 +192,16 @@ void test_cubic_real_coeff_base(size_t ne, cubic_real_coeff<fp_t,cx_t> *po,
   m2=0.0;
   lt1=clock();
   
-  gen_test_number ga(16), gb(16), gc(16), gd(16);
+  gen_test_number ga, gb, gc, gd;
   for(int j1=0;j1<16;j1++) {
     ca=ga.gen()*alpha;
+    gb.reset();
     for(int j2=0;j2<16;j2++) {
       cb=gb.gen();
+      gc.reset();
       for(int j3=0;j3<16;j3++) {
 	cc=gc.gen()*alpha;
+        gd.reset();
 	for(int j4=0;j4<16;j4++) {
 	  cd=gd.gen();
 	  
@@ -402,15 +296,18 @@ void test_cubic_complex_base(size_t ne, cubic_complex<fp_t,cx_t> *po,
   m1=0.0;
   m2=0.0;
   lt1=clock();
-  gen_test_number ga(9), gb(9), gc(9), gd(9);
+  gen_test_number ga, gb, gc, gd;
   fp_t rca, rcb, rcc, rcd;
   for(int it=0;it<2;it++) {
     for(int j1=0;j1<9;j1++) {
       rca=ga.gen();
+      gb.reset();
       for(int j2=0;j2<9;j2++) {
 	rcb=gb.gen();
+        gc.reset();
 	for(int j3=0;j3<9;j3++) {
 	  rcc=gc.gen();
+          gd.reset();
 	  for(int j4=0;j4<9;j4++) {
 	    rcd=gd.gen();
 
@@ -516,7 +413,7 @@ void test_quartic_real(size_t ne, quartic_real<double> *po,
   m2=0.0;
   lt1=clock();
 
-  gen_test_number ga(9), gb(9), gc(9), gd(9);
+  gen_test_number ga, gb, gc, gd;
   for(int j1=0;j1<9;j1++) {
     r1=ga.gen();
     for(int j2=0;j2<9;j2++) {
@@ -578,7 +475,7 @@ void test_quartic_real_coeff_base(size_t ne, quartic_real_coeff<fp_t,cx_t> *po,
   m2=0.0;
   lt1=clock();
 
-  gen_test_number ga(9), gb(9), gc(9), gd(9), ge(9);
+  gen_test_number ga, gb, gc, gd, ge;
   for(int j1=0;j1<9;j1++) {
     ca=ga.gen();
     for(int j2=0;j2<9;j2++) {
@@ -684,7 +581,7 @@ void test_quartic_complex(size_t ne, quartic_complex<> *po, string str,
   m2=0.0;
   lt1=clock();
 
-  gen_test_number ga(9), gb(9), gc(9), gd(9), ge(9);
+  gen_test_number ga, gb, gc, gd, ge;
   double rca, rcb, rcc, rcd, rce;
   for(int it=0;it<2;it++) {
     for(int j1=0;j1<9;j1++) {
@@ -818,7 +715,6 @@ int main(void) {
   cout << "Quadratics with real coefficients and complex roots:" << endl;
   cout << "type                   Avg 1      Avg 2      Max 1"
        << "      Max 2      time" << endl;
-  cout << "Hx." << endl;
   test_quadratic_real_coeff(&t3,"quad_real_coeff_gsl",1.0,
                             1.0e-13,1.0e-13,1.0e-10,1.0e-11);
   test_quadratic_real_coeff(&t1,"quad_real_coeff_gsl2",1.0,
@@ -897,7 +793,7 @@ int main(void) {
 #ifdef O2SCL_LD_TYPES
   test_cubic_real_coeff<long double,std::complex<long double> >
     (ne,&c1_ld,"cubic_rc_cern_ld",
-     1.0,1.0e-13,1.0e-12,1.0e-12,1.0e-10);
+     1.0,1.0e-12,1.0e-12,1.0e-9,1.0e-10);
   test_cubic_real_coeff<long double,std::complex<long double> >
     (ne,&c3_ld,"cubic_c_std_ld",
      1.0,1.0e-1,1.0e-1,1.0e1,1.0e1);
@@ -923,20 +819,20 @@ int main(void) {
   test_cubic_real_coeff(ne,&c3,"cubic_complex_std",1.0e-3,
 			1.0e-1,1.0e+2,4.0e0,1.0e+5);
   test_cubic_real_coeff(ne,&p3,"poly_real_coeff_gsl",1.0e-3,
-			1.0e-5,1.0e-3,1.0e-2,1.0e-2);
+			1.0e-4,1.0e-3,1.0e-2,1.0e-2);
 #ifdef O2SCL_LD_TYPES
   test_cubic_real_coeff<long double,std::complex<long double> >
     (ne,&c1_ld,"cubic_rc_cern_ld",
      1.0e-3,1.0e-7,1.0e-5,1.0e-6,1.0e-4);
   test_cubic_real_coeff<long double,std::complex<long double> >
     (ne,&c3_ld,"cubic_c_std_ld",
-     1.0e-3,1.0e-2,1.0e-1,1.0e1,1.0e1);
+     1.0e-3,1.0e1,1.0e-1,1.0e1,1.0e1);
   test_cubic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
     (ne,&c1_cdf50,"cubic_rc_cern_50",
      1.0e-3,1.0e-38,1.0e-36,1.0e-37,1.0e-35);
   test_cubic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
     (ne,&c3_cdf50,"cubic_c_std_50",
-     1.0e-3,1.0e-2,1.0e-1,1.0e1,1.0e1);
+     1.0e-3,1.0e-1,1.0e-1,1.0e1,1.0e1);
 #endif
   cout << endl;
   

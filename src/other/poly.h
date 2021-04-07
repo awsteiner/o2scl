@@ -131,12 +131,11 @@ namespace o2scl {
     virtual int solve_rc(const fp_t a2, const fp_t b2, const fp_t c2, 
 			 cx_t &x1, cx_t &x2)=0;
     
-    /** \brief Test quadratics with coefficients near a 
+    /** \brief Test \f$ n^3 \f$ quadratics with coefficients near a 
         zero discriminant
      */
-    size_t test_coeffs_zero_disc
-    (fp_t alpha, fp_t &s1, fp_t &s2, fp_t &m1,
-     fp_t &m2, size_t n=40) {
+    size_t test_coeffs_zero_disc(fp_t alpha, fp_t &s1, fp_t &s2, fp_t &m1,
+                                 fp_t &m2, size_t n=40) {
 
       o2scl::gen_test_number ga, gb, gc;
       
@@ -145,15 +144,17 @@ namespace o2scl {
       // First pick random coefficients
       for(size_t j1=0;j1<n;j1++) {
         fp_t ca=ga.gen();
+        gb.reset();
         for(size_t j2=0;j2<n;j2++) {
           fp_t cb=gb.gen()*alpha;
+          gc.reset();
           for(size_t j3=0;j3<n;j3++) {
             
             // Ensure that several quadratics near b^2=4*a*c are tested
             fp_t cc=cb*cb/4.0/ca+gc.gen();
             
             // Ensure there is a solution
-            if (fabs(ca)>0.0) {
+            if (fabs(ca)!=0.0) {
 
               cx_t cr1, cr2;
               solve_rc(ca,cb,cc,cr1,cr2);
@@ -173,14 +174,7 @@ namespace o2scl {
               if (q2>m2) m2=q2;
               count++;
               
-              if (!o2isfinite(q1) || !o2isfinite(q2) || 
-                  fabs(q1)>1.0e-10 || fabs(q2)>1.0e-10) {
-                O2SCL_ERR("Failure in test_quadratic_real_coeff().",
-                          exc_esanity);
-              }
-              
             }
-            
           }
         }
       }
@@ -188,20 +182,21 @@ namespace o2scl {
       return count;
     }
       
-    /** \brief Test quadratics with complex roots
+    /** \brief Test \f$ n^2 \f$ quadratics with complex roots
      */
-    size_t test_complex_roots
-    (fp_t &s1, fp_t &s2, fp_t &m1, fp_t &m2, size_t n=40) {
+    size_t test_complex_roots(fp_t &s1, fp_t &s2, fp_t &m1, fp_t &m2,
+                              size_t n=80) {
 
-      gen_test_number gd(n*2), ge(n*2);
+      gen_test_number gd, ge;
 
       size_t count=0;
       
       // Next, pick random roots which are complex conjugates
-      for(size_t j1=0;j1<n*2;j1++) {
+      for(size_t j1=0;j1<n;j1++) {
         cx_t cr1, cr2;
         cr1.real(gd.gen());
-        for(size_t j2=0;j2<n*2;j2++) {
+        ge.reset();
+        for(size_t j2=0;j2<n;j2++) {
           cr1.imag(ge.gen());
           cr2.real(cr1.real());
           cr2.imag(-cr1.imag());
@@ -235,31 +230,27 @@ namespace o2scl {
           if (q2>m2) m2=q2;
           count++;
           
-          if (!o2isfinite(q1) || !o2isfinite(q2) ||
-              fabs(q1)>1.0e-10 || fabs(q2)>1.0e-10) {
-            O2SCL_ERR("Failure in test_quadratic_real_coeff().",
-                      exc_esanity);
-          }
         }
       }
       
       return count;
     }
       
-    /** \brief Test quadratics with real roots
+    /** \brief Test \f$ n^2 \f$ quadratics with real roots
      */
     size_t test_real_roots(fp_t &s1, fp_t &s2, fp_t &m1,
-                         fp_t &m2, size_t n=40) {
+                           fp_t &m2, size_t n=80) {
       
-      o2scl::gen_test_number gd(n*2), ge(n*2);
+      o2scl::gen_test_number gd, ge;
 
       size_t count=0;
       
       // Next, pick random roots which are both real
-      for(size_t j1=0;j1<n*2;j1++) {
+      for(size_t j1=0;j1<n;j1++) {
         cx_t cr1, cr2;
         cr1.real(gd.gen());
-        for(size_t j2=0;j2<n*2;j2++) {
+        ge.reset();
+        for(size_t j2=0;j2<n;j2++) {
           cr2.real(ge.gen());
           cr1.imag(0.0);
           cr2.imag(0.0);
@@ -293,11 +284,6 @@ namespace o2scl {
           if (q2>m2) m2=q2;
           count++;
           
-          if (!o2isfinite(q1) || !o2isfinite(q2) ||
-              fabs(q1)>1.0e-10 || fabs(q2)>1.0e-10) {
-            O2SCL_ERR("Failure in test_quadratic_real_coeff().",
-                      exc_esanity);
-          }
         }
       }
       
@@ -357,6 +343,146 @@ namespace o2scl {
     virtual int solve_c(const cx_t a2, const cx_t b2, 
 			const cx_t c2, cx_t &x1, cx_t &x2)=0;
 
+    /** \brief Test \f$ n^6 \f$ quadratics with complex roots
+     */
+    size_t test_complex_coeffs(fp_t &s1, fp_t &s2, fp_t &m1, fp_t &m2,
+                              size_t n=10) {
+
+      gen_test_number ga, gb, gc, gd, ge, gf;
+      
+      fp_t rca, rcb, rcc, rcd, rce, rcf;
+      cx_t i(0.0,1.0);
+
+      size_t count=0;
+      
+      // Test random coefficients
+      for(size_t j1=0;j1<n;j1++) {
+        rca=ga.gen();
+        gb.reset();
+        for(size_t j2=0;j2<n;j2++) {
+          rcb=gb.gen();
+          gc.reset();
+          for(size_t j3=0;j3<n;j3++) {
+            rcc=gc.gen();
+            gd.reset();
+            for(size_t j4=0;j4<n;j4++) {
+              rcd=gd.gen();
+              ge.reset();
+              for(size_t j5=0;j5<n;j5++) {
+                rce=ge.gen();
+                gf.reset();
+                for(size_t j6=0;j6<n;j6++) {
+                  rcf=gf.gen();
+                  
+                  if (fabs(rca)>0.0 || fabs(rcb)>0.0) {
+                    cx_t ca=rca+i*rcb;
+                    cx_t cb=rcc+i*rcd;
+                    cx_t cc=rce+i*rcf;
+
+                    cx_t cr1, cr2;
+                    solve_c(ca,cb,cc,cr1,cr2);
+                    
+                    cx_t cbp=-(cr1+cr2)*ca;
+                    cx_t ccp=(cr1*cr2)*ca;
+                    
+                    cx_t czo1=(ca*cr1+cb)*cr1+cc;
+                    cx_t czo2=(ca*cr2+cb)*cr2+cc;
+                    fp_t q1=sqrt(abs(cb-cbp)*abs(cb-cbp)+
+                                 abs(cc-ccp)*abs(cc-ccp));
+                    fp_t q2=sqrt(abs(czo1)*abs(czo1)+
+                                 abs(czo2)*abs(czo2));
+                    
+                    s1+=q1;
+                    if (q1>m1) m1=q1;
+                    s2+=q2;
+                    if (q2>m2) m2=q2;
+                    
+                    count++;
+                    
+                  }
+                  
+                }
+              }
+            }
+          }
+        }
+      }
+
+      return count;
+    }
+
+    /** \brief Test \f$ n^4 \f$ quadratics with complex roots
+     */
+    size_t test_complex_roots(fp_t &s1, fp_t &s2, fp_t &m1, fp_t &m2,
+                              size_t n=20) {
+      
+      gen_test_number gg, gh, gi, gj;
+      
+      fp_t rca, rcb, rcc, rcd, rce, rcf;
+      cx_t i(0.0,1.0);
+
+      size_t count=0;
+      
+      // Test random roots
+      for(size_t j1=0;j1<20;j1++) {
+        rca=gg.gen();
+        gh.reset();
+        for(size_t j2=0;j2<20;j2++) {
+          rcb=gh.gen();
+          gi.reset();
+          for(size_t j3=0;j3<20;j3++) {
+            rcc=gi.gen();
+            gj.reset();
+            for(size_t j4=0;j4<20;j4++) {
+              rcd=gj.gen();
+              
+              if (fabs(rca)>0.0 || fabs(rcb)>0.0) {
+                cx_t cr1p=rca+i*rcb;
+                cx_t cr2p=rcc+i*rcd;
+                
+                cx_t ca=1.0;
+                cx_t cb=-cr1p-cr2p;
+                cx_t cc=cr1p*cr2p;
+
+                cx_t cr1, cr2;
+                solve_c(ca,cb,cc,cr1,cr2);
+                
+                // If the roots are flipped
+                if (fabs(cr1.real()-cr2p.real())+
+                    fabs(cr1.imag()-cr2p.imag())<
+                    fabs(cr1.real()-cr1p.real())+
+                    fabs(cr1.imag()-cr1p.imag())) {
+                    
+                  cx_t temp=cr1;
+                  cr1=cr2;
+                  cr2=temp;
+                } 
+                
+                fp_t q1=sqrt(fabs(cr1.real()-cr1p.real())*
+                             fabs(cr1.real()-cr1p.real())+
+                             fabs(cr2.real()-cr2p.real())*
+                             fabs(cr2.real()-cr2p.real()));
+                fp_t q2=sqrt(fabs(cr1.imag()-cr1p.imag())*
+                             fabs(cr1.imag()-cr1p.imag())+
+                             fabs(cr2.imag()-cr2p.imag())*
+                             fabs(cr2.imag()-cr2p.imag()));
+                
+                s1+=q1;
+                if (q1>m1) m1=q1;
+                s2+=q2;
+                if (q2>m2) m2=q2;
+                count++;
+                
+              }
+              
+            }
+          }
+        }
+      }
+      
+      return count;
+    }
+    
     /// Return a string denoting the type ("quadratic_complex")
     const char *type() { return "quadratic_complex"; }
   };  
