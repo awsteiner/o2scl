@@ -224,7 +224,14 @@ void test_cubic_real_coeff_base(size_t ne, cubic_real_coeff<fp_t,cx_t> *po,
 	    if (q1>m1) m1=q1;
 	    s2+=q2;
 	    if (q2>m2) m2=q2;
-	    
+
+            if (q1>1.0e-2 || q2>1.0e-2) {
+              cout << "Problem." << endl;
+              cout << ca << " " << cb << " " << cc << " " << cd << endl;
+              cout << cr1 << " " << cr2 << " " << cr3 << endl;
+              exit(-1);
+            }
+            
 	  }
 	}
       }
@@ -781,13 +788,13 @@ int main(void) {
   cout << "Quadratics with real coefficients and complex roots:" << endl;
   cout << "type                   Avg 1      Avg 2      Max 1"
        << "      Max 2      time" << endl;
-  test_quadratic_real_coeff(&t3,"quad_real_coeff_gsl",1.0,
+  test_quadratic_real_coeff(&t3,"quad_rc_gsl",1.0,
                             1.0e-13,1.0e-13,1.0e-10,1.0e-11);
-  test_quadratic_real_coeff(&t1,"quad_real_coeff_gsl2",1.0,
+  test_quadratic_real_coeff(&t1,"quad_rc_gsl2",1.0,
                             1.0e-13,1.0e-13,1.0e-10,1.0e-11);
-  test_quadratic_real_coeff(&t2,"quad_complex_std",1.0,
+  test_quadratic_real_coeff(&t2,"quad_c_std",1.0,
                             1.0e-13,1.0e-13,1.0e-10,1.0e-11);
-  test_quadratic_real_coeff(&p3,"poly_real_coeff_gsl",1.0,
+  test_quadratic_real_coeff(&p3,"poly_rc_gsl",1.0,
                             1.0e-13,1.0e-13,1.0e-10,1.0e-11);
 #ifdef O2SCL_LD_TYPES
   test_quadratic_real_coeff<long double>(&t1_ld,"quad_rc_gsl2_ld",1.0,
@@ -798,7 +805,7 @@ int main(void) {
     (&t1_cdf50,"quad_rc_gsl_50",1.0,
      1.0e-47,1.0e-48,1.0e-45,1.0e-45);
   test_quadratic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
-    (&t2_cdf50,"quad_rc_std_50",1.0,
+    (&t2_cdf50,"quad_c_std_50",1.0,
      1.0e-47,1.0e-48,1.0e-45,1.0e-45);
 #endif
   cout << endl;
@@ -807,13 +814,13 @@ int main(void) {
        << " coefficients of odd powers small:" << endl;
   cout << "type                   Avg 1      Avg 2      Max 1"
        << "      Max 2      time" << endl;
-  test_quadratic_real_coeff(&t3,"quad_real_coeff_gsl",1.0e-5,
+  test_quadratic_real_coeff(&t3,"quad_rc_gsl",1.0e-5,
                             1.0e-14,1.0e-14,1.0e-10,1.0e-11);
-  test_quadratic_real_coeff(&t1,"quad_real_coeff_gsl2",1.0e-5,
+  test_quadratic_real_coeff(&t1,"quad_rc_gsl2",1.0e-5,
                             1.0e-14,1.0e-14,1.0e-10,1.0e-11);
-  test_quadratic_real_coeff(&t2,"quad_complex_std",1.0e-5,
+  test_quadratic_real_coeff(&t2,"quad_c_std",1.0e-5,
                             1.0e-14,1.0e-14,1.0e-10,5.0e-11);
-  test_quadratic_real_coeff(&p3,"poly_real_coeff_gsl",1.0e-5,
+  test_quadratic_real_coeff(&p3,"poly_rc_gsl",1.0e-5,
                             1.0e-14,1.0e-14,1.0e-10,1.0e-11);
 #ifdef O2SCL_LD_TYPES
   test_quadratic_real_coeff<long double>(&t1_ld,"quad_rc_gsl2_ld",1.0e-5,
@@ -832,7 +839,7 @@ int main(void) {
   cout << "Quadratic with complex coefficients and complex roots:" << endl;
   cout << "type                   Avg 1      Avg 2      Max 1"
        << "      Max 2      time" << endl;
-  test_quadratic_complex(ne,&t2,"quad_complex_std",
+  test_quadratic_complex(ne,&t2,"quad_c_std",
 			 1.0e-13,1.0e-9,1.0e-11,1.0e-7);
 #ifdef O2SCL_LD_TYPES
   test_quadratic_complex<long double>(ne,&t2_ld,"quad_c_std_ld",
@@ -852,9 +859,9 @@ int main(void) {
 			1.0e-1,1.0e-2,1.0e1,8.0e0);
   test_cubic_real_coeff(ne,&c2,"cubic_rc_gsl2",1.0,
 			1.0e-1,1.0e-2,1.0e1,8.0e0);
-  test_cubic_real_coeff(ne,&c3,"cubic_complex_std",1.0,
+  test_cubic_real_coeff(ne,&c3,"cubic_c_std",1.0,
 			1.0e-1,1.0e-1,1.0e1,1.0e1);
-  test_cubic_real_coeff(ne,&p3,"poly_real_coeff_gsl",1.0,
+  test_cubic_real_coeff(ne,&p3,"poly_rc_gsl",1.0,
 			1.0e-1,4.0e-2,1.0e1,1.0e1);
 #ifdef O2SCL_LD_TYPES
   test_cubic_real_coeff<long double,std::complex<long double> >
@@ -882,9 +889,9 @@ int main(void) {
 			1.0e-4,5.0e-4,1.0e-3,1.0e-3);
   test_cubic_real_coeff(ne,&c2,"cubic_rc_gsl2",1.0e-3,
 			1.0e-4,5.0e-4,1.0e-3,1.0e-3);
-  test_cubic_real_coeff(ne,&c3,"cubic_complex_std",1.0e-3,
+  test_cubic_real_coeff(ne,&c3,"cubic_c_std",1.0e-3,
 			1.0e-1,1.0e+2,4.0e0,1.0e+5);
-  test_cubic_real_coeff(ne,&p3,"poly_real_coeff_gsl",1.0e-3,
+  test_cubic_real_coeff(ne,&p3,"poly_rc_gsl",1.0e-3,
 			1.0e-4,1.0e-3,1.0e-2,1.0e-2);
 #ifdef O2SCL_LD_TYPES
   test_cubic_real_coeff<long double,std::complex<long double> >
@@ -905,14 +912,14 @@ int main(void) {
   cout << "Cubic with complex coefficients and complex roots:" << endl;
   cout << "type                   Avg 1      Avg 2      Max 1"
        << "      Max 2      time" << endl;
-  test_cubic_complex(ne,&c3,"cubic_complex_std",
+  test_cubic_complex(ne,&c3,"cubic_c_std",
                      1.0e1,1.0e1,1.0e1,1.0e1);
 #ifdef O2SCL_LD_TYPES
   test_cubic_complex<long double,std::complex<long double> >
-    (ne,&c3_ld,"cubic_complex_std_ld",
+    (ne,&c3_ld,"cubic_c_std_ld",
      1.0e1,1.0e1,1.0e1,1.0e1);
   test_cubic_complex_boost<cpp_bin_float_50,cpp_complex_50>
-    (ne,&c3_cdf50,"cubic_complex_std_50",
+    (ne,&c3_cdf50,"cubic_c_std_50",
      1.0e1,1.0e1,1.0e1,1.0e1);
 #endif
   cout << endl;
@@ -931,7 +938,7 @@ int main(void) {
 		    2.0e5,1.0,3.0e7,1.0);
   test_quartic_real(ne,&q5,"quartic_c_std",1.0,
 		    1.0e-1,1.0,1.0e2,1.0);
-  test_quartic_real(ne,&p3,"poly_real_coeff_gsl",1.0,
+  test_quartic_real(ne,&p3,"poly_rc_gsl",1.0,
 		    1.0e-14,1.0,1.0e-12,1.0);
   cout << endl;
   
@@ -950,7 +957,7 @@ int main(void) {
 		    2.0e5,1.0,3.0e7,1.0);
   test_quartic_real(ne,&q5,"quartic_c_std",1.0e-5,
 		    1.0e-1,1.0,5.0,1.0);
-  test_quartic_real(ne,&p3,"poly_real_coeff_gsl",1.0e-5,
+  test_quartic_real(ne,&p3,"poly_rc_gsl",1.0e-5,
 		    1.0e-14,1.0,1.0e-13,1.0);
   cout << endl;
 
@@ -961,7 +968,7 @@ int main(void) {
 			  1.0e0,1.0e4,1.0e2,1.0e5);
   test_quartic_real_coeff(ne,&q5,"quartic_c_std",
 			  1.0e1,1.0e1,1.0e3,1.0e4);
-  test_quartic_real_coeff(ne,&p3,"poly_real_coeff_gsl",
+  test_quartic_real_coeff(ne,&p3,"poly_rc_gsl",
 			  1.0e-13,1.0e-6,1.0e-10,1.0e-4);
 #ifdef O2SCL_LD_TYPES
   test_quartic_real_coeff<long double,std::complex<long double> >

@@ -533,7 +533,7 @@ namespace o2scl {
     virtual int solve_r(const fp_t a3, const fp_t b3, const fp_t c3, 
 			const fp_t d3, fp_t &x1, fp_t &x2, fp_t &x3) {
       
-      cx_t r2,r3;
+      cx_t r2, r3;
   
       if (a3==0.0) {
         O2SCL_ERR2("Leading coefficient zero in",
@@ -575,6 +575,7 @@ namespace o2scl {
     */
     virtual int solve_r(const fp_t a3, const fp_t b3, const fp_t c3, 
 			const fp_t d3, fp_t &x1, fp_t &x2, fp_t &x3) {
+      
       if (a3==0.0) {
         O2SCL_ERR2("Leading coefficient zero in",
                    "cubic_complex::solve_r().",exc_einval);
@@ -602,11 +603,36 @@ namespace o2scl {
       }
       
       cx_t r1,r2,r3;
+      
       int ret=solve_c(a3,b3,c3,d3,r1,r2,r3);
-      fp_t s1,s2,s3;
-      s1=fabs(r1.imag()/r1.real());
-      s2=fabs(r2.imag()/r2.real());
-      s3=fabs(r3.imag()/r3.real());
+      
+      if (ret<0) {
+        O2SCL_ERR("Function solve_c() failed.",o2scl::exc_einval);
+      }
+      
+      // If all roots are real
+      
+      if (r1.imag()==0.0 && r2.imag()==0.0 && r3.imag()==0.0) {
+        if (r1.real()==0.0 && r2.real()==0.0 && r3.real()==0.0) {
+          x1=0;
+          x2=0;
+          x3=0;
+        } else {
+          x1=r1.real();
+          x2=r2.real();
+          x3=r3.real();
+        }
+        
+        return 3;
+      }
+
+      // Otherwise, determine which of the three roots is real
+      // and put the real root in x1
+      
+      fp_t s1=fabs(r1.imag());
+      fp_t s2=fabs(r2.imag());
+      fp_t s3=fabs(r3.imag());
+      
       if (s1<s2 && s1<s3) {
         x1=r1.real();
         x2=r2;
@@ -620,7 +646,8 @@ namespace o2scl {
         x2=r1;
         x3=r2;
       }
-      return ret;
+      
+      return 1;
     }
     
     /** \brief Solves the complex polynomial 
@@ -628,12 +655,9 @@ namespace o2scl {
 	giving the three complex solutions \f$ x=x_1 \f$ , 
 	\f$ x=x_2 \f$ , and \f$ x=x_3 \f$ .
     */
-    virtual int solve_c(const cx_t a3, 
-			const cx_t b3, 
-			const cx_t c3, 
-			const cx_t d3, 
-			cx_t &x1, cx_t &x2, 
-			cx_t &x3)=0;
+    virtual int solve_c(const cx_t a3, const cx_t b3, 
+			const cx_t c3, const cx_t d3, 
+			cx_t &x1, cx_t &x2, cx_t &x3)=0;
 
     /// Return a string denoting the type ("cubic_complex")
     const char *type() { return "cubic_complex"; }
@@ -2029,37 +2053,46 @@ namespace o2scl {
         cx_t p=(three*a3*c3-b3*b3)/three/a3/a3;
         cx_t q=(two*b3*b3*b3-nine*a3*b3*c3+twoseven*a3*a3*d3)/
           twoseven/a3/a3/a3;
-
-        // Formulate into a quadratic and then W is one of
-        // the roots of the quadratic
-        cx_t W=-q/two+sqrt(p*p*p/twoseven+q*q/four);
-        // This code fails when W=0
-        //std::cout << "W: " << W << std::endl;
         
-        // Construct the roots of the depressed cubic from the
-        // solution of the quadratic
-        cx_t w1=pow(W,onethird);
         cx_t exp_i_pi_three=exp(mo*pi*two/three);
-        cx_t w2=w1*exp_i_pi_three;
-        cx_t w3=w2*exp_i_pi_three;
-        //std::cout << "p: " << p << std::endl;
 
-        // Vieta's substitution
+        // Roots of the depressed cubic
         cx_t r1, r2, r3;
-        if (W.real()==0.0 && W.imag()==0.0) {
-          // If W=0, then there are three identical roots of the
-          // cubic, and they are all -b3/a3/3
-          r1=0;
-          r2=0;
-          r3=0;
+        
+        if (p.real()==0.0 && p.imag()==0.0) {
+          
+          // If p is zero, then the roots of the depressed
+          // cubic are trivial
+          
+          r1=pow(-q,onethird);
+          r2=r1*exp_i_pi_three;
+          r3=r2*exp_i_pi_three;
+          
         } else {
-          //std::cout << "Here " << W.real() << " " << W.imag() << std::endl;
-          r1=w1-p/three/w1;
-          r2=w2-p/three/w2;
-          r3=w3-p/three/w3;
+          
+          // Formulate into a quadratic and then W is one of
+          // the roots of the quadratic
+          cx_t W=-q/two+sqrt(p*p*p/twoseven+q*q/four);
+          
+          // Construct the roots of the depressed cubic from the
+          // solution of the quadratic
+          cx_t w1=pow(W,onethird);
+          cx_t w2=w1*exp_i_pi_three;
+          cx_t w3=w2*exp_i_pi_three;
+          
+          // Vieta's substitution
+          if (W.real()==0.0 && W.imag()==0.0) {
+            // If W=0, then there are three identical roots of the
+            // original cubic, and they are all -b3/a3/3
+            r1=0;
+            r2=0;
+            r3=0;
+          } else {
+            r1=w1-p/three/w1;
+            r2=w2-p/three/w2;
+            r3=w3-p/three/w3;
+          }
         }
-        //std::cout << "b3: " << b3 << std::endl;
-        //std::cout << "a3: " << a3 << std::endl;
 
         // Construct the roots of the original cubic from those of the
         // depressed cubic
@@ -2067,13 +2100,13 @@ namespace o2scl {
         x2=r2-b3/three/a3;
         x3=r3-b3/three/a3;
 
-        //std::cout << "x1,x2,x3: " << x1 << " " << x2 << " " << x3
-        //<< std::endl;
-        //if (!o2isfinite(x1.real()) || !o2isfinite(x1.imag())) {
-        //exit(-1);
-        //}
-        
       }
+
+      /*
+        cx_t check1=a3*x1*x1*x1+b3*x1*x1+c3*x1+d3;
+        cx_t check2=a3*x2*x2*x2+b3*x2*x2+c3*x2+d3;
+        cx_t check3=a3*x3*x3*x3+b3*x3*x3+c3*x3+d3;
+      */
       
       return success;
     }      
