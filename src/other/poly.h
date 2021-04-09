@@ -1187,6 +1187,8 @@ namespace o2scl {
 
         There are a couple differences with the original routine.
         The arrays z[] and u[] are now zero-indexed.
+
+        \future Make v[] zero-indexed as well.
     */
     virtual int rrteq4(fp_t a, fp_t b, fp_t c, fp_t d, 
 		       cx_t z[], fp_t &dc, 
@@ -1237,7 +1239,7 @@ namespace o2scl {
         }
       }
       
-      // Solve the resolvant cubic
+      // Solve the resolvent cubic
       fp_t aa=a*a;
       fp_t pp=b-q1*aa;
       fp_t qq=c-q2*a*(b-q4*aa);
@@ -1246,9 +1248,9 @@ namespace o2scl {
       fp_t sc=q4*(q4*pp*pp-rr);
       fp_t tc=-(q8*qq*q8*qq);
       fp_t zero=0.0;
-      
+
       cub_obj.rrteq3(rc,sc,tc,u,dc);
-      
+
       fp_t q=qq;
       fp_t h=r4*a;
       if (dc==0) u[2]=u[1];
@@ -1317,6 +1319,7 @@ namespace o2scl {
         z[2]=z0[4];
         z[3]=z0[3];
       }
+
       return success;
     }
     
@@ -1364,27 +1367,24 @@ namespace o2scl {
     /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
 	giving the two complex solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ 
 
-        This function returns the number of complex roots (either
-        1 or 2). This function calls the error handler if 
-        \f$ a=b=0 \f$.
+        This function returns the number of real roots (either 0
+        or 2)
     */
     virtual int solve_rc(const fp_t a, const fp_t b, const fp_t c,
                          cx_t &x1, cx_t &x2) {
 
-      // AWS, 3/31/21: This is equivalent to the GSL code from v2.6,
-      // but rewritten in a C++/multiprecision compatible form
+      // AWS, 3/31/21: This is nearly equivalent to the GSL code from v2.6,
+      // but rewritten in a C++/multiprecision compatible form.
+      // It also does not allow a zero value for a (the GSL version
+      // does).
+      
+      if (a==0.0) {
+        O2SCL_ERR
+          ("Leading coefficient zero in quadratic_real_coeff_gsl2::solve_rc().",
+           exc_einval);
+      }
       
       fp_t disc=b*b-4*a*c;
-      if (a == 0) {
-        if (b == 0) {
-          O2SCL_ERR2("No solution because a=b=0 in ",
-                     "quadratic_real_coeff::solve_rc().",o2scl::exc_einval);
-        } else {
-          x1.real(-c/b);
-          x1.imag(0);
-          return 1;
-        };
-      }
       
       if (disc > 0) {
         if (b == 0) {
@@ -1399,17 +1399,10 @@ namespace o2scl {
           fp_t r1=temp/a;
           fp_t r2=c/temp;
           
-          if (r1 < r2) {
-            x1.real(r1);
-            x1.imag(0);
-            x2.real(r2);
-            x2.imag(0);
-          } else {
-            x1.real(r2);
-            x1.imag(0);
-            x2.real(r1);
-            x2.imag(0);
-          }
+          x1.real(r2);
+          x1.imag(0);
+          x2.real(r1);
+          x2.imag(0);
         }
         return 2;
         
@@ -1430,7 +1423,7 @@ namespace o2scl {
       x2.real(-b/a/2);
       x2.imag(s);
       
-      return 2;
+      return 0;
     }
 
     /// Return a string denoting the type ("quadratic_real_coeff_gsl2")
@@ -1480,7 +1473,7 @@ namespace o2scl {
 
     virtual ~cubic_real_coeff_gsl2() {}
 
-    /** \brief solves the polynomial 
+    /** \brief Solves the polynomial 
 	\f$ a_3 x^3 + b_3 x^2 + c_3 x + d_3= 0 \f$ 
 	giving the real solution \f$ x=x_1 \f$ and two complex solutions 
 	\f$ x=x_2 \f$ and \f$ x=x_3 \f$ .
@@ -1519,8 +1512,8 @@ namespace o2scl {
         x3.real(-a/3);
         x3.imag(0);
 
-        if (!std::isfinite(x1) || !std::isfinite(x2.real()) ||
-            !std::isfinite(x2.imag())) {
+        if (!o2isfinite(x1) || !o2isfinite(x2.real()) ||
+            !o2isfinite(x2.imag())) {
           std::cout << "1. " << x1 << " " << x2 << " " << x3 << std::endl;
           exit(-1);
         }
@@ -1551,8 +1544,8 @@ namespace o2scl {
           x3.imag(0);
         }
         
-        if (!std::isfinite(x1) || !std::isfinite(x2.real()) ||
-            !std::isfinite(x2.imag())) {
+        if (!o2isfinite(x1) || !o2isfinite(x2.real()) ||
+            !o2isfinite(x2.imag())) {
           std::cout << "2. " << x1 << " " << x2 << " " << x3 << std::endl;
           exit(-1);
         }
@@ -1586,8 +1579,8 @@ namespace o2scl {
         x3.real(r2);
         x3.imag(0);
         
-        if (!std::isfinite(x1) || !std::isfinite(x2.real()) ||
-            !std::isfinite(x2.imag())) {
+        if (!o2isfinite(x1) || !o2isfinite(x2.real()) ||
+            !o2isfinite(x2.imag())) {
           std::cout << "3. " << x1 << " " << x2 << " " << x3 << std::endl;
           std::cout << Q << std::endl;
           std::cout << norm << " " << sqrtQ << " " << theta << std::endl;
@@ -1618,8 +1611,8 @@ namespace o2scl {
       x3.real(-0.5*(A+B)-a/3);
       x3.imag((sqrt(3.0)/2.0)*fabs(A-B));
       
-      if (!std::isfinite(x1) || !std::isfinite(x2.real()) ||
-          !std::isfinite(x2.imag())) {
+      if (!o2isfinite(x1) || !o2isfinite(x2.real()) ||
+          !o2isfinite(x2.imag())) {
         std::cout << R2-Q3 << std::endl;
         std::cout << fabs(R)+sqrt(R2-Q3) << std::endl;
         std::cout << "4. " << x1 << " " << x2 << " " << x3 << std::endl;
@@ -1628,7 +1621,7 @@ namespace o2scl {
         exit(-1);
       }
         
-      return 3;
+      return 1;
     }
 
     /// Return a string denoting the type ("cubic_real_coeff_gsl2")
@@ -2179,8 +2172,8 @@ namespace o2scl {
       quad2.solve_r(1,b2a,c2a,x1,x2);
       quad2.solve_r(1,b2b,c2b,x3,x4);
 
-      if (!std::isfinite(x1) || !std::isfinite(x2) ||
-          !std::isfinite(x3) || !std::isfinite(x4)) {
+      if (!o2isfinite(x1) || !o2isfinite(x2) ||
+          !o2isfinite(x3) || !o2isfinite(x4)) {
         std::cout << u1 << " " << u2 << " " << u3 << std::endl;
         std::cout << t1 << " " << a34 << std::endl;
         std::cout << b2a << " " << b2b << std::endl;
@@ -2228,6 +2221,16 @@ namespace o2scl {
            exc_einval);
       }
 
+      if (c4.real()==0.0 && c4.imag()==0.0 &&
+          d4.real()==0.0 && d4.imag()==0.0 &&
+          e4.real()==0.0 && e4.imag()==0.0) {
+        x1=-b4/a4;
+        x2=0;
+        x3=0;
+        x4=0;
+        return 0;
+      }
+
       fp_t two=2.0;
       fp_t eight=8.0;
       fp_t four=4.0;
@@ -2240,6 +2243,18 @@ namespace o2scl {
       q4=(b4*b4*b4-four*a4*b4*c4+eight*a4*a4*d4)/eight/(a4*a4*a4);
       r4=(sixteen*a4*b4*b4*c4+twofivesix*a4*a4*a4*e4-three*b4*b4*b4*b4-
           sixfour*a4*a4*b4*d4)/twofivesix/(a4*a4*a4*a4);
+      //std::cout << "p4,q4,r4: " << p4 << " " << q4 << " "
+      //<< r4 << std::endl;
+      
+      if (p4.real()==0.0 && p4.imag()==0.0 &&
+          q4.real()==0.0 && q4.imag()==0.0 &&
+          r4.real()==0.0 && r4.imag()==0.0) {
+        x1=-b4/four/a4;
+        x2=-b4/four/a4;
+        x3=-b4/four/a4;
+        x4=-b4/four/a4;
+        return 0;
+      }
       
       //---------------------------------------
       // Solve the resolvent cubic:
@@ -2248,29 +2263,73 @@ namespace o2scl {
       b3=-p4;
       c3=-four*r4;
       d3=four*p4*r4-q4*q4;
+      //std::cout << "a3,b3,c3,d3: " << a3 << " " << b3 << " "
+      //<< c3 << " " << d3 << std::endl;
       
       cub_obj.solve_c(a3,b3,c3,d3,u4,u41,u42);
+
+      //cx_t check1=a3*u4*u4*u4+b3*u4*u4+c3*u4+d3;
+      //std::cout << "check1: " << check1 << std::endl;
+      //cx_t check2=a3*u41*u41*u41+b3*u41*u41+c3*u41+d3;
+      //std::cout << "check2: " << check2 << std::endl;
+      //cx_t check3=a3*u42*u42*u42+b3*u42*u42+c3*u42+d3;
+      //std::cout << "check3: " << check3 << std::endl;
       
       //---------------------------------------
       
-      // What to do when u4==p4?
-      // Temporary hack:
-      if (u4==p4) {
-        b2a=0.0;
-        b2b=0.0;
-        c2a=u4/two;
-        c2b=u4/two;
+      //std::cout << "u4,u41,u42: " << u4 << " "
+      //<< u41 << " " << u42 << std::endl;
+
+      // AWS, 4/8/21: I'd prefer not to have a comparison to a number
+      // in here, but I find that sometimes u4 and p4 are extremely
+      // close but not exactly equal and this causes failures in
+      // computing the correct roots.
+      if (u4==p4 || abs(u4-p4)<1.0e-15) {
+        b2a=sqrt(u41-p4);
+        b2b=-sqrt(u41-p4);
+        c2a=-sqrt(u41-p4)*q4/two/(u41-p4)+u41/two;
+        c2b=sqrt(u41-p4)*q4/two/(u41-p4)+u41/two;
+        /*
+          b2a=0.0;
+          b2b=0.0;
+          c2a=u4/two;
+          c2b=u4/two;
+        */
+        //std::cout << "Here." << std::endl;
       } else {
         b2a=sqrt(u4-p4);
         b2b=-sqrt(u4-p4);
         c2a=-sqrt(u4-p4)*q4/two/(u4-p4)+u4/two;
         c2b=sqrt(u4-p4)*q4/two/(u4-p4)+u4/two;
       }
+      //std::cout << "u4-p4: " << u4-p4 << " " << abs(u4-p4) << std::endl;
       
       x1=(-b2a+sqrt(b2a*b2a-four*c2a))/two-b4/four/a4;
       x2=(-b2a-sqrt(b2a*b2a-four*c2a))/two-b4/four/a4;
       x3=(-b2b+sqrt(b2b*b2b-four*c2b))/two-b4/four/a4;
       x4=(-b2b-sqrt(b2b*b2b-four*c2b))/two-b4/four/a4;
+
+      //std::cout << "b2a,b2b,c2a,c2b: "
+      //<< b2a << " " << b2b << " " << c2a << " "
+      //<< c2b << std::endl;
+      
+      if (!o2isfinite(x1.real()) || !o2isfinite(x1.imag()) ||
+          !o2isfinite(x2.real()) || !o2isfinite(x2.imag()) ||
+          !o2isfinite(x3.real()) || !o2isfinite(x3.imag()) ||
+          !o2isfinite(x4.real()) || !o2isfinite(x4.imag())) {
+        std::cout << "Pt.1" << std::endl;
+        std::cout << "a3,b3,c3,d3: " << a3 << " " << b3 << " "
+                  << c3 << " " << d3 << std::endl;
+        std::cout << "a4,b4,c4,d4,e4: " << a4 << " " << b4 << " "
+                  << c4 << " " << d4 << " "
+                  << e4 << std::endl;
+        std::cout << "p4,q4,r4: " << p4 << " " << q4 << " "
+                  << r4 << std::endl;
+        std::cout << "x1,x2,x3,x4: "
+                  << x1 << " " << x2 << " " << x3 << " " << x4
+                  << std::endl;
+        exit(-1);
+      }
       
       return success;
     }
