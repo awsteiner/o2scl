@@ -1503,8 +1503,7 @@ namespace o2scl {
 	\f$ x=x_2 \f$ and \f$ x=x_3 \f$ .
     */
     virtual int solve_rc(const fp_t a3, const fp_t b3, const fp_t c3, 
-			 const fp_t d3, fp_t &x1, 
-			 std::complex<fp_t> &x2, std::complex<fp_t> &x3) {
+			 const fp_t d3, fp_t &x1, cx_t &x2, cx_t &x3) {
       
       if (a3==0.0) {
         O2SCL_ERR
@@ -1765,8 +1764,9 @@ namespace o2scl {
                              root_vec_t &ro) {
       
       int j;
-      typedef boost::numeric::ublas::vector<fp_t> ubvector;
-      ubvector a(n+1), z(2*n);
+      // We're sending a pointer to the first element, so
+      // this must be a std::vector<double>
+      std::vector<double> a(n+1), z(2*n);
       cx_t i(0.0,1.0);
       
       for(j=0;j<n+1;j++) {
@@ -1810,10 +1810,14 @@ namespace o2scl {
 
       gsl_poly_complex_solve(a,3,w2,z);
       
+      int nreal=0;
+      if (z[1]==0) nreal++;
+      if (z[3]==0) nreal++;
+      
       r1=z[0]+i*z[1];
       r2=z[2]+i*z[3];
       
-      return success;
+      return nreal;
     }
     
     /** \brief Solve a cubic polynomial with real coefficients
@@ -1821,6 +1825,7 @@ namespace o2scl {
     virtual int solve_rc(const fp_t a3, const fp_t b3, const fp_t c3, 
 			 const fp_t d3, fp_t &r1, cx_t &r2, 
 			 cx_t &r3) {
+      
       if (a3==0.0) {
         O2SCL_ERR2("Leading coefficient zero in ",
 		   "poly_real_coeff_gsl::solve_rc().",
@@ -1833,9 +1838,17 @@ namespace o2scl {
       
       gsl_poly_complex_solve(a,4,w3,z);
       
-      s1=fabs(z[1]/z[0]);
-      s2=fabs(z[3]/z[2]);
-      s3=fabs(z[5]/z[4]);
+      s1=fabs(z[1]);
+      s2=fabs(z[3]);
+      s3=fabs(z[5]);
+
+      if (s1==0 && s2==0 && s3==0) {
+        r1=z[0];
+        r2=z[2];
+        r3=z[4];
+        return 3;
+      }
+      
       if (s1<s2 && s1<s3) {
         r1=z[0];
         r2=z[2]+i*z[3];
@@ -1850,7 +1863,7 @@ namespace o2scl {
         r3=z[2]+i*z[3];
       }
       
-      return success;
+      return 1;
     }
     
     /** \brief Solve a quartic polynomial with real coefficients
@@ -1870,13 +1883,19 @@ namespace o2scl {
       cx_t i(0.0,1.0);
       
       gsl_poly_complex_solve(a,5,w4,z);
+
+      int nreal=0;
+      if (z[1]==0) nreal++;
+      if (z[3]==0) nreal++;
+      if (z[5]==0) nreal++;
+      if (z[7]==0) nreal++;
       
       r1=z[0]+i*z[1];
       r2=z[2]+i*z[3];
       r3=z[4]+i*z[5];
       r4=z[6]+i*z[7];
       
-      return success;
+      return nreal;
     }
 
     /// Return a string denoting the type ("poly_real_coeff_gsl")
@@ -2053,13 +2072,15 @@ namespace o2scl {
         cx_t p=(three*a3*c3-b3*b3)/three/a3/a3;
         cx_t q=(two*b3*b3*b3-nine*a3*b3*c3+twoseven*a3*a3*d3)/
           twoseven/a3/a3/a3;
+
+        //std::cout << "p,q: " << p << " " << q << std::endl;
         
         cx_t exp_i_pi_three=exp(mo*pi*two/three);
 
         // Roots of the depressed cubic
         cx_t r1, r2, r3;
-        
-        if (p.real()==0.0 && p.imag()==0.0) {
+
+        if (abs(p)<1.0e-15 || (p.real()==0.0 && p.imag()==0.0)) {
           
           // If p is zero, then the roots of the depressed
           // cubic are trivial
@@ -2102,11 +2123,14 @@ namespace o2scl {
 
       }
 
-      /*
-        cx_t check1=a3*x1*x1*x1+b3*x1*x1+c3*x1+d3;
-        cx_t check2=a3*x2*x2*x2+b3*x2*x2+c3*x2+d3;
-        cx_t check3=a3*x3*x3*x3+b3*x3*x3+c3*x3+d3;
-      */
+      cx_t check1=a3*x1*x1*x1+b3*x1*x1+c3*x1+d3;
+      cx_t check2=a3*x2*x2*x2+b3*x2*x2+c3*x2+d3;
+      cx_t check3=a3*x3*x3*x3+b3*x3*x3+c3*x3+d3;
+      if (abs(check1)>1.0e-4) {
+        std::cout << "ccheck: " << check1 << " " << check2 << " "
+                  << check3 << std::endl;
+        exit(-1);
+      }
       
       return success;
     }      
@@ -2271,13 +2295,39 @@ namespace o2scl {
       fp_t sixfour=64.0;
       fp_t twofivesix=256.0;
       fp_t three=3.0;
-      
+
+      // Construct the depressed quartic
       p4=(eight*a4*c4-three*b4*b4)/eight/a4/a4;
       q4=(b4*b4*b4-four*a4*b4*c4+eight*a4*a4*d4)/eight/(a4*a4*a4);
       r4=(sixteen*a4*b4*b4*c4+twofivesix*a4*a4*a4*e4-three*b4*b4*b4*b4-
           sixfour*a4*a4*b4*d4)/twofivesix/(a4*a4*a4*a4);
-      //std::cout << "p4,q4,r4: " << p4 << " " << q4 << " "
-      //<< r4 << std::endl;
+
+      // If q4 is zero, then the depressed quartic
+      // is a biquadratic
+      if (q4.real()==0.0 && q4.imag()==0.0) {
+        
+        cx_t z1, z2;
+        quad_obj.solve_c(1.0,p4,r4,z1,z2);
+        
+        x1=sqrt(z1)-b4/four/a4;
+        x2=-sqrt(z1)-b4/four/a4;
+        x3=sqrt(z2)-b4/four/a4;
+        x4=-sqrt(z2)-b4/four/a4;
+        
+        cx_t check1=a4*x1*x1*x1*x1+b4*x1*x1*x1+c4*x1*x1+d4*x1+e4;
+        cx_t check2=a4*x2*x2*x2*x2+b4*x2*x2*x2+c4*x2*x2+d4*x2+e4;
+        cx_t check3=a4*x3*x3*x3*x3+b4*x3*x3*x3+c4*x3*x3+d4*x3+e4;
+        cx_t check4=a4*x4*x4*x4*x4+b4*x4*x4*x4+c4*x4*x4+d4*x4+e4;
+        if (abs(check1)>1.0e-4 || abs(check2)>1.0e-4 ||
+            abs(check3)>1.0e-4 || abs(check4)>1.0e-4) {
+          std::cout << "Yere." << std::endl;
+          std::cout << check1 << " " << check2 << " "
+                    << check3 << " " << check4 << std::endl;
+          exit(-1);
+        }
+        
+        return 0;
+      }
       
       if (p4.real()==0.0 && p4.imag()==0.0 &&
           q4.real()==0.0 && q4.imag()==0.0 &&
@@ -2301,12 +2351,14 @@ namespace o2scl {
       
       cub_obj.solve_c(a3,b3,c3,d3,u4,u41,u42);
 
-      //cx_t check1=a3*u4*u4*u4+b3*u4*u4+c3*u4+d3;
-      //std::cout << "check1: " << check1 << std::endl;
-      //cx_t check2=a3*u41*u41*u41+b3*u41*u41+c3*u41+d3;
-      //std::cout << "check2: " << check2 << std::endl;
-      //cx_t check3=a3*u42*u42*u42+b3*u42*u42+c3*u42+d3;
-      //std::cout << "check3: " << check3 << std::endl;
+      /*
+      cx_t check5=a3*u4*u4*u4+b3*u4*u4+c3*u4+d3;
+      cx_t check6=a3*u41*u41*u41+b3*u41*u41+c3*u41+d3;
+      cx_t check7=a3*u42*u42*u42+b3*u42*u42+c3*u42+d3;
+      std::cout << "check5, check6, check7: "
+                << check5 << " " << check6 << " " << check7
+                << std::endl;
+      */
       
       //---------------------------------------
       
@@ -2345,6 +2397,37 @@ namespace o2scl {
       //std::cout << "b2a,b2b,c2a,c2b: "
       //<< b2a << " " << b2b << " " << c2a << " "
       //<< c2b << std::endl;
+
+      cx_t check1=a4*x1*x1*x1*x1+b4*x1*x1*x1+c4*x1*x1+d4*x1+e4;
+      cx_t check2=a4*x2*x2*x2*x2+b4*x2*x2*x2+c4*x2*x2+d4*x2+e4;
+      cx_t check3=a4*x3*x3*x3*x3+b4*x3*x3*x3+c4*x3*x3+d4*x3+e4;
+      cx_t check4=a4*x4*x4*x4*x4+b4*x4*x4*x4+c4*x4*x4+d4*x4+e4;
+      if (abs(check1)>1.0e-4 || abs(check2)>1.0e-4 ||
+          abs(check3)>1.0e-4 || abs(check4)>1.0e-4) {
+        std::cout << "Xere." << std::endl;
+        std::cout << "a4,b4,c4,d4,e4: " << a4 << " " << b4 << " "
+                  << c4 << " " << d4 << " " << e4 << std::endl;
+        std::cout << "a3,b3,c3,d3: " << a3 << " " << b3 << " "
+                  << c3 << " " << d3 << std::endl;
+        std::cout << "p4,q4,r4: " << p4 << " " << q4 << " "
+                  << r4 << std::endl;
+        std::cout << "u4,u41,u42: " << u4 << " "
+                  << u41 << " " << u42 << std::endl;
+        std::cout << "b2a,b2b,c2a,c2b: "
+                  << b2a << " " << b2b << " " << c2a << " "
+                  << c2b << std::endl;
+        std::cout << "x1,x2,x3,x4: " << x1 << " " << x2 << " "
+                  << x3 << " " << x4 << std::endl;
+        std::cout << "check1,2,3,4: " << check1 << " " << check2 << " "
+                  << check3 << " " << check4 << std::endl;
+        exit(-1);
+      }
+      //cx_t check1=a3*u4*u4*u4+b3*u4*u4+c3*u4+d3;
+      //std::cout << "check1: " << check1 << std::endl;
+      //cx_t check2=a3*u41*u41*u41+b3*u41*u41+c3*u41+d3;
+      //std::cout << "check2: " << check2 << std::endl;
+      //cx_t check3=a3*u42*u42*u42+b3*u42*u42+c3*u42+d3;
+      //std::cout << "check3: " << check3 << std::endl;
       
       if (!o2isfinite(x1.real()) || !o2isfinite(x1.imag()) ||
           !o2isfinite(x2.real()) || !o2isfinite(x2.imag()) ||
@@ -2376,6 +2459,9 @@ namespace o2scl {
 
     /// The object to solve for the associated cubic
     cubic_complex_std<fp_t,cx_t> cub_obj;
+    
+    /// The object to solve for the associated cubic
+    quadratic_complex_std<fp_t,cx_t> quad_obj;
     
 #endif
 
