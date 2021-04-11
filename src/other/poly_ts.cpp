@@ -321,10 +321,41 @@ void test_quartic_real(quartic_real<fp_t> *po,
 
   cout.width(wid);
   cout << str.c_str();
-  tst.test_abs(s1,0.0,e1,"quartic_real s1");
-  tst.test_abs(s2,0.0,e2,"quartic_real s2");
-  tst.test_abs(m1,0.0,e3,"quartic_real m1");
-  tst.test_abs(m2,0.0,e4,"quartic_real m2");
+  tst.test_abs<fp_t>(s1,0.0,e1,"quartic_real s1");
+  tst.test_abs<fp_t>(s2,0.0,e2,"quartic_real s2");
+  tst.test_abs<fp_t>(m1,0.0,e3,"quartic_real m1");
+  tst.test_abs<fp_t>(m2,0.0,e4,"quartic_real m2");
+  cout << ": " << s1 << " " << s2 << " " << m1 << " " 
+       << m2 << " " << time << endl;
+  return;
+}
+
+template<class fp_t=double>
+void test_quartic_real_boost(quartic_real<fp_t> *po,
+                             string str, fp_t alpha, 
+                             fp_t e1, fp_t e2, fp_t e3, fp_t e4) {
+
+  fp_t s1=0,s2=0,m1=0,m2=0;
+
+  clock_t lt1=clock();
+  
+  size_t count=0;
+  
+  count=po->test_real_roots(alpha,s1,m1);
+  
+  clock_t lt2=clock();
+  
+  s1/=count;
+  s2/=count;
+  
+  double time=((double)(lt2-lt1))/CLOCKS_PER_SEC;
+
+  cout.width(wid);
+  cout << str.c_str();
+  tst.test_abs_boost<fp_t>(s1,0.0,e1,"quartic_real s1");
+  tst.test_abs_boost<fp_t>(s2,0.0,e2,"quartic_real s2");
+  tst.test_abs_boost<fp_t>(m1,0.0,e3,"quartic_real m1");
+  tst.test_abs_boost<fp_t>(m2,0.0,e4,"quartic_real m2");
   cout << ": " << s1 << " " << s2 << " " << m1 << " " 
        << m2 << " " << time << endl;
   return;
@@ -558,8 +589,6 @@ int main(void) {
   
   // Quartic solvers
   quartic_real_coeff_cern<> q1;
-  quartic_real_gsl q2;
-  quartic_real_gsl2 q3;
   quartic_real_std<> q4;
   quartic_complex_std<> q5;
 
@@ -599,6 +628,7 @@ int main(void) {
   // give an overall scale for the timings
   size_t ne=10000;
 
+  /*
   cout << "Quadratics with real coefficients and complex roots:" << endl;
   cout << "type                   Avg 1      Avg 2      Max 1"
        << "      Max 2      time" << endl;
@@ -752,6 +782,7 @@ int main(void) {
      1.0e1,1.0e1,1.0e1,1.0e1);
 #endif
   cout << endl;
+  */
   
   cout << "Quartics with real coefficients and real roots -\n";
   cout << " leading coefficient 1:" << endl;
@@ -759,16 +790,20 @@ int main(void) {
        << "      Max 2      time" << endl;
   test_quartic_real(&q1,"quartic_rc_cern",1.0,
 		    5.0e-12,1.0,2.0e-8,1.0);
-  test_quartic_real(&q2,"quartic_real_gsl",1.0,
-		    5.0e-2,1.0,1.0e2,1.0);
-  test_quartic_real(&q3,"quartic_real_gsl2",1.0,
-		    1.0e-2,1.0,1.0e2,1.0);
-  test_quartic_real(&q4,"quartic_real_std",1.0,
+  test_quartic_real(&q4,"quartic_r_std",1.0,
 		    2.0e5,1.0,3.0e7,1.0);
   test_quartic_real(&q5,"quartic_c_std",1.0,
 		    1.0e-1,1.0,1.0e2,1.0);
   test_quartic_real(&p3,"poly_rc_gsl",1.0,
 		    1.0e-14,1.0,1.0e-10,1.0);
+#ifdef O2SCL_LD_TYPES
+  test_quartic_real<long double>
+    (&q1_ld,"quartic_rc_cern_ld",1.0,
+     5.0e-12,1.0,2.0e-8,1.0);
+  test_quartic_real_boost<cpp_bin_float_50>
+    (&q1_cdf50,"quartic_rc_cern_50",1.0,
+     5.0e-12,1.0,2.0e-8,1.0);
+#endif
   cout << endl;
   
   cout << "Quartics with real coefficients and real roots -\n"
@@ -778,16 +813,20 @@ int main(void) {
        << "      Max 2      time" << endl;
   test_quartic_real(&q1,"quartic_rc_cern",1.0e-5,
 		    1.0e-2,1.0,1.0e2,1.0);
-  test_quartic_real(&q2,"quartic_real_gsl",1.0e-5,
-		    1.0e-3,1.0,1.0e1,1.0);
-  test_quartic_real(&q3,"quartic_real_gsl2",1.0e-5,
-		    1.0e-4,1.0,1.0e0,1.0);
-  test_quartic_real(&q4,"quartic_real_std",3.0e-4,
+  test_quartic_real(&q4,"quartic_r_std",1.0e-5,
 		    2.0e5,1.0,3.0e7,1.0);
   test_quartic_real(&q5,"quartic_c_std",1.0e-5,
 		    1.0e-1,1.0,5.0,1.0);
   test_quartic_real(&p3,"poly_rc_gsl",1.0e-5,
 		    1.0e-14,1.0,1.0e-10,1.0);
+#ifdef O2SCL_LD_TYPES
+  test_quartic_real<long double>
+    (&q1_ld,"quartic_rc_cern_ld",1.0e-5,
+     5.0e-12,1.0,2.0e-8,1.0);
+  test_quartic_real_boost<cpp_bin_float_50>
+    (&q1_cdf50,"quartic_rc_cern_50",1.0e-5,
+     5.0e-12,1.0,2.0e-6,1.0);
+#endif
   cout << endl;
 
   cout << "Quartics with real coefficients and complex roots:" << endl;

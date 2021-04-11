@@ -1518,21 +1518,20 @@ namespace o2scl {
         \future Make v[] zero-indexed as well.
     */
     virtual int rrteq4(fp_t a, fp_t b, fp_t c, fp_t d, 
-		       cx_t z[], fp_t &dc, 
-		       int &mt) {
+		       cx_t z[], fp_t &dc, int &mt) {
       
       cx_t i(0.0,1.0), z0[5];
       cx_t w1(0.0,0.0), w2(0.0,0.0), w3;
 
-      fp_t q2=1.0;
-      q2/=2.0;
-      fp_t r4=q2/2.0;
+      fp_t q2=1;
+      q2/=2;
+      fp_t r4=q2/2;
       fp_t q4=r4;
-      fp_t q8=r4/2.0;
-      fp_t r12=r4/3.0;
-      fp_t q1=q8*3.0;
-      fp_t q3=q1/2.0;
-      fp_t eight=8.0;
+      fp_t q8=r4/2;
+      fp_t r12=r4/3;
+      fp_t q1=q8*3;
+      fp_t q3=q1/2;
+      fp_t eight=8;
         
       fp_t u[3], v[4], v1, v2;
       int j, k1=0, k2=0;
@@ -1960,81 +1959,6 @@ namespace o2scl {
     /// Return a string denoting the type ("cubic_real_coeff_gsl2")
     const char *type() { return "cubic_real_coeff_gsl2"; }
 
-  };
-
-  /** \brief Solve a quartic with real coefficients and real roots (GSL)
-
-      This class internally uses the GSL functions to solve the
-      resolvent cubic and associated quadratics, while
-      \ref quartic_real_gsl2 contains explicit code to solve
-      them instead.
-
-      \future Optimize value of \c cube_root_tol and compare
-      more clearly to \ref o2scl::quartic_real_gsl2
-  */
-  class quartic_real_gsl : public quartic_real<double> {
-    
-  public:
-    
-    quartic_real_gsl() {
-      cube_root_tol=1.0e-7;
-    }
-
-    virtual ~quartic_real_gsl() {}
-
-    /** \brief A tolerance for determining the proper cube root 
-	(default \f$ 10^{-4} \f$ )
-    */
-    double cube_root_tol;
-
-    /** \brief Solves the polynomial \f$ a_4 x^4 + b_4 x^3 + c_4 x^2 +
-	d_4 x + e_4= 0 \f$ giving the four real solutions \f$ x=x_1
-	\f$ , \f$ x=x_2 \f$ , \f$ x=x_3 \f$ , and \f$ x=x_4 \f$ .
-    */
-    virtual int solve_r(const double a4, const double b4, const double c4, 
-			const double d4, const double e4, double &x1, 
-			double &x2, double &x3, double &x4);
-
-    /// Return a string denoting the type ("quartic_real_gsl")
-    const char *type() { return "quartic_real_gsl"; }
-
-  };
-
-  /** \brief Solve a quartic with real coefficients and real roots (GSL)
-
-      This class directly solves 
-      resolvent cubic and associated quadratics without using 
-      the GSL functions (as done in \ref quartic_real_gsl).
-      
-      \future Optimize value of \c cube_root_tol and compare
-      more clearly to \ref o2scl::quartic_real_gsl
-  */
-  class quartic_real_gsl2 : public quartic_real<double> {
-
-  public:
-
-    quartic_real_gsl2() {
-      cube_root_tol=1.0e-7;
-    }
-
-    virtual ~quartic_real_gsl2() {}
-
-    /** \brief A tolerance for determining the proper cube root 
-	(default \f$ 10^{-7} \f$ )
-    */
-    double cube_root_tol;
-
-    /** \brief Solves the polynomial \f$ a_4 x^4 + b_4 x^3 + c_4 x^2 +
-	d_4 x + e_4= 0 \f$ giving the four real solutions \f$ x=x_1
-	\f$ , \f$ x=x_2 \f$ , \f$ x=x_3 \f$ , and \f$ x=x_4 \f$ .
-    */
-    virtual int solve_r(const double a4, const double b4, const double c4, 
-			const double d4, const double e4, double &x1, 
-			double &x2, 
-			double &x3, double &x4);
-
-    /// Return a string denoting the type ("quartic_real_gsl2")
-    const char *type() { return "quartic_real_gsl2"; }
   };
 
   /** \brief Solve a general polynomial with real coefficients (GSL)
