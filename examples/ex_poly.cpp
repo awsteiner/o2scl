@@ -49,18 +49,18 @@ int main(void) {
   typedef boost::numeric::ublas::vector<double> ubvector;
 
   // Quadratic solver
-  quadratic_real_coeff_gsl<> quad;
+  quadratic_real_coeff_gsl2<> quad;
   // Cubic solver
   cubic_real_coeff_cern<> cubic;
   // Quartic solver
   quartic_real_coeff_cern<> quart;
   // Generic polynomial solver
-  poly_real_coeff_gsl gen;
+  poly_real_coeff_gsl<> gen;
 
   // Storage for the roots
   ubvector v(5);
   double d;
-  std::complex<double> ca[5];
+  std::vector<std::complex<double> > ca(5);
 
   // The second order polynomial
   cout << "Second order roots: " << endl;
@@ -110,7 +110,7 @@ int main(void) {
 
   // The fifth order polynomial
   cout << "Fifth order roots: " << endl;
-  double co[6]={16.0,0.0,-20.0,0.0,5.0,0.0};
+  vector<double> co={16.0,0.0,-20.0,0.0,5.0,0.0};
   gen.solve_rc_arr(5,co,ca);
 
   // Sort the roots and compare with the exact results

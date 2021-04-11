@@ -175,89 +175,24 @@ void test_quadratic_complex_boost(size_t ne, quadratic_complex<fp_t,cx_t> *po,
 }
 
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
-void test_cubic_real_coeff_base(cubic_real_coeff<fp_t,cx_t> *po,
-                                string str, 
-                                fp_t alpha, fp_t &s1, fp_t &s2,
-                                fp_t &m1, fp_t &m2, clock_t &lt1,
-                                clock_t &lt2) {
-  
-  cx_t cr2,cr3,czo2,czo3,cap,cbp,ccp,cdp;
-  fp_t ca,cb,cc,cd,cr1,czo1;
-  cx_t i(0.0,1.0);
-  size_t j;
-  fp_t q1,q2;
-  s1=0.0;
-  s2=0.0;
-  m1=0.0;
-  m2=0.0;
-  lt1=clock();
-
-  size_t count=0;
-
-  gen_test_number ga, gb, gc, gd;
-  for(int j1=0;j1<16;j1++) {
-    ca=ga.gen()*alpha;
-    gb.reset();
-    for(int j2=0;j2<16;j2++) {
-      cb=gb.gen();
-      gc.reset();
-      for(int j3=0;j3<16;j3++) {
-	cc=gc.gen()*alpha;
-        gd.reset();
-	for(int j4=0;j4<16;j4++) {
-	  cd=gd.gen();
-	  
-	  if (fabs(ca)>0.0) {
-	    po->solve_rc(ca,cb,cc,cd,cr1,cr2,cr3);
-	    
-	    cbp=-(cr1+cr2+cr3)*ca;
-	    ccp=(cr1*cr2+cr1*cr3+cr2*cr3)*ca;
-	    cdp=-(cr1*cr2*cr3)*ca;
-	    
-	    czo1=((ca*cr1+cb)*cr1+cc)*cr1+cd;
-	    czo2=((ca*cr2+cb)*cr2+cc)*cr2+cd;
-	    czo3=((ca*cr3+cb)*cr3+cc)*cr3+cd;
-	    q1=sqrt(fabs(cb-cbp.real())*fabs(cb-cbp.real())+
-		    fabs(cc-ccp.real())*fabs(cc-ccp.real())+
-		    fabs(cd-cdp.real())*fabs(cd-cdp.real()));
-	    q2=sqrt(fabs(czo1)*fabs(czo1)+abs(czo2)*abs(czo2)+
-		    abs(czo3)*abs(czo3));
-            
-	    s1+=q1;
-	    if (q1>m1) m1=q1;
-	    s2+=q2;
-	    if (q2>m2) m2=q2;
-
-            if (false && (q1>1.0e-2 || q2>1.0e-2)) {
-              cout << "Problem in test_cubic_real_coeff_base." << endl;
-              cout << ca << " " << cb << " " << cc << " " << cd << endl;
-              cout << cr1 << " " << cr2 << " " << cr3 << endl;
-              exit(-1);
-            }
-
-            count++;
-	  }
-	}
-      }
-    }
-  }
-  lt2=clock();
-  s1/=((fp_t)count);
-  s2/=((fp_t)count);
-
-  return;
-}
-
-template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_cubic_real_coeff(cubic_real_coeff<fp_t,cx_t> *po,
-                           string str, 
-			   fp_t alpha, fp_t e1, fp_t e2, fp_t e3, 
-			   fp_t e4) {
-
+                           string str, fp_t alpha, fp_t e1, fp_t e2,
+                           fp_t e3, fp_t e4) {
+			   
   fp_t s1=0,s2=0,m1=0,m2=0;
-  clock_t lt1, lt2;
 
-  test_cubic_real_coeff_base(po,str,alpha,s1,s2,m1,m2,lt1,lt2);
+  clock_t lt1=clock();
+  
+  size_t count=0;
+  
+  po->test_real_coeffs(alpha,s1,s2,m1,m2);
+  
+  clock_t lt2=clock();
+  
+  s1/=count;
+  s2/=count;
+
+  double time=((double)(lt2-lt1))/CLOCKS_PER_SEC;
   
   cout.width(wid);
   cout << str.c_str();
@@ -266,7 +201,7 @@ void test_cubic_real_coeff(cubic_real_coeff<fp_t,cx_t> *po,
   tst.test_abs<fp_t>(m1,0.0,e3,"cubic_real_coeff m1");
   tst.test_abs<fp_t>(m2,0.0,e4,"cubic_real_coeff m2");
   cout << ": " << s1 << " " << s2 << " " << m1 << " " 
-       << m2 << " " << ((double)(lt2-lt1))/CLOCKS_PER_SEC << endl;
+       << m2 << " " << time << endl;
   return;
 }
 
@@ -277,9 +212,19 @@ void test_cubic_real_coeff_boost(cubic_real_coeff<fp_t,cx_t> *po,
                                  fp_t e4) {
 
   fp_t s1=0,s2=0,m1=0,m2=0;
-  clock_t lt1, lt2;
 
-  test_cubic_real_coeff_base(po,str,alpha,s1,s2,m1,m2,lt1,lt2);
+  clock_t lt1=clock();
+  
+  size_t count=0;
+  
+  po->test_real_coeffs(alpha,s1,s2,m1,m2);
+  
+  clock_t lt2=clock();
+  
+  s1/=count;
+  s2/=count;
+
+  double time=((double)(lt2-lt1))/CLOCKS_PER_SEC;
   
   cout.width(wid);
   cout << str.c_str();
@@ -288,94 +233,29 @@ void test_cubic_real_coeff_boost(cubic_real_coeff<fp_t,cx_t> *po,
   tst.test_abs_boost<fp_t>(m1,0.0,e3,"cubic_real_coeff m1");
   tst.test_abs_boost<fp_t>(m2,0.0,e4,"cubic_real_coeff m2");
   cout << ": " << s1 << " " << s2 << " " << m1 << " " 
-       << m2 << " " << ((double)(lt2-lt1))/CLOCKS_PER_SEC << endl;
+       << m2 << " " << time << endl;
   return;
-}
-
-template<class fp_t=double, class cx_t=std::complex<fp_t> >
-void test_cubic_complex_base(size_t ne, cubic_complex<fp_t,cx_t> *po,
-                             string str, fp_t &s1, fp_t &s2,
-                             fp_t &m1, fp_t &m2, clock_t &lt1,
-                             clock_t &lt2) {
-  
-  cx_t ca,cb,cc,cd,cr1,cr2,cr3,czo1,czo2,czo3,cap,cbp,ccp,cdp;
-  cx_t i(0.0,1.0);
-  size_t j;
-  fp_t q1,q2;
-  s1=0.0;
-  s2=0.0;
-  m1=0.0;
-  m2=0.0;
-  lt1=clock();
-  gen_test_number ga, gb, gc, gd;
-  fp_t rca, rcb, rcc, rcd;
-  for(int it=0;it<2;it++) {
-    for(int j1=0;j1<9;j1++) {
-      rca=ga.gen();
-      gb.reset();
-      for(int j2=0;j2<9;j2++) {
-	rcb=gb.gen();
-        gc.reset();
-	for(int j3=0;j3<9;j3++) {
-	  rcc=gc.gen();
-          gd.reset();
-	  for(int j4=0;j4<9;j4++) {
-	    rcd=gd.gen();
-
-	    if (it==0) {
-	      ca=rca+i;
-	      cb=rcb+i;
-	      cc=rcc+i;
-	      cd=rcd+i;
-	    } else {
-              fp_t one=1.0;
-	      ca=one+i*rca;
-	      cb=one+i*rcb;
-	      cc=one+i*rcc;
-	      cd=one+i*rcd;
-	    }
-
-            if (fabs(ca.real())>0.0 || fabs(ca.imag())>0.0) {
-              po->solve_c(ca,cb,cc,cd,cr1,cr2,cr3);
-              
-              cbp=-(cr1+cr2+cr3)*ca;
-              ccp=(cr1*cr2+cr1*cr3+cr2*cr3)*ca;
-              cdp=-(cr1*cr2*cr3)*ca;
-              
-              czo1=((ca*cr1+cb)*cr1+cc)*cr1+cd;
-              czo2=((ca*cr2+cb)*cr2+cc)*cr2+cd;
-              czo3=((ca*cr3+cb)*cr3+cc)*cr3+cd;
-              q1=sqrt(abs(cb-cbp)*abs(cb-cbp)+
-                      abs(cc-ccp)*abs(cc-ccp)+
-                      abs(cd-cdp)*abs(cd-cdp));
-              q2=sqrt(abs(czo1)*abs(czo1)+abs(czo2)*abs(czo2)+
-                      abs(czo3)*abs(czo3));
-
-              s1+=q1;
-              if (q1>m1) m1=q1;
-              s2+=q2;
-              if (q2>m2) m2=q2;
-
-            }
-
-	  }
-	}
-      }
-    }
-  }
-  lt2=clock();
-  s1/=((fp_t)ne);
-  s2/=((fp_t)ne);
 }
 
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_cubic_complex(size_t ne, cubic_complex<fp_t,cx_t> *po,
                         string str, fp_t e1, 
 			fp_t e2, fp_t e3, fp_t e4) {
+
   fp_t s1=0,s2=0,m1=0,m2=0;
-  clock_t lt1, lt2;
+
+  clock_t lt1=clock();
   
-  test_cubic_complex_base(ne,po,str,s1,s2,m1,m2,lt1,lt2);
+  size_t count=0;
+  
+  po->test_complex_coeffs(s1,s2,m1,m2);
+  
+  clock_t lt2=clock();
+  
+  s1/=count;
+  s2/=count;
+
+  double time=((double)(lt2-lt1))/CLOCKS_PER_SEC;
   
   cout.width(wid);
   cout << str.c_str();
@@ -384,7 +264,7 @@ void test_cubic_complex(size_t ne, cubic_complex<fp_t,cx_t> *po,
   tst.test_abs<fp_t>(m1,0.0,e3,"cubic_complex m1");
   tst.test_abs<fp_t>(m2,0.0,e4,"cubic_complex m2");
   cout << ": " << s1 << " " << s2 << " " << m1 << " " 
-       << m2 << " " << ((double)(lt2-lt1))/CLOCKS_PER_SEC << endl;
+       << m2 << " " << time << endl;
   return;
 }
 
@@ -392,10 +272,21 @@ template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_cubic_complex_boost(size_t ne, cubic_complex<fp_t,cx_t> *po,
                               string str, fp_t e1, 
                               fp_t e2, fp_t e3, fp_t e4) {
+
   fp_t s1=0,s2=0,m1=0,m2=0;
-  clock_t lt1, lt2;
+
+  clock_t lt1=clock();
   
-  test_cubic_complex_base(ne,po,str,s1,s2,m1,m2,lt1,lt2);
+  size_t count=0;
+  
+  po->test_complex_coeffs(s1,s2,m1,m2);
+  
+  clock_t lt2=clock();
+  
+  s1/=count;
+  s2/=count;
+
+  double time=((double)(lt2-lt1))/CLOCKS_PER_SEC;
   
   cout.width(wid);
   cout << str.c_str();
@@ -404,13 +295,14 @@ void test_cubic_complex_boost(size_t ne, cubic_complex<fp_t,cx_t> *po,
   tst.test_abs_boost<fp_t>(m1,0.0,e3,"cubic_complex m1");
   tst.test_abs_boost<fp_t>(m2,0.0,e4,"cubic_complex m2");
   cout << ": " << s1 << " " << s2 << " " << m1 << " " 
-       << m2 << " " << ((double)(lt2-lt1))/CLOCKS_PER_SEC << endl;
+       << m2 << " " << time << endl;
   return;
 }
 
 void test_quartic_real(size_t ne, quartic_real<double> *po,
                        string str, double alpha, 
 		       double e1, double e2, double e3, double e4) {
+  
   double s1,s2,m1,m2;
   clock_t lt1, lt2;
   double cr1,cr2,cr3,cr4;

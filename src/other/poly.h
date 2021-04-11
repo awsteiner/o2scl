@@ -556,6 +556,62 @@ namespace o2scl {
 			 const fp_t d3, fp_t &x1, cx_t &x2,
 			 cx_t &x3)=0;
 
+    /** \brief Test \f$ n^4 \f$ cubics with real coefficients
+     */
+    size_t test_real_coeffs(fp_t alpha, fp_t &s1, fp_t &s2,
+                            fp_t &m1, fp_t &m2, size_t n=16) {
+      
+      size_t count=0;
+      
+      gen_test_number ga, gb, gc, gd;
+      
+      for(size_t j1=0;j1<n;j1++) {
+        fp_t ca=ga.gen()*alpha;
+        gb.reset();
+        for(size_t j2=0;j2<n;j2++) {
+          fp_t cb=gb.gen();
+          gc.reset();
+          for(size_t j3=0;j3<n;j3++) {
+            fp_t cc=gc.gen()*alpha;
+            gd.reset();
+            for(size_t j4=0;j4<n;j4++) {
+              fp_t cd=gd.gen();
+              
+              if (fabs(ca)>0.0) {
+
+                fp_t cr1;
+                cx_t cr2, cr3;
+                solve_rc(ca,cb,cc,cd,cr1,cr2,cr3);
+                
+                cx_t cbp=-(cr1+cr2+cr3)*ca;
+                cx_t ccp=(cr1*cr2+cr1*cr3+cr2*cr3)*ca;
+                cx_t cdp=-(cr1*cr2*cr3)*ca;
+                
+                fp_t czo1=((ca*cr1+cb)*cr1+cc)*cr1+cd;
+                cx_t czo2=((ca*cr2+cb)*cr2+cc)*cr2+cd;
+                cx_t czo3=((ca*cr3+cb)*cr3+cc)*cr3+cd;
+                
+                fp_t q1=sqrt(fabs(cb-cbp.real())*fabs(cb-cbp.real())+
+                        fabs(cc-ccp.real())*fabs(cc-ccp.real())+
+                        fabs(cd-cdp.real())*fabs(cd-cdp.real()));
+                fp_t q2=sqrt(fabs(czo1)*fabs(czo1)+abs(czo2)*abs(czo2)+
+                             abs(czo3)*abs(czo3));
+                
+                s1+=q1;
+                if (q1>m1) m1=q1;
+                s2+=q2;
+                if (q2>m2) m2=q2;
+                
+                count++;
+              }
+            }
+          }
+        }
+      }
+      
+      return count;
+    }
+
     /// Return a string denoting the type ("cubic_real_coeff")
     const char *type() { return "cubic_real_coeff"; }
   };
@@ -660,6 +716,80 @@ namespace o2scl {
 			const cx_t c3, const cx_t d3, 
 			cx_t &x1, cx_t &x2, cx_t &x3)=0;
 
+    /** \brief Test \f$ 2 n^4 \f$ cubics with complex coefficients
+     */
+    size_t test_complex_coeffs(fp_t &s1, fp_t &s2,
+                               fp_t &m1, fp_t &m2, size_t n=9) {
+  
+      cx_t i(0.0,1.0);
+      
+      gen_test_number ga, gb, gc, gd;
+      fp_t rca, rcb, rcc, rcd;
+
+      size_t count=0;
+      
+      for(size_t it=0;it<2;it++) {
+        for(size_t j1=0;j1<n;j1++) {
+          rca=ga.gen();
+          gb.reset();
+          for(size_t j2=0;j2<n;j2++) {
+            rcb=gb.gen();
+            gc.reset();
+            for(size_t j3=0;j3<n;j3++) {
+              rcc=gc.gen();
+              gd.reset();
+              for(size_t j4=0;j4<n;j4++) {
+                rcd=gd.gen();
+
+                cx_t ca, cb, cc, cd;
+                if (it==0) {
+                  ca=rca+i;
+                  cb=rcb+i;
+                  cc=rcc+i;
+                  cd=rcd+i;
+                } else {
+                  fp_t one=1.0;
+                  ca=one+i*rca;
+                  cb=one+i*rcb;
+                  cc=one+i*rcc;
+                  cd=one+i*rcd;
+                }
+                
+                if (fabs(ca.real())>0.0 || fabs(ca.imag())>0.0) {
+
+                  cx_t cr1, cr2, cr3;
+                  solve_c(ca,cb,cc,cd,cr1,cr2,cr3);
+                  
+                  cx_t cbp=-(cr1+cr2+cr3)*ca;
+                  cx_t ccp=(cr1*cr2+cr1*cr3+cr2*cr3)*ca;
+                  cx_t cdp=-(cr1*cr2*cr3)*ca;
+                  
+                  cx_t czo1=((ca*cr1+cb)*cr1+cc)*cr1+cd;
+                  cx_t czo2=((ca*cr2+cb)*cr2+cc)*cr2+cd;
+                  cx_t czo3=((ca*cr3+cb)*cr3+cc)*cr3+cd;
+                  
+                  fp_t q1=sqrt(abs(cb-cbp)*abs(cb-cbp)+
+                               abs(cc-ccp)*abs(cc-ccp)+
+                               abs(cd-cdp)*abs(cd-cdp));
+                  fp_t q2=sqrt(abs(czo1)*abs(czo1)+abs(czo2)*abs(czo2)+
+                               abs(czo3)*abs(czo3));
+                  
+                  s1+=q1;
+                  if (q1>m1) m1=q1;
+                  s2+=q2;
+                  if (q2>m2) m2=q2;
+
+                  count++;
+                }
+                
+              }
+            }
+          }
+        }
+      }
+      return count;
+    }
+    
     /// Return a string denoting the type ("cubic_complex")
     const char *type() { return "cubic_complex"; }
   };
