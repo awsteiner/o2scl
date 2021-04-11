@@ -845,6 +845,54 @@ namespace o2scl {
         4.0*b3*d3-4.0*b2*c3*e+b2*c2*d2;
     }
     
+    /** \brief Test \f$ n^4 \f$ quartics with real roots
+     */
+    size_t test_real_roots(fp_t alpha, fp_t &m1, fp_t &s1, size_t n=9) {
+      
+      size_t count=0;
+      
+      gen_test_number ga, gb, gc, gd;
+      
+      for(size_t j1=0;j1<n;j1++) {
+        fp_t r1=ga.gen();
+        gb.reset();
+        for(size_t j2=0;j2<n;j2++) {
+          fp_t r2=-r1+alpha*gb.gen();
+          gc.reset();
+          for(size_t j3=0;j3<n;j3++) {
+            fp_t r3=gc.gen();
+            gd.reset();
+            for(size_t j4=0;j4<n;j4++) {
+              fp_t r4=-r3+alpha*gd.gen();
+              
+              fp_t ca=1.0;
+              fp_t cb=-(r1+r2+r3+r4);
+              fp_t cc=(r1*r2+r1*r3+r2*r3+r1*r4+r2*r4+r3*r4);
+              fp_t cd=-(r1*r2*r3+r1*r2*r4+r1*r3*r4+r2*r3*r4);
+              fp_t ce=r1*r2*r3*r4;
+
+              fp_t cr1, cr2, cr3, cr4;
+              solve_r(ca,cb,cc,cd,ce,cr1,cr2,cr3,cr4);
+              
+              fp_t zo1=(((ca*cr1+cb)*cr1+cc)*cr1+cd)*cr1+ce;
+              fp_t zo2=(((ca*cr2+cb)*cr2+cc)*cr2+cd)*cr2+ce;
+              fp_t zo3=(((ca*cr3+cb)*cr3+cc)*cr3+cd)*cr3+ce;
+              fp_t zo4=(((ca*cr4+cb)*cr4+cc)*cr4+cd)*cr4+ce;
+              
+              fp_t q1=sqrt(zo1*zo1+zo2*zo2+zo3*zo3+zo4*zo4);
+              
+              s1+=q1;
+              if (q1>m1) m1=q1;
+
+              count++;
+            }
+          }
+        }
+      }
+
+      return count;
+    }
+    
     /// Return a string denoting the type ("quartic_real")
     const char *type() { return "quartic_real"; }
   };
@@ -893,6 +941,69 @@ namespace o2scl {
 			 cx_t &x3, 
 			 cx_t &x4)=0;
 
+    size_t test_real_coeffs(fp_t &s1, fp_t &s2, fp_t &m1,
+                          fp_t &m2, size_t n=9) {
+      
+      cx_t i(0.0,1.0);
+
+      size_t count=0;
+      
+      gen_test_number ga, gb, gc, gd, ge;
+      for(size_t j1=0;j1<n;j1++) {
+        fp_t ca=ga.gen();
+        gb.reset();
+        for(size_t j2=0;j2<n;j2++) {
+          fp_t cb=gb.gen();
+          gc.reset();
+          for(size_t j3=0;j3<n;j3++) {
+            fp_t cc=gc.gen();
+            gd.reset();
+            for(size_t j4=0;j4<n;j4++) {
+              fp_t cd=gd.gen();
+              ge.reset();
+              for(size_t j5=0;j5<n;j5++) {
+                fp_t ce=ge.gen();
+                
+                if (fabs(ca)>0.0) {
+
+                  cx_t cr1, cr2, cr3, cr4;
+                  solve_rc(ca,cb,cc,cd,ce,cr1,cr2,cr3,cr4);
+                  
+                  cx_t cbp=-(cr1+cr2+cr3+cr4)*ca;
+                  cx_t ccp=(cr1*cr2+cr1*cr3+cr2*cr3+
+                            cr1*cr4+cr2*cr4+cr3*cr4)*ca;
+                  cx_t cdp=-(cr1*cr2*cr3+cr1*cr2*cr4+
+                             cr1*cr3*cr4+cr2*cr3*cr4)*ca;
+                  cx_t cep=cr1*cr2*cr3*cr4*ca;
+                  
+                  cx_t czo1=(((ca*cr1+cb)*cr1+cc)*cr1+cd)*cr1+ce;
+                  cx_t czo2=(((ca*cr2+cb)*cr2+cc)*cr2+cd)*cr2+ce;
+                  cx_t czo3=(((ca*cr3+cb)*cr3+cc)*cr3+cd)*cr3+ce;
+                  cx_t czo4=(((ca*cr4+cb)*cr4+cc)*cr4+cd)*cr4+ce;
+                  
+                  fp_t q1=sqrt(abs(cb-cbp)*abs(cb-cbp)+
+		      abs(cc-ccp)*abs(cc-ccp)+
+		      abs(cd-cdp)*abs(cd-cdp)+
+		      abs(ce-cep)*abs(ce-cep));
+                  fp_t q2=sqrt(abs(czo1)*abs(czo1)+abs(czo2)*abs(czo2)+
+                               abs(czo3)*abs(czo3)+abs(czo4)*abs(czo4));
+                  
+                  s1+=q1;
+                  if (q1>m1) m1=q1;
+                  s2+=q2;
+                  if (q2>m2) m2=q2;
+                  count++;
+                  
+                }
+              }
+            }
+          }
+        }
+      }
+
+      return count;
+    }
+    
     /// Return a string denoting the type ("quartic_real_coeff")
     const char *type() { return "quartic_real_coeff"; }
   };
@@ -1706,6 +1817,11 @@ namespace o2scl {
       fp_t a=b3/a3;
       fp_t b=c3/a3;
       fp_t c=d3/a3;
+      fp_t one=1;
+      fp_t third=one/3;
+      fp_t half=one/2;
+      fp_t three=3;
+      fp_t root3=sqrt(three);
       
       fp_t q=(a*a-3*b);
       fp_t r=(2*a*a*a-9*a*b+27*c);
@@ -1718,6 +1834,8 @@ namespace o2scl {
       
       fp_t CR2=729*r*r;
       fp_t CQ3=2916*q*q*q;
+
+      fp_t pi=boost::math::constants::pi<fp_t>();
       
       if (R == 0 && Q == 0) {
         
@@ -1780,13 +1898,13 @@ namespace o2scl {
         // so theta becomes not finite.
         
         if (R/sqrtQ3>=1.0) theta=0.0;
-        if (R/sqrtQ3<=-1.0) theta=o2scl_const::pi;
+        if (R/sqrtQ3<=-1.0) theta=pi;
         
         fp_t norm=-2*sqrtQ;
         
         fp_t r0=norm*cos(theta/3)-a/3;
-        fp_t r1=norm*cos((theta+2.0*M_PI)/3)-a/3;
-        fp_t r2=norm*cos((theta-2.0*M_PI)/3)-a/3;
+        fp_t r1=norm*cos((theta+2*pi)/3)-a/3;
+        fp_t r2=norm*cos((theta-2*pi)/3)-a/3;
         
         x1=r0;
         x2.real(r1);
@@ -1813,18 +1931,18 @@ namespace o2scl {
       // R2=Q3, finite precision can cause the argument of the sqrt()
       // function to be negative. We correct for this here.
       if (R2<=Q3) {
-        A=-sgnR*pow(fabs(R),1.0/3.0);
+        A=-sgnR*pow(fabs(R),third);
       } else {
-        A=-sgnR*pow(fabs(R)+sqrt(R2-Q3),1.0/3.0);
+        A=-sgnR*pow(fabs(R)+sqrt(R2-Q3),third);
       }
       
       fp_t B=Q/A;
       
       x1=A+B-a/3;
-      x2.real(-0.5*(A+B)-a/3);
-      x2.imag(-(sqrt(3.0)/2.0)*fabs(A-B));
-      x3.real(-0.5*(A+B)-a/3);
-      x3.imag((sqrt(3.0)/2.0)*fabs(A-B));
+      x2.real(-half*(A+B)-a/3);
+      x2.imag(-(root3*half)*fabs(A-B));
+      x3.real(-half*(A+B)-a/3);
+      x3.imag((root3*half)*fabs(A-B));
       
       if (!o2isfinite(x1) || !o2isfinite(x2.real()) ||
           !o2isfinite(x2.imag())) {
@@ -2290,7 +2408,16 @@ namespace o2scl {
         // Roots of the depressed cubic
         cx_t r1, r2, r3;
 
-        if (abs(p)<1.0e-15 || (p.real()==0.0 && p.imag()==0.0)) {
+        // AWS 4/11/21: I previously hacked a comparison here between
+        // 'one2' and 'one', but I didn't find it made any improvement.
+        //
+        // Check if p is too small:
+        // fp_t one=1.0+abs(p);
+        // fp_t one2=1.0;
+        //
+        // if (one2==one || (p.real()==0.0 && p.imag()==0.0)) {
+        
+        if (p.real()==0.0 && p.imag()==0.0) {
           
           // If p is zero, then the roots of the depressed
           // cubic are trivial
@@ -2304,6 +2431,7 @@ namespace o2scl {
           // Formulate into a quadratic and then W is one of
           // the roots of the quadratic
           cx_t W=-q/two+sqrt(p*p*p/twoseven+q*q/four);
+          //std::cout << "W: " << W << std::endl;
           
           // Construct the roots of the depressed cubic from the
           // solution of the quadratic
@@ -2333,13 +2461,19 @@ namespace o2scl {
 
       }
 
-      cx_t check1=a3*x1*x1*x1+b3*x1*x1+c3*x1+d3;
-      cx_t check2=a3*x2*x2*x2+b3*x2*x2+c3*x2+d3;
-      cx_t check3=a3*x3*x3*x3+b3*x3*x3+c3*x3+d3;
-      if (abs(check1)>1.0e-4) {
-        std::cout << "ccheck: " << check1 << " " << check2 << " "
-                  << check3 << std::endl;
-        exit(-1);
+      if (false) {
+        cx_t check1=a3*x1*x1*x1+b3*x1*x1+c3*x1+d3;
+        cx_t check2=a3*x2*x2*x2+b3*x2*x2+c3*x2+d3;
+        cx_t check3=a3*x3*x3*x3+b3*x3*x3+c3*x3+d3;
+        if (abs(check1)>1.0e-8) {
+          std::cout << "ccheck: " << check1 << " " << check2 << " "
+                    << check3 << std::endl;
+          std::cout << x1 << " " << x2 << " " << x3
+                    << std::endl;
+          std::cout << a3 << " " << b3 << " " << c3 << " "
+                    << d3 << std::endl;
+          exit(-1);
+        }
       }
       
       return success;
@@ -2608,29 +2742,31 @@ namespace o2scl {
       //<< b2a << " " << b2b << " " << c2a << " "
       //<< c2b << std::endl;
 
-      cx_t check1=a4*x1*x1*x1*x1+b4*x1*x1*x1+c4*x1*x1+d4*x1+e4;
-      cx_t check2=a4*x2*x2*x2*x2+b4*x2*x2*x2+c4*x2*x2+d4*x2+e4;
-      cx_t check3=a4*x3*x3*x3*x3+b4*x3*x3*x3+c4*x3*x3+d4*x3+e4;
-      cx_t check4=a4*x4*x4*x4*x4+b4*x4*x4*x4+c4*x4*x4+d4*x4+e4;
-      if (abs(check1)>1.0e-4 || abs(check2)>1.0e-4 ||
-          abs(check3)>1.0e-4 || abs(check4)>1.0e-4) {
-        std::cout << "Xere." << std::endl;
-        std::cout << "a4,b4,c4,d4,e4: " << a4 << " " << b4 << " "
-                  << c4 << " " << d4 << " " << e4 << std::endl;
-        std::cout << "a3,b3,c3,d3: " << a3 << " " << b3 << " "
-                  << c3 << " " << d3 << std::endl;
-        std::cout << "p4,q4,r4: " << p4 << " " << q4 << " "
-                  << r4 << std::endl;
-        std::cout << "u4,u41,u42: " << u4 << " "
-                  << u41 << " " << u42 << std::endl;
-        std::cout << "b2a,b2b,c2a,c2b: "
-                  << b2a << " " << b2b << " " << c2a << " "
-                  << c2b << std::endl;
-        std::cout << "x1,x2,x3,x4: " << x1 << " " << x2 << " "
-                  << x3 << " " << x4 << std::endl;
-        std::cout << "check1,2,3,4: " << check1 << " " << check2 << " "
-                  << check3 << " " << check4 << std::endl;
-        exit(-1);
+      if (false) {
+        cx_t check1=a4*x1*x1*x1*x1+b4*x1*x1*x1+c4*x1*x1+d4*x1+e4;
+        cx_t check2=a4*x2*x2*x2*x2+b4*x2*x2*x2+c4*x2*x2+d4*x2+e4;
+        cx_t check3=a4*x3*x3*x3*x3+b4*x3*x3*x3+c4*x3*x3+d4*x3+e4;
+        cx_t check4=a4*x4*x4*x4*x4+b4*x4*x4*x4+c4*x4*x4+d4*x4+e4;
+        if (abs(check1)>1.0e-4 || abs(check2)>1.0e-4 ||
+            abs(check3)>1.0e-4 || abs(check4)>1.0e-4) {
+          std::cout << "Xere." << std::endl;
+          std::cout << "a4,b4,c4,d4,e4: " << a4 << " " << b4 << " "
+                    << c4 << " " << d4 << " " << e4 << std::endl;
+          std::cout << "a3,b3,c3,d3: " << a3 << " " << b3 << " "
+                    << c3 << " " << d3 << std::endl;
+          std::cout << "p4,q4,r4: " << p4 << " " << q4 << " "
+                    << r4 << std::endl;
+          std::cout << "u4,u41,u42: " << u4 << " "
+                    << u41 << " " << u42 << std::endl;
+          std::cout << "b2a,b2b,c2a,c2b: "
+                    << b2a << " " << b2b << " " << c2a << " "
+                    << c2b << std::endl;
+          std::cout << "x1,x2,x3,x4: " << x1 << " " << x2 << " "
+                    << x3 << " " << x4 << std::endl;
+          std::cout << "check1,2,3,4: " << check1 << " " << check2 << " "
+                    << check3 << " " << check4 << std::endl;
+          exit(-1);
+        }
       }
       //cx_t check1=a3*u4*u4*u4+b3*u4*u4+c3*u4+d3;
       //std::cout << "check1: " << check1 << std::endl;
