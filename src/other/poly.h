@@ -46,6 +46,7 @@
 #include <o2scl/constants.h>
 #include <o2scl/err_hnd.h>
 #include <o2scl/misc.h>
+#include <o2scl/mroot_hybrids.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -844,6 +845,9 @@ namespace o2scl {
     
   public:
     
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
+    
     virtual ~poly_real_coeff() {}
     
     /** \brief Solve the n-th order polynomial
@@ -855,20 +859,44 @@ namespace o2scl {
     virtual int solve_rc_arr(int n, const coeff_vec_t &co, 
                              root_vec_t &ro)=0;
 
+    /** \brief Polish the roots
+     */
     virtual int polish_rc_arr(int n, const coeff_vec_t &co, 
                               root_vec_t &ro) {
-      return 0;
-    }
 
-#ifdef O2SCL_NEVER_DEFINED
-    {
-      mroot_hybrids<> mh;
+      /*
+        AWS 4/10/21: This doesn't work right now, because the solver
+        almost always fails. I think this could be fixed by an exact
+        Jacobian, which doesn't yet work.
+       */
+      
+      o2scl::mroot_hybrids<> mh;
+      mm_funct mf=std::bind
+        (std::mem_fn<int(size_t,const ubvector &,ubvector &,
+                         const coeff_vec_t &,size_t)>
+         (&poly_real_coeff<fp_t,cx_t,coeff_vec_t,root_vec_t>::polish_fun),
+         this,std::placeholders::_1,std::placeholders::_2,
+         std::placeholders::_3,std::cref(co),n);
       ubvector x(2), y(2);
       // Polish all each one of n roots
-      for(size_t j=0;j<n;j++) {
-        x[0]=ro[0].real();
-        x[1]=ro[0].imag();
-        mh.msolve(2,x);
+      for(int j=0;j<n;j++) {
+        x[0]=ro[j].real();
+        x[1]=ro[j].imag();
+        mh.verbose=2;
+        mh.err_nonconv=false;
+        mh.def_jac.err_nonconv=false;
+        mh.tol_rel=1.0e-12;
+        mh.tol_abs=1.0e-12;
+        mf(2,x,y);
+        std::cout << y[0] << " x " << y[1] << std::endl;
+        if (fabs(y[0])>1.0e-12 || fabs(y[1])>1.0e-12) {
+          int mret=mh.msolve(2,x,mf);
+          std::cout << "mret: " << mret << std::endl;
+          if (mret==0) {
+            ro[j].real(x[0]);
+            ro[j].imag(x[1]);
+          }
+        }
       }
       return 0;
     }
@@ -876,23 +904,57 @@ namespace o2scl {
     /** \brief Desc
      */
     virtual int polish_fun(size_t nv, const ubvector &x,
-                           fp_t ubvector &y, const coeff_vec_t &co,
-                           root_vec_t &ro) {
+                           ubvector &y, const coeff_vec_t &co,
+                           size_t n) {
+      
+      // The value x[0] is the real part and x[1] is the imaginary
+      // part of the root. The value y[0] is the real part of the
+      // evaluated polynomial expression and y[1] is the imaginary
+      // part.
+
+      //std::cout << "pf1: " << x[0] << " " << x[1] << std::endl;
       
       // Using horner's method following, e.g. GSL
-      y[0]=co[nv-1];
+      //std::cout << co[0] << std::endl;
+      y[0]=co[0];
       y[1]=0.0;
-      for(int i=nv-1; i>0; i--) {
-        fp_t tmp=co[i-1]+x[0]*y[0]-x[1]*y[1];
+      for(size_t i=0;i<n;i++) {
+        //std::cout << co[i+1] << std::endl;
+        fp_t tmp=co[i+1]+x[0]*y[0]-x[1]*y[1];
         y[1]=x[1]*y[0]+x[0]*y[1];
         y[0]=tmp;
       }
+      
+      std::cout << "pf2: " << y[0] << " " << y[1] << std::endl;
+      
       return 0;
     }
     
-#endif
+    int polish_jac(size_t nx, ubvector &x, size_t ny, ubvector &y,
+                   ubmatrix &j) {
+      
+      // In the original function y[0] is the real part of the
+      // polynomial, and y[1] is the imaginary part of the polynomial.
+      // Thus j(0,1)? is the derivative of the real part of the
+      // polynomial with respect to the imaginary part of the root.
 
-    
+      /*
+      j(0,0)=co[0]*n;
+      y(1,0)=0.0;
+      j(0,1)=0.0;
+      y(1,1)=co[0]*n;
+      for(size_t i=0;i<n-1;i++) {
+        fp_t tmp=co[i+1]*(n-1-i)+x[0]*y[0]-x[1]*y[1];
+        j(1,0)=x[1]*y[0]+x[0]*y[1];
+        j(0,0)=tmp;
+        j(1,1)=tmp;
+        j(0,1)=x[1]*y[0]+x[0]*y[1];
+      }
+      */
+      
+      return 0;
+    }
+  
     /// Return a string denoting the type ("poly_real_coeff")
     const char *type() { return "poly_real_coeff"; }
     
@@ -1736,11 +1798,15 @@ namespace o2scl {
 
   public:
 
+    /// Check each root and automatically refine
+    bool check_refine;
+    
     poly_real_coeff_gsl() {
       w2=gsl_poly_complex_workspace_alloc(3);
       w3=gsl_poly_complex_workspace_alloc(4);
       w4=gsl_poly_complex_workspace_alloc(5);
       gen_size=0;
+      check_refine=false;
     }
 
     virtual ~poly_real_coeff_gsl() {
@@ -1789,7 +1855,7 @@ namespace o2scl {
       for(j=0;j<n;j++) {
         ro[j]=z[2*j]+i*z[2*j+1];
       }
-      
+
       return success;
     }      
 
@@ -1831,7 +1897,7 @@ namespace o2scl {
 		   "poly_real_coeff_gsl::solve_rc().",
 		   exc_einval);
       }
-      
+
       fp_t a[4]={d3,c3,b3,a3};  
       fp_t z[6],s1,s2,s3;
       cx_t i(0.0,1.0);
@@ -1861,6 +1927,20 @@ namespace o2scl {
         r1=z[4];
         r2=z[0]+i*z[1];
         r3=z[2]+i*z[3];
+      }
+
+      if (check_refine) {
+        coeff_vec_t co(4);
+        co[0]=a3;
+        co[1]=b3;
+        co[2]=c3;
+        co[3]=d3;
+        root_vec_t ro(3);
+        ro[0]=r1;
+        ro[1]=r2;
+        ro[2]=r3;
+        
+        this->polish_rc_arr(3,co,ro);
       }
       
       return 1;
