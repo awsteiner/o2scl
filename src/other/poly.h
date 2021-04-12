@@ -2453,16 +2453,16 @@ namespace o2scl {
       //---------------------------------------
       // Now construct the two quadratics:
       
-      fp_t t1=u4+a34*a34/4.0-a24;
+      fp_t t1=u4+a34*a34/4-a24;
       if (t1>0.0) {
         t1=sqrt(t1);
       } else {
         t1=0.0;
       }
       
-      fp_t b2a=-t1+a34/2.0;
-      fp_t b2b=t1+a34/2.0;
-      t1=u4*u4/4.0;
+      fp_t b2a=-t1+a34/2;
+      fp_t b2b=t1+a34/2;
+      t1=u4*u4/4;
       
       // When numerical errors make t1 slightly smaller than a04.
       if (t1>a04) {
@@ -2471,24 +2471,28 @@ namespace o2scl {
         t1=0;
       }
       
-      fp_t c2a=u4/2.0-t1;
-      fp_t c2b=u4/2.0+t1;
+      fp_t c2a=u4/2-t1;
+      fp_t c2b=u4/2+t1;
       
       if (fabs((b2a*c2b+c2a*b2b-d4)/d4)>1.0e-4) {
-        t1=u4+a34*a34/4.0-a24;
-        t1=-sqrt(t1);
+        t1=u4+a34*a34/4-a24;
+        if (t1>0) {
+          t1=-sqrt(t1);
+        } else {
+          t1=0;
+        }
         
-        b2a=-t1+a34/2.0;
-        b2b=t1+a34/2.0;
+        b2a=-t1+a34/2;
+        b2b=t1+a34/2;
         
-        t1=u4*u4/4.0;
-        if (fabs((u4*u4/4.0-a04)/a04)<1.0e-6) {
+        t1=u4*u4/4;
+        if (fabs((u4*u4/4-a04)/a04)<1.0e-6) {
           t1=0.0;
         } else {
           t1=sqrt(t1-a04);
         }
-        c2a=u4/2.0-t1;
-        c2b=u4/2.0+t1;
+        c2a=u4/2-t1;
+        c2b=u4/2+t1;
       }
       
       //---------------------------------------
@@ -2499,9 +2503,10 @@ namespace o2scl {
 
       if (!o2isfinite(x1) || !o2isfinite(x2) ||
           !o2isfinite(x3) || !o2isfinite(x4)) {
+        std::cout << "Zere: " << std::endl;
         std::cout << u1 << " " << u2 << " " << u3 << std::endl;
-        std::cout << t1 << " " << a34 << std::endl;
-        std::cout << b2a << " " << b2b << std::endl;
+        std::cout << t1 << " " << a04 << " " <<  a34 << std::endl;
+        std::cout << "b2a,b2b: " << b2a << " " << b2b << std::endl;
         std::cout << c2a << " " << c2b << std::endl;
         std::cout << x1 << " " << x2 << std::endl;
         std::cout << x3 << " " << x4 << std::endl;

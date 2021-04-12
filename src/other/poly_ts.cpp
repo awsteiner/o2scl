@@ -628,7 +628,6 @@ int main(void) {
   // give an overall scale for the timings
   size_t ne=10000;
 
-  /*
   cout << "Quadratics with real coefficients and complex roots:" << endl;
   cout << "type                   Avg 1      Avg 2      Max 1"
        << "      Max 2      time" << endl;
@@ -782,7 +781,6 @@ int main(void) {
      1.0e1,1.0e1,1.0e1,1.0e1);
 #endif
   cout << endl;
-  */
   
   cout << "Quartics with real coefficients and real roots -\n";
   cout << " leading coefficient 1:" << endl;
@@ -800,8 +798,20 @@ int main(void) {
   test_quartic_real<long double>
     (&q1_ld,"quartic_rc_cern_ld",1.0,
      5.0e-12,1.0,2.0e-8,1.0);
+  test_quartic_real<long double>
+    (&q4_ld,"quartic_r_std_ld",1.0,
+     5.0e-12,1.0,2.0e-6,1.0);
+  test_quartic_real<long double>
+    (&q5_ld,"quartic_c_std_ld",1.0,
+     5.0e-12,1.0,2.0e-6,1.0);
   test_quartic_real_boost<cpp_bin_float_50>
     (&q1_cdf50,"quartic_rc_cern_50",1.0,
+     5.0e-12,1.0,2.0e-8,1.0);
+  test_quartic_real_boost<cpp_bin_float_50>
+    (&q4_cdf50,"quartic_r_std_50",1.0,
+     5.0e-12,1.0,2.0e-8,1.0);
+  test_quartic_real_boost<cpp_bin_float_50>
+    (&q5_cdf50,"quartic_c_std_50",1.0,
      5.0e-12,1.0,2.0e-8,1.0);
 #endif
   cout << endl;
@@ -822,10 +832,22 @@ int main(void) {
 #ifdef O2SCL_LD_TYPES
   test_quartic_real<long double>
     (&q1_ld,"quartic_rc_cern_ld",1.0e-5,
-     5.0e-12,1.0,2.0e-8,1.0);
+     5.0e-12,1.0,2.0e-6,1.0);
+  test_quartic_real<long double>
+    (&q4_ld,"quartic_r_std_ld",1.0e-5,
+     5.0e-7,1.0,1.0,1.0);
+  test_quartic_real<long double>
+    (&q5_ld,"quartic_c_std_ld",1.0e-5,
+     5.0e-7,1.0,1.0,1.0);
   test_quartic_real_boost<cpp_bin_float_50>
     (&q1_cdf50,"quartic_rc_cern_50",1.0e-5,
      5.0e-12,1.0,2.0e-6,1.0);
+  test_quartic_real_boost<cpp_bin_float_50>
+    (&q4_cdf50,"quartic_r_std_50",1.0e-5,
+     1.0e-7,1.0,1.0,1.0);
+  test_quartic_real_boost<cpp_bin_float_50>
+    (&q5_cdf50,"quartic_c_std_50",1.0e-5,
+     1.0e-7,1.0,1.0,1.0);
 #endif
   cout << endl;
 
@@ -842,8 +864,14 @@ int main(void) {
   test_quartic_real_coeff<long double,std::complex<long double> >
     (&q1_ld,"quartic_rc_cern_ld",
      1.0e-1,1.0e-1,1.0e1,1.0e2);
+  test_quartic_real_coeff<long double,std::complex<long double> >
+    (&q5_ld,"quartic_c_std_ld",
+     1.0e-1,1.0e-1,1.0e1,1.0e2);
   test_quartic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
     (&q1_cdf50,"quartic_rc_cern_50",
+     1.0e-1,1.0e1,1.0e2,1.0e2);
+  test_quartic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
+    (&q5_cdf50,"quartic_c_std_50",
      1.0e-1,1.0e1,1.0e2,1.0e2);
 #endif
   cout << endl;
