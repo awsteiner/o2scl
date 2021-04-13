@@ -424,113 +424,24 @@ void test_quartic_real_coeff_boost(quartic_real_coeff<fp_t,cx_t> *po,
 }
 
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
-void test_quartic_complex_base(size_t ne, quartic_complex<fp_t,cx_t> *po, 
-                               string str, fp_t &s1, fp_t &s2, fp_t &m1,
-                               fp_t &m2, clock_t &lt1, clock_t &lt2) {
-  
-  cx_t ca,cb,cc,cd,ce,cr1,cr2,cr3,cr4,czo1,czo2,czo3,czo4;  
-  cx_t i(0.0,1.0),cap,cbp,ccp,cdp,cep;
-  size_t j;
-  fp_t q1,q2;
-  s1=0.0;
-  s2=0.0;
-  m1=0.0;
-  m2=0.0;
-  lt1=clock();
-  cx_t one(1,0);
-
-  gen_test_number ga, gb, gc, gd, ge;
-  fp_t rca, rcb, rcc, rcd, rce;
-  for(int it=0;it<2;it++) {
-    for(int j1=0;j1<9;j1++) {
-      rca=ga.gen();
-      gb.reset();
-      for(int j2=0;j2<9;j2++) {
-	rcb=gb.gen();
-        gc.reset();
-	for(int j3=0;j3<9;j3++) {
-	  rcc=gc.gen();
-          gd.reset();
-	  for(int j4=0;j4<9;j4++) {
-	    rcd=gd.gen();
-            ge.reset();
-	    for(int j5=0;j5<9;j5++) {
-	      rce=ge.gen();
-
-	      if (it==0) {
-		ca=rca+i;
-		cb=rcb+i;
-		cc=rcc+i;
-		cd=rcd+i;
-		ce=rce+i;
-	      } else {
-		ca=one+i*rca;
-		cb=one+i*rcb;
-		cc=one+i*rcc;
-		cd=one+i*rcd;
-		ce=one+i*rce;
-	      }
-
-	      po->solve_c(ca,cb,cc,cd,ce,cr1,cr2,cr3,cr4);
-	    
-	      cbp=-(cr1+cr2+cr3+cr4)*ca;
-	      ccp=(cr1*cr2+cr1*cr3+cr2*cr3+cr1*cr4+cr2*cr4+cr3*cr4)*ca;
-	      cdp=-(cr1*cr2*cr3+cr1*cr2*cr4+cr1*cr3*cr4+cr2*cr3*cr4)*ca;
-	      cep=cr1*cr2*cr3*cr4*ca;
-	    
-	      czo1=(((ca*cr1+cb)*cr1+cc)*cr1+cd)*cr1+ce;
-	      czo2=(((ca*cr2+cb)*cr2+cc)*cr2+cd)*cr2+ce;
-	      czo3=(((ca*cr3+cb)*cr3+cc)*cr3+cd)*cr3+ce;
-	      czo4=(((ca*cr4+cb)*cr4+cc)*cr4+cd)*cr4+ce;
-	      q1=sqrt(abs(cb-cbp)*abs(cb-cbp)+
-		      abs(cc-ccp)*abs(cc-ccp)+
-		      abs(cd-cdp)*abs(cd-cdp)+
-		      abs(ce-cep)*abs(ce-cep));
-	      q2=sqrt(abs(czo1)*abs(czo1)+abs(czo2)*abs(czo2)+
-		      abs(czo3)*abs(czo3)+abs(czo4)*abs(czo4));
-              //std::cout << q1 << " " << q2 << std::endl;
-	      if (!o2isfinite(q1) || !o2isfinite(q2)
-                  || q1>1.0e-10 || q2>1.0e-10) {
-                std::cout << "ca,cb,cc,cd,ce: "
-                          << ca << " " << cb << " " << cc << " "
-                          << cd << " " << ce << std::endl;
-                std::cout << "cr1,cr2,cr3,cr4: "
-                          << cr1 << " " << cr2 << " "
-                          << cr3 << " " << cr4 << std::endl;
-                exit(-1);
-		O2SCL_ERR("Failure in test_quartic_complex().",
-			  exc_esanity);
-	      }
-	      s1+=q1;
-	      if (q1>m1) m1=q1;
-	      s2+=q2;
-	      if (q2>m2) m2=q2;
-	    }
-
-	  }
-	}
-      }
-    }
-  }
-  lt2=clock();
-  s1/=((fp_t)ne);
-  s2/=((fp_t)ne);
-  
-  return;
-}
-
-template<class fp_t=double, class cx_t=std::complex<fp_t> >
-void test_quartic_complex(size_t ne, quartic_complex<fp_t,cx_t> *po,
+void test_quartic_complex(quartic_complex<fp_t,cx_t> *po,
                           string str,
 			  fp_t e1, fp_t e2, fp_t e3, fp_t e4) {
+  
   fp_t s1=0,s2=0,m1=0,m2=0;
-  clock_t lt1, lt2;
-  s1=0.0;
-  s2=0.0;
-  m1=0.0;
-  m2=0.0;
 
-  test_quartic_complex_base(ne,po,str,s1,s2,m1,m1,lt1,lt2);
+  clock_t lt1=clock();
+  
+  size_t count=0;
+  
+  count=po->test_complex_coeffs(s1,s2,m1,m2);
+  
+  clock_t lt2=clock();
+  
+  s1/=count;
+  s2/=count;
+  
+  double time=((double)(lt2-lt1))/CLOCKS_PER_SEC;
 
   cout.width(wid);
   cout << str.c_str();
@@ -539,22 +450,29 @@ void test_quartic_complex(size_t ne, quartic_complex<fp_t,cx_t> *po,
   tst.test_abs<fp_t>(m1,0.0,e3,"quartic_real_coeff m1");
   tst.test_abs<fp_t>(m2,0.0,e4,"quartic_real_coeff m2");
   cout << ": " << s1 << " " << s2 << " " << m1 << " " 
-       << m2 << " " << ((double)(lt2-lt1))/CLOCKS_PER_SEC << endl;
+       << m2 << " " << time << endl;
   return;
 }
 
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
-void test_quartic_complex_boost(size_t ne, quartic_complex<fp_t,cx_t> *po,
+void test_quartic_complex_boost(quartic_complex<fp_t,cx_t> *po,
                                 string str,
                                 fp_t e1, fp_t e2, fp_t e3, fp_t e4) {
-  fp_t s1=0,s2=0,m1=0,m2=0;
-  clock_t lt1, lt2;
-  s1=0.0;
-  s2=0.0;
-  m1=0.0;
-  m2=0.0;
 
-  test_quartic_complex_base(ne,po,str,s1,s2,m1,m1,lt1,lt2);
+  fp_t s1=0,s2=0,m1=0,m2=0;
+
+  clock_t lt1=clock();
+  
+  size_t count=0;
+  
+  count=po->test_complex_coeffs(s1,s2,m1,m2);
+  
+  clock_t lt2=clock();
+  
+  s1/=count;
+  s2/=count;
+  
+  double time=((double)(lt2-lt1))/CLOCKS_PER_SEC;
 
   cout.width(wid);
   cout << str.c_str();
@@ -563,7 +481,7 @@ void test_quartic_complex_boost(size_t ne, quartic_complex<fp_t,cx_t> *po,
   tst.test_abs_boost<fp_t>(m1,0.0,e3,"quartic_real_coeff m1");
   tst.test_abs_boost<fp_t>(m2,0.0,e4,"quartic_real_coeff m2");
   cout << ": " << s1 << " " << s2 << " " << m1 << " " 
-       << m2 << " " << ((double)(lt2-lt1))/CLOCKS_PER_SEC << endl;
+       << m2 << " " << time << endl;
   return;
 }
 
@@ -615,6 +533,10 @@ int main(void) {
   
   quartic_real_coeff_cern<long double,std::complex<long double> > q1_ld;
   quartic_real_coeff_cern<cpp_bin_float_50,cpp_complex_50> q1_cdf50;
+  q1_ld.cub_obj.eps=1.0e-7;
+  q1_ld.cub_obj.delta=1.0e-18;
+  q1_cdf50.cub_obj.eps=1.0e-20;
+  q1_cdf50.cub_obj.delta=1.0e-40;
 
   quartic_real_std<long double> q4_ld;
   quartic_real_std<cpp_bin_float_50> q4_cdf50;
@@ -623,10 +545,6 @@ int main(void) {
   quartic_complex_std<cpp_bin_float_50,cpp_complex_50> q5_cdf50;
   
 #endif
-
-  // I think this number is no longer used, except to 
-  // give an overall scale for the timings
-  size_t ne=10000;
 
   cout << "Quadratics with real coefficients and complex roots:" << endl;
   cout << "type                   Avg 1      Avg 2      Max 1"
@@ -879,14 +797,14 @@ int main(void) {
   cout << "Quartics with complex coefficients and complex roots:" << endl;
   cout << "type                   Avg 1      Avg 2      Max 1"
        << "      Max 2      time" << endl;
-  test_quartic_complex(ne,&q5,"quartic_c_std",
+  test_quartic_complex(&q5,"quartic_c_std",
 		       1.0e-2,1.0e-2,1.0e1,1.0e2);
 #ifdef O2SCL_LD_TYPES
   test_quartic_complex<long double,std::complex<long double> >
-    (ne,&q5_ld,"quartic_c_std_ld",
+    (&q5_ld,"quartic_c_std_ld",
      1.0e-2,1.0e-2,1.0e1,1.0e2);
   test_quartic_complex_boost<cpp_bin_float_50,cpp_complex_50>
-    (ne,&q5_cdf50,"quartic_c_std_50",
+    (&q5_cdf50,"quartic_c_std_50",
      1.0e-2,1.0e-2,1.0e1,1.0e2);
 #endif
   cout << endl;

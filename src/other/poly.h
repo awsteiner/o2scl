@@ -68,6 +68,11 @@ namespace o2scl {
 			fp_t &x1, fp_t &x2)=0;
 
     /** \brief Compute the quadratic discriminant, \f$ b^2-4ac \f$
+
+        If the discriminant is positive, the quadratic has two real
+        roots, if it is zero, it has a double real root, and if it is
+        negative then the quadratic has complex conjugate roots.
+
      */
     virtual fp_t disc_r(fp_t a2, fp_t b2, fp_t c2) {
       return b2*b2-4.0*a2*c2;
@@ -506,6 +511,12 @@ namespace o2scl {
 
     /** \brief Compute the cubic discriminant, 
 	\f$ b^2 c^2 - 4 a c^3 - 4 b^3 d - 27 a^2 d^2 + 18 a b c d \f$
+
+        If the discriminant is zero, then at least two roots are 
+        equal, if the discriminant is positive, then there are 
+        three real roots, and if the discriminant is negative
+        then there is one real root and two complex conjugate
+        roots. 
      */
     virtual fp_t disc_r(const fp_t a3, const fp_t b3, const fp_t c3, 
 			  const fp_t d3) {
@@ -839,10 +850,61 @@ namespace o2scl {
       fp_t c4=c2*c2;
       fp_t d4=d2*d2;
       
-      return 256.0*a3*e3-192.0*a2*b*d*e2-128.0*a2*c2*e2+144.0*a2*c*d2*e-
-        27.0*a2*d4+144.0*a*b2*c*e2-6.0*a*b2*d2*e-80.0*a*b*c2*d*e+
-        18.0*a*b*c*d3+16.0*a*c4*e-4.0*a*c3*d2-27.0*b4*e2+18.0*b3*c*d*e-
-        4.0*b3*d3-4.0*b2*c3*e+b2*c2*d2;
+      return 256*a3*e3-192*a2*b*d*e2-128*a2*c2*e2+144*a2*c*d2*e-
+        27*a2*d4+144*a*b2*c*e2-6*a*b2*d2*e-80*a*b*c2*d*e+
+        18*a*b*c*d3+16*a*c4*e-4*a*c3*d2-27*b4*e2+18*b3*c*d*e-
+        4*b3*d3-4*b2*c3*e+b2*c2*d2;
+    }
+
+    /** \brief Evaluate diagnostic quantities for a quartic
+        
+        If disc is negative, then the quartic has two distinct real
+        roots and two complex conjugate roots. If disc is positive and
+        P and D are both negative, then all four roots are real and
+        distinct. If disc is positive and either P or D are positive,
+        then there are two paris of complex conjugate roots.
+        If disc is zero, then the polynomial has a multiple root,
+        and the following cases hold
+        - P<0 and D<0 and disc_0 non-zero: one real double root and
+        two real roots
+        - D>0 or (P>0 and (D nonzero or R nonzero)) real double root
+        and two complex conjugate roots
+        - disc_0=0 and D non-zero: triple real root and a real root
+        - D=0 and P<0: two real double roots
+        - D=0 and P>0 and R=0: two complex conjugate double roots
+        - D=0 and disc_0=0, all four roots are equal to -b/4/a. 
+
+        Following https://en.wikipedia.org/wiki/Quartic_function .
+     */
+    virtual void diag_r(const fp_t a, const fp_t b, const fp_t c, 
+                        const fp_t d, const fp_t e, fp_t &disc,
+                        fp_t &P, fp_t &R, fp_t &disc_0, fp_t &D) {
+      fp_t a2=a*a;
+      fp_t b2=b*b;
+      fp_t c2=c*c;
+      fp_t d2=d*d;
+      fp_t e2=e*e;
+      
+      fp_t a3=a2*a;
+      fp_t b3=b2*b;
+      fp_t c3=c2*c;
+      fp_t d3=d2*d;
+      fp_t e3=e2*e;
+      
+      fp_t b4=b2*b2;
+      fp_t c4=c2*c2;
+      fp_t d4=d2*d2;
+
+      P=8*a*c-3*b2;
+      R=b3+8*d*a2-4*a*b*c;
+      disc_0=c2-3*b*d+12*a*e;
+      D=64*a3*e-16*a2*c2+16*a*b2*c-16*a2*b*d-3*b4;
+      disc=256*a3*e3-192*a2*b*d*e2-128*a2*c2*e2+144*a2*c*d2*e-
+        27*a2*d4+144*a*b2*c*e2-6*a*b2*d2*e-80*a*b*c2*d*e+
+        18*a*b*c*d3+16*a*c4*e-4*a*c3*d2-27*b4*e2+18*b3*c*d*e-
+        4*b3*d3-4*b2*c3*e+b2*c2*d2;
+      
+      return;
     }
     
     /** \brief Test \f$ n^4 \f$ quartics with real roots
@@ -1070,6 +1132,99 @@ namespace o2scl {
 			const cx_t e4, cx_t &x1, 
 			cx_t &x2, cx_t &x3, cx_t &x4)=0;
 
+    int test_complex_coeffs(fp_t &s1, fp_t &s2, fp_t &m1,
+                             fp_t &m2, size_t n=9) {
+  
+      cx_t i(0.0,1.0);
+      cx_t one(1,0);
+
+      size_t count=0;
+
+      gen_test_number ga, gb, gc, gd, ge;
+      fp_t rca, rcb, rcc, rcd, rce;
+      for(int it=0;it<2;it++) {
+        for(size_t j1=0;j1<n;j1++) {
+          rca=ga.gen();
+          gb.reset();
+          for(size_t j2=0;j2<n;j2++) {
+            rcb=gb.gen();
+            gc.reset();
+            for(size_t j3=0;j3<n;j3++) {
+              rcc=gc.gen();
+              gd.reset();
+              for(size_t j4=0;j4<n;j4++) {
+                rcd=gd.gen();
+                ge.reset();
+                for(size_t j5=0;j5<n;j5++) {
+                  rce=ge.gen();
+
+                  cx_t ca, cb, cc, cd, ce;
+                  if (it==0) {
+                    ca=rca+i;
+                    cb=rcb+i;
+                    cc=rcc+i;
+                    cd=rcd+i;
+                    ce=rce+i;
+                  } else {
+                    ca=one+i*rca;
+                    cb=one+i*rcb;
+                    cc=one+i*rcc;
+                    cd=one+i*rcd;
+                    ce=one+i*rce;
+                  }
+
+                  cx_t cr1, cr2, cr3, cr4;
+                  solve_c(ca,cb,cc,cd,ce,cr1,cr2,cr3,cr4);
+	    
+                  cx_t cbp=-(cr1+cr2+cr3+cr4)*ca;
+                  cx_t ccp=(cr1*cr2+cr1*cr3+cr2*cr3+
+                            cr1*cr4+cr2*cr4+cr3*cr4)*ca;
+                  cx_t cdp=-(cr1*cr2*cr3+cr1*cr2*cr4+
+                             cr1*cr3*cr4+cr2*cr3*cr4)*ca;
+                  cx_t cep=cr1*cr2*cr3*cr4*ca;
+	    
+                  cx_t czo1=(((ca*cr1+cb)*cr1+cc)*cr1+cd)*cr1+ce;
+                  cx_t czo2=(((ca*cr2+cb)*cr2+cc)*cr2+cd)*cr2+ce;
+                  cx_t czo3=(((ca*cr3+cb)*cr3+cc)*cr3+cd)*cr3+ce;
+                  cx_t czo4=(((ca*cr4+cb)*cr4+cc)*cr4+cd)*cr4+ce;
+                  
+                  fp_t q1=sqrt(abs(cb-cbp)*abs(cb-cbp)+
+                               abs(cc-ccp)*abs(cc-ccp)+
+                               abs(cd-cdp)*abs(cd-cdp)+
+                               abs(ce-cep)*abs(ce-cep));
+                  fp_t q2=sqrt(abs(czo1)*abs(czo1)+abs(czo2)*abs(czo2)+
+                               abs(czo3)*abs(czo3)+abs(czo4)*abs(czo4));
+                  
+                  //std::cout << q1 << " " << q2 << std::endl;
+                  if (!o2isfinite(q1) || !o2isfinite(q2)
+                      || q1>1.0e-10 || q2>1.0e-10) {
+                    std::cout << "ca,cb,cc,cd,ce: "
+                              << ca << " " << cb << " " << cc << " "
+                              << cd << " " << ce << std::endl;
+                    std::cout << "cr1,cr2,cr3,cr4: "
+                              << cr1 << " " << cr2 << " "
+                              << cr3 << " " << cr4 << std::endl;
+                    exit(-1);
+                    O2SCL_ERR("Failure in test_quartic_complex().",
+                              exc_esanity);
+                  }
+                  s1+=q1;
+                  if (q1>m1) m1=q1;
+                  s2+=q2;
+                  if (q2>m2) m2=q2;
+                  
+                  count++;
+                }
+                
+              }
+            }
+          }
+        }
+      }
+      
+      return count;
+    }
+    
     /// Return a string denoting the type ("quartic_complex")
     const char *type() { return "quartic_complex"; }
   };
@@ -1654,7 +1809,7 @@ namespace o2scl {
 
 #ifndef DOXYGEN_INTERNAL
 
-  protected:
+  public:
 
     /// The object to solve for the associated cubic
     cubic_real_coeff_cern<fp_t,cx_t> cub_obj;
