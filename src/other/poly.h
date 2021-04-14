@@ -47,15 +47,334 @@
 #include <o2scl/err_hnd.h>
 #include <o2scl/misc.h>
 #include <o2scl/mroot_hybrids.h>
+#include <o2scl/root_brent_gsl.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
 
+  /** \brief Desc
+   */
+  template<class fp_t=double>
+  class poly_real_base {
+    
+  protected:
+    
+    o2scl::root_brent_gsl<std::function<fp_t(fp_t)>,fp_t> rbg;
+    
+  public:
+    
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
+
+    poly_real_base() {
+      // Flip this switch because we will manually check
+      // the return value of the solver and the accuracy of
+      // the root
+      rbg.err_nonconv=false;
+    }
+    
+    virtual ~poly_real_base() {}
+    
+    /** \brief Polish the roots
+     */
+    template<class vec_t=std::vector<fp_t> >
+    int polish_r_arr(int n, const vec_t &co, 
+                     int nr, vec_t &ro) {
+      
+      std::function<fp_t(fp_t)> f=std::bind
+        (std::mem_fn<fp_t(fp_t,int,const vec_t &)>
+         (&poly_real_base<fp_t>::polish_fun<vec_t>),
+         this,std::placeholders::_1,n,std::cref(co));
+
+      int verbose=0;
+      //rbg.verbose=2;
+      rbg.tol_abs=1.0e-12;
+      rbg.tol_rel=1.0e-12;
+
+      // Sort the roots first
+      o2scl::vector_sort<vec_t,fp_t>(nr,ro);
+
+      if (verbose>1) {
+        std::cout.precision(14);
+        std::cout << "Sorted roots: ";
+        o2scl::vector_out(std::cout,nr,ro,true);
+      }
+      
+      fp_t low, high;
+      for(int i=0;i<nr;i++) {
+        fp_t f_ro=polish_fun(ro[i],n,co);
+        if (verbose>1) {
+          std::cout << "Root: " << i << " "
+                    << ro[i] << " value: " << f_ro << std::endl;
+        }
+        if (fabs(f_ro)>1.0e-12) {
+          if (i==0 && i==nr-1) {
+            if (verbose>1) {
+              std::cout << "One root: " << std::endl;
+            }
+            // If there's only one root, then polish it
+            low=ro[0];
+            int ret=rbg.solve(low,f);
+            if (verbose>1) {
+              std::cout << "ret 1: " << ret << std::endl;
+            }
+            if (ret==0) {
+              fp_t f_low=polish_fun(low,n,co);
+              if (verbose>1) {
+                std::cout << "before, after: " << f_ro << " " << f_low
+                          << std::endl;
+              }
+              if (fabs(f_low)<fabs(f_ro)) {
+                // Only accept the solution if the solver succeeded
+                // and the final root is better
+                ro[0]=low;
+              }
+            }
+          } else if (i==0 && ro[0]==ro[1]) {
+            if (verbose>1) {
+              std::cout << "0 == 1" << std::endl;
+            }
+            // If there is more than one root, and the first
+            // root is identical to the second
+            int ret=rbg.solve(low,f);
+            if (verbose>1) {
+              std::cout << "ret 2: " << ret << std::endl;
+            }
+            if (ret==0) {
+              fp_t f_low=polish_fun(low,n,co);
+              if (verbose>1) {
+                std::cout << "before, after: " << f_ro << " " << f_low
+                          << std::endl;
+              }
+              if (fabs(f_low)<fabs(f_ro)) {
+                // Only accept the solution if the solver succeeded
+                // and the final root is better
+                ro[0]=low;
+              }
+            }
+            rbg.solve(ro[0],f);
+          } else if (i==nr-1 && ro[nr-1]==ro[nr-2]) {
+            if (verbose>1) {
+              std::cout << "nr-1 == nr-2" << std::endl;
+            }
+            // If the last and second-to-last roots are identical
+            low=ro[nr-1];
+            int ret=rbg.solve(low,f);
+            if (verbose>1) {
+              std::cout << "ret 3: " << ret << std::endl;
+            }
+            if (ret==0) {
+              fp_t f_low=polish_fun(low,n,co);
+              if (verbose>1) {
+                std::cout << "before, after: " << f_ro << " " << f_low
+                          << std::endl;
+              }
+              if (fabs(f_low)<fabs(f_ro)) {
+                // Only accept the solution if the solver succeeded
+                // and the final root is better
+                ro[nr-1]=low;
+              }
+            }
+          } else {
+            if (i>0 && ro[i]==ro[i-1]) {
+              if (i<nr-1 && ro[i]==ro[i+1]) {
+                if (verbose>1) {
+                  std::cout << "i-1 == i == i+1" << std::endl;
+                }
+                // The root is equal to the previous and the next root,
+                // so use the solver to automatically bracket
+                low=ro[i];
+                int ret=rbg.solve(low,f);
+                if (verbose>1) {
+                  std::cout << "ret 4: " << ret << std::endl;
+                }
+                if (ret==0) {
+                  fp_t f_low=polish_fun(low,n,co);
+                  if (verbose>1) {
+                    std::cout << "before, after: " << f_ro << " " << f_low
+                              << std::endl;
+                  }
+                  if (fabs(f_low)<fabs(f_ro)) {
+                    // Only accept the solution if the solver succeeded
+                    // and the final root is better
+                    ro[i]=low;
+                  }
+                }
+              } else {
+                if (verbose>1) {
+                  std::cout << "i-1 == i" << std::endl;
+                }
+                // The root is equal to the previous one, so try to
+                // bracket
+                low=ro[i];
+                high=(ro[i]+ro[i+1])/2;
+                fp_t f_high=polish_fun(high,n,co);
+                int ret;
+                if (f_ro*f_high<0.0) {
+                  ret=rbg.solve_bkt(low,high,f);
+                  if (verbose>1) {
+                    std::cout << "ret 5: " << ret << std::endl;
+                  }
+                } else {
+                  // If bracketing fails, use the solver to automatically
+                  // bracket
+                  ret=rbg.solve(low,f);
+                  if (verbose>1) {
+                    std::cout << "ret 6: " << ret << std::endl;
+                  }
+                }
+                if (ret==0) {
+                  fp_t f_low=polish_fun(low,n,co);
+                  if (verbose>1) {
+                    std::cout << "before, after: " << f_ro << " " << f_low
+                              << std::endl;
+                  }
+                  if (fabs(f_low)<fabs(f_ro)) {
+                    // Only accept the solution if the solver succeeded
+                    // and the final root is better
+                    ro[i]=low;
+                  }
+                }
+              }
+            } else if (i<nr-1 && ro[i]==ro[i+1]) {
+              if (verbose>1) {
+                std::cout << "i == i+1" << std::endl;
+              }
+              // The root is equal to the next one, so try to
+              // bracket
+              low=(ro[i]+ro[i-1])/2;
+              high=ro[i];
+              fp_t f_low=polish_fun(low,n,co);
+              int ret;
+              if (f_ro*f_low<0.0) {
+                ret=rbg.solve_bkt(low,high,f);
+                if (verbose>1) {
+                  std::cout << "ret 7: " << ret << std::endl;
+                }
+              } else {
+                // If bracketing fails, use the solver to automatically
+                // bracket
+                ret=rbg.solve(high,f);
+                if (verbose>1) {
+                  std::cout << "ret 8: " << ret << std::endl;
+                }
+                low=high;
+              }
+              if (ret==0) {
+                fp_t f_low=polish_fun(low,n,co);
+                if (verbose>1) {
+                  std::cout << "before, after: " << f_ro << " " << f_low
+                            << std::endl;
+                }
+                if (fabs(f_low)<fabs(f_ro)) {
+                  // Only accept the solution if the solver succeeded
+                  // and the final root is better
+                  ro[i]=low;
+                }
+              }
+            } else {
+              if (verbose>1) {
+                std::cout << "No repeats." << std::endl;
+              }
+              // Otherwise, if we have multiple but not repeated roots,
+              // try to bracket
+              if (i==0) {
+                low=ro[0]-(ro[1]-ro[0]);
+                high=ro[1]-(ro[1]-ro[0])/2.0;
+              } else if (i==nr-1) {
+                low=ro[nr-2]+(ro[nr-1]-ro[nr-2])/2.0;
+                high=ro[nr-1]+(ro[nr-1]-ro[nr-2]);
+              } else {
+                low=ro[i-1]+(ro[i]-ro[i-1])/2.0;
+                high=ro[i+1]-(ro[i+1]-ro[i])/2.0;
+              }
+              if (verbose>1) {
+                std::cout << "low ro high: " << low << " " << ro[i] << " "
+                          << high << std::endl;
+              }
+              fp_t f_low=polish_fun(low,n,co);
+              fp_t f_high=polish_fun(high,n,co);
+              if (verbose>1) {
+                std::cout << "f_low f_ro f_high: " << f_low << " "
+                          << f_ro << " "
+                          << f_high << std::endl;
+              }
+              int ret;
+              if (f_low*f_ro<0) {
+                fp_t tmp=ro[i];
+                if (verbose>1) {
+                  std::cout << "Case 1: " << low << " " << tmp << std::endl;
+                  std::cout << f_low << " " << f_ro << std::endl;
+                }
+                ret=rbg.solve_bkt(low,tmp,f);
+                if (verbose>1) {
+                  std::cout << "ret 9: " << ret << std::endl;
+                }
+              } else if (f_high*f_ro<0) {
+                fp_t tmp=ro[i];
+                if (verbose>1) {
+                  std::cout << "Case 2: " << tmp << " " << high << std::endl;
+                }
+                ret=rbg.solve_bkt(tmp,high,f);
+                if (verbose>1) {
+                  std::cout << "ret 10: " << ret << std::endl;
+                }
+                low=tmp;
+              } else {
+                // If bracketing fails, use the solver to try to automatically
+                // bracket
+                low=ro[i];
+                if (verbose>1) {
+                  std::cout << "Case 3: " << low << std::endl;
+                }
+                ret=rbg.solve(low,f);
+                if (verbose>1) {
+                  std::cout << "ret 11: " << ret << std::endl;
+                }
+              }
+              if (ret==0) {
+                fp_t f_low=polish_fun(low,n,co);
+                if (verbose>1) {
+                  std::cout << "before, after: " << f_ro << " " << f_low
+                            << std::endl;
+                }
+                if (fabs(f_low)<fabs(f_ro)) {
+                  // Only accept the solution if the solver succeeded
+                  // and the final root is better
+                  ro[i]=low;
+                }
+              }
+            }
+          }
+          if (verbose>1) {
+            f_ro=polish_fun(ro[i],n,co);
+            std::cout << "Updated root: " << i << " "
+                      << ro[i] << " value: " << f_ro << std::endl;
+            char ch;
+            std::cin >> ch;
+          }
+        }
+      }
+      
+      return 0;
+    }
+
+    template<class vec_t=std::vector<fp_t> >
+    fp_t polish_fun(fp_t x, int n, const vec_t &co) {
+      fp_t ret=co[0];
+      for(int i=0;i<n;i++) {
+        ret=co[i+1]+x*ret;
+      }
+      return ret;
+    }
+  };
+  
   /** \brief Solve a quadratic polynomial with real coefficients and 
       real roots [abstract base]
   */
-  template<class fp_t=double> class quadratic_real {
+  template<class fp_t=double> class quadratic_real :
+    public poly_real_base<fp_t> {
     
   public:
 
@@ -496,7 +815,8 @@ namespace o2scl {
   /** \brief Solve a cubic polynomial with real coefficients and real roots
       [abstract base]
   */
-  template<class fp_t=double> class cubic_real {
+  template<class fp_t=double> class cubic_real :
+    public poly_real_base<fp_t> {
   public:
 
     virtual ~cubic_real() {}
@@ -808,7 +1128,8 @@ namespace o2scl {
   /** \brief Solve a quartic polynomial with real coefficients and 
       real roots [abstract base]
   */
-  template<class fp_t=double> class quartic_real {
+  template<class fp_t=double> class quartic_real :
+    public poly_real_base<fp_t> {
 
   public:
 
@@ -862,7 +1183,7 @@ namespace o2scl {
         roots and two complex conjugate roots. If disc is positive and
         P and D are both negative, then all four roots are real and
         distinct. If disc is positive and either P or D are positive,
-        then there are two paris of complex conjugate roots.
+        then there are two pairs of complex conjugate roots.
         If disc is zero, then the polynomial has a multiple root,
         and the following cases hold
         - P<0 and D<0 and disc_0 non-zero: one real double root and
@@ -873,12 +1194,24 @@ namespace o2scl {
         - D=0 and P<0: two real double roots
         - D=0 and P>0 and R=0: two complex conjugate double roots
         - D=0 and disc_0=0, all four roots are equal to -b/4/a. 
-
+        These possibilities correspond to different values of
+        \c n_real and \c real_type
+        - root_type=0 (n_real=0, n_real=2 or n_real=4) : all real roots 
+        are distinct
+        - root_type=1 (n_real=2 or n_real4): one double root
+        - root_type=2 : two double roots
+        - root_type=3 (n_real=4): 
+        one triple root and one fourth distinct real root
+        - root_type=4 (n_real=4): all real roots equal to -b/4/a
+        - root_type=5 (n_real=0): two complex conjugate double roots
+            
         Following https://en.wikipedia.org/wiki/Quartic_function .
      */
     virtual void diag_r(const fp_t a, const fp_t b, const fp_t c, 
                         const fp_t d, const fp_t e, fp_t &disc,
-                        fp_t &P, fp_t &R, fp_t &disc_0, fp_t &D) {
+                        fp_t &P, fp_t &R, fp_t &disc_0, fp_t &D,
+                        size_t &n_real, size_t &root_type) {
+
       fp_t a2=a*a;
       fp_t b2=b*b;
       fp_t c2=c*c;
@@ -903,6 +1236,39 @@ namespace o2scl {
         27*a2*d4+144*a*b2*c*e2-6*a*b2*d2*e-80*a*b*c2*d*e+
         18*a*b*c*d3+16*a*c4*e-4*a*c3*d2-27*b4*e2+18*b3*c*d*e-
         4*b3*d3-4*b2*c3*e+b2*c2*d2;
+
+      if (disc<0) {
+        n_real=2;
+        root_type=0;
+      } else if (disc>0) {
+        if (P<0 && D<0) {
+          n_real=4;
+          root_type=0;
+        } else {
+          n_real=0;
+          root_type=0;
+        }
+      } else {
+        if (P<0 && D<0 && disc_0!=0) {
+          n_real=4;
+          root_type=1;
+        } else if (D>0 || (P>0 && (D!=0 || R!=0))) {
+          n_real=2;
+          root_type=1;
+        } else if (disc_0==0 && D!=0) {
+          n_real=4;
+          root_type=3;
+        } else if (D==0 && P<0) {
+          n_real=4;
+          root_type=2;
+        } else if (D==0 && P>0 && R==0) {
+          n_real=0;
+          root_type=5;
+        } else {
+          n_real=4;
+          root_type=4;
+        }
+      }
       
       return;
     }
@@ -935,6 +1301,12 @@ namespace o2scl {
 
               fp_t cr1, cr2, cr3, cr4;
               solve_r(ca,cb,cc,cd,ce,cr1,cr2,cr3,cr4);
+
+              if (false) {
+                std::vector<fp_t> co={ca,cb,cc,cd,ce};
+                std::vector<fp_t> ro={cr1,cr2,cr3,cr4};
+                this->polish_r_arr(4,co,4,ro);
+              }
               
               fp_t zo1=(((ca*cr1+cb)*cr1+cc)*cr1+cd)*cr1+ce;
               fp_t zo2=(((ca*cr2+cb)*cr2+cc)*cr2+cd)*cr2+ce;

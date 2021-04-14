@@ -545,7 +545,6 @@ int main(void) {
   quartic_complex_std<cpp_bin_float_50,cpp_complex_50> q5_cdf50;
   
 #endif
-
   cout << "Quadratics with real coefficients and complex roots:" << endl;
   cout << "type                   Avg 1      Avg 2      Max 1"
        << "      Max 2      time" << endl;
