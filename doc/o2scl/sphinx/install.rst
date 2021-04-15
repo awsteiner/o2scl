@@ -202,7 +202,7 @@ Compiling O\ :sub:`2`\ scl on Docker
 
 There are also some experimental dockerfiles which you can use to
 install O\ :sub:`2`\ scl which can be found at
-https://github.com/awsteiner/o2scl/tree/master/docker . For those on
+https://github.com/awsteiner/o2scl/tree/main/docker . For those on
 MacOS, I recommend the guide at
 https://medium.com/crowdbotics/a-complete-one-by-one-guide-to-install-docker-on-your-mac-os-using-homebrew-e818eb4cfc3
 to installing docker.
