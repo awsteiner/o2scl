@@ -381,7 +381,11 @@ namespace o2scl {
     virtual ~quadratic_real() {}
 
     /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
-	giving the two solutions \f$ x=x_1 \f$ and \f$ x=x_2 \f$ .
+
+	If two real solutions exist (i.e. if the discriminant is
+        non-zero) then the real roots are placed in \c x1 and \c x2
+        and the number 2 is returned. Otherwise, 0 is returned and x1
+        and x2 are unmodified.
     */
     virtual int solve_r(const fp_t a2, const fp_t b2, const fp_t c2, 
 			fp_t &x1, fp_t &x2)=0;
@@ -391,7 +395,6 @@ namespace o2scl {
         If the discriminant is positive, the quadratic has two real
         roots, if it is zero, it has a double real root, and if it is
         negative then the quadratic has complex conjugate roots.
-
      */
     virtual fp_t disc_r(fp_t a2, fp_t b2, fp_t c2) {
       return b2*b2-4.0*a2*c2;
@@ -445,9 +448,12 @@ namespace o2scl {
       
       cx_t r1,r2;
       int ret=solve_rc(a2,b2,c2,r1,r2);
-      x1=r1.real();
-      x2=r2.real();
-      return ret;
+      if (this->disc_r(a2,b2,c2)>=0.0) {
+        x1=r1.real();
+        x2=r2.real();
+        return 2;
+      }
+      return 0;
     }
 
     /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
@@ -642,9 +648,12 @@ namespace o2scl {
       
       cx_t r1,r2;
       int ret=solve_c(a2,b2,c2,r1,r2);
-      x1=r1.real();
-      x2=r2.real();
-      return ret;
+      if (this->disc_r(a2,b2,c2)>=0.0) {
+        x1=r1.real();
+        x2=r2.real();
+        return 2;
+      }
+      return 0;
     }
 
     /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
@@ -832,9 +841,10 @@ namespace o2scl {
     /** \brief Compute the cubic discriminant, 
 	\f$ b^2 c^2 - 4 a c^3 - 4 b^3 d - 27 a^2 d^2 + 18 a b c d \f$
 
-        If the discriminant is zero, then at least two roots are 
-        equal, if the discriminant is positive, then there are 
-        three real roots, and if the discriminant is negative
+        If the discriminant is zero, then all roots qre real and
+        at least two are equal (possibly all three are identical).
+        If the discriminant is positive, then there are 
+        three distinct real roots, and if the discriminant is negative
         then there is one real root and two complex conjugate
         roots. 
      */
@@ -873,9 +883,12 @@ namespace o2scl {
       }
       
       int ret=solve_rc(a3,b3,c3,d3,x1,r2,r3);
-      x2=r2.real();
-      x3=r3.real();
-      return ret;
+      if (this->disc_r(a3,b3,c3,d3)>=0) {
+        x2=r2.real();
+        x3=r3.real();
+        return 3;
+      }
+      return 1;
     }
 
     /** \brief Solves the polynomial 
@@ -971,10 +984,23 @@ namespace o2scl {
       
       cx_t r1,r2,r3;
       int ret=solve_c(a3,b3,c3,d3,r1,r2,r3);
-      x1=r1.real();
-      x2=r2.real();
-      x3=r3.real();
-      return ret;
+      if (this->disc_r(a3,b3,c3,d3)>=0) {
+        x1=r1.real();
+        x2=r2.real();
+        x3=r3.real();
+        return 3;
+      }
+      fp_t r1i=fabs(r1.imag());
+      fp_t r2i=fabs(r2.imag());
+      fp_t r3i=fabs(r3.imag());
+      if (r1i<=r2i && r1i<=r3i) {
+        x1=r1.real();
+      } else if (r2i<=r1i && r2i<=r3i) {
+        x1=r2.real();
+      } else {
+        x1=r3.real();
+      }
+      return 1;
     }
 
     /** \brief Solves the polynomial 
@@ -1145,7 +1171,7 @@ namespace o2scl {
 			fp_t &x1, fp_t &x2, 
 			fp_t &x3, fp_t &x4)=0;
 
-    /** \brief Compute the discriminant
+    /** \brief Compute the quartic discriminant
 
 	The discriminant is zero if and only if at least two roots are
 	equal. If the discriminant is non-zero, the discriminant is
@@ -1275,7 +1301,7 @@ namespace o2scl {
     
     /** \brief Test \f$ n^4 \f$ quartics with real roots
      */
-    size_t test_real_roots(fp_t alpha, fp_t &m1, fp_t &s1, size_t n=9) {
+    size_t test_real_roots(fp_t alpha, fp_t &s1, fp_t &m1, size_t n=9) {
       
       size_t count=0;
       
@@ -1314,6 +1340,9 @@ namespace o2scl {
               fp_t zo4=(((ca*cr4+cb)*cr4+cc)*cr4+cd)*cr4+ce;
               
               fp_t q1=sqrt(zo1*zo1+zo2*zo2+zo3*zo3+zo4*zo4);
+              //if (m1>1.0e-12) {
+              //std::cout << "Xere: " << q1 << " " << m1 << std::endl;
+              //}
               
               s1+=q1;
               if (q1>m1) m1=q1;

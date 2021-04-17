@@ -56,6 +56,7 @@ using namespace o2scl_const;
 int quadratic_real_gsl::solve_r(const double a2, const double b2,
                                 const double c2, 
                                 double &x1, double &x2) {
+  // This function returns the number of real roots
   return gsl_poly_solve_quadratic(a2,b2,c2,&x1,&x2);
 }
 
@@ -64,12 +65,13 @@ int quadratic_real_coeff_gsl::solve_rc(const double a2, const double b2,
                                        std::complex<double> &x1,
                                        std::complex<double> &x2) {
   gsl_complex z0, z1;
+  // This function returns the number of complex roots
   int ret=gsl_poly_complex_solve_quadratic(a2,b2,c2,&z0,&z1);
   x1.real(GSL_REAL(z0));
   x1.imag(GSL_IMAG(z0));
   x2.real(GSL_REAL(z1));
   x2.imag(GSL_IMAG(z1));
-  return ret;
+  return 2-ret;
 }
 
 int cubic_real_coeff_gsl::solve_rc(const double a3, const double b3,
@@ -79,6 +81,7 @@ int cubic_real_coeff_gsl::solve_rc(const double a3, const double b3,
                                    std::complex<double> &x3) {
   
   gsl_complex z0, z1, z2;
+  // This function always returns 3
   int ret=gsl_poly_complex_solve_cubic(b3/a3,c3/a3,d3/a3,&z0,&z1,&z2);
   if (GSL_IMAG(z0)==0.0) {
     x1=GSL_REAL(z0);
@@ -101,6 +104,9 @@ int cubic_real_coeff_gsl::solve_rc(const double a3, const double b3,
   } else {
     O2SCL_ERR("GSL returned three complex roots.",o2scl::exc_einval);
   }
-  return ret;
+
+  // Return the number of real roots
+  if (x2.imag()==0.0 && x3.imag()==0.0) return 3;
+  return 1;
 }
 

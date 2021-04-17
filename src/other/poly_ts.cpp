@@ -304,7 +304,7 @@ void test_quartic_real(quartic_real<fp_t> *po,
                        string str, fp_t alpha, 
 		       fp_t e1, fp_t e2, fp_t e3, fp_t e4) {
 
-  fp_t s1=0,s2=0,m1=0,m2=0;
+  fp_t s1=0, s2=0, m1=0, m2=0;
 
   clock_t lt1=clock();
   
@@ -543,8 +543,9 @@ int main(void) {
 
   quartic_complex_std<long double,std::complex<long double> > q5_ld;
   quartic_complex_std<cpp_bin_float_50,cpp_complex_50> q5_cdf50;
-  
+
 #endif
+
   cout << "Quadratics with real coefficients and complex roots:" << endl;
   cout << "type                   Avg 1      Avg 2      Max 1"
        << "      Max 2      time" << endl;
@@ -717,7 +718,7 @@ int main(void) {
      5.0e-12,1.0,2.0e-8,1.0);
   test_quartic_real<long double>
     (&q4_ld,"quartic_r_std_ld",1.0,
-     5.0e-12,1.0,2.0e-6,1.0);
+     5.0e-10,1.0,2.0e-6,1.0);
   test_quartic_real<long double>
     (&q5_ld,"quartic_c_std_ld",1.0,
      5.0e-12,1.0,2.0e-6,1.0);
@@ -732,6 +733,7 @@ int main(void) {
      5.0e-12,1.0,2.0e-8,1.0);
 #endif
   cout << endl;
+  exit(-1);
   
   cout << "Quartics with real coefficients and real roots -\n"
        << " leading coefficient 1, coefficients of odd powers small:" 
