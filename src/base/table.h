@@ -610,12 +610,12 @@ namespace o2scl {
       return;
     }
       
-    int i;
-    aciter it;
     row.resize(atree.size());
-    for(i=0,it=atree.begin();it!=atree.end();it++,i++) {
-      row[i]=(it->second.dat)[irow];
+
+    for(size_t i=0;i<get_ncolumns();i++) {
+      row[i]=(alist[i]->second.dat)[irow];
     }
+      
     return;
   }
 
