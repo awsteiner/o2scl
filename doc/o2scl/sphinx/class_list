@@ -38,6 +38,7 @@
   <compound refid="classo2scl_1_1cubic__real__coeff" kind="class"><name>o2scl::cubic_real_coeff</name>
   <compound refid="classo2scl_1_1cubic__real__coeff__cern" kind="class"><name>o2scl::cubic_real_coeff_cern</name>
   <compound refid="classo2scl_1_1cubic__real__coeff__gsl" kind="class"><name>o2scl::cubic_real_coeff_gsl</name>
+  <compound refid="classo2scl_1_1cubic__real__coeff__gsl2" kind="class"><name>o2scl::cubic_real_coeff_gsl2</name>
   <compound refid="classo2scl_1_1cursesw" kind="class"><name>o2scl::cursesw</name>
   <compound refid="classo2scl_1_1deriv__base" kind="class"><name>o2scl::deriv_base</name>
   <compound refid="classo2scl_1_1deriv__cern" kind="class"><name>o2scl::deriv_cern</name>
@@ -241,6 +242,7 @@
   <compound refid="classo2scl_1_1permutation" kind="class"><name>o2scl::permutation</name>
   <compound refid="classo2scl_1_1pinside" kind="class"><name>o2scl::pinside</name>
   <compound refid="classo2scl_1_1poly__complex" kind="class"><name>o2scl::poly_complex</name>
+  <compound refid="classo2scl_1_1poly__real__base" kind="class"><name>o2scl::poly_real_base</name>
   <compound refid="classo2scl_1_1poly__real__coeff" kind="class"><name>o2scl::poly_real_coeff</name>
   <compound refid="classo2scl_1_1poly__real__coeff__gsl" kind="class"><name>o2scl::poly_real_coeff_gsl</name>
   <compound refid="classo2scl_1_1polylog" kind="class"><name>o2scl::polylog</name>
@@ -266,14 +268,14 @@
   <compound refid="classo2scl_1_1quadratic__real" kind="class"><name>o2scl::quadratic_real</name>
   <compound refid="classo2scl_1_1quadratic__real__coeff" kind="class"><name>o2scl::quadratic_real_coeff</name>
   <compound refid="classo2scl_1_1quadratic__real__coeff__gsl" kind="class"><name>o2scl::quadratic_real_coeff_gsl</name>
+  <compound refid="classo2scl_1_1quadratic__real__coeff__gsl2" kind="class"><name>o2scl::quadratic_real_coeff_gsl2</name>
+  <compound refid="classo2scl_1_1quadratic__real__gsl" kind="class"><name>o2scl::quadratic_real_gsl</name>
   <compound refid="classo2scl_1_1quartic__complex" kind="class"><name>o2scl::quartic_complex</name>
-  <compound refid="classo2scl_1_1quartic__complex__simple" kind="class"><name>o2scl::quartic_complex_simple</name>
+  <compound refid="classo2scl_1_1quartic__complex__std" kind="class"><name>o2scl::quartic_complex_std</name>
   <compound refid="classo2scl_1_1quartic__real" kind="class"><name>o2scl::quartic_real</name>
   <compound refid="classo2scl_1_1quartic__real__coeff" kind="class"><name>o2scl::quartic_real_coeff</name>
   <compound refid="classo2scl_1_1quartic__real__coeff__cern" kind="class"><name>o2scl::quartic_real_coeff_cern</name>
-  <compound refid="classo2scl_1_1quartic__real__gsl" kind="class"><name>o2scl::quartic_real_gsl</name>
-  <compound refid="classo2scl_1_1quartic__real__gsl2" kind="class"><name>o2scl::quartic_real_gsl2</name>
-  <compound refid="classo2scl_1_1quartic__real__simple" kind="class"><name>o2scl::quartic_real_simple</name>
+  <compound refid="classo2scl_1_1quartic__real__std" kind="class"><name>o2scl::quartic_real_std</name>
   <compound refid="classo2scl_1_1inte__hcubature_1_1region" kind="class"><name>o2scl::inte_hcubature::region</name>
   <compound refid="classo2scl_1_1rng__gsl" kind="class"><name>o2scl::rng_gsl</name>
   <compound refid="classo2scl_1_1rng__gsl__uniform__real" kind="class"><name>o2scl::rng_gsl_uniform_real</name>

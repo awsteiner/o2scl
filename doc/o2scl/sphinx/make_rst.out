@@ -42,6 +42,7 @@ Namespace: o2scl class: cubic_real
 Namespace: o2scl class: cubic_real_coeff
 Namespace: o2scl class: cubic_real_coeff_cern
 Namespace: o2scl class: cubic_real_coeff_gsl
+Namespace: o2scl class: cubic_real_coeff_gsl2
 Namespace: o2scl class: cursesw
 Namespace: o2scl class: deriv_base
 Namespace: o2scl class: deriv_cern
@@ -245,6 +246,7 @@ Namespace: o2scl class: ode_step
 Namespace: o2scl class: permutation
 Namespace: o2scl class: pinside
 Namespace: o2scl class: poly_complex
+Namespace: o2scl class: poly_real_base
 Namespace: o2scl class: poly_real_coeff
 Namespace: o2scl class: poly_real_coeff_gsl
 Namespace: o2scl class: polylog
@@ -270,14 +272,14 @@ Namespace: o2scl class: quadratic_complex_std
 Namespace: o2scl class: quadratic_real
 Namespace: o2scl class: quadratic_real_coeff
 Namespace: o2scl class: quadratic_real_coeff_gsl
+Namespace: o2scl class: quadratic_real_coeff_gsl2
+Namespace: o2scl class: quadratic_real_gsl
 Namespace: o2scl class: quartic_complex
-Namespace: o2scl class: quartic_complex_simple
+Namespace: o2scl class: quartic_complex_std
 Namespace: o2scl class: quartic_real
 Namespace: o2scl class: quartic_real_coeff
 Namespace: o2scl class: quartic_real_coeff_cern
-Namespace: o2scl class: quartic_real_gsl
-Namespace: o2scl class: quartic_real_gsl2
-Namespace: o2scl class: quartic_real_simple
+Namespace: o2scl class: quartic_real_std
 Namespace: o2scl class: inte_hcubature::region
 Namespace: o2scl class: rng_gsl
 Namespace: o2scl class: rng_gsl_uniform_real

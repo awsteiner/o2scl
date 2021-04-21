@@ -42,6 +42,11 @@ namespace o2scl {
       We use \f$ c=1 \f$ but keep factors of \f$ G \f$, which has
       units \f$ \mathrm{km}/\mathrm{M_{\odot}} \f$.
 
+      \warning The Love number can be sensitive to inaccuracy in
+      the input EOS table, thus it's important to make sure the
+      EOS table has a sufficiently fine grid to give accurate
+      results.
+
       \verbatim embed:rst
       Following the notation in [Postnikov10]_, define
       the function :math:`H(r)`, which is the solution of
@@ -168,14 +173,12 @@ namespace o2scl {
       discontinuities (if there are any then the error handler
       is called). 
 
-      \note This class does not yet handle strange quark
-      stars which have an energy discontinuity at the surface
-      (this currently causes the error handler to be called).
-
       \future Improve calc_H() to handle discontinuities and to 
       tabulate the EOS.
       \future Improve the handling at small r using an expansion,
       similar to that used in e.g. Detweiler and Lindblom (1985)?
+      \future Allow specification of, e.g., an eos_tov like object
+      rather than an EOS table.
   */
   class tov_love {
 
