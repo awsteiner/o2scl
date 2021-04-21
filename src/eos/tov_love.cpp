@@ -73,7 +73,7 @@ int tov_love::y_derivs(double r, size_t nv, const std::vector<double> &vals,
   double cs2=tab->interp("r",r,"cs2");
   double gm=tab->interp("r",r,"gm");
   double pi=o2scl_const::pi;
-
+  
   if (r==0.0) {
     ders[0]=0.0;
   } else {
