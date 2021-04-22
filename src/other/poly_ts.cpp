@@ -733,7 +733,6 @@ int main(void) {
      5.0e-12,1.0,2.0e-8,1.0);
 #endif
   cout << endl;
-  exit(-1);
   
   cout << "Quartics with real coefficients and real roots -\n"
        << " leading coefficient 1, coefficients of odd powers small:" 
