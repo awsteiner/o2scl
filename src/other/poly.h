@@ -445,15 +445,13 @@ namespace o2scl {
           ("Leading coefficient zero in quadratic_real_coeff::solve_r().",
            exc_einval);
       }
-      
-      cx_t r1,r2;
+      cx_t r1, r2;
       int ret=solve_rc(a2,b2,c2,r1,r2);
-      if (this->disc_r(a2,b2,c2)>=0.0) {
+      if (ret==2) {
         x1=r1.real();
         x2=r2.real();
-        return 2;
       }
-      return 0;
+      return ret;
     }
 
     /** \brief Solves the polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
@@ -570,7 +568,7 @@ namespace o2scl {
     /** \brief Test \f$ n^2 \f$ quadratics with real roots
      */
     size_t test_real_roots(fp_t &s1, fp_t &s2, fp_t &m1,
-                           fp_t &m2, size_t n=80) {
+                           fp_t &m2, size_t &wrong_ret, size_t n=80) {
       
       o2scl::gen_test_number gd, ge;
 
@@ -591,7 +589,10 @@ namespace o2scl {
           fp_t cc=(cr1*cr2).real();
 
           cx_t cr1p, cr2p;
-          solve_rc(ca,cb,cc,cr1p,cr2p);
+          int ret=solve_rc(ca,cb,cc,cr1p,cr2p);
+          if (ret!=2) {
+            wrong_ret+=1;
+          }
           
           // If the roots are flipped
           if (fabs(cr1.real()-cr2p.real())<fabs(cr1.real()-cr1p.real())) {
@@ -645,8 +646,8 @@ namespace o2scl {
           ("Leading coefficient zero in quadratic_complex::solve_r().",
            exc_einval);
       }
-      
-      cx_t r1,r2;
+
+      cx_t r1, r2;
       int ret=solve_c(a2,b2,c2,r1,r2);
       if (this->disc_r(a2,b2,c2)>=0.0) {
         x1=r1.real();
@@ -668,7 +669,10 @@ namespace o2scl {
       }
       
       int ret=solve_c(a2,b2,c2,x1,x2);
-      return ret;
+      if (this->disc_r(a2,b2,c2)>=0.0) {
+        return 2;
+      }
+      return 0;
     }
 
     /** \brief Solves the complex polynomial \f$ a_2 x^2 + b_2 x + c_2 = 0 \f$ 
@@ -883,7 +887,7 @@ namespace o2scl {
       }
       
       int ret=solve_rc(a3,b3,c3,d3,x1,r2,r3);
-      if (this->disc_r(a3,b3,c3,d3)>=0) {
+      if (ret==3) {
         x2=r2.real();
         x3=r3.real();
         return 3;
@@ -903,7 +907,8 @@ namespace o2scl {
     /** \brief Test \f$ n^4 \f$ cubics with real coefficients
      */
     size_t test_real_coeffs(fp_t alpha, fp_t &s1, fp_t &s2,
-                            fp_t &m1, fp_t &m2, size_t n=16) {
+                            fp_t &m1, fp_t &m2, size_t &wrong_ret,
+                            size_t n=16) {
       
       size_t count=0;
       
@@ -925,7 +930,12 @@ namespace o2scl {
 
                 fp_t cr1;
                 cx_t cr2, cr3;
-                solve_rc(ca,cb,cc,cd,cr1,cr2,cr3);
+                int ret=solve_rc(ca,cb,cc,cd,cr1,cr2,cr3);
+                fp_t disc=this->disc_r(ca,cb,cc,cd);
+                if ((disc>=0.0 && ret==1) ||
+                    (disc<0.0 && ret==3)) {
+                  wrong_ret++;
+                }
                 
                 cx_t cbp=-(cr1+cr2+cr3)*ca;
                 cx_t ccp=(cr1*cr2+cr1*cr3+cr2*cr3)*ca;
