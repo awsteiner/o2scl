@@ -2267,7 +2267,7 @@ namespace o2scl {
       }
       
       fp_t disc=b*b-4*a*c;
-      
+
       if (disc > 0) {
         if (b == 0) {
           fp_t s=fabs(sqrt(disc)/a/2);
@@ -3053,22 +3053,45 @@ namespace o2scl {
       
       //---------------------------------------
       // The solutions to the two quadratics:
-      
-      quad2.solve_r(1,b2a,c2a,x1,x2);
-      quad2.solve_r(1,b2b,c2b,x3,x4);
 
-      if (!o2isfinite(x1) || !o2isfinite(x2) ||
-          !o2isfinite(x3) || !o2isfinite(x4)) {
-        std::cout << "Zere: " << std::endl;
-        std::cout << u1 << " " << u2 << " " << u3 << std::endl;
-        std::cout << t1 << " " << a04 << " " <<  a34 << std::endl;
-        std::cout << "b2a,b2b: " << b2a << " " << b2b << std::endl;
-        std::cout << c2a << " " << c2b << std::endl;
-        std::cout << x1 << " " << x2 << std::endl;
-        std::cout << x3 << " " << x4 << std::endl;
-        exit(-1);
+      int ir1=quad2.solve_r(1,b2a,c2a,x1,x2);
+      int ir2=quad2.solve_r(1,b2b,c2b,x3,x4);
+
+      if (ir1>=2 && (!o2isfinite(x1) || !o2isfinite(x2))) {
+        /*
+          std::cout << "Zere1: " << std::endl;
+          std::cout << u1 << " " << u2 << " " << u3 << std::endl;
+          std::cout << t1 << " " << a04 << " " <<  a34 << std::endl;
+          std::cout << "b2a,b2b: " << b2a << " " << b2b << std::endl;
+          std::cout << "c2a,c2b: " << c2a << " " << c2b << std::endl;
+          std::cout << x1 << " " << x2 << std::endl;
+          exit(-1);
+        */
+        O2SCL_ERR("Quartic failure 1 in quartic_real_std.",
+                  o2scl::exc_einval);
       }
-      
+      if (ir2>=2 && (!o2isfinite(x3) || !o2isfinite(x4))) {
+        /*
+          std::cout << "Zere1: " << std::endl;
+          std::cout << u1 << " " << u2 << " " << u3 << std::endl;
+          std::cout << t1 << " " << a04 << " " <<  a34 << std::endl;
+          std::cout << "b2a,b2b: " << b2a << " " << b2b << std::endl;
+          std::cout << "c2a,c2b: " << c2a << " " << c2b << std::endl;
+          std::cout << x3 << " " << x4 << std::endl;
+          exit(-1);
+        */
+        O2SCL_ERR("Quartic failure 2 in quartic_real_std.",
+                  o2scl::exc_einval);
+      }
+
+      if (ir1==0 && ir2==0) {
+        return 0;
+      } else if (ir1==0) {
+        x1=x3;
+        x2=x4;
+        return 2;
+      }
+
       return success;
     }
 

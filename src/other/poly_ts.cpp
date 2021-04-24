@@ -715,7 +715,7 @@ int main(void) {
 #ifdef O2SCL_LD_TYPES
   test_quartic_real<long double>
     (&q1_ld,"quartic_rc_cern_ld",1.0,
-     5.0e-12,1.0,2.0e-8,1.0);
+     6.0e-12,1.0,2.0e-8,1.0);
   test_quartic_real<long double>
     (&q4_ld,"quartic_r_std_ld",1.0,
      5.0e-10,1.0,2.0e-6,1.0);
@@ -750,10 +750,10 @@ int main(void) {
 #ifdef O2SCL_LD_TYPES
   test_quartic_real<long double>
     (&q1_ld,"quartic_rc_cern_ld",1.0e-5,
-     5.0e-12,1.0,2.0e-6,1.0);
+     1.0e-11,1.0,2.0e-6,1.0);
   test_quartic_real<long double>
     (&q4_ld,"quartic_r_std_ld",1.0e-5,
-     5.0e-7,1.0,1.0,1.0);
+     5.0e-1,1.0,1.0e2,1.0);
   test_quartic_real<long double>
     (&q5_ld,"quartic_c_std_ld",1.0e-5,
      5.0e-7,1.0,1.0,1.0);
@@ -762,7 +762,7 @@ int main(void) {
      5.0e-12,1.0,2.0e-6,1.0);
   test_quartic_real_boost<cpp_bin_float_50>
     (&q4_cdf50,"quartic_r_std_50",1.0e-5,
-     1.0e-7,1.0,1.0,1.0);
+     1.0e0,1.0,1.0e2,1.0);
   test_quartic_real_boost<cpp_bin_float_50>
     (&q5_cdf50,"quartic_c_std_50",1.0e-5,
      1.0e-7,1.0,1.0,1.0);
