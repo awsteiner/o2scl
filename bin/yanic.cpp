@@ -153,6 +153,11 @@ public:
 };
 
 /** \brief Interface type
+
+    \note The value of \c name from the parent class is used to store
+    the type itself, \c prefix is used to store prefixes like "const"
+    or "static" and \c suffix is used to store suffixes like "*", or
+    "&".
  */
 class if_type : public if_base {
   
@@ -190,7 +195,8 @@ public:
     return s;
   }
   
-  /** \brief Parse a vector string object into the type parts
+  /** \brief Parse a vector string object as a type with a prefix,
+      a suffix, and a name
    */
   void parse(std::vector<std::string> &vs, size_t start, size_t end) {
 
@@ -208,12 +214,22 @@ public:
       vs2.push_back(vs[i]);
     }
 
-    // Handle according to the number of arguments
+    // Parse according to the number of arguments in the list.
+    // We will handle *'s or &'s in the 'name' field later.
     if (vs2.size()==1) {
+      
       prefix="";
       suffix="";
+      // If there is only one string in the list with no spaces, then
+      // store the type in name
       name=vs2[0];
+      
     } else if (vs2.size()==2) {
+
+      // If's a two-string list, it's either "prefix" "name" or
+      // "name" "suffix", where the suffix is made up only of
+      // *'s and &'s. 
+      
       bool symb_only=true;
       for(size_t i=0;i<vs2[1].length();i++) {
         if (vs2[1][i]!='*' && vs2[1][i]!='&') symb_only=false;
@@ -225,7 +241,14 @@ public:
         prefix=vs2[0];
         name=vs2[1];
       }
+      
     } else if (vs2.size()==3) {
+
+      // If it's a three-string list, then it could be a shared
+      // pointer, a type of the form "prefix" "name" "suffix", or a
+      // type "prefix 1" "prefix2" "name". Note that this function
+      // cannot handle, e.g. "double * *".
+      
       if (vs2[0]=="shared_ptr" || vs2[0]=="std::shared_ptr") {
         prefix=vs2[0];
         name=vs2[1];
@@ -245,13 +268,16 @@ public:
         }
       }
     } else {
+      
       cerr << "Unsupported number of type arguments, " << vs2.size()
            << ", in if_type::parse()." << endl;
       cout << "vs: ";
       vector_out(cout,vs,true);
       cout << "vs2: ";
       vector_out(cout,vs2,true);
-      exit(-1);
+      O2SCL_ERR("Unsupported type format in if_type::parse().",
+                o2scl::exc_eunimpl);
+      
     }
     
     // Take *'s and &'s in name and add them to suffix
@@ -304,6 +330,12 @@ public:
     return false;
   }
 
+  /// Return true if the type is long
+  bool is_long() {
+    if (prefix.find("long")!=std::string::npos) return true;
+    return false;
+  }
+
   /// Return true if the type is an input/output reference
   bool is_io() {
     if (prefix.find("io")!=std::string::npos) return true;
@@ -328,7 +360,11 @@ public:
   // End of class if_type
 };
 
-/** \brief A variable with a type and a name
+/** \brief Interface variable
+
+    The name of the variable is stored in \c name, the type is
+    stored in \c type, and a default value (if present) is 
+    stored in \c value.
  */
 class if_var : public if_base {
   
@@ -340,7 +376,7 @@ public:
   /// The value (used for default function values)
   std::string value;
 
-  /// Parse a list to this variable
+  /// Parse a list of strings to this variable
   void parse(vector<string> &vs) {
 
     if (vs.size()==0) {
@@ -1394,13 +1430,17 @@ int main(int argc, char *argv[]) {
           }
           // Output default value if we're in the header file
           if (header) {
-            if (iff.args[k].value.length()>0) {
-              if (iff.args[k].value=="True") {
-                fout << "=true";
-              } else if (iff.args[k].value=="False") {
-                fout << "=false";
-              } else {
-                fout << "=" << iff.args[k].value;
+            // String arguments are converted to char *'s, so
+            // they don't need a default value
+            if (iff.args[k].ift.name!="std::string") {
+              if (iff.args[k].value.length()>0) {
+                if (iff.args[k].value=="True") {
+                  fout << "=true";
+                } else if (iff.args[k].value=="False") {
+                  fout << "=false";
+                } else {
+                  fout << "=" << iff.args[k].value;
+                }
               }
             }
           }
@@ -1455,7 +1495,13 @@ int main(int argc, char *argv[]) {
             // In case it's const, we have to explicitly typecast
             fout << "  *dptr=(double *)(&(ptr->operator[](";
           } else if (iff.name=="operator[]" || iff.name=="operator()") {
-            fout << "  double ret=ptr->" << iff.name << "(";
+            if (iff.ret.name=="std::string") {
+              fout << "  std::string *sptr=new std::string;" << endl;
+              fout << "  *sptr=ptr->" << iff.name << "(";
+            } else {
+              fout << "  " << iff.ret.name
+                   << " ret=ptr->" << iff.name << "(";
+            }
           } else if (iff.ret.name=="void") {
             fout << "  ptr->" << iff.name << "(";
           } else if (iff.ret.name=="std::string") {
@@ -1519,9 +1565,14 @@ int main(int argc, char *argv[]) {
         // "double"
         if (iff.name=="operator[]" && !iff.ret.is_const() &&
             iff.ret.suffix=="&") {
-          fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
-               << "_setitem(void *vptr, size_t i, " << iff.ret.name
-               << " val)";
+          if (iff.ret.name=="std::string") {
+            fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
+                 << "_setitem(void *vptr, size_t i, char *val)";
+          } else {
+            fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
+                 << "_setitem(void *vptr, size_t i, " << iff.ret.name
+                 << " val)";
+          }
           if (header) {
             fout << ";" << endl;
           } else {
@@ -2227,7 +2278,10 @@ int main(int argc, char *argv[]) {
       // and return python code
       std::string return_docs, restype_string;
       if (iff.name=="operator[]" || iff.name=="operator()") {
-        if ((iff.ret.name!="vector<double>" &&
+        if (iff.ret.name=="std::string") {
+          return_docs="std_string object";
+          restype_string="ctypes.c_void_p";
+        } else if ((iff.ret.name!="vector<double>" &&
              iff.ret.name!="std::vector<double>") ||
             iff.ret.suffix!="&") {
           return_docs="";
@@ -2510,8 +2564,15 @@ int main(int argc, char *argv[]) {
         fout << "        func=self._link." << dll_name << "."
              << ifc.ns << "_" << underscoreify(ifc.name) << "_setitem"
              << endl;
-        fout << "        func.argtypes=[ctypes.c_void_p,"
-             << "ctypes.c_size_t,ctypes.c_" << iff.ret.name << "]" << endl;
+        if (iff.ret.name=="std::string") {
+          fout << "        func.argtypes=[ctypes.c_void_p,"
+               << "ctypes.c_size_t,ctypes.c_char_p]"
+               << endl;
+        } else {
+          fout << "        func.argtypes=[ctypes.c_void_p,"
+               << "ctypes.c_size_t,ctypes.c_" << iff.ret.name << "]"
+               << endl;
+        }
         fout << "        func(self._ptr,i,value)" << endl;
         fout << "        return" << endl;
         fout << endl;
@@ -2706,6 +2767,15 @@ int main(int argc, char *argv[]) {
     }
     for(size_t k=0;k<iff.args.size();k++) {
       fout << iff.args[k].name;
+      if (iff.args[k].value.length()>0) {
+        if (iff.args[k].value=="true") {
+          fout << "=True";
+        } else if (iff.args[k].value=="false") {
+          fout << "=False";
+        } else {
+          fout << "=" << iff.args[k].value;
+        }
+      }
       if (k!=iff.args.size()-1) {
         fout << ",";
       }

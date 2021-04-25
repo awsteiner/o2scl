@@ -191,9 +191,9 @@ class std::vector<std::string>
   - size_t n                             
 - function size
   - size_t
-#- function operator[]
-#  - string
-#  - size_t n
+- function operator[]
+  - std::string &
+  - size_t n
 - extra_py |
 | def __len__(self):
 |     """
@@ -399,20 +399,20 @@ class table<>
   - std::string dest
 - function add_col_from_table
   - void
-  - table<> &source
+  - io table<> &source
   - std::string src_index
   - std::string src_col
   - std::string dest_index
   - std::string dest_col
 - function insert_table
   - void
-  - table<> &source
+  - io table<> &source
   - std::string src_index
   - bool allow_extrap
   - std::string dest_index
 - function add_table
   - void
-  - table<> &source
+  - io table<> &source
 - function new_row
   - void
   - size_t n
@@ -437,7 +437,7 @@ class table<>
 - function line_of_data
   - void
   - py_name line_of_data_vector
-  - std::vector<double> &data
+  - io std::vector<double> &data
 - function ordered_lookup
   - size_t
   - std::string scol
@@ -645,7 +645,7 @@ class uniform_grid<>
   - size_t n
 - function vector
   - void
-  - std::vector<double> &v
+  - out std::vector<double> &v
 # 
 # Class uniform_grid_end
 #
@@ -744,17 +744,17 @@ class table3d
   - py_name set_xy
   - std::string x_name
   - size_t nx
-  - std_vector &x
+  - io std_vector &x
   - std::string y_name
   - size_t ny
-  - std_vector &y
+  - io std_vector &y
 - function set_xy
   - void
   - py_name set_xy_grid
   - std::string x_name
-  - uniform_grid<double> &x_grid
+  - io uniform_grid<double> &x_grid
   - std::string y_name
-  - uniform_grid<double> &y_grid
+  - io uniform_grid<double> &y_grid
 - function set
   - void
   - py_name set
@@ -806,14 +806,10 @@ class table3d
 - function get_grid_y
   - double
   - size_t iy
-# The get_size() function requires a more complicated pythonization,
-# but it's a duplication of what is actually done by get_nx() and
-# get_ny() anyway, so for now we just leave it out of the python
-# interface.
-#- function get_size
-#  - void
-#  - size_t &nx
-#  - size_t &ny
+- function get_size
+  - void
+  - out size_t &nx
+  - out size_t &ny
 - function get_nx
   - size_t
 - function get_ny
@@ -904,7 +900,7 @@ class table3d
 - function function_matrix 
   - int
   - std::string function
-  - boost::numeric::ublas::matrix<double> &mat
+  - out boost::numeric::ublas::matrix<double> &mat
   - bool throw_on_err
 - function function_slice
   - void
@@ -954,7 +950,7 @@ class tensor<>
 - function get
   - double
   - py_name get_vector
-  - vector<size_t> &index
+  - io vector<size_t> &index
 #- function resize
 #  - void
 #  - py_name resize_vector
@@ -1021,23 +1017,23 @@ class tensor_grid<>
 - function set_val
   - void
   - py_name set_val_vector
-  - vector<double> &grid_point
+  - io vector<double> &grid_point
   - double val
 - function get_val
   - double
   - py_name get_val_vector
-  - vector<double> &grid_point
+  - io vector<double> &grid_point
 - function is_grid_set
   - bool
 - function set_grid_packed
   - void
-  - vector<double> &grid
+  - io vector<double> &grid
 - function default_grid
   - void
 - function set_grid_i_vec    
   - void
   - size_t i
-  - vector<double> &grid
+  - io vector<double> &grid
 - function get_grid
   - double
   - size_t i

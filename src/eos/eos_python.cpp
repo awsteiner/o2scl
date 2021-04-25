@@ -1483,9 +1483,9 @@ int o2scl_tov_solve_mvsr(void *vptr) {
   return ret;
 }
 
-int o2scl_tov_solve_fixed(void *vptr, double mass) {
+int o2scl_tov_solve_fixed(void *vptr, double mass, double pmax) {
   tov_solve *ptr=(tov_solve *)vptr;
-  int ret=ptr->fixed(mass);
+  int ret=ptr->fixed(mass,pmax);
   return ret;
 }
 

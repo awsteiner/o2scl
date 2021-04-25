@@ -85,21 +85,21 @@ int o2scl_eos_had_base_calc_e(void *vptr, void *ptr_n, void *ptr_p, void *ptr_th
 
 int o2scl_eos_had_base_calc_p(void *vptr, void *ptr_n, void *ptr_p, void *ptr_th);
 
-double o2scl_eos_had_base_fcomp(void *vptr, double nb, double delta);
+double o2scl_eos_had_base_fcomp(void *vptr, double nb, double delta=0.0);
 
 double o2scl_eos_had_base_fcomp_err(void *vptr, double nb, double delta, double *unc);
 
-double o2scl_eos_had_base_feoa(void *vptr, double nb, double delta);
+double o2scl_eos_had_base_feoa(void *vptr, double nb, double delta=0.0);
 
-double o2scl_eos_had_base_fesym(void *vptr, double nb, double delta);
+double o2scl_eos_had_base_fesym(void *vptr, double nb, double delta=0.0);
 
 double o2scl_eos_had_base_fesym_err(void *vptr, double nb, double delta, double *unc);
 
-double o2scl_eos_had_base_fesym_slope(void *vptr, double nb, double delta);
+double o2scl_eos_had_base_fesym_slope(void *vptr, double nb, double delta=0.0);
 
-double o2scl_eos_had_base_fesym_curve(void *vptr, double nb, double delta);
+double o2scl_eos_had_base_fesym_curve(void *vptr, double nb, double delta=0.0);
 
-double o2scl_eos_had_base_fesym_skew(void *vptr, double nb, double delta);
+double o2scl_eos_had_base_fesym_skew(void *vptr, double nb, double delta=0.0);
 
 double o2scl_eos_had_base_fesym_diff(void *vptr, double nb);
 
@@ -107,13 +107,13 @@ double o2scl_eos_had_base_feta(void *vptr, double nb);
 
 double o2scl_eos_had_base_feta_prime(void *vptr, double nb);
 
-double o2scl_eos_had_base_fkprime(void *vptr, double nb, double delta);
+double o2scl_eos_had_base_fkprime(void *vptr, double nb, double delta=0.0);
 
-double o2scl_eos_had_base_fmsom(void *vptr, double nb, double delta);
+double o2scl_eos_had_base_fmsom(void *vptr, double nb, double delta=0.0);
 
-double o2scl_eos_had_base_f_effm_neut(void *vptr, double nb, double delta);
+double o2scl_eos_had_base_f_effm_neut(void *vptr, double nb, double delta=0.0);
 
-double o2scl_eos_had_base_f_effm_prot(void *vptr, double nb, double delta);
+double o2scl_eos_had_base_f_effm_prot(void *vptr, double nb, double delta=0.0);
 
 double o2scl_eos_had_base_f_effm_scalar(void *vptr, double nb, double delta);
 
@@ -415,11 +415,11 @@ void o2scl_eos_tov_interp_default_low_dens_eos(void *vptr);
 
 void o2scl_eos_tov_interp_sho11_low_dens_eos(void *vptr);
 
-void o2scl_eos_tov_interp_s12_low_dens_eos(void *vptr, char *model, bool external);
+void o2scl_eos_tov_interp_s12_low_dens_eos(void *vptr, char *model, bool external=false);
 
-void o2scl_eos_tov_interp_gcp10_low_dens_eos(void *vptr, char *model, bool external);
+void o2scl_eos_tov_interp_gcp10_low_dens_eos(void *vptr, char *model, bool external=false);
 
-void o2scl_eos_tov_interp_ngl13_low_dens_eos(void *vptr, double L, char *model, bool external);
+void o2scl_eos_tov_interp_ngl13_low_dens_eos(void *vptr, double L, char *model, bool external=false);
 
 void o2scl_eos_tov_interp_ngl13_low_dens_eos2(void *vptr, double S, double L, double nt, char *fname);
 
@@ -549,7 +549,7 @@ void o2scl_tov_solve_set_eos(void *vptr, void *ptr_eos);
 
 int o2scl_tov_solve_mvsr(void *vptr);
 
-int o2scl_tov_solve_fixed(void *vptr, double mass);
+int o2scl_tov_solve_fixed(void *vptr, double mass, double pmax=1.0e20);
 
 int o2scl_tov_solve_max(void *vptr);
 
@@ -665,7 +665,7 @@ void o2scl_nstar_cold_set_err_nonconv(void *vptr, bool v);
 
 void o2scl_nstar_cold_set_eos(void *vptr, void *ptr_eos);
 
-int o2scl_nstar_cold_calc_eos(void *vptr, double np_0);
+int o2scl_nstar_cold_calc_eos(void *vptr, double np_0=0.0);
 
 int o2scl_nstar_cold_calc_nstar(void *vptr);
 

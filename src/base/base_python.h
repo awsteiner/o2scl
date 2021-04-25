@@ -88,6 +88,10 @@ void o2scl_std__vector_std__string__resize(void *vptr, size_t n);
 
 size_t o2scl_std__vector_std__string__size(void *vptr);
 
+void *o2scl_std__vector_std__string__getitem(void *vptr, size_t n);
+
+void o2scl_std__vector_std__string__setitem(void *vptr, size_t i, char *val);
+
 void *o2scl_create_boost__numeric__ublas__vector_double_();
 
 void o2scl_free_boost__numeric__ublas__vector_double_(void *vptr);
@@ -397,6 +401,8 @@ void o2scl_table3d_set_grid_y(void *vptr, size_t iy, double val);
 double o2scl_table3d_get_grid_x(void *vptr, size_t ix);
 
 double o2scl_table3d_get_grid_y(void *vptr, size_t iy);
+
+void o2scl_table3d_get_size(void *vptr, size_t *nx, size_t *ny);
 
 size_t o2scl_table3d_get_nx(void *vptr);
 

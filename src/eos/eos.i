@@ -90,7 +90,7 @@ class eos_had_base abstract
 - function fcomp
   - double
   - double nb
-  - double delta
+  - double delta [0.0]
 - function fcomp_err
   - double
   - double nb
@@ -99,11 +99,11 @@ class eos_had_base abstract
 - function feoa
   - double
   - double nb
-  - double delta
+  - double delta [0.0]
 - function fesym
   - double
   - double nb
-  - double delta
+  - double delta [0.0]
 - function fesym_err
   - double
   - double nb
@@ -112,15 +112,15 @@ class eos_had_base abstract
 - function fesym_slope
   - double
   - double nb
-  - double delta
+  - double delta [0.0]
 - function fesym_curve
   - double
   - double nb
-  - double delta
+  - double delta [0.0]
 - function fesym_skew
   - double
   - double nb
-  - double delta
+  - double delta [0.0]
 - function fesym_diff
   - double
   - double nb
@@ -133,19 +133,19 @@ class eos_had_base abstract
 - function fkprime
   - double
   - double nb
-  - double delta
+  - double delta [0.0]
 - function fmsom
   - double
   - double nb
-  - double delta
+  - double delta [0.0]
 - function f_effm_neut
   - double
   - double nb
-  - double delta
+  - double delta [0.0]
 - function f_effm_prot
   - double
   - double nb
-  - double delta
+  - double delta [0.0]
 - function f_effm_scalar
   - double
   - double nb
@@ -365,30 +365,30 @@ class eos_tov_interp
   - table_units<> &eos
   - std::string s_cole
   - std::string s_colp
-  - std::string s_colnb
+  - std::string s_colnb [""]
 - function default_low_dens_eos
   - void
 - function sho11_low_dens_eos
   - void
 - function s12_low_dens_eos
   - void
-  - std::string model
-  - bool external
+  - std::string model ["SLy4"]
+  - bool external [false]
 - function gcp10_low_dens_eos
   - void
-  - std::string model
-  - bool external
+  - std::string model ["BSk20"]
+  - bool external [false]
 - function ngl13_low_dens_eos
   - void
   - double L
-  - std::string model
-  - bool external
+  - std::string model ["PNM"]
+  - bool external [false]
 - function ngl13_low_dens_eos2
   - void
   - double S
   - double L
   - double nt
-  - std::string fname
+  - std::string fname [""]
 - function no_low_dens_eos
   - void
 # 
@@ -432,6 +432,7 @@ class tov_solve
 - function fixed
   - int
   - double mass
+  - double pmax [1.0e20]
 - function max
   - int
 - function get_results
@@ -473,10 +474,10 @@ class tov_love
 class nstar_cold
 - function set_eos
   - void
-  - eos_had_base &eos
+  - io eos_had_base &eos
 - function calc_eos
   - int
-  - double np_0
+  - double np_0 [0.0]
 - function calc_nstar
   - int
 - function fixed
@@ -507,13 +508,13 @@ class nstar_cold
 #
 function skyrme_load
 - void
-- eos_had_skyrme &sk
+- io eos_had_skyrme &sk
 - std::string model
 - bool external [false]
 - int verbose [0]
 function rmf_load
 - void
-- eos_had_rmf &rmf
+- io eos_had_rmf &rmf
 - std::string model
 - bool external [false]
 

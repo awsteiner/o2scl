@@ -44,7 +44,7 @@ size_t o2scl_std__string_length(void *vptr) {
 
 char o2scl_std__string_getitem(void *vptr, size_t n) {
   std::string *ptr=(std::string *)vptr;
-  double ret=ptr->operator[](n);
+  char ret=ptr->operator[](n);
   return ret;
 }
 
@@ -120,7 +120,7 @@ size_t o2scl_std__vector_int__size(void *vptr) {
 
 int o2scl_std__vector_int__getitem(void *vptr, size_t n) {
   std::vector<int> *ptr=(std::vector<int> *)vptr;
-  double ret=ptr->operator[](n);
+  int ret=ptr->operator[](n);
   return ret;
 }
 
@@ -155,7 +155,7 @@ size_t o2scl_std__vector_size_t__size(void *vptr) {
 
 size_t o2scl_std__vector_size_t__getitem(void *vptr, size_t n) {
   std::vector<size_t> *ptr=(std::vector<size_t> *)vptr;
-  double ret=ptr->operator[](n);
+  size_t ret=ptr->operator[](n);
   return ret;
 }
 
@@ -186,6 +186,19 @@ size_t o2scl_std__vector_std__string__size(void *vptr) {
   std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
   size_t ret=ptr->size();
   return ret;
+}
+
+void *o2scl_std__vector_std__string__getitem(void *vptr, size_t n) {
+  std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->operator[](n);
+  return sptr;
+}
+
+void o2scl_std__vector_std__string__setitem(void *vptr, size_t i, char *val) {
+  std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
+  (*ptr)[i]=val;
+  return;
 }
 
 void *o2scl_create_boost__numeric__ublas__vector_double_() {
@@ -1117,6 +1130,12 @@ double o2scl_table3d_get_grid_y(void *vptr, size_t iy) {
   table3d *ptr=(table3d *)vptr;
   double ret=ptr->get_grid_y(iy);
   return ret;
+}
+
+void o2scl_table3d_get_size(void *vptr, size_t *nx, size_t *ny) {
+  table3d *ptr=(table3d *)vptr;
+  ptr->get_size(*nx,*ny);
+  return;
 }
 
 size_t o2scl_table3d_get_nx(void *vptr) {
