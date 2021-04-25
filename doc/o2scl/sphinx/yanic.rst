@@ -87,7 +87,7 @@ Functions
     function <function name>
     - {return type}
     - py_name <python name>      
-    - {parameter type} <parameter name>
+    - {parameter type} <parameter name> [default value]
     ...
 
   For each function, an ``extern C`` wrapper is created with the
@@ -156,7 +156,7 @@ Classes
 
     - function <function name>
       - {return type}
-      - {parameter type} <parameter name>
+      - {parameter type} <parameter name> [default value]
       ...
     
 - Extra python code for the class::

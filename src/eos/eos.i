@@ -509,11 +509,11 @@ function skyrme_load
 - void
 - eos_had_skyrme &sk
 - std::string model
-- bool external
-- int verbose
+- bool external [false]
+- int verbose [0]
 function rmf_load
 - void
 - eos_had_rmf &rmf
 - std::string model
-- bool external
+- bool external [false]
 

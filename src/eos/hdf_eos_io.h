@@ -139,5 +139,3 @@ namespace o2scl_hdf {
 }
 
 #endif
-
-

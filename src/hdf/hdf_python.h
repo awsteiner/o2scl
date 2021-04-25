@@ -30,7 +30,7 @@ void *o2scl_hdf_create_hdf_file();
 
 void o2scl_hdf_free_hdf_file(void *vptr);
 
-void o2scl_hdf_hdf_file_open(void *vptr, char *fname, bool write_access, bool err_on_fail);
+void o2scl_hdf_hdf_file_open(void *vptr, char *fname, bool write_access=false, bool err_on_fail=true);
 
 void o2scl_hdf_hdf_file_open_or_create(void *vptr, char *fname);
 

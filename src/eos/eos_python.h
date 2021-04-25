@@ -675,8 +675,8 @@ void *o2scl_nstar_cold_get_eos_results(void *vptr);
 
 void *o2scl_nstar_cold_get_tov_results(void *vptr);
 
-void o2scl_skyrme_load_wrapper(void *ptr_sk, char *model, bool external, int verbose);
+void o2scl_skyrme_load_wrapper(void *ptr_sk, char *model, bool external=false, int verbose=0);
 
-void o2scl_rmf_load_wrapper(void *ptr_rmf, char *model, bool external);
+void o2scl_rmf_load_wrapper(void *ptr_rmf, char *model, bool external=false);
 
 }

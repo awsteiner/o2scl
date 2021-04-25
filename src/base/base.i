@@ -613,7 +613,7 @@ class table_units<>
   - int
   - std::string col
   - std::string unit
-  - bool err_on_fail
+  - bool err_on_fail [True]
 # 
 # Shared pointer for table_units<> objects
 #

@@ -194,8 +194,8 @@ public:
    */
   void parse(std::vector<std::string> &vs, size_t start, size_t end) {
 
-    if (start<=end) {
-      O2SCL_ERR("if_var::parse() called with start<=end.",
+    if (start>=end) {
+      O2SCL_ERR("if_type::parse() called with start>=end.",
                 o2scl::exc_einval);
     }
     if (vs[end-1][0]=='[' &&
@@ -342,6 +342,11 @@ public:
 
   /// Parse a list to this variable
   void parse(vector<string> &vs) {
+
+    if (vs.size()==0) {
+      O2SCL_ERR("if_var.parse() called with empty list.",
+                o2scl::exc_esanity);
+    }
     
     // Check if ampersands or asterisks are on the LHS
     // of the variable name. If so, include them in
@@ -349,27 +354,42 @@ public:
 
     // Temporarily store the last string in the list
     string last_string=vs[vs.size()-1];
+
+    // This will be the last index in the list which does not
+    // contain a default value
+    size_t last_non_def=vs.size()-1;
+
+    // See if we can find a default value, if so, set the "value" field
+    if (last_string[0]=='[' && last_string[last_string.length()-1]==']') {
+      value=last_string.substr(1,last_string.length()-2);
+      if (vs.size()==0) {
+        O2SCL_ERR("if_var.parse() called with default value but no type.",
+                  o2scl::exc_esanity);
+      }
+      last_string=vs[vs.size()-2];
+      last_non_def--;
+    }
     
     if (last_string[0]=='&' || last_string[0]=='*') {
-
+      
       // Clear the last list entry so we can fill it with the
       // ampersands and asterisks we find in 'last_string'
-      vs[vs.size()-1]="";
+      vs[last_non_def]="";
 
       // Progressively move ampersands and asterisks from last_string
       // to the last string in the list
       while (last_string[0]=='&' || last_string[0]=='*') {
-        vs[vs.size()-1]=last_string[0]+vs[vs.size()-1];
+        vs[last_non_def]=last_string[0]+vs[last_non_def];
         last_string=last_string.substr(1,last_string.length()-1);
       }
       
       name=last_string;
-      ift.parse(vs,1,vs.size());
+      ift.parse(vs,1,last_non_def+1);
       
     } else {
       
       name=last_string;
-      ift.parse(vs,1,vs.size()-1);
+      ift.parse(vs,1,last_non_def);
     }
     
     return;
@@ -744,10 +764,17 @@ int main(int argc, char *argv[]) {
             if_var ifv;
 
             ifv.parse(vs);
-            
-            cout << "    Member function " << iff.name
-                 << " has argument " << ifv.name << " with type "
-                 << ifv.ift.to_string() << endl;
+
+            if (ifv.value.length()==0) {
+              cout << "    Member function " << iff.name
+                   << " has argument " << ifv.name << " with type "
+                   << ifv.ift.to_string() << endl;
+            } else {
+              cout << "    Member function " << iff.name
+                   << " has argument " << ifv.name << " with type "
+                   << ifv.ift.to_string() << " and default value "
+                   << ifv.value << endl;
+            }
 
             // Check that C type references which are not return values
             // are marked 'out' or 'io'
@@ -979,10 +1006,17 @@ int main(int argc, char *argv[]) {
         if_var ifv;
 
         ifv.parse(vs);
-        
-        cout << "  Function " << iff.name
-             << " has argument " << ifv.name << " with type "
-             << ifv.ift.to_string() << endl;
+
+        if (ifv.value.length()==0) {
+          cout << "  Function " << iff.name
+               << " has argument " << ifv.name << " with type "
+               << ifv.ift.to_string() << endl;
+        } else {
+          cout << "  Function " << iff.name
+               << " has argument " << ifv.name << " with type "
+               << ifv.ift.to_string() << " with default value "
+               << ifv.value << endl;
+        }
         
         iff.args.push_back(ifv);
         
@@ -1358,6 +1392,18 @@ int main(int argc, char *argv[]) {
               fout << "void *ptr_" << iff.args[k].name;
             }
           }
+          // Output default value if we're in the header file
+          if (header) {
+            if (iff.args[k].value.length()>0) {
+              if (iff.args[k].value=="True") {
+                fout << "=true";
+              } else if (iff.args[k].value=="False") {
+                fout << "=false";
+              } else {
+                fout << "=" << iff.args[k].value;
+              }
+            }
+          }
           if (k!=iff.args.size()-1) {
             fout << ", ";
           }
@@ -1663,6 +1709,18 @@ int main(int argc, char *argv[]) {
             fout << "void *&ptr_" << iff.args[k].name;
           } else {
             fout << "void *ptr_" << iff.args[k].name;
+          }
+        }
+        // Output default value
+        if (header) {
+          if (iff.args[k].value.length()>0) {
+            if (iff.args[k].value=="True") {
+              fout << "=true";
+            } else if (iff.args[k].value=="False") {
+              fout << "=false";
+            } else {
+              fout << "=" << iff.args[k].value;
+            }
           }
         }
         if (k!=iff.args.size()-1) {
@@ -2094,6 +2152,15 @@ int main(int argc, char *argv[]) {
           ;
         } else {
           fout << "," << iff.args[k].name;
+          if (iff.args[k].value.length()>0) {
+            if (iff.args[k].value=="true") {
+              fout << "=True";
+            } else if (iff.args[k].value=="false") {
+              fout << "=False";
+            } else {
+              fout << "=" << iff.args[k].value;
+            }
+          }
         }
       }
       fout << "):" << endl;
@@ -2109,13 +2176,19 @@ int main(int argc, char *argv[]) {
         if (iff.args[k].ift.is_ctype()) {
           if (iff.args[k].ift.suffix=="&") {
             if (iff.args[k].ift.is_io()) {
-              fout << "        | *" << iff.args[k].name;
-              fout << "*: ``ctypes.c_" << iff.args[k].ift.name
+              fout << "        | *" << iff.args[k].name << "*";
+              if (iff.args[k].value.length()>0) {
+                fout << "=" << iff.args[k].value;
+              }
+              fout << ": ``ctypes.c_" << iff.args[k].ift.name
                    << "``" << endl;
             }
           } else {
-            fout << "        | *" << iff.args[k].name;
-            fout << "*: ``" << iff.args[k].ift.name << "``" << endl;
+            fout << "        | *" << iff.args[k].name << "*";
+            if (iff.args[k].value.length()>0) {
+              fout << "=" << iff.args[k].value;
+            }
+            fout << ": ``" << iff.args[k].ift.name << "``" << endl;
           }
         } else if (iff.args[k].ift.suffix=="&") {
           std::string type_temp=iff.args[k].ift.name;
@@ -2123,12 +2196,18 @@ int main(int argc, char *argv[]) {
               it!=class_py_names.end();it++) {
             if (it->first==type_temp) type_temp=it->second;
           }
-          fout << "        | *" << iff.args[k].name;
-          fout << "*: :class:`" << type_temp << "` object"
+          fout << "        | *" << iff.args[k].name << "*";
+          if (iff.args[k].value.length()>0) {
+            fout << "=" << iff.args[k].value;
+          }
+          fout << ": :class:`" << type_temp << "` object"
                << endl;
         } else if (iff.args[k].ift.name=="std::string") {
-          fout << "        | *" << iff.args[k].name;
-          fout << "*: string" << endl;
+          fout << "        | *" << iff.args[k].name << "*";
+          if (iff.args[k].value.length()>0) {
+            fout << "=" << iff.args[k].value;
+          }
+          fout << ": string" << endl;
         }
       }
 

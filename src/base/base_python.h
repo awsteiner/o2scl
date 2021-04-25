@@ -308,7 +308,7 @@ void o2scl_table_units___line_of_units(void *vptr, char *unit_line);
 
 void o2scl_table_units___remove_unit(void *vptr, char *col);
 
-int o2scl_table_units___convert_to_unit(void *vptr, char *col, char *unit, bool err_on_fail);
+int o2scl_table_units___convert_to_unit(void *vptr, char *col, char *unit, bool err_on_fail=true);
 
 void *o2scl_create_uniform_grid__();
 

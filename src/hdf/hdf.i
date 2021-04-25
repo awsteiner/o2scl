@@ -36,8 +36,8 @@ class hdf_file
 - function open
   - void
   - std::string fname
-  - bool write_access
-  - bool err_on_fail
+  - bool write_access [false]
+  - bool err_on_fail [true]
 - function open_or_create
   - void
   - std::string fname
