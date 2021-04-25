@@ -242,7 +242,7 @@ Handling of function arguments:
   std::vector<double>
 - std::vector<double> & - uniform_grid::vector
 
-Return values  
+Return values:
 
 - C type bool: return Python ``True`` or ``False``
 - C type char: return a one-character bytes object
@@ -252,5 +252,11 @@ Return values
   and operator()
 - ``std::string``: Return a Python bytes object
 - ``std::string &``: Return a std_string object
-  
+
+Special funcions:
+
+- Array-indexing, ``operator[]`` functions are translated to
+  ``__getitem__`` functions on the python side. If the ``operator[]``
+  function returns a non-const reference rather than a value,
+  then a ``__setitem__`` function is also created.
 

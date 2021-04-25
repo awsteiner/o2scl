@@ -490,6 +490,8 @@ double o2scl_index_spec_get_val3(void *vptr);
 
 void o2scl_index_spec_set_val3(void *vptr, double v);
 
+void *o2scl_index_spec_ix_index(void *vptr, size_t ix);
+
 void *o2scl_create_tensor__();
 
 void o2scl_free_tensor__(void *vptr);

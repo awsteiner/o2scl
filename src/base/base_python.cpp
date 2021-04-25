@@ -1390,6 +1390,12 @@ void o2scl_index_spec_set_val3(void *vptr, double v) {
   return;
 }
 
+void *o2scl_index_spec_ix_index(void *vptr, size_t ix) {
+  index_spec *ptr=(index_spec *)vptr;
+  index_spec ret=ptr->ix_index(ix);
+  return &ret;
+}
+
 void *o2scl_create_tensor__() {
   tensor<> *ptr=new tensor<>;
   return ptr;

@@ -1549,8 +1549,10 @@ int main(int argc, char *argv[]) {
               fout << "  return sptr;" << endl;
             } else if (iff.ret.name=="void") {
               fout << "  return;" << endl;
-            } else {
+            } else if (iff.ret.is_ctype() || iff.ret.is_reference()) {
               fout << "  return ret;" << endl;
+            } else {
+              fout << "  return &ret;" << endl;
             }
           }
           
@@ -2320,9 +2322,12 @@ int main(int argc, char *argv[]) {
       } else if (iff.ret.name=="float" || iff.ret.name=="double") {
         return_docs="a Python float";
         restype_string=((string)"ctypes.c_")+reformat_ret_type;
-      } else if (iff.ret.name!="void") {
-        return_docs=((string)"``ctypes.c_")+reformat_ret_type+"`` object";
+      } else if (iff.ret.name=="bool") {
+        return_docs="a Python boolean";
         restype_string=((string)"ctypes.c_")+reformat_ret_type;
+      } else if (iff.ret.name!="void") {
+        return_docs=((string)":class:`")+reformat_ret_type+"` object";
+        restype_string="ctypes.c_void_p";
       }
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.is_ctype()) {
@@ -2475,9 +2480,15 @@ int main(int argc, char *argv[]) {
       } else if (iff.ret.name=="void") {
         function_start="func(self._ptr";
         function_end=")";
-      } else {
+      } else if (iff.ret.is_ctype() || iff.ret.is_reference()) {
         function_start="ret=func(self._ptr";
         function_end=")";
+      } else {
+        function_start="ret2=func(self._ptr";
+        function_end=")";
+        post_func_code.push_back(((string)"ret=")+iff.ret.name+
+                                 "(self._link,ret2)");
+        post_func_code.push_back("ret.owner=True");
       }
 
       // Write the code for the actual ctypes function call
@@ -2522,7 +2533,9 @@ int main(int argc, char *argv[]) {
         if (addl_ret.length()>0) fout << "," << addl_ret << endl;
         else fout << endl;
       } else if (iff.ret.name=="std::string" || iff.ret.name=="string") {
-        if (iff.ret.is_reference()) {
+        if (iff.name=="operator[]") {
+          fout << "        return strt.to_bytes()" << endl;
+        } else if (iff.ret.is_reference()) {
           fout << "        return strt";
           if (addl_ret.length()>0) fout << "," << addl_ret << endl;
           else fout << endl;
