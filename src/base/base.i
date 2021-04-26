@@ -999,7 +999,7 @@ class tensor<>
   - size_t
   - size_t i
 #- function get_data
-#  - out const vector<double> &
+#  - out vector<double> &
 - function total_size
   - size_t
 - function min_value

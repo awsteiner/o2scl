@@ -2824,8 +2824,10 @@ int main(int argc, char *argv[]) {
       }
     }
     fout << "):" << endl;
+
+    // ----------------------------------------------------
+    // Documentation for python code for a function
     
-    // Comment
     fout << "    \"\"\"" << endl;
     
     fout << "        | Parameters:" << endl;
@@ -2878,8 +2880,12 @@ int main(int argc, char *argv[]) {
     }
       
     fout << "    \"\"\"" << endl;
+
+    // End of documention of python code for a function
     
+    // ----------------------------------------------------
     // Perform necessary conversions
+    
     for(size_t k=0;k<iff.args.size();k++) {
       if (iff.args[k].ift.name=="std::string") {
         if (iff.args[k].ift.suffix=="&") {
@@ -2895,6 +2901,7 @@ int main(int argc, char *argv[]) {
     }
       
     // Ctypes interface for function
+    
     if (iff.overloaded) {
       fout << "    func=link." << dll_name << "." << iff.ns << "_"
            << iff.py_name << "_wrapper" << endl;
@@ -2985,6 +2992,10 @@ int main(int argc, char *argv[]) {
 
     if_class &ifc=classes[i];
 
+    // This is the section header for the class. The variable 'len'
+    // counts the number of characters so that we can match with and
+    // equal number of dashes.
+
     size_t len=6;
     fout2 << "Class ";
     if (ifc.py_name=="") {
@@ -2998,7 +3009,8 @@ int main(int argc, char *argv[]) {
       fout2 << "-";
     }
     fout2 << "\n" << endl;
-    
+
+    // Construct the 'autoclass' documentation
     if (ifc.py_name=="") {
       fout2 << ".. autoclass:: o2sclpy." << ifc.name << endl;
     } else {
@@ -3013,6 +3025,7 @@ int main(int argc, char *argv[]) {
     if (ifc.std_cc) {
       fout2 << "        .. automethod:: __deepcopy__" << endl;
     }
+    
     // If the class contains an operator[] or an operator(), then ensure
     // that the __getitem__ method is documented.
     for(size_t k=0;k<ifc.methods.size();k++) {
@@ -3029,6 +3042,10 @@ int main(int argc, char *argv[]) {
 
     if_shared_ptr &ifsp=sps[i];
 
+    // This is the section header for the shared pointer. The variable
+    // 'len' counts the number of characters so that we can match with
+    // and equal number of dashes.
+    
     size_t len=17;
     fout2 << "Class shared_ptr_";
     
@@ -3043,31 +3060,28 @@ int main(int argc, char *argv[]) {
       fout2 << "-";
     }
     fout2 << "\n" << endl;
-        
+
+    // Output the 'autoclass' command
+    
     if (ifsp.py_name!="") {
+      
+      // Manually remove '<>' from the typename if necessary
       size_t len=ifsp.name.length();
       std::string tmps=ifsp.name;
-      // Manually remove '<>' from the typename if necessary
       if (len>2 && ifsp.name[len-2]=='<' &&
           ifsp.name[len-1]=='>') {
         tmps=ifsp.name.substr(0,len-2);
       }
+      
       fout2 << ".. autoclass:: o2sclpy.shared_ptr_" << tmps << endl;
       fout2 << "        :members:" << endl;
       fout2 << "        :undoc-members:\n" << endl;
       fout2 << "        .. automethod:: __init__" << endl;
       fout2 << "        .. automethod:: __del__" << endl;
       fout2 << endl;
+      
     } else {
-      /*
-      size_t len=ifsp.py_name.length();
-      std::string tmps=ifsp.py_name;
-      // Manually remove '<>' from the typename if necessary
-      if (len>2 && ifsp.py_name[len-2]=='<' &&
-          ifsp.py_name[len-1]=='>') {
-        tmps=ifsp.py_name.substr(0,len-2);
-      }
-      */
+      
       fout2 << ".. autoclass:: o2sclpy.shared_ptr_" << ifsp.py_name << endl;
       fout2 << "        :members:" << endl;
       fout2 << "        :undoc-members:\n" << endl;
@@ -3080,6 +3094,10 @@ int main(int argc, char *argv[]) {
     
     if_func &iff=functions[j];
 
+    // This is the section header for the function. The variable 'len'
+    // counts the number of characters so that we can match with and
+    // equal number of dashes.
+    
     size_t len=9;
     fout2 << "Function ";
 
@@ -3095,7 +3113,8 @@ int main(int argc, char *argv[]) {
     }
     fout2 << "\n" << endl;
     
-    // Function header
+    // Now construct the 'autofunction' command
+    
     if (iff.overloaded) {
       fout2 << ".. autofunction:: o2sclpy." << iff.py_name << "(link,";
     } else {
