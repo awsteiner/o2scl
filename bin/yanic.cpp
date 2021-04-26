@@ -267,6 +267,22 @@ public:
           name=vs2[2];
         }
       }
+      
+    } else if (vs2.size()==4) {
+      
+      bool symb_only=true;
+      for(size_t i=0;i<vs2[3].length();i++) {
+        if (vs2[3][i]!='*' && vs2[3][i]!='&') symb_only=false;
+      }
+      if (symb_only) {
+        prefix=vs2[0]+" "+vs2[1];
+        name=vs2[2];
+        suffix=vs2[3];
+      } else {
+        prefix=vs2[0]+" "+vs2[1]+" "+vs2[2];
+        name=vs2[3];
+      }
+      
     } else {
       
       cerr << "Unsupported number of type arguments, " << vs2.size()
@@ -1549,7 +1565,8 @@ int main(int argc, char *argv[]) {
               fout << "  return sptr;" << endl;
             } else if (iff.ret.name=="void") {
               fout << "  return;" << endl;
-            } else if (iff.ret.is_ctype() || iff.ret.is_reference()) {
+            } else if (iff.ret.is_ctype() || iff.ret.is_reference() ||
+                       iff.ret.is_shared_ptr()) {
               fout << "  return ret;" << endl;
             } else {
               fout << "  return &ret;" << endl;
@@ -1737,8 +1754,10 @@ int main(int argc, char *argv[]) {
       if_func &iff=functions[i];
     
       // Function header
+      
       string func_name=iff.name;
       if (iff.overloaded) func_name=iff.py_name;
+      
       if (iff.ret.name=="std::string") {
         fout << "void *" << underscoreify(iff.ns) << "_"
              << func_name << "(";
@@ -1751,6 +1770,7 @@ int main(int argc, char *argv[]) {
       }
     
       for(size_t k=0;k<iff.args.size();k++) {
+        
         if (iff.args[k].ift.suffix=="") {
           if (iff.args[k].ift.name=="std::string") {
             fout << "char *" << iff.args[k].name;
@@ -1764,6 +1784,7 @@ int main(int argc, char *argv[]) {
             fout << "void *ptr_" << iff.args[k].name;
           }
         }
+        
         // Output default value
         if (header) {
           if (iff.args[k].value.length()>0) {
@@ -1776,12 +1797,15 @@ int main(int argc, char *argv[]) {
             }
           }
         }
+
+        // Comma before next function parameter
         if (k!=iff.args.size()-1) {
           fout << ", ";
         }
       }
     
       fout << ")";
+      
       if (header) {
         fout << ";" << endl;
       } else {
@@ -1835,7 +1859,13 @@ int main(int argc, char *argv[]) {
           
         } else {
           
-          fout << "  " << iff.ret.name << " ret=ptr->" << iff.name << "(";
+          if (iff.ret.is_ctype() || iff.ret.is_reference()) {
+            fout << "  " << iff.ret.name << " ret=ptr->" << iff.name << "(";
+          } else {
+            fout << "  " << iff.ret.name << " *ret=new "
+                 << iff.ret.name << ";" << endl;
+            fout << "  *ret=" << iff.name << "(";
+          }
 
           for(size_t k=0;k<iff.args.size();k++) {
             if (iff.args[k].ift.suffix=="") {
@@ -1848,7 +1878,7 @@ int main(int argc, char *argv[]) {
             }
           }
           fout << ");" << endl;
-
+          
           fout << "  return ret;" << endl;
         }
         fout << "}" << endl;

@@ -919,9 +919,46 @@ class index_spec
 - double val1
 - double val2
 - double val3
-- function ix_index
-  - index_spec
-  - size_t ix
+function ix_index
+- index_spec
+- size_t ix
+function ix_fixed
+- index_spec
+- size_t ix
+- size_t ix2
+function ix_sum
+- index_spec
+- size_t ix
+function ix_trace
+- index_spec
+- size_t ix
+- size_t ix2
+function ix_reverse
+- index_spec
+- size_t ix
+function ix_range
+- index_spec
+- size_t ix
+- size_t start
+- size_t end
+function ix_interp
+- index_spec
+- size_t ix
+- double v
+function ix_grid
+- index_spec
+- size_t ix
+- double start
+- double end
+- size_t n_bins
+- bool log [false]
+function ix_gridw
+- index_spec
+- size_t ix
+- double start
+- double end
+- double width
+- bool log [false]
 # 
 # Class tensor
 #
@@ -951,17 +988,18 @@ class tensor<>
   - double
   - py_name get_vector
   - io vector<size_t> &index
-#- function resize
-#  - void
-#  - py_name resize_vector
-#  - vector<size_t> &index
+- function resize
+  - void
+  - py_name resize_vector
+  - size_t n
+  - io vector<size_t> &index
 - function get_rank
   - size_t
 - function get_size
   - size_t
   - size_t i
 #- function get_data
-#  - const vector<double> &
+#  - out const vector<double> &
 - function total_size
   - size_t
 - function min_value

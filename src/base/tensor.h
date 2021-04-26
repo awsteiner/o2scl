@@ -116,7 +116,7 @@ namespace o2scl {
     val2=v2;
     val3=v3;
   }
-  
+    
   };
 
   /// \name Tensor index functions in src/base/tensor.h

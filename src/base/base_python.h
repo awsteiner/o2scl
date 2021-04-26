@@ -490,8 +490,6 @@ double o2scl_index_spec_get_val3(void *vptr);
 
 void o2scl_index_spec_set_val3(void *vptr, double v);
 
-void *o2scl_index_spec_ix_index(void *vptr, size_t ix);
-
 void *o2scl_create_tensor__();
 
 void o2scl_free_tensor__(void *vptr);
@@ -507,6 +505,8 @@ void o2scl_tensor___set(void *vptr, void *ptr_index, double val);
 void o2scl_tensor___set_all(void *vptr, double x);
 
 double o2scl_tensor___get(void *vptr, void *ptr_index);
+
+void o2scl_tensor___resize(void *vptr, size_t n, void *ptr_index);
 
 size_t o2scl_tensor___get_rank(void *vptr);
 
@@ -587,5 +587,23 @@ void *o2scl_create_shared_ptr_table_units__();
 void o2scl_free_shared_ptr_table_units__(void *vptr);
 
 void *o2scl_shared_ptr_table_units___ptr(void *vp);
+
+void *o2scl_ix_index_wrapper(size_t ix);
+
+void *o2scl_ix_fixed_wrapper(size_t ix, size_t ix2);
+
+void *o2scl_ix_sum_wrapper(size_t ix);
+
+void *o2scl_ix_trace_wrapper(size_t ix, size_t ix2);
+
+void *o2scl_ix_reverse_wrapper(size_t ix);
+
+void *o2scl_ix_range_wrapper(size_t ix, size_t start, size_t end);
+
+void *o2scl_ix_interp_wrapper(size_t ix, double v);
+
+void *o2scl_ix_grid_wrapper(size_t ix, double start, double end, size_t n_bins, bool log=false);
+
+void *o2scl_ix_gridw_wrapper(size_t ix, double start, double end, double width, bool log=false);
 
 }
