@@ -241,7 +241,7 @@ int main(int argc, char *argv[]) {
   string fname=dir+"/"+fnames[ik], tmp, tmp2;
   ifstream fin(fname.c_str());
   
-  system((((string)"rm -f ")+outnames[ik]).c_str());
+  int sret=system((((string)"rm -f ")+outnames[ik]).c_str());
   
   vector<nucmass_ame::entry> list;
 
@@ -716,8 +716,8 @@ int main(int argc, char *argv[]) {
   //}
 
   if (ik<7) {
-    system((((string)"h5diff ")+outnames[ik]+
-            " ../data/o2scl/nucmass/"+outnames[ik]).c_str());
+    int sret2=system((((string)"h5diff ")+outnames[ik]+
+                      " ../data/o2scl/nucmass/"+outnames[ik]).c_str());
   }
   
   return 0;

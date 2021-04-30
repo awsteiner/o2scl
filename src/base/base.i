@@ -367,9 +367,6 @@ class table<>
 - function new_column
   - void
   - std::string col
-- function get_column
-  - vector<double> &
-  - std::string col
 - function get_column_name
   - std::string
   - size_t icol
@@ -971,7 +968,7 @@ class tensor<>
 - py_name tensor
 #- cons create_size
 #  - size_t rank
-#  - vector<size_t> &sizes
+#  - std_vector_size_t &sizes
 - function is_valid
   - void
 - function clear
@@ -998,8 +995,8 @@ class tensor<>
 - function get_size
   - size_t
   - size_t i
-#- function get_data
-#  - out vector<double> &
+- function get_data
+  - vector<double> &
 - function total_size
   - size_t
 - function min_value
@@ -1125,4 +1122,44 @@ class convert_units<>
 - std::string units_cmd_string
 - function print_cache
   - void
+#
+# Functions from misc.h
+# 
+# function fermi_function
+# - double
+# - double E
+# - double mu
+# - double T
+# - double limit [40]
+# function bose_function
+# - double
+# - double E
+# - double mu
+# - double T
+# - double limit [40]
+# function quadratic_extremum_x<double>
+# - double
+# - py_name quadratic_extremum_x
+# - double x1
+# - double x2
+# - double x3
+# - double y1
+# - double y2
+# - double y3
+# function quadratic_extremum_y<double>
+# - double
+# - py_name quadratic_extremum_y
+# - double x1
+# - double x2
+# - double x3
+# - double y1
+# - double y2
+# - double y3
+# function screenify<vector<std::string>>
+# - void  
+# - py_name screenify
+# - size_t nin
+# - vector_std_string &in_cols
+# - vector_std_string &out_cols
+# - size_t max_size [80]
 

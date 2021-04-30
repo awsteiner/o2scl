@@ -752,11 +752,6 @@ namespace o2scl {
       return data;
     }
 
-    /// Return the full data vector
-    const vec_t &get_data_const() const {
-      return data;
-    }
-
     /** \brief Returns the size of the tensor (the product of 
         the sizes over every index)
     */
@@ -1683,8 +1678,8 @@ namespace o2scl {
     for(size_t i=0;i<t1.get_rank();i++) {
       if (t1.get_size(i)!=t2.get_size(i)) return false;
     }
-    const vec_t &v1=t1.get_data_const();
-    const vec_t &v2=t2.get_data_const();
+    const vec_t &v1=t1.get_data();
+    const vec_t &v2=t2.get_data();
     for(size_t i=0;i<t1.total_size();i++) {
       if (v1[i]!=v2[i]) return false;
     }

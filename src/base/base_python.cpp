@@ -451,8 +451,9 @@ void o2scl_copy_table__(void *vsrc, void *vdest) {
 
 void o2scl_table___getitem(void *vptr, char *col, double **dptr, int *n) {
   table<> *ptr=(table<> *)vptr;
-  *dptr=(double *)(&(ptr->operator[](col)[0]));
-  *n=ptr->get_nlines();
+  const std::vector<double> &r=ptr->operator[](col);
+  *dptr=(double *)(&(r[0]));
+  *n=r.size();
   return;
 }
 
@@ -513,13 +514,6 @@ void o2scl_table___inc_maxlines(void *vptr, size_t llines) {
 void o2scl_table___new_column(void *vptr, char *col) {
   table<> *ptr=(table<> *)vptr;
   ptr->new_column(col);
-  return;
-}
-
-void o2scl_table___get_column(void *vptr, char *col, double **dptr, int *n) {
-  table<> *ptr=(table<> *)vptr;
-  *dptr=(double *)(&(ptr->operator[](col)[0]));
-  *n=ptr->get_nlines();
   return;
 }
 
@@ -1456,6 +1450,14 @@ size_t o2scl_tensor___get_size(void *vptr, size_t i) {
   tensor<> *ptr=(tensor<> *)vptr;
   size_t ret=ptr->get_size(i);
   return ret;
+}
+
+void o2scl_tensor___get_data(void *vptr, double **dptr, int *n) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  const std::vector<double> &r=ptr->get_data();
+  *dptr=(double *)(&(r[0]));
+  *n=r.size();
+  return;
 }
 
 size_t o2scl_tensor___total_size(void *vptr) {

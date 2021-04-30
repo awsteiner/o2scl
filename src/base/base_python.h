@@ -196,8 +196,6 @@ void o2scl_table___inc_maxlines(void *vptr, size_t llines);
 
 void o2scl_table___new_column(void *vptr, char *col);
 
-void o2scl_table___get_column(void *vptr, char *col, double **dptr, int *n);
-
 void *o2scl_table___get_column_name(void *vptr, size_t icol);
 
 void o2scl_table___rename_column(void *vptr, char *src, char *dest);
@@ -511,6 +509,8 @@ void o2scl_tensor___resize(void *vptr, size_t n, void *ptr_index);
 size_t o2scl_tensor___get_rank(void *vptr);
 
 size_t o2scl_tensor___get_size(void *vptr, size_t i);
+
+void o2scl_tensor___get_data(void *vptr, double **dptr, int *n);
 
 size_t o2scl_tensor___total_size(void *vptr);
 

@@ -1509,7 +1509,7 @@ int main(int argc, char *argv[]) {
                       iff.ret.name=="std::vector<double>") &&
                      iff.ret.suffix=="&") {
             // In case it's const, we have to explicitly typecast
-            fout << "  *dptr=(double *)(&(ptr->operator[](";
+            fout << "  const std::vector<double> &r=ptr->" << iff.name << "(";
           } else if (iff.name=="operator[]" || iff.name=="operator()") {
             if (iff.ret.name=="std::string") {
               fout << "  std::string *sptr=new std::string;" << endl;
@@ -1555,8 +1555,9 @@ int main(int argc, char *argv[]) {
           if ((iff.ret.name=="vector<double>" ||
                iff.ret.name=="std::vector<double>") &&
               iff.ret.suffix=="&") {
-            fout << ")[0]));" << endl;
-            fout << "  *n=ptr->get_nlines();" << endl;
+            fout << ");" << endl;
+            fout << "  *dptr=(double *)(&(r[0]));" << endl;
+            fout << "  *n=r.size();" << endl;
             fout << "  return;" << endl;
           } else {
             fout << ");" << endl;
@@ -1649,6 +1650,8 @@ int main(int argc, char *argv[]) {
               fout << "void *ptr_" << iff.args[k].name;
             } else if (iff.args[k].ift.name=="std_vector") {
               fout << "double *ptr_" << iff.args[k].name;
+            } else if (iff.args[k].ift.name=="std_vector_size_t") {
+              fout << "size_t *ptr_" << iff.args[k].name;
             } else {
               cout << "Error: " << endl;
               cout << ifc.name << " " << iff.name << endl;
@@ -2956,7 +2959,7 @@ int main(int argc, char *argv[]) {
       if (k!=iff.args.size()-1) fout << ",";
     }
     fout << ")" << endl;
-
+    
     for(size_t k=0;k<iff.args.size();k++) {
       if (iff.args[k].ift.suffix=="&") {
         if (iff.args[k].ift.name=="std::string") {
