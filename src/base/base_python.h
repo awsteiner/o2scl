@@ -520,6 +520,8 @@ double o2scl_tensor___max_value(void *vptr);
 
 double o2scl_tensor___total_sum(void *vptr);
 
+void *o2scl_tensor___create_size(size_t rank, void *ptr_sizes);
+
 void *o2scl_create_tensor_grid__();
 
 void o2scl_free_tensor_grid__(void *vptr);
@@ -605,5 +607,15 @@ void *o2scl_ix_interp_wrapper(size_t ix, double v);
 void *o2scl_ix_grid_wrapper(size_t ix, double start, double end, size_t n_bins, bool log=false);
 
 void *o2scl_ix_gridw_wrapper(size_t ix, double start, double end, double width, bool log=false);
+
+double o2scl_fermi_function_wrapper(double E, double mu, double T, double limit=40.0);
+
+double o2scl_bose_function_wrapper(double E, double mu, double T, double limit=40.0);
+
+double o2scl_quadratic_extremum_x_double__wrapper(double x1, double x2, double x3, double y1, double y2, double y3);
+
+double o2scl_quadratic_extremum_y_double__wrapper(double x1, double x2, double x3, double y1, double y2, double y3);
+
+void o2scl_screenify_vector_std__string___wrapper(size_t nin, void *ptr_in_cols, void *ptr_out_cols, size_t max_size=80);
 
 }

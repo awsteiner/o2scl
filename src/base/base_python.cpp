@@ -1484,6 +1484,12 @@ double o2scl_tensor___total_sum(void *vptr) {
   return ret;
 }
 
+void *o2scl_tensor___create_size(size_t rank, void *ptr_sizes) {
+  std::vector<size_t> *sizes=(std::vector<size_t> *)ptr_sizes;
+  tensor<> *ptr=new tensor<>(rank,*sizes);
+  return ptr;
+}
+
 void *o2scl_create_tensor_grid__() {
   tensor_grid<> *ptr=new tensor_grid<>;
   return ptr;
@@ -1737,5 +1743,32 @@ void *o2scl_ix_gridw_wrapper(size_t ix, double start, double end, double width, 
   index_spec *ret=new index_spec;
   *ret=ix_gridw(ix,start,end,width,log);
   return ret;
+}
+
+double o2scl_fermi_function_wrapper(double E, double mu, double T, double limit) {
+  double ret=fermi_function(E,mu,T,limit);
+  return ret;
+}
+
+double o2scl_bose_function_wrapper(double E, double mu, double T, double limit) {
+  double ret=bose_function(E,mu,T,limit);
+  return ret;
+}
+
+double o2scl_quadratic_extremum_x_double__wrapper(double x1, double x2, double x3, double y1, double y2, double y3) {
+  double ret=quadratic_extremum_x<double>(x1,x2,x3,y1,y2,y3);
+  return ret;
+}
+
+double o2scl_quadratic_extremum_y_double__wrapper(double x1, double x2, double x3, double y1, double y2, double y3) {
+  double ret=quadratic_extremum_y<double>(x1,x2,x3,y1,y2,y3);
+  return ret;
+}
+
+void o2scl_screenify_vector_std__string___wrapper(size_t nin, void *ptr_in_cols, void *ptr_out_cols, size_t max_size) {
+  vector<std::string> *in_cols=(vector<std::string> *)ptr_in_cols;
+  vector<std::string> *out_cols=(vector<std::string> *)ptr_out_cols;
+  screenify<vector<std::string>>(nin,*in_cols,*out_cols,max_size);
+  return;
 }
 

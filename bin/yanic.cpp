@@ -860,6 +860,19 @@ int main(int argc, char *argv[]) {
           // Read the next line
           next_line(fin,line,vs,done);
 
+          // Check for a python name for this member function
+          if (vs[1]=="py_name" && vs.size()>=3) {
+            
+            iff.py_name=vs[2];
+
+            cout << "    Member function " << iff.name
+                 << " has py_name " << iff.py_name << endl;
+
+            next_line(fin,line,vs,done);
+            if (done) class_done=true;
+            
+          }
+
           // Constructors don't have return values, so just
           // look for constructor arguments
           while (vs.size()>=2 && line[0]==' ' && line[1]==' ' &&
@@ -1635,6 +1648,7 @@ int main(int argc, char *argv[]) {
         if_func &iff=ifc.cons[j];
 
         // Now generate the actual code for the constructor
+
         fout << "void *" << underscoreify(ifc.ns) << "_"
              << underscoreify(ifc.name) << "_" << iff.name
              << "(";
@@ -1648,15 +1662,14 @@ int main(int argc, char *argv[]) {
           } else if (iff.args[k].ift.suffix=="&") {
             if (iff.args[k].ift.name=="std::string") {
               fout << "void *ptr_" << iff.args[k].name;
-            } else if (iff.args[k].ift.name=="std_vector") {
-              fout << "double *ptr_" << iff.args[k].name;
-            } else if (iff.args[k].ift.name=="std_vector_size_t") {
-              fout << "size_t *ptr_" << iff.args[k].name;
+            } else if (iff.args[k].ift.name=="vector<size_t>" ||
+                       iff.args[k].ift.name=="std::vector<size_t>") {
+              fout << "void *ptr_" << iff.args[k].name;
             } else {
-              cout << "Error: " << endl;
-              cout << ifc.name << " " << iff.name << endl;
-              cout << "Other kind of reference." << endl;
-              exit(-1);
+              cout << "class: " << ifc.name << " constructor name: "
+                   << iff.name << endl;
+              O2SCL_ERR2("Cannot yet handle this kind of reference in a ",
+                         "constructor.",o2scl::exc_eunimpl);
             }
           }
           if (k!=iff.args.size()-1) {
@@ -1670,6 +1683,21 @@ int main(int argc, char *argv[]) {
         } else {
           
           fout << ") {" << endl;
+          
+          // If the argument is a reference and not a standard C type,
+          // then we'll need to convert from a void *
+          for(size_t k=0;k<iff.args.size();k++) {
+            if (iff.args[k].ift.suffix=="&" && !iff.args[k].ift.is_ctype()) {
+              std::string type_temp=iff.args[k].ift.name;
+              if (type_temp=="std_vector") {
+                type_temp="std::vector<double>";
+              }
+              fout << "  " << type_temp << " *"
+                   << iff.args[k].name << "=("
+                   << type_temp << " *)ptr_" << iff.args[k].name
+                   << ";" << endl;
+            }
+          }
           
           // Pointer assignment for class
           fout << "  " << ifc.name << " *ptr=new "
@@ -1687,6 +1715,7 @@ int main(int argc, char *argv[]) {
           }
           
           fout << ");" << endl;
+
           fout << "  return ptr;" << endl;
           
           // Ending function brace
@@ -1759,7 +1788,11 @@ int main(int argc, char *argv[]) {
       // Function header
       
       string func_name=iff.name;
-      if (iff.overloaded) func_name=iff.py_name;
+      if (iff.overloaded) {
+        func_name=iff.py_name;
+      } else {
+        func_name=underscoreify(func_name);
+      }
       
       if (iff.ret.name=="std::string") {
         fout << "void *" << underscoreify(iff.ns) << "_"
@@ -1863,7 +1896,7 @@ int main(int argc, char *argv[]) {
         } else {
           
           if (iff.ret.is_ctype() || iff.ret.is_reference()) {
-            fout << "  " << iff.ret.name << " ret=ptr->" << iff.name << "(";
+            fout << "  " << iff.ret.name << " ret=" << iff.name << "(";
           } else {
             fout << "  " << iff.ret.name << " *ret=new "
                  << iff.ret.name << ";" << endl;
@@ -2806,7 +2839,7 @@ int main(int argc, char *argv[]) {
     if_func &iff=functions[j];
     
     // Function header
-    if (iff.overloaded) {
+    if (iff.overloaded || iff.py_name.length()>0) {
       fout << "def " << iff.py_name << "(link,";
     } else {
       fout << "def " << iff.name << "(link,";
@@ -2909,8 +2942,8 @@ int main(int argc, char *argv[]) {
       fout << "    func=link." << dll_name << "." << iff.ns << "_"
            << iff.py_name << "_wrapper" << endl;
     } else {
-      fout << "    func=link." << dll_name << "." << iff.ns << "_" << iff.name
-           << "_wrapper" << endl;
+      fout << "    func=link." << dll_name << "." << iff.ns << "_"
+           << underscoreify(iff.name) << "_wrapper" << endl;
     }
     if (iff.ret.name!="void") {
       if (iff.ret.name=="std::string") {

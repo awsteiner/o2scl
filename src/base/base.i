@@ -1,5 +1,9 @@
 # Interface file for o2scl base classes
 # 
+# Todo: add columnify (esp. add_spaces()), interpolation, and
+# vector functions (esp. autocorrelation, and more functions not part of
+# numpy), other tensor classes(?), tensor rearrangments
+#
 namespace o2scl
 py_class_doc |
 | Python interface for C++ class ``%name%``.
@@ -966,9 +970,10 @@ class tensor<>
 | https://neutronstars.utk.edu/code/o2scl/html/class/tensor.html .
 - std_cc                             
 - py_name tensor
-#- cons create_size
-#  - size_t rank
-#  - std_vector_size_t &sizes
+- cons create_size
+  - py_name create_size_vector
+  - size_t rank
+  - io std::vector<size_t> &sizes
 - function is_valid
   - void
 - function clear
@@ -1006,6 +1011,18 @@ class tensor<>
 - function total_sum
   - double
 - extra_py |
+| def create_size(self,v):
+|     """
+|     Copy ``v`` to an :class:`std_vector_size_t` object and add the line of
+|     data to the table
+|     """
+|     # Create a std_vector object and copy the data over
+|     vec=std_vector_size_t(self._link)
+|     vec.resize(len(v))
+|     for i in range(0,len(v)):
+|         vec[i]=v[i]
+|     self.create_size_vector(vec)
+|     return
 | def set(self,index,val):
 |     """
 |     Copy ``index`` to an :class:`std_vector_size_t` object and add the 
@@ -1044,9 +1061,6 @@ class tensor_grid<>
 | https://neutronstars.utk.edu/code/o2scl/html/class/tensor_grid.html .
 - std_cc                             
 - py_name tensor_grid
-#- cons create_size
-#  - size_t rank
-#  - vector<size_t> &sizes
 - function is_valid
   - void
 - function set_val
@@ -1125,41 +1139,41 @@ class convert_units<>
 #
 # Functions from misc.h
 # 
-# function fermi_function
-# - double
-# - double E
-# - double mu
-# - double T
-# - double limit [40]
-# function bose_function
-# - double
-# - double E
-# - double mu
-# - double T
-# - double limit [40]
-# function quadratic_extremum_x<double>
-# - double
-# - py_name quadratic_extremum_x
-# - double x1
-# - double x2
-# - double x3
-# - double y1
-# - double y2
-# - double y3
-# function quadratic_extremum_y<double>
-# - double
-# - py_name quadratic_extremum_y
-# - double x1
-# - double x2
-# - double x3
-# - double y1
-# - double y2
-# - double y3
-# function screenify<vector<std::string>>
-# - void  
-# - py_name screenify
-# - size_t nin
-# - vector_std_string &in_cols
-# - vector_std_string &out_cols
-# - size_t max_size [80]
+function fermi_function
+- double
+- double E
+- double mu
+- double T
+- double limit [40.0]
+function bose_function
+- double
+- double E
+- double mu
+- double T
+- double limit [40.0]
+function quadratic_extremum_x<double>
+- double
+- py_name quadratic_extremum_x
+- double x1
+- double x2
+- double x3
+- double y1
+- double y2
+- double y3
+function quadratic_extremum_y<double>
+- double
+- py_name quadratic_extremum_y
+- double x1
+- double x2
+- double x3
+- double y1
+- double y2
+- double y3
+function screenify<vector<std::string>>
+- void  
+- py_name screenify
+- size_t nin
+- io vector<std::string> &in_cols
+- out vector<std::string> &out_cols
+- size_t max_size [80]
 

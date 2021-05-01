@@ -748,7 +748,7 @@ namespace o2scl {
     }
 
     /// Return the full data vector
-    vec_t &get_data() {
+    const vec_t &get_data() {
       return data;
     }
 

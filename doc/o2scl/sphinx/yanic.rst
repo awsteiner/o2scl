@@ -177,6 +177,7 @@ Classes
   begin with two spaces::
 
     - cons <python constructor name>
+      - py_name <python name>      
       - {parameter type} <parameter name>
       ...
 
