@@ -33,6 +33,10 @@ cpp_using o2scl_hdf
 py_header from o2sclpy.base import *
 #
 class hdf_file
+- int compr_type
+- size_t min_compr_size  
+- function has_write_access
+  - bool                             
 - function open
   - void
   - std::string fname
@@ -43,6 +47,99 @@ class hdf_file
   - std::string fname
 - function close
   - void
+- function getc
+  - int
+  - std::string name
+  - out char &c
+- function getd
+  - int
+  - std::string name
+  - out double &d
+- function geti
+  - int
+  - std::string name
+  - out int &i
+- function get_szt
+  - int
+  - std::string name
+  - out size_t &u
+- function gets
+  - int
+  - std::string name
+  - out std::string &s
+- function gets_var
+  - int
+  - std::string name
+  - out std::string &s
+- function gets_fixed
+  - int
+  - std::string name
+  - out std::string &s
+- function gets_def_fixed
+  - int
+  - std::string name
+  - std::string def
+  - out std::string &s
+- function setc
+  - void
+  - std::string name
+  - char c
+- function setd
+  - void
+  - std::string name
+  - double d
+- function seti
+  - void
+  - std::string name
+  - int i
+- function set_szt
+  - void
+  - std::string name
+  - size_t u
+- function sets
+  - void
+  - std::string name
+  - std::string s
+- function sets_fixed
+  - void
+  - std::string name
+  - std::string s
+- function getd_vec
+  - int
+  - std::string name
+  - out std::vector<double> &v
+- function geti_vec
+  - int
+  - std::string name
+  - out std::vector<int> &v
+- function geti_vec
+  - int
+  - std::string name
+  - out std::vector<int> &v
+- function get_szt_vec
+  - int
+  - std::string name
+  - out std::vector<size_t> &v
+- function gets_vec
+  - int
+  - std::string name
+  - out std::vector<std::string> &s
+- function setd_vec
+  - int
+  - std::string name
+  - io std::vector<double> &v
+- function seti_vec
+  - int
+  - std::string name
+  - io std::vector<int> &v
+- function set_szt_vec
+  - int
+  - std::string name
+  - io std::vector<size_t> &v
+- function sets_vec
+  - int
+  - std::string name
+  - io std::vector<std::string> &s
 function hdf_input
 - void                             
 - py_name hdf_input_table

@@ -1137,6 +1137,52 @@ class convert_units<>
 - function print_cache
   - void
 #
+# Class columnify
+#
+class columnify
+# - const int align_left
+# - const int align_right
+# - const int align_lmid
+# - const int align_rmid
+# - const int align_dp
+# - const int align_lnum
+# - function add_spaces<std::vector<std::vector<std::string>>,std::vector<int>>
+#   - int
+#   - 
+#     template<class mat_string_t, class vec_int_t>
+#     int add_spaces(const mat_string_t &table_in, size_t ncols, size_t nrows, 
+# 		   vec_int_t &align_spec, mat_string_t &table_out) {
+#
+# Class format_float
+#
+class format_float
+- function set_sig_figs
+  - void
+  - size_t sig_figs
+- function set_exp_limits
+  - void
+  - int min
+  - int max
+- function set_pad_zeros
+  - void
+  - bool pad
+- function set_dec_point
+  - void
+  - std::string dec_point
+- function set_exp_digits
+  - void
+  - int d
+- function html_mode
+  - void
+- function latex_mode
+  - void
+- function c_mode
+  - void
+- function convert
+  - std::string
+  - double x
+  - bool debug [false]
+#
 # Functions from misc.h
 # 
 function fermi_function
