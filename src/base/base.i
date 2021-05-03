@@ -298,6 +298,30 @@ class boost::numeric::ublas::matrix<int>
 |             ret[i,j]=self.__getitem__((i,j))
 |     return ret
 #
+# Class vector<vector<double>>
+#                              
+# Create a python interface to std::vector<std::vector<double>> for
+# vector of vector arguments to O2scl functions                             
+#
+class std::vector<std::vector<double>>
+- py_name std_vector_vector
+- function resize
+  - void
+  - size_t n                             
+- function size
+  - size_t
+- function operator[]
+  - std::vector<double> &
+  - size_t n
+- extra_py |
+| def __len__(self):
+|     """
+|     Return the length of the vector
+|
+|     Returns: a Python int
+|     """
+|     return self.size()
+#
 # -------------------------------------------------------------------
 #
 # Set the python class documentation for the following classes
@@ -1016,6 +1040,9 @@ class tensor<>
 - function set_all
   - void
   - double x
+- function swap_data
+  - void
+  - std::vector<double> &data
 - function get
   - double
   - py_name get_vector
@@ -1030,16 +1057,59 @@ class tensor<>
 - function get_size
   - size_t
   - size_t i
+- function get_size_arr
+  - const std::vector<size_t> &
 - function get_data
   - vector<double> &
 - function total_size
   - size_t
+- function pack_indices
+  - size_t
+  - io std::vector<size_t> &index
+- function unpack_index
+  - void
+  - size_t ix
+  - out std::vector<size_t> &index
 - function min_value
   - double
+- function min_index
+  - size_t
+- function min
+  - void
+  - out size_t &ix
+  - out double &value    
 - function max_value
   - double
+- function max_index
+  - size_t
+- function max
+  - void
+  - out size_t &ix
+  - out double &value    
+- function minmax_value
+  - void
+  - out double &min
+  - out double &max
+- function minmax_index
+  - void
+  - out size_t &min
+  - out size_t &max
+- function minmax
+  - void
+  - out size_t &min_ix
+  - out double &min_value    
+  - out size_t &max_ix
+  - out double &max_value    
 - function total_sum
   - double
+- function convert_table3d_sum
+  - void
+  - size_t ix_x
+  - size_t ix_y
+  - out table3d &tab
+  - std::string x_name ["x"]
+  - std::string y_name ["y"]
+  - std::string slice_name ["z"]
 - extra_py |
 | def create_size(self,v):
 |     """

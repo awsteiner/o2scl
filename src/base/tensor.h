@@ -437,7 +437,7 @@ namespace o2scl {
       }
     }
 
-    ~tensor() {
+    virtual ~tensor() {
     }
 
     /// \name Method to check for valid object
@@ -872,11 +872,13 @@ namespace o2scl {
     /** \brief Compute the minimum and maximum values in the tensor
      */
     void minmax_value(data_t &min, data_t &max) {
-      return o2scl::vector_minmax_value<vec_t,data_t>(total_size(),data,min,max);
+      return o2scl::vector_minmax_value<vec_t,data_t>(total_size(),
+                                                      data,min,max);
     }
 
-    /** \brief Compute the indices of the minimum and maximum values in the tensor
-     */
+    /** \brief Compute the indices of the minimum and maximum values 
+        in the tensor
+    */
     void minmax_index(vec_size_t &index_min, vec_size_t &index_max) {
       size_t ix_min, ix_max;
       o2scl::vector_minmax_index<vec_t,data_t>
@@ -964,6 +966,119 @@ namespace o2scl {
     }
     //@}
 
+    /** \brief 
+     */
+    void index_spec_preprocess(std::string str, std::vector<std::string> &sv) {
+      int paren_count=0;
+      std::string entry;
+      for (size_t i=0;i<str.length();i++) {
+        if (str[i]=='(') {
+          entry+=str[i];
+          paren_count++;
+        } else if (str[i]==')') {
+          entry+=str[i];
+          paren_count--;
+          if (paren_count==0) {
+            sv.push_back(entry);
+            entry.clear();
+            i++;
+          }
+        } else {
+          entry+=str[i];
+        }
+      }
+      return;
+    }
+
+    /** \brief 
+     */
+    virtual void string_to_index_list(std::string str, 
+                                      std::vector<o2scl::index_spec> &vis,
+                                      int verbose=0) {
+      
+      std::vector<std::string> sv2;
+      index_spec_preprocess(str,sv2);
+      
+      if (verbose>1) {
+        std::cout << "Post-process: " << std::endl;
+        for(size_t j=0;j<sv2.size();j++) {
+          std::cout << j << " " << sv2[j] << std::endl;
+        }
+      }
+      
+      for(size_t j=0;j<sv2.size();j++) {
+        std::vector<std::string> args;
+        if (sv2[j].find("index(")==0 && sv2[j][sv2[j].size()-1]==')') {
+          std::string spec=sv2[j].substr(6,sv2[j].length()-7);
+          split_string_delim(spec,args,',');
+          if (verbose>1) {
+            std::cout << "rearrange, index: ";
+            vector_out(std::cout,args,true);
+          }
+          vis.push_back(ix_index(o2scl::stoszt(args[0])));
+        } else if (sv2[j].find("fixed(")==0 && sv2[j][sv2[j].size()-1]==')') {
+          std::string spec=sv2[j].substr(6,sv2[j].length()-7);
+          split_string_delim(spec,args,',');
+          if (verbose>1) {
+            std::cout << "rearrange, fixed: ";
+            vector_out(std::cout,args,true);
+          }
+          if (args.size()<2) {
+            O2SCL_ERR("Not enough arguments in fixed().",o2scl::exc_einval);
+          }
+          vis.push_back(ix_fixed(o2scl::stoszt(args[0]),
+                                 o2scl::stoszt(args[1])));
+        } else if (sv2[j].find("sum(")==0 &&
+                   sv2[j][sv2[j].size()-1]==')') {
+          std::string spec=sv2[j].substr(4,sv2[j].length()-5);
+          split_string_delim(spec,args,',');
+          if (verbose>1) {
+            std::cout << "rearrange, sum: ";
+            vector_out(std::cout,args,true);
+          }
+          vis.push_back(ix_sum(o2scl::stoszt(args[0])));
+        } else if (sv2[j].find("trace(")==0 &&
+                   sv2[j][sv2[j].size()-1]==')') {
+          std::string spec=sv2[j].substr(6,sv2[j].length()-7);
+          split_string_delim(spec,args,',');
+          if (verbose>1) {
+            std::cout << "rearrange, trace: ";
+            vector_out(std::cout,args,true);
+          }
+          if (args.size()<2) {
+            O2SCL_ERR("Not enough arguments in trace().",o2scl::exc_einval);
+          }
+          vis.push_back(ix_trace(o2scl::stoszt(args[0]),
+                                 o2scl::stoszt(args[1])));
+        } else if (sv2[j].find("reverse(")==0 &&
+                   sv2[j][sv2[j].size()-1]==')') {
+          std::string spec=sv2[j].substr(8,sv2[j].length()-9);
+          split_string_delim(spec,args,',');
+          if (verbose>1) {
+            std::cout << "rearrange, reverse: ";
+            vector_out(std::cout,args,true);	
+          }
+          vis.push_back(ix_reverse(o2scl::stoszt(args[0])));
+        } else if (sv2[j].find("range(")==0 &&
+                   sv2[j][sv2[j].size()-1]==')') {
+          std::string spec=sv2[j].substr(6,sv2[j].length()-7);
+          split_string_delim(spec,args,',');
+          if (verbose>1) {
+            std::cout << "rearrange, range: ";
+            vector_out(std::cout,args,true);
+          }
+          if (args.size()<3) {
+            O2SCL_ERR("Not enough arguments in range().",o2scl::exc_einval);
+          }
+          vis.push_back(ix_range(o2scl::stoszt(args[0]),
+                                 o2scl::stoszt(args[1]),
+                                 o2scl::stoszt(args[2])));
+        }
+      }
+
+      return;
+    }
+    
     /** \brief Rearrange, sum and copy current tensor to a new tensor
 
         \future Return a scalar if possible as a rank 1 tensor with
@@ -1302,6 +1417,17 @@ namespace o2scl {
       }
     
       return t_new;
+    }
+
+    /** \brief Rearrange, sum and copy current tensor to a new tensor
+        (string input version)
+    */
+    tensor<data_t> rearrange_and_copy(std::string spec,
+                                      int verbose=0, bool err_on_fail=true) {
+      
+      std::vector<o2scl::index_spec> &vis;
+      string_to_index_list(spec,vis,verbose);
+      return rearrange_and_copy(vis,verbose,err_on_fail);
     }
   
   };
