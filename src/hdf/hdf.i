@@ -140,6 +140,91 @@ class hdf_file
   - int
   - std::string name
   - io std::vector<std::string> &s
+- function getd_mat_copy
+  - int
+  - std::string name
+  - out ubmatrix &m
+- function geti_mat_copy
+  - int
+  - std::string name
+  - out ubmatrix_int &m
+- function setd_mat_copy
+  - int
+  - io ubmatrix &m
+- function seti_mat_copy
+  - int
+  - io ubmatrix_int &m
+- function getd_ten
+  - int
+  - std::string name
+  - out tensor &t
+- function geti_ten
+  - int
+  - std::string name
+  - out tensor_int &t
+- function get_szt_ten
+  - int
+  - std::string name
+  - out tensor_size_t &t
+- function setd_ten
+  - int
+  - std::string name
+  - io tensor &t
+- function seti_ten
+  - int
+  - std::string name
+  - io tensor_int &t
+- function set_szt_ten
+  - int
+  - std::string name
+  - io tensor_size_t &t
+- function getc_def
+  - int
+  - std::string name
+  - char def
+  - out char &c
+- function getd_def
+  - int
+  - std::string name
+  - double def
+  - out double &d
+- function geti_def
+  - int
+  - std::string name
+  - int def
+  - out int &i
+- function get_szt_def
+  - int
+  - std::string name
+  - size_t def
+  - out size_t &u
+- function gets_def
+  - int
+  - std::string name
+  - std::string def
+  - out std::string &s
+- function find_object_by_type
+  - int
+  - std::string type
+  - out std::string &name
+  - int verbose [0]
+- function find_object_by_name
+  - int
+  - std::string name
+  - out std::string &type
+  - int verbose [0]
+- function find_object_by_pattern
+  - int
+  - std::string pattern
+  - out std::string &type
+  - int verbose [0]
+- function file_list
+  - void
+  - int verbose
+- function copy
+  - void
+  - int verbose
+  - out hdf_file &hf2
 function hdf_input
 - void                             
 - py_name hdf_input_table
@@ -212,3 +297,52 @@ function hdf_output
 - hdf_file &hf
 - uniform_grid<> &t
 - std::string name  
+function hdf_input
+- void                             
+- py_name hdf_input_tensor_grid
+- hdf_file &hf
+- tensor_grid<> &t
+- std::string name  
+function hdf_input_n
+- void                             
+- py_name hdf_input_n_tensor_grid
+- hdf_file &hf
+- tensor_grid<> &t
+- std::string &name  
+function hdf_output
+- void                             
+- py_name hdf_output_tensor_grid
+- hdf_file &hf
+- tensor_grid<> &t
+- std::string name
+function value_spec
+- int
+- std::string spec
+- out double &d
+- int verbose [0]
+- bool err_on_fail [true]
+function vector_spec<std::vector<double>>
+- int
+- py_name vector_spec  
+- std::string spec
+- out std::vector &v
+- int verbose [0]
+- bool err_on_fail [true]
+function strings_spec<std::vector<std::string>>
+- int
+- py_name strings_spec  
+- std::string spec
+- out std::vector<std::string> &v
+- int verbose [0]
+- bool err_on_fail [true]
+function vector_spec
+- std::vector<double>
+- py_name vector_spec_vector  
+- std::string spec  
+function mult_vector_spec<std::vector<std::vector<double>>>
+- int
+- py_name mult_vector_spec  
+- std::string spec
+- out std::vector<std::vector<double>> &v
+- int verbose [0]
+- bool err_on_fail [true]

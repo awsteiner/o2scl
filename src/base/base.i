@@ -268,6 +268,36 @@ class boost::numeric::ublas::matrix<double>
 |             ret[i,j]=self.__getitem__((i,j))
 |     return ret
 #
+# Class ublas_matrix_int
+# 
+class boost::numeric::ublas::matrix<int>
+- py_name ublas_matrix
+- function size1
+  - size_t
+- function size2
+  - size_t
+- function resize
+  - void
+  - size_t m
+  - size_t n
+- function operator()
+  - int &
+  - size_t m
+  - size_t n    
+- extra_py |
+| def to_numpy(self):
+|     """
+|     Copy the vector to a numpy matrix
+|
+|     Returns: a two-dimensional ``numpy`` array, with dimension
+|     ``size1(),size2()``.
+|     """
+|     ret=numpy.zeros((self.size1(),self.size2(),dtype=numpy.intc)
+|     for i in range(0,self.size1()):
+|         for j in range(0,self.size2()):
+|             ret[i,j]=self.__getitem__((i,j))
+|     return ret
+#
 # -------------------------------------------------------------------
 #
 # Set the python class documentation for the following classes
@@ -1092,6 +1122,188 @@ class tensor_grid<>
   - size_t i
   - size_t j
   - double val
+# 
+# Class tensor_int
+#
+class tensor<int,std::vector<int>>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``tensor``,
+| see
+| https://neutronstars.utk.edu/code/o2scl/html/class/tensor.html .
+- std_cc                             
+- py_name tensor_int
+- cons create_size
+  - py_name create_size_vector
+  - size_t rank
+  - io std::vector<size_t> &sizes
+- function is_valid
+  - void
+- function clear
+  - void
+- function set
+  - void
+  - py_name set_vector
+  - vector<size_t> &index
+  - int val
+- function set_all
+  - void
+  - int x
+- function get
+  - int
+  - py_name get_vector
+  - io vector<size_t> &index
+- function resize
+  - void
+  - py_name resize_vector
+  - size_t n
+  - io vector<size_t> &index
+- function get_rank
+  - size_t
+- function get_size
+  - size_t
+  - size_t i
+- function get_data
+  - vector<int> &
+- function total_size
+  - size_t
+- function min_value
+  - int
+- function max_value
+  - int
+- function total_sum
+  - int
+- extra_py |
+| def create_size(self,v):
+|     """
+|     Copy ``v`` to an :class:`std_vector_size_t` object and add the line of
+|     data to the table
+|     """
+|     # Create a std_vector object and copy the data over
+|     vec=std_vector_size_t(self._link)
+|     vec.resize(len(v))
+|     for i in range(0,len(v)):
+|         vec[i]=v[i]
+|     self.create_size_vector(vec)
+|     return
+| def set(self,index,val):
+|     """
+|     Copy ``index`` to an :class:`std_vector_size_t` object and add the 
+|     data to the table
+|     """
+|     svst=o2sclpy.std_vector_size_t(self._link)
+|     syst.init_py(index)
+|     self.set_vector(syst,val)
+|     return
+| 
+| def get(self,index):
+|     """
+|     Copy ``index`` to an :class:`std_vector_size_t` object and get the 
+|     data from the table
+|     """
+|     svst=o2sclpy.std_vector_size_t(self._link)
+|     syst.init_py(index)
+|     return self.get_vector(syst)
+|
+| def resize(self,index):
+|     """
+|     Copy ``index`` to an :class:`std_vector_size_t` object 
+|     and resize
+|     """
+|     svst=o2sclpy.std_vector_size_t(self._link)
+|     syst.init_py(index)
+|     self.resize_vector(syst)
+|     return
+# 
+# Class tensor_size_t
+#
+class tensor<size_t,std::vector<size_t>>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``tensor``,
+| see
+| https://neutronstars.utk.edu/code/o2scl/html/class/tensor.html .
+- std_cc                             
+- py_name tensor_size_t
+- cons create_size
+  - py_name create_size_vector
+  - size_t rank
+  - io std::vector<size_t> &sizes
+- function is_valid
+  - void
+- function clear
+  - void
+- function set
+  - void
+  - py_name set_vector
+  - vector<size_t> &index
+  - size_t val
+- function set_all
+  - void
+  - size_t x
+- function get
+  - int
+  - py_name get_vector
+  - io vector<size_t> &index
+- function resize
+  - void
+  - py_name resize_vector
+  - size_t n
+  - io vector<size_t> &index
+- function get_rank
+  - size_t
+- function get_size
+  - size_t
+  - size_t i
+- function get_data
+  - vector<size_t> &
+- function total_size
+  - size_t
+- function min_value
+  - size_t
+- function max_value
+  - size_t
+- function total_sum
+  - size_t
+- extra_py |
+| def create_size(self,v):
+|     """
+|     Copy ``v`` to an :class:`std_vector_size_t` object and add the line of
+|     data to the table
+|     """
+|     # Create a std_vector object and copy the data over
+|     vec=std_vector_size_t(self._link)
+|     vec.resize(len(v))
+|     for i in range(0,len(v)):
+|         vec[i]=v[i]
+|     self.create_size_vector(vec)
+|     return
+| def set(self,index,val):
+|     """
+|     Copy ``index`` to an :class:`std_vector_size_t` object and add the 
+|     data to the table
+|     """
+|     svst=o2sclpy.std_vector_size_t(self._link)
+|     syst.init_py(index)
+|     self.set_vector(syst,val)
+|     return
+| 
+| def get(self,index):
+|     """
+|     Copy ``index`` to an :class:`std_vector_size_t` object and get the 
+|     data from the table
+|     """
+|     svst=o2sclpy.std_vector_size_t(self._link)
+|     syst.init_py(index)
+|     return self.get_vector(syst)
+|
+| def resize(self,index):
+|     """
+|     Copy ``index`` to an :class:`std_vector_size_t` object 
+|     and resize
+|     """
+|     svst=o2sclpy.std_vector_size_t(self._link)
+|     syst.init_py(index)
+|     self.resize_vector(syst)
+|     return
 # 
 # Class find_constants
 #
