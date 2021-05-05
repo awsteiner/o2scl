@@ -262,7 +262,7 @@ namespace o2scl {
                 low=high;
               }
               if (ret==0) {
-                fp_t f_low=polish_fun(low,n,co);
+                f_low=polish_fun(low,n,co);
                 if (verbose>1) {
                   std::cout << "before, after: " << f_ro << " " << f_low
                             << std::endl;
@@ -334,7 +334,7 @@ namespace o2scl {
                 }
               }
               if (ret==0) {
-                fp_t f_low=polish_fun(low,n,co);
+                f_low=polish_fun(low,n,co);
                 if (verbose>1) {
                   std::cout << "before, after: " << f_ro << " " << f_low
                             << std::endl;
