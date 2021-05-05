@@ -60,6 +60,8 @@ namespace o2scl {
       int unit_flag;
       /// Value
       double val;
+      /// Source or reference for value
+      std::string source;
     } find_constants_list;
 
     /// Database of constant values

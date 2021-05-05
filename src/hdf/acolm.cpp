@@ -1452,8 +1452,11 @@ int acol_manager::setup_options() {
       "size as the source, but will contain the same information.",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_h5_copy),
       both},
-     {0,"constant","Get constant.",0,2,"<name or pattern> [unit]",
-      "Get a hard-coded constant from the library.",
+     {0,"constant","Get a physical or numerical constant.",
+      0,2,"<name or pattern> [unit]",
+      ((string)"Get a physical or numerical constant from the library. ")+
+      "If \"list\" is given for <name or pattern>, then the full constant "+
+      "list is printed ot the screen.",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_constant),
       both},
      /*    

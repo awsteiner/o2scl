@@ -85,9 +85,12 @@ namespace o2scl_const {
   const double zeta5=1.0369277551433699263;
   /// \f$ \zeta(7) \f$
   const double zeta7=1.0083492773819228268;
+
+  /// The Euler-Mascheroni constant
+  const double euler_mascheroni=0.57721566490153286060;
   
-  /// \f$ \sin^2 \theta_W \f$ (PDG 2018 value)
-  const double sin2_theta_weak=0.23122;
+  /// \f$ \sin^2 \theta_W \f$ (PDG 2020 value)
+  const double sin2_theta_weak=0.23121;
   /** \brief Fermi coupling constant in \f$ \mathrm{GeV}^{-2} \f$
       (CODATA 2018 value)
   */
@@ -1285,43 +1288,52 @@ namespace o2scl_const {
   const double gauss2_fm4=ec_gauss_fm2*ec_gauss_fm2/
     o2scl_const::fine_structure;
 
-  /// \name Particle masses from PDG (4/30/19)
+  /// \name Particle masses from PDG 2020
   //@{
   /** \brief \f$ \Lambda \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR FIT")
   */
   const double mass_lambda_MeV=1115.683;
 
   /** \brief \f$ \Sigma^{-} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR FIT")
    */
   const double mass_sigma_minus_MeV=1197.449;
 
   /** \brief \f$ \Sigma^{0} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR FIT")
    */
   const double mass_sigma_zero_MeV=1192.642;
 
   /** \brief \f$ \Sigma^{+} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR FIT")
    */
   const double mass_sigma_plus_MeV=1189.37;
 
   /** \brief \f$ \Xi^{0} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR FIT")
    */
   const double mass_cascade_zero_MeV=1314.86;
   
   /** \brief \f$ \Xi^{-} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR FIT")
    */
   const double mass_cascade_minus_MeV=1321.71;
   
   /** \brief Up quark mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR EVALUATION")
    */
-  const double mass_up_MeV=2.2;
+  const double mass_up_MeV=2.16;
   
   /** \brief Down quark mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR EVALUATION")
    */
-  const double mass_down_MeV=4.7;
+  const double mass_down_MeV=4.67;
   
   /** \brief Strange quark mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR EVALUATION")
    */
-  const double mass_strange_MeV=95.0;
+  const double mass_strange_MeV=93.0;
   //@}
 }
 
