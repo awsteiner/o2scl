@@ -30,8 +30,6 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-typedef boost::numeric::ublas::vector<double> ubvector;
-
 nstar_cold::nstar_cold() : eost(new table_units<>) {
 
   neut.init(o2scl_settings.get_convert_units().convert
@@ -67,7 +65,7 @@ nstar_cold::nstar_cold() : eost(new table_units<>) {
   nb_end=2.0;
   dnb=0.01;
 
-  include_muons=false;
+  include_muons=true;
   eos_set=false;
 
   rp=&def_root;
@@ -103,6 +101,33 @@ double nstar_cold::solve_fun(double x, thermo &hb) {
   }
   
   return y;
+}
+
+int nstar_cold::solve_fun2(size_t nv, const ubvector &x, ubvector &y,
+                           thermo &hb, double n_B) {
+  
+  neut.n=x[0];
+  
+  prot.n=n_B-neut.n;
+  if (neut.n<0.0 || prot.n<0.0) return 1;
+  int had_ret=hep->calc_e(neut,prot,hb);
+  if (had_ret!=0) {
+    // Most EOS failures result in exceptions, but in case there is
+    // a failure which does not, then we return a non-zero value here
+    return 2;
+  }
+
+  e.mu=neut.mu-prot.mu;
+  fzt.calc_mu_zerot(e);
+  y[0]=prot.n-e.n;
+  
+  if (include_muons) {
+    mu.mu=e.mu;
+    fzt.calc_mu_zerot(mu);
+    y[0]-=mu.n;
+  }
+  
+  return 0;
 }
 
 int nstar_cold::calc_eos(double np_0) {
@@ -168,6 +193,11 @@ int nstar_cold::calc_eos(double np_0) {
   funct sf=std::bind(std::mem_fn<double(double, thermo &)>
 		     (&nstar_cold::solve_fun),
 		     this,std::placeholders::_1,std::ref(hb));
+  mm_funct sf2=std::bind(std::mem_fn<int(size_t,const ubvector &,
+                                         ubvector &, thermo &,double)>
+                         (&nstar_cold::solve_fun2),
+                         this,std::placeholders::_1,std::placeholders::_2,
+                         std::placeholders::_3,std::ref(hb),nb_start);
   
   if (verbose>0) {
     cout << "n_B         n_n         n_p         n_e         "
@@ -180,26 +210,69 @@ int nstar_cold::calc_eos(double np_0) {
   // put in to avoid negative densities for calc_eos from the solver
   // below. 
   barn=nb_start;
-  bool done=false;
-  for(size_t i=0;done==false && i<20;i++) {
-    if (solve_fun(x,hb)>0.0) {
-      x=sqrt(nb_start*x);
-    } else {
-      done=true;
+
+  if (true) {
+    ubvector ux(1), uy(1);
+    ux[0]=x;
+    rp2.err_nonconv=false;
+    int tret=rp2.msolve(1,ux,sf2);
+    if (tret!=0) {
+      O2SCL_ERR("Initial solver failed.",o2scl::exc_efailed);
     }
+    x=ux[0];
+
+  } else {
+  
+    cout << "Here: " << solve_fun(x,hb) << endl;
+    
+    bool done=false;
+    for(size_t i=0;done==false && i<20;i++) {
+      if (solve_fun(x,hb)>0.0) {
+        cout << "Adjusting " << x << " " << solve_fun(x,hb) << " ";
+        x=sqrt(nb_start*x);
+        cout << x << endl;
+      } else {
+        done=true;
+      }
+    }
+    
   }
 
   // Loop over the density range, and also determine pressure_dec_nb
   for(barn=nb_start;barn<=nb_end+dnb/10.0;barn+=dnb) {
-
-    // Solve for charge neutrality in beta-equilibrum
-    int ret=rp->solve(x,sf);
-    double y=solve_fun(x,hb);
-
-    // Check that the solver succeeded
-    if (ret!=0 || fabs(y)>solver_tol) {
-      O2SCL_CONV_RET("Solver failed in nstar_cold::calc_eos().",
-                     exc_efailed,err_nonconv);
+    
+    sf=std::bind(std::mem_fn<double(double, thermo &)>
+                 (&nstar_cold::solve_fun),
+                 this,std::placeholders::_1,std::ref(hb));
+    sf2=std::bind(std::mem_fn<int(size_t,const ubvector &,
+                                  ubvector &, thermo &,double)>
+                  (&nstar_cold::solve_fun2),
+                  this,std::placeholders::_1,std::placeholders::_2,
+                  std::placeholders::_3,std::ref(hb),barn);
+    
+    double y;
+    if (true) {
+      ubvector ux(1), uy(1);
+      ux[0]=x;
+      rp2.err_nonconv=false;
+      int tret=rp2.msolve(1,ux,sf2);
+      if (tret!=0) {
+        O2SCL_ERR("Initial solver failed.",o2scl::exc_efailed);
+      }
+      x=ux[0];
+      y=solve_fun(x,hb);
+      
+    } else {
+      
+      // Solve for charge neutrality in beta-equilibrum
+      int ret=rp->solve(x,sf);
+      y=solve_fun(x,hb);
+      
+      // Check that the solver succeeded
+      if (ret!=0 || fabs(y)>solver_tol) {
+        O2SCL_CONV_RET("Solver failed in nstar_cold::calc_eos().",
+                       exc_efailed,err_nonconv);
+      }
     }
 
     if (false) {
@@ -534,6 +607,7 @@ double nstar_hot::solve_fun_T(double x, thermo &hb, double T) {
   neut.n=x;
   
   prot.n=barn-neut.n;
+  cout << "Hx: " << neut.n << " " << prot.n << endl;
   int had_ret=hepT->calc_temp_e(neut,prot,T,hb);
   if (had_ret!=0) {
     O2SCL_ERR("EOS failed in nstar_cold::solve_fun_T().",
@@ -551,6 +625,34 @@ double nstar_hot::solve_fun_T(double x, thermo &hb, double T) {
   }
   
   return y;
+}
+
+int nstar_hot::solve_fun_T2(size_t nv, const ubvector &x,
+                            ubvector &y, thermo &hb, double T,
+                            double n_B) {
+  
+  neut.n=x[0];
+  
+  prot.n=n_B-neut.n;
+  if (neut.n<0.0 || prot.n<0.0) return 1;
+  int had_ret=hepT->calc_temp_e(neut,prot,T,hb);
+  if (had_ret!=0) {
+    // Most EOS failures result in exceptions, but in case there is
+    // a failure which does not, then we return a non-zero value here
+    return 2;
+  }
+
+  e.mu=neut.mu-prot.mu;
+  ft.calc_mu(e,T);
+  y[0]=prot.n-e.n;
+  
+  if (include_muons) {
+    mu.mu=e.mu;
+    ft.calc_mu(mu,T);
+    y[0]-=mu.n;
+  }
+  
+  return 0;
 }
 
 int nstar_hot::solve_fun_s(size_t nv, const ubvector &x, ubvector &y,
@@ -641,6 +743,11 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
   funct sf=std::bind(std::mem_fn<double(double, thermo &, double)>
 		     (&nstar_hot::solve_fun_T),
 		     this,std::placeholders::_1,std::ref(hb),T);
+  mm_funct sf2=std::bind(std::mem_fn<int(size_t,const ubvector &,
+                                         ubvector &, thermo &, double,double)>
+                         (&nstar_hot::solve_fun_T2),
+                         this,std::placeholders::_1,std::placeholders::_2,
+                         std::placeholders::_3,std::ref(hb),T,nb_start);
   
   if (verbose>0) {
     cout << "n_B         n_n         n_p         n_e         "
@@ -649,31 +756,79 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
 	 << "[1/fm^4]    [1/fm^4]" << endl;
   }
 
-  // Get a better initial guess for nb_start. This section of code was
-  // put in to avoid negative densities for calc_eos from the solver
-  // below. 
-  barn=nb_start;
-  bool done=false;
-  for(size_t i=0;done==false && i<20;i++) {
-    if (solve_fun_T(x,hb,T)>0.0) {
-      x=sqrt(nb_start*x);
-    } else {
-      done=true;
+  if (true) {
+    
+    ubvector ux(1), uy(1);
+    ux[0]=x;
+    rp2.err_nonconv=false;
+    int tret=rp2.msolve(1,ux,sf2);
+    if (tret!=0) {
+      O2SCL_ERR("Initial solver failed.",o2scl::exc_efailed);
+    }
+    x=ux[0];
+    
+  } else {
+    
+    cout << "Here2: " << solve_fun_T(x,hb,T) << endl;
+    
+    // Get a better initial guess for nb_start. This section of code was
+    // put in to avoid negative densities for calc_eos from the solver
+    // below. 
+    barn=nb_start;
+    bool done=false;
+    for(size_t i=0;done==false && i<20;i++) {
+      if (solve_fun_T(x,hb,T)>0.0) {
+        cout << "Adjusting " << x << " " << solve_fun_T(x,hb,T) << " ";
+        x=sqrt(nb_start*x);
+        cout << x << endl;
+      } else {
+        done=true;
+      }
     }
   }
-
+  
   for(barn=nb_start;barn<=nb_end+dnb/10.0;barn+=dnb) {
-
-    int ret=rp->solve(x,sf);
-    double y=solve_fun_T(x,hb,T);
     
-    if (ret!=0 || fabs(y)>solver_tol) {
-      O2SCL_CONV_RET("Solver failed in nstar_hot::calc_eos_T().",
-                     exc_efailed,err_nonconv);
+    sf=std::bind(std::mem_fn<double(double, thermo &, double)>
+                 (&nstar_hot::solve_fun_T),
+                 this,std::placeholders::_1,std::ref(hb),T);
+    sf2=std::bind(std::mem_fn<int(size_t,const ubvector &,
+                                  ubvector &, thermo &,double,double)>
+                  (&nstar_hot::solve_fun_T2),
+                  this,std::placeholders::_1,std::placeholders::_2,
+                  std::placeholders::_3,std::ref(hb),T,barn);
+
+    double y;
+    
+    if (true) {
+    
+      ubvector ux(1), uy(1);
+      ux[0]=x;
+      rp2.err_nonconv=false;
+      int tret=rp2.msolve(1,ux,sf2);
+      if (tret!=0) {
+        O2SCL_ERR("Initial solver failed.",o2scl::exc_efailed);
+      }
+      x=ux[0];
+      y=solve_fun_T(x,hb,T);
+      
+    } else {      
+      double x_old=x;
+      cout << "H1." << endl;
+      int ret=rp->solve(x,sf);
+      cout << "H12" << endl;
+      y=solve_fun_T(x,hb,T);
+      
+      if (ret!=0 || fabs(y)>solver_tol) {
+        rp->verbose=2;
+        ret=rp->solve(x_old,sf);
+        O2SCL_CONV_RET("Solver failed in nstar_hot::calc_eos_T().",
+                       exc_efailed,err_nonconv);
+      }
     }
-
+      
     // ------------------------------------------------------------
-
+    
     // Recompute neut.n and prot.n
     y=solve_fun_T(x,hb,T);
 

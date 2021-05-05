@@ -217,7 +217,7 @@ namespace o2scl_cgs {
   /// \name Solar system properties
   //@{
   /** \brief Solar mass times gravitational constant in cm^3 / s^2
-      (IAU 2015 value)
+      (IAU 2015 value, see https://arxiv.org/abs/1510.07674)
 
       Note that this value differs slightly in Barycentric Coordinate
       Time and Barycentric Dynamical Time. This is the IAU's nominal
@@ -226,15 +226,17 @@ namespace o2scl_cgs {
   const double solar_mass_parameter=1.3271244e26;
   /// Mass of the sun in g (derived)
   const double solar_mass=solar_mass_parameter/gravitational_constant;
-  /// Radius of the sun in cm (IAU 2015 value)
+  /// Radius of the sun in cm (IAU 2015 nominal value)
   const double solar_radius=6.957e10;
-  /// Temperature of the sun's photosphere in K (IAU 2015 value)
+  /// Temperature of the sun's photosphere in K (IAU 2015 nominal value)
   const double solar_temperature=5772.0;
-  /// Luminosity of sun in erg/s (IAU 2015 value)
+  /// Luminosity of sun in erg/s (IAU 2015 nominal value)
   const double solar_luminosity=3.828e40;
+  /// Solar total irradiance in W/m^2 (IAU 2015 nominal value)
+  const double solar_irradiance=1361.0;
   
   /** \brief Earth mass times gravitational constant in cm^3 / s^2
-      (IAU 2015 value)
+      (IAU 2015 nominal values)
   */
   const double earth_mass_parameter=3.986004e20;
   /// Mass of the earth in g (derived)
@@ -245,7 +247,7 @@ namespace o2scl_cgs {
   const double earth_radius_polar=6.3568e8;
   
   /** \brief Jupter mass times gravitational constant in cm^3 / s^2
-      (IAU 2015 value)
+      (IAU 2015 nominal values)
   */
   const double jupiter_mass_parameter=1.2668653e23;
   /// Mass of jupiter in g (derived)

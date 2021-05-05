@@ -229,6 +229,9 @@ int main(void) {
     nstar_cold nco;
     nco.def_tov.verbose=0;
     nco.set_eos(rmf);
+    // If muons are included, this code seems to run for a nearly
+    // infinite amount of time
+    nco.include_muons=false;
 
     // Compute the RMF EOS in beta-equilibrium
     nco.calc_eos();

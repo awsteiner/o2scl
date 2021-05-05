@@ -4080,25 +4080,25 @@ void nstar_rot::test1(o2scl::test_mgr &t) {
   fix_cent_eden_axis_rat(2.0e15,0.59);
   eos_set=false;
 
-  t.test_rel(e_center,2.0,2.0e-6,"central energy density");
-  t.test_rel(Mass/MSUN,2.13324,2.0e-6,"gravitational mass");
-  t.test_rel(Mass_0/MSUN,2.43446,2.0e-6,"baryonic mass");
-  t.test_rel(R_e/1.0e5,13.9518,2.0e-6,"radius");
-  t.test_rel(Omega/1.0e4,0.961702,2.0e-6,"angular frequency");
-  t.test_rel(Omega_K/1.0e4,1.00322,4.0e-6,"Keplerian angular frequency");
-  t.test_rel(T/W,0.109774,4.0e-6,"T/W");
-  t.test_rel(J*C/G/MSUN/MSUN,2.89653,2.0e-6,"angular momentum");
-  t.test_rel(I/1.0e45,2.64698,2.0e-6,"moment of inertia");
+  t.test_rel(e_center,2.0,2.0e-6,"central energy density (1)");
+  t.test_rel(Mass/MSUN,2.13324,2.0e-6,"gravitational mass (1)");
+  t.test_rel(Mass_0/MSUN,2.43446,2.0e-6,"baryonic mass (1)");
+  t.test_rel(R_e/1.0e5,13.9518,2.0e-6,"radius (1)");
+  t.test_rel(Omega/1.0e4,0.961702,2.0e-6,"angular frequency (1)");
+  t.test_rel(Omega_K/1.0e4,1.00322,4.0e-6,"Keplerian angular frequency (1)");
+  t.test_rel(T/W,0.109774,4.0e-6,"T/W (1)");
+  t.test_rel(J*C/G/MSUN/MSUN,2.89653,2.0e-6,"angular momentum (1)");
+  t.test_rel(I/1.0e45,2.64698,2.0e-6,"moment of inertia (1)");
   t.test_rel(mass_quadrupole*pow(sqrt(KAPPA),3.0)*C*C/G/1.0e42,
-	     277.074,2.0e-6,"mass quadrupole");
-  t.test_rel(h_plus/1.0e5,0.129382,4.0e-6,"h+");
-  t.test_rel(h_minus/1.0e5,11.9949,4.0e-6,"h-");
-  t.test_rel(Z_p,0.591305,2.0e-6,"Z_p");
-  t.test_rel(Z_f,-0.296001,2.0e-6,"Z_f");
-  t.test_rel(Z_b,1.66307,2.0e-6,"Z_b");
-  t.test_rel(om_over_Om,0.722768,2.0e-6,"om_over_Om");
-  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,10.4129,4.0e-6,"coordinate radius");
-  t.test_rel(r_ratio,0.59,2.0e-6,"axis ratio");
+	     277.074,2.0e-6,"mass quadrupole (1)");
+  t.test_rel(h_plus/1.0e5,0.129382,4.0e-6,"h+ (1)");
+  t.test_rel(h_minus/1.0e5,11.9949,4.0e-6,"h- (1)");
+  t.test_rel(Z_p,0.591305,2.0e-6,"Z_p (1)");
+  t.test_rel(Z_f,-0.296001,2.0e-6,"Z_f (1)");
+  t.test_rel(Z_b,1.66307,2.0e-6,"Z_b (1)");
+  t.test_rel(om_over_Om,0.722768,2.0e-6,"om_over_Om (1)");
+  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,10.4129,4.0e-6,"coordinate radius (1)");
+  t.test_rel(r_ratio,0.59,2.0e-6,"axis ratio (1)");
 
   return;
 }
@@ -4111,25 +4111,25 @@ void nstar_rot::test2(o2scl::test_mgr &t) {
   fix_cent_eden_with_kepler(2.0e15);
   eos_set=false;
 
-  t.test_rel(e_center,2.0,2.0e-6,"central energy density");
-  t.test_rel(Mass/MSUN,2.13633,2.0e-6,"gravitational mass");
-  t.test_rel(Mass_0/MSUN,2.43798,2.0e-6,"baryonic mass");
-  t.test_rel(R_e/1.0e5,14.3217,2.0e-6,"radius");
-  t.test_rel(Omega/1.0e4,0.964219,2.0e-6,"angular frequency");
-  t.test_rel(Omega_K/1.0e4,0.964286,2.0e-6,"Keplerian angular frequency");
-  t.test_rel(T/W,0.110522,6.0e-6,"T/W");
-  t.test_rel(J*C/G/MSUN/MSUN,2.91467,2.0e-6,"angular momentum");
-  t.test_rel(I/1.0e45,2.6566,2.0e-6,"moment of inertia");
+  t.test_rel(e_center,2.0,2.0e-6,"central energy density (2)");
+  t.test_rel(Mass/MSUN,2.13633,2.0e-6,"gravitational mass (2)");
+  t.test_rel(Mass_0/MSUN,2.43798,2.0e-6,"baryonic mass (2)");
+  t.test_rel(R_e/1.0e5,14.3217,2.0e-6,"radius (2)");
+  t.test_rel(Omega/1.0e4,0.964219,2.0e-6,"angular frequency (2)");
+  t.test_rel(Omega_K/1.0e4,0.964286,2.0e-6,"Keplerian angular frequency (2)");
+  t.test_rel(T/W,0.110522,6.0e-6,"T/W (2)");
+  t.test_rel(J*C/G/MSUN/MSUN,2.91467,2.0e-6,"angular momentum (2)");
+  t.test_rel(I/1.0e45,2.6566,2.0e-6,"moment of inertia (2)");
   t.test_rel(mass_quadrupole*pow(sqrt(KAPPA),3.0)*C*C/G/1.0e42,
-	     279.481,2.0e-6,"mass quadrupole");
-  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"h+");
-  t.test_rel(h_minus/1.0e5,11.6851,4.0e-6,"h-");
-  t.test_rel(Z_p,0.592893,2.0e-6,"Z_p");
-  t.test_rel(Z_f,-0.315912,2.0e-6,"Z_f");
-  t.test_rel(Z_b,1.67823,4.0e-6,"Z_b");
-  t.test_rel(om_over_Om,0.723265,2.0e-6,"om_over_Om");
-  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,10.7938,4.0e-6,"coordinate radius");
-  t.test_rel(r_ratio,0.568311,2.0e-6,"axis ratio");
+	     279.481,2.0e-6,"mass quadrupole (2)");
+  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"h+ (2)");
+  t.test_rel(h_minus/1.0e5,11.6851,4.0e-6,"h- (2)");
+  t.test_rel(Z_p,0.592893,2.0e-6,"Z_p (2)");
+  t.test_rel(Z_f,-0.315912,2.0e-6,"Z_f (2)");
+  t.test_rel(Z_b,1.67823,4.0e-6,"Z_b (2)");
+  t.test_rel(om_over_Om,0.723265,2.0e-6,"om_over_Om (2)");
+  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,10.7938,4.0e-6,"coordinate radius (2)");
+  t.test_rel(r_ratio,0.568311,2.0e-6,"axis ratio (2)");
 
   return;
 }
@@ -4142,25 +4142,25 @@ void nstar_rot::test3(o2scl::test_mgr &t) {
   fix_cent_eden_grav_mass(1.0e15,1.5);
   eos_set=false;
 
-  t.test_rel(e_center,1.0,2.0e-6,"central energy density");
-  t.test_rel(Mass/MSUN,1.49996,4.0e-6,"gravitational mass");
-  t.test_rel(Mass_0/MSUN,1.64049,4.0e-6,"baryonic mass");
-  t.test_rel(R_e/1.0e5,13.7545,2.0e-6,"radius");
-  t.test_rel(Omega/1.0e4,0.566135,2.0e-6,"angular frequency");
-  t.test_rel(Omega_K/1.0e4,0.87723,2.0e-6,"Keplerian angular frequency");
-  t.test_rel(T/W,0.0642316,2.0e-6,"T/W");
-  t.test_rel(J*C/G/MSUN/MSUN,1.14759,2.0e-6,"angular momentum");
-  t.test_rel(I/1.0e45,1.78148,2.0e-6,"moment of inertia");
+  t.test_rel(e_center,1.0,2.0e-6,"central energy density (3)");
+  t.test_rel(Mass/MSUN,1.49996,4.0e-6,"gravitational mass (3)");
+  t.test_rel(Mass_0/MSUN,1.64049,4.0e-6,"baryonic mass (3)");
+  t.test_rel(R_e/1.0e5,13.7545,2.0e-6,"radius (3)");
+  t.test_rel(Omega/1.0e4,0.566135,2.0e-6,"angular frequency (3)");
+  t.test_rel(Omega_K/1.0e4,0.87723,2.0e-6,"Keplerian angular frequency (3)");
+  t.test_rel(T/W,0.0642316,2.0e-6,"T/W (3)");
+  t.test_rel(J*C/G/MSUN/MSUN,1.14759,2.0e-6,"angular momentum (3)");
+  t.test_rel(I/1.0e45,1.78148,2.0e-6,"moment of inertia (3)");
   t.test_rel(mass_quadrupole*pow(sqrt(KAPPA),3.0)*C*C/G/1.0e42,
-	     162.164,2.0e-6,"mass quadrupole");
-  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"h+");
-  t.test_rel(h_minus/1.0e5,4.56495,2.0e-6,"h-");
-  t.test_rel(Z_p,0.272299,2.0e-6,"Z_p");
-  t.test_rel(Z_f,-0.117745,4.0e-6,"Z_f");
-  t.test_rel(Z_b,0.689716,2.0e-6,"Z_b");
-  t.test_rel(om_over_Om,0.475405,2.0e-6,"om_over_Om");
-  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,11.3694,4.0e-6,"coordinate radius");
-  t.test_rel(r_ratio,0.763672,2.0e-6,"axis ratio");
+	     162.164,2.0e-6,"mass quadrupole (3)");
+  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"h+ (3)");
+  t.test_rel(h_minus/1.0e5,4.56495,2.0e-6,"h- (3)");
+  t.test_rel(Z_p,0.272299,2.0e-6,"Z_p (3)");
+  t.test_rel(Z_f,-0.117745,4.0e-6,"Z_f (3)");
+  t.test_rel(Z_b,0.689716,2.0e-6,"Z_b (3)");
+  t.test_rel(om_over_Om,0.475405,2.0e-6,"om_over_Om (3)");
+  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,11.3694,4.0e-6,"coordinate radius (3)");
+  t.test_rel(r_ratio,0.763672,2.0e-6,"axis ratio (3)");
 
   return;
 }
@@ -4173,25 +4173,25 @@ void nstar_rot::test4(o2scl::test_mgr &t) {
   fix_cent_eden_bar_mass(1.0e15,1.55);
   eos_set=false;
 
-  t.test_rel(e_center,1.0,2.0e-6,"central energy density");
-  t.test_rel(Mass/MSUN,1.41870,4.0e-6,"gravitational mass");
-  t.test_rel(Mass_0/MSUN,1.55003,4.0e-6,"baryonic mass");
-  t.test_rel(R_e/1.0e5,12.8888,4.0e-6,"radius");
-  t.test_rel(Omega/1.0e4,0.439794,2.0e-6,"angular frequency");
-  t.test_rel(Omega_K/1.0e4,0.935245,2.0e-6,"Keplerian angular frequency");
-  t.test_rel(T/W,0.0364707,2.0e-6,"T/W");
-  t.test_rel(J*C/G/MSUN/MSUN,0.767165,2.0e-6,"angular momentum");
-  t.test_rel(I/1.0e45,1.53303,4.0e-6,"moment of inertia");
+  t.test_rel(e_center,1.0,2.0e-6,"central energy density (4)");
+  t.test_rel(Mass/MSUN,1.41870,4.0e-6,"gravitational mass (4)");
+  t.test_rel(Mass_0/MSUN,1.55003,4.0e-6,"baryonic mass (4)");
+  t.test_rel(R_e/1.0e5,12.8888,4.0e-6,"radius (4)");
+  t.test_rel(Omega/1.0e4,0.439794,2.0e-6,"angular frequency (4)");
+  t.test_rel(Omega_K/1.0e4,0.935245,2.0e-6,"Keplerian angular frequency (4)");
+  t.test_rel(T/W,0.0364707,2.0e-6,"T/W (4)");
+  t.test_rel(J*C/G/MSUN/MSUN,0.767165,2.0e-6,"angular momentum (4)");
+  t.test_rel(I/1.0e45,1.53303,4.0e-6,"moment of inertia (4)");
   t.test_rel(mass_quadrupole*pow(sqrt(KAPPA),3.0)*C*C/G/1.0e42,
-	     86.1211,2.0e-6,"mass quadrupole");
-  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"h+");
-  t.test_rel(h_minus/1.0e5,3.17552,2.0e-6,"h-");
-  t.test_rel(Z_p,0.247316,2.0e-6,"Z_p");
-  t.test_rel(Z_f,-0.0334667,2.0e-6,"Z_f");
-  t.test_rel(Z_b,0.542684,2.0e-6,"Z_b");
-  t.test_rel(om_over_Om,0.454775,2.0e-6,"om_over_Om");
-  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,10.6565,4.0e-6,"coordinate radius");
-  t.test_rel(r_ratio,0.863281,2.0e-6,"axis ratio");
+	     86.1211,2.0e-6,"mass quadrupole (4)");
+  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"h+ (4)");
+  t.test_rel(h_minus/1.0e5,3.17552,2.0e-6,"h- (4)");
+  t.test_rel(Z_p,0.247316,2.0e-6,"Z_p (4)");
+  t.test_rel(Z_f,-0.0334667,2.0e-6,"Z_f (4)");
+  t.test_rel(Z_b,0.542684,2.0e-6,"Z_b (4)");
+  t.test_rel(om_over_Om,0.454775,2.0e-6,"om_over_Om (4)");
+  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,10.6565,4.0e-6,"coordinate radius (4)");
+  t.test_rel(r_ratio,0.863281,2.0e-6,"axis ratio (4)");
 
   return;
 }
@@ -4212,25 +4212,25 @@ void nstar_rot::test5(o2scl::test_mgr &t) {
   fix_cent_eden_ang_vel(1.0e15,5.0e3);
   eos_set=false;
 
-  t.test_rel(e_center,1.0,2.0e-6,"central energy density");
-  t.test_rel(Mass/MSUN,1.45222,4.0e-6,"gravitational mass");
-  t.test_rel(Mass_0/MSUN,1.58737,4.0e-6,"baryonic mass");
-  t.test_rel(R_e/1.0e5,13.2294,2.0e-6,"radius");
-  t.test_rel(Omega/1.0e4,0.499991,2.0e-6,"angular frequency");
-  t.test_rel(Omega_K/1.0e4,0.912182,2.0e-6,"Keplerian angular frequency");
-  t.test_rel(T/W,0.0483527,2.0e-6,"T/W");
-  t.test_rel(J*C/G/MSUN/MSUN,0.929068,2.0e-6,"angular momentum");
-  t.test_rel(I/1.0e45,1.63304,4.0e-6,"moment of inertia");
+  t.test_rel(e_center,1.0,2.0e-6,"central energy density (5)");
+  t.test_rel(Mass/MSUN,1.45222,4.0e-6,"gravitational mass (5)");
+  t.test_rel(Mass_0/MSUN,1.58737,4.0e-6,"baryonic mass (5)");
+  t.test_rel(R_e/1.0e5,13.2294,2.0e-6,"radius (5)");
+  t.test_rel(Omega/1.0e4,0.499991,2.0e-6,"angular frequency (5)");
+  t.test_rel(Omega_K/1.0e4,0.912182,2.0e-6,"Keplerian angular frequency (5)");
+  t.test_rel(T/W,0.0483527,2.0e-6,"T/W (5)");
+  t.test_rel(J*C/G/MSUN/MSUN,0.929068,2.0e-6,"angular momentum (5)");
+  t.test_rel(I/1.0e45,1.63304,4.0e-6,"moment of inertia (5)");
   t.test_rel(mass_quadrupole*pow(sqrt(KAPPA),3.0)*C*C/G/1.0e42,
-	     117.189,2.0e-6,"mass quadrupole");
-  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"h+");
-  t.test_rel(h_minus/1.0e5,3.81883,2.0e-6,"h-");
-  t.test_rel(Z_p,0.257732,2.0e-6,"Z_p");
-  t.test_rel(Z_f,-0.0714265,2.0e-6,"Z_f");
-  t.test_rel(Z_b,0.606809,2.0e-6,"Z_b");
-  t.test_rel(om_over_Om,0.463524,2.0e-6,"om_over_Om");
-  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,10.9333,4.0e-6,"coordinate radius");
-  t.test_rel(r_ratio,0.820703,2.0e-6,"axis ratio");
+	     117.189,2.0e-6,"mass quadrupole (5)");
+  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"h+ (5)");
+  t.test_rel(h_minus/1.0e5,3.81883,2.0e-6,"h- (5)");
+  t.test_rel(Z_p,0.257732,2.0e-6,"Z_p (5)");
+  t.test_rel(Z_f,-0.0714265,2.0e-6,"Z_f (5)");
+  t.test_rel(Z_b,0.606809,2.0e-6,"Z_b (5)");
+  t.test_rel(om_over_Om,0.463524,2.0e-6,"om_over_Om (5)");
+  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,10.9333,4.0e-6,"coordinate radius (5)");
+  t.test_rel(r_ratio,0.820703,2.0e-6,"axis ratio (5)");
 
   return;
 }
@@ -4243,25 +4243,25 @@ void nstar_rot::test6(o2scl::test_mgr &t) {
   fix_cent_eden_ang_mom(1.0e15,1.5);
   eos_set=false;
 
-  t.test_rel(e_center,1.0,2.0e-6,"central energy density");
-  t.test_rel(Mass/MSUN,1.57929,2.0e-6,"gravitational mass");
-  t.test_rel(Mass_0/MSUN,1.72880,2.0e-6,"baryonic mass");
-  t.test_rel(R_e/1.0e5,14.8602,2.0e-6,"radius");
-  t.test_rel(Omega/1.0e4,0.644938,2.0e-6,"angular frequency");
-  t.test_rel(Omega_K/1.0e4,0.803770,4.0e-6,"Keplerian angular frequency");
-  t.test_rel(T/W,0.0882324,4.0e-6,"T/W");
-  t.test_rel(J*C/G/MSUN/MSUN,1.50003,4.0e-6,"angular momentum");
-  t.test_rel(I/1.0e45,2.04407,2.0e-6,"moment of inertia");
+  t.test_rel(e_center,1.0,2.0e-6,"central energy density (6)");
+  t.test_rel(Mass/MSUN,1.57929,2.0e-6,"gravitational mass (6)");
+  t.test_rel(Mass_0/MSUN,1.72880,2.0e-6,"baryonic mass (6)");
+  t.test_rel(R_e/1.0e5,14.8602,2.0e-6,"radius (6)");
+  t.test_rel(Omega/1.0e4,0.644938,2.0e-6,"angular frequency (6)");
+  t.test_rel(Omega_K/1.0e4,0.803770,4.0e-6,"Keplerian angular frequency (6)");
+  t.test_rel(T/W,0.0882324,4.0e-6,"T/W (6)");
+  t.test_rel(J*C/G/MSUN/MSUN,1.50003,4.0e-6,"angular momentum (6)");
+  t.test_rel(I/1.0e45,2.04407,2.0e-6,"moment of inertia (6)");
   t.test_rel(mass_quadrupole*pow(sqrt(KAPPA),3.0)*C*C/G/1.0e42,
-	     239.194,2.0e-6,"mass quadrupole");
-  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"h+");
-  t.test_rel(h_minus/1.0e5,5.35325,4.0e-6,"h-");
-  t.test_rel(Z_p,0.295876,2.0e-6,"Z_p");
-  t.test_rel(Z_f,-0.188541,2.0e-6,"Z_f");
-  t.test_rel(Z_b,0.818747,2.0e-6,"Z_b");
-  t.test_rel(om_over_Om,0.493751,2.0e-6,"om_over_Om");
-  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,12.3358,4.0e-6,"coordinate radius");
-  t.test_rel(r_ratio,0.670508,2.0e-6,"axis ratio");
+	     239.194,2.0e-6,"mass quadrupole (6)");
+  t.test_abs(h_plus/1.0e5,0.0,4.0e-6,"h+ (6)");
+  t.test_rel(h_minus/1.0e5,5.35325,4.0e-6,"h- (6)");
+  t.test_rel(Z_p,0.295876,2.0e-6,"Z_p (6)");
+  t.test_rel(Z_f,-0.188541,2.0e-6,"Z_f (6)");
+  t.test_rel(Z_b,0.818747,2.0e-6,"Z_b (6)");
+  t.test_rel(om_over_Om,0.493751,2.0e-6,"om_over_Om (6)");
+  t.test_rel(r_e*sqrt(KAPPA)/1.0e5,12.3358,4.0e-6,"coordinate radius (6)");
+  t.test_rel(r_ratio,0.670508,2.0e-6,"axis ratio (6)");
 
   return;
 }
@@ -4274,25 +4274,25 @@ void nstar_rot::test7(o2scl::test_mgr &t) {
   fix_cent_eden_non_rot(2.0e15);
   eos_set=false;
 
-  t.test_rel(e_center,2.0,2.0e-6,"central energy density");
-  t.test_rel(Mass/MSUN,1.79249,2.0e-6,"gravitational mass");
-  t.test_rel(Mass_0/MSUN,2.04981,2.0e-6,"baryonic mass");
-  t.test_rel(R_e/1.0e5,10.7698,2.0e-6,"radius");
-  t.test_abs(Omega/1.0e4,0.0,2.0e-6,"angular frequency");
-  t.test_rel(Omega_K/1.0e4,1.37951,2.0e-6,"Keplerian angular frequency");
-  t.test_abs(T/W,0.0,2.0e-6,"T/W");
-  t.test_abs(J*C/G/MSUN/MSUN,0.0,2.0e-6,"angular momentum");
-  t.test_rel(h_plus/1.0e5,5.10143,4.0e-6,"h+");
-  t.test_rel(h_minus/1.0e5,5.10143,2.0e-6,"h-");
-  t.test_rel(Z_p,0.401754,2.0e-6,"Z_p");
-  t.test_rel(Z_f,0.401754,2.0e-6,"Z_f");
-  t.test_rel(Z_b,0.401754,2.0e-6,"Z_b");
-  t.test_abs(om_over_Om,0.0,2.0e-6,"om_over_Om");
-  t.test_rel(r_e,0.215396,2.0e-6,"coordinate radius");
-  t.test_rel(r_ratio,1.0,2.0e-6,"axis ratio");
-  t.test_rel(Omega_p/1.0e4,1.28671,4.0e-6,"Omega_p");
-  t.test_rel(Omega_plus/1.0e4,1.27724,4.0e-6,"Omega_plus");
-  t.test_rel(u_phi,6.20982,2.0e-6,"u_phi");
+  t.test_rel(e_center,2.0,2.0e-6,"central energy density (7)");
+  t.test_rel(Mass/MSUN,1.79249,2.0e-6,"gravitational mass (7)");
+  t.test_rel(Mass_0/MSUN,2.04981,2.0e-6,"baryonic mass (7)");
+  t.test_rel(R_e/1.0e5,10.7698,2.0e-6,"radius (7)");
+  t.test_abs(Omega/1.0e4,0.0,2.0e-6,"angular frequency (7)");
+  t.test_rel(Omega_K/1.0e4,1.37951,2.0e-6,"Keplerian angular frequency (7)");
+  t.test_abs(T/W,0.0,2.0e-6,"T/W (7)");
+  t.test_abs(J*C/G/MSUN/MSUN,0.0,2.0e-6,"angular momentum (7)");
+  t.test_rel(h_plus/1.0e5,5.10143,4.0e-6,"h+ (7)");
+  t.test_rel(h_minus/1.0e5,5.10143,2.0e-6,"h- (7)");
+  t.test_rel(Z_p,0.401754,2.0e-6,"Z_p (7)");
+  t.test_rel(Z_f,0.401754,2.0e-6,"Z_f (7)");
+  t.test_rel(Z_b,0.401754,2.0e-6,"Z_b (7)");
+  t.test_abs(om_over_Om,0.0,2.0e-6,"om_over_Om (7)");
+  t.test_rel(r_e,0.215396,2.0e-6,"coordinate radius (7)");
+  t.test_rel(r_ratio,1.0,2.0e-6,"axis ratio (7)");
+  t.test_rel(Omega_p/1.0e4,1.28671,4.0e-6,"Omega_p (7)");
+  t.test_rel(Omega_plus/1.0e4,1.27724,4.0e-6,"Omega_plus (7)");
+  t.test_rel(u_phi,6.20982,2.0e-6,"u_phi (7)");
 
   return;
 }
@@ -4302,24 +4302,24 @@ void nstar_rot::test8(o2scl::test_mgr &t) {
   polytrope_eos(1.0);
   fix_cent_eden_with_kepler(0.137);
   
-  t.test_rel(e_center,0.137,2.0e-6,"central energy density");
-  t.test_rel(Mass,0.167269,2.0e-6,"gravitational mass");
-  t.test_rel(Mass_0,0.180264,2.0e-6,"baryonic mass");
-  t.test_rel(R_e,1.36735,2.0e-6,"radius");
-  t.test_rel(Omega,0.258135,2.0e-6,"angular frequency");
-  t.test_rel(Omega_K,0.258149,2.0e-6,"Keplerian angular frequency");
-  t.test_rel(T/W,0.0924266,2.0e-6,"T/W");
-  t.test_rel(J,0.0180245,2.0e-6,"angular momentum");
-  t.test_rel(I,0.0698259,2.0e-6,"moment of inertia");
-  t.test_rel(mass_quadrupole,0.00971932,2.0e-6,"mass quadrupole");
-  t.test_abs(h_plus,0.0,2.0e-6,"h+");
-  t.test_rel(h_minus,0.196584,4.0e-6,"h-");
-  t.test_rel(Z_p,0.250523,2.0e-6,"Z_p");
-  t.test_rel(Z_f,-0.247359,2.0e-6,"Z_f");
-  t.test_rel(Z_b,0.772557,2.0e-6,"Z_b");
-  t.test_rel(om_over_Om,0.459837,2.0e-6,"om_over_Om");
-  t.test_rel(r_e,1.18909,2.0e-6,"coordinate radius");
-  t.test_rel(r_ratio,0.575244,2.0e-6,"axis ratio");
+  t.test_rel(e_center,0.137,2.0e-6,"central energy density (8)");
+  t.test_rel(Mass,0.167269,2.0e-6,"gravitational mass (8)");
+  t.test_rel(Mass_0,0.180264,2.0e-6,"baryonic mass (8)");
+  t.test_rel(R_e,1.36735,2.0e-6,"radius (8)");
+  t.test_rel(Omega,0.258135,2.0e-6,"angular frequency (8)");
+  t.test_rel(Omega_K,0.258149,2.0e-6,"Keplerian angular frequency (8)");
+  t.test_rel(T/W,0.0924266,2.0e-6,"T/W (8)");
+  t.test_rel(J,0.0180245,2.0e-6,"angular momentum (8)");
+  t.test_rel(I,0.0698259,2.0e-6,"moment of inertia (8)");
+  t.test_rel(mass_quadrupole,0.00971932,2.0e-6,"mass quadrupole (8)");
+  t.test_abs(h_plus,0.0,2.0e-6,"h+ (8)");
+  t.test_rel(h_minus,0.196584,4.0e-6,"h- (8)");
+  t.test_rel(Z_p,0.250523,2.0e-6,"Z_p (8)");
+  t.test_rel(Z_f,-0.247359,2.0e-6,"Z_f (8)");
+  t.test_rel(Z_b,0.772557,2.0e-6,"Z_b (8)");
+  t.test_rel(om_over_Om,0.459837,2.0e-6,"om_over_Om (8)");
+  t.test_rel(r_e,1.18909,2.0e-6,"coordinate radius (8)");
+  t.test_rel(r_ratio,0.575244,2.0e-6,"axis ratio (8)");
 
   return;
 }

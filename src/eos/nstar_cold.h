@@ -187,6 +187,8 @@ namespace o2scl {
 
     nstar_cold();
 
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    
     /// \name Basic operation
     //@{
     /** \brief Set the equation of state
@@ -330,7 +332,7 @@ namespace o2scl {
      */
     double dnb;
 
-    /** \brief If true, include muons (default false)
+    /** \brief If true, include muons (default true)
      */
     bool include_muons;
 
@@ -394,6 +396,9 @@ namespace o2scl {
         \f]
      */
     double solve_fun(double x, thermo &hb);
+    
+    int solve_fun2(size_t nv, const ubvector &x, ubvector &y,
+                   thermo &hb, double n_B);
 
     /// True if equation of state has been set
     bool eos_set;
@@ -413,6 +418,8 @@ namespace o2scl {
     /// A pointer to the solver
     root<> *rp;
 
+    mroot_hybrids<> rp2;
+    
     /// Storage for the EOS table
     std::shared_ptr<table_units<> > eost;
 
@@ -442,6 +449,10 @@ namespace o2scl {
      */
     double solve_fun_T(double x, thermo &hb, double T);
 
+    int solve_fun_T2(size_t nv, const ubvector &x,
+                     ubvector &y, thermo &hb, double T,
+                     double n_B);
+    
     /** \brief Solve for beta equilibrium at finite temperature
      */
     int solve_fun_s(size_t nv, const ubvector &x, ubvector &y,

@@ -202,17 +202,19 @@ find_constants::find_constants() {
 	{{"massvenus","venusmass","mvenus"},"g",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::venus_mass,""},
 	{{"massearth","earthmass","mearth"},"kg",o2scl_const::o2scl_mks,
-	 o2scl_mks::earth_mass,""},
+	 o2scl_mks::earth_mass,"IAU 2015 nominal value"},
 	{{"massearth","earthmass","mearth"},"g",o2scl_const::o2scl_cgs,
-	 o2scl_cgs::earth_mass,""},
+	 o2scl_cgs::earth_mass,"IAU 2015 nominal value"},
 	{{"massmars","marsmass","mmars"},"kg",o2scl_const::o2scl_mks,
 	 o2scl_mks::mars_mass,""},
 	{{"massmars","marsmass","mmars"},"g",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::mars_mass,""},
 	{{"massjupiter","jupitermass","mjupiter","mjup"},
-	 "kg",o2scl_const::o2scl_mks,o2scl_mks::jupiter_mass,""},
+	 "kg",o2scl_const::o2scl_mks,o2scl_mks::jupiter_mass,
+         "IAU 2015 nominal value"},
 	{{"massjupiter","jupitermass","mjupiter","mjup"},
-	 "g",o2scl_const::o2scl_cgs,o2scl_cgs::jupiter_mass,""},
+	 "g",o2scl_const::o2scl_cgs,o2scl_cgs::jupiter_mass,
+         "IAU 2015 nominal value"},
 	{{"masssaturn","saturnmass","msaturn"},"kg",o2scl_const::o2scl_mks,
 	 o2scl_mks::saturn_mass,""},
 	{{"masssaturn","saturnmass","msaturn"},"g",o2scl_const::o2scl_cgs,
@@ -665,7 +667,7 @@ void find_constants::output_list(std::ostream &os) {
     os << list[i].unit_flag << " ";
     os << list[i].val << " ";
     os << list[i].source << endl;
-    if (list[i].names.size()>0) {
+    if (list[i].names.size()>1) {
       os << "  ";
       for(size_t j=1;j<list[i].names.size();j++) {
         os << list[i].names[j] << " ";

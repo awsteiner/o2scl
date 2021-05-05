@@ -95,15 +95,16 @@ int main(void) {
   cout << "M_{max} = " << tr->max("gm") << " R_{max} = "
        << tr->get("r",tr->lookup("gm",tr->max("gm"))) << " cent. density = "
        << tr->get("nb",tr->lookup("gm",tr->max("gm"))) << endl;
-  t.test_rel(tr->max("gm"),1.90373,2.0e-4,"M_max");
+  t.test_rel(tr->max("gm"),1.8956,2.0e-4,"M_max");
   t.test_rel(tr->get("r",tr->lookup("gm",tr->max("gm"))),
-	     9.956775,1.0e-3,"R_max");
+	     9.9064,1.0e-3,"R_max");
   cout << endl;
 
   // Check that EOS corresponds to result in M vs. R table
   t.test_rel(ed1,tr->interp("nb",0.16,"ed"),2.0e-3,"ed");
   t.test_rel(pr1,tr->interp("nb",0.16,"pr"),4.0e-3,"pr");
 
+  /*
   nstar_hot nh;
   eos_had_skyrme sk;
   load_sly4(sk);
@@ -112,6 +113,7 @@ int main(void) {
   nh.calc_eos_T(10.0/hc_mev_fm);
   te=nh.get_eos_results();
   te->summary(&cout);
+  */
   
   t.report();
   return 0;
