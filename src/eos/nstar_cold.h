@@ -370,6 +370,9 @@ namespace o2scl {
 
     /// Default EOS object for the TOV solver
     eos_tov_interp def_eos_tov;
+    
+    /// The solver
+    mroot_hybrids<> mh;
     //@}
 
 #ifndef DOXYGEN_INTERNAL
@@ -401,9 +404,6 @@ namespace o2scl {
 
     /// A pointer to the TOV object
     tov_solve *tp;
-    
-    /// The solver
-    mroot_hybrids<> rp2;
     
     /// Storage for the EOS table
     std::shared_ptr<table_units<> > eost;

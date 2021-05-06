@@ -77,9 +77,9 @@ nstar_cold::nstar_cold() : eost(new table_units<>) {
 int nstar_cold::solve_fun(size_t nv, const ubvector &x, ubvector &y,
                           thermo &hb, double n_B) {
   
-  neut.n=x[0];
+  prot.n=x[0];
+  neut.n=n_B-prot.n;
   
-  prot.n=n_B-neut.n;
   if (neut.n<0.0 || prot.n<0.0) return 1;
   int had_ret=hep->calc_e(neut,prot,hb);
   if (had_ret!=0) {
@@ -107,6 +107,12 @@ int nstar_cold::calc_eos(double np_0) {
     cout << "Starting calc_eos()." << endl;
   }
 
+  double fac=(nb_end-nb_start)/dnb;
+  if (fac<0.0 || fac>1.0e8) {
+    O2SCL_ERR2("Invalid baryon density range in ",
+               "nstar_cold::calc_eos().",o2scl::exc_einval);
+  }
+  
   if (eos_set==false) {
     O2SCL_ERR("EOS not set in calc_eos().",exc_efailed);
   }
@@ -139,7 +145,7 @@ int nstar_cold::calc_eos(double np_0) {
     eost->set_unit("kfmu","1/fm");
   }
 
-  // Get the initial guess for the proton fraction at nb_start
+  // Get the initial guess for the proton density at nb_start
   double x;
   if (fabs(np_0)<1.0e-12) x=nb_start/3.0;
   else x=np_0;
@@ -177,31 +183,32 @@ int nstar_cold::calc_eos(double np_0) {
   // Get a better initial guess for nb_start. This section of code was
   // put in to avoid negative densities for calc_eos from the solver
   // below. 
-  double barn=nb_start;
+  double n_B=nb_start;
   
   ubvector ux(1), uy(1);
   ux[0]=x;
-  rp2.err_nonconv=false;
-  int tret=rp2.msolve(1,ux,sf);
+  mh.err_nonconv=false;
+  int tret=mh.msolve(1,ux,sf);
   if (tret!=0) {
     O2SCL_ERR("Initial solver failed.",o2scl::exc_efailed);
   }
   x=ux[0];
 
   // Loop over the density range, and also determine pressure_dec_nb
-  for(barn=nb_start;barn<=nb_end+dnb/10.0;barn+=dnb) {
+  for(n_B=nb_start;(dnb>0.0 && n_B<=nb_end+dnb/10.0) ||
+        (dnb<0.0 && n_B>=nb_end-dnb/10.0);n_B+=dnb) {
     
     sf=std::bind(std::mem_fn<int(size_t,const ubvector &,
                                  ubvector &, thermo &,double)>
                  (&nstar_cold::solve_fun),
                  this,std::placeholders::_1,std::placeholders::_2,
-                 std::placeholders::_3,std::ref(hb),barn);
+                 std::placeholders::_3,std::ref(hb),n_B);
     
     double y;
     ubvector ux(1), uy(1);
     ux[0]=x;
-    rp2.err_nonconv=false;
-    int tret=rp2.msolve(1,ux,sf);
+    mh.err_nonconv=false;
+    int tret=mh.msolve(1,ux,sf);
     if (tret!=0) {
       O2SCL_ERR("Initial solver failed.",o2scl::exc_efailed);
     }
@@ -224,19 +231,19 @@ int nstar_cold::calc_eos(double np_0) {
       
       // Compute the hadronic part
       double dednb_Yp, dPdnb_Yp;
-      hep->const_pf_derivs(barn,prot.n/barn,dednb_Yp,dPdnb_Yp);
+      hep->const_pf_derivs(n_B,prot.n/n_B,dednb_Yp,dPdnb_Yp);
       // Compute the leptonic part
       double dne_dmue=sqrt(e.mu*e.mu-e.m*e.m)*e.mu/pi2;
       double dP_dne=e.n/dne_dmue;
       // Put them together
-      double numer=dPdnb_Yp+dP_dne*e.n/barn;
-      double denom=dednb_Yp+e.mu*e.n/barn;
+      double numer=dPdnb_Yp+dP_dne*e.n/n_B;
+      double denom=dednb_Yp+e.mu*e.n/n_B;
       // Add the muon contribution
       if (include_muons && mu.n>0.0) {
         double dnmu_dmumu=sqrt(mu.mu*mu.mu-mu.m*mu.m)*mu.mu/pi2;
         double dP_dnmu=mu.n/dnmu_dmumu;
-        numer+=dP_dnmu*mu.n/barn;
-        denom+=mu.mu*mu.n/barn;
+        numer+=dP_dnmu*mu.n/n_B;
+        denom+=mu.mu*mu.n/n_B;
       }
       double fcs2=numer/denom;
 
@@ -250,11 +257,11 @@ int nstar_cold::calc_eos(double np_0) {
 
       h=hb+e+mu;
       
-      //double line[18]={h.ed,h.pr,barn,neut.mu,prot.mu,e.mu,neut.n,prot.n,e.n,
+      //double line[18]={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,prot.n,e.n,
       //neut.kf,prot.kf,e.kf,fcs2,denom,numer,mu.mu,mu.n,mu.kf};
       //eost->line_of_data(18,line);
 
-      double line[15]={h.ed,h.pr,barn,neut.mu,prot.mu,e.mu,neut.n,prot.n,e.n,
+      double line[15]={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,prot.n,e.n,
 		       neut.kf,prot.kf,e.kf,mu.mu,mu.n,mu.kf};
       eost->line_of_data(15,line);
 
@@ -262,7 +269,7 @@ int nstar_cold::calc_eos(double np_0) {
 
       h=hb+e;
 
-      double line[12]={h.ed,h.pr,barn,neut.mu,prot.mu,e.mu,neut.n,prot.n,e.n,
+      double line[12]={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,prot.n,e.n,
 		       neut.kf,prot.kf,e.kf};
       eost->line_of_data(12,line);
 
@@ -270,13 +277,13 @@ int nstar_cold::calc_eos(double np_0) {
     
     if (verbose>0) {
       cout.precision(5);
-      cout << barn << " " << neut.n << " " << prot.n << " " << e.n << " " 
+      cout << n_B << " " << neut.n << " " << prot.n << " " << e.n << " " 
 	   << h.ed << " " << h.pr << endl;
       cout.precision(6);
     }
     
-    if (barn>nb_start && pressure_dec_nb<=0.0 && h.pr<oldpr) {
-      pressure_dec_nb=barn;
+    if (n_B>nb_start && pressure_dec_nb<=0.0 && h.pr<oldpr) {
+      pressure_dec_nb=n_B;
     }
     oldpr=h.pr;
 
@@ -430,7 +437,7 @@ double nstar_cold::calc_urca(double np_0) {
   thermo hb;
 
   bool success=true;
-  for(double barn=nb_start;barn<=nb_end+dnb/10.0;barn+=dnb) {
+  for(double n_B=nb_start;n_B<=nb_end+dnb/10.0;n_B+=dnb) {
     
     mm_funct sf=std::bind(std::mem_fn<int(size_t,const ubvector &,
                                           ubvector &,thermo &,double)>
@@ -438,11 +445,11 @@ double nstar_cold::calc_urca(double np_0) {
                           this,std::placeholders::_1,
                           std::placeholders::_2,
                           std::placeholders::_3,
-                          std::ref(hb),barn);
+                          std::ref(hb),n_B);
     
     ubvector ux(1), uy(1);
     ux[0]=x;
-    int ret=rp2.msolve(1,ux,sf);
+    int ret=mh.msolve(1,ux,sf);
     sf(1,ux,uy);
     double y=uy[0];
     
@@ -452,11 +459,11 @@ double nstar_cold::calc_urca(double np_0) {
     
     double s=(neut.kf+prot.kf+e.kf)/2.0;
     urca=s*(s-neut.kf)*(s-prot.kf)*(s-e.kf);
-    if (barn>nb_start && urca>0.0 && old_urca<0.0) {
+    if (n_B>nb_start && urca>0.0 && old_urca<0.0) {
       if (success==false) {
 	O2SCL_ERR("Solution failed in calc_urca().",exc_efailed);
       }
-      return barn-dnb*urca/(urca-old_urca);
+      return n_B-dnb*urca/(urca-old_urca);
     }
     
     old_urca=urca;
@@ -546,9 +553,9 @@ int nstar_hot::solve_fun_T(size_t nv, const ubvector &x,
                            ubvector &y, thermo &hb, double T,
                            double n_B) {
   
-  neut.n=x[0];
-  
-  prot.n=n_B-neut.n;
+  prot.n=x[0];
+  neut.n=n_B-prot.n;
+
   if (neut.n<0.0 || prot.n<0.0) return 1;
   int had_ret=hepT->calc_temp_e(neut,prot,T,hb);
   if (had_ret!=0) {
@@ -556,7 +563,7 @@ int nstar_hot::solve_fun_T(size_t nv, const ubvector &x,
     // a failure which does not, then we return a non-zero value here
     return 2;
   }
-
+  
   e.mu=neut.mu-prot.mu;
   ft.calc_mu(e,T);
   y[0]=prot.n-e.n;
@@ -628,6 +635,12 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
   if (eos_T_set==false) {
     O2SCL_ERR("EOS not set in calc_eos_T().",exc_efailed);
   }
+
+  double fac=(nb_end-nb_start)/dnb;
+  if (fac<0.0 || fac>1.0e8) {
+    O2SCL_ERR2("Invalid baryon density range in ",
+               "nstar_hot::calc_eos_T().",o2scl::exc_einval);
+  }
   
   eost->clear();
   eost->line_of_names(((string)"ed pr nb mun mup mue nn np ne kfn ")+
@@ -645,7 +658,7 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
   eost->set_unit("kfp","1/fm");
   eost->set_unit("kfe","1/fm");
 
-  // Initial guess for the proton fraction
+  // Initial guess for the proton density
   double x;
   if (fabs(np_0)<1.0e-12) x=nb_start/3.0;
   else x=np_0;
@@ -671,35 +684,36 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
 
   ubvector ux(1), uy(1);
   ux[0]=x;
-  rp2.err_nonconv=false;
-  int tret=rp2.msolve(1,ux,sf);
+  if (err_nonconv==false) {
+    mh.err_nonconv=false;
+  }
+  int tret=mh.msolve(1,ux,sf);
   if (tret!=0) {
-    rp2.verbose=2;
-    for(double utmp=1.0e-6;utmp<0.05;utmp*=1.1) {
-      ux[0]=utmp;
-      sf(1,ux,uy);
-      cout << ux[0] << " " << uy[0] << endl;
-    }
-    O2SCL_ERR("Initial solver failed.",o2scl::exc_efailed);
+    O2SCL_CONV2_RET("Solution at first baryon density failed ",
+                    "in nstar_hot::calc_eos_T().",o2scl::exc_efailed,
+                    err_nonconv);
   }
   x=ux[0];
     
-  for(double barn=nb_start;barn<=nb_end+dnb/10.0;barn+=dnb) {
+  for(double n_B=nb_start;(dnb>0.0 && n_B<=nb_end+dnb/10.0) ||
+        (dnb<0.0 && n_B>=nb_end-dnb/10.0);n_B+=dnb) {
     
     sf=std::bind(std::mem_fn<int(size_t,const ubvector &,
                                  ubvector &, thermo &,double,double)>
                  (&nstar_hot::solve_fun_T),
                  this,std::placeholders::_1,std::placeholders::_2,
-                 std::placeholders::_3,std::ref(hb),T,barn);
+                 std::placeholders::_3,std::ref(hb),T,n_B);
 
     double y;
     
     ubvector ux(1), uy(1);
     ux[0]=x;
-    rp2.err_nonconv=false;
-    int tret=rp2.msolve(1,ux,sf);
+    mh.err_nonconv=false;
+    int tret=mh.msolve(1,ux,sf);
     if (tret!=0) {
-      O2SCL_ERR("Initial solver failed.",o2scl::exc_efailed);
+      O2SCL_CONV2_RET("Solver failed ",
+                      "in nstar_hot::calc_eos_T().",o2scl::exc_efailed,
+                      err_nonconv);
     }
     x=ux[0];
     sf(1,ux,uy);
@@ -711,7 +725,7 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
 
       h=hb+e+mu;
       
-      double line[12]={h.ed,h.pr,barn,neut.mu,prot.mu,e.mu,neut.n,
+      double line[12]={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,
                        prot.n,e.n,neut.kf,prot.kf,e.kf};
       eost->line_of_data(12,line);
 
@@ -719,20 +733,20 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
 
       h=hb+e;
 
-      double line[12]={h.ed,h.pr,barn,neut.mu,prot.mu,e.mu,neut.n,
+      double line[12]={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,
                        prot.n,e.n,neut.kf,prot.kf,e.kf};
       eost->line_of_data(12,line);
     }
     
     if (verbose>0) {
       cout.precision(5);
-      cout << barn << " " << neut.n << " " << prot.n << " " << e.n << " " 
+      cout << n_B << " " << neut.n << " " << prot.n << " " << e.n << " " 
 	   << h.ed << " " << h.pr << endl;
       cout.precision(6);
     }
     
-    if (barn>nb_start && pressure_dec_nb<=0.0 && h.pr<oldpr) {
-      pressure_dec_nb=barn;
+    if (n_B>nb_start && pressure_dec_nb<=0.0 && h.pr<oldpr) {
+      pressure_dec_nb=n_B;
     }
     oldpr=h.pr;
 
