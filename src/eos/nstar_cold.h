@@ -384,8 +384,8 @@ namespace o2scl {
         n_p - n_e - n_{\mu}
         \f]
     */
-    int solve_fun2(size_t nv, const ubvector &x, ubvector &y,
-                   thermo &hb, double n_B);
+    int solve_fun(size_t nv, const ubvector &x, ubvector &y,
+                  thermo &hb, double n_B);
     
     /// True if equation of state has been set
     bool eos_set;
@@ -429,7 +429,7 @@ namespace o2scl {
 
     /** \brief Solve for beta equilibrium at finite temperature
      */
-    int solve_fun_T2(size_t nv, const ubvector &x,
+    int solve_fun_T(size_t nv, const ubvector &x,
                      ubvector &y, thermo &hb, double T,
                      double n_B);
     
