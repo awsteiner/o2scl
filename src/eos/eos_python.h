@@ -623,8 +623,6 @@ double o2scl_nstar_cold_get_acausal_pr(void *vptr);
 
 void o2scl_nstar_cold_set_acausal_pr(void *vptr, double v);
 
-double o2scl_nstar_cold_get_solver_tol(void *vptr);
-
 void o2scl_nstar_cold_set_solver_tol(void *vptr, double v);
 
 bool o2scl_nstar_cold_get_eos_neg(void *vptr);

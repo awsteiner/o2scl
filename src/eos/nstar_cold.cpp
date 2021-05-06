@@ -72,6 +72,8 @@ nstar_cold::nstar_cold() : eost(new table_units<>) {
 
   err_nonconv=true;
   remove_rows=true;
+  
+  mh.err_nonconv=false;
 }
 
 int nstar_cold::solve_fun(size_t nv, const ubvector &x, ubvector &y,
@@ -108,7 +110,7 @@ int nstar_cold::calc_eos(double np_0) {
   }
 
   double fac=(nb_end-nb_start)/dnb;
-  if (fac<0.0 || fac>1.0e8) {
+  if (fac<1.0 || fac>1.0e8) {
     O2SCL_ERR2("Invalid baryon density range in ",
                "nstar_cold::calc_eos().",o2scl::exc_einval);
   }
@@ -145,10 +147,10 @@ int nstar_cold::calc_eos(double np_0) {
     eost->set_unit("kfmu","1/fm");
   }
 
-  // Get the initial guess for the proton density at nb_start
-  double x;
-  if (fabs(np_0)<1.0e-12) x=nb_start/3.0;
-  else x=np_0;
+  // Fix poor initial guesses for np_0
+  if (fabs(np_0)<1.0e-12) {
+    np_0=nb_start/3.0;
+  }
 
   // Initialize diagnostic quantities
   pressure_dec_nb=0.0;
@@ -186,13 +188,11 @@ int nstar_cold::calc_eos(double np_0) {
   double n_B=nb_start;
   
   ubvector ux(1), uy(1);
-  ux[0]=x;
-  mh.err_nonconv=false;
+  ux[0]=np_0;
   int tret=mh.msolve(1,ux,sf);
   if (tret!=0) {
     O2SCL_ERR("Initial solver failed.",o2scl::exc_efailed);
   }
-  x=ux[0];
 
   // Loop over the density range, and also determine pressure_dec_nb
   for(n_B=nb_start;(dnb>0.0 && n_B<=nb_end+dnb/10.0) ||
@@ -204,17 +204,13 @@ int nstar_cold::calc_eos(double np_0) {
                  this,std::placeholders::_1,std::placeholders::_2,
                  std::placeholders::_3,std::ref(hb),n_B);
     
-    double y;
-    ubvector ux(1), uy(1);
-    ux[0]=x;
-    mh.err_nonconv=false;
     int tret=mh.msolve(1,ux,sf);
     if (tret!=0) {
       O2SCL_ERR("Initial solver failed.",o2scl::exc_efailed);
     }
-    x=ux[0];
+    
+    // Compute the function at the final point
     sf(1,ux,uy);
-    y=uy[0];
       
     if (false) {
       // AWS: 3/9/21: this is nothing other than the speed of
@@ -430,13 +426,18 @@ int nstar_cold::calc_eos(double np_0) {
 double nstar_cold::calc_urca(double np_0) {
   double old_urca=0.0, urca;
   
-  double x;
-  if (fabs(np_0)<1.0e-12) x=nb_start/3.0;
-  else x=np_0;
+  // Fix poor initial guesses for np_0
+  if (fabs(np_0)<1.0e-12) {
+    np_0=nb_start/3.0;
+  }
 
   thermo hb;
 
   bool success=true;
+
+  ubvector ux(1), uy(1);
+  ux[0]=np_0;
+  
   for(double n_B=nb_start;n_B<=nb_end+dnb/10.0;n_B+=dnb) {
     
     mm_funct sf=std::bind(std::mem_fn<int(size_t,const ubvector &,
@@ -447,13 +448,10 @@ double nstar_cold::calc_urca(double np_0) {
                           std::placeholders::_3,
                           std::ref(hb),n_B);
     
-    ubvector ux(1), uy(1);
-    ux[0]=x;
     int ret=mh.msolve(1,ux,sf);
     sf(1,ux,uy);
-    double y=uy[0];
     
-    if (ret!=0 || fabs(y)>1.0e-4) {
+    if (ret!=0) {
       success=false;
     }
     
@@ -637,7 +635,7 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
   }
 
   double fac=(nb_end-nb_start)/dnb;
-  if (fac<0.0 || fac>1.0e8) {
+  if (fac<1.0 || fac>1.0e8) {
     O2SCL_ERR2("Invalid baryon density range in ",
                "nstar_hot::calc_eos_T().",o2scl::exc_einval);
   }
@@ -684,9 +682,6 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
 
   ubvector ux(1), uy(1);
   ux[0]=x;
-  if (err_nonconv==false) {
-    mh.err_nonconv=false;
-  }
   int tret=mh.msolve(1,ux,sf);
   if (tret!=0) {
     O2SCL_CONV2_RET("Solution at first baryon density failed ",
@@ -708,7 +703,6 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
     
     ubvector ux(1), uy(1);
     ux[0]=x;
-    mh.err_nonconv=false;
     int tret=mh.msolve(1,ux,sf);
     if (tret!=0) {
       O2SCL_CONV2_RET("Solver failed ",

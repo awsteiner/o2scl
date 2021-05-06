@@ -39,6 +39,10 @@
 #include <o2scl/err_hnd.h>
 #include <o2scl/vector.h>
 
+#ifdef O2SCL_OPENMP
+#include <omp.h>
+#endif
+
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif
@@ -1863,14 +1867,20 @@ namespace o2scl {
       \f$ k_{\mathrm{max}}-1 \f$.
   */
   template<class vec_t, class resize_vec_t> void vector_autocorr_vector
-    (const vec_t &data, resize_vec_t &ac_vec) {
+  (const vec_t &data, resize_vec_t &ac_vec) {
+    
     size_t kmax=data.size()/2;
     double mean=vector_mean(data);
     ac_vec.resize(kmax);
     ac_vec[0]=1.0;
+    
+#ifdef O2SCL_OPENMP
+#pragma omp parallel for
+#endif
     for(size_t k=1;k<kmax;k++) {
       ac_vec[k]=vector_lagk_autocorr(data.size(),data,k,mean);
     }
+    
     return;
   }
 
@@ -1900,7 +1910,7 @@ namespace o2scl {
       one less element than the vector \c ac_vec .
   */
   template<class vec_t, class resize_vec_t> size_t vector_autocorr_tau
-    (const vec_t &ac_vec, resize_vec_t &five_tau_over_M) {
+  (const vec_t &ac_vec, resize_vec_t &five_tau_over_M) {
     five_tau_over_M.resize(0);
     size_t len=0;
     bool len_set=false;

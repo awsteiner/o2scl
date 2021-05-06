@@ -40,24 +40,40 @@
 namespace o2scl {
 #endif
 
-  /** \brief Naive static cold neutron star
+  /** \brief Static neutron star at zero temperature
 
-      This uses eos_had_base::calc_e() to compute the equation of 
-      state of zero-temperature beta-equilibrated neutron star
-      matter and tov_solve::mvsr() to compute the mass versus
-      radius curve. By default the crust EOS is given by
-      that in \ref o2scl::eos_tov_interp::default_low_dens_eos() .
+      This class provides a simplified interface for computing the
+      equation of state (EOS) of zero-temperature beta-equilibrated
+      neutron star matter and computing the mass-radius curve.
 
-      The neutron, proton, electron and muon are given masses
-      according to their values in \ref o2scl_mks
-      after a conversion to units of \f$ 1/\mathrm{fm} \f$.
+      The beta-equilibrium EOS can be computed with the function \ref
+      calc_eos() and the mass-radius curve with the function \ref
+      calc_nstar(). The function \ref fixed() computes the profile of
+      a fixed gravitational mass star. By default the crust EOS is
+      given by that in \ref
+      o2scl::eos_tov_interp::default_low_dens_eos() .
 
       There is an example for the usage of this class given
       in the :ref:`Cold Neutron Star Structure` section
       of the User's Guide.
 
-      If \ref err_nonconv is true and the solver fails,
+      The neutron, proton, electron and muon are given masses
+      according to their values in \ref o2scl_mks
+      after a conversion to units of \f$ 1/\mathrm{fm} \f$.
+
+      \note The function \ref set_eos() stores a pointer to the EOS
+      object so the user must take care that the pointer is valid.
+
+      If \ref err_nonconv is true (the default) and the solver fails,
       the error handler is called. 
+
+      The baryon density range is specified by \ref nb_start, \ref nb_end
+      and \ref dnb. Given the value of \f$ f \f$ defined by
+      \f[
+      f = \frac{\mathrm{nb\_start} - \mathrm{nb\_end}}/{\mathrm{dnb}}
+      \f]
+      if \f$ f<1 \f$ or \f$ f>10^8 \f$, then the error handler is 
+      called.
 
       Note that not all equations of state lead to physical neutron
       stars, and the function \ref calc_eos() will not warn you about
@@ -275,7 +291,7 @@ namespace o2scl {
      */
     double acausal_ed;
 
-    /// Desc
+    /// The table row which contains the maximum gravitational mass
     size_t max_row;
     
     /** \brief Set the EOS table
@@ -306,10 +322,6 @@ namespace o2scl {
     /** \name Configuration
      */
     //@{
-    /** \brief Solver tolerance (default \f$ 10^{-4} \f$)
-    */
-    double solver_tol;
-
     /// Verbosity parameter (default 0)
     int verbose;
 
@@ -371,7 +383,12 @@ namespace o2scl {
     /// Default EOS object for the TOV solver
     eos_tov_interp def_eos_tov;
     
-    /// The solver
+    /** \brief The EOS solver
+
+        The value of \ref mroot_hybrids::err_nonconv is set to false
+        in the constructor so that this class can manage solver
+        convergence errors.
+    */
     mroot_hybrids<> mh;
     //@}
 
@@ -381,11 +398,15 @@ namespace o2scl {
 
     /** \brief Solve to ensure zero charge in \f$ \beta \f$-equilibrium
 
-        This function returns the net charge density in
-        beta-equilibrium, i.e. 
+        This function takes as input (in <tt>x[0]</tt>) the proton
+        density and outputs (in <tt>y[0]</tt>) returns the net charge
+        density in beta-equilibrium, i.e.
         \f[
         n_p - n_e - n_{\mu}
         \f]
+
+        This function returns a non-zero value if the densities are
+        negative or if the EOS fails.
     */
     int solve_fun(size_t nv, const ubvector &x, ubvector &y,
                   thermo &hb, double n_B);
