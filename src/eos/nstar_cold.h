@@ -341,13 +341,6 @@ namespace o2scl {
     */
     bool err_nonconv;
 
-    /** \brief Set the equation solver for the EOS
-     */
-    int set_root(root<> &rf) {
-      rp=&rf;
-      return 0;
-    }
-
     /** \brief Specify the object for solving the TOV equations
 	
         The default uses the low-density equation of state with
@@ -375,10 +368,6 @@ namespace o2scl {
      */
     tov_solve def_tov;
 
-    /** \brief The default equation solver for the EOS
-    */
-    root_cern<> def_root;
-
     /// Default EOS object for the TOV solver
     eos_tov_interp def_eos_tov;
     //@}
@@ -394,12 +383,10 @@ namespace o2scl {
         \f[
         n_p - n_e - n_{\mu}
         \f]
-     */
-    double solve_fun(double x, thermo &hb);
-    
+    */
     int solve_fun2(size_t nv, const ubvector &x, ubvector &y,
                    thermo &hb, double n_B);
-
+    
     /// True if equation of state has been set
     bool eos_set;
 
@@ -415,16 +402,11 @@ namespace o2scl {
     /// A pointer to the TOV object
     tov_solve *tp;
     
-    /// A pointer to the solver
-    root<> *rp;
-
+    /// The solver
     mroot_hybrids<> rp2;
     
     /// Storage for the EOS table
     std::shared_ptr<table_units<> > eost;
-
-    /// The baryon density
-    double barn;
 
 #endif
 
@@ -447,8 +429,6 @@ namespace o2scl {
 
     /** \brief Solve for beta equilibrium at finite temperature
      */
-    double solve_fun_T(double x, thermo &hb, double T);
-
     int solve_fun_T2(size_t nv, const ubvector &x,
                      ubvector &y, thermo &hb, double T,
                      double n_B);
@@ -456,12 +436,12 @@ namespace o2scl {
     /** \brief Solve for beta equilibrium at finite temperature
      */
     int solve_fun_s(size_t nv, const ubvector &x, ubvector &y,
-		       thermo &hb, double s);
+                    thermo &hb, double s, double n_B);
 
     /** \brief Solve for beta equilibrium at finite temperature
      */
     int solve_fun_s_YLe(size_t nv, const ubvector &x, ubvector &y,
-		       thermo &hb, double s, double YLe);
+                        thermo &hb, double s, double YLe, double n_B);
 
     /** \brief If true, then the hadronic EOS has been set
      */
