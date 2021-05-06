@@ -25,6 +25,8 @@
 // For unit conversions
 #include <o2scl/lib_settings.h>
 
+#include <o2scl/hdf_nucmass_io.h>
+
 using namespace std;
 using namespace o2scl;
 
@@ -515,3 +517,22 @@ nucmass_mnmsk::entry nucmass_mnmsk::get_ZN(int l_Z, int l_N) {
   return ret;
 }
 
+void nucmass_patch::load(bool include_fit) {
+  
+  // Load the nuclear masses
+  o2scl_hdf::ame_load(ame,"20",true);
+  o2scl_hdf::mnmsk_load(def_table);
+
+  inc_fit=include_fit;
+
+  if (inc_fit) {
+    // Fit FRDM
+    nucmass_fit mf;
+    double qual;
+    nucdist_set(mf.dist,ame);
+    mf.def_mmin.ntrial*=10;
+    mf.fit(def_fit,qual);
+  }
+  
+  return;
+}      

@@ -190,6 +190,31 @@ int main(void) {
     t.test_gen(ac_len==ac_len2,"vector_autocorr_vector.");
     cout << ac_len << " " << ac_len2 << endl;
   }
+
+  if (true) {
+    /* 
+       This is the test case in the original acor code
+       which should report a correlation length of about 19.
+     */
+    vector<double> act;
+    double aca=0.9;
+    double acx=0.0;
+    rng_gsl r;
+    r.clock_seed();
+    for(size_t i=0;i<4000000;i++) {
+      acx=aca*acx+r.random();
+      act.push_back(acx);
+    }
+    double mean, sig, tau;
+    vector_acor(act.size(),act,mean,sig,tau,1);
+    t.test_abs(tau,19.0,2.0,"acor");
+    cout << "Results from acor: " << mean << " " << sig << " "
+         << tau << endl;
+    std::vector<double> ac, ac2, ftom, ftom2;
+    o2scl::vector_autocorr_vector(act,ac,1000);
+    size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
+    cout << "ac_len: " << ac_len << endl;
+  }
   
   t.report();
   

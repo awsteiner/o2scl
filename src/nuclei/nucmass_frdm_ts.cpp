@@ -165,6 +165,13 @@ int main(void) {
   cout << "After fit: " << qual << endl;
   t.test_rel(qual,2.3836,1.0e-2,"FRDM post-fit.");
 
+  nucmass_patch np;
+  np.load();
+  for(int Z=10;Z<100;Z++) {
+    int N=110-Z;
+    cout << Z << " " << N << " " << np.mass_excess(Z,N) << endl;
+  }
+  
   t.report();
 
   return 0;

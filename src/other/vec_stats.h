@@ -1867,9 +1867,11 @@ namespace o2scl {
       \f$ k_{\mathrm{max}}-1 \f$.
   */
   template<class vec_t, class resize_vec_t> void vector_autocorr_vector
-  (const vec_t &data, resize_vec_t &ac_vec) {
-    
-    size_t kmax=data.size()/2;
+  (const vec_t &data, resize_vec_t &ac_vec, size_t kmax=0, int verbose=0) {
+
+    if (kmax==0) {
+      kmax=data.size()/2;
+    }
     double mean=vector_mean(data);
     ac_vec.resize(kmax);
     ac_vec[0]=1.0;
@@ -1879,6 +1881,20 @@ namespace o2scl {
 #endif
     for(size_t k=1;k<kmax;k++) {
       ac_vec[k]=vector_lagk_autocorr(data.size(),data,k,mean);
+      if (verbose>0) {
+        int n_threads=1;
+        int i_thread=0;
+#ifdef O2SCL_OPENMP
+        n_threads=omp_get_num_threads();
+        i_thread=omp_get_thread_num();
+#endif
+        if (k%100==0) {
+          std::cout << "Thread " << i_thread << " of " << n_threads
+                    << " computed autocorrelation for length "
+                    << k << " of " << kmax << "." << std::endl;
+        }
+        
+      }
     }
     
     return;
@@ -1897,6 +1913,10 @@ namespace o2scl {
       \f[
       5 \hat{\tau}(M)/M \leq 1
       \f]
+
+      (See Goodman's MCMC notes at 
+      https://www.math.nyu.edu/~goodman/teaching/MonteCarlo2005/notes/MCMC.pdf
+      )
 
       This function computes the value of \f$ 5 \hat{\tau}(M)/M \f$
       and stores it in the <tt>five_tau_over_M</tt> vector and then
@@ -2118,8 +2138,10 @@ namespace o2scl {
     // This is the self consistent window approach.
     
     if (tau*win_mult<max_lag) {
-      
-      std::cout << "Stopping. tau: " << tau << std::endl;
+
+      if (verbose>0) {
+        std::cout << "Stopping. tau: " << tau << std::endl;
+      }
       return;
       
     } else {                                             

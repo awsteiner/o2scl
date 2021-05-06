@@ -32,6 +32,7 @@
 
 #include <o2scl/nucleus.h>
 #include <o2scl/nucmass.h>
+#include <o2scl/nucmass_fit.h>
 #include <o2scl/constants.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -499,6 +500,69 @@ namespace o2scl {
     /// Given \c Z and \c N, return the mass excess in MeV
     virtual double mass_excess(int Z, int N);
 
+  };
+
+  /** \brief Desc
+
+      Experimental
+   */
+  class nucmass_patch : public nucmass_table {
+    
+  protected:
+    
+    nucmass_ame ame;
+    
+    nucmass_table *nt;
+    
+    nucmass_fit_base *nf;
+
+    bool inc_fit;
+    
+  public:
+
+    nucmass_patch() {
+      nt=0;
+      nf=0;
+      nt=&def_table;
+      nf=&def_fit;
+    }
+    
+    void load(bool include_fit=true);
+    
+    nucmass_mnmsk def_table;
+    
+    nucmass_frdm def_fit;
+    
+    /// Return the type, \c "nucmass_patch".
+    virtual const char *type() { return "nucmass_patch"; }
+
+    /** \brief Return false if the mass formula does not include 
+	specified nucleus
+    */
+    virtual bool is_included(int Z, int N) {
+      if (ame.is_included(Z,N) || nt->is_included(Z,N) ||
+          nf->is_included(Z,N)) {
+        return true;
+      }
+      return false;
+    }
+
+    /// Given \c Z and \c N, return the mass excess in MeV
+    virtual double mass_excess(int Z, int N) {
+      if (ame.is_included(Z,N)) {
+        return ame.mass_excess(Z,N);
+      }
+      if (nt->is_included(Z,N)) {
+        return nt->mass_excess(Z,N);
+      }
+      if (inc_fit && nf->is_included(Z,N)) {
+        return nf->mass_excess(Z,N);
+      }
+      O2SCL_ERR("Failed to find nucleus in nucmass_patch::mass_excess().",
+                o2scl::exc_einval);
+      return 0.0;
+    }
+    
   };
 
 #ifndef DOXYGEN_NO_O2NS
