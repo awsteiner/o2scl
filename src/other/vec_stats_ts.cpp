@@ -30,7 +30,7 @@ using namespace o2scl;
 
 int main(void) {
   test_mgr t;
-  t.set_output_level(1);
+  t.set_output_level(2);
   cout.setf(ios::scientific);
 
   const size_t N=10;
@@ -157,43 +157,15 @@ int main(void) {
 	     gsl_stats_wkurtosis_m_sd(w,1,x,1,N,wmean,wsdtmp),1.0e-8,
 	     "wkurtosis 2");
 
-  // Sample a standard Gaussian
-  prob_dens_gaussian pdg;
-  std::vector<double> btest;
-  for(size_t i=0;i<1000;i++) btest.push_back(pdg());
-  // Examine bin sizes
-  cout << vector_min_value<vector<double>,double>(btest) << endl;
-  cout << vector_max_value<vector<double>,double>(btest) << endl;
-  cout << vector_bin_size_scott(btest) << endl;
-  cout << vector_bin_size_freedman(btest) << endl;
-
   if (true) {
+    cout << endl;
     cout << "------------------------------------------------------------"
 	 << endl;
     cout << "Testing vector_autocorr_vector_mult(): " << endl;
-    std::vector<double> x0, x02, mult;
-    rng_gsl r;
-    for(size_t i=0;i<20;i++) {
-      size_t m=((size_t)(r.random()*5))+1;
-      double v=r.random();
-      for(size_t j=0;j<m;j++) {
-	x0.push_back(v);
-      }
-      x02.push_back(v);
-      mult.push_back(m);
-    }
-    std::vector<double> ac, ac2, ftom, ftom2;
-    o2scl::vector_autocorr_vector(x0,ac);
-    o2scl::vector_autocorr_vector_mult(x02,mult,ac2);
-    size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
-    size_t ac_len2=o2scl::vector_autocorr_tau(ac2,ftom2);
-    t.test_gen(ac_len==ac_len2,"vector_autocorr_vector.");
-    cout << ac_len << " " << ac_len2 << endl;
-  }
-
-  if (true) {
+    cout << endl;
+    
     /* 
-       This is the test case in the original acor code
+       This is the test case in Goodman's original acor code
        which should report a correlation length of about 19.
      */
     vector<double> act;
@@ -214,6 +186,33 @@ int main(void) {
     o2scl::vector_autocorr_vector(act,ac,1000);
     size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
     cout << "ac_len: " << ac_len << endl;
+    t.test_abs(((double)ac_len),19.0,2.0,"vector_autocorr_tau");
+    cout << endl;
+  }
+  
+  if (true) {
+    /* 
+       Test a simple data set with a known covariance length of 25
+     */
+    vector<double> act;
+    rng_gsl r;
+    r.clock_seed();
+    double x0=r.random();
+    for(size_t i=0;i<100000;i++) {
+      if (i%25==24) x0=r.random();
+      act.push_back(x0);
+    }
+    double mean, sig, tau;
+    vector_acor(act.size(),act,mean,sig,tau,0);
+    cout << "Results from acor: " << mean << " " << sig << " "
+         << tau << endl;
+    t.test_abs(tau,25.0,5.0,"acor 2");
+    std::vector<double> ac, ac2, ftom, ftom2;
+    o2scl::vector_autocorr_vector(act,ac);
+    size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
+    t.test_abs(((double)ac_len),25.0,5.0,"vector_autocorr_tau 2");
+    cout << "ac_len: " << ac_len << endl;
+    cout << endl;
   }
   
   t.report();

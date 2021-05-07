@@ -1941,7 +1941,9 @@ namespace o2scl {
       }
       double val=(1.0+2.0*sum)/((double)M)*5.0;
       if (len_set==false && val<=1.0) {
-	len=M;
+        // AWS, 5/6/21: I'm changing this from M to M/2 because
+        // apparently there's a factor of two missing here
+	len=M/2;
 	len_set=true;
       }
       five_tau_over_M.push_back(val);
