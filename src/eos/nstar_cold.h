@@ -123,7 +123,7 @@ namespace o2scl {
       fraction, the ratio of the previous two quantities
       \endcomment
 
-      If \ref include_muons is true, the table has 
+      If \ref include_muons is true (the default), the table has 
       additional columns
       - \c mumu in units of \f$ 1/\mathrm{fm} \f$, the muon chemical
       potential, \f$ \mu_{\mu} \f$
@@ -242,7 +242,7 @@ namespace o2scl {
     /// \name Output 
     //@{
     /** \brief If true, the pressure or energy density became negative
-        at some point
+        at some baryon density
      */
     bool eos_neg;
 
@@ -312,7 +312,8 @@ namespace o2scl {
       return eost;
     }
     
-    /** \brief Get the results from the TOV (after having called calc_nstar())
+    /** \brief Get the results from the TOV solver (after having
+        called calc_nstar() or fixed())
      */
     std::shared_ptr<table_units<> > get_tov_results() {
       return tp->get_results();
@@ -324,7 +325,7 @@ namespace o2scl {
     //@{
     /// Verbosity parameter (default 0)
     int verbose;
-
+    
     /** \brief If true, remove rows beyond the maximum mass (default true)
 
         Note that if the M-R curve has multiple branches, this class will
@@ -332,15 +333,18 @@ namespace o2scl {
      */
     bool remove_rows;
     
-    /** \brief The starting baryon density (default 0.05)
+    /** \brief The starting baryon density in \f$ \mathrm{fm}^{-3} \f$
+        (default 0.05)
      */
     double nb_start;
 
-    /** \brief The final baryon density (default 2.0)
+    /** \brief The final baryon density in \f$ \mathrm{fm}^{-3} \f$
+        (default 2.0)
      */
     double nb_end;
 
-    /** \brief The baryon density stepsize (default 0.01)
+    /** \brief The baryon density stepsize in \f$ \mathrm{fm}^{-3} \f$
+        (default 0.01)
      */
     double dnb;
 

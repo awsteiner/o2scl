@@ -70,7 +70,17 @@ int main(void) {
   t.test_rel(ik.eval(2.5),4.0,0.1,"ik 3");
   t.test_rel(ik.eval(3.5),3.0,0.5,"ik 4");
   cout << endl;
+  
+  // ---------------------------------------------------------------
+  // Test normal interpolation with rescaling
 
+  ik.set_covar(4,x,y,f,true);
+  t.test_rel(ik.eval(1.0),5.0,1.0e-6,"ik 1");
+  t.test_rel(ik.eval(1.5),5.5,0.1,"ik 2");
+  t.test_rel(ik.eval(2.5),4.0,0.1,"ik 3");
+  t.test_rel(ik.eval(3.5),3.0,0.5,"ik 4");
+  cout << endl;
+  
   // ---------------------------------------------------------------
   // Test interpolation with noise
   
