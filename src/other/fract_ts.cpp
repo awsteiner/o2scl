@@ -46,6 +46,14 @@ int z4m1(size_t nv, const ubvector &x, ubvector &f,
   return 0;
 }
 
+int mandel(ubvector &z, ubvector c) {
+  double zr=c[0]+z[0]*z[0]-z[1]*z[1];
+  double zi=c[1]+2.0*z[0]*z[1];
+  z[0]=zr;
+  z[1]=zi;
+  return 0;
+}
+
 int main(void) {
 
   cout.setf(ios::scientific);
@@ -89,7 +97,18 @@ int main(void) {
   vector_out(cout,max,true);
 
   t.test_gen(roots_x.size()==min.size(),"array check");
+
+  table3d t3db;
+  size_t min2, max2;
+  uniform_grid<double> grid2x=uniform_grid_end<double>(-1.7,0.5,599);
+  uniform_grid<double> grid2y=uniform_grid_end<double>(-1.1,1.1,599);
+  f.itf(mandel,grid2x,grid2y,100,10.0,t3db,min2,max2);
+  cout << "min2,max2: " << min2 << " " << max2 << endl;
   
+  hf.open_or_create("nrf2.o2");
+  hdf_output(hf,(const table3d &)t3db,"nrf2");
+  hf.close();
+
   t.report();
   
   return 0;

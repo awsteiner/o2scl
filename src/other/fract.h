@@ -208,6 +208,176 @@ namespace o2scl {
 
       return 0;
     }
+    
+    template<class func_t, class vec_t=ubvector, class fp_t=double>
+    int itf(func_t &f, uniform_grid<fp_t> &gx,
+            uniform_grid<fp_t> &gy, size_t kmax, fp_t rmax,
+            o2scl::table3d &t3d, size_t &min, size_t &max) {
+      
+      t3d.clear();
+
+      min=kmax;
+      max=0;
+
+      t3d.set_xy("x",gx,"y",gy);
+      t3d.new_slice("it");
+      t3d.set_slice_all("it",0.0);
+
+      vec_t z(2), c(2);
+
+      // AWS 5/6/21: for some reason the parallelization of this
+      // causes problems at the moment.
+      
+      //#ifdef O2SCL_OPENMP
+      //#pragma omp parallel for
+      //#endif
+      for(size_t i=0;i<t3d.get_nx();i++) {
+
+	if (verbose>0 && (i+1)%10==0) {
+#ifdef O2SCL_OPENMP
+          std::cout << "itf progress: " << i+1 << "/" << t3d.get_nx()
+		    << " (" << omp_get_thread_num() << "/"
+		    << omp_get_num_threads() << " threads)." << std::endl;
+#else
+	  std::cout << "itf progress: " << i+1 << "/" << t3d.get_nx()
+		    << std::endl;
+#endif
+	}
+	
+	for(size_t j=0;j<t3d.get_ny();j++) {
+
+	  z[0]=0.0;
+	  z[1]=0.0;
+          c[0]=gx[i];
+          c[1]=gy[j];
+          /*
+            std::cout.setf(std::ios::showpos);
+            std::cout << i << "." << j << std::endl;
+            std::cout << z[0] << " " << z[1] << " " << c[0] << " " << c[1]
+            << std::endl;
+          */
+
+	  bool found=false;
+	  
+	  for(size_t k=0;k<kmax && found==false;k++) {
+
+            f(z,c);
+            /*
+              std::cout << k << " " << z[0] << " " << z[1] << " "
+              << c[0] << " " << c[1]
+              << std::endl;
+            */
+
+            if (z[0]*z[0]+z[1]*z[1]>rmax*rmax) {
+	      found=true;
+	      t3d.set(i,j,"it",k);
+              if (k<min) min=k;
+              if (k>max) max=k;
+	    }
+
+	  }
+
+	  // In the case of neither convergence nor divergence
+	  if (found==false) {
+	    t3d.set(i,j,"it",kmax);
+            if (kmax<min) min=kmax;
+            if (kmax>max) max=kmax;
+	  }
+
+	  // Proceed to next point
+	}
+      }
+
+      return 0;
+    }
+
+#ifdef O2SCL_NEVER_DEFINED
+    
+    template<class func_t, class vec_t=ubvector, class fp_t=double>
+    int itfa(func_t &f,
+             fp_t x_min_0, fp_t x_max_0, fp_t y_min_0, fp_t y_max_0, 
+             fp_t x_min_1, fp_t x_max_1, fp_t y_min_1, fp_t y_max_1,
+             size_t nf, size_t nx=200, size_t ny=200, 
+             size_t kmax=100, fp_t rmax=10.0, o2scl::table3d &t3d) {
+      
+      t3d.clear();
+
+      min=kmax;
+      max=0;
+
+      t3d.set_xy("x",gx,"y",gy);
+      t3d.new_slice("it");
+      t3d.set_slice_all("it",0.0);
+
+      vec_t z(2), c(2);
+
+      // AWS 5/6/21: for some reason the parallelization of this
+      // causes problems at the moment.
+      
+      //#ifdef O2SCL_OPENMP
+      //#pragma omp parallel for
+      //#endif
+      for(size_t i=0;i<t3d.get_nx();i++) {
+
+	if (verbose>0 && (i+1)%10==0) {
+#ifdef O2SCL_OPENMP
+          std::cout << "itf progress: " << i+1 << "/" << t3d.get_nx()
+		    << " (" << omp_get_thread_num() << "/"
+		    << omp_get_num_threads() << " threads)." << std::endl;
+#else
+	  std::cout << "itf progress: " << i+1 << "/" << t3d.get_nx()
+		    << std::endl;
+#endif
+	}
+	
+	for(size_t j=0;j<t3d.get_ny();j++) {
+
+	  z[0]=0.0;
+	  z[1]=0.0;
+          c[0]=gx[i];
+          c[1]=gy[j];
+          /*
+            std::cout.setf(std::ios::showpos);
+            std::cout << i << "." << j << std::endl;
+            std::cout << z[0] << " " << z[1] << " " << c[0] << " " << c[1]
+            << std::endl;
+          */
+
+	  bool found=false;
+	  
+	  for(size_t k=0;k<kmax && found==false;k++) {
+
+            f(z,c);
+            /*
+              std::cout << k << " " << z[0] << " " << z[1] << " "
+              << c[0] << " " << c[1]
+              << std::endl;
+            */
+
+            if (z[0]*z[0]+z[1]*z[1]>rmax*rmax) {
+	      found=true;
+	      t3d.set(i,j,"it",k);
+              if (k<min) min=k;
+              if (k>max) max=k;
+	    }
+
+	  }
+
+	  // In the case of neither convergence nor divergence
+	  if (found==false) {
+	    t3d.set(i,j,"it",kmax);
+            if (kmax<min) min=kmax;
+            if (kmax>max) max=kmax;
+	  }
+
+	  // Proceed to next point
+	}
+      }
+
+      return 0;
+    }
+    
+#endif
 
   };
   
