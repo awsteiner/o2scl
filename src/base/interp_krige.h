@@ -605,8 +605,6 @@ namespace o2scl {
       this->py=&y;
       this->sz=size;
 
-      ubvector y_r(size);
-
       if (rescale==true) {
         this->rescaled=true;
         this->mean_x=o2scl::vector_mean(size,x);
@@ -738,7 +736,7 @@ namespace o2scl {
       ff=std::bind(std::mem_fn<double(double,double)>
                    (&interp_krige_optim<vec_t,vec2_t>::covar),this,
                    std::placeholders::_1,std::placeholders::_2);
-    
+      
       this->set_covar_noise(size,x,y,ff,noise_var,this->rescaled);
       
       return 0;
@@ -755,6 +753,22 @@ namespace o2scl {
       mean_abs/=size;
 
       set_noise(size,x,y,mean_abs/1.0e8,false,true);
+    
+      return;
+    }
+  
+    /// Initialize interpolation routine
+    virtual void set(size_t size, const vec_t &x, const vec2_t &y,
+                     bool rescale, bool err_on_fail=true) {
+
+      // Use the mean absolute value to determine noise
+      double mean_abs=0.0;
+      for(size_t j=0;j<size;j++) {
+        mean_abs+=fabs(y[j]);
+      }
+      mean_abs/=size;
+
+      set_noise(size,x,y,mean_abs/1.0e8,rescale,err_on_fail);
     
       return;
     }
