@@ -368,9 +368,9 @@ namespace o2scl {
   /// True if the data has been specified
   bool data_set;
   /// Minimum values for rescaling
-  ubvector min;
+  ubvector mean;
   /// Maximum values for rescaling
-  ubvector max;
+  ubvector std;
   /// True if the data needs to be rescaled
   bool rescaled;
   

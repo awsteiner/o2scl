@@ -120,6 +120,9 @@ namespace o2scl {
 
     /// Rescaled x vector
     ubvector x_r;
+
+    // Rescaled y vector
+    ubvector y_r;
     
   public:
     
@@ -174,9 +177,6 @@ namespace o2scl {
 		   "set().").c_str(),exc_einval);
       }
 
-      // Rescaled y vector
-      ubvector y_r;
-      
       if (rescale==true) {
         rescaled=true;
         mean_x=o2scl::vector_mean(n_dim,x);
@@ -379,9 +379,6 @@ namespace o2scl {
     /// The quality factor of the optimization
     double qual;
     
-    /// Rescaled y vector
-    ubvector y_r;
-    
     /// The covariance function
     double covar(double x1, double x2) {
       return exp(-(x1-x2)*(x1-x2)/len/len/2.0);
@@ -428,7 +425,7 @@ namespace o2scl {
           ubvector y2(size-1);
           if (this->rescaled) {
             o2scl::vector_copy_jackknife(this->x_r,k,x2);
-            o2scl::vector_copy_jackknife(y_r,k,y2);
+            o2scl::vector_copy_jackknife(this->y_r,k,y2);
           } else {
             o2scl::vector_copy_jackknife((*this->px),k,x2);
             o2scl::vector_copy_jackknife((*this->py),k,y2);
@@ -483,9 +480,22 @@ namespace o2scl {
           }
 	
           double ypred=0.0;
-          double yact=(*this->py)[k];
-          for(size_t i=0;i<size-1;i++) {
-            ypred+=exp(-pow(((*this->px)[k]-x2[i])/len,2.0)/2.0)*this->Kinvf[i];
+          double yact;
+          if (this->rescaled) {
+            yact=this->y_r[k];
+          } else {
+            yact=(*this->py)[k];
+          }
+          if (this->rescaled) {
+            for(size_t i=0;i<size-1;i++) {
+              ypred+=exp(-pow((this->x_r[k]-x2[i])/len,2.0)/2.0)*
+                this->Kinvf[i];
+            }
+          } else {
+            for(size_t i=0;i<size-1;i++) {
+              ypred+=exp(-pow(((*this->px)[k]-x2[i])/len,2.0)/2.0)*
+                this->Kinvf[i];
+            }
           }
 	
           // Measure the quality with a chi-squared like function
@@ -535,7 +545,7 @@ namespace o2scl {
         this->Kinvf.resize(size);
         if (this->rescaled) {
           
-          boost::numeric::ublas::axpy_prod(inv_KXX,y_r,this->Kinvf,true);
+          boost::numeric::ublas::axpy_prod(inv_KXX,this->y_r,this->Kinvf,true);
           
           // Compute the log of the marginal likelihood, without
           // the constant term
@@ -612,10 +622,10 @@ namespace o2scl {
         this->mean_y=o2scl::vector_mean(size,y);
         this->std_y=o2scl::vector_stddev(size,y,this->mean_y);
         this->x_r.resize(size);
-        y_r.resize(size);
+        this->y_r.resize(size);
         for (size_t j=0;j<size;j++) {
           this->x_r[j]=(x[j]-this->mean_x)/this->std_x;
-          y_r[j]=(y[j]-this->mean_y)/this->std_y;
+          this->y_r[j]=(y[j]-this->mean_y)/this->std_y;
         }
       } else {
         this->rescaled=false;
@@ -696,7 +706,7 @@ namespace o2scl {
       
         if (verbose>1) {
           std::cout << "             "
-                    << "ilen len qual fail min_qual best_len"
+                    << "ilen qual len fail min_qual best_len"
                     << std::endl;
         }
 
@@ -719,7 +729,7 @@ namespace o2scl {
             std::cout.width(2);
             std::cout << j << " ";
             std::cout.setf(std::ios::showpos);
-            std::cout << len << " " << qual << " "
+            std::cout << qual << " " << len << " "
                       << success << " " << min_qual << " "
                       << len_opt << std::endl;
             std::cout.unsetf(std::ios::showpos);
