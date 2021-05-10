@@ -45,6 +45,7 @@
 #include <o2scl/vec_stats.h>
 #include <o2scl/min_brent_gsl.h>
 #include <o2scl/constants.h>
+#include <o2scl/prob_dens_func.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -123,12 +124,16 @@ namespace o2scl {
 
     // Rescaled y vector
     ubvector y_r;
+
+    /// Desc
+    ubmatrix inv_KXX;
     
   public:
     
     interp_krige() {
       this->min_size=2;
       matrix_mode=matrix_cholesky;
+      keep_matrix=true;
     }
     
     virtual ~interp_krige() {}
@@ -143,6 +148,9 @@ namespace o2scl {
     /// Use LU decomposition
     static const size_t matrix_LU=1;
     //@}
+
+    /// If true, keep \f$ K^{-1} \f$
+    bool keep_matrix;
     
     /// Initialize interpolation routine
     virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
@@ -196,38 +204,38 @@ namespace o2scl {
       // Store pointer to covariance function
       f=&fcovar;
       
-      // Construct the KXX matrix
-      ubmatrix KXX(n_dim,n_dim);
-      if (rescaled) {
-        for(size_t irow=0;irow<n_dim;irow++) {
-          for(size_t icol=0;icol<n_dim;icol++) {
-            if (irow>icol) {
-              KXX(irow,icol)=KXX(icol,irow);
-            } else if (irow==icol) {
-              KXX(irow,icol)=fcovar(x_r[irow],x_r[icol])+noise_var;
-            } else {
-              KXX(irow,icol)=fcovar(x_r[irow],x_r[icol]);
-            }
-          }
-        }
-      } else {
-        for(size_t irow=0;irow<n_dim;irow++) {
-          for(size_t icol=0;icol<n_dim;icol++) {
-            if (irow>icol) {
-              KXX(irow,icol)=KXX(icol,irow);
-            } else if (irow==icol) {
-              KXX(irow,icol)=fcovar(x[irow],x[icol])+noise_var;
-            } else {
-              KXX(irow,icol)=fcovar(x[irow],x[icol]);
-            }
-          }
-        }
-      }
-      
       if (matrix_mode==matrix_LU) {
-	
+        
+        // Construct the KXX matrix
+        ubmatrix KXX(n_dim,n_dim);
+        if (rescaled) {
+          for(size_t irow=0;irow<n_dim;irow++) {
+            for(size_t icol=0;icol<n_dim;icol++) {
+              if (irow>icol) {
+                KXX(irow,icol)=KXX(icol,irow);
+              } else if (irow==icol) {
+                KXX(irow,icol)=fcovar(x_r[irow],x_r[icol])+noise_var;
+              } else {
+                KXX(irow,icol)=fcovar(x_r[irow],x_r[icol]);
+              }
+            }
+          }
+        } else {
+          for(size_t irow=0;irow<n_dim;irow++) {
+            for(size_t icol=0;icol<n_dim;icol++) {
+              if (irow>icol) {
+                KXX(irow,icol)=KXX(icol,irow);
+              } else if (irow==icol) {
+                KXX(irow,icol)=fcovar(x[irow],x[icol])+noise_var;
+              } else {
+                KXX(irow,icol)=fcovar(x[irow],x[icol]);
+              }
+            }
+          }
+        }
+        
 	// Construct the inverse of KXX
-	ubmatrix inv_KXX(n_dim,n_dim);
+        inv_KXX.resize(n_dim,n_dim);
 	o2scl::permutation p(n_dim);
 	int signum;
 	o2scl_linalg::LU_decomp(n_dim,KXX,p,signum);
@@ -251,9 +259,42 @@ namespace o2scl {
         }
 	
       } else {
-	
-	// Construct the inverse of KXX
-	int cret=o2scl_linalg::cholesky_decomp(n_dim,KXX,false);
+
+        // The Cholesky inversion function inverts a matrix in-place,
+        // so we put the original KXX matrix in inv_KXX, knowing that
+        // we will invert it later
+
+        // Construct the KXX matrix
+        inv_KXX.resize(n_dim,n_dim);
+        if (rescaled) {
+          for(size_t irow=0;irow<n_dim;irow++) {
+            for(size_t icol=0;icol<n_dim;icol++) {
+              if (irow>icol) {
+                inv_KXX(irow,icol)=inv_KXX(icol,irow);
+              } else if (irow==icol) {
+                inv_KXX(irow,icol)=fcovar(x_r[irow],x_r[icol])+noise_var;
+              } else {
+                inv_KXX(irow,icol)=fcovar(x_r[irow],x_r[icol]);
+              }
+            }
+          }
+        } else {
+          for(size_t irow=0;irow<n_dim;irow++) {
+            for(size_t icol=0;icol<n_dim;icol++) {
+              if (irow>icol) {
+                inv_KXX(irow,icol)=inv_KXX(icol,irow);
+              } else if (irow==icol) {
+                inv_KXX(irow,icol)=fcovar(x[irow],x[icol])+noise_var;
+              } else {
+                inv_KXX(irow,icol)=fcovar(x[irow],x[icol]);
+              }
+            }
+          }
+        }
+        
+	// Now invert KXX to get inv_KXX
+        
+	int cret=o2scl_linalg::cholesky_decomp(n_dim,inv_KXX,false);
 	if (cret!=0) {
 	  if (err_on_fail) {
 	    O2SCL_ERR2("Matrix singular (Cholesky method) ",
@@ -262,7 +303,6 @@ namespace o2scl {
 	  }
 	  return 2;
 	}
-	ubmatrix &inv_KXX=KXX;
 	o2scl_linalg::cholesky_invert<ubmatrix>(n_dim,inv_KXX);
 	
 	// Inverse covariance matrix times function vector
@@ -273,6 +313,10 @@ namespace o2scl {
           boost::numeric::ublas::axpy_prod(inv_KXX,y,Kinvf,true);
         }
 	
+      }
+
+      if (!keep_matrix) {
+        inv_KXX.resize(0,0);
       }
       
       // Set parent data members
@@ -313,6 +357,93 @@ namespace o2scl {
       }
 
       return ret;
+    }
+
+    /** \brief Return the interpolation uncertainty from the 
+        Gaussian process
+    */
+    double sigma(double x0) const {
+      
+      if (!keep_matrix) {
+        O2SCL_ERR2("Matrix information not kept in ",
+                  "interp_krige::gen_dist().",o2scl::exc_einval);
+      }
+      
+      double sigma;
+      ubvector kxx0(this->sz), prod(this->sz);
+      double kx0x0=(*f)(x0,x0);
+      
+      if (rescaled) {
+        
+        x0=(x0-mean_x)/std_x;
+        
+        for(size_t i=0;i<this->sz;i++) {
+          kxx0[i]=(*f)(x0,x_r[i]);
+        }
+
+      } else {
+        
+        for(size_t i=0;i<this->sz;i++) {
+          kxx0[i]=(*f)(x0,(*this->px)[i]);
+        }
+      }
+
+      boost::numeric::ublas::axpy_prod(inv_KXX,kxx0,prod,true);
+      sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
+      
+      if (rescaled) {
+        sigma*=std_y;
+      }
+
+      return sigma;
+    }
+    
+    /** \brief Desc
+     */
+    prob_dens_gaussian gen_dist(double x0) const {
+
+      if (!keep_matrix) {
+        O2SCL_ERR2("Matrix information not kept in ",
+                  "interp_krige::gen_dist().",o2scl::exc_einval);
+      }
+      
+      double cent=0.0;
+      double sigma;
+      ubvector kxx0(this->sz), prod(this->sz);
+      double kx0x0=(*f)(x0,x0);
+      
+      if (rescaled) {
+        
+        x0=(x0-mean_x)/std_x;
+        
+        for(size_t i=0;i<this->sz;i++) {
+          kxx0[i]=(*f)(x0,x_r[i]);
+          cent+=kxx0[i]*Kinvf[i];
+        }
+
+        cent=cent*std_y+mean_y;
+        
+      } else {
+        
+        for(size_t i=0;i<this->sz;i++) {
+          kxx0[i]=(*f)(x0,(*this->px)[i]);
+          cent+=kxx0[i]*Kinvf[i];
+        }
+      }
+
+      boost::numeric::ublas::axpy_prod(inv_KXX,kxx0,prod,true);
+      sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
+
+      std::cout << "x0,cent,sigma: " << x0 << " " << cent << " "
+                << sigma << std::endl;
+      
+      if (rescaled) {
+        sigma*=std_y;
+      }
+
+      if (sigma<0.0) sigma=0.0;
+      return prob_dens_gaussian(cent,sigma);
+      //return prob_dens_gaussian(0.0,1.0);
     }
     
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .

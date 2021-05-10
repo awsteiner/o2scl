@@ -77,6 +77,9 @@ int main(void) {
   t.test_rel(ik.eval(2.5),4.0,0.1,"ik 3");
   t.test_rel(ik.eval(3.5),3.0,0.5,"ik 4");
   cout << endl;
+
+  prob_dens_gaussian pdg1=ik.gen_dist(1.0);
+  prob_dens_gaussian pdg2=ik.gen_dist(1.5);
   
   // ---------------------------------------------------------------
   // Test normal interpolation with rescaling
