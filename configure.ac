@@ -3,7 +3,7 @@
 AC_PREREQ([2.71])
 AC_INIT([o2scl],[0.926.a1],[awsteiner@mykolab.com])
 AC_CONFIG_SRCDIR(config.h.in)
-AC_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE
 
@@ -19,7 +19,7 @@ AC_PROG_MAKE_SET
 # fails.
 AX_CXX_COMPILE_STDCXX_11(,[optional])
 
-# Newer replacement for AC_PROG_LIBTOOL
+# Newer replacement for LT_INIT
 LT_INIT
 
 # Checks for typedefs, structures, and compiler characteristics.
