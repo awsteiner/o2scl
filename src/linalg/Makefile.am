@@ -9,7 +9,7 @@ HEADER_VAR = cblas.h lu.h lanczos.h tridiag.h permutation.h qr.h \
 	qr_base.h hh_base.h tridiag_base.h givens_base.h lanczos_base.h \
 	lu_base.h linear_solver.h svdstep_base.h svdstep.h cholesky.h \
 	cholesky_base.h qrpt.h qrpt_base.h bidiag.h bidiag_base.h \
-	svd.h svd_base.h
+	svd.h svd_base.h invert.h 
 
 TEST_VAR = cblas.scr permutation.scr lanczos.scr tridiag.scr lu.scr \
 	qr.scr qrpt.scr householder.scr hh.scr linear_solver.scr \

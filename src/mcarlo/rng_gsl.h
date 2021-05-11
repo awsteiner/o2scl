@@ -172,9 +172,9 @@ namespace o2scl {
    */
   template<class data_t>
   void shuffle_swap(data_t *base, size_t size, size_t i, size_t j) {
-    register char * a = size * i + (char *) base ;
-    register char * b = size * j + (char *) base ;
-    register size_t s = size ;
+    char * a = size * i + (char *) base ;
+    char * b = size * j + (char *) base ;
+    size_t s = size ;
     
     if (i == j) {
       return;
@@ -197,9 +197,9 @@ namespace o2scl {
   template<class data_t>
   void choose_copy(data_t *dest, size_t i, data_t *src, size_t j,
 		    size_t size) {
-    register char * a = size * i + (char *) dest;
-    register char * b = size * j + (char *) src;
-    register size_t s = size ;
+    char * a = size * i + (char *) dest;
+    char * b = size * j + (char *) src;
+    size_t s = size ;
     
     do {                                          
       *a++ = *b++;                              
