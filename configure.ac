@@ -347,17 +347,17 @@ AM_CONDITIONAL(O2SCL_ARMA, test x$armadillo = xtrue)
  
 # AWS: This doesn't correctly find the Armadillo libraries yet
  
-#AS_IF([test "x$enable_armadillo" != "xno"], [
-#	    
-#AC_CHECK_LIB([armadillo], [arma::is_finite()],[],
-#	[echo ""
-#        echo "Armadillo library not found."
-#	echo " The present value of LDFLAGS is: " 
-#	echo $LDFLAGS
-#	echo ""
-#	],[])
-#
-#])
+dnl AS_IF([test "x$enable_armadillo" != "xno"], [
+	    
+dnl AC_CHECK_LIB([armadillo], [dgemm],[],
+dnl 	[echo ""
+dnl         echo "Armadillo library not found."
+dnl 	echo " The present value of LDFLAGS is: " 
+dnl 	echo $LDFLAGS
+dnl 	echo ""
+dnl 	],[])
+
+dnl ])
 
 # ----------------------------------------------
 # Enable or disable Eigen support

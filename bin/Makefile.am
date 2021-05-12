@@ -106,20 +106,30 @@ ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib -fopenmp
 else
+
 acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
 ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
 yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
+
 endif
 
 else
 
+# Removed -L${pkglibdir} on 5/11/21 because it was causing the following
+# error
+# 
+# ld: warning: directory not found for option '-L/usr/local/lib/o2scl'
+
 if O2SCL_OPENMP
-acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
-ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
-yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
+#acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
+#ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
+#yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
+acol_LDFLAGS = -L../src -L../src/hdf -fopenmp
+ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp
+yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp
 else
 acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir}
 ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir}
