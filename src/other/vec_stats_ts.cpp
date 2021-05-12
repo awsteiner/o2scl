@@ -203,7 +203,8 @@ int main(void) {
     rng_gsl r;
     r.clock_seed();
     double x0=r.random();
-    for(size_t i=0;i<100000;i++) {
+    static const size_t NN=100000;
+    for(size_t i=0;i<NN;i++) {
       if (i%25==24) x0=r.random();
       act.push_back(x0);
     }
@@ -220,38 +221,42 @@ int main(void) {
     cout << endl;
 
 #ifdef O2SCL_FFTW
-    
+
     fftw_complex *in;
     fftw_complex *out;
-    in=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*100000);
-    out=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*100000);
+    in=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*NN);
+    out=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*NN);
     
     mean=vector_mean(act);
     sig=vector_stddev(act);
     
-    for(int i=0;i<100000;i++){
+    for(size_t i=0;i<NN;i++){
       in[i][0]=(act[i]-mean)/sig;
       in[i][1]=0.0;
     }
     
-    fftw_plan plan = fftw_plan_dft_1d(100000, in, out,
-                                      FFTW_FORWARD, FFTW_ESTIMATE);
+    fftw_plan plan=fftw_plan_dft_1d(NN,in,out,
+                                      FFTW_FORWARD,FFTW_ESTIMATE);
     fftw_execute(plan);
     
-    for(int i=0;i<100000;i++){
-      double re = out[i][0];
-      double im = out[i][1];
-      in[i][0] = (re*re + im*im)/static_cast<double>(100000);
-      in[i][1] = 0.0;
+    for(size_t i=0;i<NN;i++) {
+      double re=out[i][0];
+      double im=out[i][1];
+      in[i][0]=(re*re+im*im)/((double)NN);
+      in[i][1]=0.0;
     }
-    fftw_plan plan2 = fftw_plan_dft_1d(100000, in, out,
-                                       FFTW_BACKWARD, FFTW_ESTIMATE);
+    fftw_plan plan2=fftw_plan_dft_1d(NN,in,out,
+                                     FFTW_BACKWARD,FFTW_ESTIMATE);
     
     fftw_execute(plan2);
     
-    for(int i=0;i<100000;i++){
-      const double re = out[i][0]/static_cast<double>(100000);
-      act[i]+=re;
+    vector<double> fft_out;
+    for(size_t i=0;i<NN;i++){
+      fft_out.push_back(out[i][0]/((double)NN));
+    }
+
+    for(size_t i=0;i<100;i++) {
+      cout << i << " " << fft_out[i] << " " << ac[i] << endl;
     }
     
     fftw_free(in);

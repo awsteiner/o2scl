@@ -270,20 +270,6 @@ AC_ARG_ENABLE(fftw,
 AM_CONDITIONAL(O2SCL_FFTW, test x$fftw = xtrue)
 
 # ----------------------------------------------
-# Enable or disable python support
-# ----------------------------------------------
-
-dnl AC_ARG_ENABLE(python,
-dnl 	[  --enable-python         Include Python support @<:@default=no@:>@],
-dnl 	[case "${enableval}" in
-dnl 	yes) python=true ;;
-dnl 	no)  python=false ;;
-dnl 	*) AC_MSG_ERROR(bad value ${enableval} for --enable-python) ;;
-dnl 	esac],[python=false])
-
-dnl AM_CONDITIONAL(O2SCL_PYTHON, test x$python = xtrue)
-
-# ----------------------------------------------
 # If enabled, check for the FFTW library
 # ----------------------------------------------
 
@@ -298,6 +284,20 @@ AC_CHECK_LIB([fftw3], [fftw_ifree], [],
 	echo $LDFLAGS
  	],[])
 ])
+
+# ----------------------------------------------
+# Enable or disable python support
+# ----------------------------------------------
+
+dnl AC_ARG_ENABLE(python,
+dnl 	[  --enable-python         Include Python support @<:@default=no@:>@],
+dnl 	[case "${enableval}" in
+dnl 	yes) python=true ;;
+dnl 	no)  python=false ;;
+dnl 	*) AC_MSG_ERROR(bad value ${enableval} for --enable-python) ;;
+dnl 	esac],[python=false])
+
+dnl AM_CONDITIONAL(O2SCL_PYTHON, test x$python = xtrue)
 
 # ----------------------------------------------
 # Enable or disable support for acol
