@@ -273,31 +273,31 @@ AM_CONDITIONAL(O2SCL_FFTW, test x$fftw = xtrue)
 # Enable or disable python support
 # ----------------------------------------------
 
-AC_ARG_ENABLE(python,
-	[  --enable-python         Include Python support @<:@default=no@:>@],
-	[case "${enableval}" in
-	yes) python=true ;;
-	no)  python=false ;;
-	*) AC_MSG_ERROR(bad value ${enableval} for --enable-python) ;;
-	esac],[python=false])
+dnl AC_ARG_ENABLE(python,
+dnl 	[  --enable-python         Include Python support @<:@default=no@:>@],
+dnl 	[case "${enableval}" in
+dnl 	yes) python=true ;;
+dnl 	no)  python=false ;;
+dnl 	*) AC_MSG_ERROR(bad value ${enableval} for --enable-python) ;;
+dnl 	esac],[python=false])
 
-AM_CONDITIONAL(O2SCL_PYTHON, test x$python = xtrue)
+dnl AM_CONDITIONAL(O2SCL_PYTHON, test x$python = xtrue)
 
 # ----------------------------------------------
 # If enabled, check for the FFTW library
 # ----------------------------------------------
 
-dnl AS_IF([test "x$enable_fftw" != "xno"],[
-dnl AC_CHECK_LIB([fftw3], [fftw_ifree], [],
-dnl 	[echo ""
-dnl         echo "FFTW not found. Either provide the location for "
-dnl 	echo "the fftw libraries or ensure that FFTW support is "
-dnl 	echo "disabled with the --disable-fftw option to configure. "
-dnl 	echo ""
-dnl 	echo -n " The present value of LDFLAGS is: " 
-dnl 	echo $LDFLAGS
-dnl  	],[])
-dnl ])
+AS_IF([test "x$enable_fftw" == "xyes"],[
+AC_CHECK_LIB([fftw3], [fftw_ifree], [],
+	[echo ""
+        echo "FFTW not found. Either provide the location for "
+	echo "the fftw libraries or ensure that FFTW support is "
+	echo "disabled with the --disable-fftw option to configure. "
+	echo ""
+	echo -n " The present value of LDFLAGS is: " 
+	echo $LDFLAGS
+ 	],[])
+])
 
 # ----------------------------------------------
 # Enable or disable support for acol

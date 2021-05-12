@@ -218,50 +218,51 @@ int main(void) {
     t.test_abs(((double)ac_len),25.0,5.0,"vector_autocorr_tau 2");
     cout << "ac_len: " << ac_len << endl;
     cout << endl;
+
+#ifdef O2SCL_FFTW
+    
+    fftw_complex *in;
+    fftw_complex *out;
+    in=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*100000);
+    out=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*100000);
+    
+    mean=vector_mean(act);
+    sig=vector_stddev(act);
+    
+    for(int i=0;i<100000;i++){
+      in[i][0]=(act[i]-mean)/sig;
+      in[i][1]=0.0;
+    }
+    
+    fftw_plan plan = fftw_plan_dft_1d(100000, in, out,
+                                      FFTW_FORWARD, FFTW_ESTIMATE);
+    fftw_execute(plan);
+    
+    for(int i=0;i<100000;i++){
+      double re = out[i][0];
+      double im = out[i][1];
+      in[i][0] = (re*re + im*im)/static_cast<double>(100000);
+      in[i][1] = 0.0;
+    }
+    fftw_plan plan2 = fftw_plan_dft_1d(100000, in, out,
+                                       FFTW_BACKWARD, FFTW_ESTIMATE);
+    
+    fftw_execute(plan2);
+    
+    for(int i=0;i<100000;i++){
+      const double re = out[i][0]/static_cast<double>(100000);
+      act[i]+=re;
+    }
+    
+    fftw_free(in);
+    fftw_free(out);
+    
+#endif
+
   }
   
   t.report();
   
-#ifdef O2SCL_FFTW
-
-  fftw_complex *in;
-  fftw_complex *out;
-  in=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*100000);
-  out=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*100000);
-
-  mean=vector_mean(act);
-  sig=vector_stddev(act);
-  
-  for(int i=0;i<100000;i++){
-    in[i][0]=(act[i]-mean)/sig;
-    in[i][1]=0.0;
-  }
-  
-  fftw_plan plan = fftw_plan_dft_1d(100000, in, out,
-                                    FFTW_FORWARD, FFTW_ESTIMATE);
-  fftw_execute(plan);
-  
-  for(int i=0;i<100000;i++){
-    double re = out[i][0];
-    double im = out[i][1];
-    in[i][0] = (re*re + im*im)/static_cast<double>(100000);
-    in[i][1] = 0.0;
-  }
-  fftw_plan plan2 = fftw_plan_dft_1d(100000, in, out,
-                                     FFTW_BACKWARD, FFTW_ESTIMATE);
-  
-  fftw_execute(plan2);
-  
-  for(int i=0;i<100000;i++){
-    const double re = out[i][0]/static_cast<double>(100000);
-    act[i]+=re;
-  }
-
-  fftw_free(in);
-  fftw_free(out);
-  
-#endif
-
   return 0;
 }
 
