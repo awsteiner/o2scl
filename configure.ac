@@ -349,7 +349,7 @@ AM_CONDITIONAL(O2SCL_ARMA, test x$armadillo = xtrue)
  
 AS_IF([test "x$enable_armadillo" == "xyes"], [
 	    
-AC_CHECK_LIB([armadillo], [dgemm],[],
+AC_CHECK_LIB([armadillo], [wrapper_dgemm_],[],
 	[echo ""
         echo "Armadillo library not found."
 	echo " The present value of LDFLAGS is: " 
