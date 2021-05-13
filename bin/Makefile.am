@@ -141,6 +141,10 @@ if O2SCL_OPENMP
 #acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
 #ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
 #yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
+
+# AWS: 5/13/21: -fopenmp is both here and in RLIB above, but I've
+# had errors on ubuntu if it's not here as well
+
 acol_LDFLAGS = -L../src -L../src/hdf -fopenmp
 ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp
 yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp
