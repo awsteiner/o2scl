@@ -88,24 +88,34 @@ ame_parse_SOURCES = ame_parse.cpp
 yanic_SOURCES = yanic.cpp
 
 if O2SCL_READLINE
-RLIB = -lreadline -lncurses
-else 
-RLIB = 
+
+# AWS: 5/13/21: commeting this out since it's already taken care
+# of by configure.ac
+
+#RLIB = -lreadline -lncurses
+RLIB =
+
+else
+
+RLIB =
+
 endif
 
 # We look first for the libraries in the distribution directory.
 # However, homebrew's superenv appears to move the libraries around,
-# so we look for them in pkglibdir
+# so we look for them in pkglibdir. Removing -fopenmp here since
+# it's already taken care of above
+
 if O2SCL_SNAP
 
-if O2SCL_OPENMP
-acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
-	-Wl,/snap/o2scl/current/lib -fopenmp
-ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
-	-Wl,/snap/o2scl/current/lib -fopenmp
-yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
-	-Wl,/snap/o2scl/current/lib -fopenmp
-else
+#if O2SCL_OPENMP
+#acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
+#	-Wl,/snap/o2scl/current/lib -fopenmp
+#ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
+#	-Wl,/snap/o2scl/current/lib -fopenmp
+#yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
+#	-Wl,/snap/o2scl/current/lib -fopenmp
+#else
 
 acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
@@ -114,27 +124,32 @@ ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
 
-endif
+#endif
 
 else
 
 # Removed -L${pkglibdir} on 5/11/21 because it was causing the following
-# error
+# error, 
 # 
 # ld: warning: directory not found for option '-L/usr/local/lib/o2scl'
+#
+# but I bet it was there to assist with creating an ubuntu
+# package...
 
-if O2SCL_OPENMP
+#if O2SCL_OPENMP
 #acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
 #ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
 #yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
-acol_LDFLAGS = -L../src -L../src/hdf -fopenmp
-ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp
-yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp
-else
-acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir}
-ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir}
-yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir}
-endif
+#acol_LDFLAGS = -L../src -L../src/hdf -fopenmp
+#ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp
+#yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp
+#else
+
+acol_LDFLAGS = -L../src -L../src/hdf 
+ame_parse_LDFLAGS = -L../src -L../src/hdf 
+yanic_LDFLAGS = -L../src -L../src/hdf 
+
+#endif
 
 endif
 
