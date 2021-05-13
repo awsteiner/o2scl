@@ -136,20 +136,22 @@ else
 # but I bet it was there to assist with creating an ubuntu
 # package...
 
-#if O2SCL_OPENMP
+if O2SCL_OPENMP
+
 #acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
 #ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
 #yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
-#acol_LDFLAGS = -L../src -L../src/hdf -fopenmp
-#ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp
-#yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp
-#else
+acol_LDFLAGS = -L../src -L../src/hdf -fopenmp
+ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp
+yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp
+
+else
 
 acol_LDFLAGS = -L../src -L../src/hdf 
 ame_parse_LDFLAGS = -L../src -L../src/hdf 
 yanic_LDFLAGS = -L../src -L../src/hdf 
 
-#endif
+endif
 
 endif
 
