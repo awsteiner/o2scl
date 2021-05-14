@@ -13,7 +13,7 @@ HEADER_VAR = cblas.h lu.h lanczos.h tridiag.h permutation.h qr.h \
 
 TEST_VAR = cblas.scr permutation.scr lanczos.scr tridiag.scr lu.scr \
 	qr.scr qrpt.scr householder.scr hh.scr linear_solver.scr \
-	cholesky.scr bidiag.scr svdstep.scr svd.scr
+	cholesky.scr bidiag.scr svdstep.scr svd.scr invert.scr
 
 SUBDIRS = arma eigen both neither
 
@@ -84,7 +84,7 @@ pkginclude_HEADERS = $(HEADER_VAR)
 
 check_PROGRAMS = cblas_ts permutation_ts lanczos_ts tridiag_ts lu_ts \
 	qr_ts householder_ts hh_ts linear_solver_ts svdstep_ts \
-	cholesky_ts qrpt_ts bidiag_ts svd_ts
+	cholesky_ts qrpt_ts bidiag_ts svd_ts invert_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -108,6 +108,7 @@ svdstep_ts_LDADD = $(VCHECK_LIBS)
 cholesky_ts_LDADD = $(VCHECK_LIBS)
 svd_ts_LDADD = $(VCHECK_LIBS)
 bidiag_ts_LDADD = $(VCHECK_LIBS)
+invert_ts_LDADD = $(VCHECK_LIBS)
 
 if O2SCL_OPENMP
 cblas_ts_LDFLAGS = -fopenmp
@@ -124,6 +125,7 @@ svdstep_ts_LDFLAGS = -fopenmp
 cholesky_ts_LDFLAGS = -fopenmp
 svd_ts_LDFLAGS = -fopenmp
 bidiag_ts_LDFLAGS = -fopenmp
+invert_ts_LDFLAGS = -fopenmp
 else
 cblas_ts_LDFLAGS =  
 permutation_ts_LDFLAGS =  
@@ -139,6 +141,7 @@ svdstep_ts_LDFLAGS =
 cholesky_ts_LDFLAGS =  
 svd_ts_LDFLAGS =  
 bidiag_ts_LDFLAGS =  
+invert_ts_LDFLAGS =  
 endif
 
 cblas.scr: cblas_ts$(EXEEXT) 
@@ -169,6 +172,8 @@ svd.scr: svd_ts$(EXEEXT)
 	./svd_ts$(EXEEXT) > svd.scr
 bidiag.scr: bidiag_ts$(EXEEXT) 
 	./bidiag_ts$(EXEEXT) > bidiag.scr
+invert.scr: invert_ts$(EXEEXT) 
+	./invert_ts$(EXEEXT) > invert.scr
 
 cblas_ts_SOURCES = cblas_ts.cpp
 permutation_ts_SOURCES = permutation_ts.cpp
@@ -184,6 +189,7 @@ svdstep_ts_SOURCES = svdstep_ts.cpp
 cholesky_ts_SOURCES = cholesky_ts.cpp
 svd_ts_SOURCES = svd_ts.cpp
 bidiag_ts_SOURCES = bidiag_ts.cpp
+invert_ts_SOURCES = invert_ts.cpp
 
 # ------------------------------------------------------------
 # Library o2scl_linalg

@@ -28,14 +28,18 @@
 
 #include <gsl/gsl_linalg.h>
 
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
+#include <boost/numeric/ublas/matrix_proxy.hpp>
+
 #include <o2scl/permutation.h>
 #include <o2scl/lu.h>
 #include <o2scl/cholesky.h>
 
 namespace o2scl_linalg {
 
-  /** \brief Desc
-  */
+  /** \brief Invert a matrix
+   */
   template<class mat_t=boost::numeric::ublas::matrix<double> >
   class matrix_invert {
     
@@ -43,14 +47,14 @@ namespace o2scl_linalg {
     
     virtual ~matrix_invert() {}
     
-    /// Desc
-    virtual void invert(size_t n, const mat_t &A, mat_t &Ainv)=0;
+    /// Invert matrix \c A, returning the inverse in \c A_inv
+    virtual void invert(size_t n, mat_t &A, mat_t &Ainv)=0;
     
-    /// Desc
+    /// Invert matrix \c A in place
     virtual void invert_inplace(size_t n, mat_t &A)=0;
 
-    /// Desc
-    virtual mat_t invert(size_t n, const mat_t &A) {
+    /// Invert a matrix, returning the inverse
+    virtual mat_t invert(size_t n, mat_t &A) {
       mat_t Ainv(n,n);
       invert(n,A,Ainv);
       return Ainv;
@@ -67,8 +71,8 @@ namespace o2scl_linalg {
     
   public:
     
-    /// 
-    virtual void invert(size_t n, const mat_t &A, mat_t &Ainv) {
+    /// Invert matrix \c A, returning the inverse in \c A_inv
+    virtual void invert(size_t n, mat_t &A, mat_t &A_inv) {
       int sig;
       o2scl::permutation p(n);
       LU_decomp(n,A,p,sig);
@@ -79,7 +83,8 @@ namespace o2scl_linalg {
       LU_invert<mat_t,mat_t,mat_col_t>(n,A,p,A_inv);
       return;
     };
-
+    
+    /// Invert matrix \c A in place
     virtual void invert_inplace(size_t n, mat_t &A) {
       mat_t Ainv(n,n);
       invert(n,A,Ainv);
@@ -93,19 +98,19 @@ namespace o2scl_linalg {
 
   /** \brief Inverse symmetric positive matrix using Cholesky decomposition
    */
-  template <class vec_t=boost::numeric::ublas::vector<double>, 
-    class mat_t=boost::numeric::ublas::matrix<double> > 
-    class matrix_invert_cholesky : public matrix_invert<vec_t, mat_t> {
+  template <class mat_t=boost::numeric::ublas::matrix<double> > 
+  class matrix_invert_cholesky : public matrix_invert<mat_t> {
     
   public:
     
-    /// 
-    virtual void invert(size_t n, const mat_t &A, mat_t &Ainv) {
-      mat_t Ainv=A;
-      invert_inplace(n,Ainv);
+    /// Invert matrix \c A, returning the inverse in \c A_inv
+    virtual void invert(size_t n, mat_t &A, mat_t &A_inv) {
+      A_inv=A;
+      invert_inplace(n,A_inv);
       return;
     };
 
+    /// Invert matrix \c A in place
     virtual void invert_inplace(size_t n, mat_t &A) {
       cholesky_decomp(n,A,false);
       cholesky_invert(n,A);
@@ -132,11 +137,13 @@ namespace o2scl_linalg {
   template<class arma_mat_t> class matrix_invert_arma : 
     public matrix_invert<arma_mat_t> {
     
-    virtual void invert(size_t n, const arma_mat_t &A, arma_mat_t &Ainv) {
-      Ainv=inv(A);
+    /// Invert matrix \c A, returning the inverse in \c A_inv
+    virtual void invert(size_t n, const arma_mat_t &A, arma_mat_t &A_inv) {
+      A_inv=inv(A);
       return;
     }
 
+    /// Invert matrix \c A in place
     virtual void invert_inplace(size_t n, arma_mat_t &A) {
       A=inv(A);
       return;
@@ -154,11 +161,13 @@ namespace o2scl_linalg {
   template<class arma_mat_t> class matrix_invert_sympd_arma : 
     public matrix_invert<arma_mat_t> {
     
-    virtual void invert(size_t n, const arma_mat_t &A, arma_mat_t &Ainv) {
-      Ainv=inv_sympd(A);
+    /// Invert matrix \c A, returning the inverse in \c A_inv
+    virtual void invert(size_t n, const arma_mat_t &A, arma_mat_t &A_inv) {
+      A_inv=inv_sympd(A);
       return;
     }
 
+    /// Inver matrix \c A in place
     virtual void invert_inplace(size_t n, arma_mat_t &A) {
       A=inv_sympd(A);
       return;
@@ -181,17 +190,18 @@ namespace o2scl_linalg {
       installation.
 
   */
-  template<class eigen_mat_t>
-    class matrix_invert_eigen : 
-  public matrix_invert<eigen_mat_t> {
+  template<class eigen_mat_t> class matrix_invert_eigen : 
+    public matrix_invert<eigen_mat_t> {
     
-    /// Desc
-    virtual void invert(size_t n, const eigen_mat_t &A, eigen_mat_t &Ainv) {
-      Ainv=A.inverse();
+  public:
+    
+    /// Invert matrix \c A, returning the inverse in \c A_inv
+    virtual void invert(size_t n, eigen_mat_t &A, eigen_mat_t &A_inv) {
+      A_inv=A.inverse();
       return;
     }
     
-    /// Desc
+    /// Inver matrix \c A in place
     virtual void invert_inplace(size_t n, eigen_mat_t &A) {
       A=A.inverse();
       return;
