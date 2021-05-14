@@ -67,11 +67,10 @@ namespace o2scl {
 
       \note Experimental.
   */
-  template<class vec_t=boost::numeric::ublas::vector<double>,
-    class mat_t=boost::numeric::ublas::vector<double>,
-    class mat_row_t=boost::numeric::ublas::matrix_row
-    <boost::numeric::ublas::vector<double> > >
-    class interpm_krige {    
+  template<class vec_t, class mat_t, class mat_row_t,
+           class mat2_t, class mat2_row_t>
+
+  class interpm_krige {    
     
   public:
     
@@ -116,7 +115,7 @@ namespace o2scl {
       \ref o2scl::interpm_idw::set_data() . See this
       class description for more details.
   */
-  template<class mat2_row_t, class mat2_t, class func_vec_t>
+  template<class func_vec_t>
   int set_data_noise(size_t n_in, size_t n_out, size_t n_points,
 		     mat_t &user_x, mat2_t &user_y,
 		     func_vec_t &fcovar,
@@ -148,10 +147,15 @@ namespace o2scl {
 		 "interpm_krige::set_data_noise().",o2scl::exc_efailed);
     }
     std::swap(user_x,x);
+    std::swap(user_y,y);
     
     // We don't need to copy the 'y' data, but we double check
     // that it is properly sized
     if (user_y.size2()!=n_points || user_y.size1()!=n_out) {
+      std::cout << user_x.size1() << std::endl;
+      std::cout << user_x.size2() << std::endl;
+      std::cout << user_y.size1() << std::endl;
+      std::cout << user_y.size2() << std::endl;
       O2SCL_ERR2("Size of y not correct in ",
 		 "interpm_krige::set_data_noise().",o2scl::exc_efailed);
     }
@@ -167,19 +171,25 @@ namespace o2scl {
     }
     
     if (rescale==true) {
-      min.resize(n_in);
-      max.resize(n_in);
+      mean_x.resize(n_in);
+      std_x.resize(n_in);
       for(size_t j=0;j<n_in;j++) {
-	min[j]=x(0,j);
-	max[j]=x(0,j);
-	for(size_t i=1;i<n_points;i++) {
-	  double val=x(i,j);
-	  if (val>max[j]) max[j]=val;
-	  if (val<min[j]) min[j]=val;
-	}
+        mat_row_t vec(x,j);
+        mean_x[j]=vector_mean(n_points,vec);
+        std_x[j]=vector_mean(n_points,vec);
 	for(size_t i=0;i<n_points;i++) {
-	  x(i,j)=((x(i,j)-min[j])/(max[j]-min[j])-0.5)*2.0;
-	}
+	  x(i,j)=(x(i,j)-mean_x[j])/std_x[j];
+        }
+      }
+      mean_y.resize(n_out);
+      std_y.resize(n_out);
+      for(size_t j=0;j<n_out;j++) {
+        mat2_row_t vec(y,j);
+        mean_y[j]=vector_mean(n_points,vec);
+        std_y[j]=vector_mean(n_points,vec);
+	for(size_t i=0;i<n_points;i++) {
+	  y(i,j)=(y(i,j)-mean_y[j])/std_y[j];
+        }
       }
       if (verbose>1) {
 	std::cout << "interpm_krige::set_data_noise() rescaled."
@@ -287,7 +297,7 @@ namespace o2scl {
       \ref o2scl::interpm_idw::set_data() . See this
       class description for more details.
   */
-  template<class mat2_row_t, class mat2_t, class func_vec_t>
+  template<class func_vec_t>
   int set_data(size_t n_in, size_t n_out, size_t n_points,
 	       mat_t &user_x, mat2_t &user_y,
 	       func_vec_t &fcovar, bool rescale=false,
@@ -295,9 +305,9 @@ namespace o2scl {
     vec_t noise_vec;
     noise_vec.resize(1);
     noise_vec[0]=0.0;
-    return set_data_noise<mat2_row_t,mat2_t,func_vec_t>
-    (n_in,n_out,n_points,user_x,user_y,fcovar,
-     noise_vec,rescale,err_on_fail);
+    return set_data_noise<func_vec_t>
+      (n_in,n_out,n_points,user_x,user_y,fcovar,
+       noise_vec,rescale,err_on_fail);
   }
 
   /** \brief Given covariance function \c fcovar and input vector \c x
@@ -321,7 +331,7 @@ namespace o2scl {
       // result
       vec2_t x0p(nd_in);
       for(size_t iin=0;iin<nd_in;iin++) {
-	x0p[iin]=((x0[iin]-min[iin])/(max[iin]-min[iin])-0.5)*2.0;
+	x0p[iin]=(x0[iin]-mean_x[iin])/std_x[iin];
       }
 
       // Evaluate the interpolated result
@@ -365,12 +375,14 @@ namespace o2scl {
   size_t nd_out;
   /// The data
   mat_t x;
+  /// The data
+  mat2_t y;
   /// True if the data has been specified
   bool data_set;
-  /// Minimum values for rescaling
-  ubvector mean;
-  /// Maximum values for rescaling
-  ubvector std;
+  ubvector mean_x;
+  ubvector std_x;
+  ubvector mean_y;
+  ubvector std_y;
   /// True if the data needs to be rescaled
   bool rescaled;
   
@@ -378,6 +390,8 @@ namespace o2scl {
   
   };
   
+#ifdef O2SCL_NEVER_DEFINED
+
   /** \brief One-dimensional interpolation using an 
       optimized covariance function
       
@@ -1381,7 +1395,9 @@ namespace o2scl {
 #endif
     
   };
-    
+
+#endif
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

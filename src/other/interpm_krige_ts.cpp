@@ -24,6 +24,7 @@
 
 #include <o2scl/test_mgr.h>
 #include <o2scl/interpm_krige.h>
+#include <o2scl/table.h>
 #include <o2scl/interp2_neigh.h>
 #include <o2scl/interp2_planar.h>
 #include <o2scl/rng_gsl.h>
@@ -33,9 +34,9 @@ using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
-typedef o2scl::matrix_view_vec_vec<ubvector> mat_t;
-typedef o2scl::matrix_view_table<> mat2_t;
+typedef o2scl::matrix_view_table<> mat_t;
 typedef const matrix_row_gen<mat_t> row_t;
+typedef o2scl::matrix_view_table_transpose<> mat2_t;
 typedef const matrix_row_gen<mat2_t> row2_t;
 typedef vector<function<double(row_t &, row_t &) > > f1_t;
 typedef vector<function<double(row_t &, const ubvector &) > > f2_t;
@@ -62,45 +63,45 @@ int main(void) {
 
   {
     cout << "interpm_krige, unscaled" << endl;
-    // Construct the data
-    vector<ubvector> x;
-    ubvector tmp(2);
-    tmp[0]=1.04; tmp[1]=0.02;
-    x.push_back(tmp);
-    tmp[0]=0.03; tmp[1]=1.01; 
-    x.push_back(tmp);
-    tmp[0]=0.81; tmp[1]=0.23; 
-    x.push_back(tmp);
-    tmp[0]=0.03; tmp[1]=0.83; 
-    x.push_back(tmp);
-    tmp[0]=0.03; tmp[1]=0.99; 
-    x.push_back(tmp);
-    tmp[0]=0.82; tmp[1]=0.84; 
-    x.push_back(tmp);
-    tmp[0]=0.03; tmp[1]=0.24; 
-    x.push_back(tmp);
-    tmp[0]=0.03; tmp[1]=1.02; 
-    x.push_back(tmp);
-    mat_t x2(x);
 
-    vector<ubvector> y;
-    tmp.resize(8);
+    table t;
+    t.line_of_names("x y z");
+    vector<double> v={1.04,0.02};
+    t.line_of_data(2,v);
+    v={0.03,1.01};
+    t.line_of_data(2,v);
+    v={0.81,0.23};
+    t.line_of_data(2,v);
+    v={0.03,0.83};
+    t.line_of_data(2,v);
+    v={0.03,0.99};
+    t.line_of_data(2,v);
+    v={0.82,0.84};
+    t.line_of_data(2,v);
+    v={0.03,0.24};
+    t.line_of_data(2,v);
+    v={0.03,1.02};
+    t.line_of_data(2,v);
+
     for(size_t i=0;i<8;i++) {
-      tmp[i]=ft(x[i][0],x[i][1]);
+      t.set("z",i,ft(t.get("x",i),t.get("y",i)));
     }
-    y.push_back(tmp);
-    mat_t y2(y);
-
-    interpm_krige<ubvector,mat_t,matrix_row_gen<mat_t> > ik;
+    
+    interpm_krige<ubvector,mat_t,row_t,mat2_t,row2_t> ik;
     ik.verbose=2;
-    f1_t fa1={std::bind(&covar<matrix_row_gen<mat_t>,matrix_row_gen<mat_t> >,
-			std::placeholders::_1,std::placeholders::_2,0.70)};
-    f2_t fa2={std::bind(&covar<matrix_row_gen<mat_t>,ubvector>,
-			std::placeholders::_1,std::placeholders::_2,0.70)};
-    ik.set_data<matrix_row_gen<mat_t> >(2,1,8,x2,y2,fa1);
-  
+    f1_t fa1={std::bind(&covar<row_t,row_t>,
+                        std::placeholders::_1,std::placeholders::_2,0.70)};
+    f2_t fa2={std::bind(&covar<row_t,ubvector>,
+                        std::placeholders::_1,std::placeholders::_2,0.70)};
+    vector<string> col_list_x={"x","y"};
+    vector<string> col_list_y={"z"};
+    matrix_view_table mvt_x(t,col_list_x);
+    matrix_view_table_transpose mvt_y(t,col_list_y);
+    ik.set_data<>(2,1,8,mvt_x,mvt_y,fa1);
+      
     ubvector point(2);
     ubvector out(1);
+
     point[0]=0.4;
     point[1]=0.5;
     ik.eval(point,out,fa2);
@@ -112,6 +113,8 @@ int main(void) {
     cout << endl;
   }
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   {
     cout << "interpm_krige, rescaled" << endl;
     // Construct the data
@@ -185,9 +188,9 @@ int main(void) {
   
     interpm_krige<ubvector,mat2_t,matrix_row_gen<mat2_t> > ik;
     ik.verbose=2;
-    f3_t fa1={std::bind(&covar<matrix_row_gen<mat2_t>,matrix_row_gen<mat2_t> >,
+    f1_t fa1={std::bind(&covar<matrix_row_gen<mat2_t>,matrix_row_gen<mat2_t> >,
 			std::placeholders::_1,std::placeholders::_2,1.118407)};
-    f4_t fa2={std::bind(&covar<matrix_row_gen<mat2_t>,ubvector>,
+    f2_t fa2={std::bind(&covar<matrix_row_gen<mat2_t>,ubvector>,
 			std::placeholders::_1,std::placeholders::_2,1.118407)};
     ik.set_data<matrix_row_gen<matrix_view_table_transpose<> > >
       (2,1,8,cmvtx,cmvty,fa1,true);
@@ -348,6 +351,8 @@ int main(void) {
   }
   */
 
+#endif
+  
   t.report();
   return 0;
 }

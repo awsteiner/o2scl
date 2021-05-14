@@ -3391,6 +3391,11 @@ namespace o2scl {
 
   /** \brief View a o2scl::table object as a matrix
 
+      When connected to a table, the \ref size1() function returns the
+      number of lines in the table, and the \ref size2() function
+      returns the number of columns which were originally specified in
+      either the constructor or the \ref set() function.
+
       \note This stores a pointer to the table and the user must ensure
       that the pointer is valid with the matrix view is accessed.
   */
@@ -3484,6 +3489,11 @@ namespace o2scl {
   };
   
   /** \brief View a o2scl::table object as a matrix
+
+      When connected to a table, the \ref size1() function returns the
+      number of lines in the table, and the \ref size2() function
+      returns the number of columns which were originally specified in
+      either the constructor or the \ref set() function.
 
       \note This stores a pointer to the table and the user must ensure
       that the pointer is valid with the matrix view is accessed.
@@ -3597,7 +3607,12 @@ namespace o2scl {
   
   };
   
-  /** \brief View a o2scl::table object as a matrix
+  /** \brief View a o2scl::table object as a transposed matrix
+
+      When connected to a table, the \ref size1() function returns the
+      number of columns which were originally specified in either the
+      constructor or the \ref set() function, and the \ref size2()
+      function returns number of lines in the table.
 
       \note This stores a pointer to the table and the user must ensure
       that the pointer is valid with the matrix view is accessed.
