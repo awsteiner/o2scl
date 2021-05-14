@@ -43,7 +43,7 @@ using namespace o2scl_linalg;
 
 int main(void) {
   test_mgr t;
-  t.set_output_level(1);
+  t.set_output_level(2);
 
   cout.setf(ios::scientific);
   
@@ -63,25 +63,25 @@ int main(void) {
       }
     }
 
-    cout << "A: " << endl;
-    //cout << gm1 << endl;
-    cout << "b: " << endl;
-    //cout << gv1 << endl;
+    /*
+      cout << "A: " << endl;
+      cout << gm1 << endl;
+      cout << "b: " << endl;
+      cout << gv1 << endl;
+    */
 
     // -------------------------------------------------
 
     linear_solver_LU<ubvector,ubmatrix> lus;
     lus.solve(5,gm1,gv1,gv2);
 
-    cout << "x: " << endl;
-    //cout << gv2 << endl;
+    //cout << "x: " << endl;
 
     dgemv(o2cblas_RowMajor,o2cblas_NoTrans,5,5,1.0,gm2,gv2,0.0,gv3);
 
-    cout << "A*x: " << endl;
-    //cout << gv3 << endl;
+    //cout << "A*x: " << endl;
 
-    t.test_rel_vec(5,gv1,gv3,1.0e-10,"solve 1");
+    t.test_rel_vec(5,gv1,gv3,1.0e-10,"linear_solver_LU");
   }
 
   // Test QR solve using O2SCL
@@ -95,25 +95,25 @@ int main(void) {
       }
     }
 
-    cout << "A: " << endl;
-    //cout << gm1 << endl;
-    cout << "b: " << endl;
-    //cout << gv1 << endl;
+    /*
+      cout << "A: " << endl;
+      cout << gm1 << endl;
+      cout << "b: " << endl;
+      cout << gv1 << endl;
+    */
 
     // -------------------------------------------------
 
     linear_solver_QR<ubvector,ubmatrix> lus;
     lus.solve(5,gm1,gv1,gv2);
 
-    cout << "x: " << endl;
-    //cout << gv2 << endl;
+    //cout << "x: " << endl;
 
     dgemv(o2cblas_RowMajor,o2cblas_NoTrans,5,5,1.0,gm2,gv2,0.0,gv3);
 
-    cout << "A*x: " << endl;
-    //cout << gv3 << endl;
+    //cout << "A*x: " << endl;
 
-    t.test_rel_vec(5,gv1,gv3,1.0e-10,"solve 1");
+    t.test_rel_vec(5,gv1,gv3,1.0e-10,"linear_solver_QR");
   }
 
   // Test HH solve using O2SCL
@@ -127,27 +127,124 @@ int main(void) {
       }
     }
 
+    /*
     cout << "A: " << endl;
-    //cout << gm1 << endl;
+    cout << gm1 << endl;
     cout << "b: " << endl;
-    //cout << gv1 << endl;
+    cout << gv1 << endl;
+    */
 
     // -------------------------------------------------
 
     linear_solver_HH<ubvector,ubmatrix> lus;
     lus.solve(5,gm1,gv1,gv2);
 
-    cout << "x: " << endl;
-    //cout << gv2 << endl;
+    //cout << "x: " << endl;
 
     dgemv(o2cblas_RowMajor,o2cblas_NoTrans,5,5,1.0,gm2,gv2,0.0,gv3);
 
-    cout << "A*x: " << endl;
-    //cout << gv3 << endl;
+    //cout << "A*x: " << endl;
 
-    t.test_rel_vec(5,gv1,gv3,1.0e-10,"solve 1");
+    t.test_rel_vec(5,gv1,gv3,1.0e-10,"linear_solver_HH");
   }
 
+#ifdef O2SCL_ARMA
+
+  Eigen::MatrixXd am1(5,5), am2(5,5);
+  Eigen::VectorXd av1(5), av2(5), av3(5);
+  
+  {
+
+    for(size_t i=0;i<5;i++) {
+      av1[i]=cos(((double)(i)));
+      for(size_t j=0;j<5;j++) {
+	am1(i,j)=1.0/(i+j+1);
+	am2(i,j)=1.0/(i+j+1);
+      }
+    }
+
+    // -------------------------------------------------
+
+    linear_solver_arma<arma::vec,arma::mat> lsa;
+    lsa.solve(5,am1,av1,av2);
+
+    //cout << "x: " << endl;
+
+    dgemv(o2cblas_RowMajor,o2cblas_NoTrans,5,5,1.0,am2,av2,0.0,av3);
+
+    //cout << "A*x: " << endl;
+
+    t.test_rel_vec(5,av1,av3,1.0e-10,"linear_solver_arma");
+  }
+
+#endif
+  
+#ifdef O2SCL_EIGEN
+
+  for(size_t kk=0;kk<7;kk++) {
+  
+    Eigen::MatrixXd em1(5,5), em2(5,5);
+    Eigen::VectorXd ev1(5), ev2(5), ev3(5);
+    
+    // Test 
+    {
+      
+      for(size_t i=0;i<5;i++) {
+        ev1[i]=cos(((double)(i)));
+        for(size_t j=0;j<5;j++) {
+          em1(i,j)=1.0/(i+j+1);
+          em2(i,j)=1.0/(i+j+1);
+        }
+      }
+      
+      // -------------------------------------------------
+
+      if (kk==0) {
+        linear_solver_eigen_houseQR<Eigen::VectorXd,Eigen::MatrixXd> ls;
+        ls.solve(5,em1,ev1,ev2);
+      } else if (kk==1) {
+        linear_solver_eigen_colQR<Eigen::VectorXd,Eigen::MatrixXd> ls;
+        ls.solve(5,em1,ev1,ev2);
+      } else if (kk==2) {
+        linear_solver_eigen_fullQR<Eigen::VectorXd,Eigen::MatrixXd> ls;
+        ls.solve(5,em1,ev1,ev2);
+      } else if (kk==3) {
+        linear_solver_eigen_partLU<Eigen::VectorXd,Eigen::MatrixXd> ls;
+        ls.solve(5,em1,ev1,ev2);
+      } else if (kk==4) {
+        linear_solver_eigen_fullLU<Eigen::VectorXd,Eigen::MatrixXd> ls;
+        ls.solve(5,em1,ev1,ev2);
+      } else if (kk==5) {
+        linear_solver_eigen_LLT<Eigen::VectorXd,Eigen::MatrixXd> ls;
+        ls.solve(5,em1,ev1,ev2);
+      } else if (kk==6) {
+        linear_solver_eigen_LDLT<Eigen::VectorXd,Eigen::MatrixXd> ls;
+        ls.solve(5,em1,ev1,ev2);
+      }
+      
+      dgemv(o2cblas_RowMajor,o2cblas_NoTrans,5,5,1.0,em2,ev2,0.0,ev3);
+
+      if (kk==0) {
+        t.test_rel_vec(5,ev1,ev3,1.0e-10,"linear_solver_eigen_houseQR");
+      } else if (kk==1) {
+        t.test_rel_vec(5,ev1,ev3,1.0e-10,"linear_solver_eigen_colQR");
+      } else if (kk==2) {
+        t.test_rel_vec(5,ev1,ev3,1.0e-10,"linear_solver_eigen_fullQR");
+      } else if (kk==3) {
+        t.test_rel_vec(5,ev1,ev3,1.0e-10,"linear_solver_eigen_partLU");
+      } else if (kk==4) {
+        t.test_rel_vec(5,ev1,ev3,1.0e-10,"linear_solver_eigen_fullLU");
+      } else if (kk==5) {
+        t.test_rel_vec(5,ev1,ev3,1.0e-10,"linear_solver_eigen_LLT");
+      } else {
+        t.test_rel_vec(5,ev1,ev3,1.0e-10,"linear_solver_eigen_LDLT");
+      }
+    }
+    
+  }
+
+#endif
+  
   t.report();
   return 0;
 }

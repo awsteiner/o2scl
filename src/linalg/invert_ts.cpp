@@ -48,13 +48,14 @@ int main(void) {
 
   cout.setf(ios::scientific);
   
-  ubmatrix gm1(5,5), gm2(5,5), gm3(5,5);
-
   {
+
+    ubmatrix gm1(5,5), gm2(5,5), gm3(5,5);
 
     for(size_t i=0;i<5;i++) {
       for(size_t j=0;j<5;j++) {
-	gm1(i,j)=1.0/pow(i+j+1,2.0);
+        if (i==j) gm1(i,j)=((double)(i+2));
+        else gm1(i,j)=0.0;
       }
     }
     
@@ -73,6 +74,8 @@ int main(void) {
 
   {
 
+    ubmatrix gm1(5,5), gm2(5,5), gm3(5,5);
+    
     for(size_t i=0;i<5;i++) {
       for(size_t j=0;j<5;j++) {
         if (i==j) gm1(i,j)=((double)(i+2));
