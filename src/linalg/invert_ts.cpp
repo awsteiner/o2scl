@@ -47,15 +47,28 @@ int main(void) {
   t.set_output_level(1);
 
   cout.setf(ios::scientific);
+
+  // Create a 5x5 identity matrix for testing
+  ubmatrix id(5,5);
+  for(size_t i=0;i<5;i++) {
+    for(size_t j=0;j<5;j++) {
+      if (i==j) id(i,j)=1.0;
+      else id(i,j)=0.0;
+    }
+  }
   
+  ubmatrix gm1(5,5), gm2(5,5), gm3(5,5);
+    
   {
 
-    ubmatrix gm1(5,5), gm2(5,5), gm3(5,5);
+    cout << "Class matrix_invert_LU:" << endl;
 
+    // We choose a nearly diagonal positive symmetric matrix which
+    // is easy to invert
     for(size_t i=0;i<5;i++) {
       for(size_t j=0;j<5;j++) {
         if (i==j) gm1(i,j)=((double)(i+2));
-        else gm1(i,j)=0.0;
+        else gm1(i,j)=1.0e-2*exp(-2.0*pow(((double)i)+((double)j),2.0));
       }
     }
     
@@ -72,40 +85,53 @@ int main(void) {
 
   }
 
-  {
-
-    ubmatrix gm1(5,5), gm2(5,5), gm3(5,5);
+  t.test_abs_mat<ubmatrix,ubmatrix,double>(5,5,id,gm3,1.0e-3,
+                                           "LU inverse");
+  
+  ubmatrix gm4(5,5), gm5(5,5), gm6(5,5);
     
+  {
+    cout << "Class matrix_invert_cholesky:" << endl;
+
     for(size_t i=0;i<5;i++) {
       for(size_t j=0;j<5;j++) {
-        if (i==j) gm1(i,j)=((double)(i+2));
-        else gm1(i,j)=1.0e-3/((double)(i+j));
+        if (i==j) gm4(i,j)=((double)(i+2));
+        else gm4(i,j)=1.0e-2*exp(-2.0*pow(((double)i)+((double)j),2.0));
+        gm5(i,j)=0.0;
+        gm6(i,j)=0.0;
       }
     }
     
     matrix_invert_cholesky<> mi;
-    mi.invert(5,gm1,gm2);
+    mi.invert(5,gm4,gm5);
 
     dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
-          5,5,5,1.0,gm1,gm2,1.0,gm3);
+          5,5,5,1.0,gm4,gm5,1.0,gm6);
 
-    matrix_out(cout,5,5,gm2);
+    matrix_out(cout,5,5,gm5);
     cout << endl;
-    matrix_out(cout,5,5,gm3);
+    matrix_out(cout,5,5,gm6);
     cout << endl;
 
   }
 
+  t.test_abs_mat<ubmatrix,ubmatrix,double>(5,5,id,gm6,1.0e-12,
+                                           "Cholesky inverse");
+  t.test_abs_mat<ubmatrix,ubmatrix,double>(5,5,gm2,gm5,1.0e-12,
+                                           "LU vs. Cholesky");
+  
 #ifdef O2SCL_ARMA
   
-  {
-    
     arma::mat am1(5,5), am2(5,5), am3(5,5);
+
+  {
+
+    cout << "Class matrix_invert_arma: " << endl;
     
     for(size_t i=0;i<5;i++) {
       for(size_t j=0;j<5;j++) {
         if (i==j) am1(i,j)=((double)(i+2));
-        else am1(i,j)=1.0e-3/((double)(i+j));
+        else am1(i,j)=1.0e-2*exp(-2.0*pow(((double)i)+((double)j),2.0));
       }
     }
     
@@ -126,14 +152,19 @@ int main(void) {
 
 #ifdef O2SCL_EIGEN
   
-  {
-
-    Eigen::MatrixXd em1(5,5), em2(5,5), em3(5,5);
+  Eigen::MatrixXd em1(5,5), em2(5,5), em3(5,5);
     
+  {
+    cout << "Class matrix_invert_eigen: " << endl;
+
     for(size_t i=0;i<5;i++) {
       for(size_t j=0;j<5;j++) {
         if (i==j) em1(i,j)=((double)(i+2));
-        else em1(i,j)=1.0e-3/((double)(i+j));
+        else em1(i,j)=1.0e-2*exp(-2.0*pow(((double)i)+((double)j),2.0));
+        // AWS 5/14/21: this initialization shouldn't be necessary,
+        // but this code fails without it on MacOS at the moment.
+        em2(i,j)=0.0;
+        em3(i,j)=0.0;
       }
     }
     
@@ -149,6 +180,11 @@ int main(void) {
     cout << endl;
 
   }
+
+  t.test_abs_mat<ubmatrix,Eigen::MatrixXd,double>(5,5,id,em3,1.0e-12,
+                                           "Eigen inverse");
+  t.test_abs_mat<ubmatrix,Eigen::MatrixXd,double>(5,5,gm5,em2,1.0e-12,
+                                           "Cholesky vs. Eigen");
   
 #endif
 
