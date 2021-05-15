@@ -150,8 +150,8 @@ int main(void) {
 
 #ifdef O2SCL_ARMA
 
-  Eigen::MatrixXd am1(5,5), am2(5,5);
-  Eigen::VectorXd av1(5), av2(5), av3(5);
+  arma::mat am1(5,5), am2(5,5);
+  arma::vec av1(5), av2(5), av3(5);
   
   {
 

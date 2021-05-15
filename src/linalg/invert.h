@@ -136,9 +136,11 @@ namespace o2scl_linalg {
   */
   template<class arma_mat_t> class matrix_invert_arma : 
     public matrix_invert<arma_mat_t> {
+
+  public:
     
     /// Invert matrix \c A, returning the inverse in \c A_inv
-    virtual void invert(size_t n, const arma_mat_t &A, arma_mat_t &A_inv) {
+    virtual void invert(size_t n, arma_mat_t &A, arma_mat_t &A_inv) {
       A_inv=inv(A);
       return;
     }

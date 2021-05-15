@@ -135,10 +135,10 @@ int main(void) {
       }
     }
     
-    matrix_invert_arma<Arma::MatrixXd> mi;
+    matrix_invert_arma<arma::mat> mi;
     mi.invert(5,am1,am2);
 
-    dgamm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
+    dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
           5,5,5,1.0,am1,am2,1.0,am3);
 
     matrix_out(cout,5,5,am2);
