@@ -83,6 +83,13 @@ int main(void) {
     matrix_out(cout,5,5,gm3);
     cout << endl;
 
+    gm3=prod(gm1,gm2);
+    
+    matrix_out(cout,5,5,gm3);
+    cout << endl;
+
+    
+
   }
 
   t.test_abs_mat<ubmatrix,ubmatrix,double>(5,5,id,gm3,1.0e-3,
