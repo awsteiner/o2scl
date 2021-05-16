@@ -48,16 +48,23 @@ namespace o2scl_linalg {
     virtual ~matrix_invert() {}
     
     /// Invert matrix \c A, returning the inverse in \c A_inv
-    virtual void invert(size_t n, mat_t &A, mat_t &Ainv)=0;
+    virtual void invert(size_t n, const mat_t &A, mat_t &A_inv)=0;
+    
+    /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
+        modifying the original matrix A 
+    */
+    virtual void invert_dest(size_t n, mat_t &A, mat_t &A_inv) {
+      return invert(n,A,A_inv);
+    }
     
     /// Invert matrix \c A in place
     virtual void invert_inplace(size_t n, mat_t &A)=0;
 
     /// Invert a matrix, returning the inverse
-    virtual mat_t invert(size_t n, mat_t &A) {
-      mat_t Ainv(n,n);
-      invert(n,A,Ainv);
-      return Ainv;
+    virtual mat_t invert(size_t n, const mat_t &A) {
+      mat_t A_inv(n,n);
+      invert(n,A,A_inv);
+      return A_inv;
     }
     
   };
@@ -70,9 +77,9 @@ namespace o2scl_linalg {
   class matrix_invert_LU : public matrix_invert<mat_t> {
     
   public:
-    
+
     /// Invert matrix \c A, returning the inverse in \c A_inv
-    virtual void invert(size_t n, mat_t &A, mat_t &A_inv) {
+    virtual void invert_dest(size_t n, mat_t &A, mat_t &A_inv) {
       int sig;
       o2scl::permutation p(n);
       LU_decomp(n,A,p,sig);
@@ -84,11 +91,17 @@ namespace o2scl_linalg {
       return;
     };
     
+    virtual void invert(size_t n, const mat_t &A, mat_t &A_inv) {
+      mat_t A2=A;
+      invert_dest(n,A2,A_inv);
+      return;
+    }
+    
     /// Invert matrix \c A in place
     virtual void invert_inplace(size_t n, mat_t &A) {
-      mat_t Ainv(n,n);
-      invert(n,A,Ainv);
-      A=Ainv;
+      mat_t A_inv(n,n);
+      invert(n,A,A_inv);
+      A=A_inv;
       return;
     }
     
@@ -104,7 +117,7 @@ namespace o2scl_linalg {
   public:
     
     /// Invert matrix \c A, returning the inverse in \c A_inv
-    virtual void invert(size_t n, mat_t &A, mat_t &A_inv) {
+    virtual void invert(size_t n, const mat_t &A, mat_t &A_inv) {
       A_inv=A;
       invert_inplace(n,A_inv);
       return;
@@ -140,7 +153,7 @@ namespace o2scl_linalg {
   public:
     
     /// Invert matrix \c A, returning the inverse in \c A_inv
-    virtual void invert(size_t n, arma_mat_t &A, arma_mat_t &A_inv) {
+    virtual void invert(size_t n, const arma_mat_t &A, arma_mat_t &A_inv) {
       A_inv=inv(A);
       return;
     }
@@ -198,7 +211,7 @@ namespace o2scl_linalg {
   public:
     
     /// Invert matrix \c A, returning the inverse in \c A_inv
-    virtual void invert(size_t n, eigen_mat_t &A, eigen_mat_t &A_inv) {
+    virtual void invert(size_t n, const eigen_mat_t &A, eigen_mat_t &A_inv) {
       A_inv=A.inverse();
       return;
     }
