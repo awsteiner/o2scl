@@ -76,19 +76,12 @@ int main(void) {
     mi.invert(5,gm1,gm2);
 
     dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
-          5,5,5,1.0,gm1,gm2,1.0,gm3);
+          5,5,5,1.0,gm1,gm2,0.0,gm3);
 
     matrix_out(cout,5,5,gm2);
     cout << endl;
     matrix_out(cout,5,5,gm3);
     cout << endl;
-
-    gm3=prod(gm1,gm2);
-    
-    matrix_out(cout,5,5,gm3);
-    cout << endl;
-
-    
 
   }
 
@@ -113,7 +106,7 @@ int main(void) {
     mi.invert(5,gm4,gm5);
 
     dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
-          5,5,5,1.0,gm4,gm5,1.0,gm6);
+          5,5,5,1.0,gm4,gm5,0.0,gm6);
 
     matrix_out(cout,5,5,gm5);
     cout << endl;
@@ -146,7 +139,7 @@ int main(void) {
     mi.invert(5,am1,am2);
 
     dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
-          5,5,5,1.0,am1,am2,1.0,am3);
+          5,5,5,1.0,am1,am2,0.0,am3);
 
     matrix_out(cout,5,5,am2);
     cout << endl;
@@ -168,10 +161,6 @@ int main(void) {
       for(size_t j=0;j<5;j++) {
         if (i==j) em1(i,j)=((double)(i+2));
         else em1(i,j)=1.0e-2*exp(-2.0*pow(((double)i)+((double)j),2.0));
-        // AWS 5/14/21: this initialization shouldn't be necessary,
-        // but this code fails without it on MacOS at the moment.
-        em2(i,j)=0.0;
-        em3(i,j)=0.0;
       }
     }
     
@@ -179,7 +168,7 @@ int main(void) {
     mi.invert(5,em1,em2);
 
     dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
-          5,5,5,1.0,em1,em2,1.0,em3);
+          5,5,5,1.0,em1,em2,0.0,em3);
 
     matrix_out(cout,5,5,em2);
     cout << endl;
