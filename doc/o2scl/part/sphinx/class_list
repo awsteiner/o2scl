@@ -39,6 +39,7 @@
   <compound refid="classo2scl_1_1nucmass__ktuy" kind="class"><name>o2scl::nucmass_ktuy</name>
   <compound refid="classo2scl_1_1nucmass__mnmsk" kind="class"><name>o2scl::nucmass_mnmsk</name>
   <compound refid="classo2scl_1_1nucmass__mnmsk__exp" kind="class"><name>o2scl::nucmass_mnmsk_exp</name>
+  <compound refid="classo2scl_1_1nucmass__patch" kind="class"><name>o2scl::nucmass_patch</name>
   <compound refid="classo2scl_1_1nucmass__radius" kind="class"><name>o2scl::nucmass_radius</name>
   <compound refid="classo2scl_1_1nucmass__sdnp" kind="class"><name>o2scl::nucmass_sdnp</name>
   <compound refid="classo2scl_1_1nucmass__semi__empirical" kind="class"><name>o2scl::nucmass_semi_empirical</name>

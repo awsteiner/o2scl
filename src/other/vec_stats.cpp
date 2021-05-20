@@ -29,8 +29,8 @@
 using namespace std;
 using namespace o2scl;
 
-double kl_div_gaussian(double mean_prior, double mean_post,
-                       double covar_prior, double covar_post) {
+double kl_div_1d_gaussian(double mean_prior, double mean_post,
+                          double covar_prior, double covar_post) {
   
   double covar_prior_inv=1/covar_prior;
   

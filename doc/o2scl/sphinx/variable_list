@@ -18,6 +18,7 @@
     <member refid="namespaceo2scl__cgs_1a1b77266c03118a32be67fe26de740a61" kind="variable"><name>solar_radius</name></member>
     <member refid="namespaceo2scl__cgs_1af275f7d787a7cf3048560242bf86a592" kind="variable"><name>solar_temperature</name></member>
     <member refid="namespaceo2scl__cgs_1ab4764514f296f947e45e446008e68b6d" kind="variable"><name>solar_luminosity</name></member>
+    <member refid="namespaceo2scl__cgs_1a67641e527aea6956f9650aaf1f4b5014" kind="variable"><name>solar_irradiance</name></member>
     <member refid="namespaceo2scl__cgs_1a6b59d6eb0c8792e03ca964d6f49fac04" kind="variable"><name>earth_mass_parameter</name></member>
     <member refid="namespaceo2scl__cgs_1a803c14c36d070e0cd953fc2e86725d77" kind="variable"><name>earth_mass</name></member>
     <member refid="namespaceo2scl__cgs_1a7af8bd9816ae941fbafa04a211ef7876" kind="variable"><name>earth_radius_equatorial</name></member>
@@ -312,6 +313,7 @@
     <member refid="namespaceo2scl__const_1a9f624a3d84fe8b64905c74257a7e0df4" kind="variable"><name>zeta3</name></member>
     <member refid="namespaceo2scl__const_1a844501f4740f323948c0256a7692a092" kind="variable"><name>zeta5</name></member>
     <member refid="namespaceo2scl__const_1a6df3178e8f7e4d475e30c0123fd8e5c8" kind="variable"><name>zeta7</name></member>
+    <member refid="namespaceo2scl__const_1ac3eb5d0d6ea6ed12c8a8d958dfd51337" kind="variable"><name>euler_mascheroni</name></member>
     <member refid="namespaceo2scl__const_1ad031dedd9784d7e16a9ccf688448801a" kind="variable"><name>sin2_theta_weak</name></member>
     <member refid="namespaceo2scl__const_1a20efb3d7f1bd728f93feaf5abc917b93" kind="variable"><name>gfermi_gev2</name></member>
     <member refid="namespaceo2scl__const_1a1f9baf2621fb552b1746028ee69a5072" kind="variable"><name>o2scl_mks</name></member>

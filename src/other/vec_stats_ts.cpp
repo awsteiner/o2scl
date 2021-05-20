@@ -294,6 +294,28 @@ int main(void) {
 #endif
 
   }
+
+  typedef boost::numeric::ublas::vector<double> ubvector;
+  typedef boost::numeric::ublas::matrix<double> ubmatrix;
+  
+  /*
+  template<class vec_t, class vec2_t, class mat_t, class mat2_t>
+  double kl_div_gaussian(size_t nv, const vec_t &mean_prior,
+                         const vec2_t &mean_post,
+                         mat_t &covar_prior, mat2_t &covar_post) {
+  */
+  ubmatrix covar_prior(1,1);
+  covar_prior(1,1)=2.0;
+  ubmatrix covar_post(1,1);
+  covar_post(1,1)=3.0;
+  ubvector mean_prior(1);
+  mean_prior(1)=5.0;
+  ubvector mean_post(1);
+  mean_post(1)=7.0;
+  cout << kl_div_gaussian(1,mean_prior,mean_post,
+                          covar_prior,covar_post) << endl;
+  cout << kl_div_1d_gaussian(mean_prior(0),mean_post(0),
+                             covar_prior(0,0),covar_post(0,0)) << endl;
   
   t.report();
   

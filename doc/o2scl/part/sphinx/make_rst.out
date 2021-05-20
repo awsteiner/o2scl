@@ -43,6 +43,7 @@ Namespace: o2scl class: nucmass_info
 Namespace: o2scl class: nucmass_ktuy
 Namespace: o2scl class: nucmass_mnmsk
 Namespace: o2scl class: nucmass_mnmsk_exp
+Namespace: o2scl class: nucmass_patch
 Namespace: o2scl class: nucmass_radius
 Namespace: o2scl class: nucmass_sdnp
 Namespace: o2scl class: nucmass_semi_empirical

@@ -155,8 +155,6 @@
   <compound refid="classo2scl_1_1interp__vec" kind="class"><name>o2scl::interp_vec</name>
   <compound refid="classo2scl_1_1interpm__idw" kind="class"><name>o2scl::interpm_idw</name>
   <compound refid="classo2scl_1_1interpm__krige" kind="class"><name>o2scl::interpm_krige</name>
-  <compound refid="classo2scl_1_1interpm__krige__nn" kind="class"><name>o2scl::interpm_krige_nn</name>
-  <compound refid="classo2scl_1_1interpm__krige__optim" kind="class"><name>o2scl::interpm_krige_optim</name>
   <compound refid="classo2scl_1_1jacobian" kind="class"><name>o2scl::jacobian</name>
   <compound refid="classo2scl_1_1jacobian__exact" kind="class"><name>o2scl::jacobian_exact</name>
   <compound refid="classo2scl_1_1jacobian__gsl" kind="class"><name>o2scl::jacobian_gsl</name>
@@ -176,6 +174,12 @@
   <compound refid="classo2scl__linalg_1_1linear__solver__QR" kind="class"><name>o2scl_linalg::linear_solver_QR</name>
   <compound refid="classboost_1_1numeric_1_1ublas_1_1matrix" kind="class"><name>boost::numeric::ublas::matrix</name>
   <compound refid="classo2scl_1_1matrix__column__gen" kind="class"><name>o2scl::matrix_column_gen</name>
+  <compound refid="classo2scl__linalg_1_1matrix__invert" kind="class"><name>o2scl_linalg::matrix_invert</name>
+  <compound refid="classo2scl__linalg_1_1matrix__invert__arma" kind="class"><name>o2scl_linalg::matrix_invert_arma</name>
+  <compound refid="classo2scl__linalg_1_1matrix__invert__cholesky" kind="class"><name>o2scl_linalg::matrix_invert_cholesky</name>
+  <compound refid="classo2scl__linalg_1_1matrix__invert__eigen" kind="class"><name>o2scl_linalg::matrix_invert_eigen</name>
+  <compound refid="classo2scl__linalg_1_1matrix__invert__LU" kind="class"><name>o2scl_linalg::matrix_invert_LU</name>
+  <compound refid="classo2scl__linalg_1_1matrix__invert__sympd__arma" kind="class"><name>o2scl_linalg::matrix_invert_sympd_arma</name>
   <compound refid="classo2scl_1_1matrix__row__gen" kind="class"><name>o2scl::matrix_row_gen</name>
   <compound refid="classo2scl_1_1matrix__row__gen__ctor" kind="class"><name>o2scl::matrix_row_gen_ctor</name>
   <compound refid="classo2scl_1_1matrix__swap__table" kind="class"><name>o2scl::matrix_swap_table</name>

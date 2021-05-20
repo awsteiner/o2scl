@@ -2290,7 +2290,7 @@ namespace o2scl {
 
       This function implements the following
       \f[
-      D_{\mathrm{KL}}({\cal N}_{\mathrm{posterior}} |
+      D_{\mathrm{KL}}({\cal N}_{\mathrm{posterior}} ||
       {\cal N}_{\mathrm{prior}}) = 
       \frac{1}{2} 
       \left[
@@ -2301,11 +2301,13 @@ namespace o2scl {
       \Sigma_{\mathrm{prior}}^{-1} 
       \left( \mu_{\mathrm{prior}} - \mu_{\mathrm{posterior}} \right) 
       - n + 
-      \ln \left( \frac{\mathrm{det} \Sigma_{\mathrm{prior}}}
-      {\mathrm{det} \Sigma_{\mathrm{posterior}}} \right)
+      \ln \left( \frac{\mathrm{det}~\Sigma_{\mathrm{prior}}}
+      {\mathrm{det}~\Sigma_{\mathrm{posterior}}} \right)
       \right]
       \f]
+      using Cholesky decompositions.
 
+      The result is returned in units of nats.
    */
   template<class vec_t, class vec2_t, class mat_t, class mat2_t>
   double kl_div_gaussian(size_t nv, const vec_t &mean_prior,
@@ -2314,52 +2316,67 @@ namespace o2scl {
     
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    
-    // Create a copy of the prior covariance matrix so we can invert it
+
+    // Perform the Cholesky decomposition of the prior covariance matrix
+    o2scl_linalg::cholesky_decomp(nv,covar_prior);
+
+    // Create a copy of the Cholesky decomposition of the prior covariance
+    // matrix because we have to use both the inverse and the determinant
     mat_t covar_prior_inv;
     matrix_copy(nv,nv,covar_prior,covar_prior_inv);
   
-    vec_t mean_prior_copy;
-    vector_copy(nv,mean_prior,mean_prior_copy);
-        
     // Invert the prior covariance matrix
-    o2scl_linalg::cholesky_decomp(nv,covar_prior_inv);
     o2scl_linalg::cholesky_invert<ubmatrix>(nv,covar_prior_inv);
-    
+
+    // Compute the product of the inverse of the prior covariance
+    // matrix and the posterior covariance matrix
     ubmatrix prod1(nv,nv);
     o2scl_cblas::dgemm(o2scl_cblas::o2cblas_RowMajor,
                        o2scl_cblas::o2cblas_NoTrans,
                        o2scl_cblas::o2cblas_NoTrans,nv,nv,nv,1.0,
                        covar_prior_inv,covar_post,0.0,prod1);
-    
+
+    // Compute the trace of this first product
     double trace=0.0;
     for(size_t k=0;k<nv;k++) {
       trace+=prod1(k,k);
     }
-    
+
+    // Construct the difference between the prior and posterior means
     ubvector diff(nv);
     for(size_t k=0;k<nv;k++) {
       diff[k]=mean_prior[k]-mean_post[k];
     }
-    
+
+    // Compute the product involving the difference vector computed
+    // above and the inverse of the prior covariance matrix
     ubvector prod2(nv);
     o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
                        o2scl_cblas::o2cblas_NoTrans,nv,nv,1.0,covar_prior,
                        diff,0.0,prod2);
     
     double prod3=o2scl_cblas::ddot(nv,diff,prod2);
+
+    // The Cholesky decomposition of the posterior covariance matrix
+    o2scl_linalg::cholesky_decomp(nv,covar_post);
+
+    // At this point, covar_prior and covar_post both contain the
+    // respective Cholesky decompositions, so at this point we can use
+    // them to compute the determinants
     
     double sqrt_det_prior=1.0;
     for(size_t k=0;k<nv;k++) {
       sqrt_det_prior*=covar_prior(k,k);
     }
     double det_prior=sqrt_det_prior*sqrt_det_prior;
-    
+
     double sqrt_det_post=1.0;
     for(size_t k=0;k<nv;k++) {
       sqrt_det_post*=covar_post(k,k);
     }
     double det_post=sqrt_det_post*sqrt_det_post;
+
+    // Compute the final KL divergence
     double div=0.5*(trace+prod3-nv+log(det_prior/det_post));
     
     return div;
@@ -2368,7 +2385,7 @@ namespace o2scl {
   /** \brief Compute the KL divergence of two one-dimensional Gaussian
       distributions
   */
-  double kl_div_gaussian(double mean_prior, double mean_post,
+  double kl_div_1d_gaussian(double mean_prior, double mean_post,
                          double covar_prior, double covar_post);
   
 #ifndef DOXYGEN_NO_O2NS
