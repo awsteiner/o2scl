@@ -110,7 +110,7 @@ int nstar_cold::calc_eos(double np_0) {
   }
 
   double fac=(nb_end-nb_start)/dnb;
-  if (fac<1.0 || fac>1.0e8) {
+  if (fac<0.0 || fac>1.0e8) {
     O2SCL_ERR2("Invalid baryon density range in ",
                "nstar_cold::calc_eos().",o2scl::exc_einval);
   }
@@ -635,7 +635,7 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
   }
 
   double fac=(nb_end-nb_start)/dnb;
-  if (fac<1.0 || fac>1.0e8) {
+  if (fac<0.0 || fac>1.0e8) {
     O2SCL_ERR2("Invalid baryon density range in ",
                "nstar_hot::calc_eos_T().",o2scl::exc_einval);
   }

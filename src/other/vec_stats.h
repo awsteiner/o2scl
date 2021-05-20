@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2021, Andrew W. Steiner
+  Copyright (C) 2006-2021, Andrew W. Steiner and Jesse Farr
   
   This file is part of O2scl.
   
@@ -30,14 +30,15 @@
     statistics of vectors of double-precision data. It includes mean,
     median, variance, standard deviation, covariance, correlation, and
     other functions.
-
+    
     No additional range checking is done on the vectors.
-
-    \future Consider generalizing to other data types.
 */
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
 
 #include <o2scl/err_hnd.h>
 #include <o2scl/vector.h>
+#include <o2scl/cholesky.h>
 
 #ifdef O2SCL_OPENMP
 #include <omp.h>
@@ -2283,7 +2284,93 @@ namespace o2scl {
     return;
   }
   //@}
+  
+  /** \brief Compute the KL divergence of two multi-dimensional Gaussian
+      distributions
 
+      This function implements the following
+      \f[
+      D_{\mathrm{KL}}({\cal N}_{\mathrm{posterior}} |
+      {\cal N}_{\mathrm{prior}}) = 
+      \frac{1}{2} 
+      \left[
+      \mathrm{tr}\left( \Sigma_{\mathrm{prior}}^{-1} 
+      \Sigma_{\mathrm{posterior}} \right) + 
+      \left( \mu_{\mathrm{prior}} - \mu_{\mathrm{posterior}} 
+      \right)^{\mathrm{T}}
+      \Sigma_{\mathrm{prior}}^{-1} 
+      \left( \mu_{\mathrm{prior}} - \mu_{\mathrm{posterior}} \right) 
+      - n + 
+      \ln \left( \frac{\mathrm{det} \Sigma_{\mathrm{prior}}}
+      {\mathrm{det} \Sigma_{\mathrm{posterior}}} \right)
+      \right]
+      \f]
+
+   */
+  template<class vec_t, class vec2_t, class mat_t, class mat2_t>
+  double kl_div_gaussian(size_t nv, const vec_t &mean_prior,
+                         const vec2_t &mean_post,
+                         mat_t &covar_prior, mat2_t &covar_post) {
+    
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
+    
+    // Create a copy of the prior covariance matrix so we can invert it
+    mat_t covar_prior_inv;
+    matrix_copy(nv,nv,covar_prior,covar_prior_inv);
+  
+    vec_t mean_prior_copy;
+    vector_copy(nv,mean_prior,mean_prior_copy);
+        
+    // Invert the prior covariance matrix
+    o2scl_linalg::cholesky_decomp(nv,covar_prior_inv);
+    o2scl_linalg::cholesky_invert<ubmatrix>(nv,covar_prior_inv);
+    
+    ubmatrix prod1(nv,nv);
+    o2scl_cblas::dgemm(o2scl_cblas::o2cblas_RowMajor,
+                       o2scl_cblas::o2cblas_NoTrans,
+                       o2scl_cblas::o2cblas_NoTrans,nv,nv,nv,1.0,
+                       covar_prior_inv,covar_post,0.0,prod1);
+    
+    double trace=0.0;
+    for(size_t k=0;k<nv;k++) {
+      trace+=prod1(k,k);
+    }
+    
+    ubvector diff(nv);
+    for(size_t k=0;k<nv;k++) {
+      diff[k]=mean_prior[k]-mean_post[k];
+    }
+    
+    ubvector prod2(nv);
+    o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                       o2scl_cblas::o2cblas_NoTrans,nv,nv,1.0,covar_prior,
+                       diff,0.0,prod2);
+    
+    double prod3=o2scl_cblas::ddot(nv,diff,prod2);
+    
+    double sqrt_det_prior=1.0;
+    for(size_t k=0;k<nv;k++) {
+      sqrt_det_prior*=covar_prior(k,k);
+    }
+    double det_prior=sqrt_det_prior*sqrt_det_prior;
+    
+    double sqrt_det_post=1.0;
+    for(size_t k=0;k<nv;k++) {
+      sqrt_det_post*=covar_post(k,k);
+    }
+    double det_post=sqrt_det_post*sqrt_det_post;
+    double div=0.5*(trace+prod3-nv+log(det_prior/det_post));
+    
+    return div;
+  }
+
+  /** \brief Compute the KL divergence of two one-dimensional Gaussian
+      distributions
+  */
+  double kl_div_gaussian(double mean_prior, double mean_post,
+                         double covar_prior, double covar_post);
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

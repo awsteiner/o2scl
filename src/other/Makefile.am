@@ -5,7 +5,7 @@
 OTHER_SRCS = series_acc.cpp poly.cpp polylog.cpp \
 	interp2_eqi.cpp pinside.cpp \
 	contour.cpp smooth_gsl.cpp hist.cpp \
-	hist_2d.cpp prob_dens_func.cpp 
+	hist_2d.cpp prob_dens_func.cpp vec_stats.cpp
 
 HEADER_VAR = contour.h cheb_approx.h \
 	series_acc.h interp2_planar.h poly.h polylog.h \
