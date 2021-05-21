@@ -2317,19 +2317,23 @@ namespace o2scl {
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
+    //std::cout << "H1." << std::endl;
     // Perform the Cholesky decomposition of the prior covariance matrix
     o2scl_linalg::cholesky_decomp(nv,covar_prior);
 
+    //std::cout << "H2." << std::endl;
     // Create a copy of the Cholesky decomposition of the prior covariance
     // matrix because we have to use both the inverse and the determinant
-    mat_t covar_prior_inv;
+    mat_t covar_prior_inv(nv,nv);
     matrix_copy(nv,nv,covar_prior,covar_prior_inv);
   
     // Invert the prior covariance matrix
+    //std::cout << "H3." << std::endl;
     o2scl_linalg::cholesky_invert<ubmatrix>(nv,covar_prior_inv);
 
     // Compute the product of the inverse of the prior covariance
     // matrix and the posterior covariance matrix
+    //std::cout << "H4." << std::endl;
     ubmatrix prod1(nv,nv);
     o2scl_cblas::dgemm(o2scl_cblas::o2cblas_RowMajor,
                        o2scl_cblas::o2cblas_NoTrans,
@@ -2337,17 +2341,20 @@ namespace o2scl {
                        covar_prior_inv,covar_post,0.0,prod1);
 
     // Compute the trace of this first product
+    //std::cout << "H5." << std::endl;
     double trace=0.0;
     for(size_t k=0;k<nv;k++) {
       trace+=prod1(k,k);
     }
 
     // Construct the difference between the prior and posterior means
+    //std::cout << "H6." << std::endl;
     ubvector diff(nv);
     for(size_t k=0;k<nv;k++) {
       diff[k]=mean_prior[k]-mean_post[k];
     }
 
+    //std::cout << "H7." << std::endl;
     // Compute the product involving the difference vector computed
     // above and the inverse of the prior covariance matrix
     ubvector prod2(nv);
@@ -2355,21 +2362,25 @@ namespace o2scl {
                        o2scl_cblas::o2cblas_NoTrans,nv,nv,1.0,covar_prior,
                        diff,0.0,prod2);
     
+    //std::cout << "H8." << std::endl;
     double prod3=o2scl_cblas::ddot(nv,diff,prod2);
 
     // The Cholesky decomposition of the posterior covariance matrix
+    //std::cout << "H9." << std::endl;
     o2scl_linalg::cholesky_decomp(nv,covar_post);
 
     // At this point, covar_prior and covar_post both contain the
     // respective Cholesky decompositions, so at this point we can use
     // them to compute the determinants
     
+    //std::cout << "H10." << std::endl;
     double sqrt_det_prior=1.0;
     for(size_t k=0;k<nv;k++) {
       sqrt_det_prior*=covar_prior(k,k);
     }
     double det_prior=sqrt_det_prior*sqrt_det_prior;
 
+    //std::cout << "H11." << std::endl;
     double sqrt_det_post=1.0;
     for(size_t k=0;k<nv;k++) {
       sqrt_det_post*=covar_post(k,k);
@@ -2385,7 +2396,7 @@ namespace o2scl {
   /** \brief Compute the KL divergence of two one-dimensional Gaussian
       distributions
   */
-  double kl_div_1d_gaussian(double mean_prior, double mean_post,
+  double kl_div_gaussian(double mean_prior, double mean_post,
                          double covar_prior, double covar_post);
   
 #ifndef DOXYGEN_NO_O2NS
