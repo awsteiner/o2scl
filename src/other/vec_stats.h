@@ -40,6 +40,10 @@
 #include <o2scl/vector.h>
 #include <o2scl/cholesky.h>
 
+#ifdef O2SCL_FFTW
+#include <fftw3.h>
+#endif
+
 #ifdef O2SCL_OPENMP
 #include <omp.h>
 #endif
@@ -1901,6 +1905,89 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Use FFTW to construct the autocorrelation vector
+
+      From https://github.com/kaityo256/fftw_sample
+
+      \verbatim
+      MIT License
+      
+      Copyright (c) 2012 H. Watanabe 
+      
+      Permission is hereby granted, free of charge, to any person
+      obtaining a copy of this software and associated documentation
+      files (the "Software"), to deal in the Software without
+      restriction, including without limitation the rights to use,
+      copy, modify, merge, publish, distribute, sublicense, and/or
+      sell copies of the Software, and to permit persons to whom the
+      Software is furnished to do so, subject to the following
+      conditions:
+      
+      The above copyright notice and this permission notice shall be
+      included in all copies or substantial portions of the Software.
+      
+      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+      EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+      OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+      NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+      HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+      WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+      FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+      OTHER DEALINGS IN THE SOFTWARE.
+      \endverbatim
+  */
+  template<class vec_t, class resize_vec_t> void vector_autocorr_vector_fftw
+  (const vec_t &data, resize_vec_t &ac_vec, double mean,
+   double stddev, int verbose=0) {
+    
+#ifdef O2SCL_FFTW
+
+    fftw_complex *in=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*
+                                                 data.size());
+    fftw_complex *out=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*
+                                                  data.size());
+    
+    for(size_t i=0;i<data.size();i++) {
+      in[i][0]=(data[i]-mean)/stddev;
+      in[i][1]=0.0;
+    }
+
+    // The forward FFT
+    fftw_plan plan=fftw_plan_dft_1d(data.size(),in,out,
+                                    FFTW_FORWARD,FFTW_ESTIMATE);
+    fftw_execute(plan);
+
+    // Use the Weiner-Khinchin theorem
+    for(size_t i=0;i<data.size();i++) {
+      double re=out[i][0];
+      double im=out[i][1];
+      in[i][0]=(re*re+im*im)/((double)data.size());
+      in[i][1]=0.0;
+    }
+
+    // The inverse FFT
+    fftw_plan plan2=fftw_plan_dft_1d(data.size(),in,out,
+                                     FFTW_BACKWARD,FFTW_ESTIMATE);
+    fftw_execute(plan2);
+
+    ac_vec.resize(data.size());
+    for(size_t i=0;i<data.size();i++) {
+      ac_vec[i]=(out[i][0]/((double)data.size()));
+    }
+
+    fftw_free(in);
+    fftw_free(out);
+    
+#else
+    
+    O2SCL_ERR("FFTW support not included in this O2scl installation.",
+              o2scl::exc_eunsup);
+    
+#endif
+    
+    return;
+  }
+  
   /** \brief Use the Goodman method to compute the
       autocorrelation length
 

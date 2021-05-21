@@ -364,19 +364,40 @@ namespace o2scl {
       bool test_abs_vec(int nv, const vec_t &result, const vec2_t &expected, 
 			data_t abs_error, std::string description) {
       bool ret=true;
-      int i;
+      int imax=-1;
+      double max=0.0;
   
-      for(i=0;i<nv;i++) {
+      for(int i=0;i<nv;i++) {
 	if (std::isnan(expected[i])) {
+          // If the expected value is NaN, then ensure the result is
+          // also NaN
 	  ret=(ret && (std::isnan(expected[i])==std::isnan(result[i])));
 	} else if (std::isinf(expected[i])) {
+          // If the expected value is infinite, then ensure the result is
+          // also infinite
 	  ret=(ret && (std::isinf(expected[i])==std::isinf(result[i])));
 	} else {
-	  ret=(ret && (std::abs(expected[i]-result[i])<abs_error));
-	}
+          if (std::isinf(result[i]) || std::isnan(result[i])) {
+            // If the result is not finite, then we failed
+            ret=false;
+          } else {
+            // Otherwise, then ensure the results match to within
+            // the requested uncertainty
+            ret=(ret && (std::abs(expected[i]-result[i])<abs_error));
+            if (std::abs(expected[i]-result[i])>max) {
+              max=std::abs(expected[i]-result[i]);
+              imax=i;
+            }
+          }
+        }
       }
-  
-      description="\n "+description;
+
+      if (imax==-1) {
+        description="(no finite expected or result values)\n "+description;
+      } else {
+        description=((std::string)"max=")+o2scl::dtos(max)+" at i="+
+          o2scl::itos(imax)+"\n "+description;
+      }
       process_test(ret,"absolute array",description);
   
       return ret;

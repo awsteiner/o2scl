@@ -222,74 +222,13 @@ int main(void) {
 
 #ifdef O2SCL_FFTW
 
-    /*
-      From https://github.com/kaityo256/fftw_sample
-
-      MIT License
-      
-      Copyright (c) 2012 H. Watanabe 
-      
-      Permission is hereby granted, free of charge, to any person
-      obtaining a copy of this software and associated documentation
-      files (the "Software"), to deal in the Software without
-      restriction, including without limitation the rights to use,
-      copy, modify, merge, publish, distribute, sublicense, and/or
-      sell copies of the Software, and to permit persons to whom the
-      Software is furnished to do so, subject to the following
-      conditions:
-      
-      The above copyright notice and this permission notice shall be
-      included in all copies or substantial portions of the Software.
-      
-      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-      EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-      OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-      NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-      HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-      WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-      FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-      OTHER DEALINGS IN THE SOFTWARE.
-     */
-    
-    fftw_complex *in;
-    fftw_complex *out;
-    in=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*NN);
-    out=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*NN);
-    
     mean=vector_mean(act);
     sig=vector_stddev(act);
-    
-    for(size_t i=0;i<NN;i++){
-      in[i][0]=(act[i]-mean)/sig;
-      in[i][1]=0.0;
-    }
-    
-    fftw_plan plan=fftw_plan_dft_1d(NN,in,out,
-                                      FFTW_FORWARD,FFTW_ESTIMATE);
-    fftw_execute(plan);
-    
-    for(size_t i=0;i<NN;i++) {
-      double re=out[i][0];
-      double im=out[i][1];
-      in[i][0]=(re*re+im*im)/((double)NN);
-      in[i][1]=0.0;
-    }
-    fftw_plan plan2=fftw_plan_dft_1d(NN,in,out,
-                                     FFTW_BACKWARD,FFTW_ESTIMATE);
-    
-    fftw_execute(plan2);
-    
     vector<double> fft_out;
-    for(size_t i=0;i<NN;i++){
-      fft_out.push_back(out[i][0]/((double)NN));
-    }
-
-    for(size_t i=0;i<100;i++) {
-      cout << i << " " << fft_out[i] << " " << ac[i] << endl;
-    }
-    
-    fftw_free(in);
-    fftw_free(out);
+    vector_autocorr_vector_fftw(act,fft_out,mean,sig);
+    // At this point, the vector ac has half the size of the fft_out
+    // vector
+    t.test_abs_vec(ac.size(),fft_out,ac,4.0e-2,"autocorr comparison");
     
 #endif
 
