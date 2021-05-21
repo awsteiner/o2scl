@@ -30,16 +30,12 @@ using namespace std;
 using namespace o2scl;
 
 double o2scl::kl_div_gaussian(double mean_prior, double mean_post,
-                          double covar_prior, double covar_post) {
+                              double covar_prior, double covar_post) {
   
-  double covar_prior_inv=1/covar_prior;
-  
+  double covar_prior_inv=1.0/covar_prior;
   double prod1=covar_prior_inv*covar_post;
-  
   double diff=mean_prior-mean_post;
-  
   double prod2=diff*covar_prior_inv*diff;
-  
   double div=0.5*(prod1+prod2-1.0+log(covar_prior/covar_post));
   
   return div;

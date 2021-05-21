@@ -306,11 +306,11 @@ int main(void) {
   mean_prior(0)=5.0;
   ubvector mean_post(1);
   mean_post(0)=7.0;
-  cout << "here." << endl;
-  cout << kl_div_gaussian(1,mean_prior,mean_post,
-                          covar_prior,covar_post) << endl;
-  cout << kl_div_gaussian(mean_prior(0),mean_post(0),
-                             covar_prior(0,0),covar_post(0,0)) << endl;
+  double kl1=kl_div_gaussian(1,mean_prior,mean_post,
+                             covar_prior,covar_post);
+  double kl2=kl_div_gaussian(mean_prior(0),mean_post(0),
+                             covar_prior(0,0),covar_post(0,0));
+  t.test_rel(kl1,kl2,1.0e-12,"KL div");
   
   t.report();
   
