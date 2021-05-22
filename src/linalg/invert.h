@@ -44,26 +44,41 @@ namespace o2scl_linalg {
   class matrix_invert {
     
   public:
+
+    bool err_on_fail;
+
+    matrix_invert() {
+      err_on_fail=true;
+    }
     
     virtual ~matrix_invert() {}
     
     /// Invert matrix \c A, returning the inverse in \c A_inv
-    virtual void invert(size_t n, const mat_t &A, mat_t &A_inv)=0;
+    virtual int invert(size_t n, const mat_t &A, mat_t &A_inv)=0;
+    
+    /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
+        and the determinant in \c A_det
+    */
+    virtual int invert_det(size_t n, const mat_t &A, mat_t &A_inv,
+                            double &A_det)=0;
     
     /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
         modifying the original matrix A 
     */
-    virtual void invert_dest(size_t n, mat_t &A, mat_t &A_inv) {
+    virtual int invert_dest(size_t n, mat_t &A, mat_t &A_inv) {
       return invert(n,A,A_inv);
     }
     
     /// Invert matrix \c A in place
-    virtual void invert_inplace(size_t n, mat_t &A)=0;
+    virtual int invert_inplace(size_t n, mat_t &A)=0;
 
     /// Invert a matrix, returning the inverse
     virtual mat_t invert(size_t n, const mat_t &A) {
       mat_t A_inv(n,n);
-      invert(n,A,A_inv);
+      int ret=invert(n,A,A_inv);
+      if (ret!=0) {
+        O2SCL_ERR("Matrix inversion failed.",o2scl::exc_efailed);
+      }
       return A_inv;
     }
     
@@ -79,7 +94,7 @@ namespace o2scl_linalg {
   public:
 
     /// Invert matrix \c A, returning the inverse in \c A_inv
-    virtual void invert_dest(size_t n, mat_t &A, mat_t &A_inv) {
+    virtual int invert_dest(size_t n, mat_t &A, mat_t &A_inv) {
       int sig;
       o2scl::permutation p(n);
       LU_decomp(n,A,p,sig);
@@ -88,21 +103,40 @@ namespace o2scl_linalg {
                    "in matrix_invert_LU::invert().",o2scl::exc_esing);
       }
       LU_invert<mat_t,mat_t,mat_col_t>(n,A,p,A_inv);
-      return;
+      return 0;
     };
     
-    virtual void invert(size_t n, const mat_t &A, mat_t &A_inv) {
+    /// Invert matrix \c A, returning the inverse in \c A_inv
+    virtual int invert(size_t n, const mat_t &A, mat_t &A_inv) {
       mat_t A2=A;
       invert_dest(n,A2,A_inv);
-      return;
+      return 0;
+    }
+    
+    /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
+        and the determinant in \c A_det
+    */
+    virtual int invert_det(size_t n, const mat_t &A, mat_t &A_inv,
+                            double &A_det) {
+      mat_t A2=A;
+      int sig;
+      o2scl::permutation p(n);
+      LU_decomp(n,A2,p,sig);
+      if (o2scl_linalg::diagonal_has_zero(n,A)) {
+        O2SCL_ERR2("Matrix singular (LU method) ",
+                   "in matrix_invert_LU::invert().",o2scl::exc_esing);
+      }
+      A_det=LU_det(n,A2,sig);
+      LU_invert<mat_t,mat_t,mat_col_t>(n,A2,p,A_inv);
+      return 0;
     }
     
     /// Invert matrix \c A in place
-    virtual void invert_inplace(size_t n, mat_t &A) {
+    virtual int invert_inplace(size_t n, mat_t &A) {
       mat_t A_inv(n,n);
       invert(n,A,A_inv);
       A=A_inv;
-      return;
+      return 0;
     }
     
     virtual ~matrix_invert_LU() {}
@@ -117,17 +151,29 @@ namespace o2scl_linalg {
   public:
     
     /// Invert matrix \c A, returning the inverse in \c A_inv
-    virtual void invert(size_t n, const mat_t &A, mat_t &A_inv) {
+    virtual int invert(size_t n, const mat_t &A, mat_t &A_inv) {
       A_inv=A;
       invert_inplace(n,A_inv);
-      return;
+      return 0;
     };
 
+    /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
+        and the determinant in \c A_det
+    */
+    virtual int invert_det(size_t n, const mat_t &A, mat_t &A_inv,
+                            double &A_det) {
+      A_inv=A;
+      cholesky_decomp(n,A_inv,false);
+      A_det=cholesky_det(n,A_inv);
+      cholesky_invert(n,A_inv);
+      return 0;
+    }
+    
     /// Invert matrix \c A in place
-    virtual void invert_inplace(size_t n, mat_t &A) {
+    virtual int invert_inplace(size_t n, mat_t &A) {
       cholesky_decomp(n,A,false);
       cholesky_invert(n,A);
-      return;
+      return 0;
     }
     
     virtual ~matrix_invert_cholesky() {}
@@ -153,15 +199,25 @@ namespace o2scl_linalg {
   public:
     
     /// Invert matrix \c A, returning the inverse in \c A_inv
-    virtual void invert(size_t n, const arma_mat_t &A, arma_mat_t &A_inv) {
+    virtual int invert(size_t n, const arma_mat_t &A, arma_mat_t &A_inv) {
       A_inv=inv(A);
-      return;
+      return 0;
     }
 
+    /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
+        and the determinant in \c A_det
+    */
+    virtual int invert_det(size_t n, const mat_t &A, mat_t &A_inv,
+                            double &A_det) {
+      A_det=det(A);
+      A_inv=inv(A);
+      return 0;
+    }
+    
     /// Invert matrix \c A in place
-    virtual void invert_inplace(size_t n, arma_mat_t &A) {
+    virtual int invert_inplace(size_t n, arma_mat_t &A) {
       A=inv(A);
-      return;
+      return 0;
     }
 
     virtual ~matrix_invert_arma() {}
@@ -177,15 +233,25 @@ namespace o2scl_linalg {
     public matrix_invert<arma_mat_t> {
     
     /// Invert matrix \c A, returning the inverse in \c A_inv
-    virtual void invert(size_t n, const arma_mat_t &A, arma_mat_t &A_inv) {
+    virtual int invert(size_t n, const arma_mat_t &A, arma_mat_t &A_inv) {
       A_inv=inv_sympd(A);
-      return;
+      return 0;
     }
 
+    /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
+        and the determinant in \c A_det
+    */
+    virtual int invert_det(size_t n, const mat_t &A, mat_t &A_inv,
+                            double &A_det) {
+      A_det=det(A);
+      A_inv=inv_sympd(A);
+      return 0;
+    }
+    
     /// Inver matrix \c A in place
-    virtual void invert_inplace(size_t n, arma_mat_t &A) {
+    virtual int invert_inplace(size_t n, arma_mat_t &A) {
       A=inv_sympd(A);
-      return;
+      return 0;
     }
 
     virtual ~matrix_invert_sympd_arma() {}
@@ -211,15 +277,25 @@ namespace o2scl_linalg {
   public:
     
     /// Invert matrix \c A, returning the inverse in \c A_inv
-    virtual void invert(size_t n, const eigen_mat_t &A, eigen_mat_t &A_inv) {
+    virtual int invert(size_t n, const eigen_mat_t &A, eigen_mat_t &A_inv) {
       A_inv=A.inverse();
-      return;
+      return 0;
+    }
+    
+    /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
+        and the determinant in \c A_det
+    */
+    virtual int invert_det(size_t n, const eigen_mat_t &A,
+                           eigen_mat_t &A_inv, double &A_det) {
+      A_inv=A.inverse();
+      A_det=A.determinant();
+      return 0;
     }
     
     /// Inver matrix \c A in place
-    virtual void invert_inplace(size_t n, eigen_mat_t &A) {
+    virtual int invert_inplace(size_t n, eigen_mat_t &A) {
       A=A.inverse();
-      return;
+      return 0;
     }
     
   };

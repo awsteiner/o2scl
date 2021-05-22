@@ -64,7 +64,7 @@ int main(void) {
   {
     cout << "interpm_krige, unscaled" << endl;
 
-    table t;
+    table<> t;
     t.line_of_names("x y z");
     vector<double> v={1.04,0.02};
     t.line_of_data(2,v);
