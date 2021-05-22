@@ -38,20 +38,20 @@
 
 namespace o2scl_linalg {
 
-  /** \brief Invert a matrix
+  /** \brief Invert a matrix and compute its determinant
    */
   template<class mat_t=boost::numeric::ublas::matrix<double> >
-  class matrix_invert {
+  class matrix_invert_det {
     
   public:
 
     bool err_on_fail;
 
-    matrix_invert() {
+    matrix_invert_det() {
       err_on_fail=true;
     }
     
-    virtual ~matrix_invert() {}
+    virtual ~matrix_invert_det() {}
     
     /// Invert matrix \c A, returning the inverse in \c A_inv
     virtual int invert(size_t n, const mat_t &A, mat_t &A_inv)=0;
@@ -89,7 +89,7 @@ namespace o2scl_linalg {
   template <class mat_t=boost::numeric::ublas::matrix<double>,
             class mat_col_t=boost::numeric::ublas::matrix_column<
               boost::numeric::ublas::matrix<double> > >
-  class matrix_invert_LU : public matrix_invert<mat_t> {
+  class matrix_invert_det_LU : public matrix_invert_det<mat_t> {
     
   public:
 
@@ -100,7 +100,7 @@ namespace o2scl_linalg {
       LU_decomp(n,A,p,sig);
       if (o2scl_linalg::diagonal_has_zero(n,A)) {
         O2SCL_ERR2("Matrix singular (LU method) ",
-                   "in matrix_invert_LU::invert().",o2scl::exc_esing);
+                   "in matrix_invert_det_LU::invert().",o2scl::exc_esing);
       }
       LU_invert<mat_t,mat_t,mat_col_t>(n,A,p,A_inv);
       return 0;
@@ -124,7 +124,7 @@ namespace o2scl_linalg {
       LU_decomp(n,A2,p,sig);
       if (o2scl_linalg::diagonal_has_zero(n,A)) {
         O2SCL_ERR2("Matrix singular (LU method) ",
-                   "in matrix_invert_LU::invert().",o2scl::exc_esing);
+                   "in matrix_invert_det_LU::invert().",o2scl::exc_esing);
       }
       A_det=LU_det(n,A2,sig);
       LU_invert<mat_t,mat_t,mat_col_t>(n,A2,p,A_inv);
@@ -139,14 +139,14 @@ namespace o2scl_linalg {
       return 0;
     }
     
-    virtual ~matrix_invert_LU() {}
+    virtual ~matrix_invert_det_LU() {}
     
   };
 
   /** \brief Inverse symmetric positive matrix using Cholesky decomposition
    */
   template <class mat_t=boost::numeric::ublas::matrix<double> > 
-  class matrix_invert_cholesky : public matrix_invert<mat_t> {
+  class matrix_invert_det_cholesky : public matrix_invert_det<mat_t> {
     
   public:
     
@@ -176,7 +176,7 @@ namespace o2scl_linalg {
       return 0;
     }
     
-    virtual ~matrix_invert_cholesky() {}
+    virtual ~matrix_invert_det_cholesky() {}
     
   };
   
@@ -193,8 +193,8 @@ namespace o2scl_linalg {
       This class is only defined if Armadillo support was enabled
       during installation
   */
-  template<class arma_mat_t> class matrix_invert_arma : 
-    public matrix_invert<arma_mat_t> {
+  template<class arma_mat_t> class matrix_invert_det_arma : 
+    public matrix_invert_det<arma_mat_t> {
 
   public:
     
@@ -220,7 +220,7 @@ namespace o2scl_linalg {
       return 0;
     }
 
-    virtual ~matrix_invert_arma() {}
+    virtual ~matrix_invert_det_arma() {}
     
   };
 
@@ -229,8 +229,8 @@ namespace o2scl_linalg {
       This class is only defined if Armadillo support was enabled
       during installation
   */
-  template<class arma_mat_t> class matrix_invert_sympd_arma : 
-    public matrix_invert<arma_mat_t> {
+  template<class arma_mat_t> class matrix_invert_det_sympd_arma : 
+    public matrix_invert_det<arma_mat_t> {
     
     /// Invert matrix \c A, returning the inverse in \c A_inv
     virtual int invert(size_t n, const arma_mat_t &A, arma_mat_t &A_inv) {
@@ -254,7 +254,7 @@ namespace o2scl_linalg {
       return 0;
     }
 
-    virtual ~matrix_invert_sympd_arma() {}
+    virtual ~matrix_invert_det_sympd_arma() {}
     
   };
 }
@@ -271,8 +271,8 @@ namespace o2scl_linalg {
       installation.
 
   */
-  template<class eigen_mat_t> class matrix_invert_eigen : 
-    public matrix_invert<eigen_mat_t> {
+  template<class eigen_mat_t> class matrix_invert_det_eigen : 
+    public matrix_invert_det<eigen_mat_t> {
     
   public:
     

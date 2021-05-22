@@ -68,7 +68,7 @@ namespace o2scl {
            class covar_func_t=std::function<double(double,double)>,
            class covar_integ_t=std::function<double(double,double,double)>,
            class mat_t=boost::numeric::ublas::matrix<double>,
-           class mat_inv_t=matrix_invert_cholesky<mat_t> >
+           class mat_inv_t=o2scl_linalg::matrix_invert_det_cholesky<mat_t> >
   class interp_krige : public interp_base<vec_t,vec2_t> {
     
 #ifdef O2SCL_NEVER_DEFINED
@@ -396,10 +396,10 @@ namespace o2scl {
 
   private:
 
-    interp_krige<vec_t,vec2_t,covar_func_t,covar_integ_t>
-      (const interp_krige<vec_t,vec2_t,covar_func_t,covar_integ_t> &);
-    interp_krige<vec_t,vec2_t,covar_func_t,covar_integ_t>& operator=
-      (const interp_krige<vec_t,vec2_t,covar_func_t,covar_integ_t>&);
+    interp_krige<vec_t,vec2_t,covar_func_t,covar_integ_t,mat_t,mat_inv_t>
+      (const interp_krige<vec_t,vec2_t,covar_func_t,covar_integ_t,mat_t,mat_inv_t> &);
+    interp_krige<vec_t,vec2_t,covar_func_t,covar_integ_t,mat_t,mat_inv_t>& operator=
+      (const interp_krige<vec_t,vec2_t,covar_func_t,covar_integ_t,mat_t,mat_inv_t>&);
 
 #endif
 
@@ -416,8 +416,14 @@ namespace o2scl {
 
       \note This class is experimental.
   */
-  template<class vec_t, class vec2_t=vec_t>
-  class interp_krige_optim : public interp_krige<vec_t,vec2_t> {
+  template<class vec_t, class vec2_t=vec_t,
+           class mat_t=boost::numeric::ublas::matrix<double>,
+           class mat_inv_t=o2scl_linalg::matrix_invert_det_cholesky<mat_t> >
+  class interp_krige_optim :
+    public interp_krige<vec_t,vec2_t,
+                        std::function<double(double,double)>,
+                        std::function<double(double,double,double)>,
+                        mat_t,mat_inv_t> {
 
   public:
 
@@ -501,13 +507,13 @@ namespace o2scl {
           
           // Construct the inverse of KXX
           mat_t &inv_KXX=KXX;
-          mi.invert_inplace(size,inv_KXX);
+          this->mi.invert_inplace(size,inv_KXX);
 	  
           // Inverse covariance matrix times function vector
           this->Kinvf.resize(size-1);
           o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
                              o2scl_cblas::o2cblas_NoTrans,
-                             n_dim,n_dim,1.0,inv_KXX,y2,0.0,this->Kinvf);
+                             size,size,1.0,inv_KXX,y2,0.0,this->Kinvf);
 	  
           double ypred=0.0;
           double yact;
@@ -556,26 +562,19 @@ namespace o2scl {
 
         // Note: We have to use LU here because O2scl doesn't yet
         // have a lndet() function for Cholesky decomp
-      
-        // Construct the inverse of KXX
-        mat_t inv_KXX(size,size);
-        o2scl::permutation p(size);
-        int signum;
-        o2scl_linalg::LU_decomp(size,KXX,p,signum);
-        if (o2scl_linalg::diagonal_has_zero(size,KXX)) {
-          success=1;
-          return 1.0e99;
-        }
-        o2scl_linalg::LU_invert<mat_t,mat_t,mat_t_column>
-          (size,KXX,p,inv_KXX);
-      
-        double lndet=o2scl_linalg::LU_lndet<mat_t>(size,KXX);
+
+        double lndet;
+        this->mi.invert_det(size,KXX,this->inv_KXX,lndet);
+        lndet=log(lndet);
       
         // Inverse covariance matrix times function vector
         this->Kinvf.resize(size);
         if (this->rescaled) {
-          
-          boost::numeric::ublas::axpy_prod(inv_KXX,this->y_r,this->Kinvf,true);
+
+          o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                             o2scl_cblas::o2cblas_NoTrans,
+                             size,size,1.0,this->inv_KXX,this->y_r,0.0,
+                             this->Kinvf);
           
           // Compute the log of the marginal likelihood, without
           // the constant term
@@ -585,8 +584,11 @@ namespace o2scl {
           qual+=0.5*lndet;
           
         } else {
-          
-          boost::numeric::ublas::axpy_prod(inv_KXX,*this->py,this->Kinvf,true);
+
+          o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                             o2scl_cblas::o2cblas_NoTrans,
+                             size,size,1.0,this->inv_KXX,*this->py,0.0,
+                             this->Kinvf);
           
           // Compute the log of the marginal likelihood, without
           // the constant term
