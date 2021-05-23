@@ -69,8 +69,9 @@ namespace o2scl {
       \note Experimental.
   */
   template<class vec_t, class mat_t, class mat_row_t,
-           class mat2_t, class mat2_row_t,
-           class mat_inv_t=matrix_invert_det_cholesky<mat_t> >
+           class mat_col_t,
+           class mat2_t, class mat2_row_t, class mat3_t,
+           class mat_inv_t=o2scl_linalg::matrix_invert_det_cholesky<mat3_t> >
   class interpm_krige {    
     
   public:
@@ -88,7 +89,7 @@ namespace o2scl {
     std::vector<ubvector> Kinvf;
     
     /// The inverse of the covariance matrix
-    mat_t inv_KXX;
+    mat3_t inv_KXX;
 
     /// The matrix inversion object
     mat_inv_t mi;
@@ -116,7 +117,7 @@ namespace o2scl {
     */
     template<class func_vec_t>
     int set_data_noise(size_t n_in, size_t n_out, size_t n_points,
-                       const mat_t &user_x, const mat2_t &user_y,
+                       mat_t &user_x, mat2_t &user_y,
                        func_vec_t &fcovar,
                        const vec_t &noise_var, bool rescale=false,
                        bool err_on_fail=true) {
@@ -142,23 +143,26 @@ namespace o2scl {
       nd_out=n_out;
     
       if (user_x.size1()!=n_points || user_x.size2()!=n_in) {
+        
+        std::cout << user_x.size1() << std::endl;
+        std::cout << user_x.size2() << std::endl;
+        
         O2SCL_ERR2("Size of x not correct in ",
                    "interpm_krige::set_data_noise().",o2scl::exc_efailed);
       }
-      std::swap(user_x,x);
-      std::swap(user_y,y);
     
-      // We don't need to copy the 'y' data, but we double check
-      // that it is properly sized
+      // Check that the data is properly sized
       if (user_y.size2()!=n_points || user_y.size1()!=n_out) {
-        std::cout << user_x.size1() << std::endl;
-        std::cout << user_x.size2() << std::endl;
         std::cout << user_y.size1() << std::endl;
         std::cout << user_y.size2() << std::endl;
+      
         O2SCL_ERR2("Size of y not correct in ",
                    "interpm_krige::set_data_noise().",o2scl::exc_efailed);
       }
 
+      x=&user_x;
+      y=&user_y;
+      
       rescaled=rescale;
     
       data_set=true;
@@ -173,21 +177,29 @@ namespace o2scl {
         mean_x.resize(n_in);
         std_x.resize(n_in);
         for(size_t j=0;j<n_in;j++) {
-          mat_row_t vec(x,j);
+          mat_col_t vec(*x,j);
           mean_x[j]=vector_mean(n_points,vec);
-          std_x[j]=vector_mean(n_points,vec);
+          std_x[j]=vector_stddev(n_points,vec);
+          if (verbose>1) {
+            std::cout << "Mean,stddev of x " << j << " of " << n_in << " is "
+                      << mean_x[j] << " " << std_x[j] << std::endl;
+          }
           for(size_t i=0;i<n_points;i++) {
-            x(i,j)=(x(i,j)-mean_x[j])/std_x[j];
+            user_x(i,j)=(user_x(i,j)-mean_x[j])/std_x[j];
           }
         }
         mean_y.resize(n_out);
         std_y.resize(n_out);
         for(size_t j=0;j<n_out;j++) {
-          mat2_row_t vec(y,j);
+          mat2_row_t vec(*y,j);
           mean_y[j]=vector_mean(n_points,vec);
-          std_y[j]=vector_mean(n_points,vec);
+          std_y[j]=vector_stddev(n_points,vec);
+          if (verbose>1) {
+            std::cout << "Mean,stddev of y " << j << " of " << n_out << " is "
+                      << mean_y[j] << " " << std_y[j] << std::endl;
+          }
           for(size_t i=0;i<n_points;i++) {
-            y(i,j)=(y(i,j)-mean_y[j])/std_y[j];
+            user_y(j,i)=(user_y(j,i)-mean_y[j])/std_y[j];
           }
         }
         if (verbose>1) {
@@ -206,14 +218,14 @@ namespace o2scl {
         size_t inoise=iout & noise_var.size();
 
         // Select the row of the data matrix
-        mat2_row_t yiout(user_y,iout);
+        mat2_row_t yiout(*y,iout);
 
         // Construct the KXX matrix
-        ubmatrix KXX(n_points,n_points);
+        mat3_t KXX(n_points,n_points);
         for(size_t irow=0;irow<n_points;irow++) {
-          mat_row_t xrow(x,irow);
+          mat_row_t xrow(*x,irow);
           for(size_t icol=0;icol<n_points;icol++) {
-            mat_row_t xcol(x,icol);
+            mat_row_t xcol(*x,icol);
             if (irow>icol) {
               KXX(irow,icol)=KXX(icol,irow);
             } else if (irow==icol) {
@@ -227,7 +239,7 @@ namespace o2scl {
 
         inv_KXX.resize(n_points,n_points);
         mi.invert(n_points,KXX,inv_KXX);
-	
+        
         // Inverse covariance matrix times function vector
         Kinvf[iout].resize(n_points);
         o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
@@ -235,20 +247,41 @@ namespace o2scl {
                            n_points,n_points,1.0,inv_KXX,
                            yiout,0.0,Kinvf[iout]);
 	
-      }
-      
-      if (verbose>1) {
-        std::cout << "interpm_krige::set_data_noise() finished " << iout+1
-                  << " of " << n_out << "." << std::endl;
+        if (verbose>1) {
+          std::cout << "interpm_krige::set_data_noise() finished " << iout+1
+                    << " of " << n_out << "." << std::endl;
+        }
+        
       }
       
       if (verbose>1) {
         std::cout << "interpm_krige::set_data_noise() done."
                   << std::endl;
       }
-    
+      
       return 0;
     }
+
+    void unscale(size_t n_in, size_t n_out, size_t n_points) {
+      if (rescaled==true) {
+        for(size_t j=0;j<n_in;j++) {
+          for(size_t i=0;i<n_points;i++) {
+            (*x)(i,j)=(*x)(i,j)*std_x[j]+mean_x[j];
+          }
+        }
+        for(size_t j=0;j<n_out;j++) {
+          for(size_t i=0;i<n_points;i++) {
+            (*y)(j,i)=(*y)(j,i)*std_y[j]+mean_y[j];
+          }
+        }
+        if (verbose>1) {
+          std::cout << "interpm_krige::set_data_noise() "
+                    << "returned to original values." 
+                    << std::endl;
+        }
+      }
+      return;
+    }      
 
     /** \brief Initialize the data for the interpolation
       
@@ -285,7 +318,7 @@ namespace o2scl {
       }
 
       if (rescaled) {
-
+        
         // If necessary, rescale before evaluating the interpolated
         // result
         vec2_t x0p(nd_in);
@@ -298,10 +331,12 @@ namespace o2scl {
           size_t icovar=iout % fcovar.size();
           y0[iout]=0.0;
           for(size_t ipoints=0;ipoints<np;ipoints++) {
-            mat_row_t xrow(x,ipoints);
+            mat_row_t xrow(*x,ipoints);
             double covar_val=fcovar[icovar](xrow,x0p);
             y0[iout]+=covar_val*Kinvf[iout][ipoints];
           }
+          y0[iout]*=std_y[iout];
+          y0[iout]+=mean_y[iout];
         }
 
       } else {
@@ -311,7 +346,7 @@ namespace o2scl {
           size_t icovar=iout % fcovar.size();
           y0[iout]=0.0;
           for(size_t ipoints=0;ipoints<np;ipoints++) {
-            mat_row_t xrow(x,ipoints);
+            mat_row_t xrow(*x,ipoints);
             y0[iout]+=fcovar[icovar](xrow,x0)*Kinvf[iout][ipoints];
           }
         }
@@ -333,14 +368,18 @@ namespace o2scl {
     /// The number of dimensions of the outputs
     size_t nd_out;
     /// The data
-    mat_t x;
+    mat_t* x;
     /// The data
-    mat2_t y;
+    mat2_t* y;
     /// True if the data has been specified
     bool data_set;
+    /// Desc
     ubvector mean_x;
+    /// Desc
     ubvector std_x;
+    /// Desc
     ubvector mean_y;
+    /// Desc
     ubvector std_y;
     /// True if the data needs to be rescaled
     bool rescaled;
@@ -438,7 +477,7 @@ namespace o2scl {
           // Now perform the matrix analysis with those objects
 
           // Construct the KXX matrix
-          ubmatrix KXX(size-1,size-1);
+          mat3_t KXX(size-1,size-1);
           for(size_t irow=0;irow<size-1;irow++) {
             matrix_row_gen<matrix_view_omit_row<mat_t> > xrow(x_jk,irow);
             for(size_t icol=0;icol<size-1;icol++) {
@@ -454,64 +493,25 @@ namespace o2scl {
               }
             }
           }
-	
-          if (this->matrix_mode==this->matrix_cholesky) {
-	  
-            // Construct the inverse of KXX
-            if (verbose>2) {
-              std::cout << "Performing Cholesky decomposition with size "
-                        << size-1 << std::endl;
-            }
-            int cret=o2scl_linalg::cholesky_decomp(size-1,KXX,false);
-            if (cret!=0) {
-              success=1;
-              return 1.0e99;
-            }
-            if (verbose>2) {
-              std::cout << "Performing matrix inversion with size "
-                        << size-1 << std::endl;
-            }
-
-            o2scl_linalg::cholesky_invert<ubmatrix>(size-1,KXX);
-	  
-            // Inverse covariance matrix times function vector
-            this->Kinvf[iout].resize(size-1);
-            o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
-                               o2scl_cblas::o2cblas_NoTrans,
-                               size-1,size-1,1.0,KXX,
-                               y,0.0,this->Kinvf[iout]);
-
-          } else {
-	  
-            // Construct the inverse of KXX
-            ubmatrix inv_KXX(size-1,size-1);
-            o2scl::permutation p(size-1);
-            int signum;
-            if (verbose>2) {
-              std::cout << "Performing LU decomposition with size "
-                        << size-1 << std::endl;
-            }
-            o2scl_linalg::LU_decomp(size-1,KXX,p,signum);
-            if (o2scl_linalg::diagonal_has_zero(size-1,KXX)) {
-              success=1;
-              return 1.0e99;
-            }
-            if (verbose>2) {
-              std::cout << "Performing matrix inversion with size "
-                        << size-1 << std::endl;
-            }
-            o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
-              (size-1,KXX,p,inv_KXX);
-	  
-            // Inverse covariance matrix times function vector
-            this->Kinvf[iout].resize(size-1);
-            o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
-                               o2scl_cblas::o2cblas_NoTrans,
-                               size-1,size-1,1.0,inv_KXX,
-                               y,0.0,this->Kinvf[iout]);
-	  
+          
+          // Construct the inverse of KXX
+          if (verbose>2) {
+            std::cout << "Performing matrix inversion with size "
+                      << size-1 << std::endl;
           }
-
+          int cret=mi.invert_inplace(size-1,KXX);
+          if (cret!=0) {
+            success=1;
+            return 1.0e99;
+          }
+	  
+          // Inverse covariance matrix times function vector
+          this->Kinvf[iout].resize(size-1);
+          o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                             o2scl_cblas::o2cblas_NoTrans,
+                             size-1,size-1,1.0,KXX,
+                             y,0.0,this->Kinvf[iout]);
+          
           double ypred=0.0;
           double yact=y[row];
           for(size_t i=0;i<size-1;i++) {
@@ -540,7 +540,7 @@ namespace o2scl {
         }
 
         // Construct the KXX matrix
-        ubmatrix KXX(size,size);
+        mat3_t KXX(size,size);
         for(size_t irow=0;irow<size;irow++) {
           mat_row_t xrow(this->x,irow);
           for(size_t icol=0;icol<size;icol++) {
@@ -559,66 +559,27 @@ namespace o2scl {
         // have a lndet() function for Cholesky decomp
 
         double lndet;
-        if (this->matrix_mode==this->matrix_cholesky) {
 	
-          // Construct the inverse of KXX
-          if (verbose>2) {
-            std::cout << "Performing Cholesky decomposition with size "
-                      << size << std::endl;
-          }
-          int cret=o2scl_linalg::cholesky_decomp(size,KXX,false);
-          if (cret!=0) {
-            success=1;
-            return 1.0e99;
-          }
-          if (verbose>2) {
-            std::cout << "Performing matrix inversion with size "
-                      << size << std::endl;
-          }
-          o2scl_linalg::cholesky_invert<ubmatrix>(size,KXX);
-	
-          lndet=o2scl_linalg::cholesky_lndet<ubmatrix>(size,KXX);
-	
-          // Inverse covariance matrix times function vector
-          this->Kinvf[iout].resize(size);
-          o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
-                             o2scl_cblas::o2cblas_NoTrans,
-                             size,size,1.0,KXX,
-                             y,0.0,this->Kinvf[iout]);
-	
-        } else {
-	
-          // Construct the inverse of KXX
-          ubmatrix inv_KXX(size,size);
-          o2scl::permutation p(size);
-          int signum;
-          if (verbose>2) {
-            std::cout << "Performing LU decomposition with size "
-                      << size << std::endl;
-          }
-          o2scl_linalg::LU_decomp(size,KXX,p,signum);
-          if (o2scl_linalg::diagonal_has_zero(size,KXX)) {
-            success=1;
-            return 1.0e99;
-          }
-          if (verbose>2) {
-            std::cout << "Performing matrix inversion with size "
-                      << size << std::endl;
-          }
-          o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
-            (size,KXX,p,inv_KXX);
-
-          lndet=o2scl_linalg::LU_lndet<ubmatrix>(size,KXX);
-	
-          // Inverse covariance matrix times function vector
-          this->Kinvf[iout].resize(size);
-          o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
-                             o2scl_cblas::o2cblas_NoTrans,
-                             size,size,1.0,inv_KXX,
-                             y,0.0,this->Kinvf[iout]);
-	
+        // Construct the inverse of KXX
+        if (verbose>2) {
+          std::cout << "Performing matrix inversion with size "
+                    << size << std::endl;
         }
-
+        int cret=mi.invert_det(size,KXX,this->inv_KXX,lndet);
+        if (cret!=0) {
+          success=1;
+          return 1.0e99;
+        }
+	
+        lndet=log(lndet);
+	
+        // Inverse covariance matrix times function vector
+        this->Kinvf[iout].resize(size);
+        o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                           o2scl_cblas::o2cblas_NoTrans,
+                           size,size,1.0,KXX,
+                           y,0.0,this->Kinvf[iout]);
+	
         if (mode==mode_max_lml) {
           // Compute the log of the marginal likelihood, without
           // the constant term
@@ -1037,7 +998,7 @@ namespace o2scl {
         }
       
         // Construct the nearest neighbor KXX matrix
-        ubmatrix KXX(n_order,n_order);
+        mat3_t KXX(n_order,n_order);
         for(size_t irow=0;irow<n_order;irow++) {
           for(size_t icol=0;icol<n_order;icol++) {
             if (irow>icol) {
@@ -1051,8 +1012,8 @@ namespace o2scl {
       
         // Construct the inverse of KXX
         o2scl_linalg::cholesky_decomp(n_order,KXX);
-        ubmatrix &inv_KXX=KXX;
-        o2scl_linalg::cholesky_invert<ubmatrix>(n_order,inv_KXX);
+        mat3_t &inv_KXX=KXX;
+        o2scl_linalg::cholesky_invert<mat3_t>(n_order,inv_KXX);
       
         // Inverse covariance matrix times function vector
         ubvector Kinvf(n_order);
@@ -1103,7 +1064,7 @@ namespace o2scl {
         }
       
         // Construct the nearest neighbor KXX matrix
-        ubmatrix KXX(n_order,n_order);
+        mat3_t KXX(n_order,n_order);
         for(size_t irow=0;irow<n_order;irow++) {
           for(size_t icol=0;icol<n_order;icol++) {
             if (irow>icol) {
@@ -1196,7 +1157,7 @@ namespace o2scl {
       }
       
       // Construct the nearest neighbor KXX matrix
-      ubmatrix KXX(n_order,n_order);
+      mat3_t KXX(n_order,n_order);
       for(size_t irow=0;irow<n_order;irow++) {
         for(size_t icol=0;icol<n_order;icol++) {
           if (irow>icol) {
@@ -1210,8 +1171,8 @@ namespace o2scl {
 	
       // Construct the inverse of KXX
       o2scl_linalg::cholesky_decomp(n_order,KXX);
-      ubmatrix &inv_KXX=KXX;
-      o2scl_linalg::cholesky_invert<ubmatrix>(n_order,inv_KXX);
+      mat3_t &inv_KXX=KXX;
+      o2scl_linalg::cholesky_invert<mat3_t>(n_order,inv_KXX);
       
       // Inverse covariance matrix times function vector
       ubvector Kinvf(n_order);
@@ -1289,7 +1250,7 @@ namespace o2scl {
         }
       
         // Construct the nearest neighbor KXX matrix
-        ubmatrix KXX(n_order-1,n_order-1);
+        mat3_t KXX(n_order-1,n_order-1);
         for(size_t irow=0;irow<n_order-1;irow++) {
           for(size_t icol=0;icol<n_order-1;icol++) {
             if (irow>icol) {
@@ -1303,8 +1264,8 @@ namespace o2scl {
 	  
         // Construct the inverse of KXX
         o2scl_linalg::cholesky_decomp(n_order-1,KXX);
-        ubmatrix &inv_KXX=KXX;
-        o2scl_linalg::cholesky_invert<ubmatrix>(n_order-1,inv_KXX);
+        mat3_t &inv_KXX=KXX;
+        o2scl_linalg::cholesky_invert<mat3_t>(n_order-1,inv_KXX);
       
         // Inverse covariance matrix times function vector
         ubvector Kinvf(n_order-1);

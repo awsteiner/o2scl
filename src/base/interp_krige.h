@@ -396,11 +396,15 @@ namespace o2scl {
 
   private:
 
-    interp_krige<vec_t,vec2_t,covar_func_t,covar_integ_t,mat_t,mat_inv_t>
-      (const interp_krige<vec_t,vec2_t,covar_func_t,covar_integ_t,mat_t,mat_inv_t> &);
-    interp_krige<vec_t,vec2_t,covar_func_t,covar_integ_t,mat_t,mat_inv_t>& operator=
-      (const interp_krige<vec_t,vec2_t,covar_func_t,covar_integ_t,mat_t,mat_inv_t>&);
-
+    interp_krige<vec_t,vec2_t,covar_func_t,
+                 covar_integ_t,mat_t,mat_inv_t>
+      (const interp_krige<vec_t,vec2_t,covar_func_t,
+       covar_integ_t,mat_t,mat_inv_t> &);
+    interp_krige<vec_t,vec2_t,covar_func_t,
+                 covar_integ_t,mat_t,mat_inv_t>& operator=
+      (const interp_krige<vec_t,vec2_t,covar_func_t,
+       covar_integ_t,mat_t,mat_inv_t>&);
+    
 #endif
 
   };
@@ -506,14 +510,15 @@ namespace o2scl {
           }
           
           // Construct the inverse of KXX
-          mat_t &inv_KXX=KXX;
-          this->mi.invert_inplace(size,inv_KXX);
+          this->inv_KXX=KXX;
+          this->mi.invert_inplace(size-1,this->inv_KXX);
 	  
           // Inverse covariance matrix times function vector
           this->Kinvf.resize(size-1);
           o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
                              o2scl_cblas::o2cblas_NoTrans,
-                             size,size,1.0,inv_KXX,y2,0.0,this->Kinvf);
+                             size-1,size-1,1.0,this->inv_KXX,y2,0.0,
+                             this->Kinvf);
 	  
           double ypred=0.0;
           double yact;
@@ -748,6 +753,7 @@ namespace o2scl {
           len=len_min*pow(len_ratio,((double)j)/((double)nlen-1));
 
           int success=0;
+          std::cout << "Herex: " << j << " " << nlen << std::endl;
           qual=qual_fun(len,noise_var,success);
 	
           if (success==0 && (min_set==false || qual<min_qual)) {

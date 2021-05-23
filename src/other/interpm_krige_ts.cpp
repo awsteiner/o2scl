@@ -36,6 +36,7 @@ typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 typedef o2scl::matrix_view_table<> mat_t;
 typedef const matrix_row_gen<mat_t> row_t;
+typedef const matrix_column_gen<mat_t> col_t;
 typedef o2scl::matrix_view_table_transpose<> mat2_t;
 typedef const matrix_row_gen<mat2_t> row2_t;
 typedef vector<function<double(row_t &, row_t &) > > f1_t;
@@ -64,39 +65,42 @@ int main(void) {
   {
     cout << "interpm_krige, unscaled" << endl;
 
-    table<> t;
-    t.line_of_names("x y z");
+    table<> tab;
+    tab.line_of_names("x y z");
     vector<double> v={1.04,0.02};
-    t.line_of_data(2,v);
+    tab.line_of_data(2,v);
     v={0.03,1.01};
-    t.line_of_data(2,v);
+    tab.line_of_data(2,v);
     v={0.81,0.23};
-    t.line_of_data(2,v);
+    tab.line_of_data(2,v);
     v={0.03,0.83};
-    t.line_of_data(2,v);
+    tab.line_of_data(2,v);
     v={0.03,0.99};
-    t.line_of_data(2,v);
+    tab.line_of_data(2,v);
     v={0.82,0.84};
-    t.line_of_data(2,v);
+    tab.line_of_data(2,v);
     v={0.03,0.24};
-    t.line_of_data(2,v);
+    tab.line_of_data(2,v);
     v={0.03,1.02};
-    t.line_of_data(2,v);
+    tab.line_of_data(2,v);
 
     for(size_t i=0;i<8;i++) {
-      t.set("z",i,ft(t.get("x",i),t.get("y",i)));
+      tab.set("z",i,ft(tab.get("x",i),tab.get("y",i)));
     }
     
-    interpm_krige<ubvector,mat_t,row_t,mat2_t,row2_t> ik;
-    ik.verbose=2;
+    interpm_krige<ubvector,mat_t,row_t,col_t,
+                  mat2_t,row2_t,ubmatrix,
+                  o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > ik;
     f1_t fa1={std::bind(&covar<row_t,row_t>,
                         std::placeholders::_1,std::placeholders::_2,0.70)};
     f2_t fa2={std::bind(&covar<row_t,ubvector>,
                         std::placeholders::_1,std::placeholders::_2,0.70)};
+    
     vector<string> col_list_x={"x","y"};
     vector<string> col_list_y={"z"};
-    matrix_view_table mvt_x(t,col_list_x);
-    matrix_view_table_transpose mvt_y(t,col_list_y);
+    matrix_view_table mvt_x(tab,col_list_x);
+    matrix_view_table_transpose mvt_y(tab,col_list_y);
+
     ik.set_data<>(2,1,8,mvt_x,mvt_y,fa1);
       
     ubvector point(2);
@@ -105,12 +109,31 @@ int main(void) {
     point[0]=0.4;
     point[1]=0.5;
     ik.eval(point,out,fa2);
+    t.test_rel(out[0],ft(point[0],point[1]),2.0e-1,"ik 0");
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
     point[0]=0.0301;
     point[1]=0.9901;
     ik.eval(point,out,fa2);
+    t.test_rel(out[0],ft(point[0],point[1]),1.0e-2,"ik 1");
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
     cout << endl;
+
+    ik.set_data<>(2,1,8,mvt_x,mvt_y,fa1,true);
+
+    point[0]=0.4;
+    point[1]=0.5;
+    ik.eval(point,out,fa2);
+    t.test_rel(out[0],ft(point[0],point[1]),5.0e-2,"ikr 0");
+    cout << out[0] << " " << ft(point[0],point[1]) << endl;
+    point[0]=0.0301;
+    point[1]=0.9901;
+    ik.eval(point,out,fa2);
+    t.test_rel(out[0],ft(point[0],point[1]),1.0e-2,"ikr 1");
+    cout << out[0] << " " << ft(point[0],point[1]) << endl;
+    cout << endl;
+
+    ik.unscale(2,1,8);
+
   }
 
 #ifdef O2SCL_NEVER_DEFINED

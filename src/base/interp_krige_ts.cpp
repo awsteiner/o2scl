@@ -148,9 +148,9 @@ int main(void) {
   
   // ---------------------------------------------------------------
   // Test interp_krige_optim interface
-  
+
   interp_krige_optim<ubvector> iko;
-  
+
   iko.set(10,x2,y2);
 
   cout << "Class interp_krige_optim with simple interface." << endl;
