@@ -46,7 +46,9 @@ double legendre_gsl(double x, void *params) {
   return P*P;
 }
 
-double legendre(double x, int &deg) {
+// 5/22/21: renamed from legendre to legendrex because of compilation
+// errors, likely confusion with a boost function of the same name?
+double legendrex(double x, int &deg) {
   double P = gsl_sf_legendre_Pl(deg, x);
   return P*P;
 }
@@ -87,7 +89,7 @@ int main(void) {
     
     for(size_t i=0;i<7;i++) {
       
-      funct f=std::bind(legendre,std::placeholders::_1,n);
+      funct f=std::bind(legendrex,std::placeholders::_1,std::ref(n));
       
       Q.integ_err(f,-1.0,1.0,o2scl_res,o2scl_err);
     

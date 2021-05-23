@@ -68,8 +68,7 @@ namespace o2scl {
 
       \note Experimental.
   */
-  template<class vec_t, class mat_t, class mat_row_t,
-           class mat_col_t,
+  template<class vec_t, class mat_t, class mat_row_t, class mat_col_t,
            class mat2_t, class mat2_row_t, class mat3_t,
            class mat_inv_t=o2scl_linalg::matrix_invert_det_cholesky<mat3_t> >
   class interpm_krige {    
@@ -77,10 +76,6 @@ namespace o2scl {
   public:
     
     typedef boost::numeric::ublas::vector<double> ubvector;
-    typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
-    typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_column;
-    typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
     
   protected:
 
@@ -88,8 +83,10 @@ namespace o2scl {
      */
     std::vector<ubvector> Kinvf;
     
-    /// The inverse of the covariance matrix
-    mat3_t inv_KXX;
+    /** \brief The inverse of the covariance matrix for each output
+        quantity
+    */
+    std::vector<mat3_t> inv_KXX;
 
     /// The matrix inversion object
     mat_inv_t mi;
@@ -102,7 +99,7 @@ namespace o2scl {
       keep_matrix=true;
     }
     
-    /// If true, keep \f$ K^{-1} \f$
+    /// If true, keep \f$ K^{-1} \f$ (default true)
     bool keep_matrix;
     
     /** \brief Verbosity parameter (default 0)
@@ -211,6 +208,8 @@ namespace o2scl {
       Kinvf.resize(n_out);
       size_t n_covar=fcovar.size();
 
+      inv_KXX.resize(n_out);
+      
       // Loop over all output functions
       for(size_t iout=0;iout<n_out;iout++) {
 
@@ -237,14 +236,14 @@ namespace o2scl {
           }
         }
 
-        inv_KXX.resize(n_points,n_points);
-        mi.invert(n_points,KXX,inv_KXX);
+        inv_KXX[iout].resize(n_points,n_points);
+        mi.invert(n_points,KXX,inv_KXX[iout]);
         
         // Inverse covariance matrix times function vector
         Kinvf[iout].resize(n_points);
         o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
                            o2scl_cblas::o2cblas_NoTrans,
-                           n_points,n_points,1.0,inv_KXX,
+                           n_points,n_points,1.0,inv_KXX[iout],
                            yiout,0.0,Kinvf[iout]);
 	
         if (verbose>1) {
@@ -252,6 +251,10 @@ namespace o2scl {
                     << " of " << n_out << "." << std::endl;
         }
         
+      }
+
+      if (!keep_matrix) {
+        inv_KXX.clear();
       }
       
       if (verbose>1) {
@@ -262,6 +265,8 @@ namespace o2scl {
       return 0;
     }
 
+    /** \brief Remove the rescaling of the data
+     */
     void unscale(size_t n_in, size_t n_out, size_t n_points) {
       if (rescaled==true) {
         for(size_t j=0;j<n_in;j++) {
@@ -388,8 +393,6 @@ namespace o2scl {
   
   };
   
-#ifdef O2SCL_NEVER_DEFINED
-
   /** \brief One-dimensional interpolation using an 
       optimized covariance function
       
@@ -400,18 +403,23 @@ namespace o2scl {
 
       \note This class is experimental.
   */
+  template<class vec_t, class mat_t, class mat_row_t, class mat_col_t,
+           class mat2_t, class mat2_row_t, class mat3_t,
+           class mat_inv_t=o2scl_linalg::matrix_invert_det_cholesky<mat3_t> >
+  class interpm_krige_optim :
+    /*{    
   template<class vec_t=boost::numeric::ublas::vector<double>,
            class mat_t=boost::numeric::ublas::vector<double>,
            class mat_row_t=boost::numeric::ublas::matrix_row
            <boost::numeric::ublas::vector<double> > >
   class interpm_krige_optim :
-    public interpm_krige<vec_t,mat_t,mat_row_t> {    
+    */
+    public interpm_krige<vec_t,mat_t,mat_row_t,mat_col_t,mat2_t,
+                         mat2_row_t,mat3_t,mat_inv_t> {    
 
   public:
 
     typedef boost::numeric::ublas::vector<double> ubvector;
-    typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_column;
 
     /// Function objects for the covariance
     std::vector<std::function<double(const mat_row_t &, const vec_t &)> >
@@ -422,7 +430,7 @@ namespace o2scl {
     /// Function objects for the covariance
     std::vector<std::function<double(const mat_row_t &, const mat_row_t &)> >
     ff1;
-  
+    
     /// The covariance function length scale for each output function
     std::vector<double> len;
   
@@ -440,7 +448,9 @@ namespace o2scl {
   
     /// The covariance function
     template<class vec2_t, class vec3_t>
-    double covar(const vec2_t &x1, const vec3_t &x2, size_t sz, double len2) {
+    double covar(const vec2_t &x1, const vec3_t &x2, size_t sz,
+                 double len2) {
+      
       double ret=0.0;
       for(size_t i=0;i<sz;i++) {
         ret+=pow(x1[i]-x2[i],2.0);
@@ -452,6 +462,8 @@ namespace o2scl {
     /// Pointer to the user-specified minimizer
     min_base<> *mp;
   
+#ifdef O2SCL_NEVER_DEFINED
+
     /** \brief Function to optimize the covariance parameters
      */
     template<class vec3_t> 
@@ -470,9 +482,9 @@ namespace o2scl {
 
           // Create the new data objects, x_jk and y_jk
           size_t row=ell*size/loo_npts;
-          matrix_view_omit_row<mat_t> x_jk(this->x,row);
+          matrix_view_omit_row<mat_t> x_jk(*this->x,row);
           ubvector y_jk(size-1);
-          vector_copy_jackknife(size,y,row,y_jk);
+          vector_copy_jackknife(size,*this->y,row,y_jk);
 
           // Now perform the matrix analysis with those objects
 
@@ -516,7 +528,7 @@ namespace o2scl {
           double yact=y[row];
           for(size_t i=0;i<size-1;i++) {
             matrix_row_gen<matrix_view_omit_row<mat_t> > xrow(x_jk,i);
-            mat_row_t xcol(this->x,row);
+            mat_row_t xcol(*this->x,row);
             ypred+=covar<matrix_row_gen<matrix_view_omit_row<mat_t> >,
                          mat_row_t>(xrow,xcol,this->nd_in,xlen)*
               this->Kinvf[iout][i];
@@ -542,9 +554,9 @@ namespace o2scl {
         // Construct the KXX matrix
         mat3_t KXX(size,size);
         for(size_t irow=0;irow<size;irow++) {
-          mat_row_t xrow(this->x,irow);
+          mat_row_t xrow(*this->x,irow);
           for(size_t icol=0;icol<size;icol++) {
-            mat_row_t xcol(this->x,icol);
+            mat_row_t xcol(*this->x,icol);
             if (irow>icol) {
               KXX(irow,icol)=KXX(icol,irow);
             } else {
@@ -565,7 +577,7 @@ namespace o2scl {
           std::cout << "Performing matrix inversion with size "
                     << size << std::endl;
         }
-        int cret=mi.invert_det(size,KXX,this->inv_KXX,lndet);
+        int cret=mi.invert_det(size,KXX,this->inv_KXX[iout],lndet);
         if (cret!=0) {
           success=1;
           return 1.0e99;
@@ -878,9 +890,13 @@ namespace o2scl {
         (n_in,n_out,n_points,user_x,
          user_y,noise_vec,len_precompute,rescale,err_on_fail);
     }
+
+#endif
   
   };
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   /** \brief Multi-dimensional interpolation by kriging with 
       nearest-neighbor 
 
@@ -1013,7 +1029,7 @@ namespace o2scl {
         // Construct the inverse of KXX
         o2scl_linalg::cholesky_decomp(n_order,KXX);
         mat3_t &inv_KXX=KXX;
-        o2scl_linalg::cholesky_invert<mat3_t>(n_order,inv_KXX);
+        o2scl_linalg::cholesky_invert<mat3_t>(n_order,inv_KXX[iout]);
       
         // Inverse covariance matrix times function vector
         ubvector Kinvf(n_order);

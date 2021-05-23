@@ -61,7 +61,7 @@ int main(void) {
     
   {
 
-    cout << "Class matrix_invert_LU:" << endl;
+    cout << "Class matrix_invert_det_LU:" << endl;
 
     // We choose a nearly diagonal positive symmetric matrix which
     // is easy to invert
@@ -72,7 +72,7 @@ int main(void) {
       }
     }
     
-    matrix_invert_LU<> mi;
+    matrix_invert_det_LU<> mi;
     mi.invert(5,gm1,gm2);
 
     dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
@@ -91,7 +91,7 @@ int main(void) {
   ubmatrix gm4(5,5), gm5(5,5), gm6(5,5);
     
   {
-    cout << "Class matrix_invert_cholesky:" << endl;
+    cout << "Class matrix_invert_det_cholesky:" << endl;
 
     for(size_t i=0;i<5;i++) {
       for(size_t j=0;j<5;j++) {
@@ -102,7 +102,7 @@ int main(void) {
       }
     }
     
-    matrix_invert_cholesky<> mi;
+    matrix_invert_det_cholesky<> mi;
     mi.invert(5,gm4,gm5);
 
     dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
@@ -126,7 +126,7 @@ int main(void) {
 
   {
 
-    cout << "Class matrix_invert_arma: " << endl;
+    cout << "Class matrix_invert_det_arma: " << endl;
     
     for(size_t i=0;i<5;i++) {
       for(size_t j=0;j<5;j++) {
@@ -135,7 +135,7 @@ int main(void) {
       }
     }
     
-    matrix_invert_arma<arma::mat> mi;
+    matrix_invert_det_arma<arma::mat> mi;
     mi.invert(5,am1,am2);
 
     dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
@@ -155,7 +155,7 @@ int main(void) {
   Eigen::MatrixXd em1(5,5), em2(5,5), em3(5,5);
     
   {
-    cout << "Class matrix_invert_eigen: " << endl;
+    cout << "Class matrix_invert_det_eigen: " << endl;
 
     for(size_t i=0;i<5;i++) {
       for(size_t j=0;j<5;j++) {
@@ -164,7 +164,7 @@ int main(void) {
       }
     }
     
-    matrix_invert_eigen<Eigen::MatrixXd> mi;
+    matrix_invert_det_eigen<Eigen::MatrixXd> mi;
     mi.invert(5,em1,em2);
 
     dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,

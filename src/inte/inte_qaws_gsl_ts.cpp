@@ -40,7 +40,9 @@ double legendre_gsl(double x, void *params) {
   return gsl_sf_legendre_Pl(deg,x);
 }
 
-double legendre(double x, int &deg) {
+// 5/22/21: renamed from legendre to legendrex because of compilation
+// errors, likely confusion with a boost function of the same name?
+double legendrex(double x, int &deg) {
   return gsl_sf_legendre_Pl(deg,x);
 }
 
@@ -68,7 +70,7 @@ int main(void) {
   size_t limit=512;
 	
   inte_qaws_gsl<funct> Q;
-  funct f=std::bind(legendre,std::placeholders::_1,deg);
+  funct f=std::bind(legendrex,std::placeholders::_1,deg);
 	
   double alpha=0.0, beta=0.0; 
   int mu=0, nu=0;
