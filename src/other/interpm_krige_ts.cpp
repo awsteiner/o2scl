@@ -67,22 +67,14 @@ int main(void) {
 
     table<> tab;
     tab.line_of_names("x y z");
-    vector<double> v={1.04,0.02};
-    tab.line_of_data(2,v);
-    v={0.03,1.01};
-    tab.line_of_data(2,v);
-    v={0.81,0.23};
-    tab.line_of_data(2,v);
-    v={0.03,0.83};
-    tab.line_of_data(2,v);
-    v={0.03,0.99};
-    tab.line_of_data(2,v);
-    v={0.82,0.84};
-    tab.line_of_data(2,v);
-    v={0.03,0.24};
-    tab.line_of_data(2,v);
-    v={0.03,1.02};
-    tab.line_of_data(2,v);
+    tab.line_of_data(2,vector<double>({1.04,0.02}));
+    tab.line_of_data(2,vector<double>({0.03,1.01}));
+    tab.line_of_data(2,vector<double>({0.81,0.23}));
+    tab.line_of_data(2,vector<double>({0.03,0.83}));
+    tab.line_of_data(2,vector<double>({0.03,0.99}));
+    tab.line_of_data(2,vector<double>({0.82,0.84}));
+    tab.line_of_data(2,vector<double>({0.03,0.24}));
+    tab.line_of_data(2,vector<double>({0.03,1.02}));
 
     for(size_t i=0;i<8;i++) {
       tab.set("z",i,ft(tab.get("x",i),tab.get("y",i)));
@@ -132,105 +124,17 @@ int main(void) {
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
     cout << endl;
 
-    ik.unscale(2,1,8);
+    ik.unscale();
 
+    interpm_krige_optim
+      <ubvector,mat_t,row_t,col_t,
+       mat2_t,row2_t,ubmatrix,
+       o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > iko;
+    
   }
 
 #ifdef O2SCL_NEVER_DEFINED
   
-  {
-    cout << "interpm_krige, rescaled" << endl;
-    // Construct the data
-    vector<ubvector> x;
-    ubvector tmp(2);
-    tmp[0]=1.04; tmp[1]=0.02;
-    x.push_back(tmp);
-    tmp[0]=0.03; tmp[1]=1.01; 
-    x.push_back(tmp);
-    tmp[0]=0.81; tmp[1]=0.23; 
-    x.push_back(tmp);
-    tmp[0]=0.03; tmp[1]=0.83; 
-    x.push_back(tmp);
-    tmp[0]=0.03; tmp[1]=0.99; 
-    x.push_back(tmp);
-    tmp[0]=0.82; tmp[1]=0.84; 
-    x.push_back(tmp);
-    tmp[0]=0.03; tmp[1]=0.24; 
-    x.push_back(tmp);
-    tmp[0]=0.03; tmp[1]=1.02; 
-    x.push_back(tmp);
-    mat_t x2(x);
-
-    vector<ubvector> y;
-    tmp.resize(8);
-    for(size_t i=0;i<8;i++) {
-      tmp[i]=ft(x[i][0],x[i][1]);
-    }
-    y.push_back(tmp);
-    mat_t y2(y);
-
-    interpm_krige<ubvector,mat_t,matrix_row_gen<mat_t> > ik;
-    ik.verbose=2;
-    f1_t fa1={std::bind(&covar<matrix_row_gen<mat_t>,matrix_row_gen<mat_t> >,
-			std::placeholders::_1,std::placeholders::_2,1.118407)};
-    f2_t fa2={std::bind(&covar<matrix_row_gen<mat_t>,ubvector>,
-			std::placeholders::_1,std::placeholders::_2,1.118407)};
-    ik.set_data<matrix_row_gen<mat_t> >(2,1,8,x2,y2,fa1,true);
-  
-    ubvector point(2);
-    ubvector out(1);
-    point[0]=0.4;
-    point[1]=0.5;
-    ik.eval(point,out,fa2);
-    cout << out[0] << " " << ft(point[0],point[1]) << endl;
-    point[0]=0.0301;
-    point[1]=0.9901;
-    ik.eval(point,out,fa2);
-    cout << out[0] << " " << ft(point[0],point[1]) << endl;
-    cout << endl;
-  }
-
-  {
-    cout << "interpm_krige, rescaled, with data in a table" << endl;
-    // Try a table representation
-    table<> tab;
-    tab.line_of_names("x y z");
-    tab.line_of_data(2,vector<double>({1.04,0.02}));
-    tab.line_of_data(2,vector<double>({0.03,1.01}));
-    tab.line_of_data(2,vector<double>({0.81,0.23}));
-    tab.line_of_data(2,vector<double>({0.03,0.83}));
-    tab.line_of_data(2,vector<double>({0.03,0.99}));
-    tab.line_of_data(2,vector<double>({0.82,0.84}));
-    tab.line_of_data(2,vector<double>({0.03,0.24}));
-    tab.line_of_data(2,vector<double>({0.03,1.02}));
-    for(size_t i=0;i<8;i++) {
-      tab.set("z",i,ft(tab.get("x",i),tab.get("y",i)));
-    }
-    matrix_view_table<> cmvtx(tab,{"x","y"});
-    matrix_view_table_transpose<> cmvty(tab,{"z"});
-  
-    interpm_krige<ubvector,mat2_t,matrix_row_gen<mat2_t> > ik;
-    ik.verbose=2;
-    f1_t fa1={std::bind(&covar<matrix_row_gen<mat2_t>,matrix_row_gen<mat2_t> >,
-			std::placeholders::_1,std::placeholders::_2,1.118407)};
-    f2_t fa2={std::bind(&covar<matrix_row_gen<mat2_t>,ubvector>,
-			std::placeholders::_1,std::placeholders::_2,1.118407)};
-    ik.set_data<matrix_row_gen<matrix_view_table_transpose<> > >
-      (2,1,8,cmvtx,cmvty,fa1,true);
-  
-    ubvector point(2);
-    ubvector out(1);
-    point[0]=0.4;
-    point[1]=0.5;
-    ik.eval(point,out,fa2);
-    cout << out[0] << " " << ft(point[0],point[1]) << endl;
-    point[0]=0.0301;
-    point[1]=0.9901;
-    ik.eval(point,out,fa2);
-    cout << out[0] << " " << ft(point[0],point[1]) << endl;
-    cout << endl;
-  }
-
   {
     cout << "interpm_krige_optim, rescaled" << endl;
     // Construct the data

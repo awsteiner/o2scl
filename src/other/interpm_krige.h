@@ -267,15 +267,15 @@ namespace o2scl {
 
     /** \brief Remove the rescaling of the data
      */
-    void unscale(size_t n_in, size_t n_out, size_t n_points) {
+    void unscale() {
       if (rescaled==true) {
-        for(size_t j=0;j<n_in;j++) {
-          for(size_t i=0;i<n_points;i++) {
+        for(size_t j=0;j<nd_in;j++) {
+          for(size_t i=0;i<np;i++) {
             (*x)(i,j)=(*x)(i,j)*std_x[j]+mean_x[j];
           }
         }
-        for(size_t j=0;j<n_out;j++) {
-          for(size_t i=0;i<n_points;i++) {
+        for(size_t j=0;j<nd_out;j++) {
+          for(size_t i=0;i<np;i++) {
             (*y)(j,i)=(*y)(j,i)*std_y[j]+mean_y[j];
           }
         }
@@ -407,13 +407,6 @@ namespace o2scl {
            class mat2_t, class mat2_row_t, class mat3_t,
            class mat_inv_t=o2scl_linalg::matrix_invert_det_cholesky<mat3_t> >
   class interpm_krige_optim :
-    /*{    
-  template<class vec_t=boost::numeric::ublas::vector<double>,
-           class mat_t=boost::numeric::ublas::vector<double>,
-           class mat_row_t=boost::numeric::ublas::matrix_row
-           <boost::numeric::ublas::vector<double> > >
-  class interpm_krige_optim :
-    */
     public interpm_krige<vec_t,mat_t,mat_row_t,mat_col_t,mat2_t,
                          mat2_row_t,mat3_t,mat_inv_t> {    
 
@@ -462,8 +455,6 @@ namespace o2scl {
     /// Pointer to the user-specified minimizer
     min_base<> *mp;
   
-#ifdef O2SCL_NEVER_DEFINED
-
     /** \brief Function to optimize the covariance parameters
      */
     template<class vec3_t> 
@@ -511,7 +502,7 @@ namespace o2scl {
             std::cout << "Performing matrix inversion with size "
                       << size-1 << std::endl;
           }
-          int cret=mi.invert_inplace(size-1,KXX);
+          int cret=this->mi.invert_inplace(size-1,KXX);
           if (cret!=0) {
             success=1;
             return 1.0e99;
@@ -577,7 +568,7 @@ namespace o2scl {
           std::cout << "Performing matrix inversion with size "
                     << size << std::endl;
         }
-        int cret=mi.invert_det(size,KXX,this->inv_KXX[iout],lndet);
+        int cret=this->mi.invert_det(size,KXX,this->inv_KXX[iout],lndet);
         if (cret!=0) {
           success=1;
           return 1.0e99;
@@ -656,8 +647,7 @@ namespace o2scl {
     }
   
     /// Initialize interpolation routine
-    template<class mat2_row_t, class mat2_t, class vec2_t,
-             class vec3_t>
+    template<class vec2_t, class vec3_t>
     int set_data_noise(size_t n_in, size_t n_out, size_t n_points,
                        mat_t &user_x, mat2_t &user_y, 
                        const vec2_t &noise_var, const vec3_t &len_precompute,
@@ -684,9 +674,10 @@ namespace o2scl {
       this->np=n_points;
       this->nd_in=n_in;
       this->nd_out=n_out;
-      std::swap(this->x,user_x);
       this->rescaled=rescale;
       this->data_set=true;
+      this->x=&user_x;
+      this->y=&user_y;
        
       if (verbose>0) {
         std::cout << "interpm_krige_optim::set_data_noise() : Using "
@@ -695,24 +686,33 @@ namespace o2scl {
                   << this->nd_out << " output variables." << std::endl;
       }
 
-      // Get max and min of all parameters
-      this->min.resize(n_in);
-      this->max.resize(n_in);
-      for(size_t j=0;j<n_in;j++) {
-        this->min[j]=(this->x)(0,j);
-        this->max[j]=(this->x)(0,j);
-        for(size_t i=1;i<n_points;i++) {
-          double val=(this->x)(i,j);
-          if (val>this->max[j]) this->max[j]=val;
-          if (val<this->min[j]) this->min[j]=val;
-        }
-      }
-
       if (rescale==true) {
+        this->mean_x.resize(n_in);
+        this->std_x.resize(n_in);
         for(size_t j=0;j<n_in;j++) {
+          mat_col_t vec(*this->x,j);
+          this->mean_x[j]=vector_mean(n_points,vec);
+          this->std_x[j]=vector_stddev(n_points,vec);
+          if (verbose>1) {
+            std::cout << "Mean,stddev of x " << j << " of " << n_in << " is "
+                      << this->mean_x[j] << " " << this->std_x[j] << std::endl;
+          }
           for(size_t i=0;i<n_points;i++) {
-            (this->x)(i,j)=(((this->x)(i,j)-this->min[j])/
-                            (this->max[j]-this->min[j])-0.5)*2.0;
+            user_x(i,j)=(user_x(i,j)-this->mean_x[j])/this->std_x[j];
+          }
+        }
+        this->mean_y.resize(n_out);
+        this->std_y.resize(n_out);
+        for(size_t j=0;j<n_out;j++) {
+          mat2_row_t vec(*this->y,j);
+          this->mean_y[j]=vector_mean(n_points,vec);
+          this->std_y[j]=vector_stddev(n_points,vec);
+          if (verbose>1) {
+            std::cout << "Mean,stddev of y " << j << " of " << n_out << " is "
+                      << this->mean_y[j] << " " << this->std_y[j] << std::endl;
+          }
+          for(size_t i=0;i<n_points;i++) {
+            user_y(j,i)=(user_y(j,i)-this->mean_y[j])/this->std_y[j];
           }
         }
         if (verbose>1) {
@@ -733,7 +733,7 @@ namespace o2scl {
       for(size_t iout=0;iout<n_out;iout++) {
       
         // Select the row of the data matrix
-        mat2_row_t yiout(user_y,iout);
+        mat2_row_t yiout(*this->y,iout);
       
         if (iout<len_precompute.size()) {
 	
@@ -765,7 +765,8 @@ namespace o2scl {
           funct mf=std::bind
             (std::mem_fn<double(double,double,size_t,mat2_row_t &,int &)>
              (&interpm_krige_optim<vec_t,mat_t,
-              mat_row_t>::qual_fun<mat2_row_t>),
+              mat_row_t,mat_col_t,mat2_t,mat2_row_t,
+              mat3_t,mat_inv_t>::qual_fun<mat2_row_t>),
              this,std::placeholders::_1,noise_var[iout],iout,yiout,
              std::ref(success));
 	
@@ -855,7 +856,8 @@ namespace o2scl {
                                                const mat_row_t &,
                                                size_t,double)>
                             (&interpm_krige_optim<vec_t,mat_t,
-                             mat_row_t>::covar<mat_row_t,
+                             mat_row_t,mat_col_t,mat2_t,mat2_row_t,
+                             mat3_t,mat_inv_t>::covar<mat_row_t,
                              mat_row_t>),this,
                             std::placeholders::_1,std::placeholders::_2,
                             n_in,len[iout]);
@@ -863,7 +865,8 @@ namespace o2scl {
                                                const vec_t &,
                                                size_t,double)>
                             (&interpm_krige_optim<vec_t,mat_t,
-                             mat_row_t>::covar<mat_row_t,
+                             mat_row_t,mat_col_t,mat2_t,mat2_row_t,
+                             mat3_t,mat_inv_t>::covar<mat_row_t,
                              vec_t>),this,
                             std::placeholders::_1,std::placeholders::_2,
                             n_in,len[iout]);
@@ -878,7 +881,7 @@ namespace o2scl {
         \ref o2scl::interpm_idw::set_data() . See this
         class description for more details.
     */
-    template<class mat2_row_t, class mat2_t, class vec2_t>
+    template<class vec2_t>
     int set_data(size_t n_in, size_t n_out, size_t n_points,
                  mat_t &user_x, mat2_t &user_y,
                  const vec2_t &len_precompute,
@@ -886,13 +889,11 @@ namespace o2scl {
       vec_t noise_vec;
       noise_vec.resize(1);
       noise_vec[0]=0.0;
-      return set_data_noise<mat2_row_t,mat2_t,vec_t,vec2_t>
+      return set_data_noise<vec_t,vec2_t>
         (n_in,n_out,n_points,user_x,
          user_y,noise_vec,len_precompute,rescale,err_on_fail);
     }
 
-#endif
-  
   };
 
 #ifdef O2SCL_NEVER_DEFINED

@@ -207,7 +207,7 @@ namespace o2scl_linalg {
     /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
         and the determinant in \c A_det
     */
-    virtual int invert_det(size_t n, const mat_t &A, mat_t &A_inv,
+    virtual int invert_det(size_t n, const arma_mat_t &A, arma_mat_t &A_inv,
                             double &A_det) {
       A_det=det(A);
       A_inv=inv(A);
@@ -241,7 +241,7 @@ namespace o2scl_linalg {
     /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
         and the determinant in \c A_det
     */
-    virtual int invert_det(size_t n, const mat_t &A, mat_t &A_inv,
+    virtual int invert_det(size_t n, const arma_mat_t &A, arma_mat_t &A_inv,
                             double &A_det) {
       A_det=det(A);
       A_inv=inv_sympd(A);
