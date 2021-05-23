@@ -90,8 +90,8 @@ int main(void) {
     
     vector<string> col_list_x={"x","y"};
     vector<string> col_list_y={"z"};
-    matrix_view_table mvt_x(tab,col_list_x);
-    matrix_view_table_transpose mvt_y(tab,col_list_y);
+    matrix_view_table<> mvt_x(tab,col_list_x);
+    matrix_view_table_transpose<> mvt_y(tab,col_list_y);
 
     ik.set_data<>(2,1,8,mvt_x,mvt_y,fa1);
       
