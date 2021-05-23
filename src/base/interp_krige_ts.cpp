@@ -131,19 +131,19 @@ int main(void) {
   // Output default interpolation (cubic spline) results
   
   double exact, res;
-  interp_vec<ubvector> io;
-  io.set(10,x2,y2);
+  interp_vec<ubvector> iv;
+  iv.set(10,x2,y2);
 
   cout << "Class interp_vec with cubic spline results: " << endl;
   exact=sin(1.01);
-  res=io.eval(1.01);
-  t.test_rel(exact,res,1.0e-4,"io 1");
+  res=iv.eval(1.01);
+  t.test_rel(exact,res,1.0e-4,"iv 1");
   exact=sin(1.0);
-  res=io.eval(1.0);
-  t.test_rel(exact,res,1.0e-8,"io 2");
+  res=iv.eval(1.0);
+  t.test_rel(exact,res,1.0e-8,"iv 2");
   exact=sin(o2scl_const::pi);
-  res=io.eval(o2scl_const::pi);
-  t.test_abs(exact,res,1.0e-3,"io 3");
+  res=iv.eval(o2scl_const::pi);
+  t.test_abs(exact,res,1.0e-3,"iv 3");
   cout << endl;
   
   // ---------------------------------------------------------------
@@ -165,6 +165,10 @@ int main(void) {
   t.test_abs(exact,res,1.0e-4,"iko 3");
   cout << endl;
 
+  cout << iko.deriv(1.5) << " " << cos(1.5) << endl;
+  cout << iko.deriv2(1.5) << " " << -sin(1.5) << endl;
+  //exit(-1);
+  
   cout << "Class interp_krige_optim with simple interface, "
        << "rescaled version." << endl;
   iko.set(10,x2,y2,true);

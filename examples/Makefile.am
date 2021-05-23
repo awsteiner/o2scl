@@ -77,10 +77,10 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_stiff.scr ex_chebapp.scr ex_poly.scr ex_conmin.scr \
 	ex_nucleus_rmf.scr ex_methast.scr ex_eos_had_skyrme.scr \
 	ex_nucmass.scr ex_tensor.scr ex_mcmc.scr ex_nstar_rot.scr \
-	ex_interp2_nogrid.scr ex_interp.scr ex_eos_gibbs.scr \
+	ex_interp.scr ex_eos_gibbs.scr \
 	ex_fermion_summ.scr
 
-# ex_ode_it.scr ex_eos_sn.scr 
+# ex_ode_it.scr ex_eos_sn.scr ex_interp2_nogrid.scr 
 
 else
 
@@ -91,11 +91,11 @@ BENCHMARK_PRGS = bm_poly.scr bm_root.scr bm_min.scr
 EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_mroot.scr ex_mmin.scr ex_inte.scr ex_deriv.scr \
 	ex_ode.scr ex_anneal.scr ex_mcarlo.scr ex_string.scr ex_mmin_fix.scr \
-	ex_stiff.scr ex_tensor.scr ex_mcmc.scr ex_interp2_nogrid.scr \
+	ex_stiff.scr ex_tensor.scr ex_mcmc.scr \
 	ex_chebapp.scr ex_poly.scr ex_conmin.scr ex_methast.scr \
 	ex_interp.scr
 
-# ex_ode_it.scr 
+# ex_ode_it.scr ex_interp2_nogrid.scr 
 
 endif
 

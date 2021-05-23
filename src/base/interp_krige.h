@@ -91,15 +91,15 @@ namespace o2scl {
     
     /** \brief Pointer to user-specified derivative
      */
-    covar_func_t *df;
+    covar_func_t *fd;
     
     /** \brief Pointer to user-specified second derivative
      */
-    covar_func_t *df2;
+    covar_func_t *fd2;
     
     /** \brief Pointer to user-specified integral
      */
-    covar_integ_t *intp;
+    covar_integ_t *fi;
 
     /** \brief If true, then the data was rescaled to zero mean and unit
         standard deviation
@@ -156,12 +156,17 @@ namespace o2scl {
 				   const vec_t &y, covar_func_t &fcovar,
 				   covar_func_t &fderiv,
 				   covar_func_t &fderiv2,
-				   covar_func_t &finteg,
+				   covar_integ_t &finteg,
 				   double noise_var, bool rescale=false,
                                    bool err_on_fail=true) {
-      O2SCL_ERR("Function set_covar_di_noise not yet implemented.",
-		o2scl::exc_eunimpl);
-      return 0;
+
+      f=&fcovar;
+      fd=&fderiv;
+      fd2=&fderiv2;
+      fi=&finteg;
+
+      return set_covar_noise(n_dim,x,y,fcovar,noise_var,
+                             rescale,err_on_fail);
     }
     
     /// Initialize interpolation routine
@@ -285,6 +290,83 @@ namespace o2scl {
       return ret;
     }
 
+    /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
+    virtual double deriv(double x0) const {
+      
+      double ret=0.0;
+      
+      if (rescaled) {
+        
+        x0=(x0-mean_x)/std_x;
+        
+        for(size_t i=0;i<this->sz;i++) {
+          ret+=(*fd)(x0,x_r[i])*Kinvf[i];
+        }
+
+        ret=ret*std_y+mean_y;
+        
+      } else {
+        
+        for(size_t i=0;i<this->sz;i++) {
+          ret+=(*fd)(x0,(*this->px)[i])*Kinvf[i];
+        }
+      }
+
+      return ret;
+    }
+    
+    /** \brief Give the value of the second derivative  
+	\f$ y^{\prime \prime}(x=x_0) \f$
+    */
+    virtual double deriv2(double x0) const {
+      
+      double ret=0.0;
+      
+      if (rescaled) {
+        
+        x0=(x0-mean_x)/std_x;
+        
+        for(size_t i=0;i<this->sz;i++) {
+          ret+=(*fd2)(x0,x_r[i])*Kinvf[i];
+        }
+
+        ret=ret*std_y+mean_y;
+        
+      } else {
+        
+        for(size_t i=0;i<this->sz;i++) {
+          ret+=(*fd2)(x0,(*this->px)[i])*Kinvf[i];
+        }
+      }
+
+      return ret;
+    }
+    
+    /// Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$ .
+    virtual double integ(double a, double b) const {
+      double ret=0.0;
+      
+      if (rescaled) {
+        
+        a=(a-mean_x)/std_x;
+        b=(b-mean_x)/std_x;
+        
+        for(size_t i=0;i<this->sz;i++) {
+          ret+=(*fi)(a,b,x_r[i])*Kinvf[i];
+        }
+
+        ret=ret*std_y+mean_y;
+        
+      } else {
+        
+        for(size_t i=0;i<this->sz;i++) {
+          ret+=(*fi)(a,b,(*this->px)[i])*Kinvf[i];
+        }
+      }
+
+      return ret;
+    }
+
     /** \brief Return the interpolation uncertainty from the 
         Gaussian process
     */
@@ -372,23 +454,6 @@ namespace o2scl {
       return prob_dens_gaussian(cent,sigma);
     }
     
-    /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
-    virtual double deriv(double x0) const {
-      return 0.0;
-    }
-
-    /** \brief Give the value of the second derivative  
-	\f$ y^{\prime \prime}(x=x_0) \f$
-    */
-    virtual double deriv2(double x0) const {
-      return 0.0;
-    }
-
-    /// Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$ .
-    virtual double integ(double a, double b) const {
-      return 0.0;
-    }
-
     /// Return the type, \c "interp_krige".
     virtual const char *type() const { return "interp_krige"; }
 
@@ -437,6 +502,15 @@ namespace o2scl {
 
     /// Function object for the covariance
     std::function<double(double,double)> ff;
+  
+    /// Function object for the covariance
+    std::function<double(double,double)> ffd;
+  
+    /// Function object for the covariance
+    std::function<double(double,double)> ffd2;
+  
+    /// Function object for the covariance
+    std::function<double(double,double,double)> ffi;
   
     /// The covariance function length scale
     double len;
@@ -753,7 +827,6 @@ namespace o2scl {
           len=len_min*pow(len_ratio,((double)j)/((double)nlen-1));
 
           int success=0;
-          std::cout << "Herex: " << j << " " << nlen << std::endl;
           qual=qual_fun(len,noise_var,success);
 	
           if (success==0 && (min_set==false || qual<min_qual)) {
@@ -784,8 +857,19 @@ namespace o2scl {
       ff=std::bind(std::mem_fn<double(double,double)>
                    (&interp_krige_optim<vec_t,vec2_t>::covar),this,
                    std::placeholders::_1,std::placeholders::_2);
+      ffd=std::bind(std::mem_fn<double(double,double)>
+                   (&interp_krige_optim<vec_t,vec2_t>::deriv_covar),this,
+                   std::placeholders::_1,std::placeholders::_2);
+      ffd2=std::bind(std::mem_fn<double(double,double)>
+                   (&interp_krige_optim<vec_t,vec2_t>::deriv2_covar),this,
+                   std::placeholders::_1,std::placeholders::_2);
+      ffi=std::bind(std::mem_fn<double(double,double,double)>
+                    (&interp_krige_optim<vec_t,vec2_t>::integ_covar),this,
+                    std::placeholders::_1,std::placeholders::_2,
+                    std::placeholders::_3);
       
-      this->set_covar_noise(size,x,y,ff,noise_var,this->rescaled);
+      this->set_covar_di_noise(size,x,y,ff,ffd,
+                               ffd2,ffi,noise_var,this->rescaled);
       
       return 0;
     }
