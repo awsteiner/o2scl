@@ -43,14 +43,11 @@ namespace o2scl {
 
   /** \brief Random number generator (GSL)
 
-      This object is built on the <tt>gsl_rng</tt> struct and modeled
-      to look like a <tt>std::random_device</tt> object.
-
       If \c seed is zero, or is not given, then the default seed
       specific to the particular random number generator is used. 
       
-      \future This will likely be completely replaced by the random
-      number generators in the standard library.
+      \future This is being replaced by \ref o2scl::rng now that
+      C++11 support is more widespread.
   */
   class rng_gsl : public gsl_rng {
 

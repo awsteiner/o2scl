@@ -196,7 +196,6 @@ namespace o2scl {
       directly without using the table methods and the 
       EOS calculation would be a bit faster.
   */
-
   class nstar_cold {
 
   public:
@@ -411,6 +410,9 @@ namespace o2scl {
 
         This function returns a non-zero value if the densities are
         negative or if the EOS fails.
+
+        This function is very similar to \ref
+        o2scl::eos_had_base::solve_beta_eq_T0().
     */
     int solve_fun(size_t nv, const ubvector &x, ubvector &y,
                   thermo &hb, double n_B);
@@ -490,6 +492,12 @@ namespace o2scl {
      */
     int calc_eos_T(double T, double np_0=0.0);
     
+    /** \brief Compute the EOS in betq-equilibrium at finite temperature
+        at a particular density
+     */
+    int calc_eos_point_beta_T(double nb, double T, double &np,
+                                         thermo &hb);
+  
     /** \brief Compute the EOS in betq-equilibrium at fixed entropy per baryon
      */
     int calc_eos_s(double s, double np_0=0.0);

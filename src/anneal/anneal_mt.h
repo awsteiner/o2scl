@@ -23,7 +23,7 @@
 #ifndef O2SCL_ANNEAL_MT_H
 #define O2SCL_ANNEAL_MT_H
 
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 #include <o2scl/multi_funct.h>
 #include <o2scl/anneal.h>
 #include <o2scl/vector.h>
@@ -72,7 +72,7 @@ namespace o2scl {
   */
   template<class func_t=multi_funct,
     class vec_t=boost::numeric::ublas::vector<double>,
-    class rng_t=int, class rng_dist_t=rng_gsl>
+    class rng_t=int, class rng_dist_t=rng>
     class anneal_mt : public anneal_base<func_t,vec_t,rng_t,rng_dist_t> {
 
   public:

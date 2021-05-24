@@ -33,6 +33,7 @@
 #include <o2scl/lib_settings.h>
 #include <o2scl/fit_nonlin.h>
 #include <o2scl/eos_crust_virial.h>
+#include <o2scl/rng.h>
 #include <o2scl/rng_gsl.h>
 #include <o2scl/root_brent_gsl.h>
 #include <o2scl/deriv_gsl.h>
@@ -227,7 +228,7 @@ namespace o2scl {
     bool model_selected;
   
     /// Random number generator
-    o2scl::rng_gsl rng;
+    o2scl::rng_gsl rg;
     //@}
   
     /// \name EOS outputs

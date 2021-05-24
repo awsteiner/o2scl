@@ -583,7 +583,7 @@ eos_had_phen::eos_had_phen() {
   sk_Tcorr.alpha=0.144165;
 
   // Seed the random number generator with the clock time
-  rng.clock_seed();
+  rg.clock_seed();
 
   old_version=false;
 
@@ -3310,22 +3310,22 @@ int eos_had_phen::random() {
     }
 
     // Select a random value for phi
-    phi=rng.random();
+    phi=rg.random();
 
     // Random neutron star EOS
-    i_ns=rng.random_int(nstar_tab.get_nlines());
+    i_ns=rg.random_int(nstar_tab.get_nlines());
 
     // Select a random QMC two-body interaction
-    qmc_alpha=(rng.random()*0.06)+0.47;
-    qmc_a=(rng.random()*1.0)+12.5;
+    qmc_alpha=(rg.random()*0.06)+0.47;
+    qmc_a=(rg.random()*1.0)+12.5;
    
     // Select a random value of S and L according
     // to perscription in PRC 91, 015804 (2015)
-    eos_L=rng.random()*21.0+44.0;
-    eos_S=rng.random()*6.6+29.5;
+    eos_L=rg.random()*21.0+44.0;
+    eos_S=rg.random()*6.6+29.5;
 
     // Select a random Skyrme model
-    i_skyrme=rng.random_int(UNEDF_tab.get_nlines());
+    i_skyrme=rg.random_int(UNEDF_tab.get_nlines());
     
     if (true || verbose>1) {
       cout << "Trying random model: " << endl;

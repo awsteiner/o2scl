@@ -39,6 +39,7 @@
 #include <boost/numeric/ublas/operation.hpp>
 
 #include <o2scl/hist.h>
+#include <o2scl/rng.h>
 #include <o2scl/rng_gsl.h>
 #include <o2scl/search_vec.h>
 #include <o2scl/cholesky.h>
@@ -630,7 +631,7 @@ namespace o2scl {
     ubvector range;
   
     /// Random number generator
-    mutable rng_gsl rng;
+    mutable rng<> rg;
   
   public:
   
@@ -1545,7 +1546,7 @@ namespace o2scl {
 
       \comment
       I had previously used std::uniform_real_distribution
-      instead of rng_gsl, but this caused problems with
+      instead of rng, but this caused problems with
       intel compilers.
       \endcomment
 
@@ -1601,7 +1602,7 @@ namespace o2scl {
 
   /** \brief Internal random number generator
    */
-  mutable rng_gsl rg;
+    mutable rng<> rg;
   
   /** \brief Internal set function
 

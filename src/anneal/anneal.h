@@ -35,7 +35,7 @@
 
 #include <o2scl/multi_funct.h>
 #include <o2scl/mmin.h>
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 #include <o2scl/prob_dens_func.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -69,7 +69,7 @@ namespace o2scl {
   */
   template<class func_t=multi_funct,
     class vec_t=boost::numeric::ublas::vector<double>,
-    class rng_t=rng_gsl> class anneal_base :
+    class rng_t=rng> class anneal_base :
     public mmin_base<func_t,func_t,vec_t> {
       
 #ifdef O2SCL_NEVER_DEFINED

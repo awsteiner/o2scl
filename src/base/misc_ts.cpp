@@ -173,7 +173,7 @@ int main(void) {
   for(size_t i=0;i<100;i++) {
     cout << gx.gen() << endl;
   }
-  
+
   t.report();
 
   return 0;

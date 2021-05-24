@@ -50,7 +50,8 @@ namespace o2scl {
       proton properties to be specified in powers of \f$ \mathrm{fm}
       \f$ so that masses and chemical potentials are in powers of \f$
       \mathrm{fm}^{-1} \f$ and energy densities and pressures are in
-      powers of \f$ \mathrm{fm}^{-4} \f$ .
+      powers of \f$ \mathrm{fm}^{-4} \f$ , except where otherwise
+      specified. 
 
       Denote the number density of neutrons as \f$ n_n \f$, the number
       density of protons as \f$ n_p \f$, the total baryon density \f$
@@ -77,7 +78,6 @@ namespace o2scl {
       + \frac{Q_4}{3!} \epsilon^3 \right) \qquad
       \left(\mathrm{Eq.}~2\right)
       \f]
-      (Adapted slightly from Piekarewicz et al. (2009)). 
       From this, one can
       compute the energy density of nuclear matter \f$
       \varepsilon(n_B,\delta) = n_B E(n_B,\delta) \f$, the chemical
@@ -85,7 +85,13 @@ namespace o2scl {
       n_i ) \f$ and the pressure \f$ P = -\varepsilon + \mu_n n_n +
       \mu_p n_p \f$. This expansion motivates the definition of
       several separate terms. The binding energy \f$ B \f$ of
-      symmetric nuclear matter (\f$ \delta = 0 \f$) is around 16 MeV.
+      symmetric nuclear matter (\f$ \delta = 0 \f$) is around 
+      \f$ -16~\mathrm{MeV} \f$ .
+
+      \verbatim embed:rst
+      See [Piekarewicz09]_ for an excellent discussion on which
+      some of this documentation is based.
+      \endverbatim
 
       The compression modulus is usually defined by \f$ \chi = -1/V
       (dV/dP) = 1/n (dP/dn)^{-1} \f$ . In nuclear physics it has
@@ -114,8 +120,11 @@ namespace o2scl {
       We denote \f$ K \equiv K(n_B=n_0,\delta=0) \f$ and similarly for
       \f$ \tilde{K} \f$, the quantity in Eq. 1 above. In nuclear
       matter at saturation, the pressure is zero and \f$ K = \tilde{K}
-      \f$. See Chabanat et al. (1997) for further discussion of the distinction
-      between \f$ K \f$ and \f$ \tilde{K} \f$.
+      \f$. 
+      \verbatim embed:rst
+      See [Chabanat97]_ for further discussion of the distinction
+      between :math:`K` and :math:`\tilde{K}`.
+      \endverbatim
 
       The symmetry energy, \f$ S(n_B,\delta), \f$ can be defined as
       \f[
@@ -238,7 +247,7 @@ namespace o2scl {
 
       Note that assuming terms of order \f$ \epsilon^3 \f$ and higher
       are zero and solving for the baryon density for which \f$ P=0 \f$
-      gives, to order \f$ \delta^2 \f$ (Piekarewicz et al. (2009)),
+      gives, to order \f$ \delta^2 \f$,
       \f[
       n_{B,\mathrm{sat}} = n_0 \left[ 1 - \frac{3 L \delta^2}{K} \right]
       \f]
@@ -273,7 +282,7 @@ namespace o2scl {
       {3 \left[E(n_B,1/2)-E(n_B,0)\right]}
       \f]
       \verbatim embed:rst
-      (see [Piekarewicz09]_ and [Steiner06]_).
+      (see [Steiner06]_ and [Piekarewicz09]_).
       \endverbatim
       This function can be expressed
       either in terms of \f$ \tilde{S} \f$ or \f$ S_4 \f$
@@ -292,8 +301,10 @@ namespace o2scl {
       \f[
       \eta(n_0) = \frac{4 S + 5 S_4}{4 S + S_4}
       \f]
-      (Note that \f$ S_4 \f$ is referred to as \f$ Q \f$ in 
-      Steiner (2006)). Sometimes it is useful to separate out
+      \verbatim embed:rst
+      (Note that :math:`S_4` is referred to as :math:`Q` in [Steiner06]_.)
+      \endverbatim
+      Sometimes it is useful to separate out
       the kinetic and potential parts of the energy density when
       computing \f$ \eta  \f$, and the class \ref eos_had_sym4_base
       is useful for this purpose. 
@@ -328,13 +339,15 @@ namespace o2scl {
   class eos_had_base : public eos_base {
 
   public:
-    
-    typedef boost::numeric::ublas::vector<double> ubvector;
-    
+
     eos_had_base();
 
     virtual ~eos_had_base() {};
 
+    /** \brief The uBlas vector type
+     */
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    
     /** \brief Binding energy (without the rest mass) in 
         \f$ \mathrm{fm}^{-1} \f$
     */
@@ -550,36 +563,6 @@ namespace o2scl {
     */
     virtual double fn0(double delta, double &leoa);
 
-    /** \brief Compute (numerically) the number susceptibilities as a
-        function of the chemical potentials, \f$ \partial^2 P /
-        \partial \mu_i \mu_j \f$
-
-        \verbatim embed:rst
-        .. todo:: 
-
-           - This function, eos_had_base::f_number_suscept(), should
-             be overloaded for Skyrme with derivatives
-
-        \endverbatim
-    */
-    virtual void f_number_suscept(double mun, double mup, double &dPdnn, 
-                                  double &dPdnp, double &dPdpp);
-
-    /** \brief Compute (numerically) the 'inverse' number
-        susceptibilities as a function of the densities, \f$
-        \partial^2 \varepsilon / \partial n_i n_j \f$
-
-        \verbatim embed:rst
-        .. todo:: 
-
-           - This function, eos_had_base::f_inv_number_suscept(),
-             should be overloaded for Skyrme with derivatives
-
-        \endverbatim
-    */
-    virtual void f_inv_number_suscept(double mun, double mup, double &dednn, 
-                                      double &dednp, double &dedpp);
-    
     /** \brief Calculates some of the EOS properties at the saturation 
         density
         
@@ -596,7 +579,7 @@ namespace o2scl {
     virtual int saturation();
     //@}
 
-    /// \name Functions for calculating physical properties
+    /// \name Nucleonic matter functions
     //@{
     /** \brief Compute the neutron chemical potential at fixed
         density
@@ -695,10 +678,7 @@ namespace o2scl {
         internally stored neutron and proton objects.
     */
     double calc_edensity_delta(double delta, double nb);
-    //@}
 
-    /// \name Nuclear matter functions
-    //@{
     /** \brief Solve for the chemical potentials given the densities
 
         The neutron and proton chemical potentials should be stored in
@@ -730,6 +710,46 @@ namespace o2scl {
     */
     int nuc_matter_e(size_t nv, const ubvector &x, ubvector &y, 
                      double mun0, double mup0);
+    
+    /** \brief Compute the EOS in beta-equilibrium at 
+        zero temperature
+
+        This solves the function \ref solve_beta_eq_T0().
+    */
+    virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
+                           fermion &e, bool include_muons,
+                           fermion &mu, fermion_rel &frel,
+                           std::shared_ptr<table_units<> > results);
+
+    /** \brief Compute (numerically) the number susceptibilities as a
+        function of the chemical potentials, \f$ \partial^2 P /
+        \partial \mu_i \mu_j \f$
+
+        \verbatim embed:rst
+        .. todo:: 
+
+           - This function, eos_had_base::f_number_suscept(), should
+             be overloaded for Skyrme with derivatives
+
+        \endverbatim
+    */
+    virtual void f_number_suscept(double mun, double mup, double &dPdnn, 
+                                  double &dPdnp, double &dPdpp);
+
+    /** \brief Compute (numerically) the 'inverse' number
+        susceptibilities as a function of the densities, \f$
+        \partial^2 \varepsilon / \partial n_i n_j \f$
+
+        \verbatim embed:rst
+        .. todo:: 
+
+           - This function, eos_had_base::f_inv_number_suscept(),
+             should be overloaded for Skyrme with derivatives
+
+        \endverbatim
+    */
+    virtual void f_inv_number_suscept(double mun, double mup, double &dednn, 
+                                      double &dednp, double &dedpp);
     //@}
 
     /// \name Set auxilliary objects
@@ -762,8 +782,8 @@ namespace o2scl {
         Computing the slope of the symmetry energy at the saturation
         density requires two derivative objects, because it has to
         take an isospin derivative and a density derivative. Thus this
-        second \ref deriv_base object is used in the function
-        fesym_slope().
+        second \ref deriv_base object is used in the functions
+        fesym_slope(), fesym_curve(), and fesym_skew().
     */
     virtual void set_sat_deriv2(deriv_base<> &de);
     
@@ -771,23 +791,7 @@ namespace o2scl {
     virtual void set_n_and_p(fermion &n, fermion &p);
     //@}
 
-    /** \brief The defaut neutron
-
-        By default this has a spin degeneracy of 2 and a mass of \ref
-        o2scl_mks::mass_neutron . Also the value of 
-        <tt>part::non_interacting</tt> is set to <tt>false</tt>.
-    */
-    fermion def_neutron;
-
-    /** \brief The defaut proton
-
-        By default this has a spin degeneracy of 2 and a mass of \ref
-        o2scl_mks::mass_proton . Also the value of 
-        <tt>part::non_interacting</tt> is set to <tt>false</tt>.
-    */
-    fermion def_proton;
-
-    /// \name Default solvers and derivative classes
+    /// \name Default solvers, derivative classes, and fermions
     //@{
     /** \brief The default object for derivatives
         
@@ -817,6 +821,24 @@ namespace o2scl {
         saturation_matter_e() (1 variable).
     */
     root_cern<> def_sat_root;
+
+    /** \brief The defaut neutron
+
+        By default this has a spin degeneracy of 2 and a mass of \ref
+        o2scl_mks::mass_neutron converted to \f$ \mathrm{fm}^{-1} \f$. 
+        Also the value of 
+        <tt>part::non_interacting</tt> is set to <tt>false</tt>.
+    */
+    fermion def_neutron;
+
+    /** \brief The defaut proton
+
+        By default this has a spin degeneracy of 2 and a mass of \ref
+        o2scl_mks::mass_proton converted to \f$ \mathrm{fm}^{-1} \f$. 
+        <Also the value of 
+        <tt>part::non_interacting</tt> is set to <tt>false</tt>.
+    */
+    fermion def_proton;
     //@}
 
     /// \name Other functions
@@ -908,14 +930,6 @@ namespace o2scl {
                       double &dqnpdnn, double &dqnpdnp,
                       double &dqppdnn, double &dqppdnp);
 
-    /** \brief Compute the EOS in beta-equilibrium at 
-        zero temperature
-    */
-    virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
-                           fermion &e, bool include_muons,
-                           fermion &mu, fermion_rel &frel,
-                           std::shared_ptr<table_units<> > results);
-    
     /// Return string denoting type ("eos_had_base")
     virtual const char *type() { return "eos_had_base"; }
     //@}
@@ -941,23 +955,13 @@ namespace o2scl {
 
   protected:
 
+    /// \name Miscellaneous objects [protected]
+    //@{
     /// Compute t1 for gradient_qij().
     double t1_fun(double barn);
     
     /// Compute t2 for gradient_qij().
     double t2_fun(double barn);
-    
-    /// The EOS solver
-    mroot<> *eos_mroot;
-    
-    /// The solver to compute saturation properties
-    root<> *sat_root;
-
-    /// The derivative object for saturation properties
-    deriv_base<> *sat_deriv;
-    
-    /// The second derivative object for saturation properties
-    deriv_base<> *sat_deriv2;
 
     /// The neutron object
     fermion *neutron;
@@ -969,11 +973,30 @@ namespace o2scl {
     mroot_hybrids<> beta_mroot;
     
     /** \brief Equation for solving for beta-equilibrium at T=0
+
+        This function is very similar to \ref
+        o2scl::nstar_cold::solve_fun().
      */
     virtual int solve_beta_eq_T0(size_t nv, const ubvector &x,
                                  ubvector &y, const double &nB,
                                  fermion &e, bool include_muons,
                                  fermion &mu, fermion_rel &frel);
+    //@}
+    
+    /// \name Numerical methods [protected]
+    //@{
+    /// The EOS solver
+    mroot<> *eos_mroot;
+    
+    /// The solver to compute saturation properties
+    root<> *sat_root;
+
+    /// The derivative object for saturation properties
+    deriv_base<> *sat_deriv;
+    
+    /// The second derivative object for saturation properties
+    deriv_base<> *sat_deriv2;
+    //@}
     
 #endif
     

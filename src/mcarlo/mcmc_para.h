@@ -147,7 +147,7 @@ namespace o2scl {
   std::ofstream scr_out;
   
   /// Random number generators
-  std::vector<rng_gsl> rg;
+  std::vector<rng> rg;
   
   /// Pointer to proposal distribution for each thread
   std::vector<o2scl::prob_cond_mdim<vec_t> *> prop_dist;

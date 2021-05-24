@@ -89,7 +89,7 @@ double prob_dens_hist::operator()() const {
 	      exc_efailed);
   }
   
-  double r=rng.random();
+  double r=rg.random();
   if (r==1.0) r=0.0;
   size_t cache=0;
   size_t ix=sv.find_inc_const(r,cache);

@@ -8,7 +8,7 @@ TEST_VAR = mcarlo_plain.scr mcarlo_miser.scr mcarlo_vegas.scr \
 MCARLO_SRCS = expval.cpp rng_gsl.cpp
 
 HEADER_VARS = mcarlo_miser.h mcarlo_plain.h mcarlo_vegas.h mcarlo.h \
-	expval.h rng_gsl.h mcmc_para.h
+	expval.h rng_gsl.h mcmc_para.h rng.h
 
 # fit_bayes.scr
 
