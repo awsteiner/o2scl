@@ -1524,6 +1524,48 @@ class interp_vec<std::vector<double>>
   - double x1
   - double x2
 #
+# Class interp_krige_optim
+#
+class interp_krige_optim<std::vector<double>>
+- int verbose
+- size_t mode
+- size_t nlen
+- bool full_min
+- function set_noise
+  - int
+  - size_t size
+  - io const std::vector<double> &x
+  - io const std::vector<double> &y
+  - double noise_var
+  - bool rescale [false]
+  - bool err_on_fail [true]    
+- function set
+  - int
+  - size_t size
+  - io const std::vector<double> &x
+  - io const std::vector<double> &y
+  - bool rescale
+  - bool err_on_fail [true]
+- function eval
+  - double
+  - double x0
+- function deriv
+  - double
+  - double x0
+- function deriv2
+  - double
+  - double x0
+- function sigma
+  - double
+  - double x0
+- function sample
+  - double
+  - doutle x0
+- function sample_vec
+  - void
+  - io std::vector<double> &x
+  - io std::vector<double> &y
+#
 # Functions from misc.h
 # 
 function fermi_function

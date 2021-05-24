@@ -159,6 +159,7 @@ Namespace: o2scl class: interp_steffen
 Namespace: o2scl class: interp_vec
 Namespace: o2scl class: interpm_idw
 Namespace: o2scl class: interpm_krige
+Namespace: o2scl class: interpm_krige_optim
 Namespace: o2scl class: jacobian
 Namespace: o2scl class: jacobian_exact
 Namespace: o2scl class: jacobian_gsl
@@ -178,12 +179,12 @@ Namespace: o2scl_linalg class: linear_solver_LU
 Namespace: o2scl_linalg class: linear_solver_QR
 Namespace:  class: boost::numeric::ublas::matrix
 Namespace: o2scl class: matrix_column_gen
-Namespace: o2scl_linalg class: matrix_invert
-Namespace: o2scl_linalg class: matrix_invert_arma
-Namespace: o2scl_linalg class: matrix_invert_cholesky
-Namespace: o2scl_linalg class: matrix_invert_eigen
-Namespace: o2scl_linalg class: matrix_invert_LU
-Namespace: o2scl_linalg class: matrix_invert_sympd_arma
+Namespace: o2scl_linalg class: matrix_invert_det
+Namespace: o2scl_linalg class: matrix_invert_det_arma
+Namespace: o2scl_linalg class: matrix_invert_det_cholesky
+Namespace: o2scl_linalg class: matrix_invert_det_eigen
+Namespace: o2scl_linalg class: matrix_invert_det_LU
+Namespace: o2scl_linalg class: matrix_invert_det_sympd_arma
 Namespace: o2scl class: matrix_row_gen
 Namespace: o2scl class: matrix_row_gen_ctor
 Namespace: o2scl class: matrix_swap_table
@@ -899,6 +900,7 @@ Multiple entry vector_lagk_autocorr
 Namespace: o2scl function: vector_lagk_autocorr
 Multiple entry vector_lagk_autocorr
 Namespace: o2scl function: vector_autocorr_vector
+Namespace: o2scl function: vector_autocorr_vector_fftw
 Namespace: o2scl function: vector_autocorr_tau
 Namespace: o2scl function: vector_lagk_autocorr_mult
 Namespace: o2scl function: vector_lagk_autocorr_mult
@@ -1343,7 +1345,7 @@ hdf_output_data(hdf_file &hf, o2scl::table<std::vector<double>> &t)
 hdf_output_data(hdf_file &hf, o2scl::table_units<std::vector<double>> &t)
 hdf_output_data(hdf_file &hf, o2scl::table<> &t)
 hdf_output_data(hdf_file &hf, o2scl::table_units<> &t)
-kl_div_gaussian(size_t nv, const vec_t &mean_prior, const vec2_t &mean_post, mat_t &covar_prior, mat2_t &covar_post)
+kl_div_gaussian(size_t nv, const vec_t &mean_prior, const vec2_t &mean_post, const mat_t &covar_prior, const mat2_t &covar_post)
 kl_div_gaussian(double mean_prior, double mean_post, double covar_prior, double covar_post)
 linear_or_log(vec_t &x, vec2_t &y, bool &log_x, bool &log_y)
 linear_or_log(vec_t &y, bool &log_y)

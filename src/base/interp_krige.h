@@ -408,6 +408,8 @@ namespace o2scl {
     
     /** \brief Generate a probability distribution for the interpolation
         at a specified point
+
+        This function ipmlements Eq. 2.19 of R&W
      */
     prob_dens_gaussian gen_dist(double x0) const {
 
@@ -452,6 +454,25 @@ namespace o2scl {
 
       if (sigma<0.0) sigma=0.0;
       return prob_dens_gaussian(cent,sigma);
+    }
+    
+    /** \brief Sample the probability distribution for the interpolation
+        at a specified point
+     */
+    double sample(double x0) const {
+      return gen_dist(x0)();
+    }
+    
+    /** \brief Generate a probability distribution for the interpolation
+        at a vector of points
+     */
+    template<class vec_t, class vec2_t>
+      void sample_vec(vec_t &x, vec2_t &y) const {
+      y.resize(x.size());
+      for(size_t j=0;j<x.size();j++) {
+        y[j]=sample(x[j]);
+      }
+      return;
     }
     
     /// Return the type, \c "interp_krige".
@@ -639,9 +660,9 @@ namespace o2scl {
           }
         }
 
-        // Note: We have to use LU here because O2scl doesn't yet
-        // have a lndet() function for Cholesky decomp
-
+        // Compute the additive inverse of the log of the marginal
+        // likelihood, from Eq. 5.8 of R&W, without the constant term
+        
         double lndet;
         this->mi.invert_det(size,KXX,this->inv_KXX,lndet);
         lndet=log(lndet);
