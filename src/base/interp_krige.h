@@ -466,8 +466,8 @@ namespace o2scl {
     /** \brief Generate a probability distribution for the interpolation
         at a vector of points
      */
-    template<class vec_t, class vec2_t>
-      void sample_vec(vec_t &x, vec2_t &y) const {
+    template<class vec3_t, class vec4_t>
+      void sample_vec(vec3_t &x, vec4_t &y) const {
       y.resize(x.size());
       for(size_t j=0;j<x.size();j++) {
         y[j]=sample(x[j]);

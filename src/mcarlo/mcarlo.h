@@ -32,8 +32,11 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
+#include <gsl/gsl_rng.h>
+
 #include <o2scl/inte_multi.h>
 #include <o2scl/rng.h>
+#include <o2scl/rng_gsl.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -47,7 +50,7 @@ namespace o2scl {
   */
   template<class func_t=multi_funct, 
     class vec_t=boost::numeric::ublas::vector<double>,
-    class rng_t=rng>
+           class rng_t=rng<> >
     class mcarlo : public inte_multi<func_t,vec_t> {
 
   public:
@@ -62,9 +65,9 @@ namespace o2scl {
      */
     unsigned long n_points;
   
-  /** \brief The random number distribution
-   */
-  rng_gsl_uniform_real rng_dist;
+    /** \brief The random number distribution
+     */
+    rng_gsl_uniform_real rng_dist;
       
     /// The random number generator
     rng_t rng;
