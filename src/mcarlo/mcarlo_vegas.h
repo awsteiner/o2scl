@@ -120,7 +120,7 @@ namespace o2scl {
   */
   template<class func_t=multi_funct, 
     class vec_t=boost::numeric::ublas::vector<double>,
-           class rng_t=rng_gsl >
+           class rng_t=rng<> >
     class mcarlo_vegas : public mcarlo<func_t,vec_t,rng_t> {
     
     public:
@@ -320,7 +320,7 @@ namespace o2scl {
         // The equivalent of gsl_rng_uniform_pos()
         double rdn;
         do { 
-          rdn=this->rng_dist(this->rng);
+          rdn=this->rng.random();
         } while (rdn==0);
         
         /* lbox[j] + ran gives the position in the box units, while z

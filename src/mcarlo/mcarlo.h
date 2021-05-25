@@ -32,11 +32,8 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-#include <gsl/gsl_rng.h>
-
 #include <o2scl/inte_multi.h>
 #include <o2scl/rng.h>
-#include <o2scl/rng_gsl.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -65,10 +62,6 @@ namespace o2scl {
      */
     unsigned long n_points;
   
-    /** \brief The random number distribution
-     */
-    rng_gsl_uniform_real rng_dist;
-      
     /// The random number generator
     rng_t rng;
   

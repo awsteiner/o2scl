@@ -51,7 +51,6 @@
 
 #include <o2scl/multi_funct.h>
 #include <o2scl/mcarlo.h>
-#include <o2scl/rng_gsl.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -61,7 +60,7 @@ namespace o2scl {
    */
   template<class func_t=multi_funct, 
     class vec_t=boost::numeric::ublas::vector<double>,
-    class rng_t=rng_gsl>
+           class rng_t=rng<> >
     class mcarlo_plain : public mcarlo<func_t,vec_t,rng_t> {
     
   public:
@@ -82,7 +81,7 @@ namespace o2scl {
     for(size_t n=0;n<this->n_points;n++) {
       for(size_t i=0;i<ndim;i++) {
 	do {
-	  r=this->rng_dist(this->rng);
+	  r=this->rng.random();
 	} while (r==0.0);
 	cc[i]=a[i]+r*(b[i]-a[i]);
       }

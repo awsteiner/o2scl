@@ -80,7 +80,7 @@ namespace o2scl {
   virtual ~anneal_para() {
   }
 
-  std::vector<rng_gsl> vrng;
+    std::vector<rng<> > vrng;
   
   /** \brief Make a step to a new attempted minimum
    */

@@ -20,8 +20,8 @@
 
   -------------------------------------------------------------------
 */
-/** \file rng_gsl.h
-    \brief File for definition of \ref o2scl::rng_gsl
+/** \file rng.h
+    \brief File for definition of \ref o2scl::rng
 */
 #ifndef O2SCL_RNG_H
 #define O2SCL_RNG_H
@@ -86,9 +86,93 @@ namespace o2scl {
       std::uniform_int_distribution<unsigned long int> uid(0,max-1);
       return uid(def_engine);
     }
+
+    /// Copy constructor with equals operator
+    rng& operator=(const rng &rg) {
+      if (this!=&rg) {
+	seed=rg.seed;
+	dist=rg.dist;
+	def_engine=rg.def_engine;
+      }
+      return *this;
+    }
+
+    /// Copy constructor
+    rng(const rng &rg) {
+      seed=rg.seed;
+      dist=rg.dist;
+      def_engine=rg.def_engine;
+    }
+
     
   };
-  
+
+  /** \brief Swap function for vector_shuffle()
+      
+      \note This function is based on the static GSL swap function in
+      <tt>randist/shuffle.c</tt>.
+   */
+  template<class data_t>
+  void shuffle_swap(data_t *base, size_t size, size_t i, size_t j) {
+    char * a = size * i + (char *) base ;
+    char * b = size * j + (char *) base ;
+    size_t s = size ;
+    
+    if (i == j) {
+      return;
+    }
+    
+    do {                                       
+      char tmp = *a;                            
+      *a++ = *b;                                
+      *b++ = tmp;                               
+    } while (--s > 0);
+    
+    return;
+  }
+
+  /** \brief Copy function for vector_choose()
+
+      \note This function is based on the static GSL copy function in
+      <tt>randist/shuffle.c</tt>.
+   */
+  template<class data_t>
+  void choose_copy(data_t *dest, size_t i, data_t *src, size_t j,
+		    size_t size) {
+    char * a = size * i + (char *) dest;
+    char * b = size * j + (char *) src;
+    size_t s = size ;
+    
+    do {                                          
+      *a++ = *b++;                              
+    } 
+    while (--s > 0);
+
+    return;
+  }
+
+  /** \brief Shuffle the first \c n elements of vector \c data
+
+      \note This function is based on the GSL function
+      <tt>gsl_ran_shuffle()</tt> in <tt>randist/shuffle.c</tt>.
+
+      \note This function works only on vector types which
+      guarantee adjacent storage, such as <tt>vector<double></tt>.
+      
+      \note If \c n is 0, this function silently does nothing.
+   */
+  template<class vec_t, class data_t>
+  void vector_shuffle(rng<> &r, size_t n, vec_t &data) {
+    if (n==0) return;
+    
+    for (size_t i = n - 1; i > 0; i--) {
+      size_t j = r.random_int(i+1);
+      shuffle_swap(&data[0],sizeof(data_t),i,j);
+    }
+    
+    return;
+  }
+
 };
 
 #endif

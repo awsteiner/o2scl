@@ -30,7 +30,7 @@
 #include <vector>
 #include <algorithm>
 
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 #include <o2scl/mmin.h>
 #include <o2scl/mm_funct.h>
 
@@ -346,7 +346,7 @@ namespace o2scl {
     init_funct_t *rand_init_funct;
 
     /// Random number generator
-    rng_gsl gr;
+    rng<> gr;
 
     /// Step size for initialization
     std::vector<double> step;

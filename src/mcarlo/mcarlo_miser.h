@@ -92,7 +92,7 @@ namespace o2scl {
   */
   template<class func_t=multi_funct, 
     class vec_t=boost::numeric::ublas::vector<double>,
-           class rng_t=rng_gsl >
+           class rng_t=rng<> >
     class mcarlo_miser : public mcarlo<func_t,vec_t,rng_t> {
     
     public:
@@ -282,7 +282,7 @@ namespace o2scl {
 	  // The equivalent of gsl_rng_uniform_pos()
 	  double z;
 	  do { 
-	    z=this->rng_dist(this->rng);
+	    z=this->rng.random();
 	  } while (z==0);
 	  
 	  if (i != j) {
@@ -473,7 +473,7 @@ namespace o2scl {
 	    // The equivalent of gsl_rng_uniform_pos()
 	    double rdn;
 	    do { 
-	      rdn=this->rng_dist(this->rng);
+	      rdn=this->rng.random();
 	    } while (rdn==0);
 	  
 	    x[i]=xl[i]+rdn*(xu[i]-xl[i]);
@@ -511,7 +511,7 @@ namespace o2scl {
       // [GSL] Flip coins to bisect the integration region with some fuzz 
 
       for (i=0;i<dim;i++) {
-	s=(this->rng_dist(this->rng)-0.5) >= 0.0 ? dither : -dither;
+	s=((this->rng.random())-0.5) >= 0.0 ? dither : -dither;
 	xmid[i]=(0.5+s)*xl[i]+(0.5-s)*xu[i];
       }
 
@@ -572,7 +572,7 @@ namespace o2scl {
       if (!found_best) {
 	// [GSL] All estimates were the same, so chose a direction at
 	// random
-	i_bisect=((int)(this->rng_dist(this->rng)*(dim-1.0e-10)));
+	i_bisect=((int)((this->rng.random())*(dim-1.0e-10)));
 	//std::uniform_int_distribution<int> int_dist(0,dim-1);
 	//i_bisect=int_dist(this->rng);
 	//gsl_rnga gr;
