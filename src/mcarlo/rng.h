@@ -28,10 +28,11 @@
 
 #include <random>
 #include <ctime>
+#include <o2scl/err_hnd.h>
 
 namespace o2scl {
 
-  /** \brief Simple C++11 random number generator
+  /** \brief Simple C++11 random number generator class
    */
   template<class fp_t=double> class rng {
     
@@ -60,6 +61,11 @@ namespace o2scl {
       return;
     }
 
+    /// Get the seed
+    unsigned int get_seed() {
+      return seed;
+    }
+    
     /// Return a random number in \f$(0,1]\f$
     fp_t random() {
       return dist(def_engine);
@@ -71,7 +77,16 @@ namespace o2scl {
       def_engine.seed(seed);
       return;
     }
-  
+
+    /// Return random integer in \f$[0,\mathrm{max}-1]\f$.
+    unsigned long int random_int(unsigned long int max=1) {
+      if (max<1) {
+        O2SCL_ERR("Cannot specify max less than 1.",o2scl::exc_einval);
+      }
+      std::uniform_int_distribution<unsigned long int> uid(0,max-1);
+      return uid(def_engine);
+    }
+    
   };
   
 };

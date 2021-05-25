@@ -111,6 +111,7 @@ int nstar_cold::calc_eos(double np_0) {
 
   double fac=(nb_end-nb_start)/dnb;
   if (fac<0.0 || fac>1.0e8) {
+    std::cout << nb_end << " " << nb_start << " " << dnb << " " << fac << endl;
     O2SCL_ERR2("Invalid baryon density range in ",
                "nstar_cold::calc_eos().",o2scl::exc_einval);
   }
@@ -204,7 +205,7 @@ int nstar_cold::calc_eos(double np_0) {
                  this,std::placeholders::_1,std::placeholders::_2,
                  std::placeholders::_3,std::ref(hb),n_B);
     
-    int tret=mh.msolve(1,ux,sf);
+    tret=mh.msolve(1,ux,sf);
     if (tret!=0) {
       O2SCL_ERR("Initial solver failed.",o2scl::exc_efailed);
     }
@@ -554,7 +555,7 @@ int nstar_hot::solve_fun_T(size_t nv, const ubvector &x,
   prot.n=x[0];
   neut.n=n_B-prot.n;
 
-  if (neut.n<0.0 || prot.n<0.0) return 1;
+  if (neut.n<=0.0 || prot.n<=0.0) return 1;
   int had_ret=hepT->calc_temp_e(neut,prot,T,hb);
   if (had_ret!=0) {
     // Most EOS failures result in exceptions, but in case there is
@@ -723,11 +724,17 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
                  std::placeholders::_3,std::ref(hb),T,n_B);
 
     double y;
+
+    // In case the baryon density stepping led to a poor guess
+    if (ux[0]>n_B) ux[0]=n_B*0.5;
     
-    ubvector ux(1), uy(1);
-    ux[0]=x;
-    int tret=mh.msolve(1,ux,sf);
+    tret=mh.msolve(1,ux,sf);
     if (tret!=0) {
+      std::cout << "Solver failed with error code " << tret << endl;
+      cout << "x: " << ux[0] << " ret: " << sf(1,ux,uy)
+           << " y: " << uy[0] << endl;
+      mh.verbose=2;
+      mh.msolve(1,ux,sf);
       O2SCL_CONV2_RET("Solver failed ",
                       "in nstar_hot::calc_eos_T().",o2scl::exc_efailed,
                       err_nonconv);
