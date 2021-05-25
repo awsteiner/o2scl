@@ -144,7 +144,7 @@ namespace o2scl {
   */
   template<class func_t=multi_funct,
     class vec_t=boost::numeric::ublas::vector<double>,
-    class rng_t=rng> class anneal_gsl :
+           class rng_t=rng<> > class anneal_gsl :
     public anneal_base<func_t,vec_t,rng_t> {
     
   public:
