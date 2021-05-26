@@ -523,7 +523,7 @@ void test_quartic_complex_boost(quartic_complex<fp_t,cx_t> *po,
        << m2 << " " << time << endl;
   return;
 }
-#ifdef O2SCL_LD_TYPES
+#endif
 
 int main(void) {
   tst.set_output_level(1);
