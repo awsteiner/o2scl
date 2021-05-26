@@ -190,11 +190,11 @@ namespace o2scl {
       \hline
       \b TOV \b Output
 
-      The TOV table contains all the columns typically 
-      generated for mass versus radius tables in \ref tov_solve,
-      as well as columns containing the central values of 
-      al the densities and chemical potentials, and all the 
-      other columns computed for the EOS above. 
+      The TOV table contains all the columns typically generated for
+      mass versus radius tables in \ref tov_solve, as well as columns
+      containing the central values of al the densities and chemical
+      potentials, and all the other columns computed for the EOS
+      above.
 
       \hline
 

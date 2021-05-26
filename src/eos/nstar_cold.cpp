@@ -120,6 +120,20 @@ int nstar_cold::calc_eos(double np_0) {
     O2SCL_ERR("EOS not set in calc_eos().",exc_efailed);
   }
   
+  if (fabs(neut.g-2.0)>1.0e-10 || fabs(prot.g-2.0)>1.0e-10) {
+    O2SCL_ERR((((std::string)"Neutron (")+std::to_string(neut.g)+
+               ") or proton ("+std::to_string(prot.g)+") spin deg"+
+               "eneracies wrong in "+
+               "nstar_cold::calc_eos().").c_str(),
+              exc_einval);
+  }
+  if (fabs(neut.m-4.5)>1.0 || fabs(prot.m-4.5)>1.0) {
+    O2SCL_ERR((((std::string)"Neutron (")+std::to_string(neut.m)+
+               ") or proton ("+std::to_string(prot.m)+") masses wrong "+
+               "in nstar_cold::calc_eos().").c_str(),
+              exc_einval);
+  }
+  
   eost->clear();
   eost->line_of_names(((string)"ed pr nb mun mup mue nn np ne kfn ")+
 		      "kfp kfe");

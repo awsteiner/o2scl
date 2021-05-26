@@ -83,6 +83,7 @@ void test_quadratic_real_coeff
   return;
 }
 
+#ifdef O2SCL_LD_TYPES
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_quadratic_real_coeff_boost
 (quadratic_real_coeff<fp_t,cx_t> *po, 
@@ -122,6 +123,7 @@ void test_quadratic_real_coeff_boost
 
   return;
 }
+#endif
 
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_quadratic_complex(quadratic_complex<fp_t,cx_t> *po,
@@ -154,6 +156,7 @@ void test_quadratic_complex(quadratic_complex<fp_t,cx_t> *po,
   return;
 }
 
+#ifdef O2SCL_LD_TYPES
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_quadratic_complex_boost(quadratic_complex<fp_t,cx_t> *po,
                                   string str, 
@@ -184,6 +187,7 @@ void test_quadratic_complex_boost(quadratic_complex<fp_t,cx_t> *po,
        << m2 << " " << time << endl;
   return;
 }
+#endif
 
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_cubic_real_coeff(cubic_real_coeff<fp_t,cx_t> *po,
@@ -221,6 +225,8 @@ void test_cubic_real_coeff(cubic_real_coeff<fp_t,cx_t> *po,
   return;
 }
 
+#ifdef O2SCL_LD_TYPES
+
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_cubic_real_coeff_boost(cubic_real_coeff<fp_t,cx_t> *po,
                                  string str, fp_t alpha, fp_t e1,
@@ -257,6 +263,7 @@ void test_cubic_real_coeff_boost(cubic_real_coeff<fp_t,cx_t> *po,
   }
   return;
 }
+#endif
 
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_cubic_complex(cubic_complex<fp_t,cx_t> *po,
@@ -289,6 +296,8 @@ void test_cubic_complex(cubic_complex<fp_t,cx_t> *po,
   return;
 }
 
+#ifdef O2SCL_LD_TYPES
+
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_cubic_complex_boost(cubic_complex<fp_t,cx_t> *po,
                               string str, fp_t e1, 
@@ -319,6 +328,7 @@ void test_cubic_complex_boost(cubic_complex<fp_t,cx_t> *po,
        << m2 << " " << time << endl;
   return;
 }
+#endif
 
 template<class fp_t=double>
 void test_quartic_real(quartic_real<fp_t> *po,
@@ -351,6 +361,8 @@ void test_quartic_real(quartic_real<fp_t> *po,
   return;
 }
 
+#ifdef O2SCL_LD_TYPES
+
 template<class fp_t=double>
 void test_quartic_real_boost(quartic_real<fp_t> *po,
                              string str, fp_t alpha, 
@@ -381,6 +393,7 @@ void test_quartic_real_boost(quartic_real<fp_t> *po,
        << m2 << " " << time << endl;
   return;
 }
+#endif
 
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_quartic_real_coeff(quartic_real_coeff<fp_t,cx_t> *po,
@@ -413,6 +426,8 @@ void test_quartic_real_coeff(quartic_real_coeff<fp_t,cx_t> *po,
   return;
 }
 
+#ifdef O2SCL_LD_TYPES
+
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_quartic_real_coeff_boost(quartic_real_coeff<fp_t,cx_t> *po,
                                    string str, fp_t e1, fp_t e2, fp_t e3,
@@ -443,6 +458,7 @@ void test_quartic_real_coeff_boost(quartic_real_coeff<fp_t,cx_t> *po,
        << m2 << " " << time << endl;
   return;
 }
+#endif
 
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_quartic_complex(quartic_complex<fp_t,cx_t> *po,
@@ -475,6 +491,8 @@ void test_quartic_complex(quartic_complex<fp_t,cx_t> *po,
   return;
 }
 
+#ifdef O2SCL_LD_TYPES
+
 template<class fp_t=double, class cx_t=std::complex<fp_t> >
 void test_quartic_complex_boost(quartic_complex<fp_t,cx_t> *po,
                                 string str,
@@ -505,6 +523,7 @@ void test_quartic_complex_boost(quartic_complex<fp_t,cx_t> *po,
        << m2 << " " << time << endl;
   return;
 }
+#ifdef O2SCL_LD_TYPES
 
 int main(void) {
   tst.set_output_level(1);
