@@ -59,7 +59,14 @@ namespace o2scl {
 
       The neutron, proton, electron and muon are given masses
       according to their values in \ref o2scl_mks
-      after a conversion to units of \f$ 1/\mathrm{fm} \f$.
+      after a conversion to units of \f$ 1/\mathrm{fm} \f$. The
+      default neutron and proton objects have their values
+      of <tt>inc_rest_mass</tt> set to true. The user can change
+      this to false, but the energy density and chemical potential
+      columns in the output always include the rest mass so that
+      the TOV solver can use the table. The functions \ref calc_nstar()
+      and \ref fixed() expect that the energy density includes the
+      rest mass energy density.
 
       \note The function \ref set_eos() stores a pointer to the EOS
       object so the user must take care that the pointer is valid.

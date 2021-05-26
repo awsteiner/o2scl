@@ -1425,7 +1425,7 @@ namespace o2scl {
     tensor<data_t> rearrange_and_copy(std::string spec,
                                       int verbose=0, bool err_on_fail=true) {
       
-      std::vector<o2scl::index_spec> &vis;
+      std::vector<o2scl::index_spec> vis;
       string_to_index_list(spec,vis,verbose);
       return rearrange_and_copy(vis,verbose,err_on_fail);
     }

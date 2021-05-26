@@ -250,6 +250,15 @@ int nstar_cold::calc_eos(double np_0) {
       
     }
 
+    if (neut.inc_rest_mass==false) {
+      hb.ed+=neut.n*neut.m;
+      neut.mu+=neut.m;
+    }
+    if (prot.inc_rest_mass==false) {
+      hb.ed+=prot.n*prot.m;
+      prot.mu+=prot.m;
+    }
+
     if (include_muons) {
 
       h=hb+e+mu;
@@ -745,6 +754,15 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
       
     // ------------------------------------------------------------
     
+    if (neut.inc_rest_mass==false) {
+      hb.ed+=neut.n*neut.m;
+      neut.mu+=neut.m;
+    }
+    if (prot.inc_rest_mass==false) {
+      hb.ed+=prot.n*prot.m;
+      prot.mu+=prot.m;
+    }
+
     if (include_muons) {
 
       h=hb+e+mu;
