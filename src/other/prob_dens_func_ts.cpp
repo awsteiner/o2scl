@@ -183,7 +183,7 @@ int main(void) {
     
     cout << "O2scl res,err,rel: " 
 	 << res << " " << err << endl;
-    t.test_rel(res,1.0,err,"normalization");
+    t.test_rel(res,1.0,3.0*err,"normalization");
   }
 
   {
