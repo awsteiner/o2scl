@@ -38,6 +38,8 @@
 
 #include <gsl/gsl_specfunc.h>
 
+#include <boost/math/special_functions/gamma.hpp>
+
 #include <o2scl/constants.h>
 #include <o2scl/err_hnd.h>
 #include <o2scl/lib_settings.h>
