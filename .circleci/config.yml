@@ -1,0 +1,29 @@
+version: 2
+jobs:
+  build:
+    docker:
+    - image: cimg/base:2021.04
+    steps:
+    - run:
+        name: Dependencies 1
+        command: |
+          apt install libgsl0-dev libboost-all-dev libreadline-dev
+    - run:
+        name: Dependencies 2
+        command: |
+          apt install libncurses-dev libhdf5-dev
+    - run:
+        name: Autoconf
+        command: |
+          mkdir m4
+          autoreconf -i
+    - run:
+        name: Configure
+        command: |
+          ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples
+workflows:
+  version: 2
+  workflow:
+    jobs:
+    - build
+
