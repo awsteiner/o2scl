@@ -12,7 +12,12 @@ jobs:
     - run:
         name: Dependencies 2
         command: |
-          sudo apt-get install -y libncurses-dev libhdf5-dev
+          sudo apt-get install -y libncurses-dev libhdf5-dev git
+    - run:
+        name: Git clone
+        command: |
+          git clone https://github.com/awsteiner/o2scl
+          cd o2scl
     - run:
         name: Autoconf
         command: |
