@@ -7,6 +7,7 @@ jobs:
     - run:
         name: Dependencies 1
         command: |
+          sudo apt-get update
           sudo apt-get install -y libgsl0-dev libboost-all-dev libreadline-dev
     - run:
         name: Dependencies 2
