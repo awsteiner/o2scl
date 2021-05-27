@@ -7,11 +7,11 @@ jobs:
     - run:
         name: Dependencies 1
         command: |
-          apt install libgsl0-dev libboost-all-dev libreadline-dev
+          sudo apt-get install -y libgsl0-dev libboost-all-dev libreadline-dev
     - run:
         name: Dependencies 2
         command: |
-          apt install libncurses-dev libhdf5-dev
+          sudo apt-get install -y libncurses-dev libhdf5-dev
     - run:
         name: Autoconf
         command: |
