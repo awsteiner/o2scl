@@ -22,7 +22,7 @@ jobs:
         command: |
           cd o2scl && mkdir m4 && autoreconf -i
     - run:
-        name: Configure
+        name: Configure, make, make check, make examples
         command: |
           cd o2scl && ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples
 workflows:
