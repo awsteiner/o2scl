@@ -17,16 +17,14 @@ jobs:
         name: Git clone
         command: |
           git clone https://github.com/awsteiner/o2scl
-          cd o2scl
     - run:
         name: Autoconf
         command: |
-          mkdir m4
-          autoreconf -i
+          cd o2scl && mkdir m4 && autoreconf -i
     - run:
         name: Configure
         command: |
-          ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples
+          cd o2scl && ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples
 workflows:
   version: 2
   workflow:
