@@ -61,7 +61,11 @@ namespace o2scl {
     o2scl::poly_real_coeff_gsl<> quart2;
   
     /// Storage for the four roots
-    std::complex<double> res_zp[4],res_zn[4]; 
+    std::complex<double> res_zp[4];
+    
+    /// Storage for the four roots
+    std::complex<double> res_zn[4];
+    
     /** \brief Solve for the fugacities given the densities
 
 	This function computes zn and zp from pn and nn
@@ -83,23 +87,20 @@ namespace o2scl {
 	e=b_n*npt*npt/2.0/b_pn/b_pn;
       
 	quart2.solve_rc(a,b,c,d,e,res_zp[0],res_zp[1],res_zp[2],res_zp[3]);
-	//std::cout << "Here1: " << a << " " << b << " " << c << " "
-	//<< d << " " << e << std::endl;
+        
 	int root_count=0;
 	std::complex<double> eval_zp[4];
 	ubvector res_zn_real;
 	std::complex<double>  eval_zn[4];
 	res_zn_real.resize(4);
+        
 	/*
 	  AWS: Changed on 1/9/18 to select largest fugacity instead
 	  of exiting when multiple roots are found
 	*/
 
 	for (int i=0;i<4;i++) {
-
-	  // Check that the root is positive and that the imaginary
-	  // part is sufficiently small. Note I use fabs() rather
-	  // than abs().
+          
 	  if(res_zp[i].real()>0 && 
 	     fabs(res_zp[i].imag()/res_zp[i].real())<1.0e-6) {
 
@@ -154,7 +155,7 @@ namespace o2scl {
 	  }
 	}
       
-	if (root_count==0&&false) {
+	if (root_count==0 && false) {
 	  std::cout << "Zn/Zp zero roots: " << root_count 
 		    << std::endl;
 	  std::cout << "nn: " << nn << " pn: " << pn << " T: " 
@@ -192,6 +193,7 @@ namespace o2scl {
 	  O2SCL_ERR("Zero or more than one root in solve_fugacity().",
 		    o2scl::exc_efailed);
 	}
+        
 	int res_index=0;
 	double minsq=1.0e100, temp;
 	for (int i=0;i<4;i++) {
@@ -221,17 +223,13 @@ namespace o2scl {
 	e=b_n*nnt*nnt/2.0/b_pn/b_pn;
       
 	quart2.solve_rc(a,b,c,d,e,res_zn[0],res_zn[1],res_zn[2],res_zn[3]);
-	/*
-	  std::cout << "Here2: " << a << " " << b << " " << c << " "
-	  << d << " " << e << std::endl;
-	  std::cout << res_zn[0] << " " << res_zn[1] << " " << res_zn[2] << " "
-	  << res_zn[3] << std::endl;
-	*/
+        
 	int root_count=0;
 	std::complex<double> eval_zn[4];
 	ubvector res_zp_real;
 	std::complex<double> eval_zp[4];
 	res_zp_real.resize(4);
+        
 	/*
 	  AWS: Changed on 1/9/18 to select largest fugacity instead
 	  of exiting when multiple roots are found
@@ -239,9 +237,6 @@ namespace o2scl {
 
 	for (int i=0;i<4;i++) {
 
-	  // Check that the root is positive and that the imaginary
-	  // part is sufficiently small. Note I use fabs() rather
-	  // than abs().
 	  if(res_zn[i].real()>0 && 
 	     fabs(res_zn[i].imag()/res_zn[i].real())<1.0e-6) {
 
@@ -294,7 +289,7 @@ namespace o2scl {
 	  }
 	}
       
-	if (root_count==0&&false) {
+	if (root_count==0 && false) {
 	  std::cout << "Zn/Zp zero roots: " << root_count 
 		    << std::endl;
 	  std::cout << "nn: " << nn << " pn: " << pn << " T: " 
@@ -505,6 +500,12 @@ namespace o2scl {
     double d2zpdnp2;
     //@}
 
+    int verbose;
+
+    eos_had_virial_deriv() {
+      verbose=0;
+    }
+    
     /// \name Main functions
     //@{
     /** \brief Solve for the fugacity given the density
@@ -516,16 +517,30 @@ namespace o2scl {
 
       double npt=pow(lam_n,3)/2.0*np;
       double nnt=pow(lam_p,3)/2.0*nn;
-
+      
       // At high densities or very low densities, just use the
       // non-interacting result
       //
       // AWS: 9/13/2020: I added the "|| nnt>1.0e5 || npt>1.0e5" option
       // later, and this might not be the best method
       // 
-      if (nnt<5.0e-6 || npt<5.0e-6 || nnt>1.0e5 || npt>1.0e5) {
+      if (nnt<5.0e-6 || npt<5.0e-6) {
 	zn=nnt;
 	zp=npt;
+        if (verbose>0) {
+          std::cout << "Either nnt or npt is too small: " << nnt << " "
+                    << npt << std::endl;
+        }
+	return;
+      }
+
+      if (nnt>1.0e5 || npt>1.0e5) {
+	zn=nnt;
+	zp=npt;
+        if (verbose>0) {
+          std::cout << "Either nnt or npt is too large: " << nnt << " "
+                    << npt << std::endl;
+        }
 	return;
       }
 
@@ -542,6 +557,10 @@ namespace o2scl {
     
       std::vector<double> zp_list, zn_list;
       for(size_t k=0;k<4;k++) {
+        if (verbose>1) {
+          std::cout << "Root: " << k << " "
+                    << res[k].real() << " " << res[k].imag() << std::endl;
+        }
 	if (res[k].imag()==0.0 && res[k].real()>0.0 && res[k].real()<500.0) {
 	  double r0, r1;
 	  gsl_poly_solve_quadratic(2.0*b_n,2.0*res[k].real()*
@@ -555,13 +574,24 @@ namespace o2scl {
 	    std::cout << res[k] << "," << r0 << " ";
 	    zp_list.push_back(res[k].real());
 	    zn_list.push_back(r0);
+            if (verbose>1) {
+              std::cout << "Adding to zp_list and zn_list." << std::endl;
+            }
 	  }
 	  if (r1>0.0 && r1<500.0) {
 	    zp_list.push_back(res[k].real());
 	    zn_list.push_back(r1);
+            if (verbose>1) {
+              std::cout << "Adding to zp_list and zn_list." << std::endl;
+            }
 	  }
 	}
       }
+
+      if (verbose>0) {
+        std::cout << "zp_list.size() is " << zp_list.size() << std::endl;
+      }
+      
       if (zp_list.size()==1) {
 	zp=zp_list[0];
 	zn=zn_list[0];
@@ -587,6 +617,11 @@ namespace o2scl {
 	O2SCL_ERR2("Unexpected root multiplicity in ",
 		   "virial_solver_deriv::solve_fugacity().",o2scl::exc_einval);
       }
+      if (verbose>0) {
+        std::cout << "Returning zn, zp: " << zn << " "
+                  << zp << std::endl;
+      }
+      
       return;
     }
 
