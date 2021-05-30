@@ -992,12 +992,9 @@ namespace o2scl {
 
     /** \brief 
      */
-    virtual void string_to_index_list(std::string str, 
-                                      std::vector<o2scl::index_spec> &vis,
-                                      int verbose=0) {
-      
-      std::vector<std::string> sv2;
-      index_spec_preprocess(str,sv2);
+    virtual void strings_to_indexes(std::vector<std::string> sv2,
+                                    std::vector<o2scl::index_spec> &vis,
+                                    int verbose=0) {
       
       if (verbose>1) {
         std::cout << "Post-process: " << std::endl;
@@ -1073,9 +1070,74 @@ namespace o2scl {
           vis.push_back(ix_range(o2scl::stoszt(args[0]),
                                  o2scl::stoszt(args[1]),
                                  o2scl::stoszt(args[2])));
+        } else if (sv2[j].find("interp(")==0 && sv2[j][sv2[j].size()-1]==')') {
+          std::string spec=sv2[j].substr(7,sv2[j].length()-8);
+          split_string_delim(spec,args,',');
+          if (verbose>1) {
+            std::cout << "interp, value: ";
+            vector_out(std::cout,args,true);
+          }
+          if (args.size()<2) {
+            O2SCL_ERR("Not enough arguments in interp().",o2scl::exc_einval);
+          }
+          vis.push_back(ix_interp(o2scl::stoszt(args[0]),
+                                  o2scl::function_to_double(args[1])));
+        } else if (sv2[j].find("grid(")==0 && sv2[j][sv2[j].size()-1]==')') {
+          std::string spec=sv2[j].substr(5,sv2[j].length()-6);
+          split_string_delim(spec,args,',');
+          if (args.size()<4) {
+            O2SCL_ERR("Not enough arguments in grid().",o2scl::exc_einval);
+          }
+          if (args.size()>4 && o2scl::stob(args[4])==true) {
+            if (verbose>1) {
+              std::cout << "rearrange, grid, index, begin, end, n_bins, log: ";
+              vector_out(std::cout,args,true);
+            }
+            vis.push_back(ix_grid(o2scl::stoszt(args[0]),
+                                  o2scl::function_to_double(args[1]),
+                                  o2scl::function_to_double(args[2]),
+                                  o2scl::stoszt(args[3]),true));
+          } else {
+            if (verbose>1) {
+              std::cout << "rearrange, grid, index, "
+                        << "begin, end, n_bins, [no log]: ";
+              vector_out(std::cout,args,true);
+            }
+            vis.push_back(ix_grid(o2scl::stoszt(args[0]),
+                                  o2scl::function_to_double(args[1]),
+                                  o2scl::function_to_double(args[2]),
+                                  o2scl::stoszt(args[3]),false));
+          }
+        } else if (sv2[j].find("gridw(")==0 && sv2[j][sv2[j].size()-1]==')') {
+          std::string spec=sv2[j].substr(6,sv2[j].length()-7);
+          split_string_delim(spec,args,',');
+          if (args.size()<4) {
+            O2SCL_ERR("Not enough arguments in gridw().",o2scl::exc_einval);
+          }
+          if (args.size()>4 && o2scl::stob(args[4])==true) {
+            if (verbose>1) {
+              std::cout << "rearrange, gridw, index, begin, "
+                        << "end, bin_width, log: ";
+              vector_out(std::cout,args,true);
+            }
+            vis.push_back(ix_gridw(o2scl::stoszt(args[0]),
+                                   o2scl::function_to_double(args[1]),
+                                   o2scl::function_to_double(args[2]),
+                                   o2scl::function_to_double(args[3]),true));
+          } else {
+            if (verbose>1) {
+              std::cout << "rearrange, gridw, index, "
+                        << "begin, end, bin_width [no log]: ";
+              vector_out(std::cout,args,true);
+            }
+            vis.push_back(ix_gridw(o2scl::stoszt(args[0]),
+                                   o2scl::function_to_double(args[1]),
+                                   o2scl::function_to_double(args[2]),
+                                   o2scl::function_to_double(args[3]),false));
+          }
         }
       }
-
+      
       return;
     }
     
@@ -1424,9 +1486,11 @@ namespace o2scl {
     */
     tensor<data_t> rearrange_and_copy(std::string spec,
                                       int verbose=0, bool err_on_fail=true) {
-      
+
+      std::vector<std::string> sv2;
+      index_spec_preprocess(spec,sv2);
       std::vector<o2scl::index_spec> vis;
-      string_to_index_list(spec,vis,verbose);
+      strings_to_indexes(sv2,vis,verbose);
       return rearrange_and_copy(vis,verbose,err_on_fail);
     }
   
