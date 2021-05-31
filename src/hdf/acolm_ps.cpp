@@ -2756,28 +2756,6 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
   return exc_efailed;
 }
 
-void acol_manager::rearrange_arg_process(string str, vector<string> &sv) {
-  int paren_count=0;
-  string entry;
-  for (size_t i=0;i<str.length();i++) {
-    if (str[i]=='(') {
-      entry+=str[i];
-      paren_count++;
-    } else if (str[i]==')') {
-      entry+=str[i];
-      paren_count--;
-      if (paren_count==0) {
-	sv.push_back(entry);
-	entry.clear();
-	i++;
-      }
-    } else {
-      entry+=str[i];
-    }
-  }
-  return;
-}
-
 int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 				 bool itive_com) {
 

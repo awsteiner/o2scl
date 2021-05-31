@@ -966,11 +966,22 @@ namespace o2scl {
     }
     //@}
 
-    /** \brief 
-     */
-    void index_spec_preprocess(std::string str, std::vector<std::string> &sv) {
+    /** \brief Take a set of index specifications contained in a
+        single string \c str and arrange them in \c sv
+
+        \future Improve this to be more intelligent about whitespace
+        and other characters between index specifications. Right now,
+        this function fails if there are, e.g. two spaces between
+        index specs.
+    */
+    void index_spec_preprocess(std::string str,
+                               std::vector<std::string> &sv, int verbose=0) {
       int paren_count=0;
       std::string entry;
+      if (verbose>1) {
+        std::cout << "Function tensor::index_spec_preprocess(), before: "
+                  << str << std::endl;
+      }
       for (size_t i=0;i<str.length();i++) {
         if (str[i]=='(') {
           entry+=str[i];
@@ -981,23 +992,30 @@ namespace o2scl {
           if (paren_count==0) {
             sv.push_back(entry);
             entry.clear();
+            // Skip the character between index specs
             i++;
           }
         } else {
           entry+=str[i];
         }
       }
+      if (verbose>1) {
+        std::cout << "Function tensor::index_spec_preprocess(), after: ";
+        o2scl::vector_out(std::cout,sv,true);
+      }
       return;
     }
 
-    /** \brief 
-     */
-    virtual void strings_to_indexes(std::vector<std::string> sv2,
-                                    std::vector<o2scl::index_spec> &vis,
-                                    int verbose=0) {
+    /** Given a set of index specifications specified in a list of 
+        strings, reformat them into a list of \ref o2scl::index_spec
+        objects
+    */
+    virtual int strings_to_indexes(std::vector<std::string> sv2,
+                                   std::vector<o2scl::index_spec> &vis,
+                                   int verbose=0, bool err_on_fail=false) {
       
       if (verbose>1) {
-        std::cout << "Post-process: " << std::endl;
+        std::cout << "Function strings_to_indexes(): " << std::endl;
         for(size_t j=0;j<sv2.size();j++) {
           std::cout << j << " " << sv2[j] << std::endl;
         }
@@ -1021,7 +1039,10 @@ namespace o2scl {
             vector_out(std::cout,args,true);
           }
           if (args.size()<2) {
-            O2SCL_ERR("Not enough arguments in fixed().",o2scl::exc_einval);
+            if (err_on_fail) {
+              O2SCL_ERR("Not enough arguments in fixed().",o2scl::exc_einval);
+            }
+            return 2;
           }
           vis.push_back(ix_fixed(o2scl::stoszt(args[0]),
                                  o2scl::stoszt(args[1])));
@@ -1043,7 +1064,10 @@ namespace o2scl {
             vector_out(std::cout,args,true);
           }
           if (args.size()<2) {
-            O2SCL_ERR("Not enough arguments in trace().",o2scl::exc_einval);
+            if (err_on_fail) {
+              O2SCL_ERR("Not enough arguments in trace().",o2scl::exc_einval);
+            }
+            return 3;
           }
           vis.push_back(ix_trace(o2scl::stoszt(args[0]),
                                  o2scl::stoszt(args[1])));
@@ -1065,12 +1089,17 @@ namespace o2scl {
             vector_out(std::cout,args,true);
           }
           if (args.size()<3) {
-            O2SCL_ERR("Not enough arguments in range().",o2scl::exc_einval);
+            if (err_on_fail) {
+              O2SCL_ERR("Not enough arguments in range().",
+                        o2scl::exc_einval);
+            }
+            return 4;
           }
           vis.push_back(ix_range(o2scl::stoszt(args[0]),
                                  o2scl::stoszt(args[1]),
                                  o2scl::stoszt(args[2])));
-        } else if (sv2[j].find("interp(")==0 && sv2[j][sv2[j].size()-1]==')') {
+        } else if (sv2[j].find("interp(")==0 &&
+                   sv2[j][sv2[j].size()-1]==')') {
           std::string spec=sv2[j].substr(7,sv2[j].length()-8);
           split_string_delim(spec,args,',');
           if (verbose>1) {
@@ -1078,7 +1107,11 @@ namespace o2scl {
             vector_out(std::cout,args,true);
           }
           if (args.size()<2) {
-            O2SCL_ERR("Not enough arguments in interp().",o2scl::exc_einval);
+            if (err_on_fail) {
+              O2SCL_ERR("Not enough arguments in interp().",
+                        o2scl::exc_einval);
+            }
+            return 5;
           }
           vis.push_back(ix_interp(o2scl::stoszt(args[0]),
                                   o2scl::function_to_double(args[1])));
@@ -1086,7 +1119,11 @@ namespace o2scl {
           std::string spec=sv2[j].substr(5,sv2[j].length()-6);
           split_string_delim(spec,args,',');
           if (args.size()<4) {
-            O2SCL_ERR("Not enough arguments in grid().",o2scl::exc_einval);
+            if (err_on_fail) {
+              O2SCL_ERR("Not enough arguments in grid().",
+                        o2scl::exc_einval);
+            }
+            return 6;
           }
           if (args.size()>4 && o2scl::stob(args[4])==true) {
             if (verbose>1) {
@@ -1108,11 +1145,16 @@ namespace o2scl {
                                   o2scl::function_to_double(args[2]),
                                   o2scl::stoszt(args[3]),false));
           }
-        } else if (sv2[j].find("gridw(")==0 && sv2[j][sv2[j].size()-1]==')') {
+        } else if (sv2[j].find("gridw(")==0 &&
+                   sv2[j][sv2[j].size()-1]==')') {
           std::string spec=sv2[j].substr(6,sv2[j].length()-7);
           split_string_delim(spec,args,',');
           if (args.size()<4) {
-            O2SCL_ERR("Not enough arguments in gridw().",o2scl::exc_einval);
+            if (err_on_fail) {
+              O2SCL_ERR("Not enough arguments in gridw().",
+                        o2scl::exc_einval);
+            }
+            return 7;
           }
           if (args.size()>4 && o2scl::stob(args[4])==true) {
             if (verbose>1) {
@@ -1135,10 +1177,16 @@ namespace o2scl {
                                    o2scl::function_to_double(args[2]),
                                    o2scl::function_to_double(args[3]),false));
           }
+        } else {
+          if (err_on_fail) {
+            O2SCL_ERR("Did not understand index specification.",
+                      o2scl::exc_einval);
+          }
+          return 1;
         }
       }
       
-      return;
+      return 0;
     }
     
     /** \brief Rearrange, sum and copy current tensor to a new tensor
