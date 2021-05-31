@@ -186,6 +186,8 @@ void acol_manager::command_add(std::string new_type) {
 
   const int both=cli::comm_option_both;
   
+  terminal ter;
+  
   if (new_type=="int") {
     static const size_t narr=1;
     comm_option_s options_arr[narr]=
@@ -742,7 +744,14 @@ void acol_manager::command_add(std::string new_type) {
        {0,"rearrange","Rearrange the tensor.",
 	-1,-1,"<index spec. 1> [index spec. 2] ...",
 	((std::string)"Index specifications are: index(ix), fixed(ix), ")+
-	"sum(ix), trace(ix1,ix2), reverse(ix), and range(ix,start,end).",
+	"sum(ix), trace(ix1,ix2), reverse(ix), and range(ix,start,end). "+
+        "Index specifications may be specified as separate arguments "+
+        "e.g. \"index(1)\" \"fixed(2,10)\" or multiple index "+
+        "specifications may be given in a single argument separated by "+
+        "spaces or commas, e.g. \"index(1) fixed(2,10)\" or "+
+        "\"index(1),fixed(2,10)\". See '-help "+ter.green_fg()+ter.bold()+
+        "index-spec"+ter.default_fg()+"' for more information on the "+
+        "tensor index specifications.",
 	new comm_option_mfptr<acol_manager>
 	(this,&acol_manager::comm_rearrange),both},
        {0,"to-table3d","Select two indices and convert to a table3d object.",
@@ -800,7 +809,14 @@ void acol_manager::command_add(std::string new_type) {
        {0,"rearrange","Rearrange the tensor.",
 	-1,-1,"<index spec. 1> [index spec. 2] ...",
 	((std::string)"Index specifications are: index(ix), fixed(ix), ")+
-	"sum(ix), trace(ix1,ix2), reverse(ix), and range(ix,start,end).",
+	"sum(ix), trace(ix1,ix2), reverse(ix), and range(ix,start,end). "+
+        "Index specifications may be specified as separate arguments "+
+        "e.g. \"index(1)\" \"fixed(2,10)\" or multiple index "+
+        "specifications may be given in a single argument separated by "+
+        "spaces or commas, e.g. \"index(1) fixed(2,10)\" or "+
+        "\"index(1),fixed(2,10)\". See '-help "+ter.green_fg()+ter.bold()+
+        "index-spec"+ter.default_fg()+"' for more information on the "+
+        "tensor index specifications.",
 	new comm_option_mfptr<acol_manager>
 	(this,&acol_manager::comm_rearrange),both},
        {0,"to-table3d","Select two indices and convert to a table3d object.",
@@ -831,7 +847,14 @@ void acol_manager::command_add(std::string new_type) {
        {0,"rearrange","Rearrange the tensor.",
 	-1,-1,"<index spec. 1> [index spec. 2] ...",
 	((std::string)"Index specifications are: index(ix), fixed(ix), ")+
-	"sum(ix), trace(ix1,ix2), reverse(ix), and range(ix,start,end).",
+	"sum(ix), trace(ix1,ix2), reverse(ix), and range(ix,start,end). "+
+        "Index specifications may be specified as separate arguments "+
+        "e.g. \"index(1)\" \"fixed(2,10)\" or multiple index "+
+        "specifications may be given in a single argument separated by "+
+        "spaces or commas, e.g. \"index(1) fixed(2,10)\" or "+
+        "\"index(1),fixed(2,10)\". See '-help "+ter.green_fg()+ter.bold()+
+        "index-spec"+ter.default_fg()+"' for more information on the "+
+        "tensor index specifications.",
 	new comm_option_mfptr<acol_manager>
 	(this,&acol_manager::comm_rearrange),both},
        {'l',"list","List the rank and sizes.",
@@ -951,7 +974,14 @@ void acol_manager::command_add(std::string new_type) {
 	((std::string)"Index specifications are: index(ix), fixed(ix), ")+
 	"sum(ix), trace(ix1,ix2), reverse(ix), range(ix,start,end), "+
 	"interp(ix,value), grid(ix,begin,end,n_bins,log), and "+
-	"gridw(ix,begin,end,bin_width,log).",
+	"gridw(ix,begin,end,bin_width,log). "+
+        "Index specifications may be specified as separate arguments "+
+        "e.g. \"index(1)\" \"fixed(2,10)\" or multiple index "+
+        "specifications may be given in a single argument separated by "+
+        "spaces or commas, e.g. \"index(1) fixed(2,10)\" or "+
+        "\"index(1),fixed(2,10)\". See '-help "+ter.green_fg()+ter.bold()+
+        "index-spec"+ter.default_fg()+"' for more information on the "+
+        "tensor index specifications.",
 	new comm_option_mfptr<acol_manager>
 	(this,&acol_manager::comm_rearrange),both},
        {0,"slice","Slice to a smaller rank tensor_grid object.",

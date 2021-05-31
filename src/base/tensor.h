@@ -1191,6 +1191,10 @@ namespace o2scl {
     
     /** \brief Rearrange, sum and copy current tensor to a new tensor
 
+        \todo We need to check all of the degenerate cases, for
+        example, a range spec. with only one element, a grid specification
+        with only one element in the result, etc.
+
         \future Return a scalar if possible as a rank 1 tensor with
         1 element.
     */

@@ -625,10 +625,6 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   terminal ter;
   
-  // Determine if we're being redirected to a file
-  bool redirected=false;
-  if (!isatty(STDOUT_FILENO)) redirected=true;
-
   // Create a line for separating help text sections
   string line=ter.hrule();
 
@@ -755,19 +751,46 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	 << "index-spec" << ter.default_fg() << endl;
     cout << line << "\n" << endl;
     std::string str=((std::string)"Index specification ")+
-      "description:\n\nThe rearrange commands use index "+
-      "specifications:\n\n"+
+      "description:\n\nThe tensor rearrange commands use index "+
+      "specifications to specify how the tensor should be rearranged. "+
+      "Index specifications may be specified as separate arguments "+
+      "e.g. \"index(1)\" \"fixed(2,10)\" or multiple index "+
+      "specifications may be given in a single argument separated by "+
+      "spaces or commas, e.g. \"index(1) fixed(2,10)\" or "+
+      "\"index(1),fixed(2,10)\". The indices begin with 0, the first "+
+      "index so that index 1 is the second index. "+
+      "The list of index specification is:\n\n"+
       "- index(ix): Retain index ix in the new tensor.\n\n"+
       "- fixed(ix): Fix the value of index ix.\n\n"+
       "- sum(ix): Sum over the value of index ix\n\n"+
-      "- trace(ix1,ix2): Trace over indices ix and ix2.\n\n"+
-      "- reverse(ix): Retain index ix but then reverse the order.\n\n"+
-      "- range(ix,start,end): Retain index ix but modify range.\n\n"+
+      "- trace(ix1,ix2): Trace (sum) over indices ix and ix2. If the "+
+      "number of entries in either index is smaller than the other, then "+
+      "the remaining entries are ignored in the sum.\n\n"+
+      "- reverse(ix): Retain index ix but reverse the order.\n\n"+
+      "- range(ix,start,end): Retain index ix but modify range. Ranges "+
+      "include both of their endpoints.\n\n"+
       "- interp(ix,value) (for tensor_grid): fix index ix by "+
       "interpolating 'value' into the grid for index ix.\n\n"+
-      "- grid(ix,begin,end,n_bins,log) (for tensor_grid):\n\n"+
-      "- gridw(ix,begin,end,bin_width,log) (for tensor_grid):\n";
-    
+      "- grid(ix,begin,end,n_bins,log) (for tensor_grid): interpolate the "+
+      "specified index on a grid to create a new index. If the value of "+
+      "log is 1, then the grid is logarithmic.\n\n"+
+      "- gridw(ix,begin,end,bin_width,log) (for tensor_grid): interpolate "+
+      "the specified index on a grid with a fixed bin width to create "+
+      "a new index. If the value of "+
+      "log is 1, then the grid is logarithmic and the bin_width is the "+
+      "multiplicative factor between bin edges.\n\n"+
+      "Note that the index specifications which result in a tensor index "+
+      "(all except 'fixed', 'sum', 'trace' and 'interp') must be given "+
+      "in the order they should appear in the tensor which results. "+
+      "Also, the 'rearrange' commands require that the result "+
+      "of the rearrangement must have at least one index left.\n\n"+
+      "Examples:\n\n"+
+      "index(1),index(0) - take the transpose of a rank 2 "+
+      "tensor (i.e. a matrix)\n\n"+
+      "index(1),fixed(2,0),index(0) - fix the value of index 2 (i.e. the "+
+      "third index) to zero and transpose the other two indices\n\n"+
+      "fixed(2,0),index(1),index(0) - same as above\n\n";
+
     std::vector<std::string> sv;
     o2scl::rewrap_keep_endlines(str,sv);
     for(size_t i=0;i<sv.size();i++) {
