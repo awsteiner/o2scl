@@ -61,6 +61,11 @@ namespace o2scl_linalg {
     */
     virtual int invert_det(size_t n, const mat_t &A, mat_t &A_inv,
                             double &A_det)=0;
+
+    /** \brief Determine the determinant of the matrix \c A without
+        inverting
+    */
+    virtual double det(size_t n, const mat_t &A)=0;
     
     /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
         modifying the original matrix A 
@@ -111,6 +116,21 @@ namespace o2scl_linalg {
       mat_t A2=A;
       invert_dest(n,A2,A_inv);
       return 0;
+    }
+    
+    /** \brief Determine the determinant of the matrix \c A without
+        inverting
+    */
+    virtual double det(size_t n, const mat_t &A) {
+      mat_t A2=A;
+      int sig;
+      o2scl::permutation p(n);
+      LU_decomp(n,A2,p,sig);
+      if (o2scl_linalg::diagonal_has_zero(n,A)) {
+        O2SCL_ERR2("Matrix singular (LU method) ",
+                   "in matrix_invert_det_LU::invert().",o2scl::exc_esing);
+      }
+      return LU_det(n,A2,sig);
     }
     
     /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
@@ -164,9 +184,20 @@ namespace o2scl_linalg {
                             double &A_det) {
       A_inv=A;
       cholesky_decomp(n,A_inv,false);
-      A_det=cholesky_det(n,A_inv);
+      double sqrt_det=cholesky_det(n,A_inv);
+      A_det=sqrt_det*sqrt_det;
       cholesky_invert(n,A_inv);
       return 0;
+    }
+    
+    /** \brief Determine the determinant of the matrix \c A without
+        inverting
+    */
+    virtual double det(size_t n, const mat_t &A) {
+      mat_t A_copy=A;
+      cholesky_decomp(n,A_copy,false);
+      double sqrt_det=cholesky_det(n,A_copy);
+      return sqrt_det*sqrt_det;
     }
     
     /// Invert matrix \c A in place
@@ -214,6 +245,13 @@ namespace o2scl_linalg {
       return 0;
     }
     
+    /** \brief Determine the determinant of the matrix \c A without
+        inverting
+    */
+    virtual double det(size_t n, const arma_mat_t &A) {
+      return det(A);
+    }
+    
     /// Invert matrix \c A in place
     virtual int invert_inplace(size_t n, arma_mat_t &A) {
       A=inv(A);
@@ -246,6 +284,13 @@ namespace o2scl_linalg {
       A_det=det(A);
       A_inv=inv_sympd(A);
       return 0;
+    }
+    
+    /** \brief Determine the determinant of the matrix \c A without
+        inverting
+    */
+    virtual double det(size_t n, const arma_mat_t &A) {
+      return det(A);
     }
     
     /// Inver matrix \c A in place
@@ -290,6 +335,13 @@ namespace o2scl_linalg {
       A_inv=A.inverse();
       A_det=A.determinant();
       return 0;
+    }
+    
+    /** \brief Determine the determinant of the matrix \c A without
+        inverting
+    */
+    virtual double det(size_t n, const eigen_mat_t &A) {
+      return A.determinant();
     }
     
     /// Inver matrix \c A in place

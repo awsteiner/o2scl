@@ -29,6 +29,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/vec_stats.h>
 #include <o2scl/prob_dens_func.h>
+#include <o2scl/invert.h>
 
 using namespace std;
 using namespace o2scl;
@@ -245,8 +246,9 @@ int main(void) {
   mean_prior(0)=5.0;
   ubvector mean_post(1);
   mean_post(0)=7.0;
+  o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> mid;
   double kl1=kl_div_gaussian(1,mean_prior,mean_post,
-                             covar_prior,covar_post);
+                             covar_prior,covar_post,mid);
   double kl2=kl_div_gaussian(mean_prior(0),mean_post(0),
                              covar_prior(0,0),covar_post(0,0));
   t.test_rel(kl1,kl2,1.0e-12,"KL div");
