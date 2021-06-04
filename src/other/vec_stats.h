@@ -2408,21 +2408,11 @@ namespace o2scl {
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-    // Perform the Cholesky decomposition of the prior covariance matrix
-    //mat_t covar_prior_chol=covar_prior;
-    //o2scl_linalg::cholesky_decomp(nv,covar_prior_chol);
-
-    // Invert the prior covariance matrix
-    //mat_t covar_prior_inv=covar_prior_chol;
-    //o2scl_linalg::cholesky_invert<ubmatrix>(nv,covar_prior_inv);
-
     double covar_prior_det;
     mat_t covar_prior_inv;
     mid.invert_det(nv,covar_prior,covar_prior_inv,covar_prior_det);
-    std::cout << "covar_prior_det: " << covar_prior_det << std::endl;
 
     double covar_post_det=mid.det(nv,covar_post);
-    std::cout << "covar_post_det: " << covar_post_det << std::endl;
 
     // Compute the product of the inverse of the prior covariance
     // matrix and the posterior covariance matrix
@@ -2452,26 +2442,6 @@ namespace o2scl {
                        covar_prior_inv,diff,0.0,prod2);
     
     double prod3=o2scl_cblas::ddot(nv,diff,prod2);
-
-    // The Cholesky decomposition of the posterior covariance matrix
-    //mat_t covar_post_chol=covar_post;
-    //o2scl_linalg::cholesky_decomp(nv,covar_post_chol);
-
-    // At this point, covar_prior_chol and covar_post_chol both
-    // contain the respective Cholesky decompositions, so at this
-    // point we can use them to compute the determinants.
-
-    //double sqrt_det_prior=1.0;
-    //for(size_t k=0;k<nv;k++) {
-    //sqrt_det_prior*=covar_prior_chol(k,k);
-    //}
-    //double det_prior=sqrt_det_prior*sqrt_det_prior;
-
-    //double sqrt_det_post=1.0;
-    //for(size_t k=0;k<nv;k++) {
-    //sqrt_det_post*=covar_post_chol(k,k);
-    //}
-    //double det_post=sqrt_det_post*sqrt_det_post;
 
     // Compute the final KL divergence
     double div=0.5*(trace+prod3-((double)nv)+log
