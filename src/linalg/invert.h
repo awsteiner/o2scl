@@ -356,7 +356,7 @@ namespace o2scl_linalg {
 #endif
 
 #else
-#include <o2scl/linear_special.h>
+#include <o2scl/invert_special.h>
 #endif
 
 #endif

@@ -76,8 +76,9 @@ namespace o2scl_linalg {
 
 #if !defined (O2SCL_COND_FLAG) || defined (O2SCL_EIGEN)
 #include <eigen3/Eigen/Dense>
-namespace o2scl_linalg {
 
+namespace o2scl_linalg {
+  
   /** \brief Eigen inverse using QR decomposition with 
       column pivoting
 
@@ -85,26 +86,44 @@ namespace o2scl_linalg {
       installation.
 
   */
-  template<class eigen_mat_t>
-  class matrix_invert_eigen : 
-    public matrix_invert<eigen_mat_t> {
+  template<class eigen_mat_t> class matrix_invert_det_eigen : 
+    public matrix_invert_det<eigen_mat_t> {
     
-    /// Desc
-    virtual void invert(size_t n, const eigen_mat_t &A, eigen_mat_t &Ainv) {
-      Ainv=A.inverse();
-      return;
+  public:
+    
+    /// Invert matrix \c A, returning the inverse in \c A_inv
+    virtual int invert(size_t n, const eigen_mat_t &A, eigen_mat_t &A_inv) {
+      A_inv=A.inverse();
+      return 0;
     }
     
-    /// Desc
-    virtual void invert_inplace(size_t n, eigen_mat_t &A) {
+    /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
+        and the determinant in \c A_det
+    */
+    virtual int invert_det(size_t n, const eigen_mat_t &A,
+                           eigen_mat_t &A_inv, double &A_det) {
+      A_inv=A.inverse();
+      A_det=A.determinant();
+      return 0;
+    }
+    
+    /** \brief Determine the determinant of the matrix \c A without
+        inverting
+    */
+    virtual double det(size_t n, const eigen_mat_t &A) {
+      return A.determinant();
+    }
+    
+    /// Inver matrix \c A in place
+    virtual int invert_inplace(size_t n, eigen_mat_t &A) {
       A=A.inverse();
-      return;
+      return 0;
     }
     
   };
   
-
 }
+
 #endif
 
 #endif
