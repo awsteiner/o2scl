@@ -25,27 +25,49 @@
 
 #if !defined (O2SCL_COND_FLAG) || defined (O2SCL_ARMA)
 #include <armadillo>
-namespace o2scl_linalg {
 
+namespace o2scl_linalg {
+  
   /** \brief Armadillo inverse 
 
       This class is only defined if Armadillo support was enabled
       during installation
   */
-  template<class arma_mat_t> class matrix_invert_arma : 
-    public matrix_invert<arma_mat_t> {
+  template<class arma_mat_t> class matrix_invert_det_arma : 
+    public matrix_invert_det<arma_mat_t> {
+
+  public:
     
-    virtual void invert(size_t n, const arma_mat_t &A, arma_mat_t &Ainv) {
-      Ainv=inv(A);
-      return;
+    /// Invert matrix \c A, returning the inverse in \c A_inv
+    virtual int invert(size_t n, const arma_mat_t &A, arma_mat_t &A_inv) {
+      A_inv=inv(A);
+      return 0;
     }
 
-    virtual void invert_inplace(size_t n, arma_mat_t &A) {
+    /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
+        and the determinant in \c A_det
+    */
+    virtual int invert_det(size_t n, const arma_mat_t &A, arma_mat_t &A_inv,
+                            double &A_det) {
+      A_det=det(A);
+      A_inv=inv(A);
+      return 0;
+    }
+    
+    /** \brief Determine the determinant of the matrix \c A without
+        inverting
+    */
+    virtual double det(size_t n, const arma_mat_t &A) {
+      return det(A);
+    }
+    
+    /// Invert matrix \c A in place
+    virtual int invert_inplace(size_t n, arma_mat_t &A) {
       A=inv(A);
-      return;
+      return 0;
     }
 
-    virtual ~matrix_invert_arma() {}
+    virtual ~matrix_invert_det_arma() {}
     
   };
 
@@ -54,20 +76,39 @@ namespace o2scl_linalg {
       This class is only defined if Armadillo support was enabled
       during installation
   */
-  template<class arma_mat_t> class matrix_invert_sympd_arma : 
-    public matrix_invert<arma_mat_t> {
+  template<class arma_mat_t> class matrix_invert_det_sympd_arma : 
+    public matrix_invert_det<arma_mat_t> {
     
-    virtual void invert(size_t n, const arma_mat_t &A, arma_mat_t &Ainv) {
-      Ainv=inv_sympd(A);
-      return;
+    /// Invert matrix \c A, returning the inverse in \c A_inv
+    virtual int invert(size_t n, const arma_mat_t &A, arma_mat_t &A_inv) {
+      A_inv=inv_sympd(A);
+      return 0;
     }
 
-    virtual void invert_inplace(size_t n, arma_mat_t &A) {
+    /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
+        and the determinant in \c A_det
+    */
+    virtual int invert_det(size_t n, const arma_mat_t &A, arma_mat_t &A_inv,
+                            double &A_det) {
+      A_det=det(A);
+      A_inv=inv_sympd(A);
+      return 0;
+    }
+    
+    /** \brief Determine the determinant of the matrix \c A without
+        inverting
+    */
+    virtual double det(size_t n, const arma_mat_t &A) {
+      return det(A);
+    }
+    
+    /// Inver matrix \c A in place
+    virtual int invert_inplace(size_t n, arma_mat_t &A) {
       A=inv_sympd(A);
-      return;
+      return 0;
     }
 
-    virtual ~matrix_invert_sympd_arma() {}
+    virtual ~matrix_invert_det_sympd_arma() {}
     
   };
 }
