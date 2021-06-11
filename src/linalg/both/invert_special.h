@@ -49,7 +49,7 @@ namespace o2scl_linalg {
     */
     virtual int invert_det(size_t n, const arma_mat_t &A, arma_mat_t &A_inv,
                             double &A_det) {
-      A_det=det(A);
+      A_det=arma::det(A);
       A_inv=inv(A);
       return 0;
     }
@@ -58,7 +58,7 @@ namespace o2scl_linalg {
         inverting
     */
     virtual double det(size_t n, const arma_mat_t &A) {
-      return det(A);
+      return arma::det(A);
     }
     
     /// Invert matrix \c A in place
@@ -90,7 +90,7 @@ namespace o2scl_linalg {
     */
     virtual int invert_det(size_t n, const arma_mat_t &A, arma_mat_t &A_inv,
                             double &A_det) {
-      A_det=det(A);
+      A_det=arma::det(A);
       A_inv=inv_sympd(A);
       return 0;
     }
@@ -99,7 +99,7 @@ namespace o2scl_linalg {
         inverting
     */
     virtual double det(size_t n, const arma_mat_t &A) {
-      return det(A);
+      return arma::det(A);
     }
     
     /// Inver matrix \c A in place
