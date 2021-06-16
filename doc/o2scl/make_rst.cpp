@@ -42,11 +42,12 @@ std::string underscoreify(std::string s) {
   }
   return s2;
 }
+
 /** \brief Inside string \c s, extract the element inside tag \c tag
     and store the element in \c result
 */
 int xml_get_tag_element(string s, string tag, string &result) {
-  // Remove enclosing <>
+  // Remove enclosing <> in tag
   if (tag[0]=='<') {
     if (tag[tag.length()-1]!='>') {
       return 1;
@@ -57,7 +58,7 @@ int xml_get_tag_element(string s, string tag, string &result) {
   string tag_start=((string)"<")+tag+">";
   string tag_end=((string)"</")+tag+">";
 
-  // Exit early if there is a parsing error
+  // Exit early if the tag is not found
   size_t istart=s.find(tag_start);
   if (istart==std::string::npos) {
     return 2;
@@ -68,13 +69,16 @@ int xml_get_tag_element(string s, string tag, string &result) {
   }
   if (istart+tag_len+2>iend) return 4;
   
-  // Extract the name
+  // Make sure the <name> tag is also present in the string somewhere,
+  // return early if it is not
   size_t loc1=s.find("<name>");
   size_t loc2=s.find("</name>");
   size_t loct=loc1+6;
   if (loc2<loct) {
     return 5;
   }
+  
+  // Finally, return the result, adjusting by 2 for the < and >
   size_t len=iend-istart-tag_len-2;
   result=s.substr(istart+tag_len+2,len);
   return 0;
@@ -85,9 +89,10 @@ int xml_get_tag_element(string s, string tag, string &result) {
   files for each class and function (or list of overloaded functions).
 */
 int main(int argc, char *argv[]) {
-
+  
   if (argc<2) {
-    cerr << "Requires context argument." << endl;
+    cerr << "Requires context argument, either \"eos\" or \"main\"."
+         << endl;
     exit(-1);
   }
 
@@ -128,7 +133,8 @@ int main(int argc, char *argv[]) {
     std::set<std::string> list_dup;
 
     while (!fin.eof()) {
-      
+
+      // Read each line of the file
       string s;
       std::getline(fin,s);
 
