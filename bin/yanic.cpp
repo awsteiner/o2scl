@@ -392,7 +392,14 @@ public:
   /// The value (used for default function values)
   std::string value;
 
-  /// Parse a list of strings to this variable
+  /// The python name for the variable
+  std::string py_name;
+  
+  /** \brief Parse a list of strings to this variable
+
+      Note that this does not set the python name because that 
+      is specified on a different line in the interface file.
+   */
   void parse(vector<string> &vs) {
 
     if (vs.size()==0) {
@@ -842,6 +849,18 @@ int main(int argc, char *argv[]) {
             
             next_line(fin,line,vs,done);
             if (done) class_done=true;
+
+            // Here, check if there is a python name to this member
+            // function argument
+
+            if (vs.size()>=3 && vs[0]=="-" && vs[1]=="py_name" &&
+                line[0]==' ' && line[1]==' ' && line[2]==' ' &&
+                line[3]==' ') {
+              ifv.py_name=vs[2];
+              cout << "      Member function argument "
+                   << ifv.name << " has python name "
+                   << ifv.py_name << " ." << endl;
+            }
           }
 
           ifc.methods.push_back(iff);

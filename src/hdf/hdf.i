@@ -75,11 +75,12 @@ class hdf_file
   - int
   - std::string name
   - out std::string &s
-- function gets_def_fixed
-  - int
-  - std::string name
-  - std::string def
-  - out std::string &s
+#- function gets_def_fixed
+#  - int
+#  - std::string name
+#  - std::string def
+#    - py_name default
+#  - out std::string &s
 - function setc
   - void
   - std::string name
@@ -112,10 +113,6 @@ class hdf_file
   - int
   - std::string name
   - out std::vector<int> &v
-- function geti_vec
-  - int
-  - std::string name
-  - out std::vector<int> &v
 - function get_szt_vec
   - int
   - std::string name
@@ -140,69 +137,69 @@ class hdf_file
   - int
   - std::string name
   - io std::vector<std::string> &s
-- function getd_mat_copy
-  - int
-  - std::string name
-  - out ubmatrix &m
-- function geti_mat_copy
-  - int
-  - std::string name
-  - out ubmatrix_int &m
-- function setd_mat_copy
-  - int
-  - io ubmatrix &m
-- function seti_mat_copy
-  - int
-  - io ubmatrix_int &m
+#- function getd_mat_copy
+#  - int
+#  - std::string name
+#  - out boost::numeric::ublas::matrix<double> &m
+#- function geti_mat_copy
+#  - int
+#  - std::string name
+#  - out boost::numeric::ublas::matrix<double> &m
+#- function setd_mat_copy
+#  - int
+#  - io boost::numeric::ublas::matrix<double> &m
+#- function seti_mat_copy
+#  - int
+#  - io boost::numeric::ublas::matrix<int> &m
 - function getd_ten
   - int
   - std::string name
-  - out tensor &t
+  - out tensor<> &t
 - function geti_ten
   - int
   - std::string name
-  - out tensor_int &t
+  - out tensor<int> &t
 - function get_szt_ten
   - int
   - std::string name
-  - out tensor_size_t &t
+  - out tensor<size_t> &t
 - function setd_ten
   - int
   - std::string name
-  - io tensor &t
+  - io tensor<> &t
 - function seti_ten
   - int
   - std::string name
-  - io tensor_int &t
+  - io tensor<int> &t
 - function set_szt_ten
   - int
   - std::string name
-  - io tensor_size_t &t
-- function getc_def
-  - int
-  - std::string name
-  - char def
-  - out char &c
-- function getd_def
-  - int
-  - std::string name
-  - double def
-  - out double &d
-- function geti_def
-  - int
-  - std::string name
-  - int def
-  - out int &i
-- function get_szt_def
-  - int
-  - std::string name
-  - size_t def
-  - out size_t &u
-- function gets_def
-  - int
-  - std::string name
-  - std::string def
-  - out std::string &s
+  - io tensor<size_t> &t
+#- function getc_def
+#  - int
+#  - std::string name
+#  - char def
+#  - out char &c
+#- function getd_def
+#  - int
+#  - std::string name
+#  - double def
+#  - out double &d
+#- function geti_def
+#  - int
+#  - std::string name
+#  - int def
+#  - out int &i
+#- function get_szt_def
+#  - int
+#  - std::string name
+#  - size_t def
+#  - out size_t &u
+#- function gets_def
+#  - int
+#  - std::string name
+#  - std::string def
+#  - out std::string &s
 - function find_object_by_type
   - int
   - std::string type
@@ -325,7 +322,7 @@ function vector_spec<std::vector<double>>
 - int
 - py_name vector_spec  
 - std::string spec
-- out std::vector &v
+- out std::vector<double> &v
 - int verbose [0]
 - bool err_on_fail [true]
 function strings_spec<std::vector<std::string>>
@@ -335,14 +332,14 @@ function strings_spec<std::vector<std::string>>
 - out std::vector<std::string> &v
 - int verbose [0]
 - bool err_on_fail [true]
-function vector_spec
-- std::vector<double>
-- py_name vector_spec_vector  
-- std::string spec  
-function mult_vector_spec<std::vector<std::vector<double>>>
-- int
-- py_name mult_vector_spec  
-- std::string spec
-- out std::vector<std::vector<double>> &v
-- int verbose [0]
-- bool err_on_fail [true]
+#function vector_spec
+#- std::vector<double>
+#- py_name vector_spec_vector  
+#- std::string spec  
+#function mult_vector_spec<std::vector<std::vector<double>>>
+#- int
+#- py_name mult_vector_spec  
+#- std::string spec
+#- out std::vector<std::vector<double>> &v
+#- int verbose [0]
+#- bool err_on_fail [true]
