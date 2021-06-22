@@ -37,6 +37,97 @@ namespace o2scl {
   typedef boost::numeric::ublas::vector<double> ubvector;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
+  class eos_had_virial_spin {
+    
+  protected:
+    
+  public:
+
+    virtual int calc_temp_p_spin(fermion &n_up, fermion &n_dn,
+                                 fermion &p_up, fermion &p_dn,
+                                 double T, thermo &th) {
+      
+      double lam_n_up=sqrt(2.0*o2scl_const::pi/n_up.m/T);
+      double lam_n_dn=sqrt(2.0*o2scl_const::pi/n_dn.m/T);
+      double lam_p_up=sqrt(2.0*o2scl_const::pi/p_up.m/T);
+      double lam_p_dn=sqrt(2.0*o2scl_const::pi/p_dn.m/T);
+      
+      double lam_n_up3=lam_n_up*lam_n_up*lam_n_up;
+      double lam_n_dn3=lam_n_dn*lam_n_dn*lam_n_dn;
+      double lam_p_up3=lam_p_up*lam_p_up*lam_p_up;
+      double lam_p_dn3=lam_p_dn*lam_p_dn*lam_p_dn;
+
+      double z_n_up;
+      if (n_up.inc_rest_mass) {
+        z_n_up=exp((n_up.mu-n_up.m)/T);
+      } else {
+        z_n_up=exp(n_up.mu/T);
+      }
+      double z_n_dn;
+      if (n_dn.inc_rest_mass) {
+        z_n_dn=exp((n_dn.mu-n_dn.m)/T);
+      } else {
+        z_n_dn=exp(n_dn.mu/T);
+      }
+      double z_p_up;
+      if (p_up.inc_rest_mass) {
+        z_p_up=exp((p_up.mu-p_up.m)/T);
+      } else {
+        z_p_up=exp(p_up.mu/T);
+      }
+      double z_p_dn;
+      if (p_dn.inc_rest_mass) {
+        z_p_dn=exp((p_dn.mu-p_dn.m)/T);
+      } else {
+        z_p_dn=exp(p_dn.mu/T);
+      }
+
+      double bn1, bn0, bpn1, bpn0;
+      
+      th.pr=T*(z_n_up/lam_n_up3+z_n_dn/lam_n_dn3+
+               z_p_up/lam_p_up3+z_p_dn/lam_p_dn3)+
+        bn1*(z_n_up*z_n_up+z_n_dn*z_n_dn+z_p_up*z_p_up+z_p_dn*z_p_dn)+
+        bn0*(z_n_up*z_n_dn+z_p_up*z_p_dn)+
+        2.0*bpn1*(z_n_up*z_p_up+z_n_dn*z_p_dn)+
+        2.0*bpn0*(z_n_up*z_p_dn+z_n_dn*z_p_up);
+
+      n_up.n=z_n_up/lam_n_up3+
+        bn1/T*2.0*z_n_up*z_n_up+
+        bn0/T*z_n_up*z_n_dn+
+        2.0/T*bpn1*z_n_up*z_p_up+
+        2.0/T*bpn0*z_n_up*z_p_dn;
+
+      n_dn.n=z_n_dn/lam_n_dn3+
+        bn1/T*2.0*z_n_dn*z_n_dn+
+        bn0/T*z_n_dn*z_n_up+
+        2.0/T*bpn1*z_n_dn*z_p_dn+
+        2.0/T*bpn0*z_n_dn*z_p_up;
+
+      p_up.n=z_p_up/lam_p_up3+
+        bn1/T*2.0*z_p_up*z_p_up+
+        bn0/T*z_p_up*z_p_dn+
+        2.0/T*bpn1*z_p_up*z_n_up+
+        2.0/T*bpn0*z_p_up*z_n_dn;
+
+      p_dn.n=z_p_dn/lam_p_dn3+
+        bn1/T*2.0*z_p_dn*z_p_dn+
+        bn0/T*z_p_dn*z_p_up+
+        2.0/T*bpn1*z_p_dn*z_n_dn+
+        2.0/T*bpn0*z_p_dn*z_n_up;
+      
+      th.en=(z_n_up/lam_n_up3+z_n_dn/lam_n_dn3+
+                 z_p_up/lam_p_up3+z_p_dn/lam_p_dn3);
+      
+      double fr=n_up.mu*n_up.n+n_dn.mu*n_dn.n+
+        p_up.mu*p_up.n+p_dn.mu*p_dn.n-th.pr;
+
+      th.ed=fr+T*th.en;
+
+      return 0;
+    }
+    
+  };
+  
   /** \brief Compute the virial EOS
    */
   class eos_had_virial {
