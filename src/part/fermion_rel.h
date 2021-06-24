@@ -1131,7 +1131,7 @@ namespace o2scl {
         // then call the bracketing solver
 	if (yhigh>0.0 && ylow<0.0) {
 	  root_brent_gsl<func_t,fp_t> rbg;
-          rbg.test_form=1;
+          rbg.test_form=2;
 	  rbg.err_nonconv=false;
 	  ret=rbg.solve_bkt(b_low,b_high,mf);
           // If it succeeded, then set nex to the new solution

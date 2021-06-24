@@ -102,15 +102,16 @@ namespace o2scl {
 	\c gsl_root_test_interval() .
      */
     int test_interval(fp_t xx_lower, fp_t xx_upper, fp_t epsabs,
-		      fp_t epsrel) {
+		      fp_t epsrel, fp_t &tolerance, fp_t &interval) {
+      
       fp_t abs_lower, abs_upper;
-	
+
       if (xx_lower<0.0) abs_lower=-xx_lower;
       else abs_lower=xx_lower;
       if (xx_upper<0.0) abs_upper=-xx_upper;
       else abs_upper=xx_upper;
       
-      fp_t min_abs, tolerance;
+      fp_t min_abs;
       if (epsrel<0.0) {
 	O2SCL_ERR2("Relative tolerance is negative in ",
 		   "root_brent_gsl::test_interval().",o2scl::exc_ebadtol);
@@ -133,19 +134,14 @@ namespace o2scl {
       }
 
       tolerance=epsabs+epsrel*min_abs;
-
-      // AWS: This if statement cannot be combined because this form
-      // ensures success in case floating point problems imply that
-      // xx_lower<xx_upper and xx_lower>=xx_upper are both false.
       
       if (xx_lower<xx_upper) {
-	if (xx_upper-xx_lower<tolerance) {
-	  return o2scl::success;
-	}
+        interval=xx_upper-xx_lower;
       } else {
-	if (xx_lower-xx_upper<tolerance) {
-	  return o2scl::success;
-	}
+        interval=xx_lower-xx_upper;
+      }
+      if (interval<tolerance) {
+        return o2scl::success;
       }
       
       return o2scl::gsl_continue;
@@ -302,8 +298,9 @@ namespace o2scl {
       
 	iter++;
 	iterate(f);
+        fp_t tol, interval;
 	status=test_interval(x_lower,x_upper,
-			     this->tol_abs,this->tol_rel);
+			     this->tol_abs,this->tol_rel,tol,interval);
       
 	if (this->verbose>0) {
 	  fp_t y;
@@ -313,8 +310,8 @@ namespace o2scl {
 	  // This additional temporary seems to be required
 	  // for boost::multiprecision types
 	  fp_t x_diff=x_upper-x_lower;
-	  this->print_iter(root,y,iter,o2scl::o2abs(x_diff),
-			   this->tol_abs,"root_brent_gsl (abs)");
+	  this->print_iter(root,y,iter,interval,tol,
+			   "root_brent_gsl (test_interval)");
 	}
       }
 	
@@ -334,7 +331,7 @@ namespace o2scl {
       
 	if (this->verbose>0) {
 	  this->print_iter(root,y,iter,o2scl::o2abs(y),this->tol_rel,
-			   "root_brent_gsl (rel)");
+			   "root_brent_gsl (relative deviation)");
 	}
       }
 
@@ -348,15 +345,16 @@ namespace o2scl {
       
 	iter++;
 	iterate(f);
+        fp_t tol, interval;
 	status=test_interval(x_lower,x_upper,
-                             this->tol_abs,this->tol_rel);
+                             this->tol_abs,this->tol_rel,tol,interval);
         
 	if (status==o2scl::success) {
 	  fp_t y=f(root);
 	  if (o2scl::o2abs(y)>=this->tol_rel) status=gsl_continue;
 	  if (this->verbose>0) {
 	    this->print_iter(root,y,iter,o2scl::o2abs(y),this->tol_rel,
-			     "root_brent_gsl (rel2)");
+			     "root_brent_gsl (relative deviation 2)");
 	  }
 	} else {
 	  if (this->verbose>0) {
@@ -364,8 +362,8 @@ namespace o2scl {
 	    // This additional temporary seems to be required
 	    // for boost::multiprecision types
 	    fp_t x_diff=x_upper-x_lower;
-	    this->print_iter(root,y,iter,o2scl::o2abs(x_diff),
-			     this->tol_abs,"root_brent_gsl (abs2)");
+	    this->print_iter(root,y,iter,interval,tol,
+			     "root_brent_gsl (test_interval 2)");
 	  }
 	}
       }
