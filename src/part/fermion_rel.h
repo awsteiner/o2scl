@@ -1088,7 +1088,7 @@ namespace o2scl {
       }
 
       // Storage the input density
-      fp_t density_temp=f.n;
+      fp_t density_match=f.n;
   
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
 
@@ -1096,11 +1096,12 @@ namespace o2scl {
   
       fp_t nex=f.nu/temper;
       
-      func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t,bool)>
+      func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fermion_t &,fp_t,bool)>
 			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			   nit_t,dit_t,density_root_t,
 			   root_t,func_t,fp_t>::pair_fun),
-			  this,std::placeholders::_1,std::ref(f),temper,false);
+			  this,std::placeholders::_1,density_match,
+                          std::ref(f),temper,false);
 
       // Begin by trying the user-specified guess
       bool drec=density_root->err_nonconv;
@@ -1157,13 +1158,13 @@ namespace o2scl {
 	// If that failed, try working in log units
 
 	// Function in log units
-	func_t lmf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,
+	func_t lmf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fermion_t &,
 					      fp_t,bool)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			      nit_t,dit_t,density_root_t,
 			      root_t,func_t,fp_t>::pair_fun),
-			     this,std::placeholders::_1,std::ref(f),
-			     temper,true);
+			     this,std::placeholders::_1,density_match,
+                             std::ref(f),temper,true);
     
 	if (ret!=0) {
 	  nex=o2log(nex);
@@ -1214,7 +1215,26 @@ namespace o2scl {
       // The function pair_mu() can modify the density, which would be
       // confusing to the user, so we return it to the user-specified
       // value.
-      f.n=density_temp;
+      if (fabs(f.n-density_match)/fabs(f.n)>1.0e-6) {
+        std::cout << last_method << std::endl;
+        std::cout << density_root->tol_rel << " " << density_root->tol_abs
+                  << std::endl;
+        root_brent_gsl<func_t,fp_t> rbg;
+        std::cout << rbg.tol_rel << " " << rbg.tol_abs
+                  << std::endl;
+        std::cout << temper << " " << f.n << " " << density_match << std::endl;
+        std::cout << fabs(f.n-density_match) << std::endl;
+        nex=f.nu/temper;
+        std::cout << "mf: " << mf(nex) << std::endl;
+        std::cout << "Failed in pair_density()." << std::endl;
+        exit(-1);
+      }
+      f.n=density_match;
+
+      // But now that the density has been modified, we need to
+      // recompute the pressure so that the thermodynamic identity is
+      // satisified
+      f.pr=-f.ed+f.n*f.nu+temper*f.en;
 
       return success;
     }
@@ -1519,10 +1539,9 @@ namespace o2scl {
 	function which automatically handles the sum of particles and
 	antiparticles.
     */
-    fp_t pair_fun(fp_t x, fermion_t &f, fp_t T, bool log_mode) {
+    fp_t pair_fun(fp_t x, fp_t density_match, fermion_t &f, fp_t T,
+                  bool log_mode) {
 
-      // Temporary storage for density to match
-      fp_t nn_match=f.n;
       // Number density of particles and antiparticles
       fp_t nden_p, nden_ap;
 
@@ -1550,14 +1569,15 @@ namespace o2scl {
 
       if (false && use_expansions) {
 	if (this->calc_mu_ndeg(f,T,1.0e-8,true) && o2isfinite(f.n)) {
-	  fp_t y1=f.n/nn_match-1.0;
+	  fp_t y1=f.n/density_match-1.0;
 	  if (!o2isfinite(y1)) {
-	    O2SCL_ERR("Value 'y1' not finite (10) in fermion_rel::pair_fun().",
-		      exc_einval);
+	    O2SCL_ERR2("Value 'y1' not finite (10) in ",
+                       "fermion_rel::pair_fun().",
+                       exc_einval);
 	  }
 	  // Make sure to restore the value of f.n to it's original value,
-	  // nn_match
-	  f.n=nn_match;
+	  // density_match
+	  f.n=density_match;
 	  return y1;
 	}
       }
@@ -1767,10 +1787,10 @@ namespace o2scl {
 
       fp_t y2;
       // Finish computing the function value
-      if (nn_match==0.0) {
+      if (density_match==0.0) {
 	y2=fabs(nden_p-nden_ap)/fabs(nden_p);
       } else {
-	y2=(nden_p-nden_ap)/nn_match-1.0;
+	y2=(nden_p-nden_ap)/density_match-1.0;
       }
 
       if (!o2isfinite(y2)) {
@@ -1779,8 +1799,8 @@ namespace o2scl {
       }
   
       // Make sure to restore the value of f.n to it's original value,
-      // nn_match
-      f.n=nn_match;
+      // density_match
+      f.n=density_match;
       return y2;
     }
 

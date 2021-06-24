@@ -319,7 +319,7 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
   // chemical potential
   electron.mu=electron.m;
   
-  relf.pair_density(electron,T/hc_mev_fm);
+  int retx=relf.pair_density(electron,T/hc_mev_fm);
   
   if (include_muons) {
     muon.mu=electron.mu;
