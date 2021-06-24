@@ -976,7 +976,7 @@ namespace o2scl {
 	      ll=-1.0;
 	    }
 	  }
-      
+          
 	  f.ed=dit->integ(mfe,0.0,ul);
 	  f.ed*=f.g/2.0/this->pi2;
 	  unc.ed=dit->get_error()*f.g/2.0/this->pi2;
@@ -1021,21 +1021,6 @@ namespace o2scl {
       
       if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
       
-      // AWS: 2/12/19: I'm taking this out, similar to the removal
-      // of the code in fermion_rel::pair_fun(). If I put it
-      // back in, I need to find a new value for last_method
-      // other than 9.
-      if (false && use_expansions) {
-	if (this->calc_mu_ndeg(f,temper,tol_expan,true)) {
-	  unc.n=tol_expan*f.n;
-	  unc.ed=tol_expan*f.ed;
-	  unc.en=tol_expan*f.en;
-	  unc.pr=tol_expan*f.pr;
-	  last_method=9;
-	  return;
-	}
-      }
-
       fermion_t antip(f.m,f.g);
       f.anti(antip);
 
@@ -1073,6 +1058,11 @@ namespace o2scl {
 
     /** \brief Calculate thermodynamic properties with antiparticles
 	from the density
+
+        \todo This actually works for negative densities some of the
+        time, but the solver probably doesn't work as well there and
+        we need to document the density expectations for this 
+        function.
     */
     int pair_density(fermion_t &f, fp_t temper) {
 
@@ -1092,8 +1082,10 @@ namespace o2scl {
   
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
 
+      // Store the initial guess for the chemical potential
       fp_t initial_guess=f.nu;
-  
+
+      // We always work with mu/T instead of mu directly
       fp_t nex=f.nu/temper;
       
       func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fermion_t &,fp_t,bool)>
@@ -1107,19 +1099,25 @@ namespace o2scl {
       bool drec=density_root->err_nonconv;
       density_root->err_nonconv=false;
       int ret=density_root->solve(nex,mf);
-
-      // If that doesn't work, try bracketing the root
       if (ret==0) {
+        // If that worked, set last_method
 	last_method=2000;
-      } else {
+      }
+        
+      if (ret!=0) {
+        
+        // If that failed, try bracketing the root
 
-	// (std::max doesn't work with boost::multiprecision?)
+	// (max doesn't work with boost::multiprecision?)
 	fp_t lg;
 	if (o2abs(f.nu)>f.ms) lg=o2abs(f.nu);
 	lg=f.ms;
-	
+
+        // Construct an initial guess for the bracket
 	fp_t b_high=lg/temper, b_low=-b_high;
 	fp_t yhigh=mf(b_high), ylow=mf(b_low);
+
+        // Increase the size of the interval to ensure a valid bracket
 	for(size_t j=0;j<5 && yhigh<0.0;j++) {
 	  b_high*=1.0e2;
 	  yhigh=mf(b_high);
@@ -1128,80 +1126,111 @@ namespace o2scl {
 	  b_low*=1.0e2;
 	  ylow=mf(b_low);
 	}
+
+        // If we were successful in constructing a valid bracket,
+        // then call the bracketing solver
 	if (yhigh>0.0 && ylow<0.0) {
 	  root_brent_gsl<func_t,fp_t> rbg;
+          rbg.test_form=1;
 	  rbg.err_nonconv=false;
 	  ret=rbg.solve_bkt(b_low,b_high,mf);
+          // If it succeeded, then set nex to the new solution
+          // and set last_method
 	  if (ret==0) {
 	    nex=b_low;
 	    last_method=3000;
 	  }
 	}
       }
-  
+
       if (ret!=0) {
 
-	// If that fails, try to make the integrators more accurate
+	// If those methods fail, try to make the integrators more
+        // accurate
+        
 	fp_t tol1=dit->tol_rel, tol2=dit->tol_abs;
 	fp_t tol3=nit->tol_rel, tol4=nit->tol_abs;
 	dit->tol_rel/=1.0e2;
 	dit->tol_abs/=1.0e2;
 	nit->tol_rel/=1.0e2;
 	nit->tol_abs/=1.0e2;
+        
 	ret=density_root->solve(nex,mf);
-	if (ret==0) last_method=4000;
+        
+	if (ret==0) {
+          
+          // If that worked, set last_method
+          last_method=4000;
+          
+        } else {
     
-	// AWS: 7/25/18: We work in log units below, so we ensure the
-	// chemical potential is not negative
-	if (nex<0.0) nex=1.0e-10;
-    
-	// If that failed, try working in log units
-
-	// Function in log units
-	func_t lmf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fermion_t &,
-					      fp_t,bool)>
-			     (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-			      nit_t,dit_t,density_root_t,
-			      root_t,func_t,fp_t>::pair_fun),
-			     this,std::placeholders::_1,density_match,
-                             std::ref(f),temper,true);
-    
-	if (ret!=0) {
-	  nex=o2log(nex);
-	  ret=density_root->solve(nex,lmf);
-	  nex=o2exp(nex);
-	  if (ret==0) last_method=5000;
-	}
-	
-	if (ret!=0) {
-	  // If that failed, try a different solver
-	  root_brent_gsl<func_t,fp_t> rbg;
-	  rbg.err_nonconv=false;
-	  nex=o2log(nex);
-	  ret=rbg.solve(nex,lmf);
-	  nex=o2exp(nex);
-	  if (ret==0) last_method=6000;
-	}
-
-	// Return tolerances to their original values
-	dit->tol_rel=tol1;
-	dit->tol_abs=tol2;
-	nit->tol_rel=tol3;
-	nit->tol_abs=tol4;
+          // AWS: 7/25/18: We work in log units below, so we ensure the
+          // chemical potential is not negative
+          if (nex<0.0) nex=1.0e-10;
+          
+          // If that failed, try working in log units
+          
+          // Function in log units
+          func_t lmf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fermion_t &,
+                                                fp_t,bool)>
+                               (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
+                                nit_t,dit_t,density_root_t,
+                                root_t,func_t,fp_t>::pair_fun),
+                               this,std::placeholders::_1,density_match,
+                               std::ref(f),temper,true);
+          
+          if (ret!=0) {
+            nex=o2log(nex);
+            ret=density_root->solve(nex,lmf);
+            nex=o2exp(nex);
+            // If that worked, set last_method
+            if (ret==0) last_method=5000;
+          }
+          
+          if (ret!=0) {
+            // If that failed, try a different solver
+            root_brent_gsl<func_t,fp_t> rbg;
+            rbg.err_nonconv=false;
+            nex=o2log(nex);
+            ret=rbg.solve(nex,lmf);
+            nex=o2exp(nex);
+            // If that worked, set last_method
+            if (ret==0) last_method=6000;
+          }
+          
+        }
+        
+        // Return integration tolerances to their original values
+        dit->tol_rel=tol1;
+        dit->tol_abs=tol2;
+        nit->tol_rel=tol3;
+        nit->tol_abs=tol4;
       }
 
       // Restore value of err_nonconv
       density_root->err_nonconv=drec;
 
       if (ret!=0) {
-	std::cout.precision(14);
-	std::cout << "m,ms,n,T: " << f.m << " " << f.ms << " "
-		  << f.n << " " << temper << std::endl;
-	std::cout << "nu: " << initial_guess << std::endl;
+        
+        // Make sure we don't print out anything unless we're going
+        // to call the error handler anyway
+        if (this->err_nonconv==true) {
+          std::cout.precision(14);
+          std::cout << "Function fermion_rel::pair_density() failed.\n  "
+                    << "m,ms,n,T: " << f.m << " " << f.ms << " "
+                    << f.n << " " << temper << std::endl;
+          std::cout << "nu: " << initial_guess << std::endl;
+        }
+        
+        // Return the density to the user-specified value
+        f.n=density_match;
+        
 	O2SCL_CONV2_RET("Density solver failed in fermion_rel::",
 			"pair_density().",exc_efailed,this->err_nonconv);
       }
 
+      // If we succeeded (i.e. if ret==0), then continue
+      
       f.nu=nex*temper;
   
       if (f.non_interacting==true) { f.mu=f.nu; }
@@ -1212,23 +1241,25 @@ namespace o2scl {
       pair_mu(f,temper);
       last_method+=lm;
 
-      // The function pair_mu() can modify the density, which would be
-      // confusing to the user, so we return it to the user-specified
-      // value.
-      if (fabs(f.n-density_match)/fabs(f.n)>1.0e-6) {
-        std::cout << last_method << std::endl;
-        std::cout << density_root->tol_rel << " " << density_root->tol_abs
+      if (fabs(f.n-density_match)/fabs(density_match)>1.0e-6) {
+        std::cout << last_method << " " << ret << std::endl;
+        std::cout << "density_root tolarances: "
+                  << density_root->tol_rel << " " << density_root->tol_abs
                   << std::endl;
         root_brent_gsl<func_t,fp_t> rbg;
-        std::cout << rbg.tol_rel << " " << rbg.tol_abs
+        std::cout << "rbg tolerances: " << rbg.tol_rel << " " << rbg.tol_abs
                   << std::endl;
-        std::cout << temper << " " << f.n << " " << density_match << std::endl;
-        std::cout << fabs(f.n-density_match) << std::endl;
+        std::cout << "T,n,density_match: " << temper << " " << f.n << " "
+                  << density_match << std::endl;
+        std::cout << "Rel. dev.: "
+                  << fabs(f.n-density_match)/fabs(density_match) << std::endl;
         nex=f.nu/temper;
         std::cout << "mf: " << mf(nex) << std::endl;
         std::cout << "Failed in pair_density()." << std::endl;
         exit(-1);
       }
+      
+      // Return the density to the user-specified value
       f.n=density_match;
 
       // But now that the density has been modified, we need to
@@ -1559,32 +1590,8 @@ namespace o2scl {
       if (f.non_interacting) f.mu=f.nu;
 
       // -----------------------------------------------------------------
-      // First, try the non-degenerate expansion with both particles and
-      // antiparticles together
-
-      // AWS: 7/25/18: I'm taking this section out because it doesn't seem
-      // to make sense to me, it apparently uses calc_mu_ndeg() which is
-      // for particles only, and I'm not sure that's sufficient here. This
-      // section also caused problems for the n=0, T!=0 case.
-
-      if (false && use_expansions) {
-	if (this->calc_mu_ndeg(f,T,1.0e-8,true) && o2isfinite(f.n)) {
-	  fp_t y1=f.n/density_match-1.0;
-	  if (!o2isfinite(y1)) {
-	    O2SCL_ERR2("Value 'y1' not finite (10) in ",
-                       "fermion_rel::pair_fun().",
-                       exc_einval);
-	  }
-	  // Make sure to restore the value of f.n to it's original value,
-	  // density_match
-	  f.n=density_match;
-	  return y1;
-	}
-      }
-
-      // -----------------------------------------------------------------
-      // If that doesn't work, evaluate particles and antiparticles 
-      // separately. This is the contribution for particles
+      // Evaluate particles and antiparticles separately. This is the
+      // contribution for particles
 
       bool deg=true;
       fp_t psi;
@@ -1790,7 +1797,8 @@ namespace o2scl {
       if (density_match==0.0) {
 	y2=fabs(nden_p-nden_ap)/fabs(nden_p);
       } else {
-	y2=(nden_p-nden_ap)/density_match-1.0;
+        y2=(nden_p-nden_ap-density_match)/fabs(density_match);
+	//y2=(nden_p-nden_ap)/density_match-1.0;
       }
 
       if (!o2isfinite(y2)) {

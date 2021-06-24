@@ -106,6 +106,7 @@ namespace o2scl {
     char ch;
 	
     std::cout << comment << " Iteration: " << iter << std::endl;
+    std::cout << "x,y,val,lim: ";
     if (x<0) std::cout << x << " ";
     else std::cout << " " << x << " ";
     if (y<0) std::cout << y << " ";

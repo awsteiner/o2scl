@@ -134,8 +134,8 @@ namespace o2scl {
 
       tolerance=epsabs+epsrel*min_abs;
 
-      // AWS: I could combine this if statement but this form ensures
-      // success in case floating point problems imply that
+      // AWS: This if statement cannot be combined because this form
+      // ensures success in case floating point problems imply that
       // xx_lower<xx_upper and xx_lower>=xx_upper are both false.
       
       if (xx_lower<xx_upper) {
@@ -349,14 +349,14 @@ namespace o2scl {
 	iter++;
 	iterate(f);
 	status=test_interval(x_lower,x_upper,
-				      this->tol_abs,this->tol_rel);
-      
+                             this->tol_abs,this->tol_rel);
+        
 	if (status==o2scl::success) {
 	  fp_t y=f(root);
 	  if (o2scl::o2abs(y)>=this->tol_rel) status=gsl_continue;
 	  if (this->verbose>0) {
 	    this->print_iter(root,y,iter,o2scl::o2abs(y),this->tol_rel,
-			     "root_brent_gsl (rel)");
+			     "root_brent_gsl (rel2)");
 	  }
 	} else {
 	  if (this->verbose>0) {
@@ -365,7 +365,7 @@ namespace o2scl {
 	    // for boost::multiprecision types
 	    fp_t x_diff=x_upper-x_lower;
 	    this->print_iter(root,y,iter,o2scl::o2abs(x_diff),
-			     this->tol_abs,"root_brent_gsl (abs)");
+			     this->tol_abs,"root_brent_gsl (abs2)");
 	  }
 	}
       }
