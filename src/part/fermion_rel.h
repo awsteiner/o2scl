@@ -313,6 +313,9 @@ namespace o2scl {
       tol_expan=1.0e-14;
       verify_ti=false;
       therm_ident=0.0;
+
+      alt_solver.err_nonconv=false;
+      alt_solver.test_form=2;
     }
 
     virtual ~fermion_rel_tl() {
@@ -507,9 +510,7 @@ namespace o2scl {
 	    ylow=mf(b_low);
 	  }
 	  if (yhigh<0.0 && ylow>0.0) {
-	    o2scl::root_brent_gsl<func_t,fp_t> rbg;
-	    rbg.err_nonconv=false;
-	    ret=rbg.solve_bkt(b_low,bhigh,mf);
+	    ret=alt_solver.solve_bkt(b_low,bhigh,mf);
 	    if (ret==0) {
 	      // Bracketing solver worked
 	      last_method=3;
@@ -1130,10 +1131,7 @@ namespace o2scl {
         // If we were successful in constructing a valid bracket,
         // then call the bracketing solver
 	if (yhigh>0.0 && ylow<0.0) {
-	  root_brent_gsl<func_t,fp_t> rbg;
-          rbg.test_form=2;
-	  rbg.err_nonconv=false;
-	  ret=rbg.solve_bkt(b_low,b_high,mf);
+	  ret=alt_solver.solve_bkt(b_low,b_high,mf);
           // If it succeeded, then set nex to the new solution
           // and set last_method
 	  if (ret==0) {
@@ -1189,10 +1187,8 @@ namespace o2scl {
           
           if (ret!=0) {
             // If that failed, try a different solver
-            root_brent_gsl<func_t,fp_t> rbg;
-            rbg.err_nonconv=false;
             nex=o2log(nex);
-            ret=rbg.solve(nex,lmf);
+            ret=alt_solver.solve(nex,lmf);
             nex=o2exp(nex);
             // If that worked, set last_method
             if (ret==0) last_method=6000;
@@ -1246,8 +1242,8 @@ namespace o2scl {
         std::cout << "density_root tolarances: "
                   << density_root->tol_rel << " " << density_root->tol_abs
                   << std::endl;
-        root_brent_gsl<func_t,fp_t> rbg;
-        std::cout << "rbg tolerances: " << rbg.tol_rel << " " << rbg.tol_abs
+        std::cout << "rbg tolerances: " << alt_solver.tol_rel << " "
+                  << alt_solver.tol_abs
                   << std::endl;
         std::cout << "T,n,density_match: " << temper << " " << f.n << " "
                   << density_match << std::endl;
@@ -1272,6 +1268,9 @@ namespace o2scl {
     //@}
 
   protected:
+
+    /// Alternate solver
+    o2scl::root_brent_gsl<func_t,fp_t> alt_solver;
     
 #ifndef DOXYGEN_INTERNAL
 
