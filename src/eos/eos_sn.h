@@ -255,7 +255,14 @@ namespace o2scl {
 
     /** \brief Compute lepton contribution at one point
 
-        The temperature is to be specified in \c MeV.
+        The temperature is to be specified in \c MeV. An initial
+        guess for the electron chemical potential, \c mue,
+        should be stored in units of \f$ \mathrm{fm}^{-1} \f$.
+        After completion, the final value of the electron
+        chemical potential will be stored in \c mue.
+
+        This function will fail if a sufficiently poor initial
+        guess is given.
     */
     virtual void compute_eg_point(double nB, double Ye, double T,
                                   thermo &th, double &mue);

@@ -285,6 +285,9 @@ namespace o2scl {
     
     /// Value for verifying the thermodynamic identity
     fp_t therm_ident;
+
+    /// Alternate solver
+    o2scl::root_brent_gsl<func_t,fp_t> alt_solver;
     //@}
 
     /// Storage for the uncertainty
@@ -315,6 +318,8 @@ namespace o2scl {
       therm_ident=0.0;
 
       alt_solver.err_nonconv=false;
+      // AWS, 6/24/21: This appears to give better results than
+      // either test_form=0 or test_form=1.
       alt_solver.test_form=2;
     }
 
@@ -1066,19 +1071,35 @@ namespace o2scl {
         function.
     */
     int pair_density(fermion_t &f, fp_t temper) {
-
+      
+      if (verbose>0) {
+        std::cout << "Value of verbose greater than zero in "
+                  << "fermion_rel::pair_density()." << std::endl;
+        std::cout << "Density: " << f.n << " temperature: "
+                  << temper << std::endl;
+        if (verbose>1) {
+          std::cout << "Setting solver verbose parameters to 1."
+                    << std::endl;
+          density_root->verbose=1;
+          alt_solver.verbose=1;
+        }
+      }
       last_method=0;
       
       // -----------------------------------------------------------------
       // Handle T<=0
 
       if (temper<=0.0) {
+        if (verbose>0) {
+          std::cout << "Value of T<=0, so using zero temperature code."
+                    << std::endl;
+        }
 	this->calc_density_zerot(f);
 	last_method=1000;
 	return success;
       }
 
-      // Storage the input density
+      // Store the input density
       fp_t density_match=f.n;
   
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
@@ -1101,6 +1122,9 @@ namespace o2scl {
       density_root->err_nonconv=false;
       int ret=density_root->solve(nex,mf);
       if (ret==0) {
+        if (verbose>0) {
+          std::cout << "Initial solver succeeded." << std::endl;
+        }
         // If that worked, set last_method
 	last_method=2000;
       }
@@ -1114,6 +1138,10 @@ namespace o2scl {
 	if (o2abs(f.nu)>f.ms) lg=o2abs(f.nu);
 	lg=f.ms;
 
+        if (verbose>0) {
+          std::cout << "Trying to bracket." << std::endl;
+        }
+        
         // Construct an initial guess for the bracket
 	fp_t b_high=lg/temper, b_low=-b_high;
 	fp_t yhigh=mf(b_high), ylow=mf(b_low);
@@ -1131,10 +1159,18 @@ namespace o2scl {
         // If we were successful in constructing a valid bracket,
         // then call the bracketing solver
 	if (yhigh>0.0 && ylow<0.0) {
+
+          if (verbose>0) {
+            std::cout << "Bracket succeeded, trying solver." << std::endl;
+          }
+          
 	  ret=alt_solver.solve_bkt(b_low,b_high,mf);
           // If it succeeded, then set nex to the new solution
           // and set last_method
 	  if (ret==0) {
+            if (verbose>0) {
+              std::cout << "Alternate solver succeeded." << std::endl;
+            }
 	    nex=b_low;
 	    last_method=3000;
 	  }
@@ -1153,10 +1189,19 @@ namespace o2scl {
 	nit->tol_rel/=1.0e2;
 	nit->tol_abs/=1.0e2;
         
-	ret=density_root->solve(nex,mf);
+        if (verbose>0) {
+          std::cout << "Trying default solver with tighter tolerances"
+                    << std::endl;
+        }
+        
+        ret=density_root->solve(nex,mf);
         
 	if (ret==0) {
           
+          if (verbose>0) {
+            std::cout << "Default solver succeeded with tighter tolerances."
+                      << std::endl;
+          }
           // If that worked, set last_method
           last_method=4000;
           
@@ -1178,20 +1223,42 @@ namespace o2scl {
                                std::ref(f),temper,true);
           
           if (ret!=0) {
+            if (verbose>0) {
+              std::cout << "Trying default solver with tighter tolerances"
+                        << " in log units." << std::endl;
+            }
             nex=o2log(nex);
             ret=density_root->solve(nex,lmf);
             nex=o2exp(nex);
             // If that worked, set last_method
-            if (ret==0) last_method=5000;
+            if (ret==0) {
+              if (verbose>0) {
+                std::cout << "Default solver succeeded with tighter "
+                          << "tolerances in log units."
+                          << std::endl;
+              }
+              last_method=5000;
+            }
           }
           
           if (ret!=0) {
+            if (verbose>0) {
+              std::cout << "Trying alternate solver with tighter tolerances"
+                        << " in log units." << std::endl;
+            }
             // If that failed, try a different solver
             nex=o2log(nex);
             ret=alt_solver.solve(nex,lmf);
             nex=o2exp(nex);
             // If that worked, set last_method
-            if (ret==0) last_method=6000;
+            if (ret==0) {
+              if (verbose>0) {
+                std::cout << "Alternate solver succeeded with tighter "
+                          << "tolerances in log units."
+                          << std::endl;
+              }
+              last_method=6000;
+            }
           }
           
         }
@@ -1206,6 +1273,11 @@ namespace o2scl {
       // Restore value of err_nonconv
       density_root->err_nonconv=drec;
 
+      if (verbose>1) {
+        density_root->verbose=0;
+        alt_solver.verbose=0;
+      }
+        
       if (ret!=0) {
         
         // Make sure we don't print out anything unless we're going
@@ -1239,7 +1311,7 @@ namespace o2scl {
 
       if (fabs(f.n-density_match)/fabs(density_match)>1.0e-6) {
         std::cout << last_method << " " << ret << std::endl;
-        std::cout << "density_root tolarances: "
+        std::cout << "density_root tolerances: "
                   << density_root->tol_rel << " " << density_root->tol_abs
                   << std::endl;
         std::cout << "rbg tolerances: " << alt_solver.tol_rel << " "
@@ -1251,8 +1323,8 @@ namespace o2scl {
                   << fabs(f.n-density_match)/fabs(density_match) << std::endl;
         nex=f.nu/temper;
         std::cout << "mf: " << mf(nex) << std::endl;
-        std::cout << "Failed in pair_density()." << std::endl;
-        exit(-1);
+        O2SCL_ERR2("Secondary failure in ",
+                  "fermion_rel::pair_density().",o2scl::exc_esanity);
       }
       
       // Return the density to the user-specified value
@@ -1267,11 +1339,6 @@ namespace o2scl {
     }
     //@}
 
-  protected:
-
-    /// Alternate solver
-    o2scl::root_brent_gsl<func_t,fp_t> alt_solver;
-    
 #ifndef DOXYGEN_INTERNAL
 
     /// The integrand for the density for non-degenerate fermions
