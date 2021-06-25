@@ -25,6 +25,7 @@
 #include <o2scl/hdf_file.h>
 #include <o2scl/lib_settings.h>
 #include <o2scl/cloud_file.h>
+#include <o2scl/classical.h>
 
 using namespace std;
 using namespace o2scl;
@@ -312,12 +313,34 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
   
   int retx=relf.pair_density(electron,T/hc_mev_fm);
   if (retx!=0) {
-    relf.verbose=2;
-    electron.mu=guess2;
+
+    std::cout << "Failed. Trying again." << std::endl;
+    double best_mue=guess2;
+    double diff=1.0;
+    for(mue=guess2/20.0;mue<guess2*20.0;mue*=1.01) {
+      electron.mu=mue;
+      relf.pair_mu(electron,T/hc_mev_fm);
+      if (fabs(electron.n-nB*Ye)<diff) {
+        diff=fabs(electron.n-nB*Ye);
+        best_mue=mue;
+      }
+      cout << mue << " " << electron.n << " " << nB*Ye << endl;
+    }
+    cout << best_mue << endl;
+    
+    cout << endl;
+
+    //relf.verbose=2;
+    //electron.mu=guess2;
+    electron.mu=best_mue;
     int retx2=relf.pair_density(electron,T/hc_mev_fm);
     cout << "retx2: " << retx2 << endl;
-    O2SCL_ERR2("Function fermion_rel::pair_density() failed in ",
-               "eos_sn_base::compute_eg_point().",o2scl::exc_efailed);
+    //char ch;
+    //cin >> ch;
+    if (retx2!=0) {
+      O2SCL_ERR2("Function fermion_rel::pair_density() failed in ",
+                 "eos_sn_base::compute_eg_point().",o2scl::exc_efailed);
+    }
   }
   
   if (include_muons) {

@@ -1139,7 +1139,8 @@ namespace o2scl {
 	lg=f.ms;
 
         if (verbose>0) {
-          std::cout << "Trying to bracket." << std::endl;
+          std::cout << "Initial solver returned ret=" << ret
+                    << ". Trying to bracket." << std::endl;
         }
         
         // Construct an initial guess for the bracket
@@ -1310,7 +1311,8 @@ namespace o2scl {
       last_method+=lm;
 
       if (fabs(f.n-density_match)/fabs(density_match)>1.0e-6) {
-        std::cout << last_method << " " << ret << std::endl;
+        std::cout << "last_method, ret: "
+                  << last_method << " " << ret << std::endl;
         std::cout << "density_root tolerances: "
                   << density_root->tol_rel << " " << density_root->tol_abs
                   << std::endl;

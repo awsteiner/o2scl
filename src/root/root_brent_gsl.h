@@ -362,6 +362,9 @@ namespace o2scl {
 	    // This additional temporary seems to be required
 	    // for boost::multiprecision types
 	    fp_t x_diff=x_upper-x_lower;
+            std::cout << "lower,root,upper: "
+                      << x_lower << " " << root << " "
+                      << x_upper << std::endl;
 	    this->print_iter(root,y,iter,interval,tol,
 			     "root_brent_gsl (test_interval 2)");
 	  }
