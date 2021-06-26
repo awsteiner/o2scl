@@ -1026,6 +1026,22 @@ namespace o2scl {
       last_method=0;
       
       if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
+
+      // AWS: 6/26/21: Note that when the last argument is true, the
+      // function calc_mu_ndeg() includes antiparticles. However, I'm
+      // not sure that the value of last_method=9 here is unambiguous.
+
+      if (use_expansions) {
+	if (this->calc_mu_ndeg(f,temper,tol_expan,true)) {
+	  unc.n=tol_expan*f.n;
+	  unc.ed=tol_expan*f.ed;
+	  unc.en=tol_expan*f.en;
+	  unc.pr=tol_expan*f.pr;
+	  last_method=9;
+	  return;
+	}
+      }
+
       
       fermion_t antip(f.m,f.g);
       f.anti(antip);
@@ -1656,6 +1672,34 @@ namespace o2scl {
       if (!o2isfinite(f.nu)) return 3;
 
       if (f.non_interacting) f.mu=f.nu;
+
+      // -----------------------------------------------------------------
+      // First, try the non-degenerate expansion with both particles and
+      // antiparticles together
+
+      // AWS: 6/26/21: Note that calc_mu_ndeg() includes antiparticles
+      // when the last argument is true. However, this section is
+      // commented out because it caused problems for the n=0, T!=0
+      // case and it causes the calibrate() test function to fail.
+
+      if (false && use_expansions) {
+	if (this->calc_mu_ndeg(f,T,1.0e-8,true) && o2isfinite(f.n)) {
+          fp_t y1;
+          if (density_match==0.0) {
+            y1=f.n;
+          } else {
+            y1=(f.n-density_match)/fabs(density_match);
+          }
+	  if (!o2isfinite(y1)) {
+	    O2SCL_ERR("Value 'y1' not finite (10) in fermion_rel::pair_fun().",
+		      exc_einval);
+	  }
+	  // Make sure to restore the value of f.n to it's original value,
+	  // nn_match
+	  f.n=density_match;
+	  return y1;
+	}
+      }
 
       // -----------------------------------------------------------------
       // Evaluate particles and antiparticles separately. This is the
