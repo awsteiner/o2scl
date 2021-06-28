@@ -23,6 +23,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/fermion.h>
 #include <o2scl/fermion_eff.h>
+#include <o2scl/fermion_rel.h>
 
 using namespace std;
 using namespace o2scl;
@@ -92,29 +93,96 @@ int main(void) {
 				 5.0e-13,"small alpha");
   }
   t.set_output_level(2);
-  
-  // Testing ndnr expansion
 
-  /*
-    e.m=5.0;
-    e.mu=4.95;
-    e.exp_precision=1.0e-8;
-    ret=e.ndnr_expansion(1.0e-2);
-    t.test_gen(ret==0,"ndnr_expansion(0)");
-    tmp1=e.n;
-    tmp2=e.mu;
-    tmp3=e.ed;
-    tmp4=e.pr;
-    tmp5=e.en;
-    ret=e.calc_mu(1.0e-2);
-    cout << ret << " " << err_hnd->get_str() << endl;
-    t.test_gen(ret==0,"calc_mu(1)");
-    t.test_rel(e.n,tmp1,2.0e-3,"ndnr_expansion(1)");
-    t.test_rel(e.mu,tmp2,1.0e-3,"ndnr_expansion(2)");
-    t.test_rel(e.ed,tmp3,2.0e-3,"ndnr_expansion(3)");
-    t.test_rel(e.pr,tmp4,2.0e-3,"ndnr_expansion(4)");
-    t.test_rel(e.en,tmp5,2.0e-3,"ndnr_expansion(5)");
-  */
+
+  if (true) {
+    fermion e(0.511/197.33,2.0);
+    fermion_rel ft;
+    double mux=1.0e-8;
+
+    size_t j=1;
+    double pterm, nterm, enterm, edterm;
+    double pterm1, nterm1, enterm1, edterm1;
+    double pterm2, nterm2, enterm2, edterm2;
+    double T=20.0/197.33;
+
+    e.n=4.0e-10;
+    ft.pair_density(e,T);
+    cout << e.mu << endl;
+    cout << endl;
+    
+    double tt=T/e.m;
+    double psi;
+    bool inc_antip;
+
+    inc_antip=false;
+
+    e.mu=-mux;
+    psi=(e.mu-e.m)/T;
+    ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
+               pterm1,nterm1,enterm1,edterm1);
+    cout << pterm1 << " " << nterm1 << " " << enterm1 << " "
+         << edterm1 << endl;
+    e.mu=mux;
+    psi=(e.mu-e.m)/T;
+    ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
+               pterm2,nterm2,enterm2,edterm2);
+    cout << pterm2 << " " << nterm2 << " " << enterm2 << " "
+         << edterm2 << endl;
+    cout << pterm1+pterm2 << " " << nterm1-nterm2 << " "
+         << enterm1+enterm2 << " " << edterm1+edterm2 << endl;
+
+    inc_antip=true;
+
+    e.mu=-mux;
+    psi=(e.mu-e.m)/T;
+    ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
+               pterm,nterm,enterm,edterm);
+    cout << pterm << " " << nterm << " " << enterm << " "
+         << edterm << endl;
+    e.mu=mux;
+    psi=(e.mu-e.m)/T;
+    ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
+               pterm,nterm,enterm,edterm);
+    cout << pterm << " " << nterm << " " << enterm << " "
+         << edterm << endl;
+    cout << endl;
+    
+    j=2;
+
+    inc_antip=false;
+
+    e.mu=-mux;
+    psi=(e.mu-e.m)/T;
+    ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
+               pterm1,nterm1,enterm1,edterm1);
+    cout << pterm1 << " " << nterm1 << " " << enterm1 << " "
+         << edterm1 << endl;
+    e.mu=mux;
+    psi=(e.mu-e.m)/T;
+    ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
+               pterm2,nterm2,enterm2,edterm2);
+    cout << pterm2 << " " << nterm2 << " " << enterm2 << " "
+         << edterm2 << endl;
+    cout << pterm1+pterm2 << " " << nterm1-nterm2 << " "
+         << enterm1+enterm2 << " " << edterm1+edterm2 << endl;
+
+    inc_antip=true;
+
+    e.mu=-mux;
+    psi=(e.mu-e.m)/T;
+    ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
+               pterm,nterm,enterm,edterm);
+    cout << pterm << " " << nterm << " " << enterm << " "
+         << edterm << endl;
+    e.mu=mux;
+    psi=(e.mu-e.m)/T;
+    ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
+               pterm,nterm,enterm,edterm);
+    cout << pterm << " " << nterm << " " << enterm << " "
+         << edterm << endl;
+    
+  }
 
   t.report();
 

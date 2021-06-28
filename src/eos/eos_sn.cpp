@@ -309,34 +309,34 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
   // For lower densities, pair_density() has problems computing the
   // chemical potential from the density, so we loosen the tolerances
   // a little bit.
-  relf.alt_solver.tol_rel=1.0e-6;
-  
+  if (nB*Ye<1.0e-10) {
+    relf.alt_solver.tol_rel=1.0e-6;
+  }
+
+  relf.min_psi=0.0;
   int retx=relf.pair_density(electron,T/hc_mev_fm);
   if (retx!=0) {
+    cout << "Failed for (nB,Ye,T): " << nB << " " << Ye << " " << T
+         << endl;
 
-    std::cout << "Failed. Trying again." << std::endl;
-    relf.pair_mu(electron,T/hc_mev_fm);
-    cout << electron.n << endl;
-    relf.calc_mu_ndeg(electron,T/hc_mev_fm,1.0e-18,false);
-    cout << electron.n << endl;
-    relf.calc_mu_ndeg(electron,T/hc_mev_fm,1.0e-18,true);
-    cout << electron.n << endl;
-    exit(-1);
-    
     double best_mue=guess2;
     double diff=1.0;
     for(double fact=0.2;fact>1.0e-6;fact/=2.0) {
       for(mue=guess2/(1.0+fact);mue<guess2*(1.0+fact);mue*=1.0+fact/20.0) {
         electron.mu=mue;
+        relf.verbose=1;
         relf.pair_mu(electron,T/hc_mev_fm);
         if (fabs(electron.n-nB*Ye)<diff) {
           diff=fabs(electron.n-nB*Ye);
           best_mue=mue;
         }
-        cout << mue << " " << electron.n << " " << nB*Ye << endl;
+        cout << mue << " " << electron.n << " " << nB*Ye << " "
+             << relf.last_method << endl;
       }
       cout << "fgb: " << fact << " " << guess2 << " " << best_mue << endl;
       guess2=best_mue;
+      char ch;
+      cin >> ch;
     }
     
     cout << endl;

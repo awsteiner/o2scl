@@ -603,6 +603,8 @@ namespace o2scl {
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
 	bool acc=this->calc_mu_ndeg(f,temper,tol_expan);
+        std::cout << "cmn_cmu: " << f.nu << " " << temper << " "
+                  << tol_expan << " " << acc << std::endl;
 	if (verbose>1) {
 	  std::cout << "calc_mu(): non-deg expan " << acc
 		    << std::endl;
@@ -1028,10 +1030,11 @@ namespace o2scl {
       if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
 
       // AWS: 6/26/21: Note that when the last argument is true, the
-      // function calc_mu_ndeg() includes antiparticles. However, I'm
-      // not sure that the value of last_method=9 here is unambiguous.
+      // function calc_mu_ndeg() includes antiparticles. However, this
+      // code caused problems for low densities. Additionally, I'm not
+      // sure that the value of last_method=9 here is unambiguous.
 
-      if (use_expansions) {
+      if (false && use_expansions) {
 	if (this->calc_mu_ndeg(f,temper,tol_expan,true)) {
 	  unc.n=tol_expan*f.n;
 	  unc.ed=tol_expan*f.ed;
@@ -1326,7 +1329,7 @@ namespace o2scl {
       pair_mu(f,temper);
       last_method+=lm;
 
-      if (fabs(f.n-density_match)/fabs(density_match)>1.0e-6) {
+      if (fabs(f.n-density_match)/fabs(density_match)>1.0e-5) {
         std::cout << "last_method, ret: "
                   << last_method << " " << ret << std::endl;
         std::cout << "density_root tolerances: "
@@ -1683,7 +1686,7 @@ namespace o2scl {
       // case and it causes the calibrate() test function to fail.
 
       if (false && use_expansions) {
-	if (this->calc_mu_ndeg(f,T,1.0e-8,true) && o2isfinite(f.n)) {
+	if (this->calc_mu_ndeg(f,T,1.0e-18,true) && o2isfinite(f.n)) {
           fp_t y1;
           if (density_match==0.0) {
             y1=f.n;
@@ -1718,7 +1721,10 @@ namespace o2scl {
 
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
-	if (this->calc_mu_ndeg(f,T,1.0e-8) && o2isfinite(f.n)) {
+        bool acc=this->calc_mu_ndeg(f,T,1.0e-18);
+        std::cout << "cmn_pmu1: " << f.nu << " " << T << " "
+                  << 1.0e-18 << " " << acc << std::endl;
+	if (acc && o2isfinite(f.n)) {
 	  particles_done=true;
 	  nden_p=f.n;
 	  if (!o2isfinite(nden_p)) {
@@ -1823,7 +1829,10 @@ namespace o2scl {
 
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
-	if (this->calc_mu_ndeg(f,T,1.0e-8)) {
+        bool acc=this->calc_mu_ndeg(f,T,1.0e-18);
+        std::cout << "cmn_pmu2: " << f.nu << " " << T << " "
+                  << 1.0e-18 << " " << acc << std::endl;
+	if (acc) {
 	  antiparticles_done=true;
 	  nden_ap=f.n;
 	  if (!o2isfinite(nden_ap)) {

@@ -427,7 +427,7 @@ namespace o2scl {
       fp_t tt=temper/f.ms;
       
       // Return false immediately if we're degenerate
-      if (inc_antip==false && psi>-1.0) return false;
+      if (inc_antip==false && psi>0.0) return false;
       
       // Prefactor 'd' in Johns96
       fp_t prefac=f.g/2.0/this->pi2*pow(f.ms,4.0);
@@ -459,6 +459,7 @@ namespace o2scl {
       if (inc_antip==false) {
         rat=exp(dj1*psi)/jot1/jot1*be_integ.K2exp(jot1);
         rat/=exp(dj2*psi)/jot2/jot2*be_integ.K2exp(jot2);
+        std::cout << "rat: " << rat << std::endl;
       } else {
         if (f.inc_rest_mass) {
           rat=exp(-jot1)*2.0*cosh(dj1*f.nu/temper)/jot1/jot1*
@@ -865,23 +866,28 @@ namespace o2scl {
         } else {
           enterm=enterm1+enterm2;
         }
-        edterm=(dj*dj*K1j+3.0*dj*tt*K2j-2.0*K1j/jot)*
-          exp(jot*(xx+1.0))/jot/dj/dj;
+        //edterm=(dj*dj*K1j+3.0*dj*tt*K2j-2.0*K1j/jot)*
+        //exp(jot*(xx+1.0))/jot/dj/dj;
+        edterm=(K1j*dj+3.0*K2j*tt)/jot/dj*exp(xx*jot);
         if (j%2==0) edterm=-edterm;
       } else {
         double K3j=be_integ.K3exp(jot);
         // AWS 9/27/20: should this be cosh(jot*(xx+1.0))??
         pterm=exp(-jot)*2.0*cosh(jot*(xx+1.0)/tt)/jot/jot*K2j;
         if (j%2==0) pterm*=-1.0;
-        nterm=pterm*tanh(jot*(xx+1.0))*jot;
+        nterm=pterm*tanh(jot*(xx+1.0))*jot/m;
         fp_t enterm1=-(1.0+xx)/tt*nterm/m;
-        fp_t enterm2=2.0*exp(-jot*xx)/dj*cosh(jot*(xx+1.0))*K3j/m;
+        fp_t enterm2=2.0*exp(-jot)/dj*cosh(jot*(xx+1.0))*K3j/m;
         if (j%2==0) {
           enterm=enterm1-enterm2;
         } else {
           enterm=enterm1+enterm2;
         }
-        edterm=0.0;
+        edterm=2.0/jot/dj*exp(-jot)*(K3j*dj*cosh(jot*(xx+1.0))-
+                                     2.0*K2j*dj*xx*sinh(jot*(xx+1.0))-
+                                     2.0*K2j*dj*sinh(jot*(xx+1.0))-
+                                     K2j*tt*cosh(jot*(xx+1.0)));
+        if (j%2==0) edterm=-edterm;
       }
                     
       return;
