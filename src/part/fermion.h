@@ -407,9 +407,15 @@ namespace o2scl {
         \sqrt{\frac{2 x}{\pi}} e^{x} K_2(x) \approx
         1 + \frac{3}{8 x} - \frac{15}{128 x^2} + ...
         \f]
+
+        \comment
+        AWS, 6/28/21: This comment doesn't make sense to me, 
+        so I'm taking it out. 
+
         The current code currently goes up to \f$ x^{-12} \f$ in the
         expansion, which is enough for the default precision of \f$
         10^{-18} \f$ since \f$ (20/700)^{12} \sim 10^{-19} \f$.
+        \endcomment
     */
     bool calc_mu_ndeg(fermion_t &f, fp_t temper, 
                       fp_t prec=1.0e-18, bool inc_antip=false) {
@@ -421,7 +427,11 @@ namespace o2scl {
       if (f.inc_rest_mass) {
         psi_num=f.nu-f.ms;
       } else {
-        psi_num=f.nu+f.m-f.ms;
+        if (f.non_interacting) {
+          psi_num=f.nu;
+        } else {
+          psi_num=f.nu+f.m-f.ms;
+        }
       }
       psi=psi_num/temper;
       fp_t tt=temper/f.ms;
@@ -560,8 +570,15 @@ namespace o2scl {
       
       // Compute psi and tt
       fp_t psi;
-      if (f.inc_rest_mass) psi=(f.nu-f.ms)/temper;
-      else psi=(f.nu+f.m-f.ms)/temper;
+      if (f.inc_rest_mass) {
+        psi=(f.nu-f.ms)/temper;
+      } else {
+        if (f.non_interacting) {
+          psi=f.nu/temper;
+        } else {
+          psi=(f.nu+f.m-f.ms)/temper;
+        }
+      }
       fp_t tt=temper/f.ms;
       
       // Return false immediately psi<0 where the expressions below

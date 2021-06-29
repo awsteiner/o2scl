@@ -591,7 +591,11 @@ namespace o2scl {
       if (f.inc_rest_mass) {
 	psi=(f.nu-f.ms)/temper;
       } else {
-	psi=(f.nu+(f.m-f.ms))/temper;
+        if (f.non_interacting) {
+          psi=f.nu/temper;
+        } else {
+          psi=(f.nu+(f.m-f.ms))/temper;
+        }
       }
       if (psi<deg_limit) deg=false;
       
@@ -890,7 +894,11 @@ namespace o2scl {
       if (f.inc_rest_mass) {
 	psi=(f.nu-f.ms)/temper;
       } else {
-	psi=(f.nu+(f.m-f.ms))/temper;
+        if (f.non_interacting) {
+          psi=f.nu/temper;
+        } else {
+          psi=(f.nu+(f.m-f.ms))/temper;
+        }
       }
       if (psi<deg_limit) deg=false;
 
@@ -1329,7 +1337,7 @@ namespace o2scl {
       pair_mu(f,temper);
       last_method+=lm;
 
-      if (fabs(f.n-density_match)/fabs(density_match)>1.0e-5) {
+      if (false && fabs(f.n-density_match)/fabs(density_match)>1.0e-5) {
         std::cout << "last_method, ret: "
                   << last_method << " " << ret << std::endl;
         std::cout << "density_root tolerances: "
@@ -1566,7 +1574,11 @@ namespace o2scl {
       if (f.inc_rest_mass) {
 	psi=(f.nu-f.ms)/T;
       } else {
-	psi=(f.nu+(f.m-f.ms))/T;
+        if (f.non_interacting) {
+          psi=f.nu/T;
+        } else {
+          psi=(f.nu+(f.m-f.ms))/T;
+        }
       }
       if (psi<deg_limit) deg=false;
 
@@ -1713,7 +1725,11 @@ namespace o2scl {
       if (f.inc_rest_mass) {
 	psi=(f.nu-f.ms)/T;
       } else {
-	psi=(f.nu+(f.m-f.ms))/T;
+        if (f.non_interacting) {
+          psi=f.nu/T;
+        } else {
+          psi=(f.nu+(f.m-f.ms))/T;
+        }
       }
       if (psi<deg_limit) deg=false;
 
@@ -1823,7 +1839,11 @@ namespace o2scl {
       if (f.inc_rest_mass) {
 	psi=(f.nu-f.ms)/T;
       } else {
-	psi=(f.nu+f.m-f.ms)/T;
+        if (f.non_interacting) {
+          psi=f.nu/T;
+        } else {
+          psi=(f.nu+f.m-f.ms)/T;
+        }
       }
       if (psi<deg_limit) deg=false;
 

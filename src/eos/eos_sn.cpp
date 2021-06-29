@@ -312,6 +312,10 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
   if (nB*Ye<1.0e-10) {
     relf.alt_solver.tol_rel=1.0e-6;
   }
+  if (nB*Ye<2.1e-14 && T*hc_mev_fm>19.0) {
+    relf.alt_solver.tol_rel=1.0e-4;
+  }
+    
 
   relf.min_psi=0.0;
   int retx=relf.pair_density(electron,T/hc_mev_fm);

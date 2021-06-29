@@ -92,13 +92,19 @@ int main(void) {
     if (alpha<3.0e-4) t.test_rel(fabs((alpha-alpha2)/alpha),0.0,
 				 5.0e-13,"small alpha");
   }
-  t.set_output_level(2);
+  cout << endl;
 
-
+  // -----------------------------------------------------------------
+  // Test the ndeg_terms function in the non-degenerate limit 
+  
   if (true) {
+    
+    cout << "Testing ndeg_terms():" << endl;
+    cout.setf(ios::showpos);
+    
     fermion e(0.511/197.33,2.0);
     fermion_rel ft;
-    double mux=1.0e-8;
+    double mux=1.0e-7;
 
     size_t j=1;
     double pterm, nterm, enterm, edterm;
@@ -106,11 +112,6 @@ int main(void) {
     double pterm2, nterm2, enterm2, edterm2;
     double T=20.0/197.33;
 
-    e.n=4.0e-10;
-    ft.pair_density(e,T);
-    cout << e.mu << endl;
-    cout << endl;
-    
     double tt=T/e.m;
     double psi;
     bool inc_antip;
@@ -140,14 +141,26 @@ int main(void) {
                pterm,nterm,enterm,edterm);
     cout << pterm << " " << nterm << " " << enterm << " "
          << edterm << endl;
+
+    t.test_rel(pterm1+pterm2,pterm,1.0e-12,"pterm j=1");
+    t.test_rel(nterm1-nterm2,nterm,1.0e-9,"nterm j=1");
+    t.test_rel(enterm1+enterm2,enterm,1.0e-10,"enterm j=1");
+    t.test_rel(enterm1+enterm2,enterm,1.0e-10,"enterm j=1");
+    
     e.mu=mux;
     psi=(e.mu-e.m)/T;
     ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
                pterm,nterm,enterm,edterm);
     cout << pterm << " " << nterm << " " << enterm << " "
          << edterm << endl;
-    cout << endl;
+
+    t.test_rel(pterm1+pterm2,pterm,1.0e-12,"pterm antip. j=1");
+    t.test_rel(nterm2-nterm1,nterm,1.0e-9,"nterm antip. j=1");
+    t.test_rel(enterm1+enterm2,enterm,1.0e-10,"enterm antip. j=1");
+    t.test_rel(enterm1+enterm2,enterm,1.0e-10,"enterm antip. j=1");
     
+    cout << endl;
+
     j=2;
 
     inc_antip=false;
@@ -175,13 +188,26 @@ int main(void) {
                pterm,nterm,enterm,edterm);
     cout << pterm << " " << nterm << " " << enterm << " "
          << edterm << endl;
+
+    t.test_rel(pterm1+pterm2,pterm,1.0e-11,"pterm j=2");
+    t.test_rel(nterm1-nterm2,nterm,1.0e-9,"nterm j=2");
+    t.test_rel(enterm1+enterm2,enterm,1.0e-9,"enterm j=2");
+    t.test_rel(enterm1+enterm2,enterm,1.0e-9,"enterm j=2");
+    
     e.mu=mux;
     psi=(e.mu-e.m)/T;
     ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
                pterm,nterm,enterm,edterm);
     cout << pterm << " " << nterm << " " << enterm << " "
          << edterm << endl;
+
+    t.test_rel(pterm1+pterm2,pterm,1.0e-11,"pterm antip. j=2");
+    t.test_rel(nterm2-nterm1,nterm,1.0e-9,"nterm antip. j=2");
+    t.test_rel(enterm1+enterm2,enterm,1.0e-9,"enterm antip. j=2");
+    t.test_rel(enterm1+enterm2,enterm,1.0e-9,"enterm antip. j=2");
     
+    cout << endl;
+
   }
 
   t.report();
