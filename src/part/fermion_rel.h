@@ -607,8 +607,8 @@ namespace o2scl {
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
 	bool acc=this->calc_mu_ndeg(f,temper,tol_expan);
-        std::cout << "cmn_cmu: " << f.nu << " " << temper << " "
-                  << tol_expan << " " << acc << std::endl;
+        //std::cout << "cmn_cmu: " << f.nu << " " << temper << " "
+        //<< tol_expan << " " << acc << std::endl;
 	if (verbose>1) {
 	  std::cout << "calc_mu(): non-deg expan " << acc
 		    << std::endl;
@@ -1738,8 +1738,8 @@ namespace o2scl {
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
         bool acc=this->calc_mu_ndeg(f,T,1.0e-18);
-        std::cout << "cmn_pmu1: " << f.nu << " " << T << " "
-                  << 1.0e-18 << " " << acc << std::endl;
+        //std::cout << "cmn_pmu1: " << f.nu << " " << T << " "
+        //<< 1.0e-18 << " " << acc << std::endl;
 	if (acc && o2isfinite(f.n)) {
 	  particles_done=true;
 	  nden_p=f.n;
@@ -1850,8 +1850,8 @@ namespace o2scl {
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
         bool acc=this->calc_mu_ndeg(f,T,1.0e-18);
-        std::cout << "cmn_pmu2: " << f.nu << " " << T << " "
-                  << 1.0e-18 << " " << acc << std::endl;
+        //std::cout << "cmn_pmu2: " << f.nu << " " << T << " "
+        //<< 1.0e-18 << " " << acc << std::endl;
 	if (acc) {
 	  antiparticles_done=true;
 	  nden_ap=f.n;

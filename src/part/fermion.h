@@ -469,7 +469,7 @@ namespace o2scl {
       if (inc_antip==false) {
         rat=exp(dj1*psi)/jot1/jot1*be_integ.K2exp(jot1);
         rat/=exp(dj2*psi)/jot2/jot2*be_integ.K2exp(jot2);
-        std::cout << "rat: " << rat << std::endl;
+        //std::cout << "rat: " << rat << std::endl;
       } else {
         if (f.inc_rest_mass) {
           rat=exp(-jot1)*2.0*cosh(dj1*f.nu/temper)/jot1/jot1*

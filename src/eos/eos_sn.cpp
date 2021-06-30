@@ -302,67 +302,19 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
   // Provide the initial guess for the electron
   // chemical potential
   double guess2=mue;
-  electron.mu=mue;
-
-  relf.err_nonconv=false;
+  electron.mu=mue-electron.m;
   
-  // For lower densities, pair_density() has problems computing the
-  // chemical potential from the density, so we loosen the tolerances
-  // a little bit.
-  if (nB*Ye<1.0e-10) {
-    relf.alt_solver.tol_rel=1.0e-6;
-  }
-  if (nB*Ye<2.1e-14 && T*hc_mev_fm>19.0) {
-    relf.alt_solver.tol_rel=1.0e-4;
-  }
-    
-
-  relf.min_psi=0.0;
+  relf.err_nonconv=true;
+  
+  // For lower densities, including the electron mass makes
+  // the pair_density() solver fail, so we take out the
+  // electron mass here and add it back in later
+  electron.inc_rest_mass=false;
+  
   int retx=relf.pair_density(electron,T/hc_mev_fm);
   if (retx!=0) {
-    cout << "Failed for (nB,Ye,T): " << nB << " " << Ye << " " << T
-         << endl;
-
-    double best_mue=guess2;
-    double diff=1.0;
-    for(double fact=0.2;fact>1.0e-6;fact/=2.0) {
-      for(mue=guess2/(1.0+fact);mue<guess2*(1.0+fact);mue*=1.0+fact/20.0) {
-        electron.mu=mue;
-        relf.verbose=1;
-        relf.pair_mu(electron,T/hc_mev_fm);
-        if (fabs(electron.n-nB*Ye)<diff) {
-          diff=fabs(electron.n-nB*Ye);
-          best_mue=mue;
-        }
-        cout << mue << " " << electron.n << " " << nB*Ye << " "
-             << relf.last_method << endl;
-      }
-      cout << "fgb: " << fact << " " << guess2 << " " << best_mue << endl;
-      guess2=best_mue;
-      char ch;
-      cin >> ch;
-    }
-    
-    cout << endl;
-
-    if (true) {
-      relf.verbose=2;
-      //electron.mu=guess2;
-      electron.mu=best_mue;
-      electron.n=nB*Ye;
-      int retx2=relf.pair_density(electron,T/hc_mev_fm);
-      cout << "retx2: " << retx2 << endl;
-      //char ch;
-      //cin >> ch;
-      if (retx2!=0) {
-        O2SCL_ERR2("Function fermion_rel::pair_density() failed in ",
-                   "eos_sn_base::compute_eg_point().",o2scl::exc_efailed);
-      }
-    } else {
-      electron.mu=best_mue;
-      relf.pair_mu(electron,T/hc_mev_fm);
-      electron.n=nB*Ye;
-    }
+    O2SCL_ERR2("Function fermion_rel::pair_density() failed in ",
+               "eos_sn_base::compute_eg_point().",o2scl::exc_efailed);
   }
   
   if (include_muons) {
@@ -370,7 +322,7 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
     relf.pair_mu(muon,T/hc_mev_fm);
   }
 
-  th.ed=electron.ed+photon.ed;
+  th.ed=electron.ed+photon.ed+electron.n*electron.m;
   th.pr=electron.pr+photon.pr;
   th.en=electron.en+photon.en;
   
@@ -380,7 +332,7 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
     th.pr+=muon.pr;
   }
 
-  mue=electron.mu;
+  mue=electron.mu+electron.m;
 
   return;
 }
