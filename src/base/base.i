@@ -330,6 +330,35 @@ py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class ``%name%``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/%name%.html .
+# Class complex<double>
+#                              
+# Create a python interface to std::vector<double> for vector
+# arguments to O2scl functions                             
+#
+class std::complex<double>
+- py_name std_complex
+- cons init
+  - double re
+  - double im    
+- function real
+  - double &
+- function imag
+  - double &
+- function abs
+  - double
+- function arg
+  - double
+- function norm
+  - double
+- extra_py |
+| def to_python(self):
+|     """
+|     Convert to a python complex number
+|
+|     Returns: a python complex number
+|     """
+|     ret=self.real()+self.imag()*1j
+|     return ret
 # 
 # Class lib_settings_class
 #

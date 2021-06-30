@@ -3,11 +3,11 @@
 # ------------------------------------------------------------
 
 OTHER_SRCS = series_acc.cpp poly.cpp polylog.cpp \
-	interp2_eqi.cpp pinside.cpp \
+	interp2_eqi.cpp pinside.cpp other_python.cpp \
 	contour.cpp smooth_gsl.cpp hist.cpp \
-	hist_2d.cpp prob_dens_func.cpp vec_stats.cpp
+	hist_2d.cpp prob_dens_func.cpp vec_stats.cpp 
 
-HEADER_VAR = contour.h cheb_approx.h \
+HEADER_VAR = contour.h cheb_approx.h other_python.h \
 	series_acc.h interp2_planar.h poly.h polylog.h \
 	interp2_direct.h interp2_eqi.h pinside.h \
 	vec_stats.h smooth_gsl.h hist.h smooth_func.h \
@@ -238,6 +238,14 @@ noinst_LTLIBRARIES = libo2scl_other.la
 libo2scl_other_la_SOURCES = $(OTHER_SRCS)
 
 am__libo2scl_other_la_SOURCES_DIST = $(OTHER_SRCS)
+
+# ------------------------------------------------------------
+
+interface: empty
+	../../bin/yanic other.i other_python ~/wcs/o2sclpy/o2sclpy/other \
+		~/wcs/o2sclpy/doc/other | tee other_python.yanic.out
+
+empty:
 
 # ------------------------------------------------------------
 # Misc

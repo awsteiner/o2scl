@@ -1172,6 +1172,10 @@ int main(int argc, char *argv[]) {
         // They must have different python names
         if (iff.py_name==iff2.py_name || iff.py_name.length()==0 ||
             iff2.py_name.length()==0) {
+          std::cout << "iff.name: " << iff.name << std::endl;
+          std::cout << "iff2.name: " << iff2.name << std::endl;
+          std::cout << "iff.py_name: " << iff.py_name << std::endl;
+          std::cout << "iff2.py_name: " << iff2.py_name << std::endl;
           O2SCL_ERR2("Functions with same name and same py_name or ",
                      "empty py_name.",o2scl::exc_einval);
         }

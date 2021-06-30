@@ -26,6 +26,11 @@
 #ifndef O2SCL_SLACK_MESSENGER_H
 #define O2SCL_SLACK_MESSENGER_H
 
+#include <string>
+#include <vector>
+
+#include <o2scl/err_hnd.h>
+
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
 #endif

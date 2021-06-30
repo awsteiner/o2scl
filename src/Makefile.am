@@ -159,10 +159,11 @@ libo2scl_part_la_LDFLAGS = -version-info $(OLIB_LT_VERSION)
 
 interface: empty
 	cd base; $(MAKE) interface
-	cd eos; $(MAKE) interface
+	cd other; $(MAKE) interface
+	cd hdf; $(MAKE) interface
 	cd nuclei; $(MAKE) interface
 	cd part; $(MAKE) interface
-	cd hdf; $(MAKE) interface
+	cd eos; $(MAKE) interface
 
 empty:
 
