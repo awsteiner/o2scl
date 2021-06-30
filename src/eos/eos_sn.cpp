@@ -304,15 +304,26 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
   double guess2=mue;
   electron.mu=mue-electron.m;
   
-  relf.err_nonconv=true;
+  relf.err_nonconv=false;
   
   // For lower densities, including the electron mass makes
   // the pair_density() solver fail, so we take out the
   // electron mass here and add it back in later
   electron.inc_rest_mass=false;
   
+  relf.alt_solver.tol_rel=1.0e-6;
+  relf.min_psi=0.0;
+  
   int retx=relf.pair_density(electron,T/hc_mev_fm);
   if (retx!=0) {
+    
+    cout << "nB,Ye,T[MeV]: " << nB << " " << Ye << " " << T*hc_mev_fm << endl;
+    
+    electron.inc_rest_mass=true;
+    relf.verbose=2;
+    int retx2=relf.pair_density(electron,T/hc_mev_fm);
+    cout << retx2 << endl;
+    
     O2SCL_ERR2("Function fermion_rel::pair_density() failed in ",
                "eos_sn_base::compute_eg_point().",o2scl::exc_efailed);
   }
