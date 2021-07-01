@@ -755,8 +755,8 @@ namespace o2scl {
 	// Compute the number density
 
 	if (verbose>1) {
-	  std::cout << "calc_mu(): deg number density."
-		    << std::endl;
+	  std::cout << "calc_mu(): deg number density, ul, ulf: "
+                    << ul << " " << upper_limit_fac << std::endl;
 	}
 
 	f.n=dit->integ(mfd,0.0,ul);
@@ -1075,6 +1075,11 @@ namespace o2scl {
 	f.ed+=antip.ed;
       } else {
 	f.ed=f.ed+antip.ed+2.0*antip.n*f.m;
+      }
+      if (verbose>0) {
+        std::cout << "pair_mu(), particles, antiparticles, total: "
+                  << f.n << " " << antip.n << " "
+                  << f.n-antip.n << std::endl;
       }
       f.n-=antip.n;
       f.pr+=antip.pr;

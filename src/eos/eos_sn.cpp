@@ -293,10 +293,10 @@ void eos_sn_base::set_interp_type(size_t interp_type) {
   return;
 }
 
-void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
+void eos_sn_base::compute_eg_point(double nB, double Ye, double TMeV,
 				   thermo &th, double &mue) {
   
-  photon.massless_calc(T/hc_mev_fm);
+  photon.massless_calc(TMeV/hc_mev_fm);
   electron.n=nB*Ye;
   
   // Provide the initial guess for the electron
@@ -311,26 +311,40 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
   // electron mass here and add it back in later
   electron.inc_rest_mass=false;
   
-  relf.alt_solver.tol_rel=1.0e-6;
-  relf.min_psi=0.0;
-  
-  int retx=relf.pair_density(electron,T/hc_mev_fm);
+  int retx=relf.pair_density(electron,TMeV/hc_mev_fm);
+
+  // Sometimes the solver fails, but we can recover by adjusting the
+  // upper limit for degenerate electrons and tightening the electron
+  // integration tolerances
   if (retx!=0) {
     
-    cout << "nB,Ye,T[MeV]: " << nB << " " << Ye << " " << T*hc_mev_fm << endl;
+    relf.upper_limit_fac=40.0;
+    relf.def_dit.tol_rel/=1.0e2;
+    relf.def_dit.tol_abs/=1.0e2;
+    relf.def_nit.tol_rel/=1.0e2;
+    relf.def_nit.tol_abs/=1.0e2;
     
-    electron.inc_rest_mass=true;
-    relf.verbose=2;
-    int retx2=relf.pair_density(electron,T/hc_mev_fm);
-    cout << retx2 << endl;
+    int retxx=relf.pair_density(electron,TMeV/hc_mev_fm);
     
-    O2SCL_ERR2("Function fermion_rel::pair_density() failed in ",
-               "eos_sn_base::compute_eg_point().",o2scl::exc_efailed);
+    relf.upper_limit_fac=20.0;
+    relf.def_dit.tol_rel*=1.0e2;
+    relf.def_dit.tol_abs*=1.0e2;
+    relf.def_nit.tol_rel*=1.0e2;
+    relf.def_nit.tol_abs*=1.0e2;
+
+    if (retxx!=0) {
+      
+      cout << "Function fermion_rel::pair_density() failed." << endl;
+      cout << "  nB,Ye,T[MeV]: " << nB << " " << Ye << " " << TMeV << endl;
+      
+      O2SCL_ERR2("Function fermion_rel::pair_density() failed in ",
+                 "eos_sn_base::compute_eg_point().",o2scl::exc_efailed);
+    }
   }
   
   if (include_muons) {
     muon.mu=electron.mu;
-    relf.pair_mu(muon,T/hc_mev_fm);
+    relf.pair_mu(muon,TMeV/hc_mev_fm);
   }
 
   th.ed=electron.ed+photon.ed+electron.n*electron.m;
@@ -345,6 +359,8 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double T,
 
   mue=electron.mu+electron.m;
 
+  electron.inc_rest_mass=true;
+  
   return;
 }
 
