@@ -282,6 +282,7 @@
   <compound refid="classo2scl_1_1quartic__real__coeff__cern" kind="class"><name>o2scl::quartic_real_coeff_cern</name>
   <compound refid="classo2scl_1_1quartic__real__std" kind="class"><name>o2scl::quartic_real_std</name>
   <compound refid="classo2scl_1_1inte__hcubature_1_1region" kind="class"><name>o2scl::inte_hcubature::region</name>
+  <compound refid="classo2scl_1_1rng" kind="class"><name>o2scl::rng</name>
   <compound refid="classo2scl_1_1rng__gsl" kind="class"><name>o2scl::rng_gsl</name>
   <compound refid="classo2scl_1_1rng__gsl__uniform__real" kind="class"><name>o2scl::rng_gsl_uniform_real</name>
   <compound refid="classo2scl_1_1root" kind="class"><name>o2scl::root</name>

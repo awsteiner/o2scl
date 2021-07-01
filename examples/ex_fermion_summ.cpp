@@ -46,7 +46,7 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 fermion_zerot fzt;
 
 void fermion_func(double x, double y, double T,
-		  fermion_deriv &f, fermion_deriv_rel &fr,
+		  fermion_deriv &f, fermion_deriv_rel &fdr,
 		  double &log10_Pt, double &phi, double &psi,
 		  double &s, double &cv, double &cp, double &cs2,
 		  double &kfom, int &lm) {
@@ -54,24 +54,24 @@ void fermion_func(double x, double y, double T,
   f.m=T/pow(10.0,y);
   double nc=f.g*f.m*f.m*f.m/2.0/pi2;
   f.n=pow(10.0,x)*nc;
-  fr.calc_density(f,T);
+  fdr.calc_density(f,T);
   
   log10_Pt=log10(f.pr/nc/f.m);
   phi=f.mu/T;
   psi=(f.mu-f.m)/T;
   s=f.en/f.n;
-  cv=fr.heat_cap_ppart_const_vol(f,T);
-  cp=fr.heat_cap_ppart_const_press(f,T);
-  cs2=fr.squared_sound_speed(f,T);
+  cv=fdr.heat_cap_ppart_const_vol(f,T);
+  cp=fdr.heat_cap_ppart_const_press(f,T);
+  cs2=fdr.squared_sound_speed(f,T);
   fzt.kf_from_density(f);
   kfom=f.kf/f.m;
-  lm=fr.last_method;
+  lm=fdr.last_method;
 
   return;
 }
 
 void pairs_func(double x, double y, double T,
-		fermion_deriv &f, fermion_deriv_rel &fr, 
+		fermion_deriv &f, fermion_deriv_rel &fdr, 
 		double &log10_Pt, double &phi, double &psi,
 		double &s, double &cv, double &cp, double &cs2,
 		double &kfom, int &lm) {
@@ -79,18 +79,39 @@ void pairs_func(double x, double y, double T,
   f.m=T/pow(10.0,y);
   double nc=f.g*f.m*f.m*f.m/2.0/pi2;
   f.n=pow(10.0,x)*nc;
-  fr.pair_density(f,T);
+  
+  fdr.fr.err_nonconv=false;
+  fdr.fr.def_density_root.err_nonconv=false;
+  
+  int retx=fdr.pair_density(f,T);
+
+  // This sometimes fails at low densities, but can be fixed by
+  // removing the rest mass
+  if (retx!=0) {
+    f.inc_rest_mass=false;
+    
+    retx=fdr.pair_density(f,T);
+    
+    f.inc_rest_mass=true;
+    f.mu+=f.m;
+
+    if (retx!=0) {
+      O2SCL_ERR("Failed to compute in pair_density.",o2scl::exc_efailed);
+    }
+  }
+  fdr.fr.err_nonconv=true;
+  fdr.fr.def_density_root.err_nonconv=true;
   
   log10_Pt=log10(f.pr/nc/f.m);
   phi=f.mu/T;
   psi=(f.mu-f.m)/T;
   s=f.en/f.n;
-  cv=fr.heat_cap_ppart_const_vol(f,T);
-  cp=fr.heat_cap_ppart_const_press(f,T);
-  cs2=fr.squared_sound_speed(f,T);
+  cv=fdr.heat_cap_ppart_const_vol(f,T);
+  cp=fdr.heat_cap_ppart_const_press(f,T);
+  cs2=fdr.squared_sound_speed(f,T);
   fzt.kf_from_density(f);
   kfom=f.kf/f.m;
-  lm=fr.last_method;
+  lm=fdr.last_method;
   
   return;
 }
@@ -103,7 +124,7 @@ int main(void) {
   
   fermion_deriv f(1.0,2.0);
   f.inc_rest_mass=true;
-  fermion_deriv_rel fr;
+  fermion_deriv_rel fdr;
   // Choose a spin degeneracy of 2 and T=1
   double T=1.0;
 
@@ -145,7 +166,7 @@ int main(void) {
 	double log10_Pt, phi, psi, s, cv, cp, cs2, kfom;
 	int lm;
 	
-	fermion_func(x_grid[i],y_grid[j],T,f,fr,
+	fermion_func(x_grid[i],y_grid[j],T,f,fdr,
 		     log10_Pt,phi,psi,s,cv,cp,cs2,kfom,lm);
 
 	if (i==0) {
@@ -241,7 +262,7 @@ int main(void) {
 	double log10_Pt, phi, psi, s, cv, cp, cs2, kfom;
 	int lm;
 
-	pairs_func(x_grid[i],y_grid[j],T,f,fr,
+	pairs_func(x_grid[i],y_grid[j],T,f,fdr,
 		   log10_Pt,phi,psi,s,cv,cp,cs2,kfom,lm);
 	t3d.set(i,j,"log10_Pt",log10_Pt);
 	t3d.set(i,j,"phi",phi);

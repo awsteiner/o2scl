@@ -33,6 +33,7 @@ Namespace: o2scl class: eos_had_temp_eden_base
 Namespace: o2scl class: eos_had_temp_pres_base
 Namespace: o2scl class: eos_had_virial
 Namespace: o2scl class: eos_had_virial_deriv
+Namespace: o2scl class: eos_had_virial_spin
 Namespace: o2scl class: eos_nse
 Namespace: o2scl class: eos_nse_full
 Namespace: o2scl class: eos_nstar_rot

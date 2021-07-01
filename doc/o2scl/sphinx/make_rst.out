@@ -286,6 +286,7 @@ Namespace: o2scl class: quartic_real_coeff
 Namespace: o2scl class: quartic_real_coeff_cern
 Namespace: o2scl class: quartic_real_std
 Namespace: o2scl class: inte_hcubature::region
+Namespace: o2scl class: rng
 Namespace: o2scl class: rng_gsl
 Namespace: o2scl class: rng_gsl_uniform_real
 Namespace: o2scl class: root
@@ -1345,7 +1346,7 @@ hdf_output_data(hdf_file &hf, o2scl::table<std::vector<double>> &t)
 hdf_output_data(hdf_file &hf, o2scl::table_units<std::vector<double>> &t)
 hdf_output_data(hdf_file &hf, o2scl::table<> &t)
 hdf_output_data(hdf_file &hf, o2scl::table_units<> &t)
-kl_div_gaussian(size_t nv, const vec_t &mean_prior, const vec2_t &mean_post, const mat_t &covar_prior, const mat2_t &covar_post)
+kl_div_gaussian(size_t nv, const vec_t &mean_prior, const vec2_t &mean_post, const mat_t &covar_prior, const mat2_t &covar_post, o2scl_linalg::matrix_invert_det<mat_t> &mid)
 kl_div_gaussian(double mean_prior, double mean_post, double covar_prior, double covar_post)
 linear_or_log(vec_t &x, vec2_t &y, bool &log_x, bool &log_y)
 linear_or_log(vec_t &y, bool &log_y)

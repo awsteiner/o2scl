@@ -29,6 +29,7 @@
   <compound refid="classo2scl_1_1eos__had__temp__pres__base" kind="class"><name>o2scl::eos_had_temp_pres_base</name>
   <compound refid="classo2scl_1_1eos__had__virial" kind="class"><name>o2scl::eos_had_virial</name>
   <compound refid="classo2scl_1_1eos__had__virial__deriv" kind="class"><name>o2scl::eos_had_virial_deriv</name>
+  <compound refid="classo2scl_1_1eos__had__virial__spin" kind="class"><name>o2scl::eos_had_virial_spin</name>
   <compound refid="classo2scl_1_1eos__nse" kind="class"><name>o2scl::eos_nse</name>
   <compound refid="classo2scl_1_1eos__nse__full" kind="class"><name>o2scl::eos_nse_full</name>
   <compound refid="classo2scl_1_1eos__nstar__rot" kind="class"><name>o2scl::eos_nstar_rot</name>

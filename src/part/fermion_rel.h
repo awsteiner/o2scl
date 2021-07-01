@@ -1325,7 +1325,7 @@ namespace o2scl {
         
         // Return the density to the user-specified value
         f.n=density_match;
-        
+
 	O2SCL_CONV2_RET("Density solver failed in fermion_rel::",
 			"pair_density().",exc_efailed,this->err_nonconv);
       }
