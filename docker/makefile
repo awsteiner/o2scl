@@ -9,3 +9,7 @@ build_ubuntu:
 
 build_ubuntu_dev:
 	sudo docker build - < ubuntu_dev > ubuntu_dev.out 2>&1 &
+
+build_ubuntu_dev_nolinalg:
+	sudo docker build - < ubuntu_dev_nolinalg \
+		> ubuntu_dev_nolinalg.out 2>&1 &
