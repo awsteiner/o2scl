@@ -794,3 +794,355 @@ double eos_quark_njl::ipr(double x, const njtp &p) {
   ret*=3.0/pi2*x*x;
   return ret;
 }
+
+int eos_quark_njl_vec::calc_eq_p(quark &tu, quark &td, quark &ts,
+                                 double &gap1, double &gap2, double &gap3,
+                                 thermo &th) {
+
+  double vec1, vec2, vec3;
+  
+  if (tu.m<0.0) tu.m*=-1.0;
+  if (td.m<0.0) td.m*=-1.0;
+  if (ts.m<0.0) ts.m*=-1.0;
+  
+  if (tu.nu>tu.m) {
+    tu.n=1.0/o2scl_const::pi2*pow(tu.nu*tu.nu-tu.m*tu.m,1.5);
+  } else {
+    tu.n=0.0;
+  }
+  if (td.nu>td.m) {
+    td.n=1.0/o2scl_const::pi2*pow(td.nu*td.nu-td.m*td.m,1.5);
+  } else {
+    td.n=0.0;
+  }
+  if (ts.nu>ts.m) {
+    ts.n=1.0/o2scl_const::pi2*pow(ts.nu*ts.nu-ts.m*ts.m,1.5);
+  } else {
+    ts.n=0.0;
+  }
+  
+  //tu.kf=fermimom(tu.n,3.0);
+  //td.kf=fermimom(td.n,3.0);
+  //ts.kf=fermimom(ts.n,3.0);
+  
+  tu.qq=3.0/o2scl_const::pi2*(-tu.m/2.0*L*sqrt(tu.m*tu.m+L*L)+pow(tu.m,3.0)/2.0*
+                 log(L+sqrt(L*L+tu.m*tu.m)));
+  tu.qq+=3.0/o2scl_const::pi2*(tu.m/2.0*tu.kf*sqrt(tu.m*tu.m+tu.kf*tu.kf)-
+                  pow(tu.m,3.0)/2.0*
+                  log(tu.kf+sqrt(tu.kf*tu.kf+tu.m*tu.m)));
+  td.qq=3.0/o2scl_const::pi2*(-td.m/2.0*L*sqrt(td.m*td.m+L*L)+pow(td.m,3.0)/2.0*
+                 log(L+sqrt(L*L+td.m*td.m)));
+  td.qq+=3.0/o2scl_const::pi2*(td.m/2.0*td.kf*sqrt(td.m*td.m+td.kf*td.kf)-
+                  pow(td.m,3.0)/2.0*
+                  log(td.kf+sqrt(td.kf*td.kf+td.m*td.m)));
+  ts.qq=3.0/o2scl_const::pi2*(-ts.m/2.0*L*sqrt(ts.m*ts.m+L*L)+pow(ts.m,3.0)/2.0*
+                 log(L+sqrt(L*L+ts.m*ts.m)));
+  ts.qq+=3.0/o2scl_const::pi2*(ts.m/2.0*ts.kf*sqrt(ts.m*ts.m+ts.kf*ts.kf)-
+                  pow(ts.m,3.0)/2.0*
+                  log(ts.kf+sqrt(ts.kf*ts.kf+ts.m*ts.m)));
+
+  njvecbag(tu,L,G,GV);
+  njvecbag(td,L,G,GV);
+  njvecbag(ts,L,G,GV);
+  
+  //tu.ed=3.0*feden(tu.kf,tu.m);
+  //td.ed=3.0*feden(td.kf,td.m);
+  //ts.ed=3.0*feden(ts.kf,ts.m);
+
+  tu.ed-=tu.B;
+  td.ed-=td.B;
+  ts.ed-=ts.B;
+
+  th.ed=tu.ed+td.ed+ts.ed+B0+10.0*K*tu.qq*td.qq*ts.qq;
+  th.pr=-th.ed;
+  th.pr+=tu.n*sqrt(tu.m*tu.m+tu.kf*tu.kf);
+  th.pr+=td.n*sqrt(td.m*td.m+td.kf*td.kf);
+  th.pr+=ts.n*sqrt(ts.m*ts.m+ts.kf*ts.kf);
+  
+  //*charge=(tu.n*2.0-td.n-ts.n)/3.0;
+  //*barn=(tu.n+td.n+ts.n)/3.0;
+  
+  gap1=-1.0*tu.m+tu.m-4.0*G*tu.qq-4.0*K*td.qq*ts.qq;
+  gap2=-1.0*td.m+td.m-4.0*G*td.qq-4.0*K*tu.qq*ts.qq;
+  gap3=-1.0*ts.m+ts.m-4.0*G*ts.qq-4.0*K*td.qq*tu.qq;
+
+  vec1=-1.0*tu.nu+tu.mu-4.0*GV*tu.n*tu.n;
+  vec2=-1.0*td.nu+td.mu-4.0*GV*td.n*td.n;
+  vec3=-1.0*ts.nu+ts.mu-4.0*GV*ts.n*ts.n;
+
+  return 0;
+}
+
+void eos_quark_njl_vec::njvecbag(quark &pp, double L, double G, double GV) {
+  static const double zero=1.0e-9;
+  if (fabs(pp.m)<zero) {
+    pp.B=0.0;
+  } else {
+    if (fabs(pp.m)<zero) {
+      pp.B=3.0/o2scl_const::pi2*(1.0/4.0*L*pow(pp.m*pp.m+L*L,1.5)
+                    -1.0/8.0*pp.m*pp.m*L*sqrt(pp.m*pp.m+L*L)
+                    -1.0/8.0*pow(pp.m,4.0)*log(L+sqrt(pp.m*pp.m+L*L))
+                    +1.0/16.0*pow(pp.m,4.0)*log(pp.m*pp.m)
+                    -1.0/4.0*pow(L,4.0));
+    } else {
+      pp.B=3.0/o2scl_const::pi2*(1.0/4.0*L*pow(pp.m*pp.m+L*L,1.5)
+                    -1.0/8.0*pp.m*pp.m*L*sqrt(pp.m*pp.m+L*L)
+                    -1.0/8.0*pow(pp.m,4.0)*log(L+sqrt(pp.m*pp.m+L*L))
+                    +1.0/16.0*pow(pp.m,4.0)*log(pp.m*pp.m));
+    }
+  }
+  (pp.B)-=(2.0*G*pp.qq*pp.qq-2.0*GV*pp.n*pp.n);
+  return;
+}
+
+/*
+  #define LIMIT 20
+  #define DEBUG 0
+  
+  double iqq(double x, int np, double *param);
+  double ide(double x, int np, double *param);
+  double ied(double x, int np, double *param);
+  double ipr(double x, int np, double *param);
+  //void njbag3(fermion &pp, double L, double G);
+  */
+
+int eos_quark_njl_vec::calc_eq_temp_p(quark &tu, quark &td, quark &ts,
+                                      double &gap1, double &gap2,
+                                      double &gap3, thermo &th,
+                                      double temper) {
+  /*
+    double B0, double temper, int *check,
+    double *energy, double *press, double *entropy,
+    double *charge, double *barn, double *gap1, double *gap2,
+    double *gap3, double *vec1, double *vec2, double *vec3) {
+  */
+
+  double *iparam, test, test2;
+  int inp;
+
+  //inp=4;
+  //iparam=dvector(1,inp);
+
+  tu.m=fabs(tu.m);
+  td.m=fabs(td.m);
+  ts.m=fabs(ts.m);
+
+  /*
+    iparam[3]=temper;
+    
+    iparam[1]=tu.m;
+    iparam[2]=tu.nu;
+    iparam[4]=tu.m;
+  */
+  
+  //if (DEBUG) printf("uqq\n");
+  //tu.qq=qrombaws(iqq,0.0,L,inp,iparam,1.0e-7,400,-1.0,0)-L;
+  //if (DEBUG) printf("un\n");
+  //tu.n=qrombaws(ide,0.0,L,inp,iparam,1.0e-7,400,-1.0,0)-L;
+  //tu.kf=fermimom(tu.n,3.0);
+  //if (DEBUG) printf("upr\n");
+  //tu.pr=qrombaws(ipr,0.0,L,inp,iparam,1.0e-7,400,-1.0,0);
+  //  if (DEBUG) printf("ued\n");
+  //tu.ed=qrombaws(ied,0.0,L,inp,iparam,1.0e-7,400,-1.0,0);
+  tu.ed+=2.0*G*tu.qq*tu.qq-2.0*GV*tu.n*tu.n;
+  tu.pr-=2.0*G*tu.qq*tu.qq-2.0*GV*tu.n*tu.n;
+
+  /*
+  iparam[1]=td.m;
+  iparam[2]=td.nu;
+  iparam[4]=td.m;
+  */
+  //if (DEBUG) printf("dqq\n");
+  //td.qq=qrombaws(iqq,0.0,L,inp,iparam,1.0e-7,400,-1.0,0)-L;
+  //if (DEBUG) printf("dn\n");
+  //td.n=qrombaws(ide,0.0,L,inp,iparam,1.0e-7,400,-1.0,0)-L;
+  //td.kf=fermimom(td.n,3.0);
+  //if (DEBUG) printf("dpr\n");
+  //td.pr=qrombaws(ipr,0.0,L,inp,iparam,1.0e-7,400,-1.0,0);
+  //if (DEBUG) printf("ded\n");
+  //td.ed=qrombaws(ied,0.0,L,inp,iparam,1.0e-7,400,-1.0,0);
+  td.ed+=2.0*G*td.qq*td.qq+2.0*GV*td.n*td.n;
+  td.pr-=2.0*G*td.qq*td.qq+2.0*GV*td.n*td.n;
+
+  /*
+  iparam[1]=ts.m;
+  iparam[2]=ts.nu;
+  iparam[4]=ts.m;
+  */
+  //if (DEBUG) printf("sqq\n");
+  //ts.qq=qrombaws(iqq,0.0,L,inp,iparam,1.0e-7,400,-1.0,0)-L;
+  //if (DEBUG) printf("sn\n");
+  //ts.n=qrombaws(ide,0.0,L,inp,iparam,1.0e-7,400,-1.0,0)-L;
+  //ts.kf=fermimom(ts.n,3.0);
+  //if (DEBUG) printf("spr\n");
+  //ts.pr=qrombaws(ipr,0.0,L,inp,iparam,1.0e-7,400,-1.0,0);
+  //if (DEBUG) printf("sed\n");
+  //ts.ed=qrombaws(ied,0.0,L,inp,iparam,1.0e-7,400,-1.0,0);
+  ts.ed+=2.0*G*ts.qq*ts.qq-2.0*GV*ts.n*ts.n;
+  ts.pr-=2.0*G*ts.qq*ts.qq-2.0*GV*ts.n*ts.n;
+
+  /*
+    njbag(tu,L,G);
+    njbag(td,L,G);
+    njbag(ts,L,G);
+  */
+
+  th.ed=tu.ed+td.ed+ts.ed+B0-4.0*K*tu.qq*td.qq*ts.qq;
+  th.pr=tu.pr+td.pr+ts.pr-B0-10.0*K*tu.qq*td.qq*ts.qq;
+  th.en=(th.ed+th.pr-tu.n*tu.mu-td.n*td.mu-ts.n*ts.mu)/temper;
+  
+  //*charge=(tu.n*2.0-td.n-ts.n)/3.0;
+  //*barn=(tu.n+td.n+ts.n)/3.0;
+  
+  gap1=-1.0*tu.m+tu.m-4.0*G*tu.qq-4.0*K*td.qq*ts.qq;
+  gap2=-1.0*td.m+td.m-4.0*G*td.qq-4.0*K*tu.qq*ts.qq;
+  gap3=-1.0*ts.m+ts.m-4.0*G*ts.qq-4.0*K*td.qq*tu.qq;
+
+  double vec1, vec2, vec3;
+  vec1=-1.0*tu.nu+tu.mu-4.0*GV*tu.n;
+  vec2=-1.0*td.nu+td.mu-4.0*GV*td.n;
+  vec3=-1.0*ts.nu+ts.mu-4.0*GV*ts.n;
+
+  //free_dvector(iparam,1,inp);
+  return 0;
+}
+
+double eos_quark_njl_vec::iqq(double x, int np, double *param) {
+  double m, mu, t, en, ret;
+  char ch;
+  static const double limit=20.0;
+  m=param[1];
+  mu=param[2];
+  t=param[3];
+  en=sqrt(x*x+m*m);
+  ret=1.0;
+  if ((en-mu)/t>limit) {
+    ret-=0.0;
+  } else if ((en-mu)/t<-limit) {
+    ret-=1.0;
+  } else {
+    ret-=1.0/(1+exp((en-mu)/t));
+  }
+  if ((en+mu)/t>limit) {
+    ret-=0.0;
+  } else if ((en+mu)/t<-limit) {
+    ret-=1.0;
+  } else {
+    ret-=1.0/(1+exp((en+mu)/t));
+  }
+  ret*=-3.0*x*x/en/o2scl_const::pi2*m;
+  ret+=1.0;
+  return ret;
+}
+
+double eos_quark_njl_vec::ide(double x, int np, double *param) {
+  double m, mu, t, en, ret;
+  char ch;
+  m=param[1];
+  mu=param[2];
+  t=param[3];
+  en=sqrt(x*x+m*m);
+  ret=0.0;
+  static const double limit=20.0;
+  if ((en-mu)/t>limit) {
+    ret+=0.0;
+  } else if ((en-mu)/t<-limit) {
+    ret+=1.0;
+  } else {
+    ret+=1.0/(1+exp((en-mu)/t));
+  }
+  if ((en+mu)/t>limit) {
+    ret-=0.0;
+  } else if ((en+mu)/t<-limit) {
+    ret-=1.0;
+  } else {
+    ret-=1.0/(1+exp((en+mu)/t));
+  }
+  ret*=3.0*x*x/o2scl_const::pi2;
+  ret+=1.0;
+  return ret;
+}
+
+double eos_quark_njl_vec::ied(double x, int np, double *param) {
+  double m, mu, t, en, ret, en0, m0;
+  m=param[1];
+  mu=param[2];
+  t=param[3];
+  m0=param[4];
+  en=sqrt(x*x+m*m);
+  //  en0=sqrt(x*x+m0*m0);
+  ret=-en;
+  static const double limit=20.0;
+  if ((en-mu)/t>limit) {
+    ret+=0.0;
+  } else if ((en-mu)/t<-limit) {
+    ret+=en;
+  } else {
+    ret+=en/(1+exp((en-mu)/t));
+  }
+  if ((en+mu)/t>limit) {
+    ret+=0.0;
+  } else if ((en+mu)/t<-limit) {
+    ret+=en;
+  } else {
+    ret+=en/(1+exp((en+mu)/t));
+  }
+  ret*=3.0/o2scl_const::pi2*x*x;
+  return ret;
+}
+
+double eos_quark_njl_vec::ipr(double x, int np, double *param) {
+  double m, mu, t, en, ret, m0, en0;
+  m=param[1];
+  mu=param[2];
+  t=param[3];
+  m0=param[4];
+  en=sqrt(x*x+m*m);
+  // en0=sqrt(x*x+m0*m0);
+  ret=en;
+  if ((mu-en)/t>limit) {
+    ret+=mu-en;
+  } else if ((mu-en)/t<-limit) {
+    ret+=0.0;
+  } else {
+    ret+=t*log(1+exp((mu-en)/t));
+  }
+  if ((-en-mu)/t>limit) {
+    ret+=-en-mu;
+  } else if ((-en-mu)/t<-limit) {
+    ret+=0.0;
+  } else {
+    ret+=t*log(1+exp((-en-mu)/t));
+  }
+  ret*=3.0/o2scl_const::pi2*x*x;
+  return ret;
+}
+
+/*
+  AWS: this was commented in the original code
+
+  void njbag3(fermion &pp, double L, double G) {
+  if (fabs(pp->m)<ZERO) {
+  pp->B=0.0;
+  } else {
+  if (fabs(pp->m0)<ZERO) {
+  pp->B=3.0/o2scl_const::pi2*(1.0/4.0*L*pow(pp->m*pp->m+L*L,1.5)
+  -1.0/8.0*pp->m*pp->m*L*sqrt(pp->m*pp->m+L*L)
+  -1.0/8.0*pow(pp->m,4.0)*log(L+sqrt(pp->m*pp->m+L*L))
+  +1.0/16.0*pow(pp->m,4.0)*log(pp->m*pp->m)
+  -1.0/4.0*pow(L,4.0));
+  } else {
+  pp->B=3.0/o2scl_const::pi2*(1.0/4.0*L*pow(pp->m*pp->m+L*L,1.5)
+  -1.0/8.0*pp->m*pp->m*L*sqrt(pp->m*pp->m+L*L)
+  -1.0/8.0*pow(pp->m,4.0)*log(L+sqrt(pp->m*pp->m+L*L))
+  -1.0/4.0*L*pow(pp->m0*pp->m0+L*L,1.5)
+  +1.0/8.0*pp->m0*pp->m0*L*sqrt(pp->m0*pp->m0+L*L)
+  +1.0/8.0*pow(pp->m0,4.0)*log(L+sqrt(pp->m0*pp->m0+L*L))
+  +1.0/16.0*pow(pp->m,4.0)*log(pp->m*pp->m)
+  -1.0/16.0*pow(pp->m0,4.0)*log(pp->m0*pp->m0));
+  }
+  }
+  (pp->B)-=(2.0*G*pp->qq*pp->qq);
+  return;
+  }
+*/
