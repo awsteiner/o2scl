@@ -377,30 +377,44 @@ namespace o2scl {
   /** \brief Desc
    */
   class eos_quark_njl_vec : public eos_quark_njl {
+    
   public:
 
+    /// The vector coupling constant
     double GV;
 
     /// The contribution to the bag constant
     void njvecbag(quark &q);
 
+    /** \brief Desc
+     */
     double iqq(double x, int np, double *param);
+
+    /** \brief Desc
+     */
     double ide(double x, int np, double *param);
+
+    /** \brief Desc
+     */
     double ied(double x, int np, double *param);
+    
+    /** \brief Desc
+     */
     double ipr(double x, int np, double *param);
     
+    /** \brief Desc
+     */
     virtual int calc_eq_temp_p(quark &tu, quark &td, quark &ts,
                                double &gap1, double &gap2,
                                double &gap3, thermo &th, double temper);
     
+    /** \brief Desc
+     */
     virtual int calc_eq_p(quark &tu, quark &td, quark &ts,
                           double &gap1, double &gap2, double &gap3,
                           double &vec1, double &vec2, double &vec3,
                           thermo &th);
 
-    virtual void njvecbag(quark &pp, double L, double G, double GV);
-    
-    
   };
   
 #ifndef DOXYGEN_NO_O2NS

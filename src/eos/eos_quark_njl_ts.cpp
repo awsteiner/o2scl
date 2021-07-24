@@ -40,13 +40,12 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 // Prevent warnings about global variables by creating a namespace
 namespace eos_quark_njl_ts_ns {
 
-  eos_quark_njl njx;
   eos_quark_njl njt;
   eos_quark_njl nj;
 
-  quark u(njx.up_default_mass,6.0);
-  quark d(njx.down_default_mass,6.0);
-  quark s(njx.strange_default_mass,6.0);
+  quark u(nj.up_default_mass,6.0);
+  quark d(nj.down_default_mass,6.0);
+  quark s(nj.strange_default_mass,6.0);
   thermo th;
   int dtype;
   
@@ -67,8 +66,7 @@ namespace eos_quark_njl_ts_ns {
   }
 
   double omfun(double x) {
-    double L=602.3/hc_mev_fm;
-    double g1,g2,g3,G=1.835/L/L,K=12.36/pow(L,5.0);
+    double g1, g2, g3;
 
     if (dtype==1) {
       u.qq=x;
@@ -79,8 +77,8 @@ namespace eos_quark_njl_ts_ns {
       u.ms=x;
       nj.fromqq=false;
       nj.calc_eq_p(u,d,s,g1,g2,g3,th);
-      th.pr+=2.0*G*(u.qq*u.qq+d.qq*d.qq+s.qq*s.qq)-
-	4.0*K*u.qq*d.qq*s.qq;
+      th.pr+=2.0*nj.G*(u.qq*u.qq+d.qq*d.qq+s.qq*s.qq)-
+	4.0*nj.K*u.qq*d.qq*s.qq;
       return -th.pr;
     }
     return 0.0;
@@ -92,74 +90,58 @@ using namespace eos_quark_njl_ts_ns;
 
 int main(void) {
 
-  ubvector ax(3);
+  cout.setf(ios::scientific);
+
   test_mgr t;
   t.set_output_level(2);
-  int ret=0;
   
   mroot_hybrids<mm_funct> nd;
   deriv_gsl<funct> df;
-  int vpx=0;
-
-  cout.setf(ios::scientific);
-
+  
   nj.set_quarks(u,d,s);
   nj.set_thermo(th);
   t.test_gen(nj.set_parameters()==0,"set_parameters().");
   t.test_rel(nj.B0,21.6084,1.0e-4,"bag constant");
   
-  u.mu=2.5; d.mu=2.5; s.mu=2.5;
+  u.mu=2.5;
+  d.mu=2.5;
+  s.mu=2.5;
   
-  mm_funct fqq=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
-     (&eos_quark_njl::gapfunqq),
-     &nj,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3);
-  mm_funct fms=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
-     (&eos_quark_njl::gapfunms),
-     &nj,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3);
   funct fderiv=omfun;
   
   cout << "Feynman-Hellman theorem" << endl;
   cout << "Verify that (partial Omega)/(Partial qqu) = 0" << endl;
-  nj.set_quarks(u,d,s);
   nj.fromqq=true;
-  ax[0]=-1.0; ax[1]=-1.0; ax[2]=-1.0; 
-  nd.msolve(3,ax,fqq);
+  u.qq=-1.0;
+  d.qq=-1.0;
+  s.qq=-1.0;
+  int ret=nj.calc_p(u,d,s,th);
   dtype=1;
   df.h=0.01;
-  ret=nd.msolve(3,ax,fqq);
-  t.test_gen(ret==0,"successful solve.");
-  t.test_rel(df.deriv(u.qq,fderiv),0.0,1.0e-6,"fh1");
+  t.test_gen(ret==0,"success.");
+  t.test_rel(df.deriv(u.qq,fderiv),0.0,1.0e-10,"fh1");
   
   cout << "Verify that (partial (Omega-Omega_{vac}))/(Partial mu) = qqu" 
        << endl;
   nj.fromqq=false;
-  ax[0]=0.2; ax[1]=0.2; ax[2]=2.0; 
-  nd.msolve(3,ax,fms);
-  cout << u.ms << " " << u.qq << " " << th.ed << " " << th.pr << endl;
+  u.ms=0.2;
+  d.ms=0.2;
+  s.ms=2.0;
+  ret=nj.calc_p(u,d,s,th);
   dtype=2;
   df.h=0.01;
-  nd.msolve(3,ax,fms);
-  t.test_rel(df.deriv(u.ms,fderiv),u.qq,1.0e-1,"fh2");
+  t.test_gen(ret==0,"success 2.");
+  t.test_rel(df.deriv(u.ms,fderiv),u.qq,1.0e-8,"fh2");
 
   // ---------------------------------------------------------
   // Finite temperature portion
 
   double gap1, gap2, gap3;
-  ubvector axx(4);
+  ubvector axx(3);
   
-  cout.setf(ios::scientific);
-
   nd.tol_rel/=100.0;
   nd.tol_abs/=100.0;
 
-  nj.set_quarks(u,d,s);
-  nj.set_thermo(th);
-  nj.set_parameters();
-  
   njt.set_quarks(u,d,s);
   njt.set_thermo(th);
   njt.set_parameters();
@@ -178,8 +160,17 @@ int main(void) {
   axx[1]=-1.0; 
   axx[2]=-1.0; 
   nj.fromqq=true;
+  /*
+  u.qq=-1.0;
+  d.qq=-1.0;
+  s.qq=-1.0;
+  nj.calc_p(u,d,,th);
+  */
   int r=nd.msolve(3,axx,fqq2);
   double t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12;
+  //t1=u.qq;
+  //t2=d.qq;
+  //t3=s.qq;
   t1=axx[0];
   t2=axx[1];
   t3=axx[2];
@@ -192,24 +183,24 @@ int main(void) {
   t10=u.pr;
   t11=d.pr;
   t12=s.pr;
-  t.test_rel((u.n*u.mu-u.pr-u.ed)/u.ed,0.0,1.0e-10,"therm. ident. u");
-  t.test_rel((d.n*d.mu-d.pr-d.ed)/d.ed,0.0,1.0e-10,"therm. ident. d");
-  t.test_rel((s.n*s.mu-s.pr-s.ed)/s.ed,0.0,1.0e-10,"therm. ident. s");
+  t.test_rel((u.n*u.mu-u.pr-u.ed)/u.ed,0.0,1.0e-14,"therm. ident. u");
+  t.test_rel((d.n*d.mu-d.pr-d.ed)/d.ed,0.0,1.0e-14,"therm. ident. d");
+  t.test_rel((s.n*s.mu-s.pr-s.ed)/s.ed,0.0,1.0e-14,"therm. ident. s");
 
   // Check that fqq solves the gap equations for both the zero
   // and finite temperature code
 
   nj.calc_eq_p(u,d,s,gap1,gap2,gap3,th);
   
-  t.test_rel(gap1,0.0,1.0e-6,"gap1");
-  t.test_rel(gap2,0.0,1.0e-6,"gap2");
-  t.test_rel(gap3,0.0,1.0e-6,"gap3");
+  t.test_rel(gap1,0.0,1.0e-12,"gap1a");
+  t.test_rel(gap2,0.0,1.0e-12,"gap2a");
+  t.test_rel(gap3,0.0,1.0e-12,"gap3a");
   
   njt.calc_eq_temp_p(u,d,s,gap1,gap2,gap3,th,0.01);
   
-  t.test_rel(gap1,0.0,2.0e-4,"gap1");
-  t.test_rel(gap2,0.0,2.0e-4,"gap2");
-  t.test_rel(gap3,0.0,2.0e-2,"gap3");
+  t.test_rel(gap1,0.0,2.0e-5,"gap1b");
+  t.test_rel(gap2,0.0,2.0e-5,"gap2b");
+  t.test_rel(gap3,0.0,2.0e-3,"gap3b");
   
   cout << ": " << gap1 << " " << gap2 << " " << gap3 << endl;
 
