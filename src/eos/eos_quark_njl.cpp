@@ -204,9 +204,10 @@ int eos_quark_njl::calc_eq_p(quark &u, quark &d, quark &s, double &gap1,
   
   if (fromqq==true) {
     
-    //--------------------------------------------
-    // Calculate everything from the quark 
-    // condensates and the chemical potentials
+    //---------------------------------------------------------------
+    // Calculate everything from the quark condensates and the
+    // chemical potentials, then gap1, gap2, and gap3 contain
+    // Eq. 3 from Buballa99
 
     u.ms=u.m-4.0*G*u.qq+2.0*K*d.qq*s.qq;
     d.ms=d.m-4.0*G*d.qq+2.0*K*u.qq*s.qq;
@@ -244,9 +245,10 @@ int eos_quark_njl::calc_eq_p(quark &u, quark &d, quark &s, double &gap1,
 
   } else {
 
-    //--------------------------------------------
-    // Calculate everything from the dynamical 
-    // masses and the chemical potentials
+    //---------------------------------------------------------------
+    // Calculate everything from the dynamical masses and the chemical
+    // potentials, and then gap1, gap2, and gap3 contain Eq. 2 from
+    // Buballa99.
 
     if (u.mu>u.ms) u.kf=sqrt(u.mu*u.mu-u.ms*u.ms);
     else u.kf=0.0;
@@ -413,7 +415,7 @@ void eos_quark_njl::njbag(quark &pp) {
   if (fabs(pp.ms)<1.0e-6) {
     pp.B=0.0;
   } else {
-    if (fabs(pp.m)<1.0e-6) {
+    if (fabs(pp.ms)<1.0e-6) {
       pp.B=3.0/pi2*(1.0/4.0*L*pow(pp.ms*pp.ms+L*L,1.5)
 		    -1.0/8.0*pp.ms*pp.ms*L*sqrt(pp.ms*pp.ms+L*L)
 		    -1.0/8.0*pow(pp.ms,4.0)*log(L+sqrt(pp.ms*pp.ms+L*L))
@@ -797,101 +799,115 @@ double eos_quark_njl::ipr(double x, const njtp &p) {
 
 int eos_quark_njl_vec::calc_eq_p(quark &tu, quark &td, quark &ts,
                                  double &gap1, double &gap2, double &gap3,
+                                 double &vec1, double &vec2, double &vec3,
                                  thermo &th) {
 
-  double vec1, vec2, vec3;
-  
-  if (tu.m<0.0) tu.m*=-1.0;
-  if (td.m<0.0) td.m*=-1.0;
-  if (ts.m<0.0) ts.m*=-1.0;
-  
-  if (tu.nu>tu.m) {
-    tu.n=1.0/o2scl_const::pi2*pow(tu.nu*tu.nu-tu.m*tu.m,1.5);
+  /*
+    if (tu.m<0.0) tu.m*=-1.0;
+    if (td.m<0.0) td.m*=-1.0;
+    if (ts.m<0.0) ts.m*=-1.0;
+  */
+
+  // Following Klimt 90 for now. We use the "nu" field to store what
+  // is referred to in that paper as {\bar{\mu}}. Note that a
+  // different notation for G and K is used in Buballa et al. 1999,
+  // and we use that same notation for the non-vector terms as Buballa
+  // et al. 1999 in order to be consistent with the eos_quark_njl
+  // class. Then Klimt's "delta mu" is mu-nu
+
+  // This function presumes that initial guesses have been given
+  // for both the effective masses (ms) and the effective chemical
+  // potentials (nu)
+
+  if (tu.nu>tu.ms) {
+    tu.n=1.0/pi2*pow(tu.nu*tu.nu-tu.ms*tu.ms,1.5);
   } else {
     tu.n=0.0;
   }
-  if (td.nu>td.m) {
-    td.n=1.0/o2scl_const::pi2*pow(td.nu*td.nu-td.m*td.m,1.5);
+  if (td.nu>td.ms) {
+    td.n=1.0/pi2*pow(td.nu*td.nu-td.ms*td.ms,1.5);
   } else {
     td.n=0.0;
   }
-  if (ts.nu>ts.m) {
-    ts.n=1.0/o2scl_const::pi2*pow(ts.nu*ts.nu-ts.m*ts.m,1.5);
+  if (ts.nu>ts.ms) {
+    ts.n=1.0/pi2*pow(ts.nu*ts.nu-ts.ms*ts.ms,1.5);
   } else {
     ts.n=0.0;
   }
   
-  //tu.kf=fermimom(tu.n,3.0);
-  //td.kf=fermimom(td.n,3.0);
-  //ts.kf=fermimom(ts.n,3.0);
+  fet.kf_from_density(tu);
+  fet.kf_from_density(td);
+  fet.kf_from_density(ts);
   
-  tu.qq=3.0/o2scl_const::pi2*(-tu.m/2.0*L*sqrt(tu.m*tu.m+L*L)+pow(tu.m,3.0)/2.0*
+  tu.qq=3.0/pi2*(-tu.m/2.0*L*sqrt(tu.m*tu.m+L*L)+pow(tu.m,3.0)/2.0*
                  log(L+sqrt(L*L+tu.m*tu.m)));
-  tu.qq+=3.0/o2scl_const::pi2*(tu.m/2.0*tu.kf*sqrt(tu.m*tu.m+tu.kf*tu.kf)-
+  tu.qq+=3.0/pi2*(tu.m/2.0*tu.kf*sqrt(tu.m*tu.m+tu.kf*tu.kf)-
                   pow(tu.m,3.0)/2.0*
                   log(tu.kf+sqrt(tu.kf*tu.kf+tu.m*tu.m)));
-  td.qq=3.0/o2scl_const::pi2*(-td.m/2.0*L*sqrt(td.m*td.m+L*L)+pow(td.m,3.0)/2.0*
+  td.qq=3.0/pi2*(-td.m/2.0*L*sqrt(td.m*td.m+L*L)+pow(td.m,3.0)/2.0*
                  log(L+sqrt(L*L+td.m*td.m)));
-  td.qq+=3.0/o2scl_const::pi2*(td.m/2.0*td.kf*sqrt(td.m*td.m+td.kf*td.kf)-
+  td.qq+=3.0/pi2*(td.m/2.0*td.kf*sqrt(td.m*td.m+td.kf*td.kf)-
                   pow(td.m,3.0)/2.0*
                   log(td.kf+sqrt(td.kf*td.kf+td.m*td.m)));
-  ts.qq=3.0/o2scl_const::pi2*(-ts.m/2.0*L*sqrt(ts.m*ts.m+L*L)+pow(ts.m,3.0)/2.0*
+  ts.qq=3.0/pi2*(-ts.m/2.0*L*sqrt(ts.m*ts.m+L*L)+pow(ts.m,3.0)/2.0*
                  log(L+sqrt(L*L+ts.m*ts.m)));
-  ts.qq+=3.0/o2scl_const::pi2*(ts.m/2.0*ts.kf*sqrt(ts.m*ts.m+ts.kf*ts.kf)-
+  ts.qq+=3.0/pi2*(ts.m/2.0*ts.kf*sqrt(ts.m*ts.m+ts.kf*ts.kf)-
                   pow(ts.m,3.0)/2.0*
                   log(ts.kf+sqrt(ts.kf*ts.kf+ts.m*ts.m)));
 
-  njvecbag(tu,L,G,GV);
-  njvecbag(td,L,G,GV);
-  njvecbag(ts,L,G,GV);
+  fet.energy_density_zerot(tu);
+  fet.energy_density_zerot(td);
+  fet.energy_density_zerot(ts);
   
-  //tu.ed=3.0*feden(tu.kf,tu.m);
-  //td.ed=3.0*feden(td.kf,td.m);
-  //ts.ed=3.0*feden(ts.kf,ts.m);
-
+  njvecbag(tu);
+  njvecbag(td);
+  njvecbag(ts);
+  
   tu.ed-=tu.B;
   td.ed-=td.B;
   ts.ed-=ts.B;
 
-  th.ed=tu.ed+td.ed+ts.ed+B0+10.0*K*tu.qq*td.qq*ts.qq;
-  th.pr=-th.ed;
-  th.pr+=tu.n*sqrt(tu.m*tu.m+tu.kf*tu.kf);
-  th.pr+=td.n*sqrt(td.m*td.m+td.kf*td.kf);
-  th.pr+=ts.n*sqrt(ts.m*ts.m+ts.kf*ts.kf);
+  tu.pr=-tu.ed+tu.n*tu.mu;
+  td.pr=-td.ed+td.n*td.mu;
+  ts.pr=-ts.ed+ts.n*ts.mu;
   
-  //*charge=(tu.n*2.0-td.n-ts.n)/3.0;
-  //*barn=(tu.n+td.n+ts.n)/3.0;
+  th.ed=tu.ed+td.ed+ts.ed+
+    2.0*G*(tu.qq*tu.qq+td.qq*td.qq+ts.qq*ts.qq)+B0-
+    4.0*K*tu.qq*td.qq*ts.qq-2.0*GV*tu.n*tu.n-2.0*GV*td.n*td.n-
+    2.0*GV*ts.n*ts.n;
+  th.pr=-th.ed+tu.n*tu.mu+td.n*td.mu+ts.n*ts.mu;
+  th.en=0.0;
   
-  gap1=-1.0*tu.m+tu.m-4.0*G*tu.qq-4.0*K*td.qq*ts.qq;
-  gap2=-1.0*td.m+td.m-4.0*G*td.qq-4.0*K*tu.qq*ts.qq;
-  gap3=-1.0*ts.m+ts.m-4.0*G*ts.qq-4.0*K*td.qq*tu.qq;
+  gap1=-tu.ms+tu.m-4.0*G*tu.qq+2.0*K*td.qq*ts.qq;
+  gap2=-td.ms+td.m-4.0*G*td.qq+2.0*K*tu.qq*ts.qq;
+  gap3=-ts.ms+ts.m-4.0*G*ts.qq+2.0*K*td.qq*tu.qq;
 
-  vec1=-1.0*tu.nu+tu.mu-4.0*GV*tu.n*tu.n;
-  vec2=-1.0*td.nu+td.mu-4.0*GV*td.n*td.n;
-  vec3=-1.0*ts.nu+ts.mu-4.0*GV*ts.n*ts.n;
-
+  // Fix the relationship between \mu_R and \mu, following eq 8b in
+  // Klimt 90
+  vec1=tu.mu+4.0*GV*tu.n-tu.nu;
+  vec2=td.mu+4.0*GV*td.n-td.nu;
+  vec3=ts.mu+4.0*GV*ts.n-ts.nu;
+  
   return 0;
 }
 
-void eos_quark_njl_vec::njvecbag(quark &pp, double L, double G, double GV) {
+void eos_quark_njl_vec::njvecbag(quark &q) {
   static const double zero=1.0e-9;
-  if (fabs(pp.m)<zero) {
-    pp.B=0.0;
+  if (fabs(q.ms)<zero) {
+    q.B=0.0;
   } else {
-    if (fabs(pp.m)<zero) {
-      pp.B=3.0/o2scl_const::pi2*(1.0/4.0*L*pow(pp.m*pp.m+L*L,1.5)
-                    -1.0/8.0*pp.m*pp.m*L*sqrt(pp.m*pp.m+L*L)
-                    -1.0/8.0*pow(pp.m,4.0)*log(L+sqrt(pp.m*pp.m+L*L))
-                    +1.0/16.0*pow(pp.m,4.0)*log(pp.m*pp.m)
-                    -1.0/4.0*pow(L,4.0));
+    if (fabs(q.ms)<zero) {
+      q.B=3.0/pi2*(1.0/4.0*L*pow(q.ms*q.ms+L*L,1.5)
+                   -1.0/8.0*q.ms*q.ms*L*sqrt(q.ms*q.ms+L*L)
+                   -1.0/8.0*pow(q.ms,4.0)*log(L+sqrt(q.ms*q.ms+L*L))
+                   +1.0/16.0*pow(q.ms,4.0)*log(q.ms*q.ms));
     } else {
-      pp.B=3.0/o2scl_const::pi2*(1.0/4.0*L*pow(pp.m*pp.m+L*L,1.5)
-                    -1.0/8.0*pp.m*pp.m*L*sqrt(pp.m*pp.m+L*L)
-                    -1.0/8.0*pow(pp.m,4.0)*log(L+sqrt(pp.m*pp.m+L*L))
-                    +1.0/16.0*pow(pp.m,4.0)*log(pp.m*pp.m));
+      q.B=3.0/pi2*(1.0/4.0*L*pow(q.ms*q.ms+L*L,1.5)
+                   -1.0/8.0*q.ms*q.ms*L*sqrt(q.ms*q.ms+L*L)
+                   -1.0/8.0*pow(q.ms,4.0)*log(L+sqrt(q.ms*q.ms+L*L))
+                   +1.0/16.0*pow(q.ms,4.0)*log(q.ms*q.ms));
     }
   }
-  (pp.B)-=(2.0*G*pp.qq*pp.qq-2.0*GV*pp.n*pp.n);
   return;
 }
 
@@ -1030,7 +1046,7 @@ double eos_quark_njl_vec::iqq(double x, int np, double *param) {
   } else {
     ret-=1.0/(1+exp((en+mu)/t));
   }
-  ret*=-3.0*x*x/en/o2scl_const::pi2*m;
+  ret*=-3.0*x*x/en/pi2*m;
   ret+=1.0;
   return ret;
 }
@@ -1058,7 +1074,7 @@ double eos_quark_njl_vec::ide(double x, int np, double *param) {
   } else {
     ret-=1.0/(1+exp((en+mu)/t));
   }
-  ret*=3.0*x*x/o2scl_const::pi2;
+  ret*=3.0*x*x/pi2;
   ret+=1.0;
   return ret;
 }
@@ -1087,7 +1103,7 @@ double eos_quark_njl_vec::ied(double x, int np, double *param) {
   } else {
     ret+=en/(1+exp((en+mu)/t));
   }
-  ret*=3.0/o2scl_const::pi2*x*x;
+  ret*=3.0/pi2*x*x;
   return ret;
 }
 
@@ -1114,35 +1130,6 @@ double eos_quark_njl_vec::ipr(double x, int np, double *param) {
   } else {
     ret+=t*log(1+exp((-en-mu)/t));
   }
-  ret*=3.0/o2scl_const::pi2*x*x;
+  ret*=3.0/pi2*x*x;
   return ret;
 }
-
-/*
-  AWS: this was commented in the original code
-
-  void njbag3(fermion &pp, double L, double G) {
-  if (fabs(pp->m)<ZERO) {
-  pp->B=0.0;
-  } else {
-  if (fabs(pp->m0)<ZERO) {
-  pp->B=3.0/o2scl_const::pi2*(1.0/4.0*L*pow(pp->m*pp->m+L*L,1.5)
-  -1.0/8.0*pp->m*pp->m*L*sqrt(pp->m*pp->m+L*L)
-  -1.0/8.0*pow(pp->m,4.0)*log(L+sqrt(pp->m*pp->m+L*L))
-  +1.0/16.0*pow(pp->m,4.0)*log(pp->m*pp->m)
-  -1.0/4.0*pow(L,4.0));
-  } else {
-  pp->B=3.0/o2scl_const::pi2*(1.0/4.0*L*pow(pp->m*pp->m+L*L,1.5)
-  -1.0/8.0*pp->m*pp->m*L*sqrt(pp->m*pp->m+L*L)
-  -1.0/8.0*pow(pp->m,4.0)*log(L+sqrt(pp->m*pp->m+L*L))
-  -1.0/4.0*L*pow(pp->m0*pp->m0+L*L,1.5)
-  +1.0/8.0*pp->m0*pp->m0*L*sqrt(pp->m0*pp->m0+L*L)
-  +1.0/8.0*pow(pp->m0,4.0)*log(L+sqrt(pp->m0*pp->m0+L*L))
-  +1.0/16.0*pow(pp->m,4.0)*log(pp->m*pp->m)
-  -1.0/16.0*pow(pp->m0,4.0)*log(pp->m0*pp->m0));
-  }
-  }
-  (pp->B)-=(2.0*G*pp->qq*pp->qq);
-  return;
-  }
-*/

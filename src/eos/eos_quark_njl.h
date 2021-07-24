@@ -100,8 +100,11 @@ namespace o2scl {
       where \f$B_0\f$ is a constant defined to ensure that the 
       energy density and the pressure of the vacuum is zero.
 
+      \verbatim embed:rst
       Unlike Buballa et al (1999), the bag constant,
-      \f$\Omega_{\mathrm{Int}}/V\f$ is defined without the term
+      :math:`\Omega_{\mathrm{Int}}/V` is defined without the term
+      \endverbatim
+
       \f[
       \sum_{i=u,d,s} 2 N_C \int_0^{\Lambda} 
       \frac{d^3 p}{(2 \pi)^3} \sqrt{ m_{0,i}^2+p^2 } ~dp
@@ -113,7 +116,7 @@ namespace o2scl {
       the vacuum. 
 
       \verbatim embed:rst
-      The Feynman-Hellman theorem ([Bernard88]_), gives
+      The Feynman-Hellman theorem [Bernard88]_, gives
       \endverbatim
       \f[
       \left< \bar{q} q \right> = \frac{\partial m^{*}}{\partial m}
@@ -378,7 +381,8 @@ namespace o2scl {
 
     double GV;
 
-    void njvecbag(part *pp, double L, double G1, double G2);
+    /// The contribution to the bag constant
+    void njvecbag(quark &q);
 
     double iqq(double x, int np, double *param);
     double ide(double x, int np, double *param);
@@ -391,6 +395,7 @@ namespace o2scl {
     
     virtual int calc_eq_p(quark &tu, quark &td, quark &ts,
                           double &gap1, double &gap2, double &gap3,
+                          double &vec1, double &vec2, double &vec3,
                           thermo &th);
 
     virtual void njvecbag(quark &pp, double L, double G, double GV);
