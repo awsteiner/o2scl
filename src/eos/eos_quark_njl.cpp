@@ -32,6 +32,10 @@ using namespace o2scl_const;
 
 eos_quark_njl::eos_quark_njl() {
 
+  up_default_mass=5.5/hc_mev_fm;
+  down_default_mass=5.5/hc_mev_fm;
+  strange_default_mass=140.7/hc_mev_fm;
+
   def_up.non_interacting=true;
   def_down.non_interacting=true;
   def_strange.non_interacting=true;
@@ -45,10 +49,6 @@ eos_quark_njl::eos_quark_njl() {
 
   B0=0.0;
 
-  up_default_mass=5.5/hc_mev_fm;
-  down_default_mass=5.5/hc_mev_fm;
-  strange_default_mass=140.7/hc_mev_fm;
-
   L=602.3/hc_mev_fm;
   G=1.835/L/L;
   K=12.36/pow(L,5.0);
@@ -58,7 +58,6 @@ eos_quark_njl::eos_quark_njl() {
 
   // We don't call set_parameters() here, because we can't call a
   // virtual member function from the constructor
-
   limit=20.0;
 
   fromqq=true;
@@ -210,6 +209,8 @@ int eos_quark_njl::calc_eq_p(quark &u, quark &d, quark &s, double &gap1,
     // Eq. 3 from Buballa99
 
     u.ms=u.m-4.0*G*u.qq+2.0*K*d.qq*s.qq;
+    //std::cout << "X: " << u.qq << " " << d.qq << " " << G << " "
+    //<< K << " " << u.m << " " << u.ms << std::endl;
     d.ms=d.m-4.0*G*d.qq+2.0*K*u.qq*s.qq;
     s.ms=s.m-4.0*G*s.qq+2.0*K*d.qq*u.qq;
     
@@ -795,6 +796,52 @@ double eos_quark_njl::ipr(double x, const njtp &p) {
   }
   ret*=3.0/pi2*x*x;
   return ret;
+}
+
+double eos_quark_njl::f_therm_pot(double qqu, double qqd, double qqs,
+                                  double msu, double msd, double mss,
+                                  bool vac_terms) {
+  
+  double g1, g2, g3;
+  
+  up->qq=qqu;
+  down->qq=qqd;
+  strange->qq=qqs;
+  up->ms=msu;
+  down->ms=msd;
+  strange->ms=mss;
+  
+  calc_eq_p(*up,*down,*strange,g1,g2,g3,*eos_thermo);
+  if (vac_terms==false) {
+    double ret=-eos_thermo->pr-2.0*G*(up->qq*up->qq+down->qq*down->qq+
+                                  strange->qq*strange->qq)+
+      4.0*K*up->qq*down->qq*strange->qq;
+    return ret;
+  }
+  return -eos_thermo->pr;
+}
+
+double eos_quark_njl::f_therm_pot_T(double qqu, double qqd, double qqs,
+                                    double msu, double msd, double mss,
+                                    double temper, bool vac_terms) {
+  
+  double g1, g2, g3;
+  
+  up->qq=qqu;
+  down->qq=qqd;
+  strange->qq=qqs;
+  up->ms=msu;
+  down->ms=msd;
+  strange->ms=mss;
+  
+  calc_eq_temp_p(*up,*down,*strange,g1,g2,g3,*eos_thermo,temper);
+  if (vac_terms==false) {
+    double ret=-eos_thermo->pr-2.0*G*(up->qq*up->qq+down->qq*down->qq+
+                                  strange->qq*strange->qq)+
+      4.0*K*up->qq*down->qq*strange->qq;
+    return ret;
+  }
+  return -eos_thermo->pr;
 }
 
 int eos_quark_njl_vec::calc_eq_p(quark &tu, quark &td, quark &ts,

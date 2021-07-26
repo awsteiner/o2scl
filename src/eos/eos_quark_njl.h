@@ -272,6 +272,18 @@ namespace o2scl {
     double strange_default_mass;
     //@}
 
+    /** \brief Compute the thermodynamic potential at \f$ T=0 \f$
+     */
+    virtual double f_therm_pot(double qqu, double qqd, double qqs,
+                               double msu, double msd, double mss,
+                               bool vac_terms=true);
+
+    /** \brief Compute the thermodynamic potential at \f$ T=0 \f$
+     */
+    virtual double f_therm_pot_T(double qqu, double qqd, double qqs,
+                                 double msu, double msd, double mss,
+                                 double T, bool vac_terms=true);
+
     /** \brief Set the quark objects to use
 
 	The quark objects are used in gapfunms(), gapfunqq(), 

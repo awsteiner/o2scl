@@ -37,57 +37,6 @@ using namespace o2scl_const;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-// Prevent warnings about global variables by creating a namespace
-namespace eos_quark_njl_ts_ns {
-
-  eos_quark_njl njt;
-  eos_quark_njl nj;
-
-  quark u(nj.up_default_mass,6.0);
-  quark d(nj.down_default_mass,6.0);
-  quark s(nj.strange_default_mass,6.0);
-  thermo th;
-  int dtype;
-  
-  inte_qag_gsl<funct> gl;
-  
-  double temper=0.01;
-
-  int ftsolve(size_t nv, const ubvector &x, ubvector &y) {
-    double gap1, gap2, gap3;
-    u.qq=x[0];
-    d.qq=x[1];
-    s.qq=x[2];
-    njt.calc_eq_temp_p(u,d,s,gap1,gap2,gap3,th,temper);
-    y[0]=gap1;
-    y[1]=gap2;
-    y[2]=gap3;
-    return 0;
-  }
-
-  double omfun(double x) {
-    double g1, g2, g3;
-
-    if (dtype==1) {
-      u.qq=x;
-      nj.fromqq=true;
-      nj.calc_eq_p(u,d,s,g1,g2,g3,th);
-      return -th.pr;
-    } else if (dtype==2) {
-      u.ms=x;
-      nj.fromqq=false;
-      nj.calc_eq_p(u,d,s,g1,g2,g3,th);
-      th.pr+=2.0*nj.G*(u.qq*u.qq+d.qq*d.qq+s.qq*s.qq)-
-	4.0*nj.K*u.qq*d.qq*s.qq;
-      return -th.pr;
-    }
-    return 0.0;
-  }
-
-}
-
-using namespace eos_quark_njl_ts_ns;
-
 int main(void) {
 
   cout.setf(ios::scientific);
@@ -95,131 +44,248 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
   
-  mroot_hybrids<mm_funct> nd;
+  eos_quark_njl nj;
+
+  quark &u=nj.def_up;
+  quark &d=nj.def_down;
+  quark &s=nj.def_strange;
+  thermo &th=nj.def_thermo;
+  
+  mroot_hybrids<mm_funct> mh;
   deriv_gsl<funct> df;
   
-  nj.set_quarks(u,d,s);
-  nj.set_thermo(th);
+  //nj.set_quarks(u,d,s);
+  //nj.set_thermo(th);
   t.test_gen(nj.set_parameters()==0,"set_parameters().");
   t.test_rel(nj.B0,21.6084,1.0e-4,"bag constant");
+  cout << endl;
   
   u.mu=2.5;
-  d.mu=2.5;
-  s.mu=2.5;
+  d.mu=2.75;
+  s.mu=3.0;
   
-  funct fderiv=omfun;
-  
-  cout << "Feynman-Hellman theorem" << endl;
-  cout << "Verify that (partial Omega)/(Partial qqu) = 0" << endl;
+  cout << "Feynman-Hellman theorem:" << endl;
+  cout << endl;
+  cout << "Verify that (partial Omega)/(Partial qq) = 0" << endl;
+
+  // First compute the EOS at the specified values of mu,
+  // giving an initial guess for the quark condensates
   nj.fromqq=true;
   u.qq=-1.0;
   d.qq=-1.0;
   s.qq=-1.0;
   int ret=nj.calc_p(u,d,s,th);
-  dtype=1;
-  df.h=0.01;
-  t.test_gen(ret==0,"success.");
-  t.test_rel(df.deriv(u.qq,fderiv),0.0,1.0e-10,"fh1");
+  t.test_gen(ret==0,"EOS success.");
+
+  // Check that calc_p() is solving the gap equations
+  double gap1, gap2, gap3;
+  nj.calc_eq_p(u,d,s,gap1,gap2,gap3,th);
   
-  cout << "Verify that (partial (Omega-Omega_{vac}))/(Partial mu) = qqu" 
+  t.test_rel(gap1,0.0,1.0e-9,"gap1a");
+  t.test_rel(gap2,0.0,1.0e-9,"gap2a");
+  t.test_rel(gap3,0.0,1.0e-9,"gap3a");
+
+  // Then construct the functor for the derivative with
+  // respect to the up quark condensate
+  funct fderiv_u=std::bind
+    (std::mem_fn<double(double,double,double,double,double,
+                        double,bool)>
+     (&eos_quark_njl::f_therm_pot),
+     &nj,std::placeholders::_1,d.qq,s.qq,u.ms,d.ms,s.ms,true);
+  
+  df.h=0.01;
+  double der_u=df.deriv(u.qq,fderiv_u);
+  t.test_rel(der_u,0.0,1.0e-9,"fh_u");
+
+  // Test the derivative wrt the down quark condensate
+  nj.calc_p(u,d,s,th);
+  funct fderiv_d=std::bind
+    (std::mem_fn<double(double,double,double,double,double,
+                        double,bool)>
+     (&eos_quark_njl::f_therm_pot),
+     &nj,u.qq,std::placeholders::_1,s.qq,u.ms,d.ms,s.ms,true);
+  
+  double der_d=df.deriv(d.qq,fderiv_d);
+  t.test_rel(der_d,0.0,1.0e-9,"fh_d");
+  
+  // Test the derivative wrt the strange quark condensate
+  nj.calc_p(u,d,s,th);
+  funct fderiv_s=std::bind
+    (std::mem_fn<double(double,double,double,double,double,
+                        double,bool)>
+     (&eos_quark_njl::f_therm_pot),
+     &nj,u.qq,d.qq,std::placeholders::_1,u.ms,d.ms,s.ms,true);
+  
+  double der_s=df.deriv(s.qq,fderiv_s);
+  t.test_rel(der_s,0.0,1.0e-9,"fh_s");
+  cout << endl;
+    
+  cout << "Verify that (partial (Omega-Omega_{vac}))/(Partial m) = qq" 
        << endl;
   nj.fromqq=false;
+
   u.ms=0.2;
-  d.ms=0.2;
+  d.ms=0.3;
   s.ms=2.0;
   ret=nj.calc_p(u,d,s,th);
-  dtype=2;
-  df.h=0.01;
   t.test_gen(ret==0,"success 2.");
-  t.test_rel(df.deriv(u.ms,fderiv),u.qq,1.0e-8,"fh2");
+  // Save the up quark condensate for later comparison
+  double qqu=u.qq;
+  
+  funct fderiv2_u=std::bind
+    (std::mem_fn<double(double,double,double,double,double,
+                        double,bool)>
+     (&eos_quark_njl::f_therm_pot),
+     &nj,u.qq,d.qq,s.qq,std::placeholders::_1,d.ms,s.ms,false);
 
+  der_u=df.deriv(u.ms,fderiv2_u);
+  t.test_rel(der_u,qqu,1.0e-8,"fh2_u");
+
+  u.ms=0.2;
+  d.ms=0.3;
+  s.ms=2.0;
+  ret=nj.calc_p(u,d,s,th);
+  // Save the down quark condensate for later comparison
+  double qqd=d.qq;
+  
+  funct fderiv2_d=std::bind
+    (std::mem_fn<double(double,double,double,double,double,
+                        double,bool)>
+     (&eos_quark_njl::f_therm_pot),
+     &nj,u.qq,d.qq,s.qq,u.ms,std::placeholders::_1,s.ms,false);
+
+  der_d=df.deriv(d.ms,fderiv2_d);
+  t.test_rel(der_d,qqd,1.0e-8,"fh2_d");
+
+  u.ms=0.2;
+  d.ms=0.3;
+  s.ms=2.0;
+  ret=nj.calc_p(u,d,s,th);
+  // Save the strange quark condensate for later comparison
+  double qqs=s.qq;
+  
+  funct fderiv2_s=std::bind
+    (std::mem_fn<double(double,double,double,double,double,
+                        double,bool)>
+     (&eos_quark_njl::f_therm_pot),
+     &nj,u.qq,d.qq,s.qq,u.ms,d.ms,std::placeholders::_1,false);
+  
+  der_s=df.deriv(s.ms,fderiv2_s);
+  t.test_rel(der_s,qqs,1.0e-8,"fh2_s");
+  cout << endl;
+  
   // ---------------------------------------------------------
   // Finite temperature portion
-
-  double gap1, gap2, gap3;
-  ubvector axx(3);
   
-  nd.tol_rel/=100.0;
-  nd.tol_abs/=100.0;
-
-  njt.set_quarks(u,d,s);
-  njt.set_thermo(th);
-  njt.set_parameters();
+  cout << "Feynman-Hellman theorem at T>0:" << endl;
+  cout << endl;
+  cout << "Verify that (partial Omega)/(Partial qq) = 0" << endl;
   
-  mm_funct fqq2=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
-     (&eos_quark_njl::gapfunqq),
-     &nj,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3);
-  mm_funct fts=ftsolve;
-
-  u.mu=2.5;
-  d.mu=2.5;
-  s.mu=2.5;
-  axx[0]=-1.0; 
-  axx[1]=-1.0; 
-  axx[2]=-1.0; 
+  // First compute the EOS at the specified values of mu,
+  // giving an initial guess for the quark condensates
   nj.fromqq=true;
-  /*
   u.qq=-1.0;
   d.qq=-1.0;
   s.qq=-1.0;
-  nj.calc_p(u,d,,th);
-  */
-  int r=nd.msolve(3,axx,fqq2);
-  double t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12;
-  //t1=u.qq;
-  //t2=d.qq;
-  //t3=s.qq;
-  t1=axx[0];
-  t2=axx[1];
-  t3=axx[2];
-  t4=u.n;
-  t5=d.n;
-  t6=s.n;
-  t7=u.ed;
-  t8=d.ed;
-  t9=s.ed;
-  t10=u.pr;
-  t11=d.pr;
-  t12=s.pr;
-  t.test_rel((u.n*u.mu-u.pr-u.ed)/u.ed,0.0,1.0e-14,"therm. ident. u");
-  t.test_rel((d.n*d.mu-d.pr-d.ed)/d.ed,0.0,1.0e-14,"therm. ident. d");
-  t.test_rel((s.n*s.mu-s.pr-s.ed)/s.ed,0.0,1.0e-14,"therm. ident. s");
+  double T=0.1;
+  ret=nj.calc_temp_p(u,d,s,T,th);
+  t.test_gen(ret==0,"EOS success 3.");
 
-  // Check that fqq solves the gap equations for both the zero
-  // and finite temperature code
+  // Check that calc_temp_p() is solving the gap equations
+  nj.calc_eq_temp_p(u,d,s,gap1,gap2,gap3,th,T);
+  
+  t.test_rel(gap1,0.0,1.0e-9,"gap1b");
+  t.test_rel(gap2,0.0,1.0e-9,"gap2b");
+  t.test_rel(gap3,0.0,1.0e-9,"gap3b");
+  
+  // Then construct the functor for the derivative with
+  // respect to the up quark condensate
+  funct fderivT_u=std::bind
+    (std::mem_fn<double(double,double,double,double,double,
+                        double,double,bool)>
+     (&eos_quark_njl::f_therm_pot_T),
+     &nj,std::placeholders::_1,d.qq,s.qq,u.ms,d.ms,s.ms,T,true);
+  
+  der_u=df.deriv(u.qq,fderivT_u);
+  t.test_rel(der_u,0.0,1.0e-9,"fhT_u");
 
-  nj.calc_eq_p(u,d,s,gap1,gap2,gap3,th);
+  // Test the derivative wrt the down quark condensate
+  nj.calc_temp_p(u,d,s,T,th);
+  funct fderivT_d=std::bind
+    (std::mem_fn<double(double,double,double,double,double,
+                        double,double,bool)>
+     (&eos_quark_njl::f_therm_pot_T),
+     &nj,u.qq,std::placeholders::_1,s.qq,u.ms,d.ms,s.ms,T,true);
   
-  t.test_rel(gap1,0.0,1.0e-12,"gap1a");
-  t.test_rel(gap2,0.0,1.0e-12,"gap2a");
-  t.test_rel(gap3,0.0,1.0e-12,"gap3a");
+  der_d=df.deriv(d.qq,fderivT_d);
+  t.test_rel(der_d,0.0,1.0e-9,"fhT_d");
   
-  njt.calc_eq_temp_p(u,d,s,gap1,gap2,gap3,th,0.01);
+  // Test the derivative wrt the strange quark condensate
+  nj.calc_temp_p(u,d,s,T,th);
+  funct fderivT_s=std::bind
+    (std::mem_fn<double(double,double,double,double,double,
+                        double,double,bool)>
+     (&eos_quark_njl::f_therm_pot_T),
+     &nj,u.qq,d.qq,std::placeholders::_1,u.ms,d.ms,s.ms,T,true);
   
-  t.test_rel(gap1,0.0,2.0e-5,"gap1b");
-  t.test_rel(gap2,0.0,2.0e-5,"gap2b");
-  t.test_rel(gap3,0.0,2.0e-3,"gap3b");
-  
-  cout << ": " << gap1 << " " << gap2 << " " << gap3 << endl;
+  der_s=df.deriv(s.qq,fderivT_s);
+  t.test_rel(der_s,0.0,1.0e-9,"fhT_s");
+  cout << endl;
+    
+  cout << "Verify that (partial (Omega-Omega_{vac}))/(Partial m) = qq" 
+       << endl;
+  nj.fromqq=false;
 
-  // Now solve the gap equations at finite temperature, and 
-  // compare the quark condensates
-  nd.msolve(3,axx,fts);
-  t.test_rel(t1,axx[0],5.0e-4,"qqu");
-  t.test_rel(t2,axx[1],5.0e-4,"qqd");
-  t.test_rel(t3,axx[2],5.0e-3,"qqs");
-  t.test_rel(t4,u.n,5.0e-4,"nu");
-  t.test_rel(t5,d.n,5.0e-4,"nd");
-  t.test_rel(t6,s.n,5.0e-3,"ns");
-  t.test_rel(t7,u.ed,5.0e-4,"edu");
-  t.test_rel(t8,d.ed,5.0e-4,"edd");
-  t.test_rel(t9,s.ed,1.0e-3,"eds");
-  t.test_rel(t10,u.pr,5.0e-4,"pru");
-  t.test_rel(t11,d.pr,5.0e-4,"prd");
-  t.test_rel(t12,s.pr,5.0e-4,"prs");
+  u.ms=0.2;
+  d.ms=0.3;
+  s.ms=2.0;
+  ret=nj.calc_temp_p(u,d,s,T,th);
+  t.test_gen(ret==0,"success 4.");
+  // Save the up quark condensate for later comparison
+  qqu=u.qq;
+  
+  funct fderivT2_u=std::bind
+    (std::mem_fn<double(double,double,double,double,double,
+                        double,double,bool)>
+     (&eos_quark_njl::f_therm_pot_T),
+     &nj,u.qq,d.qq,s.qq,std::placeholders::_1,d.ms,s.ms,T,false);
 
+  der_u=df.deriv(u.ms,fderivT2_u);
+  t.test_rel(der_u,qqu,1.0e-8,"fh2_u");
+
+  u.ms=0.2;
+  d.ms=0.3;
+  s.ms=2.0;
+  ret=nj.calc_temp_p(u,d,s,T,th);
+  // Save the down quark condensate for later comparison
+  qqd=d.qq;
+  
+  funct fderivT2_d=std::bind
+    (std::mem_fn<double(double,double,double,double,double,
+                        double,double,bool)>
+     (&eos_quark_njl::f_therm_pot_T),
+     &nj,u.qq,d.qq,s.qq,u.ms,std::placeholders::_1,s.ms,T,false);
+
+  der_d=df.deriv(d.ms,fderivT2_d);
+  t.test_rel(der_d,qqd,1.0e-8,"fh2_d");
+
+  u.ms=0.2;
+  d.ms=0.3;
+  s.ms=2.0;
+  ret=nj.calc_temp_p(u,d,s,T,th);
+  // Save the strange quark condensate for later comparison
+  qqs=s.qq;
+  
+  funct fderivT2_s=std::bind
+    (std::mem_fn<double(double,double,double,double,double,
+                        double,double,bool)>
+     (&eos_quark_njl::f_therm_pot_T),
+     &nj,u.qq,d.qq,s.qq,u.ms,d.ms,std::placeholders::_1,T,false);
+  
+  der_s=df.deriv(s.ms,fderivT2_s);
+  t.test_rel(der_s,qqs,1.0e-8,"fh2_s");
+  cout << endl;
+    
   t.report();
 
   return 0;
