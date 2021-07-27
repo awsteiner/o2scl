@@ -61,7 +61,6 @@ eos_quark_njl::eos_quark_njl() {
   limit=20.0;
 
   fromqq=true;
-
 }
 
 int eos_quark_njl::set_quarks(quark &u, quark &d, quark &s) {
@@ -209,8 +208,6 @@ int eos_quark_njl::calc_eq_p(quark &u, quark &d, quark &s, double &gap1,
     // Eq. 3 from Buballa99
 
     u.ms=u.m-4.0*G*u.qq+2.0*K*d.qq*s.qq;
-    //std::cout << "X: " << u.qq << " " << d.qq << " " << G << " "
-    //<< K << " " << u.m << " " << u.ms << std::endl;
     d.ms=d.m-4.0*G*d.qq+2.0*K*u.qq*s.qq;
     s.ms=s.m-4.0*G*s.qq+2.0*K*d.qq*u.qq;
     
@@ -441,7 +438,7 @@ int eos_quark_njl::gapfunqq(size_t nv, const ubvector &x, ubvector &y) {
   strange->qq=x[2];
   
   if (x[0]>0.0 || x[1]>0.0 || x[2]>0.0) return 1;
-
+  
   calc_eq_p(*up,*down,*strange,gap1,gap2,gap3,*eos_thermo);
   
   y[0]=gap1;

@@ -54,8 +54,6 @@ int main(void) {
   mroot_hybrids<mm_funct> mh;
   deriv_gsl<funct> df;
   
-  //nj.set_quarks(u,d,s);
-  //nj.set_thermo(th);
   t.test_gen(nj.set_parameters()==0,"set_parameters().");
   t.test_rel(nj.B0,21.6084,1.0e-4,"bag constant");
   cout << endl;
