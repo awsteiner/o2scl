@@ -53,7 +53,7 @@ int main(void) {
   
   mroot_hybrids<mm_funct> mh;
   deriv_gsl<funct> df;
-  
+
   t.test_gen(nj.set_parameters()==0,"set_parameters().");
   t.test_rel(nj.B0,21.6084,1.0e-4,"bag constant");
   cout << endl;
@@ -284,6 +284,8 @@ int main(void) {
   t.test_rel(der_s,qqs,1.0e-8,"fh2_s");
   cout << endl;
     
+  eos_quark_njl_vec njv;
+
   t.report();
 
   return 0;

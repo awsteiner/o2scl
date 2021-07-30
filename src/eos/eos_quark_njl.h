@@ -23,8 +23,8 @@
 /** \file eos_quark_njl.h
     \brief File defining \ref o2scl::eos_quark_njl
 */
-#ifndef O2SCL_NAMBUJL_EOS_H
-#define O2SCL_NAMBUJL_EOS_H
+#ifndef O2SCL_EOS_QUARK_NJL_H
+#define O2SCL_EOS_QUARK_NJL_H
 
 #include <cmath>
 #include <o2scl/constants.h>
@@ -420,7 +420,15 @@ namespace o2scl {
                                double &gap1, double &gap2,
                                double &gap3, thermo &th, double temper);
     
-    /** \brief Desc
+    /** \brief Equation of state as a function of chemical potentials
+	
+	This function automatically solves the gap equations.
+    */
+    virtual int calc_p(quark &u, quark &d, quark &s, thermo &lth);
+
+    virtual int gapfunmsvec(size_t nv, const ubvector &x, ubvector &y);
+
+  /** \brief Desc
      */
     virtual int calc_eq_p(quark &tu, quark &td, quark &ts,
                           double &gap1, double &gap2, double &gap3,

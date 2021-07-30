@@ -145,8 +145,6 @@ int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
 
   }
 
-  double gap1, gap2, gap3;
-  
   return ret;
 }
 
@@ -410,21 +408,21 @@ int eos_quark_njl::calc_eq_e(quark &u, quark &d, quark &s, double &gap1,
 
 void eos_quark_njl::njbag(quark &pp) {
 
-  if (fabs(pp.ms)<1.0e-6) {
-    pp.B=0.0;
-  } else {
-    if (fabs(pp.ms)<1.0e-6) {
-      pp.B=3.0/pi2*(1.0/4.0*L*pow(pp.ms*pp.ms+L*L,1.5)
-		    -1.0/8.0*pp.ms*pp.ms*L*sqrt(pp.ms*pp.ms+L*L)
-		    -1.0/8.0*pow(pp.ms,4.0)*log(L+sqrt(pp.ms*pp.ms+L*L))
-		    +1.0/16.0*pow(pp.ms,4.0)*log(pp.ms*pp.ms));
-    } else {
-      pp.B=3.0/pi2*(1.0/4.0*L*pow(pp.ms*pp.ms+L*L,1.5)
-		    -1.0/8.0*pp.ms*pp.ms*L*sqrt(pp.ms*pp.ms+L*L)
-		    -1.0/8.0*pow(pp.ms,4.0)*log(L+sqrt(pp.ms*pp.ms+L*L))
-		    +1.0/16.0*pow(pp.ms,4.0)*log(pp.ms*pp.ms));
-    }
-  }
+  //if (fabs(pp.ms)<1.0e-6) {
+  //pp.B=0.0;
+  //} else {
+  //if (fabs(pp.ms)<1.0e-6) {
+  pp.B=3.0/pi2*(1.0/4.0*L*pow(pp.ms*pp.ms+L*L,1.5)
+                -1.0/8.0*pp.ms*pp.ms*L*sqrt(pp.ms*pp.ms+L*L)
+                -1.0/8.0*pow(pp.ms,4.0)*log(L+sqrt(pp.ms*pp.ms+L*L))
+                +1.0/16.0*pow(pp.ms,4.0)*log(pp.ms*pp.ms));
+  //} else {
+  //pp.B=3.0/pi2*(1.0/4.0*L*pow(pp.ms*pp.ms+L*L,1.5)
+  //-1.0/8.0*pp.ms*pp.ms*L*sqrt(pp.ms*pp.ms+L*L)
+  //-1.0/8.0*pow(pp.ms,4.0)*log(L+sqrt(pp.ms*pp.ms+L*L))
+  //+1.0/16.0*pow(pp.ms,4.0)*log(pp.ms*pp.ms));
+  //}
+  //}
 
   return;
 }
@@ -532,7 +530,7 @@ int eos_quark_njl::B0fun(size_t nv, const ubvector &x, ubvector &y) {
   strange->mu=strange->ms;
   
   calc_eq_p(*up,*down,*strange,gap1,gap2,gap3,*eos_thermo);
-  
+
   y[0]=gap1;
   y[1]=gap2;
   y[2]=gap3;
@@ -846,6 +844,10 @@ int eos_quark_njl_vec::calc_eq_p(quark &tu, quark &td, quark &ts,
                                  double &vec1, double &vec2, double &vec3,
                                  thermo &th) {
 
+  if (fromqq==true) {
+    O2SCL_ERR("Unimplemented.",o2scl::exc_eunimpl);
+  }
+  
   /*
     if (tu.m<0.0) tu.m*=-1.0;
     if (td.m<0.0) td.m*=-1.0;
@@ -883,21 +885,21 @@ int eos_quark_njl_vec::calc_eq_p(quark &tu, quark &td, quark &ts,
   fet.kf_from_density(td);
   fet.kf_from_density(ts);
   
-  tu.qq=3.0/pi2*(-tu.m/2.0*L*sqrt(tu.m*tu.m+L*L)+pow(tu.m,3.0)/2.0*
-                 log(L+sqrt(L*L+tu.m*tu.m)));
-  tu.qq+=3.0/pi2*(tu.m/2.0*tu.kf*sqrt(tu.m*tu.m+tu.kf*tu.kf)-
-                  pow(tu.m,3.0)/2.0*
-                  log(tu.kf+sqrt(tu.kf*tu.kf+tu.m*tu.m)));
-  td.qq=3.0/pi2*(-td.m/2.0*L*sqrt(td.m*td.m+L*L)+pow(td.m,3.0)/2.0*
-                 log(L+sqrt(L*L+td.m*td.m)));
-  td.qq+=3.0/pi2*(td.m/2.0*td.kf*sqrt(td.m*td.m+td.kf*td.kf)-
-                  pow(td.m,3.0)/2.0*
-                  log(td.kf+sqrt(td.kf*td.kf+td.m*td.m)));
-  ts.qq=3.0/pi2*(-ts.m/2.0*L*sqrt(ts.m*ts.m+L*L)+pow(ts.m,3.0)/2.0*
-                 log(L+sqrt(L*L+ts.m*ts.m)));
-  ts.qq+=3.0/pi2*(ts.m/2.0*ts.kf*sqrt(ts.m*ts.m+ts.kf*ts.kf)-
-                  pow(ts.m,3.0)/2.0*
-                  log(ts.kf+sqrt(ts.kf*ts.kf+ts.m*ts.m)));
+  tu.qq=3.0/pi2*(-tu.ms/2.0*L*sqrt(tu.ms*tu.ms+L*L)+pow(tu.ms,3.0)/2.0*
+                 log(L+sqrt(L*L+tu.ms*tu.ms)));
+  tu.qq+=3.0/pi2*(tu.ms/2.0*tu.kf*sqrt(tu.ms*tu.ms+tu.kf*tu.kf)-
+                  pow(tu.ms,3.0)/2.0*
+                  log(tu.kf+sqrt(tu.kf*tu.kf+tu.ms*tu.ms)));
+  td.qq=3.0/pi2*(-td.ms/2.0*L*sqrt(td.ms*td.ms+L*L)+pow(td.ms,3.0)/2.0*
+                 log(L+sqrt(L*L+td.ms*td.ms)));
+  td.qq+=3.0/pi2*(td.ms/2.0*td.kf*sqrt(td.ms*td.ms+td.kf*td.kf)-
+                  pow(td.ms,3.0)/2.0*
+                  log(td.kf+sqrt(td.kf*td.kf+td.ms*td.ms)));
+  ts.qq=3.0/pi2*(-ts.ms/2.0*L*sqrt(ts.ms*ts.ms+L*L)+pow(ts.ms,3.0)/2.0*
+                 log(L+sqrt(L*L+ts.ms*ts.ms)));
+  ts.qq+=3.0/pi2*(ts.ms/2.0*ts.kf*sqrt(ts.ms*ts.ms+ts.kf*ts.kf)-
+                  pow(ts.ms,3.0)/2.0*
+                  log(ts.kf+sqrt(ts.kf*ts.kf+ts.ms*ts.ms)));
 
   fet.energy_density_zerot(tu);
   fet.energy_density_zerot(td);
@@ -928,30 +930,30 @@ int eos_quark_njl_vec::calc_eq_p(quark &tu, quark &td, quark &ts,
 
   // Fix the relationship between \mu_R and \mu, following eq 8b in
   // Klimt 90
-  vec1=tu.mu+4.0*GV*tu.n-tu.nu;
-  vec2=td.mu+4.0*GV*td.n-td.nu;
-  vec3=ts.mu+4.0*GV*ts.n-ts.nu;
+  vec1=tu.mu-4.0*GV*tu.n-tu.nu;
+  vec2=td.mu-4.0*GV*td.n-td.nu;
+  vec3=ts.mu-4.0*GV*ts.n-ts.nu;
   
   return 0;
 }
 
 void eos_quark_njl_vec::njvecbag(quark &q) {
-  static const double zero=1.0e-9;
-  if (fabs(q.ms)<zero) {
-    q.B=0.0;
-  } else {
-    if (fabs(q.ms)<zero) {
-      q.B=3.0/pi2*(1.0/4.0*L*pow(q.ms*q.ms+L*L,1.5)
-                   -1.0/8.0*q.ms*q.ms*L*sqrt(q.ms*q.ms+L*L)
-                   -1.0/8.0*pow(q.ms,4.0)*log(L+sqrt(q.ms*q.ms+L*L))
-                   +1.0/16.0*pow(q.ms,4.0)*log(q.ms*q.ms));
-    } else {
-      q.B=3.0/pi2*(1.0/4.0*L*pow(q.ms*q.ms+L*L,1.5)
-                   -1.0/8.0*q.ms*q.ms*L*sqrt(q.ms*q.ms+L*L)
-                   -1.0/8.0*pow(q.ms,4.0)*log(L+sqrt(q.ms*q.ms+L*L))
-                   +1.0/16.0*pow(q.ms,4.0)*log(q.ms*q.ms));
-    }
-  }
+  //static const double zero=1.0e-9;
+  //if (fabs(q.ms)<zero) {
+  //q.B=0.0;
+  //} else {
+  //if (fabs(q.ms)<zero) {
+  q.B=3.0/pi2*(1.0/4.0*L*pow(q.ms*q.ms+L*L,1.5)
+               -1.0/8.0*q.ms*q.ms*L*sqrt(q.ms*q.ms+L*L)
+               -1.0/8.0*pow(q.ms,4.0)*log(L+sqrt(q.ms*q.ms+L*L))
+               +1.0/16.0*pow(q.ms,4.0)*log(q.ms*q.ms));
+  //} else {
+  //q.B=3.0/pi2*(1.0/4.0*L*pow(q.ms*q.ms+L*L,1.5)
+  //-1.0/8.0*q.ms*q.ms*L*sqrt(q.ms*q.ms+L*L)
+  //-1.0/8.0*pow(q.ms,4.0)*log(L+sqrt(q.ms*q.ms+L*L))
+  //+1.0/16.0*pow(q.ms,4.0)*log(q.ms*q.ms));
+  //}
+  //}
   return;
 }
 
@@ -1175,5 +1177,66 @@ double eos_quark_njl_vec::ipr(double x, int np, double *param) {
     ret+=t*log(1+exp((-en-mu)/t));
   }
   ret*=3.0/pi2*x*x;
+  return ret;
+}
+
+int eos_quark_njl_vec::gapfunmsvec(size_t nv, const ubvector &x,
+                                   ubvector &y) {
+
+  double gap1, gap2, gap3, vec1, vec2, vec3;
+
+  up->ms=x[0];
+  down->ms=x[1];
+  strange->ms=x[2];
+  up->nu=x[3];
+  down->nu=x[4];
+  strange->nu=x[5];
+
+  if (x[0]<0.0 || x[1]<0.0 || x[2]<0.0) return 1;
+
+  calc_eq_p(*up,*down,*strange,gap1,gap2,gap3,vec1,vec2,vec3,*eos_thermo);
+
+  y[0]=gap1;
+  y[1]=gap2;
+  y[2]=gap3;
+  y[3]=vec1;
+  y[4]=vec2;
+  y[5]=vec3;
+
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) ||
+      !std::isfinite(y[2]) || !std::isfinite(y[3]) ||
+      !std::isfinite(y[4]) || !std::isfinite(y[5])) return 2;
+
+  return 0;
+}
+
+int eos_quark_njl_vec::calc_p(quark &u, quark &d, quark &s, thermo &th) {
+  ubvector x(6);
+  int ret;
+
+  if (fromqq==true) {
+    O2SCL_ERR("Unimplemented.",o2scl::exc_eunimpl);
+  }
+  
+  up=&u;
+  down=&d;
+  strange=&s;
+  eos_thermo=&th;
+  
+  x[0]=u.ms;
+  x[1]=d.ms;
+  x[2]=s.ms;
+  x[3]=u.nu;
+  x[4]=d.nu;
+  x[5]=s.nu;
+  
+  mm_funct fmf=std::bind
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+     (&eos_quark_njl_vec::gapfunmsvec),
+     this,std::placeholders::_1,std::placeholders::_2,
+     std::placeholders::_3);
+  
+  ret=solver->msolve(6,x,fmf);
+  
   return ret;
 }
