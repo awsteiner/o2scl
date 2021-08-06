@@ -693,10 +693,10 @@ int main(int argc, char *argv[]) {
       hf.sets_fixed
         ("reference",((string)"W. J. Huang, G. Audi, M. Wang ")+
          "F. G. Kondev, S. Naimi, and X. Xu, "
-         "Chin. Phys. C, 41 (2018) 030002; "+
+         "Chin. Phys. C, 41 (2017) 030002; "+
          "M. Wang, G. Audi, F. G. Kondev, "+
          "W. J. Huang, , S. Naimi, and X. Xu, "
-         "Chin. Phys. C, 41 (2018) 030003.");
+         "Chin. Phys. C, 41 (2017) 030003.");
     } else if (ik>=8 && ik<=10) {
       hf.sets_fixed
         ("reference",((string)"W. J. Huang, M. Wang ")+

@@ -58,6 +58,7 @@
   <compound refid="classo2scl_1_1exc__overflow__error" kind="class"><name>o2scl::exc_overflow_error</name>
   <compound refid="classo2scl_1_1exc__range__error" kind="class"><name>o2scl::exc_range_error</name>
   <compound refid="classo2scl_1_1exc__runtime__error" kind="class"><name>o2scl::exc_runtime_error</name>
+  <compound refid="classo2scl_1_1exp__mat" kind="class"><name>o2scl::exp_mat</name>
   <compound refid="classo2scl_1_1expval__base" kind="class"><name>o2scl::expval_base</name>
   <compound refid="classo2scl_1_1expval__matrix" kind="class"><name>o2scl::expval_matrix</name>
   <compound refid="classo2scl_1_1expval__scalar" kind="class"><name>o2scl::expval_scalar</name>

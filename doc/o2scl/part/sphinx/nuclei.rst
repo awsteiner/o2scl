@@ -12,14 +12,14 @@ and are generally of two types: tables of masses (children of
 from a set of parameters and can be fit to data
 (:cpp:class:`o2scl::nucmass_fit`).
 
-There are eleven mass table types currently included.
+There are ten mass table types currently included.
 
 - :cpp:class:`o2scl::nucmass_ame`: data from \ref
-  [Audi95]_, [Audi03]_, [Audi12]_ and [Wang12]_, or [Huang17]_ and
-  [Wang17]_.
+  [Audi95]_, [Audi03]_, [Audi12]_ and [Wang12]_, [Huang17]_ and
+  [Wang17]_, or [Huang21ta]_ and [Wang21ta]_.
 - :cpp:class:`o2scl::nucmass_mnmsk` and
   :cpp:class:`o2scl::nucmass_mnmsk_exp`: masses
-  from [Moller95]_ and [Moller97]_.
+  from [Moller95]_, [Moller97]_, and [Moller16ng]_.
 - :cpp:class:`o2scl::nucmass_hfb` and
   :cpp:class:`o2scl::nucmass_hfb_sp`: masses from [Goriely02]_,
   [Samyn04]_, or [Goriely07]_.
@@ -31,7 +31,7 @@ There are eleven mass table types currently included.
   [Liu11]_, [Wang11]_, or [Wang14]_
 - :cpp:class:`o2scl::nucmass_sdnp` : masses from [Stoitsov03]_ or
   [Dobaczewski04]_.
-- :cpp:class:`o2scl::nucmass_dglg` : masses from [Delaroche10]_
+- :cpp:class:`o2scl::nucmass_dglg` : masses from [Delaroche10]_.
 
 The mass formulas which can be fit to data are
 

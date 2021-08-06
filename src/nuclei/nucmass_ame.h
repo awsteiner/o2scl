@@ -60,7 +60,8 @@ namespace o2scl {
 
       \verbatim embed:rst
       This class provides an interface to the atomic mass table using
-      data from [Audi95]_, [Audi03]_, [Audi12]_, and [Wang12]_.
+      data from [Audi95]_, [Audi03]_, [Audi12]_, [Wang12]_,
+      [Huang17]_, [Wang17]_, [Huang21ta]_, and [Wang21ta]_.
       \endverbatim
 
       To load data from the \o2 HDF5 data files, use

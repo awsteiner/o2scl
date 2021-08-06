@@ -271,27 +271,27 @@ namespace o2scl {
 
   };
   
-  /** \brief Mass formula from Moller, Nix, Myers, Swiatecki and Kratz
+  /** \brief Nuclear masses from Moller, et al.
 
       \verbatim embed:rst
-      This is based on the tables given in [Moller95]_ and \ref
-      [Moller97]_. 
+      This is based on the tables given in [Moller95]_, 
+      [Moller97]_, and [Moller16ng]_.
       \endverbatim
 
-      To load data from the \o2 HDF5 data files, use 
-      <tt>o2scl_hdf::mnmsk_load()</tt>.
-
-      The data containing an object of type \ref entry for 8979
-      nuclei is automatically loaded by the constructor. If the file
-      (nucmass/mnmsk.o2) is not found, then is_loaded() will return
-      <tt>false</tt> and all calls to get_ZN() will return an object
-      with \c N=Z=0.
+      In order to allow easier coordination of file I/O across
+      multiple MPI tasks the constructor does not automatically load
+      nuclear mass data. To load data from the \o2 HDF5 data files,
+      use <tt>o2scl_hdf::mnmsk_load()</tt>. If no data is loaded, 
+      then \ref o2scl::nucmass_table::is_loaded() will return
+      <tt>false</tt> and calls to get_ZN() will call the error 
+      handler.
 
       There are several entries in the original table which are
       blank because they are in some way not known, measured, or
-      computable. To distinguish these values from zero, blank entries 
-      have been replaced by the number \c 1.0e99. For convenience,
-      this value is returned by \ref blank().
+      computable. These entries are filled with a positive number 
+      larger than 1.0e90, given by the functions \ref blank(),
+      \ref neither(), \ref beta_stable(), \ref beta_plus_and_minus(),
+      \ref greater_100(), or \ref very_large() .
 
       \note This class requires data stored in an HDF file and
       thus requires HDF support for normal usage.
@@ -475,14 +475,12 @@ namespace o2scl {
     
   };
 
-  /** \brief The experimental values from Moller, Nix, Myers and Swiatecki
+  /** \brief The experimental values from the Moller et al.
+      mass tables
 
-      This mass formula only includes the experimental mass
-      excesses tabulated in Moller et al. (1995) and Moller
-      et al. (1997).
-
-      \verbatim embed:rst
-      See [Moller95]_ and \ref [Moller97]_. 
+      \verbatim embed:rst 
+      This mass formula only includes the experimental mass excesses
+      tabulated in [Moller95]_, [Moller97]_, and [Moller16ng]_.
       \endverbatim
       
       \note This class requires data stored in an HDF file and
@@ -501,10 +499,10 @@ namespace o2scl {
     virtual double mass_excess(int Z, int N);
 
   };
-
-  /** \brief Desc
-
-      Experimental
+  
+  /** \brief Nuclear masses from two tables patched together
+      
+      Experimental.
    */
   class nucmass_patch : public nucmass_table {
     

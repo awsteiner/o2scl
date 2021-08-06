@@ -62,6 +62,7 @@ Namespace: o2scl class: exc_logic_error
 Namespace: o2scl class: exc_overflow_error
 Namespace: o2scl class: exc_range_error
 Namespace: o2scl class: exc_runtime_error
+Namespace: o2scl class: exp_mat
 Namespace: o2scl class: expval_base
 Namespace: o2scl class: expval_matrix
 Namespace: o2scl class: expval_scalar

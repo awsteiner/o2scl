@@ -442,6 +442,11 @@ double nucmass_mnmsk_exp::mass_excess(int Z, int N) {
 
 nucmass_mnmsk::entry nucmass_mnmsk::get_ZN(int l_Z, int l_N) {
 
+  if (n==0) {
+    O2SCL_ERR("No nuclear masses loaded in nucmass_mnmsk::get_ZN().",
+              o2scl::exc_efailed);
+  }
+  
   int lo=0, hi=0, mid=last;
   
   nucmass_mnmsk::entry ret;
