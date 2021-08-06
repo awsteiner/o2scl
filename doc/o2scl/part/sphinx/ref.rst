@@ -61,6 +61,10 @@ Bibliography
    <https://doi.org/10.1088/1674-1137/41/3/030002>`_,
    Chin. Phys. C **41** (2017) 030002.
 
+.. [Huang21ta] : `W. J. Huang, M. Wang, F. G. Kondev, G. Audi, and S. Naimi
+   <https://doi.org/10.1088/1674-1137/abddb0>`_,
+   Chin. Phys. C **45** (2021) 030002.
+
 .. [Johns96] : S. M. Johns, P. J. Ellis, and (none) Lattimer J. M.,
    Astrophys. J. **473** (1996) 1020.
 
@@ -131,4 +135,16 @@ Bibliography
 .. [Wang12] : `M. Wang, G. Audi, A. H. Wapstra, F. G. Kondev, M. MacCormick, X. Xu, and B. Pfeiffer
    <https://doi.org/10.1088/1674-1137/36/12/003>`_,
    Chin. Phys. C **36** (2012) 1603.
+
+.. [Wang14] : `N. Wang, M. Liu, X. Wu, and J. Meng
+   <https://doi.org/10.1016/j.physletb.2014.05.049>`_,
+   Phys. Lett. B **734** (2014) 215.
+
+.. [Wang17] : `M. Wang, G. Audi, F. G. Kondev, W. J. Huang, S. Naimi, and X. Xu
+   <https://doi.org/10.1088/1674-1137/41/3/030003>`_,
+   Chin. Phys. C **41** (2017) 030003.
+
+.. [Wang21ta] : `M. Wang, W. J. Huang, F. G. Kondev, G. Audi, and S. Naimi
+   <https://doi.org/10.1088/1674-1137/abddaf>`_,
+   Chin. Phys. C **45** (2021) 030003.
 
