@@ -168,7 +168,7 @@ int main(void) {
 
   cout << ter.str_len(ter.bold()) << endl;
   
-  gen_test_number gx;
+  gen_test_number<> gx;
 
   for(size_t i=0;i<100;i++) {
     cout << gx.gen() << endl;
