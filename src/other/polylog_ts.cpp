@@ -162,7 +162,7 @@ int main(void) {
 			   cpp_dec_float_50> f4;
   f4.set_tol(1.0e-37);
 
-  gen_test_number gn;
+  gen_test_number<> gn;
   /*
   for(size_t i=0;i<15;i++) {
     double x=gn.gen();
