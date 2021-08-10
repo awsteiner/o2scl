@@ -124,6 +124,9 @@ o2scl-doc:
 clean-doc:
 	cd doc/o2scl && $(MAKE) clean-doc-recursive
 
+permfix:
+	sudo chown -R `whoami`:`whoami` *
+
 if O2SCL_OSX
     BROWSER = open
 else
