@@ -69,12 +69,12 @@ namespace o2scl {
   /** \brief Convert a floating-point number to a string 
 
       This uses a \c ostringstream object to convert the
-      floating-point number to a string. It uses
-      <tt>std::numeric_limits::max_digits10</tt> to determine the maximum
-      precision. If \c prec is 
-      greater than this maximum value, then the maximum is
-      used. If \c prec is 0, then 
-      <tt>std::numeric_limits::digits10</tt> is used.
+      floating-point number to a string. The value of
+      <tt>std::numeric_limits::max_digits10</tt> is used to determine
+      the maximum precision. If \c prec is greater than this maximum
+      value, then the maximum is used. If \c prec is 0, then
+      <tt>std::numeric_limits::digits10</tt> is used. The 
+      default value of \c prec is 6. 
       
       If \c auto_prec is false (the default), then the number is
       converted to a string in the <tt>ios::scientific</tt> mode,
@@ -200,7 +200,8 @@ namespace o2scl {
   */
   double function_to_double(std::string s);
 
-  /** \brief Desc
+  /** \brief Find constant named \c name with unit \c unit and
+      return the associated value
    */
   double find_constant(std::string name, std::string unit);
   
@@ -266,7 +267,9 @@ namespace o2scl {
   void rewrap(std::string str, std::vector<std::string> &sv,
 	      size_t ncol=79);
 
-  /** \brief Desc
+  /** \brief Rewrap string \c str splitting at spaces and 
+      place in \c sv, but ignore vt100 characters which do 
+      not require string space
    */
   void rewrap_ignore_vt100(std::string str,
 			   std::vector<std::string> &sv,

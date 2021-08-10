@@ -1248,7 +1248,7 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Desc
+  /** \brief Test the cache and the new convert_calc() function
    */
   void test_cache_calc() const {
     mciter m;

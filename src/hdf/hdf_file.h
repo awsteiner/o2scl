@@ -1088,24 +1088,37 @@ namespace o2scl_hdf {
     */
     void file_list(int verbose);
 
-    /** \brief Desc
+    /** \brief Create a copy of the current HDF5 file and place
+        the copy in \c hf2
      */
     void copy(int verbose, hdf_file &hf2);
     
     /// Parameters for iterate_func()
     typedef struct {
+      /// Name
       std::string tname;
+      /// Pointer to HDF5 file
       o2scl_hdf::hdf_file *hf;
+      /// True if found
       bool found;
+      /// Object type
       std::string type;
+      /// Verbose parameter
       int verbose;
+      /** \brief Iteration mode, either \ref ip_filelist, \ref
+          ip_name_from_type, \ref ip_type_from_name or \ref
+          ip_type_from_pattern
+       */
       int mode;
     } iterate_parms;
 
     /// Parameters for iterate_copy_func()
     typedef struct {
+      /// Pointer to source HDF5 file
       o2scl_hdf::hdf_file *hf;
+      /// Pointer to destination HDF5 file
       o2scl_hdf::hdf_file *hf2;
+      /// Verbosity parameter
       int verbose;
     } iterate_copy_parms;
 

@@ -53,13 +53,13 @@
 namespace o2scl {
 #endif
 
-  /** \brief Desc
+  /** \brief Base class for a polynomial with real coefficients
    */
-  template<class fp_t=double>
-  class poly_real_base {
+  template<class fp_t=double> class poly_real_base {
     
   protected:
-    
+
+    /// Solver for root polishing
     o2scl::root_brent_gsl<std::function<fp_t(fp_t)>,fp_t> rbg;
     
   public:
@@ -360,6 +360,8 @@ namespace o2scl {
       return 0;
     }
 
+    /** \brief Desc
+     */
     template<class vec_t=std::vector<fp_t> >
     fp_t polish_fun(fp_t x, int n, const vec_t &co) {
       fp_t ret=co[0];
@@ -466,7 +468,7 @@ namespace o2scl {
     size_t test_coeffs_zero_disc(fp_t alpha, fp_t &s1, fp_t &s2, fp_t &m1,
                                  fp_t &m2, size_t n=40) {
 
-      o2scl::gen_test_number ga, gb, gc;
+      o2scl::gen_test_number<> ga, gb, gc;
       
       size_t count=0;
       
@@ -516,7 +518,7 @@ namespace o2scl {
     size_t test_complex_roots(fp_t &s1, fp_t &s2, fp_t &m1, fp_t &m2,
                               size_t n=80) {
 
-      gen_test_number gd, ge;
+      gen_test_number<> gd, ge;
 
       size_t count=0;
       
@@ -570,7 +572,7 @@ namespace o2scl {
     size_t test_real_roots(fp_t &s1, fp_t &s2, fp_t &m1,
                            fp_t &m2, size_t &wrong_ret, size_t n=80) {
       
-      o2scl::gen_test_number gd, ge;
+      o2scl::gen_test_number<> gd, ge;
 
       size_t count=0;
       
@@ -686,7 +688,7 @@ namespace o2scl {
     size_t test_complex_coeffs(fp_t &s1, fp_t &s2, fp_t &m1, fp_t &m2,
                               size_t n=10) {
 
-      gen_test_number ga, gb, gc, gd, ge, gf;
+      gen_test_number<> ga, gb, gc, gd, ge, gf;
       
       fp_t rca, rcb, rcc, rcd, rce, rcf;
       cx_t i(0.0,1.0);
@@ -754,7 +756,7 @@ namespace o2scl {
     size_t test_complex_roots(fp_t &s1, fp_t &s2, fp_t &m1, fp_t &m2,
                               size_t n=20) {
       
-      gen_test_number gg, gh, gi, gj;
+      gen_test_number<> gg, gh, gi, gj;
       
       fp_t rca, rcb, rcc, rcd, rce, rcf;
       cx_t i(0.0,1.0);
@@ -912,7 +914,7 @@ namespace o2scl {
       
       size_t count=0;
       
-      gen_test_number ga, gb, gc, gd;
+      gen_test_number<> ga, gb, gc, gd;
       
       for(size_t j1=0;j1<n;j1++) {
         fp_t ca=ga.gen()*alpha;
@@ -1090,7 +1092,7 @@ namespace o2scl {
   
       cx_t i(0.0,1.0);
       
-      gen_test_number ga, gb, gc, gd;
+      gen_test_number<> ga, gb, gc, gd;
       fp_t rca, rcb, rcc, rcd;
 
       size_t count=0;
@@ -1315,7 +1317,7 @@ namespace o2scl {
       
       size_t count=0;
       
-      gen_test_number ga, gb, gc, gd;
+      gen_test_number<> ga, gb, gc, gd;
       
       for(size_t j1=0;j1<n;j1++) {
         fp_t r1=ga.gen();
@@ -1414,6 +1416,8 @@ namespace o2scl {
 			 cx_t &x3, 
 			 cx_t &x4)=0;
 
+    /** \brief Desc
+     */
     size_t test_real_coeffs(fp_t &s1, fp_t &s2, fp_t &m1,
                           fp_t &m2, size_t n=9) {
       
@@ -1421,7 +1425,7 @@ namespace o2scl {
 
       size_t count=0;
       
-      gen_test_number ga, gb, gc, gd, ge;
+      gen_test_number<> ga, gb, gc, gd, ge;
       for(size_t j1=0;j1<n;j1++) {
         fp_t ca=ga.gen();
         gb.reset();
@@ -1543,6 +1547,8 @@ namespace o2scl {
 			const cx_t e4, cx_t &x1, 
 			cx_t &x2, cx_t &x3, cx_t &x4)=0;
 
+    /** \brief Desc
+     */
     int test_complex_coeffs(fp_t &s1, fp_t &s2, fp_t &m1,
                              fp_t &m2, size_t n=9) {
   
@@ -1551,7 +1557,7 @@ namespace o2scl {
 
       size_t count=0;
 
-      gen_test_number ga, gb, gc, gd, ge;
+      gen_test_number<> ga, gb, gc, gd, ge;
       fp_t rca, rcb, rcc, rcd, rce;
       for(int it=0;it<2;it++) {
         for(size_t j1=0;j1<n;j1++) {
@@ -1708,7 +1714,7 @@ namespace o2scl {
       return 0;
     }
 
-    /** \brief Desc
+    /** \brief Polish roots
      */
     virtual int polish_fun(size_t nv, const ubvector &x,
                            ubvector &y, const coeff_vec_t &co,
@@ -1736,7 +1742,9 @@ namespace o2scl {
       
       return 0;
     }
-    
+
+    /** \brief Desc
+     */
     int polish_jac(size_t nx, ubvector &x, size_t ny, ubvector &y,
                    ubmatrix &j) {
       
@@ -2990,6 +2998,8 @@ namespace o2scl {
 
     virtual ~quartic_real_std() {}
 
+    /** \brief Desc
+     */
     virtual int solve_r(const fp_t a4, const fp_t b4, const fp_t c4, 
 			const fp_t d4, const fp_t e4, fp_t &x1, 
 			fp_t &x2, fp_t &x3, fp_t &x4) {

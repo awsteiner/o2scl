@@ -115,11 +115,11 @@ namespace o2scl {
     */
     std::string tostring(size_t Z, size_t N);
 
-    /** \brief Desc
+    /** \brief Convert an integer to a spin and parity string
      */
     std::string int_to_spinp(int g);
     
-    /** \brief Desc
+    /** \brief Convert a spin and parity string to an integer
      */
     int spinp_to_int(std::string s);
   

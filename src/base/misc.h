@@ -378,9 +378,11 @@ namespace o2scl {
   int pipe_cmd_string(std::string cmd, std::string &result,
 		      bool err_on_fail=true, int nmax=80);
 
-  /** \brief Desc
+  /** \brief Execute a python command and return the resulting string
       
+      \verbatim
       python_cmd_string("\"print(3+5)\"",result);
+      \endverbatim
   */
   int python_cmd_string(std::string cmd, std::string &result,
 		      bool err_on_fail=true, int nmax=80);
@@ -504,7 +506,7 @@ namespace o2scl {
       gives about 400 unique values before some repetition is 
       encountered. Smaller radices enable more unique values.
   */
-  class gen_test_number {
+  template<class fp_t=double> class gen_test_number {
 
 #ifndef DOXYGEN_INTERNAL
 
@@ -513,8 +515,8 @@ namespace o2scl {
     /// Count number of numbers generated so far
     int n;
 
-    /// Desc (default 2.0)
-    double radix;
+    /// The radix for the nuber generation (default 2.0)
+    fp_t radix;
 
 #endif
 
@@ -522,7 +524,7 @@ namespace o2scl {
 
     gen_test_number() {
       n=0;
-      radix=2.0;
+      radix=2;
     }
 
     void reset() {
@@ -534,8 +536,8 @@ namespace o2scl {
 
         Only numbers greater than 1.0 are allowed
      */
-    void set_radix(double r) {
-      if (r<=1.0) {
+    void set_radix(fp_t r) {
+      if (r<=1) {
         O2SCL_ERR("Invalid radix in gen_test_number().",
                   o2scl::exc_einval);
       }
@@ -543,45 +545,45 @@ namespace o2scl {
       return;
     }
     
-    double gen() {
+    fp_t gen() {
       
-      double x=0.0;
+      fp_t x=0;
       
       // Since we're in the o2scl namespace, we explicitly
       // specify std::tanh() below.
 
-      int d=((double)(n-3))/8;
+      int d=((fp_t)(n-3))/8;
       
       if (n==0) {
-	x=1.0;
+	x=1;
       } else if (n==1) {
-	x=0.0;
+	x=0;
       } else if (n==2) {
-	x=-1.0;
+	x=-1;
       } else if ((n-3)%8==0) {
         // The sequence 0.5, 0.25, 0.125, ..., -> 0
-        x=pow(radix,-(d+1));
+        x=o2pow(radix,-(d+1));
       } else if ((n-3)%8==1) {
         // The sequence -0.5, -0.25, -0.125, ... -> 0
-        x=-pow(radix,-(d+1));
+        x=-o2pow(radix,-(d+1));
       } else if ((n-3)%8==2) {
         // The sequence 0.75, 0.875, 0.9375, ... -> 1
-        x=1.0-pow(radix,-(d+2));
+        x=1.0-o2pow(radix,-(d+2));
       } else if ((n-3)%8==3) {
         // The sequence -0.75, -0.875, -0.9375, ... -> -1
-        x=-1.0+pow(radix,-(d+2));
+        x=-1.0+o2pow(radix,-(d+2));
       } else if ((n-3)%8==4) {
         // The sequence 1.5, 1.25, 1.125, ... -> 1
-        x=1.0+pow(radix,-(d+1));
+        x=1.0+o2pow(radix,-(d+1));
       } else if ((n-3)%8==5) {
         // The sequence -1.5, -1.25, -1.125, ... -> -1
-        x=-1.0-pow(radix,-(d+1));
+        x=-1.0-o2pow(radix,-(d+1));
       } else if ((n-3)%8==6) {
         // The sequence 2, 4, 8, ... -> \infty
-        x=pow(radix,d+1);
+        x=o2pow(radix,d+1);
       } else if ((n-3)%8==7) {
         // The sequence -2, -4, -8, ... -> -\infty
-        x=-pow(radix,d+1);
+        x=-o2pow(radix,d+1);
       }
       n++;
       return x;
@@ -952,13 +954,14 @@ namespace o2scl {
   void wordexp_single_file(std::string &fname);
   //@}
 
-  /** \brief Desc
+  /** \brief A class to support extended terminal output such 
+      as colors and graphical characters
    */
   class terminal {
 
   protected:
     
-    /** \brief Desc
+    /** \brief If true, this terminal has been redirected to a file
      */
     bool redirected;
     
@@ -966,7 +969,7 @@ namespace o2scl {
 
     terminal();
 
-    /// Desc
+    /// Return true if this terminal has been redirected to a file
     bool is_redirected() {
       return redirected;
     }

@@ -54,12 +54,14 @@ int main(void) {
   fermi_dirac_integ_gsl f1;
   fermi_dirac_integ_direct<> f2;
 
+  // Compare GSL with direct
   t.test_rel(f1.calc_1o2(0.5),f2.calc_1o2(0.5),4.0e-16,"fd 1");
   t.test_rel(f1.calc_m1o2(0.5),f2.calc_m1o2(0.5),4.0e-16,"fd 2");
   t.test_rel(f1.calc_3o2(0.5),f2.calc_3o2(0.5),4.0e-16,"fd 3");
   t.test_rel(f1.calc_2(0.5),f2.calc_2(0.5),4.0e-16,"fd 4");
   t.test_rel(f1.calc_3(0.5),f2.calc_3(0.5),4.0e-16,"fd 5");
 
+  // Compare polylog values with hard-coded values
   polylog p;
   t.test_rel(p.calc(2,-0.5),-0.448414206923646,4.0e-15,"pl 1");
   t.test_rel(p.calc(2,-2.0),-1.43674636688368,4.0e-15,"pl 2");
@@ -68,6 +70,7 @@ int main(void) {
   t.test_rel(p.calc(2,0.5),0.5822405264650125,4.0e-15,"pl 5");
   t.test_rel(p.calc(3,0.5),0.5372131936080402,4.0e-15,"pl 6");
 
+  // Compare bessel_K_exp values with hard coded values
   bessel_K_exp_integ_tl<o2scl::inte_exp_sinh_boost
 			<funct_ld,15,long double>,long double> be;
   long double res, err;
@@ -79,35 +82,12 @@ int main(void) {
   bessel_K_exp_integ_gsl beg;
   bessel_K_exp_integ_direct<> bed;
 
+  // Compare bessel_K_exp GSL and direct
   t.test_rel(beg.K1exp(2.0),bed.K1exp(2.0),1.0e-15,"bed 1");
   t.test_rel(beg.K2exp(2.0),bed.K2exp(2.0),1.0e-15,"bed 2");
   t.test_rel(beg.K3exp(2.0),bed.K3exp(2.0),1.0e-15,"bed 3");
 
   cout.precision(20);
-
-  // Todo: better testing
-  
-  fermi_dirac_integ_direct<long double,funct_cdf50,20,
-			   cpp_dec_float_50> f3;
-  f3.set_tol(1.0e-21);
-  long double xx=f3.calc_2(0.5);
-  cout << f1.calc_2(0.5) << endl;
-  cout << xx << endl;
-  
-  bessel_K_exp_integ_direct<long double,funct_cdf50,20,
-			    cpp_dec_float_50> bed2;
-  bed2.set_tol(1.0e-21);
-  double x=bed.K1exp(2.0);
-  std::cout
-    << std::setprecision(std::numeric_limits<double>::digits10)
-    << x << std::endl;
-  xx=bed2.K1exp(2.0);
-  std::cout
-    << std::setprecision(std::numeric_limits<long double>::digits10)
-    << xx << std::endl;
-  // according to wolframcloud
-  std::cout <<
-    "1.033476847068688573175357105879597425156" << endl;
 
   // Typically,
   // type              digits10 max_digits10 max          log_prec
@@ -120,39 +100,97 @@ int main(void) {
   
   cout.precision(4);
 
-  std::cout << std::numeric_limits<double>::digits10 << " ";
-  std::cout << std::numeric_limits<double>::max_digits10 << " ";
-  std::cout << std::numeric_limits<double>::max() << " ";
-  std::cout << log(pow(10.0,std::numeric_limits<double>::max_digits10))
+  cout.width(3);
+  cout << std::numeric_limits<double>::digits10 << " ";
+  cout.width(3);
+  cout << std::numeric_limits<double>::max_digits10 << " ";
+  cout.width(20);
+  cout << std::numeric_limits<double>::max() << " ";
+  cout.width(10);
+  cout << log(pow(10.0,std::numeric_limits<double>::max_digits10))
 	    << std::endl;
   
-  std::cout << std::numeric_limits<long double>::digits10 << " ";
-  std::cout << std::numeric_limits<long double>::max_digits10 << " ";
-  std::cout << std::numeric_limits<long double>::max() << " ";
-  std::cout << log(pow(10.0,std::numeric_limits<long double>::max_digits10))
+  cout.width(3);
+  cout << std::numeric_limits<long double>::digits10 << " ";
+  cout.width(3);
+  cout << std::numeric_limits<long double>::max_digits10 << " ";
+  cout.width(20);
+  cout << std::numeric_limits<long double>::max() << " ";
+  cout.width(10);
+  cout << log(pow(10.0,std::numeric_limits<long double>::max_digits10))
 	    << std::endl;
   
-  std::cout << std::numeric_limits<cpp_dec_float_35>::digits10 << " ";
-  std::cout << std::numeric_limits<cpp_dec_float_35>::max_digits10 << " "; 
-  std::cout << std::numeric_limits<cpp_dec_float_35>::max() << " ";
-  std::cout << log(pow(10.0,
+  cout.width(3);
+  cout << std::numeric_limits<cpp_dec_float_35>::digits10 << " ";
+  cout.width(3);
+  cout << std::numeric_limits<cpp_dec_float_35>::max_digits10 << " "; 
+  cout.width(20);
+  cout << std::numeric_limits<cpp_dec_float_35>::max() << " ";
+  cout.width(10);
+  cout << log(pow(10.0,
 		       std::numeric_limits<cpp_dec_float_35>::max_digits10))
 	    << std::endl;
   
-  std::cout << std::numeric_limits<cpp_dec_float_50>::digits10 << " ";
-  std::cout << std::numeric_limits<cpp_dec_float_50>::max_digits10 << " ";
-  std::cout << std::numeric_limits<cpp_dec_float_50>::max() << " ";
-  std::cout << log(pow(10.0,
+  cout.width(3);
+  cout << std::numeric_limits<cpp_dec_float_50>::digits10 << " ";
+  cout.width(3);
+  cout << std::numeric_limits<cpp_dec_float_50>::max_digits10 << " ";
+  cout.width(20);
+  cout << std::numeric_limits<cpp_dec_float_50>::max() << " ";
+  cout.width(10);
+  cout << log(pow(10.0,
 		       std::numeric_limits<cpp_dec_float_50>::max_digits10))
 	    << std::endl;
   
-  std::cout << std::numeric_limits<cpp_dec_float_100>::digits10 << " ";
-  std::cout << std::numeric_limits<cpp_dec_float_100>::max_digits10 << " ";
-  std::cout << std::numeric_limits<cpp_dec_float_100>::max() << " ";
-  std::cout << log(pow(10.0,
-		       std::numeric_limits<cpp_dec_float_100>::max_digits10))
-	    << std::endl;
+  cout.width(3);
+  cout << std::numeric_limits<cpp_dec_float_100>::digits10 << " ";
+  cout.width(3);
+  cout << std::numeric_limits<cpp_dec_float_100>::max_digits10 << " ";
+  cout.width(20);
+  cout << std::numeric_limits<cpp_dec_float_100>::max() << " ";
+  cout.width(10);
+  cout << log(pow(10.0,
+                  std::numeric_limits<cpp_dec_float_100>::max_digits10))
+       << std::endl;
+
+  // Todo: better testing
   
+  fermi_dirac_integ_direct<long double,funct_cdf50,20,
+			   cpp_dec_float_50> f3;
+  f3.set_tol(1.0e-21);
+  fermi_dirac_integ_direct<cpp_dec_float_35,funct_cdf50,20,
+			   cpp_dec_float_50> f4;
+  f4.set_tol(1.0e-37);
+
+  gen_test_number gn;
+  /*
+  for(size_t i=0;i<15;i++) {
+    double x=gn.gen();
+    double y1=f1.calc_2(x);
+    double y2=f2.calc_2(x);
+  }
+  */
+  
+  cout << "fdi_gsl: " << dtos(f1.calc_2(0.5),0) << endl;
+  cout << "fdid, ld: " << dtos(f2.calc_2(0.5),0) << endl;
+  cout << "fdid, cdf50: " << dtos(f3.calc_2(0.5),0) << endl;
+  cout << "fdid, cdf50: " << dtos(f4.calc_2(0.5),0) << endl;
+  
+  bessel_K_exp_integ_direct<long double,funct_cdf50,20,
+			    cpp_dec_float_50> bed2;
+  bed2.set_tol(1.0e-21);
+  double x=bed.K1exp(2.0);
+  std::cout
+    << std::setprecision(std::numeric_limits<double>::digits10)
+    << x << std::endl;
+  long double xx=bed2.K1exp(2.0);
+  std::cout
+    << std::setprecision(std::numeric_limits<long double>::digits10)
+    << xx << std::endl;
+  // according to wolframcloud
+  std::cout <<
+    "1.033476847068688573175357105879597425156" << endl;
+
 #endif
   
 #endif
