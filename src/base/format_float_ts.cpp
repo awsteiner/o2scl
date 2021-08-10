@@ -285,7 +285,7 @@ int main(int argc, char *argv[]) {
   ff.c_mode();
   ff.set_sig_figs(6);
   static const size_t N=20;
-  gen_test_number gtn;
+  gen_test_number<> gtn;
   for(size_t i=0;i<N;i++) {
 
     double x=gtn.gen();
