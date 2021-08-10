@@ -57,21 +57,12 @@ namespace o2scl {
 
       The number of iterations at each temperature is controlled by
       \ref o2scl::mmin_base::ntrial which defaults to 100.
-
-      \verbatim embed:rst
-      .. todo:: 
-         
-         In class anneal_base: I'm having trouble with
-         std::uniform_real_distribution on clang at the moment, so
-         this class uses \ref o2scl::prob_dens_uniform for the moment.
-
-      \endverbatim
   */
   template<class func_t=multi_funct,
     class vec_t=boost::numeric::ublas::vector<double>,
-           class rng_t=rng<> > class anneal_base :
+           class rng_t=o2scl::rng<> > class anneal_base :
     public mmin_base<func_t,func_t,vec_t> {
-      
+    
 #ifdef O2SCL_NEVER_DEFINED
     }
   {
@@ -79,7 +70,7 @@ namespace o2scl {
     
   public:
     
-  anneal_base() : dist(0.0,1.0) {
+    anneal_base() {
       this->ntrial=100;
     }
       
@@ -122,11 +113,7 @@ namespace o2scl {
     }
 
     /// The default random number generator
-    rng_t rng;
-
-    /// The random distribution object
-    o2scl::prob_dens_uniform dist;
-    //std::uniform_real_distribution<> dist;
+    rng_t local_rng;
 
     /// Return string denoting type, \c "anneal_base".
     virtual const char *type() { return "anneal_base"; }
@@ -137,7 +124,7 @@ namespace o2scl {
       (const anneal_base<func_t,vec_t,rng_t> &ab) : 
     mmin_base<func_t,func_t,vec_t>() {
       
-      this->rng=ab.rng;
+      this->local_rng=ab.local_rng;
       
     }
     
@@ -148,7 +135,7 @@ namespace o2scl {
 
       if (this != &ab) {
         mmin_base<func_t,func_t,vec_t>::operator=(ab);
-        this->rng=ab.rng;
+        this->local_rng=ab.local_rng;
       }
       return *this;
     }

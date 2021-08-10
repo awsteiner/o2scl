@@ -30,9 +30,7 @@
 #include <vector>
 #include <algorithm>
 
-#include <o2scl/rng_gsl.h>
 #include <o2scl/mm_funct.h>
-
 #include <o2scl/diff_evo.h>
 
 #ifndef DOXYGEN_NO_O2NS

@@ -144,7 +144,7 @@ namespace o2scl {
   */
   template<class func_t=multi_funct,
     class vec_t=boost::numeric::ublas::vector<double>,
-           class rng_t=rng<> > class anneal_gsl :
+           class rng_t=o2scl::rng<> > class anneal_gsl :
     public anneal_base<func_t,vec_t,rng_t> {
     
   public:
@@ -231,7 +231,7 @@ namespace o2scl {
 	  E=new_E;
 	  nmoves++;
 	} else {
-	  double r=this->dist();
+	  double r=this->local_rng.random();
 	  if (r < exp(-(new_E-E)/(boltz*T))) {
 	    for(j=0;j<nvar;j++) x[j]=new_x[j];
 	    E=new_E;
@@ -361,7 +361,7 @@ namespace o2scl {
   virtual int step(vec_t &sx, int nvar) {
     size_t nstep=step_vec.size();
     for(int i=0;i<nvar;i++) {
-      double u=this->dist();
+      double u=this->local_rng.random();
 
       // Construct the step in the ith direction
       double step_i=step_norm*step_vec[i%nstep];

@@ -75,33 +75,6 @@ int main(int argc, char *argv[]) {
 
   }
 
-  // Try with std random numbers
-  {
-
-    anneal_gsl<multi_funct,ubvector,std::random_device> ga;
-    double result;
-    ubvector init(2);
-    
-    multi_funct fx=funx;
-    
-    /// 1d to vectors
-    
-    init[0]=0.1;
-    init[1]=0.2;
-    ga.tol_abs=1.0e-6;
-    ga.mmin(1,init,result,fx);
-    cout << init[0] << " " << result << endl;
-    t.test_rel(init[0],2.0,1.0e-3,"another test - value");
-    t.test_rel(result,-1.0,1.0e-3,"another test - min");
-    
-    // Test verbose=1
-    
-    init[0]=15.5;
-    ga.verbose=1;
-    ga.mmin(1,init,result,fx);
-
-  }
-  
   t.report();
   
   return 0;

@@ -29,6 +29,7 @@
 #include <o2scl/funct.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/diff_evo_adapt.h>
+#include <o2scl/rng.h>
 
 using namespace std;
 using namespace o2scl;
@@ -44,7 +45,7 @@ double func(size_t nvar, const ubvector &x) {
   return -gsl_sf_bessel_J0(a)*gsl_sf_bessel_J0(b);
 }
 
-rng_gsl gr;
+rng<> gr;
 
 int init_function(size_t dim, const ubvector &x, ubvector &y) {
   for (size_t i = 0; i < dim; ++i) {

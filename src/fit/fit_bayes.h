@@ -31,7 +31,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/hist.h>
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 #include <o2scl/interp.h>
 #include <o2scl/fit_base.h>
 #include <o2scl/expval.h>
@@ -130,7 +130,7 @@ namespace o2scl {
   multi_func_t *pri;
 
   /// Random number generator
-  rng_gsl gr;
+    o2scl::rng<> gr;
 
   /// Default Monte Carlo integrator
   mcarlo_vegas<> def_inte;
