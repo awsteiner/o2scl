@@ -46,12 +46,6 @@ double f(double x, const double &mean, const double &sd) {
   return (sin(1.0/(0.3+x))-mean)/sd;
 }
 
-double covar(double x1, double x2) {
-  //return 1.0*exp(-(x1-x2)*(x1-x2)/0.15/0.15);
-  //return 1.0*exp(-(x1-x2)*(x1-x2)/0.13455555/0.1345555);
-  return exp(-(x1-x2)*(x1-x2)/0.131226/0.131226/2.0);
-}
-
 int main(void) {
   cout.setf(ios::scientific);
 
@@ -106,10 +100,6 @@ int main(void) {
   iko2.mode=interp_krige_optim<ubvector>::mode_max_lml;
   iko2.set_noise(N,x,y,1.0e-10);
   cout << endl;
-
-  interp_krige<ubvector> ik;
-  std::function<double(double,double)> fc=covar;
-  ik.set_covar_noise(N,x,y,fc,1.0e-10);
 
   double max=x[x.size()-1];
 

@@ -45,21 +45,36 @@ endif
 # -------------------------------------------------------------------- 
 
 ex_interp_plot:
-	o2graph -read ../ex_interp.o2 tdata -scatter x y \
+	o2graph -read ../ex_interp.o2 tdata \
+		-set ylo "(-2.0)" -set yhi 1.5 \
+		-scatter x y \
 		-read ../ex_interp.o2 tresult \
 		-plot x ylin color=k -plot x ycsp color=r \
 		-plot x ystef color=b \
-		-plot x yiko color=r,ls=: -plot x yiko_lml \
-		color=b,ls=: -xtitle x \
-		-ytitle y -inset 0.4 0.25 0.5 0.4 \
+		-plot x yiko color=r,ls=: \
+		-plot x yiko_lml color=b,ls=: \
+		-xtitle x -ytitle y \
+		-line 1.0 0.6 1.15 0.6 color=k \
+		-line 1.0 0.8 1.15 0.8 color=r \
+		-line 1.0 1.0 1.15 1.0 color=b \
+		-line 0.9 1.2 1.05 1.2 color=r,ls=: \
+		-line 0.9 1.4 1.05 1.4 color=b,ls=: \
+		-text 1.2 0.6 "Linear" ha=left \
+		-text 1.2 0.8 "Cubic spline" ha=left \
+		-text 1.2 1.0 "Steffen's" ha=left \
+		-text 1.1 1.2 "Kriging (CV)" ha=left \
+		-text 1.1 1.4 "Kriging (ML)" ha=left \
+		-inset 0.35 0.20 0.5 0.4 \
 		-set logy 1 -set ylo 1.0e-6 -set yhi 0.1 \
 		-function "abs(ylin-y)" lin2 -plot x lin2 color=k \
 		-function "abs(ycsp-y)" csp2 -plot x csp2 color=r \
 		-function "abs(ystef-y)" stef2 -plot x stef2 color=b \
 		-function "abs(yiko-y)" iko2 -plot x iko2 color=r,ls=: \
-		-xtitle x -ytitle "$$ |\Delta y| $$" \
-		-function "abs(yiko_lml-y)" iko_lml2 -plot x \
-		iko_lml2 color=b,ls=: -save ex_interp.pdf -show
+		-function "abs(yiko_lml-y)" iko_lml2 \
+		-plot x iko_lml2 color=b,ls=: \
+		-ytitle "$$ |\Delta y| $$" \
+		-ttext 0.5 "(-0.15)" x \
+		-save ex_interp.pdf -show
 
 ex_anneal_plot:
 	o2graph -backend Agg -set colbar 1 \

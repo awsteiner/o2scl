@@ -51,18 +51,18 @@ int main(void) {
 
 #ifdef O2SCL_NEW_BOOST_INTEGRATION
   
-  fermi_dirac_integ_gsl f1;
-  fermi_dirac_integ_direct<> f2;
+  fermi_dirac_integ_gsl fd_gsl;
+  fermi_dirac_integ_direct<> fd_d_ld;
 
   // Compare GSL with direct
-  t.test_rel(f1.calc_1o2(0.5),f2.calc_1o2(0.5),4.0e-16,"fd 1");
-  t.test_rel(f1.calc_m1o2(0.5),f2.calc_m1o2(0.5),4.0e-16,"fd 2");
-  t.test_rel(f1.calc_3o2(0.5),f2.calc_3o2(0.5),4.0e-16,"fd 3");
-  t.test_rel(f1.calc_2(0.5),f2.calc_2(0.5),4.0e-16,"fd 4");
-  t.test_rel(f1.calc_3(0.5),f2.calc_3(0.5),4.0e-16,"fd 5");
+  t.test_rel(fd_gsl.calc_1o2(0.5),fd_d_ld.calc_1o2(0.5),4.0e-16,"fd 1");
+  t.test_rel(fd_gsl.calc_m1o2(0.5),fd_d_ld.calc_m1o2(0.5),4.0e-16,"fd 2");
+  t.test_rel(fd_gsl.calc_3o2(0.5),fd_d_ld.calc_3o2(0.5),4.0e-16,"fd 3");
+  t.test_rel(fd_gsl.calc_2(0.5),fd_d_ld.calc_2(0.5),4.0e-16,"fd 4");
+  t.test_rel(fd_gsl.calc_3(0.5),fd_d_ld.calc_3(0.5),4.0e-16,"fd 5");
 
   // Compare polylog values with hard-coded values
-  polylog p;
+  polylog<> p;
   t.test_rel(p.calc(2,-0.5),-0.448414206923646,4.0e-15,"pl 1");
   t.test_rel(p.calc(2,-2.0),-1.43674636688368,4.0e-15,"pl 2");
   t.test_rel(p.calc(3,-0.5),-0.472597844658897,4.0e-15,"pl 3");
@@ -70,24 +70,13 @@ int main(void) {
   t.test_rel(p.calc(2,0.5),0.5822405264650125,4.0e-15,"pl 5");
   t.test_rel(p.calc(3,0.5),0.5372131936080402,4.0e-15,"pl 6");
 
-  // Compare bessel_K_exp values with hard coded values
-  bessel_K_exp_integ_tl<o2scl::inte_exp_sinh_boost
-			<funct_ld,15,long double>,long double> be;
-  long double res, err;
-  be.calc_err(2,2.0,res,err);
-  t.test_rel<long double>(res,1.875045062139460,2.0e-16,"be 1");
-  be.calc_err(2,20.0,res,err);
-  t.test_rel<long double>(res,0.3070874263512549,2.0e-16,"be 2");
-
-  bessel_K_exp_integ_gsl beg;
-  bessel_K_exp_integ_direct<> bed;
+  bessel_K_exp_integ_gsl be_gsl;
+  bessel_K_exp_integ_direct<> be_d_ld;
 
   // Compare bessel_K_exp GSL and direct
-  t.test_rel(beg.K1exp(2.0),bed.K1exp(2.0),1.0e-15,"bed 1");
-  t.test_rel(beg.K2exp(2.0),bed.K2exp(2.0),1.0e-15,"bed 2");
-  t.test_rel(beg.K3exp(2.0),bed.K3exp(2.0),1.0e-15,"bed 3");
-
-  cout.precision(20);
+  t.test_rel(be_gsl.K1exp(2.0),be_d_ld.K1exp(2.0),1.0e-15,"be_d_ld 1");
+  t.test_rel(be_gsl.K2exp(2.0),be_d_ld.K2exp(2.0),1.0e-15,"be_d_ld 2");
+  t.test_rel(be_gsl.K3exp(2.0),be_d_ld.K3exp(2.0),1.0e-15,"be_d_ld 3");
 
   // Typically,
   // type              digits10 max_digits10 max          log_prec
@@ -108,7 +97,7 @@ int main(void) {
   cout << std::numeric_limits<double>::max() << " ";
   cout.width(10);
   cout << log(pow(10.0,std::numeric_limits<double>::max_digits10))
-	    << std::endl;
+       << std::endl;
   
   cout.width(3);
   cout << std::numeric_limits<long double>::digits10 << " ";
@@ -118,7 +107,7 @@ int main(void) {
   cout << std::numeric_limits<long double>::max() << " ";
   cout.width(10);
   cout << log(pow(10.0,std::numeric_limits<long double>::max_digits10))
-	    << std::endl;
+       << std::endl;
   
   cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_35>::digits10 << " ";
@@ -128,8 +117,8 @@ int main(void) {
   cout << std::numeric_limits<cpp_dec_float_35>::max() << " ";
   cout.width(10);
   cout << log(pow(10.0,
-		       std::numeric_limits<cpp_dec_float_35>::max_digits10))
-	    << std::endl;
+                  std::numeric_limits<cpp_dec_float_35>::max_digits10))
+       << std::endl;
   
   cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_50>::digits10 << " ";
@@ -139,8 +128,8 @@ int main(void) {
   cout << std::numeric_limits<cpp_dec_float_50>::max() << " ";
   cout.width(10);
   cout << log(pow(10.0,
-		       std::numeric_limits<cpp_dec_float_50>::max_digits10))
-	    << std::endl;
+                  std::numeric_limits<cpp_dec_float_50>::max_digits10))
+       << std::endl;
   
   cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_100>::digits10 << " ";
@@ -154,42 +143,162 @@ int main(void) {
        << std::endl;
 
   // Todo: better testing
-  
-  fermi_dirac_integ_direct<long double,funct_cdf50,20,
-			   cpp_dec_float_50> f3;
-  f3.set_tol(1.0e-21);
+
+  // More accurate versions for testing
+  fermi_dirac_integ_direct<long double,funct_cdf35,20,
+			   cpp_dec_float_35> fd_ld_35;
+  fd_ld_35.set_tol(1.0e-21);
   fermi_dirac_integ_direct<cpp_dec_float_35,funct_cdf50,20,
-			   cpp_dec_float_50> f4;
-  f4.set_tol(1.0e-37);
+			   cpp_dec_float_50> fd_35_50;
+  fd_35_50.set_tol(1.0e-37);
 
   gen_test_number<> gn;
-  /*
-  for(size_t i=0;i<15;i++) {
-    double x=gn.gen();
-    double y1=f1.calc_2(x);
-    double y2=f2.calc_2(x);
+  gen_test_number<long double> gn_ld;
+  gen_test_number<cpp_dec_float_35> gn_cdf35;
+
+  if (true) {
+    
+    // This section compares the GSL class fermi_dirac_integ_gsl with
+    // o2scl versions of with various accuracies and floating point
+    // types. However, the o2scl version with the default types object
+    // named 'fd_d_ld', currently fails for large enough arguments.
+    
+    for(size_t i=0;i<24;i++) {
+      
+      double x=gn.gen();
+      long double x_ld=gn_ld.gen();
+      cpp_dec_float_35 x_cdf35=gn_cdf35.gen();
+      
+      double y1=fd_gsl.calc_3(x);
+      double y2=fd_d_ld.calc_3(x);
+      long double y3=fd_ld_35.calc_3(x_ld);
+      cpp_dec_float_35 y4=fd_35_50.calc_3(x_cdf35);
+      cout.width(4);
+      cout << i << " ";
+      cout.setf(ios::showpos);
+      cout << x << " ";
+      cout.unsetf(ios::showpos);
+      cout << dtos(y1,0) << endl;
+      cout << "                 " << dtos(y2,0) << endl;
+      cout << "                 " << dtos(y3,0) << endl;
+      cout << "                 " << dtos(y4,0) << endl;
+      double d21=y2-y1;
+      long double d32=y3-y2;
+      long double d31=y3-y1;
+      cpp_dec_float_35 d43=y4-y3;
+      cout << "                 " << abs(d21) << " " << abs(d31) << " "
+           << abs(d32) << " " << abs(d43) << endl;
+      t.test_gen(abs(d43)*1.0e2<abs(d32),
+                 "fermi_dirac 3 long double accuracy");
+      t.test_gen(abs(d32)<=abs(d31),
+                 "fermi_dirac 3 o2scl better than gsl");
+      
+      y1=fd_gsl.calc_m1o2(x);
+      y2=fd_d_ld.calc_m1o2(x);
+      y3=fd_ld_35.calc_m1o2(x_ld);
+      y4=fd_35_50.calc_m1o2(x_cdf35);
+      cout.width(4);
+      cout << i << " ";
+      cout.setf(ios::showpos);
+      cout << x << " ";
+      cout.unsetf(ios::showpos);
+      cout << dtos(y1,0) << endl;
+      cout << "                 " << dtos(y2,0) << endl;
+      cout << "                 " << dtos(y3,0) << endl;
+      cout << "                 " << dtos(y4,0) << endl;
+      d21=y2-y1;
+      d32=y3-y2;
+      d31=y3-y1;
+      d43=y4-y3;
+      cout << "                 " << abs(d21) << " " << abs(d31) << " "
+           << abs(d32) << " " << abs(d43) << endl;
+      t.test_gen(abs(d43)*1.0e2<abs(d32),
+                 "fermi_dirac -1/2 long double accuracy");
+      t.test_gen(abs(d32)<=abs(d31),
+                 "fermi_dirac -1/2 o2scl better than gsl");
+      
+    }
   }
-  */
+  cout << endl;
   
-  cout << "fdi_gsl: " << dtos(f1.calc_2(0.5),0) << endl;
-  cout << "fdid, ld: " << dtos(f2.calc_2(0.5),0) << endl;
-  cout << "fdid, cdf50: " << dtos(f3.calc_2(0.5),0) << endl;
-  cout << "fdid, cdf50: " << dtos(f4.calc_2(0.5),0) << endl;
+  bessel_K_exp_integ_direct<long double,funct_cdf35,20,
+			    cpp_dec_float_35> be_ld_35;
+  be_ld_35.set_tol(1.0e-21);
+  bessel_K_exp_integ_direct<cpp_dec_float_35,funct_cdf50,20,
+                            cpp_dec_float_50> be_35_50;
+  be_35_50.set_tol(1.0e-37);
   
-  bessel_K_exp_integ_direct<long double,funct_cdf50,20,
-			    cpp_dec_float_50> bed2;
-  bed2.set_tol(1.0e-21);
-  double x=bed.K1exp(2.0);
-  std::cout
-    << std::setprecision(std::numeric_limits<double>::digits10)
-    << x << std::endl;
-  long double xx=bed2.K1exp(2.0);
-  std::cout
-    << std::setprecision(std::numeric_limits<long double>::digits10)
-    << xx << std::endl;
-  // according to wolframcloud
-  std::cout <<
-    "1.033476847068688573175357105879597425156" << endl;
+  if (true) {
+
+    gn.reset();
+    gn_ld.reset();
+    gn_cdf35.reset();
+    
+    // This section compares the GSL class bessel_K_exp_integ_gsl with
+    // o2scl versions of with various accuracies and floating point
+    // types. However, the o2scl version with the default types object
+    // named 'be_d_ld', currently fails for large enough arguments.
+    
+    for(size_t i=0;i<6;i++) {
+      
+      double x=gn.gen();
+      long double x_ld=gn_ld.gen();
+      cpp_dec_float_35 x_cdf35=gn_cdf35.gen();
+
+      if (x>0) {
+      
+        double y1=be_gsl.K1exp(x);
+        double y2=be_d_ld.K1exp(x);
+        long double y3=be_ld_35.K1exp(x_ld);
+        cpp_dec_float_35 y4=be_35_50.K1exp(x_cdf35);
+        cout.width(4);
+        cout << i << " ";
+        cout.setf(ios::showpos);
+        cout << x << " ";
+        cout.unsetf(ios::showpos);
+        cout << dtos(y1,0) << endl;
+        cout << "                 " << dtos(y2,0) << endl;
+        cout << "                 " << dtos(y3,0) << endl;
+        cout << "                 " << dtos(y4,0) << endl;
+        double d21=y2-y1;
+        long double d32=y3-y2;
+        long double d31=y3-y1;
+        cpp_dec_float_35 d43=y4-y3;
+        cout << "                 " << abs(d21) << " " << abs(d31) << " "
+             << abs(d32) << " " << abs(d43) << endl;
+        t.test_gen(abs(d43)*1.0e2<abs(d32),
+                   "bessel_K1_exp long double accuracy");
+        t.test_gen(abs(d32)<=abs(d31),"bessel_K1_exp o2scl better than gsl");
+      
+        y1=be_gsl.K3exp(x);
+        y2=be_d_ld.K3exp(x);
+        y3=be_ld_35.K3exp(x_ld);
+        y4=be_35_50.K3exp(x_cdf35);
+        cout.width(4);
+        cout << i << " ";
+        cout.setf(ios::showpos);
+        cout << x << " ";
+        cout.unsetf(ios::showpos);
+        cout << dtos(y1,0) << endl;
+        cout << "                 " << dtos(y2,0) << endl;
+        cout << "                 " << dtos(y3,0) << endl;
+        cout << "                 " << dtos(y4,0) << endl;
+        d21=y2-y1;
+        d32=y3-y2;
+        d31=y3-y1;
+        d43=y4-y3;
+        cout << "                 " << abs(d21) << " " << abs(d31) << " "
+             << abs(d32) << " " << abs(d43) << endl;
+        t.test_gen(abs(d43)*1.0e2<abs(d32),
+                   "bessel_K3_exp long double accuracy");
+        t.test_gen(abs(d32)<=abs(d31),
+                   "bessel_K3_exp o2scl better than gsl");
+
+      }
+      
+    }
+  }
+  
 
 #endif
   

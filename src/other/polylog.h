@@ -51,20 +51,23 @@
 namespace o2scl {
 #endif
 
-  /** \brief Fermi-Dirac integral by integration
+  /** \brief Compute a Fermi-Dirac integral by direct integration
 
       This class performs direct computation of the
       Fermi-Dirac integral
       \f[
       F_{a}(\mu) = \int_0^{\infty} \frac{x^a}{1+e^{x-\mu}} \, .
       \f]
+      using an integrator which is specified as a class
+      template parameter. This class is used in 
+      \ref o2scl::fermi_dirac_integ_direct and \ref o2scl::polylog .
 
       Note that the GSL definition of the Fermi-Dirac integral
       includes an additional factor of \f$ 1/\Gamma(a+1) \f$
       which is not included here.
 
       \verbatim embed:rst
-
+      
       .. todo::
 
          In fermi_dirac_integ_tl, better testing of accuracy.
@@ -108,13 +111,14 @@ namespace o2scl {
   
   };
 
-  /** \brief Bose-Einstein integral by integration
+  /** \brief Compute a Bose-Einstein integral by direct integration
 
       This class performs direct computation of the
       Bose-Einstein integral
       \f[
       F_{a}(\mu) = \int_0^{\infty} \frac{x^a}{e^{x-\mu}-1} \, .
       \f]
+      This class is used in \ref o2scl::polylog .
 
       \verbatim embed:rst
 
@@ -161,8 +165,8 @@ namespace o2scl {
   
   };
 
-  /** \brief Exponentially scaled modified Bessel function of the
-      second kind by integration
+  /** \brief Compute an exponentially scaled modified Bessel function
+      of the second kind by direct integration
       
       This class uses an integral representation of the exponentially
       scaled modified Bessel function of the second kind
@@ -229,15 +233,16 @@ namespace o2scl {
     
   };
   
-  /** \brief Compute the fermion integrals for a non-relativistic
-      particle using the GSL functions
+  /** \brief Compute several Fermi-Dirac integrals
+      useful for non-relativistic fermions using GSL
 
       This class performs direct computation of the
       Fermi-Dirac integral
       \f[
       F_{a}(\mu) = \int_0^{\infty} \frac{x^a}{1+e^{x-\mu}} \, .
       \f]
-      using the functions from GSL.
+      using the functions from GSL where 
+      \f$ a \in [-1/2,1/2,3/2,2,3] \f$ .
 
       Note that the GSL definition of the Fermi-Dirac integral
       includes an additional factor of \f$ 1/\Gamma(a+1) \f$
@@ -356,18 +361,24 @@ namespace o2scl {
 
 #if defined(O2SCL_NEW_BOOST_INTEGRATION) || defined(DOXYGEN)
 
-  /** \brief Compute the Fermi-Dirac integral by directly
-      integrating with a higher precision type
+  /** \brief Compute several Fermi-Dirac integrals useful for
+      non-relativistic fermions by directly integrating with a higher
+      precision type
 
       This class performs direct computation of the
       Fermi-Dirac integral
       \f[
       F_{a}(\mu) = \int_0^{\infty} \frac{x^a}{1+e^{x-\mu}} \, .
       \f]
+      where \f$ a \in [-1/2,1/2,3/2,2,3] \f$ .
+      See also \ref o2scl::fermi_dirac_integ_gsl .
+      The integration is handled by an object of 
+      type \ref o2scl::fermi_dirac_integ_tl using an
+      integrator of type \ref o2scl::inte_exp_sinh_boost .
 
       Note that the GSL definition of the Fermi-Dirac integral
       includes an additional factor of \f$ 1/\Gamma(a+1) \f$
-      which is not included here.
+      which is not included here. 
    */
   template <class fp_t=double, class func_t=funct_ld,
 	    size_t max_refine=30, 
@@ -384,7 +395,10 @@ namespace o2scl {
   public:
 
     fermi_dirac_integ_direct() {
-      it.iiu.tol_rel=1.0e-17;
+      // AWS 8/14/21 changed from 1.0e-17 to 1.0e-14 because it
+      // appeard to more frequently converge (see polylog_ts) without
+      // sacrificing accuracy.
+      it.iiu.tol_rel=1.0e-14;
     }
 
     void set_tol(const fp_t &tol) {
@@ -434,7 +448,7 @@ namespace o2scl {
     
   };
 
-  /** \brief Compute exponentially scaled modified bessel function of
+  /** \brief Compute exponentially scaled modified Bessel function of
       the second kind by direct integration
 
       This class computes \f$ K_n(z) e^z\f$ for \f$ n=1,2,3 \f$
@@ -469,7 +483,7 @@ namespace o2scl {
   public:
 
     bessel_K_exp_integ_direct() {
-      it.iiu.tol_rel=1.0e-17;
+      it.iiu.tol_rel=1.0e-12;
     }
 
     void set_tol(const fp_t &tol) {
@@ -507,8 +521,9 @@ namespace o2scl {
 
       \note experimental
 
-      This class uses long double arithmetic and 
-      integral representations to compute the polylog functions.
+      This class uses integral representations based on the
+      Fermi-Dirac or Bose-Einstein functions to compute the polylog
+      functions.
 
       The relationship between the polylogarithm and the 
       Fermi-Dirac distribution is:
@@ -538,55 +553,56 @@ namespace o2scl {
 
       \verbatim embed:rst
       .. todo::
-
-         In class polylog, convert this to a template class
-         and then test the accuracy for a range of arguments
+      
+         In class polylog, test with higher accuracy floating point
+         types.
 
       A classic reference for the polylogarithm function is [Lewin81]_.
       \endverbatim
   */
-  class polylog {
+  template<class fp_t=double, class func_t=funct_ld, size_t max_refine=15,
+           class internal_fp_t=long double> class polylog {
 
   protected:
     
     /** \brief The integrator for negative arguments
      */
     fermi_dirac_integ_tl<o2scl::inte_exp_sinh_boost
-      <funct_ld,15,long double>,long double> it;
+      <func_t,max_refine,internal_fp_t>,internal_fp_t> it_fd;
     
     /** \brief The integrator for positive arguments
      */
     bose_einstein_integ_tl<o2scl::inte_exp_sinh_boost
-      <funct_ld,15,long double>,long double> it2;
+      <func_t,max_refine,internal_fp_t>,internal_fp_t> it_be;
     
   public:
     
     polylog() {
-      it.iiu.tol_rel=1.0e-17;
-      it2.iiu.tol_rel=1.0e-17;
+      it_fd.iiu.tol_rel=1.0e-17;
+      it_be.iiu.tol_rel=1.0e-17;
     }
     
-    void set_tol(double tol) {
-      it.iiu.tol_rel=tol;
-      it2.iiu.tol_rel=tol;
+    void set_tol(fp_t tol) {
+      it_fd.iiu.tol_rel=tol;
+      it_be.iiu.tol_rel=tol;
       return;
     }
     
     /** \brief Polylogarithm function
      */
-    double calc(double s, double y) {
+    fp_t calc(fp_t s, fp_t y) {
       if (y<0.0) {
 	// Fermi-Dirac integral representation
-	long double a=s-1, mu=log(-y), res, err;
-	it.calc_err(a,mu,res,err);
-	return -((double)res/boost::math::tgamma(s));
+	internal_fp_t a=s-1, mu=log(-y), res, err;
+	it_fd.calc_err(a,mu,res,err);
+	return -((fp_t)res/boost::math::tgamma(s));
       } else if (y==0.0) {
 	return 0.0;
       }
       // Bose-Einstein integral representation
-      long double a=s-1, mu=log(y), res, err;
-      it2.calc_err(a,mu,res,err);
-      return ((double)res/boost::math::tgamma(s));
+      internal_fp_t a=s-1, mu=log(y), res, err;
+      it_be.calc_err(a,mu,res,err);
+      return ((fp_t)res/boost::math::tgamma(s));
     }
 
   };

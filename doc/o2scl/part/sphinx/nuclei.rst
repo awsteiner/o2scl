@@ -28,7 +28,7 @@ There are ten mass table types currently included.
 - :cpp:class:`o2scl::nucmass_ktuy` : masses from
   [Koura00]_ and [Koura05]_
 - :cpp:class:`o2scl::nucmass_wlw` : masses from [Wang10]_, [Wang10b]_,
-  [Liu11]_, [Wang11]_, or [Wang14]_
+  [Liu11]_, [Wang11]_, or [Wang14]_.
 - :cpp:class:`o2scl::nucmass_sdnp` : masses from [Stoitsov03]_ or
   [Dobaczewski04]_.
 - :cpp:class:`o2scl::nucmass_dglg` : masses from [Delaroche10]_.
