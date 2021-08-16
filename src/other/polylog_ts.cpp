@@ -239,7 +239,7 @@ int main(void) {
     // types. However, the o2scl version with the default types object
     // named 'be_d_ld', currently fails for large enough arguments.
     
-    for(size_t i=0;i<6;i++) {
+    for(size_t i=0;i<4;i++) {
       
       double x=gn.gen();
       long double x_ld=gn_ld.gen();
