@@ -89,19 +89,6 @@
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_nucmass_io.h>
 
-#ifdef O2SCL_PLAIN_HDF5_HEADER
-#include <hdf5.h>
-#include <hdf5_hl.h>
-#else
-#ifdef O2SCL_LINUX
-#include <hdf5/serial/hdf5.h>
-#include <hdf5/serial/hdf5_hl.h>
-#else
-#include <hdf5.h>
-#include <hdf5_hl.h>
-#endif
-#endif
-
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
