@@ -641,7 +641,10 @@ int o2scl_acol_get_cli_options_type(void *vp, char *type,
   string cur_type=amp->type;
   
   amp->command_del(cur_type);
-  amp->command_add(temp_type);
+
+  if (temp_type.length()>0) {
+    amp->command_add(temp_type);
+  }
   
   vector<string> options=amp->cl->get_option_list();
   for(size_t i=0;i<options.size();i++) {
@@ -654,7 +657,9 @@ int o2scl_acol_get_cli_options_type(void *vp, char *type,
   sizes=&(amp->itemp[0]);
   chlist=&(amp->ctemp[0]);
 
-  amp->command_del(temp_type);
+  if (temp_type.length()>0) {
+    amp->command_del(temp_type);
+  }
   amp->command_add(cur_type);
   
   return 0;
