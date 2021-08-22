@@ -404,10 +404,12 @@ int cli::comm_option_no_intro(vector<string> &sv, bool itive_com) {
 
 int cli::comm_option_commands(vector<string> &sv, bool itive_com) {
 
+  terminal ter;
+
   // Form a list of the commands
   std::string *slist=new string[clist.size()];
   for(size_t i=0;i<clist.size();i++) {
-    slist[i]=clist[i].lng;
+    slist[i]=ter.bold()+ter.cyan_fg()+clist[i].lng+ter.default_fg();
   }
 
   // Sort

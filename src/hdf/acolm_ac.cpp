@@ -729,17 +729,35 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_commands(std::vector<std::string> &sv,
 				bool itive_com) {
 
+  // FIXME: there is some code duplication in this function
+  // which could be removed.
+  
   terminal ter;
+
+  if (type.length()>0) {
+    cout << "Current object named \"" << obj_name << "\" has type "
+         << ter.bold() << ter.magenta_fg() << type << ter.default_fg()
+         << ".\n" << endl;
+  } else {
+    cout << "No current object.\n" << endl;
+  }
     
   if (sv.size()==2) {
 
     if (sv[1]=="all") {
+      
       cout << "Commands which do not require a current object:\n" << endl;
 
+      // Delete the current type from the cli object temporarily
+      // so we can get a list of commands which don't require an
+      // object.
+      
       std::string curr_type=type;
       command_del(curr_type);
       std::vector<std::string> comm_list=cl->get_option_list();
       command_add(curr_type);
+
+      // Sort, screenify, and output
       
       std::vector<std::string> comm_out;
       vector_sort<std::vector<std::string>,std::string>
@@ -752,6 +770,10 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
 	cout << comm_out[j] << endl;
       }
       cout << endl;
+
+      // Proceed through all of the types, go through type_comm_list
+      // to output all of the type-specific commands (this code
+      // presumes that object is already sorted).
       
       std::map<std::string,std::vector<std::string> >::iterator it;
       for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
@@ -786,18 +808,25 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
       
       cout << "Commands which do not require a current object:\n" << endl;
 
+      // Delete the current type from the cli object temporarily
+      // so we can get a list of commands which don't require an
+      // object
+      
       command_del(curr_type);
       std::vector<std::string> comm_list=cl->get_option_list();
       command_add(curr_type);
       
+      // Sort, decorate, screenify, and output
+
       std::vector<std::string> comm_out;
       vector_sort<std::vector<std::string>,std::string>
         (comm_list.size(),comm_list);
-      std::vector<std::string> comm_list4(comm_list.size());
+      std::vector<std::string> comm_list_decor(comm_list.size());
       for(size_t j=0;j<comm_list.size();j++) {
-	comm_list4[j]=ter.cyan_fg()+ter.bold()+comm_list[j]+ter.default_fg();
+	comm_list_decor[j]=ter.cyan_fg()+ter.bold()+
+          comm_list[j]+ter.default_fg();
       }
-      screenify(comm_list4.size(),comm_list4,comm_out);
+      screenify(comm_list_decor.size(),comm_list_decor,comm_out);
       for(size_t j=0;j<comm_out.size();j++) {
 	cout << comm_out[j] << endl;
       }
@@ -810,26 +839,31 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
       command_del(curr_type);
       command_add(temp_type);
 
-      std::vector<std::string> comm_list2=cl->get_option_list();
+      // The list of commands for an object of type 'temp_type'
+      std::vector<std::string> comm_list_type=cl->get_option_list();
 
-      std::vector<std::string> comm_list3;
-      for(size_t i=0;i<comm_list2.size();i++) {
+      // Subtract out the generic list of commands
+      std::vector<std::string> comm_list_type_only;
+      for(size_t i=0;i<comm_list_type.size();i++) {
         if (std::find(comm_list.begin(),comm_list.end(),
-                      comm_list2[i])==comm_list.end()) {
-          comm_list3.push_back(comm_list2[i]);
+                      comm_list_type[i])==comm_list.end()) {
+          comm_list_type_only.push_back(comm_list_type[i]);
         }
       }
 
+      // Decorate, screenify, and output
       comm_out.clear();
-      for(size_t j=0;j<comm_list3.size();j++) {
-	comm_list3[j]=ter.cyan_fg()+ter.bold()+comm_list3[j]+ter.default_fg();
+      for(size_t j=0;j<comm_list_type_only.size();j++) {
+	comm_list_type_only[j]=ter.cyan_fg()+ter.bold()+
+          comm_list_type_only[j]+ter.default_fg();
       }
-      screenify(comm_list3.size(),comm_list3,comm_out);
+      screenify(comm_list_type_only.size(),comm_list_type_only,comm_out);
       for(size_t j=0;j<comm_out.size();j++) {
 	cout << comm_out[j] << endl;
       }
       cout << endl;
-      
+
+      // Restore the commands for the original type
       command_del(temp_type);
       command_add(curr_type);
       
@@ -837,6 +871,9 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
     }
   }
 
+  // This section applies if there are no arguments to the 'commands'
+  // option.
+  
   if (type!="") {
     cout << "Commands which do not require a current object or "
 	 << "which apply to\n  objects of type " << type << ".\n" << endl;
@@ -846,6 +883,7 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
   int ret=cl->comm_option_commands(sv,itive_com);
   cout << "Use '-commands all' for a list of all commands "
        << "for the various types." << endl;
+  
   return ret;
 }
 
