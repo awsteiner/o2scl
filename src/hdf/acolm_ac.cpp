@@ -735,8 +735,15 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
 
     if (sv[1]=="all") {
       cout << "Commands which do not require a current object:\n" << endl;
+
+      std::string curr_type=type;
+      command_del(curr_type);
       std::vector<std::string> comm_list=cl->get_option_list();
+      command_add(curr_type);
+      
       std::vector<std::string> comm_out;
+      vector_sort<std::vector<std::string>,std::string>
+        (comm_list.size(),comm_list);
       for(size_t j=0;j<comm_list.size();j++) {
 	comm_list[j]=ter.cyan_fg()+ter.bold()+comm_list[j]+ter.default_fg();
       }
@@ -745,6 +752,7 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
 	cout << comm_out[j] << endl;
       }
       cout << endl;
+      
       std::map<std::string,std::vector<std::string> >::iterator it;
       for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
 	cout << "Commands for an object of type " << ter.bold()
@@ -761,10 +769,13 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
 	}
 	cout << endl;
       }
+      
       return 0;
-    } else {   
+      
+    } else {
+      
       string temp_type=sv[1];
-      string cur_type=type;
+      string curr_type=type;
 
       if (std::find(type_list.begin(),type_list.end(),
                     temp_type)==type_list.end()) {
@@ -773,25 +784,54 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
         return 1;
       }
       
-      cout << "Commands for an object of type " << temp_type << ":\n"
-	   << endl;
+      cout << "Commands which do not require a current object:\n" << endl;
+
+      command_del(curr_type);
+      std::vector<std::string> comm_list=cl->get_option_list();
+      command_add(curr_type);
       
-      command_del(cur_type);
+      std::vector<std::string> comm_out;
+      vector_sort<std::vector<std::string>,std::string>
+        (comm_list.size(),comm_list);
+      std::vector<std::string> comm_list4(comm_list.size());
+      for(size_t j=0;j<comm_list.size();j++) {
+	comm_list4[j]=ter.cyan_fg()+ter.bold()+comm_list[j]+ter.default_fg();
+      }
+      screenify(comm_list4.size(),comm_list4,comm_out);
+      for(size_t j=0;j<comm_out.size();j++) {
+	cout << comm_out[j] << endl;
+      }
+      cout << endl;
+      
+      cout << "Commands for an object of type " << ter.bold()
+           << ter.magenta_fg() << temp_type << ter.default_fg()
+           << ":\n" << endl;
+      
+      command_del(curr_type);
       command_add(temp_type);
 
-      std::vector<std::string> comm_list=cl->get_option_list();
-      std::vector<std::string> comm_out;
-      for(size_t j=0;j<comm_list.size();j++) {
-	comm_list[j]=ter.cyan_fg()+ter.bold()+comm_list[j]+ter.default_fg();
+      std::vector<std::string> comm_list2=cl->get_option_list();
+
+      std::vector<std::string> comm_list3;
+      for(size_t i=0;i<comm_list2.size();i++) {
+        if (std::find(comm_list.begin(),comm_list.end(),
+                      comm_list2[i])==comm_list.end()) {
+          comm_list3.push_back(comm_list2[i]);
+        }
       }
-      screenify(comm_list.size(),comm_list,comm_out);
+
+      comm_out.clear();
+      for(size_t j=0;j<comm_list3.size();j++) {
+	comm_list3[j]=ter.cyan_fg()+ter.bold()+comm_list3[j]+ter.default_fg();
+      }
+      screenify(comm_list3.size(),comm_list3,comm_out);
       for(size_t j=0;j<comm_out.size();j++) {
 	cout << comm_out[j] << endl;
       }
       cout << endl;
       
       command_del(temp_type);
-      command_add(cur_type);
+      command_add(curr_type);
       
       return 0;
     }
