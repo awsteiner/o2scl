@@ -765,22 +765,35 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
     } else {   
       string temp_type=sv[1];
       string cur_type=type;
+
+      if (std::find(type_list.begin(),type_list.end(),
+                    temp_type)==type_list.end()) {
+        cerr << "Type " << sv[1] << " is not a valid "
+             << cl->cmd_name << " type." << endl;
+        return 1;
+      }
       
       cout << "Commands for an object of type " << temp_type << ":\n"
 	   << endl;
       
       command_del(cur_type);
       command_add(temp_type);
-      
-      std::vector<std::string>::iterator it=sv.begin();
-      it++;
-      sv.erase(it);
-      int ret=cl->comm_option_commands(sv,itive_com);
+
+      std::vector<std::string> comm_list=cl->get_option_list();
+      std::vector<std::string> comm_out;
+      for(size_t j=0;j<comm_list.size();j++) {
+	comm_list[j]=ter.cyan_fg()+ter.bold()+comm_list[j]+ter.default_fg();
+      }
+      screenify(comm_list.size(),comm_list,comm_out);
+      for(size_t j=0;j<comm_out.size();j++) {
+	cout << comm_out[j] << endl;
+      }
+      cout << endl;
       
       command_del(temp_type);
       command_add(cur_type);
       
-      return ret;
+      return 0;
     }
   }
 

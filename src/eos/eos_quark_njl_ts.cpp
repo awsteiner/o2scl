@@ -286,6 +286,20 @@ int main(void) {
     
   eos_quark_njl_vec njv;
 
+  if (true) {
+    
+    quark &u2=njv.def_up;
+    quark &d2=njv.def_down;
+    quark &s2=njv.def_strange;
+    thermo &th2=njv.def_thermo;
+    
+    t.test_gen(njv.set_parameters()==0,"set_parameters().");
+    cout << njv.B0 << endl;
+    //t.test_rel(njv.B0,21.6084,1.0e-4,"bag constant");
+    cout << endl;
+  
+  }
+  
   t.report();
 
   return 0;

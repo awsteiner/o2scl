@@ -1389,7 +1389,10 @@ int acol_manager::setup_options() {
       "a new table3d object which has one slice. The x and y grids "+
       "are given as vector specifications (see \"acol -help vector-spec\" "+
       "for the syntax). The slice function can be written in terms "+
-      "of the x- and y-grid values which are referred to by name.\n\n",
+      "of the x- and y-grid values which are referred to by name.\n\n"+
+      "For example, using o2graph from o2sclpy:\n\no2graph -create "+
+      "table3d x func:100:i/200 y func:100:i/200 z \"sin(1/(x+0.01))*"+
+      "sin(1/(y+0.01))\" -den-plot z -xtitle x -ytitle y -show",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
       both},
      {0,"docs","Open local HTML docs for acol or an O2scl topic.",0,1,

@@ -816,8 +816,9 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "1. <numeric value or function> - Value equal to the result of "+
       "<function>, e.g. \"7.6\" or \"sin(0.5)\". See \""+cl->cmd_name+
       " -help functions\" for a list of functions that can be used.\n\n"+
-      "2. hdf5:<object name>:[addl. spec.] - Read an HDF5 value and "+
-      "obtain the value from object named <object name>. For some "+
+      "  For example:\n\n  acol -create double \"sqrt(5)\" -output\n\n"+
+      "2. hdf5:<file>:<object name>:[addl. spec.] - Read an HDF5 value "+
+      "and obtain the value from object named <object name>. For some "+
       "object types, additional specifications are required to "+
       "specify which value should be used. A list of object types "+
       "and additional specifications and more detail is given below.\n\n"+
@@ -831,8 +832,16 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "             size_t[]: index\n"+
       " uniform_grid<double>: index\n"+
       "                table: column name,row index\n\n"+
+      "  For example:\n\n  acol -create double "+
+      "hdf5:data/o2scl/apr98.o2:apr:rho,0 -output\n\n"+
       "3. shell:<shell command> - Set the value equal to the first "+
-      "result obtained using the specified shell command.";
+      "result obtained using the specified shell command. For example "+
+      "(using bash):\n\n  acol -create double "+
+      "shell:\"ls | wc | awk '{print $1}'\" -output\n\n"+
+      "4. python:<python code> - Set the value equal to the "+
+      "result obtained using the specified python code. For example "+
+      "(using bash):\n\n  acol -create double "+
+      "$'python:\\\"import numpy\\nprint(numpy.sin(4))\\\"' -output";
     
     std::vector<std::string> sv;
     o2scl::rewrap_keep_endlines(str,sv);

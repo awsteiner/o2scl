@@ -105,6 +105,25 @@ int o2scl_hdf::value_spec(std::string spec, double &d,
     
 #endif
 
+  } else if (spec.find("python:")==0) {
+	
+    std::string cmd=spec.substr(7,spec.length()-7);
+    cout << "Using python string: " << cmd << endl;
+    string result;
+    int ret=python_cmd_string(cmd,result,err_on_fail,200);
+    if (ret!=0) {
+      if (err_on_fail) {
+        O2SCL_ERR2("Function python_cmd_string() failed in ",
+                   "value_spec().",exc_efailed);
+      }
+      return exc_efailed;
+    }
+    
+    // Finally, take the result string and convert to a double
+    d=o2scl::stod(result);
+
+    return 0;
+
   } else if (spec.find("hdf5:")==0) {
 	
     // HDF5 object in a file

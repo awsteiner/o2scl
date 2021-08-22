@@ -439,6 +439,7 @@ namespace o2scl_hdf {
       Formats:
       - value or function
       - result of shell command: shell:command 
+      - result of python code: python:code
       - HDF5 object in file: 
       hdf5:\<file name\>:\<object name\>:[additional specification]
 
@@ -1109,7 +1110,7 @@ namespace o2scl_hdf {
       if (!ps_pipe) {
 	if (err_on_fail) {
 	  O2SCL_ERR2("Pipe could not be opened in ",
-		     "convert_units::convert_gnu_units().",
+		     "strings_spec().",
 		     o2scl::exc_efilenotfound);
 	}
 	return o2scl::exc_efilenotfound;
@@ -1134,7 +1135,7 @@ namespace o2scl_hdf {
       if (pclose(ps_pipe)!=0) {
 	if (err_on_fail) {
 	  O2SCL_ERR2("Pipe could not be closed in ",
-		     "value_spec().",o2scl::exc_efailed);
+		     "strings_spec().",o2scl::exc_efailed);
 	}
 	return o2scl::exc_efailed;
       }
@@ -1181,7 +1182,7 @@ namespace o2scl_hdf {
       if (pclose(ps_pipe)!=0) {
 	if (err_on_fail) {
 	  O2SCL_ERR2("Pipe could not be closed in ",
-		     "value_spec().",o2scl::exc_efailed);
+		     "strings_spec().",o2scl::exc_efailed);
 	}
 	return o2scl::exc_efailed;
       }
