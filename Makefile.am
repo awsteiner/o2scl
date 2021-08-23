@@ -29,6 +29,7 @@ help:
 	@echo "prerelease-sync-doc: Copy docs from /usr/local on isospin"
 	@echo "  to the the internal web directory."
 	@echo "emacs-clean:      Remove files ending with a tilde"
+	@echo "permfix:          Change permissions to current user with sudo"
 	@echo
 
 # -----------------------------------------------------------------
@@ -125,7 +126,7 @@ clean-doc:
 	cd doc/o2scl && $(MAKE) clean-doc-recursive
 
 permfix:
-	sudo chown -R `whoami`:`whoami` *
+	sudo chown -R `whoami`:`whoami` * .git
 
 if O2SCL_OSX
     BROWSER = open

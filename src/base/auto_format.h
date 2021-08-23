@@ -45,7 +45,8 @@ namespace o2scl_auto_format {
 #endif
 
 #ifdef O2SCL_LD_TYPES
-  typedef boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+  typedef
+  boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
   cpp_dec_float_35;
   typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
   typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
@@ -67,20 +68,22 @@ namespace o2scl_auto_format {
       automatic spacing and table formatting. Only scientific
       formatting for floating-point numbers is supported at present.
 
-      \note Experimental.
-
-      \note This class caches each line before sending to cout,
-      so issuing <tt>cout << std::flush</tt> in the middle of 
-      a line will not output the buffer to the screen.
-
-      \note The attach() function stores a pointer to the output
-      stream, so the user must take care to make sure this pointer is
-      valid.
-
-      \note For now, this class is in its own namespace, 
-      <tt>o2scl_auto_format</tt>
-
       \verbatim embed:rst
+      .. note::
+
+         Experimental.
+
+         This class caches each line before sending to cout,
+         so issuing ``cout << std::flush`` in the middle of 
+         a line will not output the buffer to the screen.
+
+         The attach() function stores a pointer to the output
+         stream, so the user must take care to make sure this pointer is
+         valid.
+
+         For now, this class is in its own namespace, 
+         ``o2scl_auto_format``.
+
       .. todo:: 
 
          In class auto_format:
@@ -90,14 +93,16 @@ namespace o2scl_auto_format {
            table line specifications
          - Implement row_max
 
-      \endverbatim
+         Future:
 
-      \future Create a replacement for std::flush
-      \future Finish automatic table detection
-      \future For automatic table detection: allow user to change the
-      number of rows which must have the same number of 'words' to
-      verify a table.
-      \future Make internal algorithm more efficient.
+         - Create a replacement for std::flush
+         - Finish automatic table detection
+         - For automatic table detection: allow user to change the
+           number of rows which must have the same number of 'words' to
+           verify a table.
+         - Make internal algorithm more efficient.
+
+      \endverbatim
    */
   class auto_format {
     
@@ -204,7 +209,7 @@ namespace o2scl_auto_format {
     void precision(size_t p);
     
     /** \brief Disable formatting and send all output 
-	directly to \c cout
+        directly to \c cout
      */
     void off();
     
@@ -306,13 +311,13 @@ namespace o2scl_auto_format {
   /** \brief Output a vector of std::strings
    */
   auto_format &operator<<(auto_format &at,
-			  const std::vector<std::string> &vd);
+                          const std::vector<std::string> &vd);
 
   /** \brief Output a ublas vector
    */
   template<class data_t>
   auto_format &operator<<(auto_format &at,
-			  const boost::numeric::ublas::vector<data_t> &vu) {
+                          const boost::numeric::ublas::vector<data_t> &vu) {
     for(size_t i=0;i<vu.size();i++) {
       at << vu[i];
     }
@@ -326,7 +331,7 @@ namespace o2scl_auto_format {
    */
   template<class data_t>
   auto_format &operator<<(auto_format &at,
-			  const boost::numeric::ublas::matrix<data_t> &vu) {
+                          const boost::numeric::ublas::matrix<data_t> &vu) {
 
     bool table_started=false;
     if (at.align_matrices && !at.inside_table) {
@@ -336,7 +341,7 @@ namespace o2scl_auto_format {
     }
     for(size_t i=0;i<vu.size1();i++) {
       for(size_t j=0;j<vu.size2();j++) {
-	at << vu(i,j);
+        at << vu(i,j);
       }
       at << endo;
     }
@@ -354,23 +359,23 @@ namespace o2scl_auto_format {
    */
   template<class data_t>
   auto_format &operator<<(auto_format &at,
-			  const std::vector<std::vector<data_t> > &vv) {
+                          const std::vector<std::vector<data_t> > &vv) {
     bool table_started=false;
     if (at.align_matrices && !at.inside_table && vv.size()>0) {
       size_t nc=vv[0].size();
       bool cols_match=true;
       for(size_t i=0;i<vv.size();i++) {
-	if (vv[i].size()!=nc) cols_match=false;
+        if (vv[i].size()!=nc) cols_match=false;
       }
       if (cols_match) {
-	at.done();
-	at.start_table();
-	table_started=true;
+        at.done();
+        at.start_table();
+        table_started=true;
       }
     }
     for(size_t i=0;i<vv.size();i++) {
       for(size_t j=0;j<vv[i].size();j++) {
-	at << vv[i][j];
+        at << vv[i][j];
       }
       at << endo;
     }
