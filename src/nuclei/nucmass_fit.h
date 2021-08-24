@@ -38,9 +38,9 @@
 #include <o2scl/nucdist.h>
 #include <o2scl/fit_nonlin.h>
 
-#ifndef DOXYGEN_NO_O2NS
+//#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
+  //#endif
 
   /** \brief Fit a nuclear mass formula
 
@@ -175,7 +175,7 @@ namespace o2scl {
 
   protected:
 
-#ifndef DOXYGEN_NO_O2NS
+    //#ifndef DOXYGEN_NO_O2NS
 
     /// Uncertainties
     ubvector uncs;
@@ -189,12 +189,12 @@ namespace o2scl {
      */
     nucmass_fit_base *nmf;
     
-#endif
+    //#endif
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
+  //#ifndef DOXYGEN_NO_O2NS
 }
-#endif
+//#endif
 
 #endif

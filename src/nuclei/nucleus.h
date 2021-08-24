@@ -29,9 +29,9 @@
 
 #include <o2scl/part.h>
 
-#ifndef DOXYGEN_NO_O2NS
+//#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
+  //#endif
 
   /** \brief A simple nucleus class
       
@@ -120,8 +120,8 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
+  //#ifndef DOXYGEN_NO_O2NS
 }
-#endif
+//#endif
 
 #endif

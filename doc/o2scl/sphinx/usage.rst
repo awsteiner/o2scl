@@ -326,6 +326,8 @@ several details about how O\ :sub:`2`\ scl was compiled.
 - O2SCL_PLAIN_HDF5_HEADER - If true, assume HDF5 include statements 
   should be of the form ``#include <hdf5.h>`` independent
   of the automatically determined operating system type.
+- O2SCL_SNAP - If true, then make some modifications to enable
+  compiling O\ :sub:`2`\ scl with snap.
 - O2SCL_UBUNTU_PKG - If true, don't use current date and time macros
   to avoid Ubuntu packaging errors (used in
   ``src/base/lib_settings.cpp`` and ``src/hdf/acolm.cpp``). The

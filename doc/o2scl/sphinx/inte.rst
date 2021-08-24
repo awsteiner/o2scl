@@ -19,40 +19,56 @@ One-dimensional Integration based on GSL, CERNLIB, and Boost
 
 Several classes integrate arbitrary one-dimensional functions:
 
-- Integration over a finite interval: :ref:`inte_adapt_cern <inte_adapt_cern>`,
-  :ref:`inte_gauss_cern <inte_gauss_cern>`,
-  :ref:`inte_gauss56_cern <inte_gauss56_cern>` 
-  :ref:`inte_kronrod_boost <inte_kronrod_boost>`,
-  :ref:`inte_qag_gsl <inte_qag_gsl>`, 
-  and :ref:`inte_qng_gsl <inte_qng_gsl>`. 
-- Integration from :math:`a` to :math:`\infty`: 
-  :ref:`inte_qagiu_gsl <inte_qagiu_gsl>`,
-  :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>`,
-  :ref:`inte_exp_sinh_boost <inte_exp_sinh_boost>`,
-  and :ref:`inte_transform <inte_transform>`.
-- Integration from  :math:`-\infty` to :math:`b`: 
-  :ref:`inte_qagil_gsl <inte_qagil_gsl>`,
-  :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>`, 
-  :ref:`inte_exp_sinh_boost <inte_exp_sinh_boost>`, and
-  :ref:`inte_transform <inte_transform>`.
-- Integration from  :math:`-\infty` to :math:`\infty`: 
-  :ref:`inte_qagi_gsl <inte_qagi_gsl>`,
-  :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>`, 
-  :ref:`inte_sinh_sinh_boost <inte_sinh_sinh_boost>`, and
-  :ref:`inte_transform <inte_transform>`.
+- Integration over a finite interval:
+  
+  * :ref:`inte_adapt_cern <inte_adapt_cern>`
+  * :ref:`inte_gauss_cern <inte_gauss_cern>`
+  * :ref:`inte_gauss56_cern <inte_gauss56_cern>`
+  * :ref:`inte_kronrod_boost <inte_kronrod_boost>`
+  * :ref:`inte_qag_gsl <inte_qag_gsl>`
+  * :ref:`inte_qng_gsl <inte_qng_gsl>`
+    
+- Integration from :math:`a` to :math:`\infty`:
+  
+  * :ref:`inte_qagiu_gsl <inte_qagiu_gsl>`
+  * :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>`
+  * :ref:`inte_exp_sinh_boost <inte_exp_sinh_boost>`
+  * :ref:`inte_transform <inte_transform>`
+    
+- Integration from  :math:`-\infty` to :math:`b`:
+  
+  * :ref:`inte_qagil_gsl <inte_qagil_gsl>`
+  * :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>`
+  * :ref:`inte_exp_sinh_boost <inte_exp_sinh_boost>`
+  * :ref:`inte_transform <inte_transform>`
+       
+- Integration from  :math:`-\infty` to :math:`\infty`:
+  
+  * :ref:`inte_qagi_gsl <inte_qagi_gsl>`,
+  * :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>`, 
+  * :ref:`inte_sinh_sinh_boost <inte_sinh_sinh_boost>`, and
+  * :ref:`inte_transform <inte_transform>`.
+       
 - Integration over a finite interval for a function with
   singularities: :ref:`inte_qags_gsl <inte_qags_gsl>` 
   (See also :ref:`inte_qaws_gsl <inte_qaws_gsl>`.) The 
   :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>` class can also handle 
   singularities near either endpoint.
 - Cauchy principal value integration over a finite interval:
-  :ref:`inte_cauchy_cern <inte_cauchy_cern>`
-  and :ref:`inte_qawc_gsl <inte_qawc_gsl>`
+  
+  * :ref:`inte_cauchy_cern <inte_cauchy_cern>`
+  * :ref:`inte_qawc_gsl <inte_qawc_gsl>`
+    
 - Integration over a function weighted by ``cos(x)`` or ``sin(x)``:
-  :ref:`inte_qawo_gsl_cos <inte_qawo_gsl_cos>` and
-  :ref:`inte_qawo_gsl_sin <inte_qawo_gsl_sin>`
-- Fourier integrals: :ref:`inte_qawf_gsl_cos <inte_qawf_gsl_cos>` and 
-  :ref:`inte_qawf_gsl_sin <inte_qawf_gsl_sin>`
+  
+  * :ref:`inte_qawo_gsl_cos <inte_qawo_gsl_cos>`
+  * :ref:`inte_qawo_gsl_sin <inte_qawo_gsl_sin>`
+       
+- Fourier integrals:
+
+  * :ref:`inte_qawf_gsl_cos <inte_qawf_gsl_cos>`
+  * :ref:`inte_qawf_gsl_sin <inte_qawf_gsl_sin>`
+       
 - Integration over a weight function
 
 .. math::

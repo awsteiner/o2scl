@@ -35,9 +35,9 @@
 #include <o2scl/nucmass_fit.h>
 #include <o2scl/constants.h>
 
-#ifndef DOXYGEN_NO_O2NS
+//#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
+  //#endif
   
   /** \brief FRDM semi-empirical mass formula (macroscopic part only
       with no deformation)
@@ -563,9 +563,9 @@ namespace o2scl {
     
   };
 
-#ifndef DOXYGEN_NO_O2NS
+  //#ifndef DOXYGEN_NO_O2NS
 }
-#endif
+//#endif
 
 #endif
 

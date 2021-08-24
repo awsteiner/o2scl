@@ -49,9 +49,9 @@ namespace o2scl_hdf {
 		bool exp_only);
 }
   
-#ifndef DOXYGEN_NO_O2NS
+//#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
+  //#endif
 
   /** \brief Masses from the Atomic Mass Evaluation 
       
@@ -629,8 +629,8 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGEN_NO_O2NS
+  //#ifndef DOXYGEN_NO_O2NS
 }
-#endif
+//#endif
 
 #endif

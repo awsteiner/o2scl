@@ -200,9 +200,18 @@ namespace o2scl {
       which are undefined away from the initial guess, but there
       are still various ways in which the bracketing algorithm
       can fail.
-      
-      \future Return early if the bracketing procedure finds a root
-      early?
+
+      \verbatim embed:rst      
+
+      .. todo::
+        
+         class root
+
+         Future: Return early if the bracketing procedure finds a root
+         early?
+
+      \endverbatim
+
    */
   virtual int solve(fp_t &x, func_t &func) {
 
@@ -397,8 +406,16 @@ namespace o2scl {
       \note At the moment, the functions solve() and solve_bkt() 
       are not implemented for derivative solvers.
       
-      \future Implement the functions solve() and solve_bkt() 
-      for derivative solvers.
+      \verbatim embed:rst      
+
+      .. todo::
+        
+         class root
+
+         Future: Implement the functions solve() and solve_bkt() 
+         for derivative solvers.
+
+      \endverbatim
   */
   template<class func_t=funct, class dfunc_t=func_t, class fp_t=double> 
   class root_de : public root<func_t,dfunc_t,fp_t> {

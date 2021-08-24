@@ -44,9 +44,9 @@
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/polylog.h>
 
-#ifndef DOXYGEN_NO_O2NS
+//#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
+  //#endif
 
   /** \brief Equation of state for a relativistic fermion
 
@@ -2185,8 +2185,8 @@ namespace o2scl {
   
 #endif
   
-#ifndef DOXYGEN_NO_O2NS
+  //#ifndef DOXYGEN_NO_O2NS
 }
-#endif
+//#endif
 
 #endif

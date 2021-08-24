@@ -40,9 +40,9 @@
 #include <o2scl/part_deriv.h>
 #include <o2scl/fermion_rel.h>
 
-#ifndef DOXYGEN_NO_O2NS
+//#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
+  //#endif
 
   /** \brief Equation of state for a relativistic fermion
 
@@ -935,8 +935,8 @@ namespace o2scl {
   */
   typedef fermion_deriv_rel_tl<> fermion_deriv_rel;
   
-#ifndef DOXYGEN_NO_O2NS
+  //#ifndef DOXYGEN_NO_O2NS
 }
-#endif
+//#endif
 
 #endif

@@ -172,7 +172,15 @@ namespace o2scl {
 
     /** \brief Compute the Euclidean norm of \c ff
       
-	\future Replace this with \c dnrm2 from \ref cblas_base.h
+        \verbatim embed:rst      
+        
+        .. todo::
+        
+           class mroot_hybrids
+        
+           Future: Replace this with \c dnrm2 from \ref cblas_base.h
+        
+        \endverbatim
     */
     template<class vec2_t> double enorm(size_t N, const vec2_t &ff) {
       double e2=0.0;
@@ -196,7 +204,15 @@ namespace o2scl {
 
     /** \brief Compute a trial step and put the result in \c xx_trial
 	
-	\future Replace with daxpy.
+        \verbatim embed:rst      
+        
+        .. todo::
+        
+           class mroot_hybrids
+        
+           Future: Replace this function with daxpy?
+        
+        \endverbatim
     */
     template<class vec2_t>
       int compute_trial_step(size_t N, vec2_t &xl, vec2_t &dxl, 
@@ -209,7 +225,15 @@ namespace o2scl {
 
     /** \brief Compute the change in the function value
 	
-	\future Replace with daxpy?
+        \verbatim embed:rst      
+        
+        .. todo::
+        
+           class mroot_hybrids
+        
+           Future: Replace this function with daxpy?
+        
+        \endverbatim
     */
     template<class vec2_t>
       int compute_df(size_t n, const vec2_t &ff_trial, 
@@ -240,9 +264,17 @@ namespace o2scl {
     }
   
     /** \brief Compute \f$ Q^{T} f \f$
-      
-	\future This is just right-multiplication, so we could
-	use the \o2 cblas routines instead.
+
+        \verbatim embed:rst      
+        
+        .. todo::
+        
+           class mroot_hybrids
+        
+           Future: This function is just right-multiplication, so we
+           could use the O2scl cblas routines instead.
+        
+        \endverbatim
     */
     template<class vec2_t, class vec3_t, class vec4_t>
       void compute_qtf(size_t N, const vec2_t &q2, 
@@ -500,25 +532,30 @@ namespace o2scl {
       data member \ref jacobian_gsl::err_nonconv which separately
       handles the case where the one row of the Jacobian is all zero.
 
-      \future Is all the setting of vectors and matrices to zero really
-      necessary? Do they need to be executed even if memory hasn't
-      been recently allocated?
-
-      \future Convert more ubvectors to vec_t.
-
-      \future Some more of the element-wise vector manipulation could be
-      converted to BLAS routines.
-
-      \future It's kind of strange that set() sets jac_given to false
-      and set_de() has to reset it to true. Can this be simplified?
-
-      \future Many of these minpack functions could be put in their
-      own "minpack_tools" class, or possibly moved to be
-      linear algebra routines instead.
-
-      \future There are still some numbers in here which the user
-      could have control over, for example, the <tt>nslow2</tt>
-      threshold which indicates failure.
+      \verbatim embed:rst      
+        
+      .. todo::
+       
+         class mroot_hybrids
+        
+         Future: 
+        
+         - Is all the setting of vectors and matrices to zero really
+           necessary? Do they need to be executed even if memory hasn't
+           been recently allocated?
+         - Convert more ubvectors to vec_t.
+         - Some more of the element-wise vector manipulation could be
+           converted to BLAS routines.
+         - It's kind of strange that set() sets jac_given to false
+           and set_de() has to reset it to true. Can this be simplified?
+         - Many of these minpack functions could be put in their
+           own "minpack_tools" class, or possibly moved to be
+           linear algebra routines instead.
+         - There are still some numbers in here which the user
+           could have control over, for example, the ``nslow2``
+           threshold which indicates failure.
+         
+      \endverbatim
   */
   template<
     class func_t=mm_funct,

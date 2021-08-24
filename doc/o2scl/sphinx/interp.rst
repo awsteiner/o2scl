@@ -6,10 +6,10 @@ Interpolation
 Interpolation Contents
 ----------------------
 
-- :ref:`Interpolation Introduction`
+- :ref:`Interpolation introduction`
 - :ref:`Lookup and binary search`
 
-Interpolation Introduction
+Interpolation introduction
 --------------------------
 
 Basic interpolation of generic vector types is performed by

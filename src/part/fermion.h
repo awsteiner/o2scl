@@ -49,9 +49,9 @@
 #include <o2scl/part.h>
 #include <o2scl/polylog.h>
 
-#ifndef DOXYGEN_NO_O2NS
+//#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
+  //#endif
 
   /** \brief Fermion class
 
@@ -552,7 +552,7 @@ namespace o2scl {
         for fermion_deriv .
     */
     bool calc_mu_deg(fermion_t &f, fp_t temper, 
-                           fp_t prec=1.0e-18) {
+                     fp_t prec=1.0e-18) {
       
       // Handle the zero-temperature limit
       if (temper==0.0) {
@@ -931,8 +931,8 @@ namespace o2scl {
    */
   typedef fermion_thermo_tl<> fermion_thermo;
   
-#ifndef DOXYGEN_NO_O2NS
+  //#ifndef DOXYGEN_NO_O2NS
 }
-#endif
+//#endif
 
 #endif

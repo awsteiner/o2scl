@@ -6,11 +6,11 @@ Linear Algebra
 Linear Algebra Contents
 -----------------------
 
-- :ref:`Linear Algebra Introduction`
+- :ref:`Linear Algebra introduction`
 - :ref:`Specializations for Armadillo and Eigen`
 - :ref:`Linear algebra enums`
 
-Linear Algebra Introduction
+Linear Algebra introduction
 ---------------------------
   
 There is a small set of linear algebra routines. These are not

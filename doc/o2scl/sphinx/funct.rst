@@ -3,8 +3,8 @@ Function Objects
 
 :ref:`O2scl <o2scl>`
 
-F Contents
-----------
+Function Object Contents
+------------------------
 
 - :ref:`Lambda functions and std::mem_fn <lambda_func>`
 - :ref:`First function object example`

@@ -49,15 +49,9 @@
 #include <o2scl/nucmass_hfb.h>
 #include <o2scl/nucmass_frdm.h>
 
-#ifndef DOXYGEN_NO_O2NS
-
-// While ideally we would leave this o2scl_hdf namespace in the
-// documentation, Doxygen seems to get confused with the o2scl_hdf
-// documentation already in the parent O2scl library. 
-// For now, we leave the o2scl_hdf namespace in
-
+//#ifndef DOXYGEN_NO_O2NS
 namespace o2scl_hdf {
-#endif
+  //#endif
 
   /** \brief Read data for \ref o2scl::nucmass_ame from an HDF table
       specified in a file
@@ -111,10 +105,7 @@ namespace o2scl_hdf {
 
       \verbatim embed:rst
       See also [Goriely02]_, [Samyn04]_, and [Goriely07]_.
-      \endverbatim
 
-
-      \verbatim embed:rst
       .. todo:: 
 
          In hfb_sp_load(): Document models 22 through 27.
@@ -127,8 +118,8 @@ namespace o2scl_hdf {
   void hfb_sp_load(o2scl::nucmass_hfb_sp &hfb, size_t model=27, 
                    std::string filename="");
 
-#ifndef DOXYGEN_NO_O2NS
+  //#ifndef DOXYGEN_NO_O2NS
 }
-#endif
+//#endif
 
 #endif

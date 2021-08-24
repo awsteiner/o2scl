@@ -6,7 +6,7 @@ Arrays, Vectors, Matrices and Tensors
 Arrays, Vectors, Matrices and Tensors Contents
 ----------------------------------------------
 
-- :ref:`Vector and Matrix Introduction`
+- :ref:`Vector and Matrix introduction`
 - :ref:`Rows and columns vs. x and y`
 - :ref:`Assignment and copying`
 - :ref:`Differentiation and integration`
@@ -25,7 +25,7 @@ Arrays, Vectors, Matrices and Tensors Contents
 - :ref:`Tensors`
 - :ref:`I/O and contiguous storage`
 
-Vector and Matrix Introduction
+Vector and Matrix introduction
 ------------------------------
      
 Many useful vector and matrix objects are defined elsewhere, thus O\
