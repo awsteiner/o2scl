@@ -99,14 +99,20 @@ namespace o2scl {
       \verbatim embed:rst
       See the :ref:`One-dimensional solvers` section of the User's
       guide for general information about O2scl solvers.
-      \endverbatim
 
-      \future There's some extra copying here which can probably
-      be removed.
-      \future Compare directly to GSL.
-      \future This can probably be modified to shorten the step
-      if the function goes out of bounds as in exc_mroot_hybrids.
-      
+      .. todo::
+
+         class root_stef
+
+         Future:
+
+         - There's some extra copying here which can probably
+           be removed.
+         - Compare directly to GSL
+         - This can probably be modified to shorten the step
+           if the function goes out of bounds as in exc_mroot_hybrids.
+
+      \endverbatim
   */
   template<class func_t=funct, class dfunc_t=func_t> class root_stef : 
   public root_de<func_t,dfunc_t> {

@@ -66,10 +66,17 @@ namespace o2scl {
       \verbatim embed:rst
       See the :ref:`One-dimensional solvers` section of the User's
       guide for general information about O2scl solvers.
-      \endverbatim
 
-      \future Double-check this class to make sure it cannot fail
-      while returning 0 for success.
+      .. todo::
+
+         class root_cern
+
+         Future:
+
+         - Double-check this class to make sure it cannot fail
+           while returning 0 for success.
+
+      \endverbatim
   */
   template<class func_t=funct> class root_cern : public root<func_t> {
     
@@ -139,10 +146,20 @@ namespace o2scl {
 	#if (defined(CERNLIB_UNIX))&&(defined(CERNLIB_DOUBLE))
 	PARAMETER (EPS =  0.14901 16119 38476 600D-07)
 	#endif
-	\endverbatim
+        \endverbatim
 
-	\future This number should probably default to one of the
-	GSL tolerances.
+        \verbatim embed:rst
+        
+        .. todo::
+        
+           class root_cern
+        
+           Future:
+        
+           - This number should probably default to one of the
+             GSL tolerances.
+        
+        \endverbatim
     */
     double eps;
     

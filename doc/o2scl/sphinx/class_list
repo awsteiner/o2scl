@@ -91,8 +91,8 @@
   <compound refid="classo2scl_1_1inte__hcubature_1_1heap" kind="class"><name>o2scl::inte_hcubature::heap</name>
   <compound refid="classo2scl_1_1hist" kind="class"><name>o2scl::hist</name>
   <compound refid="classo2scl_1_1hist__2d" kind="class"><name>o2scl::hist_2d</name>
-  <compound refid="classo2scl_1_1prob__dens__mdim__amr_1_1hypercube" kind="class"><name>o2scl::prob_dens_mdim_amr::hypercube</name>
   <compound refid="classo2scl_1_1inte__hcubature_1_1hypercube" kind="class"><name>o2scl::inte_hcubature::hypercube</name>
+  <compound refid="classo2scl_1_1prob__dens__mdim__amr_1_1hypercube" kind="class"><name>o2scl::prob_dens_mdim_amr::hypercube</name>
   <compound refid="classo2scl_1_1index__spec" kind="class"><name>o2scl::index_spec</name>
   <compound refid="classo2scl_1_1inte" kind="class"><name>o2scl::inte</name>
   <compound refid="classo2scl_1_1inte__adapt__cern" kind="class"><name>o2scl::inte_adapt_cern</name>

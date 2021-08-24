@@ -73,15 +73,21 @@ namespace o2scl {
       demonstrating the usage of this class is given in
       ``examples/ex_fptr.cpp`` and the :ref:`First function object
       example`.
+
+      .. todo::
+
+         class root_brent_gsl
+
+         Future:
+
+         - There is some duplication in the variables \c x_lower, 
+           \c x_upper, \c a, and \c b, which could be removed. Some
+           better variable names would also be helpful.
+         - Create a meaningful enum list for \ref
+           o2scl::root_brent_gsl::test_form.
+
       \endverbatim
 
-      \future There is some duplication in the variables \c x_lower, 
-      \c x_upper, \c a, and \c b, which could be removed. Some
-      better variable names would also be helpful.
-
-      \future Create a meaningful enum list for \ref
-      o2scl::root_brent_gsl::test_form.
-      
       \comment
       Note that I used \c instead of \ref to refer to variables above
       since the variables a and b are protected, and not available if

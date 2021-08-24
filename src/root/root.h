@@ -41,10 +41,17 @@ namespace o2scl {
       \verbatim embed:rst
       See the :ref:`One-dimensional solvers` section of the User's
       guide for general information about O2scl solvers.
-      \endverbatim
+        
+      .. todo::
+        
+         class root
 
-      \future Maybe consider allowing the user to specify
-      the stream to which 'verbose' information is sent.
+         Future:
+
+         - Maybe consider allowing the user to specify
+           the stream to which 'verbose' information is sent.
+           
+      \endverbatim
   */
   template<class func_t=funct, class dfunc_t=func_t, class fp_t=double>
   class root {
