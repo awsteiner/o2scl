@@ -29,15 +29,15 @@ dochtmlimagesdir = $(prefix)/share/doc/o2scl/part/html/_images
 dist_doc_DATA = *.rst
 dist_docclass_DATA = *.rst
 dist_docfunction_DATA = *.rst
-dist_dochtml_DATA = build/html/*.html build/html/*.js build/html/*.inv
-dist_dochtmlclass_DATA = build/html/class/*.html
-dist_dochtmlfunction_DATA = build/html/function/*.html
+dist_dochtml_DATA = ../../part/html/*.html ../../part/html/*.js ../../part/html/*.inv
+dist_dochtmlclass_DATA = ../../part/html/class/*.html
+dist_dochtmlfunction_DATA = ../../part/html/function/*.html
 
-dist_dochtmlstatic_DATA = build/html/_static/*
-dist_dochtmlimages_DATA = build/html/_images/*
-dist_dochtmlsources_DATA = build/html/_sources/*.txt
-dist_dochtmlsourcesclass_DATA = build/html/_sources/class/*.txt
-dist_dochtmlsourcesfunction_DATA = build/html/_sources/function/*.txt
+dist_dochtmlstatic_DATA = ../../part/html/_static/*
+dist_dochtmlimages_DATA = ../../part/html/_images/*
+dist_dochtmlsources_DATA = ../../part/html/_sources/*.txt
+dist_dochtmlsourcesclass_DATA = ../../part/html/_sources/class/*.txt
+dist_dochtmlsourcesfunction_DATA = ../../part/html/_sources/function/*.txt
 
 # These are the additional files included in the distribution
 # 
@@ -67,16 +67,16 @@ sphinx-help:
 	sphinx-build --help
 
 html: Makefile
-	sphinx-build -v -b html "." build/html 2>&1 | tee sphinx.log
+	sphinx-build -v -b html "." ../../part/html 2>&1 | tee sphinx.log
 
 html-nit: Makefile
-	sphinx-build -v -n -b html "." build/html
+	sphinx-build -v -n -b html "." ../../part/html
 
 html-full:
-	sphinx-build -v -a -E -b html "." build/html
+	sphinx-build -v -a -E -b html "." ../../part/html
 
 html-full-nit:
-	sphinx-build -v -a -E -n -b html "." build/html
+	sphinx-build -v -a -E -n -b html "." ../../part/html
 
 rst-files: empty
 	grep "kind=\"function\"" ../xml/index.xml | \

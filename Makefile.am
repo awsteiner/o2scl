@@ -50,28 +50,6 @@ check_SCRIPTS = o2scl-test
 # -----------------------------------------------------------------
 # Additional targets
 
-# These don't work anymore
-#	@echo "move-doc:         Move documentation to a separate directory"
-#	@echo "restore-doc:      Restore documentation after move"
-#	@echo "o2scl-benchmarks: Compile and run benchmarks (not working)"
-
-# move-doc:
-# 	cd doc/o2scl/html; mkdir ../htdir; mv -i *.html *.png ../htdir; 
-# 	cd doc/o2scl/html; touch index.html blank.png
-# 	cd doc/o2scl/eos/html; mkdir ../htdir; mv -i *.html *.png ../htdir; 
-# 	cd doc/o2scl/eos/html; touch index.html blank.png
-# 	cd doc/o2scl/part/html; mkdir ../htdir; mv -i *.html *.png ../htdir; 
-# 	cd doc/o2scl/part/html; touch index.html blank.png
-
-# restore-doc:
-# 	cd doc/o2scl/html; mv ../htdir/* .; rmdir ../htdir
-# 	cd doc/o2scl/eos/html; mv ../htdir/* .; rmdir ../htdir
-# 	cd doc/o2scl/part/html; mv ../htdir/* .; rmdir ../htdir
-
-# Compile and run all benchmarks
-# o2scl-benchmarks:
-#	cd examples && $(MAKE) o2scl-benchmarks
-
 # Compile and run all examples
 o2scl-examples:
 	cd examples && $(MAKE) o2scl-examples
@@ -125,6 +103,7 @@ o2scl-doc:
 clean-doc:
 	cd doc/o2scl && $(MAKE) clean-doc-recursive
 
+#Change permissions to current user with sudo
 permfix:
 	sudo chown -R `whoami`:`whoami` * .git
 
@@ -135,13 +114,7 @@ else
 endif
 
 open-doc:
-	$(BROWSER) doc/o2scl/sphinx/build/html/index.html
-
-open-eos-doc:
-	$(BROWSER) doc/o2scl/eos/sphinx/build/html/index.html
-
-open-part-doc:
-	$(BROWSER) doc/o2scl/part/sphinx/build/html/index.html
+	$(BROWSER) doc/o2scl/html/index.html
 
 interface: empty
 	cd bin; $(MAKE) yanic
@@ -151,61 +124,61 @@ empty:
 
 # Create empty documentation
 blank-doc:
-	mkdir -p doc/o2scl/sphinx/build/html
-	mkdir -p doc/o2scl/eos/sphinx/build/html
-	mkdir -p doc/o2scl/part/sphinx/build/html
-	mkdir -p doc/o2scl/sphinx/build/html/class
-	mkdir -p doc/o2scl/eos/sphinx/build/html/class
-	mkdir -p doc/o2scl/part/sphinx/build/html/class
-	mkdir -p doc/o2scl/sphinx/build/html/function
-	mkdir -p doc/o2scl/eos/sphinx/build/html/function
-	mkdir -p doc/o2scl/part/sphinx/build/html/function
-	mkdir -p doc/o2scl/sphinx/build/html/_sources
-	mkdir -p doc/o2scl/eos/sphinx/build/html/_sources
-	mkdir -p doc/o2scl/part/sphinx/build/html/_sources
-	mkdir -p doc/o2scl/sphinx/build/html/_sources/class
-	mkdir -p doc/o2scl/eos/sphinx/build/html/_sources/class
-	mkdir -p doc/o2scl/part/sphinx/build/html/_sources/class
-	mkdir -p doc/o2scl/sphinx/build/html/_sources/function
-	mkdir -p doc/o2scl/eos/sphinx/build/html/_sources/function
-	mkdir -p doc/o2scl/part/sphinx/build/html/_sources/function
-	mkdir -p doc/o2scl/sphinx/build/html/_static
-	mkdir -p doc/o2scl/eos/sphinx/build/html/_static
-	mkdir -p doc/o2scl/part/sphinx/build/html/_static
-	mkdir -p doc/o2scl/sphinx/build/html/_images
-	mkdir -p doc/o2scl/eos/sphinx/build/html/_images
-	mkdir -p doc/o2scl/part/sphinx/build/html/_images
+	mkdir -p doc/o2scl/html
+	mkdir -p doc/o2scl/eos/html
+	mkdir -p doc/o2scl/part/html
+	mkdir -p doc/o2scl/html/class
+	mkdir -p doc/o2scl/eos/html/class
+	mkdir -p doc/o2scl/part/html/class
+	mkdir -p doc/o2scl/html/function
+	mkdir -p doc/o2scl/eos/html/function
+	mkdir -p doc/o2scl/part/html/function
+	mkdir -p doc/o2scl/html/_sources
+	mkdir -p doc/o2scl/eos/html/_sources
+	mkdir -p doc/o2scl/part/html/_sources
+	mkdir -p doc/o2scl/html/_sources/class
+	mkdir -p doc/o2scl/eos/html/_sources/class
+	mkdir -p doc/o2scl/part/html/_sources/class
+	mkdir -p doc/o2scl/html/_sources/function
+	mkdir -p doc/o2scl/eos/html/_sources/function
+	mkdir -p doc/o2scl/part/html/_sources/function
+	mkdir -p doc/o2scl/html/_static
+	mkdir -p doc/o2scl/eos/html/_static
+	mkdir -p doc/o2scl/part/html/_static
+	mkdir -p doc/o2scl/html/_images
+	mkdir -p doc/o2scl/eos/html/_images
+	mkdir -p doc/o2scl/part/html/_images
 	@echo ""
-	touch doc/o2scl/sphinx/build/html/index.html
-	touch doc/o2scl/part/sphinx/build/html/index.html
-	touch doc/o2scl/eos/sphinx/build/html/index.html
-	touch doc/o2scl/sphinx/build/html/blank.js
-	touch doc/o2scl/part/sphinx/build/html/blank.js
-	touch doc/o2scl/eos/sphinx/build/html/blank.js
-	touch doc/o2scl/sphinx/build/html/blank.inv
-	touch doc/o2scl/part/sphinx/build/html/blank.inv
-	touch doc/o2scl/eos/sphinx/build/html/blank.inv
-	touch doc/o2scl/sphinx/build/html/class/index.html
-	touch doc/o2scl/part/sphinx/build/html/class/index.html
-	touch doc/o2scl/eos/sphinx/build/html/class/index.html
-	touch doc/o2scl/sphinx/build/html/function/index.html
-	touch doc/o2scl/part/sphinx/build/html/function/index.html
-	touch doc/o2scl/eos/sphinx/build/html/function/index.html
-	touch doc/o2scl/sphinx/build/html/_sources/blank.txt
-	touch doc/o2scl/eos/sphinx/build/html/_sources/blank.txt
-	touch doc/o2scl/part/sphinx/build/html/_sources/blank.txt
-	touch doc/o2scl/sphinx/build/html/_sources/class/blank.txt
-	touch doc/o2scl/eos/sphinx/build/html/_sources/class/blank.txt
-	touch doc/o2scl/part/sphinx/build/html/_sources/class/blank.txt
-	touch doc/o2scl/sphinx/build/html/_sources/function/blank.txt
-	touch doc/o2scl/eos/sphinx/build/html/_sources/function/blank.txt
-	touch doc/o2scl/part/sphinx/build/html/_sources/function/blank.txt
-	touch doc/o2scl/sphinx/build/html/_static/blank.png
-	touch doc/o2scl/eos/sphinx/build/html/_static/blank.png
-	touch doc/o2scl/part/sphinx/build/html/_static/blank.png
-	touch doc/o2scl/sphinx/build/html/_images/blank.png
-	touch doc/o2scl/eos/sphinx/build/html/_images/blank.png
-	touch doc/o2scl/part/sphinx/build/html/_images/blank.png
+	touch doc/o2scl/html/index.html
+	touch doc/o2scl/part/html/index.html
+	touch doc/o2scl/eos/html/index.html
+	touch doc/o2scl/html/blank.js
+	touch doc/o2scl/part/html/blank.js
+	touch doc/o2scl/eos/html/blank.js
+	touch doc/o2scl/html/blank.inv
+	touch doc/o2scl/part/html/blank.inv
+	touch doc/o2scl/eos/html/blank.inv
+	touch doc/o2scl/html/class/index.html
+	touch doc/o2scl/part/html/class/index.html
+	touch doc/o2scl/eos/html/class/index.html
+	touch doc/o2scl/html/function/index.html
+	touch doc/o2scl/part/html/function/index.html
+	touch doc/o2scl/eos/html/function/index.html
+	touch doc/o2scl/html/_sources/blank.txt
+	touch doc/o2scl/eos/html/_sources/blank.txt
+	touch doc/o2scl/part/html/_sources/blank.txt
+	touch doc/o2scl/html/_sources/class/blank.txt
+	touch doc/o2scl/eos/html/_sources/class/blank.txt
+	touch doc/o2scl/part/html/_sources/class/blank.txt
+	touch doc/o2scl/html/_sources/function/blank.txt
+	touch doc/o2scl/eos/html/_sources/function/blank.txt
+	touch doc/o2scl/part/html/_sources/function/blank.txt
+	touch doc/o2scl/html/_static/blank.png
+	touch doc/o2scl/eos/html/_static/blank.png
+	touch doc/o2scl/part/html/_static/blank.png
+	touch doc/o2scl/html/_images/blank.png
+	touch doc/o2scl/eos/html/_images/blank.png
+	touch doc/o2scl/part/html/_images/blank.png
 
 snapb:
 	snapcraft build 2>&1 > ~/o2scl_snap.out &

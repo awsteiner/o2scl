@@ -95,8 +95,8 @@ Namespace: o2scl_hdf class: hdf_file
 Namespace: o2scl class: inte_hcubature::heap
 Namespace: o2scl class: hist
 Namespace: o2scl class: hist_2d
-Namespace: o2scl class: inte_hcubature::hypercube
 Namespace: o2scl class: prob_dens_mdim_amr::hypercube
+Namespace: o2scl class: inte_hcubature::hypercube
 Namespace: o2scl class: index_spec
 Namespace: o2scl class: inte
 Namespace: o2scl class: inte_adapt_cern

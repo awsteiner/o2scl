@@ -42,30 +42,10 @@ emacs-clean:
 release-sync-doc:
 	rsync -Cavzu /usr/local/share/doc/o2scl/* \
 		$(STATIC_DOC_DIR)/o2scl
-# rsync -Cavzu extras/index.html \
-# 	$(STATIC_DOC_DIR)/o2scl
-# rsync -Cavzu extras/bootstrap.css \
-# 	$(STATIC_DOC_DIR)/o2scl
-# rsync -Cavzu extras/bootstrap.js \
-# 	$(STATIC_DOC_DIR)/o2scl
-# rsync -Cavzu extras/bootstrap-responsive.css \
-# 	$(STATIC_DOC_DIR)/o2scl
-# rsync -Cavzu extras/jquery-2.0.3.min.js \
-# 	$(STATIC_DOC_DIR)/o2scl
 
 prerelease-sync-doc:
 	rsync -Cavzu -r /usr/local/share/doc/o2scl/* \
 		$(STATIC_DOC_DIR)/o2scl-dev
-#	rsync -Cavzu extras/index.html \
-#		$(STATIC_DOC_DIR)/o2scl-dev
-#	rsync -Cavzu extras/bootstrap.css \
-#		$(STATIC_DOC_DIR)/o2scl-dev
-#	rsync -Cavzu extras/bootstrap.js \
-#		$(STATIC_DOC_DIR)/o2scl-dev
-#	rsync -Cavzu extras/bootstrap-responsive.css \
-#		$(STATIC_DOC_DIR)/o2scl-dev
-#	rsync -Cavzu extras/jquery-2.0.3.min.js \
-#		$(STATIC_DOC_DIR)/o2scl-dev
 
 o2scl-doc-recursive: o2scl-doc
 	cd part && $(MAKE) o2scl-doc
@@ -74,9 +54,6 @@ o2scl-doc-recursive: o2scl-doc
 o2scl-doc:
 	doxygen doxyfile > doxygen.scr
 	cd sphinx && $(MAKE) o2scl-doc
-#cd extras; acol -run acol.scr > acol.out
-#doxygen doxyfile > doxygen.scr
-#cat doxygen.log
 
 clean-doc-recursive: clean-doc
 	cd part && $(MAKE) clean-doc
@@ -85,7 +62,7 @@ clean-doc-recursive: clean-doc
 clean-doc:
 	cd html; rm -f *.html *.png formula.repository doxygen.css \
 		_formulas* installdox tab*.gif tabs.css
-	cd sphinx/build; rm -rf html
+	rm -rf html
 	rm -f o2scl.tag
 
 clean-doc-noform:

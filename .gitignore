@@ -29,6 +29,13 @@ o2scl*.tar.gz
 *.la
 *.a
 
+# sphinx/breathe files
+.buildinfo
+.doctrees
+_sources
+_static
+objects.inv
+
 # Makefiles required by autoconf and automake
 a.out.dSYM
 m4
