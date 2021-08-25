@@ -334,7 +334,7 @@ int main(int argc, char *argv[]) {
 	      "plain table mcmc 1");
   mpc.sev_x2.current_avg_stats(avg,std,avg_err,i1,i2);
   cout << avg << " " << avg_err << " " << i1 << " " << i2 << endl;
-  tm.test_rel(avg,res[2],4.0*sqrt(avg_err*avg_err+err[2]*err[2]),
+  tm.test_rel(avg,res[2],10.0*sqrt(avg_err*avg_err+err[2]*err[2]),
 	      "plain table mcmc 2");
   
   std::vector<size_t> chain_sizes;

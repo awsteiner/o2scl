@@ -106,7 +106,7 @@ int main(void) {
 	 << fabs(res2-exact)/err << endl;
     t.test_rel(res2,exact,err*10.0,"O2SCL");
     cout << "O2scl-GSL: " << res2-res1 << endl;
-    t.test_rel(res1,res2,4.0e-2,"O2SCL vs. GSL");
+    t.test_rel(res1,res2,2.0e-1,"O2SCL vs. GSL");
   }
 
   t.report();
