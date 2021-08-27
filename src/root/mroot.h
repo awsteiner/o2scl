@@ -59,9 +59,14 @@ namespace o2scl {
       There is an example for the usage of the multidimensional solver
       classes given in ``examples/ex_mroot.cpp``, see the
       :ref:`Multi-dimensional solver example`.
-      \endverbatim
 
-      \future Change ntrial to size_t?
+      .. todo::
+
+         Class mroot:
+
+         Future: Change ntrial to size_t?
+
+      \endverbatim
   */
   template<class func_t=mm_funct, 
     class vec_t=boost::numeric::ublas::vector<double>,

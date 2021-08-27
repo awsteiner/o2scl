@@ -72,26 +72,32 @@ namespace o2scl {
       need to be checked explicitly by the caller.
 
       \verbatim embed:rst
+
       See the :ref:`Multi-dimensional solvers` section of the User's
       guide for general information about the O2scl solvers. There is
       an example for the usage of the multidimensional solver classes
       given in ``examples/ex_mroot.cpp``, see the
       :ref:`Multi-dimensional solver example`.
-      \endverbatim
 
-      \future Modify this so it handles functions which return
-      non-zero values.
-      \future Move some of the memory allocation out of msolve()
-      \future Give the user access to the number of function
-      calls
-      \future Rename nier6, nier7, and nier8 to something sensible.
-      \future It may be that the \o2 native Householder transformations
-      should be used here instead of the inline version given here.
+      .. todo::
 
-      \verbatim embed:rst
-      Based on the CERNLIB routines RSNLEQ and DSNLEQ, which was 
-      based on [More79]_ and [More80]_ and is documented at
-      http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/c201/top.html
+         In class mroot_cern:
+         
+         Future:
+
+         - Modify this so it handles functions which return
+           non-zero values.
+         - Move some of the memory allocation out of msolve()
+         - Give the user access to the number of function
+           calls
+         - Rename nier6, nier7, and nier8 to something sensible.
+         - It may be that the \o2 native Householder transformations
+           should be used here instead of the inline version given here.
+
+       Based on the CERNLIB routines RSNLEQ and DSNLEQ, which was 
+       based on [More79]_ and [More80]_ and is documented at
+       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/c201/top.html
+
       \endverbatim
   */
     template<class func_t=mm_funct,

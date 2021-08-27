@@ -26,7 +26,7 @@ Release procedure
   OS X and a homebrew HEAD install.
 - Try a test build on travis-ci.org
 - Make sure snaps are working using 
-  ``sudo snapcraft -d cleanbuild``
+  ``snapcraft build --debug``.
 - Update NEWS file with recent changes.
 - Make the final commit targeted for release. 
 - Check the commit succeeds on travis-ci.org

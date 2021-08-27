@@ -698,15 +698,21 @@ namespace o2scl {
   /** \brief Compute properties of a fermion including derivatives
       [abstract base]
 
-      \future Include explicit zero-temperature calculation, maybe
-      by making this a child of fermion_zerot or by making a 
-      new fermion_deriv_zerot? 
-      \comment
-      dn/dmu is just g*mu*kf/2/pi^2
-      \endcomment
-      \future There is also a closed form for the derivatives
-      of massless fermions with pairs at finite temperature
-      in Constantinou et al. 2014 which could be implemented here.
+      \verbatim embed:rst
+
+      .. todo::
+
+         Class fermion_deriv_thermo_tl
+
+         Future:
+
+         - Include explicit zero-temperature calculation, maybe
+         by making this a child of fermion_zerot or by making a 
+         new fermion_deriv_zerot? 
+         - There is also a closed form for the derivatives
+         of massless fermions with pairs at finite temperature
+         in Constantinou et al. 2014 which could be implemented here.
+      \endverbatim
   */
   template<class fp_t=double>
   class fermion_deriv_thermo_tl : public deriv_thermo_base_tl<fp_t> {
@@ -759,10 +765,18 @@ namespace o2scl {
     /** \brief Calculate properties as a function of chemical 
 	potential using a degenerate expansion
 
-	\future There is some repetition of the code
-	for this function and the function
-	\ref o2scl::fermion_thermo_tl::calc_mu_deg() .
-	which could be avoided.
+        \verbatim embed:rst
+      
+        .. todo::
+
+           Class fermion_deriv_thermo_tl
+
+           Future: There is some repetition of the code for this
+           function and the function \ref
+           o2scl::fermion_thermo_tl::calc_mu_deg() . which could be
+           avoided.
+
+      \endverbatim
     */
     virtual bool calc_mu_deg(fermion_deriv &f, fp_t temper,
 			     fp_t prec) {
@@ -829,10 +843,18 @@ namespace o2scl {
     /** \brief Calculate properties as a function of chemical 
 	potential using a nondegenerate expansion
 
-	\future There is some repetition of the code
-	for this function and the function
-	\ref o2scl::fermion_thermo_tl::calc_mu_ndeg() .
-	which could be avoided.
+        \verbatim embed:rst
+      
+        .. todo::
+
+           Class fermion_deriv_thermo_tl
+
+           Future: There is some repetition of the code for this
+           function and the function \ref
+           o2scl::fermion_thermo_tl::calc_mu_ndeg() . which could be
+           avoided.
+
+        \endverbatim
     */
     virtual bool calc_mu_ndeg(fermion_deriv &f, fp_t temper,
 			      fp_t prec, bool inc_antip=false) {

@@ -3,11 +3,9 @@ Download O\ :sub:`2`\ scl
 
 :ref:`O2scl <o2scl>`
 
-This documentation is from version 0.926.a1
-
-The current version is 0.925. The source distribution can be obtained
+The current version is 0.926. The source distribution can be obtained
 from
-https://github.com/awsteiner/o2scl/releases/download/v0.925/o2scl-0.925.tar.gz
+https://github.com/awsteiner/o2scl/releases/download/v0.926/o2scl-0.926.tar.gz
 
 You may also download O\ :sub:`2`\ scl from the Github
 repository. To obtain the most recent development version, 
@@ -55,6 +53,7 @@ o2scl-0.922.tar.gz    12a531f652d299af213a5f1f9bc46866
 o2scl-0.923.tar.gz    7896282e992b9be41797d25bb8ac697d
 o2scl-0.924.tar.gz    1c0175b80a86bcbff8d25294415409f8
 o2scl-0.925.tar.gz    17e1e979297ed3778f5a957aa500bfec
+o2scl-0.926.tar.gz    not yet set
 ===================== ================================
 
 ===================== ================================================================
@@ -93,6 +92,7 @@ o2scl-0.922.tar.gz    e4e636ae2506231087794b3d0603aeef2eca4409d06902d1b55fc015e5
 o2scl-0.923.tar.gz    dc98d20cf3943cfc715505d5d2a354607711e9ecd04fd7a442c585ed573cffb2
 o2scl-0.924.tar.gz    a9fa7b313566fd49d60fc3e924c207e0d1eb77f324cf982f7062a0451cbfea0b
 o2scl-0.925.tar.gz    0e9818db200db6fb896aae0395e6510dc2f8d97d532e903994cabc4680617385
+o2scl-0.926.tar.gz    not yet set
 ===================== ================================================================
 
 ======== ========== ========================= ==================
@@ -130,5 +130,6 @@ Version   Date       Rev. in Sourceforge SVN   Github repo hash
 0.923     04/29/19   N/A                       08436c7f7d869d75d67df6321e2a9a5aa707e604
 0.924     12/30/19   N/A                       5d0314a5daf3b6f87e8dff2eadddbe3a9f80681f
 0.925     11/06/20   N/A                       6f7707114c1c322f9c22be143823fa95098c5bd8
+0.926     xx/xx/xx   N/A                       not yet set
 ======== ========== ========================= ==================
 

@@ -1,3 +1,52 @@
+Notes for 0.926 release:
+
+The gen_test_number class has been rewritten and imporoved to
+allow for more flexbility.
+
+Improvements to polylogs and associated testing. 
+
+Started process of using C++ std random number generators instead of
+GSL.
+
+Improved the verbose output in root_brent_gsl, the behavior of
+tensor::rearrange(), the polynomial classes (especially for larger
+floating-point types).
+
+Improved OpenMP integration.
+
+Created functions to compute KL divergence and a new set of classes,
+matrix_invert_det to handle the inversion and determinants with Eigen
+or Armadillo.
+
+Updated to more recent versions of AME and FRDM.
+
+Created a new vector_autocorr_fftw function for autocorrelations.
+
+Created dockerfiles in a docker directory for common configurations.
+
+Created a new set of HDF5 input functions, hdf_input_n(), to allow
+input with or without a name.
+
+More work on the python interface everywhere and the snapcraft configuration.
+
+Improved citations for nuclear masses, handling of electrons and
+photons in eos_sn, the fermion_rel nondegenerate expansion, the
+fermion_rel pair_density() function, the nstar_cold class (including a
+small change to the default crust), the fermion_mag_zerot class, the
+tov_love class, the eos_tov_buchdahl class, the command ser-hist-t3d
+in acol, the function table3d::create_hist_set().
+
+Updated nucmass_ldrop to avoid unphysical central densities.
+
+Created experimental exp_max, nstar_hot, eos_quark_njl_vec, and
+eos_had_virial_spin. Progress on the experimental interp_krige
+classes.
+
+Improved documentation everywhere.
+
+Cleaned the acol -commands, acol -help,
+
+------------------------------------------------------------------------
 Notes for 0.925 release:
 
 Fixed interpolation bug and log grid bug in
