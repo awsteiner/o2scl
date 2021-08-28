@@ -24,7 +24,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/mm_funct.h>
 #include <o2scl/mroot_hybrids.h>
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 
 using namespace std;
 using namespace o2scl;

@@ -40,7 +40,6 @@
 
 #include <o2scl/hist.h>
 #include <o2scl/rng.h>
-#include <o2scl/rng_gsl.h>
 #include <o2scl/search_vec.h>
 #include <o2scl/cholesky.h>
 #include <o2scl/lu.h>
@@ -316,7 +315,7 @@ namespace o2scl {
     double ul;
 
     /// The GSL random number generator
-    rng_gsl r;
+    mutable rng<> r;
     
   public:
 
@@ -402,7 +401,8 @@ namespace o2scl {
 	O2SCL_ERR2("Limits not set in prob_dens_uniform::",
 		   "operator().",exc_einval);
       }
-      return gsl_ran_flat(&r,ll,ul);
+      double ret=r.random()*(ul-ll)+ll;
+      return ret;
     }
     
     /// The normalized density 
@@ -412,7 +412,7 @@ namespace o2scl {
 		   "pdf().",exc_einval);
       }
       if (x<ll || x>ul) return 0.0;
-      return gsl_ran_flat_pdf(x,ll,ul);
+      return 1.0/(ul-ll);
     }
     
     /// The log of the normalized density 
@@ -422,7 +422,7 @@ namespace o2scl {
 		   "pdf().",exc_einval);
       }
       if (x<ll || x>ul) return 0.0;
-      return log(gsl_ran_flat_pdf(x,ll,ul));
+      return log(1.0/(ul-ll));
     }
     
     /// The cumulative distribution function (from the lower tail)
@@ -433,7 +433,7 @@ namespace o2scl {
       }
       if (x<ll) return 0.0;
       if (x>ul) return 1.0;
-      return gsl_cdf_flat_P(x,ll,ul);
+      return (x-ll)/(ul-ll);
     }
     
     /// The inverse cumulative distribution function
@@ -446,7 +446,9 @@ namespace o2scl {
 	O2SCL_ERR2("Requested cdf inverse outside of [0,1] in ",
 		   "prob_dens_uniform::invert_cdf().",exc_einval);
       }
-      return gsl_cdf_flat_Pinv(in_cdf,ll,ul);
+      if (in_cdf==1.0) return ul;
+      if (in_cdf==0.0) return ll;
+      return in_cdf*(ul-ll)+ll;
     }
 
     /// Entropy of the distribution (\f$ - \int f \ln f \f$ )
@@ -496,13 +498,16 @@ namespace o2scl {
     double mu_;
 
     /// The GSL random number generator
-    rng_gsl r;
+    mutable rng<> r;
+
+    /// C++ base normal distribution
+    std::lognormal_distribution<double> lnd;
     
   public:
 
     /** \brief Create a blank lognormal distribution
      */
-    prob_dens_lognormal() {
+    prob_dens_lognormal() : lnd() {
       sigma_=-1.0;
       mu_=0.0;
     }
@@ -512,7 +517,7 @@ namespace o2scl {
 
 	The value of \c sigma must be larger than zero.
     */
-    prob_dens_lognormal(double mu, double sigma) {
+    prob_dens_lognormal(double mu, double sigma) : lnd(mu,sigma) {
       if (sigma<0.0) {
 	O2SCL_ERR2("Tried to create log normal dist. with mu or sigma",
 		   "<0 in prob_dens_lognormal::prob_dens_lognormal().",
@@ -529,6 +534,7 @@ namespace o2scl {
     prob_dens_lognormal(const prob_dens_lognormal &pdg) : prob_dens_positive() {
       mu_=pdg.mu_;
       sigma_=pdg.sigma_;
+      lnd=std::lognormal_distribution<double>(mu_,sigma_);
     }
 
     /// Copy constructor with operator=
@@ -537,6 +543,7 @@ namespace o2scl {
       if (this==&pdg) return *this;
       mu_=pdg.mu_;
       sigma_=pdg.sigma_;
+      lnd=pdg.lnd;
       return *this;
     }
 
@@ -550,16 +557,27 @@ namespace o2scl {
       }
       mu_=mu;
       sigma_=sigma;
+      lnd=std::lognormal_distribution<double>(mu_,sigma_);
+      return;
     }
 
     /// Set the seed
     void set_seed(unsigned long int s) {
       r.set_seed(s);
+      return;
     }
 
     /// Sample from the specified density
     virtual double operator()() const {
-      return gsl_ran_lognormal(&r,mu_,sigma_);
+      double u, r2=0.0;
+      do {
+        u=-1.0+2.0*r.random();
+        double v=-1.0+2.0*r.random();
+        r2=u*u+v*v;
+      } while (r2>1.0 || r2==0.0);
+      double normal=u*sqrt(-2.0*log(r2)/r2);
+      double z=exp(sigma_*normal+mu_);
+      return z;
     }
     
     /// The normalized density 
@@ -567,7 +585,11 @@ namespace o2scl {
       if (x<0.0) {
 	return 0.0;
       }
-      return gsl_ran_lognormal_pdf(x,mu_,sigma_);
+      double u=(log(x)-mu_)/sigma_;
+      double p=1.0/(x*fabs(sigma_)*sqrt(2.0*o2scl_const::pi))*
+        exp(-u*u/2.0);
+
+      return p;
     }
     
     /// The log of the normalized density 
@@ -575,7 +597,7 @@ namespace o2scl {
       if (x<0.0) {
 	return 0.0;
       }
-      return log(gsl_ran_lognormal_pdf(x,mu_,sigma_));
+      return log(this->pdf(x));
     }
     
     /// The cumulative distribution function (from the lower tail)

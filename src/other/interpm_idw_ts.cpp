@@ -26,7 +26,7 @@
 #include <o2scl/interpm_idw.h>
 #include <o2scl/interp2_neigh.h>
 #include <o2scl/interp2_planar.h>
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 #include <o2scl/table.h>
 
 using namespace std;
@@ -44,7 +44,7 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-  rng_gsl rg;
+  rng<> rg;
   
   // Construct the data
   ubvector x(8), y(8), dp(8);

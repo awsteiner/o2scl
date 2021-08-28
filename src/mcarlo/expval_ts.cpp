@@ -21,7 +21,7 @@
   -------------------------------------------------------------------
 */
 #include <o2scl/test_mgr.h>
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 #include <o2scl/expval.h>
 #include <o2scl/constants.h>
 
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
   test_mgr t;
   t.set_output_level(1);
 
-  rng_gsl gr;
+  rng<> gr;
   int seed=10;
   if (argc>=2) {
     seed=o2scl::stoi(argv[1]);

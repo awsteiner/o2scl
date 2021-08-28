@@ -31,7 +31,7 @@
 
 #include <o2scl/test_mgr.h>
 #include <o2scl/lanczos.h>
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 
 using namespace std;
 using namespace o2scl;
@@ -49,7 +49,7 @@ int main(void) {
   {
     using namespace o2scl_linalg;
 
-    rng_gsl gr;
+    rng<> gr;
 
     ubvector eigen(size);
     ubvector diag(size);

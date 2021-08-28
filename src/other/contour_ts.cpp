@@ -26,7 +26,7 @@
 #include <iostream>
 #include <o2scl/contour.h>
 #include <o2scl/test_mgr.h>
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 
 using namespace std;
 using namespace o2scl;
@@ -340,7 +340,7 @@ int main(void) {
   
     cout << "Stress test:" << endl;
 
-    rng_gsl ran;
+    rng<> ran;
   
     // Test non-square data
     ubvector tsx(3), tsy(3), tslev(1);

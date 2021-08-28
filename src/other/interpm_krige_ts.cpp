@@ -27,7 +27,7 @@
 #include <o2scl/table.h>
 #include <o2scl/interp2_neigh.h>
 #include <o2scl/interp2_planar.h>
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 
 using namespace std;
 using namespace o2scl;

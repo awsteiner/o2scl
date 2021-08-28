@@ -177,7 +177,7 @@ int main(void) {
     vector<double> act;
     double aca=0.9;
     double acx=0.0;
-    rng_gsl r;
+    rng<> r;
     r.clock_seed();
     for(size_t i=0;i<4000000;i++) {
       acx=aca*acx+r.random();
@@ -201,7 +201,7 @@ int main(void) {
        Test a simple data set with a known covariance length of 25
      */
     vector<double> act;
-    rng_gsl r;
+    rng<> r;
     r.clock_seed();
     double x0=r.random();
     static const size_t NN=100000;

@@ -22,7 +22,7 @@
 */
 #include <o2scl/interp_krige.h>
 #include <o2scl/test_mgr.h>
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
 
@@ -224,7 +224,7 @@ int main(void) {
   // Third set of test data
 
   cout.setf(ios::showpos);
-  rng_gsl rg;
+  rng<> rg;
 
   double err=1.0e-2;
   ubvector x3(30), y3(30);

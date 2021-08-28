@@ -25,7 +25,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 #include <o2scl/prob_dens_mdim_amr.h>
 
 using namespace std;
@@ -82,7 +82,7 @@ int main(void) {
     hf.close();
   }
 
-  rng_gsl r;
+  rng<> r;
 
   static const size_t N=20;
   

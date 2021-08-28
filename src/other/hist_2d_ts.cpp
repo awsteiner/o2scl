@@ -24,7 +24,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/constants.h>
 #include <o2scl/convert_units.h>
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 
 using namespace std;
 using namespace o2scl;
@@ -45,7 +45,7 @@ int main(void) {
   }
   cout << endl;
 
-  rng_gsl gr;
+  rng<> gr;
   for(size_t i=0;i<10000;i++) {
     h.update(gr.random()*gr.random()+1.0,gr.random()*gr.random()*9.0);
   }
