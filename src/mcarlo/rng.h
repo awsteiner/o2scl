@@ -39,7 +39,7 @@ namespace o2scl {
   protected:
 
     /// Random number engine
-    std::default_random_engine def_engine;
+    std::mt19937 def_engine;
 
     /// Distribution for \f$ [0,1) \f$
     std::uniform_real_distribution<fp_t> dist;
