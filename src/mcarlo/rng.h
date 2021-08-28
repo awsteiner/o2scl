@@ -38,9 +38,6 @@ namespace o2scl {
     
   protected:
 
-    /// Random number engine
-    std::mt19937 def_engine;
-
     /// Distribution for \f$ [0,1) \f$
     std::uniform_real_distribution<fp_t> dist;
 
@@ -49,6 +46,9 @@ namespace o2scl {
 
   public:
     
+    /// Random number engine
+    std::mt19937 def_engine;
+
     rng() {
       seed=time(0);
       def_engine.seed(seed);

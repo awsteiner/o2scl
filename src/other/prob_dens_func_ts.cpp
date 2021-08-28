@@ -53,6 +53,12 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
+  prob_dens_gaussian pdg(10.0,2.0);
+  for(size_t i=0;i<100;i++) {
+    cout << pdg() << endl;
+  }
+  exit(-1);
+  
   test_mgr t;
   t.set_output_level(2);
 

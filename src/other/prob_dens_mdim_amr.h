@@ -29,7 +29,7 @@
 #include <o2scl/table.h>
 #include <o2scl/err_hnd.h>
 #include <o2scl/prob_dens_func.h>
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 #include <o2scl/vector.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -175,7 +175,7 @@ namespace o2scl {
 
   /** \brief Internal random number generator
    */
-  mutable o2scl::rng_gsl rg;
+    mutable o2scl::rng<> rg;
 
   /** \brief Desc
    */

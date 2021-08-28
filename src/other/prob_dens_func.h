@@ -128,15 +128,18 @@ namespace o2scl {
 	A value of -1 indicates it is yet unspecified.
     */
     double sigma_;
-    
-    /// Base GSL random number generator
-    o2scl::rng_gsl r;
+
+    /// Base random number generator
+    o2scl::rng<> r2;
+
+    /// C++ base normal distribution
+    std::normal_distribution<double> nd;
     
   public:
     
     /** \brief Create a standard normal distribution
      */
-    prob_dens_gaussian() {
+    prob_dens_gaussian() : nd(0.0,1.0) {
       cent_=0.0;
       sigma_=1.0;
     }
@@ -145,7 +148,7 @@ namespace o2scl {
 
 	The value of \c sigma must be larger than zero.
     */
-    prob_dens_gaussian(double cent, double sigma) {
+    prob_dens_gaussian(double cent, double sigma) : nd(cent,sigma) {
       if (sigma<0.0) {
 	O2SCL_ERR2("Tried to create a Gaussian dist. with sigma",
 		   "<0 in prob_dens_gaussian::prob_dens_gaussian().",
@@ -159,10 +162,11 @@ namespace o2scl {
     }
 
     /// Copy constructor
-  prob_dens_gaussian(const prob_dens_gaussian &pdg) : prob_dens_func() {
+    prob_dens_gaussian(const prob_dens_gaussian &pdg) : prob_dens_func() {
       cent_=pdg.cent_;
       sigma_=pdg.sigma_;
-      r=pdg.r;
+      r2=pdg.r2;
+      return;
     }
 
     /// Copy constructor with operator=
@@ -171,20 +175,21 @@ namespace o2scl {
       if (this!=&pdg) {
 	cent_=pdg.cent_;
 	sigma_=pdg.sigma_;
-	r=pdg.r;
+	r2=pdg.r2;
       }
       return *this;
     }
 
     /// Set the seed
     void set_seed(unsigned long int s) {
-      r.set_seed(s);
+      r2.set_seed(s);
       return;
     }
 
     /// Set the center
     void set_center(double cent) {
       cent_=cent;
+      nd=std::normal_distribution<double>(cent,sigma_);
       return;
     }
 
@@ -196,6 +201,7 @@ namespace o2scl {
 		   exc_einval);
       }
       sigma_=sigma;
+      nd=std::normal_distribution<double>(cent_,sigma);
       return;
     }
 
@@ -214,12 +220,12 @@ namespace o2scl {
     }
 
     /// Sample from the specified density
-    virtual double operator()() const {
+    virtual double operator()() {
       if (sigma_<0.0) {
 	O2SCL_ERR2("Width not set in prob_dens_gaussian::",
 		   "operator().",exc_einval);
       }
-      return cent_+gsl_ran_gaussian(&r,sigma_);
+      return nd(r2.def_engine);
     }
     
     /// The normalized density 
@@ -338,7 +344,7 @@ namespace o2scl {
     }
     
     /// Copy constructor
-  prob_dens_uniform(const prob_dens_uniform &pdg) : prob_dens_frange() {
+    prob_dens_uniform(const prob_dens_uniform &pdg) : prob_dens_frange() {
       ll=pdg.ll;
       ul=pdg.ul;
     }
@@ -520,7 +526,7 @@ namespace o2scl {
     }
 
     /// Copy constructor
-  prob_dens_lognormal(const prob_dens_lognormal &pdg) : prob_dens_positive() {
+    prob_dens_lognormal(const prob_dens_lognormal &pdg) : prob_dens_positive() {
       mu_=pdg.mu_;
       sigma_=pdg.sigma_;
     }
@@ -682,43 +688,43 @@ namespace o2scl {
       This class is experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
-    class prob_dens_mdim {
+  class prob_dens_mdim {
     
   public:
   
-  /// Return the dimensionality
-  virtual size_t dim() const {
-    O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
-    return 0;
-  }
-  
-  /// The normalized density 
-  virtual double pdf(const vec_t &x) const {
-    O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
-    return 0.0;
-  }
-  
-  /// The log of the normalized density 
-  virtual double log_pdf(const vec_t &x) const {
-    double val=pdf(x);
-    if (!std::isfinite(val) || val<0.0) {
-      O2SCL_ERR2("PDF not finite or negative in ",
-		 "prob_dens_mdim::log_pdf().",o2scl::exc_efailed);
+    /// Return the dimensionality
+    virtual size_t dim() const {
+      O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
+      return 0;
     }
-    double val2=log(pdf(x));
-    if (!std::isfinite(val2)) {
-      std::cout << val << " " << val2 << std::endl;
-      O2SCL_ERR2("Log of PDF not finite in ",
-		 "prob_dens_mdim::log_pdf().",o2scl::exc_efailed);
-    }
-    return val2;
-  }
   
-  /// Sample the distribution
-  virtual void operator()(vec_t &x) const {
-    O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
-    return;
-  }
+    /// The normalized density 
+    virtual double pdf(const vec_t &x) const {
+      O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
+      return 0.0;
+    }
+  
+    /// The log of the normalized density 
+    virtual double log_pdf(const vec_t &x) const {
+      double val=pdf(x);
+      if (!std::isfinite(val) || val<0.0) {
+        O2SCL_ERR2("PDF not finite or negative in ",
+                   "prob_dens_mdim::log_pdf().",o2scl::exc_efailed);
+      }
+      double val2=log(pdf(x));
+      if (!std::isfinite(val2)) {
+        std::cout << val << " " << val2 << std::endl;
+        O2SCL_ERR2("Log of PDF not finite in ",
+                   "prob_dens_mdim::log_pdf().",o2scl::exc_efailed);
+      }
+      return val2;
+    }
+  
+    /// Sample the distribution
+    virtual void operator()(vec_t &x) const {
+      O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
+      return;
+    }
   
   };
 
@@ -726,58 +732,58 @@ namespace o2scl {
       of several one-dimensional distributions
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
-    class prob_dens_mdim_factor : public prob_dens_mdim<vec_t> {
+  class prob_dens_mdim_factor : public prob_dens_mdim<vec_t> {
     
   protected:
     
-  /// Vector of one-dimensional distributions
-  std::vector<prob_dens_func> list;
+    /// Vector of one-dimensional distributions
+    std::vector<prob_dens_func> list;
     
   public:
     
-  prob_dens_mdim_factor(std::vector<prob_dens_func> &p_list) {
-    list=p_list;
-  }
+    prob_dens_mdim_factor(std::vector<prob_dens_func> &p_list) {
+      list=p_list;
+    }
   
-  /// Copy constructor
-  prob_dens_mdim_factor(const prob_dens_mdim_factor &pdmf) {
-    list=pdmf.list;
-  }
-  
-  /// Copy constructor with operator=
-  prob_dens_mdim_factor &operator=
-  (const prob_dens_mdim_factor &pdmf) {
-    // Check for self-assignment
-    if (this!=&pdmf) {
+    /// Copy constructor
+    prob_dens_mdim_factor(const prob_dens_mdim_factor &pdmf) {
       list=pdmf.list;
     }
-    return *this;
-  }
   
-  /// Return the dimensionality
-  virtual size_t dim() const {
-    return list.size();
-  }
+    /// Copy constructor with operator=
+    prob_dens_mdim_factor &operator=
+    (const prob_dens_mdim_factor &pdmf) {
+      // Check for self-assignment
+      if (this!=&pdmf) {
+        list=pdmf.list;
+      }
+      return *this;
+    }
   
-  /// The normalized density 
-  virtual double pdf(const vec_t &x) const {
-    double ret=1.0;
-    for(size_t i=0;i<list.size();i++) ret*=list[i].pdf(x[i]);
-    return ret;
-  }
+    /// Return the dimensionality
+    virtual size_t dim() const {
+      return list.size();
+    }
+  
+    /// The normalized density 
+    virtual double pdf(const vec_t &x) const {
+      double ret=1.0;
+      for(size_t i=0;i<list.size();i++) ret*=list[i].pdf(x[i]);
+      return ret;
+    }
 
-  /// The log of the normalized density 
-  virtual double log_pdf(const vec_t &x) const {
-    double ret=1.0;
-    for(size_t i=0;i<list.size();i++) ret*=list[i].pdf(x[i]);
-    return log(ret);
-  }
+    /// The log of the normalized density 
+    virtual double log_pdf(const vec_t &x) const {
+      double ret=1.0;
+      for(size_t i=0;i<list.size();i++) ret*=list[i].pdf(x[i]);
+      return log(ret);
+    }
     
-  /// Sample the distribution
-  virtual void operator()(vec_t &x) const {
-    for(size_t i=0;i<list.size();i++) x[i]=list[i]();
-    return;
-  }
+    /// Sample the distribution
+    virtual void operator()(vec_t &x) const {
+      for(size_t i=0;i<list.size();i++) x[i]=list[i]();
+      return;
+    }
   
   };
 
@@ -834,123 +840,123 @@ namespace o2scl {
       
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
-    class prob_dens_mdim_biv_gaussian : public prob_dens_mdim<vec_t> {
+  class prob_dens_mdim_biv_gaussian : public prob_dens_mdim<vec_t> {
 
   private:
 
-  /// The x coordinate of the centroid
-  double x0;
+    /// The x coordinate of the centroid
+    double x0;
 
-  /// The y coordinate of the centroid
-  double y0;
+    /// The y coordinate of the centroid
+    double y0;
 
-  /// The x standard deviation
-  double sig_x;
+    /// The x standard deviation
+    double sig_x;
 
-  /// The y standard deviation
-  double sig_y;
+    /// The y standard deviation
+    double sig_y;
 
-  /// The covariance
-  double rho;
+    /// The covariance
+    double rho;
   
   public:
   
-  prob_dens_mdim_biv_gaussian() {
-  }
+    prob_dens_mdim_biv_gaussian() {
+    }
   
-  /// Copy constructor
-  prob_dens_mdim_biv_gaussian(const prob_dens_mdim_biv_gaussian &pdmbg) {
-    x0=pdmbg.x0;
-    y0=pdmbg.y0;
-    sig_x=pdmbg.sig_x;
-    sig_y=pdmbg.sig_y;
-    rho=pdmbg.rho;
-  }
-  
-  /// Copy constructor with operator=
-  prob_dens_mdim_biv_gaussian &operator=
-  (const prob_dens_mdim_biv_gaussian &pdmbg) {
-    // Check for self-assignment
-    if (this!=&pdmbg) {
+    /// Copy constructor
+    prob_dens_mdim_biv_gaussian(const prob_dens_mdim_biv_gaussian &pdmbg) {
       x0=pdmbg.x0;
       y0=pdmbg.y0;
       sig_x=pdmbg.sig_x;
       sig_y=pdmbg.sig_y;
       rho=pdmbg.rho;
     }
-    return *this;
-  }
   
-  /** \brief Set the properties of the distribution
+    /// Copy constructor with operator=
+    prob_dens_mdim_biv_gaussian &operator=
+    (const prob_dens_mdim_biv_gaussian &pdmbg) {
+      // Check for self-assignment
+      if (this!=&pdmbg) {
+        x0=pdmbg.x0;
+        y0=pdmbg.y0;
+        sig_x=pdmbg.sig_x;
+        sig_y=pdmbg.sig_y;
+        rho=pdmbg.rho;
+      }
+      return *this;
+    }
+  
+    /** \brief Set the properties of the distribution
 
-      \note If \f$ |\rho|\geq 1 \f$ this function will
-      call the error handler.
-  */
-  void set(double x_cent, double y_cent, double x_std, double y_std,
-	   double covar) {
-    if (fabs(covar)>=1.0) {
-      O2SCL_ERR2("Covariance cannot have magnitude equal or larger than ",
-		 "1 in prob_dens_mdim_biv_gaussian::set().",
-		 o2scl::exc_einval);
+        \note If \f$ |\rho|\geq 1 \f$ this function will
+        call the error handler.
+    */
+    void set(double x_cent, double y_cent, double x_std, double y_std,
+             double covar) {
+      if (fabs(covar)>=1.0) {
+        O2SCL_ERR2("Covariance cannot have magnitude equal or larger than ",
+                   "1 in prob_dens_mdim_biv_gaussian::set().",
+                   o2scl::exc_einval);
+      }
+      x0=x_cent;
+      y0=y_cent;
+      sig_x=x_std;
+      sig_y=y_std;
+      rho=covar;
+      return;
     }
-    x0=x_cent;
-    y0=y_cent;
-    sig_x=x_std;
-    sig_y=y_std;
-    rho=covar;
-    return;
-  }
   
-  /** \brief Compute the normalized probability density
-   */
-  virtual double pdf(const vec_t &v) const {
-    double x=v[0], y=v[1];
-    double arg=-((x-x0)*(x-x0)/sig_x/sig_x+
-		 (y-y0)*(y-y0)/sig_y/sig_y-
-		 2.0*rho*(x-x0)*(y-y0)/sig_x/sig_y)/2.0/(1.0-rho*rho);
-    double ret=exp(arg)/2.0/o2scl_const::pi/sig_x/sig_y/
-    sqrt(1.0-rho*rho);
-    return ret;
-  }
-  
-  /** \brief Return the contour level corresponding to a fixed
-      integral
-  */
-  virtual double level_fixed_integral(double integral) {
-    // This comes from inverting the cumulative distribution function
-    // for the chi-squared distribution for two degrees of of freedom,
-    // i.e. exp(-x/2)
-    double arg=-2.0*log(1.0-integral);
-    // Now compute the pdf for the fixed value of the
-    // squared Mahalanobis distance
-    return exp(-0.5*arg)/2.0/o2scl_const::pi/sig_x/
-    sig_y/sqrt(1.0-rho*rho);
-  }
-  
-  /** \brief Return a point on the contour for a specified level
-      given an angle
-  */
-  virtual void contour(double level, double theta, vec_t &x) {
-    if (level<0.0) {
-      O2SCL_ERR2("Cannot produce contours for negative values in ",
-		 "prob_dens_mdim_biv_gaussian::contour().",
-		 o2scl::exc_einval);
+    /** \brief Compute the normalized probability density
+     */
+    virtual double pdf(const vec_t &v) const {
+      double x=v[0], y=v[1];
+      double arg=-((x-x0)*(x-x0)/sig_x/sig_x+
+                   (y-y0)*(y-y0)/sig_y/sig_y-
+                   2.0*rho*(x-x0)*(y-y0)/sig_x/sig_y)/2.0/(1.0-rho*rho);
+      double ret=exp(arg)/2.0/o2scl_const::pi/sig_x/sig_y/
+        sqrt(1.0-rho*rho);
+      return ret;
     }
-    double max=0.5/sig_x/sig_y/o2scl_const::pi/sqrt(1.0-rho*rho);
-    if (level>max) {
-      O2SCL_ERR2("Cannot produce contours larger than maximum in ",
-		 "prob_dens_mdim_biv_gaussian::contour().",
-		 o2scl::exc_einval);
+  
+    /** \brief Return the contour level corresponding to a fixed
+        integral
+    */
+    virtual double level_fixed_integral(double integral) {
+      // This comes from inverting the cumulative distribution function
+      // for the chi-squared distribution for two degrees of of freedom,
+      // i.e. exp(-x/2)
+      double arg=-2.0*log(1.0-integral);
+      // Now compute the pdf for the fixed value of the
+      // squared Mahalanobis distance
+      return exp(-0.5*arg)/2.0/o2scl_const::pi/sig_x/
+        sig_y/sqrt(1.0-rho*rho);
     }
-    double arg=-log(level*2.0*o2scl_const::pi*sig_x*sig_y*
-		    sqrt(1.0-rho*rho))*2.0*(1.0-rho*rho);
-    double r2=arg/(cos(theta)*cos(theta)/sig_x/sig_x+
-		   sin(theta)*sin(theta)/sig_y/sig_y-
-		   2.0*rho/sig_x/sig_y*cos(theta)*sin(theta));
-    x[0]=sqrt(r2)*cos(theta)+x0;
-    x[1]=sqrt(r2)*sin(theta)+y0;
-    return;
-  }
+  
+    /** \brief Return a point on the contour for a specified level
+        given an angle
+    */
+    virtual void contour(double level, double theta, vec_t &x) {
+      if (level<0.0) {
+        O2SCL_ERR2("Cannot produce contours for negative values in ",
+                   "prob_dens_mdim_biv_gaussian::contour().",
+                   o2scl::exc_einval);
+      }
+      double max=0.5/sig_x/sig_y/o2scl_const::pi/sqrt(1.0-rho*rho);
+      if (level>max) {
+        O2SCL_ERR2("Cannot produce contours larger than maximum in ",
+                   "prob_dens_mdim_biv_gaussian::contour().",
+                   o2scl::exc_einval);
+      }
+      double arg=-log(level*2.0*o2scl_const::pi*sig_x*sig_y*
+                      sqrt(1.0-rho*rho))*2.0*(1.0-rho*rho);
+      double r2=arg/(cos(theta)*cos(theta)/sig_x/sig_x+
+                     sin(theta)*sin(theta)/sig_y/sig_y-
+                     2.0*rho/sig_x/sig_y*cos(theta)*sin(theta));
+      x[0]=sqrt(r2)*cos(theta)+x0;
+      x[1]=sqrt(r2)*sin(theta)+y0;
+      return;
+    }
   
   };
   
@@ -984,90 +990,78 @@ namespace o2scl {
       matrix decompositions?
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
-    class mat_t=boost::numeric::ublas::matrix<double> >
-    class prob_dens_mdim_gaussian : public prob_dens_mdim<vec_t> {
+           class mat_t=boost::numeric::ublas::matrix<double> >
+  class prob_dens_mdim_gaussian : public prob_dens_mdim<vec_t> {
     
   protected:
 
-  /// Cholesky decomposition
-  mat_t chol;
+    /// Cholesky decomposition
+    mat_t chol;
 
-  /// Inverse of the covariance matrix
-  mat_t covar_inv;
+    /// Inverse of the covariance matrix
+    mat_t covar_inv;
 
-  /// Location of the peak
-  vec_t peak;
+    /// Location of the peak
+    vec_t peak;
 
-  /// Normalization factor, \f$ \det ( 2 \pi \Sigma)^{-1/2} \f$
-  double norm;
+    /// Normalization factor, \f$ \det ( 2 \pi \Sigma)^{-1/2} \f$
+    double norm;
 
-  /// Number of dimensions
-  size_t ndim;
+    /// Number of dimensions
+    size_t ndim;
 
-  /// Temporary storage 1
-  mutable vec_t q;
+    /// Temporary storage 1
+    mutable vec_t q;
 
-  /// Temporary storage 2
-  mutable vec_t vtmp;
+    /// Temporary storage 2
+    mutable vec_t vtmp;
 
   public:
   
-  /** \brief Standard normal
-      \comment
-      This has to be public so the user can set the random seed,
-      or we have to create a new set_seed() function.
-      \endcomment
-  */
-  o2scl::prob_dens_gaussian pdg;
+    /** \brief Standard normal
+        \comment
+        This has to be public so the user can set the random seed,
+        or we have to create a new set_seed() function.
+        \endcomment
+    */
+    o2scl::prob_dens_gaussian pdg;
 
-  /** \brief Get the Cholesky decomposition 
-   */
-  const mat_t &get_chol() {
-    return chol;
-  }
+    /** \brief Get the Cholesky decomposition 
+     */
+    const mat_t &get_chol() {
+      return chol;
+    }
 
-  /** \brief Get the inverse of the covariance matrix
-   */
-  const mat_t &get_covar_inv() {
-    return covar_inv;
-  }
+    /** \brief Get the inverse of the covariance matrix
+     */
+    const mat_t &get_covar_inv() {
+      return covar_inv;
+    }
 
-  /** \brief Get the peak location
-   */
-  const vec_t &get_peak() {
-    return peak;
-  }
+    /** \brief Get the peak location
+     */
+    const vec_t &get_peak() {
+      return peak;
+    }
 
-  /** \brief Get the normalization
-   */
-  const double &get_norm() {
-    return norm;
-  }
+    /** \brief Get the normalization
+     */
+    const double &get_norm() {
+      return norm;
+    }
 
-  /// The dimensionality
-  virtual size_t dim() const {
-    return ndim;
-  }
+    /// The dimensionality
+    virtual size_t dim() const {
+      return ndim;
+    }
 
-  /// Create an empty distribution
-  prob_dens_mdim_gaussian() {
-    ndim=0;
-  }
+    /// Create an empty distribution
+    prob_dens_mdim_gaussian() {
+      ndim=0;
+    }
 
-  /// Copy constructor
-  prob_dens_mdim_gaussian(const prob_dens_mdim_gaussian &pdmg_loc) {
-    ndim=pdmg_loc.ndim;
-    chol=pdmg_loc.chol;
-    covar_inv=pdmg_loc.covar_inv;
-    norm=pdmg_loc.norm;
-    q.resize(ndim);
-    vtmp.resize(ndim);
-  }
-  
-  /// Copy constructor with operator=
-  prob_dens_mdim_gaussian &operator=(const prob_dens_mdim_gaussian &pdmg_loc) {
-    // Check for self-assignment
-    if (this!=&pdmg_loc) {
+    /// Copy constructor
+    prob_dens_mdim_gaussian(const prob_dens_mdim_gaussian &pdmg_loc) {
       ndim=pdmg_loc.ndim;
       chol=pdmg_loc.chol;
       covar_inv=pdmg_loc.covar_inv;
@@ -1075,249 +1069,261 @@ namespace o2scl {
       q.resize(ndim);
       vtmp.resize(ndim);
     }
-    return *this;
-  }
   
-  /** \brief Create a distribution from a set of samples from a 
-      multidimensional Gaussian, returning the peak values and
-      covariance matrix
-      
-      The matrix \c pts should have a size of \c n_pts in the first
-      index and \c p_mdim in the second index
-  */
-  template<class mat2_t, class vec2_t,
-  class mat2_col_t=const_matrix_column_gen<mat2_t> >
-  int set(size_t p_mdim, size_t n_pts, const mat2_t &pts,
-	  const vec2_t &vals, vec_t &peak_arg, mat_t &covar_arg) {
-    
-    // Set peak with average and diagonal elements in covariance
-    // matrix with variance
-    for(size_t i=0;i<p_mdim;i++) {
-      const mat2_col_t col(pts,i);
-      peak_arg[i]=o2scl::wvector_mean<mat2_col_t>(n_pts,col,vals);
-      // Square standard deviation
-      covar_arg(i,i)=o2scl::wvector_stddev<mat2_col_t>(n_pts,col,vals);
-      covar_arg(i,i)*=covar_arg(i,i);
-    }
-    // Setup off-diagonal covariance matrix
-    for(size_t i=0;i<p_mdim;i++) {
-      mat2_col_t col_i(pts,i);
-      for(size_t j=i+1;j<p_mdim;j++) {
-	const mat2_col_t col_j(pts,j);
-	double cov=o2scl::wvector_covariance(n_pts,col_i,col_j,vals);
-	covar_arg(i,j)=cov;
-	covar_arg(j,i)=cov;
+    /// Copy constructor with operator=
+    prob_dens_mdim_gaussian &operator=(const prob_dens_mdim_gaussian &pdmg_loc) {
+      // Check for self-assignment
+      if (this!=&pdmg_loc) {
+        ndim=pdmg_loc.ndim;
+        chol=pdmg_loc.chol;
+        covar_inv=pdmg_loc.covar_inv;
+        norm=pdmg_loc.norm;
+        q.resize(ndim);
+        vtmp.resize(ndim);
       }
+      return *this;
     }
-    set(p_mdim,peak_arg,covar_arg);
-    return 0;
-  }
   
-  /** \brief Create a distribution from a set of samples from a 
-      multidimensional Gaussian
+    /** \brief Create a distribution from a set of samples from a 
+        multidimensional Gaussian, returning the peak values and
+        covariance matrix
       
-      The matrix \c pts should have a size of \c n_pts in the first
-      index and \c p_mdim in the second index
-  */
-  template<class mat2_t, class vec2_t,
-  class mat2_col_t=const_matrix_column_gen<mat2_t> >
-  int set(size_t p_mdim, size_t n_pts, const mat2_t &pts,
-	  const vec2_t &vals) {
+        The matrix \c pts should have a size of \c n_pts in the first
+        index and \c p_mdim in the second index
+    */
+    template<class mat2_t, class vec2_t,
+             class mat2_col_t=const_matrix_column_gen<mat2_t> >
+    int set(size_t p_mdim, size_t n_pts, const mat2_t &pts,
+            const vec2_t &vals, vec_t &peak_arg, mat_t &covar_arg) {
     
-    vec_t peak_arg(p_mdim);
-    mat_t covar_arg(p_mdim,p_mdim);
-
-    set<mat2_t,vec2_t,mat2_col_t>(p_mdim,n_pts,pts,vals,peak_arg,covar_arg);
-
-    return 0;
-  }
-  /** \brief Create a distribution from the covariance matrix
-   */
-  prob_dens_mdim_gaussian(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
-    set(p_ndim,p_peak,covar);
-  }
-
-  /** \brief Set the peak and covariance matrix for the distribution
-
-      \note This function is called in constructors and thus 
-      should not be virtual.
-  */
-  void set(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
-    if (p_ndim==0) {
-      O2SCL_ERR("Zero dimension in prob_dens_mdim_gaussian::set().",
-		o2scl::exc_einval);
-    }
-    ndim=p_ndim;
-    norm=1.0;
-    peak.resize(ndim);
-    for(size_t i=0;i<ndim;i++) peak[i]=p_peak[i];
-    q.resize(ndim);
-    vtmp.resize(ndim);
-
-    // Perform the Cholesky decomposition of the covariance matrix
-    chol=covar;
-    o2scl_linalg::cholesky_decomp(ndim,chol);
-      
-    // Find the inverse
-    covar_inv=chol;
-    o2scl_linalg::cholesky_invert<mat_t>(ndim,covar_inv);
-
-    // Force chol to be lower triangular and compute the square root
-    // of the determinant
-    double sqrt_det=1.0;
-    for(size_t i=0;i<ndim;i++) {
-      if (!std::isfinite(chol(i,i))) {
-	O2SCL_ERR2("An entry of the Cholesky decomposition was not finite ",
-		   "in prob_dens_mdim_gaussian::set().",o2scl::exc_einval);
+      // Set peak with average and diagonal elements in covariance
+      // matrix with variance
+      for(size_t i=0;i<p_mdim;i++) {
+        const mat2_col_t col(pts,i);
+        peak_arg[i]=o2scl::wvector_mean<mat2_col_t>(n_pts,col,vals);
+        // Square standard deviation
+        covar_arg(i,i)=o2scl::wvector_stddev<mat2_col_t>(n_pts,col,vals);
+        covar_arg(i,i)*=covar_arg(i,i);
       }
-      sqrt_det*=chol(i,i);
-      for(size_t j=0;j<ndim;j++) {
-	if (i<j) chol(i,j)=0.0;
+      // Setup off-diagonal covariance matrix
+      for(size_t i=0;i<p_mdim;i++) {
+        mat2_col_t col_i(pts,i);
+        for(size_t j=i+1;j<p_mdim;j++) {
+          const mat2_col_t col_j(pts,j);
+          double cov=o2scl::wvector_covariance(n_pts,col_i,col_j,vals);
+          covar_arg(i,j)=cov;
+          covar_arg(j,i)=cov;
+        }
       }
+      set(p_mdim,peak_arg,covar_arg);
+      return 0;
     }
-
-    // Compute normalization
-    norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt_det;
-    if (!std::isfinite(norm)) {
-      O2SCL_ERR2("Normalization not finite in ",
-		 "prob_dens_mdim_gaussian::set().",o2scl::exc_einval);
-    }
-  }
   
-  /** \brief Alternate set function for use when covariance matrix
-      has already been decomposed and inverted
-  */
-  void set_alt(size_t p_ndim, vec_t &p_peak, mat_t &p_chol,
-	       mat_t &p_covar_inv, double p_norm) {
-    ndim=p_ndim;
-    peak=p_peak;
-    chol=p_chol;
-    covar_inv=p_covar_inv;
-    norm=p_norm;
-    q.resize(ndim);
-    vtmp.resize(ndim);
-    return;
-  }
-
-  /** \brief Given a data set and a covariance function, construct
-      probability distribution based on a Gaussian process which
-      includes noise
-
-      \note The type <tt>mat_col_t</tt> is a matrix column type
-      for the internal object matrix type <tt>mat_t</tt>, and
-      not associated with the data type <tt>vec_vec_t</tt>.
-      Since the default matrix type is 
-      <tt>boost::numeric::ublas::matrix &lt; double &gt; </tt>
-      a good matrix column type for this function is 
-      <tt>boost::numeric::ublas::matrix_column &lt; 
-      boost::numeric::ublas::matrix &lt; double &gt; &gt;</tt> .
-      This matrix column type is needed for the LU 
-      decomposition and inversion.
-  */
-  template<class vec_vec_t, class mat_col_t, class func_t> 
-  void set_gproc(size_t n_dim, size_t n_init, 
-		 vec_vec_t &x, vec_t &y, func_t &fcovar) {
+    /** \brief Create a distribution from a set of samples from a 
+        multidimensional Gaussian
+      
+        The matrix \c pts should have a size of \c n_pts in the first
+        index and \c p_mdim in the second index
+    */
+    template<class mat2_t, class vec2_t,
+             class mat2_col_t=const_matrix_column_gen<mat2_t> >
+    int set(size_t p_mdim, size_t n_pts, const mat2_t &pts,
+            const vec2_t &vals) {
     
-    // Construct the four covariance matrices
-    
-    mat_t KXsX(n_dim,n_init);
-    for(size_t irow=n_init;irow<n_dim+n_init;irow++) {
-      for(size_t icol=0;icol<n_init;icol++) {
-	KXsX(irow-n_init,icol)=fcovar(x[irow],x[icol]);
+      vec_t peak_arg(p_mdim);
+      mat_t covar_arg(p_mdim,p_mdim);
+
+      set<mat2_t,vec2_t,mat2_col_t>(p_mdim,n_pts,pts,vals,peak_arg,covar_arg);
+
+      return 0;
+    }
+    /** \brief Create a distribution from the covariance matrix
+     */
+    prob_dens_mdim_gaussian(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
+      set(p_ndim,p_peak,covar);
+    }
+
+    /** \brief Set the peak and covariance matrix for the distribution
+
+        \note This function is called in constructors and thus 
+        should not be virtual.
+    */
+    void set(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
+      if (p_ndim==0) {
+        O2SCL_ERR("Zero dimension in prob_dens_mdim_gaussian::set().",
+                  o2scl::exc_einval);
+      }
+      ndim=p_ndim;
+      norm=1.0;
+      peak.resize(ndim);
+      for(size_t i=0;i<ndim;i++) peak[i]=p_peak[i];
+      q.resize(ndim);
+      vtmp.resize(ndim);
+
+      // Perform the Cholesky decomposition of the covariance matrix
+      chol=covar;
+      o2scl_linalg::cholesky_decomp(ndim,chol);
+      
+      // Find the inverse
+      covar_inv=chol;
+      o2scl_linalg::cholesky_invert<mat_t>(ndim,covar_inv);
+
+      // Force chol to be lower triangular and compute the square root
+      // of the determinant
+      double sqrt_det=1.0;
+      for(size_t i=0;i<ndim;i++) {
+        if (!std::isfinite(chol(i,i))) {
+          O2SCL_ERR2("An entry of the Cholesky decomposition was not finite ",
+                     "in prob_dens_mdim_gaussian::set().",o2scl::exc_einval);
+        }
+        sqrt_det*=chol(i,i);
+        for(size_t j=0;j<ndim;j++) {
+          if (i<j) chol(i,j)=0.0;
+        }
+      }
+
+      // Compute normalization
+      norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt_det;
+      if (!std::isfinite(norm)) {
+        O2SCL_ERR2("Normalization not finite in ",
+                   "prob_dens_mdim_gaussian::set().",o2scl::exc_einval);
       }
     }
+  
+    /** \brief Alternate set function for use when covariance matrix
+        has already been decomposed and inverted
+    */
+    void set_alt(size_t p_ndim, vec_t &p_peak, mat_t &p_chol,
+                 mat_t &p_covar_inv, double p_norm) {
+      ndim=p_ndim;
+      peak=p_peak;
+      chol=p_chol;
+      covar_inv=p_covar_inv;
+      norm=p_norm;
+      q.resize(ndim);
+      vtmp.resize(ndim);
+      return;
+    }
+
+    /** \brief Given a data set and a covariance function, construct
+        probability distribution based on a Gaussian process which
+        includes noise
+
+        \note The type <tt>mat_col_t</tt> is a matrix column type
+        for the internal object matrix type <tt>mat_t</tt>, and
+        not associated with the data type <tt>vec_vec_t</tt>.
+        Since the default matrix type is 
+        <tt>boost::numeric::ublas::matrix &lt; double &gt; </tt>
+        a good matrix column type for this function is 
+        <tt>boost::numeric::ublas::matrix_column &lt; 
+        boost::numeric::ublas::matrix &lt; double &gt; &gt;</tt> .
+        This matrix column type is needed for the LU 
+        decomposition and inversion.
+    */
+    template<class vec_vec_t, class mat_col_t, class func_t> 
+    void set_gproc(size_t n_dim, size_t n_init, 
+                   vec_vec_t &x, vec_t &y, func_t &fcovar) {
     
-    mat_t KXXs=boost::numeric::ublas::trans(KXsX);
+      // Construct the four covariance matrices
     
-    mat_t KXX(n_init,n_init);
-    for(size_t irow=0;irow<n_init;irow++) {
-      for(size_t icol=0;icol<n_init;icol++) {
-	if (irow>icol) {
-	  KXX(irow,icol)=KXX(icol,irow);
-	} else {
-	  KXX(irow,icol)=fcovar(x[irow],x[icol]);
-	}
+      mat_t KXsX(n_dim,n_init);
+      for(size_t irow=n_init;irow<n_dim+n_init;irow++) {
+        for(size_t icol=0;icol<n_init;icol++) {
+          KXsX(irow-n_init,icol)=fcovar(x[irow],x[icol]);
+        }
       }
-    }
     
-    mat_t KXsXs(n_dim,n_dim);
-    for(size_t irow=n_init;irow<n_dim+n_init;irow++) {
-      for(size_t icol=n_init;icol<n_dim+n_init;icol++) {
-	if (irow>icol) {
-	  KXsXs(irow-n_init,icol-n_init)=KXsXs(icol-n_init,irow-n_init);
-	} else {
-	  KXsXs(irow-n_init,icol-n_init)=fcovar(x[irow],x[icol]);
-	}
+      mat_t KXXs=boost::numeric::ublas::trans(KXsX);
+    
+      mat_t KXX(n_init,n_init);
+      for(size_t irow=0;irow<n_init;irow++) {
+        for(size_t icol=0;icol<n_init;icol++) {
+          if (irow>icol) {
+            KXX(irow,icol)=KXX(icol,irow);
+          } else {
+            KXX(irow,icol)=fcovar(x[irow],x[icol]);
+          }
+        }
       }
+    
+      mat_t KXsXs(n_dim,n_dim);
+      for(size_t irow=n_init;irow<n_dim+n_init;irow++) {
+        for(size_t icol=n_init;icol<n_dim+n_init;icol++) {
+          if (irow>icol) {
+            KXsXs(irow-n_init,icol-n_init)=KXsXs(icol-n_init,irow-n_init);
+          } else {
+            KXsXs(irow-n_init,icol-n_init)=fcovar(x[irow],x[icol]);
+          }
+        }
+      }
+    
+      // Construct the inverse of KXX
+      mat_t inv_KXX(n_init,n_init);
+      o2scl::permutation p;
+      int signum;
+      o2scl_linalg::LU_decomp(n_init,KXX,p,signum);
+      if (o2scl_linalg::diagonal_has_zero(n_dim,KXX)) {
+        O2SCL_ERR2("KXX matrix is singular in ",
+                   "prob_dens_mdim_gaussian::set_gproc().",
+                   o2scl::exc_efailed);
+      }
+      o2scl_linalg::LU_invert<mat_t,mat_t,mat_col_t>(n_init,KXX,p,inv_KXX);
+    
+      // Compute the mean vector
+      vec_t prod(n_init), mean(n_dim);
+      boost::numeric::ublas::axpy_prod(inv_KXX,y,prod,true);
+      boost::numeric::ublas::axpy_prod(KXsX,prod,mean,true);
+    
+      // Compute the covariance matrix
+      mat_t covar(n_dim,n_dim), prod2(n_init,n_dim), prod3(n_dim,n_dim);
+      boost::numeric::ublas::axpy_prod(inv_KXX,KXXs,prod2,true);
+      boost::numeric::ublas::axpy_prod(KXsX,prod2,prod3,true);
+      covar=KXsXs-prod3;
+    
+      // Now use set() in the parent class
+      this->set(n_dim,mean,covar);
+    
     }
-    
-    // Construct the inverse of KXX
-    mat_t inv_KXX(n_init,n_init);
-    o2scl::permutation p;
-    int signum;
-    o2scl_linalg::LU_decomp(n_init,KXX,p,signum);
-    if (o2scl_linalg::diagonal_has_zero(n_dim,KXX)) {
-      O2SCL_ERR2("KXX matrix is singular in ",
-		 "prob_dens_mdim_gaussian::set_gproc().",
-		 o2scl::exc_efailed);
-    }
-    o2scl_linalg::LU_invert<mat_t,mat_t,mat_col_t>(n_init,KXX,p,inv_KXX);
-    
-    // Compute the mean vector
-    vec_t prod(n_init), mean(n_dim);
-    boost::numeric::ublas::axpy_prod(inv_KXX,y,prod,true);
-    boost::numeric::ublas::axpy_prod(KXsX,prod,mean,true);
-    
-    // Compute the covariance matrix
-    mat_t covar(n_dim,n_dim), prod2(n_init,n_dim), prod3(n_dim,n_dim);
-    boost::numeric::ublas::axpy_prod(inv_KXX,KXXs,prod2,true);
-    boost::numeric::ublas::axpy_prod(KXsX,prod2,prod3,true);
-    covar=KXsXs-prod3;
-    
-    // Now use set() in the parent class
-    this->set(n_dim,mean,covar);
-    
-  }
 
-  /// The normalized density 
-  virtual double pdf(const vec_t &x) const {
-    if (ndim==0) {
-      O2SCL_ERR2("Distribution not set in prob_dens_mdim_gaussian::",
-		 "pdf().",o2scl::exc_einval);
+    /// The normalized density 
+    virtual double pdf(const vec_t &x) const {
+      if (ndim==0) {
+        O2SCL_ERR2("Distribution not set in prob_dens_mdim_gaussian::",
+                   "pdf().",o2scl::exc_einval);
+      }
+      double ret=norm;
+      for(size_t i=0;i<ndim;i++) {
+        q[i]=x[i]-peak[i];
+      }
+      vtmp=prod(covar_inv,q);
+      ret*=exp(-0.5*inner_prod(q,vtmp));
+      return ret;
     }
-    double ret=norm;
-    for(size_t i=0;i<ndim;i++) {
-      q[i]=x[i]-peak[i];
-    }
-    vtmp=prod(covar_inv,q);
-    ret*=exp(-0.5*inner_prod(q,vtmp));
-    return ret;
-  }
 
-  /// The log of the normalized density 
-  virtual double log_pdf(const vec_t &x) const {
-    if (ndim==0) {
-      O2SCL_ERR2("Distribution not set in prob_dens_mdim_gaussian::",
-		 "pdf().",o2scl::exc_einval);
+    /// The log of the normalized density 
+    virtual double log_pdf(const vec_t &x) const {
+      if (ndim==0) {
+        O2SCL_ERR2("Distribution not set in prob_dens_mdim_gaussian::",
+                   "pdf().",o2scl::exc_einval);
+      }
+      double ret=log(norm);
+      for(size_t i=0;i<ndim;i++) q[i]=x[i]-peak[i];
+      vtmp=prod(covar_inv,q);
+      ret+=-0.5*inner_prod(q,vtmp);
+      return ret;
     }
-    double ret=log(norm);
-    for(size_t i=0;i<ndim;i++) q[i]=x[i]-peak[i];
-    vtmp=prod(covar_inv,q);
-    ret+=-0.5*inner_prod(q,vtmp);
-    return ret;
-  }
 
-  /// Sample the distribution
-  virtual void operator()(vec_t &x) const {
-    if (ndim==0) {
-      O2SCL_ERR2("Distribution not set in prob_dens_mdim_gaussian::",
-		 "operator().",o2scl::exc_einval);
+    /// Sample the distribution
+    virtual void operator()(vec_t &x) {
+      if (ndim==0) {
+        O2SCL_ERR2("Distribution not set in prob_dens_mdim_gaussian::",
+                   "operator().",o2scl::exc_einval);
+      }
+      for(size_t i=0;i<ndim;i++) q[i]=pdg();
+      vtmp=prod(chol,q);
+      for(size_t i=0;i<ndim;i++) x[i]=peak[i]+vtmp[i];
+      return;
     }
-    for(size_t i=0;i<ndim;i++) q[i]=pdg();
-    vtmp=prod(chol,q);
-    for(size_t i=0;i<ndim;i++) x[i]=peak[i]+vtmp[i];
-    return;
-  }
   
   };
 
@@ -1331,119 +1337,119 @@ namespace o2scl {
       \warning The PDF is not yet properly normalized
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
-    class mat_t=boost::numeric::ublas::matrix<double> >
-    class prob_dens_mdim_bound_gaussian :
+           class mat_t=boost::numeric::ublas::matrix<double> >
+  class prob_dens_mdim_bound_gaussian :
     public prob_dens_mdim_gaussian<vec_t,mat_t> {
     
   protected:
   
-  /** \brief Lower limits
-   */
-  vec_t low;
+    /** \brief Lower limits
+     */
+    vec_t low;
   
-  /** \brief Upper limits
-   */
-  vec_t high;
+    /** \brief Upper limits
+     */
+    vec_t high;
 
   public:
 
-  /** \brief Maximum number of samples
-   */
-  size_t samp_max;
+    /** \brief Maximum number of samples
+     */
+    size_t samp_max;
   
-  /** \brief Create an empty distribution
-   */
-  prob_dens_mdim_bound_gaussian() {
-    samp_max=100000;
-  }
+    /** \brief Create an empty distribution
+     */
+    prob_dens_mdim_bound_gaussian() {
+      samp_max=100000;
+    }
   
-  /** \brief Create a distribution with the specified peak, covariance
-      matrix, lower limits, and upper limits
-  */
-  prob_dens_mdim_bound_gaussian(size_t p_ndim, vec_t &p_peak, mat_t &covar,
-				vec_t &p_low, vec_t &p_high) {
-    set(p_ndim,p_peak,covar,p_low,p_high);
-    samp_max=100000;
-  }
+    /** \brief Create a distribution with the specified peak, covariance
+        matrix, lower limits, and upper limits
+    */
+    prob_dens_mdim_bound_gaussian(size_t p_ndim, vec_t &p_peak, mat_t &covar,
+                                  vec_t &p_low, vec_t &p_high) {
+      set(p_ndim,p_peak,covar,p_low,p_high);
+      samp_max=100000;
+    }
   
-  /** \brief Set the peak, covariance matrix, lower limits, and upper
-      limits
+    /** \brief Set the peak, covariance matrix, lower limits, and upper
+        limits
 
-      \note This function is called in constructors and thus 
-      should not be virtual.
-  */
-  void set(size_t p_ndim, vec_t &p_peak, mat_t &covar,
-	   vec_t &p_low, vec_t &p_high) {
-    prob_dens_mdim_gaussian<vec_t,mat_t>::set(p_ndim,p_peak,covar);
-    low=p_low;
-    high=p_high;
-    return;
-  }
-  
-  /** \brief Compute the probability density function (arbitrary
-      normalization)
-  */
-  virtual double pdf(const vec_t &x) const {
-    for(size_t i=0;i<this->ndim;i++) {
-      if (x[i]<low[i]) {
-	O2SCL_ERR("Parameter too small in pdf().",
-		  o2scl::exc_einval);
-      }
-      if (x[i]>high[i]) {
-	O2SCL_ERR("Parameter too large in pdf().",
-		  o2scl::exc_einval);
-      }
+        \note This function is called in constructors and thus 
+        should not be virtual.
+    */
+    void set(size_t p_ndim, vec_t &p_peak, mat_t &covar,
+             vec_t &p_low, vec_t &p_high) {
+      prob_dens_mdim_gaussian<vec_t,mat_t>::set(p_ndim,p_peak,covar);
+      low=p_low;
+      high=p_high;
+      return;
     }
-    return prob_dens_mdim_gaussian<vec_t,mat_t>::pdf(x);
-  }
   
-  /** \brief Compute the natural log of the probability density function
-      (arbitrary normalization)
-  */
-  virtual double log_pdf(const vec_t &x) const {
-    for(size_t i=0;i<this->ndim;i++) {
-      if (x[i]<low[i]) {
-	O2SCL_ERR("Parameter too small in log_pdf().",
-		  o2scl::exc_einval);
-      }
-      if (x[i]>high[i]) {
-	O2SCL_ERR("Parameter too large in log_pdf().",
-		  o2scl::exc_einval);
-      }
-    }
-    return prob_dens_mdim_gaussian<vec_t,mat_t>::log_pdf(x);
-  }
-  
-  /** \brief Sample the distribution
-   */
-  virtual void operator()(vec_t &x) const {
-    bool done=false;
-    size_t j=0;
-    while (done==false) {
-      done=true;
-      prob_dens_mdim_gaussian<vec_t,mat_t>::operator()(x);
-      j++;
+    /** \brief Compute the probability density function (arbitrary
+        normalization)
+    */
+    virtual double pdf(const vec_t &x) const {
       for(size_t i=0;i<this->ndim;i++) {
-	if (x[i]<low[i]) {
-	  done=false;
-	  //std::cout << "Too small " << i << " " << x[i] << " "
-	  //<< low[i] << std::endl;
-	  i=this->ndim;
-	} else if (x[i]>high[i]) {
-	  done=false;
-	  //std::cout << "Too large " << i << " " << x[i] << " "
-	  //<< high[i] << std::endl;
-	  i=this->ndim;
-	}
+        if (x[i]<low[i]) {
+          O2SCL_ERR("Parameter too small in pdf().",
+                    o2scl::exc_einval);
+        }
+        if (x[i]>high[i]) {
+          O2SCL_ERR("Parameter too large in pdf().",
+                    o2scl::exc_einval);
+        }
       }
-      if (j>samp_max) {
-	O2SCL_ERR2("Sampling failed in ",
-		   "prob_dens_mdim_bound_gaussian::operator().",
-		   o2scl::exc_einval);
-      }
+      return prob_dens_mdim_gaussian<vec_t,mat_t>::pdf(x);
     }
-    return;
-  }
+  
+    /** \brief Compute the natural log of the probability density function
+        (arbitrary normalization)
+    */
+    virtual double log_pdf(const vec_t &x) const {
+      for(size_t i=0;i<this->ndim;i++) {
+        if (x[i]<low[i]) {
+          O2SCL_ERR("Parameter too small in log_pdf().",
+                    o2scl::exc_einval);
+        }
+        if (x[i]>high[i]) {
+          O2SCL_ERR("Parameter too large in log_pdf().",
+                    o2scl::exc_einval);
+        }
+      }
+      return prob_dens_mdim_gaussian<vec_t,mat_t>::log_pdf(x);
+    }
+  
+    /** \brief Sample the distribution
+     */
+    virtual void operator()(vec_t &x) const {
+      bool done=false;
+      size_t j=0;
+      while (done==false) {
+        done=true;
+        prob_dens_mdim_gaussian<vec_t,mat_t>::operator()(x);
+        j++;
+        for(size_t i=0;i<this->ndim;i++) {
+          if (x[i]<low[i]) {
+            done=false;
+            //std::cout << "Too small " << i << " " << x[i] << " "
+            //<< low[i] << std::endl;
+            i=this->ndim;
+          } else if (x[i]>high[i]) {
+            done=false;
+            //std::cout << "Too large " << i << " " << x[i] << " "
+            //<< high[i] << std::endl;
+            i=this->ndim;
+          }
+        }
+        if (j>samp_max) {
+          O2SCL_ERR2("Sampling failed in ",
+                     "prob_dens_mdim_bound_gaussian::operator().",
+                     o2scl::exc_einval);
+        }
+      }
+      return;
+    }
   
   };
   
@@ -1463,81 +1469,81 @@ namespace o2scl {
       This class is experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
-    class prob_cond_mdim {
+  class prob_cond_mdim {
     
   public:
   
-  /// The dimensionality
-  virtual size_t dim() const {
-    return 0;
-  }
-  
-  /** \brief The conditional probability of x_A given x_B, 
-      i.e. \f$ P(A|B) \f$
-  */
-  virtual double pdf(const vec_t &x_B, const vec_t &x_A) const=0;
-  
-  /** \brief The log of the conditional probability of x_A given x_B
-      i.e. \f$ \log [P(A|B)] \f$
-  */
-  virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const=0;
-  
-  /// Sample the distribution
-  virtual void operator()(const vec_t &x_B, vec_t &x_A) const=0;
-
-  /** \brief Sample the distribution and return the 
-      log of the Metropolis-Hastings ratio
-
-      The Metropolis-Hastings ratio for a step beginning at \f$ x \f$
-      and ending at \f$ x^{\prime} \f$ is 
-      obeys
-      \f[
-      \frac{P(x^{\prime})g(x|x^{\prime})}{P(x)g(x^{\prime}|x)}
-      \f]
-      taking the log, this gives 
-      \f[
-      \log[P(x^{\prime})] - \log[P(x)] + 
-      \log \left[ \frac{g(x|x^{\prime})}{g(x^{\prime}|x)} \right]
-      \f]
-      thus this function computes 
-      \f[
-      \log \left[ g(x|x^{\prime}) \right]
-      - \log \left[ g(x^{\prime}|x) \right]
-      \f]
-      and thus, to keep a similar notation to 
-      \ref prob_cond_mdim::pdf() where \f$ g(x^{\prime}|x) \f$
-      is obtained from 
-      \code
-      pdf(x,x_prime)
-      \endcode
-      this function computes
-      \code
-      h(x,x_prime) = log_pdf(x_prime,x)-log_pdf(x,x_prime);
-      \endcode
-
-      To check this, in the limit that \f$ g(x|x^{\prime}) 
-      \rightarrow P(x) \f$ this function returns
-      \f[
-      \log \left[ \frac{P(x)}{P(x^{\prime})} \right]
-      \f]
-
-  */
-  virtual double log_metrop_hast(const vec_t &x, vec_t &x_prime) const {
-    operator()(x,x_prime);
-    double val1=log_pdf(x_prime,x);
-    double val2=log_pdf(x,x_prime);
-    if (!std::isfinite(val1)) {
-      std::cout << "val1: " << val1 << std::endl;
-      O2SCL_ERR("Log pdf not finite in log_metrop_hast 1.",
-		o2scl::exc_efailed);
+    /// The dimensionality
+    virtual size_t dim() const {
+      return 0;
     }
-    if (!std::isfinite(val2)) {
-      std::cout << "val2: " << val2 << std::endl;
-      O2SCL_ERR("Log pdf not finite in log_metrop_hast 2.",
-		o2scl::exc_efailed);
+  
+    /** \brief The conditional probability of x_A given x_B, 
+        i.e. \f$ P(A|B) \f$
+    */
+    virtual double pdf(const vec_t &x_B, const vec_t &x_A) const=0;
+  
+    /** \brief The log of the conditional probability of x_A given x_B
+        i.e. \f$ \log [P(A|B)] \f$
+    */
+    virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const=0;
+  
+    /// Sample the distribution
+    virtual void operator()(const vec_t &x_B, vec_t &x_A) const=0;
+
+    /** \brief Sample the distribution and return the 
+        log of the Metropolis-Hastings ratio
+
+        The Metropolis-Hastings ratio for a step beginning at \f$ x \f$
+        and ending at \f$ x^{\prime} \f$ is 
+        obeys
+        \f[
+        \frac{P(x^{\prime})g(x|x^{\prime})}{P(x)g(x^{\prime}|x)}
+        \f]
+        taking the log, this gives 
+        \f[
+        \log[P(x^{\prime})] - \log[P(x)] + 
+        \log \left[ \frac{g(x|x^{\prime})}{g(x^{\prime}|x)} \right]
+        \f]
+        thus this function computes 
+        \f[
+        \log \left[ g(x|x^{\prime}) \right]
+        - \log \left[ g(x^{\prime}|x) \right]
+        \f]
+        and thus, to keep a similar notation to 
+        \ref prob_cond_mdim::pdf() where \f$ g(x^{\prime}|x) \f$
+        is obtained from 
+        \code
+        pdf(x,x_prime)
+        \endcode
+        this function computes
+        \code
+        h(x,x_prime) = log_pdf(x_prime,x)-log_pdf(x,x_prime);
+        \endcode
+
+        To check this, in the limit that \f$ g(x|x^{\prime}) 
+        \rightarrow P(x) \f$ this function returns
+        \f[
+        \log \left[ \frac{P(x)}{P(x^{\prime})} \right]
+        \f]
+
+    */
+    virtual double log_metrop_hast(const vec_t &x, vec_t &x_prime) const {
+      operator()(x,x_prime);
+      double val1=log_pdf(x_prime,x);
+      double val2=log_pdf(x,x_prime);
+      if (!std::isfinite(val1)) {
+        std::cout << "val1: " << val1 << std::endl;
+        O2SCL_ERR("Log pdf not finite in log_metrop_hast 1.",
+                  o2scl::exc_efailed);
+      }
+      if (!std::isfinite(val2)) {
+        std::cout << "val2: " << val2 << std::endl;
+        O2SCL_ERR("Log pdf not finite in log_metrop_hast 2.",
+                  o2scl::exc_efailed);
+      }
+      return val1-val2;
     }
-    return val1-val2;
-  }
   
   };
 
@@ -1584,187 +1590,187 @@ namespace o2scl {
       \endcomment
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
-    class prob_cond_mdim_fixed_step : public prob_cond_mdim<vec_t> {
+  class prob_cond_mdim_fixed_step : public prob_cond_mdim<vec_t> {
 
   protected:
 
-  /** \brief Step sizes
-   */
-  std::vector<double> u_step;
+    /** \brief Step sizes
+     */
+    std::vector<double> u_step;
 
-  /** \brief Lower limits
-   */
-  std::vector<double> u_low;
+    /** \brief Lower limits
+     */
+    std::vector<double> u_low;
 
-  /** \brief Upper limits
-   */
-  std::vector<double> u_high;
+    /** \brief Upper limits
+     */
+    std::vector<double> u_high;
 
-  /** \brief Internal random number generator
-   */
+    /** \brief Internal random number generator
+     */
     mutable rng<> rg;
   
-  /** \brief Internal set function
+    /** \brief Internal set function
 
-      \comment
-      This can't be virtual because it needs to be called
-      by the constructor
-      \endcomment
-  */
-  int set_internal(size_t sz, vec_t &step, vec_t &low, vec_t &high) {
-    u_step.resize(sz);
-    u_low.resize(sz);
-    u_high.resize(sz);
-    for(size_t i=0;i<sz;i++) {
-      u_step[i]=step[i];
+        \comment
+        This can't be virtual because it needs to be called
+        by the constructor
+        \endcomment
+    */
+    int set_internal(size_t sz, vec_t &step, vec_t &low, vec_t &high) {
+      u_step.resize(sz);
+      u_low.resize(sz);
+      u_high.resize(sz);
+      for(size_t i=0;i<sz;i++) {
+        u_step[i]=step[i];
 
-      if (!std::isfinite(low[i]) || !std::isfinite(high[i])) {
-	O2SCL_ERR2("Limit not finite in prob_cond_mdim_fixed_step::",
-		   "set_internal().",o2scl::exc_einval);
-      }
+        if (!std::isfinite(low[i]) || !std::isfinite(high[i])) {
+          O2SCL_ERR2("Limit not finite in prob_cond_mdim_fixed_step::",
+                     "set_internal().",o2scl::exc_einval);
+        }
       
-      // Force low and high to be properly ordered
-      if (low[i]>high[i]) {
-	u_high[i]=low[i];
-	u_low[i]=high[i];
-      } else {
-	u_low[i]=low[i];
-	u_high[i]=high[i];
+        // Force low and high to be properly ordered
+        if (low[i]>high[i]) {
+          u_high[i]=low[i];
+          u_low[i]=high[i];
+        } else {
+          u_low[i]=low[i];
+          u_high[i]=high[i];
+        }
       }
+      return 0;
     }
-    return 0;
-  }
 
   public:
   
-  prob_cond_mdim_fixed_step() {
-  }
+    prob_cond_mdim_fixed_step() {
+    }
 
-  /// Copy constructor
-  prob_cond_mdim_fixed_step(const prob_cond_mdim_fixed_step &pcmfs) {
-    u_step=pcmfs.u_step;
-    u_low=pcmfs.u_low;
-    u_high=pcmfs.u_high;
-  }
-  
-  /// Copy constructor with operator=
-  prob_cond_mdim_fixed_step &operator=(const prob_cond_mdim_fixed_step &pcmfs)
-  {
-    // Check for self-assignment
-    if (this!=&pcmfs) {
+    /// Copy constructor
+    prob_cond_mdim_fixed_step(const prob_cond_mdim_fixed_step &pcmfs) {
       u_step=pcmfs.u_step;
       u_low=pcmfs.u_low;
       u_high=pcmfs.u_high;
     }
-    return *this;
-  }
-
-  /// Virtual destructor
-  virtual ~prob_cond_mdim_fixed_step() {
-  }
   
-  /** \brief Set the random number generator seed
-   */
-  void set_seed(unsigned long int s) {
-    rg.set_seed(s);
-    return;
-  }
+    /// Copy constructor with operator=
+    prob_cond_mdim_fixed_step &operator=(const prob_cond_mdim_fixed_step &pcmfs)
+    {
+      // Check for self-assignment
+      if (this!=&pcmfs) {
+        u_step=pcmfs.u_step;
+        u_low=pcmfs.u_low;
+        u_high=pcmfs.u_high;
+      }
+      return *this;
+    }
 
-  /** \brief Create a conditional probability object
-      with specified step sizes and limits
-  */
-  template<class=vec_t> prob_cond_mdim_fixed_step
-  (vec_t &step, vec_t &low, vec_t &high) {
-    if (step.size()!=low.size()) {
-      O2SCL_ERR2("Vectors 'step' and 'low' mismatched in ",
-		 "prob_cond_mdim_fixed_step constructor.",
-		 o2scl::exc_einval);
+    /// Virtual destructor
+    virtual ~prob_cond_mdim_fixed_step() {
     }
-    if (step.size()!=high.size()) {
-      O2SCL_ERR2("Vectors 'step' and 'high' mismatched in ",
-		 "prob_cond_mdim_fixed_step constructor.",
-		 o2scl::exc_einval);
-    }
-    set_internal(step.size(),step,low,high);
-  }
   
-  /** \brief Set step sizes and limits
-   */
-  virtual int set(vec_t &step, vec_t &low, vec_t &high) {
-    if (step.size()!=low.size()) {
-      O2SCL_ERR2("Vectors 'step' and 'low' mismatched in ",
-		 "prob_cond_mdim_fixed_step::set().",
-		 o2scl::exc_einval);
+    /** \brief Set the random number generator seed
+     */
+    void set_seed(unsigned long int s) {
+      rg.set_seed(s);
+      return;
     }
-    if (step.size()!=high.size()) {
-      O2SCL_ERR2("Vectors 'step' and 'high' mismatched in ",
-		 "prob_cond_mdim_fixed_step::set().",
-		 o2scl::exc_einval);
-    }
-    set_internal(step.size(),step,low,high);
-    return 0;
-  }
 
-  /// The dimensionality
-  virtual size_t dim() const {
-    return u_step.size();
-  }
+    /** \brief Create a conditional probability object
+        with specified step sizes and limits
+    */
+    template<class=vec_t> prob_cond_mdim_fixed_step
+    (vec_t &step, vec_t &low, vec_t &high) {
+      if (step.size()!=low.size()) {
+        O2SCL_ERR2("Vectors 'step' and 'low' mismatched in ",
+                   "prob_cond_mdim_fixed_step constructor.",
+                   o2scl::exc_einval);
+      }
+      if (step.size()!=high.size()) {
+        O2SCL_ERR2("Vectors 'step' and 'high' mismatched in ",
+                   "prob_cond_mdim_fixed_step constructor.",
+                   o2scl::exc_einval);
+      }
+      set_internal(step.size(),step,low,high);
+    }
   
-  /** \brief The conditional probability of x_A given x_B, 
-      i.e. \f$ P(A|B) \f$
-  */
-  virtual double pdf(const vec_t &x_B, const vec_t &x_A) const {
-    double vol1=1.0;
-    for(size_t i=0;i<u_step.size();i++) {
+    /** \brief Set step sizes and limits
+     */
+    virtual int set(vec_t &step, vec_t &low, vec_t &high) {
+      if (step.size()!=low.size()) {
+        O2SCL_ERR2("Vectors 'step' and 'low' mismatched in ",
+                   "prob_cond_mdim_fixed_step::set().",
+                   o2scl::exc_einval);
+      }
+      if (step.size()!=high.size()) {
+        O2SCL_ERR2("Vectors 'step' and 'high' mismatched in ",
+                   "prob_cond_mdim_fixed_step::set().",
+                   o2scl::exc_einval);
+      }
+      set_internal(step.size(),step,low,high);
+      return 0;
+    }
 
-      if (fabs(x_A[i]-x_B[i])>u_step[i]) return 0.0;
+    /// The dimensionality
+    virtual size_t dim() const {
+      return u_step.size();
+    }
+  
+    /** \brief The conditional probability of x_A given x_B, 
+        i.e. \f$ P(A|B) \f$
+    */
+    virtual double pdf(const vec_t &x_B, const vec_t &x_A) const {
+      double vol1=1.0;
+      for(size_t i=0;i<u_step.size();i++) {
+
+        if (fabs(x_A[i]-x_B[i])>u_step[i]) return 0.0;
       
-      if (x_B[i]-u_step[i]<u_low[i]) {
-	if (x_B[i]+u_step[i]>u_high[i]) {
-	  // If x+step is too large and x-step is too small
-	  vol1*=u_high[i]-u_low[i];
-	} else {
-	  // If x-step is too small
-	  vol1*=x_B[i]+u_step[i]-u_low[i];
-	}
-      } else {
-	if (x_B[i]+u_step[i]>u_high[i]) {
-	  // If x+step is too large
-	  vol1*=u_high[i]-(x_B[i]-u_step[i]);
-	} else {
-	  // The normal case, where the volumes are both inside
-	  // of the boundaries
-	  vol1*=2.0*u_step[i];
-	}
+        if (x_B[i]-u_step[i]<u_low[i]) {
+          if (x_B[i]+u_step[i]>u_high[i]) {
+            // If x+step is too large and x-step is too small
+            vol1*=u_high[i]-u_low[i];
+          } else {
+            // If x-step is too small
+            vol1*=x_B[i]+u_step[i]-u_low[i];
+          }
+        } else {
+          if (x_B[i]+u_step[i]>u_high[i]) {
+            // If x+step is too large
+            vol1*=u_high[i]-(x_B[i]-u_step[i]);
+          } else {
+            // The normal case, where the volumes are both inside
+            // of the boundaries
+            vol1*=2.0*u_step[i];
+          }
+        }
       }
+      return 1.0/vol1;
     }
-    return 1.0/vol1;
-  }
   
-  /** \brief The log of the conditional probability of x_A given x_B
-      i.e. \f$ \log [P(A|B)] \f$
-  */
-  virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const {
-    return log(pdf(x_B,x_A));
-  }
+    /** \brief The log of the conditional probability of x_A given x_B
+        i.e. \f$ \log [P(A|B)] \f$
+    */
+    virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const {
+      return log(pdf(x_B,x_A));
+    }
   
-  /// Sample the distribution
-  virtual void operator()(const vec_t &x_B, vec_t &x_A) const {
-    size_t nv=u_step.size();
-    for(size_t i=0;i<nv;i++) {
-      if (x_B[i]<u_low[i] || x_B[i]>u_high[i]) {
-	std::cout << "Input out of bounds in fixed_step::operator(): "
-		  << i << " " << x_B[i] << " "
-		  << u_low[i] << " " << u_high[i] << std::endl;
-	O2SCL_ERR("Input out of bounds in fixed_step::operator().",
-		  o2scl::exc_einval);
+    /// Sample the distribution
+    virtual void operator()(const vec_t &x_B, vec_t &x_A) const {
+      size_t nv=u_step.size();
+      for(size_t i=0;i<nv;i++) {
+        if (x_B[i]<u_low[i] || x_B[i]>u_high[i]) {
+          std::cout << "Input out of bounds in fixed_step::operator(): "
+                    << i << " " << x_B[i] << " "
+                    << u_low[i] << " " << u_high[i] << std::endl;
+          O2SCL_ERR("Input out of bounds in fixed_step::operator().",
+                    o2scl::exc_einval);
+        }
+        do {
+          x_A[i]=x_B[i]+u_step[i]*(rg.random()*2.0-1.0);
+        } while (x_A[i]<u_low[i] || x_A[i]>u_high[i]);
       }
-      do {
-	x_A[i]=x_B[i]+u_step[i]*(rg.random()*2.0-1.0);
-      } while (x_A[i]<u_low[i] || x_A[i]>u_high[i]);
+      return;
     }
-    return;
-  }
   
   };
 
@@ -1780,57 +1786,57 @@ namespace o2scl {
       This class is experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
-    class prob_cond_mdim_indep : public prob_cond_mdim<vec_t> {
+  class prob_cond_mdim_indep : public prob_cond_mdim<vec_t> {
 
   protected:
   
-  prob_dens_mdim<vec_t> &base;
+    prob_dens_mdim<vec_t> &base;
   
   public:
 
-  /** \brief Create a conditional probability distribution
-      based on the specified probability distribution
-  */
-  prob_cond_mdim_indep(prob_dens_mdim<vec_t> &out) : base(out) {
-  }
+    /** \brief Create a conditional probability distribution
+        based on the specified probability distribution
+    */
+    prob_cond_mdim_indep(prob_dens_mdim<vec_t> &out) : base(out) {
+    }
   
-  /// Copy constructor
-  prob_cond_mdim_indep(const prob_cond_mdim_indep &pcmi) {
-    base=pcmi.base;
-  }
-  
-  /// Copy constructor with operator=
-  prob_cond_mdim_indep &operator=(const prob_cond_mdim_indep &pcmi) {
-    // Check for self-assignment
-    if (this!=&pcmi) {
+    /// Copy constructor
+    prob_cond_mdim_indep(const prob_cond_mdim_indep &pcmi) {
       base=pcmi.base;
     }
-    return *this;
-  }
   
-  /// The dimensionality
-  virtual size_t dim() const {
-    return base.dim();
-  }
+    /// Copy constructor with operator=
+    prob_cond_mdim_indep &operator=(const prob_cond_mdim_indep &pcmi) {
+      // Check for self-assignment
+      if (this!=&pcmi) {
+        base=pcmi.base;
+      }
+      return *this;
+    }
   
-  /** \brief The conditional probability of x_A given x_B, 
-      i.e. \f$ P(A|B) \f$
-  */
-  virtual double pdf(const vec_t &x_B, const vec_t &x_A) const {
-    return base.pdf(x_A);
-  }
+    /// The dimensionality
+    virtual size_t dim() const {
+      return base.dim();
+    }
   
-  /** \brief The log of the conditional probability of x_A given x_B
-      i.e. \f$ \log [P(A|B)] \f$
-  */
-  virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const {
-    return base.log_pdf(x_A);
-  }
+    /** \brief The conditional probability of x_A given x_B, 
+        i.e. \f$ P(A|B) \f$
+    */
+    virtual double pdf(const vec_t &x_B, const vec_t &x_A) const {
+      return base.pdf(x_A);
+    }
   
-  /// Sample the distribution
-  virtual void operator()(const vec_t &x_B, vec_t &x_A) const {
-    return base(x_A);
-  }
+    /** \brief The log of the conditional probability of x_A given x_B
+        i.e. \f$ \log [P(A|B)] \f$
+    */
+    virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const {
+      return base.log_pdf(x_A);
+    }
+  
+    /// Sample the distribution
+    virtual void operator()(const vec_t &x_B, vec_t &x_A) const {
+      return base(x_A);
+    }
   
   };
   
@@ -1846,54 +1852,42 @@ namespace o2scl {
       mutable storage is used.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
-    class mat_t=boost::numeric::ublas::matrix<double> >
-    class prob_cond_mdim_gaussian : public prob_cond_mdim<vec_t> {
+           class mat_t=boost::numeric::ublas::matrix<double> >
+  class prob_cond_mdim_gaussian : public prob_cond_mdim<vec_t> {
     
   protected:
 
-  /// Cholesky decomposition
-  mat_t chol;
+    /// Cholesky decomposition
+    mat_t chol;
 
-  /// Inverse of the covariance matrix
-  mat_t covar_inv;
+    /// Inverse of the covariance matrix
+    mat_t covar_inv;
 
-  /// Normalization factor
-  double norm;
+    /// Normalization factor
+    double norm;
 
-  /// Number of dimensions
-  size_t ndim;
+    /// Number of dimensions
+    size_t ndim;
 
-  /// Temporary storage 1
-  mutable vec_t q;
+    /// Temporary storage 1
+    mutable vec_t q;
 
-  /// Temporary storage 2
-  mutable vec_t vtmp;
+    /// Temporary storage 2
+    mutable vec_t vtmp;
 
-  /// Standard normal
-  o2scl::prob_dens_gaussian pdg;
+    /// Standard normal
+    o2scl::prob_dens_gaussian pdg;
     
   public:
 
-  /** \brief Create an empty distribution 
-   */
-  prob_cond_mdim_gaussian() {
-    ndim=0;
-  }
+    /** \brief Create an empty distribution 
+     */
+    prob_cond_mdim_gaussian() {
+      ndim=0;
+    }
   
-  /// Copy constructor
-  prob_cond_mdim_gaussian(const prob_cond_mdim_gaussian &pcmg) {
-    ndim=pcmg.ndim;
-    chol=pcmg.chol;
-    covar_inv=pcmg.covar_inv;
-    norm=pcmg.norm;
-    q.resize(ndim);
-    vtmp.resize(ndim);
-  }
-  
-  /// Copy constructor with operator=
-  prob_cond_mdim_gaussian &operator=(const prob_cond_mdim_gaussian &pcmg) {
-    // Check for self-assignment
-    if (this!=&pcmg) {
+    /// Copy constructor
+    prob_cond_mdim_gaussian(const prob_cond_mdim_gaussian &pcmg) {
       ndim=pcmg.ndim;
       chol=pcmg.chol;
       covar_inv=pcmg.covar_inv;
@@ -1901,120 +1895,132 @@ namespace o2scl {
       q.resize(ndim);
       vtmp.resize(ndim);
     }
-    return *this;
-  }
   
-  /** \brief Create a distribution from the covariance matrix
-   */
-  prob_cond_mdim_gaussian(size_t p_ndim, mat_t &covar) {
-    set(p_ndim,covar);
-  }
-  
-  /// The dimensionality
-  virtual size_t dim() const {
-    return ndim;
-  }
-
-  /// Set the seed
-  void set_seed(unsigned long int s) {
-    pdg.set_seed(s);
-    return;
-  }
-  
-  /** \brief Set the covariance matrix for the distribution
-   */
-  void set(size_t p_ndim, mat_t &covar) {
-    if (p_ndim==0) {
-      O2SCL_ERR("Zero dimension in prob_cond_mdim_gaussian::set().",
-		o2scl::exc_einval);
-    }
-    ndim=p_ndim;
-    norm=1.0;
-    q.resize(ndim);
-    vtmp.resize(ndim);
-
-    // Perform the Cholesky decomposition
-    chol=covar;
-    o2scl_linalg::cholesky_decomp(ndim,chol);
-      
-    // Find the inverse
-    covar_inv=chol;
-    o2scl_linalg::cholesky_invert<mat_t>(ndim,covar_inv);
-      
-    // Force chol to be lower triangular and compute the determinant
-    double sqrt_det=1.0;
-    for(size_t i=0;i<ndim;i++) {
-      if (!std::isfinite(chol(i,i))) {
-	O2SCL_ERR2("An entry of the Cholesky decomposition was not finite ",
-		   "in prob_cond_mdim_gaussian::set().",o2scl::exc_einval);
+    /// Copy constructor with operator=
+    prob_cond_mdim_gaussian &operator=(const prob_cond_mdim_gaussian &pcmg) {
+      // Check for self-assignment
+      if (this!=&pcmg) {
+        ndim=pcmg.ndim;
+        chol=pcmg.chol;
+        covar_inv=pcmg.covar_inv;
+        norm=pcmg.norm;
+        q.resize(ndim);
+        vtmp.resize(ndim);
       }
-      sqrt_det*=chol(i,i);
-      for(size_t j=0;j<ndim;j++) {
-	if (i<j) chol(i,j)=0.0;
-      }
+      return *this;
     }
+  
+    /** \brief Create a distribution from the covariance matrix
+     */
+    prob_cond_mdim_gaussian(size_t p_ndim, mat_t &covar) {
+      set(p_ndim,covar);
+    }
+  
+    /// The dimensionality
+    virtual size_t dim() const {
+      return ndim;
+    }
+
+    /// Set the seed
+    void set_seed(unsigned long int s) {
+      pdg.set_seed(s);
+      return;
+    }
+  
+    /** \brief Set the covariance matrix for the distribution
+     */
+    void set(size_t p_ndim, mat_t &covar) {
+      if (p_ndim==0) {
+        O2SCL_ERR("Zero dimension in prob_cond_mdim_gaussian::set().",
+                  o2scl::exc_einval);
+      }
+      ndim=p_ndim;
+      norm=1.0;
+      q.resize(ndim);
+      vtmp.resize(ndim);
+
+      // Perform the Cholesky decomposition
+      chol=covar;
+      o2scl_linalg::cholesky_decomp(ndim,chol);
+      
+      // Find the inverse
+      covar_inv=chol;
+      o2scl_linalg::cholesky_invert<mat_t>(ndim,covar_inv);
+      
+      // Force chol to be lower triangular and compute the determinant
+      double sqrt_det=1.0;
+      for(size_t i=0;i<ndim;i++) {
+        if (!std::isfinite(chol(i,i))) {
+          O2SCL_ERR2("An entry of the Cholesky decomposition was not finite ",
+                     "in prob_cond_mdim_gaussian::set().",o2scl::exc_einval);
+        }
+        sqrt_det*=chol(i,i);
+        for(size_t j=0;j<ndim;j++) {
+          if (i<j) chol(i,j)=0.0;
+        }
+      }
     
-    // Compute normalization
-    norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt_det;
-    if (!std::isfinite(norm)) {
-      O2SCL_ERR2("Normalization not finite in ",
-		 "prob_dens_mdim_gaussian::set().",o2scl::exc_einval);
+      // Compute normalization
+      norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt_det;
+      if (!std::isfinite(norm)) {
+        O2SCL_ERR2("Normalization not finite in ",
+                   "prob_dens_mdim_gaussian::set().",o2scl::exc_einval);
+      }
     }
-  }
 
-  /** \brief The conditional probability of x_A given x_B, 
-      i.e. \f$ P(A|B) \f$
-  */
-  virtual double pdf(const vec_t &x_B, const vec_t &x_A) const {
-    if (ndim==0) {
-      O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
-		 "pdf().",o2scl::exc_einval);
-    }
-    double ret=norm;
-    for(size_t i=0;i<ndim;i++) q[i]=x_A[i]-x_B[i];
-    vtmp=prod(covar_inv,q);
-    ret*=exp(-0.5*inner_prod(q,vtmp));
-    return ret;
-  }
-
-  /** \brief The log of the conditional probability of x_A given x_B
-      i.e. \f$ \log [P(A|B)] \f$
-  */
-  virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const {
-    if (ndim==0) {
-      O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
-		 "pdf().",o2scl::exc_einval);
-    }
-    double ret=log(norm);
-    for(size_t i=0;i<ndim;i++) q[i]=x_A[i]-x_B[i];
-    vtmp=prod(covar_inv,q);
-    ret+=-0.5*inner_prod(q,vtmp);
-    /*
-      std::cout << "pdmg lp: ";
-      for (size_t i=0;i<ndim;i++) std::cout << x_A[i] << " ";
-      for (size_t i=0;i<ndim;i++) std::cout << q[i] << " ";
-      for (size_t i=0;i<ndim;i++) std::cout << vtmp[i] << " ";
-      std::cout << ret << std::endl;
+    /** \brief The conditional probability of x_A given x_B, 
+        i.e. \f$ P(A|B) \f$
     */
-    return ret;
-  }
-
-  /// Sample the distribution
-  virtual void operator()(const vec_t &x_B, vec_t &x_A) const {
-    if (ndim==0) {
-      O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
-		 "operator().",o2scl::exc_einval);
+    virtual double pdf(const vec_t &x_B, const vec_t &x_A) const {
+      if (ndim==0) {
+        O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
+                   "pdf().",o2scl::exc_einval);
+      }
+      double ret=norm;
+      for(size_t i=0;i<ndim;i++) q[i]=x_A[i]-x_B[i];
+      vtmp=prod(covar_inv,q);
+      ret*=exp(-0.5*inner_prod(q,vtmp));
+      return ret;
     }
-    for (size_t i=0;i<ndim;i++) q[i]=pdg();
-    vtmp=prod(chol,q);
-    for (size_t i=0;i<ndim;i++) x_A[i]=x_B[i]+vtmp[i];
-    /*
-      std::cout << "pdmg op: ";
-      for (size_t i=0;i<ndim;i++) std::cout << x_A[i] << " ";
-      std::cout << std::endl;
+
+    /** \brief The log of the conditional probability of x_A given x_B
+        i.e. \f$ \log [P(A|B)] \f$
     */
-    return;
-  }
+    virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const {
+      if (ndim==0) {
+        O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
+                   "pdf().",o2scl::exc_einval);
+      }
+      double ret=log(norm);
+      for(size_t i=0;i<ndim;i++) q[i]=x_A[i]-x_B[i];
+      vtmp=prod(covar_inv,q);
+      ret+=-0.5*inner_prod(q,vtmp);
+      /*
+        std::cout << "pdmg lp: ";
+        for (size_t i=0;i<ndim;i++) std::cout << x_A[i] << " ";
+        for (size_t i=0;i<ndim;i++) std::cout << q[i] << " ";
+        for (size_t i=0;i<ndim;i++) std::cout << vtmp[i] << " ";
+        std::cout << ret << std::endl;
+      */
+      return ret;
+    }
+
+    /// Sample the distribution
+    virtual void operator()(const vec_t &x_B, vec_t &x_A) {
+      if (ndim==0) {
+        O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
+                   "operator().",o2scl::exc_einval);
+      }
+      for (size_t i=0;i<ndim;i++) q[i]=pdg();
+      vtmp=prod(chol,q);
+      for (size_t i=0;i<ndim;i++) x_A[i]=x_B[i]+vtmp[i];
+      /*
+        std::cout << "pdmg op: ";
+        for (size_t i=0;i<ndim;i++) std::cout << x_A[i] << " ";
+        std::cout << std::endl;
+      */
+      return;
+    }
 
   };
 
@@ -2026,9 +2032,9 @@ namespace o2scl {
       not optimized.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
-    class mat_t=boost::numeric::ublas::matrix<double>,
-    class mat_col_t=boost::numeric::ublas::matrix_column<mat_t> >
-    class prob_dens_mdim_gproc :
+           class mat_t=boost::numeric::ublas::matrix<double>,
+           class mat_col_t=boost::numeric::ublas::matrix_column<mat_t> >
+  class prob_dens_mdim_gproc :
     public o2scl::prob_dens_mdim_gaussian<vec_t> {
     
   public:

@@ -43,7 +43,7 @@ namespace o2scl {
       
       This class provides the generic Monte Carlo parameters and the
       random number generator. The default type for the random number
-      generator is a \ref rng_gsl object. 
+      generator is a \ref rng object. 
   */
   template<class func_t=multi_funct, 
     class vec_t=boost::numeric::ublas::vector<double>,
