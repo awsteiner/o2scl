@@ -10,7 +10,7 @@ update_lic: update_lic.cpp
 	g++ -o update_lic update_lic.cpp
 
 EXTRA_DIST = binsiz.f \
-	gesvd.cpp zheev.cpp ame_parse.cpp hfb_parse.cpp mnk_parse.cpp \
+	gesvd.cpp zheev.cpp hfb_parse.cpp mnk_parse.cpp \
 	o2comm.cpp osni88.cpp make_units.cpp
 
 # contour3.pdf contour4.pdf contour_gr.cpp

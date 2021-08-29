@@ -31,7 +31,7 @@
     <member refid="namespaceo2scl_1a23441c78c7e0fb49a83b7dd578bb1398" kind="function"><name>o2abs</name></member>
     <member refid="namespaceo2scl_1a2bb148c4e4a7915314bcb8ab636b85ab" kind="function"><name>o2abs</name></member>
     <member refid="namespaceo2scl_1aca65602554aa888a1df9be7915ce40cb" kind="function"><name>o2abs</name></member>
-    <member refid="namespaceo2scl_1ac09a64817d5b827c1a8070487c7fbf74" kind="function"><name>o2abs</name></member>
+    <member refid="namespaceo2scl_1a5dc57a7fc9524a79a620ab17aff1243a" kind="function"><name>o2abs</name></member>
     <member refid="namespaceo2scl_1a7ee3118e255e910542eadd3e3f4084ea" kind="function"><name>o2abs</name></member>
     <member refid="namespaceo2scl_1a93fb81e66bbd551b8ace53c166ca9a58" kind="function"><name>o2abs</name></member>
     <member refid="namespaceo2scl_1a4a0ed28986c24c0a0d05fe3f372ede09" kind="function"><name>o2abs</name></member>
@@ -39,19 +39,19 @@
     <member refid="namespaceo2scl_1a5557379051562f5343872083de026606" kind="function"><name>o2exp</name></member>
     <member refid="namespaceo2scl_1a9b77e1dbf224e8d46dc4d95da5975646" kind="function"><name>o2exp</name></member>
     <member refid="namespaceo2scl_1aedf06fcb3a67a47de22a574d7214edea" kind="function"><name>o2exp</name></member>
-    <member refid="namespaceo2scl_1aa5efbd63a1f16d75a3e3a18518411a26" kind="function"><name>o2exp</name></member>
+    <member refid="namespaceo2scl_1a751ef4f57724a3af1c61c339437ba29c" kind="function"><name>o2exp</name></member>
     <member refid="namespaceo2scl_1a90b891bcd65716da8363d979c0b4128c" kind="function"><name>o2exp</name></member>
     <member refid="namespaceo2scl_1ac5f8c49f708e0297f29a8a4bd35a5616" kind="function"><name>o2exp</name></member>
     <member refid="namespaceo2scl_1ac71b77636b52e68acb18f54a9d13bc1c" kind="function"><name>o2log</name></member>
     <member refid="namespaceo2scl_1aa71f87e012064bda8a9350570becc8ef" kind="function"><name>o2log</name></member>
     <member refid="namespaceo2scl_1ab37389ee4f0cdca9b48492cec16fb482" kind="function"><name>o2log</name></member>
-    <member refid="namespaceo2scl_1ab4fb86831b458eb9ceef299638056868" kind="function"><name>o2log</name></member>
+    <member refid="namespaceo2scl_1af3820e35b2ec28d5077f8769c93df98b" kind="function"><name>o2log</name></member>
     <member refid="namespaceo2scl_1a9be55274505ddc4cb947a00a835f5f1d" kind="function"><name>o2log</name></member>
     <member refid="namespaceo2scl_1a6282b639b5a47544bbd32f52df2d482f" kind="function"><name>o2log</name></member>
     <member refid="namespaceo2scl_1a80468e79a2055fa535664189bf9cc9d3" kind="function"><name>o2sqrt</name></member>
     <member refid="namespaceo2scl_1a66b2e9c796a8728f4373377b9c16196f" kind="function"><name>o2sqrt</name></member>
     <member refid="namespaceo2scl_1a80dc0649ad77036ef1cd0848f6738f0b" kind="function"><name>o2sqrt</name></member>
-    <member refid="namespaceo2scl_1a1d7d108349a37a47eaacff0eea6a6191" kind="function"><name>o2sqrt</name></member>
+    <member refid="namespaceo2scl_1ac0d36c37b44a93af07b3f02e8f3968e2" kind="function"><name>o2sqrt</name></member>
     <member refid="namespaceo2scl_1a7d0573477eed100497d0afba3f8e0a29" kind="function"><name>o2sqrt</name></member>
     <member refid="namespaceo2scl_1abe4d2d56504c9aaaf7c0927b16cd1dcd" kind="function"><name>o2sqrt</name></member>
     <member refid="namespaceo2scl_1a4a1bc3f95164f04c8b0bafbb8d97b55a" kind="function"><name>o2sqrt</name></member>
@@ -59,7 +59,7 @@
     <member refid="namespaceo2scl_1a9f43bf63343ab525a2ce5473a0d82fe8" kind="function"><name>o2pow</name></member>
     <member refid="namespaceo2scl_1abd4d319c1abb508a1d6e131910a25d37" kind="function"><name>o2pow</name></member>
     <member refid="namespaceo2scl_1a463f240fe9027d13d3c68bc90cd6e83b" kind="function"><name>o2pow</name></member>
-    <member refid="namespaceo2scl_1ae350b26c498133688de57b9ebc4ec523" kind="function"><name>o2pow</name></member>
+    <member refid="namespaceo2scl_1aeb9914d957121772a913dd258506de60" kind="function"><name>o2pow</name></member>
     <member refid="namespaceo2scl_1aada9c8540bb3377c138924173261fbe6" kind="function"><name>o2pow</name></member>
     <member refid="namespaceo2scl_1a7718f8eb9fa26409aa6328b4341f0221" kind="function"><name>o2pow</name></member>
     <member refid="namespaceo2scl_1a0a1225682f9c33a7c542faac593266c7" kind="function"><name>o2pow</name></member>
@@ -73,7 +73,7 @@
     <member refid="namespaceo2scl_1a3362003b4b195c1e4a069baaa14ebea4" kind="function"><name>o2hypot</name></member>
     <member refid="namespaceo2scl_1a3a1a10347c4d0d3a078df0030d3c2501" kind="function"><name>o2hypot</name></member>
     <member refid="namespaceo2scl_1a19b6a4324149a1fcae89daeec38f2867" kind="function"><name>o2hypot</name></member>
-    <member refid="namespaceo2scl_1afe4dbcb630d82a297b7638390e6fc0cf" kind="function"><name>o2hypot</name></member>
+    <member refid="namespaceo2scl_1a821cadf43df98d39af8c1059fe6058cb" kind="function"><name>o2hypot</name></member>
     <member refid="namespaceo2scl_1a8da23af52c77a2e7d018ca3201d80700" kind="function"><name>o2hypot</name></member>
     <member refid="namespaceo2scl_1ae6cb9d8337971f35d92cab4317fa4dbe" kind="function"><name>o2hypot</name></member>
     <member refid="namespaceo2scl_1a8a2c69ef08fca5a16ca41dfdebeaa310" kind="function"><name>fermi_function</name></member>
@@ -258,23 +258,23 @@
     <member refid="namespaceo2scl_1a7d642aa06be8ece1c80f237f93b01546" kind="function"><name>vector_grid</name></member>
     <member refid="namespaceo2scl_1ae8795a06ae0f4f0eaa779e3fd39f61bb" kind="function"><name>matrix_set_identity</name></member>
     <member refid="namespaceo2scl_1a5626fcd2c4c514ffd0ab8510b56be4d2" kind="function"><name>matrix_set_identity</name></member>
-    <member refid="namespaceo2scl_1a5c36a3ae58644a7ca409d9899d0c5706" kind="function"><name>vector_range</name></member>
-    <member refid="namespaceo2scl_1ac209e8d3b22174ce5171d49f7088df43" kind="function"><name>const_vector_range</name></member>
-    <member refid="namespaceo2scl_1a4ce8f5d361dd82c7a78e3e1809ae28c1" kind="function"><name>vector_range</name></member>
-    <member refid="namespaceo2scl_1a074521a3971eda03eb1e3b1fe9c5e795" kind="function"><name>const_vector_range</name></member>
-    <member refid="namespaceo2scl_1aefcd7f01dc4b02216fa8b76e43e1528d" kind="function"><name>const_vector_range</name></member>
-    <member refid="namespaceo2scl_1af42f9caeb4a1e3c5c1cc61ad1bf99bb5" kind="function"><name>vector_range</name></member>
-    <member refid="namespaceo2scl_1aa8e9549380a13d1a78adbfdad2b95035" kind="function"><name>const_vector_range</name></member>
-    <member refid="namespaceo2scl_1ad5efc04e610729a7c29a1cc6515770d0" kind="function"><name>const_vector_range</name></member>
-    <member refid="namespaceo2scl_1ad2a68a37e9ba84f61cb623ff5642a6ec" kind="function"><name>const_vector_range</name></member>
-    <member refid="namespaceo2scl_1abdffd4f4a2cdd5f54bbee8803f049185" kind="function"><name>vector_range</name></member>
-    <member refid="namespaceo2scl_1a7c536d4c9ad20d12adfbc9ee870077b7" kind="function"><name>const_vector_range</name></member>
-    <member refid="namespaceo2scl_1a6d127958c4272900d129cfcb097922e8" kind="function"><name>const_vector_range</name></member>
-    <member refid="namespaceo2scl_1a6ea1545cde5f531af67a7deb24c761bd" kind="function"><name>vector_range</name></member>
-    <member refid="namespaceo2scl_1a4f82de8ac5cde886cb0a64642d97ce63" kind="function"><name>const_vector_range</name></member>
-    <member refid="namespaceo2scl_1a3592261c902618f3a9c32dc18243e141" kind="function"><name>const_vector_range</name></member>
-    <member refid="namespaceo2scl_1a1a2e0f764d5c7fced80d8fbcebd26c71" kind="function"><name>const_vector_range</name></member>
-    <member refid="namespaceo2scl_1aea3baa635c82e72919d3ec0d3c957f59" kind="function"><name>vector_range_copy</name></member>
+    <member refid="namespaceo2scl_1accdf2d228346d933100563ebcde569c2" kind="function"><name>vector_range</name></member>
+    <member refid="namespaceo2scl_1a584af50536228938db567bd1563842db" kind="function"><name>const_vector_range</name></member>
+    <member refid="namespaceo2scl_1a91d5f2419b3929de7f788567569969cc" kind="function"><name>vector_range</name></member>
+    <member refid="namespaceo2scl_1a7cbf73acaa1dea1eb8c4b047abdd574d" kind="function"><name>const_vector_range</name></member>
+    <member refid="namespaceo2scl_1ab622828d37c9fa2e1f97db1180f145d7" kind="function"><name>const_vector_range</name></member>
+    <member refid="namespaceo2scl_1a8ba3682f7a164aff1457c75550071d96" kind="function"><name>vector_range</name></member>
+    <member refid="namespaceo2scl_1ace85a624aa4d7719e84f34e5bccf7e1b" kind="function"><name>const_vector_range</name></member>
+    <member refid="namespaceo2scl_1ae303239c246ef48aa36e11e70921adb9" kind="function"><name>const_vector_range</name></member>
+    <member refid="namespaceo2scl_1a77f8cb37705c4b7b12e4e47c029b88e4" kind="function"><name>const_vector_range</name></member>
+    <member refid="namespaceo2scl_1a64a57d728f56f3dab8c94934b7db3259" kind="function"><name>vector_range</name></member>
+    <member refid="namespaceo2scl_1ad9ea87ae465fef8b11b21aaf21f0b182" kind="function"><name>const_vector_range</name></member>
+    <member refid="namespaceo2scl_1aedd427264559fcbbdd3199a3b57da5ea" kind="function"><name>const_vector_range</name></member>
+    <member refid="namespaceo2scl_1aa8dd818c1dc644b27c2fae98fab024b0" kind="function"><name>vector_range</name></member>
+    <member refid="namespaceo2scl_1ac665c4139f0ba0eae7d9684ef2801c2a" kind="function"><name>const_vector_range</name></member>
+    <member refid="namespaceo2scl_1ad34bd113fae600a20c78cad9a2a88833" kind="function"><name>const_vector_range</name></member>
+    <member refid="namespaceo2scl_1aa8a2220d9c46d43fa2e7ab22f7987fd2" kind="function"><name>const_vector_range</name></member>
+    <member refid="namespaceo2scl_1a8006322ff94d883bcff8b2e6494d324c" kind="function"><name>vector_range_copy</name></member>
     <member refid="namespaceo2scl_1a0f52ef1f2196bfdc7f06a7229a1970f6" kind="function"><name>matrix_max</name></member>
     <member refid="namespaceo2scl_1afd453895c4328fa1bfc09063d1bc186c" kind="function"><name>matrix_min</name></member>
     <member refid="namespaceo2scl_1a661103a085b6e52f758aee8ccd37bc84" kind="function"><name>matrix_max</name></member>
@@ -288,7 +288,7 @@
     <member refid="namespaceo2scl_1ae9a53da2e59101232e43c7faea890328" kind="function"><name>vector_integ_extended4</name></member>
     <member refid="namespaceo2scl_1a243e4c8ec14e9af42cfb846758195aa5" kind="function"><name>vector_integ_durand</name></member>
     <member refid="namespaceo2scl_1ae322696d2dc1aa0633e7d772c61e5e17" kind="function"><name>vector_integ_extended8</name></member>
-    <member refid="namespaceo2scl_1a8968e542fe7b86c353eb2efbd5a6eb58" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="namespaceo2scl_1a03c55cd2ccb35457861a6ac83adcc002" kind="function"><name>operator&lt;&lt;</name></member>
     <member refid="namespaceo2scl_1a7cbe75c44704d17436a155d3bdd0c4ad" kind="function"><name>constraint</name></member>
     <member refid="namespaceo2scl_1a1d066e73d46c910b5623671246b2c12d" kind="function"><name>cont_constraint</name></member>
     <member refid="namespaceo2scl_1ad0dc0371a51a3a0ffe9c049c4c5b6a18" kind="function"><name>lower_bound</name></member>
@@ -402,7 +402,7 @@
     <member refid="namespaceo2scl_1a903bf762b4443f26426abcf658b81856" kind="function"><name>shuffle_swap</name></member>
     <member refid="namespaceo2scl_1ad683de40036dee349ee8523f30a241d7" kind="function"><name>choose_copy</name></member>
     <member refid="namespaceo2scl_1aa57dd25835a17744201305b7a4bf1b37" kind="function"><name>vector_shuffle</name></member>
-    <member refid="namespaceo2scl__acol_1ad089d04a331ab3e3915c6980f06e5293" kind="function"><name>parse_arrays</name></member>
+    <member refid="namespaceo2scl__acol_1a61b7b8ecec5cdc833f5b0921bac5cb99" kind="function"><name>parse_arrays</name></member>
     <member refid="namespaceo2scl__cblas_1a6599c3b6c6dad504856422be39a25a84" kind="function"><name>matrix_is_finite</name></member>
     <member refid="namespaceo2scl__cblas_1a2ed707713b8d8841bbfa186d5a64a3a9" kind="function"><name>matrix_is_finite</name></member>
     <member refid="namespaceo2scl__cblas_1ac077d393fba3013cebb311d75ad78591" kind="function"><name>dasum</name></member>
@@ -480,7 +480,7 @@
     <member refid="namespaceo2scl__hdf_1aa75b1755878b4856bd08aac06cbf7e3b" kind="function"><name>value_spec</name></member>
     <member refid="namespaceo2scl__hdf_1aed3f93e319668741e0482077f89ec2c6" kind="function"><name>vector_spec</name></member>
     <member refid="namespaceo2scl__hdf_1aa799e6da229d2646e2d65212a49f74e3" kind="function"><name>strings_spec</name></member>
-    <member refid="namespaceo2scl__hdf_1af9670122dba7622a5e7f5ec4d080571a" kind="function"><name>vector_spec</name></member>
+    <member refid="namespaceo2scl__hdf_1a3725c21f93f946cd3f32a9ff98e0bb93" kind="function"><name>vector_spec</name></member>
     <member refid="namespaceo2scl__hdf_1a395ac5fb492b3a8e0d715f2c17bc1553" kind="function"><name>mult_vector_spec</name></member>
     <member refid="namespaceo2scl__hdf_1a6768d95ae5ab09f74954b76662cab8e2" kind="function"><name>hdf_output</name></member>
     <member refid="namespaceo2scl__linalg_1a187185f2c949c9122d30018109d29054" kind="function"><name>bidiag_decomp</name></member>
@@ -556,19 +556,19 @@
     <member refid="namespaceo2scl__linalg__bracket_1ab8dbc08043d530bd1faa7b218fefd7e7" kind="function"><name>LU_decomp_array_2d</name></member>
     <member refid="auto__format_8h_1ac9525a13caf7f47b7e4f5d98f080e461" kind="function"><name>operator&lt;&lt;</name></member>
     <member refid="auto__format_8h_1ab90825de874f510a416bd603551b65d5" kind="function"><name>operator&lt;&lt;</name></member>
-    <member refid="auto__format_8h_1ab60b62447dfcb43efceff1583b8e9998" kind="function"><name>operator&lt;&lt;</name></member>
-    <member refid="auto__format_8h_1a83f975d09c62ae107bbb73556d3ffb5a" kind="function"><name>operator&lt;&lt;</name></member>
-    <member refid="auto__format_8h_1aa698f50b7aebef35832d7fdafeadcadf" kind="function"><name>operator&lt;&lt;</name></member>
-    <member refid="auto__format_8h_1aaacbf603e9d13508be0a5d5bfc998f1f" kind="function"><name>operator&lt;&lt;</name></member>
-    <member refid="auto__format_8h_1ab01112f1608334db3d827a858b7711e5" kind="function"><name>operator&lt;&lt;</name></member>
-    <member refid="auto__format_8h_1a0b7a9495ef349b6d18e4d17136a69103" kind="function"><name>operator&lt;&lt;</name></member>
-    <member refid="auto__format_8h_1a74ec0c18de19b4716015907e49346484" kind="function"><name>operator&lt;&lt;</name></member>
-    <member refid="auto__format_8h_1a2319bc9f1e7feb6cd1b0feedb31821bf" kind="function"><name>operator&lt;&lt;</name></member>
-    <member refid="auto__format_8h_1a48f7bd104c4e879cf8b10b7c7ae7a46f" kind="function"><name>operator&lt;&lt;</name></member>
-    <member refid="auto__format_8h_1a45678962c651e5a34d710adc4e9ff006" kind="function"><name>operator&lt;&lt;</name></member>
-    <member refid="auto__format_8h_1a055b4000bca7a951f138fc2d8958d0f4" kind="function"><name>operator&lt;&lt;</name></member>
-    <member refid="auto__format_8h_1ab5daacd17bf39ba4b4d19c7acd791ba7" kind="function"><name>operator&lt;&lt;</name></member>
-    <member refid="auto__format_8h_1ac349f7d6d36064471f5e4f8e509cba8f" kind="function"><name>operator&lt;&lt;</name></member>
-    <member refid="auto__format_8h_1a7a8253b9634eafad2af61be779db1da9" kind="function"><name>operator&lt;&lt;</name></member>
-    <member refid="auto__format_8h_1a5e5126695b41cd9246d3aeb524f6c534" kind="function"><name>operator&lt;&lt;</name></member>
-    <member refid="auto__format_8h_1a4def4b6996e758773c170ec087da0ea9" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a287ce733cc1dceb18b89c7c3e6b8793d" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a54a7e6d90bae285108c0cadaafe37ae8" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1ac7092699c6c557383673add29b415f1c" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1aedc5acfeee163748ee6b0995782b0e95" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1ac7707fbd3dbae51ec0430897d356b2a4" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a30be43362e798febc3829343ebc6fad2" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a154131f6e55a51add8589528c1f9aea7" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a13a6d5e35934659462ffb14ab9300536" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1acfc02a7576d11dfdb17f46276788f011" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a10ce51983f1952551069fa189adad29f" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a47d52cf28b1dbf0c997297844b17cd1a" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1a02fb61b754b662aeb39a5f1497d582a7" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1ab1f95c60dcb8152ac541eb9d2094f793" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1aec8d565862f09599d8323cde5cb9db4e" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1abb0ece044b0ff7261e3d3d3cdc9ca128" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="auto__format_8h_1ac0d43983bfd2da82de4716d4e89a1440" kind="function"><name>operator&lt;&lt;</name></member>

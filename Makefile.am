@@ -43,7 +43,7 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = include src bin data doc examples 
 
 # Extra files to add to the distribution
-EXTRA_DIST = autogen.sh TODOS README acinclude.m4 m4 README.md .travis.yml
+EXTRA_DIST = autogen.sh TODOS README acinclude.m4 m4 README.md 
 
 check_SCRIPTS = o2scl-test
 
