@@ -12,16 +12,16 @@ RUN zypper install -y boost-devel curl tar gzip
 
 # Now install o2scl
 WORKDIR /opt
-RUN curl -L https://github.com/awsteiner/o2scl/releases/download/v0.925/o2scl-0.925.tar.gz --output o2scl-0.925.tar.gz
-RUN tar xvzf o2scl-0.925.tar.gz
-WORKDIR /opt/o2scl-0.925
+RUN curl -L https://isospin.roam.utk.edu/public_data/o2scl-0.926.tar.gz
+RUN tar xvzf o2scl-0.926.tar.gz
+WORKDIR /opt/o2scl-0.926
 RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_PRE_1_12" ./configure
 RUN make
 RUN make install
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
 RUN acol -v
-WORKDIR /opt/o2scl-0.925
+WORKDIR /opt/o2scl-0.926
 RUN make o2scl-test
 RUN make o2scl-examples
 
