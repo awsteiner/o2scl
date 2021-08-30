@@ -64,8 +64,8 @@ int main(int argc, char *argv[]) {
     ga.tol_abs=1.0e-6;
     ga.mmin(1,init,result,fx);
     cout << init[0] << " " << result << endl;
-    t.test_rel(init[0],2.0,8.0e-3,"another test - value");
-    t.test_rel(result,-1.0,8.0e-3,"another test - min");
+    t.test_rel(init[0],2.0,1.6e-2,"another test - value");
+    t.test_rel(result,-1.0,1.6e-2,"another test - min");
     
     // Test verbose=1
     

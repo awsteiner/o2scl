@@ -12,7 +12,7 @@ RUN zypper install -y boost-devel curl tar gzip
 
 # Now install o2scl
 WORKDIR /opt
-RUN curl -L https://isospin.roam.utk.edu/public_data/o2scl-0.926.tar.gz
+RUN curl -L https://isospin.roam.utk.edu/public_data/o2scl-0.926.tar.gz --output o2scl-0.926.tar.gz
 RUN tar xvzf o2scl-0.926.tar.gz
 WORKDIR /opt/o2scl-0.926
 RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_PRE_1_12" ./configure
