@@ -129,7 +129,7 @@ namespace o2scl {
     double sigma_;
 
     /// Base random number generator
-    o2scl::rng<> r2;
+    mutable o2scl::rng<> r2;
 
     /// C++ base normal distribution
     std::normal_distribution<double> nd;
@@ -1898,7 +1898,7 @@ namespace o2scl {
     mutable vec_t vtmp;
 
     /// Standard normal
-    o2scl::prob_dens_gaussian pdg;
+    mutable o2scl::prob_dens_gaussian pdg;
     
   public:
 
@@ -2028,7 +2028,7 @@ namespace o2scl {
     }
 
     /// Sample the distribution
-    virtual void operator()(const vec_t &x_B, vec_t &x_A) {
+    virtual void operator()(const vec_t &x_B, vec_t &x_A) const {
       if (ndim==0) {
         O2SCL_ERR2("Distribution not set in prob_cond_mdim_gaussian::",
                    "operator().",o2scl::exc_einval);
