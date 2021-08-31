@@ -129,10 +129,10 @@ namespace o2scl {
     double sigma_;
 
     /// Base random number generator
-    mutable o2scl::rng<> r2;
-
+    mutable rng<> r2;
+    
     /// C++ base normal distribution
-    std::normal_distribution<double> nd;
+    mutable std::normal_distribution<double> nd;
     
   public:
     
@@ -219,7 +219,7 @@ namespace o2scl {
     }
 
     /// Sample from the specified density
-    virtual double operator()() {
+    virtual double operator()() const {
       if (sigma_<0.0) {
 	O2SCL_ERR2("Width not set in prob_dens_gaussian::",
 		   "operator().",exc_einval);
@@ -1336,7 +1336,7 @@ namespace o2scl {
     }
 
     /// Sample the distribution
-    virtual void operator()(vec_t &x) {
+    virtual void operator()(vec_t &x) const {
       if (ndim==0) {
         O2SCL_ERR2("Distribution not set in prob_dens_mdim_gaussian::",
                    "operator().",o2scl::exc_einval);
