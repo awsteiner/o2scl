@@ -82,6 +82,8 @@ int acol_manager::comm_get_conv
   
   if (sv.size()==2 && sv[1]=="list") {
     cng.print_units(std::cout);
+    cout << endl;
+    cng.print_cache();
     return 0;
   }
       

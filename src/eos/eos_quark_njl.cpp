@@ -237,8 +237,6 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
 
   }
 
-  double gap1, gap2, gap3;
-  
   return ret;
 }
 
@@ -533,17 +531,30 @@ int eos_quark_njl::gapfunqqT(size_t nv, const ubvector &x, ubvector &y) {
     return 1;
   }
 
-  calc_eq_temp_p(*up,*down,*strange,gap1,gap2,gap3,*eos_thermo,cp_temp);
+  int ret=calc_eq_temp_p(*up,*down,*strange,gap1,gap2,gap3,*eos_thermo,
+                         cp_temp);
+  if (ret!=0) {
+    if (verbose>0) {
+      cout << "cetp returned non-zero." << endl;
+    }
+    return 3;
+  }
   
+  if (up->ms<=0.0 || down->ms<=0.0 || strange->ms<=0.0) {
+    if (verbose>0) {
+      cout << "Quark mass negative." << endl;
+    }
+    return 4;
+  }
+
   y[0]=gap1;
   y[1]=gap2;
   y[2]=gap3;
 
   if (!std::isfinite(y[0]) || !std::isfinite(y[1]) ||
       !std::isfinite(y[2])) {
-    if (verbose>0) {
-      cout << "Gap equation not finite." << endl;
-    }
+    cout << "Gap equation not finite (gapfunqqT)." << endl;
+    exit(-1);
     return 2;
   }
   
@@ -558,16 +569,38 @@ int eos_quark_njl::gapfunmsT(size_t nv, const ubvector &x, ubvector &y) {
   down->ms=x[1];
   strange->ms=x[2];
 
-  if (x[0]<0.0 || x[1]<0.0 || x[2]<0.0) return 1;
+  if (x[0]<=0.0 || x[1]<=0.0 || x[2]<=0.0) {
+    if (verbose>0) {
+      cout << "Quark mass negative." << endl;
+    }
+    return 4;
+  }
 
-  calc_eq_temp_p(*up,*down,*strange,gap1,gap2,gap3,*eos_thermo,cp_temp);
+  int ret=calc_eq_temp_p(*up,*down,*strange,gap1,gap2,gap3,*eos_thermo,cp_temp);
+  if (ret!=0) {
+    if (verbose>0) {
+      cout << "cetp returned non-zero." << endl;
+    }
+    return 3;
+  }
+
+  if (up->qq>0.0 || down->qq>0.0 || strange->qq>0.0) {
+    if (verbose>0) {
+      cout << "Quark condensate positive." << endl;
+    }
+    return 1;
+  }
 
   y[0]=gap1;
   y[1]=gap2;
   y[2]=gap3;
 
   if (!std::isfinite(y[0]) || !std::isfinite(y[1]) ||
-      !std::isfinite(y[2])) return 2;
+      !std::isfinite(y[2])) {
+    cout << "Gap equation not finite (gapfunmsT)." << endl;
+    exit(-1);
+    return 2;
+  }
 
   return 0;
 }
@@ -609,10 +642,15 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
     return 0;
   }
 
-  if (u.ms<=0.0) u.ms=1.e-9;
-  if (d.ms<=0.0) d.ms=1.e-9;
-  if (s.ms<=0.0) s.ms=1.e-9;
-
+  /*
+    if (u.ms<=0.0 || d.ms<=0.0 || s.ms<=0.0) {
+    if (err_on_fail) {
+    O2SCL_ERR("Effective masses negative.",o2scl::exc_einval);
+    }
+    return exc_efailed;
+    }
+  */
+  
   njtp pa;
   pa.temper=temper;
   pa.limit=limit;
@@ -660,7 +698,7 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
 		exc_efailed);
     }
   }
-  
+
   if (fromqq==true) {
     d.ms=d.m-4.0*G*d.qq+2.0*K*u.qq*s.qq;
     pa.ms=d.ms;

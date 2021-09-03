@@ -86,14 +86,13 @@ namespace o2scl {
       by manually adding the desired combination conversion to the
       cache after it is first computed.
 
-      \note \o2 uses some unit aliases which are not used the the GNU
-      or OSX units commands, like "Msun" for the solar mass and adds
-      some units not present like "Rschwarz" for the Schwarzchild
-      radius of a 1 solar mass black hole.
-      
-      \note Only the const versions, \ref convert_const and
+      \note Only the const functions, \ref convert_const and
       \ref convert_ret_const are guaranteed to be thread-safe,
       since they are not allowed to update the unit cache.
+
+      \note This class is designed to allow for higher-precision
+      conversions, but of course not all of the unit conversions are
+      known to high precision.
 
       \future Add G=1. 
 
@@ -117,15 +116,15 @@ namespace o2scl {
     } unit_t;
 
     /// The cache where unit conversions are stored
-    std::map<std::string,unit_t,std::greater<std::string> > mcache;
+    std::map<std::string,unit_t,std::less<std::string> > mcache;
     
     /// The iterator type
     typedef typename std::map<std::string,unit_t,
-                              std::greater<std::string> >::iterator miter;
+                              std::less<std::string> >::iterator miter;
       
     /// The const iterator type
     typedef typename std::map<std::string,unit_t,
-                              std::greater<std::string> >::const_iterator
+                              std::less<std::string> >::const_iterator
     mciter;
 
     /** \brief Type of a derived unit
@@ -158,6 +157,9 @@ namespace o2scl {
 
     /// SI prefix labels
     std::vector<std::string> prefixes;
+
+    /// SI prefix labels
+    std::vector<std::string> prefix_names;
 
     /// SI prefix factors
     std::vector<fp_t> prefix_facts;
@@ -653,7 +655,7 @@ namespace o2scl {
     /// Create a unit-conversion object
     convert_units() {
       verbose=0;
-      use_gnu_units=true;
+      use_gnu_units=false;
       units_cmd_string="units";
       err_on_fail=true;
       combine_two_conv=true;
@@ -669,6 +671,11 @@ namespace o2scl {
                     1.0e12,1.0e9,1.0e6,1.0e3,1.0e2,10.0,0.1,
                     1.0e-2,1.0e-3,1.0e-6,1.0e-6,1.0e-9,1.0e-12,1.0e-15,
                     1.0e-18,1.0e-21,1.0e-24};
+
+      prefix_names={"yotta","zetta","exa","peta","tera","giga",
+                    "mega","kilo","hecto","deka","deci","centi",
+                    "milli","micro","micro","nano","pico",
+                    "femto","atto","zepto","yocto"};
     
       // SI derived units, in order m kg s K A mol cd Note that,
       // according to the SI page on wikipedia, "newton" is left
@@ -730,6 +737,7 @@ namespace o2scl {
          {"Mpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e6,"megaparsec"},
          {"kpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e3,"kiloparsec"},
          {"pc",1,0,0,0,0,0,0,o2scl_mks::parsec,"parsec"},
+         {"fermi",1,0,0,0,0,0,0,1.0e-15},
 
          // Area units
          // hectares, "ha" and "hectare"
@@ -939,7 +947,8 @@ namespace o2scl {
                      fp_t &factor) const {
 
       if (verbose>=2) {
-        std::cout << "In convert_calc(), " << kb_is_1 << " "
+        std::cout << "Function convert_units::convert_calc(), "
+                  << "kb_is_1,hbar_is_1,c_is_1: " << kb_is_1 << " "
                   << hbar_is_1 << " " << c_is_1 << std::endl;
       }
       
@@ -981,7 +990,7 @@ namespace o2scl {
         kb_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
         if (verbose>1) {
           std::cout << "kb: " << before << " " << after << " "
-                    << calc.eval(&vars) << " "
+                    << calc.eval(&vars) << "\n\t"
                     << calc2.eval(&vars) << " " << kb_power << " ";
         }
         kb_power=log(kb_power)/log(two);
@@ -1003,7 +1012,7 @@ namespace o2scl {
         hbar_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
         if (verbose>1) {
           std::cout << "hbar: " << before << " " << after << " "
-                    << calc.eval(&vars) << " "
+                    << calc.eval(&vars) << "\n\t"
                     << calc2.eval(&vars) << " " << hbar_power << " ";
         }
         hbar_power=-log(hbar_power)/log(two)-kb_power;
@@ -1025,7 +1034,7 @@ namespace o2scl {
         c_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
         if (verbose>1) {
           std::cout << "c: " << before << " " << after << " "
-                    << calc.eval(&vars) << " "
+                    << calc.eval(&vars) << "\n\t"
                     << calc2.eval(&vars) << " " << c_power << " ";
         }
         c_power=log(c_power)/log(two)-2*kb_power-hbar_power;
@@ -1256,6 +1265,8 @@ namespace o2scl {
         std::cout << "No units in cache." << std::endl;
       } else {
         std::cout << "Unit cache: " << std::endl;
+        std::cout << "----------------------------------"
+                  << "----------------------------------" << std::endl;
         for (m=mcache.begin();m!=mcache.end();m++) {
           std::cout.setf(std::ios::left);
           std::cout.width(25);
@@ -1325,7 +1336,9 @@ namespace o2scl {
         type.
     */
     void default_conversions() {
-    
+
+      set_natural_units(true,true,true);
+      
       // Default conversions are given here. Obviously GNU units is better
       // at handling these things, but it's nice to have some of the easy
       // conversions in by default rather than worrying about opening a
