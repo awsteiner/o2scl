@@ -1339,6 +1339,9 @@ int acol_manager::comm_convert_unit
     return exc_efailed;
   }
 
+  if (verbose>=3) cng.verbose=2;
+  else cng.verbose=0;
+  
   if (unit_fname.length()>0) {
     cng.units_cmd_string=((string)"units -f ")+unit_fname;
   }

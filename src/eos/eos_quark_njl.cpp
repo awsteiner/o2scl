@@ -61,6 +61,9 @@ eos_quark_njl::eos_quark_njl() {
   limit=20.0;
 
   fromqq=true;
+
+  verbose=0;
+  err_on_fail=true;
 }
 
 int eos_quark_njl::set_quarks(quark &u, quark &d, quark &s) {
@@ -114,6 +117,12 @@ int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
   down=&d;
   strange=&s;
   eos_thermo=&th;
+
+  if (err_on_fail==false) {
+    solver->err_nonconv=false;
+  } else {
+    solver->err_nonconv=true;
+  }
   
   if (fromqq==true) {
 
@@ -128,6 +137,13 @@ int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
        std::placeholders::_3);
 
     ret=solver->msolve(3,x,fmf);
+    if (ret!=0) {
+      if (err_on_fail) {
+        O2SCL_ERR2("Solver failed (fromqq=true) in ",
+                       "eos_quark_njl::calc_p().",o2scl::exc_efailed);
+      }
+      return ret;
+    }
     
   } else {
 
@@ -142,6 +158,13 @@ int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
        std::placeholders::_3);
 
     ret=solver->msolve(3,x,fmf);
+    if (ret!=0) {
+      if (err_on_fail) {
+        O2SCL_ERR2("Solver failed (fromqq=false) in ",
+                       "eos_quark_njl::calc_p().",o2scl::exc_efailed);
+      }
+      return ret;
+    }
 
   }
 
@@ -160,6 +183,16 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
   eos_thermo=&th;
   cp_temp=T;
   
+  if (verbose>0) {
+    cout << "eos_quark_njl::calc_temp_p() fromqq=" << fromqq << endl;
+  }
+  
+  if (err_on_fail==false) {
+    solver->err_nonconv=false;
+  } else {
+    solver->err_nonconv=true;
+  }
+  
   if (fromqq==true) {
 
     x[0]=u.qq;
@@ -173,6 +206,13 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
        std::placeholders::_3);
 
     ret=solver->msolve(3,x,fmf);
+    if (ret!=0) {
+      if (err_on_fail) {
+        O2SCL_ERR2("Solver failed (fromqq=true) in ",
+                       "eos_quark_njl::calc_temp_p().",o2scl::exc_efailed);
+      }
+      return ret;
+    }
     
   } else {
 
@@ -187,6 +227,13 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
        std::placeholders::_3);
 
     ret=solver->msolve(3,x,fmf);
+    if (ret!=0) {
+      if (err_on_fail) {
+        O2SCL_ERR2("Solver failed (fromqq=false) in ",
+                       "eos_quark_njl::calc_temp_p().",o2scl::exc_efailed);
+      }
+      return ret;
+    }
 
   }
 
@@ -479,7 +526,12 @@ int eos_quark_njl::gapfunqqT(size_t nv, const ubvector &x, ubvector &y) {
   down->qq=x[1];
   strange->qq=x[2];
   
-  if (x[0]>0.0 || x[1]>0.0 || x[2]>0.0) return 1;
+  if (x[0]>0.0 || x[1]>0.0 || x[2]>0.0) {
+    if (verbose>0) {
+      cout << "Quark condensate positive." << endl;
+    }
+    return 1;
+  }
 
   calc_eq_temp_p(*up,*down,*strange,gap1,gap2,gap3,*eos_thermo,cp_temp);
   
@@ -488,7 +540,12 @@ int eos_quark_njl::gapfunqqT(size_t nv, const ubvector &x, ubvector &y) {
   y[2]=gap3;
 
   if (!std::isfinite(y[0]) || !std::isfinite(y[1]) ||
-      !std::isfinite(y[2])) return 2;
+      !std::isfinite(y[2])) {
+    if (verbose>0) {
+      cout << "Gap equation not finite." << endl;
+    }
+    return 2;
+  }
   
   return 0;
 }

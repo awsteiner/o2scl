@@ -154,7 +154,7 @@ namespace o2scl {
     } der_unit;
 
     /// Number of SI prefixes
-    static const size_t n_prefixes=25;
+    static const size_t n_prefixes=21;
 
     /// SI prefix labels
     std::vector<std::string> prefixes;
@@ -346,6 +346,10 @@ namespace o2scl {
 
       int ret_cache=convert_cache(from,to,val,converted,factor);
       if (ret_cache==0) {
+        if (verbose>=2) {
+          std::cout << "Function convert_units::convert_internal(): "
+                    << "found conversion in cache." << std::endl;
+        }
         new_conv=false;
         return 0;
       }
@@ -354,6 +358,10 @@ namespace o2scl {
       if (true) {
         int ret=convert_calc(from,to,val,converted,factor);
         if (ret==0) {
+          if (verbose>=2) {
+            std::cout << "Function convert_units::convert_internal(): "
+                      << "calculated conversion." << std::endl;
+          }
           new_conv=true;
           return 0;
         }
@@ -523,6 +531,10 @@ namespace o2scl {
       if (m3!=mcache.end()) {
         factor=m3->second.c;
         converted=val*factor;
+        if (verbose>=2) {
+          std::cout << "Function convert_units::convert_cache(): "
+                    << "found forward conversion." << std::endl;
+        }
         return 0;
       }
 
@@ -532,6 +544,10 @@ namespace o2scl {
       if (m3!=mcache.end()) {
         factor=1.0/m3->second.c;
         converted=val*factor;
+        if (verbose>=2) {
+          std::cout << "Function convert_units::convert_cache(): "
+                    << "found inverse conversion." << std::endl;
+        }
         return 0;
       }
 
@@ -642,14 +658,17 @@ namespace o2scl {
       err_on_fail=true;
       combine_two_conv=true;
 
-      prefixes={"Q","R","Y","Z","E","P","T","G","M",
+      //prefixes={"Q","R","Y","Z","E","P","T","G","M",
+      //"k","h","da","d","c","m","mu","μ","n",
+      //"p","f","a","z","y","r","q"};
+      prefixes={"Y","Z","E","P","T","G","M",
                 "k","h","da","d","c","m","mu","μ","n",
-                "p","f","a","z","y","r","q"};
+                "p","f","a","z","y"};
     
-      prefix_facts={1.0e30,1.0e27,1.0e24,1.0e21,1.0e18,1.0e15,
+      prefix_facts={1.0e24,1.0e21,1.0e18,1.0e15,
                     1.0e12,1.0e9,1.0e6,1.0e3,1.0e2,10.0,0.1,
                     1.0e-2,1.0e-3,1.0e-6,1.0e-6,1.0e-9,1.0e-12,1.0e-15,
-                    1.0e-18,1.0e-21,1.0e-24,1.0e-27,1.0e-30};
+                    1.0e-18,1.0e-21,1.0e-24};
     
       // SI derived units, in order m kg s K A mol cd Note that,
       // according to the SI page on wikipedia, "newton" is left
@@ -822,10 +841,6 @@ namespace o2scl {
      */
     void set_natural_units(bool c_is_one=true, bool hbar_is_one=true,
                            bool kb_is_one=true) {
-      //if (hbar_is_one && !c_is_one) {
-      //O2SCL_ERR2("The convert_units class does not support hbar=1,",
-      //"when c!=1.",o2scl::exc_einval);
-      //}
       c_is_1=c_is_one;
       hbar_is_1=hbar_is_one;
       kb_is_1=kb_is_one;
@@ -867,6 +882,23 @@ namespace o2scl {
         out << SI[i].val << std::endl;
       }
       out << std::endl;
+
+      out << "SI prefix value: " << std::endl;
+      for(size_t i=0;i<prefixes.size();i++) {
+        
+        // Extra space for the unicode
+        if (prefixes[i]=="μ") {
+          out.width(10);
+          out << prefixes[i] << " ";
+          out << prefix_facts[i] << std::endl;
+        } else {
+          out.width(9);
+          out << prefixes[i] << " ";
+          out << prefix_facts[i] << std::endl;
+        }
+        
+      }
+      out << std::endl;
     
       out << "Other:    label  m kg  s  K  A mol cd value:" << std::endl;
       out << "--------------- -- -- -- -- -- --- -- ------------"
@@ -905,7 +937,12 @@ namespace o2scl {
     int convert_calc(std::string from, std::string to,
                      fp_t val, fp_t &converted,
                      fp_t &factor) const {
-    
+
+      if (verbose>=2) {
+        std::cout << "In convert_calc(), " << kb_is_1 << " "
+                  << hbar_is_1 << " " << c_is_1 << std::endl;
+      }
+      
       // These calculator objects have to be inside this
       // function to make the function const
       o2scl::calculator calc;
@@ -928,10 +965,6 @@ namespace o2scl {
     
       factor=before/after;
       converted=val*factor;
-
-      if (verbose>1) {
-        //std::cout << "H: " << vars["eV"] << " " << vars["meV"] << std::endl;
-      }
 
       // Now, having verified that a conversion is possible, we see
       // if any additional factors of k_B, hbar, or c are required

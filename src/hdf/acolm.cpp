@@ -1467,14 +1467,13 @@ int acol_manager::setup_options() {
       "<old unit> <new unit> [value to convert]",
       ((string)"This command gets a unit ")+
       "conversion factor and optionally applies than conversion factor "+
-      "to a user-specified value. It only works if the conversion is one of "
-      "the hard-coded O2scl conversions or if HAVE_POPEN is defined and "+
-      "the 'units' command is available in the current "+
-      "path. For example, 'get-conv MeV erg' returns '1.000000e+00 MeV = "+
-      "1.602177e-6 erg. The conversion factor is output "+
+      "to a user-specified value. Conversions which presume hbar=c=kB=1 "+
+      "are allowed. For example, 'get-conv MeV 1/fm' returns "+
+      "'1.000000e+00 MeV = 5.067731e-03 1/fm'. The conversion factor "+
+      "is output "+
       "at the current precision, but is always internally stored with "+
-      "full double precision. O2scl has several unit conversions which "+
-      "implicitly assume hbar=c=1.",
+      "full double precision. To print the unit table, use "+
+      "-get-conv list",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_conv),
       both},
      {0,"h5-copy","Copy hdf5 file (experimental).",-1,-1,

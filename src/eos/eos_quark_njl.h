@@ -150,6 +150,10 @@ namespace o2scl {
 
   public:
 
+    int verbose;
+
+    bool err_on_fail;
+    
     typedef boost::numeric::ublas::vector<double> ubvector;
 
     /** \brief Set the parameters and the bag constant \c B0 

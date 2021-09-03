@@ -74,6 +74,17 @@ int acol_manager::comm_h5_copy(std::vector<std::string> &sv,
 int acol_manager::comm_get_conv
 (std::vector<std::string> &sv, bool itive_com) {
 
+  if (verbose>=2) {
+    cng.verbose=2;
+  } else {
+    cng.verbose=0;
+  }
+  
+  if (sv.size()==2 && sv[1]=="list") {
+    cng.print_units(std::cout);
+    return 0;
+  }
+      
   vector<string> in, pr;
   if (sv.size()==3) {
     in.push_back(sv[1]);
@@ -98,12 +109,6 @@ int acol_manager::comm_get_conv
   if (scientific) cout.setf(ios::scientific);
   else cout.unsetf(ios::scientific);
   cout.precision(prec);
-
-  if (verbose>=2) {
-    cng.verbose=1;
-  } else {
-    cng.verbose=0;
-  }
 
   double val=1.0;
   if (in.size()>=3) {
