@@ -387,7 +387,7 @@ int main(void) {
 
     tm.test_rel(ax[0],x0_s[x0_s.size()-1],1.0e-8,"post scaled x0 set/iter");
     tm.test_rel(ax[1],x1_s[x1_s.size()-1],1.0e-8,"post scaled x1 set/iter");
-    tm.test_rel(ax[2],x2_s[x2_s.size()-1],1.0e-8,"post scaled x2 set/iter");
+    tm.test_rel(ax[2],x2_s[x2_s.size()-1],5.0e-8,"post scaled x2 set/iter");
     tm.test_rel(chi2red_s,chi2/(n-3),1.0e-10,"post scaled chi2");
 
     cout << endl;
