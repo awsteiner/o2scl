@@ -75,7 +75,7 @@ int acol_manager::comm_get_conv
 (std::vector<std::string> &sv, bool itive_com) {
 
   if (verbose>=2) {
-    cng.verbose=2;
+    cng.verbose=verbose;
   } else {
     cng.verbose=0;
   }

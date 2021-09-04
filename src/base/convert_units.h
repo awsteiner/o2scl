@@ -345,7 +345,7 @@ namespace o2scl {
       // Remove whitespace
       remove_whitespace(from);
       remove_whitespace(to);
-
+      
       int ret_cache=convert_cache(from,to,val,converted,factor);
       if (ret_cache==0) {
         if (verbose>=2) {
@@ -354,6 +354,9 @@ namespace o2scl {
         }
         new_conv=false;
         return 0;
+      } else if (verbose>=2) {
+        std::cout << "Function convert_units::convert_internal(): "
+                  << "did not find conversion in cache." << std::endl;
       }
 
       // Compute conversion from convert_calc()
@@ -366,18 +369,21 @@ namespace o2scl {
           }
           new_conv=true;
           return 0;
+        } else if (verbose>=3) {
+          std::cout << "Function convert_units::convert_internal(): "
+                    << "failed to calculate conversion." << std::endl;
         }
       }
-  
+      
       if (use_gnu_units) {
-
+        
         if (verbose>0) {
           std::cout << "convert_units::convert_internal(): "
                     << "Value of use_gnu_units is true." << std::endl;
         }
-
+        
         int ret_gnu=convert_gnu_units(from,to,val,converted,factor);
-
+        
         if (ret_gnu==0) {
           new_conv=true;
           return 0;
@@ -949,7 +955,7 @@ namespace o2scl {
     int convert_calc(std::string from, std::string to,
                      fp_t val, fp_t &converted,
                      fp_t &factor) const {
-
+      
       if (verbose>=2) {
         std::cout << "Function convert_units::convert_calc(), "
                   << "kb_is_1,hbar_is_1,c_is_1: " << kb_is_1 << " "
@@ -964,21 +970,40 @@ namespace o2scl {
       std::map<std::string, fp_t> vars;
 
       set_vars(1.0,1.0,1.0,1.0,1.0,1.0,1.0,vars);
-    
+
+      if (verbose>=3) {
+        std::cout << "Compile: " << from << std::endl;
+      }
       int cret1=calc.compile_nothrow(from.c_str());
+      if (verbose>=3) {
+        std::cout << "Result: " << cret1 << std::endl;
+        std::cout << "Compile: " << to << std::endl;
+      }
       if (cret1!=0) return 1;
       int cret2=calc2.compile_nothrow(to.c_str());
+      if (verbose>=3) {
+        std::cout << "Result: " << cret2 << std::endl;
+      }
       if (cret2!=0) return 2;
-    
       fp_t before, after;
       int cret3=calc.eval_nothrow(&vars,before);
+      if (verbose>=3) {
+        std::cout << "Result: " << cret3 << std::endl;
+        std::cout << "eval: " << before << std::endl;
+      }
       if (cret3!=0) return 3;
       int cret4=calc2.eval_nothrow(&vars,after);
-      if (cret4!=0) return 4;
-    
+      if (verbose>=3) {
+        std::cout << "Result: " << cret4 << std::endl;
+        std::cout << "eval: " << after << std::endl;
+      }
+      if (cret4!=0) {
+        return 4;
+      }
+      
       factor=before/after;
       converted=val*factor;
-
+        
       // Now, having verified that a conversion is possible, we see
       // if any additional factors of k_B, hbar, or c are required
       // to perform the conversion.
