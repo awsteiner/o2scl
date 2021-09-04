@@ -374,9 +374,9 @@ int main(void) {
     for(size_t i=0;i<10;i++) {
       gf.iterate();
       //cout << ax << endl;
-      tm.test_rel(ax[0],x0_s[i],1.0e-3,"scaled x0 set/iter");
-      tm.test_rel(ax[1],x1_s[i],1.0e-3,"scaled x1 set/iter");
-      tm.test_rel(ax[2],x2_s[i],1.0e-3,"scaled x2 set/iter");
+      tm.test_rel(ax[0],x0_s[i],6.0e-3,"scaled x0 set/iter");
+      tm.test_rel(ax[1],x1_s[i],6.0e-3,"scaled x1 set/iter");
+      tm.test_rel(ax[2],x2_s[i],6.0e-3,"scaled x2 set/iter");
       if (gf.test_delta_f(3,gf.dx_,ax,gf.tol_abs,
 			  gf.tol_rel)!=gsl_continue) {
 	i=10;

@@ -663,19 +663,23 @@ namespace o2scl {
       //prefixes={"Q","R","Y","Z","E","P","T","G","M",
       //"k","h","da","d","c","m","mu","μ","n",
       //"p","f","a","z","y","r","q"};
-      prefixes={"Y","Z","E","P","T","G","M",
-                "k","h","da","d","c","m","mu","μ","n",
-                "p","f","a","z","y"};
+      prefixes={"Y","Z","E","P","T",
+                "G","M","k","h","da",
+                "d","c","m","mu","μ",
+                "n","p","f","a","z",
+                "y"};
     
-      prefix_facts={1.0e24,1.0e21,1.0e18,1.0e15,
-                    1.0e12,1.0e9,1.0e6,1.0e3,1.0e2,10.0,0.1,
-                    1.0e-2,1.0e-3,1.0e-6,1.0e-6,1.0e-9,1.0e-12,1.0e-15,
-                    1.0e-18,1.0e-21,1.0e-24};
+      prefix_facts={1.0e24,1.0e21,1.0e18,1.0e15,1.0e12,
+                    1.0e9,1.0e6,1.0e3,1.0e2,10.0,
+                    0.1,1.0e-2,1.0e-3,1.0e-6,1.0e-6,
+                    1.0e-9,1.0e-12,1.0e-15,1.0e-18,1.0e-21,
+                    1.0e-24};
 
-      prefix_names={"yotta","zetta","exa","peta","tera","giga",
-                    "mega","kilo","hecto","deka","deci","centi",
-                    "milli","micro","micro","nano","pico",
-                    "femto","atto","zepto","yocto"};
+      prefix_names={"yotta","zetta","exa","peta","tera",
+                    "giga","mega","kilo","hecto","deka",
+                    "deci","centi","milli","micro","micro",
+                    "nano","pico","femto","atto","zepto",
+                    "yocto"};
     
       // SI derived units, in order m kg s K A mol cd Note that,
       // according to the SI page on wikipedia, "newton" is left
