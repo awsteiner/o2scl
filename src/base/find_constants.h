@@ -62,6 +62,20 @@ namespace o2scl {
       double val;
       /// Source or reference for value
       std::string source;
+      /// Power of length
+      int m;
+      /// Power of mass
+      int k;
+      /// Power of time
+      int s;
+      /// Power of temperature
+      int K;
+      /// Power of current
+      int A;
+      /// Power of moles
+      int mol;
+      /// Power of luminous intensity
+      int cd;
     } find_constants_list;
 
     /// Database of constant values

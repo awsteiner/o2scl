@@ -44,7 +44,7 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
     vector<string> pr, in;
     pr.push_back("Name or search pattern");
     pr.push_back("Unit (or 'none' for any)");
-    int ret=get_input(sv,pr,in,"assign",itive_com);
+    int ret=get_input(sv,pr,in,"constant",itive_com);
     if (ret!=0) return ret;
   }
 

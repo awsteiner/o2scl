@@ -423,6 +423,11 @@ namespace o2scl {
   */
   void remove_whitespace(std::string &s);
 
+  /** \brief Remove all whitespace, punctuation, parenthesis, and slashes 
+      from the string \c s
+  */
+  void remove_ws_punct(std::string &s);
+
   /** \brief Take a string of binary quads and compress them to 
       hexadecimal digits
 

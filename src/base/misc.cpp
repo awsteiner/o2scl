@@ -486,6 +486,23 @@ void o2scl::remove_whitespace(std::string &s) {
   return;
 }
 
+void o2scl::remove_ws_punct(std::string &s) {
+  // The index 'i' must be an integer so we can do 'i--' below
+  for(int i=0;i<((int)s.length());i++) {
+    // whitespace characters first, 9=tab, 10=line feed, 11=vertical tab,
+    // 12=form feed, 13=carriage return, 32=space
+    if (s[i]==9 || s[i]==10 || s[i]==11 || s[i]==12 || s[i]==13 ||
+	s[i]==32 || s[i]=='\\' || s[i]=='_' || s[i]=='{' ||
+        s[i]=='}' || s[i]=='(' || s[i]==')' || s[i]==',' ||
+        s[i]=='[' || s[i]==']' || s[i]==':' || s[i]==';' ||
+        s[i]=='.' || s[i]=='/' || s[i]=='!' || s[i]=='?') {
+      s=s.substr(0,i)+s.substr(i+1,s.length()-i-1);
+      i--;
+    }
+  }
+  return;
+}
+
 void o2scl::RGBtoHSV(double r, double g, double b, 
 		     double &h, double &s, double &v) {
   
