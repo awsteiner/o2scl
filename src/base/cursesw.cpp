@@ -167,7 +167,7 @@ int cursesw::cw_getch() {
 
 void cursesw::finalize() {
   
-  // Return to normal “cooked” mode with line buffering
+  // Return to normal "cooked" mode with line buffering
   noraw();
   
   // Finalize curses session and return terminal to normal status
