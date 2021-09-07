@@ -425,6 +425,8 @@ namespace o2scl {
 
   /** \brief Remove all whitespace, punctuation, parenthesis, and slashes 
       from the string \c s
+
+      \warning Experimental.
   */
   void remove_ws_punct(std::string &s);
 

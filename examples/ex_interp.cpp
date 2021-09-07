@@ -71,7 +71,7 @@ int main(void) {
     y[i]-=y_mean;
   }
   double y_sd=vector_stddev(y);
-  cout << y_mean << " " << y_sd << endl;
+  cout << "Old mean and std. dev.: " << y_mean << " " << y_sd << endl;
   for(size_t i=0;i<N;i++) {
     y[i]/=y_sd;
     double line[2]={x[i],y[i]};
@@ -79,7 +79,8 @@ int main(void) {
   }
   double y_mean2=vector_mean(y);
   double y_sd2=vector_stddev(y);
-  cout << y_mean2 << " " << y_sd2 << endl;
+  cout << "New mean and std. dev.: " << y_mean2 << " " << y_sd2 << endl;
+  cout << endl;
 
   interp_vec<ubvector> iv_lin(N,x,y,itp_linear);
   interp_vec<ubvector> iv_csp(N,x,y,itp_cspline);
@@ -89,14 +90,14 @@ int main(void) {
 
   interp_krige_optim<ubvector> iko;
   iko.verbose=2;
-  iko.nlen=100;
+  iko.nlen=10000;
   iko.mode=interp_krige_optim<ubvector>::mode_loo_cv;
   iko.set_noise(N,x,y,1.0e-10);
   cout << endl;
 
   interp_krige_optim<ubvector> iko2;
   iko2.verbose=2;
-  iko2.nlen=100;
+  iko2.nlen=10000;
   iko2.mode=interp_krige_optim<ubvector>::mode_max_lml;
   iko2.set_noise(N,x,y,1.0e-10);
   cout << endl;
@@ -136,7 +137,6 @@ int main(void) {
   hdf_output(hf,tdata,"tdata");
   hdf_output(hf,tresult,"tresult");
   hf.close();
-
   
   t.report();
   return 0;

@@ -768,8 +768,13 @@ namespace o2scl {
       if (full_min) {
 
         if (verbose>1) {
-          std::cout << "krige_optim: full minimization"
-                    << std::endl;
+          std::cout << "krige_optim: full minimization, ";
+          if (mode==mode_loo_cv) {
+            std::cout << "leave one-out cross validation. ";
+          } else {
+            std::cout << "log marginal likelihood. ";
+          }
+          std::cout << std::endl;
         }
       
         // Choose first interval as initial guess
@@ -799,8 +804,13 @@ namespace o2scl {
       } else {
 
         if (verbose>1) {
-          std::cout << "krige_optim: simple minimization"
-                    << std::endl;
+          std::cout << "krige_optim: simple minimization, ";
+          if (mode==mode_loo_cv) {
+            std::cout << "leave one-out cross validation. ";
+          } else {
+            std::cout << "maximize marginal likelihood. ";
+          }
+          std::cout << std::endl;
         }
 
         // Compute a finite-difference array

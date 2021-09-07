@@ -79,13 +79,22 @@ namespace o2scl {
       calc_density_zerot() which gives the proper chemical potential
       of \f$ mu = m \f$ without calling the error handler.
 
-      \future Implement \ref o2scl::fermion_nonrel_tl::pair_density() and
-      \ref o2scl::fermion_nonrel_tl::pair_mu(). [AWS, 1/23/19: it is not
-      entirely clear to me that antiparticles will be useful.]
+      \verbatim embed:rst
 
-      \future This could be improved by performing a Chebyshev
-      approximation (for example) to invert the density integral so
-      that we don't need to use a solver.
+      .. todo::
+
+         In class fermion_nonrel_tl
+
+         - Future: Implement \ref
+         o2scl::fermion_nonrel_tl::pair_density() and \ref
+         o2scl::fermion_nonrel_tl::pair_mu(). [AWS, 1/23/19: it is not
+         entirely clear to me that antiparticles will be useful.]
+
+         - Future: This could be improved by performing a Chebyshev
+         approximation (for example) to invert the density integral so
+         that we don't need to use a solver.
+         
+      \endverbatim
   */
   template<class fermion_t=fermion_tl<double>,
 	   class fd_inte_t=fermi_dirac_integ_gsl,

@@ -2295,10 +2295,19 @@ namespace o2scl {
 
       This function is used in \ref table3d::to_hist_2d() .
 
-      \future Create a version where the user specifies log
-      vs. linear instead of autodetecting.
-      \future Compare this algorithm to linear_or_log() and
-      document the differences.
+      \verbatim embed:rst
+
+      .. todo::
+
+         In function pair_calibrate()
+
+         - Future: Create a version where the user specifies log
+         vs. linear instead of autodetecting.
+
+         - Future: Compare this algorithm to linear_or_log() and
+         document the differences.
+
+      \endverbatim
    */
   template<class vec_t, class vec2_t>
   void vector_to_bins(const vec_t &v_grid, vec2_t &v_bins,

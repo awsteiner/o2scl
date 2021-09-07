@@ -494,7 +494,15 @@ namespace o2scl {
       
 	The <tt>verbose</tt> parameter controls the amount of output.
       
-	\future Also calibrate massless fermions?
+        \verbatim embed:rst
+
+        .. todo::
+
+           In function pair_calibrate()
+
+           - Future: Also calibrate massless fermions?
+
+        \endverbatim
     */
     template<class part_t, class thermo_t>
       fp_t part_calibrate(part_t &p, thermo_t &th, bool test_pair,

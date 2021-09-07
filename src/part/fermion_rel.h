@@ -204,30 +204,34 @@ namespace o2scl {
       chemical potential from the density. Of course if these
       tolerances are too small, the calculation may fail. 
 
-      \hline 
-      <b>Todos:</b>
+      \verbatim embed:rst
 
-      \future I had to remove the shared_ptr stuff because
-      the default algorithm types don't support multiprecision,
-      but it might be nice to restore the shared_ptr mechanism
-      somehow.
+      .. todo::
 
-      \future The expressions which appear in in the integrand
-      functions density_fun(), etc. could likely be improved,
-      especially in the case where \ref o2scl::part::inc_rest_mass is
-      <tt>false</tt>. There should not be a need to check if
-      <tt>ret</tt> is finite.
+         In class fermion_rel_tl:
 
-      \future It appears this class doesn't compute the uncertainty in
-      the chemical potential or density with calc_density(). This
-      could be fixed.
+         - Future: I had to remove the shared_ptr stuff because the
+         default algorithm types don't support multiprecision, but it
+         might be nice to restore the shared_ptr mechanism somehow.
 
-      \future I'd like to change the lower limit on the entropy 
-      integration, but the value in the code at the moment (stored
-      in <tt>ll</tt>) makes bm_part2.cpp worse.
+         - Future: The expressions which appear in in the integrand
+         functions density_fun(), etc. could likely be improved,
+         especially in the case where \ref o2scl::part::inc_rest_mass
+         is <tt>false</tt>. There should not be a need to check if
+         <tt>ret</tt> is finite.
 
-      \future The function pair_mu() should set the antiparticle
-      integrators as done in fermion_deriv_rel.
+         - Future: It appears this class doesn't compute the
+         uncertainty in the chemical potential or density with
+         calc_density(). This could be fixed.
+
+         - Future: I'd like to change the lower limit on the entropy
+         integration, but the value in the code at the moment (stored
+         in <tt>ll</tt>) makes bm_part2.cpp worse.
+
+         - Future: The function pair_mu() should set the antiparticle
+         integrators as done in fermion_deriv_rel.
+
+      \endverbatim
   */
   template<class fermion_t=fermion_tl<double>,
 	   class fd_inte_t=class o2scl::fermi_dirac_integ_gsl,
@@ -834,8 +838,16 @@ namespace o2scl {
 	the chemical potential. If this guess is too small, then this
 	function may fail.
 
-	\future There is still quite a bit of code duplication
-	between this function and \ref calc_mu() .
+        \verbatim embed:rst
+
+        .. todo::
+
+           In function fermion_rel_tl::calc_density()
+
+           - Future: There is still quite a bit of code duplication
+           between this function and \ref calc_mu() .
+
+        \endverbatim
     */
     int calc_density(fermion_t &f, fp_t temper) {
 
@@ -1097,10 +1109,18 @@ namespace o2scl {
     /** \brief Calculate thermodynamic properties with antiparticles
 	from the density
 
-        \todo This actually works for negative densities some of the
-        time, but the solver probably doesn't work as well there and
-        we need to document the density expectations for this 
-        function.
+        \verbatim embed:rst
+        
+        .. todo::
+
+           In function pair_density():
+
+           - This actually works for negative densities some of the
+           time, but the solver probably doesn't work as well there and
+           we need to document the density expectations for this 
+           function.
+
+        \endverbatim
     */
     int pair_density(fermion_t &f, fp_t temper) {
       
@@ -1668,11 +1688,19 @@ namespace o2scl {
     /** \brief Solve for the chemical potential given the density 
 	with antiparticles
 	
-	\future Particles and antiparticles have different degeneracy
-	factors, so we separately use the expansions one at a time. It
-	is probably better to separately generate a new expansion
-	function which automatically handles the sum of particles and
-	antiparticles.
+        \verbatim embed:rst
+
+        .. todo::
+
+           In function fermion_rel_tl::calc_density()
+
+           - Future: Particles and antiparticles have different
+           degeneracy factors, so we separately use the expansions one
+           at a time. It is probably better to separately generate a
+           new expansion function which automatically handles the sum
+           of particles and antiparticles.
+
+        \endverbatim
     */
     fp_t pair_fun(fp_t x, fp_t density_match, fermion_t &f, fp_t T,
                   bool log_mode) {

@@ -138,10 +138,18 @@ namespace o2scl {
       compute all the thermodynamic quantities as a function of the
       chemical potential, or the density, respectively.
       
-      \future Use hypot() and other more accurate functions for the
-      analytic expressions for the zero temperature integrals. [Progress
-      has been made, but there are probably other functions which may
-      break down for small but finite masses and temperatures]
+      \verbatim embed:rst
+
+      .. todo::
+
+         In class fermion_zerot_tl:
+
+         - Future: Use hypot() and other more accurate functions for the
+         analytic expressions for the zero temperature integrals. [Progress
+         has been made, but there are probably other functions which may
+         break down for small but finite masses and temperatures]
+
+      \endverbatim
   */
   template<class fp_t=double> class fermion_zerot_tl {
 
@@ -317,8 +325,16 @@ namespace o2scl {
       object because of the simplification afforded by the inclusion
       of antiparticles.
 
-      \future Create a Chebyshev approximation for inverting the 
-      the Fermi functions for massless_calc_density() functions?
+      \verbatim embed:rst
+
+      .. todo::
+
+         In class fermion_thermo_tl:
+
+         - Future: Create a Chebyshev approximation for inverting the
+         the Fermi functions for massless_calc_density() functions?
+
+      \endverbatim
   */
   template<class fermion_t=fermion, class fd_inte_t=fermi_dirac_integ_gsl,
            class be_inte_t=bessel_K_exp_integ_gsl, class root_t=root_cern<>,
@@ -548,8 +564,16 @@ namespace o2scl {
         expansion for the entropy is zero, so the entropy is one order
         lower in accuracy.
         
-        \future Make a function like this for dndm, dsdT, etc. 
-        for fermion_deriv .
+        \verbatim embed:rst
+
+        .. todo::
+
+           In function calc_mu_deg()
+
+           - Future:  Make a function like this for dndm, dsdT, etc. 
+           for fermion_deriv .
+
+        \endverbatim
     */
     bool calc_mu_deg(fermion_t &f, fp_t temper, 
                      fp_t prec=1.0e-18) {
@@ -792,8 +816,16 @@ namespace o2scl {
         This approach works to within about 1 \part in \f$ 10^{12} \f$,
         and is tested in <tt>fermion_ts.cpp</tt>.
         
-        \future This could be improved by including more terms
-        in the expansions.
+        \verbatim embed:rst
+
+        .. todo::
+
+           In function massless_pair_density()
+
+           - Future: This could be improved by including more terms
+           in the expansions.
+
+        \endverbatim
     */
     void massless_pair_density(fermion_t &f, fp_t temper) {
 

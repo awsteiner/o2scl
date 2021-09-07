@@ -1867,11 +1867,19 @@ namespace o2scl {
 
       This class is experimental.
 
-      \todo This should be a symmetric conditional probability, 
-      i.e. \f$ P(x|y) = P(y|x) \f$. Test this.
-
       \note Const functions are not thread-safe because
       mutable storage is used.
+
+      \verbatim embed:rst
+      
+      .. todo::
+
+         In class prob_cond_mdim_gaussian:
+
+         - This should be a symmetric conditional probability, 
+         i.e. \f$ P(x|y) = P(y|x) \f$. Test this.
+
+      \endverbatim
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
            class mat_t=boost::numeric::ublas::matrix<double> >

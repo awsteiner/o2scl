@@ -247,12 +247,20 @@ namespace o2scl {
       to perform the integration. The value of the integrand
       at k=0 also looks like it might be causing difficulties.
       
-      \future The option err_nonconv=false is not really implemented
-      yet.
+      \verbatim embed:rst
 
-      \future The \ref pair_density() function is a bit slow because
-      it computes the non-derivative thermodynamic quantities 
-      twice, and this could be improved.
+      .. todo::
+
+         In class fermion_deriv_rel_tl:
+
+         - Future: The option err_nonconv=false is not really
+         implemented yet.
+
+         - Future: The \ref pair_density() function is a bit slow
+         because it computes the non-derivative thermodynamic
+         quantities twice, and this could be improved.
+
+      \endverbatim
   */
   template<class fermion_deriv_t=fermion_deriv_tl<double>,
 	   class fp_t=double>

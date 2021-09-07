@@ -101,10 +101,19 @@ namespace o2scl {
       solved for the effective chemical potential instead. The initial
       guess is just taken from the present value of part::nu .
 
-      \future Use bracketing to speed up one-dimensional root finding.
-      \future Implement the same method of allowing the user to 
-      turn on or off the degenerate and nondegenerate expansions
-      as in \ref o2scl::fermion_rel_tl .
+      \verbatim embed:rst
+
+      .. todo::
+
+         In class fermion_eff:
+
+         - Future: Use bracketing to speed up one-dimensional root finding.
+
+         - Future: Implement the same method of allowing the user to
+         turn on or off the degenerate and nondegenerate expansions as
+         in \ref o2scl::fermion_rel_tl .
+
+      \endverbatim
   */
   class fermion_eff : public fermion_thermo {
 
