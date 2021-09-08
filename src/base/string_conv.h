@@ -32,6 +32,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <codecvt>
 
 // For numeric_limits for dtos()
 #include <limits>
@@ -173,6 +174,11 @@ namespace o2scl {
   */
   int stod_nothrow(std::string s, double &result);
 
+  /** \brief Convert a string to a double returning non-zero
+      value for failure
+  */
+  int s32tod_nothrow(std::u32string s, double &result);
+
   /** \brief Find out if the number pointed to by \c x has a minus sign
       
       This function returns true if the number pointed to by \c x has
@@ -267,18 +273,30 @@ namespace o2scl {
   void rewrap(std::string str, std::vector<std::string> &sv,
 	      size_t ncol=79);
 
-  /** \brief Rewrap string \c str splitting at spaces and 
-      place in \c sv, but ignore vt100 characters which do 
-      not require string space
+  /** \brief Rewrap string \c str splitting at spaces and place in \c
+      sv, but ignore vt100 characters which do not occupy space in the
+      terminal
    */
   void rewrap_ignore_vt100(std::string str,
 			   std::vector<std::string> &sv,
 			   size_t ncol=79);
   
   /** \brief Desc
+
+      \note I'm deprecating this function as I'm not sure 
+      it is different from rewrap_ignore_vt100().
    */
-  void rewrap_color(std::string str, std::vector<std::string> &sv,
+  void rewrap_colorx(std::string str, std::vector<std::string> &sv,
 		    size_t ncol=79);
+
+  /** \brief Convert from UTF-8 to 32-bit integers
+
+      \warning This depends on C++ extensions that will 
+      eventually be deprecated, but apparently haven't been
+      replaced in C++20 yet?
+   */
+  void utf8_to_char32(std::string &in,
+                      std::u32string &out);
   
   /** \brief Rewrap a string into a single column, avoiding
       strings less than a particular number of characters

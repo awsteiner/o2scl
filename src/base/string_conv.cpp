@@ -33,6 +33,13 @@
 using namespace std;
 using namespace o2scl;
 
+void o2scl::utf8_to_char32(std::string &in,
+                    std::u32string &out) {
+  wstring_convert<std::codecvt_utf8<char32_t>,char32_t> cv;
+  out=cv.from_bytes(in);
+  return;
+}
+
 std::string o2scl::btos(bool b) {
   if (b) return "1";
   return "0";
@@ -166,6 +173,14 @@ int o2scl::stoszt_nothrow(string s, size_t &result) {
 
 int o2scl::stod_nothrow(string s, double &result) {
   istringstream ins(s);
+  if (ins >> result) {
+    return 0;
+  }
+  return exc_einval;
+}
+
+int o2scl::s32tod_nothrow(u32string s, double &result) {
+  basic_istringstream<char32_t> ins(s);
   if (ins >> result) {
     return 0;
   }
@@ -404,7 +419,7 @@ void o2scl::rewrap_ignore_vt100(std::string str,
   return;
 }
 
-void o2scl::rewrap_color(std::string str, std::vector<std::string> &sv,
+void o2scl::rewrap_colorx(std::string str, std::vector<std::string> &sv,
 			 size_t ncol) {
 
   if (sv.size()>0) sv.clear();
