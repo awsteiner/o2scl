@@ -33,8 +33,8 @@
 using namespace std;
 using namespace o2scl;
 
-void o2scl::utf8_to_char32(std::string &in,
-                    std::u32string &out) {
+void o2scl::utf8_to_char32(const std::string &in,
+                           std::u32string &out) {
   wstring_convert<std::codecvt_utf8<char32_t>,char32_t> cv;
   out=cv.from_bytes(in);
   return;

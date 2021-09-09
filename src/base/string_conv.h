@@ -295,7 +295,7 @@ namespace o2scl {
       eventually be deprecated, but apparently haven't been
       replaced in C++20 yet?
    */
-  void utf8_to_char32(std::string &in,
+  void utf8_to_char32(const std::string &in,
                       std::u32string &out);
   
   /** \brief Rewrap a string into a single column, avoiding

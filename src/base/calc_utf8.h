@@ -49,11 +49,11 @@
   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
 */
-#ifndef O2SCL_CALCULATOR2_H
-#define O2SCL_CALCULATOR2_H
+#ifndef O2SCL_CALC_UTF8_H
+#define O2SCL_CALC_UTF8_H
 
-/** \file calculator2.h
-    \brief Definitions for \ref o2scl::calculator2
+/** \file calc_utf8.h
+    \brief Definitions for \ref o2scl::calc_utf8
 */
 
 #include <map>
@@ -65,7 +65,7 @@
 namespace o2scl {
 
   /** \brief Evaluate a mathematical expression in a string
-
+      
       This is based on Brandon Amos' code at 
       https://github.com/bamos/cpp-expression-parser
       in turn based on Jesse Brown's code at
@@ -80,8 +80,8 @@ namespace o2scl {
       more detailed error handling than Amos' original code. I have
       tried to make sure they don't create any memory leaks, but 
       I have not fully tested this. 
-   */
-  class calculator2 {
+  */
+  class calc_utf8 {
 
   private:
 
@@ -95,7 +95,7 @@ namespace o2scl {
 
     /** \brief Return true if \c is a variable
      */
-    static bool isvariablechar(const std::char32_t c);
+    static bool isvariablechar(const char32_t c);
     
   public:
 
@@ -103,14 +103,14 @@ namespace o2scl {
 	\c vars
      */
     static double calculate(const std::string &expr,
-			    const std::map<std::string, double> *vars=0,
+			    const std::map<std::u32string, double> *vars=0,
 			    bool debug=false);
     
     /** \brief Compile and evaluate \c expr using definitions in 
 	\c vars and return an integer to indicate success or failure
     */
     static int calculate_nothrow(const std::string &expr,
-				 const std::map<std::string, double> *vars,
+				 const std::map<std::u32string, double> *vars,
 				 bool debug, double &result);
     
   private:
@@ -119,14 +119,14 @@ namespace o2scl {
 	using definitions in \c vars
      */
     static double calculate(TokenQueue_t RPN,
-			    const std::map<std::string, double>* vars = 0);
+			    const std::map<std::u32string, double> *vars=0);
     
     /** \brief Compile and evaluate the expression in \c RPN using
 	definitions in \c vars and return an integer to indicate
 	success or failure
      */
     static int calculate_nothrow(TokenQueue_t RPN,
-				 const std::map<std::string, double>* vars,
+				 const std::map<std::u32string, double> *vars,
 				 double &result);
 
     /** \brief Empty and free memory associated with \c rpn
@@ -139,7 +139,7 @@ namespace o2scl {
     /** \brief Convert the expression in \c expr to RPN 
      */
     static TokenQueue_t toRPN(const std::string &expr,
-			      const std::map<std::string, double> *vars,
+			      const std::map<std::u32string, double> *vars,
 			      bool debug=false,
 			      std::map<std::string, int> opPrec=opPrecedence);
 
@@ -147,7 +147,7 @@ namespace o2scl {
 	integer to indicate success or failure
      */
     static int toRPN_nothrow(const std::string &expr,
-			     const std::map<std::string, double> *vars,
+			     const std::map<std::u32string, double> *vars,
 			     bool debug,
 			     std::map<std::string, int> opPrec,
 			     TokenQueue_t &queue2);
@@ -160,17 +160,17 @@ namespace o2scl {
 
   public:
 
-    ~calculator();
+    ~calc_utf8();
     
-    /** \brief Create an empty calculator object
+    /** \brief Create an empty calc_utf8 object
      */
-    calculator(){}
+    calc_utf8(){}
     
     /** \brief Compile expression \c expr using variables 
 	specified in \c vars
      */
-    calculator(const char* expr,
-	       const std::map<std::string, double> *vars=0,
+    calc_utf8(const std::string &expr,
+	       const std::map<std::u32string, double> *vars=0,
 	       bool debug=false,
 	       std::map<std::string, int> opPrec=opPrecedence);
     
@@ -178,8 +178,8 @@ namespace o2scl {
 	specified in \c vars and return an
 	integer to indicate success or failure
     */
-    void compile(const char* expr,
-		 const std::map<std::string, double> *vars=0,
+    void compile(const std::string &expr,
+		 const std::map<std::u32string, double> *vars=0,
 		 bool debug=false,
 		 std::map<std::string, int> opPrec=opPrecedence);
     
@@ -187,20 +187,20 @@ namespace o2scl {
 	specified in \c vars and return an
 	integer to indicate success or failure
     */
-    int compile_nothrow(const char* expr,
-			const std::map<std::string, double> *vars=0,
+    int compile_nothrow(const std::string &expr,
+			const std::map<std::u32string, double> *vars=0,
 			bool debug=false,
 			std::map<std::string, int> opPrec=opPrecedence);
     
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
      */
-    double eval(const std::map<std::string, double> *vars=0);
+    double eval(const std::map<std::u32string, double> *vars=0);
 
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
      */
-    int eval_nothrow(const std::map<std::string, double> *vars,
+    int eval_nothrow(const std::map<std::u32string, double> *vars,
 		     double &result);
     
     /** \brief Convert the RPN expression to a string
@@ -218,11 +218,11 @@ namespace o2scl {
 
     /** \brief Get the variable list
      */
-    std::vector<std::string> get_var_list();
+    std::vector<std::u32string> get_var_list();
     
   };
 
 }
 
-// End of "#ifndef O2SCL_CALCULATOR2_H"
+// End of "#ifndef O2SCL_CALC_UTF8_H"
 #endif
