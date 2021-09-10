@@ -12,6 +12,7 @@
   <compound refid="classo2scl_1_1bessel__K__exp__integ__tl" kind="class"><name>o2scl::bessel_K_exp_integ_tl</name>
   <compound refid="classo2scl_1_1bose__einstein__integ__tl" kind="class"><name>o2scl::bose_einstein_integ_tl</name>
   <compound refid="classo2scl_1_1inte__pcubature_1_1cache" kind="class"><name>o2scl::inte_pcubature::cache</name>
+  <compound refid="classo2scl_1_1calc__utf8" kind="class"><name>o2scl::calc_utf8</name>
   <compound refid="classo2scl_1_1calculator" kind="class"><name>o2scl::calculator</name>
   <compound refid="classo2scl_1_1cheb__approx__tl" kind="class"><name>o2scl::cheb_approx_tl</name>
   <compound refid="classo2scl_1_1chi__fit__funct" kind="class"><name>o2scl::chi_fit_funct</name>
@@ -319,6 +320,7 @@
   <compound refid="classo2scl_1_1terminal" kind="class"><name>o2scl::terminal</name>
   <compound refid="classo2scl_1_1test__mgr" kind="class"><name>o2scl::test_mgr</name>
   <compound refid="classo2scl_1_1Token" kind="class"><name>o2scl::Token</name>
+  <compound refid="classo2scl_1_1calc__utf8_1_1token32" kind="class"><name>o2scl::calc_utf8::token32</name>
   <compound refid="classo2scl__linalg_1_1ubvector__2__mem" kind="class"><name>o2scl_linalg::ubvector_2_mem</name>
   <compound refid="classo2scl__linalg_1_1ubvector__4__mem" kind="class"><name>o2scl_linalg::ubvector_4_mem</name>
   <compound refid="classo2scl__linalg_1_1ubvector__5__mem" kind="class"><name>o2scl_linalg::ubvector_5_mem</name>

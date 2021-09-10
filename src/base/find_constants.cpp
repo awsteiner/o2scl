@@ -20,14 +20,14 @@
 
   -------------------------------------------------------------------
 */
+#include <regex>
+
+#include <boost/algorithm/string.hpp>
+
 #include <o2scl/find_constants.h>
 #include <o2scl/lib_settings.h>
 #include <o2scl/convert_units.h>
 #include <o2scl/vector.h>
-
-#include <fnmatch.h>
-
-#include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace o2scl;
@@ -427,20 +427,19 @@ int find_constants::find_nothrow(std::string name, std::string unit,
   // No matches, so try wildcard matches
   if (indexes.size()==0) {
       
-    string name_wc=((string)"*")+name+"*";
     for(size_t i=0;i<list.size();i++) {
       for(size_t j=0;j<list[i].names.size();j++) {
         string temp=list[i].names[j];
         remove_ws_punct(temp);
-	int fn_ret=fnmatch(name_wc.c_str(),temp.c_str(),
-			   FNM_CASEFOLD);
+        std::regex r(name);
+        bool fn_ret=std::regex_search(temp,r);
 	if (verbose>2) {
 	  std::cout << "find_constants::find_nothrow(): "
-		    << name_wc << " " << i << " " << j << " "
+		    << name << " " << i << " " << j << " "
 		    << list[i].names[j]
 		    << " " << fn_ret << endl;
 	}
-	if (fn_ret==0) {
+	if (fn_ret==true) {
 	  indexes.push_back(i);
 	  // Now that we've found a match, don't look in the
 	  // other names for this list entry

@@ -1851,8 +1851,6 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
 	  
           if (matched[j]==false &&
               regex_search(table3d_obj.get_slice_name(j),r)) {
-            //fnmatch(args[i].c_str(),
-            //table3d_obj.get_slice_name(j).c_str(),0)==0) {
 	    
             // If we've found a match, add it to the new table
             matched[j]=true;
@@ -1943,9 +1941,6 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
 
           if (matched[j]==false &&
               regex_search(table_obj.get_column_name(j),r)) {
-            //if (matched[j]==false &&  
-            //fnmatch(args[i].c_str(),
-            //table_obj.get_column_name(j).c_str(),0)==0) {
 
 	    // If we've found a match, add it to the new table
 	    matched[j]=true;

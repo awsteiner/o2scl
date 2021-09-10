@@ -33,8 +33,7 @@
 #include <string>
 #include <cmath>
 #include <sstream>
-
-#include <fnmatch.h>
+#include <regex>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
@@ -869,8 +868,8 @@ namespace o2scl {
         "x" ("y"), \c bin_grid is used for the y-coordinate
         (x-coordinate) of the new table3d object. This coordinate is
         named \c bin_name. The columns are taken from all those
-        columns in \c t which match \c pattern, using the C function
-        <tt>fnmatch()</tt>. All of the new histogram data is imported
+        columns in \c t which match the regular expression in 
+        \c pattern. All of the new histogram data is imported
         into a slice named \c slide in a new \ref table3d object. one
 
         The vector \c bin_grid must have a size which is exactly 1
@@ -900,8 +899,8 @@ namespace o2scl {
       std::vector<std::string> matched;
       
       for(size_t j=0;j<t.get_ncolumns();j++) {
-        if (fnmatch(pattern.c_str(),
-                    t.get_column_name(j).c_str(),0)==0) {
+        std::regex r(pattern);
+        if (std::regex_search(t.get_column_name(j),r)) {
           matched.push_back(t.get_column_name(j));
         }
       }
@@ -1050,8 +1049,8 @@ namespace o2scl {
       std::vector<std::string> matched;
       
       for(size_t j=0;j<t.get_ncolumns();j++) {
-        if (fnmatch(pattern.c_str(),
-                    t.get_column_name(j).c_str(),0)==0) {
+        std::regex r(pattern);
+        if (std::regex_search(t.get_column_name(j),r)) {
           matched.push_back(t.get_column_name(j));
         }
       }

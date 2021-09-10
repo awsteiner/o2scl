@@ -836,8 +836,6 @@ namespace o2scl_hdf {
             std::regex r(col_patterns[k]);
 	    for(size_t j=0;j<t.get_ncolumns();j++) {
               if (std::regex_search(t.get_column_name(j),r)) {
-                //if (fnmatch(col_patterns[k].c_str(),
-                //t.get_column_name(j).c_str(),0)==0) {
 		col_list.push_back(t.get_column_name(j));
 		if (verbose>2) {
 		  std::cout << "Found match: " << t.get_column_name(j)
@@ -1711,8 +1709,6 @@ namespace o2scl_hdf {
           std::regex r(addl_spec);
 	  for(size_t j=0;j<t.get_ncolumns();j++) {
             if (std::regex_search(t.get_column_name(j),r)) {
-              //if (fnmatch(addl_spec.c_str(),
-              //t.get_column_name(j).c_str(),0)==0) {
 	      if (verbose>1) {
 		std::cout << "Column " << t.get_column_name(j)
 			  << " matches pattern " << addl_spec

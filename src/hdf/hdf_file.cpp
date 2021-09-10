@@ -24,7 +24,6 @@
 #include <config.h>
 #endif
 
-//#include <fnmatch.h>
 #include <regex>
 
 #include <o2scl/err_hnd.h>
@@ -3330,7 +3329,6 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	  return;
 	} else if (mode==ip_type_from_pattern &&
                    regex_search(ip.tname,r)) {
-          //fnmatch(name.c_str(),ip.tname.c_str(),0)==0) {
 	  ip.type=base_type;
 	  ip.found=true;
 	  return;
@@ -3362,7 +3360,6 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	  return;
 	} else if (mode==ip_type_from_pattern &&
                    regex_search(ip.tname,r)) {
-          //fnmatch(name.c_str(),ip.tname.c_str(),0)==0) {
 	  ip.type=curr_type;
 	  ip.found=true;
 	  return;
@@ -3404,7 +3401,6 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	  return;
 	} else if (mode==ip_type_from_pattern &&
                    regex_search(ip.tname,r)) {
-          //fnmatch(name.c_str(),ip.tname.c_str(),0)==0) {
 	  ip.type=curr_type;
 	  ip.found=true;
 	  return;
@@ -3448,7 +3444,6 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	return;
       } else if (mode==ip_type_from_pattern &&
                  regex_search(ip.tname,r)) {
-        //fnmatch(name.c_str(),ip.tname.c_str(),0)==0) {
 	ip.type=curr_type;
 	ip.found=true;
 	return;
@@ -3858,7 +3853,6 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 	return 1;
       } else if (mode==ip_type_from_pattern &&
                  regex_search(ip->tname,r)) {
-        //fnmatch(name,ip->tname.c_str(),0)==0) {
 	ip->type=otype;
 	ip->found=true;
 	return 1;
@@ -4060,7 +4054,6 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 	  return 1;
 	} else if (mode==ip_type_from_pattern &&
                    regex_search(ip->tname,r)) {
-          //fnmatch(name,ip->tname.c_str(),0)==0) {
 	  ip->type="char[fixed]";
 	  ip->found=true;
 	}

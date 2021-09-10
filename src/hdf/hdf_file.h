@@ -1073,7 +1073,7 @@ namespace o2scl_hdf {
 			    std::string &type, int verbose=0);
 
     /** \brief Look in hdf_file \c hf for an \o2 object with name 
-	which matches (by <tt>fnmatch()</tt>) \c pattern.
+	which matches a regular expression
 
 	If an object is found, \c type is set to the associated type.
 	This function returns 0 if an object with name \c name is

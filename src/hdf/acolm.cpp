@@ -452,11 +452,7 @@ void acol_manager::command_add(std::string new_type) {
 	"specification is a list of column names, functions, or patterns "+
 	"which match "+
 	"the column names. Patterns must be preceeded by a colon ':' "+
-	"and use the rules from the fnmatch() function. A '*' matches "+
-	"everything, and '?' matches any single character. The pattern "+
-	"[list] matches any character in list, and the pattern "+
-	"[!list] matches all characters not in the list. The pattern "+
-	"[*] matches the character '*' and [?] matches the character '?'. "+
+	"and use ECMAScript regular expressions. "+
 	"All of the rows of data "+
 	"are copied over. If functions are specified, the result can be "+
 	"named using '='.",

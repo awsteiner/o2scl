@@ -84,6 +84,7 @@
     <member refid="namespaceo2scl_1aeae28c1926df5e3819dab5e1a7502bed" kind="function"><name>file_exists</name></member>
     <member refid="namespaceo2scl_1a321b38cc7488845a84187982917d4986" kind="function"><name>count_words</name></member>
     <member refid="namespaceo2scl_1a1c4b9ab50337c0fcd5df21b081f52f8d" kind="function"><name>remove_whitespace</name></member>
+    <member refid="namespaceo2scl_1ac5bd6452ccc918db3bcd78806407d314" kind="function"><name>remove_ws_punct</name></member>
     <member refid="namespaceo2scl_1acf7b38453474c1d54f7bc88e54a88261" kind="function"><name>binary_to_hex</name></member>
     <member refid="namespaceo2scl_1ae9d5cb5c639803ef4add58f38ae2b2de" kind="function"><name>RGBtoHSV</name></member>
     <member refid="namespaceo2scl_1ac5395cf1e49228ae74149a048be6472d" kind="function"><name>HSVtoRGB</name></member>
@@ -110,6 +111,7 @@
     <member refid="namespaceo2scl_1adadfa85e55a943113bc836a1631ceaf0" kind="function"><name>stob</name></member>
     <member refid="namespaceo2scl_1a293db56a26ab69f182c1eeb3c20a2c3e" kind="function"><name>stod</name></member>
     <member refid="namespaceo2scl_1a57829ba3b9cbcf41d19d9c24b103348d" kind="function"><name>stod_nothrow</name></member>
+    <member refid="namespaceo2scl_1aa0e3819ce527f696503e756e01c8ea74" kind="function"><name>s32tod_nothrow</name></member>
     <member refid="namespaceo2scl_1a2afbd13cadbc6ac8c9bf69fa284bfb68" kind="function"><name>has_minus_sign</name></member>
     <member refid="namespaceo2scl_1a98c17c6473daf7ac1d9062bf284b0c24" kind="function"><name>is_number</name></member>
     <member refid="namespaceo2scl_1ab1571bf8025b44e55d12be6d5470b122" kind="function"><name>function_to_double</name></member>
@@ -119,7 +121,8 @@
     <member refid="namespaceo2scl_1a66cc18968d7fa23b93660694068824cf" kind="function"><name>split_string_delim</name></member>
     <member refid="namespaceo2scl_1a611de09c5a2931e19acaee4e8e2bfba2" kind="function"><name>rewrap</name></member>
     <member refid="namespaceo2scl_1ae4e1fb6be97f457fc6af682fec02c533" kind="function"><name>rewrap_ignore_vt100</name></member>
-    <member refid="namespaceo2scl_1a1c4122906805198bc4121294614f7246" kind="function"><name>rewrap_color</name></member>
+    <member refid="namespaceo2scl_1a2ca6fa93bdf6c230530cb2903830ac09" kind="function"><name>rewrap_colorx</name></member>
+    <member refid="namespaceo2scl_1af4ff2aa1788d48eb47bb840ec5ba25ab" kind="function"><name>utf8_to_char32</name></member>
     <member refid="namespaceo2scl_1a56c706d99cb9fe6d07f1cf307dc3b646" kind="function"><name>rewrap_keep_endlines</name></member>
     <member refid="namespaceo2scl_1ac567fa955cd7ab7df93e03b53257520e" kind="function"><name>string_to_uint_list</name></member>
     <member refid="namespaceo2scl_1adc050b23cb5ae89cea44b86f970f180d" kind="function"><name>parse_fortran_format</name></member>

@@ -16,6 +16,7 @@ Namespace: o2scl class: bessel_K_exp_integ_gsl
 Namespace: o2scl class: bessel_K_exp_integ_tl
 Namespace: o2scl class: bose_einstein_integ_tl
 Namespace: o2scl class: inte_pcubature::cache
+Namespace: o2scl class: calc_utf8
 Namespace: o2scl class: calculator
 Namespace: o2scl class: cheb_approx_tl
 Namespace: o2scl class: chi_fit_funct
@@ -323,6 +324,7 @@ Namespace: o2scl class: tensor_grid4
 Namespace: o2scl class: terminal
 Namespace: o2scl class: test_mgr
 Namespace: o2scl class: Token
+Namespace: o2scl class: calc_utf8::token32
 Namespace: o2scl_linalg class: ubvector_2_mem
 Namespace: o2scl_linalg class: ubvector_4_mem
 Namespace: o2scl_linalg class: ubvector_5_mem
@@ -478,6 +480,7 @@ Multiple entry pipe_cmd_string
 Namespace:  function: file_exists
 Namespace:  function: count_words
 Namespace:  function: remove_whitespace
+Namespace: o2scl function: remove_ws_punct
 Namespace: o2scl function: binary_to_hex
 Namespace:  function: RGBtoHSV
 Namespace:  function: HSVtoRGB
@@ -505,6 +508,7 @@ Namespace:  function: stoszt_nothrow
 Namespace:  function: stob
 Namespace:  function: stod
 Namespace:  function: stod_nothrow
+Namespace:  function: s32tod_nothrow
 Namespace: o2scl function: has_minus_sign
 Namespace:  function: is_number
 Namespace: o2scl function: function_to_double
@@ -514,7 +518,8 @@ Namespace:  function: split_string
 Namespace: o2scl function: split_string_delim
 Namespace:  function: rewrap
 Namespace: o2scl function: rewrap_ignore_vt100
-Namespace:  function: rewrap_color
+Namespace:  function: rewrap_colorx
+Namespace: o2scl function: utf8_to_char32
 Namespace: o2scl function: rewrap_keep_endlines
 Namespace: o2scl function: string_to_uint_list
 Namespace: o2scl function: parse_fortran_format
