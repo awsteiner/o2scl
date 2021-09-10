@@ -33,7 +33,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <fnmatch.h>
 #include <o2scl/misc.h>
 #include <o2scl/cli.h>
 #include <o2scl/fit_nonlin.h>

@@ -28,7 +28,7 @@
 */
 #include <boost/numeric/ublas/vector.hpp>
 
-#include <fnmatch.h>
+#include <regex>
 
 #include <o2scl/hdf_file.h>
 #include <o2scl/table.h>
@@ -50,9 +50,9 @@ namespace o2scl_hdf {
       \ref hdf_file
   */
   template<class vec_t, class mat_t> 
-    void hdf_input_n(hdf_file &hf,
-                     o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
-                     std::string &name) {
+  void hdf_input_n(hdf_file &hf,
+                   o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
+                   std::string &name) {
 
     // If no name specified, find name of first group of specified type
     if (name.length()==0) {
@@ -90,9 +90,9 @@ namespace o2scl_hdf {
   }
   
   template<class vec_t, class mat_t> 
-    void hdf_input(hdf_file &hf,
-		   o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
-		   std::string name="") {
+  void hdf_input(hdf_file &hf,
+                 o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
+                 std::string name="") {
     hdf_input_n<vec_t,mat_t>(hf,p,name);
     return;
   }
@@ -101,9 +101,9 @@ namespace o2scl_hdf {
       object to a \ref hdf_file
   */
   template<class vec_t, class mat_t> 
-    void hdf_output(hdf_file &hf,
-		    o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
-		    std::string name) {
+  void hdf_output(hdf_file &hf,
+                  o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
+                  std::string name) {
     
     if (hf.has_write_access()==false) {
       O2SCL_ERR2("File not opened with write access in hdf_output",
@@ -153,7 +153,7 @@ namespace o2scl_hdf {
       \endcomment
   */
   template<class vec_t> 
-    void hdf_input_n(hdf_file &hf, o2scl::table<vec_t> &t, std::string &name) {
+  void hdf_input_n(hdf_file &hf, o2scl::table<vec_t> &t, std::string &name) {
       
     // If no name specified, find name of first group of specified type
     if (name.length()==0) {
@@ -185,7 +185,7 @@ namespace o2scl_hdf {
 #endif
 
   template<class vec_t> 
-    void hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string name) {
+  void hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string name) {
       
     hdf_input_n<vec_t>(hf,t,name);
     
@@ -198,7 +198,7 @@ namespace o2scl_hdf {
   /** \brief Internal function for inputting a \ref o2scl::table object
    */
   template<class vec_t> 
-    void hdf_input_data(hdf_file &hf, o2scl::table<vec_t> &t) {
+  void hdf_input_data(hdf_file &hf, o2scl::table<vec_t> &t) {
     hid_t group=hf.get_current_id();
 
     // Clear previous data
@@ -331,7 +331,7 @@ namespace o2scl_hdf {
   /** \brief Internal function for inputting a \ref o2scl::table_units object
    */
   template<class vec_t> 
-    void hdf_input_data(hdf_file &hf, o2scl::table_units<vec_t> &t) {
+  void hdf_input_data(hdf_file &hf, o2scl::table_units<vec_t> &t) {
     // Input base table object
     o2scl::table<vec_t> *tbase=dynamic_cast<o2scl::table_units<vec_t> *>(&t);
     if (tbase==0) {
@@ -405,7 +405,7 @@ namespace o2scl_hdf {
 		 std::string name="");
   /// Input a \ref o2scl::uniform_grid object from a \ref hdf_file
   void hdf_input_n(hdf_file &hf, o2scl::uniform_grid<double> &h, 
-		 std::string &name);
+                   std::string &name);
   /// Output a vector of \ref o2scl::contour_line objects to a \ref hdf_file
   void hdf_output(hdf_file &hf, const std::vector<o2scl::contour_line> &cl, 
 		  std::string name);
@@ -414,7 +414,7 @@ namespace o2scl_hdf {
 		 std::string name="");
   /// Input a vector of \ref o2scl::contour_line objects from a \ref hdf_file
   void hdf_input_n(hdf_file &hf, std::vector<o2scl::contour_line> &cl, 
-		 std::string &name);
+                   std::string &name);
   /// Output a vector of \ref o2scl::edge_crossings objects to a \ref hdf_file
   void hdf_output(hdf_file &hf, const std::vector<o2scl::edge_crossings> &ec, 
 		  std::string name);
@@ -423,7 +423,7 @@ namespace o2scl_hdf {
 		 std::string name="");
   /// Input a vector of \ref o2scl::edge_crossings objects from a \ref hdf_file
   void hdf_input_n(hdf_file &hf, std::vector<o2scl::edge_crossings> &ec, 
-		 std::string &name);
+                   std::string &name);
   /// Output a \ref o2scl::tensor_grid object to a \ref hdf_file
   void hdf_output(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
 		  std::vector<size_t> > &t, std::string name);
@@ -468,7 +468,7 @@ namespace o2scl_hdf {
       hdf5:\<file name\>:\<object name\>:[additional specification]
       
       Filenames are expanded using wordexp() and HDF5 object names
-      are expanded using fnmatch() .
+      are expanded using regex.
 
       Additional specifications
       - table: \<column\>
@@ -833,9 +833,11 @@ namespace o2scl_hdf {
 	    if (verbose>2) {
 	      std::cout << "Column pattern " << col_patterns[k] << std::endl;
 	    }
+            regex r(col_patterns[k]);
 	    for(size_t j=0;j<t.get_ncolumns();j++) {
-	      if (fnmatch(col_patterns[k].c_str(),
-			  t.get_column_name(j).c_str(),0)==0) {
+              if (regex_search(t.get_column_name(j),r)) {
+                //if (fnmatch(col_patterns[k].c_str(),
+                //t.get_column_name(j).c_str(),0)==0) {
 		col_list.push_back(t.get_column_name(j));
 		if (verbose>2) {
 		  std::cout << "Found match: " << t.get_column_name(j)
@@ -1299,7 +1301,7 @@ namespace o2scl_hdf {
 
   /** \brief Convert a vector specification to a 
       \c std::vector
-   */
+  */
   std::vector<double> vector_spec(std::string spec);
   
   /** \brief A list of vectors specified by a string
@@ -1706,9 +1708,11 @@ namespace o2scl_hdf {
 	  o2scl::table_units<> t;
 	  o2scl_hdf::hdf_input(hf,t,obj_name);
 	  
+          regex r(addl_spec);
 	  for(size_t j=0;j<t.get_ncolumns();j++) {
-	    if (fnmatch(addl_spec.c_str(),
-			t.get_column_name(j).c_str(),0)==0) {
+            if (regex_search(t.get_column_name(j),r)) {
+              //if (fnmatch(addl_spec.c_str(),
+              //t.get_column_name(j).c_str(),0)==0) {
 	      if (verbose>1) {
 		std::cout << "Column " << t.get_column_name(j)
 			  << " matches pattern " << addl_spec

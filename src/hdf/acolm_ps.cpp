@@ -22,12 +22,14 @@
 */
 #include "acolm.h"
 
-#include <o2scl/cloud_file.h>
-#include <o2scl/vector_derint.h>
+#include <regex>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
+
+#include <o2scl/cloud_file.h>
+#include <o2scl/vector_derint.h>
 
 using namespace std;
 using namespace o2scl;
@@ -1841,13 +1843,16 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
         new_table3d->copy_to_slice(mat,names[i]);
 
       } else {
-	
+
+        regex r(args[i]);
+        
         // Find the matching slices
         for(size_t j=0;j<table3d_obj.get_nslices();j++) {
 	  
-          if (matched[j]==false &&  
-              fnmatch(args[i].c_str(),
-                      table3d_obj.get_slice_name(j).c_str(),0)==0) {
+          if (matched[j]==false &&
+              regex_search(table3d_obj.get_slice_name(j),r)) {
+            //fnmatch(args[i].c_str(),
+            //table3d_obj.get_slice_name(j).c_str(),0)==0) {
 	    
             // If we've found a match, add it to the new table
             matched[j]=true;
@@ -1931,12 +1936,16 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
 
       } else {
 
+        regex r(args[i]);
+        
 	// Find the matching columns
 	for(size_t j=0;j<table_obj.get_ncolumns();j++) {
 
-	  if (matched[j]==false &&  
-	      fnmatch(args[i].c_str(),
-		      table_obj.get_column_name(j).c_str(),0)==0) {
+          if (matched[j]==false &&
+              regex_search(table_obj.get_column_name(j),r)) {
+            //if (matched[j]==false &&  
+            //fnmatch(args[i].c_str(),
+            //table_obj.get_column_name(j).c_str(),0)==0) {
 
 	    // If we've found a match, add it to the new table
 	    matched[j]=true;
