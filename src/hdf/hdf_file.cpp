@@ -3329,7 +3329,7 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	  ip.found=true;
 	  return;
 	} else if (mode==ip_type_from_pattern &&
-                   regex_search(ip.tname,name)) {
+                   regex_search(ip.tname,r)) {
           //fnmatch(name.c_str(),ip.tname.c_str(),0)==0) {
 	  ip.type=base_type;
 	  ip.found=true;
@@ -3361,7 +3361,7 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	  ip.found=true;
 	  return;
 	} else if (mode==ip_type_from_pattern &&
-                   regex_search(ip.tname,name)) {
+                   regex_search(ip.tname,r)) {
           //fnmatch(name.c_str(),ip.tname.c_str(),0)==0) {
 	  ip.type=curr_type;
 	  ip.found=true;
@@ -3403,7 +3403,7 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	  ip.found=true;
 	  return;
 	} else if (mode==ip_type_from_pattern &&
-                   regex_search(ip.tname,name)) {
+                   regex_search(ip.tname,r)) {
           //fnmatch(name.c_str(),ip.tname.c_str(),0)==0) {
 	  ip.type=curr_type;
 	  ip.found=true;
@@ -3447,7 +3447,7 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	ip.found=true;
 	return;
       } else if (mode==ip_type_from_pattern &&
-                 regex_search(ip.tname,name)) {
+                 regex_search(ip.tname,r)) {
         //fnmatch(name.c_str(),ip.tname.c_str(),0)==0) {
 	ip.type=curr_type;
 	ip.found=true;
@@ -3857,7 +3857,7 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 	ip->found=true;
 	return 1;
       } else if (mode==ip_type_from_pattern &&
-                 regex_search(ip->tname,name)) {
+                 regex_search(ip->tname,r)) {
         //fnmatch(name,ip->tname.c_str(),0)==0) {
 	ip->type=otype;
 	ip->found=true;
@@ -4059,7 +4059,7 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 	  ip->found=true;
 	  return 1;
 	} else if (mode==ip_type_from_pattern &&
-                   regex_search(ip->tname,name)) {
+                   regex_search(ip->tname,r)) {
           //fnmatch(name,ip->tname.c_str(),0)==0) {
 	  ip->type="char[fixed]";
 	  ip->found=true;
