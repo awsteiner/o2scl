@@ -73,17 +73,17 @@ calc_utf8::~calc_utf8() {
   cleanRPN(this->RPN);
 }
 
-TokenQueue_t calc_utf8::get_RPN() {
+token_queue_t calc_utf8::get_RPN() {
   return this->RPN;
 }
 
 std::vector<std::u32string> calc_utf8::get_var_list() {
   std::vector<std::u32string> list;
-  TokenQueue_t rpn=get_RPN();
+  token_queue_t rpn=get_RPN();
   while (rpn.size()) {
-    TokenBase *tb=rpn.front();
+    token_base *tb=rpn.front();
     if (tb->type==2) {
-      Token<std::u32string>* str=dynamic_cast<Token<std::u32string>*>(tb);
+      token32<std::u32string>* str=dynamic_cast<token32<std::u32string>*>(tb);
       if (str!=0) {
 	list.push_back(str->val);
       } else {
@@ -96,7 +96,7 @@ std::vector<std::u32string> calc_utf8::get_var_list() {
   return list;
 }  
 
-std::map<std::string, int> calc_utf8::buildOpPrecedence() {
+std::map<std::string, int> calc_utf8::build_op_precedence() {
   std::map<std::string, int> opp;
 
   // Create the operator precedence map based on C++ default
@@ -141,11 +141,11 @@ std::map<std::string, int> calc_utf8::buildOpPrecedence() {
   return opp;
 }
 
-// Builds the opPrecedence map only once:
-std::map<std::string, int> calc_utf8::opPrecedence=
-  calc_utf8::buildOpPrecedence();
+// Builds the op_precedence map only once:
+std::map<std::string, int> calc_utf8::op_precedence=
+  calc_utf8::build_op_precedence();
 
-bool calc_utf8::isvariablechar(const char32_t c) {
+bool calc_utf8::is_variable_char(const char32_t c) {
   if (c=='^' || c=='*' || c=='/' || c=='%' || c=='+' || c=='-' ||
       c=='<' || c=='=' || c=='>' || c=='!' || c=='&' || c=='|' ||
       c=='(' || c==')' || isdigit(c) || c=='.' || c==',') {
@@ -158,13 +158,13 @@ int calc_utf8::toRPN_nothrow(const std::string &expr,
                              const std::map<std::u32string, double> *vars,
                              bool debug,
                              std::map<std::string, int> opPrec,
-                             TokenQueue_t &rpnQueue2) {
+                             token_queue_t &rpn_queue2) {
   
   std::u32string expr2;
   utf8_to_char32(expr,expr2);
   
-  TokenQueue_t rpnQueue;
-  std::stack<std::string> operatorStack;
+  token_queue_t rpn_queue;
+  std::stack<std::string> operator_stack;
   bool lastTokenWasOp = true;
 
   // In one pass, ignore whitespace and parse the expression into RPN
@@ -197,15 +197,15 @@ int calc_utf8::toRPN_nothrow(const std::string &expr,
       if (debug) {
 	std::cout << "value: " << value << std::endl;
       }
-      rpnQueue.push(new Token<double>(value,NUM));
+      rpn_queue.push(new token32<double>(value,NUM32));
 
-    } else if (isvariablechar(expr2[i])) {
+    } else if (is_variable_char(expr2[i])) {
 
       std::u32string key;
       key+=expr2[i];
       
       while (i+1<expr2.length() &&
-             (isvariablechar(expr2[i+1]) || isdigit(expr2[i+1]))) {
+             (is_variable_char(expr2[i+1]) || isdigit(expr2[i+1]))) {
         key=key+expr2[i+1];
         i++;
       }
@@ -215,75 +215,75 @@ int calc_utf8::toRPN_nothrow(const std::string &expr,
 
       if (key.length()==3 &&
           key[0]=='s' && key[1]=='i' && key[2]=='n') {
-	operatorStack.push("sin");
+	operator_stack.push("sin");
 	lastTokenWasOp=true;
       } else if (key.length()==3 &&
                  key[0]=='c' && key[1]=='o' && key[2]=='s') {
-	operatorStack.push("cos");
+	operator_stack.push("cos");
 	lastTokenWasOp=true;
       } else if (key.length()==3 &&
                  key[0]=='t' && key[1]=='a' && key[2]=='n') {
-	operatorStack.push("tan");
+	operator_stack.push("tan");
 	lastTokenWasOp=true;
       } else if (key.length()==4 && key[0]=='s' &&
                  key[1]=='q' && key[2]=='r' && key[3]=='t') {
-	operatorStack.push("sqrt");
+	operator_stack.push("sqrt");
 	lastTokenWasOp=true;
       } else if (key.length()==3 &&
                  key[0]=='l' && key[1]=='o' && key[2]=='g') {
-	operatorStack.push("log");
+	operator_stack.push("log");
 	lastTokenWasOp=true;
       } else if (key.length()==3 &&
                  key[0]=='e' && key[1]=='x' && key[2]=='p') {
-	operatorStack.push("exp");
+	operator_stack.push("exp");
 	lastTokenWasOp=true;
       } else if (key.length()==3 &&
                  key[0]=='a' && key[1]=='b' && key[2]=='s') {
-	operatorStack.push("abs");
+	operator_stack.push("abs");
 	lastTokenWasOp=true;
       } else if (key.length()==5 && key[0]=='l' && key[1]=='o' &&
                  key[2]=='g' && key[3]=='1' && key[4]=='0') {
-	operatorStack.push("log10");
+	operator_stack.push("log10");
 	lastTokenWasOp=true;
       } else if (key.length()==4 && key[0]=='a' &&
                  key[1]=='s' && key[2]=='i' && key[3]=='n') {
-	operatorStack.push("asin");
+	operator_stack.push("asin");
 	lastTokenWasOp=true;
       } else if (key.length()==4 && key[0]=='a' &&
                  key[1]=='c' && key[2]=='o' && key[3]=='s') {
-	operatorStack.push("acos");
+	operator_stack.push("acos");
 	lastTokenWasOp=true;
       } else if (key.length()==4 && key[0]=='a' &&
                  key[1]=='t' && key[2]=='a' && key[3]=='n') {
-	operatorStack.push("atan");
+	operator_stack.push("atan");
 	lastTokenWasOp=true;
       } else if (key.length()==4 && key[0]=='s' &&
                  key[1]=='i' && key[2]=='n' && key[3]=='h') {
-	operatorStack.push("sinh");
+	operator_stack.push("sinh");
 	lastTokenWasOp=true;
       } else if (key.length()==4 && key[0]=='c' &&
                  key[1]=='o' && key[2]=='s' && key[3]=='h') {
-	operatorStack.push("cosh");
+	operator_stack.push("cosh");
 	lastTokenWasOp=true;
       } else if (key.length()==4 && key[0]=='t' &&
                  key[1]=='a' && key[2]=='n' && key[3]=='h') {
-	operatorStack.push("tanh");
+	operator_stack.push("tanh");
 	lastTokenWasOp=true;
       } else if (key.length()==5 && key[0]=='a' && key[1]=='s' &&
                  key[2]=='i' && key[3]=='n' && key[4]=='h') {
-	operatorStack.push("asinh");
+	operator_stack.push("asinh");
 	lastTokenWasOp=true;
       } else if (key.length()==5 && key[0]=='a' && key[1]=='c' &&
                  key[2]=='o' && key[3]=='s' && key[4]=='h') {
-	operatorStack.push("acosh");
+	operator_stack.push("acosh");
 	lastTokenWasOp=true;
       } else if (key.length()==5 && key[0]=='a' && key[1]=='t' &&
                  key[2]=='a' && key[3]=='n' && key[4]=='h') {
-	operatorStack.push("atanh");
+	operator_stack.push("atanh");
 	lastTokenWasOp=true;
       } else if (key.length()==5 && key[0]=='f' && key[1]=='l' &&
                  key[2]=='o' && key[3]=='o' && key[4]=='r') {
-	operatorStack.push("floor");
+	operator_stack.push("floor");
 	lastTokenWasOp=true;
       } else {
         
@@ -308,7 +308,7 @@ int calc_utf8::toRPN_nothrow(const std::string &expr,
 	  if (debug) {
 	    std::cout << "val: " << val << std::endl;
 	  }
-	  rpnQueue.push(new Token<double>(val,NUM));;
+	  rpn_queue.push(new token32<double>(val,NUM32));;
 	} else {
 	  // Save the variable name:
 	  if (debug) {
@@ -318,7 +318,7 @@ int calc_utf8::toRPN_nothrow(const std::string &expr,
             }
             std::cout << std::endl;
 	  }
-	  rpnQueue.push(new Token<std::u32string>(key,VAR));
+	  rpn_queue.push(new token32<std::u32string>(key,VAR32));
 	}
 	
 	lastTokenWasOp = false;
@@ -330,15 +330,15 @@ int calc_utf8::toRPN_nothrow(const std::string &expr,
       // Otherwise, the variable is an operator or parenthesis.
       switch (expr2[i]) {
       case '(':
-	operatorStack.push("(");
+	operator_stack.push("(");
         i++;
 	break;
       case ')':
-	while (operatorStack.top().compare("(")) {
-	  rpnQueue.push(new Token<std::string>(operatorStack.top(),OP));
-	  operatorStack.pop();
+	while (operator_stack.top().compare("(")) {
+	  rpn_queue.push(new token32<std::string>(operator_stack.top(),OP32));
+	  operator_stack.pop();
 	}
-	operatorStack.pop();
+	operator_stack.pop();
 	i++;
 	break;
 
@@ -358,7 +358,7 @@ int calc_utf8::toRPN_nothrow(const std::string &expr,
 	  ss << expr2[i];
           i++;
 	  while (i<expr2.length() && !isspace(expr2[i]) &&
-                 !isdigit(expr2[i]) && !isvariablechar(expr2[i]) &&
+                 !isdigit(expr2[i]) && !is_variable_char(expr2[i]) &&
                  expr2[i] != '(' && expr2[i] != ')') {
 	    ss << expr2[i];
             i++;
@@ -373,21 +373,22 @@ int calc_utf8::toRPN_nothrow(const std::string &expr,
 	  if (lastTokenWasOp) {
 	    // Convert unary operators to binary in the RPN.
 	    if (!str.compare("-") || !str.compare("+")) {
-	      rpnQueue.push(new Token<double>(0, NUM));
+	      rpn_queue.push(new token32<double>(0,NUM32));
 	    } else {
 	      //"Unrecognized unary operator: '" +
               //str + "'.");
-              cleanRPN(rpnQueue);
+              cleanRPN(rpn_queue);
               return 1;
 	    }
 	  }
 
-	  while (!operatorStack.empty() &&
-		 opPrec[str] >= opPrec[operatorStack.top()]) {
-	    rpnQueue.push(new Token<std::string>(operatorStack.top(), OP));
-	    operatorStack.pop();
+	  while (!operator_stack.empty() &&
+		 opPrec[str] >= opPrec[operator_stack.top()]) {
+	    rpn_queue.push(new token32<std::string>(operator_stack.top(),
+                                                    OP32));
+	    operator_stack.pop();
 	  }
-	  operatorStack.push(str);
+	  operator_stack.push(str);
 	  lastTokenWasOp = true;
 	}
       }
@@ -398,12 +399,12 @@ int calc_utf8::toRPN_nothrow(const std::string &expr,
     // End of while (i<expr2.length()) {
   }
   
-  while (!operatorStack.empty()) {
-    rpnQueue.push(new Token<std::string>(operatorStack.top(), OP));
-    operatorStack.pop();
+  while (!operator_stack.empty()) {
+    rpn_queue.push(new token32<std::string>(operator_stack.top(), OP32));
+    operator_stack.pop();
   }
 
-  rpnQueue2=rpnQueue;
+  rpn_queue2=rpn_queue;
   return 0;
 }
 
@@ -412,8 +413,8 @@ double calc_utf8::calculate(const std::string &expr,
                             bool debug) {
 
   // Convert to RPN with Dijkstra's Shunting-yard algorithm.
-  TokenQueue_t rpn;
-  int retx=toRPN_nothrow(expr,vars,debug,opPrecedence,rpn);
+  token_queue_t rpn;
+  int retx=toRPN_nothrow(expr,vars,debug,op_precedence,rpn);
   if (retx!=0) {
     O2SCL_ERR("Failed.",o2scl::exc_efailed);
   }
@@ -430,8 +431,8 @@ int calc_utf8::calculate_nothrow(const std::string &expr,
                                  bool debug, double &result) {
 
   // Convert to RPN with Dijkstra's Shunting-yard algorithm.
-  TokenQueue_t rpn;
-  int ret1=toRPN_nothrow(expr,vars,debug,opPrecedence,rpn);
+  token_queue_t rpn;
+  int ret1=toRPN_nothrow(expr,vars,debug,op_precedence,rpn);
   if (ret1!=0) return ret1;
 
   double ret;
@@ -444,18 +445,18 @@ int calc_utf8::calculate_nothrow(const std::string &expr,
   return 0;
 }
 
-double calc_utf8::calculate(TokenQueue_t rpn,
+double calc_utf8::calculate(token_queue_t rpn,
                             const std::map<std::u32string, double> *vars) {
 
   // Evaluate the expression in RPN form.
   std::stack<double> evaluation;
   while (!rpn.empty()) {
-    TokenBase* base = rpn.front();
+    token_base *base=rpn.front();
     rpn.pop();
 
     // Operator:
-    if (base->type == OP) {
-      Token<std::string>* strTok = static_cast<Token<std::string>*>(base);
+    if (base->type == OP32) {
+      token32<std::string>* strTok = static_cast<token32<std::string>*>(base);
       std::string str = strTok->val;
       /*
 	if (evaluation.size() < 2) {
@@ -539,16 +540,17 @@ double calc_utf8::calculate(TokenQueue_t rpn,
 	  throw std::domain_error("Unknown operator: '" + str + "'.");
 	}
       }
-    } else if (base->type == NUM) { // Number
-      Token<double>* doubleTok = static_cast<Token<double>*>(base);
+    } else if (base->type == NUM32) { // Number
+      token32<double>* doubleTok = static_cast<token32<double>*>(base);
       evaluation.push(doubleTok->val);
-    } else if (base->type == VAR) { // Variable
+    } else if (base->type == VAR32) { // Variable
       if (!vars) {
         throw std::domain_error
 	  ("Detected variable, but the variable map is null.");
       }
       
-      Token<std::u32string>* strTok = static_cast<Token<std::u32string>*>(base);
+      token32<std::u32string>* strTok =
+        static_cast<token32<std::u32string>*>(base);
       
       std::u32string key = strTok->val;
       std::map<std::u32string, double>::const_iterator it = vars->find(key);
@@ -566,19 +568,20 @@ double calc_utf8::calculate(TokenQueue_t rpn,
   return evaluation.top();
 }
 
-int calc_utf8::calculate_nothrow(TokenQueue_t rpn,
+int calc_utf8::calculate_nothrow(token_queue_t rpn,
                                  const std::map<std::u32string, double> *vars,
                                  double &result) {
 
   // Evaluate the expression in RPN form.
   std::stack<double> evaluation;
   while (!rpn.empty()) {
-    TokenBase* base = rpn.front();
+    token_base* base = rpn.front();
     rpn.pop();
 
     // Operator:
-    if (base->type == OP) {
-      Token<std::string>* strTok = static_cast<Token<std::string>*>(base);
+    if (base->type == OP32) {
+      token32<std::string>* strTok =
+        static_cast<token32<std::string>*>(base);
       std::string str = strTok->val;
       /*
 	if (evaluation.size() < 2) {
@@ -664,10 +667,10 @@ int calc_utf8::calculate_nothrow(TokenQueue_t rpn,
 	  //throw std::domain_error("Unknown operator: '" + str + "'.");
 	}
       }
-    } else if (base->type == NUM) { // Number
-      Token<double>* doubleTok = static_cast<Token<double>*>(base);
+    } else if (base->type == NUM32) { // Number
+      token32<double>* doubleTok = static_cast<token32<double>*>(base);
       evaluation.push(doubleTok->val);
-    } else if (base->type == VAR) { // Variable
+    } else if (base->type == VAR32) { // Variable
       if (!vars) {
 	cleanRPN(rpn);
 	return 2;
@@ -675,7 +678,8 @@ int calc_utf8::calculate_nothrow(TokenQueue_t rpn,
 	//("Detected variable, but the variable map is null.");
       }
       
-      Token<std::u32string>* strTok = static_cast<Token<std::u32string>*>(base);
+      token32<std::u32string>* strTok =
+        static_cast<token32<std::u32string>*>(base);
       
       std::u32string key = strTok->val;
       std::map<std::u32string, double>::const_iterator it = vars->find(key);
@@ -696,7 +700,7 @@ int calc_utf8::calculate_nothrow(TokenQueue_t rpn,
   return 0;
 }
 
-void calc_utf8::cleanRPN(TokenQueue_t& rpn) {
+void calc_utf8::cleanRPN(token_queue_t& rpn) {
   while (rpn.size()) {
     delete rpn.front();
     rpn.pop();
@@ -744,18 +748,18 @@ int calc_utf8::eval_nothrow(const std::map<std::u32string, double> *vars,
 
 std::string calc_utf8::RPN_to_string() {
   std::stringstream ss;
-  TokenQueue_t rpn = this->RPN;
+  token_queue_t rpn = this->RPN;
 
   ss << "calc_utf8 { RPN: [ ";
   while (rpn.size()) {
-    TokenBase* base = rpn.front();
+    token_base* base = rpn.front();
 
-    Token<double>* doubleTok = dynamic_cast<Token<double>*>(base);
+    token32<double>* doubleTok = dynamic_cast<token32<double>*>(base);
     if(doubleTok) {
       ss << doubleTok->val;
     }
 
-    Token<std::string>* strTok = dynamic_cast<Token<std::string>*>(base);
+    token32<std::string>* strTok = dynamic_cast<token32<std::string>*>(base);
     if(strTok) {
       ss << "'" << strTok->val << "'";
     }

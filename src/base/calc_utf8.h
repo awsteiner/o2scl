@@ -60,11 +60,46 @@
 #include <stack>
 #include <string>
 #include <queue>
-#include <o2scl/shunting_yard.h>
 
 namespace o2scl {
 
-  /** \brief Evaluate a mathematical expression in a string
+  /** \brief Token list for \ref o2scl::calculator
+   */
+  enum token_type {NONE32,OP32,VAR32,NUM32};
+
+  /** \brief Token base data type for \ref o2scl::calculator
+   */
+  struct token_base {
+    /** \brief The token type
+     */
+    token_type type;
+    virtual ~token_base() {}
+  };
+
+  /** \brief Token class for \ref o2scl::calculator
+   */
+  template<class T> class token32 : public token_base {
+
+  public:
+    
+    /** \brief Create a token of type \c type with value \c t
+
+	\comment
+	AWS: renamed type to typex to prevent shadow warnings
+	\endcomment
+     */
+  token32(T t, token_type typex) : val(t) { this->type=typex; }
+    
+    /** \brief The actual value stored
+     */
+    T val;
+  };
+
+  /** \brief A typedef for a queue of tokens for \ref o2scl::calculator
+   */
+  typedef std::queue<token_base*> token_queue_t;
+
+  /** \brief Evaluate a mathematical expression stored in a UTF8 string
       
       This is based on Brandon Amos' code at 
       https://github.com/bamos/cpp-expression-parser
@@ -75,7 +110,7 @@ namespace o2scl {
 
       \future Add functions atan2, cot, csc, ceil, floor, int, max, min,
       and maybe if?
-
+      
       \warning The nothrow() functions are a naive attempt at 
       more detailed error handling than Amos' original code. I have
       tried to make sure they don't create any memory leaks, but 
@@ -87,15 +122,15 @@ namespace o2scl {
 
     /** \brief A map denoting operator precedence
      */
-    static std::map<std::string, int> opPrecedence;
-
+    static std::map<std::string, int> op_precedence;
+    
     /** \brief Build the operator precedence map
      */
-    static std::map<std::string, int> buildOpPrecedence();
+    static std::map<std::string, int> build_op_precedence();
 
     /** \brief Return true if \c is a variable
      */
-    static bool isvariablechar(const char32_t c);
+    static bool is_variable_char(const char32_t c);
     
   public:
 
@@ -118,14 +153,14 @@ namespace o2scl {
     /** \brief Compile and evaluate the expression in \c RPN
 	using definitions in \c vars
      */
-    static double calculate(TokenQueue_t RPN,
+    static double calculate(token_queue_t RPN,
 			    const std::map<std::u32string, double> *vars=0);
     
     /** \brief Compile and evaluate the expression in \c RPN using
 	definitions in \c vars and return an integer to indicate
 	success or failure
      */
-    static int calculate_nothrow(TokenQueue_t RPN,
+    static int calculate_nothrow(token_queue_t RPN,
 				 const std::map<std::u32string, double> *vars,
 				 double &result);
 
@@ -134,7 +169,7 @@ namespace o2scl {
 	\note This is called by the destructor to free the memory in
 	\ref RPN .
      */
-    static void cleanRPN(TokenQueue_t &rpn);
+    static void cleanRPN(token_queue_t &rpn);
     
     /** \brief Convert the expression in \c expr to RPN and return an
 	integer to indicate success or failure
@@ -143,13 +178,13 @@ namespace o2scl {
 			     const std::map<std::u32string, double> *vars,
 			     bool debug,
 			     std::map<std::string, int> opPrec,
-			     TokenQueue_t &queue2);
+			     token_queue_t &queue2);
 
   private:
 
     /** \brief The current expression in RPN
      */
-    TokenQueue_t RPN;
+    token_queue_t RPN;
 
   public:
 
@@ -165,7 +200,7 @@ namespace o2scl {
     calc_utf8(const std::string &expr,
 	       const std::map<std::u32string, double> *vars=0,
 	       bool debug=false,
-	       std::map<std::string, int> opPrec=opPrecedence);
+	       std::map<std::string, int> opPrec=op_precedence);
     
     /** \brief Compile expression \c expr using variables 
 	specified in \c vars and return an
@@ -174,7 +209,7 @@ namespace o2scl {
     void compile(const std::string &expr,
 		 const std::map<std::u32string, double> *vars=0,
 		 bool debug=false,
-		 std::map<std::string, int> opPrec=opPrecedence);
+		 std::map<std::string, int> opPrec=op_precedence);
     
     /** \brief Compile expression \c expr using variables 
 	specified in \c vars and return an
@@ -183,7 +218,7 @@ namespace o2scl {
     int compile_nothrow(const std::string &expr,
 			const std::map<std::u32string, double> *vars=0,
 			bool debug=false,
-			std::map<std::string, int> opPrec=opPrecedence);
+			std::map<std::string, int> opPrec=op_precedence);
     
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
@@ -207,7 +242,7 @@ namespace o2scl {
 	\warning This copy contains raw pointers which are invalid
 	if the changed.
      */
-    TokenQueue_t get_RPN();
+    token_queue_t get_RPN();
 
     /** \brief Get the variable list
      */
