@@ -28,7 +28,8 @@ BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 	interp.scr columnify.scr convert_units.scr \
 	string_conv.scr tensor.scr shunting_yard.scr \
 	format_float.scr table_units.scr exception.scr uniform_grid.scr \
-	tensor_grid.scr constants.scr cursesw.scr auto_format.scr
+	tensor_grid.scr constants.scr cursesw.scr auto_format.scr \
+	calc_utf8.scr
 
 TEST_VAR = $(BASE_TEST_VAR)
 
@@ -153,7 +154,7 @@ CPVAR = err_hnd_ts funct_ts convert_units_ts \
 	columnify_ts shunting_yard_ts interp_krige_ts \
 	string_conv_ts tensor_ts tensor_grid_ts vector_ts table3d_ts \
 	format_float_ts table_units_ts exception_ts uniform_grid_ts \
-	cursesw_ts auto_format_ts
+	cursesw_ts auto_format_ts calc_utf8_ts
 
 check_PROGRAMS = $(CPVAR)
 
@@ -175,6 +176,7 @@ format_float_ts_LDFLAGS = -fopenmp
 lib_settings_ts_LDFLAGS = -fopenmp
 misc_ts_LDFLAGS = -fopenmp
 auto_format_ts_LDFLAGS = -fopenmp
+calc_utf8_ts_LDFLAGS = -fopenmp
 mm_funct_ts_LDFLAGS = -fopenmp
 multi_funct_ts_LDFLAGS = -fopenmp
 search_vec_ts_LDFLAGS = -fopenmp
@@ -202,6 +204,7 @@ format_float_ts_LDADD = $(VCHECK_LIBS)
 lib_settings_ts_LDADD = $(VCHECK_LIBS)
 misc_ts_LDADD = $(VCHECK_LIBS)
 auto_format_ts_LDADD = $(VCHECK_LIBS)
+calc_utf8_ts_LDADD = $(VCHECK_LIBS)
 mm_funct_ts_LDADD = $(VCHECK_LIBS)
 multi_funct_ts_LDADD = $(VCHECK_LIBS)
 search_vec_ts_LDADD = $(VCHECK_LIBS)
@@ -237,6 +240,8 @@ misc.scr: misc_ts$(EXEEXT)
 	./misc_ts$(EXEEXT) > misc.scr
 auto_format.scr: auto_format_ts$(EXEEXT) 
 	./auto_format_ts$(EXEEXT) > auto_format.scr
+calc_utf8.scr: calc_utf8_ts$(EXEEXT) 
+	./calc_utf8_ts$(EXEEXT) > calc_utf8.scr
 mm_funct.scr: mm_funct_ts$(EXEEXT) 
 	./mm_funct_ts$(EXEEXT) > mm_funct.scr
 multi_funct.scr: multi_funct_ts$(EXEEXT) 
@@ -279,6 +284,7 @@ format_float_ts_SOURCES = format_float_ts.cpp
 lib_settings_ts_SOURCES = lib_settings_ts.cpp
 misc_ts_SOURCES = misc_ts.cpp
 auto_format_ts_SOURCES = auto_format_ts.cpp
+calc_utf8_ts_SOURCES = calc_utf8_ts.cpp
 mm_funct_ts_SOURCES = mm_funct_ts.cpp
 multi_funct_ts_SOURCES = multi_funct_ts.cpp
 search_vec_ts_SOURCES = search_vec_ts.cpp
