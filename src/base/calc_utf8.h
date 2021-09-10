@@ -63,16 +63,12 @@
 
 namespace o2scl {
 
-  /** \brief Token list for \ref o2scl::calculator
-   */
-  enum token_type {NONE32,OP32,VAR32,NUM32};
-
   /** \brief Token base data type for \ref o2scl::calculator
    */
   struct token_base {
     /** \brief The token type
      */
-    token_type type;
+    int type;
     virtual ~token_base() {}
   };
 
@@ -87,17 +83,13 @@ namespace o2scl {
 	\comment
 	AWS: renamed type to typex to prevent shadow warnings
 	\endcomment
-     */
-  token32(T t, token_type typex) : val(t) { this->type=typex; }
+    */
+    token32(T t, int typex) : val(t) { this->type=typex; }
     
     /** \brief The actual value stored
      */
     T val;
   };
-
-  /** \brief A typedef for a queue of tokens for \ref o2scl::calculator
-   */
-  typedef std::queue<token_base*> token_queue_t;
 
   /** \brief Evaluate a mathematical expression stored in a UTF8 string
       
@@ -120,6 +112,15 @@ namespace o2scl {
 
   private:
 
+    /** \brief A typedef for a queue of tokens for \ref o2scl::calculator
+     */
+    typedef std::queue<token_base*> token_queue_t;
+    
+    static const int token_none=0;
+    static const int token_op=1;
+    static const int token_var=2;
+    static const int token_num=3;
+
     /** \brief A map denoting operator precedence
      */
     static std::map<std::string, int> op_precedence;
@@ -136,15 +137,15 @@ namespace o2scl {
 
     /** \brief Compile and evaluate \c expr using definitions in 
 	\c vars
-     */
-    static double calculate(const std::string &expr,
+    */
+    static double calculate(const std::u32string &expr,
 			    const std::map<std::u32string, double> *vars=0,
 			    bool debug=false);
     
     /** \brief Compile and evaluate \c expr using definitions in 
 	\c vars and return an integer to indicate success or failure
     */
-    static int calculate_nothrow(const std::string &expr,
+    static int calculate_nothrow(const std::u32string &expr,
 				 const std::map<std::u32string, double> *vars,
 				 bool debug, double &result);
     
@@ -152,14 +153,14 @@ namespace o2scl {
 
     /** \brief Compile and evaluate the expression in \c RPN
 	using definitions in \c vars
-     */
+    */
     static double calculate(token_queue_t RPN,
 			    const std::map<std::u32string, double> *vars=0);
     
     /** \brief Compile and evaluate the expression in \c RPN using
 	definitions in \c vars and return an integer to indicate
 	success or failure
-     */
+    */
     static int calculate_nothrow(token_queue_t RPN,
 				 const std::map<std::u32string, double> *vars,
 				 double &result);
@@ -168,13 +169,13 @@ namespace o2scl {
 
 	\note This is called by the destructor to free the memory in
 	\ref RPN .
-     */
+    */
     static void cleanRPN(token_queue_t &rpn);
     
     /** \brief Convert the expression in \c expr to RPN and return an
 	integer to indicate success or failure
     */
-    static int toRPN_nothrow(const std::string &expr,
+    static int toRPN_nothrow(const std::u32string &expr,
 			     const std::map<std::u32string, double> *vars,
 			     bool debug,
 			     std::map<std::string, int> opPrec,
@@ -196,17 +197,17 @@ namespace o2scl {
     
     /** \brief Compile expression \c expr using variables 
 	specified in \c vars
-     */
-    calc_utf8(const std::string &expr,
-	       const std::map<std::u32string, double> *vars=0,
-	       bool debug=false,
-	       std::map<std::string, int> opPrec=op_precedence);
+    */
+    calc_utf8(const std::u32string &expr,
+              const std::map<std::u32string, double> *vars=0,
+              bool debug=false,
+              std::map<std::string, int> opPrec=op_precedence);
     
     /** \brief Compile expression \c expr using variables 
 	specified in \c vars and return an
 	integer to indicate success or failure
     */
-    void compile(const std::string &expr,
+    void compile(const std::u32string &expr,
 		 const std::map<std::u32string, double> *vars=0,
 		 bool debug=false,
 		 std::map<std::string, int> opPrec=op_precedence);
@@ -215,19 +216,19 @@ namespace o2scl {
 	specified in \c vars and return an
 	integer to indicate success or failure
     */
-    int compile_nothrow(const std::string &expr,
+    int compile_nothrow(const std::u32string &expr,
 			const std::map<std::u32string, double> *vars=0,
 			bool debug=false,
 			std::map<std::string, int> opPrec=op_precedence);
     
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
-     */
+    */
     double eval(const std::map<std::u32string, double> *vars=0);
 
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
-     */
+    */
     int eval_nothrow(const std::map<std::u32string, double> *vars,
 		     double &result);
     
@@ -241,7 +242,7 @@ namespace o2scl {
 
 	\warning This copy contains raw pointers which are invalid
 	if the changed.
-     */
+    */
     token_queue_t get_RPN();
 
     /** \brief Get the variable list

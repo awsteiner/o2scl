@@ -62,11 +62,13 @@
 
 using namespace o2scl;
 
-calc_utf8::calc_utf8(const std::string &expr,
+typedef std::queue<token_base*> token_queue_t;
+
+calc_utf8::calc_utf8(const std::u32string &expr,
                      const std::map<std::u32string, double> *vars,
                      bool debug,
-                     std::map<std::string, int> opPrec) {
-  compile(expr,vars,debug,opPrec);
+                     std::map<std::string, int> op_prec) {
+  compile(expr,vars,debug,op_prec);
 }
 
 calc_utf8::~calc_utf8() {
@@ -146,6 +148,7 @@ std::map<std::string, int> calc_utf8::op_precedence=
   calc_utf8::build_op_precedence();
 
 bool calc_utf8::is_variable_char(const char32_t c) {
+  // Presume it's a variable if it's not an operator or digit
   if (c=='^' || c=='*' || c=='/' || c=='%' || c=='+' || c=='-' ||
       c=='<' || c=='=' || c=='>' || c=='!' || c=='&' || c=='|' ||
       c=='(' || c==')' || isdigit(c) || c=='.' || c==',') {
@@ -154,38 +157,37 @@ bool calc_utf8::is_variable_char(const char32_t c) {
   return true;
 }
 
-int calc_utf8::toRPN_nothrow(const std::string &expr,
+int calc_utf8::toRPN_nothrow(const std::u32string &expr,
                              const std::map<std::u32string, double> *vars,
                              bool debug,
-                             std::map<std::string, int> opPrec,
+                             std::map<std::string, int> op_prec,
                              token_queue_t &rpn_queue2) {
-  
-  std::u32string expr2;
-  utf8_to_char32(expr,expr2);
-  
+
   token_queue_t rpn_queue;
   std::stack<std::string> operator_stack;
   bool lastTokenWasOp = true;
 
   // In one pass, ignore whitespace and parse the expression into RPN
   // using Dijkstra's Shunting-yard algorithm.
-  //while (*expr && isspace(*expr)) ++expr;
-
+  
   size_t i=0;
-  while (i<expr2.length()) {
+  while (i<expr.length()) {
     
-    if (isdigit(expr2[i])) {
+    if (isdigit(expr[i])) {
       
       std::u32string part;
-      part=part+expr2[i];
-      
+      part=part+expr[i];
+
       bool exponent=false;
-      while (i+1<expr2.length() &&
-             (expr2[i]=='.' || isdigit(expr2[i+1]) || expr2[i]=='e' ||
-              expr2[i]=='E' || (exponent && (expr[i]=='+' ||
-                                             expr2[i]=='-')))) {
-        if (expr2[i]=='e' || expr2[i]=='E') exponent=true;
-        part=part+expr2[i+1];
+      // The idea here is that this will handle both commas or
+      // periods, depending on locale, but this hasn't been tested
+      while (i+1<expr.length() &&
+             (expr[i+1]=='.' || expr[i+1]==',' ||
+              isdigit(expr[i+1]) || expr[i+1]=='e' ||
+              expr[i+1]=='E' || (exponent && (expr[i+1]=='+' ||
+                                              expr[i+1]=='-')))) {
+        if (expr[i+1]=='e' || expr[i+1]=='E') exponent=true;
+        part=part+expr[i+1];
         i++;
       }
 
@@ -197,16 +199,16 @@ int calc_utf8::toRPN_nothrow(const std::string &expr,
       if (debug) {
 	std::cout << "value: " << value << std::endl;
       }
-      rpn_queue.push(new token32<double>(value,NUM32));
+      rpn_queue.push(new token32<double>(value,token_num));
 
-    } else if (is_variable_char(expr2[i])) {
+    } else if (is_variable_char(expr[i])) {
 
       std::u32string key;
-      key+=expr2[i];
+      key+=expr[i];
       
-      while (i+1<expr2.length() &&
-             (is_variable_char(expr2[i+1]) || isdigit(expr2[i+1]))) {
-        key=key+expr2[i+1];
+      while (i+1<expr.length() &&
+             (is_variable_char(expr[i+1]) || isdigit(expr[i+1]))) {
+        key=key+expr[i+1];
         i++;
       }
         
@@ -304,12 +306,15 @@ int calc_utf8::toRPN_nothrow(const std::string &expr,
 	}
 	
 	if (found) {
+          
 	  // Save the number
 	  if (debug) {
 	    std::cout << "val: " << val << std::endl;
 	  }
-	  rpn_queue.push(new token32<double>(val,NUM32));;
+	  rpn_queue.push(new token32<double>(val,token_num));
+          
 	} else {
+          
 	  // Save the variable name:
 	  if (debug) {
 	    std::cout << "key: ";
@@ -318,24 +323,29 @@ int calc_utf8::toRPN_nothrow(const std::string &expr,
             }
             std::cout << std::endl;
 	  }
-	  rpn_queue.push(new token32<std::u32string>(key,VAR32));
+	  rpn_queue.push(new token32<std::u32string>(key,token_var));
 	}
 	
-	lastTokenWasOp = false;
+	lastTokenWasOp=false;
 	
       }
 
     } else {
 
       // Otherwise, the variable is an operator or parenthesis.
-      switch (expr2[i]) {
+      switch (expr[i]) {
+        
       case '(':
+        
 	operator_stack.push("(");
         i++;
 	break;
+        
       case ')':
+        
 	while (operator_stack.top().compare("(")) {
-	  rpn_queue.push(new token32<std::string>(operator_stack.top(),OP32));
+	  rpn_queue.push(new token32<std::string>(operator_stack.top(),
+                                                  token_op));
 	  operator_stack.pop();
 	}
 	operator_stack.pop();
@@ -355,12 +365,12 @@ int calc_utf8::toRPN_nothrow(const std::string &expr,
 	  //   Push o1 on the stack.
           
 	  std::stringstream ss;
-	  ss << expr2[i];
+	  ss << expr[i];
           i++;
-	  while (i<expr2.length() && !isspace(expr2[i]) &&
-                 !isdigit(expr2[i]) && !is_variable_char(expr2[i]) &&
-                 expr2[i] != '(' && expr2[i] != ')') {
-	    ss << expr2[i];
+	  while (i<expr.length() && !isspace(expr[i]) &&
+                 !isdigit(expr[i]) && !is_variable_char(expr[i]) &&
+                 expr[i] != '(' && expr[i] != ')') {
+	    ss << expr[i];
             i++;
 	  }
 	  ss.clear();
@@ -373,7 +383,7 @@ int calc_utf8::toRPN_nothrow(const std::string &expr,
 	  if (lastTokenWasOp) {
 	    // Convert unary operators to binary in the RPN.
 	    if (!str.compare("-") || !str.compare("+")) {
-	      rpn_queue.push(new token32<double>(0,NUM32));
+	      rpn_queue.push(new token32<double>(0,token_num));
 	    } else {
 	      //"Unrecognized unary operator: '" +
               //str + "'.");
@@ -383,32 +393,34 @@ int calc_utf8::toRPN_nothrow(const std::string &expr,
 	  }
 
 	  while (!operator_stack.empty() &&
-		 opPrec[str] >= opPrec[operator_stack.top()]) {
+		 op_prec[str] >= op_prec[operator_stack.top()]) {
 	    rpn_queue.push(new token32<std::string>(operator_stack.top(),
-                                                    OP32));
+                                                    token_op));
 	    operator_stack.pop();
 	  }
+          
 	  operator_stack.push(str);
 	  lastTokenWasOp = true;
 	}
       }
     }
     
-    while (i+1<expr2.length() && isspace(expr2[i+1])) i++;
+    while (i+1<expr.length() && isspace(expr[i+1])) i++;
     
-    // End of while (i<expr2.length()) {
+    // End of while (i<expr.length()) {
   }
   
   while (!operator_stack.empty()) {
-    rpn_queue.push(new token32<std::string>(operator_stack.top(), OP32));
+    rpn_queue.push(new token32<std::string>(operator_stack.top(), token_op));
     operator_stack.pop();
   }
 
   rpn_queue2=rpn_queue;
+  
   return 0;
 }
 
-double calc_utf8::calculate(const std::string &expr,
+double calc_utf8::calculate(const std::u32string &expr,
                             const std::map<std::u32string, double> *vars,
                             bool debug) {
 
@@ -426,7 +438,7 @@ double calc_utf8::calculate(const std::string &expr,
   return ret;
 }
 
-int calc_utf8::calculate_nothrow(const std::string &expr,
+int calc_utf8::calculate_nothrow(const std::u32string &expr,
                                  const std::map<std::u32string, double> *vars,
                                  bool debug, double &result) {
 
@@ -455,7 +467,7 @@ double calc_utf8::calculate(token_queue_t rpn,
     rpn.pop();
 
     // Operator:
-    if (base->type == OP32) {
+    if (base->type == token_op) {
       token32<std::string>* strTok = static_cast<token32<std::string>*>(base);
       std::string str = strTok->val;
       /*
@@ -540,10 +552,10 @@ double calc_utf8::calculate(token_queue_t rpn,
 	  throw std::domain_error("Unknown operator: '" + str + "'.");
 	}
       }
-    } else if (base->type == NUM32) { // Number
+    } else if (base->type == token_num) { // Number
       token32<double>* doubleTok = static_cast<token32<double>*>(base);
       evaluation.push(doubleTok->val);
-    } else if (base->type == VAR32) { // Variable
+    } else if (base->type == token_var) { // Variable
       if (!vars) {
         throw std::domain_error
 	  ("Detected variable, but the variable map is null.");
@@ -579,7 +591,7 @@ int calc_utf8::calculate_nothrow(token_queue_t rpn,
     rpn.pop();
 
     // Operator:
-    if (base->type == OP32) {
+    if (base->type == token_op) {
       token32<std::string>* strTok =
         static_cast<token32<std::string>*>(base);
       std::string str = strTok->val;
@@ -667,10 +679,10 @@ int calc_utf8::calculate_nothrow(token_queue_t rpn,
 	  //throw std::domain_error("Unknown operator: '" + str + "'.");
 	}
       }
-    } else if (base->type == NUM32) { // Number
+    } else if (base->type == token_num) { // Number
       token32<double>* doubleTok = static_cast<token32<double>*>(base);
       evaluation.push(doubleTok->val);
-    } else if (base->type == VAR32) { // Variable
+    } else if (base->type == token_var) { // Variable
       if (!vars) {
 	cleanRPN(rpn);
 	return 2;
@@ -708,15 +720,15 @@ void calc_utf8::cleanRPN(token_queue_t& rpn) {
   return;
 }
 
-void calc_utf8::compile(const std::string &expr,
+void calc_utf8::compile(const std::u32string &expr,
                         const std::map<std::u32string, double> *vars,
                         bool debug,
-                        std::map<std::string, int> opPrec) {
+                        std::map<std::string, int> op_prec) {
 
   // Make sure it is empty:
   cleanRPN(this->RPN);
 
-  int retx=calc_utf8::toRPN_nothrow(expr,vars,debug,opPrec,this->RPN);
+  int retx=calc_utf8::toRPN_nothrow(expr,vars,debug,op_prec,this->RPN);
   if (retx!=0) {
     O2SCL_ERR("Failed.",o2scl::exc_einval);
   }
@@ -724,15 +736,15 @@ void calc_utf8::compile(const std::string &expr,
   return;
 }
 
-int calc_utf8::compile_nothrow(const std::string &expr,
+int calc_utf8::compile_nothrow(const std::u32string &expr,
                                const std::map<std::u32string, double> *vars,
                                bool debug,
-                               std::map<std::string, int> opPrec) {
+                               std::map<std::string, int> op_prec) {
 
   // Make sure it is empty:
   cleanRPN(this->RPN);
 
-  int ret=calc_utf8::toRPN_nothrow(expr,vars,debug,opPrec,this->RPN);
+  int ret=calc_utf8::toRPN_nothrow(expr,vars,debug,op_prec,this->RPN);
   return ret;
 }
 
