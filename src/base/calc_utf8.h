@@ -151,12 +151,6 @@ namespace o2scl {
     
   private:
 
-    /** \brief Compile and evaluate the expression in \c RPN
-	using definitions in \c vars
-    */
-    static double calculate(token_queue_t RPN,
-			    const std::map<std::u32string, double> *vars=0);
-    
     /** \brief Compile and evaluate the expression in \c RPN using
 	definitions in \c vars and return an integer to indicate
 	success or failure

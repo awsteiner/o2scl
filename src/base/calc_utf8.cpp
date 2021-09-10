@@ -431,7 +431,8 @@ double calc_utf8::calculate(const std::u32string &expr,
     O2SCL_ERR("Failed.",o2scl::exc_efailed);
   }
 
-  double ret = calculate(rpn);
+  double ret;
+  int iret=calculate_nothrow(rpn,0,ret);
 
   cleanRPN(rpn);
 
@@ -457,137 +458,15 @@ int calc_utf8::calculate_nothrow(const std::u32string &expr,
   return 0;
 }
 
-double calc_utf8::calculate(token_queue_t rpn,
-                            const std::map<std::u32string, double> *vars) {
-
-  // Evaluate the expression in RPN form.
-  std::stack<double> evaluation;
-  while (!rpn.empty()) {
-    token_base *base=rpn.front();
-    rpn.pop();
-
-    // Operator:
-    if (base->type == token_op) {
-      token32<std::string>* strTok = static_cast<token32<std::string>*>(base);
-      std::string str = strTok->val;
-      /*
-	if (evaluation.size() < 2) {
-        throw std::domain_error("Invalid equation.");
-	}
-      */
-      double right = evaluation.top();
-      evaluation.pop();
-      if (!str.compare("sin")) {
-	evaluation.push(sin(right));
-      } else if (!str.compare("cos")) {
-	evaluation.push(cos(right));
-      } else if (!str.compare("tan")) {
-	evaluation.push(tan(right));
-      } else if (!str.compare("sqrt")) {
-	evaluation.push(sqrt(right));
-      } else if (!str.compare("log")) {
-	evaluation.push(log(right));
-      } else if (!str.compare("exp")) {
-	evaluation.push(exp(right));
-      } else if (!str.compare("abs")) {
-	evaluation.push(std::abs(right));
-      } else if (!str.compare("log10")) {
-	evaluation.push(log10(right));
-      } else if (!str.compare("asin")) {
-	evaluation.push(asin(right));
-      } else if (!str.compare("acos")) {
-	evaluation.push(acos(right));
-      } else if (!str.compare("atan")) {
-	evaluation.push(atan(right));
-      } else if (!str.compare("sinh")) {
-	evaluation.push(sinh(right));
-      } else if (!str.compare("cosh")) {
-	evaluation.push(cosh(right));
-      } else if (!str.compare("tanh")) {
-	evaluation.push(tanh(right));
-      } else if (!str.compare("asinh")) {
-	evaluation.push(asinh(right));
-      } else if (!str.compare("acosh")) {
-	evaluation.push(acosh(right));
-      } else if (!str.compare("atanh")) {
-	evaluation.push(atanh(right));
-      } else if (!str.compare("floor")) {
-	evaluation.push(floor(right));
-      } else {
-	double left  = evaluation.top();
-	evaluation.pop();
-	if (!str.compare("+")) {
-	  evaluation.push(left + right);
-	} else if (!str.compare("*")) {
-	  evaluation.push(left * right);
-	} else if (!str.compare("-")) {
-	  evaluation.push(left - right);
-	} else if (!str.compare("/")) {
-	  evaluation.push(left / right);
-	} else if (!str.compare("<<")) {
-	  evaluation.push((int) left << (int) right);
-	} else if (!str.compare("^")) {
-	  evaluation.push(pow(left, right));
-	} else if (!str.compare(">>")) {
-	  evaluation.push((int) left >> (int) right);
-	} else if (!str.compare("%")) {
-	  evaluation.push((int) left % (int) right);
-	} else if (!str.compare("<")) {
-	  evaluation.push(left < right);
-	} else if (!str.compare(">")) {
-	  evaluation.push(left > right);
-	} else if (!str.compare("<=")) {
-	  evaluation.push(left <= right);
-	} else if (!str.compare(">=")) {
-	  evaluation.push(left >= right);
-	} else if (!str.compare("==")) {
-	  evaluation.push(left == right);
-	} else if (!str.compare("!=")) {
-	  evaluation.push(left != right);
-	} else if (!str.compare("&&")) {
-	  evaluation.push((int) left && (int) right);
-	} else if (!str.compare("||")) {
-	  evaluation.push((int) left || (int) right);
-	} else {
-	  throw std::domain_error("Unknown operator: '" + str + "'.");
-	}
-      }
-    } else if (base->type == token_num) { // Number
-      token32<double>* doubleTok = static_cast<token32<double>*>(base);
-      evaluation.push(doubleTok->val);
-    } else if (base->type == token_var) { // Variable
-      if (!vars) {
-        throw std::domain_error
-	  ("Detected variable, but the variable map is null.");
-      }
-      
-      token32<std::u32string>* strTok =
-        static_cast<token32<std::u32string>*>(base);
-      
-      std::u32string key = strTok->val;
-      std::map<std::u32string, double>::const_iterator it = vars->find(key);
-      
-      if (it == vars->end()) {
-        O2SCL_ERR("Unable to find variable.",o2scl::exc_efailed);
-        //throw std::domain_error("Unable to find the variable '"
-        //+ key + "'.");
-      }
-      evaluation.push(it->second);
-    } else {
-      throw std::domain_error("Invalid token.");
-    }
-  }
-  return evaluation.top();
-}
-
 int calc_utf8::calculate_nothrow(token_queue_t rpn,
-                                 const std::map<std::u32string, double> *vars,
+                                 const std::map<std::u32string,
+                                 double> *vars,
                                  double &result) {
 
   // Evaluate the expression in RPN form.
   std::stack<double> evaluation;
   while (!rpn.empty()) {
-    token_base* base = rpn.front();
+    token_base *base=rpn.front();
     rpn.pop();
 
     // Operator:
@@ -674,9 +553,8 @@ int calc_utf8::calculate_nothrow(token_queue_t rpn,
 	} else if (!str.compare("||")) {
 	  evaluation.push((int) left || (int) right);
 	} else {
-	  cleanRPN(rpn);
-	  return 1;
 	  //throw std::domain_error("Unknown operator: '" + str + "'.");
+          return 2;
 	}
       }
     } else if (base->type == token_num) { // Number
@@ -684,28 +562,27 @@ int calc_utf8::calculate_nothrow(token_queue_t rpn,
       evaluation.push(doubleTok->val);
     } else if (base->type == token_var) { // Variable
       if (!vars) {
-	cleanRPN(rpn);
-	return 2;
         //throw std::domain_error
-	//("Detected variable, but the variable map is null.");
+        //("Detected variable, but the variable map is null.");
+        return 3;
       }
       
-      token32<std::u32string>* strTok =
+      token32<std::u32string> *strTok=
         static_cast<token32<std::u32string>*>(base);
       
-      std::u32string key = strTok->val;
+      std::u32string key=strTok->val;
       std::map<std::u32string, double>::const_iterator it = vars->find(key);
       
       if (it == vars->end()) {
-	cleanRPN(rpn);
-	return 3;
-        //throw std::domain_error("Unable to find the variable '" + key + "'.");
+        //O2SCL_ERR("Unable to find variable.",o2scl::exc_efailed);
+        //throw std::domain_error("Unable to find the variable '"
+        //+ key + "'.");
+        return 4;
       }
       evaluation.push(it->second);
     } else {
-      cleanRPN(rpn);
-      return 4;
       //throw std::domain_error("Invalid token.");
+      return 5;
     }
   }
   result=evaluation.top();
@@ -749,7 +626,9 @@ int calc_utf8::compile_nothrow(const std::u32string &expr,
 }
 
 double calc_utf8::eval(const std::map<std::u32string, double> *vars) {
-  return calculate(this->RPN, vars);
+  double ret;
+  int iret=calculate_nothrow(this->RPN, vars,ret);
+  return ret;
 }
 
 int calc_utf8::eval_nothrow(const std::map<std::u32string, double> *vars,
@@ -766,14 +645,24 @@ std::string calc_utf8::RPN_to_string() {
   while (rpn.size()) {
     token_base* base = rpn.front();
 
-    token32<double>* doubleTok = dynamic_cast<token32<double>*>(base);
-    if(doubleTok) {
+    token32<double>* doubleTok=dynamic_cast<token32<double>*>(base);
+    if (doubleTok) {
       ss << doubleTok->val;
     }
-
-    token32<std::string>* strTok = dynamic_cast<token32<std::string>*>(base);
-    if(strTok) {
+    
+    token32<std::string>* strTok=dynamic_cast<token32<std::string>*>(base);
+    if (strTok) {
       ss << "'" << strTok->val << "'";
+    }
+
+    token32<std::u32string>* str32Tok=
+      dynamic_cast<token32<std::u32string>*>(base);
+    if (str32Tok) {
+      ss << "'";
+      for(size_t j=0;j<strTok->val.length();j++) {
+        ss << strTok->val[j];
+      }
+      ss << "'";
     }
 
     rpn.pop();
