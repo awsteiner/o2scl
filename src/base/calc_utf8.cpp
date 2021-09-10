@@ -154,10 +154,11 @@ bool calc_utf8::isvariablechar(const char32_t c) {
   return true;
 }
 
-TokenQueue_t calc_utf8::toRPN(const std::string &expr,
-                              const std::map<std::u32string, double> *vars,
-                              bool debug,
-                              std::map<std::string, int> opPrec) {
+int calc_utf8::toRPN_nothrow(const std::string &expr,
+                             const std::map<std::u32string, double> *vars,
+                             bool debug,
+                             std::map<std::string, int> opPrec,
+                             TokenQueue_t &rpnQueue2) {
   
   std::u32string expr2;
   utf8_to_char32(expr,expr2);
@@ -374,8 +375,10 @@ TokenQueue_t calc_utf8::toRPN(const std::string &expr,
 	    if (!str.compare("-") || !str.compare("+")) {
 	      rpnQueue.push(new Token<double>(0, NUM));
 	    } else {
-	      throw std::domain_error("Unrecognized unary operator: '" +
-				      str + "'.");
+	      //"Unrecognized unary operator: '" +
+              //str + "'.");
+              cleanRPN(rpnQueue);
+              return 1;
 	    }
 	  }
 
@@ -400,214 +403,6 @@ TokenQueue_t calc_utf8::toRPN(const std::string &expr,
     operatorStack.pop();
   }
 
-  return rpnQueue;
-}
-
-int calc_utf8::toRPN_nothrow(const std::string &expr,
-                             const std::map<std::u32string, double> *vars,
-                             bool debug, std::map<std::string, int> opPrec,
-                             TokenQueue_t &rpnQueue2) {
-
-  TokenQueue_t rpnQueue;
-  std::stack<std::string> operatorStack;
-  bool lastTokenWasOp = true;
-
-  // In one pass, ignore whitespace and parse the expression into RPN
-  // using Dijkstra's Shunting-yard algorithm.
-  while (*expr && isspace(*expr)) ++expr;
-
-  while (*expr) {
-    
-    if (isdigit(*expr)) {
-
-      // If the token is a number, add it to the output queue.
-      char* nextChar = 0;
-      double digit = strtod(expr,&nextChar);
-      if (debug) {
-	std::cout << "digit: " << digit << std::endl;
-      }
-      rpnQueue.push(new Token<double>(digit, NUM));
-      expr = nextChar;
-      lastTokenWasOp = false;
-
-    } else if (isvariablechar(*expr)) {
-
-      // If the function is a variable, resolve it and
-      // add the parsed number to the output queue.
-      std::stringstream ss;
-      ss << *expr;
-      ++expr;
-      while (isvariablechar(*expr) || isdigit(*expr)) {
-        ss << *expr;
-        ++expr;
-      }
-
-      bool found = false;
-      double val;
-
-      std::string key = ss.str();
-
-      if (key=="sin") {
-	operatorStack.push("sin");
-	lastTokenWasOp=true;
-      } else if (key=="cos") {
-	operatorStack.push("cos");
-	lastTokenWasOp=true;
-      } else if (key=="tan") {
-	operatorStack.push("tan");
-	lastTokenWasOp=true;
-      } else if (key=="sqrt") {
-	operatorStack.push("sqrt");
-	lastTokenWasOp=true;
-      } else if (key=="log") {
-	operatorStack.push("log");
-	lastTokenWasOp=true;
-      } else if (key=="exp") {
-	operatorStack.push("exp");
-	lastTokenWasOp=true;
-      } else if (key=="abs") {
-	operatorStack.push("abs");
-	lastTokenWasOp=true;
-      } else if (key=="log10") {
-	operatorStack.push("log10");
-	lastTokenWasOp=true;
-      } else if (key=="asin") {
-	operatorStack.push("asin");
-	lastTokenWasOp=true;
-      } else if (key=="acos") {
-	operatorStack.push("acos");
-	lastTokenWasOp=true;
-      } else if (key=="atan") {
-	operatorStack.push("atan");
-	lastTokenWasOp=true;
-      } else if (key=="sinh") {
-	operatorStack.push("sinh");
-	lastTokenWasOp=true;
-      } else if (key=="cosh") {
-	operatorStack.push("cosh");
-	lastTokenWasOp=true;
-      } else if (key=="tanh") {
-	operatorStack.push("tanh");
-	lastTokenWasOp=true;
-      } else if (key=="asinh") {
-	operatorStack.push("asinh");
-	lastTokenWasOp=true;
-      } else if (key=="acosh") {
-	operatorStack.push("acosh");
-	lastTokenWasOp=true;
-      } else if (key=="atanh") {
-	operatorStack.push("atanh");
-	lastTokenWasOp=true;
-      } else if (key=="floor") {
-	operatorStack.push("floor");
-	lastTokenWasOp=true;
-      } else {
-	
-	if (key == "true") {
-	  found = true;
-	  val = 1;
-	} else if (key == "false") {
-	  found = true;
-	  val = 0;
-	} else if (vars) {
-	  std::map<std::string, double>::const_iterator it = vars->find(key);
-	  if(it != vars->end()) {
-	    found = true;
-	    val = it->second;
-	  }
-	}
-	
-	if (found) {
-	  // Save the number
-	  if (debug) {
-	    std::cout << "val: " << val << std::endl;
-	  }
-	  rpnQueue.push(new Token<double>(val, NUM));;
-	} else {
-	  // Save the variable name:
-	  if (debug) {
-	    std::cout << "key: " << key << std::endl;
-	  }
-	  rpnQueue.push(new Token<std::string>(key, VAR));
-	}
-	
-	lastTokenWasOp = false;
-	
-      }
-
-    } else {
-
-      // Otherwise, the variable is an operator or parenthesis.
-      switch (*expr) {
-      case '(':
-	operatorStack.push("(");
-	++expr;
-	break;
-      case ')':
-	while (operatorStack.top().compare("(")) {
-	  rpnQueue.push(new Token<std::string>(operatorStack.top(),OP));
-	  operatorStack.pop();
-	}
-	operatorStack.pop();
-	++expr;
-	break;
-
-      default:
-	{
-	  // The token is an operator.
-	  //
-	  // Let p(o) denote the precedence of an operator o.
-	  //
-	  // If the token is an operator, o1, then
-	  //   While there is an operator token, o2, at the top
-	  //       and p(o1) <= p(o2), then
-	  //     pop o2 off the stack onto the output queue.
-	  //   Push o1 on the stack.
-	  std::stringstream ss;
-	  ss << *expr;
-	  ++expr;
-	  while (*expr && !isspace(*expr) && !isdigit(*expr)
-		 && !isvariablechar(*expr) && *expr != '(' &&
-		 *expr != ')') {
-	    ss << *expr;
-	    ++expr;
-	  }
-	  ss.clear();
-	  std::string str;
-	  ss >> str;
-	  if (debug) {
-	    std::cout << "str: " << str << std::endl;
-	  }
-
-	  if (lastTokenWasOp) {
-	    // Convert unary operators to binary in the RPN.
-	    if (!str.compare("-") || !str.compare("+")) {
-	      rpnQueue.push(new Token<double>(0, NUM));
-	    } else {
-	      cleanRPN(rpnQueue);
-	      return 1;
-	    }
-	  }
-
-	  while (!operatorStack.empty() &&
-		 opPrec[str] >= opPrec[operatorStack.top()]) {
-	    rpnQueue.push(new Token<std::string>(operatorStack.top(), OP));
-	    operatorStack.pop();
-	  }
-	  operatorStack.push(str);
-	  lastTokenWasOp = true;
-	}
-      }
-    } while (*expr && isspace(*expr)) ++expr;
-
-    // End of while (*expr)
-  }
-  
-  while (!operatorStack.empty()) {
-    rpnQueue.push(new Token<std::string>(operatorStack.top(), OP));
-    operatorStack.pop();
-  }
-
   rpnQueue2=rpnQueue;
   return 0;
 }
@@ -617,7 +412,11 @@ double calc_utf8::calculate(const std::string &expr,
                             bool debug) {
 
   // Convert to RPN with Dijkstra's Shunting-yard algorithm.
-  TokenQueue_t rpn = toRPN(expr,vars,debug,opPrecedence);
+  TokenQueue_t rpn;
+  int retx=toRPN_nothrow(expr,vars,debug,opPrecedence,rpn);
+  if (retx!=0) {
+    O2SCL_ERR("Failed.",o2scl::exc_efailed);
+  }
 
   double ret = calculate(rpn);
 
@@ -749,13 +548,15 @@ double calc_utf8::calculate(TokenQueue_t rpn,
 	  ("Detected variable, but the variable map is null.");
       }
       
-      Token<std::string>* strTok = static_cast<Token<std::string>*>(base);
+      Token<std::u32string>* strTok = static_cast<Token<std::u32string>*>(base);
       
-      std::string key = strTok->val;
-      std::map<std::string, double>::const_iterator it = vars->find(key);
+      std::u32string key = strTok->val;
+      std::map<std::u32string, double>::const_iterator it = vars->find(key);
       
       if (it == vars->end()) {
-        throw std::domain_error("Unable to find the variable '" + key + "'.");
+        O2SCL_ERR("Unable to find variable.",o2scl::exc_efailed);
+        //throw std::domain_error("Unable to find the variable '"
+        //+ key + "'.");
       }
       evaluation.push(it->second);
     } else {
@@ -874,10 +675,10 @@ int calc_utf8::calculate_nothrow(TokenQueue_t rpn,
 	//("Detected variable, but the variable map is null.");
       }
       
-      Token<std::string>* strTok = static_cast<Token<std::string>*>(base);
+      Token<std::u32string>* strTok = static_cast<Token<std::u32string>*>(base);
       
-      std::string key = strTok->val;
-      std::map<std::string, double>::const_iterator it = vars->find(key);
+      std::u32string key = strTok->val;
+      std::map<std::u32string, double>::const_iterator it = vars->find(key);
       
       if (it == vars->end()) {
 	cleanRPN(rpn);
@@ -911,7 +712,12 @@ void calc_utf8::compile(const std::string &expr,
   // Make sure it is empty:
   cleanRPN(this->RPN);
 
-  this->RPN = calc_utf8::toRPN(expr,vars,debug,opPrec);
+  int retx=calc_utf8::toRPN_nothrow(expr,vars,debug,opPrec,this->RPN);
+  if (retx!=0) {
+    O2SCL_ERR("Failed.",o2scl::exc_einval);
+  }
+
+  return;
 }
 
 int calc_utf8::compile_nothrow(const std::string &expr,

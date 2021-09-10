@@ -136,16 +136,9 @@ namespace o2scl {
      */
     static void cleanRPN(TokenQueue_t &rpn);
     
-    /** \brief Convert the expression in \c expr to RPN 
-     */
-    static TokenQueue_t toRPN(const std::string &expr,
-			      const std::map<std::u32string, double> *vars,
-			      bool debug=false,
-			      std::map<std::string, int> opPrec=opPrecedence);
-
     /** \brief Convert the expression in \c expr to RPN and return an
 	integer to indicate success or failure
-     */
+    */
     static int toRPN_nothrow(const std::string &expr,
 			     const std::map<std::u32string, double> *vars,
 			     bool debug,
