@@ -66,10 +66,13 @@ namespace o2scl {
   /** \brief Token base data type for \ref o2scl::calculator
    */
   struct token_base {
+    
     /** \brief The token type
      */
     int type;
+    
     virtual ~token_base() {}
+    
   };
 
   /** \brief Token class for \ref o2scl::calculator
@@ -89,6 +92,7 @@ namespace o2scl {
     /** \brief The actual value stored
      */
     T val;
+    
   };
 
   /** \brief Evaluate a mathematical expression stored in a UTF8 string
@@ -114,7 +118,7 @@ namespace o2scl {
 
     /** \brief A typedef for a queue of tokens for \ref o2scl::calculator
      */
-    typedef std::queue<token_base*> token_queue_t;
+    typedef std::queue<token_base *> token_queue_t;
     
     static const int token_none=0;
     static const int token_op=1;
