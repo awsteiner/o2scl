@@ -172,6 +172,13 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
   std::stack<std::string> operator_stack;
   bool lastTokenWasOp = true;
 
+  if (verbose>=2) {
+    cout << "In toRPN_nothrow(), processing expr: ";
+    std::string stmp;
+    char32_to_utf8(expr,stmp);
+    cout << stmp << endl;
+  }
+  
   // In one pass, ignore whitespace and parse the expression into RPN
   // using Dijkstra's Shunting-yard algorithm.
   
@@ -179,6 +186,11 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
   while (i<expr.length()) {
     
     if (isdigit(expr[i])) {
+      
+      if (verbose>=2) {
+        cout << "In toRPN_nothrow(), found digit at character "
+             << i << endl;
+      }
       
       std::u32string part;
       part=part+expr[i];
@@ -195,13 +207,12 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
         part=part+expr[i+1];
         i++;
       }
-
+      
       if (verbose>=2) {
-        cout << "part: ";
-        for(size_t jj=0;jj<part.length();jj++) {
-          cout << part[jj] << " ";
-        }
-        cout << endl;
+        cout << "In toRPN_nothrow(): part: ";
+        std::string stmp;
+        char32_to_utf8(part,stmp);
+        cout << stmp << endl;
       }
       
       double value;
@@ -210,9 +221,6 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
 	std::cout << "value: " << value << std::endl;
       }
       
-      char ch;
-      cin >> ch;
-      
       if (iret!=0) {
         O2SCL_ERR("Sanity 1 in calc_utf8.",o2scl::exc_einval);
       }
@@ -220,6 +228,11 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
 
     } else if (is_variable_char(expr[i])) {
 
+      if (verbose>=2) {
+        cout << "In toRPN_nothrow(), found variable at character "
+             << i << endl;
+      }
+      
       std::u32string key;
       key+=expr[i];
       
@@ -229,6 +242,13 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
         i++;
       }
         
+      if (verbose>=2) {
+        cout << "In toRPN_nothrow(): key: ";
+        std::string stmp;
+        char32_to_utf8(key,stmp);
+        cout << stmp << endl;
+      }
+      
       bool found=false;
       double val;
 
@@ -382,28 +402,36 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
 	  //   Push o1 on the stack.
           
 	  std::stringstream ss;
-	  ss << expr[i];
+	  ss << ((char)expr[i]);
           i++;
 	  while (i<expr.length() && !isspace(expr[i]) &&
                  !isdigit(expr[i]) && !is_variable_char(expr[i]) &&
                  expr[i] != '(' && expr[i] != ')') {
-	    ss << expr[i];
+	    ss << ((char)expr[i]);
             i++;
 	  }
 	  ss.clear();
 	  std::string str;
 	  ss >> str;
+          
 	  if (verbose>=1) {
-	    std::cout << "str: " << str << std::endl;
+	    std::cout << "In toRPN_nothrow(), processing operator: "
+                      << str << std::endl;
 	  }
 
 	  if (lastTokenWasOp) {
+            cout << "Here: " << str.compare("-") << " "
+                 << str.compare("+") << endl;
 	    // Convert unary operators to binary in the RPN.
 	    if (!str.compare("-") || !str.compare("+")) {
 	      rpn_queue.push(new token32<double>(0,token_num));
 	    } else {
 	      //"Unrecognized unary operator: '" +
               //str + "'.");
+              if (verbose>=2) {
+                cout << "In toRPN_nothrow(), "
+                     << "unrecognized unary operator." << endl;
+              }
               cleanRPN(rpn_queue);
               return 1;
 	    }
@@ -421,7 +449,16 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
 	}
       }
     }
+
+    cout << "Moving to next character." << endl;
     
+    // Move to the next character
+    i++;
+
+    char ch;
+    cin >> ch;
+    
+    // Skip spaces if necessary
     while (i+1<expr.length() && isspace(expr[i+1])) i++;
     
     // End of while (i<expr.length()) {

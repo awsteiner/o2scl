@@ -40,6 +40,14 @@ void o2scl::utf8_to_char32(const std::string &in,
   return;
 }
 
+void o2scl::char32_to_utf8(const std::u32string &in,
+                           std::string &out) {
+                           
+  wstring_convert<std::codecvt_utf8<char32_t>,char32_t> cv;
+  out=cv.to_bytes(in);
+  return;
+}
+
 std::string o2scl::btos(bool b) {
   if (b) return "1";
   return "0";

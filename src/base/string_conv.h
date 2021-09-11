@@ -297,6 +297,15 @@ namespace o2scl {
    */
   void utf8_to_char32(const std::string &in,
                       std::u32string &out);
+
+  /** \brief Convert from 32-bit integers to UTF-8
+
+      \warning This depends on C++ extensions that will 
+      eventually be deprecated, but apparently haven't been
+      replaced in C++20 yet?
+   */
+  void char32_to_utf8(const std::u32string &in,
+                      std::string &out);
   
   /** \brief Rewrap a string into a single column, avoiding
       strings less than a particular number of characters
