@@ -34,8 +34,14 @@ int main(void) {
   t.set_output_level(2);
 
   calc_utf8 calc;
+  calc.verbose=3;
+  cout << "1." << endl;
   calc.compile("1.0e-100<2.0e-100",0);
-  t.test_gen(calc.eval(0)==1,"calc1");
+  cout << "2." << endl;
+  double cret=calc.eval(0);
+  cout << "3." << endl;
+  t.test_gen(cret==1,"calc1");
+  exit(-1);
   calc.compile("-(10)",0);
   cout << calc.RPN_to_string() << endl;
   t.test_gen(calc.eval(0)==-10.0,"calc2");

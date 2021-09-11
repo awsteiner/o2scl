@@ -180,10 +180,25 @@ int o2scl::stod_nothrow(string s, double &result) {
 }
 
 int o2scl::s32tod_nothrow(u32string s, double &result) {
-  basic_istringstream<char32_t> ins(s);
-  if (ins >> result) {
-    return 0;
+
+  string s2;
+  bool done=false;
+  for (size_t i=0;i<s.length() && done==false;i++) {
+    if (s[i]<128) {
+      s2+=s[i];
+    } else {
+      done=true;
+    }
   }
+  
+  if (s2.length()>0) {
+    istringstream ins(s2);
+    if (ins >> result) {
+      return 0;
+    }
+    return exc_einval;
+  }
+  
   return exc_einval;
 }
 

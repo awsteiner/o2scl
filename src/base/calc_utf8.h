@@ -162,7 +162,6 @@ namespace o2scl {
     */
     int toRPN_nothrow(const std::u32string &expr,
                       const std::map<std::u32string, double> *vars,
-                      bool debug,
                       std::map<std::string, int> opPrec,
                       token_queue_t &queue2);
     
@@ -172,72 +171,94 @@ namespace o2scl {
 
   public:
 
-    ~calc_utf8();
-    
     /** \brief Create an empty calc_utf8 object
      */
     calc_utf8();
-    
+
     /** \brief Compile expression \c expr using variables 
 	specified in \c vars
     */
     calc_utf8(const std::u32string &expr,
-              const std::map<std::u32string, double> *vars=0,
-              bool debug=false);
+              const std::map<std::u32string, double> *vars=0);
+    
+    ~calc_utf8();
+    
+    int verbose;
     
     /** \brief Compile and evaluate \c expr using definitions in 
 	\c vars
     */
     double calculate(const std::u32string &expr,
-                     const std::map<std::u32string, double> *vars=0,
-                     bool debug=false);
+                     const std::map<std::u32string, double> *vars=0);
     
     /** \brief Compile and evaluate \c expr using definitions in 
 	\c vars
     */
     double calculate(const std::string &expr,
-                     const std::map<std::string, double> *vars=0,
-                     bool debug=false);
+                     const std::map<std::string, double> *vars=0);
     
     /** \brief Compile and evaluate \c expr using definitions in 
 	\c vars and return an integer to indicate success or failure
     */
     int calculate_nothrow(const std::u32string &expr,
                           const std::map<std::u32string, double> *vars,
-                          bool debug, double &result);
+                          double &result);
     
     /** \brief Compile and evaluate \c expr using definitions in 
 	\c vars and return an integer to indicate success or failure
     */
     int calculate_nothrow(const std::string &expr,
                           const std::map<std::string, double> *vars,
-                          bool debug, double &result);
+                          double &result);
     
     /** \brief Compile expression \c expr using variables 
 	specified in \c vars and return an
 	integer to indicate success or failure
     */
     void compile(const std::u32string &expr,
-		 const std::map<std::u32string, double> *vars=0,
-		 bool debug=false);
+		 const std::map<std::u32string, double> *vars=0);
     
     /** \brief Compile expression \c expr using variables 
 	specified in \c vars and return an
 	integer to indicate success or failure
     */
     int compile_nothrow(const std::u32string &expr,
-			const std::map<std::u32string, double> *vars=0,
-			bool debug=false);
+			const std::map<std::u32string, double> *vars=0);
+    
+    /** \brief Compile expression \c expr using variables 
+	specified in \c vars and return an
+	integer to indicate success or failure
+    */
+    void compile(const std::string &expr,
+		 const std::map<std::string, double> *vars=0);
+    
+    /** \brief Compile expression \c expr using variables 
+	specified in \c vars and return an
+	integer to indicate success or failure
+    */
+    int compile_nothrow(const std::string &expr,
+			const std::map<std::string, double> *vars=0);
     
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
     */
-    double eval(const std::map<std::u32string, double> *vars=0);
+    double eval_char32(const std::map<std::u32string, double> *vars=0);
 
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
     */
-    int eval_nothrow(const std::map<std::u32string, double> *vars,
+    int eval_char32_nothrow(const std::map<std::u32string, double> *vars,
+		     double &result);
+    
+    /** \brief Evalate the previously compiled expression using
+	variables specified in \c vars
+    */
+    double eval(const std::map<std::string, double> *vars=0);
+
+    /** \brief Evalate the previously compiled expression using
+	variables specified in \c vars
+    */
+    int eval_nothrow(const std::map<std::string, double> *vars,
 		     double &result);
     
     /** \brief Convert the RPN expression to a string

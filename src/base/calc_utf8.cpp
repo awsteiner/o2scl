@@ -60,20 +60,24 @@
 #include <o2scl/err_hnd.h>
 #include <o2scl/string_conv.h>
 
+using namespace std;
 using namespace o2scl;
 
 calc_utf8::calc_utf8() {
   // Create the operator precedence object
   op_precedence=calc_utf8::build_op_precedence();
+
+  verbose=0;
 }
   
 calc_utf8::calc_utf8(const std::u32string &expr,
-                     const std::map<std::u32string, double> *vars,
-                     bool debug) {
+                     const std::map<std::u32string, double> *vars) {
+  verbose=0;
+  
   // Create the operator precedence object
   op_precedence=calc_utf8::build_op_precedence();
   
-  compile(expr,vars,debug);
+  compile(expr,vars);
 }
 
 calc_utf8::~calc_utf8() {
@@ -161,7 +165,6 @@ bool calc_utf8::is_variable_char(const char32_t c) {
 
 int calc_utf8::toRPN_nothrow(const std::u32string &expr,
                              const std::map<std::u32string, double> *vars,
-                             bool debug,
                              std::map<std::string, int> op_prec,
                              token_queue_t &rpn_queue2) {
 
@@ -193,13 +196,25 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
         i++;
       }
 
+      if (verbose>=2) {
+        cout << "part: ";
+        for(size_t jj=0;jj<part.length();jj++) {
+          cout << part[jj] << " ";
+        }
+        cout << endl;
+      }
+      
       double value;
       int iret=s32tod_nothrow(part,value);
+      if (verbose>=1) {
+	std::cout << "value: " << value << std::endl;
+      }
+      
+      char ch;
+      cin >> ch;
+      
       if (iret!=0) {
         O2SCL_ERR("Sanity 1 in calc_utf8.",o2scl::exc_einval);
-      }
-      if (debug) {
-	std::cout << "value: " << value << std::endl;
       }
       rpn_queue.push(new token32<double>(value,token_num));
 
@@ -310,7 +325,7 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
 	if (found) {
           
 	  // Save the number
-	  if (debug) {
+	  if (verbose>=1) {
 	    std::cout << "val: " << val << std::endl;
 	  }
 	  rpn_queue.push(new token32<double>(val,token_num));
@@ -318,7 +333,7 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
 	} else {
           
 	  // Save the variable name:
-	  if (debug) {
+	  if (verbose>=1) {
 	    std::cout << "key: ";
             for(size_t ik=0;ik<key.length();ik++) {
               std::cout << key[ik];
@@ -378,7 +393,7 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
 	  ss.clear();
 	  std::string str;
 	  ss >> str;
-	  if (debug) {
+	  if (verbose>=1) {
 	    std::cout << "str: " << str << std::endl;
 	  }
 
@@ -423,13 +438,12 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
 }
 
 double calc_utf8::calculate(const std::string &expr,
-                            const std::map<std::string, double> *vars,
-                            bool debug) {
+                            const std::map<std::string, double> *vars) {
   double ret;
   std::u32string expr2;
   utf8_to_char32(expr,expr2);
   if (vars==0) {
-    ret=calculate(expr2,0,debug);
+    ret=calculate(expr2,0);
     return ret;
   }
   std::map<std::u32string, double> vars2;
@@ -439,17 +453,16 @@ double calc_utf8::calculate(const std::string &expr,
     utf8_to_char32(it->first,tmp);
     vars2.insert(std::make_pair(tmp,it->second));
   }
-  ret=calculate(expr2,&vars2,debug);
+  ret=calculate(expr2,&vars2);
   return ret;
 }
 
 double calc_utf8::calculate(const std::u32string &expr,
-                            const std::map<std::u32string, double> *vars,
-                            bool debug) {
+                            const std::map<std::u32string, double> *vars) {
 
   // Convert to RPN with Dijkstra's Shunting-yard algorithm.
   token_queue_t rpn;
-  int retx=toRPN_nothrow(expr,vars,debug,op_precedence,rpn);
+  int retx=toRPN_nothrow(expr,vars,op_precedence,rpn);
   if (retx!=0) {
     O2SCL_ERR("Failed.",o2scl::exc_efailed);
   }
@@ -464,11 +477,11 @@ double calc_utf8::calculate(const std::u32string &expr,
 
 int calc_utf8::calculate_nothrow(const std::u32string &expr,
                                  const std::map<std::u32string, double> *vars,
-                                 bool debug, double &result) {
+                                 double &result) {
 
   // Convert to RPN with Dijkstra's Shunting-yard algorithm.
   token_queue_t rpn;
-  int ret1=toRPN_nothrow(expr,vars,debug,op_precedence,rpn);
+  int ret1=toRPN_nothrow(expr,vars,op_precedence,rpn);
   if (ret1!=0) return ret1;
 
   double ret;
@@ -483,7 +496,7 @@ int calc_utf8::calculate_nothrow(const std::u32string &expr,
 
 int calc_utf8::calculate_nothrow(const std::string &expr,
                                  const std::map<std::string, double> *vars,
-                                 bool debug, double &result) {
+                                 double &result) {
 
   std::u32string expr2;
   utf8_to_char32(expr,expr2);
@@ -502,9 +515,9 @@ int calc_utf8::calculate_nothrow(const std::string &expr,
   token_queue_t rpn;
   int ret1;
   if (vars==0) {
-    ret1=toRPN_nothrow(expr2,0,debug,op_precedence,rpn);
+    ret1=toRPN_nothrow(expr2,0,op_precedence,rpn);
   } else {
-    ret1=toRPN_nothrow(expr2,&vars2,debug,op_precedence,rpn);
+    ret1=toRPN_nothrow(expr2,&vars2,op_precedence,rpn);
   }
   if (ret1!=0) return ret1;
 
@@ -658,13 +671,12 @@ void calc_utf8::cleanRPN(token_queue_t& rpn) {
 }
 
 void calc_utf8::compile(const std::u32string &expr,
-                        const std::map<std::u32string, double> *vars,
-                        bool debug) {
+                        const std::map<std::u32string, double> *vars) {
 
   // Make sure it is empty:
   cleanRPN(this->RPN);
 
-  int retx=calc_utf8::toRPN_nothrow(expr,vars,debug,op_precedence,this->RPN);
+  int retx=calc_utf8::toRPN_nothrow(expr,vars,op_precedence,this->RPN);
   if (retx!=0) {
     O2SCL_ERR("Failed.",o2scl::exc_einval);
   }
@@ -673,20 +685,18 @@ void calc_utf8::compile(const std::u32string &expr,
 }
 
 int calc_utf8::compile_nothrow(const std::u32string &expr,
-                               const std::map<std::u32string, double> *vars,
-                               bool debug) {
+                               const std::map<std::u32string,
+                               double> *vars) {
 
   // Make sure it is empty:
   cleanRPN(this->RPN);
 
-  int ret=calc_utf8::toRPN_nothrow(expr,vars,debug,op_precedence,this->RPN);
+  int ret=calc_utf8::toRPN_nothrow(expr,vars,op_precedence,this->RPN);
   return ret;
 }
 
-/*
 void calc_utf8::compile(const std::string &expr,
-                        const std::map<std::string, double> *vars,
-                        bool debug) {
+                        const std::map<std::string, double> *vars) {
 
   std::u32string expr2;
   utf8_to_char32(expr,expr2);
@@ -706,9 +716,9 @@ void calc_utf8::compile(const std::string &expr,
 
   int retx;
   if (vars==0) {
-    retx=calc_utf8::toRPN_nothrow(expr2,0,debug,op_precedence,this->RPN);
+    retx=calc_utf8::toRPN_nothrow(expr2,0,op_precedence,this->RPN);
   } else {
-    retx=calc_utf8::toRPN_nothrow(expr2,&vars2,debug,op_precedence,this->RPN);
+    retx=calc_utf8::toRPN_nothrow(expr2,&vars2,op_precedence,this->RPN);
   }
   if (retx!=0) {
     O2SCL_ERR("Failed.",o2scl::exc_einval);
@@ -718,8 +728,7 @@ void calc_utf8::compile(const std::string &expr,
 }
 
 int calc_utf8::compile_nothrow(const std::string &expr,
-                               const std::map<std::string, double> *vars,
-                               bool debug) {
+                               const std::map<std::string, double> *vars) {
 
   std::u32string expr2;
   utf8_to_char32(expr,expr2);
@@ -737,20 +746,71 @@ int calc_utf8::compile_nothrow(const std::string &expr,
   // Make sure it is empty:
   cleanRPN(this->RPN);
 
-  int ret=calc_utf8::toRPN_nothrow(expr,vars,debug,op_precedence,this->RPN);
+  int ret;
+  if (vars==0) {
+    ret=calc_utf8::toRPN_nothrow(expr2,0,
+                                 op_precedence,this->RPN);
+  } else {
+    ret=calc_utf8::toRPN_nothrow(expr2,&vars2,
+                                 op_precedence,this->RPN);
+  }
   return ret;
 }
-*/
 
-double calc_utf8::eval(const std::map<std::u32string, double> *vars) {
+double calc_utf8::eval_char32(const std::map<std::u32string, double> *vars) {
   double ret;
   int iret=calc_RPN_nothrow(this->RPN, vars,ret);
   return ret;
 }
 
-int calc_utf8::eval_nothrow(const std::map<std::u32string, double> *vars,
+int calc_utf8::eval_char32_nothrow(const std::map<std::u32string, double> *vars,
                             double &result) {
   int ret=calc_RPN_nothrow(this->RPN,vars,result);
+  return ret;
+}
+
+double calc_utf8::eval(const std::map<std::string, double> *vars) {
+
+  std::map<std::u32string, double> vars2;
+  if (vars!=0) {
+    for(std::map<std::string, double>::const_iterator it=vars->begin();
+        it!=vars->end();it++) {
+      std::u32string tmp;
+      utf8_to_char32(it->first,tmp);
+      vars2.insert(std::make_pair(tmp,it->second));
+    }
+  }
+  
+  double ret;
+  int iret;
+  if (vars==0) {
+    iret=calc_RPN_nothrow(this->RPN,0,ret);
+  } else {
+    iret=calc_RPN_nothrow(this->RPN,&vars2,ret);
+  }
+  return ret;
+}
+
+int calc_utf8::eval_nothrow(const std::map<std::string, double> *vars,
+                            double &result) {
+
+  std::map<std::u32string, double> vars2;
+  if (vars!=0) {
+    for(std::map<std::string, double>::const_iterator it=vars->begin();
+        it!=vars->end();it++) {
+      std::u32string tmp;
+      utf8_to_char32(it->first,tmp);
+      vars2.insert(std::make_pair(tmp,it->second));
+    }
+  }
+  
+  int ret;
+  if (vars==0) {
+    ret=calc_RPN_nothrow(this->RPN,0,result);
+  } else {
+    ret=calc_RPN_nothrow(this->RPN,&vars2,result);
+  }
+  
   return ret;
 }
 
