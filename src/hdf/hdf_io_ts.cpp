@@ -164,7 +164,7 @@ int main(void) {
   }
   
   vector<std::vector<double>> vv3;
-  mult_vector_spec("hdf5:table_units.o2:table_test:?",vv3);
+  mult_vector_spec("hdf5:table_units.o2:table_test:.",vv3);
   for(size_t i=0;i<vv3.size();i++) {
     cout << "vv3 " << i << " ";
     vector_out(cout,vv3[i],true);

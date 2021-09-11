@@ -33,6 +33,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
+#ifdef O2SCL_NEVER_DEFINED  
 #ifdef O2SCL_CALC_UTF8
   
   calc_utf8 calc;
@@ -186,6 +187,7 @@ int main(void) {
     }
   */
 
+#endif
 #endif
   
   t.report();
