@@ -714,6 +714,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     str+="exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x) ";
     str+="asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x) ";
     str+="asinh(x) acosh(x) atanh(x) floor(x)\n\n";
+    str+="Special values:\n\n";
+    str+="false = 0, true = 1, rand = random number\n\n";
     str+="Use \"acol -help function\" to get more information on the ";
     str+="type-specific command called \"function\".\n\n";
     /*

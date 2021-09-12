@@ -1125,7 +1125,11 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
     if (ret!=0) return ret;
 
     // Parse function
-    calculator calc;
+#ifdef O2SCL_CALC_UTF8
+      calc_utf8 calc;
+#else
+      calculator calc;
+#endif      
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
 
@@ -1143,7 +1147,11 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
     if (ret!=0) return ret;
 
     // Parse function
-    calculator calc;
+#ifdef O2SCL_CALC_UTF8
+      calc_utf8 calc;
+#else
+      calculator calc;
+#endif      
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
 
@@ -1161,7 +1169,11 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
     if (ret!=0) return ret;
 
     // Parse function
-    calculator calc;
+#ifdef O2SCL_CALC_UTF8
+      calc_utf8 calc;
+#else
+      calculator calc;
+#endif      
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
 
@@ -1193,7 +1205,13 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
     }
 
     // Parse function(s)
-    calculator calc, calc_cond;
+#ifdef O2SCL_CALC_UTF8
+      calc_utf8 calc;
+      calc_utf8 calc_cond;
+#else
+      calculator calc;
+      calculator calc_cond;
+#endif      
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
     calc_cond.compile(cond_func.c_str(),&vars);
@@ -1234,7 +1252,13 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
     }
 
     // Parse function(s)
-    calculator calc, calc_cond;
+#ifdef O2SCL_CALC_UTF8
+      calc_utf8 calc;
+      calc_utf8 calc_cond;
+#else
+      calculator calc;
+      calculator calc_cond;
+#endif      
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
     calc_cond.compile(cond_func.c_str(),&vars);

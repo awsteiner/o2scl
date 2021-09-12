@@ -150,20 +150,21 @@ namespace o2scl {
          matched. The problem is that the resize functions are
          templates, so they cannot be virtual.
 
+         - Future: Create a swap function for the grid similar to the
+         data swap function in the parent \ref o2scl::tensor class?
+
+         - Future: Only allocate space for grid if it is set.
+
+         - Future: as with \ref o2scl::tensor, generalize to other
+         base data types.
+
+         - Future: The function \ref interp_linear_partial() appears
+         to be a generalization of \ref
+         copy_table3d_interp_values_setxy(), so there may be some code
+         duplication between the two that can be avoided.
+
       \endverbatim
 
-      \future A swap function for the grid similar to the data swap
-      function in the parent \ref o2scl::tensor class?
-
-      \future Only allocate space for grid if it is set.
-
-      \future As with \ref o2scl::tensor, generalize to other
-      base data types.
-
-      \future The function \ref interp_linear_partial() appears
-      to be a generalization of \ref copy_table3d_interp_values_setxy(),
-      so there may be some code duplication between the two that
-      can be avoided. 
   */
   template<class vec_t=std::vector<double>, 
     class vec_size_t=std::vector<size_t> > class tensor_grid :
@@ -486,7 +487,14 @@ namespace o2scl {
         be destroyed by the user after calling set_grid_packed() without
         affecting the tensor grid. 
 
-        \future Define a more generic interface for matrix types
+        \verbatim embed:rst
+        
+        .. todo:: 
+
+           In set_grid_packed(): Define a more generic interface for
+           matrix types
+
+        \endverbatim
     */
     template<class vec2_t>
       void set_grid_packed(const vec2_t &grid_vec) {

@@ -291,6 +291,11 @@ namespace o2scl {
 
   };
 
+  /** \brief 
+      
+      \note This version avoids storing a raw pointer, supports
+      the NUBASE data, and provides more field information
+   */
   class nucmass_ame2 : public nucmass_table {
     
   public:
@@ -310,13 +315,13 @@ namespace o2scl {
     static const int not_calculable=2;
     /// Value computed by \o2
     static const int intl_computed=3;
-    /// 
+    /// The uncertainty is less than half of an eV
     static const int unc_less_than_half_eV=4;
-    /// 
+    /// The value is blank
     static const int blank=5;
-    /// 
+    /// The uncertainty is blank
     static const int blank_unc=6;
-    /// 
+    /// The nucleus is unstable
     static const int unstable=7;
     /// 
     static const int part_unstable=8;
@@ -326,7 +331,7 @@ namespace o2scl {
     static const int upper_limit=10;
     /// 
     static const int does_not_exist=11;
-    /// 
+    /// The stored value is only approximate
     static const int approximate=12;
     //@}
 
@@ -469,9 +474,8 @@ namespace o2scl {
     
     /** \brief Read data for \ref o2scl::nucmass_ame from an HDF table
         specified in a file
-        
-        \note This function is in the o2scl_hdf namespace,
-        see \ref hdf_nucmass_io.h .
+
+        \todo Why was this moved here from hdf_nucmass.h ?
     */
     void load(std::string name="20", bool exp_only=false) {
       std::string file_name, nubase_name;
@@ -509,8 +513,7 @@ namespace o2scl {
     /** \brief Read data for \ref o2scl::nucmass_ame from an HDF table
         specified in a file
         
-        \note This function is in the o2scl_hdf namespace,
-        see \ref hdf_nucmass_io.h .
+        \todo Why was this moved here from hdf_nucmass.h ?
     */
     void load_ext(std::string name, std::string filename,
                   std::string nubase_file, bool exp_only=false);
@@ -613,12 +616,6 @@ namespace o2scl {
   protected:
 
     /** \brief The array containing the mass data of length ame::n
-	
-	\comment
-	Ideally I'd prefer to store a vector<entry> rather than 
-	a pointer, but the pointer is required to read the
-	HDF5 table.
-	\endcomment
      */
     std::vector<entry> mass;
     

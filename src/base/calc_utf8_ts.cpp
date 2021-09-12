@@ -182,6 +182,12 @@ int main(void) {
   t.test_rel(calc.eval_char32(&vars),-exp(0.2+sin(4+5))*2.0,
              1.0e-12,"calc35");
 
+  calc.verbose=0;
+  calc.compile("-exp(0.2+sin(4+5))*α+rand",0);
+  for(size_t i=0;i<10;i++) {
+    cout << calc.eval_char32(&vars) << endl;
+  }
+
 #endif
   
   t.report();

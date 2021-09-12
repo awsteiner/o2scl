@@ -317,18 +317,77 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 
   } else if (type=="double[]") {
 
-    vector<double> ac_vec, ftom;
-    vector_autocorr_vector(doublev_obj,ac_vec);
-    size_t len=vector_autocorr_tau(ac_vec,ftom);
-    if (len>0) {
-      cout << "Autocorrelation length: " << len << " sample size: "
-	   << doublev_obj.size()/len << endl;
-    } else {
-      cout << "Autocorrelation length determination failed." << endl;
+    string alg="def";
+    if (sv.size()>=2) {
+      alg=sv[1];
     }
 
-    doublev_obj=ac_vec;
+    vector<double> ac_vec, ftom;
+    if (alg=="def") {
+      
+      vector_autocorr_vector(doublev_obj,ac_vec);
+      size_t len=vector_autocorr_tau(ac_vec,ftom);
+      if (len>0) {
+        cout << "Autocorrelation length: " << len << " sample size: "
+             << doublev_obj.size()/len << endl;
+      } else {
+        cout << "Autocorrelation length determination failed." << endl;
+      }
+      doublev_obj=ac_vec;
 
+    } else if (alg=="len") {
+      
+      vector_autocorr_vector(doublev_obj,ac_vec);
+      size_t len=vector_autocorr_tau(ac_vec,ftom);
+      if (len>0) {
+        cout << "Autocorrelation length: " << len << " sample size: "
+             << doublev_obj.size()/len << endl;
+      } else {
+        cout << "Autocorrelation length determination failed." << endl;
+      }
+
+    } else if (alg=="acor") {
+
+      double mean, sigma, tau;
+      vector_acor<vector<double>>(doublev_obj.size(),doublev_obj,
+                                  mean,sigma,tau);
+      cout << "Autocorrelation length: " << tau << " sample size: "
+           << doublev_obj.size()/tau << endl;
+
+    } else if (alg=="fft") {
+
+      double mean=vector_mean(doublev_obj);
+      double stddev=vector_stddev(doublev_obj);
+      vector_autocorr_vector_fftw(doublev_obj,ac_vec,mean,stddev);
+      size_t len=vector_autocorr_tau(ac_vec,ftom);
+      if (len>0) {
+        cout << "Autocorrelation length: " << len << " sample size: "
+             << doublev_obj.size()/len << endl;
+      } else {
+        cout << "Autocorrelation length determination failed." << endl;
+      }
+      doublev_obj=ac_vec;
+      
+    } else if (alg=="fft_len") {
+
+      double mean=vector_mean(doublev_obj);
+      double stddev=vector_stddev(doublev_obj);
+      vector_autocorr_vector_fftw(doublev_obj,ac_vec,mean,stddev);
+      size_t len=vector_autocorr_tau(ac_vec,ftom);
+      if (len>0) {
+        cout << "Autocorrelation length: " << len << " sample size: "
+             << doublev_obj.size()/len << endl;
+      } else {
+        cout << "Autocorrelation length determination failed." << endl;
+      }
+
+    } else {
+
+      cerr << "Invalid algorithm in 'autocorr' command." << endl;
+      return 1;
+      
+    }
+    
   } else if (type=="int[]") {
 
     vector_copy(intv_obj,doublev_obj);
@@ -1440,8 +1499,12 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
       int ret2=get_input_one(sv3,"Function of i (starting with zero)",
 			     in2,"create",itive_com);
       if (ret2!=0) return ret2;
-      
+
+#ifdef O2SCL_CALC_UTF8
+      calc_utf8 calc;
+#else
       calculator calc;
+#endif      
       std::map<std::string,double> vars;
       std::map<std::string,double>::const_iterator mit;
       size_t nn=o2scl::stoszt(in1);
@@ -1473,7 +1536,11 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     int ret=get_input(sv2,pr,in,"create",itive_com);
     if (ret!=0) return ret;
 
-    calculator calc;
+#ifdef O2SCL_CALC_UTF8
+      calc_utf8 calc;
+#else
+      calculator calc;
+#endif      
     std::map<std::string,double> vars;
     std::map<std::string,double>::const_iterator mit;
     size_t nn=o2scl::stoszt(in[0]);
@@ -1494,7 +1561,11 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     int ret=get_input(sv2,pr,in,"create",itive_com);
     if (ret!=0) return ret;
 
-    calculator calc;
+#ifdef O2SCL_CALC_UTF8
+      calc_utf8 calc;
+#else
+      calculator calc;
+#endif      
     std::map<std::string,double> vars;
     std::map<std::string,double>::const_iterator mit;
     size_t nn=o2scl::stoszt(in[0]);
@@ -1763,7 +1834,11 @@ int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
     }
 
     // Parse function(s)
-    calculator calc;
+#ifdef O2SCL_CALC_UTF8
+      calc_utf8 calc;
+#else
+      calculator calc;
+#endif      
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
 

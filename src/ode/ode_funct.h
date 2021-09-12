@@ -33,6 +33,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/shunting_yard.h>
+#include <o2scl/calc_utf8.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -118,7 +119,11 @@ namespace o2scl {
     protected:
 
     /// The function parser
-    std::vector<calculator> calc;
+#ifdef O2SCL_CALC_UTF8
+    std::vector<o2scl::calc_utf8> calc;
+#else
+    std::vector<o2scl::calculator> calc;
+#endif
       
     /// List of variables and values
     std::map<std::string,double> vars;

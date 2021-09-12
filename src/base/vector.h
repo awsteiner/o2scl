@@ -3040,8 +3040,17 @@ namespace o2scl {
       \note This stores a pointer to the table and the user must ensure
       that the pointer is valid with the matrix view is accessed.
 
-      \future It would be nice to store a reference rather than a
-      pointer, but this causes problems with \ref o2scl::interpm_idw .
+      \verbatim embed:rst
+
+      .. todo:: 
+
+         In class matrix_view_vec_vec:
+
+         - Future: It would be nice to store a reference rather than a
+         pointer, but this causes problems with \ref
+         o2scl::interpm_idw .
+         
+      \endverbatim
   */
   template<class vec1_t, class vec2_t=std::vector<vec1_t> > 
     class matrix_view_vec_vec : public matrix_view {

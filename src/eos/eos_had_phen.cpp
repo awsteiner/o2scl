@@ -1600,7 +1600,11 @@ int eos_had_phen::table_Ye(std::vector<std::string> &sv, bool itive_com) {
 
   vector<double> nB_grid, T_grid;
   
-  calculator calc;
+#ifdef O2SCL_CALC_UTF8
+      calc_utf8 calc;
+#else
+      calculator calc;
+#endif      
   std::map<std::string,double> vars;
   
   calc.compile(nB_grid_spec.c_str());
@@ -1665,7 +1669,11 @@ int eos_had_phen::table_nB(std::vector<std::string> &sv, bool itive_com) {
 
   vector<double> Ye_grid, T_grid;
   
-  calculator calc;
+#ifdef O2SCL_CALC_UTF8
+      calc_utf8 calc;
+#else
+      calculator calc;
+#endif      
   std::map<std::string,double> vars;
   
   calc.compile(Ye_grid_spec.c_str());
@@ -1730,7 +1738,11 @@ int eos_had_phen::table_full(std::vector<std::string> &sv, bool itive_com) {
 
   vector<double> nB_grid, T_grid, Ye_grid;
   
-  calculator calc;
+#ifdef O2SCL_CALC_UTF8
+      calc_utf8 calc;
+#else
+      calculator calc;
+#endif      
   std::map<std::string,double> vars;
   
   calc.compile(nB_grid_spec.c_str());
@@ -3420,7 +3432,11 @@ int eos_had_phen::test_eg(std::vector<std::string> &sv,
 
   vector<double> nB_grid, T_grid, Ye_grid;
   
-  calculator calc;
+#ifdef O2SCL_CALC_UTF8
+      calc_utf8 calc;
+#else
+      calculator calc;
+#endif      
   std::map<std::string,double> vars;
   
   calc.compile(nB_grid_spec.c_str());

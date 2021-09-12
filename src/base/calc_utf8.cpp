@@ -68,6 +68,8 @@ calc_utf8::calc_utf8() {
   op_precedence=calc_utf8::build_op_precedence();
 
   verbose=0;
+
+  r.clock_seed();
 }
   
 calc_utf8::calc_utf8(const std::u32string &expr,
@@ -78,6 +80,8 @@ calc_utf8::calc_utf8(const std::u32string &expr,
   op_precedence=calc_utf8::build_op_precedence();
   
   compile(expr,vars);
+
+  r.clock_seed();
 }
 
 calc_utf8::~calc_utf8() {
@@ -338,6 +342,10 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
                    ((char)key[3])=='s' && ((char)key[4])=='e') {
 	  found=true;
 	  val=0;
+        } else if (key.length()==4 && ((char)key[0])=='r' &&
+                   ((char)key[1])=='a' && ((char)key[2])=='n' &&
+                   ((char)key[3])=='d') {
+	  found=false;
 	} else if (vars) {
 	  std::map<std::u32string,double>::const_iterator it=vars->find(key);
 	  if (it != vars->end()) {
@@ -681,7 +689,7 @@ int calc_utf8::calc_RPN_nothrow(token_queue_t rpn,
 	}
       }
     } else if (base->type == token_num) { // Number
-      token32<double>* doubleTok = static_cast<token32<double>*>(base);
+      token32<double> *doubleTok = static_cast<token32<double>*>(base);
       evaluation.push(doubleTok->val);
     } else if (base->type == token_var) { // Variable
       if (!vars) {
@@ -694,15 +702,22 @@ int calc_utf8::calc_RPN_nothrow(token_queue_t rpn,
         static_cast<token32<std::u32string>*>(base);
       
       std::u32string key=strTok->val;
-      std::map<std::u32string, double>::const_iterator it = vars->find(key);
-      
-      if (it == vars->end()) {
-        //O2SCL_ERR("Unable to find variable.",o2scl::exc_efailed);
-        //throw std::domain_error("Unable to find the variable '"
-        //+ key + "'.");
-        return 4;
+      if (key.length()==4 && ((char)key[0])=='r' &&
+          ((char)key[1])=='a' && ((char)key[2])=='n' &&
+          ((char)key[3])=='d') {
+        evaluation.push(r.random());
+      } else {
+        
+        std::map<std::u32string, double>::const_iterator it = vars->find(key);
+        
+        if (it == vars->end()) {
+          //O2SCL_ERR("Unable to find variable.",o2scl::exc_efailed);
+          //throw std::domain_error("Unable to find the variable '"
+          //+ key + "'.");
+          return 4;
+        }
+        evaluation.push(it->second);
       }
-      evaluation.push(it->second);
     } else {
       //throw std::domain_error("Invalid token.");
       return 5;

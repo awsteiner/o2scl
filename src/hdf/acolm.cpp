@@ -1302,12 +1302,15 @@ int acol_manager::setup_options() {
   }
   type_list_str+="or "+type_list[type_list.size()-1]+'.';
   
+  terminal ter;
+
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
   comm_option_s options_arr[narr]=
     {{0,"autocorr","Compute the autocorrelation coefficients.",0,-1,
       "[arguments depend on current object type.]",
-      ((std::string)"The behavior of the autocorr command depends on ")+
+      ((std::string)"The behavior of the "+ter.cyan_fg()+ter.bold()+
+       "autocorr"+ter.default_fg()+" command depends on ")+
       "the type of the current object.\n\nNumerical array: "+
       "(no arguments)\n\nReplace the current "+
       "object with a vector of doubles which contains the autocorrelation "+

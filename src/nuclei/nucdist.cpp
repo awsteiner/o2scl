@@ -34,7 +34,11 @@ void o2scl::nucdist_set(vector<nucleus> &dist, nucmass &nm,
   if (dist.size()>0) dist.clear();
 
   /// The function parser
-  calculator calc;
+#ifdef O2SCL_CALC_UTF8
+      calc_utf8 calc;
+#else
+      calculator calc;
+#endif      
   std::map<std::string,double> vars;
   calc.compile(expr.c_str(),&vars);
   

@@ -80,7 +80,9 @@ html-full-nit:
 
 rst-files: empty
 	grep "kind=\"function\"" ../xml/index.xml | \
-		grep "refid=\"namespaceo2scl__part" > function_list
+		grep -v "part__python" | grep -v "nuclei__python" | \
+		grep -v "o2scl__hdf" | grep -v "refid=\"class" | \
+		tail -n 10 > function_list
 	grep "kind=\"class\"" ../xml/index.xml | grep -v "::entry" \
 		> class_list
 	cp ref_header ref.rst

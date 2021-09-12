@@ -61,6 +61,8 @@
 #include <string>
 #include <queue>
 
+#include <o2scl/rng.h>
+
 namespace o2scl {
 
   /** \brief Evaluate a mathematical expression stored in a UTF8 string
@@ -125,6 +127,8 @@ namespace o2scl {
     
   protected:
 
+    rng<> r;
+    
     /** \brief A typedef for a queue of tokens for \ref o2scl::calculator
      */
     typedef std::queue<token_base *> token_queue_t;

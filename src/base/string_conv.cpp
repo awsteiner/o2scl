@@ -267,7 +267,11 @@ double o2scl::function_to_double(std::string s) {
       i=0;
     }
   }
-  calculator calc;
+#ifdef O2SCL_CALC_UTF8
+      calc_utf8 calc;
+#else
+      calculator calc;
+#endif      
   calc.compile(s.c_str(),0);
   double dat=calc.eval(0);
   return dat;
@@ -289,7 +293,11 @@ int o2scl::function_to_double_nothrow(std::string s, double &result) {
       i=0;
     }
   }
-  calculator calc;
+#ifdef O2SCL_CALC_UTF8
+      calc_utf8 calc;
+#else
+      calculator calc;
+#endif      
   int ret=calc.compile_nothrow(s.c_str(),0);
   if (ret!=0) return ret;
   int ret2=calc.eval_nothrow(0,result);

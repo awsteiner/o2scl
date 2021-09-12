@@ -68,10 +68,23 @@ Creating rst files for classes:
 Parsing function_list:
 
 Namespace: o2scl function: nucdist_set
+Namespace:  function: operator+
+Namespace:  function: operator-
+Namespace:  function: operator+
+Multiple entry operator+
+Namespace:  function: operator-
+Multiple entry operator-
+Namespace: o2scl function: ame_load_ext
+Namespace: o2scl function: ame_load
+Namespace: o2scl function: mnmsk_load
+Namespace: o2scl function: hfb_load
+Namespace: o2scl function: hfb_sp_load
 
 ---------------------------------------------------
 Creating rst files for non-duplicate functions:
 
+Skipping operator+
+Skipping operator-
 
 ---------------------------------------------------
 Creating rst files for duplicate functions:

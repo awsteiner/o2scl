@@ -81,13 +81,15 @@ namespace o2scl {
       originally specified values of "start" and "end", but
       finite-precision errors may affect the inner grid points.
 
-      \future Implement operator==, etc?
+      \verbatim embed:rst
 
-      \comment
-      \future Add type() classes? 
+      .. todo:: 
 
-      Actually type() classes may not be so useful cons
-      \comment
+         In class uniform_grid:
+
+         - Future: Implement operator==, etc?
+         
+      \endverbatim
   */
   template<class data_t=double> class uniform_grid {
 
