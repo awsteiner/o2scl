@@ -34,9 +34,11 @@ int main(void) {
   t.set_output_level(2);
 
   calculator calc;
+  calc.nt_debug=1;
   calc.compile("1.0e-100<2.0e-100",0);
   t.test_gen(calc.eval(0)==1,"calc1");
   calc.compile("-(10)",0);
+  calc.nt_debug=0;
   cout << calc.RPN_to_string() << endl;
   t.test_gen(calc.eval(0)==-10.0,"calc2");
   calc.compile("((10+1)*2+3)*2+1",0);

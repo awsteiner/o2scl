@@ -134,6 +134,8 @@ namespace o2scl {
     
   public:
 
+    static int nt_debug;
+    
     /** \brief Compile and evaluate \c expr using definitions in 
 	\c vars
      */
@@ -199,7 +201,9 @@ namespace o2scl {
     
     /** \brief Create an empty calculator object
      */
-    calculator(){}
+    calculator(){
+      nt_debug=0;
+    }
     
     /** \brief Compile expression \c expr using variables 
 	specified in \c vars

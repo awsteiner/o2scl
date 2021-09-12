@@ -66,6 +66,8 @@ calculator::calculator(const char* expr,
 		       bool debug,
 		       std::map<std::string, int> opPrec) {
   compile(expr,vars,debug,opPrec);
+
+  nt_debug=0;
 }
 
 calculator::~calculator() {
@@ -94,6 +96,8 @@ std::vector<std::string> calculator::get_var_list() {
   }
   return list;
 }  
+
+int calculator::nt_debug=0;
 
 std::map<std::string, int> calculator::buildOpPrecedence() {
   std::map<std::string, int> opp;
@@ -157,6 +161,10 @@ TokenQueue_t calculator::toRPN(const char* expr,
   std::stack<std::string> operatorStack;
   bool lastTokenWasOp = true;
 
+  if (nt_debug>0) {
+    std::cout << "toRPN expression: " << expr << std::endl;
+  }
+  
   // In one pass, ignore whitespace and parse the expression into RPN
   // using Dijkstra's Shunting-yard algorithm.
   while (*expr && isspace(*expr)) ++expr;
@@ -168,7 +176,7 @@ TokenQueue_t calculator::toRPN(const char* expr,
       // If the token is a number, add it to the output queue.
       char* nextChar = 0;
       double digit = strtod(expr,&nextChar);
-      if (debug) {
+      if (nt_debug>0 || debug) {
 	std::cout << "digit: " << digit << std::endl;
       }
       rpnQueue.push(new Token<double>(digit, NUM));
@@ -177,6 +185,10 @@ TokenQueue_t calculator::toRPN(const char* expr,
 
     } else if (isvariablechar(*expr)) {
 
+      if (nt_debug>0) {
+        std::cout << "variable section." << std::endl;
+      }
+      
       // If the function is a variable, resolve it and
       // add the parsed number to the output queue.
       std::stringstream ss;
@@ -282,6 +294,10 @@ TokenQueue_t calculator::toRPN(const char* expr,
 
     } else {
 
+      if (nt_debug>0) {
+        std::cout << "operator: " << *expr << std::endl;
+      }
+      
       // Otherwise, the variable is an operator or parenthesis.
       switch (*expr) {
       case '(':
@@ -320,8 +336,9 @@ TokenQueue_t calculator::toRPN(const char* expr,
 	  ss.clear();
 	  std::string str;
 	  ss >> str;
-	  if (debug) {
-	    std::cout << "str: " << str << std::endl;
+	  if (nt_debug>0 || debug) {
+	    std::cout << "str: " << str << " ltwo: "
+                      << lastTokenWasOp << std::endl;
 	  }
 
 	  if (lastTokenWasOp) {
