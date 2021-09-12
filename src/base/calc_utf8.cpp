@@ -192,8 +192,8 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
              << i << endl;
       }
       
-      std::u32string part;
-      part=part+expr[i];
+      std::u32string str_num;
+      str_num=str_num+expr[i];
 
       bool exponent=false;
       // The idea here is that this will handle both commas or
@@ -204,21 +204,21 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
               expr[i+1]=='E' || (exponent && (expr[i+1]=='+' ||
                                               expr[i+1]=='-')))) {
         if (expr[i+1]=='e' || expr[i+1]=='E') exponent=true;
-        part=part+expr[i+1];
+        str_num=str_num+expr[i+1];
         i++;
       }
       
       if (verbose>=2) {
-        cout << "In toRPN_nothrow(): part: ";
+        cout << "In toRPN_nothrow(), str_num: ";
         std::string stmp;
-        char32_to_utf8(part,stmp);
+        char32_to_utf8(str_num,stmp);
         cout << stmp << endl;
       }
       
       double value;
-      int iret=s32tod_nothrow(part,value);
+      int iret=s32tod_nothrow(str_num,value);
       if (verbose>=1) {
-	std::cout << "value: " << value << std::endl;
+	std::cout << "In toRPN_nothrow(), value: " << value << std::endl;
       }
       
       if (iret!=0) {
@@ -465,7 +465,10 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
     // Skip spaces if necessary
     while (i+1<expr.length() && isspace(expr[i+1])) i++;
     
-    cout << "Moving to next character." << endl;
+    if (verbose>=1) {
+      std::cout << "In toRPN_nothrow(), "
+                << "moving to next character." << endl;
+    }
     
     // Move to the next character
     i++;
@@ -870,38 +873,29 @@ std::string calc_utf8::RPN_to_string() {
   
   while (rpn.size()) {
     
-    token_base* base = rpn.front();
+    token_base *base=rpn.front();
 
     token32<double> *doubleTok=dynamic_cast<token32<double>*>(base);
     if (doubleTok) {
-      cout << "a." << endl;
-      cout << "a." << doubleTok->type << endl;
       ss << doubleTok->val;
     }
     
     token32<std::string> *strTok=dynamic_cast<token32<std::string>*>(base);
     if (strTok) {
-      cout << "b." << endl;
-      cout << "b." << strTok->type << endl;
       ss << "'" << strTok->val << "'";
     }
 
     token32<std::u32string> *str32Tok=
       dynamic_cast<token32<std::u32string>*>(base);
-    
     if (str32Tok) {
-      cout << "c." << endl;
-      cout << "c." << str32Tok->type << endl;
-      cout << "c." << strTok->val.length() << endl;
-      ss << "'";
-      for(size_t j=0;j<strTok->val.length();j++) {
-        ss << strTok->val[j];
-      }
-      ss << "'";
+      std::string stmp;
+      char32_to_utf8(str32Tok->val,stmp);
+      ss << "'" << stmp << "'";
     }
 
     rpn.pop();
 
+    // Output ", " only if we're not at the end
     ss << (rpn.size() ? ", ":"");
   }
   

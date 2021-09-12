@@ -34,6 +34,7 @@
 
 #include <o2scl/err_hnd.h>
 #include <o2scl/shunting_yard.h>
+#include <o2scl/calc_utf8.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -109,7 +110,11 @@ namespace o2scl {
   protected:
 
     /// The function parser
+#ifdef O2SCL_CALC_UTF8
+    calc_utf8 calc;
+#else
     calculator calc;
+#endif
 
     /// External variables to include in the function parsing
     std::map<std::string,double> vars;

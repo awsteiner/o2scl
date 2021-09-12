@@ -167,9 +167,7 @@ int main(void) {
   t.test_rel(calc.eval(0),0.5,1.0e-14,"calc34");
 
   calc.compile("-exp(0.2+sin(4+5))*aa",0);
-  cout << "15." << endl;
   cout << calc.RPN_to_string() << endl;
-  cout << "16." << endl;
   std::map<std::u32string, double> vars;
   std::u32string stmp;
   utf8_to_char32("aa",stmp);
@@ -178,9 +176,7 @@ int main(void) {
              1.0e-12,"calc35");
 
   calc.compile("-exp(0.2+sin(4+5))*α",0);
-  cout << "17." << endl;
-  //cout << calc.RPN_to_string() << endl;
-  cout << "18." << endl;
+  cout << calc.RPN_to_string() << endl;
   utf8_to_char32("α",stmp);
   vars.insert(std::make_pair(stmp,2.0));
   t.test_rel(calc.eval_char32(&vars),-exp(0.2+sin(4+5))*2.0,

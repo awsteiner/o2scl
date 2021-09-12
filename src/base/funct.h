@@ -37,8 +37,9 @@
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #endif
 
-#include <o2scl/shunting_yard.h>
 #include <o2scl/err_hnd.h>
+#include <o2scl/shunting_yard.h>
+#include <o2scl/calc_utf8.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -143,7 +144,11 @@ namespace o2scl {
   protected:
 
     /// The object for evaluating strings
-    mutable calculator calc;
+#ifdef O2SCL_CALC_UTF8
+    mutable o2scl::calc_utf8 calc;
+#else
+    mutable o2scl::calculator calc;
+#endif
 
     /// Parameter map
     mutable std::map<std::string,double> vars;
@@ -246,7 +251,11 @@ namespace o2scl {
   protected:
 
     /// The object for evaluating strings
-    mutable calculator calc;
+#ifdef O2SCL_CALC_UTF8
+    mutable o2scl::calc_utf8 calc;
+#else
+    mutable o2scl::calculator calc;
+#endif
 
     /// Parameter map
     mutable std::map<std::string,double> vars;

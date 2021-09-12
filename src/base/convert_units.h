@@ -36,6 +36,7 @@
 #include <o2scl/constants.h>
 #include <o2scl/string_conv.h>
 #include <o2scl/shunting_yard.h>
+#include <o2scl/calc_utf8.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -964,8 +965,13 @@ namespace o2scl {
       
       // These calculator objects have to be inside this
       // function to make the function const
+#ifdef O2SCL_CALC_UTF8
+      o2scl::calc_utf8 calc;
+      o2scl::calc_utf8 calc2;
+#else
       o2scl::calculator calc;
       o2scl::calculator calc2;
+#endif
 
       std::map<std::string, fp_t> vars;
 

@@ -2983,7 +2983,11 @@ namespace o2scl {
         vars[mit->first]=mit->second;
       }
     
+#ifdef O2SCL_CALC_UTF8
+      std::vector<calc_utf8> calcs(funcs.size());
+#else
       std::vector<calculator> calcs(funcs.size());
+#endif
       std::vector<vec_t> newcols(funcs.size());
     
       for(size_t j=0;j<funcs.size();j++) {
@@ -3086,7 +3090,11 @@ namespace o2scl {
 #endif
 
         // Parse function, separate calculator for each thread
+#ifdef O2SCL_CALC_UTF8
+        calc_utf8 calc;
+#else
         calculator calc;
+#endif
         std::map<std::string,double> vars;
         std::map<std::string,double>::const_iterator mit;
         for(mit=constants.begin();mit!=constants.end();mit++) {
@@ -3113,7 +3121,11 @@ namespace o2scl {
     double row_function(std::string function, size_t row) const {
 
       // Parse function
-      calculator calc;
+#ifdef O2SCL_CALC_UTF8
+        calc_utf8 calc;
+#else
+        calculator calc;
+#endif
       std::map<std::string,double> vars;
       std::map<std::string,double>::const_iterator mit;
       for(mit=constants.begin();mit!=constants.end();mit++) {
@@ -3134,7 +3146,11 @@ namespace o2scl {
     size_t function_find_row(std::string function) const {
 
       // Parse function
-      calculator calc;
+#ifdef O2SCL_CALC_UTF8
+        calc_utf8 calc;
+#else
+        calculator calc;
+#endif
       std::map<std::string,double> vars;
       std::map<std::string,double>::const_iterator mit;
       for(mit=constants.begin();mit!=constants.end();mit++) {
