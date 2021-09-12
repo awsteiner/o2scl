@@ -166,34 +166,25 @@ int main(void) {
   cout << calc.RPN_to_string() << endl;
   t.test_rel(calc.eval(0),0.5,1.0e-14,"calc34");
 
-  // Test RPN
   calc.compile("-exp(0.2+sin(4+5))*aa",0);
-  /*
-  TokenQueue_t rpn=calc.get_RPN();
-  while (rpn.size()) {
-    TokenBase *tb=rpn.front();
-    if (tb->type==0) cout << "none" << " ";
-    if (tb->type==1) cout << "op" << " ";
-    if (tb->type==2) cout << "var" << " ";
-    if (tb->type==3) cout << "num" << " ";
-    Token<std::string>* str=dynamic_cast<Token<std::string>*>(tb);
-    if (str!=0) {
-      cout << str->val << endl;
-    }
-    Token<double>* dbl=dynamic_cast<Token<double>*>(tb);
-    if (dbl!=0) {
-      cout << dbl->val << endl;
-    }
-    rpn.pop();
-  }
-  */
+  cout << "15." << endl;
+  cout << calc.RPN_to_string() << endl;
+  cout << "16." << endl;
+  std::map<std::u32string, double> vars;
+  std::u32string stmp;
+  utf8_to_char32("aa",stmp);
+  vars.insert(std::make_pair(stmp,2.0));
+  t.test_rel(calc.eval_char32(&vars),-exp(0.2+sin(4+5))*2.0,
+             1.0e-12,"calc35");
 
-  /*
-    typedef std::queue<TokenBase *>::const_iterator cit;
-    for(cit=rpn.begin();cit!=rpn.end();cit++) {
-    cout << cit->type << endl;
-    }
-  */
+  calc.compile("-exp(0.2+sin(4+5))*α",0);
+  cout << "17." << endl;
+  //cout << calc.RPN_to_string() << endl;
+  cout << "18." << endl;
+  utf8_to_char32("α",stmp);
+  vars.insert(std::make_pair(stmp,2.0));
+  t.test_rel(calc.eval_char32(&vars),-exp(0.2+sin(4+5))*2.0,
+             1.0e-12,"calc35");
 
 #endif
   

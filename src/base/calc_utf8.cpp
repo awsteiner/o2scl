@@ -157,7 +157,7 @@ bool calc_utf8::is_variable_char(const char32_t c) {
   // Presume it's a variable if it's not an operator or digit
   if (c=='^' || c=='*' || c=='/' || c=='%' || c=='+' || c=='-' ||
       c=='<' || c=='=' || c=='>' || c=='!' || c=='&' || c=='|' ||
-      c=='(' || c==')' || isdigit(c) || c=='.' || c==',') {
+      c=='(' || c==')' || isdigit(c) || c=='.' || c==',' || isspace(c)) {
     return false;
   }
   return true;
@@ -327,15 +327,17 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
 	operator_stack.push("floor");
 	last_token_was_op=true;
       } else {
-        
-        if (key.length()==4 && key[0]=='t' &&
-            key[1]=='r' && key[2]=='u' && key[3]=='e') {
-	  found = true;
-	  val = 1;
-        } else if (key.length()==5 && key[0]=='f' && key[1]=='a' &&
-                   key[2]=='l' && key[3]=='s' && key[4]=='e') {
-	  found = true;
-	  val = 0;
+
+        if (key.length()==4 && ((char)key[0])=='t' &&
+            ((char)key[1])=='r' && ((char)key[2])=='u' &&
+            ((char)key[3])=='e') {
+	  found=true;
+	  val=1;
+        } else if (key.length()==5 && ((char)key[0])=='f' &&
+                   ((char)key[1])=='a' && ((char)key[2])=='l' &&
+                   ((char)key[3])=='s' && ((char)key[4])=='e') {
+	  found=true;
+	  val=0;
 	} else if (vars) {
 	  std::map<std::u32string,double>::const_iterator it=vars->find(key);
 	  if (it != vars->end()) {
@@ -348,7 +350,7 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
           
 	  // Save the number
 	  if (verbose>=1) {
-	    std::cout << "val: " << val << std::endl;
+            cout << "In toRPN_nothrow(), value: " << val << endl;
 	  }
 	  rpn_queue.push(new token32<double>(val,token_num));
           
@@ -356,7 +358,7 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
           
 	  // Save the variable name:
 	  if (verbose>=1) {
-	    std::cout << "key: ";
+	    std::cout << "In toRPN_nothrow(), variable: ";
 
             std::string stmp;
             char32_to_utf8(key,stmp);
@@ -472,7 +474,8 @@ int calc_utf8::toRPN_nothrow(const std::u32string &expr,
   }
   
   while (!operator_stack.empty()) {
-    rpn_queue.push(new token32<std::string>(operator_stack.top(), token_op));
+    rpn_queue.push(new token32<std::string>(operator_stack.top(),
+                                            token_op));
     operator_stack.pop();
   }
 
@@ -872,12 +875,14 @@ std::string calc_utf8::RPN_to_string() {
     token32<double> *doubleTok=dynamic_cast<token32<double>*>(base);
     if (doubleTok) {
       cout << "a." << endl;
+      cout << "a." << doubleTok->type << endl;
       ss << doubleTok->val;
     }
     
     token32<std::string> *strTok=dynamic_cast<token32<std::string>*>(base);
     if (strTok) {
       cout << "b." << endl;
+      cout << "b." << strTok->type << endl;
       ss << "'" << strTok->val << "'";
     }
 
@@ -886,6 +891,8 @@ std::string calc_utf8::RPN_to_string() {
     
     if (str32Tok) {
       cout << "c." << endl;
+      cout << "c." << str32Tok->type << endl;
+      cout << "c." << strTok->val.length() << endl;
       ss << "'";
       for(size_t j=0;j<strTok->val.length();j++) {
         ss << strTok->val[j];
