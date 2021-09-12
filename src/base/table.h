@@ -211,15 +211,23 @@ namespace o2scl {
       There is an example for the usage of this class given
       in <tt>examples/ex_table.cpp</tt>.
 
-      \future 
-      - Create a sort_column_names() or a function to 
-      arbitrarily rearrange the columns
-      - The present structure, \c
-      std::map<std::string,col,string_comp> atree and \c
-      std::vector<aiter> alist; could be replaced with \c
-      std::vector<col> list and \c std::map<std::string,int> tree
-      where the map just stores the index of the the column in the
-      list.
+      \verbatim embed:rst
+
+      .. todo:: 
+
+         In class table:
+
+         - Future: Create a sort_column_names() or a function to 
+           arbitrarily rearrange the columns
+
+         - The present structure,
+           std::map<std::string,col,string_comp> atree and \c
+           std::vector<aiter> alist; could be replaced with \c
+           std::vector<col> list and \c std::map<std::string,int> tree
+           where the map just stores the index of the the column in the
+           list.
+
+      \endverbatim
   */
   template<class vec_t=std::vector<double> > class table {
     

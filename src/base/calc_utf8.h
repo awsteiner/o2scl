@@ -71,20 +71,27 @@ namespace o2scl {
       http://www.daniweb.com/software-development/cpp/code/427500/calculator-using-shunting-yard-algorithm .
 
       The original code has been modified for use in \o2 .
-
-      \future Add functions atan2, cot, csc, ceil, floor, int, max, min,
-      and maybe if?
       
-      \warning The nothrow() functions are a naive attempt at 
-      more detailed error handling than Amos' original code. I have
-      tried to make sure they don't create any memory leaks, but 
-      I have not fully tested this. 
+      \verbatim embed:rst
+
+      .. todo::
+
+         In class calc_utf8:
+
+         - Future: Add functions atan2, cot, csc, ceil, floor, max, min,
+         and maybe if?
+
+         - Future: There is some code duplication across the
+         functions, especially with regard to conversion between UTF8
+         and char32, which could be removed.
+
+      \endverbatim
   */
   class calc_utf8 {
 
   public:
     
-    /** \brief Token base data type for \ref o2scl::calculator
+    /** \brief Token base data type for \ref o2scl::calc_utf8
      */
     struct token_base {
       
@@ -96,7 +103,7 @@ namespace o2scl {
       
     };
     
-    /** \brief Token class for \ref o2scl::calculator
+    /** \brief Token class for \ref o2scl::calc_utf8
      */
     template<class T> class token32 : public token_base {
       
@@ -121,8 +128,8 @@ namespace o2scl {
     /** \brief A typedef for a queue of tokens for \ref o2scl::calculator
      */
     typedef std::queue<token_base *> token_queue_t;
-
-    /// \name
+    
+    /// \name Token types
     //@{
     static const int token_none=0;
     static const int token_op=1;
@@ -182,9 +189,9 @@ namespace o2scl {
               const std::map<std::u32string, double> *vars=0);
     
     ~calc_utf8();
-    
-    int verbose;
-    
+
+    /// \name Compile and evaluate 
+    //@{
     /** \brief Compile and evaluate \c expr using definitions in 
 	\c vars
     */
@@ -210,7 +217,10 @@ namespace o2scl {
     int calculate_nothrow(const std::string &expr,
                           const std::map<std::string, double> *vars,
                           double &result);
-    
+    //@}
+
+    /// \name Compile functions
+    //@{
     /** \brief Compile expression \c expr using variables 
 	specified in \c vars and return an
 	integer to indicate success or failure
@@ -238,7 +248,10 @@ namespace o2scl {
     */
     int compile_nothrow(const std::string &expr,
 			const std::map<std::string, double> *vars=0);
-    
+    //@}
+
+    /// \name Evaluate functions
+    //@{
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
     */
@@ -260,7 +273,13 @@ namespace o2scl {
     */
     int eval_nothrow(const std::map<std::string, double> *vars,
 		     double &result);
+    //@}
     
+    /// Verbosity parameter
+    int verbose;
+
+    /// \name Other functions
+    //@{
     /** \brief Convert the RPN expression to a string
 
 	\note This is mostly useful for debugging
@@ -277,6 +296,7 @@ namespace o2scl {
     /** \brief Get the variable list
      */
     std::vector<std::u32string> get_var_list();
+    //@}
     
   };
 

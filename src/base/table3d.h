@@ -72,12 +72,20 @@ namespace o2scl {
   /** \brief A data structure containing one or more slices of
       two-dimensional data points defined on a grid
 
-      \future Improve interpolation and derivative caching, possibly
-      through non-const versions of the interpolation functions.
-      \future Should there be a clear_grid() function separate from
-      clear_data() and clear()?
-      \future Allow the user to more clearly probe 'size_set' vs.
-      'xy_set'? (AWS 07/18: This is apparently resolved.)
+      \verbatim embed:rst
+
+      .. todo:: 
+
+         In class table3d:
+
+         - Future: Improve interpolation and derivative caching, possibly
+           through non-const versions of the interpolation functions.
+         - Future: Should there be a clear_grid() function separate from
+           clear_data() and clear()?
+         - Future: Allow the user to more clearly probe 'size_set' vs.
+           'xy_set'? (AWS 07/18: This is apparently resolved.)
+
+      \endverbatim
   */
   class table3d {
     
@@ -727,8 +735,16 @@ namespace o2scl {
 	to the same grid point. If not all combinations of x and y are
 	found, then those entries are left unchanged in all slices.
 
-	\future It would be great to add a function which generates
-	a text file in this format as well. 
+        \verbatim embed:rst
+        
+        .. todo:: 
+        
+           In class table3d::read_gen3_list():
+           
+           Future: It would be great to add a function which generates
+           a text file in this format as well. 
+
+        \endverbatim
     */
     int read_gen3_list(std::istream &fin, int verbose=0,
 		       double eps=1.0e-12);

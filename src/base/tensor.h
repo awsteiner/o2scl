@@ -363,19 +363,27 @@ namespace o2scl {
       should clearly work for uBlas vectors, and seems to work with
       std::vector objects also, but latter use has not been fully
       tested.
+      
+      \verbatim embed:rst
+      
+      .. todo:: 
 
-      \future Create an operator[] for tensor and not just tensor1?
+         In class tensor:
+        
+         - Future: Create an operator[] for tensor and not just tensor1?
 
-      \future Could implement arithmetic operators + and - and some
-      different products. 
+         - Future: Could implement arithmetic operators + and - and some
+           different products. 
 
-      \future Implement copies to and from vector
-      and matrices 
+         - Future: Implement copies to and from vector
+           and matrices 
 
-      \future Implement tensor contractions, i.e. tensor
-      = tensor * tensor 
+         - Future: Implement tensor contractions, i.e. tensor
+           = tensor * tensor 
 
-      \future Could be interesting to write an iterator for this class.
+         - Future: Could be interesting to write an iterator for this class.
+
+      \endverbatim
 
   */
   template<class data_t=double, class vec_t=std::vector<data_t>, 
@@ -969,10 +977,18 @@ namespace o2scl {
     /** \brief Take a set of index specifications contained in a
         single string \c str and arrange them in \c sv
 
-        \future Improve this to be more intelligent about whitespace
-        and other characters between index specifications. Right now,
-        this function fails if there are, e.g. two spaces between
-        index specs.
+        \verbatim embed:rst
+        
+        .. todo:: 
+
+           In tensor::index_spec_preprocess():
+
+           Future: Improve this to be more intelligent about
+           whitespace and other characters between index
+           specifications. Right now, this function fails if there
+           are, e.g. two spaces between index specs.
+
+        \endverbatim
     */
     void index_spec_preprocess(std::string str,
                                std::vector<std::string> &sv, int verbose=0) {
@@ -1195,8 +1211,16 @@ namespace o2scl {
         example, a range spec. with only one element, a grid specification
         with only one element in the result, etc.
 
-        \future Return a scalar if possible as a rank 1 tensor with
-        1 element.
+        \verbatim embed:rst
+        
+        .. todo:: 
+
+           In tensor::rarrange_and_copy(): 
+
+           Future: Return a scalar if possible as a rank 1 tensor with
+           1 element.
+           
+        \endverbatim
     */
     tensor<data_t> rearrange_and_copy(std::vector<index_spec> spec,
                                       int verbose=0, bool err_on_fail=true) {

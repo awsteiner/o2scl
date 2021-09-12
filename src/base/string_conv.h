@@ -250,15 +250,16 @@ namespace o2scl {
       test3"</tt>.
 
       \verbatim embed:rst
+
       .. todo:: 
 
          In function split_string(), the rules surrounding spaces and
          quotes are not well documented.
 
-      \endverbatim
+         - Future: Replace with a better algorithm. Should quotes be
+         escaped?
 
-      \future Replace with a better algorithm. Should quotes be
-      escaped?
+      \endverbatim
   */
   void split_string(std::string str, std::vector<std::string> &sv);
 

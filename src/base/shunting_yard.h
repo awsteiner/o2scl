@@ -101,6 +101,9 @@ namespace o2scl {
 
   /** \brief Evaluate a mathematical expression in a string
 
+      \note This class will eventually be deprecated in favor
+      of \ref calc_utf8 .
+
       This is based on Brandon Amos' code at 
       https://github.com/bamos/cpp-expression-parser
       in turn based on Jesse Brown's code at
