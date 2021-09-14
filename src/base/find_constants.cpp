@@ -61,39 +61,39 @@ find_constants::find_constants() {
 	 "cm/s",o2scl_const::o2scl_cgs,
 	 o2scl_const::speed_of_light_f<double>(o2scl_const::o2scl_cgs),
          "exact",0,0,0,0,0,0,0},
-	{{"gravitationalconstant","g","newtonsconstant",
+	{{"gravitational","g","newtonsconstant",
 	  "newtonconstant"},"m^3/kg/s^2",o2scl_const::o2scl_mks,
 	 o2scl_mks::gravitational_constant,"CODATA 2018",3,-1,-2,0,0,0,0},
-	{{"gravitationalconstant","g","newtonsconstant",
+	{{"gravitational","g","newtonsconstant",
 	  "newtonconstant"},"cm^3/g/s^2",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::gravitational_constant,"CODATA 2018",0,0,0,0,0,0,0},
-	{{"boltzmannconstant","kb","boltzmannsconstant","boltzmann"},
+	{{"boltzmann","kb","boltzmannsconstant","boltzmann"},
 	 "m^2/kg/s^2/K",o2scl_const::o2scl_mks,o2scl_mks::boltzmann,
          "exact",2,-1,-2,-1,0,0,0},
-	{{"boltzmannconstant","kb","boltzmannsconstant","boltzmann"},
+	{{"boltzmann","kb","boltzmannsconstant","boltzmann"},
 	 "cm^2/g/s^2/K",o2scl_const::o2scl_cgs,o2scl_cgs::boltzmann,
          "exact",0,0,0,0,0,0,0},
-	{{"stefanboltzmannconstant","sigmasb","stefanboltzmann","ssb","σsb"},
+	{{"stefanboltzmann","sigmasb","stefanboltzmann","ssb","σsb"},
 	 "kg/s^3/K^4",o2scl_const::o2scl_mks,
 	 o2scl_mks::stefan_boltzmann_constant,
          "exact; derived from k_B, c, and h bar",0,1,-3,-4,0,0,0},
-	{{"stefanboltzmannconstant","sigmasb","stefanboltzmann","ssb","σsb"},
+	{{"stefanboltzmann","sigmasb","stefanboltzmann","ssb","σsb"},
 	 "g/s^3/K^4",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::stefan_boltzmann_constant,
          "exact; derived from k_B, c, and h bar",0,0,0,0,0,0,0},
-	{{"plancksconstant","h","planckconstant","planck"},
+	{{"plancks","h","planckconstant","planck"},
 	 "kg*m^2/s",o2scl_const::o2scl_mks,
 	 o2scl_const::planck_f<double>(o2scl_const::o2scl_mks),
          "exact",2,1,-1,0,0,0,0},
-	{{"plancksconstant","h","planckconstant","planck"},
+	{{"plancks","h","planckconstant","planck"},
 	 "g*cm^2/s",o2scl_const::o2scl_cgs,
 	 o2scl_const::planck_f<double>(o2scl_const::o2scl_cgs),
          "exact",0,0,0,0,0,0,0},
-	{{"reducedplancksconstant","hbar","ħ"},
+	{{"reducedplancks","hbar","ħ"},
 	 "kg*m^2/s",o2scl_const::o2scl_mks,
 	 o2scl_const::hbar_f<double>(o2scl_const::o2scl_mks),
          "exact; derived from the Planck constant",2,1,-1,0,0,0,0},
-	{{"reducedplancksconstant","hbar","ħ"},
+	{{"reducedplancks","hbar","ħ"},
 	 "g*cm^2/s",o2scl_const::o2scl_cgs,
 	 o2scl_const::hbar_f<double>(o2scl_const::o2scl_cgs),
          "exact; derived from the Planck constant",0,0,0,0,0,0,0},
@@ -159,22 +159,22 @@ find_constants::find_constants() {
 	 o2scl_mks::mass_tau,"CODATA 2018",0,1,0,0,0,0,0},
 	{{"masstau","taumass","mtau"},"g",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::mass_tau,"CODATA 2018",0,0,0,0,0,0,0},
-	{{"massneutron","neutronmass","mneutron","mneut","mn"},"kg",
+	{{"massneutron","neutronmass","mneutron","mneut"},"kg",
 	 o2scl_const::o2scl_mks,o2scl_mks::mass_neutron,
          "CODATA 2018",0,1,0,0,0,0,0},
-	{{"massneutron","neutronmass","mneutron","mneut","mn"},"g",
+	{{"massneutron","neutronmass","mneutron","mneut"},"g",
 	 o2scl_const::o2scl_cgs,o2scl_cgs::mass_neutron,
          "CODATA 2018",0,0,0,0,0,0,0},
-	{{"massproton","protonmass","mproton","mprot","mp"},"kg",
+	{{"massproton","protonmass","mproton","mprot"},"kg",
 	 o2scl_const::o2scl_mks,o2scl_mks::mass_proton,
          "CODATA 2018",0,1,0,0,0,0,0},
-	{{"massproton","protonmass","mproton","mprot","mp"},"g",
+	{{"massproton","protonmass","mproton","mprot"},"g",
 	 o2scl_const::o2scl_cgs,o2scl_cgs::mass_proton,
          "CODATA 2018",0,0,0,0,0,0,0},
-	{{"massdeuteron","deuteronmass","mdeuteron","mdeut","md"},"kg",
+	{{"massdeuteron","deuteronmass","mdeuteron","mdeut"},"kg",
 	 o2scl_const::o2scl_mks,o2scl_mks::mass_deuteron,
          "CODATA 2018",0,1,0,0,0,0,0},
-	{{"massdeuteron","deuteronmass","mdeuteron","mdeut","md"},"g",
+	{{"massdeuteron","deuteronmass","mdeuteron","mdeut"},"g",
 	 o2scl_const::o2scl_cgs,o2scl_cgs::mass_deuteron,
          "CODATA 2018",0,0,0,0,0,0,0},
 	{{"masstriton","tritonmass","mtriton"},"kg",o2scl_const::o2scl_mks,
@@ -700,14 +700,28 @@ double find_constants::find_unique(std::string name, std::string unit) {
 }
 
 void find_constants::output_list(std::ostream &os) {
-  os << "name unit flag value source" << endl;
+  os << "name unit flag value units source" << endl;
   os << "  alternate names" << endl;
   for(size_t i=0;i<list.size();i++) {
     os << list[i].names[0] << " ";
     os << list[i].unit << " ";
-    os << list[i].unit_flag << " ";
+    if (list[i].unit_flag==o2scl_const::o2scl_mks) {
+      os << "MKS ";
+    } else if (list[i].unit_flag==o2scl_const::o2scl_cgs) {
+      os << "CGS ";
+    } else {
+      os << "other ";
+    }
     os << list[i].val << " ";
-    os << list[i].source << endl;
+    os << "(m:" << list[i].m << ",kg:" << list[i].k
+       << ",s:" << list[i].s << ",K:" << list[i].K
+       << ",A:" << list[i].A << ",mol:" << list[i].mol
+       << ",cd:" << list[i].cd << ")" << endl;
+    vector<string> sv;
+    rewrap(list[i].source,sv,77);
+    for(size_t j=0;j<sv.size();j++) {
+      os << "  " << sv[j] << endl;
+    }
     if (list[i].names.size()>1) {
       os << "  ";
       for(size_t j=1;j<list[i].names.size();j++) {
@@ -718,5 +732,57 @@ void find_constants::output_list(std::ostream &os) {
       os << "  (no alternate names)" << endl;
     }
   }
+  return;
+}
+
+void find_constants::add_constant(const find_constants_list &f) {
+
+  if (f.names.size()==0) {
+    O2SCL_ERR2("No names specified in ",
+               "find_constants::add_constant().",o2scl::exc_einval);
+  }
+  
+  // Double check that there are no name duplicates before we add
+  size_t n_matches=0;
+  for(size_t i=0;i<list.size();i++) {
+    for(size_t j=0;j<list[i].names.size();j++) {
+      for(size_t k=0;k<f.names.size();k++) {
+        if (list[i].names[j]==f.names[k]) {
+          n_matches++;
+        }
+      }
+    }
+  }
+  if (n_matches>0) {
+    O2SCL_ERR2("Name already found in ",
+               "find_constants::add_constant().",o2scl::exc_einval);
+  }
+  
+  list.push_back(f);
+  return;
+}
+
+void find_constants::del_constant(std::string &name) {
+  size_t n_matches=0, i_match;
+  for(size_t i=0;i<list.size();i++) {
+    for(size_t j=0;j<list[i].names.size();j++) {
+      if (list[i].names[j]==name) {
+        n_matches++;
+        i_match=i;
+      }
+    }
+  }
+  if (n_matches==1) {
+    std::vector<find_constants_list>::iterator it=list.begin();
+    it+=i_match;
+    list.erase(it);
+    return;
+  }
+  if (n_matches>1) {
+    O2SCL_ERR2("More than one match found in attempting to delete in ",
+               "find_constants::del_constant",o2scl::exc_einval);
+  }
+  O2SCL_ERR2("No matches in ",
+             "find_constants::del_constant",o2scl::exc_einval);
   return;
 }

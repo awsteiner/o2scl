@@ -54,6 +54,60 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
   } else if (sv[1]=="list") {
     cout.precision(prec);
     fc.output_list(cout);
+  } else if (sv[1]=="add") {
+    if (sv.size()<4) {
+      cerr << "Argument 'add' given to command 'constant' implies add "
+           << "a constant but not enough arguments were given." << endl;
+      return 1;
+    }
+    find_constants::find_constants_list f;
+    f.names.push_back(sv[2]);
+    f.source=o2scl::stod(sv[3]);
+    if (sv.size()>=5) {
+      f.unit=sv[4];
+    }
+    if (sv.size()>=6) {
+      f.unit_flag=stoszt(sv[5]);
+    } else {
+      f.unit_flag=0;
+    }
+    if (sv.size()>=7) {
+      f.source=sv[6];
+    }
+    if (sv.size()>=8) {
+      f.m=o2scl::stoi(sv[7]);
+    }
+    if (sv.size()>=9) {
+      f.k=o2scl::stoi(sv[8]);
+    }
+    if (sv.size()>=10) {
+      f.s=o2scl::stoi(sv[9]);
+    }
+    if (sv.size()>=11) {
+      f.K=o2scl::stoi(sv[10]);
+    }
+    if (sv.size()>=12) {
+      f.A=o2scl::stoi(sv[11]);
+    }
+    if (sv.size()>=13) {
+      f.mol=o2scl::stoi(sv[12]);
+    }
+    if (sv.size()>=14) {
+      f.cd=o2scl::stoi(sv[13]);
+    }
+    if (sv.size()>=15) {
+      for(size_t j=14;j<sv.size();j++) {
+        f.names.push_back(sv[j]);
+      }
+    }
+    fc.add_constant(f);
+  } else if (sv[1]=="del") {
+    if (sv.size()==2) {
+      cerr << "Argument 'del' given to command 'constant' implies delete "
+           << "a constant but no name was given." << endl;
+      return 1;
+    }
+    fc.del_constant(sv[2]);
   } else {
     fc.find_print(sv[1],"",prec,verbose);
   }

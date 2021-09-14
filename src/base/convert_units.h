@@ -30,6 +30,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 #include <map>
 
 #include <o2scl/misc.h>
@@ -856,6 +857,36 @@ namespace o2scl {
     
     virtual ~convert_units() {}
 
+    /** \brief Add a user-defined unit
+     */
+    void add_unit(const der_unit &d) {
+      other.push_back(d);
+      return;
+    }
+    
+    /** \brief Remove a non-SI unit
+     */
+    void del_unit(std::string &name) {
+      size_t n_matches=0, i_match;
+      for(size_t i=0;i<other.size();i++) {
+        if (other[i].name==name) {
+          n_matches++;
+          i_match=i;
+        }
+      }
+      if (n_matches==1) {
+        /*
+          FIXME: 
+          std::vector<convert_units<fp_t>::der_unit>::iterator it=other.begin();
+          it+=i_match;
+          other.erase(it);
+        */
+      }
+      O2SCL_ERR2("Zero or more than one match found in ",
+                "convert_units::del_unit().",o2scl::exc_efailed);
+      return;
+    }
+    
     /** \brief Set natural units
      */
     void set_natural_units(bool c_is_one=true, bool hbar_is_one=true,

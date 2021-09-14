@@ -33,22 +33,7 @@ namespace o2scl {
    */
   class find_constants {
 
-  protected:
-
-    /// \name Return values for find_nothrow()
-    //@{
-    static const int one_exact_match_unit_match=0;
-    static const int one_exact_match_unit_diff=1;
-    static const int exact_matches_no_unit=2;
-    static const int exact_matches_unit_match=3;
-    static const int exact_matches_unit_diff=4;
-    static const int one_pattern_match_unit_match=5;
-    static const int one_pattern_match_unit_diff=6;
-    static const int pattern_matches_no_unit=7;
-    static const int pattern_matches_unit_match=8;
-    static const int pattern_matches_unit_diff=9;
-    static const int no_matches=10;
-    //@}
+  public:
 
     /// Type for constant database (also used for list of matches)
     typedef struct find_constants_list_s {
@@ -78,6 +63,23 @@ namespace o2scl {
       int cd;
     } find_constants_list;
 
+  protected:
+
+    /// \name Return values for find_nothrow()
+    //@{
+    static const int one_exact_match_unit_match=0;
+    static const int one_exact_match_unit_diff=1;
+    static const int exact_matches_no_unit=2;
+    static const int exact_matches_unit_match=3;
+    static const int exact_matches_unit_diff=4;
+    static const int one_pattern_match_unit_match=5;
+    static const int one_pattern_match_unit_diff=6;
+    static const int pattern_matches_no_unit=7;
+    static const int pattern_matches_unit_match=8;
+    static const int pattern_matches_unit_diff=9;
+    static const int no_matches=10;
+    //@}
+
     /// Database of constant values
     std::vector<find_constants_list> list;
   
@@ -106,6 +108,14 @@ namespace o2scl {
         \c os 
     */
     void output_list(std::ostream &os);
+
+    /** \brief Add a constant
+     */
+    void add_constant(const find_constants_list &f);
+    
+    /** \brief Add a constant
+     */
+    void del_constant(std::string &name);
     
   };
 

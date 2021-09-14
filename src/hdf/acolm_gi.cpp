@@ -79,6 +79,11 @@ int acol_manager::comm_get_conv
   } else {
     cng.verbose=0;
   }
+
+  if (false) {
+    // Here, reconfigure the argument processing to support
+    // the 'add' and 'del' options
+  }
   
   if (sv.size()==2 && sv[1]=="list") {
     cng.print_units(std::cout);

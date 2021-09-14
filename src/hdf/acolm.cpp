@@ -1497,7 +1497,7 @@ int acol_manager::setup_options() {
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_h5_copy),
       both},
      {0,"constant","Get a physical or numerical constant.",
-      0,2,"<name or pattern> [unit]",
+      0,-1,"<name or pattern> [unit]",
       ((string)"Get a physical or numerical constant from the library. ")+
       "If \"list\" is given for <name or pattern>, then the full constant "+
       "list is printed ot the screen.",
