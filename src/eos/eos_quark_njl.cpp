@@ -120,8 +120,10 @@ int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
 
   if (err_on_fail==false) {
     solver->err_nonconv=false;
+    def_solver.def_jac.err_nonconv=false;
   } else {
     solver->err_nonconv=true;
+    def_solver.def_jac.err_nonconv=true;
   }
   
   if (fromqq==true) {

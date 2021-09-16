@@ -2088,6 +2088,10 @@ int acol_manager::comm_select_rows2(std::vector<std::string> &sv,
     double tval;
     table_obj.get_constant(i,tnam,tval);
     new_table.add_constant(tnam,tval);
+    if (verbose>=2) {
+      cout << "Copying constant " << tnam << " " << tval
+           << " to new table." << endl;
+    }
   }
   
   // ---------------------------------------------------------------------
@@ -2104,6 +2108,7 @@ int acol_manager::comm_select_rows2(std::vector<std::string> &sv,
 
 #ifdef O2SCL_CALC_UTF8
   calc_utf8 calc;
+  calc.compile(i1.c_str(),0);
   vector<std::u32string> cols32=calc.get_var_list();
   vector<std::string> cols(cols32.size());
   for(size_t ij=0;ij<cols32.size();ij++) {
@@ -2111,9 +2116,12 @@ int acol_manager::comm_select_rows2(std::vector<std::string> &sv,
   }
 #else
   calculator calc;
-  vector<std::string> cols=calc.get_var_list();
-#endif      
   calc.compile(i1.c_str(),0);
+  vector<std::string> cols=calc.get_var_list();
+#endif
+  if (verbose>=2) {
+    cout << "Calculating expression: " << i1 << endl;
+  }
   
   std::map<std::string,double> vars;
 
@@ -2127,6 +2135,10 @@ int acol_manager::comm_select_rows2(std::vector<std::string> &sv,
     
     for(size_t j=0;j<cols.size();j++) {
       vars[cols[j]]=table_obj.get(cols[j],i);
+      if (verbose>=2 && i==0) {
+        cout << "At row 0, setting variable " << cols[j] << " to "
+             << table_obj.get(cols[j],i) << endl;
+      }
     }
     
     //calc.compile(i1.c_str(),&vars);
@@ -2262,7 +2274,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     cout << "Function wordexp() converted "
 	 << fname_old << " to " << fname << endl;
   }
-  
+
   ret=hf.open(fname.c_str(),false,false);
   if (ret!=0) {
     cerr << "Could not find file named '" << fname << "'. Wrong file name?" 

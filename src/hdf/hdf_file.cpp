@@ -24,7 +24,11 @@
 #include <config.h>
 #endif
 
+#ifdef O2SCL_REGEX
 #include <regex>
+#else
+#include <fnmatch.h>
+#endif
 
 #include <o2scl/err_hnd.h>
 #include <o2scl/hdf_file.h>
@@ -3318,7 +3322,8 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 
       // --------------------------------------------------------------
       // Empty case
-      
+
+#ifdef O2SCL_REGEX      
       if (mode==ip_filelist) {
 	cout << base_type;
       } else {
@@ -3338,12 +3343,33 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	  return;
 	}
       }
+#else
+      if (mode==ip_filelist) {
+	cout << base_type;
+      } else {
+	if (mode==ip_type_from_name && name==ip.tname) {
+	  ip.type=base_type;
+	  ip.found=true;
+	  return;
+	} else if (mode==ip_type_from_pattern &&
+		   fnmatch(name.c_str(),ip.tname.c_str(),0)==0) {
+	  ip.type=base_type;
+	  ip.found=true;
+	  return;
+	} else if (mode==ip_name_from_type && base_type==ip.type) {
+	  ip.tname=name;
+	  ip.found=true;
+	  return;
+	}
+      }
+#endif
       
     } else if (max_dims[0]==H5S_UNLIMITED) {
 
       // --------------------------------------------------------------
       // Unlimited array case
-      
+
+#ifdef O2SCL_REGEX      
       if (mode==ip_filelist) {
 	cout << base_type << "[" << dims[0] << "/inf]";
       } else {
@@ -3369,12 +3395,39 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	  return;
 	}
       }
+#else
+      if (mode==ip_filelist) {
+	cout << base_type << "[" << dims[0] << "/inf]";
+      } else {
+	string curr_type;
+	if (base_type=="char") {
+	  curr_type="string";
+	} else {
+	  curr_type=base_type+"[]";
+	}
+	if (mode==ip_type_from_name && name==ip.tname) {
+	  ip.type=curr_type;
+	  ip.found=true;
+	  return;
+	} else if (mode==ip_type_from_pattern &&
+		   fnmatch(name.c_str(),ip.tname.c_str(),0)==0) {
+	  ip.type=curr_type;
+	  ip.found=true;
+	  return;
+	} else if (mode==ip_name_from_type && curr_type==ip.type) {
+	  ip.tname=name;
+	  ip.found=true;
+	  return;
+	}
+      }
+#endif
 
     } else {
 
       // --------------------------------------------------------------
       // Fixed-length array case
-      
+
+#ifdef O2SCL_REGEX      
       if (mode==ip_filelist) {
 	// Determine if it is a fixed-size vector or single value
 	if (dims[0]==1 && max_dims[0]==1) {
@@ -3411,6 +3464,43 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	}
       }
     }
+#else
+    if (mode==ip_filelist) {
+      // Determine if it is a fixed-size vector or single value
+      if (dims[0]==1 && max_dims[0]==1) {
+        cout << base_type;
+      } else {
+        cout << base_type << "[" << dims[0] << "/" << max_dims[0]
+             << "]";
+      }
+    } else {
+      string curr_type;
+      if (dims[0]==1 && max_dims[0]==1) {
+        curr_type=base_type;
+      } else {
+        if (base_type=="char") {
+          curr_type="string";
+        } else {
+          curr_type=base_type+"[]";
+        }
+      }
+      if (mode==ip_type_from_name && name==ip.tname) {
+        ip.type=curr_type;
+        ip.found=true;
+        return;
+      } else if (mode==ip_type_from_pattern &&
+                 fnmatch(name.c_str(),ip.tname.c_str(),0)==0) {
+        ip.type=curr_type;
+        ip.found=true;
+        return;
+      } else if (mode==ip_name_from_type && curr_type==ip.type) {
+        ip.tname=name;
+        ip.found=true;
+        return;
+      }
+    }
+  }
+#endif
     
   } else {
     
@@ -3418,6 +3508,7 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
     // Otherwise, if it has a rank of 2 or larger, then treat it as a
     // tensor-like object
 
+#ifdef O2SCL_REGEX  
     if (mode==ip_filelist) {
       cout << base_type << "[";
       for(int i=0;i<((int)ndims)-1;i++) {
@@ -3453,7 +3544,43 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	return;
       }
     }
-
+#else
+    if (mode==ip_filelist) {
+      cout << base_type << "[";
+      for(int i=0;i<((int)ndims)-1;i++) {
+	if (max_dims[i]==H5S_UNLIMITED) {
+	  cout << dims[i] << "/inf,";
+	} else {
+	  cout << dims[i] << "/" << max_dims[i] << ",";
+	}
+      }
+      if (max_dims[ndims-1]==H5S_UNLIMITED) {
+	cout << dims[ndims-1] << "/inf].";
+      } else {
+	cout << dims[ndims-1] << "/" << max_dims[ndims-1] << "]";
+      }
+    } else {
+      string curr_type=base_type;
+      for(int i=0;i<((int)ndims);i++) {
+	curr_type+="[]";
+      }
+      if (mode==ip_type_from_name && name==ip.tname) {
+	ip.type=curr_type;
+	ip.found=true;
+	return;
+      } else if (mode==ip_type_from_pattern &&
+		 fnmatch(name.c_str(),ip.tname.c_str(),0)==0) {
+	ip.type=curr_type;
+	ip.found=true;
+	return;
+      } else if (mode==ip_name_from_type && curr_type==ip.type) {
+	ip.tname=name;
+	ip.found=true;
+	return;
+      }
+    }
+#endif    
+    
     // End of 'else' for 'if (ndims==1)'
   }
   return;
@@ -3837,8 +3964,10 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
     hf.close_group(group);
     hf.set_current_id(top);
 
+#ifdef O2SCL_REGEX    
     if (otype.length()!=0) {
-      regex r(name);
+      string sname=name;
+      regex r(sname);
       if (mode==ip_filelist) {
 	if (otype==((string)"string[]")) {
 	  cout << "O2scl object \"" << name << "\" of type " 
@@ -3867,6 +3996,37 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 	cout << "Group \"" << name << "\"." << endl;
       }
     }
+#else
+    if (otype.length()!=0) {
+      if (mode==ip_filelist) {
+	if (otype==((string)"string[]")) {
+	  cout << "O2scl object \"" << name << "\" of type " 
+	       << otype << "." << endl;
+	} else {
+	  cout << "O2scl object \"" << name << "\" of type " 
+	       << otype << "." << endl;
+	}
+      } else if (mode==ip_type_from_name && name==ip->tname) {
+	ip->type=otype;
+	ip->found=true;
+	return 1;
+      } else if (mode==ip_type_from_pattern &&
+		 fnmatch(name,ip->tname.c_str(),0)==0) {
+	ip->type=otype;
+	ip->found=true;
+	return 1;
+      } else if (mode==ip_name_from_type && otype==ip->type) {
+	ip->tname=name;
+	ip->found=true;
+	return 1;
+      }
+    } else {
+      // Non-O2scl group
+      if (mode==ip_filelist) {
+	cout << "Group \"" << name << "\"." << endl;
+      }
+    }
+#endif    
     
   } else if (infobuf.type==H5O_TYPE_DATASET) {
     
@@ -4047,6 +4207,7 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 	status=H5Tclose(memtype);
 	status=H5Sclose(space);
 	status=H5Tclose(filetype);
+#ifdef O2SCL_REGEX        
         regex r(name);
 	if (mode==ip_type_from_name && name==ip->tname) {
 	  ip->type="char[fixed]";
@@ -4057,6 +4218,17 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 	  ip->type="char[fixed]";
 	  ip->found=true;
 	}
+#else
+        if (mode==ip_type_from_name && name==ip->tname) {
+	  ip->type="char[fixed]";
+	  ip->found=true;
+	  return 1;
+	} else if (mode==ip_type_from_pattern &&
+		   fnmatch(name,ip->tname.c_str(),0)==0) {
+	  ip->type="char[fixed]";
+	  ip->found=true;
+	}
+#endif
 	if (mode==ip_filelist) {
 	  if (str_size==0) {
 	    cout << "Error. Fixed length-string with no space for null.";
@@ -4100,6 +4272,7 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
       cout << "Unexpected HDF type. " << endl;
     }
   }
+  
   return 0;
 }
 
