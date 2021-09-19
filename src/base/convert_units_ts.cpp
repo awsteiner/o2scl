@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
       ix=cux.convert_calc("J","K",2.0,d1,d2);
       if (ix==0) {
         cout << "ix,factor: " << ix << " " << d2 << endl;
-        system("acol -get-conv J K");
+        system("acol -convert J K");
         t.test_gen(kb_is_1,"kb_is_1 conv 1a");
       } else {
         cout << "ix: " << ix << endl;
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
       ix=cux.convert_calc("J","kg",2.0,d1,d2);
       if (ix==0) {
         cout << "ix,factor: " << ix << " " << d2 << endl;
-        system("acol -get-conv kg 1/c^2");
+        system("acol -convert kg 1/c^2");
         t.test_gen(c_is_1,"c_is_1 conv 2a");
       } else {
         cout << "ix: " << ix << endl;
@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
       ix=cux.convert_calc("J^2*s^2","J*s",2.0,d1,d2);
       if (ix==0) {
         cout << "ix,factor: " << ix << " " << d2 << endl;
-        system("acol -get-conv J^2*s^2 J*s");
+        system("acol -convert J^2*s^2 J*s");
         t.test_gen(hbar_is_1,"hbar_is_1 conv 3a");
       } else {
         cout << "ix: " << ix << endl;
@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
       ix=cux.convert_calc("J^2","K^2",2.0,d1,d2);
       if (ix==0) {
         cout << "ix,factor: " << ix << " " << d2 << endl;
-        system("acol -get-conv J^2 K^2");
+        system("acol -convert J^2 K^2");
         t.test_gen(kb_is_1,"kb_is_1 conv 4a");
       } else {
         cout << "ix: " << ix << endl;
@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
       ix=cux.convert_calc("erg^2","K^2",2.0,d1,d2);
       if (ix==0) {
         cout << "ix,factor: " << ix << " " << d2 << endl;
-        system("acol -get-conv erg^2 K^2");
+        system("acol -convert erg^2 K^2");
         t.test_gen(kb_is_1,"kb_is_1 conv 5a");
       } else {
         cout << "ix: " << ix << endl;
@@ -137,7 +137,7 @@ int main(int argc, char *argv[]) {
       ix=cux.convert_calc("1/fm^2","K^2",2.0,d1,d2);
       if (ix==0) {
         cout << "ix,factor: " << ix << " " << d2 << endl;
-        system("acol -get-conv 1/fm^2 K^2");
+        system("acol -convert 1/fm^2 K^2");
         t.test_gen(kb_is_1,"kb_is_1 conv 6a");
         t.test_gen(hbar_is_1,"hbar_is_1 conv 6b");
         t.test_gen(c_is_1,"c_is_1 conv 6c");
@@ -151,7 +151,7 @@ int main(int argc, char *argv[]) {
       ix=cux.convert_calc("1/s^2","nK^2",2.0,d1,d2);
       if (ix==0) {
         cout << "ix,factor: " << ix << " " << d2 << endl;
-        system("acol -get-conv 1/s^2 nK^2");
+        system("acol -convert 1/s^2 nK^2");
         t.test_gen(kb_is_1,"kb_is_1 conv 7a");
         t.test_gen(hbar_is_1,"hbar_is_1 conv 7b");
       } else {

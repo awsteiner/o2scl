@@ -41,9 +41,6 @@ int main(void) {
   
   double hc=hc_mev_fm;
 
-  // Ensure that this works without GNU units
-  o2scl_settings.get_convert_units().use_gnu_units=false;
-  
   fermion n(o2scl_settings.get_convert_units().convert
 	    ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
   n.inc_rest_mass=false;

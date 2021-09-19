@@ -41,9 +41,6 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
   
-  // Ensure that this works without GNU units
-  o2scl_settings.get_convert_units().use_gnu_units=false;
-  
   fermion n(o2scl_settings.get_convert_units().convert
 	    ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
   fermion p(o2scl_settings.get_convert_units().convert

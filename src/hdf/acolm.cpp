@@ -1458,12 +1458,12 @@ int acol_manager::setup_options() {
       ((string)"This command gets a unit ")+
       "conversion factor and optionally applies than conversion factor "+
       "to a user-specified value. Conversions which presume hbar=c=kB=1 "+
-      "are allowed. For example, 'get-conv MeV 1/fm' returns "+
+      "are allowed. For example, 'convert MeV 1/fm' returns "+
       "'1.000000e+00 MeV = 5.067731e-03 1/fm'. The conversion factor "+
       "is output "+
       "at the current precision, but is always internally stored with "+
       "full double precision. To print the unit table, use "+
-      "-get-conv list",
+      "-convert list",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_convert),
       both},
      {0,"h5-copy","Copy hdf5 file (experimental).",-1,-1,

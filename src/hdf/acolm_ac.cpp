@@ -119,13 +119,6 @@ int acol_manager::comm_convert
     }
   }
 
-  if (verbose>1) {
-    cout << "acol get-conv: " << endl;
-    for(size_t i=0;i<in.size();i++) {
-      cout << "  " << i << " x" << in[i] << "x" << endl;
-    }
-  }
-
   // Set the proper output precision and mode
   if (scientific) cout.setf(ios::scientific);
   else cout.unsetf(ios::scientific);
