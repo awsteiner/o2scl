@@ -273,7 +273,7 @@ class boost::numeric::ublas::matrix<double>
 # Class ublas_matrix_int
 # 
 class boost::numeric::ublas::matrix<int>
-- py_name ublas_matrix
+- py_name ublas_matrix_int
 - function size1
   - size_t
 - function size2
@@ -287,18 +287,18 @@ class boost::numeric::ublas::matrix<int>
   - size_t m
   - size_t n    
 - extra_py |
-| def to_numpy(self):
-|     """
-|     Copy the vector to a numpy matrix
-|
-|     Returns: a two-dimensional ``numpy`` array, with dimension
-|     ``size1(),size2()``.
-|     """
-|     ret=numpy.zeros((self.size1(),self.size2(),dtype=numpy.intc)
-|     for i in range(0,self.size1()):
-|         for j in range(0,self.size2()):
-|             ret[i,j]=self.__getitem__((i,j))
-|     return ret
+#| def to_numpy(self):
+#|     """
+#|     Copy the vector to a numpy matrix
+#|
+#|     Returns: a two-dimensional ``numpy`` array, with dimension
+#|     ``size1(),size2()``.
+#|     """
+#|     ret=numpy.zeros((self.size1(),self.size2(),dtype=numpy.int)
+#|     for i in range(0,self.size1()):
+#|         for j in range(0,self.size2()):
+#|             ret[i,j]=self.__getitem__((i,j))
+#|     return ret
 #
 # Class vector<vector<double>>
 #                              
@@ -1529,7 +1529,7 @@ class interp<std::vector<double>>
 #
 # Class interp_vec
 #
-class interp_vec<std::vector<double>>
+#class interp_vec<std::vector<double>>
 #- cons interp_vec_pre
 #  - size_t n
 #  - std::vector<double> &x
@@ -1541,8 +1541,8 @@ class interp_vec<std::vector<double>>
 #  - std::vector<double> &x
 #  - std::vector<double> &x
 #  - int interp_type
-- function clear
-  - void
+#- function clear
+#  - void
 #- function eval
 #  - double x0
 #- function deriv
@@ -1555,19 +1555,19 @@ class interp_vec<std::vector<double>>
 #
 # Class interp_krige_optim
 #
-class interp_krige_optim<std::vector<double>>
-- int verbose
-- size_t mode
-- size_t nlen
-- bool full_min
-- function set_noise
-  - int
-  - size_t size
-  - io const std::vector<double> &x
-  - io const std::vector<double> &y
-  - double noise_var
-  - bool rescale [false]
-  - bool err_on_fail [true]    
+#class interp_krige_optim<std::vector<double>>
+#- int verbose
+#- size_t mode
+#- size_t nlen
+#- bool full_min
+#- function set_noise
+#  - int
+#  - size_t size
+#  - io const std::vector<double> &x
+#  - io const std::vector<double> &y
+#  - double noise_var
+#  - bool rescale [false]
+#  - bool err_on_fail [true]    
 #- function set
 #  - int
 #  - size_t size
@@ -1575,25 +1575,25 @@ class interp_krige_optim<std::vector<double>>
 #  - io const std::vector<double> &y
 #  - bool rescale
 #  - bool err_on_fail [true]
-- function eval
-  - double
-  - double x0
-- function deriv
-  - double
-  - double x0
-- function deriv2
-  - double
-  - double x0
-- function sigma
-  - double
-  - double x0
-- function sample
-  - double
-  - double x0
-- function sample_vec
-  - void
-  - io std::vector<double> &x
-  - io std::vector<double> &y
+#- function eval
+#  - double
+#  - double x0
+#- function deriv
+#  - double
+#  - double x0
+#- function deriv2
+#  - double
+#  - double x0
+#- function sigma
+#  - double
+#  - double x0
+#- function sample
+#  - double
+#  - double x0
+#- function sample_vec
+#  - void
+#  - io std::vector<double> &x
+#  - io std::vector<double> &y
 #
 # Functions from misc.h
 # 
