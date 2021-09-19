@@ -50,10 +50,6 @@ int main(void) {
   fermion_rel relf;
   classical_thermo cla;
   
-  // Ensure that this example works without GNU units in case O2scl
-  // was installed on a system where GNU units is not installed.
-  o2scl_settings.get_convert_units().use_gnu_units=false;
-
   fermion e(o2scl_settings.get_convert_units().convert
 	    ("kg","1/fm",o2scl_mks::mass_electron),2.0);
   fermion e2(e.m,2.0);
