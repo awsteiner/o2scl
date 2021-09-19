@@ -37,6 +37,156 @@ using namespace o2scl_acol;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
+int acol_manager::comm_convert
+(std::vector<std::string> &sv, bool itive_com) {
+
+  if (verbose>=2) {
+    cng.verbose=verbose;
+  } else {
+    cng.verbose=0;
+  }
+
+  if (false) {
+    // Here, reconfigure the argument processing to support
+    // the 'add' and 'del' options
+  }
+  
+  if (sv.size()==2 && sv[1]=="list") {
+    cng.print_units(std::cout);
+    cout << endl;
+    cng.print_cache();
+    return 0;
+  }
+
+  vector<string> in, pr;
+  if (sv.size()>=3) {
+    for(size_t j=1;j<sv.size();j++) {
+      in.push_back(sv[j]);
+    }
+  } else {
+    std::vector<std::string> sv2;
+    std::string in2;
+    int ret=get_input_one(sv2,"Old unit (or \"add\" or \"del\")",
+                          in2,"convert",itive_com);
+    if (ret!=0) return ret;
+    in.push_back(in2);
+    if (in2=="add") {
+      ret=get_input_one(sv2,"New unit",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Power of length",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Power of mass",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Power of time",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Power of temperature",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Power of current",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Power of moles",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Power of luminous intensity",in2,
+                        "convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Value",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Long name",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+    } else if (in2=="del") {
+      ret=get_input_one(sv2,"Old unit",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"New unit",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+    } else {
+      ret=get_input_one(sv2,"New unit",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Value",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+    }
+  }
+
+  if (verbose>1) {
+    cout << "acol get-conv: " << endl;
+    for(size_t i=0;i<in.size();i++) {
+      cout << "  " << i << " x" << in[i] << "x" << endl;
+    }
+  }
+
+  // Set the proper output precision and mode
+  if (scientific) cout.setf(ios::scientific);
+  else cout.unsetf(ios::scientific);
+  cout.precision(prec);
+  
+  if (in[0]=="add") {
+
+    double val=1.0;
+    if (in.size()>=3) {
+      int ret2=function_to_double_nothrow(in[9],val);
+      if (ret2!=0) {
+        cerr << "Converting " << in[9] << " to value failed." << endl;
+        return 2;
+      }
+    }
+
+    convert_units<double>::der_unit d;
+    d.label=in[1];
+    d.m=o2scl::stod(in[2]);
+    d.k=o2scl::stod(in[3]);
+    d.s=o2scl::stod(in[4]);
+    d.K=o2scl::stod(in[5]);
+    d.A=o2scl::stod(in[6]);
+    d.mol=o2scl::stod(in[7]);
+    d.cd=o2scl::stod(in[8]);
+    d.val=val;
+    d.name=in[10];
+
+    cng.add_unit(d);
+    
+  } else if (in[1]=="del") {
+
+    cout << "Delete conversion." << endl;
+
+    cng.del_unit(in[2]);
+    
+  }
+  
+  double val=1.0;
+  if (in.size()>=3) {
+    int ret2=function_to_double_nothrow(in[2],val);
+    if (ret2!=0) {
+      cerr << "Converting " << in[2] << " to value failed." << endl;
+      return 2;
+    }
+  }
+  
+  // If cng.verbose is non-zero, then cng.convert may output
+  // verbose information to cout
+  double val_out;
+  int cret=cng.convert_ret(in[0],in[1],val,val_out);
+  if (cret!=0) {
+    cerr << "Conversion failed." << endl;
+    return 1;
+  }
+  
+  cout << val << " " << in[0] << " = " << val_out << " " << in[1] << endl;
+  
+  return 0;
+}
+
 int acol_manager::comm_constant(std::vector<std::string> &sv,
 				bool itive_com) {
 

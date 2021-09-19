@@ -35,12 +35,6 @@ int main(int argc, char *argv[]) {
   // Test all the permutations of mixing two conversions
   // to generate a third
 
-  if (argc>=2 && ((string)argv[1])==((string)"test-cache")) {
-    // An exhaustive check not intended for the end-user
-    convert_units<double> &cu=o2scl_settings.get_convert_units();
-    cu.test_cache();
-  }
-
   if (argc>=2 && ((string)argv[1])==((string)"make-units")) {
     convert_units<double> cu;
     cu.make_units_dat("units.dat");

@@ -436,6 +436,9 @@ namespace o2scl_acol {
 	\ref o2scl::table object
     */
     virtual int comm_slice(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Convert a slice to a histogram
+     */
     virtual int comm_slice_hist(std::vector<std::string> &sv, bool itive_com);
 
     /// Fit two columns to a function
@@ -505,14 +508,10 @@ namespace o2scl_acol {
     /// Select several columns for a new table
     virtual int comm_select(std::vector<std::string> &sv, bool itive_com);
 
-    /// Select several rows for a new table
-    //virtual int comm_select_rows(std::vector<std::string> &sv,
-    //bool itive_com);
-
     /** \brief A faster form of select rows which requires one to specify
 	the columns needed for the selection criteria first
     */
-    virtual int comm_select_rows2(std::vector<std::string> &sv,
+    virtual int comm_select_rows(std::vector<std::string> &sv,
 				  bool itive_com);
 
     /// Post-processing for setting a value
@@ -553,12 +552,13 @@ namespace o2scl_acol {
     virtual int comm_version(std::vector<std::string> &sv, bool itive_com);
 
     /// Get a conversion factor
-    virtual int comm_get_conv(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_convert(std::vector<std::string> &sv, bool itive_com);
 
-    /// Desc
+    /// Copy an HDF5 file
     virtual int comm_h5_copy(std::vector<std::string> &sv, 
 			     bool itive_com);
-    
+
+    /// Search for, or add or delete a constant
     virtual int comm_constant(std::vector<std::string> &sv, bool itive_com);
     
     /// Set screen width

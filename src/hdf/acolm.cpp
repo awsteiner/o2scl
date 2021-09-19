@@ -116,7 +116,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 			      "get-row","get-unit","entry","index",
 			      "insert","insert-full","integ","interp",
 			      "list","max","min","nlines","refine","rename",
-			      "select","select-rows","select-rows2",
+			      "select","select-rows","select-rows",
 			      "set-data","set-unit","sort","stats","sum",
 			      "to-hist","to-hist-2d","to-table3d","wstats",
                               "ser-hist-t3d",
@@ -463,16 +463,7 @@ void acol_manager::command_add(std::string new_type) {
 	"which the row specification in <row_spec> evaluates to a number "+
 	"greater than 0.5",
 	new comm_option_mfptr<acol_manager>
-	(this,&acol_manager::comm_select_rows2),both},
-       {0,"select-rows2",
-	"Select rows, with column specification (deprecated.",
-	0,-1,"<row_spec>",
-	((std::string)"Select the rows from a table for ")+
-	"which the row specification in <row_spec> evaluates to a number "+
-	"greater than 0.5 . This command should be equivalent to but "+
-	"faster than 'select-rows' for tables with many columns.",
-	new comm_option_mfptr<acol_manager>
-	(this,&acol_manager::comm_select_rows2),both},
+	(this,&acol_manager::comm_select_rows),both},
        {0,"ser-hist-t3d","Histogram series in a table3d",0,8,
         ((std::string)"<grid vector spec.> <direction (\"x\" or \"y\")> ")+
         "<grid name> <bin edges vector spec.> "+
@@ -1294,7 +1285,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=22;
+  static const int narr=20;
 
   string type_list_str;
   for(size_t i=0;i<type_list.size()-1;i++) {
@@ -1462,7 +1453,7 @@ int acol_manager::setup_options() {
       "and y-grids and the names of each slice (in order).",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
       both},
-     {0,"get-conv","Get a unit conversion factor.",0,3,
+     {0,"convert","Get a unit conversion factor.",0,11,
       "<old unit> <new unit> [value to convert]",
       ((string)"This command gets a unit ")+
       "conversion factor and optionally applies than conversion factor "+
@@ -1473,20 +1464,7 @@ int acol_manager::setup_options() {
       "at the current precision, but is always internally stored with "+
       "full double precision. To print the unit table, use "+
       "-get-conv list",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_conv),
-      both},
-     {0,"convert","Get a unit conversion factor.",0,3,
-      "<old unit> <new unit> [value to convert]",
-      ((string)"This command gets a unit ")+
-      "conversion factor and optionally applies than conversion factor "+
-      "to a user-specified value. Conversions which presume hbar=c=kB=1 "+
-      "are allowed. For example, 'get-conv MeV 1/fm' returns "+
-      "'1.000000e+00 MeV = 5.067731e-03 1/fm'. The conversion factor "+
-      "is output "+
-      "at the current precision, but is always internally stored with "+
-      "full double precision. To print the unit table, use "+
-      "-get-conv list",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_conv),
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_convert),
       both},
      {0,"h5-copy","Copy hdf5 file (experimental).",-1,-1,
       "<source> <destination>",((string)"Copy all O2scl objects from ")+

@@ -95,6 +95,33 @@ namespace o2scl {
   */
   template<class fp_t=double> class convert_units {
 
+  public:
+    
+    /** \brief Type of a derived unit
+     */
+    typedef struct der_unit_s {
+      /// Unit label
+      std::string label;
+      /// Power of length
+      int m;
+      /// Power of mass
+      int k;
+      /// Power of time
+      int s;
+      /// Power of temperature
+      int K;
+      /// Power of current
+      int A;
+      /// Power of moles
+      int mol;
+      /// Power of luminous intensity
+      int cd;
+      /// Value
+      fp_t val;
+      /// Long name
+      std::string name;
+    } der_unit;
+
 #ifndef DOXYGEN_INTERNAL
 
   protected:
@@ -120,31 +147,6 @@ namespace o2scl {
     typedef typename std::map<std::string,unit_t,
                               std::less<std::string> >::const_iterator
     mciter;
-
-    /** \brief Type of a derived unit
-     */
-    typedef struct der_unit_s {
-      /// Unit label
-      std::string label;
-      /// Power of length
-      int m;
-      /// Power of mass
-      int k;
-      /// Power of time
-      int s;
-      /// Power of temperature
-      int K;
-      /// Power of current
-      int A;
-      /// Power of moles
-      int mol;
-      /// Power of luminous intensity
-      int cd;
-      /// Value
-      fp_t val;
-      /// Long name
-      std::string name;
-    } der_unit;
 
     /// Number of SI prefixes
     static const size_t n_prefixes=21;
@@ -1926,61 +1928,6 @@ namespace o2scl {
       return;
     }
     
-    /** \brief Exhaustive test the cache against GNU units
-     */
-    int test_cache() {
-      err_on_fail=false;
-      mciter m, m2;
-      std::cout << "units_cmd_string: " << units_cmd_string << std::endl;
-      for (m=mcache.begin();m!=mcache.end();m++) {
-        for (m2=m;m2!=mcache.end();m2++) {
-          std::string from=m->second.f;
-          std::string to=m2->second.t;
-          if (from!=to) {
-            fp_t v=1.0, c, f1, f2=0.0;
-            int cret=convert_cache(from,to,v,c,f1);
-            if (cret==0) {
-              bool new_conv;
-              int gret=convert_gnu_units(from,to,v,c,f2);
-              if (gret==0) {
-                if (fabs(f1-f2)/f1>1.0e-6) {
-                  std::cout << "* ";
-                } else {
-                  std::cout << "  ";
-                }
-                std::cout.width(10);
-                std::cout << from << " ";
-                std::cout.width(10);
-                std::cout << to << " " << f1 << " " << f2 << " "
-                          << fabs(f1-f2)/f1 << std::endl;
-              }
-            }
-          }
-          to=m2->second.f;
-          if (from!=to) {
-            fp_t v=1.0, c, f1, f2=0.0;
-            int cret=convert_cache(from,to,v,c,f1);
-            if (cret==0) {
-              bool new_conv;
-              int gret=convert_gnu_units(from,to,v,c,f2);
-              if (gret==0) {
-                if (fabs(f1-f2)/f1>1.0e-6) {
-                  std::cout << "* ";
-                } else {
-                  std::cout << "  ";
-                }
-                std::cout.width(10);
-                std::cout << from << " ";
-                std::cout.width(10);
-                std::cout << to << " " << f1 << " " << f2 << " "
-                          << fabs(f1-f2)/f1 << std::endl;
-              }
-            }
-          }
-        }
-      }
-      return 0;
-    }
     //@}
     
   };

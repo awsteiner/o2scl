@@ -1964,77 +1964,7 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
-/*
 int acol_manager::comm_select_rows(std::vector<std::string> &sv, 
-				   bool itive_com) {
-
-  if (type!="table") {
-    cout << "Not implemented for type " << type << endl;
-    return 0;
-  }
-
-  if (table_obj.get_nlines()==0) {
-    cerr << "No table to select rows from." << endl;
-    return exc_efailed;
-  }
-
-  std::string i1;
-  int ret=get_input_one(sv,"Function specify rows",i1,"select-rows",
-			itive_com);
-  if (ret!=0) return ret;
-  
-  // ---------------------------------------------------------------------
-  // Create new table
-  // ---------------------------------------------------------------------
-  
-  table_units<> *new_table=new table_units<>;
-  
-  // ---------------------------------------------------------------------
-  // Copy constants from old to new table
-  // ---------------------------------------------------------------------
-
-  for(size_t i=0;i<table_obj.get_nconsts();i++) {
-    string tnam;
-    double tval;
-    table_obj.get_constant(i,tnam,tval);
-    new_table->add_constant(tnam,tval);
-  }
-  
-  // ---------------------------------------------------------------------
-  // Add column names to new table
-  // ---------------------------------------------------------------------
-
-  for(int i=0;i<((int)table_obj.get_ncolumns());i++) {
-    new_table->new_column(table_obj.get_column_name(i));
-  }
-
-  // ---------------------------------------------------------------------
-  // Copy data from selected rows
-  // ---------------------------------------------------------------------
-
-  int new_lines=0;
-  for(int i=0;i<((int)table_obj.get_nlines());i++) {
-    if (table_obj.row_function(i1,i)>0.5) {
-      // It is important to use set_nlines_auto() here because it
-      // increases the table size fast enough to avoid poor scaling
-      new_table->set_nlines_auto(new_lines+1);
-      for(int j=0;j<((int)table_obj.get_ncolumns());j++) {
-	new_table->set(j,new_lines,table_obj.get(j,i));
-      }
-      new_lines++;
-    }
-  }
-  
-  // Replace the old table with the new one
-  table_obj.clear();
-  table_obj=*new_table;
-  delete new_table;
-
-  return 0;
-}
-*/
-
-int acol_manager::comm_select_rows2(std::vector<std::string> &sv, 
 				    bool itive_com) {
 
   if (type!="table") {
