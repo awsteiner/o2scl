@@ -183,7 +183,15 @@ int acol_manager::comm_convert
 int acol_manager::comm_constant(std::vector<std::string> &sv,
 				bool itive_com) {
 
+  if (verbose>=3) {
+    cout << "Here1." << endl;
+  }
+  
   find_constants &fc=o2scl_settings.get_find_constants();
+
+  if (verbose>=3) {
+    cout << "Here2." << endl;
+  }
 
   if (sv.size()<2) {
     vector<string> pr, in;
@@ -199,6 +207,10 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
     return 0;
   }
   
+  if (verbose>=3) {
+    cout << "Here3" << endl;
+  }
+
   if (sv.size()>=3 && sv[2]!="none" && sv[2]!="None" && sv[1]!="add" &&
       sv[1]!="del") {
     // If a unit was specified, then search for the constant with
@@ -274,10 +286,10 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
     fc.del_constant(sv[2],verbose);
   } else {
     if (verbose>=1) {
-      cout << "constant: Printing constant named " << sv[2]
+      cout << "constant: Printing constant named " << sv[1]
            << " (unit unspecified)" << endl;
     }
-    fc.find_print(sv[2],"",prec,verbose);
+    fc.find_print(sv[1],"",prec,verbose);
   }
 
   return 0;

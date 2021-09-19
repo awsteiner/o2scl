@@ -836,6 +836,133 @@ namespace o2scl {
     //fp_t cd, std::map<std::string, fp_t> &vars,
     //bool test_vars=false) const {
     
+    void get_curr_unit_list(std::vector<std::string> &vs) {
+
+      vs.clear();
+      
+      // SI base units
+      vs.push_back("m");
+      for(size_t i=0;i<n_prefixes;i++) {
+        vs.push_back(prefixes[i]+"m");
+      }
+      vs.push_back("m");
+      for(size_t i=0;i<n_prefixes;i++) {
+        vs.push_back(prefixes[i]+"m");
+      }
+      vs.push_back("g");
+      for(size_t i=0;i<n_prefixes;i++) {
+        vs.push_back(prefixes[i]+"g");
+      }
+      vs.push_back("s");
+      for(size_t i=0;i<n_prefixes;i++) {
+        vs.push_back(prefixes[i]+"s");
+      }
+      vs.push_back("K");
+      for(size_t i=0;i<n_prefixes;i++) {
+        vs.push_back(prefixes[i]+"K");
+      }
+      vs.push_back("A");
+      for(size_t i=0;i<n_prefixes;i++) {
+        vs.push_back(prefixes[i]+"A");
+      }
+      vs.push_back("mol");
+      for(size_t i=0;i<n_prefixes;i++) {
+        vs.push_back(prefixes[i]+"mol");
+      }
+      vs.push_back("cd");
+      for(size_t i=0;i<n_prefixes;i++) {
+        vs.push_back(prefixes[i]+"cd");
+      }
+      for(size_t i=0;i<SI.size();i++) {
+        vs.push_back(SI[i].label);
+        for(size_t j=0;j<n_prefixes;j++) {
+          vs.push_back(prefixes[j]+SI[i].label);
+        }
+      }
+      for(size_t i=0;i<other.size();i++) {
+        vs.push_back(other[i].label);
+      }
+      return;
+    }
+    
+#ifdef O2SCL_NEVER_DEFINED
+    int convert_calc2(std::string from, std::string to,
+                      fp_t val, fp_t &converted,
+                      fp_t &factor) const {
+
+#ifdef O2SCL_CALC_UTF8
+      o2scl::calc_utf8 calc;
+      o2scl::calc_utf8 calc2;
+#else
+      o2scl::calculator calc;
+      o2scl::calculator calc2;
+#endif
+      
+      int cret1=calc.compile_nothrow(from.c_str());
+      if (cret1!=0) return 1;
+      int cret2=calc2.compile_nothrow(to.c_str());
+      if (cret2!=0) return 2;
+      
+#ifdef O2SCL_CALC_UTF8
+      std::vector<std::u32string> vars=calc.get_var_list();
+      std::vector<std::u32string> vars2=calc2.get_var_list();
+
+#else
+
+      // Create "new_units", the list of units which are not
+      // in the current unit list 
+      std::vector<std::string> vars=calc.get_var_list();
+      std::vector<std::string> vars2=calc2.get_var_list();
+      std::vector<std::string> curr, new_units;
+      get_curr_unit_list(curr);
+
+      for(size_t i=0;i<vars.size();i++) {
+        if (std::find(curr.begin(),curr.end(),vars[i])==curr.end() &&
+            std::find(new_units.begin(),new_units.end(),
+                      vars[i])==new_units.end()) {
+          new_units.push_back(vars[i]);
+        }
+      }
+      for(size_t i=0;i<vars2.size();i++) {
+        if (std::find(curr.begin(),curr.end(),vars2[i])==curr.end() &&
+            std::find(new_units.begin(),new_units.end(),
+                      vars2[i])==new_units.end()) {
+          new_units.push_back(vars2[i]);
+        }
+      }
+      
+      find_constants &fc=o2scl_settings.get_find_constants();
+      vector<find_constants_list> matches;
+      for(size_t i=0;i<new_units.size();i++) {
+        int fret=fc.find_nothrow(new_units[i],"mks",matches);
+        if (fret==find_constants::one_exact_match_unit_match ||
+            fret==find_constants::one_pattern_match_unit_match) {
+          der_unit du;
+          find_constants_list &fcl=matches[0];
+          du.label=fcl.new_units[i];
+          du.m=fcl.m;
+          du.k=fcl.k;
+          du.s=fcl.s;
+          du.K=fcl.K;
+          du.A=fcl.A;
+          du.mol=fcl.mol;
+          du.cd=fcl.cd;
+          du.val=fcl.val;
+          du.name=fcl.names[0];
+        } else {
+          return 1;
+        }
+      }
+      
+#endif
+      
+      
+      
+      return 0;
+    }
+    
+#endif
+    
     /** \brief Automatic unit conversion between SI-based units
         with a \ref o2scl::calculator object
     */
