@@ -20,7 +20,11 @@
 
   -------------------------------------------------------------------
 */
+#ifdef O2SCL_REGEX
 #include <regex>
+#else
+#include <fnmatch.h>
+#endif
 
 #include <boost/algorithm/string.hpp>
 
@@ -98,27 +102,27 @@ find_constants::find_constants() {
 	 o2scl_const::hbar_f<double>(o2scl_const::o2scl_cgs),
          "exact; derived from the Planck constant",0,0,0,0,0,0,0},
 	{{"avogadrosnumber","na","avogadro"},
-	 "",0,o2scl_const::avogadro,"exact",0,0,0,0,0,0,0},
+	 "",fc_none,o2scl_const::avogadro,"exact",0,0,0,0,0,0,0},
 	{{"alphaem","finestructure","alpha","αem"},"",0,
 	 o2scl_const::fine_structure,"CODATA 2018",0,0,0,0,0,0,0},
-	{{"pi","π"},"",0,o2scl_const::pi,"exact",0,0,0,0,0,0,0},
-	{{"zeta32","zeta(3/2)","ζ(3/2)"},"",0,o2scl_const::zeta32,
+	{{"pi","π"},"",fc_none,o2scl_const::pi,"exact",0,0,0,0,0,0,0},
+	{{"zeta32","zeta(3/2)","ζ(3/2)"},"",fc_none,o2scl_const::zeta32,
          "exact",0,0,0,0,0,0,0},
-	{{"zeta2","zeta(2)","ζ(2)"},"",0,o2scl_const::zeta2,
+	{{"zeta2","zeta(2)","ζ(2)"},"",fc_none,o2scl_const::zeta2,
          "exact",0,0,0,0,0,0,0},
-	{{"zeta52","zeta(5/2)","ζ(5/2)"},"",0,o2scl_const::zeta52,
+	{{"zeta52","zeta(5/2)","ζ(5/2)"},"",fc_none,o2scl_const::zeta52,
          "exact",0,0,0,0,0,0,0},
-	{{"zeta3","zeta(3)","ζ(3)"},"",0,o2scl_const::zeta3,
+	{{"zeta3","zeta(3)","ζ(3)"},"",fc_none,o2scl_const::zeta3,
          "exact",0,0,0,0,0,0,0},
-	{{"zeta5","zeta(5)","ζ(5)"},"",0,o2scl_const::zeta5,
+	{{"zeta5","zeta(5)","ζ(5)"},"",fc_none,o2scl_const::zeta5,
          "exact",0,0,0,0,0,0,0},
-	{{"zeta7","zeta(7)","ζ(7)"},"",0,o2scl_const::zeta7,
+	{{"zeta7","zeta(7)","ζ(7)"},"",fc_none,o2scl_const::zeta7,
          "exact",0,0,0,0,0,0,0},
-	{{"pi2","pisquared","π²"},"",0,o2scl_const::pi2,
+	{{"pi2","pisquared","π²"},"",fc_none,o2scl_const::pi2,
          "exact",0,0,0,0,0,0,0},
-	{{"rootpi","squarerootpi","√π"},"",0,o2scl_const::root_pi,
+	{{"rootpi","squarerootpi","√π"},"",fc_none,o2scl_const::root_pi,
          "exact",0,0,0,0,0,0,0},
-	{{"sin2thetaw","sin2θW","sin²θW"},"",0,
+	{{"sin2thetaw","sin2θW","sin²θW"},"",fc_none,
          o2scl_const::sin2_theta_weak,"PDG 2020 value",0,0,0,0,0,0,0},
 	{{"gfermi","gf"},"s^4/m^4/kg^2",o2scl_const::o2scl_mks,
 	 o2scl_mks::gfermi,
@@ -366,28 +370,39 @@ find_constants::find_constants() {
 
 }
 
+bool find_constants::unit_match_logic(std::string unit,
+                                      const find_constants_list &f) {
+  if (unit.length()==0 || f.unit_flag==fc_unknown ||
+      (boost::iequals(unit,"mks") &&
+       (f.unit_flag==o2scl_const::o2scl_mks ||
+        f.unit_flag==fc_none)) ||
+      (boost::iequals(unit,"cgs") &&
+       (f.unit_flag==o2scl_const::o2scl_cgs ||
+        f.unit_flag==fc_none)) ||
+      (boost::iequals(unit,"none") && f.unit_flag==fc_none) ||
+      boost::iequals(unit,f.unit) ||
+      boost::iequals(unit,"any")) {
+    return true;
+  }
+  return false;
+}
+                                      
+
 int find_constants::find_nothrow(std::string name, std::string unit,
 				 vector<find_constants_list> &matches,
 				 int verbose) {
   
   o2scl::convert_units<> &cu=o2scl_settings.get_convert_units();
   
-  // Simplify by removing alphanumerics except + and -,
-  // which we need to distinguish between positive and negative
-  // particle masses
   if (verbose>1) {
     std::cout << "find_constants::find_nothrow(): "
 	      << "before simplify: " << name << endl;
   }
+
+  // Remove whitespace and punctuation. We need + and - to distinguish
+  // between positive and negative particle masses.
   remove_ws_punct(name);
-  /*
-    for(size_t i=0;i<name.length();i++) {
-    if (!isalnum(name[i]) && name[i]!='+' && name[i]!='-') {
-    name.erase(i,1);
-    i=0;
-    }
-    }
-  */
+  
   if (verbose>1) {
     std::cout << "find_constants::find_nothrow(): "
 	      << "after simplify: " << name << endl;
@@ -401,7 +416,7 @@ int find_constants::find_nothrow(std::string name, std::string unit,
 
   int match_type=0, match_exact=1, match_pattern=2;
     
-  // Initial pass, exact matches
+  // Initial pass, exact name matches
   for(size_t i=0;i<list.size();i++) {
     for(size_t j=0;j<list[i].names.size();j++) {
       if (verbose>2) {
@@ -413,6 +428,10 @@ int find_constants::find_nothrow(std::string name, std::string unit,
       string temp=list[i].names[j];
       remove_ws_punct(temp);
       if (boost::iequals(name,temp)) {
+        if (verbose>2) {
+          cout << "find_constants::find_nothrow(): Found match."
+               << endl;
+        }
 	indexes.push_back(i);
 	// Now that we've found a match, don't look in the
 	// other names for this list entry
@@ -422,10 +441,23 @@ int find_constants::find_nothrow(std::string name, std::string unit,
     }
   }
 
+#ifdef O2SCL_REGEX    
+  std::regex r(name);
+#else
+  string fn_pat=((string)"*")+name+"*";
+#endif
+  
   if (verbose>1) {
     std::cout << "find_constants::find_nothrow(): "
 	      << "pass 1 indexes: ";
     vector_out(std::cout,indexes,true);
+#ifdef O2SCL_REGEX    
+    std::cout << "find_constants::find_nothrow(): Using regex "
+              << name << std::endl;
+#else
+    std::cout << "find_constants::find_nothrow(): Using fnmatch() "
+              << "with pattern " << fn_pat << std::endl;
+#endif
   }
   
   // No matches, so try wildcard matches
@@ -435,8 +467,11 @@ int find_constants::find_nothrow(std::string name, std::string unit,
       for(size_t j=0;j<list[i].names.size();j++) {
         string temp=list[i].names[j];
         remove_ws_punct(temp);
-        std::regex r(name);
+#ifdef O2SCL_REGEX
         bool fn_ret=std::regex_search(temp,r);
+#else
+        bool fn_ret=(fnmatch(fn_pat.c_str(),temp.c_str(),0)==0);
+#endif
 	if (verbose>2) {
 	  std::cout << "find_constants::find_nothrow(): "
 		    << name << " " << i << " " << j << " "
@@ -475,19 +510,14 @@ int find_constants::find_nothrow(std::string name, std::string unit,
     }
   
     // Unit unspecified or matching
-    if (unit.length()==0 ||
-	(unit=="mks" &&
-	 list[indexes[0]].unit_flag==o2scl_const::o2scl_mks) ||
-	(unit=="cgs" &&
-	 list[indexes[0]].unit_flag==o2scl_const::o2scl_cgs) ||
-	boost::iequals(unit,list[indexes[0]].unit)) {
+    if (unit_match_logic(unit,list[indexes[0]])) {
       if (match_type==match_exact) {
-	return one_exact_match_unit_match;
+        return one_exact_match_unit_match;
       } else {
-	return one_pattern_match_unit_match;
+        return one_pattern_match_unit_match;
       }
     }
-      
+    
     // Try to convert units
     if (unit.length()>0) {
       double val2;
@@ -557,11 +587,7 @@ int find_constants::find_nothrow(std::string name, std::string unit,
 		  << list[indexes[i]].unit << std::endl;
       }
       
-      if ((unit=="cgs" &&
-	   list[indexes[i]].unit_flag==o2scl_const::o2scl_cgs) ||
-	  (unit=="mks" &&
-	   list[indexes[i]].unit_flag==o2scl_const::o2scl_mks) ||
-	  boost::iequals(list[indexes[i]].unit,unit)) {
+      if (unit_match_logic(unit,list[indexes[i]])) {
 	indexes2.push_back(indexes[i]);
 	if (verbose>2) {
 	  std::cout << "find_constants::find_nothrow(): Added."
@@ -704,6 +730,7 @@ double find_constants::find_unique(std::string name, std::string unit) {
 }
 
 void find_constants::output_list(std::ostream &os) {
+  cout << "List.size(): " << list.size() << endl;
   os << "name unit flag value units source" << endl;
   os << "  alternate names" << endl;
   for(size_t i=0;i<list.size();i++) {
@@ -739,8 +766,14 @@ void find_constants::output_list(std::ostream &os) {
   return;
 }
 
-void find_constants::add_constant(const find_constants_list &f) {
+void find_constants::add_constant(const find_constants_list &f,
+                                  int verbose) {
 
+  if (verbose>1) {
+    cout << "find_constants::add_constant() attempting to add constant "
+         << f.names[0] << " with value " << f.val << endl;
+  }
+  
   if (f.names.size()==0) {
     O2SCL_ERR2("No names specified in ",
                "find_constants::add_constant().",o2scl::exc_einval);
@@ -761,12 +794,25 @@ void find_constants::add_constant(const find_constants_list &f) {
     O2SCL_ERR2("Name already found in ",
                "find_constants::add_constant().",o2scl::exc_einval);
   }
-  
+
+  if (verbose>0) {
+    cout << "find_constants::add_constant() adding constant "
+         << f.names[0] << " with value " << f.val << endl;
+  }
+  cout << "List.size(): " << list.size() << endl;
   list.push_back(f);
+  cout << "List.size(): " << list.size() << endl;
+  
   return;
 }
 
-void find_constants::del_constant(std::string &name) {
+void find_constants::del_constant(std::string &name, int verbose) {
+
+  if (verbose>1) {
+    cout << "find_constants::add_constant() attempting to remove "
+         << "constant named " << name << endl;
+  }
+  
   size_t n_matches=0, i_match;
   for(size_t i=0;i<list.size();i++) {
     for(size_t j=0;j<list[i].names.size();j++) {
@@ -779,6 +825,11 @@ void find_constants::del_constant(std::string &name) {
   if (n_matches==1) {
     std::vector<find_constants_list>::iterator it=list.begin();
     it+=i_match;
+    if (verbose>1) {
+      cout << "find_constants::add_constant() Removing "
+           << "constant named " << name << " with value "
+           << it->val << endl;
+    }
     list.erase(it);
     return;
   }

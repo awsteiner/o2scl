@@ -82,11 +82,39 @@ namespace o2scl {
 
     /// Database of constant values
     std::vector<find_constants_list> list;
-  
+
+    /** \brief The function which decides if the requested unit matches
+        the specified list entry
+
+        Units match if 
+        - the unit is unspecified (string of length zero)
+        - the unit is equal to "any" (case-insensitive comparison)
+        - the unit flag for the list entry is fc_unknown
+        - the unit is equal to the list unit (case-insensitive comparison)
+        - the unit is "mks" (case-insensitive comparison) and the unit
+          flag is either o2scl_mks or fc_none
+        - the unit is "cgs" (case-insensitive comparison) and the unit
+          flag is either o2scl_cgs or fc_none
+    */
+    bool unit_match_logic(std::string unit,
+                          const find_constants_list &f);
+    
   public:
   
     find_constants();
 
+    // FYI, from constants.h, we have:
+    
+    //static const size_t o2scl_mks=1;
+    //static const size_t o2scl_cgs=2;
+    
+    /// \name Other possible values of the unit flag
+    //@{
+    static const int fc_unknown=0;
+    static const int fc_none=3;
+    static const int fc_other=4;
+    //@}
+    
     /** \brief Search for constants matching \c name with unit
 	\c unit (possibly empty) and store matches in \c indexes
     */
@@ -111,11 +139,11 @@ namespace o2scl {
 
     /** \brief Add a constant
      */
-    void add_constant(const find_constants_list &f);
+    void add_constant(const find_constants_list &f, int verbose=0);
     
-    /** \brief Add a constant
+    /** \brief Remove a constant
      */
-    void del_constant(std::string &name);
+    void del_constant(std::string &name, int verbose=0);
     
   };
 

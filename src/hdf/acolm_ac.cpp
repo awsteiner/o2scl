@@ -40,16 +40,30 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 int acol_manager::comm_constant(std::vector<std::string> &sv,
 				bool itive_com) {
 
+  find_constants &fc=o2scl_settings.get_find_constants();
+
   if (sv.size()<2) {
     vector<string> pr, in;
     pr.push_back("Name or search pattern");
     pr.push_back("Unit (or 'none' for any)");
     int ret=get_input(sv,pr,in,"constant",itive_com);
     if (ret!=0) return ret;
+    if (verbose>=1) {
+      cout << "constant: Looking up constant " << in[0]
+           << " with unit " << in[1] << endl;
+    }
+    fc.find_print(in[0],in[1],prec,verbose);
+    return 0;
   }
-
-  find_constants fc;
-  if (sv.size()>=3 && sv[2]!="none" && sv[2]!="None") {
+  
+  if (sv.size()>=3 && sv[2]!="none" && sv[2]!="None" && sv[1]!="add" &&
+      sv[1]!="del") {
+    // If a unit was specified, then search for the constant with
+    // the specified unit
+    if (verbose>=1) {
+      cout << "constant: Looking up constant " << sv[1]
+           << " with unit " << sv[2] << endl;
+    }
     fc.find_print(sv[1],sv[2],prec,verbose);
   } else if (sv[1]=="list") {
     cout.precision(prec);
@@ -62,7 +76,7 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
     }
     find_constants::find_constants_list f;
     f.names.push_back(sv[2]);
-    f.source=o2scl::stod(sv[3]);
+    f.val=o2scl::stod(sv[3]);
     if (sv.size()>=5) {
       f.unit=sv[4];
     }
@@ -100,16 +114,27 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
         f.names.push_back(sv[j]);
       }
     }
-    fc.add_constant(f);
+    if (verbose>=1) {
+      cout << "constant: Adding constant named " << sv[2]
+           << " with value " << sv[3] << endl;
+    }
+    fc.add_constant(f,verbose);
   } else if (sv[1]=="del") {
     if (sv.size()==2) {
       cerr << "Argument 'del' given to command 'constant' implies delete "
            << "a constant but no name was given." << endl;
       return 1;
     }
-    fc.del_constant(sv[2]);
+    if (verbose>=1) {
+      cout << "constant: Deleting constant named " << sv[2] << endl;
+    }
+    fc.del_constant(sv[2],verbose);
   } else {
-    fc.find_print(sv[1],"",prec,verbose);
+    if (verbose>=1) {
+      cout << "constant: Printing constant named " << sv[2]
+           << " (unit unspecified)" << endl;
+    }
+    fc.find_print(sv[2],"",prec,verbose);
   }
 
   return 0;
