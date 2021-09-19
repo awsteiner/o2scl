@@ -586,7 +586,7 @@ public:
     p2.init(939.0/hc_mev_fm,2.0);
 
     // Ensure that this works without GNU units
-    o2scl_settings.get_convert_units().use_gnu_units=false;
+
     e.init(o2scl_settings.get_convert_units().convert
 	   ("kg","1/fm",o2scl_mks::mass_electron),2.0);
     mu.init(o2scl_settings.get_convert_units().convert
