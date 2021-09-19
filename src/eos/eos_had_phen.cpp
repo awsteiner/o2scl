@@ -517,9 +517,6 @@ void eos_had_phen::ns_fit(int row) {
 
 eos_had_phen::eos_had_phen() {
 
-  // Ensure that this works without GNU units
-  o2scl_settings.get_convert_units().use_gnu_units=false;
-
   // Nucleon init
   neutron.init(o2scl_settings.get_convert_units().convert
 	       ("kg","1/fm",o2scl_mks::mass_neutron),2.0);

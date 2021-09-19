@@ -29,6 +29,8 @@ h_include <o2scl/convert_units.h>
 h_include <o2scl/lib_settings.h>
 h_include <boost/numeric/ublas/vector.hpp>
 h_include <boost/numeric/ublas/matrix.hpp>
+h_include <o2scl/format_float.h>
+h_include <o2scl/interp_krige.h>
 # 
 # Include statement for C++ source code
 # 
@@ -310,9 +312,9 @@ class std::vector<std::vector<double>>
   - size_t n                             
 - function size
   - size_t
-- function operator[]
-  - std::vector<double> &
-  - size_t n
+#- function operator[]
+#  - std::vector<double> &
+#  - size_t n
 - extra_py |
 | def __len__(self):
 |     """
@@ -340,16 +342,16 @@ class std::complex<double>
 - cons init
   - double re
   - double im    
-- function real
-  - double &
-- function imag
-  - double &
-- function abs
-  - double
-- function arg
-  - double
-- function norm
-  - double
+#- function real
+#  - double &
+#- function imag
+#  - double &
+#- function abs
+#  - double
+#- function arg
+#  - double
+#- function norm
+#  - double
 - extra_py |
 | def to_python(self):
 |     """
@@ -1086,8 +1088,8 @@ class tensor<>
 - function get_size
   - size_t
   - size_t i
-- function get_size_arr
-  - const std::vector<size_t> &
+#- function get_size_arr
+#  - const std::vector<size_t> &
 - function get_data
   - vector<double> &
 - function total_size
@@ -1101,34 +1103,34 @@ class tensor<>
   - out std::vector<size_t> &index
 - function min_value
   - double
-- function min_index
-  - size_t
-- function min
-  - void
-  - out size_t &ix
-  - out double &value    
+#- function min_index
+#  - size_t
+#- function min
+#  - void
+#  - out size_t &ix
+#  - out double &value    
 - function max_value
   - double
-- function max_index
-  - size_t
-- function max
-  - void
-  - out size_t &ix
-  - out double &value    
+#- function max_index
+#  - size_t
+#- function max
+#  - void
+#  - out size_t &ix
+#  - out double &value    
 - function minmax_value
   - void
   - out double &min
   - out double &max
-- function minmax_index
-  - void
-  - out size_t &min
-  - out size_t &max
-- function minmax
-  - void
-  - out size_t &min_ix
-  - out double &min_value    
-  - out size_t &max_ix
-  - out double &max_value    
+#- function minmax_index
+#  - void
+#  - out size_t &min
+#  - out size_t &max
+#- function minmax
+#  - void
+#  - out size_t &min_ix
+#  - out double &min_value    
+#  - out size_t &max_ix
+#  - out double &max_value    
 - function total_sum
   - double
 - function convert_table3d_sum
@@ -1261,8 +1263,8 @@ class tensor<int,std::vector<int>>
 - function get_size
   - size_t
   - size_t i
-- function get_data
-  - vector<int> &
+#- function get_data
+#  - vector<int> &
 - function total_size
   - size_t
 - function min_value
@@ -1352,8 +1354,8 @@ class tensor<size_t,std::vector<size_t>>
 - function get_size
   - size_t
   - size_t i
-- function get_data
-  - vector<size_t> &
+#- function get_data
+#  - vector<size_t> &
 - function total_size
   - size_t
 - function min_value
@@ -1441,16 +1443,14 @@ class convert_units<>
   - double val
   - double converted
 - int verbose
-- bool use_gnu_units
 - bool err_on_fail
 - bool combine_two_conv
-- std::string units_cmd_string
 - function print_cache
   - void
 #
 # Class columnify
 #
-class columnify
+#class columnify
 # - const int align_left
 # - const int align_right
 # - const int align_lmid
@@ -1530,28 +1530,28 @@ class interp<std::vector<double>>
 # Class interp_vec
 #
 class interp_vec<std::vector<double>>
-- cons interp_vec_pre
-  - size_t n
-  - std::vector<double> &x
-  - std::vector<double> &y
-  - int interp_type
-- function set
-  - void
-  - size_t n
-  - std::vector<double> &x
-  - std::vector<double> &x
-  - int interp_type
+#- cons interp_vec_pre
+#  - size_t n
+#  - std::vector<double> &x
+#  - std::vector<double> &y
+#  - int interp_type
+#- function set
+#  - void
+#  - size_t n
+#  - std::vector<double> &x
+#  - std::vector<double> &x
+#  - int interp_type
 - function clear
   - void
-- function eval
-  - double x0
-- function deriv
-  - double x0
-- function deriv2
-  - double x0
-- function integ
-  - double x1
-  - double x2
+#- function eval
+#  - double x0
+#- function deriv
+#  - double x0
+#- function deriv2
+#  - double x0
+#- function integ
+#  - double x1
+#  - double x2
 #
 # Class interp_krige_optim
 #
@@ -1568,13 +1568,13 @@ class interp_krige_optim<std::vector<double>>
   - double noise_var
   - bool rescale [false]
   - bool err_on_fail [true]    
-- function set
-  - int
-  - size_t size
-  - io const std::vector<double> &x
-  - io const std::vector<double> &y
-  - bool rescale
-  - bool err_on_fail [true]
+#- function set
+#  - int
+#  - size_t size
+#  - io const std::vector<double> &x
+#  - io const std::vector<double> &y
+#  - bool rescale
+#  - bool err_on_fail [true]
 - function eval
   - double
   - double x0
@@ -1589,7 +1589,7 @@ class interp_krige_optim<std::vector<double>>
   - double x0
 - function sample
   - double
-  - doutle x0
+  - double x0
 - function sample_vec
   - void
   - io std::vector<double> &x
@@ -1644,161 +1644,152 @@ function vector_level_count<std::vector<double>,std::vector<double>>
 - size_t n
 - std::vector<double> &x
 - std::vector<double> &y
-function vector_deriv_interp<std::vector<double>,std::vector<double>>
-- void
-- py_name vector_deriv_interp  
-- io std::vector &v
-- out std::vector &dv
-- size_t interp_type [2]
-function vector_deriv2_interp<std::vector<double>,std::vector<double>>
-- void
-- py_name vector_deriv2_interp  
-- io std::vector &v
-- out std::vector &dv
-- size_t interp_type [2]
-function vector_deriv_xy_interp<std::vector<double>,std::vector<double>,std::vector<double>>
-- void
-- py_name vector_deriv_xy_interp  
-- io std::vector &vx
-- io std::vector &vy
-- out std::vector &dv
-- size_t interp_type [2]
-function vector_deriv2_xy_interp<std::vector<double>,std::vector<double>,std::vector<double>>
-- void
-- py_name vector_deriv2_xy_interp  
-- io std::vector &vx
-- io std::vector &vy
-- out std::vector &dv
-- size_t interp_type [2]
-function vector_integ_interp<std::vector<double>>
-- double
-- py_name vector_integ_interp  
-- io std::vector &vx
-- io std::vector &vy
-- size_t interp_type [2]
-function vector_integ_xy_interp<std::vector<double>,std::vector<double>>
-- double
-- py_name vector_integ_xy_interp  
-- io std::vector &vx
-- io std::vector &vy
-- size_t interp_type [2]
-function vector_integ_ul_interp<std::vector<double>,std::vector<double>>
-- double
-- py_name vector_integ_xy_interp  
-- io std::vector &vx
-- io std::vector &vy
-- size_t interp_type [2]
-function vector_integ_ul_xy_interp<std::vector<double>,std::vector<double>>
-- double
-- py_name vector_integ_xy_interp  
-- io std::vector &vx
-- io std::vector &vy
-- size_t interp_type [2]
-function vector_find_level<std::vector<double>,std::vector<double>>
-- void
-- py_name vector_find_level
-- double level
-- size_t n
-- io std::vector<double> &x
-- io std::vector<double> &y
-- out std::vector<double> &locs
-function vector_invert_enclosed_sum<std::vector<double>,std::vector<double>>
-- void
-- py_name vector_invert_enclosed_sum
-- double sum
-- size_t n
-- io std::vector<double> &x
-- io std::vector<double> &y
-- out double &lev
-- int boundaries [0]
-- int verbose [0]
-- bool err_on_fail [true]
-function vector_region_int<std::vector<double>,std::vector<double>>
-- int
-- py_name vector_region_int  
-- size_t n
-- io std::vector<double> &x
-- io std::vector<double> &y
-- double intl
-- out std::vector<double> &locs
-- int boundaries [0]
-- int verbose [0]
-- bool err_on_fail [true]
-function vector_region_fracint<std::vector<double>,std::vector<double>>
-- int
-- py_name vector_region_fracint  
-- size_t n
-- io std::vector<double> &x
-- io std::vector<double> &y
-- double intl
-- out std::vector<double> &locs
-- int boundaries [0]
-- int verbose [0]
-- bool err_on_fail [true]
-function vector_bound_fracint<std::vector<double>,std::vector<double>>
-- int
-- py_name vector_bound_fracint  
-- size_t n
-- io std::vector<double> &x
-- io std::vector<double> &y
-- double intl
-- out std::vector<double> &locs
-- int boundaries [0]
-- int verbose [0]
-- bool err_on_fail [true]
-function vector_bound_int<std::vector<double>,std::vector<double>>
-- int
-- py_name vector_bound_int  
-- size_t n
-- io std::vector<double> &x
-- io std::vector<double> &y
-- double intl
-- out std::vector<double> &locs
-- int boundaries [0]
-- int verbose [0]
-- bool err_on_fail [true]
-function rebin_xy<std::vector<double>,std::vector<double>,std::vector<double>,std::vector<double>>
-- void
-- py_name rebin_xy
-- io std::vector<double> &x
-- io std::vector<double> &y
-- out std::vector<double> &x_out
-- out std::vector<double> &y_out
-- size_t n_pts
-- size_t interp_type
-function rebin_xy<std::vector<double>,std::vector<double>,std::vector<double>,std::vector<double>>
-- void
-- py_name rebin_xy
-- io std::vector<double> &x
-- io std::vector<double> &y
-- out std::vector<double> &x_out
-- out std::vector<double> &y_out
-- size_t n_pts
-- size_t interp_type
-function linear_or_log_chi2<std::vector<double>,std::vector<double>>
-- double
-- py_name linear_or_log_chi2
-- io std::vector<double> &x
-- io std::vector<double> &y
-function linear_or_log<std::vector<double>,std::vector<double>>
-- double
-- py_name linear_or_log_pair
-- io std::vector<double> &x
-- io std::vector<double> &y
-- out bool &log_x
-- out bool &log_y
-function vector_refine<std::vector<double>,std::vector<double>,double>
-- void
-- py_name vector_refine
-- size_t n
-- std::vector<double> &index
-- std::vector<double> &data
-- size_t factor
-- size_t interp_type [2]
-function linear_or_log<std::vector<double>>
-- double
-- py_name linear_or_log
-- io std::vector<double> &x
-- out bool &log_x
+#function vector_deriv_interp<std::vector<double>,std::vector<double>>
+#- void
+#- py_name vector_deriv_interp  
+#- io std::vector &v
+#- out std::vector &dv
+#- size_t interp_type [2]
+#function vector_deriv2_interp<std::vector<double>,std::vector<double>>
+#- void
+#- py_name vector_deriv2_interp  
+#- io std::vector &v
+#- out std::vector &dv
+#- size_t interp_type [2]
+#function vector_deriv_xy_interp<std::vector<double>,std::vector<double>,std::vector<double>>
+#- void
+#- py_name vector_deriv_xy_interp  
+#- io std::vector &vx
+#- io std::vector &vy
+#- out std::vector &dv
+#- size_t interp_type [2]
+#function vector_deriv2_xy_interp<std::vector<double>,std::vector<double>,std::vector<double>>
+#- void
+#- py_name vector_deriv2_xy_interp  
+#- io std::vector &vx
+#- io std::vector &vy
+#- out std::vector &dv
+#- size_t interp_type [2]
+#function vector_integ_interp<std::vector<double>>
+#- double
+#- py_name vector_integ_interp  
+#- io std::vector &vx
+#- io std::vector &vy
+#- size_t interp_type [2]
+#function vector_integ_xy_interp<std::vector<double>,std::vector<double>>
+#- double
+#- py_name vector_integ_xy_interp  
+#- io std::vector &vx
+#- io std::vector &vy
+#- size_t interp_type [2]
+#function vector_integ_ul_interp<std::vector<double>,std::vector<double>>
+#- double
+#- py_name vector_integ_xy_interp  
+#- io std::vector &vx
+#- io std::vector &vy
+#- size_t interp_type [2]
+#function vector_integ_ul_xy_interp<std::vector<double>,std::vector<double>>
+#- double
+#- py_name vector_integ_xy_interp  
+#- io std::vector &vx
+#- io std::vector &vy
+#- size_t interp_type [2]
+#function vector_find_level<std::vector<double>,std::vector<double>>
+#- void
+#- py_name vector_find_level
+#- double level
+#- size_t n
+#- io std::vector<double> &x
+#- io std::vector<double> &y
+#- out std::vector<double> &locs
+#function vector_invert_enclosed_sum<std::vector<double>,std::vector<double>>
+#- void
+#- py_name vector_invert_enclosed_sum
+#- double sum
+#- size_t n
+#- io std::vector<double> &x
+#- io std::vector<double> &y
+#- out double &lev
+#- int boundaries [0]
+#- int verbose [0]
+#- bool err_on_fail [true]
+#function vector_region_int<std::vector<double>,std::vector<double>>
+#- int
+#- py_name vector_region_int  
+#- size_t n
+#- io std::vector<double> &x
+#- io std::vector<double> &y
+#- double intl
+#- out std::vector<double> &locs
+#- int boundaries [0]
+#- int verbose [0]
+#- bool err_on_fail [true]
+#function vector_region_fracint<std::vector<double>,std::vector<double>>
+#- int
+#- py_name vector_region_fracint  
+#- size_t n
+#- io std::vector<double> &x
+#- io std::vector<double> &y
+#- double intl
+#- out std::vector<double> &locs
+#- int boundaries [0]
+#- int verbose [0]
+#- bool err_on_fail [true]
+#function vector_bound_fracint<std::vector<double>,std::vector<double>>
+#- int
+#- py_name vector_bound_fracint  
+#- size_t n
+#- io std::vector<double> &x
+#- io std::vector<double> &y
+#- double intl
+#- out std::vector<double> &locs
+#- int boundaries [0]
+#- int verbose [0]
+#- bool err_on_fail [true]
+#function vector_bound_int<std::vector<double>,std::vector<double>>
+#- int
+#- py_name vector_bound_int  
+#- size_t n
+#- io std::vector<double> &x
+#- io std::vector<double> &y
+#- double intl
+#- out std::vector<double> &locs
+#- int boundaries [0]
+#- int verbose [0]
+#- bool err_on_fail [true]
+#function rebin_xy<std::vector<double>,std::vector<double>,std::vector<double>,std::vector<double>>
+#- void
+#- py_name rebin_xy
+#- io std::vector<double> &x
+#- io std::vector<double> &y
+#- out std::vector<double> &x_out
+#- out std::vector<double> &y_out
+#- size_t n_pts
+#- size_t interp_type
+#function linear_or_log_chi2<std::vector<double>,std::vector<double>>
+#- double
+#- py_name linear_or_log_chi2
+#- io std::vector<double> &x
+#- io std::vector<double> &y
+#function linear_or_log<std::vector<double>,std::vector<double>>
+#- double
+#- py_name linear_or_log_pair
+#- io std::vector<double> &x
+#- io std::vector<double> &y
+#- out bool &log_x
+#- out bool &log_y
+#function vector_refine<std::vector<double>,std::vector<double>,double>
+#- void
+#- py_name vector_refine
+#- size_t n
+#- std::vector<double> &index
+#- std::vector<double> &data
+#- size_t factor
+#- size_t interp_type [2]
+#function linear_or_log<std::vector<double>>
+#- double
+#- py_name linear_or_log
+#- io std::vector<double> &x
+#- out bool &log_x
 
 

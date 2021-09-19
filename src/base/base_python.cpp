@@ -277,6 +277,86 @@ void o2scl_boost__numeric__ublas__matrix_double__setitem(void *vptr, size_t i, s
   return;
 }
 
+void *o2scl_create_boost__numeric__ublas__matrix_int_() {
+  boost::numeric::ublas::matrix<int> *ptr=new boost::numeric::ublas::matrix<int>;
+  return ptr;
+}
+
+void o2scl_free_boost__numeric__ublas__matrix_int_(void *vptr) {
+  boost::numeric::ublas::matrix<int> *ptr=(boost::numeric::ublas::matrix<int> *)vptr;
+  delete ptr;
+  return;
+}
+
+size_t o2scl_boost__numeric__ublas__matrix_int__size1(void *vptr) {
+  boost::numeric::ublas::matrix<int> *ptr=(boost::numeric::ublas::matrix<int> *)vptr;
+  size_t ret=ptr->size1();
+  return ret;
+}
+
+size_t o2scl_boost__numeric__ublas__matrix_int__size2(void *vptr) {
+  boost::numeric::ublas::matrix<int> *ptr=(boost::numeric::ublas::matrix<int> *)vptr;
+  size_t ret=ptr->size2();
+  return ret;
+}
+
+void o2scl_boost__numeric__ublas__matrix_int__resize(void *vptr, size_t m, size_t n) {
+  boost::numeric::ublas::matrix<int> *ptr=(boost::numeric::ublas::matrix<int> *)vptr;
+  ptr->resize(m,n);
+  return;
+}
+
+int o2scl_boost__numeric__ublas__matrix_int__getitem(void *vptr, size_t m, size_t n) {
+  boost::numeric::ublas::matrix<int> *ptr=(boost::numeric::ublas::matrix<int> *)vptr;
+  int ret=ptr->operator()(m,n);
+  return ret;
+}
+
+void o2scl_boost__numeric__ublas__matrix_int__setitem(void *vptr, size_t i, size_t j, int val) {
+  boost::numeric::ublas::matrix<int> *ptr=(boost::numeric::ublas::matrix<int> *)vptr;
+  (*ptr)(i,j)=val;
+  return;
+}
+
+void *o2scl_create_std__vector_std__vector_double__() {
+  std::vector<std::vector<double>> *ptr=new std::vector<std::vector<double>>;
+  return ptr;
+}
+
+void o2scl_free_std__vector_std__vector_double__(void *vptr) {
+  std::vector<std::vector<double>> *ptr=(std::vector<std::vector<double>> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_std__vector_std__vector_double___resize(void *vptr, size_t n) {
+  std::vector<std::vector<double>> *ptr=(std::vector<std::vector<double>> *)vptr;
+  ptr->resize(n);
+  return;
+}
+
+size_t o2scl_std__vector_std__vector_double___size(void *vptr) {
+  std::vector<std::vector<double>> *ptr=(std::vector<std::vector<double>> *)vptr;
+  size_t ret=ptr->size();
+  return ret;
+}
+
+void *o2scl_create_std__complex_double_() {
+  std::complex<double> *ptr=new std::complex<double>;
+  return ptr;
+}
+
+void o2scl_free_std__complex_double_(void *vptr) {
+  std::complex<double> *ptr=(std::complex<double> *)vptr;
+  delete ptr;
+  return;
+}
+
+void *o2scl_std__complex_double__init(double re, double im) {
+  std::complex<double> *ptr=new std::complex<double>(re,im);
+  return ptr;
+}
+
 void *o2scl_create_lib_settings_class() {
   lib_settings_class *ptr=new lib_settings_class;
   return ptr;
@@ -1426,6 +1506,13 @@ void o2scl_tensor___set_all(void *vptr, double x) {
   return;
 }
 
+void o2scl_tensor___swap_data(void *vptr, void *ptr_data) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  std::vector<double> *data=(std::vector<double> *)ptr_data;
+  ptr->swap_data(*data);
+  return;
+}
+
 double o2scl_tensor___get(void *vptr, void *ptr_index) {
   tensor<> *ptr=(tensor<> *)vptr;
   vector<size_t> *index=(vector<size_t> *)ptr_index;
@@ -1466,6 +1553,20 @@ size_t o2scl_tensor___total_size(void *vptr) {
   return ret;
 }
 
+size_t o2scl_tensor___pack_indices(void *vptr, void *ptr_index) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
+  size_t ret=ptr->pack_indices(*index);
+  return ret;
+}
+
+void o2scl_tensor___unpack_index(void *vptr, size_t ix, void *ptr_index) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
+  ptr->unpack_index(ix,*index);
+  return;
+}
+
 double o2scl_tensor___min_value(void *vptr) {
   tensor<> *ptr=(tensor<> *)vptr;
   double ret=ptr->min_value();
@@ -1478,10 +1579,23 @@ double o2scl_tensor___max_value(void *vptr) {
   return ret;
 }
 
+void o2scl_tensor___minmax_value(void *vptr, double *min, double *max) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  ptr->minmax_value(*min,*max);
+  return;
+}
+
 double o2scl_tensor___total_sum(void *vptr) {
   tensor<> *ptr=(tensor<> *)vptr;
   double ret=ptr->total_sum();
   return ret;
+}
+
+void o2scl_tensor___convert_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  table3d *tab=(table3d *)ptr_tab;
+  ptr->convert_table3d_sum(ix_x,ix_y,*tab,x_name,y_name,slice_name);
+  return;
 }
 
 void *o2scl_tensor___create_size(size_t rank, void *ptr_sizes) {
@@ -1565,6 +1679,202 @@ void o2scl_tensor_grid___set_grid(void *vptr, size_t i, size_t j, double val) {
   return;
 }
 
+void *o2scl_create_tensor_int_std__vector_int__() {
+  tensor<int,std::vector<int>> *ptr=new tensor<int,std::vector<int>>;
+  return ptr;
+}
+
+void o2scl_free_tensor_int_std__vector_int__(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_copy_tensor_int_std__vector_int__(void *vsrc, void *vdest) {
+  tensor<int,std::vector<int>> *src=(tensor<int,std::vector<int>> *)vsrc;
+  tensor<int,std::vector<int>> *dest=(tensor<int,std::vector<int>> *)vdest;
+  *dest=*src;
+}
+
+void o2scl_tensor_int_std__vector_int___is_valid(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  ptr->is_valid();
+  return;
+}
+
+void o2scl_tensor_int_std__vector_int___clear(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  ptr->clear();
+  return;
+}
+
+void o2scl_tensor_int_std__vector_int___set(void *vptr, void *ptr_index, int val) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  vector<size_t> *index=(vector<size_t> *)ptr_index;
+  ptr->set(*index,val);
+  return;
+}
+
+void o2scl_tensor_int_std__vector_int___set_all(void *vptr, int x) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  ptr->set_all(x);
+  return;
+}
+
+int o2scl_tensor_int_std__vector_int___get(void *vptr, void *ptr_index) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  vector<size_t> *index=(vector<size_t> *)ptr_index;
+  int ret=ptr->get(*index);
+  return ret;
+}
+
+void o2scl_tensor_int_std__vector_int___resize(void *vptr, size_t n, void *ptr_index) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  vector<size_t> *index=(vector<size_t> *)ptr_index;
+  ptr->resize(n,*index);
+  return;
+}
+
+size_t o2scl_tensor_int_std__vector_int___get_rank(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  size_t ret=ptr->get_rank();
+  return ret;
+}
+
+size_t o2scl_tensor_int_std__vector_int___get_size(void *vptr, size_t i) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  size_t ret=ptr->get_size(i);
+  return ret;
+}
+
+size_t o2scl_tensor_int_std__vector_int___total_size(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  size_t ret=ptr->total_size();
+  return ret;
+}
+
+int o2scl_tensor_int_std__vector_int___min_value(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  int ret=ptr->min_value();
+  return ret;
+}
+
+int o2scl_tensor_int_std__vector_int___max_value(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  int ret=ptr->max_value();
+  return ret;
+}
+
+int o2scl_tensor_int_std__vector_int___total_sum(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  int ret=ptr->total_sum();
+  return ret;
+}
+
+void *o2scl_tensor_int_std__vector_int___create_size(size_t rank, void *ptr_sizes) {
+  std::vector<size_t> *sizes=(std::vector<size_t> *)ptr_sizes;
+  tensor<int,std::vector<int>> *ptr=new tensor<int,std::vector<int>>(rank,*sizes);
+  return ptr;
+}
+
+void *o2scl_create_tensor_size_t_std__vector_size_t__() {
+  tensor<size_t,std::vector<size_t>> *ptr=new tensor<size_t,std::vector<size_t>>;
+  return ptr;
+}
+
+void o2scl_free_tensor_size_t_std__vector_size_t__(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_copy_tensor_size_t_std__vector_size_t__(void *vsrc, void *vdest) {
+  tensor<size_t,std::vector<size_t>> *src=(tensor<size_t,std::vector<size_t>> *)vsrc;
+  tensor<size_t,std::vector<size_t>> *dest=(tensor<size_t,std::vector<size_t>> *)vdest;
+  *dest=*src;
+}
+
+void o2scl_tensor_size_t_std__vector_size_t___is_valid(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  ptr->is_valid();
+  return;
+}
+
+void o2scl_tensor_size_t_std__vector_size_t___clear(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  ptr->clear();
+  return;
+}
+
+void o2scl_tensor_size_t_std__vector_size_t___set(void *vptr, void *ptr_index, size_t val) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  vector<size_t> *index=(vector<size_t> *)ptr_index;
+  ptr->set(*index,val);
+  return;
+}
+
+void o2scl_tensor_size_t_std__vector_size_t___set_all(void *vptr, size_t x) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  ptr->set_all(x);
+  return;
+}
+
+int o2scl_tensor_size_t_std__vector_size_t___get(void *vptr, void *ptr_index) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  vector<size_t> *index=(vector<size_t> *)ptr_index;
+  int ret=ptr->get(*index);
+  return ret;
+}
+
+void o2scl_tensor_size_t_std__vector_size_t___resize(void *vptr, size_t n, void *ptr_index) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  vector<size_t> *index=(vector<size_t> *)ptr_index;
+  ptr->resize(n,*index);
+  return;
+}
+
+size_t o2scl_tensor_size_t_std__vector_size_t___get_rank(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  size_t ret=ptr->get_rank();
+  return ret;
+}
+
+size_t o2scl_tensor_size_t_std__vector_size_t___get_size(void *vptr, size_t i) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  size_t ret=ptr->get_size(i);
+  return ret;
+}
+
+size_t o2scl_tensor_size_t_std__vector_size_t___total_size(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  size_t ret=ptr->total_size();
+  return ret;
+}
+
+size_t o2scl_tensor_size_t_std__vector_size_t___min_value(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  size_t ret=ptr->min_value();
+  return ret;
+}
+
+size_t o2scl_tensor_size_t_std__vector_size_t___max_value(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  size_t ret=ptr->max_value();
+  return ret;
+}
+
+size_t o2scl_tensor_size_t_std__vector_size_t___total_sum(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  size_t ret=ptr->total_sum();
+  return ret;
+}
+
+void *o2scl_tensor_size_t_std__vector_size_t___create_size(size_t rank, void *ptr_sizes) {
+  std::vector<size_t> *sizes=(std::vector<size_t> *)ptr_sizes;
+  tensor<size_t,std::vector<size_t>> *ptr=new tensor<size_t,std::vector<size_t>>(rank,*sizes);
+  return ptr;
+}
+
 void *o2scl_create_find_constants() {
   find_constants *ptr=new find_constants;
   return ptr;
@@ -1610,17 +1920,6 @@ void o2scl_convert_units___set_verbose(void *vptr, int v) {
   return;
 }
 
-bool o2scl_convert_units___get_use_gnu_units(void *vptr) {
-  convert_units<> *ptr=(convert_units<> *)vptr;
-  return ptr->use_gnu_units;
-}
-
-void o2scl_convert_units___set_use_gnu_units(void *vptr, bool v) {
-  convert_units<> *ptr=(convert_units<> *)vptr;
-  ptr->use_gnu_units=v;
-  return;
-}
-
 bool o2scl_convert_units___get_err_on_fail(void *vptr) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   return ptr->err_on_fail;
@@ -1643,20 +1942,6 @@ void o2scl_convert_units___set_combine_two_conv(void *vptr, bool v) {
   return;
 }
 
-void *o2scl_convert_units___get_units_cmd_string(void *vptr) {
-  convert_units<> *ptr=(convert_units<> *)vptr;
-  std::string *sptr=new std::string;
-  *sptr=ptr->units_cmd_string;
-  return sptr;
-}
-
-void o2scl_convert_units___set_units_cmd_string(void *vptr, void *p_v) {
-  convert_units<> *ptr=(convert_units<> *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->units_cmd_string=*(p_t);
-  return;
-}
-
 double o2scl_convert_units___convert(void *vptr, char *frm, char *to, double val) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   double ret=ptr->convert(frm,to,val);
@@ -1672,6 +1957,239 @@ int o2scl_convert_units___convert_ret(void *vptr, char *frm, char *to, double va
 void o2scl_convert_units___print_cache(void *vptr) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   ptr->print_cache();
+  return;
+}
+
+void *o2scl_create_format_float() {
+  format_float *ptr=new format_float;
+  return ptr;
+}
+
+void o2scl_free_format_float(void *vptr) {
+  format_float *ptr=(format_float *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_format_float_set_sig_figs(void *vptr, size_t sig_figs) {
+  format_float *ptr=(format_float *)vptr;
+  ptr->set_sig_figs(sig_figs);
+  return;
+}
+
+void o2scl_format_float_set_exp_limits(void *vptr, int min, int max) {
+  format_float *ptr=(format_float *)vptr;
+  ptr->set_exp_limits(min,max);
+  return;
+}
+
+void o2scl_format_float_set_pad_zeros(void *vptr, bool pad) {
+  format_float *ptr=(format_float *)vptr;
+  ptr->set_pad_zeros(pad);
+  return;
+}
+
+void o2scl_format_float_set_dec_point(void *vptr, char *dec_point) {
+  format_float *ptr=(format_float *)vptr;
+  ptr->set_dec_point(dec_point);
+  return;
+}
+
+void o2scl_format_float_set_exp_digits(void *vptr, int d) {
+  format_float *ptr=(format_float *)vptr;
+  ptr->set_exp_digits(d);
+  return;
+}
+
+void o2scl_format_float_html_mode(void *vptr) {
+  format_float *ptr=(format_float *)vptr;
+  ptr->html_mode();
+  return;
+}
+
+void o2scl_format_float_latex_mode(void *vptr) {
+  format_float *ptr=(format_float *)vptr;
+  ptr->latex_mode();
+  return;
+}
+
+void o2scl_format_float_c_mode(void *vptr) {
+  format_float *ptr=(format_float *)vptr;
+  ptr->c_mode();
+  return;
+}
+
+void *o2scl_format_float_convert(void *vptr, double x, bool debug) {
+  format_float *ptr=(format_float *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->convert(x,debug);
+  return sptr;
+}
+
+void *o2scl_create_interp_std__vector_double__() {
+  interp<std::vector<double>> *ptr=new interp<std::vector<double>>;
+  return ptr;
+}
+
+void o2scl_free_interp_std__vector_double__(void *vptr) {
+  interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
+  delete ptr;
+  return;
+}
+
+double o2scl_interp_std__vector_double___eval(void *vptr, double x0, size_t n, void *ptr_x, void *ptr_y) {
+  interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  double ret=ptr->eval(x0,n,*x,*y);
+  return ret;
+}
+
+double o2scl_interp_std__vector_double___deriv(void *vptr, double x0, size_t n, void *ptr_x, void *ptr_y) {
+  interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  double ret=ptr->deriv(x0,n,*x,*y);
+  return ret;
+}
+
+double o2scl_interp_std__vector_double___deriv2(void *vptr, double x0, size_t n, void *ptr_x, void *ptr_y) {
+  interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  double ret=ptr->deriv2(x0,n,*x,*y);
+  return ret;
+}
+
+double o2scl_interp_std__vector_double___integ(void *vptr, double x1, double x2, size_t n, void *ptr_x, void *ptr_y) {
+  interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  double ret=ptr->integ(x1,x2,n,*x,*y);
+  return ret;
+}
+
+void o2scl_interp_std__vector_double___set_type(void *vptr, int interp_type) {
+  interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
+  ptr->set_type(interp_type);
+  return;
+}
+
+void *o2scl_create_interp_vec_std__vector_double__() {
+  interp_vec<std::vector<double>> *ptr=new interp_vec<std::vector<double>>;
+  return ptr;
+}
+
+void o2scl_free_interp_vec_std__vector_double__(void *vptr) {
+  interp_vec<std::vector<double>> *ptr=(interp_vec<std::vector<double>> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_interp_vec_std__vector_double___clear(void *vptr) {
+  interp_vec<std::vector<double>> *ptr=(interp_vec<std::vector<double>> *)vptr;
+  ptr->clear();
+  return;
+}
+
+void *o2scl_create_interp_krige_optim_std__vector_double__() {
+  interp_krige_optim<std::vector<double>> *ptr=new interp_krige_optim<std::vector<double>>;
+  return ptr;
+}
+
+void o2scl_free_interp_krige_optim_std__vector_double__(void *vptr) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  delete ptr;
+  return;
+}
+
+int o2scl_interp_krige_optim_std__vector_double___get_verbose(void *vptr) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  return ptr->verbose;
+}
+
+void o2scl_interp_krige_optim_std__vector_double___set_verbose(void *vptr, int v) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  ptr->verbose=v;
+  return;
+}
+
+size_t o2scl_interp_krige_optim_std__vector_double___get_mode(void *vptr) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  return ptr->mode;
+}
+
+void o2scl_interp_krige_optim_std__vector_double___set_mode(void *vptr, size_t v) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  ptr->mode=v;
+  return;
+}
+
+size_t o2scl_interp_krige_optim_std__vector_double___get_nlen(void *vptr) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  return ptr->nlen;
+}
+
+void o2scl_interp_krige_optim_std__vector_double___set_nlen(void *vptr, size_t v) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  ptr->nlen=v;
+  return;
+}
+
+bool o2scl_interp_krige_optim_std__vector_double___get_full_min(void *vptr) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  return ptr->full_min;
+}
+
+void o2scl_interp_krige_optim_std__vector_double___set_full_min(void *vptr, bool v) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  ptr->full_min=v;
+  return;
+}
+
+int o2scl_interp_krige_optim_std__vector_double___set_noise(void *vptr, size_t size, void *ptr_x, void *ptr_y, double noise_var, bool rescale, bool err_on_fail) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  int ret=ptr->set_noise(size,*x,*y,noise_var,rescale,err_on_fail);
+  return ret;
+}
+
+double o2scl_interp_krige_optim_std__vector_double___eval(void *vptr, double x0) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  double ret=ptr->eval(x0);
+  return ret;
+}
+
+double o2scl_interp_krige_optim_std__vector_double___deriv(void *vptr, double x0) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  double ret=ptr->deriv(x0);
+  return ret;
+}
+
+double o2scl_interp_krige_optim_std__vector_double___deriv2(void *vptr, double x0) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  double ret=ptr->deriv2(x0);
+  return ret;
+}
+
+double o2scl_interp_krige_optim_std__vector_double___sigma(void *vptr, double x0) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  double ret=ptr->sigma(x0);
+  return ret;
+}
+
+double o2scl_interp_krige_optim_std__vector_double___sample(void *vptr, double x0) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  double ret=ptr->sample(x0);
+  return ret;
+}
+
+void o2scl_interp_krige_optim_std__vector_double___sample_vec(void *vptr, void *ptr_x, void *ptr_y) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  ptr->sample_vec(*x,*y);
   return;
 }
 
@@ -1770,5 +2288,12 @@ void o2scl_screenify_vector_std__string___wrapper(size_t nin, void *ptr_in_cols,
   vector<std::string> *out_cols=(vector<std::string> *)ptr_out_cols;
   screenify<vector<std::string>>(nin,*in_cols,*out_cols,max_size);
   return;
+}
+
+size_t o2scl_vector_level_count_std__vector_double__std__vector_double___wrapper(double level, size_t n, void *ptr_x, void *ptr_y) {
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  size_t ret=vector_level_count<std::vector<double>,std::vector<double>>(level,n,*x,*y);
+  return ret;
 }
 

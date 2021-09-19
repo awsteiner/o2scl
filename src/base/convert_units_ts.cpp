@@ -38,8 +38,6 @@ int main(int argc, char *argv[]) {
   if (argc>=2 && ((string)argv[1])==((string)"test-cache")) {
     // An exhaustive check not intended for the end-user
     convert_units<double> &cu=o2scl_settings.get_convert_units();
-    //cu.units_cmd_string=((std::string)"units -f /home/awsteiner")+
-    ///wcs/int4/misc/units_hck.dat ";
     cu.test_cache();
   }
 

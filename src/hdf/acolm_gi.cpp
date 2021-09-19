@@ -91,24 +91,43 @@ int acol_manager::comm_get_conv
     cng.print_cache();
     return 0;
   }
-      
+
   vector<string> in, pr;
-  if (sv.size()==3) {
-    in.push_back(sv[1]);
-    in.push_back(sv[2]);
+  if (sv.size()>=3) {
+    for(size_t j=1;j<sv.size();j++) {
+      in.push_back(sv[j]);
+    }
   } else {
-    pr.push_back("Old unit");
-    pr.push_back("New unit");
-    pr.push_back("Value");
-    int ret=get_input(sv,pr,in,"get-conv",itive_com);
+    std::vector<std::string> sv2;
+    std::string in2;
+    int ret=get_input_one(sv2,"Old unit (or \"add\" or \"del\")",
+                          in2,"get-conv",itive_com);
     if (ret!=0) return ret;
-  }
-  
-  if (unit_fname.length()>0) {
-    cng.units_cmd_string=((string)"units -f ")+unit_fname;
-    if (verbose>=2) {
-      cout << "Units command string: " << cng.units_cmd_string
-	   << endl;
+    in.push_back(in2);
+    if (in2=="add") {
+      ret=get_input_one(sv2,"Old unit",in2,"get-conv",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"New unit",in2,"get-conv",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Value",in2,"get-conv",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+    } else if (in2=="del") {
+      ret=get_input_one(sv2,"Old unit",in2,"get-conv",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"New unit",in2,"get-conv",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+    } else {
+      ret=get_input_one(sv2,"New unit",in2,"get-conv",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Value",in2,"get-conv",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
     }
   }
   

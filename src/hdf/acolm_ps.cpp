@@ -1287,18 +1287,6 @@ int acol_manager::comm_set_unit(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
-int acol_manager::comm_show_units(std::vector<std::string> &sv, 
-				  bool itive_com) {
-  if (cng.use_gnu_units) {
-    cout << "Using GNU units? Yes." << endl;
-    cout << "Variable 'unit_fname': " << unit_fname << endl;
-  } else {
-    cout << "Using GNU units? No." << endl;
-  }
-  cng.print_cache();
-  return 0;
-}
-
 int acol_manager::comm_rename(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {

@@ -1480,9 +1480,6 @@ int acol_manager::comm_convert_unit
   if (verbose>=3) cng.verbose=2;
   else cng.verbose=0;
   
-  if (unit_fname.length()>0) {
-    cng.units_cmd_string=((string)"units -f ")+unit_fname;
-  }
   ret=table_obj.convert_to_unit(in[0],in[1],false);
   if (ret!=0) {
     cerr << "Could not find column or column does not have unit." << endl;

@@ -1545,12 +1545,6 @@ int acol_manager::setup_options() {
       "attempting to find a readable O2scl object.",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read),
       both},
-     {0,"show-units","Show the unit conversion table.",0,0,"",
-      ((string)"This command does not show all possible conversions, only ")+
-      "the conversions which have been previously used and are now stored "+
-      "in the unit cache.",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_show_units),
-      both},
      {0,"slack","Send a slack message.",0,2,"[\"#channel\"] <strings-spec>",
       ((string)"Send a message to slack, using the specified channel. ")+
       "If the channel is not specified, it is taken from the "+

@@ -53,17 +53,9 @@ namespace o2scl {
       Conversions are performed by the \ref convert() function. The
       run-time unit cache is initially filled with hard-coded
       conversions, and \ref convert() searches this cache is searched
-      for the requested conversion first. If the conversion is not
-      found and if \ref use_gnu_units is true, then \ref convert()
-      tries to open a pipe to open a shell to get the conversion
-      factor from <tt>'units'</tt>. If this is successful, then the
+      for the requested conversion first. If this is successful, then the
       conversion factor is returned and the conversion is added to the
       cache.
-
-      If the GNU units command is not in the local path, the user may
-      modify \ref units_cmd_string to specify the full pathname. One
-      can also modify \ref units_cmd_string to specify a different
-      <tt>units.dat</tt> file.
 
       Example:
       \code
@@ -377,29 +369,6 @@ namespace o2scl {
         }
       }
       
-      if (use_gnu_units) {
-        
-        if (verbose>0) {
-          std::cout << "convert_units::convert_internal(): "
-                    << "Value of use_gnu_units is true." << std::endl;
-        }
-        
-        int ret_gnu=convert_gnu_units(from,to,val,converted,factor);
-        
-        if (ret_gnu==0) {
-          new_conv=true;
-          return 0;
-        }
-
-      } else {
-    
-        if (verbose>0) {
-          std::cout << "convert_units::convert_internal(): "
-                    << "Value of use_gnu_units is false." << std::endl;
-        }
-    
-      }    
-  
       if (err_on_fail) {
         std::string str=((std::string)"Conversion between ")+from+" and "+to+
           " not found in convert_units::convert_internal().";
@@ -407,121 +376,6 @@ namespace o2scl {
       }
   
       return exc_enotfound;
-    }
-
-    /** \brief Attempt to use GNU units to perform a conversion
-
-        This function attempts to open a pipe to GNU units independent
-        of the value of \ref use_gnu_units. However, it will always
-        return a non-zero value if \c HAVE_POPEN is not defined
-        signaling that the <tt>popen()</tt> function is not available
-        (but does not call the error handler in this case). The
-        function returns 0 if the conversion was successful. If
-        HAVE_POPEN is defined but the call to GNU units fails
-        for some reason, then the error handler is called if
-        \ref err_on_fail is true.
-
-        \future Finer control on verbose=1 vs. verbose=2
-    */
-    int convert_gnu_units(std::string from, std::string to,
-                          fp_t val, fp_t &converted,
-                          fp_t &factor) const {
-
-      // Run the GNU 'units' command
-      std::string cmd=units_cmd_string+" '"+from+"' '"+to+"'";
-      if (verbose>0) {
-        std::cout << "convert_units::convert_gnu_units(): "
-                  << "Units command is " << cmd << std::endl;
-      }
-  
-#ifdef HAVE_POPEN
-  
-      if (verbose>0) {
-        std::cout << "convert_units::convert_gnu_units(): "
-                  << "GNU units command is \"" << cmd
-                  << "\"." << std::endl;
-      }
-  
-      FILE *ps_pipe=popen(cmd.c_str(),"r");
-      if (!ps_pipe) {
-        if (verbose>0) {
-          std::cout << "convert_units::convert_gnu_units(): "
-                    << "Pope open failed." << std::endl;
-        }
-        if (err_on_fail) {
-          O2SCL_ERR2("Pipe could not be opened in ",
-                     "convert_units::convert_gnu_units().",exc_efilenotfound);
-        }
-        return exc_efilenotfound;
-      }
-  
-      char line1[80];
-      int size=80;
-  
-      // Variable 'cret' is unused, but put here to avoid
-      // unused return value errors
-      char *cret=fgets(line1,80,ps_pipe);
-      if (verbose>0) {
-        std::cout << "convert_units::convert_gnu_units(): "
-                  << "Units output is \"" << line1 << "\"." << std::endl;
-      }
-  
-      // Read the output from the 'units' command and compute the 
-      // conversion factor
-      std::string s=line1, t1, t2;
-      std::istringstream *ins=new std::istringstream(s);
-      (*ins) >> t1 >> t2;
-      delete ins;
-      if (verbose>0) {
-        std::cout << "convert_units::convert_gnu_units(): "
-                  << "Second word of output is \""
-                  << t2 << "\"." << std::endl;
-      }
-      int sret=o2scl::stod_nothrow(t2,factor);
-      if (sret!=0) {
-        if (verbose>0) {
-          std::cout << "convert_units::convert_gnu_units(): "
-                    << "GNU unit conversion failed." << std::endl;
-        }
-        if (err_on_fail) {
-          std::string str=((std::string)"Conversion between ")+from+" and "+to+
-            " not found in convert_units::convert_gnu_units().";
-          O2SCL_ERR(str.c_str(),exc_enotfound);
-        }
-        return exc_enotfound;
-      }
-      if (verbose>0) {
-        std::cout << "convert_units::convert_gnu_units(): "
-                  << "Converted value is " << factor*val << std::endl;
-      }
-  
-      // Cleanup
-      if (pclose(ps_pipe)!=0) {
-        if (verbose>0) {
-          std::cout << "convert_units::convert_gnu_units(): "
-                    << "Close pipe failed." << std::endl;
-        }
-        if (err_on_fail) {
-          O2SCL_ERR2("Pipe could not be closed in ",
-                     "convert_units::convert_gnu_units().",exc_efailed);
-        }
-        return exc_efailed;
-      }
-
-      converted=factor*val;
-  
-#else
-  
-      if (verbose>0) {
-        std::cout << "convert_units::convert_gnu_units(): "
-                  << "Define constant popen is not defined." << std::endl;
-      }
-  
-      return exc_efailed;
-  
-#endif
-      
-      return 0;
     }
 
     /** \brief Attempt to construct a conversion from the internal
@@ -663,7 +517,6 @@ namespace o2scl {
     /// Create a unit-conversion object
     convert_units() {
       verbose=0;
-      use_gnu_units=false;
       units_cmd_string="units";
       err_on_fail=true;
       combine_two_conv=true;
@@ -1234,13 +1087,6 @@ namespace o2scl {
     //@{
     /// Verbosity (default 0)
     int verbose;
-
-    /** \brief If true, use a system call to units to derive new
-        conversions (default true)
-
-        This also requires <tt>popen()</tt>.
-    */
-    bool use_gnu_units;
 
     /// If true, throw an exception when a conversion fails (default true)
     bool err_on_fail;
