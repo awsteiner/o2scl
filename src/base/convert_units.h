@@ -885,7 +885,6 @@ namespace o2scl {
       return;
     }
     
-#ifdef O2SCL_NEVER_DEFINED
     int convert_calc2(std::string from, std::string to,
                       fp_t val, fp_t &converted,
                       fp_t &factor) const {
@@ -956,12 +955,8 @@ namespace o2scl {
       
 #endif
       
-      
-      
       return 0;
     }
-    
-#endif
     
     /** \brief Automatic unit conversion between SI-based units
         with a \ref o2scl::calculator object
