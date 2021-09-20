@@ -930,14 +930,14 @@ namespace o2scl {
         }
       }
       
-      find_constants &fc=o2scl_settings.get_find_constants();
-      vector<find_constants_list> matches;
+      o2scl::find_constants &fc=o2scl_settings.get_find_constants();
+      vector<o2scl::find_constants_list> matches;
       for(size_t i=0;i<new_units.size();i++) {
         int fret=fc.find_nothrow(new_units[i],"mks",matches);
-        if (fret==find_constants::one_exact_match_unit_match ||
-            fret==find_constants::one_pattern_match_unit_match) {
+        if (fret==o2scl::find_constants::one_exact_match_unit_match ||
+            fret==o2scl::find_constants::one_pattern_match_unit_match) {
           der_unit du;
-          find_constants_list &fcl=matches[0];
+          o2scl::find_constants_list &fcl=matches[0];
           du.label=fcl.new_units[i];
           du.m=fcl.m;
           du.k=fcl.k;

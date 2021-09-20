@@ -63,8 +63,6 @@ namespace o2scl {
       int cd;
     } find_constants_list;
 
-  protected:
-
     /// \name Return values for find_nothrow()
     //@{
     static const int one_exact_match_unit_match=0;
@@ -79,6 +77,8 @@ namespace o2scl {
     static const int pattern_matches_unit_diff=9;
     static const int no_matches=10;
     //@}
+
+  protected:
 
     /// Database of constant values
     std::vector<find_constants_list> list;
