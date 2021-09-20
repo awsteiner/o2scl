@@ -109,14 +109,13 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     vector<std::string> itmp={"ac-len","average-rows",
 			      "assign","cat","convert-unit",
 			      "correl","delete-col",
-			      "delete-rows",
-			      "delete-rows-tol","deriv","deriv2",
-			      "entry-grid",
+			      "delete-rows","delete-rows-tol",
+			      "deriv","deriv2","entry-grid",
 			      "find-row","fit","function",
 			      "get-row","get-unit","entry","index",
 			      "insert","insert-full","integ","interp",
 			      "list","max","min","nlines","refine","rename",
-			      "select","select-rows","select-rows",
+			      "select","select-rows",
 			      "set-data","set-unit","sort","stats","sum",
 			      "to-hist","to-hist-2d","to-table3d","wstats",
                               "ser-hist-t3d",
@@ -239,7 +238,7 @@ void acol_manager::command_add(std::string new_type) {
       };
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=42;
+    static const size_t narr=41;
     comm_option_s options_arr[narr]=
       {{0,"ac-len","Autocorrelation length using 'acor'.",0,1,"<colum>","",
 	new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_ac_len),
