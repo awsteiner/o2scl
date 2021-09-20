@@ -38,6 +38,8 @@
 #include <o2scl/string_conv.h>
 #include <o2scl/shunting_yard.h>
 #include <o2scl/calc_utf8.h>
+#include <o2scl/find_constants.h>
+#include <o2scl/vector.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -884,7 +886,9 @@ namespace o2scl {
       }
       return;
     }
-    
+
+    /** \brief Future new version of convert_calc()
+     */
     int convert_calc2(std::string from, std::string to,
                       fp_t val, fp_t &converted,
                       fp_t &factor) const {
@@ -898,9 +902,21 @@ namespace o2scl {
 #endif
       
       int cret1=calc.compile_nothrow(from.c_str());
-      if (cret1!=0) return 1;
+      if (cret1!=0) {
+        if (verbose>0) {
+          std::cout << "Compile from expression " << from << " failed."
+                    << std::endl;
+        }
+        return 1;
+      }
       int cret2=calc2.compile_nothrow(to.c_str());
-      if (cret2!=0) return 2;
+      if (cret2!=0) {
+        if (verbose>0) {
+          std::cout << "Compile to expression " << to << " failed."
+                    << std::endl;
+        }
+        return 2;
+      }
       
 #ifdef O2SCL_CALC_UTF8
       std::vector<std::u32string> vars=calc.get_var_list();
@@ -911,8 +927,16 @@ namespace o2scl {
       // Create "new_units", the list of units which are not
       // in the current unit list 
       std::vector<std::string> vars=calc.get_var_list();
+      if (verbose>=2) {
+        std::cout << "Unit list of from: ";
+        o2scl::vector_out(std::cout,vars,true);
+      }
       std::vector<std::string> vars2=calc2.get_var_list();
       std::vector<std::string> curr, new_units;
+      if (verbose>=2) {
+        std::cout << "Unit list of to: ";
+        o2scl::vector_out(std::cout,vars2,true);
+      }
       get_curr_unit_list(curr);
 
       for(size_t i=0;i<vars.size();i++) {
@@ -929,16 +953,24 @@ namespace o2scl {
           new_units.push_back(vars2[i]);
         }
       }
-      
-      o2scl::find_constants &fc=o2scl_settings.get_find_constants();
-      vector<o2scl::find_constants_list> matches;
+      if (verbose>=2) {
+        std::cout << "New units not found: ";
+        o2scl::vector_out(std::cout,new_units,true);
+      }
+
+      /*
+        This is problematic because lib_settings.h requires
+        convert_units.h
+
+      find_constants &fc=o2scl_settings.get_find_constants();
+      vector<find_constants::find_constants_list> matches;
       for(size_t i=0;i<new_units.size();i++) {
         int fret=fc.find_nothrow(new_units[i],"mks",matches);
-        if (fret==o2scl::find_constants::one_exact_match_unit_match ||
-            fret==o2scl::find_constants::one_pattern_match_unit_match) {
+        if (fret==find_constants::one_exact_match_unit_match ||
+            fret==find_constants::one_pattern_match_unit_match) {
           der_unit du;
-          o2scl::find_constants_list &fcl=matches[0];
-          du.label=fcl.new_units[i];
+          find_constants::find_constants_list &fcl=matches[0];
+          du.label=new_units[i];
           du.m=fcl.m;
           du.k=fcl.k;
           du.s=fcl.s;
@@ -948,10 +980,21 @@ namespace o2scl {
           du.cd=fcl.cd;
           du.val=fcl.val;
           du.name=fcl.names[0];
+          if (verbose>=2) {
+            std::cout << "Found constant " << new_units[i]
+                      << " not uniquely specified in constant list ("
+                      << fret << "." << std::endl;
+          }
         } else {
+          if (verbose>=2) {
+            std::cout << "New unit " << new_units[i]
+                      << " not uniquely specified in constant list ("
+                      << fret << "." << std::endl;
+          }
           return 1;
         }
       }
+      */
       
 #endif
       

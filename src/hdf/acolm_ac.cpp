@@ -66,7 +66,7 @@ int acol_manager::comm_convert
   } else {
     std::vector<std::string> sv2;
     std::string in2;
-    int ret=get_input_one(sv2,"Old unit (or \"add\" or \"del\")",
+    int ret=get_input_one(sv2,"Old unit (or \"add\", \"del\", or \"nat\")",
                           in2,"convert",itive_com);
     if (ret!=0) return ret;
     in.push_back(in2);
@@ -107,6 +107,19 @@ int acol_manager::comm_convert
       if (ret!=0) return ret;
       in.push_back(in2);
       ret=get_input_one(sv2,"New unit",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+    } else if (in2=="nat") {
+      ret=get_input_one(sv2,"Treat c as 1 (true or false)",
+                        in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Treat hbar as 1 (true or false)",
+                        in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Treat kb as 1 (true or false)",
+                        in2,"convert",itive_com);
       if (ret!=0) return ret;
       in.push_back(in2);
     } else {
@@ -154,6 +167,14 @@ int acol_manager::comm_convert
     cout << "Delete conversion." << endl;
 
     cng.del_unit(in[2]);
+    
+  } else if (in[1]=="nat") {
+
+    cout << "Set natural units." << endl;
+
+    cng.set_natural_units(o2scl::stob(in[2]),
+                          o2scl::stob(in[3]),
+                          o2scl::stob(in[4]));
     
   }
   
