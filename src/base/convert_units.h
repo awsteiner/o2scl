@@ -314,13 +314,15 @@ namespace o2scl {
         vars.insert(std::make_pair(other[i].label,val));
       }
 
-      if (false) {
+      if (verbose>=3) {
+        std::cout << "vars: " << std::endl;
         for (typename std::map<std::string,fp_t>::iterator it=vars.begin();
              it!=vars.end();it++) {
           std::cout << it->first << " " << it->second << std::endl;
         }
+        std::cout << std::endl;
       }
-    
+
       return;
     }
   
@@ -606,7 +608,7 @@ namespace o2scl {
          {"Mpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e6,"megaparsec"},
          {"kpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e3,"kiloparsec"},
          {"pc",1,0,0,0,0,0,0,o2scl_mks::parsec,"parsec"},
-         {"fermi",1,0,0,0,0,0,0,1.0e-15},
+         {"fermi",1,0,0,0,0,0,0,1.0e-15,"fermi"},
 
          // Area units
          // hectares, "ha" and "hectare"
@@ -636,7 +638,7 @@ namespace o2scl {
          {"ounce",0,1,0,0,0,0,0,o2scl_mks::ounce_mass,"ounce"},
          // SI prefixes aren't allowed for tonnes because of confusion
          // between "ft" and "femtotonne"
-         {"t",0,1,0,0,0,0,0,1.0e3,"tonne"},
+         {"t",0,1,0,0,0,0,0,1.0e3,"(metric) tonne"},
          {"uk_ton",0,1,0,0,0,0,0,o2scl_mks::uk_ton,"uk ton"},
          {"troy_ounce",0,1,0,0,0,0,0,o2scl_mks::troy_ounce,"troy ounce"},
          {"carat",0,1,0,0,0,0,0,o2scl_mks::carat,"carat"},
@@ -683,13 +685,13 @@ namespace o2scl {
          // Units of heat capacity or entropy
          // Boltzmann's constant. Could be confused with kilobytes?
          {"kB",2,1,-2,-1,0,0,0,o2scl_const::boltzmann_f<fp_t>(),
-          "boltzmann's constant"},
+          "Boltzmann's constant"},
      
          {"hbar",2,1,-1,0,0,0,0,o2scl_const::hbar_f<fp_t>(),
-          "reduced planck constant"},
+          "reduced Planck constant"},
          // "Planck" instead of "h", to avoid confusing with hours
          {"Planck",2,1,-1,0,0,0,0,o2scl_const::planck_f<fp_t>(),
-          "planck constant"},
+          "Planck constant"},
      
          // Gravitational constant. We cannot use "G" because of
          // confusion with "Gauss"
@@ -700,7 +702,7 @@ namespace o2scl {
          // constant
          {"G",0,1,-2,0,-1,0,0,o2scl_mks::gauss,"gauss"},
          
-         {"NA",0,0,0,0,0,0,0,o2scl_const::avogadro,"avogadro"}
+         {"NA",0,0,0,0,0,0,0,o2scl_const::avogadro,"Avogadro's number"}
      
         };
       
@@ -792,16 +794,17 @@ namespace o2scl {
       }
       out << std::endl;
 
-      out << "SI prefix value: " << std::endl;
+      out << "SI prefixes: prefix value" << std::endl;
+      out << "------------------- -----" << std::endl;
       for(size_t i=0;i<prefixes.size();i++) {
         
         // Extra space for the unicode
         if (prefixes[i]=="μ") {
-          out.width(10);
+          out.width(20);
           out << prefixes[i] << " ";
           out << prefix_facts[i] << std::endl;
         } else {
-          out.width(9);
+          out.width(19);
           out << prefixes[i] << " ";
           out << prefix_facts[i] << std::endl;
         }
@@ -809,9 +812,11 @@ namespace o2scl {
       }
       out << std::endl;
     
-      out << "Other:    label  m kg  s  K  A mol cd value:" << std::endl;
-      out << "--------------- -- -- -- -- -- --- -- ------------"
-          << std::endl;
+      out << "Other:    label  m kg  s  K  A mol cd value        "
+          << "full name" << std::endl;
+      out << "--------------- -- -- -- -- -- --- -- ------------ "
+          << "--------------" << std::endl;
+          
     
       for(size_t i=0;i<other.size();i++) {
         out.width(15);
@@ -830,7 +835,7 @@ namespace o2scl {
         out << other[i].mol << " ";
         out.width(2);
         out << other[i].cd << " ";
-        out << other[i].val << std::endl;
+        out << other[i].val << " " << other[i].name << std::endl;
       }
     
       return;
@@ -1029,6 +1034,7 @@ namespace o2scl {
             std::cout << "Found constant " << new_units[i]
                       << " with value " << fcl.val << std::endl;
           }
+          other.push_back(du);
         } else {
           if (verbose>=2) {
             std::cout << "New unit " << new_units[i]
@@ -1039,8 +1045,6 @@ namespace o2scl {
         }
       }
 
-      std::cout << "Here2." << std::endl;
-      
       return convert_calc(from,to,val,converted,factor);
     }
     
@@ -1628,514 +1632,6 @@ namespace o2scl {
     
       return;
     }
-  
-    /** \brief Make a GNU \c units.dat file from the GSL constants
-
-        If \c c_1 is true, then the second is defined in terms of
-        meters so that the speed of light is unitless. If \c hbar_1 is
-        true, then the kilogram is defined in terms of <tt>s/m^2</tt>
-        so that \f$ \hbar \f$ is unitless.
-
-        \note While convert() generally works with the OSX version
-        of 'units', the OSX version can't read units.dat files 
-        created by this function.
-
-        \note Not all of the GSL constants or the canonical GNU units 
-        conversions are given here.
-    */
-    void make_units_dat(std::string fname, bool c_1=false, 
-                        bool hbar_1=false, bool K_1=false) const {
-  
-      std::ofstream fout(fname.c_str());
-      fout.precision(14);
-
-      fp_t sol_mks=o2scl_const::speed_of_light_f<fp_t>(o2scl_const::o2scl_mks);
-      fp_t elem_charge=o2scl_const::elem_charge_f<fp_t>();
-    
-#ifdef O2SCL_OSX
-      fout << "/ ----------------------------------------------" 
-           << "--------------" << std::endl;
-      fout << "/ Fundamental units" << std::endl;
-#else
-      fout << "################################################" 
-           << "##############" << std::endl;
-      fout << "# Fundamental units" << std::endl;
-#endif
-      fout << "m\t!" << std::endl;
-      fout << "meter\tm" << std::endl;
-      if (c_1==false) {
-        fout << "s\t!" << std::endl;
-        fout << "second\ts" << std::endl;
-      } else {
-        fout << "s\t" << sol_mks << " m" << std::endl;
-        fout << "second\ts" << std::endl;
-      }
-      if (hbar_1==false) {
-        fout << "kg\t!" << std::endl;
-        fout << "kilogram\tkg" << std::endl;
-      } else {
-        fout << "kg\t" << 1.0/o2scl_const::hbar_f<fp_t>(o2scl_const::o2scl_mks) 
-             << " s / m^2" << std::endl;
-        fout << "kilogram\tkg" << std::endl;
-      }
-      fout << "A\t!" << std::endl;
-      fout << "ampere\tA" << std::endl;
-      fout << "amp\tA" << std::endl;
-      fout << "cd\t!" << std::endl;
-      fout << "candela\tcd" << std::endl;
-      fout << "mol\t!" << std::endl;
-      fout << "mole\tmol" << std::endl;
-      if (K_1==false) {
-        fout << "K\t!" << std::endl;
-        fout << "kelvin\tK" << std::endl;
-      } else {
-        fout << "K\t" << o2scl_mks::boltzmann << " kg m^2 / s^2" << std::endl;
-        fout << "kelvin\tK" << std::endl;
-      }
-      fout << "radian\t!" << std::endl;
-      fout << "sr\t!" << std::endl;
-      fout << "steradian\tsr" << std::endl;
-      fout << "US$\t!" << std::endl;
-      fout << "bit\t!" << std::endl;
-      fout << std::endl;
-      
-#ifdef O2SCL_OSX
-      fout << "/ ----------------------------------------------" 
-           << "--------------" << std::endl;
-      fout << "/ " << std::endl;
-#else
-      fout << "################################################" 
-           << "##############" << std::endl;
-      fout << "# SI and common prefixes" << std::endl;
-#endif
-      fout << "yotta-\t\t1e24" << std::endl;
-      fout << "zetta-\t\t1e21" << std::endl;
-      fout << "exa-\t\t1e18" << std::endl;
-      fout << "peta-\t\t1e15" << std::endl;
-      fout << "tera-\t\t1e12" << std::endl;
-      fout << "giga-\t\t1e9" << std::endl;
-      fout << "mega-\t\t1e6" << std::endl;
-      fout << "myria-\t\t1e4" << std::endl;
-      fout << "kilo-\t\t1e3" << std::endl;
-      fout << "hecto-\t\t1e2" << std::endl;
-      fout << "deca-\t\t1e1" << std::endl;
-      fout << "deka-\t\tdeca" << std::endl;
-      fout << "deci-\t\t1e-1" << std::endl;
-      fout << "centi-\t\t1e-2" << std::endl;
-      fout << "milli-\t\t1e-3" << std::endl;
-      fout << "micro-\t\t1e-6" << std::endl;
-      fout << "nano-\t\t1e-9" << std::endl;
-      fout << "pico-\t\t1e-12" << std::endl;
-      fout << "femto-\t\t1e-15" << std::endl;
-      fout << "atto-\t\t1e-18" << std::endl;
-      fout << "zepto-\t\t1e-21" << std::endl;
-      fout << "yocto-\t\t1e-24" << std::endl;
-      fout << "quarter-\t1|4" << std::endl;
-      fout << "semi-\t\t0.5" << std::endl;
-      fout << "demi-\t\t0.5" << std::endl;
-      fout << "hemi-\t\t0.5" << std::endl;
-      fout << "half-\t\t0.5" << std::endl;
-      fout << "fp_t-\t\t2" << std::endl;
-      fout << "triple-\t\t3" << std::endl;
-      fout << "treble-\t\t3" << std::endl;
-      fout << std::endl;
-
-#ifdef O2SCL_OSX
-      fout << "/ ----------------------------------------------" 
-           << "--------------" << std::endl;
-      fout << "/ " << std::endl;
-#else
-      fout << "################################################" 
-           << "##############" << std::endl;
-      fout << "# SI prefix abbreviations" << std::endl;
-#endif
-      fout << "Y-                      yotta" << std::endl;
-      fout << "Z-                      zetta" << std::endl;
-      fout << "E-                      exa" << std::endl;
-      fout << "P-                      peta" << std::endl;
-      fout << "T-                      tera" << std::endl;
-      fout << "G-                      giga" << std::endl;
-      fout << "M-                      mega" << std::endl;
-      fout << "k-                      kilo" << std::endl;
-      fout << "h-                      hecto" << std::endl;
-      fout << "da-                     deka" << std::endl;
-      fout << "d-                      deci" << std::endl;
-      fout << "c-                      centi" << std::endl;
-      fout << "m-                      milli" << std::endl;
-      fout << "n-                      nano" << std::endl;
-      fout << "p-                      pico" << std::endl;
-      fout << "f-                      femto" << std::endl;
-      fout << "a-                      atto" << std::endl;
-      fout << "z-                      zepto" << std::endl;
-      fout << "y-                      yocto" << std::endl;
-      fout << std::endl;
-
-#ifdef O2SCL_OSX
-      fout << "/ ----------------------------------------------" 
-           << "--------------" << std::endl;
-      fout << "/ " << std::endl;
-#else
-      fout << "################################################" 
-           << "##############" << std::endl;
-      fout << "# Basic numbers" << std::endl;
-#endif
-      fout << "one                     1" << std::endl;
-      fout << "two                     2" << std::endl;
-      fout << "fp_t                  2" << std::endl;
-      fout << "couple                  2" << std::endl;
-      fout << "three                   3" << std::endl;
-      fout << "triple                  3" << std::endl;
-      fout << "four                    4" << std::endl;
-      fout << "quadruple               4" << std::endl;
-      fout << "five                    5" << std::endl;
-      fout << "quintuple               5" << std::endl;
-      fout << "six                     6" << std::endl;
-      fout << "seven                   7" << std::endl;
-      fout << "eight                   8" << std::endl;
-      fout << "nine                    9" << std::endl;
-      fout << "ten                     10" << std::endl;
-      fout << "twenty                  20" << std::endl;
-      fout << "thirty                  30" << std::endl;
-      fout << "forty                   40" << std::endl;
-      fout << "fifty                   50" << std::endl;
-      fout << "sixty                   60" << std::endl;
-      fout << "seventy                 70" << std::endl;
-      fout << "eighty                  80" << std::endl;
-      fout << "ninety                  90" << std::endl;
-      fout << "hundred                 100" << std::endl;
-      fout << "thousand                1000" << std::endl;
-      fout << "million                 1e6" << std::endl;
-      fout << "billion                 1e9" << std::endl;
-      fout << "trillion                1e12" << std::endl;
-      fout << "quadrillion             1e15" << std::endl;
-      fout << "quintillion             1e18" << std::endl;
-      fout << "sextillion              1e21" << std::endl;
-      fout << "septillion              1e24" << std::endl;
-      fout << "octillion               1e27" << std::endl;
-      fout << "nonillion               1e30" << std::endl;
-      fout << "noventillion            nonillion" << std::endl;
-      fout << "decillion               1e33" << std::endl;
-      fout << "undecillion             1e36" << std::endl;
-      fout << "duodecillion            1e39" << std::endl;
-      fout << "tredecillion            1e42" << std::endl;
-      fout << "quattuordecillion       1e45" << std::endl;
-      fout << "quindecillion           1e48" << std::endl;
-      fout << "sexdecillion            1e51" << std::endl;
-      fout << "septendecillion         1e54" << std::endl;
-      fout << "octodecillion           1e57" << std::endl;
-      fout << "novemdecillion          1e60" << std::endl;
-      fout << "vigintillion            1e63" << std::endl;
-      fout << "googol                  1e100" << std::endl;
-      fout << "centillion              1e303" << std::endl;
-      fout << std::endl;
-
-#ifdef O2SCL_OSX
-      fout << "/ ----------------------------------------------" 
-           << "--------------" << std::endl;
-      fout << "/ " << std::endl;
-#else
-      fout << "################################################" 
-           << "##############" << std::endl;
-      fout << "# Basic SI units" << std::endl;
-#endif
-      fout << "newton                  kg m / s^2   " << std::endl;
-      fout << "N                       newton" << std::endl;
-      fout << "pascal                  N/m^2        " << std::endl;
-      fout << "Pa                      pascal" << std::endl;
-      fout << "joule                   N m          " << std::endl;
-      fout << "J                       joule" << std::endl;
-      fout << "watt                    J/s          " << std::endl;
-      fout << "W                       watt" << std::endl;
-      fout << "coulomb                 A s          " << std::endl;
-      fout << "C                       coulomb" << std::endl;
-      fout << "volt                    W/A          " << std::endl;
-      fout << "V                       volt" << std::endl;
-      fout << "ohm                     V/A          " << std::endl;
-      fout << "siemens                 A/V          " << std::endl;
-      fout << "S                       siemens" << std::endl;
-      fout << "farad                   C/V          " << std::endl;
-      fout << "F                       farad" << std::endl;
-      fout << "weber                   V s          " << std::endl;
-      fout << "Wb                      weber" << std::endl;
-      fout << "henry                   Wb/A         " << std::endl;
-      fout << "H                       henry" << std::endl;
-      fout << "tesla                   Wb/m^2       " << std::endl;
-      fout << "T                       tesla" << std::endl;
-      fout << "hertz                   1/s           " << std::endl;
-      fout << "Hz                      hertz" << std::endl;
-      fout << "gram                    millikg       " << std::endl;
-      fout << "g                       gram" << std::endl;
-      fout << std::endl;
-
-#ifdef O2SCL_OSX
-      fout << "/ ----------------------------------------------" 
-           << "--------------" << std::endl;
-      fout << "/ " << std::endl;
-#else
-      fout << "################################################" 
-           << "##############" << std::endl;
-      fout << "# Dimensional analysis units" << std::endl;
-#endif
-      fout << "LENGTH                  meter" << std::endl;
-      fout << "AREA                    LENGTH^2" << std::endl;
-      fout << "VOLUME                  LENGTH^3" << std::endl;
-      fout << "MASS                    kilogram" << std::endl;
-      fout << "CURRENT                 ampere" << std::endl;
-      fout << "AMOUNT                  mole" << std::endl;
-      fout << "ANGLE                   radian" << std::endl;
-      fout << "SOLID_ANGLE             steradian" << std::endl;
-      fout << "MONEY                   US$" << std::endl;
-      fout << "FORCE                   newton" << std::endl;
-      fout << "PRESSURE                FORCE / AREA" << std::endl;
-      fout << "STRESS                  FORCE / AREA" << std::endl;
-      fout << "CHARGE                  coulomb" << std::endl;
-      fout << "CAPACITANCE             farad" << std::endl;
-      fout << "RESISTANCE              ohm" << std::endl;
-      fout << "CONDUCTANCE             siemens" << std::endl;
-      fout << "INDUCTANCE              henry" << std::endl;
-      fout << "FREQUENCY               hertz" << std::endl;
-      fout << "VELOCITY                LENGTH / TIME" << std::endl;
-      fout << "ACCELERATION            VELOCITY / TIME" << std::endl;
-      fout << "DENSITY                 MASS / VOLUME" << std::endl;
-      fout << "LINEAR_DENSITY          MASS / LENGTH" << std::endl;
-      fout << "VISCOSITY               FORCE TIME / AREA" << std::endl;
-      fout << "KINEMATIC_VISCOSITY     VISCOSITY / DENSITY" << std::endl;
-      fout << std::endl;
-      
-#ifdef O2SCL_OSX
-      fout << "/ ----------------------------------------------" 
-           << "--------------" << std::endl;
-      fout << "/ " << std::endl;
-#else
-      fout << "################################################" 
-           << "##############" << std::endl;
-      fout << "# GSL constants" << std::endl;
-#endif
-      fout << "schwarzchild_radius\t\t" << o2scl_mks::schwarzchild_radius
-           << " m" << std::endl;
-      fout << "Rschwarz\t\tschwarzchild_radius" << std::endl;
-      fout << "speed_of_light\t\t" << sol_mks
-           << " m / s" << std::endl;
-      fout << "c\t\tspeed_of_light" << std::endl;
-      fout << "gravitational_constant\t\t" 
-           << o2scl_mks::gravitational_constant
-           << " m^3 / kg s^2" << std::endl;
-      fout << "G\t\tgravitational_constant" << std::endl;
-      fout << "plancks_constant_h\t\t" 
-           << o2scl_mks::plancks_constant_h
-           << " kg m^2 / s" << std::endl;
-      fout << "h\t\tplancks_constant_h" << std::endl;
-      fout << "plancks_constant_hbar\t\t" 
-           << o2scl_const::hbar_f<fp_t>(o2scl_const::o2scl_mks)
-           << " kg m^2 / s" << std::endl;
-      fout << "hbar\t\tplancks_constant_hbar" << std::endl;
-      fout << "astronomical_unit\t\t" << o2scl_mks::astronomical_unit
-           << " m" << std::endl;
-      fout << "au\t\tastronomical_unit" << std::endl;
-      fout << "light_year\t\t" << o2scl_mks::light_year
-           << " m" << std::endl;
-      fout << "lyr\t\tlight_year" << std::endl;
-      fout << "parsec\t\t" << o2scl_mks::parsec
-           << " m" << std::endl;
-      fout << "pc\t\tparsec" << std::endl;
-      fout << "grav_accel\t\t" << o2scl_mks::grav_accel
-           << " m / s^2" << std::endl;
-      fout << "electron_volt\t\t" << elem_charge
-           << " kg m^2 / s^2" << std::endl;
-      fout << "eV\t\telectron_volt" << std::endl;
-      fout << "mass_electron\t\t" << o2scl_mks::mass_electron
-           << " kg" << std::endl;
-      fout << "mass_muon\t\t" << o2scl_mks::mass_muon
-           << " kg" << std::endl;
-      fout << "mass_proton\t\t" << o2scl_mks::mass_proton
-           << " kg" << std::endl;
-      fout << "mass_neutron\t\t" << o2scl_mks::mass_neutron
-           << " kg" << std::endl;
-      fout << "rydberg\t\t" << o2scl_mks::rydberg
-           << " kg m^2 / s^2" << std::endl;
-      fout << "boltzmann\t\t" << o2scl_mks::boltzmann
-           << " kg m^2 / K s^2" << std::endl;
-      fout << "bohr_magneton\t\t" << o2scl_mks::bohr_magneton
-           << " A m^2" << std::endl;
-      fout << "nuclear_magneton\t\t" << o2scl_mks::nuclear_magneton
-           << " A m^2" << std::endl;
-      fout << "electron_magnetic_moment\t\t" 
-           << o2scl_mks::electron_magnetic_moment
-           << " A m^2" << std::endl;
-      fout << "proton_magnetic_moment\t\t" 
-           << o2scl_mks::proton_magnetic_moment
-           << " A m^2" << std::endl;
-      fout << "molar_gas\t\t" << o2scl_mks::molar_gas
-           << " kg m^2 / K mol s^2" << std::endl;
-      fout << "standard_gas_volume\t\t" << o2scl_mks::standard_gas_volume
-           << " m^3 / mol" << std::endl;
-      fout << "minute\t\t" << o2scl_mks::minute
-           << " s" << std::endl;
-      fout << "min\t\tminute" << std::endl;
-      fout << "hour\t\t" << o2scl_mks::hour
-           << " s" << std::endl;
-      fout << "day\t\t" << o2scl_mks::day
-           << " s" << std::endl;
-      fout << "week\t\t" << o2scl_mks::week
-           << " s" << std::endl;
-      fout << "inch\t\t" << o2scl_mks::inch
-           << " m" << std::endl;
-      fout << "foot\t\t" << o2scl_mks::foot
-           << " m" << std::endl;
-      fout << "yard\t\t" << o2scl_mks::yard
-           << " m" << std::endl;
-      fout << "mile\t\t" << o2scl_mks::mile
-           << " m" << std::endl;
-      fout << "nautical_mile\t\t" << o2scl_mks::nautical_mile
-           << " m" << std::endl;
-      fout << "fathom\t\t" << o2scl_mks::fathom
-           << " m" << std::endl;
-      fout << "mil\t\t" << o2scl_mks::mil
-           << " m" << std::endl;
-      fout << "point\t\t" << o2scl_mks::point
-           << " m" << std::endl;
-      fout << "texpoint\t\t" << o2scl_mks::texpoint
-           << " m" << std::endl;
-      fout << "micron\t\t" << o2scl_mks::micron
-           << " m" << std::endl;
-      fout << "angstrom\t\t" << o2scl_mks::angstrom
-           << " m" << std::endl;
-      fout << "hectare\t\t" << o2scl_mks::hectare
-           << " m^2" << std::endl;
-      fout << "acre\t\t" << o2scl_mks::acre
-           << " m^2" << std::endl;
-      fout << "barn\t\t" << o2scl_mks::barn
-           << " m^2" << std::endl;
-      fout << "liter\t\t" << o2scl_mks::liter
-           << " m^3" << std::endl;
-      fout << "us_gallon\t\t" << o2scl_mks::us_gallon
-           << " m^3" << std::endl;
-      fout << "gallon\t\tus_gallon" << std::endl;
-      fout << "quart\t\t" << o2scl_mks::quart
-           << " m^3" << std::endl;
-      fout << "pint\t\t" << o2scl_mks::pint
-           << " m^3" << std::endl;
-      fout << "cup\t\t" << o2scl_mks::cup
-           << " m^3" << std::endl;
-      fout << "fluid_ounce\t\t" << o2scl_mks::fluid_ounce
-           << " m^3" << std::endl;
-      fout << "tablespoon\t\t" << o2scl_mks::tablespoon
-           << " m^3" << std::endl;
-      fout << "teaspoon\t\t" << o2scl_mks::teaspoon
-           << " m^3" << std::endl;
-      fout << "canadian_gallon\t\t" << o2scl_mks::canadian_gallon
-           << " m^3" << std::endl;
-      fout << "uk_gallon\t\t" << o2scl_mks::uk_gallon
-           << " m^3" << std::endl;
-      fout << "miles_per_hour\t\t" << o2scl_mks::miles_per_hour
-           << " m / s" << std::endl;
-      fout << "mph\t\tmiles_per_hour" << std::endl;
-      fout << "kilometers_per_hour\t\t" << o2scl_mks::kilometers_per_hour
-           << " m / s" << std::endl;
-      fout << "kph\t\tkilometers_per_hour" << std::endl;
-      fout << "knot\t\t" << o2scl_mks::knot
-           << " m / s" << std::endl;
-      fout << "pound_mass\t\t" << o2scl_mks::pound_mass
-           << " kg" << std::endl;
-      fout << "ounce_mass\t\t" << o2scl_mks::ounce_mass
-           << " kg" << std::endl;
-      fout << "ton\t\t" << o2scl_mks::ton
-           << " kg" << std::endl;
-      fout << "metric_ton\t\t" << o2scl_mks::metric_ton
-           << " kg" << std::endl;
-      fout << "uk_ton\t\t" << o2scl_mks::uk_ton
-           << " kg" << std::endl;
-      fout << "troy_ounce\t\t" << o2scl_mks::troy_ounce
-           << " kg" << std::endl;
-      fout << "carat\t\t" << o2scl_mks::carat
-           << " kg" << std::endl;
-      fout << "unified_atomic_mass\t\t" << o2scl_mks::unified_atomic_mass
-           << " kg" << std::endl;
-      fout << "gram_force\t\t" << o2scl_mks::gram_force
-           << " kg m / s^2" << std::endl;
-      fout << "pound_force\t\t" << o2scl_mks::pound_force
-           << " kg m / s^2" << std::endl;
-      fout << "kilopound_force\t\t" << o2scl_mks::kilopound_force
-           << " kg m / s^2" << std::endl;
-      fout << "poundal\t\t" << o2scl_mks::poundal
-           << " kg m / s^2" << std::endl;
-      fout << "calorie\t\t" << o2scl_mks::calorie
-           << " kg m^2 / s^2" << std::endl;
-      fout << "btu\t\t" << o2scl_mks::btu
-           << " kg m^2 / s^2" << std::endl;
-      fout << "therm\t\t" << o2scl_mks::therm
-           << " kg m^2 / s^2" << std::endl;
-      fout << "horsepower\t\t" << o2scl_mks::horsepower
-           << " kg m^2 / s^3" << std::endl;
-      fout << "hp\t\thorsepower" << std::endl;
-      fout << "bar\t\t" << o2scl_mks::bar
-           << " kg / m s^2" << std::endl;
-      fout << "std_atmosphere\t\t" << o2scl_mks::std_atmosphere
-           << " kg / m s^2" << std::endl;
-      fout << "torr\t\t" << o2scl_mks::torr
-           << " kg / m s^2" << std::endl;
-      fout << "meter_of_mercury\t\t" << o2scl_mks::meter_of_mercury
-           << " kg / m s^2" << std::endl;
-      fout << "inch_of_mercury\t\t" << o2scl_mks::inch_of_mercury
-           << " kg / m s^2" << std::endl;
-      fout << "inch_of_water\t\t" << o2scl_mks::inch_of_water
-           << " kg / m s^2" << std::endl;
-      fout << "psi\t\t" << o2scl_mks::psi
-           << " kg / m s^2" << std::endl;
-      fout << "poise\t\t" << o2scl_mks::poise
-           << " kg / m s " << std::endl;
-      fout << "stokes\t\t" << o2scl_mks::stokes
-           << " m^2 / s" << std::endl;
-      fout << "faraday\t\t" << o2scl_mks::faraday
-           << " A s / mol" << std::endl;
-      fout << "electron_charge\t\t" << o2scl_mks::electron_charge
-           << " A s" << std::endl;
-      fout << "gauss\t\t" << o2scl_mks::gauss
-           << " kg / A s^2" << std::endl;
-      fout << "stilb\t\t" << o2scl_mks::stilb
-           << " cd / m^2" << std::endl;
-      fout << "lumen\t\t" << o2scl_mks::lumen
-           << " cd sr" << std::endl;
-      fout << "lux\t\t" << o2scl_mks::lux
-           << " cd sr / m^2" << std::endl;
-      fout << "phot\t\t" << o2scl_mks::phot
-           << " cd sr / m^2" << std::endl;
-      fout << "footcandle\t\t" << o2scl_mks::footcandle
-           << " cd sr / m^2" << std::endl;
-      fout << "lambert\t\t" << o2scl_mks::lambert
-           << " cd sr / m^2" << std::endl;
-      fout << "footlambert\t\t" << o2scl_mks::footlambert
-           << " cd sr / m^2" << std::endl;
-      fout << "curie\t\t" << o2scl_mks::curie
-           << " 1 / s" << std::endl;
-      fout << "roentgen\t\t" << o2scl_mks::roentgen
-           << " A s / kg" << std::endl;
-      fout << "rad\t\t" << o2scl_mks::rad
-           << " m^2 / s^2" << std::endl;
-      fout << "solar_mass\t\t" << o2scl_mks::solar_mass
-           << " kg" << std::endl;
-      fout << "Msun\t\tsolar_mass" << std::endl;
-      fout << "bohr_radius\t\t" << o2scl_mks::bohr_radius
-           << " m" << std::endl;
-      fout << "dyne\t\t" << o2scl_mks::dyne
-           << " kg m / s^2" << std::endl;
-      fout << "erg\t\t" << o2scl_mks::erg
-           << " kg m^2 / s^2" << std::endl;
-      fout << "stefan_boltzmann_constant\t\t" 
-           << o2scl_mks::stefan_boltzmann_constant
-           << " kg / K^4 s^3" << std::endl;
-      fout << "thomson_cross_section\t\t" 
-           << o2scl_mks::thomson_cross_section
-           << " m^2" << std::endl;
-      fout << "vacuum_permittivity\t\t" << o2scl_mks::vacuum_permittivity
-           << " A^2 s^4 / kg m^3" << std::endl;
-      fout << "vacuum_permeability\t\t" << o2scl_mks::vacuum_permeability
-           << " kg m / A^2 s^2" << std::endl;
-      fout.close();
-      
-      return;
-    }
-    
     //@}
     
   };

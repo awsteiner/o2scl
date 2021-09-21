@@ -184,9 +184,9 @@ int main(int argc, char *argv[]) {
   cux.test_cache_calc<test_mgr>(t);
   cout << endl;
   
-  cux.verbose=3;
+  cux.verbose=1;
   int cret=cux.convert_calc2("g","solarmass",1.0,d1,d2);
-  cout << cret << " " << d1 << " " << d2 << endl;
+  t.test_rel(1.0/o2scl_cgs::solar_mass,d1,1.0e-6,"calc2");
   
   t.report();
   return 0;
