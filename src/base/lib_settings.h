@@ -181,9 +181,6 @@ namespace o2scl {
     /// Default convert_units object
     convert_units<double> def_cu;
 
-    /// Default find_constants object
-    find_constants def_fc;
-    
     /// Get the global convert_units object
     convert_units<double> &get_convert_units() {
       return *cup;
@@ -194,9 +191,11 @@ namespace o2scl {
       return *fcp;
     }
 
-    /// Set the global convert_units object
+    /// Set the global convert_units and find_constants objects
     void set_convert_units(convert_units<double> &cu) {
       cup=&cu;
+      fcp=&cu.fc;
+      return;
     }
 
     // AWS: 2/22/21: I was originally thinking of using this to

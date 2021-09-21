@@ -714,6 +714,8 @@ namespace o2scl {
     
     virtual ~convert_units() {}
 
+    find_constants fc;
+    
     /** \brief Add a user-defined unit
      */
     void add_unit(const der_unit &d) {
@@ -891,7 +893,7 @@ namespace o2scl {
      */
     int convert_calc2(std::string from, std::string to,
                       fp_t val, fp_t &converted,
-                      fp_t &factor) const {
+                      fp_t &factor) {
 
 #ifdef O2SCL_CALC_UTF8
       o2scl::calc_utf8 calc;
@@ -900,7 +902,7 @@ namespace o2scl {
       o2scl::calculator calc;
       o2scl::calculator calc2;
 #endif
-      
+
       int cret1=calc.compile_nothrow(from.c_str());
       if (cret1!=0) {
         if (verbose>0) {
@@ -919,9 +921,54 @@ namespace o2scl {
       }
       
 #ifdef O2SCL_CALC_UTF8
+      
       std::vector<std::u32string> vars=calc.get_var_list();
+      std::vector<std::string> vars_str;
+      for(size_t ij=0;ij<vars.size();ij++) {
+        std::string tmp;
+        char32_to_utf8(vars[ij],tmp);
+        vars_str.push_back(tmp);
+      }
+      if (verbose>=2) {
+        std::cout << "Unit list of from: ";
+        o2scl::vector_out(std::cout,vars_str,true);
+      }
+      
       std::vector<std::u32string> vars2=calc2.get_var_list();
+      std::vector<std::string> vars2_str;
+      for(size_t ij=0;ij<vars2.size();ij++) {
+        std::string tmp;
+        char32_to_utf8(vars2[ij],tmp);
+        vars2_str.push_back(tmp);
+      }
+      if (verbose>=2) {
+        std::cout << "Unit list of to: ";
+        o2scl::vector_out(std::cout,vars2_str,true);
+      }
 
+      std::vector<std::string> curr, new_units;
+      get_curr_unit_list(curr);
+
+      for(size_t i=0;i<vars_str.size();i++) {
+        if (std::find(curr.begin(),curr.end(),vars_str[i])==curr.end() &&
+            std::find(new_units.begin(),new_units.end(),
+                      vars_str[i])==new_units.end()) {
+          new_units.push_back(vars_str[i]);
+        }
+      }
+      for(size_t i=0;i<vars2_str.size();i++) {
+        if (std::find(curr.begin(),curr.end(),vars2_str[i])==curr.end() &&
+            std::find(new_units.begin(),new_units.end(),
+                      vars2_str[i])==new_units.end()) {
+          new_units.push_back(vars2_str[i]);
+        }
+      }
+      
+      if (verbose>=2) {
+        std::cout << "New units not found: ";
+        o2scl::vector_out(std::cout,new_units,true);
+      }
+      
 #else
 
       // Create "new_units", the list of units which are not
@@ -932,11 +979,12 @@ namespace o2scl {
         o2scl::vector_out(std::cout,vars,true);
       }
       std::vector<std::string> vars2=calc2.get_var_list();
-      std::vector<std::string> curr, new_units;
       if (verbose>=2) {
         std::cout << "Unit list of to: ";
         o2scl::vector_out(std::cout,vars2,true);
       }
+
+      std::vector<std::string> curr, new_units;
       get_curr_unit_list(curr);
 
       for(size_t i=0;i<vars.size();i++) {
@@ -958,12 +1006,9 @@ namespace o2scl {
         o2scl::vector_out(std::cout,new_units,true);
       }
 
-      /*
-        This is problematic because lib_settings.h requires
-        convert_units.h
-
-      find_constants &fc=o2scl_settings.get_find_constants();
-      vector<find_constants::find_constants_list> matches;
+#endif
+      
+      std::vector<find_constants::find_constants_list> matches;
       for(size_t i=0;i<new_units.size();i++) {
         int fret=fc.find_nothrow(new_units[i],"mks",matches);
         if (fret==find_constants::one_exact_match_unit_match ||
@@ -982,23 +1027,21 @@ namespace o2scl {
           du.name=fcl.names[0];
           if (verbose>=2) {
             std::cout << "Found constant " << new_units[i]
-                      << " not uniquely specified in constant list ("
-                      << fret << "." << std::endl;
+                      << " with value " << fcl.val << std::endl;
           }
         } else {
           if (verbose>=2) {
             std::cout << "New unit " << new_units[i]
                       << " not uniquely specified in constant list ("
-                      << fret << "." << std::endl;
+                      << fret << ")." << std::endl;
           }
           return 1;
         }
       }
-      */
+
+      std::cout << "Here2." << std::endl;
       
-#endif
-      
-      return 0;
+      return convert_calc(from,to,val,converted,factor);
     }
     
     /** \brief Automatic unit conversion between SI-based units

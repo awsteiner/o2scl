@@ -28,174 +28,165 @@ using namespace o2scl;
 using namespace std;
 
 int main(int argc, char *argv[]) {
+  
   cout.setf(ios::scientific);
+  
   test_mgr t;
   t.set_output_level(1);
 
-  // Test all the permutations of mixing two conversions
-  // to generate a third
+  convert_units<double> cux;
+  double d1, d2;
+  int ix;
 
-  if (argc>=2 && ((string)argv[1])==((string)"make-units")) {
-    convert_units<double> cu;
-    cu.make_units_dat("units.dat");
-  }
-  
-  if (argc>=2 && ((string)argv[1])==((string)"make-units-hck")) {
-    convert_units<double> cu;
-    cu.make_units_dat("units_hck.dat",true,true,true);
-  }
-
-  if (true) {
-    convert_units<double> cux;
-    double d1, d2;
-    int ix;
-
-    cux.set_natural_units(1,1,1);
-    cux.verbose=2;
-    ix=cux.convert_calc("meV","eV",1.0,d1,d2);
-    cout << ix << " " << d1 << " " << d2 << endl;
-    cux.verbose=0;
-    //exit(-1);
+  cux.set_natural_units(1,1,1);
+  cux.verbose=2;
+  ix=cux.convert_calc("meV","eV",1.0,d1,d2);
+  cout << ix << " " << d1 << " " << d2 << endl;
+  cux.verbose=0;
+  //exit(-1);
     
-    // hbar is in kg m^2/s, hbar*c is in kg m^3/s^2
+  // hbar is in kg m^2/s, hbar*c is in kg m^3/s^2
 
-    for(int inu=7;inu>=0;inu--) {
+  for(int inu=7;inu>=0;inu--) {
       
-      bool c_is_1=(inu&4)>0;
-      bool hbar_is_1=(inu&2)>0;
-      bool kb_is_1=(inu&1)>0;
+    bool c_is_1=(inu&4)>0;
+    bool hbar_is_1=(inu&2)>0;
+    bool kb_is_1=(inu&1)>0;
       
-      cux.set_natural_units(c_is_1,hbar_is_1,kb_is_1);
+    cux.set_natural_units(c_is_1,hbar_is_1,kb_is_1);
 
-      cout << "-----------------------------------"
-           << "-----------------------------------" << endl;
-      cout << "c: " << c_is_1 << " hbar: " << hbar_is_1 << " kb: "
-           << kb_is_1 << endl;
-      cout << endl;
+    cout << "-----------------------------------"
+         << "-----------------------------------" << endl;
+    cout << "c: " << c_is_1 << " hbar: " << hbar_is_1 << " kb: "
+         << kb_is_1 << endl;
+    cout << endl;
 
-      int sret=0;
+    int sret=0;
       
-      cout << "J K 1/kB" << endl;
-      ix=cux.convert_calc("J","K",2.0,d1,d2);
-      if (ix==0) {
-        cout << "ix,factor: " << ix << " " << d2 << endl;
-        sret=system("acol -convert J K");
-        t.test_gen(kb_is_1,"kb_is_1 conv 1a");
-      } else {
-        cout << "ix: " << ix << endl;
-        t.test_gen(!kb_is_1,"kb_is_1 conv 1b");
-      }
-      cout << endl;
-    
-      cout << "J kg 1/c^2" << endl;
-      ix=cux.convert_calc("J","kg",2.0,d1,d2);
-      if (ix==0) {
-        cout << "ix,factor: " << ix << " " << d2 << endl;
-        sret=system("acol -convert kg 1/c^2");
-        t.test_gen(c_is_1,"c_is_1 conv 2a");
-      } else {
-        cout << "ix: " << ix << endl;
-        t.test_gen(!c_is_1,"c_is_1 conv 2b");
-      }
-      cout << endl;
-
-      cout << "J^2*s^2 J*s 1/hbar" << endl;
-      ix=cux.convert_calc("J^2*s^2","J*s",2.0,d1,d2);
-      if (ix==0) {
-        cout << "ix,factor: " << ix << " " << d2 << endl;
-        sret=system("acol -convert J^2*s^2 J*s");
-        t.test_gen(hbar_is_1,"hbar_is_1 conv 3a");
-      } else {
-        cout << "ix: " << ix << endl;
-        t.test_gen(!hbar_is_1,"hbar_is_1 conv 3b");
-      }
-      cout << endl;
-    
-      cout << "J^2 K^2 1/kB^2" << endl;
-      ix=cux.convert_calc("J^2","K^2",2.0,d1,d2);
-      if (ix==0) {
-        cout << "ix,factor: " << ix << " " << d2 << endl;
-        sret=system("acol -convert J^2 K^2");
-        t.test_gen(kb_is_1,"kb_is_1 conv 4a");
-      } else {
-        cout << "ix: " << ix << endl;
-        t.test_gen(!kb_is_1,"kb_is_1 conv 4b");
-      }
-      cout << endl;
-    
-      cout << "erg^2 K^2 1/kB^2" << endl;
-      ix=cux.convert_calc("erg^2","K^2",2.0,d1,d2);
-      if (ix==0) {
-        cout << "ix,factor: " << ix << " " << d2 << endl;
-        sret=system("acol -convert erg^2 K^2");
-        t.test_gen(kb_is_1,"kb_is_1 conv 5a");
-      } else {
-        cout << "ix: " << ix << endl;
-        t.test_gen(!kb_is_1,"kb_is_1 conv 5b");
-      }
-      cout << endl;
-    
-      cout << "1/fm^2 K^2 hbar^2*c^2/kB^2" << endl;
-      ix=cux.convert_calc("1/fm^2","K^2",2.0,d1,d2);
-      if (ix==0) {
-        cout << "ix,factor: " << ix << " " << d2 << endl;
-        sret=system("acol -convert 1/fm^2 K^2");
-        t.test_gen(kb_is_1,"kb_is_1 conv 6a");
-        t.test_gen(hbar_is_1,"hbar_is_1 conv 6b");
-        t.test_gen(c_is_1,"c_is_1 conv 6c");
-      } else {
-        cout << "ix: " << ix << endl;
-        t.test_gen(!c_is_1 || !kb_is_1 || !hbar_is_1,"conv 6d");
-      }
-      cout << endl;
-    
-      cout << "1/s^2 nK^2 hbar^2/kB^2" << endl;
-      ix=cux.convert_calc("1/s^2","nK^2",2.0,d1,d2);
-      if (ix==0) {
-        cout << "ix,factor: " << ix << " " << d2 << endl;
-        sret=system("acol -convert 1/s^2 nK^2");
-        t.test_gen(kb_is_1,"kb_is_1 conv 7a");
-        t.test_gen(hbar_is_1,"hbar_is_1 conv 7b");
-      } else {
-        cout << "ix: " << ix << endl;
-        t.test_gen(!kb_is_1 || !hbar_is_1,"conv 7c");
-      }
-      cout << endl;
-    
-      cout << "m^2 nK^2" << endl;
-      ix=cux.convert_calc("m^2","nK^2",2.0,d1,d2);
-      if (ix==0) {
-        t.test_gen(true,"conv 8a");
-      } else {
-        cout << "ix: " << ix << endl;
-      }
-      cout << endl;
+    cout << "J K 1/kB" << endl;
+    ix=cux.convert_calc("J","K",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ix,factor: " << ix << " " << d2 << endl;
+      sret=system("acol -convert J K");
+      t.test_gen(kb_is_1,"kb_is_1 conv 1a");
+    } else {
+      cout << "ix: " << ix << endl;
+      t.test_gen(!kb_is_1,"kb_is_1 conv 1b");
     }
-    
-    cout << "-----------------------------------"
-         << "-----------------------------------" << endl;
-    cout << "Print units: " << endl;
     cout << endl;
     
-    cux.print_units(cout);
+    cout << "J kg 1/c^2" << endl;
+    ix=cux.convert_calc("J","kg",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ix,factor: " << ix << " " << d2 << endl;
+      sret=system("acol -convert kg 1/c^2");
+      t.test_gen(c_is_1,"c_is_1 conv 2a");
+    } else {
+      cout << "ix: " << ix << endl;
+      t.test_gen(!c_is_1,"c_is_1 conv 2b");
+    }
+    cout << endl;
+
+    cout << "J^2*s^2 J*s 1/hbar" << endl;
+    ix=cux.convert_calc("J^2*s^2","J*s",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ix,factor: " << ix << " " << d2 << endl;
+      sret=system("acol -convert J^2*s^2 J*s");
+      t.test_gen(hbar_is_1,"hbar_is_1 conv 3a");
+    } else {
+      cout << "ix: " << ix << endl;
+      t.test_gen(!hbar_is_1,"hbar_is_1 conv 3b");
+    }
     cout << endl;
     
-    cout << "-----------------------------------"
-         << "-----------------------------------" << endl;
-    cout << "Test unique: " << endl;
-    cux.test_unique();
+    cout << "J^2 K^2 1/kB^2" << endl;
+    ix=cux.convert_calc("J^2","K^2",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ix,factor: " << ix << " " << d2 << endl;
+      sret=system("acol -convert J^2 K^2");
+      t.test_gen(kb_is_1,"kb_is_1 conv 4a");
+    } else {
+      cout << "ix: " << ix << endl;
+      t.test_gen(!kb_is_1,"kb_is_1 conv 4b");
+    }
     cout << endl;
     
-    cout << "-----------------------------------"
-         << "-----------------------------------" << endl;
-    cout << "Test cache_calc(): " << endl;
+    cout << "erg^2 K^2 1/kB^2" << endl;
+    ix=cux.convert_calc("erg^2","K^2",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ix,factor: " << ix << " " << d2 << endl;
+      sret=system("acol -convert erg^2 K^2");
+      t.test_gen(kb_is_1,"kb_is_1 conv 5a");
+    } else {
+      cout << "ix: " << ix << endl;
+      t.test_gen(!kb_is_1,"kb_is_1 conv 5b");
+    }
     cout << endl;
     
-    cux.set_natural_units(1,1,1);
-    cux.default_conversions();
-    cux.test_cache_calc<test_mgr>(t);
+    cout << "1/fm^2 K^2 hbar^2*c^2/kB^2" << endl;
+    ix=cux.convert_calc("1/fm^2","K^2",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ix,factor: " << ix << " " << d2 << endl;
+      sret=system("acol -convert 1/fm^2 K^2");
+      t.test_gen(kb_is_1,"kb_is_1 conv 6a");
+      t.test_gen(hbar_is_1,"hbar_is_1 conv 6b");
+      t.test_gen(c_is_1,"c_is_1 conv 6c");
+    } else {
+      cout << "ix: " << ix << endl;
+      t.test_gen(!c_is_1 || !kb_is_1 || !hbar_is_1,"conv 6d");
+    }
+    cout << endl;
     
+    cout << "1/s^2 nK^2 hbar^2/kB^2" << endl;
+    ix=cux.convert_calc("1/s^2","nK^2",2.0,d1,d2);
+    if (ix==0) {
+      cout << "ix,factor: " << ix << " " << d2 << endl;
+      sret=system("acol -convert 1/s^2 nK^2");
+      t.test_gen(kb_is_1,"kb_is_1 conv 7a");
+      t.test_gen(hbar_is_1,"hbar_is_1 conv 7b");
+    } else {
+      cout << "ix: " << ix << endl;
+      t.test_gen(!kb_is_1 || !hbar_is_1,"conv 7c");
+    }
+    cout << endl;
+    
+    cout << "m^2 nK^2" << endl;
+    ix=cux.convert_calc("m^2","nK^2",2.0,d1,d2);
+    if (ix==0) {
+      t.test_gen(true,"conv 8a");
+    } else {
+      cout << "ix: " << ix << endl;
+    }
+    cout << endl;
   }
+    
+  cout << "-----------------------------------"
+       << "-----------------------------------" << endl;
+  cout << "Print units: " << endl;
+  cout << endl;
+    
+  cux.print_units(cout);
+  cout << endl;
+    
+  cout << "-----------------------------------"
+       << "-----------------------------------" << endl;
+  cout << "Test unique: " << endl;
+  cux.test_unique();
+  cout << endl;
+    
+  cout << "-----------------------------------"
+       << "-----------------------------------" << endl;
+  cout << "Test cache_calc(): " << endl;
+  cout << endl;
+    
+  cux.set_natural_units(1,1,1);
+  cux.default_conversions();
+  cux.test_cache_calc<test_mgr>(t);
+  cout << endl;
+  
+  cux.verbose=3;
+  int cret=cux.convert_calc2("g","solarmass",1.0,d1,d2);
+  cout << cret << " " << d1 << " " << d2 << endl;
   
   t.report();
   return 0;
