@@ -636,9 +636,11 @@ namespace o2scl {
          {"Msolar",0,1,0,0,0,0,0,o2scl_mks::solar_mass,"solar mass"},
          {"pound",0,1,0,0,0,0,0,o2scl_mks::pound_mass,"pound"},
          {"ounce",0,1,0,0,0,0,0,o2scl_mks::ounce_mass,"ounce"},
-         // SI prefixes aren't allowed for tonnes because of confusion
-         // between "ft" and "femtotonne"
-         {"t",0,1,0,0,0,0,0,1.0e3,"(metric) tonne"},
+
+         // The offical abbreviation for tonne is "t", but then SI
+         // prefixes cause confusion between between "foot" and
+         // "femtotonne". For now, we use "tonne" instead of "t".
+         {"tonne",0,1,0,0,0,0,0,1.0e3,"(metric) tonne"},
          {"uk_ton",0,1,0,0,0,0,0,o2scl_mks::uk_ton,"uk ton"},
          {"troy_ounce",0,1,0,0,0,0,0,o2scl_mks::troy_ounce,"troy ounce"},
          {"carat",0,1,0,0,0,0,0,o2scl_mks::carat,"carat"},

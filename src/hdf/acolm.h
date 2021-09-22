@@ -135,9 +135,6 @@ namespace o2scl_acol {
     /// The output precision (default 6)
     int prec;
 
-    /// The verbosity level (default 1)
-    int verbose;
-
     /// True if we should make the output into neat columns (default true)
     bool pretty;
     
@@ -191,6 +188,9 @@ namespace o2scl_acol {
     acol_manager();
 
     virtual ~acol_manager() {}
+
+    /// The verbosity level (default 1)
+    int verbose;
 
     /// String designating the current type
     std::string type;

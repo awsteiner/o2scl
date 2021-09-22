@@ -485,6 +485,7 @@ namespace o2scl_hdf {
 
     if (verbose>2) {
       std::cout << "Function vector_spec is parsing: " << spec << std::endl;
+      std::cout << "verbose is " << verbose << std::endl;
     }
       
     if (spec.find("val:")==0) {

@@ -276,12 +276,28 @@ int o2scl_acol_mult_vectors_to_conts(void *vp, char *str1,
   string s1, s2;
   if (str1!=0) {
     s1=str1;
+    if (amp->verbose>=2) {
+      cout << "Function o2scl_acol_mult_vectors_to_conts() processing "
+           << s1 << endl;
+    }
     int ret1=mult_vector_spec(s1,v1,amp->get_verbose(),false);
+    if (amp->verbose>=2) {
+      cout << "Function o2scl_acol_mult_vectors_to_conts() return: "
+           << ret1 << " size: " << v1.size() << endl;
+    }
     if (ret1!=0) return ret1;
   }
   
   s2=str2;
+  if (amp->verbose>=2) {
+    cout << "Function o2scl_acol_mult_vectors_to_conts() processing "
+         << s2 << endl;
+  }
   int ret2=mult_vector_spec(s2,v2,amp->get_verbose(),false);
+  if (amp->verbose>=2) {
+    cout << "Function o2scl_acol_mult_vectors_to_conts() return: "
+         << ret2 << " size: " << v2.size() << endl;
+  }
   if (ret2!=0) return ret2;
   
   amp->cont_obj.clear();
