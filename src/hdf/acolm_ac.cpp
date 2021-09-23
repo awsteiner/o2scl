@@ -45,11 +45,6 @@ int acol_manager::comm_convert
   } else {
     cng.verbose=0;
   }
-
-  if (false) {
-    // Here, reconfigure the argument processing to support
-    // the 'add' and 'del' options
-  }
   
   if (sv.size()==2 && sv[1]=="list") {
     cng.print_units(std::cout);
@@ -103,10 +98,7 @@ int acol_manager::comm_convert
       if (ret!=0) return ret;
       in.push_back(in2);
     } else if (in2=="del") {
-      ret=get_input_one(sv2,"Old unit",in2,"convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-      ret=get_input_one(sv2,"New unit",in2,"convert",itive_com);
+      ret=get_input_one(sv2,"Unit to delete",in2,"convert",itive_com);
       if (ret!=0) return ret;
       in.push_back(in2);
     } else if (in2=="nat") {
@@ -114,7 +106,7 @@ int acol_manager::comm_convert
                         in2,"convert",itive_com);
       if (ret!=0) return ret;
       in.push_back(in2);
-      ret=get_input_one(sv2,"Treat hbar as 1 (true or false)",
+      ret=get_input_one(sv2,"Treat ħ as 1 (true or false)",
                         in2,"convert",itive_com);
       if (ret!=0) return ret;
       in.push_back(in2);
@@ -265,15 +257,7 @@ int acol_manager::comm_convert
 int acol_manager::comm_constant(std::vector<std::string> &sv,
 				bool itive_com) {
 
-  if (verbose>=3) {
-    cout << "Here1." << endl;
-  }
-  
   find_constants &fc=o2scl_settings.get_find_constants();
-
-  if (verbose>=3) {
-    cout << "Here2." << endl;
-  }
 
   if (sv.size()<2) {
     vector<string> pr, in;
@@ -289,10 +273,6 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
     return 0;
   }
   
-  if (verbose>=3) {
-    cout << "Here3" << endl;
-  }
-
   if (sv.size()>=3 && sv[2]!="none" && sv[2]!="None" && sv[1]!="add" &&
       sv[1]!="del") {
     // If a unit was specified, then search for the constant with

@@ -374,9 +374,15 @@ find_constants::find_constants() {
 	{{"radius pluto","plutoradius","rpluto","r♇"},"cm",
          o2scl_const::o2scl_cgs,o2scl_cgs::pluto_radius,"",0,0,0,0,0,0,0},
 	{{"Rydberg"},"kg*m^2/s^2",o2scl_const::o2scl_mks,
-	 o2scl_mks::rydberg,"CODATA 2018",1,0,0,0,0,0,0},
+	 o2scl_mks::rydberg,"CODATA 2018",2,1,-2,0,0,0,0},
 	{{"Rydberg"},"g*cm^2/s^2",o2scl_const::o2scl_cgs,
-	 o2scl_cgs::rydberg,"CODATA 2018",0,0,0,0,0,0,0}
+	 o2scl_cgs::rydberg,"CODATA 2018",0,0,0,0,0,0,0},
+	{{"tropicalyear"},"s",o2scl_const::o2scl_mks,31556925.1,
+	 "PDG 2021 (https://pdg.lbl.gov/2021/reviews/contents_sports.html)",
+         0,0,1,0,0,0,0},
+	{{"siderealyear"},"s",o2scl_const::o2scl_mks,31558149.8,
+         "PDG 2021 (https://pdg.lbl.gov/2021/reviews/contents_sports.html)",
+         0,0,1,0,0,0,0}
   };
 
 }

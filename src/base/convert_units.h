@@ -664,8 +664,10 @@ namespace o2scl {
          {"torr",-1,1,-2,0,0,0,0,o2scl_mks::torr,"torr"},
          {"psi",-1,1,-2,0,0,0,0,o2scl_mks::psi,"psi"},
 
-         // Time units
-         {"yr",0,0,1,0,0,0,0,31556926,"year"},
+         // Time units. Years are obtained from
+         // https://pdg.lbl.gov/2021/reviews/contents_sports.html,
+         // which references the 2020 Astronomical almanac
+         {"yr",0,0,1,0,0,0,0,31556925.1,"year (tropical)"},
          {"wk",0,0,1,0,0,0,0,o2scl_mks::week,"week"},
          {"d",0,0,1,0,0,0,0,o2scl_mks::day,"day"},
 
@@ -702,7 +704,7 @@ namespace o2scl {
          // constant
          {"G",0,1,-2,0,-1,0,0,o2scl_mks::gauss,"gauss"},
          
-         {"NA",0,0,0,0,0,0,0,o2scl_const::avogadro,"Avogadro's number"}
+         {"NA",0,0,0,0,0,-1,0,o2scl_const::avogadro,"Avogadro's number"}
      
         };
       
@@ -795,7 +797,7 @@ namespace o2scl {
       out << std::endl;
 
       out << "SI prefixes: prefix value" << std::endl;
-      out << "------------------- -----" << std::endl;
+      out << "------------------- ------------" << std::endl;
       for(size_t i=0;i<prefixes.size();i++) {
         
         // Extra space for the unicode
@@ -815,7 +817,7 @@ namespace o2scl {
       out << "Other:    label  m kg  s  K  A mol cd value        "
           << "full name" << std::endl;
       out << "--------------- -- -- -- -- -- --- -- ------------ "
-          << "--------------" << std::endl;
+          << "---------------------" << std::endl;
           
     
       for(size_t i=0;i<other.size();i++) {

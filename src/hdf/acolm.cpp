@@ -1453,16 +1453,26 @@ int acol_manager::setup_options() {
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
       both},
      {0,"convert","Get a unit conversion factor.",0,11,
-      "<old unit> <new unit> [value to convert]",
-      ((string)"This command gets a unit ")+
+      ((string)"<old unit (or \"list\", \"add\", \"del\", or \"nat\")> ")+
+      "<new unit> [value to convert]",
+      ((string)"This command computes a unit ")+
       "conversion factor and optionally applies than conversion factor "+
-      "to a user-specified value. Conversions which presume hbar=c=kB=1 "+
-      "are allowed. For example, 'convert MeV 1/fm' returns "+
+      "to a user-specified value. Conversions which presume ħ=c=kB=1 "+
+      "are allowed by default. For example, 'convert MeV 1/fm' returns "+
       "'1.000000e+00 MeV = 5.067731e-03 1/fm'. The conversion factor "+
       "is output "+
       "at the current precision, but is always internally stored with "+
-      "full double precision. To print the unit table, use "+
-      "-convert list",
+      "full double precision. To print the list of known units, SI "+
+      "prefixes, and the unit conversion cache, use -convert "+
+      "list. To add a unit (only MKS is supported) the format is:\n\n"+
+      "-convert add <unit> <power of meters> <power of kg> "+
+      "<power of seconds> <power of Kelvin> <power of amps> "+
+      "<power of moles> <power of candelas> <value> <long name>\n\n"+
+      "To delete a unit, the format is:\n\n-convert del <unit>\n\n"+
+      "However, note that deleting a unit does not delete its "+
+      "occurences in the unit conversion cache. "+
+      "To modify the use of naturaly units, use:\n\n"+
+      "-convert nat <boolean for c=1> <boolean for ħ> <boolean for kB>",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_convert),
       both},
      {0,"h5-copy","Copy hdf5 file (experimental).",-1,-1,
@@ -1474,18 +1484,12 @@ int acol_manager::setup_options() {
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_h5_copy),
       both},
      {0,"constant","Get a physical or numerical constant.",
-      0,-1,"<name or pattern> [unit]",
+      0,-1,"<name, pattern, \"add\", \"del\", or \"list\"> [unit]",
       ((string)"Get a physical or numerical constant from the library. ")+
       "If \"list\" is given for <name or pattern>, then the full constant "+
-      "list is printed ot the screen.",
+      "list is printed to the screen.",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_constant),
       both},
-     /*    
-	   {'H',"html","Create a file in HTML (table3d only).",0,1,"<file>",
-	   "Output the current table in HTML mode to the specified file. ",
-	   new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_html),
-	   both},
-     */
      {'q',"interactive","Toggle the interactive interface.",
       0,0,"",((string)"If given as a command-line parameter, 'interactive' ")+
       "toggles the execution of the interactive mode after the "+
