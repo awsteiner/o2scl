@@ -62,6 +62,7 @@ int main(int argc, char *argv[]) {
     init[0]=0.1;
     init[1]=0.2;
     ga.tol_abs=1.0e-6;
+    ga.ntrial*=10;
     ga.mmin(1,init,result,fx);
     cout << init[0] << " " << result << endl;
     t.test_rel(init[0],2.0,1.6e-2,"another test - value");

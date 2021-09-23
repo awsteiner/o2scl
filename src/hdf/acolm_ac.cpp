@@ -139,6 +139,8 @@ int acol_manager::comm_convert
   
   if (in[0]=="add") {
 
+    cout << "Add unit." << endl;
+
     double val=1.0;
     if (in.size()>=3) {
       int ret2=function_to_double_nothrow(in[9],val);
@@ -161,14 +163,18 @@ int acol_manager::comm_convert
     d.name=in[10];
 
     cng.add_unit(d);
-    
-  } else if (in[1]=="del") {
 
-    cout << "Delete conversion." << endl;
+    return 0;
+    
+  } else if (in[0]=="del") {
+
+    cout << "Delete unit." << endl;
 
     cng.del_unit(in[2]);
+
+    return 0;
     
-  } else if (in[1]=="nat") {
+  } else if (in[0]=="nat") {
 
     cout << "Set natural units." << endl;
 
@@ -176,27 +182,54 @@ int acol_manager::comm_convert
                           o2scl::stob(in[3]),
                           o2scl::stob(in[4]));
     
+    return 0;
+    
   }
   
   double val=1.0;
-  if (in.size()>=3) {
-    int ret2=function_to_double_nothrow(in[2],val);
-    if (ret2!=0) {
-      cerr << "Converting " << in[2] << " to value failed." << endl;
-      return 2;
+  
+  if (in[0]=="2") {
+    
+    cout << "Using convert_calc2()." << endl;
+    
+    if (in.size()>=4) {
+      int ret2=function_to_double_nothrow(in[3],val);
+      if (ret2!=0) {
+        cerr << "Converting " << in[3] << " to value failed." << endl;
+        return 2;
+      }
     }
+    
+    double val_out, factor;
+    int cret=cng.convert_calc2(in[1],in[2],val,val_out,factor);
+    if (cret!=0) {
+      cerr << "Conversion failed." << endl;
+      return 1;
+    }
+
+    cout << val << " " << in[1] << " = " << val_out << " " << in[2] << endl;
+    return 0;
+    
+  } else {
+    
+    if (in.size()>=3) {
+      int ret2=function_to_double_nothrow(in[2],val);
+      if (ret2!=0) {
+        cerr << "Converting " << in[2] << " to value failed." << endl;
+        return 2;
+      }
+    }
+
+    // If cng.verbose is non-zero, then cng.convert may output
+    // verbose information to cout
+    double val_out;
+    int cret=cng.convert_ret(in[0],in[1],val,val_out);
+    if (cret!=0) {
+      cerr << "Conversion failed." << endl;
+      return 1;
+    }
+    cout << val << " " << in[0] << " = " << val_out << " " << in[1] << endl;
   }
-  
-  // If cng.verbose is non-zero, then cng.convert may output
-  // verbose information to cout
-  double val_out;
-  int cret=cng.convert_ret(in[0],in[1],val,val_out);
-  if (cret!=0) {
-    cerr << "Conversion failed." << endl;
-    return 1;
-  }
-  
-  cout << val << " " << in[0] << " = " << val_out << " " << in[1] << endl;
   
   return 0;
 }

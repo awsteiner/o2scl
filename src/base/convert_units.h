@@ -360,19 +360,17 @@ namespace o2scl {
       }
 
       // Compute conversion from convert_calc()
-      if (true) {
-        int ret=convert_calc(from,to,val,converted,factor);
-        if (ret==0) {
-          if (verbose>=2) {
-            std::cout << "Function convert_units::convert_internal(): "
-                      << "calculated conversion." << std::endl;
-          }
-          new_conv=true;
-          return 0;
-        } else if (verbose>=3) {
+      int ret=convert_calc(from,to,val,converted,factor);
+      if (ret==0) {
+        if (verbose>=2) {
           std::cout << "Function convert_units::convert_internal(): "
-                    << "failed to calculate conversion." << std::endl;
+                    << "calculated conversion." << std::endl;
         }
+        new_conv=true;
+        return 0;
+      } else if (verbose>=3) {
+        std::cout << "Function convert_units::convert_internal(): "
+                  << "failed to calculate conversion." << std::endl;
       }
       
       if (err_on_fail) {
