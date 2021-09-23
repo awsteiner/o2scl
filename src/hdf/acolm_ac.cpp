@@ -176,11 +176,39 @@ int acol_manager::comm_convert
     
   } else if (in[0]=="nat") {
 
-    cout << "Set natural units." << endl;
-
-    cng.set_natural_units(o2scl::stob(in[2]),
-                          o2scl::stob(in[3]),
-                          o2scl::stob(in[4]));
+    if (o2scl::stob(in[1])) {
+      if (o2scl::stob(in[2])) {
+        if (o2scl::stob(in[3])) {
+          cout << "Setting c, ħ, and kB to 1." << endl;
+        } else {
+          cout << "Setting c and ħ to 1." << endl;
+        }
+      } else {
+        if (o2scl::stob(in[3])) {
+          cout << "Setting c and kB to 1." << endl;
+        } else {
+          cout << "Setting c to 1." << endl;
+        }
+      }
+    } else {
+      if (o2scl::stob(in[2])) {
+        if (o2scl::stob(in[3])) {
+          cout << "Setting ħ and kB to 1." << endl;
+        } else {
+          cout << "Setting ħ to 1." << endl;
+        }
+      } else {
+        if (o2scl::stob(in[3])) {
+          cout << "Setting kB to 1." << endl;
+        } else {
+          cout << "No natural units will be used." << endl;
+        }
+      }
+    }
+    
+    cng.set_natural_units(o2scl::stob(in[1]),
+                          o2scl::stob(in[2]),
+                          o2scl::stob(in[3]));
     
     return 0;
     
