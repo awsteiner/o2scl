@@ -302,7 +302,7 @@ namespace o2scl {
     double G;
     
     /** \brief The 't Hooft six-fermion interaction coupling
-	(in \f$ \mathrm{fm}^{2} \f$)
+	(in \f$ \mathrm{fm}^{5} \f$)
     */
     double K;
     
