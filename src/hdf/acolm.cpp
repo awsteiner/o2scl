@@ -1526,7 +1526,7 @@ int acol_manager::setup_options() {
       "attempting to find a readable O2scl object.",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read),
       both},
-     {0,"slack","Send a slack message.",0,2,"[\"#channel\"] <strings-spec>",
+     {0,"slack","Send a slack message.",0,6,"[\"#channel\"] <strings-spec>",
       ((string)"Send a message to slack, using the specified channel. ")+
       "If the channel is not specified, it is taken from the "+
       "environment variable O2SCL_SLACK_CHANNEL. The '#' sign "+

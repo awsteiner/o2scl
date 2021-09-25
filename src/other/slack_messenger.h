@@ -227,7 +227,89 @@ namespace o2scl {
     
       return iret;
     }
-  
+
+    /** \brief Send a message
+     */
+    int send_image(std::string message, std::string image_url,
+                   std::string alt_text, bool err_on_fail=true) {
+      
+      int iret=0;
+
+      if (url.length()>0) {
+
+	if (channel.length()==0) {
+	  O2SCL_ERR2("No slack channel specified in ",
+		     "slack_messenger::send().",o2scl::exc_einval);
+	}
+	if (username.length()==0) {
+	  O2SCL_ERR2("No slack username specified in ",
+		     "slack_messenger::send().",o2scl::exc_einval);
+	}
+
+	double time_now=time_last_message;
+	if (mpi_time) {
+#ifdef O2SCL_MPI
+	  time_now=MPI_Wtime();
+#else
+	  O2SCL_ERR2("Value mpi_time is true but O2SCL_MPI not defined ",
+		     "in slack_message::slack_message().",
+		    o2scl::exc_einval);
+#endif
+	} else {
+	  time_now=time(0);
+	}
+      
+	if (time_now-time_last_message>min_time_between) {
+	
+	  std::string scr;
+	  if (icon.length()>0) {
+	    scr=((std::string)"curl -X POST --data-urlencode ")+
+	      "\"payload={"+
+              "\\\"channel\\\": \\\""+channel+"\\\", "+
+	      "\\\"username\\\": \\\""+username+"\\\", "+
+	      "\\\"icon_emoji\\\": \\\":"+icon+":\\\", "+ 
+	      "\\\"blocks\\\": [ { \\\"type\\\": \\\"image\\\", "+
+              "\\\"title\\\": { \\\"type\\\": \\\"plain_text\\\", "+
+              "\\\"text\\\": \\\""+message+"\\\" }, "+
+              "\\\"image_url\\\": \\\""+image_url+"\\\", "+
+              "\\\"alt_text\\\": \\\""+alt_text+"\\\" "+
+              "} ] }\" "+url;
+          } else {
+	    scr=((std::string)"curl -X POST --data-urlencode ")+
+	      "\"payload={"+
+              "\\\"channel\\\": \\\""+channel+"\\\", "+
+	      "\\\"username\\\": \\\""+username+"\\\", "+
+	      "\\\"blocks\\\": [ { \\\"type\\\": \\\"image\\\", "+
+              "\\\"title\\\": { \\\"type\\\": \\\"plain_text\\\", "+
+              "\\\"text\\\": \\\""+message+"\\\" }, "+
+              "\\\"image_url\\\": \\\""+image_url+"\\\", "+
+              "\\\"alt_text\\\": \\\""+alt_text+"\\\" "+
+              "} ] }\" "+url;
+	  }
+
+	  if (verbose>1) {
+	    std::cout << "Executing: " << scr << std::endl;
+	  }
+	
+	  iret=system(scr.c_str());
+	
+	  if (iret!=0 && err_on_fail) {
+	    O2SCL_ERR2("System command failed in ",
+		       "slack_messenger::send().",o2scl::exc_efailed);
+	  }
+	
+	  time_last_message=time_now;
+	
+	}
+      
+      } else {
+	O2SCL_ERR2("No slack URL specified in ",
+		   "slack_messenger::send().",o2scl::exc_einval);
+      }
+    
+      return iret;
+    }
+    
   };
 
 #ifndef DOXYGEN_NO_O2NS

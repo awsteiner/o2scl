@@ -135,8 +135,37 @@ int acol_manager::comm_slack(std::vector<std::string> &sv, bool itive_com) {
     }
     cout << "Set Slack URL to " << smess.url << endl;
   }
-  if (sv.size()>=3) {
-    smess.channel=sv[1];
+
+  string channel, message, image_url, alt_text;
+  smess.verbose=verbose;
+
+  if (sv.size()>=2 && sv[1]=="image") {
+    if (sv.size()>=6) {
+      channel=sv[2];
+      message=sv[3];
+      image_url=sv[4];
+      alt_text=sv[5];
+    } else if (sv.size()>=5) {
+      message=sv[2];
+      image_url=sv[3];
+      alt_text=sv[4];
+    } else {
+      cerr << "Image specified, but not enough arguments given." << endl;
+      return 10;
+    }
+  } else if (sv.size()>=3) {
+    channel=sv[1];
+    message=sv[2];
+  } else if (sv.size()>=2) {
+    message=sv[1];
+  } else {
+    cerr << "No slack message given." << endl;
+    return 4;
+  }
+
+  // Take care of slack channel
+  if (channel.length()>0) {
+    smess.channel=channel;
   } else {
     if (smess.channel.length()==0) {
       if (smess.set_channel_from_env("O2SCL_SLACK_CHANNEL")==false) {
@@ -149,6 +178,8 @@ int acol_manager::comm_slack(std::vector<std::string> &sv, bool itive_com) {
     smess.channel=((string)("#"))+smess.channel;
   }
   cout << "Set Slack channel to " << smess.channel << endl;
+
+  // Take care of slack username
   if (smess.username.length()==0) {
     if (smess.set_username_from_env("O2SCL_SLACK_USERNAME")==false) {
       cerr << "Slack username not specified." << endl;
@@ -157,28 +188,45 @@ int acol_manager::comm_slack(std::vector<std::string> &sv, bool itive_com) {
     cout << "Set Slack username to " << smess.username << endl;
   }
 
-  if (sv.size()<2) {
-    cerr << "No slack message given." << endl;
-    return 4;
-  }
-
+  // Construct array of strings from string specification
   std::vector<std::string> slist;
   int ss_ret;
   if (sv.size()>=3) {
-    ss_ret=strings_spec(sv[2],slist,3,true);
+    ss_ret=strings_spec(message,slist,3,true);
   } else {
-    ss_ret=strings_spec(sv[1],slist,3,true);
+    ss_ret=strings_spec(message,slist,3,true);
   }
   if (ss_ret!=0) {
     cerr << "String specification failed." << endl;
   }
-  
+
+  // Collect array of strings into single string
   std::string stmp;
   for(size_t j=0;j<slist.size();j++) {
     stmp+=slist[j];
     if (j!=slist.size()-1) stmp+="\n";
   }
-  smess.send(stmp);
+
+  // Now send the message
+  int sret;
+  if (image_url.length()>0) {
+    if (verbose>=2) {
+      cout << "message: " << stmp << endl;
+      cout << "image_url: " << image_url << endl;
+      cout << "alt_text: " << alt_text << endl;
+    }
+    sret=smess.send_image(stmp,image_url,alt_text,false);
+  } else {
+    if (verbose>=2) {
+      cout << "message: " << stmp << endl;
+    }
+    sret=smess.send(stmp,false);
+  }
+  if (sret!=0) {
+    cout << "Class slack_messenger failed to send message (error "
+         << sret << ")." << endl;
+    return sret;
+  }
   
   return 0;
 }
