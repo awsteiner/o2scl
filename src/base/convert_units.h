@@ -1561,8 +1561,9 @@ namespace o2scl {
       insert_cache("MeV*fm","J*s",elem_charge/1.0e9/o2scl_mks::speed_of_light);
 
       // Simple time conversions
-    
-      insert_cache("yr","s",31556926);
+
+      // (tropical year)
+      insert_cache("yr","s",o2scl_mks::tropical_year);
       insert_cache("wk","s",o2scl_mks::week);
       insert_cache("d","s",o2scl_mks::day);
       insert_cache("hr","s",o2scl_mks::hour);
@@ -1578,6 +1579,7 @@ namespace o2scl {
       insert_cache("fm","m",1.0e-15);
       insert_cache("mm","m",1.0e-3);
       insert_cache("nm","m",1.0e-9);
+      // This quantity is constructed from the Julian year
       insert_cache("lyr","m",o2scl_mks::light_year);
   
       insert_cache("AU^2","m^2",pow(o2scl_mks::astronomical_unit,2.0));

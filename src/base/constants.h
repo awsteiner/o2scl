@@ -313,13 +313,13 @@ namespace o2scl_cgs {
   const double schwarzchild_radius=2.0*o2scl_cgs::solar_mass_parameter/
     o2scl_cgs::speed_of_light/o2scl_cgs::speed_of_light;
   /** \brief Sidereal year in s 
-      (from http://hpiers.obspm.fr/eop-pc/models/constants.html)
+      (from https://pdg.lbl.gov/2021/reviews/contents_sports.html)
   */
-  const double sidereal_year=365.256363004*8.64e4;
+  const double sidereal_year=31558149.8;
   /** \brief Tropical year in s 
-      (from http://hpiers.obspm.fr/eop-pc/models/constants.html)
+      (from https://pdg.lbl.gov/2021/reviews/contents_sports.html)
   */
-  const double tropical_year=365.242190402*8.64e4;
+  const double tropical_year=31556925.1;
   /// Julian year in s (exact)
   const double julian_year=365.25*8.64e4;
   /// Light year in \f$ \mathrm{cm} \f$ (derived; exact)
@@ -645,11 +645,11 @@ namespace o2scl_cgsm {
   /// Schwarzchild radius in cm (derived)
   const double schwarzchild_radius=o2scl_cgs::schwarzchild_radius;
   /** \brief Sidereal year in s 
-      (from http://hpiers.obspm.fr/eop-pc/models/constants.html)
+      (from https://pdg.lbl.gov/2021/reviews/contents_sports.html)
   */
   const double sidereal_year=o2scl_cgs::sidereal_year;
   /** \brief Tropical year in s 
-      (from http://hpiers.obspm.fr/eop-pc/models/constants.html)
+      (from https://pdg.lbl.gov/2021/reviews/contents_sports.html)
   */
   const double tropical_year=o2scl_cgs::tropical_year;
   /// Julian year in s (exact)
@@ -980,10 +980,12 @@ namespace o2scl_mks {
   /// Schwarzchild radius in m
   const double schwarzchild_radius=o2scl_cgs::schwarzchild_radius/1.0e2;
   /** \brief Sidereal year in s 
+      (from https://pdg.lbl.gov/2021/reviews/contents_sports.html)
   */
   const double sidereal_year=o2scl_cgs::sidereal_year;
   /** \brief Tropical year in s 
-   */
+      (from https://pdg.lbl.gov/2021/reviews/contents_sports.html)
+  */
   const double tropical_year=o2scl_cgs::tropical_year;
   /// Julian year in s
   const double julian_year=o2scl_cgs::julian_year;
