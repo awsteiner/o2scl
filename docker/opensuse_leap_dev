@@ -20,9 +20,12 @@ RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_PRE_1_12" ./configure
 RUN make blank-doc
 RUN make
 RUN make install
+RUN make o2scl-test
+RUN make o2scl-examples
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
 RUN acol -v
+
 
 
 
