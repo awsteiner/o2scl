@@ -153,6 +153,9 @@ int main(void) {
     vector<double> kfom_grid={0.5,1.0,2.0};
     
     cout << "Fermions: " << endl;
+
+    // Provide an initial guess for the chemical potential
+    f.mu=1.0;
     
     uniform_grid_end_width<double> x_grid(-5.0,5.0,0.1/refine);
     uniform_grid_end_width<double> y_grid(-5.0,3.0,0.1/refine);
@@ -165,10 +168,10 @@ int main(void) {
 
 	double log10_Pt, phi, psi, s, cv, cp, cs2, kfom;
 	int lm;
-	
+
 	fermion_func(x_grid[i],y_grid[j],T,f,fdr,
 		     log10_Pt,phi,psi,s,cv,cp,cs2,kfom,lm);
-
+        
 	if (i==0) {
 	  cout << i << " " << j << " " 
 	       << f.dndT << " " << f.dndmu << " " << f.dsdT << " "
