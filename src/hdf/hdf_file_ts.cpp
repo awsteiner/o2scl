@@ -826,10 +826,10 @@ int main(void) {
 
 #endif
   
-  t.report();
-
   system("echo -n 2: ; date");
   
+  t.report();
+
   return 0;
 }
 

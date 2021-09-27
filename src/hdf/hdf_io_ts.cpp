@@ -172,9 +172,9 @@ int main(void) {
     vector_out(cout,vv3[i],true);
   }
   
-  t.report();
-
   system("echo -n 4: ; date");
   
+  t.report();
+
   return 0;
 }
