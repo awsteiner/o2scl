@@ -24,6 +24,16 @@ Created a new vector_autocorr_fftw function for autocorrelations.
 
 Created dockerfiles in a docker directory for common configurations.
 
+The fnmatch() function is being replaced by regex, enabled if
+O2SCL_REGEX is defined. This is not yet enabled by default,
+because it has caused some problems with o2graph.
+
+A new version of the calculator class which partially supports
+UTF8 is in calc_utf8. This is enabled if O2SCL_CALC_UTF8 is
+defined.
+
+The convert_units class has been reworked to enable UTF8 support.
+
 Created a new set of HDF5 input functions, hdf_input_n(), to allow
 input with or without a name.
 

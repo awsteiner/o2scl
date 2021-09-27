@@ -38,6 +38,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
+  system("echo -n 1: ; date");
+  
   if (true) {
     
     // This section now checks that gets() now works with
@@ -826,6 +828,8 @@ int main(void) {
   
   t.report();
 
+  system("echo -n 2: ; date");
+  
   return 0;
 }
 

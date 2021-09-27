@@ -38,6 +38,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
+  system("echo -n 3: ; date");
+
   // Test of table HDF I/O
   {
     table<> tab, tab2;
@@ -172,5 +174,7 @@ int main(void) {
   
   t.report();
 
+  system("echo -n 4: ; date");
+  
   return 0;
 }
