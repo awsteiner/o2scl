@@ -20,11 +20,19 @@ RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_PRE_1_12" ./configure
 RUN make blank-doc
 RUN make
 RUN make install
-RUN make o2scl-test
-RUN make o2scl-examples
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
 RUN acol -v
+WORKDIR /opt/o2scl
+RUN make o2scl-test
+RUN make o2scl-examples
+
+# Python3, and o2sclpy via pip
+RUN zypper install -y python3 python3-pip texlive dvipng python3-h5py
+RUN pip3 install o2sclpy
+# To ensure o2graph loads OpenMP appropriately
+ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/10/libgomp.so
+RUN o2graph -help
 
 
 
