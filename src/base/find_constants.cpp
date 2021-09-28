@@ -49,6 +49,28 @@ find_constants::find_constants() {
 	 "m",o2scl_const::o2scl_mks,o2scl_mks::schwarzchild_radius,
          "derived from the IAU 2015 nominal solar mass parameter",
          1,0,0,0,0,0,0},
+        /*
+          Things to add in the future:
+          
+          {{"permittivity of free space","epsilon0"},
+          "F/m",},
+          {{"permeability of free space","mu0"},
+          "F/m",},
+          {{"classical electron radius","re"},},
+          {{"bohr radius"},},
+          {{"Thomson cross section"},},
+          {{"Wien displacement law"},},
+          {{"W boson mass"},},
+          {{"Z boson mass"},},
+          {{"Strong coupling constant at the Z mass"},},
+          {{"present day CMB temperature"},},
+          {{"present day dipole amplitude"},},
+          {{"Hubble length"},},
+          {{"Planck length"},},
+          {{"Planck length"},},
+          {{"Solar angular velocity around galactic center"},},
+
+        */
 	{{"Schwarzchild radius","rschwarz"},
 	 "cm",o2scl_const::o2scl_cgs,o2scl_cgs::schwarzchild_radius,
          "derived from the IAU 2015 nominal solar mass parameter",

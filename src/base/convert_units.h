@@ -550,7 +550,9 @@ namespace o2scl {
       // according to the SI page on wikipedia, "newton" is left
       // lowercase even though it is named after a person.
       std::vector<der_unit> SI_=
-        {{"J",2,1,-2,0,0,0,0,1.0,"joule"},
+        {{"rad",0,0,0,0,0,0,0,1.0,"radian"},
+         {"sr",0,0,0,0,0,0,0,1.0,"steradian"},
+         {"J",2,1,-2,0,0,0,0,1.0,"joule"},
          {"N",1,1,-2,0,0,0,0,1.0,"newton"},
          {"Pa",-1,1,-2,0,0,0,0,1.0,"pascal"},
          {"W",2,1,-3,0,0,0,0,1.0,"watt"},
@@ -563,6 +565,7 @@ namespace o2scl {
          {"H",2,1,-2,0,-2,0,0,1.0,"henry"},
          {"T",0,1,-2,0,-1,0,0,1.0,"tesla"},
          {"Hz",0,0,-1,0,0,0,0,1.0,"hertz"},
+         {"lu",0,0,0,0,0,0,0,1.0,"lumen"},
          {"lx",-1,0,0,0,0,0,1,1.0,"lux"},
          {"Bq",0,0,-1,0,0,0,0,1.0,"becquerel"},
          {"Gy",2,0,-2,0,0,0,0,1.0,"gray"},
