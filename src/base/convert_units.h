@@ -913,7 +913,7 @@ namespace o2scl {
                       fp_t val, fp_t &converted,
                       fp_t &factor) {
 
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
       o2scl::calc_utf8 calc;
       o2scl::calc_utf8 calc2;
 #else
@@ -938,7 +938,7 @@ namespace o2scl {
         return 2;
       }
       
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
       
       std::vector<std::u32string> vars=calc.get_var_list();
       std::vector<std::string> vars_str;
@@ -1076,7 +1076,7 @@ namespace o2scl {
       
       // These calculator objects have to be inside this
       // function to make the function const
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
       o2scl::calc_utf8 calc;
       o2scl::calc_utf8 calc2;
 #else

@@ -1793,7 +1793,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
 			     in2,"create",itive_com);
       if (ret2!=0) return ret2;
 
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
       calc_utf8 calc;
 #else
       calculator calc;
@@ -1829,7 +1829,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     int ret=get_input(sv2,pr,in,"create",itive_com);
     if (ret!=0) return ret;
 
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
       calc_utf8 calc;
 #else
       calculator calc;
@@ -1854,7 +1854,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     int ret=get_input(sv2,pr,in,"create",itive_com);
     if (ret!=0) return ret;
 
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
       calc_utf8 calc;
 #else
       calculator calc;
@@ -2127,7 +2127,7 @@ int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
     }
 
     // Parse function(s)
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
       calc_utf8 calc;
 #else
       calculator calc;

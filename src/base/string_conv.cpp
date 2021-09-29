@@ -27,6 +27,7 @@
 #include <o2scl/string_conv.h>
 #include <o2scl/err_hnd.h>
 #include <o2scl/shunting_yard.h>
+#include <o2scl/calc_utf8.h>
 #include <o2scl/find_constants.h>
 #include <o2scl/lib_settings.h>
 
@@ -257,24 +258,12 @@ bool o2scl::is_number(std::string s) {
 }
 
 double o2scl::function_to_double(std::string s) {
-  // Remove quotes and apostrophes
-  for(size_t i=0;i<s.length();i++) {
-    if (s[i]=='\"' || s[i]=='\'') {
-      string t;
-      if (i>0) t+=s.substr(0,i);
-      if (i<s.length()-1) t+=s.substr(i+1,s.length()-i-1);
-      s=t;
-      i=0;
-    }
+  double res;
+  int ret=function_to_double_nothrow(s,res);
+  if (ret!=0) {
+    O2SCL_ERR("Function function_to_double() failed.",ret);
   }
-#ifdef O2SCL_CALC_UTF8
-  calc_utf8 calc;
-#else
-  calculator calc;
-#endif      
-  calc.compile(s.c_str(),0);
-  double dat=calc.eval(0);
-  return dat;
+  return res;
 }
 
 double o2scl::find_constant(std::string name, std::string unit) {
@@ -283,25 +272,100 @@ double o2scl::find_constant(std::string name, std::string unit) {
 }
 
 int o2scl::function_to_double_nothrow(std::string s, double &result) {
+
+  int verbose=2;
+  
+  std::string s2;
   // Remove quotes and apostrophes
   for(size_t i=0;i<s.length();i++) {
-    if (s[i]=='\"' || s[i]=='\'') {
-      string t;
-      if (i>0) t+=s.substr(0,i);
-      if (i<s.length()-1) t+=s.substr(i+1,s.length()-i-1);
-      s=t;
-      i=0;
+    if (s[i]!='\"' && s[i]!='\'') {
+      s2+=s[i];
     }
   }
-#ifdef O2SCL_CALC_UTF8
+  
+#ifndef O2SCL_NO_CALC_UTF8
   calc_utf8 calc;
 #else
   calculator calc;
-#endif      
-  int ret=calc.compile_nothrow(s.c_str(),0);
+#endif
+  
+  int ret=calc.compile_nothrow(s2.c_str(),0);
   if (ret!=0) return ret;
-  int ret2=calc.eval_nothrow(0,result);
-  if (ret2!=0) return ret2;
+
+#ifndef O2SCL_NO_CALC_UTF8
+  std::vector<std::u32string> vs=calc.get_var_list();
+#else
+  std::vector<std::string> vs=calc.get_var_list();
+#endif
+
+  // If there are undefined variables, then attempt to get them
+  // from the constant database
+  if (vs.size()!=0) {
+    
+    find_constants &fc=o2scl_settings.get_find_constants();
+    
+    std::map<std::string,double> vars;
+    
+    std::vector<find_constants::find_constants_list> matches;
+    for(size_t i=0;i<vs.size();i++) {
+#ifndef O2SCL_NO_CALC_UTF8
+      std::string vsi2;
+      char32_to_utf8(vs[i],vsi2);
+      int fret=fc.find_nothrow(vsi2,"mks",matches);
+#else      
+      int fret=fc.find_nothrow(vs[i],"mks",matches);
+#endif
+      
+      if (fret==find_constants::one_exact_match_unit_match ||
+          fret==find_constants::one_pattern_match_unit_match) {
+
+        find_constants::find_constants_list &fcl=matches[0];
+
+#ifndef O2SCL_NO_CALC_UTF8
+        vars.insert(std::make_pair(vsi2,fcl.val));
+        if (verbose>=2) {
+          std::cout << "Found constant " << vsi2
+                    << " with value " << fcl.val << std::endl;
+        }
+#else
+        vars.insert(std::make_pair(vs[i],fcl.val));
+        if (verbose>=2) {
+          std::cout << "Found constant " << vs[i]
+                    << " with value " << fcl.val << std::endl;
+        }
+#endif
+        
+      } else {
+        
+#ifndef O2SCL_NO_CALC_UTF8
+        if (verbose>=2) {
+          std::cout << "Variable " << vsi2
+                    << " not uniquely specified in constant list ("
+                    << fret << ")." << std::endl;
+        }
+#else
+        if (verbose>=2) {
+          std::cout << "Variable " << vs[i]
+                    << " not uniquely specified in constant list ("
+                    << fret << ")." << std::endl;
+        }
+#endif
+        
+        return 1;
+      }
+    }
+
+    // No variables, so just evaluate
+    int ret2=calc.eval_nothrow(&vars,result);
+    if (ret2!=0) return ret2;
+    
+  } else {
+
+    // No variables, so just evaluate
+    int ret2=calc.eval_nothrow(0,result);
+    if (ret2!=0) return ret2;
+  }
+  
   return 0;
 }
 

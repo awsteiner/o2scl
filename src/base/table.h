@@ -2991,7 +2991,7 @@ namespace o2scl {
         vars[mit->first]=mit->second;
       }
     
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
       std::vector<calc_utf8> calcs(funcs.size());
 #else
       std::vector<calculator> calcs(funcs.size());
@@ -3098,7 +3098,7 @@ namespace o2scl {
 #endif
 
         // Parse function, separate calculator for each thread
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
         calc_utf8 calc;
 #else
         calculator calc;
@@ -3129,7 +3129,7 @@ namespace o2scl {
     double row_function(std::string function, size_t row) const {
 
       // Parse function
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
         calc_utf8 calc;
 #else
         calculator calc;
@@ -3154,7 +3154,7 @@ namespace o2scl {
     size_t function_find_row(std::string function) const {
 
       // Parse function
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
         calc_utf8 calc;
 #else
         calculator calc;

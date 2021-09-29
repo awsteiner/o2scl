@@ -1183,7 +1183,7 @@ namespace o2scl {
       int function_matrix(std::string function, resize_mat_t &mat,
 			  bool throw_on_err=true) {
       
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
         calc_utf8 calc;
 #else
         calculator calc;

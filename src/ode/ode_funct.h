@@ -119,7 +119,7 @@ namespace o2scl {
     protected:
 
     /// The function parser
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
     std::vector<o2scl::calc_utf8> calc;
 #else
     std::vector<o2scl::calculator> calc;

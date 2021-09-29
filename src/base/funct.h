@@ -144,7 +144,7 @@ namespace o2scl {
   protected:
 
     /// The object for evaluating strings
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
     mutable o2scl::calc_utf8 calc;
 #else
     mutable o2scl::calculator calc;
@@ -251,7 +251,7 @@ namespace o2scl {
   protected:
 
     /// The object for evaluating strings
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
     mutable o2scl::calc_utf8 calc;
 #else
     mutable o2scl::calculator calc;

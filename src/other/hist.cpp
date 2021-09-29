@@ -63,7 +63,7 @@ hist::hist(const hist &h) {
 int hist::function(std::string func) {
 
   // Parse function
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
       calc_utf8 calc;
 #else
       calculator calc;

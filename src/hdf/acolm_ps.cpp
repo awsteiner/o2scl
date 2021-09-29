@@ -2072,7 +2072,7 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
   // Copy data from selected rows
   // ---------------------------------------------------------------------
 
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
   calc_utf8 calc;
   calc.compile(i1.c_str(),0);
   vector<std::u32string> cols32=calc.get_var_list();
@@ -2157,7 +2157,7 @@ int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
     
     if (in[1].find(':')==std::string::npos) {
       
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
       calc_utf8 calc;
 #else
       calculator calc;

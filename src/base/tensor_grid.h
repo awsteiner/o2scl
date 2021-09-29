@@ -588,7 +588,7 @@ namespace o2scl {
                    "tensor_grid::set_grid_i_func().",exc_einval);
       }
 
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
       calc_utf8 calc;
 #else
       calculator calc;

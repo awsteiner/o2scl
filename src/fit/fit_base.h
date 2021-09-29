@@ -97,7 +97,7 @@ namespace o2scl {
     protected:
 
     /// The function parser
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
     o2scl::calc_utf8 calc;
 #else
     o2scl::calculator calc;

@@ -563,7 +563,7 @@ namespace o2scl_hdf {
       if (verbose>1) {
 	std::cout << "Function: " << func << std::endl;
       }
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
       o2scl::calc_utf8 calc;
 #else
       o2scl::calculator calc;
@@ -802,7 +802,7 @@ namespace o2scl_hdf {
 	  std::vector<std::string> sv2;
 	  o2scl::split_string_delim(addl_spec,sv2,':');
 	  
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
           o2scl::calc_utf8 calc;
 #else
           o2scl::calculator calc;
@@ -1411,7 +1411,7 @@ namespace o2scl_hdf {
 
 	  // Compile the function for the length of the ith vector
 	  
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
           o2scl::calc_utf8 calc2;
 #else
           o2scl::calculator calc2;
@@ -1450,7 +1450,7 @@ namespace o2scl_hdf {
 	  
 	  // Compile the function for the ith vector
 
-#ifdef O2SCL_CALC_UTF8
+#ifndef O2SCL_NO_CALC_UTF8
           o2scl::calc_utf8 calc;
 #else
           o2scl::calculator calc;
