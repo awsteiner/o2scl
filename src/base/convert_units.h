@@ -565,8 +565,8 @@ namespace o2scl {
          {"H",2,1,-2,0,-2,0,0,1.0,"henry"},
          {"T",0,1,-2,0,-1,0,0,1.0,"tesla"},
          {"Hz",0,0,-1,0,0,0,0,1.0,"hertz"},
-         {"lu",0,0,0,0,0,0,0,1.0,"lumen"},
-         {"lx",-1,0,0,0,0,0,1,1.0,"lux"},
+         {"lm",0,0,0,0,0,0,1,1.0,"lumen"},
+         {"lx",-2,0,0,0,0,0,1,1.0,"lux"},
          {"Bq",0,0,-1,0,0,0,0,1.0,"becquerel"},
          {"Gy",2,0,-2,0,0,0,0,1.0,"gray"},
          {"Sv",2,0,-2,0,0,0,0,1.0,"sievert"},
@@ -674,6 +674,14 @@ namespace o2scl {
          {"wk",0,0,1,0,0,0,0,o2scl_mks::week,"week"},
          {"d",0,0,1,0,0,0,0,o2scl_mks::day,"day"},
 
+         // Angular units
+         {"deg",0,0,0,0,0,0,0,o2scl_const::pi/180.0,"degree"},
+         {"°",0,0,0,0,0,0,0,o2scl_const::pi/180.0,"degree"},
+         {"′",0,0,0,0,0,0,0,o2scl_const::pi/10800.0,
+          "minute (fraction of a degree)"},
+         {"″",0,0,0,0,0,0,0,o2scl_const::pi/648000.0,
+          "second (fraction of a degree)"},
+         
          // Hours, "hr", to avoid confusion with Planck's constant
          {"hr",0,0,1,0,0,0,0,o2scl_mks::hour,"hour"},
          {"min",0,0,1,0,0,0,0,o2scl_mks::minute,"minute"},
