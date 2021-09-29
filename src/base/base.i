@@ -395,8 +395,6 @@ class lib_settings_class
   - bool
 - function fftw_support
   - bool
-- function python_support
-  - bool
 - function hdf5_compression_support
   - bool
 - function system_type

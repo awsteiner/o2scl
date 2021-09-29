@@ -454,12 +454,6 @@ bool o2scl_lib_settings_class_fftw_support(void *vptr) {
   return ret;
 }
 
-bool o2scl_lib_settings_class_python_support(void *vptr) {
-  lib_settings_class *ptr=(lib_settings_class *)vptr;
-  bool ret=ptr->python_support();
-  return ret;
-}
-
 bool o2scl_lib_settings_class_hdf5_compression_support(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   bool ret=ptr->hdf5_compression_support();

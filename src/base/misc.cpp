@@ -54,10 +54,6 @@ bool o2scl::file_exists(std::string fname) {
   return true;
 }     
 
-int o2scl_python_test(int x) {
-  return x*x;
-}
-
 float o2scl::o2abs(const float x) {
   return fabsf(x);
 }

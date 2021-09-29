@@ -180,8 +180,6 @@ bool o2scl_lib_settings_class_eigen_support(void *vptr);
 
 bool o2scl_lib_settings_class_fftw_support(void *vptr);
 
-bool o2scl_lib_settings_class_python_support(void *vptr);
-
 bool o2scl_lib_settings_class_hdf5_compression_support(void *vptr);
 
 void *o2scl_lib_settings_class_system_type(void *vptr);

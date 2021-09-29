@@ -198,6 +198,7 @@ bool lib_settings_class::fftw_support() {
 #endif
 }
 
+/*
 bool lib_settings_class::python_support() {
 #ifdef O2SCL_PYTHON
   return true;
@@ -205,6 +206,7 @@ bool lib_settings_class::python_support() {
   return false;
 #endif
 }
+*/
 
 bool lib_settings_class::openmp_support() {
 #ifdef O2SCL_OPENMP

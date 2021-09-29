@@ -197,6 +197,11 @@ namespace o2scl {
    */
   bool is_number(std::string s);
 
+  /** \brief Find constant named \c name with unit \c unit and
+      return the associated value
+   */
+  double find_constant(std::string name, std::string unit);
+  
   /** \brief Convert a formula to a double 
       
       This function removes all quotes and apostrophes from the string
@@ -204,13 +209,8 @@ namespace o2scl {
       "-1.0e-3", "1.0/3.0" and "exp(cos(-1.0e-2))" to floating point
       numbers.
   */
-  double function_to_double(std::string s);
+  double function_to_double(std::string s, int verbose=0);
 
-  /** \brief Find constant named \c name with unit \c unit and
-      return the associated value
-   */
-  double find_constant(std::string name, std::string unit);
-  
   /** \brief Convert a formula to a double and return an integer to
       indicate success or failure
       
@@ -219,7 +219,7 @@ namespace o2scl {
       "-1.0e-3", "1.0/3.0" and "exp(cos(-1.0e-2))" to floating point
       numbers.
   */
-  int function_to_double_nothrow(std::string s, double &result);
+  int function_to_double_nothrow(std::string s, double &result, int verbose=0);
 
   /** \brief Split a string into words using whitespace for delimiters
       and (partially) respecting quotes

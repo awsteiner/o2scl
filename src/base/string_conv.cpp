@@ -257,24 +257,18 @@ bool o2scl::is_number(std::string s) {
   return false;
 }
 
-double o2scl::function_to_double(std::string s) {
+double o2scl::function_to_double(std::string s, int verbose) {
   double res;
-  int ret=function_to_double_nothrow(s,res);
+  int ret=function_to_double_nothrow(s,res,verbose);
   if (ret!=0) {
     O2SCL_ERR("Function function_to_double() failed.",ret);
   }
   return res;
 }
 
-double o2scl::find_constant(std::string name, std::string unit) {
-  o2scl::find_constants &fc=o2scl_settings.get_find_constants();
-  return fc.find_unique(name,unit);
-}
+int o2scl::function_to_double_nothrow(std::string s, double &result,
+                                      int verbose) {
 
-int o2scl::function_to_double_nothrow(std::string s, double &result) {
-
-  int verbose=2;
-  
   std::string s2;
   // Remove quotes and apostrophes
   for(size_t i=0;i<s.length();i++) {
@@ -367,6 +361,11 @@ int o2scl::function_to_double_nothrow(std::string s, double &result) {
   }
   
   return 0;
+}
+
+double o2scl::find_constant(std::string name, std::string unit) {
+  o2scl::find_constants &fc=o2scl_settings.get_find_constants();
+  return fc.find_unique(name,unit);
 }
 
 void o2scl::split_string(string str, vector<string> &sv) {
