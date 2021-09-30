@@ -1,6 +1,9 @@
 FROM opensuse/leap
 MAINTAINER Andrew W. Steiner (awsteiner@mykolab.com)
 
+# The installation doesn't succeed, possibly because it can't find the
+# dvipng package.
+
 # To fix tzdata asking for a timezone during installation
 # can set up later using sudo dpkg-reconfigure tzdata I think.
 # I'm not sure if this is necessary for opensuse.
@@ -33,10 +36,3 @@ RUN pip3 install o2sclpy
 # To ensure o2graph loads OpenMP appropriately
 ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/10/libgomp.so
 RUN o2graph -help
-
-
-
-
-
-
-

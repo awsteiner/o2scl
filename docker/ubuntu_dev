@@ -1,6 +1,10 @@
 FROM ubuntu:latest 
 MAINTAINER Andrew W. Steiner (awsteiner@mykolab.com)
 
+# 9/29/21: This curently fails, because of an openmp linking error on
+# o2graph. Need to fix.
+
+
 # To fix tzdata asking for a timezone during installation
 # can set up later using sudo dpkg-reconfigure tzdata I think.
 ARG DEBIAN_FRONTEND=noninteractive

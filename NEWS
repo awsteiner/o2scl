@@ -28,9 +28,10 @@ The fnmatch() function is being replaced by regex, enabled if
 O2SCL_REGEX is defined. This is not yet enabled by default,
 because it has caused some problems with o2graph.
 
-A new version of the calculator class which partially supports
-UTF8 is in calc_utf8. This is enabled if O2SCL_CALC_UTF8 is
-defined.
+A new version of the calculator class which partially supports UTF8 is
+in implemented in calc_utf8. This new UTF-8 compatible class is used
+in O2scl unless O2SCL_NO_CALC_UTF8 is defined. There are still some
+complications with regex and UTF8 which haven't fully been resolved.
 
 The convert_units class has been reworked to enable UTF8 support.
 
