@@ -254,11 +254,11 @@ namespace o2scl {
          In class fermion_deriv_rel_tl:
 
          - Future: The option err_nonconv=false is not really
-         implemented yet.
+           implemented yet.
 
          - Future: The \ref pair_density() function is a bit slow
-         because it computes the non-derivative thermodynamic
-         quantities twice, and this could be improved.
+           because it computes the non-derivative thermodynamic
+           quantities twice, and this could be improved.
 
       \endverbatim
   */

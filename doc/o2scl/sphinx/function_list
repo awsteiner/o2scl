@@ -114,9 +114,9 @@
     <member refid="namespaceo2scl_1aa0e3819ce527f696503e756e01c8ea74" kind="function"><name>s32tod_nothrow</name></member>
     <member refid="namespaceo2scl_1a2afbd13cadbc6ac8c9bf69fa284bfb68" kind="function"><name>has_minus_sign</name></member>
     <member refid="namespaceo2scl_1a98c17c6473daf7ac1d9062bf284b0c24" kind="function"><name>is_number</name></member>
-    <member refid="namespaceo2scl_1ab1571bf8025b44e55d12be6d5470b122" kind="function"><name>function_to_double</name></member>
     <member refid="namespaceo2scl_1abe58dd1598278528cb53b8d14e565a7e" kind="function"><name>find_constant</name></member>
-    <member refid="namespaceo2scl_1a47774a98d61de2e2d48913114053d3fc" kind="function"><name>function_to_double_nothrow</name></member>
+    <member refid="namespaceo2scl_1ac95052c98f67c2d4516c1197da0061da" kind="function"><name>function_to_double</name></member>
+    <member refid="namespaceo2scl_1a3636e1a6fefa8f2b46b0e6262bb2a278" kind="function"><name>function_to_double_nothrow</name></member>
     <member refid="namespaceo2scl_1ade45b50d37f9cb625a865f9176bcdf96" kind="function"><name>split_string</name></member>
     <member refid="namespaceo2scl_1a66cc18968d7fa23b93660694068824cf" kind="function"><name>split_string_delim</name></member>
     <member refid="namespaceo2scl_1a611de09c5a2931e19acaee4e8e2bfba2" kind="function"><name>rewrap</name></member>

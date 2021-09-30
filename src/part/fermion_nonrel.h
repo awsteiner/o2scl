@@ -86,13 +86,13 @@ namespace o2scl {
          In class fermion_nonrel_tl
 
          - Future: Implement \ref
-         o2scl::fermion_nonrel_tl::pair_density() and \ref
-         o2scl::fermion_nonrel_tl::pair_mu(). [AWS, 1/23/19: it is not
-         entirely clear to me that antiparticles will be useful.]
+           o2scl::fermion_nonrel_tl::pair_density() and \ref
+           o2scl::fermion_nonrel_tl::pair_mu(). [AWS, 1/23/19: it is not
+           entirely clear to me that antiparticles will be useful.]
 
          - Future: This could be improved by performing a Chebyshev
-         approximation (for example) to invert the density integral so
-         that we don't need to use a solver.
+           approximation (for example) to invert the density integral so
+           that we don't need to use a solver.
          
       \endverbatim
   */

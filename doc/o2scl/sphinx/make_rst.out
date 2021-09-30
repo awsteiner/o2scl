@@ -511,8 +511,8 @@ Namespace:  function: stod_nothrow
 Namespace:  function: s32tod_nothrow
 Namespace: o2scl function: has_minus_sign
 Namespace:  function: is_number
-Namespace: o2scl function: function_to_double
 Namespace:  function: find_constant
+Namespace: o2scl function: function_to_double
 Namespace: o2scl function: function_to_double_nothrow
 Namespace:  function: split_string
 Namespace: o2scl function: split_string_delim

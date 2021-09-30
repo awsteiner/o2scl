@@ -110,8 +110,8 @@ namespace o2scl {
          - Future: Use bracketing to speed up one-dimensional root finding.
 
          - Future: Implement the same method of allowing the user to
-         turn on or off the degenerate and nondegenerate expansions as
-         in \ref o2scl::fermion_rel_tl .
+           turn on or off the degenerate and nondegenerate expansions as
+           in \ref o2scl::fermion_rel_tl .
 
       \endverbatim
   */

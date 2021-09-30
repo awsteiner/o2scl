@@ -145,9 +145,9 @@ namespace o2scl {
          In class fermion_zerot_tl:
 
          - Future: Use hypot() and other more accurate functions for the
-         analytic expressions for the zero temperature integrals. [Progress
-         has been made, but there are probably other functions which may
-         break down for small but finite masses and temperatures]
+           analytic expressions for the zero temperature integrals. [Progress
+           has been made, but there are probably other functions which may
+           break down for small but finite masses and temperatures]
 
       \endverbatim
   */
@@ -332,7 +332,7 @@ namespace o2scl {
          In class fermion_thermo_tl:
 
          - Future: Create a Chebyshev approximation for inverting the
-         the Fermi functions for massless_calc_density() functions?
+           the Fermi functions for massless_calc_density() functions?
 
       \endverbatim
   */
@@ -571,7 +571,7 @@ namespace o2scl {
            In function calc_mu_deg()
 
            - Future:  Make a function like this for dndm, dsdT, etc. 
-           for fermion_deriv .
+             for fermion_deriv .
 
         \endverbatim
     */
@@ -823,7 +823,7 @@ namespace o2scl {
            In function massless_pair_density()
 
            - Future: This could be improved by including more terms
-           in the expansions.
+             in the expansions.
 
         \endverbatim
     */
