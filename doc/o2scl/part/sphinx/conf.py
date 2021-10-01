@@ -52,7 +52,7 @@ cpp_index_common_prefix = ['o2scl::']
 # use the full absolute URL.
 intersphinx_mapping = {'o2scl':
                        ('https://neutronstars.utk.edu/code/o2scl-dev/html/',
-                        '../../sphinx/build/html/objects.inv')}
+                        '../../html/objects.inv')}
 
 # Suggested by https://my-favorite-documentation-test.readthedocs.io/en/latest/using_intersphinx.html, but gave more errors when I tried it last
 #primary_domain = 'cpp'

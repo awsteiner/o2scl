@@ -49,10 +49,10 @@ cpp_index_common_prefix = ['o2scl::']
 
 intersphinx_mapping = {'o2scl':
                        ('https://neutronstars.utk.edu/code/o2scl-dev/html/',
-                        '../../sphinx/build/html/objects.inv'),
+                        '../../html/objects.inv'),
                        'o2sclp':
                        ('https://neutronstars.utk.edu/code/o2scl-dev/part/html/',
-                        '../../part/sphinx/build/html/objects.inv')}
+                        '../../part/html/objects.inv')}
 
 # Suggested by https://my-favorite-documentation-test.readthedocs.io/en/latest/using_intersphinx.html, but gave more errors when I tried it last
 #primary_domain = 'cpp'
