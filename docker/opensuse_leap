@@ -24,9 +24,3 @@ RUN acol -v
 WORKDIR /opt/o2scl-0.926
 RUN make o2scl-test
 RUN make o2scl-examples
-
-
-
-
-
-
