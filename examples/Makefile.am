@@ -147,7 +147,7 @@ AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 # Distribution files
 # -------------------------------------------------------------
 
-EXTRA_DIST = ex*.cpp bm*.cpp Makefile* ex_bps_input.txt
+EXTRA_DIST = ex*.cpp bm*.cpp Makefile* ex_bps_input.txt ex*.h
 
 # -------------------------------------------------------------
 # Main targets
