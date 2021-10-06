@@ -39,7 +39,11 @@ typedef boost::numeric::ublas::vector<double> ubvector;
 double funx(size_t nv, const ubvector &x) {
   double ret, a;
   a=x[0]-2.0;
-  ret=-exp(-a*a);
+  // AWS, 10/6/21: changed to add an a*a term. -exp(-a*a) is a bad
+  // example because, even when the temperature is small, the routine
+  // can escape the minimum to where the function is flat and then the
+  // algorithm takes an anomalously long time to converge.
+  ret=-exp(-a*a)+a*a;
   return ret;
 }
 
@@ -49,32 +53,26 @@ int main(int argc, char *argv[]) {
 
   cout.setf(ios::scientific);
 
-  {
-
-    anneal_gsl<multi_funct,ubvector> ga;
-    double result;
-    ubvector init(2);
+  anneal_gsl<multi_funct,ubvector> ga;
+  double result;
+  ubvector init(1);
     
-    multi_funct fx=funx;
+  multi_funct fx=funx;
     
-    /// 1d to vectors
+  /// 1d to vectors
     
-    init[0]=0.1;
-    init[1]=0.2;
-    ga.tol_abs=1.0e-6;
-    ga.ntrial*=10;
-    ga.mmin(1,init,result,fx);
-    cout << init[0] << " " << result << endl;
-    t.test_rel(init[0],2.0,1.6e-2,"another test - value");
-    t.test_rel(result,-1.0,1.6e-2,"another test - min");
+  init[0]=0.1;
+  ga.tol_abs=1.0e-6;
+  ga.mmin(1,init,result,fx);
+  cout << init[0] << " " << result << endl;
+  t.test_rel(init[0],2.0,1.0e-3,"another test - value");
+  t.test_rel(result,-1.0,1.0e-3,"another test - min");
     
-    // Test verbose=1
+  // Test verbose=1
     
-    init[0]=15.5;
-    ga.verbose=1;
-    ga.mmin(1,init,result,fx);
-
-  }
+  init[0]=15.5;
+  ga.verbose=1;
+  ga.mmin(1,init,result,fx);
 
   t.report();
   

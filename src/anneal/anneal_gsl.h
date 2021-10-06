@@ -232,7 +232,13 @@ namespace o2scl {
 	  nmoves++;
 	} else {
 	  double r=this->local_rng.random();
-	  if (r < exp(-(new_E-E)/(boltz*T))) {
+          if (this->verbose>=3) {
+            std::cout << x[0] << " " << new_x[0] << " "
+                      << r << " " << exp(-(new_E-E)/(boltz*T)) << " "
+                      << (r < exp(-(new_E-E)/(boltz*T))) << " "
+                      << nmoves << std::endl;
+          }
+          if (r < exp(-(new_E-E)/(boltz*T))) {
 	    for(j=0;j<nvar;j++) x[j]=new_x[j];
 	    E=new_E;
 	    nmoves++;
@@ -336,10 +342,15 @@ namespace o2scl {
       finished=true;
       return success;
     }
+
     if (n_moves==0) {
       // If we haven't made any progress, shrink the step by
       // decreasing step_norm
       step_norm/=step_dec;
+      if (this->verbose>=3) {
+        std::cout << "Shrinking step " << step_norm << " " 
+                  << step_dec << std::endl;
+      }
       // Also reset x to best value so far
       for(size_t i=0;i<nvar;i++) {
 	x_new[i]=best_x[i];

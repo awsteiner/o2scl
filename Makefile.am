@@ -182,3 +182,11 @@ blank-doc:
 
 snapb:
 	snapcraft build 2>&1 > ~/o2scl_snap.out &
+
+inst-clean:
+	rm /usr/local/lib/libo2scl*
+	rm -r /usr/local/include/o2scl
+	rm /usr/local/bin/acol
+	rm /usr/local/bin/yanic
+	rm /usr/local/bin/ame_parse
+
