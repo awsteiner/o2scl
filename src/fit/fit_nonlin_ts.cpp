@@ -336,15 +336,15 @@ int main(void) {
     
     gf.fit(3,ax,mycovar,chi2,cff);
     
-    tm.test_rel(ax[0],x0_s[x0_s.size()-1],1.0e-8,"scaled x0");
-    tm.test_rel(ax[1],x1_s[x1_s.size()-1],1.0e-8,"scaled x1");
-    tm.test_rel(ax[2],x2_s[x2_s.size()-1],1.0e-8,"scaled x2");
+    tm.test_rel(ax[0],x0_s[x0_s.size()-1],1.0e-7,"scaled x0");
+    tm.test_rel(ax[1],x1_s[x1_s.size()-1],1.0e-7,"scaled x1");
+    tm.test_rel(ax[2],x2_s[x2_s.size()-1],1.0e-7,"scaled x2");
     tm.test_rel(chi2red_s,chi2/(n-3),1.0e-10,"scaled chi2");
 
     for(size_t i=0;i<3;i++) {
       for(size_t j=0;j<3;j++) {
 	tm.test_rel(mycovar(i,j),gsl_matrix_get(covar1,i,j),
-                    1.0e-7,"covariance mat.");
+                    1.0e-6,"covariance mat.");
       }
     }
 

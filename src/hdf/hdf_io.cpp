@@ -30,6 +30,15 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
 
+void o2scl_hdf::hdf5_write_file(o2scl::table_units<> &t, std::string fn,
+                                std::string name) {
+  hdf_file hf;
+  hf.open_or_create(fn);
+  hdf_output(hf,t,name);
+  hf.close();
+  return;
+}
+
 int o2scl_hdf::value_spec(std::string spec, double &d,
 			  int verbose, bool err_on_fail) {
   
@@ -438,7 +447,7 @@ void o2scl_hdf::hdf_output_data(hdf_file &hf, o2scl::table<> &t) {
   hf.seti("nlines",((int)t.get_nlines()));
 
   // Output the interpolation type
-  hf.set_szt("itype",t.itype);
+  hf.set_szt("itype",t.get_interp_type());
       
   // Create data group
   hid_t group2=hf.open_group("data");

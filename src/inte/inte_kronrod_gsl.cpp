@@ -55,6 +55,26 @@ inte_workspace_gsl::~inte_workspace_gsl() {
   if (limit>0) free();
 }
 
+void inte_workspace_gsl::make_table(table_units<> &t) {
+  t.clear();
+  t.line_of_names("a b r e order lev");
+  t.add_constant("size",this->size);
+  t.add_constant("nrmax",this->nrmax);
+  t.add_constant("i",this->i);
+  t.add_constant("limit",this->limit);
+  t.add_constant("maximum_level",this->maximum_level);
+  for(size_t j=0;j<this->size;j++) {
+    vector<double> line={this->alist[j],
+                         this->blist[j],
+                         this->rlist[j],
+                         this->elist[j],
+                         ((double)this->order[j]),
+                         ((double)this->level[j])};
+    t.line_of_data(line.size(),line);
+  }
+  return;
+}
+
 int inte_workspace_gsl::allocate(size_t sz) {
 
   if (sz==0) {

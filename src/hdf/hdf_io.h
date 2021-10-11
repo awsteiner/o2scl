@@ -315,6 +315,8 @@ namespace o2scl_hdf {
     return;
   }
 
+  /** \brief Desc
+   */
   template<class vec_t> 
   void hdf_input(hdf_file &hf, o2scl::table_units<vec_t> &t, 
                  std::string name) {
@@ -434,6 +436,12 @@ namespace o2scl_hdf {
   void hdf_input_n(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
                    std::vector<size_t> > &t, std::string &name);
 
+  /** \brief Write a \ref o2scl::table_units object to an HDF5 file 
+      with a given filename
+   */
+  void hdf5_write_file(o2scl::table_units<> &t, std::string fn,
+                        std::string name="table");
+  
   /** \brief A value specified by a string
       
       Formats:
