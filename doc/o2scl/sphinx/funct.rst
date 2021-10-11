@@ -53,8 +53,11 @@ types, e.g.
 First function object example
 -----------------------------
 
-The example below demonstrates how C++11 function objects can be used
-with the :ref:`root_brent_gsl <root_brent_gsl>` solver.
+The example below demonstrates how C++ function objects and lambda
+expressions can be used with the :ref:`root_brent_gsl
+<root_brent_gsl>` solver. This lengthy example demonstrates several
+different function objects in different kinds of functions. The same
+methods apply to other O\ :sub:`2`\ scl function objects.
 
 .. literalinclude:: ../../../examples/ex_lambda.cpp
    :language: c++		    

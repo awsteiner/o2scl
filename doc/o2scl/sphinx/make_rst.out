@@ -1053,6 +1053,7 @@ Namespace: o2scl_hdf function: hdf_input
 Multiple entry hdf_input
 Namespace: o2scl_hdf function: hdf_input_n
 Multiple entry hdf_input_n
+Namespace: o2scl_hdf function: hdf5_write_file
 Namespace: o2scl_hdf function: value_spec
 Namespace: o2scl_hdf function: vector_spec
 Namespace: o2scl_hdf function: strings_spec

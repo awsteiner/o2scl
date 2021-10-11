@@ -481,6 +481,7 @@
     <member refid="namespaceo2scl__hdf_1a53f46a4d66824a54f5a6cc234f1aaec7" kind="function"><name>hdf_output</name></member>
     <member refid="namespaceo2scl__hdf_1a71b9ba58a6ee2d6e5440f0de74cffa00" kind="function"><name>hdf_input</name></member>
     <member refid="namespaceo2scl__hdf_1aa3877a0082ee477b57c970ce3b67f546" kind="function"><name>hdf_input_n</name></member>
+    <member refid="namespaceo2scl__hdf_1a9f2e79bda2a1842ea8ed83d500f6dc1e" kind="function"><name>hdf5_write_file</name></member>
     <member refid="namespaceo2scl__hdf_1aa75b1755878b4856bd08aac06cbf7e3b" kind="function"><name>value_spec</name></member>
     <member refid="namespaceo2scl__hdf_1aed3f93e319668741e0482077f89ec2c6" kind="function"><name>vector_spec</name></member>
     <member refid="namespaceo2scl__hdf_1aa799e6da229d2646e2d65212a49f74e3" kind="function"><name>strings_spec</name></member>
