@@ -41,26 +41,55 @@ double gfn(double x) {
   return sin(x)-0.1;
 }
 
-// A global function with a parameter
-double gfn_param(double x, double a) {
-  return sin(x)-a;
+// A global function with a value parameter
+double gfn_param(double x, double p) {
+  return sin(x)-p;
+}
+
+// A global function with a reference parameter
+double gfn_rparam(double x, double &p) {
+  return sin(x)-p;
+}
+
+// A global function with a const reference parameter
+double gfn_crparam(double x, const double &p) {
+  return sin(x)-p;
 }
 
 class a_class {
+  
 public:
+  
   // A member function
   double mfn(double x) {
     return sin(x)-0.1;
   }
-  // A member function with a parameter
-  double mfn_param(double x, double a) {
-    return sin(x)-a;
+
+  // A const member function
+  double cmfn(double x) const {
+    return sin(x)-0.1;
   }
-  // A member function with a const and non-const reference parameter
-  double mfn_param_ref(double x, const double &a, double &b) {
-    b=x*x;
-    return sin(x)-a;
+  
+  // A member function with a value parameter
+  double mfn_param(double x, double p) {
+    return sin(x)-p;
   }
+  
+  // A member function with a reference parameter
+  double mfn_rparam(double x, double &p) {
+    return sin(x)-p;
+  }
+  
+  // A const member function with a reference parameter
+  double cmfn_rparam(double x, double &p) const {
+    return sin(x)-p;
+  }
+  
+  // A const member function with a const reference parameter
+  double cmfn_crparam(double x, const double &p) const {
+    return sin(x)-p;
+  }
+  
 };
 
 int main(void) {
@@ -71,17 +100,20 @@ int main(void) {
 
   // The O2scl solver. Note that we use the same solver for 
   // all the examples below.
-  root_brent_gsl<std::function<double(double)> > grb;
+  root_brent_gsl<> grb;
 
   // For the initial bracket 
   double a, b;
 
+  // The parameter
+  double p=0.1;
+  
   // With a global function
   {
     a=-0.9, b=0.9;
     std::function<double(double)> f=gfn;
     grb.solve_bkt(a,b,f);
-    t.test_rel(a,asin(0.1),1.0e-12,"Global function");
+    t.test_rel(a,asin(0.1),1.0e-12,"Global function using std::function");
   }
 
   // O2scl defines 'funct' as std::function<double(double)>, so this
@@ -90,15 +122,35 @@ int main(void) {
     a=-0.9, b=0.9;
     funct f=gfn;
     grb.solve_bkt(a,b,f);
-    t.test_rel(a,asin(0.1),1.0e-12,"Global function (take 2)");
+    t.test_rel(a,asin(0.1),1.0e-12,"Global function");
   }
 
-  // With a global function
+  // A global function with a parameter
   {
     a=-0.9, b=0.9;
-    funct f=std::bind(gfn_param,std::placeholders::_1,0.1);
+    funct f=std::bind(gfn_param,std::placeholders::_1,p);
     grb.solve_bkt(a,b,f);
     t.test_rel(a,asin(0.1),1.0e-12,"Global function with parameter");
+  }
+
+  // A global function with a reference parameter, note that
+  // std::ref() is used to indicate a reference parameter
+  {
+    a=-0.9, b=0.9;
+    funct f=std::bind(gfn_rparam,std::placeholders::_1,std::ref(p));
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Global function with reference parameter");
+  }
+
+  // A global function with a const reference parameter,
+  // note that std::cref() is used for the const reference
+  {
+    a=-0.9, b=0.9;
+    funct f=std::bind(gfn_crparam,std::placeholders::_1,std::cref(p));
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Global function with const reference parameter");
   }
 
   // With a member function
@@ -111,7 +163,18 @@ int main(void) {
     t.test_rel(a,asin(0.1),1.0e-12,"Member function");
   }
 
-  // With a member function which has a fixed parameter
+  // With a const member function, note the extra const in the
+  // template parameter for std::mem_fn
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct f=std::bind(std::mem_fn<double(double) const>(&a_class::cmfn),
+		      ac,std::placeholders::_1);
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,"Const member function");
+  }
+
+  // With a member function which has a value parameter.
   {
     a=-0.9, b=0.9;
     a_class ac;
@@ -122,42 +185,152 @@ int main(void) {
     t.test_rel(a,asin(0.1),1.0e-12,"Member function with parameter");
   }
 
-  // Inline specification of the function
+  // With a member function which has a reference parameter.
+  // Note the use of std::ref() for the reference parameter.
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct f=std::bind(std::mem_fn<double(double,double &)>
+		      (&a_class::mfn_rparam),
+		      ac,std::placeholders::_1,std::ref(p));
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,"Member function with reference parameter");
+  }
+
+  // With a const member function which has a reference parameter Note
+  // the use of const in the template parameter for std::mem_fn.
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct f=std::bind(std::mem_fn<double(double,double &) const>
+		      (&a_class::cmfn_rparam),
+		      ac,std::placeholders::_1,std::ref(p));
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Const member function with reference parameter");
+  }
+
+  // With a const member function which has a const reference
+  // parameter. Note the use of const in the template parameter
+  // for std::mem_fn and the use of std::cref() for the reference
+  // parameter.
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct f=std::bind(std::mem_fn<double(double,const double &) const>
+		      (&a_class::cmfn_crparam),
+		      ac,std::placeholders::_1,std::cref(p));
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Const member function with const reference parameter");
+  }
+
+  // Lambda expression with inline specification
   {
     a=-0.9, b=0.9;
     funct f=[](double x) -> double { double z=sin(x)-0.1; return z; };
     grb.solve_bkt(a,b,f);
-    t.test_rel(a,asin(0.1),1.0e-12,"Inline 1");
+    t.test_rel(a,asin(0.1),1.0e-12,"Lambda inline");
   }
 
-  // A bit of a shorter notation 
+  // Lambda expression for global function with parameter.
   {
     a=-0.9, b=0.9;
-    funct f=[](double x){ return sin(x)-0.1; };
+    funct f=[p](double x) -> double { return gfn_param(x,p); };
     grb.solve_bkt(a,b,f);
-    t.test_rel(a,asin(0.1),1.0e-12,"Inline 2");
-    // Show copy construction works
-    a=-0.9, b=0.9;
-    funct f2=f;
-    grb.solve_bkt(a,b,f2);
-    t.test_rel(a,asin(0.1),1.0e-12,"Inline 3");
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Lambda for global function with parameter");
   }
 
-  // With a member function and reference parameters. Note that
-  // we use std::cref for the const reference and std::ref
-  // for the non-const reference
+  // Lambda expression for global function with reference parameter.
+  // We require the 'mutable' keyword for the parameter 'p' because
+  // default captures are const, and p is a non-const reference.
+  {
+    a=-0.9, b=0.9;
+    funct f=[p](double x) mutable -> double { return gfn_rparam(x,p); };
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Lambda for global function with reference parameter");
+  }
+
+  // Lambda expression for global function with const reference parameter
+  {
+    a=-0.9, b=0.9;
+    funct f=[p](double x)-> double { return gfn_crparam(x,p); };
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Lambda for global function with const reference parameter");
+  }
+
+  // Lambda expression for member function. We require the 'mutable'
+  // keyword for the class instance 'ac' because default captures are
+  // const, and mfn is not a const member function.
   {
     a=-0.9, b=0.9;
     a_class ac;
-    double param1=0.1, param2;
-    funct f=std::bind(std::mem_fn<double(double,const double &,double &)>
-		      (&a_class::mfn_param_ref),
-		      ac,std::placeholders::_1,std::cref(param1),
-		      std::ref(param2));
+    funct f=[ac](double x) mutable -> double { return ac.mfn(x); };
     grb.solve_bkt(a,b,f);
-    t.test_rel(a,asin(0.1),1.0e-12,"Member function with references");
-    // The last function call isn't always at the final root!
-    t.test_rel(param2,0.01,1.0e-2,"Reference 2");
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Lambda for member function");
+  }
+
+  // Lambda expression for const member function 
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct f=[ac](double x) -> double { return ac.cmfn(x); };
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,"Lambda for const member function");
+  }
+
+  // Lambda expression for member function with value parameter. We
+  // require the 'mutable' keyword for the class instance 'ac' because
+  // default captures are const, and mfn is not a const member
+  // function.
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct f=[ac,p](double x) mutable -> double { return ac.mfn_param(x,p); };
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Lambda for member function with parameter");
+  }
+
+  // Lambda expression for member function with reference parameter.
+  // We require the 'mutable' keyword for both 'ac' and 'p'.
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct f=[ac,p](double x) mutable -> double { return ac.mfn_rparam(x,p); };
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Lambda for member function with reference parameter");
+  }
+
+  // Lambda expression for const member function with reference
+  // parameter. We require the 'mutable' keyword for the parameter 'p'
+  // because default captures are const, and p is a non-const
+  // reference.
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct f=[ac,p](double x) mutable -> double { return ac.cmfn_rparam(x,p); };
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Lambda for const member function with reference parameter");
+  }
+  
+  // Lambda expression for const member function with const reference
+  // parameter. This is the case when 'mutable' is not required, because
+  // both the reference and the member function are const. 
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct f=[ac,p](double x)-> double { return ac.cmfn_crparam(x,p); };
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,
+               ((std::string)"Lambda for const member function with ")+
+               "const reference parameter");
   }
 
   t.report();
