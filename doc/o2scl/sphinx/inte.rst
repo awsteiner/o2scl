@@ -3,10 +3,10 @@ Integration
 
 :ref:`O2scl <o2scl>`
 
-Integration Contents
+Integration contents
 --------------------
 
-- :ref:`One-dimensional Integration based on GSL, CERNLIB, and Boost`
+- :ref:`One-dimensional integration based on GSL, CERNLIB, and Boost`
 - :ref:`GSL-based integration details`
 - :ref:`GSL-based integration error messages`
 - :ref:`Multi-dimensional integration routines`
@@ -14,7 +14,7 @@ Integration Contents
 - :ref:`Gauss-Kronrod integration coefficients`
 - :ref:`Non-adaptive quadrature integration coefficients`
 
-One-dimensional Integration based on GSL, CERNLIB, and Boost
+One-dimensional integration based on GSL, CERNLIB, and Boost
 ------------------------------------------------------------
 
 Several classes integrate arbitrary one-dimensional functions:

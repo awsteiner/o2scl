@@ -3047,8 +3047,8 @@ namespace o2scl {
          In class matrix_view_vec_vec:
 
          - Future: It would be nice to store a reference rather than a
-         pointer, but this causes problems with \ref
-         o2scl::interpm_idw .
+           pointer, but this causes problems with \ref
+           o2scl::interpm_idw .
          
       \endverbatim
   */

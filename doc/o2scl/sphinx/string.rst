@@ -47,7 +47,8 @@ screen space.
     
 The function :cpp:func:`o2scl::function_to_double()` converts strings
 like ``"1.0/3.0"`` and ``"exp(cos(-1.0e-2))"`` to double-precision
-floating point numbers using :ref:`calculator <calculator>`.
+floating point numbers using :ref:`calculator <calculator>`. An
+alternate version is :cpp:func:`o2scl::function_to_double_nothrow()`.
 
 The function :cpp:func:`o2scl::size_of_exponent()` returns 2 or 3,
 depending on the number of characters in the exponent when a floating

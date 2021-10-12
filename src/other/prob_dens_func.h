@@ -1877,7 +1877,7 @@ namespace o2scl {
          In class prob_cond_mdim_gaussian:
 
          - This should be a symmetric conditional probability, 
-         i.e. \f$ P(x|y) = P(y|x) \f$. Test this.
+           i.e. \f$ P(x|y) = P(y|x) \f$. Test this.
 
       \endverbatim
   */

@@ -2302,10 +2302,10 @@ namespace o2scl {
          In function pair_calibrate()
 
          - Future: Create a version where the user specifies log
-         vs. linear instead of autodetecting.
+           vs. linear instead of autodetecting.
 
          - Future: Compare this algorithm to linear_or_log() and
-         document the differences.
+           document the differences.
 
       \endverbatim
    */

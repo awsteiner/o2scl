@@ -206,18 +206,19 @@ namespace o2scl {
       
       This function removes all quotes and apostrophes from the string
       and then uses \ref o2scl::calculator to convert strings like
-      "-1.0e-3", "1.0/3.0" and "exp(cos(-1.0e-2))" to floating point
-      numbers.
+      "-1.0e-3", "pi/3.0" and "exp(cos(-1.0e-2))" to floating point
+      numbers. This function uses the \o2 constant database from
+      \ref lib_settings_class::get_find_constants() to interpret
+      constant values.
   */
   double function_to_double(std::string s, int verbose=0);
 
   /** \brief Convert a formula to a double and return an integer to
       indicate success or failure
       
-      This function removes all quotes and apostrophes from the string
-      and then uses \ref o2scl::calculator to convert strings like
-      "-1.0e-3", "1.0/3.0" and "exp(cos(-1.0e-2))" to floating point
-      numbers.
+      This is an alternate version of \ref function_to_double()
+      which does not call the error handler and returns a non-zero
+      integer when it fails.
   */
   int function_to_double_nothrow(std::string s, double &result, int verbose=0);
 
@@ -257,7 +258,7 @@ namespace o2scl {
          quotes are not well documented.
 
          - Future: Replace with a better algorithm. Should quotes be
-         escaped?
+           escaped?
 
       \endverbatim
   */

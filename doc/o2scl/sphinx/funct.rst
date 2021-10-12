@@ -3,7 +3,7 @@ Function Objects
 
 :ref:`O2scl <o2scl>`
 
-Function Object Contents
+Function object contents
 ------------------------
 
 - :ref:`Lambda functions and std::mem_fn <lambda_func>`

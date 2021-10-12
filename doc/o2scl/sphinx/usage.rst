@@ -3,7 +3,7 @@ General Usage
 
 :ref:`O2scl <o2scl>`
 
-General Usage Contents
+General usage contents
 ----------------------
 
 - :ref:`Namespaces`

@@ -3,7 +3,7 @@ Minimization
 
 :ref:`O2scl <o2scl>`
 
-Minimization Contents
+Minimization contents
 ---------------------
 
 - :ref:`One-dimensional minimizers`

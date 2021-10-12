@@ -51,11 +51,11 @@ namespace o2scl {
          - Needs a bit more error checking and more documentation.
 
          - Future: Generalize to generic vector types. (Does this require
-         reworking the GSL linear fitting routines? Doesn't matter now,
-         the GSL linear fitting routines are now reworked.)
+           reworking the GSL linear fitting routines? Doesn't matter now,
+           the GSL linear fitting routines are now reworked.)
 
          - Future: Possibly create a new gsl_bspline class which replaces
-         the GSL bspline workspace 
+           the GSL bspline workspace 
 
          - Future: Allow user to probe chi squared and the covariance?
 

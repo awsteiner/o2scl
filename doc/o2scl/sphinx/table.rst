@@ -18,4 +18,5 @@ The class :ref:`table3d <table3d>` is a generalization of :ref:`table
 one-dimensional columns.
 
 For higher-dimensional generalizations, the class :ref:`tensor_grid
-<tensor_grid>` may be useful.
+<tensor_grid>` provides a set of data defined on a grid in an
+arbitrary number of dimensions.

@@ -3,13 +3,13 @@ Differentiation
 
 :ref:`O2scl <o2scl>`
 
-Differentiation Contents
+Differentiation contents
 ------------------------
 
-- :ref:`Differentiation Introduction`
+- :ref:`Differentiation introduction`
 - :ref:`Differentiation example`  
 
-Differentiation Introduction
+Differentiation introduction
 ----------------------------
 
 Differentiation is performed by descendants of :ref:`deriv_base

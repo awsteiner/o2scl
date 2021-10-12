@@ -3,7 +3,7 @@ Interpolation
 
 :ref:`O2scl <o2scl>`
 
-Interpolation Contents
+Interpolation contents
 ----------------------
 
 - :ref:`Interpolation introduction`

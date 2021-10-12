@@ -3,22 +3,24 @@ Linear Algebra
 
 :ref:`O2scl <o2scl>`
 
-Linear Algebra Contents
+Linear algebra contents
 -----------------------
 
-- :ref:`Linear Algebra introduction`
+- :ref:`Linear algebra introduction`
 - :ref:`Specializations for Armadillo and Eigen`
 - :ref:`Linear algebra enums`
 
-Linear Algebra introduction
+Linear algebra introduction
 ---------------------------
   
-There is a small set of linear algebra routines. These are not
-intended to be a replacement for higher performance linear algebra
-libraries. In the case that O\ :sub:`2`\ scl was compiled with support
-for either the Armadillo or Eigen libraries, some O\ :sub:`2`\ scl
-template functions are overloaded with the respective Armadillo or
-Eigen versions.
+O\ :sub:`2`\ scl contains a small set of linear algebra routines but
+is also is designed to be used with `Armadillo
+<http://arma.sourceforge.net>`_ and/or `Eigen
+<https://eigen.tuxfamily.org>`_, both of which are high performance
+C++ linear algebra libraries. In the case that O\ :sub:`2`\ scl was
+compiled with support for either the Armadillo or Eigen libraries,
+some O\ :sub:`2`\ scl template functions are overloaded with the
+respective Armadillo or Eigen versions.
 
 The fallback O\ :sub:`2`\ scl linear algebra routines offer a more
 generic and flexible interface: they work for almost all vector and
