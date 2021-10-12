@@ -2320,7 +2320,7 @@ int main(int argc, char *argv[]) {
             if (iff.args[k].ift.is_io()) {
               fout << "        | *" << iff.args[k].name << "*";
               if (iff.args[k].value.length()>0) {
-                fout << "=" << iff.args[k].value;
+                fout << " =" << iff.args[k].value;
               }
               fout << ": ``ctypes.c_" << iff.args[k].ift.name
                    << "``" << endl;
@@ -2328,7 +2328,7 @@ int main(int argc, char *argv[]) {
           } else {
             fout << "        | *" << iff.args[k].name << "*";
             if (iff.args[k].value.length()>0) {
-              fout << "=" << iff.args[k].value;
+              fout << " =" << iff.args[k].value;
             }
             fout << ": ``" << iff.args[k].ift.name << "``" << endl;
           }
@@ -2347,7 +2347,7 @@ int main(int argc, char *argv[]) {
         } else if (iff.args[k].ift.name=="std::string") {
           fout << "        | *" << iff.args[k].name << "*";
           if (iff.args[k].value.length()>0) {
-            fout << "=" << iff.args[k].value;
+            fout << " =" << iff.args[k].value;
           }
           fout << ": string" << endl;
         }
@@ -3174,7 +3174,7 @@ int main(int argc, char *argv[]) {
     
     // Now construct the 'autofunction' command
     
-    if (iff.overloaded) {
+    if (iff.overloaded || iff.py_name.length()>0) {
       fout2 << ".. autofunction:: o2sclpy." << iff.py_name << "(link,";
     } else {
       fout2 << ".. autofunction:: o2sclpy." << iff.name << "(link,";

@@ -7,10 +7,12 @@ py_class_doc |
 | https://neutronstars.utk.edu/code/o2scl/html/class/%name%.html .
 dll_name o2scl
 rst_header |
-| .. _hdf:
+| .. _other:
 |
 | Other classes from O\ :sub:`2`\ scl
-| ==================================
+| ===================================
+|
+| :ref:`O2sclpy <o2sclpy>`
 # 
 # Include statements for C++ header file
 # 
@@ -73,6 +75,7 @@ class quadratic_real_coeff_gsl
   - out std::complex<double> &r1  
   - out std::complex<double> &r2
 class quadratic_real_coeff_gsl2<>
+- py_name quadratic_real_coeff_gsl2                             
 - function solve_r
   - int
   - const double a2
@@ -88,6 +91,7 @@ class quadratic_real_coeff_gsl2<>
   - out std::complex<double> &r1  
   - out std::complex<double> &r2
 class cubic_real_coeff_cern<>
+- py_name cubic_real_coeff_cern                             
 - function solve_r
   - int
   - const double a3
@@ -126,6 +130,7 @@ class cubic_real_coeff_gsl
   - out std::complex<double> &r2  
   - out std::complex<double> &r3
 class quartic_real_coeff_cern<>
+- py_name quartic_real_coeff_cern                             
 - function solve_r
   - int
   - const double a4
@@ -184,10 +189,10 @@ class bessel_K_exp_integ_gsl
 # - double y
 class hist
 - std_cc
-- cons init
-  - size_t nv
-  - std::vector<double> v
-  - size_t n_bins
+#- cons init
+#  - size_t nv
+#  - io std::vector<double> &v
+#  - size_t n_bins
 # - function from_table
 #  - io table &t
 #  - std::string colx

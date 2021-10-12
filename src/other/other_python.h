@@ -169,6 +169,4 @@ int o2scl_hist_function(void *vptr, char *func);
 
 void o2scl_hist_clear(void *vptr);
 
-void *o2scl_hist_init(size_t nv, std::vector<double> v, size_t n_bins);
-
 }

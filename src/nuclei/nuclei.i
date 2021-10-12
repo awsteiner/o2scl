@@ -11,6 +11,8 @@ rst_header |
 |
 | Nuclei and nuclear mass classes
 | ===============================
+|
+| :ref:`O2sclpy <o2sclpy>`
 # 
 # Include statements for C++ header file
 # 

@@ -11,6 +11,8 @@ rst_header |
 |
 | Particle classes
 | ===============================
+|
+| :ref:`O2sclpy <o2sclpy>`
 # 
 # Include statements for C++ header file
 # 

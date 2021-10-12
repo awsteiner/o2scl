@@ -14,6 +14,8 @@ rst_header |
 | Base classes from O\ :sub:`2`\ scl
 | ==================================
 |
+| :ref:`O2sclpy <o2sclpy>`
+|
 | Note that these classes are experimental. They are not intended
 | to provide the full functionality
 | of the corresponding C++ class.

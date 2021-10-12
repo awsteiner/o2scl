@@ -459,8 +459,3 @@ void o2scl_hist_clear(void *vptr) {
   return;
 }
 
-void *o2scl_hist_init(size_t nv, std::vector<double> v, size_t n_bins) {
-  hist *ptr=new hist(nv,v,n_bins);
-  return ptr;
-}
-

@@ -11,6 +11,8 @@ rst_header |
 |
 | HDF5 classes from O\ :sub:`2`\ scl
 | ==================================
+|
+| :ref:`O2sclpy <o2sclpy>`
 # 
 # Include statements for C++ header file
 # 
