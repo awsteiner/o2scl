@@ -3,14 +3,14 @@ Differentiation
 
 :ref:`O2scl <o2scl>`
 
-DI Contents
------------
+Differentiation Contents
+------------------------
 
-- :ref:`DI Introduction`
+- :ref:`Differentiation Introduction`
 - :ref:`Differentiation example`  
 
-DI Introduction
----------------
+Differentiation Introduction
+----------------------------
 
 Differentiation is performed by descendants of :ref:`deriv_base
 <deriv_base>`. These allow one to calculate either first, second, and

@@ -3,8 +3,8 @@ Integration
 
 :ref:`O2scl <o2scl>`
 
-IT Contents
------------
+Integration Contents
+--------------------
 
 - :ref:`One-dimensional Integration based on GSL, CERNLIB, and Boost`
 - :ref:`GSL-based integration details`
