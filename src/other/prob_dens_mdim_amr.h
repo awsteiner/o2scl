@@ -41,10 +41,9 @@ namespace o2scl {
 
       \note This class is experimental.
 
-      \future The storage required by the mesh is larger
-      than necessary, and could be replaced by a tree-like
-      structure which uses less storage, but that might 
-      demand longer lookup times. 
+      \future The storage required by the mesh is larger than
+      necessary, and could be replaced by a tree-like structure which
+      uses less storage, but that might demand longer lookup times.
   */
   template<class vec_t=std::vector<double>,
     class mat_t=const_matrix_view_table<vec_t> >

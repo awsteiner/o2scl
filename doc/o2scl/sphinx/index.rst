@@ -42,7 +42,6 @@ User's Guide
    install
    usage
    vecmat
-   linalg
    interp
    const
    funct
@@ -55,17 +54,17 @@ User's Guide
    min
    mcarlo
    mcmc
-   conmin
    anneal
    hist
-   fit
    ode
-   rng
-   multi_interp
+   linalg
    algebraic
    cheb
    unitconv
    multip
+   conmin
+   fit
+   multi_interp
    hdf
    acol
    python

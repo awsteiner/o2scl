@@ -26,13 +26,14 @@ which never calls the error handler. The GSL derivative class
 functions which operate on multiprecision numbers (see also
 :ref:`Multiprecision Support`).
 
-.. warning::
-   For :ref:`deriv_gsl <deriv_gsl>` and :ref:`deriv_cern <deriv_cern>`
-   the second and third derivatives are calculated by naive repeated
-   application of the code for the first derivative and can be
-   particularly troublesome if the function is not sufficiently
-   smooth. Error estimation is not provided for second and third
-   derivatives.
+The classes :ref:`deriv_gsl <deriv_gsl>` and :ref:`deriv_cern
+<deriv_cern>` can also estimate second and third derivatives but these
+can be particularly troublesome if the function is not sufficiently
+smooth. Error estimation is not provided for second and third
+derivatives. If one has more information about the function, then
+second and third derivatives are often better computed by fitting to a
+model and then taking the second or third derivative of the model
+instead.
 
 Differentiation example
 -----------------------

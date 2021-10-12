@@ -3,8 +3,21 @@ The acol Command-line Utility
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
+acol contents
+-------------
 
+- :ref:`acol introduction`
+- :ref:`acol functions`
+- :ref:`acol types`
+- :ref:`Value specifications`
+- :ref:`Vector specifications`
+- :ref:`String list specifications`
+- :ref:`Multiple vector specifications`
+- :ref:`acol example`
+  
+acol introduction
+-----------------
+  
 O\ :sub:`2`\ scl contains a command-line utility, \c acol, designed to
 facilitate the manipulation of various objects stored in HDF5 files.
 It can handle integers, characters, double-precision floating point
@@ -41,7 +54,7 @@ script in the ``extras`` directory of the documentation is
 named ``acol.scr``. The associated output is a useful demonstration
 of the capabilities of ``acol``.
 
-acol Functions
+acol functions
 --------------
 
 Some ``acol`` commands can work with mathematical function arguments.
@@ -59,7 +72,7 @@ There is also a command called ``function`` which works with several
 different types to generate data based on functions. Use ``acol -help
 function`` to get more information on these type-specific commands.
 
-acol Types
+acol types
 ----------
 
 The types which can be handled by ``acol`` are either related to C++

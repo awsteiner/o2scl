@@ -3,8 +3,6 @@ Library Settings
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
-
 There are a couple library settings which are handled by a global
 object of type :ref:`lib_settings_class <lib_settings_class>` (see
 below).

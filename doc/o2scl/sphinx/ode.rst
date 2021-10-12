@@ -3,16 +3,16 @@ Ordinary Differential Equations
 
 :ref:`O2scl <o2scl>`
 
-Ordinary Differential Equations Contents
+Ordinary differential equations contents
 ----------------------------------------
 
-- :ref:`Ordinary Differential Equations Introduction`
+- :ref:`Ordinary differential equations introduction`
 - :ref:`Ordinary differential equations example`
 - :ref:`Ordinary differential equations example source code`
 - :ref:`Stiff differential equations example`
 - :ref:`Iterative solution of ODEs example`  
 
-Ordinary Differential Equations Introduction
+Ordinary differential equations introduction
 --------------------------------------------
 
 Classes for non-adaptive integration are provided as descendents of
@@ -117,7 +117,7 @@ This example solves the differential equations
 
 .. math::
 
-   \begin{eqnarray*}
+   \begin{eqnarray}
    y_0^{\prime} &=& 480 y_0 + 980 y_1 \nonumber \\
    y_1^{\prime} &=& -490 y_0 - 990 y_1
    \end{eqnarray}
@@ -168,8 +168,10 @@ given the boundary conditions
 
 by linearizing the ODEs on a mesh and using an iterative method
 (sometimes called relaxation). The :ref:`ode_it_solve <ode_it_solve>`
-class demonstrates how this works, but is slow for large grid sizes
-because the matrix is very sparse.
+class demonstrates how this works. For this simple example, the linear
+system is large and the matrix is very sparse, thus :ref:`ode_bv_shoot
+<ode_bv_shoot>` would be much faster. However, there are some problems
+where iterative methods succeed and shooting fails.
 
 .. literalinclude:: ../../../examples/ex_ode_it.cpp
    :language: c++		    

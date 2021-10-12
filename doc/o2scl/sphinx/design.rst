@@ -3,7 +3,21 @@ Design Considerations
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
+Design contents
+---------------
+
+- :ref:`Design introduction`
+- :ref:`Header file dependencies`
+- :ref:`The use of templates`
+- :ref:`Error handling`
+- :ref:`Define constants and macros`
+- :ref:`Parameter ordering`
+- :ref:`Global objects`
+- :ref:`Thread safety`
+- :ref:`Copyright notices`
+
+Design introduction
+-------------------
 
 The design goal is to create an object-oriented computing library
 with classes that perform common numerical tasks. The most
@@ -140,9 +154,9 @@ compilation to fail.
 Parameter ordering
 ------------------
 
-In functions where this makes sense, generally input parameters
-will appear first, while output parameters or parameters which
-handle both input and output will appear later.
+In functions where this makes sense, generally input parameters will
+appear first, while output parameters or parameters which handle both
+input and output will appear later.
     
 Global objects
 --------------

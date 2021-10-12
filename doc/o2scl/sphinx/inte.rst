@@ -50,10 +50,13 @@ Several classes integrate arbitrary one-dimensional functions:
   * :ref:`inte_transform <inte_transform>`.
        
 - Integration over a finite interval for a function with
-  singularities: :ref:`inte_qags_gsl <inte_qags_gsl>` 
-  (See also :ref:`inte_qaws_gsl <inte_qaws_gsl>`.) The 
-  :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>` class can also handle 
-  singularities near either endpoint.
+  singularities:
+
+  * :ref:`inte_qags_gsl <inte_qags_gsl>` 
+  * :ref:`inte_qaws_gsl <inte_qaws_gsl>`
+  * :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>` can handle 
+    singularities at either endpoint.
+    
 - Cauchy principal value integration over a finite interval:
   
   * :ref:`inte_cauchy_cern <inte_cauchy_cern>`
@@ -238,7 +241,8 @@ O\ :sub:`2`\ scl reimplements the Cubature library for
 multi-dimensional integration. The h-adaptive and p-adaptive
 integration methods are implemented in :ref:`inte_hcubature
 <inte_hcubature>` and :ref:`inte_pcubature <inte_pcubature>`. See also
-the Monte Carlo integration routines in :ref:`Monte Carlo Integration`.
+the Monte Carlo integration routines in :ref:`Monte Carlo
+Integration`.
 
 ..
   Multi-dimensional hypercubic integration is performed by

@@ -12,15 +12,10 @@ Simulated annealing contents
 Simulated annealing introduction
 --------------------------------
 
-Minimization by simulated annealing is performed by descendants of
-sim_anneal (see :ref:`anneal_gsl <anneal_gsl>`). 
-
-.. 
-  Because simulated
-  annealing is particularly well-suited to parallelization, a
-  multi-threaded minimizer analogous to \ref o2scl::anneal_gsl is
-  given in \ref o2scl::anneal_mt. This header-only class uses the
-  Boost libraries and requires it for use.
+Minimization by simulated annealing is performed by a modified
+version of the GSL algorithm in the :ref:`anneal_gsl <anneal_gsl>`
+class. A version which includes OpenMP and MPI parallelization
+is provided in :ref:`anneal_para <anneal_para>`.
 
 Simulated annealing example
 ---------------------------

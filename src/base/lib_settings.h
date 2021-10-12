@@ -73,6 +73,8 @@ namespace o2scl {
 
       A global object of this type is defined in
       <tt>lib_settings.h</tt> named \ref o2scl_settings .
+
+      This class should not typically be instantiated by the end-user.
   */
   class lib_settings_class {
 
@@ -225,9 +227,10 @@ namespace o2scl {
 
   /** \brief The global library settings object
 
-      This global object is used by \ref polylog and some of the \o2e
-      classes to find data files. It may also be used by the end-user
-      to probe details of the \o2 installation.
+      This global object is used by \o2 classes to store the global
+      constant database, the global unit conversion database, and the
+      directory for \o2p and \o2e data files. It may also be used by
+      the end-user to probe details of the \o2 installation.
    */
   extern lib_settings_class o2scl_settings;
 

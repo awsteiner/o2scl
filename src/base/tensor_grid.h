@@ -151,17 +151,17 @@ namespace o2scl {
          templates, so they cannot be virtual.
 
          - Future: Create a swap function for the grid similar to the
-         data swap function in the parent \ref o2scl::tensor class?
+           data swap function in the parent \ref o2scl::tensor class?
 
          - Future: Only allocate space for grid if it is set.
 
          - Future: as with \ref o2scl::tensor, generalize to other
-         base data types.
+           base data types.
 
          - Future: The function \ref interp_linear_partial() appears
-         to be a generalization of \ref
-         copy_table3d_interp_values_setxy(), so there may be some code
-         duplication between the two that can be avoided.
+           to be a generalization of \ref
+           copy_table3d_interp_values_setxy(), so there may be some code
+           duplication between the two that can be avoided.
 
       \endverbatim
 

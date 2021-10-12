@@ -205,7 +205,8 @@ install O\ :sub:`2`\ scl which can be found at
 https://github.com/awsteiner/o2scl/tree/main/docker . For those on
 MacOS, I recommend the guide at
 https://medium.com/crowdbotics/a-complete-one-by-one-guide-to-install-docker-on-your-mac-os-using-homebrew-e818eb4cfc3
-to installing docker.
+to installing docker (though this may need revision as now
+docker-machine is deprecated on homebrew).
 
 Optional linear algebra libraries
 ---------------------------------

@@ -19,16 +19,11 @@ argument have an extra ``"_i"`` suffix to distinguish them from
 functions which take a floating-point value to be binned as their
 argument.
 
-Empty histograms have zero size. Also, the histogram weights
-are automatically initialized to zero when memory is allocated
-for them. 
-
-The bin edges may be either increasing or decreasing, but should
-be monotonic. Also, no two bin edges should be equal. The
-histogram classes do not exhaustively check that this is the case.
-By default, histograms do not allow one to add weights
-corresponding to values of the independent variable which are less
-than the smallest bin or greater than the largest bin.
+Empty histograms have zero size. Also, the histogram weights are
+automatically initialized to zero when memory is allocated for them.
+By default, histograms do not allow one to add weights corresponding
+to values of the independent variable which are less than the smallest
+bin or greater than the largest bin.
 
 Each bin also has a representative coordinate (or set of
 coordinates), typically corresponding to some value between the
@@ -41,6 +36,15 @@ of each bin, but this option is configurable and the
 representative values may be set by the user for each individual
 bin.
 
-Histograms can be read and written to HDF files using
-the ``hdf_output`` and ``hdf_input`` functions
-in \ref o2scl_hdf.
+Histograms can be read and written to HDF files using the
+``hdf_output`` and ``hdf_input`` functions in \ref o2scl_hdf.
+
+.. warning::
+
+   The bin edges may be either increasing or decreasing, but should be
+   monotonic. Also, no two adjacent bin edges should be equal. The
+   histogram classes do not exhaustively check that this is the case.
+
+.. todo::
+
+   Create a 1- and 2-D histogram example.

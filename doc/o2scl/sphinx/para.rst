@@ -3,7 +3,12 @@ Parallel Programming with O2scl
 
 :ref:`O2scl <o2scl>`
 
-.. contents:: 
+Parallel contents
+-----------------
+
+- :ref:`Thread safety and parallelism`
+- :ref:`OpenMP and O2scl`
+- :ref:`MPI and O2scl`
 
 Thread safety and parallelism
 -----------------------------
