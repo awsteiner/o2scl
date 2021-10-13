@@ -1,4 +1,4 @@
-The acol Command-line Utility
+The acol Command Line Utility
 =============================
 
 :ref:`O2scl <o2scl>`
@@ -18,7 +18,7 @@ acol contents
 acol introduction
 -----------------
   
-O\ :sub:`2`\ scl contains a command-line utility, \c acol, designed to
+O\ :sub:`2`\ scl contains a command line utility, \c acol, designed to
 facilitate the manipulation of various objects stored in HDF5 files.
 It can handle integers, characters, double-precision floating point
 numbers, size_t objects, arrays of any of these types, or O\ :sub:`2`\

@@ -4,32 +4,39 @@
 help:
 	@echo "This the O2scl root directory makefile."
 	@echo
-	@echo "The traditional GNU-style targets apply. In addition there"
-	@echo "are a couple extra targets which may be useful listed below."
-	@echo "The documentation is automatically installed with"
-	@echo "'make install'."
+	@echo "The traditional GNU-style targets apply. In addition there "\
+	"are a couple extra "
+	@echo "targets which may be useful listed below."\
+	"The documentation is automatically"
+	@echo "installed with 'make install'."
 	@echo 
 	@echo "Additional package-specific targets"
-	@echo "-------------------------------------------------------------"
-	@echo "help:             Show this help file"
-	@echo "o2scl-test:       Test installation ('make check' works also)"
-	@echo "o2scl-examples:   Compile and run examples"
-	@echo "test-clean:       Clean files created by tests"
+	@echo "-----------------------------------"\
+	"-------------------------------------"
+	@echo "help:                 Show this help file"
+	@echo "o2scl-test:           Test installation "\
+	"('make check' works also)"
+	@echo "o2scl-examples:       Compile and run examples"
+	@echo "test-clean:           Clean files created by tests"
+	@echo "open-doc:             View local HTML documentation"
+	@echo "blank-doc:            Create blank documentation"
+	@echo "web-doc:              View web documentation"
+	@echo "emacs-clean:          Remove files ending with a tilde"
+	@echo "permfix:              Change permissions to "\
+	"current user with sudo"
 	@echo 
 	@echo "Developer targets"
-	@echo "-------------------------------------------------------------"
-	@echo "sinstall:         Install headers and libraries only"
-	@echo "o2scl-doc:        Make HTML documentation"
-	@echo "clean-doc:        Remove generated documentation files"
-	@echo "blank-doc:        Create blank documentation (used in "
-	@echo "open-doc:         View HTML documentation"
-	@echo "  the homebrew recipe and the travis script)"
-	@echo "release-sync-doc:     Copy docs from /usr/local on isospin"
-	@echo "  to the web page repository for uploading"
-	@echo "prerelease-sync-doc: Copy docs from /usr/local on isospin"
-	@echo "  to the the internal web directory."
-	@echo "emacs-clean:      Remove files ending with a tilde"
-	@echo "permfix:          Change permissions to current user with sudo"
+	@echo "-----------------------------------"\
+	"-------------------------------------"
+	@echo "sinstall:             Install headers and libraries only"
+	@echo "o2scl-doc:            Make HTML documentation"
+	@echo "clean-doc:            Remove generated documentation files"
+	@echo "release-sync-doc:     Copy docs from /usr/local on isospin "\
+	"to the web page "
+	@echo "                      repository for uploading"
+	@echo "prerelease-sync-doc:  Copy docs from /usr/local on isospin "\
+	"to the internal "
+	@echo "                      web directory."
 	@echo
 
 # -----------------------------------------------------------------
@@ -115,6 +122,9 @@ endif
 
 open-doc:
 	$(BROWSER) doc/o2scl/html/index.html
+
+web-doc:
+	$(BROWSER) https://neutronstars.utk.edu/code/o2scl/html/index.html
 
 interface: empty
 	cd bin; $(MAKE) yanic
