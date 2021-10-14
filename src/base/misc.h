@@ -342,6 +342,21 @@ namespace o2scl {
       Note that this function may return Inf or NAN if \c limit is too 
       large, depending on the machine precision.
   */
+  static const std::string fermi_function_doc=
+    ((std::string)"Calculate a Fermi-Dirac distribution function ")+
+    "safely\n"+
+
+    "\\f$ \\left[1+\exp\\left(E/T-\\mu/T\\right)\\right]^{-1} \\f$\n"+
+
+    "This function calculates a Fermi-Dirac distribution, guaranteeing "+
+    "that numbers larger than \\f$ \exp(\\mathrm{limit}) \\f$ and "+
+    "smaller than \\f$ \exp(-\\mathrm{limit}) \\f$ will be avoided. The "+
+    "default value of <tt>limit=40</tt> ensures accuracy to within 1 "+
+    "part in \\f$ 10^{17} \\f$ compared to the maximum of the "+
+    "distribution (which is unity).\n"+
+
+    "Note that this function may return Inf or NAN if \\c limit is too "+
+    "large, depending on the machine precision.";
   double fermi_function(double E, double mu, double T, double limit=40.0);
 
   /** \brief Calculate a Bose-Einstein distribution function safely
