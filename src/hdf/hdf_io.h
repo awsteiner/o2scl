@@ -571,11 +571,7 @@ namespace o2scl_hdf {
       if (verbose>1) {
 	std::cout << "Function: " << func << std::endl;
       }
-#ifndef O2SCL_NO_CALC_UTF8
       o2scl::calc_utf8 calc;
-#else
-      o2scl::calculator calc;
-#endif
       std::map<std::string,double> vars;
       calc.compile(func.c_str(),&vars);
       v.resize(n);
@@ -810,11 +806,7 @@ namespace o2scl_hdf {
 	  std::vector<std::string> sv2;
 	  o2scl::split_string_delim(addl_spec,sv2,':');
 	  
-#ifndef O2SCL_NO_CALC_UTF8
           o2scl::calc_utf8 calc;
-#else
-          o2scl::calculator calc;
-#endif
 	  calc.compile(sv2[0].c_str(),0);
 	  int row=(int)calc.eval(0);
 	  if (verbose>2) {
@@ -1419,11 +1411,7 @@ namespace o2scl_hdf {
 
 	  // Compile the function for the length of the ith vector
 	  
-#ifndef O2SCL_NO_CALC_UTF8
           o2scl::calc_utf8 calc2;
-#else
-          o2scl::calculator calc2;
-#endif
 	  std::map<std::string,double> vars2;
 	  vars2["i"]=((double)i);
 	  
@@ -1458,11 +1446,7 @@ namespace o2scl_hdf {
 	  
 	  // Compile the function for the ith vector
 
-#ifndef O2SCL_NO_CALC_UTF8
           o2scl::calc_utf8 calc;
-#else
-          o2scl::calculator calc;
-#endif
 	  std::map<std::string,double> vars;
 	  vars["i"]=((double)i);
 	  

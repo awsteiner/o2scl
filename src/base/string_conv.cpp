@@ -277,20 +277,12 @@ int o2scl::function_to_double_nothrow(std::string s, double &result,
     }
   }
   
-#ifndef O2SCL_NO_CALC_UTF8
   calc_utf8 calc;
-#else
-  calculator calc;
-#endif
   
   int ret=calc.compile_nothrow(s2.c_str(),0);
   if (ret!=0) return ret;
 
-#ifndef O2SCL_NO_CALC_UTF8
   std::vector<std::u32string> vs=calc.get_var_list();
-#else
-  std::vector<std::string> vs=calc.get_var_list();
-#endif
 
   // If there are undefined variables, then attempt to get them
   // from the constant database
@@ -302,48 +294,28 @@ int o2scl::function_to_double_nothrow(std::string s, double &result,
     
     std::vector<find_constants::find_constants_list> matches;
     for(size_t i=0;i<vs.size();i++) {
-#ifndef O2SCL_NO_CALC_UTF8
       std::string vsi2;
       char32_to_utf8(vs[i],vsi2);
       int fret=fc.find_nothrow(vsi2,"mks",matches);
-#else      
-      int fret=fc.find_nothrow(vs[i],"mks",matches);
-#endif
       
       if (fret==find_constants::one_exact_match_unit_match ||
           fret==find_constants::one_pattern_match_unit_match) {
 
         find_constants::find_constants_list &fcl=matches[0];
 
-#ifndef O2SCL_NO_CALC_UTF8
         vars.insert(std::make_pair(vsi2,fcl.val));
         if (verbose>=2) {
           std::cout << "Found constant " << vsi2
                     << " with value " << fcl.val << std::endl;
         }
-#else
-        vars.insert(std::make_pair(vs[i],fcl.val));
-        if (verbose>=2) {
-          std::cout << "Found constant " << vs[i]
-                    << " with value " << fcl.val << std::endl;
-        }
-#endif
         
       } else {
         
-#ifndef O2SCL_NO_CALC_UTF8
         if (verbose>=2) {
           std::cout << "Variable " << vsi2
                     << " not uniquely specified in constant list ("
                     << fret << ")." << std::endl;
         }
-#else
-        if (verbose>=2) {
-          std::cout << "Variable " << vs[i]
-                    << " not uniquely specified in constant list ("
-                    << fret << ")." << std::endl;
-        }
-#endif
         
         return 1;
       }

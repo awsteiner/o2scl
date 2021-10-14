@@ -1892,6 +1892,133 @@ double o2scl_find_constants_find_unique(void *vptr, char *name, char *unit) {
   return ret;
 }
 
+void *o2scl_create_convert_units____der_unit() {
+  convert_units<>::der_unit *ptr=new convert_units<>::der_unit;
+  return ptr;
+}
+
+void o2scl_free_convert_units____der_unit(void *vptr) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  delete ptr;
+  return;
+}
+
+void *o2scl_convert_units____der_unit_get_label(void *vptr) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->label;
+  return sptr;
+}
+
+void o2scl_convert_units____der_unit_set_label(void *vptr, void *p_v) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  std::string *p_t=(std::string *)p_v;
+  ptr->label=*(p_t);
+  return;
+}
+
+int o2scl_convert_units____der_unit_get_m(void *vptr) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  return ptr->m;
+}
+
+void o2scl_convert_units____der_unit_set_m(void *vptr, int v) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  ptr->m=v;
+  return;
+}
+
+int o2scl_convert_units____der_unit_get_k(void *vptr) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  return ptr->k;
+}
+
+void o2scl_convert_units____der_unit_set_k(void *vptr, int v) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  ptr->k=v;
+  return;
+}
+
+int o2scl_convert_units____der_unit_get_s(void *vptr) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  return ptr->s;
+}
+
+void o2scl_convert_units____der_unit_set_s(void *vptr, int v) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  ptr->s=v;
+  return;
+}
+
+int o2scl_convert_units____der_unit_get_K(void *vptr) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  return ptr->K;
+}
+
+void o2scl_convert_units____der_unit_set_K(void *vptr, int v) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  ptr->K=v;
+  return;
+}
+
+int o2scl_convert_units____der_unit_get_A(void *vptr) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  return ptr->A;
+}
+
+void o2scl_convert_units____der_unit_set_A(void *vptr, int v) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  ptr->A=v;
+  return;
+}
+
+int o2scl_convert_units____der_unit_get_mol(void *vptr) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  return ptr->mol;
+}
+
+void o2scl_convert_units____der_unit_set_mol(void *vptr, int v) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  ptr->mol=v;
+  return;
+}
+
+int o2scl_convert_units____der_unit_get_cd(void *vptr) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  return ptr->cd;
+}
+
+void o2scl_convert_units____der_unit_set_cd(void *vptr, int v) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  ptr->cd=v;
+  return;
+}
+
+double o2scl_convert_units____der_unit_get_val(void *vptr) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  return ptr->val;
+}
+
+void o2scl_convert_units____der_unit_set_val(void *vptr, double v) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  ptr->val=v;
+  return;
+}
+
+void *o2scl_convert_units____der_unit_get_name(void *vptr) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->name;
+  return sptr;
+}
+
+void o2scl_convert_units____der_unit_set_name(void *vptr, void *p_v) {
+  convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  std::string *p_t=(std::string *)p_v;
+  ptr->name=*(p_t);
+  return;
+}
+
 void *o2scl_create_convert_units__() {
   convert_units<> *ptr=new convert_units<>;
   return ptr;
@@ -1948,9 +2075,41 @@ int o2scl_convert_units___convert_ret(void *vptr, char *frm, char *to, double va
   return ret;
 }
 
+void o2scl_convert_units___del_unit(void *vptr, void *ptr_name) {
+  convert_units<> *ptr=(convert_units<> *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  ptr->del_unit(*name);
+  return;
+}
+
+void o2scl_convert_units___add_unit(void *vptr, void *ptr_d) {
+  convert_units<> *ptr=(convert_units<> *)vptr;
+  convert_units<>::der_unit *d=(convert_units<>::der_unit *)ptr_d;
+  ptr->add_unit(*d);
+  return;
+}
+
+void o2scl_convert_units___set_natural_units(void *vptr, bool c_is_one, bool hbar_is_one, bool kb_is_one) {
+  convert_units<> *ptr=(convert_units<> *)vptr;
+  ptr->set_natural_units(c_is_one,hbar_is_one,kb_is_one);
+  return;
+}
+
+void o2scl_convert_units___test_unique(void *vptr) {
+  convert_units<> *ptr=(convert_units<> *)vptr;
+  ptr->test_unique();
+  return;
+}
+
 void o2scl_convert_units___print_cache(void *vptr) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   ptr->print_cache();
+  return;
+}
+
+void o2scl_convert_units___print_units_cout(void *vptr) {
+  convert_units<> *ptr=(convert_units<> *)vptr;
+  ptr->print_units_cout();
   return;
 }
 

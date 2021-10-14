@@ -853,6 +853,13 @@ namespace o2scl {
     
       return;
     }
+
+    /** \brief Print units to std::cout
+     */
+    void print_units_cout() {
+      print_units(std::cout);
+      return;
+    }
     
     //void set_vars(fp_t m, fp_t k, fp_t s, fp_t K, fp_t A, fp_t mol,
     //fp_t cd, std::map<std::string, fp_t> &vars,
@@ -913,13 +920,8 @@ namespace o2scl {
                       fp_t val, fp_t &converted,
                       fp_t &factor) {
 
-#ifndef O2SCL_NO_CALC_UTF8
       o2scl::calc_utf8 calc;
       o2scl::calc_utf8 calc2;
-#else
-      o2scl::calculator calc;
-      o2scl::calculator calc2;
-#endif
 
       int cret1=calc.compile_nothrow(from.c_str());
       if (cret1!=0) {
@@ -937,8 +939,6 @@ namespace o2scl {
         }
         return 2;
       }
-      
-#ifndef O2SCL_NO_CALC_UTF8
       
       std::vector<std::u32string> vars=calc.get_var_list();
       std::vector<std::string> vars_str;
@@ -986,45 +986,6 @@ namespace o2scl {
         std::cout << "New units not found: ";
         o2scl::vector_out(std::cout,new_units,true);
       }
-      
-#else
-
-      // Create "new_units", the list of units which are not
-      // in the current unit list 
-      std::vector<std::string> vars=calc.get_var_list();
-      if (verbose>=2) {
-        std::cout << "Unit list of from: ";
-        o2scl::vector_out(std::cout,vars,true);
-      }
-      std::vector<std::string> vars2=calc2.get_var_list();
-      if (verbose>=2) {
-        std::cout << "Unit list of to: ";
-        o2scl::vector_out(std::cout,vars2,true);
-      }
-
-      std::vector<std::string> curr, new_units;
-      get_curr_unit_list(curr);
-
-      for(size_t i=0;i<vars.size();i++) {
-        if (std::find(curr.begin(),curr.end(),vars[i])==curr.end() &&
-            std::find(new_units.begin(),new_units.end(),
-                      vars[i])==new_units.end()) {
-          new_units.push_back(vars[i]);
-        }
-      }
-      for(size_t i=0;i<vars2.size();i++) {
-        if (std::find(curr.begin(),curr.end(),vars2[i])==curr.end() &&
-            std::find(new_units.begin(),new_units.end(),
-                      vars2[i])==new_units.end()) {
-          new_units.push_back(vars2[i]);
-        }
-      }
-      if (verbose>=2) {
-        std::cout << "New units not found: ";
-        o2scl::vector_out(std::cout,new_units,true);
-      }
-
-#endif
       
       std::vector<find_constants::find_constants_list> matches;
       for(size_t i=0;i<new_units.size();i++) {
@@ -1076,13 +1037,8 @@ namespace o2scl {
       
       // These calculator objects have to be inside this
       // function to make the function const
-#ifndef O2SCL_NO_CALC_UTF8
       o2scl::calc_utf8 calc;
       o2scl::calc_utf8 calc2;
-#else
-      o2scl::calculator calc;
-      o2scl::calculator calc2;
-#endif
 
       std::map<std::string, fp_t> vars;
 

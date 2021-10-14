@@ -63,11 +63,7 @@ hist::hist(const hist &h) {
 int hist::function(std::string func) {
 
   // Parse function
-#ifndef O2SCL_NO_CALC_UTF8
-      calc_utf8 calc;
-#else
-      calculator calc;
-#endif      
+  calc_utf8 calc;
   std::map<std::string,double> vars;
   calc.compile(func.c_str(),&vars);
   

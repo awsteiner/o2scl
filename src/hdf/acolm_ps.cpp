@@ -2072,7 +2072,6 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
   // Copy data from selected rows
   // ---------------------------------------------------------------------
 
-#ifndef O2SCL_NO_CALC_UTF8
   calc_utf8 calc;
   calc.compile(i1.c_str(),0);
   vector<std::u32string> cols32=calc.get_var_list();
@@ -2080,11 +2079,6 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
   for(size_t ij=0;ij<cols32.size();ij++) {
     char32_to_utf8(cols32[ij],cols[ij]);
   }
-#else
-  calculator calc;
-  calc.compile(i1.c_str(),0);
-  vector<std::string> cols=calc.get_var_list();
-#endif
   if (verbose>=2) {
     cout << "Calculating expression: " << i1 << endl;
   }
@@ -2157,11 +2151,7 @@ int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
     
     if (in[1].find(':')==std::string::npos) {
       
-#ifndef O2SCL_NO_CALC_UTF8
       calc_utf8 calc;
-#else
-      calculator calc;
-#endif      
       std::map<std::string,double> vars;
       for(size_t i=0;i<tensor_grid_obj.get_size(k);i++) {
 	vars["i"]=((double)i);

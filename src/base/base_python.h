@@ -656,6 +656,50 @@ void o2scl_find_constants_find_print(void *vptr, char *name, char *unit, size_t 
 
 double o2scl_find_constants_find_unique(void *vptr, char *name, char *unit);
 
+void *o2scl_create_convert_units____der_unit();
+
+void o2scl_free_convert_units____der_unit(void *vptr);
+
+void *o2scl_convert_units____der_unit_get_label(void *vptr);
+
+void o2scl_convert_units____der_unit_set_label(void *vptr, void *p_v);
+
+int o2scl_convert_units____der_unit_get_m(void *vptr);
+
+void o2scl_convert_units____der_unit_set_m(void *vptr, int v);
+
+int o2scl_convert_units____der_unit_get_k(void *vptr);
+
+void o2scl_convert_units____der_unit_set_k(void *vptr, int v);
+
+int o2scl_convert_units____der_unit_get_s(void *vptr);
+
+void o2scl_convert_units____der_unit_set_s(void *vptr, int v);
+
+int o2scl_convert_units____der_unit_get_K(void *vptr);
+
+void o2scl_convert_units____der_unit_set_K(void *vptr, int v);
+
+int o2scl_convert_units____der_unit_get_A(void *vptr);
+
+void o2scl_convert_units____der_unit_set_A(void *vptr, int v);
+
+int o2scl_convert_units____der_unit_get_mol(void *vptr);
+
+void o2scl_convert_units____der_unit_set_mol(void *vptr, int v);
+
+int o2scl_convert_units____der_unit_get_cd(void *vptr);
+
+void o2scl_convert_units____der_unit_set_cd(void *vptr, int v);
+
+double o2scl_convert_units____der_unit_get_val(void *vptr);
+
+void o2scl_convert_units____der_unit_set_val(void *vptr, double v);
+
+void *o2scl_convert_units____der_unit_get_name(void *vptr);
+
+void o2scl_convert_units____der_unit_set_name(void *vptr, void *p_v);
+
 void *o2scl_create_convert_units__();
 
 void o2scl_free_convert_units__(void *vptr);
@@ -676,7 +720,17 @@ double o2scl_convert_units___convert(void *vptr, char *frm, char *to, double val
 
 int o2scl_convert_units___convert_ret(void *vptr, char *frm, char *to, double val, double converted);
 
+void o2scl_convert_units___del_unit(void *vptr, void *ptr_name);
+
+void o2scl_convert_units___add_unit(void *vptr, void *ptr_d);
+
+void o2scl_convert_units___set_natural_units(void *vptr, bool c_is_one=true, bool hbar_is_one=true, bool kb_is_one=true);
+
+void o2scl_convert_units___test_unique(void *vptr);
+
 void o2scl_convert_units___print_cache(void *vptr);
+
+void o2scl_convert_units___print_units_cout(void *vptr);
 
 void *o2scl_create_format_float();
 

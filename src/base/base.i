@@ -1419,7 +1419,22 @@ class find_constants
   - double
   - std::string name
   - std::string unit
-# 
+#
+# Class convert_units_der_unit  
+#
+class convert_units<>::der_unit
+- py_name convert_units_der_unit
+- std::string label
+- int m
+- int k
+- int s
+- int K
+- int A
+- int mol
+- int cd
+- double val
+- std::string name  
+#  
 # Class convert_units<>
 #
 # Note that 'from' is a reserved keyword in python so we
@@ -1442,11 +1457,26 @@ class convert_units<>
   - std::string to
   - double val
   - double converted
+- function del_unit
+  - void
+  - io std::string &name
+- function add_unit
+  - void
+  - const io convert_units<>::der_unit &d
+- function set_natural_units
+  - void
+  - bool c_is_one [true]
+  - bool hbar_is_one [true]
+  - bool kb_is_one [true]
+- function test_unique
+  - void
+- function print_cache
+  - void
+- function print_units_cout
+  - void
 - int verbose
 - bool err_on_fail
 - bool combine_two_conv
-- function print_cache
-  - void
 #
 # Class columnify
 #

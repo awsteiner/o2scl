@@ -110,11 +110,7 @@ namespace o2scl {
   protected:
 
     /// The function parser
-#ifndef O2SCL_NO_CALC_UTF8
     calc_utf8 calc;
-#else
-    calculator calc;
-#endif
 
     /// External variables to include in the function parsing
     std::map<std::string,double> vars;

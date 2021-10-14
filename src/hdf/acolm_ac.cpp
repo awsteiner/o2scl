@@ -1793,11 +1793,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
 			     in2,"create",itive_com);
       if (ret2!=0) return ret2;
 
-#ifndef O2SCL_NO_CALC_UTF8
       calc_utf8 calc;
-#else
-      calculator calc;
-#endif      
       std::map<std::string,double> vars;
       std::map<std::string,double>::const_iterator mit;
       size_t nn=o2scl::stoszt(in1);
@@ -1829,11 +1825,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     int ret=get_input(sv2,pr,in,"create",itive_com);
     if (ret!=0) return ret;
 
-#ifndef O2SCL_NO_CALC_UTF8
       calc_utf8 calc;
-#else
-      calculator calc;
-#endif      
     std::map<std::string,double> vars;
     std::map<std::string,double>::const_iterator mit;
     size_t nn=o2scl::stoszt(in[0]);
@@ -1854,11 +1846,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     int ret=get_input(sv2,pr,in,"create",itive_com);
     if (ret!=0) return ret;
 
-#ifndef O2SCL_NO_CALC_UTF8
       calc_utf8 calc;
-#else
-      calculator calc;
-#endif      
     std::map<std::string,double> vars;
     std::map<std::string,double>::const_iterator mit;
     size_t nn=o2scl::stoszt(in[0]);
@@ -2127,11 +2115,7 @@ int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
     }
 
     // Parse function(s)
-#ifndef O2SCL_NO_CALC_UTF8
       calc_utf8 calc;
-#else
-      calculator calc;
-#endif      
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
 

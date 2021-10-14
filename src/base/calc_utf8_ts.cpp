@@ -33,8 +33,6 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-#ifndef O2SCL_NO_CALC_UTF8
-  
   calc_utf8 calc;
   calc.verbose=3;
   cout << "1." << endl;
@@ -188,8 +186,6 @@ int main(void) {
     cout << calc.eval_char32(&vars) << endl;
   }
 
-#endif
-  
   t.report();
   return 0;
 }
