@@ -1424,6 +1424,22 @@ class find_constants
 #
 class convert_units<>::der_unit
 - py_name convert_units_der_unit
+- extra_py |
+| def set(self,label,val,name='',m=0,k=0,s=0,K=0,A=0,mol=0,cd=0):
+|     """
+|     Create a derived unit
+|     """
+|     self.label=label
+|     self.val=val
+|     self.name=name
+|     self.m=m
+|     self.k=k
+|     self.s=s
+|     self.K=K
+|     self.A=A
+|     self.mol=mol
+|     self.cd=cd
+|     return
 - std::string label
 - int m
 - int k
