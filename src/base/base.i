@@ -1,5 +1,10 @@
 # Interface file for o2scl base classes
-# 
+#
+# Todo:
+# 1. operator[] for vector<vector<double>>
+# 2. real() for complex<double>
+# 3. get_size_arr() for tensor
+#
 # Todo: add columnify (esp. add_spaces()), interpolation, and
 # vector functions (esp. autocorrelation, and more functions not part of
 # numpy), other tensor classes(?), tensor rearrangments
@@ -289,18 +294,18 @@ class boost::numeric::ublas::matrix<int>
   - size_t m
   - size_t n    
 - extra_py |
-#| def to_numpy(self):
-#|     """
-#|     Copy the vector to a numpy matrix
-#|
-#|     Returns: a two-dimensional ``numpy`` array, with dimension
-#|     ``size1(),size2()``.
-#|     """
-#|     ret=numpy.zeros((self.size1(),self.size2(),dtype=numpy.int)
-#|     for i in range(0,self.size1()):
-#|         for j in range(0,self.size2()):
-#|             ret[i,j]=self.__getitem__((i,j))
-#|     return ret
+| def to_numpy(self):
+|     """
+|     Copy the ublas matrix to a numpy matrix
+|
+|     Returns: a two-dimensional ``numpy`` array, with dimension
+|     ``size1(),size2()``.
+|     """
+|     ret=numpy.zeros(self.size1(),self.size2(),dtype=numpy.intc)
+|     for i in range(0,self.size1()):
+|         for j in range(0,self.size2()):
+|             ret[i,j]=self.__getitem__((i,j))
+|     return ret
 #
 # Class vector<vector<double>>
 #                              
@@ -343,7 +348,12 @@ class std::complex<double>
 - py_name std_complex
 - cons init
   - double re
-  - double im    
+  - double im
+#    
+# These don't work yet because yanic can't really handle this
+# case yet. These functions should return a ctypes pointer to a
+# double.
+#
 #- function real
 #  - double &
 #- function imag
