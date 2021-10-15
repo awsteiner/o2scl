@@ -678,10 +678,10 @@ namespace o2scl {
          {"deg",0,0,0,0,0,0,0,o2scl_const::pi/180.0,"degree"},
          {"°",0,0,0,0,0,0,0,o2scl_const::pi/180.0,"degree"},
          {"′",0,0,0,0,0,0,0,o2scl_const::pi/10800.0,
-          "minute (fraction of a degree)"},
+          "arcminute (fraction of a degree)"},
          {"″",0,0,0,0,0,0,0,o2scl_const::pi/648000.0,
-          "second (fraction of a degree)"},
-         
+          "arcsecond (fraction of a degree)"},
+
          // Hours, "hr", to avoid confusion with Planck's constant
          {"hr",0,0,1,0,0,0,0,o2scl_mks::hour,"hour"},
          {"min",0,0,1,0,0,0,0,o2scl_mks::minute,"minute"},
@@ -832,8 +832,19 @@ namespace o2scl {
           
     
       for(size_t i=0;i<other.size();i++) {
-        out.width(15);
-        out << other[i].label << " ";
+        if (other[i].label=="°") {
+          out.width(16);
+          out << other[i].label << " ";
+        } else if (other[i].label=="′") {
+          out.width(17);
+          out << other[i].label << " ";
+        } else if (other[i].label=="″") {
+          out.width(17);
+          out << other[i].label << " ";
+        } else {
+          out.width(15);
+          out << other[i].label << " ";
+        }
         out.width(2);
         out << other[i].m << " ";
         out.width(2);

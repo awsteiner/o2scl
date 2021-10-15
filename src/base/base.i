@@ -1427,11 +1427,15 @@ class convert_units<>::der_unit
 - extra_py |
 | def set(self,label,val,name='',m=0,k=0,s=0,K=0,A=0,mol=0,cd=0):
 |     """
-|     Create a derived unit
+|     Set the properties of a derived unit
 |     """
-|     self.label=label
+|     ltmp=std_string(self._link)
+|     ltmp.init_bytes(label)
+|     self.label=ltmp
 |     self.val=val
-|     self.name=name
+|     ntmp=std_string(self._link)
+|     ntmp.init_bytes(name)
+|     self.name=ntmp
 |     self.m=m
 |     self.k=k
 |     self.s=s
