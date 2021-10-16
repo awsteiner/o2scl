@@ -25,358 +25,373 @@
 using namespace std;
 using namespace o2scl;
 
-void *o2scl_create_std__string() {
+void *o2scl_create_std_string() {
   std::string *ptr=new std::string;
   return ptr;
 }
 
-void o2scl_free_std__string(void *vptr) {
+void o2scl_free_std_string(void *vptr) {
   std::string *ptr=(std::string *)vptr;
   delete ptr;
   return;
 }
 
-size_t o2scl_std__string_length(void *vptr) {
+size_t o2scl_std_string_length(void *vptr) {
   std::string *ptr=(std::string *)vptr;
   size_t ret=ptr->length();
   return ret;
 }
 
-char o2scl_std__string_getitem(void *vptr, size_t n) {
+char o2scl_std_string_getitem(void *vptr, size_t n) {
   std::string *ptr=(std::string *)vptr;
   char ret=ptr->operator[](n);
   return ret;
 }
 
-void o2scl_std__string_setitem(void *vptr, size_t i, char val) {
+void o2scl_std_string_setitem(void *vptr, size_t i, char val) {
   std::string *ptr=(std::string *)vptr;
   (*ptr)[i]=val;
   return;
 }
 
-void o2scl_std__string_resize(void *vptr, size_t n) {
+void o2scl_std_string_resize(void *vptr, size_t n) {
   std::string *ptr=(std::string *)vptr;
   ptr->resize(n);
   return;
 }
 
-void *o2scl_create_std__vector_double_() {
+void *o2scl_create_std_vector_double_() {
   std::vector<double> *ptr=new std::vector<double>;
   return ptr;
 }
 
-void o2scl_free_std__vector_double_(void *vptr) {
+void o2scl_free_std_vector_double_(void *vptr) {
   std::vector<double> *ptr=(std::vector<double> *)vptr;
   delete ptr;
   return;
 }
 
-void o2scl_std__vector_double__resize(void *vptr, size_t n) {
+void o2scl_std_vector_double__resize(void *vptr, size_t n) {
   std::vector<double> *ptr=(std::vector<double> *)vptr;
   ptr->resize(n);
   return;
 }
 
-size_t o2scl_std__vector_double__size(void *vptr) {
+size_t o2scl_std_vector_double__size(void *vptr) {
   std::vector<double> *ptr=(std::vector<double> *)vptr;
   size_t ret=ptr->size();
   return ret;
 }
 
-double o2scl_std__vector_double__getitem(void *vptr, size_t n) {
+double o2scl_std_vector_double__getitem(void *vptr, size_t n) {
   std::vector<double> *ptr=(std::vector<double> *)vptr;
   double ret=ptr->operator[](n);
   return ret;
 }
 
-void o2scl_std__vector_double__setitem(void *vptr, size_t i, double val) {
+void o2scl_std_vector_double__setitem(void *vptr, size_t i, double val) {
   std::vector<double> *ptr=(std::vector<double> *)vptr;
   (*ptr)[i]=val;
   return;
 }
 
-void *o2scl_create_std__vector_int_() {
+void *o2scl_create_std_vector_int_() {
   std::vector<int> *ptr=new std::vector<int>;
   return ptr;
 }
 
-void o2scl_free_std__vector_int_(void *vptr) {
+void o2scl_free_std_vector_int_(void *vptr) {
   std::vector<int> *ptr=(std::vector<int> *)vptr;
   delete ptr;
   return;
 }
 
-void o2scl_std__vector_int__resize(void *vptr, size_t n) {
+void o2scl_std_vector_int__resize(void *vptr, size_t n) {
   std::vector<int> *ptr=(std::vector<int> *)vptr;
   ptr->resize(n);
   return;
 }
 
-size_t o2scl_std__vector_int__size(void *vptr) {
+size_t o2scl_std_vector_int__size(void *vptr) {
   std::vector<int> *ptr=(std::vector<int> *)vptr;
   size_t ret=ptr->size();
   return ret;
 }
 
-int o2scl_std__vector_int__getitem(void *vptr, size_t n) {
+int o2scl_std_vector_int__getitem(void *vptr, size_t n) {
   std::vector<int> *ptr=(std::vector<int> *)vptr;
   int ret=ptr->operator[](n);
   return ret;
 }
 
-void o2scl_std__vector_int__setitem(void *vptr, size_t i, int val) {
+void o2scl_std_vector_int__setitem(void *vptr, size_t i, int val) {
   std::vector<int> *ptr=(std::vector<int> *)vptr;
   (*ptr)[i]=val;
   return;
 }
 
-void *o2scl_create_std__vector_size_t_() {
+void *o2scl_create_std_vector_size_t_() {
   std::vector<size_t> *ptr=new std::vector<size_t>;
   return ptr;
 }
 
-void o2scl_free_std__vector_size_t_(void *vptr) {
+void o2scl_free_std_vector_size_t_(void *vptr) {
   std::vector<size_t> *ptr=(std::vector<size_t> *)vptr;
   delete ptr;
   return;
 }
 
-void o2scl_std__vector_size_t__resize(void *vptr, size_t n) {
+void o2scl_std_vector_size_t__resize(void *vptr, size_t n) {
   std::vector<size_t> *ptr=(std::vector<size_t> *)vptr;
   ptr->resize(n);
   return;
 }
 
-size_t o2scl_std__vector_size_t__size(void *vptr) {
+size_t o2scl_std_vector_size_t__size(void *vptr) {
   std::vector<size_t> *ptr=(std::vector<size_t> *)vptr;
   size_t ret=ptr->size();
   return ret;
 }
 
-size_t o2scl_std__vector_size_t__getitem(void *vptr, size_t n) {
+size_t o2scl_std_vector_size_t__getitem(void *vptr, size_t n) {
   std::vector<size_t> *ptr=(std::vector<size_t> *)vptr;
   size_t ret=ptr->operator[](n);
   return ret;
 }
 
-void o2scl_std__vector_size_t__setitem(void *vptr, size_t i, size_t val) {
+void o2scl_std_vector_size_t__setitem(void *vptr, size_t i, size_t val) {
   std::vector<size_t> *ptr=(std::vector<size_t> *)vptr;
   (*ptr)[i]=val;
   return;
 }
 
-void *o2scl_create_std__vector_std__string_() {
+void *o2scl_create_std_vector_std_string_() {
   std::vector<std::string> *ptr=new std::vector<std::string>;
   return ptr;
 }
 
-void o2scl_free_std__vector_std__string_(void *vptr) {
+void o2scl_free_std_vector_std_string_(void *vptr) {
   std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
   delete ptr;
   return;
 }
 
-void o2scl_std__vector_std__string__resize(void *vptr, size_t n) {
+void o2scl_std_vector_std_string__resize(void *vptr, size_t n) {
   std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
   ptr->resize(n);
   return;
 }
 
-size_t o2scl_std__vector_std__string__size(void *vptr) {
+size_t o2scl_std_vector_std_string__size(void *vptr) {
   std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
   size_t ret=ptr->size();
   return ret;
 }
 
-void *o2scl_std__vector_std__string__getitem(void *vptr, size_t n) {
+void *o2scl_std_vector_std_string__getitem(void *vptr, size_t n) {
   std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->operator[](n);
   return sptr;
 }
 
-void o2scl_std__vector_std__string__setitem(void *vptr, size_t i, char *val) {
+void o2scl_std_vector_std_string__setitem(void *vptr, size_t i, char *val) {
   std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
   (*ptr)[i]=val;
   return;
 }
 
-void *o2scl_create_boost__numeric__ublas__vector_double_() {
+void *o2scl_create_boost_numeric_ublas_vector_double_() {
   boost::numeric::ublas::vector<double> *ptr=new boost::numeric::ublas::vector<double>;
   return ptr;
 }
 
-void o2scl_free_boost__numeric__ublas__vector_double_(void *vptr) {
+void o2scl_free_boost_numeric_ublas_vector_double_(void *vptr) {
   boost::numeric::ublas::vector<double> *ptr=(boost::numeric::ublas::vector<double> *)vptr;
   delete ptr;
   return;
 }
 
-size_t o2scl_boost__numeric__ublas__vector_double__size(void *vptr) {
+size_t o2scl_boost_numeric_ublas_vector_double__size(void *vptr) {
   boost::numeric::ublas::vector<double> *ptr=(boost::numeric::ublas::vector<double> *)vptr;
   size_t ret=ptr->size();
   return ret;
 }
 
-void o2scl_boost__numeric__ublas__vector_double__resize(void *vptr, size_t n) {
+void o2scl_boost_numeric_ublas_vector_double__resize(void *vptr, size_t n) {
   boost::numeric::ublas::vector<double> *ptr=(boost::numeric::ublas::vector<double> *)vptr;
   ptr->resize(n);
   return;
 }
 
-double o2scl_boost__numeric__ublas__vector_double__getitem(void *vptr, size_t i) {
+double o2scl_boost_numeric_ublas_vector_double__getitem(void *vptr, size_t i) {
   boost::numeric::ublas::vector<double> *ptr=(boost::numeric::ublas::vector<double> *)vptr;
   double ret=ptr->operator[](i);
   return ret;
 }
 
-void o2scl_boost__numeric__ublas__vector_double__setitem(void *vptr, size_t i, double val) {
+void o2scl_boost_numeric_ublas_vector_double__setitem(void *vptr, size_t i, double val) {
   boost::numeric::ublas::vector<double> *ptr=(boost::numeric::ublas::vector<double> *)vptr;
   (*ptr)[i]=val;
   return;
 }
 
-void *o2scl_create_boost__numeric__ublas__matrix_double_() {
+void *o2scl_create_boost_numeric_ublas_matrix_double_() {
   boost::numeric::ublas::matrix<double> *ptr=new boost::numeric::ublas::matrix<double>;
   return ptr;
 }
 
-void o2scl_free_boost__numeric__ublas__matrix_double_(void *vptr) {
+void o2scl_free_boost_numeric_ublas_matrix_double_(void *vptr) {
   boost::numeric::ublas::matrix<double> *ptr=(boost::numeric::ublas::matrix<double> *)vptr;
   delete ptr;
   return;
 }
 
-size_t o2scl_boost__numeric__ublas__matrix_double__size1(void *vptr) {
+size_t o2scl_boost_numeric_ublas_matrix_double__size1(void *vptr) {
   boost::numeric::ublas::matrix<double> *ptr=(boost::numeric::ublas::matrix<double> *)vptr;
   size_t ret=ptr->size1();
   return ret;
 }
 
-size_t o2scl_boost__numeric__ublas__matrix_double__size2(void *vptr) {
+size_t o2scl_boost_numeric_ublas_matrix_double__size2(void *vptr) {
   boost::numeric::ublas::matrix<double> *ptr=(boost::numeric::ublas::matrix<double> *)vptr;
   size_t ret=ptr->size2();
   return ret;
 }
 
-void o2scl_boost__numeric__ublas__matrix_double__resize(void *vptr, size_t m, size_t n) {
+void o2scl_boost_numeric_ublas_matrix_double__resize(void *vptr, size_t m, size_t n) {
   boost::numeric::ublas::matrix<double> *ptr=(boost::numeric::ublas::matrix<double> *)vptr;
   ptr->resize(m,n);
   return;
 }
 
-double o2scl_boost__numeric__ublas__matrix_double__getitem(void *vptr, size_t m, size_t n) {
+double o2scl_boost_numeric_ublas_matrix_double__getitem(void *vptr, size_t m, size_t n) {
   boost::numeric::ublas::matrix<double> *ptr=(boost::numeric::ublas::matrix<double> *)vptr;
   double ret=ptr->operator()(m,n);
   return ret;
 }
 
-void o2scl_boost__numeric__ublas__matrix_double__setitem(void *vptr, size_t i, size_t j, double val) {
+void o2scl_boost_numeric_ublas_matrix_double__setitem(void *vptr, size_t i, size_t j, double val) {
   boost::numeric::ublas::matrix<double> *ptr=(boost::numeric::ublas::matrix<double> *)vptr;
   (*ptr)(i,j)=val;
   return;
 }
 
-void *o2scl_create_boost__numeric__ublas__matrix_int_() {
+void *o2scl_create_boost_numeric_ublas_matrix_int_() {
   boost::numeric::ublas::matrix<int> *ptr=new boost::numeric::ublas::matrix<int>;
   return ptr;
 }
 
-void o2scl_free_boost__numeric__ublas__matrix_int_(void *vptr) {
+void o2scl_free_boost_numeric_ublas_matrix_int_(void *vptr) {
   boost::numeric::ublas::matrix<int> *ptr=(boost::numeric::ublas::matrix<int> *)vptr;
   delete ptr;
   return;
 }
 
-size_t o2scl_boost__numeric__ublas__matrix_int__size1(void *vptr) {
+size_t o2scl_boost_numeric_ublas_matrix_int__size1(void *vptr) {
   boost::numeric::ublas::matrix<int> *ptr=(boost::numeric::ublas::matrix<int> *)vptr;
   size_t ret=ptr->size1();
   return ret;
 }
 
-size_t o2scl_boost__numeric__ublas__matrix_int__size2(void *vptr) {
+size_t o2scl_boost_numeric_ublas_matrix_int__size2(void *vptr) {
   boost::numeric::ublas::matrix<int> *ptr=(boost::numeric::ublas::matrix<int> *)vptr;
   size_t ret=ptr->size2();
   return ret;
 }
 
-void o2scl_boost__numeric__ublas__matrix_int__resize(void *vptr, size_t m, size_t n) {
+void o2scl_boost_numeric_ublas_matrix_int__resize(void *vptr, size_t m, size_t n) {
   boost::numeric::ublas::matrix<int> *ptr=(boost::numeric::ublas::matrix<int> *)vptr;
   ptr->resize(m,n);
   return;
 }
 
-int o2scl_boost__numeric__ublas__matrix_int__getitem(void *vptr, size_t m, size_t n) {
+int o2scl_boost_numeric_ublas_matrix_int__getitem(void *vptr, size_t m, size_t n) {
   boost::numeric::ublas::matrix<int> *ptr=(boost::numeric::ublas::matrix<int> *)vptr;
   int ret=ptr->operator()(m,n);
   return ret;
 }
 
-void o2scl_boost__numeric__ublas__matrix_int__setitem(void *vptr, size_t i, size_t j, int val) {
+void o2scl_boost_numeric_ublas_matrix_int__setitem(void *vptr, size_t i, size_t j, int val) {
   boost::numeric::ublas::matrix<int> *ptr=(boost::numeric::ublas::matrix<int> *)vptr;
   (*ptr)(i,j)=val;
   return;
 }
 
-void *o2scl_create_std__vector_std__vector_double__() {
+void *o2scl_create_std_vector_std_vector_double_() {
   std::vector<std::vector<double>> *ptr=new std::vector<std::vector<double>>;
   return ptr;
 }
 
-void o2scl_free_std__vector_std__vector_double__(void *vptr) {
+void o2scl_free_std_vector_std_vector_double_(void *vptr) {
   std::vector<std::vector<double>> *ptr=(std::vector<std::vector<double>> *)vptr;
   delete ptr;
   return;
 }
 
-void o2scl_std__vector_std__vector_double___resize(void *vptr, size_t n) {
+void o2scl_std_vector_std_vector_double__resize(void *vptr, size_t n) {
   std::vector<std::vector<double>> *ptr=(std::vector<std::vector<double>> *)vptr;
   ptr->resize(n);
   return;
 }
 
-size_t o2scl_std__vector_std__vector_double___size(void *vptr) {
+size_t o2scl_std_vector_std_vector_double__size(void *vptr) {
   std::vector<std::vector<double>> *ptr=(std::vector<std::vector<double>> *)vptr;
   size_t ret=ptr->size();
   return ret;
 }
 
-void *o2scl_create_std__complex_double_() {
+void o2scl_std_vector_std_vector_double__getitem(void *vptr, size_t n, double **dptr, int *n_) {
+  std::vector<std::vector<double>> *ptr=(std::vector<std::vector<double>> *)vptr;
+  const std::vector<double> &r=ptr->operator[](n);
+  *dptr=(double *)(&(r[0]));
+  *n_=r.size();
+  return;
+}
+
+void o2scl_std_vector_std_vector_double__setitem(void *vptr, size_t i, void *valptr) {
+  std::vector<std::vector<double>> *ptr=(std::vector<std::vector<double>> *)vptr;
+  std::vector<double> *valptr2=(std::vector<double> *)valptr;
+  (*ptr)[i]=*valptr2;
+  return;
+}
+
+void *o2scl_create_std_complex_double_() {
   std::complex<double> *ptr=new std::complex<double>;
   return ptr;
 }
 
-void o2scl_free_std__complex_double_(void *vptr) {
+void o2scl_free_std_complex_double_(void *vptr) {
   std::complex<double> *ptr=(std::complex<double> *)vptr;
   delete ptr;
   return;
 }
 
-double o2scl_std__complex_double__real(void *vptr) {
+double o2scl_std_complex_double__real(void *vptr) {
   std::complex<double> *ptr=(std::complex<double> *)vptr;
   double ret=ptr->real();
   return ret;
 }
 
-void o2scl_std__complex_double__real_set(void *vptr, double value) {
+void o2scl_std_complex_double__real_set(void *vptr, double value) {
   std::complex<double> *ptr=(std::complex<double> *)vptr;
   ptr->real(value);
   return;
 }
 
-double o2scl_std__complex_double__imag(void *vptr) {
+double o2scl_std_complex_double__imag(void *vptr) {
   std::complex<double> *ptr=(std::complex<double> *)vptr;
   double ret=ptr->imag();
   return ret;
 }
 
-void o2scl_std__complex_double__imag_set(void *vptr, double value) {
+void o2scl_std_complex_double__imag_set(void *vptr, double value) {
   std::complex<double> *ptr=(std::complex<double> *)vptr;
   ptr->imag(value);
   return;
 }
 
-void *o2scl_std__complex_double__init(double re, double im) {
+void *o2scl_std_complex_double__init(double re, double im) {
   std::complex<double> *ptr=new std::complex<double>(re,im);
   return ptr;
 }
@@ -530,597 +545,597 @@ void *o2scl_lib_settings_class_get_convert_units(void *vptr) {
   return ret;
 }
 
-void *o2scl_create_table__() {
+void *o2scl_create_table_() {
   table<> *ptr=new table<>;
   return ptr;
 }
 
-void o2scl_free_table__(void *vptr) {
+void o2scl_free_table_(void *vptr) {
   table<> *ptr=(table<> *)vptr;
   delete ptr;
   return;
 }
 
-void o2scl_copy_table__(void *vsrc, void *vdest) {
+void o2scl_copy_table_(void *vsrc, void *vdest) {
   table<> *src=(table<> *)vsrc;
   table<> *dest=(table<> *)vdest;
   *dest=*src;
 }
 
-void o2scl_table___getitem(void *vptr, char *col, double **dptr, int *n) {
+void o2scl_table__getitem(void *vptr, char *col, double **dptr, int *n_) {
   table<> *ptr=(table<> *)vptr;
   const std::vector<double> &r=ptr->operator[](col);
   *dptr=(double *)(&(r[0]));
-  *n=r.size();
+  *n_=r.size();
   return;
 }
 
-void o2scl_table___set(void *vptr, char *col, size_t row, double val) {
+void o2scl_table__set(void *vptr, char *col, size_t row, double val) {
   table<> *ptr=(table<> *)vptr;
   ptr->set(col,row,val);
   return;
 }
 
-double o2scl_table___get(void *vptr, char *col, size_t row) {
+double o2scl_table__get(void *vptr, char *col, size_t row) {
   table<> *ptr=(table<> *)vptr;
   double ret=ptr->get(col,row);
   return ret;
 }
 
-size_t o2scl_table___get_ncolumns(void *vptr) {
+size_t o2scl_table__get_ncolumns(void *vptr) {
   table<> *ptr=(table<> *)vptr;
   size_t ret=ptr->get_ncolumns();
   return ret;
 }
 
-size_t o2scl_table___get_nlines(void *vptr) {
+size_t o2scl_table__get_nlines(void *vptr) {
   table<> *ptr=(table<> *)vptr;
   size_t ret=ptr->get_nlines();
   return ret;
 }
 
-void o2scl_table___set_nlines(void *vptr, size_t lines) {
+void o2scl_table__set_nlines(void *vptr, size_t lines) {
   table<> *ptr=(table<> *)vptr;
   ptr->set_nlines(lines);
   return;
 }
 
-size_t o2scl_table___get_maxlines(void *vptr) {
+size_t o2scl_table__get_maxlines(void *vptr) {
   table<> *ptr=(table<> *)vptr;
   size_t ret=ptr->get_maxlines();
   return ret;
 }
 
-void o2scl_table___set_maxlines(void *vptr, size_t llines) {
+void o2scl_table__set_maxlines(void *vptr, size_t llines) {
   table<> *ptr=(table<> *)vptr;
   ptr->set_maxlines(llines);
   return;
 }
 
-void o2scl_table___set_nlines_auto(void *vptr, size_t il) {
+void o2scl_table__set_nlines_auto(void *vptr, size_t il) {
   table<> *ptr=(table<> *)vptr;
   ptr->set_nlines_auto(il);
   return;
 }
 
-void o2scl_table___inc_maxlines(void *vptr, size_t llines) {
+void o2scl_table__inc_maxlines(void *vptr, size_t llines) {
   table<> *ptr=(table<> *)vptr;
   ptr->inc_maxlines(llines);
   return;
 }
 
-void o2scl_table___new_column(void *vptr, char *col) {
+void o2scl_table__new_column(void *vptr, char *col) {
   table<> *ptr=(table<> *)vptr;
   ptr->new_column(col);
   return;
 }
 
-void *o2scl_table___get_column_name(void *vptr, size_t icol) {
+void *o2scl_table__get_column_name(void *vptr, size_t icol) {
   table<> *ptr=(table<> *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_column_name(icol);
   return sptr;
 }
 
-void o2scl_table___rename_column(void *vptr, char *src, char *dest) {
+void o2scl_table__rename_column(void *vptr, char *src, char *dest) {
   table<> *ptr=(table<> *)vptr;
   ptr->rename_column(src,dest);
   return;
 }
 
-void o2scl_table___delete_column(void *vptr, char *col) {
+void o2scl_table__delete_column(void *vptr, char *col) {
   table<> *ptr=(table<> *)vptr;
   ptr->delete_column(col);
   return;
 }
 
-void *o2scl_table___get_sorted_name(void *vptr, size_t icol) {
+void *o2scl_table__get_sorted_name(void *vptr, size_t icol) {
   table<> *ptr=(table<> *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_sorted_name(icol);
   return sptr;
 }
 
-void o2scl_table___init_column(void *vptr, char *scol, double val) {
+void o2scl_table__init_column(void *vptr, char *scol, double val) {
   table<> *ptr=(table<> *)vptr;
   ptr->init_column(scol,val);
   return;
 }
 
-bool o2scl_table___is_column(void *vptr, char *scol) {
+bool o2scl_table__is_column(void *vptr, char *scol) {
   table<> *ptr=(table<> *)vptr;
   bool ret=ptr->is_column(scol);
   return ret;
 }
 
-size_t o2scl_table___lookup_column(void *vptr, char *scol) {
+size_t o2scl_table__lookup_column(void *vptr, char *scol) {
   table<> *ptr=(table<> *)vptr;
   size_t ret=ptr->lookup_column(scol);
   return ret;
 }
 
-void o2scl_table___copy_column(void *vptr, char *src, char *dest) {
+void o2scl_table__copy_column(void *vptr, char *src, char *dest) {
   table<> *ptr=(table<> *)vptr;
   ptr->copy_column(src,dest);
   return;
 }
 
-void o2scl_table___add_col_from_table(void *vptr, void *ptr_source, char *src_index, char *src_col, char *dest_index, char *dest_col) {
+void o2scl_table__add_col_from_table(void *vptr, void *ptr_source, char *src_index, char *src_col, char *dest_index, char *dest_col) {
   table<> *ptr=(table<> *)vptr;
   table<> *source=(table<> *)ptr_source;
   ptr->add_col_from_table(*source,src_index,src_col,dest_index,dest_col);
   return;
 }
 
-void o2scl_table___insert_table(void *vptr, void *ptr_source, char *src_index, bool allow_extrap, char *dest_index) {
+void o2scl_table__insert_table(void *vptr, void *ptr_source, char *src_index, bool allow_extrap, char *dest_index) {
   table<> *ptr=(table<> *)vptr;
   table<> *source=(table<> *)ptr_source;
   ptr->insert_table(*source,src_index,allow_extrap,dest_index);
   return;
 }
 
-void o2scl_table___add_table(void *vptr, void *ptr_source) {
+void o2scl_table__add_table(void *vptr, void *ptr_source) {
   table<> *ptr=(table<> *)vptr;
   table<> *source=(table<> *)ptr_source;
   ptr->add_table(*source);
   return;
 }
 
-void o2scl_table___new_row(void *vptr, size_t n) {
+void o2scl_table__new_row(void *vptr, size_t n) {
   table<> *ptr=(table<> *)vptr;
   ptr->new_row(n);
   return;
 }
 
-void o2scl_table___copy_row(void *vptr, size_t src, size_t dest) {
+void o2scl_table__copy_row(void *vptr, size_t src, size_t dest) {
   table<> *ptr=(table<> *)vptr;
   ptr->copy_row(src,dest);
   return;
 }
 
-void o2scl_table___delete_row(void *vptr, char *scol, double val) {
+void o2scl_table__delete_row(void *vptr, char *scol, double val) {
   table<> *ptr=(table<> *)vptr;
   ptr->delete_row(scol,val);
   return;
 }
 
-void o2scl_table___delete_rows_func(void *vptr, char *func) {
+void o2scl_table__delete_rows_func(void *vptr, char *func) {
   table<> *ptr=(table<> *)vptr;
   ptr->delete_rows_func(func);
   return;
 }
 
-void o2scl_table___line_of_names(void *vptr, char *names) {
+void o2scl_table__line_of_names(void *vptr, char *names) {
   table<> *ptr=(table<> *)vptr;
   ptr->line_of_names(names);
   return;
 }
 
-void o2scl_table___line_of_data(void *vptr, void *ptr_data) {
+void o2scl_table__line_of_data(void *vptr, void *ptr_data) {
   table<> *ptr=(table<> *)vptr;
   std::vector<double> *data=(std::vector<double> *)ptr_data;
   ptr->line_of_data(*data);
   return;
 }
 
-size_t o2scl_table___ordered_lookup(void *vptr, char *scol, double val) {
+size_t o2scl_table__ordered_lookup(void *vptr, char *scol, double val) {
   table<> *ptr=(table<> *)vptr;
   size_t ret=ptr->ordered_lookup(scol,val);
   return ret;
 }
 
-size_t o2scl_table___lookup(void *vptr, char *scol, double val) {
+size_t o2scl_table__lookup(void *vptr, char *scol, double val) {
   table<> *ptr=(table<> *)vptr;
   size_t ret=ptr->lookup(scol,val);
   return ret;
 }
 
-size_t o2scl_table___lookup_val(void *vptr, char *scol, double val, char *scol2) {
+size_t o2scl_table__lookup_val(void *vptr, char *scol, double val, char *scol2) {
   table<> *ptr=(table<> *)vptr;
   size_t ret=ptr->lookup_val(scol,val,scol2);
   return ret;
 }
 
-void o2scl_table___set_interp_type(void *vptr, size_t interp_type) {
+void o2scl_table__set_interp_type(void *vptr, size_t interp_type) {
   table<> *ptr=(table<> *)vptr;
   ptr->set_interp_type(interp_type);
   return;
 }
 
-size_t o2scl_table___get_interp_type(void *vptr) {
+size_t o2scl_table__get_interp_type(void *vptr) {
   table<> *ptr=(table<> *)vptr;
   size_t ret=ptr->get_interp_type();
   return ret;
 }
 
-double o2scl_table___interp(void *vptr, char *sx, double x0, char *sy) {
+double o2scl_table__interp(void *vptr, char *sx, double x0, char *sy) {
   table<> *ptr=(table<> *)vptr;
   double ret=ptr->interp(sx,x0,sy);
   return ret;
 }
 
-double o2scl_table___interp_index(void *vptr, size_t ix, double x0, size_t iy) {
+double o2scl_table__interp_index(void *vptr, size_t ix, double x0, size_t iy) {
   table<> *ptr=(table<> *)vptr;
   double ret=ptr->interp(ix,x0,iy);
   return ret;
 }
 
-void o2scl_table___deriv_col(void *vptr, char *x, char *y, char *yp) {
+void o2scl_table__deriv_col(void *vptr, char *x, char *y, char *yp) {
   table<> *ptr=(table<> *)vptr;
   ptr->deriv(x,y,yp);
   return;
 }
 
-double o2scl_table___deriv(void *vptr, char *sx, double x0, char *sy) {
+double o2scl_table__deriv(void *vptr, char *sx, double x0, char *sy) {
   table<> *ptr=(table<> *)vptr;
   double ret=ptr->deriv(sx,x0,sy);
   return ret;
 }
 
-double o2scl_table___deriv_index(void *vptr, size_t ix, double x0, size_t iy) {
+double o2scl_table__deriv_index(void *vptr, size_t ix, double x0, size_t iy) {
   table<> *ptr=(table<> *)vptr;
   double ret=ptr->deriv(ix,x0,iy);
   return ret;
 }
 
-void o2scl_table___deriv2_col(void *vptr, char *x, char *y, char *yp) {
+void o2scl_table__deriv2_col(void *vptr, char *x, char *y, char *yp) {
   table<> *ptr=(table<> *)vptr;
   ptr->deriv2(x,y,yp);
   return;
 }
 
-double o2scl_table___deriv2(void *vptr, char *sx, double x0, char *sy) {
+double o2scl_table__deriv2(void *vptr, char *sx, double x0, char *sy) {
   table<> *ptr=(table<> *)vptr;
   double ret=ptr->deriv2(sx,x0,sy);
   return ret;
 }
 
-double o2scl_table___deriv2_index(void *vptr, size_t ix, double x0, size_t iy) {
+double o2scl_table__deriv2_index(void *vptr, size_t ix, double x0, size_t iy) {
   table<> *ptr=(table<> *)vptr;
   double ret=ptr->deriv2(ix,x0,iy);
   return ret;
 }
 
-double o2scl_table___integ(void *vptr, char *sx, double x1, double x2, char *sy) {
+double o2scl_table__integ(void *vptr, char *sx, double x1, double x2, char *sy) {
   table<> *ptr=(table<> *)vptr;
   double ret=ptr->integ(sx,x1,x2,sy);
   return ret;
 }
 
-double o2scl_table___integ_index(void *vptr, size_t ix, double x1, double x2, size_t iy) {
+double o2scl_table__integ_index(void *vptr, size_t ix, double x1, double x2, size_t iy) {
   table<> *ptr=(table<> *)vptr;
   double ret=ptr->integ(ix,x1,x2,iy);
   return ret;
 }
 
-void o2scl_table___integ_col(void *vptr, char *x, char *y, char *yi) {
+void o2scl_table__integ_col(void *vptr, char *x, char *y, char *yi) {
   table<> *ptr=(table<> *)vptr;
   ptr->integ(x,y,yi);
   return;
 }
 
-double o2scl_table___max(void *vptr, char *max) {
+double o2scl_table__max(void *vptr, char *max) {
   table<> *ptr=(table<> *)vptr;
   double ret=ptr->max(max);
   return ret;
 }
 
-double o2scl_table___min(void *vptr, char *min) {
+double o2scl_table__min(void *vptr, char *min) {
   table<> *ptr=(table<> *)vptr;
   double ret=ptr->min(min);
   return ret;
 }
 
-void o2scl_table___zero_table(void *vptr) {
+void o2scl_table__zero_table(void *vptr) {
   table<> *ptr=(table<> *)vptr;
   ptr->zero_table();
   return;
 }
 
-void o2scl_table___clear(void *vptr) {
+void o2scl_table__clear(void *vptr) {
   table<> *ptr=(table<> *)vptr;
   ptr->clear();
   return;
 }
 
-void o2scl_table___clear_data(void *vptr) {
+void o2scl_table__clear_data(void *vptr) {
   table<> *ptr=(table<> *)vptr;
   ptr->clear_data();
   return;
 }
 
-void o2scl_table___clear_table(void *vptr) {
+void o2scl_table__clear_table(void *vptr) {
   table<> *ptr=(table<> *)vptr;
   ptr->clear_table();
   return;
 }
 
-void o2scl_table___clear_constants(void *vptr) {
+void o2scl_table__clear_constants(void *vptr) {
   table<> *ptr=(table<> *)vptr;
   ptr->clear_constants();
   return;
 }
 
-void o2scl_table___sort_table(void *vptr, char *scol) {
+void o2scl_table__sort_table(void *vptr, char *scol) {
   table<> *ptr=(table<> *)vptr;
   ptr->sort_table(scol);
   return;
 }
 
-void o2scl_table___sort_column(void *vptr, char *scol) {
+void o2scl_table__sort_column(void *vptr, char *scol) {
   table<> *ptr=(table<> *)vptr;
   ptr->sort_column(scol);
   return;
 }
 
-void o2scl_table___average_col_roll(void *vptr, char *col_name, size_t window) {
+void o2scl_table__average_col_roll(void *vptr, char *col_name, size_t window) {
   table<> *ptr=(table<> *)vptr;
   ptr->average_col_roll(col_name,window);
   return;
 }
 
-void o2scl_table___average_rows(void *vptr, size_t window, bool rolling) {
+void o2scl_table__average_rows(void *vptr, size_t window, bool rolling) {
   table<> *ptr=(table<> *)vptr;
   ptr->average_rows(window,rolling);
   return;
 }
 
-void o2scl_table___is_valid(void *vptr) {
+void o2scl_table__is_valid(void *vptr) {
   table<> *ptr=(table<> *)vptr;
   ptr->is_valid();
   return;
 }
 
-void o2scl_table___functions_columns(void *vptr, char *list) {
+void o2scl_table__functions_columns(void *vptr, char *list) {
   table<> *ptr=(table<> *)vptr;
   ptr->functions_columns(list);
   return;
 }
 
-void o2scl_table___function_column(void *vptr, char *function, char *scol) {
+void o2scl_table__function_column(void *vptr, char *function, char *scol) {
   table<> *ptr=(table<> *)vptr;
   ptr->function_column(function,scol);
   return;
 }
 
-double o2scl_table___row_function(void *vptr, char *scol, size_t row) {
+double o2scl_table__row_function(void *vptr, char *scol, size_t row) {
   table<> *ptr=(table<> *)vptr;
   double ret=ptr->row_function(scol,row);
   return ret;
 }
 
-size_t o2scl_table___function_find_row(void *vptr, char *function) {
+size_t o2scl_table__function_find_row(void *vptr, char *function) {
   table<> *ptr=(table<> *)vptr;
   size_t ret=ptr->function_find_row(function);
   return ret;
 }
 
-void o2scl_table___summary(void *vptr) {
+void o2scl_table__summary(void *vptr) {
   table<> *ptr=(table<> *)vptr;
   ptr->summary();
   return;
 }
 
-void *o2scl_create_table_units__() {
+void *o2scl_create_table_units_() {
   table_units<> *ptr=new table_units<>;
   return ptr;
 }
 
-void o2scl_free_table_units__(void *vptr) {
+void o2scl_free_table_units_(void *vptr) {
   table_units<> *ptr=(table_units<> *)vptr;
   delete ptr;
   return;
 }
 
-void o2scl_copy_table_units__(void *vsrc, void *vdest) {
+void o2scl_copy_table_units_(void *vsrc, void *vdest) {
   table_units<> *src=(table_units<> *)vsrc;
   table_units<> *dest=(table_units<> *)vdest;
   *dest=*src;
 }
 
-void o2scl_table_units___set_unit(void *vptr, char *col, char *unit) {
+void o2scl_table_units__set_unit(void *vptr, char *col, char *unit) {
   table_units<> *ptr=(table_units<> *)vptr;
   ptr->set_unit(col,unit);
   return;
 }
 
-void *o2scl_table_units___get_unit(void *vptr, char *col) {
+void *o2scl_table_units__get_unit(void *vptr, char *col) {
   table_units<> *ptr=(table_units<> *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_unit(col);
   return sptr;
 }
 
-void o2scl_table_units___line_of_units(void *vptr, char *unit_line) {
+void o2scl_table_units__line_of_units(void *vptr, char *unit_line) {
   table_units<> *ptr=(table_units<> *)vptr;
   ptr->line_of_units(unit_line);
   return;
 }
 
-void o2scl_table_units___remove_unit(void *vptr, char *col) {
+void o2scl_table_units__remove_unit(void *vptr, char *col) {
   table_units<> *ptr=(table_units<> *)vptr;
   ptr->remove_unit(col);
   return;
 }
 
-int o2scl_table_units___convert_to_unit(void *vptr, char *col, char *unit, bool err_on_fail) {
+int o2scl_table_units__convert_to_unit(void *vptr, char *col, char *unit, bool err_on_fail) {
   table_units<> *ptr=(table_units<> *)vptr;
   int ret=ptr->convert_to_unit(col,unit,err_on_fail);
   return ret;
 }
 
-void *o2scl_create_uniform_grid__() {
+void *o2scl_create_uniform_grid_() {
   uniform_grid<> *ptr=new uniform_grid<>;
   return ptr;
 }
 
-void o2scl_free_uniform_grid__(void *vptr) {
+void o2scl_free_uniform_grid_(void *vptr) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
   delete ptr;
   return;
 }
 
-size_t o2scl_uniform_grid___get_nbins(void *vptr) {
+size_t o2scl_uniform_grid__get_nbins(void *vptr) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
   size_t ret=ptr->get_nbins();
   return ret;
 }
 
-size_t o2scl_uniform_grid___get_npoints(void *vptr) {
+size_t o2scl_uniform_grid__get_npoints(void *vptr) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
   size_t ret=ptr->get_npoints();
   return ret;
 }
 
-bool o2scl_uniform_grid___is_log(void *vptr) {
+bool o2scl_uniform_grid__is_log(void *vptr) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
   bool ret=ptr->is_log();
   return ret;
 }
 
-double o2scl_uniform_grid___get_start(void *vptr) {
+double o2scl_uniform_grid__get_start(void *vptr) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
   double ret=ptr->get_start();
   return ret;
 }
 
-double o2scl_uniform_grid___get_end(void *vptr) {
+double o2scl_uniform_grid__get_end(void *vptr) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
   double ret=ptr->get_end();
   return ret;
 }
 
-double o2scl_uniform_grid___get_width(void *vptr) {
+double o2scl_uniform_grid__get_width(void *vptr) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
   double ret=ptr->get_width();
   return ret;
 }
 
-double o2scl_uniform_grid___getitem(void *vptr, size_t n) {
+double o2scl_uniform_grid__getitem(void *vptr, size_t n) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
   double ret=ptr->operator[](n);
   return ret;
 }
 
-void o2scl_uniform_grid___vector(void *vptr, void *ptr_v) {
+void o2scl_uniform_grid__vector(void *vptr, void *ptr_v) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
   std::vector<double> *v=(std::vector<double> *)ptr_v;
   ptr->vector(*v);
   return;
 }
 
-void *o2scl_create_uniform_grid_end__() {
+void *o2scl_create_uniform_grid_end_() {
   uniform_grid_end<> *ptr=new uniform_grid_end<>;
   return ptr;
 }
 
-void o2scl_free_uniform_grid_end__(void *vptr) {
+void o2scl_free_uniform_grid_end_(void *vptr) {
   uniform_grid_end<> *ptr=(uniform_grid_end<> *)vptr;
   delete ptr;
   return;
 }
 
-void *o2scl_uniform_grid_end___init(double start, double end, size_t n_bins) {
+void *o2scl_uniform_grid_end__init(double start, double end, size_t n_bins) {
   uniform_grid_end<> *ptr=new uniform_grid_end<>(start,end,n_bins);
   return ptr;
 }
 
-void *o2scl_create_uniform_grid_width__() {
+void *o2scl_create_uniform_grid_width_() {
   uniform_grid_width<> *ptr=new uniform_grid_width<>;
   return ptr;
 }
 
-void o2scl_free_uniform_grid_width__(void *vptr) {
+void o2scl_free_uniform_grid_width_(void *vptr) {
   uniform_grid_width<> *ptr=(uniform_grid_width<> *)vptr;
   delete ptr;
   return;
 }
 
-void *o2scl_uniform_grid_width___init(double start, double width, size_t n_bins) {
+void *o2scl_uniform_grid_width__init(double start, double width, size_t n_bins) {
   uniform_grid_width<> *ptr=new uniform_grid_width<>(start,width,n_bins);
   return ptr;
 }
 
-void *o2scl_create_uniform_grid_end_width__() {
+void *o2scl_create_uniform_grid_end_width_() {
   uniform_grid_end_width<> *ptr=new uniform_grid_end_width<>;
   return ptr;
 }
 
-void o2scl_free_uniform_grid_end_width__(void *vptr) {
+void o2scl_free_uniform_grid_end_width_(void *vptr) {
   uniform_grid_end_width<> *ptr=(uniform_grid_end_width<> *)vptr;
   delete ptr;
   return;
 }
 
-void *o2scl_uniform_grid_end_width___init(double start, double end, double width) {
+void *o2scl_uniform_grid_end_width__init(double start, double end, double width) {
   uniform_grid_end_width<> *ptr=new uniform_grid_end_width<>(start,end,width);
   return ptr;
 }
 
-void *o2scl_create_uniform_grid_log_end__() {
+void *o2scl_create_uniform_grid_log_end_() {
   uniform_grid_log_end<> *ptr=new uniform_grid_log_end<>;
   return ptr;
 }
 
-void o2scl_free_uniform_grid_log_end__(void *vptr) {
+void o2scl_free_uniform_grid_log_end_(void *vptr) {
   uniform_grid_log_end<> *ptr=(uniform_grid_log_end<> *)vptr;
   delete ptr;
   return;
 }
 
-void *o2scl_uniform_grid_log_end___init(double start, double end, size_t n_bins) {
+void *o2scl_uniform_grid_log_end__init(double start, double end, size_t n_bins) {
   uniform_grid_log_end<> *ptr=new uniform_grid_log_end<>(start,end,n_bins);
   return ptr;
 }
 
-void *o2scl_create_uniform_grid_log_width__() {
+void *o2scl_create_uniform_grid_log_width_() {
   uniform_grid_log_width<> *ptr=new uniform_grid_log_width<>;
   return ptr;
 }
 
-void o2scl_free_uniform_grid_log_width__(void *vptr) {
+void o2scl_free_uniform_grid_log_width_(void *vptr) {
   uniform_grid_log_width<> *ptr=(uniform_grid_log_width<> *)vptr;
   delete ptr;
   return;
 }
 
-void *o2scl_uniform_grid_log_width___init(double start, double width, size_t n_bins) {
+void *o2scl_uniform_grid_log_width__init(double start, double width, size_t n_bins) {
   uniform_grid_log_width<> *ptr=new uniform_grid_log_width<>(start,width,n_bins);
   return ptr;
 }
 
-void *o2scl_create_uniform_grid_log_end_width__() {
+void *o2scl_create_uniform_grid_log_end_width_() {
   uniform_grid_log_end_width<> *ptr=new uniform_grid_log_end_width<>;
   return ptr;
 }
 
-void o2scl_free_uniform_grid_log_end_width__(void *vptr) {
+void o2scl_free_uniform_grid_log_end_width_(void *vptr) {
   uniform_grid_log_end_width<> *ptr=(uniform_grid_log_end_width<> *)vptr;
   delete ptr;
   return;
 }
 
-void *o2scl_uniform_grid_log_end_width___init(double start, double end, double width) {
+void *o2scl_uniform_grid_log_end_width__init(double start, double end, double width) {
   uniform_grid_log_end_width<> *ptr=new uniform_grid_log_end_width<>(start,end,width);
   return ptr;
 }
@@ -1482,412 +1497,412 @@ void o2scl_index_spec_set_val3(void *vptr, double v) {
   return;
 }
 
-void *o2scl_create_tensor__() {
+void *o2scl_create_tensor_() {
   tensor<> *ptr=new tensor<>;
   return ptr;
 }
 
-void o2scl_free_tensor__(void *vptr) {
+void o2scl_free_tensor_(void *vptr) {
   tensor<> *ptr=(tensor<> *)vptr;
   delete ptr;
   return;
 }
 
-void o2scl_copy_tensor__(void *vsrc, void *vdest) {
+void o2scl_copy_tensor_(void *vsrc, void *vdest) {
   tensor<> *src=(tensor<> *)vsrc;
   tensor<> *dest=(tensor<> *)vdest;
   *dest=*src;
 }
 
-void o2scl_tensor___is_valid(void *vptr) {
+void o2scl_tensor__is_valid(void *vptr) {
   tensor<> *ptr=(tensor<> *)vptr;
   ptr->is_valid();
   return;
 }
 
-void o2scl_tensor___clear(void *vptr) {
+void o2scl_tensor__clear(void *vptr) {
   tensor<> *ptr=(tensor<> *)vptr;
   ptr->clear();
   return;
 }
 
-void o2scl_tensor___set(void *vptr, void *ptr_index, double val) {
+void o2scl_tensor__set(void *vptr, void *ptr_index, double val) {
   tensor<> *ptr=(tensor<> *)vptr;
   vector<size_t> *index=(vector<size_t> *)ptr_index;
   ptr->set(*index,val);
   return;
 }
 
-void o2scl_tensor___set_all(void *vptr, double x) {
+void o2scl_tensor__set_all(void *vptr, double x) {
   tensor<> *ptr=(tensor<> *)vptr;
   ptr->set_all(x);
   return;
 }
 
-void o2scl_tensor___swap_data(void *vptr, void *ptr_data) {
+void o2scl_tensor__swap_data(void *vptr, void *ptr_data) {
   tensor<> *ptr=(tensor<> *)vptr;
   std::vector<double> *data=(std::vector<double> *)ptr_data;
   ptr->swap_data(*data);
   return;
 }
 
-double o2scl_tensor___get(void *vptr, void *ptr_index) {
+double o2scl_tensor__get(void *vptr, void *ptr_index) {
   tensor<> *ptr=(tensor<> *)vptr;
   vector<size_t> *index=(vector<size_t> *)ptr_index;
   double ret=ptr->get(*index);
   return ret;
 }
 
-void o2scl_tensor___resize(void *vptr, size_t n, void *ptr_index) {
+void o2scl_tensor__resize(void *vptr, size_t n, void *ptr_index) {
   tensor<> *ptr=(tensor<> *)vptr;
   vector<size_t> *index=(vector<size_t> *)ptr_index;
   ptr->resize(n,*index);
   return;
 }
 
-size_t o2scl_tensor___get_rank(void *vptr) {
+size_t o2scl_tensor__get_rank(void *vptr) {
   tensor<> *ptr=(tensor<> *)vptr;
   size_t ret=ptr->get_rank();
   return ret;
 }
 
-size_t o2scl_tensor___get_size(void *vptr, size_t i) {
+size_t o2scl_tensor__get_size(void *vptr, size_t i) {
   tensor<> *ptr=(tensor<> *)vptr;
   size_t ret=ptr->get_size(i);
   return ret;
 }
 
-void o2scl_tensor___get_data(void *vptr, double **dptr, int *n) {
+void o2scl_tensor__get_data(void *vptr, double **dptr, int *n_) {
   tensor<> *ptr=(tensor<> *)vptr;
   const std::vector<double> &r=ptr->get_data();
   *dptr=(double *)(&(r[0]));
-  *n=r.size();
+  *n_=r.size();
   return;
 }
 
-size_t o2scl_tensor___total_size(void *vptr) {
+size_t o2scl_tensor__total_size(void *vptr) {
   tensor<> *ptr=(tensor<> *)vptr;
   size_t ret=ptr->total_size();
   return ret;
 }
 
-size_t o2scl_tensor___pack_indices(void *vptr, void *ptr_index) {
+size_t o2scl_tensor__pack_indices(void *vptr, void *ptr_index) {
   tensor<> *ptr=(tensor<> *)vptr;
   std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
   size_t ret=ptr->pack_indices(*index);
   return ret;
 }
 
-void o2scl_tensor___unpack_index(void *vptr, size_t ix, void *ptr_index) {
+void o2scl_tensor__unpack_index(void *vptr, size_t ix, void *ptr_index) {
   tensor<> *ptr=(tensor<> *)vptr;
   std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
   ptr->unpack_index(ix,*index);
   return;
 }
 
-double o2scl_tensor___min_value(void *vptr) {
+double o2scl_tensor__min_value(void *vptr) {
   tensor<> *ptr=(tensor<> *)vptr;
   double ret=ptr->min_value();
   return ret;
 }
 
-double o2scl_tensor___max_value(void *vptr) {
+double o2scl_tensor__max_value(void *vptr) {
   tensor<> *ptr=(tensor<> *)vptr;
   double ret=ptr->max_value();
   return ret;
 }
 
-void o2scl_tensor___minmax_value(void *vptr, double *min, double *max) {
+void o2scl_tensor__minmax_value(void *vptr, double *min, double *max) {
   tensor<> *ptr=(tensor<> *)vptr;
   ptr->minmax_value(*min,*max);
   return;
 }
 
-double o2scl_tensor___total_sum(void *vptr) {
+double o2scl_tensor__total_sum(void *vptr) {
   tensor<> *ptr=(tensor<> *)vptr;
   double ret=ptr->total_sum();
   return ret;
 }
 
-void o2scl_tensor___convert_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
+void o2scl_tensor__convert_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
   tensor<> *ptr=(tensor<> *)vptr;
   table3d *tab=(table3d *)ptr_tab;
   ptr->convert_table3d_sum(ix_x,ix_y,*tab,x_name,y_name,slice_name);
   return;
 }
 
-void *o2scl_tensor___create_size(size_t rank, void *ptr_sizes) {
+void *o2scl_tensor__create_size(size_t rank, void *ptr_sizes) {
   std::vector<size_t> *sizes=(std::vector<size_t> *)ptr_sizes;
   tensor<> *ptr=new tensor<>(rank,*sizes);
   return ptr;
 }
 
-void *o2scl_create_tensor_grid__() {
+void *o2scl_create_tensor_grid_() {
   tensor_grid<> *ptr=new tensor_grid<>;
   return ptr;
 }
 
-void o2scl_free_tensor_grid__(void *vptr) {
+void o2scl_free_tensor_grid_(void *vptr) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   delete ptr;
   return;
 }
 
-void o2scl_copy_tensor_grid__(void *vsrc, void *vdest) {
+void o2scl_copy_tensor_grid_(void *vsrc, void *vdest) {
   tensor_grid<> *src=(tensor_grid<> *)vsrc;
   tensor_grid<> *dest=(tensor_grid<> *)vdest;
   *dest=*src;
 }
 
-void o2scl_tensor_grid___is_valid(void *vptr) {
+void o2scl_tensor_grid__is_valid(void *vptr) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   ptr->is_valid();
   return;
 }
 
-void o2scl_tensor_grid___set_val(void *vptr, void *ptr_grid_point, double val) {
+void o2scl_tensor_grid__set_val(void *vptr, void *ptr_grid_point, double val) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   vector<double> *grid_point=(vector<double> *)ptr_grid_point;
   ptr->set_val(*grid_point,val);
   return;
 }
 
-double o2scl_tensor_grid___get_val(void *vptr, void *ptr_grid_point) {
+double o2scl_tensor_grid__get_val(void *vptr, void *ptr_grid_point) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   vector<double> *grid_point=(vector<double> *)ptr_grid_point;
   double ret=ptr->get_val(*grid_point);
   return ret;
 }
 
-bool o2scl_tensor_grid___is_grid_set(void *vptr) {
+bool o2scl_tensor_grid__is_grid_set(void *vptr) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   bool ret=ptr->is_grid_set();
   return ret;
 }
 
-void o2scl_tensor_grid___set_grid_packed(void *vptr, void *ptr_grid) {
+void o2scl_tensor_grid__set_grid_packed(void *vptr, void *ptr_grid) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   vector<double> *grid=(vector<double> *)ptr_grid;
   ptr->set_grid_packed(*grid);
   return;
 }
 
-void o2scl_tensor_grid___default_grid(void *vptr) {
+void o2scl_tensor_grid__default_grid(void *vptr) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   ptr->default_grid();
   return;
 }
 
-void o2scl_tensor_grid___set_grid_i_vec(void *vptr, size_t i, void *ptr_grid) {
+void o2scl_tensor_grid__set_grid_i_vec(void *vptr, size_t i, void *ptr_grid) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   vector<double> *grid=(vector<double> *)ptr_grid;
   ptr->set_grid_i_vec(i,*grid);
   return;
 }
 
-double o2scl_tensor_grid___get_grid(void *vptr, size_t i, size_t j) {
+double o2scl_tensor_grid__get_grid(void *vptr, size_t i, size_t j) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   double ret=ptr->get_grid(i,j);
   return ret;
 }
 
-void o2scl_tensor_grid___set_grid(void *vptr, size_t i, size_t j, double val) {
+void o2scl_tensor_grid__set_grid(void *vptr, size_t i, size_t j, double val) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   ptr->set_grid(i,j,val);
   return;
 }
 
-void *o2scl_create_tensor_int_std__vector_int__() {
+void *o2scl_create_tensor_int_std_vector_int_() {
   tensor<int,std::vector<int>> *ptr=new tensor<int,std::vector<int>>;
   return ptr;
 }
 
-void o2scl_free_tensor_int_std__vector_int__(void *vptr) {
+void o2scl_free_tensor_int_std_vector_int_(void *vptr) {
   tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
   delete ptr;
   return;
 }
 
-void o2scl_copy_tensor_int_std__vector_int__(void *vsrc, void *vdest) {
+void o2scl_copy_tensor_int_std_vector_int_(void *vsrc, void *vdest) {
   tensor<int,std::vector<int>> *src=(tensor<int,std::vector<int>> *)vsrc;
   tensor<int,std::vector<int>> *dest=(tensor<int,std::vector<int>> *)vdest;
   *dest=*src;
 }
 
-void o2scl_tensor_int_std__vector_int___is_valid(void *vptr) {
+void o2scl_tensor_int_std_vector_int__is_valid(void *vptr) {
   tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
   ptr->is_valid();
   return;
 }
 
-void o2scl_tensor_int_std__vector_int___clear(void *vptr) {
+void o2scl_tensor_int_std_vector_int__clear(void *vptr) {
   tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
   ptr->clear();
   return;
 }
 
-void o2scl_tensor_int_std__vector_int___set(void *vptr, void *ptr_index, int val) {
+void o2scl_tensor_int_std_vector_int__set(void *vptr, void *ptr_index, int val) {
   tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
   vector<size_t> *index=(vector<size_t> *)ptr_index;
   ptr->set(*index,val);
   return;
 }
 
-void o2scl_tensor_int_std__vector_int___set_all(void *vptr, int x) {
+void o2scl_tensor_int_std_vector_int__set_all(void *vptr, int x) {
   tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
   ptr->set_all(x);
   return;
 }
 
-int o2scl_tensor_int_std__vector_int___get(void *vptr, void *ptr_index) {
+int o2scl_tensor_int_std_vector_int__get(void *vptr, void *ptr_index) {
   tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
   vector<size_t> *index=(vector<size_t> *)ptr_index;
   int ret=ptr->get(*index);
   return ret;
 }
 
-void o2scl_tensor_int_std__vector_int___resize(void *vptr, size_t n, void *ptr_index) {
+void o2scl_tensor_int_std_vector_int__resize(void *vptr, size_t n, void *ptr_index) {
   tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
   vector<size_t> *index=(vector<size_t> *)ptr_index;
   ptr->resize(n,*index);
   return;
 }
 
-size_t o2scl_tensor_int_std__vector_int___get_rank(void *vptr) {
+size_t o2scl_tensor_int_std_vector_int__get_rank(void *vptr) {
   tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
   size_t ret=ptr->get_rank();
   return ret;
 }
 
-size_t o2scl_tensor_int_std__vector_int___get_size(void *vptr, size_t i) {
+size_t o2scl_tensor_int_std_vector_int__get_size(void *vptr, size_t i) {
   tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
   size_t ret=ptr->get_size(i);
   return ret;
 }
 
-size_t o2scl_tensor_int_std__vector_int___total_size(void *vptr) {
+size_t o2scl_tensor_int_std_vector_int__total_size(void *vptr) {
   tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
   size_t ret=ptr->total_size();
   return ret;
 }
 
-int o2scl_tensor_int_std__vector_int___min_value(void *vptr) {
+int o2scl_tensor_int_std_vector_int__min_value(void *vptr) {
   tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
   int ret=ptr->min_value();
   return ret;
 }
 
-int o2scl_tensor_int_std__vector_int___max_value(void *vptr) {
+int o2scl_tensor_int_std_vector_int__max_value(void *vptr) {
   tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
   int ret=ptr->max_value();
   return ret;
 }
 
-int o2scl_tensor_int_std__vector_int___total_sum(void *vptr) {
+int o2scl_tensor_int_std_vector_int__total_sum(void *vptr) {
   tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
   int ret=ptr->total_sum();
   return ret;
 }
 
-void *o2scl_tensor_int_std__vector_int___create_size(size_t rank, void *ptr_sizes) {
+void *o2scl_tensor_int_std_vector_int__create_size(size_t rank, void *ptr_sizes) {
   std::vector<size_t> *sizes=(std::vector<size_t> *)ptr_sizes;
   tensor<int,std::vector<int>> *ptr=new tensor<int,std::vector<int>>(rank,*sizes);
   return ptr;
 }
 
-void *o2scl_create_tensor_size_t_std__vector_size_t__() {
+void *o2scl_create_tensor_size_t_std_vector_size_t_() {
   tensor<size_t,std::vector<size_t>> *ptr=new tensor<size_t,std::vector<size_t>>;
   return ptr;
 }
 
-void o2scl_free_tensor_size_t_std__vector_size_t__(void *vptr) {
+void o2scl_free_tensor_size_t_std_vector_size_t_(void *vptr) {
   tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
   delete ptr;
   return;
 }
 
-void o2scl_copy_tensor_size_t_std__vector_size_t__(void *vsrc, void *vdest) {
+void o2scl_copy_tensor_size_t_std_vector_size_t_(void *vsrc, void *vdest) {
   tensor<size_t,std::vector<size_t>> *src=(tensor<size_t,std::vector<size_t>> *)vsrc;
   tensor<size_t,std::vector<size_t>> *dest=(tensor<size_t,std::vector<size_t>> *)vdest;
   *dest=*src;
 }
 
-void o2scl_tensor_size_t_std__vector_size_t___is_valid(void *vptr) {
+void o2scl_tensor_size_t_std_vector_size_t__is_valid(void *vptr) {
   tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
   ptr->is_valid();
   return;
 }
 
-void o2scl_tensor_size_t_std__vector_size_t___clear(void *vptr) {
+void o2scl_tensor_size_t_std_vector_size_t__clear(void *vptr) {
   tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
   ptr->clear();
   return;
 }
 
-void o2scl_tensor_size_t_std__vector_size_t___set(void *vptr, void *ptr_index, size_t val) {
+void o2scl_tensor_size_t_std_vector_size_t__set(void *vptr, void *ptr_index, size_t val) {
   tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
   vector<size_t> *index=(vector<size_t> *)ptr_index;
   ptr->set(*index,val);
   return;
 }
 
-void o2scl_tensor_size_t_std__vector_size_t___set_all(void *vptr, size_t x) {
+void o2scl_tensor_size_t_std_vector_size_t__set_all(void *vptr, size_t x) {
   tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
   ptr->set_all(x);
   return;
 }
 
-int o2scl_tensor_size_t_std__vector_size_t___get(void *vptr, void *ptr_index) {
+int o2scl_tensor_size_t_std_vector_size_t__get(void *vptr, void *ptr_index) {
   tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
   vector<size_t> *index=(vector<size_t> *)ptr_index;
   int ret=ptr->get(*index);
   return ret;
 }
 
-void o2scl_tensor_size_t_std__vector_size_t___resize(void *vptr, size_t n, void *ptr_index) {
+void o2scl_tensor_size_t_std_vector_size_t__resize(void *vptr, size_t n, void *ptr_index) {
   tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
   vector<size_t> *index=(vector<size_t> *)ptr_index;
   ptr->resize(n,*index);
   return;
 }
 
-size_t o2scl_tensor_size_t_std__vector_size_t___get_rank(void *vptr) {
+size_t o2scl_tensor_size_t_std_vector_size_t__get_rank(void *vptr) {
   tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
   size_t ret=ptr->get_rank();
   return ret;
 }
 
-size_t o2scl_tensor_size_t_std__vector_size_t___get_size(void *vptr, size_t i) {
+size_t o2scl_tensor_size_t_std_vector_size_t__get_size(void *vptr, size_t i) {
   tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
   size_t ret=ptr->get_size(i);
   return ret;
 }
 
-size_t o2scl_tensor_size_t_std__vector_size_t___total_size(void *vptr) {
+size_t o2scl_tensor_size_t_std_vector_size_t__total_size(void *vptr) {
   tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
   size_t ret=ptr->total_size();
   return ret;
 }
 
-size_t o2scl_tensor_size_t_std__vector_size_t___min_value(void *vptr) {
+size_t o2scl_tensor_size_t_std_vector_size_t__min_value(void *vptr) {
   tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
   size_t ret=ptr->min_value();
   return ret;
 }
 
-size_t o2scl_tensor_size_t_std__vector_size_t___max_value(void *vptr) {
+size_t o2scl_tensor_size_t_std_vector_size_t__max_value(void *vptr) {
   tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
   size_t ret=ptr->max_value();
   return ret;
 }
 
-size_t o2scl_tensor_size_t_std__vector_size_t___total_sum(void *vptr) {
+size_t o2scl_tensor_size_t_std_vector_size_t__total_sum(void *vptr) {
   tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
   size_t ret=ptr->total_sum();
   return ret;
 }
 
-void *o2scl_tensor_size_t_std__vector_size_t___create_size(size_t rank, void *ptr_sizes) {
+void *o2scl_tensor_size_t_std_vector_size_t__create_size(size_t rank, void *ptr_sizes) {
   std::vector<size_t> *sizes=(std::vector<size_t> *)ptr_sizes;
   tensor<size_t,std::vector<size_t>> *ptr=new tensor<size_t,std::vector<size_t>>(rank,*sizes);
   return ptr;
@@ -1916,222 +1931,222 @@ double o2scl_find_constants_find_unique(void *vptr, char *name, char *unit) {
   return ret;
 }
 
-void *o2scl_create_convert_units____der_unit() {
+void *o2scl_create_convert_units_der_unit() {
   convert_units<>::der_unit *ptr=new convert_units<>::der_unit;
   return ptr;
 }
 
-void o2scl_free_convert_units____der_unit(void *vptr) {
+void o2scl_free_convert_units_der_unit(void *vptr) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   delete ptr;
   return;
 }
 
-void *o2scl_convert_units____der_unit_get_label(void *vptr) {
+void *o2scl_convert_units_der_unit_get_label(void *vptr) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->label;
   return sptr;
 }
 
-void o2scl_convert_units____der_unit_set_label(void *vptr, void *p_v) {
+void o2scl_convert_units_der_unit_set_label(void *vptr, void *p_v) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   std::string *p_t=(std::string *)p_v;
   ptr->label=*(p_t);
   return;
 }
 
-int o2scl_convert_units____der_unit_get_m(void *vptr) {
+int o2scl_convert_units_der_unit_get_m(void *vptr) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   return ptr->m;
 }
 
-void o2scl_convert_units____der_unit_set_m(void *vptr, int v) {
+void o2scl_convert_units_der_unit_set_m(void *vptr, int v) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   ptr->m=v;
   return;
 }
 
-int o2scl_convert_units____der_unit_get_k(void *vptr) {
+int o2scl_convert_units_der_unit_get_k(void *vptr) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   return ptr->k;
 }
 
-void o2scl_convert_units____der_unit_set_k(void *vptr, int v) {
+void o2scl_convert_units_der_unit_set_k(void *vptr, int v) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   ptr->k=v;
   return;
 }
 
-int o2scl_convert_units____der_unit_get_s(void *vptr) {
+int o2scl_convert_units_der_unit_get_s(void *vptr) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   return ptr->s;
 }
 
-void o2scl_convert_units____der_unit_set_s(void *vptr, int v) {
+void o2scl_convert_units_der_unit_set_s(void *vptr, int v) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   ptr->s=v;
   return;
 }
 
-int o2scl_convert_units____der_unit_get_K(void *vptr) {
+int o2scl_convert_units_der_unit_get_K(void *vptr) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   return ptr->K;
 }
 
-void o2scl_convert_units____der_unit_set_K(void *vptr, int v) {
+void o2scl_convert_units_der_unit_set_K(void *vptr, int v) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   ptr->K=v;
   return;
 }
 
-int o2scl_convert_units____der_unit_get_A(void *vptr) {
+int o2scl_convert_units_der_unit_get_A(void *vptr) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   return ptr->A;
 }
 
-void o2scl_convert_units____der_unit_set_A(void *vptr, int v) {
+void o2scl_convert_units_der_unit_set_A(void *vptr, int v) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   ptr->A=v;
   return;
 }
 
-int o2scl_convert_units____der_unit_get_mol(void *vptr) {
+int o2scl_convert_units_der_unit_get_mol(void *vptr) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   return ptr->mol;
 }
 
-void o2scl_convert_units____der_unit_set_mol(void *vptr, int v) {
+void o2scl_convert_units_der_unit_set_mol(void *vptr, int v) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   ptr->mol=v;
   return;
 }
 
-int o2scl_convert_units____der_unit_get_cd(void *vptr) {
+int o2scl_convert_units_der_unit_get_cd(void *vptr) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   return ptr->cd;
 }
 
-void o2scl_convert_units____der_unit_set_cd(void *vptr, int v) {
+void o2scl_convert_units_der_unit_set_cd(void *vptr, int v) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   ptr->cd=v;
   return;
 }
 
-double o2scl_convert_units____der_unit_get_val(void *vptr) {
+double o2scl_convert_units_der_unit_get_val(void *vptr) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   return ptr->val;
 }
 
-void o2scl_convert_units____der_unit_set_val(void *vptr, double v) {
+void o2scl_convert_units_der_unit_set_val(void *vptr, double v) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   ptr->val=v;
   return;
 }
 
-void *o2scl_convert_units____der_unit_get_name(void *vptr) {
+void *o2scl_convert_units_der_unit_get_name(void *vptr) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->name;
   return sptr;
 }
 
-void o2scl_convert_units____der_unit_set_name(void *vptr, void *p_v) {
+void o2scl_convert_units_der_unit_set_name(void *vptr, void *p_v) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   std::string *p_t=(std::string *)p_v;
   ptr->name=*(p_t);
   return;
 }
 
-void *o2scl_create_convert_units__() {
+void *o2scl_create_convert_units_() {
   convert_units<> *ptr=new convert_units<>;
   return ptr;
 }
 
-void o2scl_free_convert_units__(void *vptr) {
+void o2scl_free_convert_units_(void *vptr) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   delete ptr;
   return;
 }
 
-int o2scl_convert_units___get_verbose(void *vptr) {
+int o2scl_convert_units__get_verbose(void *vptr) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   return ptr->verbose;
 }
 
-void o2scl_convert_units___set_verbose(void *vptr, int v) {
+void o2scl_convert_units__set_verbose(void *vptr, int v) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   ptr->verbose=v;
   return;
 }
 
-bool o2scl_convert_units___get_err_on_fail(void *vptr) {
+bool o2scl_convert_units__get_err_on_fail(void *vptr) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   return ptr->err_on_fail;
 }
 
-void o2scl_convert_units___set_err_on_fail(void *vptr, bool v) {
+void o2scl_convert_units__set_err_on_fail(void *vptr, bool v) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   ptr->err_on_fail=v;
   return;
 }
 
-bool o2scl_convert_units___get_combine_two_conv(void *vptr) {
+bool o2scl_convert_units__get_combine_two_conv(void *vptr) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   return ptr->combine_two_conv;
 }
 
-void o2scl_convert_units___set_combine_two_conv(void *vptr, bool v) {
+void o2scl_convert_units__set_combine_two_conv(void *vptr, bool v) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   ptr->combine_two_conv=v;
   return;
 }
 
-double o2scl_convert_units___convert(void *vptr, char *frm, char *to, double val) {
+double o2scl_convert_units__convert(void *vptr, char *frm, char *to, double val) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   double ret=ptr->convert(frm,to,val);
   return ret;
 }
 
-int o2scl_convert_units___convert_ret(void *vptr, char *frm, char *to, double val, double converted) {
+int o2scl_convert_units__convert_ret(void *vptr, char *frm, char *to, double val, double converted) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   int ret=ptr->convert_ret(frm,to,val,converted);
   return ret;
 }
 
-void o2scl_convert_units___del_unit(void *vptr, void *ptr_name) {
+void o2scl_convert_units__del_unit(void *vptr, void *ptr_name) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   std::string *name=(std::string *)ptr_name;
   ptr->del_unit(*name);
   return;
 }
 
-void o2scl_convert_units___add_unit(void *vptr, void *ptr_d) {
+void o2scl_convert_units__add_unit(void *vptr, void *ptr_d) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   convert_units<>::der_unit *d=(convert_units<>::der_unit *)ptr_d;
   ptr->add_unit(*d);
   return;
 }
 
-void o2scl_convert_units___set_natural_units(void *vptr, bool c_is_one, bool hbar_is_one, bool kb_is_one) {
+void o2scl_convert_units__set_natural_units(void *vptr, bool c_is_one, bool hbar_is_one, bool kb_is_one) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   ptr->set_natural_units(c_is_one,hbar_is_one,kb_is_one);
   return;
 }
 
-void o2scl_convert_units___test_unique(void *vptr) {
+void o2scl_convert_units__test_unique(void *vptr) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   ptr->test_unique();
   return;
 }
 
-void o2scl_convert_units___print_cache(void *vptr) {
+void o2scl_convert_units__print_cache(void *vptr) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   ptr->print_cache();
   return;
 }
 
-void o2scl_convert_units___print_units_cout(void *vptr) {
+void o2scl_convert_units__print_units_cout(void *vptr) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   ptr->print_units_cout();
   return;
@@ -2203,18 +2218,18 @@ void *o2scl_format_float_convert(void *vptr, double x, bool debug) {
   return sptr;
 }
 
-void *o2scl_create_interp_std__vector_double__() {
+void *o2scl_create_interp_std_vector_double_() {
   interp<std::vector<double>> *ptr=new interp<std::vector<double>>;
   return ptr;
 }
 
-void o2scl_free_interp_std__vector_double__(void *vptr) {
+void o2scl_free_interp_std_vector_double_(void *vptr) {
   interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
   delete ptr;
   return;
 }
 
-double o2scl_interp_std__vector_double___eval(void *vptr, double x0, size_t n, void *ptr_x, void *ptr_y) {
+double o2scl_interp_std_vector_double__eval(void *vptr, double x0, size_t n, void *ptr_x, void *ptr_y) {
   interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
   std::vector<double> *x=(std::vector<double> *)ptr_x;
   std::vector<double> *y=(std::vector<double> *)ptr_y;
@@ -2222,7 +2237,7 @@ double o2scl_interp_std__vector_double___eval(void *vptr, double x0, size_t n, v
   return ret;
 }
 
-double o2scl_interp_std__vector_double___deriv(void *vptr, double x0, size_t n, void *ptr_x, void *ptr_y) {
+double o2scl_interp_std_vector_double__deriv(void *vptr, double x0, size_t n, void *ptr_x, void *ptr_y) {
   interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
   std::vector<double> *x=(std::vector<double> *)ptr_x;
   std::vector<double> *y=(std::vector<double> *)ptr_y;
@@ -2230,7 +2245,7 @@ double o2scl_interp_std__vector_double___deriv(void *vptr, double x0, size_t n, 
   return ret;
 }
 
-double o2scl_interp_std__vector_double___deriv2(void *vptr, double x0, size_t n, void *ptr_x, void *ptr_y) {
+double o2scl_interp_std_vector_double__deriv2(void *vptr, double x0, size_t n, void *ptr_x, void *ptr_y) {
   interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
   std::vector<double> *x=(std::vector<double> *)ptr_x;
   std::vector<double> *y=(std::vector<double> *)ptr_y;
@@ -2238,7 +2253,7 @@ double o2scl_interp_std__vector_double___deriv2(void *vptr, double x0, size_t n,
   return ret;
 }
 
-double o2scl_interp_std__vector_double___integ(void *vptr, double x1, double x2, size_t n, void *ptr_x, void *ptr_y) {
+double o2scl_interp_std_vector_double__integ(void *vptr, double x1, double x2, size_t n, void *ptr_x, void *ptr_y) {
   interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
   std::vector<double> *x=(std::vector<double> *)ptr_x;
   std::vector<double> *y=(std::vector<double> *)ptr_y;
@@ -2246,119 +2261,119 @@ double o2scl_interp_std__vector_double___integ(void *vptr, double x1, double x2,
   return ret;
 }
 
-void o2scl_interp_std__vector_double___set_type(void *vptr, int interp_type) {
+void o2scl_interp_std_vector_double__set_type(void *vptr, int interp_type) {
   interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
   ptr->set_type(interp_type);
   return;
 }
 
-void *o2scl_create_interp_vec_std__vector_double__() {
+void *o2scl_create_interp_vec_std_vector_double_() {
   interp_vec<std::vector<double>> *ptr=new interp_vec<std::vector<double>>;
   return ptr;
 }
 
-void o2scl_free_interp_vec_std__vector_double__(void *vptr) {
+void o2scl_free_interp_vec_std_vector_double_(void *vptr) {
   interp_vec<std::vector<double>> *ptr=(interp_vec<std::vector<double>> *)vptr;
   delete ptr;
   return;
 }
 
-void o2scl_interp_vec_std__vector_double___clear(void *vptr) {
+void o2scl_interp_vec_std_vector_double__clear(void *vptr) {
   interp_vec<std::vector<double>> *ptr=(interp_vec<std::vector<double>> *)vptr;
   ptr->clear();
   return;
 }
 
-double o2scl_interp_vec_std__vector_double___eval(void *vptr, double x0) {
+double o2scl_interp_vec_std_vector_double__eval(void *vptr, double x0) {
   interp_vec<std::vector<double>> *ptr=(interp_vec<std::vector<double>> *)vptr;
   double ret=ptr->eval(x0);
   return ret;
 }
 
-double o2scl_interp_vec_std__vector_double___deriv(void *vptr, double x0) {
+double o2scl_interp_vec_std_vector_double__deriv(void *vptr, double x0) {
   interp_vec<std::vector<double>> *ptr=(interp_vec<std::vector<double>> *)vptr;
   double ret=ptr->deriv(x0);
   return ret;
 }
 
-double o2scl_interp_vec_std__vector_double___deriv2(void *vptr, double x0) {
+double o2scl_interp_vec_std_vector_double__deriv2(void *vptr, double x0) {
   interp_vec<std::vector<double>> *ptr=(interp_vec<std::vector<double>> *)vptr;
   double ret=ptr->deriv2(x0);
   return ret;
 }
 
-double o2scl_interp_vec_std__vector_double___integ(void *vptr, double x1, double x2) {
+double o2scl_interp_vec_std_vector_double__integ(void *vptr, double x1, double x2) {
   interp_vec<std::vector<double>> *ptr=(interp_vec<std::vector<double>> *)vptr;
   double ret=ptr->integ(x1,x2);
   return ret;
 }
 
-void *o2scl_create_interp_krige_optim_std__vector_double__() {
+void *o2scl_create_interp_krige_optim_std_vector_double_() {
   interp_krige_optim<std::vector<double>> *ptr=new interp_krige_optim<std::vector<double>>;
   return ptr;
 }
 
-void o2scl_free_interp_krige_optim_std__vector_double__(void *vptr) {
+void o2scl_free_interp_krige_optim_std_vector_double_(void *vptr) {
   interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
   delete ptr;
   return;
 }
 
-int o2scl_interp_krige_optim_std__vector_double___get_verbose(void *vptr) {
+int o2scl_interp_krige_optim_std_vector_double__get_verbose(void *vptr) {
   interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
   return ptr->verbose;
 }
 
-void o2scl_interp_krige_optim_std__vector_double___set_verbose(void *vptr, int v) {
+void o2scl_interp_krige_optim_std_vector_double__set_verbose(void *vptr, int v) {
   interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
   ptr->verbose=v;
   return;
 }
 
-size_t o2scl_interp_krige_optim_std__vector_double___get_mode(void *vptr) {
+size_t o2scl_interp_krige_optim_std_vector_double__get_mode(void *vptr) {
   interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
   return ptr->mode;
 }
 
-void o2scl_interp_krige_optim_std__vector_double___set_mode(void *vptr, size_t v) {
+void o2scl_interp_krige_optim_std_vector_double__set_mode(void *vptr, size_t v) {
   interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
   ptr->mode=v;
   return;
 }
 
-size_t o2scl_interp_krige_optim_std__vector_double___get_nlen(void *vptr) {
+size_t o2scl_interp_krige_optim_std_vector_double__get_nlen(void *vptr) {
   interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
   return ptr->nlen;
 }
 
-void o2scl_interp_krige_optim_std__vector_double___set_nlen(void *vptr, size_t v) {
+void o2scl_interp_krige_optim_std_vector_double__set_nlen(void *vptr, size_t v) {
   interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
   ptr->nlen=v;
   return;
 }
 
-bool o2scl_interp_krige_optim_std__vector_double___get_full_min(void *vptr) {
+bool o2scl_interp_krige_optim_std_vector_double__get_full_min(void *vptr) {
   interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
   return ptr->full_min;
 }
 
-void o2scl_interp_krige_optim_std__vector_double___set_full_min(void *vptr, bool v) {
+void o2scl_interp_krige_optim_std_vector_double__set_full_min(void *vptr, bool v) {
   interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
   ptr->full_min=v;
   return;
 }
 
-void *o2scl_create_shared_ptr_table_units__() {
+void *o2scl_create_shared_ptr_table_units_() {
   std::shared_ptr<table_units<> > *ptr=new std::shared_ptr<table_units<> >(new table_units<>);
   return ptr;
 }
 
-void o2scl_free_shared_ptr_table_units__(void *vptr) {
+void o2scl_free_shared_ptr_table_units_(void *vptr) {
   std::shared_ptr<table_units<> > *ptr=(std::shared_ptr<table_units<> > *)vptr;
   delete ptr;
 }
 
-void *o2scl_shared_ptr_table_units___ptr(void *vp) {
+void *o2scl_shared_ptr_table_units__ptr(void *vp) {
   std::shared_ptr<table_units<> > *p=(std::shared_ptr<table_units<> > *)vp;
   table_units<> *ref=p->get();
   return ref;
@@ -2438,14 +2453,14 @@ double o2scl_quadratic_extremum_y_double__wrapper(double x1, double x2, double x
   return ret;
 }
 
-void o2scl_screenify_vector_std__string___wrapper(size_t nin, void *ptr_in_cols, void *ptr_out_cols, size_t max_size) {
+void o2scl_screenify_vector_std_string__wrapper(size_t nin, void *ptr_in_cols, void *ptr_out_cols, size_t max_size) {
   vector<std::string> *in_cols=(vector<std::string> *)ptr_in_cols;
   vector<std::string> *out_cols=(vector<std::string> *)ptr_out_cols;
   screenify<vector<std::string>>(nin,*in_cols,*out_cols,max_size);
   return;
 }
 
-size_t o2scl_vector_level_count_std__vector_double__std__vector_double___wrapper(double level, size_t n, void *ptr_x, void *ptr_y) {
+size_t o2scl_vector_level_count_std_vector_double_std_vector_double__wrapper(double level, size_t n, void *ptr_x, void *ptr_y) {
   std::vector<double> *x=(std::vector<double> *)ptr_x;
   std::vector<double> *y=(std::vector<double> *)ptr_y;
   size_t ret=vector_level_count<std::vector<double>,std::vector<double>>(level,n,*x,*y);

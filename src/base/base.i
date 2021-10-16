@@ -1,6 +1,7 @@
 # Interface file for o2scl base classes
 #
 # Todo:
+# 0. in yanic take care of setitem() docs in python
 # 1. operator[] for vector<vector<double>>
 # 2. get_size_arr() for tensor
 # 3. global functions like abs() and norm() for complex numbers
@@ -319,9 +320,9 @@ class std::vector<std::vector<double>>
   - size_t n                             
 - function size
   - size_t
-#- function operator[]
-#  - std::vector<double> &
-#  - size_t n
+- function operator[]
+  - std::vector<double> &
+  - size_t n
 - extra_py |
 | def __len__(self):
 |     """
@@ -339,6 +340,11 @@ py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class ``%name%``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/%name%.html .
+|
+| Note that python complex numbers are immutable, but this class is
+| not, so the real and imaginary parts can be changed with real_set()
+| and imag_set(). 
+|                              
 # Class complex<double>
 #                              
 # Create a python interface to std::vector<double> for vector

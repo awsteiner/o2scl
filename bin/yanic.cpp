@@ -34,9 +34,18 @@ using namespace o2scl;
 /** \brief Convert all non-alphanumeric characters to underscores
  */
 std::string underscoreify(std::string s) {
-  std::string s2=s;
-  for(size_t i=0;i<s2.length();i++) {
-    if (std::isalnum(s2[i])==false) s2[i]='_';
+  std::string s2;
+  bool last_char_is_underscore=false;
+  for(size_t i=0;i<s.length();i++) {
+    if (std::isalnum(s[i])==false) {
+      if (i==0 || last_char_is_underscore==false) {
+        s2+='_';
+      }
+      last_char_is_underscore=true;
+    } else {
+      s2+=s[i];
+      last_char_is_underscore=false;
+    }
   }
   return s2;
 }
@@ -1457,7 +1466,7 @@ int main(int argc, char *argv[]) {
           // For a std::vector<double> &, we return a void, but add
           // double pointer and integer output parameters
           ret_type="void ";
-          extra_args=", double **dptr, int *n";
+          extra_args=", double **dptr, int *n_";
         } else if (iff.ret.name=="void" || iff.ret.is_ctype()) {
           if (iff.ret.suffix=="*") {
             ret_type=iff.ret.name+" *";
@@ -1618,7 +1627,7 @@ int main(int argc, char *argv[]) {
               iff.ret.suffix=="&") {
             fout << ");" << endl;
             fout << "  *dptr=(double *)(&(r[0]));" << endl;
-            fout << "  *n=r.size();" << endl;
+            fout << "  *n_=r.size();" << endl;
             fout << "  return;" << endl;
           } else {
             fout << ");" << endl;
@@ -1649,6 +1658,10 @@ int main(int argc, char *argv[]) {
           if (iff.ret.name=="std::string") {
             fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
                  << "_setitem(void *vptr, size_t i, char *val)";
+          } else if (iff.ret.name=="std::vector<double>") {
+            fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
+                 << "_setitem(void *vptr, size_t i, "
+                 << "void *valptr)";
           } else {
             fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
                  << "_setitem(void *vptr, size_t i, " << iff.ret.name
@@ -1660,7 +1673,13 @@ int main(int argc, char *argv[]) {
             fout << " {" << endl;
             fout << "  " << ifc.name << " *ptr=(" << ifc.name
                  << " *)vptr;" << endl;
-            fout << "  (*ptr)[i]=val;" << endl;
+            if (iff.ret.name=="std::vector<double>") {
+              fout << "  std::vector<double> *valptr2="
+                   << "(std::vector<double> *)valptr;" << endl;
+              fout << "  (*ptr)[i]=*valptr2;" << endl;
+            } else {
+              fout << "  (*ptr)[i]=val;" << endl;
+            }
             fout << "  return;" << endl;
             fout << "}" << endl;
           }
@@ -2688,6 +2707,18 @@ int main(int argc, char *argv[]) {
       if (iff.name=="operator[]" && !iff.ret.is_const() &&
           iff.ret.suffix=="&") {
         fout << "    def __setitem__(self,i,value):" << endl;
+        fout << "        \"\"\"" << endl;
+        fout << "        | Parameters:" << endl;
+        fout << "        | *i*: ``size_t``" << endl;
+        if (iff.ret.name=="std::string") {
+          fout << "        | *value*: Python bytes string" << endl;
+        } else if (iff.ret.name=="std::vector<double>") {
+          fout << "        | *value*: :class:`std::vector<double>` "
+               << "object" << endl;
+        } else {
+          fout << "        | *value*: " << iff.ret.name << endl;
+        }
+        fout << "        \"\"\"" << endl;
         fout << "        func=self._link." << dll_name << "."
              << ifc.ns << "_" << underscoreify(ifc.name) << "_setitem"
              << endl;
@@ -2695,12 +2726,22 @@ int main(int argc, char *argv[]) {
           fout << "        func.argtypes=[ctypes.c_void_p,"
                << "ctypes.c_size_t,ctypes.c_char_p]"
                << endl;
+          fout << "        func(self._ptr,i,value)" << endl;
+        } else if (iff.ret.name=="std::vector<double>") {
+          fout << "        sv=std_vector(self._link)" << endl;
+          fout << "        sv.resize(len(value))" << endl;
+          fout << "        for i in range(0,len(value)):" << endl;
+          fout << "            sv[i]=value[i]" << endl;
+          fout << "        func.argtypes=[ctypes.c_void_p,"
+               << "ctypes.c_size_t,ctypes.c_void_p]"
+               << endl;
+          fout << "        func(self._ptr,i,sv._ptr)" << endl;
         } else {
           fout << "        func.argtypes=[ctypes.c_void_p,"
                << "ctypes.c_size_t,ctypes.c_" << iff.ret.name << "]"
                << endl;
+          fout << "        func(self._ptr,i,value)" << endl;
         }
-        fout << "        func(self._ptr,i,value)" << endl;
         fout << "        return" << endl;
         fout << endl;
       }
