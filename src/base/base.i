@@ -2,8 +2,8 @@
 #
 # Todo:
 # 1. operator[] for vector<vector<double>>
-# 2. real() for complex<double>
-# 3. get_size_arr() for tensor
+# 2. get_size_arr() for tensor
+# 3. global functions like abs() and norm() for complex numbers
 #
 # Todo: add columnify (esp. add_spaces()), interpolation, and
 # vector functions (esp. autocorrelation, and more functions not part of
@@ -349,21 +349,20 @@ class std::complex<double>
 - cons init
   - double re
   - double im
-#    
-# These don't work yet because yanic can't really handle this
-# case yet. These functions should return a ctypes pointer to a
-# double.
-#
-#- function real
-#  - double &
-#- function imag
-#  - double &
-#- function abs
-#  - double
-#- function arg
-#  - double
-#- function norm
-#  - double
+- function real
+  - double
+  - py_name real
+- function real
+  - void
+  - py_name real_set
+  - double value
+- function imag
+  - double
+  - py_name imag
+- function imag
+  - void
+  - py_name imag_set
+  - double value
 - extra_py |
 | def to_python(self):
 |     """
@@ -1274,7 +1273,7 @@ class tensor<int,std::vector<int>>
   - size_t
   - size_t i
 #- function get_data
-#  - vector<int> &
+#  - out std::vector<int> &
 - function total_size
   - size_t
 - function min_value
@@ -1365,7 +1364,7 @@ class tensor<size_t,std::vector<size_t>>
   - size_t
   - size_t i
 #- function get_data
-#  - vector<size_t> &
+#  - out std::vector<size_t> &
 - function total_size
   - size_t
 - function min_value
@@ -1511,12 +1510,12 @@ class convert_units<>
 # Class columnify
 #
 #class columnify
-# - const int align_left
-# - const int align_right
-# - const int align_lmid
-# - const int align_rmid
-# - const int align_dp
-# - const int align_lnum
+# - static const int align_left
+# - static const int align_right
+# - static const int align_lmid
+# - static const int align_rmid
+# - static const int align_dp
+# - static const int align_lnum
 # - function add_spaces<std::vector<std::vector<std::string>>,std::vector<int>>
 #   - int
 #   - 
@@ -1589,7 +1588,8 @@ class interp<std::vector<double>>
 #
 # Class interp_vec
 #
-#class interp_vec<std::vector<double>>
+class interp_vec<std::vector<double>>
+- py_name interp_vec  
 #- cons interp_vec_pre
 #  - size_t n
 #  - std::vector<double> &x
@@ -1598,28 +1598,33 @@ class interp<std::vector<double>>
 #- function set
 #  - void
 #  - size_t n
-#  - std::vector<double> &x
-#  - std::vector<double> &x
+#  - io std::vector<double> &x
+#  - io std::vector<double> &x
 #  - int interp_type
-#- function clear
-#  - void
-#- function eval
-#  - double x0
-#- function deriv
-#  - double x0
-#- function deriv2
-#  - double x0
-#- function integ
-#  - double x1
-#  - double x2
+- function clear
+  - void
+- function eval
+  - double
+  - double x0
+- function deriv
+  - double
+  - double x0
+- function deriv2
+  - double
+  - double x0
+- function integ
+  - double
+  - double x1
+  - double x2
 #
 # Class interp_krige_optim
 #
-#class interp_krige_optim<std::vector<double>>
-#- int verbose
-#- size_t mode
-#- size_t nlen
-#- bool full_min
+class interp_krige_optim<std::vector<double>>
+- py_name interp_krige_optim  
+- int verbose
+- size_t mode
+- size_t nlen
+- bool full_min
 #- function set_noise
 #  - int
 #  - size_t size

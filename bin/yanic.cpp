@@ -598,6 +598,7 @@ int main(int argc, char *argv[]) {
   typedef
     std::map<std::string,std::string,std::less<std::string>>::iterator
     cpn_it;
+  
   class_py_names.insert(std::make_pair("std::string","std_string"));
   class_py_names.insert(std::make_pair("std::vector<double>",
                                        "std_vector"));
@@ -824,16 +825,23 @@ int main(int argc, char *argv[]) {
 
             ifv.parse(vs);
 
-            if (ifv.value.length()==0) {
-              cout << "    Member function " << iff.name
-                   << " has argument " << ifv.name << " with type "
-                   << ifv.ift.to_string() << endl;
-            } else {
-              cout << "    Member function " << iff.name
-                   << " has argument " << ifv.name << " with type "
-                   << ifv.ift.to_string() << " and default value "
-                   << ifv.value << endl;
+            cout << "    Member function " << iff.name
+                 << " has argument " << ifv.name << " with type "
+                 << ifv.ift.to_string();
+            if (ifv.value.length()!=0) {
+              cout << " and default value " << ifv.value;
             }
+            cout << " [";
+            if (ifv.ift.is_pointer()) cout << "p";
+            if (ifv.ift.is_reference()) cout << "r";
+            if (ifv.ift.is_const()) cout << "t";
+            if (ifv.ift.is_static()) cout << "s";
+            if (ifv.ift.is_shared_ptr()) cout << "h";
+            if (ifv.ift.is_io()) cout << "i";
+            if (ifv.ift.is_out()) cout << "o";
+            if (ifv.ift.is_out()) cout << "o";
+            if (ifv.ift.is_ctype()) cout << "c";
+            cout << "]." << endl;
 
             // Check that C type references which are not return values
             // are marked 'out' or 'io'
@@ -996,7 +1004,17 @@ int main(int argc, char *argv[]) {
           ifv.parse(vs);
           
           cout << "  Member " << ifv.name << " with type "
-               << ifv.ift.to_string() << " ." << endl;
+               << ifv.ift.to_string() << " [";
+          if (ifv.ift.is_pointer()) cout << "p";
+          if (ifv.ift.is_reference()) cout << "r";
+          if (ifv.ift.is_const()) cout << "t";
+          if (ifv.ift.is_static()) cout << "s";
+          if (ifv.ift.is_shared_ptr()) cout << "h";
+          if (ifv.ift.is_io()) cout << "i";
+          if (ifv.ift.is_out()) cout << "o";
+          if (ifv.ift.is_out()) cout << "o";
+          if (ifv.ift.is_ctype()) cout << "c";
+          cout << "]." << endl;
 
           next_line(fin,line,vs,done);
           
@@ -1309,6 +1327,9 @@ int main(int argc, char *argv[]) {
 
         // Get functions for class data
         if (ifv.ift.is_ctype()) {
+          if (ifv.ift.is_reference()) {
+            fout << "*";
+          }
           // Get function for a C data type
           fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
                << underscoreify(ifc.name) << "_get_" << ifv.name
@@ -1319,7 +1340,11 @@ int main(int argc, char *argv[]) {
             fout << " {" << endl;
             fout << "  " << ifc.name << " *ptr=(" << ifc.name
                  << " *)vptr;" << endl;
-            fout << "  return ptr->" << ifv.name << ";" << endl;
+            if (ifv.ift.is_reference()) {
+              fout << "  return &ptr->" << ifv.name << ";" << endl;
+            } else {
+              fout << "  return ptr->" << ifv.name << ";" << endl;
+            }
             fout << "}" << endl;
           }
         } else if (ifv.ift.name=="std::string" ||
@@ -3159,8 +3184,8 @@ int main(int argc, char *argv[]) {
     
     size_t len=9;
     fout2 << "Function ";
-
-    if (iff.overloaded) {
+    
+    if (iff.overloaded || iff.py_name.length()>0) {
       fout2 << iff.py_name << endl;
       len+=iff.py_name.length();
     } else {

@@ -146,6 +146,14 @@ void *o2scl_create_std__complex_double_();
 
 void o2scl_free_std__complex_double_(void *vptr);
 
+double o2scl_std__complex_double__real(void *vptr);
+
+void o2scl_std__complex_double__real_set(void *vptr, double value);
+
+double o2scl_std__complex_double__imag(void *vptr);
+
+void o2scl_std__complex_double__imag_set(void *vptr, double value);
+
 void *o2scl_std__complex_double__init(double re, double im);
 
 void *o2scl_create_lib_settings_class();
@@ -767,6 +775,40 @@ double o2scl_interp_std__vector_double___deriv2(void *vptr, double x0, size_t n,
 double o2scl_interp_std__vector_double___integ(void *vptr, double x1, double x2, size_t n, void *ptr_x, void *ptr_y);
 
 void o2scl_interp_std__vector_double___set_type(void *vptr, int interp_type);
+
+void *o2scl_create_interp_vec_std__vector_double__();
+
+void o2scl_free_interp_vec_std__vector_double__(void *vptr);
+
+void o2scl_interp_vec_std__vector_double___clear(void *vptr);
+
+double o2scl_interp_vec_std__vector_double___eval(void *vptr, double x0);
+
+double o2scl_interp_vec_std__vector_double___deriv(void *vptr, double x0);
+
+double o2scl_interp_vec_std__vector_double___deriv2(void *vptr, double x0);
+
+double o2scl_interp_vec_std__vector_double___integ(void *vptr, double x1, double x2);
+
+void *o2scl_create_interp_krige_optim_std__vector_double__();
+
+void o2scl_free_interp_krige_optim_std__vector_double__(void *vptr);
+
+int o2scl_interp_krige_optim_std__vector_double___get_verbose(void *vptr);
+
+void o2scl_interp_krige_optim_std__vector_double___set_verbose(void *vptr, int v);
+
+size_t o2scl_interp_krige_optim_std__vector_double___get_mode(void *vptr);
+
+void o2scl_interp_krige_optim_std__vector_double___set_mode(void *vptr, size_t v);
+
+size_t o2scl_interp_krige_optim_std__vector_double___get_nlen(void *vptr);
+
+void o2scl_interp_krige_optim_std__vector_double___set_nlen(void *vptr, size_t v);
+
+bool o2scl_interp_krige_optim_std__vector_double___get_full_min(void *vptr);
+
+void o2scl_interp_krige_optim_std__vector_double___set_full_min(void *vptr, bool v);
 
 void *o2scl_create_shared_ptr_table_units__();
 

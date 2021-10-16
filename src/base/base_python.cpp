@@ -352,6 +352,30 @@ void o2scl_free_std__complex_double_(void *vptr) {
   return;
 }
 
+double o2scl_std__complex_double__real(void *vptr) {
+  std::complex<double> *ptr=(std::complex<double> *)vptr;
+  double ret=ptr->real();
+  return ret;
+}
+
+void o2scl_std__complex_double__real_set(void *vptr, double value) {
+  std::complex<double> *ptr=(std::complex<double> *)vptr;
+  ptr->real(value);
+  return;
+}
+
+double o2scl_std__complex_double__imag(void *vptr) {
+  std::complex<double> *ptr=(std::complex<double> *)vptr;
+  double ret=ptr->imag();
+  return ret;
+}
+
+void o2scl_std__complex_double__imag_set(void *vptr, double value) {
+  std::complex<double> *ptr=(std::complex<double> *)vptr;
+  ptr->imag(value);
+  return;
+}
+
 void *o2scl_std__complex_double__init(double re, double im) {
   std::complex<double> *ptr=new std::complex<double>(re,im);
   return ptr;
@@ -2225,6 +2249,102 @@ double o2scl_interp_std__vector_double___integ(void *vptr, double x1, double x2,
 void o2scl_interp_std__vector_double___set_type(void *vptr, int interp_type) {
   interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
   ptr->set_type(interp_type);
+  return;
+}
+
+void *o2scl_create_interp_vec_std__vector_double__() {
+  interp_vec<std::vector<double>> *ptr=new interp_vec<std::vector<double>>;
+  return ptr;
+}
+
+void o2scl_free_interp_vec_std__vector_double__(void *vptr) {
+  interp_vec<std::vector<double>> *ptr=(interp_vec<std::vector<double>> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_interp_vec_std__vector_double___clear(void *vptr) {
+  interp_vec<std::vector<double>> *ptr=(interp_vec<std::vector<double>> *)vptr;
+  ptr->clear();
+  return;
+}
+
+double o2scl_interp_vec_std__vector_double___eval(void *vptr, double x0) {
+  interp_vec<std::vector<double>> *ptr=(interp_vec<std::vector<double>> *)vptr;
+  double ret=ptr->eval(x0);
+  return ret;
+}
+
+double o2scl_interp_vec_std__vector_double___deriv(void *vptr, double x0) {
+  interp_vec<std::vector<double>> *ptr=(interp_vec<std::vector<double>> *)vptr;
+  double ret=ptr->deriv(x0);
+  return ret;
+}
+
+double o2scl_interp_vec_std__vector_double___deriv2(void *vptr, double x0) {
+  interp_vec<std::vector<double>> *ptr=(interp_vec<std::vector<double>> *)vptr;
+  double ret=ptr->deriv2(x0);
+  return ret;
+}
+
+double o2scl_interp_vec_std__vector_double___integ(void *vptr, double x1, double x2) {
+  interp_vec<std::vector<double>> *ptr=(interp_vec<std::vector<double>> *)vptr;
+  double ret=ptr->integ(x1,x2);
+  return ret;
+}
+
+void *o2scl_create_interp_krige_optim_std__vector_double__() {
+  interp_krige_optim<std::vector<double>> *ptr=new interp_krige_optim<std::vector<double>>;
+  return ptr;
+}
+
+void o2scl_free_interp_krige_optim_std__vector_double__(void *vptr) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  delete ptr;
+  return;
+}
+
+int o2scl_interp_krige_optim_std__vector_double___get_verbose(void *vptr) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  return ptr->verbose;
+}
+
+void o2scl_interp_krige_optim_std__vector_double___set_verbose(void *vptr, int v) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  ptr->verbose=v;
+  return;
+}
+
+size_t o2scl_interp_krige_optim_std__vector_double___get_mode(void *vptr) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  return ptr->mode;
+}
+
+void o2scl_interp_krige_optim_std__vector_double___set_mode(void *vptr, size_t v) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  ptr->mode=v;
+  return;
+}
+
+size_t o2scl_interp_krige_optim_std__vector_double___get_nlen(void *vptr) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  return ptr->nlen;
+}
+
+void o2scl_interp_krige_optim_std__vector_double___set_nlen(void *vptr, size_t v) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  ptr->nlen=v;
+  return;
+}
+
+bool o2scl_interp_krige_optim_std__vector_double___get_full_min(void *vptr) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  return ptr->full_min;
+}
+
+void o2scl_interp_krige_optim_std__vector_double___set_full_min(void *vptr, bool v) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  ptr->full_min=v;
   return;
 }
 
