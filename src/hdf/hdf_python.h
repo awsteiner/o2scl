@@ -142,8 +142,8 @@ void o2scl_hdf_hdf_output_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, char *n
 
 int o2scl_hdf_value_spec_wrapper(char *spec, void *ptr_d, int verbose=0, bool err_on_fail=true);
 
-int o2scl_hdf_vector_spec_std__vector_double___wrapper(char *spec, void *ptr_v, int verbose=0, bool err_on_fail=true);
+int o2scl_hdf_vector_spec_std_vector_double__wrapper(char *spec, void *ptr_v, int verbose=0, bool err_on_fail=true);
 
-int o2scl_hdf_strings_spec_std__vector_std__string___wrapper(char *spec, void *ptr_v, int verbose=0, bool err_on_fail=true);
+int o2scl_hdf_strings_spec_std_vector_std_string__wrapper(char *spec, void *ptr_v, int verbose=0, bool err_on_fail=true);
 
 }

@@ -73,21 +73,21 @@ int o2scl_quadratic_real_coeff_gsl_solve_r(void *vptr, double a2, double b2, dou
 
 int o2scl_quadratic_real_coeff_gsl_solve_rc(void *vptr, double a2, double b2, double c2, void *ptr_r1, void *ptr_r2);
 
-void *o2scl_create_quadratic_real_coeff_gsl2__();
+void *o2scl_create_quadratic_real_coeff_gsl2_();
 
-void o2scl_free_quadratic_real_coeff_gsl2__(void *vptr);
+void o2scl_free_quadratic_real_coeff_gsl2_(void *vptr);
 
-int o2scl_quadratic_real_coeff_gsl2___solve_r(void *vptr, double a2, double b2, double c2, double *r1, double *r2);
+int o2scl_quadratic_real_coeff_gsl2__solve_r(void *vptr, double a2, double b2, double c2, double *r1, double *r2);
 
-int o2scl_quadratic_real_coeff_gsl2___solve_rc(void *vptr, double a2, double b2, double c2, void *ptr_r1, void *ptr_r2);
+int o2scl_quadratic_real_coeff_gsl2__solve_rc(void *vptr, double a2, double b2, double c2, void *ptr_r1, void *ptr_r2);
 
-void *o2scl_create_cubic_real_coeff_cern__();
+void *o2scl_create_cubic_real_coeff_cern_();
 
-void o2scl_free_cubic_real_coeff_cern__(void *vptr);
+void o2scl_free_cubic_real_coeff_cern_(void *vptr);
 
-int o2scl_cubic_real_coeff_cern___solve_r(void *vptr, double a3, double b3, double c3, double d3, double *r1, double *r2, double *r3);
+int o2scl_cubic_real_coeff_cern__solve_r(void *vptr, double a3, double b3, double c3, double d3, double *r1, double *r2, double *r3);
 
-int o2scl_cubic_real_coeff_cern___solve_rc(void *vptr, double a3, double b3, double c3, double d3, double *r1, void *ptr_r2, void *ptr_r3);
+int o2scl_cubic_real_coeff_cern__solve_rc(void *vptr, double a3, double b3, double c3, double d3, double *r1, void *ptr_r2, void *ptr_r3);
 
 void *o2scl_create_cubic_real_coeff_gsl();
 
@@ -97,13 +97,13 @@ int o2scl_cubic_real_coeff_gsl_solve_r(void *vptr, double a3, double b3, double 
 
 int o2scl_cubic_real_coeff_gsl_solve_rc(void *vptr, double a3, double b3, double c3, double d3, double *r1, void *ptr_r2, void *ptr_r3);
 
-void *o2scl_create_quartic_real_coeff_cern__();
+void *o2scl_create_quartic_real_coeff_cern_();
 
-void o2scl_free_quartic_real_coeff_cern__(void *vptr);
+void o2scl_free_quartic_real_coeff_cern_(void *vptr);
 
-int o2scl_quartic_real_coeff_cern___solve_r(void *vptr, double a4, double b4, double c4, double d4, double e4, double *r1, double *r2, double *r3, double *r4);
+int o2scl_quartic_real_coeff_cern__solve_r(void *vptr, double a4, double b4, double c4, double d4, double e4, double *r1, double *r2, double *r3, double *r4);
 
-int o2scl_quartic_real_coeff_cern___solve_rc(void *vptr, double a4, double b4, double c4, double d4, double e4, void *ptr_r1, void *ptr_r2, void *ptr_r3, void *ptr_r4);
+int o2scl_quartic_real_coeff_cern__solve_rc(void *vptr, double a4, double b4, double c4, double d4, double e4, void *ptr_r1, void *ptr_r2, void *ptr_r3, void *ptr_r4);
 
 void *o2scl_create_fermi_dirac_integ_gsl();
 

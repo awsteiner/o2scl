@@ -2730,8 +2730,8 @@ int main(int argc, char *argv[]) {
         } else if (iff.ret.name=="std::vector<double>") {
           fout << "        sv=std_vector(self._link)" << endl;
           fout << "        sv.resize(len(value))" << endl;
-          fout << "        for i in range(0,len(value)):" << endl;
-          fout << "            sv[i]=value[i]" << endl;
+          fout << "        for j in range(0,len(value)):" << endl;
+          fout << "            sv[j]=value[j]" << endl;
           fout << "        func.argtypes=[ctypes.c_void_p,"
                << "ctypes.c_size_t,ctypes.c_void_p]"
                << endl;
@@ -3152,11 +3152,15 @@ int main(int argc, char *argv[]) {
     }
     
     // If the class contains an operator[] or an operator(), then ensure
-    // that the __getitem__ method is documented.
+    // that the __getitem__ and __setitem__ methods are documented.
     for(size_t k=0;k<ifc.methods.size();k++) {
       if (ifc.methods[k].name=="operator[]" ||
           ifc.methods[k].name=="operator()") {
         fout2 << "        .. automethod:: __getitem__" << endl;
+        if (!ifc.methods[k].ret.is_const() &&
+            ifc.methods[k].ret.suffix=="&") {
+          fout2 << "        .. automethod:: __setitem__" << endl;
+        }
         k=ifc.methods.size();
       }
     }

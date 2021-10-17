@@ -417,13 +417,13 @@ int o2scl_hdf_value_spec_wrapper(char *spec, void *ptr_d, int verbose, bool err_
   return ret;
 }
 
-int o2scl_hdf_vector_spec_std__vector_double___wrapper(char *spec, void *ptr_v, int verbose, bool err_on_fail) {
+int o2scl_hdf_vector_spec_std_vector_double__wrapper(char *spec, void *ptr_v, int verbose, bool err_on_fail) {
   std::vector<double> *v=(std::vector<double> *)ptr_v;
   int ret=vector_spec<std::vector<double>>(spec,*v,verbose,err_on_fail);
   return ret;
 }
 
-int o2scl_hdf_strings_spec_std__vector_std__string___wrapper(char *spec, void *ptr_v, int verbose, bool err_on_fail) {
+int o2scl_hdf_strings_spec_std_vector_std_string__wrapper(char *spec, void *ptr_v, int verbose, bool err_on_fail) {
   std::vector<std::string> *v=(std::vector<std::string> *)ptr_v;
   int ret=strings_spec<std::vector<std::string>>(spec,*v,verbose,err_on_fail);
   return ret;

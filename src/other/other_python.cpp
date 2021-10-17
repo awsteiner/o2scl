@@ -168,24 +168,24 @@ int o2scl_quadratic_real_coeff_gsl_solve_rc(void *vptr, double a2, double b2, do
   return ret;
 }
 
-void *o2scl_create_quadratic_real_coeff_gsl2__() {
+void *o2scl_create_quadratic_real_coeff_gsl2_() {
   quadratic_real_coeff_gsl2<> *ptr=new quadratic_real_coeff_gsl2<>;
   return ptr;
 }
 
-void o2scl_free_quadratic_real_coeff_gsl2__(void *vptr) {
+void o2scl_free_quadratic_real_coeff_gsl2_(void *vptr) {
   quadratic_real_coeff_gsl2<> *ptr=(quadratic_real_coeff_gsl2<> *)vptr;
   delete ptr;
   return;
 }
 
-int o2scl_quadratic_real_coeff_gsl2___solve_r(void *vptr, double a2, double b2, double c2, double *r1, double *r2) {
+int o2scl_quadratic_real_coeff_gsl2__solve_r(void *vptr, double a2, double b2, double c2, double *r1, double *r2) {
   quadratic_real_coeff_gsl2<> *ptr=(quadratic_real_coeff_gsl2<> *)vptr;
   int ret=ptr->solve_r(a2,b2,c2,*r1,*r2);
   return ret;
 }
 
-int o2scl_quadratic_real_coeff_gsl2___solve_rc(void *vptr, double a2, double b2, double c2, void *ptr_r1, void *ptr_r2) {
+int o2scl_quadratic_real_coeff_gsl2__solve_rc(void *vptr, double a2, double b2, double c2, void *ptr_r1, void *ptr_r2) {
   quadratic_real_coeff_gsl2<> *ptr=(quadratic_real_coeff_gsl2<> *)vptr;
   std::complex<double> *r1=(std::complex<double> *)ptr_r1;
   std::complex<double> *r2=(std::complex<double> *)ptr_r2;
@@ -193,24 +193,24 @@ int o2scl_quadratic_real_coeff_gsl2___solve_rc(void *vptr, double a2, double b2,
   return ret;
 }
 
-void *o2scl_create_cubic_real_coeff_cern__() {
+void *o2scl_create_cubic_real_coeff_cern_() {
   cubic_real_coeff_cern<> *ptr=new cubic_real_coeff_cern<>;
   return ptr;
 }
 
-void o2scl_free_cubic_real_coeff_cern__(void *vptr) {
+void o2scl_free_cubic_real_coeff_cern_(void *vptr) {
   cubic_real_coeff_cern<> *ptr=(cubic_real_coeff_cern<> *)vptr;
   delete ptr;
   return;
 }
 
-int o2scl_cubic_real_coeff_cern___solve_r(void *vptr, double a3, double b3, double c3, double d3, double *r1, double *r2, double *r3) {
+int o2scl_cubic_real_coeff_cern__solve_r(void *vptr, double a3, double b3, double c3, double d3, double *r1, double *r2, double *r3) {
   cubic_real_coeff_cern<> *ptr=(cubic_real_coeff_cern<> *)vptr;
   int ret=ptr->solve_r(a3,b3,c3,d3,*r1,*r2,*r3);
   return ret;
 }
 
-int o2scl_cubic_real_coeff_cern___solve_rc(void *vptr, double a3, double b3, double c3, double d3, double *r1, void *ptr_r2, void *ptr_r3) {
+int o2scl_cubic_real_coeff_cern__solve_rc(void *vptr, double a3, double b3, double c3, double d3, double *r1, void *ptr_r2, void *ptr_r3) {
   cubic_real_coeff_cern<> *ptr=(cubic_real_coeff_cern<> *)vptr;
   std::complex<double> *r2=(std::complex<double> *)ptr_r2;
   std::complex<double> *r3=(std::complex<double> *)ptr_r3;
@@ -243,24 +243,24 @@ int o2scl_cubic_real_coeff_gsl_solve_rc(void *vptr, double a3, double b3, double
   return ret;
 }
 
-void *o2scl_create_quartic_real_coeff_cern__() {
+void *o2scl_create_quartic_real_coeff_cern_() {
   quartic_real_coeff_cern<> *ptr=new quartic_real_coeff_cern<>;
   return ptr;
 }
 
-void o2scl_free_quartic_real_coeff_cern__(void *vptr) {
+void o2scl_free_quartic_real_coeff_cern_(void *vptr) {
   quartic_real_coeff_cern<> *ptr=(quartic_real_coeff_cern<> *)vptr;
   delete ptr;
   return;
 }
 
-int o2scl_quartic_real_coeff_cern___solve_r(void *vptr, double a4, double b4, double c4, double d4, double e4, double *r1, double *r2, double *r3, double *r4) {
+int o2scl_quartic_real_coeff_cern__solve_r(void *vptr, double a4, double b4, double c4, double d4, double e4, double *r1, double *r2, double *r3, double *r4) {
   quartic_real_coeff_cern<> *ptr=(quartic_real_coeff_cern<> *)vptr;
   int ret=ptr->solve_r(a4,b4,c4,d4,e4,*r1,*r2,*r3,*r4);
   return ret;
 }
 
-int o2scl_quartic_real_coeff_cern___solve_rc(void *vptr, double a4, double b4, double c4, double d4, double e4, void *ptr_r1, void *ptr_r2, void *ptr_r3, void *ptr_r4) {
+int o2scl_quartic_real_coeff_cern__solve_rc(void *vptr, double a4, double b4, double c4, double d4, double e4, void *ptr_r1, void *ptr_r2, void *ptr_r3, void *ptr_r4) {
   quartic_real_coeff_cern<> *ptr=(quartic_real_coeff_cern<> *)vptr;
   std::complex<double> *r1=(std::complex<double> *)ptr_r1;
   std::complex<double> *r2=(std::complex<double> *)ptr_r2;
