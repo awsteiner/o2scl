@@ -552,6 +552,8 @@ size_t o2scl_tensor__get_rank(void *vptr);
 
 size_t o2scl_tensor__get_size(void *vptr, size_t i);
 
+void *o2scl_tensor__get_size_arr(void *vptr);
+
 void o2scl_tensor__get_data(void *vptr, double **dptr, int *n_);
 
 size_t o2scl_tensor__total_size(void *vptr);
@@ -562,9 +564,21 @@ void o2scl_tensor__unpack_index(void *vptr, size_t ix, void *ptr_index);
 
 double o2scl_tensor__min_value(void *vptr);
 
+void o2scl_tensor__min_index(void *vptr, void *ptr_index);
+
+void o2scl_tensor__min(void *vptr, void *ptr_ix, double *value);
+
 double o2scl_tensor__max_value(void *vptr);
 
+void o2scl_tensor__max_index(void *vptr, void *ptr_index);
+
+void o2scl_tensor__max(void *vptr, void *ptr_ix, double *value);
+
 void o2scl_tensor__minmax_value(void *vptr, double *min, double *max);
+
+void o2scl_tensor__minmax_index(void *vptr, void *ptr_min, void *ptr_max);
+
+void o2scl_tensor__minmax(void *vptr, void *ptr_min_ix, double *min_value, void *ptr_max_ix, double *max_value);
 
 double o2scl_tensor__total_sum(void *vptr);
 
@@ -618,6 +632,8 @@ size_t o2scl_tensor_int_std_vector_int__get_rank(void *vptr);
 
 size_t o2scl_tensor_int_std_vector_int__get_size(void *vptr, size_t i);
 
+void *o2scl_tensor_int_std_vector_int__get_data(void *vptr);
+
 size_t o2scl_tensor_int_std_vector_int__total_size(void *vptr);
 
 int o2scl_tensor_int_std_vector_int__min_value(void *vptr);
@@ -649,6 +665,8 @@ void o2scl_tensor_size_t_std_vector_size_t__resize(void *vptr, size_t n, void *p
 size_t o2scl_tensor_size_t_std_vector_size_t__get_rank(void *vptr);
 
 size_t o2scl_tensor_size_t_std_vector_size_t__get_size(void *vptr, size_t i);
+
+void *o2scl_tensor_size_t_std_vector_size_t__get_data(void *vptr);
 
 size_t o2scl_tensor_size_t_std_vector_size_t__total_size(void *vptr);
 

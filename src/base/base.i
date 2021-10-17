@@ -1,10 +1,8 @@
 # Interface file for o2scl base classes
 #
 # Todo:
-# 0. in yanic take care of setitem() docs in python
-# 1. operator[] for vector<vector<double>>
-# 2. get_size_arr() for tensor
-# 3. global functions like abs() and norm() for complex numbers
+# 1. test get_size_arr() for tensor
+# 2. global functions like abs() and norm() for complex numbers
 #
 # Todo: add columnify (esp. add_spaces()), interpolation, and
 # vector functions (esp. autocorrelation, and more functions not part of
@@ -1103,8 +1101,8 @@ class tensor<>
 - function get_size
   - size_t
   - size_t i
-#- function get_size_arr
-#  - const std::vector<size_t> &
+- function get_size_arr
+  - const std::vector<size_t> &
 - function get_data
   - vector<double> &
 - function total_size
@@ -1118,34 +1116,36 @@ class tensor<>
   - out std::vector<size_t> &index
 - function min_value
   - double
-#- function min_index
-#  - size_t
-#- function min
-#  - void
-#  - out size_t &ix
-#  - out double &value    
+- function min_index
+  - void
+  - out std::vector<size_t> &index
+- function min
+  - void
+  - out std::vector<size_t> &ix
+  - out double &value    
 - function max_value
   - double
-#- function max_index
-#  - size_t
-#- function max
-#  - void
-#  - out size_t &ix
-#  - out double &value    
+- function max_index
+  - void
+  - out std::vector<size_t> &index
+- function max
+  - void
+  - out std::vector<size_t> &ix
+  - out double &value    
 - function minmax_value
   - void
   - out double &min
   - out double &max
-#- function minmax_index
-#  - void
-#  - out size_t &min
-#  - out size_t &max
-#- function minmax
-#  - void
-#  - out size_t &min_ix
-#  - out double &min_value    
-#  - out size_t &max_ix
-#  - out double &max_value    
+- function minmax_index
+  - void
+  - out std::vector<size_t> &min
+  - out std::vector<size_t> &max
+- function minmax
+  - void
+  - out std::vector<size_t> &min_ix
+  - out double &min_value    
+  - out std::vector<size_t> &max_ix
+  - out double &max_value    
 - function total_sum
   - double
 - function convert_table3d_sum
@@ -1278,8 +1278,8 @@ class tensor<int,std::vector<int>>
 - function get_size
   - size_t
   - size_t i
-#- function get_data
-#  - out std::vector<int> &
+- function get_data
+  - const std::vector<int> &
 - function total_size
   - size_t
 - function min_value
@@ -1369,8 +1369,8 @@ class tensor<size_t,std::vector<size_t>>
 - function get_size
   - size_t
   - size_t i
-#- function get_data
-#  - out std::vector<size_t> &
+- function get_data
+  - const std::vector<size_t> &
 - function total_size
   - size_t
 - function min_value

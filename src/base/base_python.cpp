@@ -1572,6 +1572,12 @@ size_t o2scl_tensor__get_size(void *vptr, size_t i) {
   return ret;
 }
 
+void *o2scl_tensor__get_size_arr(void *vptr) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  const std::vector<size_t> *ret=&ptr->get_size_arr();
+  return (void *)ret;
+}
+
 void o2scl_tensor__get_data(void *vptr, double **dptr, int *n_) {
   tensor<> *ptr=(tensor<> *)vptr;
   const std::vector<double> &r=ptr->get_data();
@@ -1606,15 +1612,59 @@ double o2scl_tensor__min_value(void *vptr) {
   return ret;
 }
 
+void o2scl_tensor__min_index(void *vptr, void *ptr_index) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
+  ptr->min_index(*index);
+  return;
+}
+
+void o2scl_tensor__min(void *vptr, void *ptr_ix, double *value) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  std::vector<size_t> *ix=(std::vector<size_t> *)ptr_ix;
+  ptr->min(*ix,*value);
+  return;
+}
+
 double o2scl_tensor__max_value(void *vptr) {
   tensor<> *ptr=(tensor<> *)vptr;
   double ret=ptr->max_value();
   return ret;
 }
 
+void o2scl_tensor__max_index(void *vptr, void *ptr_index) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
+  ptr->max_index(*index);
+  return;
+}
+
+void o2scl_tensor__max(void *vptr, void *ptr_ix, double *value) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  std::vector<size_t> *ix=(std::vector<size_t> *)ptr_ix;
+  ptr->max(*ix,*value);
+  return;
+}
+
 void o2scl_tensor__minmax_value(void *vptr, double *min, double *max) {
   tensor<> *ptr=(tensor<> *)vptr;
   ptr->minmax_value(*min,*max);
+  return;
+}
+
+void o2scl_tensor__minmax_index(void *vptr, void *ptr_min, void *ptr_max) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  std::vector<size_t> *min=(std::vector<size_t> *)ptr_min;
+  std::vector<size_t> *max=(std::vector<size_t> *)ptr_max;
+  ptr->minmax_index(*min,*max);
+  return;
+}
+
+void o2scl_tensor__minmax(void *vptr, void *ptr_min_ix, double *min_value, void *ptr_max_ix, double *max_value) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  std::vector<size_t> *min_ix=(std::vector<size_t> *)ptr_min_ix;
+  std::vector<size_t> *max_ix=(std::vector<size_t> *)ptr_max_ix;
+  ptr->minmax(*min_ix,*min_value,*max_ix,*max_value);
   return;
 }
 
@@ -1780,6 +1830,12 @@ size_t o2scl_tensor_int_std_vector_int__get_size(void *vptr, size_t i) {
   return ret;
 }
 
+void *o2scl_tensor_int_std_vector_int__get_data(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  const std::vector<int> *ret=&ptr->get_data();
+  return (void *)ret;
+}
+
 size_t o2scl_tensor_int_std_vector_int__total_size(void *vptr) {
   tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
   size_t ret=ptr->total_size();
@@ -1876,6 +1932,12 @@ size_t o2scl_tensor_size_t_std_vector_size_t__get_size(void *vptr, size_t i) {
   tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
   size_t ret=ptr->get_size(i);
   return ret;
+}
+
+void *o2scl_tensor_size_t_std_vector_size_t__get_data(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  const std::vector<size_t> *ret=&ptr->get_data();
+  return (void *)ret;
 }
 
 size_t o2scl_tensor_size_t_std_vector_size_t__total_size(void *vptr) {

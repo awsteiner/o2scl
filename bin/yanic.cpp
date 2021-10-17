@@ -1638,7 +1638,13 @@ int main(int argc, char *argv[]) {
               fout << "  return;" << endl;
             } else if (iff.ret.is_ctype() || iff.ret.is_reference() ||
                        iff.ret.is_shared_ptr()) {
-              fout << "  return ret;" << endl;
+              if (iff.ret.is_const()) {
+                // Cast away const for conversions between const pointers
+                // and void *
+                fout << "  return (void *)ret;" << endl;
+              } else {
+                fout << "  return ret;" << endl;
+              }
             } else {
               fout << "  return &ret;" << endl;
             }
@@ -2713,8 +2719,7 @@ int main(int argc, char *argv[]) {
         if (iff.ret.name=="std::string") {
           fout << "        | *value*: Python bytes string" << endl;
         } else if (iff.ret.name=="std::vector<double>") {
-          fout << "        | *value*: :class:`std::vector<double>` "
-               << "object" << endl;
+          fout << "        | *value*: Python array" << endl;
         } else {
           fout << "        | *value*: " << iff.ret.name << endl;
         }

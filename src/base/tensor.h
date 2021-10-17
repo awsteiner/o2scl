@@ -899,8 +899,8 @@ namespace o2scl {
     /** \brief Compute the indices and values of the maximum and minimum
         in the tensor
     */
-    void minmax(vec_size_t &index, size_t &index_min, data_t &min,
-                size_t &index_max, data_t &max) {
+    void minmax(vec_size_t &index_min, data_t &min,
+                vec_size_t &index_max, data_t &max) {
       size_t ix_min, ix_max;
       o2scl::vector_minmax<vec_t,data_t>(total_size(),data,ix_min,min,
                                          ix_max,max);
