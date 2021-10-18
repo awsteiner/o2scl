@@ -4,6 +4,8 @@ help:
 	@echo "The traditional GNU-style targets apply."
 	@echo 
 
+EXTRA_DIST = yanic_header.txt
+
 # ------------------------------------------------------------      
 # Include statement
 # ------------------------------------------------------------      

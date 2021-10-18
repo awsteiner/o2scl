@@ -2408,9 +2408,14 @@ int main(int argc, char *argv[]) {
           iff.ret.name[len-1]=='>') {
         reformat_ret_type=iff.ret.name.substr(0,len-2);
       }
-      if (reformat_ret_type=="boost::numeric::ublas::matrix<double>") {
-        reformat_ret_type="ublas_matrix";
+      for(cpn_it it=class_py_names.begin();
+          it!=class_py_names.end();it++) {
+        if (it->first==reformat_ret_type) reformat_ret_type=it->second;
       }
+      
+      //if (reformat_ret_type=="boost::numeric::ublas::matrix<double>") {
+      //reformat_ret_type="ublas_matrix";
+      //}
       
       // Depending on return type, set return document string
       // and return python code
