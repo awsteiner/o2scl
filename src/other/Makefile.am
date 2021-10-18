@@ -243,7 +243,8 @@ am__libo2scl_other_la_SOURCES_DIST = $(OTHER_SRCS)
 
 interface: empty
 	../../bin/yanic other.i other_python ~/wcs/o2sclpy/o2sclpy/other \
-		~/wcs/o2sclpy/doc/other | tee other_python.yanic.out
+		~/wcs/o2sclpy/doc/other ../../bin/yanic_header.txt \
+		| tee other_python.yanic.out
 
 empty:
 

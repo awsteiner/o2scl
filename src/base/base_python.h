@@ -17,6 +17,7 @@
 
   You should have received a copy of the GNU General Public License
   along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+
   -------------------------------------------------------------------
 */
 
@@ -685,6 +686,10 @@ void o2scl_free_find_constants(void *vptr);
 void o2scl_find_constants_find_print(void *vptr, char *name, char *unit, size_t prec, int verbose);
 
 double o2scl_find_constants_find_unique(void *vptr, char *name, char *unit);
+
+void o2scl_find_constants_output_list_cout(void *vptr);
+
+void o2scl_find_constants_del_constant(void *vptr, void *ptr_name, int verbose=0);
 
 void *o2scl_create_convert_units_der_unit();
 

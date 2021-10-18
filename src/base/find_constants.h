@@ -104,9 +104,9 @@ namespace o2scl {
     find_constants();
 
     // FYI, from constants.h, we have:
-    
-    //static const size_t o2scl_mks=1;
-    //static const size_t o2scl_cgs=2;
+    //
+    // static const size_t o2scl_mks=1;
+    // static const size_t o2scl_cgs=2;
     
     /// \name Other possible values of the unit flag
     //@{
@@ -137,6 +137,14 @@ namespace o2scl {
     */
     void output_list(std::ostream &os);
 
+    /** \brief Output the full list of constants to 
+        \c std::cout
+    */
+    void output_list_cout() {
+      output_list(std::cout);
+      return;
+    }
+    
     /** \brief Add a constant
      */
     void add_constant(const find_constants_list &f, int verbose=0);

@@ -1,12 +1,13 @@
 # Interface file for o2scl base classes
 #
 # Todo:
-# 1. test get_size_arr() for tensor
-# 2. global functions like abs() and norm() for complex numbers
-#
-# Todo: add columnify (esp. add_spaces()), interpolation, and
-# vector functions (esp. autocorrelation, and more functions not part of
-# numpy), other tensor classes(?), tensor rearrangments
+# 1. Create o2sclpy/test/test_tensor.py
+# 2. Implement static const ints for class columnify
+# 3. Fix interp_vec and interp_krige_optim
+# 4. Fix all of the functions at the end
+# 5. Check links in python docs to o2scl website
+# 6. In yanic, allow user configuration of copyright notice.
+# 7. global functions like abs() and norm() for complex numbers
 #
 namespace o2scl
 py_class_doc |
@@ -1434,6 +1435,12 @@ class find_constants
   - double
   - std::string name
   - std::string unit
+- function output_list_cout
+  - void
+- function del_constant
+  - void
+  - io std::string &name
+  - int verbose [0]
 #
 # Class convert_units_der_unit  
 #

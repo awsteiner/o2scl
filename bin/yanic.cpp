@@ -536,7 +536,7 @@ int main(int argc, char *argv[]) {
 
   if (argc<5) {
     cerr << "Args: <interface file> <c++ output prefix> "
-         << "<python prefix> <rst prefix>" << endl;
+         << "<python prefix> <rst prefix> [header file]" << endl;
     exit(-1);
   }
   
@@ -545,33 +545,27 @@ int main(int argc, char *argv[]) {
   std::string py_prefix=argv[3];
   std::string rst_prefix=argv[4];
 
+  std::string header_file="";
+
   cout << "Reading interface file " << fname << " ." << endl;
   cout << "Setting C++ output prefix to " << cpp_prefix << " ." << endl;
   cout << "Setting Python output prefix to " << py_prefix << " ." << endl;
+  if (argc>=6) {
+    header_file=argv[5];
+    cout << "Setting header file to " << header_file << " ." << endl;
+  }
   cout << endl;
 
-  vector<string> header_strings=
-    {"  -------------------------------------------------------------------",
-     "",
-     "  Copyright (C) 2020-2021, Andrew W. Steiner",
-     "",
-     "  This file is part of O2scl.",
-     "",
-     "  O2scl is free software; you can redistribute it and/or modify",
-     "  it under the terms of the GNU General Public License as published by",
-     "  the Free Software Foundation; either version 3 of the License, or",
-     "  (at your option) any later version.",
-     "",
-     "  O2scl is distributed in the hope that it will be useful,",
-     "  but WITHOUT ANY WARRANTY; without even the implied warranty of",
-     "  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
-     "  GNU General Public License for more details.",
-     "",
-     "  You should have received a copy of the GNU General Public License",
-     "  along with O2scl. If not, see <http://www.gnu.org/licenses/>."
-     "",
-     "  -------------------------------------------------------------------"
-    };
+  // Read header file
+  vector<string> header_strings;
+  ifstream fin2;
+  string line_temp;
+  fin2.open(header_file.c_str());
+  while (getline(fin2,line_temp)) {
+    header_strings.push_back(line_temp);
+    cout << "Line: " << line_temp << endl;
+  }
+  fin2.close();
   
   cout << "Parsing interface " << fname << " ." << endl;
 
@@ -1638,7 +1632,10 @@ int main(int argc, char *argv[]) {
               fout << "  return;" << endl;
             } else if (iff.ret.is_ctype() || iff.ret.is_reference() ||
                        iff.ret.is_shared_ptr()) {
-              if (iff.ret.is_const()) {
+              if ((iff.ret.name=="std::vector<double>" ||
+                   iff.ret.name=="std::vector<int>" ||
+                   iff.ret.name=="std::vector<size_t>") &&
+                  iff.ret.is_const()) {
                 // Cast away const for conversions between const pointers
                 // and void *
                 fout << "  return (void *)ret;" << endl;

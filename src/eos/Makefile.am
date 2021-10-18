@@ -433,7 +433,8 @@ x:
 
 interface: empty
 	../../bin/yanic eos.i eos_python ~/wcs/o2sclpy/o2sclpy/eos \
-		~/wcs/o2sclpy/doc/eos | tee eos_python.yanic.out
+		~/wcs/o2sclpy/doc/eos  ../../bin/yanic_header.txt \
+		| tee eos_python.yanic.out
 
 empty:
 
