@@ -767,6 +767,28 @@ void o2scl_convert_units__print_cache(void *vptr);
 
 void o2scl_convert_units__print_units_cout(void *vptr);
 
+void *o2scl_create_columnify();
+
+void o2scl_free_columnify(void *vptr);
+
+int o2scl_columnify_get_align_left(void *vptr);
+
+
+int o2scl_columnify_get_align_right(void *vptr);
+
+
+int o2scl_columnify_get_align_lmid(void *vptr);
+
+
+int o2scl_columnify_get_align_rmid(void *vptr);
+
+
+int o2scl_columnify_get_align_dp(void *vptr);
+
+
+int o2scl_columnify_get_align_lnum(void *vptr);
+
+
 void *o2scl_create_format_float();
 
 void o2scl_free_format_float(void *vptr);
@@ -806,6 +828,8 @@ void o2scl_interp_std_vector_double__set_type(void *vptr, int interp_type);
 void *o2scl_create_interp_vec_std_vector_double_();
 
 void o2scl_free_interp_vec_std_vector_double_(void *vptr);
+
+void o2scl_interp_vec_std_vector_double__set(void *vptr, size_t n, void *ptr_x, void *ptr_y, int interp_type);
 
 void o2scl_interp_vec_std_vector_double__clear(void *vptr);
 
@@ -872,5 +896,43 @@ double o2scl_quadratic_extremum_y_double__wrapper(double x1, double x2, double x
 void o2scl_screenify_vector_std_string__wrapper(size_t nin, void *ptr_in_cols, void *ptr_out_cols, size_t max_size=80);
 
 size_t o2scl_vector_level_count_std_vector_double_std_vector_double__wrapper(double level, size_t n, void *ptr_x, void *ptr_y);
+
+void o2scl_vector_deriv_interp_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_v, void *ptr_dv, size_t interp_type=2);
+
+void o2scl_vector_deriv2_interp_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_v, void *ptr_dv, size_t interp_type=2);
+
+void o2scl_vector_deriv_xy_interp_std_vector_double_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_vx, void *ptr_vy, void *ptr_dv, size_t interp_type=2);
+
+void o2scl_vector_deriv2_xy_interp_std_vector_double_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_vx, void *ptr_vy, void *ptr_dv, size_t interp_type=2);
+
+double o2scl_vector_integ_interp_std_vector_double__wrapper(size_t n, void *ptr_vx, size_t interp_type=2);
+
+double o2scl_vector_integ_xy_interp_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_vx, void *ptr_vy, size_t interp_type=2);
+
+double o2scl_vector_integ_ul_interp_std_vector_double__wrapper(size_t n, double x2, void *ptr_v, size_t interp_type=2);
+
+double o2scl_vector_integ_ul_xy_interp_std_vector_double_std_vector_double__wrapper(size_t n, double x2, void *ptr_vx, void *ptr_vy, size_t interp_type=2);
+
+void o2scl_vector_find_level_std_vector_double_std_vector_double__wrapper(double level, size_t n, void *ptr_x, void *ptr_y, void *ptr_locs);
+
+void o2scl_vector_invert_enclosed_sum_std_vector_double_std_vector_double__wrapper(double sum, size_t n, void *ptr_x, void *ptr_y, void *ptr_lev, int boundaries=0, int verbose=0, bool err_on_fail=true);
+
+int o2scl_vector_region_int_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_x, void *ptr_y, double intl, void *ptr_locs, int boundaries=0, int verbose=0, bool err_on_fail=true);
+
+int o2scl_vector_region_fracint_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_x, void *ptr_y, double intl, void *ptr_locs, int boundaries=0, int verbose=0, bool err_on_fail=true);
+
+int o2scl_vector_bound_fracint_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_x, void *ptr_y, double frac, void *ptr_low, void *ptr_high, int boundaries=0, int verbose=0, bool err_on_fail=true);
+
+int o2scl_vector_bound_int_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_x, void *ptr_y, double frac, void *ptr_low, void *ptr_high, int boundaries=0, int verbose=0, bool err_on_fail=true);
+
+void o2scl_rebin_xy_std_vector_double_std_vector_double_std_vector_double_std_vector_double__wrapper(void *ptr_x, void *ptr_y, void *ptr_x_out, void *ptr_y_out, size_t n_pts, size_t interp_type);
+
+double o2scl_linear_or_log_chi2_std_vector_double_std_vector_double__wrapper(void *ptr_x, void *ptr_y);
+
+void o2scl_linear_or_log_std_vector_double_std_vector_double__wrapper(void *ptr_x, void *ptr_y, void *ptr_log_x, void *ptr_log_y);
+
+void o2scl_vector_refine_std_vector_double_std_vector_double_double__wrapper(size_t n, void *ptr_index, void *ptr_data, size_t factor, size_t interp_type=2);
+
+void o2scl_linear_or_log_std_vector_double__wrapper(void *ptr_x, void *ptr_log_x);
 
 }

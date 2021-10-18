@@ -1397,20 +1397,23 @@ int main(int argc, char *argv[]) {
       
         // Set functions for class data
         if (ifv.ift.is_ctype()) {
-          // Set function for a C data type
-          fout << "void " << underscoreify(ifc.ns) << "_"
-               << underscoreify(ifc.name) << "_set_"
-               << ifv.name << "(void *vptr, "
-               << ifv.ift.name << " v)";
-          if (header) {
-            fout << ";" << endl;
-          } else {
-            fout << " {" << endl;
-            fout << "  " << ifc.name << " *ptr=(" << ifc.name
-                 << " *)vptr;" << endl;
-            fout << "  ptr->" << ifv.name << "=v;" << endl;
-            fout << "  return;" << endl;
-            fout << "}" << endl;
+          if (!ifv.ift.is_const() &&
+              !ifv.ift.is_reference()) {
+            // Set function for a C data type
+            fout << "void " << underscoreify(ifc.ns) << "_"
+                 << underscoreify(ifc.name) << "_set_"
+                 << ifv.name << "(void *vptr, "
+                 << ifv.ift.name << " v)";
+            if (header) {
+              fout << ";" << endl;
+            } else {
+              fout << " {" << endl;
+              fout << "  " << ifc.name << " *ptr=(" << ifc.name
+                   << " *)vptr;" << endl;
+              fout << "  ptr->" << ifv.name << "=v;" << endl;
+              fout << "  return;" << endl;
+              fout << "}" << endl;
+            }
           }
         } else {
           // Set function for other types
@@ -2279,19 +2282,24 @@ int main(int argc, char *argv[]) {
       // Setter
       if (ifv.ift.is_ctype()) {
         
-        fout << "    @" << ifv.name << ".setter" << endl;
-        fout << "    def " << ifv.name << "(self,value):" << endl;
-        fout << "        \"\"\"" << endl;
-        fout << "        Setter function for " << ifc.name << "::"
-             << ifv.name << " ." << endl;
-        fout << "        \"\"\"" << endl;
-        fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
-             << underscoreify(ifc.name)
-             << "_set_" << ifv.name << endl;
-        fout << "        func.argtypes=[ctypes.c_void_p,ctypes.c_"
-             << ifv.ift.name << "]" << endl;
-        fout << "        func(self._ptr,value)" << endl;
-        fout << "        return" << endl;
+        if (!ifv.ift.is_const() &&
+            !ifv.ift.is_reference()) {
+          
+          fout << "    @" << ifv.name << ".setter" << endl;
+          fout << "    def " << ifv.name << "(self,value):" << endl;
+          fout << "        \"\"\"" << endl;
+          fout << "        Setter function for " << ifc.name << "::"
+               << ifv.name << " ." << endl;
+          fout << "        \"\"\"" << endl;
+          fout << "        func=self._link." << dll_name << "."
+               << ifc.ns << "_" << underscoreify(ifc.name)
+               << "_set_" << ifv.name << endl;
+          fout << "        func.argtypes=[ctypes.c_void_p,ctypes.c_"
+               << ifv.ift.name << "]" << endl;
+          fout << "        func(self._ptr,value)" << endl;
+          fout << "        return" << endl;
+          
+        }
         
       } else {
         

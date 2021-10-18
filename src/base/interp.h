@@ -2221,8 +2221,8 @@ namespace o2scl {
       interpolation up to a specified upper limit
   */
   template<class vec_t, class vec2_t> 
-    double vector_integ_ul_xy_interp(size_t n, const vec_t &x,
-                                     const vec2_t &y, double x2,
+    double vector_integ_ul_xy_interp(size_t n, double x2,
+                                     const vec_t &x, const vec2_t &y, 
                                      size_t interp_type=itp_linear) {
     
     // Interpolation object

@@ -2228,6 +2228,53 @@ void o2scl_convert_units__print_units_cout(void *vptr) {
   return;
 }
 
+void *o2scl_create_columnify() {
+  columnify *ptr=new columnify;
+  return ptr;
+}
+
+void o2scl_free_columnify(void *vptr) {
+  columnify *ptr=(columnify *)vptr;
+  delete ptr;
+  return;
+}
+
+int o2scl_columnify_get_align_left(void *vptr) {
+  columnify *ptr=(columnify *)vptr;
+  return ptr->align_left;
+}
+
+
+int o2scl_columnify_get_align_right(void *vptr) {
+  columnify *ptr=(columnify *)vptr;
+  return ptr->align_right;
+}
+
+
+int o2scl_columnify_get_align_lmid(void *vptr) {
+  columnify *ptr=(columnify *)vptr;
+  return ptr->align_lmid;
+}
+
+
+int o2scl_columnify_get_align_rmid(void *vptr) {
+  columnify *ptr=(columnify *)vptr;
+  return ptr->align_rmid;
+}
+
+
+int o2scl_columnify_get_align_dp(void *vptr) {
+  columnify *ptr=(columnify *)vptr;
+  return ptr->align_dp;
+}
+
+
+int o2scl_columnify_get_align_lnum(void *vptr) {
+  columnify *ptr=(columnify *)vptr;
+  return ptr->align_lnum;
+}
+
+
 void *o2scl_create_format_float() {
   format_float *ptr=new format_float;
   return ptr;
@@ -2351,6 +2398,14 @@ void *o2scl_create_interp_vec_std_vector_double_() {
 void o2scl_free_interp_vec_std_vector_double_(void *vptr) {
   interp_vec<std::vector<double>> *ptr=(interp_vec<std::vector<double>> *)vptr;
   delete ptr;
+  return;
+}
+
+void o2scl_interp_vec_std_vector_double__set(void *vptr, size_t n, void *ptr_x, void *ptr_y, int interp_type) {
+  interp_vec<std::vector<double>> *ptr=(interp_vec<std::vector<double>> *)vptr;
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  ptr->set(n,*x,*y,interp_type);
   return;
 }
 
@@ -2541,5 +2596,150 @@ size_t o2scl_vector_level_count_std_vector_double_std_vector_double__wrapper(dou
   std::vector<double> *y=(std::vector<double> *)ptr_y;
   size_t ret=vector_level_count<std::vector<double>,std::vector<double>>(level,n,*x,*y);
   return ret;
+}
+
+void o2scl_vector_deriv_interp_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_v, void *ptr_dv, size_t interp_type) {
+  std::vector<double> *v=(std::vector<double> *)ptr_v;
+  std::vector<double> *dv=(std::vector<double> *)ptr_dv;
+  vector_deriv_interp<std::vector<double>,std::vector<double>>(n,*v,*dv,interp_type);
+  return;
+}
+
+void o2scl_vector_deriv2_interp_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_v, void *ptr_dv, size_t interp_type) {
+  std::vector<double> *v=(std::vector<double> *)ptr_v;
+  std::vector<double> *dv=(std::vector<double> *)ptr_dv;
+  vector_deriv2_interp<std::vector<double>,std::vector<double>>(n,*v,*dv,interp_type);
+  return;
+}
+
+void o2scl_vector_deriv_xy_interp_std_vector_double_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_vx, void *ptr_vy, void *ptr_dv, size_t interp_type) {
+  std::vector<double> *vx=(std::vector<double> *)ptr_vx;
+  std::vector<double> *vy=(std::vector<double> *)ptr_vy;
+  std::vector<double> *dv=(std::vector<double> *)ptr_dv;
+  vector_deriv_xy_interp<std::vector<double>,std::vector<double>,std::vector<double>>(n,*vx,*vy,*dv,interp_type);
+  return;
+}
+
+void o2scl_vector_deriv2_xy_interp_std_vector_double_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_vx, void *ptr_vy, void *ptr_dv, size_t interp_type) {
+  std::vector<double> *vx=(std::vector<double> *)ptr_vx;
+  std::vector<double> *vy=(std::vector<double> *)ptr_vy;
+  std::vector<double> *dv=(std::vector<double> *)ptr_dv;
+  vector_deriv2_xy_interp<std::vector<double>,std::vector<double>,std::vector<double>>(n,*vx,*vy,*dv,interp_type);
+  return;
+}
+
+double o2scl_vector_integ_interp_std_vector_double__wrapper(size_t n, void *ptr_vx, size_t interp_type) {
+  std::vector<double> *vx=(std::vector<double> *)ptr_vx;
+  double ret=vector_integ_interp<std::vector<double>>(n,*vx,interp_type);
+  return ret;
+}
+
+double o2scl_vector_integ_xy_interp_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_vx, void *ptr_vy, size_t interp_type) {
+  std::vector<double> *vx=(std::vector<double> *)ptr_vx;
+  std::vector<double> *vy=(std::vector<double> *)ptr_vy;
+  double ret=vector_integ_xy_interp<std::vector<double>,std::vector<double>>(n,*vx,*vy,interp_type);
+  return ret;
+}
+
+double o2scl_vector_integ_ul_interp_std_vector_double__wrapper(size_t n, double x2, void *ptr_v, size_t interp_type) {
+  std::vector<double> *v=(std::vector<double> *)ptr_v;
+  double ret=vector_integ_ul_interp<std::vector<double>>(n,x2,*v,interp_type);
+  return ret;
+}
+
+double o2scl_vector_integ_ul_xy_interp_std_vector_double_std_vector_double__wrapper(size_t n, double x2, void *ptr_vx, void *ptr_vy, size_t interp_type) {
+  std::vector<double> *vx=(std::vector<double> *)ptr_vx;
+  std::vector<double> *vy=(std::vector<double> *)ptr_vy;
+  double ret=vector_integ_ul_xy_interp<std::vector<double>,std::vector<double>>(n,x2,*vx,*vy,interp_type);
+  return ret;
+}
+
+void o2scl_vector_find_level_std_vector_double_std_vector_double__wrapper(double level, size_t n, void *ptr_x, void *ptr_y, void *ptr_locs) {
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  std::vector<double> *locs=(std::vector<double> *)ptr_locs;
+  vector_find_level<std::vector<double>,std::vector<double>>(level,n,*x,*y,*locs);
+  return;
+}
+
+void o2scl_vector_invert_enclosed_sum_std_vector_double_std_vector_double__wrapper(double sum, size_t n, void *ptr_x, void *ptr_y, void *ptr_lev, int boundaries, int verbose, bool err_on_fail) {
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  double *lev=(double *)ptr_lev;
+  vector_invert_enclosed_sum<std::vector<double>,std::vector<double>>(sum,n,*x,*y,*lev,boundaries,verbose,err_on_fail);
+  return;
+}
+
+int o2scl_vector_region_int_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_x, void *ptr_y, double intl, void *ptr_locs, int boundaries, int verbose, bool err_on_fail) {
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  std::vector<double> *locs=(std::vector<double> *)ptr_locs;
+  int ret=vector_region_int<std::vector<double>,std::vector<double>>(n,*x,*y,intl,*locs,boundaries,verbose,err_on_fail);
+  return ret;
+}
+
+int o2scl_vector_region_fracint_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_x, void *ptr_y, double intl, void *ptr_locs, int boundaries, int verbose, bool err_on_fail) {
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  std::vector<double> *locs=(std::vector<double> *)ptr_locs;
+  int ret=vector_region_fracint<std::vector<double>,std::vector<double>>(n,*x,*y,intl,*locs,boundaries,verbose,err_on_fail);
+  return ret;
+}
+
+int o2scl_vector_bound_fracint_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_x, void *ptr_y, double frac, void *ptr_low, void *ptr_high, int boundaries, int verbose, bool err_on_fail) {
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  double *low=(double *)ptr_low;
+  double *high=(double *)ptr_high;
+  int ret=vector_bound_fracint<std::vector<double>,std::vector<double>>(n,*x,*y,frac,*low,*high,boundaries,verbose,err_on_fail);
+  return ret;
+}
+
+int o2scl_vector_bound_int_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_x, void *ptr_y, double frac, void *ptr_low, void *ptr_high, int boundaries, int verbose, bool err_on_fail) {
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  double *low=(double *)ptr_low;
+  double *high=(double *)ptr_high;
+  int ret=vector_bound_int<std::vector<double>,std::vector<double>>(n,*x,*y,frac,*low,*high,boundaries,verbose,err_on_fail);
+  return ret;
+}
+
+void o2scl_rebin_xy_std_vector_double_std_vector_double_std_vector_double_std_vector_double__wrapper(void *ptr_x, void *ptr_y, void *ptr_x_out, void *ptr_y_out, size_t n_pts, size_t interp_type) {
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  std::vector<double> *x_out=(std::vector<double> *)ptr_x_out;
+  std::vector<double> *y_out=(std::vector<double> *)ptr_y_out;
+  rebin_xy<std::vector<double>,std::vector<double>,std::vector<double>,std::vector<double>>(*x,*y,*x_out,*y_out,n_pts,interp_type);
+  return;
+}
+
+double o2scl_linear_or_log_chi2_std_vector_double_std_vector_double__wrapper(void *ptr_x, void *ptr_y) {
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  double ret=linear_or_log_chi2<std::vector<double>,std::vector<double>>(*x,*y);
+  return ret;
+}
+
+void o2scl_linear_or_log_std_vector_double_std_vector_double__wrapper(void *ptr_x, void *ptr_y, void *ptr_log_x, void *ptr_log_y) {
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  bool *log_x=(bool *)ptr_log_x;
+  bool *log_y=(bool *)ptr_log_y;
+  linear_or_log<std::vector<double>,std::vector<double>>(*x,*y,*log_x,*log_y);
+  return;
+}
+
+void o2scl_vector_refine_std_vector_double_std_vector_double_double__wrapper(size_t n, void *ptr_index, void *ptr_data, size_t factor, size_t interp_type) {
+  std::vector<double> *index=(std::vector<double> *)ptr_index;
+  std::vector<double> *data=(std::vector<double> *)ptr_data;
+  vector_refine<std::vector<double>,std::vector<double>,double>(n,*index,*data,factor,interp_type);
+  return;
+}
+
+void o2scl_linear_or_log_std_vector_double__wrapper(void *ptr_x, void *ptr_log_x) {
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  bool *log_x=(bool *)ptr_log_x;
+  linear_or_log<std::vector<double>>(*x,*log_x);
+  return;
 }
 
