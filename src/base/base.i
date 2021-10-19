@@ -1778,7 +1778,7 @@ function vector_integ_xy_interp<std::vector<double>,std::vector<double>>
 - size_t interp_type [2]
 function vector_integ_ul_interp<std::vector<double>>
 - double
-- py_name vector_integ_xy_interp  
+- py_name vector_integ_ul_interp  
 - size_t n  
 - double x2
 - io std::vector<double> &v

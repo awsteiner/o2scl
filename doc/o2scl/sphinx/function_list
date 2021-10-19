@@ -1,3 +1,15 @@
+    <member refid="namespaceo2scl_1a8a2c69ef08fca5a16ca41dfdebeaa310" kind="function"><name>fermi_function</name></member>
+    <member refid="namespaceo2scl_1a664c30f53f2c6379fb8211e0a91f90ce" kind="function"><name>bose_function</name></member>
+    <member refid="namespaceo2scl_1a09b56a2b5f7a846d87868ec7d8088bdd" kind="function"><name>pipe_cmd_string</name></member>
+    <member refid="namespaceo2scl_1a1e252280eb590b07c4a5235eb3cbc2ac" kind="function"><name>python_cmd_string</name></member>
+    <member refid="namespaceo2scl_1afada3607a1d3d633ee47366431768681" kind="function"><name>pipe_cmd_string</name></member>
+    <member refid="namespaceo2scl_1aeae28c1926df5e3819dab5e1a7502bed" kind="function"><name>file_exists</name></member>
+    <member refid="namespaceo2scl_1a321b38cc7488845a84187982917d4986" kind="function"><name>count_words</name></member>
+    <member refid="namespaceo2scl_1a1c4b9ab50337c0fcd5df21b081f52f8d" kind="function"><name>remove_whitespace</name></member>
+    <member refid="namespaceo2scl_1ac5bd6452ccc918db3bcd78806407d314" kind="function"><name>remove_ws_punct</name></member>
+    <member refid="namespaceo2scl_1acf7b38453474c1d54f7bc88e54a88261" kind="function"><name>binary_to_hex</name></member>
+    <member refid="namespaceo2scl_1ae9d5cb5c639803ef4add58f38ae2b2de" kind="function"><name>RGBtoHSV</name></member>
+    <member refid="namespaceo2scl_1ac5395cf1e49228ae74149a048be6472d" kind="function"><name>HSVtoRGB</name></member>
     <member refid="namespaceo2scl_1a979e62e12220c8af248c0f4c6829a9cb" kind="function"><name>matrix_out</name></member>
     <member refid="namespaceo2scl_1a78e38ca1a86bd8baf773bdba4dc68c48" kind="function"><name>matrix_out</name></member>
     <member refid="namespaceo2scl_1a21a4a5a1d9ba77d8248389171e39c15d" kind="function"><name>matrix_trans_out</name></member>
@@ -15,7 +27,7 @@
     <member refid="namespaceo2scl_1a966330ec9c1ecd41d3fe5961eb89f4a6" kind="function"><name>vector_integ_xy_interp</name></member>
     <member refid="namespaceo2scl_1ad548fbff8c977c3726894f54fbcd95d1" kind="function"><name>vector_integ_xy_interp</name></member>
     <member refid="namespaceo2scl_1abe8c0020ff7c717f6b2d3b26bbee53db" kind="function"><name>vector_integ_ul_interp</name></member>
-    <member refid="namespaceo2scl_1a4a69340cee7e8e1cd445eabcfb6601b7" kind="function"><name>vector_integ_ul_xy_interp</name></member>
+    <member refid="namespaceo2scl_1aeeb33ccf7d7bcaa770bec5e98b02dd6d" kind="function"><name>vector_integ_ul_xy_interp</name></member>
     <member refid="namespaceo2scl_1a8455c1454e35a49c2cf3bc08c412b040" kind="function"><name>vector_find_level</name></member>
     <member refid="namespaceo2scl_1a0e314b1deb4c905613a53d202148f8be" kind="function"><name>vector_invert_enclosed_sum</name></member>
     <member refid="namespaceo2scl_1af610f74fadc9afd32a6b453fe7616243" kind="function"><name>vector_region_int</name></member>
@@ -76,18 +88,6 @@
     <member refid="namespaceo2scl_1a821cadf43df98d39af8c1059fe6058cb" kind="function"><name>o2hypot</name></member>
     <member refid="namespaceo2scl_1a8da23af52c77a2e7d018ca3201d80700" kind="function"><name>o2hypot</name></member>
     <member refid="namespaceo2scl_1ae6cb9d8337971f35d92cab4317fa4dbe" kind="function"><name>o2hypot</name></member>
-    <member refid="namespaceo2scl_1a8a2c69ef08fca5a16ca41dfdebeaa310" kind="function"><name>fermi_function</name></member>
-    <member refid="namespaceo2scl_1a664c30f53f2c6379fb8211e0a91f90ce" kind="function"><name>bose_function</name></member>
-    <member refid="namespaceo2scl_1a09b56a2b5f7a846d87868ec7d8088bdd" kind="function"><name>pipe_cmd_string</name></member>
-    <member refid="namespaceo2scl_1a1e252280eb590b07c4a5235eb3cbc2ac" kind="function"><name>python_cmd_string</name></member>
-    <member refid="namespaceo2scl_1afada3607a1d3d633ee47366431768681" kind="function"><name>pipe_cmd_string</name></member>
-    <member refid="namespaceo2scl_1aeae28c1926df5e3819dab5e1a7502bed" kind="function"><name>file_exists</name></member>
-    <member refid="namespaceo2scl_1a321b38cc7488845a84187982917d4986" kind="function"><name>count_words</name></member>
-    <member refid="namespaceo2scl_1a1c4b9ab50337c0fcd5df21b081f52f8d" kind="function"><name>remove_whitespace</name></member>
-    <member refid="namespaceo2scl_1ac5bd6452ccc918db3bcd78806407d314" kind="function"><name>remove_ws_punct</name></member>
-    <member refid="namespaceo2scl_1acf7b38453474c1d54f7bc88e54a88261" kind="function"><name>binary_to_hex</name></member>
-    <member refid="namespaceo2scl_1ae9d5cb5c639803ef4add58f38ae2b2de" kind="function"><name>RGBtoHSV</name></member>
-    <member refid="namespaceo2scl_1ac5395cf1e49228ae74149a048be6472d" kind="function"><name>HSVtoRGB</name></member>
     <member refid="namespaceo2scl_1a514efbfa23d06e94bd7daf205ca03c0b" kind="function"><name>quadratic_extremum_x</name></member>
     <member refid="namespaceo2scl_1adc1a3bcdf0c66bf7aff38e3a75764c2f" kind="function"><name>quadratic_extremum_y_full</name></member>
     <member refid="namespaceo2scl_1a6d16293457c7a75922ac2794bfb5619e" kind="function"><name>quadratic_extremum_y</name></member>

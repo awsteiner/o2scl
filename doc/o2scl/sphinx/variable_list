@@ -1,3 +1,4 @@
+    <member refid="namespaceo2scl_1adc643a701d476795e320637c84cdb80f" kind="variable"><name>fermi_function_doc</name></member>
     <member refid="namespaceo2scl_1adcd60e45e495084dda3ed6b6d81609dd" kind="variable"><name>err_hnd</name></member>
     <member refid="namespaceo2scl_1a4e88f03beb8a6bee57ce1cc67fb003e0" kind="variable"><name>alt_err_hnd</name></member>
     <member refid="namespaceo2scl_1adb46f38d30aa221bb7d5bca3dfc7bb92" kind="variable"><name>def_err_hnd</name></member>

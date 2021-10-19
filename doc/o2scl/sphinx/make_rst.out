@@ -347,6 +347,19 @@ Creating rst files for classes:
 ---------------------------------------------------
 Parsing function_list:
 
+Namespace:  function: fermi_function
+Namespace:  function: bose_function
+Namespace: o2scl function: pipe_cmd_string
+Namespace: o2scl function: python_cmd_string
+Namespace: o2scl function: pipe_cmd_string
+Multiple entry pipe_cmd_string
+Namespace:  function: file_exists
+Namespace:  function: count_words
+Namespace:  function: remove_whitespace
+Namespace: o2scl function: remove_ws_punct
+Namespace: o2scl function: binary_to_hex
+Namespace:  function: RGBtoHSV
+Namespace:  function: HSVtoRGB
 Namespace:  function: matrix_out
 Namespace:  function: matrix_out
 Multiple entry matrix_out
@@ -471,19 +484,6 @@ Namespace:  function: o2hypot
 Multiple entry o2hypot
 Namespace:  function: o2hypot
 Multiple entry o2hypot
-Namespace:  function: fermi_function
-Namespace:  function: bose_function
-Namespace: o2scl function: pipe_cmd_string
-Namespace: o2scl function: python_cmd_string
-Namespace: o2scl function: pipe_cmd_string
-Multiple entry pipe_cmd_string
-Namespace:  function: file_exists
-Namespace:  function: count_words
-Namespace:  function: remove_whitespace
-Namespace: o2scl function: remove_ws_punct
-Namespace: o2scl function: binary_to_hex
-Namespace:  function: RGBtoHSV
-Namespace:  function: HSVtoRGB
 Namespace: o2scl function: quadratic_extremum_x
 Namespace: o2scl function: quadratic_extremum_y_full
 Namespace: o2scl function: quadratic_extremum_y
