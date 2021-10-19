@@ -93,7 +93,7 @@ The classes :ref:`search_vec <search_vec>` and :ref:`search_vec_ext
 which contain monotonic (either increasing or decreasing) data. It is
 :ref:`search_vec <search_vec>` which is used internally by the
 interpolation classes to perform cached binary searching. These
-classes also allow one to to exahaustively search for the index of an
+classes also allow one to to exhaustively search for the index of an
 element in a vector without regard to any kind of ordering, e.g. 
 :cpp:func:`o2scl::search_vec::ordered_lookup()`.
 
@@ -121,12 +121,13 @@ Inverse interpolation and related functions
 
 The equivalent to "inverse" linear interpolation, which computes all
 the abcissae which have a fixed value of the ordinate, is implemented
-in the template function :cpp:func:`vector_find_level()`. This
-function together with \ref :cpp:func:`vector_invert_enclosed_sum()`
-can be used to determine confidence limits surrounding the peak of a
-1-dimensional data set using linear interpolation. To count level
-crossings in a function, use :cpp:func:`vector_level_count()`. The
-function \ref :cpp:func:`vector_integ_interp()` uses interpolation to
+in the template function :cpp:func:`o2scl::vector_find_level()`. This
+function together with \ref
+:cpp:func:`o2scl::vector_invert_enclosed_sum()` can be used to
+determine confidence limits surrounding the peak of a 1-dimensional
+data set using linear interpolation. To count level crossings in a
+function, use :cpp:func:`o2scl::vector_level_count()`. The function
+\ref :cpp:func:`o2scl::vector_integ_interp()` uses interpolation to
 compute the integral defined by a set of vectors, and the function
 :cpp:func:`o2scl::vector_region_fracint()` finds the set of regions
 which gives a fraction of the integral reported by \ref

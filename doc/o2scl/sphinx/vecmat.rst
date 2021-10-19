@@ -3,10 +3,10 @@ Arrays, Vectors, Matrices and Tensors
 
 :ref:`O2scl <o2scl>`
 
-Arrays, Vectors, Matrices and Tensors Contents
+Arrays, vectors, matrices and tensors contents
 ----------------------------------------------
 
-- :ref:`Vector and Matrix introduction`
+- :ref:`Vector and matrix introduction`
 - :ref:`Rows and columns vs. x and y`
 - :ref:`Assignment and copying`
 - :ref:`Differentiation and integration`
@@ -25,12 +25,12 @@ Arrays, Vectors, Matrices and Tensors Contents
 - :ref:`Tensors`
 - :ref:`I/O and contiguous storage`
 
-Vector and Matrix introduction
+Vector and matrix introduction
 ------------------------------
      
 Many useful vector and matrix objects are defined elsewhere, thus O\
 :sub:`2`\ scl does not include native vector and matrix classes.
-Internally, O\ :sub:`2`\ scl uses <tt>std::vector</tt>,
+Internally, O\ :sub:`2`\ scl uses ``std::vector``,
 Boost uBLAS vector and
 matrix objects: ``boost::numeric::ublas::vector<>``,
 ``boost::numeric::ublas::matrix<>``, and other related class
@@ -64,8 +64,7 @@ row object, and it is thus difficult to implement ``operator[]``
 without incurring an overhead. Nevertheless, some O\ :sub:`2`\ scl
 classes have separate versions which operate on matrix types which are
 only accessible with ``operator[][]`` (like two-dimensional arrays).
-See the :ref:`Linear Algebra` section of the User's guide for examples
-of this.
+See :ref:`Linear Algebra` for examples of this distinction.
 
 With ``std::function<>`` and the new lambda function support in C++11,
 it is important to notice that ``std::function<double
@@ -77,16 +76,16 @@ slices of tensors) can be trivially constructed from ``std::bind`` and
 
 A matrix type is distinct from a "vector of vectors" or a "list of
 vectors", such as that implied by ``std::vector<std::vector<double>
->`` because not all of the vectors in the list need to have the same
-size. In some cases, There are places where a list of vectors is
-preferable to a matrix, and O\ :sub:`2`\ scl expects that elements in
-a list of vectors can be accessed by ``operator[][]``. A :ref:`table
-<table>` object can be thought of as a list of vectors in this
-sense. The function :cpp:func:`o2scl::tensor_grid::set_grid` also
-accepts a list of vectors, and for this function, none of the
-vectors needs to have the same size. A list of vectors can also be
-used to specify a scattered list of points in a multi-dimensional
-space. Thus, a list of vectors is what is used for the argument of
+>`` because in the latter, not all of the vectors in the list need to
+have the same size. In some cases, There are places where a list of
+vectors is preferable to a matrix, and O\ :sub:`2`\ scl expects that
+elements in a list of vectors can be accessed by ``operator[][]``. A
+:ref:`table <table>` object can be thought of as a list of vectors in
+this sense. The function :cpp:func:`o2scl::tensor_grid::set_grid` also
+accepts a list of vectors, and for this function, none of the vectors
+needs to have the same size. A list of vectors can also be used to
+specify a scattered list of points in a multi-dimensional space. Thus,
+a list of vectors is what is used for the argument of
 :ref:`interpm_idw <interpm_idw>`.
 
 The word "tensor" is used for a generic object which has rank ``n``
@@ -355,7 +354,7 @@ For writing generic vectors to a stream, you can use the
 :cpp:func:`o2scl::vector_out()` functions, which are defined in
 ``src/base/vector.h``. Pretty matrix output is performed by the
 :cpp:func:`o2scl::matrix_out()` functions, which are defined in
-``src/base/columnify.h``. These functions uses a :ref:`columnify
+``src/base/columnify.h``. These function uses a :ref:`columnify
 <columnify>` object to format the output.
 
 Tensors
@@ -369,9 +368,10 @@ size in the class :ref:`tensor <tensor>`. Classes :ref:`tensor1
 :ref:`tensor_grid <tensor_grid>` provides a space to define a
 hyper-cubic grid in addition to the the tensor data. This class
 :ref:`tensor_grid <tensor_grid>` also provides simple n-dimensional
-interpolation of the data defined on the specified grid. There are
-functions in ``src/hdf/hdf_io.h`` which provide HDF5 I/O for tensor
-objects.
+interpolation of the data defined on the specified grid. See
+:ref:`File I/O with HDF5` for functions in which provide HDF5 I/O for
+tensor objects.
+
 
 I/O and contiguous storage
 --------------------------
@@ -383,14 +383,14 @@ is thus important to ensure that these objects are stored contiguously
 in memory. The standard template library objects, e.g. ``std::vector``
 have this property as part of the recent C++ standard. The ublas
 objects, so far as I know, do not necessarily have this property. For
-this reason, :cpp:func:`o2scl::hdf_file::getd_vec()` and
-:cpp:func:`o2scl::hdf_file::setd_vec()` are efficient when working with
-``std::vector`` objects, but otherwise require an extra copy upon
+this reason, :cpp:func:`o2scl_hdf::hdf_file::getd_vec()` and
+:cpp:func:`o2scl_hdf::hdf_file::setd_vec()` are efficient when working
+with ``std::vector`` objects, but otherwise require an extra copy upon
 reading from and writing to an HDF5 file. The same holds for matrix
 and tensor I/O. It is the efficiency of this I/O which motivated the
 default choice of ``std::vector`` objects as the default vector type
 in :ref:`table <table>` and :ref:`tensor <tensor>`. Also because of
 this issue, O\ :sub:`2`\ scl does not currently provide HDF I/O
-functions for :ref:`tensor <tensor>` classes unless it is built upon
-``std::vector``.
+functions for :ref:`tensor <tensor>` classes unless they are built
+upon ``std::vector``.
 

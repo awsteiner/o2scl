@@ -40,21 +40,6 @@
 using namespace std;
 using namespace o2scl;
 
-// A function demonstrating the different ways of implementing
-// function parameters
-double global_function(double x) {
-  double parameter=0.01;
-  double p=1.1;
-  return atan((x-parameter)*4)*(1.0+sin((x-parameter)*50.0)/p);
-}
-  
-// A function demonstrating the different ways of implementing
-// function parameters
-double global_function_parameter(double x, double &p) {
-  double parameter=0.01;
-  return atan((x-parameter)*4)*(1.0+sin((x-parameter)*50.0)/p);
-}
-  
 class my_class {
 
 private:
@@ -67,14 +52,7 @@ public:
   
   // A function demonstrating the different ways of implementing
   // function parameters
-  double member_function(double x) {
-    double p=1.1;
-    return atan((x-parameter)*4)*(1.0+sin((x-parameter)*50.0)/p);
-  }
-  
-  // A function demonstrating the different ways of implementing
-  // function parameters
-  double member_function_parameter(double x, double &p) {
+  double member_function(double x, double &p) {
     return atan((x-parameter)*4)*(1.0+sin((x-parameter)*50.0)/p);
   }
   
@@ -105,27 +83,9 @@ int main(void) {
   // static variables and functions and multiple inheritance at the
   // expense of a little overhead. We need to provide the address of
   // an instantiated object and the address of the member function.
-  funct function1=global_function;
-
-  funct function2=std::bind(global_function_parameter,
-                            std::placeholders::_1,std::ref(p));
-  
-  funct function3=std::bind(std::mem_fn
+  funct function=std::bind(std::mem_fn<double(double,double &)>
                             (&my_class::member_function),
-                            &c,std::placeholders::_1);
-  
-  funct function4=std::bind(std::mem_fn<double(double,double &)>
-                            (&my_class::member_function_parameter),
                             &c,std::placeholders::_1,std::ref(p));
-  
-  funct function5=[c,p](double x) mutable -> double {
-                    return c.member_function_parameter(x,p); };
-
-  funct function6=[c,p](double x) mutable -> double {
-                    return c.member_function_parameter(x,p); };
-
-  funct function7=[c,p](double x) mutable -> double {
-                    return c.member_function_parameter(x,p); };
   
   double x1=-1;
   double x2=2;
@@ -133,25 +93,19 @@ int main(void) {
   // The value verbose=1 prints out iteration information
   // and verbose=2 requires a keypress between iterations.
   solver.verbose=1;
-  solver.solve_bkt(x1,x2,function4);
+  solver.solve_bkt(x1,x2,function);
 
   // This is actually a somewhat difficult function to solve because
   // of the sinusoidal behavior.
   cout << "Solution: " << x1 
-       << " Function value: " << c.member_function_parameter(x1,p) << endl;
+       << " Function value: " << c.member_function(x1,p) << endl;
 
   // Write the function being solved to a file (see source code 
   // in examples directory for details)
   write_file(x1);
 
-  /*
-    solver.solve_bkt(x1,x2,[c,p](double x) -> double {
-    return c.member_function_parameter(x,p);
-    } ));
-  */
-
   // Obtain and summarize test results
-  t.test_abs(c.member_function_parameter(x1,p),0.0,1.0e-10,"ex_fptr");
+  t.test_abs(c.member_function(x1,p),0.0,1.0e-10,"ex_fptr");
   t.report();
 
   return 0;

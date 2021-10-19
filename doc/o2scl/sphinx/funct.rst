@@ -66,11 +66,11 @@ methods apply to other O\ :sub:`2`\ scl function objects.
 General comments about function objects
 ---------------------------------------
 
-The C++ standard library functors employ copy construction at
-various types, so one must be careful about the types involved in
-creating the functor. Generally, all classes should have
-constructors and structs should be avoided because they can cause
-difficulties with default copy construction.
+The C++ standard library functors employ copy construction at various
+types, so one must be careful about the types involved in creating the
+functor. Generally, all classes should have constructors and structs
+should be used with care because they can cause difficulties with
+default copy construction.
 
 There is a small overhead associated with the indirection: a "user
 class" accesses the function class which then calls function which
