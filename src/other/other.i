@@ -20,6 +20,7 @@ h_include <o2scl/slack_messenger.h>
 h_include <o2scl/poly.h>
 h_include <o2scl/polylog.h>
 h_include <o2scl/hist.h>
+h_include <o2scl/fract.h>
 # 
 # Include statement for C++ source code
 # 
@@ -243,3 +244,15 @@ class hist
   - std::string func
 - function clear
   - void
+class fract
+- function nrf_z4m1
+  - void
+  - io uniform_grid<> &gx
+  - io uniform_grid<> &gy
+  - size_t kmax
+  - double rmax
+  - out o2scl::table3d &t3d
+  - io std::vector<double> &roots_x
+  - io std::vector<double> &roots_y
+  - io std::vector<double> &min
+  - io std::vector<double> &max

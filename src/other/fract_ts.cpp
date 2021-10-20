@@ -33,27 +33,6 @@ using namespace o2scl_hdf;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-int z4m1(size_t nv, const ubvector &x, ubvector &f,
-	 ubmatrix &J) {
-  double x2=x[0]*x[0];
-  double y2=x[1]*x[1];
-  f[0]=-1+x2*x2-6*x2*y2+y2*y2;
-  f[1]=4*x[0]*x[1]*(x2-y2);
-  J(0,0)=4*x2*x[0]-12*x[0]*y2;
-  J(0,1)=-12*x2*x[1]+4*y2*x[1];
-  J(1,0)=8*x2*x[1]+4*x[1]*(x2-y2);
-  J(1,1)=-8*x[0]*y2+4*x[0]*(x2-y2);
-  return 0;
-}
-
-int mandel(ubvector &z, ubvector c) {
-  double zr=c[0]+z[0]*z[0]-z[1]*z[1];
-  double zi=c[1]+2.0*z[0]*z[1];
-  z[0]=zr;
-  z[1]=zi;
-  return 0;
-}
-
 int main(void) {
 
   cout.setf(ios::scientific);
@@ -75,7 +54,7 @@ int main(void) {
   roots_y.push_back(0.0);
   roots_y.push_back(-1.0);
   roots_y.push_back(1.0);
-  f.nrf(z4m1,grid,grid,1000,1.0e9,t3d,roots_x,roots_y,min,max);
+  f.nrf(nrf_z4m1,grid,grid,1000,1.0e9,t3d,roots_x,roots_y,min,max);
 
   hdf_file hf;
   hf.open_or_create("nrf.o2");
@@ -102,7 +81,7 @@ int main(void) {
   size_t min2, max2;
   uniform_grid<double> grid2x=uniform_grid_end<double>(-1.7,0.5,599);
   uniform_grid<double> grid2y=uniform_grid_end<double>(-1.1,1.1,599);
-  f.itf(mandel,grid2x,grid2y,100,10.0,t3db,min2,max2);
+  f.itf(itf_mandel,grid2x,grid2y,100,10.0,t3db,min2,max2);
   cout << "min2,max2: " << min2 << " " << max2 << endl;
   
   hf.open_or_create("nrf2.o2");

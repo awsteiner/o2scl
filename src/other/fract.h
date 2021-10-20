@@ -49,6 +49,18 @@ namespace o2scl {
 
   /** \brief Desc
    */
+  int nrf_z4m1(size_t nv,
+               const boost::numeric::ublas::vector<double> &x,
+               boost::numeric::ublas::vector<double> &f,
+               boost::numeric::ublas::matrix<double> &J);
+  
+  /** \brief Desc
+   */
+  int itf_mandel(boost::numeric::ublas::vector<double> &z,
+                 boost::numeric::ublas::vector<double> c);
+  
+  /** \brief Desc
+   */
   class fract {
     
   public:
@@ -208,7 +220,22 @@ namespace o2scl {
 
       return 0;
     }
-    
+
+    template<class mat_t=ubmatrix,
+      class vec_t=ubvector, class vec2_t=std::vector<double>,
+             class vec2_size_t=std::vector<size_t>, class fp_t=double>
+    int nrf_z4m1(uniform_grid<fp_t> &gx,
+                 uniform_grid<fp_t> &gy, size_t kmax, fp_t rmax,
+                 o2scl::table3d &t3d, vec2_t &roots_x,
+                 vec2_t &roots_y, vec2_size_t &min_count,
+                 vec2_size_t &max_count) {
+      nrf_funct f=o2scl::nrf_z4m1;
+      return nrf(f,gx,gy,kmax,rmax,t3d,roots_x,roots_y,min_count,
+                 max_count);
+    }
+      
+    /** \brief Desc
+     */
     template<class func_t, class vec_t=ubvector, class fp_t=double>
     int itf(func_t &f, uniform_grid<fp_t> &gx,
             uniform_grid<fp_t> &gy, size_t kmax, fp_t rmax,
