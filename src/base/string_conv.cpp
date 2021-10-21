@@ -292,7 +292,7 @@ int o2scl::function_to_double_nothrow(std::string s, double &result,
     
     std::map<std::string,double> vars;
     
-    std::vector<find_constants::find_constants_list> matches;
+    std::vector<find_constants::const_entry> matches;
     for(size_t i=0;i<vs.size();i++) {
       std::string vsi2;
       char32_to_utf8(vs[i],vsi2);
@@ -301,7 +301,7 @@ int o2scl::function_to_double_nothrow(std::string s, double &result,
       if (fret==find_constants::one_exact_match_unit_match ||
           fret==find_constants::one_pattern_match_unit_match) {
 
-        find_constants::find_constants_list &fcl=matches[0];
+        find_constants::const_entry &fcl=matches[0];
 
         vars.insert(std::make_pair(vsi2,fcl.val));
         if (verbose>=2) {

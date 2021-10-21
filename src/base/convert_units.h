@@ -998,13 +998,13 @@ namespace o2scl {
         o2scl::vector_out(std::cout,new_units,true);
       }
       
-      std::vector<find_constants::find_constants_list> matches;
+      std::vector<find_constants::const_entry> matches;
       for(size_t i=0;i<new_units.size();i++) {
         int fret=fc.find_nothrow(new_units[i],"mks",matches);
         if (fret==find_constants::one_exact_match_unit_match ||
             fret==find_constants::one_pattern_match_unit_match) {
           der_unit du;
-          find_constants::find_constants_list &fcl=matches[0];
+          find_constants::const_entry &fcl=matches[0];
           du.label=new_units[i];
           du.m=fcl.m;
           du.k=fcl.k;

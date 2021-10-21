@@ -1433,6 +1433,22 @@ class tensor<size_t,std::vector<size_t>>
 |     self.resize_vector(svst)
 |     return
 # 
+# Class find_constants::const_entry
+#
+class find_constants_const_entry
+- std::vector<std::string> names
+- std::string unit
+- int unit_flag
+- double val
+- std::string source
+- int m
+- int k
+- int s
+- int K
+- int A
+- int mol
+- int cd
+# 
 # Class find_constants
 #
 class find_constants
@@ -1448,6 +1464,10 @@ class find_constants
   - std::string unit
 - function output_list_cout
   - void
+- function add_constant
+  - void
+  - io find_constants::const_entry &f
+  - int verbose [0]    
 - function del_constant
   - void
   - io std::string &name
@@ -1723,6 +1743,12 @@ function screenify<vector<std::string>>
 - io vector<std::string> &in_cols
 - out vector<std::string> &out_cols
 - size_t max_size [80]
+#
+# Functions from string_conv.h
+#
+function file_exists
+- bool
+function   
 #
 # Functions from interp.h
 # 

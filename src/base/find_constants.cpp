@@ -432,7 +432,7 @@ find_constants::find_constants() {
 }
 
 bool find_constants::unit_match_logic(std::string unit,
-                                      const find_constants_list &f) {
+                                      const const_entry &f) {
   if (unit.length()==0 || f.unit_flag==fc_unknown ||
       (boost::iequals(unit,"mks") &&
        (f.unit_flag==o2scl_const::o2scl_mks ||
@@ -450,7 +450,7 @@ bool find_constants::unit_match_logic(std::string unit,
                                       
 
 int find_constants::find_nothrow(std::string name, std::string unit,
-				 vector<find_constants_list> &matches,
+				 vector<const_entry> &matches,
 				 int verbose) {
   
   o2scl::convert_units<> &cu=o2scl_settings.get_convert_units();
@@ -752,7 +752,7 @@ void find_constants::find_print(std::string name, std::string unit,
 
   cout.precision(prec);
     
-  vector<find_constants_list> matches;
+  vector<const_entry> matches;
   int ret=find_nothrow(name,unit,matches,verbose);
   if (ret==no_matches) {
     cout << "find_constant::find_print(): No matches found for name "
@@ -778,7 +778,7 @@ void find_constants::find_print(std::string name, std::string unit,
 }
   
 double find_constants::find_unique(std::string name, std::string unit) {
-  vector<find_constants_list> matches;
+  vector<const_entry> matches;
   int ret=find_nothrow(name,unit,matches);
   if (ret!=one_exact_match_unit_match &&
       ret!=one_pattern_match_unit_match) {
@@ -827,7 +827,7 @@ void find_constants::output_list(std::ostream &os) {
   return;
 }
 
-void find_constants::add_constant(const find_constants_list &f,
+void find_constants::add_constant(const const_entry &f,
                                   int verbose) {
 
   if (verbose>1) {
@@ -884,7 +884,7 @@ void find_constants::del_constant(std::string &name, int verbose) {
     }
   }
   if (n_matches==1) {
-    std::vector<find_constants_list>::iterator it=list.begin();
+    std::vector<const_entry>::iterator it=list.begin();
     it+=i_match;
     if (verbose>1) {
       cout << "find_constants::add_constant() Removing "

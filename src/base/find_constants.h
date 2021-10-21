@@ -36,7 +36,7 @@ namespace o2scl {
   public:
 
     /// Type for constant database (also used for list of matches)
-    typedef struct find_constants_list_s {
+    typedef struct const_entry_s {
       /// List of names for the constant, with the preferred name first
       std::vector<std::string> names;
       /// Unit
@@ -61,7 +61,7 @@ namespace o2scl {
       int mol;
       /// Power of luminous intensity
       int cd;
-    } find_constants_list;
+    } const_entry;
 
     /// \name Return values for find_nothrow()
     //@{
@@ -81,7 +81,7 @@ namespace o2scl {
   protected:
 
     /// Database of constant values
-    std::vector<find_constants_list> list;
+    std::vector<const_entry> list;
 
     /** \brief The function which decides if the requested unit matches
         the specified list entry
@@ -97,7 +97,7 @@ namespace o2scl {
           flag is either o2scl_cgs or fc_none
     */
     bool unit_match_logic(std::string unit,
-                          const find_constants_list &f);
+                          const const_entry &f);
     
   public:
   
@@ -119,7 +119,7 @@ namespace o2scl {
 	\c unit (possibly empty) and store matches in \c indexes
     */
     int find_nothrow(std::string name, std::string unit,
-		     std::vector<find_constants_list> &matches,
+		     std::vector<const_entry> &matches,
 		     int verbose=0);
   
     /** \brief Search for constants matching \c name with unit \c unit
@@ -147,7 +147,7 @@ namespace o2scl {
     
     /** \brief Add a constant
      */
-    void add_constant(const find_constants_list &f, int verbose=0);
+    void add_constant(const const_entry &f, int verbose=0);
     
     /** \brief Remove a constant
      */
