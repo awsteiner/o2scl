@@ -729,6 +729,7 @@ namespace o2scl {
     
     virtual ~convert_units() {}
 
+    /// The associated find constants object
     find_constants fc;
     
     /** \brief Add a user-defined unit

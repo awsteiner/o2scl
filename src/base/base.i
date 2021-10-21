@@ -1435,7 +1435,8 @@ class tensor<size_t,std::vector<size_t>>
 # 
 # Class find_constants::const_entry
 #
-class find_constants_const_entry
+class find_constants::const_entry
+- py_name find_constants_const_entry
 - std::vector<std::string> names
 - std::string unit
 - int unit_flag
@@ -1519,6 +1520,15 @@ class convert_units<>
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/convert_units.html .
 - py_name convert_units
+- extra_py |
+| def add_unit(self,label,val,name='',m=0,k=0,s=0,K=0,A=0,mol=0,cd=0):
+|     """
+|     Add a unit
+|     """
+|     du=convert_units_der_unit(self._link)
+|     du.set(label,val,name,m,k,s,K,A,mol,cd)
+|     self.add_unit_internal(du)
+|     return
 - function convert
   - double
   - std::string frm
@@ -1535,6 +1545,7 @@ class convert_units<>
   - io std::string &name
 - function add_unit
   - void
+  - py_name add_unit_internal
   - const io convert_units<>::der_unit &d
 - function set_natural_units
   - void
@@ -1704,7 +1715,7 @@ class interp_krige_optim<std::vector<double>>
 #  - io std::vector<double> &x
 #  - io std::vector<double> &y
 #
-# Functions from misc.h
+# Functions and classes from misc.h
 # 
 function fermi_function
 - double
@@ -1743,12 +1754,63 @@ function screenify<vector<std::string>>
 - io vector<std::string> &in_cols
 - out vector<std::string> &out_cols
 - size_t max_size [80]
+function file_exists
+- bool
+- std::string fname
+function RGBtoHSV
+- void
+- double r
+- double g
+- double b
+- out double &h
+- out double &s
+- out double &v
+function HSVtoRGB
+- void
+- double h
+- double s
+- double v
+- out double &r
+- out double &g
+- out double &b
+function wordexp_single_file
+- void
+- io std::string &fname  
+function wordexp_wrapper
+- void
+- std::string word
+- out std::vector<std::string> &matches
+class gen_test_number<double>
+- py_name gen_test_number
+- function reset
+  - void
+- function set_radix
+  - void
+  - double r
+- function gen
+  - double
 #
 # Functions from string_conv.h
 #
-function file_exists
-- bool
-function   
+function function_to_double
+- double
+- std::string s
+- int verbose [0]
+function function_to_double_nothrow
+- int
+- std::string s
+- out double &result
+- int verbose [0]
+function string_to_uint_list<vector<size_t>>
+- int
+- py_name string_to_uint_list
+- io const std::string &x
+- out vector<size_t> &list
+function string_to_char_array
+- void
+- std::string s
+- char *x
+- int len  
 #
 # Functions from interp.h
 # 
