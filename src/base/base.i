@@ -1482,14 +1482,15 @@ class convert_units<>::der_unit
 | def set(self,label,val,name='',m=0,k=0,s=0,K=0,A=0,mol=0,cd=0):
 |     """
 |     Set the properties of a derived unit
+|     FIXME: beter docs here
 |     """
-|     ltmp=std_string(self._link)
-|     ltmp.init_bytes(label)
-|     self.label=ltmp
+|     label2=std_string(self._link)
+|     label2.init_bytes(force_bytes(label))
+|     self.set_label(label2)
 |     self.val=val
-|     ntmp=std_string(self._link)
-|     ntmp.init_bytes(name)
-|     self.name=ntmp
+|     name2=std_string(self._link)
+|     name2.init_bytes(force_bytes(name))
+|     self.set_name(name2)
 |     self.m=m
 |     self.k=k
 |     self.s=s
@@ -1806,11 +1807,11 @@ function string_to_uint_list<vector<size_t>>
 - py_name string_to_uint_list
 - io const std::string &x
 - out vector<size_t> &list
-function string_to_char_array
-- void
-- std::string s
-- char *x
-- int len  
+#function string_to_char_array
+#- void
+#- std::string s
+#- char *x
+#- int len
 #
 # Functions from interp.h
 # 

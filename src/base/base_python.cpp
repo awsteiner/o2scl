@@ -2168,7 +2168,6 @@ void o2scl_find_constants_del_constant(void *vptr, void *ptr_name, int verbose) 
 
 void *o2scl_create_convert_units_der_unit() {
   convert_units<>::der_unit *ptr=new convert_units<>::der_unit;
-  std::cout << "Created der_unit: " << ptr << std::endl;
   return ptr;
 }
 
@@ -2188,8 +2187,6 @@ void *o2scl_convert_units_der_unit_get_label(void *vptr) {
 void o2scl_convert_units_der_unit_set_label(void *vptr, void *p_v) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   std::string *p_t=(std::string *)p_v;
-  std::cout << "Setting label of pointer " << ptr << " to " << *p_t
-            << std::endl;
   ptr->label=*(p_t);
   return;
 }
@@ -2292,8 +2289,6 @@ void *o2scl_convert_units_der_unit_get_name(void *vptr) {
 void o2scl_convert_units_der_unit_set_name(void *vptr, void *p_v) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   std::string *p_t=(std::string *)p_v;
-  std::cout << "Setting name of pointer " << ptr << " to " << *p_t
-            << std::endl;
   ptr->name=*(p_t);
   return;
 }
@@ -2658,6 +2653,35 @@ void o2scl_interp_krige_optim_std_vector_double__set_full_min(void *vptr, bool v
   return;
 }
 
+void *o2scl_create_gen_test_number_double_() {
+  gen_test_number<double> *ptr=new gen_test_number<double>;
+  return ptr;
+}
+
+void o2scl_free_gen_test_number_double_(void *vptr) {
+  gen_test_number<double> *ptr=(gen_test_number<double> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_gen_test_number_double__reset(void *vptr) {
+  gen_test_number<double> *ptr=(gen_test_number<double> *)vptr;
+  ptr->reset();
+  return;
+}
+
+void o2scl_gen_test_number_double__set_radix(void *vptr, double r) {
+  gen_test_number<double> *ptr=(gen_test_number<double> *)vptr;
+  ptr->set_radix(r);
+  return;
+}
+
+double o2scl_gen_test_number_double__gen(void *vptr) {
+  gen_test_number<double> *ptr=(gen_test_number<double> *)vptr;
+  double ret=ptr->gen();
+  return ret;
+}
+
 void *o2scl_create_shared_ptr_table_units_() {
   std::shared_ptr<table_units<> > *ptr=new std::shared_ptr<table_units<> >(new table_units<>);
   return ptr;
@@ -2757,6 +2781,53 @@ void o2scl_screenify_vector_std_string__wrapper(size_t nin, void *ptr_in_cols, v
 
 bool o2scl_file_exists_wrapper(char *fname) {
   bool ret=file_exists(fname);
+  return ret;
+}
+
+void o2scl_RGBtoHSV_wrapper(double r, double g, double b, void *ptr_h, void *ptr_s, void *ptr_v) {
+  double *h=(double *)ptr_h;
+  double *s=(double *)ptr_s;
+  double *v=(double *)ptr_v;
+  RGBtoHSV(r,g,b,*h,*s,*v);
+  return;
+}
+
+void o2scl_HSVtoRGB_wrapper(double h, double s, double v, void *ptr_r, void *ptr_g, void *ptr_b) {
+  double *r=(double *)ptr_r;
+  double *g=(double *)ptr_g;
+  double *b=(double *)ptr_b;
+  HSVtoRGB(h,s,v,*r,*g,*b);
+  return;
+}
+
+void o2scl_wordexp_single_file_wrapper(void *&ptr_fname) {
+  std::string *fname=new std::string;
+  wordexp_single_file(*fname);
+  ptr_fname=(void *)fname;
+  return;
+}
+
+void o2scl_wordexp_wrapper_wrapper(char *word, void *ptr_matches) {
+  std::vector<std::string> *matches=(std::vector<std::string> *)ptr_matches;
+  wordexp_wrapper(word,*matches);
+  return;
+}
+
+double o2scl_function_to_double_wrapper(char *s, int verbose) {
+  double ret=function_to_double(s,verbose);
+  return ret;
+}
+
+int o2scl_function_to_double_nothrow_wrapper(char *s, void *ptr_result, int verbose) {
+  double *result=(double *)ptr_result;
+  int ret=function_to_double_nothrow(s,*result,verbose);
+  return ret;
+}
+
+int o2scl_string_to_uint_list_vector_size_t__wrapper(void *&ptr_x, void *ptr_list) {
+  std::string *x=new std::string;
+  vector<size_t> *list=(vector<size_t> *)ptr_list;
+  int ret=string_to_uint_list<vector<size_t>>(*x,*list);
   return ret;
 }
 

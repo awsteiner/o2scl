@@ -915,6 +915,16 @@ bool o2scl_interp_krige_optim_std_vector_double__get_full_min(void *vptr);
 
 void o2scl_interp_krige_optim_std_vector_double__set_full_min(void *vptr, bool v);
 
+void *o2scl_create_gen_test_number_double_();
+
+void o2scl_free_gen_test_number_double_(void *vptr);
+
+void o2scl_gen_test_number_double__reset(void *vptr);
+
+void o2scl_gen_test_number_double__set_radix(void *vptr, double r);
+
+double o2scl_gen_test_number_double__gen(void *vptr);
+
 void *o2scl_create_shared_ptr_table_units_();
 
 void o2scl_free_shared_ptr_table_units_(void *vptr);
@@ -950,6 +960,20 @@ double o2scl_quadratic_extremum_y_double__wrapper(double x1, double x2, double x
 void o2scl_screenify_vector_std_string__wrapper(size_t nin, void *ptr_in_cols, void *ptr_out_cols, size_t max_size=80);
 
 bool o2scl_file_exists_wrapper(char *fname);
+
+void o2scl_RGBtoHSV_wrapper(double r, double g, double b, void *ptr_h, void *ptr_s, void *ptr_v);
+
+void o2scl_HSVtoRGB_wrapper(double h, double s, double v, void *ptr_r, void *ptr_g, void *ptr_b);
+
+void o2scl_wordexp_single_file_wrapper(void *&ptr_fname);
+
+void o2scl_wordexp_wrapper_wrapper(char *word, void *ptr_matches);
+
+double o2scl_function_to_double_wrapper(char *s, int verbose=0);
+
+int o2scl_function_to_double_nothrow_wrapper(char *s, void *ptr_result, int verbose=0);
+
+int o2scl_string_to_uint_list_vector_size_t__wrapper(void *&ptr_x, void *ptr_list);
 
 size_t o2scl_vector_level_count_std_vector_double_std_vector_double__wrapper(double level, size_t n, void *ptr_x, void *ptr_y);
 
