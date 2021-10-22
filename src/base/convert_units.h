@@ -735,7 +735,10 @@ namespace o2scl {
     /** \brief Add a user-defined unit
      */
     void add_unit(const der_unit &d) {
+      std::cout << "Adding: " << &d << " "
+                << d.name << " " << d.label << std::endl;
       other.push_back(d);
+      std::cout << "Done adding." << std::endl;
       return;
     }
     

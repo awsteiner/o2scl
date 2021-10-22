@@ -2168,6 +2168,7 @@ void o2scl_find_constants_del_constant(void *vptr, void *ptr_name, int verbose) 
 
 void *o2scl_create_convert_units_der_unit() {
   convert_units<>::der_unit *ptr=new convert_units<>::der_unit;
+  std::cout << "Created der_unit: " << ptr << std::endl;
   return ptr;
 }
 
@@ -2187,6 +2188,8 @@ void *o2scl_convert_units_der_unit_get_label(void *vptr) {
 void o2scl_convert_units_der_unit_set_label(void *vptr, void *p_v) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   std::string *p_t=(std::string *)p_v;
+  std::cout << "Setting label of pointer " << ptr << " to " << *p_t
+            << std::endl;
   ptr->label=*(p_t);
   return;
 }
@@ -2289,6 +2292,8 @@ void *o2scl_convert_units_der_unit_get_name(void *vptr) {
 void o2scl_convert_units_der_unit_set_name(void *vptr, void *p_v) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
   std::string *p_t=(std::string *)p_v;
+  std::cout << "Setting name of pointer " << ptr << " to " << *p_t
+            << std::endl;
   ptr->name=*(p_t);
   return;
 }
