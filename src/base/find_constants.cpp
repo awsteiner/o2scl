@@ -588,7 +588,7 @@ int find_constants::find_nothrow(std::string name, std::string unit,
 	     << unit << endl;
       }
       int cret=cu.convert_ret(list[indexes[0]].unit,unit,
-			      list[indexes[0]].val,val2);
+                              list[indexes[0]].val,val2);
       if (cret==0) {
 	// Update the value with the unit conversion and
 	// the unit with the new unit
@@ -673,7 +673,7 @@ int find_constants::find_nothrow(std::string name, std::string unit,
 	     << list[indexes[i]].unit << " to "
 	     << unit << endl;
 	int cret=cu.convert_ret(list[indexes[i]].unit,unit,
-				list[indexes[i]].val,val2);
+                                list[indexes[i]].val,val2);
 	if (cret==0 &&
 	    (matches.size()==0 ||
 	     list[indexes[i]].names!=matches[matches.size()-1].names)) {

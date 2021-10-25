@@ -933,6 +933,8 @@ Namespace: o2scl function: get_screen_size_ioctl
 Namespace:  function: shuffle_swap
 Namespace:  function: choose_copy
 Namespace:  function: vector_shuffle
+Namespace:  function: nrf_z4m1
+Namespace:  function: itf_mandel
 Namespace: o2scl_acol function: parse_arrays
 Namespace: o2scl_cblas function: matrix_is_finite
 Namespace: o2scl_cblas function: matrix_is_finite

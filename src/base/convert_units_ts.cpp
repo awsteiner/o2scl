@@ -195,10 +195,11 @@ int main(int argc, char *argv[]) {
   cout << endl;
   
   cux.verbose=1;
-  int cret=cux.convert_calc2("g","solarmass",1.0,d1,d2);
+  int cret=cux.convert_calc("g","solarmass",1.0,d1,d2);
   t.test_rel(1.0/o2scl_cgs::solar_mass,d1,1.0e-6,"calc2");
 
-  convert_units::der_unit d;
+  // With these values, alpha is basically 3 Newtons per Kelvin
+  convert_units<>::der_unit d;
   d.label="α";
   d.val=3.0;
   d.name="alpha unit";
@@ -208,6 +209,11 @@ int main(int argc, char *argv[]) {
   d.K=-1;
   cux.add_unit(d);
 
+  // Convert from 3 alpha to N/K to get 9
+  int iret=cux.convert_ret("α","N/K",3.0,d1,d2);
+  t.test_rel(d1,9.0,1.0e-15,"convert with new unit");
+
+  cux.del_unit("α");
   
   t.report();
   return 0;

@@ -57,7 +57,7 @@ namespace o2scl {
       conversions, and \ref convert() searches this cache is searched
       for the requested conversion first. If this is successful, then the
       conversion factor is returned and the conversion is added to the
-      cache.
+      cache. If a conversion is not found, then it is computed.
 
       Example:
       \code
@@ -78,7 +78,7 @@ namespace o2scl {
       different values after adding a related conversion to the table.
       One way to fix this is to force the class not to combine two
       conversions by setting \ref combine_two_conv to false.
-      Alternatively, one can ensure that no combination is necessary
+      Alternatively, one can ensure that no conversion is necessary
       by manually adding the desired combination conversion to the
       cache after it is first computed.
 
@@ -87,13 +87,19 @@ namespace o2scl {
       since they are not allowed to update the unit cache.
 
       \note This class is designed to allow for higher-precision
-      conversions, but of course not all of the unit conversions are
-      known to high precision.
+      conversions, but this is experimental. Also, not all of the unit
+      conversions are known to high precision.
 
-      \future Add G=1. 
+      \verbatim embed:rst
+      .. todo::
 
-      \future An in_cache() function to test
-      to see if a conversion is currently in the cache. 
+         In class convert_units:
+
+         - (Future) Add G=1. 
+         - (Future) An in_cache() function to test
+           to see if a conversion is currently in the cache. 
+
+      \endverbatim
   */
   template<class fp_t=double> class convert_units {
 
@@ -128,6 +134,8 @@ namespace o2scl {
 
   protected:
 
+    /// \name Unit data and associated objects
+    //@{
     /// The type for caching unit conversions
     typedef struct {
       /// The input unit
@@ -173,6 +181,7 @@ namespace o2scl {
         Set in constructor.
     */
     std::vector<der_unit> other;
+    //@}
 
     /// \name Flags for natural units
     //@{
@@ -182,6 +191,8 @@ namespace o2scl {
     bool G_is_1;
     //@}
 
+    /// \name Internal functions [protected]
+    //@{
     /** \brief Set variables for the calculator object for 
         \ref convert_calc()
     */
@@ -327,7 +338,8 @@ namespace o2scl {
     }
   
     /** \brief The internal conversion function which tries the
-        cache first and, if that failed, tries GNU units.
+        cache first and, if that failed, tries to compute the
+        conversion
 
         This function returns 0 if the conversion was successful. If
         the conversion fails and \ref err_on_fail is \c true, then the
@@ -340,7 +352,7 @@ namespace o2scl {
     */
     int convert_internal(std::string from, std::string to,
                          fp_t val, fp_t &converted,
-                         fp_t &factor, bool &new_conv) const {
+                         fp_t &factor, bool &new_conv) {
 
       // Remove whitespace
       remove_whitespace(from);
@@ -360,7 +372,7 @@ namespace o2scl {
       }
 
       // Compute conversion from convert_calc()
-      int ret=convert_calc_hck(from,to,val,converted,factor);
+      int ret=convert_calc(from,to,val,converted,factor);
       if (ret==0) {
         if (verbose>=2) {
           std::cout << "Function convert_units::convert_internal(): "
@@ -376,6 +388,63 @@ namespace o2scl {
       if (err_on_fail) {
         std::string str=((std::string)"Conversion between ")+from+" and "+to+
           " not found in convert_units::convert_internal().";
+        O2SCL_ERR(str.c_str(),exc_enotfound);
+      }
+  
+      return exc_enotfound;
+    }
+
+    /** \brief The internal conversion function which tries the
+        cache first and, if that failed, tries to compute the
+        conversion (const version)
+
+        This function returns 0 if the conversion was successful. If
+        the conversion fails and \ref err_on_fail is \c true, then the
+        error handler is called. If the conversion fails and \ref
+        err_on_fail is \c false, then the value \ref
+        o2scl::exc_enotfound is returned.
+
+        The public conversion functions in this class are
+        basically just wrappers around this internal function.
+    */
+    int convert_internal_const(std::string from, std::string to,
+                               fp_t val, fp_t &converted,
+                               fp_t &factor, bool &new_conv) const {
+
+      // Remove whitespace
+      remove_whitespace(from);
+      remove_whitespace(to);
+      
+      int ret_cache=convert_cache(from,to,val,converted,factor);
+      if (ret_cache==0) {
+        if (verbose>=2) {
+          std::cout << "Function convert_units::convert_internal_const(): "
+                    << "found conversion in cache." << std::endl;
+        }
+        new_conv=false;
+        return 0;
+      } else if (verbose>=2) {
+        std::cout << "Function convert_units::convert_internal_const(): "
+                  << "did not find conversion in cache." << std::endl;
+      }
+
+      // Compute conversion from convert_calc_hck()
+      int ret=convert_calc_hck(from,to,val,converted,factor);
+      if (ret==0) {
+        if (verbose>=2) {
+          std::cout << "Function convert_units::convert_internal_const(): "
+                    << "calculated conversion." << std::endl;
+        }
+        new_conv=true;
+        return 0;
+      } else if (verbose>=3) {
+        std::cout << "Function convert_units::convert_internal_const(): "
+                  << "failed to calculate conversion." << std::endl;
+      }
+      
+      if (err_on_fail) {
+        std::string str=((std::string)"Conversion between ")+from+" and "+to+
+          " not found in convert_units::convert_internal_const().";
         O2SCL_ERR(str.c_str(),exc_enotfound);
       }
   
@@ -512,7 +581,7 @@ namespace o2scl {
 
       return exc_efailed;
     }
-
+    //@}
   
 #endif
 
@@ -730,7 +799,7 @@ namespace o2scl {
     
     virtual ~convert_units() {}
 
-    /// The associated find constants object
+    /// The associated \ref o2scl::find_constants object
     find_constants fc;
     
     /** \brief Add a user-defined unit
@@ -742,10 +811,10 @@ namespace o2scl {
     
     /** \brief Remove a non-SI unit
      */
-    void del_unit(std::string name) {
+    void del_unit(std::string label) {
       size_t n_matches=0, i_match;
       for(size_t i=0;i<other.size();i++) {
-        if (other[i].name==name) {
+        if (other[i].label==label) {
           n_matches++;
           i_match=i;
         }
@@ -755,9 +824,15 @@ namespace o2scl {
           it=other.begin();
         it+=i_match;
         other.erase(it);
+        return;
       }
-      O2SCL_ERR2("Zero or more than one match found in ",
-                "convert_units::del_unit().",o2scl::exc_efailed);
+      if (n_matches==0) {
+        O2SCL_ERR2("Zero matches found in ",
+                   "convert_units::del_unit().",o2scl::exc_efailed);
+        return;
+      } 
+      O2SCL_ERR2("More than one match found in ",
+                 "convert_units::del_unit().",o2scl::exc_efailed);
       return;
     }
     
@@ -870,10 +945,10 @@ namespace o2scl {
       return;
     }
     
-    //void set_vars(fp_t m, fp_t k, fp_t s, fp_t K, fp_t A, fp_t mol,
-    //fp_t cd, std::map<std::string, fp_t> &vars,
-    //bool test_vars=false) const {
+  protected:
     
+    /** \brief Get the current unit list as an array of strings
+     */
     void get_curr_unit_list(std::vector<std::string> &vs) const {
 
       vs.clear();
@@ -1238,7 +1313,9 @@ namespace o2scl {
 
       return 0;
     }
-  
+    
+  public:
+    
     /// \name Basic usage
     //@{
     /** \brief Return the value \c val after converting using units \c
@@ -1328,12 +1405,12 @@ namespace o2scl {
       fp_t factor;
       bool new_conv;
   
-      return convert_internal(from,to,val,converted,factor,new_conv);
+      return convert_internal_const(from,to,val,converted,factor,new_conv);
     }
       
     //@}
 
-    /// \name Manipulate cache and create units.dat files
+    /// \name Manipulate unit cache
     //@{
     /// Manually insert a unit conversion into the cache
     void insert_cache(std::string from, std::string to, fp_t conv) {
@@ -1406,7 +1483,7 @@ namespace o2scl {
         std::cout.precision(6);
         std::cout << m->second.c << ' ';
         fp_t c, f;
-        int ix=convert_calc(m->second.f,m->second.t,1.0,c,f);
+        int ix=convert_calc_hck(m->second.f,m->second.t,1.0,c,f);
         std::cout << ix << ' ' << f << ' ';
         t.test_rel(f,m->second.c,1.0e-13,"test_cache_calc");
         std::cout << (fabs(f-m->second.c)/fabs(f)<1.0e-12) << std::endl;

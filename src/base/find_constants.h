@@ -29,7 +29,7 @@
 
 namespace o2scl {
 
-  /** \brief Find constant values which match a search term
+  /** \brief A simple database of physical constants
    */
   class find_constants {
 
@@ -41,7 +41,7 @@ namespace o2scl {
       std::vector<std::string> names;
       /// Unit
       std::string unit;
-      /// Flag (either 0, o2scl_mks, or o2scl_cgs)
+      /// Flag (currently in the range 0 to 4)
       int unit_flag;
       /// Value
       double val;
@@ -80,6 +80,8 @@ namespace o2scl {
 
   protected:
 
+    /// \name List of constants and unit match function [protected]
+    //@{
     /// Database of constant values
     std::vector<const_entry> list;
 
@@ -98,6 +100,7 @@ namespace o2scl {
     */
     bool unit_match_logic(std::string unit,
                           const const_entry &f) const;
+    //@}
     
   public:
   
@@ -114,7 +117,9 @@ namespace o2scl {
     static const int fc_none=3;
     static const int fc_other=4;
     //@}
-    
+
+    /// \name Basic usage
+    //@{
     /** \brief Search for constants matching \c name with unit
 	\c unit (possibly empty) and store matches in \c indexes
     */
@@ -131,9 +136,11 @@ namespace o2scl {
     /** \brief Find a unique match and return the numerical value
      */
     double find_unique(std::string name, std::string unit="");
+    //@}
 
-    /** \brief Output the full list of constants to 
-        \c os 
+    /// \name Functions to show or modify the constant list
+    //@{
+    /** \brief Output the full list of constants to \c os 
     */
     void output_list(std::ostream &os);
 
@@ -152,6 +159,7 @@ namespace o2scl {
     /** \brief Remove a constant
      */
     void del_constant(std::string &name, int verbose=0);
+    //@}
     
   };
 

@@ -84,6 +84,8 @@ namespace o2scl {
 
     ~lib_settings_class();
 
+    /// \name Library settings
+    //@{
     /** \brief Return the data directory */
     std::string get_data_dir() {
       return data_dir;
@@ -165,11 +167,12 @@ namespace o2scl {
     /// Report some of the settings from config.h
     void config_h_report();
 
-    /// Obtain HDF5 version
+    /// Obtain HDF5 version from the library compiled with O2scl
     void hdf5_lib_version(unsigned &maj, unsigned &min, unsigned &rel);
     
-    /// Obtain HDF5 version
+    /// Obtain HDF5 version from the current headers
     void hdf5_header_version(unsigned &maj, unsigned &min, unsigned &rel);
+    //@}
     
     /// \name Miscellaneous config.h string properties
     //@{
@@ -180,6 +183,8 @@ namespace o2scl {
     std::string o2scl_tarname();
     //@}
 
+    /// \name Unit conversion and constant objects
+    //@{
     /// Default convert_units object
     convert_units<double> def_cu;
 
@@ -199,6 +204,7 @@ namespace o2scl {
       fcp=&cu.fc;
       return;
     }
+    //@}
 
     // AWS: 2/22/21: I was originally thinking of using this to
     // control OpenMP threads, but I think for now the best is just to
@@ -209,6 +215,8 @@ namespace o2scl {
 
 #ifndef DOXYGEN_INTERNAL
 
+    /// \name Internal data set in the constructor [protected]
+    //@{
     /// The present data directory
     std::string data_dir;
 
@@ -220,6 +228,7 @@ namespace o2scl {
 
     /// Pointer to current \ref find_constants object
     find_constants *fcp;
+    //@}
 
 #endif
   
