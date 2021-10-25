@@ -125,7 +125,7 @@ find_constants::find_constants() {
          "exact; derived from the Planck constant",0,0,0,0,0,0,0},
 	{{"Avogadro's number","na","avogadro"},
 	 "",fc_none,o2scl_const::avogadro,"exact",0,0,0,0,0,0,0},
-	{{"Fine structure","alphaem","alpha","αem"},"",0,
+	{{"Fine structure","alphaem","alpha","αem"},"",fc_none,
 	 o2scl_const::fine_structure,"CODATA 2018",0,0,0,0,0,0,0},
 	{{"pi","π"},"",fc_none,o2scl_const::pi,"exact",0,0,0,0,0,0,0},
 	{{"zeta32","zeta(3/2)","ζ(3/2)"},"",fc_none,o2scl_const::zeta32,
@@ -169,7 +169,7 @@ find_constants::find_constants() {
 	 o2scl_const::o2scl_mks,o2scl_const::elem_charge_f<double>(),
          "exact",0,0,1,0,1,0,0},
 	{{"hbarc","ħc"},"MeV*fm",
-	 0,o2scl_const::hc_mev_fm_f<double>(),
+	 fc_other,o2scl_const::hc_mev_fm_f<double>(),
          "derived from Plack constant",0,0,0,0,0,0,0},
 	{{"hbarc","ħc"},"J*m",o2scl_const::o2scl_mks,
 	 o2scl_const::hbarc_f<double>(o2scl_const::o2scl_mks),
@@ -432,17 +432,17 @@ find_constants::find_constants() {
 }
 
 bool find_constants::unit_match_logic(std::string unit,
-                                      const const_entry &f) {
-  if (unit.length()==0 || f.unit_flag==fc_unknown ||
+                                      const const_entry &f) const {
+  if (boost::iequals(unit,"any") ||
+      ((boost::iequals(unit,"none") || unit.length()==0) &&
+       f.unit_flag==fc_none) ||
       (boost::iequals(unit,"mks") &&
        (f.unit_flag==o2scl_const::o2scl_mks ||
         f.unit_flag==fc_none)) ||
       (boost::iequals(unit,"cgs") &&
        (f.unit_flag==o2scl_const::o2scl_cgs ||
         f.unit_flag==fc_none)) ||
-      (boost::iequals(unit,"none") && f.unit_flag==fc_none) ||
-      boost::iequals(unit,f.unit) ||
-      boost::iequals(unit,"any")) {
+      boost::iequals(unit,f.unit)) {
     return true;
   }
   return false;
@@ -451,7 +451,7 @@ bool find_constants::unit_match_logic(std::string unit,
 
 int find_constants::find_nothrow(std::string name, std::string unit,
 				 vector<const_entry> &matches,
-				 int verbose) {
+				 int verbose) const {
   
   o2scl::convert_units<> &cu=o2scl_settings.get_convert_units();
   
@@ -791,18 +791,28 @@ double find_constants::find_unique(std::string name, std::string unit) {
 }
 
 void find_constants::output_list(std::ostream &os) {
-  cout << "List.size(): " << list.size() << endl;
-  os << "name unit flag value units source" << endl;
+  os << "name unit flag value units" << endl;
+  os << "  source" << endl;
   os << "  alternate names" << endl;
+  os << "---------------------------------------" 
+     << "---------------------------------------" << endl;
   for(size_t i=0;i<list.size();i++) {
     os << list[i].names[0] << " ";
-    os << list[i].unit << " ";
+    if (list[i].unit.length()==0) {
+      os << "\"\" ";
+    } else {
+      os << list[i].unit << " ";
+    }
     if (list[i].unit_flag==o2scl_const::o2scl_mks) {
       os << "MKS ";
     } else if (list[i].unit_flag==o2scl_const::o2scl_cgs) {
       os << "CGS ";
-    } else {
+    } else if (list[i].unit_flag==fc_none) {
+      os << "none ";
+    } else if (list[i].unit_flag==fc_other) {
       os << "other ";
+    } else {
+      os << "unknown ";
     }
     os << list[i].val << " ";
     os << "(m:" << list[i].m << ",kg:" << list[i].k

@@ -210,7 +210,7 @@ int acol_manager::comm_convert
   
   if (in[0]=="2") {
     
-    cout << "Using convert_calc2()." << endl;
+    cout << "Using convert_calc()." << endl;
     
     if (in.size()>=4) {
       int ret2=function_to_double_nothrow(in[3],val);
@@ -221,7 +221,7 @@ int acol_manager::comm_convert
     }
     
     double val_out, factor;
-    int cret=cng.convert_calc2(in[1],in[2],val,val_out,factor);
+    int cret=cng.convert_calc(in[1],in[2],val,val_out,factor);
     if (cret!=0) {
       cerr << "Conversion failed." << endl;
       return 1;

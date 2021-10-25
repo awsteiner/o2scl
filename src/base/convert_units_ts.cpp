@@ -197,6 +197,17 @@ int main(int argc, char *argv[]) {
   cux.verbose=1;
   int cret=cux.convert_calc2("g","solarmass",1.0,d1,d2);
   t.test_rel(1.0/o2scl_cgs::solar_mass,d1,1.0e-6,"calc2");
+
+  convert_units::der_unit d;
+  d.label="α";
+  d.val=3.0;
+  d.name="alpha unit";
+  d.m=1;
+  d.k=1;
+  d.s=-2;
+  d.K=-1;
+  cux.add_unit(d);
+
   
   t.report();
   return 0;

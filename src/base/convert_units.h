@@ -360,7 +360,7 @@ namespace o2scl {
       }
 
       // Compute conversion from convert_calc()
-      int ret=convert_calc(from,to,val,converted,factor);
+      int ret=convert_calc_hck(from,to,val,converted,factor);
       if (ret==0) {
         if (verbose>=2) {
           std::cout << "Function convert_units::convert_internal(): "
@@ -546,8 +546,8 @@ namespace o2scl {
                     "nano","pico","femto","atto","zepto",
                     "yocto"};
     
-      // SI derived units, in order m kg s K A mol cd Note that,
-      // according to the SI page on wikipedia, "newton" is left
+      // SI derived units, in order m, kg, s, K, A, mol, and cd. Note
+      // that, according to the SI page on Wikipedia, "newton" is left
       // lowercase even though it is named after a person.
       std::vector<der_unit> SI_=
         {{"rad",0,0,0,0,0,0,0,1.0,"radian"},
@@ -559,6 +559,7 @@ namespace o2scl {
          {"C",0,1,0,0,1,0,0,1.0,"coulomb"},
          {"V",2,1,-3,0,-1,0,0,1.0,"volt"},
          {"ohm",2,1,-3,0,-2,0,0,1.0,"ohm"},
+         {"Ω",2,1,-3,0,-2,0,0,1.0,"ohm"},
          {"S",-2,-1,3,0,2,0,0,1.0,"siemens"},
          {"F",-2,-1,4,0,2,0,0,1.0,"farad"},
          {"Wb",2,1,-2,0,-1,0,0,1.0,"weber"},
@@ -669,7 +670,7 @@ namespace o2scl {
 
          // Time units. Years are obtained from
          // https://pdg.lbl.gov/2021/reviews/contents_sports.html,
-         // which references the 2020 Astronomical almanac
+         // which references the 2020 Astronomical almanac.
          {"yr",0,0,1,0,0,0,0,31556925.1,"year (tropical)"},
          {"wk",0,0,1,0,0,0,0,o2scl_mks::week,"week"},
          {"d",0,0,1,0,0,0,0,o2scl_mks::day,"day"},
@@ -741,7 +742,7 @@ namespace o2scl {
     
     /** \brief Remove a non-SI unit
      */
-    void del_unit(std::string &name) {
+    void del_unit(std::string name) {
       size_t n_matches=0, i_match;
       for(size_t i=0;i<other.size();i++) {
         if (other[i].name==name) {
@@ -750,12 +751,10 @@ namespace o2scl {
         }
       }
       if (n_matches==1) {
-        /*
-          FIXME: 
-          std::vector<convert_units<fp_t>::der_unit>::iterator it=other.begin();
-          it+=i_match;
-          other.erase(it);
-        */
+        typename std::vector<convert_units<fp_t>::der_unit>::iterator
+          it=other.begin();
+        it+=i_match;
+        other.erase(it);
       }
       O2SCL_ERR2("Zero or more than one match found in ",
                 "convert_units::del_unit().",o2scl::exc_efailed);
@@ -788,22 +787,28 @@ namespace o2scl {
       out << "--------------- -- -- -- -- -- --- -- ------------"
           << std::endl;
       for(size_t i=0;i<SI.size();i++) {
-        out.width(15);
-        out << SI[i].label << " ";
+
+        std::u32string c32;
+        utf8_to_char32(SI[i].label,c32);
+        int ns=c32.length();
+
+        for(int j=0;j<15-ns;j++) out << ' ';
+        
+        out << SI[i].label << ' ';
         out.width(2);
-        out << SI[i].m << " ";
+        out << SI[i].m << ' ';
         out.width(2);
-        out << SI[i].k << " ";
+        out << SI[i].k << ' ';
         out.width(2);
-        out << SI[i].s << " ";
+        out << SI[i].s << ' ';
         out.width(2);
-        out << SI[i].K << " ";
+        out << SI[i].K << ' ';
         out.width(2);
-        out << SI[i].A << " ";
+        out << SI[i].A << ' ';
         out.width(3);
-        out << SI[i].mol << " ";
+        out << SI[i].mol << ' ';
         out.width(2);
-        out << SI[i].cd << " ";
+        out << SI[i].cd << ' ';
         out << SI[i].val << std::endl;
       }
       out << std::endl;
@@ -812,55 +817,47 @@ namespace o2scl {
       out << "------------------- ------------" << std::endl;
       for(size_t i=0;i<prefixes.size();i++) {
         
-        // Extra space for the unicode
-        if (prefixes[i]=="μ") {
-          out.width(20);
-          out << prefixes[i] << " ";
-          out << prefix_facts[i] << std::endl;
-        } else {
-          out.width(19);
-          out << prefixes[i] << " ";
-          out << prefix_facts[i] << std::endl;
-        }
+        std::u32string c32;
+        utf8_to_char32(prefixes[i],c32);
+        int ns=c32.length();
+
+        for(int j=0;j<19-ns;j++) out << ' ';
+        out << prefixes[i] << ' ';
+        out << prefix_facts[i] << std::endl;
         
       }
       out << std::endl;
     
-      out << "Other:    label  m kg  s  K  A mol cd value        "
+      out << "Other: label  m kg  s  K  A mol cd value        "
           << "full name" << std::endl;
-      out << "--------------- -- -- -- -- -- --- -- ------------ "
+      out << "------------ -- -- -- -- -- --- -- ------------ "
           << "---------------------" << std::endl;
           
     
       for(size_t i=0;i<other.size();i++) {
-        if (other[i].label=="°") {
-          out.width(16);
-          out << other[i].label << " ";
-        } else if (other[i].label=="′") {
-          out.width(17);
-          out << other[i].label << " ";
-        } else if (other[i].label=="″") {
-          out.width(17);
-          out << other[i].label << " ";
-        } else {
-          out.width(15);
-          out << other[i].label << " ";
-        }
+        
+        std::u32string c32;
+        utf8_to_char32(other[i].label,c32);
+        int ns=c32.length();
+        
+        out << other[i].label;
+        for(int j=0;j<13-ns;j++) out << ' ';
+        
         out.width(2);
-        out << other[i].m << " ";
+        out << other[i].m << ' ';
         out.width(2);
-        out << other[i].k << " ";
+        out << other[i].k << ' ';
         out.width(2);
-        out << other[i].s << " ";
+        out << other[i].s << ' ';
         out.width(2);
-        out << other[i].K << " ";
+        out << other[i].K << ' ';
         out.width(2);
-        out << other[i].A << " ";
+        out << other[i].A << ' ';
         out.width(3);
-        out << other[i].mol << " ";
+        out << other[i].mol << ' ';
         out.width(2);
-        out << other[i].cd << " ";
-        out << other[i].val << " " << other[i].name << std::endl;
+        out << other[i].cd << ' ';
+        out << other[i].val << ' ' << other[i].name << std::endl;
       }
     
       return;
@@ -877,7 +874,7 @@ namespace o2scl {
     //fp_t cd, std::map<std::string, fp_t> &vars,
     //bool test_vars=false) const {
     
-    void get_curr_unit_list(std::vector<std::string> &vs) {
+    void get_curr_unit_list(std::vector<std::string> &vs) const {
 
       vs.clear();
       
@@ -925,10 +922,11 @@ namespace o2scl {
       }
       return;
     }
-
-    /** \brief Future new version of convert_calc()
+    
+    /** \brief Convert units, possibly using constants from
+        the internal \ref o2scl::find_constants object
      */
-    int convert_calc2(std::string from, std::string to,
+    int convert_calc(std::string from, std::string to,
                       fp_t val, fp_t &converted,
                       fp_t &factor) {
 
@@ -1031,20 +1029,23 @@ namespace o2scl {
         }
       }
 
-      return convert_calc(from,to,val,converted,factor);
+      return convert_calc_hck(from,to,val,converted,factor);
     }
     
-    /** \brief Automatic unit conversion between SI-based units
-        with a \ref o2scl::calculator object
+    /** \brief Convert units, taking into account conversions
+        which are allowed by setting hbar, c, or kB to 1
+        
+        This function is also useful as a const version of 
+        convert_calc() .
     */
-    int convert_calc(std::string from, std::string to,
-                     fp_t val, fp_t &converted,
-                     fp_t &factor) const {
+    int convert_calc_hck(std::string from, std::string to,
+                         fp_t val, fp_t &converted,
+                         fp_t &factor) const {
       
       if (verbose>=2) {
         std::cout << "Function convert_units::convert_calc(), "
-                  << "kb_is_1,hbar_is_1,c_is_1: " << kb_is_1 << " "
-                  << hbar_is_1 << " " << c_is_1 << std::endl;
+                  << "kb_is_1,hbar_is_1,c_is_1: " << kb_is_1 << ' '
+                  << hbar_is_1 << ' ' << c_is_1 << std::endl;
       }
       
       // These calculator objects have to be inside this
@@ -1103,13 +1104,13 @@ namespace o2scl {
         set_vars(1.0,1.0,1.0,2.0,1.0,1.0,1.0,vars);
         kb_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
         if (verbose>1) {
-          std::cout << "kb: " << before << " " << after << " "
+          std::cout << "kb: " << before << ' ' << after << ' '
                     << calc.eval(&vars) << "\n\t"
-                    << calc2.eval(&vars) << " " << kb_power << " ";
+                    << calc2.eval(&vars) << ' ' << kb_power << ' ';
         }
         kb_power=log(kb_power)/log(two);
         if (verbose>1) {
-          std::cout << kb_power << " ";
+          std::cout << kb_power << ' ';
         }
         factor_kb=pow(o2scl_mks::boltzmann,kb_power);
         if (verbose>1) {
@@ -1125,13 +1126,13 @@ namespace o2scl {
         set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
         hbar_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
         if (verbose>1) {
-          std::cout << "hbar: " << before << " " << after << " "
+          std::cout << "hbar: " << before << ' ' << after << ' '
                     << calc.eval(&vars) << "\n\t"
-                    << calc2.eval(&vars) << " " << hbar_power << " ";
+                    << calc2.eval(&vars) << ' ' << hbar_power << ' ';
         }
         hbar_power=-log(hbar_power)/log(two)-kb_power;
         if (verbose>1) {
-          std::cout << hbar_power << " ";
+          std::cout << hbar_power << ' ';
         }
         factor_hbar=pow(o2scl_mks::plancks_constant_hbar,hbar_power);
         if (verbose>1) {
@@ -1147,13 +1148,13 @@ namespace o2scl {
         set_vars(1.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
         c_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
         if (verbose>1) {
-          std::cout << "c: " << before << " " << after << " "
+          std::cout << "c: " << before << ' ' << after << ' '
                     << calc.eval(&vars) << "\n\t"
-                    << calc2.eval(&vars) << " " << c_power << " ";
+                    << calc2.eval(&vars) << ' ' << c_power << ' ';
         }
         c_power=log(c_power)/log(two)-2*kb_power-hbar_power;
         if (verbose>1) {
-          std::cout << c_power << " ";
+          std::cout << c_power << ' ';
         }
         factor_c=pow(o2scl_mks::speed_of_light,c_power);
         if (verbose>1) {
@@ -1168,8 +1169,8 @@ namespace o2scl {
       fp_t m_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
       m_power=log(m_power)/log(two);
       if (verbose>1) {
-        std::cout << "m_power: " << m_power << " "
-                  << 2*kb_power+2*hbar_power+c_power << " "
+        std::cout << "m_power: " << m_power << ' '
+                  << 2*kb_power+2*hbar_power+c_power << ' '
                   << fabs(m_power+2*kb_power+2*hbar_power+c_power)
                   << std::endl;
       }
@@ -1185,7 +1186,7 @@ namespace o2scl {
       fp_t kg_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
       kg_power=log(kg_power)/log(two);
       if (verbose>1) {
-        std::cout << "kg_power: " << kg_power << " "
+        std::cout << "kg_power: " << kg_power << ' '
                   << kb_power+hbar_power << std::endl;
       }
           
@@ -1200,7 +1201,7 @@ namespace o2scl {
       fp_t s_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
       s_power=log(s_power)/log(two);
       if (verbose>1) {
-        std::cout << "s_power: " << s_power << " "
+        std::cout << "s_power: " << s_power << ' '
                   << -2*kb_power-hbar_power-c_power << std::endl;
       }
       
@@ -1377,9 +1378,9 @@ namespace o2scl {
         for (m=mcache.begin();m!=mcache.end();m++) {
           std::cout.setf(std::ios::left);
           std::cout.width(25);
-          std::cout << m->second.f << " ";
+          std::cout << m->second.f << ' ';
           std::cout.width(25);
-          std::cout << m->second.t << " ";
+          std::cout << m->second.t << ' ';
           std::cout.unsetf(std::ios::left);
           std::cout.precision(10);
           std::cout << m->second.c << std::endl;
@@ -1398,15 +1399,15 @@ namespace o2scl {
       for (m=mcache.begin();m!=mcache.end();m++) {
         std::cout.setf(std::ios::left);
         std::cout.width(10);
-        std::cout << m->second.f << " ";
+        std::cout << m->second.f << ' ';
         std::cout.width(10);
-        std::cout << m->second.t << " ";
+        std::cout << m->second.t << ' ';
         std::cout.unsetf(std::ios::left);
         std::cout.precision(6);
-        std::cout << m->second.c << " ";
+        std::cout << m->second.c << ' ';
         fp_t c, f;
         int ix=convert_calc(m->second.f,m->second.t,1.0,c,f);
-        std::cout << ix << " " << f << " ";
+        std::cout << ix << ' ' << f << ' ';
         t.test_rel(f,m->second.c,1.0e-13,"test_cache_calc");
         std::cout << (fabs(f-m->second.c)/fabs(f)<1.0e-12) << std::endl;
       }

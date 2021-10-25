@@ -87,9 +87,9 @@ namespace o2scl {
         the specified list entry
 
         Units match if 
-        - the unit is unspecified (string of length zero)
+        - the unit is unspecified (string of length zero) or 
+          "none" and the flag is \ref fc_none
         - the unit is equal to "any" (case-insensitive comparison)
-        - the unit flag for the list entry is fc_unknown
         - the unit is equal to the list unit (case-insensitive comparison)
         - the unit is "mks" (case-insensitive comparison) and the unit
           flag is either o2scl_mks or fc_none
@@ -97,7 +97,7 @@ namespace o2scl {
           flag is either o2scl_cgs or fc_none
     */
     bool unit_match_logic(std::string unit,
-                          const const_entry &f);
+                          const const_entry &f) const;
     
   public:
   
@@ -120,7 +120,7 @@ namespace o2scl {
     */
     int find_nothrow(std::string name, std::string unit,
 		     std::vector<const_entry> &matches,
-		     int verbose=0);
+		     int verbose=0) const;
   
     /** \brief Search for constants matching \c name with unit \c unit
 	and output result(s) with precision \c prec
