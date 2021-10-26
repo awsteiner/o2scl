@@ -151,6 +151,12 @@ namespace o2scl {
       output_list(std::cout);
       return;
     }
+
+    /** \brief Output one entry from the constant database
+        to \c os
+    */
+    void output(const find_constants::const_entry &c,
+                std::ostream &os) const;
     
     /** \brief Add a constant
      */

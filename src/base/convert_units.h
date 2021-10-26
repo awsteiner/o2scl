@@ -382,7 +382,8 @@ namespace o2scl {
         return 0;
       } else if (verbose>=3) {
         std::cout << "Function convert_units::convert_internal(): "
-                  << "failed to calculate conversion." << std::endl;
+                  << "failed to calculate conversion (" << ret << ")"
+                  << std::endl;
       }
       
       if (err_on_fail) {
@@ -1250,7 +1251,8 @@ namespace o2scl {
                   << std::endl;
       }
 
-      // If this is non-zero, the units are inconsistent
+      // If this is non-zero, the units are inconsistent. This counts
+      // powers of length
       if (fabs(m_power+2*kb_power+2*hbar_power+c_power)>1.0e-12) {
         return 5;
       }

@@ -87,10 +87,10 @@ find_constants::find_constants() {
 	 "cm/s",o2scl_const::o2scl_cgs,
 	 o2scl_const::speed_of_light_f<double>(o2scl_const::o2scl_cgs),
          "exact",0,0,0,0,0,0,0},
-	{{"gravitational","g","newtonsconstant","gn",
+	{{"gravitational","g","newtonsconstant","gnewton",
 	  "newtonconstant"},"m^3/kg/s^2",o2scl_const::o2scl_mks,
 	 o2scl_mks::gravitational_constant,"CODATA 2018",3,-1,-2,0,0,0,0},
-	{{"gravitational","g","newtonsconstant","gn",
+	{{"gravitational","g","newtonsconstant","gnewton",
 	  "newtonconstant"},"cm^3/g/s^2",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::gravitational_constant,"CODATA 2018",0,0,0,0,0,0,0},
 	{{"Boltzmann's","kb","boltzmannsconstant","boltzmann"},
@@ -769,10 +769,8 @@ void find_constants::find_print(std::string name, std::string unit,
   }
   cout << ": " << endl;
   for(size_t i=0;i<matches.size();i++) {
-    cout << "(" << i+1 << "/" << matches.size() << ") "
-	 << matches[i].names[0] << " = "
-	 << matches[i].val << " "
-	 << matches[i].unit << endl;
+    cout << "(" << i+1 << "/" << matches.size() << ") ";
+    output(matches[i],std::cout);
   }
   return;
 }
@@ -791,7 +789,7 @@ double find_constants::find_unique(std::string name, std::string unit) {
 }
 
 void find_constants::output_list(std::ostream &os) {
-  os << "name unit flag value units" << endl;
+  os << "name unit flag value units (m,kg,s,K,A,mol,cd)" << endl;
   os << "  source" << endl;
   os << "  alternate names" << endl;
   os << "---------------------------------------" 
@@ -815,10 +813,10 @@ void find_constants::output_list(std::ostream &os) {
       os << "unknown ";
     }
     os << list[i].val << " ";
-    os << "(m:" << list[i].m << ",kg:" << list[i].k
-       << ",s:" << list[i].s << ",K:" << list[i].K
-       << ",A:" << list[i].A << ",mol:" << list[i].mol
-       << ",cd:" << list[i].cd << ")" << endl;
+    os << "(" << list[i].m << "," << list[i].k
+       << "," << list[i].s << "," << list[i].K
+       << "," << list[i].A << "," << list[i].mol
+       << "," << list[i].cd << ")" << endl;
     vector<string> sv;
     rewrap(list[i].source,sv,77);
     for(size_t j=0;j<sv.size();j++) {
@@ -834,6 +832,52 @@ void find_constants::output_list(std::ostream &os) {
       os << "  (no alternate names)" << endl;
     }
   }
+  return;
+}
+
+void find_constants::output(const find_constants::const_entry &c,
+                            std::ostream &os) const {
+    os << "Name: " << c.names[0] << " unit: ";
+    if (c.unit.length()==0) {
+      os << "\"\" ";
+    } else {
+      os << c.unit << " ";
+    }
+    os << "flag: ";
+    if (c.unit_flag==o2scl_const::o2scl_mks) {
+      os << "MKS ";
+    } else if (c.unit_flag==o2scl_const::o2scl_cgs) {
+      os << "CGS ";
+    } else if (c.unit_flag==fc_none) {
+      os << "none ";
+    } else if (c.unit_flag==fc_other) {
+      os << "other ";
+    } else {
+      os << "unknown ";
+    }
+    os << "value: " << c.val << endl;
+    os << "  (m:" << c.m << ",kg:" << c.k
+       << ",s:" << c.s << ",K:" << c.K
+       << ",A:" << c.A << ",mol:" << c.mol
+       << ",cd:" << c.cd << ")" << endl;
+    vector<string> sv;
+    rewrap(c.source,sv,71);
+    for(size_t j=0;j<sv.size();j++) {
+      if (j==0) {
+        os << "  Source: " << sv[0] << endl;
+      } else {
+        os << "  " << sv[j] << endl;
+      }
+    }
+    if (c.names.size()>1) {
+      os << "  Names: ";
+      for(size_t j=1;j<c.names.size();j++) {
+        os << c.names[j] << " ";
+      }
+      os << endl;
+    } else {
+      os << "  (no alternate names)" << endl;
+    }
   return;
 }
 

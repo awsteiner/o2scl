@@ -40,8 +40,8 @@ int main(int argc, char *argv[]) {
 
   cux.set_natural_units(1,1,1);
   cux.verbose=2;
-  ix=cux.convert_calc("meV","eV",1.0,d1,d2);
-  cout << ix << " " << d1 << " " << d2 << endl;
+  ix=cux.convert_ret("meV","eV",1.0,d1);
+  cout << ix << " " << d1 << endl;
   cux.verbose=0;
   //exit(-1);
     
@@ -66,8 +66,10 @@ int main(int argc, char *argv[]) {
     // AWS, 10/6/21: this testing code is nice, but it uses
     // acol, and acol isn't available via system() until
     // LD_LIBRARY_FLAGS is set, so I need to rewrite these
-    // tests. FIXME.
-    
+    // tests. FIXME. Additionally, convert_calc() is now
+    // protected.
+
+#ifdef O2SCL_NEVER_DEFINED
     if (false) {
       
       cout << "J K 1/kB" << endl;
@@ -168,6 +170,8 @@ int main(int argc, char *argv[]) {
 
     }
     
+#endif
+    
   }
     
   cout << "-----------------------------------"
@@ -195,9 +199,13 @@ int main(int argc, char *argv[]) {
   cout << endl;
   
   cux.verbose=1;
-  int cret=cux.convert_calc("g","solarmass",1.0,d1,d2);
+  int cret=cux.convert_ret("g","solarmass",1.0,d1);
   t.test_rel(1.0/o2scl_cgs::solar_mass,d1,1.0e-6,"calc2");
 
+  cux.err_on_fail=false;
+  int iret=cux.convert_ret("α","N/K",3.0,d1);
+  t.test_gen(iret!=0,"convert with new unit 0");
+  
   // With these values, alpha is basically 3 Newtons per Kelvin
   convert_units<>::der_unit d;
   d.label="α";
@@ -209,11 +217,18 @@ int main(int argc, char *argv[]) {
   d.K=-1;
   cux.add_unit(d);
 
-  // Convert from 3 alpha to N/K to get 9
-  int iret=cux.convert_ret("α","N/K",3.0,d1,d2);
-  t.test_rel(d1,9.0,1.0e-15,"convert with new unit");
+  // Convert from 3 alpha to N/K to get 9. FIXME. This doesn't
+  // work yet.
+  cux.verbose=3;
+  iret=cux.convert_ret("α","N/K",3.0,d1);
+  cux.verbose=0;
+  //t.test_gen(iret==0,"convert with new unit 1");
+  t.test_rel(d1,9.0,1.0e-15,"convert with new unit 2");
 
   cux.del_unit("α");
+
+  iret=cux.convert_ret("α","N/K",3.0,d1);
+  t.test_gen(iret!=0,"convert with new unit 3");
   
   t.report();
   return 0;
