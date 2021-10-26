@@ -435,10 +435,11 @@ find_constants::find_constants() {
 	 o2scl_mks::rydberg,"CODATA 2018",2,1,-2,0,0,0,0},
 	{{"Rydberg"},"g*cm^2/s^2",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::rydberg,"CODATA 2018",0,0,0,0,0,0,0},
-	{{"tropicalyear"},"s",o2scl_const::o2scl_mks,31556925.1,
+	{{"tropicalyear","yeartropical"},"s",o2scl_const::o2scl_mks,
+         31556925.1,
 	 "PDG 2021 (https://pdg.lbl.gov/2021/reviews/contents_sports.html)",
          0,0,1,0,0,0,0},
-	{{"siderealyear"},"s",o2scl_const::o2scl_mks,31558149.8,
+	{{"siderealyear","yearsidereal"},"s",o2scl_const::o2scl_mks,31558149.8,
          "PDG 2021 (https://pdg.lbl.gov/2021/reviews/contents_sports.html)",
          0,0,1,0,0,0,0}
   };
@@ -839,7 +840,7 @@ void find_constants::output_list(std::ostream &os) {
     if (list[i].names.size()>1) {
       os << "  ";
       for(size_t j=1;j<list[i].names.size();j++) {
-        os << list[i].names[j] << " ";
+        os << '\"' << list[i].names[j] << "\" ";
       }
       os << endl;
     } else {
@@ -884,9 +885,9 @@ void find_constants::output(const find_constants::const_entry &c,
       }
     }
     if (c.names.size()>1) {
-      os << "  Names: ";
+      os << "  Other names: ";
       for(size_t j=1;j<c.names.size();j++) {
-        os << c.names[j] << " ";
+        os << '\"' << c.names[j] << "\" ";
       }
       os << endl;
     } else {
