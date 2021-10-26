@@ -1188,12 +1188,15 @@ namespace o2scl_mks {
   /// A m^2
   const double nuclear_magneton=o2scl_cgsm::nuclear_magneton/1.0e3;
   /// A^2 s^4 / kg m^3 (derived)
-  const double vacuum_permittivity=1.0/o2scl_mks::speed_of_light/
-    o2scl_mks::speed_of_light/4.0e-7/o2scl_const::pi;
+  // CODATA 2018
+  const double vacuum_permittivity=8.8541878128e-12;
+  //1.0/o2scl_mks::speed_of_light/
+  //o2scl_mks::speed_of_light/4.0e-7/o2scl_const::pi;
   /** \brief Vacuum permeability in kg m / A^2 s^2 
-      (being redefined as of 5/20, this value is from Wikipedia)
-  */
-  const double vacuum_permeability=4.0*o2scl_const::pi*1.00000000082e-7;
+   */
+  //(being redefined as of 5/20, this value is from Wikipedia)
+  // CODATA 2018
+  const double vacuum_permeability=1.25663706212e-6;
   /// A s / mol
   const double faraday=o2scl_cgsm::faraday*10.0;
   /// A s (derived)
