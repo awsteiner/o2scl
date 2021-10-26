@@ -215,20 +215,23 @@ int main(int argc, char *argv[]) {
   d.k=1;
   d.s=-2;
   d.K=-1;
+  d.A=0;
+  d.mol=0;
+  d.cd=0;
   cux.add_unit(d);
 
   // Convert from 3 alpha to N/K to get 9. FIXME. This doesn't
   // work yet.
-  cux.verbose=3;
   iret=cux.convert_ret("α","N/K",3.0,d1);
-  cux.verbose=0;
-  //t.test_gen(iret==0,"convert with new unit 1");
+  t.test_gen(iret==0,"convert with new unit 1");
   t.test_rel(d1,9.0,1.0e-15,"convert with new unit 2");
 
   cux.del_unit("α");
 
+  // This succeeds because the unit conversion is still in the
+  // cache
   iret=cux.convert_ret("α","N/K",3.0,d1);
-  t.test_gen(iret!=0,"convert with new unit 3");
+  t.test_gen(iret==0,"convert with new unit 3");
   
   t.report();
   return 0;

@@ -98,6 +98,8 @@ namespace o2scl {
          - (Future) Add G=1. 
          - (Future) An in_cache() function to test
            to see if a conversion is currently in the cache. 
+         - (Future) Add a del_cache() function to remove a 
+           conversion in the cache.
 
       \endverbatim
   */
@@ -294,14 +296,18 @@ namespace o2scl {
           O2SCL_ERR((((std::string)"SI unit ")+SI[i].label+
                      " already found in list.").c_str(),o2scl::exc_esanity);
         }
-        fp_t val=pow(m,SI[i].m)*pow(k,SI[i].k)*pow(s,SI[i].s)*SI[i].val;
+        fp_t val=pow(m,SI[i].m)*pow(k,SI[i].k)*pow(s,SI[i].s)*
+          pow(K,SI[i].K)*pow(A,SI[i].A)*pow(mol,SI[i].mol)*
+          pow(cd,SI[i].cd)*SI[i].val;
         vars.insert(std::make_pair(SI[i].label,val));
         for(size_t j=0;j<n_prefixes;j++) {
           if (test_vars && vars.find(prefixes[j]+SI[i].label)!=vars.end()) {
             O2SCL_ERR((((std::string)"SI unit ")+prefixes[j]+SI[i].label+
                        " already found in list.").c_str(),o2scl::exc_esanity);
           }
-          val=pow(m,SI[i].m)*pow(k,SI[i].k)*pow(s,SI[i].s)*SI[i].val;
+          val=pow(m,SI[i].m)*pow(k,SI[i].k)*pow(s,SI[i].s)*
+            pow(K,SI[i].K)*pow(A,SI[i].A)*pow(mol,SI[i].mol)*
+            pow(cd,SI[i].cd)*SI[i].val;
           if (false && SI[i].label=="eV") {
             std::cout << "X1: " << SI[i].val << " "
                       << prefixes[j]+SI[i].label << " "
@@ -321,7 +327,8 @@ namespace o2scl {
                      " already found in list.").c_str(),o2scl::exc_esanity);
         }
         fp_t val=pow(m,other[i].m)*pow(k,other[i].k)*pow(s,other[i].s)*
-          other[i].val;
+          pow(K,other[i].K)*pow(A,other[i].A)*pow(mol,other[i].mol)*
+          pow(cd,other[i].cd)*other[i].val;
         vars.insert(std::make_pair(other[i].label,val));
       }
 
