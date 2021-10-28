@@ -57,7 +57,7 @@ find_constants::find_constants() {
            "permeability of free space","mu0","μ0","magnetic constant"},
          "N/A^2",o2scl_const::o2scl_mks,o2scl_mks::vacuum_permeability,
          "CODATA 2018",1,1,-2,0,-2,0,0},
-        {{"bohr radius","rbohr"},
+        {{"Bohr radius","rbohr"},
          "m",o2scl_const::o2scl_mks,o2scl_mks::bohr_radius,
          "CODATA 2018",1,0,0,0,0,0,0},
         {{"Thomson cross section","σThomson"},
@@ -136,7 +136,7 @@ find_constants::find_constants() {
          "exact; derived from the Planck constant",0,0,0,0,0,0,0},
 	{{"Avogadro's number","na","avogadro"},
 	 "",fc_none,o2scl_const::avogadro,"exact",0,0,0,0,0,0,0},
-	{{"Fine structure","alphaem","alpha","αem"},"",fc_none,
+	{{"fine structure","alphaem","alpha","αem"},"",fc_none,
 	 o2scl_const::fine_structure,"CODATA 2018",0,0,0,0,0,0,0},
 	{{"pi","π"},"",fc_none,o2scl_const::pi,"exact",0,0,0,0,0,0,0},
 	{{"zeta32","zeta(3/2)","ζ(3/2)"},"",fc_none,o2scl_const::zeta32,
@@ -446,11 +446,11 @@ find_constants::find_constants() {
 	 o2scl_mks::rydberg,"CODATA 2018",2,1,-2,0,0,0,0},
 	{{"Rydberg"},"g*cm^2/s^2",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::rydberg,"CODATA 2018",0,0,0,0,0,0,0},
-	{{"tropicalyear","yeartropical"},"s",o2scl_const::o2scl_mks,
+	{{"tropical year","yeartropical"},"s",o2scl_const::o2scl_mks,
          31556925.1,
 	 "PDG 2021 (https://pdg.lbl.gov/2021/reviews/contents_sports.html)",
          0,0,1,0,0,0,0},
-	{{"siderealyear","yearsidereal"},"s",o2scl_const::o2scl_mks,31558149.8,
+	{{"sidereal year","yearsidereal"},"s",o2scl_const::o2scl_mks,31558149.8,
          "PDG 2021 (https://pdg.lbl.gov/2021/reviews/contents_sports.html)",
          0,0,1,0,0,0,0}
   };
@@ -825,7 +825,7 @@ void find_constants::output_list(std::ostream &os) {
     s+=" ";
     if (list[i].names.size()>1) {
       for(size_t j=1;j<list[i].names.size();j++) {
-        s+='\"'+list[i].names[j]+"\" ";
+        s+='\''+list[i].names[j]+"\' ";
       }
     }
     vector<string> sv;

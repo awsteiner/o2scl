@@ -151,10 +151,71 @@ int main(void) {
   fermi_dirac_integ_direct<cpp_dec_float_35,funct_cdf50,20,
 			   cpp_dec_float_50> fd_35_50;
   fd_35_50.set_tol(1.0e-37);
+  fermi_dirac_integ_direct<cpp_dec_float_50,funct_cdf100,20,
+			   cpp_dec_float_100> fd_50_100;
+  fd_50_100.set_tol(1.0e-52);
 
   gen_test_number<> gn;
   gen_test_number<long double> gn_ld;
   gen_test_number<cpp_dec_float_35> gn_cdf35;
+  gen_test_number<cpp_dec_float_50> gn_cdf50;
+
+  /*
+    AWS, 10/28/21: The next section, while commented out because it's
+    time consuming, does indeed seem to work. The 35_50 results seem
+    to be correct, as verified by the 50_100 results. However, the
+    integral is progressively more difficult as the arguments go to
+    +infty (going to -infty might also be difficult), so I think it
+    may be that we need to replace the direct integration with series
+    expansions in those limits. The long double versions, d_ld and
+    ld_35 seem to have even more difficulty for large arguments, but
+    maybe this will also be improved by the series expansions. It 
+    could also be that even with the series, the long double versions
+    just aren't very useful.
+  */
+  
+  if (false) {
+    
+    // This section compares the GSL class fermi_dirac_integ_gsl with
+    // o2scl versions of with various accuracies and floating point
+    // types. However, the o2scl version with the default types object
+    // named 'fd_d_ld', currently fails for large enough arguments.
+    
+    for(size_t i=0;i<50;i++) {
+      
+      double x=gn.gen();
+      long double x_ld=gn_ld.gen();
+      cpp_dec_float_35 x_cdf35=gn_cdf35.gen();
+      cpp_dec_float_50 x_cdf50=gn_cdf50.gen();
+      
+      double y1=fd_gsl.calc_3(x);
+      cpp_dec_float_35 y4=fd_35_50.calc_3(x_cdf35);
+      cpp_dec_float_50 y5=fd_50_100.calc_3(x_cdf50);
+      cout.width(4);
+      cout << i << " ";
+      cout.setf(ios::showpos);
+      cout << x << " ";
+      cout.unsetf(ios::showpos);
+      cout << dtos(y1,0) << endl;
+      cout << "                 " << dtos(y4,0) << endl;
+      cout << "                 " << dtos(y5,0) << endl;
+      
+      y1=fd_gsl.calc_m1o2(x);
+      y4=fd_35_50.calc_m1o2(x_cdf35);
+      y5=fd_50_100.calc_m1o2(x_cdf50);
+      cout.width(4);
+      cout << i << " ";
+      cout.setf(ios::showpos);
+      cout << x << " ";
+      cout.unsetf(ios::showpos);
+      cout << dtos(y1,0) << endl;
+      cout << "                 " << dtos(y4,0) << endl;
+      cout << "                 " << dtos(y5,0) << endl;
+      
+    }
+    cout << endl;
+    
+  }
 
   if (true) {
     
@@ -168,7 +229,7 @@ int main(void) {
       double x=gn.gen();
       long double x_ld=gn_ld.gen();
       cpp_dec_float_35 x_cdf35=gn_cdf35.gen();
-      
+
       double y1=fd_gsl.calc_3(x);
       double y2=fd_d_ld.calc_3(x);
       long double y3=fd_ld_35.calc_3(x_ld);
@@ -218,8 +279,8 @@ int main(void) {
                  "fermi_dirac -1/2 o2scl better than gsl");
       
     }
+    cout << endl;
   }
-  cout << endl;
   
   bessel_K_exp_integ_direct<long double,funct_cdf35,20,
 			    cpp_dec_float_35> be_ld_35;

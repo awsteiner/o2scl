@@ -379,6 +379,15 @@ namespace o2scl {
       Note that the GSL definition of the Fermi-Dirac integral
       includes an additional factor of \f$ 1/\Gamma(a+1) \f$
       which is not included here. 
+
+      \verbatim embed:rst
+      
+      .. todo::
+
+         Future: In fermi_dirac_integ_direct, create a new function
+         allowing arbitrary values of 'a' in the equation above.
+
+      \endverbatim
    */
   template <class fp_t=double, class func_t=funct_ld,
 	    size_t max_refine=30, 
