@@ -72,18 +72,54 @@ find_constants::find_constants() {
         {{"Wien wavelength displacement law","b"},
          "m/K",o2scl_const::o2scl_mks,2.897771955e-3,
          "CODATA 2018",1,0,0,-1,0,0,0},
+        {{"Planck length"},"m",o2scl_const::o2scl_mks,
+         sqrt(o2scl_mks::gravitational_constant*
+              o2scl_mks::plancks_constant_hbar/
+              o2scl_mks::speed_of_light/
+              o2scl_mks::speed_of_light/
+              o2scl_mks::speed_of_light),
+         "derived",1,0,0,0,0,0,0},
+        {{"Planck mass"},"kg",o2scl_const::o2scl_mks,
+         sqrt(o2scl_mks::plancks_constant_hbar/
+              o2scl_mks::gravitational_constant*
+              o2scl_mks::speed_of_light),
+         "derived",0,1,0,0,0,0,0},
+        {{"Planck time"},"s",o2scl_const::o2scl_mks,
+         sqrt(o2scl_mks::gravitational_constant*
+              o2scl_mks::plancks_constant_hbar/
+              o2scl_mks::speed_of_light/
+              o2scl_mks::speed_of_light/
+              o2scl_mks::speed_of_light/
+              o2scl_mks::speed_of_light/
+              o2scl_mks::speed_of_light),
+         "derived",0,0,1,0,0,0,0},
+        {{"Planck temperature"},"K",o2scl_const::o2scl_mks,
+         sqrt(o2scl_mks::plancks_constant_hbar*
+              o2scl_mks::speed_of_light*
+              o2scl_mks::speed_of_light*
+              o2scl_mks::speed_of_light*
+              o2scl_mks::speed_of_light*
+              o2scl_mks::speed_of_light/
+              o2scl_mks::gravitational_constant/
+              o2scl_mks::boltzmann/
+              o2scl_mks::boltzmann),
+         "derived",0,0,0,1,0,0,0},
         /*
           Things to add in the future:
-          
-          {{"Strong coupling constant at the Z mass"},},
-          {{"present day CMB temperature"},},
-          {{"present day dipole amplitude"},},
-          {{"Hubble length"},},
-          {{"Planck length"},},
-          {{"Planck mass"},},
-          {{"Solar angular velocity around galactic center"},},
-
+          Astrophysical/cosmological constants from PDG
         */
+	{{"elementary charge","e"},"C",
+	 o2scl_const::o2scl_mks,1.602176634,"exact",
+         0,0,1,0,1,0,0},
+	{{"Bohr magneton"},"J/T",
+	 o2scl_const::o2scl_mks,9.2740100783e-24,"CODATA 2018",
+         1,1,0,0,1,0,0},
+	{{"nuclear magneton"},"J/T",
+	 o2scl_const::o2scl_mks,5.0507837461e-27,"CODATA 2018",
+         1,1,0,0,1,0,0},
+	{{"strong coupling constant at the Z mass"},"",
+         fc_none,0.1179,"https://pdg.lbl.gov/2021/reviews/contents_sports.html",
+         0,0,0,0,0,0,0},
 	{{"Schwarzchild radius","rschwarz"},
 	 "cm",o2scl_const::o2scl_cgs,o2scl_cgs::schwarzchild_radius,
          "derived from the IAU 2015 nominal solar mass parameter",
