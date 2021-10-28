@@ -100,16 +100,14 @@ find_constants::find_constants() {
 	 "cm/s",o2scl_const::o2scl_cgs,
 	 o2scl_const::speed_of_light_f<double>(o2scl_const::o2scl_cgs),
          "exact",0,0,0,0,0,0,0},
-	{{"gravitational","g","newtonsconstant","gnewton",
-	  "newtonconstant"},"m^3/kg/s^2",o2scl_const::o2scl_mks,
+	{{"gravitational","g","gnewton"},"m^3/kg/s^2",o2scl_const::o2scl_mks,
 	 o2scl_mks::gravitational_constant,"CODATA 2018",3,-1,-2,0,0,0,0},
-	{{"gravitational","g","newtonsconstant","gnewton",
-	  "newtonconstant"},"cm^3/g/s^2",o2scl_const::o2scl_cgs,
-	 o2scl_cgs::gravitational_constant,"CODATA 2018",0,0,0,0,0,0,0},
-	{{"Boltzmann's","kb","boltzmannsconstant","boltzmann"},
+	{{"gravitational","g","gnewton"},"cm^3/g/s^2",o2scl_const::o2scl_cgs,
+         o2scl_cgs::gravitational_constant,"CODATA 2018",0,0,0,0,0,0,0},
+	{{"Boltzmann's","kb","boltzmann"},
 	 "m^2/kg/s^2/K",o2scl_const::o2scl_mks,o2scl_mks::boltzmann,
          "exact",2,-1,-2,-1,0,0,0},
-	{{"Boltzmann's","kb","boltzmannsconstant","boltzmann"},
+	{{"Boltzmann's","kb","boltzmann"},
 	 "cm^2/g/s^2/K",o2scl_const::o2scl_cgs,o2scl_cgs::boltzmann,
          "exact",0,0,0,0,0,0,0},
 	{{"Stefan-Boltzmann","sigmasb","stefanboltzmann","ssb","σsb"},
@@ -120,11 +118,11 @@ find_constants::find_constants() {
 	 "g/s^3/K^4",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::stefan_boltzmann_constant,
          "exact; derived from k_B, c, and h bar",0,0,0,0,0,0,0},
-	{{"Planck","h","planck","plancks"},
+	{{"Planck","h","plancks"},
 	 "kg*m^2/s",o2scl_const::o2scl_mks,
 	 o2scl_const::planck_f<double>(o2scl_const::o2scl_mks),
          "exact",2,1,-1,0,0,0,0},
-	{{"Planck","h","planckconstant","plancks"},
+	{{"Planck","h","plancks"},
 	 "g*cm^2/s",o2scl_const::o2scl_cgs,
 	 o2scl_const::planck_f<double>(o2scl_const::o2scl_cgs),
          "exact",0,0,0,0,0,0,0},
@@ -328,7 +326,7 @@ find_constants::find_constants() {
 	 o2scl_cgs::neptune_mass,"",0,0,0,0,0,0,0},
 	{{"mass pluto","plutomass","mpluto","m♇"},"kg",o2scl_const::o2scl_mks,
 	 o2scl_mks::pluto_mass,"",0,1,0,0,0,0,0},
-	{{"masspluto","plutomass","mpluto","m♇"},"g",o2scl_const::o2scl_cgs,
+	{{"mass pluto","plutomass","mpluto","m♇"},"g",o2scl_const::o2scl_cgs,
 	 o2scl_cgs::pluto_mass,"",0,0,0,0,0,0,0},
 	{{"radius solar","solarradius","radiussun","sunradius","rsun","r☉"},
 	 "m",o2scl_const::o2scl_mks,o2scl_mks::solar_radius,"",1,0,0,0,0,0,0},
@@ -817,6 +815,32 @@ double find_constants::find_unique(std::string name, std::string unit) {
 }
 
 void find_constants::output_list(std::ostream &os) {
+  for(size_t i=0;i<list.size();i++) {
+    string s;
+    s+=list[i].names[0];
+    s+=" ";
+    s+=o2scl::dtos(list[i].val);
+    s+=" ";
+    s+=list[i].unit;
+    s+=" ";
+    if (list[i].names.size()>1) {
+      for(size_t j=1;j<list[i].names.size();j++) {
+        s+='\"'+list[i].names[j]+"\" ";
+      }
+    }
+    vector<string> sv;
+    rewrap(s,sv,75);
+    os << sv[0];
+    if (sv.size()>1) {
+      os << "..." << endl;
+    } else {
+      os << endl;
+    }
+  }
+  return;
+}
+
+void find_constants::output_list_full(std::ostream &os) {
   os << "name unit flag value units (m,kg,s,K,A,mol,cd)" << endl;
   os << "  source" << endl;
   os << "  alternate names" << endl;

@@ -144,6 +144,10 @@ namespace o2scl {
     */
     void output_list(std::ostream &os);
 
+    /** \brief Output the full list of constants to \c os 
+    */
+    void output_list_full(std::ostream &os);
+
     /** \brief Output the full list of constants to 
         \c std::cout
     */

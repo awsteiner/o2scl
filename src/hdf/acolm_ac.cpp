@@ -285,6 +285,9 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
   } else if (sv[1]=="list") {
     cout.precision(prec);
     fc.output_list(cout);
+  } else if (sv[1]=="list-full") {
+    cout.precision(prec);
+    fc.output_list_full(cout);
   } else if (sv[1]=="add") {
     if (sv.size()<4) {
       cerr << "Argument 'add' given to command 'constant' implies add "
