@@ -96,10 +96,6 @@ namespace o2scl {
          In class convert_units:
 
          - (Future) Add G=1. 
-         - (Future) An in_cache() function to test
-           to see if a conversion is currently in the cache. 
-         - (Future) Add a del_cache() function to remove a 
-           conversion in the cache.
 
       \endverbatim
   */
@@ -1421,6 +1417,71 @@ namespace o2scl {
 
     /// \name Manipulate unit cache
     //@{
+    /// Remove a unit conversion from the cache
+    int remove_cache(std::string from, std::string to) {
+
+      // Remove whitespace
+      remove_whitespace(from);
+      remove_whitespace(to);
+
+      bool found=false;
+      
+      // Find the forward conversion
+      miter m1=mcache.find(from+","+to);
+      if (m1!=mcache.end()) {
+        mcache.erase(m1);
+        found=true;
+      }
+      
+      // Find the forward conversion
+      miter m2=mcache.find(to+","+from);
+      if (m2!=mcache.end()) {
+        mcache.erase(m2);
+        found=true;
+      }
+
+      if (found==false) {
+        if (err_on_fail) {
+          O2SCL_ERR((((std::string)"Conversion ")+from+" -> "+to+
+                     " not found in convert_units::remove_cache().").c_str(),
+                    exc_enotfound);
+        }
+        return exc_enotfound;
+      }
+      
+      return 0;
+    }
+
+    /// Test if a unit conversion is in the cache
+    int is_in_cache(std::string from, std::string to) {
+
+      // Remove whitespace
+      remove_whitespace(from);
+      remove_whitespace(to);
+      
+      int ret=0;
+
+      // Find the forward conversion
+      miter m1=mcache.find(from+","+to);
+      if (m1!=mcache.end()) {
+        ret++;
+      }
+      
+      // Find the forward conversion
+      miter m2=mcache.find(to+","+from);
+      if (m2!=mcache.end()) {
+        ret+=2;
+      }
+      
+      return ret;
+    }
+
+    /// Clear the cache completely
+    void clear_cache() {
+      mcache.clear();
+      return;
+    }
+    
     /// Manually insert a unit conversion into the cache
     void insert_cache(std::string from, std::string to, fp_t conv) {
 
@@ -1500,29 +1561,6 @@ namespace o2scl {
       return;
     }
   
-    /// Manually remove a unit conversion into the cache
-    void remove_cache(std::string from, std::string to) {
-
-      // Remove whitespace
-      remove_whitespace(from);
-      remove_whitespace(to);
-      std::string both=from+","+to;
-
-      miter m3=mcache.find(both);
-      if (m3!=mcache.end()) {
-        mcache.erase(m3);
-        return;
-      }
-  
-      if (err_on_fail) {
-        O2SCL_ERR((((std::string)"Conversion ")+from+" -> "+to+
-                   " not found in convert_units::remove_cache().").c_str(),
-                  exc_enotfound);
-      }
-
-      return;
-    }
-
     /** \brief Add default conversions
 
         Where possible, this uses templates from constants.h to define

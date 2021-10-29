@@ -1553,6 +1553,16 @@ class convert_units<>
   - bool c_is_one [true]
   - bool hbar_is_one [true]
   - bool kb_is_one [true]
+- function is_in_cache
+  - int
+  - std::string frm
+  - std::string to     
+- function remove_cache
+  - int
+  - std::string frm
+  - std::string to
+- function clear_cache
+  - void
 - function test_unique
   - void
 - function print_cache

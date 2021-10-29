@@ -55,25 +55,28 @@ namespace o2scl {
       \endcomment
   */
   template<class func_t=funct> class inte_qags_gsl : 
-  public inte_singular_gsl<func_t> {
+    public inte_singular_gsl<func_t> {
     
   public:
 
-  inte_qags_gsl() {
-    this->set_rule(2);
-  }
+    inte_qags_gsl() {
+      this->set_rule(2);
+    }
       
-  virtual ~inte_qags_gsl() {
-  }
+    virtual ~inte_qags_gsl() {
+    }
 
-  /** \brief Integrate function \c func from \c a to \c b and place
-      the result in \c res and the error in \c err
-  */
-  virtual int integ_err(func_t &func, double a, double b, 
-			double &res, double &err) {
-    return this->qags(func,a,b,this->tol_abs,this->tol_rel,&res,&err);
-  }
+    /** \brief Integrate function \c func from \c a to \c b and place
+        the result in \c res and the error in \c err
+    */
+    virtual int integ_err(func_t &func, double a, double b, 
+                          double &res, double &err) {
+      return this->qags(func,a,b,this->tol_abs,this->tol_rel,&res,&err);
+    }
            
+    /// Return string denoting type ("inte_qags_gsl")
+    const char *type() { return "inte_qags_gsl"; }
+  
   };
   
 #ifndef DOXYGEN_NO_O2NS

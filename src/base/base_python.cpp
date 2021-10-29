@@ -2369,6 +2369,24 @@ void o2scl_convert_units__set_natural_units(void *vptr, bool c_is_one, bool hbar
   return;
 }
 
+int o2scl_convert_units__is_in_cache(void *vptr, char *frm, char *to) {
+  convert_units<> *ptr=(convert_units<> *)vptr;
+  int ret=ptr->is_in_cache(frm,to);
+  return ret;
+}
+
+int o2scl_convert_units__remove_cache(void *vptr, char *frm, char *to) {
+  convert_units<> *ptr=(convert_units<> *)vptr;
+  int ret=ptr->remove_cache(frm,to);
+  return ret;
+}
+
+void o2scl_convert_units__clear_cache(void *vptr) {
+  convert_units<> *ptr=(convert_units<> *)vptr;
+  ptr->clear_cache();
+  return;
+}
+
 void o2scl_convert_units__test_unique(void *vptr) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   ptr->test_unique();

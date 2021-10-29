@@ -815,6 +815,12 @@ void o2scl_convert_units__add_unit(void *vptr, void *ptr_d);
 
 void o2scl_convert_units__set_natural_units(void *vptr, bool c_is_one=true, bool hbar_is_one=true, bool kb_is_one=true);
 
+int o2scl_convert_units__is_in_cache(void *vptr, char *frm, char *to);
+
+int o2scl_convert_units__remove_cache(void *vptr, char *frm, char *to);
+
+void o2scl_convert_units__clear_cache(void *vptr);
+
 void o2scl_convert_units__test_unique(void *vptr);
 
 void o2scl_convert_units__print_cache(void *vptr);

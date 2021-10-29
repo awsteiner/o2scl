@@ -226,12 +226,22 @@ int main(int argc, char *argv[]) {
   t.test_gen(iret==0,"convert with new unit 1");
   t.test_rel(d1,9.0,1.0e-15,"convert with new unit 2");
 
+  t.test_gen(cux.is_in_cache("α","N/K")==1,"in_cache() 1");
+  t.test_gen(cux.is_in_cache("N/K","α")==2,"in_cache() 2");
+  
   cux.del_unit("α");
 
   // This succeeds because the unit conversion is still in the
   // cache
   iret=cux.convert_ret("α","N/K",3.0,d1);
   t.test_gen(iret==0,"convert with new unit 3");
+
+  // Now additionally remove it from the cache
+  cux.remove_cache("α","N/K");
+
+  // This now fails
+  iret=cux.convert_ret("α","N/K",3.0,d1);
+  t.test_gen(iret!=0,"convert with new unit 4");
   
   t.report();
   return 0;
