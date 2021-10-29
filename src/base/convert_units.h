@@ -1417,7 +1417,14 @@ namespace o2scl {
 
     /// \name Manipulate unit cache
     //@{
-    /// Remove a unit conversion from the cache
+    /** \brief Remove a unit conversion from the cache
+
+        If either the forward or reverse conversions are found,
+        they are removed from the cache. If neither is found,
+        the error handler is called, unless \ref err_on_fail 
+        is \c false, in which case \ref o2scl::exc_enotfound is
+        returned.
+    */
     int remove_cache(std::string from, std::string to) {
 
       // Remove whitespace
@@ -1452,8 +1459,16 @@ namespace o2scl {
       return 0;
     }
 
-    /// Test if a unit conversion is in the cache
-    int is_in_cache(std::string from, std::string to) {
+    /** \brief Test if a unit conversion is in the cache
+
+        The possible return values are as follows:
+        - 0: neither the forward nor the reverse conversion are in
+          the cache
+        - 1: only the forward conversion is in the cache
+        - 2: only the reverse conversion is in the cache
+        - 3: both the forward and reverse conversions are in the cache
+     */
+    int is_in_cache(std::string from, std::string to) const {
 
       // Remove whitespace
       remove_whitespace(from);
@@ -1462,13 +1477,13 @@ namespace o2scl {
       int ret=0;
 
       // Find the forward conversion
-      miter m1=mcache.find(from+","+to);
+      mciter m1=mcache.find(from+","+to);
       if (m1!=mcache.end()) {
         ret++;
       }
       
       // Find the forward conversion
-      miter m2=mcache.find(to+","+from);
+      mciter m2=mcache.find(to+","+from);
       if (m2!=mcache.end()) {
         ret+=2;
       }
@@ -1540,7 +1555,7 @@ namespace o2scl {
 
         \note We make this a template to avoid problems with
         circular headers.
-     */
+    */
     template<class test_mgr_t> void test_cache_calc(test_mgr_t &t) const {
       mciter m;
       for (m=mcache.begin();m!=mcache.end();m++) {

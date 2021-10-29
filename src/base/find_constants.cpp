@@ -810,7 +810,7 @@ int find_constants::find_nothrow(std::string name, std::string unit,
 }
 
 void find_constants::find_print(std::string name, std::string unit,
-				size_t prec, int verbose) {
+				size_t prec, int verbose) const {
 
   cout.precision(prec);
     
@@ -837,7 +837,8 @@ void find_constants::find_print(std::string name, std::string unit,
   return;
 }
   
-double find_constants::find_unique(std::string name, std::string unit) {
+double find_constants::find_unique(std::string name,
+                                   std::string unit) const {
   vector<const_entry> matches;
   int ret=find_nothrow(name,unit,matches);
   if (ret!=one_exact_match_unit_match &&
@@ -850,7 +851,7 @@ double find_constants::find_unique(std::string name, std::string unit) {
   return matches[0].val;
 }
 
-void find_constants::output_list(std::ostream &os) {
+void find_constants::output_list(std::ostream &os) const {
   for(size_t i=0;i<list.size();i++) {
     string s;
     s+=list[i].names[0];
@@ -876,7 +877,7 @@ void find_constants::output_list(std::ostream &os) {
   return;
 }
 
-void find_constants::output_list_full(std::ostream &os) {
+void find_constants::output_list_full(std::ostream &os) const {
   os << "name unit flag value units (m,kg,s,K,A,mol,cd)" << endl;
   os << "  source" << endl;
   os << "  alternate names" << endl;

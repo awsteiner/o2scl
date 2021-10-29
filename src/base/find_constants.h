@@ -29,7 +29,7 @@
 
 namespace o2scl {
 
-  /** \brief A simple database of physical constants
+  /** \brief A searchable database of constants with units
    */
   class find_constants {
 
@@ -131,27 +131,27 @@ namespace o2scl {
 	and output result(s) with precision \c prec
     */
     void find_print(std::string name, std::string unit="", size_t prec=6,
-		    int verbose=0);
+		    int verbose=0) const;
   
     /** \brief Find a unique match and return the numerical value
      */
-    double find_unique(std::string name, std::string unit="");
+    double find_unique(std::string name, std::string unit="") const;
     //@}
 
     /// \name Functions to show or modify the constant list
     //@{
     /** \brief Output the full list of constants to \c os 
     */
-    void output_list(std::ostream &os);
+    void output_list(std::ostream &os) const;
 
     /** \brief Output the full list of constants to \c os 
     */
-    void output_list_full(std::ostream &os);
+    void output_list_full(std::ostream &os) const;
 
     /** \brief Output the full list of constants to 
         \c std::cout
     */
-    void output_list_cout() {
+    void output_list_cout() const {
       output_list(std::cout);
       return;
     }
