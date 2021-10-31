@@ -423,6 +423,8 @@ namespace o2scl {
       three_half/=two;
     }
 
+    /** \brief Set tolerance
+     */
     void set_tol(const fp_t &tol) {
       it.iiu.tol_rel=tol;
       return;
@@ -520,21 +522,27 @@ namespace o2scl {
     
   };
 
-  /** \brief Use progressively larger precision floating point types
-      until integral succeeds
+  /** \brief Fermi-Dirac integral by brute force
   */
   template<class fp_t, size_t max1, size_t max2, size_t max3,
            class fp1_t, class fp2_t, class fp3_t>
   class fermi_dirac_integ_bf {
     
   protected:
-    
+
+    /// Lowest precision integrator
     fermi_dirac_integ_direct<fp_t,std::function<fp1_t(fp1_t)>,max1,
                              fp1_t> fdi1;
+    
+    /// Medium precision integrator
     fermi_dirac_integ_direct<fp_t,std::function<fp2_t(fp2_t)>,max2,
                              fp2_t> fdi2;
+    
+    /// Highest precision integrator
     fermi_dirac_integ_direct<fp_t,std::function<fp3_t(fp3_t)>,max3,
                              fp3_t> fdi3;
+
+    /// Tolerance
     fp_t tol;
     
   public:
@@ -547,13 +555,20 @@ namespace o2scl {
       err_nonconv=true;
     }
 
+    /** \brief If true, then convergene failures call the error 
+        handler (default true)
+    */
     bool err_nonconv;
-    
+
+    /** \brief Set tolerance
+     */
     void set_tol(const fp_t &tol_) {
       tol=tol_;
       return;
     }
     
+    /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$
+     */
     int calc_1o2_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
       fdi1.set_tol(tol);
       int ret1=fdi1.calc_1o2_ret(y,res,err);
@@ -576,6 +591,8 @@ namespace o2scl {
       return ret3;
     }
 
+    /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$
+     */
     int calc_1o2_ret(fp_t y, fp_t &res, fp_t &err) {
       int method;
       int iret=calc_1o2_ret_full(y,res,err,method);
@@ -586,12 +603,16 @@ namespace o2scl {
       return 0;
     }
 
+    /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$
+     */
     fp_t calc_1o2(fp_t y) {
       fp_t res, err;
       calc_1o2_ret(y,res,err);
       return res;
     }
     
+    /** \brief Fermi-Dirac integral of order \f$ -1/2 \f$
+     */
     int calc_m1o2_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
       fdi1.set_tol(tol);
       int ret1=fdi1.calc_m1o2_ret(y,res,err);
@@ -614,6 +635,8 @@ namespace o2scl {
       return ret3;
     }
 
+    /** \brief Fermi-Dirac integral of order \f$ -1/2 \f$
+     */
     int calc_m1o2_ret(fp_t y, fp_t &res, fp_t &err) {
       int method;
       int iret=calc_m1o2_ret_full(y,res,err,method);
@@ -624,12 +647,16 @@ namespace o2scl {
       return iret;
     }
     
+    /** \brief Fermi-Dirac integral of order \f$ -1/2 \f$
+     */
     fp_t calc_m1o2(fp_t y) {
       fp_t res, err;
       calc_m1o2_ret(y,res,err);
       return res;
     }
     
+    /** \brief Fermi-Dirac integral of order \f$ 3/2 \f$
+     */
     int calc_3o2_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
       fdi1.set_tol(tol);
       int ret1=fdi1.calc_3o2_ret(y,res,err);
@@ -650,6 +677,8 @@ namespace o2scl {
       return ret3;
     }
 
+    /** \brief Fermi-Dirac integral of order \f$ 3/2 \f$
+     */
     int calc_3o2_ret(fp_t y, fp_t &res, fp_t &err) {
       int method;
       int iret=calc_3o2_ret_full(y,res,err,method);
@@ -660,12 +689,16 @@ namespace o2scl {
       return iret;
     }
     
+    /** \brief Fermi-Dirac integral of order \f$ 3/2 \f$
+     */
     fp_t calc_3o2(fp_t y) {
       fp_t res, err;
       calc_3o2_ret(y,res,err);
       return res;
     }
     
+    /** \brief Fermi-Dirac integral of order \f$ 2 \f$
+     */
     int calc_2_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
       fdi1.set_tol(tol);
       int ret1=fdi1.calc_2_ret(y,res,err);
@@ -686,6 +719,8 @@ namespace o2scl {
       return ret3;
     }
 
+    /** \brief Fermi-Dirac integral of order \f$ 2 \f$
+     */
     int calc_2_ret(fp_t y, fp_t &res, fp_t &err) {
       int method;
       int iret=calc_2_ret_full(y,res,err,method);
@@ -696,12 +731,16 @@ namespace o2scl {
       return iret;
     }
     
+    /** \brief Fermi-Dirac integral of order \f$ 2 \f$
+     */
     fp_t calc_2(fp_t y) {
       fp_t res, err;
       calc_2_ret(y,res,err);
       return res;
     }
     
+    /** \brief Fermi-Dirac integral of order \f$ 3 \f$
+     */
     int calc_3_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
       fdi1.set_tol(tol);
       int ret1=fdi1.calc_3_ret(y,res,err);
@@ -722,6 +761,8 @@ namespace o2scl {
       return ret3;
     }
 
+    /** \brief Fermi-Dirac integral of order \f$ 3 \f$
+     */
     int calc_3_ret(fp_t y, fp_t &res, fp_t &err) {
       int method;
       int iret=calc_3_ret_full(y,res,err,method);
@@ -732,12 +773,13 @@ namespace o2scl {
       return iret;
     }
     
+    /** \brief Fermi-Dirac integral of order \f$ 3 \f$
+     */
     fp_t calc_3(fp_t y) {
       fp_t res, err;
       calc_3_ret(y,res,err);
       return res;
     }
-    
     
   };
     
@@ -779,6 +821,8 @@ namespace o2scl {
       it.iiu.tol_rel=1.0e-12;
     }
 
+    /** \brief Set tolerance
+     */
     void set_tol(const fp_t &tol) {
       it.iiu.tol_rel=tol;
       return;
@@ -875,6 +919,8 @@ namespace o2scl {
       it_be.iiu.tol_rel=1.0e-17;
     }
     
+    /** \brief Set tolerance
+     */
     void set_tol(fp_t tol) {
       it_fd.iiu.tol_rel=tol;
       it_be.iiu.tol_rel=tol;
