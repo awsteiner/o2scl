@@ -1517,12 +1517,15 @@ namespace o2scl {
     /// The integrand for the energy density for degenerate fermions
     fp_t deg_energy_fun(fp_t k, fermion_t &f, fp_t T) {
 
-      fp_t E=o2hypot(k,f.ms), ret;
-      if (!f.inc_rest_mass) E-=f.m;
-
-      fp_t arg1=(E-f.nu)/T;
-      ret=k*k*E/(1.0+o2exp(arg1));
-
+      fp_t ret;
+      fp_t y=f.nu/T;
+      fp_t eta=f.ms/T;
+      fp_t E=o2hypot(k/T,eta);
+      if (!f.inc_rest_mass) E-=f.m/T;
+      fp_t arg1=E-y;
+      
+      ret=k*k*E*T/(1.0+o2exp(arg1));
+      
       if (!o2isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
 		   "in fermion_rel::deg_energy_fun().",exc_einval);
@@ -1534,11 +1537,14 @@ namespace o2scl {
     /// The integrand for the energy density for degenerate fermions
     fp_t deg_pressure_fun(fp_t k, fermion_t &f, fp_t T) {
 
-      fp_t E=o2hypot(k,f.ms), ret;
-      if (!f.inc_rest_mass) E-=f.m;
-
-      fp_t arg1=(E-f.nu)/T;
-      ret=k*k*k*k/3/E/(1.0+o2exp(arg1));
+      fp_t ret;
+      fp_t y=f.nu/T;
+      fp_t eta=f.ms/T;
+      fp_t E=o2hypot(k/T,eta);
+      if (!f.inc_rest_mass) E-=f.m/T;
+      fp_t arg1=E-y;
+      
+      ret=k*k*k*k/3/E/T/(1.0+o2exp(arg1));
 
       if (!o2isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
@@ -1551,21 +1557,23 @@ namespace o2scl {
     /// The integrand for the entropy density for degenerate fermions
     fp_t deg_entropy_fun(fp_t k, fermion_t &f, fp_t T) {
   
-      fp_t E=o2hypot(k,f.ms), ret;
-      if (!f.inc_rest_mass) E-=f.m;
+      fp_t ret;
+      fp_t y=f.nu/T;
+      fp_t eta=f.ms/T;
+      fp_t E=o2hypot(k/T,eta);
+      if (!f.inc_rest_mass) E-=f.m/T;
+      fp_t arg1=E-y;
 
       // If the argument to the exponential is really small, then the
       // value of the integrand is just zero
-      if (((E-f.nu)/T)<-exp_limit) {
+      if (arg1<-exp_limit) {
 	ret=0.0;
 	// Otherwise, if the argument to the exponential is still small,
 	// then addition of 1 makes us lose precision, so we use an
 	// alternative:
-      } else if (((E-f.nu)/T)<-deg_entropy_fac) {
-	fp_t arg1=E/T-f.nu/T;
+      } else if (arg1<-deg_entropy_fac) {
 	ret=-k*k*(-1.0+arg1)*o2exp(arg1);
       } else {
-	fp_t arg1=E/T-f.nu/T;
 	fp_t nx=1.0/(1.0+o2exp(arg1));
         fp_t arg2=1.0-nx;
 	ret=-k*k*(nx*o2log(nx)+(1.0-nx)*o2log(arg2));
