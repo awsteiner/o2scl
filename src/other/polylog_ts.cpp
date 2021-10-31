@@ -34,9 +34,15 @@ using namespace o2scl;
 
 #ifdef O2SCL_LD_TYPES
 typedef
+boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
+cpp_dec_float_25;
+
+typedef
 boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
 cpp_dec_float_35;
+
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+
 typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
 #endif
 
@@ -110,6 +116,17 @@ int main(void) {
        << std::endl;
   
   cout.width(3);
+  cout << std::numeric_limits<cpp_dec_float_25>::digits10 << " ";
+  cout.width(3);
+  cout << std::numeric_limits<cpp_dec_float_25>::max_digits10 << " "; 
+  cout.width(20);
+  cout << std::numeric_limits<cpp_dec_float_25>::max() << " ";
+  cout.width(10);
+  cout << log(pow(10.0,
+                  std::numeric_limits<cpp_dec_float_25>::max_digits10))
+       << std::endl;
+  
+  cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_35>::digits10 << " ";
   cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_35>::max_digits10 << " "; 
@@ -155,10 +172,35 @@ int main(void) {
 			   cpp_dec_float_100> fd_50_100;
   fd_50_100.set_tol(1.0e-52);
 
+  fermi_dirac_integ_bf<double,30,40,50,cpp_dec_float_25,
+                       cpp_dec_float_35,cpp_dec_float_50> fdib;
+  fdib.set_tol(1.0e-17);
+
   gen_test_number<> gn;
   gen_test_number<long double> gn_ld;
   gen_test_number<cpp_dec_float_35> gn_cdf35;
   gen_test_number<cpp_dec_float_50> gn_cdf50;
+
+  if (true) {
+    gn.set_radix(1.7);
+
+    for(size_t i=0;i<90;i++) {
+      
+      double x=gn.gen(), res, err;
+      int iret=fdib.calc_1o2_ret(x,res,err);
+      
+      cout.width(4);
+      cout << i << " ";
+      cout.setf(ios::showpos);
+      cout << x << " ";
+      cout.unsetf(ios::showpos);
+      cout << dtos(res,0) << " " << dtos(err,0) << " " << iret << endl;
+      
+    }
+    cout << endl;
+    exit(-1);
+    
+  }
 
   /*
     AWS, 10/28/21: The next section, while commented out because it's

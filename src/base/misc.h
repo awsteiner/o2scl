@@ -580,28 +580,28 @@ namespace o2scl {
 	x=-1;
       } else if ((n-3)%8==0) {
         // The sequence 0.5, 0.25, 0.125, ..., -> 0
-        x=o2pow(radix,-(d+1));
+        x=pow(radix,-(d+1));
       } else if ((n-3)%8==1) {
         // The sequence -0.5, -0.25, -0.125, ... -> 0
-        x=-o2pow(radix,-(d+1));
+        x=-pow(radix,-(d+1));
       } else if ((n-3)%8==2) {
         // The sequence 0.75, 0.875, 0.9375, ... -> 1
-        x=1.0-o2pow(radix,-(d+2));
+        x=1.0-pow(radix,-(d+2));
       } else if ((n-3)%8==3) {
         // The sequence -0.75, -0.875, -0.9375, ... -> -1
-        x=-1.0+o2pow(radix,-(d+2));
+        x=-1.0+pow(radix,-(d+2));
       } else if ((n-3)%8==4) {
         // The sequence 1.5, 1.25, 1.125, ... -> 1
-        x=1.0+o2pow(radix,-(d+1));
+        x=1.0+pow(radix,-(d+1));
       } else if ((n-3)%8==5) {
         // The sequence -1.5, -1.25, -1.125, ... -> -1
-        x=-1.0-o2pow(radix,-(d+1));
+        x=-1.0-pow(radix,-(d+1));
       } else if ((n-3)%8==6) {
         // The sequence 2, 4, 8, ... -> \infty
-        x=o2pow(radix,d+1);
+        x=pow(radix,d+1);
       } else if ((n-3)%8==7) {
         // The sequence -2, -4, -8, ... -> -\infty
-        x=-o2pow(radix,d+1);
+        x=-pow(radix,d+1);
       }
       n++;
       return x;

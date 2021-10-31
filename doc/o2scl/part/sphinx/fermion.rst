@@ -529,6 +529,15 @@ The Sommerfeld expansion for :math:`t \rightarrow 0` is
    \end{eqnarray}
    
 This is an asymptotic expansion, and must thus be used with care.
+In the case where :math:`f(z)=z^n`,
+
+.. math::
+
+   \int_0^{\infty} dz~\frac{f(z)}{1 + e^{(z-x)/t}} =
+   \int_0^{x} f(z) + \sum_{n=1}^{\infty}
+   \pi^{2n}t^{2n} (2n-1)! z^{2n-1}
+   \left[ \frac{2 (-1)^{1+n}(2^{2n-1}-1)B_{2n}}{(2n)!} \right]
+   
 Define :math:`\tilde{P}(x,t) \equiv 2 \pi^2 P/(g m^4)`. The first term
 in the Sommerfeld expansion for :math:`\tilde{P}` depends only on
 :math:`x` alone:

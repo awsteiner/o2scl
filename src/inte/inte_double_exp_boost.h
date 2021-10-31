@@ -78,12 +78,14 @@ namespace o2scl {
       size_t levels;
       res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm,&levels);
       if (err>this->tol_rel) {
-        std::cout << "Function inte_tanh_sinh_boost::integ_err() failed."
-                  << std::endl;
-        std::cout << "Values err,tol_rel,L1norm,levels,max: "
-                  << err << " " << this->tol_rel << " "
-                  << L1norm << " " << levels << " " << max_refine
-                  << std::endl;
+        if (this->err_nonconv==true) {
+          std::cout << "Function inte_tanh_sinh_boost::integ_err() failed."
+                    << std::endl;
+          std::cout << "Values err,tol_rel,L1norm,levels,max: "
+                    << err << " " << this->tol_rel << " "
+                    << L1norm << " " << levels << " " << max_refine
+                    << std::endl;
+        }
         O2SCL_CONV2_RET("Failed to achieve tolerance in ",
                         "inte_tanh_sinh_boost::integ_err().",
                         o2scl::exc_efailed,this->err_nonconv);
@@ -183,12 +185,14 @@ namespace o2scl {
       size_t levels;
       res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm,&levels);
       if (err>this->tol_rel) {
-	std::cout << "Function inte_exp_sinh_boost::integ_err() failed."
-                  << std::endl;
-        std::cout << "Values err,tol_rel,L1norm,levels,max: "
-		  << err << " " << this->tol_rel << " "
-		  << L1norm << " " << levels << " " << max_refine
-                  << std::endl;
+        if (this->err_nonconv==true) {
+          std::cout << "Function inte_exp_sinh_boost::integ_err() failed."
+                    << std::endl;
+          std::cout << "Values err,tol_rel,L1norm,levels,max: "
+                    << err << " " << this->tol_rel << " "
+                    << L1norm << " " << levels << " " << max_refine
+                    << std::endl;
+        }
 	O2SCL_CONV2_RET("Failed to achieve tolerance in ",
                         "inte_exp_sinh_boost::integ_err().",
                         o2scl::exc_efailed,this->err_nonconv);
@@ -256,12 +260,14 @@ namespace o2scl {
       size_t levels;
       res=it.integrate(func,this->tol_rel/10.0,&err,&L1norm,&levels);
       if (err>this->tol_rel) {
-	std::cout << "Function inte_sinh_sinh_boost::integ_err() failed."
-                  << std::endl;
-        std::cout << "Values err,tol_rel,L1norm,levels,max: "
-		  << err << " " << this->tol_rel << " "
-		  << L1norm << " " << levels << " " << max_refine
-                  << std::endl;
+        if (this->err_nonconv==true) {
+          std::cout << "Function inte_sinh_sinh_boost::integ_err() failed."
+                    << std::endl;
+          std::cout << "Values err,tol_rel,L1norm,levels,max: "
+                    << err << " " << this->tol_rel << " "
+                    << L1norm << " " << levels << " " << max_refine
+                    << std::endl;
+        }
 	O2SCL_CONV2_RET("Failed to achieve tolerance in ",
                         "inte_sinh_sinh_boost::integ_err().",
                         o2scl::exc_efailed,this->err_nonconv);

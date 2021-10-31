@@ -65,7 +65,7 @@ help:
 SUBDIRS = plot
 
 if O2SCL_EOSLIB
-BENCHMARK_PRGS = bm_poly.scr bm_root.scr bm_min.scr
+BENCHMARK_PRGS = bm_poly.scr bm_root.scr bm_min.scr bm_polylog.scr
 #	bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
 #	bm_part.scr bm_part2.scr 
 # bm_mmin.scr
@@ -84,7 +84,7 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 
 else
 
-BENCHMARK_PRGS = bm_poly.scr bm_root.scr bm_min.scr
+BENCHMARK_PRGS = bm_poly.scr bm_root.scr bm_min.scr bm_polylog.scr
 #	bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
 #bm_mmin.scr 
 
@@ -216,7 +216,8 @@ EXTRA_PROGRAMS = \
 	ex_lambda \
 	bm_root \
 	bm_min \
-	bm_poly 
+	bm_poly \
+	bm_polylog
 #	bm_lu \
 #	bm_deriv \
 #	bm_mmin \
@@ -258,7 +259,8 @@ EXTRA_PROGRAMS = ex_fptr \
 	ex_lambda \
 	bm_root \
 	bm_min \
-	bm_poly 
+	bm_poly \
+	bm_polylog
 
 #	bm_lu \
 #	bm_deriv \
@@ -698,6 +700,11 @@ bm_root_LDADD = $(OOLIBS) $(OOLIBSTWO)
 bm_root_SOURCES = bm_root.cpp
 bm_root.scr: bm_root bm_root.cpp
 	./bm_root > bm_root.scr
+
+bm_polylog_LDADD = $(OOLIBS) $(OOLIBSTWO)
+bm_polylog_SOURCES = bm_polylog.cpp
+bm_polylog.scr: bm_polylog bm_polylog.cpp
+	./bm_polylog > bm_polylog.scr
 
 bm_min_LDADD = $(OOLIBS) $(OOLIBSTWO)
 bm_min_SOURCES = bm_min.cpp

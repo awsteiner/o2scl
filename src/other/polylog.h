@@ -100,13 +100,13 @@ namespace o2scl {
   /** \brief Compute the integral, storing the result in 
       \c res and the error in \c err
   */
-  void calc_err(fp_t a, fp_t mu, fp_t &res, fp_t &err) {
+    int calc_err(fp_t a, fp_t mu, fp_t &res, fp_t &err) {
     func_t f=
     std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
 	      (&fermi_dirac_integ_tl::obj_func),
 	      this,std::placeholders::_1,a,mu);
-    iiu.integ_iu_err(f,0.0,res,err);
-    return;
+    int iret=iiu.integ_iu_err(f,0.0,res,err);
+    return iret;
   }
   
   };
@@ -154,13 +154,13 @@ namespace o2scl {
   /** \brief Compute the integral, storing the result in 
       \c res and the error in \c err
   */
-  void calc_err(fp_t a, fp_t mu, fp_t &res, fp_t &err) {
+    int calc_err(fp_t a, fp_t mu, fp_t &res, fp_t &err) {
     func_t f=
     std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
 	      (&bose_einstein_integ_tl::obj_func),
 	      this,std::placeholders::_1,a,mu);
-    iiu.integ_iu_err(f,0.0,res,err);
-    return;
+    int iret=iiu.integ_iu_err(f,0.0,res,err);
+    return iret;
   }
   
   };
@@ -396,18 +396,31 @@ namespace o2scl {
 
   protected:
     
+    internal_fp_t half;
+    internal_fp_t three_half;
+    internal_fp_t three;
+    internal_fp_t two;
+    
+  public:
+
     /** \brief The integrator
      */
     fermi_dirac_integ_tl<o2scl::inte_exp_sinh_boost
       <func_t,max_refine,internal_fp_t>,internal_fp_t> it;
-    
-  public:
 
     fermi_dirac_integ_direct() {
       // AWS 8/14/21 changed from 1.0e-17 to 1.0e-14 because it
       // appeard to more frequently converge (see polylog_ts) without
       // sacrificing accuracy.
       it.iiu.tol_rel=1.0e-14;
+
+      // Set up the arguments in the internal precision
+      three=3;
+      two=2;
+      half=1;
+      half/=two;
+      three_half=three;
+      three_half/=two;
     }
 
     void set_tol(const fp_t &tol) {
@@ -419,44 +432,315 @@ namespace o2scl {
      */
     fp_t calc_1o2(fp_t y) {
       internal_fp_t y2=y, res, err;
-      it.calc_err(0.5L,y2,res,err);
+      it.calc_err(half,y2,res,err);
       return ((fp_t)res);
+    }
+
+    /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$
+     */
+    int calc_1o2_ret(fp_t y, fp_t &res, fp_t &err) {
+      internal_fp_t y2=y, res2, err2;
+      int iret=it.calc_err(half,y2,res2,err2);
+      res=(fp_t)res2;
+      err=(fp_t)err2;
+      return iret;
     }
     
     /** \brief Fermi-Dirac integral of order \f$ -1/2 \f$
      */
     fp_t calc_m1o2(fp_t y) {
       internal_fp_t y2=y, res, err;
-      it.calc_err(-0.5L,y2,res,err);
+      it.calc_err(-half,y2,res,err);
       return ((fp_t)res);
+    }
+    
+    /** \brief Fermi-Dirac integral of order \f$ -1/2 \f$
+     */
+    int calc_m1o2_ret(fp_t y, fp_t &res, fp_t &err) {
+      internal_fp_t y2=y, res2, err2;
+      int iret=it.calc_err(-half,y2,res2,err2);
+      res=(fp_t)res2;
+      err=(fp_t)err2;
+      return iret;
     }
     
     /** \brief Fermi-Dirac integral of order \f$ 3/2 \f$
      */
     fp_t calc_3o2(fp_t y) {
       internal_fp_t y2=y, res, err;
-      it.calc_err(1.5L,y2,res,err);
+      it.calc_err(three_half,y2,res,err);
       return ((fp_t)res);
+    }
+    
+    /** \brief Fermi-Dirac integral of order \f$ 3/2 \f$
+     */
+    int calc_3o2_ret(fp_t y, fp_t &res, fp_t &err) {
+      internal_fp_t y2=y, res2, err2;
+      int iret=it.calc_err(three_half,y2,res2,err2);
+      res=(fp_t)res2;
+      err=(fp_t)err2;
+      return iret;
     }
     
     /** \brief Fermi-Dirac integral of order \f$ 2 \f$
      */
     fp_t calc_2(fp_t y) {
       internal_fp_t y2=y, res, err;
-      it.calc_err(2.0L,y2,res,err);
+      it.calc_err(two,y2,res,err);
       return ((fp_t)res);
+    }
+    
+    /** \brief Fermi-Dirac integral of order \f$ 2 \f$
+     */
+    int calc_2_ret(fp_t y, fp_t &res, fp_t &err) {
+      internal_fp_t y2=y, res2, err2;
+      int iret=it.calc_err(two,y2,res2,err2);
+      res=(fp_t)res2;
+      err=(fp_t)err2;
+      return iret;
     }
     
     /** \brief Fermi-Dirac integral of order \f$ 3 \f$
      */
     fp_t calc_3(fp_t y) {
       internal_fp_t y2=y, res, err;
-      it.calc_err(3.0L,y2,res,err);
+      it.calc_err(three,y2,res,err);
       return ((fp_t)res);
+    }
+    
+    /** \brief Fermi-Dirac integral of order \f$ 3 \f$
+     */
+    int calc_3_ret(fp_t y, fp_t &res, fp_t &err) {
+      internal_fp_t y2=y, res2, err2;
+      int iret=it.calc_err(three,y2,res2,err2);
+      res=(fp_t)res2;
+      err=(fp_t)err2;
+      return iret;
     }
     
   };
 
+  /** \brief Use progressively larger precision floating point types
+      until integral succeeds
+  */
+  template<class fp_t, size_t max1, size_t max2, size_t max3,
+           class fp1_t, class fp2_t, class fp3_t>
+  class fermi_dirac_integ_bf {
+    
+  protected:
+    
+    fermi_dirac_integ_direct<fp_t,std::function<fp1_t(fp1_t)>,max1,
+                             fp1_t> fdi1;
+    fermi_dirac_integ_direct<fp_t,std::function<fp2_t(fp2_t)>,max2,
+                             fp2_t> fdi2;
+    fermi_dirac_integ_direct<fp_t,std::function<fp3_t(fp3_t)>,max3,
+                             fp3_t> fdi3;
+    fp_t tol;
+    
+  public:
+
+    fermi_dirac_integ_bf() {
+      fdi1.it.iiu.err_nonconv=false;
+      fdi2.it.iiu.err_nonconv=false;
+      fdi3.it.iiu.err_nonconv=false;
+      tol=1.0e-17;
+      err_nonconv=true;
+    }
+
+    bool err_nonconv;
+    
+    void set_tol(const fp_t &tol_) {
+      tol=tol_;
+      return;
+    }
+    
+    int calc_1o2_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
+      fdi1.set_tol(tol);
+      int ret1=fdi1.calc_1o2_ret(y,res,err);
+      if (ret1==0) {
+        method=1;
+        return 0;
+      }
+      fdi2.set_tol(tol);
+      int ret2=fdi2.calc_1o2_ret(y,res,err);
+      if (ret2==0) {
+        method=2;
+        return 0;
+      }
+      int ret3=fdi3.calc_1o2_ret(y,res,err);
+      if (ret3==0) {
+        method=3;
+      } else {
+        method=0;
+      }
+      return ret3;
+    }
+
+    int calc_1o2_ret(fp_t y, fp_t &res, fp_t &err) {
+      int method;
+      int iret=calc_1o2_ret_full(y,res,err,method);
+      if (iret!=0) {
+        O2SCL_CONV_RET("Function calc_1o2 failed",o2scl::exc_efailed,
+                        err_nonconv);
+      }
+      return 0;
+    }
+
+    fp_t calc_1o2(fp_t y) {
+      fp_t res, err;
+      calc_1o2_ret(y,res,err);
+      return res;
+    }
+    
+    int calc_m1o2_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
+      fdi1.set_tol(tol);
+      int ret1=fdi1.calc_m1o2_ret(y,res,err);
+      if (ret1==0) {
+        method=1;
+        return 0;
+      }
+      fdi2.set_tol(tol);
+      int ret2=fdi2.calc_m1o2_ret(y,res,err);
+      if (ret2==0) {
+        method=2;
+        return 0;
+      }
+      int ret3=fdi3.calc_m1o2_ret(y,res,err);
+      if (ret3==0) {
+        method=3;
+      } else {
+        method=0;
+      }
+      return ret3;
+    }
+
+    int calc_m1o2_ret(fp_t y, fp_t &res, fp_t &err) {
+      int method;
+      int iret=calc_m1o2_ret_full(y,res,err,method);
+      if (iret!=0) {
+        O2SCL_CONV_RET("Function calc_m1o2 failed",o2scl::exc_efailed,
+                        err_nonconv);
+      }
+      return iret;
+    }
+    
+    fp_t calc_m1o2(fp_t y) {
+      fp_t res, err;
+      calc_m1o2_ret(y,res,err);
+      return res;
+    }
+    
+    int calc_3o2_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
+      fdi1.set_tol(tol);
+      int ret1=fdi1.calc_3o2_ret(y,res,err);
+      if (ret1==0) {
+        return 0;
+      }
+      fdi2.set_tol(tol);
+      int ret2=fdi2.calc_3o2_ret(y,res,err);
+      if (ret2==0) {
+        return 0;
+      }
+      int ret3=fdi3.calc_3o2_ret(y,res,err);
+      if (ret3==0) {
+        method=3;
+      } else {
+        method=0;
+      }
+      return ret3;
+    }
+
+    int calc_3o2_ret(fp_t y, fp_t &res, fp_t &err) {
+      int method;
+      int iret=calc_3o2_ret_full(y,res,err,method);
+      if (iret!=0) {
+        O2SCL_CONV_RET("Function calc_3o2 failed",o2scl::exc_efailed,
+                        err_nonconv);
+      }
+      return iret;
+    }
+    
+    fp_t calc_3o2(fp_t y) {
+      fp_t res, err;
+      calc_3o2_ret(y,res,err);
+      return res;
+    }
+    
+    int calc_2_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
+      fdi1.set_tol(tol);
+      int ret1=fdi1.calc_2_ret(y,res,err);
+      if (ret1==0) {
+        return 0;
+      }
+      fdi2.set_tol(tol);
+      int ret2=fdi2.calc_2_ret(y,res,err);
+      if (ret2==0) {
+        return 0;
+      }
+      int ret3=fdi3.calc_2_ret(y,res,err);
+      if (ret3==0) {
+        method=3;
+      } else {
+        method=0;
+      }
+      return ret3;
+    }
+
+    int calc_2_ret(fp_t y, fp_t &res, fp_t &err) {
+      int method;
+      int iret=calc_2_ret_full(y,res,err,method);
+      if (iret!=0) {
+        O2SCL_CONV_RET("Function calc_2 failed",o2scl::exc_efailed,
+                        err_nonconv);
+      }
+      return iret;
+    }
+    
+    fp_t calc_2(fp_t y) {
+      fp_t res, err;
+      calc_2_ret(y,res,err);
+      return res;
+    }
+    
+    int calc_3_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
+      fdi1.set_tol(tol);
+      int ret1=fdi1.calc_3_ret(y,res,err);
+      if (ret1==0) {
+        return 0;
+      }
+      fdi2.set_tol(tol);
+      int ret2=fdi2.calc_3_ret(y,res,err);
+      if (ret2==0) {
+        return 0;
+      }
+      int ret3=fdi3.calc_3_ret(y,res,err);
+      if (ret3==0) {
+        method=3;
+      } else {
+        method=0;
+      }
+      return ret3;
+    }
+
+    int calc_3_ret(fp_t y, fp_t &res, fp_t &err) {
+      int method;
+      int iret=calc_3_ret_full(y,res,err,method);
+      if (iret!=0) {
+        O2SCL_CONV_RET("Function calc_3 failed",o2scl::exc_efailed,
+                        err_nonconv);
+      }
+      return iret;
+    }
+    
+    fp_t calc_3(fp_t y) {
+      fp_t res, err;
+      calc_3_ret(y,res,err);
+      return res;
+    }
+    
+    
+  };
+    
   /** \brief Compute exponentially scaled modified Bessel function of
       the second kind by direct integration
 
