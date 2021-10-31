@@ -521,9 +521,21 @@ namespace o2scl {
     }
     
   };
-
+  
   /** \brief Fermi-Dirac integral by brute force
-  */
+
+      This class seems to work well, and can produce results at
+      high-precision, but can be slow, especially for large arguments.
+
+      \verbatim embed:rst
+
+      .. todo::
+
+         In class fermi_dirac_integ_bf: implement degenerate
+         expansions.
+
+      \endverbatim
+   */
   template<class fp_t, size_t max1, size_t max2, size_t max3,
            class fp1_t, class fp2_t, class fp3_t>
   class fermi_dirac_integ_bf {
