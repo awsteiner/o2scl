@@ -659,17 +659,17 @@ namespace o2scl {
 	func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			      nit_t,dit_t,density_root_t,
-			      root_t,func_t,fp_t>::density_fun),
+			      root_t,func_t,fp_t>::density_fun<fp_t>),
 			     this,std::placeholders::_1,y,eta);
 	func_t mfe=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			      nit_t,dit_t,density_root_t,
-			      root_t,func_t,fp_t>::energy_fun),
+			      root_t,func_t,fp_t>::energy_fun<fp_t>),
 			     this,std::placeholders::_1,y,eta);
 	func_t mfs=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			      nit_t,dit_t,density_root_t,
-			      root_t,func_t,fp_t>::entropy_fun),
+			      root_t,func_t,fp_t>::entropy_fun<fp_t>),
 			     this,std::placeholders::_1,y,eta);
       
 	fp_t prefac=f.g*pow(temper,3.0)/2.0/this->pi2;
@@ -971,12 +971,12 @@ namespace o2scl {
 	func_t mfe=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			      nit_t,dit_t,density_root_t,
-			      root_t,func_t,fp_t>::energy_fun),
+			      root_t,func_t,fp_t>::energy_fun<fp_t>),
 			     this,std::placeholders::_1,y,eta);
 	func_t mfs=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			      nit_t,dit_t,density_root_t,
-			      root_t,func_t,fp_t>::entropy_fun),
+			      root_t,func_t,fp_t>::entropy_fun<fp_t>),
 			     this,std::placeholders::_1,y,eta);
 	
 	f.ed=nit->integ_iu(mfe,0.0);
@@ -1430,13 +1430,14 @@ namespace o2scl {
 #ifndef DOXYGEN_INTERNAL
 
     /// The integrand for the density for non-degenerate fermions
-    fp_t density_fun(fp_t u, fp_t y, fp_t eta) {
+    template<class internal_fp_t>
+    internal_fp_t density_fun(internal_fp_t u, internal_fp_t y, internal_fp_t eta) {
       
-      fp_t ret;
+      internal_fp_t ret;
         
-      fp_t arg1=u*u+2*eta*u;
-      fp_t arg2=eta+u-y;
-      fp_t arg3=eta+u;
+      internal_fp_t arg1=u*u+2*eta*u;
+      internal_fp_t arg2=eta+u-y;
+      internal_fp_t arg3=eta+u;
       if (y-eta-u>exp_limit) {
 	ret=(eta+u)*o2sqrt(arg1);
       } else if (y>u+exp_limit && eta>u+exp_limit) {
@@ -1453,13 +1454,14 @@ namespace o2scl {
     }
 
     /// The integrand for the pressure for non-degenerate fermions
-    fp_t pressure_fun(fp_t u, fp_t y, fp_t eta) {
+    template<class internal_fp_t>
+    internal_fp_t pressure_fun(internal_fp_t u, internal_fp_t y, internal_fp_t eta) {
 
-      fp_t ret;
+      internal_fp_t ret;
       
-      fp_t arg1=u*u+2*eta*u;
-      fp_t term1=o2sqrt(arg1);
-      fp_t arg3=eta+u;
+      internal_fp_t arg1=u*u+2*eta*u;
+      internal_fp_t term1=o2sqrt(arg1);
+      internal_fp_t arg3=eta+u;
       ret=term1*term1*term1*o2exp(y)/(o2exp(arg3)+o2exp(y))/3;
       
       if (!o2isfinite(ret)) {
@@ -1470,40 +1472,43 @@ namespace o2scl {
     }
 
     /// The integrand for the energy density for non-degenerate fermions
-    fp_t energy_fun(fp_t u, fp_t y, fp_t eta) {
+    template<class internal_fp_t>
+    internal_fp_t energy_fun(internal_fp_t u, internal_fp_t y,
+                             internal_fp_t eta) {
 
-      fp_t ret;
+      internal_fp_t ret;
 
-      fp_t arg1=u*u+2*eta*u;
-      fp_t arg2=eta+u-y;
-      fp_t arg3=eta+u;
+      internal_fp_t arg1=u*u+2*eta*u;
+      internal_fp_t arg2=eta+u-y;
+      internal_fp_t arg3=eta+u;
       if (y>u+exp_limit && eta>u+exp_limit) {
-	ret=(eta+u)*(eta+u)*o2sqrt(arg1)/(o2exp(arg2)+1.0);
+	ret=(eta+u)*(eta+u)*o2sqrt(arg1)/(o2exp(arg2)+1);
       } else {
 	ret=(eta+u)*(eta+u)*o2sqrt(arg1)*o2exp(y)/
           (o2exp(arg3)+o2exp(y));
       }
  
       if (!o2isfinite(ret)) {
-	return 0.0;
+	return 0;
       }
 
       return ret;
     }
 
     /// The integrand for the entropy density for non-degenerate fermions
-    fp_t entropy_fun(fp_t u, fp_t y, fp_t eta) {
+    template<class internal_fp_t>
+    internal_fp_t entropy_fun(internal_fp_t u, internal_fp_t y, internal_fp_t eta) {
 
-      fp_t ret;
+      internal_fp_t ret;
 
-      fp_t arg1=u*u+2*eta*u;
-      fp_t arg2=eta+u-y;
-      fp_t arg3=eta+u;
-      fp_t arg4=y-eta-u;
-      fp_t arg5=1+o2exp(arg4);
-      fp_t arg6=1+o2exp(arg2);
-      fp_t term1=o2log(arg5)/(1+o2exp(arg4));
-      fp_t term2=o2log(arg6)/(1+o2exp(arg2));
+      internal_fp_t arg1=u*u+2*eta*u;
+      internal_fp_t arg2=eta+u-y;
+      internal_fp_t arg3=eta+u;
+      internal_fp_t arg4=y-eta-u;
+      internal_fp_t arg5=1+o2exp(arg4);
+      internal_fp_t arg6=1+o2exp(arg2);
+      internal_fp_t term1=o2log(arg5)/(1+o2exp(arg4));
+      internal_fp_t term2=o2log(arg6)/(1+o2exp(arg2));
       ret=(eta+u)*o2sqrt(arg1)*(term1+term2);
   
       if (!o2isfinite(ret)) {
@@ -1654,7 +1659,7 @@ namespace o2scl {
 	func_t mfe=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,
 			      be_inte_t,nit_t,dit_t,density_root_t,
-			      root_t,func_t,fp_t>::density_fun),
+			      root_t,func_t,fp_t>::density_fun<fp_t>),
 			     this,std::placeholders::_1,y,eta);
     
 	nden=nit->integ_iu(mfe,0.0);
@@ -1837,7 +1842,7 @@ namespace o2scl {
 	  func_t mfe=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
 			       (&fermion_rel_tl<fermion_t,fd_inte_t,
 				be_inte_t,nit_t,dit_t,density_root_t,
-				root_t,func_t,fp_t>::density_fun),
+				root_t,func_t,fp_t>::density_fun<fp_t>),
 			       this,std::placeholders::_1,y,eta);
       
 	  nden_p=nit->integ_iu(mfe,0.0);
@@ -1968,7 +1973,7 @@ namespace o2scl {
 	  func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
 			      (&fermion_rel_tl<fermion_t,fd_inte_t,
 			       be_inte_t,nit_t,dit_t,density_root_t,
-			       root_t,func_t,fp_t>::density_fun),
+			       root_t,func_t,fp_t>::density_fun<fp_t>),
 			      this,std::placeholders::_1,y,eta);
       
 	  nden_ap=nit->integ_iu(mf,0.0);
