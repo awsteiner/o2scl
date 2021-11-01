@@ -180,6 +180,10 @@ int main(void) {
     (f,fr,1,"../../data/o2scl/fermion_deriv_cal.o2",false,1,1);
   t.test_rel(v2,0.0,4.0e-10,"calibrate 2");
 
+  // AWS, 11/1/21: taking the multiprecision types out while I
+  // develop new fermion integrators.
+#ifdef O2SCL_NEVER_DEFINED
+  
   // -----------------------------------------------------------------
   // Downcast the shared_ptr to the default integration type. This
   // shows how to get access the internal integration object that
@@ -323,7 +327,8 @@ int main(void) {
   //cout << vx_cdf35 << endl;
   
 #endif
-
+#endif
+  
   t.report();
 
   return 0;

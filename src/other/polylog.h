@@ -844,24 +844,54 @@ namespace o2scl {
      */
     fp_t K1exp(fp_t x) {
       internal_fp_t x2=x, res, err;
-      it.calc_err(1.0L,x2,res,err);
+      it.calc_err(1,x2,res,err);
       return ((fp_t)res);
+    }
+
+    /** \brief Compute \f$ K_1(x) e^x \f$
+     */
+    int K1exp_ret(fp_t x, fp_t &res, fp_t &err) {
+      internal_fp_t x2=x, res2, err2;
+      int iret=it.calc_err(1,x2,res2,err2);
+      res=(fp_t)res2;
+      err=(fp_t)err2;
+      return iret;
     }
     
     /** \brief Compute \f$ K_2(x) e^x \f$
      */
     fp_t K2exp(fp_t x) {
       internal_fp_t x2=x, res, err;
-      it.calc_err(2.0L,x2,res,err);
+      it.calc_err(2,x2,res,err);
       return ((fp_t)res);
+    }
+    
+    /** \brief Compute \f$ K_2(x) e^x \f$
+     */
+    int K2exp_ret(fp_t x, fp_t &res, fp_t &err) {
+      internal_fp_t x2=x, res2, err2;
+      int iret=it.calc_err(2,x2,res2,err2);
+      res=(fp_t)res2;
+      err=(fp_t)err2;
+      return iret;
     }
     
     /** \brief Compute \f$ K_3(x) e^x \f$
      */
     fp_t K3exp(fp_t x) {
       internal_fp_t x2=x, res, err;
-      it.calc_err(3.0L,x2,res,err);
+      it.calc_err(3,x2,res,err);
       return ((fp_t)res);
+    }
+    
+    /** \brief Compute \f$ K_3(x) e^x \f$
+     */
+    int K3exp_ret(fp_t x, fp_t &res, fp_t &err) {
+      internal_fp_t x2=x, res2, err2;
+      int iret=it.calc_err(3,x2,res2,err2);
+      res=(fp_t)res2;
+      err=(fp_t)err2;
+      return iret;
     }
     
   };

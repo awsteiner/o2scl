@@ -41,6 +41,10 @@ int main(void) {
   e.non_interacting=true;
 
   double alpha, two13, alpha16, cbt, alpha2, temper;
+
+  e.mu=2.0;
+  e.n=0.01;
+  fet.massless_pair_density(e,1.5);
   
   // This section is discussed in the documentation for
   // the massless_pair_density() function

@@ -48,6 +48,7 @@
 #include <o2scl/root_cern.h>
 #include <o2scl/part.h>
 #include <o2scl/polylog.h>
+#include <o2scl/poly.h>
 
 //#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -340,6 +341,11 @@ namespace o2scl {
            class be_inte_t=bessel_K_exp_integ_gsl, class root_t=root_cern<>,
            class func_t=funct, class fp_t=double>
   class fermion_thermo_tl : public fermion_zerot_tl<fp_t> {
+
+  protected:
+
+    /// Cubic solver for massless fermions
+    o2scl::cubic_real_coeff_gsl2<fp_t> crcg2;
     
   public:
     
@@ -851,11 +857,34 @@ namespace o2scl {
       fp_t cbt, alpha, two13, alpha16;
 
       if (f.non_interacting) { f.ms=f.m; }
+      
       if (f.n<=0.0) {
+        
         f.nu=0.0;
         f.ed=f.g/8.0/this->pi2*7.0/15.0*pow(this->pi*temper,4.0);
         f.pr=f.ed/3.0;
+        
       } else {
+
+        // AWS, 11/1/21: I'm using the cubic solver here to get
+        // multiprecision support, but extending the power series
+        // below would be better. 
+        
+        fp_t ca=f.g/6/this->pi2;
+        fp_t cb=0;
+        fp_t cc=f.g/6*temper*temper;
+        fp_t cd=-f.n;
+        fp_t cr1;
+        std::complex<fp_t> cr2, cr3;
+        crcg2.solve_rc(ca,cb,cc,cd,cr1,cr2,cr3);
+        f.nu=cr1;
+
+#ifdef O2SCL_NEVER_DEFINED
+        
+        // AWS, 11/1/21: Keep this section for posterity, since it's
+        // better than a direct cubic solver, even though it doesn't
+        // work for multiprecision support.
+        
         alpha=f.g*f.g*this->pi2*t2*t2*t2/243.0/f.n/f.n;
         if (alpha>1.0e4) {
           f.nu=(2.0/3.0/sqrt(alpha)-8.0/81.0/pow(alpha,1.5)+
@@ -873,9 +902,13 @@ namespace o2scl {
           cbt=pow(-1.0+sqrt(1.0+alpha),1.0/3.0)/pow(alpha,1.0/6.0);
           f.nu=this->pi*temper/sqrt(3.0)*(1.0/cbt-cbt);
         }
+        
+#endif
+        
         pitmu=this->pi*temper/f.nu;
         pitmu2=pitmu*pitmu;
         nu2=f.nu*f.nu;
+        
         f.ed=f.g*nu2*nu2/8.0/this->pi2*
           (1.0+2.0*pitmu2+7.0/15.0*pitmu2*pitmu2);
         f.pr=f.ed/3.0;

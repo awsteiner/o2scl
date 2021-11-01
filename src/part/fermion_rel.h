@@ -51,11 +51,14 @@ namespace o2scl {
   protected:
     
     double exp_limit;
+
+    double deg_entropy_fac;
     
   public:
 
     frit_base() {
       exp_limit=200.0;
+      deg_entropy_fac=30.0;
     }      
     
     /// The integrand for the density for non-degenerate fermions
@@ -83,6 +86,73 @@ namespace o2scl {
       return ret;
     }
 
+    /// The integrand for the pressure for non-degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t pressure_fun(internal_fp_t u, internal_fp_t y,
+                               internal_fp_t eta) {
+
+      internal_fp_t ret;
+      
+      internal_fp_t arg1=u*u+2*eta*u;
+      internal_fp_t term1=o2sqrt(arg1);
+      internal_fp_t arg3=eta+u;
+      ret=term1*term1*term1*o2exp(y)/(o2exp(arg3)+o2exp(y))/3;
+      
+      if (!o2isfinite(ret)) {
+	ret=0.0;
+      }
+
+      return ret;
+    }
+
+    /// The integrand for the energy density for non-degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t energy_fun(internal_fp_t u, internal_fp_t y,
+                             internal_fp_t eta) {
+
+      internal_fp_t ret;
+
+      internal_fp_t arg1=u*u+2*eta*u;
+      internal_fp_t arg2=eta+u-y;
+      internal_fp_t arg3=eta+u;
+      if (y>u+exp_limit && eta>u+exp_limit) {
+	ret=(eta+u)*(eta+u)*o2sqrt(arg1)/(o2exp(arg2)+1);
+      } else {
+	ret=(eta+u)*(eta+u)*o2sqrt(arg1)*o2exp(y)/
+          (o2exp(arg3)+o2exp(y));
+      }
+ 
+      if (!o2isfinite(ret)) {
+	return 0;
+      }
+
+      return ret;
+    }
+
+    /// The integrand for the entropy density for non-degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t entropy_fun(internal_fp_t u, internal_fp_t y,
+                              internal_fp_t eta) {
+
+      internal_fp_t ret;
+
+      internal_fp_t arg1=u*u+2*eta*u;
+      internal_fp_t arg2=eta+u-y;
+      internal_fp_t arg3=eta+u;
+      internal_fp_t arg4=y-eta-u;
+      internal_fp_t arg5=1+o2exp(arg4);
+      internal_fp_t arg6=1+o2exp(arg2);
+      internal_fp_t term1=o2log(arg5)/(1+o2exp(arg4));
+      internal_fp_t term2=o2log(arg6)/(1+o2exp(arg2));
+      ret=(eta+u)*o2sqrt(arg1)*(term1+term2);
+  
+      if (!o2isfinite(ret)) {
+	return 0.0;
+      }
+
+      return ret;
+    }
+
     /// The integrand for the density for degenerate fermions
     template<class internal_fp_t>
     internal_fp_t deg_density_fun(internal_fp_t k, internal_fp_t T,
@@ -102,6 +172,79 @@ namespace o2scl {
       return ret;
     }
 
+    /// The integrand for the energy density for degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t deg_energy_fun(internal_fp_t k, internal_fp_t T,
+                                 internal_fp_t y, internal_fp_t eta,
+                                 internal_fp_t mot) {
+
+      internal_fp_t ret;
+      internal_fp_t E=o2hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
+      
+      ret=k*k*E*T/(1.0+o2exp(arg1));
+      
+      if (!o2isfinite(ret)) {
+	O2SCL_ERR2("Returned not finite result ",
+		   "in fermion_rel::deg_energy_fun().",exc_einval);
+      }
+  
+      return ret;
+    }
+
+    /// The integrand for the energy density for degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t deg_pressure_fun(internal_fp_t k, internal_fp_t T,
+                                   internal_fp_t y, internal_fp_t eta,
+                                   internal_fp_t mot) {
+
+      internal_fp_t ret;
+      internal_fp_t E=o2hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
+      
+      ret=k*k*k*k/3/E/T/(1.0+o2exp(arg1));
+
+      if (!o2isfinite(ret)) {
+	O2SCL_ERR2("Returned not finite result ",
+		   "in fermion_rel::deg_energy_fun().",exc_einval);
+      }
+  
+      return ret;
+    }
+
+    /// The integrand for the entropy density for degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t deg_entropy_fun(internal_fp_t k, internal_fp_t T,
+                                  internal_fp_t y, internal_fp_t eta,
+                                  internal_fp_t mot) {
+  
+      internal_fp_t ret;
+      internal_fp_t E=o2hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
+
+      // If the argument to the exponential is really small, then the
+      // value of the integrand is just zero
+      if (arg1<-exp_limit) {
+	ret=0.0;
+	// Otherwise, if the argument to the exponential is still small,
+	// then addition of 1 makes us lose precision, so we use an
+	// alternative:
+      } else if (arg1<-deg_entropy_fac) {
+	ret=-k*k*(-1.0+arg1)*o2exp(arg1);
+      } else {
+	internal_fp_t nx=1.0/(1.0+o2exp(arg1));
+        internal_fp_t arg2=1.0-nx;
+	ret=-k*k*(nx*o2log(nx)+(1.0-nx)*o2log(arg2));
+      }
+
+      if (!o2isfinite(ret)) {
+	O2SCL_ERR2("Returned not finite result ",
+		   "in fermion_rel::deg_entropy_fun().",exc_einval);
+      }
+
+      return ret;
+    }
+    
   };
   
   template<class func_t, class fp_t> class frit : public frit_base {
@@ -126,6 +269,57 @@ namespace o2scl {
                          fp_t ul, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
                            (&frit<func_t,fp_t>::deg_density_fun<fp_t>),
+                           this,std::placeholders::_1,T,y,eta,mot);
+      int iret=dit.integ_err(mfd,0.0,ul,res,err);
+      return iret;
+    }
+
+    int eval_energy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
+      func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
+                           (&frit<func_t,fp_t>::energy_fun<fp_t>),
+                           this,std::placeholders::_1,y,eta);
+      int iret=nit.integ_iu_err(mfd,0.0,res,err);
+      return iret;
+    }
+
+    int eval_deg_energy(fp_t T, fp_t y, fp_t eta, fp_t mot,
+                         fp_t ul, fp_t &res, fp_t &err) {
+      func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
+                           (&frit<func_t,fp_t>::deg_energy_fun<fp_t>),
+                           this,std::placeholders::_1,T,y,eta,mot);
+      int iret=dit.integ_err(mfd,0.0,ul,res,err);
+      return iret;
+    }
+
+    int eval_entropy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
+      func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
+                           (&frit<func_t,fp_t>::entropy_fun<fp_t>),
+                           this,std::placeholders::_1,y,eta);
+      int iret=nit.integ_iu_err(mfd,0.0,res,err);
+      return iret;
+    }
+
+    int eval_deg_entropy(fp_t T, fp_t y, fp_t eta, fp_t mot,
+                         fp_t ul, fp_t &res, fp_t &err) {
+      func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
+                           (&frit<func_t,fp_t>::deg_entropy_fun<fp_t>),
+                           this,std::placeholders::_1,T,y,eta,mot);
+      int iret=dit.integ_err(mfd,0.0,ul,res,err);
+      return iret;
+    }
+
+    int eval_pressure(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
+      func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
+                           (&frit<func_t,fp_t>::pressure_fun<fp_t>),
+                           this,std::placeholders::_1,y,eta);
+      int iret=nit.integ_iu_err(mfd,0.0,res,err);
+      return iret;
+    }
+
+    int eval_deg_pressure(fp_t T, fp_t y, fp_t eta, fp_t mot,
+                         fp_t ul, fp_t &res, fp_t &err) {
+      func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
+                           (&frit<func_t,fp_t>::deg_pressure_fun<fp_t>),
                            this,std::placeholders::_1,T,y,eta,mot);
       int iret=dit.integ_err(mfd,0.0,ul,res,err);
       return iret;
@@ -332,7 +526,7 @@ namespace o2scl {
 
   protected:
 
-    //frit<fp_t> fritx;
+    frit<func_t,fp_t> fritx;
     
   public:
 
