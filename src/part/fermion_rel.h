@@ -45,6 +45,65 @@
 #include <o2scl/polylog.h>
 
 namespace o2scl {
+
+  class frit_base {
+    
+  protected:
+    
+    double exp_limit;
+    
+  public:
+
+    frit_base() {
+      exp_limit=200.0;
+    }      
+    
+    /// The integrand for the density for non-degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t density_fun(internal_fp_t u, internal_fp_t y,
+                              internal_fp_t eta) {
+      
+      internal_fp_t ret;
+        
+      internal_fp_t arg1=u*u+2*eta*u;
+      internal_fp_t arg2=eta+u-y;
+      internal_fp_t arg3=eta+u;
+      if (y-eta-u>exp_limit) {
+	ret=(eta+u)*o2sqrt(arg1);
+      } else if (y>u+exp_limit && eta>u+exp_limit) {
+	ret=(eta+u)*o2sqrt(arg1)/(o2exp(arg2)+1);
+      } else {
+	ret=(eta+u)*o2sqrt(arg1)*o2exp(y)/(o2exp(arg3)+o2exp(y));
+      }
+      
+      if (!o2isfinite(ret)) {
+	ret=0.0;
+      }
+
+      return ret;
+    }
+
+  };
+  
+  template<class func_t, class fp_t> class frit : public frit_base {
+
+  protected:
+    
+    inte_qagiu_gsl<> nit;
+    
+    inte_qag_gsl<> dit;
+    
+  public:
+
+    int eval_density(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
+      func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
+                           (&frit<func_t,fp_t>::density_fun<fp_t>),
+                           this,std::placeholders::_1,y,eta);
+      int iret=nit.integ_iu_err(mfd,0.0,res,err);
+      return iret;
+    }
+
+  };
   
   /** \brief Equation of state for a relativistic fermion
 
@@ -242,6 +301,10 @@ namespace o2scl {
   class fermion_rel_tl :
     public fermion_thermo_tl<fermion_t,fd_inte_t,be_inte_t,root_t,
 			     func_t,fp_t> {
+
+  protected:
+
+    //frit<fp_t> fritx;
     
   public:
 
@@ -682,6 +745,10 @@ namespace o2scl {
 	f.n=nit->integ_iu(mfd,0.0);
 	f.n*=prefac;
 	unc.n=nit->get_error()*prefac;
+        
+	//f.n=fritx.eval_density(y,eta,f.n,unc.n);
+	//f.n*=prefac;
+	//unc.n*=prefac;
 
 	// Compute the energy density
 
