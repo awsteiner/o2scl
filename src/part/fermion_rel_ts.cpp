@@ -49,8 +49,110 @@ int main(void) {
   part_calibrate_class pcc;
 
   fermion f(1.0,2.0);
+  fermion f2(1.0,2.0);
   fermion_rel fr;
 
+  // AWS, 11/1/21: Note that massless fermions aren't necessary tested
+  // by the particle calibrate classes so we test this separately here
+  
+  cout << "----------------------------------------------------" << endl;
+  cout << "Test massless fermions." << endl;
+  cout << "----------------------------------------------------" << endl;
+  
+  if (true) {
+    
+    double temper=3.0;
+    f.m=1.0e-6;
+    f2.m=1.0e-6;
+
+    f.inc_rest_mass=true;
+    f2.inc_rest_mass=true;
+    cout << "Variable inc_rest_mass true.\n" << endl;
+    
+    cout << "mu=2.5: " << endl;
+    f.mu=2.5;
+    f2.mu=2.5;
+    fr.calc_mu(f,temper);
+    cout << f.n << " " << f.ed << " " << f.pr << " " << f.en << endl;
+    fr.massless_calc_mu(f2,temper);
+    cout << f2.n << " " << f2.ed << " " << f2.pr << " " << f2.en << endl;
+    t.test_rel(f.n,f2.n,1.0e-6,"massless");
+    t.test_rel(f.pr,f2.pr,1.0e-6,"massless");
+    t.test_rel(f.ed,f2.ed,1.0e-6,"massless");
+    fr.pair_mu(f,temper);
+    cout << f.n << " " << f.ed << " " << f.pr << " " << f.en << endl;
+    fr.massless_pair_mu(f2,temper);
+    cout << f2.n << " " << f2.ed << " " << f2.pr << " " << f2.en << endl;
+    t.test_rel(f.n,f2.n,1.0e-6,"massless");
+    t.test_rel(f.pr,f2.pr,1.0e-6,"massless");
+    t.test_rel(f.ed,f2.ed,1.0e-6,"massless");
+    cout << endl;
+    
+    f.mu=0.0;
+    f2.mu=0.0;
+    cout << "mu=0.0: " << endl;
+    fr.calc_mu(f,temper);
+    cout << f.n << " " << f.ed << " " << f.pr << " " << f.en << endl;
+    fr.massless_calc_mu(f2,temper);
+    cout << f2.n << " " << f2.ed << " " << f2.pr << " " << f2.en << endl;
+    t.test_rel(f.n,f2.n,1.0e-6,"massless");
+    t.test_rel(f.pr,f2.pr,1.0e-6,"massless");
+    t.test_rel(f.ed,f2.ed,1.0e-6,"massless");
+    fr.pair_mu(f,temper);
+    cout << f.n << " " << f.ed << " " << f.pr << " " << f.en << endl;
+    fr.massless_pair_mu(f2,temper);
+    cout << f2.n << " " << f2.ed << " " << f2.pr << " " << f2.en << endl;
+    t.test_rel(f2.n,f2.n,1.0e-6,"massless");
+    t.test_rel(f.pr,f2.pr,1.0e-6,"massless");
+    t.test_rel(f.ed,f2.ed,1.0e-6,"massless");
+    cout << endl;
+    
+    f.inc_rest_mass=false;
+    f2.inc_rest_mass=false;
+    cout << "Variable inc_rest_mass false.\n" << endl;
+    
+    cout << "mu=2.5: " << endl;
+    f.mu=2.5;
+    f2.mu=2.5;
+    fr.calc_mu(f,temper);
+    cout << f.n << " " << f.ed << " " << f.pr << " " << f.en << endl;
+    fr.massless_calc_mu(f2,temper);
+    cout << f2.n << " " << f2.ed << " " << f2.pr << " " << f2.en << endl;
+    t.test_rel(f.n,f2.n,1.0e-6,"massless");
+    t.test_rel(f.pr,f2.pr,1.0e-6,"massless");
+    t.test_rel(f.ed,f2.ed,1.0e-6,"massless");
+    fr.pair_mu(f,temper);
+    cout << f.n << " " << f.ed << " " << f.pr << " " << f.en << endl;
+    fr.massless_pair_mu(f2,temper);
+    cout << f2.n << " " << f2.ed << " " << f2.pr << " " << f2.en << endl;
+    t.test_rel(f.n,f2.n,1.0e-6,"massless");
+    t.test_rel(f.pr,f2.pr,1.0e-6,"massless");
+    t.test_rel(f.ed,f2.ed,1.0e-6,"massless");
+    cout << endl;
+    
+    f.mu=0.0;
+    f2.mu=0.0;
+    cout << "mu=0.0: " << endl;
+    fr.calc_mu(f,temper);
+    cout << f.n << " " << f.ed << " " << f.pr << " " << f.en << endl;
+    fr.massless_calc_mu(f2,temper);
+    cout << f2.n << " " << f2.ed << " " << f2.pr << " " << f2.en << endl;
+    t.test_rel(f.n,f2.n,1.0e-6,"massless");
+    t.test_rel(f.pr,f2.pr,1.0e-6,"massless");
+    t.test_rel(f.ed,f2.ed,1.0e-6,"massless");
+    fr.pair_mu(f,temper);
+    cout << f.n << " " << f.ed << " " << f.pr << " " << f.en << endl;
+    fr.massless_pair_mu(f2,temper);
+    cout << f2.n << " " << f2.ed << " " << f2.pr << " " << f2.en << endl;
+    t.test_rel(f.n,f2.n,5.0e-6,"massless");
+    t.test_rel(f.pr,f2.pr,1.0e-6,"massless");
+    t.test_rel(f.ed,f2.ed,1.0e-6,"massless");
+    cout << endl;
+    
+    f.m=1.0;
+    f2.m=1.0;
+  }
+  
   cout << "----------------------------------------------------" << endl;
   cout << "Function calibrate()." << endl;
   cout << "----------------------------------------------------" << endl;

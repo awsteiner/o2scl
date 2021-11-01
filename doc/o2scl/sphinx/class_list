@@ -64,6 +64,7 @@
   <compound refid="classo2scl_1_1expval__matrix" kind="class"><name>o2scl::expval_matrix</name>
   <compound refid="classo2scl_1_1expval__scalar" kind="class"><name>o2scl::expval_scalar</name>
   <compound refid="classo2scl_1_1expval__vector" kind="class"><name>o2scl::expval_vector</name>
+  <compound refid="classo2scl_1_1fermi__dirac__integ__bf" kind="class"><name>o2scl::fermi_dirac_integ_bf</name>
   <compound refid="classo2scl_1_1fermi__dirac__integ__direct" kind="class"><name>o2scl::fermi_dirac_integ_direct</name>
   <compound refid="classo2scl_1_1fermi__dirac__integ__gsl" kind="class"><name>o2scl::fermi_dirac_integ_gsl</name>
   <compound refid="classo2scl_1_1fermi__dirac__integ__tl" kind="class"><name>o2scl::fermi_dirac_integ_tl</name>

@@ -21,6 +21,8 @@ Namespace: o2scl class: fermion_rel_tl
 Namespace: o2scl class: fermion_thermo_tl
 Namespace: o2scl class: fermion_tl
 Namespace: o2scl class: fermion_zerot_tl
+Namespace: o2scl class: frit
+Namespace: o2scl class: frit_base
 Namespace: o2scl class: nuclear_reaction
 Namespace: o2scl class: nucleus
 Namespace: o2scl class: nucmass

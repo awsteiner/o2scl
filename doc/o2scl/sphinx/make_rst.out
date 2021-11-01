@@ -68,6 +68,7 @@ Namespace: o2scl class: expval_base
 Namespace: o2scl class: expval_matrix
 Namespace: o2scl class: expval_scalar
 Namespace: o2scl class: expval_vector
+Namespace: o2scl class: fermi_dirac_integ_bf
 Namespace: o2scl class: fermi_dirac_integ_direct
 Namespace: o2scl class: fermi_dirac_integ_gsl
 Namespace: o2scl class: fermi_dirac_integ_tl

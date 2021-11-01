@@ -737,14 +737,32 @@ namespace o2scl {
     }
     
     /** \brief Finite temperature massless fermions and antifermions 
-     */
+
+        When \f$ \mu=0 \f$ (e.g. for photons), the density is zero,
+        the energy density is
+        \f[
+        \varepsilon = \frac{7g T^4}{120 \pi^2}
+        \f]
+        and the pressure is \f$ P = \varepsilon/3 \f$.
+        When the chemical potential is finite, we have
+        \f{
+        \begin{eqnarray}
+        n &=& \frac{g \mu^3}{6 \pi^2} \left[ 1 + 
+        \left( \frac{\pi T}{\mu} \right)^2 \right]
+        \varepsilon &=& \frac{g \mu^4}{8 \pi^2} \left[ 1 + 
+        2 \left( \frac{\pi T}{\mu} \right)^2 +
+        \frac{7}{15} \left( \frac{\pi T}{\mu} \right)^4 \right]
+        \end{eqnarray}
+        \f}
+        and the pressure is \f$ P = \varepsilon/3 \f$.
+    */
     void massless_pair_mu(fermion_t &f, fp_t temper) {
       fp_t pitmu, pitmu2, nu2;
 
       if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
       if (f.nu==0.0) {
         f.n=0.0;
-        f.ed=f.g/8.0/this->pi2*7.0/15.0*
+        f.ed=f.g/this->pi2*7.0/120.0*
           pow(this->pi*temper,4.0);
         f.pr=f.ed/3.0;
         f.en=(f.ed+f.pr-f.n*f.mu)/temper;

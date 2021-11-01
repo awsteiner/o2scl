@@ -181,27 +181,6 @@ int main(void) {
   gen_test_number<cpp_dec_float_35> gn_cdf35;
   gen_test_number<cpp_dec_float_50> gn_cdf50;
 
-  if (true) {
-    gn.set_radix(1.7);
-
-    for(size_t i=0;i<90;i++) {
-      
-      double x=gn.gen(), res, err;
-      int iret=fdib.calc_1o2_ret(x,res,err);
-      
-      cout.width(4);
-      cout << i << " ";
-      cout.setf(ios::showpos);
-      cout << x << " ";
-      cout.unsetf(ios::showpos);
-      cout << dtos(res,0) << " " << dtos(err,0) << " " << iret << endl;
-      
-    }
-    cout << endl;
-    exit(-1);
-    
-  }
-
   /*
     AWS, 10/28/21: The next section, while commented out because it's
     time consuming, does indeed seem to work. The 35_50 results seem

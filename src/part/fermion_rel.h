@@ -83,6 +83,25 @@ namespace o2scl {
       return ret;
     }
 
+    /// The integrand for the density for degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t deg_density_fun(internal_fp_t k, internal_fp_t T,
+                                  internal_fp_t y, internal_fp_t eta,
+                                  internal_fp_t mot) {
+
+      internal_fp_t ret;
+      
+      internal_fp_t E=o2hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
+      ret=k*k/(1.0+o2exp(arg1));
+          
+      if (!o2isfinite(ret)) {
+	O2SCL_ERR2("Returned not finite result ",
+		   "in fermion_rel::deg_density_fun().",exc_einval);
+      }
+      return ret;
+    }
+
   };
   
   template<class func_t, class fp_t> class frit : public frit_base {
@@ -100,6 +119,15 @@ namespace o2scl {
                            (&frit<func_t,fp_t>::density_fun<fp_t>),
                            this,std::placeholders::_1,y,eta);
       int iret=nit.integ_iu_err(mfd,0.0,res,err);
+      return iret;
+    }
+
+    int eval_deg_density(fp_t T, fp_t y, fp_t eta, fp_t mot,
+                         fp_t ul, fp_t &res, fp_t &err) {
+      func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
+                           (&frit<func_t,fp_t>::deg_density_fun<fp_t>),
+                           this,std::placeholders::_1,T,y,eta,mot);
+      int iret=dit.integ_err(mfd,0.0,ul,res,err);
       return iret;
     }
 

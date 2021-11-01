@@ -3,6 +3,20 @@ Fermion Details
 
 :ref:`O2scl_part <o2sclp>`
 
+Fermion details contents
+------------------------
+
+- :ref:`Interacting and non-interacting fermions`
+- :ref:`Relativistic versus non-relativistic fermions`
+- :ref:`Upper limits`
+- :ref:`Integrands`
+- :ref:`Non-degenerate integrands`
+- :ref:`Distribution function derivatives`
+- :ref:`Explicit forms`
+- :ref:`Expansions for fermions`  
+- :ref:`Degenerate expansion`
+- :ref:`Nondegenerate expansion`  
+     
 Interacting and non-interacting fermions
 ----------------------------------------
 

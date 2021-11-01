@@ -17,6 +17,8 @@
   <compound refid="classo2scl_1_1fermion__thermo__tl" kind="class"><name>o2scl::fermion_thermo_tl</name>
   <compound refid="classo2scl_1_1fermion__tl" kind="class"><name>o2scl::fermion_tl</name>
   <compound refid="classo2scl_1_1fermion__zerot__tl" kind="class"><name>o2scl::fermion_zerot_tl</name>
+  <compound refid="classo2scl_1_1frit" kind="class"><name>o2scl::frit</name>
+  <compound refid="classo2scl_1_1frit__base" kind="class"><name>o2scl::frit_base</name>
   <compound refid="classo2scl_1_1nuclear__reaction" kind="class"><name>o2scl::nuclear_reaction</name>
   <compound refid="classo2scl_1_1nucleus" kind="class"><name>o2scl::nucleus</name>
   <compound refid="classo2scl_1_1nucmass" kind="class"><name>o2scl::nucmass</name>

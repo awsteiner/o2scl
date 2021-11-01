@@ -7,6 +7,16 @@ The classes in the library O\ :sub:`2`\ scl_part described below
 calculate the thermodynamic properties of interacting and
 non-interacting quantum and \classical particles.
 
+Particles contents
+------------------
+
+- :ref:`Particle data classes`
+- :ref:`Units`
+- :ref:`Classes for particle thermodynamics`
+- :ref:`Thermodynamics with derivatives`
+- :ref:`Other derivatives`
+- :ref:`Particle example`  
+
 Particle data classes
 ---------------------
 
