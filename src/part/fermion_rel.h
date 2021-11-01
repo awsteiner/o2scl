@@ -732,17 +732,17 @@ namespace o2scl {
 	func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			      nit_t,dit_t,density_root_t,
-			      root_t,func_t,fp_t>::deg_density_fun),
+			      root_t,func_t,fp_t>::deg_density_fun<fp_t>),
 			     this,std::placeholders::_1,temper,y,eta,mot);
 	func_t mfe=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			      nit_t,dit_t,density_root_t,
-			      root_t,func_t,fp_t>::deg_energy_fun),
+			      root_t,func_t,fp_t>::deg_energy_fun<fp_t>),
 			     this,std::placeholders::_1,temper,y,eta,mot);
 	func_t mfs=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			      nit_t,dit_t,density_root_t,
-			      root_t,func_t,fp_t>::deg_entropy_fun),
+			      root_t,func_t,fp_t>::deg_entropy_fun<fp_t>),
 			     this,std::placeholders::_1,temper,y,eta,mot);
 
 	fp_t prefac=f.g/2.0/this->pi2;
@@ -1003,12 +1003,12 @@ namespace o2scl {
 	func_t mfe=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			      nit_t,dit_t,density_root_t,
-			      root_t,func_t,fp_t>::deg_energy_fun),
+			      root_t,func_t,fp_t>::deg_energy_fun<fp_t>),
 			     this,std::placeholders::_1,temper,y,eta,mot);
 	func_t mfs=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			      nit_t,dit_t,density_root_t,
-			      root_t,func_t,fp_t>::deg_entropy_fun),
+			      root_t,func_t,fp_t>::deg_entropy_fun<fp_t>),
 			     this,std::placeholders::_1,temper,y,eta,mot);
         
 	fp_t arg;
@@ -1497,7 +1497,8 @@ namespace o2scl {
 
     /// The integrand for the entropy density for non-degenerate fermions
     template<class internal_fp_t>
-    internal_fp_t entropy_fun(internal_fp_t u, internal_fp_t y, internal_fp_t eta) {
+    internal_fp_t entropy_fun(internal_fp_t u, internal_fp_t y,
+                              internal_fp_t eta) {
 
       internal_fp_t ret;
 
@@ -1519,12 +1520,15 @@ namespace o2scl {
     }
 
     /// The integrand for the density for degenerate fermions
-    fp_t deg_density_fun(fp_t k, fp_t T, fp_t y, fp_t eta, fp_t mot) {
+    template<class internal_fp_t>
+    internal_fp_t deg_density_fun(internal_fp_t k, internal_fp_t T,
+                                  internal_fp_t y, internal_fp_t eta,
+                                  internal_fp_t mot) {
 
-      fp_t ret;
+      internal_fp_t ret;
       
-      fp_t E=o2hypot(k/T,eta)-mot;
-      fp_t arg1=E-y;
+      internal_fp_t E=o2hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
       ret=k*k/(1.0+o2exp(arg1));
           
       if (!o2isfinite(ret)) {
@@ -1535,11 +1539,14 @@ namespace o2scl {
     }
 
     /// The integrand for the energy density for degenerate fermions
-    fp_t deg_energy_fun(fp_t k, fp_t T, fp_t y, fp_t eta, fp_t mot) {
+    template<class internal_fp_t>
+    internal_fp_t deg_energy_fun(internal_fp_t k, internal_fp_t T,
+                                 internal_fp_t y, internal_fp_t eta,
+                                 internal_fp_t mot) {
 
-      fp_t ret;
-      fp_t E=o2hypot(k/T,eta)-mot;
-      fp_t arg1=E-y;
+      internal_fp_t ret;
+      internal_fp_t E=o2hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
       
       ret=k*k*E*T/(1.0+o2exp(arg1));
       
@@ -1552,11 +1559,14 @@ namespace o2scl {
     }
 
     /// The integrand for the energy density for degenerate fermions
-    fp_t deg_pressure_fun(fp_t k, fp_t T, fp_t y, fp_t eta, fp_t mot) {
+    template<class internal_fp_t>
+    internal_fp_t deg_pressure_fun(internal_fp_t k, internal_fp_t T,
+                                   internal_fp_t y, internal_fp_t eta,
+                                   internal_fp_t mot) {
 
-      fp_t ret;
-      fp_t E=o2hypot(k/T,eta)-mot;
-      fp_t arg1=E-y;
+      internal_fp_t ret;
+      internal_fp_t E=o2hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
       
       ret=k*k*k*k/3/E/T/(1.0+o2exp(arg1));
 
@@ -1569,11 +1579,14 @@ namespace o2scl {
     }
 
     /// The integrand for the entropy density for degenerate fermions
-    fp_t deg_entropy_fun(fp_t k, fp_t T, fp_t y, fp_t eta, fp_t mot) {
+    template<class internal_fp_t>
+    internal_fp_t deg_entropy_fun(internal_fp_t k, internal_fp_t T,
+                                  internal_fp_t y, internal_fp_t eta,
+                                  internal_fp_t mot) {
   
-      fp_t ret;
-      fp_t E=o2hypot(k/T,eta)-mot;
-      fp_t arg1=E-y;
+      internal_fp_t ret;
+      internal_fp_t E=o2hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
 
       // If the argument to the exponential is really small, then the
       // value of the integrand is just zero
@@ -1585,8 +1598,8 @@ namespace o2scl {
       } else if (arg1<-deg_entropy_fac) {
 	ret=-k*k*(-1.0+arg1)*o2exp(arg1);
       } else {
-	fp_t nx=1.0/(1.0+o2exp(arg1));
-        fp_t arg2=1.0-nx;
+	internal_fp_t nx=1.0/(1.0+o2exp(arg1));
+        internal_fp_t arg2=1.0-nx;
 	ret=-k*k*(nx*o2log(nx)+(1.0-nx)*o2log(arg2));
       }
 
@@ -1682,7 +1695,7 @@ namespace o2scl {
 	func_t mfe=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,
 			      be_inte_t,nit_t,dit_t,density_root_t,
-			      root_t,func_t,fp_t>::deg_density_fun),
+			      root_t,func_t,fp_t>::deg_density_fun<fp_t>),
 			     this,std::placeholders::_1,T,y,eta,mot);
     
 	fp_t arg;
@@ -1868,7 +1881,7 @@ namespace o2scl {
 	  func_t mfe=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
 			       (&fermion_rel_tl<fermion_t,fd_inte_t,
 				be_inte_t,nit_t,dit_t,density_root_t,
-				root_t,func_t,fp_t>::deg_density_fun),
+				root_t,func_t,fp_t>::deg_density_fun<fp_t>),
 			     this,std::placeholders::_1,T,y,eta,mot);
       
 	  fp_t arg;
@@ -2000,7 +2013,7 @@ namespace o2scl {
         func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
 			      (&fermion_rel_tl<fermion_t,fd_inte_t,
 			       be_inte_t,nit_t,dit_t,density_root_t,
-			       root_t,func_t,fp_t>::deg_density_fun),
+			       root_t,func_t,fp_t>::deg_density_fun<fp_t>),
 			     this,std::placeholders::_1,T,y,eta,mot);
       
 	  fp_t arg;
