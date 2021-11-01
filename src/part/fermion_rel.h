@@ -44,10 +44,8 @@
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/polylog.h>
 
-//#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-  //#endif
-
+  
   /** \brief Equation of state for a relativistic fermion
 
       This class computes the thermodynamics of a relativistic fermion
@@ -1431,7 +1429,8 @@ namespace o2scl {
 
     /// The integrand for the density for non-degenerate fermions
     template<class internal_fp_t>
-    internal_fp_t density_fun(internal_fp_t u, internal_fp_t y, internal_fp_t eta) {
+    internal_fp_t density_fun(internal_fp_t u, internal_fp_t y,
+                              internal_fp_t eta) {
       
       internal_fp_t ret;
         
@@ -1455,7 +1454,8 @@ namespace o2scl {
 
     /// The integrand for the pressure for non-degenerate fermions
     template<class internal_fp_t>
-    internal_fp_t pressure_fun(internal_fp_t u, internal_fp_t y, internal_fp_t eta) {
+    internal_fp_t pressure_fun(internal_fp_t u, internal_fp_t y,
+                               internal_fp_t eta) {
 
       internal_fp_t ret;
       
