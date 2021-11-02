@@ -204,7 +204,7 @@ namespace o2scl {
       return 0;
     }
     res=exp(arg)*pow(t*t-1,n-0.5);
-    if (!o2isfinite(res)) {
+    if (!isfinite(res)) {
       std::cout << t << " x " << n << " " << z << " "
                 << res << " " << -t*z+z << " " << t*t-1 << std::endl;
     }
@@ -220,15 +220,15 @@ namespace o2scl {
     /** \brief Compute the integral, storing the result in 
 	\c res and the error in \c err
     */
-    void calc_err(size_t n, fp_t z, fp_t &res, fp_t &err) {
+    int calc_err(size_t n, fp_t z, fp_t &res, fp_t &err) {
       func_t f=std::bind(std::mem_fn<fp_t(fp_t,size_t,fp_t)>
 			 (&bessel_K_exp_integ_tl::obj_func),
 			 this,std::placeholders::_1,n,z);
-      iiu.integ_iu_err(f,1.0,res,err);
+      int iret=iiu.integ_iu_err(f,1.0,res,err);
       fp_t fact=o2scl_const::root_pi*pow(z/2,n)/boost::math::tgamma(n+0.5);
       res*=fact;
       err*=fact;
-      return;
+      return iret;
     }
     
   };
@@ -594,6 +594,7 @@ namespace o2scl {
         method=2;
         return 0;
       }
+      fdi3.set_tol(tol);
       int ret3=fdi3.calc_1o2_ret(y,res,err);
       if (ret3==0) {
         method=3;
@@ -609,7 +610,7 @@ namespace o2scl {
       int method;
       int iret=calc_1o2_ret_full(y,res,err,method);
       if (iret!=0) {
-        O2SCL_CONV_RET("Function calc_1o2 failed",o2scl::exc_efailed,
+        O2SCL_CONV_RET("Function calc_1o2 failed.",o2scl::exc_efailed,
                         err_nonconv);
       }
       return 0;
@@ -638,6 +639,7 @@ namespace o2scl {
         method=2;
         return 0;
       }
+      fdi3.set_tol(tol);
       int ret3=fdi3.calc_m1o2_ret(y,res,err);
       if (ret3==0) {
         method=3;
@@ -653,7 +655,7 @@ namespace o2scl {
       int method;
       int iret=calc_m1o2_ret_full(y,res,err,method);
       if (iret!=0) {
-        O2SCL_CONV_RET("Function calc_m1o2 failed",o2scl::exc_efailed,
+        O2SCL_CONV_RET("Function calc_m1o2 failed.",o2scl::exc_efailed,
                         err_nonconv);
       }
       return iret;
@@ -680,6 +682,7 @@ namespace o2scl {
       if (ret2==0) {
         return 0;
       }
+      fdi3.set_tol(tol);
       int ret3=fdi3.calc_3o2_ret(y,res,err);
       if (ret3==0) {
         method=3;
@@ -695,7 +698,7 @@ namespace o2scl {
       int method;
       int iret=calc_3o2_ret_full(y,res,err,method);
       if (iret!=0) {
-        O2SCL_CONV_RET("Function calc_3o2 failed",o2scl::exc_efailed,
+        O2SCL_CONV_RET("Function calc_3o2 failed.",o2scl::exc_efailed,
                         err_nonconv);
       }
       return iret;
@@ -722,6 +725,7 @@ namespace o2scl {
       if (ret2==0) {
         return 0;
       }
+      fdi3.set_tol(tol);
       int ret3=fdi3.calc_2_ret(y,res,err);
       if (ret3==0) {
         method=3;
@@ -737,7 +741,7 @@ namespace o2scl {
       int method;
       int iret=calc_2_ret_full(y,res,err,method);
       if (iret!=0) {
-        O2SCL_CONV_RET("Function calc_2 failed",o2scl::exc_efailed,
+        O2SCL_CONV_RET("Function calc_2 failed.",o2scl::exc_efailed,
                         err_nonconv);
       }
       return iret;
@@ -764,6 +768,7 @@ namespace o2scl {
       if (ret2==0) {
         return 0;
       }
+      fdi3.set_tol(tol);
       int ret3=fdi3.calc_3_ret(y,res,err);
       if (ret3==0) {
         method=3;
@@ -779,7 +784,7 @@ namespace o2scl {
       int method;
       int iret=calc_3_ret_full(y,res,err,method);
       if (iret!=0) {
-        O2SCL_CONV_RET("Function calc_3 failed",o2scl::exc_efailed,
+        O2SCL_CONV_RET("Function calc_3 failed.",o2scl::exc_efailed,
                         err_nonconv);
       }
       return iret;
@@ -820,15 +825,13 @@ namespace o2scl {
 	    class internal_fp_t=long double>
   class bessel_K_exp_integ_direct {
     
-  protected:
-    
+  public:
+
     /** \brief The integrator
      */
     bessel_K_exp_integ_tl<o2scl::inte_exp_sinh_boost
-      <func_t,max_refine,internal_fp_t>,internal_fp_t> it;
+                          <func_t,max_refine,internal_fp_t>,internal_fp_t> it;
     
-  public:
-
     bessel_K_exp_integ_direct() {
       it.iiu.tol_rel=1.0e-12;
     }
@@ -895,6 +898,188 @@ namespace o2scl {
     }
     
   };
+
+  /** \brief Bessel K times exponential by brute force
+   */
+  template<class fp_t, size_t max1, size_t max2, size_t max3,
+           class fp1_t, class fp2_t, class fp3_t>
+  class bessel_K_exp_integ_bf {
+    
+  protected:
+    
+    /// Lowest precision integrator
+    bessel_K_exp_integ_direct<fp_t,std::function<fp1_t(fp1_t)>,max1,
+                              fp1_t> bke1;
+    
+    /// Medium precision integrator
+    bessel_K_exp_integ_direct<fp_t,std::function<fp2_t(fp2_t)>,max2,
+                              fp2_t> bke2;
+    
+    /// Highest precision integrator
+    bessel_K_exp_integ_direct<fp_t,std::function<fp3_t(fp3_t)>,max3,
+                              fp3_t> bke3;
+
+    /// Tolerance
+    fp_t tol;
+
+  public:
+    
+    bessel_K_exp_integ_bf() {
+      tol=1.0e-17;
+      bke1.it.iiu.err_nonconv=false;
+      bke2.it.iiu.err_nonconv=false;
+      bke3.it.iiu.err_nonconv=false;
+      err_nonconv=true;
+    }
+
+    /** \brief If true, then convergene failures call the error 
+        handler (default true)
+    */
+    bool err_nonconv;
+
+    /** \brief Set tolerance
+     */
+    void set_tol(const fp_t &tol_) {
+      tol=tol_;
+      return;
+    }
+    
+    /** \brief Compute \f$ K_1(x) e^x \f$
+     */
+    int K1exp_ret_full(fp_t x, fp_t &res, fp_t &err, int &method) {
+      bke1.set_tol(tol);
+      int ret1=bke1.K1exp_ret(x,res,err);
+      if (ret1==0) {
+        method=1;
+        return 0;
+      }
+      bke2.set_tol(tol);
+      int ret2=bke2.K1exp_ret(x,res,err);
+      if (ret2==0) {
+        method=2;
+        return 0;
+      }
+      bke3.set_tol(tol);
+      int ret3=bke3.K1exp_ret(x,res,err);
+      if (ret3==0) {
+        method=3;
+      } else {
+        method=0;
+      }
+      return ret3;
+    }
+    
+    /** \brief Compute \f$ K_1(x) e^x \f$
+     */
+    int K1exp_ret(fp_t x, fp_t &res, fp_t &err) {
+      int method;
+      int iret=K1exp_ret_full(2,res,err,method);
+      if (iret!=0) {
+        O2SCL_CONV_RET("Function K1exp failed.",o2scl::exc_efailed,
+                       err_nonconv);
+      }
+      return iret;
+    }
+    
+    /** \brief Compute \f$ K_1(x) e^x \f$
+     */
+    fp_t K1exp(fp_t x) {
+      fp_t res, err;
+      K1exp_ret(x,res,err);
+      return res;
+    }
+
+    /** \brief Compute \f$ K_2(x) e^x \f$
+     */
+    int K2exp_ret_full(fp_t x, fp_t &res, fp_t &err, int &method) {
+      bke1.set_tol(tol);
+      int ret1=bke1.K2exp_ret(x,res,err);
+      if (ret1==0) {
+        method=1;
+        return 0;
+      }
+      bke2.set_tol(tol);
+      int ret2=bke2.K2exp_ret(x,res,err);
+      if (ret2==0) {
+        method=2;
+        return 0;
+      }
+      bke3.set_tol(tol);
+      int ret3=bke3.K2exp_ret(x,res,err);
+      if (ret3==0) {
+        method=3;
+      } else {
+        method=0;
+      }
+      return ret3;
+    }
+    
+    /** \brief Compute \f$ K_2(x) e^x \f$
+     */
+    int K2exp_ret(fp_t x, fp_t &res, fp_t &err) {
+      int method;
+      int iret=K2exp_ret_full(2,res,err,method);
+      if (iret!=0) {
+        O2SCL_CONV_RET("Function K2exp failed.",o2scl::exc_efailed,
+                       err_nonconv);
+      }
+      return iret;
+    }
+    
+    /** \brief Compute \f$ K_2(x) e^x \f$
+     */
+    fp_t K2exp(fp_t x) {
+      fp_t res, err;
+      K2exp_ret(x,res,err);
+      return res;
+    }
+
+    /** \brief Compute \f$ K_3(x) e^x \f$
+     */
+    int K3exp_ret_full(fp_t x, fp_t &res, fp_t &err, int &method) {
+      bke1.set_tol(tol);
+      int ret1=bke1.K3exp_ret(x,res,err);
+      if (ret1==0) {
+        method=1;
+        return 0;
+      }
+      bke2.set_tol(tol);
+      int ret2=bke2.K3exp_ret(x,res,err);
+      if (ret2==0) {
+        method=2;
+        return 0;
+      }
+      bke3.set_tol(tol);
+      int ret3=bke3.K3exp_ret(x,res,err);
+      if (ret3==0) {
+        method=3;
+      } else {
+        method=0;
+      }
+      return ret3;
+    }
+    
+    /** \brief Compute \f$ K_3(x) e^x \f$
+     */
+    int K3exp_ret(fp_t x, fp_t &res, fp_t &err) {
+      int method;
+      int iret=K3exp_ret_full(2,res,err,method);
+      if (iret!=0) {
+        O2SCL_CONV_RET("Function K3exp failed.",o2scl::exc_efailed,
+                       err_nonconv);
+      }
+      return iret;
+    }
+    
+    /** \brief Compute \f$ K_3(x) e^x \f$
+     */
+    fp_t K3exp(fp_t x) {
+      fp_t res, err;
+      K3exp_ret(x,res,err);
+      return res;
+    }
+    
+    };
   
   /** \brief Class to compute the polylogarithm function
 

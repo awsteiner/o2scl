@@ -176,6 +176,10 @@ int main(void) {
                        cpp_dec_float_35,cpp_dec_float_50> fdib;
   fdib.set_tol(1.0e-17);
 
+  bessel_K_exp_integ_bf<double,30,40,50,cpp_dec_float_25,
+                  cpp_dec_float_35,cpp_dec_float_50> bkeb;
+  bkeb.set_tol(1.0e-17);
+
   gen_test_number<> gn;
   gen_test_number<long double> gn_ld;
   gen_test_number<cpp_dec_float_35> gn_cdf35;
