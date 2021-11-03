@@ -44,6 +44,12 @@ cpp_dec_float_35;
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 
 typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
+
+#ifdef O2SCL_MPFR
+typedef boost::multiprecision::mpfr_float_50 mpfr_float_50;
+
+typedef boost::multiprecision::mpfr_float_100 mpfr_float_100;
+#endif
 #endif
 
 int main(void) {

@@ -50,15 +50,17 @@ AC_SUBST(OLIB_LT_VERSION)
 # Enable or disable GSL 2.0 support
 # ----------------------------------------------
 
-AC_ARG_ENABLE(gsl2,
-[  --enable-gsl2           Include GSL v2.0 support @<:@default=yes@:>@],
-   [case "${enableval}" in
-   yes) gsl2=true ;;
-   no)  gsl2=false ;;
-   *) AC_MSG_ERROR(bad value ${enableval} for --enable-gsl2) ;;
-   esac],[gsl2=true])
+# 11/3/21: Comment this out since everyone has GSL2 now
 
-AM_CONDITIONAL(O2SCL_GSL2, test x$gsl2 = xtrue)
+dnl AC_ARG_ENABLE(gsl2,
+dnl [  --enable-gsl2           Include GSL v2.0 support @<:@default=yes@:>@],
+dnl    [case "${enableval}" in
+dnl    yes) gsl2=true ;;
+dnl    no)  gsl2=false ;;
+dnl    *) AC_MSG_ERROR(bad value ${enableval} for --enable-gsl2) ;;
+dnl    esac],[gsl2=true])
+
+dnl AM_CONDITIONAL(O2SCL_GSL2, test x$gsl2 = xtrue)
 
 # ----------------------------------------------
 # Enable or disable particle and nuclei library
@@ -166,6 +168,36 @@ AS_IF([test "x$enable_readline" != "xno"], [
 AC_CHECK_LIB([readline], [add_history], [],
 	[echo ""
         echo "Readline not found. "
+	echo ""
+	echo -n " The present value of LDFLAGS is: "
+	echo $LDFLAGS
+	],[])
+
+])
+
+# ----------------------------------------------
+# Check for Mpfr library
+# ----------------------------------------------
+
+AC_ARG_ENABLE(mpfr,
+[  --enable-mpfr       Include mpfr support @<:@default=yes@:>@],
+	[case "${enableval}" in
+	yes) mpfr=true ;;
+	no)  mpfr=false ;;
+	*) AC_MSG_ERROR(bad value ${enableval} for --enable-mpfr) ;;
+	esac],[mpfr=true])
+
+AM_CONDITIONAL(O2SCL_MPFR, test x$mpfr = xtrue)
+
+# ----------------------------------------------
+# If enabled, check for the mpfr library
+# ----------------------------------------------
+
+AS_IF([test "x$enable_mpfr" != "xno"], [
+
+AC_CHECK_LIB([mpfr], [mpfr_add], [],
+	[echo ""
+        echo "Mpfr not found. "
 	echo ""
 	echo -n " The present value of LDFLAGS is: "
 	echo $LDFLAGS

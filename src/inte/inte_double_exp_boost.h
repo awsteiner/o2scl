@@ -127,7 +127,6 @@ namespace o2scl {
     virtual int integ_moo_err(func_t &func, fp_t &res, fp_t &err) {
       // Dropping the tolerance by a factor of 10 seems to help
       // the boost integrator succeed.
-      size_t levels;
       res=it.integrate(func,this->tol_rel/10.0,&err,&L1norm,&levels);
       if (err>this->tol_rel) {
 	std::cout << "Function inte_tanh_sinh_boost::integ_moo_err() failed."
@@ -145,6 +144,9 @@ namespace o2scl {
   
     /// L1 norm of the last integral computed
     fp_t L1norm;
+
+    /// Number of refinement levels in last integral computed
+    size_t levels;
 
   };
   
@@ -182,7 +184,6 @@ namespace o2scl {
 			  fp_t &res, fp_t &err) {
       // Dropping the tolerance by a factor of 10 seems to help
       // the boost integrator succeed.
-      size_t levels;
       res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm,&levels);
       if (err>this->tol_rel) {
         if (this->err_nonconv==true) {
@@ -221,6 +222,9 @@ namespace o2scl {
     /// L1 norm of the last integral computed
     fp_t L1norm;
 
+    /// Number of refinement levels in last integral computed
+    size_t levels;
+
   };
   
   /** \brief Sinh-sinh integration class (Boost)
@@ -257,7 +261,6 @@ namespace o2scl {
 			    fp_t &res, fp_t &err) {
       // Dropping the tolerance by a factor of 10 seems to help
       // the boost integrator succeed.
-      size_t levels;
       res=it.integrate(func,this->tol_rel/10.0,&err,&L1norm,&levels);
       if (err>this->tol_rel) {
         if (this->err_nonconv==true) {
@@ -277,6 +280,9 @@ namespace o2scl {
 
     /// L1 norm of the last integral computed
     fp_t L1norm;
+
+    /// Number of refinement levels in last integral computed
+    size_t levels;
 
   };
   

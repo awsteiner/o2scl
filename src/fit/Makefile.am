@@ -50,12 +50,6 @@ else
 O2SCL_ARMA_MVAR =
 endif
 
-if O2SCL_GSL2
-O2SCL_GSL2_MVAR = -DO2SCL_GSL2
-else
-O2SCL_GSL2_MVAR =
-endif
-
 if O2SCL_SNAP
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"/snap/o2scl/current/share/o2scl/\" \

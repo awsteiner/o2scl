@@ -425,7 +425,7 @@ namespace o2scl {
 
     /** \brief Set tolerance
      */
-    void set_tol(const fp_t &tol) {
+    void set_tol(const internal_fp_t &tol) {
       it.iiu.tol_rel=tol;
       return;
     }
@@ -542,6 +542,11 @@ namespace o2scl {
     
   protected:
 
+    /// Tolerance
+    fp_t tol;
+    
+  public:
+
     /// Lowest precision integrator
     fermi_dirac_integ_direct<fp_t,std::function<fp1_t(fp1_t)>,max1,
                              fp1_t> fdi1;
@@ -553,11 +558,6 @@ namespace o2scl {
     /// Highest precision integrator
     fermi_dirac_integ_direct<fp_t,std::function<fp3_t(fp3_t)>,max3,
                              fp3_t> fdi3;
-
-    /// Tolerance
-    fp_t tol;
-    
-  public:
 
     fermi_dirac_integ_bf() {
       fdi1.it.iiu.err_nonconv=false;
@@ -582,19 +582,19 @@ namespace o2scl {
     /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$
      */
     int calc_1o2_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
-      fdi1.set_tol(tol);
+      fdi1.set_tol(static_cast<fp1_t>(tol));
       int ret1=fdi1.calc_1o2_ret(y,res,err);
       if (ret1==0) {
         method=1;
         return 0;
       }
-      fdi2.set_tol(tol);
+      fdi2.set_tol(static_cast<fp2_t>(tol));
       int ret2=fdi2.calc_1o2_ret(y,res,err);
       if (ret2==0) {
         method=2;
         return 0;
       }
-      fdi3.set_tol(tol);
+      fdi3.set_tol(static_cast<fp3_t>(tol));
       int ret3=fdi3.calc_1o2_ret(y,res,err);
       if (ret3==0) {
         method=3;
@@ -907,6 +907,11 @@ namespace o2scl {
     
   protected:
     
+    /// Tolerance
+    fp_t tol;
+
+  public:
+    
     /// Lowest precision integrator
     bessel_K_exp_integ_direct<fp_t,std::function<fp1_t(fp1_t)>,max1,
                               fp1_t> bke1;
@@ -919,11 +924,6 @@ namespace o2scl {
     bessel_K_exp_integ_direct<fp_t,std::function<fp3_t(fp3_t)>,max3,
                               fp3_t> bke3;
 
-    /// Tolerance
-    fp_t tol;
-
-  public:
-    
     bessel_K_exp_integ_bf() {
       tol=1.0e-17;
       bke1.it.iiu.err_nonconv=false;

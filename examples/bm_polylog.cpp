@@ -26,6 +26,7 @@
 
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
+#include <boost/multiprecision/mpfr.hpp>
 
 using namespace std;
 using namespace o2scl;
@@ -39,12 +40,14 @@ boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
 cpp_dec_float_35;
 
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+typedef boost::multiprecision::mpfr_float_50 mpfr_float_50;
 
 typedef
 boost::multiprecision::number<boost::multiprecision::cpp_dec_float<75> >
 cpp_dec_float_75;
 
 typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
+typedef boost::multiprecision::mpfr_float_100 mpfr_float_100;
 
 int main(void) {
 
@@ -71,8 +74,18 @@ int main(void) {
   // long double is typically 1.0e-18, but we do two digits larger
   fdib2.set_tol(1.0e-20);
   
+  fermi_dirac_integ_bf<long double,30,40,50,cpp_dec_float_25,
+                       cpp_dec_float_35,mpfr_float_50> fdib2b;
+  // long double is typically 1.0e-18, but we do two digits larger
+  fdib2.set_tol(1.0e-20);
+  
   fermi_dirac_integ_bf<cpp_dec_float_25,30,40,50,cpp_dec_float_35,
                        cpp_dec_float_50,cpp_dec_float_75> fdib3;
+  // cpp_dec_float_25 is typically 1.0e-25, but we do two digits larger
+  fdib3.set_tol(1.0e-27);
+
+  fermi_dirac_integ_bf<cpp_dec_float_25,30,40,50,cpp_dec_float_35,
+                       mpfr_float_50,mpfr_float_100> fdib3b;
   // cpp_dec_float_25 is typically 1.0e-25, but we do two digits larger
   fdib3.set_tol(1.0e-27);
 
@@ -108,35 +121,54 @@ int main(void) {
     for(size_t i=0;i<139;i++) {
     
       double x=gn.gen(), res, err;
-      int method, method2, method3;
+      int method, method2, method3, method2b, method3b;
       int iret=fdib.calc_1o2_ret_full(x,res,err,method);
     
-      long double x_ld=gn_ld.gen(), res_ld, err_ld;
+      long double x_ld=gn_ld.gen(), res_ld, err_ld, res_ldb, err_ldb;
       int iret2=fdib2.calc_1o2_ret_full(x_ld,res_ld,err_ld,method2);
+      int iret2b=fdib2b.calc_1o2_ret_full(x_ld,res_ldb,err_ldb,method2b);
     
       cpp_dec_float_25 x_cdf25=gn_cdf25.gen(), res_cdf25, err_cdf25;
+      cpp_dec_float_25 res_cdf25b, err_cdf25b;
       int iret3=fdib3.calc_1o2_ret_full(x_cdf25,res_cdf25,err_cdf25,method3);
+      int iret3b=fdib3b.calc_1o2_ret_full(x_cdf25,res_cdf25b,err_cdf25b,
+                                          method3b);
     
       cout.width(4);
       cout << i << " ";
       cout.setf(ios::showpos);
+      
       cout << x << " ";
       cout.unsetf(ios::showpos);
       cout << iret << " " << method << " "
            << dtos(res,0) << " " << dtos(err,0) << endl;
       t.test_gen(iret==0,"double prec");
       t.test_abs(err/res,0.0,1.0e-17,"double prec2");
+      
       cout << "                   ";
       cout << iret2 << " " << method2 << " "
            << dtos(res_ld,0) << " " << dtos(err_ld,0) << endl;
       t.test_gen(iret2==0,"long double prec");
       t.test_abs<long double>(err_ld/res_ld,0.0,1.0e-20,"long double prec2");
+      
+      cout << "                   ";
+      cout << iret2b << " " << method2b << " "
+           << dtos(res_ldb,0) << " " << dtos(err_ldb,0) << endl;
+      t.test_gen(iret2==0,"long double precb");
+      t.test_abs<long double>(err_ldb/res_ldb,0.0,1.0e-20,"long double prec2b");
+      
       cout << "                   ";
       cout << iret3 << " " << method3 << " "
            << dtos(res_cdf25,0) << " " << dtos(err_cdf25,0) << endl;
       t.test_gen(iret3==0,"cdf25 prec");
       t.test_abs_boost<cpp_dec_float_25>(err_cdf25/res_cdf25,
                                          0.0,1.0e-27,"cdf25 prec2");
+      cout << "                   ";
+      cout << iret3b << " " << method3b << " "
+           << dtos(res_cdf25b,0) << " " << dtos(err_cdf25b,0) << endl;
+      t.test_gen(iret3b==0,"cdf25 precb");
+      t.test_abs_boost<cpp_dec_float_25>(err_cdf25b/res_cdf25b,
+                                         0.0,1.0e-27,"cdf25 prec2b");
     }
     cout << endl;
   }

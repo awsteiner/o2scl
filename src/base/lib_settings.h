@@ -123,6 +123,9 @@ namespace o2scl {
     /// Return true if \o2 was installed with readline support
     bool readline_support();
 
+    /// Return true if \o2 was installed with mpfr support
+    bool mpfr_support();
+
     /// Return true if \o2 was installed with ncurses support
     bool ncurses_support();
 

@@ -133,6 +133,12 @@ else
 O2SCL_OSX_MVAR = 
 endif
 
+if O2SCL_MPFR
+O2SCL_MPFR_MVAR = -DO2SCL_MPFR
+else 
+O2SCL_MPFR_MVAR = 
+endif
+
 if O2SCL_OPENMP
 O2SCL_OPENMP_MVAR = -DO2SCL_OPENMP -fopenmp
 else
@@ -140,7 +146,7 @@ O2SCL_OPENMP_MVAR =
 endif
 
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
-	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) \
+	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) $(O2SCL_MPFR_MVAR) \
 	$(O2SCL_HDF_MVAR) -DO2SCL_COND_FLAG $(O2SCL_OPENMP_MVAR)
 
 # -------------------------------------------------------------
