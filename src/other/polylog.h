@@ -441,7 +441,7 @@ namespace o2scl {
     /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$
      */
     int calc_1o2_ret(fp_t y, fp_t &res, fp_t &err) {
-      internal_fp_t y2=y, res2, err2;
+      internal_fp_t y2=static_cast<internal_fp_t>(y), res2, err2;
       int iret=it.calc_err(half,y2,res2,err2);
       res=(fp_t)res2;
       err=(fp_t)err2;
@@ -459,7 +459,7 @@ namespace o2scl {
     /** \brief Fermi-Dirac integral of order \f$ -1/2 \f$
      */
     int calc_m1o2_ret(fp_t y, fp_t &res, fp_t &err) {
-      internal_fp_t y2=y, res2, err2;
+      internal_fp_t y2=static_cast<internal_fp_t>(y), res2, err2;
       int iret=it.calc_err(-half,y2,res2,err2);
       res=(fp_t)res2;
       err=(fp_t)err2;
@@ -477,7 +477,7 @@ namespace o2scl {
     /** \brief Fermi-Dirac integral of order \f$ 3/2 \f$
      */
     int calc_3o2_ret(fp_t y, fp_t &res, fp_t &err) {
-      internal_fp_t y2=y, res2, err2;
+      internal_fp_t y2=static_cast<internal_fp_t>(y), res2, err2;
       int iret=it.calc_err(three_half,y2,res2,err2);
       res=(fp_t)res2;
       err=(fp_t)err2;
@@ -495,7 +495,7 @@ namespace o2scl {
     /** \brief Fermi-Dirac integral of order \f$ 2 \f$
      */
     int calc_2_ret(fp_t y, fp_t &res, fp_t &err) {
-      internal_fp_t y2=y, res2, err2;
+      internal_fp_t y2=static_cast<internal_fp_t>(y), res2, err2;
       int iret=it.calc_err(two,y2,res2,err2);
       res=(fp_t)res2;
       err=(fp_t)err2;
@@ -513,7 +513,7 @@ namespace o2scl {
     /** \brief Fermi-Dirac integral of order \f$ 3 \f$
      */
     int calc_3_ret(fp_t y, fp_t &res, fp_t &err) {
-      internal_fp_t y2=y, res2, err2;
+      internal_fp_t y2=static_cast<internal_fp_t>(y), res2, err2;
       int iret=it.calc_err(three,y2,res2,err2);
       res=(fp_t)res2;
       err=(fp_t)err2;
