@@ -257,6 +257,33 @@ int main(void) {
 				       "it_iac cpp_dec_float_50");
     cout << endl;
 
+#ifdef O2SCL_MPFR
+    
+    cout << "inte_transform with inte_adapt_cern, mpfr_float_50 precision, "
+         << "sin_recip:\n  " << endl;
+    
+    inte_transform<funct_mp50,inte_adapt_cern
+		   <funct_mp50,inte_gauss56_cern
+		    <funct_mp50,mpfr_float_50,
+		     inte_gauss56_coeffs_float_50<mpfr_float_50>>,100,
+		    mpfr_float_50>,mpfr_float_50> it_iac_mp50;
+    
+    mpfr_float_50 one_mp50=1.0;
+    mpfr_float_50 hundred_mp50=100.0;
+    mpfr_float_50 exact_mp50=one_mp50-cos(hundred_mp50/(hundred_mp50+one_mp50));
+    funct_mp50 tf2_mp50=std::bind(sin_recip_mpfr,std::placeholders::_1);
+    mpfr_float_50 calc_mp50, ei_mp50;
+    it_iac_mp50.def_inte.tol_rel=1.0e-30;
+    it_iac_mp50.def_inte.tol_abs=1.0e-30;
+    it_iac_mp50.integ_il_err(tf2_mp50,-one_mp50,calc_mp50,ei_mp50);
+    mpfr_float_50 diff_mp50=fabs(calc_mp50-exact_mp50);
+    cout << calc_mp50 << " " << exact_mp50 << " "
+	 << diff_mp50 << " " << ei_mp50 << endl;
+    t.test_rel_boost<mpfr_float_50>(calc_mp50,exact_mp50,1.0e-29,
+				       "it_iac mpfr_float_50");
+    cout << endl;
+
+#endif
 #endif
     
   }
