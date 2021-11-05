@@ -87,7 +87,7 @@ int main(void) {
   cout << calc_ld << " " << exact_ld << " " << diff_ld << endl;
   
   inte_gauss56_cern<funct_cdf50,cpp_dec_float_50,
-		    inte_gauss56_coeffs_cpp_dec_float_50> cg_cdf;
+		    inte_gauss56_coeffs_float_50<cpp_dec_float_50> > cg_cdf;
   cpp_dec_float_50 a_cdf=3.0L, calc_cdf, exact_cdf, diff_cdf;
   
   funct_cdf50 tf_cdf=std::bind(testfun_cdf,std::placeholders::_1,a_cdf);

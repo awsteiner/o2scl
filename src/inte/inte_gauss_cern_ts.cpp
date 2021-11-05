@@ -32,6 +32,9 @@ using namespace o2scl;
 
 #ifdef O2SCL_LD_TYPES
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+#ifdef O2SCL_MPFR
+typedef boost::multiprecision::mpfr_float_50 mpfr_float_50;
+#endif
 #endif
 
 double testfun(double tx, double &a);
@@ -107,7 +110,7 @@ int main(void) {
 
   {
     inte_gauss_cern<funct_cdf50,cpp_dec_float_50,
-		    inte_gauss_coeffs_cpp_dec_float_50> cg_cdf;
+		    inte_gauss_coeffs_float_50<cpp_dec_float_50> > cg_cdf;
     cg_cdf.tol_rel=1.0e-30;
     cg_cdf.tol_abs=1.0e-30;
     cpp_dec_float_50 a=3.0, calc, exact, diff;
@@ -117,10 +120,31 @@ int main(void) {
     calc=cg_cdf.integ(tf2,0.0,1.0);
     exact=boost::math::constants::pi<cpp_dec_float_50>();
     t.test_rel_boost<cpp_dec_float_50>(calc,exact,
-				       1.0e-30,"inte_gauss_cern ld");
+				       1.0e-30,"inte_gauss_cern 50 cpp_dec");
     diff=fabs(calc-exact);
     cout << calc << " " << exact << " " << diff << endl;
   }
+
+#ifdef O2SCL_MPFR
+  
+  {
+    inte_gauss_cern<funct_cdf50,mpfr_float_50,
+		    inte_gauss_coeffs_float_50<mpfr_float_50> > cg_cdf;
+    cg_cdf.tol_rel=1.0e-30;
+    cg_cdf.tol_abs=1.0e-30;
+    mpfr_float_50 a=3.0, calc, exact, diff;
+
+    funct_cdf50 tf2=testfun2_cdf;
+    
+    calc=cg_cdf.integ(tf2,0.0,1.0);
+    exact=boost::math::constants::pi<mpfr_float_50>();
+    t.test_rel_boost<mpfr_float_50>(calc,exact,
+				       1.0e-30,"inte_gauss_cern 50 mpfr");
+    diff=fabs(calc-exact);
+    cout << calc << " " << exact << " " << diff << endl;
+  }
+  
+#endif
   
 #endif
   

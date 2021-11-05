@@ -169,76 +169,77 @@ namespace o2scl {
       numbers by AWS using code in ~/wcs/int5/sbox on 10/7/19. 
       \endcomment
   */
-  class inte_gauss56_coeffs_cpp_dec_float_50 {
+  template<class fp_50_t>
+  class inte_gauss56_coeffs_float_50 {
 
   public:
 
     /** \brief Fifth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in cpp_dec_float_50 precision
+	\ref o2scl::inte_gauss56_cern in 50-digit precision
     */
-    boost::multiprecision::cpp_dec_float_50 x5[5];
+    fp_50_t x5[5];
   
     /** \brief Fifth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in cpp_dec_float_50 precision
+	\ref o2scl::inte_gauss56_cern in 50-digit precision
     */
-    boost::multiprecision::cpp_dec_float_50 w5[5];
+    fp_50_t w5[5];
   
     /** \brief Sixth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in cpp_dec_float_50 precision
+	\ref o2scl::inte_gauss56_cern in 50-digit precision
     */
-    boost::multiprecision::cpp_dec_float_50 x6[6];
+    fp_50_t x6[6];
   
     /** \brief Sixth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in cpp_dec_float_50 precision
+	\ref o2scl::inte_gauss56_cern in 50-digit precision
     */
-    boost::multiprecision::cpp_dec_float_50 w6[6];
+    fp_50_t w6[6];
 
-    inte_gauss56_coeffs_cpp_dec_float_50() {
+    inte_gauss56_coeffs_float_50() {
       
-      x5[0]=boost::multiprecision::cpp_dec_float_50
+      x5[0]=fp_50_t
 	("4.69100770306680036011865608503035174371740446187346e-02");
-      w5[0]=boost::multiprecision::cpp_dec_float_50
+      w5[0]=fp_50_t
 	("1.18463442528094543757132020359958681321630001106207e-01");
-      x5[1]=boost::multiprecision::cpp_dec_float_50
+      x5[1]=fp_50_t
 	("2.30765344947158454481842789649895597516356696547220e-01");
-      w5[1]=boost::multiprecision::cpp_dec_float_50
+      w5[1]=fp_50_t
 	("2.39314335249683234020645757417819096456147776671571e-01");
-      x5[2]=boost::multiprecision::cpp_dec_float_50
+      x5[2]=fp_50_t
 	("5.00000000000000000000000000000000000000000000000000e-01");
-      w5[2]=boost::multiprecision::cpp_dec_float_50
+      w5[2]=fp_50_t
 	("2.84444444444444444444444444444444444444444444444444e-01");
-      x5[3]=boost::multiprecision::cpp_dec_float_50
+      x5[3]=fp_50_t
 	("7.69234655052841545518157210350104402483643303452780e-01");
-      w5[3]=boost::multiprecision::cpp_dec_float_50
+      w5[3]=fp_50_t
 	("2.39314335249683234020645757417819096456147776671571e-01");
-      x5[4]=boost::multiprecision::cpp_dec_float_50
+      x5[4]=fp_50_t
 	("9.53089922969331996398813439149696482562825955381265e-01");
-      w5[4]=boost::multiprecision::cpp_dec_float_50
+      w5[4]=fp_50_t
 	("1.18463442528094543757132020359958681321630001106207e-01");
       
-      x6[0]=boost::multiprecision::cpp_dec_float_50
+      x6[0]=fp_50_t
 	("3.37652428984239860938492227530026954326171311438551e-02");
-      w6[0]=boost::multiprecision::cpp_dec_float_50
+      w6[0]=fp_50_t
 	("8.56622461895851725201480710863664467634112507420220e-02");
-      x6[1]=boost::multiprecision::cpp_dec_float_50
+      x6[1]=fp_50_t
 	("1.69395306766867743169300202490047326496775717802415e-01");
-      w6[1]=boost::multiprecision::cpp_dec_float_50
+      w6[1]=fp_50_t
 	("1.80380786524069303784916756918858055830760946373373e-01");
-      x6[2]=boost::multiprecision::cpp_dec_float_50
+      x6[2]=fp_50_t
 	("3.80690406958401545684749139159644032290694684929989e-01");
-      w6[2]=boost::multiprecision::cpp_dec_float_50
+      w6[2]=fp_50_t
 	("2.33956967286345523694935171994775497405827802884605e-01");
-      x6[3]=boost::multiprecision::cpp_dec_float_50
+      x6[3]=fp_50_t
 	("6.19309593041598454315250860840355967709305315070011e-01");
-      w6[3]=boost::multiprecision::cpp_dec_float_50
+      w6[3]=fp_50_t
 	("2.33956967286345523694935171994775497405827802884605e-01");
-      x6[4]=boost::multiprecision::cpp_dec_float_50
+      x6[4]=fp_50_t
 	("8.30604693233132256830699797509952673503224282197585e-01");
-      w6[4]=boost::multiprecision::cpp_dec_float_50
+      w6[4]=fp_50_t
 	("1.80380786524069303784916756918858055830760946373373e-01");
-      x6[5]=boost::multiprecision::cpp_dec_float_50
+      x6[5]=fp_50_t
 	("9.66234757101576013906150777246997304567382868856145e-01");
-      w6[5]=boost::multiprecision::cpp_dec_float_50
+      w6[5]=fp_50_t
 	("8.56622461895851725201480710863664467634112507420220e-02");
       
     }
