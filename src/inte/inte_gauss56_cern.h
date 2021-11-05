@@ -299,7 +299,7 @@ namespace o2scl {
     e6+=w6[5]*ytmp;
     res=(e6+e5)*rang/2.0;
     fp_t diff=e5-e6;
-    err=o2scl::o2abs(diff)*rang;
+    err=abs(diff)*rang;
 
     return success;
   }

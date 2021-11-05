@@ -30,7 +30,7 @@
 #ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #ifdef O2SCL_MPFR
-#include <boost/multiprecision/mpfr_float.hpp>
+#include <boost/multiprecision/mpfr.hpp>
 #endif
 #endif
 
@@ -71,12 +71,12 @@ cpp_dec_float_50 sin_recip_cdf(cpp_dec_float_50 x) {
 #ifdef O2SCL_MPFR
 typedef boost::multiprecision::mpfr_float_50 mpfr_float_50;
 
-mpfr_float_50 testfun_cdf(mpfr_float_50 tx, mpfr_float_50 &a) {
+mpfr_float_50 testfun_mpfr(mpfr_float_50 tx, mpfr_float_50 &a) {
   mpfr_float_50 one=1.0;
   return -cos(one/(tx+a))/(a+tx)/(a+tx);
 }
 
-mpfr_float_50 sin_recip_cdf(mpfr_float_50 x) {
+mpfr_float_50 sin_recip_mpfr(mpfr_float_50 x) {
   mpfr_float_50 one=1;
   mpfr_float_50 hundred=100;
   return sin(one/(-x+one/hundred))*pow(-x+one/hundred,-one-one);
@@ -167,7 +167,8 @@ int main(void) {
     funct_cdf50 tf_cdf=std::bind(testfun_cdf,std::placeholders::_1,a_cdf);
     test_iac<funct_cdf50,cpp_dec_float_50,
 	     inte_gauss56_cern<funct_cdf50,cpp_dec_float_50,
-			       inte_gauss56_coeffs_cpp_dec_float_50>,10000>
+			       inte_gauss56_coeffs_float_50<cpp_dec_float_50>
+                               >,10000>
       (t,tf_cdf,1.0e-30,"iac, cpp_dec_float_50, testfun",diff_cdf);
     t.test_abs_boost<cpp_dec_float_50>(diff_cdf,0.0,1.0e-29,
 				       "inte_adapt_cern_cdf");
@@ -176,17 +177,17 @@ int main(void) {
     
     cout << "inte_adapt_cern, mpfr_float_50, testfun:\n  ";
     
-    mpfr_float_50 one=1.0, diff_cdf;
-    mpfr_float_50 hundred=100.0;
-    mpfr_float_50 a_cdf=one/hundred;
-    funct_cdf50 tf_cdf=std::bind(testfun_cdf,std::placeholders::_1,a_cdf);
-    test_iac<funct_cdf50,mpfr_float_50,
-	     inte_gauss56_cern<funct_cdf50,mpfr_float_50,
+    mpfr_float_50 one_mpfr=1.0, diff_mpfr;
+    mpfr_float_50 hundred_mpfr=100.0;
+    mpfr_float_50 a_mpfr=one_mpfr/hundred_mpfr;
+    funct_mp50 tf_mpfr=std::bind(testfun_mpfr,std::placeholders::_1,a_mpfr);
+    test_iac<funct_mp50,mpfr_float_50,
+	     inte_gauss56_cern<funct_mp50,mpfr_float_50,
 			       inte_gauss56_coeffs_float_50<mpfr_float_50>
                                >,10000>
-      (t,tf_cdf,1.0e-30,"iac, mpfr_float_50, testfun",diff_cdf);
-    t.test_abs_boost<cpp_dec_float_50>(diff_cdf,0.0,1.0e-29,
-				       "inte_adapt_cern_cdf");
+      (t,tf_mpfr,1.0e-30,"iac, mpfr_float_50, testfun",diff_mpfr);
+    t.test_abs_boost<mpfr_float_50>(diff_mpfr,0.0,1.0e-29,
+                                    "inte_adapt_cern_mpfr");
 
 #endif
 #endif
@@ -238,7 +239,7 @@ int main(void) {
     inte_transform<funct_cdf50,inte_adapt_cern
 		   <funct_cdf50,inte_gauss56_cern
 		    <funct_cdf50,cpp_dec_float_50,
-		     inte_gauss56_coeffs_cpp_dec_float_50>,100,
+		     inte_gauss56_coeffs_float_50<cpp_dec_float_50>>,100,
 		    cpp_dec_float_50>,cpp_dec_float_50> it_iac_cdf;
     
     cpp_dec_float_50 one=1.0;

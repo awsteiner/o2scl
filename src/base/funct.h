@@ -35,6 +35,9 @@
 #include <boost/numeric/ublas/vector.hpp>
 #ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
+#ifdef O2SCL_MPFR
+#endif
+#include <boost/multiprecision/mpfr.hpp>
 #endif
 
 #include <o2scl/err_hnd.h>
@@ -70,6 +73,18 @@ namespace o2scl {
   typedef std::function<boost::multiprecision::cpp_dec_float_50
 			(boost::multiprecision::cpp_dec_float_50)>
   funct_cdf50;
+
+#ifdef O2SCL_MPFR
+  
+  /** \brief One-dimensional function typedef in src/base/funct.h
+      
+      This typedef is only present if O2SCL_LD_TYPES is
+      defined during compilation.
+   */
+  typedef std::function<boost::multiprecision::mpfr_float_50
+			(boost::multiprecision::mpfr_float_50)>
+  funct_mp50;
+#endif
   
   /** \brief One-dimensional function typedef in src/base/funct.h
       
