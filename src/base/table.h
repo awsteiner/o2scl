@@ -215,17 +215,17 @@ namespace o2scl {
 
       .. todo:: 
 
-         In class table:
+      In class table:
 
-         - Future: Create a sort_column_names() or a function to 
-           arbitrarily rearrange the columns
+      - Future: Create a sort_column_names() or a function to 
+      arbitrarily rearrange the columns
 
-         - The present structure,
-           std::map<std::string,col,string_comp> atree and \c
-           std::vector<aiter> alist; could be replaced with \c
-           std::vector<col> list and \c std::map<std::string,int> tree
-           where the map just stores the index of the the column in the
-           list.
+      - The present structure,
+      std::map<std::string,col,string_comp> atree and \c
+      std::vector<aiter> alist; could be replaced with \c
+      std::vector<col> list and \c std::map<std::string,int> tree
+      where the map just stores the index of the the column in the
+      list.
 
       \endverbatim
   */
@@ -2991,7 +2991,7 @@ namespace o2scl {
         vars[mit->first]=mit->second;
       }
     
-      std::vector<calc_utf8> calcs(funcs.size());
+      std::vector<calc_utf8<> > calcs(funcs.size());
       std::vector<vec_t> newcols(funcs.size());
     
       for(size_t j=0;j<funcs.size();j++) {
@@ -3061,10 +3061,10 @@ namespace o2scl {
         \verbatim embed:rst
         .. todo:: 
 
-           In table::function_vector(): FIXME: there may be a problem
-           with the OpenMP code if an exception is thrown in the
-           calculator class and there is not a unique error handler
-           for each thread.
+        In table::function_vector(): FIXME: there may be a problem
+        with the OpenMP code if an exception is thrown in the
+        calculator class and there is not a unique error handler
+        for each thread.
 
         \endverbatim
 
@@ -3094,7 +3094,7 @@ namespace o2scl {
 #endif
 
         // Parse function, separate calculator for each thread
-        calc_utf8 calc;
+        calc_utf8<> calc;
         std::map<std::string,double> vars;
         std::map<std::string,double>::const_iterator mit;
         for(mit=constants.begin();mit!=constants.end();mit++) {
@@ -3121,7 +3121,7 @@ namespace o2scl {
     double row_function(std::string function, size_t row) const {
 
       // Parse function
-        calc_utf8 calc;
+      calc_utf8<> calc;
       std::map<std::string,double> vars;
       std::map<std::string,double>::const_iterator mit;
       for(mit=constants.begin();mit!=constants.end();mit++) {
@@ -3142,7 +3142,7 @@ namespace o2scl {
     size_t function_find_row(std::string function) const {
 
       // Parse function
-        calc_utf8 calc;
+      calc_utf8<> calc;
       std::map<std::string,double> vars;
       std::map<std::string,double>::const_iterator mit;
       for(mit=constants.begin();mit!=constants.end();mit++) {

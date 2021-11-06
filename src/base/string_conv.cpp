@@ -277,7 +277,7 @@ int o2scl::function_to_double_nothrow(std::string s, double &result,
     }
   }
   
-  calc_utf8 calc;
+  calc_utf8<> calc;
   
   int ret=calc.compile_nothrow(s2.c_str(),0);
   if (ret!=0) return ret;

@@ -588,7 +588,7 @@ namespace o2scl {
                    "tensor_grid::set_grid_i_func().",exc_einval);
       }
 
-      calc_utf8 calc;
+      calc_utf8<> calc;
       std::map<std::string,double> vars;
       calc.compile(func.c_str(),&vars);
       

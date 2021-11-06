@@ -159,7 +159,7 @@ namespace o2scl {
   protected:
 
     /// The object for evaluating strings
-    mutable o2scl::calc_utf8 calc;
+    mutable o2scl::calc_utf8<> calc;
 
     /// Parameter map
     mutable std::map<std::string,double> vars;
@@ -262,7 +262,7 @@ namespace o2scl {
   protected:
 
     /// The object for evaluating strings
-    mutable o2scl::calc_utf8 calc;
+    mutable o2scl::calc_utf8<> calc;
 
     /// Parameter map
     mutable std::map<std::string,double> vars;

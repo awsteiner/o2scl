@@ -97,7 +97,7 @@ namespace o2scl {
     protected:
 
     /// The function parser
-    o2scl::calc_utf8 calc;
+    o2scl::calc_utf8<> calc;
       
     /// Desc
     std::map<std::string,double> vars;

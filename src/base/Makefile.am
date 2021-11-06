@@ -18,7 +18,7 @@ BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	test_mgr.cpp vector.cpp auto_format.cpp \
 	string_conv.cpp exception.cpp format_float.cpp \
 	shunting_yard.cpp tensor.cpp find_constants.cpp cursesw.cpp \
-	base_python.cpp calc_utf8.cpp
+	base_python.cpp
 
 BASE_SRCS = $(BASE_BASE_SRCS)
 

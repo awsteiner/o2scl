@@ -1183,7 +1183,7 @@ namespace o2scl {
       int function_matrix(std::string function, resize_mat_t &mat,
 			  bool throw_on_err=true) {
       
-        calc_utf8 calc;
+      calc_utf8<> calc;
       std::map<std::string,double> vars;
 
       std::map<std::string,double>::const_iterator mit;

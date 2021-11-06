@@ -119,7 +119,7 @@ namespace o2scl {
     protected:
 
     /// The function parser
-    std::vector<o2scl::calc_utf8> calc;
+    std::vector<o2scl::calc_utf8<> > calc;
       
     /// List of variables and values
     std::map<std::string,double> vars;

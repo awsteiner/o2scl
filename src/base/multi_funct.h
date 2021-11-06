@@ -110,7 +110,7 @@ namespace o2scl {
   protected:
 
     /// The function parser
-    calc_utf8 calc;
+    calc_utf8<> calc;
 
     /// External variables to include in the function parsing
     std::map<std::string,double> vars;
