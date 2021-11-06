@@ -406,7 +406,8 @@ namespace o2scl {
     /** \brief The integrator
      */
     fermi_dirac_integ_tl<o2scl::inte_exp_sinh_boost
-      <func_t,max_refine,internal_fp_t>,internal_fp_t> it;
+                         <func_t,max_refine,internal_fp_t>,
+                         internal_fp_t> it;
 
     fermi_dirac_integ_direct() {
       // AWS 8/14/21 changed from 1.0e-17 to 1.0e-14 because it
@@ -559,10 +560,22 @@ namespace o2scl {
     fermi_dirac_integ_direct<fp_t,std::function<fp3_t(fp3_t)>,max3,
                              fp3_t> fdi3;
 
+    typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+    
+    typedef inte_transform<funct_cdf50,inte_adapt_cern
+                           <funct_cdf50,inte_gauss56_cern
+                            <funct_cdf50,cpp_dec_float_50,
+                             inte_gauss56_coeffs_float_50<cpp_dec_float_50>>,
+                            2000,
+                            cpp_dec_float_50>,cpp_dec_float_50> inte_t;
+    
+    fermi_dirac_integ_tl<inte_t,cpp_dec_float_50> fdi4;
+    
     fermi_dirac_integ_bf() {
       fdi1.it.iiu.err_nonconv=false;
       fdi2.it.iiu.err_nonconv=false;
       fdi3.it.iiu.err_nonconv=false;
+      fdi4.iiu.err_nonconv=false;
       tol=1.0e-17;
       err_nonconv=true;
     }
@@ -584,21 +597,39 @@ namespace o2scl {
     int calc_1o2_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
       fdi1.set_tol(static_cast<fp1_t>(tol));
       int ret1=fdi1.calc_1o2_ret(y,res,err);
-      if (ret1==0) {
+      if (ret1==0 && abs(err/res)<tol) {
         method=1;
         return 0;
       }
+      //std::cout << "fdi1: " << fdi1.it.iiu.L1norm << " "
+      //<< fdi1.it.iiu.levels << std::endl;
       fdi2.set_tol(static_cast<fp2_t>(tol));
       int ret2=fdi2.calc_1o2_ret(y,res,err);
-      if (ret2==0) {
+      if (ret2==0 && abs(err/res)<tol) {
         method=2;
         return 0;
       }
+      //std::cout << "fdi2: " << fdi2.it.iiu.L1norm << " "
+      //<< fdi2.it.iiu.levels << std::endl;
       fdi3.set_tol(static_cast<fp3_t>(tol));
       int ret3=fdi3.calc_1o2_ret(y,res,err);
-      if (ret3==0) {
+      if (ret3==0 && abs(err/res)<tol) {
         method=3;
       } else {
+        //std::cout << "fdi3: " << fdi3.it.iiu.L1norm << " "
+        //<< fdi3.it.iiu.levels << std::endl;
+        cpp_dec_float_50 y2=static_cast<cpp_dec_float_50>(y);
+        cpp_dec_float_50 res2,err2;
+        fdi4.iiu.def_inte.tol_rel=static_cast<cpp_dec_float_50>(tol);
+        fdi4.iiu.def_inte.tol_abs=static_cast<cpp_dec_float_50>(tol);
+        fdi4.iiu.def_inte.verbose=1;
+        int iretx=fdi4.calc_err(0.5,y2,res2,err2);
+        res=static_cast<fp_t>(res2);
+        err=static_cast<fp_t>(err2);
+        if (iretx==0 && abs(err/res)<tol) {
+          method=4;
+          return 0;
+        }
         method=0;
       }
       return ret3;
