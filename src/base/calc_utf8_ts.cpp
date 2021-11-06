@@ -23,6 +23,17 @@
 #include <o2scl/calc_utf8.h>
 #include <o2scl/test_mgr.h>
 
+#ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#ifdef O2SCL_MPFR
+#include <boost/multiprecision/mpfr.hpp>
+#endif
+#endif
+
+#ifdef O2SCL_LD_TYPES
+typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+#endif
+
 using namespace std;
 using namespace o2scl;
 
@@ -33,7 +44,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-  calc_utf8 calc;
+  calc_utf8<> calc;
   calc.verbose=3;
   cout << "1." << endl;
   calc.compile("1.0e-100<2.0e-100",0);
@@ -186,6 +197,14 @@ int main(void) {
     cout << calc.eval_char32(&vars) << endl;
   }
 
+#ifdef O2SCL_LD_TYPES
+  
+  //calc_utf8<cpp_dec_float_50> calc_50;
+  //calc_50.compile("sqrt(2)",0);
+  //std::cout << dtos(calc_50.eval(0),0) << std::endl;
+  
+#endif
+  
   t.report();
   return 0;
 }

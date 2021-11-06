@@ -216,11 +216,11 @@ namespace o2scl {
 	success or failure
     */
     int calc_RPN_nothrow(token_queue_t rpn,
-                         const std::map<std::u32string, double> *vars,
-                         double &result) {
+                         const std::map<std::u32string, fp_t> *vars,
+                         fp_t &result) {
 
       // Evaluate the expression in RPN form.
-      std::stack<double> evaluation;
+      std::stack<fp_t> evaluation;
       while (!rpn.empty()) {
         token_base *base=rpn.front();
         rpn.pop();
@@ -235,7 +235,7 @@ namespace o2scl {
             throw std::domain_error("Invalid equation.");
             }
           */
-          double right = evaluation.top();
+          fp_t right = evaluation.top();
           evaluation.pop();
           if (!str.compare("sin")) {
             evaluation.push(sin(right));
@@ -274,7 +274,7 @@ namespace o2scl {
           } else if (!str.compare("floor")) {
             evaluation.push(floor(right));
           } else {
-            double left  = evaluation.top();
+            fp_t left  = evaluation.top();
             evaluation.pop();
             if (!str.compare("+")) {
               evaluation.push(left + right);
@@ -314,7 +314,7 @@ namespace o2scl {
             }
           }
         } else if (base->type == token_num) { // Number
-          token32<double> *doubleTok = static_cast<token32<double>*>(base);
+          token32<fp_t> *doubleTok = static_cast<token32<fp_t>*>(base);
           evaluation.push(doubleTok->val);
         } else if (base->type == token_var) { // Variable
           if (!vars) {
@@ -333,7 +333,8 @@ namespace o2scl {
             evaluation.push(r.random());
           } else {
         
-            std::map<std::u32string, double>::const_iterator it = vars->find(key);
+            typename std::map<std::u32string, fp_t>::const_iterator it=
+              vars->find(key);
         
             if (it == vars->end()) {
               //O2SCL_ERR("Unable to find variable.",o2scl::exc_efailed);
@@ -369,7 +370,7 @@ namespace o2scl {
 	integer to indicate success or failure
     */
     int toRPN_nothrow(const std::u32string &expr,
-                      const std::map<std::u32string, double> *vars,
+                      const std::map<std::u32string, fp_t> *vars,
                       std::map<std::string, int> op_prec,
                       token_queue_t &rpn_queue2) {
       
@@ -420,7 +421,7 @@ namespace o2scl {
             std::cout << stmp << std::endl;
           }
       
-          double value;
+          fp_t value;
           int iret=s32tod_nothrow(str_num,value);
           if (verbose>=1) {
             std::cout << "In toRPN_nothrow(), value: " << value << std::endl;
@@ -429,7 +430,7 @@ namespace o2scl {
           if (iret!=0) {
             O2SCL_ERR("Sanity 1 in calc_utf8.",o2scl::exc_einval);
           }
-          rpn_queue.push(new token32<double>(value,token_num));
+          rpn_queue.push(new token32<fp_t>(value,token_num));
 
           last_token_was_op=false;
       
@@ -457,7 +458,7 @@ namespace o2scl {
           }
       
           bool found=false;
-          double val;
+          fp_t val;
 
           if (key.length()==3 &&
               key[0]=='s' && key[1]=='i' && key[2]=='n') {
@@ -548,7 +549,8 @@ namespace o2scl {
                        ((char)key[3])=='d') {
               found=false;
             } else if (vars) {
-              std::map<std::u32string,double>::const_iterator it=vars->find(key);
+              typename std::map<std::u32string,fp_t>::const_iterator it=
+                vars->find(key);
               if (it != vars->end()) {
                 found = true;
                 val = it->second;
@@ -561,7 +563,7 @@ namespace o2scl {
               if (verbose>=1) {
                 std::cout << "In toRPN_nothrow(), value: " << val << std::endl;
               }
-              rpn_queue.push(new token32<double>(val,token_num));
+              rpn_queue.push(new token32<fp_t>(val,token_num));
           
             } else {
           
@@ -642,7 +644,7 @@ namespace o2scl {
                 }
                 // Convert unary operators to binary in the RPN.
                 if (!str.compare("-") || !str.compare("+")) {
-                  rpn_queue.push(new token32<double>(0,token_num));
+                  rpn_queue.push(new token32<fp_t>(0,token_num));
                 } else {
                   //"Unrecognized unary operator: '" +
                   //str + "'.");
@@ -717,7 +719,7 @@ namespace o2scl {
 	specified in \c vars
     */
     calc_utf8(const std::u32string &expr,
-              const std::map<std::u32string, double> *vars=0) {
+              const std::map<std::u32string, fp_t> *vars=0) {
       verbose=0;
   
       // Create the operator precedence object
@@ -738,8 +740,8 @@ namespace o2scl {
     /** \brief Compile and evaluate \c expr using definitions in 
 	\c vars
     */
-    double calculate(const std::u32string &expr,
-                     const std::map<std::u32string, double> *vars=0) {
+    fp_t calculate(const std::u32string &expr,
+                     const std::map<std::u32string, fp_t> *vars=0) {
 
       // Convert to RPN with Dijkstra's Shunting-yard algorithm.
       token_queue_t rpn;
@@ -748,7 +750,7 @@ namespace o2scl {
         O2SCL_ERR("Failed.",o2scl::exc_efailed);
       }
 
-      double ret;
+      fp_t ret;
       int iret=calc_RPN_nothrow(rpn,0,ret);
 
       cleanRPN(rpn);
@@ -759,17 +761,18 @@ namespace o2scl {
     /** \brief Compile and evaluate \c expr using definitions in 
 	\c vars
     */
-    double calculate(const std::string &expr,
-                     const std::map<std::string, double> *vars=0) {
-      double ret;
+    fp_t calculate(const std::string &expr,
+                     const std::map<std::string, fp_t> *vars=0) {
+      fp_t ret;
       std::u32string expr2;
       utf8_to_char32(expr,expr2);
       if (vars==0) {
         ret=calculate(expr2,0);
         return ret;
       }
-      std::map<std::u32string, double> vars2;
-      for(std::map<std::string, double>::const_iterator it=vars->begin();
+      std::map<std::u32string, fp_t> vars2;
+      for(typename std::map<std::string, fp_t>::const_iterator it=
+            vars->begin();
           it!=vars->end();it++) {
         std::u32string tmp;
         utf8_to_char32(it->first,tmp);
@@ -783,15 +786,15 @@ namespace o2scl {
 	\c vars and return an integer to indicate success or failure
     */
     int calculate_nothrow(const std::u32string &expr,
-                          const std::map<std::u32string, double> *vars,
-                          double &result) {
+                          const std::map<std::u32string, fp_t> *vars,
+                          fp_t &result) {
 
       // Convert to RPN with Dijkstra's Shunting-yard algorithm.
       token_queue_t rpn;
       int ret1=toRPN_nothrow(expr,vars,op_precedence,rpn);
       if (ret1!=0) return ret1;
 
-      double ret;
+      fp_t ret;
       int ret2=calc_RPN_nothrow(rpn,0,ret);
       if (ret2!=0) return 10+ret2;
 
@@ -805,15 +808,16 @@ namespace o2scl {
 	\c vars and return an integer to indicate success or failure
     */
     int calculate_nothrow(const std::string &expr,
-                          const std::map<std::string, double> *vars,
-                          double &result) {
+                          const std::map<std::string, fp_t> *vars,
+                          fp_t &result) {
 
       std::u32string expr2;
       utf8_to_char32(expr,expr2);
   
-      std::map<std::u32string, double> vars2;
+      std::map<std::u32string, fp_t> vars2;
       if (vars!=0) {
-        for(std::map<std::string, double>::const_iterator it=vars->begin();
+        for(typename std::map<std::string, fp_t>::const_iterator it=
+              vars->begin();
             it!=vars->end();it++) {
           std::u32string tmp;
           utf8_to_char32(it->first,tmp);
@@ -831,7 +835,7 @@ namespace o2scl {
       }
       if (ret1!=0) return ret1;
 
-      double ret;
+      fp_t ret;
       int ret2=calc_RPN_nothrow(rpn,0,ret);
       if (ret2!=0) return 10+ret2;
 
@@ -849,7 +853,7 @@ namespace o2scl {
 	integer to indicate success or failure
     */
     void compile(const std::u32string &expr,
-		 const std::map<std::u32string, double> *vars=0) {
+		 const std::map<std::u32string, fp_t> *vars=0) {
 
       // Make sure it is empty:
       cleanRPN(this->RPN);
@@ -867,7 +871,7 @@ namespace o2scl {
 	integer to indicate success or failure
     */
     int compile_nothrow(const std::u32string &expr,
-			const std::map<std::u32string, double> *vars=0) {
+			const std::map<std::u32string, fp_t> *vars=0) {
 
       // Make sure it is empty:
       cleanRPN(this->RPN);
@@ -881,14 +885,15 @@ namespace o2scl {
 	integer to indicate success or failure
     */
     void compile(const std::string &expr,
-		 const std::map<std::string, double> *vars=0) {
+		 const std::map<std::string, fp_t> *vars=0) {
 
       std::u32string expr2;
       utf8_to_char32(expr,expr2);
   
-      std::map<std::u32string, double> vars2;
+      std::map<std::u32string, fp_t> vars2;
       if (vars!=0) {
-        for(std::map<std::string, double>::const_iterator it=vars->begin();
+        for(typename std::map<std::string, fp_t>::const_iterator it=
+              vars->begin();
             it!=vars->end();it++) {
           std::u32string tmp;
           utf8_to_char32(it->first,tmp);
@@ -917,14 +922,15 @@ namespace o2scl {
 	integer to indicate success or failure
     */
     int compile_nothrow(const std::string &expr,
-			const std::map<std::string, double> *vars=0) {
+			const std::map<std::string, fp_t> *vars=0) {
 
       std::u32string expr2;
       utf8_to_char32(expr,expr2);
   
-      std::map<std::u32string, double> vars2;
+      std::map<std::u32string, fp_t> vars2;
       if (vars!=0) {
-        for(std::map<std::string, double>::const_iterator it=vars->begin();
+        for(typename std::map<std::string, fp_t>::const_iterator it=
+              vars->begin();
             it!=vars->end();it++) {
           std::u32string tmp;
           utf8_to_char32(it->first,tmp);
@@ -952,8 +958,8 @@ namespace o2scl {
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
     */
-    double eval_char32(const std::map<std::u32string, double> *vars=0) {
-      double ret;
+    fp_t eval_char32(const std::map<std::u32string, fp_t> *vars=0) {
+      fp_t ret;
       int iret=calc_RPN_nothrow(this->RPN, vars,ret);
       return ret;
     }
@@ -961,8 +967,8 @@ namespace o2scl {
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
     */
-    int eval_char32_nothrow(const std::map<std::u32string, double> *vars,
-                            double &result) {
+    int eval_char32_nothrow(const std::map<std::u32string, fp_t> *vars,
+                            fp_t &result) {
       int ret=calc_RPN_nothrow(this->RPN,vars,result);
       return ret;
     }
@@ -970,11 +976,12 @@ namespace o2scl {
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
     */
-    double eval(const std::map<std::string, double> *vars=0) {
+    fp_t eval(const std::map<std::string, fp_t> *vars=0) {
 
-      std::map<std::u32string, double> vars2;
+      std::map<std::u32string, fp_t> vars2;
       if (vars!=0) {
-        for(std::map<std::string, double>::const_iterator it=vars->begin();
+        for(typename std::map<std::string, fp_t>::const_iterator it=
+              vars->begin();
             it!=vars->end();it++) {
           std::u32string tmp;
           utf8_to_char32(it->first,tmp);
@@ -982,7 +989,7 @@ namespace o2scl {
         }
       }
   
-      double ret;
+      fp_t ret;
       int iret;
       if (vars==0) {
         iret=calc_RPN_nothrow(this->RPN,0,ret);
@@ -995,12 +1002,13 @@ namespace o2scl {
     /** \brief Evalate the previously compiled expression using
 	variables specified in \c vars
     */
-    int eval_nothrow(const std::map<std::string, double> *vars,
-		     double &result) {
+    int eval_nothrow(const std::map<std::string, fp_t> *vars,
+		     fp_t &result) {
 
-      std::map<std::u32string, double> vars2;
+      std::map<std::u32string, fp_t> vars2;
       if (vars!=0) {
-        for(std::map<std::string, double>::const_iterator it=vars->begin();
+        for(typename std::map<std::string, fp_t>::const_iterator it=
+              vars->begin();
             it!=vars->end();it++) {
           std::u32string tmp;
           utf8_to_char32(it->first,tmp);
@@ -1039,7 +1047,7 @@ namespace o2scl {
     
         token_base *base=rpn.front();
 
-        token32<double> *doubleTok=dynamic_cast<token32<double>*>(base);
+        token32<fp_t> *doubleTok=dynamic_cast<token32<fp_t>*>(base);
         if (doubleTok) {
           ss << doubleTok->val;
         }
