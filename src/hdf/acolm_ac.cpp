@@ -927,7 +927,11 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     return exc_efailed;
   }
 
-  if (prec>35) {
+  if (prec>50) {
+    cerr << "Requested precision larger too large for the calc "
+         << "command." << endl;
+    return 2;
+  } else if (prec>35) {
 #ifdef O2SCL_LD_TYPES
     boost::multiprecision::number<boost::multiprecision::cpp_dec_float<50> >
       d;

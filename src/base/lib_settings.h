@@ -272,46 +272,12 @@ namespace o2scl {
     
     std::vector<std::u32string> vs=calc.get_var_list();
     
-    // If there are undefined variables, then attempt to get them
-    // from the constant database
+    // The o2scl class find_constants doesn't work for 
+    // multiprecision, so we return a non-zero value instead
     if (vs.size()!=0) {
-      
-      find_constants &fc=o2scl_settings.get_find_constants();
-      
-      std::map<std::string,fp_t> vars;
-      
-      std::vector<find_constants::const_entry> matches;
-      for(size_t i=0;i<vs.size();i++) {
-        std::string vsi2;
-        char32_to_utf8(vs[i],vsi2);
-        int fret=fc.find_nothrow(vsi2,"mks",matches);
-        
-        if (fret==find_constants::one_exact_match_unit_match ||
-            fret==find_constants::one_pattern_match_unit_match) {
-          
-          find_constants::const_entry &fcl=matches[0];
-          
-          vars.insert(std::make_pair(vsi2,fcl.val));
-          if (verbose>=2) {
-            std::cout << "Found constant " << vsi2
-                      << " with value " << fcl.val << std::endl;
-          }
-          
-        } else {
-          
-          if (verbose>=2) {
-            std::cout << "Variable " << vsi2
-                      << " not uniquely specified in constant list ("
-                      << fret << ")." << std::endl;
-          }
-          
-          return 1;
-        }
-      }
-      
-      // No variables, so just evaluate
-      int ret2=calc.eval_nothrow(&vars,result);
-      if (ret2!=0) return ret2;
+
+      // There are undefined constants
+      return 1;
       
     } else {
       

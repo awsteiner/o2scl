@@ -261,6 +261,13 @@ namespace o2scl {
   int function_to_double_nothrow(std::string s, double &result,
                                  int verbose=0);
   
+  /** \brief Convert a formula to a long double and return an integer
+      to indicate success or failure
+      
+      This is an alternate version of \ref function_to_double()
+      which does not call the error handler and returns a non-zero
+      integer when it fails.
+  */
   int function_to_double_nothrow(std::string s, long double &result,
                                  int verbose=0);
 
