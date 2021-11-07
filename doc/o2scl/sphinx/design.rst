@@ -54,7 +54,8 @@ Tier 2
   - exception.h : err_hnd.h
   - misc.h : err_hnd.h
   - find_constants.h : constants.h
-  - rng.h : err_hnd.h
+  - rng.h (in the mcarlo directory) : err_hnd.h
+  - tridiag.h (in the linalg directory) : err_hnd.h
 
 Tier 3
   - string_conv.h : misc.h
@@ -74,10 +75,13 @@ Tier 5
 Tier 6    
   - convert_units.h : find_constants.h calc_utf8.h misc.h string_conv.h
     vector.h constants.h
+  - search_vec.h : err_hnd.h vector.h misc.h
+  - permutation.h : vector.h
+  - interp.h : search_vec.h tridiag.h vector.h
 
 Tier 7    
   - lib_settings.h : convert_units.h find_constants.h
-
+    
 The interpolation, testing, and table headers are not
 as top-level as the ones above because they depend on 
 tridiagonalization in the linear algebra directory::

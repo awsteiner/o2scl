@@ -30,6 +30,8 @@
 #endif
 #endif
 
+#include <o2scl/lib_settings.h>
+
 #ifdef O2SCL_LD_TYPES
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 #endif
@@ -199,9 +201,9 @@ int main(void) {
 
 #ifdef O2SCL_LD_TYPES
   
-  calc_utf8<cpp_dec_float_50> calc_50;
-  calc_50.compile("sqrt(2)",0);
-  std::cout << dtos(calc_50.eval(0),0) << std::endl;
+  //calc_utf8<cpp_dec_float_50> calc_50;
+  //calc_50.compile("sqrt(2)",0);
+  //std::cout << dtos(calc_50.eval(0),0) << std::endl;
   
 #endif
   

@@ -26,8 +26,7 @@
 #ifndef O2SCL_TRIDIAG_H
 #define O2SCL_TRIDIAG_H
 
-#include <o2scl/householder.h>
-#include <o2scl/givens.h>
+#include <o2scl/err_hnd.h>
 
 namespace o2scl_linalg {
   
