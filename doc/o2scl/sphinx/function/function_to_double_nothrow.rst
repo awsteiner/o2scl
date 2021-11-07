@@ -1,6 +1,9 @@
-Function function_to_double_nothrow (o2scl)
-===========================================
-
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-.. doxygenfunction:: o2scl::function_to_double_nothrow
+Functions function_to_double_nothrow
+====================================
+
+.. doxygenfunction:: function_to_double_nothrow(std::string s, double &result, int verbose = 0)
+
+.. doxygenfunction:: function_to_double_nothrow(std::string s, long double &result, int verbose = 0)
+

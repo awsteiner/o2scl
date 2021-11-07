@@ -252,12 +252,9 @@ namespace o2scl {
       Note that this template is in lib_settings.h because of the
       hierarchy of header files which must be included
    */
-  template<size_t N> int function_to_double_nothrow
+  template<class fp_t> int function_to_double_nothrow
   (std::string s,
-   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<N> >
-   &result, int verbose=0) {
-    
-    typedef boost::multiprecision::number<boost::multiprecision::cpp_dec_float<N>> fp_t;
+   fp_t &result, int verbose=0) {
     
     std::string s2;
     
@@ -281,7 +278,7 @@ namespace o2scl {
       
       find_constants &fc=o2scl_settings.get_find_constants();
       
-      std::map<std::string,long double> vars;
+      std::map<std::string,fp_t> vars;
       
       std::vector<find_constants::const_entry> matches;
       for(size_t i=0;i<vs.size();i++) {

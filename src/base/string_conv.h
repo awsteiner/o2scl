@@ -195,10 +195,8 @@ namespace o2scl {
   
   /** \brief Convert a string to a multiprecision boost number
    */
-  template<size_t N> int s32tod_nothrow
-  (std::u32string s,
-   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<N> >
-   &result) {
+  template<class fp_t> int s32tod_nothrow
+  (std::u32string s, fp_t &result) {
     
     std::string s2;
     bool done=false;
@@ -210,8 +208,7 @@ namespace o2scl {
       }
     }
     
-    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<N> >
-      ret(s2);
+    fp_t ret(s2);
     
     result=ret;
     

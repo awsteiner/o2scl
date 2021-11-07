@@ -7,6 +7,7 @@
   <compound refid="classo2scl_1_1astep__gsl" kind="class"><name>o2scl::astep_gsl</name>
   <compound refid="classo2scl_1_1astep__nonadapt" kind="class"><name>o2scl::astep_nonadapt</name>
   <compound refid="classo2scl__auto__format_1_1auto__format" kind="class"><name>o2scl_auto_format::auto_format</name>
+  <compound refid="classo2scl_1_1bessel__K__exp__integ__bf" kind="class"><name>o2scl::bessel_K_exp_integ_bf</name>
   <compound refid="classo2scl_1_1bessel__K__exp__integ__direct" kind="class"><name>o2scl::bessel_K_exp_integ_direct</name>
   <compound refid="classo2scl_1_1bessel__K__exp__integ__gsl" kind="class"><name>o2scl::bessel_K_exp_integ_gsl</name>
   <compound refid="classo2scl_1_1bessel__K__exp__integ__tl" kind="class"><name>o2scl::bessel_K_exp_integ_tl</name>
@@ -103,12 +104,12 @@
   <compound refid="classo2scl_1_1inte__cubature__base" kind="class"><name>o2scl::inte_cubature_base</name>
   <compound refid="classo2scl_1_1inte__exp__sinh__boost" kind="class"><name>o2scl::inte_exp_sinh_boost</name>
   <compound refid="classo2scl_1_1inte__gauss56__cern" kind="class"><name>o2scl::inte_gauss56_cern</name>
-  <compound refid="classo2scl_1_1inte__gauss56__coeffs__cpp__dec__float__50" kind="class"><name>o2scl::inte_gauss56_coeffs_cpp_dec_float_50</name>
   <compound refid="classo2scl_1_1inte__gauss56__coeffs__double" kind="class"><name>o2scl::inte_gauss56_coeffs_double</name>
+  <compound refid="classo2scl_1_1inte__gauss56__coeffs__float__50" kind="class"><name>o2scl::inte_gauss56_coeffs_float_50</name>
   <compound refid="classo2scl_1_1inte__gauss56__coeffs__long__double" kind="class"><name>o2scl::inte_gauss56_coeffs_long_double</name>
   <compound refid="classo2scl_1_1inte__gauss__cern" kind="class"><name>o2scl::inte_gauss_cern</name>
-  <compound refid="classo2scl_1_1inte__gauss__coeffs__cpp__dec__float__50" kind="class"><name>o2scl::inte_gauss_coeffs_cpp_dec_float_50</name>
   <compound refid="classo2scl_1_1inte__gauss__coeffs__double" kind="class"><name>o2scl::inte_gauss_coeffs_double</name>
+  <compound refid="classo2scl_1_1inte__gauss__coeffs__float__50" kind="class"><name>o2scl::inte_gauss_coeffs_float_50</name>
   <compound refid="classo2scl_1_1inte__gauss__coeffs__long__double" kind="class"><name>o2scl::inte_gauss_coeffs_long_double</name>
   <compound refid="classo2scl_1_1inte__gen" kind="class"><name>o2scl::inte_gen</name>
   <compound refid="classo2scl_1_1inte__gsl" kind="class"><name>o2scl::inte_gsl</name>

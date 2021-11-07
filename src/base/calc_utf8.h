@@ -251,7 +251,7 @@ namespace o2scl {
           } else if (!str.compare("exp")) {
             evaluation.push(exp(right));
           } else if (!str.compare("abs")) {
-            evaluation.push(std::abs(right));
+            evaluation.push(abs(right));
           } else if (!str.compare("log10")) {
             evaluation.push(log10(right));
           } else if (!str.compare("asin")) {

@@ -11,6 +11,7 @@ Namespace: o2scl class: astep_base
 Namespace: o2scl class: astep_gsl
 Namespace: o2scl class: astep_nonadapt
 Namespace: o2scl_auto_format class: auto_format
+Namespace: o2scl class: bessel_K_exp_integ_bf
 Namespace: o2scl class: bessel_K_exp_integ_direct
 Namespace: o2scl class: bessel_K_exp_integ_gsl
 Namespace: o2scl class: bessel_K_exp_integ_tl
@@ -107,12 +108,12 @@ Namespace: o2scl class: inte_cheb_gsl
 Namespace: o2scl class: inte_cubature_base
 Namespace: o2scl class: inte_exp_sinh_boost
 Namespace: o2scl class: inte_gauss56_cern
-Namespace: o2scl class: inte_gauss56_coeffs_cpp_dec_float_50
 Namespace: o2scl class: inte_gauss56_coeffs_double
+Namespace: o2scl class: inte_gauss56_coeffs_float_50
 Namespace: o2scl class: inte_gauss56_coeffs_long_double
 Namespace: o2scl class: inte_gauss_cern
-Namespace: o2scl class: inte_gauss_coeffs_cpp_dec_float_50
 Namespace: o2scl class: inte_gauss_coeffs_double
+Namespace: o2scl class: inte_gauss_coeffs_float_50
 Namespace: o2scl class: inte_gauss_coeffs_long_double
 Namespace: o2scl class: inte_gen
 Namespace: o2scl class: inte_gsl
@@ -510,11 +511,15 @@ Namespace:  function: stob
 Namespace:  function: stod
 Namespace:  function: stod_nothrow
 Namespace:  function: s32tod_nothrow
+Namespace:  function: s32tod_nothrow
+Multiple entry s32tod_nothrow
 Namespace: o2scl function: has_minus_sign
 Namespace:  function: is_number
 Namespace:  function: find_constant
 Namespace: o2scl function: function_to_double
 Namespace: o2scl function: function_to_double_nothrow
+Namespace: o2scl function: function_to_double_nothrow
+Multiple entry function_to_double_nothrow
 Namespace:  function: split_string
 Namespace: o2scl function: split_string_delim
 Namespace:  function: rewrap
@@ -1182,6 +1187,7 @@ Creating rst files for non-duplicate functions:
 
 Skipping const_vector_range
 Skipping dtos
+Skipping function_to_double_nothrow
 Skipping hdf_input
 Skipping hdf_input_data
 Skipping hdf_input_n
@@ -1221,6 +1227,7 @@ Skipping o2sqrt
 Skipping operator<<
 Skipping pipe_cmd_string
 Skipping rebin_xy
+Skipping s32tod_nothrow
 Skipping solve_cyc_tridiag_nonsym
 Skipping solve_cyc_tridiag_sym
 Skipping solve_tridiag_nonsym
@@ -1307,6 +1314,8 @@ const_vector_range(const vector_range_gen<vec_t> &v, size_t start, size_t last)
 const_vector_range(const const_vector_range_gen<vec_t> &v, size_t start, size_t last)
 dtos(const fp_t &x, int prec = 6, bool auto_prec = false)
 dtos(double x, std::ostream &format)
+function_to_double_nothrow(std::string s, double &result, int verbose = 0)
+function_to_double_nothrow(std::string s, long double &result, int verbose = 0)
 hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string name)
 hdf_input(hdf_file &hf, o2scl::table3d &h, std::string name = "")
 hdf_input(hdf_file &hf, o2scl::table_units<vec_t> &t, std::string name)
@@ -1459,6 +1468,8 @@ pipe_cmd_string(std::string cmd, std::string &result, bool err_on_fail = true, i
 pipe_cmd_string(std::string cmd, int nmax = 80)
 rebin_xy(const vec_t &x, const vec2_t &y, vec3_t &x_out, vec4_t &y_out, size_t n_pts, size_t interp_type)
 rebin_xy(const vec_t &x, const vec2_t &y, vec3_t &x_out, vec4_t &y_out, size_t n_pts, size_t interp_type1, size_t interp_type2, double acc = 1.0e-4)
+s32tod_nothrow(std::u32string s, double &result)
+s32tod_nothrow(std::u32string s, long double &result)
 solve_cyc_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, const vec3_t &belowdiag, const vec4_t &rhs, vec5_t &x, size_t N, mem_t &m)
 solve_cyc_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, const vec3_t &belowdiag, const vec4_t &rhs, vec5_t &x, size_t N)
 solve_cyc_tridiag_sym(const vec_t &diag, const vec2_t &offdiag, const vec3_t &b, vec4_t &x, size_t N, mem_t &m)
