@@ -44,7 +44,6 @@
 #include <o2scl/misc.h>
 #include <o2scl/interp.h>
 #include <o2scl/vec_stats.h>
-#include <o2scl/shunting_yard.h>
 #include <o2scl/lib_settings.h>
 
 #ifndef DOXYGEN_NO_O2NS

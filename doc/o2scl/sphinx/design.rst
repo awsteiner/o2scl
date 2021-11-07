@@ -44,23 +44,39 @@ down. The following are the most "top-level" header files and their
 associated dependencies within O\ :sub:`2`\ scl (there are other
 dependencies on GSL and the C standard library not listed here). Note
 that not all of the headers in the "base" directory are listed here
-(because they are less likely to cause problems)::
+(because they are less likely to cause problems)
 
-  constants.h : (none)
-  err_hnd.h : (none)
-  exception.h : err_hnd.h
-  find_constants.h : constants.h convert_units.h
-  format_float.h : err_hnd.h misc.h string_conv.h
-  funct.h : err_hnd.h shunting_yard.h
-  lib_settings.h : convert_units.h find_constants.h
-  misc.h : err_hnd.h
-  mm_funct.h : shunting_yard.h
-  multi_funct.h : err_hnd.h shunting_yard.h
-  search_vec.h : err_hnd.h vector.h
-  shunting_yard.h : (none)
-  string_conv.h : misc.h
-  uniform_grid.h: err_hnd.h string_conv.h
-  vector.h: uniform_grid.h misc.h vector_special.h
+Tier 1
+  - constants.h : (none)
+  - err_hnd.h : (none)
+
+Tier 2    
+  - exception.h : err_hnd.h
+  - misc.h : err_hnd.h
+  - find_constants.h : constants.h
+  - rng.h : err_hnd.h
+
+Tier 3
+  - string_conv.h : misc.h
+  
+Tier 4
+  - calc_utf8.h : rng.h err_hnd.h string_conv.h find_constants.h
+  - columnify.h : misc.h string_conv.h
+  - uniform_grid.h : string_conv.h err_hnd.h
+  - format_float.h : err_hnd.h misc.h string_conv.h
+
+Tier 5
+  - funct.h : err_hnd.h calc_utf8.h
+  - vector.h : misc.h uniform_grid.h (vector_special.h)
+  - mm_funct.h : calc_utf8.h
+  - multi_funct.h : calc_utf8.h
+
+Tier 6    
+  - convert_units.h : find_constants.h calc_utf8.h misc.h string_conv.h
+    vector.h constants.h
+
+Tier 7    
+  - lib_settings.h : convert_units.h find_constants.h
 
 The interpolation, testing, and table headers are not
 as top-level as the ones above because they depend on 

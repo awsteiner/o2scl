@@ -36,7 +36,6 @@
 #include <o2scl/misc.h>
 #include <o2scl/constants.h>
 #include <o2scl/string_conv.h>
-#include <o2scl/shunting_yard.h>
 #include <o2scl/calc_utf8.h>
 #include <o2scl/find_constants.h>
 #include <o2scl/vector.h>
