@@ -34,6 +34,13 @@
 #include <sstream>
 #include <codecvt>
 
+#ifdef O2SCL_LD_TYPES
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#ifdef O2SCL_MPFR
+#include <boost/multiprecision/mpfr.hpp>
+#endif
+#endif
+
 // For numeric_limits for dtos()
 #include <limits>
 
@@ -179,6 +186,40 @@ namespace o2scl {
   */
   int s32tod_nothrow(std::u32string s, double &result);
 
+  /** \brief Convert a string to a long double returning non-zero
+      value for failure
+  */
+  int s32tod_nothrow(std::u32string s, long double &result);
+
+#ifdef O2SCL_LD_TYPES
+  
+  /** \brief Convert a string to a multiprecision boost number
+   */
+  template<size_t N> int s32tod_nothrow
+  (std::u32string s,
+   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<N> >
+   &result) {
+    
+    std::string s2;
+    bool done=false;
+    for (size_t i=0;i<s.length() && done==false;i++) {
+      if (s[i]<128) {
+        s2+=s[i];
+      } else {
+        done=true;
+      }
+    }
+    
+    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<N> >
+      ret(s2);
+    
+    result=ret;
+    
+    return 0;
+  }
+  
+#endif
+
   /** \brief Find out if the number pointed to by \c x has a minus sign
       
       This function returns true if the number pointed to by \c x has
@@ -220,7 +261,11 @@ namespace o2scl {
       which does not call the error handler and returns a non-zero
       integer when it fails.
   */
-  int function_to_double_nothrow(std::string s, double &result, int verbose=0);
+  int function_to_double_nothrow(std::string s, double &result,
+                                 int verbose=0);
+  
+  int function_to_double_nothrow(std::string s, long double &result,
+                                 int verbose=0);
 
   /** \brief Split a string into words using whitespace for delimiters
       and (partially) respecting quotes

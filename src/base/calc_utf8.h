@@ -69,6 +69,7 @@
 #include <o2scl/rng.h>
 #include <o2scl/err_hnd.h>
 #include <o2scl/string_conv.h>
+#include <o2scl/find_constants.h>
 
 namespace o2scl {
 
@@ -1108,7 +1109,7 @@ namespace o2scl {
     //@}
     
   };
-
+  
 }
 
 // End of "#ifndef O2SCL_CALC_UTF8_H"

@@ -211,6 +211,29 @@ int o2scl::s32tod_nothrow(u32string s, double &result) {
   return exc_einval;
 }
 
+int o2scl::s32tod_nothrow(u32string s, long double &result) {
+
+  string s2;
+  bool done=false;
+  for (size_t i=0;i<s.length() && done==false;i++) {
+    if (s[i]<128) {
+      s2+=s[i];
+    } else {
+      done=true;
+    }
+  }
+  
+  if (s2.length()>0) {
+    istringstream ins(s2);
+    if (ins >> result) {
+      return 0;
+    }
+    return exc_einval;
+  }
+  
+  return exc_einval;
+}
+
 bool o2scl::stob(string s, bool err_on_fail) {
   bool ret;
   // Read into a string stream to remove initial whitespace
@@ -301,6 +324,75 @@ int o2scl::function_to_double_nothrow(std::string s, double &result,
       if (fret==find_constants::one_exact_match_unit_match ||
           fret==find_constants::one_pattern_match_unit_match) {
 
+        find_constants::const_entry &fcl=matches[0];
+
+        vars.insert(std::make_pair(vsi2,fcl.val));
+        if (verbose>=2) {
+          std::cout << "Found constant " << vsi2
+                    << " with value " << fcl.val << std::endl;
+        }
+        
+      } else {
+        
+        if (verbose>=2) {
+          std::cout << "Variable " << vsi2
+                    << " not uniquely specified in constant list ("
+                    << fret << ")." << std::endl;
+        }
+        
+        return 1;
+      }
+    }
+
+    // No variables, so just evaluate
+    int ret2=calc.eval_nothrow(&vars,result);
+    if (ret2!=0) return ret2;
+    
+  } else {
+
+    // No variables, so just evaluate
+    int ret2=calc.eval_nothrow(0,result);
+    if (ret2!=0) return ret2;
+  }
+  
+  return 0;
+}
+
+int o2scl::function_to_double_nothrow(std::string s, long double &result,
+                                      int verbose) {
+
+  std::string s2;
+  // Remove quotes and apostrophes
+  for(size_t i=0;i<s.length();i++) {
+    if (s[i]!='\"' && s[i]!='\'') {
+      s2+=s[i];
+    }
+  }
+  
+  calc_utf8<long double> calc;
+  
+  int ret=calc.compile_nothrow(s2.c_str(),0);
+  if (ret!=0) return ret;
+
+  std::vector<std::u32string> vs=calc.get_var_list();
+
+  // If there are undefined variables, then attempt to get them
+  // from the constant database
+  if (vs.size()!=0) {
+    
+    find_constants &fc=o2scl_settings.get_find_constants();
+    
+    std::map<std::string,long double> vars;
+    
+    std::vector<find_constants::const_entry> matches;
+    for(size_t i=0;i<vs.size();i++) {
+      std::string vsi2;
+      char32_to_utf8(vs[i],vsi2);
+      int fret=fc.find_nothrow(vsi2,"mks",matches);
+      
+      if (fret==find_constants::one_exact_match_unit_match ||
+          fret==find_constants::one_pattern_match_unit_match) {
+        
         find_constants::const_entry &fcl=matches[0];
 
         vars.insert(std::make_pair(vsi2,fcl.val));
