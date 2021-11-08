@@ -251,11 +251,11 @@ namespace o2scl {
 
   protected:
     
+  public:
+    
     inte_qagiu_gsl<> nit;
     
     inte_qag_gsl<> dit;
-    
-  public:
 
     int eval_density(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
@@ -300,7 +300,7 @@ namespace o2scl {
     }
 
     int eval_deg_entropy(fp_t T, fp_t y, fp_t eta, fp_t mot,
-                         fp_t ul, fp_t &res, fp_t &err) {
+                         fp_t ll, fp_t ul, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
                            (&frit<func_t,fp_t>::deg_entropy_fun<fp_t>),
                            this,std::placeholders::_1,T,y,eta,mot);
@@ -524,12 +524,11 @@ namespace o2scl {
     public fermion_thermo_tl<fermion_t,fd_inte_t,be_inte_t,root_t,
 			     func_t,fp_t> {
 
-  protected:
-
-    frit<func_t,fp_t> fritx;
-    
   public:
 
+    /// The integrator 
+    frit<func_t,fp_t> fritx;
+    
     /// \name Numerical parameters
     //@{
     /** \brief If true, call the error handler when convergence 
@@ -963,14 +962,10 @@ namespace o2scl {
 	  std::cout << "calc_mu(): non-deg number density:"
 		    << std::endl;
 	}
-	
-	f.n=nit->integ_iu(mfd,0.0);
-	f.n*=prefac;
-	unc.n=nit->get_error()*prefac;
-        
-	//f.n=fritx.eval_density(y,eta,f.n,unc.n);
-	//f.n*=prefac;
-	//unc.n*=prefac;
+
+        fritx.eval_density(y,eta,f.n,unc.n);
+        f.n*=prefac;
+        unc.n*=prefac;
 
 	// Compute the energy density
 
@@ -979,10 +974,15 @@ namespace o2scl {
 		    << std::endl;
 	}
 	
-	f.ed=nit->integ_iu(mfe,0.0);
-	f.ed*=prefac*temper;
+        fritx.eval_energy(y,eta,f.ed,unc.ed);
+        f.ed*=prefac*temper;
+        unc.ed*=prefac*temper;
 	if (!f.inc_rest_mass) f.ed-=f.n*f.m;
-	unc.ed=nit->get_error()*prefac*temper;
+        
+	//f.ed=nit->integ_iu(mfe,0.0);
+	//f.ed*=prefac*temper;
+	//if (!f.inc_rest_mass) f.ed-=f.n*f.m;
+	//unc.ed=nit->get_error()*prefac*temper;
     
 	// Compute the entropy
 
@@ -991,9 +991,13 @@ namespace o2scl {
 		    << std::endl;
 	}
 	
-	f.en=nit->integ_iu(mfs,0.0);
-	f.en*=prefac;
-	unc.en=nit->get_error()*prefac;
+        fritx.eval_entropy(y,eta,f.en,unc.en);
+        f.en*=prefac;
+        unc.en*=prefac;
+        
+	//f.en=nit->integ_iu(mfs,0.0);
+	//f.en*=prefac;
+	//unc.en=nit->get_error()*prefac;
 
 	if (verbose>1) {
 	  std::cout << "calc_mu(): non-deg integrals done."
@@ -1067,9 +1071,13 @@ namespace o2scl {
                     << ul << " " << upper_limit_fac << std::endl;
 	}
 
-	f.n=dit->integ(mfd,0.0,ul);
-	f.n*=prefac;
-	unc.n=dit->get_error()*prefac;
+        fritx.eval_deg_density(temper,y,eta,mot,ul,f.n,unc.n);
+        f.n*=prefac;
+        unc.n*=prefac;
+
+	//f.n=dit->integ(mfd,0.0,ul);
+	//f.n*=prefac;
+	//unc.n=dit->get_error()*prefac;
     
 	// Compute the energy density
 
@@ -1078,9 +1086,13 @@ namespace o2scl {
 		    << std::endl;
 	}
 	
-	f.ed=dit->integ(mfe,0.0,ul);
-	f.ed*=prefac;
-	unc.ed=dit->get_error()*prefac;
+        fritx.eval_deg_energy(temper,y,eta,mot,ul,f.ed,unc.ed);
+        f.ed*=prefac;
+        unc.ed*=prefac;
+
+	//f.ed=dit->integ(mfe,0.0,ul);
+	//f.ed*=prefac;
+	//unc.ed=dit->get_error()*prefac;
 
 	// Compute the lower limit for the entropy integration
 
@@ -1109,14 +1121,20 @@ namespace o2scl {
 	}
 	
 	if (ll>0.0) {
-	  f.en=dit->integ(mfs,ll,ul);
+          fritx.eval_deg_entropy(temper,y,eta,mot,ll,ul,f.en,unc.en);
+          
+	  //f.en=dit->integ(mfs,ll,ul);
 	  last_method=7;
 	} else {
-	  f.en=dit->integ(mfs,0.0,ul);
+          fritx.eval_deg_entropy(temper,y,eta,mot,0,ul,f.en,unc.en);
+
+	  //f.en=dit->integ(mfs,0.0,ul);
 	  last_method=8;
 	}
-	f.en*=prefac;
-	unc.en=dit->get_error()*prefac;
+        f.en*=prefac;
+        unc.en*=prefac;
+	//f.en*=prefac;
+	//unc.en=dit->get_error()*prefac;
 
 	if (verbose>1) {
 	  std::cout << "calc_mu(): deg integrals done."
@@ -2361,6 +2379,8 @@ namespace o2scl {
   */
   typedef fermion_rel_tl<> fermion_rel;
 
+#ifdef O2SCL_NEVER_DEFINED
+  
 #ifdef O2SCL_LD_TYPES
 
   /** \brief Equation of state for a relativistic fermion using long 
@@ -2576,6 +2596,7 @@ namespace o2scl {
     }
   };
   
+#endif
 #endif
   
   //#ifndef DOXYGEN_NO_O2NS
