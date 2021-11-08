@@ -59,6 +59,12 @@ cpp_dec_float_50 testfun2_cdf(cpp_dec_float_50 tx) {
   return four*sqrt(one-tx*tx);
 }
 
+mpfr_float_50 testfun2_mp(mpfr_float_50 tx) {
+  mpfr_float_50 one=1;
+  mpfr_float_50 four=4;
+  return four*sqrt(one-tx*tx);
+}
+
 #endif
 
 int main(void) {
@@ -128,13 +134,13 @@ int main(void) {
 #ifdef O2SCL_MPFR
   
   {
-    inte_gauss_cern<funct_cdf50,mpfr_float_50,
+    inte_gauss_cern<funct_mp50,mpfr_float_50,
 		    inte_gauss_coeffs_float_50<mpfr_float_50> > cg_cdf;
     cg_cdf.tol_rel=1.0e-30;
     cg_cdf.tol_abs=1.0e-30;
     mpfr_float_50 a=3.0, calc, exact, diff;
 
-    funct_cdf50 tf2=testfun2_cdf;
+    funct_mp50 tf2=testfun2_mp;
     
     calc=cg_cdf.integ(tf2,0.0,1.0);
     exact=boost::math::constants::pi<mpfr_float_50>();

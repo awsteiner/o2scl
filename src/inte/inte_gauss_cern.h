@@ -307,8 +307,8 @@ namespace o2scl {
 
   /** \brief Integrate function \c func from \c a to \c b.
    */
-  virtual int integ_err(func_t &func, fp_t a, fp_t b, 
-			fp_t &res, fp_t &err) {
+    virtual int integ_err(func_t &func, fp_t a, fp_t b, 
+                          fp_t &res, fp_t &err) {
 
     fp_t y1, y2;
     err=0.0;
@@ -353,14 +353,14 @@ namespace o2scl {
       loop2=false;
 
       fp_t tdiff=s16-c2*s8;
-      if (o2scl::o2abs(tdiff)<this->tol_rel*
-	  (1.0+o2scl::o2abs(s16))) {
+      if (abs(tdiff)<this->tol_rel*
+	  (1.0+abs(s16))) {
 	h+=s16;
 	if (bb!=b) loop=true;
       } else {
 	bb=c1;
 	fp_t one=1;
-	if (one+cnst*o2scl::o2abs(c2)!=one) {
+	if (one+cnst*abs(c2)!=one) {
 	  loop2=true;
 	} else {
 	  this->last_iter=itx;

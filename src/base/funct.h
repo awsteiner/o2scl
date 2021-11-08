@@ -83,6 +83,7 @@ namespace o2scl {
   typedef std::function<boost::multiprecision::mpfr_float_50
 			(boost::multiprecision::mpfr_float_50)>
   funct_mp50;
+  
 #endif
   
   /** \brief One-dimensional function typedef in src/base/funct.h
