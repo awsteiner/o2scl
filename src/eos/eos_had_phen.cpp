@@ -195,7 +195,7 @@ void eos_crust_virial_v2::fit(bool show_fit) {
       cout << Tv_neut[j] << " " << bnv[j] << " " << bn_err[j] << " "
 	   << ff_neutron(bn_np,bn_params,Tv_neut[j]) << endl;
       double line[4]={Tv_neut[j],bnv[j],bn_err[j],
-		      ff_neutron(bn_np,bn_params,Tv_neut[j])};
+        ff_neutron(bn_np,bn_params,Tv_neut[j])};
       t.line_of_data(4,line);
     }
     cout << endl;
@@ -301,7 +301,7 @@ void eos_crust_virial_v2::fit(bool show_fit) {
       cout << Tv_nuc[j] << " " << bpnv[j] << " " << bpn_err[j] << " "
 	   << ff_nuc(bpn_np,bpn_params,Tv_nuc[j]) << endl;
       double line[4]={Tv_nuc[j],bpnv[j],bpn_err[j],
-		      ff_nuc(bpn_np,bpn_params,Tv_nuc[j])};
+        ff_nuc(bpn_np,bpn_params,Tv_nuc[j])};
       t.line_of_data(4,line);
     }
 
@@ -400,8 +400,8 @@ void eos_had_phen::ns_fit(int row) {
     double EoA=nstar_tab.get(((string)"EoA_")+szttos(i),i_ns)*hc_mev_fm;
     if (fabs(nstar_tab.get(((string)"EoA_")+szttos(i),i_ns))>1.0e-2) {
       double line[2]={0.04+((double)i)*0.012,
-		      nstar_tab.get(((string)"EoA_")+szttos(i),i_ns)*
-		      hc_mev_fm};
+        nstar_tab.get(((string)"EoA_")+szttos(i),i_ns)*
+        hc_mev_fm};
       nstar_high.line_of_data(2,line);
     }
   }
@@ -1597,7 +1597,7 @@ int eos_had_phen::table_Ye(std::vector<std::string> &sv, bool itive_com) {
 
   vector<double> nB_grid, T_grid;
   
-      calc_utf8 calc;
+  calc_utf8<> calc;
   std::map<std::string,double> vars;
   
   calc.compile(nB_grid_spec.c_str());
@@ -1662,7 +1662,7 @@ int eos_had_phen::table_nB(std::vector<std::string> &sv, bool itive_com) {
 
   vector<double> Ye_grid, T_grid;
   
-      calc_utf8 calc;
+  calc_utf8<> calc;
   std::map<std::string,double> vars;
   
   calc.compile(Ye_grid_spec.c_str());
@@ -1727,7 +1727,7 @@ int eos_had_phen::table_full(std::vector<std::string> &sv, bool itive_com) {
 
   vector<double> nB_grid, T_grid, Ye_grid;
   
-      calc_utf8 calc;
+  calc_utf8<> calc;
   std::map<std::string,double> vars;
   
   calc.compile(nB_grid_spec.c_str());
@@ -2889,10 +2889,10 @@ int eos_had_phen::mcarlo_data(std::vector<std::string> &sv, bool itive_com) {
     random();
 
     vector<double> line={((double)j),eos_S,eos_L,qmc_a,qmc_b,qmc_alpha,
-			 qmc_beta,((double)i_ns),((double)i_skyrme),phi,
-			 eos_n0,eos_EoA,eos_K,chi2_ns,ns_fit_parms[0],
-			 ns_fit_parms[1],ns_fit_parms[2],ns_fit_parms[3],
-			 ns_fit_parms[4]};
+      qmc_beta,((double)i_ns),((double)i_skyrme),phi,
+      eos_n0,eos_EoA,eos_K,chi2_ns,ns_fit_parms[0],
+      ns_fit_parms[1],ns_fit_parms[2],ns_fit_parms[3],
+      ns_fit_parms[4]};
     
     for(size_t k=0;k<6;k++) {
       neutron.n=nB_arr[k]*(1.0-Ye_arr[k]);
@@ -2953,7 +2953,7 @@ int eos_had_phen::vir_comp(std::vector<std::string> &sv, bool itive_com) {
       proton.n=nb/2.0;
       double T=5.0/hc_mev_fm;
       double line[2]={log10(nb),free_energy_density(neutron,proton,T,th2)/
-		      nb*hc_mev_fm};
+        nb*hc_mev_fm};
       t.line_of_data(2,line);
       if (j==0) {
 	double F_vir=free_energy_density_virial(neutron,proton,T,th2)/
@@ -3010,10 +3010,10 @@ int eos_had_phen::pns_eos(std::vector<std::string> &sv, bool itive_com) {
     }
     
     vector<double> line={nB,x[0],x[1],th2.ed+electron.ed+photon.ed+
-			 neutron.m*neutron.n+proton.m*proton.n,
-			 th2.pr+electron.pr+photon.pr,neutron.n,
-			 proton.n,neutron.mu,proton.mu,electron.n,
-			 electron.mu};
+      neutron.m*neutron.n+proton.m*proton.n,
+      th2.pr+electron.pr+photon.pr,neutron.n,
+      proton.n,neutron.mu,proton.mu,electron.n,
+      electron.mu};
     eost.line_of_data(line);
     
   }
@@ -3050,10 +3050,10 @@ int eos_had_phen::pns_eos(std::vector<std::string> &sv, bool itive_com) {
       cout << nB << " " << x[0] << " " << x[1] << endl;
       
       vector<double> line={nB,x[0],x[1],th2.ed+electron.ed+photon.ed+
-			   neutron.m*neutron.n+proton.m*proton.n,
-			   th2.pr+electron.pr+photon.pr,neutron.n,
-			   proton.n,neutron.mu,proton.mu,electron.n,
-			   electron.mu};
+        neutron.m*neutron.n+proton.m*proton.n,
+        th2.pr+electron.pr+photon.pr,neutron.n,
+        proton.n,neutron.mu,proton.mu,electron.n,
+        electron.mu};
       eost.line_of_data(line);
     }
     
@@ -3417,7 +3417,7 @@ int eos_had_phen::test_eg(std::vector<std::string> &sv,
 
   vector<double> nB_grid, T_grid, Ye_grid;
   
-      calc_utf8 calc;
+  calc_utf8<> calc;
   std::map<std::string,double> vars;
   
   calc.compile(nB_grid_spec.c_str());

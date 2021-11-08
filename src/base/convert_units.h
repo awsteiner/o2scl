@@ -1008,8 +1008,8 @@ namespace o2scl {
                       fp_t val, fp_t &converted,
                       fp_t &factor) {
 
-      o2scl::calc_utf8 calc;
-      o2scl::calc_utf8 calc2;
+      o2scl::calc_utf8<> calc;
+      o2scl::calc_utf8<> calc2;
 
       int cret1=calc.compile_nothrow(from.c_str());
       if (cret1!=0) {
@@ -1128,8 +1128,8 @@ namespace o2scl {
       
       // These calculator objects have to be inside this
       // function to make the function const
-      o2scl::calc_utf8 calc;
-      o2scl::calc_utf8 calc2;
+      o2scl::calc_utf8<> calc;
+      o2scl::calc_utf8<> calc2;
 
       std::map<std::string, fp_t> vars;
 
