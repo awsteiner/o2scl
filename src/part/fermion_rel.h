@@ -46,7 +46,7 @@
 
 namespace o2scl {
 
-  class frit_base {
+  class fermion_rel_integ_base {
     
   protected:
     
@@ -56,7 +56,7 @@ namespace o2scl {
     
   public:
 
-    frit_base() {
+    fermion_rel_integ_base() {
       exp_limit=200.0;
       deg_entropy_fac=30.0;
     }      
@@ -247,7 +247,7 @@ namespace o2scl {
     
   };
   
-  template<class func_t, class fp_t> class frit : public frit_base {
+  template<class func_t, class fp_t> class fermion_rel_integ : public fermion_rel_integ_base {
 
   protected:
     
@@ -259,7 +259,7 @@ namespace o2scl {
 
     int eval_density(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
-                           (&frit<func_t,fp_t>::density_fun<fp_t>),
+                           (&fermion_rel_integ<func_t,fp_t>::density_fun<fp_t>),
                            this,std::placeholders::_1,y,eta);
       int iret=nit.integ_iu_err(mfd,0.0,res,err);
       return iret;
@@ -268,7 +268,7 @@ namespace o2scl {
     int eval_deg_density(fp_t T, fp_t y, fp_t eta, fp_t mot,
                          fp_t ul, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
-                           (&frit<func_t,fp_t>::deg_density_fun<fp_t>),
+                           (&fermion_rel_integ<func_t,fp_t>::deg_density_fun<fp_t>),
                            this,std::placeholders::_1,T,y,eta,mot);
       int iret=dit.integ_err(mfd,0.0,ul,res,err);
       return iret;
@@ -276,7 +276,7 @@ namespace o2scl {
 
     int eval_energy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
-                           (&frit<func_t,fp_t>::energy_fun<fp_t>),
+                           (&fermion_rel_integ<func_t,fp_t>::energy_fun<fp_t>),
                            this,std::placeholders::_1,y,eta);
       int iret=nit.integ_iu_err(mfd,0.0,res,err);
       return iret;
@@ -285,7 +285,7 @@ namespace o2scl {
     int eval_deg_energy(fp_t T, fp_t y, fp_t eta, fp_t mot,
                          fp_t ul, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
-                           (&frit<func_t,fp_t>::deg_energy_fun<fp_t>),
+                           (&fermion_rel_integ<func_t,fp_t>::deg_energy_fun<fp_t>),
                            this,std::placeholders::_1,T,y,eta,mot);
       int iret=dit.integ_err(mfd,0.0,ul,res,err);
       return iret;
@@ -293,7 +293,7 @@ namespace o2scl {
 
     int eval_entropy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
-                           (&frit<func_t,fp_t>::entropy_fun<fp_t>),
+                           (&fermion_rel_integ<func_t,fp_t>::entropy_fun<fp_t>),
                            this,std::placeholders::_1,y,eta);
       int iret=nit.integ_iu_err(mfd,0.0,res,err);
       return iret;
@@ -302,7 +302,7 @@ namespace o2scl {
     int eval_deg_entropy(fp_t T, fp_t y, fp_t eta, fp_t mot,
                          fp_t ll, fp_t ul, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
-                           (&frit<func_t,fp_t>::deg_entropy_fun<fp_t>),
+                           (&fermion_rel_integ<func_t,fp_t>::deg_entropy_fun<fp_t>),
                            this,std::placeholders::_1,T,y,eta,mot);
       int iret=dit.integ_err(mfd,0.0,ul,res,err);
       return iret;
@@ -310,7 +310,7 @@ namespace o2scl {
 
     int eval_pressure(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
-                           (&frit<func_t,fp_t>::pressure_fun<fp_t>),
+                           (&fermion_rel_integ<func_t,fp_t>::pressure_fun<fp_t>),
                            this,std::placeholders::_1,y,eta);
       int iret=nit.integ_iu_err(mfd,0.0,res,err);
       return iret;
@@ -319,7 +319,7 @@ namespace o2scl {
     int eval_deg_pressure(fp_t T, fp_t y, fp_t eta, fp_t mot,
                          fp_t ul, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
-                           (&frit<func_t,fp_t>::deg_pressure_fun<fp_t>),
+                           (&fermion_rel_integ<func_t,fp_t>::deg_pressure_fun<fp_t>),
                            this,std::placeholders::_1,T,y,eta,mot);
       int iret=dit.integ_err(mfd,0.0,ul,res,err);
       return iret;
@@ -527,7 +527,7 @@ namespace o2scl {
   public:
 
     /// The integrator 
-    frit<func_t,fp_t> fritx;
+    fermion_rel_integ<func_t,fp_t> fri;
     
     /// \name Numerical parameters
     //@{
@@ -937,7 +937,8 @@ namespace o2scl {
           y=(f.nu+f.m)/temper;
         }
         eta=f.ms/temper;
-        
+
+        /*
 	func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			      nit_t,dit_t,density_root_t,
@@ -953,6 +954,7 @@ namespace o2scl {
 			      nit_t,dit_t,density_root_t,
 			      root_t,func_t,fp_t>::entropy_fun<fp_t>),
 			     this,std::placeholders::_1,y,eta);
+        */
       
 	fp_t prefac=f.g*pow(temper,3.0)/2.0/this->pi2;
 
@@ -963,7 +965,7 @@ namespace o2scl {
 		    << std::endl;
 	}
 
-        fritx.eval_density(y,eta,f.n,unc.n);
+        fri.eval_density(y,eta,f.n,unc.n);
         f.n*=prefac;
         unc.n*=prefac;
 
@@ -974,7 +976,7 @@ namespace o2scl {
 		    << std::endl;
 	}
 	
-        fritx.eval_energy(y,eta,f.ed,unc.ed);
+        fri.eval_energy(y,eta,f.ed,unc.ed);
         f.ed*=prefac*temper;
         unc.ed*=prefac*temper;
 	if (!f.inc_rest_mass) f.ed-=f.n*f.m;
@@ -991,7 +993,7 @@ namespace o2scl {
 		    << std::endl;
 	}
 	
-        fritx.eval_entropy(y,eta,f.en,unc.en);
+        fri.eval_entropy(y,eta,f.en,unc.en);
         f.en*=prefac;
         unc.en*=prefac;
         
@@ -1019,7 +1021,8 @@ namespace o2scl {
         } else {
           mot=f.m/temper;
         }
-        
+
+        /*
 	func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
 			     (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
 			      nit_t,dit_t,density_root_t,
@@ -1035,6 +1038,7 @@ namespace o2scl {
 			      nit_t,dit_t,density_root_t,
 			      root_t,func_t,fp_t>::deg_entropy_fun<fp_t>),
 			     this,std::placeholders::_1,temper,y,eta,mot);
+        */
 
 	fp_t prefac=f.g/2.0/this->pi2;
     
@@ -1071,7 +1075,7 @@ namespace o2scl {
                     << ul << " " << upper_limit_fac << std::endl;
 	}
 
-        fritx.eval_deg_density(temper,y,eta,mot,ul,f.n,unc.n);
+        fri.eval_deg_density(temper,y,eta,mot,ul,f.n,unc.n);
         f.n*=prefac;
         unc.n*=prefac;
 
@@ -1086,7 +1090,7 @@ namespace o2scl {
 		    << std::endl;
 	}
 	
-        fritx.eval_deg_energy(temper,y,eta,mot,ul,f.ed,unc.ed);
+        fri.eval_deg_energy(temper,y,eta,mot,ul,f.ed,unc.ed);
         f.ed*=prefac;
         unc.ed*=prefac;
 
@@ -1121,12 +1125,12 @@ namespace o2scl {
 	}
 	
 	if (ll>0.0) {
-          fritx.eval_deg_entropy(temper,y,eta,mot,ll,ul,f.en,unc.en);
+          fri.eval_deg_entropy(temper,y,eta,mot,ll,ul,f.en,unc.en);
           
 	  //f.en=dit->integ(mfs,ll,ul);
 	  last_method=7;
 	} else {
-          fritx.eval_deg_entropy(temper,y,eta,mot,0,ul,f.en,unc.en);
+          fri.eval_deg_entropy(temper,y,eta,mot,0,ul,f.en,unc.en);
 
 	  //f.en=dit->integ(mfs,0.0,ul);
 	  last_method=8;
@@ -1981,10 +1985,16 @@ namespace o2scl {
 			      be_inte_t,nit_t,dit_t,density_root_t,
 			      root_t,func_t,fp_t>::density_fun<fp_t>),
 			     this,std::placeholders::_1,y,eta);
-    
-	nden=nit->integ_iu(mfe,0.0);
-	nden*=f.g*pow(T,3.0)/2.0/this->pi2;
-	unc.n=nit->get_error()*f.g*pow(T,3.0)/2.0/this->pi2;
+
+        fp_t prefac=f.g*pow(T,3.0)/2.0/this->pi2;
+        
+        fri.eval_density(y,eta,nden,unc.n);
+        nden*=prefac;
+        unc.n*=prefac;
+        
+	//nden=nit->integ_iu(mfe,0.0);
+	//nden*=f.g*pow(T,3.0)/2.0/this->pi2;
+	//unc.n=nit->get_error()*f.g*pow(T,3.0)/2.0/this->pi2;
     
 	yy=(f.n-nden)/f.n;
 
@@ -2018,10 +2028,14 @@ namespace o2scl {
 
 	  ul=sqrt(arg);
       
-	  nden=dit->integ(mfe,0.0,ul);
-	  nden*=f.g/2.0/this->pi2;
-	  unc.n=dit->get_error()*f.g/2.0/this->pi2;
-      
+	  //nden=dit->integ(mfe,0.0,ul);
+	  //nden*=f.g/2.0/this->pi2;
+	  //unc.n=dit->get_error()*f.g/2.0/this->pi2;
+
+          fri.eval_deg_density(T,y,eta,mot,ul,nden,unc.n);
+          nden*=f.g/2.0/this->pi2;
+          unc.n*=f.g/2.0/this->pi2;
+          
 	} else {
 
 	  nden=0.0;

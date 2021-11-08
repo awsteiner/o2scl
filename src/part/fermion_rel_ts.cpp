@@ -174,10 +174,10 @@ int main(void) {
   fr.dit->tol_rel=1.0e-13;
   fr.nit->tol_abs=1.0e-13;
   fr.nit->tol_rel=1.0e-13;
-  fr.fritx.dit.tol_abs=1.0e-13;
-  fr.fritx.dit.tol_rel=1.0e-13;
-  fr.fritx.nit.tol_abs=1.0e-13;
-  fr.fritx.nit.tol_rel=1.0e-13;
+  fr.fri.dit.tol_abs=1.0e-13;
+  fr.fri.dit.tol_rel=1.0e-13;
+  fr.fri.nit.tol_abs=1.0e-13;
+  fr.fri.nit.tol_rel=1.0e-13;
   fr.density_root->tol_rel=1.0e-10;
 
   double v2=pcc.part_calibrate<fermion,fermion_rel>
