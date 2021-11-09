@@ -263,11 +263,15 @@ namespace o2scl {
   protected:
     
   public:
-    
+
+    /// Nondegenerate integrator
     inte_qagiu_gsl<> nit;
-    
+
+    /// Degenerate integrator
     inte_qag_gsl<> dit;
 
+    /** \brief Evalulate the density integral in the nondegenerate limit
+     */
     int eval_density(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
                            (&fermion_rel_integ<func_t,
@@ -277,6 +281,8 @@ namespace o2scl {
       return iret;
     }
 
+    /** \brief Evalulate the density integral in the degenerate limit
+     */
     int eval_deg_density(fp_t T, fp_t y, fp_t eta, fp_t mot,
                          fp_t ul, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
@@ -287,6 +293,8 @@ namespace o2scl {
       return iret;
     }
 
+    /** \brief Evalulate the energy density integral in the nondegenerate limit
+     */
     int eval_energy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
                            (&fermion_rel_integ<func_t,
@@ -296,6 +304,8 @@ namespace o2scl {
       return iret;
     }
 
+    /** \brief Evalulate the energy density integral in the degenerate limit
+     */
     int eval_deg_energy(fp_t T, fp_t y, fp_t eta, fp_t mot,
                         fp_t ul, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
@@ -306,6 +316,8 @@ namespace o2scl {
       return iret;
     }
 
+    /** \brief Evalulate the entropy integral in the nondegenerate limit
+     */
     int eval_entropy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
                            (&fermion_rel_integ<func_t,
@@ -315,6 +327,8 @@ namespace o2scl {
       return iret;
     }
 
+    /** \brief Evalulate the entropy integral in the degenerate limit
+     */
     int eval_deg_entropy(fp_t T, fp_t y, fp_t eta, fp_t mot,
                          fp_t ll, fp_t ul, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
@@ -325,6 +339,8 @@ namespace o2scl {
       return iret;
     }
 
+    /** \brief Evalulate the entropy integral in the nondegenerate limit
+     */
     int eval_pressure(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
                            (&fermion_rel_integ<func_t,
@@ -334,6 +350,8 @@ namespace o2scl {
       return iret;
     }
 
+    /** \brief Evalulate the entropy integral in the degenerate limit
+     */
     int eval_deg_pressure(fp_t T, fp_t y, fp_t eta, fp_t mot,
                           fp_t ul, fp_t &res, fp_t &err) {
       func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
@@ -536,6 +554,7 @@ namespace o2scl {
 	   class be_inte_t=o2scl::bessel_K_exp_integ_gsl,
 	   class nit_t=inte_qagiu_gsl<>,
 	   class dit_t=inte_qag_gsl<>,
+           class inte_t=fermion_rel_integ<funct,double>,
 	   class density_root_t=root_cern<>,
 	   class root_t=root_cern<>, class func_t=funct,
 	   class fp_t=double>
@@ -546,7 +565,7 @@ namespace o2scl {
   public:
 
     /// The integrator 
-    fermion_rel_integ<func_t,fp_t> fri;
+    inte_t fri;
     
     /// \name Numerical parameters
     //@{
@@ -765,7 +784,7 @@ namespace o2scl {
       // Perform full solution
       func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-			   nit_t,dit_t,density_root_t,
+			   nit_t,dit_t,inte_t,density_root_t,
 			   root_t,func_t,fp_t>::solve_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
 
@@ -1553,7 +1572,7 @@ namespace o2scl {
       
       func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fermion_t &,fp_t,bool)>
 			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-			   nit_t,dit_t,density_root_t,
+			   nit_t,dit_t,inte_t,density_root_t,
 			   root_t,func_t,fp_t>::pair_fun),
 			  this,std::placeholders::_1,density_match,
                           std::ref(f),temper,false);
@@ -1659,7 +1678,7 @@ namespace o2scl {
           func_t lmf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fermion_t &,
                                                 fp_t,bool)>
                                (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-                                nit_t,dit_t,density_root_t,
+                                nit_t,dit_t,inte_t,density_root_t,
                                 root_t,func_t,fp_t>::pair_fun),
                                this,std::placeholders::_1,density_match,
                                std::ref(f),temper,true);
@@ -2466,10 +2485,10 @@ namespace o2scl {
   */
   typedef fermion_rel_tl<> fermion_rel;
 
-#ifdef O2SCL_NEVER_DEFINED
-  
 #ifdef O2SCL_LD_TYPES
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   /** \brief Equation of state for a relativistic fermion using long 
       double precision
   */
