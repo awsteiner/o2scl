@@ -2252,9 +2252,9 @@ namespace o2scl {
           //root_t,func_t,fp_t>::density_fun<fp_t>),
           //          this,std::placeholders::_1,y,eta);
           
-          fp_t prefac=f.g*pow(T,3.0)/2.0/this->pi2, unc;
+          fp_t prefac=f.g*pow(T,3.0)/2.0/this->pi2, unc2=0;
           
-          fri.eval_density(y,eta,nden_p,unc);
+          fri.eval_density(y,eta,nden_p,unc2);
           nden_p*=prefac;
         
 	  //nden_p=nit->integ_iu(mfe,0.0);
@@ -2291,11 +2291,11 @@ namespace o2scl {
 	    arg=pow(upper_limit_fac*T+f.nu+f.m,2.0)-f.ms*f.ms;
 	  }
       
-	  fp_t ul, unc;
+	  fp_t ul, unc2=0;
 	  if (arg>0.0) {
 	    ul=sqrt(arg);
 
-            fri.eval_deg_density(T,y,eta,mot,ul,nden_p,unc);
+            fri.eval_deg_density(T,y,eta,mot,ul,nden_p,unc2);
             nden_p*=f.g/2.0/this->pi2;
             
 	    //nden_p=dit->integ(mfe,0.0,ul);
@@ -2393,9 +2393,9 @@ namespace o2scl {
           //root_t,func_t,fp_t>::density_fun<fp_t>),
           //this,std::placeholders::_1,y,eta);
       
-          fp_t prefac=f.g*pow(T,3.0)/2.0/this->pi2, unc;
+          fp_t prefac=f.g*pow(T,3.0)/2.0/this->pi2, unc2=0;
           
-          fri.eval_density(y,eta,nden_ap,unc);
+          fri.eval_density(y,eta,nden_ap,unc2);
           nden_ap*=prefac;
         
 	  //nden_ap=nit->integ_iu(mf,0.0);
@@ -2433,10 +2433,10 @@ namespace o2scl {
 	    arg=pow(upper_limit_fac*T+f.nu+f.m,2.0)-f.ms*f.ms;
 	  }
       
-	  fp_t ul, unc;
+	  fp_t ul, unc2=0;
 	  if (arg>0.0) {
 	    ul=sqrt(arg);
-            fri.eval_deg_density(T,y,eta,mot,ul,nden_ap,unc);
+            fri.eval_deg_density(T,y,eta,mot,ul,nden_ap,unc2);
             nden_ap*=f.g/2.0/this->pi2;
 
 	    //nden_ap=dit->integ(mf,0.0,ul);
