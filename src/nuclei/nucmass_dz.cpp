@@ -32,7 +32,7 @@ using namespace o2scl_const;
 bool nucmass_dz_table::is_included(int l_Z, int l_N) {
   int lo=0, hi=0, mid=last;
   int l_A=l_Z+l_N;
-
+  
   // binary search for the correct A first
   if (data.get("A",mid)!=l_A) {
     if (data.get("A",mid)>l_A) {
@@ -62,9 +62,18 @@ bool nucmass_dz_table::is_included(int l_Z, int l_N) {
     return true;
   }
 
-  // Now look for the right N among all the Z's
+  // Now look for the right N among all the Z's. There are a
+  // few gaps in the table which don't have all the Z's for
+  // a fixed A, i.e. Z=25, A=104 is not in the 1995 table,
+  // so we need to implement this counter mechanism to ensure
+  // the loop doesn't go on forever.
+  
+  int counter=0;
   while (data.get("A",mid)==l_A) {
 
+    //cout << "3." << " " << mid << " " << l_A << " " << l_Z << " "
+    //<< data.get("Z",mid) << " " << data.get("A",mid) << endl;
+    
     if (data.get("Z",mid)==l_Z) {
       return true;
     } else if (data.get("Z",mid)>l_Z) {
@@ -73,6 +82,10 @@ bool nucmass_dz_table::is_included(int l_Z, int l_N) {
     } else {
       if (mid==((int)(n-1))) return false;
       mid++;
+    }
+    counter++;
+    if (counter>200) {
+      return false;
     }
   }
   
