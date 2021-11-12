@@ -191,20 +191,6 @@ int main(void) {
   gen_test_number<cpp_dec_float_35> gn_cdf35;
   gen_test_number<cpp_dec_float_50> gn_cdf50;
 
-  /*
-    AWS, 10/28/21: The next section, while commented out because it's
-    time consuming, does indeed seem to work. The 35_50 results seem
-    to be correct, as verified by the 50_100 results. However, the
-    integral is progressively more difficult as the arguments go to
-    +infty (going to -infty might also be difficult), so I think it
-    may be that we need to replace the direct integration with series
-    expansions in those limits. The long double versions, d_ld and
-    ld_35 seem to have even more difficulty for large arguments, but
-    maybe this will also be improved by the series expansions. It 
-    could also be that even with the series, the long double versions
-    just aren't very useful.
-  */
-  
   if (false) {
     
     // This section compares the GSL class fermi_dirac_integ_gsl with

@@ -527,25 +527,25 @@ namespace o2scl {
       In class fermion_rel_tl:
       
       - Future: I had to remove the shared_ptr stuff because the
-      default algorithm types don't support multiprecision, but it
-      might be nice to restore the shared_ptr mechanism somehow.
+        default algorithm types don't support multiprecision, but it
+        might be nice to restore the shared_ptr mechanism somehow.
       
       - Future: The expressions which appear in in the integrand
-      functions density_fun(), etc. could likely be improved,
-      especially in the case where \ref o2scl::part::inc_rest_mass
-      is <tt>false</tt>. There should not be a need to check if
-      <tt>ret</tt> is finite.
+        functions density_fun(), etc. could likely be improved,
+        especially in the case where \ref o2scl::part::inc_rest_mass
+        is <tt>false</tt>. There should not be a need to check if
+        <tt>ret</tt> is finite.
       
       - Future: It appears this class doesn't compute the
-      uncertainty in the chemical potential or density with
-      calc_density(). This could be fixed.
+        uncertainty in the chemical potential or density with
+        calc_density(). This could be fixed.
       
       - Future: I'd like to change the lower limit on the entropy
-      integration, but the value in the code at the moment (stored
-      in <tt>ll</tt>) makes bm_part2.cpp worse.
+        integration, but the value in the code at the moment (stored
+        in <tt>ll</tt>) makes bm_part2.cpp worse.
       
       - Future: The function pair_mu() should set the antiparticle
-      integrators as done in fermion_deriv_rel.
+        integrators as done in fermion_deriv_rel.
       
       \endverbatim
   */

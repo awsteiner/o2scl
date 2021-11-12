@@ -526,14 +526,14 @@ namespace o2scl {
   /** \brief Fermi-Dirac integral by brute force
 
       This class seems to work well, and can produce results at
-      high-precision, but can be slow, especially for large arguments.
+      high-precision, but has difficulty with large arguments.
 
       \verbatim embed:rst
 
       .. todo::
 
-         In class fermi_dirac_integ_bf: implement degenerate
-         expansions.
+         - In class fermi_dirac_integ_bf: implement degenerate
+           and nondegenerate expansions.
 
       \endverbatim
    */

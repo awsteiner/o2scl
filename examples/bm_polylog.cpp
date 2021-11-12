@@ -106,7 +106,7 @@ int main(void) {
   // cpp_dec_float_25 is typically 1.0e-25, but we do two digits larger
   bkeb3.set_tol(1.0e-27);
 
-  if (true) {
+  if (false) {
 
     double x;
     long double x_ld;
@@ -198,12 +198,6 @@ int main(void) {
       cout << x << " " << bkeg.K1exp(x) << endl;
       int iret=bkeb.K1exp_ret_full(x,res,err,method);
       
-      long double x_ld=gn_ld.gen(), res_ld, err_ld;
-      int iret2=bkeb2.K1exp_ret_full(x_ld,res_ld,err_ld,method2);
-      
-      cpp_dec_float_25 x_cdf25=gn_cdf25.gen(), res_cdf25, err_cdf25;
-      int iret3=bkeb3.K1exp_ret_full(x_cdf25,res_cdf25,err_cdf25,method3);
-      
       cout.width(4);
       cout << i << " ";
       cout.setf(ios::showpos);
@@ -211,19 +205,33 @@ int main(void) {
       cout.unsetf(ios::showpos);
       cout << iret << " " << method << " "
            << dtos(res,0) << " " << dtos(err,0) << endl;
-      t.test_gen(iret==0,"double prec");
-      t.test_abs(err/res,0.0,1.0e-17,"double prec2");
-      cout << "                   ";
-      cout << iret2 << " " << method2 << " "
-           << dtos(res_ld,0) << " " << dtos(err_ld,0) << endl;
-      t.test_gen(iret2==0,"long double prec");
-      t.test_abs<long double>(err_ld/res_ld,0.0,1.0e-20,"long double prec2");
-      cout << "                   ";
-      cout << iret3 << " " << method3 << " "
-           << dtos(res_cdf25,0) << " " << dtos(err_cdf25,0) << endl;
-      t.test_gen(iret3==0,"cdf25 prec");
-      t.test_abs_boost<cpp_dec_float_25>(err_cdf25/res_cdf25,
-                                         0.0,1.0e-27,"cdf25 prec2");
+      t.test_gen(iret==0,"double ret");
+      t.test_abs(err/res,0.0,1.0e-17,"double prec");
+      
+      if (true) {
+        
+        long double x_ld=gn_ld.gen(), res_ld, err_ld;
+        int iret2=bkeb2.K1exp_ret_full(x_ld,res_ld,err_ld,method2);
+        
+        cout << "                   ";
+        cout << iret2 << " " << method2 << " "
+             << dtos(res_ld,0) << " " << dtos(err_ld,0) << endl;
+        t.test_gen(iret2==0,"long double ret");
+        t.test_abs<long double>(err_ld/res_ld,0.0,1.0e-20,"long double prec");
+      }
+
+      if (false) {
+        
+        cpp_dec_float_25 x_cdf25=gn_cdf25.gen(), res_cdf25, err_cdf25;
+        int iret3=bkeb3.K1exp_ret_full(x_cdf25,res_cdf25,err_cdf25,method3);
+        
+        cout << "                   ";
+        cout << iret3 << " " << method3 << " "
+             << dtos(res_cdf25,0) << " " << dtos(err_cdf25,0) << endl;
+        t.test_gen(iret3==0,"cdf25 ret");
+        t.test_abs_boost<cpp_dec_float_25>(err_cdf25/res_cdf25,
+                                           0.0,1.0e-27,"cdf25 prec");
+      }
     }
   }
   cout << endl;
