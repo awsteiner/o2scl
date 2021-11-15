@@ -45,7 +45,7 @@ int main(void) {
   cout.setf(ios::scientific);
 
   test_mgr t;
-  t.set_output_level(1);
+  t.set_output_level(2);
   part_calibrate_class pcc;
 
   fermion f(1.0,2.0);
@@ -161,6 +161,16 @@ int main(void) {
   double v1=pcc.part_calibrate<fermion,fermion_rel>
     (f,fr,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
   t.test_rel(v1,0.0,4.0e-6,"calibrate");
+
+  fermion_rel_tl<fermion_tl<double>,o2scl::fermi_dirac_integ_gsl,
+                 bessel_K_exp_integ_boost<double>,inte_qagiu_gsl<>,
+                 inte_qag_gsl<>,fermion_rel_integ<funct,double>,
+                 root_cern<>,root_cern<>,funct,double> fr2;
+  
+  double v1x=pcc.part_calibrate<fermion,fermion_rel>
+    (f,fr,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
+  t.test_rel(v1x,0.0,4.0e-6,"calibrate x");
+
   
   cout << "----------------------------------------------------" << endl;
   cout << "Function calibrate() with better limits." << endl;
