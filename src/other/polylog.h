@@ -39,6 +39,7 @@
 #include <gsl/gsl_specfunc.h>
 
 #include <boost/math/special_functions/gamma.hpp>
+#include <boost/math/special_functions/bessel.hpp>
 
 #include <o2scl/constants.h>
 #include <o2scl/err_hnd.h>
@@ -357,6 +358,36 @@ namespace o2scl {
     
   };
   
+  /** \brief Compute exponentially scaled modified bessel function of
+      the second kind using Boost
+
+      This class computes \f$ K_n(z) e^z\f$ for \f$ n=1,2,3 \f$.
+   */
+  template<class fp_t> class bessel_K_exp_integ_boost {
+    
+  public:
+
+    /** \brief Compute \f$ K_1(x) e^x \f$
+     */
+    fp_t K1exp(fp_t x) {
+      return exp(x)*boost::math::cyl_bessel_k(1,x);
+    }
+    
+    /** \brief Compute \f$ K_2(x) e^x \f$
+    */
+    fp_t K2exp(fp_t x) {
+      return exp(x)*boost::math::cyl_bessel_k(2,x);
+    }
+    
+    /** \brief Compute \f$ K_3(x) e^x \f$
+     */
+    fp_t K3exp(fp_t x) {
+      return exp(x)*boost::math::cyl_bessel_k(3,x);
+    }
+    
+  };
+  
+
 #if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
 
 #if defined(O2SCL_NEW_BOOST_INTEGRATION) || defined(DOXYGEN)
