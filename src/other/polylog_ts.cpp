@@ -83,8 +83,23 @@ int main(void) {
   t.test_rel(p.calc(3,0.5),0.5372131936080402,4.0e-15,"pl 6");
 
   bessel_K_exp_integ_gsl be_gsl;
+  bessel_K_exp_integ_boost<double> be_boost;
+  bessel_K_exp_integ_boost<long double> be_boost2;
   bessel_K_exp_integ_direct<> be_d_ld;
 
+  cout.precision(15);
+  cout << be_gsl.K1exp(3.0e2) << endl;
+  cout << be_boost.K1exp(3.0e2) << endl;
+  cout << be_gsl.K1exp(7.0e2) << endl;
+  cout << be_boost.K1exp(7.0e2) << endl;
+
+  // Demonstrate we can use long double precision to get around
+  // difficulties with large arguments
+  cout << be_gsl.K1exp(1.0e3) << endl;
+  cout << be_boost.K1exp(1.0e3) << endl;
+  cout << be_boost2.K1exp(1.0e3) << endl;
+  cout.precision(6);
+  
   // Compare bessel_K_exp GSL and direct
   t.test_rel(be_gsl.K1exp(2.0),be_d_ld.K1exp(2.0),1.0e-15,"be_d_ld 1");
   t.test_rel(be_gsl.K2exp(2.0),be_d_ld.K2exp(2.0),1.0e-15,"be_d_ld 2");
