@@ -458,7 +458,7 @@ AC_CONFIG_FILES([Makefile
                  src/base/both/Makefile
                  src/base/eigen/Makefile
                  src/base/neither/Makefile
-		 src/cubature/Makefile
+		 src/polylogarithm/Makefile
                  src/deriv/Makefile
                  src/eos/Makefile
                  src/fit/Makefile

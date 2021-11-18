@@ -68,7 +68,7 @@ endif
 endif
 
 SUBLIBS = mcarlo/libo2scl_mcarlo.la other/libo2scl_other.la \
-	min/libo2scl_min.la \
+	min/libo2scl_min.la polylogarithm/libo2scl_polylogarithm.la \
 	inte/libo2scl_inte.la linalg/libo2scl_linalg.la \
 	base/libo2scl_base.la
 
