@@ -21,14 +21,14 @@ if O2SCL_HDF
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
 	min ode other root linalg \
-	part nuclei eos hdf cubature
+	part nuclei eos hdf polylogarithm
 LIBLIST = libo2scl.la libo2scl_part.la
 
 else
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
 	min ode other root linalg \
-	part nuclei eos cubature
+	part nuclei eos polylogarithm
 LIBLIST = libo2scl.la libo2scl_part.la
 
 endif
@@ -38,14 +38,14 @@ if O2SCL_HDF
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
 	min ode other root linalg \
-	nuclei part hdf cubature
+	nuclei part hdf polylogarithm
 LIBLIST = libo2scl.la libo2scl_part.la
 
 else
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
 	min ode other root linalg \
-	nuclei part cubature
+	nuclei part polylogarithm
 LIBLIST = libo2scl.la libo2scl_part.la
 
 endif
@@ -55,13 +55,13 @@ else
 if O2SCL_HDF
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
-	min ode other root linalg hdf cubature
+	min ode other root linalg hdf polylogarithm
 LIBLIST = libo2scl.la
 
 else
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
-	min ode other root linalg cubature
+	min ode other root linalg polylogarithm
 LIBLIST = libo2scl.la
 
 endif
@@ -178,24 +178,24 @@ if O2SCL_HDF
 O2SCL_TEST_ADD = test_anneal test_base test_deriv test_eos test_fit \
 	test_inte test_mcarlo test_min test_nuclei test_ode \
 	test_other test_part test_root test_linalg \
-	test_internal test_hdf test_cubature
+	test_internal test_hdf test_polylogarithm
 else
 O2SCL_TEST_ADD = test_anneal test_base test_deriv test_eos test_fit \
 	test_inte test_mcarlo test_min test_nuclei test_ode \
 	test_other test_part test_root test_linalg \
-	test_internal test_cubature
+	test_internal test_polylogarithm
 endif
 else
 if O2SCL_HDF
 O2SCL_TEST_ADD = test_anneal test_base test_deriv test_fit \
 	test_inte test_mcarlo test_min test_nuclei test_ode \
 	test_other test_part test_root test_linalg \
-	test_internal test_hdf test_cubature
+	test_internal test_hdf test_polylogarithm
 else
 O2SCL_TEST_ADD = test_anneal test_base test_deriv test_fit \
 	test_inte test_mcarlo test_min test_nuclei test_ode \
 	test_other test_part test_root test_linalg \
-	test_internal test_cubature
+	test_internal test_polylogarithm
 endif
 endif
 else 
@@ -203,12 +203,12 @@ if O2SCL_HDF
 O2SCL_TEST_ADD = test_anneal test_base test_deriv test_fit \
 	test_inte test_mcarlo test_min test_ode \
 	test_other test_root test_linalg \
-	test_internal test_hdf test_cubature
+	test_internal test_hdf test_polylogarithm
 else
 O2SCL_TEST_ADD = test_anneal test_base test_deriv test_fit \
 	test_inte test_mcarlo test_min test_ode \
 	test_other test_root test_linalg \
-	test_internal test_cubature
+	test_internal test_polylogarithm
 endif
 endif
 
@@ -223,8 +223,8 @@ test_anneal:
 test_base:
 	cd base && $(MAKE) o2scl-test-rec
 
-test_cubature:
-	cd cubature && $(MAKE) o2scl-test-rec
+test_polylogarithm:
+	cd polylogarithm && $(MAKE) o2scl-test-rec
 
 test_deriv:
 	cd deriv && $(MAKE) o2scl-test-rec
