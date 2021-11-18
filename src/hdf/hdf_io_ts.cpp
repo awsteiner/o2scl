@@ -38,7 +38,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-  system("echo -n 3: ; date");
+  int ret1=system("echo -n 3: ; date");
 
   // Test of table HDF I/O
   {
@@ -172,7 +172,7 @@ int main(void) {
     vector_out(cout,vv3[i],true);
   }
   
-  system("echo -n 4: ; date");
+  int ret2=system("echo -n 4: ; date");
   
   t.report();
 

@@ -363,7 +363,8 @@ namespace o2scl {
 
       This class computes \f$ K_n(z) e^z\f$ for \f$ n=1,2,3 \f$.
    */
-  template<class fp_t, class internal_fp_t> class bessel_K_exp_integ_boost {
+  template<class fp_t, class internal_fp_t=fp_t>
+  class bessel_K_exp_integ_boost {
     
   public:
 
