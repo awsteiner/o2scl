@@ -206,7 +206,7 @@ int nstar_cold::calc_eos(double np_0) {
   ux[0]=np_0;
   int tret=mh.msolve(1,ux,sf);
   if (tret!=0) {
-    O2SCL_ERR("Initial solver failed.",o2scl::exc_efailed);
+    O2SCL_CONV_RET("Initial solver failed.",o2scl::exc_efailed,err_nonconv);
   }
 
   // Loop over the density range, and also determine pressure_dec_nb
@@ -221,7 +221,7 @@ int nstar_cold::calc_eos(double np_0) {
     
     tret=mh.msolve(1,ux,sf);
     if (tret!=0) {
-      O2SCL_ERR("Initial solver failed.",o2scl::exc_efailed);
+      O2SCL_CONV_RET("Initial solver failed.",o2scl::exc_efailed,err_nonconv);
     }
     
     // Compute the function at the final point
