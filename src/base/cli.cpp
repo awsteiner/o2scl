@@ -1318,7 +1318,11 @@ int cli::comm_option_shell(vector<string> &sv, bool itive_com) {
     }
     string cmd;
     for(size_t i=1;i<sv.size();i++) {
-      cmd+=" "+sv[i];
+      if (i==1) {
+        cmd+=sv[i];
+      } else {
+        cmd+=" "+sv[i];
+      }
     }
     if (verbose>0) {
       cout << "Executing system command: " 

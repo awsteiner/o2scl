@@ -386,6 +386,10 @@ nucmass_ame2::entry nucmass_ame2::get(string nucleus) {
     ret.orig[0]='\0';
     ret.mass=0.0;
     ret.dmass=0.0;
+    ret.mass_acc=0;
+    ret.be_acc=0;
+    ret.beoa_acc=0;
+    ret.amass_acc=0;
     return ret;
   }
   if (isalpha(nucleus[1])) {

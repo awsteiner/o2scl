@@ -86,8 +86,8 @@ int main(void) {
   t.test_rel(p.calc(3,0.5),0.5372131936080402,4.0e-15,"pl 6");
 
   bessel_K_exp_integ_gsl be_gsl;
-  bessel_K_exp_integ_boost<double> be_boost;
-  bessel_K_exp_integ_boost<long double> be_boost2;
+  bessel_K_exp_integ_boost<double,double> be_boost;
+  bessel_K_exp_integ_boost<long double,long double> be_boost2;
   bessel_K_exp_integ_direct<> be_d_ld;
 
   cout.precision(15);

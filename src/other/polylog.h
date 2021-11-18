@@ -363,26 +363,35 @@ namespace o2scl {
 
       This class computes \f$ K_n(z) e^z\f$ for \f$ n=1,2,3 \f$.
    */
-  template<class fp_t> class bessel_K_exp_integ_boost {
+  template<class fp_t, class internal_fp_t> class bessel_K_exp_integ_boost {
     
   public:
 
     /** \brief Compute \f$ K_1(x) e^x \f$
      */
     fp_t K1exp(fp_t x) {
-      return exp(x)*boost::math::cyl_bessel_k(1,x);
+      internal_fp_t x2=static_cast<internal_fp_t>(x), ret;
+      ret=exp(x2)*boost::math::cyl_bessel_k(1,x2);
+      fp_t ret2=static_cast<fp_t>(ret);
+      return ret2;
     }
     
     /** \brief Compute \f$ K_2(x) e^x \f$
     */
     fp_t K2exp(fp_t x) {
-      return exp(x)*boost::math::cyl_bessel_k(2,x);
+      internal_fp_t x2=static_cast<internal_fp_t>(x), ret;
+      ret=exp(x2)*boost::math::cyl_bessel_k(2,x2);
+      fp_t ret2=static_cast<fp_t>(ret);
+      return ret2;
     }
     
     /** \brief Compute \f$ K_3(x) e^x \f$
      */
     fp_t K3exp(fp_t x) {
-      return exp(x)*boost::math::cyl_bessel_k(3,x);
+      internal_fp_t x2=static_cast<internal_fp_t>(x), ret;
+      ret=exp(x2)*boost::math::cyl_bessel_k(3,x2);
+      fp_t ret2=static_cast<fp_t>(ret);
+      return ret2;
     }
     
   };

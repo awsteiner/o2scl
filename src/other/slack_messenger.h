@@ -128,7 +128,8 @@ namespace o2scl {
       return;
     }
   
-    /** \brief Set the Slack webhook URL from an environment variable
+    /** \brief Set the Slack webhook URL from the environment variable
+        \c env_var
      */
     bool set_url_from_env(std::string env_var) {
       char *cstring=getenv(env_var.c_str());
@@ -139,6 +140,9 @@ namespace o2scl {
       return false;
     }
   
+    /** \brief Set the channel from the environment variable
+        \c env_var
+     */
     bool set_channel_from_env(std::string env_var) {
       char *cstring=getenv(env_var.c_str());
       if (cstring) {
@@ -148,7 +152,8 @@ namespace o2scl {
       return false;
     }
 
-    /** \brief Desc
+    /** \brief Set the username from the environment variable
+        \c env_var
      */
     bool set_username_from_env(std::string env_var) {
       char *cstring=getenv(env_var.c_str());

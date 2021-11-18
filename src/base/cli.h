@@ -492,7 +492,7 @@ namespace o2scl {
     */
     bool sync_verbose;
 
-    /** \brief If true, allow the user to executeshell commands
+    /** \brief If true, allow the user to execute shell commands
 	(default true)
     */
     bool shell_cmd_allowed;
