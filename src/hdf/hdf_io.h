@@ -988,6 +988,7 @@ namespace o2scl_hdf {
       - python: read all lines output from a python command
       - pattern: create a list of strings from a pattern using
       [0], [a], and [A]
+      - text: read all the lines in a text file
       - hdf5: From an HDF5 file using type string or string[]
 
       This function is used for the acol slack command.
@@ -1150,6 +1151,19 @@ namespace o2scl_hdf {
       }
 
 #endif
+      
+      return 0;
+
+    } else if (spec.find("text:")==0) {
+      
+      std::string file=spec.substr(5,spec.length()-5);
+      std::cout << "Reading from text file: " << file << std::endl;
+      std::ifstream fin(file.c_str());
+      std::string stmp;
+      while (getline(fin,stmp)) {
+	v.push_back(stmp);
+      }
+      fin.close();
       
       return 0;
 
