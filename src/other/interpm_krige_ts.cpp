@@ -34,15 +34,15 @@ using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
-typedef o2scl::matrix_view_table<> mat_t;
-typedef const matrix_row_gen<mat_t> row_t;
-typedef const matrix_column_gen<mat_t> col_t;
-typedef o2scl::matrix_view_table_transpose<> mat2_t;
-typedef const matrix_row_gen<mat2_t> row2_t;
-typedef vector<function<double(row_t &, row_t &) > > f1_t;
-typedef vector<function<double(row_t &, const ubvector &) > > f2_t;
-typedef vector<function<double(row2_t &, row2_t &) > > f3_t;
-typedef vector<function<double(row2_t &, const ubvector &) > > f4_t;
+typedef o2scl::matrix_view_table<> mat_x_t;
+typedef const matrix_row_gen<mat_x_t> mat_x_row_t;
+typedef const matrix_column_gen<mat_x_t> mat_x_col_t;
+typedef o2scl::matrix_view_table_transpose<> mat_y_t;
+typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
+typedef vector<function<double(mat_x_row_t &, mat_x_row_t &) > > f1_t;
+typedef vector<function<double(mat_x_row_t &, const ubvector &) > > f2_t;
+typedef vector<function<double(mat_y_row_t &, mat_y_row_t &) > > f3_t;
+typedef vector<function<double(mat_y_row_t &, const ubvector &) > > f4_t;
 
 template<class vec_t, class vec2_t>
 double covar(const vec_t &x, const vec2_t &y, double len) {
@@ -80,12 +80,12 @@ int main(void) {
       tab.set("z",i,ft(tab.get("x",i),tab.get("y",i)));
     }
     
-    interpm_krige<ubvector,mat_t,row_t,col_t,
-                  mat2_t,row2_t,ubmatrix,
+    interpm_krige<ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
+                  mat_y_t,mat_y_row_t,ubmatrix,
                   o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > ik;
-    f1_t fa1={std::bind(&covar<row_t,row_t>,
+    f1_t fa1={std::bind(&covar<mat_x_row_t,mat_x_row_t>,
                         std::placeholders::_1,std::placeholders::_2,0.70)};
-    f2_t fa2={std::bind(&covar<row_t,ubvector>,
+    f2_t fa2={std::bind(&covar<mat_x_row_t,ubvector>,
                         std::placeholders::_1,std::placeholders::_2,0.70)};
     
     vector<string> col_list_x={"x","y"};
@@ -127,9 +127,12 @@ int main(void) {
     ik.unscale();
 
     interpm_krige_optim
-      <ubvector,mat_t,row_t,col_t,
-       mat2_t,row2_t,ubmatrix,
+      <ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
+       mat_y_t,mat_y_row_t,ubmatrix,
        o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > iko;
+    
+    ubvector len_precompute;
+    iko.set_data<>(2,1,8,mvt_x,mvt_y,len_precompute);
     
   }
 
@@ -156,7 +159,7 @@ int main(void) {
     x.push_back(tmp);
     tmp[0]=0.03; tmp[1]=1.02; 
     x.push_back(tmp);
-    mat_t x2(x);
+    mat_x_t x2(x);
 
     vector<ubvector> y;
     tmp.resize(8);
@@ -164,14 +167,14 @@ int main(void) {
       tmp[i]=ft(x[i][0],x[i][1]);
     }
     y.push_back(tmp);
-    mat_t y2(y);
+    mat_x_t y2(y);
 
-    interpm_krige_optim<ubvector,mat_t,
-			matrix_row_gen<mat_t> > iko;
+    interpm_krige_optim<ubvector,mat_x_t,
+			matrix_row_gen<mat_x_t> > iko;
     iko.verbose=2;
 
     /*
-    iko.set_data<matrix_row_gen<mat_t> >(2,1,8,x2,y2,true);
+    iko.set_data<matrix_row_gen<mat_x_t> >(2,1,8,x2,y2,true);
     
     ubvector point(2);
     ubvector out(1);
@@ -206,8 +209,8 @@ int main(void) {
     matrix_view_table<> cmvtx(tab,{"x","y"});
     matrix_view_table_transpose<> cmvty(tab,{"z"});
   
-    interpm_krige_optim<ubvector,mat2_t,
-			matrix_row_gen<mat2_t> > iko;
+    interpm_krige_optim<ubvector,mat_y_t,
+			matrix_row_gen<mat_y_t> > iko;
     iko.verbose=2;
 
     /*
@@ -248,7 +251,7 @@ int main(void) {
     x.push_back(tmp);
     tmp[0]=0.03; tmp[1]=1.02; 
     x.push_back(tmp);
-    mat_t x2(x);
+    mat_x_t x2(x);
 
     vector<ubvector> y;
     tmp.resize(8);
@@ -256,10 +259,10 @@ int main(void) {
       tmp[i]=ft(x[i][0],x[i][1]);
     }
     y.push_back(tmp);
-    mat_t y2(y);
+    mat_x_t y2(y);
 
-    interpm_krige_nn<ubvector,mat_t,
-		     matrix_row_gen<mat_t> > ik;
+    interpm_krige_nn<ubvector,mat_x_t,
+		     matrix_row_gen<mat_x_t> > ik;
     vector<function<double(const ubvector &,const ubvector &)> > fa={covar};
     ik.set_data(2,1,8,x2,y2,fa,4);
   

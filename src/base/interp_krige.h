@@ -63,6 +63,21 @@ namespace o2scl {
       of scope before any of the interpolation functions are called.
 
       \note This class is experimental.
+
+      \verbatim embed:rst
+
+      .. todo:
+
+         In class interp_krige:
+
+         - The cross validation method may need to be fixed to match,
+           e.g. R&W.
+
+         - This class currently standardizes x in addition to y. This
+           may not be necessary.
+
+      \endverbatim
+
   */
   template<class vec_t, class vec2_t=vec_t,
            class covar_func_t=std::function<double(double,double)>,
