@@ -631,6 +631,8 @@ namespace o2scl {
                              this->Kinvf);
 	  
           double ypred=0.0;
+          double kx0x0;
+          ubvector kxx0(size-1), prod(size-1);
           double yact;
           if (this->rescaled) {
             yact=this->y_r[k];
@@ -638,19 +640,24 @@ namespace o2scl {
             yact=(*this->py)[k];
           }
           if (this->rescaled) {
+            kx0x0=covar(this->x_r[k],this->x_r[k]);
             for(size_t i=0;i<size-1;i++) {
-              ypred+=exp(-pow((this->x_r[k]-x2[i])/len,2.0)/2.0)*
-                this->Kinvf[i];
+              kxx0[i]=covar(this->x_r[k],x2[i]);
+              ypred+=kxx0[i]*this->Kinvf[i];
             }
           } else {
+            kx0x0=covar((*this->px)[k],(*this->px)[k]);
             for(size_t i=0;i<size-1;i++) {
-              ypred+=exp(-pow(((*this->px)[k]-x2[i])/len,2.0)/2.0)*
-                this->Kinvf[i];
+              kxx0[i]=covar((*this->px)[k],x2[i]);
+              ypred+=kxx0[i]*this->Kinvf[i];
             }
           }
+          
+          boost::numeric::ublas::axpy_prod(this->inv_KXX,kxx0,prod,true);
+          double sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
 	
           // Measure the quality with a chi-squared like function
-          qual+=pow(yact-ypred,2.0);
+          qual+=pow(yact-ypred,2.0)/sigma/sigma;
 	
         }
       

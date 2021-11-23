@@ -97,10 +97,10 @@ int main(void) {
   
   cout << "Noisy interpolation:" << endl;
   ik.set_covar_noise(4,x,y,f,0.5);
-  t.test_rel(ik.eval(1.0),5.0,0.7,"ik 1");
-  t.test_rel(ik.eval(1.5),5.5,0.7,"ik 2");
-  t.test_rel(ik.eval(2.5),4.0,0.7,"ik 3");
-  t.test_rel(ik.eval(3.5),3.0,0.7,"ik 4");
+  t.test_rel(ik.eval(1.0),5.0,0.7,"ik 5");
+  t.test_rel(ik.eval(1.5),5.5,0.7,"ik 6");
+  t.test_rel(ik.eval(2.5),4.0,0.7,"ik 7");
+  t.test_rel(ik.eval(3.5),3.0,0.7,"ik 8");
   cout << endl;
 
   // ---------------------------------------------------------------
@@ -108,10 +108,10 @@ int main(void) {
   
   cout << "Noisy interpolation with rescaling:" << endl;
   ik.set_covar_noise(4,x,y,f,0.5,true);
-  t.test_rel(ik.eval(1.0),5.0,0.7,"ikr 1");
-  t.test_rel(ik.eval(1.5),5.5,0.7,"ikr 2");
-  t.test_rel(ik.eval(2.5),4.0,0.7,"ikr 3");
-  t.test_rel(ik.eval(3.5),3.0,0.7,"ikr 4");
+  t.test_rel(ik.eval(1.0),5.0,0.7,"ikr 5");
+  t.test_rel(ik.eval(1.5),5.5,0.7,"ikr 6");
+  t.test_rel(ik.eval(2.5),4.0,0.7,"ikr 7");
+  t.test_rel(ik.eval(3.5),3.0,0.7,"ikr 8");
   cout << endl;
 
   // ---------------------------------------------------------------
@@ -209,13 +209,13 @@ int main(void) {
        << "and rescaling" << endl;
   exact=sin(1.01);
   res=iko.eval(1.01);
-  t.test_rel(exact,res,1.0e-4,"iko 4");
+  t.test_rel(exact,res,1.0e-4,"iko 7");
   exact=sin(1.0);
   res=iko.eval(1.0);
-  t.test_rel(exact,res,1.0e-4,"iko 5");
+  t.test_rel(exact,res,1.0e-4,"iko 8");
   exact=sin(o2scl_const::pi);
   res=iko.eval(o2scl_const::pi);
-  t.test_abs(exact,res,1.0e-5,"iko 6");
+  t.test_abs(exact,res,1.0e-5,"iko 9");
   cout << endl;
 
   iko.full_min=false;
@@ -243,13 +243,13 @@ int main(void) {
   
   exact=sin(1.01);
   res=iko.eval(1.01);
-  t.test_rel(exact,res,1.0e-1,"io 4");
+  t.test_rel(exact,res,1.0e-1,"io 1");
   exact=sin(1.0);
   res=iko.eval(1.0);
-  t.test_rel(exact,res,1.0e-1,"io 5");
+  t.test_rel(exact,res,1.0e-1,"io 2");
   exact=sin(o2scl_const::pi);
   res=iko.eval(o2scl_const::pi);
-  t.test_abs(exact,res,1.0e-2,"io 6");
+  t.test_abs(exact,res,1.0e-2,"io 3");
   cout << endl;
   
   cout << "Class interp_krige_optim with noise" << endl;
@@ -258,13 +258,13 @@ int main(void) {
 
   exact=sin(1.01);
   res=iko.eval(1.01);
-  t.test_rel(exact,res,1.0e-1,"iko 7");
+  t.test_rel(exact,res,1.0e-1,"iko 10");
   exact=sin(1.0);
   res=iko.eval(1.0);
-  t.test_rel(exact,res,1.0e-1,"iko 8");
+  t.test_rel(exact,res,1.0e-1,"iko 11");
   exact=sin(o2scl_const::pi);
   res=iko.eval(o2scl_const::pi);
-  t.test_abs(exact,res,1.0e-2,"iko 9");
+  t.test_abs(exact,res,1.0e-2,"iko 12");
   cout << endl;
   
   cout << "Class interp_krige_optim without noise but with rescaling" << endl;
@@ -288,13 +288,13 @@ int main(void) {
 
   exact=sin(1.01);
   res=iko.eval(1.01);
-  t.test_rel(exact,res,1.0e-1,"iko 7");
+  t.test_rel(exact,res,1.0e-1,"iko 13");
   exact=sin(1.0);
   res=iko.eval(1.0);
-  t.test_rel(exact,res,1.0e-1,"iko 8");
+  t.test_rel(exact,res,1.0e-1,"iko 14");
   exact=sin(o2scl_const::pi);
   res=iko.eval(o2scl_const::pi);
-  t.test_abs(exact,res,1.0e-2,"iko 9");
+  t.test_abs(exact,res,1.0e-2,"iko 15");
   cout << endl;
   
   t.report();
