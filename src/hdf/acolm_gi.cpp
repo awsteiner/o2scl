@@ -875,9 +875,9 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "'zz' for i from 26 to 701. Occurrences of [A] are replaced "+
       "with 'A' through 'Z' from 0 through 25, and 'AA' through "+
       "'ZZ' for i from 26 to 701.\n\n"+
-      "  4. text:<filename> - The lines in the text file.\n\n
+      "  4. text:<filename> - The lines in the text file.\n\n"+
       "  5. hdf5: - Unfinished.\n\n";
-
+    
     std::vector<std::string> sv;
     o2scl::rewrap_keep_endlines(str,sv);
     for(size_t i=0;i<sv.size();i++) {
@@ -1137,7 +1137,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     cout << ter.green_fg() << ter.bold() << "types" << ter.default_fg()
 	 << ", ";
     cout << ter.green_fg() << ter.bold() << "value-spec" << ter.default_fg()
-	 << ", and ";
+	 << ", and\n";
     cout << ter.green_fg() << ter.bold() << "vector-spec" << ter.default_fg()
 	 << ".\n" << endl;
 

@@ -1157,6 +1157,18 @@ namespace o2scl_hdf {
     } else if (spec.find("text:")==0) {
       
       std::string file=spec.substr(5,spec.length()-5);
+      std::vector<std::string> matches;
+      int wret=o2scl::wordexp_wrapper(file,matches);
+      if (matches.size()>1 || matches.size()==0 || wret!=0) {
+	if (err_on_fail) {
+	  O2SCL_ERR2("Function wordexp_wrapper() failed ",
+		     "in strings_spec().",o2scl::exc_einval);
+	} else {
+	  return 9;
+	}
+      }
+      file=matches[0];
+      
       std::cout << "Reading from text file: " << file << std::endl;
       std::ifstream fin(file.c_str());
       std::string stmp;
