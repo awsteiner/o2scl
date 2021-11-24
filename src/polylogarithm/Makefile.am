@@ -8,7 +8,7 @@ POLYLOGARITHM_SRCS = Cl2.cpp Cl3.cpp Cl4.cpp Cl5.cpp \
 HEADERS_VAR = Cl2.h Cl3.h Cl4.h Cl5.h Cl6.h \
 	Li.h Li2.h Li3.h Li4.h Li5.h Li6.h complex.h
 
-TEST_VAR = polylogarithm.scr polylogarithm_orig.scr
+TEST_VAR = 
 
 # ------------------------------------------------------------
 # Includes
@@ -75,7 +75,7 @@ pkginclude_HEADERS = $(HEADERS_VAR)
 # libtool testing targets
 # ------------------------------------------------------------
 
-check_PROGRAMS = polylogarithm_ts polylogarithm_orig_ts
+check_PROGRAMS = 
 
 check_SCRIPTS = o2scl-test
 
@@ -83,25 +83,6 @@ if O2SCL_HDF
 VCHECK_LIBS = ../hdf/libo2scl_hdf.la ../libo2scl.la
 else
 VCHECK_LIBS = ../libo2scl.la
-endif
-
-polylogarithm_ts_LDADD = $(VCHECK_LIBS)
-
-polylogarithm.scr: polylogarithm_ts$(EXEEXT)
-	./polylogarithm_ts$(EXEEXT) > polylogarithm.scr
-
-polylogarithm_ts_SOURCES = polylogarithm_ts.cpp
-
-polylogarithm_orig_ts_LDADD = $(VCHECK_LIBS)
-
-polylogarithm_orig.scr: polylogarithm_orig_ts$(EXEEXT)
-	./polylogarithm_orig_ts$(EXEEXT) > polylogarithm_orig.scr
-
-polylogarithm_orig_ts_SOURCES = polylogarithm_orig_ts.cpp
-
-if O2SCL_OPENMP
-polylogarithm_ts_LDFLAGS = -fopenmp
-polylogarithm_orig_ts_LDFLAGS = -fopenmp
 endif
 
 # ------------------------------------------------------------

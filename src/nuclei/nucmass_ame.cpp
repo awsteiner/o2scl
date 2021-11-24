@@ -380,16 +380,27 @@ nucmass_ame2::entry nucmass_ame2::get(string nucleus) {
     nucmass_ame2::entry ret;
     ret.Z=0;
     ret.A=0;
+    ret.A2=0;
     ret.N=0;
     ret.NMZ=0;
     ret.el[0]='\0';
     ret.orig[0]='\0';
     ret.mass=0.0;
     ret.dmass=0.0;
+    ret.amass=0.0;
+    ret.damass=0.0;
+    ret.bde=0.0;
+    ret.dbde=0.0;
+    ret.be=0.0;
+    ret.dbe=0.0;
+    ret.beoa=0.0;
+    ret.dbeoa=0.0;
+    ret.bde_acc=0.0;
     ret.mass_acc=0;
     ret.be_acc=0;
     ret.beoa_acc=0;
     ret.amass_acc=0;
+    ret.bdmode[0]='\0';
     return ret;
   }
   if (isalpha(nucleus[1])) {

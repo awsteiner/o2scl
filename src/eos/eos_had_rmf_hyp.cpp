@@ -77,13 +77,19 @@ int eos_had_rmf_hyp::calc_eq_hyp_p
   double rho2,sig4,ome4,dfdw,fnn=0.0,fnp=0.0;
 
 #if !O2SCL_NO_RANGE_CHECK
-  if (!std::isfinite(ne.n) || !std::isfinite(ne.n) ||
+  if (!std::isfinite(ne.n) || !std::isfinite(pr.n) ||
       !std::isfinite(lam.n) || !std::isfinite(sigp.n) ||
       !std::isfinite(sigz.n) || !std::isfinite(sigm.n) ||
       (inc_cascade==true &&
        (!std::isfinite(casz.n) || !std::isfinite(casm.n)))) {
+    cout << "Baryon density not finite in calc_eq_hyp_p()." << endl;
+    cout << ne.n << " " << pr.n << " " << lam.n << " " << sigp.n << " "
+         << sigz.n << " " << sigm.n << endl;
+    if (inc_cascade) {
+      cout << casz.n << " " << casm.n << endl;
+    }
     O2SCL_ERR2("At least one baryon density not finite in ",
-	       "eos_had_apr::calc_eq_hyp_p().",exc_einval);
+	       "eos_had_rmf_hyp::calc_eq_hyp_p().",exc_einval);
   }
   if (fabs(ne.g-2.0)>1.0e-10 || fabs(pr.g-2.0)>1.0e-10 ||
       fabs(lam.g-2.0)>1.0e-10 || fabs(sigp.g-2.0)>1.0e-10 ||
@@ -91,11 +97,11 @@ int eos_had_rmf_hyp::calc_eq_hyp_p
       (inc_cascade==true &&
        (fabs(casz.g-2.0)>1.0e-10 || fabs(casm.g-2.0)>1.0e-10))) {
     O2SCL_ERR2("At least one of the baryon spin degeneracies ",
-	       "is wrong in eos_had_apr::calc_eq_hyp_p().",exc_einval);
+	       "is wrong in eos_had_rmf_hyp::calc_eq_hyp_p().",exc_einval);
   }
   if (fabs(ne.m-4.5)>1.0 || fabs(pr.m-4.5)>1.0) {
     O2SCL_ERR2("Neutron or proton masses wrong in ",
-	       "eos_had_apr::calc_eq_hyp_p().",exc_einval);
+	       "eos_had_rmf_hyp::calc_eq_hyp_p().",exc_einval);
   }
   if (ne.non_interacting==true || pr.non_interacting==true ||
       lam.non_interacting==true || sigp.non_interacting==true ||
@@ -103,7 +109,7 @@ int eos_had_rmf_hyp::calc_eq_hyp_p
       (inc_cascade==true && 
        (casz.non_interacting==true || casm.non_interacting==true))) {
     O2SCL_ERR2("At least one baryon is non-interacting in ",
-	       "eos_had_apr::calc_eq_hyp_p().",exc_einval);
+	       "eos_had_rmf_hyp::calc_eq_hyp_p().",exc_einval);
   }
 #endif
   
