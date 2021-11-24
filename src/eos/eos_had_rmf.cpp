@@ -454,7 +454,7 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
     x[2]=0.1;
     x[3]=0.07;
     x[4]=-0.001;
-    
+
     if (verbose>0) {
       cout << "Solving in eos_had_rmf::calc_e()." << endl;
       cout << "alpha      n_B        n_ch       mu_n       "
@@ -521,7 +521,6 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 	     << x[3] << " " << x[4] << " " << ret << endl;
 	cout.precision(6);
       }
-
     }
     if (verbose>0) {
       cout << endl;
