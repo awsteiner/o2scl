@@ -847,7 +847,8 @@ namespace o2scl_hdf {
               if (std::regex_search(t.get_column_name(j),r)) {
 		col_list.push_back(t.get_column_name(j));
 		if (verbose>2) {
-		  std::cout << "Found match: " << t.get_column_name(j)
+		  std::cout << "Found match (using regex): "
+                            << t.get_column_name(j)
 			    << std::endl;
 		}
 	      }

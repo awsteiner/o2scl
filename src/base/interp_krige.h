@@ -410,7 +410,7 @@ namespace o2scl {
           kxx0[i]=(*f)(x0,(*this->px)[i]);
         }
       }
-
+      
       boost::numeric::ublas::axpy_prod(inv_KXX,kxx0,prod,true);
       sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
       
@@ -456,7 +456,7 @@ namespace o2scl {
           cent+=kxx0[i]*Kinvf[i];
         }
       }
-
+      
       boost::numeric::ublas::axpy_prod(inv_KXX,kxx0,prod,true);
       sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
 
@@ -655,11 +655,22 @@ namespace o2scl {
           
           boost::numeric::ublas::axpy_prod(this->inv_KXX,kxx0,prod,true);
           double sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
-	
-          // Measure the quality with a chi-squared like function
-          qual+=pow(yact-ypred,2.0)/sigma/sigma;
+          //sigma=sqrt(this->inv_KXX(k,k));
+          std::cout.setf(std::ios::showpos);
+          std::cout << "k,x,yact,ypred,sigma: " << k << " "
+                    << (*this->px)[k] << " "
+                    << yact << " " << ypred << " "
+                    << sigma << std::endl;
+          std::cout.unsetf(std::ios::showpos);
+          
+          // We maximize the predictive log probability, Eq 5.10
+          // in R&W
+          qual+=pow(yact-ypred,2.0);///sigma/sigma/2.0;
+          //qual+=0.5*log(sigma*sigma);
 	
         }
+        std::cout << "qual: " << qual << std::endl;
+
       
       } else if (mode==mode_max_lml) {
 
