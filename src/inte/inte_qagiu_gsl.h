@@ -82,6 +82,9 @@ namespace o2scl {
     return integ_iu_err(func,a,res,err);
   }
   
+  /// Return string denoting type ("inte_qagiu_gsl")
+  const char *type() { return "inte_qagiu_gsl"; }
+    
 #ifndef DOXYGEN_INTERNAL
 
   protected:

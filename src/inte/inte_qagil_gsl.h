@@ -82,6 +82,9 @@ namespace o2scl {
     return integ_il_err(func,b,res,err);
   }
 
+  /// Return string denoting type ("inte_qagil_gsl")
+  const char *type() { return "inte_qagil_gsl"; }
+
   protected:
       
   /// Transform to \f$ t \in (0,1] \f$
