@@ -12,11 +12,11 @@ Namespace: o2scl class: astep_gsl
 Namespace: o2scl class: astep_nonadapt
 Namespace: o2scl_auto_format class: auto_format
 Namespace: o2scl class: bessel_K_exp_integ_bf
+Namespace: o2scl class: bessel_K_exp_integ_boost
 Namespace: o2scl class: bessel_K_exp_integ_direct
 Namespace: o2scl class: bessel_K_exp_integ_gsl
 Namespace: o2scl class: bessel_K_exp_integ_tl
 Namespace: o2scl class: bose_einstein_integ_tl
-Namespace: o2scl class: inte_pcubature::cache
 Namespace: o2scl class: calc_utf8
 Namespace: o2scl class: calculator
 Namespace: o2scl class: cheb_approx_tl
@@ -56,7 +56,6 @@ Namespace: o2scl class: edge_crossings
 Namespace: o2scl class: err_hnd_cpp
 Namespace: o2scl class: err_hnd_gsl
 Namespace: o2scl class: err_hnd_type
-Namespace: o2scl class: inte_hcubature::esterr
 Namespace: o2scl class: exc_exception
 Namespace: o2scl class: exc_invalid_argument
 Namespace: o2scl class: exc_ios_failure
@@ -95,17 +94,14 @@ Namespace: o2scl class: gsl_matrix_wrap
 Namespace: o2scl class: gsl_tolerance
 Namespace: o2scl class: gsl_vector_wrap
 Namespace: o2scl_hdf class: hdf_file
-Namespace: o2scl class: inte_hcubature::heap
 Namespace: o2scl class: hist
 Namespace: o2scl class: hist_2d
-Namespace: o2scl class: inte_hcubature::hypercube
 Namespace: o2scl class: prob_dens_mdim_amr::hypercube
 Namespace: o2scl class: index_spec
 Namespace: o2scl class: inte
 Namespace: o2scl class: inte_adapt_cern
 Namespace: o2scl class: inte_cauchy_cern
 Namespace: o2scl class: inte_cheb_gsl
-Namespace: o2scl class: inte_cubature_base
 Namespace: o2scl class: inte_exp_sinh_boost
 Namespace: o2scl class: inte_gauss56_cern
 Namespace: o2scl class: inte_gauss56_coeffs_double
@@ -117,11 +113,9 @@ Namespace: o2scl class: inte_gauss_coeffs_float_50
 Namespace: o2scl class: inte_gauss_coeffs_long_double
 Namespace: o2scl class: inte_gen
 Namespace: o2scl class: inte_gsl
-Namespace: o2scl class: inte_hcubature
 Namespace: o2scl class: inte_kronrod_boost
 Namespace: o2scl class: inte_kronrod_gsl
 Namespace: o2scl class: inte_multi
-Namespace: o2scl class: inte_pcubature
 Namespace: o2scl class: inte_qag_gsl
 Namespace: o2scl class: inte_qagi_gsl
 Namespace: o2scl class: inte_qagil_gsl
@@ -289,7 +283,6 @@ Namespace: o2scl class: quartic_real
 Namespace: o2scl class: quartic_real_coeff
 Namespace: o2scl class: quartic_real_coeff_cern
 Namespace: o2scl class: quartic_real_std
-Namespace: o2scl class: inte_hcubature::region
 Namespace: o2scl class: rng
 Namespace: o2scl class: rng_gsl
 Namespace: o2scl class: rng_gsl_uniform_real
@@ -302,8 +295,6 @@ Namespace: o2scl class: root_de
 Namespace: o2scl class: root_robbins_monro
 Namespace: o2scl class: root_stef
 Namespace: o2scl class: root_toms748
-Namespace: o2scl class: inte_hcubature::rule
-Namespace: o2scl class: inte_hcubature::rule75genzmalik
 Namespace: o2scl class: search_vec
 Namespace: o2scl class: search_vec_ext
 Namespace: o2scl class: series_acc

@@ -1,4 +1,3 @@
-    <member refid="classo2scl_1_1inte__cubature__base_1acacc6c39024fc1b8bd2bc630ccdca7b0" kind="enum"><name>error_norm</name></member>
     <member refid="namespaceo2scl_1a000e554ca357b4e493b12882f44ab091" kind="enum"><name>@0</name></member>
     <member refid="namespaceo2scl_1a51905d0a53bd5216ff6aaba6e8bf0f78" kind="enum"><name>@1</name></member>
     <member refid="namespaceo2scl_1ae0f6f533472442d0763060f6dcd53f19" kind="enum"><name>tokType</name></member>

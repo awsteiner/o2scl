@@ -8,11 +8,11 @@
   <compound refid="classo2scl_1_1astep__nonadapt" kind="class"><name>o2scl::astep_nonadapt</name>
   <compound refid="classo2scl__auto__format_1_1auto__format" kind="class"><name>o2scl_auto_format::auto_format</name>
   <compound refid="classo2scl_1_1bessel__K__exp__integ__bf" kind="class"><name>o2scl::bessel_K_exp_integ_bf</name>
+  <compound refid="classo2scl_1_1bessel__K__exp__integ__boost" kind="class"><name>o2scl::bessel_K_exp_integ_boost</name>
   <compound refid="classo2scl_1_1bessel__K__exp__integ__direct" kind="class"><name>o2scl::bessel_K_exp_integ_direct</name>
   <compound refid="classo2scl_1_1bessel__K__exp__integ__gsl" kind="class"><name>o2scl::bessel_K_exp_integ_gsl</name>
   <compound refid="classo2scl_1_1bessel__K__exp__integ__tl" kind="class"><name>o2scl::bessel_K_exp_integ_tl</name>
   <compound refid="classo2scl_1_1bose__einstein__integ__tl" kind="class"><name>o2scl::bose_einstein_integ_tl</name>
-  <compound refid="classo2scl_1_1inte__pcubature_1_1cache" kind="class"><name>o2scl::inte_pcubature::cache</name>
   <compound refid="classo2scl_1_1calc__utf8" kind="class"><name>o2scl::calc_utf8</name>
   <compound refid="classo2scl_1_1calculator" kind="class"><name>o2scl::calculator</name>
   <compound refid="classo2scl_1_1cheb__approx__tl" kind="class"><name>o2scl::cheb_approx_tl</name>
@@ -52,7 +52,6 @@
   <compound refid="classo2scl_1_1err__hnd__cpp" kind="class"><name>o2scl::err_hnd_cpp</name>
   <compound refid="classo2scl_1_1err__hnd__gsl" kind="class"><name>o2scl::err_hnd_gsl</name>
   <compound refid="classo2scl_1_1err__hnd__type" kind="class"><name>o2scl::err_hnd_type</name>
-  <compound refid="classo2scl_1_1inte__hcubature_1_1esterr" kind="class"><name>o2scl::inte_hcubature::esterr</name>
   <compound refid="classo2scl_1_1exc__exception" kind="class"><name>o2scl::exc_exception</name>
   <compound refid="classo2scl_1_1exc__invalid__argument" kind="class"><name>o2scl::exc_invalid_argument</name>
   <compound refid="classo2scl_1_1exc__ios__failure" kind="class"><name>o2scl::exc_ios_failure</name>
@@ -91,17 +90,14 @@
   <compound refid="classo2scl_1_1gsl__tolerance" kind="class"><name>o2scl::gsl_tolerance</name>
   <compound refid="classo2scl_1_1gsl__vector__wrap" kind="class"><name>o2scl::gsl_vector_wrap</name>
   <compound refid="classo2scl__hdf_1_1hdf__file" kind="class"><name>o2scl_hdf::hdf_file</name>
-  <compound refid="classo2scl_1_1inte__hcubature_1_1heap" kind="class"><name>o2scl::inte_hcubature::heap</name>
   <compound refid="classo2scl_1_1hist" kind="class"><name>o2scl::hist</name>
   <compound refid="classo2scl_1_1hist__2d" kind="class"><name>o2scl::hist_2d</name>
-  <compound refid="classo2scl_1_1inte__hcubature_1_1hypercube" kind="class"><name>o2scl::inte_hcubature::hypercube</name>
   <compound refid="classo2scl_1_1prob__dens__mdim__amr_1_1hypercube" kind="class"><name>o2scl::prob_dens_mdim_amr::hypercube</name>
   <compound refid="classo2scl_1_1index__spec" kind="class"><name>o2scl::index_spec</name>
   <compound refid="classo2scl_1_1inte" kind="class"><name>o2scl::inte</name>
   <compound refid="classo2scl_1_1inte__adapt__cern" kind="class"><name>o2scl::inte_adapt_cern</name>
   <compound refid="classo2scl_1_1inte__cauchy__cern" kind="class"><name>o2scl::inte_cauchy_cern</name>
   <compound refid="classo2scl_1_1inte__cheb__gsl" kind="class"><name>o2scl::inte_cheb_gsl</name>
-  <compound refid="classo2scl_1_1inte__cubature__base" kind="class"><name>o2scl::inte_cubature_base</name>
   <compound refid="classo2scl_1_1inte__exp__sinh__boost" kind="class"><name>o2scl::inte_exp_sinh_boost</name>
   <compound refid="classo2scl_1_1inte__gauss56__cern" kind="class"><name>o2scl::inte_gauss56_cern</name>
   <compound refid="classo2scl_1_1inte__gauss56__coeffs__double" kind="class"><name>o2scl::inte_gauss56_coeffs_double</name>
@@ -113,11 +109,9 @@
   <compound refid="classo2scl_1_1inte__gauss__coeffs__long__double" kind="class"><name>o2scl::inte_gauss_coeffs_long_double</name>
   <compound refid="classo2scl_1_1inte__gen" kind="class"><name>o2scl::inte_gen</name>
   <compound refid="classo2scl_1_1inte__gsl" kind="class"><name>o2scl::inte_gsl</name>
-  <compound refid="classo2scl_1_1inte__hcubature" kind="class"><name>o2scl::inte_hcubature</name>
   <compound refid="classo2scl_1_1inte__kronrod__boost" kind="class"><name>o2scl::inte_kronrod_boost</name>
   <compound refid="classo2scl_1_1inte__kronrod__gsl" kind="class"><name>o2scl::inte_kronrod_gsl</name>
   <compound refid="classo2scl_1_1inte__multi" kind="class"><name>o2scl::inte_multi</name>
-  <compound refid="classo2scl_1_1inte__pcubature" kind="class"><name>o2scl::inte_pcubature</name>
   <compound refid="classo2scl_1_1inte__qag__gsl" kind="class"><name>o2scl::inte_qag_gsl</name>
   <compound refid="classo2scl_1_1inte__qagi__gsl" kind="class"><name>o2scl::inte_qagi_gsl</name>
   <compound refid="classo2scl_1_1inte__qagil__gsl" kind="class"><name>o2scl::inte_qagil_gsl</name>
@@ -285,7 +279,6 @@
   <compound refid="classo2scl_1_1quartic__real__coeff" kind="class"><name>o2scl::quartic_real_coeff</name>
   <compound refid="classo2scl_1_1quartic__real__coeff__cern" kind="class"><name>o2scl::quartic_real_coeff_cern</name>
   <compound refid="classo2scl_1_1quartic__real__std" kind="class"><name>o2scl::quartic_real_std</name>
-  <compound refid="classo2scl_1_1inte__hcubature_1_1region" kind="class"><name>o2scl::inte_hcubature::region</name>
   <compound refid="classo2scl_1_1rng" kind="class"><name>o2scl::rng</name>
   <compound refid="classo2scl_1_1rng__gsl" kind="class"><name>o2scl::rng_gsl</name>
   <compound refid="classo2scl_1_1rng__gsl__uniform__real" kind="class"><name>o2scl::rng_gsl_uniform_real</name>
@@ -298,8 +291,6 @@
   <compound refid="classo2scl_1_1root__robbins__monro" kind="class"><name>o2scl::root_robbins_monro</name>
   <compound refid="classo2scl_1_1root__stef" kind="class"><name>o2scl::root_stef</name>
   <compound refid="classo2scl_1_1root__toms748" kind="class"><name>o2scl::root_toms748</name>
-  <compound refid="classo2scl_1_1inte__hcubature_1_1rule" kind="class"><name>o2scl::inte_hcubature::rule</name>
-  <compound refid="classo2scl_1_1inte__hcubature_1_1rule75genzmalik" kind="class"><name>o2scl::inte_hcubature::rule75genzmalik</name>
   <compound refid="classo2scl_1_1search__vec" kind="class"><name>o2scl::search_vec</name>
   <compound refid="classo2scl_1_1search__vec__ext" kind="class"><name>o2scl::search_vec_ext</name>
   <compound refid="classo2scl_1_1series__acc" kind="class"><name>o2scl::series_acc</name>
