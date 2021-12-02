@@ -255,7 +255,7 @@ AM_CONDITIONAL(O2SCL_POLYLOGARITHM, test x$polylogarithm = xtrue)
 
 AS_IF([test "x$enable_polylogarithm" != "xno"], [
 
-AC_CHECK_LIB([polylog], [lC0], [],
+AC_CHECK_LIB([polylog_cpp], [log], [],
 	[echo ""
         echo "Polylogarithm not found. "
 	echo ""
