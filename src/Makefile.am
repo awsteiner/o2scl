@@ -21,14 +21,14 @@ if O2SCL_HDF
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
 	min ode other root linalg \
-	part nuclei eos hdf polylogarithm
+	part nuclei eos hdf 
 LIBLIST = libo2scl.la libo2scl_part.la
 
 else
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
 	min ode other root linalg \
-	part nuclei eos polylogarithm
+	part nuclei eos 
 LIBLIST = libo2scl.la libo2scl_part.la
 
 endif
@@ -38,14 +38,14 @@ if O2SCL_HDF
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
 	min ode other root linalg \
-	nuclei part hdf polylogarithm
+	nuclei part hdf 
 LIBLIST = libo2scl.la libo2scl_part.la
 
 else
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
 	min ode other root linalg \
-	nuclei part polylogarithm
+	nuclei part 
 LIBLIST = libo2scl.la libo2scl_part.la
 
 endif
@@ -55,20 +55,20 @@ else
 if O2SCL_HDF
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
-	min ode other root linalg hdf polylogarithm
+	min ode other root linalg hdf 
 LIBLIST = libo2scl.la
 
 else
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
-	min ode other root linalg polylogarithm
+	min ode other root linalg 
 LIBLIST = libo2scl.la
 
 endif
 endif
 
 SUBLIBS = mcarlo/libo2scl_mcarlo.la other/libo2scl_other.la \
-	min/libo2scl_min.la polylogarithm/libo2scl_polylogarithm.la \
+	min/libo2scl_min.la \
 	inte/libo2scl_inte.la linalg/libo2scl_linalg.la \
 	base/libo2scl_base.la
 

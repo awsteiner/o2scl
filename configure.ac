@@ -206,6 +206,66 @@ AC_CHECK_LIB([mpfr], [mpfr_add], [],
 ])
 
 # ----------------------------------------------
+# Check for Cubature library
+# ----------------------------------------------
+
+AC_ARG_ENABLE(cubature,
+[  --enable-cubature       Include cubature support @<:@default=yes@:>@],
+	[case "${enableval}" in
+	yes) cubature=true ;;
+	no)  cubature=false ;;
+	*) AC_MSG_ERROR(bad value ${enableval} for --enable-cubature) ;;
+	esac],[cubature=true])
+
+AM_CONDITIONAL(O2SCL_CUBATURE, test x$cubature = xtrue)
+
+# ----------------------------------------------
+# If enabled, check for the cubature library
+# ----------------------------------------------
+
+AS_IF([test "x$enable_cubature" != "xno"], [
+
+AC_CHECK_LIB([cubature], [pcubature], [],
+	[echo ""
+        echo "Cubature not found. "
+	echo ""
+	echo -n " The present value of LDFLAGS is: "
+	echo $LDFLAGS
+	],[])
+
+])
+
+# ----------------------------------------------
+# Check for Polylogarithm library
+# ----------------------------------------------
+
+AC_ARG_ENABLE(polylogarithm,
+[  --enable-polylogarithm       Include polylogarithm support @<:@default=yes@:>@],
+	[case "${enableval}" in
+	yes) polylogarithm=true ;;
+	no)  polylogarithm=false ;;
+	*) AC_MSG_ERROR(bad value ${enableval} for --enable-polylogarithm) ;;
+	esac],[polylogarithm=true])
+
+AM_CONDITIONAL(O2SCL_POLYLOGARITHM, test x$polylogarithm = xtrue)
+
+# ----------------------------------------------
+# If enabled, check for the polylogarithm library
+# ----------------------------------------------
+
+AS_IF([test "x$enable_polylogarithm" != "xno"], [
+
+AC_CHECK_LIB([polylog], [lC0], [],
+	[echo ""
+        echo "Polylogarithm not found. "
+	echo ""
+	echo -n " The present value of LDFLAGS is: "
+	echo $LDFLAGS
+	],[])
+
+])
+
+# ----------------------------------------------
 # Check for ncurses library
 # ----------------------------------------------
 
@@ -458,7 +518,6 @@ AC_CONFIG_FILES([Makefile
                  src/base/both/Makefile
                  src/base/eigen/Makefile
                  src/base/neither/Makefile
-		 src/polylogarithm/Makefile
                  src/deriv/Makefile
                  src/eos/Makefile
                  src/fit/Makefile
