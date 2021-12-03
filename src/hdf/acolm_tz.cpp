@@ -759,8 +759,9 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
        << o2scl_settings.armadillo_support() << endl;
   cout << "Eigen support: " << o2scl_settings.eigen_support() << endl;
   cout << "FFTW support: " << o2scl_settings.fftw_support() << endl;
-  cout << "CUBATURE support: " << o2scl_settings.cubature_support() << endl;
-  cout << "POLYLOGARITHM support: " << o2scl_settings.polylogarithm_support() << endl;
+  cout << "Cubature support: " << o2scl_settings.cubature_support() << endl;
+  cout << "Polylogarithm support: "
+       << o2scl_settings.polylogarithm_support() << endl;
   cout << "GSL V2.0+ support: " << o2scl_settings.gsl2_support() << endl;
   cout << "OpenMP support: " << o2scl_settings.openmp_support() << endl;
   cout << "Readline support: " << o2scl_settings.readline_support() << endl;
