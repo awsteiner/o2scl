@@ -69,7 +69,6 @@
 #include <o2scl/rng.h>
 #include <o2scl/err_hnd.h>
 #include <o2scl/string_conv.h>
-#include <o2scl/find_constants.h>
 
 namespace o2scl {
 
@@ -135,7 +134,9 @@ namespace o2scl {
     
   protected:
 
-    rng<> r;
+    rng<> *r;
+
+    rng<> def_r;
     
     /** \brief A typedef for a queue of tokens for \ref o2scl::calculator
      */
@@ -328,10 +329,11 @@ namespace o2scl {
             static_cast<token32<std::u32string>*>(base);
       
           std::u32string key=strTok->val;
+          //std::cout << "Here: " << key[0] << std::endl;
           if (key.length()==4 && ((char)key[0])=='r' &&
               ((char)key[1])=='a' && ((char)key[2])=='n' &&
               ((char)key[3])=='d') {
-            evaluation.push(r.random());
+            evaluation.push(r->random());
           } else {
         
             typename std::map<std::u32string, fp_t>::const_iterator it=
@@ -402,19 +404,31 @@ namespace o2scl {
           std::u32string str_num;
           str_num=str_num+expr[i];
 
+          // ----------------------------------------------------------
+          // This extracts a number from the expression, handling
+          // scientific notation. The idea here is that this code will
+          // handle both commas or periods, depending on locale, but
+          // this hasn't been tested.
+
+          // True if a '+' or '-' has been read
+          bool plus_minus=false;
+          // True if 'E' or 'e' has been read
           bool exponent=false;
-          // The idea here is that this will handle both commas or
-          // periods, depending on locale, but this hasn't been tested
+          
           while (i+1<expr.length() &&
                  (expr[i+1]=='.' || expr[i+1]==',' ||
                   isdigit(expr[i+1]) || expr[i+1]=='e' ||
-                  expr[i+1]=='E' || (exponent && (expr[i+1]=='+' ||
-                                                  expr[i+1]=='-')))) {
+                  expr[i+1]=='E' || (exponent && plus_minus==false &&
+                                     (expr[i+1]=='+' ||
+                                      expr[i+1]=='-')))) {
             if (expr[i+1]=='e' || expr[i+1]=='E') exponent=true;
+            if (expr[i+1]=='+' || expr[i+1]=='-') plus_minus=true;
             str_num=str_num+expr[i+1];
             i++;
           }
-      
+
+          // ----------------------------------------------------------
+          
           if (verbose>=2) {
             std::cout << "In toRPN_nothrow(), str_num: ";
             std::string stmp;
@@ -533,8 +547,13 @@ namespace o2scl {
                      key[2]=='o' && key[3]=='o' && key[4]=='r') {
             operator_stack.push("floor");
             last_token_was_op=true;
+            
           } else {
 
+            /*std::cout << "Here2: " << key[0] << " "
+              << key.length() << " " << (key[0]=='r')
+              << std::endl;
+            */
             if (key.length()==4 && ((char)key[0])=='t' &&
                 ((char)key[1])=='r' && ((char)key[2])=='u' &&
                 ((char)key[3])=='e') {
@@ -548,7 +567,8 @@ namespace o2scl {
             } else if (key.length()==4 && ((char)key[0])=='r' &&
                        ((char)key[1])=='a' && ((char)key[2])=='n' &&
                        ((char)key[3])=='d') {
-              found=false;
+              found=true;
+              val=r->random();
             } else if (vars) {
               typename std::map<std::u32string,fp_t>::const_iterator it=
                 vars->find(key);
@@ -640,8 +660,10 @@ namespace o2scl {
 
               if (last_token_was_op) {
                 if (verbose>=1) {
-                  std::cout << "In toRPN_nothrow(), last token was an operator: "
-                       << str.compare("-") << " " << str.compare("+") << std::endl;
+                  std::cout << "In toRPN_nothrow(), last "
+                            << "token was an operator: "
+                            << str.compare("-") << " " << str.compare("+")
+                            << std::endl;
                 }
                 // Convert unary operators to binary in the RPN.
                 if (!str.compare("-") || !str.compare("+")) {
@@ -713,7 +735,8 @@ namespace o2scl {
       
       verbose=0;
       
-      r.clock_seed();
+      def_r.clock_seed();
+      r=&def_r;
     }      
 
     /** \brief Compile expression \c expr using variables 
@@ -728,13 +751,21 @@ namespace o2scl {
   
       compile(expr,vars);
 
-      r.clock_seed();
+      def_r.clock_seed();
+      r=&def_r;
     }      
     
     ~calc_utf8() {
       // Clear memory associated with the RPN object
       cleanRPN(this->RPN);
-    }      
+    }
+
+    /** \brief
+     */
+    void set_rng(rng<> r_new) {
+      r=&r_new;
+      return;
+    }
 
     /// \name Compile and evaluate 
     //@{

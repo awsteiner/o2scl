@@ -46,6 +46,7 @@
 #include <o2scl/tensor_grid.h>
 #include <o2scl/uniform_grid.h>
 #include <o2scl/slack_messenger.h>
+#include <o2scl/rng.h>
 
 #ifdef O2SCL_READLINE
 #include <o2scl/cli_readline.h>
@@ -107,6 +108,9 @@ namespace o2scl_acol {
 
   protected:
 
+    /// Random number generator
+    o2scl::rng<> rng;
+    
     /// The object which sends Slack messages
     o2scl::slack_messenger smess;
     

@@ -290,7 +290,7 @@ double o2scl::function_to_double(std::string s, int verbose) {
 }
 
 int o2scl::function_to_double_nothrow(std::string s, double &result,
-                                      int verbose) {
+                                      int verbose, o2scl::rng<> *r) {
 
   std::string s2;
   // Remove quotes and apostrophes
@@ -301,6 +301,9 @@ int o2scl::function_to_double_nothrow(std::string s, double &result,
   }
   
   calc_utf8<> calc;
+  if (r!=0) {
+    calc.set_rng(*r);
+  }
   
   int ret=calc.compile_nothrow(s2.c_str(),0);
   if (ret!=0) return ret;

@@ -46,6 +46,7 @@
 
 // For screenify()
 #include <o2scl/misc.h>
+#include <o2scl/rng.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -259,8 +260,8 @@ namespace o2scl {
       integer when it fails.
   */
   int function_to_double_nothrow(std::string s, double &result,
-                                 int verbose=0);
-  
+                                 int verbose=0, o2scl::rng<> *r=0);
+
   /** \brief Convert a formula to a long double and return an integer
       to indicate success or failure
       

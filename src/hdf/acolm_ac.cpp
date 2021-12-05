@@ -135,7 +135,7 @@ int acol_manager::comm_convert
 
     double val=1.0;
     if (in.size()>=3) {
-      int ret2=function_to_double_nothrow(in[9],val);
+      int ret2=function_to_double_nothrow(in[9],val,0,&rng);
       if (ret2!=0) {
         cerr << "Converting " << in[9] << " to value failed." << endl;
         return 2;
@@ -213,7 +213,7 @@ int acol_manager::comm_convert
     cout << "Using convert()." << endl;
     
     if (in.size()>=4) {
-      int ret2=function_to_double_nothrow(in[3],val);
+      int ret2=function_to_double_nothrow(in[3],val,0,&rng);
       if (ret2!=0) {
         cerr << "Converting " << in[3] << " to value failed." << endl;
         return 2;
@@ -233,7 +233,7 @@ int acol_manager::comm_convert
   } else {
     
     if (in.size()>=3) {
-      int ret2=function_to_double_nothrow(in[2],val);
+      int ret2=function_to_double_nothrow(in[2],val,0,&rng);
       if (ret2!=0) {
         cerr << "Converting " << in[2] << " to value failed." << endl;
         return 2;
@@ -477,7 +477,7 @@ int acol_manager::comm_assign(std::vector<std::string> &sv, bool itive_com) {
   if (ret!=0) return ret;
 
   double d;
-  int retx=function_to_double_nothrow(sv[2],d);
+  int retx=function_to_double_nothrow(sv[2],d,0,&rng);
   if (retx!=0) {
     cerr << "Converting " << sv[2] << " to value failed." << endl;
     return 1;
@@ -823,7 +823,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 }
 
 int acol_manager::comm_ac_len(std::vector<std::string> &sv,
-				bool itive_com) {
+                              bool itive_com) {
 
   if (type=="table") {
     
@@ -976,7 +976,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   }
   
   double d;
-  int retx=o2scl::function_to_double_nothrow(i1,d);
+  int retx=o2scl::function_to_double_nothrow(i1,d,0,&rng);
   if (retx!=0) {
     cerr << "Converting " << i1 << " to value failed." << endl;
     return 1;
@@ -1302,22 +1302,22 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
   }
   
   /*
-  if (sv.size()>=2 && sv[1]=="frac") {
+    if (sv.size()>=2 && sv[1]=="frac") {
     cout << "Fraction mode is true." << endl;
     frac_mode=true;
     std::vector<std::string>::iterator it=sv.begin();
     it++;
     sv.erase(it);
-  } else {
+    } else {
     cout << "Fraction mode is false." << endl;
-  }
-  if (sv.size()<2 && itive_com) {
+    }
+    if (sv.size()<2 && itive_com) {
     string temp=((string)"Enter \"frac\" for fractions of total sum and ")
-      +"\"abs\" for absolute scale", i1;
+    +"\"abs\" for absolute scale", i1;
     int ret=get_input_one(sv,temp,i1,"contours",itive_com);
     if (ret!=0) return ret;
     if (i1=="frac") frac_mode=true;
-  }
+    }
   */
   
   std::string svalue, file, name="contours";
@@ -1387,7 +1387,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     }
     
     ubvector levs(1);
-    int retx=o2scl::function_to_double_nothrow(svalue,levs[0]);
+    int retx=o2scl::function_to_double_nothrow(svalue,levs[0],0,&rng);
     if (retx!=0) {
       cerr << "Failed to convert " << svalue << " to value." << endl;
       return 1;
@@ -1422,14 +1422,14 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       }
       ubvector ybins(ny+1);
       if (yd[1]>yd[0]) {
-	ybins[0]=yd[0]-(yd[1]-yd[0])/2.0;
-	ybins[ny]=yd[ny-1]+(yd[ny-1]-yd[ny-2])/2.0;
+      ybins[0]=yd[0]-(yd[1]-yd[0])/2.0;
+      ybins[ny]=yd[ny-1]+(yd[ny-1]-yd[ny-2])/2.0;
       } else {
-	ybins[0]=yd[0]+(yd[0]-yd[1])/2.0;
-	ybins[ny]=yd[ny-1]-(yd[ny-2]-yd[ny-1])/2.0;
+      ybins[0]=yd[0]+(yd[0]-yd[1])/2.0;
+      ybins[ny]=yd[ny-1]-(yd[ny-2]-yd[ny-1])/2.0;
       }
       for(size_t i=1;i<ny-1;i++) {
-	ybins[i]=(yd[i-1]+yd[i])/2.0;
+      ybins[i]=(yd[i-1]+yd[i])/2.0;
       }
 
       // Compute the total integral and the target fraction
@@ -1437,13 +1437,13 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       o2scl::matrix_minmax(m,min,max);
       double sum=matrix_sum<ubmatrix,double>(nx,ny,m);
       for(size_t i=0;i<nx;i++) {
-	for(size_t j=0;j<ny;j++) {
-	  sum-=min*(xbins[i+1]-xbins[i])*(ybins[j+1]-ybins[j]);
-	}
+      for(size_t j=0;j<ny;j++) {
+      sum-=min*(xbins[i+1]-xbins[i])*(ybins[j+1]-ybins[j]);
+      }
       }
       double target=levs[0]*sum;
       if (verbose>1) {
-	cout << "sum,target: " << sum << " " << target << endl;
+      cout << "sum,target: " << sum << " " << target << endl;
       }
 
       // Setup the vectors to interpolate the target integral
@@ -1452,52 +1452,52 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       ug.vector(integx);
       size_t N=integx.size();
       if (verbose>1) {
-	cout << "N integx[0] integx[1]: " << N << " "
-	     << integx[0] << " " << integx[1] << endl;
+      cout << "N integx[0] integx[1]: " << N << " "
+      << integx[0] << " " << integx[1] << endl;
       }
       integy.resize(N);
 
       // Fill the interpolation vectors
       for(size_t k=0;k<N;k++) {
-	integy[k]=0.0;
-	for(size_t i=0;i<nx;i++) {
-	  for(size_t j=0;j<ny;j++) {
-	    if (m(i,j)>integx[k]) {
-	      integy[k]+=(m(i,j)-min)*(xbins[i+1]-xbins[i])*
-		(ybins[j+1]-ybins[j]);
-	    }
-	  }
-	}
-	if (verbose>1) {
-	  cout << k << " " << integx[k] << " " << integy[k] << endl;
-	}
+      integy[k]=0.0;
+      for(size_t i=0;i<nx;i++) {
+      for(size_t j=0;j<ny;j++) {
+      if (m(i,j)>integx[k]) {
+      integy[k]+=(m(i,j)-min)*(xbins[i+1]-xbins[i])*
+      (ybins[j+1]-ybins[j]);
+      }
+      }
+      }
+      if (verbose>1) {
+      cout << k << " " << integx[k] << " " << integy[k] << endl;
+      }
       }
 
       // Perform the interpolation
       bool found=false;
       double level=0.0;
       for(size_t k=0;k<N-1;k++) {
-	if (integy[k]>target && integy[k+1]<target) {
-	  found=true;
-	  level=integx[k]+(integx[k+1]-integx[k])*(target-integy[k])/
-	    (integy[k+1]-integy[k]);
-	}
+      if (integy[k]>target && integy[k+1]<target) {
+      found=true;
+      level=integx[k]+(integx[k+1]-integx[k])*(target-integy[k])/
+      (integy[k+1]-integy[k]);
+      }
       }
       
       // Return if the interpolation failed
       if (found==false) {
-	cerr << "Failed to find a level matching requested fraction."
-	     << endl;
-	return 2;
+      cerr << "Failed to find a level matching requested fraction."
+      << endl;
+      return 2;
       }
       
       if (verbose>1) {
-	cout << "Found: " << level << endl;
+      cout << "Found: " << level << endl;
       }
       // Set level from interpolated value
       levs[0]=level;
       
-    }
+      }
     */
     
     if (file.length()>0) {
@@ -1583,7 +1583,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     }
 
     ubvector levs(1);
-    int retx=o2scl::function_to_double_nothrow(svalue,levs[0]);
+    int retx=o2scl::function_to_double_nothrow(svalue,levs[0],0,&rng);
     if (retx!=0) {
       cerr << "Failed to convert " << svalue << " to value." << endl;
       return 1;
@@ -1846,6 +1846,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
       if (ret2!=0) return ret2;
 
       calc_utf8<> calc;
+      calc.set_rng(rng);
       std::map<std::string,double> vars;
       std::map<std::string,double>::const_iterator mit;
       size_t nn=o2scl::stoszt(in1);
@@ -1877,7 +1878,8 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     int ret=get_input(sv2,pr,in,"create",itive_com);
     if (ret!=0) return ret;
 
-      calc_utf8<> calc;
+    calc_utf8<> calc;
+    calc.set_rng(rng);
     std::map<std::string,double> vars;
     std::map<std::string,double>::const_iterator mit;
     size_t nn=o2scl::stoszt(in[0]);
@@ -1898,7 +1900,8 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     int ret=get_input(sv2,pr,in,"create",itive_com);
     if (ret!=0) return ret;
 
-      calc_utf8<> calc;
+    calc_utf8<> calc;
+    calc.set_rng(rng);
     std::map<std::string,double> vars;
     std::map<std::string,double>::const_iterator mit;
     size_t nn=o2scl::stoszt(in[0]);
@@ -2167,7 +2170,8 @@ int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
     }
 
     // Parse function(s)
-      calc_utf8<> calc;
+    calc_utf8<> calc;
+    calc.set_rng(rng);
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
 
