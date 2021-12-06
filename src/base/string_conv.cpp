@@ -302,6 +302,7 @@ int o2scl::function_to_double_nothrow(std::string s, double &result,
   
   calc_utf8<> calc;
   if (r!=0) {
+    cout << "Setting rng: " << r << endl;
     calc.set_rng(*r);
   }
   

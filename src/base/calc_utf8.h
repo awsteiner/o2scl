@@ -134,8 +134,10 @@ namespace o2scl {
     
   protected:
 
+    ///
     rng<> *r;
 
+    ///
     rng<> def_r;
     
     /** \brief A typedef for a queue of tokens for \ref o2scl::calculator
@@ -329,11 +331,11 @@ namespace o2scl {
             static_cast<token32<std::u32string>*>(base);
       
           std::u32string key=strTok->val;
-          //std::cout << "Here: " << key[0] << std::endl;
           if (key.length()==4 && ((char)key[0])=='r' &&
               ((char)key[1])=='a' && ((char)key[2])=='n' &&
               ((char)key[3])=='d') {
-            evaluation.push(r->random());
+            double rx=r->random();
+            evaluation.push(rx);
           } else {
         
             typename std::map<std::u32string, fp_t>::const_iterator it=
@@ -762,7 +764,7 @@ namespace o2scl {
 
     /** \brief
      */
-    void set_rng(rng<> r_new) {
+    void set_rng(rng<> &r_new) {
       r=&r_new;
       return;
     }
