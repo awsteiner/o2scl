@@ -47,24 +47,29 @@ namespace o2scl {
 	boost::numeric::ublas::vector<double> &,
 	boost::numeric::ublas::matrix<double> &) > nrf_funct;
 
-  /** \brief Desc
+  /** \brief The function \f$ z^4-1 \f$ and its Jacobian
    */
   int nrf_z4m1(size_t nv,
                const boost::numeric::ublas::vector<double> &x,
                boost::numeric::ublas::vector<double> &f,
                boost::numeric::ublas::matrix<double> &J);
   
-  /** \brief Desc
+  typedef std::function<int(boost::numeric::ublas::vector<double> &,
+                            boost::numeric::ublas::vector<double>) >
+  itf_funct;
+  
+  /** \brief The function \f$ z \rightarrow z^2+c \f$ 
    */
   int itf_mandel(boost::numeric::ublas::vector<double> &z,
                  boost::numeric::ublas::vector<double> c);
   
-  /** \brief Desc
+  /** \brief Generate fractal images
    */
   class fract {
     
   public:
 
+    /// Verbosity parameter
     int verbose;
 
     fract() {
@@ -74,7 +79,8 @@ namespace o2scl {
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-    /** \brief Desc
+    /** \brief Generate a Newton-Raphson fractal and store in 
+        the \ref o2scl::table3d object \c t3d
 
 	If the iteration converges to a root, then the <tt>"root"</tt>
 	slice in the \ref o2scl::table3d object is set to the index of
@@ -221,6 +227,9 @@ namespace o2scl {
       return 0;
     }
 
+    /** \brief Generate a Newton-Raphson fractal for \f$ z^4-1 \f$ and
+        store in the \ref o2scl::table3d object \c t3d
+    */
     template<class mat_t=ubmatrix,
       class vec_t=ubvector, class vec2_t=std::vector<double>,
              class vec2_size_t=std::vector<size_t>, class fp_t=double>
@@ -234,7 +243,10 @@ namespace o2scl {
                  max_count);
     }
       
-    /** \brief Desc
+    /** \brief Generate an iteration fractal and
+        store in the \ref o2scl::table3d object \c t3d
+
+        FIXME: fix parallelization
      */
     template<class func_t, class vec_t=ubvector, class fp_t=double>
     int itf(func_t &f, uniform_grid<fp_t> &gx,
@@ -319,7 +331,11 @@ namespace o2scl {
     }
 
 #ifdef O2SCL_NEVER_DEFINED
-    
+
+    /** \brief
+
+        FIXME: explain what was intended here, maybe an animation?
+     */
     template<class func_t, class vec_t=ubvector, class fp_t=double>
     int itfa(func_t &f,
              fp_t x_min_0, fp_t x_max_0, fp_t y_min_0, fp_t y_max_0, 
@@ -406,6 +422,17 @@ namespace o2scl {
     
 #endif
 
+    /** \brief Generate an iteration fractal for the Mandelbrot set
+        and store in the \ref o2scl::table3d object \c t3d
+     */
+    template<class vec_t=ubvector, class fp_t=double>
+    int itf_mandel(uniform_grid<fp_t> &gx, uniform_grid<fp_t> &gy,
+                   size_t kmax, fp_t rmax, o2scl::table3d &t3d,
+                   size_t &min, size_t &max) {
+      itf_funct f=o2scl::itf_mandel;
+      return itf(f,gx,gy,kmax,rmax,t3d,min,max);
+    }
+    
   };
   
 #ifndef DOXYGEN_NO_O2NS

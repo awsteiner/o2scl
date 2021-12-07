@@ -347,6 +347,8 @@ namespace o2scl {
       } else {
       
         // Evaluate the interpolated result
+        std::cout << "E1 " << nd_out << " " << np << " "
+                  << Kinvf.size() << " " << Kinvf[0].size() << std::endl;
         for(size_t iout=0;iout<nd_out;iout++) {
           size_t icovar=iout % fcovar.size();
           y0[iout]=0.0;
@@ -355,6 +357,7 @@ namespace o2scl {
             y0[iout]+=fcovar[icovar](xrow,x0)*Kinvf[iout][ipoints];
           }
         }
+        std::cout << "E2" << std::endl;
 
       }
 
@@ -527,12 +530,12 @@ namespace o2scl {
               this->Kinvf[iout][i];
           }
 
-          std::cout << "act,pred: " << yact << " " << ypred << std::endl;
+          std::cout << "iko: ell,act,pred: " << ell << " "
+                    << yact << " " << ypred << std::endl;
         
           // Measure the quality with a chi-squared like function
           ret+=pow(yact-ypred,2.0);
 
-	
           // Proceed to next point to omit
         }
         std::cout << "ret: " << ret << std::endl;
@@ -559,7 +562,7 @@ namespace o2scl {
             }
           }
         }
-      
+
         // Note: We have to use LU here because O2scl doesn't yet
         // have a lndet() function for Cholesky decomp
 
@@ -596,6 +599,8 @@ namespace o2scl {
 
       }
 
+      std::cout << "Here." << std::endl;
+      
       return ret;
     }
 
@@ -648,7 +653,20 @@ namespace o2scl {
       return;
     }
   
-    /// Initialize interpolation routine
+    /** \brief Initialize interpolation routine
+        
+        \verbatim embed:rst
+        
+        .. todo:
+
+           In interpm_krige_optim::set_data_noise():
+
+           - AWS, 12/6/21: I'm not sure why this function has a
+             len_precompute argument but the corresponding function
+             interp_krige_optim::set_data_noise() does not.
+
+        \endverbatim
+     */
     template<class vec2_t, class vec3_t>
     int set_data_noise(size_t n_in, size_t n_out, size_t n_points,
                        mat_x_t &user_x, mat_y_t &user_y, 
@@ -744,10 +762,6 @@ namespace o2scl {
                       << len_precompute[iout] << std::endl;
           }
           len[iout]=len_precompute[iout];
-          size_t mode_temp=mode;
-          mode=mode_final;
-          qual[iout]=qual_fun(len[iout],noise_var[iout],iout,yiout,success);
-          mode=mode_temp;
 	
         } else if (full_min) {
 	
@@ -843,9 +857,17 @@ namespace o2scl {
 	
           len[iout]=len_opt;
 	
-	
         }
-      
+
+        std::cout << "A: " << iout << " " << len.size() << " "
+                  << noise_var.size() << " " << qual.size() << " "
+                  << mode << std::endl;
+        size_t mode_temp=mode;
+        mode=mode_final;
+        qual[iout]=qual_fun(len[iout],noise_var[iout],iout,yiout,success);
+        mode=mode_temp;
+        std::cout << "A2: " << iout << std::endl;
+        
         ff1[iout]=std::bind(std::mem_fn<double(const mat_x_row_t &,
                                                const mat_x_row_t &,
                                                size_t,double)>
@@ -864,6 +886,8 @@ namespace o2scl {
                              vec_t>),this,
                             std::placeholders::_1,std::placeholders::_2,
                             n_in,len[iout]);
+        
+        // End of loop over iout
       }
     
       return 0;

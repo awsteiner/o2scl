@@ -256,3 +256,12 @@ class fract
   - io std::vector<double> &roots_y
   - io std::vector<double> &min
   - io std::vector<double> &max
+- function itf_mandel
+  - int
+  - io uniform_grid<> &gx
+  - io uniform_grid<> &gy
+  - size_t kmax
+  - double rmax
+  - out o2scl::table3d &t3d
+  - io size_t &min
+  - io size_t &max

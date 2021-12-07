@@ -32,6 +32,7 @@
 using namespace std;
 using namespace o2scl;
 
+/*
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 typedef o2scl::matrix_view_table<> mat_x_t;
@@ -43,6 +44,7 @@ typedef vector<function<double(mat_x_row_t &, mat_x_row_t &) > > f1_t;
 typedef vector<function<double(mat_x_row_t &, const ubvector &) > > f2_t;
 typedef vector<function<double(mat_y_row_t &, mat_y_row_t &) > > f3_t;
 typedef vector<function<double(mat_y_row_t &, const ubvector &) > > f4_t;
+*/
 
 template<class vec_t, class vec2_t>
 double covar(const vec_t &x, const vec2_t &y, double len) {
@@ -79,6 +81,16 @@ int main(void) {
     for(size_t i=0;i<8;i++) {
       tab.set("z",i,ft(tab.get("x",i),tab.get("y",i)));
     }
+    
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
+    typedef o2scl::matrix_view_table<> mat_x_t;
+    typedef const matrix_row_gen<mat_x_t> mat_x_row_t;
+    typedef const matrix_column_gen<mat_x_t> mat_x_col_t;
+    typedef o2scl::matrix_view_table_transpose<> mat_y_t;
+    typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
+    typedef vector<function<double(mat_x_row_t &, mat_x_row_t &) > > f1_t;
+    typedef vector<function<double(mat_x_row_t &, const ubvector &) > > f2_t;
     
     interpm_krige<ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
                   mat_y_t,mat_y_row_t,ubmatrix,
@@ -133,12 +145,40 @@ int main(void) {
     
     ubvector len_precompute;
     iko.set_data<>(2,1,8,mvt_x,mvt_y,len_precompute);
+
+    point[0]=0.4;
+    point[1]=0.5;
+    iko.eval(point,out,fa2);
+    t.test_rel(out[0],ft(point[0],point[1]),2.0e-1,"iko 0");
+    cout << out[0] << " " << ft(point[0],point[1]) << endl;
+    point[0]=0.0301;
+    point[1]=0.9901;
+    iko.eval(point,out,fa2);
+    t.test_rel(out[0],ft(point[0],point[1]),1.0e-2,"iko 1");
+    cout << out[0] << " " << ft(point[0],point[1]) << endl;
+    cout << endl;
+
     
   }
 
 #ifdef O2SCL_NEVER_DEFINED
   
   {
+
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
+    typedef vector<ubvector> mat_x_t;
+    typedef const matrix_row_gen<mat_x_t> mat_x_row_t;
+    typedef const matrix_column_gen<mat_x_t> mat_x_col_t;
+    typedef vector<ubvector> mat_y_t;
+    typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
+    typedef vector<function<double(mat_x_row_t &, mat_x_row_t &) > > f1_t;
+    typedef vector<function<double(mat_x_row_t &, const ubvector &) > > f2_t;
+    
+    interpm_krige<ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
+                  mat_y_t,mat_y_row_t,ubmatrix,
+                  o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > ik;
+    
     cout << "interpm_krige_optim, rescaled" << endl;
     // Construct the data
     vector<ubvector> x;

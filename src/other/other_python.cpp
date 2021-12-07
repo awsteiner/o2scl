@@ -484,3 +484,12 @@ void o2scl_fract_nrf_z4m1(void *vptr, void *ptr_gx, void *ptr_gy, size_t kmax, d
   return;
 }
 
+int o2scl_fract_itf_mandel(void *vptr, void *ptr_gx, void *ptr_gy, size_t kmax, double rmax, void *ptr_t3d, size_t *min, size_t *max) {
+  fract *ptr=(fract *)vptr;
+  uniform_grid<> *gx=(uniform_grid<> *)ptr_gx;
+  uniform_grid<> *gy=(uniform_grid<> *)ptr_gy;
+  o2scl::table3d *t3d=(o2scl::table3d *)ptr_t3d;
+  int ret=ptr->itf_mandel(*gx,*gy,kmax,rmax,*t3d,*min,*max);
+  return ret;
+}
+

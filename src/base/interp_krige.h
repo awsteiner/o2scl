@@ -655,6 +655,86 @@ namespace o2scl {
           
           boost::numeric::ublas::axpy_prod(this->inv_KXX,kxx0,prod,true);
           double sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
+          std::cout.setf(std::ios::showpos);
+          std::cout << "k,x,yact,ypred,sigma: " << k << " "
+                    << (*this->px)[k] << " "
+                    << yact << " " << ypred << " "
+                    << sigma << std::endl;
+          std::cout.unsetf(std::ios::showpos);
+          
+          // We maximize the predictive log probability, Eq 5.10
+          // in R&W
+          qual+=pow(yact-ypred,2.0);///sigma/sigma/2.0;
+          //qual+=0.5*log(sigma*sigma);
+	
+        }
+        std::cout << "qual: " << qual << std::endl;
+
+      } else if (mode==mode_loo_cv_new) {
+      
+        qual=0.0;
+        for(size_t k=0;k<size;k++) {
+	
+          // Leave one observation out
+          ubvector x2(size-1);
+          ubvector y2(size-1);
+          if (this->rescaled) {
+            o2scl::vector_copy_jackknife(this->x_r,k,x2);
+            o2scl::vector_copy_jackknife(this->y_r,k,y2);
+          } else {
+            o2scl::vector_copy_jackknife((*this->px),k,x2);
+            o2scl::vector_copy_jackknife((*this->py),k,y2);
+          }
+	
+          // Construct the KXX matrix
+          mat_t KXX(size-1,size-1);
+          for(size_t irow=0;irow<size-1;irow++) {
+            for(size_t icol=0;icol<size-1;icol++) {
+              if (irow>icol) {
+                KXX(irow,icol)=KXX(icol,irow);
+              } else {
+                KXX(irow,icol)=exp(-pow((x2[irow]-x2[icol])/len,2.0)/2.0);
+                if (irow==icol) KXX(irow,icol)+=noise_var;
+              }
+            }
+          }
+          
+          // Construct the inverse of KXX
+          this->inv_KXX=KXX;
+          this->mi.invert_inplace(size-1,this->inv_KXX);
+	  
+          // Inverse covariance matrix times function vector
+          this->Kinvf.resize(size-1);
+          o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                             o2scl_cblas::o2cblas_NoTrans,
+                             size-1,size-1,1.0,this->inv_KXX,y2,0.0,
+                             this->Kinvf);
+	  
+          double ypred=0.0;
+          double kx0x0;
+          ubvector kxx0(size-1), prod(size-1);
+          double yact;
+          if (this->rescaled) {
+            yact=this->y_r[k];
+          } else {
+            yact=(*this->py)[k];
+          }
+          if (this->rescaled) {
+            kx0x0=covar(this->x_r[k],this->x_r[k]);
+            for(size_t i=0;i<size-1;i++) {
+              kxx0[i]=covar(this->x_r[k],x2[i]);
+              ypred+=kxx0[i]*this->Kinvf[i];
+            }
+          } else {
+            kx0x0=covar((*this->px)[k],(*this->px)[k]);
+            for(size_t i=0;i<size-1;i++) {
+              kxx0[i]=covar((*this->px)[k],x2[i]);
+              ypred+=kxx0[i]*this->Kinvf[i];
+            }
+          }
+          
+          boost::numeric::ublas::axpy_prod(this->inv_KXX,kxx0,prod,true);
+          double sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
           //sigma=sqrt(this->inv_KXX(k,k));
           std::cout.setf(std::ios::showpos);
           std::cout << "k,x,yact,ypred,sigma: " << k << " "
@@ -752,6 +832,7 @@ namespace o2scl {
     static const size_t mode_loo_cv=1;
     /// Minus Log-marginal-likelihood
     static const size_t mode_max_lml=2;
+    static const size_t mode_loo_cv_new=3;
     /// Function to minimize (default \ref mode_loo_cv)
     size_t mode;
     ///@}

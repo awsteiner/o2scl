@@ -165,7 +165,6 @@ int main(void) {
   cout << "Here: " << exact << " " << res << endl;
   t.test_abs(exact,res,1.0e-4,"iko 3");
   cout << endl;
-  exit(-1);
 
   cout << iko.deriv(1.5) << " " << cos(1.5) << endl;
   cout << iko.deriv2(1.5) << " " << -sin(1.5) << endl;
