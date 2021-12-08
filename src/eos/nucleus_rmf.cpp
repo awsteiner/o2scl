@@ -867,8 +867,8 @@ void nucleus_rmf::center_mass_corr(double atot) {
     charge=charge+chden1[i]*x*x;
     
     if (!std::isfinite(chdenc[i])) chdenc[i]=0.0;
-    double line[3]={x,chden1[i],chdenc[i]};
-    chden_table->line_of_data(3,line);
+    vector<double> line={x,chden1[i],chdenc[i]};
+    chden_table->line_of_data(line.size(),line);
     
   }
 
