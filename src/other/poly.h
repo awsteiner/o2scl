@@ -3023,7 +3023,9 @@ namespace o2scl {
       
       fp_t u1, u2, u3;
       cub2.solve_r(1,a23,a13,a03,u1,u2,u3);
-      
+
+      // FIXME: if the cubic above has only one real root,
+      // then u2 will be uninitialized
       fp_t u4=u2;
       
       //---------------------------------------
