@@ -781,17 +781,17 @@ int nstar_hot::calc_eos_T(double T, double np_0) {
 
       h=hb+e+mu;
       
-      double line[12]={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,
+      vector<double> line={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,
                        prot.n,e.n,neut.kf,prot.kf,e.kf};
-      eost->line_of_data(12,line);
+      eost->line_of_data(line.size(),line);
 
     } else {
 
       h=hb+e;
 
-      double line[12]={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,
+      vector<double> line={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,
                        prot.n,e.n,neut.kf,prot.kf,e.kf};
-      eost->line_of_data(12,line);
+      eost->line_of_data(line.size(),line);
     }
     
     if (verbose>0) {

@@ -572,10 +572,8 @@ namespace o2scl {
 
     /// The integral of the covariance function
     double integ_covar(double x, double x1, double x2) {
-      exit(-1);
-      // AWS: This is probably wrong
-      //return 0.5*len*sqrt(o2scl_const::pi)*
-      //(gsl_sf_erf((x2-x)/len)+gsl_sf_erf((x-x1)/len));
+      return 0.5*len*sqrt(o2scl_const::pi)*
+      (gsl_sf_erf((x2-x)/len)+gsl_sf_erf((x-x1)/len));
     }
 
     /// Pointer to the user-specified minimizer

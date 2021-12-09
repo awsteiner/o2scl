@@ -32,8 +32,21 @@ using namespace o2scl_hdf;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 
+double f(double x, double mean, double sd) {
+  return (sin(1.0/(0.3+x))-mean)/sd;
+}
+
+double df(double x, double mean, double sd) {
+  return cos(1.0/(0.3+x))/sd/pow(0.3+x,2.0);
+}
+
+double d2f(double x, double mean, double sd) {
+  return 2.0*cos(1.0/(0.3+x))/sd/pow(0.3+x,3.0)-
+    sin(1.0/(0.3+x))/sd/pow(0.3+x,4.0);
+}
+
 double covar(double x, double y) {
-  return exp(-2.0*(x-y)*(x-y));
+  return exp(-2.0*(x-y)*(x-y)/0.1);
 }
 
 int main(void) {
@@ -46,23 +59,34 @@ int main(void) {
   // ---------------------------------------------------------------
   // Create test data
 
-  ubvector x(4), y(4);
-  for(size_t i=0;i<4;i++) {
-    x[i]=((double)i)+1.0;
+  static const size_t N=20;
+  ubvector x(N), y(N);
+  x[0]=0.0;
+  y[0]=f(x[0],0.0,1.0);
+  for(size_t i=1;i<N;i++) {
+    x[i]=x[i-1]+pow(((double)i)/40.0,2.0);
+    y[i]=f(x[i],0.0,1.0);
   }
-  y[0]=5.0;
-  y[1]=6.0;
-  y[2]=2.0;
-  y[3]=3.0;
+  
   cout << "Data: " << endl;
-  for(size_t i=0;i<4;i++) {
+  for(size_t i=0;i<N;i++) {
     cout.width(2);
-    cout << x[i] << " " <<y[i] << endl;
+    cout << x[i] << " ";
+    cout.setf(ios::showpos);
+    cout << y[i] << endl;
+    cout.setf(ios::showpos);
   }
   cout << endl;
 
+  double y_mean=vector_mean(y);
+  double y_sd=vector_stddev(y);
+  for(size_t i=0;i<N;i++) {
+    y[i]-=y_mean;
+    y[i]/=y_sd;
+  }
+  
   // ---------------------------------------------------------------
-  //
+  // First test the interp_krige class
 
   interp_krige<ubvector> ik;
   std::function<double(double,double)> f=covar;
@@ -71,26 +95,24 @@ int main(void) {
   // Test normal interpolation
 
   cout << "Normal interpolation:" << endl;
-  ik.set_covar(4,x,y,f);
-  t.test_rel(ik.eval(1.0),5.0,1.0e-6,"ik 1");
-  t.test_rel(ik.eval(1.5),5.5,0.1,"ik 2");
-  t.test_rel(ik.eval(2.5),4.0,0.1,"ik 3");
-  t.test_rel(ik.eval(3.5),3.0,0.5,"ik 4");
+  ik.set_covar(N,x,y,f);
+  t.test_rel(ik.eval(x[0]),y[0],0.2,"ik 1");
+  t.test_rel(ik.eval(x[N-1]),y[N-1],0.2,"ik 2");
+  t.test_rel(ik.eval((x[0]+x[1])/2.0),
+             (y[0]+y[1])/2.0,0.2,"ik 3");
   cout << endl;
-
-  prob_dens_gaussian pdg1=ik.gen_dist(1.0);
-  prob_dens_gaussian pdg2=ik.gen_dist(1.5);
+  exit(-1);
   
   // ---------------------------------------------------------------
   // Test normal interpolation with rescaling
 
   cout << "Normal interpolation with rescaling:" << endl;
-  ik.set_covar(4,x,y,f,true);
-  t.test_rel(ik.eval(1.0),5.0,1.0e-6,"ikr 1");
-  t.test_rel(ik.eval(1.5),5.5,0.1,"ikr 2");
-  t.test_rel(ik.eval(2.5),4.0,0.1,"ikr 3");
-  t.test_rel(ik.eval(3.5),3.0,0.5,"ikr 4");
+  ik.set_covar(N,x,y,f,true);
+  //t.test_rel(ik.eval(x[0]),y[0],0.2,"ikr 1");
+  //t.test_rel(ik.eval(x[N-1]),y[N-1],0.2,"ikr 2");
+  //t.test_rel(ik.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,0.2,"ikr 3");
   cout << endl;
+  //exit(-1);
   
   // ---------------------------------------------------------------
   // Test interpolation with noise
@@ -103,6 +125,9 @@ int main(void) {
   t.test_rel(ik.eval(3.5),3.0,0.7,"ik 8");
   cout << endl;
 
+  prob_dens_gaussian pdg1=ik.gen_dist(1.0);
+  prob_dens_gaussian pdg2=ik.gen_dist(1.5);
+  
   // ---------------------------------------------------------------
   // Test interpolation with noise and rescaling
   
