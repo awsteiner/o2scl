@@ -122,19 +122,10 @@ namespace o2scl {
     bool rescaled;
 
     /// Mean before rescaling
-    double mean_x;
-
-    /// Standard deviation before rescaling
-    double std_x;
-    
-    /// Mean before rescaling
     double mean_y;
 
     /// Standard deviation before rescaling
     double std_y;
-
-    /// Rescaled x vector
-    ubvector x_r;
 
     // Rescaled y vector
     ubvector y_r;
@@ -145,50 +136,21 @@ namespace o2scl {
     /// The matrix inversion object
     mat_inv_t mi;
     
-  public:
-    
-    interp_krige() {
-      this->min_size=2;
-      keep_matrix=true;
-    }
-    
-    virtual ~interp_krige() {}
-    
-    /// If true, keep \f$ K^{-1} \f$
-    bool keep_matrix;
-    
-    /// Initialize interpolation routine
-    virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
-      O2SCL_ERR2("Function set(size_t,vec_t,vec_t) unimplemented ",
-		 "in interp_krige.",o2scl::exc_eunimpl);
-      return;
-    }
-
     /** \brief Initialize interpolation routine, specifying derivatives
 	and integrals [not yet implemented]
     */
-    virtual int set_covar_di_noise(size_t n_dim, const vec_t &x,
-				   const vec_t &y, covar_func_t &fcovar,
-				   covar_func_t &fderiv,
-				   covar_func_t &fderiv2,
-				   covar_integ_t &finteg,
-				   double noise_var, bool rescale=false,
-                                   bool err_on_fail=true) {
+    virtual int set_covar_di_noise_internal
+      (size_t n_dim, const vec_t &x,
+       const vec_t &y, covar_func_t &fcovar,
+       covar_func_t *fderiv, covar_func_t *fderiv2,
+       covar_integ_t *finteg, double noise_var, bool rescale=false,
+       bool err_on_fail=true) {
 
       f=&fcovar;
-      fd=&fderiv;
-      fd2=&fderiv2;
-      fi=&finteg;
+      fd=fderiv;
+      fd2=fderiv2;
+      fi=finteg;
 
-      return set_covar_noise(n_dim,x,y,fcovar,noise_var,
-                             rescale,err_on_fail);
-    }
-    
-    /// Initialize interpolation routine
-    virtual int set_covar_noise(size_t n_dim, const vec_t &x, const vec_t &y,
-				covar_func_t &fcovar, double noise_var,
-                                bool rescale=false, bool err_on_fail=true) {
-      
       if (n_dim<this->min_size) {
 	O2SCL_ERR((((std::string)"Vector size, ")+szttos(n_dim)+", is less"+
 		   " than "+szttos(this->min_size)+" in interp_krige::"+
@@ -197,14 +159,10 @@ namespace o2scl {
 
       if (rescale==true) {
         rescaled=true;
-        mean_x=o2scl::vector_mean(n_dim,x);
-        std_x=o2scl::vector_stddev(n_dim,x,mean_x);
         mean_y=o2scl::vector_mean(n_dim,y);
         std_y=o2scl::vector_stddev(n_dim,y,mean_y);
-        x_r.resize(n_dim);
         y_r.resize(n_dim);
         for (size_t j=0;j<n_dim;j++) {
-          x_r[j]=(x[j]-mean_x)/std_x;
           y_r[j]=(y[j]-mean_y)/std_y;
         }
       } else {
@@ -220,32 +178,18 @@ namespace o2scl {
       
       // Construct the KXX matrix
       inv_KXX.resize(n_dim,n_dim);
-      if (rescaled) {
-        for(size_t irow=0;irow<n_dim;irow++) {
-          for(size_t icol=0;icol<n_dim;icol++) {
-            if (irow>icol) {
-              inv_KXX(irow,icol)=inv_KXX(icol,irow);
-            } else if (irow==icol) {
-              inv_KXX(irow,icol)=fcovar(x_r[irow],x_r[icol])+noise_var;
-            } else {
-              inv_KXX(irow,icol)=fcovar(x_r[irow],x_r[icol]);
-            }
-          }
-        }
-      } else {
-        for(size_t irow=0;irow<n_dim;irow++) {
-          for(size_t icol=0;icol<n_dim;icol++) {
-            if (irow>icol) {
-              inv_KXX(irow,icol)=inv_KXX(icol,irow);
-            } else if (irow==icol) {
-              inv_KXX(irow,icol)=fcovar(x[irow],x[icol])+noise_var;
-            } else {
-              inv_KXX(irow,icol)=fcovar(x[irow],x[icol]);
-            }
+      for(size_t irow=0;irow<n_dim;irow++) {
+        for(size_t icol=0;icol<n_dim;icol++) {
+          if (irow>icol) {
+            inv_KXX(irow,icol)=inv_KXX(icol,irow);
+          } else if (irow==icol) {
+            inv_KXX(irow,icol)=fcovar(x[irow],x[icol])+noise_var;
+          } else {
+            inv_KXX(irow,icol)=fcovar(x[irow],x[icol]);
           }
         }
       }
-      
+
       // Now invert KXX to get inv_KXX
       mi.invert_inplace(n_dim,inv_KXX);
 
@@ -273,6 +217,52 @@ namespace o2scl {
       return 0;
     }
     
+  public:
+    
+    interp_krige() {
+      this->min_size=2;
+      keep_matrix=true;
+      f=0;
+      fd=0;
+      fd2=0;
+      fi=0;
+    }
+    
+    virtual ~interp_krige() {}
+    
+    /// If true, keep \f$ K^{-1} \f$
+    bool keep_matrix;
+    
+    /// Initialize interpolation routine
+    virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
+      O2SCL_ERR2("Function set(size_t,vec_t,vec_t) unimplemented ",
+		 "in interp_krige.",o2scl::exc_eunimpl);
+      return;
+    }
+    
+    /// Initialize interpolation routine
+    virtual int set_covar_noise(size_t n_dim, const vec_t &x, const vec_t &y,
+				covar_func_t &fcovar, double noise_var,
+                                bool rescale=false, bool err_on_fail=true) {
+      return set_covar_di_noise_internal(n_dim,x,y,fcovar,0,0,0,noise_var,
+                                         rescale,err_on_fail);
+    }
+
+    /** \brief Initialize interpolation routine, specifying derivatives
+	and integrals [not yet implemented]
+    */
+    virtual int set_covar_di_noise
+      (size_t n_dim, const vec_t &x,
+       const vec_t &y, covar_func_t &fcovar,
+       covar_func_t &fderiv, covar_func_t &fderiv2,
+       covar_integ_t &finteg, double noise_var, bool rescale=false,
+       bool err_on_fail=true) {
+      
+      return set_covar_di_noise_internal(n_dim,x,y,fcovar,
+                                         &fderiv,&fderiv2,&finteg,noise_var,
+                                         rescale,err_on_fail);
+    }
+    
     /// Initialize interpolation routine
     virtual int set_covar(size_t n_dim, const vec_t &x, const vec_t &y,
 			  covar_func_t &fcovar, bool rescale=false,
@@ -285,21 +275,12 @@ namespace o2scl {
 
       double ret=0.0;
       
-      if (rescaled) {
-        
-        x0=(x0-mean_x)/std_x;
-        
-        for(size_t i=0;i<this->sz;i++) {
-          ret+=(*f)(x0,x_r[i])*Kinvf[i];
-        }
+      for(size_t i=0;i<this->sz;i++) {
+        ret+=(*f)(x0,(*this->px)[i])*Kinvf[i];
+      }
 
+      if (rescaled) {
         ret=ret*std_y+mean_y;
-        
-      } else {
-        
-        for(size_t i=0;i<this->sz;i++) {
-          ret+=(*f)(x0,(*this->px)[i])*Kinvf[i];
-        }
       }
 
       return ret;
@@ -307,24 +288,20 @@ namespace o2scl {
 
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
     virtual double deriv(double x0) const {
+
+      if (fd==0) {
+        O2SCL_ERR("Derivative not specified in interp_krige::deriv().",
+                  o2scl::exc_einval);
+      }
       
       double ret=0.0;
       
+      for(size_t i=0;i<this->sz;i++) {
+        ret+=(*fd)(x0,(*this->px)[i])*Kinvf[i];
+      }
+      
       if (rescaled) {
-        
-        x0=(x0-mean_x)/std_x;
-        
-        for(size_t i=0;i<this->sz;i++) {
-          ret+=(*fd)(x0,x_r[i])*Kinvf[i];
-        }
-
         ret=ret*std_y+mean_y;
-        
-      } else {
-        
-        for(size_t i=0;i<this->sz;i++) {
-          ret+=(*fd)(x0,(*this->px)[i])*Kinvf[i];
-        }
       }
 
       return ret;
@@ -335,14 +312,17 @@ namespace o2scl {
     */
     virtual double deriv2(double x0) const {
       
+      if (fd2==0) {
+        O2SCL_ERR("Derivative not specified in interp_krige::deriv().",
+                  o2scl::exc_einval);
+      }
+      
       double ret=0.0;
       
       if (rescaled) {
         
-        x0=(x0-mean_x)/std_x;
-        
         for(size_t i=0;i<this->sz;i++) {
-          ret+=(*fd2)(x0,x_r[i])*Kinvf[i];
+          ret+=(*fd2)(x0,(*this->px)[i])*Kinvf[i];
         }
 
         ret=ret*std_y+mean_y;
@@ -361,13 +341,15 @@ namespace o2scl {
     virtual double integ(double a, double b) const {
       double ret=0.0;
       
+      if (fd2==0) {
+        O2SCL_ERR("Integral not specified in interp_krige::deriv().",
+                  o2scl::exc_einval);
+      }
+      
       if (rescaled) {
         
-        a=(a-mean_x)/std_x;
-        b=(b-mean_x)/std_x;
-        
         for(size_t i=0;i<this->sz;i++) {
-          ret+=(*fi)(a,b,x_r[i])*Kinvf[i];
+          ret+=(*fi)(a,b,(*this->px)[i])*Kinvf[i];
         }
 
         ret=ret*std_y+mean_y;
@@ -398,10 +380,8 @@ namespace o2scl {
       
       if (rescaled) {
         
-        x0=(x0-mean_x)/std_x;
-        
         for(size_t i=0;i<this->sz;i++) {
-          kxx0[i]=(*f)(x0,x_r[i]);
+          kxx0[i]=(*f)(x0,(*this->px)[i]);
         }
 
       } else {
@@ -440,10 +420,8 @@ namespace o2scl {
       
       if (rescaled) {
         
-        x0=(x0-mean_x)/std_x;
-        
         for(size_t i=0;i<this->sz;i++) {
-          kxx0[i]=(*f)(x0,x_r[i]);
+          kxx0[i]=(*f)(x0,(*this->px)[i]);
           cent+=kxx0[i]*Kinvf[i];
         }
 
@@ -597,7 +575,7 @@ namespace o2scl {
           ubvector x2(size-1);
           ubvector y2(size-1);
           if (this->rescaled) {
-            o2scl::vector_copy_jackknife(this->x_r,k,x2);
+            o2scl::vector_copy_jackknife((*this->px),k,x2);
             o2scl::vector_copy_jackknife(this->y_r,k,y2);
           } else {
             o2scl::vector_copy_jackknife((*this->px),k,x2);
@@ -638,9 +616,9 @@ namespace o2scl {
             yact=(*this->py)[k];
           }
           if (this->rescaled) {
-            kx0x0=covar(this->x_r[k],this->x_r[k]);
+            kx0x0=covar((*this->px)[k],(*this->px)[k]);
             for(size_t i=0;i<size-1;i++) {
-              kxx0[i]=covar(this->x_r[k],x2[i]);
+              kxx0[i]=covar((*this->px)[k],x2[i]);
               ypred+=kxx0[i]*this->Kinvf[i];
             }
           } else {
@@ -677,7 +655,7 @@ namespace o2scl {
           ubvector x2(size-1);
           ubvector y2(size-1);
           if (this->rescaled) {
-            o2scl::vector_copy_jackknife(this->x_r,k,x2);
+            o2scl::vector_copy_jackknife((*this->px),k,x2);
             o2scl::vector_copy_jackknife(this->y_r,k,y2);
           } else {
             o2scl::vector_copy_jackknife((*this->px),k,x2);
@@ -718,9 +696,9 @@ namespace o2scl {
             yact=(*this->py)[k];
           }
           if (this->rescaled) {
-            kx0x0=covar(this->x_r[k],this->x_r[k]);
+            kx0x0=covar((*this->px)[k],(*this->px)[k]);
             for(size_t i=0;i<size-1;i++) {
-              kxx0[i]=covar(this->x_r[k],x2[i]);
+              kxx0[i]=covar((*this->px)[k],x2[i]);
               ypred+=kxx0[i]*this->Kinvf[i];
             }
           } else {
@@ -760,8 +738,8 @@ namespace o2scl {
               KXX(irow,icol)=KXX(icol,irow);
             } else {
               if (this->rescaled) {
-                KXX(irow,icol)=exp(-pow((this->x_r[irow]-
-                                         this->x_r[icol])/len,2.0)/2.0);
+                KXX(irow,icol)=exp(-pow(((*this->px)[irow]-
+                                         (*this->px)[icol])/len,2.0)/2.0);
               } else {
                 KXX(irow,icol)=exp(-pow(((*this->px)[irow]-
                                          (*this->px)[icol])/len,2.0)/2.0);
@@ -861,14 +839,10 @@ namespace o2scl {
 
       if (rescale==true) {
         this->rescaled=true;
-        this->mean_x=o2scl::vector_mean(size,x);
-        this->std_x=o2scl::vector_stddev(size,x,this->mean_x);
         this->mean_y=o2scl::vector_mean(size,y);
         this->std_y=o2scl::vector_stddev(size,y,this->mean_y);
-        this->x_r.resize(size);
         this->y_r.resize(size);
         for (size_t j=0;j<size;j++) {
-          this->x_r[j]=(x[j]-this->mean_x)/this->std_x;
           this->y_r[j]=(y[j]-this->mean_y)/this->std_y;
         }
       } else {
@@ -892,7 +866,7 @@ namespace o2scl {
         // Choose first interval as initial guess
         double len_opt;
         if (this->rescaled) {
-          len_opt=this->x_r[1]-this->x_r[0];
+          len_opt=(*this->px)[1]-(*this->px)[0];
         } else {
           len_opt=x[1]-x[0];
         }
@@ -929,7 +903,7 @@ namespace o2scl {
         std::vector<double> diff(size-1);
         if (this->rescaled) {
           for(size_t i=0;i<size-1;i++) {
-            diff[i]=fabs(this->x_r[i+1]-this->x_r[i]);
+            diff[i]=fabs((*this->px)[i+1]-(*this->px)[i]);
           }
         } else {
           for(size_t i=0;i<size-1;i++) {
@@ -942,7 +916,7 @@ namespace o2scl {
           <std::vector<double>,double>(size-1,diff)/3.0;
         double len_max;
         if (this->rescaled) {
-          len_max=fabs(this->x_r[size-1]-this->x_r[0])*3.0;
+          len_max=fabs((*this->px)[size-1]-(*this->px)[0])*3.0;
         } else {
           len_max=fabs(x[size-1]-x[0])*3.0;
         }
