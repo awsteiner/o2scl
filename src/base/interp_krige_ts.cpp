@@ -46,15 +46,16 @@ double d2f(double x, double sd) {
 }
 
 double covar(double x, double y) {
-  return exp(-2.0*(x-y)*(x-y));
+  return exp(-2.0*(x-y)*(x-y)/0.1);
 }
 
 double covard(double x, double y) {
-  return exp(-2.0*(x-y)*(x-y))*(x-y)*4.0;
+  return exp(-2.0*(x-y)*(x-y)/0.1)*(x-y)*4.0/0.1;
 }
 
 double covard2(double x, double y) {
-  return -4.0*exp(-2.0*(x-y)*(x-y))+16.0*exp(-2.0*(x-y)*(x-y))*(x-y)*(x-y);
+  return -4.0*exp(-2.0*(x-y)*(x-y)/0.1)/0.1+
+    16.0*exp(-2.0*(x-y)*(x-y)/0.1)*(x-y)*(x-y)/0.1/0.1;
 }
 
 double covari(double x, double a, double b) {
@@ -91,20 +92,30 @@ int main(void) {
   cout << endl;
 
   double y_mean=vector_mean(y);
-  double y_sd=vector_stddev(y);
+  double y_sd=vector_stddev(y,y_mean);
   for(size_t i=0;i<N;i++) {
     y[i]-=y_mean;
     y[i]/=y_sd;
   }
 
+  cout << "Rescaled data: " << endl;
+  for(size_t i=0;i<N;i++) {
+    cout.width(2);
+    cout << x[i] << " ";
+    cout.setf(ios::showpos);
+    cout << y[i] << endl;
+    cout.unsetf(ios::showpos);
+  }
+  cout << endl;
+
   // ---------------------------------------------------------------
   // First test the interp_krige class
 
   interp_krige<ubvector> ik;
-  std::function<double(double,double)> f=covar;
-  std::function<double(double,double)> fd=covard;
-  std::function<double(double,double)> fd2=covard2;
-  std::function<double(double,double,double)> fi=covari;
+  std::function<double(double,double)> fp=covar;
+  std::function<double(double,double)> fpd=covard;
+  std::function<double(double,double)> fpd2=covard2;
+  std::function<double(double,double,double)> fpi=covari;
 
   // ---------------------------------------------------------------
   // Test normal interpolation
@@ -113,7 +124,7 @@ int main(void) {
   // term is zero because of the matrix inversion
   
   cout << "Normal interpolation:" << endl;
-  ik.set_covar(N,x,y,f);
+  ik.set_covar(N,x,y,fp);
   double x0=ik.eval(x[0]);
   double x1=ik.eval(x[N-1]);
   double x2=ik.eval((x[0]+x[0])/2.0);
@@ -122,9 +133,9 @@ int main(void) {
   t.test_rel(ik.eval((x[0]+x[1])/2.0),
              (y[0]+y[1])/2.0,0.2,"ik 3");
   cout << endl;
-  exit(-1);
 
   // Show how extrapolation works
+  cout << "Test extrapolation:" << endl;
   t.test_rel(ik.eval(10.0),0.0,1.0e-10,"ik 4");
   t.test_rel(ik.sigma(10.0),1.0,1.0e-10,"ik 5");
   cout << endl;
@@ -133,7 +144,10 @@ int main(void) {
   // of higher quality
   
   cout << "Normal interpolation with noise:" << endl;
-  ik.set_covar_noise(N,x,y,f,1.0e-9);
+  ik.set_covar_noise(N,x,y,fp,1.0e-9);
+  double xn0=ik.eval(x[0]);
+  double xn1=ik.eval(x[N-1]);
+  double xn2=ik.eval((x[0]+x[0])/2.0);
   t.test_rel(ik.eval(x[0]),y[0],1.0e-4,"ik 6");
   t.test_rel(ik.eval(x[N-1]),y[N-1],1.0e-8,"ik 7");
   t.test_rel(ik.eval((x[0]+x[1])/2.0),
@@ -144,7 +158,7 @@ int main(void) {
 
   // Test derivative -- this is extremely inaccurate
   cout << "Derivatives:" << endl;
-  ik.set_covar_di_noise(N,x,y,f,fd,fd2,fi,1.0e-9);
+  ik.set_covar_di_noise(N,x,y,fp,fpd,fpd2,fpi,1.0e-9);
   t.test_rel(ik.deriv(x[0]),df(x[0],y_sd),1.0,"ik 11");
   t.test_rel(ik.deriv(x[N-1]),df(x[N-1],y_sd),10.0,"ik 12");
   t.test_rel(ik.deriv((x[0]+x[1])/2.0),
@@ -155,13 +169,13 @@ int main(void) {
   // Test normal interpolation with rescaling
   
   cout << "Normal interpolation with rescaling:" << endl;
-  ik.set_covar_noise(N,x,y,f,0.0,true);
+  ik.set_covar_noise(N,x,y,fp,0.0,true);
   t.test_rel(ik.eval(x[0]),y[0],0.2,"ikr 1");
   t.test_rel(ik.eval(x[N-1]),y[N-1],0.2,"ikr 2");
   t.test_rel(ik.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,0.2,"ikr 3");
-  t.test_rel(ik.eval(x[0]),x0,1.0e-6,"ikr vs. ik 1");
-  t.test_rel(ik.eval(x[N-1]),x1,1.0e-6,"ikr vs. ik 1");
-  t.test_rel(ik.eval((x[0]+x[1])/2.0),x2,1.0e-6,"ikr vs. ik 1");
+  t.test_rel(ik.eval(x[0]),x0,5.0e-2,"ikr vs. ik 1");
+  t.test_rel(ik.eval(x[N-1]),x1,5.0e-4,"ikr vs. ik 2");
+  t.test_rel(ik.eval((x[0]+x[1])/2.0),x2,2.0e-3,"ikr vs. ik 3");
   cout << endl;
 
   // Just make sure this compiles
@@ -172,14 +186,16 @@ int main(void) {
   // Test interpolation with noise and rescaling
   
   cout << "Noisy interpolation with rescaling:" << endl;
-  ik.set_covar_noise(N,x,y,f,1.0e-9,true);
-  t.test_rel(ik.eval(x[0]),y[0],0.2,"ikr 1");
-  t.test_rel(ik.eval(x[N-1]),y[N-1],0.2,"ikr 2");
-  t.test_rel(ik.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,0.2,"ikr 3");
+  ik.set_covar_noise(N,x,y,fp,1.0e-9,true);
+  t.test_rel(ik.eval(x[0]),y[0],0.2,"ikr 4");
+  t.test_rel(ik.eval(x[N-1]),y[N-1],0.2,"ikr 5");
+  t.test_rel(ik.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,0.2,"ikr 6");
+  t.test_rel(ik.eval(x[0]),xn0,5.0e-2,"ikr vs. ik 4");
+  t.test_rel(ik.eval(x[N-1]),xn1,5.0e-4,"ikr vs. ik 5");
+  t.test_rel(ik.eval((x[0]+x[1])/2.0),xn2,1.0e-2,"ikr vs. ik 6");
   cout << endl;
+  exit(-1);
 
-#ifdef O2SCL_NEVER_DEFINED
-  
   // ---------------------------------------------------------------
   // Test interp_krige_optim interface
 
@@ -187,6 +203,8 @@ int main(void) {
 
   iko.set(N,x,y);
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   cout << "Class interp_krige_optim with simple interface." << endl;
   exact=sin(1.01);
   res=iko.eval(1.01);

@@ -132,6 +132,8 @@ namespace o2scl {
       return find_dec(x0);
     }
 
+    /** \brief Const version of \ref find()
+     */
     size_t find_const(const double x0, size_t &cache) const {
 #if !O2SCL_NO_RANGE_CHECK
       if (cache>=n) {
@@ -168,6 +170,8 @@ namespace o2scl {
       return cache;
     }
 
+    /** \brief Const version of \ref find_inc()
+     */
     size_t find_inc_const(const double x0, size_t &cache) const {
       if (x0<(*v)[cache]) {
 	cache=vector_bsearch_inc<vec_t,double>(x0,*v,0,cache);
@@ -206,7 +210,9 @@ namespace o2scl {
 #endif
       return cache;
     }
-
+    
+    /** \brief Const version of \ref find_dec()
+     */
     size_t find_dec_const(const double x0, size_t &cache) const {
       if (x0>(*v)[cache]) {
 	cache=vector_bsearch_dec<vec_t,double>(x0,*v,0,cache);

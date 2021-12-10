@@ -72,10 +72,7 @@ namespace o2scl {
 
          - The cross validation method may need to be fixed to match,
            e.g. R&W.
-
-         - This class currently standardizes x in addition to y. This
-           may not be necessary.
-
+         
       \endverbatim
 
   */
@@ -137,7 +134,7 @@ namespace o2scl {
     mat_inv_t mi;
     
     /** \brief Initialize interpolation routine, specifying derivatives
-	and integrals [not yet implemented]
+	and integrals, internal version
     */
     virtual int set_covar_di_noise_internal
       (size_t n_dim, const vec_t &x,
@@ -152,9 +149,10 @@ namespace o2scl {
       fi=finteg;
 
       if (n_dim<this->min_size) {
-	O2SCL_ERR((((std::string)"Vector size, ")+szttos(n_dim)+", is less"+
-		   " than "+szttos(this->min_size)+" in interp_krige::"+
-		   "set().").c_str(),exc_einval);
+	O2SCL_ERR((((std::string)"Vector size, ")+szttos(n_dim)+
+                   ", is less than "+szttos(this->min_size)+
+                   " in interp_krige::"+"set().").c_str(),
+                  exc_einval);
       }
 
       if (rescale==true) {
@@ -169,9 +167,6 @@ namespace o2scl {
         rescaled=false;
       }
 
-      // Store pointer to covariance function
-      f=&fcovar;
-      
       // The Cholesky inversion function inverts a matrix in-place,
       // so we put the original KXX matrix in inv_KXX, knowing that
       // we will invert it later
@@ -319,19 +314,12 @@ namespace o2scl {
       
       double ret=0.0;
       
-      if (rescaled) {
-        
-        for(size_t i=0;i<this->sz;i++) {
-          ret+=(*fd2)(x0,(*this->px)[i])*Kinvf[i];
-        }
+      for(size_t i=0;i<this->sz;i++) {
+        ret+=(*fd2)(x0,(*this->px)[i])*Kinvf[i];
+      }
 
+      if (rescaled) {
         ret=ret*std_y+mean_y;
-        
-      } else {
-        
-        for(size_t i=0;i<this->sz;i++) {
-          ret+=(*fd2)(x0,(*this->px)[i])*Kinvf[i];
-        }
       }
 
       return ret;
@@ -346,19 +334,12 @@ namespace o2scl {
                   o2scl::exc_einval);
       }
       
+      for(size_t i=0;i<this->sz;i++) {
+        ret+=(*fi)(a,b,(*this->px)[i])*Kinvf[i];
+      }
+      
       if (rescaled) {
-        
-        for(size_t i=0;i<this->sz;i++) {
-          ret+=(*fi)(a,b,(*this->px)[i])*Kinvf[i];
-        }
-
         ret=ret*std_y+mean_y;
-        
-      } else {
-        
-        for(size_t i=0;i<this->sz;i++) {
-          ret+=(*fi)(a,b,(*this->px)[i])*Kinvf[i];
-        }
       }
 
       return ret;
@@ -378,17 +359,8 @@ namespace o2scl {
       ubvector kxx0(this->sz), prod(this->sz);
       double kx0x0=(*f)(x0,x0);
       
-      if (rescaled) {
-        
-        for(size_t i=0;i<this->sz;i++) {
-          kxx0[i]=(*f)(x0,(*this->px)[i]);
-        }
-
-      } else {
-        
-        for(size_t i=0;i<this->sz;i++) {
-          kxx0[i]=(*f)(x0,(*this->px)[i]);
-        }
+      for(size_t i=0;i<this->sz;i++) {
+        kxx0[i]=(*f)(x0,(*this->px)[i]);
       }
       
       boost::numeric::ublas::axpy_prod(inv_KXX,kxx0,prod,true);
@@ -418,28 +390,20 @@ namespace o2scl {
       ubvector kxx0(this->sz), prod(this->sz);
       double kx0x0=(*f)(x0,x0);
       
-      if (rescaled) {
-        
-        for(size_t i=0;i<this->sz;i++) {
-          kxx0[i]=(*f)(x0,(*this->px)[i]);
-          cent+=kxx0[i]*Kinvf[i];
-        }
-
-        cent=cent*std_y+mean_y;
-        
-      } else {
-        
-        for(size_t i=0;i<this->sz;i++) {
-          kxx0[i]=(*f)(x0,(*this->px)[i]);
-          cent+=kxx0[i]*Kinvf[i];
-        }
+      for(size_t i=0;i<this->sz;i++) {
+        kxx0[i]=(*f)(x0,(*this->px)[i]);
+        cent+=kxx0[i]*Kinvf[i];
       }
       
+      if (rescaled) {
+        cent=cent*std_y+mean_y;
+      }
+        
       boost::numeric::ublas::axpy_prod(inv_KXX,kxx0,prod,true);
       sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
 
-      std::cout << "x0,cent,sigma: " << x0 << " " << cent << " "
-                << sigma << std::endl;
+      //std::cout << "x0,cent,sigma: " << x0 << " " << cent << " "
+      //<< sigma << std::endl;
       
       if (rescaled) {
         sigma*=std_y;
