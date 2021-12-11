@@ -83,23 +83,34 @@ namespace o2scl {
     /// The vector size
     size_t n;
 
+#ifdef NEW_SV
+    /// Cache the search
+    size_t cache;
+#endif
+    
 #endif
 
   public:
 
     /** \brief Create a blank searching object
      */
-  search_vec() : v(0), n(0) {
+    search_vec() : v(0), n(0) {
+#ifdef NEW_SV
+      cache=0;
+#endif
     }
 
     /** \brief Create a searching object with vector \c x of size \c nn
      */
-  search_vec(size_t nn, const vec_t &x) : v(&x), n(nn) {
+    search_vec(size_t nn, const vec_t &x) : v(&x), n(nn) {
       if (nn<2) {
 	std::string str=((std::string)"Vector too small (size=")+
 	  o2scl::szttos(nn)+") in search_vec::search_vec().";
 	O2SCL_ERR(str.c_str(),exc_einval);
       }
+#ifdef NEW_SV
+      cache=nn/2;
+#endif
     }
 
     /** \brief Set the vector to be searched 
@@ -112,6 +123,9 @@ namespace o2scl {
       }
       v=&x;
       n=nn;
+#ifdef NEW_SV
+      cache=nn/2;
+#endif
     }
     
     /** \brief Search an increasing or decreasing vector for the
@@ -121,12 +135,16 @@ namespace o2scl {
 	increasing, and find_dec() if the data is decreasing. 
     */
     size_t find(const double x0) {
+#ifdef NEW_SV
+      if (cache>=n) cache=n/2;
+#else
       size_t cache=n/2;
 #if !O2SCL_NO_RANGE_CHECK
       if (cache>=n) {
 	O2SCL_ERR("Cache mis-alignment in search_vec::find().",
 		  exc_esanity);
       }
+#endif
 #endif
       if ((*v)[0]<(*v)[n-1]) return find_inc(x0);
       return find_dec(x0);
@@ -135,11 +153,15 @@ namespace o2scl {
     /** \brief Const version of \ref find()
      */
     size_t find_const(const double x0, size_t &cache) const {
+#ifdef NEW_SV
+      cache=n/2;
+#else
 #if !O2SCL_NO_RANGE_CHECK
       if (cache>=n) {
 	O2SCL_ERR("Cache mis-alignment in search_vec::find().",
 		  exc_esanity);
       }
+#endif
 #endif
       if ((*v)[0]<(*v)[n-1]) return find_inc_const(x0,cache);
       return find_dec_const(x0,cache);
@@ -148,14 +170,17 @@ namespace o2scl {
     /** \brief Search an increasing vector for the interval
 	containing <tt>x0</tt>
 
-	This function is a cached version of \ref vector_bsearch_inc()
-	, analogous to <tt>gsl_interp_accel_find()</tt>, except
-	that it does not internally record cache hits and 
-	misses. 
-
+	This function is a cached version of \ref
+	vector_bsearch_inc(), analogous to
+	<tt>gsl_interp_accel_find()</tt>, except that it does not
+	internally record cache hits and misses.
     */
     size_t find_inc(const double x0) {
+#ifdef NEW_SV
+      if (cache>=n) cache=n/2;
+#else
       size_t cache=n/2;
+#endif
       if (x0<(*v)[cache]) {
 	cache=vector_bsearch_inc<vec_t,double>(x0,*v,0,cache);
       } else if (x0>=(*v)[cache+1]) {
@@ -173,6 +198,9 @@ namespace o2scl {
     /** \brief Const version of \ref find_inc()
      */
     size_t find_inc_const(const double x0, size_t &cache) const {
+#ifdef NEW_SV
+      if (cache>=n) cache=n/2;
+#endif
       if (x0<(*v)[cache]) {
 	cache=vector_bsearch_inc<vec_t,double>(x0,*v,0,cache);
       } else if (x0>=(*v)[cache+1]) {
@@ -196,7 +224,11 @@ namespace o2scl {
 	equal. 
     */
     size_t find_dec(const double x0) {
+#ifdef NEW_SV
+      if (cache>=n) cache=n/2;
+#else
       size_t cache=n/2;
+#endif
       if (x0>(*v)[cache]) {
 	cache=vector_bsearch_dec<vec_t,double>(x0,*v,0,cache);
       } else if (x0<=(*v)[cache+1]) {
@@ -214,6 +246,9 @@ namespace o2scl {
     /** \brief Const version of \ref find_dec()
      */
     size_t find_dec_const(const double x0, size_t &cache) const {
+#ifdef NEW_SV
+      if (cache>=n) cache=n/2;
+#endif
       if (x0>(*v)[cache]) {
 	cache=vector_bsearch_dec<vec_t,double>(x0,*v,0,cache);
       } else if (x0<=(*v)[cache+1]) {
@@ -261,8 +296,8 @@ namespace o2scl {
 	if (x0>=(*v)[n-1]) {
 	  row=n-1;
 	} else {
-	  size_t cache=0;
-	  row=find_inc_const(x0,cache);
+	  size_t lcache=0;
+	  row=find_inc_const(x0,lcache);
 	  if (row<n-1 && fabs((*v)[row+1]-x0)<fabs((*v)[row]-x0)) row++;
 	}
     
@@ -273,8 +308,8 @@ namespace o2scl {
 	if (x0<=(*v)[n-1]) {
 	  row=n-1;
 	} else {
-	  size_t cache=0;
-	  row=find_dec_const(x0,cache);
+	  size_t lcache=0;
+	  row=find_dec_const(x0,lcache);
 	  if (row<n-1 && fabs((*v)[row+1]-x0)<fabs((*v)[row]-x0)) row++;
 	}
       }
@@ -302,9 +337,11 @@ namespace o2scl {
 
   protected:
 
+#ifndef NEW_SV    
     /** \brief Storage for the most recent index
-    */
+     */
     size_t cache;
+#endif
 
     /// The vector to be searched
     const vec_t *v;
@@ -318,7 +355,7 @@ namespace o2scl {
 
     /** \brief Create a blank searching object
      */
-  search_vec_ext() : v(0), n(0) {
+    search_vec_ext() : v(0), n(0) {
     }
 
     /** \brief Create a searching object for vector \c x of size 
@@ -333,7 +370,7 @@ namespace o2scl {
 	\future Ensure this is fully tested for vectors with
 	only one element.
     */
-  search_vec_ext(size_t nn, const vec_t &x) : v(&x), n(nn) {
+    search_vec_ext(size_t nn, const vec_t &x) : v(&x), n(nn) {
       if (nn<1) {
 	std::string str=((std::string)"Vector too small (n=")+
 	  o2scl::szttos(nn)+") in search_vec_ext::search_vec_ext().";
