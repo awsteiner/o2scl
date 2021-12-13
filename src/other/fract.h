@@ -424,7 +424,7 @@ namespace o2scl {
 
     /** \brief Generate an iteration fractal for the Mandelbrot set
         and store in the \ref o2scl::table3d object \c t3d
-     */
+    */
     template<class vec_t=ubvector, class fp_t=double>
     int itf_mandel(uniform_grid<fp_t> &gx, uniform_grid<fp_t> &gy,
                    size_t kmax, fp_t rmax, o2scl::table3d &t3d,

@@ -85,14 +85,14 @@ namespace o2scl {
 
       .. todo::
 
-      In class calc_utf8:
+         In class calc_utf8:
 
-      - Future: Add functions atan2, cot, csc, ceil, floor, max, min,
-      and maybe if?
+         - Future: Add functions atan2, cot, csc, ceil, floor, max, min,
+           and maybe if?
 
-      - Future: There is some code duplication across the
-      functions, especially with regard to conversion between UTF8
-      and char32, which could be removed.
+         - Future: There is some code duplication across the
+           functions, especially with regard to conversion between UTF8
+           and char32, which could be removed.
 
       \endverbatim
   */

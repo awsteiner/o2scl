@@ -402,9 +402,6 @@ namespace o2scl {
       boost::numeric::ublas::axpy_prod(inv_KXX,kxx0,prod,true);
       sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
 
-      //std::cout << "x0,cent,sigma: " << x0 << " " << cent << " "
-      //<< sigma << std::endl;
-      
       if (rescaled) {
         sigma*=std_y;
       }
@@ -799,6 +796,7 @@ namespace o2scl {
     static const size_t mode_loo_cv=1;
     /// Minus Log-marginal-likelihood
     static const size_t mode_max_lml=2;
+    /// New leave-one-out cross validation method
     static const size_t mode_loo_cv_new=3;
     /// Function to minimize (default \ref mode_loo_cv)
     size_t mode;

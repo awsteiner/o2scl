@@ -214,17 +214,17 @@ namespace o2scl {
 
       .. todo:: 
 
-      In class table:
+         In class table:
 
-      - Future: Create a sort_column_names() or a function to 
-      arbitrarily rearrange the columns
+         - Future: Create a sort_column_names() or a function to 
+           arbitrarily rearrange the columns
 
-      - The present structure,
-      std::map<std::string,col,string_comp> atree and \c
-      std::vector<aiter> alist; could be replaced with \c
-      std::vector<col> list and \c std::map<std::string,int> tree
-      where the map just stores the index of the the column in the
-      list.
+         - The present structure,
+           std::map<std::string,col,string_comp> atree and \c
+           std::vector<aiter> alist; could be replaced with \c
+           std::vector<col> list and \c std::map<std::string,int> tree
+           where the map just stores the index of the the column in
+           the list.
 
       \endverbatim
   */
