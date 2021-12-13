@@ -117,7 +117,7 @@
     <member refid="namespaceo2scl_1a98c17c6473daf7ac1d9062bf284b0c24" kind="function"><name>is_number</name></member>
     <member refid="namespaceo2scl_1abe58dd1598278528cb53b8d14e565a7e" kind="function"><name>find_constant</name></member>
     <member refid="namespaceo2scl_1ac95052c98f67c2d4516c1197da0061da" kind="function"><name>function_to_double</name></member>
-    <member refid="namespaceo2scl_1a3636e1a6fefa8f2b46b0e6262bb2a278" kind="function"><name>function_to_double_nothrow</name></member>
+    <member refid="namespaceo2scl_1adf5b5867a26b359f016c5141e4d54875" kind="function"><name>function_to_double_nothrow</name></member>
     <member refid="namespaceo2scl_1a2cf0e95a9795f06ebf7089d06472b29b" kind="function"><name>function_to_double_nothrow</name></member>
     <member refid="namespaceo2scl_1ade45b50d37f9cb625a865f9176bcdf96" kind="function"><name>split_string</name></member>
     <member refid="namespaceo2scl_1a66cc18968d7fa23b93660694068824cf" kind="function"><name>split_string_delim</name></member>

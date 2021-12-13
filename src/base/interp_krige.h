@@ -92,7 +92,7 @@ namespace o2scl {
     typedef boost::numeric::ublas::vector<double> ubvector;
     
   protected:
-
+    
     /** \brief Inverse covariance matrix times function vector
      */
     ubvector Kinvf;
@@ -137,9 +137,8 @@ namespace o2scl {
 	and integrals, internal version
     */
     virtual int set_covar_di_noise_internal
-      (size_t n_dim, const vec_t &x,
-       const vec_t &y, covar_func_t &fcovar,
-       covar_func_t *fderiv, covar_func_t *fderiv2,
+      (size_t n_dim, const vec_t &x, const vec_t &y,
+       covar_func_t &fcovar, covar_func_t *fderiv, covar_func_t *fderiv2,
        covar_integ_t *finteg, double noise_var, bool rescale=false,
        bool err_on_fail=true) {
 
@@ -201,6 +200,7 @@ namespace o2scl {
       }
       
       if (!keep_matrix) {
+        // If not needed, free the associated memory
         inv_KXX.resize(0,0);
       }
       
@@ -329,13 +329,13 @@ namespace o2scl {
     virtual double integ(double a, double b) const {
       double ret=0.0;
       
-      if (fd2==0) {
+      if (fi==0) {
         O2SCL_ERR("Integral not specified in interp_krige::deriv().",
                   o2scl::exc_einval);
       }
       
       for(size_t i=0;i<this->sz;i++) {
-        ret+=(*fi)(a,b,(*this->px)[i])*Kinvf[i];
+        ret+=(*fi)((*this->px)[i],a,b)*Kinvf[i];
       }
       
       if (rescaled) {
@@ -501,21 +501,48 @@ namespace o2scl {
       return exp(-(x1-x2)*(x1-x2)/len/len/2.0);
     }
 
-    /// The derivative of the covariance function
+    /** \brief The derivative of the covariance function
+     */
     double deriv_covar(double x1, double x2) {
       return -exp(-(x1-x2)*(x1-x2)/len/len/2.0)/len/len*(x1-x2);
     }
-
+    
     /// The second derivative of the covariance function
     double deriv2_covar(double x1, double x2) {
       return ((x1-x2)*(x1-x2)-len*len)*
         exp(-(x1-x2)*(x1-x2)/len/len/2.0)/len/len/len/len;
     }
 
-    /// The integral of the covariance function
+    /** \brief The integral of the covariance function
+        
+        The integral of the function is
+        \f[
+        \int_a^b f(x) dx = \sum_i A_i \int_a^b C(x,x_i) dx
+        \f]
+        where \f$ A_i = (K^{-1})_{ij} f_j \f$. To compute
+        the integral we use
+        \f[
+        \int_a^b C(x,x_i) dx = 
+        \int_{a+x_i}^{b+x_i} \exp \left( - \frac{x^2}{2 L^2} \right) dx = 
+        \int_{(a+x_i)/(L\sqrt{2})}^{(b+x_i)/(L\sqrt{2})} 
+        L \sqrt{2} \exp \left( - y^2 \right) dy 
+        \f]
+        But 
+        \f[
+        \mathrm{erf}(x) \equiv \frac{2}{\sqrt{\pi}} \int_0^{x} e^{-t^2}
+        \f]
+        so
+        \f[
+        \int_a^b C(x,x_i) dx = 
+        L \frac{\sqrt{\pi}}{\sqrt{2}} \left[ 
+        \mathrm{erf}\left( \frac{b+x_i}{L \sqrt{2}} \right) - 
+        \mathrm{erf}\left( \frac{a+x_i}{L \sqrt{2}} \right) \right]
+        \f]
+     */
     double integ_covar(double x, double x1, double x2) {
-      return 0.5*len*sqrt(o2scl_const::pi)*
-      (gsl_sf_erf((x2-x)/len)+gsl_sf_erf((x-x1)/len));
+      return len*sqrt(o2scl_const::pi/2.0)*
+        (gsl_sf_erf((x2+x)/len/sqrt(2.0))-
+         gsl_sf_erf((x1+x)/len/sqrt(2.0)));
     }
 
     /// Pointer to the user-specified minimizer

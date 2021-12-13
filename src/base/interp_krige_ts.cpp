@@ -59,7 +59,9 @@ double covard2(double x, double y) {
 }
 
 double covari(double x, double a, double b) {
-  return exp(-2.0*(x-a)*(x-a));
+  return 0.1*sqrt(o2scl_const::pi/2.0)*
+    (gsl_sf_erf((b+x)/0.1/sqrt(2.0))-
+     gsl_sf_erf((a+x)/0.1/sqrt(2.0)));
 }
 
 int main(void) {
@@ -125,9 +127,9 @@ int main(void) {
   
   cout << "Normal interpolation:" << endl;
   ik.set_covar(N,x,y,fp);
-  double x0=ik.eval(x[0]);
-  double x1=ik.eval(x[N-1]);
-  double x2=ik.eval((x[0]+x[0])/2.0);
+  double xi0=ik.eval(x[0]);
+  double xi1=ik.eval(x[N-1]);
+  double xi2=ik.eval((x[0]+x[0])/2.0);
   t.test_rel(ik.eval(x[0]),y[0],0.2,"ik 1");
   t.test_rel(ik.eval(x[N-1]),y[N-1],0.2,"ik 2");
   t.test_rel(ik.eval((x[0]+x[1])/2.0),
@@ -173,9 +175,9 @@ int main(void) {
   t.test_rel(ik.eval(x[0]),y[0],0.2,"ikr 1");
   t.test_rel(ik.eval(x[N-1]),y[N-1],0.2,"ikr 2");
   t.test_rel(ik.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,0.2,"ikr 3");
-  t.test_rel(ik.eval(x[0]),x0,5.0e-2,"ikr vs. ik 1");
-  t.test_rel(ik.eval(x[N-1]),x1,5.0e-4,"ikr vs. ik 2");
-  t.test_rel(ik.eval((x[0]+x[1])/2.0),x2,2.0e-3,"ikr vs. ik 3");
+  t.test_rel(ik.eval(x[0]),xi0,5.0e-2,"ikr vs. ik 1");
+  t.test_rel(ik.eval(x[N-1]),xi1,1.0e-12,"ikr vs. ik 2");
+  t.test_rel(ik.eval((x[0]+x[1])/2.0),xi2,2.0e-3,"ikr vs. ik 3");
   cout << endl;
 
   // Just make sure this compiles
@@ -190,18 +192,72 @@ int main(void) {
   t.test_rel(ik.eval(x[0]),y[0],0.2,"ikr 4");
   t.test_rel(ik.eval(x[N-1]),y[N-1],0.2,"ikr 5");
   t.test_rel(ik.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,0.2,"ikr 6");
-  t.test_rel(ik.eval(x[0]),xn0,5.0e-2,"ikr vs. ik 4");
-  t.test_rel(ik.eval(x[N-1]),xn1,5.0e-4,"ikr vs. ik 5");
+  t.test_rel(ik.eval(x[0]),xn0,5.0e-7,"ikr vs. ik 4");
+  t.test_rel(ik.eval(x[N-1]),xn1,5.0e-12,"ikr vs. ik 5");
   t.test_rel(ik.eval((x[0]+x[1])/2.0),xn2,1.0e-2,"ikr vs. ik 6");
   cout << endl;
-  exit(-1);
 
+  // ---------------------------------------------------------------
+  // More precise data to test derivatives and integrals
+
+  static const size_t N2=400;
+  ubvector x2(N2), y2(N2);
+  for(size_t i=0;i<N2;i++) {
+    x2[i]=((double)i)*1.55/399.0;
+    y2[i]=f(x2[i],0.0,1.0);
+  }
+  double y2_mean=vector_mean(y2);
+  double y2_sd=vector_stddev(y2,y2_mean);
+  for(size_t i=0;i<N2;i++) {
+    y2[i]-=y2_mean;
+    y2[i]/=y2_sd;
+  }
+
+  cout << "Test derivatives and integrals:" << endl;
+  
+  ik.set_covar_di_noise(N,x2,y2,fp,fpd,fpd2,fpi,1.0e-12);
+  t.test_rel(ik.deriv(x2[0]),df(x2[0],y2_sd),4.0e-4,"der 11");
+  t.test_rel(ik.deriv(x2[N-1]),df(x2[N-1],y2_sd),1.0e-4,"der 12");
+  t.test_rel(ik.deriv((x2[0]+x2[1])/2.0),
+             df((x2[0]+x2[1])/2.0,y2_sd),1.0e-4,"der 13");
+  
+  t.test_rel(ik.deriv2(x2[0]),d2f(x2[0],y2_sd),0.05,"der2 11");
+  t.test_rel(ik.deriv2(x2[N-1]),d2f(x2[N-1],y2_sd),0.01,"der2 12");
+  t.test_rel(ik.deriv2((x2[0]+x2[1])/2.0),
+             d2f((x2[0]+x2[1])/2.0,y2_sd),0.02,"der2 13");
+
+  //t.test_rel(ik.integ(0.0,0.5),0.396839,1.0,"integ 1");
+  //t.test_rel(ik.integ(0.5,1.0),0.408849,1.0,"integ 2");
+  //t.test_rel(ik.integ(1.0,1.5),0.302358,1.0,"integ 3");
+  cout << endl;
+
+  cout << "Test derivatives and integrals with rescaling:" << endl;
+  
+  ik.set_covar_di_noise(N,x2,y2,fp,fpd,fpd2,fpi,1.0e-12,true);
+  /*
+  t.test_rel(ik.deriv(x2[0]),df(x2[0],y2_sd),4.0e-4,"der 11");
+  t.test_rel(ik.deriv(x2[N-1]),df(x2[N-1],y2_sd),1.0e-4,"der 12");
+  t.test_rel(ik.deriv((x2[0]+x2[1])/2.0),
+             df((x2[0]+x2[1])/2.0,y2_sd),1.0e-4,"der 13");
+  
+  t.test_rel(ik.deriv2(x2[0]),d2f(x2[0],y2_sd),0.05,"der2 11");
+  t.test_rel(ik.deriv2(x2[N-1]),d2f(x2[N-1],y2_sd),0.01,"der2 12");
+  t.test_rel(ik.deriv2((x2[0]+x2[1])/2.0),
+             d2f((x2[0]+x2[1])/2.0,y2_sd),0.02,"der2 13");
+
+  t.test_rel(ik.integ(0.0,0.5),0.396839,1.0,"integ 4");
+  t.test_rel(ik.integ(0.5,1.0),0.408849,1.0,"integ 5");
+  t.test_rel(ik.integ(1.0,1.5),0.302358,1.0,"integ 6");
+  cout << endl;
+  exit(-1);
+  */
+  
   // ---------------------------------------------------------------
   // Test interp_krige_optim interface
 
   interp_krige_optim<ubvector> iko;
 
-  iko.set(N,x,y);
+  //iko.set(N,x,y);
 
 #ifdef O2SCL_NEVER_DEFINED
   
