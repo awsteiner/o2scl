@@ -281,17 +281,17 @@ int nstar_cold::calc_eos(double np_0) {
       //neut.kf,prot.kf,e.kf,fcs2,denom,numer,mu.mu,mu.n,mu.kf};
       //eost->line_of_data(18,line);
 
-      double line[15]={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,prot.n,e.n,
-		       neut.kf,prot.kf,e.kf,mu.mu,mu.n,mu.kf};
-      eost->line_of_data(15,line);
+      vector<double> line={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,
+        prot.n,e.n,neut.kf,prot.kf,e.kf,mu.mu,mu.n,mu.kf};
+      eost->line_of_data(line.size(),line);
 
     } else {
 
       h=hb+e;
 
-      double line[12]={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,prot.n,e.n,
-		       neut.kf,prot.kf,e.kf};
-      eost->line_of_data(12,line);
+      vector<double> line={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,
+        prot.n,e.n,neut.kf,prot.kf,e.kf};
+      eost->line_of_data(line.size(),line);
 
     }
     
