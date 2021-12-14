@@ -69,8 +69,6 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-#ifdef O2SCL_NEW_BOOST_INTEGRATION
-
   inte_tanh_sinh_boost<funct,61> itsb;
   inte_exp_sinh_boost<funct,61> iesb;
   inte_sinh_sinh_boost<funct,61> issb;
@@ -184,8 +182,6 @@ int main(void) {
   t.test_rel_boost<cpp_dec_float_50>(ans_cdf,exact_cdf,1.0e-40,
 				     "tanh_sinh test cdf");
   cout << endl;
-  
-#endif
   
 #endif
   

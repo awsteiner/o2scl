@@ -29,17 +29,13 @@
 
 #include <cmath>
 
-#if defined(O2SCL_NEW_BOOST_INTEGRATION) || defined(DOXYGEN)
-
 #include <boost/math/quadrature/tanh_sinh.hpp>
 #include <boost/math/quadrature/exp_sinh.hpp>
 #include <boost/math/quadrature/sinh_sinh.hpp>
 
 #include <o2scl/inte.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Tanh-sinh integration class (Boost)
       
@@ -75,15 +71,14 @@ namespace o2scl {
 			  fp_t &res, fp_t &err) {
       // Dropping the tolerance by a factor of 10 seems to help
       // the boost integrator succeed.
-      size_t levels;
-      res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm,&levels);
+      res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm,&this->levels);
       if (err>this->tol_rel) {
         if (this->err_nonconv==true) {
           std::cout << "Function inte_tanh_sinh_boost::integ_err() failed."
                     << std::endl;
           std::cout << "Values err,tol_rel,L1norm,levels,max: "
                     << err << " " << this->tol_rel << " "
-                    << L1norm << " " << levels << " " << max_refine
+                    << L1norm << " " << this->levels << " " << max_refine
                     << std::endl;
         }
         O2SCL_CONV2_RET("Failed to achieve tolerance in ",
@@ -286,11 +281,6 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
-
-// End of #if defined(O2SCL_NEW_BOOST_INTEGRATION) || defined(DOXYGEN)
-#endif
 
 #endif

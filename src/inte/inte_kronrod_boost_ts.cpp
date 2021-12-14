@@ -22,9 +22,7 @@
 */
 #include <o2scl/test_mgr.h>
 #include <o2scl/funct.h>
-#ifdef O2SCL_NEW_BOOST_INTEGRATION
 #include <o2scl/inte_kronrod_boost.h>
-#endif
 
 #ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
@@ -60,8 +58,6 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-#ifdef O2SCL_NEW_BOOST_INTEGRATION
-  
   {
     inte_kronrod_boost<funct,61> ikb;
     
@@ -114,7 +110,6 @@ int main(void) {
     t.test_rel_boost<cpp_dec_float_50>(ans,exact,1.0e-30,"qag test");
   }
 
-#endif
 #endif
   
   t.report();
