@@ -1852,6 +1852,11 @@ namespace o2scl {
   interp_vec(size_t n, const vec_t &x, 
              const vec2_t &y, size_t interp_type=itp_cspline) {
     
+    if (n==0) {
+      O2SCL_ERR("Cannot give vector of length 0 to interp_vec::interp_vec().",
+                o2scl::exc_einval);
+    }
+    
     if (x[0]==x[n-1]) {
       O2SCL_ERR((((std::string)"Vector endpoints equal (value=")+
                  o2scl::dtos(x[0])+") in interp_vec()::"+
@@ -1902,6 +1907,11 @@ namespace o2scl {
    */
   void set(size_t n, const vec_t &x, 
            const vec2_t &y, size_t interp_type) {
+
+    if (n==0) {
+      O2SCL_ERR("Cannot give vector of length 0 to interp_vec::set().",
+                o2scl::exc_einval);
+    }
     
     if (x[0]==x[n-1]) {
       O2SCL_ERR((((std::string)"Vector endpoints equal (value=")+
