@@ -1909,7 +1909,7 @@ namespace o2scl {
                  "interp_vec().").c_str(),exc_einval);
     }
 
-    delete itp;
+    if (itp!=0) delete itp;
     if (interp_type==itp_linear) {
       itp=new interp_linear<vec_t,vec2_t>;
     } else if (interp_type==itp_cspline) {
