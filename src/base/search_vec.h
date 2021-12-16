@@ -83,7 +83,7 @@ namespace o2scl {
     /// The vector size
     size_t n;
 
-#ifdef NEW_SV
+#ifdef O2SCL_SV_CACHE
     /// Cache the search
     size_t cache;
 #endif
@@ -95,7 +95,7 @@ namespace o2scl {
     /** \brief Create a blank searching object
      */
     search_vec() : v(0), n(0) {
-#ifdef NEW_SV
+#ifdef O2SCL_SV_CACHE
       cache=0;
 #endif
     }
@@ -108,7 +108,7 @@ namespace o2scl {
 	  o2scl::szttos(nn)+") in search_vec::search_vec().";
 	O2SCL_ERR(str.c_str(),exc_einval);
       }
-#ifdef NEW_SV
+#ifdef O2SCL_SV_CACHE
       cache=nn/2;
 #endif
     }
@@ -123,7 +123,7 @@ namespace o2scl {
       }
       v=&x;
       n=nn;
-#ifdef NEW_SV
+#ifdef O2SCL_SV_CACHE
       cache=nn/2;
 #endif
     }
@@ -135,7 +135,7 @@ namespace o2scl {
 	increasing, and find_dec() if the data is decreasing. 
     */
     size_t find(const double x0) {
-#ifdef NEW_SV
+#ifdef O2SCL_SV_CACHE
       if (cache>=n) cache=n/2;
 #else
       size_t cache=n/2;
@@ -152,19 +152,15 @@ namespace o2scl {
 
     /** \brief Const version of \ref find()
      */
-    size_t find_const(const double x0, size_t &cache) const {
-#ifdef NEW_SV
-      cache=n/2;
-#else
+    size_t find_const(const double x0, size_t &lcache) const {
 #if !O2SCL_NO_RANGE_CHECK
-      if (cache>=n) {
+      if (lcache>=n) {
 	O2SCL_ERR("Cache mis-alignment in search_vec::find().",
 		  exc_esanity);
       }
 #endif
-#endif
-      if ((*v)[0]<(*v)[n-1]) return find_inc_const(x0,cache);
-      return find_dec_const(x0,cache);
+      if ((*v)[0]<(*v)[n-1]) return find_inc_const(x0,lcache);
+      return find_dec_const(x0,lcache);
     }
 
     /** \brief Search an increasing vector for the interval
@@ -176,7 +172,7 @@ namespace o2scl {
 	internally record cache hits and misses.
     */
     size_t find_inc(const double x0) {
-#ifdef NEW_SV
+#ifdef O2SCL_SV_CACHE
       if (cache>=n) cache=n/2;
 #else
       size_t cache=n/2;
@@ -197,22 +193,19 @@ namespace o2scl {
 
     /** \brief Const version of \ref find_inc()
      */
-    size_t find_inc_const(const double x0, size_t &cache) const {
-#ifdef NEW_SV
-      if (cache>=n) cache=n/2;
-#endif
-      if (x0<(*v)[cache]) {
-	cache=vector_bsearch_inc<vec_t,double>(x0,*v,0,cache);
-      } else if (x0>=(*v)[cache+1]) {
-	cache=vector_bsearch_inc<vec_t,double>(x0,*v,cache,n-1);
+    size_t find_inc_const(const double x0, size_t &lcache) const {
+      if (x0<(*v)[lcache]) {
+	lcache=vector_bsearch_inc<vec_t,double>(x0,*v,0,lcache);
+      } else if (x0>=(*v)[lcache+1]) {
+	lcache=vector_bsearch_inc<vec_t,double>(x0,*v,lcache,n-1);
       }
 #if !O2SCL_NO_RANGE_CHECK
-      if (cache>=n) {
+      if (lcache>=n) {
 	O2SCL_ERR("Cache mis-alignment in search_vec::find_inc().",
 		  exc_esanity);
       }
 #endif
-      return cache;
+      return lcache;
     }
     
     /** \brief Search a decreasing vector for the interval
@@ -224,7 +217,7 @@ namespace o2scl {
 	equal. 
     */
     size_t find_dec(const double x0) {
-#ifdef NEW_SV
+#ifdef O2SCL_SV_CACHE
       if (cache>=n) cache=n/2;
 #else
       size_t cache=n/2;
@@ -245,22 +238,19 @@ namespace o2scl {
     
     /** \brief Const version of \ref find_dec()
      */
-    size_t find_dec_const(const double x0, size_t &cache) const {
-#ifdef NEW_SV
-      if (cache>=n) cache=n/2;
-#endif
-      if (x0>(*v)[cache]) {
-	cache=vector_bsearch_dec<vec_t,double>(x0,*v,0,cache);
-      } else if (x0<=(*v)[cache+1]) {
-	cache=vector_bsearch_dec<vec_t,double>(x0,*v,cache,n-1);
+    size_t find_dec_const(const double x0, size_t &lcache) const {
+      if (x0>(*v)[lcache]) {
+	lcache=vector_bsearch_dec<vec_t,double>(x0,*v,0,lcache);
+      } else if (x0<=(*v)[lcache+1]) {
+	lcache=vector_bsearch_dec<vec_t,double>(x0,*v,lcache,n-1);
       }
 #if !O2SCL_NO_RANGE_CHECK
-      if (cache>=n) {
+      if (lcache>=n) {
 	O2SCL_ERR("Cache mis-alignment in search_vec::find_dec().",
 		  exc_esanity);
       }
 #endif
-      return cache;
+      return lcache;
     }
 
     /** \brief Find the index of x0 in the ordered array \c x 
@@ -337,7 +327,7 @@ namespace o2scl {
 
   protected:
 
-#ifndef NEW_SV    
+#ifndef O2SCL_SV_CACHE    
     /** \brief Storage for the most recent index
      */
     size_t cache;
