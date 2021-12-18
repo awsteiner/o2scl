@@ -262,14 +262,9 @@ namespace o2scl {
       t3d.new_slice("it");
       t3d.set_slice_all("it",0.0);
 
-      vec_t z(2), c(2);
-
-      // AWS 5/6/21: for some reason the parallelization of this
-      // causes problems at the moment.
-      
-      //#ifdef O2SCL_OPENMP
-      //#pragma omp parallel for
-      //#endif
+#ifdef O2SCL_OPENMP
+#pragma omp parallel for 
+#endif
       for(size_t i=0;i<t3d.get_nx();i++) {
 
 	if (verbose>0 && (i+1)%10==0) {
@@ -282,36 +277,25 @@ namespace o2scl {
 		    << std::endl;
 #endif
 	}
-	
+
 	for(size_t j=0;j<t3d.get_ny();j++) {
+
+          vec_t z(2), c(2);
 
 	  z[0]=0.0;
 	  z[1]=0.0;
           c[0]=gx[i];
           c[1]=gy[j];
-          /*
-            std::cout.setf(std::ios::showpos);
-            std::cout << i << "." << j << std::endl;
-            std::cout << z[0] << " " << z[1] << " " << c[0] << " " << c[1]
-            << std::endl;
-          */
 
 	  bool found=false;
 	  
 	  for(size_t k=0;k<kmax && found==false;k++) {
 
             f(z,c);
-            /*
-              std::cout << k << " " << z[0] << " " << z[1] << " "
-              << c[0] << " " << c[1]
-              << std::endl;
-            */
-
+            
             if (z[0]*z[0]+z[1]*z[1]>rmax*rmax) {
 	      found=true;
 	      t3d.set(i,j,"it",k);
-              if (k<min) min=k;
-              if (k>max) max=k;
 	    }
 
 	  }
@@ -319,14 +303,21 @@ namespace o2scl {
 	  // In the case of neither convergence nor divergence
 	  if (found==false) {
 	    t3d.set(i,j,"it",kmax);
-            if (kmax<min) min=kmax;
-            if (kmax>max) max=kmax;
 	  }
 
 	  // Proceed to next point
 	}
       }
 
+      // Set min and max outside of parallel region 
+      for(size_t i=0;i<t3d.get_nx();i++) {
+	for(size_t j=0;j<t3d.get_ny();j++) {
+          size_t k=(size_t)(t3d.get(i,j,"it")*(1.0+1.0e-11));
+          if (k<min) min=k;
+          if (k>max) max=k;
+        }
+      }
+      
       return 0;
     }
 

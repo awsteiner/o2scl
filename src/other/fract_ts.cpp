@@ -46,48 +46,56 @@ int main(void) {
   table3d t3d;
   std::vector<double> roots_x, roots_y, min, max;
 
-  roots_x.push_back(-1.0);
-  roots_x.push_back(1.0);
-  roots_x.push_back(0.0);
-  roots_x.push_back(0.0);
-  roots_y.push_back(0.0);
-  roots_y.push_back(0.0);
-  roots_y.push_back(-1.0);
-  roots_y.push_back(1.0);
-  f.nrf(nrf_z4m1,grid,grid,1000,1.0e9,t3d,roots_x,roots_y,min,max);
-
   hdf_file hf;
-  hf.open_or_create("nrf.o2");
-  hdf_output(hf,(const table3d &)t3d,"nrf");
-  hf.close();
-
-  cout << "roots: ";
-  cout.setf(ios::showpos);
-  for(size_t i=0;i<roots_x.size();i++) {
-    if (i!=0) {
-      cout << "       ";
+  
+  if (true) {
+    roots_x.push_back(-1.0);
+    roots_x.push_back(1.0);
+    roots_x.push_back(0.0);
+    roots_x.push_back(0.0);
+    roots_y.push_back(0.0);
+    roots_y.push_back(0.0);
+    roots_y.push_back(-1.0);
+    roots_y.push_back(1.0);
+    f.nrf(nrf_z4m1,grid,grid,1000,1.0e9,t3d,roots_x,roots_y,min,max);
+    
+    hf.open_or_create("nrf.o2");
+    hdf_output(hf,(const table3d &)t3d,"nrf");
+    hf.close();
+    
+    cout << "roots: ";
+    cout.setf(ios::showpos);
+    for(size_t i=0;i<roots_x.size();i++) {
+      if (i!=0) {
+        cout << "       ";
+      }
+      cout << "(" << roots_x[i] << "," << roots_y[i] << ")" << endl;
     }
-    cout << "(" << roots_x[i] << "," << roots_y[i] << ")" << endl;
+    cout.unsetf(ios::showpos);
+    cout << "min: ";
+    vector_out(cout,min,true);
+    cout << "max: ";
+    vector_out(cout,max,true);
+    
+    t.test_gen(roots_x.size()==min.size(),"array check");
   }
-  cout.unsetf(ios::showpos);
-  cout << "min: ";
-  vector_out(cout,min,true);
-  cout << "max: ";
-  vector_out(cout,max,true);
-
-  t.test_gen(roots_x.size()==min.size(),"array check");
 
   table3d t3db;
   size_t min2, max2;
   uniform_grid<double> grid2x=uniform_grid_end<double>(-1.7,0.5,599);
   uniform_grid<double> grid2y=uniform_grid_end<double>(-1.1,1.1,599);
-  f.itf(itf_mandel,grid2x,grid2y,100,10.0,t3db,min2,max2);
-  cout << "min2,max2: " << min2 << " " << max2 << endl;
-  
-  hf.open_or_create("nrf2.o2");
-  hdf_output(hf,(const table3d &)t3db,"nrf2");
-  hf.close();
 
+  if (true) {
+    
+    f.itf(itf_mandel,grid2x,grid2y,100,10.0,t3db,min2,max2);
+    cout << "min2,max2: " << min2 << " " << max2 << endl;
+    
+    hf.open_or_create("nrf2.o2");
+    hdf_output(hf,(const table3d &)t3db,"nrf2");
+    hf.close();
+    
+  }
+    
   t.report();
   
   return 0;
