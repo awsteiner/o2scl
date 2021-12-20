@@ -43,75 +43,105 @@ namespace o2scl {
       the class \ref inte_gen.
   */
   template<class func_t=multi_funct, 
-    class vec_t=boost::numeric::ublas::vector<double> > class inte_multi {
+           class vec_t=boost::numeric::ublas::vector<double> >
+  class inte_multi {
       
-      public:
+  public:
       
-      inte_multi() {
-	tol_rel=1.0e-8;
-	verbose=0;
-	interror=0.0;
-	err_nonconv=true;
-      }
+    inte_multi() {
+      tol_rel=1.0e-8;
+      verbose=0;
+      interror=0.0;
+      err_nonconv=true;
+    }
       
-      virtual ~inte_multi() {}
+    virtual ~inte_multi() {}
       
-      /// If true, call the error handler if the routine does not "converge"
-      bool err_nonconv;
+    /// If true, call the error handler if the routine does not "converge"
+    bool err_nonconv;
       
-      /** \brief Verbosity
-       */
-      int verbose;
+    /** \brief Verbosity
+     */
+    int verbose;
   
-      /** \brief The maximum "uncertainty" in the value of the integral
-	  (default \f$ 10^{-8} \f$).
-       */
-      double tol_rel;
+    /** \brief The maximum "uncertainty" in the value of the integral
+        (default \f$ 10^{-8} \f$).
+    */
+    double tol_rel;
   
-      /** \brief Integrate function \c func over the hypercube from
-	  \f$ x_i=a_i \f$ to \f$ x_i=b_i \f$ for
-          \f$ 0<i< \f$ ndim-1
+    /** \brief Integrate function \c func over the hypercube from
+        \f$ x_i=a_i \f$ to \f$ x_i=b_i \f$ for
+        \f$ 0<i< \f$ ndim-1
 	  
-	  \comment 
-	  (I had some problems with Doxygen 
-	  using \mathrm in the formula above.)
-	  \endcomment
-      */
-      virtual double minteg(func_t &func, size_t ndim, const vec_t &a, 
-			    const vec_t &b) {
-	double err, res;
-	minteg_err(func,ndim,a,b,res,err);
-	return res;
-      }
+        \comment 
+        (I had some problems with Doxygen 
+        using \mathrm in the formula above.)
+        \endcomment
+    */
+    virtual double minteg(func_t &func, size_t ndim, const vec_t &a, 
+                          const vec_t &b) {
+      double err, res;
+      minteg_err(func,ndim,a,b,res,err);
+      return res;
+    }
       
-      /** \brief Integrate function \c func over the hypercube from
-	  \f$ x_i=a_i \f$ to \f$ x_i=b_i \f$ for
-          \f$ 0<i< \f$ ndim-1
-      */
-      virtual int minteg_err(func_t &func, size_t ndim, const vec_t &a, 
-			     const vec_t &b, double &res, double &err)=0;
+    /** \brief Integrate function \c func over the hypercube from
+        \f$ x_i=a_i \f$ to \f$ x_i=b_i \f$ for
+        \f$ 0<i< \f$ ndim-1
+    */
+    virtual int minteg_err(func_t &func, size_t ndim, const vec_t &a, 
+                           const vec_t &b, double &res, double &err)=0;
+
+
+    /** \brief Desc
+     */
+    template<class func2_t>
+    double oned_wrapper(size_t ndim, const vec_t &x, func2_t *f) {
+      double x2=x[0];
+      double ret=(*f)(x2);
+      return ret;
+    }
+    
+    /** \brief Desc
+
+        (Note this is a template and thus cannot be virtual)
+     */
+    template<class func2_t>
+    int integ_err(func2_t &f, double a, double b, double &res,
+                          double &err) {
+
+      multi_funct f2=std::bind
+        (std::mem_fn<double(size_t, const vec_t &,func2_t *)>
+         (&inte_multi::oned_wrapper<func2_t>),
+         this,std::placeholders::_1,std::placeholders::_2,&f);
+      vec_t low(1), high(1);
+      low[0]=a;
+      high[0]=b;
       
-      /** \brief Return the error in the result from the last call to 
-	  minteg() or minteg_err()
+      return minteg_err(f2,1,low,high,res,err);
+    }
+
+    /** \brief Return the error in the result from the last call to 
+        minteg() or minteg_err()
 	  
-	  This will quietly return zero if no integrations have been
-	  performed.
-      */
-      double get_error() { return interror; }
+        This will quietly return zero if no integrations have been
+        performed.
+    */
+    double get_error() { return interror; }
   
-      /// Return string denoting type ("inte_multi")
-      const char *type() { return "inte_multi"; }
+    /// Return string denoting type ("inte_multi")
+    const char *type() { return "inte_multi"; }
   
 #ifndef DOXYGEN_INTERNAL
   
-      protected:
+  protected:
   
-      /// The uncertainty for the last integration computation
-      double interror;
+    /// The uncertainty for the last integration computation
+    double interror;
   
 #endif
   
-    };
+  };
 
 #ifndef DOXYGEN_NO_O2NS
 }
