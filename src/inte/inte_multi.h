@@ -45,7 +45,18 @@ namespace o2scl {
   template<class func_t=multi_funct, 
            class vec_t=boost::numeric::ublas::vector<double> >
   class inte_multi {
-      
+
+  protected:
+    
+    /** \brief A wrapper for \ref integ_err()
+     */
+    template<class func2_t>
+    double oned_wrapper(size_t ndim, const vec_t &x, func2_t *f) {
+      double x2=x[0];
+      double ret=(*f)(x2);
+      return ret;
+    }
+    
   public:
       
     inte_multi() {
@@ -93,23 +104,14 @@ namespace o2scl {
                            const vec_t &b, double &res, double &err)=0;
 
 
-    /** \brief Desc
-     */
-    template<class func2_t>
-    double oned_wrapper(size_t ndim, const vec_t &x, func2_t *f) {
-      double x2=x[0];
-      double ret=(*f)(x2);
-      return ret;
-    }
-    
-    /** \brief Desc
-
+    /** \brief Integration function \c f from \c a to \c b 
+        
         (Note this is a template and thus cannot be virtual)
-     */
+    */
     template<class func2_t>
     int integ_err(func2_t &f, double a, double b, double &res,
-                          double &err) {
-
+                  double &err) {
+      
       multi_funct f2=std::bind
         (std::mem_fn<double(size_t, const vec_t &,func2_t *)>
          (&inte_multi::oned_wrapper<func2_t>),
