@@ -605,8 +605,8 @@ namespace o2scl {
 	  std::cout << "\ti,left,mid,right: " << i_bisect << " "
 		    << xbi_l << " " << xbi_m << " " << xbi_r << std::endl;
 	  for(size_t j=0;j<dim;j++) {
-	    std::cout << "\t\ti,low,high: " << j << " " << xl[j] << " " << xu[j] 
-		      << std::endl;
+	    std::cout << "\t\ti,low,high: " << j << " " << xl[j] << " "
+                      << xu[j] << std::endl;
 	  }
 	}
 	if (this->verbose>2) {

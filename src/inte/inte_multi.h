@@ -41,6 +41,14 @@ namespace o2scl {
       Multi-dimensional integration over a region defined by constant
       limits. For more general regions of integration, use children of
       the class \ref inte_gen.
+
+      \verbatim embed:rst
+      .. todo::
+      
+         In class inte_multi, the function integ_err() this class
+         could now be made a child of the class inte in the future.
+
+      \endverbatim
   */
   template<class func_t=multi_funct, 
            class vec_t=boost::numeric::ublas::vector<double> >
