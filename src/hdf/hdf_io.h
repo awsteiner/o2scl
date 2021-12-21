@@ -1635,7 +1635,8 @@ namespace o2scl_hdf {
 	
       // HDF5 object in a file
       if (verbose>1) {
-	std::cout << "mult_vector_spec(): HDF5 file " << spec << std::endl;
+	std::cout << "mult_vector_spec(), HDF5 file, spec: "
+                  << spec << std::endl;
       }
       std::string temp=spec.substr(5,spec.length()-5);
       size_t ncolon=temp.find(':');
@@ -1649,7 +1650,7 @@ namespace o2scl_hdf {
       }
       std::string fname=temp.substr(0,ncolon);
       if (verbose>1) {
-	std::cout << "Filename " << fname << std::endl;
+	std::cout << "Filename: " << fname << std::endl;
       }
       if (temp.length()<ncolon+1) {
 	if (err_on_fail) {
@@ -1667,8 +1668,8 @@ namespace o2scl_hdf {
 	obj_name=obj_name.substr(0,ncolon);
       } 
       if (verbose>1) {
-	std::cout << "Object name " << obj_name << std::endl;
-	std::cout << "Additional specification " << addl_spec << std::endl;
+	std::cout << "Object name: " << obj_name << std::endl;
+	std::cout << "Additional specification: " << addl_spec << std::endl;
       }
       o2scl_hdf::hdf_file hf;
       
@@ -1723,42 +1724,74 @@ namespace o2scl_hdf {
 	    }
 	  }
 
+          o2scl::table_units<> t;
+          o2scl_hdf::hdf_input(hf,t,obj_name);
+            
 	  if (addl_spec.find(':')!=std::string::npos) {
 	    if (verbose>1) {
-	      std::cout << "Found colon in addl. spec. Forwarding "
-			<< "as row:column pattern to vector_spec()."
+	      std::cout << "Found row:column pattern in mult_vector_spec()."
 			<< std::endl;
 	    }
-	    
-	    // If this is a row-column pattern specification, 
-	    // then just use the vector_spec() function
-	    std::vector<double> vtemp;
-	    int iret=vector_spec(spec,vtemp,verbose,err_on_fail);
-	    v.push_back(vtemp);
-	    
-	    if (iret!=0) return iret;
-	  }
+
+            int pos=addl_spec.find(':');
+            if (pos==0 || pos==((int)addl_spec.length())-1) {
+              std::cout << "Colon at beginning or end of additional "
+                        << "specification in mult_vector_spec()."
+                        << std::endl;
+              return 2;
+            }
+            std::string row_list=addl_spec.substr(0,pos);
+            std::string col_spec=addl_spec.substr(pos+1,
+                                                  addl_spec.length()-pos-1);
+            std::cout << "row_list: " << row_list << std::endl;
+            std::cout << "col_spec: " << col_spec << std::endl;
+
+            std::vector<size_t> uint_list;
+            o2scl::string_to_uint_list(row_list,uint_list);
+            
+            std::vector<size_t> col_ix;
+
+            std::regex r(col_spec);
+            for(size_t j=0;j<t.get_ncolumns();j++) {
+              if (std::regex_search(t.get_column_name(j),r)) {
+                col_ix.push_back(j);
+                if (verbose>1) {
+                  std::cout << "Found match (using regex): "
+                            << t.get_column_name(j)
+                            << std::endl;
+                }
+              }
+            }
+
+            for(size_t j=0;j<uint_list.size();j++) {
+              vec_t vtemp(col_ix.size());
+              for(size_t k=0;k<col_ix.size();k++) {
+                vtemp[k]=t.get(col_ix[k],j);
+              }
+              v.push_back(vtemp);
+            }              
+
+	  } else {
 	  
-	  o2scl::table_units<> t;
-	  o2scl_hdf::hdf_input(hf,t,obj_name);
-	  
-          std::regex r(addl_spec);
-	  for(size_t j=0;j<t.get_ncolumns();j++) {
-            if (std::regex_search(t.get_column_name(j),r)) {
-	      if (verbose>1) {
-		std::cout << "Column " << t.get_column_name(j)
-			  << " matches pattern " << addl_spec
-			  << "." << std::endl;
-	      }
-	      vec_t vtemp(t.get_nlines());
-	      for(size_t k=0;k<t.get_nlines();k++) {
-		vtemp[k]=t.get(j,k);
-	      }
-	      v.push_back(vtemp);
-	    }
-	  }
-	  
-	  hf.close();
+            std::regex r(addl_spec);
+            for(size_t j=0;j<t.get_ncolumns();j++) {
+              if (std::regex_search(t.get_column_name(j),r)) {
+                if (verbose>1) {
+                  std::cout << "Column " << t.get_column_name(j)
+                            << " matches pattern " << addl_spec
+                            << "." << std::endl;
+                }
+                vec_t vtemp(t.get_nlines());
+                for(size_t k=0;k<t.get_nlines();k++) {
+                  vtemp[k]=t.get(j,k);
+                }
+                v.push_back(vtemp);
+              }
+            }
+            
+          }
+            
+          hf.close();
 	  
 	} else if (type=="double" || type=="double[]" || type=="hist" ||
 		   type=="int" || type=="int[]" || type=="size_t" ||

@@ -920,7 +920,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "type of object stored in the HDF5 file.\n"+
       "                 type: addl. spec.      Description\n"+
       " --------------------------------------------------\n"+
-      "                table: <column pattern>\n"+
+      "                table:<column pattern>\n"+
+      "                table:<row list>:<column pattern>\n"+
       "\n"+
       "Also, many normal vector specifications (from 'acol -help "+
       "vector-spec') also work as multiple vector specifications. "+
