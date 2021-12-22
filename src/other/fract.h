@@ -32,6 +32,9 @@
 #include <o2scl/constants.h>
 #include <o2scl/err_hnd.h>
 #include <o2scl/table3d.h>
+#include <o2scl/tensor_grid.h>
+#include <o2scl/hdf_file.h>
+#include <o2scl/hdf_io.h>
 
 #ifdef O2SCL_OPENMP
 #include <omp.h>
@@ -422,6 +425,189 @@ namespace o2scl {
                    size_t &min, size_t &max) {
       itf_funct f=o2scl::itf_mandel;
       return itf(f,gx,gy,kmax,rmax,t3d,min,max);
+    }
+
+    /** \brief 
+     */
+    template<class vec_t=ubvector, class fp_t=double>
+    int itf_mandel_auto(o2scl::tensor3<> &ten3,
+                        std::vector<double> &x0v,
+                        std::vector<double> &x1v,
+                        std::vector<double> &y0v,
+                        std::vector<double> &y1v,
+                        double x0=-1.8, double x1=0.6,
+                        double y0=-0.75, double y1=0.75,
+                        size_t nx=1280, size_t ny=800,
+                        size_t n_steps=5, size_t frames_per_step=5,
+                        double shrink=0.2) {
+
+      ten3.clear();
+
+      o2scl::rng<> r;
+      r.clock_seed();
+
+      o2scl::table3d t3d_temp, t3d_temp2;
+
+      double xx0=x0, xx1=x1, yy0=y0, yy1=y1;
+
+      double initial_count=0.0;
+
+      size_t min, max;
+
+      size_t kmax=100;
+
+      std::cout << "ima: " << std::endl;
+
+      std::vector<size_t> sza={nx,ny,n_steps*frames_per_step};
+      ten3.resize(sza.size(),sza);
+
+      size_t ix_z=0;
+      
+      for(size_t j=0;j<n_steps;j++) {
+
+        o2scl::uniform_grid<double> grid_x=
+          o2scl::uniform_grid_end<double>(xx0,xx1,nx-1);
+        o2scl::uniform_grid<double> grid_y=
+          o2scl::uniform_grid_end<double>(yy0,yy1,ny-1);
+        x0v.push_back(xx0);
+        x1v.push_back(xx1);
+        y0v.push_back(yy0);
+        y1v.push_back(yy1);
+
+        itf_mandel(grid_x,grid_y,kmax,10.0,t3d_temp,min,max);
+        if (false) {
+          o2scl_hdf::hdf_file hf;
+          hf.open_or_create("temp.o2");
+          hdf_output(hf,t3d_temp,"temp");
+          hf.close();
+          int ret=system((((std::string)"o2graph -set fig_dict ")+
+                          "\"fig_size_x=8.0,fig_size_y=5.0\" "+
+                          "-read temp.o2 -den-plot it -show").c_str());
+        }
+        {
+          for(size_t kx=0;kx<t3d_temp.get_nx();kx++) {
+            for(size_t ky=0;ky<t3d_temp.get_ny();ky++) {
+              ten3.set(kx,ky,ix_z,t3d_temp.get(kx,ky,"it"));
+            }
+          }
+          ix_z++;
+        }
+        if (j==0) {
+          std::cout << "Going to count." << std::endl;
+          initial_count=0.0;
+          for(size_t kx=0;kx<t3d_temp.get_nx()-1;kx++) {
+            for(size_t ky=0;ky<t3d_temp.get_ny()-1;ky++) {
+              if (t3d_temp.get(kx,ky,"it")!=
+                  t3d_temp.get(kx+1,ky,"it")) {
+                initial_count+=1.0;
+              }
+              if (t3d_temp.get(kx,ky,"it")!=
+                  t3d_temp.get(kx,ky+1,"it")) {
+                initial_count+=1.0;
+              }
+            }
+          }
+          initial_count*=shrink*shrink;
+          std::cout << "initial_count: " << initial_count 
+                    << std::endl;
+        }
+
+        double xnext=0.0, ynext=0.0, x1next=0.0, y1next=0.0;
+        
+        bool done=false;
+        while (done==false) {
+          
+          xnext=r.random()*(xx1-xx0)*(1.0-shrink)+xx0;
+          ynext=r.random()*(yy1-yy0)*(1.0-shrink)+yy0;
+          x1next=xnext+(xx1-xx0)*shrink;
+          y1next=ynext+(yy1-yy0)*shrink;
+          
+          o2scl::uniform_grid<double> grid_new_x=
+            o2scl::uniform_grid_end<double>(xnext,x1next,nx-1);
+          o2scl::uniform_grid<double> grid_new_y=
+            o2scl::uniform_grid_end<double>(ynext,y1next,ny-1);
+          
+          itf_mandel(grid_new_x,grid_new_y,kmax,10.0,t3d_temp2,min,max);
+          
+          size_t count=0;
+          for(size_t kx=0;kx<t3d_temp2.get_nx()-1;kx++) {
+            for(size_t ky=0;ky<t3d_temp2.get_ny()-1;ky++) {
+              if (t3d_temp2.get(kx,ky,"it")!=
+                  t3d_temp2.get(kx+1,ky,"it")) {
+                count++;
+              }
+              if (t3d_temp2.get(kx,ky,"it")!=
+                  t3d_temp2.get(kx,ky+1,"it")) {
+                count++;
+              }
+            }
+          }
+
+          std::cout << xx0 << " " << xx1 << " "
+                    << yy0 << " " << yy1 << std::endl;
+          std::cout << xnext << " " << x1next << " "
+                    << ynext << " " << y1next << std::endl;
+          std::cout << "count: " << count << std::endl;
+          //char ch;
+          //std::cin >> ch;
+
+          if ((double)count>initial_count*5.0) done=true;
+          
+        }
+
+        for(size_t k=1;k<n_steps;k++) {
+          
+          double x0k=xx0+(xnext-xx0)*((double)k)/((double)(n_steps-1));
+          double x1k=xx1+(x1next-xx1)*((double)k)/((double)(n_steps-1));
+          double y0k=yy0+(ynext-yy0)*((double)k)/((double)(n_steps-1));
+          double y1k=yy1+(y1next-yy1)*((double)k)/((double)(n_steps-1));
+          x0v.push_back(x0k);
+          x1v.push_back(x1k);
+          y0v.push_back(y0k);
+          y1v.push_back(y1k);
+          xx0=x0k;
+          xx1=x1k;
+          yy0=y0k;
+          yy1=y1k;
+
+          std::cout.width(3);
+          std::cout << k << " " << n_steps << " ";
+          std::cout.setf(std::ios::showpos);
+          std::cout << x0v[x0v.size()-1] << " "
+                    << x1v[x1v.size()-1] << " "
+                    << y0v[y0v.size()-1] << " "
+                    << y1v[y1v.size()-1] << std::endl;
+          std::cout.unsetf(std::ios::showpos);
+          
+          o2scl::uniform_grid<double> grid_k_x=
+            o2scl::uniform_grid_end<double>(x0k,x1k,nx-1);
+          o2scl::uniform_grid<double> grid_k_y=
+            o2scl::uniform_grid_end<double>(y0k,y1k,ny-1);
+          
+          itf_mandel(grid_k_x,grid_k_y,kmax,10.0,t3d_temp2,min,max);
+          if (false) {
+            o2scl_hdf::hdf_file hf;
+            hf.open_or_create("temp.o2");
+            hdf_output(hf,t3d_temp2,"temp");
+            hf.close();
+            int ret=system((((std::string)"o2graph -set fig_dict ")+
+                            "\"fig_size_x=8.0,fig_size_y=5.0\" "+
+                            "-read temp.o2 -den-plot it -show").c_str());
+          }
+          {
+            for(size_t kx=0;kx<t3d_temp2.get_nx();kx++) {
+              for(size_t ky=0;ky<t3d_temp2.get_ny();ky++) {
+                ten3.set(kx,ky,ix_z,t3d_temp2.get(kx,ky,"it"));
+              }
+            }
+            ix_z++;
+          }
+        }
+
+        kmax*=2;
+      }
+      
+      return 0;
     }
     
   };
