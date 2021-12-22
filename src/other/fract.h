@@ -427,19 +427,18 @@ namespace o2scl {
       return itf(f,gx,gy,kmax,rmax,t3d,min,max);
     }
 
-    /** \brief 
+    /** \brief Desc
      */
     template<class vec_t=ubvector, class fp_t=double>
     int itf_mandel_auto(o2scl::tensor3<> &ten3,
-                        std::vector<double> &x0v,
-                        std::vector<double> &x1v,
-                        std::vector<double> &y0v,
-                        std::vector<double> &y1v,
+                        std::vector<double> &x0v, std::vector<double> &x1v,
+                        std::vector<double> &y0v, std::vector<double> &y1v,
                         double x0=-1.8, double x1=0.6,
                         double y0=-0.75, double y1=0.75,
                         size_t nx=1280, size_t ny=800,
                         size_t n_steps=5, size_t frames_per_step=5,
-                        double shrink=0.2) {
+                        double shrink=0.2, double count_thresh=8.0e4,
+                        bool plot_steps=false) {
 
       ten3.clear();
 
@@ -449,8 +448,6 @@ namespace o2scl {
       o2scl::table3d t3d_temp, t3d_temp2;
 
       double xx0=x0, xx1=x1, yy0=y0, yy1=y1;
-
-      double initial_count=0.0;
 
       size_t min, max;
 
@@ -492,29 +489,11 @@ namespace o2scl {
           }
           ix_z++;
         }
-        if (j==0) {
-          std::cout << "Going to count." << std::endl;
-          initial_count=0.0;
-          for(size_t kx=0;kx<t3d_temp.get_nx()-1;kx++) {
-            for(size_t ky=0;ky<t3d_temp.get_ny()-1;ky++) {
-              if (t3d_temp.get(kx,ky,"it")!=
-                  t3d_temp.get(kx+1,ky,"it")) {
-                initial_count+=1.0;
-              }
-              if (t3d_temp.get(kx,ky,"it")!=
-                  t3d_temp.get(kx,ky+1,"it")) {
-                initial_count+=1.0;
-              }
-            }
-          }
-          initial_count*=shrink*shrink;
-          std::cout << "initial_count: " << initial_count 
-                    << std::endl;
-        }
 
         double xnext=0.0, ynext=0.0, x1next=0.0, y1next=0.0;
         
         bool done=false;
+        int shrink_it=0;
         while (done==false) {
           
           xnext=r.random()*(xx1-xx0)*(1.0-shrink)+xx0;
@@ -548,10 +527,30 @@ namespace o2scl {
           std::cout << xnext << " " << x1next << " "
                     << ynext << " " << y1next << std::endl;
           std::cout << "count: " << count << std::endl;
-          //char ch;
-          //std::cin >> ch;
+          
+          if (plot_steps) {
+            o2scl_hdf::hdf_file hf;
+            hf.open_or_create("temp.o2");
+            hdf_output(hf,t3d_temp,"temp");
+            hf.close();
+            std::string cmd=((std::string)"o2graph -set fig_dict ")+
+              "\"fig_size_x=8.0,fig_size_y=5.0\" "+
+              "-read temp.o2 -den-plot it -rect \"("+
+              dtos(xnext)+")\" \"("+
+              dtos(ynext)+")\" \"("+
+              dtos(x1next)+")\" \"("+
+              dtos(y1next)+")\" 0.0 \"lw=2,fill=False\" "+
+              "-show";
+            std::cout << cmd << std::endl;
+            int ret=system(cmd.c_str());
+          }
 
-          if ((double)count>initial_count*5.0) done=true;
+          if ((double)count>count_thresh) done=true;
+
+          shrink_it++;
+          if (shrink_it==10) {
+            return 1;
+          }
           
         }
 
