@@ -96,25 +96,6 @@ int main(void) {
     
   }
 
-  tensor3<> ten3;
-  std::vector<double> x0v;
-  std::vector<double> x1v;
-  std::vector<double> y0v;
-  std::vector<double> y1v;
-  f.verbose=0;
-  int ima_ret=f.itf_mandel_auto(ten3,x0v,x1v,y0v,y1v,t3d);
-
-  if (ima_ret==0) {
-    hf.open_or_create("ima.o2");
-    hf.setd_ten("ima",ten3);
-    hf.setd_vec("x0",x0v);
-    hf.setd_vec("x1",x1v);
-    hf.setd_vec("y0",y0v);
-    hf.setd_vec("y1",y1v);
-    hdf_output(hf,t3d,"t3d");
-    hf.close();
-  }
-  
   t.report();
   
   return 0;
