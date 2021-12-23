@@ -433,27 +433,30 @@ namespace o2scl {
     int itf_mandel_auto(o2scl::tensor3<> &ten3,
                         std::vector<double> &x0v, std::vector<double> &x1v,
                         std::vector<double> &y0v, std::vector<double> &y1v,
+                        o2scl::table3d &t3d,
                         double x0=-1.8, double x1=0.6,
                         double y0=-0.75, double y1=0.75,
                         size_t nx=1280, size_t ny=800,
                         size_t n_steps=5, size_t frames_per_step=5,
-                        double shrink=0.2, double count_thresh=8.0e4,
-                        bool plot_steps=false) {
+                        double shrink=0.2, double count_thresh=0.078,
+                        bool plot_steps=false, size_t kmax_start=400,
+                        double kmax_fact=1.0, size_t kmod=256) {
 
       ten3.clear();
+      t3d.clear();
 
       o2scl::rng<> r;
       r.clock_seed();
 
-      o2scl::table3d t3d_temp, t3d_temp2;
+      o2scl::table3d t3d_temp;
 
       double xx0=x0, xx1=x1, yy0=y0, yy1=y1;
 
       size_t min, max;
 
-      size_t kmax=100;
+      size_t kmax=kmax_start;
 
-      std::cout << "ima: " << std::endl;
+      std::cout << "itf_mandel_auto: " << std::endl;
 
       std::vector<size_t> sza={nx,ny,n_steps*frames_per_step};
       ten3.resize(sza.size(),sza);
@@ -472,6 +475,9 @@ namespace o2scl {
         y1v.push_back(yy1);
 
         itf_mandel(grid_x,grid_y,kmax,10.0,t3d_temp,min,max);
+        std::cout << "Step " << j+1 << " of " << n_steps
+                  << ", min,max,kmax: "
+                  << min << " " << max << " " << kmax << std::endl;
         if (false) {
           o2scl_hdf::hdf_file hf;
           hf.open_or_create("temp.o2");
@@ -484,7 +490,8 @@ namespace o2scl {
         {
           for(size_t kx=0;kx<t3d_temp.get_nx();kx++) {
             for(size_t ky=0;ky<t3d_temp.get_ny();ky++) {
-              ten3.set(kx,ky,ix_z,t3d_temp.get(kx,ky,"it"));
+              size_t it=(size_t)(t3d_temp.get(kx,ky,"it")+1.0e-12);
+              ten3.set(kx,ky,ix_z,it%kmod);
             }
           }
           ix_z++;
@@ -506,17 +513,17 @@ namespace o2scl {
           o2scl::uniform_grid<double> grid_new_y=
             o2scl::uniform_grid_end<double>(ynext,y1next,ny-1);
           
-          itf_mandel(grid_new_x,grid_new_y,kmax,10.0,t3d_temp2,min,max);
+          itf_mandel(grid_new_x,grid_new_y,kmax,10.0,t3d,min,max);
           
           size_t count=0;
-          for(size_t kx=0;kx<t3d_temp2.get_nx()-1;kx++) {
-            for(size_t ky=0;ky<t3d_temp2.get_ny()-1;ky++) {
-              if (t3d_temp2.get(kx,ky,"it")!=
-                  t3d_temp2.get(kx+1,ky,"it")) {
+          for(size_t kx=0;kx<t3d.get_nx()-1;kx++) {
+            for(size_t ky=0;ky<t3d.get_ny()-1;ky++) {
+              if (t3d.get(kx,ky,"it")!=
+                  t3d.get(kx+1,ky,"it")) {
                 count++;
               }
-              if (t3d_temp2.get(kx,ky,"it")!=
-                  t3d_temp2.get(kx,ky+1,"it")) {
+              if (t3d.get(kx,ky,"it")!=
+                  t3d.get(kx,ky+1,"it")) {
                 count++;
               }
             }
@@ -545,7 +552,7 @@ namespace o2scl {
             int ret=system(cmd.c_str());
           }
 
-          if ((double)count>count_thresh) done=true;
+          if ((double)count/((double)nx)/((double)ny)>count_thresh) done=true;
 
           shrink_it++;
           if (shrink_it==10) {
@@ -583,27 +590,37 @@ namespace o2scl {
           o2scl::uniform_grid<double> grid_k_y=
             o2scl::uniform_grid_end<double>(y0k,y1k,ny-1);
           
-          itf_mandel(grid_k_x,grid_k_y,kmax,10.0,t3d_temp2,min,max);
+          itf_mandel(grid_k_x,grid_k_y,kmax,10.0,t3d,min,max);
+          std::cout << "min,max,kmax: " << min << " " << max << " "
+                    << kmax << std::endl;
           if (false) {
             o2scl_hdf::hdf_file hf;
             hf.open_or_create("temp.o2");
-            hdf_output(hf,t3d_temp2,"temp");
+            hdf_output(hf,t3d,"temp");
             hf.close();
             int ret=system((((std::string)"o2graph -set fig_dict ")+
                             "\"fig_size_x=8.0,fig_size_y=5.0\" "+
                             "-read temp.o2 -den-plot it -show").c_str());
           }
           {
-            for(size_t kx=0;kx<t3d_temp2.get_nx();kx++) {
-              for(size_t ky=0;ky<t3d_temp2.get_ny();ky++) {
-                ten3.set(kx,ky,ix_z,t3d_temp2.get(kx,ky,"it"));
+            for(size_t kx=0;kx<t3d.get_nx();kx++) {
+              for(size_t ky=0;ky<t3d.get_ny();ky++) {
+                size_t it=(size_t)(t3d.get(kx,ky,"it")+1.0e-12);
+                ten3.set(kx,ky,ix_z,it%kmod);
               }
             }
             ix_z++;
           }
         }
+        
+        kmax=((size_t)(((double)kmax)*kmax_fact));
+      }
 
-        kmax*=2;
+      for(size_t kx=0;kx<t3d.get_nx();kx++) {
+        for(size_t ky=0;ky<t3d.get_ny();ky++) {
+          size_t it=(size_t)(t3d.get(kx,ky,"it")+1.0e-12);
+          t3d.set(kx,ky,"it",it%kmod);
+        }
       }
       
       return 0;
