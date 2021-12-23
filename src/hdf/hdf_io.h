@@ -742,6 +742,7 @@ namespace o2scl_hdf {
 	  return 5;
 	}
       }
+      
       std::string obj_name=temp.substr(ncolon+1,temp.length()-ncolon-1);
       std::string addl_spec;
       ncolon=obj_name.find(':');
@@ -750,8 +751,12 @@ namespace o2scl_hdf {
 	obj_name=obj_name.substr(0,ncolon);
       } 
       if (verbose>1) {
-	std::cout << "Object name " << obj_name << std::endl;
-	std::cout << "Additional specification " << addl_spec << std::endl;
+        if (obj_name[0]=='_') {
+          std::cout << "Object type: "
+                    << obj_name.substr(1,obj_name.length()) << std::endl;
+        }
+	std::cout << "Object name: " << obj_name << std::endl;
+	std::cout << "Additional specification: " << addl_spec << std::endl;
       }
       o2scl_hdf::hdf_file hf;
 	
@@ -768,12 +773,19 @@ namespace o2scl_hdf {
       }
       fname=matches[0];
       if (verbose>1) {
-	std::cout << "Filename after wordexp() " << fname << std::endl;
+	std::cout << "Filename after wordexp_wrapper(): "
+                  << fname << std::endl;
       }
 	
       hf.open(fname);
       std::string type;
-      int find_ret=hf.find_object_by_name(obj_name,type);
+      int find_ret;
+      if (obj_name[0]=='_') {
+        type=obj_name.substr(1,obj_name.length()-1);
+        find_ret=hf.find_object_by_type(type,obj_name);
+      } else {
+        find_ret=hf.find_object_by_name(obj_name,type);
+      }
       if (find_ret!=0) {
 	if (err_on_fail) {
 	  O2SCL_ERR2("Object not found in file ",
@@ -783,7 +795,8 @@ namespace o2scl_hdf {
 	}
       }
       if (verbose>1) {
-	std::cout << "Object type from file: " << type << std::endl;
+        std::cout << "Object type and name: " << type << " " << obj_name
+                  << std::endl;
       }
 	
       if (type=="table") {
@@ -1263,11 +1276,16 @@ namespace o2scl_hdf {
 	obj_name=obj_name.substr(0,ncolon);
       } 
       if (verbose>1) {
-	std::cout << "Object name " << obj_name << std::endl;
-	std::cout << "Additional specification " << addl_spec << std::endl;
+        if (obj_name[0]=='_') {
+          std::cout << "Object type: "
+                    << obj_name.substr(1,obj_name.length()) << std::endl;
+        } else {
+          std::cout << "Object name: " << obj_name << std::endl;
+        }
+	std::cout << "Additional specification: " << addl_spec << std::endl;
       }
       o2scl_hdf::hdf_file hf;
-	
+      
       std::string fname_old=fname;
       std::vector<std::string> matches;
       int wret=o2scl::wordexp_wrapper(fname_old,matches);
@@ -1286,7 +1304,13 @@ namespace o2scl_hdf {
 	
       hf.open(fname);
       std::string type;
-      int find_ret=hf.find_object_by_name(obj_name,type);
+      int find_ret;
+      if (obj_name[0]=='_') {
+        type=obj_name.substr(1,obj_name.length()-1);
+        find_ret=hf.find_object_by_type(type,obj_name);
+      } else {
+        find_ret=hf.find_object_by_name(obj_name,type);
+      }
       if (find_ret!=0) {
 	if (err_on_fail) {
 	  O2SCL_ERR2("Object not found in file ",
@@ -1296,7 +1320,8 @@ namespace o2scl_hdf {
 	}
       }
       if (verbose>1) {
-	std::cout << "Object type from file: " << type << std::endl;
+        std::cout << "Object type and name: " << type << " " << obj_name
+                  << std::endl;
       }
 
       if (type=="string") {
@@ -1668,7 +1693,12 @@ namespace o2scl_hdf {
 	obj_name=obj_name.substr(0,ncolon);
       } 
       if (verbose>1) {
-	std::cout << "Object name: " << obj_name << std::endl;
+        if (obj_name[0]=='_') {
+          std::cout << "Object type: "
+                    << obj_name.substr(1,obj_name.length()-1) << std::endl;
+        } else {
+          std::cout << "Object name: " << obj_name << std::endl;
+        }
 	std::cout << "Additional specification: " << addl_spec << std::endl;
       }
       o2scl_hdf::hdf_file hf;
@@ -1700,7 +1730,13 @@ namespace o2scl_hdf {
 	
 	hf.open(fname);
 	std::string type;
-	int find_ret=hf.find_object_by_name(obj_name,type);
+        int find_ret;
+        if (obj_name[0]=='_') {
+          type=obj_name.substr(1,obj_name.length()-1);
+          find_ret=hf.find_object_by_type(type,obj_name);
+        } else {
+          find_ret=hf.find_object_by_name(obj_name,type);
+        }
 	if (find_ret!=0) {
 	  if (err_on_fail) {
 	    O2SCL_ERR2("Object not found in file ",
@@ -1710,7 +1746,8 @@ namespace o2scl_hdf {
 	  }
 	}
 	if (verbose>1) {
-	  std::cout << "Object type from file: " << type << std::endl;
+          std::cout << "Object type and name: " << type << " " << obj_name
+                    << std::endl;
 	}
 	
 	if (type=="table") {
