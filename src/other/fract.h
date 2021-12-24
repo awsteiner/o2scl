@@ -533,7 +533,9 @@ namespace o2scl {
                     << yy0 << " " << yy1 << std::endl;
           std::cout << xnext << " " << x1next << " "
                     << ynext << " " << y1next << std::endl;
-          std::cout << "count: " << count << std::endl;
+          std::cout << "count: "
+                    << ((double)count)/((double)nx)/((double)ny)
+                    << " threshold: " << count_thresh << std::endl;
           
           if (plot_steps) {
             o2scl_hdf::hdf_file hf;
