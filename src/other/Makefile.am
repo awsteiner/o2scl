@@ -5,7 +5,7 @@
 OTHER_SRCS = series_acc.cpp poly.cpp polylog.cpp \
 	interp2_eqi.cpp pinside.cpp other_python.cpp \
 	contour.cpp smooth_gsl.cpp hist.cpp \
-	hist_2d.cpp prob_dens_func.cpp vec_stats.cpp fract.cpp
+	hist_2d.cpp prob_dens_func.cpp vec_stats.cpp
 
 HEADER_VAR = contour.h cheb_approx.h other_python.h \
 	series_acc.h interp2_planar.h poly.h polylog.h \
@@ -13,14 +13,14 @@ HEADER_VAR = contour.h cheb_approx.h other_python.h \
 	vec_stats.h smooth_gsl.h hist.h smooth_func.h \
 	hist_2d.h prob_dens_func.h interp2_seq.h interp2_neigh.h \
 	interpm_idw.h interp2.h interpm_krige.h prob_dens_mdim_amr.h \
-	slack_messenger.h fract.h
+	slack_messenger.h
 
 TEST_VAR = series_acc.scr interp2_planar.scr contour.scr \
 	poly.scr polylog.scr cheb_approx.scr vec_stats.scr smooth_gsl.scr \
 	hist.scr hist_2d.scr prob_dens_func.scr interp2_direct.scr \
 	pinside.scr interp2_seq.scr interp2_neigh.scr \
 	interpm_idw.scr interpm_krige.scr smooth_func.scr \
-	prob_dens_mdim_amr.scr fract.scr
+	prob_dens_mdim_amr.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -119,7 +119,7 @@ check_PROGRAMS = series_acc_ts interp2_planar_ts \
 	smooth_gsl_ts hist_ts hist_2d_ts interp2_seq_ts \
 	prob_dens_func_ts interp2_neigh_ts \
 	interpm_idw_ts interpm_krige_ts smooth_func_ts \
-	prob_dens_mdim_amr_ts fract_ts
+	prob_dens_mdim_amr_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -139,7 +139,6 @@ interpm_krige_ts_LDADD = $(VCHECK_LIBS)
 contour_ts_LDADD = $(VCHECK_LIBS)
 poly_ts_LDADD = $(VCHECK_LIBS)
 polylog_ts_LDADD = $(VCHECK_LIBS)
-fract_ts_LDADD = $(VCHECK_LIBS)
 interp2_seq_ts_LDADD = $(VCHECK_LIBS)
 prob_dens_mdim_amr_ts_LDADD = $(VCHECK_LIBS)
 interp2_direct_ts_LDADD = $(VCHECK_LIBS)
@@ -161,7 +160,6 @@ interpm_krige_ts_LDFLAGS = -fopenmp
 contour_ts_LDFLAGS = -fopenmp
 poly_ts_LDFLAGS = -fopenmp
 polylog_ts_LDFLAGS = -fopenmp
-fract_ts_LDFLAGS = -fopenmp
 interp2_seq_ts_LDFLAGS = -fopenmp
 prob_dens_mdim_amr_ts_LDFLAGS = -fopenmp
 interp2_direct_ts_LDFLAGS = -fopenmp
@@ -193,8 +191,6 @@ poly.scr: poly_ts$(EXEEXT)
 	./poly_ts$(EXEEXT) > poly.scr
 polylog.scr: polylog_ts$(EXEEXT) 
 	./polylog_ts$(EXEEXT) > polylog.scr
-fract.scr: fract_ts$(EXEEXT) 
-	./fract_ts$(EXEEXT) > fract.scr
 interp2_seq.scr: interp2_seq_ts$(EXEEXT) 
 	./interp2_seq_ts$(EXEEXT) > interp2_seq.scr
 prob_dens_mdim_amr.scr: prob_dens_mdim_amr_ts$(EXEEXT) 
@@ -230,7 +226,6 @@ interp2_direct_ts_SOURCES = interp2_direct_ts.cpp
 pinside_ts_SOURCES = pinside_ts.cpp
 poly_ts_SOURCES = poly_ts.cpp
 polylog_ts_SOURCES = polylog_ts.cpp
-fract_ts_SOURCES = fract_ts.cpp
 prob_dens_func_ts_SOURCES = prob_dens_func_ts.cpp
 smooth_gsl_ts_SOURCES = smooth_gsl_ts.cpp
 vec_stats_ts_SOURCES = vec_stats_ts.cpp
