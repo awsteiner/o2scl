@@ -171,12 +171,4 @@ int o2scl_hist_function(void *vptr, char *func);
 
 void o2scl_hist_clear(void *vptr);
 
-void *o2scl_create_fract();
-
-void o2scl_free_fract(void *vptr);
-
-void o2scl_fract_nrf_z4m1(void *vptr, void *ptr_gx, void *ptr_gy, size_t kmax, double rmax, void *ptr_t3d, void *ptr_roots_x, void *ptr_roots_y, void *ptr_min, void *ptr_max);
-
-int o2scl_fract_itf_mandel(void *vptr, void *ptr_gx, void *ptr_gy, size_t kmax, double rmax, void *ptr_t3d, size_t *min, size_t *max);
-
 }

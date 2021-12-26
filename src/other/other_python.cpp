@@ -460,36 +460,3 @@ void o2scl_hist_clear(void *vptr) {
   return;
 }
 
-void *o2scl_create_fract() {
-  fract *ptr=new fract;
-  return ptr;
-}
-
-void o2scl_free_fract(void *vptr) {
-  fract *ptr=(fract *)vptr;
-  delete ptr;
-  return;
-}
-
-void o2scl_fract_nrf_z4m1(void *vptr, void *ptr_gx, void *ptr_gy, size_t kmax, double rmax, void *ptr_t3d, void *ptr_roots_x, void *ptr_roots_y, void *ptr_min, void *ptr_max) {
-  fract *ptr=(fract *)vptr;
-  uniform_grid<> *gx=(uniform_grid<> *)ptr_gx;
-  uniform_grid<> *gy=(uniform_grid<> *)ptr_gy;
-  o2scl::table3d *t3d=(o2scl::table3d *)ptr_t3d;
-  std::vector<double> *roots_x=(std::vector<double> *)ptr_roots_x;
-  std::vector<double> *roots_y=(std::vector<double> *)ptr_roots_y;
-  std::vector<double> *min=(std::vector<double> *)ptr_min;
-  std::vector<double> *max=(std::vector<double> *)ptr_max;
-  ptr->nrf_z4m1(*gx,*gy,kmax,rmax,*t3d,*roots_x,*roots_y,*min,*max);
-  return;
-}
-
-int o2scl_fract_itf_mandel(void *vptr, void *ptr_gx, void *ptr_gy, size_t kmax, double rmax, void *ptr_t3d, size_t *min, size_t *max) {
-  fract *ptr=(fract *)vptr;
-  uniform_grid<> *gx=(uniform_grid<> *)ptr_gx;
-  uniform_grid<> *gy=(uniform_grid<> *)ptr_gy;
-  o2scl::table3d *t3d=(o2scl::table3d *)ptr_t3d;
-  int ret=ptr->itf_mandel(*gx,*gy,kmax,rmax,*t3d,*min,*max);
-  return ret;
-}
-
