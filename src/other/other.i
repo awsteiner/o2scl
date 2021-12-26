@@ -20,7 +20,6 @@ h_include <o2scl/slack_messenger.h>
 h_include <o2scl/poly.h>
 h_include <o2scl/polylog.h>
 h_include <o2scl/hist.h>
-h_include <o2scl/fract.h>
 # 
 # Include statement for C++ source code
 # 
@@ -244,41 +243,3 @@ class hist
   - std::string func
 - function clear
   - void
-class fract
-- function nrf_z4m1
-  - void
-  - io uniform_grid<> &gx
-  - io uniform_grid<> &gy
-  - size_t kmax
-  - double rmax
-  - out o2scl::table3d &t3d
-  - io std::vector<double> &roots_x
-  - io std::vector<double> &roots_y
-  - io std::vector<double> &min
-  - io std::vector<double> &max
-- function itf_mandel
-  - int
-  - io uniform_grid<> &gx
-  - io uniform_grid<> &gy
-  - size_t kmax
-  - double rmax
-  - out o2scl::table3d &t3d
-  - io size_t &min
-  - io size_t &max
-- function itf_mandel_auto
-  - int
-  - io std::vector<double> &x0v
-  - io std::vector<double> &x1v
-  - io std::vector<double> &y0v
-  - io std::vector<double> &y1v
-  - double x0 [-1.8]
-  - double x1 [0.6]
-  - double y0 [-1.8]
-  - double y1 [-1.8]
-  - size_t nx [1280]
-  - size_t ny [800]
-  - size_t n_steps [5]
-  - size_t frames_per_step [5]
-  - double shrink [0.2]
-  - double count_thresh [8.0e4]
-  - bool plot_steps [false]

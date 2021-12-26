@@ -25,7 +25,6 @@
 #include <o2scl/poly.h>
 #include <o2scl/polylog.h>
 #include <o2scl/hist.h>
-#include <o2scl/fract.h>
 
 extern "C" {
 
