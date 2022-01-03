@@ -626,21 +626,21 @@ namespace o2scl {
           }
           
           boost::numeric::ublas::axpy_prod(this->inv_KXX,kxx0,prod,true);
-          double sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
-          std::cout.setf(std::ios::showpos);
-          std::cout << "k,x,yact,ypred,sigma: " << k << " "
-                    << (*this->px)[k] << " "
-                    << yact << " " << ypred << " "
-                    << sigma << std::endl;
-          std::cout.unsetf(std::ios::showpos);
+          if (false) {
+            std::cout.setf(std::ios::showpos);
+            std::cout << "k,x,yact,ypred: " << k << " "
+                      << (*this->px)[k] << " "
+                      << yact << " " << ypred << std::endl;
+            std::cout.unsetf(std::ios::showpos);
+          }
           
-          // We maximize the predictive log probability, Eq 5.10
-          // in R&W
-          qual+=pow(yact-ypred,2.0);///sigma/sigma/2.0;
-          //qual+=0.5*log(sigma*sigma);
+          qual+=pow(yact-ypred,2.0);
 	
         }
-        std::cout << "qual: " << qual << std::endl;
+        if (verbose>0) {
+          std::cout << "len,qual (loo_cv): " << len << " "
+                    << qual << std::endl;
+        }
 
       } else if (mode==mode_loo_cv_new) {
       
@@ -707,7 +707,7 @@ namespace o2scl {
           
           boost::numeric::ublas::axpy_prod(this->inv_KXX,kxx0,prod,true);
           double sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
-          //sigma=sqrt(this->inv_KXX(k,k));
+          sigma=sqrt(this->inv_KXX(k,k));
           std::cout.setf(std::ios::showpos);
           std::cout << "k,x,yact,ypred,sigma: " << k << " "
                     << (*this->px)[k] << " "
@@ -717,12 +717,14 @@ namespace o2scl {
           
           // We maximize the predictive log probability, Eq 5.10
           // in R&W
-          qual+=pow(yact-ypred,2.0);///sigma/sigma/2.0;
-          //qual+=0.5*log(sigma*sigma);
+          qual+=pow(yact-ypred,2.0)/sigma/sigma/2.0;
+          qual+=0.5*log(sigma*sigma);
 	
         }
-        std::cout << "qual: " << qual << std::endl;
 
+        if (verbose>0) {
+          std::cout << "qual (loo_cv_new): " << qual << std::endl;
+        }
       
       } else if (mode==mode_max_lml) {
 
@@ -776,8 +778,10 @@ namespace o2scl {
             qual+=0.5*(*this->py)[i]*this->Kinvf[i];
           }
           qual+=0.5*lndet;
-        }          
-
+        }
+        if (verbose>0) {
+          std::cout << "qual (lml): " << qual << std::endl;
+        }
       }
 
       return qual;
@@ -990,7 +994,8 @@ namespace o2scl {
     }
   
     /// Initialize interpolation routine
-    virtual void set(size_t size, const vec_t &x, const vec2_t &y,
+    virtual void set(
+                     size_t size, const vec_t &x, const vec2_t &y,
                      bool rescale, bool err_on_fail=true) {
 
       // Use the mean absolute value to determine noise
