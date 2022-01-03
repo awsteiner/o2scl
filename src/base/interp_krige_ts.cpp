@@ -257,31 +257,28 @@ int main(void) {
 
   interp_krige_optim<ubvector> iko;
 
+  iko.verbose=1;
   iko.set(N,x,y);
+  iko.verbose=0;
 
   cout << "Class interp_krige_optim with simple interface." << endl;
-  double exact=f(1.01,y_mean,y_sd);
-  double res=iko.eval(1.01);
-  t.test_rel(exact,res,1.0e-2,"iko 1");
-  exact=f(1.0,y_mean,y_sd);
-  res=iko.eval(1.0);
-  t.test_rel(exact,res,1.0e-2,"iko 2");
+  t.test_rel(iko.eval(x[0]),y[0],1.0e-2,"iko 1");
+  t.test_rel(iko.eval(x[N-1]),y[N-1],1.0e-4,"iko 2");
+  t.test_rel(iko.eval((x[0]+x[1])/2.0),
+             (y[0]+y[1])/2.0,1.0e-2,"iko 3");
   cout << endl;
 
-  cout << iko.deriv(1.5) << " " << cos(1.5) << endl;
-  cout << iko.deriv2(1.5) << " " << -sin(1.5) << endl;
+  //cout << iko.deriv(1.5) << " " << cos(1.5) << endl;
+  //cout << iko.deriv2(1.5) << " " << -sin(1.5) << endl;
 
   cout << "Class interp_krige_optim with simple interface, "
        << "rescaled version." << endl;
   
   iko.set(N,x,y,true);
 
-  exact=f(1.01,y_mean,y_sd);
-  res=iko.eval(1.01);
-  t.test_rel(exact,res,1.0e-2,"ikor 1");
-  exact=f(1.0,y_mean,y_sd);
-  res=iko.eval(1.0);
-  t.test_rel(exact,res,1.0e-2,"ikor 2");
+  t.test_rel(iko.eval(x[0]),y[0],1.0e-2,"ikor 1");
+  t.test_rel(iko.eval(x[N-1]),y[N-1],1.0e-4,"ikor 2");
+  t.test_rel(iko.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,1.0e-2,"ikor 3");
   cout << endl;
 
   // ---------------------------------------------------------------
@@ -289,11 +286,13 @@ int main(void) {
 
   iko.full_min=true;
   
+  iko.verbose=1;
   iko.set(N,x,y);
+  iko.verbose=0;
 
   cout << "Class interp_krige_optim with full minimization" << endl;
-  exact=f(1.01,y_mean,y_sd);
-  res=iko.eval(1.01);
+  double exact=f(1.01,y_mean,y_sd);
+  double res=iko.eval(1.01);
   t.test_rel(exact,res,1.0e-1,"iko 4");
   exact=f(1.0,y_mean,y_sd);
   res=iko.eval(1.0);

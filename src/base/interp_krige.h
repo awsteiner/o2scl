@@ -951,13 +951,17 @@ namespace o2scl {
           }
 	  
         }
-      
+
         // Now that we've optimized the covariance function,
         // just use the parent class to interpolate
         len=len_opt;
 
       }
 
+      if (verbose>0) {
+        std::cout << "Optimum length: " << len << std::endl;
+      }
+      
       ff=std::bind(std::mem_fn<double(double,double)>
                    (&interp_krige_optim<vec_t,vec2_t>::covar),this,
                    std::placeholders::_1,std::placeholders::_2);
