@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2021-2021, Andrew W. Steiner and Jesse Farr
+  Copyright (C) 2021-2022, Andrew W. Steiner and Jesse Farr
   
   This file is part of O2scl.
   
