@@ -166,9 +166,8 @@ namespace o2scl {
         rescaled=false;
       }
 
-      // The Cholesky inversion function inverts a matrix in-place,
-      // so we put the original KXX matrix in inv_KXX, knowing that
-      // we will invert it later
+      // We put the original KXX matrix in inv_KXX, knowing that
+      // we will invert it below
       
       // Construct the KXX matrix
       inv_KXX.resize(n_dim,n_dim);
@@ -184,7 +183,7 @@ namespace o2scl {
         }
       }
 
-      // Now invert KXX to get inv_KXX
+      // Now invert in-place to get inv_KXX
       mi.invert_inplace(n_dim,inv_KXX);
 
       // Inverse covariance matrix times function vector
@@ -225,7 +224,11 @@ namespace o2scl {
     
     virtual ~interp_krige() {}
     
-    /// If true, keep \f$ K^{-1} \f$
+    /** \brief If true, keep \f$ K^{-1} \f$
+
+        This must be set to true in order to use \ref sigma() or
+        \ref gen_dist() .
+     */
     bool keep_matrix;
     
     /// Initialize interpolation routine
@@ -351,8 +354,8 @@ namespace o2scl {
     double sigma(double x0) const {
       
       if (!keep_matrix) {
-        O2SCL_ERR2("Matrix information not kept in ",
-                  "interp_krige::gen_dist().",o2scl::exc_einval);
+        O2SCL_ERR2("Matrix information missing (keep_matrix==false) in ",
+                  "interp_krige::sigma().",o2scl::exc_einval);
       }
       
       double sigma;
@@ -381,8 +384,8 @@ namespace o2scl {
     prob_dens_gaussian gen_dist(double x0) const {
 
       if (!keep_matrix) {
-        O2SCL_ERR2("Matrix information not kept in ",
-                  "interp_krige::gen_dist().",o2scl::exc_einval);
+        O2SCL_ERR2("Matrix information missing (keep_matrix==false) in ",
+                   "interp_krige::gen_dist().",o2scl::exc_einval);
       }
       
       double cent=0.0;
@@ -412,6 +415,11 @@ namespace o2scl {
     
     /** \brief Sample the probability distribution for the interpolation
         at a specified point
+
+        This creates a new distribution at the point \x c0 and then
+        samples that distribution. If one wants to perform several
+        samples at the same point, it is much more efficient to
+        use gen_dist() instead.
      */
     double sample(double x0) const {
       return gen_dist(x0)();
@@ -489,7 +497,7 @@ namespace o2scl {
   
     /// The covariance function length scale
     double len;
-
+    
     /// The quality factor of the optimization
     double qual;
     
@@ -725,13 +733,8 @@ namespace o2scl {
             if (irow>icol) {
               KXX(irow,icol)=KXX(icol,irow);
             } else {
-              if (this->rescaled) {
-                KXX(irow,icol)=exp(-pow(((*this->px)[irow]-
-                                         (*this->px)[icol])/len,2.0)/2.0);
-              } else {
-                KXX(irow,icol)=exp(-pow(((*this->px)[irow]-
-                                         (*this->px)[icol])/len,2.0)/2.0);
-              }
+              KXX(irow,icol)=exp(-pow(((*this->px)[irow]-
+                                       (*this->px)[icol])/len,2.0)/2.0);
               if (irow==icol) KXX(irow,icol)+=noise_var;
             }
           }
@@ -843,22 +846,18 @@ namespace o2scl {
       if (full_min) {
 
         if (verbose>1) {
-          std::cout << "krige_optim: full minimization, ";
+          std::cout << "Class interp_krige_optim: full minimization, "
+                    << std::endl;
           if (mode==mode_loo_cv) {
-            std::cout << "leave one-out cross validation. ";
+            std::cout << "  leave one-out cross validation. ";
           } else {
-            std::cout << "log marginal likelihood. ";
+            std::cout << "  log marginal likelihood. ";
           }
           std::cout << std::endl;
         }
       
         // Choose first interval as initial guess
-        double len_opt;
-        if (this->rescaled) {
-          len_opt=(*this->px)[1]-(*this->px)[0];
-        } else {
-          len_opt=x[1]-x[0];
-        }
+        double len_opt=x[1]-x[0];
 
         funct mf=std::bind
           (std::mem_fn<double(double,double,int &)>
@@ -879,25 +878,20 @@ namespace o2scl {
       } else {
 
         if (verbose>1) {
-          std::cout << "krige_optim: simple minimization, ";
+          std::cout << "Class interp_krige_optim: simple minimization, "
+                    << std::endl;
           if (mode==mode_loo_cv) {
-            std::cout << "leave one-out cross validation. ";
+            std::cout << "  leave one-out cross validation. ";
           } else {
-            std::cout << "maximize marginal likelihood. ";
+            std::cout << "  maximize marginal likelihood. ";
           }
           std::cout << std::endl;
         }
 
         // Compute a finite-difference array
         std::vector<double> diff(size-1);
-        if (this->rescaled) {
-          for(size_t i=0;i<size-1;i++) {
-            diff[i]=fabs((*this->px)[i+1]-(*this->px)[i]);
-          }
-        } else {
-          for(size_t i=0;i<size-1;i++) {
-            diff[i]=fabs(x[i+1]-x[i]);
-          }
+        for(size_t i=0;i<size-1;i++) {
+          diff[i]=fabs(x[i+1]-x[i]);
         }
       
         // Range of the length parameter
