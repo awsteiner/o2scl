@@ -1773,9 +1773,10 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
       (this,&acol_manager::comm_help),both},
      {0,"commands",
       "List available commands for current or specified type.",
-      0,1,"[type]",((string)"Output the commands available for ")+
+      0,1,"[type or \"all\"]",((string)"Output the commands available for ")+
       "the current type, or, if the optional type argument is given "+
-      "then output the commands available for that type.",
+      "then output the commands available for that type. \"commands all\""+
+      " outputs all commands for any type.",
       new o2scl::comm_option_mfptr<acol_manager>
       (this,&acol_manager::comm_commands),both}
     };
