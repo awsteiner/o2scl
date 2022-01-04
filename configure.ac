@@ -180,12 +180,12 @@ AC_CHECK_LIB([readline], [add_history], [],
 # ----------------------------------------------
 
 AC_ARG_ENABLE(mpfr,
-[  --enable-mpfr           Include mpfr support @<:@default=yes@:>@],
+[  --enable-mpfr           Include mpfr support @<:@default=no@:>@],
 	[case "${enableval}" in
 	yes) mpfr=true ;;
 	no)  mpfr=false ;;
 	*) AC_MSG_ERROR(bad value ${enableval} for --enable-mpfr) ;;
-	esac],[mpfr=true])
+	esac],[mpfr=false])
 
 AM_CONDITIONAL(O2SCL_MPFR, test x$mpfr = xtrue)
 
@@ -193,7 +193,7 @@ AM_CONDITIONAL(O2SCL_MPFR, test x$mpfr = xtrue)
 # If enabled, check for the mpfr library
 # ----------------------------------------------
 
-AS_IF([test "x$enable_mpfr" != "xno"], [
+AS_IF([test "x$enable_mpfr" != "xyes"], [
 
 AC_CHECK_LIB([mpfr], [mpfr_add], [],
 	[echo ""
