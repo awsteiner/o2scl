@@ -26,6 +26,7 @@
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
+using namespace o2scl_acol;
 
 void *o2scl_hdf_create_hdf_file() {
   hdf_file *ptr=new hdf_file;
@@ -294,6 +295,170 @@ void o2scl_hdf_hdf_file_copy(void *vptr, int verbose, void *ptr_hf2) {
   hdf_file *ptr=(hdf_file *)vptr;
   hdf_file *hf2=(hdf_file *)ptr_hf2;
   ptr->copy(verbose,*hf2);
+  return;
+}
+
+void *o2scl_hdf_create_acol_manager() {
+  acol_manager *ptr=new acol_manager;
+  return ptr;
+}
+
+void o2scl_hdf_free_acol_manager(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  delete ptr;
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_env_var_name(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->env_var_name;
+  return sptr;
+}
+
+void o2scl_hdf_acol_manager_set_env_var_name(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *p_t=(std::string *)p_v;
+  ptr->env_var_name=*(p_t);
+  return;
+}
+
+int o2scl_hdf_acol_manager_get_verbose(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return ptr->verbose;
+}
+
+void o2scl_hdf_acol_manager_set_verbose(void *vptr, int v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  ptr->verbose=v;
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_type(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->type;
+  return sptr;
+}
+
+void o2scl_hdf_acol_manager_set_type(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *p_t=(std::string *)p_v;
+  ptr->type=*(p_t);
+  return;
+}
+
+void o2scl_hdf_acol_manager_get_table_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  table_units<> *p_t=(table_units<> *)p_v;
+  *(p_t)=ptr->table_obj;
+  return;
+}
+
+void o2scl_hdf_acol_manager_set_table_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  table_units<> *p_t=(table_units<> *)p_v;
+  ptr->table_obj=*(p_t);
+  return;
+}
+
+void o2scl_hdf_acol_manager_get_table3d_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  table3d *p_t=(table3d *)p_v;
+  *(p_t)=ptr->table3d_obj;
+  return;
+}
+
+void o2scl_hdf_acol_manager_set_table3d_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  table3d *p_t=(table3d *)p_v;
+  ptr->table3d_obj=*(p_t);
+  return;
+}
+
+void o2scl_hdf_acol_manager_get_hist_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  hist *p_t=(hist *)p_v;
+  *(p_t)=ptr->hist_obj;
+  return;
+}
+
+void o2scl_hdf_acol_manager_set_hist_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  hist *p_t=(hist *)p_v;
+  ptr->hist_obj=*(p_t);
+  return;
+}
+
+void o2scl_hdf_acol_manager_get_hist_2d_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  hist_2d *p_t=(hist_2d *)p_v;
+  *(p_t)=ptr->hist_2d_obj;
+  return;
+}
+
+void o2scl_hdf_acol_manager_set_hist_2d_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  hist_2d *p_t=(hist_2d *)p_v;
+  ptr->hist_2d_obj=*(p_t);
+  return;
+}
+
+int o2scl_hdf_acol_manager_get_int_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return ptr->int_obj;
+}
+
+void o2scl_hdf_acol_manager_set_int_obj(void *vptr, int v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  ptr->int_obj=v;
+  return;
+}
+
+char o2scl_hdf_acol_manager_get_char_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return ptr->char_obj;
+}
+
+void o2scl_hdf_acol_manager_set_char_obj(void *vptr, char v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  ptr->char_obj=v;
+  return;
+}
+
+double o2scl_hdf_acol_manager_get_double_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return ptr->double_obj;
+}
+
+void o2scl_hdf_acol_manager_set_double_obj(void *vptr, double v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  ptr->double_obj=v;
+  return;
+}
+
+size_t o2scl_hdf_acol_manager_get_size_t_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return ptr->size_t_obj;
+}
+
+void o2scl_hdf_acol_manager_set_size_t_obj(void *vptr, size_t v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  ptr->size_t_obj=v;
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_string_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->string_obj;
+  return sptr;
+}
+
+void o2scl_hdf_acol_manager_set_string_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *p_t=(std::string *)p_v;
+  ptr->string_obj=*(p_t);
   return;
 }
 

@@ -24,6 +24,7 @@
 #include <o2scl/table.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
+#include <o2scl/acolm.h>
 
 extern "C" {
 
@@ -110,6 +111,58 @@ int o2scl_hdf_hdf_file_find_object_by_pattern(void *vptr, char *pattern, void *p
 void o2scl_hdf_hdf_file_file_list(void *vptr, int verbose);
 
 void o2scl_hdf_hdf_file_copy(void *vptr, int verbose, void *ptr_hf2);
+
+void *o2scl_hdf_create_acol_manager();
+
+void o2scl_hdf_free_acol_manager(void *vptr);
+
+void *o2scl_hdf_acol_manager_get_env_var_name(void *vptr);
+
+void o2scl_hdf_acol_manager_set_env_var_name(void *vptr, void *p_v);
+
+int o2scl_hdf_acol_manager_get_verbose(void *vptr);
+
+void o2scl_hdf_acol_manager_set_verbose(void *vptr, int v);
+
+void *o2scl_hdf_acol_manager_get_type(void *vptr);
+
+void o2scl_hdf_acol_manager_set_type(void *vptr, void *p_v);
+
+void o2scl_hdf_acol_manager_get_table_obj(void *vptr, void *p_v);
+
+void o2scl_hdf_acol_manager_set_table_obj(void *vptr, void *p_v);
+
+void o2scl_hdf_acol_manager_get_table3d_obj(void *vptr, void *p_v);
+
+void o2scl_hdf_acol_manager_set_table3d_obj(void *vptr, void *p_v);
+
+void o2scl_hdf_acol_manager_get_hist_obj(void *vptr, void *p_v);
+
+void o2scl_hdf_acol_manager_set_hist_obj(void *vptr, void *p_v);
+
+void o2scl_hdf_acol_manager_get_hist_2d_obj(void *vptr, void *p_v);
+
+void o2scl_hdf_acol_manager_set_hist_2d_obj(void *vptr, void *p_v);
+
+int o2scl_hdf_acol_manager_get_int_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_int_obj(void *vptr, int v);
+
+char o2scl_hdf_acol_manager_get_char_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_char_obj(void *vptr, char v);
+
+double o2scl_hdf_acol_manager_get_double_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_double_obj(void *vptr, double v);
+
+size_t o2scl_hdf_acol_manager_get_size_t_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_size_t_obj(void *vptr, size_t v);
+
+void *o2scl_hdf_acol_manager_get_string_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_string_obj(void *vptr, void *p_v);
 
 void o2scl_hdf_hdf_input_table_wrapper(void *ptr_hf, void *ptr_t, char *name);
 

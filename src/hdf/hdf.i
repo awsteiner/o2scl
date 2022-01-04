@@ -19,6 +19,7 @@ rst_header |
 h_include <o2scl/table.h>
 h_include <o2scl/hdf_file.h>
 h_include <o2scl/hdf_io.h>
+h_include <o2scl/acolm.h>
 # 
 # Include statement for C++ source code
 # 
@@ -29,6 +30,7 @@ cpp_include <o2scl/hdf_python.h>
 cpp_using std
 cpp_using o2scl
 cpp_using o2scl_hdf
+cpp_using o2scl_acol
 #
 # Additional python headers
 #
@@ -345,3 +347,17 @@ function strings_spec<std::vector<std::string>>
 #- out std::vector<std::vector<double>> &v
 #- int verbose [0]
 #- bool err_on_fail [true]
+class acol_manager
+- std::string env_var_name
+#- cli *cl
+- int verbose
+- std::string type
+- table_units<> table_obj
+- table3d table3d_obj
+- hist hist_obj
+- hist_2d hist_2d_obj
+- int int_obj
+- char char_obj
+- double double_obj
+- size_t size_t_obj
+- std::string string_obj

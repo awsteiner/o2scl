@@ -37,6 +37,7 @@ h_include <boost/numeric/ublas/vector.hpp>
 h_include <boost/numeric/ublas/matrix.hpp>
 h_include <o2scl/format_float.h>
 h_include <o2scl/interp_krige.h>
+h_include <o2scl/cli.h>
 # 
 # Include statement for C++ source code
 # 
@@ -1989,5 +1990,37 @@ function linear_or_log<std::vector<double>>
 - py_name linear_or_log
 - io std::vector<double> &x
 - out bool &log_x
-
+class comm_option_s
+- char shrt
+- std::string lng
+- std::string desc
+- int min_parms
+- int max_parms
+- std::string parm_desc
+- std::string help
+- int type
+class cmd_line_arg
+- std::string arg
+- bool is_option
+- bool is_valid
+- std::vector<std::string> parms
+#- comm_option_s *cop
+class cli
+- bool sync_verbose
+- bool gnu_intro
+- std::string desc
+- std::string cmd_name
+- std::string addl_help_cmd
+- std::string addl_help_cli
+- function set_verbose
+  - int
+  - int v
+#  amp->cl->process_args(args,ca,0);
+#  amp->cl->call_args(ca);
+#  amp->cl->parse_for_aliases(args,false);
+#  amp->cl->apply_aliases(args,0);
+#  vector<string> params=amp->cl->get_parameter_list();
+#  std::string desc=amp->cl->parameter_desc(name2);
+#  std::string desc=amp->cl->option_short_desc(name2);
+#  vector<string> options=amp->cl->get_option_list();
 

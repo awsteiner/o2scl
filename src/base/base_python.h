@@ -32,6 +32,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <o2scl/format_float.h>
 #include <o2scl/interp_krige.h>
+#include <o2scl/cli.h>
 
 extern "C" {
 
@@ -930,6 +931,92 @@ void o2scl_gen_test_number_double__reset(void *vptr);
 void o2scl_gen_test_number_double__set_radix(void *vptr, double r);
 
 double o2scl_gen_test_number_double__gen(void *vptr);
+
+void *o2scl_create_comm_option_s();
+
+void o2scl_free_comm_option_s(void *vptr);
+
+char o2scl_comm_option_s_get_shrt(void *vptr);
+
+void o2scl_comm_option_s_set_shrt(void *vptr, char v);
+
+void *o2scl_comm_option_s_get_lng(void *vptr);
+
+void o2scl_comm_option_s_set_lng(void *vptr, void *p_v);
+
+void *o2scl_comm_option_s_get_desc(void *vptr);
+
+void o2scl_comm_option_s_set_desc(void *vptr, void *p_v);
+
+int o2scl_comm_option_s_get_min_parms(void *vptr);
+
+void o2scl_comm_option_s_set_min_parms(void *vptr, int v);
+
+int o2scl_comm_option_s_get_max_parms(void *vptr);
+
+void o2scl_comm_option_s_set_max_parms(void *vptr, int v);
+
+void *o2scl_comm_option_s_get_parm_desc(void *vptr);
+
+void o2scl_comm_option_s_set_parm_desc(void *vptr, void *p_v);
+
+void *o2scl_comm_option_s_get_help(void *vptr);
+
+void o2scl_comm_option_s_set_help(void *vptr, void *p_v);
+
+int o2scl_comm_option_s_get_type(void *vptr);
+
+void o2scl_comm_option_s_set_type(void *vptr, int v);
+
+void *o2scl_create_cmd_line_arg();
+
+void o2scl_free_cmd_line_arg(void *vptr);
+
+void *o2scl_cmd_line_arg_get_arg(void *vptr);
+
+void o2scl_cmd_line_arg_set_arg(void *vptr, void *p_v);
+
+bool o2scl_cmd_line_arg_get_is_option(void *vptr);
+
+void o2scl_cmd_line_arg_set_is_option(void *vptr, bool v);
+
+bool o2scl_cmd_line_arg_get_is_valid(void *vptr);
+
+void o2scl_cmd_line_arg_set_is_valid(void *vptr, bool v);
+
+void o2scl_cmd_line_arg_get_parms(void *vptr, void *p_v);
+
+void o2scl_cmd_line_arg_set_parms(void *vptr, void *p_v);
+
+void *o2scl_create_cli();
+
+void o2scl_free_cli(void *vptr);
+
+bool o2scl_cli_get_sync_verbose(void *vptr);
+
+void o2scl_cli_set_sync_verbose(void *vptr, bool v);
+
+bool o2scl_cli_get_gnu_intro(void *vptr);
+
+void o2scl_cli_set_gnu_intro(void *vptr, bool v);
+
+void *o2scl_cli_get_desc(void *vptr);
+
+void o2scl_cli_set_desc(void *vptr, void *p_v);
+
+void *o2scl_cli_get_cmd_name(void *vptr);
+
+void o2scl_cli_set_cmd_name(void *vptr, void *p_v);
+
+void *o2scl_cli_get_addl_help_cmd(void *vptr);
+
+void o2scl_cli_set_addl_help_cmd(void *vptr, void *p_v);
+
+void *o2scl_cli_get_addl_help_cli(void *vptr);
+
+void o2scl_cli_set_addl_help_cli(void *vptr, void *p_v);
+
+int o2scl_cli_set_verbose(void *vptr, int v);
 
 void *o2scl_create_shared_ptr_table_units_();
 

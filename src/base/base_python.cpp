@@ -2700,6 +2700,273 @@ double o2scl_gen_test_number_double__gen(void *vptr) {
   return ret;
 }
 
+void *o2scl_create_comm_option_s() {
+  comm_option_s *ptr=new comm_option_s;
+  return ptr;
+}
+
+void o2scl_free_comm_option_s(void *vptr) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  delete ptr;
+  return;
+}
+
+char o2scl_comm_option_s_get_shrt(void *vptr) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  return ptr->shrt;
+}
+
+void o2scl_comm_option_s_set_shrt(void *vptr, char v) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  ptr->shrt=v;
+  return;
+}
+
+void *o2scl_comm_option_s_get_lng(void *vptr) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->lng;
+  return sptr;
+}
+
+void o2scl_comm_option_s_set_lng(void *vptr, void *p_v) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  std::string *p_t=(std::string *)p_v;
+  ptr->lng=*(p_t);
+  return;
+}
+
+void *o2scl_comm_option_s_get_desc(void *vptr) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->desc;
+  return sptr;
+}
+
+void o2scl_comm_option_s_set_desc(void *vptr, void *p_v) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  std::string *p_t=(std::string *)p_v;
+  ptr->desc=*(p_t);
+  return;
+}
+
+int o2scl_comm_option_s_get_min_parms(void *vptr) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  return ptr->min_parms;
+}
+
+void o2scl_comm_option_s_set_min_parms(void *vptr, int v) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  ptr->min_parms=v;
+  return;
+}
+
+int o2scl_comm_option_s_get_max_parms(void *vptr) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  return ptr->max_parms;
+}
+
+void o2scl_comm_option_s_set_max_parms(void *vptr, int v) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  ptr->max_parms=v;
+  return;
+}
+
+void *o2scl_comm_option_s_get_parm_desc(void *vptr) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->parm_desc;
+  return sptr;
+}
+
+void o2scl_comm_option_s_set_parm_desc(void *vptr, void *p_v) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  std::string *p_t=(std::string *)p_v;
+  ptr->parm_desc=*(p_t);
+  return;
+}
+
+void *o2scl_comm_option_s_get_help(void *vptr) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->help;
+  return sptr;
+}
+
+void o2scl_comm_option_s_set_help(void *vptr, void *p_v) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  std::string *p_t=(std::string *)p_v;
+  ptr->help=*(p_t);
+  return;
+}
+
+int o2scl_comm_option_s_get_type(void *vptr) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  return ptr->type;
+}
+
+void o2scl_comm_option_s_set_type(void *vptr, int v) {
+  comm_option_s *ptr=(comm_option_s *)vptr;
+  ptr->type=v;
+  return;
+}
+
+void *o2scl_create_cmd_line_arg() {
+  cmd_line_arg *ptr=new cmd_line_arg;
+  return ptr;
+}
+
+void o2scl_free_cmd_line_arg(void *vptr) {
+  cmd_line_arg *ptr=(cmd_line_arg *)vptr;
+  delete ptr;
+  return;
+}
+
+void *o2scl_cmd_line_arg_get_arg(void *vptr) {
+  cmd_line_arg *ptr=(cmd_line_arg *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->arg;
+  return sptr;
+}
+
+void o2scl_cmd_line_arg_set_arg(void *vptr, void *p_v) {
+  cmd_line_arg *ptr=(cmd_line_arg *)vptr;
+  std::string *p_t=(std::string *)p_v;
+  ptr->arg=*(p_t);
+  return;
+}
+
+bool o2scl_cmd_line_arg_get_is_option(void *vptr) {
+  cmd_line_arg *ptr=(cmd_line_arg *)vptr;
+  return ptr->is_option;
+}
+
+void o2scl_cmd_line_arg_set_is_option(void *vptr, bool v) {
+  cmd_line_arg *ptr=(cmd_line_arg *)vptr;
+  ptr->is_option=v;
+  return;
+}
+
+bool o2scl_cmd_line_arg_get_is_valid(void *vptr) {
+  cmd_line_arg *ptr=(cmd_line_arg *)vptr;
+  return ptr->is_valid;
+}
+
+void o2scl_cmd_line_arg_set_is_valid(void *vptr, bool v) {
+  cmd_line_arg *ptr=(cmd_line_arg *)vptr;
+  ptr->is_valid=v;
+  return;
+}
+
+void o2scl_cmd_line_arg_get_parms(void *vptr, void *p_v) {
+  cmd_line_arg *ptr=(cmd_line_arg *)vptr;
+  std::vector<std::string> *p_t=(std::vector<std::string> *)p_v;
+  *(p_t)=ptr->parms;
+  return;
+}
+
+void o2scl_cmd_line_arg_set_parms(void *vptr, void *p_v) {
+  cmd_line_arg *ptr=(cmd_line_arg *)vptr;
+  std::vector<std::string> *p_t=(std::vector<std::string> *)p_v;
+  ptr->parms=*(p_t);
+  return;
+}
+
+void *o2scl_create_cli() {
+  cli *ptr=new cli;
+  return ptr;
+}
+
+void o2scl_free_cli(void *vptr) {
+  cli *ptr=(cli *)vptr;
+  delete ptr;
+  return;
+}
+
+bool o2scl_cli_get_sync_verbose(void *vptr) {
+  cli *ptr=(cli *)vptr;
+  return ptr->sync_verbose;
+}
+
+void o2scl_cli_set_sync_verbose(void *vptr, bool v) {
+  cli *ptr=(cli *)vptr;
+  ptr->sync_verbose=v;
+  return;
+}
+
+bool o2scl_cli_get_gnu_intro(void *vptr) {
+  cli *ptr=(cli *)vptr;
+  return ptr->gnu_intro;
+}
+
+void o2scl_cli_set_gnu_intro(void *vptr, bool v) {
+  cli *ptr=(cli *)vptr;
+  ptr->gnu_intro=v;
+  return;
+}
+
+void *o2scl_cli_get_desc(void *vptr) {
+  cli *ptr=(cli *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->desc;
+  return sptr;
+}
+
+void o2scl_cli_set_desc(void *vptr, void *p_v) {
+  cli *ptr=(cli *)vptr;
+  std::string *p_t=(std::string *)p_v;
+  ptr->desc=*(p_t);
+  return;
+}
+
+void *o2scl_cli_get_cmd_name(void *vptr) {
+  cli *ptr=(cli *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->cmd_name;
+  return sptr;
+}
+
+void o2scl_cli_set_cmd_name(void *vptr, void *p_v) {
+  cli *ptr=(cli *)vptr;
+  std::string *p_t=(std::string *)p_v;
+  ptr->cmd_name=*(p_t);
+  return;
+}
+
+void *o2scl_cli_get_addl_help_cmd(void *vptr) {
+  cli *ptr=(cli *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->addl_help_cmd;
+  return sptr;
+}
+
+void o2scl_cli_set_addl_help_cmd(void *vptr, void *p_v) {
+  cli *ptr=(cli *)vptr;
+  std::string *p_t=(std::string *)p_v;
+  ptr->addl_help_cmd=*(p_t);
+  return;
+}
+
+void *o2scl_cli_get_addl_help_cli(void *vptr) {
+  cli *ptr=(cli *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->addl_help_cli;
+  return sptr;
+}
+
+void o2scl_cli_set_addl_help_cli(void *vptr, void *p_v) {
+  cli *ptr=(cli *)vptr;
+  std::string *p_t=(std::string *)p_v;
+  ptr->addl_help_cli=*(p_t);
+  return;
+}
+
+int o2scl_cli_set_verbose(void *vptr, int v) {
+  cli *ptr=(cli *)vptr;
+  int ret=ptr->set_verbose(v);
+  return ret;
+}
+
 void *o2scl_create_shared_ptr_table_units_() {
   std::shared_ptr<table_units<> > *ptr=new std::shared_ptr<table_units<> >(new table_units<>);
   return ptr;
