@@ -192,7 +192,7 @@ AM_CONDITIONAL(O2SCL_MPFR, test x$mpfr = xtrue)
 # If enabled, check for the mpfr library
 # ----------------------------------------------
 
-AS_IF([test "x$enable_mpfr" != "xyes"], [
+AS_IF([test "x$enable_mpfr" == "xyes"], [
 AC_CHECK_LIB([mpfr], [mpfr_add], [],
 	[echo ""
         echo "Mpfr not found. "
