@@ -36,8 +36,8 @@
 #ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #ifdef O2SCL_MPFR
-#endif
 #include <boost/multiprecision/mpfr.hpp>
+#endif
 #endif
 
 #include <o2scl/err_hnd.h>

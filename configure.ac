@@ -164,7 +164,6 @@ AM_CONDITIONAL(O2SCL_READLINE, test x$readline = xtrue)
 # ----------------------------------------------
 
 AS_IF([test "x$enable_readline" != "xno"], [
-
 AC_CHECK_LIB([readline], [add_history], [],
 	[echo ""
         echo "Readline not found. "
@@ -194,7 +193,6 @@ AM_CONDITIONAL(O2SCL_MPFR, test x$mpfr = xtrue)
 # ----------------------------------------------
 
 AS_IF([test "x$enable_mpfr" != "xyes"], [
-
 AC_CHECK_LIB([mpfr], [mpfr_add], [],
 	[echo ""
         echo "Mpfr not found. "
@@ -251,7 +249,6 @@ AM_CONDITIONAL(O2SCL_POLYLOGARITHM, test x$polylogarithm = xtrue)
 # ----------------------------------------------
 
 AS_IF([test "x$enable_polylogarithm" == "xyes"], [
-
 AC_CHECK_LIB([polylog_cpp], [log], [],
 	[echo ""
         echo "Polylogarithm not found. "
@@ -281,7 +278,6 @@ AM_CONDITIONAL(O2SCL_NCURSES, test x$ncurses = xtrue)
 # ----------------------------------------------
 
 AS_IF([test "x$enable_ncurses" != "xno"], [
-
 AC_CHECK_LIB([ncurses], [initscr], [],
 	[echo ""
         echo "Ncurses not found. "
@@ -311,7 +307,6 @@ AM_CONDITIONAL(O2SCL_HDF, test x$hdf = xtrue)
 # ----------------------------------------------
 
 AS_IF([test "x$enable_hdf" != "xno"], [
-	    
 AC_CHECK_LIB([hdf5], [H5Fopen], [], [
   AC_CHECK_LIB([hdf5_serial], [H5Fopen], [], [
     echo ""
