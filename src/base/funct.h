@@ -313,17 +313,16 @@ namespace o2scl {
     PyObject *pArgs;
 
     /// Desc
-    std::string func_name;
-    
+    PyObject *pFunc;
+
   public:
     
     /** \brief Specify the python and the parameters
      */
     funct_python(std::string module, std::string func,
                  std::string path="");
-
-    virtual ~funct_python() {
-    };
+    
+    virtual ~funct_python();
   
     /** \brief Specify the python and the parameters
 
