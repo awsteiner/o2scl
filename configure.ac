@@ -16,7 +16,7 @@ AC_PROG_MAKE_SET
 # O2scl requires c++11 support, but sometimes it isn't properly
 # detected when it's present (notably in travis), so we make it
 # optional here and users will have to modify their flags if this
-# fails.
+# fails. AWS, 1/5/22, this is probably unnecessary now
 AX_CXX_COMPILE_STDCXX_11(,[optional])
 
 # Newer replacement for LT_INIT
@@ -35,10 +35,11 @@ AC_FUNC_SELECT_ARGTYPES
 AC_CHECK_FUNC([popen],[AC_DEFINE([HAVE_POPEN],[1],
 [Define if popen exists])])
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Take care of library version numbers
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
+# Currently, these are always "version number minus 910"
 OLIB_CURRENT=17
 OLIB_REVISION=0
 OLIB_AGE=17
@@ -46,25 +47,25 @@ OLIB_AGE=17
 OLIB_LT_VERSION="${OLIB_CURRENT}:${OLIB_REVISION}:${OLIB_AGE}"
 AC_SUBST(OLIB_LT_VERSION)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Enable or disable GSL 2.0 support
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 # 11/3/21: Comment this out since everyone has GSL2 now
 
-dnl AC_ARG_ENABLE(gsl2,
-dnl [  --enable-gsl2           Include GSL v2.0 support @<:@default=yes@:>@],
-dnl    [case "${enableval}" in
-dnl    yes) gsl2=true ;;
-dnl    no)  gsl2=false ;;
-dnl    *) AC_MSG_ERROR(bad value ${enableval} for --enable-gsl2) ;;
-dnl    esac],[gsl2=true])
+# AC_ARG_ENABLE(gsl2,
+# [  --enable-gsl2           Include GSL v2.0 support @<:@default=yes@:>@],
+#    [case "${enableval}" in
+#    yes) gsl2=true ;;
+#    no)  gsl2=false ;;
+#    *) AC_MSG_ERROR(bad value ${enableval} for --enable-gsl2) ;;
+#    esac],[gsl2=true])
 
-dnl AM_CONDITIONAL(O2SCL_GSL2, test x$gsl2 = xtrue)
+# AM_CONDITIONAL(O2SCL_GSL2, test x$gsl2 = xtrue)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Enable or disable particle and nuclei library
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_ARG_ENABLE(partlib,
 [  --enable-partlib        Include particle library @<:@default=yes@:>@],
@@ -76,9 +77,9 @@ AC_ARG_ENABLE(partlib,
 
 AM_CONDITIONAL(O2SCL_PARTLIB, test x$partlib = xtrue)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Enable or disable EOS library
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_ARG_ENABLE(eoslib,
 [  --enable-eoslib         Include equation of state library @<:@default=yes@:>@],
@@ -90,9 +91,9 @@ AC_ARG_ENABLE(eoslib,
 
 AM_CONDITIONAL(O2SCL_EOSLIB, test x$eoslib = xtrue)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Check for Boost headers
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 # AWS: This doesn't seem to correctly find the Boost libraries yet
 
@@ -106,15 +107,15 @@ AM_CONDITIONAL(O2SCL_EOSLIB, test x$eoslib = xtrue)
 #	exit -1
 #	],[])
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Check for math library
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_CHECK_LIB([m],[cos])
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Check for BLAS
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_CHECK_LIB([cblas],[cblas_dgemm],[],[
   echo "Library libcblas not found. Looking for GSL cblas." 
@@ -131,9 +132,9 @@ AC_CHECK_LIB([cblas],[cblas_dgemm],[],[
   ],[])
 ],[])
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Check for GSL library (must check for BLAS first)
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_CHECK_LIB([gsl], [gsl_vector_get], [], 
 	[echo ""
@@ -145,9 +146,9 @@ AC_CHECK_LIB([gsl], [gsl_vector_get], [],
         exit -1
 	],[])
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Check for Readline library
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_ARG_ENABLE(readline,
 [  --enable-readline       Include readline support @<:@default=yes@:>@],
@@ -159,9 +160,9 @@ AC_ARG_ENABLE(readline,
 
 AM_CONDITIONAL(O2SCL_READLINE, test x$readline = xtrue)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # If enabled, check for the readline library
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AS_IF([test "x$enable_readline" != "xno"], [
 AC_CHECK_LIB([readline], [add_history], [],
@@ -174,9 +175,9 @@ AC_CHECK_LIB([readline], [add_history], [],
 
 ])
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Check for Mpfr library
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_ARG_ENABLE(mpfr,
 [  --enable-mpfr           Include mpfr support @<:@default=no@:>@],
@@ -188,9 +189,9 @@ AC_ARG_ENABLE(mpfr,
 
 AM_CONDITIONAL(O2SCL_MPFR, test x$mpfr = xtrue)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # If enabled, check for the mpfr library
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AS_IF([test "x$enable_mpfr" == "xyes"], [
 AC_CHECK_LIB([mpfr], [mpfr_add], [],
@@ -202,9 +203,9 @@ AC_CHECK_LIB([mpfr], [mpfr_add], [],
 	],[])
 ])
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Check for Cubature library
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_ARG_ENABLE(cubature,
 [  --enable-cubature       Include cubature support @<:@default=no@:>@],
@@ -216,9 +217,9 @@ AC_ARG_ENABLE(cubature,
 
 AM_CONDITIONAL(O2SCL_CUBATURE, test x$cubature = xtrue)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # If enabled, check for the cubature library
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AS_IF([test "x$enable_cubature" == "xyes"], [
 AC_CHECK_LIB([cubature], [pcubature], [],
@@ -230,9 +231,31 @@ AC_CHECK_LIB([cubature], [pcubature], [],
 	],[])
 ])
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
+# Enable Python extensions
+# ------------------------------------------------------------------
+
+AC_ARG_ENABLE(python,
+[  --enable-python       Include python support @<:@default=no@:>@],
+	[case "${enableval}" in
+	yes) python=true ;;
+	no)  python=false ;;
+	*) AC_MSG_ERROR(bad value ${enableval} for --enable-python) ;;
+	esac],[python=false])
+
+AM_CONDITIONAL(O2SCL_PYTHON, test x$python = xtrue)
+
+# ------------------------------------------------------------------
+# If enabled, check for the python library
+# ------------------------------------------------------------------
+
+AS_IF([test "x$enable_python" == "xyes"], [
+        AX_PYTHON
+])
+
+# ------------------------------------------------------------------
 # Check for Polylogarithm library
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_ARG_ENABLE(polylogarithm,
 [  --enable-polylogarithm  Include polylogarithm support @<:@default=no@:>@],
@@ -244,9 +267,9 @@ AC_ARG_ENABLE(polylogarithm,
 
 AM_CONDITIONAL(O2SCL_POLYLOGARITHM, test x$polylogarithm = xtrue)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # If enabled, check for the polylogarithm library
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AS_IF([test "x$enable_polylogarithm" == "xyes"], [
 AC_CHECK_LIB([polylog_cpp], [log], [],
@@ -259,9 +282,9 @@ AC_CHECK_LIB([polylog_cpp], [log], [],
 
 ])
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Check for ncurses library
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_ARG_ENABLE(ncurses,
 [  --enable-ncurses        Include ncurses support @<:@default=yes@:>@],
@@ -273,9 +296,9 @@ AC_ARG_ENABLE(ncurses,
 
 AM_CONDITIONAL(O2SCL_NCURSES, test x$ncurses = xtrue)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # If enabled, check for the ncurses library
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AS_IF([test "x$enable_ncurses" != "xno"], [
 AC_CHECK_LIB([ncurses], [initscr], [],
@@ -288,9 +311,9 @@ AC_CHECK_LIB([ncurses], [initscr], [],
 
 ])
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Enable or disable HDF5 support
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_ARG_ENABLE(hdf,
 	[  --enable-hdf            Include HDF5 support @<:@default=yes@:>@],
@@ -302,9 +325,9 @@ AC_ARG_ENABLE(hdf,
 
 AM_CONDITIONAL(O2SCL_HDF, test x$hdf = xtrue)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # If enabled, check for the HDF5 library
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AS_IF([test "x$enable_hdf" != "xno"], [
 AC_CHECK_LIB([hdf5], [H5Fopen], [], [
@@ -321,9 +344,9 @@ AC_CHECK_LIB([hdf5], [H5Fopen], [], [
 
 ])
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # ... and for the HDF5 high-level library
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_CHECK_LIB([hdf5_hl], [H5TBread_table], [], [
   AC_CHECK_LIB([hdf5_serial_hl], [H5TBread_table], [], [
@@ -338,10 +361,10 @@ AC_CHECK_LIB([hdf5_hl], [H5TBread_table], [], [
   ],[])
 ],[])  
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Enable or disable FFTW support (included here
 # for later use)
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_ARG_ENABLE(fftw,
 	[  --enable-fftw           Include FFTW support @<:@default=no@:>@],
@@ -353,9 +376,9 @@ AC_ARG_ENABLE(fftw,
 	
 AM_CONDITIONAL(O2SCL_FFTW, test x$fftw = xtrue)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # If enabled, check for the FFTW library
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AS_IF([test "x$enable_fftw" == "xyes"],[
 AC_CHECK_LIB([fftw3], [fftw_ifree], [],
@@ -369,23 +392,23 @@ AC_CHECK_LIB([fftw3], [fftw_ifree], [],
  	],[])
 ])
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Enable or disable python support
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
-dnl AC_ARG_ENABLE(python,
-dnl 	[  --enable-python         Include Python support @<:@default=no@:>@],
-dnl 	[case "${enableval}" in
-dnl 	yes) python=true ;;
-dnl 	no)  python=false ;;
-dnl 	*) AC_MSG_ERROR(bad value ${enableval} for --enable-python) ;;
-dnl 	esac],[python=false])
+# AC_ARG_ENABLE(python,
+# 	[  --enable-python         Include Python support @<:@default=no@:>@],
+# 	[case "${enableval}" in
+# 	yes) python=true ;;
+# 	no)  python=false ;;
+# 	*) AC_MSG_ERROR(bad value ${enableval} for --enable-python) ;;
+# 	esac],[python=false])
 
-dnl AM_CONDITIONAL(O2SCL_PYTHON, test x$python = xtrue)
+# AM_CONDITIONAL(O2SCL_PYTHON, test x$python = xtrue)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Enable or disable support for acol
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_ARG_ENABLE(acol,
 [  --enable-acol           Include 'acol' utility @<:@default=yes@:>@],
@@ -397,9 +420,9 @@ AC_ARG_ENABLE(acol,
 
 AM_CONDITIONAL(O2SCL_ENABLE_ACOL, test x$acol = xtrue)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Enable or disable snap configurations
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_ARG_ENABLE(snap,
 [  --enable-snap           Enable snap features @<:@default=no@:>@],
@@ -411,9 +434,9 @@ AC_ARG_ENABLE(snap,
 
 AM_CONDITIONAL(O2SCL_SNAP, test x$snap = xtrue)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Enable or disable armadillo support
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_ARG_ENABLE(armadillo,
 [  --enable-armadillo      Include Armadillo support @<:@default=no@:>@],
@@ -425,9 +448,9 @@ AC_ARG_ENABLE(armadillo,
 
 AM_CONDITIONAL(O2SCL_ARMA, test x$armadillo = xtrue)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # If enabled, check for Armadillo library
-# ----------------------------------------------
+# ------------------------------------------------------------------
  
 # AWS: This doesn't correctly find the Armadillo libraries yet
  
@@ -442,9 +465,9 @@ AC_CHECK_LIB([armadillo], [wrapper_dgemm_],[],
 	],[])
 ])
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Enable or disable Eigen support
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_ARG_ENABLE(eigen,
 	[  --enable-eigen          Include Eigen support @<:@default=no@:>@],
@@ -456,9 +479,9 @@ AC_ARG_ENABLE(eigen,
 
 AM_CONDITIONAL(O2SCL_EIGEN, test x$eigen = xtrue)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Enable or disable openmp support
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_ARG_ENABLE(openmp,
 	[  --enable-openmp         Include OpenMP support @<:@default=no@:>@],
@@ -470,7 +493,7 @@ AC_ARG_ENABLE(openmp,
 
 AM_CONDITIONAL(O2SCL_OPENMP, test x$openmp = xtrue)
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 # Define 'host_os' to determine target system
 # from https://stackoverflow.com/questions/38898591/how-to-check-the-os-with-automake
 
@@ -500,7 +523,7 @@ AM_CONDITIONAL([O2SCL_LINUX], [test "$build_linux" = "yes"])
 AM_CONDITIONAL([O2SCL_WINDOWS], [test "$build_windows" = "yes"])
 AM_CONDITIONAL([O2SCL_OSX], [test "$build_mac" = "yes"])
 
-# ----------------------------------------------
+# ------------------------------------------------------------------
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile

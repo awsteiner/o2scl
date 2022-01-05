@@ -27,6 +27,10 @@
 #include <o2scl/lib_settings.h>
 #include <o2scl/prev_commit.h>
 
+#ifdef O2SCL_PYTHON
+#include <Python.h>
+#endif
+
 #ifdef O2SCL_HDF
 #ifdef O2SCL_PLAIN_HDF5_HEADER
 #include <hdf5.h>
@@ -63,9 +67,50 @@ lib_settings_class::lib_settings_class() {
   // When this is zero, O2scl functions just use the value returned by
   // omp_get_num_threads()
   //omp_num_threads=0;
+
+  py_initialized=false;
 }
 
 lib_settings_class::~lib_settings_class() {
+}
+
+int lib_settings_class::py_init_nothrow() {
+#ifdef O2SCL_PYTHON
+  Py_Initialize();
+  if (Py_IsInitialized()) {
+    py_initialized=true;
+    return 0;
+  }
+#else
+  return 2;
+#endif
+  return 1;
+}
+
+void lib_settings_class::py_init() {
+  int ret=py_init_nothrow();
+  if (ret!=0) {
+    O2SCL_ERR("Python initialization failed.",o2scl::exc_efailed);
+  }
+  return;
+}
+
+int lib_settings_class::py_final_nothrow() {
+#ifdef O2SCL_PYTHON
+  Py_Finalize();
+  py_initialized=false;
+#else
+  return 2;
+#endif
+  return 0;
+}
+
+void lib_settings_class::py_final() {
+  int ret=py_final_nothrow();
+  if (ret!=0) {
+    O2SCL_ERR("Python finalization failed.",o2scl::exc_efailed);
+  }
+  return;
 }
 
 bool lib_settings_class::range_check() {
@@ -214,7 +259,6 @@ bool lib_settings_class::cubature_support() {
 #endif
 }
 
-/*
 bool lib_settings_class::python_support() {
 #ifdef O2SCL_PYTHON
   return true;
@@ -222,7 +266,6 @@ bool lib_settings_class::python_support() {
   return false;
 #endif
 }
-*/
 
 bool lib_settings_class::openmp_support() {
 #ifdef O2SCL_OPENMP

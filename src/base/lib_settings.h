@@ -148,7 +148,7 @@ namespace o2scl {
     bool polylogarithm_support();
 
     // Return true if \o2 was installed with Python support
-    //bool python_support();
+    bool python_support();
 
     /// Return true if \o2 was installed with HDF5 compression support
     bool hdf5_compression_support();
@@ -219,6 +219,21 @@ namespace o2scl {
     // control OpenMP threads, but I think for now the best is just to
     // use export OMP_NUM_THREADS to control this
     //size_t omp_num_threads;
+
+    /// True if Python has been initialized (default false)
+    bool py_initialized;
+
+    /// Desc
+    int py_init_nothrow();
+
+    /// Desc
+    void py_init();
+    
+    /// Desc
+    int py_final_nothrow();
+
+    /// Desc
+    void py_final();
     
   protected:
 

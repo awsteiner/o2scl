@@ -18,7 +18,7 @@ BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	test_mgr.cpp vector.cpp auto_format.cpp \
 	string_conv.cpp exception.cpp format_float.cpp \
 	shunting_yard.cpp tensor.cpp find_constants.cpp cursesw.cpp \
-	base_python.cpp
+	base_python.cpp funct.cpp
 
 BASE_SRCS = $(BASE_BASE_SRCS)
 
@@ -123,6 +123,12 @@ else
 O2SCL_MPFR_MVAR = 
 endif
 
+if O2SCL_PYTHON
+O2SCL_PYTHON_MVAR = -DO2SCL_PYTHON
+else 
+O2SCL_PYTHON_MVAR = 
+endif
+
 if O2SCL_READLINE
 ADDINC = -DO2SCL_READLINE
 else 
@@ -137,7 +143,8 @@ AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
 	$(O2SCL_GSL2_MVAR) -DO2SCL_COND_FLAG $(ADDINC) \
 	$(O2SCL_OSX_MVAR) $(O2SCL_FFTW_MVAR) $(O2SCL_LINUX_MVAR) \
-	$(O2SCL_MPFR_MVAR) $(O2SCL_POLYLOGARITHM_MVAR) $(O2SCL_CUBATURE_MVAR)
+	$(O2SCL_MPFR_MVAR) $(O2SCL_POLYLOGARITHM_MVAR) \
+	$(O2SCL_PYTHON_MVAR) $(O2SCL_CUBATURE_MVAR) $(PYTHON_INCLUDE_DIR)
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
@@ -146,7 +153,8 @@ AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
 	$(O2SCL_GSL2_MVAR) -DO2SCL_COND_FLAG $(ADDINC) \
 	$(O2SCL_OSX_MVAR) $(O2SCL_FFTW_MVAR) $(O2SCL_LINUX_MVAR) \
-	$(O2SCL_MPFR_MVAR) $(O2SCL_POLYLOGARITHM_MVAR) $(O2SCL_CUBATURE_MVAR)
+	$(O2SCL_MPFR_MVAR) $(O2SCL_POLYLOGARITHM_MVAR) \
+	$(O2SCL_PYTHON_MVAR) $(O2SCL_CUBATURE_MVAR) $(PYTHON_INCLUDE_DIR)
 endif
 
 

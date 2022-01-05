@@ -42,6 +42,11 @@
 
 #include <o2scl/err_hnd.h>
 #include <o2scl/calc_utf8.h>
+#include <o2scl/lib_settings.h>
+
+#ifdef O2SCL_PYTHON
+#include <Python.h>
+#endif
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -60,8 +65,10 @@ namespace o2scl {
       This typedef is only present if O2SCL_LD_TYPES is
       defined during compilation.
    */
-  typedef std::function<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
-			(boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> > )>
+  typedef std::function<boost::multiprecision::number<
+                          boost::multiprecision::cpp_dec_float<35> >
+			(boost::multiprecision::number<
+                         boost::multiprecision::cpp_dec_float<35> > )>
   funct_cdf35;
   
   /** \brief One-dimensional function typedef in src/base/funct.h
@@ -288,7 +295,67 @@ namespace o2scl {
 
   };
 
+#ifdef O2SCL_PYTHON
   
+  /** \brief One-dimensional function from a python function
+  */
+  class funct_python {
+
+  protected:
+
+    /// Desc
+    PyObject *pName;
+    
+    /// Desc
+    PyObject *pModule;
+    
+    /// Desc
+    PyObject *pArgs;
+
+    /// Desc
+    std::string func_name;
+    
+  public:
+    
+    /** \brief Specify the python and the parameters
+     */
+    funct_python(std::string module, std::string func,
+                 std::string path="");
+
+    virtual ~funct_python() {
+    };
+  
+    /** \brief Specify the python and the parameters
+
+        This function is called by the constructor and thus
+        cannot be virtual.
+     */
+    int set_function(std::string module, std::string func,
+                     std::string path="");
+    
+    /** \brief Compute the function at point \c x and return the result
+     */
+    virtual double operator()(double x) const;
+
+#ifndef DOXYGEN_INTERNAL
+
+  protected:
+
+    funct_python() {};
+
+#endif
+#ifndef DOXYGEN_NO_O2NS
+
+  private:
+
+    funct_python(const funct_python &);
+    funct_python& operator=(const funct_python&);
+
+#endif
+
+  };
+
+#endif
 
 #ifndef DOXYGEN_NO_O2NS
 }

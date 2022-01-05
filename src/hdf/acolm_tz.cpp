@@ -755,6 +755,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   }
   cout << "  HDF5 compression support: "
        << o2scl_settings.hdf5_compression_support() << endl;
+  cout << "Python support: " << o2scl_settings.python_support() << endl;
   cout << "Armadillo support: "
        << o2scl_settings.armadillo_support() << endl;
   cout << "Eigen support: " << o2scl_settings.eigen_support() << endl;

@@ -95,20 +95,6 @@ ame_parse_SOURCES = ame_parse.cpp
 
 yanic_SOURCES = yanic.cpp
 
-if O2SCL_READLINE
-
-# AWS: 5/13/21: commeting this out since it's already taken care
-# of by configure.ac
-
-#RLIB = -lreadline -lncurses
-RLIB =
-
-else
-
-RLIB =
-
-endif
-
 # We look first for the libraries in the distribution directory.
 # However, homebrew's superenv appears to move the libraries around,
 # so we look for them in pkglibdir. Removing -fopenmp here since
@@ -150,26 +136,24 @@ if O2SCL_OPENMP
 #ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
 #yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
 
-# AWS: 5/13/21: -fopenmp is both here and in RLIB above, but I've
-# had errors on ubuntu if it's not here as well
-
-acol_LDFLAGS = -L../src -L../src/hdf -fopenmp
-ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp
-yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp
+acol_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
+ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
+yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 
 else
 
-acol_LDFLAGS = -L../src -L../src/hdf 
-ame_parse_LDFLAGS = -L../src -L../src/hdf 
-yanic_LDFLAGS = -L../src -L../src/hdf 
+acol_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB) -Ltest1
+ame_parse_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
+yanic_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
 
 endif
 
 endif
 
-acol_LDADD = -lo2scl_hdf -lo2scl -lgsl -lgslcblas $(RLIB)
-ame_parse_LDADD = -lo2scl_part -lo2scl_hdf -lo2scl -lgsl -lgslcblas $(RLIB)
-yanic_LDADD = -lo2scl_hdf -lo2scl -lgsl -lgslcblas $(RLIB)
+acol_LDADD = -lo2scl_hdf -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
+ame_parse_LDADD = -lo2scl_part -lo2scl_hdf -lo2scl \
+	-lgsl -lgslcblas -l$(PYTHON_LIB)
+yanic_LDADD = -lo2scl_hdf -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 
 endif
 
