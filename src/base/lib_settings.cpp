@@ -74,9 +74,15 @@ lib_settings_class::lib_settings_class() {
 lib_settings_class::~lib_settings_class() {
 }
 
-int lib_settings_class::py_init_nothrow() {
+int lib_settings_class::py_init_nothrow(int verbose) {
 #ifdef O2SCL_PYTHON
+  if (verbose>0) {
+    cout << "Running Py_Initialize()." << endl;
+  }
   Py_Initialize();
+  if (verbose>0) {
+    cout << "Finished Py_Initialize()." << endl;
+  }
   if (Py_IsInitialized()) {
     py_initialized=true;
     return 0;
@@ -87,17 +93,23 @@ int lib_settings_class::py_init_nothrow() {
   return 1;
 }
 
-void lib_settings_class::py_init() {
-  int ret=py_init_nothrow();
+void lib_settings_class::py_init(int verbose) {
+  int ret=py_init_nothrow(verbose);
   if (ret!=0) {
     O2SCL_ERR("Python initialization failed.",o2scl::exc_efailed);
   }
   return;
 }
 
-int lib_settings_class::py_final_nothrow() {
+int lib_settings_class::py_final_nothrow(int verbose) {
 #ifdef O2SCL_PYTHON
+  if (verbose>0) {
+    cout << "Running Py_Finalize()." << endl;
+  }
   Py_Finalize();
+  if (verbose>0) {
+    cout << "Finished Py_Finalize()." << endl;
+  }
   py_initialized=false;
 #else
   return 2;
@@ -105,8 +117,8 @@ int lib_settings_class::py_final_nothrow() {
   return 0;
 }
 
-void lib_settings_class::py_final() {
-  int ret=py_final_nothrow();
+void lib_settings_class::py_final(int verbose) {
+  int ret=py_final_nothrow(verbose);
   if (ret!=0) {
     O2SCL_ERR("Python finalization failed.",o2scl::exc_efailed);
   }
@@ -119,6 +131,144 @@ bool lib_settings_class::range_check() {
 #else
   return false;
 #endif
+}
+
+void lib_settings_class::add_python_path(std::string path, int verbose) {
+  
+#ifdef O2SCL_PYTHON
+  
+  // Import the system module so that we can modify the search path
+  // to import the module where the function is located
+  if (verbose>0) {
+    cout << "Importing sys." << endl;
+  }
+  PyObject *sys_mod=PyImport_ImportModule("sys");
+  if (sys_mod==0) {
+    O2SCL_ERR2("Import system module failed in",
+              "funct_python::set_function().",
+              o2scl::exc_efailed);
+  }
+  
+  // Obtain the path and the number of elements 
+  if (verbose>0) {
+    cout << "Getting sys.path" << endl;
+  }
+  PyObject *sys_path=PyObject_GetAttrString(sys_mod,"path");
+  if (sys_path==0) {
+    O2SCL_ERR2("Obtain sys.path failed in",
+              "funct_python::set_function().",
+              o2scl::exc_efailed);
+  }
+  if (verbose>0) {
+    cout << "Getting len(sys.path)" << endl;
+  }
+  Py_ssize_t path_size=PySequence_Size(sys_path);
+  if (path_size==-1) {
+    O2SCL_ERR2("Getting sys.path sequence size failed in",
+              "funct_python::set_function().",
+              o2scl::exc_efailed);
+  }
+
+  // Iterate through each element in the path, and compare with
+  // the user-specified path
+  
+  bool path_found=false;
+  
+  for(int j=0;j<path_size;j++) {
+    if (verbose>0) {
+      cout << "Getting item." << endl;
+    }
+    PyObject *item=PySequence_GetItem(sys_path,j);
+    if (item==0) {
+      O2SCL_ERR2("Getting sequence item failed in",
+                "funct_python::set_function().",
+                o2scl::exc_efailed);
+    }
+    if (verbose>0) {
+      cout << "Getting representation." << endl;
+    }
+    PyObject *item2=PyObject_Repr(item);
+    if (item2==0) {
+      O2SCL_ERR2("Getting sequence item unicode failed in",
+                "funct_python::set_function().",
+                o2scl::exc_efailed);
+    }
+    if (verbose>0) {
+      cout << "Getting string." << endl;
+    }
+    PyObject *str=PyUnicode_AsEncodedString(item2,"utf-8","Error");
+    if (str==0) {
+      O2SCL_ERR2("Getting encoded sequence item failed in",
+                "funct_python::set_function().",
+                o2scl::exc_efailed);
+    }
+    if (verbose>0) {
+      cout << "Getting C string." << endl;
+    }
+    const char *cstr=PyBytes_AS_STRING(str);
+    if (cstr==0) {
+      O2SCL_ERR2("Getting C string from sequence item failed in",
+                "funct_python::set_function().",
+                o2scl::exc_efailed);
+    }
+    
+    if (verbose>0) {
+      cout << "Converting " << cstr << " to std::string." << endl;
+    }
+    string cppstr=cstr;
+    if (cppstr==path) {
+      path_found=true;
+      if (verbose>0) {
+        cout << "Path found." << endl;
+      }
+    }
+    
+    if (verbose>0) {
+      cout << "Decref() for next item" << endl;
+    }
+    Py_DECREF(str);
+    Py_DECREF(item2);
+    Py_DECREF(item);
+  }
+
+  if (verbose>0) {
+    cout << "import sys" << endl;
+  }
+  // Is this necessary?
+  PyRun_SimpleString("import sys");
+
+  // If necessary, add the user-specified path to sys.path
+  if (path_found==false) {
+    if (verbose>0) {
+      cout << "Adding path" << endl;
+    }
+    std::string pys=((std::string)"sys.path.append('")+path+"')";
+    PyRun_SimpleString(pys.c_str());
+  } else {
+    if (verbose>0) {
+      cout << "Path found" << endl;
+    }
+  }
+
+  // Free the memory associated with the system path and module
+  if (verbose>0) {
+    cout << "Decref" << endl;
+  }
+  Py_DECREF(sys_path);
+  Py_DECREF(sys_mod);
+
+  if (verbose>0) {
+    cout << "Done in add_python_path()." << endl;
+  }
+  
+#else
+
+  O2SCL_ERR2("Python not supported in ",
+             "lib_settings_class::add_python_path().",o2scl::exc_efailed);
+
+#endif  
+  
+  return;
 }
 
 std::string lib_settings_class::o2scl_version() {

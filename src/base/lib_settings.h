@@ -223,17 +223,20 @@ namespace o2scl {
     /// True if Python has been initialized (default false)
     bool py_initialized;
 
-    /// Desc
-    int py_init_nothrow();
+    /// Initialize the python interface
+    int py_init_nothrow(int verbose=0);
 
-    /// Desc
-    void py_init();
+    /// Initialize the python interface
+    void py_init(int verbose=0);
     
-    /// Desc
-    int py_final_nothrow();
+    /// Finalize the python interface
+    int py_final_nothrow(int verbose=0);
 
-    /// Desc
-    void py_final();
+    /// Finalize the python interface
+    void py_final(int verbose=0);
+
+    /// Add path \c path to the python system search path
+    void add_python_path(std::string path, int verbose=0);
     
   protected:
 

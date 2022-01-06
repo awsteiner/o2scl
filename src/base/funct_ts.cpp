@@ -39,6 +39,20 @@ int main(void) {
     t.test_rel(f(r),o2scl_const::pi*r*r,1.0e-12,"funct_string");
   }
 
+#ifdef O2SCL_PYTHON
+
+  o2scl_settings.py_init();
+  o2scl_settings.add_python_path("./");
+  {
+    // We use the brackets to force the funct_python
+    // destructor to run before py_final()
+    funct_python fp("funct_test","fun");
+    t.test_rel(fp(2.0),o2scl_const::pi*2.0,1.0e-12,"funct_python");
+  }
+  o2scl_settings.py_final();
+  
+#endif
+  
   t.report();
   return 0;
 }

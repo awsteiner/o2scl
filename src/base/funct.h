@@ -303,24 +303,26 @@ namespace o2scl {
 
   protected:
 
-    /// Desc
+    /// Python unicode object containing function name
     PyObject *pName;
     
-    /// Desc
+    /// Python module containing function
     PyObject *pModule;
     
-    /// Desc
+    /// Function arguments
     PyObject *pArgs;
 
-    /// Desc
+    /// Python function
     PyObject *pFunc;
 
+    /// Verbosity parameter
+    int verbose;
+    
   public:
     
     /** \brief Specify the python and the parameters
      */
-    funct_python(std::string module, std::string func,
-                 std::string path="");
+    funct_python(std::string module, std::string func, int v=0);
     
     virtual ~funct_python();
   
@@ -329,8 +331,7 @@ namespace o2scl {
         This function is called by the constructor and thus
         cannot be virtual.
      */
-    int set_function(std::string module, std::string func,
-                     std::string path="");
+    int set_function(std::string module, std::string func);
     
     /** \brief Compute the function at point \c x and return the result
      */

@@ -183,9 +183,17 @@ check_PROGRAMS = $(CPVAR)
 check_SCRIPTS = o2scl-test
 
 if O2SCL_HDF
+if O2SCL_PYTHON
+VCHECK_LIBS = ../hdf/libo2scl_hdf.la ../libo2scl.la -l$(PYTHON_LIB)
+else
 VCHECK_LIBS = ../hdf/libo2scl_hdf.la ../libo2scl.la
+endif
+else
+if O2SCL_PYTHON
+VCHECK_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
 else
 VCHECK_LIBS = ../libo2scl.la
+endif
 endif
 
 if O2SCL_OPENMP
