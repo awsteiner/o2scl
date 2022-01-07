@@ -32,7 +32,7 @@ types, e.g.
   one-dimensional solver and minimizer classes, derivative classes,
   integration classes, etc.)
 - :ref:`funct_ld <funct_ld>` : One function of one variable using
-  long double 
+  long double precision
 - :ref:`multi_funct <multi_funct>` : One function of several variables (used
   in minimizer and integration classes)
 - :ref:`mm_funct <mm_funct>`: :math:`n` functions of :math:`n`

@@ -408,8 +408,6 @@
     <member refid="namespaceo2scl_1a903bf762b4443f26426abcf658b81856" kind="function"><name>shuffle_swap</name></member>
     <member refid="namespaceo2scl_1ad683de40036dee349ee8523f30a241d7" kind="function"><name>choose_copy</name></member>
     <member refid="namespaceo2scl_1aa57dd25835a17744201305b7a4bf1b37" kind="function"><name>vector_shuffle</name></member>
-    <member refid="namespaceo2scl_1ad8266b0db10e4ac676ac830ea32151f6" kind="function"><name>nrf_z4m1</name></member>
-    <member refid="namespaceo2scl_1a8a10684ea5296021dc84136b4344da12" kind="function"><name>itf_mandel</name></member>
     <member refid="namespaceo2scl__acol_1a61b7b8ecec5cdc833f5b0921bac5cb99" kind="function"><name>parse_arrays</name></member>
     <member refid="namespaceo2scl__cblas_1a6599c3b6c6dad504856422be39a25a84" kind="function"><name>matrix_is_finite</name></member>
     <member refid="namespaceo2scl__cblas_1a2ed707713b8d8841bbfa186d5a64a3a9" kind="function"><name>matrix_is_finite</name></member>

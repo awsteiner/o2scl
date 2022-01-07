@@ -78,7 +78,6 @@
   <compound refid="classo2scl_1_1fit__nonlin" kind="class"><name>o2scl::fit_nonlin</name>
   <compound refid="classo2scl_1_1fit__nonlin__b" kind="class"><name>o2scl::fit_nonlin_b</name>
   <compound refid="classo2scl_1_1format__float" kind="class"><name>o2scl::format_float</name>
-  <compound refid="classo2scl_1_1fract" kind="class"><name>o2scl::fract</name>
   <compound refid="classo2scl_1_1funct2__string" kind="class"><name>o2scl::funct2_string</name>
   <compound refid="classo2scl_1_1funct__gsl" kind="class"><name>o2scl::funct_gsl</name>
   <compound refid="classo2scl_1_1funct__string" kind="class"><name>o2scl::funct_string</name>

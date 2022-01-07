@@ -1,8 +1,8 @@
-    <member refid="nucdist_8h_1a82f4e8183022b1ef513f19faa6ce7324" kind="function"><name>nucdist_set</name></member>
     <member refid="part_8h_1a7f748df690d7ee8d8985027b08323e35" kind="function"><name>operator+</name></member>
     <member refid="part_8h_1a0f0b7d8e775b7d2214a55c41691482fb" kind="function"><name>operator-</name></member>
     <member refid="part_8h_1a74b6dcffc34ff74f50d353cd0672cfa9" kind="function"><name>operator+</name></member>
     <member refid="part_8h_1a2c00979610541d69a93ec38120c58d6d" kind="function"><name>operator-</name></member>
+    <member refid="nucdist_8h_1a82f4e8183022b1ef513f19faa6ce7324" kind="function"><name>nucdist_set</name></member>
     <member refid="hdf__nucmass__io_8h_1a7a718e871b55ed75fb4b59c66c902bc3" kind="function"><name>ame_load_ext</name></member>
     <member refid="hdf__nucmass__io_8h_1afff3d724a00bcc52fdfe45be5077ed6c" kind="function"><name>ame_load</name></member>
     <member refid="hdf__nucmass__io_8h_1a1d49f7e6c12902bba7eb6680d59a5add" kind="function"><name>mnmsk_load</name></member>

@@ -362,7 +362,8 @@ int main(int argc, char *argv[]) {
 
       } else {
 	// Skip items in the list of duplicates
-	cout << "Skipping " << it->first << endl;
+	cout << "Skipping " << it->first << " because it is a duplicate."
+             << endl;
       }
     }
 
@@ -576,6 +577,7 @@ int main(int argc, char *argv[]) {
                   type=ns_file[i];
                   if (xml_get_tag_element(type,"type",type)!=0) {
                     cerr << "Failed to find type in " << type << endl;
+                    cout << "ns_file[i]: " << ns_file[i] << endl;
                     exit(-1);
                   }
 		

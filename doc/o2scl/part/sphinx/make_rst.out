@@ -69,13 +69,13 @@ Creating rst files for classes:
 ---------------------------------------------------
 Parsing function_list:
 
-Namespace: o2scl function: nucdist_set
 Namespace:  function: operator+
 Namespace:  function: operator-
 Namespace:  function: operator+
 Multiple entry operator+
 Namespace:  function: operator-
 Multiple entry operator-
+Namespace: o2scl function: nucdist_set
 Namespace: o2scl function: ame_load_ext
 Namespace: o2scl function: ame_load
 Namespace: o2scl function: mnmsk_load
