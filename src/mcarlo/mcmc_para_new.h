@@ -20,12 +20,12 @@
 
   -------------------------------------------------------------------
 */
-/** \file mcmc_para.h
-    \brief File for definition of \ref o2scl::mcmc_para_base,
-    \ref o2scl::mcmc_para_table and \ref o2scl::mcmc_para_cli
+/** \file mcmc_para_new.h
+    \brief File for definition of \ref o2scl::mcmc_para_new_base,
+    \ref o2scl::mcmc_para_new_table and \ref o2scl::mcmc_para_new_cli
 */
-#ifndef O2SCL_MCMC_PARA_H
-#define O2SCL_MCMC_PARA_H
+#ifndef O2SCL_MCMC_PARA_NEW_H
+#define O2SCL_MCMC_PARA_NEW_H
 
 #include <iostream>
 #include <random>
@@ -120,6 +120,9 @@ namespace o2scl {
 
       \note This class is experimental.
 
+      \future There is a little code in mcmc_init() and mcmc_cleanup()
+      and I should document why that code needs to be there.
+
       \note Currently, this class requires that the data_t 
       has a good copy constructor. 
 
@@ -130,7 +133,7 @@ namespace o2scl {
       walkers to share the data_t for the initial point as needed.
   */
   template<class func_t, class measure_t,
-           class data_t, class vec_t=ubvector> class mcmc_para_base {
+           class data_t, class vec_t=ubvector> class mcmc_para_new_base {
     
   protected:
   
@@ -146,16 +149,17 @@ namespace o2scl {
     /// The screen output file
     std::ofstream scr_out;
   
-    /// Random number generators
+    /// Random number generators, one for each thread
     std::vector<rng<> > rg;
   
     /// Pointer to proposal distribution for each thread
     std::vector<o2scl::prob_cond_mdim<vec_t> *> prop_dist;
   
-    /// If true, then use the user-specified proposal distribution
+    /** \brief If true, then use the user-specified proposal
+        distribution (default false) */
     bool pd_mode;
 
-    /// If true, we are in the warm up phase
+    /// If true, we are in the warm up phase (default false)
     bool warm_up;
 
     /** \brief Current points in parameter space for each walker and 
@@ -166,13 +170,13 @@ namespace o2scl {
     */
     std::vector<vec_t> current;
 
-    /** \brief Data array
+    /* \brief Data array
 
         This is an array of size 2 times \ref n_threads times \ref
         n_walk . The two copies of data objects are indexed by
         <tt>i_copy*n_walk*n_threads+thread_index*n_walk+walker_index</tt>
     */
-    std::vector<data_t> data_arr;
+    //std::vector<data_t> data_arr;
 
     /** \brief Data switch array for each walker and each OpenMP thread
 
@@ -191,12 +195,6 @@ namespace o2scl {
      */
     virtual int mcmc_init() {
 
-      if (pd_mode && aff_inv) {
-        O2SCL_ERR2("Using a proposal distribution with affine-invariant ",
-                   "sampling not implemented in mcmc_para::mcmc_init().",
-                   o2scl::exc_eunimpl);
-      }
-    
       if (verbose>1) {
         std::cout << "Prefix is: " << prefix << std::endl;
       }
@@ -237,7 +235,7 @@ namespace o2scl {
     }
     //@}
 
-    /** \brief Index of the current walker
+    /** \brief Index of the current walker, one for each OpenMP thread
       
         This quantity has to be a vector because different threads
         may have different values for the current walker during
@@ -308,7 +306,7 @@ namespace o2scl {
      */
     std::string prefix;
 
-    /// If true, use affine-invariant Monte Carlo
+    /// If true, use affine-invariant Monte Carlo (default false)
     bool aff_inv;
   
     /// Stepsize factor (default 10.0)
@@ -374,7 +372,7 @@ namespace o2scl {
     double ai_initial_step;
     //@}
   
-    mcmc_para_base() {
+    mcmc_para_new_base() {
       user_seed=0;
       n_warm_up=0;
 
@@ -445,7 +443,9 @@ namespace o2scl {
         calling the measurement function \c meas at each MC point.
     */
     virtual int mcmc(size_t n_params, vec_t &low, vec_t &high,
-                     std::vector<func_t> &func, std::vector<measure_t> &meas) {
+                     std::vector<func_t> &func,
+                     std::vector<measure_t> &meas,
+                     std::vector<data_t> &data) {
 
       // Doxygen seems to have trouble reading the code, so we
       // ensure it doesn't see it. 
@@ -453,11 +453,11 @@ namespace o2scl {
 
       if (func.size()==0 || meas.size()==0) {
         O2SCL_ERR2("Size of 'func' or 'meas' array is zero in ",
-                   "mcmc_para::mcmc().",o2scl::exc_einval);
+                   "mcmc_para_new::mcmc().",o2scl::exc_einval);
       }
       if (func.size()<n_threads) {
         if (verbose>0) {
-          std::cout << "mcmc_para::mcmc(): Not enough functions for "
+          std::cout << "mcmc_para_new::mcmc(): Not enough functions for "
                     << n_threads << " threads. Setting n_threads to "
                     << func.size() << "." << std::endl;
         }
@@ -465,19 +465,32 @@ namespace o2scl {
       }
       if (meas.size()<n_threads) {
         if (verbose>0) {
-          std::cout << "mcmc_para::mcmc(): Not enough measurement objects for "
+          std::cout << "mcmc_para_new::mcmc(): Not enough measurement objects for "
                     << n_threads << " threads. Setting n_threads to "
                     << meas.size() << "." << std::endl;
         }
         n_threads=meas.size();
       }
+      if (data.size()<n_threads) {
+        if (verbose>0) {
+          std::cout << "mcmc_para_new::mcmc(): Not enough data objects for "
+                    << n_threads << " threads. Setting n_threads to "
+                    << meas.size() << "." << std::endl;
+        }
+        n_threads=data.size();
+      }
       if (aff_inv==true && n_walk<=1) {
         if (verbose>0) {
-          std::cout << "mcmc_para::mcmc(): Affine-invariant sampling selected "
+          std::cout << "mcmc_para_new::mcmc(): Affine-invariant sampling selected "
                     << "but n_walk is <= 1.\n  Setting n_walk to 3 * n_params."
                     << std::endl;
         }
         n_walk=3*n_params;
+      }
+      if (pd_mode && aff_inv) {
+        O2SCL_ERR2("Using a proposal distribution with affine-invariant ",
+                   "sampling not implemented in mcmc_para_new::mcmc_init().",
+                   o2scl::exc_eunimpl);
       }
 
       // Set start time if necessary
@@ -532,7 +545,7 @@ namespace o2scl {
           for(size_t k=0;k<initial_points[i].size();k++) {
             if (!std::isfinite(initial_points[i][k])) {
               O2SCL_ERR2("Initial point not finite in ",
-                         "mcmc_para::mcmc().",o2scl::exc_einval);
+                         "mcmc_para_new::mcmc().",o2scl::exc_einval);
             }
           }
           // 2/14/19 - AWS: I waffle on whether or not this ought to be
@@ -553,7 +566,7 @@ namespace o2scl {
                 std::cout << j << " ";
                 o2scl::vector_out(std::cout,initial_points[j],true);
                 O2SCL_ERR2("Initial points not distinct in ",
-                           "mcmc_para::mcmc().",o2scl::exc_einval);
+                           "mcmc_para_new::mcmc().",o2scl::exc_einval);
               }
             }
           }
@@ -566,7 +579,7 @@ namespace o2scl {
       omp_set_num_threads(n_threads);
 #else
       if (n_threads>1) {
-        std::cout << "mcmc_para::mcmc(): "
+        std::cout << "mcmc_para_new::mcmc(): "
                   << n_threads << " threads were requested but the "
                   << "-DO2SCL_OPENMP flag was not used during "
                   << "compilation. Setting n_threads to 1."
@@ -581,12 +594,12 @@ namespace o2scl {
       // Fix 'step_fac' if it's less than or equal to zero
       if (step_fac<=0.0) {
         if (aff_inv) {
-          std::cout << "mcmc_para::mcmc(): Requested negative or zero "
+          std::cout << "mcmc_para_new::mcmc(): Requested negative or zero "
                     << "step_fac with aff_inv=true.\nSetting to 2.0."
                     << std::endl;
           step_fac=2.0;
         } else {
-          std::cout << "mcmc_para::mcmc(): Requested negative or zero "
+          std::cout << "mcmc_para_new::mcmc(): Requested negative or zero "
                     << "step_fac. Setting to 10.0." << std::endl;
           step_fac=10.0;
         }
@@ -636,7 +649,7 @@ namespace o2scl {
       //ret_value_counts.resize(n_threads);
 
       // Initialize data and switch arrays
-      data_arr.resize(2*ssize);
+      data.resize(2*ssize);
       switch_arr.resize(ssize);
       for(size_t i=0;i<switch_arr.size();i++) switch_arr[i]=false;
     
@@ -735,7 +748,7 @@ namespace o2scl {
               
                 // Compute the weight
                 func_ret[it]=func[it](n_params,current[sindex],
-                                      w_current[sindex],data_arr[sindex]);
+                                      w_current[sindex],data[sindex]);
 
                 if (func_ret[it]==mcmc_done) {
                   mcmc_done_flag[it]=true;
@@ -750,7 +763,7 @@ namespace o2scl {
                   if (meas_for_initial) {
                     meas_ret[it]=meas[it](current[sindex],w_current[sindex],
                                           curr_walker[it],func_ret[it],
-                                          true,data_arr[sindex]);
+                                          true,data[sindex]);
                   } else {
                     meas_ret[it]=0;
                   }
@@ -779,7 +792,7 @@ namespace o2scl {
               
                 // Compute the weight
                 func_ret[it]=func[it](n_params,current[sindex],
-                                      w_current[sindex],data_arr[sindex]);
+                                      w_current[sindex],data[sindex]);
                 
                 // ------------------------------------------------
               
@@ -810,7 +823,7 @@ namespace o2scl {
                       if (meas_for_initial) {
                         meas_ret[it]=meas[it](current[sindex],w_current[sindex],
                                               curr_walker[it],func_ret[it],true,
-                                              data_arr[sindex]);
+                                              data[sindex]);
                       } else {
                         meas_ret[it]=0;
                       }
@@ -822,7 +835,7 @@ namespace o2scl {
                     std::string err=((std::string)"In loop with thread ")+
                       o2scl::szttos(it)+" iterations required to obtain an "+
                       "initial point exceeded "+o2scl::szttos(max_bad_steps)+
-                      " in mcmc_para_base::mcmc().";
+                      " in mcmc_para_new_base::mcmc().";
                     O2SCL_ERR(err.c_str(),o2scl::exc_einval);
                   }
                 }
@@ -863,7 +876,7 @@ namespace o2scl {
           }
         }
         best=current[best_index];
-        best_point(best,w_best,data_arr[best_index]);
+        best_point(best,w_best,data[best_index]);
 
         // Verbose output
         if (verbose>=2) {
@@ -897,7 +910,7 @@ namespace o2scl {
           for(size_t it=0;it<n_threads;it++) {
           
             // Note that this value is used (e.g. in
-            // mcmc_para_table::add_line() ) even if aff_inv is false,
+            // mcmc_para_new_table::add_line() ) even if aff_inv is false,
             // so we set it to zero here.
             curr_walker[it]=0;
           
@@ -911,15 +924,15 @@ namespace o2scl {
               // If we have a new unique initial point, then
               // perform a function evaluation
               func_ret[it]=func[it](n_params,current[it],w_current[it],
-                                    data_arr[it]);
+                                    data[it]);
             } else {
               // Otherwise copy the result already computed
               func_ret[it]=func_ret[it % ip_size];
               w_current[it]=w_current[it % ip_size];
-              // This loop requires the data_arr to have a valid
+              // This loop requires the data to have a valid
               // copy constructor
-              for(size_t j=0;j<data_arr.size();j++) {
-                data_arr[it]=data_arr[it % ip_size];
+              for(size_t j=0;j<data.size();j++) {
+                data[it]=data[it % ip_size];
               }
             }
 
@@ -943,7 +956,7 @@ namespace o2scl {
             if (err_nonconv) {
               O2SCL_ERR((((std::string)"Initial weight from thread ")+
                          o2scl::szttos(it)+
-                         " vanished in mcmc_para_base::mcmc().").c_str(),
+                         " vanished in mcmc_para_new_base::mcmc().").c_str(),
                         o2scl::exc_einval);
             }
             return 2;
@@ -969,7 +982,7 @@ namespace o2scl {
               func_ret[it]=func_ret[it % ip_size];
               current[it]=current[it % ip_size];
               w_current[it]=w_current[it % ip_size];
-              data_arr[it]=data_arr[it % ip_size];
+              data[it]=data[it % ip_size];
             }
           
             // Update the return value count
@@ -980,7 +993,7 @@ namespace o2scl {
             if (meas_for_initial) {
               // Call the measurement function    
               meas_ret[it]=meas[it](current[it],w_current[it],0,
-                                    func_ret[it],true,data_arr[it]);
+                                    func_ret[it],true,data[it]);
             } else {
               meas_ret[it]=0;
             }
@@ -1015,12 +1028,12 @@ namespace o2scl {
         // Set initial values for best point
         best=current[0];
         w_best=w_current[0];
-        best_point(best,w_best,data_arr[0]);
+        best_point(best,w_best,data[0]);
         for(size_t it=1;it<n_threads;it++) {
           if (w_current[it]<w_best) {
             best=current[it];
             w_best=w_current[it];
-            best_point(best,w_best,data_arr[it]);
+            best_point(best,w_best,data[it]);
           }
         }
 
@@ -1090,7 +1103,7 @@ namespace o2scl {
               
                   if (!std::isfinite(q_prop[it])) {
                     O2SCL_ERR2("Proposal distribution not finite in ",
-                               "mcmc_para_base::mcmc().",o2scl::exc_efailed);
+                               "mcmc_para_new_base::mcmc().",o2scl::exc_efailed);
                   }
             
                 } else {
@@ -1151,11 +1164,11 @@ namespace o2scl {
                 if (func_ret[it]!=mcmc_skip) {
                   if (switch_arr[n_walk*it+curr_walker[it]]==false) {
                     func_ret[it]=func[it](n_params,next[it],w_next[it],
-                                          data_arr[it*n_walk+curr_walker[it]+
+                                          data[it*n_walk+curr_walker[it]+
                                                    n_walk*n_threads]);
                   } else {
                     func_ret[it]=func[it](n_params,next[it],w_next[it],
-                                          data_arr[it*n_walk+curr_walker[it]]);
+                                          data[it*n_walk+curr_walker[it]]);
                   }
                   if (func_ret[it]==mcmc_done) {
                     mcmc_done_flag[it]=true;
@@ -1203,11 +1216,11 @@ namespace o2scl {
                     if (switch_arr[sindex]==false) {
                       meas_ret[it]=meas[it](next[it],w_next[it],
                                             curr_walker[it],func_ret[it],true,
-                                            data_arr[sindex+n_threads*n_walk]);
+                                            data[sindex+n_threads*n_walk]);
                     } else {
                       meas_ret[it]=meas[it](next[it],w_next[it],
                                             curr_walker[it],func_ret[it],true,
-                                            data_arr[sindex]);
+                                            data[sindex]);
                     }
                   }
 
@@ -1228,13 +1241,13 @@ namespace o2scl {
                         meas_ret[it]=meas[it](next[it],w_next[it],
                                               curr_walker[it],
                                               func_ret[it],false,
-                                              data_arr[sindex+
+                                              data[sindex+
                                                        n_threads*n_walk]);
                       } else {
                         meas_ret[it]=meas[it](next[it],w_next[it],
                                               curr_walker[it],
                                               func_ret[it],false,
-                                              data_arr[sindex]);
+                                              data[sindex]);
                       }
                     }
                   }
@@ -1247,18 +1260,18 @@ namespace o2scl {
                 // Collect best point
                 if (func_ret[it]==o2scl::success && w_best>w_next[it]) {
 #ifdef O2SCL_OPENMP
-#pragma omp critical (o2scl_mcmc_para_best_point)
+#pragma omp critical (o2scl_mcmc_para_new_best_point)
 #endif
                   {
                     best=next[it];
                     w_best=w_next[it];
                     if (switch_arr[n_walk*it+curr_walker[it]]==false) {
                       best_point(best,w_best,
-                                 data_arr[curr_walker[it]+n_walk*it+
+                                 data[curr_walker[it]+n_walk*it+
                                           n_threads*n_walk]);
                     } else {
                       best_point(best,w_best,
-                                 data_arr[curr_walker[it]+n_walk*it]);
+                                 data[curr_walker[it]+n_walk*it]);
                     }
                   }
                 }
@@ -1272,7 +1285,7 @@ namespace o2scl {
                   if (err_nonconv) {
                     O2SCL_ERR((((std::string)"Measurement function returned ")+
                                o2scl::dtos(meas_ret[it])+
-                               " in mcmc_para_base::mcmc().").c_str(),
+                               " in mcmc_para_new_base::mcmc().").c_str(),
                               o2scl::exc_efailed);
                   }
                   main_done=true;
@@ -1290,7 +1303,7 @@ namespace o2scl {
                     n_accept[it]=0;
                     n_reject[it]=0;
                     if (verbose>=1) {
-                      scr_out << "o2scl::mcmc_para: Thread " << it
+                      scr_out << "o2scl::mcmc_para_new: Thread " << it
                               << " finished warmup." << std::endl;
                     }
                 
@@ -1301,7 +1314,7 @@ namespace o2scl {
                 if (main_done==false && warm_up==false && max_iters>0 &&
                     mcmc_iters==max_iters) {
                   if (verbose>=1) {
-                    scr_out << "o2scl::mcmc_para: Thread " << it
+                    scr_out << "o2scl::mcmc_para_new: Thread " << it
                             << " stopping because number of iterations ("
                             << mcmc_iters << ") equal to max_iters ("
                             << max_iters << ")." << std::endl;
@@ -1318,7 +1331,7 @@ namespace o2scl {
 #endif
                   if (max_time>0.0 && elapsed>max_time) {
                     if (verbose>=1) {
-                      scr_out << "o2scl::mcmc_para: Thread " << it
+                      scr_out << "o2scl::mcmc_para_new: Thread " << it
                               << " stopping because elapsed (" << elapsed
                               << ") > max_time (" << max_time << ")."
                               << std::endl;
@@ -1412,7 +1425,7 @@ namespace o2scl {
 
               if (couple_threads) {
                 if (jt>=n_threads || ij>=n_walk) {
-                  O2SCL_ERR("Variable jt or ij wrong in mcmc_para",
+                  O2SCL_ERR("Variable jt or ij wrong in mcmc_para_new",
                             o2scl::exc_esanity);
                 }
               }
@@ -1429,7 +1442,7 @@ namespace o2scl {
               for(size_t i=0;i<n_params;i++) {
                 if (n_walk*jt+ij>=current.size() ||
                     n_walk*it+curr_walker[it]>=current.size()) {
-                  O2SCL_ERR("Walker arithmetic wrong in mcmc_para",
+                  O2SCL_ERR("Walker arithmetic wrong in mcmc_para_new",
                             o2scl::exc_esanity);
                 }
                 next[it][i]=current[n_walk*jt+ij][i]+
@@ -1488,11 +1501,11 @@ namespace o2scl {
               if (func_ret[it]!=mcmc_skip) {
                 if (switch_arr[n_walk*it+curr_walker[it]]==false) {
                   func_ret[it]=func[it](n_params,next[it],w_next[it],
-                                        data_arr[it*n_walk+curr_walker[it]+
+                                        data[it*n_walk+curr_walker[it]+
                                                  n_walk*n_threads]);
                 } else {
                   func_ret[it]=func[it](n_params,next[it],w_next[it],
-                                        data_arr[it*n_walk+curr_walker[it]]);
+                                        data[it*n_walk+curr_walker[it]]);
                 }
                 if (func_ret[it]==mcmc_done) {
                   mcmc_done_flag[it]=true;
@@ -1597,11 +1610,11 @@ namespace o2scl {
                   if (switch_arr[sindex]==false) {
                     meas_ret[it]=meas[it](next[it],w_next[it],
                                           curr_walker[it],func_ret[it],true,
-                                          data_arr[sindex+n_threads*n_walk]);
+                                          data[sindex+n_threads*n_walk]);
                   } else {
                     meas_ret[it]=meas[it](next[it],w_next[it],
                                           curr_walker[it],func_ret[it],true,
-                                          data_arr[sindex]);
+                                          data[sindex]);
                   }
                 }
 
@@ -1620,11 +1633,11 @@ namespace o2scl {
                   if (switch_arr[sindex]==false) {
                     meas_ret[it]=meas[it](next[it],w_next[it],
                                           curr_walker[it],func_ret[it],false,
-                                          data_arr[sindex+n_threads*n_walk]);
+                                          data[sindex+n_threads*n_walk]);
                   } else {
                     meas_ret[it]=meas[it](next[it],w_next[it],
                                           curr_walker[it],func_ret[it],false,
-                                          data_arr[sindex]);
+                                          data[sindex]);
                   }
                 }
 
@@ -1657,10 +1670,10 @@ namespace o2scl {
               best=next[it];
               w_best=w_next[it];
               if (switch_arr[n_walk*it+curr_walker[it]]==false) {
-                best_point(best,w_best,data_arr[curr_walker[it]+n_walk*it+
+                best_point(best,w_best,data[curr_walker[it]+n_walk*it+
                                                 n_threads*n_walk]);
               } else {
-                best_point(best,w_best,data_arr[curr_walker[it]+n_walk*it]);
+                best_point(best,w_best,data[curr_walker[it]+n_walk*it]);
               }
             }
           }
@@ -1675,7 +1688,7 @@ namespace o2scl {
               if (err_nonconv) {
                 O2SCL_ERR((((std::string)"Measurement function returned ")+
                            o2scl::dtos(meas_ret[it])+
-                           " in mcmc_para_base::mcmc().").c_str(),
+                           " in mcmc_para_new_base::mcmc().").c_str(),
                           o2scl::exc_efailed);
               }
               main_done=true;
@@ -1757,7 +1770,7 @@ namespace o2scl {
         or with only one OpenMP thread
     */
     virtual int mcmc(size_t n_params, vec_t &low, vec_t &high,
-                     func_t &func, measure_t &meas) {
+                     func_t &func, measure_t &meas, data_t data) {
     
 #ifdef O2SCL_OPENMP
       omp_set_num_threads(n_threads);
@@ -1766,11 +1779,13 @@ namespace o2scl {
 #endif
       std::vector<func_t> vf(n_threads);
       std::vector<measure_t> vm(n_threads);
+      std::vector<data_t> vd;
       for(size_t i=0;i<n_threads;i++) {
         vf[i]=func;
         vm[i]=meas;
+        vd[i]=data;
       }
-      return mcmc(n_params,low,high,vf,vm);
+      return mcmc(n_params,low,high,vf,vm,vd);
     }
     //@}
 
@@ -1850,8 +1865,8 @@ namespace o2scl {
       one, rather than adding the same row to the table again.
 
       There is some output which occurs in addition to the output
-      from \ref o2scl::mcmc_para_base depending on the value 
-      of \ref o2scl::mcmc_para_base::verbose . If there is 
+      from \ref o2scl::mcmc_para_new_base depending on the value 
+      of \ref o2scl::mcmc_para_new_base::verbose . If there is 
       a misalignment between the number of columns in the 
       table and the number of data points in any line, then
       some debugging information is sent to <tt>cout</tt>.
@@ -1864,8 +1879,8 @@ namespace o2scl {
       to create a full post-processing function.
   */
   template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
-  class mcmc_para_table :
-    public mcmc_para_base<func_t,std::function<int(const vec_t &,
+  class mcmc_para_new_table :
+    public mcmc_para_new_base<func_t,std::function<int(const vec_t &,
                                                    double,size_t,
                                                    int,bool,data_t &)>,
                           data_t,vec_t> {
@@ -1877,7 +1892,7 @@ namespace o2scl {
     internal_measure_t;
   
     /// Type of parent class
-    typedef mcmc_para_base<func_t,internal_measure_t,data_t,vec_t> parent_t;
+    typedef mcmc_para_new_base<func_t,internal_measure_t,data_t,vec_t> parent_t;
 
     /// Column names
     std::vector<std::string> col_names;
@@ -1949,7 +1964,7 @@ namespace o2scl {
 
         if (table==0) {
           O2SCL_ERR2("Flag 'prev_read' is true but table pointer is 0 ",
-                     "in mcmc_para_table::mcmc_init().",o2scl::exc_esanity);
+                     "in mcmc_para_new_table::mcmc_init().",o2scl::exc_esanity);
         }
       
         // -----------------------------------------------------------
@@ -1957,7 +1972,7 @@ namespace o2scl {
 
         if (table->get_ncolumns()!=5+col_names.size()) {
           std::string str=((std::string)"Table does not have correct ")+
-            "number of columns in mcmc_para_table::mcmc_init()."+
+            "number of columns in mcmc_para_new_table::mcmc_init()."+
             o2scl::szttos(table->get_ncolumns())+" columns and "+
             o2scl::szttos(col_names.size())+" entries in col_names.";
           O2SCL_ERR(str.c_str(),o2scl::exc_einval);
@@ -1968,15 +1983,15 @@ namespace o2scl {
             !table->is_column("mult") ||
             !table->is_column("log_wgt")) {
           O2SCL_ERR2("Table does not have the correct internal columns ",
-                     "in mcmc_para_table::mcmc_init().",o2scl::exc_einval);
+                     "in mcmc_para_new_table::mcmc_init().",o2scl::exc_einval);
         }
         if (walker_accept_rows.size()!=this->n_walk*this->n_threads) {
           O2SCL_ERR2("Array walker_accept_rows does not have correct size ",
-                     "in mcmc_para_table::mcmc_init().",o2scl::exc_einval);
+                     "in mcmc_para_new_table::mcmc_init().",o2scl::exc_einval);
         }
         if (walker_reject_rows.size()!=this->n_walk*this->n_threads) {
           O2SCL_ERR2("Array walker_reject_rows does not have correct size ",
-                     "in mcmc_para_table::mcmc_init().",o2scl::exc_einval);
+                     "in mcmc_para_new_table::mcmc_init().",o2scl::exc_einval);
         }
 
         // Set prev_read to false so that next call to mcmc()
@@ -2210,7 +2225,7 @@ namespace o2scl {
       return;
     }
   
-    mcmc_para_table() {
+    mcmc_para_new_table() {
       table_io_chunk=1;
       file_update_iters=0;
       file_update_time=0.0;
@@ -2229,7 +2244,7 @@ namespace o2scl {
                                  std::vector<std::string> units) {
       if (names.size()!=units.size()) {
         O2SCL_ERR2("Size of names and units arrays don't match in ",
-                   "mcmc_para_table::set_names_units().",o2scl::exc_einval);
+                   "mcmc_para_new_table::set_names_units().",o2scl::exc_einval);
       }
       col_names=names;
       col_units=units;
@@ -2239,8 +2254,8 @@ namespace o2scl {
     /** \brief Read initial points from the last points recorded in file
         named \c fname
 
-        The values of \ref o2scl::mcmc_para_base::n_walk and \ref
-        o2scl::mcmc_para_base::n_threads, must be set to their correct
+        The values of \ref o2scl::mcmc_para_new_base::n_walk and \ref
+        o2scl::mcmc_para_new_base::n_threads, must be set to their correct
         values before calling this function. This function requires that
         a table is present in \c fname which stores parameters in a
         block of columns and has columns named \c mult, \c thread, \c
@@ -2343,8 +2358,8 @@ namespace o2scl {
     /** \brief Read initial points from file
         named \c fname, distributing across the chain if necessary
 
-        The values of \ref o2scl::mcmc_para_base::n_walk and \ref
-        o2scl::mcmc_para_base::n_threads, must be set to their correct values
+        The values of \ref o2scl::mcmc_para_new_base::n_walk and \ref
+        o2scl::mcmc_para_new_base::n_threads, must be set to their correct values
         before calling this function. This function requires that a
         table is present in \c fname which stores parameters in a block
         of columns. This function does not double check
@@ -2418,8 +2433,8 @@ namespace o2scl {
     /** \brief Read initial points from the best points recorded in file
         named \c fname
 
-        The values of \ref o2scl::mcmc_para_base::n_walk and \ref
-        o2scl::mcmc_para_base::n_threads, must be set to their correct values
+        The values of \ref o2scl::mcmc_para_new_base::n_walk and \ref
+        o2scl::mcmc_para_new_base::n_threads, must be set to their correct values
         before calling this function. This function requires that a
         table is present in \c fname which stores parameters in a block
         of columns and contains a separate column named \c log_wgt .
@@ -2502,7 +2517,7 @@ namespace o2scl {
       // Check to see if we have enough
       if (m.size()<n_points) {
         O2SCL_ERR2("Could not find enough points in file in ",
-                   "mcmc_para::initial_points_file_best().",
+                   "mcmc_para_new::initial_points_file_best().",
                    o2scl::exc_efailed);
       }
 
@@ -2534,8 +2549,10 @@ namespace o2scl {
         calling the measurement function \c meas at each MC point.
     */
     virtual int mcmc_fill(size_t n_params_local, 
-                          vec_t &low, vec_t &high, std::vector<func_t> &func,
-                          std::vector<fill_t> &fill) {
+                          vec_t &low, vec_t &high,
+                          std::vector<func_t> &func,
+                          std::vector<fill_t> &fill,
+                          std::vector<data_t> &data) {
     
       n_params=n_params_local;
       low_copy=low;
@@ -2558,13 +2575,13 @@ namespace o2scl {
         meas[it]=std::bind
           (std::mem_fn<int(const vec_t &,double,size_t,int,bool,
                            data_t &, size_t, fill_t &)>
-           (&mcmc_para_table::add_line),this,std::placeholders::_1,
+           (&mcmc_para_new_table::add_line),this,std::placeholders::_1,
            std::placeholders::_2,std::placeholders::_3,
            std::placeholders::_4,std::placeholders::_5,
            std::placeholders::_6,it,std::ref(fill[it]));
       }
     
-      return parent_t::mcmc(n_params,low,high,func,meas);
+      return parent_t::mcmc(n_params,low,high,func,meas,data);
     }
   
     /** \brief Get the output table
@@ -2631,7 +2648,7 @@ namespace o2scl {
           !table->is_column("mult") ||
           !table->is_column("log_wgt")) {
         O2SCL_ERR2("Table does not have the correct internal columns ",
-                   "in mcmc_para_table::read_prev_results().",
+                   "in mcmc_para_new_table::read_prev_results().",
                    o2scl::exc_einval);
       }
     
@@ -2690,7 +2707,7 @@ namespace o2scl {
       }
 
       if (this->verbose>0) {
-        std::cout << "mcmc_para_table::read_prev_results():" << std::endl;
+        std::cout << "mcmc_para_new_table::read_prev_results():" << std::endl;
         std::cout << "  index walker_accept_rows walker_reject_rows"
                   << std::endl;
         for(size_t j=0;j<ntot;j++) {
@@ -2799,7 +2816,7 @@ namespace o2scl {
       }
     
 #ifdef O2SCL_OPENMP
-#pragma omp critical (o2scl_mcmc_para_table_add_line)
+#pragma omp critical (o2scl_mcmc_para_new_table_add_line)
 #endif
       {
 
@@ -2870,7 +2887,7 @@ namespace o2scl {
                 if (k<line.size()) std::cout << line[k] << " ";
                 std::cout << std::endl;
               }
-              O2SCL_ERR("Table misalignment in mcmc_para_table::add_line().",
+              O2SCL_ERR("Table misalignment in mcmc_para_new_table::add_line().",
                         exc_einval);
             }
           
@@ -2911,12 +2928,12 @@ namespace o2scl {
         if (walker_accept_rows[windex]<0 ||
             walker_accept_rows[windex]>=((int)table->get_nlines())) {
           O2SCL_ERR2("Invalid row for incrementing multiplier in ",
-                     "mcmc_para_table::add_line().",o2scl::exc_efailed);
+                     "mcmc_para_new_table::add_line().",o2scl::exc_efailed);
         }
         double mult_old=table->get("mult",walker_accept_rows[windex]);
         if (mult_old<0.5) {
           O2SCL_ERR2("Old multiplier less than 1 in ",
-                     "mcmc_para_table::add_line().",o2scl::exc_efailed);
+                     "mcmc_para_new_table::add_line().",o2scl::exc_efailed);
         }
         table->set("mult",walker_accept_rows[windex],mult_old+1.0);
         if (this->verbose>=2) {
@@ -3049,7 +3066,7 @@ namespace o2scl {
         \note The number of blocks \c n_blocks must be larger than the
         current table size. This function expects to find a column named
         "mult" which contains the multiplicity of each column, as is the
-        case after a call to \ref mcmc_para_base::mcmc().
+        case after a call to \ref mcmc_para_new_base::mcmc().
       
         This function is useful to remove autocorrelations to the table
         so long as the autocorrelation length is shorter than the block
@@ -3063,7 +3080,7 @@ namespace o2scl {
         size_t n=table->get_nlines();
         if (n_blocks>n) {
           O2SCL_ERR2("Cannot reblock. Not enough data in ",
-                     "mcmc_para_table::reblock().",o2scl::exc_einval);
+                     "mcmc_para_new_table::reblock().",o2scl::exc_einval);
         }
         size_t n_block=n/n_blocks;
         size_t m=table->get_ncolumns();
@@ -3102,14 +3119,14 @@ namespace o2scl {
 
   */
   template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
-  class mcmc_para_cli : public mcmc_para_table<func_t,fill_t,
+  class mcmc_para_new_cli : public mcmc_para_new_table<func_t,fill_t,
                                                data_t,vec_t> {
     
   protected:
   
     /** \brief The parent typedef
      */
-    typedef o2scl::mcmc_para_table<func_t,fill_t,data_t,vec_t> parent_t;
+    typedef o2scl::mcmc_para_new_table<func_t,fill_t,data_t,vec_t> parent_t;
 
     /// \name Parameter objects for the 'set' command
     //@{
@@ -3171,8 +3188,8 @@ namespace o2scl {
         "remaining arguments specify all the parameter values. On the "+
         "command-line, enclose negative values in quotes and parentheses, "+
         "i.e. \"(-1.00)\" to ensure they do not get confused with other "+
-        "options.",new o2scl::comm_option_mfptr<mcmc_para_cli>
-        (this,&mcmc_para_cli::set_initial_point),
+        "options.",new o2scl::comm_option_mfptr<mcmc_para_new_cli>
+        (this,&mcmc_para_new_cli::set_initial_point),
         o2scl::cli::comm_option_both}
         {'s',"hastings","Specify distribution for M-H step",
         1,1,"<filename>",
