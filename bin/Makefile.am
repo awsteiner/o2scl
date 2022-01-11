@@ -136,13 +136,23 @@ if O2SCL_OPENMP
 #ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
 #yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
 
+if O2SCL_PYTHON
+
 acol_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 
 else
 
-acol_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB) -Ltest1
+acol_LDFLAGS = -L../src -L../src/hdf -fopenmp
+ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp
+yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp
+
+endif
+
+else
+
+acol_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
 ame_parse_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
 yanic_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
 
@@ -150,10 +160,21 @@ endif
 
 endif
 
+if O2SCL_PYTHON
+
 acol_LDADD = -lo2scl_hdf -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 ame_parse_LDADD = -lo2scl_part -lo2scl_hdf -lo2scl \
 	-lgsl -lgslcblas -l$(PYTHON_LIB)
 yanic_LDADD = -lo2scl_hdf -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
+
+else
+
+acol_LDADD = -lo2scl_hdf -lo2scl -lgsl -lgslcblas
+ame_parse_LDADD = -lo2scl_part -lo2scl_hdf -lo2scl \
+	-lgsl -lgslcblas
+yanic_LDADD = -lo2scl_hdf -lo2scl -lgsl -lgslcblas
+
+endif
 
 endif
 
