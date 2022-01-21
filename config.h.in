@@ -51,6 +51,9 @@
 /* Define to 1 if you have the `polylog_cpp' library (-lpolylog_cpp). */
 #undef HAVE_LIBPOLYLOG_CPP
 
+/* Define to 1 if you have the `pugixml' library (-lpugixml). */
+#undef HAVE_LIBPUGIXML
+
 /* Define to 1 if you have the `readline' library (-lreadline). */
 #undef HAVE_LIBREADLINE
 

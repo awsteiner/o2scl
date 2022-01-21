@@ -204,6 +204,34 @@ AC_CHECK_LIB([mpfr], [mpfr_add], [],
 ])
 
 # ------------------------------------------------------------------
+# Check for Pugixml library
+# ------------------------------------------------------------------
+
+AC_ARG_ENABLE(pugixml,
+[  --enable-pugixml           Include pugixml support @<:@default=no@:>@],
+	[case "${enableval}" in
+	yes) pugixml=true ;;
+	no)  pugixml=false ;;
+	*) AC_MSG_ERROR(bad value ${enableval} for --enable-pugixml) ;;
+	esac],[pugixml=false])
+
+AM_CONDITIONAL(O2SCL_PUGIXML, test x$pugixml = xtrue)
+
+# ------------------------------------------------------------------
+# If enabled, check for the pugixml library
+# ------------------------------------------------------------------
+
+AS_IF([test "x$enable_pugixml" == "xyes"], [
+AC_CHECK_LIB([pugixml], [atoi], [],
+	[echo ""
+        echo "Pugixml not found. "
+	echo ""
+	echo -n " The present value of LDFLAGS is: "
+	echo $LDFLAGS
+	],[])
+])
+
+# ------------------------------------------------------------------
 # Check for Cubature library
 # ------------------------------------------------------------------
 

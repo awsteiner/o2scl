@@ -26,6 +26,8 @@
 #include <set>
 #include <map>
 
+#include "pugixml.hpp"
+
 using namespace std;
 
 /** \brief Convert <,>, ,: to _
@@ -84,21 +86,83 @@ int xml_get_tag_element(string s, string tag, string &result) {
   return 0;
 }
 
-/*
-  This code parses 'function_list' and 'class list' to create .rst
-  files for each class and function (or list of overloaded functions).
-*/
 int main(int argc, char *argv[]) {
-  
-  if (argc<2) {
-    cerr << "Requires context argument, either \"eos\" or \"main\"."
+
+  if (argc<3) {
+    cerr << "Requires input file and context argument, "
+         << "either \"eos\" or \"main\"."
          << endl;
     exit(-1);
   }
 
-  string context=argv[1];
+  std::string in_file=argv[1];
+  cout << "Using input file " << in_file << endl;
+  string context=argv[2];
   cout << "Using context " << context << endl;
 
+  // -----------------------------------------------------------------
+  // Step 1: Parse the doxygen XML to find all the classes and
+  // functions
+  
+  pugi::xml_document doc;
+
+  vector<std::string> class_list;
+  vector<std::string> function_list[2];
+
+  pugi::xml_parse_result result=doc.load_file(in_file.c_str());
+  if (!result) {
+    cout << result.description() << endl;
+    cout << "Failed to read file." << endl;
+    exit(-1);
+  }
+
+  int xml_verbose=0;
+  
+  pugi::xml_node dindex=doc.first_child();
+  
+  if (xml_verbose>0) {
+    std::cout << "1: " << dindex.name() << endl;
+  }
+  int i=0;
+  
+  for (pugi::xml_node_iterator it=dindex.begin();it!=dindex.end();++it) {
+    if (xml_verbose>0) {
+      cout << i << " " << it->name() << " " << it->child_value("name") << endl;
+      cout << "  kind: " << it->attribute("kind").value() << std::endl;
+    }
+    if (((string)it->attribute("kind").value())==((string)"class")) {
+      class_list.push_back(it->child_value("name"));
+    }
+    if (((string)it->attribute("kind").value())==((string)"namespace")) {
+      int j=0;
+      for (pugi::xml_node_iterator it2=it->begin();
+           it2!=it->end();++it2) {
+        if (xml_verbose>1) {
+          cout << j << " " << it2->name() << " "
+               << it2->child_value("name") << endl;
+          cout << "  kind: " << it2->attribute("kind").value() << std::endl;
+        }
+        if (((string)it2->attribute("kind").value())==((string)"function")) {
+          function_list[0].push_back(it->child_value("name"));
+          function_list[1].push_back(it2->child_value("name"));
+        }
+        j++;
+      }
+    }
+    i++;
+  }
+
+  if (xml_verbose>1) {
+    for(size_t i=0;i<class_list.size();i++) {
+      cout << i << " " << class_list[i] << endl;
+    }
+    for(size_t i=0;i<function_list[0].size();i++) {
+      cout << i << " " << function_list[0][i] << " "
+           << function_list[1][i] << endl;
+    }
+  }
+  exit(-1);
+  
   size_t kk_max=2;
   if (context==((string)"eos")) kk_max=1;
   //if (context==((string)"main")) kk_max=3;
