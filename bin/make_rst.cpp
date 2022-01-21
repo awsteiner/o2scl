@@ -26,7 +26,9 @@
 #include <set>
 #include <map>
 
+#ifdef O2SCL_PUGIXML
 #include "pugixml.hpp"
+#endif
 
 using namespace std;
 
@@ -88,6 +90,7 @@ int xml_get_tag_element(string s, string tag, string &result) {
 
 int main(int argc, char *argv[]) {
 
+#ifdef O2SCL_PUGIXML
   if (argc<3) {
     cerr << "Requires input file and context argument, "
          << "either \"eos\" or \"main\"."
@@ -719,6 +722,8 @@ int main(int argc, char *argv[]) {
     }
     
   }
+  
+#endif
   
   return 0;
 }
