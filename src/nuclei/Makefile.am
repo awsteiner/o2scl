@@ -162,7 +162,7 @@ nucmass_densmat_ts_SOURCES = nucmass_densmat_ts.cpp
 # Library o2scl_nuclei
 # ------------------------------------------------------------
 
-lib_LTLIBRARIES = libo2scl_nuclei.la
+noinst_LTLIBRARIES = libo2scl_nuclei.la
 
 libo2scl_nuclei_la_SOURCES = $(NUCLEI_SRCS)
 

@@ -154,8 +154,7 @@ endif
 if O2SCL_PYTHON
 
 acol_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
-ame_parse_LDADD = -lo2scl_part -lo2scl \
-	-lgsl -lgslcblas -l$(PYTHON_LIB)
+ame_parse_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 yanic_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 make_rst_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 

@@ -118,7 +118,7 @@ hdf_io_ts_SOURCES = hdf_io_ts.cpp
 # Library o2scl_hdf
 # ------------------------------------------------------------
 
-lib_LTLIBRARIES = libo2scl_hdf.la
+noinst_LTLIBRARIES = libo2scl_hdf.la
 
 libo2scl_hdf_la_SOURCES = $(HDF_SRCS)
 libo2scl_hdf_la_LDFLAGS = -version-info $(OLIB_LT_VERSION)

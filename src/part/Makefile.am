@@ -189,7 +189,7 @@ empty:
 # Library o2scl_part
 # ------------------------------------------------------------
 
-lib_LTLIBRARIES = libo2scl_part.la
+noinst_LTLIBRARIES = libo2scl_part.la
 
 libo2scl_part_la_SOURCES = $(PART_SRCS)
 
