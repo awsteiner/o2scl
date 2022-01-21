@@ -17,11 +17,12 @@ SUBDIRS = internal anneal base deriv fit inte mcarlo \
 
 LIBLIST = libo2scl.la
 
-SUBLIBS = mcarlo/libo2scl_mcarlo.la other/libo2scl_other.la \
+SUBLIBS = eos/libo2scl_eos.la part/libo2scl_part.la \
+	hdf/libo2scl_hdf.la \
+	mcarlo/libo2scl_mcarlo.la other/libo2scl_other.la \
 	min/libo2scl_min.la base/libo2scl_base.la \
 	inte/libo2scl_inte.la linalg/libo2scl_linalg.la \
-	hdf/libo2scl_hdf.la eos/libo2scl_eos.la \
-	part/libo2scl_part.la nuclei/libo2scl_nuclei.la
+	nuclei/libo2scl_nuclei.la
 
 #	fit/libo2scl_fit.la
 
@@ -73,7 +74,7 @@ AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 endif
 
 # ------------------------------------------------------------      
-# Aggregate int libraries libo2scl and libo2scl_part
+# Libraries libo2scl
 # -------------------------------------------------------------
 
 lib_LTLIBRARIES = $(LIBLIST)
