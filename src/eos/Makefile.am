@@ -376,7 +376,7 @@ empty:
 # Library o2scl_eos
 # ------------------------------------------------------------
 
-noinst_LTLIBRARIES = libo2scl_eos.la
+lib_LTLIBRARIES = libo2scl_eos.la
 
 libo2scl_eos_la_SOURCES = $(EOS_SRCS)
 libo2scl_eos_la_LDFLAGS = -version-info $(OLIB_LT_VERSION)
