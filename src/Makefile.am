@@ -18,13 +18,10 @@ SUBDIRS = internal anneal base deriv fit inte mcarlo \
 LIBLIST = libo2scl.la
 
 SUBLIBS = mcarlo/libo2scl_mcarlo.la other/libo2scl_other.la \
-	min/libo2scl_min.la \
+	min/libo2scl_min.la base/libo2scl_base.la \
 	inte/libo2scl_inte.la linalg/libo2scl_linalg.la \
-	base/libo2scl_base.la \
-	hdf/libo2scl_hdf.la
-	eos/libo2scl_eos.la
-	part/libo2scl_part.la
-	nuclei/libo2scl_nuclei.la
+	hdf/libo2scl_hdf.la eos/libo2scl_eos.la \
+	part/libo2scl_part.la nuclei/libo2scl_nuclei.la
 
 #	fit/libo2scl_fit.la
 
