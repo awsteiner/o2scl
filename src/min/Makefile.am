@@ -20,24 +20,6 @@ TEST_VAR = min_cern.scr min_brent_gsl.scr min_brent_boost.scr \
 # Includes
 # ------------------------------------------------------------
 
-if O2SCL_PARTLIB
-O2SCL_PART_MVAR = -DO2SCL_PART
-else
-O2SCL_PART_MVAR =
-endif
-
-if O2SCL_EOSLIB
-O2SCL_EOS_MVAR = -DO2SCL_EOS
-else
-O2SCL_EOS_MVAR =
-endif
-
-if O2SCL_HDF
-O2SCL_HDF_MVAR = -DO2SCL_HDF
-else
-O2SCL_HDF_MVAR =
-endif
-
 if O2SCL_OPENMP
 O2SCL_OPENMP_MVAR = -DO2SCL_OPENMP -fopenmp
 else
@@ -59,12 +41,10 @@ endif
 if O2SCL_SNAP
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"/snap/o2scl/current/share/o2scl/\" \
-	$(O2SCL_PART_MVAR) $(O2SCL_EOS_MVAR) $(O2SCL_HDF_MVAR) \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
 	-DO2SCL_COND_FLAG
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
-	$(O2SCL_PART_MVAR) $(O2SCL_EOS_MVAR) $(O2SCL_HDF_MVAR) \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
 	-DO2SCL_COND_FLAG
 endif
@@ -89,11 +69,7 @@ check_PROGRAMS = min_cern_ts min_brent_gsl_ts \
 
 check_SCRIPTS = o2scl-test
 
-if O2SCL_HDF
-VCHECK_LIBS = ../hdf/libo2scl_hdf.la ../libo2scl.la
-else
 VCHECK_LIBS = ../libo2scl.la
-endif
 
 min_cern_ts_LDADD = $(VCHECK_LIBS)
 min_brent_gsl_ts_LDADD = $(VCHECK_LIBS)

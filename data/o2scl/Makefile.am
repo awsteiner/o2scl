@@ -1,6 +1,3 @@
-if O2SCL_PARTLIB
-if O2SCL_EOSLIB
-
 SUBDIRVAR = nucmass rmfdata skdata
 
 DATAVAR = bbp71.o2 bps71.o2 fmt49.o2 hzd89.o2 dh01.o2 \
@@ -10,21 +7,6 @@ DATAVAR = bbp71.o2 bps71.o2 fmt49.o2 hzd89.o2 dh01.o2 \
 	eos19.o2 eos20.o2 eos21.o2 nv83.o2 o2scl.bib o2scl_eos.bib \
 	o2scl_part.bib fermion_deriv_cal.o2 boson_cal.o2 fermion_nr_cal.o2 \
 	qmc_twop_10_0_out thetaANL-1002x12.o2
-
-else
-
-SUBDIRVAR = nucmass
-
-DATAVAR = 
-
-endif
-else
-
-SUBDIRVAR = nucmass
-
-DATAVAR = 
-
-endif
 
 SUBDIRS = $(SUBDIRVAR)
 

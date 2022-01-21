@@ -434,24 +434,6 @@ int o2scl_lib_settings_class_set_doc_dir(void *vptr, char *dir) {
   return ret;
 }
 
-bool o2scl_lib_settings_class_eos_installed(void *vptr) {
-  lib_settings_class *ptr=(lib_settings_class *)vptr;
-  bool ret=ptr->eos_installed();
-  return ret;
-}
-
-bool o2scl_lib_settings_class_part_installed(void *vptr) {
-  lib_settings_class *ptr=(lib_settings_class *)vptr;
-  bool ret=ptr->part_installed();
-  return ret;
-}
-
-bool o2scl_lib_settings_class_hdf_support(void *vptr) {
-  lib_settings_class *ptr=(lib_settings_class *)vptr;
-  bool ret=ptr->hdf_support();
-  return ret;
-}
-
 bool o2scl_lib_settings_class_openmp_support(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   bool ret=ptr->openmp_support();

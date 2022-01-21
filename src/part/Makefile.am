@@ -21,24 +21,6 @@ TEST_VAR = classical.scr fermion_eff.scr fermion_rel.scr boson.scr \
 # Includes
 # ------------------------------------------------------------
 
-if O2SCL_PARTLIB
-O2SCL_PART_MVAR = -DO2SCL_PART
-else
-O2SCL_PART_MVAR =
-endif
-
-if O2SCL_EOSLIB
-O2SCL_EOS_MVAR = -DO2SCL_EOS
-else
-O2SCL_EOS_MVAR =
-endif
-
-if O2SCL_HDF
-O2SCL_HDF_MVAR = -DO2SCL_HDF
-else
-O2SCL_HDF_MVAR =
-endif
-
 if O2SCL_OPENMP
 O2SCL_OPENMP_MVAR = -DO2SCL_OPENMP -fopenmp
 else
@@ -72,13 +54,11 @@ endif
 if O2SCL_SNAP
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"/snap/o2scl/current/share/o2scl/\" \
-	$(O2SCL_PART_MVAR) $(O2SCL_EOS_MVAR) $(O2SCL_HDF_MVAR) \
 	$(ADDINC) $(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) \
 	$(O2SCL_ARMA_MVAR) -DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR)
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
-	$(O2SCL_PART_MVAR) $(O2SCL_EOS_MVAR) $(O2SCL_HDF_MVAR) \
 	$(ADDINC) $(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) \
 	$(O2SCL_ARMA_MVAR) -DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR)
@@ -103,7 +83,7 @@ check_PROGRAMS = classical_ts fermion_eff_ts fermion_rel_ts \
 
 check_SCRIPTS = o2scl-test
 
-VCHECK_LIBS = ../libo2scl_part.la ../hdf/libo2scl_hdf.la ../libo2scl.la
+VCHECK_LIBS = ../libo2scl.la
 
 classical_ts_LDADD = $(VCHECK_LIBS)
 fermion_eff_ts_LDADD = $(VCHECK_LIBS)
@@ -206,14 +186,14 @@ interface: empty
 empty:
 
 # ------------------------------------------------------------
-# Library o2scl_basepart
+# Library o2scl_part
 # ------------------------------------------------------------
 
-noinst_LTLIBRARIES = libo2scl_basepart.la
+lib_LTLIBRARIES = libo2scl_part.la
 
-libo2scl_basepart_la_SOURCES = $(PART_SRCS)
+libo2scl_part_la_SOURCES = $(PART_SRCS)
 
-am__libo2scl_basepart_la_SOURCES_DIST = $(PART_SRCS)
+am__libo2scl_part_la_SOURCES_DIST = $(PART_SRCS)
 
 # ------------------------------------------------------------
 # Misc

@@ -174,12 +174,6 @@ void *o2scl_lib_settings_class_get_doc_dir(void *vptr);
 
 int o2scl_lib_settings_class_set_doc_dir(void *vptr, char *dir);
 
-bool o2scl_lib_settings_class_eos_installed(void *vptr);
-
-bool o2scl_lib_settings_class_part_installed(void *vptr);
-
-bool o2scl_lib_settings_class_hdf_support(void *vptr);
-
 bool o2scl_lib_settings_class_openmp_support(void *vptr);
 
 bool o2scl_lib_settings_class_readline_support(void *vptr);

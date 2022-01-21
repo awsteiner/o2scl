@@ -8,93 +8,29 @@ help:
 # Subdirectory and sublibrary lists
 # -------------------------------------------------------------
 
-# The ordering is important for these directories, since part, nuclei,
-# and eos, depend on the base library. We also need to make sure
+# We also need to make sure
 # 'internal' appears before the other subdirectories because 'tsumm'
-# needs to be created first for 'make check'. We don't need to list
-# libo2scl_eos and libo2scl_hdf here, since they're taken care of in
-# their respective directories.
-
-if O2SCL_PARTLIB
-if O2SCL_EOSLIB
-if O2SCL_HDF
+# needs to be created first for 'make check'. 
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
-	min ode other root linalg \
-	part nuclei eos hdf 
-LIBLIST = libo2scl.la libo2scl_part.la
+	min ode other root linalg part nuclei eos hdf
 
-else
-
-SUBDIRS = internal anneal base deriv fit inte mcarlo \
-	min ode other root linalg \
-	part nuclei eos 
-LIBLIST = libo2scl.la libo2scl_part.la
-
-endif
-else
-
-if O2SCL_HDF
-
-SUBDIRS = internal anneal base deriv fit inte mcarlo \
-	min ode other root linalg \
-	nuclei part hdf 
-LIBLIST = libo2scl.la libo2scl_part.la
-
-else
-
-SUBDIRS = internal anneal base deriv fit inte mcarlo \
-	min ode other root linalg \
-	nuclei part 
-LIBLIST = libo2scl.la libo2scl_part.la
-
-endif
-endif
-else 
-
-if O2SCL_HDF
-
-SUBDIRS = internal anneal base deriv fit inte mcarlo \
-	min ode other root linalg hdf 
 LIBLIST = libo2scl.la
-
-else
-
-SUBDIRS = internal anneal base deriv fit inte mcarlo \
-	min ode other root linalg 
-LIBLIST = libo2scl.la
-
-endif
-endif
 
 SUBLIBS = mcarlo/libo2scl_mcarlo.la other/libo2scl_other.la \
 	min/libo2scl_min.la \
 	inte/libo2scl_inte.la linalg/libo2scl_linalg.la \
-	base/libo2scl_base.la
+	base/libo2scl_base.la \
+	hdf/libo2scl_hdf.la
+	eos/libo2scl_eos.la
+	part/libo2scl_part.la
+	nuclei/libo2scl_nuclei.la
 
 #	fit/libo2scl_fit.la
 
 # ------------------------------------------------------------      
 # Include statement
 # ------------------------------------------------------------      
-
-if O2SCL_PARTLIB
-O2SCL_PART_MVAR = -DO2SCL_PART
-else
-O2SCL_PART_MVAR =
-endif
-
-if O2SCL_EOSLIB
-O2SCL_EOS_MVAR = -DO2SCL_EOS
-else
-O2SCL_EOS_MVAR =
-endif
-
-if O2SCL_HDF
-O2SCL_HDF_MVAR = -DO2SCL_HDF
-else
-O2SCL_HDF_MVAR =
-endif
 
 if O2SCL_OPENMP
 O2SCL_OPENMP_MVAR = -DO2SCL_OPENMP -fopenmp
@@ -129,13 +65,11 @@ endif
 if O2SCL_SNAP
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"/snap/o2scl/current/share/o2scl/\" \
-	$(O2SCL_PART_MVAR) $(O2SCL_EOS_MVAR) $(O2SCL_HDF_MVAR) \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
 	$(O2SCL_GSL2_MVAR) -DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR)
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
-	$(O2SCL_PART_MVAR) $(O2SCL_EOS_MVAR) $(O2SCL_HDF_MVAR) \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
 	$(O2SCL_GSL2_MVAR) -DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR)
@@ -150,10 +84,6 @@ lib_LTLIBRARIES = $(LIBLIST)
 libo2scl_la_SOURCES = 
 libo2scl_la_LIBADD = $(SUBLIBS)
 libo2scl_la_LDFLAGS = -version-info $(OLIB_LT_VERSION)
-
-libo2scl_part_la_SOURCES = 
-libo2scl_part_la_LIBADD = nuclei/libo2scl_nuclei.la part/libo2scl_basepart.la
-libo2scl_part_la_LDFLAGS = -version-info $(OLIB_LT_VERSION)
 
 # ------------------------------------------------------------
 
@@ -172,50 +102,10 @@ empty:
 # Testing targets
 # -------------------------------------------------------------
 
-if O2SCL_PARTLIB
-if O2SCL_EOSLIB
-if O2SCL_HDF
 O2SCL_TEST_ADD = test_anneal test_base test_deriv test_eos test_fit \
 	test_inte test_mcarlo test_min test_nuclei test_ode \
 	test_other test_part test_root test_linalg \
 	test_internal test_hdf
-else
-O2SCL_TEST_ADD = test_anneal test_base test_deriv test_eos test_fit \
-	test_inte test_mcarlo test_min test_nuclei test_ode \
-	test_other test_part test_root test_linalg \
-	test_internal
-endif
-else
-if O2SCL_HDF
-O2SCL_TEST_ADD = test_anneal test_base test_deriv test_fit \
-	test_inte test_mcarlo test_min test_nuclei test_ode \
-	test_other test_part test_root test_linalg \
-	test_internal test_hdf
-else
-O2SCL_TEST_ADD = test_anneal test_base test_deriv test_fit \
-	test_inte test_mcarlo test_min test_nuclei test_ode \
-	test_other test_part test_root test_linalg \
-	test_internal
-endif
-endif
-else 
-if O2SCL_HDF
-O2SCL_TEST_ADD = test_anneal test_base test_deriv test_fit \
-	test_inte test_mcarlo test_min test_ode \
-	test_other test_root test_linalg \
-	test_internal test_hdf
-else
-O2SCL_TEST_ADD = test_anneal test_base test_deriv test_fit \
-	test_inte test_mcarlo test_min test_ode \
-	test_other test_root test_linalg \
-	test_internal
-endif
-endif
-
-#all: pybuild all-am
-
-#pybuild:
-#	swig -c++ -python -o base/python.cpp python.i
 
 test_anneal:
 	cd anneal && $(MAKE) o2scl-test-rec

@@ -741,10 +741,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << ter.bold() << "O2scl" << ter.default_fg()
        << " version: " << o2scl_settings.o2scl_version() << endl;
   cout << "Range checking: " << o2scl_settings.range_check() << endl;
-  cout << "EOS library: " << o2scl_settings.eos_installed() << endl;
-  cout << "Particle library: " << o2scl_settings.part_installed() << endl;
-  cout << "HDF5 support: " << o2scl_settings.hdf_support() << endl;
-  if (o2scl_settings.hdf_support()) {
+  if (true) {
     unsigned maj, min, rel;
     o2scl_settings.hdf5_header_version(maj,min,rel);
     cout << "  HDF5 version numbers when O2scl was compiled: "

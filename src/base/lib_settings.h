@@ -108,15 +108,6 @@ namespace o2scl {
       return 0;
     }
     
-    /// Return true if the EOS library was installed
-    bool eos_installed();
-
-    /// Return true if the particle library was installed
-    bool part_installed();
-
-    /// Return true if \o2 was installed with HDF support
-    bool hdf_support();
-
     /// Return true if \o2 was installed with OpenMP support
     bool openmp_support();
 

@@ -311,32 +311,8 @@ std::string lib_settings_class::time_compiled() {
 #endif
 }
 
-bool lib_settings_class::eos_installed() {
-#ifdef O2SCL_EOS
-  return true;
-#else
-  return false;
-#endif
-}
-
 bool lib_settings_class::hdf5_compression_support() {
 #ifdef O2SCL_HDF5_COMP
-  return true;
-#else
-  return false;
-#endif
-}
-
-bool lib_settings_class::part_installed() {
-#ifdef O2SCL_PART
-  return true;
-#else
-  return false;
-#endif
-}
-
-bool lib_settings_class::hdf_support() {
-#ifdef O2SCL_HDF
   return true;
 #else
   return false;

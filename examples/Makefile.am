@@ -64,7 +64,6 @@ help:
 
 SUBDIRS = plot
 
-if O2SCL_EOSLIB
 BENCHMARK_PRGS = bm_poly.scr bm_root.scr bm_min.scr bm_polylog.scr
 #	bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
 #	bm_part.scr bm_part2.scr 
@@ -82,44 +81,8 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 
 # ex_ode_it.scr ex_eos_sn.scr ex_interp2_nogrid.scr 
 
-else
-
-BENCHMARK_PRGS = bm_poly.scr bm_root.scr bm_min.scr bm_polylog.scr
-#	bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
-#bm_mmin.scr 
-
-EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
-	ex_mroot.scr ex_mmin.scr ex_inte.scr ex_deriv.scr \
-	ex_ode.scr ex_anneal.scr ex_mcarlo.scr ex_string.scr ex_mmin_fix.scr \
-	ex_stiff.scr ex_tensor.scr ex_mcmc.scr \
-	ex_chebapp.scr ex_poly.scr ex_conmin.scr ex_methast.scr \
-	ex_interp.scr ex_lambda.scr
-
-# ex_ode_it.scr ex_interp2_nogrid.scr 
-
-endif
-
-if O2SCL_EOSLIB
-if O2SCL_HDF
 OOLIBSTWO = -lo2scl_eos -lo2scl_part -lo2scl_hdf -lo2scl \
 		-L../src -L../src/eos -L../src/hdf
-else
-OOLIBSTWO = -lo2scl_eos -lo2scl_part -lo2scl \
-		-L../src -L../src/eos
-endif
-else
-if O2SCL_HDF
-OOLIBSTWO = -lo2scl_hdf -lo2scl -L../src -L../src/hdf
-else 
-OOLIBSTWO = -lo2scl -L../src
-endif
-endif
-
-if O2SCL_HDF
-O2SCL_HDF_MVAR = -DO2SCL_HDF
-else
-O2SCL_HDF_MVAR =
-endif
 
 if O2SCL_LINUX
 O2SCL_LINUX_MVAR = -DO2SCL_LINUX
@@ -177,8 +140,6 @@ o2scl-examples-doc:
 # o2scl_examples target.
 # -------------------------------------------------------------
 
-if O2SCL_EOSLIB
-
 EXTRA_PROGRAMS = \
 	ex_fptr \
 	ex_fermion_summ \
@@ -224,59 +185,6 @@ EXTRA_PROGRAMS = \
 	bm_min \
 	bm_poly \
 	bm_polylog
-#	bm_lu \
-#	bm_deriv \
-#	bm_mmin \
-#	bm_mroot2 \
-#	bm_mroot \
-#	bm_part \
-#	bm_rk8pd \
-#	bm_rkck \
-#	bm_part2 
-
-else
-
-EXTRA_PROGRAMS = ex_fptr \
-	ex_diff \
-	ex_mcmc \
-	ex_interp \
-	ex_interp2 \
-	ex_interp2_nogrid \
-	ex_table \
-	ex_mroot \
-	ex_mmin \
-	ex_inte \
-	ex_deriv \
-	ex_ode \
-	ex_anneal \
-	ex_mcarlo \
-	ex_string \
-	ex_contour \
-	ex_tensor \
-	ex_hydrogen \
-	ex_mmin_fix \
-	ex_const_vec \
-	ex_ode_it \
-	ex_methast \
-	ex_stiff \
-	ex_chebapp \
-	ex_poly \
-	ex_conmin \
-	ex_lambda \
-	bm_root \
-	bm_min \
-	bm_poly \
-	bm_polylog
-
-#	bm_lu \
-#	bm_deriv \
-#	bm_mmin \
-#	bm_mroot2 \
-#	bm_mroot \
-#	bm_rk8pd \
-#	bm_rkck 
-
-endif
 
 if O2SCL_OPENMP
 ex_diff_LDFLAGS = -fopenmp

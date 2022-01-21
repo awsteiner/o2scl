@@ -48,50 +48,6 @@ OLIB_LT_VERSION="${OLIB_CURRENT}:${OLIB_REVISION}:${OLIB_AGE}"
 AC_SUBST(OLIB_LT_VERSION)
 
 # ------------------------------------------------------------------
-# Enable or disable GSL 2.0 support
-# ------------------------------------------------------------------
-
-# 11/3/21: Comment this out since everyone has GSL2 now
-
-# AC_ARG_ENABLE(gsl2,
-# [  --enable-gsl2           Include GSL v2.0 support @<:@default=yes@:>@],
-#    [case "${enableval}" in
-#    yes) gsl2=true ;;
-#    no)  gsl2=false ;;
-#    *) AC_MSG_ERROR(bad value ${enableval} for --enable-gsl2) ;;
-#    esac],[gsl2=true])
-
-# AM_CONDITIONAL(O2SCL_GSL2, test x$gsl2 = xtrue)
-
-# ------------------------------------------------------------------
-# Enable or disable particle and nuclei library
-# ------------------------------------------------------------------
-
-AC_ARG_ENABLE(partlib,
-[  --enable-partlib        Include particle library @<:@default=yes@:>@],
-   [case "${enableval}" in
-   yes) partlib=true ;;
-   no)  partlib=false ;;
-   *) AC_MSG_ERROR(bad value ${enableval} for --enable-partlib) ;;
-   esac],[partlib=true])
-
-AM_CONDITIONAL(O2SCL_PARTLIB, test x$partlib = xtrue)
-
-# ------------------------------------------------------------------
-# Enable or disable EOS library
-# ------------------------------------------------------------------
-
-AC_ARG_ENABLE(eoslib,
-[  --enable-eoslib         Include equation of state library @<:@default=yes@:>@],
-   [case "${enableval}" in
-   yes) eoslib=true ;;
-   no)  eoslib=false ;;
-   *) AC_MSG_ERROR(bad value ${enableval} for --enable-eoslib) ;;
-   esac],[eoslib=true])
-
-AM_CONDITIONAL(O2SCL_EOSLIB, test x$eoslib = xtrue)
-
-# ------------------------------------------------------------------
 # Check for Boost headers
 # ------------------------------------------------------------------
 
@@ -340,24 +296,9 @@ AC_CHECK_LIB([ncurses], [initscr], [],
 ])
 
 # ------------------------------------------------------------------
-# Enable or disable HDF5 support
-# ------------------------------------------------------------------
-
-AC_ARG_ENABLE(hdf,
-	[  --enable-hdf            Include HDF5 support @<:@default=yes@:>@],
-	[case "${enableval}" in
-	yes) hdf=true ;;
-	no)  hdf=false ;;
-	*) AC_MSG_ERROR(bad value ${enableval} for --enable-hdf) ;;
-	esac],[hdf=true])
-
-AM_CONDITIONAL(O2SCL_HDF, test x$hdf = xtrue)
-
-# ------------------------------------------------------------------
 # If enabled, check for the HDF5 library
 # ------------------------------------------------------------------
 
-AS_IF([test "x$enable_hdf" != "xno"], [
 AC_CHECK_LIB([hdf5], [H5Fopen], [], [
   AC_CHECK_LIB([hdf5_serial], [H5Fopen], [], [
     echo ""
@@ -369,8 +310,6 @@ AC_CHECK_LIB([hdf5], [H5Fopen], [], [
     echo $LDFLAGS
   ],[])
 ],[])
-
-])
 
 # ------------------------------------------------------------------
 # ... and for the HDF5 high-level library

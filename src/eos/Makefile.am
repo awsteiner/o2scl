@@ -2,11 +2,6 @@
 # Basic variables
 # ------------------------------------------------------------
 
-# 5/19/11, AWS: Even though currently O2scl_eos requires HDF support,
-# we leave this HDF conditional here, in case future versions of
-# the EOS library will allow one to disable HDF support
-if O2SCL_HDF
-
 EOS_SRCS = eos_had_apr.cpp eos_quark_bag.cpp \
 	eos_crust.cpp nstar_cold.cpp eos_base.cpp eos_had_potential.cpp \
 	eos_quark_njl.cpp eos_had_ddc.cpp nucmass_ldrop.cpp \
@@ -41,63 +36,9 @@ TEST_VAR = eos_had_apr.scr eos_quark_bag.scr nstar_cold.scr \
 	eos_nse_full.scr nstar_rot.scr tov_love.scr \
 	eos_had_rmf_hyp.scr
 
-else
-
-EOS_SRCS = eos_had_apr.cpp eos_quark_bag.cpp eos_quark_cfl.cpp \
-	eos_quark_cfl6.cpp \
-	eos_crust.cpp nstar_cold.cpp eos_base.cpp eos_had_potential.cpp \
-	eos_quark_njl.cpp eos_had_ddc.cpp nucmass_ldrop.cpp \
-	eos_quark.cpp eos_had_rmf.cpp eos_had_schematic.cpp \
-	eos_had_skyrme.cpp tov_solve.cpp eos_nse.cpp \
-	eos_had_rmf_delta.cpp eos_tov.cpp eos_had_sym4.cpp \
-	eos_had_base.cpp eos_had_rmf_hyp.cpp \
-	eos_sn.cpp nucmass_ldrop_shell.cpp \
-	eos_nse_full.cpp eos_crust_virial.cpp nstar_rot.cpp tov_love.cpp
-
-HEADER_VAR = eos_had_apr.h eos_quark_bag.h eos_crust.h eos_had_ddc.h \
-	nstar_cold.h eos_base.h eos_had_potential.h nucmass_ldrop.h \
-	eos_quark_njl.h eos_quark.h eos_had_rmf.h eos_quark_cfl.h \
-	eos_quark_cfl6.h eos_had_schematic.h eos_had_skyrme.h \
-	eos_had_tabulated.h eos_nse.h tov_solve.h eos_had_rmf_delta.h \
-	eos_had_sym4.h eos_tov.h eos_had_base.h tov_love.h \
-	eos_sn.h nucmass_ldrop_shell.h eos_had_gogny.h \
-	eos_crust_virial.h eos_nse_full.h nstar_rot.h \
-	eos_had_rmf_hyp.h eos_cs2_poly.h
-
-TEST_VAR = eos_had_apr.scr eos_quark_bag.scr eos_crust_virial.scr \
-	nstar_cold.scr eos_base.scr eos_had_potential.scr \
-	eos_had_sym4.scr \
-	eos_quark_njl.scr eos_quark.scr eos_had_gogny.scr \
-	eos_had_rmf.scr eos_had_schematic.scr eos_had_skyrme.scr eos_tov.scr \
-	tov_solve.scr eos_quark_cfl6.scr eos_had_tabulated.scr eos_nse.scr \
-	eos_had_rmf_delta.scr eos_crust.scr eos_had_ddc.scr eos_quark_cfl.scr \
-	eos_had_base.scr nucmass_ldrop_shell.scr eos_nse_full.scr \
-	nstar_rot.scr tov_love.scr eos_cs2_poly.scr \
-	eos_had_rmf_hyp.scr
-
-endif
-
 # ------------------------------------------------------------
 # Includes
 # ------------------------------------------------------------
-
-if O2SCL_PARTLIB
-O2SCL_PART_MVAR = -DO2SCL_PART
-else
-O2SCL_PART_MVAR =
-endif
-
-if O2SCL_EOSLIB
-O2SCL_EOS_MVAR = -DO2SCL_EOS
-else
-O2SCL_EOS_MVAR =
-endif
-
-if O2SCL_HDF
-O2SCL_HDF_MVAR = -DO2SCL_HDF
-else
-O2SCL_HDF_MVAR =
-endif
 
 if O2SCL_OPENMP
 O2SCL_OPENMP_MVAR = -DO2SCL_OPENMP -fopenmp
@@ -132,13 +73,11 @@ endif
 if O2SCL_SNAP
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"/snap/o2scl/current/share/o2scl/\" \
-	$(O2SCL_PART_MVAR) $(O2SCL_EOS_MVAR) $(O2SCL_HDF_MVAR) \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
 	-DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR)
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
-	$(O2SCL_PART_MVAR) $(O2SCL_EOS_MVAR) $(O2SCL_HDF_MVAR) \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
 	-DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR)
@@ -168,12 +107,7 @@ check_PROGRAMS = eos_had_apr_ts eos_quark_bag_ts nucmass_ldrop_ts \
 
 check_SCRIPTS = o2scl-test
 
-if O2SCL_HDF
-VCHECK_LIBS = libo2scl_eos.la ../libo2scl_part.la \
-	../hdf/libo2scl_hdf.la ../libo2scl.la
-else
-VCHECK_LIBS = libo2scl_eos.la ../libo2scl_part.la ../libo2scl.la
-endif
+VCHECK_LIBS = ../libo2scl.la
 
 eos_had_apr_ts_LDADD = $(VCHECK_LIBS)
 eos_quark_bag_ts_LDADD = $(VCHECK_LIBS)
@@ -442,7 +376,7 @@ empty:
 # Library o2scl_eos
 # ------------------------------------------------------------
 
-lib_LTLIBRARIES = libo2scl_eos.la
+noinst_LTLIBRARIES = libo2scl_eos.la
 
 libo2scl_eos_la_SOURCES = $(EOS_SRCS)
 libo2scl_eos_la_LDFLAGS = -version-info $(OLIB_LT_VERSION)
@@ -474,4 +408,3 @@ o2scl-test-rec: $(TEST_VAR)
 
 test-clean: 
 	rm -f *_ts.o *_ts *.scr
-

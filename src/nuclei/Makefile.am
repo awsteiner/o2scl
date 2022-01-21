@@ -2,11 +2,6 @@
 # Basic variables
 # ------------------------------------------------------------
 
-# The files nucmass, nucdist, nucmass_fit, reaction_lib, and
-# hdf_nucmass_io can only be tested if HDF is enabled
-
-if O2SCL_HDF
-
 NUCLEI_SRCS = nucmass.cpp nucdist.cpp nucleus.cpp nucmass_fit.cpp \
 	reaction_lib.cpp hdf_nucmass_io.cpp nucmass_frdm.cpp \
 	nucmass_dz.cpp nucmass_ame.cpp nucmass_hfb.cpp nucmass_ktuy.cpp \
@@ -23,45 +18,9 @@ TEST_VAR = nucmass.scr nucdist.scr nucleus.scr nucmass_fit.scr \
 	reaction_lib.scr hdf_nucmass_io.scr nucmass_frdm.scr \
 	nucmass_dz.scr nucmass_densmat.scr nucmass_gen.scr nucmass_ame.scr
 
-else
-
-NUCLEI_SRCS = nucmass.cpp nucdist.cpp nucleus.cpp nucmass_fit.cpp \
-	reaction_lib.cpp nucmass_frdm.cpp nucmass_dz.cpp \
-	nucmass_ame.cpp nucmass_hfb.cpp nucmass_ktuy.cpp \
-	nucmass_dglg.cpp nucmass_wlw.cpp nucmass_sdnp.cpp \
-	nucmass_densmat.cpp nuclei_python.cpp
-
-HEADER_VAR = nucmass.h nucdist.h nucleus.h nucmass_fit.h reaction_lib.h \
-	nucmass_frdm.h nucmass_dz.h nucmass_ame.h \
-	nucmass_hfb.h nucmass_ktuy.h nucmass_dglg.h \
-	nucmass_wlw.h nucmass_sdnp.h nucmass_densmat.h \
-	nuclei_python.h
-
-TEST_VAR = nucleus.scr
-
-endif
-
 # ------------------------------------------------------------
 # Includes
 # ------------------------------------------------------------
-
-if O2SCL_PARTLIB
-O2SCL_PART_MVAR = -DO2SCL_PART
-else
-O2SCL_PART_MVAR =
-endif
-
-if O2SCL_EOSLIB
-O2SCL_EOS_MVAR = -DO2SCL_EOS
-else
-O2SCL_EOS_MVAR =
-endif
-
-if O2SCL_HDF
-O2SCL_HDF_MVAR = -DO2SCL_HDF
-else
-O2SCL_HDF_MVAR =
-endif
 
 if O2SCL_OPENMP
 O2SCL_OPENMP_MVAR = -DO2SCL_OPENMP -fopenmp
@@ -96,13 +55,11 @@ endif
 if O2SCL_SNAP
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"/snap/o2scl/current/share/o2scl/\" \
-	$(O2SCL_PART_MVAR) $(O2SCL_EOS_MVAR) $(O2SCL_HDF_MVAR) \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
 	-DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR)
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
-	$(O2SCL_PART_MVAR) $(O2SCL_EOS_MVAR) $(O2SCL_HDF_MVAR) \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
 	-DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR)
@@ -126,12 +83,7 @@ check_PROGRAMS = nucmass_ts nucdist_ts nucleus_ts \
 
 check_SCRIPTS = o2scl-test
 
-if O2SCL_HDF
-VCHECK_LIBS = ../libo2scl_part.la ../libo2scl.la \
-	../hdf/libo2scl_hdf.la
-else
-VCHECK_LIBS = ../libo2scl_part.la ../libo2scl.la 
-endif
+VCHECK_LIBS = ../libo2scl.la 
 
 nucmass_ts_LDADD = $(VCHECK_LIBS)
 reaction_lib_ts_LDADD = $(VCHECK_LIBS)
@@ -210,7 +162,7 @@ nucmass_densmat_ts_SOURCES = nucmass_densmat_ts.cpp
 # Library o2scl_nuclei
 # ------------------------------------------------------------
 
-noinst_LTLIBRARIES = libo2scl_nuclei.la
+lib_LTLIBRARIES = libo2scl_nuclei.la
 
 libo2scl_nuclei_la_SOURCES = $(NUCLEI_SRCS)
 
