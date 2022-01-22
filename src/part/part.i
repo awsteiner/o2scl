@@ -5,7 +5,7 @@ py_class_doc |
 | Python interface for O\ :sub:`2`\ scl class ``%name%``,
 | See
 | https://neutronstars.utk.edu/code/o2scl/part/html/class/%name%.html .
-dll_name o2scl_part
+dll_name o2scl
 rst_header |
 | .. _particle:
 |
