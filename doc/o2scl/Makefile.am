@@ -27,8 +27,6 @@ dist_doc_DATA =
 # These are the files included in the distribution
 EXTRA_DIST = o2scl.tag make_rst.cpp 
 
-SUBDOC_DIRS = part eos
-
 SUBDIRS = sphinx part eos
 
 emacs-clean:
@@ -47,17 +45,9 @@ prerelease-sync-doc:
 	rsync -Cavzu -r /usr/local/share/doc/o2scl/* \
 		$(STATIC_DOC_DIR)/o2scl-dev
 
-o2scl-doc-recursive: o2scl-doc
-	cd part && $(MAKE) o2scl-doc
-	cd eos && $(MAKE) o2scl-doc
-
 o2scl-doc:
 	doxygen doxyfile > doxygen.scr
 	cd sphinx && $(MAKE) o2scl-doc
-
-clean-doc-recursive: clean-doc
-	cd part && $(MAKE) clean-doc
-	cd eos && $(MAKE) clean-doc
 
 clean-doc:
 	cd html; rm -f *.html *.png formula.repository doxygen.css \
