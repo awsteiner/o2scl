@@ -158,6 +158,13 @@ ame_parse_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 yanic_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 make_rst_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 
+else
+
+acol_LDADD = -lo2scl -lgsl -lgslcblas
+ame_parse_LDADD = -lo2scl -lgsl -lgslcblas
+yanic_LDADD = -lo2scl -lgsl -lgslcblas
+make_rst_LDADD = -lo2scl -lgsl -lgslcblas
+
 endif
 
 endif
