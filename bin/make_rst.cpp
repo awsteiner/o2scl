@@ -91,638 +91,338 @@ int xml_get_tag_element(string s, string tag, string &result) {
 int main(int argc, char *argv[]) {
 
 #ifdef O2SCL_PUGIXML
-  if (argc<3) {
-    cerr << "Requires input file and context argument, "
-         << "either \"eos\" or \"main\"."
-         << endl;
+  
+  if (argc<2) {
+    cerr << "Requires input file." << endl;
     exit(-1);
   }
 
-  std::string in_file=argv[1];
+  std::string in_dir=argv[1];
+  std::string in_file=in_dir+"/index.xml";
   cout << "Using input file " << in_file << endl;
-  string context=argv[2];
-  cout << "Using context " << context << endl;
 
+  // -----------------------------------------------------------------
+  
+  typedef struct generic_s {
+    std::string ns;
+    std::string name;
+  } generic;
+
+  typedef struct function_s {
+    std::string ns;
+    std::string name;
+    std::string args;
+  } function;
+
+  std::vector<generic> class_list, function_list;
+  
+  std::vector<function> overloaded_list;
+  
   // -----------------------------------------------------------------
   // Step 1: Parse the doxygen XML to find all the classes and
   // functions
-  
-  pugi::xml_document doc;
-
-  vector<std::string> class_list;
-  vector<std::string> function_list[2];
-
-  pugi::xml_parse_result result=doc.load_file(in_file.c_str());
-  if (!result) {
-    cout << result.description() << endl;
-    cout << "Failed to read file." << endl;
-    exit(-1);
-  }
 
   int xml_verbose=0;
-  
-  pugi::xml_node dindex=doc.first_child();
-  
-  if (xml_verbose>0) {
-    std::cout << "1: " << dindex.name() << endl;
-  }
-  int i=0;
-  
-  for (pugi::xml_node_iterator it=dindex.begin();it!=dindex.end();++it) {
+    
+  { 
+    pugi::xml_document doc;
+    
+    pugi::xml_parse_result result=doc.load_file(in_file.c_str());
+    if (!result) {
+      cout << result.description() << endl;
+      cout << "Failed to read file." << endl;
+      exit(-1);
+    }
+    
+    pugi::xml_node dindex=doc.first_child();
+    
     if (xml_verbose>0) {
-      cout << i << " " << it->name() << " " << it->child_value("name") << endl;
-      cout << "  kind: " << it->attribute("kind").value() << std::endl;
+      std::cout << "1: " << dindex.name() << endl;
     }
-    if (((string)it->attribute("kind").value())==((string)"class")) {
-      class_list.push_back(it->child_value("name"));
+    int i=0;
+    
+    for (pugi::xml_node_iterator it=dindex.begin();it!=dindex.end();++it) {
+      if (xml_verbose>0) {
+        cout << i << " " << it->name() << " "
+             << it->child_value("name") << endl;
+        cout << "  kind: " << it->attribute("kind").value() << std::endl;
+      }
+      if (((string)it->attribute("kind").value())==((string)"class")) {
+        generic o;
+        o.name=it->child_value("name");
+        size_t loc=o.name.find_last_of(':');
+        if (loc!=std::string::npos && loc>1) {
+          o.ns=o.name.substr(0,loc-1);
+          o.name=o.name.substr(loc+1,o.name.length()-loc);
+        }
+        class_list.push_back(o);
+      }
+      if (((string)it->attribute("kind").value())==((string)"namespace")) {
+        int j=0;
+        for (pugi::xml_node_iterator it2=it->begin();
+             it2!=it->end();++it2) {
+          if (xml_verbose>1) {
+            cout << j << " " << it2->name() << " "
+                 << it2->child_value("name") << endl;
+            cout << "  kind: " << it2->attribute("kind").value()
+                 << std::endl;
+          }
+          if (((string)it2->attribute("kind").value())==((string)"function")) {
+            generic o;
+            o.ns=it->child_value("name");
+            o.name=it2->child_value("name");
+            bool found_in_list=false;
+            for(size_t k=0;k<function_list.size();k++) {
+              if (function_list[k].ns==o.ns &&
+                  function_list[k].name==o.name) {
+                found_in_list=true;
+              }
+            }
+            if (found_in_list) {
+              function f;
+              f.ns=o.ns;
+              f.name=o.name;
+              bool found_in_dups=false;
+              for(size_t k=0;k<overloaded_list.size();k++) {
+                if (overloaded_list[k].ns==o.ns &&
+                    overloaded_list[k].name==o.name) {
+                  found_in_dups=true;
+                }
+              }
+              if (found_in_dups==false) {
+                overloaded_list.push_back(f);
+              }
+            } else {
+              function_list.push_back(o);
+            }
+          }
+          j++;
+        }  
+      }
+      i++;
     }
-    if (((string)it->attribute("kind").value())==((string)"namespace")) {
-      int j=0;
-      for (pugi::xml_node_iterator it2=it->begin();
-           it2!=it->end();++it2) {
-        if (xml_verbose>1) {
-          cout << j << " " << it2->name() << " "
-               << it2->child_value("name") << endl;
-          cout << "  kind: " << it2->attribute("kind").value() << std::endl;
-        }
-        if (((string)it2->attribute("kind").value())==((string)"function")) {
-          function_list[0].push_back(it->child_value("name"));
-          function_list[1].push_back(it2->child_value("name"));
-        }
-        j++;
+
+    // End of reading index.xml
+  }
+
+  vector<std::string> ns_list;
+
+  for(size_t k=0;k<overloaded_list.size();k++) {
+    
+    bool found_in_ns=false;
+    for(size_t i=0;i<ns_list.size();i++) {
+      if (ns_list[i]==overloaded_list[k].ns) {
+        found_in_ns=true;
       }
     }
-    i++;
+    if (found_in_ns==false) {
+      ns_list.push_back(overloaded_list[k].ns);
+    }
+
+  }
+
+  for(size_t k=0;k<ns_list.size();k++) {
+
+    if (ns_list[k]=="o2scl") {
+      
+      pugi::xml_document ns_doc;
+      
+      std::string ns_file=in_dir+"/namespace"+
+        ns_list[k]+".xml";
+
+      cout << "Reading namespace file: " << ns_file << endl;
+      pugi::xml_parse_result result=ns_doc.load_file(ns_file.c_str());
+      if (!result) {
+        cout << result.description() << endl;
+        cout << "Failed to read namespace file." << endl;
+        exit(-1);
+      }
+
+      // Parse through <doxygen><compounddef>
+      pugi::xml_node dindex=ns_doc.first_child().first_child();
+      
+      for (pugi::xml_node_iterator it=dindex.begin();it!=dindex.end();++it) {
+
+        // Parse through the namespace
+        std::cout << "2: " << it->name() << std::endl;
+
+        // The namespace name is in a <compoundname> object, classes
+        // are in <innerclass> objects, and some functions are 
+        // stored in sections, <sectiondef> objects
+        
+        if (it->name()==((string)"sectiondef")) {
+
+          // In each section, look for a <memberdef> object with a
+          // kind attribute of "function"
+          
+          for (pugi::xml_node_iterator it2=it->begin();
+               it2!=it->end();++it2) {
+            
+            std::cout << "3: " << it2->name() << " "
+                      << it2->attribute("kind").value() << std::endl;
+            
+            if (it2->name()==((string)"memberdef") &&
+                it2->attribute("kind").value()==((string)"function")) {
+              
+              cout << "  " << it2->child("name").child_value() << endl;
+
+              // If we found a function, see if its in overloaded_list
+              // so we can set the argstrings
+              
+              bool found=false;
+              for(size_t j=0;j<overloaded_list.size() && found==false;j++) {
+                if (overloaded_list[j].ns==ns_list[k] &&
+                    overloaded_list[j].name==
+                    it2->child("name").child_value()) {
+                  found=true;
+
+                  pugi::xml_node nt=it2->child("name").child("argsstring");
+                  overloaded_list[j].args=nt.child_value();
+                  //it2->child("name").child("argsstring").child_value();
+
+                  cout << "Found overloaded function in namespace "
+                       << overloaded_list[j].ns << " with name "
+                       << overloaded_list[j].name << " and arg string "
+                       << overloaded_list[j].args << endl;
+                  
+                }
+              }
+              if (found==false) {
+                cout << "This function is not in overloaded list." << endl;
+              }
+            }
+          }
+          exit(-1);
+          
+        }
+        
+      }
+      
+      exit(-1);
+    }
+    
   }
 
   if (xml_verbose>1) {
+    cout << "Class list: " << endl;
     for(size_t i=0;i<class_list.size();i++) {
-      cout << i << " " << class_list[i] << endl;
-    }
-    for(size_t i=0;i<function_list[0].size();i++) {
-      cout << i << " " << function_list[0][i] << " "
-           << function_list[1][i] << endl;
-    }
-  }
-  exit(-1);
-  
-  size_t kk_max=2;
-  if (context==((string)"eos")) kk_max=1;
-  //if (context==((string)"main")) kk_max=3;
-  if (context==((string)"main")) kk_max=2;
-  
-  // kk=0 for classes and kk=1 for functions
-  for (size_t kk=0;kk<kk_max;kk++) {
-
-    // -------------------------------------------------------
-    // Parse the list file
-
-    cout << "---------------------------------------------------" << endl;
-    if (kk==0) {
-      cout << "Parsing class_list:" << endl;
-    } else if (kk==1) {
-      cout << "Parsing function_list:" << endl;
-    } else {
-      cout << "Parsing file_list:" << endl;
+      cout << i << " " << class_list[i].ns << " "
+           << class_list[i].name << endl;
     }
     cout << endl;
-    
-    // Open the file of functions or classes
-    string fname_in;
-    if (kk==0) fname_in="class_list";
-    else if (kk==1) fname_in="function_list";
-    else fname_in="file_list";
-    ifstream fin(fname_in);
-
-    // List of items, name as "first" and namespace as "second"
-    std::map<std::string,std::string> list;
-    // list of duplicate items (names only)
-    std::set<std::string> list_dup;
-
-    while (!fin.eof()) {
-
-      // Read each line of the file
-      string s;
-      std::getline(fin,s);
-
-      // There is sometimes a line with zero length at the end,
-      // so we skip it
-      if (s.length()>0) {
-
-	string ns;
-        
-	// Extract namespace for a function
-	if (kk==1) {
-	  size_t loc=s.find("namespace")+14;
-	  size_t cnt=0;
-	  for(size_t j=loc;j<s.length();j++) {
-	    if (s[j]=='_') cnt++;
-	    if (cnt==3) {
-	      size_t loc2=j;
-	      string stemp=s.substr(loc,loc2-loc);
-	      if (stemp==((string)"__acol")) {
-		ns="o2scl_acol";
-	      } else if (stemp==((string)"__cblas")) {
-		ns="o2scl_cblas";
-	      } else if (stemp==((string)"__hdf")) {
-		ns="o2scl_hdf";
-	      } else if (stemp==((string)"__linalg")) {
-                ns="o2scl_linalg";
-	      } else {
-		ns="o2scl";
-	      }
-	      j=s.length();
-	    }
-	  }
-	}
-	
-	if (xml_get_tag_element(s,"name",s)!=0) {
-	  cerr << "Failed to find name in " << s << endl;
-	  exit(-1);
-	}
-
-        // Fix parsing for lu_decomp_array_2d()
-        if (s==((string)"LU_decomp_array_2d")) {
-          ns="o2scl_linalg_bracket";
-        }
-        
-	// Extract the namespace for a class
-	if (kk==0 && s.find("::")!=std::string::npos) {
-	  size_t loc=s.find("::");
-	  ns=s.substr(0,loc);
-          if (ns=="o2scl" || ns=="o2scl_auto_format" ||
-              ns=="o2scl_linalg" || ns=="o2scl_hdf" ||
-              ns=="o2scl_const" || ns=="o2scl_acol" ||
-              ns=="o2scl_cgs" || ns=="o2scl_cgsm" ||
-              ns=="o2scl_mks") {
-            s=s.substr(loc+2,s.length()-loc-2);
-          } else {
-            ns="";
-          }
-	}
-	
-	// Replace &lt; with <
-	while (s.find("&lt;")!=std::string::npos) {
-	  s.replace(s.find("&lt;"),4,"<");
-	}
-	// Replace &gt; with >
-	while (s.find("&gt;")!=std::string::npos) {
-	  s.replace(s.find("&gt;"),4,">");
-	}
-      
-        if (s==((string)"operator<<")) {
-          if (ns=="o2scl") {
-            ns="o2scl_auto_format";
-          } else {
-            ns="o2scl";
-          }
-        }
-        
-	if (kk==0) {
-	  cout << "Namespace: " << ns << " class: " << s << endl;
-	} else if (kk==1) {
-	  cout << "Namespace: " << ns << " function: " << s << endl;
-	} else { 
-	  cout << "File: " << s << endl;
-	}
-
-        //cout << "Here4: " << ns << " " << s << endl;
-
-        // Polytrope solve is already documented as part of the
-        // nstar_rot class, so we don't need to duplicate the
-        // documentation.
-        if (s!="nstar_rot::polytrope_solve") {
-          
-          // Handle multiple entry or add to the main list
-          if (list.find(s)!=list.end()) {
-            cout << "Multiple entry " << s << endl;
-            list_dup.insert(s);
-            if (kk==0) {
-              cerr << "Duplicate classes not allowed." << endl;
-              exit(-1);
-            }
-            if (kk==2) {
-              cerr << "Duplicate files not allowed." << endl;
-              exit(-1);
-            }
-          } else if (ns!=((string)"boost")) {
-            list.insert(std::make_pair(s,ns));
-          }
-          
-        }
-	
-	// End of 'if (s.length()>0)'
-      }
-      
-      // End of 'while (!fin.eof())'
+    cout << "Function list: " << endl;
+    for(size_t i=0;i<function_list.size();i++) {
+      cout << i << " " << function_list[i].ns << " "
+           << function_list[i].name << endl;
     }
-
-    fin.close();
-
     cout << endl;
+    cout << "Overloaded list: " << endl;
+    for(size_t i=0;i<overloaded_list.size();i++) {
+      cout << i << " " << overloaded_list[i].ns << " "
+           << overloaded_list[i].name << endl;
+    }
+    cout << endl;
+    cout << "Namespace list: " << endl;
+    for(size_t i=0;i<ns_list.size();i++) {
+      cout << i << " " << ns_list[i] << endl;
+    }
+    cout << endl;
+  }
 
-    // -------------------------------------------------------
-    // Now create the rst files for the non-duplicate entries
+  // -------------------------------------------------------
+  
+  cout << "---------------------------------------------------" << endl;
+  cout << "Creating rst files for classes:" << endl;
+  cout << endl;
+  
+  // Proceed through the list
+  for(size_t j=0;j<class_list.size();j++) {
     
-    cout << "---------------------------------------------------" << endl;
-    if (kk==0) {
-      cout << "Creating rst files for classes:" << endl;
-    } else if (kk==1) {
-      cout << "Creating rst files for non-duplicate functions:" << endl;
-      cout << endl;
+    // Open the rst file
+    string fname_out="class/";
+    fname_out+=class_list[j].name+".rst";
+    if (class_list[j].name.length()<4 ||
+        class_list[j].name[0]!='o' || class_list[j].name[1]!='p' ||
+        class_list[j].name[2]!='e' || class_list[j].name[3]!='r') {
+      fname_out=underscoreify(fname_out);
+    }
+    ofstream fout(fname_out);
+
+    // Title
+    string head="Class "+class_list[j].name;
+    // If we're in "class mode" and the namespace is not empty,
+    // then add the namespace to the header
+    head+=" ("+class_list[j].ns+")";
+
+    fout << head << endl;
+    for(size_t i=0;i<head.length();i++) {
+      fout << "=";
+    }
+    fout << endl;
+    fout << endl;
+    
+    fout << ":ref:`O2scl <o2scl>` : :ref:`Class List`\n" << endl;
+    fout << ".. _" << class_list[j].name << ":\n" << endl;
+    
+    // Output the class or function directive
+    if (class_list[j].ns.length()>0) {
+      fout << ".. doxygenclass:: " << class_list[j].ns << "::"
+           << class_list[j].name << endl;
     } else {
-      cout << "Creating rst files for files:" << endl;
+      fout << ".. doxygenclass:: " << class_list[j].name << endl;
     }
-
-    // Proceed through the list
-    for (std::map<std::string,std::string>::iterator it=list.begin();
-	 it!=list.end();it++) {
-
-      string s=it->first, ns=it->second;
-
-      // Make sure it's not a duplicate
-      if (list_dup.find(s)==list_dup.end()) {
-
-	// Open the rst file
-	string fname_out="class/";
-	if (kk==1) fname_out="function/";
-	else if (kk==2) fname_out="file/";
-	fname_out+=s+".rst";
-        if (s.length()<4 || s[0]!='o' || s[1]!='p' ||
-            s[2]!='e' || s[3]!='r') {
-          fname_out=underscoreify(fname_out);
-        }
-	ofstream fout(fname_out);
-
-	// Title
-	string head="Class "+s;
-	// If we're in "class mode" and the namespace is not empty,
-	// then add the namespace to the header
-	if (kk==0 && ns.length()>0) {
-	  head+=" ("+ns+")";
-	} else if (kk==1) {
-	  // If we're in function mode, then switch the to a
-	  // function header
-	  head="Function "+s;
-	  if (ns.length()>0) {
-	    head+=" ("+ns+")";
-	  }
-	} else if (kk==2) {
-	  head="File "+s;
-	}
-	fout << head << endl;
-	for(size_t i=0;i<head.length();i++) {
-	  fout << "=";
-	}
-	fout << endl;
-	fout << endl;
-
-	// Links to top-level 
-	if (context==((string)"main")) {
-	  if (kk==0) {
-	    fout << ":ref:`O2scl <o2scl>` : :ref:`Class List`\n" << endl;
-	    fout << ".. _" << s << ":\n" << endl;
-	  } else if (kk==1) {
-	    fout << ":ref:`O2scl <o2scl>` : :ref:`Function List`\n" << endl;
-	  } else {
-	    fout << ":ref:`O2scl <o2scl>` : :ref:`File List`\n" << endl;
-	  }
-	} else if (context==((string)"part")) {
-	  if (kk==0) {
-	    fout << ":ref:`O2scl_part <o2sclp>` : :ref:`Class List`\n"
-		 << endl;
-	    fout << ".. _" << s << ":\n" << endl;
-	  } else {
-	    fout << ":ref:`O2scl_part <o2sclp>` : "
-		 << ":ref:`Function List`\n" << endl;
-	  }
-	} else if (context==((string)"eos")) {
-	  if (kk==0) {
-	    fout << ":ref:`O2scl_eos <o2scle>` : :ref:`Class List`\n"
-		 << endl;
-	    fout << ".. _" << s << ":\n" << endl;
-	  } else {
-	    fout << ":ref:`O2scl_eos <o2scle>` : "
-		 << ":ref:`Function List`\n" << endl;
-	  }
-	}
-	
-	// Output the class or function directive
-	if (kk==0) {
-	  if (ns.length()>0) {
-	    fout << ".. doxygenclass:: " << ns << "::" << s << endl;
-	  } else {
-	    fout << ".. doxygenclass:: " << s << endl;
-	  }
-	} else if (kk==1) {
-	  if (context==((string)"part")) {
-	    fout << ".. doxygenfunction:: " << s << endl;
-	  } else {
-	    fout << ".. doxygenfunction:: " << ns << "::" << s << endl;
-	  }
-	} else {
-	  fout << ".. doxygenfile:: " << s << endl;
-	}
-
-	// Close the file
-	fout.close();
-
-      } else {
-	// Skip items in the list of duplicates
-	cout << "Skipping " << it->first << " because it is a duplicate."
-             << endl;
-      }
-    }
-
-    // -------------------------------------------------------
-    // For functions, create the rst files for duplicate entries
     
-    if (kk==1) {
+    // Close the file
+    fout.close();
 
-      cout << endl;
-      cout << "---------------------------------------------------" << endl;
-      cout << "Creating rst files for duplicate functions:" << endl;
-      cout << endl;
+    cout << "Wrote class file: " << fname_out << endl;
+  }
+  cout << endl;
+
+  cout << "---------------------------------------------------" << endl;
+  cout << "Creating rst files for functions not overloaded:" << endl;
+  cout << endl;
+  
+  // Proceed through the list
+  for(size_t j=0;j<function_list.size();j++) {
     
-      // Open the namespace xml file and read it into memory
-      vector<string> ns_file;
-      if (context==((string)"main")) {
-	ifstream fin("../xml/namespaceo2scl.xml");
-	while (!fin.eof()) {
-	  string s2;
-	  std::getline(fin,s2);
-	  ns_file.push_back(s2);
-	}
-	fin.close();
-	fin.open("../xml/namespaceo2scl__acol.xml");
-	while (!fin.eof()) {
-	  string s2;
-	  std::getline(fin,s2);
-	  ns_file.push_back(s2);
-	}
-	fin.close();
-	fin.open("../xml/namespaceo2scl__cblas.xml");
-	while (!fin.eof()) {
-	  string s2;
-	  std::getline(fin,s2);
-	  ns_file.push_back(s2);
-	}
-	fin.close();
-	fin.open("../xml/namespaceo2scl__hdf.xml");
-	while (!fin.eof()) {
-	  string s2;
-	  std::getline(fin,s2);
-	  ns_file.push_back(s2);
-	}
-	fin.close();
-	fin.open("../xml/namespaceo2scl__auto__format.xml");
-	while (!fin.eof()) {
-	  string s2;
-	  std::getline(fin,s2);
-	  ns_file.push_back(s2);
-	}
-	fin.close();
-	fin.open("../xml/namespaceo2scl__linalg.xml");
-	while (!fin.eof()) {
-	  string s2;
-	  std::getline(fin,s2);
-	  ns_file.push_back(s2);
-	}
-	fin.close();
-      } else if (context==((string)"part")) {
-	ifstream fin("../../xml/namespaceo2scl.xml");
-	while (!fin.eof()) {
-	  string s2;
-	  std::getline(fin,s2);
-	  ns_file.push_back(s2);
-	}
-	fin.close();
-	fin.open("../../xml/namespaceo2scl__hdf.xml");
-	while (!fin.eof()) {
-	  string s2;
-	  std::getline(fin,s2);
-	  ns_file.push_back(s2);
-	}
-	fin.close();
-      } else if (context==((string)"eos")) {
-	ifstream fin("../../xml/namespaceo2scl.xml");
-	while (!fin.eof()) {
-	  string s2;
-	  std::getline(fin,s2);
-	  ns_file.push_back(s2);
-	}
-	fin.close();
-	fin.open("../../xml/namespaceo2scl__hdf.xml");
-	while (!fin.eof()) {
-	  string s2;
-	  std::getline(fin,s2);
-	  ns_file.push_back(s2);
-	}
-	fin.close();
-      }
-
-      // Iterate over the list
-      for (std::set<std::string>::iterator it=list_dup.begin();
-	   it!=list_dup.end();it++) {
-
-	// The function name
-	string s=*it;
-
-        if (s!="operator<<") {
-        
-          // Open the rst file
-          string fname_out="function/";
-          fname_out+=s+".rst";
-          if (s.length()<4 || s[0]!='o' || s[1]!='p' ||
-              s[2]!='e' || s[3]!='r') {
-            fname_out=underscoreify(fname_out);
-          }
-          ofstream fout(fname_out);
-
-          // Header
-          if (context==((string)"main")) {
-            fout << ":ref:`O2scl <o2scl>` : :ref:`Function List`\n" << endl;
-          } else if (context==((string)"part")) {
-            fout << ":ref:`O2scl_part <o2sclp>` : "
-                 << ":ref:`Function List`\n" << endl;
-          } else if (context==((string)"eos")) {
-            fout << ":ref:`O2scl_eos <o2scle>` : "
-                 << ":ref:`Function List`\n" << endl;
-          }
-	
-          string head="Functions "+s;
-          fout << head << endl;
-          for(size_t i=0;i<head.length();i++) {
-            fout << "=";
-          }
-          fout << endl;
-          fout << endl;
-
-          // Iterate through the namespace file
-          for(size_t i=0;i<ns_file.size();i++) {
-	  
-            string s2=ns_file[i];
-	  
-            // Proceed through the file until we find the right
-            // definition
-            if (s2.find("<definition>")!=std::string::npos &&
-                s2.find(s)!=std::string::npos) {
-
-              size_t arg_count=0;
-
-              string argsstring;
-              // Read the argstring
-              i++;
-              argsstring=ns_file[i];
-              if (xml_get_tag_element(argsstring,"argsstring",argsstring)!=0) {
-                cerr << "Failed to find argsstring in " << argsstring << endl;
-                exit(-1);
-              }
-              // Replace &amp; with &
-              while (argsstring.find("&amp;")!=std::string::npos) {
-                argsstring.replace(argsstring.find("&amp;"),5,"&");
-              }
-              // Replace "&lt; " with <
-              while (argsstring.find("&lt; ")!=std::string::npos) {
-                argsstring.replace(argsstring.find("&lt; "),5,"<");
-              }
-              // Replace "&lt;" with <
-              while (argsstring.find("&lt;")!=std::string::npos) {
-                argsstring.replace(argsstring.find("&lt;"),4,"<");
-              }
-              // Replace " &gt;" with >
-              while (argsstring.find(" &gt;")!=std::string::npos) {
-                argsstring.replace(argsstring.find(" &gt;"),5,">");
-              }
-              // Replace "&gt;" with >
-              while (argsstring.find("&gt;")!=std::string::npos) {
-                argsstring.replace(argsstring.find("&gt;"),4,">");
-              }
-              // Replace &quot; with "
-              while (argsstring.find("&quot;")!=std::string::npos) {
-                argsstring.replace(argsstring.find("&quot;"),6,"\"");
-              }
-              // Replace all = with ' = '
-              vector<size_t> equal_list;
-              for(size_t j=0;j<argsstring.length();j++) {
-                if (argsstring[j]=='=') {
-                  argsstring.replace(j,1," = ");
-                  j++;
-                }
-              }
-
-              // Read the name line
-              string name;
-              i++;
-              name=ns_file[i];
-	    
-              if (xml_get_tag_element(name,"name",name)!=0) {
-                cerr << "Failed to find name in " << name << endl;
-                exit(-1);
-              }
-
-              // Only proceed if the name and s match
-              if (name==s) {
-	      
-                // Output the sphinx directive
-                fout << ".. doxygenfunction:: " << s << argsstring
-                     << "\n" << endl;
-                cout << s << argsstring << endl;
-	      
-                // Read the line <param> (if present)
-                i++;
-                s2=ns_file[i];
-	      
-                //cout << s << "(";
-
-                // Read all of the parameters
-                bool params_done=false;
-                while (params_done==false) {
-
-                  string type, declname, end;
-                  i++;
-                  type=ns_file[i];
-                  if (xml_get_tag_element(type,"type",type)!=0) {
-                    cerr << "Failed to find type in " << type << endl;
-                    cout << "ns_file[i]: " << ns_file[i] << endl;
-                    exit(-1);
-                  }
-		
-                  //cout << "Type: " << type << endl;
-                  if (type.find(" &amp;")!=std::string::npos) {
-                    type.replace(type.find(" &amp;"),6,"&");
-                  }
-		
-                  i++;
-                  declname=ns_file[i];
-                  if (xml_get_tag_element(declname,"declname",declname)!=0) {
-                    cerr << "Failed to find declname in " << declname << endl;
-                    exit(-1);
-                  }
-                  //cout << "Declname: " << declname << endl;
-		
-                  // Read <defval> (if present) and </param> lines
-                  i++;
-                  end=ns_file[i];
-                  //cout << "End: " << end << endl;
-                  if (end.find("<defval>")!=std::string::npos) {
-                    i++;
-                    end=ns_file[i];
-                  }
-		
-                  // Read the next line
-                  i++;
-                  s2=ns_file[i];
-                  //cout << "s2: " << s2 << endl;
-
-                  /*
-                  // Update file and screen output
-                  if (arg_count!=0) {
-		  cout << ", " << type;
-                  } else {
-		  cout << type;
-                  }
-
-                  if (arg_count!=0) {
-		  fout << ", " << type;
-                  } else {
-		  fout << type;
-                  }
-                  */
-	      
-                  arg_count++;
-
-                  if (s2.find("<param>")==std::string::npos) {
-                    params_done=true;
-                    //cout << "X " << s2 << endl;
-                  }
-		
-                  //char ch;
-                  //cin >> ch;
-                }
-
-                // Output right parenthesis
-                //cout << ")" << endl;
-                //fout << ")\n" << endl;
-	      
-              } else {
-                //cout << "No match " << name << " " << s << endl;
-              }
-            }
-	    
-          }
-
-          // Close this rst file
-          fout.close();
-
-        }
-        
-      }
-      
+    // Open the rst file
+    string fname_out="function/";
+    fname_out+=function_list[j].name+".rst";
+    if (function_list[j].name.length()<4 ||
+        function_list[j].name[0]!='o' || function_list[j].name[1]!='p' ||
+        function_list[j].name[2]!='e' || function_list[j].name[3]!='r') {
+      fname_out=underscoreify(fname_out);
     }
+    ofstream fout(fname_out);
+
+    // Title
+    string head="Function "+function_list[j].name;
+    // If we're in "function mode" and the namespace is not empty,
+    // then add the namespace to the header
+    head+=" ("+function_list[j].ns+")";
+	
+    fout << head << endl;
+    for(size_t i=0;i<head.length();i++) {
+      fout << "=";
+    }
+    fout << endl;
+    fout << endl;
+    
+    fout << ":ref:`O2scl <o2scl>` : :ref:`Function List`\n" << endl;
+    
+    // Output the function or function directive
+    fout << ".. doxygenfunction:: " << function_list[j].ns << "::"
+         << function_list[j].name << endl;
+    
+    // Close the file
+    fout.close();
+
+    cout << "Wrote function file: " << fname_out << endl;
     
   }
-  
+  cout << endl;
+
 #endif
   
   return 0;

@@ -80,27 +80,13 @@ full-html:
 	sphinx-build -v -a -E -b html "." ../html
 
 rst-files: empty
-	grep "kind=\"function\"" ../xml/index.xml | \
-		grep "refid=\"namespaceo2scl" | grep -v Eigen | \
-		grep -v "refid=\"namespaceo2scl__const" | \
-		grep -v arma > function_list
-	grep "refid=\"auto__format" ../xml/index.xml | \
-		grep "operator&lt;" >> function_list
-	grep "kind=\"class\"" ../xml/index.xml | grep -v "cli::parameter" \
-		> class_list
-	grep "kind=\"variable\"" ../xml/index.xml | \
-		grep -v "<member refid=\"class" | \
-		grep -v "<member refid=\"struct" > variable_list
-	grep "kind=\"enum\"" ../xml/index.xml > enum_list
-#	grep "kind=\"file\"" ../xml/index.xml > file_list
 	cp ref_header ref.rst
 	btmanip -parse ../../../data/o2scl/o2scl.bib -rst temp.rst
 	cat temp.rst >> ref.rst
 	rm -f temp.rst
-	g++ -o ../make_rst ../make_rst.cpp
 	rm -f class/*.rst
 	rm -f function/*.rst
-	../make_rst main | tee make_rst.out
+	../../../bin/make_rst ../xml | tee make_rst.out
 	cd static; acol -run acol.scr > acol.out
 
 o2scl-doc: rst-files html

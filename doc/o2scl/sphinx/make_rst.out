@@ -1,1293 +1,481 @@
-Using context main
----------------------------------------------------
-Parsing class_list:
-
-Namespace: o2scl_acol class: acol_manager
-Namespace: o2scl class: anneal_base
-Namespace: o2scl class: anneal_gsl
-Namespace: o2scl class: anneal_mt
-Namespace: o2scl class: anneal_para
-Namespace: o2scl class: astep_base
-Namespace: o2scl class: astep_gsl
-Namespace: o2scl class: astep_nonadapt
-Namespace: o2scl_auto_format class: auto_format
-Namespace: o2scl class: bessel_K_exp_integ_bf
-Namespace: o2scl class: bessel_K_exp_integ_boost
-Namespace: o2scl class: bessel_K_exp_integ_direct
-Namespace: o2scl class: bessel_K_exp_integ_gsl
-Namespace: o2scl class: bessel_K_exp_integ_tl
-Namespace: o2scl class: bose_einstein_integ_tl
-Namespace: o2scl class: calc_utf8
-Namespace: o2scl class: calculator
-Namespace: o2scl class: cheb_approx_tl
-Namespace: o2scl class: chi_fit_funct
-Namespace: o2scl class: cli
-Namespace: o2scl class: cli_readline
-Namespace: o2scl_hdf class: cloud_file
-Namespace: o2scl class: table::col
-Namespace: o2scl class: columnify
-Namespace: o2scl class: comm_option_fptr
-Namespace: o2scl class: comm_option_funct
-Namespace: o2scl class: comm_option_mfptr
-Namespace: o2scl class: const_matrix_column_gen
-Namespace: o2scl class: const_matrix_row_gen
-Namespace: o2scl class: const_matrix_view
-Namespace: o2scl class: const_matrix_view_table
-Namespace: o2scl class: const_matrix_view_table_transpose
-Namespace: o2scl class: const_vector_range_gen
-Namespace: o2scl class: contour
-Namespace: o2scl class: contour_line
-Namespace: o2scl class: convert_units
-Namespace: o2scl class: cubic_complex
-Namespace: o2scl class: cubic_complex_std
-Namespace: o2scl class: cubic_real
-Namespace: o2scl class: cubic_real_coeff
-Namespace: o2scl class: cubic_real_coeff_cern
-Namespace: o2scl class: cubic_real_coeff_gsl
-Namespace: o2scl class: cubic_real_coeff_gsl2
-Namespace: o2scl class: cursesw
-Namespace: o2scl class: deriv_base
-Namespace: o2scl class: deriv_cern
-Namespace: o2scl class: deriv_eqi
-Namespace: o2scl class: deriv_gsl
-Namespace: o2scl class: diff_evo
-Namespace: o2scl class: diff_evo_adapt
-Namespace: o2scl class: edge_crossings
-Namespace: o2scl class: err_hnd_cpp
-Namespace: o2scl class: err_hnd_gsl
-Namespace: o2scl class: err_hnd_type
-Namespace: o2scl class: exc_exception
-Namespace: o2scl class: exc_invalid_argument
-Namespace: o2scl class: exc_ios_failure
-Namespace: o2scl class: exc_logic_error
-Namespace: o2scl class: exc_overflow_error
-Namespace: o2scl class: exc_range_error
-Namespace: o2scl class: exc_runtime_error
-Namespace: o2scl class: exp_mat
-Namespace: o2scl class: expval_base
-Namespace: o2scl class: expval_matrix
-Namespace: o2scl class: expval_scalar
-Namespace: o2scl class: expval_vector
-Namespace: o2scl class: fermi_dirac_integ_bf
-Namespace: o2scl class: fermi_dirac_integ_direct
-Namespace: o2scl class: fermi_dirac_integ_gsl
-Namespace: o2scl class: fermi_dirac_integ_tl
-Namespace: o2scl class: find_constants
-Namespace: o2scl class: fit_base
-Namespace: o2scl class: fit_bayes
-Namespace: o2scl class: fit_fix_pars
-Namespace: o2scl class: fit_funct_strings
-Namespace: o2scl class: fit_linear
-Namespace: o2scl class: fit_min
-Namespace: o2scl class: fit_nonlin
-Namespace: o2scl class: fit_nonlin_b
-Namespace: o2scl class: format_float
-Namespace: o2scl class: funct2_string
-Namespace: o2scl class: funct_gsl
-Namespace: o2scl class: funct_string
-Namespace: o2scl class: gen_fit_funct
-Namespace: o2scl class: gen_test_number
-Namespace: o2scl class: gradient
-Namespace: o2scl class: gradient_gsl
-Namespace: o2scl class: gsl_matrix_wrap
-Namespace: o2scl class: gsl_tolerance
-Namespace: o2scl class: gsl_vector_wrap
-Namespace: o2scl_hdf class: hdf_file
-Namespace: o2scl class: hist
-Namespace: o2scl class: hist_2d
-Namespace: o2scl class: prob_dens_mdim_amr::hypercube
-Namespace: o2scl class: index_spec
-Namespace: o2scl class: inte
-Namespace: o2scl class: inte_adapt_cern
-Namespace: o2scl class: inte_cauchy_cern
-Namespace: o2scl class: inte_cheb_gsl
-Namespace: o2scl class: inte_exp_sinh_boost
-Namespace: o2scl class: inte_gauss56_cern
-Namespace: o2scl class: inte_gauss56_coeffs_double
-Namespace: o2scl class: inte_gauss56_coeffs_float_50
-Namespace: o2scl class: inte_gauss56_coeffs_long_double
-Namespace: o2scl class: inte_gauss_cern
-Namespace: o2scl class: inte_gauss_coeffs_double
-Namespace: o2scl class: inte_gauss_coeffs_float_50
-Namespace: o2scl class: inte_gauss_coeffs_long_double
-Namespace: o2scl class: inte_gen
-Namespace: o2scl class: inte_gsl
-Namespace: o2scl class: inte_kronrod_boost
-Namespace: o2scl class: inte_kronrod_gsl
-Namespace: o2scl class: inte_multi
-Namespace: o2scl class: inte_qag_gsl
-Namespace: o2scl class: inte_qagi_gsl
-Namespace: o2scl class: inte_qagil_gsl
-Namespace: o2scl class: inte_qagiu_gsl
-Namespace: o2scl class: inte_qags_gsl
-Namespace: o2scl class: inte_qawc_gsl
-Namespace: o2scl class: inte_qawf_gsl_cos
-Namespace: o2scl class: inte_qawf_gsl_sin
-Namespace: o2scl class: inte_qawo_gsl_cos
-Namespace: o2scl class: inte_qawo_gsl_sin
-Namespace: o2scl class: inte_qaws_gsl
-Namespace: o2scl class: inte_qng_gsl
-Namespace: o2scl class: inte_singular_gsl
-Namespace: o2scl class: inte_sinh_sinh_boost
-Namespace: o2scl class: inte_tanh_sinh_boost
-Namespace: o2scl class: inte_transform
-Namespace: o2scl class: inte_transform_gsl
-Namespace: o2scl class: inte_workspace_gsl
-Namespace: o2scl class: interp
-Namespace: o2scl class: interp2_base
-Namespace: o2scl class: interp2_direct
-Namespace: o2scl class: interp2_eqi
-Namespace: o2scl class: interp2_neigh
-Namespace: o2scl class: interp2_planar
-Namespace: o2scl class: interp2_seq
-Namespace: o2scl class: interp_akima
-Namespace: o2scl class: interp_akima_peri
-Namespace: o2scl class: interp_array
-Namespace: o2scl class: interp_array_vec
-Namespace: o2scl class: interp_base
-Namespace: o2scl class: interp_cspline
-Namespace: o2scl class: interp_cspline_peri
-Namespace: o2scl class: interp_krige
-Namespace: o2scl class: interp_krige_optim
-Namespace: o2scl class: interp_linear
-Namespace: o2scl class: interp_monotonic
-Namespace: o2scl class: interp_nearest_neigh
-Namespace: o2scl class: interp_steffen
-Namespace: o2scl class: interp_vec
-Namespace: o2scl class: interpm_idw
-Namespace: o2scl class: interpm_krige
-Namespace: o2scl class: interpm_krige_optim
-Namespace: o2scl class: jacobian
-Namespace: o2scl class: jacobian_exact
-Namespace: o2scl class: jacobian_gsl
-Namespace: o2scl_linalg class: lanczos
-Namespace: o2scl class: lib_settings_class
-Namespace: o2scl_linalg class: linear_solver
-Namespace: o2scl_linalg class: linear_solver_arma
-Namespace: o2scl_linalg class: linear_solver_eigen_colQR
-Namespace: o2scl_linalg class: linear_solver_eigen_fullLU
-Namespace: o2scl_linalg class: linear_solver_eigen_fullQR
-Namespace: o2scl_linalg class: linear_solver_eigen_houseQR
-Namespace: o2scl_linalg class: linear_solver_eigen_LDLT
-Namespace: o2scl_linalg class: linear_solver_eigen_LLT
-Namespace: o2scl_linalg class: linear_solver_eigen_partLU
-Namespace: o2scl_linalg class: linear_solver_HH
-Namespace: o2scl_linalg class: linear_solver_LU
-Namespace: o2scl_linalg class: linear_solver_QR
-Namespace:  class: boost::numeric::ublas::matrix
-Namespace: o2scl class: matrix_column_gen
-Namespace: o2scl_linalg class: matrix_invert_det
-Namespace: o2scl_linalg class: matrix_invert_det_arma
-Namespace: o2scl_linalg class: matrix_invert_det_cholesky
-Namespace: o2scl_linalg class: matrix_invert_det_eigen
-Namespace: o2scl_linalg class: matrix_invert_det_LU
-Namespace: o2scl_linalg class: matrix_invert_det_sympd_arma
-Namespace: o2scl class: matrix_row_gen
-Namespace: o2scl class: matrix_row_gen_ctor
-Namespace: o2scl class: matrix_swap_table
-Namespace: o2scl class: matrix_view
-Namespace: o2scl class: matrix_view_omit_column
-Namespace: o2scl class: matrix_view_omit_row
-Namespace: o2scl class: matrix_view_table
-Namespace: o2scl class: matrix_view_table_transpose
-Namespace: o2scl class: matrix_view_transpose
-Namespace: o2scl class: matrix_view_vec_vec
-Namespace: o2scl class: mcarlo
-Namespace: o2scl class: mcarlo_miser
-Namespace: o2scl class: mcarlo_plain
-Namespace: o2scl class: mcarlo_vegas
-Namespace: o2scl class: mcmc_para_base
-Namespace: o2scl class: mcmc_para_cli
-Namespace: o2scl class: mcmc_para_table
-Namespace: o2scl class: min_base
-Namespace: o2scl class: min_bkt_base
-Namespace: o2scl class: min_brent_boost
-Namespace: o2scl class: min_brent_gsl
-Namespace: o2scl class: min_cern
-Namespace: o2scl class: min_de_base
-Namespace: o2scl class: min_quad_golden
-Namespace: o2scl class: mm_funct_strings
-Namespace: o2scl class: mmin_base
-Namespace: o2scl class: mmin_bfgs2
-Namespace: o2scl class: mmin_conf
-Namespace: o2scl class: mmin_conp
-Namespace: o2scl class: mmin_constr
-Namespace: o2scl class: mmin_constr_gencan
-Namespace: o2scl class: mmin_constr_pgrad
-Namespace: o2scl class: mmin_constr_spg
-Namespace: o2scl class: mmin_fix_params
-Namespace: o2scl class: mmin_gsl_base
-Namespace: o2scl class: mmin_linmin_gsl
-Namespace: o2scl class: mmin_simp2
-Namespace: o2scl class: mmin_wrap_gsl
-Namespace: o2scl class: mmin_wrapper_gsl
-Namespace: o2scl class: mroot
-Namespace: o2scl class: mroot_broyden
-Namespace: o2scl class: mroot_cern
-Namespace: o2scl class: mroot_hybrids
-Namespace: o2scl class: mroot_hybrids_arma_qr_econ
-Namespace: o2scl class: mroot_hybrids_base
-Namespace: o2scl class: mroot_hybrids_eigen
-Namespace: o2scl class: multi_funct_strings
-Namespace: o2scl class: ode_bsimp_gsl
-Namespace: o2scl class: ode_bv_mshoot
-Namespace: o2scl class: ode_bv_multishoot
-Namespace: o2scl class: ode_bv_shoot
-Namespace: o2scl class: ode_bv_shoot_grid
-Namespace: o2scl class: ode_bv_solve
-Namespace: o2scl class: ode_control_gsl
-Namespace: o2scl class: ode_funct_strings
-Namespace: o2scl class: ode_it_solve
-Namespace: o2scl class: ode_iv_solve
-Namespace: o2scl class: ode_iv_solve_grid
-Namespace: o2scl class: ode_iv_table
-Namespace: o2scl class: ode_rk8pd_gsl
-Namespace: o2scl class: ode_rkck_gsl
-Namespace: o2scl class: ode_rkf45_gsl
-Namespace: o2scl class: ode_step
-Namespace: o2scl class: permutation
-Namespace: o2scl class: pinside
-Namespace: o2scl class: poly_complex
-Namespace: o2scl class: poly_real_base
-Namespace: o2scl class: poly_real_coeff
-Namespace: o2scl class: poly_real_coeff_gsl
-Namespace: o2scl class: polylog
-Namespace: o2scl class: prob_cond_mdim
-Namespace: o2scl class: prob_cond_mdim_fixed_step
-Namespace: o2scl class: prob_cond_mdim_gaussian
-Namespace: o2scl class: prob_cond_mdim_indep
-Namespace: o2scl class: prob_dens_frange
-Namespace: o2scl class: prob_dens_func
-Namespace: o2scl class: prob_dens_gaussian
-Namespace: o2scl class: prob_dens_hist
-Namespace: o2scl class: prob_dens_lognormal
-Namespace: o2scl class: prob_dens_mdim
-Namespace: o2scl class: prob_dens_mdim_amr
-Namespace: o2scl class: prob_dens_mdim_biv_gaussian
-Namespace: o2scl class: prob_dens_mdim_bound_gaussian
-Namespace: o2scl class: prob_dens_mdim_factor
-Namespace: o2scl class: prob_dens_mdim_gaussian
-Namespace: o2scl class: prob_dens_positive
-Namespace: o2scl class: prob_dens_uniform
-Namespace: o2scl class: quadratic_complex
-Namespace: o2scl class: quadratic_complex_std
-Namespace: o2scl class: quadratic_real
-Namespace: o2scl class: quadratic_real_coeff
-Namespace: o2scl class: quadratic_real_coeff_gsl
-Namespace: o2scl class: quadratic_real_coeff_gsl2
-Namespace: o2scl class: quadratic_real_gsl
-Namespace: o2scl class: quartic_complex
-Namespace: o2scl class: quartic_complex_std
-Namespace: o2scl class: quartic_real
-Namespace: o2scl class: quartic_real_coeff
-Namespace: o2scl class: quartic_real_coeff_cern
-Namespace: o2scl class: quartic_real_std
-Namespace: o2scl class: rng
-Namespace: o2scl class: rng_gsl
-Namespace: o2scl class: rng_gsl_uniform_real
-Namespace: o2scl class: root
-Namespace: o2scl class: root_bkt
-Namespace: o2scl class: root_bkt_cern
-Namespace: o2scl class: root_brent_gsl
-Namespace: o2scl class: root_cern
-Namespace: o2scl class: root_de
-Namespace: o2scl class: root_robbins_monro
-Namespace: o2scl class: root_stef
-Namespace: o2scl class: root_toms748
-Namespace: o2scl class: search_vec
-Namespace: o2scl class: search_vec_ext
-Namespace: o2scl class: series_acc
-Namespace: o2scl class: slack_messenger
-Namespace: o2scl class: smooth_func
-Namespace: o2scl class: smooth_gsl
-Namespace: o2scl class: table
-Namespace: o2scl class: table3d
-Namespace: o2scl class: table_units
-Namespace: o2scl class: tensor
-Namespace: o2scl class: tensor1
-Namespace: o2scl class: tensor2
-Namespace: o2scl class: tensor3
-Namespace: o2scl class: tensor4
-Namespace: o2scl class: tensor_grid
-Namespace: o2scl class: tensor_grid1
-Namespace: o2scl class: tensor_grid2
-Namespace: o2scl class: tensor_grid3
-Namespace: o2scl class: tensor_grid4
-Namespace: o2scl class: terminal
-Namespace: o2scl class: test_mgr
-Namespace: o2scl class: Token
-Namespace: o2scl class: calc_utf8::token32
-Namespace: o2scl_linalg class: ubvector_2_mem
-Namespace: o2scl_linalg class: ubvector_4_mem
-Namespace: o2scl_linalg class: ubvector_5_mem
-Namespace: o2scl class: uniform_grid
-Namespace: o2scl class: uniform_grid_end
-Namespace: o2scl class: uniform_grid_end_width
-Namespace: o2scl class: uniform_grid_log_end
-Namespace: o2scl class: uniform_grid_log_end_width
-Namespace: o2scl class: uniform_grid_log_width
-Namespace: o2scl class: uniform_grid_width
-Namespace: o2scl class: uniform_prior
-Namespace: o2scl class: vec_index
-Namespace:  class: boost::numeric::ublas::vector
-Namespace: o2scl class: vector_index_vector
-Namespace: o2scl class: vector_index_vector_size
-Namespace: o2scl class: vector_range_gen
-
----------------------------------------------------
-Creating rst files for classes:
----------------------------------------------------
-Parsing function_list:
-
-Namespace:  function: fermi_function
-Namespace:  function: bose_function
-Namespace: o2scl function: pipe_cmd_string
-Namespace: o2scl function: python_cmd_string
-Namespace: o2scl function: pipe_cmd_string
-Multiple entry pipe_cmd_string
-Namespace:  function: file_exists
-Namespace:  function: count_words
-Namespace:  function: remove_whitespace
-Namespace: o2scl function: remove_ws_punct
-Namespace: o2scl function: binary_to_hex
-Namespace:  function: RGBtoHSV
-Namespace:  function: HSVtoRGB
-Namespace:  function: matrix_out
-Namespace:  function: matrix_out
-Multiple entry matrix_out
-Namespace: o2scl function: matrix_trans_out
-Namespace: o2scl function: matrix_trans_out
-Multiple entry matrix_trans_out
-Namespace: o2scl function: array_2d_out
-Namespace: o2scl function: array_2d_trans_out
-Namespace: o2scl function: set_err_fn
-Namespace:  function: error_update
-Namespace: o2scl function: vector_level_count
-Namespace: o2scl function: vector_deriv_interp
-Namespace: o2scl function: vector_deriv2_interp
-Namespace: o2scl function: vector_deriv_xy_interp
-Namespace: o2scl function: vector_deriv2_xy_interp
-Namespace: o2scl function: vector_integ_interp
-Namespace: o2scl function: vector_integ_xy_interp
-Namespace: o2scl function: vector_integ_xy_interp
-Multiple entry vector_integ_xy_interp
-Namespace: o2scl function: vector_integ_ul_interp
-Namespace: o2scl function: vector_integ_ul_xy_interp
-Namespace: o2scl function: vector_find_level
-Namespace: o2scl function: vector_invert_enclosed_sum
-Namespace: o2scl function: vector_region_int
-Namespace: o2scl function: vector_region_fracint
-Namespace: o2scl function: vector_bound_fracint
-Namespace: o2scl function: vector_bound_int
-Namespace:  function: rebin_xy
-Namespace:  function: rebin_xy
-Multiple entry rebin_xy
-Namespace: o2scl function: linear_or_log_chi2
-Namespace: o2scl function: linear_or_log
-Namespace:  function: vector_refine
-Namespace: o2scl function: linear_or_log
-Multiple entry linear_or_log
-Namespace:  function: o2abs
-Namespace:  function: o2abs
-Multiple entry o2abs
-Namespace:  function: o2abs
-Multiple entry o2abs
-Namespace:  function: o2abs
-Multiple entry o2abs
-Namespace:  function: o2abs
-Multiple entry o2abs
-Namespace:  function: o2abs
-Multiple entry o2abs
-Namespace:  function: o2abs
-Multiple entry o2abs
-Namespace:  function: o2abs
-Multiple entry o2abs
-Namespace:  function: o2exp
-Namespace:  function: o2exp
-Multiple entry o2exp
-Namespace:  function: o2exp
-Multiple entry o2exp
-Namespace:  function: o2exp
-Multiple entry o2exp
-Namespace:  function: o2exp
-Multiple entry o2exp
-Namespace:  function: o2exp
-Multiple entry o2exp
-Namespace:  function: o2log
-Namespace:  function: o2log
-Multiple entry o2log
-Namespace:  function: o2log
-Multiple entry o2log
-Namespace:  function: o2log
-Multiple entry o2log
-Namespace:  function: o2log
-Multiple entry o2log
-Namespace:  function: o2log
-Multiple entry o2log
-Namespace:  function: o2sqrt
-Namespace:  function: o2sqrt
-Multiple entry o2sqrt
-Namespace:  function: o2sqrt
-Multiple entry o2sqrt
-Namespace:  function: o2sqrt
-Multiple entry o2sqrt
-Namespace:  function: o2sqrt
-Multiple entry o2sqrt
-Namespace:  function: o2sqrt
-Multiple entry o2sqrt
-Namespace:  function: o2sqrt
-Multiple entry o2sqrt
-Namespace:  function: o2sqrt
-Multiple entry o2sqrt
-Namespace:  function: o2pow
-Namespace:  function: o2pow
-Multiple entry o2pow
-Namespace:  function: o2pow
-Multiple entry o2pow
-Namespace:  function: o2pow
-Multiple entry o2pow
-Namespace:  function: o2pow
-Multiple entry o2pow
-Namespace:  function: o2pow
-Multiple entry o2pow
-Namespace:  function: o2pow
-Multiple entry o2pow
-Namespace:  function: o2pow
-Multiple entry o2pow
-Namespace:  function: o2isfinite
-Namespace:  function: o2isfinite
-Multiple entry o2isfinite
-Namespace:  function: o2isfinite
-Multiple entry o2isfinite
-Namespace:  function: o2isfinite
-Multiple entry o2isfinite
-Namespace:  function: o2isfinite
-Multiple entry o2isfinite
-Namespace:  function: o2isfinite
-Multiple entry o2isfinite
-Namespace:  function: o2hypot
-Namespace:  function: o2hypot
-Multiple entry o2hypot
-Namespace:  function: o2hypot
-Multiple entry o2hypot
-Namespace:  function: o2hypot
-Multiple entry o2hypot
-Namespace:  function: o2hypot
-Multiple entry o2hypot
-Namespace:  function: o2hypot
-Multiple entry o2hypot
-Namespace: o2scl function: quadratic_extremum_x
-Namespace: o2scl function: quadratic_extremum_y_full
-Namespace: o2scl function: quadratic_extremum_y
-Namespace: o2scl function: quadratic_extremum_xy
-Namespace: o2scl function: quadratic_extremum_coeffs
-Namespace:  function: glob_wrapper
-Namespace:  function: wordexp_wrapper
-Namespace: o2scl function: wordexp_single_file
-Namespace:  function: screenify
-Namespace:  function: ptos
-Namespace:  function: itos
-Namespace:  function: szttos
-Namespace:  function: btos
-Namespace:  function: dtos
-Namespace: o2scl function: size_of_exponent
-Namespace:  function: dtos
-Multiple entry dtos
-Namespace:  function: stoi
-Namespace:  function: stoi_nothrow
-Namespace:  function: stoszt
-Namespace:  function: stoszt_nothrow
-Namespace:  function: stob
-Namespace:  function: stod
-Namespace:  function: stod_nothrow
-Namespace:  function: s32tod_nothrow
-Namespace:  function: s32tod_nothrow
-Multiple entry s32tod_nothrow
-Namespace: o2scl function: has_minus_sign
-Namespace:  function: is_number
-Namespace:  function: find_constant
-Namespace: o2scl function: function_to_double
-Namespace: o2scl function: function_to_double_nothrow
-Namespace: o2scl function: function_to_double_nothrow
-Multiple entry function_to_double_nothrow
-Namespace:  function: split_string
-Namespace: o2scl function: split_string_delim
-Namespace:  function: rewrap
-Namespace: o2scl function: rewrap_ignore_vt100
-Namespace:  function: rewrap_colorx
-Namespace: o2scl function: utf8_to_char32
-Namespace: o2scl function: char32_to_utf8
-Namespace: o2scl function: rewrap_keep_endlines
-Namespace: o2scl function: string_to_uint_list
-Namespace: o2scl function: parse_fortran_format
-Namespace: o2scl function: string_to_char_array
-Namespace:  function: ix_index
-Namespace:  function: ix_fixed
-Namespace:  function: ix_sum
-Namespace:  function: ix_trace
-Namespace:  function: ix_reverse
-Namespace:  function: ix_range
-Namespace:  function: ix_interp
-Namespace:  function: ix_grid
-Namespace:  function: ix_gridw
-Namespace:  function: tensor_out
-Namespace:  function: operator==
-Namespace:  function: vectors_equal
-Namespace:  function: vectors_equal
-Multiple entry vectors_equal
-Namespace: o2scl function: vectors_equal_tol
-Namespace: o2scl function: vectors_equal_tol
-Multiple entry vectors_equal_tol
-Namespace:  function: vector_copy
-Namespace:  function: vector_copy
-Multiple entry vector_copy
-Namespace:  function: matrix_copy
-Namespace:  function: matrix_copy
-Multiple entry matrix_copy
-Namespace:  function: matrix_transpose
-Namespace:  function: matrix_transpose
-Multiple entry matrix_transpose
-Namespace:  function: matrix_transpose
-Multiple entry matrix_transpose
-Namespace:  function: matrix_transpose
-Multiple entry matrix_transpose
-Namespace: o2scl function: matrix_is_lower
-Namespace: o2scl function: matrix_is_upper
-Namespace: o2scl function: matrix_make_lower
-Namespace: o2scl function: matrix_make_upper
-Namespace: o2scl function: matrix_is_lower
-Multiple entry matrix_is_lower
-Namespace: o2scl function: matrix_is_upper
-Multiple entry matrix_is_upper
-Namespace: o2scl function: matrix_make_lower
-Multiple entry matrix_make_lower
-Namespace: o2scl function: matrix_make_upper
-Multiple entry matrix_make_upper
-Namespace:  function: vector_swap
-Namespace:  function: vector_swap
-Multiple entry vector_swap
-Namespace: o2scl function: vector_swap_double
-Namespace: o2scl function: vector_swap_double
-Multiple entry vector_swap_double
-Namespace:  function: vector_swap
-Multiple entry vector_swap
-Namespace: o2scl function: vector_swap_double
-Multiple entry vector_swap_double
-Namespace:  function: matrix_swap
-Namespace: o2scl function: matrix_swap_double
-Namespace:  function: matrix_swap
-Multiple entry matrix_swap
-Namespace: o2scl function: matrix_swap_double
-Multiple entry matrix_swap_double
-Namespace: o2scl function: matrix_swap_cols
-Namespace: o2scl function: matrix_swap_cols_double
-Namespace: o2scl function: matrix_swap_rows
-Namespace: o2scl function: matrix_swap_rows_double
-Namespace:  function: sort_downheap
-Namespace:  function: vector_sort
-Namespace: o2scl function: sort_index_downheap
-Namespace: o2scl function: vector_sort_index
-Namespace: o2scl function: vector_sort_index
-Multiple entry vector_sort_index
-Namespace: o2scl function: vector_sort_double
-Namespace:  function: vector_smallest
-Namespace:  function: vector_smallest
-Multiple entry vector_smallest
-Namespace: o2scl function: vector_smallest_index
-Namespace: o2scl function: vector_smallest_index
-Multiple entry vector_smallest_index
-Namespace:  function: vector_largest
-Namespace:  function: vector_largest
-Multiple entry vector_largest
-Namespace: o2scl function: vector_max_value
-Namespace: o2scl function: vector_max_value
-Multiple entry vector_max_value
-Namespace: o2scl function: vector_max_index
-Namespace:  function: vector_max
-Namespace: o2scl function: vector_min_value
-Namespace: o2scl function: vector_min_value
-Multiple entry vector_min_value
-Namespace: o2scl function: vector_min_index
-Namespace:  function: vector_min
-Namespace: o2scl function: vector_minmax_value
-Namespace: o2scl function: vector_minmax_index
-Namespace:  function: vector_minmax
-Namespace: o2scl function: vector_max_quad
-Namespace: o2scl function: vector_max_quad
-Multiple entry vector_max_quad
-Namespace: o2scl function: vector_max_quad_loc
-Namespace: o2scl function: vector_min_quad
-Namespace: o2scl function: vector_min_quad
-Multiple entry vector_min_quad
-Namespace: o2scl function: vector_min_quad_loc
-Namespace: o2scl function: matrix_max_value
-Namespace: o2scl function: matrix_max_value
-Multiple entry matrix_max_value
-Namespace: o2scl function: matrix_max_value_double
-Namespace: o2scl function: matrix_max_index
-Namespace: o2scl function: matrix_max_index
-Multiple entry matrix_max_index
-Namespace: o2scl function: matrix_min_value
-Namespace: o2scl function: matrix_min_value
-Multiple entry matrix_min_value
-Namespace: o2scl function: matrix_min_value_double
-Namespace: o2scl function: matrix_min_index
-Namespace: o2scl function: matrix_min_index
-Multiple entry matrix_min_index
-Namespace:  function: matrix_minmax
-Namespace:  function: matrix_minmax
-Multiple entry matrix_minmax
-Namespace: o2scl function: matrix_minmax_index
-Namespace:  function: matrix_sum
-Namespace:  function: matrix_sum
-Multiple entry matrix_sum
-Namespace:  function: vector_lookup
-Namespace:  function: vector_lookup
-Multiple entry vector_lookup
-Namespace:  function: vector_search
-Namespace:  function: vector_search
-Multiple entry vector_search
-Namespace:  function: matrix_lookup
-Namespace:  function: matrix_lookup
-Multiple entry matrix_lookup
-Namespace: o2scl function: vector_bsearch_inc
-Namespace: o2scl function: vector_bsearch_dec
-Namespace:  function: vector_bsearch
-Namespace:  function: vector_bsearch
-Multiple entry vector_bsearch
-Namespace: o2scl function: vector_is_monotonic
-Namespace: o2scl function: vector_is_monotonic
-Multiple entry vector_is_monotonic
-Namespace: o2scl function: vector_is_strictly_monotonic
-Namespace: o2scl function: vector_is_strictly_monotonic
-Multiple entry vector_is_strictly_monotonic
-Namespace: o2scl function: vector_is_finite
-Namespace: o2scl function: vector_is_finite
-Multiple entry vector_is_finite
-Namespace:  function: vector_sum
-Namespace:  function: vector_diffs
-Namespace:  function: vector_sum
-Multiple entry vector_sum
-Namespace: o2scl function: vector_sum_double
-Namespace: o2scl function: vector_sum_double
-Multiple entry vector_sum_double
-Namespace:  function: vector_norm
-Namespace:  function: vector_norm
-Multiple entry vector_norm
-Namespace: o2scl function: vector_norm_double
-Namespace: o2scl function: vector_norm_double
-Multiple entry vector_norm_double
-Namespace: o2scl function: vector_set_all
-Namespace: o2scl function: vector_set_all
-Multiple entry vector_set_all
-Namespace: o2scl function: matrix_set_all
-Namespace: o2scl function: matrix_set_all
-Multiple entry matrix_set_all
-Namespace: o2scl function: vector_copy_jackknife
-Namespace: o2scl function: vector_copy_jackknife
-Multiple entry vector_copy_jackknife
-Namespace:  function: vector_rotate
-Namespace:  function: vector_reverse
-Namespace:  function: vector_reverse
-Multiple entry vector_reverse
-Namespace: o2scl function: vector_reverse_double
-Namespace: o2scl function: vector_reverse_double
-Multiple entry vector_reverse_double
-Namespace:  function: matrix_row
-Namespace:  function: matrix_column
-Namespace:  function: vector_out
-Namespace: o2scl function: vector_out_quotes
-Namespace:  function: vector_out
-Multiple entry vector_out
-Namespace: o2scl function: vector_out_quotes
-Multiple entry vector_out_quotes
-Namespace:  function: vector_grid
-Namespace: o2scl function: matrix_set_identity
-Namespace: o2scl function: matrix_set_identity
-Multiple entry matrix_set_identity
-Namespace:  function: vector_range
-Namespace: o2scl function: const_vector_range
-Namespace:  function: vector_range
-Multiple entry vector_range
-Namespace: o2scl function: const_vector_range
-Multiple entry const_vector_range
-Namespace: o2scl function: const_vector_range
-Multiple entry const_vector_range
-Namespace:  function: vector_range
-Multiple entry vector_range
-Namespace: o2scl function: const_vector_range
-Multiple entry const_vector_range
-Namespace: o2scl function: const_vector_range
-Multiple entry const_vector_range
-Namespace: o2scl function: const_vector_range
-Multiple entry const_vector_range
-Namespace:  function: vector_range
-Multiple entry vector_range
-Namespace: o2scl function: const_vector_range
-Multiple entry const_vector_range
-Namespace: o2scl function: const_vector_range
-Multiple entry const_vector_range
-Namespace:  function: vector_range
-Multiple entry vector_range
-Namespace: o2scl function: const_vector_range
-Multiple entry const_vector_range
-Namespace: o2scl function: const_vector_range
-Multiple entry const_vector_range
-Namespace: o2scl function: const_vector_range
-Multiple entry const_vector_range
-Namespace: o2scl function: vector_range_copy
-Namespace:  function: matrix_max
-Namespace:  function: matrix_min
-Namespace:  function: matrix_max
-Multiple entry matrix_max
-Namespace:  function: matrix_min
-Multiple entry matrix_min
-Namespace: o2scl function: vector_deriv_threept
-Namespace: o2scl function: vector_deriv_threept_tap
-Namespace: o2scl function: vector_deriv_fivept
-Namespace: o2scl function: vector_deriv_fivept_tap
-Namespace: o2scl function: vector_integ_trap
-Namespace: o2scl function: vector_integ_threept
-Namespace: o2scl function: vector_integ_extended4
-Namespace: o2scl function: vector_integ_durand
-Namespace: o2scl function: vector_integ_extended8
-Namespace: o2scl function: operator<<
-Namespace:  function: constraint
-Namespace:  function: cont_constraint
-Namespace:  function: lower_bound
-Namespace: o2scl function: cont_lower_bound
-Namespace:  function: vector_mean
-Namespace:  function: vector_mean
-Multiple entry vector_mean
-Namespace: o2scl function: vector_variance_fmean
-Namespace: o2scl function: vector_variance_fmean
-Multiple entry vector_variance_fmean
-Namespace:  function: vector_variance
-Namespace:  function: vector_variance
-Multiple entry vector_variance
-Namespace:  function: vector_variance
-Multiple entry vector_variance
-Namespace:  function: vector_variance
-Multiple entry vector_variance
-Namespace: o2scl function: vector_stddev_fmean
-Namespace: o2scl function: vector_stddev_fmean
-Multiple entry vector_stddev_fmean
-Namespace:  function: vector_stddev
-Namespace:  function: vector_stddev
-Multiple entry vector_stddev
-Namespace:  function: vector_stddev
-Multiple entry vector_stddev
-Namespace:  function: vector_stddev
-Multiple entry vector_stddev
-Namespace:  function: vector_absdev
-Namespace:  function: vector_absdev
-Multiple entry vector_absdev
-Namespace:  function: vector_absdev
-Multiple entry vector_absdev
-Namespace:  function: vector_absdev
-Multiple entry vector_absdev
-Namespace:  function: vector_skew
-Namespace:  function: vector_skew
-Multiple entry vector_skew
-Namespace:  function: vector_skew
-Multiple entry vector_skew
-Namespace:  function: vector_skew
-Multiple entry vector_skew
-Namespace:  function: vector_kurtosis
-Namespace:  function: vector_kurtosis
-Multiple entry vector_kurtosis
-Namespace:  function: vector_kurtosis
-Multiple entry vector_kurtosis
-Namespace:  function: vector_kurtosis
-Multiple entry vector_kurtosis
-Namespace:  function: vector_covariance
-Namespace:  function: vector_covariance
-Multiple entry vector_covariance
-Namespace:  function: vector_covariance
-Multiple entry vector_covariance
-Namespace:  function: vector_covariance
-Multiple entry vector_covariance
-Namespace:  function: vector_correlation
-Namespace:  function: vector_correlation
-Multiple entry vector_correlation
-Namespace:  function: vector_pvariance
-Namespace:  function: vector_pvariance
-Multiple entry vector_pvariance
-Namespace: o2scl function: vector_quantile_sorted
-Namespace: o2scl function: vector_quantile_sorted
-Multiple entry vector_quantile_sorted
-Namespace: o2scl function: vector_median_sorted
-Namespace: o2scl function: vector_median_sorted
-Multiple entry vector_median_sorted
-Namespace: o2scl function: vector_chi_squared
-Namespace: o2scl function: vector_chi_squared
-Multiple entry vector_chi_squared
-Namespace: o2scl function: vector_bin_size_scott
-Namespace: o2scl function: vector_bin_size_scott
-Multiple entry vector_bin_size_scott
-Namespace: o2scl function: vector_sorted_quantile
-Namespace: o2scl function: vector_bin_size_freedman
-Namespace: o2scl function: vector_bin_size_freedman
-Multiple entry vector_bin_size_freedman
-Namespace: o2scl function: vector_roll_avg
-Namespace: o2scl function: vector_roll_avg
-Multiple entry vector_roll_avg
-Namespace:  function: wvector_mean
-Namespace:  function: wvector_mean
-Multiple entry wvector_mean
-Namespace:  function: wvector_factor
-Namespace:  function: wvector_factor
-Multiple entry wvector_factor
-Namespace: o2scl function: wvector_variance_fmean
-Namespace: o2scl function: wvector_variance_fmean
-Multiple entry wvector_variance_fmean
-Namespace:  function: wvector_variance
-Namespace:  function: wvector_variance
-Multiple entry wvector_variance
-Namespace:  function: wvector_variance
-Multiple entry wvector_variance
-Namespace:  function: wvector_variance
-Multiple entry wvector_variance
-Namespace: o2scl function: wvector_stddev_fmean
-Namespace: o2scl function: wvector_stddev_fmean
-Multiple entry wvector_stddev_fmean
-Namespace:  function: wvector_stddev
-Namespace:  function: wvector_stddev
-Multiple entry wvector_stddev
-Namespace:  function: wvector_stddev
-Multiple entry wvector_stddev
-Namespace:  function: wvector_stddev
-Multiple entry wvector_stddev
-Namespace:  function: wvector_covariance
-Namespace:  function: wvector_covariance
-Multiple entry wvector_covariance
-Namespace:  function: wvector_sumsq
-Namespace:  function: wvector_sumsq
-Multiple entry wvector_sumsq
-Namespace:  function: wvector_sumsq
-Multiple entry wvector_sumsq
-Namespace:  function: wvector_sumsq
-Multiple entry wvector_sumsq
-Namespace:  function: wvector_absdev
-Namespace:  function: wvector_absdev
-Multiple entry wvector_absdev
-Namespace:  function: wvector_absdev
-Multiple entry wvector_absdev
-Namespace:  function: wvector_absdev
-Multiple entry wvector_absdev
-Namespace:  function: wvector_skew
-Namespace:  function: wvector_skew
-Multiple entry wvector_skew
-Namespace:  function: wvector_skew
-Multiple entry wvector_skew
-Namespace:  function: wvector_skew
-Multiple entry wvector_skew
-Namespace:  function: wvector_kurtosis
-Namespace:  function: wvector_kurtosis
-Multiple entry wvector_kurtosis
-Namespace:  function: wvector_kurtosis
-Multiple entry wvector_kurtosis
-Namespace:  function: wvector_kurtosis
-Multiple entry wvector_kurtosis
-Namespace: o2scl function: vector_lag1_autocorr
-Namespace: o2scl function: vector_lag1_autocorr
-Multiple entry vector_lag1_autocorr
-Namespace: o2scl function: vector_lag1_autocorr
-Multiple entry vector_lag1_autocorr
-Namespace: o2scl function: vector_lag1_autocorr
-Multiple entry vector_lag1_autocorr
-Namespace: o2scl function: vector_lagk_autocorr
-Namespace: o2scl function: vector_lagk_autocorr
-Multiple entry vector_lagk_autocorr
-Namespace: o2scl function: vector_lagk_autocorr
-Multiple entry vector_lagk_autocorr
-Namespace: o2scl function: vector_lagk_autocorr
-Multiple entry vector_lagk_autocorr
-Namespace: o2scl function: vector_autocorr_vector
-Namespace: o2scl function: vector_autocorr_vector_fftw
-Namespace: o2scl function: vector_autocorr_tau
-Namespace: o2scl function: vector_lagk_autocorr_mult
-Namespace: o2scl function: vector_lagk_autocorr_mult
-Multiple entry vector_lagk_autocorr_mult
-Namespace: o2scl function: vector_lagk_autocorr_mult
-Multiple entry vector_lagk_autocorr_mult
-Namespace: o2scl function: vector_lagk_autocorr_mult
-Multiple entry vector_lagk_autocorr_mult
-Namespace: o2scl function: vector_autocorr_vector_mult
-Namespace: o2scl function: vector_autocorr_vector_mult
-Multiple entry vector_autocorr_vector_mult
-Namespace:  function: vector_acor
-Namespace:  function: vector_acor
-Multiple entry vector_acor
-Namespace: o2scl function: vector_to_bins
-Namespace: o2scl function: kl_div_gaussian
-Namespace: o2scl function: kl_div_gaussian
-Multiple entry kl_div_gaussian
-Namespace: o2scl function: get_screen_size_curses
-Namespace: o2scl function: get_screen_size_tput
-Namespace: o2scl function: get_screen_size_ioctl
-Namespace:  function: shuffle_swap
-Namespace:  function: choose_copy
-Namespace:  function: vector_shuffle
-Namespace: o2scl_acol function: parse_arrays
-Namespace: o2scl_cblas function: matrix_is_finite
-Namespace: o2scl_cblas function: matrix_is_finite
-Multiple entry matrix_is_finite
-Namespace: o2scl_cblas function: dasum
-Namespace: o2scl_cblas function: daxpy
-Namespace: o2scl_cblas function: ddot
-Namespace: o2scl_cblas function: dnrm2
-Namespace: o2scl_cblas function: dscal
-Namespace: o2scl_cblas function: dgemv
-Namespace: o2scl_cblas function: dtrsv
-Namespace: o2scl_cblas function: dtrmv
-Namespace: o2scl_cblas function: dgemm
-Namespace: o2scl_cblas function: dtrsm
-Namespace: o2scl_cblas function: daxpy_subvec
-Namespace: o2scl_cblas function: ddot_subvec
-Namespace: o2scl_cblas function: dnrm2_subvec
-Namespace: o2scl_cblas function: dscal_subvec
-Namespace: o2scl_cblas function: daxpy_subcol
-Namespace: o2scl_cblas function: ddot_subcol
-Namespace: o2scl_cblas function: dnrm2_subcol
-Namespace: o2scl_cblas function: dscal_subcol
-Namespace: o2scl_cblas function: dasum_subcol
-Namespace: o2scl_cblas function: daxpy_subrow
-Namespace: o2scl_cblas function: ddot_subrow
-Namespace: o2scl_cblas function: dnrm2_subrow
-Namespace: o2scl_cblas function: dscal_subrow
-Namespace: o2scl_hdf function: hdf_input
-Namespace: o2scl_hdf function: hdf_output
-Namespace: o2scl_hdf function: hdf_input_data
-Namespace: o2scl_hdf function: hdf_output_data
-Namespace: o2scl_hdf function: hdf_input
-Multiple entry hdf_input
-Namespace: o2scl_hdf function: hdf_output
-Multiple entry hdf_output
-Namespace: o2scl_hdf function: hdf_input
-Multiple entry hdf_input
-Namespace: o2scl_hdf function: hdf_output
-Multiple entry hdf_output
-Namespace: o2scl_hdf function: hdf_input_data
-Multiple entry hdf_input_data
-Namespace: o2scl_hdf function: hdf_output_data
-Multiple entry hdf_output_data
-Namespace: o2scl_hdf function: hdf_input
-Multiple entry hdf_input
-Namespace: o2scl_hdf function: hdf_output
-Multiple entry hdf_output
-Namespace: o2scl_hdf function: hdf_input_n
-Namespace: o2scl_hdf function: hdf_output
-Multiple entry hdf_output
-Namespace: o2scl_hdf function: hdf_input_n
-Multiple entry hdf_input_n
-Namespace: o2scl_hdf function: hdf_input
-Multiple entry hdf_input
-Namespace: o2scl_hdf function: hdf_output
-Multiple entry hdf_output
-Namespace: o2scl_hdf function: hdf_output
-Multiple entry hdf_output
-Namespace: o2scl_hdf function: hdf_input_n
-Multiple entry hdf_input_n
-Namespace: o2scl_hdf function: hdf_output_data
-Multiple entry hdf_output_data
-Namespace: o2scl_hdf function: hdf_output
-Multiple entry hdf_output
-Namespace: o2scl_hdf function: hdf_input_n
-Multiple entry hdf_input_n
-Namespace: o2scl_hdf function: hdf_output_data
-Multiple entry hdf_output_data
-Namespace: o2scl_hdf function: hdf_output
-Multiple entry hdf_output
-Namespace: o2scl_hdf function: hdf_input
-Multiple entry hdf_input
-Namespace: o2scl_hdf function: hdf_input_n
-Multiple entry hdf_input_n
-Namespace: o2scl_hdf function: hdf_output
-Multiple entry hdf_output
-Namespace: o2scl_hdf function: hdf_input
-Multiple entry hdf_input
-Namespace: o2scl_hdf function: hdf_input_n
-Multiple entry hdf_input_n
-Namespace: o2scl_hdf function: hdf_input_n
-Multiple entry hdf_input_n
-Namespace: o2scl_hdf function: hdf_output
-Multiple entry hdf_output
-Namespace: o2scl_hdf function: hdf_input
-Multiple entry hdf_input
-Namespace: o2scl_hdf function: hdf_input_n
-Multiple entry hdf_input_n
-Namespace: o2scl_hdf function: hdf_output
-Multiple entry hdf_output
-Namespace: o2scl_hdf function: hdf_input
-Multiple entry hdf_input
-Namespace: o2scl_hdf function: hdf_input_n
-Multiple entry hdf_input_n
-Namespace: o2scl_hdf function: hdf_output
-Multiple entry hdf_output
-Namespace: o2scl_hdf function: hdf_input
-Multiple entry hdf_input
-Namespace: o2scl_hdf function: hdf_input_n
-Multiple entry hdf_input_n
-Namespace: o2scl_hdf function: hdf_input
-Multiple entry hdf_input
-Namespace: o2scl_hdf function: hdf_output
-Multiple entry hdf_output
-Namespace: o2scl_hdf function: hdf_input
-Multiple entry hdf_input
-Namespace: o2scl_hdf function: hdf_input_n
-Multiple entry hdf_input_n
-Namespace: o2scl_hdf function: hdf_output
-Multiple entry hdf_output
-Namespace: o2scl_hdf function: hdf_input
-Multiple entry hdf_input
-Namespace: o2scl_hdf function: hdf_input_n
-Multiple entry hdf_input_n
-Namespace: o2scl_hdf function: hdf_output
-Multiple entry hdf_output
-Namespace: o2scl_hdf function: hdf_input
-Multiple entry hdf_input
-Namespace: o2scl_hdf function: hdf_input_n
-Multiple entry hdf_input_n
-Namespace: o2scl_hdf function: hdf5_write_file
-Namespace: o2scl_hdf function: value_spec
-Namespace: o2scl_hdf function: vector_spec
-Namespace: o2scl_hdf function: strings_spec
-Namespace: o2scl_hdf function: vector_spec
-Multiple entry vector_spec
-Namespace: o2scl_hdf function: mult_vector_spec
-Namespace: o2scl_hdf function: hdf_output
-Multiple entry hdf_output
-Namespace: o2scl_linalg function: bidiag_decomp
-Namespace: o2scl_linalg function: bidiag_unpack
-Namespace: o2scl_linalg function: bidiag_unpack2
-Namespace: o2scl_linalg function: bidiag_unpack_B
-Namespace: o2scl_linalg function: cholesky_decomp
-Namespace: o2scl_linalg function: cholesky_det
-Namespace: o2scl_linalg function: cholesky_lndet
-Namespace: o2scl_linalg function: cholesky_solve
-Namespace: o2scl_linalg function: cholesky_svx
-Namespace: o2scl_linalg function: cholesky_invert
-Namespace: o2scl_linalg function: cholesky_decomp_unit
-Namespace: o2scl_linalg function: create_givens
-Namespace: o2scl_linalg function: apply_givens_qr
-Namespace: o2scl_linalg function: apply_givens_lq
-Namespace: o2scl_linalg function: apply_givens_vec
-Namespace: o2scl_linalg function: HH_svx
-Namespace: o2scl_linalg function: HH_solve
-Namespace: o2scl_linalg function: householder_transform
-Namespace: o2scl_linalg function: householder_transform_subcol
-Namespace: o2scl_linalg function: householder_transform_subrow
-Namespace: o2scl_linalg function: householder_hm
-Namespace: o2scl_linalg function: householder_hm_subcol
-Namespace: o2scl_linalg function: householder_hm_subrow
-Namespace: o2scl_linalg function: householder_hv
-Namespace: o2scl_linalg function: householder_hv_subcol
-Namespace: o2scl_linalg function: householder_hm1
-Namespace: o2scl_linalg function: householder_hm1_sub
-Namespace: o2scl_linalg function: householder_mh
-Namespace: o2scl_linalg function: householder_mh_subrow
-Namespace: o2scl_linalg function: diagonal_has_zero
-Namespace: o2scl_linalg function: LU_decomp
-Namespace: o2scl_linalg function: LU_svx
-Namespace: o2scl_linalg function: LU_decomp_alt
-Namespace: o2scl_linalg function: LU_solve
-Namespace: o2scl_linalg function: LU_refine
-Namespace: o2scl_linalg function: LU_invert
-Namespace: o2scl_linalg function: LU_det
-Namespace: o2scl_linalg function: LU_lndet
-Namespace: o2scl_linalg function: LU_sgndet
-Namespace: o2scl_linalg function: QR_decomp
-Namespace: o2scl_linalg function: QR_QTvec
-Namespace: o2scl_linalg function: QR_unpack
-Namespace: o2scl_linalg function: QR_svx
-Namespace: o2scl_linalg function: QR_solve
-Namespace: o2scl_linalg function: QR_update
-Namespace: o2scl_linalg function: QR_decomp_unpack
-Namespace: o2scl_linalg function: QRPT_decomp
-Namespace: o2scl_linalg function: SV_decomp
-Namespace: o2scl_linalg function: SV_decomp_mod
-Namespace: o2scl_linalg function: SV_solve
-Namespace: o2scl_linalg function: SV_decomp_jacobi
-Namespace: o2scl_linalg function: balance_columns
-Namespace: o2scl_linalg function: chop_small_elements
-Namespace: o2scl_linalg function: trailing_eigenvalue
-Namespace: o2scl_linalg function: create_schur
-Namespace: o2scl_linalg function: svd2
-Namespace: o2scl_linalg function: svd2_sub
-Namespace: o2scl_linalg function: chase_out_intermediate_zero
-Namespace: o2scl_linalg function: chase_out_trailing_zero
-Namespace: o2scl_linalg function: chase_out_trailing_zero_sub
-Namespace: o2scl_linalg function: qrstep
-Namespace: o2scl_linalg function: qrstep_sub
-Namespace: o2scl_linalg function: solve_tridiag_sym
-Namespace: o2scl_linalg function: solve_tridiag_nonsym
-Namespace: o2scl_linalg function: solve_cyc_tridiag_sym
-Namespace: o2scl_linalg function: solve_cyc_tridiag_nonsym
-Namespace: o2scl_linalg function: solve_tridiag_sym
-Multiple entry solve_tridiag_sym
-Namespace: o2scl_linalg function: solve_tridiag_nonsym
-Multiple entry solve_tridiag_nonsym
-Namespace: o2scl_linalg function: solve_cyc_tridiag_sym
-Multiple entry solve_cyc_tridiag_sym
-Namespace: o2scl_linalg function: solve_cyc_tridiag_nonsym
-Multiple entry solve_cyc_tridiag_nonsym
-Namespace: o2scl_linalg_bracket function: LU_decomp_array_2d
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-Namespace: o2scl_auto_format function: operator<<
-Multiple entry operator<<
-
----------------------------------------------------
-Creating rst files for non-duplicate functions:
-
-Skipping const_vector_range because it is a duplicate.
-Skipping dtos because it is a duplicate.
-Skipping function_to_double_nothrow because it is a duplicate.
-Skipping hdf_input because it is a duplicate.
-Skipping hdf_input_data because it is a duplicate.
-Skipping hdf_input_n because it is a duplicate.
-Skipping hdf_output because it is a duplicate.
-Skipping hdf_output_data because it is a duplicate.
-Skipping kl_div_gaussian because it is a duplicate.
-Skipping linear_or_log because it is a duplicate.
-Skipping matrix_copy because it is a duplicate.
-Skipping matrix_is_finite because it is a duplicate.
-Skipping matrix_is_lower because it is a duplicate.
-Skipping matrix_is_upper because it is a duplicate.
-Skipping matrix_lookup because it is a duplicate.
-Skipping matrix_make_lower because it is a duplicate.
-Skipping matrix_make_upper because it is a duplicate.
-Skipping matrix_max because it is a duplicate.
-Skipping matrix_max_index because it is a duplicate.
-Skipping matrix_max_value because it is a duplicate.
-Skipping matrix_min because it is a duplicate.
-Skipping matrix_min_index because it is a duplicate.
-Skipping matrix_min_value because it is a duplicate.
-Skipping matrix_minmax because it is a duplicate.
-Skipping matrix_out because it is a duplicate.
-Skipping matrix_set_all because it is a duplicate.
-Skipping matrix_set_identity because it is a duplicate.
-Skipping matrix_sum because it is a duplicate.
-Skipping matrix_swap because it is a duplicate.
-Skipping matrix_swap_double because it is a duplicate.
-Skipping matrix_trans_out because it is a duplicate.
-Skipping matrix_transpose because it is a duplicate.
-Skipping o2abs because it is a duplicate.
-Skipping o2exp because it is a duplicate.
-Skipping o2hypot because it is a duplicate.
-Skipping o2isfinite because it is a duplicate.
-Skipping o2log because it is a duplicate.
-Skipping o2pow because it is a duplicate.
-Skipping o2sqrt because it is a duplicate.
-Skipping operator<< because it is a duplicate.
-Skipping pipe_cmd_string because it is a duplicate.
-Skipping rebin_xy because it is a duplicate.
-Skipping s32tod_nothrow because it is a duplicate.
-Skipping solve_cyc_tridiag_nonsym because it is a duplicate.
-Skipping solve_cyc_tridiag_sym because it is a duplicate.
-Skipping solve_tridiag_nonsym because it is a duplicate.
-Skipping solve_tridiag_sym because it is a duplicate.
-Skipping vector_absdev because it is a duplicate.
-Skipping vector_acor because it is a duplicate.
-Skipping vector_autocorr_vector_mult because it is a duplicate.
-Skipping vector_bin_size_freedman because it is a duplicate.
-Skipping vector_bin_size_scott because it is a duplicate.
-Skipping vector_bsearch because it is a duplicate.
-Skipping vector_chi_squared because it is a duplicate.
-Skipping vector_copy because it is a duplicate.
-Skipping vector_copy_jackknife because it is a duplicate.
-Skipping vector_correlation because it is a duplicate.
-Skipping vector_covariance because it is a duplicate.
-Skipping vector_integ_xy_interp because it is a duplicate.
-Skipping vector_is_finite because it is a duplicate.
-Skipping vector_is_monotonic because it is a duplicate.
-Skipping vector_is_strictly_monotonic because it is a duplicate.
-Skipping vector_kurtosis because it is a duplicate.
-Skipping vector_lag1_autocorr because it is a duplicate.
-Skipping vector_lagk_autocorr because it is a duplicate.
-Skipping vector_lagk_autocorr_mult because it is a duplicate.
-Skipping vector_largest because it is a duplicate.
-Skipping vector_lookup because it is a duplicate.
-Skipping vector_max_quad because it is a duplicate.
-Skipping vector_max_value because it is a duplicate.
-Skipping vector_mean because it is a duplicate.
-Skipping vector_median_sorted because it is a duplicate.
-Skipping vector_min_quad because it is a duplicate.
-Skipping vector_min_value because it is a duplicate.
-Skipping vector_norm because it is a duplicate.
-Skipping vector_norm_double because it is a duplicate.
-Skipping vector_out because it is a duplicate.
-Skipping vector_out_quotes because it is a duplicate.
-Skipping vector_pvariance because it is a duplicate.
-Skipping vector_quantile_sorted because it is a duplicate.
-Skipping vector_range because it is a duplicate.
-Skipping vector_reverse because it is a duplicate.
-Skipping vector_reverse_double because it is a duplicate.
-Skipping vector_roll_avg because it is a duplicate.
-Skipping vector_search because it is a duplicate.
-Skipping vector_set_all because it is a duplicate.
-Skipping vector_skew because it is a duplicate.
-Skipping vector_smallest because it is a duplicate.
-Skipping vector_smallest_index because it is a duplicate.
-Skipping vector_sort_index because it is a duplicate.
-Skipping vector_spec because it is a duplicate.
-Skipping vector_stddev because it is a duplicate.
-Skipping vector_stddev_fmean because it is a duplicate.
-Skipping vector_sum because it is a duplicate.
-Skipping vector_sum_double because it is a duplicate.
-Skipping vector_swap because it is a duplicate.
-Skipping vector_swap_double because it is a duplicate.
-Skipping vector_variance because it is a duplicate.
-Skipping vector_variance_fmean because it is a duplicate.
-Skipping vectors_equal because it is a duplicate.
-Skipping vectors_equal_tol because it is a duplicate.
-Skipping wvector_absdev because it is a duplicate.
-Skipping wvector_covariance because it is a duplicate.
-Skipping wvector_factor because it is a duplicate.
-Skipping wvector_kurtosis because it is a duplicate.
-Skipping wvector_mean because it is a duplicate.
-Skipping wvector_skew because it is a duplicate.
-Skipping wvector_stddev because it is a duplicate.
-Skipping wvector_stddev_fmean because it is a duplicate.
-Skipping wvector_sumsq because it is a duplicate.
-Skipping wvector_variance because it is a duplicate.
-Skipping wvector_variance_fmean because it is a duplicate.
-
----------------------------------------------------
-Creating rst files for duplicate functions:
-
-Here: 112
-const_vector_range(const dat_t *v, size_t start, size_t last)
+Using input file ../xml/index.xml
+Reading namespace file: ../xml/namespaceo2scl.xml
+2: compoundname
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: innerclass
+2: sectiondef
+3: header 
+3: memberdef variable
+3: memberdef function
+  fermi_function
+This function is not in overloaded list.
+3: memberdef function
+  bose_function
+This function is not in overloaded list.
+3: memberdef function
+  pipe_cmd_string
+Found overloaded function in namespace o2scl with name pipe_cmd_string and arg string 
+3: memberdef function
+  python_cmd_string
+This function is not in overloaded list.
+3: memberdef function
+  pipe_cmd_string
+Found overloaded function in namespace o2scl with name pipe_cmd_string and arg string 
+3: memberdef function
+  file_exists
+This function is not in overloaded list.
+3: memberdef function
+  count_words
+This function is not in overloaded list.
+3: memberdef function
+  remove_whitespace
+This function is not in overloaded list.
+3: memberdef function
+  remove_ws_punct
+This function is not in overloaded list.
+3: memberdef function
+  binary_to_hex
+This function is not in overloaded list.
+3: memberdef function
+  RGBtoHSV
+This function is not in overloaded list.
+3: memberdef function
+  HSVtoRGB
+This function is not in overloaded list.
