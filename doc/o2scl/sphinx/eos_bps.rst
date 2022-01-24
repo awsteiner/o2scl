@@ -17,7 +17,7 @@ values from the original paper in [Baym71tg]_ as stored in the
 file ``examples/ex_bps_input.txt``. Then it computes several
 crusts from [Shen11b]_, [Steiner12]_, and [Newton13]_.
     
-.. literalinclude:: ../../../../examples/ex_eos_crust.cpp
+.. literalinclude:: ../../../examples/ex_eos_crust.cpp
    :language: c++		    
    :start-after: sphinx-example-start
 

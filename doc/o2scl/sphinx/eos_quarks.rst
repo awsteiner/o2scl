@@ -1,7 +1,7 @@
 Equations of State of Quark Matter
 ==================================
 
-:ref:`O2scl_eos <o2scle>`
+:ref:`O2scl <o2scl>`
 
 The equations of state of \quark matter are all inherited from
 :ref:`eos_quark <eos_quark>` : :ref:`eos_quark_bag <eos_quark_bag>` is

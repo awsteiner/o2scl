@@ -1,7 +1,7 @@
 Solution of the Tolman-Oppenheimer-Volkov Equations
 ===================================================
 
-:ref:`O2scl_eos <o2scle>`
+:ref:`O2scl <o2scl>`
      
 The class :ref:`tov_solve <tov_solve>` provides a solution to the
 Tolman-Oppenheimer-Volkov (TOV) equations given an equation of state

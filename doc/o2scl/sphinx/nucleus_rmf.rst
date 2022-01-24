@@ -1,7 +1,7 @@
 Nuclear structure in the Hartree approximation
 ==============================================
 
-:ref:`O2scl_eos <o2scle>`
+:ref:`O2scl <o2scl>`
 
 See class :ref:`nucleus_rmf <nucleus_rmf>`.
 

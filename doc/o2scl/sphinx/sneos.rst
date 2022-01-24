@@ -1,6 +1,8 @@
 Finite-temperature Equation of State Tables
 ===========================================
 
+:ref:`O2scl <o2scl>`
+
 There are several classes designed to provide a consistent interface
 to several EOS tables intended for core-collapse supernovae and
 neutron-star mergers. The abstract base class is :ref:`eos_sn_base
@@ -18,9 +20,9 @@ formats:
 - :ref:`eos_sn_oo <eos_sn_oo>` - The Lattimer-Swesty and H. Shen et al. tables
   reformatted by O'Connor and Ott ([OConnor10]_)
 
-The :ref:`O2scl_eos <o2scle>` distribution does not contain the tables
+The :ref:`O2scl <o2scl>` distribution does not contain the tables
 themselves, as they are quite large and most are freely available.
-:ref:`O2scl_eos <o2scle>` includes code which parses these tables and
+:ref:`O2scl <o2scl>` includes code which parses these tables and
 puts them in \ref o2scl::tensor_grid3 objects for analysis by the
 user.
 

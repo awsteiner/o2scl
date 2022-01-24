@@ -32,6 +32,7 @@
 
 using namespace std;
 
+/// Remove template parameters from a function name
 std::string remove_template_params(std::string in) {
   std::string stmp;
   int n_bracket=0;
@@ -60,47 +61,6 @@ std::string underscoreify(std::string s) {
     s2.replace(s2.find("__"),2,"_");
   }
   return s2;
-}
-
-/** \brief Inside string \c s, extract the element inside tag \c tag
-    and store the element in \c result
-*/
-int xml_get_tag_element(string s, string tag, string &result) {
-  // Remove enclosing <> in tag
-  if (tag[0]=='<') {
-    if (tag[tag.length()-1]!='>') {
-      return 1;
-    }
-    tag=tag.substr(1,tag.length()-2);
-  }
-  size_t tag_len=tag.length();
-  string tag_start=((string)"<")+tag+">";
-  string tag_end=((string)"</")+tag+">";
-
-  // Exit early if the tag is not found
-  size_t istart=s.find(tag_start);
-  if (istart==std::string::npos) {
-    return 2;
-  }
-  size_t iend=s.find(tag_end);
-  if (iend==std::string::npos) {
-    return 3;
-  }
-  if (istart+tag_len+2>iend) return 4;
-  
-  // Make sure the <name> tag is also present in the string somewhere,
-  // return early if it is not
-  size_t loc1=s.find("<name>");
-  size_t loc2=s.find("</name>");
-  size_t loct=loc1+6;
-  if (loc2<loct) {
-    return 5;
-  }
-  
-  // Finally, return the result, adjusting by 2 for the < and >
-  size_t len=iend-istart-tag_len-2;
-  result=s.substr(istart+tag_len+2,len);
-  return 0;
 }
 
 int main(int argc, char *argv[]) {
@@ -196,7 +156,7 @@ int main(int argc, char *argv[]) {
             // Remove template parameters from function name
             o.name=remove_template_params(o.name);
             
-            //
+            // Determine if this function is already in the function list
             bool found_in_list=false;
             for(size_t k=0;k<function_list.size();k++) {
               if (function_list[k].ns==o.ns &&
@@ -204,6 +164,9 @@ int main(int argc, char *argv[]) {
                 found_in_list=true;
               }
             }
+
+            // If it is, then it's overloaded, so see if it's in the
+            // overloaded list
             if (found_in_list) {
               function f;
               f.ns=o.ns;
@@ -215,22 +178,31 @@ int main(int argc, char *argv[]) {
                   found_in_dups=true;
                 }
               }
+
+              // If it's overloaded but not in the overloaded list, add it
               if (found_in_dups==false) {
                 overloaded_list.push_back(f);
               }
+              
             } else {
+
+              // If it's not overloaded, add it to the function list
               function_list.push_back(o);
+              
             }
           }
           j++;
+          
         }  
       }
       i++;
+      
     }
 
     // End of reading index.xml
   }
 
+  // Extract the list of namespaces from the overloaded functions
   vector<std::string> ns_list;
 
   for(size_t k=0;k<overloaded_list.size();k++) {
@@ -247,6 +219,9 @@ int main(int argc, char *argv[]) {
 
   }
 
+  // For each overloaded function, go through the namespace .xml file
+  // to find the possible argument lists
+  
   for(size_t k=0;k<ns_list.size();k++) {
 
     // Doxygen doubles namespaces for the namespace.xml file
@@ -356,6 +331,10 @@ int main(int argc, char *argv[]) {
     
   }
 
+  // Some overloaded functions still appear in function_list, so we
+  // remove them here so that functions are only in function_list
+  // or overloaded_list, but not both
+  
   for(size_t i=0;i<overloaded_list.size();i++) {
     bool found=false;
     size_t jfound;
@@ -379,6 +358,8 @@ int main(int argc, char *argv[]) {
       function_list=function_list_new;
     }
   }
+
+  // Verbose output
   
   if (true || xml_verbose>1) {
     cout << "Class list: " << endl;

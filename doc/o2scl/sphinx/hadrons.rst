@@ -1,7 +1,7 @@
 Equations of State of Hadronic Matter
 =====================================
 
-:ref:`O2scl_eos <o2scle>`
+:ref:`O2scl <o2scl>`
      
 The hadronic equations of state (EOSs) treat nucleonic (neutrons
 and protons) matter at zero or finite temperature. There are
@@ -56,18 +56,18 @@ curves for APR created by this example and for the Skyrme model SLy4
 from the next example is below. The third figure below is the Gibbs
 phase transition for APR.
 
-.. image:: ../../../../examples/plot/ex_eos_had_eos.png
+.. image:: ../../../examples/plot/ex_eos_had_eos.png
    :width: 60%
 	   
-.. image:: ../../../../examples/plot/ex_eos_had_mvsr.png
+.. image:: ../../../examples/plot/ex_eos_had_mvsr.png
    :width: 60%
 	   
-.. image:: ../../../../examples/plot/ex_eos_had_gibbs.png
+.. image:: ../../../examples/plot/ex_eos_had_gibbs.png
    :width: 60%
 
 Typical output:
 
-.. literalinclude:: ../../../../examples/ex_eos_had_apr.scr
+.. literalinclude:: ../../../examples/ex_eos_had_apr.scr
    :language: none		    
 
 Skyrme EOS example
@@ -82,6 +82,6 @@ duplicated here. The class created in that example is documented at
 
 Typical output:
 
-.. literalinclude:: ../../../../examples/ex_eos_had_skyrme.scr      
+.. literalinclude:: ../../../examples/ex_eos_had_skyrme.scr      
    :language: none
 

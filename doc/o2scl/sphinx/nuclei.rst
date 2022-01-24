@@ -52,38 +52,38 @@ object, one can use :cpp:func:`o2scl_part::nucdist_set()`.
 Nuclear mass fit example
 ------------------------
     
-.. literalinclude:: ../../../../examples/ex_nucmass_fit.cpp
+.. literalinclude:: ../../../examples/ex_nucmass_fit.cpp
    :language: c++		    
    :start-after: sphinx-example-start
 
 Nuclear mass example
 --------------------
 
-.. literalinclude:: ../../../../examples/ex_nucmass.cpp
+.. literalinclude:: ../../../examples/ex_nucmass.cpp
    :language: c++		    
    :start-after: sphinx-example-start
 
-.. |se| image:: ../../../../examples/plot/ex_nucmass_se.png
+.. |se| image:: ../../../examples/plot/ex_nucmass_se.png
 		
-.. |mnmsk| image:: ../../../../examples/plot/ex_nucmass_mnmsk.png
+.. |mnmsk| image:: ../../../examples/plot/ex_nucmass_mnmsk.png
 		   
-.. |dz96| image:: ../../../../examples/plot/ex_nucmass_dz96.png
+.. |dz96| image:: ../../../examples/plot/ex_nucmass_dz96.png
 		  
-.. |ame03| image:: ../../../../examples/plot/ex_nucmass_ame03.png
+.. |ame03| image:: ../../../examples/plot/ex_nucmass_ame03.png
 		   
-.. |hfb14| image:: ../../../../examples/plot/ex_nucmass_hfb14.png
+.. |hfb14| image:: ../../../examples/plot/ex_nucmass_hfb14.png
 		   
-.. |hfb21| image:: ../../../../examples/plot/ex_nucmass_hfb21.png
+.. |hfb21| image:: ../../../examples/plot/ex_nucmass_hfb21.png
 		   
-.. |hfb27| image:: ../../../../examples/plot/ex_nucmass_hfb27.png
+.. |hfb27| image:: ../../../examples/plot/ex_nucmass_hfb27.png
 		   
-.. |ktuy05| image:: ../../../../examples/plot/ex_nucmass_ktuy05.png
+.. |ktuy05| image:: ../../../examples/plot/ex_nucmass_ktuy05.png
 		    
-.. |dvi| image:: ../../../../examples/plot/ex_nucmass_dvi.png
+.. |dvi| image:: ../../../examples/plot/ex_nucmass_dvi.png
 		 
-.. |ws32| image:: ../../../../examples/plot/ex_nucmass_ws32.png
+.. |ws32| image:: ../../../examples/plot/ex_nucmass_ws32.png
 		  
-.. |ws36| image:: ../../../../examples/plot/ex_nucmass_ws36.png
+.. |ws36| image:: ../../../examples/plot/ex_nucmass_ws36.png
 
 +---------+---------+---------+----------+
 | |se|    | |mnmsk| | |dz96|  | |ame03|  | 

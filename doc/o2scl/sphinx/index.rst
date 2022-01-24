@@ -71,6 +71,20 @@ User's Guide
    para
    other
    lset
+   part
+   fermion
+   nuclei
+   part_multip
+   hadrons
+   eos_quarks
+   eos_tov
+   eos_momi
+   eos_tidal
+   eos_cnstar
+   eos_rot
+   eos_bps
+   nucleus_rmf
+   sneos
    yanic
    design
    dev_guide
