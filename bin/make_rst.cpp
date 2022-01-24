@@ -32,6 +32,21 @@
 
 using namespace std;
 
+std::string remove_template_params(std::string in) {
+  std::string stmp;
+  int n_bracket=0;
+  for(size_t ij=0;ij<in.length();ij++) {
+    if (in[ij]=='<') {
+      n_bracket++;
+    } else if (in[ij]=='>') {
+      n_bracket--;
+    } else if (n_bracket==0) {
+      stmp+=in[ij];
+    }
+  }
+  return stmp;
+}
+
 /** \brief Convert <,>, ,: to _
  */
 std::string underscoreify(std::string s) {
@@ -111,7 +126,7 @@ int main(int argc, char *argv[]) {
   typedef struct function_s {
     std::string ns;
     std::string name;
-    std::string args;
+    std::vector<std::string> args;
   } function;
 
   std::vector<generic> class_list, function_list;
@@ -147,6 +162,7 @@ int main(int argc, char *argv[]) {
              << it->child_value("name") << endl;
         cout << "  kind: " << it->attribute("kind").value() << std::endl;
       }
+      
       if (((string)it->attribute("kind").value())==((string)"class")) {
         generic o;
         o.name=it->child_value("name");
@@ -157,20 +173,30 @@ int main(int argc, char *argv[]) {
         }
         class_list.push_back(o);
       }
+      
       if (((string)it->attribute("kind").value())==((string)"namespace")) {
+        
         int j=0;
+        
         for (pugi::xml_node_iterator it2=it->begin();
              it2!=it->end();++it2) {
+          
           if (xml_verbose>1) {
             cout << j << " " << it2->name() << " "
                  << it2->child_value("name") << endl;
             cout << "  kind: " << it2->attribute("kind").value()
                  << std::endl;
           }
+          
           if (((string)it2->attribute("kind").value())==((string)"function")) {
             generic o;
             o.ns=it->child_value("name");
             o.name=it2->child_value("name");
+
+            // Remove template parameters from function name
+            o.name=remove_template_params(o.name);
+            
+            //
             bool found_in_list=false;
             for(size_t k=0;k<function_list.size();k++) {
               if (function_list[k].ns==o.ns &&
@@ -223,18 +249,31 @@ int main(int argc, char *argv[]) {
 
   for(size_t k=0;k<ns_list.size();k++) {
 
-    if (ns_list[k]=="o2scl") {
+    // Doxygen doubles namespaces for the namespace.xml file
+    // so we do that here
+    std::string stmp=ns_list[k];
+    for(int ik=0;ik<((int)stmp.length());ik++) {
+      if (stmp[ik]=='_') {
+        stmp=stmp.substr(0,ik)+"__"+stmp.substr(ik+1,stmp.length()-ik-1);
+        ik+=2;
+        if (ik==100) {
+          cout << "Failed to rename namespace file: " << stmp << endl;
+          exit(-1);
+        }
+      }
+    }
+    
+    if (ns_list[k]!="std") {
       
       pugi::xml_document ns_doc;
       
-      std::string ns_file=in_dir+"/namespace"+
-        ns_list[k]+".xml";
+      std::string ns_file=in_dir+"/namespace"+stmp+".xml";
 
       cout << "Reading namespace file: " << ns_file << endl;
       pugi::xml_parse_result result=ns_doc.load_file(ns_file.c_str());
       if (!result) {
         cout << result.description() << endl;
-        cout << "Failed to read namespace file." << endl;
+        cout << "Failed to read namespace file " << ns_file << endl;
         exit(-1);
       }
 
@@ -244,7 +283,8 @@ int main(int argc, char *argv[]) {
       for (pugi::xml_node_iterator it=dindex.begin();it!=dindex.end();++it) {
 
         // Parse through the namespace
-        std::cout << "2: " << it->name() << std::endl;
+        
+        //std::cout << "2: " << it->name() << std::endl;
 
         // The namespace name is in a <compoundname> object, classes
         // are in <innerclass> objects, and some functions are 
@@ -252,58 +292,95 @@ int main(int argc, char *argv[]) {
         
         if (it->name()==((string)"sectiondef")) {
 
+          cout << "Section: " << it->child("header").child_value() << endl;
+          
           // In each section, look for a <memberdef> object with a
           // kind attribute of "function"
           
           for (pugi::xml_node_iterator it2=it->begin();
                it2!=it->end();++it2) {
             
-            std::cout << "3: " << it2->name() << " "
-                      << it2->attribute("kind").value() << std::endl;
+            //std::cout << "3: " << it2->name() << " "
+            //<< it2->attribute("kind").value() << std::endl;
             
             if (it2->name()==((string)"memberdef") &&
                 it2->attribute("kind").value()==((string)"function")) {
               
-              cout << "  " << it2->child("name").child_value() << endl;
+              //cout << "  " << it2->child("name").child_value() << endl;
+              //cout << "  " << it2->child("argsstring").child_value() << endl;
 
               // If we found a function, see if its in overloaded_list
               // so we can set the argstrings
               
               bool found=false;
+              std::string func_name=it2->child("name").child_value();
+              func_name=remove_template_params(func_name);
+              
               for(size_t j=0;j<overloaded_list.size() && found==false;j++) {
                 if (overloaded_list[j].ns==ns_list[k] &&
-                    overloaded_list[j].name==
-                    it2->child("name").child_value()) {
+                    overloaded_list[j].name==func_name) {
+                  
                   found=true;
 
-                  pugi::xml_node nt=it2->child("name").child("argsstring");
-                  overloaded_list[j].args=nt.child_value();
-                  //it2->child("name").child("argsstring").child_value();
+                  pugi::xml_node nt=it2->child("argsstring");
+                  overloaded_list[j].args.push_back(nt.child_value());
 
-                  cout << "Found overloaded function in namespace "
-                       << overloaded_list[j].ns << " with name "
-                       << overloaded_list[j].name << " and arg string "
-                       << overloaded_list[j].args << endl;
-                  
+                  /*
+                    cout << "Found overloaded function in namespace "
+                    << overloaded_list[j].ns << " with name "
+                    << overloaded_list[j].name << endl;
+                    for(size_t ik=0;ik<overloaded_list[j].args.size();ik++) {
+                    cout << "  " << ik << " "
+                    << overloaded_list[j].args[ik].substr(0,74)
+                    << endl;
+                    }
+                    cout << endl;
+                  */
                 }
               }
-              if (found==false) {
+
+              /*
+                if (found==false) {
                 cout << "This function is not in overloaded list." << endl;
-              }
+                }
+              */
+              
             }
           }
-          exit(-1);
           
         }
         
       }
       
-      exit(-1);
     }
     
   }
 
-  if (xml_verbose>1) {
+  for(size_t i=0;i<overloaded_list.size();i++) {
+    bool found=false;
+    size_t jfound;
+    for(size_t j=0;j<function_list.size();j++) {
+      if (function_list[j].ns==overloaded_list[i].ns &&
+          function_list[j].name==overloaded_list[i].name) {
+        found=true;
+        jfound=j;
+      }
+    }
+    if (found==true) {
+      std::vector<generic> function_list_new;
+      for(size_t k=0;k<function_list.size();k++) {
+        if (k!=jfound) {
+          generic g;
+          g.ns=function_list[k].ns;
+          g.name=function_list[k].name;
+          function_list_new.push_back(g);
+        }
+      }
+      function_list=function_list_new;
+    }
+  }
+  
+  if (true || xml_verbose>1) {
     cout << "Class list: " << endl;
     for(size_t i=0;i<class_list.size();i++) {
       cout << i << " " << class_list[i].ns << " "
@@ -320,6 +397,15 @@ int main(int argc, char *argv[]) {
     for(size_t i=0;i<overloaded_list.size();i++) {
       cout << i << " " << overloaded_list[i].ns << " "
            << overloaded_list[i].name << endl;
+      for(size_t ik=0;ik<overloaded_list[i].args.size();ik++) {
+        cout << "  " << ik << " ";
+        if (overloaded_list[i].args[ik].length()<70) {
+          cout << overloaded_list[i].args[ik];
+        } else {
+          cout << overloaded_list[i].args[ik].substr(0,70) << "..";
+        }
+        cout << endl;
+      }
     }
     cout << endl;
     cout << "Namespace list: " << endl;
@@ -414,6 +500,53 @@ int main(int argc, char *argv[]) {
     // Output the function or function directive
     fout << ".. doxygenfunction:: " << function_list[j].ns << "::"
          << function_list[j].name << endl;
+    
+    // Close the file
+    fout.close();
+
+    cout << "Wrote function file: " << fname_out << endl;
+    
+  }
+  cout << endl;
+
+  cout << "---------------------------------------------------" << endl;
+  cout << "Creating rst files for overloaded functions:" << endl;
+  cout << endl;
+  
+  // Proceed through the list
+  for(size_t j=0;j<overloaded_list.size();j++) {
+    
+    // Open the rst file
+    string fname_out="function/";
+    fname_out+=overloaded_list[j].name+".rst";
+    if (overloaded_list[j].name.length()<4 ||
+        overloaded_list[j].name[0]!='o' || overloaded_list[j].name[1]!='p' ||
+        overloaded_list[j].name[2]!='e' || overloaded_list[j].name[3]!='r') {
+      fname_out=underscoreify(fname_out);
+    }
+    ofstream fout(fname_out);
+
+    // Title
+    string head="Function "+overloaded_list[j].name;
+    // If we're in "function mode" and the namespace is not empty,
+    // then add the namespace to the header
+    head+=" ("+overloaded_list[j].ns+")";
+	
+    fout << head << endl;
+    for(size_t i=0;i<head.length();i++) {
+      fout << "=";
+    }
+    fout << endl;
+    fout << endl;
+    
+    fout << ":ref:`O2scl <o2scl>` : :ref:`Function List`\n" << endl;
+    
+    for(size_t k=0;k<overloaded_list[j].args.size();k++) {
+      // Output the function or function directive
+      fout << ".. doxygenfunction:: " << overloaded_list[j].ns << "::"
+           << overloaded_list[j].name
+           << overloaded_list[j].args[k] << "\n" << endl;
+    }
     
     // Close the file
     fout.close();
