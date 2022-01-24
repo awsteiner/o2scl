@@ -25,11 +25,9 @@
 
 using namespace std;
 using namespace o2scl;
-#ifdef O2SCL_HDF
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
 using namespace o2scl_hdf;
-#endif
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 
@@ -166,8 +164,6 @@ int main(void) {
       }
     }
     
-#if O2SCL_HDF
-
     hdf_file hf;
     hf.open_or_create("table3d.o2");
     hdf_output(hf,(const table3d &)bt,"table3d_test");
@@ -181,8 +177,6 @@ int main(void) {
     t.test_gen(bt.get_ny()==bt2.get_ny(),"ny");
     t.test_gen(bt.get_nslices()==bt2.get_nslices(),"cols");
     t.test_gen(bt.get_nconsts()==bt2.get_nconsts(),"cols");
-
-#endif
 
   }    
 

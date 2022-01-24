@@ -60,26 +60,42 @@ check_PROGRAMS = fit_base_ts fit_min_ts fit_fix_ts fit_nonlin_ts \
 
 check_SCRIPTS = o2scl-test
 
-VCHECK_LIBS = ../libo2scl.la
+if O2SCL_PYTHON
 
-fit_base_ts_LDADD = $(VCHECK_LIBS)
-fit_nonlin_ts_LDADD = $(VCHECK_LIBS)
-fit_min_ts_LDADD = $(VCHECK_LIBS)
-fit_fix_ts_LDADD = $(VCHECK_LIBS)
-fit_linear_ts_LDADD = $(VCHECK_LIBS)
-
+ADDL_TEST_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
 if O2SCL_OPENMP
-fit_base_ts_LDFLAGS = -fopenmp
-fit_nonlin_ts_LDFLAGS = -fopenmp
-fit_min_ts_LDFLAGS = -fopenmp
-fit_fix_ts_LDFLAGS = -fopenmp
-fit_linear_ts_LDFLAGS = -fopenmp
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
 endif
 
-#fit_bayes_ts_LDADD = $(VCHECK_LIBS)
+else
 
-#fit_bayes.scr: fit_bayes_ts$(EXEEXT)
-#	./fit_bayes_ts$(EXEEXT) > fit_bayes.scr
+ADDL_TEST_LIBS = ../libo2scl.la
+if O2SCL_OPENMP
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = 
+endif
+
+endif
+
+fit_base_ts_LDADD = $(ADDL_TEST_LIBS)
+fit_nonlin_ts_LDADD = $(ADDL_TEST_LIBS)
+fit_min_ts_LDADD = $(ADDL_TEST_LIBS)
+fit_fix_ts_LDADD = $(ADDL_TEST_LIBS)
+fit_linear_ts_LDADD = $(ADDL_TEST_LIBS)
+
+fit_base_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+fit_nonlin_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+fit_min_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+fit_fix_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+fit_linear_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+
 fit_base.scr: fit_base_ts$(EXEEXT)
 	./fit_base_ts$(EXEEXT) > fit_base.scr
 fit_nonlin.scr: fit_nonlin_ts$(EXEEXT)
@@ -91,7 +107,6 @@ fit_fix.scr: fit_fix_ts$(EXEEXT)
 fit_linear.scr: fit_linear_ts$(EXEEXT)
 	./fit_linear_ts$(EXEEXT) > fit_linear.scr
 
-#fit_bayes_ts_SOURCES = fit_bayes_ts.cpp
 fit_base_ts_SOURCES = fit_base_ts.cpp
 fit_nonlin_ts_SOURCES = fit_nonlin_ts.cpp
 fit_min_ts_SOURCES = fit_min_ts.cpp

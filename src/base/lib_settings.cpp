@@ -31,7 +31,6 @@
 #include <Python.h>
 #endif
 
-#ifdef O2SCL_HDF
 #ifdef O2SCL_PLAIN_HDF5_HEADER
 #include <hdf5.h>
 #else
@@ -39,7 +38,6 @@
 #include <hdf5/serial/hdf5.h>
 #else
 #include <hdf5.h>
-#endif
 #endif
 #endif
 
@@ -321,27 +319,15 @@ bool lib_settings_class::hdf5_compression_support() {
 
 void lib_settings_class::hdf5_header_version(unsigned &maj,
 					     unsigned &min, unsigned &rel) {
-#ifdef O2SCL_HDF
   maj=H5_VERS_MAJOR;
   min=H5_VERS_MINOR;
   rel=H5_VERS_RELEASE;
-#else
-  maj=0;
-  min=0;
-  rel=0;
-#endif
   return;
 }
 
 void lib_settings_class::hdf5_lib_version(unsigned &maj,
 					  unsigned &min, unsigned &rel) {
-#ifdef O2SCL_HDF
   H5get_libversion(&maj,&min,&rel);
-#else
-  maj=0;
-  min=0;
-  rel=0;
-#endif
   return;
 }
 

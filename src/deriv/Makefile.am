@@ -58,12 +58,34 @@ check_PROGRAMS = deriv_cern_ts deriv_eqi_ts deriv_gsl_ts vector_derint_ts
 
 check_SCRIPTS = o2scl-test
 
-VCHECK_LIBS = ../libo2scl.la
+if O2SCL_PYTHON
 
-deriv_cern_ts_LDADD = $(VCHECK_LIBS)
-deriv_gsl_ts_LDADD = $(VCHECK_LIBS)
-deriv_eqi_ts_LDADD = $(VCHECK_LIBS)
-vector_derint_ts_LDADD = $(VCHECK_LIBS)
+ADDL_TEST_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
+if O2SCL_OPENMP
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
+endif
+
+else
+
+ADDL_TEST_LIBS = ../libo2scl.la
+if O2SCL_OPENMP
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = 
+endif
+
+endif
+
+deriv_cern_ts_LDADD = $(ADDL_TEST_LIBS)
+deriv_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+deriv_eqi_ts_LDADD = $(ADDL_TEST_LIBS)
+vector_derint_ts_LDADD = $(ADDL_TEST_LIBS)
 
 deriv_cern.scr: deriv_cern_ts$(EXEEXT)
 	./deriv_cern_ts$(EXEEXT) > deriv_cern.scr
@@ -79,14 +101,11 @@ deriv_gsl_ts_SOURCES = deriv_gsl_ts.cpp
 deriv_eqi_ts_SOURCES = deriv_eqi_ts.cpp
 vector_derint_ts_SOURCES = vector_derint_ts.cpp
 
-if O2SCL_OPENMP
+deriv_cern_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+deriv_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+deriv_eqi_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+vector_derint_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
-deriv_cern_ts_LDFLAGS = -fopenmp
-deriv_gsl_ts_LDFLAGS = -fopenmp
-deriv_eqi_ts_LDFLAGS = -fopenmp
-vector_derint_ts_LDFLAGS = -fopenmp
-
-endif
 # ------------------------------------------------------------
 # No library o2scl_deriv
 # ------------------------------------------------------------

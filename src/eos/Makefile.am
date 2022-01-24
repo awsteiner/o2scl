@@ -107,105 +107,93 @@ check_PROGRAMS = eos_had_apr_ts eos_quark_bag_ts nucmass_ldrop_ts \
 
 check_SCRIPTS = o2scl-test
 
-VCHECK_LIBS = ../libo2scl.la
+if O2SCL_PYTHON
 
-eos_had_apr_ts_LDADD = $(VCHECK_LIBS)
-eos_quark_bag_ts_LDADD = $(VCHECK_LIBS)
-nstar_cold_ts_LDADD = $(VCHECK_LIBS)
-nucmass_ldrop_ts_LDADD = $(VCHECK_LIBS)
-nucmass_ldrop_shell_ts_LDADD = $(VCHECK_LIBS)
-eos_base_ts_LDADD = $(VCHECK_LIBS)
-eos_had_potential_ts_LDADD = $(VCHECK_LIBS)
-eos_had_sym4_ts_LDADD = $(VCHECK_LIBS)
-eos_had_base_ts_LDADD = $(VCHECK_LIBS)
-eos_quark_njl_ts_LDADD = $(VCHECK_LIBS)
-eos_quark_ts_LDADD = $(VCHECK_LIBS)
-eos_had_rmf_ts_LDADD = $(VCHECK_LIBS)
-eos_had_rmf_hyp_ts_LDADD = $(VCHECK_LIBS)
-eos_had_schematic_ts_LDADD = $(VCHECK_LIBS)
-eos_had_skyrme_ts_LDADD = $(VCHECK_LIBS)
-eos_tov_ts_LDADD = $(VCHECK_LIBS)
-eos_cs2_poly_ts_LDADD = $(VCHECK_LIBS)
-tov_solve_ts_LDADD = $(VCHECK_LIBS)
-tov_love_ts_LDADD = $(VCHECK_LIBS)
-nstar_rot_ts_LDADD = $(VCHECK_LIBS)
-eos_quark_cfl6_ts_LDADD = $(VCHECK_LIBS)
-eos_had_tabulated_ts_LDADD = $(VCHECK_LIBS)
-eos_had_rmf_delta_ts_LDADD = $(VCHECK_LIBS)
-eos_crust_ts_LDADD = $(VCHECK_LIBS)
-eos_had_ddc_ts_LDADD = $(VCHECK_LIBS)
-eos_quark_cfl_ts_LDADD = $(VCHECK_LIBS)
-eos_nse_ts_LDADD = $(VCHECK_LIBS)
-eos_nse_full_ts_LDADD = $(VCHECK_LIBS)
-nucleus_rmf_ts_LDADD = $(VCHECK_LIBS)
-eos_had_gogny_ts_LDADD = $(VCHECK_LIBS)
-eos_crust_virial_ts_LDADD = $(VCHECK_LIBS)
-
+ADDL_TEST_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
 if O2SCL_OPENMP
-eos_had_apr_ts_LDFLAGS = -fopenmp
-eos_quark_bag_ts_LDFLAGS = -fopenmp
-nstar_cold_ts_LDFLAGS = -fopenmp
-nucmass_ldrop_ts_LDFLAGS = -fopenmp
-nucmass_ldrop_shell_ts_LDFLAGS = -fopenmp
-eos_base_ts_LDFLAGS = -fopenmp
-eos_had_potential_ts_LDFLAGS = -fopenmp
-eos_had_sym4_ts_LDFLAGS = -fopenmp
-eos_had_base_ts_LDFLAGS = -fopenmp
-eos_quark_njl_ts_LDFLAGS = -fopenmp
-eos_quark_ts_LDFLAGS = -fopenmp
-eos_had_rmf_ts_LDFLAGS = -fopenmp
-eos_had_rmf_hyp_ts_LDFLAGS = -fopenmp
-eos_had_schematic_ts_LDFLAGS = -fopenmp
-eos_had_skyrme_ts_LDFLAGS = -fopenmp
-eos_tov_ts_LDFLAGS = -fopenmp
-eos_cs2_poly_ts_LDFLAGS = -fopenmp
-tov_solve_ts_LDFLAGS = -fopenmp
-tov_love_ts_LDFLAGS = -fopenmp
-nstar_rot_ts_LDFLAGS = -fopenmp
-eos_quark_cfl6_ts_LDFLAGS = -fopenmp
-eos_had_tabulated_ts_LDFLAGS = -fopenmp
-eos_had_rmf_delta_ts_LDFLAGS = -fopenmp
-eos_crust_ts_LDFLAGS = -fopenmp
-eos_had_ddc_ts_LDFLAGS = -fopenmp
-eos_quark_cfl_ts_LDFLAGS = -fopenmp
-eos_nse_ts_LDFLAGS = -fopenmp
-eos_nse_full_ts_LDFLAGS = -fopenmp
-nucleus_rmf_ts_LDFLAGS = -fopenmp
-eos_had_gogny_ts_LDFLAGS = -fopenmp
-eos_crust_virial_ts_LDFLAGS = -fopenmp
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
 else
-eos_had_apr_ts_LDFLAGS =  
-eos_quark_bag_ts_LDFLAGS =  
-nstar_cold_ts_LDFLAGS =  
-nucmass_ldrop_ts_LDFLAGS =  
-nucmass_ldrop_shell_ts_LDFLAGS =  
-eos_base_ts_LDFLAGS =  
-eos_had_potential_ts_LDFLAGS =  
-eos_had_sym4_ts_LDFLAGS =  
-eos_had_base_ts_LDFLAGS =  
-eos_quark_njl_ts_LDFLAGS =  
-eos_quark_ts_LDFLAGS =  
-eos_had_rmf_ts_LDFLAGS =  
-eos_had_rmf_hyp_ts_LDFLAGS =  
-eos_had_schematic_ts_LDFLAGS =  
-eos_had_skyrme_ts_LDFLAGS =  
-eos_tov_ts_LDFLAGS =  
-eos_cs2_poly_ts_LDFLAGS =  
-tov_solve_ts_LDFLAGS =  
-tov_love_ts_LDFLAGS =  
-nstar_rot_ts_LDFLAGS =  
-eos_quark_cfl6_ts_LDFLAGS =  
-eos_had_tabulated_ts_LDFLAGS =  
-eos_had_rmf_delta_ts_LDFLAGS =  
-eos_crust_ts_LDFLAGS =  
-eos_had_ddc_ts_LDFLAGS =  
-eos_quark_cfl_ts_LDFLAGS =  
-eos_nse_ts_LDFLAGS =  
-eos_nse_full_ts_LDFLAGS =  
-nucleus_rmf_ts_LDFLAGS =  
-eos_had_gogny_ts_LDFLAGS =  
-eos_crust_virial_ts_LDFLAGS =  
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
 endif
+
+else
+
+ADDL_TEST_LIBS = ../libo2scl.la
+if O2SCL_OPENMP
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = 
+endif
+
+endif
+
+eos_had_apr_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_quark_bag_ts_LDADD = $(ADDL_TEST_LIBS)
+nstar_cold_ts_LDADD = $(ADDL_TEST_LIBS)
+nucmass_ldrop_ts_LDADD = $(ADDL_TEST_LIBS)
+nucmass_ldrop_shell_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_base_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_had_potential_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_had_sym4_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_had_base_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_quark_njl_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_quark_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_had_rmf_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_had_rmf_hyp_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_had_schematic_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_had_skyrme_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_tov_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_cs2_poly_ts_LDADD = $(ADDL_TEST_LIBS)
+tov_solve_ts_LDADD = $(ADDL_TEST_LIBS)
+tov_love_ts_LDADD = $(ADDL_TEST_LIBS)
+nstar_rot_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_quark_cfl6_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_had_tabulated_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_had_rmf_delta_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_crust_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_had_ddc_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_quark_cfl_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_nse_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_nse_full_ts_LDADD = $(ADDL_TEST_LIBS)
+nucleus_rmf_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_had_gogny_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_crust_virial_ts_LDADD = $(ADDL_TEST_LIBS)
+
+eos_had_apr_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_quark_bag_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nstar_cold_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nucmass_ldrop_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nucmass_ldrop_shell_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_base_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_had_potential_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_had_sym4_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_had_base_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_quark_njl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_quark_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_had_rmf_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_had_rmf_hyp_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_had_schematic_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_had_skyrme_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_tov_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_cs2_poly_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+tov_solve_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+tov_love_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nstar_rot_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_quark_cfl6_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_had_tabulated_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_had_rmf_delta_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_crust_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_had_ddc_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_quark_cfl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_nse_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_nse_full_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nucleus_rmf_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_had_gogny_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_crust_virial_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 eos_had_apr.scr: eos_had_apr_ts$(EXEEXT) 
 	./eos_had_apr_ts$(EXEEXT) > eos_had_apr.scr

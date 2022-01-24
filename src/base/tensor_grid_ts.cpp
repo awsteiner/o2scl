@@ -23,11 +23,10 @@
 #include <o2scl/tensor.h>
 #include <o2scl/tensor_grid.h>
 #include <o2scl/test_mgr.h>
-#if O2SCL_HDF
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
+
 using namespace o2scl_hdf;
-#endif
 
 using namespace std;
 using namespace o2scl;
@@ -365,8 +364,6 @@ int main(void) {
   // -------------------------------------------------------
   // Test tensor_grid3 HDF5 I/O
 
-#if O2SCL_HDF
-
   {
 
     // Construct a small rank-3 tensor
@@ -409,8 +406,6 @@ int main(void) {
 
   }
 
-#endif
-  
   if (true) {
     
     // Test rearrange_and_copy()

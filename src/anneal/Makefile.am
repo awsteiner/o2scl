@@ -65,29 +65,46 @@ endif
 
 check_SCRIPTS = o2scl-test
 
-VCHECK_LIBS = ../libo2scl.la
+if O2SCL_PYTHON
 
-anneal_gsl_ts_LDADD = $(VCHECK_LIBS)
+ADDL_TEST_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
+if O2SCL_OPENMP
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
+endif
+
+else
+
+ADDL_TEST_LIBS = ../libo2scl.la
+if O2SCL_OPENMP
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = 
+endif
+
+endif
+
+
+anneal_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+anneal_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+anneal_gsl_ts_CFLAGS = $(ADDL_TEST_FLGS)
+anneal_gsl_ts_SOURCES = anneal_gsl_ts.cpp
 
 anneal_gsl.scr: anneal_gsl_ts$(EXEEXT)
 	./anneal_gsl_ts$(EXEEXT) > anneal_gsl.scr
 
-anneal_gsl_ts_SOURCES = anneal_gsl_ts.cpp
-
-if O2SCL_OPENMP
-
-anneal_gsl_ts_LDFLAGS = -fopenmp
-
-anneal_para_ts_LDADD = $(VCHECK_LIBS)
-anneal_para_ts_LDFLAGS = -fopenmp
-anneal_para_ts_CFLAGS = -DO2SCL_OPENMP
+anneal_para_ts_LDADD = $(ADDL_TEST_LIBS)
+anneal_para_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+anneal_para_ts_CFLAGS = $(ADDL_TEST_FLGS)
+anneal_para_ts_SOURCES = anneal_para_ts.cpp
 
 anneal_para.scr: anneal_para_ts$(EXEEXT)
 	./anneal_para_ts$(EXEEXT) > anneal_para.scr
-
-anneal_para_ts_SOURCES = anneal_para_ts.cpp
-
-endif
 
 # ------------------------------------------------------------
 # No library o2scl_anneal
