@@ -83,45 +83,53 @@ check_PROGRAMS = nucmass_ts nucdist_ts nucleus_ts \
 
 check_SCRIPTS = o2scl-test
 
-VCHECK_LIBS = ../libo2scl.la 
+if O2SCL_PYTHON
 
-nucmass_ts_LDADD = $(VCHECK_LIBS)
-reaction_lib_ts_LDADD = $(VCHECK_LIBS)
-hdf_nucmass_io_ts_LDADD = $(VCHECK_LIBS)
-nucdist_ts_LDADD = $(VCHECK_LIBS)
-nucleus_ts_LDADD = $(VCHECK_LIBS)
-nucmass_fit_ts_LDADD = $(VCHECK_LIBS)
-nucmass_frdm_ts_LDADD = $(VCHECK_LIBS)
-nucmass_gen_ts_LDADD = $(VCHECK_LIBS)
-nucmass_ame_ts_LDADD = $(VCHECK_LIBS)
-nucmass_dz_ts_LDADD = $(VCHECK_LIBS)
-nucmass_densmat_ts_LDADD = $(VCHECK_LIBS)
-
+ADDL_TEST_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
 if O2SCL_OPENMP
-nucmass_ts_LDFLAGS = -fopenmp
-reaction_lib_ts_LDFLAGS = -fopenmp
-hdf_nucmass_io_ts_LDFLAGS = -fopenmp
-nucdist_ts_LDFLAGS = -fopenmp
-nucleus_ts_LDFLAGS = -fopenmp
-nucmass_fit_ts_LDFLAGS = -fopenmp
-nucmass_frdm_ts_LDFLAGS = -fopenmp
-nucmass_gen_ts_LDFLAGS = -fopenmp
-nucmass_ame_ts_LDFLAGS = -fopenmp
-nucmass_dz_ts_LDFLAGS = -fopenmp
-nucmass_densmat_ts_LDFLAGS = -fopenmp
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
 else
-nucmass_ts_LDFLAGS =  
-reaction_lib_ts_LDFLAGS =  
-hdf_nucmass_io_ts_LDFLAGS =  
-nucdist_ts_LDFLAGS =  
-nucleus_ts_LDFLAGS =  
-nucmass_fit_ts_LDFLAGS =  
-nucmass_frdm_ts_LDFLAGS =  
-nucmass_gen_ts_LDFLAGS =  
-nucmass_ame_ts_LDFLAGS =  
-nucmass_dz_ts_LDFLAGS =  
-nucmass_densmat_ts_LDFLAGS =  
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
 endif
+
+else
+
+ADDL_TEST_LIBS = ../libo2scl.la
+if O2SCL_OPENMP
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = 
+endif
+
+endif
+
+nucmass_ts_LDADD = $(ADDL_TEST_LIBS)
+reaction_lib_ts_LDADD = $(ADDL_TEST_LIBS)
+hdf_nucmass_io_ts_LDADD = $(ADDL_TEST_LIBS)
+nucdist_ts_LDADD = $(ADDL_TEST_LIBS)
+nucleus_ts_LDADD = $(ADDL_TEST_LIBS)
+nucmass_fit_ts_LDADD = $(ADDL_TEST_LIBS)
+nucmass_frdm_ts_LDADD = $(ADDL_TEST_LIBS)
+nucmass_gen_ts_LDADD = $(ADDL_TEST_LIBS)
+nucmass_ame_ts_LDADD = $(ADDL_TEST_LIBS)
+nucmass_dz_ts_LDADD = $(ADDL_TEST_LIBS)
+nucmass_densmat_ts_LDADD = $(ADDL_TEST_LIBS)
+
+nucmass_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+reaction_lib_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+hdf_nucmass_io_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nucdist_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nucleus_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nucmass_fit_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nucmass_frdm_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nucmass_gen_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nucmass_ame_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nucmass_dz_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nucmass_densmat_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 nucmass.scr: nucmass_ts$(EXEEXT)
 	./nucmass_ts$(EXEEXT) > nucmass.scr

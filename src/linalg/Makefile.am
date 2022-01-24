@@ -68,57 +68,61 @@ check_PROGRAMS = cblas_ts permutation_ts lanczos_ts tridiag_ts lu_ts \
 
 check_SCRIPTS = o2scl-test
 
-VCHECK_LIBS = ../libo2scl.la
+if O2SCL_PYTHON
 
-cblas_ts_LDADD = $(VCHECK_LIBS)
-permutation_ts_LDADD = $(VCHECK_LIBS)
-lanczos_ts_LDADD = $(VCHECK_LIBS)
-tridiag_ts_LDADD = $(VCHECK_LIBS)
-lu_ts_LDADD = $(VCHECK_LIBS)
-qr_ts_LDADD = $(VCHECK_LIBS)
-qrpt_ts_LDADD = $(VCHECK_LIBS)
-householder_ts_LDADD = $(VCHECK_LIBS)
-hh_ts_LDADD = $(VCHECK_LIBS)
-linear_solver_ts_LDADD = $(VCHECK_LIBS)
-svdstep_ts_LDADD = $(VCHECK_LIBS)
-cholesky_ts_LDADD = $(VCHECK_LIBS)
-svd_ts_LDADD = $(VCHECK_LIBS)
-bidiag_ts_LDADD = $(VCHECK_LIBS)
-invert_ts_LDADD = $(VCHECK_LIBS)
-
+ADDL_TEST_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
 if O2SCL_OPENMP
-cblas_ts_LDFLAGS = -fopenmp
-permutation_ts_LDFLAGS = -fopenmp
-lanczos_ts_LDFLAGS = -fopenmp
-tridiag_ts_LDFLAGS = -fopenmp
-lu_ts_LDFLAGS = -fopenmp
-qr_ts_LDFLAGS = -fopenmp
-qrpt_ts_LDFLAGS = -fopenmp
-householder_ts_LDFLAGS = -fopenmp
-hh_ts_LDFLAGS = -fopenmp
-linear_solver_ts_LDFLAGS = -fopenmp
-svdstep_ts_LDFLAGS = -fopenmp
-cholesky_ts_LDFLAGS = -fopenmp
-svd_ts_LDFLAGS = -fopenmp
-bidiag_ts_LDFLAGS = -fopenmp
-invert_ts_LDFLAGS = -fopenmp
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
 else
-cblas_ts_LDFLAGS =  
-permutation_ts_LDFLAGS =  
-lanczos_ts_LDFLAGS =  
-tridiag_ts_LDFLAGS =  
-lu_ts_LDFLAGS =  
-qr_ts_LDFLAGS =  
-qrpt_ts_LDFLAGS =  
-householder_ts_LDFLAGS =  
-hh_ts_LDFLAGS =  
-linear_solver_ts_LDFLAGS =  
-svdstep_ts_LDFLAGS =  
-cholesky_ts_LDFLAGS =  
-svd_ts_LDFLAGS =  
-bidiag_ts_LDFLAGS =  
-invert_ts_LDFLAGS =  
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
 endif
+
+else
+
+ADDL_TEST_LIBS = ../libo2scl.la
+if O2SCL_OPENMP
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = 
+endif
+
+endif
+
+cblas_ts_LDADD = $(ADDL_TEST_LIBS)
+permutation_ts_LDADD = $(ADDL_TEST_LIBS)
+lanczos_ts_LDADD = $(ADDL_TEST_LIBS)
+tridiag_ts_LDADD = $(ADDL_TEST_LIBS)
+lu_ts_LDADD = $(ADDL_TEST_LIBS)
+qr_ts_LDADD = $(ADDL_TEST_LIBS)
+qrpt_ts_LDADD = $(ADDL_TEST_LIBS)
+householder_ts_LDADD = $(ADDL_TEST_LIBS)
+hh_ts_LDADD = $(ADDL_TEST_LIBS)
+linear_solver_ts_LDADD = $(ADDL_TEST_LIBS)
+svdstep_ts_LDADD = $(ADDL_TEST_LIBS)
+cholesky_ts_LDADD = $(ADDL_TEST_LIBS)
+svd_ts_LDADD = $(ADDL_TEST_LIBS)
+bidiag_ts_LDADD = $(ADDL_TEST_LIBS)
+invert_ts_LDADD = $(ADDL_TEST_LIBS)
+
+cblas_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+permutation_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+lanczos_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+tridiag_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+lu_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+qr_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+qrpt_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+householder_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+hh_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+linear_solver_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+svdstep_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+cholesky_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+svd_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+bidiag_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+invert_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 cblas.scr: cblas_ts$(EXEEXT) 
 	./cblas_ts$(EXEEXT) > cblas.scr

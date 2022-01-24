@@ -69,33 +69,53 @@ check_SCRIPTS = o2scl-test
 
 #ode_bv_mshoot_ts ode_bv_solve_ts ode_iv_table_ts
 
-VCHECK_LIBS = ../libo2scl.la
+if O2SCL_PYTHON
 
-astep_gsl_ts_LDADD = $(VCHECK_LIBS)
-ode_rkf45_gsl_ts_LDADD = $(VCHECK_LIBS)
-ode_rkck_gsl_ts_LDADD = $(VCHECK_LIBS)
-ode_bsimp_gsl_ts_LDADD = $(VCHECK_LIBS)
-astep_nonadapt_ts_LDADD = $(VCHECK_LIBS)
-ode_iv_solve_ts_LDADD = $(VCHECK_LIBS)
-#ode_iv_table_ts_LDADD = $(VCHECK_LIBS)
-#ode_bv_mshoot_ts_LDADD = $(VCHECK_LIBS)
-ode_it_solve_ts_LDADD = $(VCHECK_LIBS)
-#ode_bv_solve_ts_LDADD = $(VCHECK_LIBS)
-ode_rk8pd_gsl_ts_LDADD = $(VCHECK_LIBS)
-
+ADDL_TEST_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
 if O2SCL_OPENMP
-astep_gsl_ts_LDFLAGS = -fopenmp
-ode_rkf45_gsl_ts_LDFLAGS = -fopenmp
-ode_rkck_gsl_ts_LDFLAGS = -fopenmp
-ode_bsimp_gsl_ts_LDFLAGS = -fopenmp
-astep_nonadapt_ts_LDFLAGS = -fopenmp
-ode_iv_solve_ts_LDFLAGS = -fopenmp
-#ode_iv_table_ts_LDFLAGS = -fopenmp
-#ode_bv_mshoot_ts_LDFLAGS = -fopenmp
-ode_it_solve_ts_LDFLAGS = -fopenmp
-#ode_bv_solve_ts_LDFLAGS = -fopenmp
-ode_rk8pd_gsl_ts_LDFLAGS = -fopenmp
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
 endif
+
+else
+
+ADDL_TEST_LIBS = ../libo2scl.la
+if O2SCL_OPENMP
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = 
+endif
+
+endif
+
+astep_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+ode_rkf45_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+ode_rkck_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+ode_bsimp_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+astep_nonadapt_ts_LDADD = $(ADDL_TEST_LIBS)
+ode_iv_solve_ts_LDADD = $(ADDL_TEST_LIBS)
+#ode_iv_table_ts_LDADD = $(ADDL_TEST_LIBS)
+#ode_bv_mshoot_ts_LDADD = $(ADDL_TEST_LIBS)
+ode_it_solve_ts_LDADD = $(ADDL_TEST_LIBS)
+#ode_bv_solve_ts_LDADD = $(ADDL_TEST_LIBS)
+ode_rk8pd_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+
+astep_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ode_rkf45_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ode_rkck_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ode_bsimp_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+astep_nonadapt_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ode_iv_solve_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+#ode_iv_table_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+#ode_bv_mshoot_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ode_it_solve_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+#ode_bv_solve_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ode_rk8pd_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 astep_gsl.scr: astep_gsl_ts$(EXEEXT)
 	./astep_gsl_ts$(EXEEXT) > astep_gsl.scr
