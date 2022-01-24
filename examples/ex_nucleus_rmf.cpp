@@ -30,17 +30,13 @@
 */
 #include <o2scl/nucleus_rmf.h>
 #include <o2scl/test_mgr.h>
-#ifdef O2SCL_HDF
 #include <o2scl/hdf_io.h>
 #include <o2scl/hdf_eos_io.h>
-#endif
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
-#ifdef O2SCL_HDF
 using namespace o2scl_hdf;
-#endif
 
 int lead_chden_exp(std::shared_ptr<table_units<> > profiles);
 

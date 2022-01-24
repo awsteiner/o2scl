@@ -81,8 +81,7 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 
 # ex_ode_it.scr ex_eos_sn.scr ex_interp2_nogrid.scr 
 
-OOLIBSTWO = -lo2scl_eos -lo2scl_part -lo2scl_hdf -lo2scl \
-		-L../src -L../src/eos -L../src/hdf
+OOLIBSTWO = -lo2scl -L../src -L../src/eos -L../src/hdf
 
 if O2SCL_LINUX
 O2SCL_LINUX_MVAR = -DO2SCL_LINUX

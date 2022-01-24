@@ -1,7 +1,7 @@
 Fermion Details
 ===============
 
-:ref:`O2scl_part <o2sclp>`
+:ref:`O2scl <o2scl>`
 
 Fermion details contents
 ------------------------
@@ -50,7 +50,7 @@ Relativistic versus non-relativistic fermions
 ---------------------------------------------
 
 There are a few distinctions between how relativistic and
-nonrelativistic fermions are handled in :ref:`o2scl_part <o2sclp>`
+nonrelativistic fermions are handled in :ref:`o2scl <o2scl>`
 which are worth noting. For an interacting relativistic fermion, the
 effective mass, :math:`m^{*}`, and the effective chemical potential,
 :math:`\nu` are defined so that the energy density is

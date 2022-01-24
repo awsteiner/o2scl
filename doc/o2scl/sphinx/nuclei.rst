@@ -1,7 +1,7 @@
 Nuclei and Nuclear Masses
 =========================
 
-:ref:`O2scl_part <o2sclp>`
+:ref:`O2scl <o2scl>`
 
 A basic data structure for nuclei, class :cpp:class:`o2scl::nucleus`, is
 implemented as a child of :cpp:class:`o2scl::part_tl`.

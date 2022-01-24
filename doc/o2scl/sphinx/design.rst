@@ -163,14 +163,6 @@ Finally, I sometimes comment out sections of code with::
 This constant should not be defined by the user as it will cause
 compilation to fail.
 
-..
-  These are makefile constants not source code define constants
-
-  The two define constants O2SCL_PARTLIB and O2SCL_EOSLIB are used
-  internally to control which sublibraries are compiled together
-  with the main library (see \ref install_section ). The end-user
-  shouldn't have to worry about these.
-
 Parameter ordering
 ------------------
 

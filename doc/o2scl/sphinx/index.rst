@@ -8,11 +8,9 @@ computing. This is a beta version. The library should install and test
 successfully, and most of the classes are ready for production use.
 Some of the interfaces may change slightly in future versions. There
 are a few classes which are more experimental, and this is stated at
-the top of the documentation for these classes.
-
-There are sub-libraries for handling thermodynamics of particles and
-nuclei, `O2scl_part <../part/html/index.html>`_ and equations of state
-of dense matter, `O2scl_eos <../eos/html/index.html>`_ .
+the top of the documentation for these classes. O\ :sub:`2`\ scl also
+computes the thermodynamics of particles and nuclei and equations of
+state of dense matter.
 
 Gallery
 =======

@@ -234,17 +234,18 @@ errors:
   occurs if the maximum level of the table of Chebyshev
   moments is reached.
 
-Multi-dimensional integration routines
---------------------------------------
-
-O\ :sub:`2`\ scl reimplements the Cubature library for
-multi-dimensional integration. The h-adaptive and p-adaptive
-integration methods are implemented in :ref:`inte_hcubature
-<inte_hcubature>` and :ref:`inte_pcubature <inte_pcubature>`. See also
-the Monte Carlo integration routines in :ref:`Monte Carlo
-Integration`.
-
 ..
+  
+  Multi-dimensional integration routines
+  --------------------------------------
+
+  O\ :sub:`2`\ scl reimplements the Cubature library for
+  multi-dimensional integration. The h-adaptive and p-adaptive
+  integration methods are implemented in :ref:`inte_hcubature
+  <inte_hcubature>` and :ref:`inte_pcubature <inte_pcubature>`. See also
+  the Monte Carlo integration routines in :ref:`Monte Carlo
+  Integration`.
+
   Multi-dimensional hypercubic integration is performed by
   children of :ref:`inte_multi . Currently in O\ :sub:`2`\ scl, only the 
 

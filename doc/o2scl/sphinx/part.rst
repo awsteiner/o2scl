@@ -1,11 +1,10 @@
 Particles
 =========
     
-:ref:`O2scl_part <o2sclp>`
+:ref:`O2scl <o2scl>`
 
-The classes in the library O\ :sub:`2`\ scl_part described below
-calculate the thermodynamic properties of interacting and
-non-interacting quantum and \classical particles.
+The classes described below calculate the thermodynamic properties of
+interacting and non-interacting quantum and \classical particles.
 
 Particles contents
 ------------------

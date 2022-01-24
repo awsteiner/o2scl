@@ -264,9 +264,6 @@ several details about how O\ :sub:`2`\ scl was compiled.
 - O2SCL_ENABLE_ACOL - Internal flag to tell the makefiles if
   ``acol`` is to be compiled. This is set by default unless the
   configure script is specified with ``--disable-acol``.
-- O2SCL_EOS - Internal flag to tell the makefiles if the O\ :sub:`2`\ scle
-  library is to be included. The end-user should not
-  need to use this.
 - O2SCL_FAST_TEST - Internal flag to speed up testing so that
   travis-ci.org builds don't time out. This constant is 
   defined by the ``--with-fast-test`` option in homebrew.
@@ -312,11 +309,6 @@ several details about how O\ :sub:`2`\ scl was compiled.
   enable OpenMP support in their code.
   The command ``acol -v`` reports on whether or not
   OpenMP was enabled during installation.
-- O2SCL_PART - Internal flag to tell the makefiles if the O\ :sub:`2`\
-  sclp library is to be included. This constant is automatically set
-  by the configure script depending on whether or not
-  ``--disable-partlib`` is specified. End-user code which uses O\
-  :sub:`2`\ sclp should not need to define this.
 - O2SCL_PYTHON - Doesn't do anything (yet).
 - O2SCL_READLINE - Internal flag to tell the makefiles if GNU
   readline support should be included in ``acol``. The end-user

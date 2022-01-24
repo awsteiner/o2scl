@@ -29,9 +29,7 @@ https://snapcraft.io/o2scl). Use::
 
   sudo snap install (--edge or --beta) --devmode o2scl
 
-The snap installation includes HDF5 support, the O\ :sub:`2`\ scl_part
-and O\ :sub:`2`\ scl_eos sub-libraries, readline support, and uses the
-GSL CBLAS.
+The snap installation includes readline support and uses the GSL CBLAS.
 
 Using the command-line utility ``acol`` may require you to set the
 environment variable ``LD_LIBRARY_PATH``. For example, on machines
@@ -108,14 +106,8 @@ for ``libgslcblas``. If neither is present, then you may have to
 manually specify a CBLAS library using the ``LIBS`` and ``LDFLAGS``
 environment variables.
 
-Compiling with the readline, ncurses, and HDF5 libraries is optional,
-but they are assumed to be present by default. To compile without
-these libraries, you will need to use the arguments
-``--disable-readline``, ``--disable-ncurses`` or ``--disable-hdf`` to
-``./configure``, respectively. Note that HDF5 is currently required
-for the physics sub-libraries, so ``--disable-hdf`` should be
-accompanied by the ``--disable-eoslib`` and ``--disable-partlib``
-flags.
+Compiling with the readline and ncurses libraries is optional,
+but they are assumed to be present by default. 
 
 After ``make install``, you may test the library with ``make check``
 or ``make o2scl-test``. At the end, the phrase ``"All O2scl tests
@@ -229,18 +221,6 @@ default. You can disable range-checking by defining
 -DO2SCL_NO_RANGE_CHECK, e.g.::
 
   CXXFLAGS="-DO2SCL_NO_RANGE_CHECK" ./configure
-
-Optional physics libraries
---------------------------
-
-The separate libraries O\ :sub:`2`\ scl_eos and O\ :sub:`2`\ scl_part
-are installed by default. To disable the installation of these
-libraries and their associated documentation, run ``./configure`` with
-the flags ``--disable-eoslib`` or ``--disable-partlib``. Note that O\
-:sub:`2`\ scl_eos depends on O\ :sub:`2`\ scl_part so using
-``--disable-partlib`` without ``--disable-eoslib`` will not work. Note
-also that both O\ :sub:`2`\ scl_part and O\ :sub:`2`\ scl_eos require
-HDF5 support.
 
 More configure flags
 --------------------
