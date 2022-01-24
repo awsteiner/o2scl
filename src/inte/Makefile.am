@@ -79,43 +79,63 @@ check_PROGRAMS = inte_adapt_cern_ts inte_cauchy_cern_ts inte_gauss_cern_ts \
 
 check_SCRIPTS = o2scl-test
 
-VCHECK_LIBS = ../libo2scl.la
+if O2SCL_PYTHON
 
-inte_adapt_cern_ts_LDADD = $(VCHECK_LIBS)
-inte_cauchy_cern_ts_LDADD = $(VCHECK_LIBS)
-inte_gauss_cern_ts_LDADD = $(VCHECK_LIBS)
-inte_qng_gsl_ts_LDADD = $(VCHECK_LIBS)
-inte_qag_gsl_ts_LDADD = $(VCHECK_LIBS)
-inte_qags_gsl_ts_LDADD = $(VCHECK_LIBS)
-inte_qagi_gsl_ts_LDADD = $(VCHECK_LIBS)
-inte_qagil_gsl_ts_LDADD = $(VCHECK_LIBS)
-inte_qagiu_gsl_ts_LDADD = $(VCHECK_LIBS)
-inte_qawc_gsl_ts_LDADD = $(VCHECK_LIBS)
-inte_qawo_gsl_ts_LDADD = $(VCHECK_LIBS)
-inte_qawf_gsl_ts_LDADD = $(VCHECK_LIBS)
-inte_qaws_gsl_ts_LDADD = $(VCHECK_LIBS)
-inte_gauss56_cern_ts_LDADD = $(VCHECK_LIBS)
-inte_kronrod_boost_ts_LDADD = $(VCHECK_LIBS)
-inte_double_exp_boost_ts_LDADD = $(VCHECK_LIBS)
-
+ADDL_TEST_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
 if O2SCL_OPENMP
-inte_adapt_cern_ts_LDFLAGS = -fopenmp
-inte_cauchy_cern_ts_LDFLAGS = -fopenmp
-inte_gauss_cern_ts_LDFLAGS = -fopenmp
-inte_qng_gsl_ts_LDFLAGS = -fopenmp
-inte_qag_gsl_ts_LDFLAGS = -fopenmp
-inte_qags_gsl_ts_LDFLAGS = -fopenmp
-inte_qagi_gsl_ts_LDFLAGS = -fopenmp
-inte_qagil_gsl_ts_LDFLAGS = -fopenmp
-inte_qagiu_gsl_ts_LDFLAGS = -fopenmp
-inte_qawc_gsl_ts_LDFLAGS = -fopenmp
-inte_qawo_gsl_ts_LDFLAGS = -fopenmp
-inte_qawf_gsl_ts_LDFLAGS = -fopenmp
-inte_qaws_gsl_ts_LDFLAGS = -fopenmp
-inte_gauss56_cern_ts_LDFLAGS = -fopenmp
-inte_kronrod_boost_ts_LDFLAGS = -fopenmp
-inte_double_exp_boost_ts_LDFLAGS = -fopenmp
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
 endif
+
+else
+
+ADDL_TEST_LIBS = ../libo2scl.la
+if O2SCL_OPENMP
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = 
+endif
+
+endif
+
+inte_adapt_cern_ts_LDADD = $(ADDL_TEST_LIBS)
+inte_cauchy_cern_ts_LDADD = $(ADDL_TEST_LIBS)
+inte_gauss_cern_ts_LDADD = $(ADDL_TEST_LIBS)
+inte_qng_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+inte_qag_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+inte_qags_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+inte_qagi_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+inte_qagil_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+inte_qagiu_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+inte_qawc_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+inte_qawo_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+inte_qawf_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+inte_qaws_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+inte_gauss56_cern_ts_LDADD = $(ADDL_TEST_LIBS)
+inte_kronrod_boost_ts_LDADD = $(ADDL_TEST_LIBS)
+inte_double_exp_boost_ts_LDADD = $(ADDL_TEST_LIBS)
+
+inte_adapt_cern_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+inte_cauchy_cern_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+inte_gauss_cern_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+inte_qng_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+inte_qag_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+inte_qags_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+inte_qagi_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+inte_qagil_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+inte_qagiu_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+inte_qawc_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+inte_qawo_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+inte_qawf_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+inte_qaws_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+inte_gauss56_cern_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+inte_kronrod_boost_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+inte_double_exp_boost_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 inte_adapt_cern.scr: inte_adapt_cern_ts$(EXEEXT) 
 	./inte_adapt_cern_ts$(EXEEXT) > inte_adapt_cern.scr

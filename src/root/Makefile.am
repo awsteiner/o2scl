@@ -68,29 +68,49 @@ check_PROGRAMS = root_bkt_cern_ts mroot_cern_ts mroot_hybrids_ts \
 
 check_SCRIPTS = o2scl-test
 
-VCHECK_LIBS = ../libo2scl.la
+if O2SCL_PYTHON
 
-root_bkt_cern_ts_LDADD = $(VCHECK_LIBS)
-mroot_cern_ts_LDADD = $(VCHECK_LIBS)
-mroot_hybrids_ts_LDADD = $(VCHECK_LIBS)
-mroot_broyden_ts_LDADD = $(VCHECK_LIBS)
-root_stef_ts_LDADD = $(VCHECK_LIBS)
-root_cern_ts_LDADD = $(VCHECK_LIBS)
-root_brent_gsl_ts_LDADD = $(VCHECK_LIBS)
-root_toms748_ts_LDADD = $(VCHECK_LIBS)
-jacobian_ts_LDADD = $(VCHECK_LIBS)
-
+ADDL_TEST_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
 if O2SCL_OPENMP
-root_bkt_cern_ts_LDFLAGS = -fopenmp
-mroot_cern_ts_LDFLAGS = -fopenmp
-mroot_hybrids_ts_LDFLAGS = -fopenmp
-mroot_broyden_ts_LDFLAGS = -fopenmp
-root_stef_ts_LDFLAGS = -fopenmp
-root_cern_ts_LDFLAGS = -fopenmp
-root_brent_gsl_ts_LDFLAGS = -fopenmp
-root_toms748_ts_LDFLAGS = -fopenmp
-jacobian_ts_LDFLAGS = -fopenmp
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
 endif
+
+else
+
+ADDL_TEST_LIBS = ../libo2scl.la
+if O2SCL_OPENMP
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = 
+endif
+
+endif
+
+root_bkt_cern_ts_LDADD = $(ADDL_TEST_LIBS)
+mroot_cern_ts_LDADD = $(ADDL_TEST_LIBS)
+mroot_hybrids_ts_LDADD = $(ADDL_TEST_LIBS)
+mroot_broyden_ts_LDADD = $(ADDL_TEST_LIBS)
+root_stef_ts_LDADD = $(ADDL_TEST_LIBS)
+root_cern_ts_LDADD = $(ADDL_TEST_LIBS)
+root_brent_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+root_toms748_ts_LDADD = $(ADDL_TEST_LIBS)
+jacobian_ts_LDADD = $(ADDL_TEST_LIBS)
+
+root_bkt_cern_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+mroot_cern_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+mroot_hybrids_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+mroot_broyden_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+root_stef_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+root_cern_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+root_brent_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+root_toms748_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+jacobian_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 root_bkt_cern.scr: root_bkt_cern_ts$(EXEEXT) 
 	./root_bkt_cern_ts$(EXEEXT) > root_bkt_cern.scr

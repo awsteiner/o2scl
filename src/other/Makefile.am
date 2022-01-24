@@ -103,49 +103,69 @@ check_PROGRAMS = series_acc_ts interp2_planar_ts \
 
 check_SCRIPTS = o2scl-test
 
-VCHECK_LIBS = ../libo2scl.la
+if O2SCL_PYTHON
 
-smooth_gsl_ts_LDADD = $(VCHECK_LIBS)
-series_acc_ts_LDADD = $(VCHECK_LIBS)
-interp2_planar_ts_LDADD = $(VCHECK_LIBS)
-interp2_neigh_ts_LDADD = $(VCHECK_LIBS)
-interpm_idw_ts_LDADD = $(VCHECK_LIBS)
-smooth_func_ts_LDADD = $(VCHECK_LIBS)
-interpm_krige_ts_LDADD = $(VCHECK_LIBS)
-contour_ts_LDADD = $(VCHECK_LIBS)
-poly_ts_LDADD = $(VCHECK_LIBS)
-polylog_ts_LDADD = $(VCHECK_LIBS)
-interp2_seq_ts_LDADD = $(VCHECK_LIBS)
-prob_dens_mdim_amr_ts_LDADD = $(VCHECK_LIBS)
-interp2_direct_ts_LDADD = $(VCHECK_LIBS)
-cheb_approx_ts_LDADD = $(VCHECK_LIBS)
-pinside_ts_LDADD = $(VCHECK_LIBS)
-hist_ts_LDADD = $(VCHECK_LIBS)
-hist_2d_ts_LDADD = $(VCHECK_LIBS)
-prob_dens_func_ts_LDADD = $(VCHECK_LIBS)
-vec_stats_ts_LDADD = $(VCHECK_LIBS)
-
+ADDL_TEST_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
 if O2SCL_OPENMP
-smooth_gsl_ts_LDFLAGS = -fopenmp
-series_acc_ts_LDFLAGS = -fopenmp
-interp2_planar_ts_LDFLAGS = -fopenmp
-interp2_neigh_ts_LDFLAGS = -fopenmp
-interpm_idw_ts_LDFLAGS = -fopenmp
-smooth_func_ts_LDFLAGS = -fopenmp
-interpm_krige_ts_LDFLAGS = -fopenmp
-contour_ts_LDFLAGS = -fopenmp
-poly_ts_LDFLAGS = -fopenmp
-polylog_ts_LDFLAGS = -fopenmp
-interp2_seq_ts_LDFLAGS = -fopenmp
-prob_dens_mdim_amr_ts_LDFLAGS = -fopenmp
-interp2_direct_ts_LDFLAGS = -fopenmp
-cheb_approx_ts_LDFLAGS = -fopenmp
-pinside_ts_LDFLAGS = -fopenmp
-hist_ts_LDFLAGS = -fopenmp
-hist_2d_ts_LDFLAGS = -fopenmp
-prob_dens_func_ts_LDFLAGS = -fopenmp
-vec_stats_ts_LDFLAGS = -fopenmp
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
 endif
+
+else
+
+ADDL_TEST_LIBS = ../libo2scl.la
+if O2SCL_OPENMP
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = 
+endif
+
+endif
+
+smooth_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+series_acc_ts_LDADD = $(ADDL_TEST_LIBS)
+interp2_planar_ts_LDADD = $(ADDL_TEST_LIBS)
+interp2_neigh_ts_LDADD = $(ADDL_TEST_LIBS)
+interpm_idw_ts_LDADD = $(ADDL_TEST_LIBS)
+smooth_func_ts_LDADD = $(ADDL_TEST_LIBS)
+interpm_krige_ts_LDADD = $(ADDL_TEST_LIBS)
+contour_ts_LDADD = $(ADDL_TEST_LIBS)
+poly_ts_LDADD = $(ADDL_TEST_LIBS)
+polylog_ts_LDADD = $(ADDL_TEST_LIBS)
+interp2_seq_ts_LDADD = $(ADDL_TEST_LIBS)
+prob_dens_mdim_amr_ts_LDADD = $(ADDL_TEST_LIBS)
+interp2_direct_ts_LDADD = $(ADDL_TEST_LIBS)
+cheb_approx_ts_LDADD = $(ADDL_TEST_LIBS)
+pinside_ts_LDADD = $(ADDL_TEST_LIBS)
+hist_ts_LDADD = $(ADDL_TEST_LIBS)
+hist_2d_ts_LDADD = $(ADDL_TEST_LIBS)
+prob_dens_func_ts_LDADD = $(ADDL_TEST_LIBS)
+vec_stats_ts_LDADD = $(ADDL_TEST_LIBS)
+
+smooth_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+series_acc_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+interp2_planar_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+interp2_neigh_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+interpm_idw_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+smooth_func_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+interpm_krige_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+contour_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+poly_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+polylog_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+interp2_seq_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+prob_dens_mdim_amr_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+interp2_direct_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+cheb_approx_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+pinside_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+hist_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+hist_2d_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+prob_dens_func_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+vec_stats_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 smooth_gsl.scr: smooth_gsl_ts$(EXEEXT) 
 	./smooth_gsl_ts$(EXEEXT) > smooth_gsl.scr

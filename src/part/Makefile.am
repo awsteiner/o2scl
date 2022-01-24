@@ -83,54 +83,59 @@ check_PROGRAMS = classical_ts fermion_eff_ts fermion_rel_ts \
 
 check_SCRIPTS = o2scl-test
 
-VCHECK_LIBS = ../libo2scl.la
+if O2SCL_PYTHON
 
-classical_ts_LDADD = $(VCHECK_LIBS)
-fermion_eff_ts_LDADD = $(VCHECK_LIBS)
-fermion_rel_ts_LDADD = $(VCHECK_LIBS)
-boson_ts_LDADD = $(VCHECK_LIBS)
-fermion_ts_LDADD = $(VCHECK_LIBS)
-part_ts_LDADD = $(VCHECK_LIBS)
-quark_ts_LDADD = $(VCHECK_LIBS)
-classical_deriv_ts_LDADD = $(VCHECK_LIBS)
-fermion_nonrel_ts_LDADD = $(VCHECK_LIBS)
-fermion_deriv_rel_ts_LDADD = $(VCHECK_LIBS)
-fermion_deriv_nr_ts_LDADD = $(VCHECK_LIBS)
-boson_rel_ts_LDADD = $(VCHECK_LIBS)
-boson_eff_ts_LDADD = $(VCHECK_LIBS)
-fermion_mag_zerot_ts_LDADD = $(VCHECK_LIBS)
-
+ADDL_TEST_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
 if O2SCL_OPENMP
-classical_ts_LDFLAGS = -fopenmp
-fermion_eff_ts_LDFLAGS = -fopenmp
-fermion_rel_ts_LDFLAGS = -fopenmp
-boson_ts_LDFLAGS = -fopenmp
-fermion_ts_LDFLAGS = -fopenmp
-part_ts_LDFLAGS = -fopenmp
-quark_ts_LDFLAGS = -fopenmp
-classical_deriv_ts_LDFLAGS = -fopenmp
-fermion_nonrel_ts_LDFLAGS = -fopenmp
-fermion_deriv_rel_ts_LDFLAGS = -fopenmp
-fermion_deriv_nr_ts_LDFLAGS = -fopenmp
-boson_rel_ts_LDFLAGS = -fopenmp
-boson_eff_ts_LDFLAGS = -fopenmp
-fermion_mag_zerot_ts_LDFLAGS = -fopenmp
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
 else
-classical_ts_LDFLAGS =  
-fermion_eff_ts_LDFLAGS =  
-fermion_rel_ts_LDFLAGS =  
-boson_ts_LDFLAGS =  
-fermion_ts_LDFLAGS =  
-part_ts_LDFLAGS =  
-quark_ts_LDFLAGS =  
-classical_deriv_ts_LDFLAGS =  
-fermion_nonrel_ts_LDFLAGS =  
-fermion_deriv_rel_ts_LDFLAGS =  
-fermion_deriv_nr_ts_LDFLAGS =  
-boson_rel_ts_LDFLAGS =  
-boson_eff_ts_LDFLAGS =  
-fermion_mag_zerot_ts_LDFLAGS =  
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
 endif
+
+else
+
+ADDL_TEST_LIBS = ../libo2scl.la
+if O2SCL_OPENMP
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = 
+endif
+
+endif
+
+classical_ts_LDADD = $(ADDL_TEST_LIBS)
+fermion_eff_ts_LDADD = $(ADDL_TEST_LIBS)
+fermion_rel_ts_LDADD = $(ADDL_TEST_LIBS)
+boson_ts_LDADD = $(ADDL_TEST_LIBS)
+fermion_ts_LDADD = $(ADDL_TEST_LIBS)
+part_ts_LDADD = $(ADDL_TEST_LIBS)
+quark_ts_LDADD = $(ADDL_TEST_LIBS)
+classical_deriv_ts_LDADD = $(ADDL_TEST_LIBS)
+fermion_nonrel_ts_LDADD = $(ADDL_TEST_LIBS)
+fermion_deriv_rel_ts_LDADD = $(ADDL_TEST_LIBS)
+fermion_deriv_nr_ts_LDADD = $(ADDL_TEST_LIBS)
+boson_rel_ts_LDADD = $(ADDL_TEST_LIBS)
+boson_eff_ts_LDADD = $(ADDL_TEST_LIBS)
+fermion_mag_zerot_ts_LDADD = $(ADDL_TEST_LIBS)
+
+classical_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+fermion_eff_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+fermion_rel_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+boson_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+fermion_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+part_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+quark_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+classical_deriv_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+fermion_nonrel_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+fermion_deriv_rel_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+fermion_deriv_nr_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+boson_rel_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+boson_eff_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+fermion_mag_zerot_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 classical.scr: classical_ts$(EXEEXT) 
 	./classical_ts$(EXEEXT) > classical.scr

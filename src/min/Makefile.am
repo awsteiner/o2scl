@@ -69,39 +69,59 @@ check_PROGRAMS = min_cern_ts min_brent_gsl_ts \
 
 check_SCRIPTS = o2scl-test
 
-VCHECK_LIBS = ../libo2scl.la
+if O2SCL_PYTHON
 
-min_cern_ts_LDADD = $(VCHECK_LIBS)
-min_brent_gsl_ts_LDADD = $(VCHECK_LIBS)
-min_brent_boost_ts_LDADD = $(VCHECK_LIBS)
-min_quad_golden_ts_LDADD = $(VCHECK_LIBS)
-mmin_simp2_ts_LDADD = $(VCHECK_LIBS)
-mmin_conf_ts_LDADD = $(VCHECK_LIBS)
-mmin_conp_ts_LDADD = $(VCHECK_LIBS)
-mmin_bfgs2_ts_LDADD = $(VCHECK_LIBS)
-mmin_fix_ts_LDADD = $(VCHECK_LIBS)
-mmin_constr_pgrad_ts_LDADD = $(VCHECK_LIBS)
-mmin_constr_spg_ts_LDADD = $(VCHECK_LIBS)
-diff_evo_ts_LDADD = $(VCHECK_LIBS)
-diff_evo_adapt_ts_LDADD = $(VCHECK_LIBS)
-min_ts_LDADD = $(VCHECK_LIBS)
-
+ADDL_TEST_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
 if O2SCL_OPENMP
-min_cern_ts_LDFLAGS = -fopenmp
-min_brent_gsl_ts_LDFLAGS = -fopenmp
-min_brent_boost_ts_LDFLAGS = -fopenmp
-min_quad_golden_ts_LDFLAGS = -fopenmp
-mmin_simp2_ts_LDFLAGS = -fopenmp
-mmin_conf_ts_LDFLAGS = -fopenmp
-mmin_conp_ts_LDFLAGS = -fopenmp
-mmin_bfgs2_ts_LDFLAGS = -fopenmp
-mmin_fix_ts_LDFLAGS = -fopenmp
-mmin_constr_pgrad_ts_LDFLAGS = -fopenmp
-mmin_constr_spg_ts_LDFLAGS = -fopenmp
-diff_evo_ts_LDFLAGS = -fopenmp
-diff_evo_adapt_ts_LDFLAGS = -fopenmp
-min_ts_LDFLAGS = -fopenmp
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
 endif
+
+else
+
+ADDL_TEST_LIBS = ../libo2scl.la
+if O2SCL_OPENMP
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = 
+endif
+
+endif
+
+min_cern_ts_LDADD = $(ADDL_TEST_LIBS)
+min_brent_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+min_brent_boost_ts_LDADD = $(ADDL_TEST_LIBS)
+min_quad_golden_ts_LDADD = $(ADDL_TEST_LIBS)
+mmin_simp2_ts_LDADD = $(ADDL_TEST_LIBS)
+mmin_conf_ts_LDADD = $(ADDL_TEST_LIBS)
+mmin_conp_ts_LDADD = $(ADDL_TEST_LIBS)
+mmin_bfgs2_ts_LDADD = $(ADDL_TEST_LIBS)
+mmin_fix_ts_LDADD = $(ADDL_TEST_LIBS)
+mmin_constr_pgrad_ts_LDADD = $(ADDL_TEST_LIBS)
+mmin_constr_spg_ts_LDADD = $(ADDL_TEST_LIBS)
+diff_evo_ts_LDADD = $(ADDL_TEST_LIBS)
+diff_evo_adapt_ts_LDADD = $(ADDL_TEST_LIBS)
+min_ts_LDADD = $(ADDL_TEST_LIBS)
+
+min_cern_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+min_brent_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+min_brent_boost_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+min_quad_golden_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+mmin_simp2_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+mmin_conf_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+mmin_conp_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+mmin_bfgs2_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+mmin_fix_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+mmin_constr_pgrad_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+mmin_constr_spg_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+diff_evo_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+diff_evo_adapt_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+min_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 min_cern.scr: min_cern_ts$(EXEEXT) 
 	./min_cern_ts$(EXEEXT) > min_cern.scr
