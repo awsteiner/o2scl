@@ -243,7 +243,7 @@ public:
       vector<double> line={nbt,th.pr,0.0};
       tneut.line_of_data(line.size(),line);
       line={th.ed,th.pr,0.0};
-      tneut2.line_of_data(line.size(),line2);
+      tneut2.line_of_data(line.size(),line);
     }
     
     return;
