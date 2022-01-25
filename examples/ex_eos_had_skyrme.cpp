@@ -240,10 +240,10 @@ public:
       n.n=nbt;
       p.n=0;
       int ret=sk.calc_e(n,p,th);
-      double line[3]={nbt,th.pr,0.0};
-      tneut.line_of_data(3,line);
-      double line2[3]={th.ed,th.pr,0.0};
-      tneut2.line_of_data(3,line2);
+      vector<double> line={nbt,th.pr,0.0};
+      tneut.line_of_data(line.size(),line);
+      line={th.ed,th.pr,0.0};
+      tneut2.line_of_data(line.size(),line2);
     }
     
     return;
@@ -318,8 +318,8 @@ public:
         cout << nbt << " " << epb << " "
              << n.kf << " " << fermi << " " << epb/fermi << endl;
       }
-      double line[5]={nbt,epb,n.kf,fermi,epb/fermi};
-      ln.line_of_data(5,line);
+      vector<double> line={nbt,epb,n.kf,fermi,epb/fermi};
+      ln.line_of_data(line.size(),line);
     }
     if (verbose>1) cout << endl;
 

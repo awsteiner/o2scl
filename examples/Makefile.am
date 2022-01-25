@@ -81,8 +81,6 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 
 # ex_ode_it.scr ex_eos_sn.scr ex_interp2_nogrid.scr 
 
-OOLIBSTWO = -lo2scl -L../src -L../src/eos -L../src/hdf
-
 if O2SCL_LINUX
 O2SCL_LINUX_MVAR = -DO2SCL_LINUX
 else 
@@ -140,447 +138,311 @@ o2scl-examples-doc:
 # -------------------------------------------------------------
 
 EXTRA_PROGRAMS = \
-	ex_fptr \
-	ex_fermion_summ \
-	ex_mcmc \
-	ex_diff \
-	ex_interp \
-	ex_interp2 \
-	ex_interp2_nogrid \
-	ex_table \
-	ex_nstar_cold \
-	ex_nstar_rot \
-	ex_mroot \
-	ex_mmin \
-	ex_inte \
-	ex_deriv \
-	ex_part \
-	ex_ode \
-	ex_eos_gibbs \
-	ex_ode_it \
 	ex_anneal \
-	ex_mcarlo \
-	ex_string \
-	ex_eos_sn \
+	ex_chebapp \
+	ex_conmin \
+	ex_const_vec \
 	ex_contour \
-	ex_tensor \
+	ex_deriv \
+	ex_diff \
 	ex_eos_crust \
+	ex_eos_gibbs \
 	ex_eos_had_apr \
 	ex_eos_had_skyrme \
 	ex_eos_had_rmf \
-	ex_nucmass \
+	ex_eos_sn \
+	ex_fermion_summ \
+	ex_fptr \
 	ex_hydrogen \
-	ex_mmin_fix \
-	ex_stiff \
-	ex_nucmass_fit \
-	ex_const_vec \
-	ex_methast \
-	ex_chebapp \
-	ex_poly \
-	ex_conmin \
-	ex_nucleus_rmf \
+	ex_inte \
+	ex_interp \
+	ex_interp2 \
+	ex_interp2_nogrid \
 	ex_lambda \
+	ex_mcarlo \
+	ex_mcmc \
+	ex_methast \
+	ex_mmin \
+	ex_mmin_fix \
+	ex_mroot \
+	ex_nucleus_rmf \
+	ex_nucmass \
+	ex_nucmass_fit \
+	ex_nstar_rot \
+	ex_nstar_cold \
+	ex_ode \
+	ex_ode_it \
+	ex_part \
+	ex_poly \
+	ex_stiff \
+	ex_string \
+	ex_table \
+	ex_tensor \
 	bm_root \
 	bm_min \
 	bm_poly \
 	bm_polylog
 
+if O2SCL_PYTHON
+
+ADDL_TEST_LIBS = -lo2scl -l$(PYTHON_LIB)
 if O2SCL_OPENMP
-ex_diff_LDFLAGS = -fopenmp
+ADDL_TEST_LDFLGS = -fopenmp -L../src 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
 else
-ex_diff_LDFLAGS = 
+ADDL_TEST_LDFLGS = -L../src 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
 endif
-ex_diff_LDADD = $(OOLIBS) $(OOLIBSTWO)
+
+else
+
+ADDL_TEST_LIBS = -lo2scl
+if O2SCL_OPENMP
+ADDL_TEST_LDFLGS = -fopenmp -L../src 
+ADDL_TEST_FLGS = -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = -L../src 
+ADDL_TEST_FLGS = 
+endif
+
+endif
+
+ex_diff_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_diff_LDADD = $(ADDL_TEST_LIBS)
 ex_diff_SOURCES = ex_diff.cpp
 ex_diff.scr: ex_diff
 	./ex_diff > ex_diff.scr
 
-if O2SCL_OPENMP
-ex_lambda_LDFLAGS = -fopenmp
-else
-ex_lambda_LDFLAGS = 
-endif
-ex_lambda_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_lambda_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_lambda_LDADD = $(ADDL_TEST_LIBS)
 ex_lambda_SOURCES = ex_lambda.cpp
 ex_lambda.scr: ex_lambda
 	./ex_lambda > ex_lambda.scr
 
-if O2SCL_OPENMP
-ex_eos_sn_LDFLAGS = -fopenmp
-else
-ex_eos_sn_LDFLAGS = 
-endif
-ex_eos_sn_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_eos_sn_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_eos_sn_LDADD = $(ADDL_TEST_LIBS)
 ex_eos_sn_SOURCES = ex_eos_sn.cpp
 ex_eos_sn.scr: ex_eos_sn
 	./ex_eos_sn -help > ex_eos_sn.scr
 
-if O2SCL_OPENMP
-ex_fermion_summ_LDFLAGS = -fopenmp
-else
-ex_fermion_summ_LDFLAGS = 
-endif
-ex_fermion_summ_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_fermion_summ_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_fermion_summ_LDADD = $(ADDL_TEST_LIBS)
 ex_fermion_summ_SOURCES = ex_fermion_summ.cpp
 ex_fermion_summ.scr: ex_fermion_summ
 	./ex_fermion_summ -help > ex_fermion_summ.scr
 
-if O2SCL_OPENMP
-ex_eos_gibbs_LDFLAGS = -fopenmp
-else
-ex_eos_gibbs_LDFLAGS = 
-endif
-ex_eos_gibbs_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_eos_gibbs_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_eos_gibbs_LDADD = $(ADDL_TEST_LIBS)
 ex_eos_gibbs_SOURCES = ex_eos_gibbs.cpp
 ex_eos_gibbs.scr: ex_eos_gibbs
 	./ex_eos_gibbs -test > ex_eos_gibbs.scr
 
-if O2SCL_OPENMP
-ex_hydrogen_LDFLAGS = -fopenmp
-else
-ex_hydrogen_LDFLAGS = 
-endif
-ex_hydrogen_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_hydrogen_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_hydrogen_LDADD = $(ADDL_TEST_LIBS)
 ex_hydrogen_SOURCES = ex_hydrogen.cpp
 ex_hydrogen.scr: ex_hydrogen
 	./ex_hydrogen > ex_hydrogen.scr
 
-if O2SCL_OPENMP
-ex_fptr_LDFLAGS = -fopenmp
-else
-ex_fptr_LDFLAGS = 
-endif
-ex_fptr_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_fptr_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_fptr_LDADD = $(ADDL_TEST_LIBS)
 ex_fptr_SOURCES = ex_fptr.cpp
 ex_fptr.scr: ex_fptr
 	./ex_fptr > ex_fptr.scr
 
-if O2SCL_OPENMP
-ex_mcmc_LDFLAGS = -fopenmp
-else
-ex_mcmc_LDFLAGS = 
-endif
-ex_mcmc_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_mcmc_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_mcmc_LDADD = $(ADDL_TEST_LIBS)
 ex_mcmc_SOURCES = ex_mcmc.cpp
 ex_mcmc.scr: ex_mcmc
 	./ex_mcmc > ex_mcmc.scr
 
-if O2SCL_OPENMP
-ex_interp_LDFLAGS = -fopenmp
-else
-ex_interp_LDFLAGS = 
-endif
-ex_interp_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_interp_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_interp_LDADD = $(ADDL_TEST_LIBS)
 ex_interp_SOURCES = ex_interp.cpp
 ex_interp.scr: ex_interp
 	./ex_interp > ex_interp.scr
 
-if O2SCL_OPENMP
-ex_interp2_LDFLAGS = -fopenmp
-else
-ex_interp2_LDFLAGS = 
-endif
-ex_interp2_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_interp2_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_interp2_LDADD = $(ADDL_TEST_LIBS)
 ex_interp2_SOURCES = ex_interp2.cpp
 ex_interp2.scr: ex_interp2
 	./ex_interp2 > ex_interp2.scr
 
-if O2SCL_OPENMP
-ex_interp2_nogrid_LDFLAGS = -fopenmp
-else
-ex_interp2_nogrid_LDFLAGS = 
-endif
-ex_interp2_nogrid_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_interp2_nogrid_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_interp2_nogrid_LDADD = $(ADDL_TEST_LIBS)
 ex_interp2_nogrid_SOURCES = ex_interp2_nogrid.cpp
 ex_interp2_nogrid.scr: ex_interp2_nogrid
 	./ex_interp2_nogrid > ex_interp2_nogrid.scr
 
-if O2SCL_OPENMP
-ex_table_LDFLAGS = -fopenmp
-else
-ex_table_LDFLAGS = 
-endif
-ex_table_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_table_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_table_LDADD = $(ADDL_TEST_LIBS)
 ex_table_SOURCES = ex_table.cpp
 ex_table.scr: ex_table
 	./ex_table > ex_table.scr
 
-if O2SCL_OPENMP
-ex_nstar_cold_LDFLAGS = -fopenmp
-else
-ex_nstar_cold_LDFLAGS = 
-endif
-ex_nstar_cold_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_nstar_cold_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_nstar_cold_LDADD = $(ADDL_TEST_LIBS)
 ex_nstar_cold_SOURCES = ex_nstar_cold.cpp
 ex_nstar_cold.scr: ex_nstar_cold
 	./ex_nstar_cold > ex_nstar_cold.scr
 
-if O2SCL_OPENMP
-ex_nstar_rot_LDFLAGS = -fopenmp
-else
-ex_nstar_rot_LDFLAGS = 
-endif
-ex_nstar_rot_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_nstar_rot_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_nstar_rot_LDADD = $(ADDL_TEST_LIBS)
 ex_nstar_rot_SOURCES = ex_nstar_rot.cpp
 ex_nstar_rot.scr: ex_nstar_rot
 	./ex_nstar_rot > ex_nstar_rot.scr
 
-if O2SCL_OPENMP
-ex_mroot_LDFLAGS = -fopenmp
-else
-ex_mroot_LDFLAGS = 
-endif
-ex_mroot_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_mroot_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_mroot_LDADD = $(ADDL_TEST_LIBS)
 ex_mroot_SOURCES = ex_mroot.cpp
 ex_mroot.scr: ex_mroot
 	./ex_mroot > ex_mroot.scr
 
-if O2SCL_OPENMP
-ex_mmin_LDFLAGS = -fopenmp
-else
-ex_mmin_LDFLAGS = 
-endif
-ex_mmin_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_mmin_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_mmin_LDADD = $(ADDL_TEST_LIBS)
 ex_mmin_SOURCES = ex_mmin.cpp
 ex_mmin.scr: ex_mmin
 	./ex_mmin > ex_mmin.scr
 
-if O2SCL_OPENMP
-ex_mmin_fix_LDFLAGS = -fopenmp
-else
-ex_mmin_fix_LDFLAGS = 
-endif
-ex_mmin_fix_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_mmin_fix_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_mmin_fix_LDADD = $(ADDL_TEST_LIBS)
 ex_mmin_fix_SOURCES = ex_mmin_fix.cpp
 ex_mmin_fix.scr: ex_mmin_fix
 	./ex_mmin_fix > ex_mmin_fix.scr
 
-if O2SCL_OPENMP
-ex_inte_LDFLAGS = -fopenmp
-else
-ex_inte_LDFLAGS = 
-endif
-ex_inte_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_inte_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_inte_LDADD = $(ADDL_TEST_LIBS)
 ex_inte_SOURCES = ex_inte.cpp
 ex_inte.scr: ex_inte
 	./ex_inte > ex_inte.scr
 
-if O2SCL_OPENMP
-ex_deriv_LDFLAGS = -fopenmp
-else
-ex_deriv_LDFLAGS = 
-endif
-ex_deriv_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_deriv_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_deriv_LDADD = $(ADDL_TEST_LIBS)
 ex_deriv_SOURCES = ex_deriv.cpp
 ex_deriv.scr: ex_deriv
 	./ex_deriv > ex_deriv.scr
 
-if O2SCL_OPENMP
-ex_part_LDFLAGS = -fopenmp
-else
-ex_part_LDFLAGS = 
-endif
-ex_part_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_part_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_part_LDADD = $(ADDL_TEST_LIBS)
 ex_part_SOURCES = ex_part.cpp
 ex_part.scr: ex_part
 	./ex_part > ex_part.scr
 
-if O2SCL_OPENMP
-ex_nucmass_fit_LDFLAGS = -fopenmp
-else
-ex_nucmass_fit_LDFLAGS = 
-endif
-ex_nucmass_fit_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_nucmass_fit_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_nucmass_fit_LDADD = $(ADDL_TEST_LIBS)
 ex_nucmass_fit_SOURCES = ex_nucmass_fit.cpp
 ex_nucmass_fit.scr: ex_nucmass_fit
 	./ex_nucmass_fit > ex_nucmass_fit.scr
 
-if O2SCL_OPENMP
-ex_ode_LDFLAGS = -fopenmp
-else
-ex_ode_LDFLAGS = 
-endif
-ex_ode_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_ode_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_ode_LDADD = $(ADDL_TEST_LIBS)
 ex_ode_SOURCES = ex_ode.cpp
 ex_ode.scr: ex_ode
 	./ex_ode > ex_ode.scr
 
-if O2SCL_OPENMP
-ex_anneal_LDFLAGS = -fopenmp
-else
-ex_anneal_LDFLAGS = 
-endif
-ex_anneal_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_anneal_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_anneal_LDADD = $(ADDL_TEST_LIBS)
 ex_anneal_SOURCES = ex_anneal.cpp
 ex_anneal.scr: ex_anneal
 	./ex_anneal > ex_anneal.scr
 
-if O2SCL_OPENMP
-ex_mcarlo_LDFLAGS = -fopenmp
-else
-ex_mcarlo_LDFLAGS = 
-endif
-ex_mcarlo_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_mcarlo_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_mcarlo_LDADD = $(ADDL_TEST_LIBS)
 ex_mcarlo_SOURCES = ex_mcarlo.cpp
 ex_mcarlo.scr: ex_mcarlo
 	./ex_mcarlo > ex_mcarlo.scr
 
-if O2SCL_OPENMP
-ex_string_LDFLAGS = -fopenmp
-else
-ex_string_LDFLAGS = 
-endif
-ex_string_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_string_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_string_LDADD = $(ADDL_TEST_LIBS)
 ex_string_SOURCES = ex_string.cpp
 ex_string.scr: ex_string
 	./ex_string > ex_string.scr
 
-if O2SCL_OPENMP
-ex_contour_LDFLAGS = -fopenmp
-else
-ex_contour_LDFLAGS = 
-endif
-ex_contour_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_contour_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_contour_LDADD = $(ADDL_TEST_LIBS)
 ex_contour_SOURCES = ex_contour.cpp
 ex_contour.scr: ex_contour
 	./ex_contour > ex_contour.scr
 
-if O2SCL_OPENMP
-ex_tensor_LDFLAGS = -fopenmp
-else
-ex_tensor_LDFLAGS = 
-endif
-ex_tensor_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_tensor_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_tensor_LDADD = $(ADDL_TEST_LIBS)
 ex_tensor_SOURCES = ex_tensor.cpp
 ex_tensor.scr: ex_tensor
 	./ex_tensor > ex_tensor.scr
 
-if O2SCL_OPENMP
-ex_eos_crust_LDFLAGS = -fopenmp
-else
-ex_eos_crust_LDFLAGS = 
-endif
-ex_eos_crust_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_eos_crust_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_eos_crust_LDADD = $(ADDL_TEST_LIBS)
 ex_eos_crust_SOURCES = ex_eos_crust.cpp
 ex_eos_crust.scr: ex_eos_crust
 	./ex_eos_crust > ex_eos_crust.scr
 
-if O2SCL_OPENMP
-ex_eos_had_apr_LDFLAGS = -fopenmp
-else
-ex_eos_had_apr_LDFLAGS = 
-endif
-ex_eos_had_apr_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_eos_had_apr_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_eos_had_apr_LDADD = $(ADDL_TEST_LIBS)
 ex_eos_had_apr_SOURCES = ex_eos_had_apr.cpp
 ex_eos_had_apr.scr: ex_eos_had_apr
 	./ex_eos_had_apr > ex_eos_had_apr.scr
 
-if O2SCL_OPENMP
-ex_eos_had_skyrme_LDFLAGS = -fopenmp
-else
-ex_eos_had_skyrme_LDFLAGS = 
-endif
-ex_eos_had_skyrme_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_eos_had_skyrme_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_eos_had_skyrme_LDADD = $(ADDL_TEST_LIBS)
 ex_eos_had_skyrme_SOURCES = ex_eos_had_skyrme.cpp
 ex_eos_had_skyrme.scr: ex_eos_had_skyrme
 	./ex_eos_had_skyrme -test > ex_eos_had_skyrme.scr
 
-if O2SCL_OPENMP
-ex_eos_had_rmf_LDFLAGS = -fopenmp
-else
-ex_eos_had_rmf_LDFLAGS = 
-endif
-ex_eos_had_rmf_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_eos_had_rmf_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_eos_had_rmf_LDADD = $(ADDL_TEST_LIBS)
 ex_eos_had_rmf_SOURCES = ex_eos_had_rmf.cpp
 ex_eos_had_rmf.scr: ex_eos_had_rmf
 	./ex_eos_had_rmf -test > ex_eos_had_rmf.scr
 
-if O2SCL_OPENMP
-ex_nucmass_LDFLAGS = -fopenmp
-else
-ex_nucmass_LDFLAGS = 
-endif
-ex_nucmass_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_nucmass_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_nucmass_LDADD = $(ADDL_TEST_LIBS)
 ex_nucmass_SOURCES = ex_nucmass.cpp
 ex_nucmass.scr: ex_nucmass
 	./ex_nucmass > ex_nucmass.scr
 
-if O2SCL_OPENMP
-ex_const_vec_LDFLAGS = -fopenmp
-else
-ex_const_vec_LDFLAGS = 
-endif
-ex_const_vec_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_const_vec_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_const_vec_LDADD = $(ADDL_TEST_LIBS)
 ex_const_vec_SOURCES = ex_const_vec.cpp
 ex_const_vec.scr: ex_const_vec
 	./ex_const_vec > ex_const_vec.scr
 
-if O2SCL_OPENMP
-ex_stiff_LDFLAGS = -fopenmp
-else
-ex_stiff_LDFLAGS = 
-endif
-ex_stiff_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_stiff_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_stiff_LDADD = $(ADDL_TEST_LIBS)
 ex_stiff_SOURCES = ex_stiff.cpp
 ex_stiff.scr: ex_stiff
 	./ex_stiff > ex_stiff.scr
 
-if O2SCL_OPENMP
-ex_methast_LDFLAGS = -fopenmp
-else
-ex_methast_LDFLAGS = 
-endif
-ex_methast_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_methast_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_methast_LDADD = $(ADDL_TEST_LIBS)
 ex_methast_SOURCES = ex_methast.cpp
 ex_methast.scr: ex_methast
 	./ex_methast > ex_methast.scr
 
-if O2SCL_OPENMP
-ex_chebapp_LDFLAGS = -fopenmp
-else
-ex_chebapp_LDFLAGS = 
-endif
-ex_chebapp_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_chebapp_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_chebapp_LDADD = $(ADDL_TEST_LIBS)
 ex_chebapp_SOURCES = ex_chebapp.cpp
 ex_chebapp.scr: ex_chebapp
 	./ex_chebapp > ex_chebapp.scr
 
-if O2SCL_OPENMP
-ex_poly_LDFLAGS = -fopenmp
-else
-ex_poly_LDFLAGS = 
-endif
-ex_poly_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_poly_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_poly_LDADD = $(ADDL_TEST_LIBS)
 ex_poly_SOURCES = ex_poly.cpp
 ex_poly.scr: ex_poly
 	./ex_poly > ex_poly.scr
 
-if O2SCL_OPENMP
-ex_conmin_LDFLAGS = -fopenmp
-else
-ex_conmin_LDFLAGS = 
-endif
-ex_conmin_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_conmin_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_conmin_LDADD = $(ADDL_TEST_LIBS)
 ex_conmin_SOURCES = ex_conmin.cpp
 ex_conmin.scr: ex_conmin
 	./ex_conmin > ex_conmin.scr
 
-if O2SCL_OPENMP
-ex_ode_it_LDFLAGS = -fopenmp
-else
-ex_ode_it_LDFLAGS = 
-endif
-ex_ode_it_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_ode_it_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_ode_it_LDADD = $(ADDL_TEST_LIBS)
 ex_ode_it_SOURCES = ex_ode_it.cpp
 ex_ode_it.scr: ex_ode_it
 	./ex_ode_it > ex_ode_it.scr
 
-if O2SCL_OPENMP
-ex_nucleus_rmf_LDFLAGS = -fopenmp
-else
-ex_nucleus_rmf_LDFLAGS = 
-endif
-ex_nucleus_rmf_LDADD = $(OOLIBS) $(OOLIBSTWO)
+ex_nucleus_rmf_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_nucleus_rmf_LDADD = $(ADDL_TEST_LIBS)
 ex_nucleus_rmf_SOURCES = ex_nucleus_rmf.cpp
 ex_nucleus_rmf.scr: ex_nucleus_rmf
 	./ex_nucleus_rmf > ex_nucleus_rmf.scr

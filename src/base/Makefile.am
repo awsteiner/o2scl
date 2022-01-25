@@ -163,66 +163,82 @@ check_PROGRAMS = $(CPVAR)
 check_SCRIPTS = o2scl-test
 
 if O2SCL_PYTHON
-VCHECK_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
-else
-VCHECK_LIBS = ../libo2scl.la
-endif
 
+ADDL_TEST_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
 if O2SCL_OPENMP
-interp_krige_ts_LDFLAGS = -fopenmp
-constants_ts_LDFLAGS = -fopenmp
-err_hnd_ts_LDFLAGS = -fopenmp
-convert_units_ts_LDFLAGS = -fopenmp
-funct_ts_LDFLAGS = -fopenmp
-format_float_ts_LDFLAGS = -fopenmp
-lib_settings_ts_LDFLAGS = -fopenmp
-misc_ts_LDFLAGS = -fopenmp
-auto_format_ts_LDFLAGS = -fopenmp
-calc_utf8_ts_LDFLAGS = -fopenmp
-mm_funct_ts_LDFLAGS = -fopenmp
-multi_funct_ts_LDFLAGS = -fopenmp
-search_vec_ts_LDFLAGS = -fopenmp
-table_ts_LDFLAGS = -fopenmp
-table3d_ts_LDFLAGS = -fopenmp
-vector_ts_LDFLAGS = -fopenmp
-interp_ts_LDFLAGS = -fopenmp
-columnify_ts_LDFLAGS = -fopenmp
-cursesw_ts_LDFLAGS = -fopenmp
-string_conv_ts_LDFLAGS = -fopenmp
-tensor_ts_LDFLAGS = -fopenmp
-tensor_grid_ts_LDFLAGS = -fopenmp
-table_units_ts_LDFLAGS = -fopenmp
-exception_ts_LDFLAGS = -fopenmp
-uniform_grid_ts_LDFLAGS = -fopenmp
-shunting_yard_ts_LDFLAGS = -fopenmp
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
 endif
 
-interp_krige_ts_LDADD = $(VCHECK_LIBS)
-constants_ts_LDADD = $(VCHECK_LIBS)
-err_hnd_ts_LDADD = $(VCHECK_LIBS)
-convert_units_ts_LDADD = $(VCHECK_LIBS)
-funct_ts_LDADD = $(VCHECK_LIBS)
-format_float_ts_LDADD = $(VCHECK_LIBS)
-lib_settings_ts_LDADD = $(VCHECK_LIBS)
-misc_ts_LDADD = $(VCHECK_LIBS)
-auto_format_ts_LDADD = $(VCHECK_LIBS)
-calc_utf8_ts_LDADD = $(VCHECK_LIBS)
-mm_funct_ts_LDADD = $(VCHECK_LIBS)
-multi_funct_ts_LDADD = $(VCHECK_LIBS)
-search_vec_ts_LDADD = $(VCHECK_LIBS)
-table_ts_LDADD = $(VCHECK_LIBS)
-table3d_ts_LDADD = $(VCHECK_LIBS)
-vector_ts_LDADD = $(VCHECK_LIBS)
-interp_ts_LDADD = $(VCHECK_LIBS)
-columnify_ts_LDADD = $(VCHECK_LIBS)
-cursesw_ts_LDADD = $(VCHECK_LIBS)
-string_conv_ts_LDADD = $(VCHECK_LIBS)
-tensor_ts_LDADD = $(VCHECK_LIBS)
-tensor_grid_ts_LDADD = $(VCHECK_LIBS)
-table_units_ts_LDADD = $(VCHECK_LIBS)
-exception_ts_LDADD = $(VCHECK_LIBS)
-uniform_grid_ts_LDADD = $(VCHECK_LIBS)
-shunting_yard_ts_LDADD = $(VCHECK_LIBS)
+else
+
+ADDL_TEST_LIBS = ../libo2scl.la
+if O2SCL_OPENMP
+ADDL_TEST_LDFLGS = -fopenmp 
+ADDL_TEST_FLGS = -DO2SCL_OPENMP
+else
+ADDL_TEST_LDFLGS = 
+ADDL_TEST_FLGS = 
+endif
+
+endif
+
+interp_krige_ts_LDADD = $(ADDL_TEST_LIBS)
+constants_ts_LDADD = $(ADDL_TEST_LIBS)
+err_hnd_ts_LDADD = $(ADDL_TEST_LIBS)
+convert_units_ts_LDADD = $(ADDL_TEST_LIBS)
+funct_ts_LDADD = $(ADDL_TEST_LIBS)
+format_float_ts_LDADD = $(ADDL_TEST_LIBS)
+lib_settings_ts_LDADD = $(ADDL_TEST_LIBS)
+misc_ts_LDADD = $(ADDL_TEST_LIBS)
+auto_format_ts_LDADD = $(ADDL_TEST_LIBS)
+calc_utf8_ts_LDADD = $(ADDL_TEST_LIBS)
+mm_funct_ts_LDADD = $(ADDL_TEST_LIBS)
+multi_funct_ts_LDADD = $(ADDL_TEST_LIBS)
+search_vec_ts_LDADD = $(ADDL_TEST_LIBS)
+table_ts_LDADD = $(ADDL_TEST_LIBS)
+table3d_ts_LDADD = $(ADDL_TEST_LIBS)
+vector_ts_LDADD = $(ADDL_TEST_LIBS)
+interp_ts_LDADD = $(ADDL_TEST_LIBS)
+columnify_ts_LDADD = $(ADDL_TEST_LIBS)
+cursesw_ts_LDADD = $(ADDL_TEST_LIBS)
+string_conv_ts_LDADD = $(ADDL_TEST_LIBS)
+tensor_ts_LDADD = $(ADDL_TEST_LIBS)
+tensor_grid_ts_LDADD = $(ADDL_TEST_LIBS)
+table_units_ts_LDADD = $(ADDL_TEST_LIBS)
+exception_ts_LDADD = $(ADDL_TEST_LIBS)
+uniform_grid_ts_LDADD = $(ADDL_TEST_LIBS)
+shunting_yard_ts_LDADD = $(ADDL_TEST_LIBS)
+
+interp_krige_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+constants_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+err_hnd_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+convert_units_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+funct_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+format_float_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+lib_settings_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+misc_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+auto_format_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+calc_utf8_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+mm_funct_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+multi_funct_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+search_vec_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+table_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+table3d_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+vector_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+interp_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+columnify_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+cursesw_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+string_conv_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+tensor_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+tensor_grid_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+table_units_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+exception_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+uniform_grid_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+shunting_yard_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 interp_krige.scr: interp_krige_ts$(EXEEXT) 
 	./interp_krige_ts$(EXEEXT) > interp_krige.scr

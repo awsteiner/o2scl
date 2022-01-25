@@ -161,10 +161,10 @@ int main(void) {
     t.test_rel(y[0],gsl_sf_bessel_J1(x),5.0e-5,"rkck");
 
     // Also output the results to a table
-    double line[5]={x,y[0],gsl_sf_bessel_J1(x),
-		    fabs((y[0]-gsl_sf_bessel_J1(x))/gsl_sf_bessel_J1(x)),
-		    yerr[0]};
-    tab[0].line_of_data(5,line);
+    vector<double> line={x,y[0],gsl_sf_bessel_J1(x),
+      fabs((y[0]-gsl_sf_bessel_J1(x))/gsl_sf_bessel_J1(x)),
+      yerr[0]};
+    tab[0].line_of_data(line.size(),line);
   }
 
   // Compare with the exact result at the last point
@@ -196,10 +196,10 @@ int main(void) {
     t.test_rel(y[0],gsl_sf_bessel_J1(x),5.0e-4,"rk8pd");
 
     // Also output the results to a table
-    double line[5]={x,y[0],gsl_sf_bessel_J1(x),
-		    fabs((y[0]-gsl_sf_bessel_J1(x))/gsl_sf_bessel_J1(x)),
-		    yerr[0]};
-    tab[1].line_of_data(5,line);
+    vector<double> line={x,y[0],gsl_sf_bessel_J1(x),
+      fabs((y[0]-gsl_sf_bessel_J1(x))/gsl_sf_bessel_J1(x)),
+      yerr[0]};
+    tab[1].line_of_data(line.size(),line);
   }
   cout << "Accuracy at end: " 
        << fabs(y[0]-gsl_sf_bessel_J1(x))/gsl_sf_bessel_J1(x) << endl;
@@ -227,11 +227,11 @@ int main(void) {
     t.test_rel(y[0],gsl_sf_airy_Ai(x,GSL_PREC_DOUBLE),1.0e-8,"rkck");
 
     // Also output the results to a table
-    double line[5]={x,y[0],gsl_sf_airy_Ai(x,GSL_PREC_DOUBLE),
-		    fabs((y[0]-gsl_sf_airy_Ai(x,GSL_PREC_DOUBLE))/
-			 gsl_sf_airy_Ai(x,GSL_PREC_DOUBLE)),
-		    yerr[0]};
-    tab[2].line_of_data(5,line);
+    vector<double> line={x,y[0],gsl_sf_airy_Ai(x,GSL_PREC_DOUBLE),
+      fabs((y[0]-gsl_sf_airy_Ai(x,GSL_PREC_DOUBLE))/
+           gsl_sf_airy_Ai(x,GSL_PREC_DOUBLE)),
+      yerr[0]};
+    tab[2].line_of_data(line.size(),line);
   }
   cout << "Accuracy at end: " 
        << fabs(y[0]-gsl_sf_airy_Ai(x,GSL_PREC_DOUBLE))/
@@ -262,11 +262,11 @@ int main(void) {
     t.test_rel(y[0],gsl_sf_airy_Ai(x,GSL_PREC_DOUBLE),1.0e-14,"rk8pd");
 
     // Also output the results to a table
-    double line[5]={x,y[0],gsl_sf_airy_Ai(x,GSL_PREC_DOUBLE),
-		    fabs((y[0]-gsl_sf_airy_Ai(x,GSL_PREC_DOUBLE))/
-			 gsl_sf_airy_Ai(x,GSL_PREC_DOUBLE)),
-		    yerr[0]};
-    tab[3].line_of_data(5,line);
+    vector<double> line={x,y[0],gsl_sf_airy_Ai(x,GSL_PREC_DOUBLE),
+      fabs((y[0]-gsl_sf_airy_Ai(x,GSL_PREC_DOUBLE))/
+           gsl_sf_airy_Ai(x,GSL_PREC_DOUBLE)),
+      yerr[0]};
+    tab[3].line_of_data(line.size(),line);
   }
   cout << "Accuracy at end: " 
        << fabs(y[0]-gsl_sf_airy_Ai(x,GSL_PREC_DOUBLE))/
@@ -304,10 +304,10 @@ int main(void) {
     t.test_gen(retx==0,"astep 5");
 
     // Also output the results to a table
-    double line[6]={x,y[0],gsl_sf_bessel_J1(x),
-		    fabs((y[0]-gsl_sf_bessel_J1(x))/gsl_sf_bessel_J1(x)),
-		    yerr[0],yerr[1]};
-    tab[4].line_of_data(6,line);
+    vector<double> line={x,y[0],gsl_sf_bessel_J1(x),
+      fabs((y[0]-gsl_sf_bessel_J1(x))/gsl_sf_bessel_J1(x)),
+      yerr[0],yerr[1]};
+    tab[4].line_of_data(line.size(),line);
 
     k++;
   }
@@ -346,10 +346,10 @@ int main(void) {
     t.test_gen(retx==0,"astep 5");
 
     // Also output the results to a table
-    double line[6]={x,y[0],gsl_sf_bessel_J1(x),
-		    fabs((y[0]-gsl_sf_bessel_J1(x))/gsl_sf_bessel_J1(x)),
-		    yerr[0],yerr[1]};
-    tab[5].line_of_data(6,line);
+    vector<double> line={x,y[0],gsl_sf_bessel_J1(x),
+      fabs((y[0]-gsl_sf_bessel_J1(x))/gsl_sf_bessel_J1(x)),
+      yerr[0],yerr[1]};
+    tab[5].line_of_data(line.size(),line);
 
     k++;
   }
@@ -388,10 +388,10 @@ int main(void) {
     t.test_gen(retx==0,"astep 5");
 
     // Also output the results to a table
-    double line[6]={x,y[0],gsl_sf_bessel_J1(x),
-		    fabs((y[0]-gsl_sf_bessel_J1(x))/gsl_sf_bessel_J1(x)),
-		    yerr[0],yerr[1]};
-    tab[6].line_of_data(6,line);
+    vector<double> line={x,y[0],gsl_sf_bessel_J1(x),
+      fabs((y[0]-gsl_sf_bessel_J1(x))/gsl_sf_bessel_J1(x)),
+      yerr[0],yerr[1]};
+    tab[6].line_of_data(line.size(),line);
 
     k++;
   }
@@ -440,10 +440,10 @@ int main(void) {
                              gsl_sf_bessel_Jn(2,xg[i])),5.0e-7,"astep 2");
 
     // Also output the results to a table
-    double line[5]={xg[i],yg(i,0),gsl_sf_bessel_J1(xg[i]),
-		    fabs(yg(i,0)-gsl_sf_bessel_J1(xg[i])),
-		    fabs(yerrg(i,0))};
-    tab[7].line_of_data(5,line);
+    vector<double> line={xg[i],yg(i,0),gsl_sf_bessel_J1(xg[i]),
+      fabs(yg(i,0)-gsl_sf_bessel_J1(xg[i])),
+      fabs(yerrg(i,0))};
+    tab[7].line_of_data(line.size(),line);
   }
 
   cout << "Accuracy at end: "

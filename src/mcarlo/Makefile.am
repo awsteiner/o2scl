@@ -3,7 +3,8 @@
 # ------------------------------------------------------------
 
 TEST_VAR = mcarlo_plain.scr mcarlo_miser.scr mcarlo_vegas.scr \
-	expval.scr rng_gsl.scr mcmc_para.scr mcmc_para_new.scr
+	expval.scr rng_gsl.scr mcmc_para.scr
+#mcmc_para_new.scr
 
 MCARLO_SRCS = expval.cpp rng_gsl.cpp
 
