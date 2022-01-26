@@ -2199,3 +2199,48 @@ int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
+int acol_manager::comm_add_vec(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="table") {
+    
+    if (table_obj.get_nlines()==0) {
+      cerr << "No table to add a column to." << endl;
+      return exc_efailed;
+    }
+    
+    vector<string> pr, in;
+    pr.push_back("Enter vector specification for new column");
+    pr.push_back("Enter name for new column");
+    int ret=get_input(sv,pr,in,"function",itive_com);
+    if (ret!=0) return ret;
+    
+    // Remove single or double quotes just in case
+    if (in[0].size()>=3 && ((in[0][0]=='\'' && in[0][in[0].size()-1]=='\'') ||
+			    (in[0][0]=='\"' && in[0][in[0].size()-1]=='\"'))) {
+      in[0]=in[0].substr(1,in[0].size()-2);
+    }
+
+    std::vector<double> vec;
+    int vret=vector_spec(in[0],vec,verbose,false);
+    if (vret!=0) {
+      cerr << "Vector spec failed in add-vec." << endl;
+      return exc_efailed;
+    }
+    if (vec.size()<table_obj.get_nlines()) {
+      cerr << "Not enough entries in vector." << endl;
+      cout << vec.size() << " " << table_obj.get_nlines() << endl;
+      return exc_efailed;
+    }
+
+    table_obj.new_column(in[1]);
+    for(size_t i=0;i<table_obj.get_nlines();i++) {
+      table_obj.set(in[1],i,vec[i]);
+    }
+    
+  } else {
+    cerr << "Not implemented for type " << type << " ." << endl;
+    return exc_efailed;
+  }
+
+  return 0;
+}

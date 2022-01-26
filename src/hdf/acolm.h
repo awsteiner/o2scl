@@ -441,6 +441,9 @@ namespace o2scl_acol {
     /// Create a column from a function
     virtual int comm_function(std::vector<std::string> &sv, bool itive_com);
 
+    /// Add a column from a vector_specification
+    virtual int comm_add_vec(std::vector<std::string> &sv, bool itive_com);
+
     /// Read a generic data file
     virtual int comm_generic(std::vector<std::string> &sv, bool itive_com);
 

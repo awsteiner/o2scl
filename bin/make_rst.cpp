@@ -412,13 +412,15 @@ int main(int argc, char *argv[]) {
           cout << overloaded_list[i].args[ik].substr(0,70) << "..";
         }
         cout << endl;
-        cout << "  " << ik << " ";
-        if (overloaded_list[i].tlate_parms[ik].length()<70) {
-          cout << overloaded_list[i].tlate_parms[ik];
-        } else {
-          cout << overloaded_list[i].tlate_parms[ik].substr(0,70) << "..";
+        if (overloaded_list[i].tlate_parms[ik].length()>0) {
+          cout << "  ";
+          if (overloaded_list[i].tlate_parms[ik].length()<75) {
+            cout << overloaded_list[i].tlate_parms[ik];
+          } else {
+            cout << overloaded_list[i].tlate_parms[ik].substr(0,75) << "..";
+          }
+          cout << endl;
         }
-        cout << endl;
       }
     }
     cout << endl;

@@ -29,6 +29,7 @@
 
 #include <string>
 #include <functional>
+#include <vector>
 
 #include <boost/numeric/ublas/vector.hpp>
 
@@ -42,7 +43,7 @@ namespace o2scl {
   /// Multi-dimensional function typedef in src/base/multi_funct.h
   typedef std::function<
     double(size_t,const boost::numeric::ublas::vector<double> &)>
-    multi_funct;
+  multi_funct;
   
   /** \brief A multi-dimensional function from a string
    */
@@ -53,8 +54,8 @@ namespace o2scl {
     /** \brief Specify the string and the parameters
      */
     template<class vec_string_t=std::vector<std::string> >
-      multi_funct_strings(std::string expr, int nv,
-			    vec_string_t &var_arr) {
+    multi_funct_strings(std::string expr, int nv,
+                        vec_string_t &var_arr) {
     
       st_nv=nv;
       st_funct=expr;
@@ -68,7 +69,7 @@ namespace o2scl {
     /** \brief Specify the string and the parameters
      */
     template<class vec_string_t=std::vector<std::string> >
-      void set_function(std::string expr, int nv, vec_string_t &var_arr) {
+    void set_function(std::string expr, int nv, vec_string_t &var_arr) {
 
       st_nv=nv;
       st_funct=expr;
@@ -95,7 +96,7 @@ namespace o2scl {
 	with parameter \c pa.
     */
     template<class vec_t=boost::numeric::ublas::vector<double> >
-      double operator()(size_t nv, const vec_t &x) {
+    double operator()(size_t nv, const vec_t &x) {
 
       for(size_t i=0;i<nv;i++) {
 	vars[st_vars[i]]=x[i];
@@ -137,6 +138,208 @@ namespace o2scl {
 
   };
 
+#ifdef O2SCL_PYTHON
+  
+  /** \brief One-dimensional function from a python function
+   */
+  template<class vec_t=boost::numeric::ublas::vector<double> >
+  class multi_funct_python {
+    
+  protected:
+
+    /// Python unicode object containing function name
+    PyObject *pName;
+    
+    /// Python module containing function
+    PyObject *pModule;
+    
+    /// Function arguments
+    PyObject *pArgs;
+
+    /// Python function
+    PyObject *pFunc;
+
+    /// Verbosity parameter
+    int verbose;
+    
+  public:
+    
+    /** \brief Specify the python and the parameters
+     */
+    multi_funct_python(std::string module, std::string func, int v=0) {
+      verbose=v;
+      
+      if (o2scl_settings.py_initialized==false) {
+        if (verbose>0) {
+          std::cout << "Running py_init()." << std::endl;
+        }
+        o2scl_settings.py_init();
+      }
+      set_function(module,func);
+    }      
+    
+    virtual ~multi_funct_python() {
+      if (verbose>0) {
+        std::cout << "Decref func." << std::endl;
+      }
+      Py_DECREF(pFunc);
+      if (verbose>0) {
+        std::cout << "Decref args." << std::endl;
+      }
+      Py_DECREF(pArgs);
+      if (verbose>0) {
+        std::cout << "Decref module." << std::endl;
+      }
+      Py_DECREF(pModule);
+      if (verbose>0) {
+        std::cout << "Decref name." << std::endl;
+      }
+      Py_DECREF(pName);
+      if (verbose>0) {
+        std::cout << "Done in multi_funct_python destructor." << std::endl;
+      }
+    }      
+  
+    /** \brief Specify the python and the parameters
+
+        This function is called by the constructor and thus
+        cannot be virtual.
+    */
+    int set_function(std::string module, std::string func) {
+      
+      // Get the Unicode name of the user-specified module
+      if (verbose>0) {
+        std::cout << "Getting unicode for module name()." << std::endl;
+      }
+      pName=PyUnicode_FromString(module.c_str());
+      if (pName==0) {
+        O2SCL_ERR2("Create module name failed in ",
+                   "multi_funct_python::set_function().",o2scl::exc_efailed);
+      }
+      
+      // Import the user-specified module
+      if (verbose>0) {
+        std::cout << "Importing module." << std::endl;
+      }
+      pModule=PyImport_Import(pName);
+      if (pModule==0) {
+        O2SCL_ERR2("Load module failed in ",
+                   "multi_funct_python::set_function().",o2scl::exc_efailed);
+      }
+
+      // Setup the arguments to the python function
+      if (verbose>0) {
+        std::cout << "Getting arguments for python function." << std::endl;
+      }
+      pArgs=PyTuple_New(1);
+      if (pArgs==0) {
+        O2SCL_ERR2("Create arg tuple failed in ",
+                   "multi_funct_python::set_function().",o2scl::exc_efailed);
+      }
+      
+      // Load the python function
+      if (verbose>0) {
+        std::cout << "Loading python function." << std::endl;
+      }
+      pFunc=PyObject_GetAttrString(pModule,func.c_str());
+      if (pFunc==0) {
+        O2SCL_ERR2("Get function failed in ",
+                   "multi_funct_python::set_function().",o2scl::exc_efailed);
+      }
+      
+      return 0;
+    }
+    
+    /** \brief Compute the function at point \c x and return the result
+     */
+    virtual double operator()(size_t n, const vec_t &v) const {
+      
+      // Create a python object from the value
+      if (verbose>0) {
+        std::cout << "Creating python object from double." << std::endl;
+      }
+      
+      // Create the list object
+      PyObject *pList=PyList_New(n);
+      if (pList==0) {
+        O2SCL_ERR2("List creation failed in ",
+                   "multi_funct_python::operator().",o2scl::exc_efailed);
+      }
+      
+      /// Python function
+      std::vector<PyObject *p> pValues(n);
+      
+      for(size_t i=0;i<n;i++) {
+        pValues[i]=PyFloat_FromDouble(v[i]);
+        if (pValues[i]==0) {
+          O2SCL_ERR2("Value creation failed in ",
+                     "multi_funct_python::operator().",o2scl::exc_efailed);
+        }
+        
+        // Set the python function arguments
+        int iret=PyList_SetItem(pList,i,pValues[i]);
+        if (iret!=0) {
+          O2SCL_ERR2("Item set failed in ",
+                     "multi_funct_python::operator().",o2scl::exc_efailed);
+        }
+      }
+      
+      int ret=PyTuple_SetItem(pArgs,0,pList);
+      if (ret!=0) {
+        O2SCL_ERR2("Tuple set failed in ",
+                   "multi_funct_python::operator().",o2scl::exc_efailed);
+      }
+
+      // Call the python function
+      if (verbose>0) {
+        std::cout << "Call python function." << std::endl;
+      }
+      PyObject *result=PyObject_CallObject(pFunc,pArgs);
+      if (result==0) {
+        O2SCL_ERR2("Function call failed in ",
+                   "multi_funct_python::operator().",o2scl::exc_efailed);
+      }
+
+      double y=PyFloat_AsDouble(result);
+
+      for(size_t i=0;i<pValues.size();i++) {
+        if (verbose>0) {
+          std::cout << "Decref value " << i << " of " << pValues.size()
+                    << std::endl;
+        }
+        Py_DECREF(pValues[i]);
+      }
+      if (verbose>0) {
+        std::cout << "Decref list." << std::endl;
+      }
+      Py_DECREF(pList);
+      
+      if (verbose>0) {
+        std::cout << "Decref value and result." << std::endl;
+      }
+      Py_DECREF(pValue);
+      Py_DECREF(result);
+  
+      if (verbose>0) {
+        std::cout << "Done in multi_funct_python::operator()." << std::endl;
+      }
+    
+      return y;
+    }      
+
+  protected:
+
+    multi_funct_python() {};
+
+  private:
+
+    multi_funct_python(const multi_funct_python &);
+    multi_funct_python& operator=(const multi_funct_python&);
+
+  };
+
+#endif
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif
