@@ -5,5 +5,5 @@ Function cholesky_decomp (o2scl_linalg)
 
 .. doxygenfunction:: o2scl_linalg::cholesky_decomp(const size_t M, Eigen::MatrixXd &A, bool err_on_fail)
 
-.. doxygenfunction:: o2scl_linalg::cholesky_decomp(const size_t M, mat_t &A, bool err_on_fail=true)
+.. doxygenfunction:: o2scl_linalg::cholesky_decomp< Eigen::MatrixXd >(const size_t M, mat_t &A, bool err_on_fail=true)
 

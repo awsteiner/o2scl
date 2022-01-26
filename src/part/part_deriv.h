@@ -707,11 +707,13 @@ namespace o2scl {
          Future:
 
          - Include explicit zero-temperature calculation, maybe
-         by making this a child of fermion_zerot or by making a 
-         new fermion_deriv_zerot? 
+           by making this a child of fermion_zerot or by making a 
+           new fermion_deriv_zerot? 
+
          - There is also a closed form for the derivatives
-         of massless fermions with pairs at finite temperature
-         in Constantinou et al. 2014 which could be implemented here.
+           of massless fermions with pairs at finite temperature
+           in Constantinou et al. 2014 which could be implemented here.
+
       \endverbatim
   */
   template<class fp_t=double>

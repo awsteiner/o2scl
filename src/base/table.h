@@ -3060,10 +3060,10 @@ namespace o2scl {
         \verbatim embed:rst
         .. todo:: 
 
-        In table::function_vector(): FIXME: there may be a problem
-        with the OpenMP code if an exception is thrown in the
-        calculator class and there is not a unique error handler
-        for each thread.
+           In table::function_vector(): FIXME: there may be a problem
+           with the OpenMP code if an exception is thrown in the
+           calculator class and there is not a unique error handler
+           for each thread.
 
         \endverbatim
 

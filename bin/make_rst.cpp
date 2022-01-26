@@ -33,19 +33,25 @@
 using namespace std;
 
 /// Remove template parameters from a function name
-std::string remove_template_params(std::string in) {
-  std::string stmp;
+void separate_template_params(std::string in, std::string &name,
+                              std::string &tlate_parms) {
+  name="";
+  tlate_parms="";
   int n_bracket=0;
   for(size_t ij=0;ij<in.length();ij++) {
     if (in[ij]=='<') {
       n_bracket++;
+      tlate_parms+=in[ij];
     } else if (in[ij]=='>') {
       n_bracket--;
+      tlate_parms+=in[ij];
     } else if (n_bracket==0) {
-      stmp+=in[ij];
+      name+=in[ij];
+    } else {
+      tlate_parms+=in[ij];
     }
   }
-  return stmp;
+  return;
 }
 
 /** \brief Convert <,>, ,: to _
@@ -81,11 +87,13 @@ int main(int argc, char *argv[]) {
   typedef struct generic_s {
     std::string ns;
     std::string name;
+    std::string tlate_parms;
   } generic;
 
   typedef struct function_s {
     std::string ns;
     std::string name;
+    std::vector<std::string> tlate_parms;
     std::vector<std::string> args;
   } function;
 
@@ -131,7 +139,9 @@ int main(int argc, char *argv[]) {
           o.ns=o.name.substr(0,loc-1);
           o.name=o.name.substr(loc+1,o.name.length()-loc);
         }
-        class_list.push_back(o);
+        if (o.ns.find(':')==std::string::npos) {
+          class_list.push_back(o);
+        }
       }
       
       if (((string)it->attribute("kind").value())==((string)"namespace")) {
@@ -148,13 +158,15 @@ int main(int argc, char *argv[]) {
                  << std::endl;
           }
           
-          if (((string)it2->attribute("kind").value())==((string)"function")) {
+          if (((string)it2->attribute("kind").value())==
+              ((string)"function")) {
+            
             generic o;
             o.ns=it->child_value("name");
             o.name=it2->child_value("name");
 
             // Remove template parameters from function name
-            o.name=remove_template_params(o.name);
+            separate_template_params(o.name,o.name,o.tlate_parms);
             
             // Determine if this function is already in the function list
             bool found_in_list=false;
@@ -168,9 +180,12 @@ int main(int argc, char *argv[]) {
             // If it is, then it's overloaded, so see if it's in the
             // overloaded list
             if (found_in_list) {
+              
               function f;
               f.ns=o.ns;
               f.name=o.name;
+              f.tlate_parms.push_back(o.tlate_parms);
+              
               bool found_in_dups=false;
               for(size_t k=0;k<overloaded_list.size();k++) {
                 if (overloaded_list[k].ns==o.ns &&
@@ -267,7 +282,12 @@ int main(int argc, char *argv[]) {
         
         if (it->name()==((string)"sectiondef")) {
 
-          cout << "Section: " << it->child("header").child_value() << endl;
+          std::string section_name=it->child("header").child_value();
+          if (section_name.length()==0) {
+            cout << "Section: <no name>" << endl;
+          } else {
+            cout << "Section: " << it->child("header").child_value() << endl;
+          }
           
           // In each section, look for a <memberdef> object with a
           // kind attribute of "function"
@@ -289,7 +309,9 @@ int main(int argc, char *argv[]) {
               
               bool found=false;
               std::string func_name=it2->child("name").child_value();
-              func_name=remove_template_params(func_name);
+              std::string tlate_parms;
+              separate_template_params(func_name,func_name,
+                                       tlate_parms);
               
               for(size_t j=0;j<overloaded_list.size() && found==false;j++) {
                 if (overloaded_list[j].ns==ns_list[k] &&
@@ -299,6 +321,7 @@ int main(int argc, char *argv[]) {
 
                   pugi::xml_node nt=it2->child("argsstring");
                   overloaded_list[j].args.push_back(nt.child_value());
+                  overloaded_list[j].tlate_parms.push_back(tlate_parms);
 
                   /*
                     cout << "Found overloaded function in namespace "
@@ -352,6 +375,7 @@ int main(int argc, char *argv[]) {
           generic g;
           g.ns=function_list[k].ns;
           g.name=function_list[k].name;
+          g.tlate_parms=function_list[k].tlate_parms;
           function_list_new.push_back(g);
         }
       }
@@ -365,13 +389,15 @@ int main(int argc, char *argv[]) {
     cout << "Class list: " << endl;
     for(size_t i=0;i<class_list.size();i++) {
       cout << i << " " << class_list[i].ns << " "
-           << class_list[i].name << endl;
+           << class_list[i].name << " "
+           << class_list[i].tlate_parms << endl;
     }
     cout << endl;
     cout << "Function list: " << endl;
     for(size_t i=0;i<function_list.size();i++) {
       cout << i << " " << function_list[i].ns << " "
-           << function_list[i].name << endl;
+           << function_list[i].name << " "
+           << function_list[i].tlate_parms << endl;
     }
     cout << endl;
     cout << "Overloaded list: " << endl;
@@ -384,6 +410,13 @@ int main(int argc, char *argv[]) {
           cout << overloaded_list[i].args[ik];
         } else {
           cout << overloaded_list[i].args[ik].substr(0,70) << "..";
+        }
+        cout << endl;
+        cout << "  " << ik << " ";
+        if (overloaded_list[i].tlate_parms[ik].length()<70) {
+          cout << overloaded_list[i].tlate_parms[ik];
+        } else {
+          cout << overloaded_list[i].tlate_parms[ik].substr(0,70) << "..";
         }
         cout << endl;
       }
@@ -526,6 +559,7 @@ int main(int argc, char *argv[]) {
       // Output the function or function directive
       fout << ".. doxygenfunction:: " << overloaded_list[j].ns << "::"
            << overloaded_list[j].name
+           << overloaded_list[j].tlate_parms[k]
            << overloaded_list[j].args[k] << "\n" << endl;
     }
     
