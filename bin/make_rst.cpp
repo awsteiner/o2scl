@@ -51,6 +51,10 @@ void separate_template_params(std::string in, std::string &name,
       tlate_parms+=in[ij];
     }
   }
+  if (tlate_parms=="<<" && name=="operator") {
+    name="operator<<";
+    tlate_parms="";
+  }
   return;
 }
 
@@ -168,43 +172,9 @@ int main(int argc, char *argv[]) {
             // Remove template parameters from function name
             separate_template_params(o.name,o.name,o.tlate_parms);
             
-            // Determine if this function is already in the function list
-            bool found_in_list=false;
-            for(size_t k=0;k<function_list.size();k++) {
-              if (function_list[k].ns==o.ns &&
-                  function_list[k].name==o.name) {
-                found_in_list=true;
-              }
-            }
-
-            // If it is, then it's overloaded, so see if it's in the
-            // overloaded list
-            if (found_in_list) {
-              
-              function f;
-              f.ns=o.ns;
-              f.name=o.name;
-              f.tlate_parms.push_back(o.tlate_parms);
-              
-              bool found_in_dups=false;
-              for(size_t k=0;k<overloaded_list.size();k++) {
-                if (overloaded_list[k].ns==o.ns &&
-                    overloaded_list[k].name==o.name) {
-                  found_in_dups=true;
-                }
-              }
-
-              // If it's overloaded but not in the overloaded list, add it
-              if (found_in_dups==false) {
-                overloaded_list.push_back(f);
-              }
-              
-            } else {
-
-              // If it's not overloaded, add it to the function list
-              function_list.push_back(o);
-              
-            }
+            // If it's not overloaded, add it to the function list
+            function_list.push_back(o);
+            
           }
           j++;
           
@@ -216,6 +186,95 @@ int main(int argc, char *argv[]) {
 
     // End of reading index.xml
   }
+
+  for(size_t k1=0;k1<function_list.size();k1++) {
+    for(size_t k2=k1+1;k2<function_list.size();k2++) {
+      if (function_list[k1].ns==function_list[k2].ns &&
+          function_list[k1].name==function_list[k2].name) {
+
+        bool found_in_ol=false;
+        
+        for(size_t k3=0;k3<overloaded_list.size() &&
+              found_in_ol==false;k3++) {
+          if (overloaded_list[k3].ns==function_list[k1].ns &&
+              overloaded_list[k3].name==function_list[k1].name) {
+            found_in_ol=true;
+            bool found_in_list1=false;
+            bool found_in_list2=false;
+            for(size_t k4=0;k4<overloaded_list[k3].tlate_parms.size();
+                k4++) {
+              if (overloaded_list[k3].tlate_parms[k4]==
+                  function_list[k1].tlate_parms) {
+                found_in_list1=true;
+              }
+              if (overloaded_list[k3].tlate_parms[k4]==
+                  function_list[k2].tlate_parms) {
+                found_in_list2=true;
+              }
+            }
+            if (found_in_list1==false &&
+                function_list[k1].tlate_parms.length()>0) {
+              overloaded_list[k3].tlate_parms.push_back
+                (function_list[k1].tlate_parms);
+            }
+            if (found_in_list2==false &&
+                function_list[k2].tlate_parms.length()>0) {
+              overloaded_list[k3].tlate_parms.push_back
+                (function_list[k2].tlate_parms);
+            }
+          }
+        }
+        
+        if (found_in_ol==false) {
+          function f;
+          f.ns=function_list[k1].ns;
+          f.name=function_list[k1].name;
+          if (function_list[k1].tlate_parms.length()>0) {
+            f.tlate_parms.push_back(function_list[k1].tlate_parms);
+          }
+          if (function_list[k2].tlate_parms.length()>0) {
+            f.tlate_parms.push_back(function_list[k2].tlate_parms);
+          }
+          overloaded_list.push_back(f);
+        }
+        
+      }
+    }
+  }
+
+    // Overloaded functions still appear in function_list, so we
+    // remove them here so that functions are only in function_list
+    // or overloaded_list, but not both
+    
+    for(size_t i=0;i<overloaded_list.size();i++) {
+      bool found=false;
+      size_t jfound;
+      for(size_t j=0;j<function_list.size();j++) {
+        if (function_list[j].ns==overloaded_list[i].ns &&
+            function_list[j].name==overloaded_list[i].name) {
+          cout << "found: " << function_list[j].name << " "
+               << overloaded_list[i].name << endl;
+          found=true;
+          jfound=j;
+        }
+      }
+      if (found==true) {
+        std::vector<generic> function_list_new;
+        for(size_t k=0;k<function_list.size();k++) {
+          if (k!=jfound) {
+            generic g;
+            g.ns=function_list[k].ns;
+            g.name=function_list[k].name;
+            g.tlate_parms=function_list[k].tlate_parms;
+            function_list_new.push_back(g);
+          }
+        }
+        function_list=function_list_new;
+
+        // Start back at the beginning of overloaded_list
+        i=0;
+      }
+    }
 
   // Extract the list of namespaces from the overloaded functions
   vector<std::string> ns_list;
@@ -232,6 +291,43 @@ int main(int argc, char *argv[]) {
       ns_list.push_back(overloaded_list[k].ns);
     }
 
+  }
+  if (true || xml_verbose>1) {
+    cout << "Class list: " << endl;
+    for(size_t i=0;i<class_list.size();i++) {
+      cout << i << " " << class_list[i].ns << " "
+           << class_list[i].name << " "
+           << class_list[i].tlate_parms << endl;
+    }
+    cout << endl;
+    cout << "Function list: " << endl;
+    for(size_t i=0;i<function_list.size();i++) {
+      cout << i << " " << function_list[i].ns << " "
+           << function_list[i].name << " "
+           << function_list[i].tlate_parms << endl;
+    }
+    cout << endl;
+    cout << "Overloaded list: " << endl;
+    for(size_t i=0;i<overloaded_list.size();i++) {
+      cout << i << " " << overloaded_list[i].ns << " "
+           << overloaded_list[i].name << endl;
+      for(size_t ik=0;ik<overloaded_list[i].tlate_parms.size();ik++) {
+        cout << "  " << ik << " "
+             << overloaded_list[i].tlate_parms[ik].length() << " ";
+        if (overloaded_list[i].tlate_parms[ik].length()<70) {
+          cout << overloaded_list[i].tlate_parms[ik];
+        } else {
+          cout << overloaded_list[i].tlate_parms[ik].substr(0,70) << "..";
+        }
+        cout << endl;
+      }
+    }
+    cout << endl;
+    cout << "Namespace list: " << endl;
+    for(size_t i=0;i<ns_list.size();i++) {
+      cout << i << " " << ns_list[i] << endl;
+    }
+    cout << endl;
   }
 
   // For each overloaded function, go through the namespace .xml file
@@ -352,35 +448,6 @@ int main(int argc, char *argv[]) {
       
     }
     
-  }
-
-  // Some overloaded functions still appear in function_list, so we
-  // remove them here so that functions are only in function_list
-  // or overloaded_list, but not both
-  
-  for(size_t i=0;i<overloaded_list.size();i++) {
-    bool found=false;
-    size_t jfound;
-    for(size_t j=0;j<function_list.size();j++) {
-      if (function_list[j].ns==overloaded_list[i].ns &&
-          function_list[j].name==overloaded_list[i].name) {
-        found=true;
-        jfound=j;
-      }
-    }
-    if (found==true) {
-      std::vector<generic> function_list_new;
-      for(size_t k=0;k<function_list.size();k++) {
-        if (k!=jfound) {
-          generic g;
-          g.ns=function_list[k].ns;
-          g.name=function_list[k].name;
-          g.tlate_parms=function_list[k].tlate_parms;
-          function_list_new.push_back(g);
-        }
-      }
-      function_list=function_list_new;
-    }
   }
 
   // Verbose output
