@@ -372,6 +372,75 @@ int eos_had_rmf_hyp::calc_e_solve_fun(size_t nv, const ubvector &ex,
   return 0;
 }
 
+int eos_had_rmf_hyp::calc_e_nobeta_fun(size_t nv, const ubvector &ex, 
+                                       ubvector &ey, double nB,
+                                       double Ye, double Ys) {
+  
+  double muu=ex[0];
+  double mud=ex[1];
+  double mus=ex[2];
+  
+  double sig=ex[3];
+  double ome=ex[4];
+  double lrho=ex[5];
+
+  cout << "1: " << ex[0] << " " << ex[1] << " " << ex[2] << " "
+       << ex[3] << " " << ex[4] << " " << ex[5] << endl;
+
+  neutron->mu=muu+mud+mud;
+  proton->mu=muu+muu+mud;
+  lambda->mu=muu+mud+mus;
+  sigma_p->mu=muu+muu+mus;
+  sigma_z->mu=muu+mud+mus;
+  sigma_m->mu=mud+mud+mus;
+  
+  if (inc_cascade) {
+    cascade_z->mu=muu+mus+mus;
+    cascade_m->mu=mud+mus+mus;
+  }
+
+  double f1, f2, f3;
+  calc_eq_hyp_p(*neutron,*proton,*lambda,*sigma_p,*sigma_z,
+                *sigma_m,*cascade_z,*cascade_m,sig,ome,lrho,f1,f2,f3,
+                *eos_thermo);
+
+  double nB2=neutron->n+proton->n+lambda->n+sigma_p->n+sigma_z->n+
+    sigma_m->n;
+  if (inc_cascade) nB2+=cascade_z->n+cascade_m->n;
+
+  double Ye2=proton->n+sigma_p->n-sigma_m->n;
+  if (inc_cascade) Ye2-=cascade_m->n;
+  Ye2/=nB2;
+    
+  double Ys2=lambda->n+sigma_p->n+sigma_z->n+sigma_m->n;
+  if (inc_cascade) {
+    Ys2+=2.0*(cascade_m->n+cascade_m->n);
+  }
+  Ys2/=nB2;
+
+  if (Ys2==0.0) return 1;
+
+  ey[0]=(nB-nB2)/nB;
+  ey[1]=Ye-Ye2;
+  ey[2]=Ys-Ys2;
+  ey[3]=f1;
+  ey[4]=f2;
+  ey[5]=f3;
+
+  cout << "2: " << ex[0] << " " << ex[1] << " " << ex[2] << " "
+       << ex[3] << " " << ex[4] << " " << ex[5] << endl;
+  
+  for(int i=0;i<6;i++) {
+    if (!std::isfinite(ex[i]) || !std::isfinite(ey[i])) {
+      // 07/12/11 - We don't want to call the error handler here, because
+      // sometimes the solver may be able to handle it automatically
+      return 3;
+    }
+  }
+
+  return 0;
+}
+
 int eos_had_rmf_hyp::calc_hyp_e(fermion &ne, fermion &pr,
 				fermion &lam, fermion &sigp, fermion &sigz, 
 				fermion &sigm, fermion &casz, fermion &casm,
@@ -592,6 +661,160 @@ int eos_had_rmf_hyp::calc_hyp_e(fermion &ne, fermion &pr,
   // return neutron and proton densities to original values
   ne.n=n_baryon-n_charge;
   pr.n=n_charge;
+  
+  if (ret!=0) {
+    O2SCL_CONV2_RET("Solver failed in eos_had_rmf_hyp::calc_e",
+		    "(fermion,fermion,thermo).",exc_efailed,this->err_nonconv);
+  }
+
+  return 0;
+}
+
+int eos_had_rmf_hyp::calc_hyp_e_nobeta
+(double nB, double Ye, double Ys, fermion &ne, fermion &pr,
+ fermion &lam, fermion &sigp, fermion &sigz, 
+ fermion &sigm, fermion &casz, fermion &casm, thermo &lth) {
+  
+  size_t nv=6;
+
+  ubvector x(nv), y(nv);
+  int ret;
+
+  ne.non_interacting=false;
+  pr.non_interacting=false;
+  
+  set_thermo(lth);
+  set_n_and_p(ne,pr);
+  lambda=&lam;
+  sigma_p=&sigp;
+  sigma_z=&sigz;
+  sigma_m=&sigm;
+  cascade_z=&casz;
+  cascade_m=&casm;
+
+  lambda->non_interacting=false;
+  sigma_p->non_interacting=false;
+  sigma_z->non_interacting=false;
+  sigma_m->non_interacting=false;
+  cascade_z->non_interacting=false;
+  cascade_m->non_interacting=false;
+
+  if (guess_set) {
+    
+    // If an initial guess is given, then use it to directly compute
+    // the EOS
+    
+    x[0]=(2.0*proton->mu-neutron->mu)/3.0;
+    x[1]=(2.0*neutron->mu-proton->mu)/3.0;
+    x[2]=lambda->mu-x[0]-x[1];
+    x[3]=sigma;
+    x[4]=omega;
+    x[5]=rho;
+    guess_set=false;
+    
+    mm_funct fmf=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,double,
+                       double,double)>
+       (&eos_had_rmf_hyp::calc_e_nobeta_fun),
+       this,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3,nB,Ye,Ys);
+    
+    ret=eos_mroot->msolve(nv,x,fmf);
+    
+    int rt=calc_e_solve_fun(nv,x,y);
+    if (rt!=0) {
+      O2SCL_CONV2_RET("Final solution failed (user guess) in ",
+		      "eos_had_rmf_hyp::calc_hyp_e_nobeta().",exc_efailed,
+		      this->err_nonconv);
+    }
+    
+  } else {
+
+    // If no initial guess is given, then create one by beginning
+    // at saturated nuclear matter and proceeding incrementally.
+
+    x[0]=(ne.m+0.05)/2.5;
+    x[1]=(pr.m+0.01)/2.5;
+    x[2]=x[1];
+    x[3]=0.1;
+    x[4]=0.07;
+    x[5]=0.001;
+    
+    if (verbose>0) {
+      cout << "Solving in eos_had_rmf_hyp::calc_e()." << endl;
+      cout << "alpha      n_B        n_ch       mu_n       "
+	   << "mu_p       sigma       omega      rho         ret" << endl;
+      cout.precision(4);
+    }
+
+    for(double alpha=0.0;alpha<=1.0+1.0e-10;
+	alpha+=1.0/((double)calc_e_steps)) {
+
+      double nB2=0.16*(1.0-alpha)+nB*alpha;
+      double Ye2=0.4*(1.0-alpha)+Ye*alpha;
+      double Ys2=0.1*(1.0-alpha)+Ys*alpha;
+    
+      mm_funct fmf=std::bind
+        (std::mem_fn<int(size_t,const ubvector &,ubvector &,double,
+                         double,double)>
+         (&eos_had_rmf_hyp::calc_e_nobeta_fun),
+         this,std::placeholders::_1,std::placeholders::_2,
+         std::placeholders::_3,nB2,Ye2,Ys2);
+      
+      // If the chemical potentials are too small, shift them by
+      // a little more than required to get positive densities. 
+      int rt=calc_e_nobeta_fun(6,x,y,nB2,Ye2,Ys2);
+      if (neutron->nu<neutron->ms) {
+	neutron->mu+=(neutron->ms-neutron->mu)*1.01;
+	rt=calc_e_nobeta_fun(6,x,y,nB2,Ye2,Ys2);
+      }
+      if (proton->nu<proton->ms) {
+	proton->mu+=(proton->ms-proton->mu)*1.01;
+	rt=calc_e_nobeta_fun(6,x,y,nB2,Ye2,Ys2);
+      }
+
+      // The initial point has n_n = n_p and thus rho=0, and the
+      // solver has a little problem with the stepsize getting away
+      // from the rho=0 point, so we give rho a small non-zero value
+      if (fabs(x[5])<1.0e-8) {
+	if (Ye<0.5) {
+	  x[5]=-1.0e-8;
+	} else {
+	  x[5]=1.0e-8;
+	}
+      }
+      
+      // If the initial guess failed then we won't be able to solve
+      if (rt!=0) {
+	string s=((string)"Initial guess failed at (nn=")+
+	  dtos(neutron->n)+" and np="+dtos(proton->n)+") in "+
+	  "eos_had_rmf_hyp::calc_e().";
+	O2SCL_CONV_RET(s.c_str(),exc_efailed,this->err_nonconv);
+      }
+
+      ret=eos_mroot->msolve(6,x,fmf);
+      if (verbose>0.0) {
+	cout << alpha << " " << nB2 << " " << Ye2 << " " << Ys2 << " "
+	     << x[0] << " " << x[1] << " " << x[2] << " " 
+	     << x[3] << " " << x[4] << " " << x[5] << " " << ret << endl;
+      }
+    }
+    if (verbose>0) {
+      cout.precision(6);
+      cout << endl;
+    }
+    
+    int rt2=calc_e_nobeta_fun(6,x,y,nB,Ye,Ys);
+    if (rt2!=0) {
+      O2SCL_CONV_RET("Final solution failed in eos_had_rmf_hyp::calc_e().",
+		     exc_efailed,this->err_nonconv);
+    }
+    
+  }
+
+  sigma=x[3];
+  omega=x[4];
+  rho=x[5];
   
   if (ret!=0) {
     O2SCL_CONV2_RET("Solver failed in eos_had_rmf_hyp::calc_e",

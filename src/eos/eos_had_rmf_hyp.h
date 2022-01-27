@@ -86,6 +86,11 @@ namespace o2scl {
     virtual int calc_e_solve_fun(size_t nv, const ubvector &ex, 
                          ubvector &ey);
 
+    /// The function for calc_e_hyp_nobeta()
+    int calc_e_nobeta_fun(size_t nv, const ubvector &ex, 
+                          ubvector &ey, double nB,
+                          double Ye, double Ys);
+    
     /** \brief Equation for solving for beta-equilibrium at T=0
     */
     virtual int solve_beta_eq_T0(size_t nv, const ubvector &x,
@@ -158,6 +163,15 @@ namespace o2scl {
                            fermion &lam, fermion &sigp, fermion &sigz, 
                            fermion &sigm, fermion &casz, fermion &casm,
                            thermo &lth);
+
+    /** \brief Equation of state as a function of density
+        out of beta equilibrium
+    */
+    virtual int calc_hyp_e_nobeta(double nB, double Ye, double Ys,
+                                  fermion &ne, fermion &pr,
+                                  fermion &lam, fermion &sigp, fermion &sigz, 
+                                  fermion &sigm, fermion &casz, fermion &casm,
+                                  thermo &lth);
 
     /** \brief Set the hyperon objects
      */

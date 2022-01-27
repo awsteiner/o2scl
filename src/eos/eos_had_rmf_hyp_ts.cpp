@@ -208,6 +208,17 @@ int main(int argc, char *argv[]) {
 
   re.beta_eq_T0(nB_grid,guess,e,true,mu,frel,eos_table);
 
+  if (false) {
+    re.def_mroot.verbose=2;
+    re.verbose=2;
+    re.calc_hyp_e_nobeta(0.48,0.4,0.1,
+                         re.def_neutron,re.def_proton,re.def_lambda,
+                         re.def_sigma_p,re.def_sigma_z,re.def_sigma_m,
+                         re.def_cascade_z,re.def_cascade_m,
+                         re.def_thermo);
+    exit(-1);
+  }
+  
   eti.read_table(*eos_table,"ed","pr","nb");
   ts.set_eos(eti);
   ts.max();
