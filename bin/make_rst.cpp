@@ -241,41 +241,41 @@ int main(int argc, char *argv[]) {
       }
     }
   }
-
-    // Overloaded functions still appear in function_list, so we
-    // remove them here so that functions are only in function_list
-    // or overloaded_list, but not both
-    
-    for(size_t i=0;i<overloaded_list.size();i++) {
-      bool found=false;
-      size_t jfound;
-      for(size_t j=0;j<function_list.size();j++) {
-        if (function_list[j].ns==overloaded_list[i].ns &&
-            function_list[j].name==overloaded_list[i].name) {
-          cout << "found: " << function_list[j].name << " "
-               << overloaded_list[i].name << endl;
-          found=true;
-          jfound=j;
-        }
-      }
-      if (found==true) {
-        std::vector<generic> function_list_new;
-        for(size_t k=0;k<function_list.size();k++) {
-          if (k!=jfound) {
-            generic g;
-            g.ns=function_list[k].ns;
-            g.name=function_list[k].name;
-            g.tlate_parms=function_list[k].tlate_parms;
-            function_list_new.push_back(g);
-          }
-        }
-        function_list=function_list_new;
-
-        // Start back at the beginning of overloaded_list
-        i=0;
+  
+  // Overloaded functions still appear in function_list, so we
+  // remove them here so that functions are only in function_list
+  // or overloaded_list, but not both
+  
+  for(size_t i=0;i<overloaded_list.size();i++) {
+    bool found=false;
+    size_t jfound;
+    for(size_t j=0;j<function_list.size();j++) {
+      if (function_list[j].ns==overloaded_list[i].ns &&
+          function_list[j].name==overloaded_list[i].name) {
+        cout << "found: " << function_list[j].name << " "
+             << overloaded_list[i].name << endl;
+        found=true;
+        jfound=j;
       }
     }
-
+    if (found==true) {
+      std::vector<generic> function_list_new;
+      for(size_t k=0;k<function_list.size();k++) {
+        if (k!=jfound) {
+          generic g;
+          g.ns=function_list[k].ns;
+          g.name=function_list[k].name;
+          g.tlate_parms=function_list[k].tlate_parms;
+          function_list_new.push_back(g);
+        }
+      }
+      function_list=function_list_new;
+      
+      // Start back at the beginning of overloaded_list
+      i=0;
+    }
+  }
+  
   // Extract the list of namespaces from the overloaded functions
   vector<std::string> ns_list;
 
@@ -310,14 +310,16 @@ int main(int argc, char *argv[]) {
     cout << "Overloaded list: " << endl;
     for(size_t i=0;i<overloaded_list.size();i++) {
       cout << i << " " << overloaded_list[i].ns << " "
-           << overloaded_list[i].name << endl;
+           << overloaded_list[i].name << " "
+           << overloaded_list[i].tlate_parms.size() << endl;
       for(size_t ik=0;ik<overloaded_list[i].tlate_parms.size();ik++) {
         cout << "  " << ik << " "
              << overloaded_list[i].tlate_parms[ik].length() << " ";
         if (overloaded_list[i].tlate_parms[ik].length()<70) {
-          cout << overloaded_list[i].tlate_parms[ik];
+          cout << "x" << overloaded_list[i].tlate_parms[ik] << "x";
         } else {
-          cout << overloaded_list[i].tlate_parms[ik].substr(0,70) << "..";
+          cout << "x"
+               << overloaded_list[i].tlate_parms[ik].substr(0,70) << "..";
         }
         cout << endl;
       }
@@ -409,9 +411,22 @@ int main(int argc, char *argv[]) {
               separate_template_params(func_name,func_name,
                                        tlate_parms);
               
+              cout << "Z: " << func_name << " " << tlate_parms << endl;
+              
               for(size_t j=0;j<overloaded_list.size() && found==false;j++) {
                 if (overloaded_list[j].ns==ns_list[k] &&
                     overloaded_list[j].name==func_name) {
+                  
+                  for(size_t ell=0;ell<overloaded_list[j].tlate_parms.size();
+                      ell++) {
+                    cout << "ell: " << ell << " "
+                         << overloaded_list[j].name << " "
+                         << overloaded_list[j].tlate_parms.size() << " x"
+                         << overloaded_list[j].tlate_parms[ell] << "x"
+                         << endl;
+                    char ch;
+                    cin >> ch;
+                  }
                   
                   found=true;
 
@@ -449,6 +464,7 @@ int main(int argc, char *argv[]) {
     }
     
   }
+  exit(-1);
 
   // Verbose output
   

@@ -384,8 +384,8 @@ int eos_had_rmf_hyp::calc_e_nobeta_fun(size_t nv, const ubvector &ex,
   double ome=ex[4];
   double lrho=ex[5];
 
-  cout << "1: " << ex[0] << " " << ex[1] << " " << ex[2] << " "
-       << ex[3] << " " << ex[4] << " " << ex[5] << endl;
+  //cout << "1: " << ex[0] << " " << ex[1] << " " << ex[2] << " "
+  //<< ex[3] << " " << ex[4] << " " << ex[5] << endl;
 
   neutron->mu=muu+mud+mud;
   proton->mu=muu+muu+mud;
@@ -418,8 +418,6 @@ int eos_had_rmf_hyp::calc_e_nobeta_fun(size_t nv, const ubvector &ex,
   }
   Ys2/=nB2;
 
-  if (Ys2==0.0) return 1;
-
   ey[0]=(nB-nB2)/nB;
   ey[1]=Ye-Ye2;
   ey[2]=Ys-Ys2;
@@ -427,8 +425,9 @@ int eos_had_rmf_hyp::calc_e_nobeta_fun(size_t nv, const ubvector &ex,
   ey[4]=f2;
   ey[5]=f3;
 
-  cout << "2: " << ex[0] << " " << ex[1] << " " << ex[2] << " "
-       << ex[3] << " " << ex[4] << " " << ex[5] << endl;
+  //cout << nB2 << " " << Ye2 << " " << Ys2 << endl;
+  //cout << "2: " << ex[0] << " " << ex[1] << " " << ex[2] << " "
+  //<< ex[3] << " " << ex[4] << " " << ex[5] << endl;
   
   for(int i=0;i<6;i++) {
     if (!std::isfinite(ex[i]) || !std::isfinite(ey[i])) {
@@ -750,7 +749,7 @@ int eos_had_rmf_hyp::calc_hyp_e_nobeta
     for(double alpha=0.0;alpha<=1.0+1.0e-10;
 	alpha+=1.0/((double)calc_e_steps)) {
 
-      double nB2=0.16*(1.0-alpha)+nB*alpha;
+      double nB2=0.60*(1.0-alpha)+nB*alpha;
       double Ye2=0.4*(1.0-alpha)+Ye*alpha;
       double Ys2=0.1*(1.0-alpha)+Ys*alpha;
     
@@ -765,10 +764,12 @@ int eos_had_rmf_hyp::calc_hyp_e_nobeta
       // a little more than required to get positive densities. 
       int rt=calc_e_nobeta_fun(6,x,y,nB2,Ye2,Ys2);
       if (neutron->nu<neutron->ms) {
+        cout << "adjusting." << endl;
 	neutron->mu+=(neutron->ms-neutron->mu)*1.01;
 	rt=calc_e_nobeta_fun(6,x,y,nB2,Ye2,Ys2);
       }
       if (proton->nu<proton->ms) {
+        cout << "adjusting 2." << endl;
 	proton->mu+=(proton->ms-proton->mu)*1.01;
 	rt=calc_e_nobeta_fun(6,x,y,nB2,Ye2,Ys2);
       }
@@ -777,9 +778,11 @@ int eos_had_rmf_hyp::calc_hyp_e_nobeta
       // solver has a little problem with the stepsize getting away
       // from the rho=0 point, so we give rho a small non-zero value
       if (fabs(x[5])<1.0e-8) {
-	if (Ye<0.5) {
+	if (Ye2<0.5) {
+          cout << "adjusting 3." << endl;
 	  x[5]=-1.0e-8;
 	} else {
+          cout << "adjusting 4." << endl;
 	  x[5]=1.0e-8;
 	}
       }

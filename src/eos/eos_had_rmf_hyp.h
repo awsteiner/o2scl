@@ -143,7 +143,7 @@ namespace o2scl {
 
     /** \brief Compute xs assuming a fixed value of the \f$ \Lambda \f$
         binding energy in nuclear matter in \f$ \mathrm{fm}^{-1} \f$
-     */
+    */
     void calc_xs(double lam_be);
 
     /** \brief Compute xs assuming a fixed value of the \f$ \Lambda \f$
@@ -151,8 +151,14 @@ namespace o2scl {
      */
     void calc_xw(double lam_be);
 
-    /** \brief Equation of state as a function of density
+    /** \brief Equation of state as a function of density at 
+        fixed baryon and charge density presuming the hyperons 
+        are in beta-equilibrium with the nucleons
 
+        (AWS, 1/27/22: I'm not sure if this function is useful or not.
+        It might be useful in the new github.com/awsteiner/eos code to
+        implicitly include strangeness.)
+        
         Initial guesses for the chemical potentials are taken
         from the user-given values. Initial guesses for the fields
         can be set by set_fields(), or default values will be used.
@@ -172,7 +178,7 @@ namespace o2scl {
                                   fermion &lam, fermion &sigp, fermion &sigz, 
                                   fermion &sigm, fermion &casz, fermion &casm,
                                   thermo &lth);
-
+    
     /** \brief Set the hyperon objects
      */
     virtual void set_hyp(fermion &lam, fermion &sigp, fermion &sigz, 
