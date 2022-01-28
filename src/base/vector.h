@@ -3835,10 +3835,14 @@ namespace o2scl {
   /// Armadillo version of \ref matrix_min()
   double matrix_min(const arma::mat &data);
 
-  /// Armadillo version of \ref matrix_row()
+  /** \brief Armadillo version of \ref matrix_row()
+
+      This function creates a <tt>arma::subview_row</tt> object from
+      an Armadillo matrix.
+   */
   template<> arma::subview_row<double>  
     matrix_row<arma::mat,arma::subview_row<double> >
-    (arma::mat &M, size_t row);
+  (arma::mat &M, size_t row);
 
   /// Armadillo version of \ref matrix_column()
   template<> arma::subview_col<double>  

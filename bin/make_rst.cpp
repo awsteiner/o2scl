@@ -395,18 +395,20 @@ int main(int argc, char *argv[]) {
                   for(size_t ell=0;
                       ell<overloaded_list[j].tlate_parms.size() &&
                         found==false;ell++) {
-                    
-                    pugi::xml_node nt=it2->child("argsstring");
-                    overloaded_list[j].args[ell]=nt.child_value();
-                    
-                    cout << "Found overloaded function in namespace "
-                         << overloaded_list[j].ns << " with name "
-                         << overloaded_list[j].name << " tp: "
-                         << overloaded_list[j].tlate_parms[ell]
-                         << " args: "
-                         << overloaded_list[j].args[ell] << endl;
-                    
-                    found=true;
+
+                    if (overloaded_list[j].tlate_parms[ell]==tlate_parms) {
+                      pugi::xml_node nt=it2->child("argsstring");
+                      overloaded_list[j].args[ell]=nt.child_value();
+                      
+                      cout << "Found overloaded function in namespace "
+                           << overloaded_list[j].ns << " with name "
+                           << overloaded_list[j].name << " tp: "
+                           << overloaded_list[j].tlate_parms[ell]
+                           << " args: "
+                           << overloaded_list[j].args[ell] << endl;
+                      
+                      found=true;
+                    }
                   }
 
                   /*

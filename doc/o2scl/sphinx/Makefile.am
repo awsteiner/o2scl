@@ -84,8 +84,8 @@ rst-files: empty
 	btmanip -parse ../../../data/o2scl/o2scl.bib -rst temp.rst
 	cat temp.rst >> ref.rst
 	rm -f temp.rst
-	rm -f class/*.rst
-	rm -f function/*.rst
+#	rm -f class/*.rst
+#	rm -f function/*.rst
 	../../../bin/make_rst ../xml | tee make_rst.out
 	cd static; acol -run acol.scr > acol.out
 
