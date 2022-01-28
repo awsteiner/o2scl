@@ -216,11 +216,13 @@ int main(int argc, char *argv[]) {
                 function_list[k1].tlate_parms.length()>0) {
               overloaded_list[k3].tlate_parms.push_back
                 (function_list[k1].tlate_parms);
+              overloaded_list[k3].args.push_back("");
             }
             if (found_in_list2==false &&
                 function_list[k2].tlate_parms.length()>0) {
               overloaded_list[k3].tlate_parms.push_back
                 (function_list[k2].tlate_parms);
+              overloaded_list[k3].args.push_back("");
             }
           }
         }
@@ -231,9 +233,11 @@ int main(int argc, char *argv[]) {
           f.name=function_list[k1].name;
           if (function_list[k1].tlate_parms.length()>0) {
             f.tlate_parms.push_back(function_list[k1].tlate_parms);
+            f.args.push_back("");
           }
           if (function_list[k2].tlate_parms.length()>0) {
             f.tlate_parms.push_back(function_list[k2].tlate_parms);
+            f.args.push_back("");
           }
           overloaded_list.push_back(f);
         }
@@ -252,8 +256,6 @@ int main(int argc, char *argv[]) {
     for(size_t j=0;j<function_list.size();j++) {
       if (function_list[j].ns==overloaded_list[i].ns &&
           function_list[j].name==overloaded_list[i].name) {
-        cout << "found: " << function_list[j].name << " "
-             << overloaded_list[i].name << endl;
         found=true;
         jfound=j;
       }
@@ -291,45 +293,6 @@ int main(int argc, char *argv[]) {
       ns_list.push_back(overloaded_list[k].ns);
     }
 
-  }
-  if (true || xml_verbose>1) {
-    cout << "Class list: " << endl;
-    for(size_t i=0;i<class_list.size();i++) {
-      cout << i << " " << class_list[i].ns << " "
-           << class_list[i].name << " "
-           << class_list[i].tlate_parms << endl;
-    }
-    cout << endl;
-    cout << "Function list: " << endl;
-    for(size_t i=0;i<function_list.size();i++) {
-      cout << i << " " << function_list[i].ns << " "
-           << function_list[i].name << " "
-           << function_list[i].tlate_parms << endl;
-    }
-    cout << endl;
-    cout << "Overloaded list: " << endl;
-    for(size_t i=0;i<overloaded_list.size();i++) {
-      cout << i << " " << overloaded_list[i].ns << " "
-           << overloaded_list[i].name << " "
-           << overloaded_list[i].tlate_parms.size() << endl;
-      for(size_t ik=0;ik<overloaded_list[i].tlate_parms.size();ik++) {
-        cout << "  " << ik << " "
-             << overloaded_list[i].tlate_parms[ik].length() << " ";
-        if (overloaded_list[i].tlate_parms[ik].length()<70) {
-          cout << "x" << overloaded_list[i].tlate_parms[ik] << "x";
-        } else {
-          cout << "x"
-               << overloaded_list[i].tlate_parms[ik].substr(0,70) << "..";
-        }
-        cout << endl;
-      }
-    }
-    cout << endl;
-    cout << "Namespace list: " << endl;
-    for(size_t i=0;i<ns_list.size();i++) {
-      cout << i << " " << ns_list[i] << endl;
-    }
-    cout << endl;
   }
 
   // For each overloaded function, go through the namespace .xml file
@@ -411,30 +374,43 @@ int main(int argc, char *argv[]) {
               separate_template_params(func_name,func_name,
                                        tlate_parms);
               
-              cout << "Z: " << func_name << " " << tlate_parms << endl;
-              
               for(size_t j=0;j<overloaded_list.size() && found==false;j++) {
                 if (overloaded_list[j].ns==ns_list[k] &&
                     overloaded_list[j].name==func_name) {
-                  
-                  for(size_t ell=0;ell<overloaded_list[j].tlate_parms.size();
-                      ell++) {
-                    cout << "ell: " << ell << " "
-                         << overloaded_list[j].name << " "
-                         << overloaded_list[j].tlate_parms.size() << " x"
-                         << overloaded_list[j].tlate_parms[ell] << "x"
-                         << endl;
-                    char ch;
-                    cin >> ch;
+
+                  if (tlate_parms.length()==0) {
+                    pugi::xml_node nt=it2->child("argsstring");
+                    overloaded_list[j].tlate_parms.push_back(tlate_parms);
+                    overloaded_list[j].args.push_back(nt.child_value());
+                    found=true;
+
+                    size_t ix=overloaded_list[j].args.size()-1;
+                    cout << "Found overloaded function in namespace "
+                         << overloaded_list[j].ns << " with name "
+                         << overloaded_list[j].name
+                         << " args: "
+                         << overloaded_list[j].args[ix] << endl;
                   }
                   
-                  found=true;
-
-                  pugi::xml_node nt=it2->child("argsstring");
-                  overloaded_list[j].args.push_back(nt.child_value());
-                  overloaded_list[j].tlate_parms.push_back(tlate_parms);
+                  for(size_t ell=0;
+                      ell<overloaded_list[j].tlate_parms.size() &&
+                        found==false;ell++) {
+                    
+                    pugi::xml_node nt=it2->child("argsstring");
+                    overloaded_list[j].args[ell]=nt.child_value();
+                    
+                    cout << "Found overloaded function in namespace "
+                         << overloaded_list[j].ns << " with name "
+                         << overloaded_list[j].name << " tp: "
+                         << overloaded_list[j].tlate_parms[ell]
+                         << " args: "
+                         << overloaded_list[j].args[ell] << endl;
+                    
+                    found=true;
+                  }
 
                   /*
+                  if (found
                     cout << "Found overloaded function in namespace "
                     << overloaded_list[j].ns << " with name "
                     << overloaded_list[j].name << endl;
@@ -464,7 +440,6 @@ int main(int argc, char *argv[]) {
     }
     
   }
-  exit(-1);
 
   // Verbose output
   
@@ -487,23 +462,25 @@ int main(int argc, char *argv[]) {
     for(size_t i=0;i<overloaded_list.size();i++) {
       cout << i << " " << overloaded_list[i].ns << " "
            << overloaded_list[i].name << endl;
-      for(size_t ik=0;ik<overloaded_list[i].args.size();ik++) {
-        cout << "  " << ik << " ";
-        if (overloaded_list[i].args[ik].length()<70) {
-          cout << overloaded_list[i].args[ik];
-        } else {
-          cout << overloaded_list[i].args[ik].substr(0,70) << "..";
-        }
-        cout << endl;
+      for(size_t ik=0;ik<overloaded_list[i].tlate_parms.size();ik++) {
         if (overloaded_list[i].tlate_parms[ik].length()>0) {
-          cout << "  ";
-          if (overloaded_list[i].tlate_parms[ik].length()<75) {
+          cout << "  " << ik << " tp: ";
+          if (overloaded_list[i].tlate_parms[ik].length()<70) {
             cout << overloaded_list[i].tlate_parms[ik];
           } else {
-            cout << overloaded_list[i].tlate_parms[ik].substr(0,75) << "..";
+            cout << overloaded_list[i].tlate_parms[ik].substr(0,70) << "..";
+                 
           }
           cout << endl;
         }
+        cout << "  " << ik << " args: ";
+        if (overloaded_list[i].args[ik].length()<65) {
+          cout << overloaded_list[i].args[ik];
+        } else {
+          cout << overloaded_list[i].args[ik].substr(0,65) << "..";
+               
+        }
+        cout << endl;
       }
     }
     cout << endl;
