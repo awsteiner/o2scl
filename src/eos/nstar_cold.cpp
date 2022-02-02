@@ -74,6 +74,11 @@ nstar_cold::nstar_cold() : eost(new table_units<>) {
   remove_rows=true;
   
   mh.err_nonconv=false;
+
+  nb_last_min=0.48;
+  
+  // In case calc_nstar() is used without calc_eos()
+  nb_last=2.0;
 }
 
 int nstar_cold::solve_fun(size_t nv, const ubvector &x, ubvector &y,
@@ -206,13 +211,15 @@ int nstar_cold::calc_eos(double np_0) {
   ux[0]=np_0;
   int tret=mh.msolve(1,ux,sf);
   if (tret!=0) {
-    O2SCL_CONV_RET("Initial solver failed.",o2scl::exc_efailed,err_nonconv);
+    O2SCL_CONV_RET("Initial solver failed.",
+                   o2scl::exc_efailed,err_nonconv);
   }
 
   // Loop over the density range, and also determine pressure_dec_nb
-  for(n_B=nb_start;(dnb>0.0 && n_B<=nb_end+dnb/10.0) ||
+  bool done=false;
+  for(n_B=nb_start;(dnb>0.0 && n_B<=nb_end+dnb/10.0 && done==false) ||
         (dnb<0.0 && n_B>=nb_end-dnb/10.0);n_B+=dnb) {
-    
+
     sf=std::bind(std::mem_fn<int(size_t,const ubvector &,
                                  ubvector &, thermo &,double)>
                  (&nstar_cold::solve_fun),
@@ -220,8 +227,12 @@ int nstar_cold::calc_eos(double np_0) {
                  std::placeholders::_3,std::ref(hb),n_B);
     
     tret=mh.msolve(1,ux,sf);
-    if (tret!=0) {
-      O2SCL_CONV_RET("Initial solver failed.",o2scl::exc_efailed,err_nonconv);
+    nb_last=n_B;
+    if (tret!=0 && n_B<nb_last_min) {
+      std::string str_err=((string)"Solver failed inside loop at ")+
+        "density "+o2scl::dtos(n_B)+" with nb_last_min="+
+        o2scl::dtos(nb_last_min)+" and nb_end="+o2scl::dtos(nb_end);
+      O2SCL_CONV_RET(str_err.c_str(),o2scl::exc_efailed,err_nonconv);
     }
     
     // Compute the function at the final point
@@ -534,6 +545,12 @@ int nstar_cold::calc_nstar() {
   double pr_max=mvsrt->get("pr",max_row);
   double nb_max=mvsrt->get("nb",max_row);
 
+  if (nb_max>nb_last) {
+    O2SCL_CONV2_RET("Central baryon density larger than last baryon ",
+                    "density in nstar_cold::calc_nstar().",
+                    o2scl::exc_einval,err_nonconv);
+  }
+
   // Remove rows beyond maximum mass
   if (remove_rows) {
     mvsrt->set_nlines(max_row+1);
@@ -568,7 +585,18 @@ int nstar_cold::fixed(double target_mass) {
   tp->set_units("1/fm^4","1/fm^4","1/fm^3");
   tp->set_eos(def_eos_tov);
   
-  return tp->fixed(target_mass);
+  int fret=tp->fixed(target_mass);
+  std::shared_ptr<table_units<> > ft=tp->get_results();
+  
+  double nb_max=ft->get("nb",0);
+
+  if (nb_max>nb_last) {
+    O2SCL_CONV2_RET("Central baryon density larger than last baryon ",
+                    "density in nstar_cold::fixed().",
+                    o2scl::exc_einval,err_nonconv);
+  }
+  
+  return fret;
 }
 
 int nstar_hot::solve_fun_T(size_t nv, const ubvector &x,

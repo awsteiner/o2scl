@@ -297,16 +297,34 @@ namespace o2scl {
      */
     double acausal_ed;
 
-    /// The table row which contains the maximum gravitational mass
+    /** \brief The last valid baryon density in the EOS 
+        (in \f$ \mathrm^{-3} \f$; default 2.0)
+
+        This value is computed by \ref calc_eos() .
+     */
+    double nb_last;
+
+    /** \brief The minimum last valid baryon density in the EOS
+        (in \f$ \mathrm^{-3} \f$; default 0.48)
+
+        The function \ref calc_eos() requires that the EOS must
+        be computable up to at least this density.
+     */
+    double nb_last_min;
+    
+    /** \brief The table row which contains the maximum gravitational mass
+        
+        This value is computed by \ref calc_nstar().
+    */
     size_t max_row;
     
     /** \brief Set the EOS table
-
+        
 	In order for the \ref calc_nstar() function to use this table,
 	it must contain at least the columns <tt>ed, pr</tt>, and
 	<tt>nB</tt> which store the energy density, pressure, and
 	baryon density.
-     */
+    */
     void set_eos_table(std::shared_ptr<table_units<> > t) {
       eost=t;
       return;

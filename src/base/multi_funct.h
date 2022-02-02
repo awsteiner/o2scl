@@ -138,7 +138,7 @@ namespace o2scl {
 
   };
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_NEVER_DEFINED
   
   /** \brief One-dimensional function from a python function
    */
