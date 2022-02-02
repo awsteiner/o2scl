@@ -228,95 +228,104 @@ int nstar_cold::calc_eos(double np_0) {
     
     tret=mh.msolve(1,ux,sf);
     nb_last=n_B;
-    if (tret!=0 && n_B<nb_last_min) {
+    
+    if (tret!=0 && (n_B<nb_last_min || dnb<0.0)) {
       std::string str_err=((string)"Solver failed inside loop at ")+
         "density "+o2scl::dtos(n_B)+" with nb_last_min="+
         o2scl::dtos(nb_last_min)+" and nb_end="+o2scl::dtos(nb_end);
       O2SCL_CONV_RET(str_err.c_str(),o2scl::exc_efailed,err_nonconv);
     }
     
-    // Compute the function at the final point
-    sf(1,ux,uy);
+    if (tret!=0) {
       
-    if (false) {
-      // AWS: 3/9/21: this is nothing other than the speed of
-      // sound, which can be easily approximated by dP/deps,
-      // saving the trouble of computing these derivatives.
-      // I'm commenting this out for now, but I may put it
-      // back in later. Even if it should be put in later,
-      // it's probably more efficient just to compute dP/depsilon
-      // directly.
+      done=true;
       
-      // ------------------------------------------------------------
-      // Compute dP/de at fixed Ye and Ymu. This code uses neut.n and
-      // prot.n, so we'll have to recompute them below.
-      
-      // Compute the hadronic part
-      double dednb_Yp, dPdnb_Yp;
-      hep->const_pf_derivs(n_B,prot.n/n_B,dednb_Yp,dPdnb_Yp);
-      // Compute the leptonic part
-      double dne_dmue=sqrt(e.mu*e.mu-e.m*e.m)*e.mu/pi2;
-      double dP_dne=e.n/dne_dmue;
-      // Put them together
-      double numer=dPdnb_Yp+dP_dne*e.n/n_B;
-      double denom=dednb_Yp+e.mu*e.n/n_B;
-      // Add the muon contribution
-      if (include_muons && mu.n>0.0) {
-        double dnmu_dmumu=sqrt(mu.mu*mu.mu-mu.m*mu.m)*mu.mu/pi2;
-        double dP_dnmu=mu.n/dnmu_dmumu;
-        numer+=dP_dnmu*mu.n/n_B;
-        denom+=mu.mu*mu.n/n_B;
-      }
-      double fcs2=numer/denom;
-
-      // ------------------------------------------------------------
-      // Recompute neut.n and prot.n
-      //y=solve_fun(x,hb);
-      
-    }
-
-    if (neut.inc_rest_mass==false) {
-      hb.ed+=neut.n*neut.m;
-      neut.mu+=neut.m;
-    }
-    if (prot.inc_rest_mass==false) {
-      hb.ed+=prot.n*prot.m;
-      prot.mu+=prot.m;
-    }
-
-    if (include_muons) {
-
-      h=hb+e+mu;
-      
-      //double line[18]={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,prot.n,e.n,
-      //neut.kf,prot.kf,e.kf,fcs2,denom,numer,mu.mu,mu.n,mu.kf};
-      //eost->line_of_data(18,line);
-
-      vector<double> line={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,
-        prot.n,e.n,neut.kf,prot.kf,e.kf,mu.mu,mu.n,mu.kf};
-      eost->line_of_data(line.size(),line);
-
     } else {
-
-      h=hb+e;
-
-      vector<double> line={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,
-        prot.n,e.n,neut.kf,prot.kf,e.kf};
-      eost->line_of_data(line.size(),line);
+      
+      // Compute the function at the final point
+      sf(1,ux,uy);
+      
+      if (false) {
+        // AWS: 3/9/21: this is nothing other than the speed of
+        // sound, which can be easily approximated by dP/deps,
+        // saving the trouble of computing these derivatives.
+        // I'm commenting this out for now, but I may put it
+        // back in later. Even if it should be put in later,
+        // it's probably more efficient just to compute dP/depsilon
+        // directly.
+        
+        // ------------------------------------------------------------
+        // Compute dP/de at fixed Ye and Ymu. This code uses neut.n and
+        // prot.n, so we'll have to recompute them below.
+        
+        // Compute the hadronic part
+        double dednb_Yp, dPdnb_Yp;
+        hep->const_pf_derivs(n_B,prot.n/n_B,dednb_Yp,dPdnb_Yp);
+        // Compute the leptonic part
+        double dne_dmue=sqrt(e.mu*e.mu-e.m*e.m)*e.mu/pi2;
+        double dP_dne=e.n/dne_dmue;
+        // Put them together
+        double numer=dPdnb_Yp+dP_dne*e.n/n_B;
+        double denom=dednb_Yp+e.mu*e.n/n_B;
+        // Add the muon contribution
+        if (include_muons && mu.n>0.0) {
+          double dnmu_dmumu=sqrt(mu.mu*mu.mu-mu.m*mu.m)*mu.mu/pi2;
+          double dP_dnmu=mu.n/dnmu_dmumu;
+          numer+=dP_dnmu*mu.n/n_B;
+          denom+=mu.mu*mu.n/n_B;
+        }
+        double fcs2=numer/denom;
+        
+        // ------------------------------------------------------------
+        // Recompute neut.n and prot.n
+        //y=solve_fun(x,hb);
+        
+      }
+      
+      if (neut.inc_rest_mass==false) {
+        hb.ed+=neut.n*neut.m;
+        neut.mu+=neut.m;
+      }
+      if (prot.inc_rest_mass==false) {
+        hb.ed+=prot.n*prot.m;
+        prot.mu+=prot.m;
+      }
+      
+      if (include_muons) {
+        
+        h=hb+e+mu;
+        
+        //double line[18]={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,prot.n,e.n,
+        //neut.kf,prot.kf,e.kf,fcs2,denom,numer,mu.mu,mu.n,mu.kf};
+        //eost->line_of_data(18,line);
+        
+        vector<double> line={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,
+          prot.n,e.n,neut.kf,prot.kf,e.kf,mu.mu,mu.n,mu.kf};
+        eost->line_of_data(line.size(),line);
+        
+      } else {
+        
+        h=hb+e;
+        
+        vector<double> line={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,
+          prot.n,e.n,neut.kf,prot.kf,e.kf};
+        eost->line_of_data(line.size(),line);
+        
+      }
+      
+      if (verbose>0) {
+        cout.precision(5);
+        cout << n_B << " " << neut.n << " " << prot.n << " " << e.n << " " 
+             << h.ed << " " << h.pr << endl;
+        cout.precision(6);
+      }
+      
+      if (n_B>nb_start && pressure_dec_nb<=0.0 && h.pr<oldpr) {
+        pressure_dec_nb=n_B;
+      }
+      oldpr=h.pr;
 
     }
-    
-    if (verbose>0) {
-      cout.precision(5);
-      cout << n_B << " " << neut.n << " " << prot.n << " " << e.n << " " 
-	   << h.ed << " " << h.pr << endl;
-      cout.precision(6);
-    }
-    
-    if (n_B>nb_start && pressure_dec_nb<=0.0 && h.pr<oldpr) {
-      pressure_dec_nb=n_B;
-    }
-    oldpr=h.pr;
 
     // Proceed to next baryon density
   }
