@@ -120,7 +120,6 @@ fit_linear_ts_SOURCES = fit_linear_ts.cpp
 # lib_LTLIBRARIES = libo2scl_fit.la
 
 # libo2scl_fit_la_SOURCES = $(FIT_SRCS)
-# libo2scl_fit_la_LDFLAGS = -version-info $(OLIB_LT_VERSION)
 
 # am__libo2scl_fit_la_SOURCES_DIST = $(FIT_SRCS)
 

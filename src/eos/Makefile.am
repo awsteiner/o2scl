@@ -367,7 +367,6 @@ empty:
 noinst_LTLIBRARIES = libo2scl_eos.la
 
 libo2scl_eos_la_SOURCES = $(EOS_SRCS)
-libo2scl_eos_la_LDFLAGS = -version-info $(OLIB_LT_VERSION)
 
 am__libo2scl_eos_la_SOURCES_DIST = $(EOS_SRCS)
 

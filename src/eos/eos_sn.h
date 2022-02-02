@@ -239,7 +239,7 @@ namespace o2scl {
     /** \brief Compute the electron and photon contribution for the full
         grid
 
-        If \ref baryons_only_loaded is true, this function computes
+        If \ref baryons_only is true, this function computes
         the data for <tt>E, P, S,</tt> and <tt>F</tt> by adding
         electrons and photons to the baryon contributions stored in
         <tt>Eint, Pint, Sint,</tt> and <tt>Fint</tt>. Otherwise,
@@ -281,9 +281,9 @@ namespace o2scl {
     /** \brief Test the free energy and store results in \c tm
 
         This checks that the data in \c Fint is consistent with that
-        in \c Eint and \c Sint (if \ref baryons_only_loaded is true)
+        in \c Eint and \c Sint (if \ref baryons_only is true)
         and that \c F is consistent with that in \c E and \c S (if
-        \ref with_leptons_loaded is true).
+        \ref with_leptons is true).
     */
     void check_free_energy(double &avg);
     
@@ -325,12 +325,12 @@ namespace o2scl {
 
     /// Return true if data with lepton information has been loaded
     bool data_with_leptons() {
-      return with_leptons_loaded;
+      return with_leptons;
     }
     
     /// Return true if data with only baryon information has been loaded
     bool data_baryons_only() {
-      return baryons_only_loaded;
+      return baryons_only;
     }
 
     /* \brief Load EOS from file named \c file_name
@@ -441,9 +441,9 @@ namespace o2scl {
     /// If true, a EOS table was successfully loaded (default false)
     bool loaded;
     /// True if thermodynamics with leptons has been loaded
-    bool with_leptons_loaded;
+    bool with_leptons;
     /// True if baryon-only thermodynamics has been loaded
-    bool baryons_only_loaded;
+    bool baryons_only;
 
     /// \name Memory allocation
     //@{
@@ -1062,8 +1062,8 @@ namespace o2scl {
       // Loaded must be set to true before calling set_interp()
       n_oth=0;
       loaded=true;
-      with_leptons_loaded=true;
-      baryons_only_loaded=false;
+      with_leptons=true;
+      baryons_only=false;
     
       if (n_oth!=oth_names.size()) {
         O2SCL_ERR2("Number of names does not match number of data sets ",

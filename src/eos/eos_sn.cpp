@@ -65,8 +65,8 @@ eos_sn_base::eos_sn_base() : cu(o2scl_settings.get_convert_units()) {
   verbose=1;
 
   loaded=false;
-  with_leptons_loaded=false;
-  baryons_only_loaded=false;
+  with_leptons=false;
+  baryons_only=false;
 
   m_neut=o2scl_mks::mass_neutron*
     o2scl_settings.get_convert_units().convert("kg","1/fm",1.0)*
@@ -115,13 +115,13 @@ void eos_sn_base::output(std::string fname) {
     hf.seti("include_muons",0);
   }
 
-  if (with_leptons_loaded) {
+  if (with_leptons) {
     hdf_output(hf,F,"F");
     hdf_output(hf,E,"E");
     hdf_output(hf,P,"P");
     hdf_output(hf,S,"S");
   }
-  if (baryons_only_loaded) {
+  if (baryons_only) {
     hdf_output(hf,Fint,"Fint");
     hdf_output(hf,Eint,"Eint");
     hdf_output(hf,Pint,"Pint");
@@ -196,22 +196,22 @@ void eos_sn_base::load(std::string fname, size_t mode) {
   // Flags
   int itmp;
   hf.geti("baryons_only",itmp);
-  if (itmp==1) baryons_only_loaded=true;
-  else baryons_only_loaded=false;
+  if (itmp==1) baryons_only=true;
+  else baryons_only=false;
   hf.geti("with_leptons",itmp);
-  if (itmp==1) with_leptons_loaded=true;
-  else with_leptons_loaded=false;
+  if (itmp==1) with_leptons=true;
+  else with_leptons=false;
   hf.geti("include_muons",itmp);
   if (itmp==1) include_muons=true;
   else include_muons=false;
 
-  if (with_leptons_loaded) {
+  if (with_leptons) {
     hdf_input(hf,F,"F");
     hdf_input(hf,E,"E");
     hdf_input(hf,P,"P");
     hdf_input(hf,S,"S");
   }
-  if (baryons_only_loaded) {
+  if (baryons_only) {
     hdf_input(hf,Fint,"Fint");
     hdf_input(hf,Eint,"Eint");
     hdf_input(hf,Pint,"Pint");
@@ -396,7 +396,7 @@ void eos_sn_base::compute_eg() {
 	double S_eg=th.en/nb1;
 	double F_eg=E_eg-T1*S_eg;
 
-	if (baryons_only_loaded==true) {
+	if (baryons_only==true) {
 	  E.set(i,j,k,Eint.get(i,j,k)+E_eg);
 	  P.set(i,j,k,Pint.get(i,j,k)+P_eg);
 	  S.set(i,j,k,Sint.get(i,j,k)+S_eg);
@@ -411,10 +411,10 @@ void eos_sn_base::compute_eg() {
     }
   }
 
-  if (baryons_only_loaded==true) {
-    with_leptons_loaded=true;
+  if (baryons_only==true) {
+    with_leptons=true;
   } else {
-    baryons_only_loaded=true;
+    baryons_only=true;
   }
   
   return;
@@ -457,11 +457,11 @@ void eos_sn_base::check_free_energy(double &avg) {
     ye1=E.get_grid(1,j);
     T1=E.get_grid(2,k);
 
-    if (baryons_only_loaded) {
+    if (baryons_only) {
       sum+=fabs(Eint.get(i,j,k)-
 		Fint.get(i,j,k)-T1*Sint.get(i,j,k))/fabs(Eint.get(i,j,k));
     }
-    if (with_leptons_loaded) {
+    if (with_leptons) {
       sum+=fabs(E.get(i,j,k)-
 		F.get(i,j,k)-T1*S.get(i,j,k))/fabs(E.get(i,j,k));
     }
@@ -472,8 +472,8 @@ void eos_sn_base::check_free_energy(double &avg) {
 
   if (verbose>0) {
     cout << "loaded: " << loaded << endl;
-    cout << "baryons_only_loaded: " << baryons_only_loaded << endl;
-    cout << "with_leptons_loaded: " << with_leptons_loaded << endl;
+    cout << "baryons_only: " << baryons_only << endl;
+    cout << "with_leptons: " << with_leptons << endl;
     cout << "sum/count: " << sum/count << endl;
     cout << endl;
   }
@@ -545,7 +545,7 @@ void eos_sn_base::beta_eq_sfixed(double nB, double entr,
     O2SCL_ERR2("No data loaded in ",
 	       "eos_sn_base::beta_eq_sfixed().",exc_einval);
   }
-  if (with_leptons_loaded==false) {
+  if (with_leptons==false) {
     compute_eg();
   }
 
@@ -600,7 +600,7 @@ void eos_sn_base::beta_eq_Tfixed(double nB, double T, double &Ye) {
     O2SCL_ERR2("No data loaded in ",
 	       "eos_sn_base::beta_eq_Tfixed().",exc_einval);
   }
-  if (with_leptons_loaded==false) {
+  if (with_leptons==false) {
     compute_eg();
   }
 
@@ -626,10 +626,10 @@ void eos_sn_base::beta_eq_Tfixed(double nB, double T, double &Ye) {
 
 double eos_sn_base::check_eg() {
   
-  if (!baryons_only_loaded) {
+  if (!baryons_only) {
     O2SCL_ERR("Baryons only EOS not loaded in check_eg().",exc_efailed);
   }
-  if (!with_leptons_loaded) {
+  if (!with_leptons) {
     O2SCL_ERR("With leptons EOS not loaded in check_eg().",exc_efailed);
   }
 
@@ -905,8 +905,8 @@ void eos_sn_ls::load(std::string fname, size_t mode) {
 
   // Loaded must be set to true before calling set_interp()
   loaded=true;
-  with_leptons_loaded=true;
-  baryons_only_loaded=true;
+  with_leptons=true;
+  baryons_only=true;
   
   if (n_oth!=oth_names.size()) {
     O2SCL_ERR2("Number of names does not match number of data sets ",
@@ -926,7 +926,7 @@ void eos_sn_ls::load(std::string fname, size_t mode) {
 
 double eos_sn_ls::check_eg() {
   
-  if (!baryons_only_loaded || !with_leptons_loaded) {
+  if (!baryons_only || !with_leptons) {
     O2SCL_ERR("Not enough data loaded in check_eg().",exc_efailed);
   }
 
@@ -1505,8 +1505,8 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
 
   // Loaded must be set to true before calling set_interp()
   loaded=true;
-  with_leptons_loaded=true;
-  baryons_only_loaded=false;
+  with_leptons=true;
+  baryons_only=false;
 
   if (n_oth!=oth_names.size()) {
     O2SCL_ERR2("Number of names does not match number of data sets ",
@@ -1878,8 +1878,8 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
 
   // Loaded must be set to true before calling set_interp()
   loaded=true;
-  with_leptons_loaded=false;
-  baryons_only_loaded=true;
+  with_leptons=false;
+  baryons_only=true;
 
   // It is important that 'loaded' is set to true before the call to
   // set_interp_type().
@@ -2129,11 +2129,11 @@ void eos_sn_sht::load(std::string fname, size_t mode) {
   // has already been loaded. This is important so we can load both
   // the EOS table with lepton contributions and the table without.
   if (mode==mode_17b || mode==mode_21b || mode==mode_NL3b) {
-    if (loaded==false) with_leptons_loaded=false;
-    baryons_only_loaded=true;
+    if (loaded==false) with_leptons=false;
+    baryons_only=true;
   } else {
-    with_leptons_loaded=true;
-    if (loaded==false) baryons_only_loaded=false;
+    with_leptons=true;
+    if (loaded==false) baryons_only=false;
   }
   loaded=true;
 
@@ -2270,8 +2270,8 @@ void eos_sn_hfsl::load(std::string fname, size_t mode) {
 
   // Loaded must be set to true before calling set_interp()
   loaded=true;
-  with_leptons_loaded=false;
-  baryons_only_loaded=true;
+  with_leptons=false;
+  baryons_only=true;
 
   // It is important that 'loaded' is set to true before the call to
   // set_interp_type().
