@@ -127,10 +127,9 @@ namespace o2scl_hdf {
   void skyrme_write(o2scl::eos_had_skyrme &sk, std::string model);
 
   /** \brief Return a pointer to an eos_had_base object 
-      from two strings specifying type and name
+      from a string
   */
-  o2scl::eos_had_base *eos_had_strings(std::string type,
-				       std::string name="");
+  o2scl::eos_had_base *eos_had_strings(std::string eos_str);
 
   /** \brief List EOSs understood by \ref eos_had_strings() .
   */

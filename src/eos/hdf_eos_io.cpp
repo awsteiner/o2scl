@@ -26,7 +26,7 @@
 
 using namespace std;
 using namespace o2scl;
-using namespace o2scl;
+using namespace o2scl_const;
 using namespace o2scl_hdf;
 
 void o2scl_hdf::gogny_load(o2scl::eos_had_gogny &ge, std::string model,
@@ -326,6 +326,7 @@ void o2scl_hdf::eos_had_strings_list() {
   vector<string> list;
   list.push_back("apr");
   list.push_back("gogny");
+  list.push_back("skyrme t0[MeV] t1[MeV] t2[MeV] t3[MeV] x0 x1 x2 x3 alpha");
   list.push_back("skyrme a");
   list.push_back("skyrme b");
   list.push_back("skyrme BSk10");
@@ -582,21 +583,36 @@ void o2scl_hdf::eos_had_strings_list() {
   return;
 }
 
-eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
-					 std::string name) {
-  if (type=="skyrme") {
+eos_had_base *o2scl_hdf::eos_had_strings(std::string eos_str) {
+
+  vector<string> vs;
+  split_string(eos_str,vs);
+  
+  if (vs[0]=="skyrme") {
     eos_had_skyrme *sk=new eos_had_skyrme;
-    skyrme_load(*sk,name);
+    if (is_number(vs[1]) && vs.size()>=10) {
+      sk->t0=o2scl::stod(vs[1])/hc_mev_fm;
+      sk->t1=o2scl::stod(vs[2])/hc_mev_fm;
+      sk->t2=o2scl::stod(vs[3])/hc_mev_fm;
+      sk->t3=o2scl::stod(vs[4])/hc_mev_fm;
+      sk->x0=o2scl::stod(vs[5]);
+      sk->x1=o2scl::stod(vs[6]);
+      sk->x2=o2scl::stod(vs[7]);
+      sk->x3=o2scl::stod(vs[8]);
+      sk->alpha=o2scl::stod(vs[9]);
+    } else {
+      skyrme_load(*sk,vs[1]);
+    }
     return sk;
-  } else if (type=="apr") {
+  } else if (vs[0]=="apr") {
     eos_had_apr *apr=new eos_had_apr;
     return apr;
-  } else if (type=="gogny") {
+  } else if (vs[0]=="gogny") {
     eos_had_gogny *gogny=new eos_had_gogny;
     return gogny;
-  } else if (type=="pot") {
+  } else if (vs[0]=="pot") {
     eos_had_potential *pot=new eos_had_potential;
-    if (name=="MDI0") {
+    if (vs[1]=="MDI0") {
       pot->Au=-95.98/o2scl_const::hc_mev_fm;
       pot->Al=-120.57/o2scl_const::hc_mev_fm;
       pot->B=106.35/o2scl_const::hc_mev_fm;
@@ -605,7 +621,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->sigma=4.0/3.0;
       pot->x=0.0;
       pot->form=pot->mdi_form;
-    } else if (name=="MDI1") {
+    } else if (vs[1]=="MDI1") {
       pot->Au=-187.27/o2scl_const::hc_mev_fm;
       pot->Al=-29.28/o2scl_const::hc_mev_fm;
       pot->B=106.35/o2scl_const::hc_mev_fm;
@@ -614,7 +630,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->sigma=4.0/3.0;
       pot->x=1.0;
       pot->form=pot->mdi_form;
-    } else if (name=="BGBD_das") {
+    } else if (vs[1]=="BGBD_das") {
       pot->Au=-192.0/o2scl_const::hc_mev_fm;
       pot->Al=-96.0/o2scl_const::hc_mev_fm;
       pot->B=203.3/o2scl_const::hc_mev_fm;
@@ -623,7 +639,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->sigma=7.0/6.0;
       pot->x=1.0/15.0;
       pot->form=pot->gbd_form;
-    } else if (name=="PAL11") {
+    } else if (vs[1]=="PAL11") {
       pot->A=75.94/o2scl_const::hc_mev_fm;
       pot->B=-30.880/o2scl_const::hc_mev_fm;
       pot->Bp=0.0;
@@ -636,7 +652,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z2=0.0;
       pot->sym_index=1;
       pot->form=pot->pal_form;
-    } else if (name=="PAL12") {
+    } else if (vs[1]=="PAL12") {
       pot->A=75.94/o2scl_const::hc_mev_fm;
       pot->B=-30.880/o2scl_const::hc_mev_fm;
       pot->Bp=0.0;
@@ -649,7 +665,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z2=0.0;
       pot->sym_index=2;
       pot->form=pot->pal_form;
-    } else if (name=="PAL13") {
+    } else if (vs[1]=="PAL13") {
       pot->A=75.94/o2scl_const::hc_mev_fm;
       pot->B=-30.880/o2scl_const::hc_mev_fm;
       pot->Bp=0.0;
@@ -662,7 +678,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z2=0.0;
       pot->sym_index=3;
       pot->form=pot->pal_form;
-    } else if (name=="PAL21") {
+    } else if (vs[1]=="PAL21") {
       pot->A=440.94/o2scl_const::hc_mev_fm;
       pot->B=-213.41/o2scl_const::hc_mev_fm;
       pot->Bp=0.0;
@@ -675,7 +691,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z2=0.0;
       pot->sym_index=1;
       pot->form=pot->pal_form;
-    } else if (name=="PAL22") {
+    } else if (vs[1]=="PAL22") {
       pot->A=440.94/o2scl_const::hc_mev_fm;
       pot->B=-213.41/o2scl_const::hc_mev_fm;
       pot->Bp=0.0;
@@ -688,7 +704,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z2=0.0;
       pot->sym_index=2;
       pot->form=pot->pal_form;
-    } else if (name=="PAL23") {
+    } else if (vs[1]=="PAL23") {
       pot->A=440.94/o2scl_const::hc_mev_fm;
       pot->B=-213.41/o2scl_const::hc_mev_fm;
       pot->Bp=0.0;
@@ -701,7 +717,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z2=0.0;
       pot->sym_index=3;
       pot->form=pot->pal_form;
-    } else if (name=="PAL31") {
+    } else if (vs[1]=="PAL31") {
       pot->A=-46.65/o2scl_const::hc_mev_fm;
       pot->B=39.54/o2scl_const::hc_mev_fm;
       pot->Bp=0.3;
@@ -714,7 +730,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z2=0.0;
       pot->sym_index=1;
       pot->form=pot->pal_form;
-    } else if (name=="PAL32") {
+    } else if (vs[1]=="PAL32") {
       pot->A=-46.65/o2scl_const::hc_mev_fm;
       pot->B=39.54/o2scl_const::hc_mev_fm;
       pot->Bp=0.3;
@@ -727,7 +743,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z2=0.0;
       pot->sym_index=2;
       pot->form=pot->pal_form;
-    } else if (name=="PAL33") {
+    } else if (vs[1]=="PAL33") {
       pot->A=-46.65/o2scl_const::hc_mev_fm;
       pot->B=39.54/o2scl_const::hc_mev_fm;
       pot->Bp=0.3;
@@ -740,7 +756,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z2=0.0;
       pot->sym_index=3;
       pot->form=pot->pal_form;
-    } else if (name=="BPALb11") {
+    } else if (vs[1]=="BPALb11") {
       pot->A=75.94/o2scl_const::hc_mev_fm;
       pot->B=-30.880/o2scl_const::hc_mev_fm;
       pot->Bp=0.0;
@@ -752,7 +768,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z1=-13.91/o2scl_const::hc_mev_fm;
       pot->z2=16.69/o2scl_const::hc_mev_fm;
       pot->form=pot->bpal_form;
-    } else if (name=="BPALb12") {
+    } else if (vs[1]=="BPALb12") {
       pot->A=75.94/o2scl_const::hc_mev_fm;
       pot->B=-30.880/o2scl_const::hc_mev_fm;
       pot->Bp=0.0;
@@ -764,7 +780,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z1=-13.91/o2scl_const::hc_mev_fm;
       pot->z2=16.69/o2scl_const::hc_mev_fm;
       pot->form=pot->bpal_form;
-    } else if (name=="BPALb13") {
+    } else if (vs[1]=="BPALb13") {
       pot->A=75.94/o2scl_const::hc_mev_fm;
       pot->B=-30.880/o2scl_const::hc_mev_fm;
       pot->Bp=0.0;
@@ -776,7 +792,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z1=-1.83/o2scl_const::hc_mev_fm;
       pot->z2=5.09/o2scl_const::hc_mev_fm;
       pot->form=pot->bpal_form;
-    } else if (name=="BPALb21") {
+    } else if (vs[1]=="BPALb21") {
       pot->A=440.94/o2scl_const::hc_mev_fm;
       pot->B=-213.41/o2scl_const::hc_mev_fm;
       pot->Bp=0.0;
@@ -788,7 +804,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z1=-18.4/o2scl_const::hc_mev_fm;
       pot->z2=46.27/o2scl_const::hc_mev_fm;
       pot->form=pot->bpal_form;
-    } else if (name=="BPALb22") {
+    } else if (vs[1]=="BPALb22") {
       pot->A=440.94/o2scl_const::hc_mev_fm;
       pot->B=-213.41/o2scl_const::hc_mev_fm;
       pot->Bp=0.0;
@@ -800,7 +816,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z1=-18.4/o2scl_const::hc_mev_fm;
       pot->z2=46.27/o2scl_const::hc_mev_fm;
       pot->form=pot->bpal_form;
-    } else if (name=="BPALb23") {
+    } else if (vs[1]=="BPALb23") {
       pot->A=440.94/o2scl_const::hc_mev_fm;
       pot->B=-213.41/o2scl_const::hc_mev_fm;
       pot->Bp=0.0;
@@ -812,7 +828,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z1=-18.4/o2scl_const::hc_mev_fm;
       pot->z2=46.27/o2scl_const::hc_mev_fm;
       pot->form=pot->bpal_form;
-    } else if (name=="BPALb31") {
+    } else if (vs[1]=="BPALb31") {
       pot->A=-46.65/o2scl_const::hc_mev_fm;
       pot->B=39.45/o2scl_const::hc_mev_fm;
       pot->Bp=0.3;
@@ -824,7 +840,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z1=-12.23/o2scl_const::hc_mev_fm;
       pot->z2=-2.98/o2scl_const::hc_mev_fm;
       pot->form=pot->bpal_form;
-    } else if (name=="SL12") {
+    } else if (vs[1]=="SL12") {
       pot->A=3.706/o2scl_const::hc_mev_fm;
       pot->B=-31.155/o2scl_const::hc_mev_fm;
       pot->Bp=0.0;
@@ -836,7 +852,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->z1=-13.355/o2scl_const::hc_mev_fm;
       pot->z2=2.789/o2scl_const::hc_mev_fm;
       pot->form=pot->sl_form;
-    } else if (name=="GBD0") {
+    } else if (vs[1]=="GBD0") {
       pot->Au=-109.85/o2scl_const::hc_mev_fm;
       pot->Al=-191.30/o2scl_const::hc_mev_fm;
       pot->B=205.66/o2scl_const::hc_mev_fm;
@@ -845,7 +861,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->sigma=7.0/6.0;
       pot->x=0.0;
       pot->form=pot->gbd_form;
-    } else if (name=="GBD1") {
+    } else if (vs[1]=="GBD1") {
       pot->Au=-299.69/o2scl_const::hc_mev_fm;
       pot->Al=-1.46/o2scl_const::hc_mev_fm;
       pot->B=205.66/o2scl_const::hc_mev_fm;
@@ -853,7 +869,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
       pot->Cl=-26.26/o2scl_const::hc_mev_fm;
       pot->sigma=7.0/6.0;
       pot->x=1.0;
-    } else if (name=="CKLxm2") {
+    } else if (vs[1]=="CKLxm2") {
       pot->B=106.35/o2scl_const::hc_mev_fm;
       pot->sigma=4.0/3.0;
       pot->Cu=-103.40/o2scl_const::hc_mev_fm;
@@ -864,7 +880,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
 	pot->x/(pot->sigma+1.0);
       pot->Al=-120.75/o2scl_const::hc_mev_fm+2.0*pot->B*
 	pot->x/(pot->sigma+1.0);
-    } else if (name=="CKLxm1") {
+    } else if (vs[1]=="CKLxm1") {
       pot->B=106.35/o2scl_const::hc_mev_fm;
       pot->sigma=4.0/3.0;
       pot->Cu=-103.40/o2scl_const::hc_mev_fm;
@@ -875,7 +891,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
 	pot->x/(pot->sigma+1.0);
       pot->Al=-120.75/o2scl_const::hc_mev_fm+2.0*pot->B*
 	pot->x/(pot->sigma+1.0);
-    } else if (name=="CKLx0") {
+    } else if (vs[1]=="CKLx0") {
       pot->B=106.35/o2scl_const::hc_mev_fm;
       pot->sigma=4.0/3.0;
       pot->Cu=-103.40/o2scl_const::hc_mev_fm;
@@ -886,7 +902,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
 	pot->x/(pot->sigma+1.0);
       pot->Al=-120.75/o2scl_const::hc_mev_fm+2.0*pot->B*
 	pot->x/(pot->sigma+1.0);
-    } else if (name=="CKLx1") {
+    } else if (vs[1]=="CKLx1") {
       pot->B=106.35/o2scl_const::hc_mev_fm;
       pot->sigma=4.0/3.0;
       pot->Cu=-103.40/o2scl_const::hc_mev_fm;
@@ -902,9 +918,31 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string type,
     pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
     pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2*pot->rho0);
     return pot;
-  } else if (type=="rmf") {
+  } else if (vs[0]=="rmf") {
     eos_had_rmf *rmf=new eos_had_rmf;
-    rmf_load(*rmf,name);
+    if (is_number(vs[1]) && vs.size()>=20) {
+      rmf->cs=o2scl::stod(vs[1]);
+      rmf->cw=o2scl::stod(vs[2]);
+      rmf->cr=o2scl::stod(vs[3]);
+      rmf->b=o2scl::stod(vs[4]);
+      rmf->c=o2scl::stod(vs[5]);
+      rmf->ms=o2scl::stod(vs[6])/hc_mev_fm;
+      rmf->mw=o2scl::stod(vs[7])/hc_mev_fm;
+      rmf->mr=o2scl::stod(vs[8])/hc_mev_fm;
+      rmf->zeta=o2scl::stod(vs[9]);
+      rmf->xi=o2scl::stod(vs[10]);
+      rmf->a1=o2scl::stod(vs[11]);
+      rmf->a2=o2scl::stod(vs[12]);
+      rmf->a3=o2scl::stod(vs[13]);
+      rmf->a4=o2scl::stod(vs[14]);
+      rmf->a5=o2scl::stod(vs[15]);
+      rmf->a6=o2scl::stod(vs[16]);
+      rmf->b1=o2scl::stod(vs[17]);
+      rmf->b2=o2scl::stod(vs[18]);
+      rmf->b3=o2scl::stod(vs[19]);
+    } else {
+      rmf_load(*rmf,vs[1]);
+    }
     return rmf;
   }
   O2SCL_ERR("Type not understood in eos_had_strings().",exc_einval);
