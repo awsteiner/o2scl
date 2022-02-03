@@ -99,7 +99,8 @@ namespace o2scl {
     size_t dig=std::numeric_limits<fp_t>::digits10;
 
     if (prec>((int)max)) prec=((int)max);
-    if (prec<=0) prec=dig;
+    if (prec==-1) prec=max;
+    if (prec==0) prec=dig;
     
     if (!auto_prec) strout.setf(std::ios::scientific);
     strout.precision(prec);
