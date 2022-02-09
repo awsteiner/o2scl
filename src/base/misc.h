@@ -49,6 +49,10 @@
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #endif
 
+#ifdef O2SCL_PUGIXML
+#include "pugixml.hpp"
+#endif
+
 #include <o2scl/err_hnd.h>
 
 #ifndef DOXYGEN_NO_O2NS
@@ -342,23 +346,8 @@ namespace o2scl {
       Note that this function may return Inf or NAN if \c limit is too 
       large, depending on the machine precision.
   */
-  static const std::string fermi_function_doc=
-    ((std::string)"Calculate a Fermi-Dirac distribution function ")+
-    "safely\n"+
-
-    "\\f$ \\left[1+\exp\\left(E/T-\\mu/T\\right)\\right]^{-1} \\f$\n"+
-
-    "This function calculates a Fermi-Dirac distribution, guaranteeing "+
-    "that numbers larger than \\f$ \exp(\\mathrm{limit}) \\f$ and "+
-    "smaller than \\f$ \exp(-\\mathrm{limit}) \\f$ will be avoided. The "+
-    "default value of <tt>limit=40</tt> ensures accuracy to within 1 "+
-    "part in \\f$ 10^{17} \\f$ compared to the maximum of the "+
-    "distribution (which is unity).\n"+
-
-    "Note that this function may return Inf or NAN if \\c limit is too "+
-    "large, depending on the machine precision.";
   double fermi_function(double E, double mu, double T, double limit=40.0);
-
+  
   /** \brief Calculate a Bose-Einstein distribution function safely
 
       \f$ \left[\exp\left(E/T-\mu/T\right)-1\right]^{-1} \f$ 
@@ -544,7 +533,9 @@ namespace o2scl {
       n=0;
       radix=2;
     }
-
+    
+    /** \brief Reset to the first number in the sequence
+     */
     void reset() {
       n=0;
       return;
@@ -562,7 +553,9 @@ namespace o2scl {
       radix=r;
       return;
     }
-    
+
+    /** \brief Generate the next number in the sequence
+     */
     fp_t gen() {
       
       fp_t x=0;
@@ -1160,6 +1153,215 @@ namespace o2scl {
     return;
   }
 
+  void doxygen_xml_func(std::string fname,
+                        std::string func_name,
+                        std::vector<std::string> &docs,
+                        int verbose=0) {
+    
+    if (verbose>1) {
+      std::cout << "Looking for " << func_name << " in file "
+                << fname << std::endl;
+    }
+    
+#ifdef O2SCL_PUGIXML
+    
+    docs.clear();
+    
+    pugi::xml_document ns_doc;
+    
+    pugi::xml_parse_result result=ns_doc.load_file(fname.c_str());
+    if (!result) {
+      std::cout << result.description() << std::endl;
+      std::cout << "Failed to read namespace file " << fname << std::endl;
+      exit(-1);
+    }
+    
+    // Parse through <doxygen><compounddef>
+    pugi::xml_node dindex=ns_doc.first_child().first_child();
+    
+    for (pugi::xml_node_iterator it=dindex.begin();it!=dindex.end();++it) {
+      
+      // Parse through the namespace
+
+      if (verbose>1) {
+        std::cout << "2: " << it->name() << std::endl;
+      }
+      
+      // The namespace name is in a <compoundname> object, classes
+      // are in <innerclass> objects, and some functions are 
+      // stored in sections, <sectiondef> objects
+      
+      if (it->name()==((std::string)"sectiondef")) {
+        
+        std::string section_name=it->child("header").child_value();
+        if (verbose>0) {
+          if (section_name.length()==0) {
+            std::cout << "Section: <no name>" << std::endl;
+          } else {
+            std::cout << "Section: "
+                      << it->child("header").child_value() << std::endl;
+          }
+        }
+        
+        // In each section, look for a <memberdef> object with a
+        // kind attribute of "function"
+        
+        for (pugi::xml_node_iterator it2=it->begin();
+             it2!=it->end();++it2) {
+
+          if (verbose>1) {
+            std::cout << "3: " << it2->name() << " "
+                      << it2->attribute("kind").value() << std::endl;
+          }
+          
+          if (it2->name()==((std::string)"memberdef") &&
+              it2->attribute("kind").value()==((std::string)"function")) {
+
+            if (verbose>1) {
+              std::cout << "Found function named: "
+                        << it2->child("name").child_value() << std::endl;
+            }
+            
+            // If we found a function, see if its in overloaded_list
+            // so we can set the argstrings
+            
+            bool found=false;
+            std::string func_name2=it2->child("name").child_value();
+            //std::string tlate_parms;
+            //separate_template_params(func_name2,func_name2,
+            //tlate_parms);
+
+            if (func_name==func_name2) {
+              
+              pugi::xml_node nt=it2->child("detaileddescription");
+              
+              std::cout << "Here: " << nt.child_value() << std::endl;
+              exit(-1);
+              found=true;
+            }
+            
+            // End of if statement we're dealing with a function
+          }
+
+          // End of loop over XML nodes in this section
+        }
+
+        // End of 'if (it->name()==((std::string)"sectiondef"))'
+      }
+
+      // Main loop over the XML nodes
+    }
+
+#endif
+    
+    return;
+  }
+  
+  void doxygen_xml_member_func(std::string fname, std::string class_name,
+                               std::string func_name,
+                               std::vector<std::string> &docs,
+                               int verbose=0) {
+    
+    if (verbose>1) {
+      std::cout << "Looking for member " << func_name
+                << " of class " << class_name << " in file "
+                << fname << std::endl;
+    }
+    
+#ifdef O2SCL_PUGIXML
+    
+    docs.clear();
+    
+    pugi::xml_document ns_doc;
+    
+    pugi::xml_parse_result result=ns_doc.load_file(fname.c_str());
+    if (!result) {
+      std::cout << result.description() << std::endl;
+      std::cout << "Failed to read namespace file " << fname << std::endl;
+      exit(-1);
+    }
+    
+    // Parse through <doxygen><compounddef>
+    pugi::xml_node dindex=ns_doc.first_child().first_child();
+    
+    for (pugi::xml_node_iterator it=dindex.begin();it!=dindex.end();++it) {
+      
+      // Parse through the namespace
+
+      if (verbose>1) {
+        std::cout << "2: " << it->name() << std::endl;
+      }
+      
+      // The namespace name is in a <compoundname> object, classes
+      // are in <innerclass> objects, and some functions are 
+      // stored in sections, <sectiondef> objects
+      
+      if (it->name()==((std::string)"sectiondef")) {
+        
+        std::string section_name=it->child("header").child_value();
+        if (verbose>0) {
+          if (section_name.length()==0) {
+            std::cout << "Section: <no name>" << std::endl;
+          } else {
+            std::cout << "Section: "
+                      << it->child("header").child_value() << std::endl;
+          }
+        }
+        
+        // In each section, look for a <memberdef> object with a
+        // kind attribute of "function"
+        
+        for (pugi::xml_node_iterator it2=it->begin();
+             it2!=it->end();++it2) {
+
+          if (verbose>1) {
+            std::cout << "3: " << it2->name() << " "
+                      << it2->attribute("kind").value() << std::endl;
+          }
+          
+          if (it2->name()==((std::string)"memberdef") &&
+              it2->attribute("kind").value()==((std::string)"function")) {
+
+            if (verbose>1) {
+              std::cout << "Found function named: "
+                        << it2->child("name").child_value() << std::endl;
+            }
+            
+            // If we found a function, see if its in overloaded_list
+            // so we can set the argstrings
+            
+            bool found=false;
+            std::string func_name2=it2->child("name").child_value();
+            //std::string tlate_parms;
+            //separate_template_params(func_name2,func_name2,
+            //tlate_parms);
+
+            if (func_name==func_name2) {
+              
+              pugi::xml_node nt=it2->child("detaileddescription");
+              
+              std::cout << "Here: " << nt.child_value() << std::endl;
+              exit(-1);
+              found=true;
+            }
+            
+            // End of if statement we're dealing with a function
+          }
+
+          // End of loop over XML nodes in this section
+        }
+
+        // End of 'if (it->name()==((std::string)"sectiondef"))'
+      }
+
+      // Main loop over the XML nodes
+    }
+
+#endif
+    
+    return;
+  }
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

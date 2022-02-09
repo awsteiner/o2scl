@@ -430,9 +430,11 @@ namespace o2scl {
     */
     virtual int calc_p(quark &u, quark &d, quark &s, thermo &lth);
 
+    /** \brief Desc
+     */
     virtual int gapfunmsvec(size_t nv, const ubvector &x, ubvector &y);
 
-  /** \brief Desc
+    /** \brief Desc
      */
     virtual int calc_eq_p(quark &tu, quark &td, quark &ts,
                           double &gap1, double &gap2, double &gap3,

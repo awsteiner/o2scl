@@ -174,6 +174,13 @@ int main(void) {
     cout << gx.gen() << endl;
   }
 
+  vector<string> vs3;
+  doxygen_xml_func(((std::string)"/Users/awsteiner/wcs/o2scl/doc/")+
+                   "o2scl/xml/namespaceo2scl.xml","glob_wrapper",vs3);
+  doxygen_xml_member_func(((std::string)"/Users/awsteiner/wcs/o2scl/doc/")+
+                          "o2scl/xml/classo2scl_1_1gen__test__number.xml",
+                          "gen_test_number","set_radix",vs3);
+  
   t.report();
 
   return 0;

@@ -134,9 +134,6 @@ namespace o2scl {
       return 0;
     }
     
-
-
-    
     
   };
   
