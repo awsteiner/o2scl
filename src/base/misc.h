@@ -1153,17 +1153,89 @@ namespace o2scl {
     return;
   }
 
+#ifdef O2SCL_PUGIXML
+  
+  class simple_walker : public pugi::xml_tree_walker {
+    
+  public:
+    
+    int last_depth;
+    
+    std::vector<std::string> names;
+    
+    simple_walker() {
+      last_depth=-1;
+    }
+    
+    virtual bool for_each(pugi::xml_node &node) {
+      
+      if (depth()>last_depth) {
+        if (((std::string)node.name()).length()>0) {
+          names.push_back(node.name());
+        }
+      } else {
+        int n=last_depth-depth();
+        for(int i=0;i<n;i++) {
+          std::cout << "</" << names[names.size()-1] << ">"
+                    << std::endl;
+          names.pop_back();
+          //last_depth--;
+          //std::cout << "pop" << std::endl;
+        }
+      }
+      
+      for (int i = 0; i < depth(); i++) {
+        std::cout << "  ";
+      }
+      
+      if (((std::string)node.name()).length()>0) {
+        std::cout << "<" << node.name()
+                  << ">" << node.value();
+        //std::cout << " d: "
+        //<< depth() << " l: " << last_depth << " ";
+      } else {
+        std::cout << node.value();
+        //std::cout << " d: "
+        //<< depth() << " l: " << last_depth << " ";
+      }
+      for(size_t k=0;k<names.size();k++) {
+        std::cout << "." << names[k] << ". ";
+      }
+      std::cout << std::endl;
+      
+      last_depth=depth();
+      
+      //names=node.name();
+      return true;
+    }
+
+    virtual bool end(pugi::xml_node &node) {
+      int n=last_depth;
+      for(int i=0;i<n;i++) {
+        std::cout << "</" << names[names.size()-1] << ">"
+                  << std::endl;
+        names.pop_back();
+        //last_depth--;
+        //std::cout << "pop" << std::endl;
+      }
+      return true;
+    }
+    
+  };
+  
+#endif
+  
   void doxygen_xml_func(std::string fname,
                         std::string func_name,
                         std::vector<std::string> &docs,
                         int verbose=0) {
     
+#ifdef O2SCL_PUGIXML
+    
     if (verbose>1) {
       std::cout << "Looking for " << func_name << " in file "
                 << fname << std::endl;
     }
-    
-#ifdef O2SCL_PUGIXML
     
     docs.clear();
     
@@ -1236,6 +1308,19 @@ namespace o2scl {
               pugi::xml_node nt=it2->child("detaileddescription");
               
               std::cout << "Here: " << nt.child_value() << std::endl;
+              std::cout << "Here2: " << nt.value() << std::endl;
+              std::cout << "Here3: " << nt.text() << std::endl;
+
+              simple_walker walker;
+              nt.traverse(walker);
+              
+              pugi::xml_node nt2=nt.child("para");
+              if (nt2!=0) {
+                std::cout << "Here: " << nt2.child_value() << std::endl;
+                std::cout << "Here2: " << nt2.value() << std::endl;
+                std::cout << "Here3: " << nt2.text() << std::endl;
+              }
+              
               exit(-1);
               found=true;
             }
@@ -1341,6 +1426,7 @@ namespace o2scl {
               pugi::xml_node nt=it2->child("detaileddescription");
               
               std::cout << "Here: " << nt.child_value() << std::endl;
+              std::cout << "Here: " << nt.value() << std::endl;
               exit(-1);
               found=true;
             }
