@@ -1169,11 +1169,35 @@ namespace o2scl {
     
     virtual bool for_each(pugi::xml_node &node) {
       
-      if (depth()>last_depth) {
-        if (((std::string)node.name()).length()>0) {
-          names.push_back(node.name());
-        }
+      if (((std::string)node.name()).length()>0) {
+        names.push_back(node.name());
+      }
+      
+      //if (depth()>last_depth) {
+      //if (((std::string)node.name()).length()>0) {
+      //names.push_back(node.name());
+      //}
+      //} else {
+      for (int i = 0; i < depth(); i++) {
+        std::cout << "  ";
+      }
+      
+      if (((std::string)node.name()).length()>0) {
+        std::cout << "<" << node.name()
+                  << ">" << node.value();
+        std::cout << " d: "
+                  << depth() << " l: " << last_depth << " ";
       } else {
+        std::cout << node.value();
+        std::cout << " d: "
+                  << depth() << " l: " << last_depth << " ";
+      }
+      for(size_t k=0;k<names.size();k++) {
+        std::cout << "." << names[k] << ". ";
+      }
+      std::cout << std::endl;
+      
+      if (depth()<last_depth) {
         int n=last_depth-depth();
         for(int i=0;i<n;i++) {
           std::cout << "</" << names[names.size()-1] << ">"
@@ -1183,25 +1207,6 @@ namespace o2scl {
           //std::cout << "pop" << std::endl;
         }
       }
-      
-      for (int i = 0; i < depth(); i++) {
-        std::cout << "  ";
-      }
-      
-      if (((std::string)node.name()).length()>0) {
-        std::cout << "<" << node.name()
-                  << ">" << node.value();
-        //std::cout << " d: "
-        //<< depth() << " l: " << last_depth << " ";
-      } else {
-        std::cout << node.value();
-        //std::cout << " d: "
-        //<< depth() << " l: " << last_depth << " ";
-      }
-      for(size_t k=0;k<names.size();k++) {
-        std::cout << "." << names[k] << ". ";
-      }
-      std::cout << std::endl;
       
       last_depth=depth();
       
