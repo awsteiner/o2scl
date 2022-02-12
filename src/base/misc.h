@@ -948,6 +948,13 @@ namespace o2scl {
       
       \future Fix for openSUSE (see
       https://github.com/awsteiner/o2scl/issues/8 )
+
+      \verbatim test
+
+      blah blah
+
+      blah blah 2
+      \endverbatim
   */
   int glob_wrapper(std::string pattern,
 		   std::vector<std::string> &matches);
@@ -1154,59 +1161,80 @@ namespace o2scl {
   }
 
 #ifdef O2SCL_PUGIXML
+
+  class walker_base  : public pugi::xml_tree_walker {
+    
+  public:
+
+    int last_depth;
+
+    int verbose;
+    
+    std::vector<std::string> names;
+
+    simple_walker() {
+      last_depth=-1;
+      verbose=0;
+    }
+    
+  };
   
-  class simple_walker : public pugi::xml_tree_walker {
+  class ostream_walker : public walker_base {
     
   public:
     
-    int last_depth;
-    
-    std::vector<std::string> names;
-    
-    simple_walker() {
-      last_depth=-1;
+    std::vector<std::string> output;
+
+    std::ostream *outs;
+
+    ostream_walker() {
+      outs=&std::cout;
+    }
+
+    virtual bool begin(pugi::xml_node &node) {
+      output.clear();
+      return true;
     }
     
     virtual bool for_each(pugi::xml_node &node) {
+
+      if (verbose>0) {
+        (*outs) << " d: "
+                  << depth() << " l: " << last_depth << std::endl;
+      }
+      
+      if (depth()<last_depth) {
+        int n=last_depth-depth();
+        for(int i=0;i<n;i++) {
+          for (int j = 0; j < depth()-i+n-1; j++) {
+            (*outs) << "  ";
+          }
+          (*outs) << "</" << names[names.size()-1] << ">"
+                    << std::endl;
+          names.pop_back();
+        }
+      }
       
       if (((std::string)node.name()).length()>0) {
         names.push_back(node.name());
       }
       
-      //if (depth()>last_depth) {
-      //if (((std::string)node.name()).length()>0) {
-      //names.push_back(node.name());
-      //}
-      //} else {
       for (int i = 0; i < depth(); i++) {
-        std::cout << "  ";
+        (*outs) << "  ";
       }
       
       if (((std::string)node.name()).length()>0) {
-        std::cout << "<" << node.name()
+        (*outs) << "<" << node.name()
                   << ">" << node.value();
-        std::cout << " d: "
-                  << depth() << " l: " << last_depth << " ";
       } else {
-        std::cout << node.value();
-        std::cout << " d: "
-                  << depth() << " l: " << last_depth << " ";
+        (*outs) << node.value();
       }
-      for(size_t k=0;k<names.size();k++) {
-        std::cout << "." << names[k] << ". ";
-      }
-      std::cout << std::endl;
-      
-      if (depth()<last_depth) {
-        int n=last_depth-depth();
-        for(int i=0;i<n;i++) {
-          std::cout << "</" << names[names.size()-1] << ">"
-                    << std::endl;
-          names.pop_back();
-          //last_depth--;
-          //std::cout << "pop" << std::endl;
+      if (verbose>0) {
+        for(size_t k=0;k<names.size();k++) {
+          (*outs) << "." << names[k] << ". ";
         }
       }
+      (*outs) << std::endl;
       
       last_depth=depth();
       
@@ -1217,11 +1245,93 @@ namespace o2scl {
     virtual bool end(pugi::xml_node &node) {
       int n=last_depth;
       for(int i=0;i<n;i++) {
-        std::cout << "</" << names[names.size()-1] << ">"
+        if (names.size()>0) {
+          for (int j = 0; j < depth()-i+n; j++) {
+            (*outs) << "  ";
+          }
+          (*outs) << "</" << names[names.size()-1] << ">"
                   << std::endl;
-        names.pop_back();
-        //last_depth--;
-        //std::cout << "pop" << std::endl;
+          names.pop_back();
+        }
+      }
+      return true;
+    }
+    
+  };
+  
+  class vec_string_walker : public walker_base {
+    
+  public:
+    
+    std::vector<std::string> output;
+
+    virtual bool begin(pugi::xml_node &node) {
+      output.clear();
+      return true;
+    }
+    
+    virtual bool for_each(pugi::xml_node &node) {
+
+      std::string stmp;
+      
+      if (verbose>0) {
+        std::cout << " d: "
+                  << depth() << " l: " << last_depth << std::endl;
+      }
+      
+      if (depth()<last_depth) {
+        int n=last_depth-depth();
+        for(int i=0;i<n;i++) {
+          for (int j = 0; j < depth()-i+n-1; j++) {
+            stmp+=((std::string)"  ");
+          }
+          stmp+=((std::string)"</")+names[names.size()-1]+">";
+          output.push_back(stmp);
+          stmp.clear();
+          names.pop_back();
+        }
+      }
+      
+      if (((std::string)node.name()).length()>0) {
+        names.push_back(node.name());
+      }
+      
+      for (int i = 0; i < depth(); i++) {
+        stmp+=((std::string)"  ");
+      }
+      
+      if (((std::string)node.name()).length()>0) {
+        stmp+=((std::string)"<")+node.name+">"+node.value();
+      } else {
+        stmp+=node.value();
+      }
+      if (verbose>0) {
+        for(size_t k=0;k<names.size();k++) {
+          std::cout << "." << names[k] << ". ";
+        }
+      }
+      output.push_back(stmp);
+      stmp.clear();
+      
+      last_depth=depth();
+      
+      //names=node.name();
+      return true;
+    }
+
+    virtual bool end(pugi::xml_node &node) {
+      int n=last_depth;
+      for(int i=0;i<n;i++) {
+        std::string stmp;
+        if (names.size()>0) {
+          for (int j = 0; j < depth()-i+n; j++) {
+            stmp+=((std::string)"  ");
+          }
+          stmp+=((std::string)"</")+names[names.size()-1]+">";
+          output.push_back(stmp);
+          stmp.clear();
+          names.pop_back();
+        }
       }
       return true;
     }
