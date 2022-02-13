@@ -1182,6 +1182,13 @@ namespace o2scl {
     
     std::vector<std::string> names;
 
+    virtual bool begin(pugi::xml_node &node) {
+      last_depth=-1;
+      verbose=0;
+      names.clear();
+      return true;
+    }
+      
     walker_base() {
       last_depth=-1;
       verbose=0;
@@ -1280,6 +1287,7 @@ namespace o2scl {
      */
     virtual bool begin(pugi::xml_node &node) {
       output.clear();
+      walker_base::begin(node);
       return true;
     }
 
@@ -1358,6 +1366,7 @@ namespace o2scl {
 #endif
 
 #ifdef O2SCL_PUGIXML
+  
   /** \brief Extract XML node named \c node_name in the doxygen
       documentation for a global function named \c func_name from a
       file named \c fname
@@ -1365,19 +1374,7 @@ namespace o2scl {
   pugi::xml_node doxygen_xml_get
   (std::string fname, std::string func_name,
    std::string node_name, int verbose=0);
-   
-#endif
-
-  /** \brief Extract doxygen documentation for a member function named
-      \c func_name from a class named \c class_name from a file named
-      \c fname
-  */
-  void doxygen_xml_member_func(std::string fname, std::string class_name,
-                               std::string func_name,
-                               std::vector<std::string> &docs,
-                               int verbose=0);
   
-#ifdef O2SCL_PUGIXML
   /** \brief Extract XML node named \c node_name in the doxygen
       documentation for a member function named \c func_name from a
       class named \c class_name from a file named \c fname

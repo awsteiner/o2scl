@@ -183,7 +183,7 @@ int main(void) {
   
   pugi::xml_node n2=doxygen_xml_member_get
     (doc2_fn,"gen_test_number","set_radix","detaileddescription");
-     
+  
   cout << "dxmg: " << n2.name() << endl;
   n2.traverse(walker);
   
