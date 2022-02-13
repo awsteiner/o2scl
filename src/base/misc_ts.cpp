@@ -28,11 +28,15 @@ using namespace std;
 using namespace o2scl;
 
 int main(void) {
+
+  cout.setf(ios::scientific);
+  
+  test_mgr t;
+  t.set_output_level(2);
+  
   double x=sqrt(2.0);
   int i=3;
   string s1="4", s2="1.7320508";
-  test_mgr t;
-  t.set_output_level(2);
   
   string s[10]={"test1","test_of_string2","test_of_string3",
 		"test_of_string4","test5","test_of_string6",
@@ -60,13 +64,8 @@ int main(void) {
   }
   cout << endl;
   
-  cout << fermi_function(39.9,0.0,1.0) << " " 
-       << fermi_function(40.1,0.0,1.0) << " " 
-       << 1.0/(1.0+exp(40.1)) << endl;
-
   // This generates a list of numbers for the gen_test_number
   // class documentation
-  cout.setf(ios::scientific);
   gen_test_number<> gn;
   for(size_t ij=0;ij<15;ij++) {
     cout.width(2);
@@ -167,19 +166,28 @@ int main(void) {
   cout << endl;
 
   cout << ter.str_len(ter.bold()) << endl;
+
+#ifdef O2SCL_PUGIXML
   
-  gen_test_number<> gx;
-
-  for(size_t i=0;i<100;i++) {
-    cout << gx.gen() << endl;
-  }
-
-  vector<string> vs3;
-  doxygen_xml_func(((std::string)"/Users/awsteiner/wcs/o2scl/doc/")+
-                   "o2scl/xml/namespaceo2scl.xml","glob_wrapper",vs3);
-  doxygen_xml_member_func(((std::string)"/Users/awsteiner/wcs/o2scl/doc/")+
-                          "o2scl/xml/classo2scl_1_1gen__test__number.xml",
-                          "gen_test_number","set_radix",vs3);
+  std::string doc_fn=o2scl_settings.get_doc_dir()+
+    "xml/namespaceo2scl.xml";
+  
+  pugi::xml_node n=doxygen_xml_get(doc_fn,"glob_wrapper",
+                                   "detaileddescription");
+  cout << "dxg: " << n.name() << endl;
+  ostream_walker walker;
+  n.traverse(walker);
+  
+  std::string doc2_fn=((string)"/Users/awsteiner/wcs/o2scl/")+
+    "doc/o2scl/xml/classo2scl_1_1gen__test__number.xml";
+  
+  pugi::xml_node n2=doxygen_xml_member_get
+    (doc2_fn,"gen_test_number","set_radix","detaileddescription");
+     
+  cout << "dxmg: " << n2.name() << endl;
+  n2.traverse(walker);
+  
+#endif
   
   t.report();
 

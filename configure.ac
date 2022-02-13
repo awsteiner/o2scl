@@ -505,6 +505,7 @@ AC_CONFIG_FILES([Makefile
                  src/fit/Makefile
                  src/hdf/Makefile
                  src/inte/Makefile
+                 src/internal/Makefile
                  src/linalg/Makefile
                  src/linalg/neither/Makefile
                  src/linalg/both/Makefile
@@ -515,7 +516,6 @@ AC_CONFIG_FILES([Makefile
                  src/nuclei/Makefile
                  src/ode/Makefile
                  src/other/Makefile
-                 src/internal/Makefile
                  src/part/Makefile
                  src/root/Makefile	
                  src/root/arma/Makefile	
@@ -536,7 +536,8 @@ AC_CONFIG_FILES([Makefile
 		 examples/plot/Makefile
                  doc/Makefile
                  doc/o2scl/Makefile
-                 doc/o2scl/sphinx/Makefile])
+                 doc/o2scl/sphinx/Makefile
+                 doc/o2scl/xml/Makefile])
 
 AC_OUTPUT
 

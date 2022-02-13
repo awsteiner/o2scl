@@ -512,6 +512,14 @@ namespace o2scl {
       \note With the default radix and double precision, this only
       gives about 400 unique values before some repetition is 
       encountered. Smaller radices enable more unique values.
+
+      \verbatim embed:rst
+      .. todo:: 
+
+         In class gen_test_number, need to test this class somehow.
+
+      \endverbatim
+
   */
   template<class fp_t=double> class gen_test_number {
 
@@ -1162,6 +1170,8 @@ namespace o2scl {
 
 #ifdef O2SCL_PUGIXML
 
+  /** \brief A base class for PugiXML walkers
+   */
   class walker_base  : public pugi::xml_tree_walker {
     
   public:
@@ -1172,30 +1182,26 @@ namespace o2scl {
     
     std::vector<std::string> names;
 
-    simple_walker() {
+    walker_base() {
       last_depth=-1;
       verbose=0;
     }
     
   };
   
+  /** \brief A PugiXML walker which outputs the full contents of the 
+      node (no attributes yet) to an ostream
+   */
   class ostream_walker : public walker_base {
     
   public:
     
-    std::vector<std::string> output;
-
     std::ostream *outs;
 
     ostream_walker() {
       outs=&std::cout;
     }
 
-    virtual bool begin(pugi::xml_node &node) {
-      output.clear();
-      return true;
-    }
-    
     virtual bool for_each(pugi::xml_node &node) {
 
       if (verbose>0) {
@@ -1259,17 +1265,26 @@ namespace o2scl {
     
   };
   
+  /** \brief A PugiXML walker which outputs the full contents of the 
+      node (no attributes yet) to a vector<string> object
+   */
   class vec_string_walker : public walker_base {
     
   public:
-    
+
+    /** \brief The traversal output
+     */
     std::vector<std::string> output;
 
+    /** \brief Before traversing
+     */
     virtual bool begin(pugi::xml_node &node) {
       output.clear();
       return true;
     }
-    
+
+    /** \brief For each subnode
+     */
     virtual bool for_each(pugi::xml_node &node) {
 
       std::string stmp;
@@ -1301,7 +1316,7 @@ namespace o2scl {
       }
       
       if (((std::string)node.name()).length()>0) {
-        stmp+=((std::string)"<")+node.name+">"+node.value();
+        stmp+=((std::string)"<")+node.name()+">"+node.value();
       } else {
         stmp+=node.value();
       }
@@ -1319,6 +1334,8 @@ namespace o2scl {
       return true;
     }
 
+    /** \brief After traversing
+     */
     virtual bool end(pugi::xml_node &node) {
       int n=last_depth;
       for(int i=0;i<n;i++) {
@@ -1339,229 +1356,37 @@ namespace o2scl {
   };
   
 #endif
-  
-  void doxygen_xml_func(std::string fname,
-                        std::string func_name,
-                        std::vector<std::string> &docs,
-                        int verbose=0) {
-    
+
 #ifdef O2SCL_PUGIXML
-    
-    if (verbose>1) {
-      std::cout << "Looking for " << func_name << " in file "
-                << fname << std::endl;
-    }
-    
-    docs.clear();
-    
-    pugi::xml_document ns_doc;
-    
-    pugi::xml_parse_result result=ns_doc.load_file(fname.c_str());
-    if (!result) {
-      std::cout << result.description() << std::endl;
-      std::cout << "Failed to read namespace file " << fname << std::endl;
-      exit(-1);
-    }
-    
-    // Parse through <doxygen><compounddef>
-    pugi::xml_node dindex=ns_doc.first_child().first_child();
-    
-    for (pugi::xml_node_iterator it=dindex.begin();it!=dindex.end();++it) {
-      
-      // Parse through the namespace
-
-      if (verbose>1) {
-        std::cout << "2: " << it->name() << std::endl;
-      }
-      
-      // The namespace name is in a <compoundname> object, classes
-      // are in <innerclass> objects, and some functions are 
-      // stored in sections, <sectiondef> objects
-      
-      if (it->name()==((std::string)"sectiondef")) {
-        
-        std::string section_name=it->child("header").child_value();
-        if (verbose>0) {
-          if (section_name.length()==0) {
-            std::cout << "Section: <no name>" << std::endl;
-          } else {
-            std::cout << "Section: "
-                      << it->child("header").child_value() << std::endl;
-          }
-        }
-        
-        // In each section, look for a <memberdef> object with a
-        // kind attribute of "function"
-        
-        for (pugi::xml_node_iterator it2=it->begin();
-             it2!=it->end();++it2) {
-
-          if (verbose>1) {
-            std::cout << "3: " << it2->name() << " "
-                      << it2->attribute("kind").value() << std::endl;
-          }
-          
-          if (it2->name()==((std::string)"memberdef") &&
-              it2->attribute("kind").value()==((std::string)"function")) {
-
-            if (verbose>1) {
-              std::cout << "Found function named: "
-                        << it2->child("name").child_value() << std::endl;
-            }
-            
-            // If we found a function, see if its in overloaded_list
-            // so we can set the argstrings
-            
-            bool found=false;
-            std::string func_name2=it2->child("name").child_value();
-            //std::string tlate_parms;
-            //separate_template_params(func_name2,func_name2,
-            //tlate_parms);
-
-            if (func_name==func_name2) {
-              
-              pugi::xml_node nt=it2->child("detaileddescription");
-              
-              std::cout << "Here: " << nt.child_value() << std::endl;
-              std::cout << "Here2: " << nt.value() << std::endl;
-              std::cout << "Here3: " << nt.text() << std::endl;
-
-              simple_walker walker;
-              nt.traverse(walker);
-              
-              pugi::xml_node nt2=nt.child("para");
-              if (nt2!=0) {
-                std::cout << "Here: " << nt2.child_value() << std::endl;
-                std::cout << "Here2: " << nt2.value() << std::endl;
-                std::cout << "Here3: " << nt2.text() << std::endl;
-              }
-              
-              exit(-1);
-              found=true;
-            }
-            
-            // End of if statement we're dealing with a function
-          }
-
-          // End of loop over XML nodes in this section
-        }
-
-        // End of 'if (it->name()==((std::string)"sectiondef"))'
-      }
-
-      // Main loop over the XML nodes
-    }
-
+  /** \brief Extract XML node named \c node_name in the doxygen
+      documentation for a global function named \c func_name from a
+      file named \c fname
+  */
+  pugi::xml_node doxygen_xml_get
+  (std::string fname, std::string func_name,
+   std::string node_name, int verbose=0);
+   
 #endif
-    
-    return;
-  }
-  
+
+  /** \brief Extract doxygen documentation for a member function named
+      \c func_name from a class named \c class_name from a file named
+      \c fname
+  */
   void doxygen_xml_member_func(std::string fname, std::string class_name,
                                std::string func_name,
                                std::vector<std::string> &docs,
-                               int verbose=0) {
-    
-    if (verbose>1) {
-      std::cout << "Looking for member " << func_name
-                << " of class " << class_name << " in file "
-                << fname << std::endl;
-    }
-    
+                               int verbose=0);
+  
 #ifdef O2SCL_PUGIXML
-    
-    docs.clear();
-    
-    pugi::xml_document ns_doc;
-    
-    pugi::xml_parse_result result=ns_doc.load_file(fname.c_str());
-    if (!result) {
-      std::cout << result.description() << std::endl;
-      std::cout << "Failed to read namespace file " << fname << std::endl;
-      exit(-1);
-    }
-    
-    // Parse through <doxygen><compounddef>
-    pugi::xml_node dindex=ns_doc.first_child().first_child();
-    
-    for (pugi::xml_node_iterator it=dindex.begin();it!=dindex.end();++it) {
-      
-      // Parse through the namespace
-
-      if (verbose>1) {
-        std::cout << "2: " << it->name() << std::endl;
-      }
-      
-      // The namespace name is in a <compoundname> object, classes
-      // are in <innerclass> objects, and some functions are 
-      // stored in sections, <sectiondef> objects
-      
-      if (it->name()==((std::string)"sectiondef")) {
-        
-        std::string section_name=it->child("header").child_value();
-        if (verbose>0) {
-          if (section_name.length()==0) {
-            std::cout << "Section: <no name>" << std::endl;
-          } else {
-            std::cout << "Section: "
-                      << it->child("header").child_value() << std::endl;
-          }
-        }
-        
-        // In each section, look for a <memberdef> object with a
-        // kind attribute of "function"
-        
-        for (pugi::xml_node_iterator it2=it->begin();
-             it2!=it->end();++it2) {
-
-          if (verbose>1) {
-            std::cout << "3: " << it2->name() << " "
-                      << it2->attribute("kind").value() << std::endl;
-          }
-          
-          if (it2->name()==((std::string)"memberdef") &&
-              it2->attribute("kind").value()==((std::string)"function")) {
-
-            if (verbose>1) {
-              std::cout << "Found function named: "
-                        << it2->child("name").child_value() << std::endl;
-            }
-            
-            // If we found a function, see if its in overloaded_list
-            // so we can set the argstrings
-            
-            bool found=false;
-            std::string func_name2=it2->child("name").child_value();
-            //std::string tlate_parms;
-            //separate_template_params(func_name2,func_name2,
-            //tlate_parms);
-
-            if (func_name==func_name2) {
-              
-              pugi::xml_node nt=it2->child("detaileddescription");
-              
-              std::cout << "Here: " << nt.child_value() << std::endl;
-              std::cout << "Here: " << nt.value() << std::endl;
-              exit(-1);
-              found=true;
-            }
-            
-            // End of if statement we're dealing with a function
-          }
-
-          // End of loop over XML nodes in this section
-        }
-
-        // End of 'if (it->name()==((std::string)"sectiondef"))'
-      }
-
-      // Main loop over the XML nodes
-    }
-
+  /** \brief Extract XML node named \c node_name in the doxygen
+      documentation for a member function named \c func_name from a
+      class named \c class_name from a file named \c fname
+  */
+  pugi::xml_node doxygen_xml_member_get
+  (std::string fname, std::string class_name, std::string func_name, 
+   std::string node_name, int verbose=0);
+   
 #endif
-    
-    return;
-  }
   
 #ifndef DOXYGEN_NO_O2NS
 }
