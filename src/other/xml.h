@@ -240,7 +240,8 @@ namespace o2scl {
   */
   pugi::xml_node doxygen_xml_get
   (std::string fname, std::string func_name,
-   std::string node_name, int verbose=0);
+   std::string node_name, pugi::xml_document &doc,
+   int verbose=0);
   
   /** \brief Extract XML node named \c node_name in the doxygen
       documentation for a member function named \c func_name from a
@@ -248,7 +249,7 @@ namespace o2scl {
   */
   pugi::xml_node doxygen_xml_member_get
   (std::string fname, std::string class_name, std::string func_name, 
-   std::string node_name, int verbose=0);
+   std::string node_name, pugi::xml_document &doc, int verbose=0);
    
 #endif
   

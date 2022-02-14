@@ -31,10 +31,9 @@
 pugi::xml_node o2scl::doxygen_xml_get(std::string fname,
                                       std::string func_name,
                                       std::string node_name,
+                                      pugi::xml_document &doc,
                                       int verbose) {
 
-  pugi::xml_document doc;
-  
   if (verbose>1) {
     std::cout << "Looking for " << func_name << " in file "
               << fname << std::endl;
@@ -124,9 +123,9 @@ pugi::xml_node o2scl::doxygen_xml_get(std::string fname,
 
 pugi::xml_node o2scl::doxygen_xml_member_get
 (std::string fname, std::string class_name, std::string func_name, 
- std::string node_name, int verbose) {
-  
-  pugi::xml_document doc;
+ std::string node_name,
+ pugi::xml_document &doc,
+ int verbose) {
   
   if (verbose>1) {
     std::cout << "Looking for member " << func_name
