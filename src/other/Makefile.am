@@ -4,7 +4,7 @@
 
 OTHER_SRCS = series_acc.cpp poly.cpp polylog.cpp \
 	interp2_eqi.cpp pinside.cpp other_python.cpp \
-	contour.cpp smooth_gsl.cpp hist.cpp \
+	contour.cpp smooth_gsl.cpp hist.cpp xml.cpp \
 	hist_2d.cpp prob_dens_func.cpp vec_stats.cpp
 
 HEADER_VAR = contour.h cheb_approx.h other_python.h \
@@ -13,14 +13,14 @@ HEADER_VAR = contour.h cheb_approx.h other_python.h \
 	vec_stats.h smooth_gsl.h hist.h smooth_func.h \
 	hist_2d.h prob_dens_func.h interp2_seq.h interp2_neigh.h \
 	interpm_idw.h interp2.h interpm_krige.h prob_dens_mdim_amr.h \
-	slack_messenger.h
+	slack_messenger.h xml.h
 
 TEST_VAR = series_acc.scr interp2_planar.scr contour.scr \
 	poly.scr polylog.scr cheb_approx.scr vec_stats.scr smooth_gsl.scr \
 	hist.scr hist_2d.scr prob_dens_func.scr interp2_direct.scr \
 	pinside.scr interp2_seq.scr interp2_neigh.scr \
 	interpm_idw.scr interpm_krige.scr smooth_func.scr \
-	prob_dens_mdim_amr.scr
+	prob_dens_mdim_amr.scr xml.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -99,7 +99,7 @@ check_PROGRAMS = series_acc_ts interp2_planar_ts \
 	smooth_gsl_ts hist_ts hist_2d_ts interp2_seq_ts \
 	prob_dens_func_ts interp2_neigh_ts \
 	interpm_idw_ts interpm_krige_ts smooth_func_ts \
-	prob_dens_mdim_amr_ts
+	prob_dens_mdim_amr_ts xml_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -146,6 +146,7 @@ hist_ts_LDADD = $(ADDL_TEST_LIBS)
 hist_2d_ts_LDADD = $(ADDL_TEST_LIBS)
 prob_dens_func_ts_LDADD = $(ADDL_TEST_LIBS)
 vec_stats_ts_LDADD = $(ADDL_TEST_LIBS)
+xml_ts_LDADD = $(ADDL_TEST_LIBS)
 
 smooth_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 series_acc_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
@@ -166,6 +167,7 @@ hist_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 hist_2d_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 prob_dens_func_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 vec_stats_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+xml_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 smooth_gsl.scr: smooth_gsl_ts$(EXEEXT) 
 	./smooth_gsl_ts$(EXEEXT) > smooth_gsl.scr
@@ -205,6 +207,8 @@ prob_dens_func.scr: prob_dens_func_ts$(EXEEXT)
 	./prob_dens_func_ts$(EXEEXT) > prob_dens_func.scr
 vec_stats.scr: vec_stats_ts$(EXEEXT) 
 	./vec_stats_ts$(EXEEXT) > vec_stats.scr
+xml.scr: xml_ts$(EXEEXT) 
+	./xml_ts$(EXEEXT) > xml.scr
 
 cheb_approx_ts_SOURCES = cheb_approx_ts.cpp
 contour_ts_SOURCES = contour_ts.cpp
@@ -225,6 +229,7 @@ polylog_ts_SOURCES = polylog_ts.cpp
 prob_dens_func_ts_SOURCES = prob_dens_func_ts.cpp
 smooth_gsl_ts_SOURCES = smooth_gsl_ts.cpp
 vec_stats_ts_SOURCES = vec_stats_ts.cpp
+xml_ts_SOURCES = xml_ts.cpp
 
 # ------------------------------------------------------------
 # Library o2scl_other

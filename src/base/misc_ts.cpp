@@ -167,28 +167,6 @@ int main(void) {
 
   cout << ter.str_len(ter.bold()) << endl;
 
-#ifdef O2SCL_PUGIXML
-  
-  std::string doc_fn=o2scl_settings.get_doc_dir()+
-    "xml/namespaceo2scl.xml";
-  
-  pugi::xml_node n=doxygen_xml_get(doc_fn,"glob_wrapper",
-                                   "detaileddescription");
-  cout << "dxg: " << n.name() << endl;
-  ostream_walker walker;
-  n.traverse(walker);
-  
-  std::string doc2_fn=((string)"/Users/awsteiner/wcs/o2scl/")+
-    "doc/o2scl/xml/classo2scl_1_1gen__test__number.xml";
-  
-  pugi::xml_node n2=doxygen_xml_member_get
-    (doc2_fn,"gen_test_number","set_radix","detaileddescription");
-  
-  cout << "dxmg: " << n2.name() << endl;
-  n2.traverse(walker);
-  
-#endif
-  
   t.report();
 
   return 0;
