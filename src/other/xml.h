@@ -41,18 +41,26 @@ namespace o2scl {
 
 #ifdef O2SCL_PUGIXML
 
-  /** \brief A base class for PugiXML walkers
+  /** \brief A base class for pugixml walkers
    */
   class walker_base  : public pugi::xml_tree_walker {
     
   public:
 
+    /** \brief The depth of the last node traversed
+     */
     int last_depth;
 
+    /** \brief Verbosity parameter, principally for debugging
+     */
     int verbose;
     
+    /** \brief Current hierarchy of node names
+     */
     std::vector<std::string> names;
 
+    /** \brief Begin a traversal
+     */
     virtual bool begin(pugi::xml_node &node) {
       last_depth=-1;
       verbose=0;
@@ -61,25 +69,27 @@ namespace o2scl {
     }
       
     walker_base() {
-      last_depth=-1;
-      verbose=0;
     }
     
   };
   
-  /** \brief A PugiXML walker which outputs the full contents of the 
+  /** \brief A pugixml walker which outputs the full contents of the 
       node (no attributes yet) to an ostream
    */
   class ostream_walker : public walker_base {
     
   public:
-    
+
+    /** \brief The output stream to be used (defaults to &cout)
+     */
     std::ostream *outs;
 
     ostream_walker() {
       outs=&std::cout;
     }
 
+    /** \brief Output XML for each node
+     */
     virtual bool for_each(pugi::xml_node &node) {
 
       if (verbose>0) {
@@ -122,10 +132,11 @@ namespace o2scl {
       
       last_depth=depth();
       
-      //names=node.name();
       return true;
     }
 
+    /** \brief Complete the XML output by ending all of the tags
+     */
     virtual bool end(pugi::xml_node &node) {
       int n=last_depth;
       for(int i=0;i<n;i++) {
@@ -143,7 +154,7 @@ namespace o2scl {
     
   };
   
-  /** \brief A PugiXML walker which outputs the full contents of the 
+  /** \brief A pugixml walker which outputs the full contents of the 
       node (no attributes yet) to a vector<string> object
    */
   class vec_string_walker : public walker_base {
@@ -162,7 +173,7 @@ namespace o2scl {
       return true;
     }
 
-    /** \brief For each subnode
+    /** \brief Store output for each node
      */
     virtual bool for_each(pugi::xml_node &node) {
 
@@ -213,7 +224,7 @@ namespace o2scl {
       return true;
     }
 
-    /** \brief After traversing
+    /** \brief Finish output by closing all tags
      */
     virtual bool end(pugi::xml_node &node) {
       int n=last_depth;
