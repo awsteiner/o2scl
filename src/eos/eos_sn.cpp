@@ -310,6 +310,7 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double TMeV,
   // the pair_density() solver fail, so we take out the
   // electron mass here and add it back in later
   electron.inc_rest_mass=false;
+  muon.inc_rest_mass=false;
   
   int retx=relf.pair_density(electron,TMeV/hc_mev_fm);
 
@@ -343,7 +344,7 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double TMeV,
   }
   
   if (include_muons) {
-    muon.mu=electron.mu;
+    muon.mu=electron.mu+electron.m-muon.m;
     relf.pair_mu(muon,TMeV/hc_mev_fm);
   }
 
@@ -352,14 +353,18 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double TMeV,
   th.en=electron.en+photon.en;
   
   if (include_muons) {
-    th.ed+=muon.ed;
+    th.ed+=muon.ed+muon.n*muon.m;
     th.en+=muon.en;
     th.pr+=muon.pr;
   }
 
-  mue=electron.mu+electron.m;
+  electron.mu+=electron.m;
+  muon.mu+=muon.m;
+  
+  mue=electron.mu;
 
   electron.inc_rest_mass=true;
+  muon.inc_rest_mass=true;
   
   return;
 }
