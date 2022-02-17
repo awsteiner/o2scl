@@ -653,43 +653,37 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
     }
   */
   
-  njtp pa;
-  pa.temper=temper;
-  pa.limit=limit;
-
   // -----------------------------------------------------------------
-  // Some of these integrals (iqq, and ide) converge better when they
-  // are non-zero, so we add 1 to the integrand and subtract off the
-  // contribution after the fact. This may cause inaccuracies when the
-  // densities are small.
+  // Some of these integrals (integ_qq, and integ_density) converge
+  // better when they are non-zero, so we add 1 to the integrand and
+  // subtract off the contribution after the fact. This may cause
+  // inaccuracies when the densities are small.
 
   if (from_qq==true) {
     u.ms=u.m-4.0*G*u.qq+2.0*K*d.qq*s.qq;
-    pa.ms=u.ms;
-    pa.mu=u.mu;
-    pa.m=u.m;
     iret1=0;
   } else {
-    pa.ms=u.ms;
-    pa.mu=u.mu;
-    pa.m=u.m;
-    funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
-			(&eos_quark_njl::iqq),
-			this,std::placeholders::_1,pa);
+    funct fqq=std::bind(std::mem_fn<double(double,double,double,
+                                           double,double)>
+			(&eos_quark_njl::integ_qq),
+			this,std::placeholders::_1,temper,u.mu,u.m,u.ms);
     iret1=it->integ_err(fqq,0.0,L,u.qq,ierr);
     u.qq-=L;
   }
 
   {
-    funct fde=std::bind(std::mem_fn<double(double,const njtp &)>
-			(&eos_quark_njl::ide),
-			this,std::placeholders::_1,pa);
-    funct fed=std::bind(std::mem_fn<double(double,const njtp &)>
-			(&eos_quark_njl::ied),
-			this,std::placeholders::_1,pa);
-    funct fpr=std::bind(std::mem_fn<double(double,const njtp &)>
-			(&eos_quark_njl::ipr),
-			this,std::placeholders::_1,pa);
+    funct fde=std::bind(std::mem_fn<double(double,double,double,
+                                           double,double)>
+			(&eos_quark_njl::integ_density),
+			this,std::placeholders::_1,temper,u.mu,u.m,u.ms);
+    funct fed=std::bind(std::mem_fn<double(double,double,double,
+                                           double,double)>
+			(&eos_quark_njl::integ_edensity),
+			this,std::placeholders::_1,temper,u.mu,u.m,u.ms);
+    funct fpr=std::bind(std::mem_fn<double(double,double,double,
+                                           double,double)>
+			(&eos_quark_njl::integ_pressure),
+			this,std::placeholders::_1,temper,u.mu,u.m,u.ms);
     iret2=it->integ_err(fde,0.0,L,u.n,ierr);
     u.n-=L;
     fet.kf_from_density(u);
@@ -703,30 +697,28 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
 
   if (from_qq==true) {
     d.ms=d.m-4.0*G*d.qq+2.0*K*u.qq*s.qq;
-    pa.ms=d.ms;
-    pa.mu=d.mu;
-    pa.m=d.m;
     iret1=0;
   } else {
-    pa.ms=d.ms;
-    pa.mu=d.mu;
-    pa.m=d.m;
-    funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
-			(&eos_quark_njl::iqq),
-			this,std::placeholders::_1,pa);
+    funct fqq=std::bind(std::mem_fn<double(double,double,double,
+                                           double,double)>
+			(&eos_quark_njl::integ_qq),
+			this,std::placeholders::_1,temper,d.mu,d.m,d.ms);
     iret1=it->integ_err(fqq,0.0,L,d.qq,ierr);
     d.qq-=L;
   }
   {
-    funct fde=std::bind(std::mem_fn<double(double,const njtp &)>
-			(&eos_quark_njl::ide),
-			this,std::placeholders::_1,pa);
-    funct fed=std::bind(std::mem_fn<double(double,const njtp &)>
-			(&eos_quark_njl::ied),
-			this,std::placeholders::_1,pa);
-    funct fpr=std::bind(std::mem_fn<double(double,const njtp &)>
-			(&eos_quark_njl::ipr),
-			this,std::placeholders::_1,pa);
+    funct fde=std::bind(std::mem_fn<double(double,double,double,
+                                           double,double)>
+			(&eos_quark_njl::integ_density),
+			this,std::placeholders::_1,temper,d.mu,d.m,d.ms);
+    funct fed=std::bind(std::mem_fn<double(double,double,double,
+                                           double,double)>
+			(&eos_quark_njl::integ_edensity),
+			this,std::placeholders::_1,temper,d.mu,d.m,d.ms);
+    funct fpr=std::bind(std::mem_fn<double(double,double,double,
+                                           double,double)>
+			(&eos_quark_njl::integ_pressure),
+			this,std::placeholders::_1,temper,d.mu,d.m,d.ms);
 
     iret2=it->integ_err(fde,0.0,L,d.n,ierr);
     d.n-=L;
@@ -741,30 +733,28 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
   
   if (from_qq==true) {
     s.ms=s.m-4.0*G*s.qq+2.0*K*d.qq*u.qq;
-    pa.ms=s.ms;
-    pa.mu=s.mu;
-    pa.m=s.m;
     iret1=0;
   } else {
-    pa.ms=s.ms;
-    pa.mu=s.mu;
-    pa.m=s.m;
-    funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
-			(&eos_quark_njl::iqq),
-			this,std::placeholders::_1,pa);
+    funct fqq=std::bind(std::mem_fn<double(double,double,double,
+                                           double,double)>
+			(&eos_quark_njl::integ_qq),
+			this,std::placeholders::_1,temper,s.mu,s.m,s.ms);
     iret1=it->integ_err(fqq,0.0,L,s.qq,ierr);
     s.qq-=L;
   }
   {
-    funct fde=std::bind(std::mem_fn<double(double,const njtp &)>
-			(&eos_quark_njl::ide),
-			this,std::placeholders::_1,pa);
-    funct fed=std::bind(std::mem_fn<double(double,const njtp &)>
-			(&eos_quark_njl::ied),
-			this,std::placeholders::_1,pa);
-    funct fpr=std::bind(std::mem_fn<double(double,const njtp &)>
-			(&eos_quark_njl::ipr),
-			this,std::placeholders::_1,pa);
+    funct fde=std::bind(std::mem_fn<double(double,double,double,
+                                           double,double)>
+			(&eos_quark_njl::integ_density),
+			this,std::placeholders::_1,temper,s.mu,s.m,s.ms);
+    funct fed=std::bind(std::mem_fn<double(double,double,double,
+                                           double,double)>
+			(&eos_quark_njl::integ_edensity),
+			this,std::placeholders::_1,temper,s.mu,s.m,s.ms);
+    funct fpr=std::bind(std::mem_fn<double(double,double,double,
+                                           double,double)>
+			(&eos_quark_njl::integ_pressure),
+			this,std::placeholders::_1,temper,s.mu,s.m,s.ms);
     iret2=it->integ_err(fde,0.0,L,s.n,ierr);
     s.n-=L;
     fet.kf_from_density(s);
@@ -786,35 +776,29 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
   if (from_qq==true) {
     double qqt;
 
-    pa.ms=u.ms;
-    pa.mu=u.mu;
-    pa.m=u.m;
     {
-      funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
-			  (&eos_quark_njl::iqq),
-			  this,std::placeholders::_1,pa);
+      funct fqq=std::bind(std::mem_fn<double(double,double,double,
+                                             double,double)>
+			  (&eos_quark_njl::integ_qq),
+			  this,std::placeholders::_1,temper,u.mu,u.m,u.ms);
       iret1=it->integ_err(fqq,0.0,L,qqt,ierr);
     }
     gap1=-u.qq+qqt-L;
     
-    pa.ms=d.ms;
-    pa.mu=d.mu;
-    pa.m=d.m;
     {
-      funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
-			  (&eos_quark_njl::iqq),
-			  this,std::placeholders::_1,pa);
+      funct fqq=std::bind(std::mem_fn<double(double,double,double,
+                                             double,double)>
+			  (&eos_quark_njl::integ_qq),
+			  this,std::placeholders::_1,temper,d.mu,d.m,d.ms);
       iret2=it->integ_err(fqq,0.0,L,qqt,ierr);
     }
     gap2=-d.qq+qqt-L;
     
-    pa.ms=s.ms;
-    pa.mu=s.mu;
-    pa.m=s.m;
     {
-      funct fqq=std::bind(std::mem_fn<double(double,const njtp &)>
-			  (&eos_quark_njl::iqq),
-			  this,std::placeholders::_1,pa);
+      funct fqq=std::bind(std::mem_fn<double(double,double,double,
+                                             double,double)>
+			  (&eos_quark_njl::integ_qq),
+			  this,std::placeholders::_1,temper,s.mu,s.m,s.ms);
       iret3=it->integ_err(fqq,0.0,L,qqt,ierr);
     }
     gap3=-s.qq+qqt-L;
@@ -832,59 +816,63 @@ int eos_quark_njl::calc_eq_temp_p(quark &u, quark &d, quark &s,
   return 0;
 }
 
-double eos_quark_njl::iqq(double x, const njtp &p) {
+double eos_quark_njl::integ_qq(double x, double temper, double mu,
+                               double m, double ms) {
   double en, ret;
 
-  en=sqrt(x*x+p.ms*p.ms);
+  en=sqrt(x*x+ms*ms);
   ret=1.0;
-  ret-=fermi_function(en,p.mu,p.temper,p.limit)+
-    fermi_function(en,-p.mu,p.temper,p.limit);
-  ret*=-3.0*x*x/en/pi2*p.ms;
+  ret-=fermi_function(en,mu,temper,limit)+
+    fermi_function(en,-mu,temper,limit);
+  ret*=-3.0*x*x/en/pi2*ms;
   ret+=1.0;
   return ret;
 }
 
-double eos_quark_njl::ide(double x, const njtp &p) {
+double eos_quark_njl::integ_density(double x, double temper, double mu,
+                          double m, double ms) {
   double en, ret;
 
 
-  en=sqrt(x*x+p.ms*p.ms);
-  ret=fermi_function(en,p.mu,p.temper,p.limit)-
-    fermi_function(en,-p.mu,p.temper,p.limit);
+  en=sqrt(x*x+ms*ms);
+  ret=fermi_function(en,mu,temper,limit)-
+    fermi_function(en,-mu,temper,limit);
   ret*=3.0*x*x/pi2;
   ret+=1.0;
   return ret;
 }
 
-double eos_quark_njl::ied(double x, const njtp &p) {
+double eos_quark_njl::integ_edensity(double x, double temper, double mu,
+                          double m, double ms) {
   double en, ret;
 
-  en=sqrt(x*x+p.ms*p.ms);
+  en=sqrt(x*x+ms*ms);
   ret=-en;
-  ret+=en*fermi_function(en,p.mu,p.temper,p.limit)+
-    en*fermi_function(en,-p.mu,p.temper,p.limit);
+  ret+=en*fermi_function(en,mu,temper,limit)+
+    en*fermi_function(en,-mu,temper,limit);
   ret*=3.0/pi2*x*x;
   return ret;
 }
 
-double eos_quark_njl::ipr(double x, const njtp &p) {
+double eos_quark_njl::integ_pressure(double x, double temper, double mu,
+                          double m, double ms) {
   double en, ret;
-
-  en=sqrt(x*x+p.ms*p.ms);
+  
+  en=sqrt(x*x+ms*ms);
   ret=en;
-  if ((p.mu-en)/p.temper>p.limit) {
-    ret+=p.mu-en;
-  } else if ((p.mu-en)/p.temper<-p.limit) {
+  if ((mu-en)/temper>limit) {
+    ret+=mu-en;
+  } else if ((mu-en)/temper<-limit) {
     ret+=0.0;
   } else {
-    ret+=p.temper*log(1+exp((p.mu-en)/p.temper));
+    ret+=temper*log(1+exp((mu-en)/temper));
   }
-  if ((-en-p.mu)/p.temper>p.limit) {
-    ret+=-en-p.mu;
-  } else if ((-en-p.mu)/p.temper<-p.limit) {
+  if ((-en-mu)/temper>limit) {
+    ret+=-en-mu;
+  } else if ((-en-mu)/temper<-limit) {
     ret+=0.0;
   } else {
-    ret+=p.temper*log(1+exp((-en-p.mu)/p.temper));
+    ret+=temper*log(1+exp((-en-mu)/temper));
   }
   ret*=3.0/pi2*x*x;
   return ret;
@@ -1056,89 +1044,20 @@ void eos_quark_njl_vec::njl_vec_bag(quark &q) {
   return;
 }
 
-/*
-  #define LIMIT 20
-  #define DEBUG 0
-  
-  double iqq(double x, int np, double *param);
-  double ide(double x, int np, double *param);
-  double ied(double x, int np, double *param);
-  double ipr(double x, int np, double *param);
-  //void njl_bag3(fermion &pp, double L, double G);
-  */
-
 int eos_quark_njl_vec::calc_eq_temp_p(quark &tu, quark &td, quark &ts,
                                       double &gap1, double &gap2,
                                       double &gap3, thermo &th,
                                       double temper) {
-  /*
-    double B0, double temper, int *check,
-    double *energy, double *press, double *entropy,
-    double *charge, double *barn, double *gap1, double *gap2,
-    double *gap3, double *vec1, double *vec2, double *vec3) {
-  */
-
-  double *iparam, test, test2;
-  int inp;
-
-  //inp=4;
-  //iparam=dvector(1,inp);
-
   tu.m=fabs(tu.m);
   td.m=fabs(td.m);
   ts.m=fabs(ts.m);
 
-  /*
-    iparam[3]=temper;
-    
-    iparam[1]=tu.m;
-    iparam[2]=tu.nu;
-    iparam[4]=tu.m;
-  */
-  
-  //if (DEBUG) printf("uqq\n");
-  //tu.qq=qrombaws(iqq,0.0,L,inp,iparam,1.0e-7,400,-1.0,0)-L;
-  //if (DEBUG) printf("un\n");
-  //tu.n=qrombaws(ide,0.0,L,inp,iparam,1.0e-7,400,-1.0,0)-L;
-  //tu.kf=fermimom(tu.n,3.0);
-  //if (DEBUG) printf("upr\n");
-  //tu.pr=qrombaws(ipr,0.0,L,inp,iparam,1.0e-7,400,-1.0,0);
-  //  if (DEBUG) printf("ued\n");
-  //tu.ed=qrombaws(ied,0.0,L,inp,iparam,1.0e-7,400,-1.0,0);
   tu.ed+=2.0*G*tu.qq*tu.qq-2.0*GV*tu.n*tu.n;
   tu.pr-=2.0*G*tu.qq*tu.qq-2.0*GV*tu.n*tu.n;
 
-  /*
-  iparam[1]=td.m;
-  iparam[2]=td.nu;
-  iparam[4]=td.m;
-  */
-  //if (DEBUG) printf("dqq\n");
-  //td.qq=qrombaws(iqq,0.0,L,inp,iparam,1.0e-7,400,-1.0,0)-L;
-  //if (DEBUG) printf("dn\n");
-  //td.n=qrombaws(ide,0.0,L,inp,iparam,1.0e-7,400,-1.0,0)-L;
-  //td.kf=fermimom(td.n,3.0);
-  //if (DEBUG) printf("dpr\n");
-  //td.pr=qrombaws(ipr,0.0,L,inp,iparam,1.0e-7,400,-1.0,0);
-  //if (DEBUG) printf("ded\n");
-  //td.ed=qrombaws(ied,0.0,L,inp,iparam,1.0e-7,400,-1.0,0);
   td.ed+=2.0*G*td.qq*td.qq+2.0*GV*td.n*td.n;
   td.pr-=2.0*G*td.qq*td.qq+2.0*GV*td.n*td.n;
 
-  /*
-  iparam[1]=ts.m;
-  iparam[2]=ts.nu;
-  iparam[4]=ts.m;
-  */
-  //if (DEBUG) printf("sqq\n");
-  //ts.qq=qrombaws(iqq,0.0,L,inp,iparam,1.0e-7,400,-1.0,0)-L;
-  //if (DEBUG) printf("sn\n");
-  //ts.n=qrombaws(ide,0.0,L,inp,iparam,1.0e-7,400,-1.0,0)-L;
-  //ts.kf=fermimom(ts.n,3.0);
-  //if (DEBUG) printf("spr\n");
-  //ts.pr=qrombaws(ipr,0.0,L,inp,iparam,1.0e-7,400,-1.0,0);
-  //if (DEBUG) printf("sed\n");
-  //ts.ed=qrombaws(ied,0.0,L,inp,iparam,1.0e-7,400,-1.0,0);
   ts.ed+=2.0*G*ts.qq*ts.qq-2.0*GV*ts.n*ts.n;
   ts.pr-=2.0*G*ts.qq*ts.qq-2.0*GV*ts.n*ts.n;
 
@@ -1164,11 +1083,10 @@ int eos_quark_njl_vec::calc_eq_temp_p(quark &tu, quark &td, quark &ts,
   vec2=-1.0*td.nu+td.mu-4.0*GV*td.n;
   vec3=-1.0*ts.nu+ts.mu-4.0*GV*ts.n;
 
-  //free_dvector(iparam,1,inp);
   return 0;
 }
 
-double eos_quark_njl_vec::iqq(double x, int np, double *param) {
+double eos_quark_njl_vec::integ_qq(double x, int np, double *param) {
   double m, mu, t, en, ret;
   char ch;
   static const double limit=20.0;
@@ -1196,7 +1114,7 @@ double eos_quark_njl_vec::iqq(double x, int np, double *param) {
   return ret;
 }
 
-double eos_quark_njl_vec::ide(double x, int np, double *param) {
+double eos_quark_njl_vec::integ_density(double x, int np, double *param) {
   double m, mu, t, en, ret;
   char ch;
   m=param[1];
@@ -1224,7 +1142,7 @@ double eos_quark_njl_vec::ide(double x, int np, double *param) {
   return ret;
 }
 
-double eos_quark_njl_vec::ied(double x, int np, double *param) {
+double eos_quark_njl_vec::integ_edensity(double x, int np, double *param) {
   double m, mu, t, en, ret, en0, m0;
   m=param[1];
   mu=param[2];
@@ -1252,7 +1170,7 @@ double eos_quark_njl_vec::ied(double x, int np, double *param) {
   return ret;
 }
 
-double eos_quark_njl_vec::ipr(double x, int np, double *param) {
+double eos_quark_njl_vec::integ_pressure(double x, int np, double *param) {
   double m, mu, t, en, ret, m0, en0;
   m=param[1];
   mu=param[2];

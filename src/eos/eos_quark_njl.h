@@ -83,14 +83,18 @@ namespace o2scl {
 
       And the corresponding thermodynamic potential is
       \f[
-      \Omega = \Omega_{FG} + \Omega_{\mathrm{Int}}
+      \Omega = \Omega_{FG} + \Omega_{\mathrm{int}}
       \f]
       where \f$\Omega_{FG}\f$ is the Fermi gas contribution and
+      \f$\Omega_{int}\f$ is the contribution from interactions.
+      \f$\Omega_{int}\f$ is
       \f[
       \frac{\Omega_{\mathrm{Int}}}{V} = - 2 N_c \sum_{i=u,d,s}
       \int \frac {d^3p}{(2\pi)^3} \sqrt{m_i^2 + p^2} +
-      \frac{\Omega_{V}}{V}
+      \frac{\Omega_{V}}{V} \, .
       \f]
+      The lst term is the vacuum contribution, 
+      \f$\Omega_{V}\f$:
       \f[
       \frac{\Omega_{V}}{V} = 
       \sum_{i=u,d,s} 2 G \langle\bar{q}_i q_i \rangle^2
@@ -101,7 +105,7 @@ namespace o2scl {
       energy density and the pressure of the vacuum is zero.
 
       \verbatim embed:rst
-      Unlike Buballa et al (1999), the bag constant,
+      Unlike [Buballa99]_, the bag constant,
       :math:`\Omega_{\mathrm{Int}}/V` is defined without the term
       \endverbatim
 
@@ -110,10 +114,9 @@ namespace o2scl {
       \frac{d^3 p}{(2 \pi)^3} \sqrt{ m_{0,i}^2+p^2 } ~dp
       \f]
       since this allows an easier comparison to the finite temperature
-      EOS. The constant \f$B_0\f$ in this case 
-      is therefore significantly 
-      larger, but the energy density and pressure are still zero in
-      the vacuum. 
+      EOS. The constant \f$B_0\f$ in this case is therefore
+      significantly larger, but the energy density and pressure are
+      still zero in the vacuum.
 
       \verbatim embed:rst
       The Feynman-Hellman theorem [Bernard88]_, gives
@@ -138,8 +141,6 @@ namespace o2scl {
 
       \endverbatim
 
-      \future Remove the njtp structure and move the numbers
-      there to function parameters. 
       \future Consider rewriting the testing code and making
       the various gap functions protected instead of public.
       \future Remove the stored quark pointers if they are
@@ -180,10 +181,11 @@ namespace o2scl {
 			       double sixferm=0.0);
     
     /** \brief Accuracy limit for Fermi integrals for finite temperature
+        (default 20)
 
 	\ref limit is used for the finite temperature integrals to
-	ensure that no numbers larger than exp(limit) or smaller than
-	exp(-limit) are avoided. (Default: 20)
+	ensure that no numbers larger than <tt>exp(limit)</tt> or
+	smaller than <tt>exp(-limit)</tt> are avoided.
     */
     double limit;
   
@@ -337,11 +339,6 @@ namespace o2scl {
       return 0;
     }
 
-    /// A structure for passing parameters to the integrands
-    typedef struct njtp_s {
-      double ms, m, mu, temper, limit;
-    } njtp;
-
     /// Set integration object
     virtual int set_inte(inte<> &i) {
       it=&i;
@@ -380,13 +377,13 @@ namespace o2scl {
     quark *strange;
 
     /// The integrand for the quark condensate
-    double iqq(double x, const njtp &pa);
+    double integ_qq(double x, double T, double mu, double m, double ms);
     /// The integrand for the density
-    double ide(double x, const njtp &pa);
+    double integ_density(double x, double T, double mu, double m, double ms);
     /// The integrand for the energy density
-    double ied(double x, const njtp &pa);
+    double integ_edensity(double x, double T, double mu, double m, double ms);
     /// The integrand for the pressure
-    double ipr(double x, const njtp &pa);
+    double integ_pressure(double x, double T, double mu, double m, double ms);
   
     /// The temperature for calc_temp_p()
     double cp_temp;
@@ -395,7 +392,7 @@ namespace o2scl {
     
   };
 
-  /** \brief Desc
+  /** \brief The Nambu-Jona-Lasinio model with vector interactions
    */
   class eos_quark_njl_vec : public eos_quark_njl {
     
@@ -407,46 +404,50 @@ namespace o2scl {
     /// The contribution to the bag constant
     void njl_vec_bag(quark &q);
 
-    /** \brief Desc
+    /** \brief Integrand for the quark condensate
      */
-    double iqq(double x, int np, double *param);
+    double integ_qq(double x, int np, double *param);
 
-    /** \brief Desc
+    /** \brief Integrand for the density
      */
-    double ide(double x, int np, double *param);
+    double integ_density(double x, int np, double *param);
 
-    /** \brief Desc
+    /** \brief Integrand for the energy density
      */
-    double ied(double x, int np, double *param);
+    double integ_edensity(double x, int np, double *param);
     
-    /** \brief Desc
+    /** \brief Integrand for the pressure
      */
-    double ipr(double x, int np, double *param);
+    double integ_pressure(double x, int np, double *param);
     
-    /** \brief Desc
+    /** \brief Compute the gap equations and the equation of state at
+        finite temperature as a function of the chemical potentials
      */
     virtual int calc_eq_temp_p(quark &tu, quark &td, quark &ts,
                                double &gap1, double &gap2,
                                double &gap3, thermo &th, double temper);
     
-    /** \brief Equation of state as a function of chemical potentials
+    /** \brief Compute the equation of state as a function of the
+        chemical potentials
 	
 	This function automatically solves the gap equations.
     */
     virtual int calc_p(quark &u, quark &d, quark &s, thermo &lth);
 
-    /** \brief Desc
+    /** \brief The gap equations starting from the effective masses
      */
     virtual int gap_func_ms_vec(size_t nv, const ubvector &x, ubvector &y);
 
-    /** \brief Desc
+    /** \brief Compute the gap equations and the equation of state
+        as a function of the chemical potentials
      */
     virtual int calc_eq_p(quark &tu, quark &td, quark &ts,
                           double &gap1, double &gap2, double &gap3,
                           double &vec1, double &vec2, double &vec3,
                           thermo &th);
 
-    /** \brief Compute the thermodynamic potential at \f$ T=0 \f$
+    /** \brief Compute the thermodynamic potential at 
+        zero temperature
      */
     virtual double f_therm_pot(double qqu, double qqd, double qqs,
                                double msu, double msd, double mss,
