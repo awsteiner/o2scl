@@ -986,14 +986,14 @@ void o2scl_eos_quark_njl_set_limit(void *vptr, double v) {
   return;
 }
 
-bool o2scl_eos_quark_njl_get_fromqq(void *vptr) {
+bool o2scl_eos_quark_njl_get_from_qq(void *vptr) {
   eos_quark_njl *ptr=(eos_quark_njl *)vptr;
-  return ptr->fromqq;
+  return ptr->from_qq;
 }
 
-void o2scl_eos_quark_njl_set_fromqq(void *vptr, bool v) {
+void o2scl_eos_quark_njl_set_from_qq(void *vptr, bool v) {
   eos_quark_njl *ptr=(eos_quark_njl *)vptr;
-  ptr->fromqq=v;
+  ptr->from_qq=v;
   return;
 }
 

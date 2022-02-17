@@ -372,9 +372,9 @@ double o2scl_eos_quark_njl_get_limit(void *vptr);
 
 void o2scl_eos_quark_njl_set_limit(void *vptr, double v);
 
-bool o2scl_eos_quark_njl_get_fromqq(void *vptr);
+bool o2scl_eos_quark_njl_get_from_qq(void *vptr);
 
-void o2scl_eos_quark_njl_set_fromqq(void *vptr, bool v);
+void o2scl_eos_quark_njl_set_from_qq(void *vptr, bool v);
 
 int o2scl_eos_tov_get_verbose(void *vptr);
 

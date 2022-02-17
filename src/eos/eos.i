@@ -321,7 +321,7 @@ class eos_quark_njl
 - double G
 - double K
 - double limit
-- bool fromqq
+- bool from_qq
 # - o2scl::quark def_up
 # - o2scl::quark def_down
 # - o2scl::quark def_strange
