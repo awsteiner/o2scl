@@ -1339,3 +1339,33 @@ int eos_quark_njl_vec::calc_p(quark &u, quark &d, quark &s, thermo &th) {
   
   return ret;
 }
+
+double eos_quark_njl_vec::f_therm_pot(double qqu, double qqd, double qqs,
+                                      double msu, double msd, double mss,
+                                      double nuu, double nud, double nus,
+                                      bool vac_terms) {
+  
+  double g1, g2, g3, h1, h2, h3;
+  
+  up->qq=qqu;
+  down->qq=qqd;
+  strange->qq=qqs;
+  up->ms=msu;
+  down->ms=msd;
+  strange->ms=mss;
+  up->nu=nuu;
+  down->nu=nud;
+  strange->nu=nus;
+  
+  calc_eq_p(*up,*down,*strange,g1,g2,g3,h1,h2,h3,*eos_thermo);
+  
+  if (vac_terms==false) {
+    double ret=-eos_thermo->pr-2.0*G*(up->qq*up->qq+down->qq*down->qq+
+                                      strange->qq*strange->qq)+
+      4.0*K*up->qq*down->qq*strange->qq+
+      2.0*GV*up->n*up->n+2.0*GV*down->n*down->n+2.0*GV*strange->n*strange->n;
+    return ret;
+  }
+  return -eos_thermo->pr;
+}
+

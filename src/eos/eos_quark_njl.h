@@ -446,6 +446,13 @@ namespace o2scl {
                           double &vec1, double &vec2, double &vec3,
                           thermo &th);
 
+    /** \brief Compute the thermodynamic potential at \f$ T=0 \f$
+     */
+    virtual double f_therm_pot(double qqu, double qqd, double qqs,
+                               double msu, double msd, double mss,
+                               double nuu, double nud, double nus,
+                               bool vac_terms=true);
+
   };
   
 #ifndef DOXYGEN_NO_O2NS

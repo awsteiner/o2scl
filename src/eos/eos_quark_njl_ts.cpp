@@ -68,7 +68,7 @@ int main(void) {
 
   // First compute the EOS at the specified values of mu,
   // giving an initial guess for the quark condensates
-  nj.fromqq=true;
+  nj.from_qq=true;
   u.qq=-1.0;
   d.qq=-1.0;
   s.qq=-1.0;
@@ -120,7 +120,7 @@ int main(void) {
     
   cout << "Verify that (partial (Omega-Omega_{vac}))/(Partial m) = qq" 
        << endl;
-  nj.fromqq=false;
+  nj.from_qq=false;
 
   u.ms=0.2;
   d.ms=0.3;
@@ -181,7 +181,7 @@ int main(void) {
   
   // First compute the EOS at the specified values of mu,
   // giving an initial guess for the quark condensates
-  nj.fromqq=true;
+  nj.from_qq=true;
   u.qq=-1.0;
   d.qq=-1.0;
   s.qq=-1.0;
@@ -232,7 +232,7 @@ int main(void) {
     
   cout << "Verify that (partial (Omega-Omega_{vac}))/(Partial m) = qq" 
        << endl;
-  nj.fromqq=false;
+  nj.from_qq=false;
 
   u.ms=0.2;
   d.ms=0.3;
@@ -293,7 +293,7 @@ int main(void) {
     //t.test_rel(njv.B0,21.6084,1.0e-4,"bag constant");
     cout << endl;
 
-    nj.fromqq=false;
+    nj.from_qq=false;
     u.mu=2.5;
     d.mu=2.75;
     s.mu=3.0;
@@ -306,7 +306,7 @@ int main(void) {
     ret=nj.calc_p(u,d,s,th);
     cout << th.ed+th.pr << " " << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
     
-    njv.fromqq=false;
+    njv.from_qq=false;
     njv.GV=njv.G;
     u.mu=2.5;
     d.mu=2.75;
@@ -319,6 +319,32 @@ int main(void) {
     s.ms=2.0;
     ret=njv.calc_p(u,d,s,th);
     cout << th.ed+th.pr << " " << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
+
+    // Then construct the functor for the derivative with
+    // respect to the up quark condensate
+    funct fderiv_u2=std::bind
+      (std::mem_fn<double(double,double,double,double,double,
+                          double,double,double,double,bool)>
+       (&eos_quark_njl_vec::f_therm_pot),
+       &njv,std::placeholders::_1,d.qq,s.qq,u.ms,d.ms,s.ms,
+       u.nu,d.nu,s.nu,true);
+    
+    df.h=0.01;
+    double der_u=df.deriv(u.qq,fderiv_u2);
+    cout << "Here: " << der_u << endl;
+    //t.test_rel(der_u,0.0,1.0e-9,"fh_u");
+
+    funct fderiv_u3=std::bind
+      (std::mem_fn<double(double,double,double,double,double,
+                          double,double,double,double,bool)>
+       (&eos_quark_njl_vec::f_therm_pot),
+       &njv,u.qq,d.qq,s.qq,u.ms,d.ms,s.ms,
+       std::placeholders::_1,d.nu,s.nu,true);
+    
+    df.h=0.01;
+    double der_u3=df.deriv(u.nu,fderiv_u3);
+    cout << "Here: " << der_u3 << endl;
+    //t.test_rel(der_u3,0.0,1.0e-9,"fh_u");
 
   }
   
