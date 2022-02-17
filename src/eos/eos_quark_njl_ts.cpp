@@ -288,16 +288,38 @@ int main(void) {
 
   if (true) {
     
-    quark &u2=njv.def_up;
-    quark &d2=njv.def_down;
-    quark &s2=njv.def_strange;
-    thermo &th2=njv.def_thermo;
-    
     t.test_gen(njv.set_parameters()==0,"set_parameters().");
     cout << njv.B0 << endl;
     //t.test_rel(njv.B0,21.6084,1.0e-4,"bag constant");
     cout << endl;
-  
+
+    nj.fromqq=false;
+    u.mu=2.5;
+    d.mu=2.75;
+    s.mu=3.0;
+    u.nu=2.5;
+    d.nu=2.75;
+    s.nu=3.0;
+    u.ms=0.2;
+    d.ms=0.3;
+    s.ms=2.0;
+    ret=nj.calc_p(u,d,s,th);
+    cout << th.ed+th.pr << " " << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
+    
+    njv.fromqq=false;
+    njv.GV=njv.G;
+    u.mu=2.5;
+    d.mu=2.75;
+    s.mu=3.0;
+    u.nu=2.5;
+    d.nu=2.75;
+    s.nu=3.0;
+    u.ms=0.2;
+    d.ms=0.3;
+    s.ms=2.0;
+    ret=njv.calc_p(u,d,s,th);
+    cout << th.ed+th.pr << " " << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
+
   }
   
   t.report();

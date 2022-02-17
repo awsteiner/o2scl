@@ -715,6 +715,14 @@ namespace o2scl {
         zero temperature
 
         This solves the function \ref solve_beta_eq_T0().
+
+        \verbatim embed:rst
+        .. todo:: 
+
+           In eos_had_base::beta_eq_T0(), clearly document why this
+           function is different than the calc_eos() function in
+           the nstar_cold object and explain the differences.
+        \endverbatim 
     */
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
                            fermion &e, bool include_muons,
@@ -730,7 +738,6 @@ namespace o2scl {
 
            - This function, eos_had_base::f_number_suscept(), should
              be overloaded for Skyrme with derivatives
-
         \endverbatim
     */
     virtual void f_number_suscept(double mun, double mup, double &dPdnn, 

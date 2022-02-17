@@ -49,7 +49,7 @@ eos_quark_cfl::eos_quark_cfl() {
   gap_limit=1.0e-6;
   zerot=false;
   fixed_mass=false;
-  fromqq=true;
+  from_qq=true;
   eq_limit=1.0e-6;
 
   smu3=0.0;
@@ -359,8 +359,8 @@ int eos_quark_cfl::calc_eq_temp_p(quark &u, quark &d, quark &s,
 				double &n3, double &n8, 
 				thermo &qb, const double ltemper) {
 
-  if (fromqq==false) {
-    O2SCL_ERR("fromqq=false in eos_quark_cfl::calc_eq_temp_p()",exc_efailed);
+  if (from_qq==false) {
+    O2SCL_ERR("from_qq=false in eos_quark_cfl::calc_eq_temp_p()",exc_efailed);
   }
   
   up=&u;
