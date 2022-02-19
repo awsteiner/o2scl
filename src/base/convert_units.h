@@ -40,9 +40,7 @@
 #include <o2scl/find_constants.h>
 #include <o2scl/vector.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Convert units
 
@@ -1758,8 +1756,6 @@ namespace o2scl {
     
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

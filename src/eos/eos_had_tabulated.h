@@ -32,9 +32,7 @@
 #include <o2scl/fermion.h>
 #include <o2scl/eos_had_apr.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Zero-temperature EOS from a table
 
@@ -207,8 +205,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

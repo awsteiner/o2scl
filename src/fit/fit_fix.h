@@ -33,9 +33,7 @@
 #include <o2scl/fit_base.h>
 #include <o2scl/fit_nonlin.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Multidimensional fitting class fixing some parameters and 
       varying others
@@ -343,8 +341,6 @@ namespace o2scl {
   };
 
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

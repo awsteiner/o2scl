@@ -35,9 +35,7 @@
 
 #include <o2scl/err_hnd.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief Generic exception
 
@@ -281,8 +279,6 @@ namespace o2scl {
    */      
   extern err_hnd_cpp def_err_hnd;
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

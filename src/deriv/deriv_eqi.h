@@ -34,9 +34,7 @@
 #include <o2scl/deriv.h>
 #include <o2scl/err_hnd.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Derivatives for equally-spaced abscissas
 
@@ -315,8 +313,6 @@ namespace o2scl {
     /// Return string denoting type ("deriv_eqi")
     virtual const char *type() { return "deriv_eqi"; }
 
-#ifndef DOXYGEN_NO_O2NS  
-
     protected:
 
     /** \brief Calculate the first derivative of \c func w.r.t. x and the
@@ -491,12 +487,8 @@ namespace o2scl {
                               double dx, size_t nx,
                               const vec_t &y, size_t ix);
 
-#endif
-
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

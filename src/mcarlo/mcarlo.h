@@ -35,9 +35,7 @@
 #include <o2scl/inte_multi.h>
 #include <o2scl/rng.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Monte-Carlo integration [abstract base]
       
@@ -70,9 +68,7 @@ namespace o2scl {
   
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

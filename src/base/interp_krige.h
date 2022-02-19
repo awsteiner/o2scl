@@ -46,9 +46,7 @@
 #include <o2scl/invert.h>
 #include <o2scl/prob_dens_func.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief Interpolation by Kriging with a user-specified 
       covariance function
@@ -1017,8 +1015,6 @@ namespace o2scl {
   
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

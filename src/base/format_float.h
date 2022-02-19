@@ -33,9 +33,7 @@
 #include <o2scl/misc.h>
 #include <o2scl/string_conv.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Format a floating point number into a Latex or HTML string
       
@@ -478,8 +476,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

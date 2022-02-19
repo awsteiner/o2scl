@@ -33,9 +33,7 @@
 #include <o2scl/mm_funct.h>
 #include <o2scl/diff_evo.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Multidimensional minimization by the differential
       evolution method
@@ -288,8 +286,6 @@ namespace o2scl {
 
     };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

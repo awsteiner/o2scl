@@ -55,9 +55,7 @@
 
 #include <o2scl/mcarlo.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief Multidimensional integration using Vegas Monte Carlo (GSL)
 
@@ -883,9 +881,7 @@ namespace o2scl {
       
     };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

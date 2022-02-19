@@ -23,8 +23,8 @@
 /** \file nucleus_rmf.h
     \brief File defining \ref o2scl::nucleus_rmf
 */
-#ifndef RMF_NUCLEUS_H
-#define RMF_NUCLEUS_H
+#ifndef O2SCL_RMF_NUCLEUS_H
+#define O2SCL_RMF_NUCLEUS_H
 
 #include <iostream>
 #include <string>
@@ -37,9 +37,7 @@
 #include <o2scl/ode_rkck_gsl.h>
 #include <o2scl/ode_funct.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Spherical closed-shell nuclei with a relativistic
       mean-field model in the Hartree approximation
@@ -774,8 +772,6 @@ namespace o2scl {
     
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

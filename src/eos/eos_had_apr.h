@@ -32,9 +32,7 @@
 #include <o2scl/fermion.h>
 #include <o2scl/fermion_nonrel.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief EOS from Akmal, Pandharipande, and Ravenhall
 
@@ -308,8 +306,6 @@ namespace o2scl {
     
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

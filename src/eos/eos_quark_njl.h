@@ -35,9 +35,7 @@
 #include <o2scl/inte.h>
 #include <o2scl/inte_qag_gsl.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Nambu Jona-Lasinio EOS
 
@@ -45,17 +43,18 @@ namespace o2scl {
       This class is based on [Buballa99]_.
       \endverbatim
 
-      The quantities \ref L, \ref G, and \ref K are the coupling
-      constants. In order to use the EOS, the user should either (i)
-      set the bag constant, \ref B0 directly, or (ii) use \ref
-      set_parameters() to modify the parameters (and then the \ref
-      set_parameters() function also automatically computes the bag
-      constant.
+      The quantities \ref G, and \ref K are the coupling constants and
+      \ref L is the momentum cutoff. In order to use the EOS, the user
+      should either (i) set the bag constant, \ref B0 directly, or
+      (ii) use \ref set_parameters() to modify the parameters (and
+      then the \ref set_parameters() function also automatically
+      computes the bag constant.
 
       This class can compute the EOS from the quark condensates
       (stored in \ref o2scl::quark::qq) by setting \ref from_qq to
       <tt>true</tt> (this is the default) or from the dynamical masses
-      (stored in \ref o2scl::part_tl::ms) by setting \ref from_qq to
+      (denoted \f$ m_i^{*} \f$ and 
+      stored in \ref o2scl::part_tl::ms) by setting \ref from_qq to
       <tt>false</tt>.
 
       The Fermi gas-like contribution to the pressure due
@@ -64,11 +63,9 @@ namespace o2scl {
       energy density for each quark is set so that
       \f$ \varepsilon + P = \mu n \f$ . 
 
-      <b>Finite T documentation</b>
-
-      This implementation includes contributions from antiquarks.
-      
-      <b>Details</b>
+      \note This code does not currently check to see if \f$
+      k_F>\Lambda \f$ and thus gives unphysical results at higher
+      densities.
 
       The Lagrangian is
       \f[
@@ -81,16 +78,23 @@ namespace o2scl {
       q}(1+\gamma_5) q) + {\rm det}_f ({\bar q}(1-\gamma_5) q) \,] \, .
       \f]
 
-      And the corresponding thermodynamic potential is
+      <b>Finite T documentation</b>
+
+      This implementation includes contributions from antiquarks.
+      
+      <b>Zero temperature</b>
+
+      In the mean-field approximation, 
+      the corresponding thermodynamic potential at \f$ T=0 \f$ is
       \f[
       \Omega = \Omega_{FG} + \Omega_{\mathrm{int}}
       \f]
-      where \f$\Omega_{FG}\f$ is the Fermi gas contribution and
-      \f$\Omega_{int}\f$ is the contribution from interactions.
-      \f$\Omega_{int}\f$ is
+      where \f$\Omega_{\mathrm{FG}}\f$ is the Fermi gas contribution and
+      \f$\Omega_{\mathrm{int}}\f$ is the contribution from interactions.
+      \f$\Omega_{\mathrm{int}}\f$ is
       \f[
-      \frac{\Omega_{\mathrm{Int}}}{V} = - 2 N_c \sum_{i=u,d,s}
-      \int \frac {d^3p}{(2\pi)^3} \sqrt{m_i^2 + p^2} +
+      \frac{\Omega_{\mathrm{int}}}{V} = - 2 N_c \sum_{i=u,d,s}
+      \int \frac {d^3p}{(2\pi)^3} \sqrt{m_i^{*2} + p^2} +
       \frac{\Omega_{V}}{V} \, .
       \f]
       The lst term is the vacuum contribution, 
@@ -106,17 +110,56 @@ namespace o2scl {
 
       \verbatim embed:rst
       Unlike [Buballa99]_, the bag constant,
-      :math:`\Omega_{\mathrm{Int}}/V` is defined without the term
+      :math:`\Omega_{\mathrm{int}}/V` is defined without the term
       \endverbatim
 
       \f[
       \sum_{i=u,d,s} 2 N_C \int_0^{\Lambda} 
-      \frac{d^3 p}{(2 \pi)^3} \sqrt{ m_{0,i}^2+p^2 } ~dp
+      \frac{d^3 p}{(2 \pi)^3} \sqrt{ m_{i}^2+p^2 } ~dp
       \f]
-      since this allows an easier comparison to the finite temperature
-      EOS. The constant \f$B_0\f$ in this case is therefore
-      significantly larger, but the energy density and pressure are
-      still zero in the vacuum.
+      where \f$ m_i \f$ is the bare mass, since this allows an easier
+      comparison to the finite temperature EOS. The constant \f$B_0\f$
+      in this case is therefore significantly larger, but the energy
+      density and pressure are still zero in the vacuum.
+
+      <b>Finite Temperature</b>
+
+      The thermodynamic potential (including the contribution from
+      antiquarks) in the mean-field approximation is
+      \f{eqnarray*}
+      \Omega &=& 6 \sum_{i=u,d,s}
+      \int_0^{\Lambda} \frac {d^3p}{(2\pi)^3} \left\{ E_i^{*} +
+      T \log \left[ 1 + \exp (-E^{*}_i+\mu_i)/T \right]
+      + T \log \left[ 1 + \exp (-E^{*}_i-\mu_i)/T \right]
+      \right\} \nonumber \\
+      && -
+      \sum_{i=u,d,s} 2 G \langle\bar{q}_i q_i \rangle^2
+      + 4 K \langle \bar{q}_u q_u \rangle \langle \bar{q}_d q_d \rangle
+      \langle \bar{q}_s q_s \rangle + B_0
+      \f}
+      where \f$ E_i^{*} \equiv \sqrt{m_i^{* 2}+p^2} \f$ .
+      The quark densities are
+      \f[
+      n_i = 6 
+      \int_0^{\Lambda} \frac {d^3p}{(2\pi)^3} 
+      \left\{
+      \left[ \frac{1}{1 + \exp (E_i^{*}_i-\mu_i)/T} \right]
+      -
+      \left[ \frac{1}{1 + \exp (E_i^{*}_i+\mu_i)/T} \right]
+      \right\} \, ,
+      \f]
+      and the quark condensates are
+      \f[
+      \langle \bar{q}_i q_i \rangle = - 6
+      \int_0^{\Lambda} \frac {d^3p}{(2\pi)^3} 
+      \frac{m_i^{*} k^2}{E_i^{*}}
+      \left[ 1 - 
+      \frac{1}{1 + \exp (E^{*}_i-\mu_i)/T} -
+      \frac{1}{1 + \exp (E^{*}_i+\mu_i)/T} \right] \, .
+      \f]
+      \verbatim embed:rst
+      See, e.g. [Hatsuda94]_ or [Alaverdyan21]_.
+      \endverbatim
 
       \verbatim embed:rst
       The Feynman-Hellman theorem [Bernard88]_, gives
@@ -132,21 +175,21 @@ namespace o2scl {
       <b>References</b>
 
       \verbatim embed:rst
-      Created for [Steiner00]_. See also [Buballa99]_ and
-      [Hatsuda94]_.
+      This class was created for [Steiner00]_. 
+      See also [Bernard88]_, [Hatsuda94]_,
+      [Buballa99]_, and [Alaverdyan21]_.
 
       .. todo::
 
-         In class eos_quark_njl: better documentation.
+         - In class eos_quark_njl: better documentation.
+         - future Consider rewriting the testing code and making
+           the various gap functions protected instead of public.
+         - future Remove the stored quark pointers if they are
+           unnecessary?
 
       \endverbatim
 
-      \future Consider rewriting the testing code and making
-      the various gap functions protected instead of public.
-      \future Remove the stored quark pointers if they are
-      unnecessary?
   */
-
   class eos_quark_njl : public eos_quark {
 
   public:
@@ -256,7 +299,7 @@ namespace o2scl {
 	be specified in set_quarks() and the \ref thermo object
 	which can be specified in eos::set_thermo().
     */
-    int gap_func_msT(size_t nv, const ubvector &x, ubvector &y);
+    int gap_func_ms_T(size_t nv, const ubvector &x, ubvector &y);
     
     /** \brief Calculates gap equations in \c y as a function of the 
 	quark condensates in \c x
@@ -267,15 +310,18 @@ namespace o2scl {
     */
     int gap_func_qq_T(size_t nv, const ubvector &x, ubvector &y);
 
-    /** \name The default quark masses
+    /** \name The default quark masses (in \f$ \mathrm{fm}^{-1} \f$ )
 
-	These are the values from Buballa et al. (1999) which were
-	used to fix the pion and kaon decay constants, and the pion,
-	kaon, and eta prime masses. They are set in the constructor
-	and are in units of \f$ \mathrm{fm}^{-1} \f$ . The default
-	values are 5.5 MeV for the up and down quark and 140.7 MeV for
-	the strange quark (then divided by \ref o2scl_const::hc_mev_fm
-	for the conversion).
+        \verbatim embed:rst
+        These default masses are taken from [Buballa99]_, where they
+        were used to fix the pion and kaon decay constants, and the
+        pion, kaon, and eta prime masses.
+        \endverbatim
+
+	They are set in the constructor. The default values are 5.5
+	MeV for the up and down quark and 140.7 MeV for the strange
+	quark (then divided by \ref o2scl_const::hc_mev_fm for the
+	conversion).
     */
     //@{
     double up_default_mass;
@@ -298,11 +344,11 @@ namespace o2scl {
     /** \brief Set the quark objects to use
 
 	The quark objects are used in gap_func_ms(), gap_func_qq(), 
-	gap_func_msT(), gap_func_qq_T(), and B0_func().
+	gap_func_ms_T(), gap_func_qq_T(), and B0_func().
     */
     int set_quarks(quark &u, quark &d, quark &s);
 
-    /// The momentum cutoff (in \f$ \mathrm{fm}^{-1} \f$)
+    /// The momentum cutoff, \f$ \Lambda \f$ (in \f$ \mathrm{fm}^{-1} \f$)
     double L;
     
     /// The four-fermion coupling (in \f$ \mathrm{fm}^{2} \f$)
@@ -366,7 +412,16 @@ namespace o2scl {
     /// Used by calc_B0() to compute the bag constant
     int B0_func(size_t nv, const ubvector &x, ubvector &y);
     
-    /// Calculates the contribution to the bag constant from quark \c q 
+    /** \brief Calculates the contribution to the bag constant from 
+        quark \c q 
+
+        This function evaluates the integral
+        \f[
+        6 \int_0^{\Lambda} \frac{d^3 p}{(2 \pi)^3} \sqrt{m^{*2}+p^2}~dp
+        \f]
+
+        This function is used in \ref calc_eq_p() and \ref calc_eq_e() .
+     */
     void njl_bag(quark &q);
 
     /// The up quark
@@ -393,11 +448,22 @@ namespace o2scl {
   };
 
   /** \brief The Nambu-Jona-Lasinio model with vector interactions
+
+      \verbatim embed:rst
+      This class is based on [Alaverdyan21]_, but see also
+      older work e.g. [Klimt90]_.
+      \endverbatim
    */
   class eos_quark_njl_vec : public eos_quark_njl {
     
   public:
 
+    eos_quark_njl_vec() {
+      from_nu=false;
+    }
+    
+    bool from_nu;
+    
     /// The vector coupling constant
     double GV;
 
@@ -406,19 +472,19 @@ namespace o2scl {
 
     /** \brief Integrand for the quark condensate
      */
-    double integ_qq(double x, int np, double *param);
+    double integ_qq(double x, double T, double mu, double m, double ms);
 
     /** \brief Integrand for the density
      */
-    double integ_density(double x, int np, double *param);
+    double integ_density(double x, double T, double mu, double m, double ms);
 
     /** \brief Integrand for the energy density
      */
-    double integ_edensity(double x, int np, double *param);
+    double integ_edensity(double x, double T, double mu, double m, double ms);
     
     /** \brief Integrand for the pressure
      */
-    double integ_pressure(double x, int np, double *param);
+    double integ_pressure(double x, double T, double mu, double m, double ms);
     
     /** \brief Compute the gap equations and the equation of state at
         finite temperature as a function of the chemical potentials
@@ -456,8 +522,6 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

@@ -33,9 +33,7 @@
 #include <o2scl/fermion.h>
 #include <o2scl/nucmass.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Baym-Pethick-Sutherland equation of state
     
@@ -181,8 +179,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

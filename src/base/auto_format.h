@@ -40,9 +40,7 @@
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #endif
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl_auto_format {
-#endif
 
 #ifdef O2SCL_LD_TYPES
   typedef
@@ -395,9 +393,7 @@ namespace o2scl_auto_format {
    */
   //auto_format &endl(auto_format &c);
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

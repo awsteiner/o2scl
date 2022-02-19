@@ -48,9 +48,7 @@
 #include <Python.h>
 #endif
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /// One-dimensional function typedef in src/base/funct.h
   typedef std::function<double(double)> funct;
@@ -179,14 +177,11 @@ namespace o2scl {
     funct_string() {};
 
 #endif
-#ifndef DOXYGEN_NO_O2NS
 
   private:
 
     funct_string(const funct_string &);
     funct_string& operator=(const funct_string&);
-
-#endif
 
   };
 
@@ -284,14 +279,11 @@ namespace o2scl {
     funct2_string() {};
 
 #endif
-#ifndef DOXYGEN_NO_O2NS
 
   private:
 
     funct2_string(const funct2_string &);
     funct2_string& operator=(const funct2_string&);
-
-#endif
 
   };
 
@@ -344,21 +336,16 @@ namespace o2scl {
     funct_python() {};
 
 #endif
-#ifndef DOXYGEN_NO_O2NS
 
   private:
 
     funct_python(const funct_python &);
     funct_python& operator=(const funct_python&);
 
-#endif
-
   };
 
 #endif
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

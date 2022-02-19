@@ -29,9 +29,7 @@
 #include <o2scl/inte.h>
 #include <o2scl/inte_gauss_cern.h>
  
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
  
   /** \brief Cauchy principal value integration (CERNLIB)
  
@@ -188,8 +186,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

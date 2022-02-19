@@ -47,9 +47,7 @@ namespace o2scl_hdf {
 		  std::string name);
 }
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
 #ifdef O2SCL_NEVER_DEFINED
   // Forward definition of the uniform_grid class for HDF I/O
@@ -510,8 +508,6 @@ namespace o2scl {
     
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

@@ -36,9 +36,7 @@
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/eos_tov.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Static neutron star at zero temperature
 
@@ -536,8 +534,6 @@ namespace o2scl {
   };
   
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

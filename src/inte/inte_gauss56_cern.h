@@ -34,9 +34,7 @@
 #include <o2scl/inte.h>
 #include <o2scl/funct.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Integration weights and abcissas for 
       \ref o2scl::inte_gauss56_cern in double precision
@@ -306,8 +304,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

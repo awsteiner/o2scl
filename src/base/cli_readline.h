@@ -31,9 +31,7 @@
 
 #include <o2scl/cli.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief An extension to \ref o2scl::cli which uses readline
       
@@ -112,8 +110,6 @@ namespace o2scl {
   
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

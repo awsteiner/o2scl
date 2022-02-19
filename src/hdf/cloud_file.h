@@ -39,9 +39,7 @@
 #include <o2scl/err_hnd.h>
 #include <o2scl/hdf_file.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl_hdf {
-#endif
 
   /** \brief Read a file and download from a URL if necessary
       
@@ -135,8 +133,6 @@ namespace o2scl_hdf {
     
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

@@ -33,9 +33,7 @@
     \brief One-dimensional minimization base class and associated functions
 */
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief One-dimensional minimization [abstract base]
    */
@@ -474,8 +472,6 @@ namespace o2scl {
   }
   //@}
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

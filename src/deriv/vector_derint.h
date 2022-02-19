@@ -47,9 +47,7 @@
 */
 #include <o2scl/interp.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \name Derivative of a generic vector in src/deriv/vector_derint.h
 
@@ -292,8 +290,6 @@ namespace o2scl {
   }
   //@}
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

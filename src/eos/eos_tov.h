@@ -39,9 +39,7 @@
 #include <o2scl/vector_derint.h>
 #include <o2scl/root_brent_gsl.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief A EOS base class for the TOV solver
    */
@@ -1026,9 +1024,7 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

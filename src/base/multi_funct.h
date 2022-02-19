@@ -36,9 +36,7 @@
 #include <o2scl/err_hnd.h>
 #include <o2scl/calc_utf8.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /// Multi-dimensional function typedef in src/base/multi_funct.h
   typedef std::function<
@@ -105,8 +103,6 @@ namespace o2scl {
       return calc.eval(&vars);
     }
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// The function parser
@@ -126,15 +122,10 @@ namespace o2scl {
   
     multi_funct_strings() {}
   
-#ifndef DOXYGEN_NO_O2NS
-#endif
-
   private:
 
     multi_funct_strings(const multi_funct_strings &);
     multi_funct_strings& operator=(const multi_funct_strings&);
-
-#endif
 
   };
 

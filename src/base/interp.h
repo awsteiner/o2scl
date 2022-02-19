@@ -60,9 +60,7 @@
 #include <o2scl/tridiag.h>
 #include <o2scl/vector.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief Interpolation types in src/base/interp.h
    */
@@ -2869,8 +2867,6 @@ namespace o2scl {
   }
   //@}
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

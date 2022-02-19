@@ -39,9 +39,7 @@
 #include <o2scl/mcarlo_vegas.h>
 #include <o2scl/vector.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief An unnormalized uniform prior distribution for several 
       variables
@@ -437,8 +435,6 @@ namespace o2scl {
   
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

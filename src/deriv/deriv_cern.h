@@ -31,9 +31,7 @@
 #include <o2scl/string_conv.h>
 #include <o2scl/err_hnd.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief Numerical differentiation routine (CERNLIB)
 
@@ -267,9 +265,7 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

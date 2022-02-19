@@ -36,9 +36,7 @@
 #include <o2scl/vector.h>
 #include <o2scl/string_conv.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Base for \ref o2scl::cli command function
       
@@ -385,8 +383,6 @@ namespace o2scl {
       std::greater<std::string> >::iterator par_t;
     //@}
     
-#ifndef DOXYGEN_NO_O2NS_INTERNAL
-    
   protected:
 
     /// Desc
@@ -422,8 +418,6 @@ namespace o2scl {
     /// Compare two strings, treating dashes and underscores as equivalent
     bool string_equal_dash(std::string s1, std::string s2);
 
-#endif
-  
   public:
 
     cli();
@@ -686,8 +680,6 @@ namespace o2scl {
     
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

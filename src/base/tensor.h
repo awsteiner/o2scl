@@ -45,9 +45,7 @@
 #include <o2scl/table3d.h>
 #include <o2scl/misc.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief Index specification 
    */
@@ -1953,9 +1951,7 @@ namespace o2scl {
   }
   //@}
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

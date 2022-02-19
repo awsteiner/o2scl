@@ -37,9 +37,7 @@
 #include <o2scl/fermion_nonrel.h>
 #include <o2scl/fermion_deriv_nr.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief Skyrme hadronic equation of state 
 
@@ -805,8 +803,6 @@ namespace o2scl {
     fermion_deriv_nr nrfd;
     //@}
     
-#ifndef DOXYGEN_NO_O2NS
-    
   protected:
 
     /// \name Functions and parameters for calpar()
@@ -816,12 +812,8 @@ namespace o2scl {
     double fixn0, fixeoa, fixesym, fixcomp, fixmsom;
     //@}
 
-#endif
-
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

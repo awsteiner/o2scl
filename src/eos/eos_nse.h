@@ -33,9 +33,7 @@
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/mmin_simp2.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Equation of state for nuclei in statistical equilibrium
 
@@ -245,8 +243,6 @@ namespace o2scl {
     
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

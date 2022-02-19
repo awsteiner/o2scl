@@ -30,9 +30,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/eos_quark_cfl.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief An EOS like \ref eos_quark_cfl but 
       with a color-superconducting 't Hooft interaction
@@ -325,8 +323,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

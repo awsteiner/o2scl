@@ -48,9 +48,7 @@
 #include <o2scl/misc.h>
 #include <o2scl/rng.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /// \name Functions in src/base/string_conv.h
   //@{
@@ -429,9 +427,7 @@ namespace o2scl {
   /// Copy string \c s to character array \c x of length \c len
   void string_to_char_array(std::string s, char *x, int len);
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

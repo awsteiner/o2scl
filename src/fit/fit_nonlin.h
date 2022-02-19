@@ -57,9 +57,7 @@
 #include <o2scl/qrpt.h>
 #include <o2scl/columnify.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Base routines for the nonlinear fitting classes
    */
@@ -1450,8 +1448,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

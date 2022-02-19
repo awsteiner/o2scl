@@ -33,9 +33,7 @@
 
 #include <o2scl/calc_utf8.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /// Array of multi-dimensional functions typedef in src/base/mm_funct.h
   typedef std::function<
@@ -174,8 +172,6 @@ namespace o2scl {
   };
 #endif
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

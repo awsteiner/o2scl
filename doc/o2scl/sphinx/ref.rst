@@ -9,6 +9,13 @@ Bibliography
    <https://doi.org/10.1103/PhysRevC.58.1804>`_,
    Phys. Rev. C **58** (1998) 1804.
 
+.. [Klimt90] : S. Klimt, M. Lutz, U. Vogl, and W. Weise,
+   Nucl. Phys. A **516** (1990) 429.
+
+.. [Alaverdyan21] : `G. Alaverdyan
+   <https://doi.org/10.3390/sym13010124>`_,
+   Symmetry **13** (2021) .
+
 .. [Audi03] : `G. Audi, A. H. Wapstra, and C. Thibault
    <https://doi.org/10.1016/j.nuclphysa.2003.11.003>`_,
    Nucl. Phys. A **729** (2003) 337.

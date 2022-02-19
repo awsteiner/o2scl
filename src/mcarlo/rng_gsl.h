@@ -37,9 +37,7 @@
 
 #include <gsl/gsl_rng.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Random number generator (GSL)
 
@@ -162,8 +160,6 @@ namespace o2scl {
     }
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

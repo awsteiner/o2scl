@@ -53,9 +53,7 @@ namespace o2scl_hdf {
   void hdf_output(hdf_file &hf, o2scl::expval_matrix &t, std::string name);
 }
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief Expectation value base class
       

@@ -31,9 +31,7 @@
 #include <o2scl/funct.h>
 #include <o2scl/root.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief One-dimensional root-finding for noisy functions
    */
@@ -160,8 +158,6 @@ namespace o2scl {
   
   };
    
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

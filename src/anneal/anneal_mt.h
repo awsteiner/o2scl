@@ -33,9 +33,7 @@
 // for boost::thread
 #include <boost/thread/thread.hpp>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief Multidimensional minimization by simulated annealing 
       (Boost multi-threaded version)
@@ -404,8 +402,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

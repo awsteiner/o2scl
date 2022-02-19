@@ -52,9 +52,7 @@
 #include <o2scl/part.h>
 #include <o2scl/eos_quark_njl.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Nambu Jona-Lasinio model with a schematic CFL 
       di-quark interaction at finite temperature
@@ -515,8 +513,6 @@ namespace o2scl {
     
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

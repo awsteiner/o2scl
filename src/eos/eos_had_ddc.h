@@ -35,9 +35,7 @@
 #include <o2scl/fermion.h>
 #include <o2scl/mm_funct.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Relativistic mean field EOS with density dependent couplings
 
@@ -136,8 +134,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

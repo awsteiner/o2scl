@@ -67,9 +67,7 @@ namespace o2scl_hdf {
 
 #endif
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Data \table class with units
 
@@ -1187,8 +1185,6 @@ namespace o2scl {
   
 #endif  
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

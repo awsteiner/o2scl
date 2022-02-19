@@ -32,9 +32,7 @@
 #include <o2scl/string_conv.h>
 #include <o2scl/vector_derint.h>
  
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Adaptive integration (CERNLIB)
     
@@ -307,8 +305,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

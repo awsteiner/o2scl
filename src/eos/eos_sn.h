@@ -23,8 +23,8 @@
 /** \file eos_sn.h
     \brief File defining \ref o2scl::eos_sn_base
 */
-#ifndef GEN_SN_EOS_H
-#define GEN_SN_EOS_H
+#ifndef O2SCL_EOS_SN_H
+#define O2SCL_EOS_SN_H
 
 #include <cmath>
 #include <iostream>
@@ -39,9 +39,7 @@
 #include <o2scl/convert_units.h>
 #include <o2scl/interp2_direct.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief A base class for the supernova EOSs [abstract]
 
@@ -1083,8 +1081,6 @@ namespace o2scl {
   
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

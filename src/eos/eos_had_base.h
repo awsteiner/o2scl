@@ -40,9 +40,7 @@
 #include <o2scl/part.h>
 #include <o2scl/lib_settings.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Hadronic equation of state [abstract base]
 
@@ -1318,9 +1316,7 @@ namespace o2scl {
                             thermo &th);
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

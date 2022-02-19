@@ -57,9 +57,7 @@ namespace o2scl_hdf {
                     std::string name);
 }
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief A <tt>ublas::range</tt> typedef for \ref 
       o2scl::tensor_grid and related classes in src/base/tensor_grid.h
@@ -2606,9 +2604,7 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

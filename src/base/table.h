@@ -46,8 +46,6 @@
 #include <o2scl/vec_stats.h>
 #include <o2scl/lib_settings.h>
 
-#ifndef DOXYGEN_NO_O2NS
-
 namespace o2scl {
   // Forward definition of the table class for HDF5 I/O
   template<class vec_t> class table;
@@ -76,11 +74,7 @@ namespace o2scl_hdf {
 
 }
 
-#endif
-
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Data \table class
 
@@ -3937,9 +3931,7 @@ namespace o2scl {
     
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 namespace std {
   

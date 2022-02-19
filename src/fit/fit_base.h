@@ -32,9 +32,7 @@
 #include <o2scl/jacobian.h>
 #include <o2scl/mm_funct.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Array of multi-dimensional functions typedef (C++11 
       version) in src/fit/fit_base.h
@@ -404,8 +402,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

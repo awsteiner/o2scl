@@ -37,9 +37,7 @@
 #include <o2scl/misc.h>
 #include <o2scl/string_conv.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Create nicely formatted columns from a table of strings
     
@@ -639,8 +637,6 @@ namespace o2scl {
   }
   //@}
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

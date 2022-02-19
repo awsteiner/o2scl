@@ -57,9 +57,7 @@
 #include <gsl/gsl_machine.h>
 #include <gsl/gsl_monte_miser.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief Multidimensional integration using the MISER Monte Carlo 
       algorithm (GSL)
@@ -708,9 +706,7 @@ namespace o2scl {
     
     };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

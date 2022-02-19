@@ -33,9 +33,7 @@
 #include <o2scl/fit_base.h>
 #include <o2scl/fit_nonlin.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Non-linear least-squares fitting class with generic minimizer
     
@@ -198,8 +196,6 @@ namespace o2scl {
   
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

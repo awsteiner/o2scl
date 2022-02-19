@@ -41,9 +41,7 @@
 #include <gsl/gsl_sys.h>
 #include <gsl/gsl_matrix.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief A class to manage testing and record success and failure
    */
@@ -664,8 +662,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

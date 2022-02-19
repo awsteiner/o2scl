@@ -31,9 +31,7 @@
 #include <cmath>
 #include <o2scl/funct.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Numerical differentiation base [abstract base]
       
@@ -243,8 +241,6 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

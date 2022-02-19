@@ -33,9 +33,7 @@
 #include <o2scl/deriv.h>
 #include <o2scl/mroot.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Quark matter equation of state base
   */
@@ -73,9 +71,7 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

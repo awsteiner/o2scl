@@ -33,9 +33,7 @@
 #include <iostream>
 #include <string>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief The integer error definitions in src/base/err_hnd.h
       
@@ -357,9 +355,7 @@ namespace o2scl {
 
 #endif
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 extern "C" {
 

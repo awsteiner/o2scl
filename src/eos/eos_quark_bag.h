@@ -30,9 +30,7 @@
 #include <o2scl/part.h>
 #include <o2scl/eos_quark.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Simple bag model
 
@@ -82,8 +80,6 @@ namespace o2scl {
     virtual const char *type() { return "eos_quark_bag"; }
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

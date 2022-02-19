@@ -31,9 +31,7 @@
 #include <string>
 #include <vector>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
 #if defined(O2SCL_NCURSES) || defined(DOXYGEN)
   
@@ -100,8 +98,6 @@ namespace o2scl {
    */
   void get_screen_size_ioctl(int &row, int &col);
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

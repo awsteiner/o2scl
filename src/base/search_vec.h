@@ -33,9 +33,7 @@
 #include <o2scl/err_hnd.h>
 #include <o2scl/vector.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Searching class for monotonic data with caching
       
@@ -433,8 +431,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

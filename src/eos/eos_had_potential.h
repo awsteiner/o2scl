@@ -37,9 +37,7 @@
 #include <o2scl/fermion_nonrel.h>
 #include <cstdlib>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Generalized potential model equation of state
       
@@ -278,8 +276,6 @@ namespace o2scl {
     
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

@@ -61,9 +61,7 @@
 namespace o2scl {
 }
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief A class to manage global library settings
 
@@ -305,9 +303,7 @@ namespace o2scl {
   }
 #endif  
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 extern "C" {
   void *o2scl_get_o2scl_settings();

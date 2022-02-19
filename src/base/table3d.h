@@ -64,9 +64,7 @@ namespace o2scl_hdf {
   void hdf_output(hdf_file &hf, const o2scl::table3d &t, std::string name);
 }
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief A data structure containing one or more slices of
       two-dimensional data points defined on a grid
@@ -1351,8 +1349,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

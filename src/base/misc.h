@@ -51,9 +51,7 @@
 
 #include <o2scl/err_hnd.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /*
     AWS 10/10/19: A new abs() function is probably overkill, but I am
@@ -1164,9 +1162,7 @@ namespace o2scl {
     return;
   }
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

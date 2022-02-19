@@ -38,9 +38,7 @@
 #include <o2scl/rng.h>
 #include <o2scl/prob_dens_func.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Simulated annealing base
 
@@ -142,9 +140,7 @@ namespace o2scl {
     
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 
