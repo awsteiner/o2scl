@@ -64,9 +64,7 @@
 // For matrix_out() below
 #include <o2scl/columnify.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Base functions for \ref mroot_hybrids
    */
@@ -1148,9 +1146,7 @@ namespace o2scl {
 
  };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)
 #if defined (O2SCL_ARMA) || defined (DOXYGEN)

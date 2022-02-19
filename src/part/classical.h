@@ -39,9 +39,7 @@
 #include <o2scl/inte.h>
 #include <o2scl/part.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Classical particle class
 
@@ -196,8 +194,6 @@ namespace o2scl {
    */
   typedef classical_thermo_tl<double> classical_thermo;
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

@@ -36,9 +36,7 @@
 #include <o2scl/part_deriv.h>
 #include <o2scl/classical.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Equation of state for a classical particle with derivatives
    */
@@ -122,8 +120,6 @@ namespace o2scl {
    */
   typedef classical_deriv_thermo_tl<double> classical_deriv_thermo;
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

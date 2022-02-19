@@ -46,9 +46,7 @@
 
 #include <o2scl/boson.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Boson class from fitting method
      
@@ -196,8 +194,6 @@ namespace o2scl {
 #endif
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

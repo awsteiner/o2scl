@@ -35,9 +35,7 @@
 #include <o2scl/fermion.h>
 #include <o2scl/fermion_rel.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Object to store second derivatives of 
       \f$ P(\mu_n,\mu_p,T) \f$
@@ -1550,8 +1548,6 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

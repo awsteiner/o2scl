@@ -37,9 +37,7 @@
 
 #include <o2scl/fermion.h>
 
-//#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-  //#endif
 
   /** \brief Quark class
 
@@ -62,8 +60,6 @@ namespace o2scl {
 
   };
 
-  //#ifndef DOXYGEN_NO_O2NS
 }
-//#endif
 
 #endif

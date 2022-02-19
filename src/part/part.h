@@ -42,9 +42,7 @@
     \brief File defining \ref o2scl::thermo_tl and \ref o2scl::part_tl 
 */
 
-//#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-  //#endif
 
   /** \brief A class containing three thermodynamical variables (energy
       density, pressure, entropy density)
@@ -1177,9 +1175,6 @@ namespace o2scl {
 
   typedef part_calibrate_class_tl<double> part_calibrate_class;
 
-  
-  //#ifndef DOXYGEN_NO_O2NS
 }
-//#endif
 
 #endif

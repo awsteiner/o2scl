@@ -33,9 +33,7 @@
     \brief File defining \ref o2scl::thermo_tl and \ref o2scl::part_pdg_tl 
 */
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief A particle object compatible with the PDG
    */
@@ -128,8 +126,6 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

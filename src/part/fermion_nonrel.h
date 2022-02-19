@@ -42,9 +42,7 @@
 #include <o2scl/fermion.h>
 #include <o2scl/polylog.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Nonrelativistic fermion class
 
@@ -457,8 +455,6 @@ namespace o2scl {
 
   protected:
 
-#ifndef DOXYGEN_NO_O2NS
-
   /// Solver to compute chemical potential from density
   root<> *density_root;
     
@@ -467,14 +463,10 @@ namespace o2scl {
   fermion_nonrel_tl(const fermion_nonrel_tl &);
   fermion_nonrel_tl& operator=(const fermion_nonrel_tl&);
 
-#endif
-
   };
 
   typedef fermion_nonrel_tl<> fermion_nonrel;
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

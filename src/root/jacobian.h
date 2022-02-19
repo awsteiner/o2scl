@@ -33,9 +33,7 @@
 #include <o2scl/columnify.h>
 #include <o2scl/vector.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /// Jacobian function (not necessarily square) in src/root/jacobian.h
   typedef std::function<
@@ -479,8 +477,6 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

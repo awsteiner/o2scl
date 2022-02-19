@@ -41,9 +41,7 @@
 
 #include <o2scl/boson.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Equation of state for a relativistic boson
       
@@ -111,8 +109,6 @@ namespace o2scl {
 
   protected:
 
-#ifndef DOXYGEN_NO_O2NS
-
     /// The non-degenerate integrator
     inte<> *nit;
     /// The degenerate integrator
@@ -135,12 +131,8 @@ namespace o2scl {
     /// Solve for the density in calc_density()
     double solve_fun(double x, boson &b, double T);
 
-#endif
-
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

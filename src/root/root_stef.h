@@ -53,9 +53,7 @@
 #include <o2scl/misc.h>
 #include <o2scl/root.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Steffenson equation solver (GSL)
 
@@ -297,9 +295,7 @@ namespace o2scl {
   
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 
