@@ -1052,7 +1052,7 @@ int eos_quark_njl_vec::calc_eq_p(quark &tu, quark &td, quark &ts,
 
   } else {
 
-    vec1=tu.ed
+    vec1=tu.ed;
     
   }
   
