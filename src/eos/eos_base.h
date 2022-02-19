@@ -28,82 +28,91 @@
 
 #include <o2scl/part.h>
 #include <o2scl/fermion.h>
+#include <o2scl/boson.h>
 #include <o2scl/fermion_rel.h>
 
 namespace o2scl {
 
-#ifdef O2SCL_NEVER_DEFINED
-  
   /** \brief
    */
   class eos_leptons {
     
   public:
     
-    /** \brief
+    /** \brief Relativistic fermion thermodyanmics
      */
     fermion_rel frel;
     
-    /** \brief
+    /** \brief Electron
      */
     fermion e;
     
-    /** \brief
+    /** \brief Muon
      */
     fermion mu;
 
-    /** \brief
+    /** \brief Photon
      */
-    boson photon;
+    boson ph;
     
-    /** \brief
+    /** \brief If true, include muons (default true)
      */
     bool include_muons;
 
-    /** \brief
+    /** \brief If true, include photons (default false)
      */
     bool include_photons;
 
-    /** \brief
+    /** \brief Thermodynamic quantities
      */
     thermo th;
 
     eos_leptons() {
       include_muons=true;
       include_photons=false;
-      electron.init(cu.convert("kg","1/fm",
-                               o2scl_mks::mass_electron),2.0);
-      muon.init(cu.convert("kg","1/fm",
-                           o2scl_mks::mass_muon),2.0);
-      photon.init(0.0,2.0);
+      
+      convert_units<double> &cu=o2scl_settings.get_convert_units();
+      e.init(cu.convert("kg","1/fm",o2scl_mks::mass_electron),2.0);
+      mu.init(cu.convert("kg","1/fm",o2scl_mks::mass_muon),2.0);
+                         
+      ph.init(0.0,2.0);
     }
 
-    /** \brief
+    /** \brief Thermodynamics from the electron and muon 
+        chemical potentials
      */
     int pair_mu(double T) {
-      int retx=frel.pair_mu(e,T);
-      if (retx!=0) return retx;
+      frel.pair_mu(e,T);
       th.ed=e.ed;
       th.pr=e.pr;
       th.en=e.en;
       if (include_muons) {
-        mu.mu=e.mu;
-        retx=frel.pair_mu(mu,T);
-        if (retx!=0) return retx;
+        frel.pair_mu(mu,T);
         th.ed+=mu.ed;
         th.pr+=mu.pr;
         th.en+=mu.en;
       }
       if (include_photons) {
-        photon.massless_calc(T);
-        th.ed+=photon.ed;
-        th.pr+=photon.pr;
-        th.en+=photon.en;
+        ph.massless_calc(T);
+        th.ed+=ph.ed;
+        th.pr+=ph.pr;
+        th.en+=ph.en;
       }
       return 0;
     }
 
-    /** \brief
+    /** \brief Thermodynamics from the electron chemical potential
+        in weak equilibrium
+    */
+    int pair_mu_eq(double T) {
+      if (include_muons) {
+        mu.mu=e.mu;
+      }
+      pair_mu(T);
+      return 0;
+    }
+
+    /** \brief Thermodynamics from the electron and muon densities
      */
     int pair_density(double T) {
       
@@ -211,10 +220,10 @@ namespace o2scl {
       }
       
       if (include_photons) {
-        photon.massless_calc(T);
-        th.ed+=photon.ed;
-        th.pr+=photon.pr;
-        th.en+=photon.en;
+        ph.massless_calc(T);
+        th.ed+=ph.ed;
+        th.pr+=ph.pr;
+        th.en+=ph.en;
       }
 
       frel.err_nonconv=fr_en;
@@ -223,8 +232,6 @@ namespace o2scl {
     }
     
   };
-  
-#endif
   
   /** \brief Equation of state base class
     

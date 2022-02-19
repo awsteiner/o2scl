@@ -41,9 +41,7 @@
 #include <o2scl/nucmass_ldrop.h>
 #include <o2scl/nucmass_frdm.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Liquid drop model with shell effects
   */
@@ -96,8 +94,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

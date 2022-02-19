@@ -37,9 +37,7 @@
 #include <o2scl/fermion_eff.h>
 #include <o2scl/inte_qagiu_gsl.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Simple liquid drop mass formula
       
@@ -561,8 +559,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

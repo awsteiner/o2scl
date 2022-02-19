@@ -41,6 +41,7 @@ const thermo &eos_base::get_thermo() {
   return *eos_thermo;
 }
 
+
 int eos_base::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
 			 fermion &e, bool include_muons,
 			 fermion &mu, fermion_rel &frel,

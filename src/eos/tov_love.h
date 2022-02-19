@@ -33,9 +33,7 @@
 #include <o2scl/ode_rk8pd_gsl.h>
 #include <o2scl/ode_iv_solve.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief Determination of the neutron star Love number
 
@@ -308,8 +306,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

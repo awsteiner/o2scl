@@ -11,7 +11,7 @@ EOS_SRCS = eos_had_apr.cpp eos_quark_bag.cpp \
 	eos_had_base.cpp nucleus_rmf.cpp eos_sn.cpp \
 	nucmass_ldrop_shell.cpp eos_quark_cfl.cpp eos_quark_cfl6.cpp \
 	eos_nse_full.cpp eos_crust_virial.cpp \
-	nstar_rot.cpp tov_love.cpp eos_had_rmf_hyp.cpp eos_had_phen.cpp \
+	nstar_rot.cpp tov_love.cpp eos_had_rmf_hyp.cpp \
 	eos_python.cpp
 
 HEADER_VAR = eos_had_apr.h eos_quark_bag.h eos_crust.h eos_had_ddc.h \
@@ -23,7 +23,7 @@ HEADER_VAR = eos_had_apr.h eos_quark_bag.h eos_crust.h eos_had_ddc.h \
 	hdf_eos_io.h nucleus_rmf.h eos_sn.h nucmass_ldrop_shell.h \
 	eos_had_gogny.h eos_crust_virial.h \
 	eos_nse_full.h nstar_rot.h tov_love.h eos_had_rmf_hyp.h \
-	eos_had_virial.h eos_had_phen.h eos_python.h
+	eos_had_virial.h eos_python.h
 
 TEST_VAR = eos_had_apr.scr eos_quark_bag.scr nstar_cold.scr \
 	eos_base.scr eos_had_potential.scr eos_had_sym4.scr \

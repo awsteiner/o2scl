@@ -33,9 +33,7 @@
 #include <o2scl/boson.h>
 #include <o2scl/eos_had_base.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Virial EOS for neutrons, protons, deuterons, and alpha 
       particles
@@ -129,8 +127,6 @@ namespace o2scl {
     
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

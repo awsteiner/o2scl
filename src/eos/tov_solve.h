@@ -33,9 +33,7 @@
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/min_brent_gsl.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Class to solve the Tolman-Oppenheimer-Volkov equations
 
@@ -809,9 +807,7 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 
