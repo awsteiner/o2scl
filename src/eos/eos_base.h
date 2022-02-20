@@ -33,11 +33,37 @@
 
 namespace o2scl {
 
-  /** \brief
+  /** \brief Lepton and photon EOS
    */
   class eos_leptons {
-    
+
   public:
+
+    // Vector type
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    
+  protected:
+
+    /** \brief Electron thermodynamics from the electron density
+
+        \note This internal function presumes that 
+        \ref fermion_rel::err_nonconv is false .
+     */
+    int electron_density(double T);
+
+    /** \brief Function to solve for \ref pair_density_eq()
+
+        \note This internal function presumes that include_muons is
+        true (otherwise there's nothing to solve) and that \ref
+        fermion_rel::err_nonconv is false .
+     */
+    int pair_density_eq_fun(size_t nv, const ubvector &x,
+                            ubvector &y, double T, double nq);
+
+  public:
+    
+    /// Solver for \ref pair_density_eq() 
+    mroot_hybrids<> mh;
     
     /** \brief Relativistic fermion thermodyanmics
      */
@@ -55,6 +81,11 @@ namespace o2scl {
      */
     boson ph;
     
+    /** \brief If true, call the error handler if msolve()
+        does not converge (default true)
+    */
+    bool err_nonconv;
+    
     /** \brief If true, include muons (default true)
      */
     bool include_muons;
@@ -67,169 +98,30 @@ namespace o2scl {
      */
     thermo th;
 
-    eos_leptons() {
-      include_muons=true;
-      include_photons=false;
-      
-      convert_units<double> &cu=o2scl_settings.get_convert_units();
-      e.init(cu.convert("kg","1/fm",o2scl_mks::mass_electron),2.0);
-      mu.init(cu.convert("kg","1/fm",o2scl_mks::mass_muon),2.0);
-                         
-      ph.init(0.0,2.0);
-    }
+    eos_leptons();
 
     /** \brief Thermodynamics from the electron and muon 
         chemical potentials
      */
-    int pair_mu(double T) {
-      frel.pair_mu(e,T);
-      th.ed=e.ed;
-      th.pr=e.pr;
-      th.en=e.en;
-      if (include_muons) {
-        frel.pair_mu(mu,T);
-        th.ed+=mu.ed;
-        th.pr+=mu.pr;
-        th.en+=mu.en;
-      }
-      if (include_photons) {
-        ph.massless_calc(T);
-        th.ed+=ph.ed;
-        th.pr+=ph.pr;
-        th.en+=ph.en;
-      }
-      return 0;
-    }
+    int pair_mu(double T);
 
     /** \brief Thermodynamics from the electron chemical potential
         in weak equilibrium
     */
-    int pair_mu_eq(double T) {
-      if (include_muons) {
-        mu.mu=e.mu;
-      }
-      pair_mu(T);
-      return 0;
-    }
+    int pair_mu_eq(double T);
 
     /** \brief Thermodynamics from the electron and muon densities
      */
-    int pair_density(double T) {
-      
-      bool fr_en=frel.err_nonconv;
-      frel.err_nonconv=false;
+    int pair_density(double T);
+    
+    /** \brief Thermodynamics from the charge density in 
+        weak equilibrium
 
-      int retx;
-      if (e.inc_rest_mass) {
-        e.inc_rest_mass=false;
-        e.mu-=e.m;
-        retx=frel.pair_density(e,T);
-        e.inc_rest_mass=true;
-        e.mu+=e.m;
-      } else {
-        retx=frel.pair_density(e,T);
-      }
-      
-      // Sometimes the solver fails, but we can recover by adjusting
-      // the upper limit for degenerate fermions and tightening the
-      // integration tolerances
-      if (retx!=0) {
-        
-        frel.upper_limit_fac=40.0;
-        frel.def_dit.tol_rel/=1.0e2;
-        frel.def_dit.tol_abs/=1.0e2;
-        frel.def_nit.tol_rel/=1.0e2;
-        frel.def_nit.tol_abs/=1.0e2;
-        
-        if (e.inc_rest_mass) {
-          e.inc_rest_mass=false;
-          e.mu-=e.m;
-          retx=frel.pair_density(e,T);
-          e.inc_rest_mass=true;
-          e.mu+=e.m;
-        } else {
-          retx=frel.pair_density(e,T);
-        }
-
-        if (retx!=0) {
-          O2SCL_ERR2("Function pair_density() for electrons failed in ",
-                     "class eos_leptons().",o2scl::exc_efailed);
-        }
-        
-        frel.upper_limit_fac=20.0;
-        frel.def_dit.tol_rel*=1.0e2;
-        frel.def_dit.tol_abs*=1.0e2;
-        frel.def_nit.tol_rel*=1.0e2;
-        frel.def_nit.tol_abs*=1.0e2;
-        
-      }
-      
-      th.ed=e.ed;
-      th.pr=e.pr;
-      th.en=e.en;
-
-      if (include_muons) {
-
-        if (mu.inc_rest_mass) {
-          mu.inc_rest_mass=false;
-          mu.mu-=mu.m;
-          retx=frel.pair_density(mu,T);
-          mu.inc_rest_mass=true;
-          mu.mu+=mu.m;
-        } else {
-          retx=frel.pair_density(mu,T);
-        }
-        
-        // Sometimes the solver fails, but we can recover by adjusting
-        // the upper limit for degenerate fermions and tightening the
-        // integration tolerances
-        if (retx!=0) {
-          
-          frel.upper_limit_fac=40.0;
-          frel.def_dit.tol_rel/=1.0e2;
-          frel.def_dit.tol_abs/=1.0e2;
-          frel.def_nit.tol_rel/=1.0e2;
-          frel.def_nit.tol_abs/=1.0e2;
-          
-          if (mu.inc_rest_mass) {
-            mu.inc_rest_mass=false;
-            mu.mu-=mu.m;
-            retx=frel.pair_density(mu,T);
-            mu.inc_rest_mass=true;
-            mu.mu+=mu.m;
-          } else {
-            retx=frel.pair_density(mu,T);
-          }
-          
-          if (retx!=0) {
-            O2SCL_ERR2("Function pair_density() for muons failed in ",
-                       "class eos_leptons().",o2scl::exc_efailed);
-          }
-        
-          frel.upper_limit_fac=20.0;
-          frel.def_dit.tol_rel*=1.0e2;
-          frel.def_dit.tol_abs*=1.0e2;
-          frel.def_nit.tol_rel*=1.0e2;
-          frel.def_nit.tol_abs*=1.0e2;
-          
-        }
-      
-        th.ed+=mu.ed;
-        th.pr+=mu.pr;
-        th.en+=mu.en;
-      }
-      
-      if (include_photons) {
-        ph.massless_calc(T);
-        th.ed+=ph.ed;
-        th.pr+=ph.pr;
-        th.en+=ph.en;
-      }
-
-      frel.err_nonconv=fr_en;
-      
-      return 0;
-    }
+        The first argument \c nq, is the total negative charge density
+        including electrons (and muons if \ref include_muons is true)
+        and \c T is the temperature.
+    */
+    int pair_density_eq(double nq, double T);
     
   };
   
