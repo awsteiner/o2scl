@@ -60,6 +60,11 @@ namespace o2scl {
     int pair_density_eq_fun(size_t nv, const ubvector &x,
                             ubvector &y, double T, double nq);
 
+    /** \brief If true, use the electron density for 
+        \ref pair_density_eq_fun().
+     */
+    bool pde_from_density;
+    
   public:
     
     /// Solver for \ref pair_density_eq() 

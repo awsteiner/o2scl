@@ -39,6 +39,8 @@ eos_leptons::eos_leptons() {
   mu.init(cu.convert("kg","1/fm",o2scl_mks::mass_muon),2.0);
                          
   ph.init(0.0,2.0);
+
+  pde_from_density=true;
 }
 
 int eos_leptons::electron_density(double T) {
@@ -61,10 +63,10 @@ int eos_leptons::electron_density(double T) {
   if (retx!=0) {
         
     frel.upper_limit_fac=40.0;
-    frel.def_dit.tol_rel/=1.0e2;
-    frel.def_dit.tol_abs/=1.0e2;
-    frel.def_nit.tol_rel/=1.0e2;
-    frel.def_nit.tol_abs/=1.0e2;
+    frel.def_dit.tol_rel=1.0e-10;
+    frel.def_dit.tol_abs=1.0e-10;
+    frel.def_nit.tol_rel=1.0e-10;
+    frel.def_nit.tol_abs=1.0e-10;
         
     if (false && e.inc_rest_mass) {
       e.inc_rest_mass=false;
@@ -82,10 +84,10 @@ int eos_leptons::electron_density(double T) {
     //}
         
     frel.upper_limit_fac=20.0;
-    frel.def_dit.tol_rel*=1.0e2;
-    frel.def_dit.tol_abs*=1.0e2;
-    frel.def_nit.tol_rel*=1.0e2;
-    frel.def_nit.tol_abs*=1.0e2;
+    frel.def_dit.tol_rel=1.0e-8;
+    frel.def_dit.tol_abs=1.0e-8;
+    frel.def_nit.tol_rel=1.0e-8;
+    frel.def_nit.tol_abs=1.0e-8;
         
   }
       
@@ -95,7 +97,7 @@ int eos_leptons::electron_density(double T) {
 int eos_leptons::pair_density_eq_fun(size_t nv, const ubvector &x,
                                      ubvector &y, double T, double nq) {
 
-  if (true) {
+  if (pde_from_density) {
     
     e.n=x[0]*nq;
     int retx=electron_density(T);
@@ -105,7 +107,7 @@ int eos_leptons::pair_density_eq_fun(size_t nv, const ubvector &x,
     
     e.mu=x[0];
 
-    if (e.inc_rest_mass) {
+    if (false && e.inc_rest_mass) {
       e.inc_rest_mass=false;
       e.mu-=e.m;
       frel.pair_mu(e,T);
@@ -130,7 +132,7 @@ int eos_leptons::pair_density_eq_fun(size_t nv, const ubvector &x,
     }
   }
       
-  if (mu.inc_rest_mass) {
+  if (false && mu.inc_rest_mass) {
     mu.inc_rest_mass=false;
     mu.mu-=mu.m;
     frel.pair_mu(mu,T);
@@ -216,10 +218,10 @@ int eos_leptons::pair_density(double T) {
     if (retx!=0) {
           
       frel.upper_limit_fac=40.0;
-      frel.def_dit.tol_rel/=1.0e2;
-      frel.def_dit.tol_abs/=1.0e2;
-      frel.def_nit.tol_rel/=1.0e2;
-      frel.def_nit.tol_abs/=1.0e2;
+      frel.def_dit.tol_rel=1.0e-10;
+      frel.def_dit.tol_abs=1.0e-10;
+      frel.def_nit.tol_rel=1.0e-10;
+      frel.def_nit.tol_abs=1.0e-10;
           
       if (mu.inc_rest_mass) {
         mu.inc_rest_mass=false;
@@ -237,10 +239,10 @@ int eos_leptons::pair_density(double T) {
       }
         
       frel.upper_limit_fac=20.0;
-      frel.def_dit.tol_rel*=1.0e2;
-      frel.def_dit.tol_abs*=1.0e2;
-      frel.def_nit.tol_rel*=1.0e2;
-      frel.def_nit.tol_abs*=1.0e2;
+      frel.def_dit.tol_rel=1.0e-8;
+      frel.def_dit.tol_abs=1.0e-8;
+      frel.def_nit.tol_rel=1.0e-8;
+      frel.def_nit.tol_abs=1.0e-8;
           
     }
       
@@ -270,8 +272,11 @@ int eos_leptons::pair_density_eq(double nq, double T) {
   if (include_muons) {
 
     ubvector x(1), y(1);
-    //x[0]=e.mu;
-    x[0]=e.n/nq;
+    if (pde_from_density) {
+      x[0]=e.n/nq;
+    } else {
+      x[0]=e.mu;
+    }
 
     mm_funct mf=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,double,double)>
