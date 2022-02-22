@@ -933,25 +933,16 @@ int eos_quark_njl_vec::calc_eq_p(quark &tu, quark &td, quark &ts,
     
   }
   
-  // Following Klimt 90 for now. We use the "nu" field to store what
-  // is referred to in that paper as {\bar{\mu}}. Note that a
-  // different notation for G and K is used in Buballa et al. 1999,
-  // and we use that same notation for the non-vector terms as Buballa
-  // et al. 1999 in order to be consistent with the eos_quark_njl
-  // class. Then Klimt's "delta mu" is mu-nu
-
   // This function presumes that initial guesses have been given
   // for both the effective masses (ms) and the effective chemical
   // potentials (nu)
   
   if (from_nu==false) {
-    
     tu.nu=tu.mu-4.0*GV*tu.n;
     td.nu=td.mu-4.0*GV*td.n;
     ts.nu=ts.mu-4.0*GV*ts.n;
-    
   }
-  
+    
   if (tu.nu>tu.ms) {
     tu.kf=sqrt(tu.nu*tu.nu-tu.ms*tu.ms);
     tu.n=tu.kf*tu.kf*tu.kf/pi2;
@@ -973,7 +964,7 @@ int eos_quark_njl_vec::calc_eq_p(quark &tu, quark &td, quark &ts,
     ts.kf=0.0;
     ts.n=0.0;
   }
-
+  
   if (from_qq==true) {
 
     gap1=3.0/pi2*(-tu.ms/2.0*L*sqrt(tu.ms*tu.ms+L*L)+pow(tu.ms,3.0)/2.0*
@@ -1031,19 +1022,12 @@ int eos_quark_njl_vec::calc_eq_p(quark &tu, quark &td, quark &ts,
   td.ed-=td.B;
   ts.ed-=ts.B;
 
-  tu.pr=-tu.ed+tu.n*tu.mu;
-  td.pr=-td.ed+td.n*td.mu;
-  ts.pr=-ts.ed+ts.n*ts.mu;
-  
-  th.ed=tu.ed+td.ed+ts.ed+
-    2.0*G*(tu.qq*tu.qq+td.qq*td.qq+ts.qq*ts.qq)+B0-
-    4.0*K*tu.qq*td.qq*ts.qq+2.0*GV*tu.n*tu.n+2.0*GV*td.n*td.n+
-    2.0*GV*ts.n*ts.n;
-  th.pr=-th.ed+tu.n*tu.mu+td.n*td.mu+ts.n*ts.mu;
-  th.en=0.0;
-
   if (from_nu==true) {
   
+    tu.pr=-tu.ed+tu.n*tu.mu;
+    td.pr=-td.ed+td.n*td.mu;
+    ts.pr=-ts.ed+ts.n*ts.mu;
+    
     // Fix the relationship between \mu_R and \mu, following eq 8b in
     // Klimt 90
     vec1=tu.mu-4.0*GV*tu.n-tu.nu;
@@ -1052,9 +1036,18 @@ int eos_quark_njl_vec::calc_eq_p(quark &tu, quark &td, quark &ts,
 
   } else {
 
-    vec1=tu.ed;
+    vec1=-tu.pr-tu.ed+tu.n*tu.mu;
+    vec2=-td.pr-td.ed+tu.n*tu.mu;
+    vec3=-ts.pr-ts.ed+tu.n*tu.mu;
     
   }
+
+  th.ed=tu.ed+td.ed+ts.ed+
+    2.0*G*(tu.qq*tu.qq+td.qq*td.qq+ts.qq*ts.qq)+B0-
+    4.0*K*tu.qq*td.qq*ts.qq+2.0*GV*tu.n*tu.n+2.0*GV*td.n*td.n+
+    2.0*GV*ts.n*ts.n;
+  th.pr=-th.ed+tu.n*tu.mu+td.n*td.mu+ts.n*ts.mu;
+  th.en=0.0;
   
   return 0;
 }

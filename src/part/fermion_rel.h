@@ -965,7 +965,7 @@ namespace o2scl {
       }
 
       if (!deg) {
-    
+
 	// If the temperature is large enough, perform the full integral
 
         fp_t y, eta;
@@ -1047,7 +1047,7 @@ namespace o2scl {
 	last_method=6;
 
       } else {
-    
+
 	// Otherwise, apply a degenerate approximation, by making the
 	// upper integration limit finite
     
@@ -2235,7 +2235,7 @@ namespace o2scl {
       if (particles_done==false) {
     
 	if (!deg) {
-      
+
           fp_t y, eta;
           if (f.inc_rest_mass) {
             y=f.nu/T;
@@ -2246,20 +2246,15 @@ namespace o2scl {
           
 	  // Nondegenerate case
       
-	  //func_t mfe=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
-          //(&fermion_rel_tl<fermion_t,fd_inte_t,
-          //be_inte_t,nit_t,dit_t,density_root_t,
-          //root_t,func_t,fp_t>::density_fun<fp_t>),
-          //          this,std::placeholders::_1,y,eta);
-          
           fp_t prefac=f.g*pow(T,3.0)/2.0/this->pi2, unc2=0;
-          
-          fri.eval_density(y,eta,nden_p,unc2);
+
+          bool save=nit->err_nonconv;
+          nit->err_nonconv=false;
+          int reti1=fri.eval_density(y,eta,nden_p,unc2);
+          nit->err_nonconv=save;
+          if (reti1!=0) return 1;
           nden_p*=prefac;
         
-	  //nden_p=nit->integ_iu(mfe,0.0);
-	  //nden_p*=f.g*pow(T,3.0)/2.0/this->pi2;
-          
 	  if (!o2isfinite(nden_p)) {
 	    O2SCL_ERR2("Value 'nden_p' not finite (3) in",
 		       "fermion_rel::pair_fun().",exc_einval);
@@ -2278,12 +2273,6 @@ namespace o2scl {
             mot=f.m/T;
           }
         
-          //func_t mfe=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
-          //(&fermion_rel_tl<fermion_t,fd_inte_t,
-          //be_inte_t,nit_t,dit_t,density_root_t,
-          //root_t,func_t,fp_t>::deg_density_fun<fp_t>),
-          //        this,std::placeholders::_1,T,y,eta,mot);
-          
 	  fp_t arg;
 	  if (f.inc_rest_mass) {
 	    arg=pow(upper_limit_fac*T+f.nu,2.0)-f.ms*f.ms;
@@ -2295,11 +2284,13 @@ namespace o2scl {
 	  if (arg>0.0) {
 	    ul=sqrt(arg);
 
-            fri.eval_deg_density(T,y,eta,mot,ul,nden_p,unc2);
+            bool save=fri.dit.err_nonconv;
+            fri.dit.err_nonconv=false;
+            int reti2=fri.eval_deg_density(T,y,eta,mot,ul,nden_p,unc2);
+            fri.dit.err_nonconv=save;
+            if (reti2!=0) return 2;
             nden_p*=f.g/2.0/this->pi2;
             
-	    //nden_p=dit->integ(mfe,0.0,ul);
-	    //nden_p*=f.g/2.0/this->pi2;
 	  } else {
 	    nden_p=0.0;
 	  }
@@ -2346,8 +2337,6 @@ namespace o2scl {
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
         bool acc=this->calc_mu_ndeg(f,T,1.0e-18);
-        //std::cout << "cmn_pmu2: " << f.nu << " " << T << " "
-        //<< 1.0e-18 << " " << acc << std::endl;
 	if (acc) {
 	  antiparticles_done=true;
 	  nden_ap=f.n;
@@ -2387,20 +2376,11 @@ namespace o2scl {
           
 	  // Nondegenerate case
           
-	  //func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
-          //(&fermion_rel_tl<fermion_t,fd_inte_t,
-          //be_inte_t,nit_t,dit_t,density_root_t,
-          //root_t,func_t,fp_t>::density_fun<fp_t>),
-          //this,std::placeholders::_1,y,eta);
-      
           fp_t prefac=f.g*pow(T,3.0)/2.0/this->pi2, unc2=0;
           
           fri.eval_density(y,eta,nden_ap,unc2);
           nden_ap*=prefac;
         
-	  //nden_ap=nit->integ_iu(mf,0.0);
-	  //nden_ap*=f.g*pow(T,3.0)/2.0/this->pi2;
-          
 	  if (!o2isfinite(nden_ap)) {
 	    O2SCL_ERR2("Value 'nden_ap' not finite (7) in",
 		       "fermion_rel::pair_fun().",
@@ -2420,12 +2400,6 @@ namespace o2scl {
             mot=f.m/T;
           }
         
-          //func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
-          //(&fermion_rel_tl<fermion_t,fd_inte_t,
-          //be_inte_t,nit_t,dit_t,density_root_t,
-          //root_t,func_t,fp_t>::deg_density_fun<fp_t>),
-          //this,std::placeholders::_1,T,y,eta,mot);
-      
 	  fp_t arg;
 	  if (f.inc_rest_mass) {
 	    arg=pow(upper_limit_fac*T+f.nu,2.0)-f.ms*f.ms;
@@ -2439,8 +2413,6 @@ namespace o2scl {
             fri.eval_deg_density(T,y,eta,mot,ul,nden_ap,unc2);
             nden_ap*=f.g/2.0/this->pi2;
 
-	    //nden_ap=dit->integ(mf,0.0,ul);
-            //	    nden_ap*=f.g/2.0/this->pi2;
 	  } else {
 	    nden_ap=0.0;
 	  }

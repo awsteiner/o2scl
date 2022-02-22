@@ -568,9 +568,12 @@ namespace o2scl {
 	estr+=") reached in inte_qawc_gsl::qawc().";
 	O2SCL_CONV_RET(estr.c_str(),exc_emaxiter,this->err_nonconv);
       } else {
+        // AWS, 2/21/22: This error also sometimes occurs when the
+        // function returns a finite (but still very large) result.
+        // I'm changing this to a convergence error for now.
 	std::string estr="Could not integrate function in inte_qawc_gsl::";
 	estr+="qawc() (it may have returned a non-finite result).";
-	O2SCL_ERR(estr.c_str(),exc_efailed);
+	O2SCL_CONV_RET(estr.c_str(),exc_efailed,this->err_nonconv);
       }
 
       // No return statement needed since the above if statement

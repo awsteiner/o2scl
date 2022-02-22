@@ -737,9 +737,12 @@ namespace o2scl {
 	O2SCL_CONV_RET(estr.c_str(),exc_ediverge,this->err_nonconv);
       } 
 
+      // AWS, 2/21/22: This error also sometimes occurs when the
+      // function returns a finite (but still very large) result.
+      // I'm changing this to a convergence error for now.
       std::string estr="Could not integrate function in inte_kronrod_gsl";
       estr+="::qags() (it may have returned a non-finite result).";
-      O2SCL_ERR(estr.c_str(),exc_efailed);
+      O2SCL_CONV_RET(estr.c_str(),exc_efailed,this->err_nonconv);
 
       return exc_efailed;
     }                                               

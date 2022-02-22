@@ -453,6 +453,15 @@ namespace o2scl {
       This class is based on [Alaverdyan21]_, but see also
       older work e.g. [Klimt90]_.
       \endverbatim
+
+      Following Klimt 90 for now. We use the "nu" field to store what
+      is referred to in that paper as {\bar{\mu}}. Note that a
+      different notation for G and K is used in Buballa et al. 1999,
+      and we use that same notation for the non-vector terms as Buballa
+      et al. 1999 in order to be consistent with the eos_quark_njl
+      class. Then Klimt's "delta mu" is mu-nu
+
+
    */
   class eos_quark_njl_vec : public eos_quark_njl {
     
