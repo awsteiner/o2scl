@@ -561,7 +561,7 @@ namespace o2scl {
   class fermion_rel_tl :
     public fermion_thermo_tl<fermion_t,fd_inte_t,be_inte_t,root_t,
 			     func_t,fp_t> {
-
+    
   public:
 
     /// The integrator 
@@ -975,25 +975,7 @@ namespace o2scl {
           y=(f.nu+f.m)/temper;
         }
         eta=f.ms/temper;
-
-        /*
-          func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
-          (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-          nit_t,dit_t,density_root_t,
-          root_t,func_t,fp_t>::density_fun<fp_t>),
-          this,std::placeholders::_1,y,eta);
-          func_t mfe=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
-          (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-          nit_t,dit_t,density_root_t,
-          root_t,func_t,fp_t>::energy_fun<fp_t>),
-          this,std::placeholders::_1,y,eta);
-          func_t mfs=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
-          (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-          nit_t,dit_t,density_root_t,
-          root_t,func_t,fp_t>::entropy_fun<fp_t>),
-          this,std::placeholders::_1,y,eta);
-        */
-      
+        
 	fp_t prefac=f.g*pow(temper,3.0)/2.0/this->pi2;
 
 	// Compute the number density
@@ -1019,11 +1001,6 @@ namespace o2scl {
         unc.ed*=prefac*temper;
 	if (!f.inc_rest_mass) f.ed-=f.n*f.m;
         
-	//f.ed=nit->integ_iu(mfe,0.0);
-	//f.ed*=prefac*temper;
-	//if (!f.inc_rest_mass) f.ed-=f.n*f.m;
-	//unc.ed=nit->get_error()*prefac*temper;
-    
 	// Compute the entropy
 
 	if (verbose>1) {
@@ -1059,24 +1036,6 @@ namespace o2scl {
         } else {
           mot=f.m/temper;
         }
-
-        /*
-          func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
-          (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-          nit_t,dit_t,density_root_t,
-          root_t,func_t,fp_t>::deg_density_fun<fp_t>),
-          this,std::placeholders::_1,temper,y,eta,mot);
-          func_t mfe=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
-          (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-          nit_t,dit_t,density_root_t,
-          root_t,func_t,fp_t>::deg_energy_fun<fp_t>),
-          this,std::placeholders::_1,temper,y,eta,mot);
-          func_t mfs=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
-          (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-          nit_t,dit_t,density_root_t,
-          root_t,func_t,fp_t>::deg_entropy_fun<fp_t>),
-          this,std::placeholders::_1,temper,y,eta,mot);
-        */
 
 	fp_t prefac=f.g/2.0/this->pi2;
     
@@ -1117,10 +1076,6 @@ namespace o2scl {
         f.n*=prefac;
         unc.n*=prefac;
 
-	//f.n=dit->integ(mfd,0.0,ul);
-	//f.n*=prefac;
-	//unc.n=dit->get_error()*prefac;
-    
 	// Compute the energy density
 
 	if (verbose>1) {
@@ -1131,10 +1086,6 @@ namespace o2scl {
         fri.eval_deg_energy(temper,y,eta,mot,ul,f.ed,unc.ed);
         f.ed*=prefac;
         unc.ed*=prefac;
-
-	//f.ed=dit->integ(mfe,0.0,ul);
-	//f.ed*=prefac;
-	//unc.ed=dit->get_error()*prefac;
 
 	// Compute the lower limit for the entropy integration
 

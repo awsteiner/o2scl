@@ -40,15 +40,18 @@ namespace o2scl {
   /** \brief Nambu Jona-Lasinio EOS
 
       \verbatim embed:rst
-      This class is based on [Buballa99]_.
+      This class is based on [Buballa99]_, but the notation is a bit
+      different. The effective mass is denoted :math:`m^{*}` rather
+      than :math:`m`, and the bare mass is denoted :math:`m` rather
+      than :math:`m_0`.
       \endverbatim
 
       The quantities \ref G, and \ref K are the coupling constants and
-      \ref L is the momentum cutoff. In order to use the EOS, the user
-      should either (i) set the bag constant, \ref B0 directly, or
-      (ii) use \ref set_parameters() to modify the parameters (and
-      then the \ref set_parameters() function also automatically
-      computes the bag constant.
+      \ref L (i.e. \f$ \Lambda \f$) is the three-momentum cutoff. In
+      order to use the EOS, the user should either (i) set the bag
+      constant, \ref B0 directly, or (ii) use \ref set_parameters() to
+      modify the parameters (and then the \ref set_parameters()
+      function also automatically computes the bag constant.
 
       This class can compute the EOS from the quark condensates
       (stored in \ref o2scl::quark::qq) by setting \ref from_qq to
@@ -417,8 +420,13 @@ namespace o2scl {
 
         This function evaluates the integral
         \f[
-        6 \int_0^{\Lambda} \frac{d^3 p}{(2 \pi)^3} \sqrt{m^{*2}+p^2}~dp
+        I = 6 \int_0^{\Lambda} \frac{d^3 p}{(2 \pi)^3} \sqrt{m^{*2}+p^2}~dp
         \f]
+
+        \verbatim embed:rst
+        This is part of the bag pressure (at zero temperature) as
+        given in Eq. 5 of [Buballa99]_.
+        \endverbatim
 
         This function is used in \ref calc_eq_p() and \ref calc_eq_e() .
      */

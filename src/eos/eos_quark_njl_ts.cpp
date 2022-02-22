@@ -83,6 +83,17 @@ int main(void) {
   t.test_rel(gap2,0.0,1.0e-9,"gap2a");
   t.test_rel(gap3,0.0,1.0e-9,"gap3a");
 
+  // Compare with the finite-temperature code and make sure
+  // the results match
+  nj.calc_p(u,d,s,th);
+  thermo zt=th;
+  
+  nj.calc_temp_p(u,d,s,0.1/hc_mev_fm,th);
+  thermo ft=th;
+  t.test_rel(zt.ed,ft.ed,1.0e-5,"finite and zero T ed");
+  t.test_rel(zt.pr,ft.pr,1.0e-5,"finite and zero T pr");
+  t.test_abs(zt.en,ft.en,5.0e-2,"finite and zero T en");
+  
   // Then construct the functor for the derivative with
   // respect to the up quark condensate
   funct fderiv_u=std::bind
@@ -93,7 +104,7 @@ int main(void) {
   
   df.h=0.01;
   double der_u=df.deriv(u.qq,fderiv_u);
-  t.test_rel(der_u,0.0,1.0e-9,"fh_u");
+  t.test_rel(der_u,0.0,1.0e-8,"fh_u");
 
   // Test the derivative wrt the down quark condensate
   nj.calc_p(u,d,s,th);
@@ -286,7 +297,7 @@ int main(void) {
     
   eos_quark_njl_vec njv;
 
-  if (true) {
+  if (false) {
     
     t.test_gen(njv.set_parameters()==0,"set_parameters().");
     cout << njv.B0 << endl;
