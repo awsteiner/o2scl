@@ -302,7 +302,7 @@ namespace o2scl {
 	be specified in set_quarks() and the \ref thermo object
 	which can be specified in eos::set_thermo().
     */
-    int gap_func_ms_T(size_t nv, const ubvector &x, ubvector &y);
+    int gap_func_ms_T(size_t nv, const ubvector &x, ubvector &y, double T);
     
     /** \brief Calculates gap equations in \c y as a function of the 
 	quark condensates in \c x
@@ -311,7 +311,7 @@ namespace o2scl {
 	be specified in set_quarks() and the \ref thermo object
 	which can be specified in eos::set_thermo().
     */
-    int gap_func_qq_T(size_t nv, const ubvector &x, ubvector &y);
+    int gap_func_qq_T(size_t nv, const ubvector &x, ubvector &y, double T);
 
     /** \name The default quark masses (in \f$ \mathrm{fm}^{-1} \f$ )
 
@@ -459,17 +459,10 @@ namespace o2scl {
 
       \verbatim embed:rst
       This class is based on [Alaverdyan21]_, but see also
-      older work e.g. [Klimt90]_.
+      older work e.g. [Klimt90]_. We use the \ref part_tl::nu
+      field to store what is referred to in [Alaverdyan21]_
+      as :math:`{\tilde{\mu}}`. 
       \endverbatim
-
-      Following Klimt 90 for now. We use the "nu" field to store what
-      is referred to in that paper as {\bar{\mu}}. Note that a
-      different notation for G and K is used in Buballa et al. 1999,
-      and we use that same notation for the non-vector terms as Buballa
-      et al. 1999 in order to be consistent with the eos_quark_njl
-      class. Then Klimt's "delta mu" is mu-nu
-
-
    */
   class eos_quark_njl_vec : public eos_quark_njl {
     
@@ -478,31 +471,42 @@ namespace o2scl {
     /// The vector coupling constant
     double GV;
 
-    /// The contribution to the bag constant
-    void njl_vec_bag(quark &q);
-
+#ifdef O2SCL_NEVER_DEFINED    
     /** \brief Integrand for the quark condensate
      */
     double integ_qq(double x, double T, double mu, double m, double ms);
 
     /** \brief Integrand for the density
      */
-    double integ_density(double x, double T, double mu, double m, double ms);
+    double integ_density(double x, double T, double mu, double m,
+                         double ms);
 
     /** \brief Integrand for the energy density
      */
-    double integ_edensity(double x, double T, double mu, double m, double ms);
+    double integ_edensity(double x, double T, double mu, double m,
+                          double ms);
     
     /** \brief Integrand for the pressure
      */
-    double integ_pressure(double x, double T, double mu, double m, double ms);
+    double integ_pressure(double x, double T, double mu, double m,
+                          double ms);
+#endif
     
+    /** \brief Equation of state as a function of chemical potentials at 
+	finite temperature
+
+	This function automatically solves the gap equations.
+    */
+    virtual int calc_temp_p(quark &u, quark &d, quark &s, 
+			    double T, thermo &th);
+
     /** \brief Compute the gap equations and the equation of state at
         finite temperature as a function of the chemical potentials
      */
     virtual int calc_eq_temp_p(quark &tu, quark &td, quark &ts,
                                double &gap1, double &gap2,
-                               double &gap3, thermo &th, double temper);
+                               double &gap3, double &vec1, double &vec2,
+                               double &vec3, thermo &th, double temper);
     
     /** \brief Compute the equation of state as a function of the
         chemical potentials
@@ -531,6 +535,15 @@ namespace o2scl {
                                double nuu, double nud, double nus,
                                bool vac_terms=true);
 
+    /** \brief Calculates gap equations in \c y as a function of the 
+	quark condensates in \c x
+
+	The function utilizes the \ref quark objects which can
+	be specified in set_quarks() and the \ref thermo object
+	which can be specified in eos::set_thermo().
+    */
+    int gap_func_qq_T(size_t nv, const ubvector &x, ubvector &y, double T);
+    
   };
   
 }
