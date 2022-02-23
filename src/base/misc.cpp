@@ -131,8 +131,6 @@ long double o2scl::o2hypot(const long double x, const long double y) {
   return hypotl(x,y);
 }
 
-#ifdef O2SCL_LD_TYPES
-
 // cpp_dec_float_35 functions
 
 typedef
@@ -288,8 +286,6 @@ o2scl::o2pow(const boost::multiprecision::cpp_bin_float_100 x,
              const boost::multiprecision::cpp_bin_float_100 y) {
   return boost::multiprecision::pow(x,y);
 }
-
-#endif
 
 int o2scl::pipe_cmd_string(std::string cmd, std::string &result,
 			   bool err_on_fail, int nmax) {

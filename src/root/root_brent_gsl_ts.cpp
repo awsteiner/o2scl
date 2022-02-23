@@ -24,9 +24,7 @@
 #include <o2scl/root_brent_gsl.h>
 #include <o2scl/test_mgr.h>
 
-#ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#endif
 
 using namespace std;
 using namespace o2scl;
@@ -45,8 +43,6 @@ public:
     return atan((x-0.2)*4)*(1.0+sin((x-0.2)*50.0)/1.1);
   }
 };
-
-#ifdef O2SCL_LD_TYPES
 
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 
@@ -75,9 +71,6 @@ class cl_cdf {
     (one+one/ten));
   }
 };
-
-
-#endif
 
 int main(void) {
 
@@ -173,8 +166,6 @@ int main(void) {
   t.test_rel(a,0.2,1.0e-10,"1");
   cout << a << " " << gfn(a) << endl;
 
-#ifdef O2SCL_LD_TYPES
-
   cl_ld acl_ld;
   funct_ld fmf_ld=std::bind(std::mem_fn<long double(long double)>
 			(&cl_ld::mfn),&acl_ld,std::placeholders::_1);
@@ -190,8 +181,6 @@ int main(void) {
   cpp_dec_float_50 a_cdf=-1, b_cdf=1;
   grb2_cdf.solve_bkt(a_cdf,b_cdf,fmf_cdf);
   cout << a_cdf << endl;
-
-#endif
 
   t.report();
   return 0;

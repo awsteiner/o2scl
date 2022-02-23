@@ -37,10 +37,8 @@
 // For gsl_sf_fermi_dirac_int()
 #include <gsl/gsl_specfunc.h>
 
-#ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#endif
 
 #include <o2scl/constants.h>
 #include <o2scl/funct.h>
@@ -121,15 +119,11 @@ namespace o2scl {
   
   typedef fermion_tl<double> fermion;
   
-#ifdef O2SCL_LD_TYPES
-  
   typedef fermion_tl<long double> fermion_ld;
   typedef fermion_tl<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> > > fermion_cdf35;
   typedef fermion_tl<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<50> > > fermion_cdf50;
   typedef fermion_tl<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<100> > > fermion_cdf100;
   
-#endif
-
   /** \brief Fermion properties at zero temperature
 
       This is a base class for the computation of fermionic statistics

@@ -29,9 +29,7 @@
 
 #include <string>
 
-#ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/number.hpp>
-#endif
 
 #include <o2scl/string_conv.h>
 #include <o2scl/misc.h>
@@ -195,8 +193,6 @@ namespace o2scl {
       return ret;
     }
     
-#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
-    
     /** \brief Testing functions for \c boost::multiprecision numbers
 
 	This function is similar to \ref test_abs(), but replaces 
@@ -281,8 +277,6 @@ namespace o2scl {
       return ret;
     }
     
-#endif
-
     /** \brief  Test for \f$1/\mathrm{factor} < \mathrm{result/expected} 
 	< \mathrm{factor}\f$
     */

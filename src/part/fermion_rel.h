@@ -2141,8 +2141,6 @@ namespace o2scl {
   */
   typedef fermion_rel_tl<> fermion_rel;
 
-#ifdef O2SCL_LD_TYPES
-
 #ifdef O2SCL_NEVER_DEFINED
   
   /** \brief Equation of state for a relativistic fermion using long 
@@ -2358,7 +2356,6 @@ namespace o2scl {
     }
   };
   
-#endif
 #endif
   
 }

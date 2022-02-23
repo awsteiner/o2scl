@@ -35,30 +35,24 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
-#ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#endif
 
 namespace o2scl_auto_format {
 
-#ifdef O2SCL_LD_TYPES
   typedef
   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
   cpp_dec_float_35;
   typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
   typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
-#endif
   
   // Declarations for friendship
   class auto_format;
   auto_format &operator<<(auto_format &at, double d);
   auto_format &operator<<(auto_format &at, long double d);
-#ifdef O2SCL_LD_TYPES
   auto_format &operator<<(auto_format &at, const cpp_dec_float_35 &d);
   auto_format &operator<<(auto_format &at, const cpp_dec_float_50 &d);
   auto_format &operator<<(auto_format &at, const cpp_dec_float_100 &d);
-#endif
 
   /** \brief Automatically format output
 
@@ -159,7 +153,6 @@ namespace o2scl_auto_format {
     friend auto_format &o2scl_auto_format::operator<<
     (auto_format &at, long double d);
     
-#ifdef O2SCL_LD_TYPES
     friend auto_format &o2scl_auto_format::operator<<
     (auto_format &at, const cpp_dec_float_35 &d);
      
@@ -169,8 +162,6 @@ namespace o2scl_auto_format {
     friend auto_format &o2scl_auto_format::operator<<
     (auto_format &at, const cpp_dec_float_100 &d);
      
-#endif
-
     template<class data_t>
     friend auto_format &operator<<
     (auto_format &at,
@@ -254,8 +245,6 @@ namespace o2scl_auto_format {
    */
   auto_format &operator<<(auto_format &at, long double d);
 
-#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
-  
   /** \brief Output a double-precision number
    */
   auto_format &operator<<(auto_format &at, const cpp_dec_float_35 &d);
@@ -268,8 +257,6 @@ namespace o2scl_auto_format {
    */
   auto_format &operator<<(auto_format &at, const cpp_dec_float_100 &d);
 
-#endif
-  
   /** \brief Output a single-precision number
    */
   auto_format &operator<<(auto_format &at, float f);

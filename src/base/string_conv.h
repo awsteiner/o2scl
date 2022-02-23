@@ -34,11 +34,9 @@
 #include <sstream>
 #include <codecvt>
 
-#ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #ifdef O2SCL_MPFR
 #include <boost/multiprecision/mpfr.hpp>
-#endif
 #endif
 
 // For numeric_limits for dtos()
@@ -191,8 +189,6 @@ namespace o2scl {
   */
   int s32tod_nothrow(std::u32string s, long double &result);
 
-#ifdef O2SCL_LD_TYPES
-  
   /** \brief Convert a string to a multiprecision boost number
    */
   template<class fp_t> int s32tod_nothrow
@@ -215,8 +211,6 @@ namespace o2scl {
     return 0;
   }
   
-#endif
-
   /** \brief Find out if the number pointed to by \c x has a minus sign
       
       This function returns true if the number pointed to by \c x has

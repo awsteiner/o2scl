@@ -27,11 +27,9 @@
 #include <o2scl/inte_adapt_cern.h>
 #include <o2scl/test_mgr.h>
 
-#ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #ifdef O2SCL_MPFR
 #include <boost/multiprecision/mpfr.hpp>
-#endif
 #endif
 
 using namespace std;
@@ -52,8 +50,6 @@ double sin_recip(double x) {
 long double sin_recip_ld(long double x) {
   return sin(1.0L/(-x+0.01L))*pow(-x+0.01L,-2.0L);
 }
-
-#ifdef O2SCL_LD_TYPES
 
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 
@@ -82,7 +78,6 @@ mpfr_float_50 sin_recip_mpfr(mpfr_float_50 x) {
   return sin(one/(-x+one/hundred))*pow(-x+one/hundred,-one-one);
 }
 
-#endif
 #endif
 
 template<class func_t=funct, class fp_t=double,
@@ -147,8 +142,6 @@ int main(void) {
       (t,tf,1.0e-8,"iac, double, testfun",diff,true);
     t.test_abs<double>(diff,0.0,1.0e-7,"inte_adapt_cern");
 
-#ifdef O2SCL_LD_TYPES
-    
     cout << "inte_adapt_cern, long double, testfun:\n  ";
     
     long double a_ld=0.01L, diff_ld;
@@ -190,7 +183,6 @@ int main(void) {
                                     "inte_adapt_cern_mpfr");
 
 #endif
-#endif
     
   }
 
@@ -210,8 +202,6 @@ int main(void) {
     t.test_rel<double>(calc,exact,1.0e-12,"it_iac double");
     cout << endl;
   
-#ifdef O2SCL_LD_TYPES
-
     cout << "inte_transform with inte_adapt_cern, long double precision, "
          << "sin_recip:\n  " << endl;
     
@@ -283,7 +273,6 @@ int main(void) {
 				       "it_iac mpfr_float_50");
     cout << endl;
 
-#endif
 #endif
     
   }

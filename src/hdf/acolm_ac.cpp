@@ -932,7 +932,6 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
          << "command." << endl;
     return 2;
   } else if (prec>35) {
-#ifdef O2SCL_LD_TYPES
     boost::multiprecision::number<boost::multiprecision::cpp_dec_float<50> >
       d;
     int retx=o2scl::function_to_double_nothrow(i1,d);
@@ -943,12 +942,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     if (verbose>0) cout << "Result (cpp_dec_float_50): ";
     cout << dtos(d,prec) << endl;
     return 0;
-#else
-    cerr << "Requested precision larger than 18 but LD_TYPES not enabled."
-         << endl;
-#endif
   } else if (prec>18) {
-#ifdef O2SCL_LD_TYPES
     boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
       d;
     int retx=o2scl::function_to_double_nothrow(i1,d);
@@ -959,10 +953,6 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     if (verbose>0) cout << "Result (cpp_dec_float_35): ";
     cout << dtos(d,prec) << endl;
     return 0;
-#else
-    cerr << "Requested precision larger than 18 but LD_TYPES not enabled."
-         << endl;
-#endif
   } else if (prec>15) {
     long double d;
     int retx=o2scl::function_to_double_nothrow(i1,d);

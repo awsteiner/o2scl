@@ -26,19 +26,15 @@
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/eos_sn.h>
 
-#ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#endif
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-#ifdef O2SCL_LD_TYPES
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 typedef boost::multiprecision::number<
   boost::multiprecision::cpp_dec_float<35> > cpp_dec_float_35;
-#endif
 
 int main(void) {
 
@@ -213,8 +209,6 @@ int main(void) {
   //inte_qag_gsl<> &qag2=dynamic_cast<inte_qag_gsl<> &>(*fr.dit.get());
   //t.test_gen(qag->get_rule()==qag2.get_rule(),"downcast");
   
-#ifdef O2SCL_LD_TYPES
-
   // The long double type isn't that much more precise than double, so
   // I'm concerned about precision loss in the integrands. Thus, the
   // plan is to have a particle type which operates in
@@ -340,7 +334,6 @@ int main(void) {
   //(f35,fr35,1,"../../data/o2scl/fermion_deriv_cal.o2",false,3,true);
   //cout << vx_cdf35 << endl;
   
-#endif
 #endif
   
   t.report();

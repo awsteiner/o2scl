@@ -24,9 +24,7 @@
 #include <o2scl/funct.h>
 #include <o2scl/inte_kronrod_boost.h>
 
-#ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#endif
 
 using namespace std;
 using namespace o2scl;
@@ -35,8 +33,6 @@ using namespace o2scl;
 double test_func(double x) {
   return -sin(1.0/(x+0.01))*pow(x+0.01,-2.0);
 }
-
-#ifdef O2SCL_LD_TYPES
 
 long double test_func_ld(long double x) {
   return -sin(1.0L/(x+0.01L))*pow(x+0.01L,-2.0L);
@@ -49,8 +45,6 @@ cpp_dec_float_50 test_func_cdf(cpp_dec_float_50 x) {
   cpp_dec_float_50 hundred=100;
   return -sin(one/(x+one/hundred))/(x+one/hundred)/(x+one/hundred);
 }
-
-#endif
 
 int main(void) {
   cout.setf(ios::scientific);
@@ -71,8 +65,6 @@ int main(void) {
     std::cout << ans << " " << err << std::endl;
     t.test_rel(ans,exact,1.0e-8,"qag test");
   }
-
-#ifdef O2SCL_LD_TYPES
 
   {
     inte_kronrod_boost<funct_ld,61,long double> ikb;
@@ -109,8 +101,6 @@ int main(void) {
     std::cout << ans << " " << err << std::endl;
     t.test_rel_boost<cpp_dec_float_50>(ans,exact,1.0e-30,"qag test");
   }
-
-#endif
   
   t.report();
   return 0;

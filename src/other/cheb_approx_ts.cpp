@@ -23,9 +23,7 @@
 
 #include <iostream>
 
-#ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#endif
 
 #include <o2scl/constants.h>
 #include <o2scl/test_mgr.h>
@@ -44,8 +42,6 @@ double func2(double x) {
   return exp(x)*a+b;
 }
 
-#ifdef O2SCL_LD_TYPES
-
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 
 long double func2_ld(long double x) {
@@ -59,8 +55,6 @@ cpp_dec_float_50 func2_cdf(cpp_dec_float_50 x) {
   cpp_dec_float_50 b=1.0/(1.0-exp(1.0));
   return exp(x)*a+b;
 }
-
-#endif
 
 int main(void) {
 
@@ -130,8 +124,6 @@ int main(void) {
   cout << gc.eval(0.0) << " " << gc.eval(1.0) << endl;
   cout << endl;
 
-#ifdef O2SCL_LD_TYPES
-
   {
     cout << "double:" << endl;
     cheb_approx_tl<double> ca;
@@ -170,8 +162,6 @@ int main(void) {
     cout << endl;
     
   }
-  
-#endif
   
   t.report();
   return 0;

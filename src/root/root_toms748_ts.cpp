@@ -28,8 +28,6 @@ double gfn(double x) {
   return sin(x-0.2);
 }
 
-#ifdef O2SCL_LD_TYPES
-
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 
 long double gfn_ld(long double x) {
@@ -39,8 +37,6 @@ long double gfn_ld(long double x) {
 cpp_dec_float_50 gfn_cdf(cpp_dec_float_50 x) {
   return sin(x-0.2);
 }
-
-#endif
 
 using namespace std;
 using namespace o2scl;
@@ -60,8 +56,6 @@ int main(void) {
   rt.solve_bkt(a,b,f);
   t.test_rel(a,0.2,1.0e-6,"1");
 
-#ifdef O2SCL_LD_TYPES
-
   long double a_ld, b_ld;
   funct_ld f_ld=gfn_ld;
 
@@ -79,8 +73,6 @@ int main(void) {
   b_cdf=1.0;
   rt_cdf.solve_bkt(a_cdf,b_cdf,f_cdf);
   t.test_rel_boost<cpp_dec_float_50>(a_cdf,0.2,1.0e-6,"1");
-  
-#endif
   
   t.report();
   return 0;

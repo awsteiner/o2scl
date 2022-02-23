@@ -27,15 +27,11 @@
 using namespace std;
 using namespace o2scl;
 
-#ifdef O2SCL_LD_TYPES
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
-#endif
 
 double testfun(double tx, double &pa) {
   return (pa*sin(tx)/(tx+0.01));
 }
-
-#ifdef O2SCL_LD_TYPES
 
 long double testfun_ld(long double tx, long double &pa) {
   return (pa*sinl(tx)/(tx+0.01L));
@@ -46,8 +42,6 @@ cpp_dec_float_50 testfun_cdf(cpp_dec_float_50 tx, cpp_dec_float_50 &pa) {
   cpp_dec_float_50 hundred=100;
   return (pa*sin(tx)/(tx+one/hundred));
 }
-
-#endif
 
 int main(void) {
   cout.setf(ios::scientific);
@@ -67,8 +61,6 @@ int main(void) {
   diff=fabs(calc-exact);
   cout << calc << " " << exact << " " << diff << endl;
 
-#ifdef O2SCL_LD_TYPES
-  
   // Moving to long double here doesn't really improve the accuracy
   // for this particular function, but it verifies that
   // inte_gauss56_cern compiles and executes with the long double
@@ -98,8 +90,6 @@ int main(void) {
 				     "inte_gauss56_cern ls");
   diff_cdf=fabs(calc_cdf-exact_cdf);
   cout << calc_cdf << " " << exact_cdf << " " << diff_cdf << endl;
-  
-#endif
   
   t.report();
   return 0;

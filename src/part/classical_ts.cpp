@@ -21,9 +21,7 @@
   -------------------------------------------------------------------
 */
 
-#ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#endif
 
 #include <o2scl/classical.h>
 #include <o2scl/test_mgr.h>
@@ -32,9 +30,7 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-#ifdef O2SCL_LD_TYPES
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
-#endif
 
 int main(void) {
   test_mgr t;
@@ -56,15 +52,11 @@ int main(void) {
   cl.calc_mu(n,temper);
   t.test_rel(n.n,0.1,1.0e-8,"calc_mu(calc_density)");
 
-#ifdef O2SCL_LD_TYPES
-  
   part_tl<cpp_dec_float_50> p_cdf(5,2);
   classical_thermo_tl<cpp_dec_float_50> ct_cdf;
   p_cdf.n=0.1;
   ct_cdf.calc_density(p_cdf,0.1);
   cout << p_cdf.mu << endl;
-  
-#endif
 
   t.report();
   return 0;

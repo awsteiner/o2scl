@@ -36,8 +36,6 @@ double test_func_2(double x) {
   return exp(-x*x);
 }
 
-#ifdef O2SCL_LD_TYPES
-
 long double test_func_1_ld(long double x) {
   long double one=1;
   long double hundred=100;
@@ -59,8 +57,6 @@ cpp_dec_float_50 test_func_1_cdf(cpp_dec_float_50 x) {
 cpp_dec_float_50 test_func_2_cdf(cpp_dec_float_50 x) {
   return exp(-x*x);
 }
-
-#endif
 
 int main(void) {
 
@@ -147,8 +143,6 @@ int main(void) {
   t.test_rel(ans,exact,1.0e-8,"sinh_sinh test");
   cout << endl;
 
-#ifdef O2SCL_LD_TYPES
-
   funct_ld tf1_ld=test_func_1_ld;
   funct_cdf50 tf1_cdf=test_func_1_cdf;
   funct_ld tf2_ld=test_func_2_ld;
@@ -182,8 +176,6 @@ int main(void) {
   t.test_rel_boost<cpp_dec_float_50>(ans_cdf,exact_cdf,1.0e-40,
 				     "tanh_sinh test cdf");
   cout << endl;
-  
-#endif
   
   t.report();
   return 0;

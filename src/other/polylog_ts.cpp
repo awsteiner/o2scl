@@ -25,15 +25,12 @@
 #include <o2scl/polylog.h>
 #include <o2scl/Li.h>
 
-#ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#endif
 
 using namespace std;
 using namespace o2scl;
 
-#ifdef O2SCL_LD_TYPES
 typedef
 boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
 cpp_dec_float_25;
@@ -51,7 +48,6 @@ typedef boost::multiprecision::mpfr_float_50 mpfr_float_50;
 
 typedef boost::multiprecision::mpfr_float_100 mpfr_float_100;
 #endif
-#endif
 
 int main(void) {
 
@@ -59,10 +55,6 @@ int main(void) {
   
   test_mgr t;
   t.set_output_level(2);
-  
-#ifdef O2SCL_LD_TYPES
-
-#ifdef O2SCL_NEW_BOOST_INTEGRATION
   
   fermi_dirac_integ_gsl fd_gsl;
   fermi_dirac_integ_direct<> fd_d_ld;
@@ -395,11 +387,7 @@ int main(void) {
     }
   }
   
-
-#endif
-  
-#endif
-  
   t.report();
+  
   return 0;
 }

@@ -398,10 +398,6 @@ namespace o2scl {
   };
   
 
-#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
-
-#if defined(O2SCL_NEW_BOOST_INTEGRATION) || defined(DOXYGEN)
-
   /** \brief Compute several Fermi-Dirac integrals useful for
       non-relativistic fermions by directly integrating with a higher
       precision type
@@ -621,7 +617,7 @@ namespace o2scl {
       err_nonconv=true;
     }
 
-    /** \brief If true, then convergene failures call the error 
+    /** \brief If true, then convergence failures call the error 
         handler (default true)
     */
     bool err_nonconv;
@@ -1244,10 +1240,6 @@ namespace o2scl {
     }
 
   };
-  
-#endif
-  
-#endif
   
 #ifndef DOXYGEN_NO_O2NS
 }

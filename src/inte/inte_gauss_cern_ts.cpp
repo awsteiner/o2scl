@@ -30,11 +30,9 @@
 using namespace std;
 using namespace o2scl;
 
-#ifdef O2SCL_LD_TYPES
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 #ifdef O2SCL_MPFR
 typedef boost::multiprecision::mpfr_float_50 mpfr_float_50;
-#endif
 #endif
 
 double testfun(double tx, double &a);
@@ -46,8 +44,6 @@ double testfun(double tx, double &a) {
 double testfun2(double tx) {
   return 4.0*std::sqrt(1.0-tx*tx);
 }
-
-#ifdef O2SCL_LD_TYPES
 
 long double testfun2_ld(long double tx) {
   return 4.0*sqrtl(1.0-tx*tx);
@@ -64,8 +60,6 @@ mpfr_float_50 testfun2_mp(mpfr_float_50 tx) {
   mpfr_float_50 four=4;
   return four*sqrt(one-tx*tx);
 }
-
-#endif
 
 int main(void) {
   
@@ -96,8 +90,6 @@ int main(void) {
     cout << calc << " " << exact << " " << diff << endl;
   }
 
-#ifdef O2SCL_LD_TYPES
-  
   {
     inte_gauss_cern<funct_ld,long double,
 		    inte_gauss_coeffs_long_double> cg_ld;
@@ -149,8 +141,6 @@ int main(void) {
     diff=fabs(calc-exact);
     cout << calc << " " << exact << " " << diff << endl;
   }
-  
-#endif
   
 #endif
   

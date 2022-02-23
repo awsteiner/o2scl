@@ -476,8 +476,8 @@ bm_root_SOURCES = bm_root.cpp
 bm_root.scr: bm_root bm_root.cpp
 	./bm_root > bm_root.scr
 
-bm_polylog_LDADD = $(OOLIBS) $(OOLIBSTWO)
-bm_polylog_LDFLAGS = -fopenmp
+bm_polylog_LDFLAGS = $(ADDL_TEST_LDFLGS)
+bm_polylog_LDADD = $(ADDL_TEST_LIBS)
 bm_polylog_SOURCES = bm_polylog.cpp
 bm_polylog.scr: bm_polylog bm_polylog.cpp
 	./bm_polylog > bm_polylog.scr

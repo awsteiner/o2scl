@@ -26,9 +26,7 @@
 #ifndef O2SCL_INTE_GAUSS56_CERN_H
 #define O2SCL_INTE_GAUSS56_CERN_H
 
-#ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#endif
 
 #include <o2scl/misc.h>
 #include <o2scl/inte.h>
@@ -154,8 +152,6 @@ namespace o2scl {
   
   };
 
-#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
-  
   /** \brief Integration weights and abcissas for 
       \ref o2scl::inte_gauss56_cern in long double precision
 
@@ -243,8 +239,6 @@ namespace o2scl {
     }
   
   };
-  
-#endif
   
   /** \brief 5,6-point Gaussian quadrature (CERNLIB)
       

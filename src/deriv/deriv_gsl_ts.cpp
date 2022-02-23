@@ -27,9 +27,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/deriv_gsl.h>
 
-#ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#endif
 
 using namespace std;
 using namespace o2scl;
@@ -46,15 +44,11 @@ long double testfun_ld(long double x) {
   return std::sin(x);
 }
 
-#ifdef O2SCL_LD_TYPES
-
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 
 cpp_dec_float_50 testfun_cdf(cpp_dec_float_50 x) {
   return sin(x);
 }
-
-#endif
 
 class tempc {
 public:
@@ -111,8 +105,6 @@ int main(void) {
   t.test_rel(res,1.0/2.0/std::sqrt(1.0e-6),1.0e-7,"first, non-finite");
   cout << endl;
 
-#ifdef O2SCL_LD_TYPES
-  
   // Try a long double derivative
   deriv_gsl<funct_ld,long double> de_ld;
   funct_ld tf_ld=testfun_ld;
@@ -138,8 +130,6 @@ int main(void) {
   t.test_rel_boost<cpp_dec_float_50>(cdf_res,cos(half),4.0e-20,
 				     "simple derivative cpp_dec_float_50");
 				     
-#endif
-  
   t.report();
   return 0;
 }
