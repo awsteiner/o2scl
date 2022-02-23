@@ -82,23 +82,23 @@ int main(void) {
 
     mm_funct fqq=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
-       (&eos_quark_njl::eos_quark_njl::gapfunqq),
+       (&eos_quark_njl::eos_quark_njl::gap_func_qq),
        &nj,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);
     mm_funct fqq2=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
-       (&eos_quark_njl::eos_quark_njl::gapfunqq),
+       (&eos_quark_njl::eos_quark_njl::gap_func_qq),
        &njt,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);
     mm_funct fqq3=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
-       (&eos_quark_njl::eos_quark_njl::gapfunqq),
+       (&eos_quark_njl::eos_quark_njl::gap_func_qq),
        &cfl,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3);
 
-    //mm_funct_mfptr<eos_quark_njl> fqq(&nj,&eos_quark_njl::gapfunqq);
-    //mm_funct_mfptr<eos_quark_njl> fqq2(&njt,&eos_quark_njl::gapfunqq);
-    //   mm_funct_mfptr<eos_quark_njl> fqq3(&cfl,&eos_quark_njl::gapfunqq);
+    //mm_funct_mfptr<eos_quark_njl> fqq(&nj,&eos_quark_njl::gap_func_qq);
+    //mm_funct_mfptr<eos_quark_njl> fqq2(&njt,&eos_quark_njl::gap_func_qq);
+    //   mm_funct_mfptr<eos_quark_njl> fqq3(&cfl,&eos_quark_njl::gap_func_qq);
   
     // Set the quark chemical potentials
 
@@ -117,7 +117,7 @@ int main(void) {
     ax[1]=-1.0;
     ax[2]=-2.0;
   
-    nj.fromqq=true;
+    nj.from_qq=true;
     nd.msolve(3,ax,fqq);
     cout << ax[0] << " " << ax[1] << " " << ax[2] << endl;
 
@@ -127,8 +127,8 @@ int main(void) {
     ax[0]=u.ms;
     ax[1]=d.ms;
     ax[2]=s.ms;
-    nj.fromqq=false;
-    nj.gapfunms(3,ax,ay);
+    nj.from_qq=false;
+    nj.gap_func_ms(3,ax,ay);
     t.test_rel(ay[0],0.0,5.0e-9,"zero T ungapped gap eqn 1");
     t.test_rel(ay[1],0.0,5.0e-9,"zero T ungapped gap eqn 2");
     t.test_rel(ay[2],0.0,1.0e-6,"zero T ungapped gap eqn 3");
@@ -156,7 +156,7 @@ int main(void) {
     ax[1]=-1.0;
     ax[2]=-2.0;
     int vpy;
-    njt.fromqq=true;
+    njt.from_qq=true;
     nd.msolve(3,ax,fqq2);
     cout << ax[0] << " " << ax[1] << " " << ax[2] << endl;
 
@@ -165,7 +165,7 @@ int main(void) {
     u2.qq=ax[0];
     d2.qq=ax[1];
     s2.qq=ax[2];
-    njt.fromqq=true;
+    njt.from_qq=true;
     njt.calc_eq_temp_p(u2,d2,s2,rr1,rr2,rr3,th2,0.01);
   
     cout << "qq: " << u2.qq << " " << d2.qq << " " << s2.qq << endl;

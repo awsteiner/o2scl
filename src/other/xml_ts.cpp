@@ -20,9 +20,10 @@
 
   -------------------------------------------------------------------
 */
+#include <climits>
 #include <o2scl/misc.h>
 #include <o2scl/test_mgr.h>
-#include <climits>
+#include <o2scl/xml.h>
 
 using namespace std;
 using namespace o2scl;
@@ -33,6 +34,8 @@ int main(void) {
   
   test_mgr t;
   t.set_output_level(2);
+
+  pugi::xml_document doc1, doc2;
   
 #ifdef O2SCL_PUGIXML
   
@@ -40,16 +43,16 @@ int main(void) {
     "xml/namespaceo2scl.xml";
   
   pugi::xml_node n=doxygen_xml_get(doc_fn,"glob_wrapper",
-                                   "detaileddescription");
+                                   "detaileddescription",doc1);
   cout << "dxg: " << n.name() << endl;
   ostream_walker walker;
   n.traverse(walker);
   
-  std::string doc2_fn=((string)"/Users/awsteiner/wcs/o2scl/")+
+  std::string doc2_fn=((string)"../../")+
     "doc/o2scl/xml/classo2scl_1_1gen__test__number.xml";
   
   pugi::xml_node n2=doxygen_xml_member_get
-    (doc2_fn,"gen_test_number","set_radix","detaileddescription");
+    (doc2_fn,"gen_test_number","set_radix","detaileddescription",doc2);
   
   cout << "dxmg: " << n2.name() << endl;
   n2.traverse(walker);
