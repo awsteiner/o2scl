@@ -326,74 +326,21 @@ int main(void) {
   d.ms=0.3;
   s.ms=2.0;
 
-  if (false) {
-    
-    ret=njv.calc_p(u,d,s,th);
+  ret=njv.calc_p(u,d,s,th);
+  zt=th;
+  cout << "T=0: " << th.ed << " " << th.pr << " "
+       << u.mu << " " << u.n << " " << d.mu << " "
+       << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
+  cout << u.qq << " " << u.ms << endl;
   
-    double g[6];
-    ret=njv.calc_eq_p(u,d,s,g[0],g[1],g[2],g[3],g[4],g[5],th);
-    cout << "a: " << th.ed << " " << th.pr << " "
-         << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
-    cout << u.mu << " " << u.n << " " << u.ed << " " << u.pr << endl;
-    cout << d.mu << " " << d.n << " " << d.ed << " " << d.pr << endl;
-    cout << s.mu << " " << s.n << " " << s.ed << " " << s.pr << endl;
-    cout << u.qq << " " << u.ms << endl;
-    cout << d.qq << " " << d.ms << endl;
-    cout << s.qq << " " << s.ms << endl;
-    cout << u.nu << " " << d.nu << " " << s.nu << endl;
-    cout << g[0] << " " << g[1] << " " << g[2] << " " << g[3] << " "
-         << g[4] << " " << g[5] << endl;
-    cout << endl;
-  
-    ret=njv.calc_eq_temp_p(u,d,s,g[0],g[1],g[2],g[3],
-                           g[4],g[5],th,1.0/hc_mev_fm);
-    cout << "b: " << th.ed << " " << th.pr << " "
-         << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
-    cout << u.mu << " " << u.n << " " << u.ed << " " << u.pr << " "
-         << u.en << endl;
-    cout << d.mu << " " << d.n << " " << d.ed << " " << d.pr << " "
-         << d.en << endl;
-    cout << s.mu << " " << s.n << " " << s.ed << " " << s.pr << " "
-         << s.en << endl;
-    cout << u.qq << " " << u.ms << endl;
-    cout << d.qq << " " << d.ms << endl;
-    cout << s.qq << " " << s.ms << endl;
-    cout << u.nu << " " << d.nu << " " << s.nu << endl;
-    cout << g[0] << " " << g[1] << " " << g[2] << " " << g[3] << " "
-         << g[4] << " " << g[5] << endl;
-    cout << endl;
-
-    njv.calc_temp_p(u,d,s,0.1/hc_mev_fm,th);
-  
-    ret=njv.calc_eq_temp_p(u,d,s,g[0],g[1],g[2],g[3],
-                           g[4],g[5],th,0.01/hc_mev_fm);
-    cout << "b: " << th.ed << " " << th.pr << " "
-         << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
-    cout << u.mu << " " << u.n << " " << u.ed << " " << u.pr << endl;
-    cout << d.mu << " " << d.n << " " << d.ed << " " << d.pr << endl;
-    cout << s.mu << " " << s.n << " " << s.ed << " " << s.pr << endl;
-    cout << u.qq << " " << u.ms << endl;
-    cout << d.qq << " " << d.ms << endl;
-    cout << s.qq << " " << s.ms << endl;
-    cout << u.nu << " " << d.nu << " " << s.nu << endl;
-    cout << g[0] << " " << g[1] << " " << g[2] << " " << g[3] << " "
-         << g[4] << " " << g[5] << endl;
-
-    exit(-1);
-  
-    ret=njv.calc_p(u,d,s,th);
-    cout << "1: " << th.ed << " " << th.pr << " "
-         << u.mu << " " << u.n << " " << d.mu << " "
-         << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
-    cout << u.qq << " " << u.ms << endl;
-  
-    njv.calc_temp_p(u,d,s,0.1/hc_mev_fm,th);
-    cout << "2: " << th.ed << " " << th.pr << " " 
-         << u.mu << " " << u.n << " " << d.mu << " "
-         << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
-    cout << u.qq << " " << u.ms << endl;
-
-  }
+  njv.calc_temp_p(u,d,s,0.1/hc_mev_fm,th);
+  ft=th;
+  cout << "T>0: " << th.ed << " " << th.pr << " " 
+       << u.mu << " " << u.n << " " << d.mu << " "
+       << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
+  t.test_rel(zt.ed,ft.ed,1.0e-4,"T=0 vs T>0");
+  t.test_rel(zt.pr,ft.pr,1.0e-4,"T=0 vs T>0");
+  cout << endl;
   
   ret=njv.calc_p(u,d,s,th);
     

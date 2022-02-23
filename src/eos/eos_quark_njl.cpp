@@ -917,19 +917,6 @@ double eos_quark_njl::f_therm_pot_T(double qqu, double qqd, double qqs,
   return -eos_thermo->pr;
 }
 
-double eos_quark_njl_vec::integ_entropy(double x, double temper, double mu,
-                                        double m, double ms) {
-
-  double en=sqrt(x*x+ms*ms);
-  double f=fermi_function(en,mu,temper,limit);
-  double ret=0.0;
-  if (f>0.0) ret+=f*log(f);
-  if (f<1.0) ret+=(1.0-f)*log(1.0-f);
-  ret*=-3.0*x*x/pi2;
-  ret+=1.0;
-  return ret;
-}
-
 int eos_quark_njl_vec::calc_eq_p(quark &tu, quark &td, quark &ts,
                                  double &gap1, double &gap2, double &gap3,
                                  double &vec1, double &vec2, double &vec3,
@@ -1180,17 +1167,11 @@ int eos_quark_njl_vec::calc_eq_temp_p(quark &u, quark &d, quark &s,
                                            double,double)>
 			(&eos_quark_njl_vec::integ_pressure),
 			this,std::placeholders::_1,temper,u.nu,u.m,u.ms);
-    funct fen=std::bind(std::mem_fn<double(double,double,double,
-                                           double,double)>
-			(&eos_quark_njl_vec::integ_entropy),
-			this,std::placeholders::_1,temper,u.nu,u.m,u.ms);
     iret2=it->integ_err(fde,0.0,L,u.n,ierr);
     u.n-=L;
     fet.kf_from_density(u);
     iret3=it->integ_err(fpr,0.0,L,u.pr,ierr);
     iret4=it->integ_err(fed,0.0,L,u.ed,ierr);
-    iret5=it->integ_err(fen,0.0,L,u.en,ierr);
-    u.en-=L;
     if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
       O2SCL_ERR("Up quark failed in eos_quark_njl::calc_eq_temp_p().",
 		exc_efailed);
@@ -1222,17 +1203,11 @@ int eos_quark_njl_vec::calc_eq_temp_p(quark &u, quark &d, quark &s,
                                            double,double)>
 			(&eos_quark_njl_vec::integ_pressure),
 			this,std::placeholders::_1,temper,d.nu,d.m,d.ms);
-    funct fen=std::bind(std::mem_fn<double(double,double,double,
-                                           double,double)>
-			(&eos_quark_njl_vec::integ_entropy),
-			this,std::placeholders::_1,temper,d.nu,d.m,d.ms);
     iret2=it->integ_err(fde,0.0,L,d.n,ierr);
     d.n-=L;
     fet.kf_from_density(d);
     iret3=it->integ_err(fpr,0.0,L,d.pr,ierr);
     iret4=it->integ_err(fed,0.0,L,d.ed,ierr);
-    iret5=it->integ_err(fen,0.0,L,d.en,ierr);
-    d.en-=L;
     if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
       O2SCL_ERR("Down quark failed in eos_quark_njl_vec::calc_eq_temp_p().",
 		exc_efailed);
@@ -1264,32 +1239,26 @@ int eos_quark_njl_vec::calc_eq_temp_p(quark &u, quark &d, quark &s,
                                            double,double)>
 			(&eos_quark_njl_vec::integ_pressure),
 			this,std::placeholders::_1,temper,s.nu,s.m,s.ms);
-    funct fen=std::bind(std::mem_fn<double(double,double,double,
-                                           double,double)>
-			(&eos_quark_njl_vec::integ_entropy),
-			this,std::placeholders::_1,temper,s.nu,s.m,s.ms);
     iret2=it->integ_err(fde,0.0,L,s.n,ierr);
     s.n-=L;
     fet.kf_from_density(s);
     iret3=it->integ_err(fpr,0.0,L,s.pr,ierr);
     iret4=it->integ_err(fed,0.0,L,s.ed,ierr);
-    iret5=it->integ_err(fen,0.0,L,s.en,ierr);
-    s.en-=L;
     if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
       O2SCL_ERR("Strange quark failed in eos_quark_njl_vec::calc_eq_temp_p().",
 		exc_efailed);
     }
   }
 
-  u.mu=(u.ed+u.pr-temper*u.en)/u.n;
-  d.mu=(d.ed+d.pr-temper*d.en)/d.n;
-  s.mu=(s.ed+s.pr-temper*s.en)/s.n;
+  u.en=(u.ed+u.pr-u.nu*u.n)/temper;
+  d.en=(d.ed+d.pr-d.nu*d.n)/temper;
+  s.en=(s.ed+s.pr-s.nu*s.n)/temper;
 
   th.ed=u.ed+d.ed+s.ed+2.0*G*(u.qq*u.qq+d.qq*d.qq+s.qq*s.qq)+
     B0-4.0*K*u.qq*d.qq*s.qq+2.0*GV*u.n*u.n+2.0*GV*d.n*d.n+
     2.0*GV*s.n*s.n;
   th.pr=u.pr+d.pr+s.pr-2.0*G*(u.qq*u.qq+d.qq*d.qq+s.qq*s.qq)-
-    B0+4.0*K*u.qq*d.qq*s.qq-2.0*GV*u.n*u.n-2.0*GV*d.n*d.n-
+    B0+4.0*K*u.qq*d.qq*s.qq+2.0*GV*u.n*u.n+2.0*GV*d.n*d.n+
     2.0*GV*s.n*s.n;
   th.en=(th.ed+th.pr-u.n*u.mu-d.n*d.mu-s.n*s.mu)/temper;
   
@@ -1592,9 +1561,9 @@ int eos_quark_njl_vec::gap_func_ms_T(size_t nv, const ubvector &x,
   down->nu=x[4];
   strange->nu=x[5];
   
-  if (x[0]>0.0 || x[1]>0.0 || x[2]>0.0) {
+  if (x[0]<0.0 || x[1]<0.0 || x[2]<0.0) {
     if (verbose>0) {
-      cout << "Quark condensate positive." << endl;
+      cout << "Masses negative." << endl;
     }
     return 1;
   }

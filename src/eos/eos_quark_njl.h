@@ -51,7 +51,7 @@ namespace o2scl {
       order to use the EOS, the user should either (i) set the bag
       constant, \ref B0 directly, or (ii) use \ref set_parameters() to
       modify the parameters (and then the \ref set_parameters()
-      function also automatically computes the bag constant.
+      function also automatically computes the bag constant).
 
       This class can compute the EOS from the quark condensates
       (stored in \ref o2scl::quark::qq) by setting \ref from_qq to
@@ -144,11 +144,11 @@ namespace o2scl {
       The quark densities are
       \f[
       n_i = 6 
-      \int_0^{\Lambda} \frac {d^3p}{(2\pi)^3} 
+      \int_0^{\Lambda} \frac{d^3p}{(2\pi)^3} 
       \left\{
-      \left[ \frac{1}{1 + \exp (E_i^{*}_i-\mu_i)/T} \right]
+      \left[ \frac{1}{1 + \exp (E_i^{*}-\mu_i)/T} \right]
       -
-      \left[ \frac{1}{1 + \exp (E_i^{*}_i+\mu_i)/T} \right]
+      \left[ \frac{1}{1 + \exp (E_i^{*}+\mu_i)/T} \right]
       \right\} \, ,
       \f]
       and the quark condensates are
@@ -185,8 +185,6 @@ namespace o2scl {
       .. todo::
 
          - In class eos_quark_njl: better documentation.
-         - future Consider rewriting the testing code and making
-           the various gap functions protected instead of public.
          - future Remove the stored quark pointers if they are
            unnecessary?
 
@@ -197,6 +195,13 @@ namespace o2scl {
 
   public:
 
+    typedef boost::numeric::ublas::vector<double> ubvector;
+
+    /// Class constructor
+    eos_quark_njl();
+
+    /// \name Settings
+    //@{
     /** \brief Verbosity parameter
      */
     int verbose;
@@ -206,8 +211,41 @@ namespace o2scl {
     */
     bool err_on_fail;
     
-    typedef boost::numeric::ublas::vector<double> ubvector;
+    /** \brief Accuracy limit for Fermi integrals for finite temperature
+        (default 20)
 
+	\ref limit is used for the finite temperature integrals to
+	ensure that no numbers larger than <tt>exp(limit)</tt> or
+	smaller than <tt>exp(-limit)</tt> are avoided.
+    */
+    double limit;
+
+    /** \brief Determine variables for solver (default true)
+        
+	If this is false, then the internal solvers use the effective
+	masses as variables, otherwise, the quark condensates are used
+	as variables. The two forms are equivalent, but having both
+        versions can be useful for testing.
+     */
+    bool from_qq;
+    //@}
+
+    /// \name NJL model parameters
+    //@{
+    /// The momentum cutoff, \f$ \Lambda \f$ (in \f$ \mathrm{fm}^{-1} \f$)
+    double L;
+    
+    /// The four-fermion coupling (in \f$ \mathrm{fm}^{2} \f$)
+    double G;
+    
+    /** \brief The 't Hooft six-fermion interaction coupling
+	(in \f$ \mathrm{fm}^{5} \f$)
+    */
+    double K;
+    
+    /// The bag constant (in \f$ \mathrm{fm}^{-4} \f$)
+    double B0;
+    
     /** \brief Set the parameters and the bag constant \c B0 
       
 	This function allows the user to specify the momentum cutoff,
@@ -225,38 +263,15 @@ namespace o2scl {
     */
     virtual int set_parameters(double lambda=0.0, double fourferm=0.0, 
 			       double sixferm=0.0);
-    
-    /** \brief Accuracy limit for Fermi integrals for finite temperature
-        (default 20)
+    //@}
 
-	\ref limit is used for the finite temperature integrals to
-	ensure that no numbers larger than <tt>exp(limit)</tt> or
-	smaller than <tt>exp(-limit)</tt> are avoided.
-    */
-    double limit;
-  
-    /** \brief Calculate from quark condensates if true (default true)
-    
-	If this is false, then computations are performed using
-	the effective masses as inputs
-     */
-    bool from_qq;
-
-    eos_quark_njl();
-    
+    /// \name Zero-temperature EOS
+    //@{
     /** \brief Equation of state as a function of chemical potentials
 	
 	This function automatically solves the gap equations.
     */
     virtual int calc_p(quark &u, quark &d, quark &s, thermo &lth);
-
-    /** \brief Equation of state as a function of chemical potentials at 
-	finite temperature
-
-	This function automatically solves the gap equations.
-    */
-    virtual int calc_temp_p(quark &u, quark &d, quark &s, 
-			    double T, thermo &th);
 
     /** \brief Equation of state and gap equations as a function of 
 	chemical potential
@@ -269,14 +284,40 @@ namespace o2scl {
     */
     virtual int calc_eq_e(quark &u, quark &d, quark &s, double &gap1, 
 			  double &gap2, double &gap3, thermo &lth);
-    
+
+    /** \brief Compute the thermodynamic potential at \f$ T=0 \f$
+     */
+    virtual double f_therm_pot(double qqu, double qqd, double qqs,
+                               double msu, double msd, double mss,
+                               bool vac_terms=true);
+    //@}
+
+    /// \name Finite-temperature EOS
+    //@{
+    /** \brief Equation of state as a function of chemical potentials at 
+	finite temperature
+
+	This function automatically solves the gap equations.
+    */
+    virtual int calc_temp_p(quark &u, quark &d, quark &s, 
+			    double T, thermo &th);
+
     /** \brief Equation of state and gap equations
 	as a function of chemical potentials at finite temperature
     */
     int calc_eq_temp_p(quark &tu, quark &td, quark &ts,
 		       double &gap1, double &gap2, double &gap3,
 		       thermo &qb, double temper);
-    
+
+    /** \brief Compute the thermodynamic potential at \f$ T>0 \f$
+     */
+    virtual double f_therm_pot_T(double qqu, double qqd, double qqs,
+                                 double msu, double msd, double mss,
+                                 double T, bool vac_terms=true);
+    //@}
+
+    /// \name Gap equations
+    //@{
     /** \brief Calculates gap equations in \c y as a function of the 
 	constituent masses in \c x
 	
@@ -312,8 +353,9 @@ namespace o2scl {
 	which can be specified in eos::set_thermo().
     */
     int gap_func_qq_T(size_t nv, const ubvector &x, ubvector &y, double T);
+    //@}
 
-    /** \name The default quark masses (in \f$ \mathrm{fm}^{-1} \f$ )
+    /** \name The default quark masses (in inverse femtometers)
 
         \verbatim embed:rst
         These default masses are taken from [Buballa99]_, where they
@@ -332,18 +374,6 @@ namespace o2scl {
     double strange_default_mass;
     //@}
 
-    /** \brief Compute the thermodynamic potential at \f$ T=0 \f$
-     */
-    virtual double f_therm_pot(double qqu, double qqd, double qqs,
-                               double msu, double msd, double mss,
-                               bool vac_terms=true);
-
-    /** \brief Compute the thermodynamic potential at \f$ T>0 \f$
-     */
-    virtual double f_therm_pot_T(double qqu, double qqd, double qqs,
-                                 double msu, double msd, double mss,
-                                 double T, bool vac_terms=true);
-
     /** \brief Set the quark objects to use
 
 	The quark objects are used in gap_func_ms(), gap_func_qq(), 
@@ -351,20 +381,6 @@ namespace o2scl {
     */
     int set_quarks(quark &u, quark &d, quark &s);
 
-    /// The momentum cutoff, \f$ \Lambda \f$ (in \f$ \mathrm{fm}^{-1} \f$)
-    double L;
-    
-    /// The four-fermion coupling (in \f$ \mathrm{fm}^{2} \f$)
-    double G;
-    
-    /** \brief The 't Hooft six-fermion interaction coupling
-	(in \f$ \mathrm{fm}^{5} \f$)
-    */
-    double K;
-    
-    /// The bag constant (in \f$ \mathrm{fm}^{-4} \f$)
-    double B0;
-    
     /** \name The default quark objects
 	
 	The masses are automatically set in the constructor to
@@ -380,6 +396,8 @@ namespace o2scl {
     /// Return string denoting type ("eos_quark_njl")
     virtual const char *type() { return "eos_quark_njl"; }
 
+    /// \name Numerical methods
+    //@{
     /// Set solver to use in set_parameters()
     virtual int set_solver
       (mroot<mm_funct,boost::numeric::ublas::vector<double>,
@@ -400,11 +418,14 @@ namespace o2scl {
     
     /// The default integrator
     inte_qag_gsl<> def_it;
+    //@}
     
   protected:
 
 #ifndef DOXYGEN_INTERNAL
 
+    /// \name Protected functions and variables
+    //@{
     /// The integrator for finite temperature integrals
     inte<> *it;
     
@@ -440,17 +461,19 @@ namespace o2scl {
     quark *strange;
 
     /// The integrand for the quark condensate
-    double integ_qq(double x, double T, double mu, double m, double ms);
+    double integ_qq(double x, double T, double mu, double m,
+                    double ms);
     /// The integrand for the density
-    double integ_density(double x, double T, double mu, double m, double ms);
+    double integ_density(double x, double T, double mu, double m,
+                         double ms);
     /// The integrand for the energy density
-    double integ_edensity(double x, double T, double mu, double m, double ms);
+    double integ_edensity(double x, double T, double mu, double m,
+                          double ms);
     /// The integrand for the pressure
-    double integ_pressure(double x, double T, double mu, double m, double ms);
+    double integ_pressure(double x, double T, double mu, double m,
+                          double ms);
+    //@}
   
-    /// The temperature for calc_temp_p()
-    double cp_temp;
-    
 #endif
     
   };
@@ -468,42 +491,17 @@ namespace o2scl {
     
   public:
 
-    /// The integrand for the density
-    double integ_entropy(double x, double T, double mu, double m, double ms);
-    
     /// The vector coupling constant
     double GV;
 
-    /** \brief Equation of state as a function of chemical potentials at 
-	finite temperature
-
-	This function automatically solves the gap equations.
-    */
-    virtual int calc_temp_p(quark &u, quark &d, quark &s, 
-			    double T, thermo &th);
-
-    /** \brief Compute the gap equations and the equation of state at
-        finite temperature as a function of the chemical potentials
-     */
-    virtual int calc_eq_temp_p(quark &tu, quark &td, quark &ts,
-                               double &gap1, double &gap2,
-                               double &gap3, double &vec1, double &vec2,
-                               double &vec3, thermo &th, double temper);
-    
+    /// \name The zero temperature EOS
+    //@{
     /** \brief Compute the equation of state as a function of the
         chemical potentials
 	
 	This function automatically solves the gap equations.
     */
     virtual int calc_p(quark &u, quark &d, quark &s, thermo &lth);
-
-    /** \brief The gap equations starting from the effective masses
-     */
-    virtual int gap_func_ms_vec(size_t nv, const ubvector &x, ubvector &y);
-
-    /** \brief The gap equations starting from the effective masses
-     */
-    virtual int gap_func_qq_vec(size_t nv, const ubvector &x, ubvector &y);
 
     /** \brief Compute the gap equations and the equation of state
         as a function of the chemical potentials
@@ -520,6 +518,44 @@ namespace o2scl {
                                double msu, double msd, double mss,
                                double nuu, double nud, double nus,
                                bool vac_terms=true);
+
+    //@}
+
+    /// \name The finite temperature EOS
+    //@{
+    /** \brief Equation of state as a function of chemical potentials at 
+	finite temperature
+
+	This function automatically solves the gap equations.
+    */
+    virtual int calc_temp_p(quark &u, quark &d, quark &s, 
+			    double T, thermo &th);
+
+    /** \brief Compute the gap equations and the equation of state at
+        finite temperature as a function of the chemical potentials
+     */
+    virtual int calc_eq_temp_p(quark &tu, quark &td, quark &ts,
+                               double &gap1, double &gap2,
+                               double &gap3, double &vec1, double &vec2,
+                               double &vec3, thermo &th, double temper);
+    
+    /** \brief Compute the thermodynamic potential at \f$ T>0 \f$
+     */
+    virtual double f_therm_pot_T(double qqu, double qqd, double qqs,
+                                 double msu, double msd, double mss,
+                                 double nuu, double nud, double nus,
+                                 double T, bool vac_terms=true);
+    //@}
+    
+    /// \name The gap equations
+    //@{
+    /** \brief The gap equations starting from the effective masses
+     */
+    virtual int gap_func_ms_vec(size_t nv, const ubvector &x, ubvector &y);
+
+    /** \brief The gap equations starting from the effective masses
+     */
+    virtual int gap_func_qq_vec(size_t nv, const ubvector &x, ubvector &y);
 
     /** \brief Calculates gap equations in \c y as a function of the 
 	quark condensates in \c x
@@ -538,14 +574,7 @@ namespace o2scl {
 	which can be specified in eos::set_thermo().
     */
     int gap_func_ms_T(size_t nv, const ubvector &x, ubvector &y, double T);
-
-    /** \brief Compute the thermodynamic potential at \f$ T>0 \f$
-     */
-    virtual double f_therm_pot_T(double qqu, double qqd, double qqs,
-                                 double msu, double msd, double mss,
-                                 double nuu, double nud, double nus,
-                                 double T, bool vac_terms=true);
-
+    //@}
     
   };
   
