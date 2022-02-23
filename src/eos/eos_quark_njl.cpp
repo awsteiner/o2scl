@@ -937,12 +937,6 @@ int eos_quark_njl_vec::calc_eq_p(quark &tu, quark &td, quark &ts,
   // for both the effective masses (ms) and the effective chemical
   // potentials (nu)
   
-  if (from_nu==false) {
-    tu.nu=tu.mu-4.0*GV*tu.n;
-    td.nu=td.mu-4.0*GV*td.n;
-    ts.nu=ts.mu-4.0*GV*ts.n;
-  }
-    
   if (tu.nu>tu.ms) {
     tu.kf=sqrt(tu.nu*tu.nu-tu.ms*tu.ms);
     tu.n=tu.kf*tu.kf*tu.kf/pi2;
@@ -1022,25 +1016,15 @@ int eos_quark_njl_vec::calc_eq_p(quark &tu, quark &td, quark &ts,
   td.ed-=td.B;
   ts.ed-=ts.B;
 
-  if (from_nu==true) {
+  tu.pr=-tu.ed+tu.n*tu.mu;
+  td.pr=-td.ed+td.n*td.mu;
+  ts.pr=-ts.ed+ts.n*ts.mu;
   
-    tu.pr=-tu.ed+tu.n*tu.mu;
-    td.pr=-td.ed+td.n*td.mu;
-    ts.pr=-ts.ed+ts.n*ts.mu;
-    
-    // Fix the relationship between \mu_R and \mu, following eq 8b in
-    // Klimt 90
-    vec1=tu.mu-4.0*GV*tu.n-tu.nu;
-    vec2=td.mu-4.0*GV*td.n-td.nu;
-    vec3=ts.mu-4.0*GV*ts.n-ts.nu;
-
-  } else {
-
-    vec1=-tu.pr-tu.ed+tu.n*tu.mu;
-    vec2=-td.pr-td.ed+tu.n*tu.mu;
-    vec3=-ts.pr-ts.ed+tu.n*tu.mu;
-    
-  }
+  // Fix the relationship between \mu_R and \mu, following eq 8b in
+  // Klimt 90
+  vec1=tu.mu-4.0*GV*tu.n-tu.nu;
+  vec2=td.mu-4.0*GV*td.n-td.nu;
+  vec3=ts.mu-4.0*GV*ts.n-ts.nu;
 
   th.ed=tu.ed+td.ed+ts.ed+
     2.0*G*(tu.qq*tu.qq+td.qq*td.qq+ts.qq*ts.qq)+B0-

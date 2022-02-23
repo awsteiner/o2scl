@@ -475,12 +475,6 @@ namespace o2scl {
     
   public:
 
-    eos_quark_njl_vec() {
-      from_nu=false;
-    }
-    
-    bool from_nu;
-    
     /// The vector coupling constant
     double GV;
 
