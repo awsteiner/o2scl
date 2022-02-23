@@ -142,7 +142,7 @@ int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
     if (ret!=0) {
       if (err_on_fail) {
         O2SCL_ERR2("Solver failed (from_qq=true) in ",
-                       "eos_quark_njl::calc_p().",o2scl::exc_efailed);
+                   "eos_quark_njl::calc_p().",o2scl::exc_efailed);
       }
       return ret;
     }
@@ -163,7 +163,7 @@ int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
     if (ret!=0) {
       if (err_on_fail) {
         O2SCL_ERR2("Solver failed (from_qq=false) in ",
-                       "eos_quark_njl::calc_p().",o2scl::exc_efailed);
+                   "eos_quark_njl::calc_p().",o2scl::exc_efailed);
       }
       return ret;
     }
@@ -210,7 +210,7 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
     if (ret!=0) {
       if (err_on_fail) {
         O2SCL_ERR2("Solver failed (from_qq=true) in ",
-                       "eos_quark_njl::calc_temp_p().",o2scl::exc_efailed);
+                   "eos_quark_njl::calc_temp_p().",o2scl::exc_efailed);
       }
       return ret;
     }
@@ -231,7 +231,7 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
     if (ret!=0) {
       if (err_on_fail) {
         O2SCL_ERR2("Solver failed (from_qq=false) in ",
-                       "eos_quark_njl::calc_temp_p().",o2scl::exc_efailed);
+                   "eos_quark_njl::calc_temp_p().",o2scl::exc_efailed);
       }
       return ret;
     }
@@ -827,7 +827,7 @@ double eos_quark_njl::integ_qq(double x, double temper, double mu,
 }
 
 double eos_quark_njl::integ_density(double x, double temper, double mu,
-                          double m, double ms) {
+                                    double m, double ms) {
 
   double en=sqrt(x*x+ms*ms);
   double ret=fermi_function(en,mu,temper,limit)-
@@ -838,7 +838,7 @@ double eos_quark_njl::integ_density(double x, double temper, double mu,
 }
 
 double eos_quark_njl::integ_edensity(double x, double temper, double mu,
-                          double m, double ms) {
+                                     double m, double ms) {
 
   double en=sqrt(x*x+ms*ms);
   double ret=-en;
@@ -849,7 +849,7 @@ double eos_quark_njl::integ_edensity(double x, double temper, double mu,
 }
 
 double eos_quark_njl::integ_pressure(double x, double temper, double mu,
-                          double m, double ms) {
+                                     double m, double ms) {
   
   double en=sqrt(x*x+ms*ms);
   double ret=en;
@@ -887,7 +887,7 @@ double eos_quark_njl::f_therm_pot(double qqu, double qqd, double qqs,
   calc_eq_p(*up,*down,*strange,g1,g2,g3,*eos_thermo);
   if (vac_terms==false) {
     double ret=-eos_thermo->pr-2.0*G*(up->qq*up->qq+down->qq*down->qq+
-                                  strange->qq*strange->qq)+
+                                      strange->qq*strange->qq)+
       4.0*K*up->qq*down->qq*strange->qq;
     return ret;
   }
@@ -910,11 +910,24 @@ double eos_quark_njl::f_therm_pot_T(double qqu, double qqd, double qqs,
   calc_eq_temp_p(*up,*down,*strange,g1,g2,g3,*eos_thermo,temper);
   if (vac_terms==false) {
     double ret=-eos_thermo->pr-2.0*G*(up->qq*up->qq+down->qq*down->qq+
-                                  strange->qq*strange->qq)+
+                                      strange->qq*strange->qq)+
       4.0*K*up->qq*down->qq*strange->qq;
     return ret;
   }
   return -eos_thermo->pr;
+}
+
+double eos_quark_njl_vec::integ_entropy(double x, double temper, double mu,
+                                        double m, double ms) {
+
+  double en=sqrt(x*x+ms*ms);
+  double f=fermi_function(en,mu,temper,limit);
+  double ret=0.0;
+  if (f>0.0) ret+=f*log(f);
+  if (f<1.0) ret+=(1.0-f)*log(1.0-f);
+  ret*=-3.0*x*x/pi2;
+  ret+=1.0;
+  return ret;
 }
 
 int eos_quark_njl_vec::calc_eq_p(quark &tu, quark &td, quark &ts,
@@ -1067,7 +1080,7 @@ int eos_quark_njl_vec::calc_temp_p(quark &u, quark &d, quark &s,
 
     mm_funct fmf=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,double)>
-       (&eos_quark_njl::gap_func_qq_T),
+       (&eos_quark_njl_vec::gap_func_qq_T),
        this,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3,T);
 
@@ -1075,7 +1088,7 @@ int eos_quark_njl_vec::calc_temp_p(quark &u, quark &d, quark &s,
     if (ret!=0) {
       if (err_on_fail) {
         O2SCL_ERR2("Solver failed (from_qq=true) in ",
-                       "eos_quark_njl::calc_temp_p().",o2scl::exc_efailed);
+                   "eos_quark_njl::calc_temp_p().",o2scl::exc_efailed);
       }
       return ret;
     }
@@ -1091,7 +1104,7 @@ int eos_quark_njl_vec::calc_temp_p(quark &u, quark &d, quark &s,
 
     mm_funct fmf=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,double)>
-       (&eos_quark_njl::gap_func_ms_T),
+       (&eos_quark_njl_vec::gap_func_ms_T),
        this,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3,T);
 
@@ -1099,7 +1112,7 @@ int eos_quark_njl_vec::calc_temp_p(quark &u, quark &d, quark &s,
     if (ret!=0) {
       if (err_on_fail) {
         O2SCL_ERR2("Solver failed (from_qq=false) in ",
-                       "eos_quark_njl::calc_temp_p().",o2scl::exc_efailed);
+                   "eos_quark_njl::calc_temp_p().",o2scl::exc_efailed);
       }
       return ret;
     }
@@ -1116,7 +1129,7 @@ int eos_quark_njl_vec::calc_eq_temp_p(quark &u, quark &d, quark &s,
                                       thermo &th, double temper) {
 
   double ierr;
-  int iret1, iret2, iret3, iret4;
+  int iret1, iret2, iret3, iret4, iret5;
   
   if (temper<=0.0) {
     calc_eq_p(u,d,s,gap1,gap2,gap3,vec1,vec2,vec3,th);
@@ -1167,11 +1180,17 @@ int eos_quark_njl_vec::calc_eq_temp_p(quark &u, quark &d, quark &s,
                                            double,double)>
 			(&eos_quark_njl_vec::integ_pressure),
 			this,std::placeholders::_1,temper,u.nu,u.m,u.ms);
+    funct fen=std::bind(std::mem_fn<double(double,double,double,
+                                           double,double)>
+			(&eos_quark_njl_vec::integ_entropy),
+			this,std::placeholders::_1,temper,u.nu,u.m,u.ms);
     iret2=it->integ_err(fde,0.0,L,u.n,ierr);
     u.n-=L;
     fet.kf_from_density(u);
     iret3=it->integ_err(fpr,0.0,L,u.pr,ierr);
     iret4=it->integ_err(fed,0.0,L,u.ed,ierr);
+    iret5=it->integ_err(fen,0.0,L,u.en,ierr);
+    u.en-=L;
     if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
       O2SCL_ERR("Up quark failed in eos_quark_njl::calc_eq_temp_p().",
 		exc_efailed);
@@ -1203,12 +1222,17 @@ int eos_quark_njl_vec::calc_eq_temp_p(quark &u, quark &d, quark &s,
                                            double,double)>
 			(&eos_quark_njl_vec::integ_pressure),
 			this,std::placeholders::_1,temper,d.nu,d.m,d.ms);
-
+    funct fen=std::bind(std::mem_fn<double(double,double,double,
+                                           double,double)>
+			(&eos_quark_njl_vec::integ_entropy),
+			this,std::placeholders::_1,temper,d.nu,d.m,d.ms);
     iret2=it->integ_err(fde,0.0,L,d.n,ierr);
     d.n-=L;
     fet.kf_from_density(d);
     iret3=it->integ_err(fpr,0.0,L,d.pr,ierr);
     iret4=it->integ_err(fed,0.0,L,d.ed,ierr);
+    iret5=it->integ_err(fen,0.0,L,d.en,ierr);
+    d.en-=L;
     if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
       O2SCL_ERR("Down quark failed in eos_quark_njl_vec::calc_eq_temp_p().",
 		exc_efailed);
@@ -1240,16 +1264,26 @@ int eos_quark_njl_vec::calc_eq_temp_p(quark &u, quark &d, quark &s,
                                            double,double)>
 			(&eos_quark_njl_vec::integ_pressure),
 			this,std::placeholders::_1,temper,s.nu,s.m,s.ms);
+    funct fen=std::bind(std::mem_fn<double(double,double,double,
+                                           double,double)>
+			(&eos_quark_njl_vec::integ_entropy),
+			this,std::placeholders::_1,temper,s.nu,s.m,s.ms);
     iret2=it->integ_err(fde,0.0,L,s.n,ierr);
     s.n-=L;
     fet.kf_from_density(s);
     iret3=it->integ_err(fpr,0.0,L,s.pr,ierr);
     iret4=it->integ_err(fed,0.0,L,s.ed,ierr);
+    iret5=it->integ_err(fen,0.0,L,s.en,ierr);
+    s.en-=L;
     if (iret1!=0 || iret2!=0 || iret3!=0 || iret4!=0) {
       O2SCL_ERR("Strange quark failed in eos_quark_njl_vec::calc_eq_temp_p().",
 		exc_efailed);
     }
   }
+
+  u.mu=(u.ed+u.pr-temper*u.en)/u.n;
+  d.mu=(d.ed+d.pr-temper*d.en)/d.n;
+  s.mu=(s.ed+s.pr-temper*s.en)/s.n;
 
   th.ed=u.ed+d.ed+s.ed+2.0*G*(u.qq*u.qq+d.qq*d.qq+s.qq*s.qq)+
     B0-4.0*K*u.qq*d.qq*s.qq+2.0*GV*u.n*u.n+2.0*GV*d.n*d.n+
@@ -1299,104 +1333,12 @@ int eos_quark_njl_vec::calc_eq_temp_p(quark &u, quark &d, quark &s,
     gap3=-s.ms+s.m-4.0*G*s.qq+2.0*K*d.qq*u.qq;
   }
 
-  vec1=-1.0*u.nu+u.mu-4.0*GV*u.n;
-  vec2=-1.0*d.nu+d.mu-4.0*GV*d.n;
-  vec3=-1.0*s.nu+s.mu-4.0*GV*s.n;
+  vec1=-u.nu+u.mu-4.0*GV*u.n;
+  vec2=-d.nu+d.mu-4.0*GV*d.n;
+  vec3=-s.nu+s.mu-4.0*GV*s.n;
 
   return 0;
 }
-
-#ifdef O2SCL_NEVER_DEFINED    
-double eos_quark_njl_vec::integ_qq(double x, double T, double mu,
-                                   double m, double ms) {
-  double en=sqrt(x*x+ms*ms);
-  double ret=1.0;
-  if ((en-mu)/T>limit) {
-    ret-=0.0;
-  } else if ((en-mu)/T<-limit) {
-    ret-=1.0;
-  } else {
-    ret-=1.0/(1+exp((en-mu)/T));
-  }
-  if ((en+mu)/T>limit) {
-    ret-=0.0;
-  } else if ((en+mu)/T<-limit) {
-    ret-=1.0;
-  } else {
-    ret-=1.0/(1+exp((en+mu)/T));
-  }
-  ret*=-3.0*x*x/en/pi2*ms;
-  ret+=1.0;
-  return ret;
-}
-
-double eos_quark_njl_vec::integ_density(double x, double T, double mu,
-                                        double m, double ms) {
-  double en=sqrt(x*x+ms*ms);
-  double ret=0.0;
-  if ((en-mu)/T>limit) {
-    ret+=0.0;
-  } else if ((en-mu)/T<-limit) {
-    ret+=1.0;
-  } else {
-    ret+=1.0/(1+exp((en-mu)/T));
-  }
-  if ((en+mu)/T>limit) {
-    ret-=0.0;
-  } else if ((en+mu)/T<-limit) {
-    ret-=1.0;
-  } else {
-    ret-=1.0/(1+exp((en+mu)/T));
-  }
-  ret*=3.0*x*x/pi2;
-  ret+=1.0;
-  return ret;
-}
-
-double eos_quark_njl_vec::integ_edensity(double x, double T, double mu,
-                                         double m, double ms) {
-  double en=sqrt(x*x+ms*ms);
-  double ret=-en;
-  if ((en-mu)/T>limit) {
-    ret+=0.0;
-  } else if ((en-mu)/T<-limit) {
-    ret+=en;
-  } else {
-    ret+=en/(1+exp((en-mu)/T));
-  }
-  if ((en+mu)/T>limit) {
-    ret+=0.0;
-  } else if ((en+mu)/T<-limit) {
-    ret+=en;
-  } else {
-    ret+=en/(1+exp((en+mu)/T));
-  }
-  ret*=3.0/pi2*x*x;
-  return ret;
-}
-
-double eos_quark_njl_vec::integ_pressure(double x, double T, double mu,
-                                         double m, double ms) {
-  double en=sqrt(x*x+ms*ms);
-  double ret=en;
-  if ((mu-en)/T>limit) {
-    ret+=mu-en;
-  } else if ((mu-en)/T<-limit) {
-    ret+=0.0;
-  } else {
-    ret+=T*log(1+exp((mu-en)/T));
-  }
-  if ((-en-mu)/T>limit) {
-    ret+=-en-mu;
-  } else if ((-en-mu)/T<-limit) {
-    ret+=0.0;
-  } else {
-    ret+=T*log(1+exp((-en-mu)/T));
-  }
-  ret*=3.0/pi2*x*x;
-  return ret;
-}
-#endif
 
 int eos_quark_njl_vec::gap_func_ms_vec(size_t nv, const ubvector &x,
                                        ubvector &y) {
@@ -1428,33 +1370,101 @@ int eos_quark_njl_vec::gap_func_ms_vec(size_t nv, const ubvector &x,
   return 0;
 }
 
+int eos_quark_njl_vec::gap_func_qq_vec(size_t nv, const ubvector &x,
+                                       ubvector &y) {
+  
+  double gap1, gap2, gap3, vec1, vec2, vec3;
+
+  up->qq=x[0];
+  down->qq=x[1];
+  strange->qq=x[2];
+  up->nu=x[3];
+  down->nu=x[4];
+  strange->nu=x[5];
+
+  if (x[0]>0.0 || x[1]>0.0 || x[2]>0.0) return 1;
+
+  calc_eq_p(*up,*down,*strange,gap1,gap2,gap3,vec1,vec2,vec3,*eos_thermo);
+
+  y[0]=gap1;
+  y[1]=gap2;
+  y[2]=gap3;
+  y[3]=vec1;
+  y[4]=vec2;
+  y[5]=vec3;
+
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) ||
+      !std::isfinite(y[2]) || !std::isfinite(y[3]) ||
+      !std::isfinite(y[4]) || !std::isfinite(y[5])) return 2;
+
+  return 0;
+}
+
 int eos_quark_njl_vec::calc_p(quark &u, quark &d, quark &s, thermo &th) {
   ubvector x(6);
   int ret;
 
-  if (from_qq==true) {
-    O2SCL_ERR("Unimplemented.",o2scl::exc_eunimpl);
-  }
-  
   up=&u;
   down=&d;
   strange=&s;
   eos_thermo=&th;
   
-  x[0]=u.ms;
-  x[1]=d.ms;
-  x[2]=s.ms;
-  x[3]=u.nu;
-  x[4]=d.nu;
-  x[5]=s.nu;
-  
-  mm_funct fmf=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
-     (&eos_quark_njl_vec::gap_func_ms_vec),
-     this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3);
+  if (err_on_fail==false) {
+    solver->err_nonconv=false;
+    def_solver.def_jac.err_nonconv=false;
+  } else {
+    solver->err_nonconv=true;
+    def_solver.def_jac.err_nonconv=true;
+  }
 
-  ret=solver->msolve(6,x,fmf);
+  if (from_qq==true) {
+
+    x[0]=u.qq;
+    x[1]=d.qq;
+    x[2]=s.qq;
+    x[3]=u.nu;
+    x[4]=d.nu;
+    x[5]=s.nu;
+    
+    mm_funct fmf=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&eos_quark_njl_vec::gap_func_qq_vec),
+       this,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3);
+    
+    ret=solver->msolve(6,x,fmf);
+    if (ret!=0) {
+      if (err_on_fail) {
+        O2SCL_ERR2("Solver failed (from_qq=true) in ",
+                   "eos_quark_njl_vec::calc_p().",o2scl::exc_efailed);
+      }
+      return ret;
+    }
+    
+  } else {
+    
+    x[0]=u.ms;
+    x[1]=d.ms;
+    x[2]=s.ms;
+    x[3]=u.nu;
+    x[4]=d.nu;
+    x[5]=s.nu;
+    
+    mm_funct fmf=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+       (&eos_quark_njl_vec::gap_func_ms_vec),
+       this,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3);
+    
+    ret=solver->msolve(6,x,fmf);
+    if (ret!=0) {
+      if (err_on_fail) {
+        O2SCL_ERR2("Solver failed (from_qq=false) in ",
+                   "eos_quark_njl_vec::calc_p().",o2scl::exc_efailed);
+      }
+      return ret;
+    }
+  }
   
   return ret;
 }
@@ -1477,6 +1487,35 @@ double eos_quark_njl_vec::f_therm_pot(double qqu, double qqd, double qqs,
   strange->nu=nus;
   
   calc_eq_p(*up,*down,*strange,g1,g2,g3,h1,h2,h3,*eos_thermo);
+  
+  if (vac_terms==false) {
+    double ret=-eos_thermo->pr-2.0*G*(up->qq*up->qq+down->qq*down->qq+
+                                      strange->qq*strange->qq)+
+      4.0*K*up->qq*down->qq*strange->qq+
+      2.0*GV*up->n*up->n+2.0*GV*down->n*down->n+2.0*GV*strange->n*strange->n;
+    return ret;
+  }
+  return -eos_thermo->pr;
+}
+
+double eos_quark_njl_vec::f_therm_pot_T(double qqu, double qqd, double qqs,
+                                        double msu, double msd, double mss,
+                                        double nuu, double nud, double nus,
+                                        double T, bool vac_terms) {
+  
+  double g1, g2, g3, h1, h2, h3;
+  
+  up->qq=qqu;
+  down->qq=qqd;
+  strange->qq=qqs;
+  up->ms=msu;
+  down->ms=msd;
+  strange->ms=mss;
+  up->nu=nuu;
+  down->nu=nud;
+  strange->nu=nus;
+  
+  calc_eq_temp_p(*up,*down,*strange,g1,g2,g3,h1,h2,h3,*eos_thermo,T);
   
   if (vac_terms==false) {
     double ret=-eos_thermo->pr-2.0*G*(up->qq*up->qq+down->qq*down->qq+
@@ -1522,6 +1561,59 @@ int eos_quark_njl_vec::gap_func_qq_T(size_t nv, const ubvector &x,
       cout << "Quark mass negative." << endl;
     }
     return 4;
+  }
+
+  y[0]=gap1;
+  y[1]=gap2;
+  y[2]=gap3;
+  y[3]=vec1;
+  y[4]=vec2;
+  y[5]=vec3;
+
+  if (!std::isfinite(y[0]) || !std::isfinite(y[1]) ||
+      !std::isfinite(y[2])) {
+    cout << "Gap equation not finite (gap_func_qq_T)." << endl;
+    exit(-1);
+    return 2;
+  }
+  
+  return 0;
+}
+
+int eos_quark_njl_vec::gap_func_ms_T(size_t nv, const ubvector &x,
+                                     ubvector &y, double T) {
+
+  double gap1, gap2, gap3, vec1, vec2, vec3;
+  
+  up->ms=x[0];
+  down->ms=x[1];
+  strange->ms=x[2];
+  up->nu=x[3];
+  down->nu=x[4];
+  strange->nu=x[5];
+  
+  if (x[0]>0.0 || x[1]>0.0 || x[2]>0.0) {
+    if (verbose>0) {
+      cout << "Quark condensate positive." << endl;
+    }
+    return 1;
+  }
+
+  int ret=calc_eq_temp_p(*up,*down,*strange,gap1,gap2,gap3,
+                         vec1,vec2,vec3,*eos_thermo,T);
+  
+  if (ret!=0) {
+    if (verbose>0) {
+      cout << "cetp returned non-zero." << endl;
+    }
+    return 3;
+  }
+  
+  if (up->qq>0.0 || down->qq>0.0 || strange->qq>0.0) {
+    if (verbose>0) {
+      cout << "Quark condensate positive." << endl;
+    }
+    return 1;
   }
 
   y[0]=gap1;

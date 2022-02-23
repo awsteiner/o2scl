@@ -338,7 +338,7 @@ namespace o2scl {
                                double msu, double msd, double mss,
                                bool vac_terms=true);
 
-    /** \brief Compute the thermodynamic potential at \f$ T=0 \f$
+    /** \brief Compute the thermodynamic potential at \f$ T>0 \f$
      */
     virtual double f_therm_pot_T(double qqu, double qqd, double qqs,
                                  double msu, double msd, double mss,
@@ -468,30 +468,12 @@ namespace o2scl {
     
   public:
 
+    /// The integrand for the density
+    double integ_entropy(double x, double T, double mu, double m, double ms);
+    
     /// The vector coupling constant
     double GV;
 
-#ifdef O2SCL_NEVER_DEFINED    
-    /** \brief Integrand for the quark condensate
-     */
-    double integ_qq(double x, double T, double mu, double m, double ms);
-
-    /** \brief Integrand for the density
-     */
-    double integ_density(double x, double T, double mu, double m,
-                         double ms);
-
-    /** \brief Integrand for the energy density
-     */
-    double integ_edensity(double x, double T, double mu, double m,
-                          double ms);
-    
-    /** \brief Integrand for the pressure
-     */
-    double integ_pressure(double x, double T, double mu, double m,
-                          double ms);
-#endif
-    
     /** \brief Equation of state as a function of chemical potentials at 
 	finite temperature
 
@@ -519,6 +501,10 @@ namespace o2scl {
      */
     virtual int gap_func_ms_vec(size_t nv, const ubvector &x, ubvector &y);
 
+    /** \brief The gap equations starting from the effective masses
+     */
+    virtual int gap_func_qq_vec(size_t nv, const ubvector &x, ubvector &y);
+
     /** \brief Compute the gap equations and the equation of state
         as a function of the chemical potentials
      */
@@ -543,6 +529,23 @@ namespace o2scl {
 	which can be specified in eos::set_thermo().
     */
     int gap_func_qq_T(size_t nv, const ubvector &x, ubvector &y, double T);
+
+    /** \brief Calculates gap equations in \c y as a function of the 
+	constituent masses in \c x
+
+	The function utilizes the \ref quark objects which can
+	be specified in set_quarks() and the \ref thermo object
+	which can be specified in eos::set_thermo().
+    */
+    int gap_func_ms_T(size_t nv, const ubvector &x, ubvector &y, double T);
+
+    /** \brief Compute the thermodynamic potential at \f$ T>0 \f$
+     */
+    virtual double f_therm_pot_T(double qqu, double qqd, double qqs,
+                                 double msu, double msd, double mss,
+                                 double nuu, double nud, double nus,
+                                 double T, bool vac_terms=true);
+
     
   };
   

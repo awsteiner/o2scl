@@ -299,7 +299,7 @@ int main(void) {
 
   t.test_gen(njv.set_parameters()==0,"set_parameters().");
   cout << njv.B0 << endl;
-  //t.test_rel(njv.B0,21.6084,1.0e-4,"bag constant");
+  t.test_rel(njv.B0,21.6084,1.0e-4,"bag constant");
   cout << endl;
 
   nj.from_qq=false;
@@ -313,7 +313,6 @@ int main(void) {
   d.ms=0.3;
   s.ms=2.0;
   ret=nj.calc_p(u,d,s,th);
-  cout << th.ed+th.pr << " " << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
     
   njv.from_qq=false;
   njv.GV=njv.G;
@@ -326,10 +325,77 @@ int main(void) {
   u.ms=0.2;
   d.ms=0.3;
   s.ms=2.0;
-  ret=njv.calc_p(u,d,s,th);
-  cout << th.ed+th.pr << " " << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
 
-  cout << u.n << " " << d.n << " " << s.n << endl;
+  if (false) {
+    
+    ret=njv.calc_p(u,d,s,th);
+  
+    double g[6];
+    ret=njv.calc_eq_p(u,d,s,g[0],g[1],g[2],g[3],g[4],g[5],th);
+    cout << "a: " << th.ed << " " << th.pr << " "
+         << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
+    cout << u.mu << " " << u.n << " " << u.ed << " " << u.pr << endl;
+    cout << d.mu << " " << d.n << " " << d.ed << " " << d.pr << endl;
+    cout << s.mu << " " << s.n << " " << s.ed << " " << s.pr << endl;
+    cout << u.qq << " " << u.ms << endl;
+    cout << d.qq << " " << d.ms << endl;
+    cout << s.qq << " " << s.ms << endl;
+    cout << u.nu << " " << d.nu << " " << s.nu << endl;
+    cout << g[0] << " " << g[1] << " " << g[2] << " " << g[3] << " "
+         << g[4] << " " << g[5] << endl;
+    cout << endl;
+  
+    ret=njv.calc_eq_temp_p(u,d,s,g[0],g[1],g[2],g[3],
+                           g[4],g[5],th,1.0/hc_mev_fm);
+    cout << "b: " << th.ed << " " << th.pr << " "
+         << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
+    cout << u.mu << " " << u.n << " " << u.ed << " " << u.pr << " "
+         << u.en << endl;
+    cout << d.mu << " " << d.n << " " << d.ed << " " << d.pr << " "
+         << d.en << endl;
+    cout << s.mu << " " << s.n << " " << s.ed << " " << s.pr << " "
+         << s.en << endl;
+    cout << u.qq << " " << u.ms << endl;
+    cout << d.qq << " " << d.ms << endl;
+    cout << s.qq << " " << s.ms << endl;
+    cout << u.nu << " " << d.nu << " " << s.nu << endl;
+    cout << g[0] << " " << g[1] << " " << g[2] << " " << g[3] << " "
+         << g[4] << " " << g[5] << endl;
+    cout << endl;
+
+    njv.calc_temp_p(u,d,s,0.1/hc_mev_fm,th);
+  
+    ret=njv.calc_eq_temp_p(u,d,s,g[0],g[1],g[2],g[3],
+                           g[4],g[5],th,0.01/hc_mev_fm);
+    cout << "b: " << th.ed << " " << th.pr << " "
+         << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
+    cout << u.mu << " " << u.n << " " << u.ed << " " << u.pr << endl;
+    cout << d.mu << " " << d.n << " " << d.ed << " " << d.pr << endl;
+    cout << s.mu << " " << s.n << " " << s.ed << " " << s.pr << endl;
+    cout << u.qq << " " << u.ms << endl;
+    cout << d.qq << " " << d.ms << endl;
+    cout << s.qq << " " << s.ms << endl;
+    cout << u.nu << " " << d.nu << " " << s.nu << endl;
+    cout << g[0] << " " << g[1] << " " << g[2] << " " << g[3] << " "
+         << g[4] << " " << g[5] << endl;
+
+    exit(-1);
+  
+    ret=njv.calc_p(u,d,s,th);
+    cout << "1: " << th.ed << " " << th.pr << " "
+         << u.mu << " " << u.n << " " << d.mu << " "
+         << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
+    cout << u.qq << " " << u.ms << endl;
+  
+    njv.calc_temp_p(u,d,s,0.1/hc_mev_fm,th);
+    cout << "2: " << th.ed << " " << th.pr << " " 
+         << u.mu << " " << u.n << " " << d.mu << " "
+         << u.mu*u.n+d.mu*d.n+s.mu*s.n << endl;
+    cout << u.qq << " " << u.ms << endl;
+
+  }
+  
+  ret=njv.calc_p(u,d,s,th);
     
   // Then construct the functor for the derivative with
   // respect to the up quark condensate
@@ -345,7 +411,7 @@ int main(void) {
   df.h=0.01;
   der_u=df.deriv(u.qq,fderiv_u2);
   cout << "der_u: " << der_u << endl;
-  t.test_rel(der_u,0.0,1.0e-9,"fh_u");
+  t.test_rel(der_u,0.0,5.0e-9,"fh_u");
 
   // Then construct the functor for the derivative with
   // respect to the down quark condensate
