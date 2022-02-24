@@ -403,7 +403,7 @@ namespace o2scl_acol {
 
         [Arguments depend on current object type.]
 
-        The behavior of the <tt>autocorr</tt> command depends on the
+        The behavior of the \t1 autocorr command depends on the
         type of the current object.
 
         Numerical array: no arguments. Replace the current object with
