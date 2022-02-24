@@ -164,7 +164,7 @@ AC_CHECK_LIB([mpfr], [mpfr_add], [],
 # ------------------------------------------------------------------
 
 AC_ARG_ENABLE(pugixml,
-[  --enable-pugixml           Include pugixml support @<:@default=no@:>@],
+[  --enable-pugixml        Include pugixml support @<:@default=no@:>@],
 	[case "${enableval}" in
 	yes) pugixml=true ;;
 	no)  pugixml=false ;;
@@ -220,7 +220,7 @@ AC_CHECK_LIB([cubature], [pcubature], [],
 # ------------------------------------------------------------------
 
 AC_ARG_ENABLE(python,
-[  --enable-python       Include python support @<:@default=no@:>@],
+[  --enable-python         Include python support @<:@default=no@:>@],
 	[case "${enableval}" in
 	yes) python=true ;;
 	no)  python=false ;;

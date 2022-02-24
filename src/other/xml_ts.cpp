@@ -35,9 +35,9 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-  pugi::xml_document doc1, doc2;
-  
 #ifdef O2SCL_PUGIXML
+  
+  pugi::xml_document doc1, doc2;
   
   std::string doc_fn=o2scl_settings.get_doc_dir()+
     "xml/namespaceo2scl.xml";
@@ -48,8 +48,8 @@ int main(void) {
   ostream_walker walker;
   n.traverse(walker);
   
-  std::string doc2_fn=((string)"../../")+
-    "doc/o2scl/xml/classo2scl_1_1gen__test__number.xml";
+  std::string doc2_fn=o2scl_settings.get_doc_dir()+
+    "xml/classo2scl_1_1gen__test__number.xml";
   
   pugi::xml_node n2=doxygen_xml_member_get
     (doc2_fn,"gen_test_number","set_radix","detaileddescription",doc2);

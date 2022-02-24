@@ -7,3 +7,5 @@ Function s32tod_nothrow (o2scl)
 
 .. doxygenfunction:: o2scl::s32tod_nothrow(std::u32string s, long double &result)
 
+.. doxygenfunction:: o2scl::s32tod_nothrow(std::u32string s, fp_t &result)
+
