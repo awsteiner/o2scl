@@ -54,9 +54,7 @@
 #include <gsl/gsl_machine.h>
 #include <o2scl/err_hnd.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Series acceleration by Levin u-transform (GSL)
 
@@ -357,8 +355,6 @@ namespace o2scl {
     /** \brief Set the number of terms */
     void set_size(size_t new_size);
 
-#ifndef DOXYGEN_NO_O2NS
-
   protected:
     
     /** \brief An internal function reducing two matrix indices, i and j,
@@ -387,12 +383,8 @@ namespace o2scl {
     /// The workspace size
     size_t size;
 
-#endif
-
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

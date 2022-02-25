@@ -31,9 +31,7 @@
 #include <o2scl/astep_gsl.h>
 #include <o2scl/ode_iv_solve.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Solve an initial-value ODE problem and store
       the result in a \ref table object
@@ -177,8 +175,6 @@ namespace o2scl {
     
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

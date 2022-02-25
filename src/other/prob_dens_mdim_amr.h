@@ -32,9 +32,7 @@
 #include <o2scl/rng.h>
 #include <o2scl/vector.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Probability distribution from an adaptive mesh
       created using a matrix of points
@@ -1150,8 +1148,6 @@ namespace o2scl {
  
   };
  
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

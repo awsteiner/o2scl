@@ -35,9 +35,7 @@
 #include <o2scl/shunting_yard.h>
 #include <o2scl/calc_utf8.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Ordinary differential equation function in src/ode/ode_funct.h
    */
@@ -144,8 +142,6 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

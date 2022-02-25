@@ -32,9 +32,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/vector.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Test line intersection and point inside polygon
 
@@ -186,8 +184,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

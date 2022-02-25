@@ -37,9 +37,7 @@
 #include <o2scl/interp.h>
 #include <o2scl/interp2.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Two-dimensional interpolation class by successive
       one-dimensional interpolation
@@ -428,9 +426,7 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

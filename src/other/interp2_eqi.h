@@ -30,9 +30,7 @@
 #include <iostream>
 #include <string>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Two-dimensional interpolation for equally-spaced intervals
 
@@ -89,19 +87,13 @@ namespace o2scl {
       return 0;
     }
 
-#ifndef DOXYGEN_NO_O2NS
-
   protected:
 
     int itype;
 
-#endif
-
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

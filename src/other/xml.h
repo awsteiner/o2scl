@@ -35,9 +35,7 @@
 #include "pugixml.hpp"
 #endif
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
 #ifdef O2SCL_PUGIXML
 
@@ -264,9 +262,7 @@ namespace o2scl {
    
 #endif
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

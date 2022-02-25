@@ -50,9 +50,7 @@
 #include <o2scl/ode_funct.h>
 #include <o2scl/ode_step.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Runge-Kutta-Fehlberg embedded Runge-Kutta ODE stepper (GSL)
 
@@ -228,8 +226,6 @@ namespace o2scl {
     
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

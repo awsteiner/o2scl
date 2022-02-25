@@ -31,9 +31,7 @@
 #include <gsl/gsl_qrng.h>
 #include <o2scl/vector.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Smooth a function by averaging in a neighborhood
       of points defined by a Sobol sequence
@@ -164,8 +162,6 @@ namespace o2scl {
   
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

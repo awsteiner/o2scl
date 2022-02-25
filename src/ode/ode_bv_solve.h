@@ -33,9 +33,7 @@
 #include <o2scl/ode_iv_solve.h>
 #include <o2scl/mroot_hybrids.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Base class for boundary-value ODE solvers
 
@@ -507,8 +505,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

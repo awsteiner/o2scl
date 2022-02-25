@@ -29,9 +29,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Two-dimensional interpolation base class [abstract]
    */
@@ -145,9 +143,7 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

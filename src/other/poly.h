@@ -49,9 +49,7 @@
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/root_brent_gsl.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Base class for a polynomial with real coefficients
    */
@@ -3329,8 +3327,6 @@ namespace o2scl {
     /// Return a string denoting the type ("quartic_complex_std")
     const char *type() { return "quartic_complex_std"; }
 
-#ifndef DOXYGEN_NO_O2NS
-
   protected:
 
     /// The object to solve for the associated cubic
@@ -3339,12 +3335,8 @@ namespace o2scl {
     /// The object to solve for the associated cubic
     quadratic_complex_std<fp_t,cx_t> quad_obj;
     
-#endif
-
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

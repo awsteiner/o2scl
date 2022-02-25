@@ -30,9 +30,7 @@
 
 #include <o2scl/ode_funct.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief ODE stepper base [abstract base]
    */
@@ -86,8 +84,6 @@ namespace o2scl {
     
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

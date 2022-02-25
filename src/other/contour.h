@@ -36,9 +36,7 @@
 #include <o2scl/interp.h>
 #include <o2scl/uniform_grid.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief A contour line 
 
@@ -526,9 +524,7 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

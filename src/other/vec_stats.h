@@ -49,9 +49,7 @@
 #include <omp.h>
 #endif
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /// \name Vector mean, std. dev., and variance in src/other/vec_stats.h
   //@{
@@ -2467,8 +2465,6 @@ namespace o2scl {
   double kl_div_gaussian(double mean_prior, double mean_post,
                          double covar_prior, double covar_post);
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

@@ -55,9 +55,7 @@
 #include <o2scl/lu.h>
 #include <o2scl/permutation.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Bulirsch-Stoer implicit ODE stepper (GSL)
       
@@ -597,8 +595,6 @@ namespace o2scl {
     
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

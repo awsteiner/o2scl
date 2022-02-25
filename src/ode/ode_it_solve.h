@@ -39,9 +39,7 @@
 #include <o2scl/linear_solver.h>
 #include <o2scl/vector.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /// Function for iterative solving of ODEs
   typedef std::function<double
@@ -418,8 +416,6 @@ namespace o2scl {
   
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

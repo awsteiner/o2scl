@@ -36,9 +36,7 @@
 #include <o2scl/astep.h>
 #include <o2scl/astep_gsl.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Solve an initial-value ODE problems given an adaptive ODE
       stepper
@@ -852,8 +850,6 @@ namespace o2scl {
   
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

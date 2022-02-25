@@ -35,9 +35,7 @@
 
 #include <o2scl/astep.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief An non-adaptive stepper implementation of \ref astep_base.
 
@@ -189,8 +187,6 @@ namespace o2scl {
   
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

@@ -36,9 +36,7 @@
 #include <o2scl/err_hnd.h>
 #include <o2scl/vector.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Interpolate among two independent variables with planes
 
@@ -385,9 +383,7 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

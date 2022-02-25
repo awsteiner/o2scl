@@ -37,9 +37,7 @@
 #include <o2scl/part_deriv.h>
 #include <o2scl/classical_deriv.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Equation of state for a nonrelativistic fermion
 
@@ -631,8 +629,6 @@ namespace o2scl {
 
   typedef fermion_deriv_nr_tl<> fermion_deriv_nr;
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

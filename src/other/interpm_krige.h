@@ -47,9 +47,7 @@
 #include <o2scl/cblas.h>
 #include <o2scl/invert.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Multi-dimensional interpolation by kriging
 
@@ -1353,9 +1351,7 @@ namespace o2scl {
 
 #endif
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
     
 #endif
 

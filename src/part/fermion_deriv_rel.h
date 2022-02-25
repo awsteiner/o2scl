@@ -40,9 +40,7 @@
 #include <o2scl/part_deriv.h>
 #include <o2scl/fermion_rel.h>
 
-//#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-  //#endif
 
   /** \brief Equation of state for a relativistic fermion
 
@@ -691,8 +689,6 @@ namespace o2scl {
 
   protected:
 
-#ifndef DOXYGEN_NO_O2NS
-
     /// The internal integration method
     int intl_method;
 
@@ -934,8 +930,6 @@ namespace o2scl {
     
     //@}
 
-#endif
-
   };
 
   /** \brief Double-precision version of 
@@ -943,8 +937,6 @@ namespace o2scl {
   */
   typedef fermion_deriv_rel_tl<> fermion_deriv_rel;
   
-  //#ifndef DOXYGEN_NO_O2NS
 }
-//#endif
 
 #endif

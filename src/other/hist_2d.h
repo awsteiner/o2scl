@@ -48,9 +48,7 @@ namespace o2scl_hdf {
   void hdf_output(hdf_file &hf, o2scl::hist_2d &t, std::string name);
 }
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief A two-dimensional histogram class
 
@@ -601,8 +599,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

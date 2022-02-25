@@ -36,9 +36,7 @@
 #include <gsl/gsl_bspline.h>
 #include <gsl/gsl_multifit.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief Smooth a GSL vector using GSL bsplines 
       
@@ -177,8 +175,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

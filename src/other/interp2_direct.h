@@ -62,9 +62,7 @@
 #include <o2scl/interp2.h>
 #include <o2scl/search_vec.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Bilinear or bicubic two-dimensional interpolation
       
@@ -770,8 +768,6 @@ namespace o2scl {
     }
 
 
-#ifndef DOXYGEN_NO_O2NS
-    
   protected:
 
     /// True if the data has been specified by the user
@@ -802,13 +798,9 @@ namespace o2scl {
     interp2_direct<vec_t,mat_t,mat_row_t,mat_column_t>& operator=
       (const interp2_direct<vec_t,mat_t,mat_row_t,mat_column_t>&);
 
-#endif
-
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

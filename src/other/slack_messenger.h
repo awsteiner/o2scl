@@ -31,9 +31,7 @@
 
 #include <o2scl/err_hnd.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Object to send messages to Slack using curl
 
@@ -317,9 +315,7 @@ namespace o2scl {
     
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

@@ -42,9 +42,7 @@
 #include <o2scl/columnify.h>
 #include <o2scl/table.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Multi-dimensional interpolation by inverse distance
       weighting
@@ -870,9 +868,7 @@ namespace o2scl {
     
   };
     
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
     
 #endif
 

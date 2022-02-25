@@ -48,9 +48,7 @@
 #include <o2scl/polylog.h>
 #include <o2scl/poly.h>
 
-//#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-  //#endif
 
   /** \brief Fermion class
 
@@ -987,8 +985,6 @@ namespace o2scl {
       return;
     }
     
-#ifndef DOXYGEN_NO_O2NS
-
   protected:
     
     /// A pointer to the solver for massless fermions
@@ -1000,16 +996,12 @@ namespace o2scl {
       return f.g*pow(temper,3.0)*fm2/this->pi2/f.n-1.0;
     }    
   
-#endif
-    
   };
 
   /** \brief Double-precision version of \ref o2scl::fermion_thermo_tl 
    */
   typedef fermion_thermo_tl<> fermion_thermo;
   
-  //#ifndef DOXYGEN_NO_O2NS
 }
-//#endif
 
 #endif

@@ -29,9 +29,7 @@
 
 #include <string>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /// Functor for ODE Jacobians in src/ode/ode_jac_funct.h
   typedef std::function<
@@ -39,8 +37,6 @@ namespace o2scl {
 	boost::numeric::ublas::matrix<double> &,
 	boost::numeric::ublas::vector<double> &) > ode_jac_funct;
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

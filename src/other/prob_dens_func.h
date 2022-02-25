@@ -45,9 +45,7 @@
 #include <o2scl/lu.h>
 #include <o2scl/vec_stats.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief A one-dimensional probability density function
 
@@ -2072,8 +2070,6 @@ namespace o2scl {
   };
 #endif
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

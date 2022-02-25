@@ -29,9 +29,7 @@
 
 #include <o2scl/ode_bv_solve.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Solve boundary-value ODE problems by multishooting
       with a generic nonlinear solver
@@ -344,8 +342,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

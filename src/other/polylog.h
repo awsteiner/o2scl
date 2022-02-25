@@ -48,9 +48,7 @@
 #include <o2scl/inte_double_exp_boost.h>
 #include <o2scl/exception.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Compute a Fermi-Dirac integral by direct integration
 
@@ -1241,8 +1239,6 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

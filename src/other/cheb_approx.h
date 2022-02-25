@@ -32,9 +32,7 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Chebyshev approximation (GSL)
       
@@ -486,8 +484,6 @@ namespace o2scl {
    */
   typedef cheb_approx_tl<double> cheb_approx;
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

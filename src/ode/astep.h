@@ -30,9 +30,7 @@
 #include <o2scl/ode_rkck_gsl.h>
 #include <o2scl/ode_funct.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Adaptive stepper [abstract base]
       
@@ -134,8 +132,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
