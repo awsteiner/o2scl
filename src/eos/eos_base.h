@@ -48,6 +48,12 @@ namespace o2scl {
 
         \note This internal function presumes that 
         \ref fermion_rel::err_nonconv is false .
+
+        The temperature should be in units of \f$ 1/\mathrm{fm} \f$ .
+
+        Because this function uses fermion_rel::pair_density(), the
+        current electron chemical potential is used as an initial
+        guess.
      */
     int electron_density(double T);
 
@@ -56,15 +62,12 @@ namespace o2scl {
         \note This internal function presumes that include_muons is
         true (otherwise there's nothing to solve) and that \ref
         fermion_rel::err_nonconv is false .
+
+        The temperature should be in units of \f$ 1/\mathrm{fm} \f$ .
      */
     int pair_density_eq_fun(size_t nv, const ubvector &x,
                             ubvector &y, double T, double nq);
 
-    /** \brief If true, use the electron density for 
-        \ref pair_density_eq_fun().
-     */
-    bool pde_from_density;
-    
   public:
     
     /// Solver for \ref pair_density_eq() 
@@ -77,6 +80,11 @@ namespace o2scl {
     /** \brief Electron
      */
     fermion e;
+    
+    /** \brief If true, use the electron density for 
+        \ref pair_density_eq_fun().
+     */
+    bool pde_from_density;
     
     /** \brief Muon
      */
@@ -107,15 +115,57 @@ namespace o2scl {
 
     /** \brief Thermodynamics from the electron and muon 
         chemical potentials
+
+        The temperature should be in units of \f$ 1/\mathrm{fm} \f$ .
      */
     int pair_mu(double T);
 
     /** \brief Thermodynamics from the electron chemical potential
         in weak equilibrium
+
+        When \ref include_muons is false, this function is essentially
+        equivalent to \ref pair_mu().
+
+        The temperature should be in units of \f$ 1/\mathrm{fm} \f$ .
     */
     int pair_mu_eq(double T);
 
+    void high_acc() {
+      frel.upper_limit_fac=40.0;
+      frel.fri.dit.tol_abs=1.0e-13;
+      frel.fri.dit.tol_rel=1.0e-13;
+      frel.fri.nit.tol_abs=1.0e-13;
+      frel.fri.nit.tol_rel=1.0e-13;
+      frel.fri.dit.tol_abs=1.0e-13;
+      frel.fri.dit.tol_rel=1.0e-13;
+      frel.fri.nit.tol_abs=1.0e-13;
+      frel.fri.nit.tol_rel=1.0e-13;
+      frel.density_root->tol_rel=1.0e-10;
+      return;
+    }
+
+    void standard_acc() {
+      frel.upper_limit_fac=20.0;
+      frel.fri.dit.tol_abs=1.0e-8;
+      frel.fri.dit.tol_rel=1.0e-8;
+      frel.fri.nit.tol_abs=1.0e-8;
+      frel.fri.nit.tol_rel=1.0e-8;
+      frel.fri.dit.tol_abs=1.0e-8;
+      frel.fri.dit.tol_rel=1.0e-8;
+      frel.fri.nit.tol_abs=1.0e-8;
+      frel.fri.nit.tol_rel=1.0e-8;
+      frel.density_root->tol_rel=4.0e-7;
+      return;
+    }
+    
     /** \brief Thermodynamics from the electron and muon densities
+
+        The temperature should be in units of \f$ 1/\mathrm{fm} \f$ .
+
+        The current values of the electron and muon chemical
+        potentials are used as initial guesses to \ref
+        fermion_rel::pair_density() for both the electrons and (if
+        included) muons.
      */
     int pair_density(double T);
     
@@ -125,6 +175,19 @@ namespace o2scl {
         The first argument \c nq, is the total negative charge density
         including electrons (and muons if \ref include_muons is true)
         and \c T is the temperature.
+
+        When \ref include_muons is false, this function is essentially
+        equivalent to \ref pair_density() using \c nq for the electron
+        density.
+
+        The charge density should be in units of \f$
+        1/\mathrm{fm}^{-3} \f$ and the temperature should be in units
+        of \f$ 1/\mathrm{fm} \f$.
+
+        The current values of the electron chemical potential
+        potentials is used as initial guess. If \ref
+        pde_from_density is true, then the current value
+        of the electron density is also used as an initial guess.
     */
     int pair_density_eq(double nq, double T);
     

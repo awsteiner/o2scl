@@ -320,18 +320,18 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double TMeV,
   if (retx!=0) {
     
     relf.upper_limit_fac=40.0;
-    relf.def_dit.tol_rel/=1.0e2;
-    relf.def_dit.tol_abs/=1.0e2;
-    relf.def_nit.tol_rel/=1.0e2;
-    relf.def_nit.tol_abs/=1.0e2;
+    relf.fri.dit.tol_rel/=1.0e2;
+    relf.fri.dit.tol_abs/=1.0e2;
+    relf.fri.nit.tol_rel/=1.0e2;
+    relf.fri.nit.tol_abs/=1.0e2;
     
     int retxx=relf.pair_density(electron,TMeV/hc_mev_fm);
     
     relf.upper_limit_fac=20.0;
-    relf.def_dit.tol_rel*=1.0e2;
-    relf.def_dit.tol_abs*=1.0e2;
-    relf.def_nit.tol_rel*=1.0e2;
-    relf.def_nit.tol_abs*=1.0e2;
+    relf.fri.dit.tol_rel*=1.0e2;
+    relf.fri.dit.tol_abs*=1.0e2;
+    relf.fri.nit.tol_rel*=1.0e2;
+    relf.fri.nit.tol_abs*=1.0e2;
 
     if (retxx!=0) {
       

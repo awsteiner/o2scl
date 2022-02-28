@@ -625,8 +625,8 @@ namespace o2scl {
       verbose=0;
       last_method=0;
 
-      dit=&def_dit;
-      nit=&def_nit;
+      //dit=&def_dit;
+      //nit=&def_nit;
       density_root=&def_density_root;
       
       density_root->tol_rel=4.0e-7;
@@ -645,19 +645,19 @@ namespace o2scl {
     }
 
     /// Pointer to the non-degenerate integrator
-    inte<func_t,fp_t> *nit;
+    //inte<func_t,fp_t> *nit;
 
     /// Pointer to the degenerate integrator
-    inte<func_t,fp_t> *dit;
+    //inte<func_t,fp_t> *dit;
 
     /// The solver for calc_density()
     root<func_t,func_t,fp_t> *density_root;
 
     /// The default non-degenerate integrator
-    nit_t def_nit;
+    //nit_t def_nit;
     
     /// The default degenerate integrator
-    dit_t def_dit;
+    //dit_t def_dit;
 
     /// The default solver for the chemical potential given the density
     density_root_t def_density_root;
@@ -801,12 +801,12 @@ namespace o2scl {
 	}
 
 	// If it fails, try to make the integrators more accurate
-	fp_t tol1=dit->tol_rel, tol2=dit->tol_abs;
-	fp_t tol3=nit->tol_rel, tol4=nit->tol_abs;
-	dit->tol_rel/=1.0e2;
-	dit->tol_abs/=1.0e2;
-	nit->tol_rel/=1.0e2;
-	nit->tol_abs/=1.0e2;
+	fp_t tol1=fri.dit.tol_rel, tol2=fri.dit.tol_abs;
+	fp_t tol3=fri.nit.tol_rel, tol4=fri.nit.tol_abs;
+	fri.dit.tol_rel/=1.0e2;
+	fri.dit.tol_abs/=1.0e2;
+	fri.nit.tol_rel/=1.0e2;
+	fri.nit.tol_abs/=1.0e2;
 	ret=density_root->solve(nex,mf);
 
 	if (ret!=0) {
@@ -853,10 +853,10 @@ namespace o2scl {
 	}
 
 	// Return tolerances to their original values
-	dit->tol_rel=tol1;
-	dit->tol_abs=tol2;
-	nit->tol_rel=tol3;
-	nit->tol_abs=tol4;
+	fri.dit.tol_rel=tol1;
+	fri.dit.tol_abs=tol2;
+	fri.nit.tol_rel=tol3;
+	fri.nit.tol_abs=tol4;
 
       } else {
 	// First solver worked
@@ -1539,12 +1539,12 @@ namespace o2scl {
 	// If those methods fail, try to make the integrators more
         // accurate
         
-	fp_t tol1=dit->tol_rel, tol2=dit->tol_abs;
-	fp_t tol3=nit->tol_rel, tol4=nit->tol_abs;
-	dit->tol_rel/=1.0e2;
-	dit->tol_abs/=1.0e2;
-	nit->tol_rel/=1.0e2;
-	nit->tol_abs/=1.0e2;
+	fp_t tol1=fri.dit.tol_rel, tol2=fri.dit.tol_abs;
+	fp_t tol3=fri.nit.tol_rel, tol4=fri.nit.tol_abs;
+	fri.dit.tol_rel/=1.0e2;
+	fri.dit.tol_abs/=1.0e2;
+	fri.nit.tol_rel/=1.0e2;
+	fri.nit.tol_abs/=1.0e2;
         
         if (verbose>0) {
           std::cout << "Trying default solver with tighter tolerances"
@@ -1621,10 +1621,10 @@ namespace o2scl {
         }
         
         // Return integration tolerances to their original values
-        dit->tol_rel=tol1;
-        dit->tol_abs=tol2;
-        nit->tol_rel=tol3;
-        nit->tol_abs=tol4;
+        fri.dit.tol_rel=tol1;
+        fri.dit.tol_abs=tol2;
+        fri.nit.tol_rel=tol3;
+        fri.nit.tol_abs=tol4;
       }
 
       // Restore value of err_nonconv
@@ -1932,10 +1932,10 @@ namespace o2scl {
       
           fp_t prefac=f.g*pow(T,3.0)/2.0/this->pi2, unc2=0;
 
-          bool save=nit->err_nonconv;
-          nit->err_nonconv=false;
+          bool save=fri.nit.err_nonconv;
+          fri.nit.err_nonconv=false;
           int reti1=fri.eval_density(y,eta,nden_p,unc2);
-          nit->err_nonconv=save;
+          fri.nit.err_nonconv=save;
           if (reti1!=0) return 1;
           nden_p*=prefac;
         

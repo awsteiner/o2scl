@@ -167,6 +167,16 @@ int main(void) {
     (f,fr,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
   t.test_rel(v1x,0.0,4.0e-6,"calibrate x");
 
+  cout << fr.upper_limit_fac << endl;
+  cout << fr.fri.dit.tol_abs << endl;
+  cout << fr.fri.dit.tol_rel << endl;
+  cout << fr.fri.nit.tol_abs << endl;
+  cout << fr.fri.nit.tol_rel << endl;
+  cout << fr.fri.dit.tol_abs << endl;
+  cout << fr.fri.dit.tol_rel << endl;
+  cout << fr.fri.nit.tol_abs << endl;
+  cout << fr.fri.nit.tol_rel << endl;
+  cout << fr.density_root->tol_rel << endl;
   
   cout << "----------------------------------------------------" << endl;
   cout << "Function calibrate() with better limits." << endl;
@@ -176,10 +186,10 @@ int main(void) {
   // These seem to improve the accuracy. It's not clear that more
   // stringent tolerances will improve results.
   fr.upper_limit_fac=40.0;
-  fr.dit->tol_abs=1.0e-13;
-  fr.dit->tol_rel=1.0e-13;
-  fr.nit->tol_abs=1.0e-13;
-  fr.nit->tol_rel=1.0e-13;
+  fr.fri.dit.tol_abs=1.0e-13;
+  fr.fri.dit.tol_rel=1.0e-13;
+  fr.fri.nit.tol_abs=1.0e-13;
+  fr.fri.nit.tol_rel=1.0e-13;
   fr.fri.dit.tol_abs=1.0e-13;
   fr.fri.dit.tol_rel=1.0e-13;
   fr.fri.nit.tol_abs=1.0e-13;

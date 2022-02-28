@@ -63,10 +63,10 @@ int eos_leptons::electron_density(double T) {
   if (retx!=0) {
         
     frel.upper_limit_fac=40.0;
-    frel.def_dit.tol_rel=1.0e-10;
-    frel.def_dit.tol_abs=1.0e-10;
-    frel.def_nit.tol_rel=1.0e-10;
-    frel.def_nit.tol_abs=1.0e-10;
+    frel.fri.dit.tol_rel=1.0e-10;
+    frel.fri.dit.tol_abs=1.0e-10;
+    frel.fri.nit.tol_rel=1.0e-10;
+    frel.fri.nit.tol_abs=1.0e-10;
         
     if (false && e.inc_rest_mass) {
       e.inc_rest_mass=false;
@@ -84,10 +84,10 @@ int eos_leptons::electron_density(double T) {
     //}
         
     frel.upper_limit_fac=20.0;
-    frel.def_dit.tol_rel=1.0e-8;
-    frel.def_dit.tol_abs=1.0e-8;
-    frel.def_nit.tol_rel=1.0e-8;
-    frel.def_nit.tol_abs=1.0e-8;
+    frel.fri.dit.tol_rel=1.0e-8;
+    frel.fri.dit.tol_abs=1.0e-8;
+    frel.fri.nit.tol_rel=1.0e-8;
+    frel.fri.nit.tol_abs=1.0e-8;
         
   }
       
@@ -218,10 +218,10 @@ int eos_leptons::pair_density(double T) {
     if (retx!=0) {
           
       frel.upper_limit_fac=40.0;
-      frel.def_dit.tol_rel=1.0e-10;
-      frel.def_dit.tol_abs=1.0e-10;
-      frel.def_nit.tol_rel=1.0e-10;
-      frel.def_nit.tol_abs=1.0e-10;
+      frel.fri.dit.tol_rel=1.0e-10;
+      frel.fri.dit.tol_abs=1.0e-10;
+      frel.fri.nit.tol_rel=1.0e-10;
+      frel.fri.nit.tol_abs=1.0e-10;
           
       if (mu.inc_rest_mass) {
         mu.inc_rest_mass=false;
@@ -239,10 +239,10 @@ int eos_leptons::pair_density(double T) {
       }
         
       frel.upper_limit_fac=20.0;
-      frel.def_dit.tol_rel=1.0e-8;
-      frel.def_dit.tol_abs=1.0e-8;
-      frel.def_nit.tol_rel=1.0e-8;
-      frel.def_nit.tol_abs=1.0e-8;
+      frel.fri.dit.tol_rel=1.0e-8;
+      frel.fri.dit.tol_abs=1.0e-8;
+      frel.fri.nit.tol_rel=1.0e-8;
+      frel.fri.nit.tol_abs=1.0e-8;
           
     }
       
@@ -293,7 +293,10 @@ int eos_leptons::pair_density_eq(double nq, double T) {
       mh.tol_rel*=pow(10.0,1.0/2.0);
     }
     if (mret!=0) {
-      O2SCL_ERR("muons failed.",o2scl::exc_einval);
+      std::cout << "nq,T,T_MeV: " << nq << " " << T << " "
+                << T*o2scl_const::hc_mev_fm << std::endl;
+      O2SCL_ERR2("Failed to compute muons in ",
+                 "eos_leptons::pair_density_eq()",o2scl::exc_einval);
     }
 
     mf(1,x,y);
