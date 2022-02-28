@@ -159,8 +159,8 @@ int main(void) {
   t.test_rel(v1,0.0,4.0e-6,"calibrate");
 
   fermion_rel_tl<fermion_tl<double>,o2scl::fermi_dirac_integ_gsl,
-                 bessel_K_exp_integ_boost<double>,inte_qagiu_gsl<>,
-                 inte_qag_gsl<>,fermion_rel_integ<funct,double>,
+                 bessel_K_exp_integ_boost<double>,
+                 fermion_rel_integ<funct,double>,
                  root_cern<>,root_cern<>,funct,double> fr2;
   
   double v1x=pcc.part_calibrate<fermion,fermion_rel>
@@ -168,10 +168,6 @@ int main(void) {
   t.test_rel(v1x,0.0,4.0e-6,"calibrate x");
 
   cout << fr.upper_limit_fac << endl;
-  cout << fr.fri.dit.tol_abs << endl;
-  cout << fr.fri.dit.tol_rel << endl;
-  cout << fr.fri.nit.tol_abs << endl;
-  cout << fr.fri.nit.tol_rel << endl;
   cout << fr.fri.dit.tol_abs << endl;
   cout << fr.fri.dit.tol_rel << endl;
   cout << fr.fri.nit.tol_abs << endl;
@@ -186,10 +182,6 @@ int main(void) {
   // These seem to improve the accuracy. It's not clear that more
   // stringent tolerances will improve results.
   fr.upper_limit_fac=40.0;
-  fr.fri.dit.tol_abs=1.0e-13;
-  fr.fri.dit.tol_rel=1.0e-13;
-  fr.fri.nit.tol_abs=1.0e-13;
-  fr.fri.nit.tol_rel=1.0e-13;
   fr.fri.dit.tol_abs=1.0e-13;
   fr.fri.dit.tol_rel=1.0e-13;
   fr.fri.nit.tol_abs=1.0e-13;

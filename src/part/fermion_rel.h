@@ -546,8 +546,6 @@ namespace o2scl {
   template<class fermion_t=fermion_tl<double>,
 	   class fd_inte_t=class o2scl::fermi_dirac_integ_gsl,
 	   class be_inte_t=o2scl::bessel_K_exp_integ_gsl,
-	   class nit_t=inte_qagiu_gsl<>,
-	   class dit_t=inte_qag_gsl<>,
            class inte_t=fermion_rel_integ<funct,double>,
 	   class density_root_t=root_cern<>,
 	   class root_t=root_cern<>, class func_t=funct,
@@ -652,12 +650,6 @@ namespace o2scl {
 
     /// The solver for calc_density()
     root<func_t,func_t,fp_t> *density_root;
-
-    /// The default non-degenerate integrator
-    //nit_t def_nit;
-    
-    /// The default degenerate integrator
-    //dit_t def_dit;
 
     /// The default solver for the chemical potential given the density
     density_root_t def_density_root;
@@ -778,7 +770,7 @@ namespace o2scl {
       // Perform full solution
       func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
 			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-			   nit_t,dit_t,inte_t,density_root_t,
+			   inte_t,density_root_t,
 			   root_t,func_t,fp_t>::solve_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
 
@@ -1468,7 +1460,7 @@ namespace o2scl {
       
       func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fermion_t &,fp_t,bool)>
 			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-			   nit_t,dit_t,inte_t,density_root_t,
+			   inte_t,density_root_t,
 			   root_t,func_t,fp_t>::pair_fun),
 			  this,std::placeholders::_1,density_match,
                           std::ref(f),temper,false);
@@ -1574,7 +1566,7 @@ namespace o2scl {
           func_t lmf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fermion_t &,
                                                 fp_t,bool)>
                                (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-                                nit_t,dit_t,inte_t,density_root_t,
+                                inte_t,density_root_t,
                                 root_t,func_t,fp_t>::pair_fun),
                                this,std::placeholders::_1,density_match,
                                std::ref(f),temper,true);
