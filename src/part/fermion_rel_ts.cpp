@@ -192,6 +192,8 @@ int main(void) {
     (f,fr,1,"../../data/o2scl/fermion_deriv_cal.o2",false,1,1);
   t.test_rel(v2,0.0,4.0e-10,"calibrate 2");
 
+  fermion_rel_ld3 frld3;
+  
   // AWS, 11/1/21: taking the multiprecision types out while I
   // develop new fermion integrators.
 #ifdef O2SCL_NEVER_DEFINED

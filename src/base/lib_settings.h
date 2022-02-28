@@ -259,7 +259,6 @@ namespace o2scl {
    */
   extern lib_settings_class o2scl_settings;
 
-#ifdef O2SCL_LD_TYPES
   /** \brief
 
       Note that this template is in lib_settings.h because of the
@@ -301,7 +300,6 @@ namespace o2scl {
     
     return 0;
   }
-#endif  
   
 }
 

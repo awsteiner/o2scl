@@ -80,11 +80,11 @@ namespace o2scl {
       internal_fp_t arg2=eta+u-y;
       internal_fp_t arg3=eta+u;
       if (y-eta-u>exp_limit) {
-	ret=(eta+u)*o2sqrt(arg1);
+	ret=(eta+u)*sqrt(arg1);
       } else if (y>u+exp_limit && eta>u+exp_limit) {
-	ret=(eta+u)*o2sqrt(arg1)/(o2exp(arg2)+1);
+	ret=(eta+u)*sqrt(arg1)/(exp(arg2)+1);
       } else {
-	ret=(eta+u)*o2sqrt(arg1)*o2exp(y)/(o2exp(arg3)+o2exp(y));
+	ret=(eta+u)*sqrt(arg1)*exp(y)/(exp(arg3)+exp(y));
       }
       
       if (!o2isfinite(ret)) {
@@ -102,9 +102,9 @@ namespace o2scl {
       internal_fp_t ret;
       
       internal_fp_t arg1=u*u+2*eta*u;
-      internal_fp_t term1=o2sqrt(arg1);
+      internal_fp_t term1=sqrt(arg1);
       internal_fp_t arg3=eta+u;
-      ret=term1*term1*term1*o2exp(y)/(o2exp(arg3)+o2exp(y))/3;
+      ret=term1*term1*term1*exp(y)/(exp(arg3)+exp(y))/3;
       
       if (!o2isfinite(ret)) {
 	ret=0.0;
@@ -124,10 +124,10 @@ namespace o2scl {
       internal_fp_t arg2=eta+u-y;
       internal_fp_t arg3=eta+u;
       if (y>u+exp_limit && eta>u+exp_limit) {
-	ret=(eta+u)*(eta+u)*o2sqrt(arg1)/(o2exp(arg2)+1);
+	ret=(eta+u)*(eta+u)*sqrt(arg1)/(exp(arg2)+1);
       } else {
-	ret=(eta+u)*(eta+u)*o2sqrt(arg1)*o2exp(y)/
-          (o2exp(arg3)+o2exp(y));
+	ret=(eta+u)*(eta+u)*sqrt(arg1)*exp(y)/
+          (exp(arg3)+exp(y));
       }
  
       if (!o2isfinite(ret)) {
@@ -148,11 +148,11 @@ namespace o2scl {
       internal_fp_t arg2=eta+u-y;
       internal_fp_t arg3=eta+u;
       internal_fp_t arg4=y-eta-u;
-      internal_fp_t arg5=1+o2exp(arg4);
-      internal_fp_t arg6=1+o2exp(arg2);
-      internal_fp_t term1=o2log(arg5)/(1+o2exp(arg4));
-      internal_fp_t term2=o2log(arg6)/(1+o2exp(arg2));
-      ret=(eta+u)*o2sqrt(arg1)*(term1+term2);
+      internal_fp_t arg5=1+exp(arg4);
+      internal_fp_t arg6=1+exp(arg2);
+      internal_fp_t term1=o2log(arg5)/(1+exp(arg4));
+      internal_fp_t term2=o2log(arg6)/(1+exp(arg2));
+      ret=(eta+u)*sqrt(arg1)*(term1+term2);
   
       if (!o2isfinite(ret)) {
 	return 0.0;
@@ -171,7 +171,7 @@ namespace o2scl {
       
       internal_fp_t E=o2hypot(k/T,eta)-mot;
       internal_fp_t arg1=E-y;
-      ret=k*k/(1.0+o2exp(arg1));
+      ret=k*k/(1.0+exp(arg1));
           
       if (!o2isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
@@ -190,7 +190,7 @@ namespace o2scl {
       internal_fp_t E=o2hypot(k/T,eta)-mot;
       internal_fp_t arg1=E-y;
       
-      ret=k*k*E*T/(1.0+o2exp(arg1));
+      ret=k*k*E*T/(1.0+exp(arg1));
       
       if (!o2isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
@@ -210,7 +210,7 @@ namespace o2scl {
       internal_fp_t E=o2hypot(k/T,eta)-mot;
       internal_fp_t arg1=E-y;
       
-      ret=k*k*k*k/3/E/T/(1.0+o2exp(arg1));
+      ret=k*k*k*k/3/E/T/(1.0+exp(arg1));
 
       if (!o2isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
@@ -238,9 +238,9 @@ namespace o2scl {
 	// then addition of 1 makes us lose precision, so we use an
 	// alternative:
       } else if (arg1<-deg_entropy_fac) {
-	ret=-k*k*(-1.0+arg1)*o2exp(arg1);
+	ret=-k*k*(-1.0+arg1)*exp(arg1);
       } else {
-	internal_fp_t nx=1.0/(1.0+o2exp(arg1));
+	internal_fp_t nx=1.0/(1.0+exp(arg1));
         internal_fp_t arg2=1.0-nx;
 	ret=-k*k*(nx*o2log(nx)+(1.0-nx)*o2log(arg2));
       }
@@ -255,6 +255,134 @@ namespace o2scl {
     
   };
   
+  /** \brief Default integrator for \ref o2scl::fermion_rel_tl
+   */
+  template<class fp_t> class fermion_rel_integ_multip :
+    public fermion_rel_integ_base {
+    
+  public:
+
+    typedef boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<25> > cpp_dec_float_25;
+    typedef boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<35> > cpp_dec_float_35;
+    typedef boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<50> > cpp_dec_float_50;
+    
+    typedef cpp_dec_float_25 fp1_t;
+    typedef cpp_dec_float_35 fp2_t;
+    typedef cpp_dec_float_50 fp3_t;
+  
+    // The non-degenerate integrators
+    inte_tanh_sinh_boost<funct_cdf25,30,cpp_dec_float_25> nit25;
+    inte_tanh_sinh_boost<funct_cdf35,30,cpp_dec_float_35> nit35;
+    inte_tanh_sinh_boost<funct_cdf50,30,cpp_dec_float_50> nit50;
+    
+    // The degenerate integrators
+    inte_tanh_sinh_boost<funct_cdf25,30,cpp_dec_float_25> dit25;
+    inte_tanh_sinh_boost<funct_cdf35,30,cpp_dec_float_35> dit35;
+    inte_tanh_sinh_boost<funct_cdf50,30,cpp_dec_float_50> dit50;
+      
+    fermion_rel_integ_multip() {
+      nit25.tol_rel=1.0e-15;
+      nit35.tol_rel=1.0e-15;
+      nit50.tol_rel=1.0e-15;
+      dit25.tol_rel=1.0e-15;
+      dit35.tol_rel=1.0e-15;
+      dit50.tol_rel=1.0e-15;
+    }
+    
+    /** \brief Evalulate the density integral in the nondegenerate limit
+     */
+    int eval_density(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
+      funct_cdf25 mfd25=std::bind(std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t)>
+                                 (&fermion_rel_integ_base::density_fun<fp1_t>),
+                                 this,std::placeholders::_1,
+                                 static_cast<fp1_t>(y),
+                                 static_cast<fp1_t>(eta));
+      funct_cdf35 mfd35=std::bind(std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t)>
+                                 (&fermion_rel_integ_base::density_fun<fp2_t>),
+                                 this,std::placeholders::_1,
+                                 static_cast<fp2_t>(y),
+                                 static_cast<fp2_t>(eta));
+      funct_cdf50 mfd50=std::bind(std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t)>
+                                 (&fermion_rel_integ_base::density_fun<fp3_t>),
+                                 this,std::placeholders::_1,
+                                 static_cast<fp3_t>(y),
+                                 static_cast<fp3_t>(eta));
+      fp1_t res1, err1;
+      fp2_t res2, err2;
+      fp3_t res3, err3;
+      int iret=nit25.integ_iu_err(mfd25,0.0,res1,err1);
+      if (iret==0) {
+        res=static_cast<fp_t>(res1);
+        err=static_cast<fp_t>(err1);
+        return iret;
+      }
+      iret=nit35.integ_iu_err(mfd35,0.0,res2,err2);
+      if (iret==0) {
+        res=static_cast<fp_t>(res2);
+        err=static_cast<fp_t>(err2);
+        return iret;
+      }
+      iret=nit50.integ_iu_err(mfd50,0.0,res3,err3);
+      if (iret==0) {
+        res=static_cast<fp_t>(res3);
+        err=static_cast<fp_t>(err3);
+        return iret;
+      }
+      return iret;
+    }
+
+    /** \brief Evalulate the density integral in the degenerate limit
+     */
+    int eval_deg_density(fp_t T, fp_t y, fp_t eta, fp_t mot,
+                         fp_t ul, fp_t &res, fp_t &err) {
+      return 0;
+    }
+
+    /** \brief Evalulate the energy density integral in the nondegenerate limit
+     */
+    int eval_energy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
+      return 0;
+    }
+
+    /** \brief Evalulate the energy density integral in the degenerate limit
+     */
+    int eval_deg_energy(fp_t T, fp_t y, fp_t eta, fp_t mot,
+                        fp_t ul, fp_t &res, fp_t &err) {
+      return 0;
+    }
+
+    /** \brief Evalulate the entropy integral in the nondegenerate limit
+     */
+    int eval_entropy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
+      return 0;
+    }
+
+    /** \brief Evalulate the entropy integral in the degenerate limit
+     */
+    int eval_deg_entropy(fp_t T, fp_t y, fp_t eta, fp_t mot,
+                         fp_t ll, fp_t ul, fp_t &res, fp_t &err) {
+      return 0;
+    }
+
+    /** \brief Evalulate the entropy integral in the nondegenerate limit
+     */
+    int eval_pressure(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
+      return 0;
+    }
+
+    /** \brief Evalulate the entropy integral in the degenerate limit
+     */
+    int eval_deg_pressure(fp_t T, fp_t y, fp_t eta, fp_t mot,
+                          fp_t ul, fp_t &res, fp_t &err) {
+      return 0;
+    }
+    
+
+  };
+
   /** \brief Default integrator for \ref o2scl::fermion_rel_tl
    */
   template<class func_t, class fp_t> class fermion_rel_integ :
@@ -792,13 +920,14 @@ namespace o2scl {
 		    << std::endl;
 	}
 
+        /*
 	// If it fails, try to make the integrators more accurate
-	fp_t tol1=fri.dit.tol_rel, tol2=fri.dit.tol_abs;
-	fp_t tol3=fri.nit.tol_rel, tol4=fri.nit.tol_abs;
-	fri.dit.tol_rel/=1.0e2;
-	fri.dit.tol_abs/=1.0e2;
-	fri.nit.tol_rel/=1.0e2;
-	fri.nit.tol_abs/=1.0e2;
+	//fp_t tol1=fri.dit.tol_rel, tol2=fri.dit.tol_abs;
+	//fp_t tol3=fri.nit.tol_rel, tol4=fri.nit.tol_abs;
+	//fri.dit.tol_rel/=1.0e2;
+	//fri.dit.tol_abs/=1.0e2;
+	//fri.nit.tol_rel/=1.0e2;
+	//fri.nit.tol_abs/=1.0e2;
 	ret=density_root->solve(nex,mf);
 
 	if (ret!=0) {
@@ -843,12 +972,13 @@ namespace o2scl {
 	  // Increasing tolerances worked
 	  last_method=2;
 	}
+        */
 
 	// Return tolerances to their original values
-	fri.dit.tol_rel=tol1;
-	fri.dit.tol_abs=tol2;
-	fri.nit.tol_rel=tol3;
-	fri.nit.tol_abs=tol4;
+	//fri.dit.tol_rel=tol1;
+	//fri.dit.tol_abs=tol2;
+	//fri.nit.tol_rel=tol3;
+        //	fri.nit.tol_abs=tol4;
 
       } else {
 	// First solver worked
@@ -1530,13 +1660,14 @@ namespace o2scl {
 
 	// If those methods fail, try to make the integrators more
         // accurate
-        
-	fp_t tol1=fri.dit.tol_rel, tol2=fri.dit.tol_abs;
-	fp_t tol3=fri.nit.tol_rel, tol4=fri.nit.tol_abs;
-	fri.dit.tol_rel/=1.0e2;
-	fri.dit.tol_abs/=1.0e2;
-	fri.nit.tol_rel/=1.0e2;
-	fri.nit.tol_abs/=1.0e2;
+
+        /*
+	//fp_t tol1=fri.dit.tol_rel, tol2=fri.dit.tol_abs;
+	//fp_t tol3=fri.nit.tol_rel, tol4=fri.nit.tol_abs;
+	//fri.dit.tol_rel/=1.0e2;
+	//fri.dit.tol_abs/=1.0e2;
+	//fri.nit.tol_rel/=1.0e2;
+	//fri.nit.tol_abs/=1.0e2;
         
         if (verbose>0) {
           std::cout << "Trying default solver with tighter tolerances"
@@ -1613,10 +1744,12 @@ namespace o2scl {
         }
         
         // Return integration tolerances to their original values
-        fri.dit.tol_rel=tol1;
-        fri.dit.tol_abs=tol2;
-        fri.nit.tol_rel=tol3;
-        fri.nit.tol_abs=tol4;
+        //fri.dit.tol_rel=tol1;
+        //fri.dit.tol_abs=tol2;
+        //fri.nit.tol_rel=tol3;
+        //fri.nit.tol_abs=tol4;
+        */
+        
       }
 
       // Restore value of err_nonconv
@@ -1924,10 +2057,10 @@ namespace o2scl {
       
           fp_t prefac=f.g*pow(T,3.0)/2.0/this->pi2, unc2=0;
 
-          bool save=fri.nit.err_nonconv;
-          fri.nit.err_nonconv=false;
+          //bool save=fri.nit.err_nonconv;
+          //fri.nit.err_nonconv=false;
           int reti1=fri.eval_density(y,eta,nden_p,unc2);
-          fri.nit.err_nonconv=save;
+          //fri.nit.err_nonconv=save;
           if (reti1!=0) return 1;
           nden_p*=prefac;
         
@@ -1960,10 +2093,10 @@ namespace o2scl {
 	  if (arg>0.0) {
 	    ul=sqrt(arg);
 
-            bool save=fri.dit.err_nonconv;
-            fri.dit.err_nonconv=false;
+            //bool save=fri.dit.err_nonconv;
+            //fri.dit.err_nonconv=false;
             int reti2=fri.eval_deg_density(T,y,eta,mot,ul,nden_p,unc2);
-            fri.dit.err_nonconv=save;
+            //fri.dit.err_nonconv=save;
             if (reti2!=0) return 2;
             nden_p*=f.g/2.0/this->pi2;
             
@@ -2133,6 +2266,68 @@ namespace o2scl {
   */
   typedef fermion_rel_tl<> fermion_rel;
 
+  class fermion_rel_ld3 : public
+  fermion_rel_tl<
+    // the fermion type
+    fermion_tl<long double>,
+    // the Fermi-Dirac integrator
+    fermi_dirac_integ_direct<
+      long double,funct_cdf35,25,
+      boost::multiprecision::number<
+	boost::multiprecision::cpp_dec_float<35> > >,
+    // the Bessel-exp integrator
+    bessel_K_exp_integ_direct<
+      long double,funct_cdf35,25,
+      boost::multiprecision::number<
+	boost::multiprecision::cpp_dec_float<35> > >,
+    fermion_rel_integ_multip<long double>,
+    // The density solver
+    root_brent_gsl<funct_ld,long double>,
+    // The parent solver for massless fermions
+    root_brent_gsl<funct_ld,long double>,
+    // The function type
+    funct_ld,
+    // The floating-point type
+    long double> {
+
+  public:
+    
+    fermion_rel_ld3() {
+
+      // See output of polylog_ts for numeric limit information
+      
+      // Tolerance for the integrator for massless fermions
+      this->fd_integ.set_tol(1.0e-21);
+
+      // Tolerance for the integrator for the nondegenerate expansion
+      this->be_integ.set_tol(1.0e-21);
+
+      // Internal function tolerances
+
+      // This could be as large as log(1.0e4932)=11400,
+      // but only 200 is used for double, so we try this for now.
+      this->exp_limit=4000.0;
+      
+      // log(1.0e18) is 41.4
+      this->upper_limit_fac=42.0;
+      this->deg_entropy_fac=42.0;
+      this->tol_expan=1.0e-17;
+
+      // Solver tolerances
+      this->def_density_root.tol_abs=1.0e-18;
+      this->def_massless_root.tol_abs=1.0e-18;
+
+      // Integrator tolerances
+      fri.nit25.tol_rel=1.0e-16;
+      fri.nit35.tol_rel=1.0e-16;
+      fri.nit50.tol_rel=1.0e-16;
+      fri.dit25.tol_rel=1.0e-16;
+      fri.dit35.tol_rel=1.0e-16;
+      fri.dit50.tol_rel=1.0e-16;
+    }
+    
+  };
+  
 #ifdef O2SCL_NEVER_DEFINED
   
   /** \brief Equation of state for a relativistic fermion using long 

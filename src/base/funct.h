@@ -55,9 +55,14 @@ namespace o2scl {
   typedef std::function<long double(long double)> funct_ld;
 
   /** \brief One-dimensional function typedef in src/base/funct.h
-      
-      This typedef is only present if O2SCL_LD_TYPES is
-      defined during compilation.
+   */
+  typedef std::function<boost::multiprecision::number<
+                          boost::multiprecision::cpp_dec_float<25> >
+			(boost::multiprecision::number<
+                         boost::multiprecision::cpp_dec_float<25> > )>
+  funct_cdf25;
+  
+  /** \brief One-dimensional function typedef in src/base/funct.h
    */
   typedef std::function<boost::multiprecision::number<
                           boost::multiprecision::cpp_dec_float<35> >
@@ -66,9 +71,6 @@ namespace o2scl {
   funct_cdf35;
   
   /** \brief One-dimensional function typedef in src/base/funct.h
-      
-      This typedef is only present if O2SCL_LD_TYPES is
-      defined during compilation.
    */
   typedef std::function<boost::multiprecision::cpp_dec_float_50
 			(boost::multiprecision::cpp_dec_float_50)>
@@ -78,7 +80,7 @@ namespace o2scl {
   
   /** \brief One-dimensional function typedef in src/base/funct.h
       
-      This typedef is only present if O2SCL_LD_TYPES is
+      This typedef is only present if O2SCL_MPFR is
       defined during compilation.
    */
   typedef std::function<boost::multiprecision::mpfr_float_50
@@ -88,9 +90,6 @@ namespace o2scl {
 #endif
   
   /** \brief One-dimensional function typedef in src/base/funct.h
-      
-      This typedef is only present if O2SCL_LD_TYPES is
-      defined during compilation.
    */
   typedef std::function<boost::multiprecision::cpp_dec_float_100
 			(boost::multiprecision::cpp_dec_float_100)>

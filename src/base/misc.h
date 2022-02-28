@@ -43,11 +43,9 @@
 #include <initializer_list>
 #endif
 
-#ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_bin_float.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#endif
 
 #include <o2scl/err_hnd.h>
 
@@ -77,8 +75,6 @@ namespace o2scl {
    */
   long double o2abs(const long double x);
 
-#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
-
   /** \brief Absolute value for cpp_dec_float_35
    */
   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
@@ -104,8 +100,6 @@ namespace o2scl {
   boost::multiprecision::cpp_bin_float_100
     o2abs(const boost::multiprecision::cpp_bin_float_100 x);
   
-#endif
-
   /** \brief Exponential for single precision numbers
    */
   float o2exp(const float x);
@@ -118,8 +112,6 @@ namespace o2scl {
    */
   long double o2exp(const long double x);
 
-#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
-  
   /** \brief Exponential for cpp_dec_float_35
    */
   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
@@ -135,8 +127,6 @@ namespace o2scl {
   boost::multiprecision::cpp_dec_float_100
     o2exp(const boost::multiprecision::cpp_dec_float_100 x);
   
-#endif
-
   /** \brief Logarithm for single precision numbers
    */
   float o2log(const float x);
@@ -149,8 +139,6 @@ namespace o2scl {
    */
   long double o2log(const long double x);
 
-#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
-  
   /** \brief Logarithm for cpp_dec_float_35
    */
   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
@@ -166,8 +154,6 @@ namespace o2scl {
   boost::multiprecision::cpp_dec_float_100
     o2log(const boost::multiprecision::cpp_dec_float_100 x);
   
-#endif
-
   /** \brief Square root for single precision numbers
    */
   float o2sqrt(const float x);
@@ -180,8 +166,6 @@ namespace o2scl {
    */
   long double o2sqrt(const long double x);
 
-#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
-  
   /** \brief Square root for cpp_dec_float_35
    */
   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
@@ -207,8 +191,6 @@ namespace o2scl {
   boost::multiprecision::cpp_bin_float_100
     o2sqrt(const boost::multiprecision::cpp_bin_float_100 x);
   
-#endif
-  
   /** \brief Exponential for single precision numbers
    */
   float o2pow(const float x, const float y);
@@ -221,8 +203,6 @@ namespace o2scl {
    */
   long double o2pow(const long double x, const long double y);
 
-#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
-  
   /** \brief Exponential for cpp_dec_float_35
    */
   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
@@ -253,8 +233,6 @@ namespace o2scl {
   o2pow(const boost::multiprecision::cpp_bin_float_100 x,
         const boost::multiprecision::cpp_bin_float_100 y);
   
-#endif
-
   /** \brief Compatbility function for isfinite()
 
       AWS, 11/11/19: Older compilers seem to require std::isfinite(),
@@ -264,11 +242,11 @@ namespace o2scl {
   */
   bool o2isfinite(const double x);
 
-#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
-
   /** \brief Compatbility function for isfinite()
    */
   bool o2isfinite(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> > x);
+  
+  bool o2isfinite(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> > x);
 
   /** \brief Compatbility function for isfinite()
    */
@@ -286,8 +264,6 @@ namespace o2scl {
    */
   bool o2isfinite(const boost::multiprecision::cpp_bin_float_100 x);
 
-#endif
-  
   /** \brief Compatbility function for hypot()
   */
   float o2hypot(const float x, const float y);
@@ -299,8 +275,6 @@ namespace o2scl {
   /** \brief Compatbility function for hypot()
   */
   long double o2hypot(const long double x, const long double y);
-
-#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
 
   /** \brief Compatbility function for hypot()
    */
@@ -319,8 +293,6 @@ namespace o2scl {
   boost::multiprecision::cpp_dec_float_100
     o2hypot(const boost::multiprecision::cpp_dec_float_100 x,
 	    const boost::multiprecision::cpp_dec_float_100 y);
-
-#endif
   
   //@}
   
