@@ -295,6 +295,7 @@ namespace o2scl {
     /** \brief Evalulate the density integral in the nondegenerate limit
      */
     int eval_density(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
+      
       funct_cdf25 mfd25=std::bind(std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t)>
                                  (&fermion_rel_integ_base::density_fun<fp1_t>),
                                  this,std::placeholders::_1,
@@ -331,6 +332,7 @@ namespace o2scl {
         err=static_cast<fp_t>(err3);
         return iret;
       }
+      
       return iret;
     }
 
@@ -910,88 +912,20 @@ namespace o2scl {
       bool drec=density_root->err_nonconv;
       density_root->err_nonconv=false;
       int ret=density_root->solve(nex,mf);
+      last_method=1;
 
       if (ret!=0) {
     
 	if (verbose>1) {
 	  std::cout << "nu_from_n(): density_root failed x="
 		    << nex << " ." << std::endl;
-	  std::cout << "\tTrying to make integrators more accurate."
-		    << std::endl;
 	}
-
-        /*
-	// If it fails, try to make the integrators more accurate
-	//fp_t tol1=fri.dit.tol_rel, tol2=fri.dit.tol_abs;
-	//fp_t tol3=fri.nit.tol_rel, tol4=fri.nit.tol_abs;
-	//fri.dit.tol_rel/=1.0e2;
-	//fri.dit.tol_abs/=1.0e2;
-	//fri.nit.tol_rel/=1.0e2;
-	//fri.nit.tol_abs/=1.0e2;
-	ret=density_root->solve(nex,mf);
-
-	if (ret!=0) {
-
-	  if (verbose>1) {
-	    std::cout << "nu_from_n(): density_root failed again x=" << nex
-		      << " ." << std::endl;
-	    std::cout << "Trying to bracket root." << std::endl;
-	  }
-	  
-	  // (std::max doesn't work with boost::multiprecision?)
-	  fp_t lg;
-	  if (o2abs(f.nu)>f.ms) lg=o2abs(f.nu);
-	  lg=f.ms;
-	  
-	  fp_t bhigh=lg/temper, b_low=-bhigh;
-	  fp_t yhigh=mf(bhigh), ylow=mf(b_low);
-	  for(size_t j=0;j<5 && yhigh>0.0;j++) {
-	    bhigh*=1.0e2;
-	    yhigh=mf(bhigh);
-	  }
-	  for(size_t j=0;j<5 && ylow<0.0;j++) {
-	    b_low*=1.0e2;
-	    ylow=mf(b_low);
-	  }
-	  if (yhigh<0.0 && ylow>0.0) {
-	    ret=alt_solver.solve_bkt(b_low,bhigh,mf);
-	    if (ret==0) {
-	      // Bracketing solver worked
-	      last_method=3;
-	      nex=b_low;
-	    } else {
-	      if (verbose>1) {
-		std::cout << "nu_from_n(): density_root failed fourth solver "
-			  << b_low << std::endl;
-	      }
-	    }
-	  } else if (verbose>1) {
-	    std::cout << "nu_from_n(): Failed to bracket." << std::endl;
-	  }
-	} else {
-	  // Increasing tolerances worked
-	  last_method=2;
-	}
-        */
-
-	// Return tolerances to their original values
-	//fri.dit.tol_rel=tol1;
-	//fri.dit.tol_abs=tol2;
-	//fri.nit.tol_rel=tol3;
-        //	fri.nit.tol_abs=tol4;
-
-      } else {
-	// First solver worked
-	last_method=1;
-      }
-
-      density_root->err_nonconv=drec;
-
-      if (ret!=0) {
 	O2SCL_CONV2_RET("Density solver failed in ",
 			"fermion_rel::nu_from_n().",exc_efailed,
 			this->err_nonconv);
       }
+
+      density_root->err_nonconv=drec;
 
       f.nu=nex*temper;
 
@@ -1656,102 +1590,6 @@ namespace o2scl {
 	}
       }
 
-      if (ret!=0) {
-
-	// If those methods fail, try to make the integrators more
-        // accurate
-
-        /*
-	//fp_t tol1=fri.dit.tol_rel, tol2=fri.dit.tol_abs;
-	//fp_t tol3=fri.nit.tol_rel, tol4=fri.nit.tol_abs;
-	//fri.dit.tol_rel/=1.0e2;
-	//fri.dit.tol_abs/=1.0e2;
-	//fri.nit.tol_rel/=1.0e2;
-	//fri.nit.tol_abs/=1.0e2;
-        
-        if (verbose>0) {
-          std::cout << "Trying default solver with tighter tolerances"
-                    << std::endl;
-        }
-        
-        ret=density_root->solve(nex,mf);
-        
-	if (ret==0) {
-          
-          if (verbose>0) {
-            std::cout << "Default solver succeeded with tighter tolerances."
-                      << std::endl;
-          }
-          // If that worked, set last_method
-          last_method=4000;
-          
-        } else {
-    
-          // AWS: 7/25/18: We work in log units below, so we ensure the
-          // chemical potential is not negative
-          if (nex<0.0) nex=1.0e-10;
-          
-          // If that failed, try working in log units
-          
-          // Function in log units
-          func_t lmf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fermion_t &,
-                                                fp_t,bool)>
-                               (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-                                inte_t,density_root_t,
-                                root_t,func_t,fp_t>::pair_fun),
-                               this,std::placeholders::_1,density_match,
-                               std::ref(f),temper,true);
-          
-          if (ret!=0) {
-            if (verbose>0) {
-              std::cout << "Trying default solver with tighter tolerances"
-                        << " in log units." << std::endl;
-            }
-            nex=o2log(nex);
-            ret=density_root->solve(nex,lmf);
-            nex=o2exp(nex);
-            // If that worked, set last_method
-            if (ret==0) {
-              if (verbose>0) {
-                std::cout << "Default solver succeeded with tighter "
-                          << "tolerances in log units."
-                          << std::endl;
-              }
-              last_method=5000;
-            }
-          }
-          
-          if (ret!=0) {
-            if (verbose>0) {
-              std::cout << "Trying alternate solver with tighter tolerances"
-                        << " in log units." << std::endl;
-            }
-            // If that failed, try a different solver
-            nex=o2log(nex);
-            ret=alt_solver.solve(nex,lmf);
-            nex=o2exp(nex);
-            // If that worked, set last_method
-            if (ret==0) {
-              if (verbose>0) {
-                std::cout << "Alternate solver succeeded with tighter "
-                          << "tolerances in log units."
-                          << std::endl;
-              }
-              last_method=6000;
-            }
-          }
-          
-        }
-        
-        // Return integration tolerances to their original values
-        //fri.dit.tol_rel=tol1;
-        //fri.dit.tol_abs=tol2;
-        //fri.nit.tol_rel=tol3;
-        //fri.nit.tol_abs=tol4;
-        */
-        
-      }
-
       // Restore value of err_nonconv
       density_root->err_nonconv=drec;
 
@@ -1826,7 +1664,11 @@ namespace o2scl {
 
     /// Solve for the chemical potential given the density
     fp_t solve_fun(fp_t x, fermion_t &f, fp_t T) {
-      fp_t nden, yy;
+
+      // AWS, 2/28/22: I'm getting some uninitialized variable
+      // warnings, so I'm setting nden to a large value to
+      // make sure that they're not causing problems.
+      fp_t nden=1.0e99, yy;
       
       f.nu=T*x;
 
@@ -1951,7 +1793,10 @@ namespace o2scl {
                   bool log_mode) {
 
       // Number density of particles and antiparticles
-      fp_t nden_p, nden_ap;
+      // AWS, 2/28/22: I'm getting some uninitialized variable
+      // warnings, so I'm setting these to a large value to
+      // make sure that they're not causing problems.
+      fp_t nden_p=1.0e99, nden_ap=1.0e99;
 
       // -----------------------------------------------------------------
 
