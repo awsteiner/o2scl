@@ -150,8 +150,8 @@ namespace o2scl {
       internal_fp_t arg4=y-eta-u;
       internal_fp_t arg5=1+exp(arg4);
       internal_fp_t arg6=1+exp(arg2);
-      internal_fp_t term1=o2log(arg5)/(1+exp(arg4));
-      internal_fp_t term2=o2log(arg6)/(1+exp(arg2));
+      internal_fp_t term1=log(arg5)/(1+exp(arg4));
+      internal_fp_t term2=log(arg6)/(1+exp(arg2));
       ret=(eta+u)*sqrt(arg1)*(term1+term2);
   
       if (!o2isfinite(ret)) {
@@ -169,7 +169,7 @@ namespace o2scl {
 
       internal_fp_t ret;
       
-      internal_fp_t E=o2hypot(k/T,eta)-mot;
+      internal_fp_t E=hypot(k/T,eta)-mot;
       internal_fp_t arg1=E-y;
       ret=k*k/(1.0+exp(arg1));
           
@@ -187,7 +187,7 @@ namespace o2scl {
                                  internal_fp_t mot) {
 
       internal_fp_t ret;
-      internal_fp_t E=o2hypot(k/T,eta)-mot;
+      internal_fp_t E=hypot(k/T,eta)-mot;
       internal_fp_t arg1=E-y;
       
       ret=k*k*E*T/(1.0+exp(arg1));
@@ -207,14 +207,15 @@ namespace o2scl {
                                    internal_fp_t mot) {
 
       internal_fp_t ret;
-      internal_fp_t E=o2hypot(k/T,eta)-mot;
+      internal_fp_t E=hypot(k/T,eta)-mot;
       internal_fp_t arg1=E-y;
       
       ret=k*k*k*k/3/E/T/(1.0+exp(arg1));
 
       if (!o2isfinite(ret)) {
-	O2SCL_ERR2("Returned not finite result ",
-		   "in fermion_rel::deg_energy_fun().",exc_einval);
+        return 0.0;
+	//O2SCL_ERR2("Returned not finite result ",
+        //"in fermion_rel::deg_pressure_fun().",exc_einval);
       }
   
       return ret;
@@ -227,7 +228,7 @@ namespace o2scl {
                                   internal_fp_t mot) {
   
       internal_fp_t ret;
-      internal_fp_t E=o2hypot(k/T,eta)-mot;
+      internal_fp_t E=hypot(k/T,eta)-mot;
       internal_fp_t arg1=E-y;
 
       // If the argument to the exponential is really small, then the
@@ -242,7 +243,7 @@ namespace o2scl {
       } else {
 	internal_fp_t nx=1.0/(1.0+exp(arg1));
         internal_fp_t arg2=1.0-nx;
-	ret=-k*k*(nx*o2log(nx)+(1.0-nx)*o2log(arg2));
+	ret=-k*k*(nx*log(nx)+(1.0-nx)*log(arg2));
       }
 
       if (!o2isfinite(ret)) {
@@ -316,18 +317,21 @@ namespace o2scl {
       fp3_t res3, err3;
       int iret=nit25.integ_iu_err(mfd25,0.0,res1,err1);
       if (iret==0) {
+        //std::cout << "1x" << std::endl;
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
       iret=nit35.integ_iu_err(mfd35,0.0,res2,err2);
       if (iret==0) {
+        //std::cout << "2" << std::endl;
         res=static_cast<fp_t>(res2);
         err=static_cast<fp_t>(err2);
         return iret;
       }
       iret=nit50.integ_iu_err(mfd50,0.0,res3,err3);
       if (iret==0) {
+        //std::cout << "3" << std::endl;
         res=static_cast<fp_t>(res3);
         err=static_cast<fp_t>(err3);
         return iret;
@@ -340,46 +344,393 @@ namespace o2scl {
      */
     int eval_deg_density(fp_t T, fp_t y, fp_t eta, fp_t mot,
                          fp_t ul, fp_t &res, fp_t &err) {
-      return 0;
+      
+      funct_cdf25 mfd25=std::bind
+        (std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t,fp1_t,fp1_t)>
+         (&fermion_rel_integ_base::deg_density_fun<fp1_t>),
+         this,std::placeholders::_1,
+         static_cast<fp1_t>(T),
+         static_cast<fp1_t>(y),
+         static_cast<fp1_t>(eta),
+         static_cast<fp1_t>(mot));
+      funct_cdf35 mfd35=std::bind
+        (std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t,fp2_t,fp2_t)>
+         (&fermion_rel_integ_base::deg_density_fun<fp2_t>),
+         this,std::placeholders::_1,
+         static_cast<fp2_t>(T),
+         static_cast<fp2_t>(y),
+         static_cast<fp2_t>(eta),
+         static_cast<fp2_t>(mot));
+      funct_cdf50 mfd50=std::bind
+        (std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t,fp3_t,fp3_t)>
+         (&fermion_rel_integ_base::deg_density_fun<fp3_t>),
+         this,std::placeholders::_1,
+         static_cast<fp3_t>(T),
+         static_cast<fp3_t>(y),
+         static_cast<fp3_t>(eta),
+         static_cast<fp3_t>(mot));
+      
+      fp1_t res1, err1;
+      fp2_t res2, err2;
+      fp3_t res3, err3;
+      fp1_t ul1=static_cast<fp1_t>(ul);
+      fp2_t ul2=static_cast<fp2_t>(ul);
+      fp3_t ul3=static_cast<fp3_t>(ul);
+      
+      int iret=nit25.integ_err(mfd25,0.0,ul1,res1,err1);
+      if (iret==0) {
+        //std::cout << "1b" << std::endl;
+        res=static_cast<fp_t>(res1);
+        err=static_cast<fp_t>(err1);
+        return iret;
+      }
+      iret=nit35.integ_err(mfd35,0.0,ul2,res2,err2);
+      if (iret==0) {
+        //std::cout << "2b" << std::endl;
+        res=static_cast<fp_t>(res2);
+        err=static_cast<fp_t>(err2);
+        return iret;
+      }
+      iret=nit50.integ_err(mfd50,0.0,ul3,res3,err3);
+      if (iret==0) {
+        //std::cout << "3b" << std::endl;
+        res=static_cast<fp_t>(res3);
+        err=static_cast<fp_t>(err3);
+        return iret;
+      }
+      //exit(-1);
+      
+      return iret;
     }
 
     /** \brief Evalulate the energy density integral in the nondegenerate limit
      */
     int eval_energy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
-      return 0;
+      
+      funct_cdf25 mfd25=std::bind(std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t)>
+                                 (&fermion_rel_integ_base::energy_fun<fp1_t>),
+                                 this,std::placeholders::_1,
+                                 static_cast<fp1_t>(y),
+                                 static_cast<fp1_t>(eta));
+      funct_cdf35 mfd35=std::bind(std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t)>
+                                 (&fermion_rel_integ_base::energy_fun<fp2_t>),
+                                 this,std::placeholders::_1,
+                                 static_cast<fp2_t>(y),
+                                 static_cast<fp2_t>(eta));
+      funct_cdf50 mfd50=std::bind(std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t)>
+                                 (&fermion_rel_integ_base::energy_fun<fp3_t>),
+                                 this,std::placeholders::_1,
+                                 static_cast<fp3_t>(y),
+                                 static_cast<fp3_t>(eta));
+      fp1_t res1, err1;
+      fp2_t res2, err2;
+      fp3_t res3, err3;
+      int iret=nit25.integ_iu_err(mfd25,0.0,res1,err1);
+      if (iret==0) {
+        //std::cout << "1x" << std::endl;
+        res=static_cast<fp_t>(res1);
+        err=static_cast<fp_t>(err1);
+        return iret;
+      }
+      iret=nit35.integ_iu_err(mfd35,0.0,res2,err2);
+      if (iret==0) {
+        //std::cout << "2" << std::endl;
+        res=static_cast<fp_t>(res2);
+        err=static_cast<fp_t>(err2);
+        return iret;
+      }
+      iret=nit50.integ_iu_err(mfd50,0.0,res3,err3);
+      if (iret==0) {
+        //std::cout << "3" << std::endl;
+        res=static_cast<fp_t>(res3);
+        err=static_cast<fp_t>(err3);
+        return iret;
+      }
+      
+      return iret;
     }
 
     /** \brief Evalulate the energy density integral in the degenerate limit
      */
     int eval_deg_energy(fp_t T, fp_t y, fp_t eta, fp_t mot,
                         fp_t ul, fp_t &res, fp_t &err) {
-      return 0;
+
+      funct_cdf25 mfd25=std::bind
+        (std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t,fp1_t,fp1_t)>
+         (&fermion_rel_integ_base::deg_energy_fun<fp1_t>),
+         this,std::placeholders::_1,
+         static_cast<fp1_t>(T),
+         static_cast<fp1_t>(y),
+         static_cast<fp1_t>(eta),
+         static_cast<fp1_t>(mot));
+      funct_cdf35 mfd35=std::bind
+        (std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t,fp2_t,fp2_t)>
+         (&fermion_rel_integ_base::deg_energy_fun<fp2_t>),
+         this,std::placeholders::_1,
+         static_cast<fp2_t>(T),
+         static_cast<fp2_t>(y),
+         static_cast<fp2_t>(eta),
+         static_cast<fp2_t>(mot));
+      funct_cdf50 mfd50=std::bind
+        (std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t,fp3_t,fp3_t)>
+         (&fermion_rel_integ_base::deg_energy_fun<fp3_t>),
+         this,std::placeholders::_1,
+         static_cast<fp3_t>(T),
+         static_cast<fp3_t>(y),
+         static_cast<fp3_t>(eta),
+         static_cast<fp3_t>(mot));
+      
+      fp1_t res1, err1;
+      fp2_t res2, err2;
+      fp3_t res3, err3;
+      fp1_t ul1=static_cast<fp1_t>(ul);
+      fp2_t ul2=static_cast<fp2_t>(ul);
+      fp3_t ul3=static_cast<fp3_t>(ul);
+      
+      int iret=nit25.integ_err(mfd25,0.0,ul1,res1,err1);
+      if (iret==0) {
+        //std::cout << "1b" << std::endl;
+        res=static_cast<fp_t>(res1);
+        err=static_cast<fp_t>(err1);
+        return iret;
+      }
+      iret=nit35.integ_err(mfd35,0.0,ul2,res2,err2);
+      if (iret==0) {
+        //std::cout << "2b" << std::endl;
+        res=static_cast<fp_t>(res2);
+        err=static_cast<fp_t>(err2);
+        return iret;
+      }
+      iret=nit50.integ_err(mfd50,0.0,ul3,res3,err3);
+      if (iret==0) {
+        //std::cout << "3b" << std::endl;
+        res=static_cast<fp_t>(res3);
+        err=static_cast<fp_t>(err3);
+        return iret;
+      }
+      //exit(-1);
+      
+      return iret;
     }
 
     /** \brief Evalulate the entropy integral in the nondegenerate limit
      */
     int eval_entropy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
-      return 0;
+      
+      funct_cdf25 mfd25=std::bind(std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t)>
+                                 (&fermion_rel_integ_base::entropy_fun<fp1_t>),
+                                 this,std::placeholders::_1,
+                                 static_cast<fp1_t>(y),
+                                 static_cast<fp1_t>(eta));
+      funct_cdf35 mfd35=std::bind(std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t)>
+                                 (&fermion_rel_integ_base::entropy_fun<fp2_t>),
+                                 this,std::placeholders::_1,
+                                 static_cast<fp2_t>(y),
+                                 static_cast<fp2_t>(eta));
+      funct_cdf50 mfd50=std::bind(std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t)>
+                                 (&fermion_rel_integ_base::entropy_fun<fp3_t>),
+                                 this,std::placeholders::_1,
+                                 static_cast<fp3_t>(y),
+                                 static_cast<fp3_t>(eta));
+      fp1_t res1, err1;
+      fp2_t res2, err2;
+      fp3_t res3, err3;
+      int iret=nit25.integ_iu_err(mfd25,0.0,res1,err1);
+      if (iret==0) {
+        //std::cout << "1x" << std::endl;
+        res=static_cast<fp_t>(res1);
+        err=static_cast<fp_t>(err1);
+        return iret;
+      }
+      iret=nit35.integ_iu_err(mfd35,0.0,res2,err2);
+      if (iret==0) {
+        //std::cout << "2" << std::endl;
+        res=static_cast<fp_t>(res2);
+        err=static_cast<fp_t>(err2);
+        return iret;
+      }
+      iret=nit50.integ_iu_err(mfd50,0.0,res3,err3);
+      if (iret==0) {
+        //std::cout << "3" << std::endl;
+        res=static_cast<fp_t>(res3);
+        err=static_cast<fp_t>(err3);
+        return iret;
+      }
+      
+      return iret;
     }
 
     /** \brief Evalulate the entropy integral in the degenerate limit
      */
     int eval_deg_entropy(fp_t T, fp_t y, fp_t eta, fp_t mot,
                          fp_t ll, fp_t ul, fp_t &res, fp_t &err) {
-      return 0;
+
+      funct_cdf25 mfd25=std::bind
+        (std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t,fp1_t,fp1_t)>
+         (&fermion_rel_integ_base::deg_entropy_fun<fp1_t>),
+         this,std::placeholders::_1,
+         static_cast<fp1_t>(T),
+         static_cast<fp1_t>(y),
+         static_cast<fp1_t>(eta),
+         static_cast<fp1_t>(mot));
+      funct_cdf35 mfd35=std::bind
+        (std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t,fp2_t,fp2_t)>
+         (&fermion_rel_integ_base::deg_entropy_fun<fp2_t>),
+         this,std::placeholders::_1,
+         static_cast<fp2_t>(T),
+         static_cast<fp2_t>(y),
+         static_cast<fp2_t>(eta),
+         static_cast<fp2_t>(mot));
+      funct_cdf50 mfd50=std::bind
+        (std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t,fp3_t,fp3_t)>
+         (&fermion_rel_integ_base::deg_entropy_fun<fp3_t>),
+         this,std::placeholders::_1,
+         static_cast<fp3_t>(T),
+         static_cast<fp3_t>(y),
+         static_cast<fp3_t>(eta),
+         static_cast<fp3_t>(mot));
+      
+      fp1_t res1, err1;
+      fp2_t res2, err2;
+      fp3_t res3, err3;
+      fp1_t ul1=static_cast<fp1_t>(ul);
+      fp2_t ul2=static_cast<fp2_t>(ul);
+      fp3_t ul3=static_cast<fp3_t>(ul);
+      
+      int iret=nit25.integ_err(mfd25,0.0,ul1,res1,err1);
+      if (iret==0) {
+        //std::cout << "1b" << std::endl;
+        res=static_cast<fp_t>(res1);
+        err=static_cast<fp_t>(err1);
+        return iret;
+      }
+      iret=nit35.integ_err(mfd35,0.0,ul2,res2,err2);
+      if (iret==0) {
+        //std::cout << "2b" << std::endl;
+        res=static_cast<fp_t>(res2);
+        err=static_cast<fp_t>(err2);
+        return iret;
+      }
+      iret=nit50.integ_err(mfd50,0.0,ul3,res3,err3);
+      if (iret==0) {
+        //std::cout << "3b" << std::endl;
+        res=static_cast<fp_t>(res3);
+        err=static_cast<fp_t>(err3);
+        return iret;
+      }
+      //exit(-1);
+      
+      return iret;
     }
 
     /** \brief Evalulate the entropy integral in the nondegenerate limit
      */
     int eval_pressure(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
-      return 0;
+      
+      funct_cdf25 mfd25=std::bind(std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t)>
+                                 (&fermion_rel_integ_base::pressure_fun<fp1_t>),
+                                 this,std::placeholders::_1,
+                                 static_cast<fp1_t>(y),
+                                 static_cast<fp1_t>(eta));
+      funct_cdf35 mfd35=std::bind(std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t)>
+                                 (&fermion_rel_integ_base::pressure_fun<fp2_t>),
+                                 this,std::placeholders::_1,
+                                 static_cast<fp2_t>(y),
+                                 static_cast<fp2_t>(eta));
+      funct_cdf50 mfd50=std::bind(std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t)>
+                                 (&fermion_rel_integ_base::pressure_fun<fp3_t>),
+                                 this,std::placeholders::_1,
+                                 static_cast<fp3_t>(y),
+                                 static_cast<fp3_t>(eta));
+      fp1_t res1, err1;
+      fp2_t res2, err2;
+      fp3_t res3, err3;
+      int iret=nit25.integ_iu_err(mfd25,0.0,res1,err1);
+      if (iret==0) {
+        //std::cout << "1x" << std::endl;
+        res=static_cast<fp_t>(res1);
+        err=static_cast<fp_t>(err1);
+        return iret;
+      }
+      iret=nit35.integ_iu_err(mfd35,0.0,res2,err2);
+      if (iret==0) {
+        //std::cout << "2" << std::endl;
+        res=static_cast<fp_t>(res2);
+        err=static_cast<fp_t>(err2);
+        return iret;
+      }
+      iret=nit50.integ_iu_err(mfd50,0.0,res3,err3);
+      if (iret==0) {
+        //std::cout << "3" << std::endl;
+        res=static_cast<fp_t>(res3);
+        err=static_cast<fp_t>(err3);
+        return iret;
+      }
+      
+      return iret;
     }
 
     /** \brief Evalulate the entropy integral in the degenerate limit
      */
     int eval_deg_pressure(fp_t T, fp_t y, fp_t eta, fp_t mot,
                           fp_t ul, fp_t &res, fp_t &err) {
-      return 0;
+
+      funct_cdf25 mfd25=std::bind
+        (std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t,fp1_t,fp1_t)>
+         (&fermion_rel_integ_base::deg_pressure_fun<fp1_t>),
+         this,std::placeholders::_1,
+         static_cast<fp1_t>(T),
+         static_cast<fp1_t>(y),
+         static_cast<fp1_t>(eta),
+         static_cast<fp1_t>(mot));
+      funct_cdf35 mfd35=std::bind
+        (std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t,fp2_t,fp2_t)>
+         (&fermion_rel_integ_base::deg_pressure_fun<fp2_t>),
+         this,std::placeholders::_1,
+         static_cast<fp2_t>(T),
+         static_cast<fp2_t>(y),
+         static_cast<fp2_t>(eta),
+         static_cast<fp2_t>(mot));
+      funct_cdf50 mfd50=std::bind
+        (std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t,fp3_t,fp3_t)>
+         (&fermion_rel_integ_base::deg_pressure_fun<fp3_t>),
+         this,std::placeholders::_1,
+         static_cast<fp3_t>(T),
+         static_cast<fp3_t>(y),
+         static_cast<fp3_t>(eta),
+         static_cast<fp3_t>(mot));
+      
+      fp1_t res1, err1;
+      fp2_t res2, err2;
+      fp3_t res3, err3;
+      fp1_t ul1=static_cast<fp1_t>(ul);
+      fp2_t ul2=static_cast<fp2_t>(ul);
+      fp3_t ul3=static_cast<fp3_t>(ul);
+      
+      int iret=nit25.integ_err(mfd25,0.0,ul1,res1,err1);
+      if (iret==0) {
+        //std::cout << "1b" << std::endl;
+        res=static_cast<fp_t>(res1);
+        err=static_cast<fp_t>(err1);
+        return iret;
+      }
+      iret=nit35.integ_err(mfd35,0.0,ul2,res2,err2);
+      if (iret==0) {
+        //std::cout << "2b" << std::endl;
+        res=static_cast<fp_t>(res2);
+        err=static_cast<fp_t>(err2);
+        return iret;
+      }
+      iret=nit50.integ_err(mfd50,0.0,ul3,res3,err3);
+      if (iret==0) {
+        //std::cout << "3b" << std::endl;
+        res=static_cast<fp_t>(res3);
+        err=static_cast<fp_t>(err3);
+        return iret;
+      }
+      //exit(-1);
+      
+      return iret;
     }
     
 
@@ -772,12 +1123,6 @@ namespace o2scl {
     virtual ~fermion_rel_tl() {
     }
 
-    /// Pointer to the non-degenerate integrator
-    //inte<func_t,fp_t> *nit;
-
-    /// Pointer to the degenerate integrator
-    //inte<func_t,fp_t> *dit;
-
     /// The solver for calc_density()
     root<func_t,func_t,fp_t> *density_root;
 
@@ -934,7 +1279,7 @@ namespace o2scl {
 
     /** \brief Calculate properties as function of chemical potential
      */
-    void calc_mu(fermion_t &f, fp_t temper) {
+    int calc_mu(fermion_t &f, fp_t temper) {
 
       if (verbose>1) {
 	std::cout << "calc_mu(): start."
@@ -953,7 +1298,7 @@ namespace o2scl {
       if (temper==0.0) {
 	this->calc_mu_zerot(f);
 	last_method=9;
-	return;
+	return 0;
       }
 
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
@@ -993,7 +1338,7 @@ namespace o2scl {
 	  unc.pr=f.pr*tol_expan;
 	  unc.en=f.en*tol_expan;
 	  last_method=4;
-	  return;
+	  return 0;
 	}
       }
 
@@ -1010,7 +1355,7 @@ namespace o2scl {
 	  unc.pr=f.pr*tol_expan;
 	  unc.en=f.en*tol_expan;
 	  last_method=5;
-	  return;
+	  return 0;
 	}
       }
 
@@ -1061,6 +1406,21 @@ namespace o2scl {
         fri.eval_entropy(y,eta,f.en,unc.en);
         f.en*=prefac;
         unc.en*=prefac;
+
+        if (verify_ti) {
+          // Compute the pressure
+
+          if (verbose>1) {
+            std::cout << "calc_mu(): non-deg pressure:"
+                      << std::endl;
+          }
+          
+          int iret=fri.eval_pressure(y,eta,f.pr,unc.pr);
+          f.pr*=temper;
+          
+          f.pr*=prefac;
+          unc.pr*=prefac;
+        }
         
 	if (verbose>1) {
 	  std::cout << "calc_mu(): non-deg integrals done."
@@ -1108,7 +1468,7 @@ namespace o2scl {
 	  O2SCL_ERR2("Zero density in degenerate limit in fermion_rel::",
 		     "calc_mu(). Variable deg_limit set improperly?",
 		     exc_efailed);
-	  return;
+	  return 0;
 	}
     
 	// Compute the number density
@@ -1173,6 +1533,19 @@ namespace o2scl {
         f.en*=prefac;
         unc.en*=prefac;
 
+        if (verify_ti) {
+          // Compute the pressure
+          
+          if (verbose>1) {
+            std::cout << "calc_mu(): deg pressure."
+                      << std::endl;
+          }
+          
+          fri.eval_deg_pressure(temper,y,eta,mot,ul,f.pr,unc.pr);
+          f.pr*=prefac;
+          unc.pr*=prefac;
+        }
+
 	if (verbose>1) {
 	  std::cout << "calc_mu(): deg integrals done."
 		    << std::endl;
@@ -1183,11 +1556,13 @@ namespace o2scl {
 
       // Compute the pressure using the thermodynamic identity
 
-      f.pr=-f.ed+temper*f.en+f.nu*f.n;
-      unc.pr=sqrt(unc.ed*unc.ed+temper*unc.en*temper*unc.en+
-		  f.nu*unc.n*f.nu*unc.n);
+      if (verify_ti==false) {
+        f.pr=-f.ed+temper*f.en+f.nu*f.n;
+        unc.pr=sqrt(unc.ed*unc.ed+temper*unc.en*temper*unc.en+
+                    f.nu*unc.n*f.nu*unc.n);
+      }
 
-      return;
+      return 0;
     }
 
     /** \brief Calculate properties as function of density
@@ -1458,10 +1833,10 @@ namespace o2scl {
       f.en+=antip.en;
 
       // Add up uncertainties
-      unc.n=o2hypot(unc.n,unc_n);
-      unc.ed=o2hypot(unc.ed,unc_ed);
-      unc.pr=o2hypot(unc.pr,unc_pr);
-      unc.en=o2hypot(unc.ed,unc_en);
+      unc.n=hypot(unc.n,unc_n);
+      unc.ed=hypot(unc.ed,unc_ed);
+      unc.pr=hypot(unc.pr,unc_pr);
+      unc.en=hypot(unc.ed,unc_en);
 
       return;
     }
@@ -1654,7 +2029,9 @@ namespace o2scl {
       // But now that the density has been modified, we need to
       // recompute the pressure so that the thermodynamic identity is
       // satisified
-      f.pr=-f.ed+f.n*f.nu+temper*f.en;
+      if (verify_ti==false) {
+        f.pr=-f.ed+f.n*f.nu+temper*f.en;
+      }
 
       return success;
     }

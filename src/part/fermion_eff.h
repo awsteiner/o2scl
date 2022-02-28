@@ -166,7 +166,7 @@ namespace o2scl {
 	this quietly sets the density, the scalar density, the energy
 	density, the pressure and the entropy to zero and exits.
     */
-    virtual void calc_mu(fermion &f, double temper);
+    virtual int calc_mu(fermion &f, double temper);
 
     /** \brief Calculate thermodynamic properties as function of
 	density

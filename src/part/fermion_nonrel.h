@@ -151,7 +151,7 @@ namespace o2scl {
     
   /** \brief Calculate properties as function of chemical potential
    */
-  virtual void calc_mu(fermion_t &f, fp_t temper) {
+  virtual int calc_mu(fermion_t &f, fp_t temper) {
 
     if (temper<0.0) {
       O2SCL_ERR("Temperature less than zero in fermion_nonrel::calc_mu().",
@@ -159,7 +159,7 @@ namespace o2scl {
     }
     if (temper==0.0) {
       calc_mu_zerot(f);
-      return;
+      return 0;
     }
 
     fp_t y, sy, spi, ey, int1, int2;
@@ -173,7 +173,7 @@ namespace o2scl {
 
     if (temper<=0.0) {
       calc_mu_zerot(f);
-      return;
+      return 0;
     }
   
     if (f.inc_rest_mass) {
@@ -218,7 +218,7 @@ namespace o2scl {
 		 "fermion_nonrel::calc_mu().",exc_efailed);
     }
   
-    return;
+    return 0;
   }
 
 

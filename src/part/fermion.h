@@ -669,7 +669,7 @@ namespace o2scl {
     
     /** \brief Calculate properties as function of chemical potential
      */
-    virtual void calc_mu(fermion_t &f, fp_t temper)=0;
+    virtual int calc_mu(fermion_t &f, fp_t temper)=0;
     
     /** \brief Calculate properties as function of density
         

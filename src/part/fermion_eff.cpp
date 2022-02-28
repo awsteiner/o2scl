@@ -156,7 +156,7 @@ void fermion_eff::load_coefficients(int ctype) {
   return;
 }
 
-void fermion_eff::calc_mu(fermion &f, double temper) {
+int fermion_eff::calc_mu(fermion &f, double temper) {
   int nn, mm;
   double xx, pren, preu, prep, sumn, sumu, sump;
   double ff, gg, opf, opg, nc;
@@ -171,7 +171,7 @@ void fermion_eff::calc_mu(fermion &f, double temper) {
   // Use zero temperature results if necessary
   if (temper<=tlimit) {
     calc_mu_zerot(f);
-    return;
+    return 0;
   }
   
   // Compute psi
@@ -185,13 +185,13 @@ void fermion_eff::calc_mu(fermion &f, double temper) {
   // Try the nondegenerate expansion if we can
   if (psi<-4.0) {
     bool acc=calc_mu_ndeg(f,temper,1.0e-7);
-    if (acc) return;
+    if (acc) return 0;
   }
 
   // Try the degenerate expansion if we can
   if (psi>10.0) {
     bool acc=calc_mu_deg(f,temper,1.0e-10);
-    if (acc) return;
+    if (acc) return 0;
   }
 
   // The following code assumes that the chemical potential includes
@@ -274,7 +274,7 @@ void fermion_eff::calc_mu(fermion &f, double temper) {
     f.ed-=f.n*f.m;
   }
 
-  return;
+  return 0;
 }
 
 int fermion_eff::calc_density(fermion &f, double temper) {

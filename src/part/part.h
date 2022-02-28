@@ -51,36 +51,36 @@ namespace o2scl {
 
   public:
 
-  /// Pressure
-  fp_t pr;
-  /// Energy density
-  fp_t ed;
-  /// Entropy density
-  fp_t en;
+    /// Pressure
+    fp_t pr;
+    /// Energy density
+    fp_t ed;
+    /// Entropy density
+    fp_t en;
 
-  /// Return string denoting type ("thermo")
-  const char *type() { return "thermo"; }
+    /// Return string denoting type ("thermo")
+    const char *type() { return "thermo"; }
 
-  // Default constructor
-  thermo_tl() {
-  }
+    // Default constructor
+    thermo_tl() {
+    }
 
-  /// Copy constructor
-  thermo_tl(const thermo_tl &t) {
-    ed=t.ed;
-    pr=t.pr;
-    en=t.en;
-  }
-
-  /// Copy construction with operator=()
-  thermo_tl &operator=(const thermo_tl &t) {
-    if (this!=&t) {
+    /// Copy constructor
+    thermo_tl(const thermo_tl &t) {
       ed=t.ed;
       pr=t.pr;
       en=t.en;
     }
-    return *this;
-  }
+
+    /// Copy construction with operator=()
+    thermo_tl &operator=(const thermo_tl &t) {
+      if (this!=&t) {
+        ed=t.ed;
+        pr=t.pr;
+        en=t.en;
+      }
+      return *this;
+    }
 
   };
 
@@ -102,49 +102,33 @@ namespace o2scl {
     
   public:
 
-  /// Degeneracy (e.g. spin and color if applicable)
-  fp_t g;
-  /// Mass
-  fp_t m;
-  /// Number density
-  fp_t n;
-  /// Energy density
-  fp_t ed;
-  /// Pressure
-  fp_t pr;
-  /// Chemical potential
-  fp_t mu;
-  /// Entropy density
-  fp_t en;
-  /// Effective mass (Dirac unless otherwise specified)
-  fp_t ms;
-  /// Effective chemical potential
-  fp_t nu;
-  /** \brief If true, include the mass in the energy 
-      density and chemical potential (default true) 
-  */
-  bool inc_rest_mass;
-  /// True if the particle is non-interacting (default true)
-  bool non_interacting;
+    /// Degeneracy (e.g. spin and color if applicable)
+    fp_t g;
+    /// Mass
+    fp_t m;
+    /// Number density
+    fp_t n;
+    /// Energy density
+    fp_t ed;
+    /// Pressure
+    fp_t pr;
+    /// Chemical potential
+    fp_t mu;
+    /// Entropy density
+    fp_t en;
+    /// Effective mass (Dirac unless otherwise specified)
+    fp_t ms;
+    /// Effective chemical potential
+    fp_t nu;
+    /** \brief If true, include the mass in the energy 
+        density and chemical potential (default true) 
+    */
+    bool inc_rest_mass;
+    /// True if the particle is non-interacting (default true)
+    bool non_interacting;
 
-  /// Copy constructor
-  part_tl(const part_tl &p) {
-    g=p.g;
-    m=p.m;
-    ms=p.ms;
-    n=p.n;
-    ed=p.ed;
-    pr=p.pr;
-    mu=p.mu;
-    en=p.en;
-    nu=p.nu;
-    inc_rest_mass=p.inc_rest_mass;
-    non_interacting=p.non_interacting;
-  }
-
-  /// Copy construction with operator=()
-  part_tl &operator=(const part_tl &p) {
-    if (this!=&p) {
+    /// Copy constructor
+    part_tl(const part_tl &p) {
       g=p.g;
       m=p.m;
       ms=p.ms;
@@ -157,67 +141,83 @@ namespace o2scl {
       inc_rest_mass=p.inc_rest_mass;
       non_interacting=p.non_interacting;
     }
-    return *this;
-  }
-    
-  /// Make a particle of mass \c mass and degeneracy \c dof.
-  part_tl(fp_t mass=0.0, fp_t dof=0.0) {
-    m=mass; 
-    ms=mass; 
-    g=dof;
-    
-    non_interacting=true;
-    inc_rest_mass=true;
-  }    
-  
-  virtual ~part_tl() {
-  }
-  
-  /// Set the mass \c mass and degeneracy \c dof.
-  virtual void init(fp_t mass, fp_t dof) {
-    m=mass; 
-    ms=mass; 
-    g=dof;
-    return;
-  }
 
-  /** \brief Make \c ap an anti-particle with the same mass
-      and degeneracy
-
-      This sets the \ref m, \ref g, \ref ms, \ref inc_rest_mass
-      and \ref non_interacting fields of \c ap equal to that
-      of the current object. If \ref inc_rest_mass is true,
-      then it sets 
-      \f[
-      \mu_{\mathrm{anti}} = - \mu
-      \qquad\mathrm{and}\qquad
-      \nu_{\mathrm{anti}} = - \nu
-      \f]
-      and if \ref inc_rest_mass is false, it sets
-      \f[
-      \mu_{\mathrm{anti}} = - \mu - 2 m
-      \qquad\mathrm{and}\qquad
-      \nu_{\mathrm{anti}} = - \nu - 2 m
-      \f]
-  */
-  virtual void anti(part_tl &ax) {
-    ax.g=g;
-    ax.m=m;
-    ax.ms=ms;
-    ax.inc_rest_mass=inc_rest_mass;
-    ax.non_interacting=non_interacting;
-    if (inc_rest_mass) {
-      ax.nu=-nu;
-      ax.mu=-mu;
-    } else {
-      ax.nu=-nu-2.0*m;
-      ax.mu=-mu-2.0*m;
+    /// Copy construction with operator=()
+    part_tl &operator=(const part_tl &p) {
+      if (this!=&p) {
+        g=p.g;
+        m=p.m;
+        ms=p.ms;
+        n=p.n;
+        ed=p.ed;
+        pr=p.pr;
+        mu=p.mu;
+        en=p.en;
+        nu=p.nu;
+        inc_rest_mass=p.inc_rest_mass;
+        non_interacting=p.non_interacting;
+      }
+      return *this;
     }
-    return;
-  }    
+    
+    /// Make a particle of mass \c mass and degeneracy \c dof.
+    part_tl(fp_t mass=0.0, fp_t dof=0.0) {
+      m=mass; 
+      ms=mass; 
+      g=dof;
+    
+      non_interacting=true;
+      inc_rest_mass=true;
+    }    
+  
+    virtual ~part_tl() {
+    }
+  
+    /// Set the mass \c mass and degeneracy \c dof.
+    virtual void init(fp_t mass, fp_t dof) {
+      m=mass; 
+      ms=mass; 
+      g=dof;
+      return;
+    }
 
-  /// Return string denoting type ("part_tl")
-  virtual const char *type() { return "part_tl"; }
+    /** \brief Make \c ap an anti-particle with the same mass
+        and degeneracy
+
+        This sets the \ref m, \ref g, \ref ms, \ref inc_rest_mass
+        and \ref non_interacting fields of \c ap equal to that
+        of the current object. If \ref inc_rest_mass is true,
+        then it sets 
+        \f[
+        \mu_{\mathrm{anti}} = - \mu
+        \qquad\mathrm{and}\qquad
+        \nu_{\mathrm{anti}} = - \nu
+        \f]
+        and if \ref inc_rest_mass is false, it sets
+        \f[
+        \mu_{\mathrm{anti}} = - \mu - 2 m
+        \qquad\mathrm{and}\qquad
+        \nu_{\mathrm{anti}} = - \nu - 2 m
+        \f]
+    */
+    virtual void anti(part_tl &ax) {
+      ax.g=g;
+      ax.m=m;
+      ax.ms=ms;
+      ax.inc_rest_mass=inc_rest_mass;
+      ax.non_interacting=non_interacting;
+      if (inc_rest_mass) {
+        ax.nu=-nu;
+        ax.mu=-mu;
+      } else {
+        ax.nu=-nu-2.0*m;
+        ax.mu=-mu-2.0*m;
+      }
+      return;
+    }    
+
+    /// Return string denoting type ("part_tl")
+    virtual const char *type() { return "part_tl"; }
     
   };
 
@@ -243,7 +243,7 @@ namespace o2scl {
     /** \brief Set mass and flags from mot, T, and the index k
      */
     template<class part_t>
-      void set_mass_flags(part_t &p, fp_t mot, fp_t T, size_t k) {
+    void set_mass_flags(part_t &p, fp_t mot, fp_t T, size_t k) {
       if (k>=2) {
 	p.non_interacting=false;
 	p.ms=mot*T;
@@ -265,8 +265,8 @@ namespace o2scl {
 	and the flag nr_mode
     */
     template<class part_t>
-      void set_chem_pot(part_t &p, fp_t psi, fp_t T, size_t k,
-			bool nr_mode) {
+    void set_chem_pot(part_t &p, fp_t psi, fp_t T, size_t k,
+                      bool nr_mode) {
       if (k%2==0) {
 	if (k>=2) {
 	  if (nr_mode) {
@@ -299,11 +299,11 @@ namespace o2scl {
 	and update 
     */
     template<class part1_t, class part2_t, class part3_t>
-      void check_density(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
-			 fp_t T, fp_t mot, fp_t psi,
-			 fp_t &mu_bad, fp_t &m_bad,
-			 fp_t &T_bad, fp_t &mot_bad, fp_t &psi_bad,
-			 fp_t &ret_local) {
+    void check_density(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
+                       fp_t T, fp_t mot, fp_t psi,
+                       fp_t &mu_bad, fp_t &m_bad,
+                       fp_t &T_bad, fp_t &mot_bad, fp_t &psi_bad,
+                       fp_t &ret_local) {
       if (fabs((p.n-exact.n)/exact.n)>bad.n) {
 	bad.n=fabs((p.n-exact.n)/exact.n);
 	if (bad.n>ret_local) {
@@ -327,11 +327,11 @@ namespace o2scl {
 	and update 
     */
     template<class part1_t, class part2_t, class part3_t>
-      void check_chem_pot(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
-			  fp_t T, fp_t mot, fp_t psi,
-			  fp_t &mu_bad, fp_t &m_bad,
-			  fp_t &T_bad, fp_t &mot_bad, fp_t &psi_bad,
-			  fp_t &ret_local) {
+    void check_chem_pot(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
+                        fp_t T, fp_t mot, fp_t psi,
+                        fp_t &mu_bad, fp_t &m_bad,
+                        fp_t &T_bad, fp_t &mot_bad, fp_t &psi_bad,
+                        fp_t &ret_local) {
       if (k>=2) {
 	if (fabs((p.nu-exact.nu)/exact.nu)>bad.mu) {
 	  bad.mu=fabs((p.nu-exact.nu)/exact.nu);
@@ -364,11 +364,11 @@ namespace o2scl {
 	the exact result and update
     */
     template<class part1_t, class part2_t, class part3_t>
-      void check_eps(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
-		     fp_t T, fp_t mot, fp_t psi,
-		     fp_t &mu_bad, fp_t &m_bad,
-		     fp_t &T_bad, fp_t &mot_bad, fp_t &psi_bad,
-		     fp_t &ret_local) {
+    void check_eps(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
+                   fp_t T, fp_t mot, fp_t psi,
+                   fp_t &mu_bad, fp_t &m_bad,
+                   fp_t &T_bad, fp_t &mot_bad, fp_t &psi_bad,
+                   fp_t &ret_local) {
       if (fabs((p.ed-exact.ed)/exact.ed)>bad.ed) {
 	bad.ed=fabs((p.ed-exact.ed)/exact.ed);
 	if (bad.ed>ret_local) {
@@ -424,11 +424,11 @@ namespace o2scl {
 	the exact result and update
     */
     template<class part1_t, class part2_t, class part3_t>
-      void check_derivs(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
-			fp_t T, fp_t mot, fp_t psi,
-			fp_t &mu_bad, fp_t &m_bad,
-			fp_t &T_bad, fp_t &mot_bad, fp_t &psi_bad,
-			fp_t &ret_local) {
+    void check_derivs(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
+                      fp_t T, fp_t mot, fp_t psi,
+                      fp_t &mu_bad, fp_t &m_bad,
+                      fp_t &T_bad, fp_t &mot_bad, fp_t &psi_bad,
+                      fp_t &ret_local) {
       if (fabs((p.dndT-exact.dndT)/exact.dndT)>bad.dndT) {
 	bad.dndT=fabs((p.dndT-exact.dndT)/exact.dndT);
 	if (bad.dndT>ret_local) {
@@ -496,17 +496,17 @@ namespace o2scl {
 
         .. todo::
 
-           In function pair_calibrate()
+        In function pair_calibrate()
 
-           - Future: Also calibrate massless fermions?
+        - Future: Also calibrate massless fermions?
 
         \endverbatim
     */
     template<class part_t, class thermo_t>
-      fp_t part_calibrate(part_t &p, thermo_t &th, bool test_pair,
-			    std::string file, bool nr_mode=false,
-			    int verbose=0, bool external=false) {
-			  
+    fp_t part_calibrate(part_t &p, thermo_t &th, bool test_pair,
+                        std::string file, bool nr_mode=false,
+                        int verbose=0, bool external=false) {
+      
       fp_t ret=0;
   
       // ----------------------------------------------------------------
@@ -517,6 +517,9 @@ namespace o2scl {
       // ----------------------------------------------------------------
       // Read data file
 
+      fp_t new_test=0;
+      size_t new_count=0;
+      
       std::string fname;
       if (external==false) {
 	fname=o2scl_settings.get_data_dir()+file;
@@ -600,8 +603,23 @@ namespace o2scl {
 			  << psi << " " << mot << std::endl;
 	      }
             }
-            
+
 	    th.calc_mu(p,T);
+            if (th.verify_ti) {
+              if (p.pr==0.0) {
+                new_test+=abs(p.pr+p.ed-p.n*p.mu-p.en*T)/
+                  abs(-p.ed+p.n*p.mu+p.en*T);
+              } else {
+                new_test+=abs(p.pr+p.ed-p.n*p.mu-p.en*T)/abs(p.pr);
+              }
+              std::cout << "nt1: " << p.pr << " " << (p.pr==0.0) << " "
+                        << abs(-p.ed+p.n*p.mu+p.en*T) << " "
+                        << abs(p.pr+p.ed-p.n*p.mu-p.en*T)/abs(p.pr)
+                        << " " << new_test << std::endl;
+              std::cout << p.ed << " " << p.en << " " << p.n << " "
+                        << p.mu << std::endl;
+              new_count++;
+            }
 	
 	    exact.n*=pow(T,3.0);
 	    if (nr_mode) {
@@ -781,6 +799,18 @@ namespace o2scl {
             }
             
 	    th.calc_density(p,T);
+            if (th.verify_ti) {
+              if (p.pr==0.0) {
+                new_test+=abs(p.pr+p.ed-p.n*p.mu-p.en*T)/
+                  abs(-p.ed+p.n*p.mu+p.en*T);
+              } else {
+                new_test+=abs(p.pr+p.ed-p.n*p.mu-p.en*T)/abs(p.pr);
+              }
+              std::cout << "nt2: " << p.pr << " "
+                        << abs(p.pr+p.ed-p.n*p.mu-p.en*T)/abs(p.pr)
+                        << " " << new_test << std::endl;
+              new_count++;
+            }
 	
 	    if (k>=2) {
 	      dev.nu+=fabs((p.nu-exact.nu)/exact.nu);
@@ -913,6 +943,18 @@ namespace o2scl {
               }
               
 	      th.pair_mu(p,T);
+              if (th.verify_ti) {
+                if (p.pr==0.0) {
+                  new_test+=abs(p.pr+p.ed-p.n*p.mu-p.en*T)/
+                    abs(-p.ed+p.n*p.mu+p.en*T);
+                } else {
+                  new_test+=abs(p.pr+p.ed-p.n*p.mu-p.en*T)/abs(p.pr);
+                }
+                std::cout << "nt3: " << p.pr << " "
+                          << abs(p.pr+p.ed-p.n*p.mu-p.en*T)/abs(p.pr)
+                          << " " << new_test << std::endl;
+                new_count++;
+              }
 	
 	      exact.n*=pow(T,3.0);
 	      if (k%2==0) {
@@ -1061,6 +1103,18 @@ namespace o2scl {
               }
               
 	      th.pair_density(p,T);
+              if (th.verify_ti) {
+                if (p.pr==0.0) {
+                  new_test+=abs(p.pr+p.ed-p.n*p.mu-p.en*T)/
+                    abs(-p.ed+p.n*p.mu+p.en*T);
+                } else {
+                  new_test+=abs(p.pr+p.ed-p.n*p.mu-p.en*T)/abs(p.pr);
+                }
+                std::cout << "nt4: " << p.pr << " "
+                          << abs(p.pr+p.ed-p.n*p.mu-p.en*T)/abs(p.pr)
+                          << " " << new_test << std::endl;
+                new_count++;
+              }
 
 	      if (k>=2) {
 		dev.nu+=fabs((p.nu-exact.nu)/exact.nu);
@@ -1167,6 +1221,12 @@ namespace o2scl {
       // Return to the original values 
 
       p=orig;
+
+      if (th.verify_ti) {
+        std::cout << "ntx: " << new_test << " " << new_test/new_count
+                  << std::endl;
+        exit(-1);
+      }
   
       return ret;
     }

@@ -192,7 +192,32 @@ int main(void) {
     (f,fr,1,"../../data/o2scl/fermion_deriv_cal.o2",false,1,1);
   t.test_rel(v2,0.0,4.0e-10,"calibrate 2");
 
+  fermion_ld fld;
   fermion_rel_ld3 frld3;
+  fld.m=1;
+  fld.g=2;
+  fld.mu=3;
+  fld.mu/=2;
+  long double Tld=3;
+  Tld/=10;
+  std::cout << "Here2." << endl;
+  frld3.verify_ti=true;
+  frld3.calc_mu(fld,Tld);
+  cout << "long double: " << frld3.last_method << endl;
+  cout << dtos(fld.n,0) << " " << dtos(fld.ed,0) << endl;
+  cout << dtos(fld.pr,0) << " " << dtos(fld.en,0) << endl;
+  cout << dtos(-fld.ed+fld.n*fld.mu+Tld*fld.en,0) << endl;
+  cout << endl;
+
+  fld.mu=30;
+  fld.mu/=2;
+  std::cout << "Here4." << endl;
+  frld3.calc_mu(fld,Tld);
+  cout << "long double: " << frld3.last_method << endl;
+  cout << dtos(fld.n,0) << " " << dtos(fld.ed,0) << endl;
+  cout << dtos(fld.pr,0) << " " << dtos(fld.en,0) << endl;
+  cout << dtos(-fld.ed+fld.n*fld.mu+Tld*fld.en,0) << endl;
+  cout << endl;
   
   // AWS, 11/1/21: taking the multiprecision types out while I
   // develop new fermion integrators.

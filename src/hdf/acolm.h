@@ -403,27 +403,31 @@ namespace o2scl_acol {
 
         [Arguments depend on current object type.]
 
-        The behavior of the \t1 autocorr command depends on the
+        The behavior of the <tt>autocorr</tt> command depends on the
         type of the current object.
 
-        Numerical array: no arguments. Replace the current object with
-        a vector of doubles which contains the autocorrelation
+        For objects which act as numerical array (i.e. objects of type
+        <tt>double[]</tt>, <tt>int[]</tt>, etc., the <tt>autocorr</tt>
+        command requires no arguments. It replaces the current object
+        with a vector of doubles which contains the autocorrelation
         coefficient as a function of the step size.
 
-        <b>table</b>: <ac> <ftom> <column or vec. spec> [column or
-        vec. spec. 2] Three arguments are required A column name <ac>,
-        a column name <ftom>, and arguments which specify the data.
-        The autocorrelation coefficients are stored in column <ac> and
-        the quantity '5*tau/M' is stored in column <ftom>. The data
-        may be either a column in the table or a vector specification.
-        Columns <ac> and <ftom> are created if they are not already
-        present and overwritten if they already contain data. Also,
-        the autocorrelation length and estimated sample size are
-        output to the screen. If multiple data sources are given, then
-        the autocorrelation coefficients are averaged together. See
-        -help vector-spec for help on multiple vector specifications.
+        For objects of type <b>table</b>, the <tt>autocorr</tt>
+        command requires three arguments: <ac> <ftom> <column or vec.
+        spec> [column or vec. spec. 2]. The first argument is the
+        column name <ac>, the second is column name <ftom>, and
+        arguments which specify the data. The autocorrelation
+        coefficients are stored in column <ac> and the quantity
+        '5*tau/M' is stored in column <ftom>. The data may be either a
+        column in the table or a vector specification. Columns <ac>
+        and <ftom> are created if they are not already present and
+        overwritten if they already contain data. Also, the
+        autocorrelation length and estimated sample size are output to
+        the screen. If multiple data sources are given, then the
+        autocorrelation coefficients are averaged together. See -help
+        vector-spec for help on multiple vector specifications.
 
-        no object: <mult. vec. spec. 1> [mult. vec. spec 2] ...
+        <b>no object</b>: <mult. vec. spec. 1> [mult. vec. spec 2] ...
 
         Compute the autocorrelation coefficient for all vectors 
         specified as arguments then average those autocorrelation 
