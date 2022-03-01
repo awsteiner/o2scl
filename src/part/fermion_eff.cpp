@@ -64,6 +64,8 @@ fermion_eff::fermion_eff() {
   psi_root=&def_psi_root;
   density_root=&def_density_root;
   min_psi=-4.0;
+
+  verify_ti=false;
 }
 
 fermion_eff::~fermion_eff() {

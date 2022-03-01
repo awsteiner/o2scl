@@ -230,6 +230,9 @@ namespace o2scl {
     /// The minimum value of \f$ \psi \f$ (default -200)
     double min_psi;
 
+    /// If true, verify the thermodynamic identity
+    bool verify_ti;
+    
 #ifndef DOXYGEN_INTERNAL
 
   protected:

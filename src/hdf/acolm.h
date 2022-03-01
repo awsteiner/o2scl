@@ -427,14 +427,15 @@ namespace o2scl_acol {
         autocorrelation coefficients are averaged together. See -help
         vector-spec for help on multiple vector specifications.
 
-        <b>no object</b>: <mult. vec. spec. 1> [mult. vec. spec 2] ...
-
-        Compute the autocorrelation coefficient for all vectors 
-        specified as arguments then average those autocorrelation 
-        coefficients together. If there is no current object 
-        then the averaged autocorrelation coefficients are kept 
-        as a double[] object. See -help mult-vector-spec
-        for help on multiple vector specifications.
+        When no current object is present, the <tt>autocorr</tt>
+        command requires at least one multiple vector specification
+        (see \ref o2scl_hdf::mult_vector_spec()). Compute the
+        autocorrelation coefficient for all vectors specified as
+        arguments then average those autocorrelation coefficients
+        together. If there is no current object then the averaged
+        autocorrelation coefficients are kept as a double[] object.
+        See -help mult-vector-spec for help on multiple vector
+        specifications.
     */
     virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
 

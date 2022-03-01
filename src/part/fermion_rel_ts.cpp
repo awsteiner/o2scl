@@ -153,7 +153,8 @@ int main(void) {
   cout << "Function calibrate()." << endl;
   cout << "----------------------------------------------------" << endl;
   cout << endl;
-  
+
+  fr.verify_ti=true;
   double v1=pcc.part_calibrate<fermion,fermion_rel>
     (f,fr,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
   t.test_rel(v1,0.0,4.0e-6,"calibrate");

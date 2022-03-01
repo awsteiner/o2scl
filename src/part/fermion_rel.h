@@ -1576,10 +1576,10 @@ namespace o2scl {
 
         .. todo::
 
-        In function fermion_rel_tl::calc_density()
+           In function fermion_rel_tl::calc_density()
 
-        - Future: There is still quite a bit of code duplication
-        between this function and \ref calc_mu() .
+           - Future: There is still quite a bit of code duplication
+             between this function and \ref calc_mu() .
 
         \endverbatim
     */
@@ -1848,12 +1848,12 @@ namespace o2scl {
         
         .. todo::
 
-        In function pair_density():
+           In function pair_density():
 
-        - This actually works for negative densities some of the
-        time, but the solver probably doesn't work as well there and
-        we need to document the density expectations for this 
-        function.
+           - This actually works for negative densities some of the
+             time, but the solver probably doesn't work as well there and
+             we need to document the density expectations for this 
+             function.
 
         \endverbatim
     */
@@ -2156,13 +2156,13 @@ namespace o2scl {
 
         .. todo::
 
-        In function fermion_rel_tl::calc_density()
+           In function fermion_rel_tl::calc_density()
 
-        - Future: Particles and antiparticles have different
-        degeneracy factors, so we separately use the expansions one
-        at a time. It is probably better to separately generate a
-        new expansion function which automatically handles the sum
-        of particles and antiparticles.
+           - Future: Particles and antiparticles have different
+             degeneracy factors, so we separately use the expansions one
+             at a time. It is probably better to separately generate a
+             new expansion function which automatically handles the sum
+             of particles and antiparticles.
 
         \endverbatim
     */

@@ -108,6 +108,7 @@ namespace o2scl {
   /// Create a nonrelativistic fermion with mass 'm' and degeneracy 'g'
   fermion_nonrel_tl() {
     density_root=&def_density_root;
+    verify_ti=false;
   }
     
   virtual ~fermion_nonrel_tl() {
@@ -420,6 +421,9 @@ namespace o2scl {
   /// The default solver for calc_density().
   root_cern<> def_density_root;
 
+    /// If true, verify the thermodynamic identity
+    bool verify_ti;
+    
   /// Return string denoting type ("fermion_nonrel")
   virtual const char *type() { return "fermion_nonrel"; }
 
