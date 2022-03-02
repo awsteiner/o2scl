@@ -163,7 +163,8 @@ int main(void) {
                  bessel_K_exp_integ_boost<double>,
                  fermion_rel_integ<funct,double>,
                  root_cern<>,root_cern<>,funct,double> fr2;
-  
+
+  fr.verify_ti=true;
   double v1x=pcc.part_calibrate<fermion,fermion_rel>
     (f,fr,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
   t.test_rel(v1x,0.0,4.0e-6,"calibrate x");

@@ -605,21 +605,6 @@ namespace o2scl {
             }
 
 	    th.calc_mu(p,T);
-            if (th.verify_ti) {
-              if (p.pr==0.0) {
-                new_test+=abs(p.pr+p.ed-p.n*p.mu-p.en*T)/
-                  abs(-p.ed+p.n*p.mu+p.en*T);
-              } else {
-                new_test+=abs(p.pr+p.ed-p.n*p.mu-p.en*T)/abs(p.pr);
-              }
-              std::cout << "nt1: " << p.pr << " " << (p.pr==0.0) << " "
-                        << abs(-p.ed+p.n*p.mu+p.en*T) << " "
-                        << abs(p.pr+p.ed-p.n*p.mu-p.en*T)/abs(p.pr)
-                        << " " << new_test << std::endl;
-              std::cout << p.ed << " " << p.en << " " << p.n << " "
-                        << p.mu << std::endl;
-              new_count++;
-            }
 	
 	    exact.n*=pow(T,3.0);
 	    if (nr_mode) {
@@ -636,6 +621,32 @@ namespace o2scl {
 	    exact.pr*=pow(T,4.0);
 	    exact.en*=pow(T,3.0);
 	
+            if (th.verify_ti) {
+              double val;
+              if (p.pr==0.0) {
+                val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/
+                  abs(-p.ed+p.n*p.nu+p.en*T);
+              } else {
+                val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/abs(p.pr);
+              }
+              new_test+=val;
+              new_count++;
+              if (false) {
+                std::cout << "nt1: " << p.pr << " " 
+                          << -p.ed+p.n*p.nu+p.en*T << " " << val << " "
+                          << new_test << std::endl;
+              }
+              if (val>0.1) {
+                std::cout << "     " << p.n << " " << exact.n << std::endl;
+                std::cout << "     " << p.ed << " " << exact.ed << std::endl;
+                std::cout << "     " << p.en << " " << exact.en << std::endl;
+                std::cout << "     " << p.pr << " " << exact.pr << " "
+                          << -p.ed+p.n*p.nu+p.en*T << std::endl;
+                std::cout << "     " << p.ed << " " << p.en << " "
+                          << p.n << " " << p.mu << std::endl;
+                exit(-1);
+              }
+            }
 	    dev.n+=fabs((p.n-exact.n)/exact.n);
 	    dev.ed+=fabs((p.ed-exact.ed)/exact.ed);
 	    dev.pr+=fabs((p.pr-exact.pr)/exact.pr);
@@ -800,16 +811,25 @@ namespace o2scl {
             
 	    th.calc_density(p,T);
             if (th.verify_ti) {
+              double val;
               if (p.pr==0.0) {
-                new_test+=abs(p.pr+p.ed-p.n*p.mu-p.en*T)/
-                  abs(-p.ed+p.n*p.mu+p.en*T);
+                val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/
+                  abs(-p.ed+p.n*p.nu+p.en*T);
               } else {
-                new_test+=abs(p.pr+p.ed-p.n*p.mu-p.en*T)/abs(p.pr);
+                val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/abs(p.pr);
               }
-              std::cout << "nt2: " << p.pr << " "
-                        << abs(p.pr+p.ed-p.n*p.mu-p.en*T)/abs(p.pr)
-                        << " " << new_test << std::endl;
+              new_test+=val;
               new_count++;
+              if (false) {
+                std::cout << "nt2: " << p.pr << " " 
+                          << -p.ed+p.n*p.nu+p.en*T << " " << val << " "
+                          << new_test << std::endl;
+              }
+              if (val>0.1) {
+                std::cout << "     " << p.ed << " " << p.en << " " << p.n << " "
+                          << p.nu << std::endl;
+                exit(-1);
+              }
             }
 	
 	    if (k>=2) {
@@ -944,16 +964,25 @@ namespace o2scl {
               
 	      th.pair_mu(p,T);
               if (th.verify_ti) {
+                double val;
                 if (p.pr==0.0) {
-                  new_test+=abs(p.pr+p.ed-p.n*p.mu-p.en*T)/
-                    abs(-p.ed+p.n*p.mu+p.en*T);
+                  val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/
+                    abs(-p.ed+p.n*p.nu+p.en*T);
                 } else {
-                  new_test+=abs(p.pr+p.ed-p.n*p.mu-p.en*T)/abs(p.pr);
+                  val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/abs(p.pr);
                 }
-                std::cout << "nt3: " << p.pr << " "
-                          << abs(p.pr+p.ed-p.n*p.mu-p.en*T)/abs(p.pr)
-                          << " " << new_test << std::endl;
+                new_test+=val;
                 new_count++;
+                if (false) {
+                  std::cout << "nt3: " << p.pr << " " 
+                            << -p.ed+p.n*p.nu+p.en*T << " " << val << " "
+                            << new_test << std::endl;
+                }
+                if (val>0.1) {
+                  std::cout << "     " << p.ed << " " << p.en << " "
+                            << p.n << " " << p.nu << std::endl;
+                  exit(-1);
+                }
               }
 	
 	      exact.n*=pow(T,3.0);
@@ -1104,18 +1133,28 @@ namespace o2scl {
               
 	      th.pair_density(p,T);
               if (th.verify_ti) {
+                double val;
                 if (p.pr==0.0) {
-                  new_test+=abs(p.pr+p.ed-p.n*p.mu-p.en*T)/
-                    abs(-p.ed+p.n*p.mu+p.en*T);
+                  val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/
+                    abs(-p.ed+p.n*p.nu+p.en*T);
                 } else {
-                  new_test+=abs(p.pr+p.ed-p.n*p.mu-p.en*T)/abs(p.pr);
+                  val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/abs(p.pr);
                 }
-                std::cout << "nt4: " << p.pr << " "
-                          << abs(p.pr+p.ed-p.n*p.mu-p.en*T)/abs(p.pr)
-                          << " " << new_test << std::endl;
+                new_test+=val;
                 new_count++;
+                if (false) {
+                  std::cout << "nt4: " << p.pr << " " 
+                            << -p.ed+p.n*p.nu+p.en*T << " " << val << " "
+                            << new_test << std::endl;
+                }
+                if (val>0.1) {
+                  std::cout << "     " << p.ed << " " << p.en << " "
+                            << p.n << " "
+                            << p.nu << std::endl;
+                  exit(-1);
+                }
               }
-
+              
 	      if (k>=2) {
 		dev.nu+=fabs((p.nu-exact.nu)/exact.nu);
 	      } else {
@@ -1225,7 +1264,6 @@ namespace o2scl {
       if (th.verify_ti) {
         std::cout << "ntx: " << new_test << " " << new_test/new_count
                   << std::endl;
-        exit(-1);
       }
   
       return ret;

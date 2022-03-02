@@ -80,12 +80,31 @@ namespace o2scl {
       internal_fp_t arg2=eta+u-y;
       internal_fp_t arg3=eta+u;
       if (y-eta-u>exp_limit) {
-	ret=(eta+u)*sqrt(arg1);
+	ret=arg3*sqrt(arg1);
       } else if (y>u+exp_limit && eta>u+exp_limit) {
-	ret=(eta+u)*sqrt(arg1)/(exp(arg2)+1);
+	ret=arg3*sqrt(arg1)/(exp(arg2)+1);
       } else {
-	ret=(eta+u)*sqrt(arg1)*exp(y)/(exp(arg3)+exp(y));
+	ret=arg3*sqrt(arg1)*exp(y)/(exp(arg3)+exp(y));
       }
+      
+      if (!o2isfinite(ret)) {
+	ret=0.0;
+      }
+
+      return ret;
+    }
+
+    /// The integrand for the pressure for non-degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t pressure_fun_old(internal_fp_t u, internal_fp_t y,
+                               internal_fp_t eta) {
+
+      internal_fp_t ret;
+      
+      internal_fp_t arg1=u*u+2*eta*u;
+      internal_fp_t term1=sqrt(arg1);
+      internal_fp_t arg3=eta+u;
+      ret=term1*term1*term1*exp(y)/(exp(arg3)+exp(y))/3;
       
       if (!o2isfinite(ret)) {
 	ret=0.0;
@@ -104,7 +123,7 @@ namespace o2scl {
       internal_fp_t arg1=u*u+2*eta*u;
       internal_fp_t term1=sqrt(arg1);
       internal_fp_t arg3=eta+u;
-      ret=term1*term1*term1*exp(y)/(exp(arg3)+exp(y))/3;
+      ret=term1*arg3*log1p(exp(y-arg3));
       
       if (!o2isfinite(ret)) {
 	ret=0.0;
@@ -124,10 +143,9 @@ namespace o2scl {
       internal_fp_t arg2=eta+u-y;
       internal_fp_t arg3=eta+u;
       if (y>u+exp_limit && eta>u+exp_limit) {
-	ret=(eta+u)*(eta+u)*sqrt(arg1)/(exp(arg2)+1);
+	ret=arg3*arg3*sqrt(arg1)/(exp(arg2)+1);
       } else {
-	ret=(eta+u)*(eta+u)*sqrt(arg1)*exp(y)/
-          (exp(arg3)+exp(y));
+	ret=arg3*arg3*sqrt(arg1)*exp(y)/(exp(arg3)+exp(y));
       }
  
       if (!o2isfinite(ret)) {
@@ -152,7 +170,7 @@ namespace o2scl {
       internal_fp_t arg6=1+exp(arg2);
       internal_fp_t term1=log(arg5)/(1+exp(arg4));
       internal_fp_t term2=log(arg6)/(1+exp(arg2));
-      ret=(eta+u)*sqrt(arg1)*(term1+term2);
+      ret=arg3*sqrt(arg1)*(term1+term2);
   
       if (!o2isfinite(ret)) {
 	return 0.0;
@@ -210,7 +228,8 @@ namespace o2scl {
       internal_fp_t E=hypot(k/T,eta)-mot;
       internal_fp_t arg1=E-y;
       
-      ret=k*k*k*k/3/E/T/(1.0+exp(arg1));
+      //ret=k*k*k*k/3/E/T/(1.0+exp(arg1));
+      ret=k*k*T*log1p(exp(-arg1));
 
       if (!o2isfinite(ret)) {
         return 0.0;
@@ -266,9 +285,9 @@ namespace o2scl {
     typedef boost::multiprecision::number<
     boost::multiprecision::cpp_dec_float<25> > cpp_dec_float_25;
     typedef boost::multiprecision::number<
-    boost::multiprecision::cpp_dec_float<35> > cpp_dec_float_35;
+      boost::multiprecision::cpp_dec_float<35> > cpp_dec_float_35;
     typedef boost::multiprecision::number<
-    boost::multiprecision::cpp_dec_float<50> > cpp_dec_float_50;
+      boost::multiprecision::cpp_dec_float<50> > cpp_dec_float_50;
     
     typedef cpp_dec_float_25 fp1_t;
     typedef cpp_dec_float_35 fp2_t;
@@ -298,44 +317,44 @@ namespace o2scl {
     int eval_density(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       
       funct_cdf25 mfd25=std::bind(std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t)>
-                                 (&fermion_rel_integ_base::density_fun<fp1_t>),
-                                 this,std::placeholders::_1,
-                                 static_cast<fp1_t>(y),
-                                 static_cast<fp1_t>(eta));
+                                  (&fermion_rel_integ_base::density_fun<fp1_t>),
+                                  this,std::placeholders::_1,
+                                  static_cast<fp1_t>(y),
+                                  static_cast<fp1_t>(eta));
       funct_cdf35 mfd35=std::bind(std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t)>
-                                 (&fermion_rel_integ_base::density_fun<fp2_t>),
-                                 this,std::placeholders::_1,
-                                 static_cast<fp2_t>(y),
-                                 static_cast<fp2_t>(eta));
+                                  (&fermion_rel_integ_base::density_fun<fp2_t>),
+                                  this,std::placeholders::_1,
+                                  static_cast<fp2_t>(y),
+                                  static_cast<fp2_t>(eta));
       funct_cdf50 mfd50=std::bind(std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t)>
-                                 (&fermion_rel_integ_base::density_fun<fp3_t>),
-                                 this,std::placeholders::_1,
-                                 static_cast<fp3_t>(y),
-                                 static_cast<fp3_t>(eta));
+                                  (&fermion_rel_integ_base::density_fun<fp3_t>),
+                                  this,std::placeholders::_1,
+                                  static_cast<fp3_t>(y),
+                                  static_cast<fp3_t>(eta));
       fp1_t res1, err1;
       fp2_t res2, err2;
       fp3_t res3, err3;
       int iret=nit25.integ_iu_err(mfd25,0.0,res1,err1);
       if (iret==0) {
-        //std::cout << "1x" << std::endl;
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
       iret=nit35.integ_iu_err(mfd35,0.0,res2,err2);
       if (iret==0) {
-        //std::cout << "2" << std::endl;
         res=static_cast<fp_t>(res2);
         err=static_cast<fp_t>(err2);
         return iret;
       }
       iret=nit50.integ_iu_err(mfd50,0.0,res3,err3);
       if (iret==0) {
-        //std::cout << "3" << std::endl;
         res=static_cast<fp_t>(res3);
         err=static_cast<fp_t>(err3);
         return iret;
       }
+      std::cout << "Non-degenerate density integrator failed at "
+                << "highest precision for y,eta: " << y << " " << eta
+                << std::endl;
       
       return iret;
     }
@@ -379,26 +398,25 @@ namespace o2scl {
       
       int iret=nit25.integ_err(mfd25,0.0,ul1,res1,err1);
       if (iret==0) {
-        //std::cout << "1b" << std::endl;
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
       iret=nit35.integ_err(mfd35,0.0,ul2,res2,err2);
       if (iret==0) {
-        //std::cout << "2b" << std::endl;
         res=static_cast<fp_t>(res2);
         err=static_cast<fp_t>(err2);
         return iret;
       }
       iret=nit50.integ_err(mfd50,0.0,ul3,res3,err3);
       if (iret==0) {
-        //std::cout << "3b" << std::endl;
         res=static_cast<fp_t>(res3);
         err=static_cast<fp_t>(err3);
         return iret;
       }
-      //exit(-1);
+      std::cout << "Degenerate density integrator failed at "
+                << "highest precision for y,eta: " << y << " " << eta
+                << std::endl;
       
       return iret;
     }
@@ -408,44 +426,44 @@ namespace o2scl {
     int eval_energy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       
       funct_cdf25 mfd25=std::bind(std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t)>
-                                 (&fermion_rel_integ_base::energy_fun<fp1_t>),
-                                 this,std::placeholders::_1,
-                                 static_cast<fp1_t>(y),
-                                 static_cast<fp1_t>(eta));
+                                  (&fermion_rel_integ_base::energy_fun<fp1_t>),
+                                  this,std::placeholders::_1,
+                                  static_cast<fp1_t>(y),
+                                  static_cast<fp1_t>(eta));
       funct_cdf35 mfd35=std::bind(std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t)>
-                                 (&fermion_rel_integ_base::energy_fun<fp2_t>),
-                                 this,std::placeholders::_1,
-                                 static_cast<fp2_t>(y),
-                                 static_cast<fp2_t>(eta));
+                                  (&fermion_rel_integ_base::energy_fun<fp2_t>),
+                                  this,std::placeholders::_1,
+                                  static_cast<fp2_t>(y),
+                                  static_cast<fp2_t>(eta));
       funct_cdf50 mfd50=std::bind(std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t)>
-                                 (&fermion_rel_integ_base::energy_fun<fp3_t>),
-                                 this,std::placeholders::_1,
-                                 static_cast<fp3_t>(y),
-                                 static_cast<fp3_t>(eta));
+                                  (&fermion_rel_integ_base::energy_fun<fp3_t>),
+                                  this,std::placeholders::_1,
+                                  static_cast<fp3_t>(y),
+                                  static_cast<fp3_t>(eta));
       fp1_t res1, err1;
       fp2_t res2, err2;
       fp3_t res3, err3;
       int iret=nit25.integ_iu_err(mfd25,0.0,res1,err1);
       if (iret==0) {
-        //std::cout << "1x" << std::endl;
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
       iret=nit35.integ_iu_err(mfd35,0.0,res2,err2);
       if (iret==0) {
-        //std::cout << "2" << std::endl;
         res=static_cast<fp_t>(res2);
         err=static_cast<fp_t>(err2);
         return iret;
       }
       iret=nit50.integ_iu_err(mfd50,0.0,res3,err3);
       if (iret==0) {
-        //std::cout << "3" << std::endl;
         res=static_cast<fp_t>(res3);
         err=static_cast<fp_t>(err3);
         return iret;
       }
+      std::cout << "Non-degenerate energy integrator failed at "
+                << "highest precision for y,eta: " << y << " " << eta
+                << std::endl;
       
       return iret;
     }
@@ -489,26 +507,25 @@ namespace o2scl {
       
       int iret=nit25.integ_err(mfd25,0.0,ul1,res1,err1);
       if (iret==0) {
-        //std::cout << "1b" << std::endl;
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
       iret=nit35.integ_err(mfd35,0.0,ul2,res2,err2);
       if (iret==0) {
-        //std::cout << "2b" << std::endl;
         res=static_cast<fp_t>(res2);
         err=static_cast<fp_t>(err2);
         return iret;
       }
       iret=nit50.integ_err(mfd50,0.0,ul3,res3,err3);
       if (iret==0) {
-        //std::cout << "3b" << std::endl;
         res=static_cast<fp_t>(res3);
         err=static_cast<fp_t>(err3);
         return iret;
       }
-      //exit(-1);
+      std::cout << "Degenerate energy integrator failed at "
+                << "highest precision for y,eta: " << y << " " << eta
+                << std::endl;
       
       return iret;
     }
@@ -518,44 +535,44 @@ namespace o2scl {
     int eval_entropy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       
       funct_cdf25 mfd25=std::bind(std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t)>
-                                 (&fermion_rel_integ_base::entropy_fun<fp1_t>),
-                                 this,std::placeholders::_1,
-                                 static_cast<fp1_t>(y),
-                                 static_cast<fp1_t>(eta));
+                                  (&fermion_rel_integ_base::entropy_fun<fp1_t>),
+                                  this,std::placeholders::_1,
+                                  static_cast<fp1_t>(y),
+                                  static_cast<fp1_t>(eta));
       funct_cdf35 mfd35=std::bind(std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t)>
-                                 (&fermion_rel_integ_base::entropy_fun<fp2_t>),
-                                 this,std::placeholders::_1,
-                                 static_cast<fp2_t>(y),
-                                 static_cast<fp2_t>(eta));
+                                  (&fermion_rel_integ_base::entropy_fun<fp2_t>),
+                                  this,std::placeholders::_1,
+                                  static_cast<fp2_t>(y),
+                                  static_cast<fp2_t>(eta));
       funct_cdf50 mfd50=std::bind(std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t)>
-                                 (&fermion_rel_integ_base::entropy_fun<fp3_t>),
-                                 this,std::placeholders::_1,
-                                 static_cast<fp3_t>(y),
-                                 static_cast<fp3_t>(eta));
+                                  (&fermion_rel_integ_base::entropy_fun<fp3_t>),
+                                  this,std::placeholders::_1,
+                                  static_cast<fp3_t>(y),
+                                  static_cast<fp3_t>(eta));
       fp1_t res1, err1;
       fp2_t res2, err2;
       fp3_t res3, err3;
       int iret=nit25.integ_iu_err(mfd25,0.0,res1,err1);
       if (iret==0) {
-        //std::cout << "1x" << std::endl;
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
       iret=nit35.integ_iu_err(mfd35,0.0,res2,err2);
       if (iret==0) {
-        //std::cout << "2" << std::endl;
         res=static_cast<fp_t>(res2);
         err=static_cast<fp_t>(err2);
         return iret;
       }
       iret=nit50.integ_iu_err(mfd50,0.0,res3,err3);
       if (iret==0) {
-        //std::cout << "3" << std::endl;
         res=static_cast<fp_t>(res3);
         err=static_cast<fp_t>(err3);
         return iret;
       }
+      std::cout << "Non-degenerate entropy integrator failed at "
+                << "highest precision for y,eta: " << y << " " << eta
+                << std::endl;
       
       return iret;
     }
@@ -599,26 +616,25 @@ namespace o2scl {
       
       int iret=nit25.integ_err(mfd25,0.0,ul1,res1,err1);
       if (iret==0) {
-        //std::cout << "1b" << std::endl;
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
       iret=nit35.integ_err(mfd35,0.0,ul2,res2,err2);
       if (iret==0) {
-        //std::cout << "2b" << std::endl;
         res=static_cast<fp_t>(res2);
         err=static_cast<fp_t>(err2);
         return iret;
       }
       iret=nit50.integ_err(mfd50,0.0,ul3,res3,err3);
       if (iret==0) {
-        //std::cout << "3b" << std::endl;
         res=static_cast<fp_t>(res3);
         err=static_cast<fp_t>(err3);
         return iret;
       }
-      //exit(-1);
+      std::cout << "Degenerate entropy integrator failed at "
+                << "highest precision for y,eta: " << y << " " << eta
+                << std::endl;
       
       return iret;
     }
@@ -627,45 +643,46 @@ namespace o2scl {
      */
     int eval_pressure(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       
-      funct_cdf25 mfd25=std::bind(std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t)>
-                                 (&fermion_rel_integ_base::pressure_fun<fp1_t>),
-                                 this,std::placeholders::_1,
-                                 static_cast<fp1_t>(y),
-                                 static_cast<fp1_t>(eta));
-      funct_cdf35 mfd35=std::bind(std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t)>
-                                 (&fermion_rel_integ_base::pressure_fun<fp2_t>),
-                                 this,std::placeholders::_1,
-                                 static_cast<fp2_t>(y),
-                                 static_cast<fp2_t>(eta));
-      funct_cdf50 mfd50=std::bind(std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t)>
-                                 (&fermion_rel_integ_base::pressure_fun<fp3_t>),
-                                 this,std::placeholders::_1,
-                                 static_cast<fp3_t>(y),
-                                 static_cast<fp3_t>(eta));
+      funct_cdf25 mfd25=std::bind
+        (std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t)>
+         (&fermion_rel_integ_base::pressure_fun<fp1_t>),
+         this,std::placeholders::_1,
+         static_cast<fp1_t>(y),static_cast<fp1_t>(eta));
+      funct_cdf35 mfd35=std::bind
+        (std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t)>
+         (&fermion_rel_integ_base::pressure_fun<fp2_t>),
+         this,std::placeholders::_1,
+         static_cast<fp2_t>(y),static_cast<fp2_t>(eta));
+      funct_cdf50 mfd50=std::bind
+        (std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t)>
+         (&fermion_rel_integ_base::pressure_fun<fp3_t>),
+         this,std::placeholders::_1,
+         static_cast<fp3_t>(y),static_cast<fp3_t>(eta));
+         
       fp1_t res1, err1;
       fp2_t res2, err2;
       fp3_t res3, err3;
       int iret=nit25.integ_iu_err(mfd25,0.0,res1,err1);
       if (iret==0) {
-        //std::cout << "1x" << std::endl;
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
       iret=nit35.integ_iu_err(mfd35,0.0,res2,err2);
       if (iret==0) {
-        //std::cout << "2" << std::endl;
         res=static_cast<fp_t>(res2);
         err=static_cast<fp_t>(err2);
         return iret;
       }
       iret=nit50.integ_iu_err(mfd50,0.0,res3,err3);
       if (iret==0) {
-        //std::cout << "3" << std::endl;
         res=static_cast<fp_t>(res3);
         err=static_cast<fp_t>(err3);
         return iret;
       }
+      std::cout << "Non-degenerate pressure integrator failed at "
+                << "highest precision for y,eta: " << y << " " << eta
+                << std::endl;
       
       return iret;
     }
@@ -706,29 +723,28 @@ namespace o2scl {
       fp1_t ul1=static_cast<fp1_t>(ul);
       fp2_t ul2=static_cast<fp2_t>(ul);
       fp3_t ul3=static_cast<fp3_t>(ul);
-      
+
       int iret=nit25.integ_err(mfd25,0.0,ul1,res1,err1);
       if (iret==0) {
-        //std::cout << "1b" << std::endl;
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
       iret=nit35.integ_err(mfd35,0.0,ul2,res2,err2);
       if (iret==0) {
-        //std::cout << "2b" << std::endl;
         res=static_cast<fp_t>(res2);
         err=static_cast<fp_t>(err2);
         return iret;
       }
       iret=nit50.integ_err(mfd50,0.0,ul3,res3,err3);
       if (iret==0) {
-        //std::cout << "3b" << std::endl;
         res=static_cast<fp_t>(res3);
         err=static_cast<fp_t>(err3);
         return iret;
       }
-      //exit(-1);
+      std::cout << "Degenerate pressure integrator failed at "
+                << "highest precision for y,eta: " << y << " " << eta
+                << std::endl;
       
       return iret;
     }
@@ -828,7 +844,8 @@ namespace o2scl {
                             fp_t>::pressure_fun<fp_t>),
                            this,std::placeholders::_1,y,eta);
       int iret=nit.integ_iu_err(mfd,0.0,res,err);
-      return iret;
+      return 0;
+      //return iret;
     }
 
     /** \brief Evalulate the entropy integral in the degenerate limit
@@ -981,48 +998,48 @@ namespace o2scl {
       uncertainties are stored in \ref unc. In the case of
       calc_density() and pair_density(), the uncertainty from the
       numerical accuracy of the solver is not included. (There is also
-      a relatively small inaccuracy due to the mathematical evaluation
-      of the integrands which is not included in \ref unc.)
+                                                         a relatively small inaccuracy due to the mathematical evaluation
+                                                         of the integrands which is not included in \ref unc.)
       
-      One can improve the accuracy to within 1 part in \f$ 10^{10} \f$
-      using \code fermion_rel rf(1.0,2.0); rf.upper_limit_fac=40.0;
-      rf.dit->tol_abs=1.0e-13; rf.dit->tol_rel=1.0e-13;
-      rf.nit->tol_abs=1.0e-13; rf.nit->tol_rel=1.0e-13;
-      rf.density_root->tol_rel=1.0e-10; \endcode which decreases the
-      both the relative and absolute tolerances for both the
-      degenerate and non-degenerate integrators and improves the
-      accuracy of the solver which determines the chemical potential
-      from the density. Of course if these tolerances are too small,
-      the calculation may fail.
+                                                         One can improve the accuracy to within 1 part in \f$ 10^{10} \f$
+                                                         using \code fermion_rel rf(1.0,2.0); rf.upper_limit_fac=40.0;
+                                                         rf.dit->tol_abs=1.0e-13; rf.dit->tol_rel=1.0e-13;
+                                                         rf.nit->tol_abs=1.0e-13; rf.nit->tol_rel=1.0e-13;
+                                                         rf.density_root->tol_rel=1.0e-10; \endcode which decreases the
+                                                         both the relative and absolute tolerances for both the
+                                                         degenerate and non-degenerate integrators and improves the
+                                                         accuracy of the solver which determines the chemical potential
+                                                         from the density. Of course if these tolerances are too small,
+                                                         the calculation may fail.
       
-      \verbatim embed:rst
+                                                         \verbatim embed:rst
       
-      .. todo::
+                                                         .. todo::
       
-         In class fermion_rel_tl:
+                                                         In class fermion_rel_tl:
       
-         - Future: I had to remove the shared_ptr stuff because the
-           default algorithm types don't support multiprecision, but it
-           might be nice to restore the shared_ptr mechanism somehow.
+                                                         - Future: I had to remove the shared_ptr stuff because the
+                                                         default algorithm types don't support multiprecision, but it
+                                                         might be nice to restore the shared_ptr mechanism somehow.
          
-         - Future: The expressions which appear in in the integrand
-           functions density_fun(), etc. could likely be improved,
-           especially in the case where \ref o2scl::part::inc_rest_mass
-           is <tt>false</tt>. There should not be a need to check if
-           <tt>ret</tt> is finite.
+                                                         - Future: The expressions which appear in in the integrand
+                                                         functions density_fun(), etc. could likely be improved,
+                                                         especially in the case where \ref o2scl::part::inc_rest_mass
+                                                         is <tt>false</tt>. There should not be a need to check if
+                                                         <tt>ret</tt> is finite.
          
-         - Future: It appears this class doesn't compute the
-           uncertainty in the chemical potential or density with
-           calc_density(). This could be fixed.
+                                                         - Future: It appears this class doesn't compute the
+                                                         uncertainty in the chemical potential or density with
+                                                         calc_density(). This could be fixed.
          
-         - Future: I'd like to change the lower limit on the entropy
-           integration, but the value in the code at the moment (stored
-           in <tt>ll</tt>) makes bm_part2.cpp worse.
+                                                         - Future: I'd like to change the lower limit on the entropy
+                                                         integration, but the value in the code at the moment (stored
+                                                         in <tt>ll</tt>) makes bm_part2.cpp worse.
          
-         - Future: The function pair_mu() should set the antiparticle
-           integrators as done in fermion_deriv_rel.
+                                                         - Future: The function pair_mu() should set the antiparticle
+                                                         integrators as done in fermion_deriv_rel.
       
-      \endverbatim
+                                                         \endverbatim
   */
   template<class fermion_t=fermion_tl<double>,
 	   class fd_inte_t=class o2scl::fermi_dirac_integ_gsl,
@@ -1416,10 +1433,9 @@ namespace o2scl {
           }
           
           int iret=fri.eval_pressure(y,eta,f.pr,unc.pr);
-          f.pr*=temper;
           
-          f.pr*=prefac;
-          unc.pr*=prefac;
+          f.pr*=prefac*temper;
+          unc.pr*=prefac*temper;
         }
         
 	if (verbose>1) {
@@ -1433,7 +1449,7 @@ namespace o2scl {
 
 	// Otherwise, apply a degenerate approximation, by making the
 	// upper integration limit finite
-    
+
         fp_t y=f.nu/temper;
         fp_t eta=f.ms/temper;
         fp_t mot;
@@ -1576,10 +1592,10 @@ namespace o2scl {
 
         .. todo::
 
-           In function fermion_rel_tl::calc_density()
+        In function fermion_rel_tl::calc_density()
 
-           - Future: There is still quite a bit of code duplication
-             between this function and \ref calc_mu() .
+        - Future: There is still quite a bit of code duplication
+        between this function and \ref calc_mu() .
 
         \endverbatim
     */
@@ -1848,12 +1864,12 @@ namespace o2scl {
         
         .. todo::
 
-           In function pair_density():
+        In function pair_density():
 
-           - This actually works for negative densities some of the
-             time, but the solver probably doesn't work as well there and
-             we need to document the density expectations for this 
-             function.
+        - This actually works for negative densities some of the
+        time, but the solver probably doesn't work as well there and
+        we need to document the density expectations for this 
+        function.
 
         \endverbatim
     */
@@ -2156,13 +2172,13 @@ namespace o2scl {
 
         .. todo::
 
-           In function fermion_rel_tl::calc_density()
+        In function fermion_rel_tl::calc_density()
 
-           - Future: Particles and antiparticles have different
-             degeneracy factors, so we separately use the expansions one
-             at a time. It is probably better to separately generate a
-             new expansion function which automatically handles the sum
-             of particles and antiparticles.
+        - Future: Particles and antiparticles have different
+        degeneracy factors, so we separately use the expansions one
+        at a time. It is probably better to separately generate a
+        new expansion function which automatically handles the sum
+        of particles and antiparticles.
 
         \endverbatim
     */
@@ -2238,8 +2254,6 @@ namespace o2scl {
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
         bool acc=this->calc_mu_ndeg(f,T,1.0e-18);
-        //std::cout << "cmn_pmu1: " << f.nu << " " << T << " "
-        //<< 1.0e-18 << " " << acc << std::endl;
 	if (acc && o2isfinite(f.n)) {
 	  particles_done=true;
 	  nden_p=f.n;
