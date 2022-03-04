@@ -73,7 +73,7 @@ namespace o2scl {
       // the boost integrator succeed.
       res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm,&this->levels);
       if (err>this->tol_rel) {
-        if (this->err_nonconv==true) {
+        if (this->verbose>0 || this->err_nonconv==true) {
           std::cout << "Function inte_tanh_sinh_boost::integ_err() failed."
                     << std::endl;
           std::cout << "Values err,tol_rel,L1norm,levels,max: "
@@ -123,7 +123,7 @@ namespace o2scl {
       // Dropping the tolerance by a factor of 10 seems to help
       // the boost integrator succeed.
       res=it.integrate(func,this->tol_rel/10.0,&err,&L1norm,&levels);
-      if (err>this->tol_rel) {
+      if (this->verbose>0 || err>this->tol_rel) {
 	std::cout << "Function inte_tanh_sinh_boost::integ_moo_err() failed."
                   << std::endl;
         std::cout << "Values err,tol_rel,L1norm,levels,max: "

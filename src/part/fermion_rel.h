@@ -229,7 +229,8 @@ namespace o2scl {
       internal_fp_t arg1=E-y;
       
       //ret=k*k*k*k/3/E/T/(1.0+exp(arg1));
-      ret=k*k*T*log1p(exp(-arg1));
+      //ret=k*k*T*log1p(exp(-arg1));
+      ret=k*k*T*log(1.0+exp(-arg1));
 
       if (!o2isfinite(ret)) {
         return 0.0;
@@ -310,6 +311,12 @@ namespace o2scl {
       dit25.tol_rel=1.0e-15;
       dit35.tol_rel=1.0e-15;
       dit50.tol_rel=1.0e-15;
+      nit25.err_nonconv=false;
+      nit35.err_nonconv=false;
+      nit50.err_nonconv=false;
+      dit25.err_nonconv=false;
+      dit35.err_nonconv=false;
+      dit50.err_nonconv=false;
     }
     
     /** \brief Evalulate the density integral in the nondegenerate limit
@@ -355,7 +362,6 @@ namespace o2scl {
       std::cout << "Non-degenerate density integrator failed at "
                 << "highest precision for y,eta: " << y << " " << eta
                 << std::endl;
-      
       return iret;
     }
 
@@ -396,19 +402,19 @@ namespace o2scl {
       fp2_t ul2=static_cast<fp2_t>(ul);
       fp3_t ul3=static_cast<fp3_t>(ul);
       
-      int iret=nit25.integ_err(mfd25,0.0,ul1,res1,err1);
+      int iret=dit25.integ_err(mfd25,0.0,ul1,res1,err1);
       if (iret==0) {
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
-      iret=nit35.integ_err(mfd35,0.0,ul2,res2,err2);
+      iret=dit35.integ_err(mfd35,0.0,ul2,res2,err2);
       if (iret==0) {
         res=static_cast<fp_t>(res2);
         err=static_cast<fp_t>(err2);
         return iret;
       }
-      iret=nit50.integ_err(mfd50,0.0,ul3,res3,err3);
+      iret=dit50.integ_err(mfd50,0.0,ul3,res3,err3);
       if (iret==0) {
         res=static_cast<fp_t>(res3);
         err=static_cast<fp_t>(err3);
@@ -417,7 +423,6 @@ namespace o2scl {
       std::cout << "Degenerate density integrator failed at "
                 << "highest precision for y,eta: " << y << " " << eta
                 << std::endl;
-      
       return iret;
     }
 
@@ -505,19 +510,19 @@ namespace o2scl {
       fp2_t ul2=static_cast<fp2_t>(ul);
       fp3_t ul3=static_cast<fp3_t>(ul);
       
-      int iret=nit25.integ_err(mfd25,0.0,ul1,res1,err1);
+      int iret=dit25.integ_err(mfd25,0.0,ul1,res1,err1);
       if (iret==0) {
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
-      iret=nit35.integ_err(mfd35,0.0,ul2,res2,err2);
+      iret=dit35.integ_err(mfd35,0.0,ul2,res2,err2);
       if (iret==0) {
         res=static_cast<fp_t>(res2);
         err=static_cast<fp_t>(err2);
         return iret;
       }
-      iret=nit50.integ_err(mfd50,0.0,ul3,res3,err3);
+      iret=dit50.integ_err(mfd50,0.0,ul3,res3,err3);
       if (iret==0) {
         res=static_cast<fp_t>(res3);
         err=static_cast<fp_t>(err3);
@@ -614,19 +619,19 @@ namespace o2scl {
       fp2_t ul2=static_cast<fp2_t>(ul);
       fp3_t ul3=static_cast<fp3_t>(ul);
       
-      int iret=nit25.integ_err(mfd25,0.0,ul1,res1,err1);
+      int iret=dit25.integ_err(mfd25,0.0,ul1,res1,err1);
       if (iret==0) {
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
-      iret=nit35.integ_err(mfd35,0.0,ul2,res2,err2);
+      iret=dit35.integ_err(mfd35,0.0,ul2,res2,err2);
       if (iret==0) {
         res=static_cast<fp_t>(res2);
         err=static_cast<fp_t>(err2);
         return iret;
       }
-      iret=nit50.integ_err(mfd50,0.0,ul3,res3,err3);
+      iret=dit50.integ_err(mfd50,0.0,ul3,res3,err3);
       if (iret==0) {
         res=static_cast<fp_t>(res3);
         err=static_cast<fp_t>(err3);
@@ -724,27 +729,27 @@ namespace o2scl {
       fp2_t ul2=static_cast<fp2_t>(ul);
       fp3_t ul3=static_cast<fp3_t>(ul);
 
-      int iret=nit25.integ_err(mfd25,0.0,ul1,res1,err1);
+      int iret=dit25.integ_err(mfd25,0.0,ul1,res1,err1);
       if (iret==0) {
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
-      iret=nit35.integ_err(mfd35,0.0,ul2,res2,err2);
+      iret=dit35.integ_err(mfd35,0.0,ul2,res2,err2);
       if (iret==0) {
         res=static_cast<fp_t>(res2);
         err=static_cast<fp_t>(err2);
         return iret;
       }
-      iret=nit50.integ_err(mfd50,0.0,ul3,res3,err3);
+      iret=dit50.integ_err(mfd50,0.0,ul3,res3,err3);
       if (iret==0) {
         res=static_cast<fp_t>(res3);
         err=static_cast<fp_t>(err3);
         return iret;
       }
       std::cout << "Degenerate pressure integrator failed at "
-                << "highest precision for y,eta: " << y << " " << eta
-                << std::endl;
+                << "highest precision for y,eta,iret: " << y << " " << eta
+                << iret << std::endl;
       
       return iret;
     }
@@ -997,49 +1002,49 @@ namespace o2scl {
       When the integrators provide numerical uncertainties, these
       uncertainties are stored in \ref unc. In the case of
       calc_density() and pair_density(), the uncertainty from the
-      numerical accuracy of the solver is not included. (There is also
-                                                         a relatively small inaccuracy due to the mathematical evaluation
-                                                         of the integrands which is not included in \ref unc.)
+      numerical accuracy of the solver is not included. There is also
+      a relatively small inaccuracy due to the mathematical evaluation
+      of the integrands which is not included in \ref unc.)
       
-                                                         One can improve the accuracy to within 1 part in \f$ 10^{10} \f$
-                                                         using \code fermion_rel rf(1.0,2.0); rf.upper_limit_fac=40.0;
-                                                         rf.dit->tol_abs=1.0e-13; rf.dit->tol_rel=1.0e-13;
-                                                         rf.nit->tol_abs=1.0e-13; rf.nit->tol_rel=1.0e-13;
-                                                         rf.density_root->tol_rel=1.0e-10; \endcode which decreases the
-                                                         both the relative and absolute tolerances for both the
-                                                         degenerate and non-degenerate integrators and improves the
-                                                         accuracy of the solver which determines the chemical potential
-                                                         from the density. Of course if these tolerances are too small,
-                                                         the calculation may fail.
+      One can improve the accuracy to within 1 part in \f$ 10^{10} \f$
+      using \code fermion_rel rf(1.0,2.0); rf.upper_limit_fac=40.0;
+      rf.dit->tol_abs=1.0e-13; rf.dit->tol_rel=1.0e-13;
+      rf.nit->tol_abs=1.0e-13; rf.nit->tol_rel=1.0e-13;
+      rf.density_root->tol_rel=1.0e-10; \endcode which decreases the
+      both the relative and absolute tolerances for both the
+      degenerate and non-degenerate integrators and improves the
+      accuracy of the solver which determines the chemical potential
+      from the density. Of course if these tolerances are too small,
+      the calculation may fail.
       
-                                                         \verbatim embed:rst
+      \verbatim embed:rst
       
-                                                         .. todo::
+      .. todo::
       
-                                                         In class fermion_rel_tl:
+         In class fermion_rel_tl:
       
-                                                         - Future: I had to remove the shared_ptr stuff because the
-                                                         default algorithm types don't support multiprecision, but it
-                                                         might be nice to restore the shared_ptr mechanism somehow.
+         - Future: I had to remove the shared_ptr stuff because the
+           default algorithm types don't support multiprecision, but it
+           might be nice to restore the shared_ptr mechanism somehow.
+           
+         - Future: The expressions which appear in in the integrand
+           functions density_fun(), etc. could likely be improved,
+           especially in the case where \ref o2scl::part::inc_rest_mass
+           is <tt>false</tt>. There should not be a need to check if
+           <tt>ret</tt> is finite.
          
-                                                         - Future: The expressions which appear in in the integrand
-                                                         functions density_fun(), etc. could likely be improved,
-                                                         especially in the case where \ref o2scl::part::inc_rest_mass
-                                                         is <tt>false</tt>. There should not be a need to check if
-                                                         <tt>ret</tt> is finite.
+         - Future: It appears this class doesn't compute the
+           uncertainty in the chemical potential or density with
+           calc_density(). This could be fixed.
+           
+         - Future: I'd like to change the lower limit on the entropy
+           integration, but the value in the code at the moment (stored
+           in <tt>ll</tt>) makes bm_part2.cpp worse.
+           
+         - Future: The function pair_mu() should set the antiparticle
+           integrators as done in fermion_deriv_rel.
          
-                                                         - Future: It appears this class doesn't compute the
-                                                         uncertainty in the chemical potential or density with
-                                                         calc_density(). This could be fixed.
-         
-                                                         - Future: I'd like to change the lower limit on the entropy
-                                                         integration, but the value in the code at the moment (stored
-                                                         in <tt>ll</tt>) makes bm_part2.cpp worse.
-         
-                                                         - Future: The function pair_mu() should set the antiparticle
-                                                         integrators as done in fermion_deriv_rel.
-      
-                                                         \endverbatim
+      \endverbatim
   */
   template<class fermion_t=fermion_tl<double>,
 	   class fd_inte_t=class o2scl::fermi_dirac_integ_gsl,

@@ -214,6 +214,9 @@ int main(void) {
   fld.mu=30;
   fld.mu/=2;
   std::cout << "Here4." << endl;
+  frld3.fri.dit25.verbose=1;
+  frld3.fri.dit35.verbose=1;
+  frld3.fri.dit50.verbose=1;
   frld3.calc_mu(fld,Tld);
   cout << "long double: " << frld3.last_method << endl;
   cout << dtos(fld.n,0) << " " << dtos(fld.ed,0) << endl;

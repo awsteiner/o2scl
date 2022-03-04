@@ -29,9 +29,7 @@
 #include <o2scl/misc.h>
 #include <o2scl/inte.h>
  
-#ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#endif
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -136,8 +134,6 @@ namespace o2scl {
     
   };
 
-#if defined(O2SCL_LD_TYPES) || defined(DOXYGEN)
-
   /** \brief Integration weights and abcissas for
       o2scl::inte_gauss_cern and \ref o2scl::inte_cauchy_cern for 
       the cpp_dec_float_50 type
@@ -220,8 +216,6 @@ namespace o2scl {
     
   };
 
-#endif
-  
   /** \brief Gaussian quadrature (CERNLIB)
  
       For any interval \f$ (a,b) \f$, we define \f$ g_8(a,b) \f$ and
