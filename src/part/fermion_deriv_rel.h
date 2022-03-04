@@ -266,6 +266,8 @@ namespace o2scl {
     
   public:
 
+    bool verify_ti;
+    
     /// Create a fermion with mass \c m and degeneracy \c g
     fermion_deriv_rel_tl() {
   
@@ -284,6 +286,7 @@ namespace o2scl {
       err_nonconv=true;
 
       last_method=0;
+      verify_ti=false;
     }
   
     virtual ~fermion_deriv_rel_tl() {
