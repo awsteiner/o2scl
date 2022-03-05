@@ -53,6 +53,7 @@ int eos_leptons::electron_density(double T) {
     retx=frel.pair_density(e,T);
     e.inc_rest_mass=true;
     e.mu+=e.m;
+    e.ed+=e.m*e.n;
   } else {
     retx=frel.pair_density(e,T);
   }
@@ -74,6 +75,7 @@ int eos_leptons::electron_density(double T) {
       retx=frel.pair_density(e,T);
       e.inc_rest_mass=true;
       e.mu+=e.m;
+      e.ed+=e.m*e.n;
     } else {
       retx=frel.pair_density(e,T);
     }
@@ -113,6 +115,7 @@ int eos_leptons::pair_density_eq_fun(size_t nv, const ubvector &x,
       frel.pair_mu(e,T);
       e.inc_rest_mass=true;
       e.mu+=e.m;
+      e.ed+=e.n*e.m;
     } else {
       frel.pair_mu(e,T);
     }
@@ -138,6 +141,7 @@ int eos_leptons::pair_density_eq_fun(size_t nv, const ubvector &x,
     frel.pair_mu(mu,T);
     mu.inc_rest_mass=true;
     mu.mu+=mu.m;
+    mu.ed+=mu.m*mu.n;
   } else {
     frel.pair_mu(mu,T);
   }
@@ -208,6 +212,7 @@ int eos_leptons::pair_density(double T) {
       retx=frel.pair_density(mu,T);
       mu.inc_rest_mass=true;
       mu.mu+=mu.m;
+      mu.ed+=mu.m*mu.n;
     } else {
       retx=frel.pair_density(mu,T);
     }
@@ -229,6 +234,7 @@ int eos_leptons::pair_density(double T) {
         retx=frel.pair_density(mu,T);
         mu.inc_rest_mass=true;
         mu.mu+=mu.m;
+        mu.ed+=mu.m*mu.n;
       } else {
         retx=frel.pair_density(mu,T);
       }
