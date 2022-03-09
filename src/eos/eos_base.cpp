@@ -41,6 +41,7 @@ eos_leptons::eos_leptons() {
   ph.init(0.0,2.0);
 
   pde_from_density=true;
+  verbose=0;
 }
 
 int eos_leptons::electron_density(double T) {
@@ -69,7 +70,7 @@ int eos_leptons::electron_density(double T) {
     frel.fri.nit.tol_rel=1.0e-10;
     frel.fri.nit.tol_abs=1.0e-10;
         
-    if (false && e.inc_rest_mass) {
+    if (e.inc_rest_mass) {
       e.inc_rest_mass=false;
       e.mu-=e.m;
       retx=frel.pair_density(e,T);
@@ -80,10 +81,8 @@ int eos_leptons::electron_density(double T) {
       retx=frel.pair_density(e,T);
     }
 
-    //if (retx!=0) {
-    //O2SCL_ERR2("Function pair_density() for electrons failed in ",
-    //"class eos_leptons().",o2scl::exc_efailed);
-    //}
+    // If it still fails, then we don't call the error handler here
+    // because this function is used in pair_density_eq_fun().
         
     frel.upper_limit_fac=20.0;
     frel.fri.dit.tol_rel=1.0e-8;
@@ -109,7 +108,7 @@ int eos_leptons::pair_density_eq_fun(size_t nv, const ubvector &x,
     
     e.mu=x[0];
 
-    if (false && e.inc_rest_mass) {
+    if (e.inc_rest_mass) {
       e.inc_rest_mass=false;
       e.mu-=e.m;
       frel.pair_mu(e,T);
@@ -135,7 +134,7 @@ int eos_leptons::pair_density_eq_fun(size_t nv, const ubvector &x,
     }
   }
       
-  if (false && mu.inc_rest_mass) {
+  if (mu.inc_rest_mass) {
     mu.inc_rest_mass=false;
     mu.mu-=mu.m;
     frel.pair_mu(mu,T);
@@ -276,6 +275,10 @@ int eos_leptons::pair_density_eq(double nq, double T) {
 
   int retx;
   if (include_muons) {
+    if (verbose>1) {
+      std::cout << "pair_density_eq() with muons, pde_from_density="
+                << pde_from_density << std::endl;
+    }
 
     ubvector x(1), y(1);
     if (pde_from_density) {
@@ -293,8 +296,15 @@ int eos_leptons::pair_density_eq(double nq, double T) {
     mh.def_jac.err_nonconv=false;
     mh.tol_rel=1.0e-6;
     size_t maxj=10;
+    if (verbose>1) {
+      cout << "Initial guess: " << x[0] << endl;
+    }
     int mret=mh.msolve(1,x,mf);
     for(size_t j=0;j<maxj && mret!=0;j++) {
+      if (verbose>1) {
+        cout << "Attempt " << j+2 << " with guess " << x[0]
+             << " and tolerance: " << mh.tol_rel << std::endl;
+      }
       mret=mh.msolve(1,x,mf);
       mh.tol_rel*=pow(10.0,1.0/2.0);
     }
@@ -304,11 +314,17 @@ int eos_leptons::pair_density_eq(double nq, double T) {
       O2SCL_ERR2("Failed to compute muons in ",
                  "eos_leptons::pair_density_eq()",o2scl::exc_einval);
     }
+    if (verbose>1) {
+      cout << "Solution: " << x[0] << endl;
+    }
 
     mf(1,x,y);
     e.n=x[0]*nq;
         
   } else {
+    if (verbose>1) {
+      std::cout << "pair_density_eq() just electrons." << std::endl;
+    }
         
     e.n=nq;
     mu.n=0.0;

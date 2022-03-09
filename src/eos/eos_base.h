@@ -46,14 +46,20 @@ namespace o2scl {
 
     /** \brief Electron thermodynamics from the electron density
 
-        \note This internal function presumes that 
-        \ref fermion_rel::err_nonconv is false .
+        \note This internal function is designed to be used when \ref
+        fermion_rel::err_nonconv is false .
 
+        \note If this function fails, it does not necessarily
+        call the error handler. This allows it to be used 
+        inside \ref pair_density_eq_fun() and is the reason 
+        why this function is protected instead of public.
+        
         The temperature should be in units of \f$ 1/\mathrm{fm} \f$ .
 
         Because this function uses fermion_rel::pair_density(), the
         current electron chemical potential is used as an initial
         guess.
+        
      */
     int electron_density(double T);
 
@@ -130,6 +136,8 @@ namespace o2scl {
     */
     int pair_mu_eq(double T);
 
+    int verbose;
+    
     void high_acc() {
       frel.upper_limit_fac=40.0;
       frel.fri.dit.tol_abs=1.0e-13;
