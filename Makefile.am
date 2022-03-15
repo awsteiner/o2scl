@@ -135,6 +135,7 @@ empty:
 # Create empty documentation
 blank-doc:
 	mkdir -p doc/o2scl/html
+	mkdir -p doc/o2scl/xml
 	mkdir -p doc/o2scl/html/class
 	mkdir -p doc/o2scl/html/function
 	mkdir -p doc/o2scl/html/_sources
@@ -144,6 +145,7 @@ blank-doc:
 	mkdir -p doc/o2scl/html/_images
 	@echo ""
 	touch doc/o2scl/html/index.html
+	touch doc/o2scl/xml/namespaceo2scl.xml
 	touch doc/o2scl/html/blank.js
 	touch doc/o2scl/html/blank.inv
 	touch doc/o2scl/html/class/index.html
