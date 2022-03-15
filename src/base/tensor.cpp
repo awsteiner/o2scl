@@ -53,6 +53,10 @@ index_spec o2scl::ix_interp(size_t ix, double v) {
   return index_spec(index_spec::interp,ix,0,0,v,0.0,0.0);
 }
   
+index_spec o2scl::ix_deriv(size_t ix, double v) {
+  return index_spec(index_spec::deriv,ix,0,0,v,0.0,0.0);
+}
+  
 index_spec o2scl::ix_grid(size_t ix, double begin, double end, 
 			  size_t n_bins, bool log) {
   if (log) {

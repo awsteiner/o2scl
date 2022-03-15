@@ -90,6 +90,8 @@ namespace o2scl {
     static const size_t grid=8;
     /// Interpolate a value to set a new grid (fixed bin width)
     static const size_t gridw=9;
+    /// Interpolate a value to fix an index and take the derivative
+    static const size_t deriv=10;
     //@}
 
     /// Default constructor
@@ -148,7 +150,14 @@ namespace o2scl {
   */
   index_spec ix_interp(size_t ix, double v);
   
+  /** \brief Interpolate value \c v into index \c ix and
+      then differentiate
+      (for \ref o2scl::tensor_grid only)
+  */
+  index_spec ix_deriv(size_t ix, double v);
+  
   /** \brief Interpolate grid with fixed number of bins into index \c ix
+
       (for \ref o2scl::tensor_grid only)
   */
   index_spec ix_grid(size_t ix, double begin, double end, size_t n_bins,
@@ -161,78 +170,87 @@ namespace o2scl {
                       bool log=false);
   //@}
 
-#ifdef O2SCL_NEVER_DEFINED
-
-  class index_index2 : public index_spec {
+  /** \brief Desc
+   */
+  class ix_index2 : public index_spec {
 
   public:
 
-    index_index2(index_spec &is) {
-      if (ix.type!=index_spec::index) {
-	O2SCL_ERR("Invalid index_spec in index_index2",
+    /// Desc
+    ix_index2(index_spec &is) {
+      if (is.type!=index_spec::index) {
+	O2SCL_ERR("Invalid index_spec in ix_index2",
 		  o2scl::exc_einval);
       }
     }
     
+    /// Desc
+    ix_index2(size_t ix) {
+      this->type=index_spec::index;
+      this->ix1=ix;
+    }
+    
   };
   
-  class index_fixed2 : public index_spec {
+#ifdef O2SCL_NEVER_DEFINED
+
+  class ix_fixed2 : public index_spec {
 
   public:
 
     size_t &fixed_value;
 
-    index_fixed2(index_spec &is) : fixed_value(ix.ix2) {
+    ix_fixed2(index_spec &is) : fixed_value(ix.ix2) {
       if (ix.type!=index_spec::fixed) {
-	O2SCL_ERR("Invalid index_spec in index_index2",
+	O2SCL_ERR("Invalid index_spec in ix_index2",
 		  o2scl::exc_einval);
       }
     }
     
   };
   
-  class index_sum2 : public index_spec {
+  class ix_sum2 : public index_spec {
 
   public:
 
-    index_sum2(index_spec &is) : {
+    ix_sum2(index_spec &is) : {
       if (ix.type!=index_spec::sum) {
-	O2SCL_ERR("Invalid index_spec in index_index2",
+	O2SCL_ERR("Invalid index_spec in ix_index2",
 		  o2scl::exc_einval);
       }
     }
     
                                  };
   
-  class index_trace2 : public index_spec {
+  class ix_trace2 : public index_spec {
 
   public:
 
     size_t &second_index;
     
-    index_trace2(index_spec &is) : second_index(ix.ix2) {
+    ix_trace2(index_spec &is) : second_index(ix.ix2) {
       if (ix.type!=index_spec::trace) {
-	O2SCL_ERR("Invalid index_spec in index_index2",
+	O2SCL_ERR("Invalid index_spec in ix_index2",
 		  o2scl::exc_einval);
       }
     }
     
   };
   
-  class index_reverse2 : public index_spec {
+  class ix_reverse2 : public index_spec {
 
   public:
 
-    index_reverse2(index_spec &is) {
+    ix_reverse2(index_spec &is) {
       if (ix.type!=index_spec::reverse) {
-	O2SCL_ERR("Invalid index_spec in index_index2",
+	O2SCL_ERR("Invalid index_spec in ix_index2",
 		  o2scl::exc_einval);
       }
     }
     
   };
   
-  class index_range2 : public index_spec {
+  class ix_range2 : public index_spec {
 
   public:
     
@@ -240,16 +258,16 @@ namespace o2scl {
 
     double &end;
     
-    index_range2(index_spec &is) : begin(is.ix2), end(is.ix3) {
+    ix_range2(index_spec &is) : begin(is.ix2), end(is.ix3) {
       if (ix.type!=index_spec::range) {
-	O2SCL_ERR("Invalid index_spec in index_index2",
+	O2SCL_ERR("Invalid index_spec in ix_index2",
 		  o2scl::exc_einval);
       }
     }
     
   };
 
-  class index_interp2 : public index_spec {
+  class ix_interp2 : public index_spec {
 
   public:
     
@@ -259,17 +277,17 @@ namespace o2scl {
 
     size_t &n_bins;
 
-    index_interp2(index_spec &is) : begin(is.val1), end(is.val2),
+    ix_interp2(index_spec &is) : begin(is.val1), end(is.val2),
                                     n_bins(is.ix2) {
       if (ix.type!=index_spec::interp) {
-	O2SCL_ERR("Invalid index_spec in index_index2",
+	O2SCL_ERR("Invalid index_spec in ix_index2",
 		  o2scl::exc_einval);
       }
     }
     
   };
 
-  class index_grid2 : public index_spec {
+  class ix_grid2 : public index_spec {
 
   public:
     
@@ -281,17 +299,17 @@ namespace o2scl {
 
     size_t &log_flag;
 
-    index_grid2(index_spec &is) : begin(is.val1), end(is.val2),
+    ix_grid2(index_spec &is) : begin(is.val1), end(is.val2),
 				  n_bins(is.ix2), log_flag(is.ix3) {
       if (ix.type!=index_spec::grid) {
-	O2SCL_ERR("Invalid index_spec in index_index2",
+	O2SCL_ERR("Invalid index_spec in ix_index2",
 		  o2scl::exc_einval);
       }
     }
     
   };
 
-  class index_gridw2 : public index_spec {
+  class ix_gridw2 : public index_spec {
 
   public:
     
@@ -303,10 +321,10 @@ namespace o2scl {
 
     size_t &log_flag;
     
-    index_gridw2(index_spec &is) : begin(is.val1), end(is.val2),
+    ix_gridw2(index_spec &is) : begin(is.val1), end(is.val2),
 				   width(is.val3), log_flag(is.ix3) {
       if (ix.type!=index_spec::gridw) {
-	O2SCL_ERR("Invalid index_spec in index_index2",
+	O2SCL_ERR("Invalid index_spec in ix_index2",
 		  o2scl::exc_einval);
       }
     }
@@ -1044,7 +1062,7 @@ namespace o2scl {
             std::cout << "rearrange, index: ";
             vector_out(std::cout,args,true);
           }
-          vis.push_back(ix_index(o2scl::stoszt(args[0])));
+          vis.push_back(ix_index2(o2scl::stoszt(args[0])));
         } else if (sv2[j].find("fixed(")==0 && sv2[j][sv2[j].size()-1]==')') {
           std::string spec=sv2[j].substr(6,sv2[j].length()-7);
           split_string_delim(spec,args,',');
@@ -1129,6 +1147,23 @@ namespace o2scl {
           }
           vis.push_back(ix_interp(o2scl::stoszt(args[0]),
                                   o2scl::function_to_double(args[1])));
+        } else if (sv2[j].find("deriv(")==0 &&
+                   sv2[j][sv2[j].size()-1]==')') {
+          std::string spec=sv2[j].substr(7,sv2[j].length()-8);
+          split_string_delim(spec,args,',');
+          if (verbose>1) {
+            std::cout << "deriv, value: ";
+            vector_out(std::cout,args,true);
+          }
+          if (args.size()<2) {
+            if (err_on_fail) {
+              O2SCL_ERR("Not enough arguments in deriv().",
+                        o2scl::exc_einval);
+            }
+            return 5;
+          }
+          vis.push_back(ix_deriv(o2scl::stoszt(args[0]),
+                                 o2scl::function_to_double(args[1])));
         } else if (sv2[j].find("grid(")==0 && sv2[j][sv2[j].size()-1]==')') {
           std::string spec=sv2[j].substr(5,sv2[j].length()-6);
           split_string_delim(spec,args,',');

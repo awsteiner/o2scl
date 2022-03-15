@@ -1911,6 +1911,30 @@ namespace o2scl {
                                            spec[i].val1);
           n_interps++;
           ix_to_interp.push_back(spec[i].ix1);
+        } else if (spec[i].type==index_spec::deriv) {
+          if (spec[i].ix1>=rank_old) {
+            if (err_on_fail) {
+              O2SCL_ERR2("Index too large (deriv) in ",
+                         "tensor_grid::rearrange_and_copy().",
+                         o2scl::exc_einval);
+            } else {
+              if (verbose>0) {
+                std::cout << "Index " << spec[i].ix1
+                          << " too large (deriv) in "
+                          << "tensor_grid::rearrange_and_copy()."
+                          << std::endl;
+              }
+              return tensor_grid<>();
+            }
+          }
+          // Use ix1 to store the destination index (which is
+          // at this point equal to rank_new)
+          spec_old[spec[i].ix1]=index_spec(spec[i].type,
+                                           rank_new,
+                                           spec[i].ix2,0,
+                                           spec[i].val1);
+          n_interps++;
+          ix_to_interp.push_back(spec[i].ix1);
         } else if (spec[i].type==index_spec::grid ||
                    spec[i].type==index_spec::gridw) {
           if (spec[i].ix1>=rank_old) {
@@ -2080,6 +2104,9 @@ namespace o2scl {
           } else if (spec_old[i].type==index_spec::interp) {
             std::cout << " is being interpolated from value "
                       << spec_old[i].val1 << "." << std::endl;
+          } else if (spec_old[i].type==index_spec::deriv) {
+            std::cout << " is being differentiated at value "
+                      << spec_old[i].val1 << "." << std::endl;
           } else if (spec_old[i].type==index_spec::grid ||
                      spec_old[i].type==index_spec::gridw) {
             std::cout << " is being reinterpolated based on grid\n  "
@@ -2201,6 +2228,8 @@ namespace o2scl {
           } else if (spec_old[j].type==index_spec::fixed) {
             ix_old[j]=spec_old[j].ix2;
           } else if (spec_old[j].type==index_spec::interp) {
+            interp_vals.push_back(spec_old[j].val1);
+          } else if (spec_old[j].type==index_spec::deriv) {
             interp_vals.push_back(spec_old[j].val1);
           } else if (spec_old[j].type==index_spec::grid) {
             if (spec_old[j].ix3==1) {
