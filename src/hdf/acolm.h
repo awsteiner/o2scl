@@ -352,6 +352,9 @@ namespace o2scl_acol {
     /// Download a file from a specified URL
     virtual int comm_download(std::vector<std::string> &sv, bool itive_com);
 
+    /// Desc
+    virtual int comm_xml_to_o2(std::vector<std::string> &sv, bool itive_com);
+
     /// Open the local HTML documentation
     virtual int comm_docs(std::vector<std::string> &sv, bool itive_com);
 
@@ -407,10 +410,11 @@ namespace o2scl_acol {
         type of the current object.
 
         For objects which act as numerical array (i.e. objects of type
-        <tt>double[]</tt>, <tt>int[]</tt>, etc., the <tt>autocorr</tt>
-        command requires no arguments. It replaces the current object
-        with a vector of doubles which contains the autocorrelation
-        coefficient as a function of the step size.
+        <tt>double[]</tt>, <tt>int[]</tt>, etc.), the
+        <tt>autocorr</tt> command requires no arguments. It replaces
+        the current object with a <tt>double[]</tt> object which
+        contains the autocorrelation coefficient as a function of the
+        step size.
 
         For objects of type <tt>table</tt>, the <tt>autocorr</tt>
         command requires at least three arguments: <ac> <ftom> <column
@@ -435,6 +439,13 @@ namespace o2scl_acol {
         specified as arguments then average those autocorrelation
         coefficients together. The averaged autocorrelation
         coefficients are kept as a double[] object.
+
+        End of runtime documentation. 
+
+        [web][terminal]
+        [``Vector specifications``]['acol -help vector-spec']
+        [``Multiple vector specifications``]['acol -help mult-vector-spec']
+        [:math:`5 \tau/M`][5*tau/M]
     */
     virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
 

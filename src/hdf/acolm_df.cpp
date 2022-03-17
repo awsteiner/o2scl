@@ -204,6 +204,90 @@ int acol_manager::comm_deriv(std::vector<std::string> &sv, bool itive_com) {
     o2scl::vector_copy(vderiv,size_tv_obj);
     doublev_obj.resize(0);
     
+  } else if (type=="tensor") {
+    
+    std::string i1;
+    int ret=get_input_one(sv,"Index to differentiate",i1,"deriv",
+                          itive_com);
+    if (ret!=0) return ret;
+
+    size_t dix=o2scl::stoszt(i1);
+    size_t n=tensor_obj.get_size(dix);
+    size_t rk=tensor_obj.get_rank();
+    if (dix>=rk) {
+      cerr << "Cannot access index " << dix << " in a " << rk
+           << " rank tensor." << endl;
+      return 1;
+    }
+
+    ubvector deriv_x(n), deriv_y(n);
+    for(size_t i=0;i<n;i++) {
+      deriv_x[i]=((double)i);
+    }
+
+    const vector<double> &d=tensor_obj.get_data();
+    
+    for(size_t i=0;i<d.size();i++) {
+      
+      vector<size_t> tix(rk);
+      tensor_obj.unpack_index(i,tix);
+      if (tix[dix]==0) {
+        for(size_t j=0;j<n;j++) {
+          tix[dix]=j;
+          size_t k=tensor_obj.pack_indices(tix);
+          deriv_y[j]=d[k];
+        }
+        // The interpolation object
+        interp_vec<ubvector,ubvector> itp(n,deriv_x,deriv_y,interp_type);
+        for(size_t j=0;j<n;j++) {
+          tix[dix]=j;
+          tensor_obj.set(tix,itp.deriv(deriv_x[j]));
+        }
+      }
+    }
+    
+  } else if (type=="tensor_grid") {
+    
+    std::string i1;
+    int ret=get_input_one(sv,"Index to differentiate",i1,"deriv",
+                          itive_com);
+    if (ret!=0) return ret;
+
+    size_t dix=o2scl::stoszt(i1);
+    size_t n=tensor_grid_obj.get_size(dix);
+    size_t rk=tensor_grid_obj.get_rank();
+    if (dix>=rk) {
+      cerr << "Cannot access index " << dix << " in a " << rk
+           << " rank tensor." << endl;
+      return 1;
+    }
+
+    ubvector deriv_x(n), deriv_y(n);
+    for(size_t i=0;i<n;i++) {
+      deriv_x[i]=tensor_grid_obj.get_grid(dix,i);
+    }
+
+    const vector<double> &d=tensor_grid_obj.get_data();
+    
+    for(size_t i=0;i<d.size();i++) {
+      
+      vector<size_t> tix(rk);
+      tensor_grid_obj.unpack_index(i,tix);
+      if (tix[dix]==0) {
+        for(size_t j=0;j<n;j++) {
+          tix[dix]=j;
+          size_t k=tensor_grid_obj.pack_indices(tix);
+          deriv_y[j]=d[k];
+        }
+        // The interpolation object
+        interp_vec<ubvector,ubvector> itp(n,deriv_x,deriv_y,interp_type);
+        for(size_t j=0;j<n;j++) {
+          tix[dix]=j;
+          tensor_grid_obj.set(tix,itp.deriv(deriv_x[j]));
+        }
+      }
+    }
+    
   } else {
     
     cerr << "Not implemented for type " << type << " ." << endl;

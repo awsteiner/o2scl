@@ -150,12 +150,6 @@ namespace o2scl {
   */
   index_spec ix_interp(size_t ix, double v);
   
-  /** \brief Interpolate value \c v into index \c ix and
-      then differentiate
-      (for \ref o2scl::tensor_grid only)
-  */
-  index_spec ix_deriv(size_t ix, double v);
-  
   /** \brief Interpolate grid with fixed number of bins into index \c ix
 
       (for \ref o2scl::tensor_grid only)
@@ -1147,23 +1141,6 @@ namespace o2scl {
           }
           vis.push_back(ix_interp(o2scl::stoszt(args[0]),
                                   o2scl::function_to_double(args[1])));
-        } else if (sv2[j].find("deriv(")==0 &&
-                   sv2[j][sv2[j].size()-1]==')') {
-          std::string spec=sv2[j].substr(7,sv2[j].length()-8);
-          split_string_delim(spec,args,',');
-          if (verbose>1) {
-            std::cout << "deriv, value: ";
-            vector_out(std::cout,args,true);
-          }
-          if (args.size()<2) {
-            if (err_on_fail) {
-              O2SCL_ERR("Not enough arguments in deriv().",
-                        o2scl::exc_einval);
-            }
-            return 5;
-          }
-          vis.push_back(ix_deriv(o2scl::stoszt(args[0]),
-                                 o2scl::function_to_double(args[1])));
         } else if (sv2[j].find("grid(")==0 && sv2[j][sv2[j].size()-1]==')') {
           std::string spec=sv2[j].substr(5,sv2[j].length()-6);
           split_string_delim(spec,args,',');

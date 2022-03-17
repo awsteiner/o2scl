@@ -143,7 +143,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   {
     vector<std::string> itmp={"list","diag","to-table3d","to-table3d-sum",
       "max","min","to-tensor-grid","rearrange",
-      "entry","function","sum","stats"};
+      "entry","function","sum","stats","deriv"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("tensor",itmp));
   }
@@ -156,7 +156,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
       "set-grid","max","min","rearrange",
       "get-grid","interp","entry","to-tensor",
       "entry-grid","function","sum","stats",
-      "binary"};
+      "binary","deriv"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
   }
@@ -686,7 +686,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor") {
     
-    static const size_t narr=12;
+    static const size_t narr=13;
     comm_option_s options_arr[narr]=
       {
         {0,"sum","Output the sum of all the tensor entries.",0,0,"",
@@ -694,6 +694,12 @@ void acol_manager::command_add(std::string new_type) {
          "and the sum over all entries.",
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
          both},
+        {0,"deriv","Compute the derivative of the tensor_grid object.",
+         -1,-1,"<index>",
+         ((string)"The \"tensor_grid\" command differentiates the ")+
+         "tensor_grid object with respect to one of the indices.",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_deriv),both},
         {0,"stats","Show stats for the data in the tensor.",0,0,"",
          ((string)"The 'stats' command outputs the number of entries, ")+
          "their mean, standard deviation, minimum and maximum. It also "+
@@ -881,7 +887,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor_grid") {
     
-    static const size_t narr=17;
+    static const size_t narr=18;
     comm_option_s options_arr[narr]=
       {
         {0,"sum","Output the sum of all the tensor entries.",0,0,"",
@@ -913,6 +919,12 @@ void acol_manager::command_add(std::string new_type) {
          "(optionally) a new value to store in that location.",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_entry),both},
+        {0,"deriv","Compute the derivative of the tensor_grid object.",
+         -1,-1,"<index>",
+         ((string)"The \"tensor_grid\" command differentiates the ")+
+         "tensor_grid object with respect to one of the indices.",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_deriv),both},
         {0,"entry-grid","Get a single entry in a tensor_grid object.",
          -1,-1,"<value 1> <value 2> <value 3> ... [value or \"none\"]",
          ((string)"The \"entry-grid\" command gets or sets a value in the ")+
@@ -1288,7 +1300,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=20;
+  static const int narr=21;
 
   string type_list_str;
   for(size_t i=0;i<type_list.size()-1;i++) {
@@ -1550,6 +1562,12 @@ int acol_manager::setup_options() {
       both},
      {'v',"version","Print version information and O2scl settings.",0,0,"",
       "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_version),
+      both},
+     {0,"xml-to-o2","Parse doxygen XML to generate runtime docs.",0,0,"",
+      ((string)"When pugixml is enabled, this function reads the ")+
+      "doxygen XML output and generates an HDF5 file which acol reads "+
+      "to generate the runtime documentation.",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_xml_to_o2),
       both}
     };
   /*

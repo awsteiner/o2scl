@@ -24,6 +24,7 @@
 
 #include <o2scl/cloud_file.h>
 #include <o2scl/vector_derint.h>
+#include <o2scl/xml.h>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
@@ -228,6 +229,96 @@ int acol_manager::comm_to_table3d_sum(std::vector<std::string> &sv,
 	 << type << "." << endl;
     return exc_efailed;
   }
+
+  return 0;
+}
+
+int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
+                                 bool itive_com) {
+
+#ifdef O2SCL_PUGIXML
+  
+  verbose=2;
+
+  vector<std::string> doc_strings;
+  
+  vector<string> clist=cl->get_option_list();
+  
+  for(size_t j=0;j<clist.size();j++) {
+
+    bool found=false;
+    
+    pugi::xml_document doc;
+    pugi::xml_document doc2;
+    
+    std::string cmd_name=clist[j];
+    std::string fn_name="comm_";
+    for(size_t k=0;k<cmd_name.length();k++) {
+      if (cmd_name[k]=='-') {
+        fn_name+='_';
+      } else {
+        fn_name+=cmd_name[k];
+      }
+    }
+    if (verbose>0) {
+      cout << "cmd,fn: " << cmd_name << " " << fn_name << endl;
+    }
+    
+    std::string fn="doc/o2scl/xml/classo2scl__acol_1_1acol__manager.xml";
+    
+    ostream_walker w;
+    
+    pugi::xml_node n3=doxygen_xml_member_get
+      (fn,"acol_manager",fn_name,"briefdescription",doc);
+    if (verbose>1 && n3!=0) {
+      cout << "dxmg: " << n3.name() << " " << n3.value() << endl;
+      n3.traverse(w);
+    }
+    
+    pugi::xml_node n4=doxygen_xml_member_get
+      (fn,"acol_manager",fn_name,"detaileddescription",doc2);
+    if (verbose>1 && n4!=0) {
+      cout << "dxmg: " << n4.name() << " " << n4.value() << endl;
+      n4.traverse(w);
+    }
+    
+    if (n3!=0 && n4!=0) {
+      
+      pugi::xml_node_iterator it=n4.begin();
+      pugi::xml_node_iterator it2=n4.begin();
+      if (it2!=n4.end()) it2++;
+      
+      if (it!=n4.end() && it2!=n4.end() &&
+          it->name()==((string)"para") &&
+          it2->name()==((string)"para")) {
+        
+        doc_strings.push_back(cmd_name);
+        doc_strings.push_back(fn_name);
+        doc_strings.push_back(n3.child_value("para"));
+        doc_strings.push_back(it->child_value());
+        doc_strings.push_back(it2->child_value());
+        found=true;
+      }
+    }
+    
+    if (found==false) {
+      cout << "Could not find documentation for command " << cmd_name
+           << " and function " << fn_name << "." << endl;
+    }
+  }
+  
+  hdf_file hf;
+  hf.open_or_create("data/o2scl/acol_docs.o2");
+  hf.sets_vec("doc_strings",doc_strings);
+  hf.close();
+  cout << "Created file data/o2scl/acol_docs.o2." << endl;
+
+#else
+
+  cout << "Pugixml must be enabled to create the runtime documentation "
+       << "from the doxygen\n XML output." << endl;
+  
+#endif
 
   return 0;
 }

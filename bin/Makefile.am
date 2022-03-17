@@ -76,7 +76,8 @@ temp:
 
 if O2SCL_ENABLE_ACOL
 
-bin_PROGRAMS = acol yanic ame_parse make_rst xml_acol
+bin_PROGRAMS = acol yanic ame_parse make_rst
+#xml_acol
 
 acol_SOURCES = acol.cpp
 
@@ -86,7 +87,7 @@ yanic_SOURCES = yanic.cpp
 
 make_rst_SOURCES = make_rst.cpp
 
-xml_acol_SOURCES = xml_acol.cpp
+#xml_acol_SOURCES = xml_acol.cpp
 
 # We look first for the libraries in the distribution directory.
 # However, homebrew's superenv appears to move the libraries around,
@@ -112,8 +113,8 @@ yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
 make_rst_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
-xml_acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
-	-Wl,/snap/o2scl/current/lib
+#xml_acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
+#	-Wl,/snap/o2scl/current/lib
 
 #endif
 
@@ -139,7 +140,7 @@ acol_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 make_rst_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
-xml_acol_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
+#xml_acol_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 
 else
 
@@ -147,7 +148,7 @@ acol_LDFLAGS = -L../src -L../src/hdf -fopenmp
 ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp
 yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp
 make_rst_LDFLAGS = -L../src -L../src/hdf -fopenmp
-xml_acol_LDFLAGS = -L../src -L../src/hdf -fopenmp
+#xml_acol_LDFLAGS = -L../src -L../src/hdf -fopenmp
 
 endif
 
@@ -157,7 +158,7 @@ acol_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
 ame_parse_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
 yanic_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
 make_rst_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
-xml_acol_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
+#xml_acol_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
 
 endif
 
@@ -169,7 +170,7 @@ acol_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 ame_parse_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 yanic_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 make_rst_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
-xml_acol_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
+#xml_acol_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 
 else
 
@@ -177,7 +178,7 @@ acol_LDADD = -lo2scl -lgsl -lgslcblas
 ame_parse_LDADD = -lo2scl -lgsl -lgslcblas
 yanic_LDADD = -lo2scl -lgsl -lgslcblas
 make_rst_LDADD = -lo2scl -lgsl -lgslcblas
-xml_acol_LDADD = -lo2scl -lgsl -lgslcblas
+#xml_acol_LDADD = -lo2scl -lgsl -lgslcblas
 
 endif
 
