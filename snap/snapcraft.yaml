@@ -34,7 +34,7 @@
     o2scl:
       source: https://github.com/awsteiner/o2scl.git
       plugin: autotools
-      stage-packages:
+      build-packages:
       - g++
       - make
       - libboost-all-dev
