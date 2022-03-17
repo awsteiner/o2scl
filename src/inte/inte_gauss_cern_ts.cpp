@@ -55,11 +55,13 @@ cpp_dec_float_50 testfun2_cdf(cpp_dec_float_50 tx) {
   return four*sqrt(one-tx*tx);
 }
 
+#ifdef O2SCL_MPFR
 mpfr_float_50 testfun2_mp(mpfr_float_50 tx) {
   mpfr_float_50 one=1;
   mpfr_float_50 four=4;
   return four*sqrt(one-tx*tx);
 }
+#endif
 
 int main(void) {
   
