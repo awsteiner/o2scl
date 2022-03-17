@@ -2407,6 +2407,84 @@ int hdf_file::sets_vec(std::string name, const std::vector<std::string> &s) {
 
   // Initialize these pointers to zero to avoid uninit'ed variable
   // warnings
+  vector<int> ip;
+  std::string cp;
+  //vector<char> cp;
+  //int *ip=0;
+  //char *cp=0;
+  //if (s.size()>0) {
+  //ip=new int[s.size()];
+  //}
+  //if (nc>0) {
+  //cp=new char[nc];
+  //}
+  //size_t ix=0;
+  for(size_t i=0;i<s.size();i++) {
+    ip.push_back(s[i].length());
+    //ip[i]=s[i].length();
+    for(size_t j=0;j<s[i].size();j++) {
+      cp+=s[i][j];
+      //cp[ix]=s[i][j];
+      //ix++;
+    }
+  }
+  
+  // Set data
+  seti_vec("counter",ip);
+  sets("data",cp);
+  
+  // Free allocations
+  //if (nc>0) {
+  //delete[] cp;
+  //}
+  //if (s.size()>0) {
+  //delete[] ip;
+  //}
+
+  // Close the group
+  close_group(group);
+  
+  // Return file location
+  set_current_id(top);
+
+  return 0;
+}
+
+#ifdef O2SCL_NEVER_DEFINED
+int hdf_file::sets_vec_vec(std::string name,
+                           const std::vector<std::vector<std::string>> &s) {
+
+  if (write_access==false) {
+    O2SCL_ERR2("File not opened with write access ",
+	       "in hdf_file::sets_vec_vec().",exc_efailed);
+  }
+
+  // Create the group
+  hid_t top=current;
+  hid_t group=open_group(name);
+  set_current_id(group);
+  
+  sets_fixed("o2scl_type","string_vec_vec");
+
+  vector<int> sizes;
+  for(size_t i=0;i<s.size();i++) {
+    sizes.push_back(s[i].size());
+  }
+  seti_arr("nw",sizes);
+  
+  // Compute total length
+  int nc=0;
+  for(size_t i=0;i<s.size();i++) {
+    for(size_t j=0;j<s[j].size();j++) {
+      nc+=s[i][j].length();
+    }
+  }
+  seti("nc",nc);
+  
+  // Copy strings over to a contiguous char *, and count lengths
+
+  // Initialize these pointers to zero to avoid uninit'ed variable
+  // warnings
   int *ip=0;
   char *cp=0;
   if (s.size()>0) {
@@ -2444,6 +2522,7 @@ int hdf_file::sets_vec(std::string name, const std::vector<std::string> &s) {
 
   return 0;
 }
+#endif
 
 int hdf_file::setd_mat_copy(std::string name, const ubmatrix &m) {
   

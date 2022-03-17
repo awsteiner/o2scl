@@ -395,6 +395,7 @@ namespace o2scl_hdf {
 
     /// Set vector dataset named \c name with \c v
     int seti_vec(std::string name, const std::vector<int> &v);
+    
     /** \brief Set vector dataset named \c name with \c v
 	
 	This requires a copy before the vector is written to
