@@ -30,6 +30,9 @@
 # section will work or is useful outside of strict confinement). I had
 # to manually add the hdf5 and compression libraries to LIBS.
 
+# 3/16/2022: Renamed stage-packages to build-packages as this made
+# snapcraft build work on isospin
+
   parts:
     o2scl:
       source: https://github.com/awsteiner/o2scl.git
