@@ -2318,8 +2318,9 @@ int hdf_file::get_szt_vec(std::string name, std::vector<size_t> &v) {
   return 0;
 }
 
-int hdf_file::gets_vec(std::string name, std::vector<std::string> &s) {
-		  
+int hdf_file::gets_vec_vec(std::string name,
+                           const std::vector<std::vector<std::string>> &s) {
+  
   int nc, nw;
 
   // Open the group
@@ -2346,9 +2347,6 @@ int hdf_file::gets_vec(std::string name, std::vector<std::string> &s) {
     
     if (nc>0) {
 
-      //int *ip;
-      //char *cp;
-      
       // Allocate space for ip and cp
       vector<int> ip(nw);
       std::string cp;
@@ -2368,10 +2366,6 @@ int hdf_file::gets_vec(std::string name, std::vector<std::string> &s) {
 	s.push_back(tmp);
       }
 
-      // Free allocations
-      //delete[] cp;
-      //delete[] ip;
-      
     }
     
   }
@@ -2384,7 +2378,67 @@ int hdf_file::gets_vec(std::string name, std::vector<std::string> &s) {
   return 0;
 }
 
-int hdf_file::sets_vec(std::string name, const std::vector<std::string> &s) {
+int hdf_file::gets_vec(std::string name, std::vector<std::string> &s) {
+		  
+  int nc, nw;
+
+  // Open the group
+  hid_t top=get_current_id();
+  hid_t group=open_group(name);
+  set_current_id(group);
+  
+  string o2t;
+  gets_fixed("o2scl_type",o2t);
+  if (o2t!="string_vec_vec") {
+    set_current_id(top);
+    O2SCL_ERR2("The specified name does not refer to data which ",
+	       "can be read by O2scl in hdf_file::gets_vec().",
+	       exc_efailed);
+  }
+
+  // Get number of words
+  geti("nw",nw);
+
+  if (nw>0) {
+    
+    // Get number of characters
+    geti("nc",nc);
+    
+    if (nc>0) {
+
+      // Allocate space for ip and cp
+      vector<int> ip(nw);
+      std::string cp;
+      
+      // Get counter and data
+      geti_vec("counter",ip);
+      gets("data",cp);
+      
+      // Copy the data over
+      size_t ix=0;
+      for(int i=0;i<nw;i++) {
+	string tmp;
+	for(int j=0;j<ip[i];j++) {
+	  tmp+=cp[ix];
+	  ix++;
+	}
+	s.push_back(tmp);
+      }
+
+    }
+    
+  }
+
+  close_group(group);
+
+  // Return file location
+  set_current_id(top);
+
+  return 0;
+}
+
+int hdf_file::sets_vec(std::string name,
+                       const std::vector<std::string> &s) {
 
   if (write_access==false) {
     O2SCL_ERR2("File not opened with write access ",
@@ -2409,7 +2463,6 @@ int hdf_file::sets_vec(std::string name, const std::vector<std::string> &s) {
   // count lengths
 
   if (nc>0) {
-    
     vector<int> ip;
     std::string cp;
     for(size_t i=0;i<s.size();i++) {
@@ -2422,7 +2475,6 @@ int hdf_file::sets_vec(std::string name, const std::vector<std::string> &s) {
     // Set data
     seti_vec("counter",ip);
     sets("data",cp);
-    
   }
 
   // Close the group
@@ -2434,10 +2486,9 @@ int hdf_file::sets_vec(std::string name, const std::vector<std::string> &s) {
   return 0;
 }
 
-#ifdef O2SCL_NEVER_DEFINED
 int hdf_file::sets_vec_vec(std::string name,
                            const std::vector<std::vector<std::string>> &s) {
-
+  
   if (write_access==false) {
     O2SCL_ERR2("File not opened with write access ",
 	       "in hdf_file::sets_vec_vec().",exc_efailed);
@@ -2449,55 +2500,34 @@ int hdf_file::sets_vec_vec(std::string name,
   set_current_id(group);
   
   sets_fixed("o2scl_type","string_vec_vec");
-
+  
+  set_szt("n",s.size());
+  
   vector<int> sizes;
+  vector<int> lengths;
   for(size_t i=0;i<s.size();i++) {
     sizes.push_back(s[i].size());
-  }
-  seti_arr("nw",sizes);
-  
-  // Compute total length
-  int nc=0;
-  for(size_t i=0;i<s.size();i++) {
-    for(size_t j=0;j<s[j].size();j++) {
-      nc+=s[i][j].length();
-    }
-  }
-  seti("nc",nc);
-  
-  // Copy strings over to a contiguous char *, and count lengths
-
-  // Initialize these pointers to zero to avoid uninit'ed variable
-  // warnings
-  int *ip=0;
-  char *cp=0;
-  if (s.size()>0) {
-    ip=new int[s.size()];
-  }
-  if (nc>0) {
-    cp=new char[nc];
-  }
-  size_t ix=0;
-  for(size_t i=0;i<s.size();i++) {
-    ip[i]=s[i].length();
     for(size_t j=0;j<s[i].size();j++) {
-      cp[ix]=s[i][j];
-      ix++;
+      lengths.push_back(s[i][j].length());
     }
   }
-  
-  // Set data
-  seti_arr("counter",s.size(),ip);
-  setc_arr("data",nc,cp);
-  
-  // Free allocations
-  if (nc>0) {
-    delete[] cp;
-  }
   if (s.size()>0) {
-    delete[] ip;
+    seti_vec("sizes",sizes);
+    seti_vec("lengths",lengths);
   }
-
+  
+  std::string cp;
+  for(size_t i=0;i<s.size();i++) {
+    for(size_t j=0;j<s[i].size();j++) {
+      for(size_t k=0;k<s[i][j].length();k++) {
+        cp+=s[i][j][k];
+      }
+    }
+  }
+  if (cp.length()>0) {
+    sets("data",cp);
+  }
+  
   // Close the group
   close_group(group);
   
@@ -2506,7 +2536,6 @@ int hdf_file::sets_vec_vec(std::string name,
 
   return 0;
 }
-#endif
 
 int hdf_file::setd_mat_copy(std::string name, const ubmatrix &m) {
   

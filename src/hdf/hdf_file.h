@@ -442,6 +442,13 @@ namespace o2scl_hdf {
 	stored as an integer named <tt>nw</tt>.
     */
     int sets_vec(std::string name, const std::vector<std::string> &s);
+    
+    /** \brief Set a vector of vectors of strings named \c name
+
+        (experimental)
+     */
+    int sets_vec_vec(std::string name,
+                     const std::vector<std::vector<std::string>> &s);
     //@}
 
     /** \name Matrix get functions
