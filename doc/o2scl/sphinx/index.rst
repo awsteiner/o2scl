@@ -3,12 +3,12 @@
 Object-oriented Scientific Computing Library: v0.927a1
 ======================================================
 
-O\ :sub:`2`\ scl is a C++ library for object-oriented scientific
+O₂scl is a C++ library for object-oriented scientific
 computing. This is a beta version. The library should install and test
 successfully, and most of the classes are ready for production use.
 Some of the interfaces may change slightly in future versions. There
 are a few classes which are more experimental, and this is stated at
-the top of the documentation for these classes. O\ :sub:`2`\ scl also
+the top of the documentation for these classes. O₂scl also
 computes the thermodynamics of particles and nuclei and equations of
 state of dense matter.
 

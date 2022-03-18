@@ -2319,7 +2319,7 @@ int hdf_file::get_szt_vec(std::string name, std::vector<size_t> &v) {
 }
 
 int hdf_file::gets_vec_vec(std::string name,
-                           const std::vector<std::vector<std::string>> &s) {
+                           std::vector<std::vector<std::string>> &s) {
   
   int nc, nw;
 
@@ -2330,10 +2330,10 @@ int hdf_file::gets_vec_vec(std::string name,
   
   string o2t;
   gets_fixed("o2scl_type",o2t);
-  if (o2t!="string[]") {
+  if (o2t!="string_vec_vec") {
     set_current_id(top);
     O2SCL_ERR2("The specified name does not refer to data which ",
-	       "can be read by O2scl in hdf_file::gets_vec().",
+	       "can be read by O₂scl in hdf_file::gets_vec().",
 	       exc_efailed);
   }
 
@@ -2363,7 +2363,7 @@ int hdf_file::gets_vec_vec(std::string name,
 	  tmp+=cp[ix];
 	  ix++;
 	}
-	s.push_back(tmp);
+	s[i].push_back(tmp);
       }
 
     }
@@ -2389,7 +2389,7 @@ int hdf_file::gets_vec(std::string name, std::vector<std::string> &s) {
   
   string o2t;
   gets_fixed("o2scl_type",o2t);
-  if (o2t!="string_vec_vec") {
+  if (o2t!="string[]") {
     set_current_id(top);
     O2SCL_ERR2("The specified name does not refer to data which ",
 	       "can be read by O2scl in hdf_file::gets_vec().",

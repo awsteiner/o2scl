@@ -367,7 +367,7 @@ namespace o2scl_hdf {
     /** \brief Desc
      */
     int gets_vec_vec(std::string name,
-                               const std::vector<std::vector<std::string>> &s);
+                     std::vector<std::vector<std::string>> &s);
     //@}
 
     /** \name Vector set functions
@@ -439,6 +439,11 @@ namespace o2scl_hdf {
     }
 
     /** \brief Set a vector of strings named \c name
+
+        \warning This function copies the data in the vector of strings
+        to a new string before writing the data to the HDF5 file and
+        thus may be less useful for larger vectors or vectors which
+        contain longer strings.
 
         \devnote 
 	String vectors are reformatted as a single character array, in
