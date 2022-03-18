@@ -363,6 +363,11 @@ namespace o2scl_hdf {
     /** \brief Get a vector of strings named \c name and store it in \c s
      */
     int gets_vec(std::string name, std::vector<std::string> &s);
+
+    /** \brief Desc
+     */
+    int gets_vec_vec(std::string name,
+                               const std::vector<std::vector<std::string>> &s);
     //@}
 
     /** \name Vector set functions
