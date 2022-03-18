@@ -240,7 +240,7 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
   
   verbose=2;
 
-  vector<vector<std::string>> doc_strings;
+  vector<std::string> doc_strings;
   
   vector<string> clist=cl->get_option_list();
   

@@ -463,6 +463,8 @@ void hdf_file::sets_fixed(std::string name, std::string s) {
     space=H5Dget_space(dset);
     int ndims=H5Sget_simple_extent_dims(space,dims,0);
     if (ndims!=1 || dims[0]!=1) {
+      std::cerr << "Incorrect dimensions in hdf_file::sets_fixed():\n  "
+                << ndims << " " << dims[0] << std::endl;
       O2SCL_ERR2("Incorrect dimensions in hdf_file::sets_fixed().",
 		 "",exc_einval);
     }
@@ -2318,8 +2320,6 @@ int hdf_file::get_szt_vec(std::string name, std::vector<size_t> &v) {
 
 int hdf_file::gets_vec(std::string name, std::vector<std::string> &s) {
 		  
-  int *ip;
-  char *cp;
   int nc, nw;
 
   // Open the group
@@ -2345,14 +2345,17 @@ int hdf_file::gets_vec(std::string name, std::vector<std::string> &s) {
     geti("nc",nc);
     
     if (nc>0) {
+
+      //int *ip;
+      //char *cp;
       
       // Allocate space for ip and cp
-      ip=new int[nw];
-      cp=new char[nc];
+      vector<int> ip(nw);
+      std::string cp;
       
       // Get counter and data
-      geti_arr("counter",nw,ip);
-      getc_arr("data",nc,cp);
+      geti_vec("counter",ip);
+      gets("data",cp);
       
       // Copy the data over
       size_t ix=0;
@@ -2366,8 +2369,8 @@ int hdf_file::gets_vec(std::string name, std::vector<std::string> &s) {
       }
 
       // Free allocations
-      delete[] cp;
-      delete[] ip;
+      //delete[] cp;
+      //delete[] ip;
       
     }
     
@@ -2394,7 +2397,7 @@ int hdf_file::sets_vec(std::string name, const std::vector<std::string> &s) {
   set_current_id(group);
   
   sets_fixed("o2scl_type","string[]");
-  
+
   seti("nw",s.size());
   
   // Compute total length
@@ -2403,43 +2406,24 @@ int hdf_file::sets_vec(std::string name, const std::vector<std::string> &s) {
   
   seti("nc",nc);
   
-  // Copy strings over to a contiguous char *, and count lengths
+  // count lengths
 
-  // Initialize these pointers to zero to avoid uninit'ed variable
-  // warnings
-  vector<int> ip;
-  std::string cp;
-  //vector<char> cp;
-  //int *ip=0;
-  //char *cp=0;
-  //if (s.size()>0) {
-  //ip=new int[s.size()];
-  //}
-  //if (nc>0) {
-  //cp=new char[nc];
-  //}
-  //size_t ix=0;
-  for(size_t i=0;i<s.size();i++) {
-    ip.push_back(s[i].length());
-    //ip[i]=s[i].length();
-    for(size_t j=0;j<s[i].size();j++) {
-      cp+=s[i][j];
-      //cp[ix]=s[i][j];
-      //ix++;
+  if (nc>0) {
+    
+    vector<int> ip;
+    std::string cp;
+    for(size_t i=0;i<s.size();i++) {
+      ip.push_back(s[i].length());
+      for(size_t j=0;j<s[i].size();j++) {
+        cp+=s[i][j];
+      }
     }
+  
+    // Set data
+    seti_vec("counter",ip);
+    sets("data",cp);
+    
   }
-  
-  // Set data
-  seti_vec("counter",ip);
-  sets("data",cp);
-  
-  // Free allocations
-  //if (nc>0) {
-  //delete[] cp;
-  //}
-  //if (s.size()>0) {
-  //delete[] ip;
-  //}
 
   // Close the group
   close_group(group);
@@ -4035,6 +4019,10 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
   // If it's a group
   if (infobuf.type==H5O_TYPE_GROUP) {
 
+    if (loc_verbose>1) {
+      std::cout << "iterate_func(), group:" << std::endl;
+    }
+
     // Open the group and see if it's an O2scl object
     hid_t group=hf.open_group(name);
     hf.set_current_id(group);
@@ -4107,7 +4095,15 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
     }
 #endif    
     
+    if (loc_verbose>1) {
+      std::cout << "iterate_func(), group end." << std::endl;
+    }
+    
   } else if (infobuf.type==H5O_TYPE_DATASET) {
+    
+    if (loc_verbose>1) {
+      std::cout << "iterate_func(), dataset:" << std::endl;
+    }
     
     if (mode==ip_filelist) {
       cout << "Dataset \"" << name << "\" of type ";
@@ -4159,17 +4155,68 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
       }
     }
     
+    //if (loc_verbose>1) {
+    //std::cout << "iterate_func(), 1:" << std::endl;
+    //}
+    
     // Get dataspace information
     hid_t space_id = H5Dget_space(dset);
     hsize_t dims[100];
     hsize_t max_dims[100];
     int ndims=H5Sget_simple_extent_dims(space_id,dims,max_dims);
     
+    //if (loc_verbose>1) {
+    //std::cout << "iterate_func(), 2:" << std::endl;
+    //}
+    
     if (H5Tequal(nat_id,H5T_NATIVE_CHAR)) {
+
+      //if (loc_verbose>1) {
+      //std::cout << "iterate_func(), 3:" << std::endl;
+      //}
+      
       type_process(*ip,mode,ndims,dims,max_dims,"char",name);
+      
+      //if (loc_verbose>1) {
+      //std::cout << "iterate_func(), 3b:" << std::endl;
+      //}
+      
       if (ndims==1 && mode==ip_filelist) {
-	std::string s;
-	hf.gets(name,s);
+
+        //if (loc_verbose>1) {
+        //std::cout << "iterate_func(), 3c: " << ndims << " "
+        //<< dims[0] << std::endl;
+        //}
+
+        // Allocate memory
+        char *c=new char[dims[0]];
+        
+        // Read the data
+        herr_t status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
+                              H5P_DEFAULT,c);
+        if (status<0) {
+          O2SCL_ERR("Could not read dataspace in hdf_file::iterate_func().",
+                    exc_einval);
+        }
+        
+        // Copy to the string object
+        std::string s="";
+        for(size_t i=0;i<dims[0];i++) s+=c[i];
+        
+        // Delete char memory
+        delete[] c;
+        
+        //if (loc_verbose>1) {
+        //std::cout << "iterate_func(), 3c2:" << std::endl;
+        //}
+
+	//std::string s;
+	//hf.gets(name,s);
+
+        //if (loc_verbose>1) {
+        //std::cout << "iterate_func(), 3d:" << std::endl;
+        //}
+        
 	if (dims[0]==0) {
 	  cout << " is empty.";
 	} else if (dims[0]<20) {
@@ -4181,9 +4228,16 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 	       << s[dims[0]-6] << s[dims[0]-5] << s[dims[0]-4]
 	       << s[dims[0]-3] << s[dims[0]-2] << s[dims[0]-1]
 	       << "\".";
-	}
+
+        }
       }
+
+      //if (loc_verbose>1) {
+      //std::cout << "iterate_func(), 4: " << ip->found << std::endl;
+      //}
+
       if (ip->found==true) return 1;
+      
     } else if (H5Tequal(nat_id,H5T_NATIVE_SHORT)) {
       type_process(*ip,mode,ndims,dims,max_dims,"short",name);
       if (ip->found==true) return 1;
@@ -4337,10 +4391,18 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 	   << ip->type << endl;
     }
     
+    if (loc_verbose>1) {
+      std::cout << "iterate_func(), 5: " << endl;
+    }
+    
     H5Sclose(space_id);
     H5Tclose(nat_id);
     H5Tclose(type_id);
     H5Dclose(dset);
+    
+    if (loc_verbose>1) {
+      std::cout << "iterate_func(), dataset end" << std::endl;
+    }
     
   } else if (infobuf.type==H5O_TYPE_NAMED_DATATYPE) {
     if (mode==ip_filelist) {
