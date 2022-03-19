@@ -2318,66 +2318,6 @@ int hdf_file::get_szt_vec(std::string name, std::vector<size_t> &v) {
   return 0;
 }
 
-int hdf_file::gets_vec_vec(std::string name,
-                           std::vector<std::vector<std::string>> &s) {
-  
-  int nc, nw;
-
-  // Open the group
-  hid_t top=get_current_id();
-  hid_t group=open_group(name);
-  set_current_id(group);
-  
-  string o2t;
-  gets_fixed("o2scl_type",o2t);
-  if (o2t!="string_vec_vec") {
-    set_current_id(top);
-    O2SCL_ERR2("The specified name does not refer to data which ",
-	       "can be read by O₂scl in hdf_file::gets_vec().",
-	       exc_efailed);
-  }
-
-  // Get number of words
-  geti("nw",nw);
-
-  if (nw>0) {
-    
-    // Get number of characters
-    geti("nc",nc);
-    
-    if (nc>0) {
-
-      // Allocate space for ip and cp
-      vector<int> ip(nw);
-      std::string cp;
-      
-      // Get counter and data
-      geti_vec("counter",ip);
-      gets("data",cp);
-      
-      // Copy the data over
-      size_t ix=0;
-      for(int i=0;i<nw;i++) {
-	string tmp;
-	for(int j=0;j<ip[i];j++) {
-	  tmp+=cp[ix];
-	  ix++;
-	}
-	s[i].push_back(tmp);
-      }
-
-    }
-    
-  }
-
-  close_group(group);
-
-  // Return file location
-  set_current_id(top);
-
-  return 0;
-}
-
 int hdf_file::gets_vec(std::string name, std::vector<std::string> &s) {
 		  
   int nc, nw;
@@ -2486,6 +2426,63 @@ int hdf_file::sets_vec(std::string name,
   return 0;
 }
 
+int hdf_file::gets_vec_vec(std::string name,
+                           std::vector<std::vector<std::string>> &s) {
+  
+  // Open the group
+  hid_t top=get_current_id();
+  hid_t group=open_group(name);
+  set_current_id(group);
+
+  string o2t;
+  gets_fixed("o2scl_type",o2t);
+  if (o2t!="vec_vec_string") {
+    set_current_id(top);
+    O2SCL_ERR2("The specified name does not refer to data which ",
+	       "can be read by O₂scl in hdf_file::gets_vec().",
+	       exc_efailed);
+  }
+
+  size_t n;
+  get_szt("n",n);
+  
+  if (n>0) {
+    
+    s.resize(n);
+    
+    vector<int> sizes;
+    geti_vec("sizes",sizes);
+    vector<int> lengths;
+    geti_vec("lengths",lengths);
+
+    std::string cp;
+    gets("data",cp);
+
+    size_t ic=0;
+    size_t ik=0;
+    for(size_t i=0;i<n;i++) {
+      s[i].resize(sizes[i]);
+      for(size_t j=0;j<s[i].size();j++) {
+        int length=lengths[ik];
+        
+        for(int k=0;k<length;k++) {
+          s[i][j]+=cp[ic];
+          ic++;
+        }
+        
+        ik++;
+      }
+    }
+  }
+
+  close_group(group);
+
+  // Return file location
+  set_current_id(top);
+
+  return 0;
+}
+
 int hdf_file::sets_vec_vec(std::string name,
                            const std::vector<std::vector<std::string>> &s) {
   
@@ -2499,32 +2496,32 @@ int hdf_file::sets_vec_vec(std::string name,
   hid_t group=open_group(name);
   set_current_id(group);
   
-  sets_fixed("o2scl_type","string_vec_vec");
+  sets_fixed("o2scl_type","vec_vec_string");
   
   set_szt("n",s.size());
-  
-  vector<int> sizes;
-  vector<int> lengths;
-  for(size_t i=0;i<s.size();i++) {
-    sizes.push_back(s[i].size());
-    for(size_t j=0;j<s[i].size();j++) {
-      lengths.push_back(s[i][j].length());
-    }
-  }
+
   if (s.size()>0) {
-    seti_vec("sizes",sizes);
-    seti_vec("lengths",lengths);
-  }
-  
-  std::string cp;
-  for(size_t i=0;i<s.size();i++) {
-    for(size_t j=0;j<s[i].size();j++) {
-      for(size_t k=0;k<s[i][j].length();k++) {
-        cp+=s[i][j][k];
+    
+    vector<int> sizes;
+    vector<int> lengths;
+    for(size_t i=0;i<s.size();i++) {
+      sizes.push_back(s[i].size());
+      for(size_t j=0;j<s[i].size();j++) {
+        lengths.push_back(s[i][j].length());
       }
     }
-  }
-  if (cp.length()>0) {
+    seti_vec("sizes",sizes);
+    seti_vec("lengths",lengths);
+    
+    std::string cp;
+    for(size_t i=0;i<s.size();i++) {
+      for(size_t j=0;j<s[i].size();j++) {
+        for(size_t k=0;k<s[i][j].length();k++) {
+          cp+=s[i][j][k];
+        }
+      }
+    }
+    
     sets("data",cp);
   }
   

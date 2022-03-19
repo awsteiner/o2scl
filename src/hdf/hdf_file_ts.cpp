@@ -603,6 +603,11 @@ int main(void) {
       vs.push_back("is");
       vs.push_back("a");
       vs.push_back("test.");
+      
+      vector<vector<string>> vvs, vvs2;
+      vvs.push_back(vs);
+      vs.push_back("test2");
+      vvs.push_back(vs);
     
       char *c2=new char[6];
       double *d2=new double[6];
@@ -649,6 +654,8 @@ int main(void) {
       vs.push_back("test.");
       hf.sets_vec("testsa2",vs);
 
+      hf.sets_vec_vec("testvvs",vvs);
+
       hf.close();
 
       // Re-open the file, get the scalar values
@@ -667,6 +674,8 @@ int main(void) {
 
       hf.gets_vec("testsa2",vs2);
 
+      hf.gets_vec_vec("testvvs",vvs2);
+      
       hf.close();
 
       // Compare the old and new values
@@ -678,6 +687,12 @@ int main(void) {
 
       for(size_t j=0;j<vs.size();j++) {
 	t.test_gen(vs[j]==vs2[j],"string");
+      }
+      
+      for(size_t j=0;j<vvs.size();j++) {
+        for(size_t k=0;k<vvs[j].size();k++) {
+          t.test_gen(vvs[j][k]==vvs2[j][k],"vvs string");
+        }
       }
 
       delete[] c2;
