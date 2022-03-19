@@ -159,9 +159,15 @@ namespace o2scl {
     
   public:
 
+    vec_string_walker() {
+      indent=true;
+    }
+    
     /** \brief The traversal output
      */
     std::vector<std::string> output;
+
+    bool indent;
 
     /** \brief Before traversing
      */
@@ -185,8 +191,10 @@ namespace o2scl {
       if (depth()<last_depth) {
         int n=last_depth-depth();
         for(int i=0;i<n;i++) {
-          for (int j = 0; j < depth()-i+n-1; j++) {
-            stmp+=((std::string)"  ");
+          if (indent) {
+            for (int j = 0; j < depth()-i+n-1; j++) {
+              stmp+=((std::string)"  ");
+            }
           }
           stmp+=((std::string)"</")+names[names.size()-1]+">";
           output.push_back(stmp);
@@ -198,9 +206,11 @@ namespace o2scl {
       if (((std::string)node.name()).length()>0) {
         names.push_back(node.name());
       }
-      
-      for (int i = 0; i < depth(); i++) {
-        stmp+=((std::string)"  ");
+
+      if (indent) {
+        for (int i = 0; i < depth(); i++) {
+          stmp+=((std::string)"  ");
+        }
       }
       
       if (((std::string)node.name()).length()>0) {
@@ -229,8 +239,10 @@ namespace o2scl {
       for(int i=0;i<n;i++) {
         std::string stmp;
         if (names.size()>0) {
-          for (int j = 0; j < depth()-i+n; j++) {
-            stmp+=((std::string)"  ");
+          if (indent) {
+            for (int j = 0; j < depth()-i+n; j++) {
+              stmp+=((std::string)"  ");
+            }
           }
           stmp+=((std::string)"</")+names[names.size()-1]+">";
           output.push_back(stmp);

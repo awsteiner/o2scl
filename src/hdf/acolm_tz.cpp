@@ -238,16 +238,14 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
 
 #ifdef O2SCL_PUGIXML
   
-  verbose=2;
-
-  vector<std::string> doc_strings;
+  vector<vector<std::string>> doc_strings;
   
   vector<string> clist=cl->get_option_list();
   
   for(size_t j=0;j<clist.size();j++) {
 
-    bool found=false;
-    
+    vector<std::string> vs_tmp;
+
     pugi::xml_document doc;
     pugi::xml_document doc2;
     
@@ -260,9 +258,6 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
         fn_name+=cmd_name[k];
       }
     }
-    if (verbose>0) {
-      cout << "cmd,fn: " << cmd_name << " " << fn_name << endl;
-    }
     
     std::string fn="doc/o2scl/xml/classo2scl__acol_1_1acol__manager.xml";
     
@@ -270,46 +265,69 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
     
     pugi::xml_node n3=doxygen_xml_member_get
       (fn,"acol_manager",fn_name,"briefdescription",doc);
-    if (verbose>1 && n3!=0) {
-      cout << "dxmg: " << n3.name() << " " << n3.value() << endl;
-      n3.traverse(w);
-    }
     
     pugi::xml_node n4=doxygen_xml_member_get
       (fn,"acol_manager",fn_name,"detaileddescription",doc2);
-    if (verbose>1 && n4!=0) {
-      cout << "dxmg: " << n4.name() << " " << n4.value() << endl;
-      n4.traverse(w);
-    }
     
     if (n3!=0 && n4!=0) {
+
+      if (verbose>2) {
+        cout << "dxmg: " << n3.name() << " " << n3.value() << endl;
+        n3.traverse(w);
+        
+        cout << "dxmg: " << n4.name() << " " << n4.value() << endl;
+        n4.traverse(w);
+      }
       
       pugi::xml_node_iterator it=n4.begin();
-      pugi::xml_node_iterator it2=n4.begin();
-      if (it2!=n4.end()) it2++;
-      
-      if (it!=n4.end() && it2!=n4.end() &&
-          it->name()==((string)"para") &&
-          it2->name()==((string)"para")) {
-        
-        doc_strings.push_back(cmd_name);
-        doc_strings.push_back(fn_name);
-        doc_strings.push_back(n3.child_value("para"));
-        doc_strings.push_back(it->child_value());
-        doc_strings.push_back(it2->child_value());
-        found=true;
+
+      vs_tmp.push_back(cmd_name);
+      vs_tmp.push_back(fn_name);
+      vs_tmp.push_back(n3.child_value("para"));
+      if (verbose>1) {
+        cout << "cmd: " << cmd_name << endl;
+        cout << "fn: " << fn_name << endl;
+        cout << "brief: " << n3.child_value("para") << endl;
       }
+
+      bool found=false;
+      
+      vec_string_walker w2;
+      w2.indent=false;
+      n4.traverse(w2);
+      //cout << w2.output.size() << endl;
+      bool done=false;
+      std::string stmp;
+      for(size_t k=0;k<w2.output.size() && done==false;k++) {
+        if (w2.output[k].find("End of runtime documentation.")!=
+            string::npos) {
+          done=true;
+        } else {
+          if (w2.output[k]!=((string)"<para>")) {
+            if (w2.output[k]==((string)"</para>")) {
+              if (verbose>1) {
+                cout << "stmp: " << stmp << endl;
+              }
+              found=true;
+              vs_tmp.push_back(stmp);
+              stmp.clear();
+            } else {
+              if (stmp.length()==0) stmp=w2.output[k];
+              else stmp+=' '+w2.output[k];
+            }
+          }
+        }
+      }
+
+      if (found) doc_strings.push_back(vs_tmp);
+      
     }
     
-    if (found==false) {
-      cout << "Could not find documentation for command " << cmd_name
-           << " and function " << fn_name << "." << endl;
-    }
   }
-  
+
   hdf_file hf;
   hf.open_or_create("data/o2scl/acol_docs.o2");
-  hf.sets_vec("doc_strings",doc_strings);
+  hf.sets_vec_vec("doc_strings",doc_strings);
   hf.close();
   cout << "Created file data/o2scl/acol_docs.o2." << endl;
 
