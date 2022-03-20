@@ -88,7 +88,9 @@ namespace o2scl_hdf {
 
     return;
   }
-  
+
+  /** \brief Desc
+   */
   template<class vec_t, class mat_t> 
   void hdf_input(hdf_file &hf,
                  o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,

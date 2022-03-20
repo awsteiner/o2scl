@@ -386,6 +386,133 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
     
   }
 
+  vector<string> flist={"value_spec","vector_spec","mult_vector_spec",
+    "strings_spec"};
+  
+  for(size_t j=0;j<flist.size();j++) {
+
+    verbose=3;
+    
+    vector<std::string> vs_tmp;
+
+    pugi::xml_document doc;
+    pugi::xml_document doc2;
+
+    std::string fn_name=flist[j];
+    
+    std::string fn="doc/o2scl/xml/namespaceo2scl__hdf.xml";
+    
+    ostream_walker w;
+    
+    pugi::xml_node n3=doxygen_xml_get
+      (fn,fn_name,"briefdescription",doc);
+    
+    pugi::xml_node n4=doxygen_xml_get
+      (fn,fn_name,"detaileddescription",doc2);
+    
+    if (n3!=0 && n4!=0) {
+
+      if (verbose>2) {
+        cout << "dxmg: " << n3.name() << " " << n3.value() << endl;
+        n3.traverse(w);
+        
+        cout << "dxmg: " << n4.name() << " " << n4.value() << endl;
+        n4.traverse(w);
+      }
+      
+      pugi::xml_node_iterator it=n4.begin();
+
+      vs_tmp.push_back(fn_name);
+      vs_tmp.push_back(n3.child_value("para"));
+      cout << fn_name << endl;
+
+      bool found=false;
+      
+      vec_string_walker w2;
+      w2.indent=false;
+      n4.traverse(w2);
+      //cout << w2.output.size() << endl;
+      bool done=false;
+      std::string stmp;
+      for(size_t k=0;k<w2.output.size() && done==false;k++) {
+        if (w2.output[k].find("End of runtime documentation.")!=
+            string::npos) {
+          done=true;
+        } else {
+          if (w2.output[k]!=((string)"<para>")) {
+            if (w2.output[k]==((string)"</para>")) {
+              if (verbose>1) {
+                //cout << "stmp: " << stmp << endl;
+              }
+              found=true;
+
+              // Make the manual replacements from the 'subs' list
+              // above
+              for(size_t i=0;i<subs.size();i+=2) {
+                //cout << "Replacing: " << i << endl;
+                string_replace(stmp,subs[i],subs[i+1]);
+              }
+
+              // Make all of the type replacements
+              for(size_t i=0;i<type_list.size();i++) {
+                string_replace(stmp,"<computeroutput> "+type_list[i]+
+                               " </computeroutput>",
+                               ter.magenta_fg()+ter.bold()+type_list[i]+
+                               ter.default_fg());
+              }
+
+              // Make the command replacements from the current option
+              // list
+              std::vector<std::string> comm_list=cl->get_option_list();
+              for(size_t i=0;i<comm_list.size();i++) {
+                string_replace(stmp,"<computeroutput> "+comm_list[i]+
+                               " </computeroutput>",
+                               ter.cyan_fg()+ter.bold()+comm_list[i]+
+                               ter.default_fg());
+              }
+              
+              // Make the command replacements from the option
+              // lists for other types
+              for (std::map<std::string,std::vector<std::string> >::iterator
+                     it=type_comm_list.begin();it!=type_comm_list.end();
+                   it++) {
+                for(size_t ii=0;ii<it->second.size();ii++) {
+                  string_replace(stmp,"<computeroutput> "+it->second[ii]+
+                                 " </computeroutput>",
+                                 ter.cyan_fg()+ter.bold()+it->second[ii]+
+                                 ter.default_fg());
+                }
+              }
+              
+              string_replace(stmp,"  "," ");
+              string_replace(stmp," ,",",");
+              string_replace(stmp," .",".");
+              
+              vs_tmp.push_back(stmp);
+              stmp.clear();
+            } else {
+              if (stmp.length()==0) stmp=w2.output[k];
+              else stmp+=' '+w2.output[k];
+            }
+          }
+        }
+      }
+
+      if (found) {
+        if (vs_tmp.size()>=4 || true) {
+          for(size_t jj=0;jj<vs_tmp.size();jj++) {
+            cout << jj << ": " << vs_tmp[jj] << endl;
+          }
+          cout << endl;
+        }
+        doc_strings.push_back(vs_tmp);
+        
+      }
+      
+    }
+
+  }
+
   hdf_file hf;
   hf.open_or_create("data/o2scl/acol_docs.o2");
   hf.sets_vec_vec("doc_strings",doc_strings);
