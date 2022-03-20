@@ -151,6 +151,9 @@ namespace o2scl_acol {
     /// True if we should output column names
     bool names_out;
 
+    /// True to use regex (false)
+    bool use_regex;
+
     /// The name of the table
     std::string obj_name;
   
@@ -186,6 +189,7 @@ namespace o2scl_acol {
     o2scl::cli::parameter_bool p_scientific;
     o2scl::cli::parameter_bool p_pretty;
     o2scl::cli::parameter_bool p_names_out;
+    o2scl::cli::parameter_bool p_use_regex;
     //@}
 
     /// \name Other data [protected]
@@ -324,10 +328,24 @@ namespace o2scl_acol {
     /// Refine an object
     virtual int comm_refine(std::vector<std::string> &sv, bool itive_com);
 
-    /// Compute a scalar value
+    /** \brief Compute the value of a constant expression.
+
+        <expr>
+
+        This computes the value of the constant expression
+        <expr>. Examples are "calc acos(-1)" or "calc 2+1/sqrt(2.0e4)".
+        Results are given at the current precision. To see valid
+        expressions type 'acol -help <tt>functions</tt>'.
+    */
     virtual int comm_calc(std::vector<std::string> &sv, bool itive_com);
 
-    /// Clear the current object
+    /** \brief Clear the current object
+
+        (no parameters)
+
+        Deallocate the memory associated with the current object. This
+        command does not clear the object name stored in ``obj_name``.
+     */
     virtual int comm_clear(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Output the help text
@@ -338,7 +356,63 @@ namespace o2scl_acol {
      */
     virtual int comm_commands(std::vector<std::string> &sv, bool itive_com);
     
-    /// Create a table from a column of equally spaced values
+    /** \brief Create an object.
+
+        <type> [...]
+
+        Create a new object of type <type>. If an object is currently
+        in memory, it is deallocated before creating the new object.
+
+        "<tt>create</tt> <type> <value>": For types <tt>char</tt>,
+        <tt>int</tt>, <tt>size_t</tt>, and <tt>string</tt>, create an
+        object and give it the initial value specified.
+
+        "<tt>create</tt> <tt>double</tt> <value spec.>": Create a
+        <tt>double</tt> object and set it equal to the value specified by
+        <value spec.>. (See "acol -help functions" for help on
+        specifying functions and "acol -help value-spec" for help on
+        value specifications.)
+
+        "<tt>create</tt> <type> <size> <function of "i">": For array
+        types <tt>int[]</tt> and <tt>size_t[]</tt>, the user must
+        specify the size of the array and a function of the array
+        index <tt>i</tt> to fill the array.
+
+        "<tt>create</tt> <tt>double[]</tt> [<size> <function of "i">]
+        or [vector spec.]": For <tt>double[]</tt> the user must either
+        give a vector specification, or specify the size of the array
+        and a function of the array index <tt>i</tt>.
+
+        "<tt>create</tt> <tt>table</tt> <name> <vector spec.>":
+        Create a new <tt>table</tt> object with one column named <name>
+        from a vector specification (see ``Vector specifications``
+        for the syntax).
+        
+        "<tt>create</tt> <tt>tensor</tt> <rank> <size 0> <size 1>
+        ...": Create a <tt>tensor</tt> object with the specified rank and
+        sizes. All tensor entries are initialized to zero.
+
+        "<tt>create</tt> <tt>tensor_grid</tt> <rank> <size 0> <size 1>
+        ...": <tt>Create a tensor_grid object</tt> with the specified
+        rank and sizes. The tensor grid is initialized to count each
+        index (beginning with zero) and the entries of the tensor are
+        initialized to zero. The grid can be specified afterwards
+        using <tt>set-grid</tt>.
+
+        "<tt>create</tt> <tt>table3d</tt> <x name> <x vector spec.> <y
+        name> <y vector spec.>\n <slice name> <slice function>":
+        Create a new table3d object which has one slice. The x and y
+        grids are given as vector specifications (see "acol -help
+        vector-spec" for the syntax). The slice function can be
+        written in terms of the x- and y-grid values which are
+        referred to by name.
+
+        For example, using <tt>o2graph</tt> from o2sclpy:
+
+        o2graph -create table3d x func:100:i/200 y func:100:i/200 z
+        "sin(1/(x+0.01))* sin(1/(y+0.01))" -den-plot z -xtitle x
+        -ytitle y -show
+    */
     virtual int comm_create(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Set the grid for a \ref o2scl::tensor_grid object
@@ -349,16 +423,58 @@ namespace o2scl_acol {
      */
     virtual int comm_get_grid(std::vector<std::string> &sv, bool itive_com);
 
-    /// Download a file from a specified URL
+    /** \brief Download a file from the specified URL.
+
+        <file> <URL> [hash, \"file:\"hash_filename, or \"none\"] 
+        [directory]
+
+        Check if a file matches a specified hash, and if not, attempt
+        to download a fresh copy from the specified URL. If the
+        filename is "_", then the file is extracted from the end of
+        the URL.
+     */
     virtual int comm_download(std::vector<std::string> &sv, bool itive_com);
 
-    /// Desc
+    /** \brief Parse doxygen XML to generate runtime docs.
+        
+        No parameters.
+
+        When pugixml is enabled, this function reads the
+        doxygen XML output and generates an HDF5 file which acol reads
+        to generate the runtime documentation.
+    */
     virtual int comm_xml_to_o2(std::vector<std::string> &sv, bool itive_com);
 
-    /// Open the local HTML documentation
+    /** \brief Open local HTML docs for acol or an O2scl topic.
+
+        [topic]
+
+        If [topic] is unspecified, this command opens up the local
+        HTML documentation for acol in the default web browser using
+        'open' on OSX and 'xdg-open' on other systems. If a topic is
+        specified, then the closest O2scl documentation web page is
+        opened. In order to open the remote version of the
+        documentation instead of the local copy, use the
+        <tt>wdocs</tt> command instead.
+    */
     virtual int comm_docs(std::vector<std::string> &sv, bool itive_com);
 
-    /// Open the HTML documentation
+    /** \brief Open remote HTML docs for acol or an O2scl topic.
+
+        [search_term], [topic] or [section search_term]
+        
+        If no arguments are given, this command opens up the remote
+        HTML documentation for acol in the default web browser using
+        'open' on OSX and 'xdg-open' on other systems. If a [topic] is
+        specified, then the associated O2scl web page is opened. If
+        the argument does not match an already known topic, then the
+        search feature on the O2scl web page is opened using the
+        specified search term. Note that, for search terms, spaces can
+        be included using e.g. '-wdocs \"Simulated annealing\"'. Valid
+        sections are either \"eos\" or \"part\". In order to open
+        the local version of the documentation instead of the remote
+        copy, use <tt>docs</tt> instead of <tt>wdocs</tt>.
+    */
     virtual int comm_wdocs(std::vector<std::string> &sv, bool itive_com);
 
     /// Delete a column
@@ -438,14 +554,7 @@ namespace o2scl_acol {
         computes the autocorrelation coefficient for all vectors
         specified as arguments then average those autocorrelation
         coefficients together. The averaged autocorrelation
-        coefficients are kept as a double[] object.
-
-        End of runtime documentation. 
-
-        [web][terminal]
-        [``Vector specifications``]['acol -help vector-spec']
-        [``Multiple vector specifications``]['acol -help mult-vector-spec']
-        [:math:`5 \tau/M`][5*tau/M]
+        coefficients are kept as a <tt>double[]</tt> object.
     */
     virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
 
@@ -463,10 +572,27 @@ namespace o2scl_acol {
     /// Create a column which is the second derivative of another
     virtual int comm_deriv2(std::vector<std::string> &sv, bool itive_com);
 
-    /// Read a file and list the O2scl objects
+    /** \brief List objects in a HDF5 file
+
+        <file>
+
+        This lists all the top-level datasets and groups in a HDF5
+        file and, for those groups which are in the O2scl format,
+        gives the type and name of the object stored in that HDF5
+        group.
+     */
     virtual int comm_filelist(std::vector<std::string> &sv, bool itive_com);
 
-    /// Read an object from a file
+    /** Read an object from an O2scl-style HDF5 file.
+
+        <file> [object name]
+
+        Read an HDF5 file with the specified filename. If the [object
+        name] argument is specified, then read the object with the
+        specified name. Otherwise, look for the first <tt>table</tt>
+        object, and if not found, look for the first <tt>table3d</tt>
+        object, and so on, attempting to find a readable O2scl object.
+     */
     virtual int comm_read(std::vector<std::string> &sv, bool itive_com);
 
     /// Add 'nlines' as a constant to a \ref o2scl::table object
@@ -478,7 +604,19 @@ namespace o2scl_acol {
     /// Convert a \ref o2scl::table object to a \ref o2scl::hist object
     virtual int comm_to_hist_2d(std::vector<std::string> &sv, bool itive_com);
 
-    /// Output the type of the current object to the screen
+    /** \brief Output the type of the current object
+
+        No parameters.
+
+        Show the current object type, either <tt>table</tt>,
+        <tt>table3d</tt>, <tt>hist</tt>, <tt>hist_2d</tt>,
+        <tt>vector<contour_line></tt>, <tt>int</tt>, <tt>double</tt>,
+        <tt>char</tt>, <tt>string</tt>, <tt>int[]</tt>,
+        <tt>double[]</tt>, <tt>string[]</tt>, <tt>size_t</tt>,
+        <tt>size_t[]</tt>, <tt>uniform_grid<double></tt>,
+        <tt>tensor_grid</tt>, <tt>tensor</tt>, <tt>tensor<int></tt>,
+        <tt>tensor<size_t></tt> or <tt>prob_dens_mdim_amr</tt>.
+     */
     virtual int comm_type(std::vector<std::string> &sv, bool itive_com);
     
     /// Find a row from a function
@@ -490,7 +628,44 @@ namespace o2scl_acol {
     /// Add a column from a vector_specification
     virtual int comm_add_vec(std::vector<std::string> &sv, bool itive_com);
 
-    /// Read a generic data file
+    /** \brief Read an object generic text file
+        
+        <type> <file>
+        
+        Read an object of type <type> from a text file named <file>.
+        The allowed text file formats depend on the particular type
+        specified.
+
+        For <tt>int</tt>, <tt>char</tt>, <tt>double</tt>, or 
+        <tt>size_t</tt> objects, the
+        file is assumed to begin with the desired object and it is
+        read using operator>>().
+
+        For <tt>string</tt> objects, the first line is read using
+        <tt>std::getline()</tt>.
+
+        For array objects, it is assumed that all array entries are on
+        the first line of the file and no carriage returns are present
+        between entries.
+
+        For <tt>table</tt> objects, the first line of the file must
+        either contain numeric data or column names separated by white
+        space, without carriage returns, except for the one at the end
+        of the line. If the first line contains column names, the
+        second line may optionally contain unit expressions for each
+        column, enclosed by square brackets. All remaining lines are
+        assumed to contain data with the same number of columns as the
+        first line.
+        
+        For <tt>table3d</tt> objects, the data must be stored in
+        columns with the first column specifying the x-axis grid point
+        and the second column specifying the y-axis grid point. The
+        remaining columns give the data for each slice at that point.
+        Each grid point must correspond to a row in the file, but the
+        lines need not be in any particular order. The columns may
+        have one header line at top which specifies the names of the
+        x- and y-grids and the names of each slice (in order).
+     */
     virtual int comm_generic(std::vector<std::string> &sv, bool itive_com);
 
     /// Print out an entire row
@@ -517,10 +692,26 @@ namespace o2scl_acol {
     /// Create a column which is the integral of another
     virtual int comm_integ(std::vector<std::string> &sv, bool itive_com);
 
-    /// Toggle interactive mode
+    /** \brief Toggle interactive mode
+
+        No parameters.
+
+        If given as a command-line parameter, 'interactive' toggles
+        the execution of the interactive mode after the command-line
+        parameters are processed. If zero arguments are given to
+        'acol' on the command-line then the interactive interface is
+        automatically turned on.
+     */
     virtual int comm_interactive(std::vector<std::string> &sv, bool itive_com);
 
-    /// Output to a file in internal format
+    /** \brief Output current object in the internal HDF5 format.
+        
+        [file]
+
+        Output the current object in the internal HDF5 format.
+        If no argument is given, then output is sent to the screen,
+        otherwise, output is sent to the specified file. 
+     */
     virtual int comm_internal(std::vector<std::string> &sv, bool itive_com);
 
     /// Create an html file
@@ -544,16 +735,42 @@ namespace o2scl_acol {
     /// Add a column for line numbers
     virtual int comm_index(std::vector<std::string> &sv, bool itive_com);
 
-    /// Output to screen or file
+    /** \brief Output the current object to screen or text file.
+
+        [file]
+
+        Output the object to the screen, or if the [file] argument is
+        specified, to a file. This is the same format as can be read
+        using the 'generic' command.
+     */
     virtual int comm_output(std::vector<std::string> &sv, bool itive_com);
 
     /// Rearrange a tensor
     virtual int comm_rearrange(std::vector<std::string> &sv, bool itive_com);
 
-    /// Preview the table
+    /** \brief Preview the current object
+
+        [number of lines] [number of columns]
+
+        Print out all or part of the current object in format suitable
+        for the screen.
+    */
     virtual int comm_preview(std::vector<std::string> &sv, bool itive_com);
 
-    /// Send a slack message
+    /** \brief Send a slack message
+
+        [\"#channel\"] <strings-spec>
+
+        Send a message to slack, using the specified channel. If the
+        channel is not specified, it is taken from the environment
+        variable O2SCL_SLACK_CHANNEL. The '#' sign should be included
+        with the channel name. The Slack webhook URL is taken from the
+        environment variable O2SCL_SLACK_URL and the username is taken
+        from the environment variable O2SCL_SLACK_USERNAME. The
+        message is constructed from the string list specification in
+        <strings-spec> (see 'acol -help strings-spec' for more
+        information).
+     */
     virtual int comm_slack(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Get or set the value 
@@ -599,7 +816,35 @@ namespace o2scl_acol {
     /// Get an entry by grid point
     virtual int comm_entry_grid(std::vector<std::string> &sv, bool itive_com);
     
-    /// Convert units of a column
+    /** \brief Get a unit conversion factor.
+
+        <old unit (or \"list\", \"add\", \"del\", or \"nat\")>
+        <new unit> [value to convert]
+
+        This command computes a unit conversion factor and optionally
+        applies than conversion factor to a user-specified value.
+        Conversions which presume ħ=c=kB=1 are allowed by default. For
+        example, 'convert MeV 1/fm' returns '1.000000e+00 MeV =
+        5.067731e-03 1/fm'. The conversion factor is output at the
+        current precision, but is always internally stored with full
+        double precision. To print the list of known units, SI
+        prefixes, and the unit conversion cache, use -convert list. To
+        add a unit (only MKS is supported) the format is:
+
+        -convert add <unit> <power of meters> <power of kg>
+        <power of seconds> <power of Kelvin> <power of amps>
+        <power of moles> <power of candelas> <value> <long name>
+
+        To delete a unit, the format is:
+
+        -convert del <unit>
+
+        However, note that deleting a unit does not delete its
+        occurences in the unit conversion cache. To modify the use of
+        naturaly units, use:
+        
+        -convert nat <boolean for c=1> <boolean for ħ> <boolean for kB>
+    */
     virtual int comm_convert_unit(std::vector<std::string> &sv, 
                                   bool itive_com);
     
@@ -612,17 +857,34 @@ namespace o2scl_acol {
     /// Get column stats with weights specified in a second column
     virtual int comm_wstats(std::vector<std::string> &sv, bool itive_com);
 
-    /// Print version
+    /** \brief Print version information and O2scl settings.
+     */
     virtual int comm_version(std::vector<std::string> &sv, bool itive_com);
 
     /// Get a conversion factor
     virtual int comm_convert(std::vector<std::string> &sv, bool itive_com);
 
-    /// Copy an HDF5 file
+    /** \brief Copy an O2scl-generated HDF5 file
+
+        <source> <destination>
+
+        Copy all O2scl objects from one HDF5 file to another. This may
+        not work for HDF5 files generated outside of O2scl. The source
+        and destination filenames may not be identical. The
+        destination file may not be the same size as the source, but
+        will contain the same information.
+     */
     virtual int comm_h5_copy(std::vector<std::string> &sv, 
                              bool itive_com);
 
-    /// Search for, or add or delete a constant
+    /** \brief Get a physical or numerical constant.
+
+        <name, pattern, \"add\", \"del\", or \"list\"> [unit]
+
+        Get a physical or numerical constant from the library.
+        If "list" is given for <name or pattern>, then the full constant
+        list is printed to the screen.
+     */
     virtual int comm_constant(std::vector<std::string> &sv, bool itive_com);
     //@}
     

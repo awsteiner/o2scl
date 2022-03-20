@@ -237,6 +237,19 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
                                  bool itive_com) {
 
 #ifdef O2SCL_PUGIXML
+
+  terminal ter;
+  
+  vector<string> subs={((string)"<computeroutput> Vector ")+
+    "specifications </computeroutput>",
+    "'acol -help "+ter.green_fg()+ter.bold()+"vector-spec"+
+    ter.default_fg()+"'",
+    "<computeroutput> Multiple vector specifications </computeroutput>",
+    "'acol -help "+ter.green_fg()+ter.bold()+"mult-vector-spec"+
+    ter.default_fg()+"'",
+    "\"acol -help <computeroutput> functions </computeroutput> \"",
+    "\"acol -help "+ter.green_fg()+ter.bold()+"functions"+
+    ter.default_fg()+"\""};
   
   vector<vector<std::string>> doc_strings;
   
@@ -284,11 +297,7 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
       vs_tmp.push_back(cmd_name);
       vs_tmp.push_back(fn_name);
       vs_tmp.push_back(n3.child_value("para"));
-      if (verbose>1) {
-        cout << "cmd: " << cmd_name << endl;
-        cout << "fn: " << fn_name << endl;
-        cout << "brief: " << n3.child_value("para") << endl;
-      }
+      cout << cmd_name << " " << fn_name << endl;
 
       bool found=false;
       
@@ -306,9 +315,52 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
           if (w2.output[k]!=((string)"<para>")) {
             if (w2.output[k]==((string)"</para>")) {
               if (verbose>1) {
-                cout << "stmp: " << stmp << endl;
+                //cout << "stmp: " << stmp << endl;
               }
               found=true;
+
+              // Make the manual replacements from the 'subs' list
+              // above
+              for(size_t i=0;i<subs.size();i+=2) {
+                //cout << "Replacing: " << i << endl;
+                string_replace(stmp,subs[i],subs[i+1]);
+              }
+
+              // Make all of the type replacements
+              for(size_t i=0;i<type_list.size();i++) {
+                string_replace(stmp,"<computeroutput> "+type_list[i]+
+                               " </computeroutput>",
+                               ter.magenta_fg()+ter.bold()+type_list[i]+
+                               ter.default_fg());
+              }
+
+              // Make the command replacements from the current option
+              // list
+              std::vector<std::string> comm_list=cl->get_option_list();
+              for(size_t i=0;i<comm_list.size();i++) {
+                string_replace(stmp,"<computeroutput> "+comm_list[i]+
+                               " </computeroutput>",
+                               ter.cyan_fg()+ter.bold()+comm_list[i]+
+                               ter.default_fg());
+              }
+              
+              // Make the command replacements from the option
+              // lists for other types
+              for (std::map<std::string,std::vector<std::string> >::iterator
+                     it=type_comm_list.begin();it!=type_comm_list.end();
+                   it++) {
+                for(size_t ii=0;ii<it->second.size();ii++) {
+                  string_replace(stmp,"<computeroutput> "+it->second[ii]+
+                                 " </computeroutput>",
+                                 ter.cyan_fg()+ter.bold()+it->second[ii]+
+                                 ter.default_fg());
+                }
+              }
+              
+              string_replace(stmp,"  "," ");
+              string_replace(stmp," ,",",");
+              string_replace(stmp," .",".");
+              
               vs_tmp.push_back(stmp);
               stmp.clear();
             } else {
@@ -319,7 +371,16 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
         }
       }
 
-      if (found) doc_strings.push_back(vs_tmp);
+      if (found) {
+        if (vs_tmp.size()>=4 || true) {
+          for(size_t jj=0;jj<vs_tmp.size();jj++) {
+            cout << jj << ": " << vs_tmp[jj] << endl;
+          }
+          cout << endl;
+        }
+        doc_strings.push_back(vs_tmp);
+        
+      }
       
     }
     

@@ -325,6 +325,16 @@ namespace o2scl {
   void rewrap_ignore_vt100(std::string str,
 			   std::vector<std::string> &sv,
 			   size_t ncol=79);
+
+  /** \brief In string \c s, replace all occurrences of \c s1
+      with string \c s2, and return the number of replacements
+
+      \note If the string \c s1 can be found inside \c s2, then
+      this would lead to an infinite loop, so the error handler
+      is called.
+   */
+  size_t string_replace(std::string &s, const std::string &s1,
+                        const std::string &s2);
   
   /** \brief Desc
 

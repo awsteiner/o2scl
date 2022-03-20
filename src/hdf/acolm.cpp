@@ -52,6 +52,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   verbose=1;
   pretty=true;
   names_out=true;
+  use_regex=false;
   scientific=true;
   prec=6;
   user_ncols=-1;
@@ -1714,6 +1715,7 @@ int acol_manager::setup_parameters() {
   p_scientific.b=&scientific;
   p_pretty.b=&pretty;
   p_names_out.b=&names_out;
+  p_use_regex.b=&use_regex;
   
   p_obj_name.help="The current object name.";
   p_unit_fname.help="The unit filename.";
@@ -1728,6 +1730,7 @@ int acol_manager::setup_parameters() {
     "(1=linear, 2=cubic spline, 3=periodic cubic spline, 4=Akima, "+
     "5=periodic Akima, 6=monotonic, 7=Steffen's monotonic).";
   p_names_out.help="If true, output column names at top.";
+  p_use_regex.help="If true, use regex.";
   p_pretty.help="If true, make the output more readable.";
   p_scientific.help="If true, output in scientific mode.";
   
@@ -1740,6 +1743,7 @@ int acol_manager::setup_parameters() {
   cl->par_list.insert(make_pair("ncols",&p_ncols));
   cl->par_list.insert(make_pair("interp_type",&p_interp_type));
   cl->par_list.insert(make_pair("names_out",&p_names_out));
+  cl->par_list.insert(make_pair("use_regex",&p_use_regex));
   cl->par_list.insert(make_pair("pretty",&p_pretty));
   cl->par_list.insert(make_pair("scientific",&p_scientific));
 

@@ -41,6 +41,22 @@ void o2scl::utf8_to_char32(const std::string &in,
   return;
 }
 
+size_t o2scl::string_replace(std::string &s, const std::string &s1,
+                             const std::string &s2) {
+  if (s2.find(s1)!=std::string::npos) {
+    O2SCL_ERR2("Replacement string contains original string in ",
+               "string_replace().",o2scl::exc_einval);
+  }
+  size_t pos=s.find(s1);
+  size_t nrep=0;
+  while (pos!=std::string::npos) {
+    nrep++;
+    s.replace(pos,s1.length(),s2);
+    pos=s.find(s1);
+  }
+  return nrep;
+}
+
 void o2scl::char32_to_utf8(const std::u32string &in,
                            std::string &out) {
                            
