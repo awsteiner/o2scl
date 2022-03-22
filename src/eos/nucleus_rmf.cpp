@@ -46,6 +46,8 @@ nucleus_rmf::nucleus_rmf() :
   chden1.resize(grid_size);
   chdenc.resize(grid_size);
 
+  include_delta=false;
+
   ode_y.resize(2);
   ode_dydx.resize(2);
   ode_yerr.resize(2);
@@ -94,6 +96,7 @@ nucleus_rmf::nucleus_rmf() :
       {4,2,-1.5,-0.5,"^{3}d_{3/2}",7.0,0,0,0}
       // Z=184
     };
+  
   shell nshells[n_internal_levels]=
     {
       {2,-1,-60.0,-0.5,"^{1}s_{1/2}",3.0,0,0,0},

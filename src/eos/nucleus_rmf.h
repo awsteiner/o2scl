@@ -157,6 +157,14 @@ namespace o2scl {
       field equations for each index \f$ \alpha \f$ must be solved to
       compute the structure of a given nucleus.
 
+      If the delta meson is included, there is another field equation
+      \f[
+      \delta^{\prime \prime}(r) + \frac{2}{r} \delta^{\prime}(r)
+      - m_{\delta}^2 \delta &=& - \frac{g_{\delta}}{2} 
+      \left[n_n(r)-n_p(r)\right] + 2 g_{\delta}^2 \delta f + \frac{\xi}{6}
+      g_{\delta}^4 \delta^3
+      \f]
+
       The densities (scalar, baryon, isospin, and charge) are
       \f{eqnarray*}
       n_s(r) &=& \sum_{\alpha} \left\{ \int d^3 r \left[ G(r)^2-F(r)^2 
@@ -224,8 +232,6 @@ namespace o2scl {
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// A convenient struct for the solution of the Dirac equations
@@ -243,8 +249,9 @@ namespace o2scl {
     /// The total number of shells stored internally
     static const int n_internal_levels=29;
 
-#endif
-
+    /// If true, include the scalar isovector meson
+    bool include_delta;
+    
   public:
     
     nucleus_rmf();
@@ -405,6 +412,21 @@ namespace o2scl {
       return 0;
     }
 
+#ifdef O2SCL_NEVER_DEFINED
+    
+    /** \brief Desc
+     */
+    int set_eos_delta(eos_had_rmf_delta &r) {
+      rmf=&r;
+      include_delta=true;
+      fields.resize(grid_size,5);
+      field0.resize(grid_size,4);
+      gin.resize(grid_size,5);
+      gout.resize(grid_size,5);
+      return 0;
+    }
+#endif
+
     /** \brief \ref thermo object for the EOS
 
 	This is just used as temporary storage.
@@ -482,6 +504,9 @@ namespace o2scl {
       double omega0;
       /// Isubvector field at r=0
       double rho0;
+#ifdef O2SCL_NEVER_DEFINED
+      double delta0;
+#endif
       /// Coulomb field at r=0
       double A0;
       /// The radius for which the fields are half their central value
@@ -569,8 +594,12 @@ namespace o2scl {
     /// Vector density RHS
     double omega_rhs(double sig, double ome, double rho);
 
-    /// Isubvector density RHS
+    /// Isovector density RHS
     double rho_rhs(double sig, double ome, double rho);
+
+#ifdef O2SCL_NEVER_DEFINED
+    double delta_rhs(double sig, double ome, double rho);
+#endif
 
     /** \brief Calculate meson and photon 
 	Green's functions \ref gin and \ref gout

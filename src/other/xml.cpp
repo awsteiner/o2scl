@@ -168,7 +168,7 @@ pugi::xml_node o2scl::doxygen_xml_member_get
       }
         
       // In each section, look for a <memberdef> object with a
-      // kind attribute of "function"
+      // kind attribute of "function" or "variable"
         
       for (pugi::xml_node_iterator it2=it->begin();
            it2!=it->end();++it2) {
@@ -179,7 +179,8 @@ pugi::xml_node o2scl::doxygen_xml_member_get
         }
           
         if (it2->name()==((std::string)"memberdef") &&
-            it2->attribute("kind").value()==((std::string)"function")) {
+            (it2->attribute("kind").value()==((std::string)"function") ||
+             it2->attribute("kind").value()==((std::string)"variable"))) {
 
           if (verbose>1) {
             std::cout << "Found function named: "

@@ -52,9 +52,9 @@ namespace o2scl {
     
       \f{eqnarray*}
       {\cal L}_{Dirac} &=& 
-      \bar{\Psi} \left[ i {{\partial}\!\!\!{\slash}} - 
-      g_{\omega} {{\omega}\!\!\!{\slash}} - \frac{g_{\rho}}{2} 
-      {{\vec{\rho}}\!\!\!{\slash}}~
+      \bar{\Psi} \left[ i {{\partial}\!\!\!{\backslash}} - 
+      g_{\omega} {{\omega}\!\!\!{\backslash}} - \frac{g_{\rho}}{2} 
+      {{\vec{\rho}}\!\!\!{\backslash}}~
       \vec{\tau} - M + g_{\sigma} \sigma - \frac{e}{2} 
       \left( 1 + \tau_3 \right) A_{\mu} \right] \Psi \nonumber \\
       {\cal L}_{\sigma} &=& 
@@ -112,16 +112,16 @@ namespace o2scl {
     /** \brief Equation of state as a function of chemical potentials
     */
     virtual int calc_eqd_p(fermion &neu, fermion &p, 
-			  double sig, double ome, double rho, double delta,
-			  double &f1, double &f2, double &f3, double &f4,
-			  thermo& th);
+                           double sig, double ome, double rho, double delta,
+                           double &f1, double &f2, double &f3, double &f4,
+                           thermo& th);
     
     /** \brief Finite temperature (unfinished)
      */
     int calc_temp_eqd_p(fermion &ne, fermion &pr, double temper,
-		       double sig, double ome, double lrho, 
-		       double delta, double &f1, double &f2, 
-		       double &f3, double &f4, thermo& lth);
+                        double sig, double ome, double lrho, 
+                        double delta, double &f1, double &f2, 
+                        double &f3, double &f4, thermo& lth);
       
     /** \brief Set a guess for the fields for the next call to calc_e(), 
 	calc_p(), or saturation()

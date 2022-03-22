@@ -1301,7 +1301,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=21;
+  static const int narr=20;
 
   string type_list_str;
   for(size_t i=0;i<type_list.size()-1;i++) {
@@ -1563,7 +1563,9 @@ int acol_manager::setup_options() {
       both},
      {'v',"version","Print version information and O2scl settings.",0,0,"",
       "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_version),
-      both},
+      both}
+    };
+  /*
      {0,"xml-to-o2","Parse doxygen XML to generate runtime docs.",0,0,"",
       ((string)"When pugixml is enabled, this function reads the ")+
       "doxygen XML output and generates an HDF5 file which acol reads "+
@@ -1571,6 +1573,7 @@ int acol_manager::setup_options() {
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_xml_to_o2),
       both}
     };
+  */
   /*
     {0,"find-x","Find an entry in the x-grid (3d only)",1,1,"<value>","",
     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_find_x),
