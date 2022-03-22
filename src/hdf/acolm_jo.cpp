@@ -397,6 +397,16 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     }
     (*fout) << endl;
 
+  } else if (type=="vec_vec_string") {
+    
+    (*fout) << vvstring_obj.size() << endl;
+    for(size_t k=0;k<vvstring_obj.size();k++) {
+      (*fout) << vvstring_obj[k].size() << endl;
+      for(size_t kk=0;kk<vvstring_obj[k].size();kk++) {
+        (*fout) << vvstring_obj[k][kk] << endl;
+      }
+    }
+
   } else if (type=="hist_2d") {
     
     for(size_t k=0;k<hist_2d_obj.size_x();k++) {

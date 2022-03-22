@@ -2370,6 +2370,15 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       command_add("string[]");
       type="string[]";
       return 0;
+    } else if (ip.type=="vec_vec_string") {
+      if (verbose>2) {
+	cout << "Reading vec_vec_string." << endl;
+      }
+      hf.gets_vec_vec(in[1],vvstring_obj);
+      obj_name=in[1];
+      command_add("vec_vec_string");
+      type="vec_vec_string";
+      return 0;
     } else if (ip.type=="int") {
       if (verbose>2) {
 	cout << "Reading int." << endl;

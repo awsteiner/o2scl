@@ -96,6 +96,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   type_list.push_back("tensor<int>");
   type_list.push_back("tensor<size_t>");
   type_list.push_back("prob_dens_mdim_amr");
+  type_list.push_back("vec_vec_string");
   vector_sort<vector<string>,string>(type_list.size(),type_list);
   
   {

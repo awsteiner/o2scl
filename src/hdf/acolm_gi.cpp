@@ -1345,6 +1345,10 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
 
     hf.sets_vec(obj_name,stringv_obj);
     
+  } else if (type=="vec_vec_string") {
+
+    hf.sets_vec_vec(obj_name,vvstring_obj);
+    
   } else if (type=="table3d") {
     
     hdf_output(hf,((const table3d &)(table3d_obj)),obj_name);
