@@ -1018,8 +1018,6 @@ void o2scl_free_shared_ptr_table_units_(void *vptr);
 
 void *o2scl_shared_ptr_table_units__ptr(void *vp);
 
-void *o2scl_ix_index_wrapper(size_t ix);
-
 void *o2scl_ix_fixed_wrapper(size_t ix, size_t ix2);
 
 void *o2scl_ix_sum_wrapper(size_t ix);

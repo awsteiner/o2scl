@@ -48,6 +48,18 @@
 namespace o2scl {
   
   /** \brief Index specification 
+
+      \comment
+
+      It would be great to add derivatives to the index specifications
+      and the rearrange function, but I'm not sure how best to do it
+      yet because there are a large number of ways to compute the
+      derivative. The interpolation is easy because it's just done
+      linearly, but using linear interpolation to do the derivative
+      isn't as useful. For now, 'acol -deriv' is a way to compute
+      derivatives.
+
+      \endcomment
    */
   class index_spec {
     
@@ -123,7 +135,7 @@ namespace o2scl {
   //@{
   /** \brief Choose an index
    */
-  index_spec ix_index(size_t ix);
+  //index_spec ix_index(size_t ix);
   
   /** \brief Fix index \c ix to value \c ix2
    */

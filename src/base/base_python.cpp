@@ -2965,12 +2965,6 @@ void *o2scl_shared_ptr_table_units__ptr(void *vp) {
   return ref;
 }
 
-void *o2scl_ix_index_wrapper(size_t ix) {
-  index_spec *ret=new index_spec;
-  *ret=ix_index(ix);
-  return ret;
-}
-
 void *o2scl_ix_fixed_wrapper(size_t ix, size_t ix2) {
   index_spec *ret=new index_spec;
   *ret=ix_fixed(ix,ix2);

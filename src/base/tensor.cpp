@@ -25,9 +25,9 @@
 using namespace std;
 using namespace o2scl;
 
-index_spec o2scl::ix_index(size_t ix) {
-  return index_spec(index_spec::index,ix,0,0,0.0,0.0,0.0);
-}
+//index_spec o2scl::ix_index(size_t ix) {
+//return index_spec(index_spec::index,ix,0,0,0.0,0.0,0.0);
+//}
 
 index_spec o2scl::ix_fixed(size_t ix, size_t fix) {
   return index_spec(index_spec::fixed,ix,fix,0,0.0,0.0,0.0);

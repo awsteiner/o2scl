@@ -1022,9 +1022,9 @@ class index_spec
 - double val1
 - double val2
 - double val3
-function ix_index
-- index_spec
-- size_t ix
+#function ix_index
+#- index_spec
+#- size_t ix
 function ix_fixed
 - index_spec
 - size_t ix

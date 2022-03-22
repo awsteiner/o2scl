@@ -179,8 +179,6 @@ namespace o2scl {
     std::string doc_class;
     /// The function or object name
     std::string doc_name;
-    /// The file containing the O2scl documentation to be used
-    std::string doc_o2_file;
     /// The file containing the XML documentation to be used
     std::string doc_xml_file;
     
@@ -258,7 +256,7 @@ namespace o2scl {
       /// Convert to string
       virtual std::string get()=0;
 
-      /// 1 for class member function and 2 for global function
+      /// (currently unused)
       int doc_type;
       /// The name of the namespace
       std::string doc_ns;
@@ -266,8 +264,6 @@ namespace o2scl {
       std::string doc_class;
       /// The function or object name
       std::string doc_name;
-      /// The file containing the O2scl documentation to be used
-      std::string doc_o2_file;
       /// The file containing the XML documentation to be used
       std::string doc_xml_file;
     
@@ -404,6 +400,7 @@ namespace o2scl {
     //@{
     /// Parameter list
     std::map<std::string,parameter *,std::less<std::string> > par_list;
+    
     /// List iterator
     typedef std::map<std::string,parameter *,
       std::greater<std::string> >::iterator par_t;
@@ -471,6 +468,12 @@ namespace o2scl {
     int apply_aliases(std::vector<std::string> &sv, size_t istart,
 		      bool debug=false);
 
+    /// The file containing the O2scl documentation to be used
+    std::string doc_o2_file;
+    
+    /// XML substitutions
+    std::vector<std::string> xml_subs;
+    
     /** \brief If true, output the usual GNU intro when run_interactive() 
 	is called (default true).
 
@@ -494,18 +497,19 @@ namespace o2scl {
 
     /// \name The default command objects
     //@{
-    comm_option_s c_commands;
-    comm_option_s c_help;
-    comm_option_s c_quit;
-    comm_option_s c_exit;
-    comm_option_s c_license;
-    comm_option_s c_warranty;
-    comm_option_s c_set;
-    comm_option_s c_get;
-    comm_option_s c_run;
-    comm_option_s c_shell;
-    comm_option_s c_no_intro;
     comm_option_s c_alias;
+    comm_option_s c_commands;
+    comm_option_s c_exit;
+    comm_option_s c_get;
+    comm_option_s c_help;
+    comm_option_s c_license;
+    comm_option_s c_no_intro;
+    comm_option_s c_quit;
+    comm_option_s c_run;
+    comm_option_s c_set;
+    comm_option_s c_shell;
+    comm_option_s c_warranty;
+    comm_option_s c_xml_to_o2;
     //@}
     
     /** \brief If true, then sync cli::verbose, with a parameter of 

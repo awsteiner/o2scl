@@ -22,6 +22,9 @@
 */
 #include <cstdlib>
 #include <o2scl/cli.h>
+#include <o2scl/xml.h>
+#include <o2scl/hdf_file.h>
+#include <o2scl/hdf_io.h>
 
 using namespace std;
 using namespace o2scl;
@@ -274,21 +277,29 @@ cli::cli() {
   c_warranty.func=new comm_option_mfptr<cli>(this,&cli::comm_option_warranty);
   c_warranty.type=comm_option_both;
   
-  clist.push_back(c_help);
-  clist.push_back(c_no_intro);
-  clist.push_back(c_commands);
-  clist.push_back(c_run);
-  clist.push_back(c_shell);
-  clist.push_back(c_quit);
-  clist.push_back(c_exit);
-  clist.push_back(c_license);
-  clist.push_back(c_warranty);
+  c_xml_to_o2.shrt=0;
+  c_xml_to_o2.lng="xml-to-o2";
+  c_xml_to_o2.min_parms=0;
+  c_xml_to_o2.max_parms=0;
+  c_xml_to_o2.desc="Read doxygen XML files to generate run-time documentation";
+  c_xml_to_o2.help="X";
+  c_xml_to_o2.parm_desc="(no parameters).";
+  c_xml_to_o2.func=new comm_option_mfptr<cli>(this,&cli::comm_option_xml_to_o2);
+  c_xml_to_o2.type=comm_option_both;
+  
   clist.push_back(c_alias);
-
-  // 1/7/09 I don't know why this wasn't present in earlier versions.
-  // Adding it back in for now
-  clist.push_back(c_set);
+  clist.push_back(c_commands);
+  clist.push_back(c_exit);
   clist.push_back(c_get);
+  clist.push_back(c_help);
+  clist.push_back(c_license);
+  clist.push_back(c_no_intro);
+  clist.push_back(c_quit);
+  clist.push_back(c_run);
+  clist.push_back(c_set);
+  clist.push_back(c_shell);
+  clist.push_back(c_warranty);
+  clist.push_back(c_xml_to_o2);
 
   user_set_func=0;
 
@@ -1805,14 +1816,19 @@ int cli::set_param_help(string param, string helps) {
 
 int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
 
-#ifdef O2SCL_NEVER_DEFINED
+#ifdef O2SCL_PUGIXML
+
+  terminal ter;
   
   vector<vector<std::string>> doc_strings;
+
+  verbose=2;
   
-#ifdef O2SCL_PUGIXML
-  
+  // Go through all the commands
   for(size_t j=0;j<clist.size();j++) {
 
+    // This command name, the brief description, the parameter description,
+    // and then the long-form documentation, in that order
     vector<std::string> vs_tmp;
     
     if (clist[j].doc_type==1) {
@@ -1821,7 +1837,8 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
       pugi::xml_document doc2;
       
       if (verbose>0) {
-        cout << "cmd,fn: " << clist[j].lng << " " << clist[j].doc_name << endl;
+        cout << "cmd,fn: " << clist[j].lng << " "
+             << clist[j].doc_name << endl;
       }
       
       std::string fn=clist[j].doc_xml_file;
@@ -1844,40 +1861,221 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
       
       if (n3!=0 && n4!=0) {
         
-        pugi::xml_node_iterator it=n4.begin();
-        pugi::xml_node_iterator it2=n4.begin();
-        if (it2!=n4.end()) it2++;
-        
-        if (it!=n4.end() && it2!=n4.end() &&
-            it->name()==((string)"para") &&
-            it2->name()==((string)"para")) {
+        if (verbose>2) {
+          cout << "dxmg: " << n3.name() << " " << n3.value() << endl;
+          n3.traverse(w);
           
-          vs_tmp.push_back(clist[j].lng);
-          vs_tmp.push_back(clist[j].doc_name);
-          vs_tmp.push_back(n3.child_value("para"));
-          vs_tmp.push_back(it->child_value());
-          vs_tmp.push_back(it2->child_value());
-          found=true;
+          cout << "dxmg: " << n4.name() << " " << n4.value() << endl;
+          n4.traverse(w);
         }
-      }
-      
-      if (found==false) {
-        cout << "Could not find documentation for command " << clist[j].lng
-             << " and function " << clist[j].doc_name << "." << endl;
-      }
+        
+        pugi::xml_node_iterator it=n4.begin();
 
-      doc_strings.push_back(vs_tmp);
-      
-      hdf_file hf;
-      hf.open_or_create(clist[j].doc_o2_file);
-      hf.sets_vec("doc_strings",doc_strings);
-      hf.close();
-      cout << "Created file data/eos_docs.o2." << endl;
-    
+        // Command name
+        vs_tmp.push_back(clist[j].lng);
+        // Brief description
+        vs_tmp.push_back(n3.child_value("para"));
+        
+        bool found=false;
+        
+        vec_string_walker w2;
+        w2.indent=false;
+        n4.traverse(w2);
+        bool done=false;
+        std::string stmp;
+        for(size_t k=0;k<w2.output.size() && done==false;k++) {
+          if (w2.output[k].find("End of runtime documentation.")!=
+              string::npos) {
+            done=true;
+          } else {
+            if (w2.output[k]!=((string)"<para>")) {
+              if (w2.output[k]==((string)"</para>")) {
+                if (verbose>1) {
+                  //cout << "stmp: " << stmp << endl;
+                }
+                found=true;
+                
+                // Make the manual replacements from the 'subs' list
+                // above
+                for(size_t i=0;i<xml_subs.size();i+=2) {
+                  //cout << "Replacing: " << i << endl;
+                  string_replace(stmp,xml_subs[i],xml_subs[i+1]);
+                }
+                
+                // Make the command replacements from the current option
+                // list
+                std::vector<std::string> comm_list=get_option_list();
+                for(size_t i=0;i<comm_list.size();i++) {
+                  string_replace(stmp,"<computeroutput> "+comm_list[i]+
+                                 " </computeroutput>",
+                                 ter.cyan_fg()+ter.bold()+comm_list[i]+
+                                 ter.default_fg());
+                }
+                
+                string_replace(stmp,"  "," ");
+                string_replace(stmp," ,",",");
+                string_replace(stmp," .",".");
+                
+                vs_tmp.push_back(stmp);
+                stmp.clear();
+              } else {
+                if (stmp.length()==0) stmp=w2.output[k];
+                else stmp+=' '+w2.output[k];
+              }
+            }
+          }
+        }
+        
+        if (found) {
+          if (vs_tmp.size()>=3) {
+            for(size_t jj=0;jj<vs_tmp.size();jj++) {
+              cout << jj << ": " << vs_tmp[jj] << endl;
+            }
+            cout << endl;
+          }
+          doc_strings.push_back(vs_tmp);
+        }
+        
+        
+      }
     }
 
   }
 
+#ifdef O2SCL_NEVER_DEFINED
+
+  // Go through all the parameters
+  for(par_t it=par_list.begin();it!=par_list.end();it++) {
+
+    // This parameter name, the brief description, the default value,
+    // and the long-form description, in that order
+    vector<std::string> vs_tmp;
+    
+    pugi::xml_document doc;
+    pugi::xml_document doc2;
+    
+    if (verbose>0) {
+      cout << "parameter name, doc_name: " << it->first << " "
+           << it->second->doc_name << endl;
+    }
+    
+    std::string fn=it->second->doc_xml_file;
+    
+    ostream_walker w;
+    
+    pugi::xml_node n3=doxygen_xml_member_get
+      (fn,it->second->.doc_class,it->second->doc_name,
+       "briefdescription",doc);
+    if (verbose>1 && n3!=0) {
+      cout << "dxmg: " << n3.name() << " " << n3.value() << endl;
+      n3.traverse(w);
+    }
+    
+    pugi::xml_node n4=doxygen_xml_member_get
+      (fn,it->second->.doc_class,it->second->doc_name,
+       "detaileddescription",doc2);
+    if (verbose>1 && n4!=0) {
+      cout << "dxmg: " << n4.name() << " " << n4.value() << endl;
+      n4.traverse(w);
+    }
+
+      if (n3!=0 && n4!=0) {
+        
+        if (verbose>2) {
+          cout << "dxmg: " << n3.name() << " " << n3.value() << endl;
+          n3.traverse(w);
+          
+          cout << "dxmg: " << n4.name() << " " << n4.value() << endl;
+          n4.traverse(w);
+        }
+        
+        pugi::xml_node_iterator it=n4.begin();
+
+        // Command name
+        vs_tmp.push_back(clist[j].lng);
+        // Brief description
+        vs_tmp.push_back(n3.child_value("para"));
+        
+        bool found=false;
+        
+        vec_string_walker w2;
+        w2.indent=false;
+        n4.traverse(w2);
+        bool done=false;
+        std::string stmp;
+        for(size_t k=0;k<w2.output.size() && done==false;k++) {
+          if (w2.output[k].find("End of runtime documentation.")!=
+              string::npos) {
+            done=true;
+          } else {
+            if (w2.output[k]!=((string)"<para>")) {
+              if (w2.output[k]==((string)"</para>")) {
+                if (verbose>1) {
+                  //cout << "stmp: " << stmp << endl;
+                }
+                found=true;
+                
+                // Make the manual replacements from the 'subs' list
+                // above
+                for(size_t i=0;i<xml_subs.size();i+=2) {
+                  //cout << "Replacing: " << i << endl;
+                  string_replace(stmp,xml_subs[i],xml_subs[i+1]);
+                }
+                
+                // Make the command replacements from the current option
+                // list
+                std::vector<std::string> comm_list=get_option_list();
+                for(size_t i=0;i<comm_list.size();i++) {
+                  string_replace(stmp,"<computeroutput> "+comm_list[i]+
+                                 " </computeroutput>",
+                                 ter.cyan_fg()+ter.bold()+comm_list[i]+
+                                 ter.default_fg());
+                }
+                
+                string_replace(stmp,"  "," ");
+                string_replace(stmp," ,",",");
+                string_replace(stmp," .",".");
+                
+                vs_tmp.push_back(stmp);
+                stmp.clear();
+              } else {
+                if (stmp.length()==0) stmp=w2.output[k];
+                else stmp+=' '+w2.output[k];
+              }
+            }
+          }
+        }
+        
+        if (found) {
+          if (vs_tmp.size()>=3) {
+            for(size_t jj=0;jj<vs_tmp.size();jj++) {
+              cout << jj << ": " << vs_tmp[jj] << endl;
+            }
+            cout << endl;
+          }
+          doc_strings.push_back(vs_tmp);
+        }
+        
+        
+      }
+    
+  }
+
+  
+#endif
+  
+  if (doc_strings.size()>0) {
+    if (doc_o2_file.length()==1) {
+      O2SCL_ERR("No doc_o2_file specified in cli::comm_option_xml_to_o2().",
+                o2scl::exc_einval);
+    }
+    o2scl_hdf::hdf_file hf;
+    hf.open_or_create(doc_o2_file);
+    hf.sets_vec_vec("cmd_doc_strings",doc_strings);
+    hf.close();
+    cout << "Created file " << doc_o2_file << endl;
+  }
+  
 #else
 
   cout << "Pugixml must be enabled to create the documentation strings "
@@ -1885,7 +2083,6 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
   
 #endif
   
-#endif
   return 0;
 }
 

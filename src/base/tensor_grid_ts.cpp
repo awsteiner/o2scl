@@ -464,7 +464,7 @@ int main(void) {
       t.test_gen(tx2==tx2b,"rearrange 1");
       
       // Second test
-      tx3=tx.rearrange_and_copy({ix_index(1),ix_range(4,1,0),
+      tx3=tx.rearrange_and_copy({ix_index2(1),ix_range(4,1,0),
 	    ix_interp(3,9.5),ix_trace(0,2)},2);
       size_t sz3b[2]={3,2};
       tx3b.resize(2,sz3b);
