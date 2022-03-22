@@ -63,7 +63,7 @@ namespace o2scl_hdf {
   class hdf_file;
   // Forward definition of HDF5 I/O functions to extend friendship
   template<class vec_t>
-  void hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string name);
+  void hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string name="");
   void hdf_output(hdf_file &hf, 
 		  o2scl::table<std::vector<double> > &t, 
 		  std::string name);

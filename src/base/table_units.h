@@ -49,7 +49,7 @@ namespace o2scl_hdf {
   
   template<class vec_t>
   void hdf_input(hdf_file &hf, o2scl::table_units<vec_t> &t, 
-                 std::string name);
+                 std::string name="");
   
   void hdf_output
     (hdf_file &hf, 

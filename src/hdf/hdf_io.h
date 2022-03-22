@@ -89,8 +89,9 @@ namespace o2scl_hdf {
     return;
   }
 
-  /** \brief Desc
-   */
+  /** \brief Input a \ref o2scl::prob_dens_mdim_amr object from a \ref
+      hdf_file
+  */
   template<class vec_t, class mat_t> 
   void hdf_input(hdf_file &hf,
                  o2scl::prob_dens_mdim_amr<vec_t,mat_t> &p,
@@ -186,6 +187,13 @@ namespace o2scl_hdf {
   }
 #endif
 
+  /** \brief Input a \ref o2scl::table object from a \ref
+      hdf_file
+
+      \note This function is declared in <tt>table.h</tt>, and 
+      thus the default argument to the \c name parameter 
+      appears there instead of here.
+  */
   template<class vec_t> 
   void hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string name) {
       
@@ -317,8 +325,13 @@ namespace o2scl_hdf {
     return;
   }
 
-  /** \brief Desc
-   */
+  /** \brief Input a \ref o2scl::table_units object from a \ref
+      hdf_file
+
+      \note This function is declared in <tt>table_units.h</tt>, and 
+      thus the default argument to the \c name parameter 
+      appears there instead of here.
+  */
   template<class vec_t> 
   void hdf_input(hdf_file &hf, o2scl::table_units<vec_t> &t, 
                  std::string name) {

@@ -171,6 +171,19 @@ namespace o2scl {
     /// Type: command-line parameter, command, or both
     int type;
 
+    /// 1 for class member function and 2 for global function
+    int doc_type;
+    /// The name of the namespace
+    std::string doc_ns;
+    /// The name of the class (if applicable)
+    std::string doc_class;
+    /// The function or object name
+    std::string doc_name;
+    /// The file containing the O2scl documentation to be used
+    std::string doc_o2_file;
+    /// The file containing the XML documentation to be used
+    std::string doc_xml_file;
+    
   } comm_option_s;
   
   /** \brief A command-line argument for \ref o2scl::cli
@@ -244,7 +257,20 @@ namespace o2scl {
 
       /// Convert to string
       virtual std::string get()=0;
-      
+
+      /// 1 for class member function and 2 for global function
+      int doc_type;
+      /// The name of the namespace
+      std::string doc_ns;
+      /// The name of the class (if applicable)
+      std::string doc_class;
+      /// The function or object name
+      std::string doc_name;
+      /// The file containing the O2scl documentation to be used
+      std::string doc_o2_file;
+      /// The file containing the XML documentation to be used
+      std::string doc_xml_file;
+    
     };
 
     /// String parameter for \ref o2scl::cli
@@ -436,6 +462,7 @@ namespace o2scl {
     int comm_option_shell(std::vector<std::string> &sv, bool itive_com);
     int comm_option_set(std::vector<std::string> &sv, bool itive_com);
     int comm_option_warranty(std::vector<std::string> &sv, bool itive_com);
+    int comm_option_xml_to_o2(std::vector<std::string> &sv, bool itive_com);
     //@}
 
     /** \brief Proceed through \c sv, applying all previously
