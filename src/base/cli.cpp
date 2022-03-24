@@ -3314,3 +3314,61 @@ int cli::comm_option_license(vector<string> &sv, bool itive_com) {
   return 0;
 }
 
+int cli::read_docs() {
+
+  if (file_exists(doc_o2_file)) {
+  
+    o2scl_hdf::hdf_file hf;
+    hf.open(doc_o2_file);
+    vector<vector<string>> cmd_doc_strings, param_doc_strings;
+    hf.gets_vec_vec("cmd_doc_strings",cmd_doc_strings);
+    hf.gets_vec_vec("param_doc_strings",param_doc_strings);
+    hf.close();
+    
+    for(size_t j=0;j<clist.size();j++) {
+      bool found=false;
+      for(size_t k=0;k<cmd_doc_strings.size() && found==false;k++) {
+        if (cmd_doc_strings[k][0]==clist[j].lng) {
+          if (cmd_doc_strings[k].size()>=2) {
+            clist[j].desc=cmd_doc_strings[k][1];
+            if (cmd_doc_strings[k].size()>=3) {
+              clist[j].parm_desc=cmd_doc_strings[k][2];
+              if (cmd_doc_strings[k].size()>=4) {
+                clist[j].help=cmd_doc_strings[k][3];
+              }
+            }
+          }
+          found=true;
+        }
+      }
+      if (verbose>2) {
+        cout << "Function cli::read_docs() could not "
+             << "find documentation for command "
+             << clist[j].lng << endl;
+      }
+    }
+    
+    for(par_t it=par_list.begin();it!=par_list.end();it++) {
+      if (it->second->doc_class==((string)"eos")) {
+        bool found=false;
+        for(size_t k=0;k<param_doc_strings.size() && found==false;k++) {
+          if (param_doc_strings[k][0]==it->first) {
+            it->second->help=param_doc_strings[k][1];
+            found=true;
+          }
+        }
+        if (verbose>2) {
+          cout << "Function cli::read_docs() could not find "
+               << "documentation for parameter "
+               << it->first << endl;
+        }
+      }
+    }
+    
+  } else {
+    O2SCL_ERR2("File does not exist in ",
+              "cli::read_docs().",o2scl::exc_efilenotfound);
+  }
+
+  return 0;
+}

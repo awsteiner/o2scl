@@ -708,6 +708,11 @@ namespace o2scl {
     /** \brief Get the short description of option named \c name
      */
     std::string option_short_desc(std::string name);
+
+    /** \brief Read the command and parameter documentation from
+        \ref doc_o2_file
+     */
+    int read_docs();
     
   };
 
