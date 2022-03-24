@@ -1225,7 +1225,15 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	  cout << "Parameter: " << ter.red_fg() << ter.bold() << sv[1]
 	       << ter.default_fg() << " value: " << (it->second)->get() 
 	       << endl;
-	  
+
+	  vector<string> desc2;
+	  rewrap_keep_endlines(((string)"Description: ")+it->second->help,
+                               desc2);
+	  for(size_t j=0;j<desc2.size();j++) {
+	    cout << desc2[j] << endl;
+	  }
+
+          /*
 	  vector<string> desc2;
 	  desc2.push_back("Description:");
 	  split_string(it->second->help,desc2);
@@ -1242,6 +1250,7 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	    bufx+=desc2[j]+" ";
 	  }
 	  if (bufx.length()>0) cout << bufx << endl;
+          */
 	  
 	  getset_found=true;
 	}
