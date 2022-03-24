@@ -1822,8 +1822,6 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
   
   vector<vector<std::string>> cmd_doc_strings, param_doc_strings;
 
-  verbose=2;
-  
   // Go through all the commands
   for(size_t j=0;j<clist.size();j++) {
 
@@ -1836,7 +1834,7 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
       pugi::xml_document doc;
       pugi::xml_document doc2;
       
-      if (verbose>0) {
+      if (verbose>1) {
         cout << "cmd,fn: " << clist[j].lng << " "
              << clist[j].doc_name << endl;
       }
@@ -1928,10 +1926,15 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
         
         if (found) {
           if (vs_tmp.size()>=3) {
-            for(size_t jj=0;jj<vs_tmp.size();jj++) {
-              cout << jj << ": " << vs_tmp[jj] << endl;
+            if (verbose>1) {
+              for(size_t jj=0;jj<vs_tmp.size();jj++) {
+                cout << jj << ": " << vs_tmp[jj] << endl;
+              }
+              cout << endl;
+            } else if (verbose>0) {
+              cout << "Adding documention for command: " << vs_tmp[0]
+                   << endl;
             }
-            cout << endl;
           }
           cmd_doc_strings.push_back(vs_tmp);
         }
@@ -1951,7 +1954,7 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
     pugi::xml_document doc;
     pugi::xml_document doc2;
     
-    if (verbose>0) {
+    if (verbose>1) {
       cout << "parameter name, doc_name: " << itp->first << " "
            << itp->second->doc_name << endl;
     }
@@ -1980,7 +1983,16 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
       cout << "dxmg: " << n4.name() << " " << n4.value() << endl;
       n4.traverse(w);
     }
-    
+
+    if (n3!=0) {
+      
+      // Command name
+      vs_tmp.push_back(itp->first);
+      // Brief description
+      vs_tmp.push_back(n3.child_value("para"));
+
+    }
+      
     if (n3!=0 && n4!=0) {
       
       if (verbose>2) {
@@ -1992,11 +2004,6 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
       }
       
       pugi::xml_node_iterator it=n4.begin();
-      
-      // Command name
-      vs_tmp.push_back(itp->first);
-      // Brief description
-      vs_tmp.push_back(n3.child_value("para"));
       
       vec_string_walker w2;
       w2.indent=false;
@@ -2044,15 +2051,18 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
           }
         }
       }
-      
-      if (vs_tmp.size()>=2) {
+    }
+    
+    if (vs_tmp.size()>=2) {
+      if (verbose>1) {
         for(size_t jj=0;jj<vs_tmp.size();jj++) {
           cout << jj << ": " << vs_tmp[jj] << endl;
         }
         cout << endl;
+      } else if (verbose>0) {
+        cout << "Adding documentation for parameter " << vs_tmp[0] << endl;
       }
       param_doc_strings.push_back(vs_tmp);
-      
     }
     
   }
@@ -3335,6 +3345,9 @@ int cli::read_docs() {
               clist[j].parm_desc=cmd_doc_strings[k][2];
               if (cmd_doc_strings[k].size()>=4) {
                 clist[j].help=cmd_doc_strings[k][3];
+                for(size_t kk=4;kk<cmd_doc_strings[k].size();kk++) {
+                  clist[j].help+="\n\n"+cmd_doc_strings[k][kk];
+                }
               }
             }
           }
@@ -3342,25 +3355,38 @@ int cli::read_docs() {
         }
       }
       if (verbose>2) {
-        cout << "Function cli::read_docs() could not "
-             << "find documentation for command "
-             << clist[j].lng << endl;
+        if (found==true) {
+          cout << "Function cli::read_docs() "
+               << "found documentation for command "
+               << clist[j].lng << " ." << endl;
+        } else {
+          cout << "Function cli::read_docs() could not "
+               << "find documentation for command "
+               << clist[j].lng << " ." << endl;
+        }
       }
     }
     
     for(par_t it=par_list.begin();it!=par_list.end();it++) {
-      if (it->second->doc_class==((string)"eos")) {
-        bool found=false;
-        for(size_t k=0;k<param_doc_strings.size() && found==false;k++) {
-          if (param_doc_strings[k][0]==it->first) {
-            it->second->help=param_doc_strings[k][1];
-            found=true;
+      bool found=false;
+      for(size_t k=0;k<param_doc_strings.size() && found==false;k++) {
+        if (param_doc_strings[k][0]==it->first) {
+          it->second->help=param_doc_strings[k][1];
+          for(size_t kk=2;kk<param_doc_strings[k].size();kk++) {
+            it->second->help+="\n\n"+param_doc_strings[k][kk];
           }
+          found=true;
         }
-        if (verbose>2) {
+      }
+      if (verbose>2) {
+        if (found) {
+          cout << "Function cli::read_docs() found "
+               << "documentation for parameter "
+               << it->first << " ." << endl;
+        } else {
           cout << "Function cli::read_docs() could not find "
                << "documentation for parameter "
-               << it->first << endl;
+               << it->first << " ." << endl;
         }
       }
     }
