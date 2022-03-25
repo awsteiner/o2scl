@@ -1830,7 +1830,6 @@ void cli::xml_replacements(std::string &s) {
   // Make the manual replacements from the 'subs' list
   // above
   for(size_t i=0;i<xml_subs.size();i+=2) {
-    //cout << "Replacing: " << i << endl;
     string_replace(s,xml_subs[i],xml_subs[i+1]);
   }
   
@@ -1841,6 +1840,14 @@ void cli::xml_replacements(std::string &s) {
     string_replace(s,"<computeroutput> "+comm_list[i]+
                    " </computeroutput>",
                    ter.cyan_fg()+ter.bold()+comm_list[i]+
+                   ter.default_fg());
+  }
+  
+  // Make the command replacements from the current parameter list
+  for(par_t it=par_list.begin();it!=par_list.end();it++) {
+    string_replace(s,"<computeroutput> "+it->first+
+                   " </computeroutput>",
+                   ter.red_fg()+ter.bold()+it->first+
                    ter.default_fg());
   }
   
@@ -1916,6 +1923,8 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
             stmp+=vsw.output[k];
           }
         }
+        
+        xml_replacements(stmp);
         
         // Add brief description to stmp
         vs_tmp.push_back(stmp);
@@ -2038,6 +2047,8 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
           stmp+=vsw.output[k];
         }
       }
+
+      xml_replacements(stmp);
       
       // Add brief description to stmp
       vs_tmp.push_back(stmp);
