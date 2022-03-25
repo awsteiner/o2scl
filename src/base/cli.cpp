@@ -1002,8 +1002,13 @@ int cli::output_param_list() {
 	// If we're on the first parameter, set the iterator
 	if (i==1) it=par_list.begin();
 
-	cout << " ";
-	
+        vector<string> desc2;
+        rewrap_keep_endlines(it->second->help,desc2,78);
+        for(size_t j=0;j<desc2.size();j++) {
+          cout << " " << desc2[j] << endl;
+        }
+
+        /*
 	// First separate help description into words with split_string()
 	vector<string> desc2;
 	split_string(it->second->help,desc2);
@@ -1020,6 +1025,7 @@ int cli::output_param_list() {
 	  bufx+=desc2[j]+" ";
 	}
 	if (bufx.length()>0) cout << bufx << endl;
+        */
 
 	// Advance the iterator
 	it++;
@@ -1226,7 +1232,6 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	       << ter.default_fg() << " value: " << (it->second)->get() 
 	       << endl;
 
-          //cout << "Here: x" << it->second->help << "x" << endl;
 	  vector<string> desc2;
 	  rewrap_keep_endlines(((string)"Description: ")+it->second->help,
                                desc2);
@@ -1853,6 +1858,7 @@ void cli::xml_replacements(std::string &s) {
   }
   
   string_replace(s,"  "," ");
+  string_replace(s," )",")");
   string_replace(s," ,",",");
   string_replace(s," .",".");
                   
