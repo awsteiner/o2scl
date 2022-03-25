@@ -1226,6 +1226,7 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	       << ter.default_fg() << " value: " << (it->second)->get() 
 	       << endl;
 
+          //cout << "Here: x" << it->second->help << "x" << endl;
 	  vector<string> desc2;
 	  rewrap_keep_endlines(((string)"Description: ")+it->second->help,
                                desc2);
@@ -2049,6 +2050,18 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
       }
 
       xml_replacements(stmp);
+
+      // Remove trailing spaces
+      while (stmp.length()>2 && stmp[stmp.length()-1]==' ') {
+        stmp=stmp.substr(0,stmp.length()-1);
+      }
+      
+      // Add a period at the end, because this brief description
+      // is combined with the detailed description by the
+      // cli 'help' command above.
+      if (stmp.length()>2 && stmp[stmp.length()-1]!='.') {
+        stmp+='.';
+      }
       
       // Add brief description to stmp
       vs_tmp.push_back(stmp);

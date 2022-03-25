@@ -419,8 +419,8 @@ public:
   int f_beg_mixed_phase(size_t nv, const ubvector &x, ubvector &y,
 			double &nB) {
 
-    cout << "x: ";
-    vector_out(cout,x,true);
+    //cout << "x: ";
+    //vector_out(cout,nv,x,true);
     
     size_t ix=0;
     n.n=x[ix++];
@@ -457,8 +457,8 @@ public:
       y[ix++]=sonB-tot.en/nB;
     }
 
-    cout << "y: ";
-    vector_out(cout,y,true);
+    //cout << "y: ";
+    //vector_out(cout,nv,y,true);
 
     return 0;
   }
@@ -870,16 +870,14 @@ public:
 	x[ix++]=0.1;
       }
       size_t nvar=ix;
-      mh.verbose=1;
-      cout << "nvar: " << nvar << endl;
+      //mh.verbose=1;
       mh.msolve(nvar,x,fp_beg_mixed_phase);
       
       f_beg_mixed_phase(nvar,x,y,nB);
       mp_start=nB;
-      cout << "Baryon density: " << nB << " fm^{-3}" << endl;
+      cout << "Mixed phase begins at nB: " << nB << " fm^{-3}" << endl;
       
       cout << endl;
-      return 0;
       
     }
 
@@ -888,14 +886,14 @@ public:
 
     if (true) {
       cout << "End of mixed phase: " << endl;
-      x[0]=0.9;
-      x[1]=0.2;
+      x[0]=0.3;
+      x[1]=0.05;
       mh.msolve(2,x,fp_end_mixed_phase);
       n.n=x[0];
       p.n=x[1];
       f_end_mixed_phase(2,x,y,nB);
       mp_end=nB;
-      cout << "Baryon density: " << nB << " fm^{-3}" << endl;
+      cout << "Mixed phase ends at nB: " << nB << " fm^{-3}" << endl;
       cout << endl;
     }
 
@@ -1212,7 +1210,7 @@ public:
     
     return 0;
   }
-
+  
   int test(vector<string> &sv, bool itive_com) {
     test_mgr t;
     t.report();
