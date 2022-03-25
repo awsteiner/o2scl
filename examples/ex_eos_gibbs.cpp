@@ -884,6 +884,8 @@ public:
     // -----------------------------------------------------------------
     // Find the end of the mixed phase with fp_end_mixed_phase()
 
+    double mp_end_muQ=1.0;
+    double mp_end_mue=0.1;
     if (true) {
       cout << "End of mixed phase: " << endl;
       x[0]=0.3;
@@ -892,6 +894,8 @@ public:
       n.n=x[0];
       p.n=x[1];
       f_end_mixed_phase(2,x,y,nB);
+      mp_end_muQ=(2.0*d.mu+u.mu)/3.0;
+      mp_end_mue=d.mu-u.mu;
       mp_end=nB;
       cout << "Mixed phase ends at nB: " << nB << " fm^{-3}" << endl;
       cout << endl;
@@ -925,8 +929,8 @@ public:
     if (true) {
       tq.line_of_names("nB muQ mue ede pre edq prq edt prt");
       cout << "Quark phase: " << endl;
-      x[0]=1.0;
-      x[1]=0.1;
+      x[0]=mp_end_muQ;
+      x[1]=mp_end_mue;
       for(nB=mp_end;nB<1.5001;nB+=0.01) {
 	cout << nB << endl;
 	mh.msolve(2,x,fp_quark_phase);
@@ -949,15 +953,17 @@ public:
       tmixed.line_of_names(((string)"nB nn np nu nd ns ede pre edt ")+
 			   "prt edh prh edq prq mun mup chi");
 
+      x[0]=thad.interp("nB",mp_start,"nn");
+      x[1]=thad.interp("nB",mp_start,"np");
+      
       double delta=1.0e-3;
       for(nB=mp_start+delta;nB<=mp_end-delta;
 	  nB+=(mp_end-mp_start-2.0*delta)/40.0) {
-	cout << nB << endl;
 
-	x[0]=thad.interp("nB",mp_start,"nn");
-	x[1]=thad.interp("nB",mp_start,"np");
 	mh.msolve(2,x,fp_mixed_phase);
-	
+
+	cout << nB << " " << chi << endl;
+        
 	std::vector<double> line;
 	line.push_back(nB);
 	line.push_back(n.n);
@@ -1022,8 +1028,9 @@ public:
     ts.mvsr();
     std::shared_ptr<table_units<> > tov=ts.get_results();
     cout << "M_max: " << tov->max("gm") << endl;
-    cout << tov->get_unit("ed") << endl;
-    cout << tov->get("ed",tov->lookup("gm",tov->max("gm"))) << endl;
+    cout << "Central energy density of maximum mass star:\n  "
+         << tov->get("ed",tov->lookup("gm",tov->max("gm"))) << " "
+         << tov->get_unit("ed") << " ." << endl;
 
     // -----------------------------------------------------------------
     // Output results to a file
@@ -1054,7 +1061,7 @@ public:
       skyrme_load(sk,sv[2]);
     } else if (sv[1]=="rmf") {
       ptr_h=&rmf;
-    } else if (sv[1]=="SLB00") {
+    } else if (sv[1]=="SPL00") {
       ptr_h=&rmf;
 
       n.m=939.0/hc_mev_fm;
@@ -1089,9 +1096,10 @@ public:
       rmf.fix_saturation();
       cout << "Done." << endl;
       rmf.saturation();
-      cout << rmf.n0 << " " << rmf.msom << endl;
-      cout << "Selected the RMF model from SLB00 (no hyperons)." << endl;
-    } else if (sv[1]=="SLB00_hyp") {
+      cout << "n0,m*/m: " << rmf.n0 << " " << rmf.msom << endl;
+      
+      cout << "Selected the RMF model from SPL00 (no hyperons)." << endl;
+    } else if (sv[1]=="SPL00_hyp") {
       ptr_h=&rmf_hyp;
       rmf_hyp.n0=0.16;
       rmf_hyp.eoa=16.0/hc_mev_fm;
@@ -1137,7 +1145,7 @@ public:
       u.non_interacting=true;
       d.non_interacting=true;
       s.non_interacting=true;
-    } else if (sv[1]=="SLB00_bag") {
+    } else if (sv[1]=="SPL00_bag") {
       ptr_q=&bag;
       u.m=5.5/hc_mev_fm;
       d.m=5.5/hc_mev_fm;
@@ -1147,8 +1155,8 @@ public:
       s.non_interacting=true;
       bag.bag_constant=200.0/hc_mev_fm;
       mp_start_fix=0.0;
-      cout << "Selected the bag model from SLB00." << endl;
-    } else if (sv[1]=="SLB00_njl") {
+      cout << "Selected the bag model from SPL00." << endl;
+    } else if (sv[1]=="SPL00_njl") {
       ptr_q=&njl;
       u.m=5.5/hc_mev_fm;
       d.m=5.5/hc_mev_fm;
@@ -1177,18 +1185,18 @@ public:
     return 0;
   }
   
-  int slb00(vector<string> &sv, bool itive_com) {
+  int spl00(vector<string> &sv, bool itive_com) {
 
     {
-      vector<string> sv2={"hadrons","SLB00"};
+      vector<string> sv2={"hadrons","SPL00"};
       model_hadrons(sv2,itive_com);
     }
     {
-      vector<string> sv2={"quarks","SLB00_bag"};
+      vector<string> sv2={"quarks","SPL00_bag"};
       model_quarks(sv2,itive_com);
     }
     {
-      vector<string> sv2={"mvsr","ex_eos_gibbs_slb00.o2"};
+      vector<string> sv2={"mvsr","ex_eos_gibbs_spl00.o2"};
       mvsr(sv2,itive_com);
     }
 
@@ -1196,7 +1204,7 @@ public:
     //YLe=0.4;
     //YLmu=0.0;
     {
-      vector<string> sv2={"mvsr","ex_eos_gibbs_slb00.o2"};
+      vector<string> sv2={"mvsr","ex_eos_gibbs_spl00.o2"};
       mvsr(sv2,itive_com);
     }
     
@@ -1204,7 +1212,7 @@ public:
     YLe=-1.0;
     YLmu=-1.0;
     {
-      vector<string> sv2={"mvsr","ex_eos_gibbs_slb00.o2"};
+      vector<string> sv2={"mvsr","ex_eos_gibbs_spl00.o2"};
       mvsr(sv2,itive_com);
     }
     
@@ -1240,8 +1248,8 @@ int main(int argc, char *argv[]) {
     {0,"mvsr","Compute EOS and M-R curve",1,-1,"","",
      new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::mvsr),
      cli::comm_option_both},
-    {0,"slb00","Desc",0,-1,"","",
-     new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::slb00),
+    {0,"spl00","Desc",0,-1,"","",
+     new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::spl00),
      cli::comm_option_both},
     {0,"test","Desc",0,-1,"","",
      new comm_option_mfptr<ex_eos_gibbs>(&ehg,&ex_eos_gibbs::test),
