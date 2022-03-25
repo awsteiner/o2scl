@@ -713,6 +713,8 @@ namespace o2scl {
         \ref doc_o2_file
      */
     int read_docs();
+
+    void xml_replacements(std::string &s);
     
   };
 
