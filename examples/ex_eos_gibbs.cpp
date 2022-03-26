@@ -492,7 +492,8 @@ public:
     quark_nQ=u.n+d.n+s.n;
     
     // Update the energy density and pressure
-    tot.pr=hth.pr+e.pr;
+    tot.pr=qth.pr+e.pr;
+    tot.ed=qth.ed+e.ed;
 
     // Compute total baryon density
     nB=quark_nQ/3.0;
@@ -900,7 +901,7 @@ public:
       cout << "Mixed phase ends at nB: " << nB << " fm^{-3}" << endl;
       cout << endl;
     }
-
+    
     // -----------------------------------------------------------------
     // Tabulate full hadronic phase
 
@@ -932,7 +933,7 @@ public:
       x[0]=mp_end_muQ;
       x[1]=mp_end_mue;
       for(nB=mp_end;nB<1.5001;nB+=0.01) {
-	cout << nB << endl;
+	cout << nB << " " << u.n << " " << d.n << " " << s.n << endl;
 	mh.msolve(2,x,fp_quark_phase);
 	std::vector<double> line={nB,x[0],x[1],e.ed*hc_mev_fm,
 				  e.pr*hc_mev_fm,qth.ed*hc_mev_fm,
@@ -962,7 +963,8 @@ public:
 
 	mh.msolve(2,x,fp_mixed_phase);
 
-	cout << nB << " " << chi << endl;
+	cout << nB << " " << n.n << " " << p.n << " " << u.n << " "
+             << d.n << " " << s.n << " " << chi << endl;
         
 	std::vector<double> line;
 	line.push_back(nB);
@@ -996,24 +998,29 @@ public:
     // Construct the neutron star EOS
     
     table_units<> ns;
-    ns.line_of_names("ed pr");
+    ns.line_of_names("ed pr nb");
     ns.set_unit("ed","MeV/fm^3");
     ns.set_unit("pr","MeV/fm^3");
+    ns.set_unit("nb","1/fm^3");
 
     for(size_t i=0;i<thad.get_nlines();i++) {
-      double line[2]={thad.get("edt",i),
-		      thad.get("prt",i)};
-      ns.line_of_data(2,line);
+      double line[3]={thad.get("edt",i),
+        thad.get("prt",i),
+        thad.get("nB",i)
+      };
+      ns.line_of_data(3,line);
     }
     for(size_t i=0;i<tmixed.get_nlines();i++) {
-      double line[2]={tmixed.get("edt",i),
-		      tmixed.get("prt",i)};
-      ns.line_of_data(2,line);
+      double line[3]={tmixed.get("edt",i),
+        tmixed.get("prt",i),
+        tmixed.get("nB",i)};
+      ns.line_of_data(3,line);
     }
     for(size_t i=0;i<tq.get_nlines();i++) {
-      double line[2]={tq.get("edt",i),
-		      tq.get("prt",i)};
-      ns.line_of_data(2,line);
+      double line[3]={tq.get("edt",i),
+        tq.get("prt",i),
+        tq.get("nB",i)};
+      ns.line_of_data(3,line);
     }
 
     // -----------------------------------------------------------------
@@ -1021,7 +1028,7 @@ public:
     
     eos_tov_interp eti;
     eti.default_low_dens_eos();
-    eti.read_table(ns,"ed","pr");
+    eti.read_table(ns,"ed","pr","nb");
     cout << "Going to tov_solve." << endl;
     tov_solve ts;
     ts.set_eos(eti);
@@ -1031,6 +1038,9 @@ public:
     cout << "Central energy density of maximum mass star:\n  "
          << tov->get("ed",tov->lookup("gm",tov->max("gm"))) << " "
          << tov->get_unit("ed") << " ." << endl;
+    cout << "Central baryon density of maximum mass star:\n  "
+         << tov->get("nb",tov->lookup("gm",tov->max("gm"))) << " "
+         << tov->get_unit("nb") << " ." << endl;
 
     // -----------------------------------------------------------------
     // Output results to a file
@@ -1168,9 +1178,8 @@ public:
       njl.up_default_mass=5.5/hc_mev_fm;
       njl.down_default_mass=5.5/hc_mev_fm;
       njl.strange_default_mass=140.7/hc_mev_fm;
-      njl.set_parameters(602.3/hc_mev_fm,
-			 1.835/njl.L/njl.L,
-			 12.36/pow(njl.L,5.0));
+      double L=602.3/hc_mev_fm;
+      njl.set_parameters(L,1.835/L/L,12.36/pow(L,5.0));
       mp_start_fix=0.0;
     } else if (sv[1]=="njl") {
       ptr_q=&njl;

@@ -208,11 +208,16 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
 
     ret=solver->msolve(3,x,fmf);
     if (ret!=0) {
-      if (err_on_fail) {
-        O2SCL_ERR2("Solver failed (from_qq=true) in ",
-                   "eos_quark_njl::calc_temp_p().",o2scl::exc_efailed);
+      // AWS, 5/25/22: I've found that the solver sometimes fails
+      // and we can recover just by calling it a second time
+      ret=solver->msolve(3,x,fmf);
+      if (ret!=0) {
+        if (err_on_fail) {
+          O2SCL_ERR2("Solver failed (from_qq=true) in ",
+                     "eos_quark_njl::calc_temp_p().",o2scl::exc_efailed);
+        }
+        return ret;
       }
-      return ret;
     }
     
   } else {
@@ -229,11 +234,16 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
 
     ret=solver->msolve(3,x,fmf);
     if (ret!=0) {
-      if (err_on_fail) {
-        O2SCL_ERR2("Solver failed (from_qq=false) in ",
-                   "eos_quark_njl::calc_temp_p().",o2scl::exc_efailed);
+      // AWS, 5/25/22: I've found that the solver sometimes fails
+      // and we can recover just by calling it a second time.
+      ret=solver->msolve(3,x,fmf);
+      if (ret!=0) {
+        if (err_on_fail) {
+          O2SCL_ERR2("Solver failed (from_qq=false) in ",
+                     "eos_quark_njl::calc_temp_p().",o2scl::exc_efailed);
+        }
+        return ret;
       }
-      return ret;
     }
 
   }
