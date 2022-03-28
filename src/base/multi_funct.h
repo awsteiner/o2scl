@@ -134,6 +134,8 @@ namespace o2scl {
 
   };
 
+#ifdef O2SCL_PYTHON
+  
   /** \brief One-dimensional function from a python function
    */
   template<class vec_t=boost::numeric::ublas::vector<double> >
@@ -331,6 +333,8 @@ namespace o2scl {
 
   };
 
+#endif
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif
