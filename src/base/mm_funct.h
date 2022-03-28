@@ -142,6 +142,8 @@ namespace o2scl {
       
   };
 
+#ifdef O2SCL_PYTHON
+  
   /** \brief One-dimensional function from a python function
    */
   template<class vec_t=boost::numeric::ublas::vector<double> >
@@ -349,6 +351,8 @@ namespace o2scl {
     mm_funct_python& operator=(const mm_funct_python&);
 
   };
+
+#endif
   
 #ifdef O2SCL_NEVER_DEFINED
   /** \brief A wrapper to specify \ref o2scl::mm_funct-like objects 
