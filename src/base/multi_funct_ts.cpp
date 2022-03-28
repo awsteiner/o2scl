@@ -43,6 +43,20 @@ int main(void) {
   x[1]=2.1;
   t.test_rel(x[0]*x[1]-x[0],f(2,x),1.0e-12,"multi_funct_strings");
 
+#ifdef O2SCL_PYTHON
+
+  o2scl_settings.py_init();
+  o2scl_settings.add_python_path("./");
+  {
+    // We use the brackets to force the multi_funct_python
+    // destructor to run before py_final()
+    multi_funct_python<ubvector> fp("multi_funct_test","fun");
+    t.test_rel(fp(2,x),o2scl_const::pi*3.6,1.0e-12,"multi_funct_python");
+  }
+  o2scl_settings.py_final();
+  
+#endif
+  
   t.report();
   return 0;
 }

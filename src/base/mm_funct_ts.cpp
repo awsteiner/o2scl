@@ -47,6 +47,24 @@ int main(void) {
   t.test_rel(x[0]*x[1]-x[0],y[0],1.0e-12,"mm_funct_strings");
   t.test_rel(x[0]*x[1]-x[1],y[1],1.0e-12,"mm_funct_strings");
 
+#ifdef O2SCL_PYTHON
+
+  o2scl_settings.py_init();
+  o2scl_settings.add_python_path("./");
+  {
+    // We use the brackets to force the mm_funct_python
+    // destructor to run before py_final()
+    mm_funct_python<ubvector> fp("mm_funct_test","fun");
+    int mfp_ret=fp(2,x,y);
+    ubvector y2(2);
+    y2[0]=x[0]*o2scl_const::pi;
+    y2[1]=x[1]*o2scl_const::pi;
+    t.test_rel_vec(2,y,y2,1.0e-12,"mm_funct_python");
+  }
+  o2scl_settings.py_final();
+  
+#endif
+  
   t.report();
   return 0;
 }

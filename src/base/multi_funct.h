@@ -35,6 +35,11 @@
 
 #include <o2scl/err_hnd.h>
 #include <o2scl/calc_utf8.h>
+#include <o2scl/lib_settings.h>
+
+#ifdef O2SCL_PYTHON
+#include <Python.h>
+#endif
 
 namespace o2scl {
 
@@ -129,8 +134,6 @@ namespace o2scl {
 
   };
 
-#ifdef O2SCL_NEVER_DEFINED
-  
   /** \brief One-dimensional function from a python function
    */
   template<class vec_t=boost::numeric::ublas::vector<double> >
@@ -245,20 +248,20 @@ namespace o2scl {
      */
     virtual double operator()(size_t n, const vec_t &v) const {
       
-      // Create a python object from the value
-      if (verbose>0) {
-        std::cout << "Creating python object from double." << std::endl;
-      }
-      
       // Create the list object
       PyObject *pList=PyList_New(n);
       if (pList==0) {
         O2SCL_ERR2("List creation failed in ",
                    "multi_funct_python::operator().",o2scl::exc_efailed);
       }
+
+      double y;
       
-      /// Python function
-      std::vector<PyObject *p> pValues(n);
+      // Create a python object from the vector
+      std::vector<PyObject *> pValues(n);
+      if (verbose>0) {
+        std::cout << "Creating python object from vector." << std::endl;
+      }
       
       for(size_t i=0;i<n;i++) {
         pValues[i]=PyFloat_FromDouble(v[i]);
@@ -291,7 +294,7 @@ namespace o2scl {
                    "multi_funct_python::operator().",o2scl::exc_efailed);
       }
 
-      double y=PyFloat_AsDouble(result);
+      y=PyFloat_AsDouble(result);
 
       for(size_t i=0;i<pValues.size();i++) {
         if (verbose>0) {
@@ -306,15 +309,14 @@ namespace o2scl {
       Py_DECREF(pList);
       
       if (verbose>0) {
-        std::cout << "Decref value and result." << std::endl;
+        std::cout << "Decref result." << std::endl;
       }
-      Py_DECREF(pValue);
       Py_DECREF(result);
   
       if (verbose>0) {
         std::cout << "Done in multi_funct_python::operator()." << std::endl;
       }
-    
+
       return y;
     }      
 
@@ -329,8 +331,6 @@ namespace o2scl {
 
   };
 
-#endif
-  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif
