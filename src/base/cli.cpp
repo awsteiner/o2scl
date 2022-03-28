@@ -25,6 +25,7 @@
 #include <o2scl/xml.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
+#include <o2scl/cursesw.h>
 
 using namespace std;
 using namespace o2scl;
@@ -1169,6 +1170,9 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 
   terminal ter;
   
+  int srow, scol;
+  get_screen_size_ioctl(srow,scol);
+  
   // If not in interactive mode and no arguments are given,
   // Just output the full command list
 
@@ -1188,7 +1192,7 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 
     if (addl_help_cmd.length()>0) {
       vector<string> str_rewrap;
-      rewrap_keep_endlines(addl_help_cmd,str_rewrap);
+      rewrap_keep_endlines(addl_help_cmd,str_rewrap,scol-1);
       for(size_t j=0;j<str_rewrap.size();j++) {
 	cout << str_rewrap[j] << endl;
       }
@@ -1229,35 +1233,16 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	if (string_equal_dash(it->first,sv[1])) {
 	  
 	  cout << "Parameter: " << ter.red_fg() << ter.bold() << sv[1]
-	       << ter.default_fg() << " value: " << (it->second)->get() 
-	       << endl;
+	       << ter.default_fg() << " value: " << (it->second)->get()
+               << endl;
 
 	  vector<string> desc2;
 	  rewrap_keep_endlines(((string)"Description: ")+it->second->help,
-                               desc2);
+                               desc2,scol-1);
 	  for(size_t j=0;j<desc2.size();j++) {
 	    cout << desc2[j] << endl;
 	  }
-
-          /*
-            vector<string> desc2;
-            desc2.push_back("Description:");
-            split_string(it->second->help,desc2);
-	  
-            // The fill a buffer 'bufx' with lines with less than 78
-            // characters. (We need 78 here instead of 79 to accomodate
-            // the extra space which was already output above.)
-            string bufx;
-            for(size_t j=0;j<desc2.size();j++) {
-	    if (j!=0 && bufx.length()+desc2[j].length()>78) {
-            cout << bufx << endl << " ";
-            bufx="";
-	    }
-	    bufx+=desc2[j]+" ";
-            }
-            if (bufx.length()>0) cout << bufx << endl;
-          */
-	  
+          
 	  getset_found=true;
 	}
       }
@@ -1296,10 +1281,9 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 
 	cout << "\nLong description:" << endl;
 	{
-	  // Rewrap to 79 columns before writing additional
-	  // help text
+	  // Rewrap before writing additional help text
 	  vector<string> desc2;
-	  rewrap_keep_endlines(clist[ix].help,desc2);
+	  rewrap_keep_endlines(clist[ix].help,desc2,scol-1);
 	  for(size_t j=0;j<desc2.size();j++) {
 	    cout << desc2[j] << endl;
 	  }

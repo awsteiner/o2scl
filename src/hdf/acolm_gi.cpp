@@ -22,11 +22,9 @@
 */
 #include "acolm.h"
 
-// unistd.h is for isatty()
-#include <unistd.h>
-
 #include <o2scl/cloud_file.h>
 #include <o2scl/vector_derint.h>
+#include <o2scl/cursesw.h>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
@@ -554,6 +552,9 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   terminal ter;
+
+  int srow, scol;
+  get_screen_size_ioctl(srow,scol);
   
   // Create a line for separating help text sections
   string line=ter.hrule();
@@ -647,7 +648,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       dsc+="ceil(x) int(x) max(x,y) min(x,y)\n";
     */
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv);
+    o2scl::rewrap_keep_endlines(str,sv,scol-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -669,7 +670,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     str+="and "+type_list[type_list.size()-1]+'.';
 
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv);
+    o2scl::rewrap_keep_endlines(str,sv,scol-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -724,7 +725,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "fixed(2,0),index(1),index(0) - same as above\n\n";
 
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv);
+    o2scl::rewrap_keep_endlines(str,sv,scol-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -776,7 +777,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "$'python:\\\"import numpy\\nprint(numpy.sin(4))\\\"' -output";
     
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv);
+    o2scl::rewrap_keep_endlines(str,sv,scol-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -843,7 +844,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "column names using either '*' or '?'.";
 
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv);
+    o2scl::rewrap_keep_endlines(str,sv,scol-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -879,7 +880,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "  5. hdf5: - Unfinished.\n\n";
     
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv);
+    o2scl::rewrap_keep_endlines(str,sv,scol-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -931,7 +932,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "int[], size_t, size_t[], and uniform_grid<double>.";
 
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv);
+    o2scl::rewrap_keep_endlines(str,sv,scol-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -949,7 +950,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	type_list[i]+ter.default_fg()+
 	" can be read, written, or modified by "+cl->cmd_name+".";
       std::vector<std::string> svx;
-      o2scl::rewrap_keep_endlines(str,svx);
+      o2scl::rewrap_keep_endlines(str,svx,scol-1);
       for(size_t j=0;j<svx.size();j++) {
 	cout << svx[j] << endl;
       }
@@ -967,7 +968,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	    }
 	    str+=" and "+ter.cyan_fg()+ter.bold()+
 	      clist[clist.size()-1]+ter.default_fg()+".";
-	    o2scl::rewrap_ignore_vt100(str,svx);
+	    o2scl::rewrap_ignore_vt100(str,svx,scol-1);
 	    for(size_t j=0;j<svx.size();j++) {
 	      cout << svx[j] << endl;
 	    }
@@ -1057,7 +1058,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   stemp+="use '-commands all'. Required arguments ";
   stemp+="are surrounded by ";
   stemp+="<>'s and optional arguments are surrounded by []'s.\n";
-  rewrap_ignore_vt100(stemp,sv2,76);
+  rewrap_ignore_vt100(stemp,sv2,scol-4);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
     dsc+="   "+sv2[j]+"\n";
@@ -1065,14 +1066,14 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   stemp="2. Options may also be specified in the environment variable ";
   stemp+=env_var_name+".\n";
-  rewrap_ignore_vt100(stemp,sv2,76);
+  rewrap_ignore_vt100(stemp,sv2,scol-4);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
     dsc+="   "+sv2[j]+"\n";
   }
 
   stemp="3. Long options may be preceeded by two dashes.\n";
-  rewrap_ignore_vt100(stemp,sv2,76);
+  rewrap_ignore_vt100(stemp,sv2,scol-4);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
     dsc+="   "+sv2[j]+"\n";
@@ -1080,7 +1081,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   stemp="4. In order to avoid confusion between arguments and functions, ";
   stemp+="use parenthesis and quotes, i.e. \"(-x*2)\" instead of -x*2.\n";
-  rewrap_ignore_vt100(stemp,sv2,76);
+  rewrap_ignore_vt100(stemp,sv2,scol-4);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
     dsc+="   "+sv2[j]+"\n";
@@ -1088,7 +1089,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   stemp="5. Also, do not use a unary minus next to a binary operator, ";
   stemp+="i.e. use \"a>(-1)\" instead of \"a>-1\".\n\n";
-  rewrap_ignore_vt100(stemp,sv2,76);
+  rewrap_ignore_vt100(stemp,sv2,scol-4);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
     dsc+="   "+sv2[j]+"\n";
@@ -1102,7 +1103,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     stemp+=", and help topics as\n   ";
     stemp+=ter.green_fg()+ter.bold()+"functions"+ter.default_fg();
     stemp+=".\n";
-    rewrap_ignore_vt100(stemp,sv2,76);
+    rewrap_ignore_vt100(stemp,sv2,scol-4);
     dsc+=sv2[0]+"\n";
     for(size_t j=1;j<sv2.size();j++) {
       dsc+="   "+sv2[j]+"\n";
