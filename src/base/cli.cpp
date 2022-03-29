@@ -952,6 +952,9 @@ int cli::output_param_list() {
 
   terminal ter;
 
+  int srow, scol;
+  get_screen_size_ioctl(srow,scol);
+  
   // One row for each parameter and an additional row for
   // the header
   size_t nr=par_list.size()+1;
@@ -973,6 +976,7 @@ int cli::output_param_list() {
     for(size_t i=0;i<par_list.size();i++) {
       tab_names[0][i+1]=ter.red_fg()+ter.bold()+it->first+ter.default_fg();
       string stmp=it->second->get();
+      // FIXME, AWS 3/28/22, why 64?
       static const size_t nc2=64;
       if (stmp.length()>=nc2) stmp=stmp.substr(0,nc2-3)+"...";
       tab_values[0][i+1]=stmp;
@@ -1004,29 +1008,10 @@ int cli::output_param_list() {
 	if (i==1) it=par_list.begin();
 
         vector<string> desc2;
-        rewrap_keep_endlines(it->second->help,desc2,78);
+        rewrap_keep_endlines(it->second->help,desc2,scol-2);
         for(size_t j=0;j<desc2.size();j++) {
           cout << " " << desc2[j] << endl;
         }
-
-        /*
-	// First separate help description into words with split_string()
-	vector<string> desc2;
-	split_string(it->second->help,desc2);
-
-	// The fill a buffer 'bufx' with lines with less than 78
-	// characters. (We need 78 here instead of 79 to accomodate
-	// the extra space which was already output above.)
-	string bufx;
-	for(size_t j=0;j<desc2.size();j++) {
-	  if (j!=0 && bufx.length()+desc2[j].length()>78) {
-	    cout << bufx << endl << " ";
-	    bufx="";
-	  }
-	  bufx+=desc2[j]+" ";
-	}
-	if (bufx.length()>0) cout << bufx << endl;
-        */
 
 	// Advance the iterator
 	it++;
@@ -2147,27 +2132,38 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
 }
 
 int cli::comm_option_warranty(vector<string> &sv, bool itive_com) {
-  cout << desc << endl;
-  
-  cout << "This program is free software: you"
-       << " can redistribute it and/or modify" << endl;
-  cout << "it under the terms of the GNU Gene"
-       << "ral Public License as published by" << endl;
-  cout << "the Free Software Foundation, eith"
-       << "er version 3 of the License, or" << endl;
-  cout << "(at your option) any later version.\n" << endl;
-  
-  cout << "This program is distributed in the"
-       << " hope that it will be useful," << endl;
-  cout << "but WITHOUT ANY WARRANTY; without "
-       << "even the implied warranty of" << endl;
-  cout << "MERCHANTABILITY or FITNESS FOR A P"
-       << "ARTICULAR PURPOSE.  See the" << endl;
-  cout << "GNU General Public License for more details.\n" << endl;
 
-  cout << "The GNU General Public License can also be obtained using the\n"
-       << "'license' command.\n" << endl;
+  std::string stmp=desc;
+  stmp+="\n";
+  
+  stmp+="This program is free software: you ";
+  stmp+="can redistribute it and/or modify ";
+  stmp+="it under the terms of the GNU General ";
+  stmp+="Public License as published by ";
+  stmp+="the Free Software Foundation, either ";
+  stmp+="version 3 of the License, or ";
+  stmp+="(at your option) any later version.\n\n";
+  
+  stmp+="This program is distributed in the ";
+  stmp+="hope that it will be useful, ";
+  stmp+="but WITHOUT ANY WARRANTY; without ";
+  stmp+="even the implied warranty of ";
+  stmp+="MERCHANTABILITY or FITNESS FOR A ";
+  stmp+="PARTICULAR PURPOSE. See the ";
+  stmp+="GNU General Public License for more details.\n\n";
+  
+  stmp+="The GNU General Public License can also be obtained using the ";
+  stmp+="'license' command.";
 
+  int srow, scol;
+  get_screen_size_ioctl(srow,scol);
+  
+  vector<string> desc2;
+  rewrap_keep_endlines(stmp,desc2,scol-2);
+  for(size_t j=0;j<desc2.size();j++) {
+    cout << desc2[j] << endl;
+  }
+  
   return 0;
 }
 
@@ -3375,6 +3371,46 @@ int cli::comm_option_license(vector<string> &sv, bool itive_com) {
 
   return 0;
 }
+
+#ifdef NEVER_DEFINED
+
+int cli::comm_option_license(vector<string> &sv, bool itive_com) {
+
+  // For this new version, we need to create a string here of
+  // the license text.
+  
+  int srow, scol=80;
+  if (sv.size()==1) {
+    get_screen_size_ioctl(srow,scol);
+  }
+  
+  vector<string> desc2;
+  rewrap_keep_endlines(stmp,desc2,scol-2);
+  
+  ostream *outs;
+  ofstream fout;
+  if (sv.size()>1) {
+    fout.open(sv[1].c_str());
+    //for(size_t j=0;j<desc2.size();j++) {
+    //fout << desc2[j] << endl;
+    //}
+    fout << stmp << endl;
+    fout.close();
+    if (verbose>0) cout << "License written to file: " << sv[1] << endl;
+  } else {
+    //for(size_t j=0;j<desc2.size();j++) {
+    //cout << desc2[j] << endl;
+    //}
+    cout << stmp << endl;
+    cout << "To output this information to a file, give the filename "
+         << "as the first\nargument of the 'license' command. The file,"
+         << "if already present, will be\noverwritten." << endl;
+  }
+  
+  return 0;
+}
+
+#endif
 
 int cli::read_docs() {
 

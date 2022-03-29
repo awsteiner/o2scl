@@ -408,10 +408,15 @@ namespace o2scl {
     
   protected:
 
-    /// Desc
+    /** \brief Print out all of the command-line options
+     */
     int print_option_list();
     
-    /// Output the parameter list
+    /** \brief Output the parameter list
+
+        Todo: there is a fixme entry for 64 columns which should
+        probably be fixed using the screen columns
+     */
     int output_param_list();
 
     /// Control screen output

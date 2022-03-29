@@ -557,7 +557,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   get_screen_size_ioctl(srow,scol);
   
   // Create a line for separating help text sections
-  string line=ter.hrule();
+  string line=ter.hrule(scol-2);
 
   // Handle the 'help type command' case for type-specific commands
   if (sv.size()==3) {
