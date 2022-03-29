@@ -24,6 +24,7 @@
 
 #include <o2scl/cloud_file.h>
 #include <o2scl/vector_derint.h>
+#include <o2scl/cursesw.h>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
@@ -38,16 +39,28 @@ typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
 int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
+
   cout.precision(prec);
+
+  int ncols_loc;
+  if (ncols<=0) {
+    int srow, scol;
+    get_screen_size_ioctl(srow,scol);
+    if (scol>10) ncols_loc=scol;
+    else ncols_loc=80;
+  } else {
+    ncols_loc=ncols;
+  }
+  
   if (type=="table3d") {
     cout << "table3d name: " << obj_name << endl;
-    table3d_obj.summary(&cout,ncols);
+    table3d_obj.summary(&cout,ncols_loc);
   } else if (type=="table") {
     cout << "table name: " << obj_name << endl;
     if (table_obj.get_nunits()>0) {
-      table_obj.summary(&cout,ncols);
+      table_obj.summary(&cout,ncols_loc);
     } else {
-      table_obj.table<std::vector<double> >::summary(&cout,ncols);
+      table_obj.table<std::vector<double> >::summary(&cout,ncols_loc);
     }
   } else if (type=="hist_2d") {
     cout << "hist_2d name: " << obj_name << endl;

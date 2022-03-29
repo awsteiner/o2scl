@@ -55,9 +55,8 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   use_regex=false;
   scientific=true;
   prec=6;
-  user_ncols=-1;
-  unit_fname="";
   def_args="";
+  ncols=0;
   
   post_interactive=false;
 
@@ -1709,7 +1708,6 @@ int acol_manager::setup_help() {
 int acol_manager::setup_parameters() {
   
   p_obj_name.str=&obj_name;
-  p_unit_fname.str=&unit_fname;
   p_def_args.str=&def_args;
   p_verbose.i=&verbose;
   p_compress.i=&compress;
@@ -1722,7 +1720,6 @@ int acol_manager::setup_parameters() {
   p_use_regex.b=&use_regex;
   
   p_obj_name.help="The current object name.";
-  p_unit_fname.help="The unit filename.";
   p_def_args.help=((std::string)"The default arguments from the ")+
     "environment varable "+env_var_name+".";
   p_prec.help="The numerical precision.";
@@ -1739,7 +1736,6 @@ int acol_manager::setup_parameters() {
   p_scientific.help="If true, output in scientific mode.";
   
   cl->par_list.insert(make_pair("obj_name",&p_obj_name));
-  cl->par_list.insert(make_pair("unit_fname",&p_unit_fname));
   cl->par_list.insert(make_pair("def_args",&p_def_args));
   cl->par_list.insert(make_pair("precision",&p_prec));
   cl->par_list.insert(make_pair("verbose",&p_verbose));
@@ -1814,14 +1810,17 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
 
   //-------------------------------------------------------------------
   // Try to get screen width
+
+  // AWS 3/29/22: we no longer try to do this here but in the
+  // individual functions which have complex screen output
   
-  int nrow, ncol=80;
   // Use curses
   // AWS: this prints out a bunch of crazy characters on Ubuntu
   //get_screen_size_curses(nrow,ncol);
   //#else
   
   // If not, attempt to obtain the result from the environment
+  /*
   char *ncstring=getenv("COLUMNS");
   if (ncstring) {
     int nc2;
@@ -1833,11 +1832,10 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
            << " as a positive number of columns." << endl;
     }
   }
+  */
   
   //#endif
   
-  set_swidth(ncol);
-
   //-------------------------------------------------------------------
   // Setup parameters modified by 'set' and 'get'
 

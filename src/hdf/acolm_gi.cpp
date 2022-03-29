@@ -228,22 +228,16 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
   //--------------------------------------------------------------------
   // Compute number of screen columns
 
-  if (user_ncols<=0) {
-    char *ncstring=getenv("COLUMNS");
-    if (ncstring) {
-      int nc2;
-      int sret=o2scl::stoi_nothrow(ncstring,nc2);
-      if (sret==0 && nc2>0) {
-	ncols=nc2;
-      } else {
-	cerr << "Failed to interpret COLUMNS value " << ncstring
-	     << " as a positive number of columns." << endl;
-      }
-    }
+  int ncols_loc;
+  if (ncols<=0) {
+    int srow, scol;
+    get_screen_size_ioctl(srow,scol);
+    if (scol>10) ncols_loc=scol;
+    else ncols_loc=80;
   } else {
-    ncols=user_ncols;
+    ncols_loc=ncols;
   }
-
+  
   //--------------------------------------------------------------------
   // Temporary storage strings for names and data
 
@@ -1047,7 +1041,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   // to print colors and lines.
   
   string stemp;
-  string dsc=line+"\nNotes:\n\n";
+  string dsc="\n"+line+"\nNotes:\n\n";
   vector<std::string> sv2;
   
   stemp="1. Help for commands which apply to the current object ";
@@ -1110,7 +1104,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     }
   }
   
-  dsc+=line+"\n";
+  dsc+="\n"+line+"\n";
 
   cl->addl_help_cmd=dsc;
   cl->addl_help_cli=dsc;

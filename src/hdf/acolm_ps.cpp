@@ -30,6 +30,7 @@
 
 #include <o2scl/cloud_file.h>
 #include <o2scl/vector_derint.h>
+#include <o2scl/cursesw.h>
 
 using namespace std;
 using namespace o2scl;
@@ -242,21 +243,15 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
   else cout.unsetf(ios::scientific);
   
   cout.precision(prec);
-  
-  if (user_ncols<=0) {
-    char *ncstring=getenv("COLUMNS");
-    if (ncstring) {
-      int nc2;
-      int sret=o2scl::stoi_nothrow(ncstring,nc2);
-      if (sret==0 && nc2>0) {
-	ncols=nc2;
-      } else {
-	cerr << "Failed to interpret COLUMNS value " << ncstring
-	     << " as a positive number of columns." << endl;
-      }
-    }
+
+  int ncols_loc;
+  if (ncols<=0) {
+    int srow, scol;
+    get_screen_size_ioctl(srow,scol);
+    if (scol>10) ncols_loc=scol;
+    else ncols_loc=80;
   } else {
-    ncols=user_ncols;
+    ncols_loc=ncols;
   }
 
   cout << "Type: " << type << " Name: " << obj_name << endl;
@@ -292,12 +287,12 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       } else {
 	// 8+prec for the grid point, 4 for extra spacing,
 	// and lmar for the left margin which has the x label
-	if (ncols<=prec+lmar+12) ncls=1;
-	else ncls=(ncols-prec-12-lmar)/(prec+8);
+	if (ncols_loc<=prec+lmar+12) ncls=1;
+	else ncls=(ncols_loc-prec-12-lmar)/(prec+8);
 	if (verbose>1) {
-	  std::cout << "Screen width: " << ncols << " prec: " << prec
-		    << " lmar: " << lmar << " flag: " << (ncols<=prec+lmar+12)
-		    << " ncols: " << ncls << endl;
+	  std::cout << "Screen width: " << ncols_loc << " prec: " << prec
+		    << " lmar: " << lmar << " flag: " << (ncols_loc<=prec+lmar+12)
+		    << " ncols_loc: " << ncls << endl;
 	}
       }
       if (((size_t)ncls)>ny) ncls=ny;
@@ -465,12 +460,12 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	}
       } else {
 	// 8+prec for the grid point, 3 for extra spacing,
-	if (ncols<=prec+11) ncls=1;
-	else ncls=(ncols-prec-11)/(prec+8);
+	if (ncols_loc<=prec+11) ncls=1;
+	else ncls=(ncols_loc-prec-11)/(prec+8);
 	if (verbose>1) {
-	  std::cout << "Screen width: " << ncols << " prec: " << prec
-		    << " flag: " << (ncols<=prec+11)
-		    << " ncols: " << ncls << endl;
+	  std::cout << "Screen width: " << ncols_loc << " prec: " << prec
+		    << " flag: " << (ncols_loc<=prec+11)
+		    << " ncols_loc: " << ncls << endl;
 	}
       }
       if (((size_t)ncls)>ny) ncls=ny;
@@ -601,7 +596,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       //----------------------------------------------------------------------
       // Compute number of columns which will fit
       
-      size_t max_cols=(ncols)/(8+prec);
+      size_t max_cols=(ncols_loc)/(8+prec);
       if (max_cols>table_obj.get_ncolumns()) max_cols=table_obj.get_ncolumns();
       
       //--------------------------------------------------------------------
@@ -939,9 +934,9 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     if (!has_minus_sign(&x)) maxwid++;
 
     // Number of 'columns' is equal to the number of columns
-    // in the screen 'ncols' divided by the maximum width
+    // in the screen 'ncols_loc' divided by the maximum width
     // of one column
-    size_t nct=ncols/maxwid;
+    size_t nct=ncols_loc/maxwid;
     size_t step=total_size/nrows/nct;
     vector<string> svin, svout;
     for(size_t i=0;i<total_size;i+=step) {
@@ -995,9 +990,9 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     if (!has_minus_sign(&x)) maxwid++;
 
     // Number of 'columns' is equal to the number of columns
-    // in the screen 'ncols' divided by the maximum width
+    // in the screen 'ncols_loc' divided by the maximum width
     // of one column
-    size_t nct=ncols/maxwid;
+    size_t nct=ncols_loc/maxwid;
     size_t step=total_size/nrows/nct;
     vector<string> svin, svout;
     for(size_t i=0;i<total_size;i+=step) {
@@ -1051,9 +1046,9 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     if (x>=0) maxwid++;
 
     // Number of 'columns' is equal to the number of columns
-    // in the screen 'ncols' divided by the maximum width
+    // in the screen 'ncols_loc' divided by the maximum width
     // of one column
-    size_t nct=ncols/maxwid;
+    size_t nct=ncols_loc/maxwid;
     size_t step=total_size/nrows/nct;
     vector<string> svin, svout;
     for(size_t i=0;i<total_size;i+=step) {
@@ -1107,9 +1102,9 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     if (x>=0) maxwid++;
 
     // Number of 'columns' is equal to the number of columns
-    // in the screen 'ncols' divided by the maximum width
+    // in the screen 'ncols_loc' divided by the maximum width
     // of one column
-    size_t nct=ncols/maxwid;
+    size_t nct=ncols_loc/maxwid;
     size_t step=total_size/nrows/nct;
     vector<string> svin, svout;
     for(size_t i=0;i<total_size;i+=step) {

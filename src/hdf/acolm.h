@@ -148,7 +148,8 @@ namespace o2scl_acol {
     /// True if we should make the output into neat columns (default true)
     bool pretty;
     
-    /// True if we should output column names
+    /** \brief If true, output names at the top of some objects
+     */
     bool names_out;
 
     /// True to use regex (false)
@@ -157,15 +158,14 @@ namespace o2scl_acol {
     /// The name of the table
     std::string obj_name;
   
-    /// Filename for units command
-    std::string unit_fname;
-
     /// Default arguments from environment
     std::string def_args;
 
-    /// The number of columns requested by the user
-    int user_ncols;
-
+    /** \brief The number of columns requested by the user 
+        (default 0 for autodetect)
+    */
+    int ncols;
+    
     /// The interpolation type
     int interp_type;
 
@@ -179,7 +179,6 @@ namespace o2scl_acol {
     /// \name The parameter objects
     //@{
     o2scl::cli::parameter_string p_obj_name;
-    o2scl::cli::parameter_string p_unit_fname;
     o2scl::cli::parameter_string p_def_args;
     o2scl::cli::parameter_int p_verbose;
     o2scl::cli::parameter_int p_compress;
@@ -190,12 +189,6 @@ namespace o2scl_acol {
     o2scl::cli::parameter_bool p_pretty;
     o2scl::cli::parameter_bool p_names_out;
     o2scl::cli::parameter_bool p_use_regex;
-    //@}
-
-    /// \name Other data [protected]
-    //@{
-    /// Number of columns in screen
-    int ncols;
     //@}
 
 #endif
@@ -889,12 +882,6 @@ namespace o2scl_acol {
     virtual int comm_constant(std::vector<std::string> &sv, bool itive_com);
     //@}
     
-    /// Set screen width
-    int set_swidth(int ncol) {
-      ncols=ncol;
-      return 0;
-    }
-
   protected:
     
     /// An internal command for prompting the user for command arguments
