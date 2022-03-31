@@ -137,6 +137,12 @@ namespace o2scl_acol {
     o2scl::format_float ffl;
 #endif
 
+    std::vector<std::vector<std::string>> cmd_doc_strings;
+    
+    std::vector<std::vector<std::string>> param_doc_strings;
+    
+    std::vector<std::vector<std::string>> help_doc_strings;
+    
     /// Convert units object (initialized by constructor to global object)
     o2scl::convert_units<double> &cng;
 
@@ -438,7 +444,8 @@ namespace o2scl_acol {
         to generate the runtime documentation.
     */
     virtual int comm_xml_to_o2(std::vector<std::string> &sv, bool itive_com);
-    void xml_replacements(std::string &s);
+    void xml_replacements(std::string &s,
+                          std::vector<std::string> &clist);
 
     /** \brief Open local HTML docs for acol or an O2scl topic.
 

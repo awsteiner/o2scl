@@ -233,7 +233,8 @@ int acol_manager::comm_to_table3d_sum(std::vector<std::string> &sv,
   return 0;
 }
 
-void acol_manager::xml_replacements(std::string &s) {
+void acol_manager::xml_replacements(std::string &s,
+                                    std::vector<std::string> &clist) {
 
   terminal ter;
   
@@ -254,30 +255,41 @@ void acol_manager::xml_replacements(std::string &s) {
     string_replace(s,subs[i],subs[i+1]);
   }
   
-  // Make the command replacements from the current option
-  // list
-  std::vector<std::string> comm_list=cl->get_option_list();
-  for(size_t i=0;i<comm_list.size();i++) {
-    string_replace(s,"<computeroutput> "+comm_list[i]+
+  // Make all of the type replacements
+  for(size_t i=0;i<type_list.size();i++) {
+    string_replace(s,"<computeroutput> "+type_list[i]+
                    " </computeroutput>",
-                   ter.cyan_fg()+ter.bold()+comm_list[i]+
+                   ter.magenta_fg()+ter.bold()+type_list[i]+
+                   ter.default_fg());
+  }
+                
+  // Make the command replacements
+  for(size_t i=0;i<clist.size();i++) {
+    string_replace(s,"<computeroutput> "+clist[i]+
+                   " </computeroutput>",
+                   ter.cyan_fg()+ter.bold()+clist[i]+
                    ter.default_fg());
   }
   
   // Make the command replacements from the current parameter list
-  /*
-  for(par_t it=par_list.begin();it!=par_list.end();it++) {
+  for(cli::par_t it=cl->par_list.begin();it!=cl->par_list.end();it++) {
     string_replace(s,"<computeroutput> "+it->first+
                    " </computeroutput>",
                    ter.red_fg()+ter.bold()+it->first+
                    ter.default_fg());
   }
-  */
   
   string_replace(s,"  "," ");
   string_replace(s," )",")");
   string_replace(s," ,",",");
   string_replace(s," .",".");
+  /*
+  string_replace(s,"<itemizedlist>","");
+  string_replace(s,"</itemizedlist>","");
+  string_replace(s,"<listitem>","*");
+  string_replace(s,"</listitem> *","*");
+  string_replace(s,"</listitem>","");
+  */
                   
   return;
 }
@@ -287,6 +299,8 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
 
 #ifdef O2SCL_PUGIXML
 
+  verbose=2;
+  
   terminal ter;
   
   // XML walkers
@@ -296,9 +310,10 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
   
   std::string stmp;
   
-  vector<vector<std::string>> cmd_doc_strings, param_doc_strings;
+  vector<vector<std::string>> cmd_doc_strings, help_doc_strings,
+    param_doc_strings;
 
-  // Add all of the current options
+  // Create a list of the current options
   vector<string> clist=cl->get_option_list();
 
   // Add the remaining type-specific options
@@ -311,7 +326,13 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
       }
     }
   }
-  
+
+  if (verbose>2) {
+    cout << "clist: ";
+    vector_out(cout,clist,true);
+  }
+
+  // Loop over every command
   for(size_t j=0;j<clist.size();j++) {
     
     // The command name, the brief description, the parameter
@@ -333,7 +354,7 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
     }
     
     std::string fn="doc/o2scl/xml/classo2scl__acol_1_1acol__manager.xml";
-    
+
     pugi::xml_node n3=doxygen_xml_member_get
       (fn,"acol_manager",fn_name,"briefdescription",doc);
 
@@ -364,11 +385,11 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
         }
       }
       
-      xml_replacements(stmp);
+      xml_replacements(stmp,clist);
       
       // Add brief description to stmp
       vs_tmp.push_back(stmp);
-      
+
       pugi::xml_node n4=doxygen_xml_member_get
         (fn,"acol_manager",fn_name,"detaileddescription",doc2);
       
@@ -396,12 +417,9 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
           } else {
             if (vsw.output[k]!=((string)"<para>")) {
               if (vsw.output[k]==((string)"</para>")) {
-                if (verbose>1) {
-                  //cout << "stmp: " << stmp << endl;
-                }
                 found=true;
                 
-                xml_replacements(stmp);
+                xml_replacements(stmp,clist);
                 
                 vs_tmp.push_back(stmp);
                 stmp.clear();
@@ -433,61 +451,103 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
     }
   }
 
-  #ifdef O2SCL_NEVER_DEFINED
+  // Go through all the parameters
+  for(cli::par_t itp=cl->par_list.begin();itp!=cl->par_list.end();itp++) {
+
+    // This parameter name and then all of the paragraphs in the
+    // long-form description, in that order.
+    vector<std::string> vs_tmp;
+    
+    pugi::xml_document doc;
+    pugi::xml_document doc2;
+    
+    if (verbose>1) {
+      cout << "parameter name, doc_name: " << itp->first << " "
+           << itp->second->doc_name << endl;
+    }
+    
+    std::string fn="doc/o2scl/xml/classo2scl__acol_1_1acol__manager.xml";
+    
+    pugi::xml_node n3=doxygen_xml_member_get
+      (fn,itp->first,itp->first,"briefdescription",doc);
+    if (n3==0) {
+      cout << "n3 0 " << itp->first << " "
+           << itp->second->doc_name << " " << fn << endl;
+    }
+    
+    if (n3!=0) {
+      
+      // We found a brief description, so add the parameter name
+      // to the list
+      vs_tmp.push_back(itp->first);
+      
+      if (verbose>2) {
+        cout << "brief desc. name, value: "
+             << n3.name() << " " << n3.value() << endl;
+        n3.traverse(ow);
+      }
+      
+      // Store the XML for the brief description in vsw.output
+      n3.traverse(vsw);
+      
+      // Combine with spaces, and remove the outer paragraph
+      stmp="";
+      for(size_t k=0;k<vsw.output.size();k++) {
+        if (stmp.length()!=0) {
+          stmp+=' ';
+        }
+        if (vsw.output[k]!=((string)"<para>") &&
+            vsw.output[k]!=((string)"</para>")) {
+          stmp+=vsw.output[k];
+        }
+      }
+
+      xml_replacements(stmp,clist);
+
+      // Remove trailing spaces
+      while (stmp.length()>2 && stmp[stmp.length()-1]==' ') {
+        stmp=stmp.substr(0,stmp.length()-1);
+      }
+      
+      // Add a period at the end, because this brief description
+      // is combined with the detailed description by the
+      // cli 'help' command above.
+      if (stmp.length()>2 && stmp[stmp.length()-1]!='.') {
+        stmp+='.';
+      }
+      
+      // Add brief description to stmp
+      vs_tmp.push_back(stmp);
+
+      // Look for a detailed description
+      pugi::xml_node n4=doxygen_xml_member_get
+        (fn,itp->first,itp->first,
+         "detaileddescription",doc2);
+      
+      if (n4!=0) {
+        
+        if (verbose>2) {
+          cout << "detailed desc. name, value: "
+               << n4.name() << " " << n4.value() << endl;
+          n4.traverse(ow);
+        }
+        
+        // Store the XML for the brief description in vsw.output
+        n4.traverse(vsw);
+        
+        bool done=false;
+        stmp="";
         
         for(size_t k=0;k<vsw.output.size() && done==false;k++) {
+          
           if (vsw.output[k].find("End of runtime documentation.")!=
               string::npos) {
             done=true;
           } else {
             if (vsw.output[k]!=((string)"<para>")) {
               if (vsw.output[k]==((string)"</para>")) {
-                if (verbose>1) {
-                  //cout << "stmp: " << stmp << endl;
-                }
-                found=true;
                 
-                // Make the manual replacements from the 'subs' list
-                // above
-                //for(size_t i=0;i<subs.size();i+=2) {
-                //cout << "Replacing: " << i << endl;
-                //string_replace(stmp,subs[i],subs[i+1]);
-                //}
-                
-                // Make all of the type replacements
-                for(size_t i=0;i<type_list.size();i++) {
-                  string_replace(stmp,"<computeroutput> "+type_list[i]+
-                                 " </computeroutput>",
-                                 ter.magenta_fg()+ter.bold()+type_list[i]+
-                                 ter.default_fg());
-                }
-                
-                // Make the command replacements from the current option
-                // list
-                std::vector<std::string> comm_list=cl->get_option_list();
-                for(size_t i=0;i<comm_list.size();i++) {
-                  string_replace(stmp,"<computeroutput> "+comm_list[i]+
-                                 " </computeroutput>",
-                                 ter.cyan_fg()+ter.bold()+comm_list[i]+
-                                 ter.default_fg());
-                }
-                
-                // Make the command replacements from the option
-                // lists for other types
-                for (std::map<std::string,std::vector<std::string> >::iterator
-                       it=type_comm_list.begin();it!=type_comm_list.end();
-                     it++) {
-                  for(size_t ii=0;ii<it->second.size();ii++) {
-                    string_replace(stmp,"<computeroutput> "+it->second[ii]+
-                                   " </computeroutput>",
-                                   ter.cyan_fg()+ter.bold()+it->second[ii]+
-                                   ter.default_fg());
-                  }
-                }
-                
-                string_replace(stmp,"  "," ");
-                string_replace(stmp," ,",",");
-                string_replace(stmp," .",".");
+                xml_replacements(stmp,clist);
                 
                 vs_tmp.push_back(stmp);
                 stmp.clear();
@@ -498,32 +558,33 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
             }
           }
         }
-        
-        if (found) {
-          if (vs_tmp.size()>=4 || true) {
-            for(size_t jj=0;jj<vs_tmp.size();jj++) {
-              cout << jj << ": " << vs_tmp[jj] << endl;
-            }
-            cout << endl;
-          }
-          cmd_doc_strings.push_back(vs_tmp);
-          
-        }
+
+        // End of if (n4!=0)
       }
       
+      if (vs_tmp.size()>=2) {
+        if (verbose>1) {
+          for(size_t jj=0;jj<vs_tmp.size();jj++) {
+            cout << jj << ": " << vs_tmp[jj] << endl;
+          }
+          cout << endl;
+        } else if (verbose>0) {
+          cout << "Adding documentation for parameter " << vs_tmp[0] << endl;
+        }
+        param_doc_strings.push_back(vs_tmp);
+      }
+
+      // End of if (n3!=0)
     }
     
   }
-
-#endif
-
+  
+  // Help topic list
   vector<string> flist={"value_spec","vector_spec","mult_vector_spec",
     "strings_spec"};
   
   for(size_t j=0;j<flist.size();j++) {
 
-    verbose=3;
-    
     vector<std::string> vs_tmp;
 
     pugi::xml_document doc;
@@ -535,7 +596,7 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
     
     pugi::xml_node n3=doxygen_xml_get
       (fn,fn_name,"briefdescription",doc);
-    
+
     pugi::xml_node n4=doxygen_xml_get
       (fn,fn_name,"detaileddescription",doc2);
     
@@ -553,7 +614,6 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
 
       vs_tmp.push_back(fn_name);
       vs_tmp.push_back(n3.child_value("para"));
-      cout << fn_name << endl;
 
       bool found=false;
       
@@ -573,47 +633,7 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
               }
               found=true;
 
-              // Make the manual replacements from the 'subs' list
-              // above
-              //for(size_t i=0;i<subs.size();i+=2) {
-              //cout << "Replacing: " << i << endl;
-              //string_replace(stmp,subs[i],subs[i+1]);
-              //}
-
-              // Make all of the type replacements
-              for(size_t i=0;i<type_list.size();i++) {
-                string_replace(stmp,"<computeroutput> "+type_list[i]+
-                               " </computeroutput>",
-                               ter.magenta_fg()+ter.bold()+type_list[i]+
-                               ter.default_fg());
-              }
-
-              // Make the command replacements from the current option
-              // list
-              std::vector<std::string> comm_list=cl->get_option_list();
-              for(size_t i=0;i<comm_list.size();i++) {
-                string_replace(stmp,"<computeroutput> "+comm_list[i]+
-                               " </computeroutput>",
-                               ter.cyan_fg()+ter.bold()+comm_list[i]+
-                               ter.default_fg());
-              }
-              
-              // Make the command replacements from the option
-              // lists for other types
-              for (std::map<std::string,std::vector<std::string> >::iterator
-                     it=type_comm_list.begin();it!=type_comm_list.end();
-                   it++) {
-                for(size_t ii=0;ii<it->second.size();ii++) {
-                  string_replace(stmp,"<computeroutput> "+it->second[ii]+
-                                 " </computeroutput>",
-                                 ter.cyan_fg()+ter.bold()+it->second[ii]+
-                                 ter.default_fg());
-                }
-              }
-              
-              string_replace(stmp,"  "," ");
-              string_replace(stmp," ,",",");
-              string_replace(stmp," .",".");
+              xml_replacements(stmp,clist);
               
               vs_tmp.push_back(stmp);
               stmp.clear();
@@ -632,7 +652,7 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
           }
           cout << endl;
         }
-        param_doc_strings.push_back(vs_tmp);
+        help_doc_strings.push_back(vs_tmp);
         
       }
       
@@ -643,6 +663,7 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
   hdf_file hf;
   hf.open_or_create("data/o2scl/acol_docs.o2");
   hf.sets_vec_vec("cmd_doc_strings",cmd_doc_strings);
+  hf.sets_vec_vec("help_doc_strings",help_doc_strings);
   hf.sets_vec_vec("param_doc_strings",param_doc_strings);
   hf.close();
   cout << "Created file data/o2scl/acol_docs.o2." << endl;

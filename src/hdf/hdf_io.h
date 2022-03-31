@@ -1012,6 +1012,7 @@ namespace o2scl_hdf {
   /** \brief Specification of several strings
 
       The specification types are:
+
       - list: list of comma separated entries
       - shell: read all lines output from a shell command
       - python: read all lines output from a python command

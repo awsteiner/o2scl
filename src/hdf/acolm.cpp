@@ -1301,7 +1301,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=20;
+  static const int narr=21;
 
   string type_list_str;
   for(size_t i=0;i<type_list.size()-1;i++) {
@@ -1563,9 +1563,7 @@ int acol_manager::setup_options() {
       both},
      {'v',"version","Print version information and O2scl settings.",0,0,"",
       "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_version),
-      both}
-    };
-  /*
+      both},
      {0,"xml-to-o2","Parse doxygen XML to generate runtime docs.",0,0,"",
       ((string)"When pugixml is enabled, this function reads the ")+
       "doxygen XML output and generates an HDF5 file which acol reads "+
@@ -1573,7 +1571,60 @@ int acol_manager::setup_options() {
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_xml_to_o2),
       both}
     };
-  */
+
+  cl->remove_comm_option("xml-to-o2");
+
+  if (true) {
+    
+    std::string doc_fn=o2scl::o2scl_settings.get_data_dir()+"/acol_docs.o2";
+    
+    if (file_exists(doc_fn)) {
+      
+      hdf_file hf;
+      hf.open(doc_fn);
+      hf.gets_vec_vec("cmd_doc_strings",cmd_doc_strings);
+      hf.gets_vec_vec("param_doc_strings",param_doc_strings);
+      hf.gets_vec_vec("help_doc_strings",help_doc_strings);
+      hf.close();
+
+      for(size_t j=0;j<narr;j++) {
+        bool found=false;
+        for(size_t k=0;k<cmd_doc_strings.size() && found==false;k++) {
+          if (cmd_doc_strings[k][0]==options_arr[j].lng) {
+            if (cmd_doc_strings[k].size()>=2) {
+              options_arr[j].desc=cmd_doc_strings[k][1];
+              if (cmd_doc_strings[k].size()>=3) {
+                options_arr[j].parm_desc=cmd_doc_strings[k][2];
+                if (cmd_doc_strings[k].size()>=4) {
+                  options_arr[j].help=cmd_doc_strings[k][3];
+                  for(size_t kk=4;kk<cmd_doc_strings[k].size();kk++) {
+                    options_arr[j].help+="\n\n"+cmd_doc_strings[k][kk];
+                  }
+                }
+              }
+            }
+            found=true;
+          }
+        }
+        if (true || verbose>2) {
+          if (found==true) {
+            cout << "Function cli::read_docs() "
+                 << "found documentation for command "
+                 << options_arr[j].lng << " ." << endl;
+          } else {
+            cout << "Function cli::read_docs() could not "
+                 << "find documentation for command "
+                 << options_arr[j].lng << " ." << endl;
+          }
+        }
+        
+      }
+      
+    } else {
+      cout << "Couldn't find file " << doc_fn << endl;
+    }
+  }
+  
   /*
     {0,"find-x","Find an entry in the x-grid (3d only)",1,1,"<value>","",
     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_find_x),
