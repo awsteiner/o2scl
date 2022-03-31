@@ -29,13 +29,13 @@ using namespace o2scl;
 //return index_spec(index_spec::index,ix,0,0,0.0,0.0,0.0);
 //}
 
-index_spec o2scl::ix_fixed(size_t ix, size_t fix) {
-  return index_spec(index_spec::fixed,ix,fix,0,0.0,0.0,0.0);
-}
+//index_spec o2scl::ix_fixed(size_t ix, size_t fix) {
+//return index_spec(index_spec::fixed,ix,fix,0,0.0,0.0,0.0);
+//}
   
-index_spec o2scl::ix_sum(size_t ix) {
-  return index_spec(index_spec::sum,ix,0,0,0.0,0.0,0.0);
-}
+//index_spec o2scl::ix_sum(size_t ix) {
+//return index_spec(index_spec::sum,ix,0,0,0.0,0.0,0.0);
+//}
   
 index_spec o2scl::ix_trace(size_t ix, size_t ix2) {
   return index_spec(index_spec::trace,ix,ix2,0,0.0,0.0,0.0);

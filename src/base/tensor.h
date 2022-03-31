@@ -139,11 +139,11 @@ namespace o2scl {
   
   /** \brief Fix index \c ix to value \c ix2
    */
-  index_spec ix_fixed(size_t ix, size_t ix2);
+  //index_spec ix_fixed(size_t ix, size_t ix2);
   
   /** \brief Sum over index \c ix
    */
-  index_spec ix_sum(size_t ix);
+  //index_spec ix_sum(size_t ix);
   
   /** \brief Perform a trace over indices \c ix and \c ix2
    */
@@ -178,56 +178,78 @@ namespace o2scl {
 
   /** \brief Desc
    */
-  class ix_index2 : public index_spec {
+  class ix_index : public index_spec {
 
   public:
 
     /// Desc
-    ix_index2(index_spec &is) {
+    ix_index(size_t ix) {
+      this->type=index_spec::index;
+      this->ix1=ix;
+    }
+    
+    /// Desc
+    ix_index(index_spec &is) {
       if (is.type!=index_spec::index) {
-	O2SCL_ERR("Invalid index_spec in ix_index2",
+	O2SCL_ERR("Invalid index_spec in ix_index",
+		  o2scl::exc_einval);
+      }
+      this->type=is.type;
+      this->ix1=is.ix1;
+    }
+    
+  };
+  
+  /** \brief Desc
+   */
+  class ix_fixed : public index_spec {
+
+  public:
+
+    size_t &fixed_value;
+
+    /// Desc
+    ix_fixed(size_t ix, size_t fix) : fixed_value(this->ix2) {
+      this->type=index_spec::fixed;
+      this->ix1=ix;
+      this->ix2=fix;
+    }
+    
+    ix_fixed(index_spec &is) : fixed_value(this->ix2) {
+      if (is.type!=index_spec::fixed) {
+	O2SCL_ERR("Invalid index_spec in ix_fixed",
 		  o2scl::exc_einval);
       }
     }
     
+  };
+  
+  /** \brief Desc
+   */
+  class ix_sum : public index_spec {
+
+  public:
+
     /// Desc
-    ix_index2(size_t ix) {
-      this->type=index_spec::index;
+    ix_sum(size_t ix) {
+      this->type=index_spec::sum;
       this->ix1=ix;
+    }
+    
+    /// Desc
+    ix_sum(index_spec &is) {
+      if (is.type!=index_spec::sum) {
+	O2SCL_ERR("Invalid index_spec in ix_sum",
+		  o2scl::exc_einval);
+      }
+      this->type=is.type;
+      this->ix1=is.ix1;
     }
     
   };
   
 #ifdef O2SCL_NEVER_DEFINED
 
-  class ix_fixed2 : public index_spec {
-
-  public:
-
-    size_t &fixed_value;
-
-    ix_fixed2(index_spec &is) : fixed_value(ix.ix2) {
-      if (ix.type!=index_spec::fixed) {
-	O2SCL_ERR("Invalid index_spec in ix_index2",
-		  o2scl::exc_einval);
-      }
-    }
-    
-  };
-  
-  class ix_sum2 : public index_spec {
-
-  public:
-
-    ix_sum2(index_spec &is) : {
-      if (ix.type!=index_spec::sum) {
-	O2SCL_ERR("Invalid index_spec in ix_index2",
-		  o2scl::exc_einval);
-      }
-    }
-    
-                                 };
-  
   class ix_trace2 : public index_spec {
 
   public:
@@ -236,7 +258,7 @@ namespace o2scl {
     
     ix_trace2(index_spec &is) : second_index(ix.ix2) {
       if (ix.type!=index_spec::trace) {
-	O2SCL_ERR("Invalid index_spec in ix_index2",
+	O2SCL_ERR("Invalid index_spec in ix_index",
 		  o2scl::exc_einval);
       }
     }
@@ -249,7 +271,7 @@ namespace o2scl {
 
     ix_reverse2(index_spec &is) {
       if (ix.type!=index_spec::reverse) {
-	O2SCL_ERR("Invalid index_spec in ix_index2",
+	O2SCL_ERR("Invalid index_spec in ix_index",
 		  o2scl::exc_einval);
       }
     }
@@ -266,7 +288,7 @@ namespace o2scl {
     
     ix_range2(index_spec &is) : begin(is.ix2), end(is.ix3) {
       if (ix.type!=index_spec::range) {
-	O2SCL_ERR("Invalid index_spec in ix_index2",
+	O2SCL_ERR("Invalid index_spec in ix_index",
 		  o2scl::exc_einval);
       }
     }
@@ -286,7 +308,7 @@ namespace o2scl {
     ix_interp2(index_spec &is) : begin(is.val1), end(is.val2),
                                     n_bins(is.ix2) {
       if (ix.type!=index_spec::interp) {
-	O2SCL_ERR("Invalid index_spec in ix_index2",
+	O2SCL_ERR("Invalid index_spec in ix_index",
 		  o2scl::exc_einval);
       }
     }
@@ -308,7 +330,7 @@ namespace o2scl {
     ix_grid2(index_spec &is) : begin(is.val1), end(is.val2),
 				  n_bins(is.ix2), log_flag(is.ix3) {
       if (ix.type!=index_spec::grid) {
-	O2SCL_ERR("Invalid index_spec in ix_index2",
+	O2SCL_ERR("Invalid index_spec in ix_index",
 		  o2scl::exc_einval);
       }
     }
@@ -330,7 +352,7 @@ namespace o2scl {
     ix_gridw2(index_spec &is) : begin(is.val1), end(is.val2),
 				   width(is.val3), log_flag(is.ix3) {
       if (ix.type!=index_spec::gridw) {
-	O2SCL_ERR("Invalid index_spec in ix_index2",
+	O2SCL_ERR("Invalid index_spec in ix_index",
 		  o2scl::exc_einval);
       }
     }
@@ -1068,7 +1090,7 @@ namespace o2scl {
             std::cout << "rearrange, index: ";
             vector_out(std::cout,args,true);
           }
-          vis.push_back(ix_index2(o2scl::stoszt(args[0])));
+          vis.push_back(ix_index(o2scl::stoszt(args[0])));
         } else if (sv2[j].find("fixed(")==0 && sv2[j][sv2[j].size()-1]==')') {
           std::string spec=sv2[j].substr(6,sv2[j].length()-7);
           split_string_delim(spec,args,',');

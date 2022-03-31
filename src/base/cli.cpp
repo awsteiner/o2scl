@@ -1855,7 +1855,8 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
   for(size_t j=0;j<clist.size();j++) {
 
     // This command name, the brief description, the parameter description,
-    // and then the long-form documentation, in that order
+    // and then all of the paragraphs in the long-form documentation,
+    // in that order.
     vector<std::string> vs_tmp;
 
     if (clist[j].doc_type==1) {
@@ -1976,7 +1977,8 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
   // Go through all the parameters
   for(par_t itp=par_list.begin();itp!=par_list.end();itp++) {
 
-    // This parameter name and the long-form description, in that order
+    // This parameter name and then all of the paragraphs in the
+    // long-form description, in that order.
     vector<std::string> vs_tmp;
     
     pugi::xml_document doc;
