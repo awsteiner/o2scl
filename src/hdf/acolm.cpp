@@ -54,7 +54,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   names_out=true;
   use_regex=false;
   scientific=true;
-  prec=6;
+  precision=6;
   def_args="";
   ncols=0;
   
@@ -1762,7 +1762,7 @@ int acol_manager::setup_parameters() {
   p_def_args.str=&def_args;
   p_verbose.i=&verbose;
   p_compress.i=&compress;
-  p_prec.i=&prec;
+  p_precision.i=&precision;
   p_ncols.i=&ncols;
   p_interp_type.i=&interp_type;
   p_scientific.b=&scientific;
@@ -1773,7 +1773,7 @@ int acol_manager::setup_parameters() {
   p_obj_name.help="The current object name.";
   p_def_args.help=((std::string)"The default arguments from the ")+
     "environment varable "+env_var_name+".";
-  p_prec.help="The numerical precision.";
+  p_precision.help="The numerical precision.";
   p_verbose.help="Control the amount of output.";
   p_compress.help=((std::string)"If true, enable compression ")+
     "(defaults to true if compression was enabled in O2scl).";
@@ -1788,7 +1788,7 @@ int acol_manager::setup_parameters() {
   
   cl->par_list.insert(make_pair("obj_name",&p_obj_name));
   cl->par_list.insert(make_pair("def_args",&p_def_args));
-  cl->par_list.insert(make_pair("precision",&p_prec));
+  cl->par_list.insert(make_pair("precision",&p_precision));
   cl->par_list.insert(make_pair("verbose",&p_verbose));
   cl->par_list.insert(make_pair("compress",&p_compress));
   cl->par_list.insert(make_pair("ncols",&p_ncols));
@@ -1798,6 +1798,32 @@ int acol_manager::setup_parameters() {
   cl->par_list.insert(make_pair("pretty",&p_pretty));
   cl->par_list.insert(make_pair("scientific",&p_scientific));
 
+  if (true) {
+    for(cli::par_t it=cl->par_list.begin();it!=cl->par_list.end();it++) {
+      bool found=false;
+      for(size_t k=0;k<param_doc_strings.size() && found==false;k++) {
+        if (param_doc_strings[k][0]==it->first) {
+          it->second->help=param_doc_strings[k][1];
+          for(size_t kk=2;kk<param_doc_strings[k].size();kk++) {
+            it->second->help+="\n\n"+param_doc_strings[k][kk];
+          }
+          found=true;
+        }
+      }
+      if (true || verbose>2) {
+        if (found) {
+          cout << "Function cli::read_docs() found "
+               << "documentation for parameter "
+               << it->first << " ." << endl;
+        } else {
+          cout << "Function cli::read_docs() could not find "
+               << "documentation for parameter "
+               << it->first << " ." << endl;
+        }
+      }
+    }
+  }
+  
   return 0;
 }
 

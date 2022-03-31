@@ -127,7 +127,7 @@ int acol_manager::comm_convert
   // Set the proper output precision and mode
   if (scientific) cout.setf(ios::scientific);
   else cout.unsetf(ios::scientific);
-  cout.precision(prec);
+  cout.precision(precision);
   
   if (in[0]=="add") {
 
@@ -269,7 +269,7 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
       cout << "constant: Looking up constant " << in[0]
            << " with unit " << in[1] << endl;
     }
-    fc.find_print(in[0],in[1],prec,verbose);
+    fc.find_print(in[0],in[1],precision,verbose);
     return 0;
   }
   
@@ -281,12 +281,12 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
       cout << "constant: Looking up constant " << sv[1]
            << " with unit " << sv[2] << endl;
     }
-    fc.find_print(sv[1],sv[2],prec,verbose);
+    fc.find_print(sv[1],sv[2],precision,verbose);
   } else if (sv[1]=="list") {
-    cout.precision(prec);
+    cout.precision(precision);
     fc.output_list(cout);
   } else if (sv[1]=="list-full") {
-    cout.precision(prec);
+    cout.precision(precision);
     fc.output_list_full(cout);
   } else if (sv[1]=="add") {
     if (sv.size()<4) {
@@ -354,7 +354,7 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
       cout << "constant: Printing constant named " << sv[1]
            << " (unit unspecified)" << endl;
     }
-    fc.find_print(sv[1],"",prec,verbose);
+    fc.find_print(sv[1],"",precision,verbose);
   }
 
   return 0;
@@ -927,11 +927,11 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     return exc_efailed;
   }
 
-  if (prec>50) {
+  if (precision>50) {
     cerr << "Requested precision larger too large for the calc "
          << "command." << endl;
     return 2;
-  } else if (prec>35) {
+  } else if (precision>35) {
     boost::multiprecision::number<boost::multiprecision::cpp_dec_float<50> >
       d;
     int retx=o2scl::function_to_double_nothrow(i1,d);
@@ -940,9 +940,9 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
       return 1;
     }
     if (verbose>0) cout << "Result (cpp_dec_float_50): ";
-    cout << dtos(d,prec) << endl;
+    cout << dtos(d,precision) << endl;
     return 0;
-  } else if (prec>18) {
+  } else if (precision>18) {
     boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
       d;
     int retx=o2scl::function_to_double_nothrow(i1,d);
@@ -951,9 +951,9 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
       return 1;
     }
     if (verbose>0) cout << "Result (cpp_dec_float_35): ";
-    cout << dtos(d,prec) << endl;
+    cout << dtos(d,precision) << endl;
     return 0;
-  } else if (prec>15) {
+  } else if (precision>15) {
     long double d;
     int retx=o2scl::function_to_double_nothrow(i1,d);
     if (retx!=0) {
@@ -961,7 +961,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
       return 1;
     }
     if (verbose>0) cout << "Result (long double): ";
-    cout << dtos(d,prec) << endl;
+    cout << dtos(d,precision) << endl;
     return 0;
   }
   
@@ -973,7 +973,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   }
   if (scientific) cout.setf(ios::scientific);
   else cout.unsetf(ios::scientific);
-  cout.precision(prec);
+  cout.precision(precision);
   if (verbose>0) cout << "Result: ";
   cout << d << endl;
   return 0;

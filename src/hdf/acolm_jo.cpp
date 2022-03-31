@@ -40,7 +40,7 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
 int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
 
-  cout.precision(prec);
+  cout.precision(precision);
 
   int ncols_loc;
   if (ncols<=0) {
@@ -174,7 +174,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
   
   if (scientific) fout->setf(ios::scientific);
   else fout->unsetf(ios::scientific);
-  fout->precision(prec);
+  fout->precision(precision);
 
   if (type=="table3d") {
     
@@ -225,7 +225,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
       vector<size_t> col_wids(table_obj.get_ncolumns());
 
       for(size_t i=0;i<table_obj.get_ncolumns();i++) {
-	col_wids[i]=prec+6;
+	col_wids[i]=precision+6;
       }
 
       if (names_out==true) {
@@ -309,7 +309,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 	  }
 	  (*fout) << table_obj.get(j,i) << ' ';
 	  if (pretty==true) {
-	    int nsp=((int)(table_obj.get_column_name(j).size()-prec-6));
+	    int nsp=((int)(table_obj.get_column_name(j).size()-precision-6));
 	    for(int kk=0;kk<nsp;kk++) {
 	      (*fout) << ' ';
 	    }

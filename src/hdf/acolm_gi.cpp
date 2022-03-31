@@ -99,10 +99,10 @@ int acol_manager::comm_get_grid(std::vector<std::string> &sv, bool itive_com) {
     // Now the grid data
     for(size_t ell=0;ell<max_size;ell++) {
       if (ell<table3d_obj.get_nx()) {
-	string_mat[1][ell+1]=o2scl::dtos(table3d_obj.get_grid_x(ell),prec);
+	string_mat[1][ell+1]=o2scl::dtos(table3d_obj.get_grid_x(ell),precision);
       }
       if (ell<table3d_obj.get_ny()) {
-	string_mat[2][ell+1]=o2scl::dtos(table3d_obj.get_grid_y(ell),prec);
+	string_mat[2][ell+1]=o2scl::dtos(table3d_obj.get_grid_y(ell),precision);
       }
     }
 
@@ -146,7 +146,7 @@ int acol_manager::comm_get_grid(std::vector<std::string> &sv, bool itive_com) {
       for(size_t k=0;k<rank;k++) {
 	if (ell<tensor_grid_obj.get_size(k)) {
 	  string_mat[k+1][ell+1]=
-	    o2scl::dtos(tensor_grid_obj.get_grid(k,ell),prec);
+	    o2scl::dtos(tensor_grid_obj.get_grid(k,ell),precision);
 	}
       }
     }
@@ -254,7 +254,7 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
       ostringstream str;
       // Clear ostringstream with str.str(""); and str.clear();
       str.setf(ios::scientific);
-      str.precision(prec);
+      str.precision(precision);
       
       for(size_t i=0;i<table_obj.get_ncolumns();i++) {
 
@@ -263,7 +263,7 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
 	// Count column name
 	this_col+=table_obj.get_column_name(i).size();
 	// Count extra spaces to format number
-	int num_spaces=prec+6-((int)(table_obj.get_column_name(i).size()));
+	int num_spaces=precision+6-((int)(table_obj.get_column_name(i).size()));
 	if (num_spaces>0) this_col+=num_spaces;
 	// See if there will be space
 	if (running_width>0 && ((int)(running_width+this_col))>=ncols) {
@@ -271,7 +271,7 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
 	  str.str("");
 	  str.clear();
 	  str.setf(ios::scientific);
-	  str.precision(prec);
+	  str.precision(precision);
 	  running_width=0;
 	}
 	// Output this column name
@@ -287,7 +287,7 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
       
     } else {
       
-      cout.precision(prec);
+      cout.precision(precision);
   
       for(size_t i=0;i<table_obj.get_ncolumns();i++) {
 	cout << table_obj.get_column_name(i) << ' ';
@@ -305,14 +305,14 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
     size_t running_width=0;
     ostringstream str;
     str.setf(ios::scientific);
-    str.precision(prec);
+    str.precision(precision);
     
     for(size_t i=0;i<table_obj.get_ncolumns();i++) {
       
       // Count space for number
-      size_t this_col=prec+8;
+      size_t this_col=precision+8;
       // Count extra spaces if necessary
-      int num_spaces=((int)(table_obj.get_column_name(i).size())-prec-6);
+      int num_spaces=((int)(table_obj.get_column_name(i).size())-precision-6);
       if (num_spaces>0) this_col+=num_spaces;
       // See if there will be space
       if (running_width>0 && ((int)(running_width+this_col))>=ncols) {
@@ -320,7 +320,7 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
 	str.str("");
 	str.clear();
 	str.setf(ios::scientific);
-	str.precision(prec);
+	str.precision(precision);
 	running_width=0;
       }
       // Output the data

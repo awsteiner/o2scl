@@ -242,7 +242,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
   if (scientific) cout.setf(ios::scientific);
   else cout.unsetf(ios::scientific);
   
-  cout.precision(prec);
+  cout.precision(precision);
 
   int ncols_loc;
   if (ncols<=0) {
@@ -287,11 +287,12 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       } else {
 	// 8+prec for the grid point, 4 for extra spacing,
 	// and lmar for the left margin which has the x label
-	if (ncols_loc<=prec+lmar+12) ncls=1;
-	else ncls=(ncols_loc-prec-12-lmar)/(prec+8);
+	if (ncols_loc<=precision+lmar+12) ncls=1;
+	else ncls=(ncols_loc-precision-12-lmar)/(precision+8);
 	if (verbose>1) {
-	  std::cout << "Screen width: " << ncols_loc << " prec: " << prec
-		    << " lmar: " << lmar << " flag: " << (ncols_loc<=prec+lmar+12)
+	  std::cout << "Screen width: " << ncols_loc << " prec: " << precision
+		    << " lmar: " << lmar << " flag: "
+                    << (ncols_loc<=precision+lmar+12)
 		    << " ncols_loc: " << ncls << endl;
 	}
       }
@@ -343,7 +344,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	  cout.setf(ios::showpos);
 
 	  // Grid row
-	  for(size_t i=0;i<((size_t)prec)+8+lmar;i++) cout << " ";
+	  for(size_t i=0;i<((size_t)precision)+8+lmar;i++) cout << " ";
 	  cout << "| ";
 	  
 	  for(size_t i=0;i<((size_t)ncls);i++) {
@@ -353,9 +354,9 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 
 	  // Divider row
 	  for(int i=0;i<lmar;i++) cout << " ";
-	  for(size_t i=0;i<((size_t)prec)+8;i++) cout << "-";
+	  for(size_t i=0;i<((size_t)precision)+8;i++) cout << "-";
 	  cout << "|";
-	  for(size_t i=0;i<((size_t)ncls)*(prec+8);i++) {
+	  for(size_t i=0;i<((size_t)ncls)*(precision+8);i++) {
 	    cout << "-";
 	  }
 	  cout << endl;
@@ -398,14 +399,14 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     int inr=(hist_obj.size()+(nrows-1))/(nrows);
     if (inr<1) inr=1;
 
-    cout.precision(prec);
+    cout.precision(precision);
 
     cout.setf(ios::left);
-    cout.width(prec+8);
+    cout.width(precision+8);
     cout << " low";
-    cout.width(prec+8);
+    cout.width(precision+8);
     cout << " high";
-    cout.width(prec+8);
+    cout.width(precision+8);
     cout << " weight" << endl;
     cout.unsetf(ios::left);
 
@@ -460,11 +461,11 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	}
       } else {
 	// 8+prec for the grid point, 3 for extra spacing,
-	if (ncols_loc<=prec+11) ncls=1;
-	else ncls=(ncols_loc-prec-11)/(prec+8);
+	if (ncols_loc<=precision+11) ncls=1;
+	else ncls=(ncols_loc-precision-11)/(precision+8);
 	if (verbose>1) {
-	  std::cout << "Screen width: " << ncols_loc << " prec: " << prec
-		    << " flag: " << (ncols_loc<=prec+11)
+	  std::cout << "Screen width: " << ncols_loc << " prec: " << precision
+		    << " flag: " << (ncols_loc<=precision+11)
 		    << " ncols_loc: " << ncls << endl;
 	}
       }
@@ -548,7 +549,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       cout.setf(ios::showpos);
       
       // Grid row
-      for(size_t i=0;i<((size_t)prec)+8;i++) cout << " ";
+      for(size_t i=0;i<((size_t)precision)+8;i++) cout << " ";
       cout << "| ";
       
       for(size_t i=0;i<((size_t)ncls);i++) {
@@ -557,9 +558,9 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       cout << endl;
       
       // Divider row
-      for(size_t i=0;i<((size_t)prec)+8;i++) cout << "-";
+      for(size_t i=0;i<((size_t)precision)+8;i++) cout << "-";
       cout << "|";
-      for(size_t i=0;i<((size_t)ncls)*(prec+8);i++) {
+      for(size_t i=0;i<((size_t)ncls)*(precision+8);i++) {
 	cout << "-";
       }
       cout << endl;
@@ -596,7 +597,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       //----------------------------------------------------------------------
       // Compute number of columns which will fit
       
-      size_t max_cols=(ncols_loc)/(8+prec);
+      size_t max_cols=(ncols_loc)/(8+precision);
       if (max_cols>table_obj.get_ncolumns()) max_cols=table_obj.get_ncolumns();
       
       //--------------------------------------------------------------------
@@ -646,7 +647,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	  
 	  // Trailing spaces
 	  if (pretty==true) {
-	    int nsp=prec+6-((int)(table_obj.get_column_name(i).size()));
+	    int nsp=precision+6-((int)(table_obj.get_column_name(i).size()));
 	    for(int j=0;j<nsp;j++) cout << ' ';
 	  } else {
 	    for(size_t kk=1;kk<nlast.length();kk++) cout << ' ';
@@ -677,7 +678,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	  
 	  // Trailing spaces
 	  if (pretty==true) {
-	    int nsp=prec+6-cunit.size()-2;
+	    int nsp=precision+6-cunit.size()-2;
 	    if (nsp<0) nsp=0;
 	    for(int j=0;j<nsp;j++) cout << ' ';
 	  } else {
@@ -707,7 +708,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	  cout << table_obj.get(j,i) << ' ';
 	  if (pretty==true) {
 	    for(int kk=0;kk<((int)(table_obj.get_column_name(j).size()-
-				   prec-6));kk++) {
+				   precision-6));kk++) {
 	      cout << ' ';
 	    }
 	  }

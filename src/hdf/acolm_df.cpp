@@ -908,7 +908,7 @@ int acol_manager::comm_entry_grid(std::vector<std::string> &sv,
 
     if (scientific) cout.setf(ios::scientific);
     else cout.unsetf(ios::scientific);
-    cout.precision(prec);
+    cout.precision(precision);
     
     // Output indices, grid point, value
     cout << "Indices, grid point, value: ";
@@ -945,7 +945,7 @@ int acol_manager::comm_filelist(std::vector<std::string> &sv,
   // Set the proper output precision and mode
   if (scientific) cout.setf(ios::scientific);
   else cout.unsetf(ios::scientific);
-  cout.precision(prec);
+  cout.precision(precision);
 
   hf.file_list(verbose);
   

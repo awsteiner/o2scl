@@ -149,7 +149,7 @@ namespace o2scl_acol {
     /// \name Parameters modifiable by the user
     //@{
     /// The output precision (default 6)
-    int prec;
+    int precision;
 
     /// True if we should make the output into neat columns (default true)
     bool pretty;
@@ -188,7 +188,7 @@ namespace o2scl_acol {
     o2scl::cli::parameter_string p_def_args;
     o2scl::cli::parameter_int p_verbose;
     o2scl::cli::parameter_int p_compress;
-    o2scl::cli::parameter_int p_prec;
+    o2scl::cli::parameter_int p_precision;
     o2scl::cli::parameter_int p_ncols;
     o2scl::cli::parameter_int p_interp_type;
     o2scl::cli::parameter_bool p_scientific;
