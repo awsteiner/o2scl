@@ -1707,16 +1707,25 @@ int cli::set_comm_option(comm_option_s &ic) {
     O2SCL_ERR(str.c_str(),exc_efailed);
   }
   bool found=false;
+  size_t i_found=0;
   for(size_t i=0;found==false && i<clist.size();i++) {
     if ((ic.shrt!=0 && clist[i].shrt==ic.shrt) || 
 	(ic.lng.length()>0 && clist[i].lng==ic.lng)) {
       found=true;
+      i_found=i;
     }
   }
   if (found==true) {
-    string err="Option ";
-    err+=ic.shrt;
-    err+=((string)", ")+ic.lng+" already present in cli::set_comm_option().";
+    std::string err="Cannot add option ";
+    err+=ic.lng+' ';
+    if (ic.shrt!=0) {
+      err+="('"+ic.shrt+((std::string)"') ");
+    }
+    err+="because option "+clist[i_found].lng+" ";
+    if (clist[i_found].shrt!=0) {
+      err+="('"+clist[i_found].shrt+((std::string)"') ");
+    }
+    err+="already present in cli::set_comm_option().";
     O2SCL_ERR(err.c_str(),exc_einval);
   }
   clist.push_back(ic);

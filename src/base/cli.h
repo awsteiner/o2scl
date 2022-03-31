@@ -574,6 +574,7 @@ namespace o2scl {
 	}
 	
 	bool found=false;
+        size_t i_found=0;
 	for(size_t i=0;found==false && i<clist.size();i++) {
 	  // If short or long options match
 	  if ((option_list[k].shrt!=0 && 
@@ -581,21 +582,21 @@ namespace o2scl {
 	      (option_list[k].lng.length()>0 && 
 	       clist[i].lng==option_list[k].lng)) {
 	    found=true;
+            i_found=i;
 	  }
 	}
 	if (found==true) {
-	  // Call the error handler
-	  if (option_list[k].shrt!=0) {
-	    std::string err="Option ";
-	    err+=option_list[k].lng+" ('";
-	    err+=option_list[k].shrt;
-	    err+="') already present.";
-	    O2SCL_ERR(err.c_str(),exc_einval);
-	  } else {
-	    std::string err="Option ";
-	    err+=option_list[k].lng+" already present.";
-	    O2SCL_ERR(err.c_str(),exc_einval);
-	  }
+          std::string err="Cannot add option ";
+          err+=option_list[k].lng+' ';
+          if (option_list[k].shrt!=0) {
+            err+="('"+option_list[k].shrt+((std::string)"') ");
+          }
+          err+="because option "+clist[i_found].lng+" ";
+          if (clist[i_found].shrt!=0) {
+            err+="('"+clist[i_found].shrt+((std::string)"') ");
+          }
+          err+="already present in cli::set_comm_option().";
+          O2SCL_ERR(err.c_str(),exc_einval);
 	}
 	// Add the option to the option list
 	clist.push_back(option_list[k]);

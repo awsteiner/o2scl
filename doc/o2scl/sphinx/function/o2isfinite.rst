@@ -7,6 +7,8 @@ Function o2isfinite (o2scl)
 
 .. doxygenfunction:: o2scl::o2isfinite(const boost::multiprecision::number< boost::multiprecision::cpp_dec_float< 35 > > x)
 
+.. doxygenfunction:: o2scl::o2isfinite(const boost::multiprecision::number< boost::multiprecision::cpp_dec_float< 25 > > x)
+
 .. doxygenfunction:: o2scl::o2isfinite(const boost::multiprecision::cpp_dec_float_50 x)
 
 .. doxygenfunction:: o2scl::o2isfinite(const boost::multiprecision::cpp_dec_float_100 x)

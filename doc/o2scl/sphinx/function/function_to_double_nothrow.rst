@@ -7,3 +7,5 @@ Function function_to_double_nothrow (o2scl)
 
 .. doxygenfunction:: o2scl::function_to_double_nothrow(std::string s, long double &result, int verbose=0)
 
+.. doxygenfunction:: o2scl::function_to_double_nothrow(std::string s, fp_t &result, int verbose=0)
+
