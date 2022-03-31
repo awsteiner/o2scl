@@ -525,41 +525,54 @@ namespace o2scl_acol {
 
     /** \brief Compute the autocorrelation coefficients
 
-        [Arguments depend on current object type.]
+        If there is no current object:
 
-        The behavior of the <tt>autocorr</tt> command depends on the
-        type of the current object.
+        Compute autocorrelation coefficients from a set of vectors
 
-        For objects which act as numerical array (i.e. objects of type
-        <tt>double[]</tt>, <tt>int[]</tt>, etc.), the
-        <tt>autocorr</tt> command requires no arguments. It replaces
-        the current object with a <tt>double[]</tt> object which
+        <mult. vec. spec. 1> [mult. vec. spec. 2]
+        
+        This command computes the autocorrelation coefficients for all
+        vectors specified as multiple vector specifications in the
+        arguments, then averages those autocorrelation coefficients
+        together. The averaged autocorrelation coefficients are kept
+        as a new <tt>double[]</tt> object. See ``Multiple vector
+        specifications`` for more information.
+
+        For objects of type int[]:
+
+        (no parameters)
+
+        Replace the current object with a <tt>double[]</tt> object which
         contains the autocorrelation coefficient as a function of the
         step size.
 
-        For objects of type <tt>table</tt>, the <tt>autocorr</tt>
-        command requires at least three arguments: <ac> <ftom> <column
-        or vector specification> [second column or vector
-        specification]. The first argument, <ac>, is the name of the
-        column in which the autocorrelation coefficients will be
-        stored. The second argument, <ftom>, is the name of the column
-        in which the quantity '5*tau/M' will be stored. The data may
-        be either a column in the table or a vector specification.
-        Columns <ac> and <ftom> are created if they are not already
-        present and overwritten if they already contain data. Also,
-        the autocorrelation length and estimated sample size are
-        output to the screen. If multiple data sources are given, then
-        the autocorrelation coefficients are averaged together. See
-        also ``Vector specifications`` for more information on the
-        third and fourth arguments.
+        For objects of type double[]:
 
-        When no current object is present, the <tt>autocorr</tt>
-        command requires at least one multiple vector specification
-        (see ``Multiple vector specifications``). This function
-        computes the autocorrelation coefficient for all vectors
-        specified as arguments then average those autocorrelation
-        coefficients together. The averaged autocorrelation
-        coefficients are kept as a <tt>double[]</tt> object.
+        (no parameters)
+
+        Replace the current object with a <tt>double[]</tt> object which
+        contains the autocorrelation coefficient as a function of the
+        step size.
+
+        For objects of type table:
+
+        <ac> <ftom> <column or vector specification> [second column or vector
+        specification] ... 
+
+        Compute autocorrelation coefficients from a column of a table.
+        The first argument, <ac>, is the name of the column in which
+        the autocorrelation coefficients will be stored. The second
+        argument, <ftom>, is the name of the column in which the
+        quantity '5*tau/M' will be stored. The data may be either a
+        column in the table or a vector specification. Columns <ac>
+        and <ftom> are created if they are not already present and
+        overwritten if they already contain data. Also, the
+        autocorrelation length and estimated sample size are output to
+        the screen. If multiple data sources are given, then the
+        autocorrelation coefficients are averaged together. See also
+        ``Vector specifications`` for more information on the third
+        and fourth arguments.
+
     */
     virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
 
@@ -719,7 +732,17 @@ namespace o2scl_acol {
      */
     virtual int comm_internal(std::vector<std::string> &sv, bool itive_com);
 
-    /// Create an html file
+    /** Perform an interpolation using the current object
+
+        For objects of type table:
+
+        Interpolate a number into a column.
+
+        <x name> <x value> <y name>
+
+        Interpolate <x value> from column
+        named <x name> into column named <y name>.
+     */
     virtual int comm_interp(std::vector<std::string> &sv, bool itive_com);
 
     /// List columns in table 'tp' named 'tname' assuming screen size 'ncol'

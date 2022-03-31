@@ -189,14 +189,84 @@ void acol_manager::update_o2_docs(size_t narr,
     bool found=false;
     for(size_t k=0;k<cmd_doc_strings.size() && found==false;k++) {
       if (cmd_doc_strings[k][0]==options_arr[j].lng) {
+        cout << "Found documentation for " << options_arr[j].lng << endl;
+        found=true;
         if (cmd_doc_strings[k].size()>=2) {
           options_arr[j].desc=cmd_doc_strings[k][1];
+          cout << "Found brief desc.: " << options_arr[j].desc << endl;
           if (cmd_doc_strings[k].size()>=3) {
-            options_arr[j].parm_desc=cmd_doc_strings[k][2];
-            if (cmd_doc_strings[k].size()>=4) {
-              options_arr[j].help=cmd_doc_strings[k][3];
-              for(size_t kk=4;kk<cmd_doc_strings[k].size();kk++) {
-                options_arr[j].help+="\n\n"+cmd_doc_strings[k][kk];
+            cout << "Found detailed desc." << endl;
+            bool generic_docs=true;
+            if (cmd_doc_strings[k][2].substr(0,19)==
+                ((string)"For objects of type")) {
+              generic_docs=false;
+            } else if (cmd_doc_strings[k][2].substr(0,30)==
+                       ((string)"If there is no current object:")) {
+              generic_docs=false;
+            }
+            if (generic_docs) {
+              if (type.length()==0) {
+                cout << "Found generic docs, no type." << endl;
+              } else {
+                cout << "Found generic docs, type is " << type << endl;
+              }
+            } else {
+              cout << "No generic docs, type is " << type << endl;
+            }
+            if (type.length()==0) {
+              if (generic_docs==true) {
+                cout << "Reading generic docs: " << endl;
+                options_arr[j].parm_desc="";
+                bool loop_done=false;
+                options_arr[j].help=cmd_doc_strings[k][2];
+                for(size_t kk=3;kk<cmd_doc_strings[k].size() &&
+                      loop_done==false;kk++) {
+                  if (cmd_doc_strings[k][kk].substr(0,19)==
+                      ((string)"For objects of type")) {
+                    loop_done=true;
+                  } else if (cmd_doc_strings[k][kk].substr(0,30)==
+                             ((string)"If there is no current object:")) {
+                    loop_done=true;
+                  }
+                  options_arr[j].help+="\n\n"+cmd_doc_strings[k][kk];
+                }
+              } else {
+                cout << "No generic docs, no type." << endl;
+                options_arr[j].parm_desc="";
+                options_arr[j].help="";
+              }
+            } else {
+              cout << "Current type is " << type << endl;
+              options_arr[j].desc="";
+              options_arr[j].parm_desc="";
+              options_arr[j].help="";
+              bool loop1_done=false;
+              for(size_t kk=2;kk<cmd_doc_strings[k].size() &&
+                    loop1_done==false;kk++) {
+                string s="For objects of type "+type+":";
+                if (cmd_doc_strings[k][kk].substr(0,s.length())==s) {
+                  cout << "Found type-specific docs." << endl;
+                  loop1_done=true;
+                  bool loop2_done=false;
+                  for(size_t kk=3;kk<cmd_doc_strings[k].size() &&
+                        loop2_done==false;kk++) {
+                    if (cmd_doc_strings[k][kk].substr(0,19)==
+                        ((string)"For objects of type")) {
+                      loop2_done=true;
+                    } else if (cmd_doc_strings[k][kk].substr(0,30)==
+                               ((string)"If there is no current object:")) {
+                      loop2_done=true;
+                    } else if (options_arr[j].desc=="") {
+                      options_arr[j].desc=cmd_doc_strings[k][kk];
+                    } else if (options_arr[j].parm_desc=="") {
+                      options_arr[j].parm_desc=cmd_doc_strings[k][kk];
+                    } else if (options_arr[j].help=="") {
+                      options_arr[j].help=cmd_doc_strings[k][kk];
+                    } else {
+                      options_arr[j].help+="\n\n"+cmd_doc_strings[k][kk];
+                    }
+                  }
+                }
               }
             }
           }
@@ -1631,51 +1701,14 @@ int acol_manager::setup_options() {
   cl->remove_comm_option("xml-to-o2");
 
   if (true) {
-    
     std::string doc_fn=o2scl::o2scl_settings.get_data_dir()+"/acol_docs.o2";
-    
     if (file_exists(doc_fn)) {
-      
       hdf_file hf;
       hf.open(doc_fn);
       hf.gets_vec_vec("cmd_doc_strings",cmd_doc_strings);
       hf.gets_vec_vec("param_doc_strings",param_doc_strings);
       hf.gets_vec_vec("help_doc_strings",help_doc_strings);
       hf.close();
-
-      for(size_t j=0;j<narr;j++) {
-        bool found=false;
-        for(size_t k=0;k<cmd_doc_strings.size() && found==false;k++) {
-          if (cmd_doc_strings[k][0]==options_arr[j].lng) {
-            if (cmd_doc_strings[k].size()>=2) {
-              options_arr[j].desc=cmd_doc_strings[k][1];
-              if (cmd_doc_strings[k].size()>=3) {
-                options_arr[j].parm_desc=cmd_doc_strings[k][2];
-                if (cmd_doc_strings[k].size()>=4) {
-                  options_arr[j].help=cmd_doc_strings[k][3];
-                  for(size_t kk=4;kk<cmd_doc_strings[k].size();kk++) {
-                    options_arr[j].help+="\n\n"+cmd_doc_strings[k][kk];
-                  }
-                }
-              }
-            }
-            found=true;
-          }
-        }
-        if (true || verbose>2) {
-          if (found==true) {
-            cout << "Function cli::read_docs() "
-                 << "found documentation for command "
-                 << options_arr[j].lng << " ." << endl;
-          } else {
-            cout << "Function cli::read_docs() could not "
-                 << "find documentation for command "
-                 << options_arr[j].lng << " ." << endl;
-          }
-        }
-        
-      }
-      
     } else {
       cout << "Couldn't find file " << doc_fn << endl;
     }
@@ -1695,6 +1728,8 @@ int acol_manager::setup_options() {
     comm_option::both},
   */
 
+  update_o2_docs(narr,&options_arr[0]);
+  
   cl->set_comm_option_vec(narr,options_arr);
   
   return 0;
