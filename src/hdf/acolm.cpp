@@ -182,6 +182,45 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 
 }
 
+void acol_manager::update_o2_docs(size_t narr,
+                                  o2scl::comm_option_s *options_arr) {
+  
+  for(size_t j=0;j<narr;j++) {
+    bool found=false;
+    for(size_t k=0;k<cmd_doc_strings.size() && found==false;k++) {
+      if (cmd_doc_strings[k][0]==options_arr[j].lng) {
+        if (cmd_doc_strings[k].size()>=2) {
+          options_arr[j].desc=cmd_doc_strings[k][1];
+          if (cmd_doc_strings[k].size()>=3) {
+            options_arr[j].parm_desc=cmd_doc_strings[k][2];
+            if (cmd_doc_strings[k].size()>=4) {
+              options_arr[j].help=cmd_doc_strings[k][3];
+              for(size_t kk=4;kk<cmd_doc_strings[k].size();kk++) {
+                options_arr[j].help+="\n\n"+cmd_doc_strings[k][kk];
+              }
+            }
+          }
+        }
+        found=true;
+      }
+    }
+    if (true || verbose>2) {
+      if (found==true) {
+        cout << "Function cli::read_docs() "
+             << "found documentation for command "
+             << options_arr[j].lng << " ." << endl;
+      } else {
+        cout << "Function cli::read_docs() could not "
+             << "find documentation for command "
+             << options_arr[j].lng << " ." << endl;
+      }
+    }
+    
+  }
+    
+  return;
+}
+
 void acol_manager::command_add(std::string new_type) {
 
   const int both=cli::comm_option_both;
@@ -197,6 +236,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
          both}
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="double") {
     static const size_t narr=1;
@@ -207,6 +247,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
          both}
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="char") {
     static const size_t narr=1;
@@ -217,6 +258,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
          both}
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="size_t") {
     static const size_t narr=1;
@@ -227,6 +269,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
          both}
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="string") {
     static const size_t narr=1;
@@ -237,6 +280,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
          both}
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
     static const size_t narr=42;
@@ -536,6 +580,7 @@ void acol_manager::command_add(std::string new_type) {
         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_wstats),
         both}
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
 
   } else if (new_type=="table3d") {
@@ -683,6 +728,7 @@ void acol_manager::command_add(std::string new_type) {
         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_y_name),
         both}
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="tensor") {
@@ -784,6 +830,7 @@ void acol_manager::command_add(std::string new_type) {
          "used.",new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_tensor_grid),both}
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="tensor<int>") {
@@ -834,6 +881,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table3d),both}
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="tensor<size_t>") {
@@ -884,6 +932,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
          both}
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="tensor_grid") {
@@ -1028,6 +1077,7 @@ void acol_manager::command_add(std::string new_type) {
          "",new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_tensor),both}
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
 
   } else if (new_type=="prob_dens_mdim_amr") {
@@ -1042,6 +1092,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table3d),both}
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="hist") {
@@ -1058,6 +1109,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table),both}
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="double[]") {
@@ -1104,6 +1156,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both}      
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="int[]") {
@@ -1150,6 +1203,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both}     
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="size_t[]") {
@@ -1196,6 +1250,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
          both}
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="vector<contour_line>") {
@@ -1238,6 +1293,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_contours),both},
       };
+    update_o2_docs(narr,&options_arr[0]);
     cl->set_comm_option_vec(narr,options_arr);
   }
   

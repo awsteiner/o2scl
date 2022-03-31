@@ -271,6 +271,9 @@ namespace o2scl_acol {
     /** \brief Add new commands for type \c new_type
      */
     void command_add(std::string new_type);
+
+    void update_o2_docs(size_t narr,
+                        o2scl::comm_option_s *options_arr);
     
     /** \brief Remove the type-specific commands
 
