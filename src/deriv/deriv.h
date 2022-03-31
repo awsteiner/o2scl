@@ -67,10 +67,10 @@ namespace o2scl {
     /** \brief A structure for passing the function to second and 
 	third derivatives [protected]
     */
-    typedef struct {
+    typedef struct dpars_s {
       
     public:
-
+      
       /// The pointer to the function
       func_t *func;
 
