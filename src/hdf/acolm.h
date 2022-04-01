@@ -456,6 +456,22 @@ namespace o2scl_acol {
     virtual int comm_create(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Set the grid for a \ref o2scl::tensor_grid object
+
+        For objects of type tensor_grid:
+
+        Set the tensor grid.
+
+        <index> <func. or vector spec>
+
+        The first argument for the \c set-grid command specifies the
+        index for which grid to set. The second argument specifies the
+        grid. If it contains a ':', it is assumed to be a vector
+        specification (see 'help vector-spec'). Otherwise, the
+        argument is assumed to be a function which specifies the grid
+        value as a function of the variables 'i' and 'x'. The value of
+        'i' ranges from 0 to m-1, where 'm' is the tensor size for
+        each rank and the value of 'x' is equal to the previous grid
+        value.
      */
     virtual int comm_set_grid(std::vector<std::string> &sv, bool itive_com);
 
@@ -577,6 +593,14 @@ namespace o2scl_acol {
     virtual int comm_deriv(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Convert object to a \ref o2scl::table object
+
+        For objects of type hist:
+
+        Convert to a table object.
+
+        (no parameters)
+        
+        Convert to a table object.
      */
     virtual int comm_to_table(std::vector<std::string> &sv, bool itive_com);
 
@@ -585,6 +609,15 @@ namespace o2scl_acol {
     virtual int comm_diag(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Convert object to a \ref o2scl::table3d object
+
+        For objects of type prob_dens_mdim_amr:
+
+        Select two indices and convert to a table3d object.
+
+        <x index> <y index> <x name> <x points> <y name> <y points>
+        <slice name>
+
+        Select two indices and convert to a table3d object.
      */
     virtual int comm_to_table3d(std::vector<std::string> &sv, bool itive_com);
 
@@ -754,7 +787,29 @@ namespace o2scl_acol {
      */
     virtual int comm_find_row(std::vector<std::string> &sv, bool itive_com);
     
-    /// Create a column from a function
+    /** \brief Create a column from a function
+
+        For objects of type table:
+
+        Create a column from a function
+
+        <func> <name>
+
+        Set the column named <name> to the result of a function,
+        <func>, in terms of the other columns. If the column does not
+        already exist, a new one is added to the table. For example,
+        for a table containing columns named 'c1' and 'c2', 'function
+        c1-c2 c3' would create a new column c3 which contains the
+        difference of columns 'c1' and 'c2'.
+
+        For objects of type hist:
+
+        Apply a function to the weights.
+
+        <function>
+
+        Apply a function to the weights.
+    */
     virtual int comm_function(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Add a vector_specification
@@ -809,7 +864,21 @@ namespace o2scl_acol {
      */
     virtual int comm_generic(std::vector<std::string> &sv, bool itive_com);
 
-    /// Print out an entire row
+    /** \brief Print out an entire row
+
+        For objects of type table:
+
+        Get a row by index.
+
+        <index>
+
+        Get a row by index. The first row has index 0, and the last
+        row has index n-1, where n is the total number of rows as
+        returned by the 'list' command. The 'index' command creates a
+        column of row indexes. To find a row which contains a
+        particular value or maximizes a specified function, use
+        'find-row'.
+     */
     virtual int comm_get_row(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Extract a slice from a table3d object to generate a 
@@ -821,16 +890,70 @@ namespace o2scl_acol {
      */
     virtual int comm_slice_hist(std::vector<std::string> &sv, bool itive_com);
 
-    /// Fit two columns to a function
+    /** \brief Fit data to a function
+
+        For objects of type table:
+
+        Fit two columns to a function (experimental).
+
+        <x> <y> <yerr> <ynew> <par names> <func> <vals>
+
+        Detailed desc.
+    */
     virtual int comm_fit(std::vector<std::string> &sv, bool itive_com);
 
-    /// Insert a column from an external table using interpolation
+    /** \brief Insert a column from an external table using 
+        interpolation
+
+        For objects of type table:
+
+        Interpolate a column from another file.
+
+        <file> <table> <oldx> <oldy> <newx> [newy]
+
+        Insert a column from file <fname> interpolating it into the
+        current table. The column <oldy> is the columns in the file
+        which is to be inserted into the table, using the column
+        <oldx> in the file and <newx> in the table. The new column in
+        the table is named <oldy>, or it is named [newy] if the
+        additional argument is given.
+    */
     virtual int comm_insert(std::vector<std::string> &sv, bool itive_com);
 
-    /// Insert an external table using interpolation
+    /** \brief Insert an external table using interpolation
+
+        For objects of type table:
+
+        Insert a table from another file.
+
+        <fname> [table name] [old_x new_x]
+
+        Insert all columns from file <fname> into the current table.
+        The first table is used or the table object named table_name,
+        if specified. If index columns old_x and new_x are not
+        specified, then the insert requires both the current and the
+        source table to have the same number of rows. If they are
+        specified, then interpolation using those index columns is
+        used. If columns in the new table are not present in the
+        current table, then they are added automatically. If a column
+        in the current table has the same name as one in the new table
+        then it is rewritten with new data, with one exception. If a
+        column in the new table has the same name as old_x, then it is
+        left unmodified.
+     */
     virtual int comm_insert_full(std::vector<std::string> &sv, bool itive_com);
 
-    /// Create a column which is the integral of another
+    /** \brief Create a column which is the integral of another
+
+        For objects of type table:
+
+        Integrate a function specified by two columns.
+
+        <x> <y> <name>
+
+        Create a new column named <name> filled with the integral of
+        the function y(x) obtained from columns <x> and <y>.
+     */
     virtual int comm_integ(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Toggle interactive mode
@@ -863,18 +986,45 @@ namespace o2scl_acol {
 
         <x name> <x value> <y name>
 
-        Interpolate <x value> from column
-        named <x name> into column named <y name>.
-     */
+        Interpolate <x value> from column named <x name> into column
+        named <y name>.
+    */
     virtual int comm_interp(std::vector<std::string> &sv, bool itive_com);
 
-    /// List columns in table 'tp' named 'tname' assuming screen size 'ncol'
+    /** \brief List properties of an object
+
+        For objects of type table:
+
+        List the constants, column names and other info.
+
+        (no parameters)
+
+        List the constants, column names and other info.
+    */
     virtual int comm_list(std::vector<std::string> &sv, bool itive_com);
 
-    /// Compute the maximum value of a column
+    /** \brief Compute the maximum value of a column
+
+        For objects of type table:
+
+        Compute the maximum value of a column.
+
+        <column name>
+
+        Compute the maximum value of a column.
+    */
     virtual int comm_max(std::vector<std::string> &sv, bool itive_com);
     
-    /// Compute the minimum value of a column
+    /** \brief Compute the minimum value of a column
+
+        For objects of type table:
+
+        Compute the minimum value of a column.
+
+        <column name>
+
+        Compute the minimum value of a column.
+    */
     virtual int comm_min(std::vector<std::string> &sv, bool itive_com);
 
     /// Set the name of the x grid
@@ -883,7 +1033,18 @@ namespace o2scl_acol {
     /// Set the name of the y grid
     virtual int comm_y_name(std::vector<std::string> &sv, bool itive_com);
     
-    /// Add a column for line numbers
+    /** \brief Add a column for line numbers
+
+        For objects of type table:
+
+        Add a column containing the row numbers.
+
+        [column name]
+        
+        Define a new column named [column name] and fill the column
+        with the row indexes, beginning with zero. If no argument is
+        given, the new column is named 'N'.
+    */
     virtual int comm_index(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Output the current object to screen or text file.
@@ -896,7 +1057,24 @@ namespace o2scl_acol {
      */
     virtual int comm_output(std::vector<std::string> &sv, bool itive_com);
 
-    /// Rearrange a tensor
+    /** \brief Rearrange a tensor
+
+        For objects of type tensor_grid:
+
+        Rearrange the tensor_grid object.
+
+        <index spec. 1> [index spec. 2] ...
+
+        Index specifications are: index(ix), fixed(ix), sum(ix),
+        trace(ix1,ix2), reverse(ix), range(ix,start,end),
+        interp(ix,value), grid(ix,begin,end,n_bins,log), and
+        gridw(ix,begin,end,bin_width,log). Index specifications may be
+        specified as separate arguments e.g. "index(1)" "fixed(2,10)"
+        or multiple index specifications may be given in a single
+        argument separated by spaces or commas, e.g. "index(1)
+        fixed(2,10)" or "index(1),fixed(2,10)". See '-help index-spec'
+        for more information on the tensor index specifications.
+    */
     virtual int comm_rearrange(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Preview the current object
@@ -910,7 +1088,7 @@ namespace o2scl_acol {
 
     /** \brief Send a slack message
 
-        [\"#channel\"] <strings-spec>
+        ["#channel"] <strings-spec>
 
         Send a message to slack, using the specified channel. If the
         channel is not specified, it is taken from the environment
@@ -1000,7 +1178,16 @@ namespace o2scl_acol {
     /// Compute contour lines
     virtual int comm_contours(std::vector<std::string> &sv, bool itive_com);
     
-    /// Get units of a column
+    /** \brief Get units of a column
+
+        For objects of type table:
+
+        Get the units for a specified column.
+
+        <column>
+
+        Obtains the units for the specified column.
+     */
     virtual int comm_get_unit(std::vector<std::string> &sv, bool itive_com);
     
     /** \brief Get or set an entry
@@ -1049,7 +1236,32 @@ namespace o2scl_acol {
     virtual int comm_convert_unit(std::vector<std::string> &sv, 
                                   bool itive_com);
     
-    /// Sort the table by a column
+    /** \brief Sort data
+
+        For objects of type int[]:
+
+        Sort the vector.
+
+        (no parameters)
+
+        Sort the vector (in-place).
+
+        For objects of type size_t[]:
+
+        Sort the vector.
+
+        (no parameters)
+
+        Sort the vector (in-place).
+
+        For objects of type double[]:
+
+        Sort the vector.
+
+        (no parameters)
+
+        Sort the vector (in-place).
+     */
     virtual int comm_sort(std::vector<std::string> &sv, bool itive_com);
 
     /// Get column stats
