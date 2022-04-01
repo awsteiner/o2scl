@@ -382,113 +382,48 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=42;
     comm_option_s options_arr[narr]=
       {{0,"ac-len","",0,1,"","",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_ac_len),
-         both},
-       {0,"add-vec","Add vector specification to a table",0,2,
-        "<vec. spec.> <column>","",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_add_vec),
-        both},
-       {0,"average-rows","Average rows of some or all columns together",
-        0,3,"<column or '*' for all> <window> [block averages]",
-        ((string)"The first argument is the column to be ")+
-        "modified. If the first argument is '*', then all columns are "+
-        "averaged. The second argument is the size "+
-        "of the window. If the third argument evaluates to false, then "+
-        "block averages instead of rolling averages are computed, and then "+
-        "the number of rows is divided by the window parameter. If block "+
-        "averages are requested, then the first argument must be '*'.",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_ac_len),both},
+       {0,"add-vec","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_add_vec),both},
+       {0,"average-rows","",0,3,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_average_rows),both},
-       {'a',"assign","Assign a constant, e.g. assign pi acos(-1) .",
-        0,2,"<name> [val]",
-        ((string)"Assign a constant value to a name for the present table. ")+
-        "Valid constant values are things like 1.618 or "+
-        "acos(-1.0) or sin(4^5). "+
-        "To remove an assignment, call assign with a blank value.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_assign),
-        both},
-       {0,"cat",
-        "Concatenate a second table object onto current table.",0,2,
-        "<file> [name]",((string)"For table objects, add a ")+
-        "second table to the end of the first, creating new columns "+
-        "if necessary.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
-        both},
-       {0,"convert-unit","Convert a column to a new unit.",0,2,
-        "<column> <new_unit>",((string)"(This command only works if ")+
-        "the GNU 'units' command is installed and available in the current "+
-        "path.) Convert the units of a column to <new unit>, multipliying "+
-        "all entries in that column by the appropriate factor.",
+       {'a',"assign","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_assign),both},
+       {0,"cat","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_cat),both},
+       {0,"convert-unit","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_convert_unit),both},
-       {0,"correl","Compute correlation between two columns",0,2,
-        "<column 1> <column 2>",((string)"Compute the correlation ")+
-        "coefficient between two columns, or, if no arguments are "+
-        "given, then compute the correlation coefficients between all "+
-        "pairs of columns.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_correl),
-        both},
-       {0,"delete-col","Delete a column.",0,1,"<name>",
-        "Delete the entire column named <name>.",
+       {0,"correl","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_correl),both},
+       {0,"delete-col","",0,1,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_delete_col),both},
-       {'d',"delete-rows","Delete rows selected by a function.",
-        0,1,"<func>",((string)"Delete the set of rows for ")+
-        "which a function evaluates to a number greater than 0.5. "+
-        "For example, 'delete-rows if(col1+col2>10,1,0)' will delete "+
-        "all columns where the sum of the entries in 'col1' and 'col2' "+
-        "is larger than 10. See also 'select-rows'.",
+       {'d',"delete-rows","",0,1,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_delete_rows),both},
-       {0,"delete-rows-tol","Delete rows within a tolerance.",
-        0,2,"[relative tol.] [absolute tol.]",
-        ((std::string)("This command deletes all rows which match "))+
-        "within the specified tolerances. If verbose is larger than zero "+
-        "then information about how many rows were deleted is provided.",
+       {0,"delete-rows-tol","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_delete_rows),both},
-       {0,"deriv",
-        "Derivative of a function defined by two columns.",
-        0,3,"<x> <y> <name>",
-        ((string)"Create a new column named <name> filled with the ")+
-        "derivative of the function y(x) obtained from columns <x> and <y>. ",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv),
-        both},
-       {0,"deriv2","Second derivative.",0,3,"<name> <x> <y>",
-        ((string)"Create a new column named <name> filled with the second ")+
-        "derivative of the function y(x) obtained from columns <x> and <y>. ",
+       {0,"deriv","",0,3,"","",
         new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_deriv2),
-        both},
-       {0,"entry","Get or set a single entry in a table.",0,3,
-        "<column> <row> [value or \"none\"]",
-        ((std::string)"This command ")+
-        "gets or sets the value in the specified column and row. If "+
-        "\"none\" is specified as the third argument, then \"entry\" "+
-        "just prints out the specified entry as if the third argument "+
-        "was not specified.",
+        (this,&acol_manager::comm_deriv),both},
+       {0,"deriv2","",0,3,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_deriv2),both},
+       {0,"entry","",0,3,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_entry),both},
-       {0,"entry-grid","Get or set a single entry in a table.",0,4,
-        "<index column> <index value> <target column> [value or \"none\"]",
-        ((std::string)"The \"entry-grid\" command ")+
-        "first looks for the value closest to <index value> in the column "+
-        "<index column> to determine a row in the table. "+
-        "Next \"entry-grid\" gets or sets the value of the "+
-        "target column in that row. If "+
-        "\"none\" is specified as the fourth argument, then \"entry\" "+
-        "just prints out the specified entry as if the third argument "+
-        "was not specified.",
+       {0,"entry-grid","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_entry_grid),both},
-       {0,"find-row","Find a row which maximizes a function.",
-        0,2,"<func> or find-row <col> <val>",
-        ((string)"If one argument is given, then find-row finds the row ")+
-        "which maximizes the value of the "+
-        "expression given in <func>, and then output the entire row. "+
-        "Otherwise find-row finds the row for which the value in "+
-        "column named <col> is as close as possible to the value <val>. "+
-        "See command 'get-row' to get a row by it's index.",
+       {0,"find-row","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_find_row),both},
        {0,"fit","Fit two columns to a function (experimental).",0,7,

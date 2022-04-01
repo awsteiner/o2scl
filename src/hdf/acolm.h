@@ -309,7 +309,20 @@ namespace o2scl_acol {
 
     /// \name Functions for the interface
     //@{
-    /// Assign a constant
+    /** \brief Assign a constant
+
+        For objects of type table:
+
+        Assign a constant to the table, e.g. <tt>-assign pi
+        "acos(-1)"</tt>.
+
+        <name> val
+
+        Assign a constant value to a name for the present table. Valid
+        constant values are things like 1.618 or acos(-1.0) or
+        sin(4^5). To remove an assignment, call assign with a blank
+        value.
+     */
     virtual int comm_assign(std::vector<std::string> &sv, bool itive_com);
 
     /// Convert a series of histograms to a table3d object
@@ -319,11 +332,37 @@ namespace o2scl_acol {
     /// Binary function for tensors
     virtual int comm_binary(std::vector<std::string> &sv, bool itive_com);
 
-    /// Average rows together in a table
+    /** \brief Average rows together 
+
+        For objects of type table:
+
+        Average rows of some or all columns together.
+
+        <column or '*' for all> <window> [block averages]
+
+        The first argument is the column to be modified. If the first
+        argument is '*', then all columns are averaged. The second
+        argument is the size of the window. If the third argument
+        evaluates to false, then block averages instead of rolling
+        averages are computed, and then the number of rows is divided
+        by the window parameter. If block averages are requested, then
+        the first argument must be '*'.
+     */
     virtual int comm_average_rows(std::vector<std::string> &sv,
                                   bool itive_com);
 
-    /// Compute correlation between table columns
+    /** \brief Compute correlation
+
+        For objects of type table:
+
+        Compute the correlation coefficient between two columns.
+
+        <column 1> <column 2>
+
+        Compute the correlation coefficient between two columns, or,
+        if no arguments are given, then compute the correlation
+        coefficients between all pairs of columns.
+     */
     virtual int comm_correl(std::vector<std::string> &sv, bool itive_com);
 
     /// Refine an object
@@ -481,17 +520,60 @@ namespace o2scl_acol {
     */
     virtual int comm_wdocs(std::vector<std::string> &sv, bool itive_com);
 
-    /// Delete a column
+    /** \brief Delete a column
+
+        For objects of type table:
+
+        Delete a table column.
+
+        <name>
+
+        Delete the entire column named <name>.
+     */
     virtual int comm_delete_col(std::vector<std::string> &sv, bool itive_com);
 
-    /// Delete rows specified by a function
+    /** \brief Delete rows
+
+        For objects of type table:
+
+        Delete rows selected by a function.
+
+        <function>
+
+        Delete the set of rows for which a function evaluates to a
+        number greater than 0.5. For example, <tt>-delete-rows
+        if(col1+col2>10,1,0)</tt> will delete all columns where the
+        sum of the entries in \c col1 and \c col2 is larger than 10.
+        See also the \c select-rows command.
+     */
     virtual int comm_delete_rows(std::vector<std::string> &sv, bool itive_com);
     
-    /// Delete rows which match to within a specified tolerance
+    /** \brief Delete rows which match to within a specified tolerance
+
+        For objects of type table:
+
+        Delete rows which match to within a specified tolerance
+
+        [relative tol.] [absolute tol.]
+
+        This command deletes all rows which match within the specified
+        tolerances. If verbose is larger than zero then information
+        about how many rows were deleted is provided.
+     */
     virtual int comm_delete_rows_tol(std::vector<std::string> &sv,
                                      bool itive_com);
 
-    /// Create a column which is the derivative of another
+    /** \brief Compute a derivative
+
+        For objects of type table:
+
+        Derivative of a function defined by two columns.
+
+        <x> <y> <name>
+
+        Create a new column named <name> filled with the derivative
+        of the function y(x) obtained from columns <x> and <y>.
+     */
     virtual int comm_deriv(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Convert object to a \ref o2scl::table object
@@ -594,7 +676,18 @@ namespace o2scl_acol {
     /// Create a slice which is the derivative wrt y of another
     virtual int comm_deriv_y(std::vector<std::string> &sv, bool itive_com);
 
-    /// Create a column which is the second derivative of another
+    /** \brief Compute a second derivative
+
+        For objects of type table:
+
+        Second derivative of a function defined by two columns.
+
+        <x> <y> <name>
+
+        Create a new column named <name> filled with the second
+        derivative of the function y(x) obtained from columns <x> and
+        <y>.
+     */
     virtual int comm_deriv2(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief List objects in a HDF5 file
@@ -644,13 +737,36 @@ namespace o2scl_acol {
      */
     virtual int comm_type(std::vector<std::string> &sv, bool itive_com);
     
-    /// Find a row from a function
+    /** \brief Find a row
+
+        For objects of type table:
+
+        Find a row which maximizes a function.
+
+        <func> or find-row <col> <val>
+
+        If one argument is given, then find-row finds the row which
+        maximizes the value of the expression given in <func>, and
+        then output the entire row. Otherwise find-row finds the row
+        for which the value in column named <col> is as close as
+        possible to the value <val>. See command 'get-row' to get a
+        row by it's index.
+     */
     virtual int comm_find_row(std::vector<std::string> &sv, bool itive_com);
     
     /// Create a column from a function
     virtual int comm_function(std::vector<std::string> &sv, bool itive_com);
 
-    /// Add a column from a vector_specification
+    /** \brief Add a vector_specification
+
+        For objects of type table:
+
+        Add column from a vector specification to the table.
+
+        <vec. spec.> <column>
+
+        Detailed spec.
+     */
     virtual int comm_add_vec(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Read an object generic text file
@@ -844,7 +960,17 @@ namespace o2scl_acol {
      */
     virtual int comm_value(std::vector<std::string> &sv, bool itive_com);
 
-    /// Concatenate two table/table3d objects
+    /** \brief Concatenate two objects
+
+        For objects of type table:
+
+        Concatenate a second table object onto current table.
+
+        <file> [name]
+
+        For table objects, add a second table to the end of the first,
+        creating new columns if necessary.
+     */
     virtual int comm_cat(std::vector<std::string> &sv, bool itive_com);
 
     /// Sum two table/table3d objects
@@ -877,40 +1003,48 @@ namespace o2scl_acol {
     /// Get units of a column
     virtual int comm_get_unit(std::vector<std::string> &sv, bool itive_com);
     
-    /// Get an entry
+    /** \brief Get or set an entry
+
+        For objects of type table:
+
+        Get or set a single entry in a table.
+
+        <column> <row> [value or "none"]
+
+        This command gets or sets the value in the specified column
+        and row. If "none" is specified as the third argument, then
+        "entry" just prints out the specified entry as if the third
+        argument was not specified.
+    */
     virtual int comm_entry(std::vector<std::string> &sv, bool itive_com);
 
-    /// Get an entry by grid point
+    /** \brief Get an entry by grid point
+
+        For objects of type table:
+
+        Get or set a single entry in a table.
+        
+        <index column> <index value> <target column> [value or "none"]
+        
+        The "entry-grid" command first looks for the value closest to
+        <index value> in the column <index column> to determine a row
+        in the table. Next "entry-grid" gets or sets the value of the
+        target column in that row. If "none" is specified as the
+        fourth argument, then "entry" just prints out the specified
+        entry as if the third argument was not specified.
+    */
     virtual int comm_entry_grid(std::vector<std::string> &sv, bool itive_com);
     
-    /** \brief Get a unit conversion factor.
+    /** \brief Convert units
 
-        <old unit (or \"list\", \"add\", \"del\", or \"nat\")>
-        <new unit> [value to convert]
+        For objects of type table:
 
-        This command computes a unit conversion factor and optionally
-        applies than conversion factor to a user-specified value.
-        Conversions which presume ħ=c=kB=1 are allowed by default. For
-        example, 'convert MeV 1/fm' returns '1.000000e+00 MeV =
-        5.067731e-03 1/fm'. The conversion factor is output at the
-        current precision, but is always internally stored with full
-        double precision. To print the list of known units, SI
-        prefixes, and the unit conversion cache, use -convert list. To
-        add a unit (only MKS is supported) the format is:
+        Convert a column to a new unit.
 
-        -convert add <unit> <power of meters> <power of kg>
-        <power of seconds> <power of Kelvin> <power of amps>
-        <power of moles> <power of candelas> <value> <long name>
+        <column> <new_unit>
 
-        To delete a unit, the format is:
-
-        -convert del <unit>
-
-        However, note that deleting a unit does not delete its
-        occurences in the unit conversion cache. To modify the use of
-        naturaly units, use:
-        
-        -convert nat <boolean for c=1> <boolean for ħ> <boolean for kB>
+        Convert the units of a column to <new unit>, multipliying all
+        entries in that column by the appropriate factor.
     */
     virtual int comm_convert_unit(std::vector<std::string> &sv, 
                                   bool itive_com);
@@ -956,7 +1090,6 @@ namespace o2scl_acol {
         natural units, use:
 
         -convert nat <boolean for c=1> <boolean for ħ> <boolean for kB>
-        
      */
     virtual int comm_convert(std::vector<std::string> &sv, bool itive_com);
 
