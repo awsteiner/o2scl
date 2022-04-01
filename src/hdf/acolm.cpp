@@ -1669,7 +1669,7 @@ int acol_manager::setup_parameters() {
           found=true;
         }
       }
-      if (true || verbose>2) {
+      if (verbose>2) {
         if (found) {
           cout << "Function acol_manager::setup_parameters() found "
                << "documentation for parameter "
