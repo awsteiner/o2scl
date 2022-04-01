@@ -462,103 +462,52 @@ void acol_manager::command_add(std::string new_type) {
        {0,"min","",0,1,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_min),both},
-       {0,"nlines","Add 'nlines' as a constant to a table object.",0,0,
-        "",((std::string)"Add a constant called 'nlines' to the table and ")+
-        "set it equal to the number of lines (rows) in the table",
+       {0,"nlines","",0,0,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_nlines),both},
-       {0,"refine","Refine the table.",0,2,"<index column> <factor>","",
+       {0,"refine","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_refine),both},
-       {0,"rename","Rename a column.",0,2,"<old> <new>",
-        "Rename a column from <old> to <new>. ",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rename),
-        both},
-       {'s',"select","Select columns for a new table.",-1,-1,"<cols>",
-        ((string)"Select creates a new table from the present table, ")+
-        "including only the columns specified in <cols>. The column "+
-        "specification is a list of column names, functions, or patterns "+
-        "which match "+
-        "the column names. Patterns must be preceeded by a colon ':' "+
-        "and use ECMAScript regular expressions. "+
-        "All of the rows of data "+
-        "are copied over. If functions are specified, the result can be "+
-        "named using '='.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_select),
-        both},
-       {0,"select-rows","Select rows for a new table.",
-        0,1,"<row_spec>",((std::string)"Select the rows from a table for ")+
-        "which the row specification in <row_spec> evaluates to a number "+
-        "greater than 0.5",
+       {0,"rename","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_rename),both},
+       {'s',"select","",-1,-1,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_select),both},
+       {0,"select-rows","",0,1,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_select_rows),both},
-       {0,"ser-hist-t3d","Histogram series in a table3d",0,8,
-        ((std::string)"<grid vector spec.> <direction (\"x\" or \"y\")> ")+
-        "<grid name> <bin edges vector spec.> "+
-        "<bin grid vector spec.> <bin name> <pattern> <new slice>","",
+       {0,"ser-hist-t3d","",0,8,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_ser_hist_t3d),
         both},
-       {0,"set-data","Set the entries of a column.",3,4,
-        "<row_spec> <col> <val_spec>",
-        ((string)"Set the value of rows specifed by the ")+
-        "'row_spec' function in column 'col' to the value given by the "+
-        "'val_spec' function. Rows are chosen if row_spec evaluates to a "+
-        "number greater than 0.5.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_data),
-        both},
-       {0,"set-unit","Set the units for a specified column.",0,2,
-        "<column> <unit>","Set the units for a specified column.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_set_unit),
-        both},
-       {'S',"sort","Sort the entire table by a column.",0,2,
-        "<col> [unique]",
-        ((string)"Sorts the entire table by the column specified in <col>. ")+
-        "If the word \"unique\" is specified as the second argument, then "+
-        "delete duplicate rows after sorting.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
-        both},
-       {0,"stats","Show column statistics.",0,1,"<col>",
-        "Output the average, std. dev, max and min of <col>. ",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_stats),
-        both},
-       {0,"sum","Add data from a second table object to current table.",
-        0,2,"<file> [name]",((string)"Add all columns ")+
-        "from the second table to their corresponding columns in the "+
-        "current table, creating new columns if necessary.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
-        both},
-       {0,"to-hist","Convert a table to a histogram.",0,3,
-        "<col> <n_bins> [wgts]",
-        ((std::string)"The 'to-hist' command creates ")+
-        "a 1D histogram from 'col' using exactly 'n_bins' bins and "+
-        "(optionally) weighting the entries by the values in column 'wgts'. "+
-        "The second form creates a 2D histogram from 'col1' and 'col2' "+
-        "using N1 bins in the x direction and N2 bins in the y direction, "+
-        "optionally weighting the entries by the column 'wgts'.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_to_hist),
-        both},
-       {0,"to-hist-2d","Convert a table to a 2d histogram.",0,5,
-        "<col x> <col y> <n_x_bins> <n_y_bins> [wgts]",
-        ((std::string)"The 'to-hist-2d' command creates a 2D histogram ")+
-        "from 'col x' and 'col y' using 'n_x_bins' bins in the x "+
-        "direction and 'n_y_bins' bins in the y direction, "+
-        "optionally weighting the entries by the column 'wgts'.",
+       {0,"set-data","",3,4,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_set_data),both},
+       {0,"set-unit","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_set_unit),both},
+       {'S',"sort","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_sort),both},
+       {0,"stats","",0,1,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_stats),both},
+       {0,"sum","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_sum),both},
+       {0,"to-hist","",0,3,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_to_hist),both},
+       {0,"to-hist-2d","",0,5,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_hist_2d),both},
-       {0,"to-table3d","Convert a table to a table3d object.",0,4,
-        "<x column> <y column> [empty value] [eps]",
-        ((std::string)"The 'to-table3d' creates a table3d object using ")+
-        "'x column' and 'y column' as the data for the x and y grids. "+
-        "If 'empty value', then this value is used for points not given "+
-        "by the table. If 'eps' is specified, then use that value as the "+
-        "minimum value between grid points.",
+       {0,"to-table3d","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_table3d),both},
-       {0,"wstats","Show weighted column statistics.",0,2,"<col> <weights>",
-        "Output the average, std. dev, max and min of <col>. ",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_wstats),
-        both}
+       {0,"wstats","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_wstats),both}
       };
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
@@ -567,64 +516,31 @@ void acol_manager::command_add(std::string new_type) {
     
     static const size_t narr=24;
     comm_option_s options_arr[narr]=
-      {{0,"to-tensor-grid",
-         "Convert a slice of the table3d to a tensor_grid object.",
-         1,1,"<slice>","",
+      {{0,"to-tensor-grid","",1,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_tensor_grid),both},
-       {0,"get-grid","Get the table3d grid.",0,0,"",
-        "Output the table3d grid as a series of columns.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_get_grid),
-        both},
-       {'s',"select","Select slices for a new table3d object.",-1,-1,
-        "<slice spec.>",
-        ((string)"Select creates a new table3d from the present table3d, ")+
-        "including only the slices specified in <slice spec.>. The slice "+
-        "specification is a list of slice names, functions, or patterns "+
-        "which match "+
-        "the slice names. Patterns must be preceeded by a colon ':' "+
-        "and can use wildcards like '*' and '?'. All of the rows of data "+
-        "are copied over. If functions are specified, the result can be "+
-        "named using '='. ",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_select),
-        both},
-       {0,"cat",
-        "Concatenate data from a second table3d onto current table3d.",0,2,
-        "<file> [name]",((string)"Add all slices from the ")+
-        "second table3d object which aren't already present in the "+
-        "current table3d object.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_cat),
-        both},
-       {0,"contours","Create contour lines from a table3d slice.",
-        0,5,"<value> <slice_name> [output_filename object_name]",
-        ((string)"The ")+
-        "\"contours\" command constructs a set of contour lines using "+
-        "the data in slice named <slice> at the fixed value given in "+
-        "<value>. If two additional arguments are given, then the "+
-        "contour lines are stored in the file named output_filename "+
-        "and the object is named object_name. If the file does not "+
-        "exist, it is created. If no contours are found, then no file "+
-        "I/O is performed and the current table3d object is unmodified.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_contours),
-        both},
-       {0,"deriv-x","Derivative with respect to x.",0,2,
-        "<f> <dfdx>",
-        ((string)"Create a new slice named <dfdx> filled with the ")+
-        "derivative of the function from the x grid and slice named <f>.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_x),
-        both},
-       {0,"deriv-y","Derivative with respect to y.",0,2,
-        "<f> <dfdy>",
-        ((string)"Create a new slice named <dfdy> filled with the ")+
-        "derivative of the function from the y grid and slice named <f>.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv_y),
-        both},
-       {0,"entry","Get a single entry in a table3d object.",0,4,
-        "<slice> <x index> <y index> [value or \"none\"]","",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_entry),
-        both},
-       {0,"entry-grid","Get a single entry in a table3d object.",0,4,
-        "<slice> <x value> <y value> [value or \"none\"]","",
+       {0,"get-grid","",0,0,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_get_grid),both},
+       {'s',"select","",-1,-1,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_select),both},
+       {0,"cat","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_cat),both},
+       {0,"contours","",0,5,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_contours),both},
+       {0,"deriv-x","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_deriv_x),both},
+       {0,"deriv-y","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_deriv_y),both},
+       {0,"entry","",0,4,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_entry),both},
+       {0,"entry-grid","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_entry_grid),both},
        {'f',"function","Create a new slice from a function.",0,2,
