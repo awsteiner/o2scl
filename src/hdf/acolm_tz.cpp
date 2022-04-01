@@ -421,7 +421,7 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
                 
                 xml_replacements(stmp,clist);
                 
-                vs_tmp.push_back(stmp);
+                if (stmp.length()>0) vs_tmp.push_back(stmp);
                 stmp.clear();
               } else {
                 if (stmp.length()==0) stmp=vsw.output[k];
@@ -549,7 +549,7 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
                 
                 xml_replacements(stmp,clist);
                 
-                vs_tmp.push_back(stmp);
+                if (stmp.length()>0) vs_tmp.push_back(stmp);
                 stmp.clear();
               } else {
                 if (stmp.length()==0) stmp=vsw.output[k];

@@ -183,19 +183,28 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 }
 
 void acol_manager::update_o2_docs(size_t narr,
-                                  o2scl::comm_option_s *options_arr) {
+                                  o2scl::comm_option_s *options_arr,
+                                  std::string new_type) {
+
+  int loc_verbose=0;
   
   for(size_t j=0;j<narr;j++) {
     bool found=false;
     for(size_t k=0;k<cmd_doc_strings.size() && found==false;k++) {
       if (cmd_doc_strings[k][0]==options_arr[j].lng) {
-        cout << "Found documentation for " << options_arr[j].lng << endl;
+        if (loc_verbose>1) {
+          cout << "Found documentation for " << options_arr[j].lng << endl;
+        }
         found=true;
         if (cmd_doc_strings[k].size()>=2) {
           options_arr[j].desc=cmd_doc_strings[k][1];
-          cout << "Found brief desc.: " << options_arr[j].desc << endl;
+          if (loc_verbose>1) {
+            cout << "Found brief desc.: " << options_arr[j].desc << endl;
+          }
           if (cmd_doc_strings[k].size()>=3) {
-            cout << "Found detailed desc." << endl;
+            if (loc_verbose>1) {
+              cout << "Found detailed desc." << endl;
+            }
             bool generic_docs=true;
             if (cmd_doc_strings[k][2].substr(0,19)==
                 ((string)"For objects of type")) {
@@ -205,21 +214,37 @@ void acol_manager::update_o2_docs(size_t narr,
               generic_docs=false;
             }
             if (generic_docs) {
-              if (type.length()==0) {
-                cout << "Found generic docs, no type." << endl;
+              if (new_type.length()==0) {
+                if (loc_verbose>1) {
+                  cout << "Found generic docs, no type." << endl;
+                }
               } else {
-                cout << "Found generic docs, type is " << type << endl;
+                if (loc_verbose>1) {
+                  cout << "Found generic docs, type is " << new_type << endl;
+                }
               }
             } else {
-              cout << "No generic docs, type is " << type << endl;
+              if (new_type.length()==0) {
+                if (loc_verbose>1) {
+                  cout << "No generic docs, no type." << endl;
+                }
+              } else {
+                if (loc_verbose>1) {
+                  cout << "No generic docs, type is " << new_type << endl;
+                }
+              }
             }
-            if (type.length()==0) {
+            if (new_type.length()==0) {
               if (generic_docs==true) {
-                cout << "Reading generic docs: " << endl;
-                options_arr[j].parm_desc="";
+                if (loc_verbose>1) {
+                  cout << "Reading generic docs: " << endl;
+                }
+                options_arr[j].parm_desc=cmd_doc_strings[k][2];
                 bool loop_done=false;
-                options_arr[j].help=cmd_doc_strings[k][2];
-                for(size_t kk=3;kk<cmd_doc_strings[k].size() &&
+                if (cmd_doc_strings[k].size()>=4) {
+                  options_arr[j].help=cmd_doc_strings[k][3];
+                }
+                for(size_t kk=4;kk<cmd_doc_strings[k].size() &&
                       loop_done==false;kk++) {
                   if (cmd_doc_strings[k][kk].substr(0,19)==
                       ((string)"For objects of type")) {
@@ -231,21 +256,27 @@ void acol_manager::update_o2_docs(size_t narr,
                   options_arr[j].help+="\n\n"+cmd_doc_strings[k][kk];
                 }
               } else {
-                cout << "No generic docs, no type." << endl;
+                if (loc_verbose>1) {
+                  cout << "No generic docs, no type." << endl;
+                }
                 options_arr[j].parm_desc="";
                 options_arr[j].help="";
               }
             } else {
-              cout << "Current type is " << type << endl;
+              if (loc_verbose>1) {
+                cout << "Current type is " << new_type << endl;
+              }
               options_arr[j].desc="";
               options_arr[j].parm_desc="";
               options_arr[j].help="";
               bool loop1_done=false;
               for(size_t kk=2;kk<cmd_doc_strings[k].size() &&
                     loop1_done==false;kk++) {
-                string s="For objects of type "+type+":";
+                string s="For objects of type "+new_type+":";
                 if (cmd_doc_strings[k][kk].substr(0,s.length())==s) {
-                  cout << "Found type-specific docs." << endl;
+                  if (loc_verbose>1) {
+                    cout << "Found type-specific docs." << endl;
+                  }
                   loop1_done=true;
                   bool loop2_done=false;
                   for(size_t kk=3;kk<cmd_doc_strings[k].size() &&
@@ -274,13 +305,13 @@ void acol_manager::update_o2_docs(size_t narr,
         found=true;
       }
     }
-    if (true || verbose>2) {
+    if (verbose>2) {
       if (found==true) {
-        cout << "Function cli::read_docs() "
+        cout << "Function acol_manager::update_o2_docs() "
              << "found documentation for command "
              << options_arr[j].lng << " ." << endl;
       } else {
-        cout << "Function cli::read_docs() could not "
+        cout << "Function acol_manager::update_o2_docs() could not "
              << "find documentation for command "
              << options_arr[j].lng << " ." << endl;
       }
@@ -301,61 +332,56 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=1;
     comm_option_s options_arr[narr]=
       {
-        {0,"value","Get or set the value of the int object.",
-         0,1,"[value]","Get or set the value of the int object.",
+        {0,"value","",0,1,"","",
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
          both}
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="double") {
     static const size_t narr=1;
     comm_option_s options_arr[narr]=
       {
-        {0,"value","Get or set the value of the double object",
-         0,1,"[value-spec]","Get or set the value of the double object.",
+        {0,"value","",0,1,"","",
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
          both}
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="char") {
     static const size_t narr=1;
     comm_option_s options_arr[narr]=
       {
-        {0,"value","Get or set the value of the char object",
-         0,1,"[value]","Get or set the value of the char object.",
+        {0,"value","",0,1,"","",
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
          both}
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="size_t") {
     static const size_t narr=1;
     comm_option_s options_arr[narr]=
       {
-        {0,"value","Get or set the value of the size_t object.",
-         0,1,"[value]","Get or set the value of the size_t object.",
+        {0,"value","",0,1,"","",
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
          both}
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="string") {
     static const size_t narr=1;
     comm_option_s options_arr[narr]=
       {
-        {0,"value","Get or set the value of the string object.",
-         0,1,"[value]","Get or set the value of the string object.",
+        {0,"value","",0,1,"","",
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
          both}
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
     static const size_t narr=42;
     comm_option_s options_arr[narr]=
-      {{0,"ac-len","Autocorrelation length using 'acor'.",0,1,"<column>","",
+      {{0,"ac-len","",0,1,"","",
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_ac_len),
          both},
        {0,"add-vec","Add vector specification to a table",0,2,
@@ -650,7 +676,7 @@ void acol_manager::command_add(std::string new_type) {
         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_wstats),
         both}
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
 
   } else if (new_type=="table3d") {
@@ -798,7 +824,7 @@ void acol_manager::command_add(std::string new_type) {
         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_y_name),
         both}
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="tensor") {
@@ -900,7 +926,7 @@ void acol_manager::command_add(std::string new_type) {
          "used.",new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_tensor_grid),both}
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="tensor<int>") {
@@ -951,7 +977,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table3d),both}
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="tensor<size_t>") {
@@ -1002,7 +1028,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
          both}
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="tensor_grid") {
@@ -1147,7 +1173,7 @@ void acol_manager::command_add(std::string new_type) {
          "",new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_tensor),both}
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
 
   } else if (new_type=="prob_dens_mdim_amr") {
@@ -1162,7 +1188,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table3d),both}
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="hist") {
@@ -1179,7 +1205,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table),both}
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="double[]") {
@@ -1226,7 +1252,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both}      
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="int[]") {
@@ -1273,7 +1299,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both}     
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="size_t[]") {
@@ -1320,7 +1346,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
          both}
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
   } else if (new_type=="vector<contour_line>") {
@@ -1363,7 +1389,7 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_contours),both},
       };
-    update_o2_docs(narr,&options_arr[0]);
+    update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   }
   
@@ -1440,260 +1466,67 @@ int acol_manager::setup_options() {
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
   comm_option_s options_arr[narr]=
-    {{0,"autocorr","Compute the autocorrelation coefficients.",0,-1,
-       "[arguments depend on current object type.]",
-       ((std::string)"The behavior of the "+ter.cyan_fg()+ter.bold()+
-        "autocorr"+ter.default_fg()+" command depends on ")+
-       "the type of the current object.\n\nNumerical array: "+
-       "(no arguments)\n\nReplace the current "+
-       "object with a vector of doubles which contains the autocorrelation "+
-       "coefficient as a function of the step size.\n\n"+
-       "table: <ac> <ftom> <column or vec. spec> [column or vec. spec. 2]"+
-       "\n\nThree arguments are required "+
-       "A column name <ac>, a column name <ftom>, and arguments which "+
-       "specify the data. The "
-       "autocorrelation coefficients are stored in column <ac> and "+
-       "the quantity '5*tau/M' is stored in "+
-       "column <ftom>. The data may be either a column "+
-       "in the table or a vector specification. "+
-       "Columns <ac> and <ftom> are created "+
-       "if they are not already present and overwritten if they "+
-       "already contain data. Also, the autocorrelation length and "+
-       "estimated sample size are output to the screen. If multiple "+
-       "data sources are given, then the autocorrelation coefficients "+
-       "are averaged together. See "+cl->cmd_name+" -help vector-spec"+
-       " for help on multiple vector specifications.\n\n"+
-       "no object: <mult. vec. spec. 1> "+
-       "[mult. vec. spec 2] "+
-       "...\n\n Compute the autocorrelation coefficient for all vectors "+
-       "specified as arguments then average those autocorrelation "+
-       "coefficients together. If there is no current object "+
-       "then the averaged autocorrelation coefficients are kept "+
-       "as a double[] object. See "+cl->cmd_name+" -help mult-vector-spec"+
-       " for help on multiple vector specifications.",
+    {{0,"autocorr","",0,-1,"","",
        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
        both},
-     {0,"calc","Compute the value of a constant expression.",0,1,"<expr>",
-      ((string)"This computes the value of the constant expression ")+
-      " <expr>. Examples are \"calc acos(-1)\" or \"calc 2+1/sqrt(2.0e4)\". "+
-      "Results are given at the current precision. To see valid "+
-      "expressions type \""+cl->cmd_name+" -help functions\".",
+     {0,"calc","",0,1,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_calc),
       both},
-     {0,"clear","Clear the current object.",0,0,"",
-      "Deallocate the memory associated with the current object.",
+     {0,"clear","",0,0,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_clear),
       both},
-     {'c',"create","Create an object.",0,-1,"<type> [...]",
-      ((string)"Create a new object of type <type>. ")+
-      "If an object is currently in memory, it is deallocated before "+
-      "creating the new object.\n\n"+
-      "\"create <type> <value>\": For types char, "+
-      "int, size_t, and string, create an object and give it the "+
-      "initial value specified.\n\n"+
-      "\"create double <value spec.>\": Create a double object and set "+
-      "it equal to the value specified by <value spec.>. "+
-      "(See \"acol -help "+
-      "functions\" for help on specifying functions and \"acol -help "+
-      "value-spec\" for help on value specifications.)\n\n"+
-      "\"create <type> <size> <function of \"i\">\": For array types "+
-      "int[] and size_t[], the user must specify the size of "+
-      "the array and a function of the array index 'i' to fill the array.\n\n"+
-      "\"create double[] [<size> <function of \"i\">] or [vector spec.]\": "+
-      "For double[] the user must either "+
-      "give a vector specification, or specify the size of "+
-      "the array and a function of the array index 'i'.\n\n"+
-      "\"create table <name> <vector spec.>\": "+
-      "Create a new table object with one column named <name> "+
-      "from a vector specification (see \"acol -help vector-spec\" "+
-      "for the syntax).\n\n"+
-      "\"create tensor <rank> <size 0> <size 1> ...\": Create a tensor "+
-      "object with the specified rank and sizes. All tensor entries "+
-      "are initialized to zero.\n\n"+
-      "\"create tensor_grid <rank> <size 0> <size 1> ...\": Create a "+
-      "tensor_grid object with the specified rank and sizes. The tensor "+
-      "grid is initialized to count each index (beginning with zero) and "+
-      "the entries of the tensor "+
-      "are initialized to zero. The grid can be specified afterwards "+
-      "using \"set-grid\".\n\n"+
-      "\"create table3d <x name> <x vector spec.> <y name> "+
-      "<y vector spec.>\n  <slice name> <slice function>\": Create "+
-      "a new table3d object which has one slice. The x and y grids "+
-      "are given as vector specifications (see \"acol -help vector-spec\" "+
-      "for the syntax). The slice function can be written in terms "+
-      "of the x- and y-grid values which are referred to by name.\n\n"+
-      "For example, using o2graph from o2sclpy:\n\no2graph -create "+
-      "table3d x func:100:i/200 y func:100:i/200 z \"sin(1/(x+0.01))*"+
-      "sin(1/(y+0.01))\" -den-plot z -xtitle x -ytitle y -show",
+     {'c',"create","",0,-1,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
       both},
-     {0,"docs","Open local HTML docs for acol or an O2scl topic.",0,1,
-      "[topic]",
-      ((string)"If [topic] is unspecified, this command opens up the ")+
-      "local HTML documentation for acol in the default web browser "+
-      "using 'open' on OSX and "+
-      "'xdg-open' on other systems. If a topic is specified, then "+
-      "the closest O2scl documentation web page is opened. In order "+
-      "to open the remote version of the documentation instead of "+
-      "the local copy, use 'wdocs' instead.",
+     {0,"docs","",0,1,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_docs),
       both},
-     {0,"wdocs","Open remote HTML docs for acol or an O2scl topic.",0,2,
-      "[search_term], [topic] or [section search_term]",
-      ((string)"If no arguments are given, this command opens up the ")+
-      "remote HTML documentation for acol in the default web browser "+
-      "using 'open' on OSX and "+
-      "'xdg-open' on other systems. If a [topic] is specified, then "+
-      "the associated O2slcl web page is opened. If the argument "+
-      "does not match an already known topic, then the search feature "+
-      "on the O2scl web page is opened using the specified search term. "+
-      "Note that, for search terms, spaces can be included using e.g. "+
-      "'-wdocs \"Simulated annealing\"'. Valid sections are either "+
-      "\"eos\" or \"part\". In order "+
-      "to open the local version of the documentation instead of "+
-      "the remote copy, use 'docs' instead of 'wdocs'.",
+     {0,"wdocs","",0,2,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_wdocs),
       both},
-     {0,"download","Download file from specified URL.",0,4,
-      "<file> <URL> [hash, \"file:\"hash_filename, or \"none\"] [directory]",
-      ((string)"Check if a file matches a specified hash, and if not, ")+
-      "attempt to download a fresh copy from the specified URL. If the "+
-      "filename is \"_\", then the file is extracted from the end of "+
-      "the URL.",
+     {0,"download","",0,4,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_download),
       both},
-     {0,"filelist","List objects in a HDF5 file.",0,1,"<file>",
-      ((string)"This lists all the top-level datasets and groups in a ")+
-      "HDF5 file and, for those groups which are in the O2scl format, "+
-      "gives the type and name of the object stored in that HDF5 group.",
+     {0,"filelist","",0,1,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_filelist),
       both},
-     {'g',"generic","Read in a generic text file.",0,2,"<type> <file>",
-      ((string)"Read an object of type <type> from a text file named ")+
-      "<file>. The allowed text file formats depend on the particular "+
-      "type specified.\n\nFor int, char, double, or size_t objects, "+
-      "the file is assumed to begin with the desired object and it is "+
-      "read using operator>>().\n\nFor string objects, the first line is "
-      "read using std::getline().\n\nFor array objects, it is assumed "+
-      "that all array entries are on the first line of the file and no "+
-      "carriage returns are present between entries.\n\nFor table objects, "
-      "the first line of the file must either contain numeric "+
-      "data or column names "+
-      "separated by white space, without carriage returns, except for "+
-      "the one at the end of the line. If the first line contains "+
-      "column names, the second line may optionally contain unit "+
-      "expressions for each column, enclosed by square brackets. "+
-      "All remaining lines are assumed "+
-      "to contain data with the same number of columns as the first line. "+
-      "\n\nFor table3d objects, the data must be stored in columns "+
-      "with the first column specifying the x-axis grid point and "+
-      "the second column specifying the y-axis grid point. The "+
-      "remaining columns give the data for each slice at that point. "+
-      "Each grid point must correspond to a row in the file, but "+
-      "the lines need not be in any particular order. The columns may "+
-      "have one header line at top which specifies the names of the x- "+
-      "and y-grids and the names of each slice (in order).",
+     {'g',"generic","",0,2,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
       both},
-     {0,"convert","Get a unit conversion factor.",0,11,
-      ((string)"<old unit (or \"list\", \"add\", \"del\", or \"nat\")> ")+
-      "<new unit> [value to convert]",
-      ((string)"This command computes a unit ")+
-      "conversion factor and optionally applies than conversion factor "+
-      "to a user-specified value. Conversions which presume ħ=c=kB=1 "+
-      "are allowed by default. For example, 'convert MeV 1/fm' returns "+
-      "'1.000000e+00 MeV = 5.067731e-03 1/fm'. The conversion factor "+
-      "is output "+
-      "at the current precision, but is always internally stored with "+
-      "full double precision. To print the list of known units, SI "+
-      "prefixes, and the unit conversion cache, use -convert "+
-      "list. To add a unit (only MKS is supported) the format is:\n\n"+
-      "-convert add <unit> <power of meters> <power of kg> "+
-      "<power of seconds> <power of Kelvin> <power of amps> "+
-      "<power of moles> <power of candelas> <value> <long name>\n\n"+
-      "To delete a unit, the format is:\n\n-convert del <unit>\n\n"+
-      "However, note that deleting a unit does not delete its "+
-      "occurences in the unit conversion cache. "+
-      "To modify the use of naturaly units, use:\n\n"+
-      "-convert nat <boolean for c=1> <boolean for ħ> <boolean for kB>",
+     {0,"convert","",0,1,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_convert),
       both},
-     {0,"h5-copy","Copy hdf5 file (experimental).",-1,-1,
-      "<source> <destination>",((string)"Copy all O2scl objects from ")+
-      "one HDF5 file to another. This may not work for HDF5 files "+
-      "generated outside of O2scl. The source and destination filenames "+
-      "may not be identical. The destination file may not be the same "+
-      "size as the source, but will contain the same information.",
+     {0,"h5-copy","",-1,-1,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_h5_copy),
       both},
-     {0,"constant","Get a physical or numerical constant.",
-      0,-1,"<name, pattern, \"add\", \"del\", or \"list\"> [unit]",
-      ((string)"Get a physical or numerical constant from the library. ")+
-      "If \"list\" is given for <name or pattern>, then the full constant "+
-      "list is printed to the screen.",
+     {0,"constant","",0,-1,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_constant),
       both},
-     {'q',"interactive","Toggle the interactive interface.",
-      0,0,"",((string)"If given as a command-line parameter, 'interactive' ")+
-      "toggles the execution of the interactive mode after the "+
-      "command-line parameters are processed. If zero arguments are given "+
-      "to 'acol' on the command-line then the interactive interface is "+
-      "automatically turned on.",
+     {'q',"interactive","",0,0,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interactive),
       cl_param},
-     {'i',"internal","Output current object in the internal HDF5 format.",
-      0,1,"[file]",
-      ((string)"Output the current object in the internal HDF5 format. ")+
-      "If no argument is given, then output is sent to the screen, "+
-      "otherwise, output is sent to the specified file. ",
+     {'i',"internal","",0,1,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_internal),
       both},
-     {'o',"output","Output the current object as text.",0,1,"[file]",
-      ((string)"Output the object to the screen, or if the [file] ")+
-      "argument is specified, to a file. This is the same format as "+
-      "can be read using the 'generic' command.",
+     {'o',"output","",0,1,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_output),
       both},
-     {'P',"preview","Preview the current object.",0,2,
-      "[number of lines] [number of columns]",
-      ((string)"Print out all or part of the current object in format ")+
-      "suitable for the screen.",
+     {'P',"preview","",0,2,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_preview),
       both},
-     {'r',"read","Read an object from an O2scl-style HDF5 file.",0,2,
-      "<file> [object name]",
-      ((string)"Read an HDF5 file with the specified filename. ")+
-      "If the [object name] argument is specified, then read the object "+
-      "with the specified name. Otherwise, look for the first table object, "+
-      "and if not found, look for the first table3d object, and so on, "+
-      "attempting to find a readable O2scl object.",
+     {'r',"read","",0,2,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read),
       both},
-     {0,"slack","Send a slack message.",0,6,"[\"#channel\"] <strings-spec>",
-      ((string)"Send a message to slack, using the specified channel. ")+
-      "If the channel is not specified, it is taken from the "+
-      "environment variable O2SCL_SLACK_CHANNEL. The '#' sign "+
-      "should be included with the channel name. "+
-      "The Slack webhook URL is taken "+
-      "from the environment variable O2SCL_SLACK_URL and the username "+
-      "is taken from the environment variable O2SCL_SLACK_USERNAME. "+
-      "The message is constructed from the string list specification "+
-      "in <strings-spec> (see 'acol -help strings-spec' for more "+
-      "information).",
+     {0,"slack","",0,6,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slack),
       both},
-     {0,"type","Show current object type.",0,0,"",
-      ((string)"Show the current object type, either table, ")+
-      type_list_str,
+     {0,"type","",0,0,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_type),
       both},
-     {'v',"version","Print version information and O2scl settings.",0,0,"",
-      "",new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_version),
+     {'v',"version","",0,0,"","",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_version),
       both},
-     {0,"xml-to-o2","Parse doxygen XML to generate runtime docs.",0,0,"",
-      ((string)"When pugixml is enabled, this function reads the ")+
-      "doxygen XML output and generates an HDF5 file which acol reads "+
-      "to generate the runtime documentation.",
+     {0,"xml-to-o2","",0,0,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_xml_to_o2),
       both}
     };
@@ -1903,11 +1736,11 @@ int acol_manager::setup_parameters() {
       }
       if (true || verbose>2) {
         if (found) {
-          cout << "Function cli::read_docs() found "
+          cout << "Function acol_manager::setup_parameters() found "
                << "documentation for parameter "
                << it->first << " ." << endl;
         } else {
-          cout << "Function cli::read_docs() could not find "
+          cout << "Function acol_manager::setup_parameters() could not find "
                << "documentation for parameter "
                << it->first << " ." << endl;
         }

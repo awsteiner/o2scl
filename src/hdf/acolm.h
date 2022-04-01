@@ -130,17 +130,16 @@ namespace o2scl_acol {
      */
     o2scl::comm_option_mfptr<acol_manager> cset;
     
-#ifdef DOXYGEN
     /// The number formatter for html output
-    format_float ffl;
-#else
     o2scl::format_float ffl;
-#endif
 
+    /// Document strings for commands
     std::vector<std::vector<std::string>> cmd_doc_strings;
     
+    /// Document strings for parameters
     std::vector<std::vector<std::string>> param_doc_strings;
-    
+
+    /// Document strings for help topics
     std::vector<std::vector<std::string>> help_doc_strings;
     
     /// Convert units object (initialized by constructor to global object)
@@ -212,12 +211,8 @@ namespace o2scl_acol {
     std::string type;
 
     /// Dummy cli object for cli::cli_gets()
-#ifdef DOXYGEN
-    cli *cl;
-#else
     o2scl::cli *cl;
-#endif
-
+    
     /// \name Object storage
     //@{
     o2scl::table_units<> table_obj;
@@ -272,8 +267,11 @@ namespace o2scl_acol {
      */
     void command_add(std::string new_type);
 
+    /** \brief Desc
+     */
     void update_o2_docs(size_t narr,
-                        o2scl::comm_option_s *options_arr);
+                        o2scl::comm_option_s *options_arr,
+                        std::string new_type="");
     
     /** \brief Remove the type-specific commands
 
@@ -447,6 +445,7 @@ namespace o2scl_acol {
         to generate the runtime documentation.
     */
     virtual int comm_xml_to_o2(std::vector<std::string> &sv, bool itive_com);
+    
     void xml_replacements(std::string &s,
                           std::vector<std::string> &clist);
 
@@ -576,7 +575,15 @@ namespace o2scl_acol {
     */
     virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Compute the autocorrelation coefficient
+    /** \brief Compute the autocorrelation coefficient using \c acor
+
+        For objects of type table:
+
+        Compute the autocorrelation coefficient using \c acor
+
+        <column>
+
+        Detailed desc.
      */
     virtual int comm_ac_len(std::vector<std::string> &sv,
                             bool itive_com);
@@ -732,8 +739,8 @@ namespace o2scl_acol {
      */
     virtual int comm_internal(std::vector<std::string> &sv, bool itive_com);
 
-    /** Perform an interpolation using the current object
-
+    /** \brief Perform an interpolation using the current object
+        
         For objects of type table:
 
         Interpolate a number into a column.
@@ -748,10 +755,10 @@ namespace o2scl_acol {
     /// List columns in table 'tp' named 'tname' assuming screen size 'ncol'
     virtual int comm_list(std::vector<std::string> &sv, bool itive_com);
 
-    /// Compute the maximum value of a colum
+    /// Compute the maximum value of a column
     virtual int comm_max(std::vector<std::string> &sv, bool itive_com);
     
-    /// Compute the minimum value of a colum
+    /// Compute the minimum value of a column
     virtual int comm_min(std::vector<std::string> &sv, bool itive_com);
 
     /// Set the name of the x grid
@@ -801,7 +808,39 @@ namespace o2scl_acol {
      */
     virtual int comm_slack(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Get or set the value 
+    /** \brief Get or set the value of an object
+
+        For objects of type int:
+
+        [value]
+
+        Get or set the integer.
+
+        For objects of type size_t:
+
+        [value]
+
+        Get or set the size_t object.
+
+        For objects of type string:
+
+        [value]
+
+        Get or set the string.
+
+        For objects of type double:
+
+        [value spec.]
+
+        Get or set the value of the double object. See ``Value
+        specifications`` for more information.
+
+        For objects of type char:
+
+        [value]
+
+        Get or set the character.
+
      */
     virtual int comm_value(std::vector<std::string> &sv, bool itive_com);
 
@@ -889,7 +928,36 @@ namespace o2scl_acol {
      */
     virtual int comm_version(std::vector<std::string> &sv, bool itive_com);
 
-    /// Get a conversion factor
+    /** \brief Manipulate or use a unit conversion factor
+
+        <old unit (or "list", "add", "del", or "nat")> <new unit>
+        [value to convert]
+
+        This command computes a unit conversion factor and optionally
+        applies than conversion factor to a user-specified value.
+        Conversions which presume ħ=c=kB=1 are allowed by default. For
+        example, 'convert MeV 1/fm' returns '1.000000e+00 MeV =
+        5.067731e-03 1/fm'. The conversion factor is output at the
+        current precision, but is always internally stored with full
+        double precision. To print the list of known units, SI
+        prefixes, and the unit conversion cache, use -convert list. To
+        add a unit (only MKS is supported) the format is:
+
+        -convert add <unit> <power of meters> <power of kg>
+        <power of seconds> <power of Kelvin> <power of amps>
+        <power of moles> <power of candelas> <value> <long name>
+
+        To delete a unit, the format is:
+
+        -convert del <unit>
+
+        However, note that deleting a unit does not delete its
+        occurences in the unit conversion cache. To modify the use of
+        natural units, use:
+
+        -convert nat <boolean for c=1> <boolean for ħ> <boolean for kB>
+        
+     */
     virtual int comm_convert(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Copy an O2scl-generated HDF5 file
