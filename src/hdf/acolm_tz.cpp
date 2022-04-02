@@ -261,6 +261,10 @@ void acol_manager::xml_replacements(std::string &s,
                    " </computeroutput>",
                    ter.magenta_fg()+ter.bold()+type_list[i]+
                    ter.default_fg());
+    string_replace(s,"<computeroutput> <ref> "+type_list[i]+
+                   " </ref> </computeroutput>",
+                   ter.magenta_fg()+ter.bold()+type_list[i]+
+                   ter.default_fg());
   }
                 
   // Make the command replacements
@@ -279,15 +283,18 @@ void acol_manager::xml_replacements(std::string &s,
                    ter.default_fg());
   }
   
+  string_replace(s,"<itemizedlist> <listitem>","\n\n*");
+  string_replace(s,"</listitem> <listitem>","*");
+  string_replace(s,"</listitem> </itemizedlist>","");
+  string_replace(s,"<simplesect>","");
+  string_replace(s,"</simplesect>","");
+  
   string_replace(s,"  "," ");
   string_replace(s," )",")");
   string_replace(s," ,",",");
   string_replace(s," .",".");
   /*
-  string_replace(s,"<itemizedlist>","");
   string_replace(s,"</itemizedlist>","");
-  string_replace(s,"<listitem>","*");
-  string_replace(s,"</listitem> *","*");
   string_replace(s,"</listitem>","");
   */
                   

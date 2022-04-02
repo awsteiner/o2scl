@@ -406,18 +406,38 @@ namespace o2scl_acol {
 
     /** \brief Clear the current object
 
-        (no parameters)
+        (No arguments.)
 
         Deallocate the memory associated with the current object. This
-        command does not clear the object name stored in ``obj_name``.
+        command does not clear the object name stored in \c obj_name.
      */
     virtual int comm_clear(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Output the help text
+    /** \brief Get help
+
+        [command or parameter or type or topic]
+
+        If no argument is specified, this outputs all of the commands
+        which are valid for the current type, and then some generic
+        help for using acol. If a command is specified as the
+        argument, then help for that command is printed. If a
+        parameter which is modifiable by the \c get or \c set commands
+        is specified as the argument, then the help for that parameter
+        is printed. If a type is specified as the argument, then a
+        list of commands which operate on objects of that type is
+        printed. Finally, if a help topic is specified as the
+        argument, then that help information is printed.
      */
     virtual int comm_help(std::vector<std::string> &sv, bool itive_com);
     
     /** \brief List commands, with an optional type argument
+
+        [type]
+
+        If no argument is specified, list all valid commands for the
+        current type (including those commands which do not require a
+        current object). If a type argument is given, then list all
+        valid commands for the specified type.
      */
     virtual int comm_commands(std::vector<std::string> &sv, bool itive_com);
     
@@ -506,7 +526,7 @@ namespace o2scl_acol {
 
         Print out the table3d grid.
 
-        (No parameters.)
+        (No arguments.)
 
         Output the table3d grid as a series of columns.
      */
@@ -526,7 +546,7 @@ namespace o2scl_acol {
 
     /** \brief Parse doxygen XML to generate runtime docs.
         
-        No parameters.
+        (No arguments.)
 
         When pugixml is enabled, this function reads the
         doxygen XML output and generates an HDF5 file which acol reads
@@ -619,6 +639,15 @@ namespace o2scl_acol {
 
         Create a new column named <name> filled with the derivative
         of the function y(x) obtained from columns <x> and <y>.
+
+        For objects of type tensor:
+
+        Compute the derivative of the tensor object w.r.t. an index
+
+        <index>
+
+        The <tt>deriv</tt> command differentiates the tensor object
+        with respect to one of the indices.
      */
     virtual int comm_deriv(std::vector<std::string> &sv, bool itive_com);
 
@@ -628,13 +657,15 @@ namespace o2scl_acol {
 
         Convert to a table object.
 
-        (no parameters)
+        (No arguments.)
         
         Convert to a table object.
      */
     virtual int comm_to_table(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief For tensor object, get entries along the main diagonal
+    /** \brief Get entries along the main diagonal
+
+        For objects of type tensor:
      */
     virtual int comm_diag(std::vector<std::string> &sv, bool itive_com);
 
@@ -704,7 +735,7 @@ namespace o2scl_acol {
 
         For objects of type int[]:
 
-        (no parameters)
+        (No arguments.)
 
         Replace the current object with a <tt>double[]</tt> object which
         contains the autocorrelation coefficient as a function of the
@@ -712,7 +743,7 @@ namespace o2scl_acol {
 
         For objects of type double[]:
 
-        (no parameters)
+        (No arguments.)
 
         Replace the current object with a <tt>double[]</tt> object which
         contains the autocorrelation coefficient as a function of the
@@ -804,7 +835,7 @@ namespace o2scl_acol {
      */
     virtual int comm_filelist(std::vector<std::string> &sv, bool itive_com);
 
-    /** Read an object from an O2scl-style HDF5 file.
+    /** \brief Read an object from an O2scl-style HDF5 file.
 
         <file> [object name]
 
@@ -813,7 +844,7 @@ namespace o2scl_acol {
         specified name. Otherwise, look for the first <tt>table</tt>
         object, and if not found, look for the first <tt>table3d</tt>
         object, and so on, attempting to find a readable O2scl object.
-     */
+    */
     virtual int comm_read(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Add 'nlines' as a constant to a \ref o2scl::table object
@@ -822,7 +853,7 @@ namespace o2scl_acol {
 
         Add 'nlines' as a constant to a table object.
 
-        (no parameters)
+        (No arguments.)
 
         Add a constant called 'nlines' to the table and set it equal
         to the number of lines (rows) in the table.
@@ -858,12 +889,21 @@ namespace o2scl_acol {
         and 'col y' using 'n_x_bins' bins in the x direction and
         'n_y_bins' bins in the y direction, optionally weighting the
         entries by the column 'wgts'.
+
+        For objects of type table3d:
+
+        Convert a table3d slice to a 2d histogram.
+
+        <slice>
+
+        The 'to-hist-2d' command creates a 2D histogram from slice
+        <slice>.
      */
     virtual int comm_to_hist_2d(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Output the type of the current object
 
-        No parameters.
+        (No arguments.)
 
         Show the current object type, either <tt>table</tt>,
         <tt>table3d</tt>, <tt>hist</tt>, <tt>hist_2d</tt>,
@@ -915,6 +955,19 @@ namespace o2scl_acol {
         <function>
 
         Apply a function to the weights.
+
+        For objects of type table3d:
+
+        Create a new slice from a function.
+
+        <func> <name>
+
+        Set the slice named <name> to the result of a function,
+        <func>, in terms of the other slices. If the slice does not
+        already exist, a new one is created. For example, for a
+        table3d containing slices named 's1' and 's2', 'function s1-s2
+        s3' would create a new column 's3' which contains the
+        difference of columns 's1' and 's2'.
     */
     virtual int comm_function(std::vector<std::string> &sv, bool itive_com);
 
@@ -989,10 +1042,30 @@ namespace o2scl_acol {
 
     /** \brief Extract a slice from a table3d object to generate a 
         \ref o2scl::table object
+
+        For objects of type table3d:
+
+        Convert a slice to a table object.
+
+        <"x" or "y"> <value>
+
+        Extract a slice of a table3d object at fixed x or fixed y to
+        create a new table object. This function uses interpolation
+        with the current interpolation type to interpolate all of the
+        slices in the table3d object to create a table with a column
+        for each slice.
     */
     virtual int comm_slice(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Convert a slice to a histogram
+
+        For objects of type table3d:
+
+        Construct a histogram from a slice.
+
+        <slice>
+
+        Detailed desc.
      */
     virtual int comm_slice_hist(std::vector<std::string> &sv, bool itive_com);
 
@@ -1023,6 +1096,12 @@ namespace o2scl_acol {
         <oldx> in the file and <newx> in the table. The new column in
         the table is named <oldy>, or it is named [newy] if the
         additional argument is given.
+
+        For objects of type table3d:
+
+        Interpolate a slice from another file.
+
+        <file> <table> <old> [new]
     */
     virtual int comm_insert(std::vector<std::string> &sv, bool itive_com);
 
@@ -1064,7 +1143,7 @@ namespace o2scl_acol {
 
     /** \brief Toggle interactive mode
 
-        No parameters.
+        (No arguments.)
 
         If given as a command-line parameter, 'interactive' toggles
         the execution of the interactive mode after the command-line
@@ -1094,6 +1173,15 @@ namespace o2scl_acol {
 
         Interpolate <x value> from column named <x name> into column
         named <y name>.
+
+        For objects of type table3d:
+
+        Interpolate a number into a slice.
+
+        <z name> <x value> <y value>
+
+        Interpolate (<x value>,<y value>) into the slice named <z
+        name>.
     */
     virtual int comm_interp(std::vector<std::string> &sv, bool itive_com);
 
@@ -1103,9 +1191,17 @@ namespace o2scl_acol {
 
         List the constants, column names and other info.
 
-        (no parameters)
+        (No arguments.)
 
         List the constants, column names and other info.
+
+        For objects of type table3d:
+
+        List the slice names and print out grid info.
+
+        (No arguments.)
+
+        List the slice names and print out grid info.
     */
     virtual int comm_list(std::vector<std::string> &sv, bool itive_com);
 
@@ -1118,6 +1214,14 @@ namespace o2scl_acol {
         <column name>
 
         Compute the maximum value of a column.
+
+        For objects of type table3d:
+
+        Compute the maximum value of a slice.
+
+        <slice name>
+
+        Compute the maximum value of a slice.
     */
     virtual int comm_max(std::vector<std::string> &sv, bool itive_com);
     
@@ -1130,13 +1234,39 @@ namespace o2scl_acol {
         <column name>
 
         Compute the minimum value of a column.
+
+        For objects of type table3d:
+
+        Compute the minimum value of a slice.
+
+        <slice name>
+
+        Compute the minimum value of a slice.
     */
     virtual int comm_min(std::vector<std::string> &sv, bool itive_com);
 
-    /// Set the name of the x grid
+    /** \brief Set the name of the x grid
+
+        For objects of type table3d:
+
+        Get or set the name of the x grid.
+
+        [name]
+
+        Get or set the name of the x grid.
+     */
     virtual int comm_x_name(std::vector<std::string> &sv, bool itive_com);
 
-    /// Set the name of the y grid
+    /** \brief Set the name of the y grid
+
+        For objects of type table3d:
+
+        Get or set the name of the y grid.
+
+        [name]
+
+        Get or set the name of the y grid.
+     */
     virtual int comm_y_name(std::vector<std::string> &sv, bool itive_com);
     
     /** \brief Add a column for line numbers
@@ -1278,16 +1408,48 @@ namespace o2scl_acol {
         Add all columns from the second table to their corresponding
         columns in the current table, creating new columns if
         necessary.
-     */
+
+        For objects of type table:
+
+        Add data from a second table3d object to current table3d.
+        
+        <file> [name]
+
+        Add all slides from the second table3d to their corresponding
+        slices in the current table3d, creating new slices if
+        necessary.
+
+        For objects of type tensor:
+
+        Output the sum of all the tensor entries.
+
+        (No arguments.)
+
+        The "sum" command outputs the total tensor size
+        and the sum over all entries. Note, to perform a partial
+        sum over sum of the tensor indices, use the 
+        <tt>rearrange</tt> command.
+    */
     virtual int comm_sum(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Rename a part of an object
 
         For objects of type table:
 
+        Rename a column.
+
         <old> <new>
 
         Rename a column from <old> to <new>. Note that to rename the
+        entire object, you should use <tt>-set obj_name new_name</tt>.
+
+        For objects of type table3d:
+
+        Rename a slice.
+
+        <old> <new>
+
+        Rename a slice from <old> to <new>. Note that to rename the
         entire object, you should use <tt>-set obj_name new_name</tt>.
      */
     virtual int comm_rename(std::vector<std::string> &sv, bool itive_com);
@@ -1345,7 +1507,7 @@ namespace o2scl_acol {
 
         For objects of type table:
 
-        Set the entries of a column
+        Set the entries of a column.
 
         <row_spec> <col> <val_spec>
 
@@ -1353,6 +1515,15 @@ namespace o2scl_acol {
         column 'col' to the value given by the 'val_spec' function.
         Rows are chosen if row_spec evaluates to a number greater than
         0.5.
+
+        For objects of type table3d:
+
+        Set the entries of a slice.
+
+        <x value> <y value> <z name> <val>
+
+        Set the value of the slice named 'z name' at the grid point
+        closest to (<x value>,<y value>) to the value <val>.
      */
     virtual int comm_set_data(std::vector<std::string> &sv, bool itive_com);
     
@@ -1466,7 +1637,7 @@ namespace o2scl_acol {
 
         Sort the vector.
 
-        (no parameters)
+        (No arguments.)
 
         Sort the vector (in-place).
 
@@ -1474,7 +1645,7 @@ namespace o2scl_acol {
 
         Sort the vector.
 
-        (no parameters)
+        (No arguments.)
 
         Sort the vector (in-place).
 
@@ -1482,7 +1653,7 @@ namespace o2scl_acol {
 
         Sort the vector.
 
-        (no parameters)
+        (No arguments.)
 
         Sort the vector (in-place).
 
@@ -1507,6 +1678,15 @@ namespace o2scl_acol {
         <column>
 
         Output the average, std. dev, max and min of <column>.
+
+        For objects of type table:
+
+        Show slice statistics.
+
+        <slice>
+
+        Output the average, std. dev, max and min of <slice>.
+
      */
     virtual int comm_stats(std::vector<std::string> &sv, bool itive_com);
 
@@ -1520,6 +1700,16 @@ namespace o2scl_acol {
 
         Output the average, std. dev, max and min of <column>, using
         the weights specified in <weights>.
+
+        For objects of type tensor:
+        
+        Show stats for the data in the tensor.
+
+        (No arguments.)
+
+        The 'stats' command outputs the number of entries, their mean,
+        standard deviation, minimum and maximum. It also counts the
+        number of infinite or NaN values.
      */
     virtual int comm_wstats(std::vector<std::string> &sv, bool itive_com);
 

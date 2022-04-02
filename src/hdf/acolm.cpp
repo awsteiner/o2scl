@@ -543,86 +543,51 @@ void acol_manager::command_add(std::string new_type) {
        {0,"entry-grid","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_entry_grid),both},
-       {'f',"function","Create a new slice from a function.",0,2,
-        "<func> <name>",
-        ((string)"Set the slice named <name> to the result of a function, ")+
-        "<func>, in terms of the other slices. If the slice does not "+
-        "already exist, a new one is created. For example, for "+
-        "a table3d containing slices named 's1' and 's2', 'function "+
-        "s1-s2 s3' would create a new column 's3' which contains the "+
-        "difference of columns 's1' and 's2'.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
-        both},
-       {0,"insert","Interpolate a slice from another file.",0,6,
-        "<file> <table> <old> [new]","",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_insert),
-        both},
-       {0,"interp","Interpolate a number into a slice.",0,3,
-        "<z name> <x value> <y value> ",
-        "Interpolate (<x value>,<y value>) into the slice named <z name>.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
-        both},
-       {'l',"list","List the slice names and print out grid info.",
-        0,0,"","List the slice names and print out grid info.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
-        both},
-       {0,"max","Find the maximum value of a slice.",0,1,"<slice>",
-        "Compute the maximum value of column <col>.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
-        both},
-       {0,"min","Find the minimum value of a slice.",0,1,"<slice>",
-        "Compute the minimum value of column <col>.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
-        both},
-       {0,"rename","Rename a slice.",0,2,"<old> <new>",
-        "Rename a slice from <old> to <new>. ",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_rename),
-        both},
-       {0,"set-data","Set the entries of a column.",3,4,
-        "<x value> <y value> <z name> <val>",
-        ((string)"Set the value of ")+
-        "the slice named 'z name' at the grid point closest to "+
-        "(<x value>,<y value>) to the value <val>.",
+       {'f',"function","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_function),both},
+       {0,"insert","",0,6,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_insert),both},
+       {0,"interp","",0,3,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_interp),both},
+       {'l',"list","",0,0,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_list),both},
+       {0,"max","",0,1,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_max),both},
+       {0,"min","",0,1,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_min),both},
+       {0,"rename","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_rename),both},
+       {0,"set-data","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_set_data),both},
-       {0,"slice","Construct a slice.",2,2,
-        "<\"x\" or \"y\"> <value>",
-        ((string)"Extract a slice of a table3d object at fixed x or fixed y ")+
-        "to create a new table object. This function uses interpolation "+
-        "with the current interpolation type to interpolate all of the "+
-        "slices in the table3d object to create a table with a column "+
-        "for each slice.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slice),
-        both},
-       {0,"slice-hist","Construct a histogram from a slice.",1,1,
-        "<slice>","",
+       {0,"slice","Construct a slice.",2,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_slice),both},
+       {0,"slice-hist","",1,1,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_slice_hist),both},
-       {0,"stats","Show slice statistics.",0,1,"<slice>",
-        "Output the size, sum, max and min of <slice>. ",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_stats),
-        both},
-       {0,"sum","Add data from a second table3d object to current table3d.",
-        0,2,"<file> [name]",((string)"Add all slides from the ")+
-        "second table3d to their "+
-        "corresponding slices in the current table3d, creating new slices "+
-        "if necessary.",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
-        both},
-       {0,"to-hist-2d","Convert a table3d slice to a 2d histogram.",0,1,
-        "<slice>",
-        ((std::string)"The 'to-hist-2d' command creates a 2D histogram ")+
-        "from slice <slice>.",
+       {0,"stats","",0,1,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_stats),both},
+       {0,"sum","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_sum),both},
+       {0,"to-hist-2d","",0,1,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_hist_2d),both},
-       {0,"x-name","Get or set the 'x' grid name",
-        0,1,"[name]","",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_x_name),
-        both},
-       {0,"y-name","Get or set the 'y' grid name",
-        0,1,"[name]","",
-        new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_y_name),
-        both}
+       {0,"x-name","",0,1,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_x_name),both},
+       {0,"y-name","",0,1,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_y_name),both}
       };
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
@@ -632,23 +597,15 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=13;
     comm_option_s options_arr[narr]=
       {
-        {0,"sum","Output the sum of all the tensor entries.",0,0,"",
-         ((string)"The \"sum\" command outputs the total tensor size ")+
-         "and the sum over all entries.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
-         both},
-        {0,"deriv","Compute the derivative of the tensor_grid object.",
-         -1,-1,"<index>",
-         ((string)"The \"tensor_grid\" command differentiates the ")+
-         "tensor_grid object with respect to one of the indices.",
+        {0,"sum","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_sum),both},
+        {0,"deriv","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_deriv),both},
-        {0,"stats","Show stats for the data in the tensor.",0,0,"",
-         ((string)"The 'stats' command outputs the number of entries, ")+
-         "their mean, standard deviation, minimum and maximum. It also "+
-         "counts the number of infinite or NaN values.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_stats),
-         both},
+        {0,"stats","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_stats),both},
         {0,"diag","Get diagonal elements.",-1,-1,"",
          ((string)"Extract only the elements on the main diagonal ")+
          "to create a double[] object.",new comm_option_mfptr<acol_manager>
