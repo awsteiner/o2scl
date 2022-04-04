@@ -459,43 +459,115 @@ namespace o2scl_hdf {
   
   /** \brief A value specified by a string
       
-      Formats:
-      - value or function
-      - result of shell command: shell:command 
-      - result of python code: python:code
-      - HDF5 object in file: 
-      hdf5:\<file name\>:\<object name\>:[additional specification]
-
-      Additional specifications
-      - double: (none)
-      - int: (none)
-      - size_t: (none)
-      - double[]: \<index\>
-      - int[]: \<index\>
-      - size_t[]: \<index\>
-      - uniform_grid<double>: \<index\>
-      - table: \<column\>,\<row\>
+      Some acol commands value specifications as arguments. The first
+      part of the specification is a "type" followed by a colon,
+      followed by arguments which depend on the type. If no colon is
+      present, then a "func:" prefix is assumed. The different types
+      for a value specification are:
+      
+      1. <numeric value or function> - Value equal to the result of
+      <function>, e.g. "7.6" or "sin(0.5)". See the \c functions
+      help topic for a list of functions that can be used.
+      
+      For example:
+      
+      <tt>acol -create double "sqrt(5)" -output</tt>
+      
+      2. hdf5:<file>:<object name>:[addl. spec.] - Read an HDF5 value
+      and obtain the value from object named <object name>. For some
+      object types, additional specifications are required to specify
+      which value should be used. A list of object types and
+      additional specifications and more detail is given below.
+      
+      - double: (no addl. spec.)
+      - int: (no addl. spec.)
+      - size_t: (no addl. spec.)
+      - double[]: index
+      - int[]: index
+      - size_t[]: index
+      - uniform_grid<double>: index
+      - table: column name,row index
+      
+      For example:
+      
+      <tt>acol -create double hdf5:data/o2scl/apr98.o2:apr:rho,0 
+      -output</tt>
+      
+      3. shell:<shell command> - Set the value equal to the first
+      result obtained using the specified shell command. For example
+      (using bash):
+      
+      <tt>acol -create double shell:"ls | wc | awk '{print $1}'" 
+      -output</tt>
+      
+      4. python:<python code> - Set the value equal to the result
+      obtained using the specified python code. For example (using
+      bash):
+      
+      <tt>acol -create double 
+      $'python:\"import numpy\nprint(numpy.sin(4))\"' -output</tt>
   */
   int value_spec(std::string spec, double &d,
 		 int verbose=0, bool err_on_fail=true);
   
   /** \brief A vector specified by a string
       
-      Formats:
-      - single value: val:\<value\>
-      - list of values: list:\<entry 0\>,\<entry 1\>, ...,\<entry n-1\>
-      - function: func:\<N\>:\<function of i\>
-      - grid: grid:\<begin\>:\<end\>:\<width\>:["log"]
-      - column in text file: text:\<filename\>:\<column index\> 
-      - HDF5 object in file: 
-      hdf5:\<file name\>:\<object name\>:[additional specification]
-      
-      Filenames are expanded using wordexp() and HDF5 object names
-      are expanded using regex.
+      Vector specification description:
 
-      Additional specifications
-      - table: \<column\>
-      - table-row: table-row:\<row\>:\<column pattern\>
+      Some acol commands take arguments which are 'vector
+      specifications', i.e. an array specified as a string. The
+      different parts of the string are separated by a colon, and the
+      first part specifes the type of vector specification. The
+      different types are:
+
+      1. val:<value> - Create a vector with one element equal to
+      <value>, which may be a number or a simple function, e.g.
+      'val:sin(0.5)'.
+
+      2. list:<entry 0>,<entry 1>, ..., <entry n-1> - Create a vector
+      with a simple list of numbers or functions, e.g.
+      'list:3.0,1.0e-3,sqrt(2.0)'.
+
+      3. func:<N>:<function of i> - Create a vector by specifying the
+      length of the vector and a function used to fill the elements.
+      For example: 'func:41:sin(i/20.0*acos(-1))'.
+
+      4. grid:<begin>,<end>,<width>,["log"] - Create a vector equal to
+      a uniform grid, e.g. use 'grid:1.0,10.0,1.0' for a 10-element
+      vector filled with the numbers 1 to 10.The grid arguments can be
+      values or mathematical expressions.
+
+      5. text:<filename>:<column index> - Read a text file and extract
+      a vector of numbers from a column of the text file (starting
+      with zero for the first column), ignoring any header rows which
+      contain non-numeric values. For example 'text:~/temp.dat:2' will
+      construct a vector from the third column of the file 'temp.dat'
+      in the user's home directory.
+
+      6. hdf5:<file name>:<object name>:[addtional spec.] - Read an
+      HDF5 file and obtain a vector from the object with the specified
+      name. The remaining parts of the string contain additional
+      information which may be needed depending on the type of object
+      stored in the HDF5 file. A list of object types and additional
+      specifications and more detail is given below.
+
+      - double: (no addl. spec.) Implies vector of size 1
+      - double[]: (no addl. spec.)
+      - hist: (no addl. spec.) Vector of histogram weights
+      - int: (no addl. spec.) Implies vector of size 1
+      - int[]: (no addl. spec.)
+      - size_t: (no addl. spec.) Implies vector of size 1
+      - size_t[]: (no addl. spec.)
+      - table: <column>         Selected column from table
+      - table: <row>:<col pat>  Selected row and columns  
+      - uniform_grid<double>: (no addl. spec.)
+
+      For table <row>:<col pat>, the first additional specification is
+      a row number, which can be negative to refer to counting from the end
+      of the table. The second additional specification is a pattern of
+      column names using either '*' or '?'.
+
+      End of runtime documentation.
 
       \note Any data in the vector \c before the function is 
       called will be lost.
@@ -1011,17 +1083,30 @@ namespace o2scl_hdf {
 
   /** \brief Specification of several strings
 
-      The specification types are:
+      Some acol commands take arguments which are 'string list
+      specifications'. The different parts of the string are separated
+      by a colon, and the first part specifes the type of vector
+      specification. The different types are:
 
-      - list: list of comma separated entries
-      - shell: read all lines output from a shell command
-      - python: read all lines output from a python command
-      - pattern: create a list of strings from a pattern using
-      [0], [a], and [A]
-      - text: read all the lines in a text file
-      - hdf5: From an HDF5 file using type string or string[]
+      1. list:<comma-separated list> - A list of strings
+
+      2. shell:<command> - The lines obtained from the result of a
+      shell command, with a maximum of 256 characters per line.
+
+      3. pattern:N:x[0][a][A] - The N strings obtained from a pattern.
+      Occurrences of [0] are replaced with the integer 'i' where i
+      runs from 0 to N-1. Occurrences of [a] are replaced with 'a'
+      through 'z' from 0 through 25, and 'aa' through 'zz' for i from
+      26 to 701. Occurrences of [A] are replaced with 'A' through 'Z'
+      from 0 through 25, and 'AA' through 'ZZ' for i from 26 to 701.
+
+      4. text:<filename> - The lines in the text file.
+
+      5. hdf5: - Unfinished.
 
       This function is used for the acol slack command.
+
+      End of runtime documentation.
 
       \note Previous strings in \c v are left unchanged and
       new strings are just added to the end.
@@ -1381,14 +1466,40 @@ namespace o2scl_hdf {
   
   /** \brief A list of vectors specified by a string
 
-      Formats:
-      - function: func:\<num\>:\<len(i)\>:\<function of i and j\>
-      - columns in text file: text:\<column index list\> 
-      - HDF5 object(s) in file(s): 
-      hdf5:\<file name(s)\>:\<object name(s)\>:[additional specification]
+      Some acol commands take arguments which are 'multiple vector
+      specifications', i.e. a set of arrays specified as a string. The
+      different parts of the string are separated by a colon, and the
+      first part specifes the type of multiple vector specification.
+      The different types are:
 
-      Also, many vector specifications from \ref vector_spec() 
-      work.
+      1. func:<N>:<function of i>:<function of i and j> - Specify the
+      number of vectors, a function of "i" which determines the length
+      of the ith vector, and a function of "i" and "j" which specifies
+      the jth element of the ith vector.
+
+      2. text:<filename pattern>:<numeric column list> - Read one or
+      more text files and extract vectors of numbers from columns of
+      the text file, ignoring any header rows which contain
+      non-numeric values. For example 'text:~/temp.dat:2-4' will
+      construct vectors from the third, fourth, and fifth columns of
+      the file 'temp.dat' in the user's home directory.
+
+      3. hdf5:<filename pattern>:<object name>:[additional spec.] -
+      Read one or more HDF5 files and obtain a vector from the object with
+      the specified name. The remaining parts of the string contain
+      additional information which may be needed depending on the type of
+      object stored in the HDF5 file. type: addl. spec. 
+      
+      table:<column pattern> table:<row list>:<column pattern>
+
+      Also, many normal vector specifications (from 'acol -help
+      vector-spec') also work as multiple vector specifications. These
+      include specifications which begin with 'val:', 'list:',
+      'grid:', and 'table-row:'. Also included are 'hdf5:'
+      specifications which refer to objects of type double, double[],
+      hist, int, int[], size_t, size_t[], and uniform_grid<double>.
+
+      End of runtime documentation.
       
       \note The vector \c v is not cleared and new vector specified
       in \c spec are added to the end of \c v.

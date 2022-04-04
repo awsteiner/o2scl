@@ -659,9 +659,10 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     string str="The O2scl types which can be handled by "+cl->cmd_name;
     str+=" are ";
     for(size_t i=0;i<type_list.size()-1;i++) {
-      str+=type_list[i]+", ";
+      str+=ter.magenta_fg()+ter.bold()+type_list[i]+ter.default_fg()+", ";
     }
-    str+="and "+type_list[type_list.size()-1]+'.';
+    str+="and "+ter.magenta_fg()+ter.bold()+
+      type_list[type_list.size()-1]+ter.default_fg()+'.';
 
     std::vector<std::string> sv;
     o2scl::rewrap_keep_endlines(str,sv,scol-1);
@@ -732,46 +733,24 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     cout << "Documentation for help topic: " << ter.green_fg() << ter.bold()
 	 << "value-spec" << ter.default_fg() << endl;
     cout << line << "\n" << endl;
-    
-    std::string str=((std::string)"Value specification ")+
-      "description:\n\nSome "+cl->cmd_name+
-      " commands value specifications as "+
-      "arguments. The first part of the specification is a \"type\" "+
-      "followed by a colon, followed by arguments which depend on "+
-      "the type. If no colon is present, then a \"func:\" prefix is "+
-      "assumed. The different types for a value specification are:\n\n"+
-      "1. <numeric value or function> - Value equal to the result of "+
-      "<function>, e.g. \"7.6\" or \"sin(0.5)\". See \""+cl->cmd_name+
-      " -help functions\" for a list of functions that can be used.\n\n"+
-      "  For example:\n\n  acol -create double \"sqrt(5)\" -output\n\n"+
-      "2. hdf5:<file>:<object name>:[addl. spec.] - Read an HDF5 value "+
-      "and obtain the value from object named <object name>. For some "+
-      "object types, additional specifications are required to "+
-      "specify which value should be used. A list of object types "+
-      "and additional specifications and more detail is given below.\n\n"+
-      "                 type: addl. spec.      Description\n"+
-      " --------------------------------------------------\n"+
-      "               double: (no addl. spec.)\n"+
-      "                  int: (no addl. spec.)\n"+
-      "               size_t: (no addl. spec.)\n"+
-      "             double[]: index\n"+
-      "                int[]: index\n"+
-      "             size_t[]: index\n"+
-      " uniform_grid<double>: index\n"+
-      "                table: column name,row index\n\n"+
-      "  For example:\n\n  acol -create double "+
-      "hdf5:data/o2scl/apr98.o2:apr:rho,0 -output\n\n"+
-      "3. shell:<shell command> - Set the value equal to the first "+
-      "result obtained using the specified shell command. For example "+
-      "(using bash):\n\n  acol -create double "+
-      "shell:\"ls | wc | awk '{print $1}'\" -output\n\n"+
-      "4. python:<python code> - Set the value equal to the "+
-      "result obtained using the specified python code. For example "+
-      "(using bash):\n\n  acol -create double "+
-      "$'python:\\\"import numpy\\nprint(numpy.sin(4))\\\"' -output";
+
+    std::string help;
+    for(size_t j=0;j<help_doc_strings.size();j++) {
+      if (help_doc_strings[j][0]=="value_spec") {
+        for(size_t kk=1;kk<help_doc_strings[j].size();kk++) {
+          if (kk==1) {
+            help=help_doc_strings[j][kk];
+          } else {
+            if (help_doc_strings[j][kk].length()>0) {
+              help+="\n\n"+help_doc_strings[j][kk];
+            }
+          }
+        }
+      }
+    }
     
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv,scol-1);
+    o2scl::rewrap_keep_endlines(help,sv,scol-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -784,61 +763,22 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     cout << "Documentation for help topic: " << ter.green_fg() << ter.bold()
 	 << "vector-spec" << ter.default_fg() << endl;
     cout << line << "\n" << endl;
-    
-    std::string str=((std::string)"Vector specification ")+
-      "description:\n\nSome "+cl->cmd_name+
-      " commands take arguments "+
-      "which are 'vector specifications', i.e. an "+
-      "array specified as a string. The different parts of the string "+
-      "are separated by a colon, and the first part specifes the type "+
-      "of vector specification. The different types are:\n\n"+
-      "  1. val:<value> - Create a vector with one element equal to "+
-      "<value>, which may be a number or a simple function, e.g. "+
-      "'val:sin(0.5)'.\n\n"+
-      "  2. list:<entry 0>,<entry 1>, ..., <entry n-1> - Create a "+
-      "vector with a simple list of numbers or functions, e.g. "+
-      "'list:3.0,1.0e-3,sqrt(2.0)'.\n\n"+
-      "  3. func:<N>:<function of i> - Create a vector by specifying "+
-      "the length of the vector and a function used to fill the "+
-      "elements. For example: 'func:41:sin(i/20.0*acos(-1))'.\n\n"+
-      "  4. grid:<begin>,<end>,<width>,[\"log\"] - Create a "+
-      "vector equal to a uniform grid, e.g. use 'grid:1.0,10.0,1.0' "+
-      "for a 10-element vector filled with the numbers 1 to 10."+
-      "The grid arguments can be values or mathematical expressions.\n\n"+
-      "  5. text:<filename>:<column index> - Read a text file and extract "+
-      "a vector of numbers from a column of the text file (starting "+
-      "with zero for the first column), ignoring "+
-      "any header rows which contain non-numeric values. For "+
-      "example 'text:~/temp.dat:2' will construct a vector from the "+
-      "third column of the file 'temp.dat' in the user's home "+
-      "directory.\n\n"+
-      "  6. hdf5:<file name>:<object name>:[addtional spec.] - "+
-      "Read an HDF5 file and obtain a vector from the object with "+
-      "the specified name. The remaining parts of the string contain "+
-      "additional information which may be needed depending on the "+
-      "type of object stored in the HDF5 file. A list of object types "+
-      "and additional specifications and more detail is given below.\n\n"+
-      "                 type: addl. spec.      Description\n"+
-      " --------------------------------------------------\n"+
-      "               double: (no addl. spec.) Implies vector of size 1\n"+
-      "             double[]: (no addl. spec.)\n"+
-      "                 hist: (no addl. spec.) Vector of histogram weights\n"+
-      "                  int: (no addl. spec.) Implies vector of size 1\n"+
-      "                int[]: (no addl. spec.)\n"+
-      "               size_t: (no addl. spec.) Implies vector of size 1\n"+
-      "             size_t[]: (no addl. spec.)\n"+
-      "                table: <column>         Selected column from table\n"+
-      "                table: <row>:<col pat>  Selected row and columns  \n"+
-      " uniform_grid<double>: (no addl. spec.)\n"+
-      "\n"+
-      "For table <row>:<col pat>, "+
-      "the first additional specification is a row number, "+
-      "which can be negative to refer to counting from the end of the "+
-      "table. The second additional specification is a pattern of "+
-      "column names using either '*' or '?'.";
 
+    std::string help;
+    for(size_t j=0;j<help_doc_strings.size();j++) {
+      if (help_doc_strings[j][0]=="vector_spec") {
+        for(size_t kk=1;kk<help_doc_strings[j].size();kk++) {
+          if (kk==1) {
+            help=help_doc_strings[j][kk];
+          } else {
+            help+="\n\n"+help_doc_strings[j][kk];
+          }
+        }
+      }
+    }
+    
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv,scol-1);
+    o2scl::rewrap_keep_endlines(help,sv,scol-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -852,29 +792,23 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	 << "strings-spec" << ter.default_fg() << endl;
     cout << line << "\n" << endl;
     
-    std::string str=((std::string)"String list specification ")+
-      "description:\n\nSome "+cl->cmd_name+
-      " commands take arguments "+
-      "which are 'string list specifications'. "+
-      "The different parts of the string "+
-      "are separated by a colon, and the first part specifes the type "+
-      "of vector specification. The different types are:\n\n"+
-      "  1. list:<comma-separated list> - A list of strings\n\n"+
-      "  2. shell:<command> - The lines obtained from the "+
-      "result of a shell command, with a maximum of 256 characters "+
-      "per line.\n\n"+
-      "  3. pattern:N:x[0][a][A] - The N strings obtained from a "+
-      "pattern. Occurrences of [0] are replaced with the integer 'i' "+
-      "where i runs from 0 to N-1. Occurrences of [a] are replaced "+
-      "with 'a' through 'z' from 0 through 25, and 'aa' through "+
-      "'zz' for i from 26 to 701. Occurrences of [A] are replaced "+
-      "with 'A' through 'Z' from 0 through 25, and 'AA' through "+
-      "'ZZ' for i from 26 to 701.\n\n"+
-      "  4. text:<filename> - The lines in the text file.\n\n"+
-      "  5. hdf5: - Unfinished.\n\n";
+    std::string help;
+    for(size_t j=0;j<help_doc_strings.size();j++) {
+      if (help_doc_strings[j][0]=="strings_spec") {
+        for(size_t kk=1;kk<help_doc_strings[j].size();kk++) {
+          if (kk==1) {
+            help=help_doc_strings[j][kk];
+          } else {
+            if (help_doc_strings[j][kk].length()>0) {
+              help+="\n\n"+help_doc_strings[j][kk];
+            }
+          }
+        }
+      }
+    }
     
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv,scol-1);
+    o2scl::rewrap_keep_endlines(help,sv,scol-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -889,44 +823,23 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	 << "mult-vector-spec" << ter.default_fg() << endl;
     cout << line << "\n" << endl;
     
-    std::string str=((std::string)"Multiple vector specification ")+
-      "description:\n\nSome "+cl->cmd_name+
-      " commands take arguments "+
-      "which are 'multiple vector specifications', i.e. a set of "+
-      "arrays specified as a string. The different parts of the string "+
-      "are separated by a colon, and the first part specifes the type "+
-      "of multiple vector specification. The different types are:\n\n"+
-      "  1. func:<N>:<function of i>:<function of i and j> - "+
-      "Specify the number of vectors, a function of \"i\" which "+
-      "determines the length of the ith vector, and a function of "+
-      "\"i\" and \"j\" which specifies the jth element of the ith "+
-      "vector.\n\n"+
-      "  2. text:<filename pattern>:<numeric column list> - "+
-      "Read one or more text files and extract "+
-      "vectors of numbers from columns of the text file, ignoring "+
-      "any header rows which contain non-numeric values. For "+
-      "example 'text:~/temp.dat:2-4' will construct vectors from the "+
-      "third, fourth, and fifth columns of the file 'temp.dat' "+
-      "in the user's home directory.\n\n"+
-      "  3. hdf5:<filename pattern>:<object name>:[additional spec.] - "+
-      "Read one or more HDF5 files and obtain a vector from the object "+
-      "with the specified name. The remaining parts of the string contain "+
-      "additional information which may be needed depending on the "+
-      "type of object stored in the HDF5 file.\n"+
-      "                 type: addl. spec.      Description\n"+
-      " --------------------------------------------------\n"+
-      "                table:<column pattern>\n"+
-      "                table:<row list>:<column pattern>\n"+
-      "\n"+
-      "Also, many normal vector specifications (from 'acol -help "+
-      "vector-spec') also work as multiple vector specifications. "+
-      "These include specifications which begin with 'val:', 'list:', "+
-      "'grid:', and 'table-row:'. Also included are 'hdf5:' specifications "+
-      "which refer to objects of type double, double[], hist, int, "+
-      "int[], size_t, size_t[], and uniform_grid<double>.";
+    std::string help;
+    for(size_t j=0;j<help_doc_strings.size();j++) {
+      if (help_doc_strings[j][0]=="mult_vector_spec") {
+        for(size_t kk=1;kk<help_doc_strings[j].size();kk++) {
+          if (kk==1) {
+            help=help_doc_strings[j][kk];
+          } else {
+            if (help_doc_strings[j][kk].length()>0) {
+              help+="\n\n"+help_doc_strings[j][kk];
+            }
+          }
+        }
+      }
+    }
 
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv,scol-1);
+    o2scl::rewrap_keep_endlines(help,sv,scol-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }

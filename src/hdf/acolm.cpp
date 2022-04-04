@@ -1244,16 +1244,16 @@ int acol_manager::setup_parameters() {
           found=true;
         }
       }
-      if (verbose>2) {
-        if (found) {
+      if (found) {
+        if (verbose>2) {
           cout << "Function acol_manager::setup_parameters() found "
                << "documentation for parameter "
                << it->first << " ." << endl;
-        } else {
-          cout << "Function acol_manager::setup_parameters() could not find "
-               << "documentation for parameter "
-               << it->first << " ." << endl;
         }
+      } else {
+        cout << "Function acol_manager::setup_parameters() could "
+             << "not find documentation for parameter "
+             << it->first << " ." << endl;
       }
     }
   }

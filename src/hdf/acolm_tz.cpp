@@ -257,12 +257,16 @@ void acol_manager::xml_replacements(std::string &s,
   
   // Make all of the type replacements
   for(size_t i=0;i<type_list.size();i++) {
+    string_replace(s,"<computeroutput> <ref> "+type_list[i]+
+                   " </ref> </computeroutput>",
+                   ter.magenta_fg()+ter.bold()+type_list[i]+
+                   ter.default_fg());
     string_replace(s,"<computeroutput> "+type_list[i]+
                    " </computeroutput>",
                    ter.magenta_fg()+ter.bold()+type_list[i]+
                    ter.default_fg());
-    string_replace(s,"<computeroutput> <ref> "+type_list[i]+
-                   " </ref> </computeroutput>",
+    string_replace(s,"<ref> "+type_list[i]+
+                   " </ref>",
                    ter.magenta_fg()+ter.bold()+type_list[i]+
                    ter.default_fg());
   }
@@ -286,8 +290,15 @@ void acol_manager::xml_replacements(std::string &s,
   string_replace(s,"<itemizedlist> <listitem>","\n\n*");
   string_replace(s,"</listitem> <listitem>","*");
   string_replace(s,"</listitem> </itemizedlist>","");
+  string_replace(s,"<orderedlist> <listitem>","\n\n*");
+  string_replace(s,"</listitem> </orderedlist>","");
   string_replace(s,"<simplesect>","");
   string_replace(s,"</simplesect>","");
+
+  string_replace(s,"<computeroutput> ","");
+  string_replace(s," </computeroutput>","");
+  string_replace(s,"<linebreak> ","");
+  string_replace(s," </linebreak>","");
   
   string_replace(s,"  "," ");
   string_replace(s," )",")");
