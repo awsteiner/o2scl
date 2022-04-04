@@ -345,7 +345,21 @@ namespace o2scl_acol {
     virtual int comm_ser_hist_t3d(std::vector<std::string> &sv,
                                   bool itive_com);
 
-    /// Binary function for tensors
+    /** \brief Binary function for tensors
+
+        For objects of type tensor_grid:
+
+        Apply a binary function to two tensor_grid objects.
+
+        <file> <object name> <function>
+
+        Read tensor_grid named <object name> from file <file> and use
+        it along with the function <function> to modify the current
+        tensor_grid object. The <function> parameter should be a
+        mathematical function of the value in the current tensor (v),
+        the value in the tensor named <object name> (w), the indices
+        (i0, i1, ...) or the grid points (x0, x1, ...).
+     */
     virtual int comm_binary(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Average rows together 
@@ -529,6 +543,14 @@ namespace o2scl_acol {
         (No arguments.)
 
         Output the table3d grid as a series of columns.
+
+        For objects of type tensor_grid:
+
+        Get the tensor grid.
+
+        (No arguments.)
+
+        Output the tensor grid as a series of columns.
      */
     virtual int comm_get_grid(std::vector<std::string> &sv, bool itive_com);
 
@@ -648,10 +670,54 @@ namespace o2scl_acol {
 
         The <tt>deriv</tt> command differentiates the tensor object
         with respect to one of the indices.
+
+        For objects of type tensor_grid:
+
+        Compute the derivative of the tensor object w.r.t. an index
+
+        <index>
+
+        The <tt>deriv</tt> command differentiates the tensor object
+        with respect to one of the indices.
+
+        For objects of type double[]:
+
+        Replace the array with its derivative.
+
+        (No arguments.)
+
+        Replace the array with its derivative using the current
+        interpolation type.
+
+        For objects of type int[]:
+
+        Replace the array with its derivative.
+
+        (No arguments.)
+
+        Replace the array with its derivative using the current
+        interpolation type, converting it to a double[].
+
+        For objects of type size_t[]:
+
+        Replace the array with its derivative.
+
+        (No arguments.)
+
+        Replace the array with its derivative using the current
+        interpolation type, converting it to a double[].
      */
     virtual int comm_deriv(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Convert object to a \ref o2scl::table object
+
+        For objects of type tensor_grid:
+
+        Convert to a table object.
+
+        <index> <grid name> <data name> [values of fixed indices]
+        
+        Detailed desc.
 
         For objects of type hist:
 
@@ -666,6 +732,13 @@ namespace o2scl_acol {
     /** \brief Get entries along the main diagonal
 
         For objects of type tensor:
+
+        Get diagonal elements.
+
+        (No arguments.)
+
+        Extract only the elements on the main diagonal to create a
+        double[] object.
      */
     virtual int comm_diag(std::vector<std::string> &sv, bool itive_com);
 
@@ -683,6 +756,83 @@ namespace o2scl_acol {
         table. If 'eps' is specified, then use that value as the
         minimum value between grid points.
 
+        For objects of type tensor:
+
+        Select two indices and convert to a table3d object.
+
+        <x index> <y index> <slice name> [fixed 1] [fixed 2] ...
+
+        This command uses two indices in the current tensor object to
+        create a table3d object. The values for the remaining indices
+        fixed to [fixed 1], [fixed 2], etc. in that order. For
+        example, "to-table3d 3 1 z 5 3" uses index 3 for the x
+        coordinate of the new table3d object, uses index 1 for the y
+        coordinate of the new table3d object, uses 5 for index 0, and
+        uses 3 for index 2."+ The x- and y-grids in he table3d object
+        are named "x" and "y" and filled with the grid index by
+        default."+ To set the x- or y-grid names afterwards, use
+        commands 'x-name' and 'y-name'.
+
+        For objects of type tensor<int>:
+
+        Select two indices and convert to a table3d object.
+
+        <x index> <y index> <slice name> [fixed 1] [fixed 2] ...
+
+        This command uses two indices in the current tensor object to
+        create a table3d object. The values for the remaining indices
+        fixed to [fixed 1], [fixed 2], etc. in that order. For
+        example, "to-table3d 3 1 z 5 3" uses index 3 for the x
+        coordinate of the new table3d object, uses index 1 for the y
+        coordinate of the new table3d object, uses 5 for index 0, and
+        uses 3 for index 2."+ The x- and y-grids in he table3d object
+        are named "x" and "y" and filled with the grid index by
+        default."+ To set the x- or y-grid names afterwards, use
+        commands 'x-name' and 'y-name'.
+
+        For objects of type tensor<size_t>:
+
+        Select two indices and convert to a table3d object.
+
+        <x index> <y index> <slice name> [fixed 1] [fixed 2] ...
+
+        This command uses two indices in the current tensor object to
+        create a table3d object. The values for the remaining indices
+        fixed to [fixed 1], [fixed 2], etc. in that order. For
+        example, "to-table3d 3 1 z 5 3" uses index 3 for the x
+        coordinate of the new table3d object, uses index 1 for the y
+        coordinate of the new table3d object, uses 5 for index 0, and
+        uses 3 for index 2."+ The x- and y-grids in he table3d object
+        are named "x" and "y" and filled with the grid index by
+        default."+ To set the x- or y-grid names afterwards, use
+        commands 'x-name' and 'y-name'.
+
+        For objects of type tensor_grid:
+
+        Select two indices and convert to a table3d object.
+
+        <x index> <y index> <slice name> [value 1] [value 2] ...
+
+        This command uses two indices in the current tensor_grid
+        object to create a table3d object. The values for the
+        remaining indices are by interpolation to [value 1], [value
+        2], etc. in that order. For example, "to-table3d 3 1 z 0.5
+        2.0" uses index 3 for the x coordinate of the new table3d
+        object, uses index 1 for the y coordinate of the new table3d
+        object, uses interpolation to set the value of the index 0 to
+        0.5, and uses interpolation to set the value of index 2 to to
+        2.0. The x- and y-grids in the table3d object are named "x"
+        and "y" by default. To set the x- or y-grid names
+        afterwards, use commands 'x-name' and 'y-name'.
+
+        For objects of type hist_2d:
+
+        Convert to a hist_2d object.
+
+        <x name> <y name> <weight name>
+
+        Convert to a hist_2d object using the specified names.
+        
         For objects of type prob_dens_mdim_amr:
 
         Select two indices and convert to a table3d object.
@@ -703,18 +853,47 @@ namespace o2scl_acol {
         <slice>
 
         Detailed desc.
+
+        For objects of type tensor:
+
+        Convert the tensor to a tensor_grid object.
+
+        [function 1] [function 2] ...
+
+        Convert a tensor to a tensor_grid object, using functions to
+        specify the grid for each index. The functions should be
+        specified as functions of the variable 'i', which runs from 0
+        to size-1 for each index. Any user-specified functions are
+        used up to the rank of the tensor, and if not enough functions
+        are specified, then the function 'i' is used.
      */
     virtual int comm_to_tensor_grid(std::vector<std::string> &sv,
                                     bool itive_com);
     
     /** \brief Convert object to a \ref o2scl::tensor object
+
+        For objects of type tensor_grid:
+
+        Convert to a tensor object.
+
+        (No arguments.)
+        
+        Convert to a tensor object, ignoring the grid.
      */
     virtual int comm_to_tensor(std::vector<std::string> &sv,
                                bool itive_com);
 
     /** \brief Convert object to a \ref o2scl::table3d object
         by summing over tensor indices
-     */
+
+        For objects of type tensor:
+
+        Select two indices and convert to a table3d object.
+
+        <x name> <y name> <slice name> [fixed 1] [fixed 2] ...
+
+        Detailed desc.
+    */
     virtual int comm_to_table3d_sum(std::vector<std::string> &sv,
                                     bool itive_com);
 
@@ -968,6 +1147,35 @@ namespace o2scl_acol {
         table3d containing slices named 's1' and 's2', 'function s1-s2
         s3' would create a new column 's3' which contains the
         difference of columns 's1' and 's2'.
+
+        For objects of type tensor:
+
+        Set the tensor values from a function.
+
+        [cond. function] <function of v, i0, i1, ...>
+
+        The \c function command sets all entries in a tensor equal to
+        a user-specified mathematical function of the indices. When
+        the conditional function evaluates to a number less than or
+        equal to 0.5, then the tensor entry will be unchanged. (For
+        more help with functions, type acol -help functions)
+
+        For objects of type tensor_grid:
+
+        Set the tensor values from a function.
+
+        [conditional func.] <func. of v, i0, i1, ... and x0, x1, ...>
+
+        The "function" command sets all the data entries in a
+        tensor_grid equal to a user-specified mathematical function of
+        the value in the tensor (v), the indices (i0, i1, ...) or the
+        grid points (x0, x1, ...). If two function arguments are given
+        and if the first function argument is not "none", then the
+        first function specifies which tensor entries are to be
+        modified. When the conditional function evaluates to a number
+        less than or equal to 0.5, then the tensor entry will be "
+        unchanged. (For more help with functions, type "acol -help
+        functions.".)
     */
     virtual int comm_function(std::vector<std::string> &sv, bool itive_com);
 
@@ -1054,6 +1262,14 @@ namespace o2scl_acol {
         with the current interpolation type to interpolate all of the
         slices in the table3d object to create a table with a column
         for each slice.
+
+        For objects of type tensor_grid:
+
+        Slice to a smaller rank tensor_grid object.
+
+        <index 1> <value 1> <index 2> <value 2> ...
+
+        Detailed desc.
     */
     virtual int comm_slice(std::vector<std::string> &sv, bool itive_com);
 
@@ -1176,12 +1392,22 @@ namespace o2scl_acol {
 
         For objects of type table3d:
 
-        Interpolate a number into a slice.
+        Interpolate x and y values into a slice.
 
         <z name> <x value> <y value>
 
         Interpolate (<x value>,<y value>) into the slice named <z
         name>.
+
+        For objects of type tensor_grid:
+
+        Linearly interpolate in the grid.
+
+        <value 1> <value 2> <value 3> ...
+
+        The command "interp" uses linear interpolation to interpolate
+        an array with size equal to the tensor rank into the tensor
+        grid and outputs the result.
     */
     virtual int comm_interp(std::vector<std::string> &sv, bool itive_com);
 
@@ -1202,6 +1428,46 @@ namespace o2scl_acol {
         (No arguments.)
 
         List the slice names and print out grid info.
+
+        For objects of type tensor:
+
+        List the tensor rank and index sizes.
+
+        (No arguments.)
+
+        List the tensor rank and index sizes.
+
+        For objects of type tensor<int>:
+
+        List the tensor rank and index sizes.
+
+        (No arguments.)
+
+        List the tensor rank and index sizes.
+
+        For objects of type tensor<size_t>:
+
+        List the tensor rank and index sizes.
+
+        (No arguments.)
+
+        List the tensor rank and index sizes.
+
+        For objects of type tensor_grid:
+
+        List the tensor rank and index sizes.
+
+        (No arguments.)
+
+        List the tensor rank and index sizes.
+
+        For objects of type hist_2d:
+
+        List the bin edges.
+
+        (No arguments.)
+
+        For objects of type hist_2d:
     */
     virtual int comm_list(std::vector<std::string> &sv, bool itive_com);
 
@@ -1222,6 +1488,46 @@ namespace o2scl_acol {
         <slice name>
 
         Compute the maximum value of a slice.
+
+        For objects of type tensor:
+
+        Compute the maximum value and the associated index.
+
+        (No arguments.)
+        
+        Compute the maximum value and the associated index.
+
+        For objects of type tensor<int>:
+
+        Compute the maximum value and the associated index.
+
+        (No arguments.)
+        
+        Compute the maximum value and the associated index.
+
+        For objects of type tensor<size_t>:
+
+        Compute the maximum value and the associated index.
+
+        (No arguments.)
+        
+        Compute the maximum value and the associated index.
+
+        For objects of type tensor_grid:
+
+        Compute the maximum value and the associated index and grid point.
+
+        (No arguments.)
+        
+        Compute the maximum value and the associated index and grid point.
+
+        For objects of type hist_2d:
+
+        Find the maximum weight.
+
+        (No arguments.)
+
+        Find the maximum weight and print out the location.
     */
     virtual int comm_max(std::vector<std::string> &sv, bool itive_com);
     
@@ -1242,6 +1548,46 @@ namespace o2scl_acol {
         <slice name>
 
         Compute the minimum value of a slice.
+
+        For objects of type tensor:
+
+        Compute the minimum value and the associated index.
+
+        (No arguments.)
+        
+        Compute the minimum value and the associated index.
+
+        For objects of type tensor<int>:
+
+        Compute the minimum value and the associated index.
+
+        (No arguments.)
+        
+        Compute the minimum value and the associated index.
+
+        For objects of type tensor<size_t>:
+
+        Compute the minimum value and the associated index.
+
+        (No arguments.)
+        
+        Compute the minimum value and the associated index.
+
+        For objects of type tensor_grid:
+
+        Compute the minimum value and the associated index and grid point.
+
+        (No arguments.)
+        
+        Compute the minimum value and the associated index and grid point.
+
+        For objects of type hist_2d:
+
+        Find the minimum weight.
+
+        (No arguments.)
+
+        Find the minimum weight and print out the location.
     */
     virtual int comm_min(std::vector<std::string> &sv, bool itive_com);
 
@@ -1294,6 +1640,51 @@ namespace o2scl_acol {
     virtual int comm_output(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Rearrange a tensor
+
+        For objects of type tensor:
+
+        Rearrange the tensor
+
+        <index spec. 1> [index spec. 2] ...
+
+        Index specifications are: index(ix), fixed(ix), sum(ix),
+        trace(ix1,ix2), reverse(ix), and range(ix,start,end). Index
+        specifications may be specified as separate arguments e.g.
+        "index(1)" "fixed(2,10)" or multiple index specifications may
+        be given in a single argument separated by spaces or commas,
+        e.g. "index(1) fixed(2,10)" or "index(1),fixed(2,10)". See
+        '-help index-spec for more information on the tensor index
+        specifications.
+
+        For objects of type tensor<int>:
+
+        Rearrange the tensor.
+
+        <index spec. 1> [index spec. 2] ...
+
+        Index specifications are: index(ix), fixed(ix), sum(ix),
+        trace(ix1,ix2), reverse(ix), and range(ix,start,end). Index
+        specifications may be specified as separate arguments e.g.
+        "index(1)" "fixed(2,10)" or multiple index specifications may
+        be given in a single argument separated by spaces or commas,
+        e.g. "index(1) fixed(2,10)" or "index(1),fixed(2,10)". See
+        '-help index-spec for more information on the tensor index
+        specifications.
+
+        For objects of type tensor<size_t>:
+
+        Rearrange the tensor.
+
+        <index spec. 1> [index spec. 2] ...
+
+        Index specifications are: index(ix), fixed(ix), sum(ix),
+        trace(ix1,ix2), reverse(ix), and range(ix,start,end). Index
+        specifications may be specified as separate arguments e.g.
+        "index(1)" "fixed(2,10)" or multiple index specifications may
+        be given in a single argument separated by spaces or commas,
+        e.g. "index(1) fixed(2,10)" or "index(1),fixed(2,10)". See
+        '-help index-spec for more information on the tensor index
+        specifications.
 
         For objects of type tensor_grid:
 
@@ -1429,6 +1820,17 @@ namespace o2scl_acol {
         and the sum over all entries. Note, to perform a partial
         sum over sum of the tensor indices, use the 
         <tt>rearrange</tt> command.
+
+        For objects of type tensor_grid:
+
+        Output the sum of all the tensor entries.
+
+        (No arguments.)
+
+        The "sum" command outputs the total tensor size
+        and the sum over all entries. Note, to perform a partial
+        sum over sum of the tensor indices, use the 
+        <tt>rearrange</tt> command.
     */
     virtual int comm_sum(std::vector<std::string> &sv, bool itive_com);
 
@@ -1554,6 +1956,23 @@ namespace o2scl_acol {
         the object is named object_name. If the file does not exist,
         it is created. If no contours are found, then no file I/O is
         performed and the current table3d object is unmodified.
+
+        For objects of type hist_2d:
+
+        Create contour lines from a table3d slice.
+
+        ["frac"] <value> [output file] [output name]
+
+        If the argument "frac" is not present, the "contours" command
+        constructs a set of contour lines using at the fixed value
+        given in <value>. If two additional arguments are given, then
+        the contour lines are stored in the file named output_filename
+        and the object is named object_name. If the file does not
+        exist, it is created. If no contours are found, then no file
+        I/O is performed and the current table3d object is
+        unmodified."+ If the argument "frac" is present, then the
+        operation is the same except that <value> is interpreted as a
+        fraction of the total integral under the data.
      */
     virtual int comm_contours(std::vector<std::string> &sv, bool itive_com);
     
@@ -1584,11 +2003,29 @@ namespace o2scl_acol {
 
         For objects of type table3d:
 
-        Get a single entry in a table3d object.
+        Get or set a single entry in a table3d object.
 
         <slice> <x index> <y index> [value or "none"]
 
         Detailed desc.
+
+        For objects of type tensor:
+
+        Get or set a single entry in a tensor object.
+
+        <index 1> <index 2> <index 3> ... [value or "none"]
+
+        Detailed desc.
+
+        For objects of type tensor_grid:
+
+        Get or set a single entry in a tensor_grid object.
+
+        <index 1> <index 2> <index 3> ... [value or "none"]
+
+        The \"entry\" command gets or sets a value in the tensor_grid
+        object. The arguments are a list of indices and (optionally) a
+        new value to store in that location.
     */
     virtual int comm_entry(std::vector<std::string> &sv, bool itive_com);
 
@@ -1614,6 +2051,17 @@ namespace o2scl_acol {
         <slice> <x value> <y value> [value or "none"]
 
         Detailed desc.
+
+        For objects of type tensor_grid:
+
+        Get a single entry in a tensor_grid object.
+
+        <value 1> <value 2> <value 3> ... [value or "none"]
+
+        The "entry-grid" command gets or sets a value in the
+        tensor_grid object. The arguments are a list of grid values
+        and (optionally) a new value to store in the location closest
+        to the specified grid values.
     */
     virtual int comm_entry_grid(std::vector<std::string> &sv, bool itive_com);
     
@@ -1679,7 +2127,7 @@ namespace o2scl_acol {
 
         Output the average, std. dev, max and min of <column>.
 
-        For objects of type table:
+        For objects of type table3d:
 
         Show slice statistics.
 
@@ -1687,6 +2135,15 @@ namespace o2scl_acol {
 
         Output the average, std. dev, max and min of <slice>.
 
+        For objects of type tensor_grid:
+
+        Show tensor statistics.
+
+        (No arguments.)
+
+        The 'stats' command outputs the number of entries, their mean,
+        standard deviation, minimum and maximum. It also counts the
+        number of infinite or NaN values.
      */
     virtual int comm_stats(std::vector<std::string> &sv, bool itive_com);
 

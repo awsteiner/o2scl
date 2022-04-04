@@ -606,81 +606,35 @@ void acol_manager::command_add(std::string new_type) {
         {0,"stats","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_stats),both},
-        {0,"diag","Get diagonal elements.",-1,-1,"",
-         ((string)"Extract only the elements on the main diagonal ")+
-         "to create a double[] object.",new comm_option_mfptr<acol_manager>
+        {0,"diag","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_diag),both},
-        {0,"entry","Get a single entry in a tensor object.",
-         -1,-1,"<value 1> <value 2> <value 3> ... [value or \"none\"]",
-         "",new comm_option_mfptr<acol_manager>
+        {0,"entry","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_entry),both},
-        {'f',"function","Set tensor value from a function.",0,1,
-         "[cond. function] <function of v, i0, i1, ...>",
-         ((string)"The \"function\" command ")+
-         "sets all entries in a tensor equal to a user-specified "+
-         "mathematical function of the indices. When the conditional "+
-         "function evaluates to a number "+
-         "less than or equal to 0.5, then the tensor entry will be "
-         "unchanged. (For more help with "+
-         "functions, type \""+cl->cmd_name+" -help functions\".)",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
-         both},
-        {'l',"list","List the tensor rank and index sizes.",
-         0,0,"","List the tensor rank and index sizes.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
-         both},
-        {0,"max","Find the maximum value and index.",0,0,"",
-         "Compute the maximum value.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
-         both},
-        {0,"min","Find the minimum value of and index.",0,0,"",
-         "Compute the minimum value.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
-         both},
-        {0,"rearrange","Rearrange the tensor.",
-         -1,-1,"<index spec. 1> [index spec. 2] ...",
-         ((std::string)"Index specifications are: index(ix), fixed(ix), ")+
-         "sum(ix), trace(ix1,ix2), reverse(ix), and range(ix,start,end). "+
-         "Index specifications may be specified as separate arguments "+
-         "e.g. \"index(1)\" \"fixed(2,10)\" or multiple index "+
-         "specifications may be given in a single argument separated by "+
-         "spaces or commas, e.g. \"index(1) fixed(2,10)\" or "+
-         "\"index(1),fixed(2,10)\". See '-help "+ter.green_fg()+ter.bold()+
-         "index-spec"+ter.default_fg()+"' for more information on the "+
-         "tensor index specifications.",
+        {'f',"function","",0,1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_function),both},
+        {'l',"list","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_list),both},
+        {0,"max","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_max),both},
+        {0,"min","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_min),both},
+        {0,"rearrange","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_rearrange),both},
-        {0,"to-table3d","Select two indices and convert to a table3d object.",
-         -1,-1,"<x index> <y index> <slice name> [fixed 1] [fixed 2] ...",
-         ((string)"This command uses two indices in the current ")+
-         "tensor object to create a table3d object. The values for "+
-         "the remaining indices fixed to [fixed 1], "+
-         "[fixed 2], etc. in that order. For example, \"to-table3d 3 1 "+
-         "z 5 3\" uses index 3 for the "+
-         "x coordinate of the new table3d object, uses index 1 for "+
-         "the y coordinate of the new table3d object, uses 5 for index "+
-         "0, and uses 3 for index 2."+
-         "The x- and y-grids in "+
-         "the table3d object are named \"x\" and \"y\" and filled with "+
-         "the grid index by default."+
-         "To set the x- or y-grid names afterwards, "+
-         "use commands 'x-name' and 'y-name'.",
+        {0,"to-table3d","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table3d),both},
-        {0,"to-table3d-sum",
-         "Select two indices and convert to a table3d object.",
-         -1,-1,"<x name> <y name> <slice name> [fixed 1] [fixed 2] ...",
-         "",new comm_option_mfptr<acol_manager>
+        {0,"to-table3d-sum","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table3d_sum),both},
-        {0,"to-tensor-grid","Convert the tensor to a tensor_grid object.",
-         -1,-1,"[function 1] [function 2] ...",
-         ((string)"Convert a tensor to a tensor_grid object, using ")+
-         "functions to specify the grid for each index. The functions "+
-         "should be specified as functions of the variable 'i', which "+
-         "runs from 0 to size-1 for each index. Any user-specified "+
-         "functions are used up to the rank of the tensor, and if "+
-         "not enough functions are specified, then the function 'i' is "+
-         "used.",new comm_option_mfptr<acol_manager>
+        {0,"to-tensor-grid","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_tensor_grid),both}
       };
     update_o2_docs(narr,&options_arr[0],new_type);
@@ -691,46 +645,19 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=5;
     comm_option_s options_arr[narr]=
       {
-        {'l',"list","List the rank and sizes.",
-         0,0,"","List the rank and sizes.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
-         both},
-        {0,"max","Find the maximum value and index.",0,0,"",
-         "Compute the maximum value.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
-         both},
-        {0,"min","Find the minimum value of and index.",0,0,"",
-         "Compute the minimum value.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
-         both},
-        {0,"rearrange","Rearrange the tensor.",
-         -1,-1,"<index spec. 1> [index spec. 2] ...",
-         ((std::string)"Index specifications are: index(ix), fixed(ix), ")+
-         "sum(ix), trace(ix1,ix2), reverse(ix), and range(ix,start,end). "+
-         "Index specifications may be specified as separate arguments "+
-         "e.g. \"index(1)\" \"fixed(2,10)\" or multiple index "+
-         "specifications may be given in a single argument separated by "+
-         "spaces or commas, e.g. \"index(1) fixed(2,10)\" or "+
-         "\"index(1),fixed(2,10)\". See '-help "+ter.green_fg()+ter.bold()+
-         "index-spec"+ter.default_fg()+"' for more information on the "+
-         "tensor index specifications.",
+        {'l',"list","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_list),both},
+        {0,"max","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_max),both},
+        {0,"min","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_min),both},
+        {0,"rearrange","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_rearrange),both},
-        {0,"to-table3d","Select two indices and convert to a table3d object.",
-         -1,-1,"<x name> <y name> <slice name>",
-         ((string)"This command uses two indices in the current ")+
-         "tensor<int> object to create a table3d object. The values for "+
-         "the remaining indices fixed to [fixed 1], "+
-         "[fixed 2], etc. in that order. For example, \"to-table3d 3 1 "+
-         "z 5 3\" uses index 3 for the "+
-         "x coordinate of the new table3d object, uses index 1 for "+
-         "the y coordinate of the new table3d object, uses 5 for index "+
-         "0, and uses 3 for index 2."+
-         "The x- and y-grids in "+
-         "the table3d object are named \"x\" and \"y\" and filled with "+
-         "the grid index by default."+
-         "To set the x- or y-grid names afterwards, "+
-         "use commands 'x-name' and 'y-name'.",
+        {0,"to-table3d","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table3d),both}
       };
@@ -742,48 +669,21 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=5;
     comm_option_s options_arr[narr]=
       {
-        {0,"rearrange","Rearrange the tensor.",
-         -1,-1,"<index spec. 1> [index spec. 2] ...",
-         ((std::string)"Index specifications are: index(ix), fixed(ix), ")+
-         "sum(ix), trace(ix1,ix2), reverse(ix), and range(ix,start,end). "+
-         "Index specifications may be specified as separate arguments "+
-         "e.g. \"index(1)\" \"fixed(2,10)\" or multiple index "+
-         "specifications may be given in a single argument separated by "+
-         "spaces or commas, e.g. \"index(1) fixed(2,10)\" or "+
-         "\"index(1),fixed(2,10)\". See '-help "+ter.green_fg()+ter.bold()+
-         "index-spec"+ter.default_fg()+"' for more information on the "+
-         "tensor index specifications.",
+        {0,"rearrange","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_rearrange),both},
-        {'l',"list","List the rank and sizes.",
-         0,0,"","List the rank and sizes.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
-         both},
-        {0,"to-table3d","Select two indices and convert to a table3d object.",
-         -1,-1,"<x name> <y name> <slice name>",
-         ((string)"This command uses two indices in the current ")+
-         "tensor<size_t> object to create a table3d object. The values for "+
-         "the remaining indices fixed to [fixed 1], "+
-         "[fixed 2], etc. in that order. For example, \"to-table3d 3 1 "+
-         "z 5 3\" uses index 3 for the "+
-         "x coordinate of the new table3d object, uses index 1 for "+
-         "the y coordinate of the new table3d object, uses 5 for index "+
-         "0, and uses 3 for index 2."+
-         "The x- and y-grids in "+
-         "the table3d object are named \"x\" and \"y\" and filled with "+
-         "the grid index by default."+
-         "To set the x- or y-grid names afterwards, "+
-         "use commands 'x-name' and 'y-name'.",
+        {'l',"list","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_list),both},
+        {0,"to-table3d","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table3d),both},
-        {0,"max","Find the maximum value and index.",0,0,"",
-         "Compute the maximum value.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
-         both},
-        {0,"min","Find the minimum value of and index.",0,0,"",
-         "Compute the minimum value.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
-         both}
+        {0,"max","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_max),both},
+        {0,"min","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_min),both}
       };
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
@@ -793,120 +693,59 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=18;
     comm_option_s options_arr[narr]=
       {
-        {0,"sum","Output the sum of all the tensor entries.",0,0,"",
-         ((string)"The \"sum\" command outputs the total tensor size ")+
-         "and the sum over all entries.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
-         both},
-        {0,"binary","Apply a binary function to two tensor_grid objects.",
-         -1,-1,"<file> <object name> <function>",
-         ((string)"Read tensor_grid named <object name> from file <file> ")+
-         "and use it along with the function <function> to modify the "+
-         "current tensor_grid object. The <function> parameter should "+
-         "be a mathematical function of the value in the current tensor "+
-         "(v), the value in the tensor named <object name> (w), the "+
-         "indices (i0, i1, ...) or the grid "+
-         "points (x0, x1, ...).",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_binary),
-         both},
-        {0,"stats","Show stats for the data in the tensor.",0,0,"",
-         ((string)"The 'stats' command outputs the number of entries, ")+
-         "their mean, standard deviation, minimum and maximum. It also "+
-         "counts the number of infinite or NaN values.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_stats),
-         both},
-        {0,"entry","Get a single entry in a tensor_grid object.",
-         -1,-1,"<index 1> <index 2> <index 3> ... [value or \"none\"]",
-         ((string)"The \"entry\" command gets or sets a value in the ")+
-         "tensor_grid object. The arguments are a list of indices and "+
-         "(optionally) a new value to store in that location.",
+        {0,"sum","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_sum),both},
+        {0,"binary","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_binary),both},
+        {0,"stats","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_stats),both},
+        {0,"entry","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_entry),both},
-        {0,"deriv","Compute the derivative of the tensor_grid object.",
-         -1,-1,"<index>",
-         ((string)"The \"tensor_grid\" command differentiates the ")+
-         "tensor_grid object with respect to one of the indices.",
+        {0,"deriv","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_deriv),both},
-        {0,"entry-grid","Get a single entry in a tensor_grid object.",
-         -1,-1,"<value 1> <value 2> <value 3> ... [value or \"none\"]",
-         ((string)"The \"entry-grid\" command gets or sets a value in the ")+
-         "tensor_grid object. The arguments are a list of grid values and "+
-         "(optionally) a new value to store in the location closest to "+
-         "the specified grid values.",
+        {0,"entry-grid","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_entry_grid),both},
-        {'f',"function","Set tensor value from a function.",0,1,
-         "[conditional func.] <func. of v, i0, i1, ... and x0, x1, ...>",
-         ((string)"The \"function\" command sets ")+
-         "all the data entries in a tensor_grid equal to a user-specified "+
-         "mathematical function of the value in the tensor (v), the "+
-         "indices (i0, i1, ...) or the grid "+
-         "points (x0, x1, ...). If two function arguments are given and "+
-         "if the first function argument is not \"none\", then "+
-         "the first function specifies which tensor entries are to be "+
-         "modified. When the conditional function evaluates to a number "+
-         "less than or equal to 0.5, then the tensor entry will be "
-         "unchanged. (For more help with "+
-         "functions, type \""+cl->cmd_name+" -help functions.\".)",
+        {'f',"function","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both},
-        {0,"get-grid","Get the tensor grid.",0,0,"",
-         "Output the tensor grid as a series of columns.",
+        {0,"get-grid","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_get_grid),both},
-        {0,"interp","Linearly interpolate in the grid.",
-         -1,-1,"<value 1> <value 2> <value 3> ...",
-         ((string)"The command \"interp\" uses linear interpolation to ")+
-         "interpolate an array with size equal to the tensor rank "+
-         "into the tensor grid and outputs the result.",
+        {0,"interp","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_interp),both},
-        {'l',"list","List the slice names and print out grid info.",
-         0,0,"","List the slice names and print out grid info.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_list),
-         both},
-        {0,"max","Find the maximum value and indices.",0,0,"",
-         "Compute the maximum value.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
-         both},
-        {0,"min","Find the minimum value and indices.",0,0,"",
-         "Compute the minimum value.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
-         both},
+        {'l',"list","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_list),both},
+        {0,"max","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_max),both},
+        {0,"min","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_min),both},
         {0,"rearrange","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_rearrange),both},
-        {0,"slice","Slice to a smaller rank tensor_grid object.",
-         -1,-1,"<index 1> <value 1> <index 2> <value 2> ...",
-         "",new comm_option_mfptr<acol_manager>
+        {0,"slice","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_slice),both},
         {0,"set-grid","",0,2,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_set_grid),both},
-        {0,"to-table3d","Select two indices and convert to a table3d object.",
-         -1,-1,"<x index> <y index> <new slice> [value 1] [value 2] ...",
-         ((string)"This command uses two indices in the current ")+
-         "tensor_grid object to create a table3d object. The values for "+
-         "the remaining indices are by interpolation to [value 1], "+
-         "[value 2], etc. in that order. For example, \"to-table3d 3 1 "+
-         "z 0.5 2.0\" uses index 3 for the "+
-         "x coordinate of the new table3d object, uses index 1 for "+
-         "the y coordinate of the new table3d object, uses interpolation "+
-         "to set the value of the index 0 to 0.5, and uses interpolation "+
-         "to set the value of index 2 to to 2.0. The x- and y-grids in "+
-         "the table3d object are named \"x\" and \"y\" by default. "+
-         "To set the x- or y-grid names afterwards, "+
-         "use commands 'x-name' and 'y-name'.",
+        {0,"to-table3d","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table3d),both},
-        {0,"to-table","Convert to a two-column table object.",
-         -1,-1,"<index> <grid name> <data name> [values of fixed indices]",
-         "",new comm_option_mfptr<acol_manager>
+        {0,"to-table","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table),both},
-        {0,"to-tensor","Convert to a tensor object.",
-         0,0,"Convert the tensor-grid object to a tensor object.",
-         "",new comm_option_mfptr<acol_manager>
+        {0,"to-tensor","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_tensor),both}
       };
     update_o2_docs(narr,&options_arr[0],new_type);
@@ -944,10 +783,7 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=8;
     comm_option_s options_arr[narr]=
       {
-        {0,"deriv",
-         "Replace the array with its derivative.",0,0,"",
-         ((string)"Replace the array with its derivative using the ")+
-         "current interpolation type.",
+        {0,"deriv","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_deriv),both},
         {0,"interp","Interpolate an index into the array.",0,1,
@@ -1005,12 +841,9 @@ void acol_manager::command_add(std::string new_type) {
          "Compute the minimum value of column <col>.",
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
          both},
-        {0,"deriv",
-         "Replace the array with its derivative.",0,0,"",
-         ((string)"Replace the array with its derivative using the ")+
-         "current interpolation type.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv),
-         both},
+        {0,"deriv","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_deriv),both},
         {0,"interp","Interpolate an index into the array.",0,1,
          "<x value>",
          ((string)"Interpolate <x value> in the array."),
@@ -1051,12 +884,9 @@ void acol_manager::command_add(std::string new_type) {
          "Compute the minimum value of column <col>.",
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
          both},
-        {0,"deriv",
-         "Replace the array with its derivative.",0,0,"",
-         ((string)"Replace the array with its derivative using the ")+
-         "current interpolation type.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_deriv),
-         both},
+        {0,"deriv","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_deriv),both},
         {0,"interp","Interpolate an index into the array.",0,1,
          "<x value>",
          ((string)"Interpolate <x value> in the array."),
@@ -1084,36 +914,19 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=5;
     comm_option_s options_arr[narr]=
       {
-        {'l',"list","List the bin edges.",
-         0,0,"","List the bin edges.",
+        {'l',"list","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_list),both},
-        {0,"max","Find the maximum weight.",0,0,"",
-         "Find the maximum weight and print out the location.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
-         both},
-        {0,"min","Find the minimum weight.",0,0,"",
-         "Find the minimum weight and print out the location.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
-         both},
-        {0,"to-table3d","Convert to a table3d object",-1,-1,
-         "<x name> <y name> <weight name>",
-         "Convert to a table3d object using the specified names.",
+        {0,"max","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_max),both},
+        {0,"min","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_min),both},
+        {0,"to-table3d","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table3d),both},
-        {0,"contours","Create contour lines from a table3d slice.",
-         0,4,"[\"frac\"] <value> [output file] [output name]",
-         ((string)"If the argument \"frac\" is not present, the ")+
-         "\"contours\" command constructs a set of contour lines using "+
-         "at the fixed value given in "+
-         "<value>. If two additional arguments are given, then the "+
-         "contour lines are stored in the file named output_filename "+
-         "and the object is named object_name. If the file does not "+
-         "exist, it is created. If no contours are found, then no file "+
-         "I/O is performed and the current table3d object is unmodified."+
-         "If the argument \"frac\" is present, then the operation is "+
-         "the same except that <value> is interpreted as a fraction of "+
-         "the total integral under the data.",
+        {0,"contours","",0,4,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_contours),both},
       };
