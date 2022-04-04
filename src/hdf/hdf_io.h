@@ -459,11 +459,10 @@ namespace o2scl_hdf {
   
   /** \brief A value specified by a string
       
-      Some acol commands value specifications as arguments. The first
-      part of the specification is a "type" followed by a colon,
-      followed by arguments which depend on the type. If no colon is
-      present, then a "func:" prefix is assumed. The different types
-      for a value specification are:
+      The first part of the specification is a "type" followed by a
+      colon, followed by arguments which depend on the type. If no
+      colon is present, then a "func:" prefix is assumed. The
+      different types for a value specification are:
       
       1. <numeric value or function> - Value equal to the result of
       <function>, e.g. "7.6" or "sin(0.5)". See the \c functions
@@ -479,14 +478,14 @@ namespace o2scl_hdf {
       which value should be used. A list of object types and
       additional specifications and more detail is given below.
       
-      - double: (no addl. spec.)
-      - int: (no addl. spec.)
-      - size_t: (no addl. spec.)
-      - double[]: index
-      - int[]: index
-      - size_t[]: index
-      - uniform_grid<double>: index
-      - table: column name,row index
+      - <tt>double</tt>: (no addl. spec.)
+      - <tt>int</tt>: (no addl. spec.)
+      - <tt>size_t</tt>: (no addl. spec.)
+      - <tt>double[]</tt>: index
+      - <tt>int[]</tt>: index
+      - <tt>size_t[]</tt>: index
+      - <tt>uniform_grid<double></tt>: index
+      - <tt>table</tt>: column name,row index
       
       For example:
       
@@ -512,8 +511,6 @@ namespace o2scl_hdf {
   
   /** \brief A vector specified by a string
       
-      Vector specification description:
-
       Some acol commands take arguments which are 'vector
       specifications', i.e. an array specified as a string. The
       different parts of the string are separated by a colon, and the
@@ -534,8 +531,8 @@ namespace o2scl_hdf {
 
       4. grid:<begin>,<end>,<width>,["log"] - Create a vector equal to
       a uniform grid, e.g. use 'grid:1.0,10.0,1.0' for a 10-element
-      vector filled with the numbers 1 to 10.The grid arguments can be
-      values or mathematical expressions.
+      vector filled with the numbers 1 to 10. The grid arguments can
+      be values or mathematical expressions.
 
       5. text:<filename>:<column index> - Read a text file and extract
       a vector of numbers from a column of the text file (starting
@@ -558,8 +555,8 @@ namespace o2scl_hdf {
       - int[]: (no addl. spec.)
       - size_t: (no addl. spec.) Implies vector of size 1
       - size_t[]: (no addl. spec.)
-      - table: <column>         Selected column from table
-      - table: <row>:<col pat>  Selected row and columns  
+      - table: <column> Selected column from table
+      - table: <row>:<col pat> Selected row and columns  
       - uniform_grid<double>: (no addl. spec.)
 
       For table <row>:<col pat>, the first additional specification is

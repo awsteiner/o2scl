@@ -287,10 +287,34 @@ void acol_manager::xml_replacements(std::string &s,
                    ter.default_fg());
   }
   
-  string_replace(s,"<itemizedlist> <listitem>","\n\n*");
+  // Make the help topic replacements
+  string_replace(s,"<computeroutput> functions </computeroutput>",
+                 ter.green_fg()+ter.bold()+"functions"+
+                 ter.default_fg());
+  string_replace(s,"<computeroutput> types </computeroutput>",
+                 ter.green_fg()+ter.bold()+"types"+
+                 ter.default_fg());
+  string_replace(s,"<computeroutput> value-spec </computeroutput>",
+                 ter.green_fg()+ter.bold()+"value-spec"+
+                 ter.default_fg());
+  string_replace(s,"<computeroutput> vector-spec </computeroutput>",
+                 ter.green_fg()+ter.bold()+"vector-spec"+
+                 ter.default_fg());
+  string_replace(s,"<computeroutput> mult-vector-spec </computeroutput>",
+                 ter.green_fg()+ter.bold()+"mult-vector-spec"+
+                 ter.default_fg());
+  string_replace(s,"<computeroutput> strings-spec </computeroutput>",
+                 ter.green_fg()+ter.bold()+"strings-spec"+
+                 ter.default_fg());
+  string_replace(s,"<computeroutput> index-spec </computeroutput>",
+                 ter.green_fg()+ter.bold()+"index-spec"+
+                 ter.default_fg());
+
+  // Other miscellaneous replacements
+  string_replace(s,"<itemizedlist> <listitem>","*");
   string_replace(s,"</listitem> <listitem>","*");
   string_replace(s,"</listitem> </itemizedlist>","");
-  string_replace(s,"<orderedlist> <listitem>","\n\n*");
+  string_replace(s,"<orderedlist> <listitem>","*");
   string_replace(s,"</listitem> </orderedlist>","");
   string_replace(s,"<simplesect>","");
   string_replace(s,"</simplesect>","");
@@ -647,11 +671,14 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
           if (vsw.output[k]!=((string)"<para>")) {
             if (vsw.output[k]==((string)"</para>")) {
               if (verbose>1) {
-                //cout << "stmp: " << stmp << endl;
+                cout << "stmp before: " << stmp << endl;
               }
               found=true;
 
               xml_replacements(stmp,clist);
+              if (verbose>1) {
+                cout << "stmp after: " << stmp << endl;
+              }
               
               vs_tmp.push_back(stmp);
               stmp.clear();

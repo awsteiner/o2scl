@@ -305,16 +305,16 @@ void acol_manager::update_o2_docs(size_t narr,
         found=true;
       }
     }
-    if (verbose>2) {
-      if (found==true) {
+    if (found==true) {
+      if (verbose>2) {
         cout << "Function acol_manager::update_o2_docs() "
              << "found documentation for command "
              << options_arr[j].lng << " ." << endl;
-      } else {
-        cout << "Function acol_manager::update_o2_docs() could not "
-             << "find documentation for command "
-             << options_arr[j].lng << " ." << endl;
       }
+    } else {
+      cout << "Function acol_manager::update_o2_docs() could not "
+           << "find documentation for command "
+           << options_arr[j].lng << " ." << endl;
     }
     
   }
