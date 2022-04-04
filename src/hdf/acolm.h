@@ -711,6 +711,33 @@ namespace o2scl_acol {
 
     /** \brief Convert object to a \ref o2scl::table object
 
+        For objects of type double[]:
+
+        Convert to a table object.
+
+        <column name>
+        
+        Convert the vector to a table with a single column named
+        <column name>.
+
+        For objects of type int[]:
+
+        Convert to a table object.
+
+        <column name>
+        
+        Convert the vector to a table with a single column named
+        <column name>.
+
+        For objects of type size_t[]:
+
+        Convert to a table object.
+
+        <column name>
+        
+        Convert the vector to a table with a single column named
+        <column name>.
+
         For objects of type tensor_grid:
 
         Convert to a table object.
@@ -1127,6 +1154,33 @@ namespace o2scl_acol {
         c1-c2 c3' would create a new column c3 which contains the
         difference of columns 'c1' and 'c2'.
 
+        For objects of type double[]:
+
+        Set the values of the array given a function.
+
+        <function>
+
+        Set the values of the array given a user-specified function of
+        'i'. For example, "(sin(i)>1)*4".
+
+        For objects of type int[]:
+
+        Set the values of the array given a function.
+
+        <function>
+
+        Set the values of the array given a user-specified function of
+        'i'. For example, "(sin(i)>1)*4".
+
+        For objects of type size_t[]:
+
+        Set the values of the array given a function.
+
+        <function>
+
+        Set the values of the array given a user-specified function of
+        'i'. For example, "(sin(i)>1)*4".
+
         For objects of type hist:
 
         Apply a function to the weights.
@@ -1390,6 +1444,32 @@ namespace o2scl_acol {
         Interpolate <x value> from column named <x name> into column
         named <y name>.
 
+        For objects of type double[]:
+
+        Interpolate an index into the array
+
+        <x value>
+
+        Interpolate <x value> in the array.
+
+        For objects of type int[]:
+
+        Interpolate an index into the array
+
+        <x value>
+
+        Interpolate <x value> in the array and print out the result
+        as a double.
+
+        For objects of type size_t[]:
+
+        Interpolate an index into the array
+
+        <x value>
+
+        Interpolate <x value> in the array and print out the result
+        as a double.
+
         For objects of type table3d:
 
         Interpolate x and y values into a slice.
@@ -1481,6 +1561,30 @@ namespace o2scl_acol {
 
         Compute the maximum value of a column.
 
+        For objects of type double[]:
+
+        Compute the maximum value and the associated index.
+
+        (No arguments.)
+
+        Compute the maximum value and the associated index.
+
+        For objects of type int[]:
+
+        Compute the maximum value and the associated index.
+
+        (No arguments.)
+
+        Compute the maximum value and the associated index.
+
+        For objects of type size_t[]:
+
+        Compute the maximum value and the associated index.
+
+        (No arguments.)
+
+        Compute the maximum value and the associated index.
+
         For objects of type table3d:
 
         Compute the maximum value of a slice.
@@ -1540,6 +1644,30 @@ namespace o2scl_acol {
         <column name>
 
         Compute the minimum value of a column.
+
+        For objects of type double[]:
+
+        Compute the maximum value and the associated index.
+
+        (No arguments.)
+
+        Compute the maximum value and the associated index.
+
+        For objects of type int[]:
+
+        Compute the maximum value and the associated index.
+
+        (No arguments.)
+
+        Compute the maximum value and the associated index.
+
+        For objects of type size_t[]:
+
+        Compute the maximum value and the associated index.
+
+        (No arguments.)
+
+        Compute the maximum value and the associated index.
 
         For objects of type table3d:
 
@@ -1800,7 +1928,31 @@ namespace o2scl_acol {
         columns in the current table, creating new columns if
         necessary.
 
-        For objects of type table:
+        For objects of type double[]:
+
+        Compute the vector sum.
+
+        (No arguments.)
+
+        Compute the vector sum.
+
+        For objects of type int[]:
+
+        Compute the vector sum.
+
+        (No arguments.)
+
+        Compute the vector sum.
+
+        For objects of type size_t[]:
+
+        Compute the vector sum.
+
+        (No arguments.)
+
+        Compute the vector sum.
+
+        For objects of type table3d:
 
         Add data from a second table3d object to current table3d.
         

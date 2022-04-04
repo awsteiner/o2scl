@@ -333,8 +333,8 @@ void acol_manager::command_add(std::string new_type) {
     comm_option_s options_arr[narr]=
       {
         {0,"value","",0,1,"","",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
-         both}
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_value),both}
       };
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
@@ -343,8 +343,8 @@ void acol_manager::command_add(std::string new_type) {
     comm_option_s options_arr[narr]=
       {
         {0,"value","",0,1,"","",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
-         both}
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_value),both}
       };
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
@@ -353,8 +353,8 @@ void acol_manager::command_add(std::string new_type) {
     comm_option_s options_arr[narr]=
       {
         {0,"value","",0,1,"","",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
-         both}
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_value),both}
       };
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
@@ -363,8 +363,8 @@ void acol_manager::command_add(std::string new_type) {
     comm_option_s options_arr[narr]=
       {
         {0,"value","",0,1,"","",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
-         both}
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_value),both}
       };
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
@@ -373,8 +373,8 @@ void acol_manager::command_add(std::string new_type) {
     comm_option_s options_arr[narr]=
       {
         {0,"value","",0,1,"","",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_value),
-         both}
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_value),both}
       };
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
@@ -479,8 +479,7 @@ void acol_manager::command_add(std::string new_type) {
         (this,&acol_manager::comm_select_rows),both},
        {0,"ser-hist-t3d","",0,8,"","",
         new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_ser_hist_t3d),
-        both},
+        (this,&acol_manager::comm_ser_hist_t3d),both},
        {0,"set-data","",3,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_set_data),both},
@@ -786,35 +785,25 @@ void acol_manager::command_add(std::string new_type) {
         {0,"deriv","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_deriv),both},
-        {0,"interp","Interpolate an index into the array.",0,1,
-         "<x value>",
-         ((string)"Interpolate <x value> in the array."),
+        {0,"interp","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_interp),both},
-        {0,"max","Find the maximum value and index.",0,0,"",
-         "Compute the maximum value of column <col>.",
+        {0,"max","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_max),both},
-        {0,"min","Find the minimum value of and index.",0,0,"",
-         "Compute the minimum value of column <col>.",
+        {0,"min","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_min),both},
         {0,"sort","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_sort),both},
-        {0,"sum","Compute the vector sum.",0,0,"",
-         ((string)"Compute the vector sum."),
+        {0,"sum","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_sum),both},
-        {0,"to-table","Convert to a table given a column name",0,1,
-         "<column name>",
-         "Convert to a table given a column name.",
+        {0,"to-table","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table),both},      
-        {0,"function","Set the values of the array given a function",0,1,
-         "<function>.",((string)"Set the values of the array ")+
-         "given a user-specified function of 'i'. For example, "+
-         "\"(sin(i)>1)*4\".",
+        {0,"function","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both}      
       };
@@ -829,35 +818,25 @@ void acol_manager::command_add(std::string new_type) {
         {0,"sort","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_sort),both},
-        {0,"sum","Compute the vector sum.",0,0,"",
-         ((string)"Compute the vector sum."),
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
-         both},
-        {0,"max","Find the maximum value and index.",0,0,"",
-         "Compute the maximum value of column <col>.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
-         both},
-        {0,"min","Find the minimum value of and index.",0,0,"",
-         "Compute the minimum value of column <col>.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
-         both},
+        {0,"sum","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_sum),both},
+        {0,"max","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_max),both},
+        {0,"min","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_min),both},
         {0,"deriv","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_deriv),both},
-        {0,"interp","Interpolate an index into the array.",0,1,
-         "<x value>",
-         ((string)"Interpolate <x value> in the array."),
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
-         both},
-        {0,"to-table","Convert to a table given a column name",0,1,
-         "<column name>",
-         "Convert to a table given a column name.",
+        {0,"interp","",0,1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_interp),both},
+        {0,"to-table","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table),both},
-        {0,"function","Set the values of the array given a function",0,1,
-         "<function>.",((string)"Set the values of the array ")+
-         "given a user-specified function of 'i'. For example, "+
-         "\"(sin(i)>1)*4\".",
+        {0,"function","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both}     
       };
@@ -872,37 +851,27 @@ void acol_manager::command_add(std::string new_type) {
         {0,"sort","",0,0,"","",
          new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
          both},
-        {0,"sum","Compute the vector sum.",0,0,"",
-         ((string)"Compute the vector sum."),
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sum),
-         both},
-        {0,"max","Find the maximum value and index.",0,0,"",
-         "Compute the maximum value of column <col>.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_max),
-         both},
-        {0,"min","Find the minimum value of and index.",0,0,"",
-         "Compute the minimum value of column <col>.",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_min),
-         both},
+        {0,"sum","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_sum),both},
+        {0,"max","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_max),both},
+        {0,"min","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_min),both},
         {0,"deriv","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_deriv),both},
-        {0,"interp","Interpolate an index into the array.",0,1,
-         "<x value>",
-         ((string)"Interpolate <x value> in the array."),
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interp),
-         both},
-        {0,"to-table","Convert to a table given a column name",0,1,
-         "<column name>",
-         "Convert to a table given a column name.",
+        {0,"interp","",0,1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_interp),both},
+        {0,"to-table","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table),both},
-        {0,"function","Set the values of the array given a function",0,1,
-         "<function>.",((string)"Set the values of the array ")+
-         "given a user-specified function of 'i'. For example, "+
-         "\"(sin(i)>1)*4\".",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_function),
-         both}
+        {0,"function","",0,1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_function),both}
       };
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
