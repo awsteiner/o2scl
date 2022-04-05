@@ -1853,8 +1853,6 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
 
 #ifdef O2SCL_PUGIXML
 
-  verbose=2;
-  
   terminal ter;
   
   vector<vector<std::string>> cmd_doc_strings, param_doc_strings;
@@ -1865,8 +1863,12 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
   vsw.indent=false;
 
   std::string stmp;
-  
+
   // Go through all the commands
+  if (verbose>1) {
+    cout << "In cli::comm_option_xml_to_o2(): " << clist.size()
+         << " commands." << endl;
+  }
   for(size_t j=0;j<clist.size();j++) {
 
     // This command name, the brief description, the parameter description,
