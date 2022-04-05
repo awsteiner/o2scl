@@ -559,7 +559,6 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   
   // Create a line for separating help text sections
-  cout << "Herez: " << ncols << " " << ncols_loc << endl;
   string line=ter.hrule(ncols_loc-2);
 
   // Handle the 'help type command' case for type-specific commands
