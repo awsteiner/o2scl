@@ -952,8 +952,11 @@ int cli::output_param_list() {
 
   terminal ter;
 
+  int ncols_loc;
   int srow, scol;
-  get_screen_size_ioctl(srow,scol);
+  int iret=get_screen_size_ioctl(srow,scol);
+  if (scol>10 || iret!=0) ncols_loc=scol;
+  else ncols_loc=80;
   
   // One row for each parameter and an additional row for
   // the header
@@ -1008,7 +1011,7 @@ int cli::output_param_list() {
 	if (i==1) it=par_list.begin();
 
         vector<string> desc2;
-        rewrap_keep_endlines(it->second->help,desc2,scol-2);
+        rewrap_keep_endlines(it->second->help,desc2,ncols_loc-2);
         for(size_t j=0;j<desc2.size();j++) {
           cout << " " << desc2[j] << endl;
         }
@@ -1155,8 +1158,11 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 
   terminal ter;
   
+  int ncols_loc;
   int srow, scol;
-  get_screen_size_ioctl(srow,scol);
+  int iret=get_screen_size_ioctl(srow,scol);
+  if (scol>10 || iret!=0) ncols_loc=scol;
+  else ncols_loc=80;
   
   // If not in interactive mode and no arguments are given,
   // Just output the full command list
@@ -1177,7 +1183,7 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 
     if (addl_help_cmd.length()>0) {
       vector<string> str_rewrap;
-      rewrap_keep_endlines(addl_help_cmd,str_rewrap,scol-1);
+      rewrap_keep_endlines(addl_help_cmd,str_rewrap,ncols_loc-1);
       for(size_t j=0;j<str_rewrap.size();j++) {
 	cout << str_rewrap[j] << endl;
       }
@@ -1223,7 +1229,7 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 
 	  vector<string> desc2;
 	  rewrap_keep_endlines(((string)"Description: ")+it->second->help,
-                               desc2,scol-1);
+                               desc2,ncols_loc-1);
 	  for(size_t j=0;j<desc2.size();j++) {
 	    cout << desc2[j] << endl;
 	  }
@@ -1268,7 +1274,7 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	{
 	  // Rewrap before writing additional help text
 	  vector<string> desc2;
-	  rewrap_keep_endlines(clist[ix].help,desc2,scol-1);
+	  rewrap_keep_endlines(clist[ix].help,desc2,ncols_loc-1);
 	  for(size_t j=0;j<desc2.size();j++) {
 	    cout << desc2[j] << endl;
 	  }
@@ -1879,6 +1885,8 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
       }
       
       std::string fn=clist[j].doc_xml_file;
+
+      if (fn.length()>0) {
       
       pugi::xml_node n3=doxygen_xml_member_get
         (fn,clist[j].doc_class,clist[j].doc_name,"briefdescription",doc);
@@ -1976,8 +1984,11 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
           }
           cmd_doc_strings.push_back(vs_tmp);
         }
+
         
         // End of if (n3!=0) 
+      }
+      
       }
     }
 
@@ -1997,8 +2008,10 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
       cout << "parameter name, doc_name: " << itp->first << " "
            << itp->second->doc_name << endl;
     }
-    
+
     std::string fn=itp->second->doc_xml_file;
+    
+    if (fn.length()>0) {
     
     pugi::xml_node n3=doxygen_xml_member_get
       (fn,itp->second->doc_class,itp->second->doc_name,
@@ -2112,6 +2125,8 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
 
       // End of if (n3!=0)
     }
+
+    }
     
   }
   
@@ -2166,11 +2181,14 @@ int cli::comm_option_warranty(vector<string> &sv, bool itive_com) {
   stmp+="The GNU General Public License can also be obtained using the ";
   stmp+="'license' command.";
 
+  int ncols_loc;
   int srow, scol;
-  get_screen_size_ioctl(srow,scol);
+  int iret=get_screen_size_ioctl(srow,scol);
+  if (scol>10 || iret!=0) ncols_loc=scol;
+  else ncols_loc=80;
   
   vector<string> desc2;
-  rewrap_keep_endlines(stmp,desc2,scol-2);
+  rewrap_keep_endlines(stmp,desc2,ncols_loc-2);
   for(size_t j=0;j<desc2.size();j++) {
     cout << desc2[j] << endl;
   }
@@ -3389,14 +3407,16 @@ int cli::comm_option_license(vector<string> &sv, bool itive_com) {
 
   // For this new version, we need to create a string here of
   // the license text.
-  
-  int srow, scol=80;
+
+  int ncols_loc=80;
   if (sv.size()==1) {
-    get_screen_size_ioctl(srow,scol);
+    int srow, scol;
+    int iret=get_screen_size_ioctl(srow,scol);
+    if (scol>=10 || iret!=0) ncols_loc=scol;
   }
   
   vector<string> desc2;
-  rewrap_keep_endlines(stmp,desc2,scol-2);
+  rewrap_keep_endlines(stmp,desc2,ncols_loc-2);
   
   ostream *outs;
   ofstream fout;

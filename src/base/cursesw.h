@@ -95,8 +95,11 @@ namespace o2scl {
   void get_screen_size_tput(int &row, int &col);
 
   /** \brief Use ioctl to determine window size
+
+      If this returns non-zero, then the attempt to determine the 
+      size failed.
    */
-  void get_screen_size_ioctl(int &row, int &col);
+  int get_screen_size_ioctl(int &row, int &col);
   
 }
 

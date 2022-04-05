@@ -231,13 +231,13 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
   int ncols_loc;
   if (ncols<=0) {
     int srow, scol;
-    get_screen_size_ioctl(srow,scol);
-    if (scol>10) ncols_loc=scol;
+    int iret=get_screen_size_ioctl(srow,scol);
+    if (scol>10 && iret==0) ncols_loc=scol;
     else ncols_loc=80;
   } else {
     ncols_loc=ncols;
   }
-  
+
   //--------------------------------------------------------------------
   // Temporary storage strings for names and data
 
@@ -266,7 +266,7 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
 	int num_spaces=precision+6-((int)(table_obj.get_column_name(i).size()));
 	if (num_spaces>0) this_col+=num_spaces;
 	// See if there will be space
-	if (running_width>0 && ((int)(running_width+this_col))>=ncols) {
+	if (running_width>0 && ((int)(running_width+this_col))>=ncols_loc) {
 	  row_names.push_back(str.str());
 	  str.str("");
 	  str.clear();
@@ -315,7 +315,7 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
       int num_spaces=((int)(table_obj.get_column_name(i).size())-precision-6);
       if (num_spaces>0) this_col+=num_spaces;
       // See if there will be space
-      if (running_width>0 && ((int)(running_width+this_col))>=ncols) {
+      if (running_width>0 && ((int)(running_width+this_col))>=ncols_loc) {
 	row_data.push_back(str.str());
 	str.str("");
 	str.clear();
@@ -547,11 +547,20 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   terminal ter;
 
-  int srow, scol;
-  get_screen_size_ioctl(srow,scol);
+  int ncols_loc;
+  if (ncols<=0) {
+    int srow, scol;
+    int iret=get_screen_size_ioctl(srow,scol);
+    if (scol<10 || iret!=0) ncols_loc=80;
+    else ncols_loc=scol;
+  } else {
+    ncols_loc=ncols;
+  }
+
   
   // Create a line for separating help text sections
-  string line=ter.hrule(scol-2);
+  cout << "Herez: " << ncols << " " << ncols_loc << endl;
+  string line=ter.hrule(ncols_loc-2);
 
   // Handle the 'help type command' case for type-specific commands
   if (sv.size()==3) {
@@ -642,7 +651,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       dsc+="ceil(x) int(x) max(x,y) min(x,y)\n";
     */
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv,scol-1);
+    o2scl::rewrap_keep_endlines(str,sv,ncols_loc-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -665,7 +674,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       type_list[type_list.size()-1]+ter.default_fg()+'.';
 
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv,scol-1);
+    o2scl::rewrap_keep_endlines(str,sv,ncols_loc-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -720,7 +729,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "fixed(2,0),index(1),index(0) - same as above\n\n";
 
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv,scol-1);
+    o2scl::rewrap_keep_endlines(str,sv,ncols_loc-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -750,7 +759,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     }
     
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(help,sv,scol-1);
+    o2scl::rewrap_keep_endlines(help,sv,ncols_loc-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -778,7 +787,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     }
     
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(help,sv,scol-1);
+    o2scl::rewrap_keep_endlines(help,sv,ncols_loc-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -808,7 +817,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     }
     
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(help,sv,scol-1);
+    o2scl::rewrap_keep_endlines(help,sv,ncols_loc-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -839,7 +848,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     }
 
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(help,sv,scol-1);
+    o2scl::rewrap_keep_endlines(help,sv,ncols_loc-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
@@ -857,7 +866,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	type_list[i]+ter.default_fg()+
 	" can be read, written, or modified by "+cl->cmd_name+".";
       std::vector<std::string> svx;
-      o2scl::rewrap_keep_endlines(str,svx,scol-1);
+      o2scl::rewrap_keep_endlines(str,svx,ncols_loc-1);
       for(size_t j=0;j<svx.size();j++) {
 	cout << svx[j] << endl;
       }
@@ -875,7 +884,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	    }
 	    str+=" and "+ter.cyan_fg()+ter.bold()+
 	      clist[clist.size()-1]+ter.default_fg()+".";
-	    o2scl::rewrap_ignore_vt100(str,svx,scol-1);
+	    o2scl::rewrap_ignore_vt100(str,svx,ncols_loc-1);
 	    for(size_t j=0;j<svx.size();j++) {
 	      cout << svx[j] << endl;
 	    }
@@ -965,7 +974,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   stemp+="use '-commands all'. Required arguments ";
   stemp+="are surrounded by ";
   stemp+="<>'s and optional arguments are surrounded by []'s.\n";
-  rewrap_ignore_vt100(stemp,sv2,scol-4);
+  rewrap_ignore_vt100(stemp,sv2,ncols_loc-4);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
     dsc+="   "+sv2[j]+"\n";
@@ -973,14 +982,14 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   stemp="2. Options may also be specified in the environment variable ";
   stemp+=env_var_name+".\n";
-  rewrap_ignore_vt100(stemp,sv2,scol-4);
+  rewrap_ignore_vt100(stemp,sv2,ncols_loc-4);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
     dsc+="   "+sv2[j]+"\n";
   }
 
   stemp="3. Long options may be preceeded by two dashes.\n";
-  rewrap_ignore_vt100(stemp,sv2,scol-4);
+  rewrap_ignore_vt100(stemp,sv2,ncols_loc-4);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
     dsc+="   "+sv2[j]+"\n";
@@ -988,7 +997,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   stemp="4. In order to avoid confusion between arguments and functions, ";
   stemp+="use parenthesis and quotes, i.e. \"(-x*2)\" instead of -x*2.\n";
-  rewrap_ignore_vt100(stemp,sv2,scol-4);
+  rewrap_ignore_vt100(stemp,sv2,ncols_loc-4);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
     dsc+="   "+sv2[j]+"\n";
@@ -996,7 +1005,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   stemp="5. Also, do not use a unary minus next to a binary operator, ";
   stemp+="i.e. use \"a>(-1)\" instead of \"a>-1\".\n\n";
-  rewrap_ignore_vt100(stemp,sv2,scol-4);
+  rewrap_ignore_vt100(stemp,sv2,ncols_loc-4);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
     dsc+="   "+sv2[j]+"\n";
@@ -1010,7 +1019,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     stemp+=", and help topics as\n   ";
     stemp+=ter.green_fg()+ter.bold()+"functions"+ter.default_fg();
     stemp+=".\n";
-    rewrap_ignore_vt100(stemp,sv2,scol-4);
+    rewrap_ignore_vt100(stemp,sv2,ncols_loc-4);
     dsc+=sv2[0]+"\n";
     for(size_t j=1;j<sv2.size();j++) {
       dsc+="   "+sv2[j]+"\n";
