@@ -3,20 +3,20 @@
   
   Copyright (C) 2006-2022, Andrew W. Steiner
   
-  This file is part of O2scl.
+  This file is part of O₂scl.
   
-  O2scl is free software; you can redistribute it and/or modify
+  O₂scl is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 3 of the License, or
   (at your option) any later version.
   
-  O2scl is distributed in the hope that it will be useful,
+  O₂scl is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
   
   You should have received a copy of the GNU General Public License
-  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+  along with O₂scl. If not, see <http://www.gnu.org/licenses/>.
 
   -------------------------------------------------------------------
 */
@@ -576,30 +576,30 @@ namespace o2scl_acol {
     */
     virtual int comm_xml_to_o2(std::vector<std::string> &sv, bool itive_com);
     
-    /** \brief Open local HTML docs for acol or an O2scl topic.
+    /** \brief Open local HTML docs for acol or an O₂scl topic.
 
         [topic]
 
         If [topic] is unspecified, this command opens up the local
         HTML documentation for acol in the default web browser using
         'open' on OSX and 'xdg-open' on other systems. If a topic is
-        specified, then the closest O2scl documentation web page is
+        specified, then the closest O₂scl documentation web page is
         opened. In order to open the remote version of the
         documentation instead of the local copy, use the
         <tt>wdocs</tt> command instead.
     */
     virtual int comm_docs(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Open remote HTML docs for acol or an O2scl topic.
+    /** \brief Open remote HTML docs for acol or an O₂scl topic.
 
         [search_term], [topic] or [section search_term]
         
         If no arguments are given, this command opens up the remote
         HTML documentation for acol in the default web browser using
         'open' on OSX and 'xdg-open' on other systems. If a [topic] is
-        specified, then the associated O2scl web page is opened. If
+        specified, then the associated O₂scl web page is opened. If
         the argument does not match an already known topic, then the
-        search feature on the O2scl web page is opened using the
+        search feature on the O₂scl web page is opened using the
         specified search term. Note that, for search terms, spaces can
         be included using e.g. '-wdocs \"Simulated annealing\"'. Valid
         sections are either \"eos\" or \"part\". In order to open
@@ -1035,13 +1035,13 @@ namespace o2scl_acol {
         <file>
 
         This lists all the top-level datasets and groups in a HDF5
-        file and, for those groups which are in the O2scl format,
+        file and, for those groups which are in the O₂scl format,
         gives the type and name of the object stored in that HDF5
         group.
      */
     virtual int comm_filelist(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Read an object from an O2scl-style HDF5 file.
+    /** \brief Read an object from an O₂scl-style HDF5 file.
 
         <file> [object name]
 
@@ -1049,7 +1049,7 @@ namespace o2scl_acol {
         name] argument is specified, then read the object with the
         specified name. Otherwise, look for the first <tt>table</tt>
         object, and if not found, look for the first <tt>table3d</tt>
-        object, and so on, attempting to find a readable O2scl object.
+        object, and so on, attempting to find a readable O₂scl object.
     */
     virtual int comm_read(std::vector<std::string> &sv, bool itive_com);
 
@@ -2322,7 +2322,7 @@ namespace o2scl_acol {
      */
     virtual int comm_wstats(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Print version information and O2scl settings.
+    /** \brief Print version information and O₂scl settings.
      */
     virtual int comm_version(std::vector<std::string> &sv, bool itive_com);
 
@@ -2357,12 +2357,12 @@ namespace o2scl_acol {
      */
     virtual int comm_convert(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Copy an O2scl-generated HDF5 file
+    /** \brief Copy an O₂scl-generated HDF5 file
 
         <source> <destination>
 
-        Copy all O2scl objects from one HDF5 file to another. This may
-        not work for HDF5 files generated outside of O2scl. The source
+        Copy all O₂scl objects from one HDF5 file to another. This may
+        not work for HDF5 files generated outside of O₂scl. The source
         and destination filenames may not be identical. The
         destination file may not be the same size as the source, but
         will contain the same information.
