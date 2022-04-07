@@ -57,8 +57,8 @@ void *o2scl_slack_messenger_get_url(void *vptr) {
 
 void o2scl_slack_messenger_set_url(void *vptr, void *p_v) {
   slack_messenger *ptr=(slack_messenger *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->url=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->url=*(p_tsot);
   return;
 }
 
@@ -71,8 +71,8 @@ void *o2scl_slack_messenger_get_channel(void *vptr) {
 
 void o2scl_slack_messenger_set_channel(void *vptr, void *p_v) {
   slack_messenger *ptr=(slack_messenger *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->channel=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->channel=*(p_tsot);
   return;
 }
 
@@ -85,8 +85,8 @@ void *o2scl_slack_messenger_get_icon(void *vptr) {
 
 void o2scl_slack_messenger_set_icon(void *vptr, void *p_v) {
   slack_messenger *ptr=(slack_messenger *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->icon=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->icon=*(p_tsot);
   return;
 }
 
@@ -99,8 +99,8 @@ void *o2scl_slack_messenger_get_username(void *vptr) {
 
 void o2scl_slack_messenger_set_username(void *vptr, void *p_v) {
   slack_messenger *ptr=(slack_messenger *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->username=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->username=*(p_tsot);
   return;
 }
 

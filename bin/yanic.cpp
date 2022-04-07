@@ -1328,12 +1328,15 @@ int main(int argc, char *argv[]) {
 
         if_var &ifv=ifc.members[j];
 
-        // Get functions for class data
+        // --------------------------------------------------------------
+        // Get functions for class data members
+
         if (ifv.ift.is_ctype()) {
+          
+          // Get function for a C data type
           if (ifv.ift.is_reference()) {
             fout << "*";
           }
-          // Get function for a C data type
           fout << ifv.ift.name << " " << underscoreify(ifc.ns) << "_"
                << underscoreify(ifc.name) << "_get_" << ifv.name
                << "(void *vptr)";
@@ -1350,8 +1353,10 @@ int main(int argc, char *argv[]) {
             }
             fout << "}" << endl;
           }
+          
         } else if (ifv.ift.name=="std::string" ||
                    ifv.ift.name=="string") {
+          
           // Get function for string data
           fout << "void *" << underscoreify(ifc.ns) << "_"
                << underscoreify(ifc.name) << "_get_" << ifv.name
@@ -1367,8 +1372,10 @@ int main(int argc, char *argv[]) {
             fout << "  return sptr;" << endl;
             fout << "}" << endl;
           }
-        } else {
-          // Get function for other types
+          
+        } else if (ifv.ift.is_shared_ptr()) {
+          
+          // Get function for shared pointers
           fout << "void " << underscoreify(ifc.ns) << "_"
                << underscoreify(ifc.name) << "_get_" << ifv.name
                << "(void *vptr, void *p_v)";
@@ -1378,20 +1385,33 @@ int main(int argc, char *argv[]) {
             fout << " {" << endl;            
             fout << "  " << ifc.name << " *ptr=(" << ifc.name
                  << " *)vptr;" << endl;
-            if (ifv.ift.is_shared_ptr()) {
-              // Shared pointers
-              fout << "  std::shared_ptr<" << ifv.ift.name
-                   << " > *p_t=(std::shared_ptr<"
-                   << ifv.ift.name << " > *)p_v;" << endl;
-            } else {
-              // Other types
-              fout << "  " << ifv.ift.name << " *p_t=("
-                   << ifv.ift.name << " *)p_v;" << endl;
-            }
-            fout << "  *(p_t)=ptr->" << ifv.name << ";" << endl;
+            fout << "  std::shared_ptr<" << ifv.ift.name
+                 << " > *p_tgsp=(std::shared_ptr<"
+                 << ifv.ift.name << " > *)p_v;" << endl;
+            fout << "  *(p_tgsp)=ptr->" << ifv.name << ";" << endl;
             fout << "  return;" << endl;
             fout << "}" << endl;
           }
+          
+        } else {
+          
+          // Get function for other types
+          fout << "void *" << underscoreify(ifc.ns) << "_"
+               << underscoreify(ifc.name) << "_get_" << ifv.name
+               << "(void *vptr)";
+          if (header) {
+            fout << ";" << endl;
+          } else {
+            fout << " {" << endl;            
+            fout << "  " << ifc.name << " *ptr=(" << ifc.name
+                 << " *)vptr;" << endl;
+            //fout << "  " << ifv.ift.name << " *p_tgot=("
+            //<< ifv.ift.name << " *)p_v;" << endl;
+            //fout << "  *(p_tgot)=ptr->" << ifv.name << ";" << endl;
+            fout << "  return (void *)(&(ptr->" << ifv.name << "));" << endl;
+            fout << "}" << endl;
+          }
+          
         }
         fout << endl;
       
@@ -1429,19 +1449,24 @@ int main(int argc, char *argv[]) {
             if (ifv.ift.is_shared_ptr()) {
               // Shared pointers
               fout << "  std::shared_ptr<" << ifv.ift.name
-                   << " > *p_t=(std::shared_ptr<"
+                   << " > *p_tssp=(std::shared_ptr<"
                    << ifv.ift.name << " > *)p_v;" << endl;
+              fout << "  ptr->" << ifv.name << "=*(p_tssp);" << endl;
+              fout << "  return;" << endl;
+              fout << "}" << endl;
             } else {
               // Other types
-              fout << "  " << ifv.ift.name << " *p_t=("
+              fout << "  " << ifv.ift.name << " *p_tsot=("
                    << ifv.ift.name << " *)p_v;" << endl;
+              fout << "  ptr->" << ifv.name << "=*(p_tsot);" << endl;
+              fout << "  return;" << endl;
+              fout << "}" << endl;
             }
-            fout << "  ptr->" << ifv.name << "=*(p_t);" << endl;
-            fout << "  return;" << endl;
-            fout << "}" << endl;
           }
         }
         fout << endl;
+
+        // End of loop over class data members
       }
     
       for(size_t j=0;j<ifc.methods.size();j++) {
@@ -2096,7 +2121,7 @@ int main(int argc, char *argv[]) {
       fout << endl;
     }
     
-    // Define __init__() function
+    // Define the __init__() function
     if (ifc.is_abstract || ifc.def_cons==false) {
       fout << "    @abstractmethod" << endl;
     }
@@ -2128,7 +2153,7 @@ int main(int argc, char *argv[]) {
     fout << "        return" << endl;
     fout << endl;
     
-    // Define __del__() function
+    // Define the __del__() function
     fout << "    def __del__(self):" << endl;
     fout << "        \"\"\"" << endl;
     fout << "        Delete function for class ";
@@ -2149,7 +2174,7 @@ int main(int argc, char *argv[]) {
     fout << "        return" << endl;
     fout << endl;
 
-    // Define copy() function
+    // Define the copy() function
     fout << "    def __copy__(self):" << endl;
     fout << "        \"\"\"" << endl;
     fout << "        Shallow copy function for class ";
@@ -2172,7 +2197,9 @@ int main(int argc, char *argv[]) {
     fout << "        return new_obj" << endl;
     fout << endl;
 
-    // Define deepcopy() function
+    // Define the deepcopy() function if it has a standard
+    // copy constructor
+    
     if (ifc.std_cc) {
       fout << "    def __deepcopy__(self,memo):" << endl;
       fout << "        \"\"\"" << endl;
@@ -2204,21 +2231,25 @@ int main(int argc, char *argv[]) {
 
     // Define member get and set properties
     for(size_t j=0;j<ifc.members.size();j++) {
+      
       if_var &ifv=ifc.members[j];
 
       // Hack, because del has a special meaning in python
       if (ifv.name=="del") ifv.name="delta";
 
-      // Getter
+      // Set up get functions for member data
+
       if (ifv.ift.is_ctype()) {
+
+        // For raw C-types, set up a property and return a value
         fout << "    @property" << endl;
         fout << "    def " << ifv.name << "(self):" << endl;
         fout << "        \"\"\"" << endl;
         fout << "        Property of type ``ctypes.c_" << ifv.ift.name
              << "``" << endl;
         fout << "        \"\"\"" << endl;
-        fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
-             << underscoreify(ifc.name)
+        fout << "        func=self._link." << dll_name << "."
+             << ifc.ns << "_" << underscoreify(ifc.name)
              << "_get_" << ifv.name << endl;
         fout << "        func.restype=ctypes.c_" << ifv.ift.name << endl;
         fout << "        func.argtypes=[ctypes.c_void_p]" << endl;
@@ -2226,6 +2257,8 @@ int main(int argc, char *argv[]) {
         
       } else if (ifv.ift.prefix.find("shared_ptr")!=std::string::npos ||
                  ifv.ift.prefix.find("std::shared_ptr")!=std::string::npos) {
+
+        // For shared pointers, return a new shared pointer object
         
         fout << "    def get_" << ifv.name << "(self," << ifv.name
              << "):" << endl;
@@ -2252,8 +2285,32 @@ int main(int argc, char *argv[]) {
              << "ctypes.c_void_p]" << endl;
         fout << "        func(self._ptr,sp._s_ptr)" << endl;
         fout << "        return" << endl;
+
+      } else if (ifv.ift.name=="std::string") {
+
+        // Get strings by value
+
+        fout << "    def get_" << ifv.name << "(self," << ifv.name
+             << "):" << endl;
+        fout << "        \"\"\"" << endl;
+        fout << "        Get object of type :class:`"
+             << ifv.ift.name << "`" << endl;
+        fout << "        \"\"\"" << endl;
+        fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
+             << underscoreify(ifc.name)
+             << "_get_" << ifv.name << endl;
+
+        fout << "        func.restype=ctypes.c_char_p" << endl;
+        
+        fout << "        func.argtypes=[ctypes.c_void_p," 
+             << "ctypes.c_void_p]" << endl;
+        fout << "        func(self._ptr," << ifv.name
+             << "._ptr)" << endl;
+        fout << "        return" << endl;
         
       } else {
+
+        // Get a reference to other types
         
         fout << "    def get_" << ifv.name << "(self," << ifv.name
              << "):" << endl;
@@ -2265,15 +2322,11 @@ int main(int argc, char *argv[]) {
              << underscoreify(ifc.name)
              << "_get_" << ifv.name << endl;
         
-        // If it's not a string, then we don't need a return type
-        if (ifv.ift.name=="std::string") {
-          fout << "        func.restype=ctypes.c_char_p" << endl;
-        }
+        fout << "        func.restype=ctypes.c_void_p" << endl;
         
-        fout << "        func.argtypes=[ctypes.c_void_p," 
-             << "ctypes.c_void_p]" << endl;
-        fout << "        func(self._ptr," << ifv.name
-             << "._ptr)" << endl;
+        fout << "        func.argtypes=[ctypes.c_void_p]" << endl;
+        fout << "        " << ifv.name << "._ptr=func(self._ptr)" << endl;
+        fout << "        " << ifv.name << "._owner=False" << endl;
         fout << "        return" << endl;
         
       }

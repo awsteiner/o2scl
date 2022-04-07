@@ -128,19 +128,19 @@ void *o2scl_hdf_acol_manager_get_type(void *vptr);
 
 void o2scl_hdf_acol_manager_set_type(void *vptr, void *p_v);
 
-void o2scl_hdf_acol_manager_get_table_obj(void *vptr, void *p_v);
+void *o2scl_hdf_acol_manager_get_table_obj(void *vptr);
 
 void o2scl_hdf_acol_manager_set_table_obj(void *vptr, void *p_v);
 
-void o2scl_hdf_acol_manager_get_table3d_obj(void *vptr, void *p_v);
+void *o2scl_hdf_acol_manager_get_table3d_obj(void *vptr);
 
 void o2scl_hdf_acol_manager_set_table3d_obj(void *vptr, void *p_v);
 
-void o2scl_hdf_acol_manager_get_hist_obj(void *vptr, void *p_v);
+void *o2scl_hdf_acol_manager_get_hist_obj(void *vptr);
 
 void o2scl_hdf_acol_manager_set_hist_obj(void *vptr, void *p_v);
 
-void o2scl_hdf_acol_manager_get_hist_2d_obj(void *vptr, void *p_v);
+void *o2scl_hdf_acol_manager_get_hist_2d_obj(void *vptr);
 
 void o2scl_hdf_acol_manager_set_hist_2d_obj(void *vptr, void *p_v);
 

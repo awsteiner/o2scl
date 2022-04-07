@@ -305,8 +305,8 @@ void *o2scl_nucmass_table_get_reference(void *vptr) {
 
 void o2scl_nucmass_table_set_reference(void *vptr, void *p_v) {
   nucmass_table *ptr=(nucmass_table *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->reference=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->reference=*(p_tsot);
   return;
 }
 

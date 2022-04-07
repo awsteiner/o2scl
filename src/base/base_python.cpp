@@ -1964,17 +1964,15 @@ void o2scl_free_find_constants_const_entry(void *vptr) {
   return;
 }
 
-void o2scl_find_constants_const_entry_get_names(void *vptr, void *p_v) {
+void *o2scl_find_constants_const_entry_get_names(void *vptr) {
   find_constants::const_entry *ptr=(find_constants::const_entry *)vptr;
-  std::vector<std::string> *p_t=(std::vector<std::string> *)p_v;
-  *(p_t)=ptr->names;
-  return;
+  return (void *)(&(ptr->names));
 }
 
 void o2scl_find_constants_const_entry_set_names(void *vptr, void *p_v) {
   find_constants::const_entry *ptr=(find_constants::const_entry *)vptr;
-  std::vector<std::string> *p_t=(std::vector<std::string> *)p_v;
-  ptr->names=*(p_t);
+  std::vector<std::string> *p_tsot=(std::vector<std::string> *)p_v;
+  ptr->names=*(p_tsot);
   return;
 }
 
@@ -1987,8 +1985,8 @@ void *o2scl_find_constants_const_entry_get_unit(void *vptr) {
 
 void o2scl_find_constants_const_entry_set_unit(void *vptr, void *p_v) {
   find_constants::const_entry *ptr=(find_constants::const_entry *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->unit=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->unit=*(p_tsot);
   return;
 }
 
@@ -2023,8 +2021,8 @@ void *o2scl_find_constants_const_entry_get_source(void *vptr) {
 
 void o2scl_find_constants_const_entry_set_source(void *vptr, void *p_v) {
   find_constants::const_entry *ptr=(find_constants::const_entry *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->source=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->source=*(p_tsot);
   return;
 }
 
@@ -2168,8 +2166,8 @@ void *o2scl_convert_units_der_unit_get_label(void *vptr) {
 
 void o2scl_convert_units_der_unit_set_label(void *vptr, void *p_v) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->label=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->label=*(p_tsot);
   return;
 }
 
@@ -2270,8 +2268,8 @@ void *o2scl_convert_units_der_unit_get_name(void *vptr) {
 
 void o2scl_convert_units_der_unit_set_name(void *vptr, void *p_v) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->name=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->name=*(p_tsot);
   return;
 }
 
@@ -2713,8 +2711,8 @@ void *o2scl_comm_option_s_get_lng(void *vptr) {
 
 void o2scl_comm_option_s_set_lng(void *vptr, void *p_v) {
   comm_option_s *ptr=(comm_option_s *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->lng=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->lng=*(p_tsot);
   return;
 }
 
@@ -2727,8 +2725,8 @@ void *o2scl_comm_option_s_get_desc(void *vptr) {
 
 void o2scl_comm_option_s_set_desc(void *vptr, void *p_v) {
   comm_option_s *ptr=(comm_option_s *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->desc=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->desc=*(p_tsot);
   return;
 }
 
@@ -2763,8 +2761,8 @@ void *o2scl_comm_option_s_get_parm_desc(void *vptr) {
 
 void o2scl_comm_option_s_set_parm_desc(void *vptr, void *p_v) {
   comm_option_s *ptr=(comm_option_s *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->parm_desc=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->parm_desc=*(p_tsot);
   return;
 }
 
@@ -2777,8 +2775,8 @@ void *o2scl_comm_option_s_get_help(void *vptr) {
 
 void o2scl_comm_option_s_set_help(void *vptr, void *p_v) {
   comm_option_s *ptr=(comm_option_s *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->help=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->help=*(p_tsot);
   return;
 }
 
@@ -2813,8 +2811,8 @@ void *o2scl_cmd_line_arg_get_arg(void *vptr) {
 
 void o2scl_cmd_line_arg_set_arg(void *vptr, void *p_v) {
   cmd_line_arg *ptr=(cmd_line_arg *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->arg=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->arg=*(p_tsot);
   return;
 }
 
@@ -2840,17 +2838,15 @@ void o2scl_cmd_line_arg_set_is_valid(void *vptr, bool v) {
   return;
 }
 
-void o2scl_cmd_line_arg_get_parms(void *vptr, void *p_v) {
+void *o2scl_cmd_line_arg_get_parms(void *vptr) {
   cmd_line_arg *ptr=(cmd_line_arg *)vptr;
-  std::vector<std::string> *p_t=(std::vector<std::string> *)p_v;
-  *(p_t)=ptr->parms;
-  return;
+  return (void *)(&(ptr->parms));
 }
 
 void o2scl_cmd_line_arg_set_parms(void *vptr, void *p_v) {
   cmd_line_arg *ptr=(cmd_line_arg *)vptr;
-  std::vector<std::string> *p_t=(std::vector<std::string> *)p_v;
-  ptr->parms=*(p_t);
+  std::vector<std::string> *p_tsot=(std::vector<std::string> *)p_v;
+  ptr->parms=*(p_tsot);
   return;
 }
 
@@ -2896,8 +2892,8 @@ void *o2scl_cli_get_desc(void *vptr) {
 
 void o2scl_cli_set_desc(void *vptr, void *p_v) {
   cli *ptr=(cli *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->desc=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->desc=*(p_tsot);
   return;
 }
 
@@ -2910,8 +2906,8 @@ void *o2scl_cli_get_cmd_name(void *vptr) {
 
 void o2scl_cli_set_cmd_name(void *vptr, void *p_v) {
   cli *ptr=(cli *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->cmd_name=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->cmd_name=*(p_tsot);
   return;
 }
 
@@ -2924,8 +2920,8 @@ void *o2scl_cli_get_addl_help_cmd(void *vptr) {
 
 void o2scl_cli_set_addl_help_cmd(void *vptr, void *p_v) {
   cli *ptr=(cli *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->addl_help_cmd=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->addl_help_cmd=*(p_tsot);
   return;
 }
 
@@ -2938,8 +2934,8 @@ void *o2scl_cli_get_addl_help_cli(void *vptr) {
 
 void o2scl_cli_set_addl_help_cli(void *vptr, void *p_v) {
   cli *ptr=(cli *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->addl_help_cli=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->addl_help_cli=*(p_tsot);
   return;
 }
 

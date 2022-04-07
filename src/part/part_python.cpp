@@ -501,17 +501,15 @@ void o2scl_fermion_rel_set_therm_ident(void *vptr, double v) {
   return;
 }
 
-void o2scl_fermion_rel_get_unc(void *vptr, void *p_v) {
+void *o2scl_fermion_rel_get_unc(void *vptr) {
   fermion_rel *ptr=(fermion_rel *)vptr;
-  fermion *p_t=(fermion *)p_v;
-  *(p_t)=ptr->unc;
-  return;
+  return (void *)(&(ptr->unc));
 }
 
 void o2scl_fermion_rel_set_unc(void *vptr, void *p_v) {
   fermion_rel *ptr=(fermion_rel *)vptr;
-  fermion *p_t=(fermion *)p_v;
-  ptr->unc=*(p_t);
+  fermion *p_tsot=(fermion *)p_v;
+  ptr->unc=*(p_tsot);
   return;
 }
 
@@ -998,17 +996,15 @@ void o2scl_fermion_deriv_rel_set_upper_limit_fac(void *vptr, double v) {
   return;
 }
 
-void o2scl_fermion_deriv_rel_get_unc(void *vptr, void *p_v) {
+void *o2scl_fermion_deriv_rel_get_unc(void *vptr) {
   fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
-  fermion_deriv *p_t=(fermion_deriv *)p_v;
-  *(p_t)=ptr->unc;
-  return;
+  return (void *)(&(ptr->unc));
 }
 
 void o2scl_fermion_deriv_rel_set_unc(void *vptr, void *p_v) {
   fermion_deriv_rel *ptr=(fermion_deriv_rel *)vptr;
-  fermion_deriv *p_t=(fermion_deriv *)p_v;
-  ptr->unc=*(p_t);
+  fermion_deriv *p_tsot=(fermion_deriv *)p_v;
+  ptr->unc=*(p_tsot);
   return;
 }
 
@@ -1102,17 +1098,15 @@ void o2scl_fermion_deriv_nr_set_flimit(void *vptr, double v) {
   return;
 }
 
-void o2scl_fermion_deriv_nr_get_unc(void *vptr, void *p_v) {
+void *o2scl_fermion_deriv_nr_get_unc(void *vptr) {
   fermion_deriv_nr *ptr=(fermion_deriv_nr *)vptr;
-  fermion_deriv *p_t=(fermion_deriv *)p_v;
-  *(p_t)=ptr->unc;
-  return;
+  return (void *)(&(ptr->unc));
 }
 
 void o2scl_fermion_deriv_nr_set_unc(void *vptr, void *p_v) {
   fermion_deriv_nr *ptr=(fermion_deriv_nr *)vptr;
-  fermion_deriv *p_t=(fermion_deriv *)p_v;
-  ptr->unc=*(p_t);
+  fermion_deriv *p_tsot=(fermion_deriv *)p_v;
+  ptr->unc=*(p_tsot);
   return;
 }
 

@@ -678,7 +678,7 @@ void *o2scl_create_find_constants_const_entry();
 
 void o2scl_free_find_constants_const_entry(void *vptr);
 
-void o2scl_find_constants_const_entry_get_names(void *vptr, void *p_v);
+void *o2scl_find_constants_const_entry_get_names(void *vptr);
 
 void o2scl_find_constants_const_entry_set_names(void *vptr, void *p_v);
 
@@ -978,7 +978,7 @@ bool o2scl_cmd_line_arg_get_is_valid(void *vptr);
 
 void o2scl_cmd_line_arg_set_is_valid(void *vptr, bool v);
 
-void o2scl_cmd_line_arg_get_parms(void *vptr, void *p_v);
+void *o2scl_cmd_line_arg_get_parms(void *vptr);
 
 void o2scl_cmd_line_arg_set_parms(void *vptr, void *p_v);
 

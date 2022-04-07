@@ -41,17 +41,15 @@ void o2scl_free_eos_base(void *vptr) {
   return;
 }
 
-void o2scl_eos_base_get_def_thermo(void *vptr, void *p_v) {
+void *o2scl_eos_base_get_def_thermo(void *vptr) {
   eos_base *ptr=(eos_base *)vptr;
-  o2scl::thermo *p_t=(o2scl::thermo *)p_v;
-  *(p_t)=ptr->def_thermo;
-  return;
+  return (void *)(&(ptr->def_thermo));
 }
 
 void o2scl_eos_base_set_def_thermo(void *vptr, void *p_v) {
   eos_base *ptr=(eos_base *)vptr;
-  o2scl::thermo *p_t=(o2scl::thermo *)p_v;
-  ptr->def_thermo=*(p_t);
+  o2scl::thermo *p_tsot=(o2scl::thermo *)p_v;
+  ptr->def_thermo=*(p_tsot);
   return;
 }
 
@@ -132,31 +130,27 @@ void o2scl_eos_had_base_set_err_nonconv(void *vptr, bool v) {
   return;
 }
 
-void o2scl_eos_had_base_get_def_neutron(void *vptr, void *p_v) {
+void *o2scl_eos_had_base_get_def_neutron(void *vptr) {
   eos_had_base *ptr=(eos_had_base *)vptr;
-  o2scl::fermion *p_t=(o2scl::fermion *)p_v;
-  *(p_t)=ptr->def_neutron;
-  return;
+  return (void *)(&(ptr->def_neutron));
 }
 
 void o2scl_eos_had_base_set_def_neutron(void *vptr, void *p_v) {
   eos_had_base *ptr=(eos_had_base *)vptr;
-  o2scl::fermion *p_t=(o2scl::fermion *)p_v;
-  ptr->def_neutron=*(p_t);
+  o2scl::fermion *p_tsot=(o2scl::fermion *)p_v;
+  ptr->def_neutron=*(p_tsot);
   return;
 }
 
-void o2scl_eos_had_base_get_def_proton(void *vptr, void *p_v) {
+void *o2scl_eos_had_base_get_def_proton(void *vptr) {
   eos_had_base *ptr=(eos_had_base *)vptr;
-  o2scl::fermion *p_t=(o2scl::fermion *)p_v;
-  *(p_t)=ptr->def_proton;
-  return;
+  return (void *)(&(ptr->def_proton));
 }
 
 void o2scl_eos_had_base_set_def_proton(void *vptr, void *p_v) {
   eos_had_base *ptr=(eos_had_base *)vptr;
-  o2scl::fermion *p_t=(o2scl::fermion *)p_v;
-  ptr->def_proton=*(p_t);
+  o2scl::fermion *p_tsot=(o2scl::fermion *)p_v;
+  ptr->def_proton=*(p_tsot);
   return;
 }
 
@@ -549,22 +543,20 @@ void *o2scl_eos_had_skyrme_get_reference(void *vptr) {
 
 void o2scl_eos_had_skyrme_set_reference(void *vptr, void *p_v) {
   eos_had_skyrme *ptr=(eos_had_skyrme *)vptr;
-  std::string *p_t=(std::string *)p_v;
-  ptr->reference=*(p_t);
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->reference=*(p_tsot);
   return;
 }
 
-void o2scl_eos_had_skyrme_get_nrfd(void *vptr, void *p_v) {
+void *o2scl_eos_had_skyrme_get_nrfd(void *vptr) {
   eos_had_skyrme *ptr=(eos_had_skyrme *)vptr;
-  o2scl::fermion_deriv_nr *p_t=(o2scl::fermion_deriv_nr *)p_v;
-  *(p_t)=ptr->nrfd;
-  return;
+  return (void *)(&(ptr->nrfd));
 }
 
 void o2scl_eos_had_skyrme_set_nrfd(void *vptr, void *p_v) {
   eos_had_skyrme *ptr=(eos_had_skyrme *)vptr;
-  o2scl::fermion_deriv_nr *p_t=(o2scl::fermion_deriv_nr *)p_v;
-  ptr->nrfd=*(p_t);
+  o2scl::fermion_deriv_nr *p_tsot=(o2scl::fermion_deriv_nr *)p_v;
+  ptr->nrfd=*(p_tsot);
   return;
 }
 
@@ -1547,17 +1539,15 @@ void o2scl_tov_love_set_err_nonconv(void *vptr, bool v) {
   return;
 }
 
-void o2scl_tov_love_get_results(void *vptr, void *p_v) {
+void *o2scl_tov_love_get_results(void *vptr) {
   tov_love *ptr=(tov_love *)vptr;
-  table_units<> *p_t=(table_units<> *)p_v;
-  *(p_t)=ptr->results;
-  return;
+  return (void *)(&(ptr->results));
 }
 
 void o2scl_tov_love_set_results(void *vptr, void *p_v) {
   tov_love *ptr=(tov_love *)vptr;
-  table_units<> *p_t=(table_units<> *)p_v;
-  ptr->results=*(p_t);
+  table_units<> *p_tsot=(table_units<> *)p_v;
+  ptr->results=*(p_tsot);
   return;
 }
 
@@ -1585,15 +1575,15 @@ void o2scl_tov_love_set_eps(void *vptr, double v) {
 
 void o2scl_tov_love_get_tab(void *vptr, void *p_v) {
   tov_love *ptr=(tov_love *)vptr;
-  std::shared_ptr<table_units<> > *p_t=(std::shared_ptr<table_units<> > *)p_v;
-  *(p_t)=ptr->tab;
+  std::shared_ptr<table_units<> > *p_tgsp=(std::shared_ptr<table_units<> > *)p_v;
+  *(p_tgsp)=ptr->tab;
   return;
 }
 
 void o2scl_tov_love_set_tab(void *vptr, void *p_v) {
   tov_love *ptr=(tov_love *)vptr;
-  std::shared_ptr<table_units<> > *p_t=(std::shared_ptr<table_units<> > *)p_v;
-  ptr->tab=*(p_t);
+  std::shared_ptr<table_units<> > *p_tssp=(std::shared_ptr<table_units<> > *)p_v;
+  ptr->tab=*(p_tssp);
   return;
 }
 
