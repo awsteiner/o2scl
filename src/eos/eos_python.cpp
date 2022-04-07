@@ -897,6 +897,18 @@ void o2scl_eos_had_rmf_set_b3(void *vptr, double v) {
   return;
 }
 
+int o2scl_eos_had_rmf_get_fields(void *vptr, double *sig, double *ome, double *rho) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  int ret=ptr->get_fields(*sig,*ome,*rho);
+  return ret;
+}
+
+int o2scl_eos_had_rmf_set_fields(void *vptr, double *sig, double *ome, double *rho) {
+  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
+  int ret=ptr->set_fields(*sig,*ome,*rho);
+  return ret;
+}
+
 void *o2scl_create_eos_quark() {
   eos_quark *ptr=new eos_quark;
   return ptr;

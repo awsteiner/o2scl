@@ -312,6 +312,16 @@ class eos_had_rmf
 - double b1
 - double b2
 - double b3
+- function get_fields
+  - int
+  - out double &sig
+  - out double &ome
+  - out double &rho
+- function set_fields
+  - int
+  - io double &sig
+  - io double &ome
+  - io double &rho
 # 
 # Class eos_quark
 #

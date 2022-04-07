@@ -340,6 +340,10 @@ double o2scl_eos_had_rmf_get_b3(void *vptr);
 
 void o2scl_eos_had_rmf_set_b3(void *vptr, double v);
 
+int o2scl_eos_had_rmf_get_fields(void *vptr, double *sig, double *ome, double *rho);
+
+int o2scl_eos_had_rmf_set_fields(void *vptr, double *sig, double *ome, double *rho);
+
 void *o2scl_create_eos_quark();
 
 void o2scl_free_eos_quark(void *vptr);
