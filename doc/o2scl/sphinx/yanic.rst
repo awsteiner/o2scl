@@ -146,9 +146,10 @@ Classes
   - {type} <name>
 
   Get and set methods for class member data are generated. For
-  standard C types, the get and set methods pass by value. For
-  classes from the interface, the get and set methods pass by
-  reference.
+  standard C types, ``std::string`` objects, and shared pointer
+  objects, the get and set methods pass by value (i.e. they imply
+  a copy). For classes from the interface, the get methods return 
+  references and the set methods pass by value.
   
 - Class member function definitions are of the following form.
   The return type and parameter specifications must begin with

@@ -358,6 +358,24 @@ double o2scl_eos_had_base_calc_edensity_nb(void *vptr, double nb, double delta) 
   return ret;
 }
 
+int o2scl_eos_had_temp_base_calc_temp_e(void *vptr, void *ptr_n, void *ptr_p, double T, void *ptr_th) {
+  eos_had_temp_base *ptr=(eos_had_temp_base *)vptr;
+  fermion *n=(fermion *)ptr_n;
+  fermion *p=(fermion *)ptr_p;
+  thermo *th=(thermo *)ptr_th;
+  int ret=ptr->calc_temp_e(*n,*p,T,*th);
+  return ret;
+}
+
+int o2scl_eos_had_temp_base_calc_temp_p(void *vptr, void *ptr_n, void *ptr_p, double T, void *ptr_th) {
+  eos_had_temp_base *ptr=(eos_had_temp_base *)vptr;
+  fermion *n=(fermion *)ptr_n;
+  fermion *p=(fermion *)ptr_p;
+  thermo *th=(thermo *)ptr_th;
+  int ret=ptr->calc_temp_p(*n,*p,T,*th);
+  return ret;
+}
+
 void *o2scl_create_eos_had_skyrme() {
   eos_had_skyrme *ptr=new eos_had_skyrme;
   return ptr;

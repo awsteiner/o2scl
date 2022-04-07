@@ -148,6 +148,10 @@ double o2scl_eos_had_base_calc_pressure_nb(void *vptr, double nb, double delta);
 
 double o2scl_eos_had_base_calc_edensity_nb(void *vptr, double nb, double delta);
 
+int o2scl_eos_had_temp_base_calc_temp_e(void *vptr, void *ptr_n, void *ptr_p, double T, void *ptr_th);
+
+int o2scl_eos_had_temp_base_calc_temp_p(void *vptr, void *ptr_n, void *ptr_p, double T, void *ptr_th);
+
 void *o2scl_create_eos_had_skyrme();
 
 void o2scl_free_eos_had_skyrme(void *vptr);

@@ -231,6 +231,18 @@ class eos_had_pres_base abstract
 #
 class eos_had_temp_base abstract
 - parent eos_had_base
+- function calc_temp_e
+  - int
+  - io fermion &n
+  - io fermion &p
+  - double T
+  - io thermo &th
+- function calc_temp_p
+  - int
+  - io fermion &n
+  - io fermion &p
+  - double T
+  - io thermo &th
 # 
 # Class eos_had_temp_eden_base
 #
