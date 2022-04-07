@@ -355,11 +355,6 @@ namespace o2scl {
         progress on solving for matter at a fixed density.
      */
     int verbose;
-
-    /** \brief If true, throw exceptions when the function calc_e()
-        does not converge (default true)
-    */
-    bool err_nonconv;
     //@}
     
     /// \name Masses

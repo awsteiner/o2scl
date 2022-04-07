@@ -291,7 +291,6 @@ class eos_had_rmf
 - bool calc_e_relative
 - bool zm_mode
 - int verbose
-- bool err_nonconv
 - double mnuc
 - double ms
 - double mw

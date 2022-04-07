@@ -62,6 +62,17 @@ eos_had_rmf::eos_had_rmf() {
 
   calc_e_relative=true;
   calc_e_steps=20;
+
+  // Are these necessary?
+
+  // AWS, 4/7/22: These settings have been moved from eos_had_rmf_ts
+  // and are now the default, because they appear to improve results.
+  // One problem was that the rho field is zero in nuclear matter and
+  // so the step size has to be large enough to compute derivatives.
+  def_mroot.def_jac.set_epsrel(1.0e-4);
+  def_sat_mroot.def_jac.set_epsrel(1.0e-4);
+  def_mroot.def_jac.set_epsmin(1.0e-15);
+  
 }
 
 int eos_had_rmf::calc_eq_temp_p
@@ -670,6 +681,17 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
 	}
       }
 
+      // The initial point has n_n = n_p and thus rho=0, and the
+      // solver has a little problem with the stepsize getting away
+      // from the rho=0 point, so we give rho a small non-zero value
+      if (fabs(x[4])<1.0e-8) {
+	if (neutron->n>proton->n) {
+	  x[4]=-1.0e-8;
+	} else if (neutron->n<proton->n) {
+	  x[4]=1.0e-8;
+	}
+      }
+      
       ret=eos_mroot->msolve(5,x,fmf);
       if (verbose>0) {
 	cout << alpha << " " << n_baryon << " " << n_charge << " "
@@ -684,10 +706,12 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
     }
     calc_temp_e_solve_fun(5,x,y);
     if (verbose>0) {
+      cout.setf(ios::scientific);
       cout << "x: ";
       vector_out(cout,x,true);
       cout << "y: ";
       vector_out(cout,y,true);
+      cout.unsetf(ios::scientific);
     }
   }
   
