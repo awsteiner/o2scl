@@ -1480,6 +1480,17 @@ void o2scl_index_spec_set_val3(void *vptr, double v) {
   return;
 }
 
+void o2scl_free_ix_index(void *vptr) {
+  ix_index *ptr=(ix_index *)vptr;
+  delete ptr;
+  return;
+}
+
+void *o2scl_ix_index_init(size_t ix) {
+  ix_index *ptr=new ix_index(ix);
+  return ptr;
+}
+
 void *o2scl_create_tensor_() {
   tensor<> *ptr=new tensor<>;
   return ptr;
@@ -2959,54 +2970,6 @@ void *o2scl_shared_ptr_table_units__ptr(void *vp) {
   std::shared_ptr<table_units<> > *p=(std::shared_ptr<table_units<> > *)vp;
   table_units<> *ref=p->get();
   return ref;
-}
-
-void *o2scl_ix_fixed_wrapper(size_t ix, size_t ix2) {
-  index_spec *ret=new index_spec;
-  *ret=ix_fixed(ix,ix2);
-  return ret;
-}
-
-void *o2scl_ix_sum_wrapper(size_t ix) {
-  index_spec *ret=new index_spec;
-  *ret=ix_sum(ix);
-  return ret;
-}
-
-void *o2scl_ix_trace_wrapper(size_t ix, size_t ix2) {
-  index_spec *ret=new index_spec;
-  *ret=ix_trace(ix,ix2);
-  return ret;
-}
-
-void *o2scl_ix_reverse_wrapper(size_t ix) {
-  index_spec *ret=new index_spec;
-  *ret=ix_reverse(ix);
-  return ret;
-}
-
-void *o2scl_ix_range_wrapper(size_t ix, size_t start, size_t end) {
-  index_spec *ret=new index_spec;
-  *ret=ix_range(ix,start,end);
-  return ret;
-}
-
-void *o2scl_ix_interp_wrapper(size_t ix, double v) {
-  index_spec *ret=new index_spec;
-  *ret=ix_interp(ix,v);
-  return ret;
-}
-
-void *o2scl_ix_grid_wrapper(size_t ix, double start, double end, size_t n_bins, bool log) {
-  index_spec *ret=new index_spec;
-  *ret=ix_grid(ix,start,end,n_bins,log);
-  return ret;
-}
-
-void *o2scl_ix_gridw_wrapper(size_t ix, double start, double end, double width, bool log) {
-  index_spec *ret=new index_spec;
-  *ret=ix_gridw(ix,start,end,width,log);
-  return ret;
 }
 
 double o2scl_fermi_function_wrapper(double E, double mu, double T, double limit) {

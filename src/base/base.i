@@ -1024,9 +1024,10 @@ class index_spec
 - double val1
 - double val2
 - double val3
-#function ix_index
-#- index_spec
-#- size_t ix
+class ix_index
+- no_def_cons
+- cons init
+  - size_t ix
 #function ix_fixed
 #- index_spec
 #- size_t ix
@@ -1162,6 +1163,11 @@ class tensor<>
   - std::string x_name ["x"]
   - std::string y_name ["y"]
   - std::string slice_name ["z"]
+#- function rearrange_and_copy
+#  - tensor<>
+#  - std::string spec
+#  - int verbose [0]
+#  - bool err_on_fail [true]
 - extra_py |
 | def create_size(self,v):
 |     """

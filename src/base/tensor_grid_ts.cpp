@@ -482,6 +482,64 @@ int main(void) {
       t.test_gen(tx3==tx3b,"rearrange 2");
     }
   }
+
+  /*
+  {
+    index_spec i1=ix_index2(4);
+    ix_index i2(4);
+    cout << i1.equal(i2) << endl;
+  }
+  {
+    index_spec i1=ix_fixed2(4,1);
+    ix_fixed i2(4,1);
+    cout << i1.equal(i2) << endl;
+  }
+  {
+    index_spec i1=ix_trace2(4,1);
+    ix_trace i2(4,1);
+    cout << i1.equal(i2) << endl;
+  }
+  {
+    index_spec i1=ix_sum2(4);
+    ix_sum i2(4);
+    cout << i1.equal(i2) << endl;
+  }
+  {
+    index_spec i1=ix_reverse2(4);
+    ix_reverse i2(4);
+    cout << i1.equal(i2) << endl;
+  }
+  {
+    index_spec i1=ix_range2(4,1,2);
+    ix_range i2(4,1,2);
+    cout << i1.equal(i2) << endl;
+  }
+  {
+    index_spec i1=ix_interp2(4,1.0);
+    ix_interp i2(4,1.0);
+    cout << i1.equal(i2) << endl;
+  }
+  {
+    index_spec i1=ix_grid2(4,10.0,15.0,1.1);
+    ix_grid i2(4,10.0,15.0,1.1);
+    cout << i1.equal(i2) << endl;
+  }
+  {
+    index_spec i1=ix_grid2(4,10.0,15.0,1.1,1);
+    ix_grid i2(4,10.0,15.0,1.1,1);
+    cout << i1.equal(i2) << endl;
+  }
+  {
+    index_spec i1=ix_gridw2(4,10.0,15.0,1.1);
+    ix_gridw i2(4,10.0,15.0,1.1);
+    cout << i1.equal(i2) << endl;
+  }
+  {
+    index_spec i1=ix_gridw2(4,10.0,15.0,1.1,1);
+    ix_gridw i2(4,10.0,15.0,1.1,1);
+    cout << i1.equal(i2) << endl;
+  }
+  */
   
   t.report();
 

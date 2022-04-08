@@ -337,6 +337,69 @@ namespace o2scl {
 
   };
 
+  /** \brief One-dimensional function from a python function
+  */
+  class funct_python_method {
+
+  protected:
+
+    /// Python unicode object containing function name
+    PyObject *pName;
+    
+    /// Python module containing function
+    PyObject *pModule;
+    
+    /// Function arguments
+    PyObject *pArgs;
+
+    /// Python function
+    PyObject *pFunc;
+
+    /// Python class instance
+    PyObject *pInstance;
+
+    /// Python class
+    PyObject *pClass;
+
+    /// Verbosity parameter
+    int verbose;
+    
+  public:
+    
+    /** \brief Specify the python and the parameters
+     */
+    funct_python_method(std::string module, std::string class_name,
+                        std::string func, int v=0);
+    
+    virtual ~funct_python_method();
+  
+    /** \brief Specify the python and the parameters
+
+        This function is called by the constructor and thus
+        cannot be virtual.
+     */
+    int set_function(std::string module, std::string class_name,
+                     std::string func);
+    
+    /** \brief Compute the function at point \c x and return the result
+     */
+    virtual double operator()(double x) const;
+
+#ifndef DOXYGEN_INTERNAL
+
+  protected:
+
+    funct_python_method() {};
+
+#endif
+
+  private:
+
+    funct_python_method(const funct_python_method &);
+    funct_python_method& operator=(const funct_python_method&);
+
+  };
+
 #endif
 
 }

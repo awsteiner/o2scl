@@ -128,53 +128,23 @@ namespace o2scl {
       val2=v2;
       val3=v3;
     }
+
+    bool equal(index_spec &is) {
+      bool ret;
+      ret=(type==is.type && ix1==is.ix1 && ix2==is.ix2 && ix3==is.ix3 &&
+           val1==is.val1 && val2==is.val2 && val3==is.val3);
+      if (ret==false) {
+        std::cout << type << " " << ix1 << " " << ix2 << " "
+                  << ix3 << " " << val1 << " " << val2 << " " << val3
+                  << std::endl;
+        std::cout << is.type << " " << is.ix1 << " " << is.ix2 << " "
+                  << is.ix3 << " " << is.val1 << " " << is.val2 << " "
+                  << is.val3 << std::endl;
+      }
+      return ret;
+    }
     
   };
-
-  /// \name Tensor index functions in src/base/tensor.h
-  //@{
-  /** \brief Choose an index
-   */
-  index_spec ix_index2(size_t ix);
-  
-  /** \brief Fix index \c ix to value \c ix2
-   */
-  index_spec ix_fixed2(size_t ix, size_t ix2);
-  
-  /** \brief Sum over index \c ix
-   */
-  index_spec ix_sum2(size_t ix);
-  
-  /** \brief Perform a trace over indices \c ix and \c ix2
-   */
-  index_spec ix_trace2(size_t ix, size_t ix2);
-  
-  /** \brief Reverse index \c ix
-   */
-  index_spec ix_reverse2(size_t ix);
-  
-  /** \brief Index covers a range of values
-   */
-  index_spec ix_range2(size_t ix, size_t start, size_t end);
-
-  /** \brief Interpolate value \c v into index \c ix
-      (for \ref o2scl::tensor_grid only)
-  */
-  index_spec ix_interp2(size_t ix, double v);
-  
-  /** \brief Interpolate grid with fixed number of bins into index \c ix
-
-      (for \ref o2scl::tensor_grid only)
-  */
-  index_spec ix_grid2(size_t ix, double begin, double end, size_t n_bins,
-		     bool log=false);
-  
-  /** \brief Interpolate grid with fixed bin width into index \c ix
-      (for \ref o2scl::tensor_grid only)
-  */
-  index_spec ix_gridw2(size_t ix, double begin, double end, double width,
-                      bool log=false);
-  //@}
 
   /** \brief Unmodified index for tensors
    */
@@ -183,15 +153,7 @@ namespace o2scl {
   public:
 
     /// Desc
-    ix_index(size_t ix) {
-      this->type=index_spec::index;
-      this->ix1=ix;
-      this->ix2=0;
-      this->ix3=0;
-      this->val1=0.0;
-      this->val2=0.0;
-      this->val3=0.0;
-    }
+    ix_index(size_t ix);
     
     /// Desc
     ix_index(index_spec &is) {
@@ -482,7 +444,7 @@ namespace o2scl {
     ix_gridw(size_t ix, double start, double finish, double wid,
              bool log=false) : begin(this->val1), end(this->val2),
                          width(this->val3), log_flag(this->ix3) {
-      this->type=index_spec::grid;
+      this->type=index_spec::gridw;
       this->ix1=ix;
       this->ix2=0;
       if (log==true) {

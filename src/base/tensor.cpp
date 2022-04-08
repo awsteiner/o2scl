@@ -25,46 +25,12 @@
 using namespace std;
 using namespace o2scl;
 
-index_spec o2scl::ix_index2(size_t ix) {
-  return index_spec(index_spec::index,ix,0,0,0.0,0.0,0.0);
-}
-
-index_spec o2scl::ix_fixed2(size_t ix, size_t fix) {
-  return index_spec(index_spec::fixed,ix,fix,0,0.0,0.0,0.0);
-}
-
-index_spec o2scl::ix_sum2(size_t ix) {
-  return index_spec(index_spec::sum,ix,0,0,0.0,0.0,0.0);
-}
-
-index_spec o2scl::ix_trace2(size_t ix, size_t ix2) {
-  return index_spec(index_spec::trace,ix,ix2,0,0.0,0.0,0.0);
-}
-  
-index_spec o2scl::ix_reverse2(size_t ix) {
-  return index_spec(index_spec::reverse,ix,0,0,0.0,0.0,0.0);
-}
-  
-index_spec o2scl::ix_range2(size_t ix, size_t start, size_t end) {
-  return index_spec(index_spec::range,ix,start,end,0.0,0.0,0.0);
-}
-
-index_spec o2scl::ix_interp2(size_t ix, double v) {
-  return index_spec(index_spec::interp,ix,0,0,v,0.0,0.0);
-}
-  
-index_spec o2scl::ix_grid2(size_t ix, double begin, double end, 
-			  size_t n_bins, bool log) {
-  if (log) {
-    return index_spec(index_spec::grid,ix,n_bins,1,begin,end,0.0);
-  }
-  return index_spec(index_spec::grid,ix,n_bins,0,begin,end,0.0);
-}
-
-index_spec o2scl::ix_gridw2(size_t ix, double begin, double end, 
-			   double width, bool log) {
-  if (log) {
-    return index_spec(index_spec::gridw,ix,0,1,begin,end,width);
-  }
-  return index_spec(index_spec::gridw,ix,0,0,begin,end,width);
+ix_index::ix_index(size_t ix) {
+  this->type=index_spec::index;
+  this->ix1=ix;
+  this->ix2=0;
+  this->ix3=0;
+  this->val1=0.0;
+  this->val2=0.0;
+  this->val3=0.0;
 }
