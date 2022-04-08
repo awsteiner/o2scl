@@ -33,6 +33,7 @@
 #include <o2scl/format_float.h>
 #include <o2scl/interp_krige.h>
 #include <o2scl/cli.h>
+#include <o2scl/funct.h>
 
 extern "C" {
 

@@ -35,6 +35,7 @@
 #include <o2scl/nstar_cold.h>
 #include <o2scl/tov_love.h>
 #include <o2scl/eos_tov.h>
+#include <o2scl/nucleus_rmf.h>
 
 extern "C" {
 
@@ -255,10 +256,6 @@ void o2scl_eos_had_rmf_set_zm_mode(void *vptr, bool v);
 int o2scl_eos_had_rmf_get_verbose(void *vptr);
 
 void o2scl_eos_had_rmf_set_verbose(void *vptr, int v);
-
-bool o2scl_eos_had_rmf_get_err_nonconv(void *vptr);
-
-void o2scl_eos_had_rmf_set_err_nonconv(void *vptr, bool v);
 
 double o2scl_eos_had_rmf_get_mnuc(void *vptr);
 
@@ -679,6 +676,44 @@ int o2scl_nstar_cold_fixed(void *vptr, double target_mass);
 void *o2scl_nstar_cold_get_eos_results(void *vptr);
 
 void *o2scl_nstar_cold_get_tov_results(void *vptr);
+
+void *o2scl_create_nucleus_rmf();
+
+void o2scl_free_nucleus_rmf(void *vptr);
+
+double o2scl_nucleus_rmf_get_stens(void *vptr);
+
+void o2scl_nucleus_rmf_set_stens(void *vptr, double v);
+
+double o2scl_nucleus_rmf_get_rnrp(void *vptr);
+
+void o2scl_nucleus_rmf_set_rnrp(void *vptr, double v);
+
+double o2scl_nucleus_rmf_get_rnrms(void *vptr);
+
+void o2scl_nucleus_rmf_set_rnrms(void *vptr, double v);
+
+double o2scl_nucleus_rmf_get_rprms(void *vptr);
+
+void o2scl_nucleus_rmf_set_rprms(void *vptr, double v);
+
+double o2scl_nucleus_rmf_get_etot(void *vptr);
+
+void o2scl_nucleus_rmf_set_etot(void *vptr, double v);
+
+double o2scl_nucleus_rmf_get_r_charge(void *vptr);
+
+void o2scl_nucleus_rmf_set_r_charge(void *vptr, double v);
+
+double o2scl_nucleus_rmf_get_r_charge_cm(void *vptr);
+
+void o2scl_nucleus_rmf_set_r_charge_cm(void *vptr, double v);
+
+int o2scl_nucleus_rmf_run_nucleus(void *vptr, int nucleus_Z, int nucleus_N, int unocc_Z, int unocc_N);
+
+void *o2scl_nucleus_rmf_get_profiles(void *vptr);
+
+void *o2scl_nucleus_rmf_get_chden(void *vptr);
 
 void o2scl_skyrme_load_wrapper(void *ptr_sk, char *model, bool external=false, int verbose=0);
 

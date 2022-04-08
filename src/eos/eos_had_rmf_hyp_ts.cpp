@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
     re.def_proton.n*re.def_proton.mu << endl;
   t.test_rel(re.def_thermo.ed+re.def_thermo.pr-
 	     re.def_neutron.n*re.def_neutron.mu-
-	     re.def_proton.n*re.def_proton.mu,0.0,1.0e-9,"TI");
+	     re.def_proton.n*re.def_proton.mu,0.0,2.0e-9,"TI");
   cout << endl;
 
   // Compare with Table I in GM91.

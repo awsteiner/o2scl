@@ -30,6 +30,7 @@ h_include <o2scl/hdf_eos_io.h>
 h_include <o2scl/nstar_cold.h>
 h_include <o2scl/tov_love.h>
 h_include <o2scl/eos_tov.h>
+h_include <o2scl/nucleus_rmf.h>
 # 
 # Include statement for C++ source code
 # 
@@ -525,6 +526,31 @@ class nstar_cold
 - bool remove_rows  
 - bool include_muons
 - bool err_nonconv
+# 
+# Class nucleus_rmf
+#
+class nucleus_rmf
+- function run_nucleus
+  - int
+  - int nucleus_Z
+  - int nucleus_N
+  - int unocc_Z
+  - int unocc_N
+- function get_profiles
+  - shared_ptr table_units<>
+- function get_chden
+  - shared_ptr table_units<>
+- double stens
+- double rnrp
+- double rnrms
+- double rprms
+- double etot
+- double r_charge  
+- double r_charge_cm
+#- eos_had_rmf def_rmf
+#- function set_eos
+#  - int
+#  - io eos_had_rmf &r
 # 
 # HDF functions
 #

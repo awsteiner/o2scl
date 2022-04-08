@@ -1,12 +1,13 @@
 # Interface file for o2scl base classes
 #
 # Todo:
-# 1. Create o2sclpy/test/test_tensor.py
+# 1. Finish o2sclpy/test/test_tensor.py
 # 2. Implement static const ints for class columnify
 # 3. Fix interp_vec and interp_krige_optim
 # 4. Fix all of the functions at the end
 # 5. Check links in python docs to o2scl website
-# 7. global functions like abs() and norm() for complex numbers
+# 6. global functions like abs() and norm() for complex numbers
+# 7. Create o2sclpy/test/test_tensor_grid.py
 #
 namespace o2scl
 py_class_doc |
@@ -38,6 +39,7 @@ h_include <boost/numeric/ublas/matrix.hpp>
 h_include <o2scl/format_float.h>
 h_include <o2scl/interp_krige.h>
 h_include <o2scl/cli.h>
+h_include <o2scl/funct.h>
 # 
 # Include statement for C++ source code
 # 
@@ -1025,43 +1027,43 @@ class index_spec
 #function ix_index
 #- index_spec
 #- size_t ix
-function ix_fixed
-- index_spec
-- size_t ix
-- size_t ix2
-function ix_sum
-- index_spec
-- size_t ix
-function ix_trace
-- index_spec
-- size_t ix
-- size_t ix2
-function ix_reverse
-- index_spec
-- size_t ix
-function ix_range
-- index_spec
-- size_t ix
-- size_t start
-- size_t end
-function ix_interp
-- index_spec
-- size_t ix
-- double v
-function ix_grid
-- index_spec
-- size_t ix
-- double start
-- double end
-- size_t n_bins
-- bool log [false]
-function ix_gridw
-- index_spec
-- size_t ix
-- double start
-- double end
-- double width
-- bool log [false]
+#function ix_fixed
+#- index_spec
+#- size_t ix
+#- size_t ix2
+#function ix_sum
+#- index_spec
+#- size_t ix
+#function ix_trace
+#- index_spec
+#- size_t ix
+#- size_t ix2
+#function ix_reverse
+#- index_spec
+#- size_t ix
+#function ix_range
+#- index_spec
+#- size_t ix
+#- size_t start
+#- size_t end
+#function ix_interp
+#- index_spec
+#- size_t ix
+#- double v
+#function ix_grid
+#- index_spec
+#- size_t ix
+#- double start
+#- double end
+#- size_t n_bins
+#- bool log [false]
+#function ix_gridw
+#- index_spec
+#- size_t ix
+#- double start
+#- double end
+#- double width
+#- bool log [false]
 # 
 # Class tensor
 #
@@ -1984,6 +1986,14 @@ function linear_or_log<std::vector<double>>
 - py_name linear_or_log
 - io std::vector<double> &x
 - out bool &log_x
+#class funct_python
+#- cons init
+#  - std::string module
+#  - std::string func
+#  - int v [0]
+#- int set_function
+#  - std::string module
+#  - std::string func
 class comm_option_s
 - char shrt
 - std::string lng

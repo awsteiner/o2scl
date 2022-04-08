@@ -135,48 +135,48 @@ namespace o2scl {
   //@{
   /** \brief Choose an index
    */
-  //index_spec ix_index(size_t ix);
+  index_spec ix_index2(size_t ix);
   
   /** \brief Fix index \c ix to value \c ix2
    */
-  //index_spec ix_fixed(size_t ix, size_t ix2);
+  index_spec ix_fixed2(size_t ix, size_t ix2);
   
   /** \brief Sum over index \c ix
    */
-  //index_spec ix_sum(size_t ix);
+  index_spec ix_sum2(size_t ix);
   
   /** \brief Perform a trace over indices \c ix and \c ix2
    */
-  index_spec ix_trace(size_t ix, size_t ix2);
+  index_spec ix_trace2(size_t ix, size_t ix2);
   
   /** \brief Reverse index \c ix
    */
-  index_spec ix_reverse(size_t ix);
+  index_spec ix_reverse2(size_t ix);
   
   /** \brief Index covers a range of values
    */
-  index_spec ix_range(size_t ix, size_t start, size_t end);
+  index_spec ix_range2(size_t ix, size_t start, size_t end);
 
   /** \brief Interpolate value \c v into index \c ix
       (for \ref o2scl::tensor_grid only)
   */
-  index_spec ix_interp(size_t ix, double v);
+  index_spec ix_interp2(size_t ix, double v);
   
   /** \brief Interpolate grid with fixed number of bins into index \c ix
 
       (for \ref o2scl::tensor_grid only)
   */
-  index_spec ix_grid(size_t ix, double begin, double end, size_t n_bins,
+  index_spec ix_grid2(size_t ix, double begin, double end, size_t n_bins,
 		     bool log=false);
   
   /** \brief Interpolate grid with fixed bin width into index \c ix
       (for \ref o2scl::tensor_grid only)
   */
-  index_spec ix_gridw(size_t ix, double begin, double end, double width,
+  index_spec ix_gridw2(size_t ix, double begin, double end, double width,
                       bool log=false);
   //@}
 
-  /** \brief Desc
+  /** \brief Unmodified index for tensors
    */
   class ix_index : public index_spec {
 
@@ -186,6 +186,11 @@ namespace o2scl {
     ix_index(size_t ix) {
       this->type=index_spec::index;
       this->ix1=ix;
+      this->ix2=0;
+      this->ix3=0;
+      this->val1=0.0;
+      this->val2=0.0;
+      this->val3=0.0;
     }
     
     /// Desc
@@ -196,11 +201,16 @@ namespace o2scl {
       }
       this->type=is.type;
       this->ix1=is.ix1;
+      this->ix2=0;
+      this->ix3=0;
+      this->val1=0.0;
+      this->val2=0.0;
+      this->val3=0.0;
     }
     
   };
   
-  /** \brief Desc
+  /** \brief Fix an index for tensors
    */
   class ix_fixed : public index_spec {
 
@@ -213,6 +223,10 @@ namespace o2scl {
       this->type=index_spec::fixed;
       this->ix1=ix;
       this->ix2=fix;
+      this->ix3=0;
+      this->val1=0.0;
+      this->val2=0.0;
+      this->val3=0.0;
     }
     
     ix_fixed(index_spec &is) : fixed_value(this->ix2) {
@@ -220,11 +234,18 @@ namespace o2scl {
 	O2SCL_ERR("Invalid index_spec in ix_fixed",
 		  o2scl::exc_einval);
       }
+      this->type=is.type;
+      this->ix1=is.ix1;
+      this->ix2=is.ix2;
+      this->ix3=0;
+      this->val1=0.0;
+      this->val2=0.0;
+      this->val3=0.0;
     }
     
   };
   
-  /** \brief Desc
+  /** \brief Sum over an index for tensors
    */
   class ix_sum : public index_spec {
 
@@ -234,6 +255,11 @@ namespace o2scl {
     ix_sum(size_t ix) {
       this->type=index_spec::sum;
       this->ix1=ix;
+      this->ix2=0;
+      this->ix3=0;
+      this->val1=0.0;
+      this->val2=0.0;
+      this->val3=0.0;
     }
     
     /// Desc
@@ -244,78 +270,156 @@ namespace o2scl {
       }
       this->type=is.type;
       this->ix1=is.ix1;
+      this->ix2=0;
+      this->ix3=0;
+      this->val1=0.0;
+      this->val2=0.0;
+      this->val3=0.0;
     }
     
   };
-  
-#ifdef O2SCL_NEVER_DEFINED
 
-  class ix_trace2 : public index_spec {
+  /** \brief Perform a trace over two tensor indices
+   */
+  class ix_trace : public index_spec {
 
   public:
 
     size_t &second_index;
+
+    ix_trace(size_t ix, size_t jx) : second_index(this->ix2) {
+      this->type=index_spec::trace;
+      this->ix1=ix;
+      this->ix2=jx;
+      this->ix3=0;
+      this->val1=0.0;
+      this->val2=0.0;
+      this->val3=0.0;
+    }
     
-    ix_trace2(index_spec &is) : second_index(ix.ix2) {
-      if (ix.type!=index_spec::trace) {
-	O2SCL_ERR("Invalid index_spec in ix_index",
+    ix_trace(index_spec &is) : second_index(is.ix2) {
+      if (is.type!=index_spec::trace) {
+	O2SCL_ERR("Invalid index_spec in ix_trace",
 		  o2scl::exc_einval);
       }
+      this->type=is.type;
+      this->ix1=is.ix1;
+      this->ix2=is.ix2;
+      this->ix3=0;
+      this->val1=0.0;
+      this->val2=0.0;
+      this->val3=0.0;
     }
     
   };
-  
-  class ix_reverse2 : public index_spec {
+
+  /** \brief Reverse the order of an index
+   */
+  class ix_reverse : public index_spec {
 
   public:
 
-    ix_reverse2(index_spec &is) {
-      if (ix.type!=index_spec::reverse) {
-	O2SCL_ERR("Invalid index_spec in ix_index",
+    ix_reverse(size_t ix) {
+      this->type=index_spec::reverse;
+      this->ix1=ix;
+      this->ix2=0;
+      this->ix3=0;
+      this->val1=0.0;
+      this->val2=0.0;
+      this->val3=0.0;
+    }
+    
+    ix_reverse(index_spec &is) {
+      if (is.type!=index_spec::reverse) {
+	O2SCL_ERR("Invalid index_spec in ix_reverse",
 		  o2scl::exc_einval);
       }
+      this->type=is.type;
+      this->ix1=is.ix1;
+      this->ix2=0;
+      this->ix3=0;
+      this->val1=0.0;
+      this->val2=0.0;
+      this->val3=0.0;
     }
     
   };
-  
-  class ix_range2 : public index_spec {
+
+  /** \brief Restrict an index to a range
+   */
+  class ix_range : public index_spec {
 
   public:
     
-    double &begin;
+    size_t &begin;
 
-    double &end;
+    size_t &end;
+
+    ix_range(size_t ix, size_t start, size_t finish) :
+      begin(this->ix2), end(this->ix3) {
+      this->type=index_spec::range;
+      this->ix1=ix;
+      this->ix2=start;
+      this->ix3=finish;
+      this->val1=0.0;
+      this->val2=0.0;
+      this->val3=0.0;
+    }
     
-    ix_range2(index_spec &is) : begin(is.ix2), end(is.ix3) {
-      if (ix.type!=index_spec::range) {
-	O2SCL_ERR("Invalid index_spec in ix_index",
+    ix_range(index_spec &is) : begin(this->ix2), end(this->ix3) {
+      if (is.type!=index_spec::range) {
+	O2SCL_ERR("Invalid index_spec in ix_range",
 		  o2scl::exc_einval);
       }
+      this->type=is.type;
+      this->ix1=is.ix1;
+      this->ix2=is.ix2;
+      this->ix3=is.ix3;
+      this->val1=0.0;
+      this->val2=0.0;
+      this->val3=0.0;
     }
     
   };
 
-  class ix_interp2 : public index_spec {
+  /** \brief For a tensor_grid object, interpolate a value into 
+      the grid for one of the indices
+  */
+  class ix_interp : public index_spec {
 
   public:
     
-    double &begin;
+    double &val;
 
-    double &end;
-
-    size_t &n_bins;
-
-    ix_interp2(index_spec &is) : begin(is.val1), end(is.val2),
-                                    n_bins(is.ix2) {
-      if (ix.type!=index_spec::interp) {
-	O2SCL_ERR("Invalid index_spec in ix_index",
+    ix_interp(size_t ix, double v) : val(this->val1) {
+      this->type=index_spec::interp;
+      this->ix1=ix;
+      this->ix2=0;
+      this->ix3=0;
+      this->val1=v;
+      this->val2=0.0;
+      this->val3=0.0;
+    }
+    
+    ix_interp(index_spec &is) : val(this->val1) {
+      if (is.type!=index_spec::interp) {
+	O2SCL_ERR("Invalid index_spec in ix_interp",
 		  o2scl::exc_einval);
       }
+      this->type=is.type;
+      this->ix1=is.ix1;
+      this->ix2=0;
+      this->ix3=0;
+      this->val1=is.val1;
+      this->val2=0.0;
+      this->val3=0.0;
     }
     
   };
 
-  class ix_grid2 : public index_spec {
+  /** \brief For a tensor_grid object, interpolate a grid
+  */
+  class ix_grid : public index_spec {
 
   public:
     
@@ -326,18 +430,44 @@ namespace o2scl {
     size_t &n_bins;
 
     size_t &log_flag;
+    
+    ix_grid(size_t ix, double start, double finish, size_t bins,
+            bool log=false) : begin(this->val1), end(this->val2),
+                        n_bins(this->ix2), log_flag(this->ix3) {
+      this->type=index_spec::grid;
+      this->ix1=ix;
+      this->ix2=bins;
+      if (log==true) {
+        this->ix3=1;
+      } else {
+        this->ix3=0;
+      }
+      this->val1=start;
+      this->val2=finish;
+      this->val3=0.0;
+    }
 
-    ix_grid2(index_spec &is) : begin(is.val1), end(is.val2),
-				  n_bins(is.ix2), log_flag(is.ix3) {
-      if (ix.type!=index_spec::grid) {
-	O2SCL_ERR("Invalid index_spec in ix_index",
+    ix_grid(index_spec &is) : begin(this->val1), end(this->val2),
+                              n_bins(this->ix2), log_flag(this->ix3) {
+      if (is.type!=index_spec::grid) {
+	O2SCL_ERR("Invalid index_spec in ix_grid",
 		  o2scl::exc_einval);
       }
+      this->type=is.type;
+      this->ix1=is.ix1;
+      this->ix2=is.ix2;
+      this->ix3=is.ix3;
+      this->val1=is.val1;
+      this->val2=is.val2;
+      this->val3=0.0;
     }
     
   };
 
-  class ix_gridw2 : public index_spec {
+  /** \brief For a tensor_grid object, interpolate a grid with
+      a fixed width
+  */
+  class ix_gridw : public index_spec {
 
   public:
     
@@ -349,16 +479,38 @@ namespace o2scl {
 
     size_t &log_flag;
     
-    ix_gridw2(index_spec &is) : begin(is.val1), end(is.val2),
-				   width(is.val3), log_flag(is.ix3) {
-      if (ix.type!=index_spec::gridw) {
-	O2SCL_ERR("Invalid index_spec in ix_index",
+    ix_gridw(size_t ix, double start, double finish, double wid,
+             bool log=false) : begin(this->val1), end(this->val2),
+                         width(this->val3), log_flag(this->ix3) {
+      this->type=index_spec::grid;
+      this->ix1=ix;
+      this->ix2=0;
+      if (log==true) {
+        this->ix3=1;
+      } else {
+        this->ix3=0;
+      }
+      this->val1=start;
+      this->val2=finish;
+      this->val3=wid;
+    }
+
+    ix_gridw(index_spec &is) : begin(this->val1), end(this->val2),
+                               width(this->val3), log_flag(this->ix3) {
+      if (is.type!=index_spec::gridw) {
+	O2SCL_ERR("Invalid index_spec in ix_gridw",
 		  o2scl::exc_einval);
       }
+      this->type=is.type;
+      this->ix1=is.ix1;
+      this->ix2=0;
+      this->ix3=is.ix3;
+      this->val1=is.val1;
+      this->val2=is.val2;
+      this->val3=is.val3;
     }
     
   };
-#endif
   
   /** \brief Tensor class with arbitrary dimensions
 

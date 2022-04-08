@@ -666,17 +666,6 @@ void o2scl_eos_had_rmf_set_verbose(void *vptr, int v) {
   return;
 }
 
-bool o2scl_eos_had_rmf_get_err_nonconv(void *vptr) {
-  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
-  return ptr->err_nonconv;
-}
-
-void o2scl_eos_had_rmf_set_err_nonconv(void *vptr, bool v) {
-  eos_had_rmf *ptr=(eos_had_rmf *)vptr;
-  ptr->err_nonconv=v;
-  return;
-}
-
 double o2scl_eos_had_rmf_get_mnuc(void *vptr) {
   eos_had_rmf *ptr=(eos_had_rmf *)vptr;
   return ptr->mnuc;
@@ -1853,6 +1842,114 @@ void *o2scl_nstar_cold_get_tov_results(void *vptr) {
   nstar_cold *ptr=(nstar_cold *)vptr;
   std::shared_ptr<table_units<> > *ret=new std::shared_ptr<table_units<> >;
   *ret=ptr->get_tov_results();
+  return ret;
+}
+
+void *o2scl_create_nucleus_rmf() {
+  nucleus_rmf *ptr=new nucleus_rmf;
+  return ptr;
+}
+
+void o2scl_free_nucleus_rmf(void *vptr) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  delete ptr;
+  return;
+}
+
+double o2scl_nucleus_rmf_get_stens(void *vptr) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  return ptr->stens;
+}
+
+void o2scl_nucleus_rmf_set_stens(void *vptr, double v) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  ptr->stens=v;
+  return;
+}
+
+double o2scl_nucleus_rmf_get_rnrp(void *vptr) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  return ptr->rnrp;
+}
+
+void o2scl_nucleus_rmf_set_rnrp(void *vptr, double v) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  ptr->rnrp=v;
+  return;
+}
+
+double o2scl_nucleus_rmf_get_rnrms(void *vptr) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  return ptr->rnrms;
+}
+
+void o2scl_nucleus_rmf_set_rnrms(void *vptr, double v) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  ptr->rnrms=v;
+  return;
+}
+
+double o2scl_nucleus_rmf_get_rprms(void *vptr) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  return ptr->rprms;
+}
+
+void o2scl_nucleus_rmf_set_rprms(void *vptr, double v) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  ptr->rprms=v;
+  return;
+}
+
+double o2scl_nucleus_rmf_get_etot(void *vptr) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  return ptr->etot;
+}
+
+void o2scl_nucleus_rmf_set_etot(void *vptr, double v) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  ptr->etot=v;
+  return;
+}
+
+double o2scl_nucleus_rmf_get_r_charge(void *vptr) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  return ptr->r_charge;
+}
+
+void o2scl_nucleus_rmf_set_r_charge(void *vptr, double v) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  ptr->r_charge=v;
+  return;
+}
+
+double o2scl_nucleus_rmf_get_r_charge_cm(void *vptr) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  return ptr->r_charge_cm;
+}
+
+void o2scl_nucleus_rmf_set_r_charge_cm(void *vptr, double v) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  ptr->r_charge_cm=v;
+  return;
+}
+
+int o2scl_nucleus_rmf_run_nucleus(void *vptr, int nucleus_Z, int nucleus_N, int unocc_Z, int unocc_N) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  int ret=ptr->run_nucleus(nucleus_Z,nucleus_N,unocc_Z,unocc_N);
+  return ret;
+}
+
+void *o2scl_nucleus_rmf_get_profiles(void *vptr) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  std::shared_ptr<table_units<> > *ret=new std::shared_ptr<table_units<> >;
+  *ret=ptr->get_profiles();
+  return ret;
+}
+
+void *o2scl_nucleus_rmf_get_chden(void *vptr) {
+  nucleus_rmf *ptr=(nucleus_rmf *)vptr;
+  std::shared_ptr<table_units<> > *ret=new std::shared_ptr<table_units<> >;
+  *ret=ptr->get_chden();
   return ret;
 }
 
