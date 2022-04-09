@@ -529,6 +529,38 @@ void o2scl_free_ix_index(void *vptr);
 
 void *o2scl_ix_index_init(size_t ix);
 
+void o2scl_free_ix_fixed(void *vptr);
+
+void *o2scl_ix_fixed_init(size_t ix, size_t ix2);
+
+void o2scl_free_ix_sum(void *vptr);
+
+void *o2scl_ix_sum_init(size_t ix);
+
+void o2scl_free_ix_trace(void *vptr);
+
+void *o2scl_ix_trace_init(size_t ix, size_t ix2);
+
+void o2scl_free_ix_reverse(void *vptr);
+
+void *o2scl_ix_reverse_init(size_t ix);
+
+void o2scl_free_ix_range(void *vptr);
+
+void *o2scl_ix_range_init(size_t ix, size_t start, size_t end);
+
+void o2scl_free_ix_interp(void *vptr);
+
+void *o2scl_ix_interp_init(size_t ix, double v);
+
+void o2scl_free_ix_grid(void *vptr);
+
+void *o2scl_ix_grid_init(size_t ix, double start, double end, size_t n_bins, bool log);
+
+void o2scl_free_ix_gridw(void *vptr);
+
+void *o2scl_ix_gridw_init(size_t ix, double start, double end, double width, bool log);
+
 void *o2scl_create_tensor_();
 
 void o2scl_free_tensor_(void *vptr);
@@ -930,6 +962,14 @@ void o2scl_gen_test_number_double__reset(void *vptr);
 void o2scl_gen_test_number_double__set_radix(void *vptr, double r);
 
 double o2scl_gen_test_number_double__gen(void *vptr);
+
+void o2scl_free_funct_string(void *vptr);
+
+int o2scl_funct_string_set_parm(void *vptr, char *name, double val);
+
+double o2scl_funct_string_getitem(void *vptr, double x);
+
+void *o2scl_funct_string_init(char *expr, char *var);
 
 void *o2scl_create_comm_option_s();
 

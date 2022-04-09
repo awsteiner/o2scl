@@ -1491,6 +1491,94 @@ void *o2scl_ix_index_init(size_t ix) {
   return ptr;
 }
 
+void o2scl_free_ix_fixed(void *vptr) {
+  ix_fixed *ptr=(ix_fixed *)vptr;
+  delete ptr;
+  return;
+}
+
+void *o2scl_ix_fixed_init(size_t ix, size_t ix2) {
+  ix_fixed *ptr=new ix_fixed(ix,ix2);
+  return ptr;
+}
+
+void o2scl_free_ix_sum(void *vptr) {
+  ix_sum *ptr=(ix_sum *)vptr;
+  delete ptr;
+  return;
+}
+
+void *o2scl_ix_sum_init(size_t ix) {
+  ix_sum *ptr=new ix_sum(ix);
+  return ptr;
+}
+
+void o2scl_free_ix_trace(void *vptr) {
+  ix_trace *ptr=(ix_trace *)vptr;
+  delete ptr;
+  return;
+}
+
+void *o2scl_ix_trace_init(size_t ix, size_t ix2) {
+  ix_trace *ptr=new ix_trace(ix,ix2);
+  return ptr;
+}
+
+void o2scl_free_ix_reverse(void *vptr) {
+  ix_reverse *ptr=(ix_reverse *)vptr;
+  delete ptr;
+  return;
+}
+
+void *o2scl_ix_reverse_init(size_t ix) {
+  ix_reverse *ptr=new ix_reverse(ix);
+  return ptr;
+}
+
+void o2scl_free_ix_range(void *vptr) {
+  ix_range *ptr=(ix_range *)vptr;
+  delete ptr;
+  return;
+}
+
+void *o2scl_ix_range_init(size_t ix, size_t start, size_t end) {
+  ix_range *ptr=new ix_range(ix,start,end);
+  return ptr;
+}
+
+void o2scl_free_ix_interp(void *vptr) {
+  ix_interp *ptr=(ix_interp *)vptr;
+  delete ptr;
+  return;
+}
+
+void *o2scl_ix_interp_init(size_t ix, double v) {
+  ix_interp *ptr=new ix_interp(ix,v);
+  return ptr;
+}
+
+void o2scl_free_ix_grid(void *vptr) {
+  ix_grid *ptr=(ix_grid *)vptr;
+  delete ptr;
+  return;
+}
+
+void *o2scl_ix_grid_init(size_t ix, double start, double end, size_t n_bins, bool log) {
+  ix_grid *ptr=new ix_grid(ix,start,end,n_bins,log);
+  return ptr;
+}
+
+void o2scl_free_ix_gridw(void *vptr) {
+  ix_gridw *ptr=(ix_gridw *)vptr;
+  delete ptr;
+  return;
+}
+
+void *o2scl_ix_gridw_init(size_t ix, double start, double end, double width, bool log) {
+  ix_gridw *ptr=new ix_gridw(ix,start,end,width,log);
+  return ptr;
+}
+
 void *o2scl_create_tensor_() {
   tensor<> *ptr=new tensor<>;
   return ptr;
@@ -2689,6 +2777,29 @@ double o2scl_gen_test_number_double__gen(void *vptr) {
   gen_test_number<double> *ptr=(gen_test_number<double> *)vptr;
   double ret=ptr->gen();
   return ret;
+}
+
+void o2scl_free_funct_string(void *vptr) {
+  funct_string *ptr=(funct_string *)vptr;
+  delete ptr;
+  return;
+}
+
+int o2scl_funct_string_set_parm(void *vptr, char *name, double val) {
+  funct_string *ptr=(funct_string *)vptr;
+  int ret=ptr->set_parm(name,val);
+  return ret;
+}
+
+double o2scl_funct_string_getitem(void *vptr, double x) {
+  funct_string *ptr=(funct_string *)vptr;
+  double ret=ptr->operator()(x);
+  return ret;
+}
+
+void *o2scl_funct_string_init(char *expr, char *var) {
+  funct_string *ptr=new funct_string(expr,var);
+  return ptr;
 }
 
 void *o2scl_create_comm_option_s() {

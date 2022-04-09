@@ -1024,47 +1024,82 @@ class index_spec
 - double val1
 - double val2
 - double val3
+# 
+# Class ix_index
+#
 class ix_index
 - no_def_cons
 - cons init
   - size_t ix
-#function ix_fixed
-#- index_spec
-#- size_t ix
-#- size_t ix2
-#function ix_sum
-#- index_spec
-#- size_t ix
-#function ix_trace
-#- index_spec
-#- size_t ix
-#- size_t ix2
-#function ix_reverse
-#- index_spec
-#- size_t ix
-#function ix_range
-#- index_spec
-#- size_t ix
-#- size_t start
-#- size_t end
-#function ix_interp
-#- index_spec
-#- size_t ix
-#- double v
-#function ix_grid
-#- index_spec
-#- size_t ix
-#- double start
-#- double end
-#- size_t n_bins
-#- bool log [false]
-#function ix_gridw
-#- index_spec
-#- size_t ix
-#- double start
-#- double end
-#- double width
-#- bool log [false]
+# 
+# Class ix_fixed
+#
+class ix_fixed
+- no_def_cons
+- cons init
+  - size_t ix
+  - size_t ix2
+# 
+# Class ix_sum
+#
+class ix_sum
+- no_def_cons
+- cons init
+  - size_t ix
+# 
+# Class ix_trace
+#
+class ix_trace
+- no_def_cons
+- cons init
+  - size_t ix
+  - size_t ix2
+# 
+# Class ix_reverse
+#
+class ix_reverse
+- no_def_cons
+- cons init
+  - size_t ix
+# 
+# Class ix_range
+#
+class ix_range
+- no_def_cons
+- cons init
+  - size_t ix
+  - size_t start
+  - size_t end
+# 
+# Class ix_interp
+#
+class ix_interp
+- no_def_cons
+- cons init
+  - size_t ix
+  - double v
+# 
+# Class ix_grid
+#
+class ix_grid
+- no_def_cons
+- cons init
+  - size_t ix
+  - double start
+  - double end
+  - size_t n_bins
+  - bool log [false]
+# 
+# Class ix_gridw
+#
+class ix_gridw
+- no_def_cons
+- cons init
+  - size_t ix
+  - double start
+  - double end
+  - double width
+  - bool log [false]
 # 
 # Class tensor
 #
@@ -1992,14 +2027,18 @@ function linear_or_log<std::vector<double>>
 - py_name linear_or_log
 - io std::vector<double> &x
 - out bool &log_x
-#class funct_python
-#- cons init
-#  - std::string module
-#  - std::string func
-#  - int v [0]
-#- int set_function
-#  - std::string module
-#  - std::string func
+class funct_string
+- no_def_cons
+- cons init
+  - std::string expr
+  - std::string var
+- function set_parm
+  - int
+  - std::string name
+  - double val
+- function operator()
+  - double
+  - double x
 class comm_option_s
 - char shrt
 - std::string lng
