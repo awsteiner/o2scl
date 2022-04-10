@@ -611,6 +611,7 @@ int main(int argc, char *argv[]) {
                                        "std_vector_size_t"));
   class_py_names.insert(std::make_pair("std::vector<std::string>",
                                        "std_vector_string"));
+  class_py_names.insert(std::make_pair("tensor<>","tensor"));
   class_py_names.insert(std::make_pair
                         ("boost::numeric::ublas::vector<double>",
                          "ublas_vector"));
@@ -1616,19 +1617,42 @@ int main(int argc, char *argv[]) {
             fout << "  std::string *sptr=new std::string;" << endl;
             fout << "  *sptr=ptr->" << iff.name << "(";
           } else {
-            // If the function returns a reference, return a pointer
-            // instead
-            if (iff.ret.prefix.length()>0) {
-              fout << "  " << iff.ret.prefix << " ";
-            } else {
-              fout << "  ";
-            }
             if (iff.ret.suffix=="&") {
+              // If the function returns a reference, return a pointer
+              // instead
+              if (iff.ret.prefix.length()>0) {
+                fout << "  " << iff.ret.prefix << " ";
+              } else {
+                fout << "  ";
+              }
               fout << iff.ret.name << " *ret=&ptr->" << iff.name << "(";
             } else if (iff.ret.suffix=="*") {
+              // If it's a pointer, then we can just return the pointer
+              if (iff.ret.prefix.length()>0) {
+                fout << "  " << iff.ret.prefix << " ";
+              } else {
+                fout << "  ";
+              }
               fout << iff.ret.name << " *ret=ptr->" << iff.name << "(";
-            } else {
+            } else if (iff.ret.is_ctype()) {
+              // If it's a C type, then we can just return by value
+              if (iff.ret.prefix.length()>0) {
+                fout << "  " << iff.ret.prefix << " ";
+              } else {
+                fout << "  ";
+              }
               fout << iff.ret.name << " ret=ptr->" << iff.name << "(";
+            } else {
+              // If it's a class, and we're returning by value,
+              // then we have to return a pointer to a new object
+              fout << "  " << iff.ret.name << " *ret=new "
+                   << iff.ret.name << ";" << endl;
+              if (iff.ret.prefix.length()>0) {
+                fout << "  " << iff.ret.prefix << " ";
+              } else {
+                fout << "  ";
+              }
+              fout << "*ret=ptr->" << iff.name << "(";
             }
           }
           
@@ -1642,17 +1666,21 @@ int main(int argc, char *argv[]) {
               fout << ",";
             }
           }
+          fout << ");" << endl;
+
+          // Construct the function return statement
           
-          // Extra code for array types
           if ((iff.ret.name=="vector<double>" ||
                iff.ret.name=="std::vector<double>") &&
               iff.ret.suffix=="&") {
-            fout << ");" << endl;
+            
+            // Extra code for array types
             fout << "  *dptr=(double *)(&(r[0]));" << endl;
             fout << "  *n_=r.size();" << endl;
+            
             fout << "  return;" << endl;
+            
           } else {
-            fout << ");" << endl;
             
             if (iff.ret.name=="std::string") {
               fout << "  return sptr;" << endl;
@@ -1670,8 +1698,13 @@ int main(int argc, char *argv[]) {
               } else {
                 fout << "  return ret;" << endl;
               }
-            } else {
+            } else if (iff.ret.is_ctype()) {
               fout << "  return &ret;" << endl;
+            } else {
+              // If it's not a reference or a pointer, then if it's
+              // not a ctype we need to return a pointer to a new
+              // object.
+              fout << "  return ret;" << endl;
             }
           }
           
@@ -2688,7 +2721,14 @@ int main(int argc, char *argv[]) {
       } else {
         function_start="ret2=func(self._ptr";
         function_end=")";
-        post_func_code.push_back(((string)"ret=")+iff.ret.name+
+
+        std::string ret_temp=iff.ret.name;
+        for(cpn_it it=class_py_names.begin();
+            it!=class_py_names.end();it++) {
+          if (it->first==ret_temp) ret_temp=it->second;
+        }
+        
+        post_func_code.push_back(((string)"ret=")+ret_temp+
                                  "(self._link,ret2)");
         post_func_code.push_back("ret.owner=True");
       }

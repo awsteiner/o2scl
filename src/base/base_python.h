@@ -617,6 +617,8 @@ double o2scl_tensor__total_sum(void *vptr);
 
 void o2scl_tensor__convert_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name);
 
+void *o2scl_tensor__rearrange_and_copy(void *vptr, char *spec, int verbose=0, bool err_on_fail=true);
+
 void *o2scl_tensor__create_size(size_t rank, void *ptr_sizes);
 
 void *o2scl_create_tensor_grid_();

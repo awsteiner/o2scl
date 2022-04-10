@@ -1198,11 +1198,11 @@ class tensor<>
   - std::string x_name ["x"]
   - std::string y_name ["y"]
   - std::string slice_name ["z"]
-#- function rearrange_and_copy
-#  - tensor<>
-#  - std::string spec
-#  - int verbose [0]
-#  - bool err_on_fail [true]
+- function rearrange_and_copy
+  - tensor<>
+  - std::string spec
+  - int verbose [0]
+  - bool err_on_fail [true]
 - extra_py |
 | def create_size(self,v):
 |     """
