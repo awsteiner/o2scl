@@ -1003,7 +1003,7 @@ int acol_manager::setup_options() {
      {'g',"generic","",0,2,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
       both},
-     {0,"convert","",0,1,"","",
+     {0,"convert","",0,9,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_convert),
       both},
      {0,"h5-copy","",-1,-1,"","",
