@@ -237,4 +237,8 @@ int o2scl_hdf_vector_spec_std_vector_double__wrapper(char *spec, void *ptr_v, in
 
 int o2scl_hdf_strings_spec_std_vector_std_string__wrapper(char *spec, void *ptr_v, int verbose=0, bool err_on_fail=true);
 
+void *o2scl_hdf_vector_spec_wrapper(char *spec);
+
+int o2scl_hdf_mult_vector_spec_std_vector_double__wrapper(char *spec, void *ptr_v, int verbose=0, bool err_on_fail=true);
+
 }

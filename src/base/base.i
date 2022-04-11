@@ -341,6 +341,24 @@ class std::vector<std::vector<double>>
 |     Returns: a Python int
 |     """
 |     return self.size()
+class std::vector<std::vector<std::string>>
+- py_name vec_vec_string
+- function resize
+  - void
+  - size_t n                             
+- function size
+  - size_t
+- function operator[]
+  - std::vector<std::string> &
+  - size_t n
+- extra_py |
+| def __len__(self):
+|     """
+|     Return the length of the vector
+|
+|     Returns: a Python int
+|     """
+|     return self.size()
 #
 # -------------------------------------------------------------------
 #

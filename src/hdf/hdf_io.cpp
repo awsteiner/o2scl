@@ -1612,3 +1612,10 @@ std::vector<double> o2scl_hdf::vector_spec(std::string spec) {
   vector_spec<std::vector<double> >(spec,v);
   return v;
 }
+
+std::vector<std::vector<double>>
+o2scl_hdf::mult_vector_spec(std::string spec) {
+  std::vector<std::vector<double>> v;
+  mult_vector_spec<std::vector<double> >(spec,v);
+  return v;
+}

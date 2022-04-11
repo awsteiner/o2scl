@@ -1995,6 +1995,11 @@ namespace o2scl_hdf {
 
     return 0;
   }
+
+  /** \brief Convert a vector specification to a 
+      \c std::vector
+  */
+  std::vector<std::vector<double>> mult_vector_spec(std::string spec);
   
 }
 

@@ -611,6 +611,10 @@ int main(int argc, char *argv[]) {
                                        "std_vector_size_t"));
   class_py_names.insert(std::make_pair("std::vector<std::string>",
                                        "std_vector_string"));
+  class_py_names.insert(std::make_pair("std::vector<std::vector<std::string>>",
+                                       "vec_vec_string"));
+  class_py_names.insert(std::make_pair("std::vector<std::vector<std::string>>",
+                                       "std_vector_vector"));
   class_py_names.insert(std::make_pair("tensor<>","tensor"));
   class_py_names.insert(std::make_pair
                         ("boost::numeric::ublas::vector<double>",
@@ -1614,6 +1618,10 @@ int main(int argc, char *argv[]) {
             if (iff.ret.name=="std::string") {
               fout << "  std::string *sptr=new std::string;" << endl;
               fout << "  *sptr=ptr->" << iff.name << "(";
+            } else if (iff.ret.name=="std::vector<std::string>") {
+              fout << "  std::vector<std::string> *vsptr="
+                   << "new std::vector<std::string>;" << endl;
+              fout << "  *vsptr=ptr->" << iff.name << "(";
             } else {
               fout << "  " << iff.ret.name
                    << " ret=ptr->" << iff.name << "(";
@@ -1691,6 +1699,8 @@ int main(int argc, char *argv[]) {
             
             if (iff.ret.name=="std::string") {
               fout << "  return sptr;" << endl;
+            } else if (iff.ret.name=="std::vector<std::string>") {
+              fout << "  return vsptr;" << endl;
             } else if (iff.ret.name=="void") {
               fout << "  return;" << endl;
             } else if (iff.ret.is_ctype() || iff.ret.is_reference() ||
@@ -2501,7 +2511,7 @@ int main(int argc, char *argv[]) {
         }
       }
 
-      // Reformat return type 
+      // Reformat return type
       size_t len=iff.ret.name.length();
       std::string reformat_ret_type=iff.ret.name;
       // Manually remove '<>' from the typename if necessary
@@ -2524,6 +2534,9 @@ int main(int argc, char *argv[]) {
       if (iff.name=="operator[]" || iff.name=="operator()") {
         if (iff.ret.name=="std::string") {
           return_docs="std_string object";
+          restype_string="ctypes.c_void_p";
+        } else if (iff.ret.name=="std::vector<std::string>") {
+          return_docs="vec_vec_string object";
           restype_string="ctypes.c_void_p";
         } else if ((iff.ret.name!="vector<double>" &&
              iff.ret.name!="std::vector<double>") ||
@@ -2830,6 +2843,8 @@ int main(int argc, char *argv[]) {
           fout << "        | *value*: Python bytes string" << endl;
         } else if (iff.ret.name=="std::vector<double>") {
           fout << "        | *value*: Python array" << endl;
+        } else if (iff.ret.name=="std::vector<std::string>") {
+          fout << "        | *value*: std_vector_string object" << endl;
         } else {
           fout << "        | *value*: " << iff.ret.name << endl;
         }
@@ -2842,6 +2857,11 @@ int main(int argc, char *argv[]) {
                << "ctypes.c_size_t,ctypes.c_char_p]"
                << endl;
           fout << "        func(self._ptr,i,value)" << endl;
+        } else if (iff.ret.name=="std::vector<std::string>") {
+          fout << "        func.argtypes=[ctypes.c_void_p,"
+               << "ctypes.c_size_t,ctypes.c_void_p]"
+               << endl;
+          fout << "        func(self._ptr,i,value._ptr)" << endl;
         } else if (iff.ret.name=="std::vector<double>") {
           fout << "        sv=std_vector(self._link)" << endl;
           fout << "        sv.resize(len(value))" << endl;
@@ -3114,9 +3134,25 @@ int main(int argc, char *argv[]) {
     } else if (iff.ret.name=="std::string") {
       fout << "        | Returns: python bytes object"
            << endl;
-    } else if (iff.ret.name!="void") {
+    } else if (iff.ret.is_ctype()) {
       fout << "        | Returns: ``ctypes.c_"
            << iff.ret.name << "`` object" << endl;
+    } else if (iff.ret.name!="void") {
+
+      size_t len=iff.ret.name.length();
+      std::string reformat_ret_type=iff.ret.name;
+      // Manually remove '<>' from the typename if necessary
+      if (len>2 && iff.ret.name[len-2]=='<' &&
+          iff.ret.name[len-1]=='>') {
+        reformat_ret_type=iff.ret.name.substr(0,len-2);
+      }
+      for(cpn_it it=class_py_names.begin();
+          it!=class_py_names.end();it++) {
+        if (it->first==reformat_ret_type) reformat_ret_type=it->second;
+      }
+      
+      fout << "        | Returns: ``"
+           << reformat_ret_type << "`` object" << endl;
     }
       
     fout << "    \"\"\"" << endl;
@@ -3153,7 +3189,24 @@ int main(int argc, char *argv[]) {
       if (iff.ret.name=="std::string") {
         fout << "    func.restype=ctypes.c_char_p" << endl;
       } else {
-        fout << "    func.restype=ctypes.c_" << iff.ret.name << endl;
+
+        if (iff.ret.is_ctype()) {
+          fout << "    func.restype=ctypes.c_" << iff.ret.name << endl;
+        } else {
+          size_t len=iff.ret.name.length();
+          std::string reformat_ret_type=iff.ret.name;
+          // Manually remove '<>' from the typename if necessary
+          if (len>2 && iff.ret.name[len-2]=='<' &&
+              iff.ret.name[len-1]=='>') {
+            reformat_ret_type=iff.ret.name.substr(0,len-2);
+          }
+          for(cpn_it it=class_py_names.begin();
+              it!=class_py_names.end();it++) {
+            if (it->first==reformat_ret_type) reformat_ret_type=it->second;
+          }
+          
+          fout << "    func.restype=" << reformat_ret_type << endl;
+        }
       }
     }
     fout << "    func.argtypes=[";

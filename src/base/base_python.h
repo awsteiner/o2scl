@@ -149,6 +149,18 @@ void o2scl_std_vector_std_vector_double__getitem(void *vptr, size_t n, double **
 
 void o2scl_std_vector_std_vector_double__setitem(void *vptr, size_t i, void *valptr);
 
+void *o2scl_create_std_vector_std_vector_std_string_();
+
+void o2scl_free_std_vector_std_vector_std_string_(void *vptr);
+
+void o2scl_std_vector_std_vector_std_string__resize(void *vptr, size_t n);
+
+size_t o2scl_std_vector_std_vector_std_string__size(void *vptr);
+
+void *o2scl_std_vector_std_vector_std_string__getitem(void *vptr, size_t n);
+
+void o2scl_std_vector_std_vector_std_string__setitem(void *vptr, size_t i, std::vector<std::string> val);
+
 void *o2scl_create_std_complex_double_();
 
 void o2scl_free_std_complex_double_(void *vptr);

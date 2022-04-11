@@ -357,6 +357,42 @@ void o2scl_std_vector_std_vector_double__setitem(void *vptr, size_t i, void *val
   return;
 }
 
+void *o2scl_create_std_vector_std_vector_std_string_() {
+  std::vector<std::vector<std::string>> *ptr=new std::vector<std::vector<std::string>>;
+  return ptr;
+}
+
+void o2scl_free_std_vector_std_vector_std_string_(void *vptr) {
+  std::vector<std::vector<std::string>> *ptr=(std::vector<std::vector<std::string>> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_std_vector_std_vector_std_string__resize(void *vptr, size_t n) {
+  std::vector<std::vector<std::string>> *ptr=(std::vector<std::vector<std::string>> *)vptr;
+  ptr->resize(n);
+  return;
+}
+
+size_t o2scl_std_vector_std_vector_std_string__size(void *vptr) {
+  std::vector<std::vector<std::string>> *ptr=(std::vector<std::vector<std::string>> *)vptr;
+  size_t ret=ptr->size();
+  return ret;
+}
+
+void *o2scl_std_vector_std_vector_std_string__getitem(void *vptr, size_t n) {
+  std::vector<std::vector<std::string>> *ptr=(std::vector<std::vector<std::string>> *)vptr;
+  std::vector<std::string> *vsptr=new std::vector<std::string>;
+  *vsptr=ptr->operator[](n);
+  return vsptr;
+}
+
+void o2scl_std_vector_std_vector_std_string__setitem(void *vptr, size_t i, std::vector<std::string> val) {
+  std::vector<std::vector<std::string>> *ptr=(std::vector<std::vector<std::string>> *)vptr;
+  (*ptr)[i]=val;
+  return;
+}
+
 void *o2scl_create_std_complex_double_() {
   std::complex<double> *ptr=new std::complex<double>;
   return ptr;

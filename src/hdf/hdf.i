@@ -337,17 +337,17 @@ function strings_spec<std::vector<std::string>>
 - out std::vector<std::string> &v
 - int verbose [0]
 - bool err_on_fail [true]
-#function vector_spec
-#- std::vector<double>
-#- py_name vector_spec_vector  
-#- std::string spec  
-#function mult_vector_spec<std::vector<std::vector<double>>>
-#- int
-#- py_name mult_vector_spec  
-#- std::string spec
-#- out std::vector<std::vector<double>> &v
-#- int verbose [0]
-#- bool err_on_fail [true]
+function vector_spec
+- std::vector<double>
+- py_name vector_spec_v
+- std::string spec  
+function mult_vector_spec<std::vector<double>>
+- int
+- py_name mult_vector_spec  
+- std::string spec
+- out std::vector<std::vector<double>> &v
+- int verbose [0]
+- bool err_on_fail [true]
 class acol_manager
 - std::string env_var_name
 - cli *cl
