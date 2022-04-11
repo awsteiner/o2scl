@@ -1455,6 +1455,13 @@ int main(int argc, char *argv[]) {
               fout << "  ptr->" << ifv.name << "=*(p_tssp);" << endl;
               fout << "  return;" << endl;
               fout << "}" << endl;
+            } else if (ifv.ift.is_pointer()) {
+              // Other types
+              fout << "  " << ifv.ift.name << " *p_tsptr=("
+                   << ifv.ift.name << " *)p_v;" << endl;
+              fout << "  ptr->" << ifv.name << "=p_tsptr;" << endl;
+              fout << "  return;" << endl;
+              fout << "}" << endl;
             } else {
               // Other types
               fout << "  " << ifv.ift.name << " *p_tsot=("

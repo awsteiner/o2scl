@@ -1744,25 +1744,25 @@ class interp_krige_optim<std::vector<double>>
 #  - io const std::vector<double> &y
 #  - bool rescale
 #  - bool err_on_fail [true]
-#- function eval
-#  - double
-#  - double x0
-#- function deriv
-#  - double
-#  - double x0
-#- function deriv2
-#  - double
-#  - double x0
-#- function sigma
-#  - double
-#  - double x0
-#- function sample
-#  - double
-#  - double x0
-#- function sample_vec
-#  - void
-#  - io std::vector<double> &x
-#  - io std::vector<double> &y
+- function eval
+  - double
+  - double x0
+- function deriv
+  - double
+  - double x0
+- function deriv2
+  - double
+  - double x0
+- function sigma
+  - double
+  - double x0
+- function sample
+  - double
+  - double x0
+- function sample_vec
+  - void
+  - io std::vector<double> &x
+  - io std::vector<double> &y
 #
 # Functions and classes from misc.h
 # 

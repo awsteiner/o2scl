@@ -2757,6 +2757,44 @@ void o2scl_interp_krige_optim_std_vector_double__set_full_min(void *vptr, bool v
   return;
 }
 
+double o2scl_interp_krige_optim_std_vector_double__eval(void *vptr, double x0) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  double ret=ptr->eval(x0);
+  return ret;
+}
+
+double o2scl_interp_krige_optim_std_vector_double__deriv(void *vptr, double x0) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  double ret=ptr->deriv(x0);
+  return ret;
+}
+
+double o2scl_interp_krige_optim_std_vector_double__deriv2(void *vptr, double x0) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  double ret=ptr->deriv2(x0);
+  return ret;
+}
+
+double o2scl_interp_krige_optim_std_vector_double__sigma(void *vptr, double x0) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  double ret=ptr->sigma(x0);
+  return ret;
+}
+
+double o2scl_interp_krige_optim_std_vector_double__sample(void *vptr, double x0) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  double ret=ptr->sample(x0);
+  return ret;
+}
+
+void o2scl_interp_krige_optim_std_vector_double__sample_vec(void *vptr, void *ptr_x, void *ptr_y) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  ptr->sample_vec(*x,*y);
+  return;
+}
+
 void *o2scl_create_gen_test_number_double_() {
   gen_test_number<double> *ptr=new gen_test_number<double>;
   return ptr;

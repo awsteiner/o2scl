@@ -25,6 +25,7 @@
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
 #include <o2scl/acolm.h>
+#include <o2scl/cloud_file.h>
 
 extern "C" {
 
@@ -120,6 +121,10 @@ void *o2scl_hdf_acol_manager_get_env_var_name(void *vptr);
 
 void o2scl_hdf_acol_manager_set_env_var_name(void *vptr, void *p_v);
 
+void *o2scl_hdf_acol_manager_get_cl(void *vptr);
+
+void o2scl_hdf_acol_manager_set_cl(void *vptr, void *p_v);
+
 int o2scl_hdf_acol_manager_get_verbose(void *vptr);
 
 void o2scl_hdf_acol_manager_set_verbose(void *vptr, int v);
@@ -163,6 +168,38 @@ void o2scl_hdf_acol_manager_set_size_t_obj(void *vptr, size_t v);
 void *o2scl_hdf_acol_manager_get_string_obj(void *vptr);
 
 void o2scl_hdf_acol_manager_set_string_obj(void *vptr, void *p_v);
+
+void *o2scl_hdf_create_cloud_file();
+
+void o2scl_hdf_free_cloud_file(void *vptr);
+
+int o2scl_hdf_cloud_file_get_hash_type(void *vptr);
+
+void o2scl_hdf_cloud_file_set_hash_type(void *vptr, int v);
+
+int o2scl_hdf_cloud_file_get_verbose(void *vptr);
+
+void o2scl_hdf_cloud_file_set_verbose(void *vptr, int v);
+
+bool o2scl_hdf_cloud_file_get_throw_on_fail(void *vptr);
+
+void o2scl_hdf_cloud_file_set_throw_on_fail(void *vptr, bool v);
+
+bool o2scl_hdf_cloud_file_get_allow_wget(void *vptr);
+
+void o2scl_hdf_cloud_file_set_allow_wget(void *vptr, bool v);
+
+bool o2scl_hdf_cloud_file_get_allow_curl(void *vptr);
+
+void o2scl_hdf_cloud_file_set_allow_curl(void *vptr, bool v);
+
+int o2scl_hdf_cloud_file_get_file(void *vptr, char *file, char *url, char *dir);
+
+int o2scl_hdf_cloud_file_get_file_hash(void *vptr, char *file, char *url, char *hash, char *dir);
+
+int o2scl_hdf_cloud_file_hdf5_open(void *vptr, void *ptr_hf, char *file, char *url, char *dir);
+
+int o2scl_hdf_cloud_file_hdf5_open_hash(void *vptr, void *ptr_hf, char *file, char *url, char *hash, char *dir);
 
 void o2scl_hdf_hdf_input_table_wrapper(void *ptr_hf, void *ptr_t, char *name);
 

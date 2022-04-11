@@ -323,6 +323,18 @@ void o2scl_hdf_acol_manager_set_env_var_name(void *vptr, void *p_v) {
   return;
 }
 
+void *o2scl_hdf_acol_manager_get_cl(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return (void *)(&(ptr->cl));
+}
+
+void o2scl_hdf_acol_manager_set_cl(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  cli *p_tsptr=(cli *)p_v;
+  ptr->cl=p_tsptr;
+  return;
+}
+
 int o2scl_hdf_acol_manager_get_verbose(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
   return ptr->verbose;
@@ -452,6 +464,98 @@ void o2scl_hdf_acol_manager_set_string_obj(void *vptr, void *p_v) {
   std::string *p_tsot=(std::string *)p_v;
   ptr->string_obj=*(p_tsot);
   return;
+}
+
+void *o2scl_hdf_create_cloud_file() {
+  cloud_file *ptr=new cloud_file;
+  return ptr;
+}
+
+void o2scl_hdf_free_cloud_file(void *vptr) {
+  cloud_file *ptr=(cloud_file *)vptr;
+  delete ptr;
+  return;
+}
+
+int o2scl_hdf_cloud_file_get_hash_type(void *vptr) {
+  cloud_file *ptr=(cloud_file *)vptr;
+  return ptr->hash_type;
+}
+
+void o2scl_hdf_cloud_file_set_hash_type(void *vptr, int v) {
+  cloud_file *ptr=(cloud_file *)vptr;
+  ptr->hash_type=v;
+  return;
+}
+
+int o2scl_hdf_cloud_file_get_verbose(void *vptr) {
+  cloud_file *ptr=(cloud_file *)vptr;
+  return ptr->verbose;
+}
+
+void o2scl_hdf_cloud_file_set_verbose(void *vptr, int v) {
+  cloud_file *ptr=(cloud_file *)vptr;
+  ptr->verbose=v;
+  return;
+}
+
+bool o2scl_hdf_cloud_file_get_throw_on_fail(void *vptr) {
+  cloud_file *ptr=(cloud_file *)vptr;
+  return ptr->throw_on_fail;
+}
+
+void o2scl_hdf_cloud_file_set_throw_on_fail(void *vptr, bool v) {
+  cloud_file *ptr=(cloud_file *)vptr;
+  ptr->throw_on_fail=v;
+  return;
+}
+
+bool o2scl_hdf_cloud_file_get_allow_wget(void *vptr) {
+  cloud_file *ptr=(cloud_file *)vptr;
+  return ptr->allow_wget;
+}
+
+void o2scl_hdf_cloud_file_set_allow_wget(void *vptr, bool v) {
+  cloud_file *ptr=(cloud_file *)vptr;
+  ptr->allow_wget=v;
+  return;
+}
+
+bool o2scl_hdf_cloud_file_get_allow_curl(void *vptr) {
+  cloud_file *ptr=(cloud_file *)vptr;
+  return ptr->allow_curl;
+}
+
+void o2scl_hdf_cloud_file_set_allow_curl(void *vptr, bool v) {
+  cloud_file *ptr=(cloud_file *)vptr;
+  ptr->allow_curl=v;
+  return;
+}
+
+int o2scl_hdf_cloud_file_get_file(void *vptr, char *file, char *url, char *dir) {
+  cloud_file *ptr=(cloud_file *)vptr;
+  int ret=ptr->get_file(file,url,dir);
+  return ret;
+}
+
+int o2scl_hdf_cloud_file_get_file_hash(void *vptr, char *file, char *url, char *hash, char *dir) {
+  cloud_file *ptr=(cloud_file *)vptr;
+  int ret=ptr->get_file_hash(file,url,hash,dir);
+  return ret;
+}
+
+int o2scl_hdf_cloud_file_hdf5_open(void *vptr, void *ptr_hf, char *file, char *url, char *dir) {
+  cloud_file *ptr=(cloud_file *)vptr;
+  hdf_file *hf=(hdf_file *)ptr_hf;
+  int ret=ptr->hdf5_open(*hf,file,url,dir);
+  return ret;
+}
+
+int o2scl_hdf_cloud_file_hdf5_open_hash(void *vptr, void *ptr_hf, char *file, char *url, char *hash, char *dir) {
+  cloud_file *ptr=(cloud_file *)vptr;
+  hdf_file *hf=(hdf_file *)ptr_hf;
+  int ret=ptr->hdf5_open_hash(*hf,file,url,hash,dir);
+  return ret;
 }
 
 void o2scl_hdf_hdf_input_table_wrapper(void *ptr_hf, void *ptr_t, char *name) {

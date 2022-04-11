@@ -105,7 +105,7 @@ namespace o2scl_hdf {
 	necessary
     */
     int hdf5_open_hash(hdf_file &hf, std::string file, std::string url,
-		      std::string hash, std::string dir="");
+		      std::string hash="", std::string dir="");
 
     /** \brief Get file named \c file in directory \c dir 
 	from url \c url

@@ -20,6 +20,7 @@ h_include <o2scl/table.h>
 h_include <o2scl/hdf_file.h>
 h_include <o2scl/hdf_io.h>
 h_include <o2scl/acolm.h>
+h_include <o2scl/cloud_file.h>
 # 
 # Include statement for C++ source code
 # 
@@ -349,7 +350,7 @@ function strings_spec<std::vector<std::string>>
 #- bool err_on_fail [true]
 class acol_manager
 - std::string env_var_name
-#- cli *cl
+- cli *cl
 - int verbose
 - std::string type
 - table_units<> table_obj
@@ -361,3 +362,33 @@ class acol_manager
 - double double_obj
 - size_t size_t_obj
 - std::string string_obj
+class cloud_file
+- int hash_type
+- int verbose
+- bool throw_on_fail
+- bool allow_wget
+- bool allow_curl
+- function get_file
+  - int
+  - std::string file
+  - std::string url
+  - std::string dir [""]
+- function get_file_hash
+  - int
+  - std::string file
+  - std::string url
+  - std::string hash [""]
+  - std::string dir [""]
+- function hdf5_open    
+  - int
+  - io hdf_file &hf
+  - std::string file
+  - std::string url
+  - std::string dir [""]
+- function hdf5_open_hash
+  - int
+  - io hdf_file &hf
+  - std::string file
+  - std::string url
+  - std::string hash [""]
+  - std::string dir [""]

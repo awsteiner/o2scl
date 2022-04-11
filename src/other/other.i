@@ -20,6 +20,7 @@ h_include <o2scl/slack_messenger.h>
 h_include <o2scl/poly.h>
 h_include <o2scl/polylog.h>
 h_include <o2scl/hist.h>
+h_include <o2scl/contour.h>
 # 
 # Include statement for C++ source code
 # 
@@ -189,14 +190,22 @@ class bessel_K_exp_integ_gsl
 # - double y
 class hist
 - std_cc
-#- cons init
-#  - size_t nv
-#  - io std::vector<double> &v
-#  - size_t n_bins
-# - function from_table
-#  - io table &t
-#  - std::string colx
-#  - size_t n_bins
+- cons init
+  - size_t nv
+  - io std::vector<double> &v
+  - size_t n_bins
+- function from_table
+  - void                             
+  - io table<> &t
+  - std::string colx
+  - size_t n_bins
+- function from_table
+  - void                             
+  - py_name from_table_twocol
+  - io table<> &t
+  - std::string colx
+  - std::string coly
+  - size_t n_bins
 - function size
   - size_t
 - bool extend_rhs
@@ -243,3 +252,24 @@ class hist
   - std::string func
 - function clear
   - void
+class contour_line
+- double level
+- std::vector<double> x  
+- std::vector<double> y
+- std_cc  
+class contour
+- int verbose
+- double lev_adjust
+- bool debug_next_point
+- function set_data
+  - void
+  - io const uniform_grid<double> &ugx
+  - io const uniform_grid<double> &ugy
+  - io const ubmatrix &udata
+- function set_levels
+  - int
+  - size_t n_levels
+  - io vector<size_t> &levels
+- function calc_contours
+  - void
+  - io vector<contour_line> &clines
