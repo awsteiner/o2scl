@@ -38,6 +38,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/convert_units.h>
 #include <o2scl/interp2_direct.h>
+#include <o2scl/eos_base.h>
 
 namespace o2scl {
 
@@ -108,6 +109,9 @@ namespace o2scl {
     static const size_t n_base=16;
     //@}
 
+    /// EOS of leptons and photons
+    eos_leptons elep;
+    
     /// \name Data
     //@{
     /** \brief Total free energy per baryon in MeV (without 
