@@ -374,6 +374,10 @@ class acol_manager
 - double double_obj
 - size_t size_t_obj
 - std::string string_obj
+#- function run
+#  - int argv
+#  - char *argc[]
+#  - bool full_process [true]
 #
 # Class cloud_file
 #
