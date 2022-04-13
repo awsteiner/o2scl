@@ -622,6 +622,12 @@ int main(int argc, char *argv[]) {
   class_py_names.insert(std::make_pair
                         ("boost::numeric::ublas::matrix<double>",
                          "ublas_matrix"));
+  class_py_names.insert(std::make_pair
+                        ("boost::numeric::ublas::vector<int>",
+                         "ublas_vector_int"));
+  class_py_names.insert(std::make_pair
+                        ("boost::numeric::ublas::matrix<int>",
+                         "ublas_matrix_int"));
   
   // Open file
   ifstream fin;
@@ -2555,6 +2561,10 @@ int main(int argc, char *argv[]) {
       } else if (iff.ret.name=="boost::numeric::ublas::vector<double>" &&
                  iff.ret.suffix=="&") {
         return_docs="ublas_matrix object";
+        restype_string="";
+      } else if (iff.ret.name=="boost::numeric::ublas::vector<int>" &&
+                 iff.ret.suffix=="&") {
+        return_docs="ublas_matrix_int object";
         restype_string="";
       } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
                  iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {

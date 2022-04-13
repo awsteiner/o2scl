@@ -226,6 +226,7 @@ class std::vector<std::string>
 |     Returns: a Python int
 |     """
 |     return self.size()
+#
 # Class ublas_vector
 # 
 class boost::numeric::ublas::vector<double>
@@ -254,6 +255,38 @@ class boost::numeric::ublas::vector<double>
 |     Returns: a one-dimensional ``numpy`` array
 |     """
 |     ret=numpy.zeros((self.size()))
+|     for i in range(0,self.size()):
+|         ret[i]=self.__getitem__(i)
+|     return ret
+#
+# Class ublas_vector_int
+# 
+class boost::numeric::ublas::vector<int>
+- py_name ublas_vector_int
+- function size
+  - size_t
+- function resize
+  - void
+  - size_t n
+- function operator[]
+  - int &
+  - size_t i
+- extra_py |
+| def __len__(self):
+|     """
+|     Return the length of the vector
+|
+|     Returns: a Python int
+|     """
+|     return self.size()
+|
+| def to_numpy(self):
+|     """
+|     Copy the vector to a numpy array
+|
+|     Returns: a one-dimensional ``numpy`` array
+|     """
+|     ret=numpy.zeros((self.size()),dtype=numpy.intc)
 |     for i in range(0,self.size()):
 |         ret[i]=self.__getitem__(i)
 |     return ret

@@ -80,12 +80,13 @@ class hdf_file
   - int
   - std::string name
   - out std::string &s
-#- function gets_def_fixed
-#  - int
-#  - std::string name
-#  - std::string def
-#    - py_name default
-#  - out std::string &s
+# Note we rename the second parameter "deft" instead of "def" since
+# def is a python keyword and "default" is a C++ keyword.
+- function gets_def_fixed
+  - int
+  - std::string name
+  - std::string deft
+  - out std::string &s
 - function setc
   - void
   - std::string name
@@ -142,17 +143,18 @@ class hdf_file
   - int
   - std::string name
   - io std::vector<std::string> &s
-#- function getd_mat_copy
-#  - int
-#  - std::string name
-#  - out boost::numeric::ublas::matrix<double> &m
+- function getd_mat_copy
+  - int
+  - std::string name
+  - out boost::numeric::ublas::matrix<double> &m
 #- function geti_mat_copy
 #  - int
 #  - std::string name
-#  - out boost::numeric::ublas::matrix<double> &m
-#- function setd_mat_copy
-#  - int
-#  - io boost::numeric::ublas::matrix<double> &m
+#  - out boost::numeric::ublas::matrix<int> &m
+- function setd_mat_copy
+  - int
+  - std::string name
+  - io boost::numeric::ublas::matrix<double> &m
 #- function seti_mat_copy
 #  - int
 #  - io boost::numeric::ublas::matrix<int> &m

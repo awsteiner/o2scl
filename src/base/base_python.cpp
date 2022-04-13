@@ -237,6 +237,41 @@ void o2scl_boost_numeric_ublas_vector_double__setitem(void *vptr, size_t i, doub
   return;
 }
 
+void *o2scl_create_boost_numeric_ublas_vector_int_() {
+  boost::numeric::ublas::vector<int> *ptr=new boost::numeric::ublas::vector<int>;
+  return ptr;
+}
+
+void o2scl_free_boost_numeric_ublas_vector_int_(void *vptr) {
+  boost::numeric::ublas::vector<int> *ptr=(boost::numeric::ublas::vector<int> *)vptr;
+  delete ptr;
+  return;
+}
+
+size_t o2scl_boost_numeric_ublas_vector_int__size(void *vptr) {
+  boost::numeric::ublas::vector<int> *ptr=(boost::numeric::ublas::vector<int> *)vptr;
+  size_t ret=ptr->size();
+  return ret;
+}
+
+void o2scl_boost_numeric_ublas_vector_int__resize(void *vptr, size_t n) {
+  boost::numeric::ublas::vector<int> *ptr=(boost::numeric::ublas::vector<int> *)vptr;
+  ptr->resize(n);
+  return;
+}
+
+int o2scl_boost_numeric_ublas_vector_int__getitem(void *vptr, size_t i) {
+  boost::numeric::ublas::vector<int> *ptr=(boost::numeric::ublas::vector<int> *)vptr;
+  int ret=ptr->operator[](i);
+  return ret;
+}
+
+void o2scl_boost_numeric_ublas_vector_int__setitem(void *vptr, size_t i, int val) {
+  boost::numeric::ublas::vector<int> *ptr=(boost::numeric::ublas::vector<int> *)vptr;
+  (*ptr)[i]=val;
+  return;
+}
+
 void *o2scl_create_boost_numeric_ublas_matrix_double_() {
   boost::numeric::ublas::matrix<double> *ptr=new boost::numeric::ublas::matrix<double>;
   return ptr;

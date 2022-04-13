@@ -63,6 +63,8 @@ int o2scl_hdf_hdf_file_gets_var(void *vptr, char *name, void *ptr_s);
 
 int o2scl_hdf_hdf_file_gets_fixed(void *vptr, char *name, void *ptr_s);
 
+int o2scl_hdf_hdf_file_gets_def_fixed(void *vptr, char *name, char *deft, void *ptr_s);
+
 void o2scl_hdf_hdf_file_setc(void *vptr, char *name, char c);
 
 void o2scl_hdf_hdf_file_setd(void *vptr, char *name, double d);
@@ -90,6 +92,10 @@ int o2scl_hdf_hdf_file_seti_vec(void *vptr, char *name, void *ptr_v);
 int o2scl_hdf_hdf_file_set_szt_vec(void *vptr, char *name, void *ptr_v);
 
 int o2scl_hdf_hdf_file_sets_vec(void *vptr, char *name, void *ptr_s);
+
+int o2scl_hdf_hdf_file_getd_mat_copy(void *vptr, char *name, void *ptr_m);
+
+int o2scl_hdf_hdf_file_setd_mat_copy(void *vptr, char *name, void *ptr_m);
 
 int o2scl_hdf_hdf_file_getd_ten(void *vptr, char *name, void *ptr_t);
 

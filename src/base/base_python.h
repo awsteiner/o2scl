@@ -109,6 +109,18 @@ double o2scl_boost_numeric_ublas_vector_double__getitem(void *vptr, size_t i);
 
 void o2scl_boost_numeric_ublas_vector_double__setitem(void *vptr, size_t i, double val);
 
+void *o2scl_create_boost_numeric_ublas_vector_int_();
+
+void o2scl_free_boost_numeric_ublas_vector_int_(void *vptr);
+
+size_t o2scl_boost_numeric_ublas_vector_int__size(void *vptr);
+
+void o2scl_boost_numeric_ublas_vector_int__resize(void *vptr, size_t n);
+
+int o2scl_boost_numeric_ublas_vector_int__getitem(void *vptr, size_t i);
+
+void o2scl_boost_numeric_ublas_vector_int__setitem(void *vptr, size_t i, int val);
+
 void *o2scl_create_boost_numeric_ublas_matrix_double_();
 
 void o2scl_free_boost_numeric_ublas_matrix_double_(void *vptr);

@@ -130,6 +130,13 @@ int o2scl_hdf_hdf_file_gets_fixed(void *vptr, char *name, void *ptr_s) {
   return ret;
 }
 
+int o2scl_hdf_hdf_file_gets_def_fixed(void *vptr, char *name, char *deft, void *ptr_s) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *s=(std::string *)ptr_s;
+  int ret=ptr->gets_def_fixed(name,deft,*s);
+  return ret;
+}
+
 void o2scl_hdf_hdf_file_setc(void *vptr, char *name, char c) {
   hdf_file *ptr=(hdf_file *)vptr;
   ptr->setc(name,c);
@@ -219,6 +226,20 @@ int o2scl_hdf_hdf_file_sets_vec(void *vptr, char *name, void *ptr_s) {
   hdf_file *ptr=(hdf_file *)vptr;
   std::vector<std::string> *s=(std::vector<std::string> *)ptr_s;
   int ret=ptr->sets_vec(name,*s);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_getd_mat_copy(void *vptr, char *name, void *ptr_m) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  boost::numeric::ublas::matrix<double> *m=(boost::numeric::ublas::matrix<double> *)ptr_m;
+  int ret=ptr->getd_mat_copy(name,*m);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_setd_mat_copy(void *vptr, char *name, void *ptr_m) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  boost::numeric::ublas::matrix<double> *m=(boost::numeric::ublas::matrix<double> *)ptr_m;
+  int ret=ptr->setd_mat_copy(name,*m);
   return ret;
 }
 
