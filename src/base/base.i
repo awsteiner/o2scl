@@ -2115,12 +2115,25 @@ class cli
 - function set_verbose
   - int
   - int v
+- function parse_for_aliases
+  - int
+  - io std::vector<std::string> &sv
+  - bool allow_undashed
+- function apply_aliases
+  - int
+  - io std::vector<std::string> &sv
+  - size_t istart
+  - bool debug [false]
+#- function get_parameter_list
+#  - std::vector<std::string>
+#- function get_option_list
+#  - std::vector<std::string>
+- function parameter_desc
+  - std::string
+  - std::string name
+- function option_short_desc
+  - std::string
+  - std::string name
 #  amp->cl->process_args(args,ca,0);
 #  amp->cl->call_args(ca);
-#  amp->cl->parse_for_aliases(args,false);
-#  amp->cl->apply_aliases(args,0);
-#  vector<string> params=amp->cl->get_parameter_list();
-#  std::string desc=amp->cl->parameter_desc(name2);
-#  std::string desc=amp->cl->option_short_desc(name2);
-#  vector<string> options=amp->cl->get_option_list();
 

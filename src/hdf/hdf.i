@@ -37,6 +37,9 @@ cpp_using o2scl_acol
 #
 py_header from o2sclpy.base import *
 #
+#
+# Class hdf_file
+#
 class hdf_file
 - int compr_type
 - size_t min_compr_size  
@@ -147,17 +150,18 @@ class hdf_file
   - int
   - std::string name
   - out boost::numeric::ublas::matrix<double> &m
-#- function geti_mat_copy
-#  - int
-#  - std::string name
-#  - out boost::numeric::ublas::matrix<int> &m
+- function geti_mat_copy
+  - int
+  - std::string name
+  - out boost::numeric::ublas::matrix<int> &m
 - function setd_mat_copy
   - int
   - std::string name
   - io boost::numeric::ublas::matrix<double> &m
-#- function seti_mat_copy
-#  - int
-#  - io boost::numeric::ublas::matrix<int> &m
+- function seti_mat_copy
+  - int
+  - std::string name
+  - io boost::numeric::ublas::matrix<int> &m
 - function getd_ten
   - int
   - std::string name
@@ -182,31 +186,31 @@ class hdf_file
   - int
   - std::string name
   - io tensor<size_t> &t
-#- function getc_def
-#  - int
-#  - std::string name
-#  - char def
-#  - out char &c
-#- function getd_def
-#  - int
-#  - std::string name
-#  - double def
-#  - out double &d
-#- function geti_def
-#  - int
-#  - std::string name
-#  - int def
-#  - out int &i
-#- function get_szt_def
-#  - int
-#  - std::string name
-#  - size_t def
-#  - out size_t &u
-#- function gets_def
-#  - int
-#  - std::string name
-#  - std::string def
-#  - out std::string &s
+- function getc_def
+  - int
+  - std::string name
+  - char deft
+  - out char &c
+- function getd_def
+  - int
+  - std::string name
+  - double deft
+  - out double &d
+- function geti_def
+  - int
+  - std::string name
+  - int deft
+  - out int &i
+- function get_szt_def
+  - int
+  - std::string name
+  - size_t deft
+  - out size_t &u
+- function gets_def
+  - int
+  - std::string name
+  - std::string deft
+  - out std::string &s
 - function find_object_by_type
   - int
   - std::string type
@@ -229,6 +233,9 @@ class hdf_file
   - void
   - int verbose
   - out hdf_file &hf2
+#
+# Functions from hdf_io.h
+#
 function hdf_input
 - void                             
 - py_name hdf_input_table
@@ -350,6 +357,9 @@ function mult_vector_spec<std::vector<double>>
 - out std::vector<std::vector<double>> &v
 - int verbose [0]
 - bool err_on_fail [true]
+#
+# Class acol_manager
+#
 class acol_manager
 - std::string env_var_name
 - cli *cl
@@ -364,6 +374,9 @@ class acol_manager
 - double double_obj
 - size_t size_t_obj
 - std::string string_obj
+#
+# Class cloud_file
+#
 class cloud_file
 - int hash_type
 - int verbose

@@ -3183,6 +3183,34 @@ int o2scl_cli_set_verbose(void *vptr, int v) {
   return ret;
 }
 
+int o2scl_cli_parse_for_aliases(void *vptr, void *ptr_sv, bool allow_undashed) {
+  cli *ptr=(cli *)vptr;
+  std::vector<std::string> *sv=(std::vector<std::string> *)ptr_sv;
+  int ret=ptr->parse_for_aliases(*sv,allow_undashed);
+  return ret;
+}
+
+int o2scl_cli_apply_aliases(void *vptr, void *ptr_sv, size_t istart, bool debug) {
+  cli *ptr=(cli *)vptr;
+  std::vector<std::string> *sv=(std::vector<std::string> *)ptr_sv;
+  int ret=ptr->apply_aliases(*sv,istart,debug);
+  return ret;
+}
+
+void *o2scl_cli_parameter_desc(void *vptr, char *name) {
+  cli *ptr=(cli *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->parameter_desc(name);
+  return sptr;
+}
+
+void *o2scl_cli_option_short_desc(void *vptr, char *name) {
+  cli *ptr=(cli *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->option_short_desc(name);
+  return sptr;
+}
+
 void *o2scl_create_shared_ptr_table_units_() {
   std::shared_ptr<table_units<> > *ptr=new std::shared_ptr<table_units<> >(new table_units<>);
   return ptr;

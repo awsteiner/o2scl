@@ -236,10 +236,24 @@ int o2scl_hdf_hdf_file_getd_mat_copy(void *vptr, char *name, void *ptr_m) {
   return ret;
 }
 
+int o2scl_hdf_hdf_file_geti_mat_copy(void *vptr, char *name, void *ptr_m) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  boost::numeric::ublas::matrix<int> *m=(boost::numeric::ublas::matrix<int> *)ptr_m;
+  int ret=ptr->geti_mat_copy(name,*m);
+  return ret;
+}
+
 int o2scl_hdf_hdf_file_setd_mat_copy(void *vptr, char *name, void *ptr_m) {
   hdf_file *ptr=(hdf_file *)vptr;
   boost::numeric::ublas::matrix<double> *m=(boost::numeric::ublas::matrix<double> *)ptr_m;
   int ret=ptr->setd_mat_copy(name,*m);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_seti_mat_copy(void *vptr, char *name, void *ptr_m) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  boost::numeric::ublas::matrix<int> *m=(boost::numeric::ublas::matrix<int> *)ptr_m;
+  int ret=ptr->seti_mat_copy(name,*m);
   return ret;
 }
 
@@ -282,6 +296,37 @@ int o2scl_hdf_hdf_file_set_szt_ten(void *vptr, char *name, void *ptr_t) {
   hdf_file *ptr=(hdf_file *)vptr;
   tensor<size_t> *t=(tensor<size_t> *)ptr_t;
   int ret=ptr->set_szt_ten(name,*t);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_getc_def(void *vptr, char *name, char deft, char *c) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  int ret=ptr->getc_def(name,deft,*c);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_getd_def(void *vptr, char *name, double deft, double *d) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  int ret=ptr->getd_def(name,deft,*d);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_geti_def(void *vptr, char *name, int deft, int *i) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  int ret=ptr->geti_def(name,deft,*i);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_get_szt_def(void *vptr, char *name, size_t deft, size_t *u) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  int ret=ptr->get_szt_def(name,deft,*u);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_gets_def(void *vptr, char *name, char *deft, void *ptr_s) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *s=(std::string *)ptr_s;
+  int ret=ptr->gets_def(name,deft,*s);
   return ret;
 }
 

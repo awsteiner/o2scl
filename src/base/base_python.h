@@ -1095,6 +1095,14 @@ void o2scl_cli_set_addl_help_cli(void *vptr, void *p_v);
 
 int o2scl_cli_set_verbose(void *vptr, int v);
 
+int o2scl_cli_parse_for_aliases(void *vptr, void *ptr_sv, bool allow_undashed);
+
+int o2scl_cli_apply_aliases(void *vptr, void *ptr_sv, size_t istart, bool debug=false);
+
+void *o2scl_cli_parameter_desc(void *vptr, char *name);
+
+void *o2scl_cli_option_short_desc(void *vptr, char *name);
+
 void *o2scl_create_shared_ptr_table_units_();
 
 void o2scl_free_shared_ptr_table_units_(void *vptr);

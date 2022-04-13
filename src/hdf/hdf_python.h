@@ -95,7 +95,11 @@ int o2scl_hdf_hdf_file_sets_vec(void *vptr, char *name, void *ptr_s);
 
 int o2scl_hdf_hdf_file_getd_mat_copy(void *vptr, char *name, void *ptr_m);
 
+int o2scl_hdf_hdf_file_geti_mat_copy(void *vptr, char *name, void *ptr_m);
+
 int o2scl_hdf_hdf_file_setd_mat_copy(void *vptr, char *name, void *ptr_m);
+
+int o2scl_hdf_hdf_file_seti_mat_copy(void *vptr, char *name, void *ptr_m);
 
 int o2scl_hdf_hdf_file_getd_ten(void *vptr, char *name, void *ptr_t);
 
@@ -108,6 +112,16 @@ int o2scl_hdf_hdf_file_setd_ten(void *vptr, char *name, void *ptr_t);
 int o2scl_hdf_hdf_file_seti_ten(void *vptr, char *name, void *ptr_t);
 
 int o2scl_hdf_hdf_file_set_szt_ten(void *vptr, char *name, void *ptr_t);
+
+int o2scl_hdf_hdf_file_getc_def(void *vptr, char *name, char deft, char *c);
+
+int o2scl_hdf_hdf_file_getd_def(void *vptr, char *name, double deft, double *d);
+
+int o2scl_hdf_hdf_file_geti_def(void *vptr, char *name, int deft, int *i);
+
+int o2scl_hdf_hdf_file_get_szt_def(void *vptr, char *name, size_t deft, size_t *u);
+
+int o2scl_hdf_hdf_file_gets_def(void *vptr, char *name, char *deft, void *ptr_s);
 
 int o2scl_hdf_hdf_file_find_object_by_type(void *vptr, char *type, void *ptr_name, int verbose=0);
 
