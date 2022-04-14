@@ -410,7 +410,7 @@ void acol_manager::command_add(std::string new_type) {
         (this,&acol_manager::comm_delete_rows),both},
        {0,"delete-rows-tol","",0,2,"","",
         new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_delete_rows),both},
+        (this,&acol_manager::comm_delete_rows_tol),both},
        {0,"deriv","",0,3,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_deriv),both},

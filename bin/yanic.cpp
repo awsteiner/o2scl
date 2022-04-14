@@ -2374,16 +2374,37 @@ int main(int argc, char *argv[]) {
         fout << "        Get object of type :class:`"
              << ifv.ift.name << "`" << endl;
         fout << "        \"\"\"" << endl;
-        fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
+        fout << "        func1=self._link." << dll_name << "." << ifc.ns << "_"
              << underscoreify(ifc.name)
              << "_get_" << ifv.name << endl;
         
-        fout << "        func.restype=ctypes.c_void_p" << endl;
+        fout << "        func1.restype=ctypes.c_void_p" << endl;
         
-        fout << "        func.argtypes=[ctypes.c_void_p]" << endl;
-        fout << "        " << ifv.name << "._ptr=func(self._ptr)" << endl;
-        fout << "        " << ifv.name << "._owner=False" << endl;
-        fout << "        return" << endl;
+        fout << "        func1.argtypes=[ctypes.c_void_p]" << endl;
+        if (true) {
+          fout << "        ptr=func1(self._ptr)" << endl;
+          std::string type_temp=ifv.ift.name;
+          if (ifv.ift.py_name.length()!=0) {
+            type_temp=ifv.ift.py_name;
+          }
+          if (type_temp.substr(type_temp.length()-2,2)==
+              (string)"<>") {
+            type_temp=type_temp.substr(0,type_temp.length()-2);
+          }
+          for(cpn_it it=class_py_names.begin();
+              it!=class_py_names.end();it++) {
+            if (it->first==type_temp) type_temp=it->second;
+          }
+          if (type_temp.substr(0,7)==(string)"o2scl::") {
+            type_temp=type_temp.substr(7,type_temp.length()-7);
+          }
+          fout << "        obj=o2sclpy." << type_temp << "(link,ptr)"
+               << endl;
+        } else {
+          fout << "        " << ifv.name << "._ptr=func1(self._ptr)" << endl;
+          fout << "        " << ifv.name << "._owner=False" << endl;
+          fout << "        return" << endl;
+        }
         
       }
       fout << endl;
