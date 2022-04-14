@@ -50,6 +50,7 @@ cpp_using o2scl_hdf
 # We need shared_ptr_table_units from base
 #
 py_header from o2sclpy.base import *
+py_header from o2sclpy.part import *
 #
 # ------------------------------------------------------
 # 

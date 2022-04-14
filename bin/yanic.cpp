@@ -2398,7 +2398,7 @@ int main(int argc, char *argv[]) {
           if (type_temp.substr(0,7)==(string)"o2scl::") {
             type_temp=type_temp.substr(7,type_temp.length()-7);
           }
-          fout << "        obj=o2sclpy." << type_temp << "(link,ptr)"
+          fout << "        obj=" << type_temp << "(self._link,ptr)"
                << endl;
         } else {
           fout << "        " << ifv.name << "._ptr=func1(self._ptr)" << endl;
