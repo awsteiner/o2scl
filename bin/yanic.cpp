@@ -2368,8 +2368,11 @@ int main(int argc, char *argv[]) {
 
         // Get a reference to other types
         
-        fout << "    def get_" << ifv.name << "(self," << ifv.name
+        fout << "    def get_" << ifv.name << "(self):" << endl;
+        /*
+        fout << "," << ifv.name
              << "):" << endl;
+        */
         fout << "        \"\"\"" << endl;
         fout << "        Get object of type :class:`"
              << ifv.ift.name << "`" << endl;
@@ -2400,6 +2403,7 @@ int main(int argc, char *argv[]) {
           }
           fout << "        obj=" << type_temp << "(self._link,ptr)"
                << endl;
+          fout << "        return obj" << endl;
         } else {
           fout << "        " << ifv.name << "._ptr=func1(self._ptr)" << endl;
           fout << "        " << ifv.name << "._owner=False" << endl;
