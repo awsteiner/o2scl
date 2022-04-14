@@ -103,15 +103,21 @@ int cloud_file::get_file_hash
 
   // First use wordexp to do tilde expansion
   string dir_old=dir;
-  std::vector<std::string> matches;
-  int wret=wordexp_wrapper(dir,matches);
-  if (matches.size()>1 || matches.size()==0 || wret!=0) {
-    return 10;
-  }
-  dir=matches[0];
-  if (verbose>1) {
-    cout << "Function wordexp() converted "
-	 << dir_old << " to " << dir << endl;
+  if (dir.length()>0) {
+    std::vector<std::string> matches;
+    int wret=wordexp_wrapper(dir,matches);
+    if (matches.size()>1 || matches.size()==0 || wret!=0) {
+      if (verbose>1) {
+        cout << "Function cloud_file::get_file_hash() failed to perform "
+             << "tilde expansion for directory " << dir << "." << endl;
+      }
+      return 10;
+    }
+    dir=matches[0];
+    if (verbose>1) {
+      cout << "Function wordexp() converted "
+           << dir_old << " to " << dir << endl;
+    }
   }
   
   // Look for directory 
@@ -192,7 +198,8 @@ int cloud_file::get_file_hash
 
   // First use wordexp to do tilde expansion
   string fname_old=fname;
-  wret=wordexp_wrapper(fname,matches);
+  std::vector<std::string> matches;
+  int wret=wordexp_wrapper(fname,matches);
   if (matches.size()>1 || matches.size()==0 || wret!=0) {
     return 10;
   }
@@ -211,7 +218,12 @@ int cloud_file::get_file_hash
 
   // If there's no hash, assume it's valid
   if (hash.length()==0) valid_hash=true;
-    
+
+  if (verbose>1) {
+    std::cout << "Function cloud_file::get_file_hash(): file_present: "
+              << file_present << endl;
+  }
+  
   // If the file was found, check the hash
   if (sret==0 && file_present && hash.length()>0) {
     std::string cmd;
@@ -252,12 +264,22 @@ int cloud_file::get_file_hash
     }
   }
       
+  if (verbose>1) {
+    std::cout << "Function cloud_file::get_file_hash(): valid_hash: "
+              << valid_hash << endl;
+  }
+  
   if (sret!=0 || file_present==false || valid_hash==false) {
     // If it couldn't be found, try to download it
     int ret=1;
     if (allow_curl) {
-      std::string cmd=((std::string)"cd ")+dir+"; curl -o "+
-	file+" "+url;
+      std::string cmd;
+      if (dir.length()>0) {
+        cmd=((std::string)"cd ")+dir+"; curl -o "+
+          file+" "+url;
+      } else {
+        cmd=((std::string)"curl -o ")+file+" "+url;
+      }
       if (verbose>0) {
 	std::cout << "Trying curl command:\n  "
 		  << cmd << std::endl;
@@ -265,8 +287,12 @@ int cloud_file::get_file_hash
       ret=system(cmd.c_str());
     }
     if (allow_wget && ret!=0) {
-      std::string cmd=((std::string)"cd ")+dir+"; wget -O "+file+
-	" "+url;
+      std::string cmd;
+      if (dir.length()>0) {
+        cmd=((std::string)"cd ")+dir+"; wget -O "+file+" "+url;
+      } else {
+        cmd=((std::string)"wget -O ")+file+" "+url;
+      }
       if (verbose>0) {
 	std::cout << "File did not exist or read failed or invalid hash."
 		  << std::endl;
@@ -275,15 +301,25 @@ int cloud_file::get_file_hash
       }
       ret=system(cmd.c_str());
     }
+    
     // Check to see if download command succeeded
     if (ret!=0) {
+      if (verbose>1) {
+        std::cout << "Function cloud_file::get_file_hash() received "
+                  << "non-zero return value from system command." << endl;
+      }
       if (throw_on_fail) {
 	O2SCL_ERR("Failed to download file.",o2scl::exc_efilenotfound);
       } else {
 	return o2scl::exc_efilenotfound;
       }
     }
+    
     // Check to see if the file is there
+    if (verbose>1) {
+      std::cout << "Function cloud_file::get_file_hash() checking "
+                << "that file exists." << endl;
+    }
     sret=stat(fname.c_str(),&sb);
     if (sret==0) {
       file_present=S_ISREG(sb.st_mode);
@@ -344,9 +380,10 @@ int cloud_file::get_file_hash
   // -------------------------------------------------------
   // Output full filename
     
-  if (verbose>1) {
-    std::cout << "Success with file named '" << fname
-	      << "'" << std::endl;
+  if (verbose>0) {
+    std::cout << "Function cloud_file::get_file_hash() succeeded "
+              << "to obtain file named '" << fname
+	      << "'." << std::endl;
   }
 
 #else
