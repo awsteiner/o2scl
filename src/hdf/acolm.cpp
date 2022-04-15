@@ -188,24 +188,41 @@ void acol_manager::update_o2_docs(size_t narr,
 
   int loc_verbose=0;
 
+  // Loop through all options, attempting to assign docs for all
   for(size_t j=0;j<narr;j++) {
+    
     bool found=false;
+
+    // Loop over all command doc strings, attempting to find a match
     for(size_t k=0;k<cmd_doc_strings.size() && found==false;k++) {
+
+      // We found a match for option j and list of doc strings k
       if (cmd_doc_strings[k][0]==options_arr[j].lng) {
+
+        //if (options_arr[j].lng==(string)"stats") loc_verbose=3;
+        //else loc_verbose=0;
+        
         if (loc_verbose>1) {
           cout << "Found documentation for " << options_arr[j].lng << endl;
         }
         found=true;
+
+        // Only proceed if there is at least one line of documentation
         if (cmd_doc_strings[k].size()>=2) {
+          
           options_arr[j].desc=cmd_doc_strings[k][1];
           if (loc_verbose>1) {
             cout << "Found brief desc.: " << options_arr[j].desc << endl;
           }
+
+          // If there might be some detailed documentation
           if (cmd_doc_strings[k].size()>=3) {
+            
             if (loc_verbose>1) {
               cout << "Found detailed desc." << endl;
             }
             bool generic_docs=true;
+            
             if (cmd_doc_strings[k][2].substr(0,19)==
                 ((string)"For objects of type")) {
               generic_docs=false;
@@ -213,6 +230,7 @@ void acol_manager::update_o2_docs(size_t narr,
                        ((string)"If there is no current object:")) {
               generic_docs=false;
             }
+            
             if (generic_docs) {
               if (new_type.length()==0) {
                 if (loc_verbose>1) {
@@ -234,6 +252,7 @@ void acol_manager::update_o2_docs(size_t narr,
                 }
               }
             }
+            
             if (new_type.length()==0) {
               if (generic_docs==true) {
                 if (loc_verbose>1) {
@@ -262,30 +281,38 @@ void acol_manager::update_o2_docs(size_t narr,
                 options_arr[j].parm_desc="";
                 options_arr[j].help="";
               }
+              
             } else {
+              
               if (loc_verbose>1) {
-                cout << "Current type is " << new_type << endl;
+                cout << "Current type is '" << new_type << "'" << endl;
               }
               options_arr[j].desc="";
               options_arr[j].parm_desc="";
               options_arr[j].help="";
+              
               bool loop1_done=false;
               for(size_t kk=2;kk<cmd_doc_strings[k].size() &&
                     loop1_done==false;kk++) {
+                
                 string s="For objects of type "+new_type+":";
                 // (When types contain <>'s, the xml parser manges them
                 // and ends up adding a space.)
                 string s2="For objects of type "+new_type+" :";
+
                 if (cmd_doc_strings[k][kk].substr(0,s.length())==s ||
                     cmd_doc_strings[k][kk].substr(0,s2.length())==s2) {
+                  
                   if (loc_verbose>1) {
                     cout << "Found type-specific docs [" << new_type
                          << "]." << endl;
                   }
                   loop1_done=true;
                   bool loop2_done=false;
+                  
                   for(size_t kl=kk+1;kl<cmd_doc_strings[k].size() &&
                         loop2_done==false;kl++) {
+                    
                     if (cmd_doc_strings[k][kl].substr(0,19)==
                         ((string)"For objects of type")) {
                       loop2_done=true;
@@ -293,12 +320,28 @@ void acol_manager::update_o2_docs(size_t narr,
                                ((string)"If there is no current object:")) {
                       loop2_done=true;
                     } else if (options_arr[j].desc=="") {
+                      if (loc_verbose>2) {
+                        cout << "Adding desc: "
+                             << cmd_doc_strings[k][kl] << endl;
+                      }
                       options_arr[j].desc=cmd_doc_strings[k][kl];
                     } else if (options_arr[j].parm_desc=="") {
+                      if (loc_verbose>2) {
+                        cout << "Adding parm_desc: "
+                             << cmd_doc_strings[k][kl] << endl;
+                      }
                       options_arr[j].parm_desc=cmd_doc_strings[k][kl];
                     } else if (options_arr[j].help=="") {
+                      if (loc_verbose>2) {
+                        cout << "Adding first doc string: \n  "
+                             << cmd_doc_strings[k][kl] << endl;
+                      }
                       options_arr[j].help=cmd_doc_strings[k][kl];
                     } else {
+                      if (loc_verbose>2) {
+                        cout << "Adding doc string: \n  "
+                             << cmd_doc_strings[k][kl] << endl;
+                      }
                       options_arr[j].help+="\n\n"+cmd_doc_strings[k][kl];
                     }
                   }
@@ -309,7 +352,10 @@ void acol_manager::update_o2_docs(size_t narr,
         }
         found=true;
       }
+
+      // End of 'k' loop over command doc strings
     }
+    
     if (found==true) {
       if (verbose>2 || loc_verbose>1) {
         cout << "Function acol_manager::update_o2_docs() "
@@ -324,6 +370,8 @@ void acol_manager::update_o2_docs(size_t narr,
     if (loc_verbose>1) {
       cout << endl;
     }
+
+    // End of 'j' loop over list of options
   }
     
   return;
