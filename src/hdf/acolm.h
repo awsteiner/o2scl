@@ -2287,6 +2287,16 @@ namespace o2scl_acol {
 
         Output the average, std. dev, max and min of <slice>.
 
+        For objects of type tensor:
+
+        Show tensor statistics.
+
+        (No arguments.)
+
+        The 'stats' command outputs the number of entries, their mean,
+        standard deviation, minimum and maximum. It also counts the
+        number of infinite or NaN values.
+
         For objects of type tensor_grid:
 
         Show tensor statistics.

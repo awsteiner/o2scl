@@ -187,7 +187,7 @@ void acol_manager::update_o2_docs(size_t narr,
                                   std::string new_type) {
 
   int loc_verbose=0;
-  
+
   for(size_t j=0;j<narr;j++) {
     bool found=false;
     for(size_t k=0;k<cmd_doc_strings.size() && found==false;k++) {
@@ -279,26 +279,27 @@ void acol_manager::update_o2_docs(size_t narr,
                 if (cmd_doc_strings[k][kk].substr(0,s.length())==s ||
                     cmd_doc_strings[k][kk].substr(0,s2.length())==s2) {
                   if (loc_verbose>1) {
-                    cout << "Found type-specific docs." << endl;
+                    cout << "Found type-specific docs [" << new_type
+                         << "]." << endl;
                   }
                   loop1_done=true;
                   bool loop2_done=false;
-                  for(size_t kk=3;kk<cmd_doc_strings[k].size() &&
-                        loop2_done==false;kk++) {
-                    if (cmd_doc_strings[k][kk].substr(0,19)==
+                  for(size_t kl=kk+1;kl<cmd_doc_strings[k].size() &&
+                        loop2_done==false;kl++) {
+                    if (cmd_doc_strings[k][kl].substr(0,19)==
                         ((string)"For objects of type")) {
                       loop2_done=true;
-                    } else if (cmd_doc_strings[k][kk].substr(0,30)==
+                    } else if (cmd_doc_strings[k][kl].substr(0,30)==
                                ((string)"If there is no current object:")) {
                       loop2_done=true;
                     } else if (options_arr[j].desc=="") {
-                      options_arr[j].desc=cmd_doc_strings[k][kk];
+                      options_arr[j].desc=cmd_doc_strings[k][kl];
                     } else if (options_arr[j].parm_desc=="") {
-                      options_arr[j].parm_desc=cmd_doc_strings[k][kk];
+                      options_arr[j].parm_desc=cmd_doc_strings[k][kl];
                     } else if (options_arr[j].help=="") {
-                      options_arr[j].help=cmd_doc_strings[k][kk];
+                      options_arr[j].help=cmd_doc_strings[k][kl];
                     } else {
-                      options_arr[j].help+="\n\n"+cmd_doc_strings[k][kk];
+                      options_arr[j].help+="\n\n"+cmd_doc_strings[k][kl];
                     }
                   }
                 }
@@ -310,7 +311,7 @@ void acol_manager::update_o2_docs(size_t narr,
       }
     }
     if (found==true) {
-      if (verbose>2) {
+      if (verbose>2 || loc_verbose>1) {
         cout << "Function acol_manager::update_o2_docs() "
              << "found documentation for command "
              << options_arr[j].lng << " ." << endl;
@@ -320,7 +321,9 @@ void acol_manager::update_o2_docs(size_t narr,
            << "find documentation for command "
            << options_arr[j].lng << " ." << endl;
     }
-    
+    if (loc_verbose>1) {
+      cout << endl;
+    }
   }
     
   return;
