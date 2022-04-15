@@ -273,7 +273,11 @@ void acol_manager::update_o2_docs(size_t narr,
               for(size_t kk=2;kk<cmd_doc_strings[k].size() &&
                     loop1_done==false;kk++) {
                 string s="For objects of type "+new_type+":";
-                if (cmd_doc_strings[k][kk].substr(0,s.length())==s) {
+                // (When types contain <>'s, the xml parser manges them
+                // and ends up adding a space.)
+                string s2="For objects of type "+new_type+" :";
+                if (cmd_doc_strings[k][kk].substr(0,s.length())==s ||
+                    cmd_doc_strings[k][kk].substr(0,s.length())==s2) {
                   if (loc_verbose>1) {
                     cout << "Found type-specific docs." << endl;
                   }
