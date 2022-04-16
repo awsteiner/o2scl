@@ -1241,14 +1241,14 @@ class tensor<>
   - out double &max_value    
 - function total_sum
   - double
-- function convert_table3d_sum
-  - void
-  - size_t ix_x
-  - size_t ix_y
-  - out table3d &tab
-  - std::string x_name ["x"]
-  - std::string y_name ["y"]
-  - std::string slice_name ["z"]
+#- function convert_table3d_sum
+#  - void
+#  - size_t ix_x
+#  - size_t ix_y
+#  - out table3d &tab
+#  - std::string x_name ["x"]
+#  - std::string y_name ["y"]
+#  - std::string slice_name ["z"]
 - function rearrange_and_copy
   - tensor<>
   - std::string spec
@@ -1317,26 +1317,81 @@ class tensor_grid<>
   - double
   - py_name get_val_vector
   - io vector<double> &grid_point
+- function resize
+  - void
+  - size_t rank
+  - io vector<size_t> &dim  
 - function is_grid_set
   - bool
 - function set_grid_packed
   - void
   - io vector<double> &grid
+- function set_grid
+  - void
+  - py_name set_grid_vec_vec
+  - vector<vector<double>> &grid_vecs
 - function default_grid
   - void
 - function set_grid_i_vec    
   - void
   - size_t i
   - io vector<double> &grid
+- function set_grid_i_func
+  - void
+  - size_t ix
+  - std::string func
 - function get_grid
   - double
   - size_t i
   - size_t j
 - function set_grid
   - void
+  - py_name set_grid
   - size_t i
   - size_t j
   - double val
+#- function lookup_grid_val
+#  - void
+#  - io const double &val
+#  - out double &val2
+- function lookup_grid
+  - size_t
+  - size_t i
+  - double val
+#- function convert_table3d_sum  
+#  - void
+#  - size_t ix_x
+#  - size_t ix_y
+#  - io table3d &tab
+#  - std::string x_name ["x"]
+#  - std::string y_name ["y"]
+#  - std::string z_name ["z"]
+- function copy_table3d_align
+  - void
+  - size_t ix_x
+  - size_t ix_y
+  - io vector<size_t> &index
+  - io table3d &tab
+  - std::string z_name ["z"]
+- function copy_table3d_align_setxy
+  - void
+  - size_t ix_x
+  - size_t ix_y
+  - io vector<size_t> &index
+  - io table3d &tab
+  - std::string x_name ["x"]
+  - std::string y_name ["y"]
+  - std::string z_name ["z"]
+- function clear
+  - void
+- function interp_linear
+  - double
+  - io vector<double> &v
+#- function rearrange_and_copy
+#  - tensor_grid<>
+#  - std::vector<index_spec> spec
+#  - int verbose [0]
+#  - bool err_on_fail [true]
 # 
 # Class tensor_int
 #

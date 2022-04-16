@@ -1827,13 +1827,6 @@ double o2scl_tensor__total_sum(void *vptr) {
   return ret;
 }
 
-void o2scl_tensor__convert_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
-  tensor<> *ptr=(tensor<> *)vptr;
-  table3d *tab=(table3d *)ptr_tab;
-  ptr->convert_table3d_sum(ix_x,ix_y,*tab,x_name,y_name,slice_name);
-  return;
-}
-
 void *o2scl_tensor__rearrange_and_copy(void *vptr, char *spec, int verbose, bool err_on_fail) {
   tensor<> *ptr=(tensor<> *)vptr;
   tensor<> *ret=new tensor<>;
@@ -1884,6 +1877,13 @@ double o2scl_tensor_grid__get_val(void *vptr, void *ptr_grid_point) {
   return ret;
 }
 
+void o2scl_tensor_grid__resize(void *vptr, size_t rank, void *ptr_dim) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  vector<size_t> *dim=(vector<size_t> *)ptr_dim;
+  ptr->resize(rank,*dim);
+  return;
+}
+
 bool o2scl_tensor_grid__is_grid_set(void *vptr) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   bool ret=ptr->is_grid_set();
@@ -1894,6 +1894,13 @@ void o2scl_tensor_grid__set_grid_packed(void *vptr, void *ptr_grid) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   vector<double> *grid=(vector<double> *)ptr_grid;
   ptr->set_grid_packed(*grid);
+  return;
+}
+
+void o2scl_tensor_grid__set_grid_vec_vec(void *vptr, void *ptr_grid_vecs) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  vector<vector<double>> *grid_vecs=(vector<vector<double>> *)ptr_grid_vecs;
+  ptr->set_grid(*grid_vecs);
   return;
 }
 
@@ -1910,6 +1917,12 @@ void o2scl_tensor_grid__set_grid_i_vec(void *vptr, size_t i, void *ptr_grid) {
   return;
 }
 
+void o2scl_tensor_grid__set_grid_i_func(void *vptr, size_t ix, char *func) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  ptr->set_grid_i_func(ix,func);
+  return;
+}
+
 double o2scl_tensor_grid__get_grid(void *vptr, size_t i, size_t j) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   double ret=ptr->get_grid(i,j);
@@ -1920,6 +1933,41 @@ void o2scl_tensor_grid__set_grid(void *vptr, size_t i, size_t j, double val) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   ptr->set_grid(i,j,val);
   return;
+}
+
+size_t o2scl_tensor_grid__lookup_grid(void *vptr, size_t i, double val) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  size_t ret=ptr->lookup_grid(i,val);
+  return ret;
+}
+
+void o2scl_tensor_grid__copy_table3d_align(void *vptr, size_t ix_x, size_t ix_y, void *ptr_index, void *ptr_tab, char *z_name) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  vector<size_t> *index=(vector<size_t> *)ptr_index;
+  table3d *tab=(table3d *)ptr_tab;
+  ptr->copy_table3d_align(ix_x,ix_y,*index,*tab,z_name);
+  return;
+}
+
+void o2scl_tensor_grid__copy_table3d_align_setxy(void *vptr, size_t ix_x, size_t ix_y, void *ptr_index, void *ptr_tab, char *x_name, char *y_name, char *z_name) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  vector<size_t> *index=(vector<size_t> *)ptr_index;
+  table3d *tab=(table3d *)ptr_tab;
+  ptr->copy_table3d_align_setxy(ix_x,ix_y,*index,*tab,x_name,y_name,z_name);
+  return;
+}
+
+void o2scl_tensor_grid__clear(void *vptr) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  ptr->clear();
+  return;
+}
+
+double o2scl_tensor_grid__interp_linear(void *vptr, void *ptr_v) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  vector<double> *v=(vector<double> *)ptr_v;
+  double ret=ptr->interp_linear(*v);
+  return ret;
 }
 
 void *o2scl_create_tensor_int_std_vector_int_() {

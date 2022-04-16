@@ -575,8 +575,7 @@ namespace o2scl {
 
     /** \brief Set grid for one index from a function
      */
-    template<class vec2_t>
-      void set_grid_i_func(size_t ix, std::string func) {
+    void set_grid_i_func(size_t ix, std::string func) {
       if (grid_set==false) {
         O2SCL_ERR2("Grid not already set in ",
                    "tensor_grid::set_grid_i_func().",exc_einval);
@@ -585,7 +584,7 @@ namespace o2scl {
         O2SCL_ERR2("Tried to set grid for empty tensor in ",
                    "tensor_grid::set_grid_i_func().",exc_einval);
       }
-
+      
       calc_utf8<> calc;
       std::map<std::string,double> vars;
       calc.compile(func.c_str(),&vars);
