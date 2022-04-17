@@ -26,6 +26,8 @@
 /** \file hdf_io.h
     \brief File defining HDF I/O for selected \o2 objects
 */
+#include <fnmatch.h>
+
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <regex>
@@ -571,9 +573,9 @@ namespace o2scl_hdf {
 
       \warning Experimental.
   */
-  template<class vec_t> int vector_spec(std::string spec, vec_t &v,
-					int verbose=0,
-					bool err_on_fail=true) {
+  template<class vec_t> int vector_spec
+  (std::string spec, vec_t &v, bool use_regex=false,
+   int verbose=0, bool err_on_fail=true) {
 
     if (verbose>2) {
       std::cout << "Function vector_spec is parsing: " << spec << std::endl;
@@ -939,17 +941,33 @@ namespace o2scl_hdf {
 	    if (verbose>2) {
 	      std::cout << "Column pattern " << col_patterns[k] << std::endl;
 	    }
-            std::regex r(col_patterns[k]);
-	    for(size_t j=0;j<t.get_ncolumns();j++) {
-              if (std::regex_search(t.get_column_name(j),r)) {
-		col_list.push_back(t.get_column_name(j));
-		if (verbose>2) {
-		  std::cout << "Found match (using regex): "
-                            << t.get_column_name(j)
-			    << std::endl;
-		}
-	      }
-	    }
+
+            if (use_regex) {
+              std::regex r(col_patterns[k]);
+              for(size_t j=0;j<t.get_ncolumns();j++) {
+                if (std::regex_search(t.get_column_name(j),r)) {
+                  col_list.push_back(t.get_column_name(j));
+                  if (verbose>2) {
+                    std::cout << "Found match (using regex): "
+                              << t.get_column_name(j)
+                              << std::endl;
+                  }
+                }
+              }
+            } else {
+              for(size_t j=0;j<t.get_ncolumns();j++) {
+                if (fnmatch(col_patterns[k].c_str(),
+                            t.get_column_name(j).c_str(),0)==0) {
+                  col_list.push_back(t.get_column_name(j));
+                  if (verbose>2) {
+                    std::cout << "Found match (using fnmatch): "
+                              << t.get_column_name(j)
+                              << std::endl;
+                  }
+                }
+              }
+            }
+            
 	  }
 	  
 	  v.resize(col_list.size());
@@ -1512,10 +1530,9 @@ namespace o2scl_hdf {
       This should be fixed. Maybe the way to improve this is to
       break it up into several functions.
   */
-  template<class vec_t> int mult_vector_spec(std::string spec,
-					     std::vector<vec_t> &v,
-					     int verbose=0,
-					     bool err_on_fail=true) {
+  template<class vec_t> int mult_vector_spec
+  (std::string spec, std::vector<vec_t> &v, bool use_regex=false,
+   int verbose=0, bool err_on_fail=true) {
 
     if (spec.find("list:")==0 || spec.find("grid:")==0 ||
 	spec.find("val:")==0) {
@@ -1912,14 +1929,28 @@ namespace o2scl_hdf {
             
             std::vector<size_t> col_ix;
 
-            std::regex r(col_spec);
-            for(size_t j=0;j<t.get_ncolumns();j++) {
-              if (std::regex_search(t.get_column_name(j),r)) {
-                col_ix.push_back(j);
-                if (verbose>1) {
-                  std::cout << "Found match (using regex): "
-                            << t.get_column_name(j)
-                            << std::endl;
+            if (use_regex) {
+              std::regex r(col_spec);
+              for(size_t j=0;j<t.get_ncolumns();j++) {
+                if (std::regex_search(t.get_column_name(j),r)) {
+                  col_ix.push_back(j);
+                  if (verbose>1) {
+                    std::cout << "Found match (using regex): "
+                              << t.get_column_name(j)
+                              << std::endl;
+                  }
+                }
+              }
+            } else {
+              for(size_t j=0;j<t.get_ncolumns();j++) {
+                if (fnmatch(col_spec.c_str(),
+                            t.get_column_name(j).c_str(),0)==0) {
+                  col_ix.push_back(j);
+                  if (verbose>1) {
+                    std::cout << "Found match (using fnmatch): "
+                              << t.get_column_name(j)
+                              << std::endl;
+                  }
                 }
               }
             }
@@ -1933,20 +1964,38 @@ namespace o2scl_hdf {
             }              
 
 	  } else {
-	  
-            std::regex r(addl_spec);
-            for(size_t j=0;j<t.get_ncolumns();j++) {
-              if (std::regex_search(t.get_column_name(j),r)) {
-                if (verbose>1) {
-                  std::cout << "Column " << t.get_column_name(j)
-                            << " matches pattern " << addl_spec
-                            << "." << std::endl;
+
+            if (use_regex) {
+              std::regex r(addl_spec);
+              for(size_t j=0;j<t.get_ncolumns();j++) {
+                if (std::regex_search(t.get_column_name(j),r)) {
+                  if (verbose>1) {
+                    std::cout << "Column " << t.get_column_name(j)
+                              << " matches pattern " << addl_spec
+                              << "." << std::endl;
+                  }
+                  vec_t vtemp(t.get_nlines());
+                  for(size_t k=0;k<t.get_nlines();k++) {
+                    vtemp[k]=t.get(j,k);
+                  }
+                  v.push_back(vtemp);
                 }
-                vec_t vtemp(t.get_nlines());
-                for(size_t k=0;k<t.get_nlines();k++) {
-                  vtemp[k]=t.get(j,k);
+              }
+            } else {
+              for(size_t j=0;j<t.get_ncolumns();j++) {
+                if (fnmatch(addl_spec.c_str(),
+                            t.get_column_name(j).c_str(),0)==0) {
+                  if (verbose>1) {
+                    std::cout << "Column " << t.get_column_name(j)
+                              << " matches pattern " << addl_spec
+                              << "." << std::endl;
+                  }
+                  vec_t vtemp(t.get_nlines());
+                  for(size_t k=0;k<t.get_nlines();k++) {
+                    vtemp[k]=t.get(j,k);
+                  }
+                  v.push_back(vtemp);
                 }
-                v.push_back(vtemp);
               }
             }
             
