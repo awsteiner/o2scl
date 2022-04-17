@@ -20,11 +20,8 @@
 
   -------------------------------------------------------------------
 */
-#ifdef O2SCL_REGEX
 #include <regex>
-#else
 #include <fnmatch.h>
-#endif
 
 #include <boost/algorithm/string.hpp>
 
@@ -513,7 +510,7 @@ bool find_constants::unit_match_logic(std::string unit,
 
 int find_constants::find_nothrow(std::string name, std::string unit,
 				 vector<const_entry> &matches,
-				 int verbose) const {
+				 bool use_regex, int verbose) const {
   
   o2scl::convert_units<> &cu=o2scl_settings.get_convert_units();
   
@@ -564,23 +561,20 @@ int find_constants::find_nothrow(std::string name, std::string unit,
     }
   }
 
-#ifdef O2SCL_REGEX    
   std::regex r(name);
-#else
   string fn_pat=((string)"*")+name+"*";
-#endif
   
   if (verbose>1) {
     std::cout << "find_constants::find_nothrow(): "
 	      << "pass 1 indexes: ";
     vector_out(std::cout,indexes,true);
-#ifdef O2SCL_REGEX    
-    std::cout << "find_constants::find_nothrow(): Using regex "
-              << name << std::endl;
-#else
-    std::cout << "find_constants::find_nothrow(): Using fnmatch() "
-              << "with pattern " << fn_pat << std::endl;
-#endif
+    if (use_regex) {
+      std::cout << "find_constants::find_nothrow(): Using regex "
+                << name << std::endl;
+    } else {
+      std::cout << "find_constants::find_nothrow(): Using fnmatch() "
+                << "with pattern " << fn_pat << std::endl;
+    }
   }
   
   // No matches, so try wildcard matches
@@ -590,11 +584,14 @@ int find_constants::find_nothrow(std::string name, std::string unit,
       for(size_t j=0;j<list[i].names.size();j++) {
         string temp=list[i].names[j];
         remove_ws_punct(temp);
-#ifdef O2SCL_REGEX
-        bool fn_ret=std::regex_search(temp,r);
-#else
-        bool fn_ret=(fnmatch(fn_pat.c_str(),temp.c_str(),0)==0);
-#endif
+        
+        bool fn_ret;
+        if (use_regex) {
+          fn_ret=std::regex_search(temp,r);
+        } else {
+          fn_ret=(fnmatch(fn_pat.c_str(),temp.c_str(),0)==0);
+        }
+        
 	if (verbose>2) {
 	  std::cout << "find_constants::find_nothrow(): "
 		    << name << " " << i << " " << j << " "

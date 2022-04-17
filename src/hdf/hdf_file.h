@@ -1078,8 +1078,8 @@ namespace o2scl_hdf {
 	This function returns 0 if an object of type \c type is found
 	and \ref o2scl::exc_enoprog if it fails.
     */
-    int find_object_by_type(std::string type,
-			   std::string &name, int verbose=0);
+    int find_object_by_type(std::string type, std::string &name,
+                            bool use_regex=true, int verbose=0);
 
     /** \brief Look in hdf_file \c hf for an \o2 object with name 
 	\c name and if found, set \c type to the associated type
@@ -1087,9 +1087,10 @@ namespace o2scl_hdf {
 	This function returns 0 if an object with name \c name is
 	found and \ref o2scl::exc_enoprog if it fails.
     */
-    int find_object_by_name(std::string name,
-			    std::string &type, int verbose=0);
-
+    int find_object_by_name(std::string name, std::string &type,
+                            bool use_regex=true, int verbose=0);
+			    
+    
     /** \brief Look in hdf_file \c hf for an \o2 object with name 
 	which matches a regular expression
 
@@ -1097,14 +1098,15 @@ namespace o2scl_hdf {
 	This function returns 0 if an object with name \c name is
 	found and \ref o2scl::exc_enoprog if it fails.
      */
-    int find_object_by_pattern(std::string name,
-			       std::string &type, int verbose=0);
+    int find_object_by_pattern(std::string name, std::string &type,
+                               bool use_regex=true, int verbose=0);
+			       
     //@}
 
     /** \brief List datasets and \o2 objects in the top-level
 	of the file 
     */
-    void file_list(int verbose);
+    void file_list(bool use_regex=true, int verbose=0);
 
     /** \brief Create a copy of the current HDF5 file and place
         the copy in \c hf2
@@ -1128,6 +1130,8 @@ namespace o2scl_hdf {
           ip_type_from_pattern
        */
       int mode;
+      /// Desc
+      bool use_regex;
     } iterate_parms;
 
     /// Parameters for iterate_copy_func()
