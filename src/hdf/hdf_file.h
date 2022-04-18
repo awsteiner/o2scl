@@ -1079,7 +1079,7 @@ namespace o2scl_hdf {
 	and \ref o2scl::exc_enoprog if it fails.
     */
     int find_object_by_type(std::string type, std::string &name,
-                            bool use_regex=true, int verbose=0);
+                            bool use_regex=false, int verbose=0);
 
     /** \brief Look in hdf_file \c hf for an \o2 object with name 
 	\c name and if found, set \c type to the associated type
@@ -1088,7 +1088,7 @@ namespace o2scl_hdf {
 	found and \ref o2scl::exc_enoprog if it fails.
     */
     int find_object_by_name(std::string name, std::string &type,
-                            bool use_regex=true, int verbose=0);
+                            bool use_regex=false, int verbose=0);
 			    
     
     /** \brief Look in hdf_file \c hf for an \o2 object with name 
@@ -1099,14 +1099,14 @@ namespace o2scl_hdf {
 	found and \ref o2scl::exc_enoprog if it fails.
      */
     int find_object_by_pattern(std::string name, std::string &type,
-                               bool use_regex=true, int verbose=0);
+                               bool use_regex=false, int verbose=0);
 			       
     //@}
 
     /** \brief List datasets and \o2 objects in the top-level
 	of the file 
     */
-    void file_list(bool use_regex=true, int verbose=0);
+    void file_list(bool use_regex=false, int verbose=0);
 
     /** \brief Create a copy of the current HDF5 file and place
         the copy in \c hf2

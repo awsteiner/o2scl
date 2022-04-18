@@ -123,9 +123,9 @@ int o2scl_hdf_hdf_file_get_szt_def(void *vptr, char *name, size_t deft, size_t *
 
 int o2scl_hdf_hdf_file_gets_def(void *vptr, char *name, char *deft, void *ptr_s);
 
-int o2scl_hdf_hdf_file_find_object_by_type(void *vptr, char *type, void *ptr_name, int verbose=0);
+int o2scl_hdf_hdf_file_find_object_by_type(void *vptr, char *type, void *ptr_name, bool use_regex=false, int verbose=0);
 
-int o2scl_hdf_hdf_file_find_object_by_name(void *vptr, char *name, void *ptr_type, int verbose=0);
+int o2scl_hdf_hdf_file_find_object_by_name(void *vptr, char *name, void *ptr_type, bool use_regex=false, int verbose=0);
 
 int o2scl_hdf_hdf_file_find_object_by_pattern(void *vptr, char *pattern, void *ptr_type, int verbose=0);
 

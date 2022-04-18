@@ -125,7 +125,7 @@ namespace o2scl {
     */
     int find_nothrow(std::string name, std::string unit,
 		     std::vector<const_entry> &matches,
-		     bool use_regex=true, int verbose=0) const;
+		     bool use_regex=false, int verbose=0) const;
   
     /** \brief Search for constants matching \c name with unit \c unit
 	and output result(s) with precision \c prec

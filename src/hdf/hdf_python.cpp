@@ -330,17 +330,17 @@ int o2scl_hdf_hdf_file_gets_def(void *vptr, char *name, char *deft, void *ptr_s)
   return ret;
 }
 
-int o2scl_hdf_hdf_file_find_object_by_type(void *vptr, char *type, void *ptr_name, int verbose) {
+int o2scl_hdf_hdf_file_find_object_by_type(void *vptr, char *type, void *ptr_name, bool use_regex, int verbose) {
   hdf_file *ptr=(hdf_file *)vptr;
   std::string *name=(std::string *)ptr_name;
-  int ret=ptr->find_object_by_type(type,*name,verbose);
+  int ret=ptr->find_object_by_type(type,*name,use_regex,verbose);
   return ret;
 }
 
-int o2scl_hdf_hdf_file_find_object_by_name(void *vptr, char *name, void *ptr_type, int verbose) {
+int o2scl_hdf_hdf_file_find_object_by_name(void *vptr, char *name, void *ptr_type, bool use_regex, int verbose) {
   hdf_file *ptr=(hdf_file *)vptr;
   std::string *type=(std::string *)ptr_type;
-  int ret=ptr->find_object_by_name(name,*type,verbose);
+  int ret=ptr->find_object_by_name(name,*type,use_regex,verbose);
   return ret;
 }
 

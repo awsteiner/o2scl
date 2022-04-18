@@ -1876,25 +1876,51 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
 
       } else {
 
-        regex r(args[i]);
+        if (use_regex==true) {
+          
+          regex r(args[i]);
         
-        // Find the matching slices
-        for(size_t j=0;j<table3d_obj.get_nslices();j++) {
+          // Find the matching slices
+          for(size_t j=0;j<table3d_obj.get_nslices();j++) {
 	  
-          if (matched[j]==false &&
-              regex_search(table3d_obj.get_slice_name(j),r)) {
+            if (matched[j]==false &&
+                regex_search(table3d_obj.get_slice_name(j),r)) {
 	    
-            // If we've found a match, add it to the new table
-            matched[j]=true;
+              // If we've found a match, add it to the new table
+              matched[j]=true;
 	    
-            // Add the new slice to the new table
-            new_table3d->new_slice(table3d_obj.get_slice_name(j));
+              // Add the new slice to the new table
+              new_table3d->new_slice(table3d_obj.get_slice_name(j));
 	    
-            // Fill it with the new data
-	    ubmatrix mat(nx,ny);
-	    table3d_obj.function_matrix(args[i],mat,false);
-	    new_table3d->copy_to_slice(mat,table3d_obj.get_slice_name(j));
+              // Fill it with the new data
+              ubmatrix mat(nx,ny);
+              table3d_obj.function_matrix(args[i],mat,false);
+              new_table3d->copy_to_slice(mat,table3d_obj.get_slice_name(j));
+            }
           }
+        
+        } else {
+          
+          // Find the matching slices
+          for(size_t j=0;j<table3d_obj.get_nslices();j++) {
+	  
+            if (matched[j]==false &&
+                fnmatch(args[i].c_str(),
+                        table3d_obj.get_slice_name(j).c_str(),0)==0) {
+	    
+              // If we've found a match, add it to the new table
+              matched[j]=true;
+	    
+              // Add the new slice to the new table
+              new_table3d->new_slice(table3d_obj.get_slice_name(j));
+	    
+              // Fill it with the new data
+              ubmatrix mat(nx,ny);
+              table3d_obj.function_matrix(args[i],mat,false);
+              new_table3d->copy_to_slice(mat,table3d_obj.get_slice_name(j));
+            }
+          }
+        
         }
       }
     }
@@ -1966,32 +1992,64 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
 
       } else {
 
-        regex r(args[i]);
+        if (use_regex==true) {
+          
+          regex r(args[i]);
         
-	// Find the matching columns
-	for(size_t j=0;j<table_obj.get_ncolumns();j++) {
+          // Find the matching columns
+          for(size_t j=0;j<table_obj.get_ncolumns();j++) {
 
-          if (matched[j]==false &&
-              regex_search(table_obj.get_column_name(j),r)) {
+            if (matched[j]==false &&
+                regex_search(table_obj.get_column_name(j),r)) {
 
-	    // If we've found a match, add it to the new table
-	    matched[j]=true;
+              // If we've found a match, add it to the new table
+              matched[j]=true;
 
-	    // Add the new column to the new table
-	    new_table.new_column(table_obj.get_column_name(j));
+              // Add the new column to the new table
+              new_table.new_column(table_obj.get_column_name(j));
 
-	    // If necessary, set units
-	    string tmp=table_obj.get_column_name(j);
-	    if (table_obj.get_unit(tmp).length()!=0) {
-	      new_table.set_unit(tmp,table_obj.get_unit(tmp));
-	    }
+              // If necessary, set units
+              string tmp=table_obj.get_column_name(j);
+              if (table_obj.get_unit(tmp).length()!=0) {
+                new_table.set_unit(tmp,table_obj.get_unit(tmp));
+              }
 
-	    // Fill it with the new data
-	    ubvector vec(table_obj.get_nlines());
-	    table_obj.function_vector(table_obj.get_column_name(j),vec,false);
-	    new_table.copy_to_column(vec,table_obj.get_column_name(j));
-	  }
-	}
+              // Fill it with the new data
+              ubvector vec(table_obj.get_nlines());
+              table_obj.function_vector(table_obj.get_column_name(j),vec,false);
+              new_table.copy_to_column(vec,table_obj.get_column_name(j));
+            }
+          }
+
+        } else {
+          
+          // Find the matching columns
+          for(size_t j=0;j<table_obj.get_ncolumns();j++) {
+
+            if (matched[j]==false &&
+                fnmatch(args[i].c_str(),
+                        table_obj.get_column_name(j).c_str(),0)==0) {
+
+              // If we've found a match, add it to the new table
+              matched[j]=true;
+
+              // Add the new column to the new table
+              new_table.new_column(table_obj.get_column_name(j));
+
+              // If necessary, set units
+              string tmp=table_obj.get_column_name(j);
+              if (table_obj.get_unit(tmp).length()!=0) {
+                new_table.set_unit(tmp,table_obj.get_unit(tmp));
+              }
+
+              // Fill it with the new data
+              ubvector vec(table_obj.get_nlines());
+              table_obj.function_vector(table_obj.get_column_name(j),vec,false);
+              new_table.copy_to_column(vec,table_obj.get_column_name(j));
+            }
+          }
+
+        }
       }
     }
 
@@ -2009,7 +2067,7 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
 }
 
 int acol_manager::comm_select_rows(std::vector<std::string> &sv, 
-				    bool itive_com) {
+                                   bool itive_com) {
 
   if (type!="table") {
     cout << "Not implemented for type " << type << endl;
@@ -2239,9 +2297,9 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     if (verbose>1) {
       cout << "Command read looking for object with name " << in[1] << endl;
     }
-    
+
     hdf_file::iterate_parms ip={in[1],&hf,false,type,verbose,
-				hdf_file::ip_type_from_name};
+      hdf_file::ip_type_from_name,false};
     
     H5Literate(hf.get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
 	       0,hdf_file::iterate_func,&ip);
@@ -2464,7 +2522,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 2;
   }
 
-  ret=hf.find_object_by_type("table",in[1],verbose);
+  ret=hf.find_object_by_type("table",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first table object named '"
@@ -2478,7 +2536,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
     
-  ret=hf.find_object_by_type("table3d",in[1],verbose);
+  ret=hf.find_object_by_type("table3d",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first table3d object named '"
@@ -2494,7 +2552,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
     
-  ret=hf.find_object_by_type("hist",in[1],verbose);
+  ret=hf.find_object_by_type("hist",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first hist object named '"
@@ -2507,7 +2565,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
     
-  ret=hf.find_object_by_type("hist_2d",in[1],verbose);
+  ret=hf.find_object_by_type("hist_2d",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first hist_2d object named '"
@@ -2520,7 +2578,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_object_by_type("tensor_grid",in[1],verbose);
+  ret=hf.find_object_by_type("tensor_grid",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first tensor_grid object named '"
@@ -2533,7 +2591,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_object_by_type("tensor",in[1],verbose);
+  ret=hf.find_object_by_type("tensor",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first tensor object named '"
@@ -2546,7 +2604,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_object_by_type("tensor<size_t>",in[1],verbose);
+  ret=hf.find_object_by_type("tensor<size_t>",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first tensor<size_t> object named '"
@@ -2559,7 +2617,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_object_by_type("tensor<int>",in[1],verbose);
+  ret=hf.find_object_by_type("tensor<int>",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first tensor<int> object named '"
@@ -2572,7 +2630,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_object_by_type("vector<contour_line>",in[1],verbose);
+  ret=hf.find_object_by_type("vector<contour_line>",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first vector<contour_line> "
@@ -2586,7 +2644,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_object_by_type("uniform_grid<double>",in[1],verbose);
+  ret=hf.find_object_by_type("uniform_grid<double>",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first uniform_grid<double> "
@@ -2600,7 +2658,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_object_by_type("prob_dens_mdim_amr",in[1],verbose);
+  ret=hf.find_object_by_type("prob_dens_mdim_amr",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first prob_dens_mdim_amr "
@@ -2614,7 +2672,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
 
-  ret=hf.find_object_by_type("double[]",in[1],verbose);
+  ret=hf.find_object_by_type("double[]",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first double[] "
@@ -2628,7 +2686,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_object_by_type("int[]",in[1],verbose);
+  ret=hf.find_object_by_type("int[]",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first int[] "
@@ -2642,7 +2700,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_object_by_type("string[]",in[1],verbose);
+  ret=hf.find_object_by_type("string[]",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first string[] "
@@ -2656,7 +2714,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_object_by_type("size_t[]",in[1],verbose);
+  ret=hf.find_object_by_type("size_t[]",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first size_t[] "
@@ -2670,7 +2728,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_object_by_type("double",in[1],verbose);
+  ret=hf.find_object_by_type("double",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first double "
@@ -2684,7 +2742,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_object_by_type("int",in[1],verbose);
+  ret=hf.find_object_by_type("int",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first int "
@@ -2698,7 +2756,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_object_by_type("string",in[1],verbose);
+  ret=hf.find_object_by_type("string",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first string "
@@ -2712,7 +2770,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_object_by_type("size_t",in[1],verbose);
+  ret=hf.find_object_by_type("size_t",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first size_t "
@@ -2726,7 +2784,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
   
-  ret=hf.find_object_by_type("char",in[1],verbose);
+  ret=hf.find_object_by_type("char",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {
       cout << "No name specified, found first char "

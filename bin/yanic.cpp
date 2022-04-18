@@ -2344,10 +2344,10 @@ int main(int argc, char *argv[]) {
 
       } else if (ifv.ift.name=="std::string") {
 
-        // Get strings by value
+        // Get strings by converting to a bytes object using the
+        // std_string class
 
-        fout << "    def get_" << ifv.name << "(self," << ifv.name
-             << "):" << endl;
+        fout << "    def get_" << ifv.name << "(self):" << endl;
         fout << "        \"\"\"" << endl;
         fout << "        Get object of type :class:`"
              << ifv.ift.name << "`" << endl;
@@ -2356,23 +2356,18 @@ int main(int argc, char *argv[]) {
              << underscoreify(ifc.name)
              << "_get_" << ifv.name << endl;
 
-        fout << "        func.restype=ctypes.c_char_p" << endl;
+        fout << "        func.restype=ctypes.c_void_p" << endl;
         
-        fout << "        func.argtypes=[ctypes.c_void_p," 
-             << "ctypes.c_void_p]" << endl;
-        fout << "        func(self._ptr," << ifv.name
-             << "._ptr)" << endl;
-        fout << "        return" << endl;
+        fout << "        func.argtypes=[ctypes.c_void_p]" << endl;
+        fout << "        s=std_string(self._link)" << endl;
+        fout << "        s._ptr=func(self._ptr)" << endl;
+        fout << "        return s.to_bytes()" << endl;
         
       } else {
 
         // Get a reference to other types
         
         fout << "    def get_" << ifv.name << "(self):" << endl;
-        /*
-        fout << "," << ifv.name
-             << "):" << endl;
-        */
         fout << "        \"\"\"" << endl;
         fout << "        Get object of type :class:`"
              << ifv.ift.name << "`" << endl;

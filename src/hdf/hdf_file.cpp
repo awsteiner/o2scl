@@ -4042,7 +4042,7 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
 #endif
 
   ip->found=false;
-  
+
   // If it's a group
   if (infobuf.type==H5O_TYPE_GROUP) {
 

@@ -215,11 +215,13 @@ class hdf_file
   - int
   - std::string type
   - out std::string &name
+  - bool use_regex [false]                             
   - int verbose [0]
 - function find_object_by_name
   - int
   - std::string name
   - out std::string &type
+  - bool use_regex [false]                             
   - int verbose [0]
 - function find_object_by_pattern
   - int

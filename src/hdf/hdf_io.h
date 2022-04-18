@@ -159,7 +159,7 @@ namespace o2scl_hdf {
   */
   template<class vec_t> 
   void hdf_input_n(hdf_file &hf, o2scl::table<vec_t> &t, std::string &name) {
-      
+
     // If no name specified, find name of first group of specified type
     if (name.length()==0) {
       hf.find_object_by_type("table",name);
