@@ -1063,7 +1063,7 @@ class table3d
   - std::string function
   - std::string slice
 - function summary
-  - void                             
+  - void
 # 
 # Class index_spec
 #
@@ -1342,8 +1342,12 @@ class tensor_grid<>
   - std::string func
 - function get_grid
   - double
+  - py_name get_grid
   - size_t i
   - size_t j
+- function get_grid
+  - const vector<double> &
+  - py_name get_grid_packed
 - function set_grid
   - void
   - py_name set_grid
@@ -1387,6 +1391,14 @@ class tensor_grid<>
 - function interp_linear
   - double
   - io vector<double> &v
+- function from_table3d_fermi
+  - void
+  - const table3d &t3d
+  - std::string slice
+  - size_t n_points
+  - double low [0.0]
+  - double high [0.0]
+  - double width [0.0]
 #- function rearrange_and_copy
 #  - tensor_grid<>
 #  - std::vector<index_spec> spec

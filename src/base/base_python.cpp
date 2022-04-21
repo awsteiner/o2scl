@@ -1929,6 +1929,14 @@ double o2scl_tensor_grid__get_grid(void *vptr, size_t i, size_t j) {
   return ret;
 }
 
+void o2scl_tensor_grid__get_grid_packed(void *vptr, double **dptr, int *n_) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  const std::vector<double> &r=ptr->get_grid();
+  *dptr=(double *)(&(r[0]));
+  *n_=r.size();
+  return;
+}
+
 void o2scl_tensor_grid__set_grid(void *vptr, size_t i, size_t j, double val) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   ptr->set_grid(i,j,val);
@@ -1968,6 +1976,13 @@ double o2scl_tensor_grid__interp_linear(void *vptr, void *ptr_v) {
   vector<double> *v=(vector<double> *)ptr_v;
   double ret=ptr->interp_linear(*v);
   return ret;
+}
+
+void o2scl_tensor_grid__from_table3d_fermi(void *vptr, void *ptr_t3d, char *slice, size_t n_points, double low, double high, double width) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  table3d *t3d=(table3d *)ptr_t3d;
+  ptr->from_table3d_fermi(*t3d,slice,n_points,low,high,width);
+  return;
 }
 
 void *o2scl_create_tensor_int_std_vector_int_() {

@@ -70,6 +70,9 @@ namespace o2scl {
   typedef boost::numeric::ublas::vector_range
     <boost::numeric::ublas::vector<double> > ubvector_range;
 
+  typedef boost::numeric::ublas::vector<double> ubvector;
+  typedef boost::numeric::ublas::matrix<double> ubmatrix;
+  
   /** \brief A <tt>ublas::vector_range</tt> typedef (size_t version)
       for \ref o2scl::tensor_grid and related classes
       in src/base/tensor_grid.h
@@ -1151,6 +1154,62 @@ namespace o2scl {
     }
     //@}
 
+    /** \brief Create from a table3d object
+     */
+    void from_table3d_fermi
+      (const table3d &t3d, std::string slice, size_t n_points,
+       double low=0.0, double high=0.0, double width=0.0) {
+      
+      if (n_points<2) {
+        O2SCL_ERR("Number of points too small.",o2scl::exc_efailed);
+      }
+
+      const ubmatrix &sl=t3d.get_slice(slice);
+
+      if (low>=high) {
+        low=matrix_min_value<ubmatrix,double>(sl);
+        high=matrix_max_value<ubmatrix,double>(sl);
+      }
+      uniform_grid_end<double> ug(low,high,n_points-1);
+
+      const ubvector &gx=t3d.get_x_data();
+      const ubvector &gy=t3d.get_y_data();
+      std::vector<size_t> sz={gx.size(),gy.size(),ug.get_npoints()};
+      resize(3,sz);
+
+      if (width<=0.0) {
+        width=fabs(high-low)/100.0;
+      }
+      
+      std::vector<double> tgrid;
+      for(size_t i=0;i<gx.size();i++) {
+        tgrid.push_back(gx[i]);
+      }
+      for(size_t i=0;i<gy.size();i++) {
+        tgrid.push_back(gy[i]);
+      }
+      for(size_t i=0;i<ug.get_npoints();i++) {
+        tgrid.push_back(ug[i]);
+      }
+      this->set_grid_packed(tgrid);
+
+      for(size_t i=0;i<gx.size();i++) {
+        for(size_t j=0;j<gy.size();j++) {
+          double val=t3d.get(i,j,slice);
+          for(size_t k=0;k<ug.get_npoints();k++) {
+            double vk=ug[k];
+            double v2=1.0/(1.0+exp((vk-val)/width));
+            std::vector<size_t> ix={i,j,k};
+            this->set(ix,v2);
+          }
+        }
+      }
+      
+      return;
+    }
+    
+
+    
     /// \name Clear method
     //@{
     /// Clear the tensor of all data and free allocated memory

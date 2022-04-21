@@ -280,7 +280,7 @@ int o2scl_acol_mult_vectors_to_conts(void *vp, char *str1,
       cout << "Function o2scl_acol_mult_vectors_to_conts() processing "
            << s1 << endl;
     }
-    int ret1=mult_vector_spec(s1,v1,amp->get_verbose(),false);
+    int ret1=mult_vector_spec(s1,v1,false,amp->get_verbose(),false);
     if (amp->verbose>=2) {
       cout << "Function o2scl_acol_mult_vectors_to_conts() return: "
            << ret1 << " size: " << v1.size() << endl;
@@ -293,7 +293,7 @@ int o2scl_acol_mult_vectors_to_conts(void *vp, char *str1,
     cout << "Function o2scl_acol_mult_vectors_to_conts() processing "
          << s2 << endl;
   }
-  int ret2=mult_vector_spec(s2,v2,amp->get_verbose(),false);
+  int ret2=mult_vector_spec(s2,v2,false,amp->get_verbose(),false);
   if (amp->verbose>=2) {
     cout << "Function o2scl_acol_mult_vectors_to_conts() return: "
          << ret2 << " size: " << v2.size() << endl;

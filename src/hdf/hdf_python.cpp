@@ -344,10 +344,10 @@ int o2scl_hdf_hdf_file_find_object_by_name(void *vptr, char *name, void *ptr_typ
   return ret;
 }
 
-int o2scl_hdf_hdf_file_find_object_by_pattern(void *vptr, char *pattern, void *ptr_type, int verbose) {
+int o2scl_hdf_hdf_file_find_object_by_pattern(void *vptr, char *pattern, void *ptr_type, bool use_regex, int verbose) {
   hdf_file *ptr=(hdf_file *)vptr;
   std::string *type=(std::string *)ptr_type;
-  int ret=ptr->find_object_by_pattern(pattern,*type,verbose);
+  int ret=ptr->find_object_by_pattern(pattern,*type,use_regex,verbose);
   return ret;
 }
 

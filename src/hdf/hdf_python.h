@@ -127,7 +127,7 @@ int o2scl_hdf_hdf_file_find_object_by_type(void *vptr, char *type, void *ptr_nam
 
 int o2scl_hdf_hdf_file_find_object_by_name(void *vptr, char *name, void *ptr_type, bool use_regex=false, int verbose=0);
 
-int o2scl_hdf_hdf_file_find_object_by_pattern(void *vptr, char *pattern, void *ptr_type, int verbose=0);
+int o2scl_hdf_hdf_file_find_object_by_pattern(void *vptr, char *pattern, void *ptr_type, bool use_regex=false, int verbose=0);
 
 void o2scl_hdf_hdf_file_file_list(void *vptr, int verbose);
 

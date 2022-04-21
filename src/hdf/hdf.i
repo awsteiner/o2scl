@@ -227,6 +227,7 @@ class hdf_file
   - int
   - std::string pattern
   - out std::string &type
+  - bool use_regex [false]                             
   - int verbose [0]
 - function file_list
   - void

@@ -671,6 +671,8 @@ void o2scl_tensor_grid__set_grid_i_func(void *vptr, size_t ix, char *func);
 
 double o2scl_tensor_grid__get_grid(void *vptr, size_t i, size_t j);
 
+void o2scl_tensor_grid__get_grid_packed(void *vptr, double **dptr, int *n_);
+
 void o2scl_tensor_grid__set_grid(void *vptr, size_t i, size_t j, double val);
 
 size_t o2scl_tensor_grid__lookup_grid(void *vptr, size_t i, double val);
@@ -682,6 +684,8 @@ void o2scl_tensor_grid__copy_table3d_align_setxy(void *vptr, size_t ix_x, size_t
 void o2scl_tensor_grid__clear(void *vptr);
 
 double o2scl_tensor_grid__interp_linear(void *vptr, void *ptr_v);
+
+void o2scl_tensor_grid__from_table3d_fermi(void *vptr, void *ptr_t3d, char *slice, size_t n_points, double low=0.0, double high=0.0, double width=0.0);
 
 void *o2scl_create_tensor_int_std_vector_int_();
 

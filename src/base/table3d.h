@@ -55,6 +55,7 @@ namespace o2scl {
   class table3d;
   // Define for to_hist_2d() function below
   class hist_2d;
+  
 }
 
 // Forward definition of HDF I/O to extend friendship

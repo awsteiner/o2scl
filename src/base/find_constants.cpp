@@ -561,7 +561,6 @@ int find_constants::find_nothrow(std::string name, std::string unit,
     }
   }
 
-  std::regex r(name);
   string fn_pat=((string)"*")+name+"*";
   
   if (verbose>1) {
@@ -587,6 +586,7 @@ int find_constants::find_nothrow(std::string name, std::string unit,
         
         bool fn_ret;
         if (use_regex) {
+          std::regex r(name);
           fn_ret=std::regex_search(temp,r);
         } else {
           fn_ret=(fnmatch(fn_pat.c_str(),temp.c_str(),0)==0);
