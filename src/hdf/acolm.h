@@ -2393,13 +2393,53 @@ namespace o2scl_acol {
     virtual int comm_h5_copy(std::vector<std::string> &sv, 
                              bool itive_com);
 
-    /** \brief Get a physical or numerical constant.
+    /** \brief Get or modify a physical or numerical constant.
 
-        <name, pattern, "add", "del", or "list"> [unit]
+        <name, pattern, "add", "del", "list", "list-full"> [unit]
 
-        Get a physical or numerical constant from the library.
-        If "list" is given for <name or pattern>, then the full constant
+        Get a physical or numerical constant from the library. If
+        "list" is given for <name or pattern>, then the full constant
         list is printed to the screen.
+        
+        If the constant has no units, like the Euler-Mascheroni
+        constant, then no additional argument is required, for example
+        <tt>acol -constant euler</tt> will report the value
+        5.772157e-1 (at the default precision which is 6). If the user
+        requests a precision larger than 15 (double precision), then
+        the <tt>constant</tt> command fails and prints an error
+        message.
+
+        If the constant has units but no units are specified as
+        arguments to the <tt>constant</tt> command, then all values of
+        the constant in the library are written to the screen. If a
+        unit is specified, then the <tt>constant</tt> command tries to
+        find the unique value with the specified unit. The user can
+        specify, <tt>mks</tt>, <tt>cgs</tt>, or the exact unit string
+        of the constant. For example, <tt>acol -constant hbar cgs</tt>
+        and <tt>acol -constant hbar g*cm^2/s</tt> both work and return
+        the same value.
+
+        Search patterns are also allowed, for example <tt>acol
+        -constant "satur*"</tt> returns all the constants related to
+        saturn in both MKS and CGS units. If <tt>use_regex</tt> is set
+        to true, then regex is used to do the pattern matching, and
+        otherwise <tt>fnmatch()</tt> is used. Unicode is allowed, but
+        pattern matching and unicode is not fully functional.
+
+        To list all the constants in the library, use <tt>acol
+        -constant list</tt>. Alternatively, <tt>acol -constant
+        list-full</tt> gives all information for all constants,
+        including all aliases, the source, and all the decompositions
+        into base units.
+
+        One can delete a constant with, e.g. <tt>acol -del
+        hbar</tt> (this doesn't quite work yet for constants with
+        different values in different unit systems).
+
+        To add a constant, one must specify the name of the constant,
+        the value, the unit system, the unit flag, the source, and
+        then the 7 powers of the SI base units (in order
+        m,kg,s,K,A,mol,cd).
      */
     virtual int comm_constant(std::vector<std::string> &sv, bool itive_com);
     //@}

@@ -807,12 +807,20 @@ int find_constants::find_nothrow(std::string name, std::string unit,
 }
 
 void find_constants::find_print(std::string name, std::string unit,
-				size_t prec, int verbose) const {
+				size_t prec, bool use_regex,
+                                int verbose) const {
 
-  cout.precision(prec);
+  if (prec>std::numeric_limits<double>::digits10) {
+    cout << "Requested precision is " << prec << " and largest "
+         << "allowable precision is "
+         << std::numeric_limits<double>::digits10 << endl;
+    return;
+  }
     
+  cout.precision(prec);
+
   vector<const_entry> matches;
-  int ret=find_nothrow(name,unit,matches,verbose);
+  int ret=find_nothrow(name,unit,matches,use_regex,verbose);
   if (ret==no_matches) {
     cout << "find_constant::find_print(): No matches found for name "
 	 << name << endl;
@@ -835,9 +843,10 @@ void find_constants::find_print(std::string name, std::string unit,
 }
   
 double find_constants::find_unique(std::string name,
-                                   std::string unit) const {
+                                   std::string unit,
+                                   bool use_regex) const {
   vector<const_entry> matches;
-  int ret=find_nothrow(name,unit,matches);
+  int ret=find_nothrow(name,unit,matches,use_regex);
   if (ret!=one_exact_match_unit_match &&
       ret!=one_pattern_match_unit_match) {
     std::string err=((std::string)"Failed to find unique match for name ")+
