@@ -13,16 +13,16 @@ Linear algebra contents
 Linear algebra introduction
 ---------------------------
   
-O\ :sub:`2`\ scl contains a small set of linear algebra routines but
+O₂scl contains a small set of linear algebra routines but
 is also is designed to be used with `Armadillo
 <http://arma.sourceforge.net>`_ and/or `Eigen
 <https://eigen.tuxfamily.org>`_, both of which are high performance
-C++ linear algebra libraries. In the case that O\ :sub:`2`\ scl was
+C++ linear algebra libraries. In the case that O₂scl was
 compiled with support for either the Armadillo or Eigen libraries,
-some O\ :sub:`2`\ scl template functions are overloaded with the
+some O₂scl template functions are overloaded with the
 respective Armadillo or Eigen versions.
 
-The fallback O\ :sub:`2`\ scl linear algebra routines offer a more
+The fallback O₂scl linear algebra routines offer a more
 generic and flexible interface: they work for almost all vector and
 matrix types. For matrix types using ``operator(,)``, the BLAS and
 linear algebra routines routines are inside the ``o2scl_cblas`` and
@@ -127,7 +127,7 @@ Specializations for Armadillo and Eigen
 ---------------------------------------
 
 Armadillo and Eigen linear solvers are wrapped to have a consistent
-interface with the fallback O\ :sub:`2`\ scl linear solvers. See
+interface with the fallback O₂scl linear solvers. See
 :cpp:class:`o2scl_linalg::linear_solver_arma`,
 :cpp:class:`o2scl_linalg::linear_solver_eigen_houseQR`,
 :cpp:class:`o2scl_linalg::linear_solver_eigen_colQR`,

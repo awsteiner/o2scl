@@ -18,7 +18,7 @@ Lambda functions and ``std::mem_fn``
 .. _lambda_func:
 
 Functions are passed to numerical routines using template-based
-function classes, sometimes called "functors". O\ :sub:`2`\ scl
+function classes, sometimes called "functors". O₂scl
 classes which accept functions as parameters generally default to
 types built upon ``std::function``. If the
 user would like to use Boost function objects instead, these may
@@ -57,7 +57,7 @@ The example below demonstrates how C++ function objects and lambda
 expressions can be used with the :ref:`root_brent_gsl
 <root_brent_gsl>` solver. This lengthy example demonstrates several
 different function objects in different kinds of functions. The same
-methods apply to other O\ :sub:`2`\ scl function objects.
+methods apply to other O₂scl function objects.
 
 .. literalinclude:: ../../../examples/ex_lambda.cpp
    :language: c++		    
@@ -84,7 +84,7 @@ specify a new type for the template parameter in the user class.
 Second function object example
 ------------------------------
 
-This example shows how to provide functions to O\ :sub:`2`\ scl
+This example shows how to provide functions to O₂scl
 classes by solving the equation
 
 .. math::

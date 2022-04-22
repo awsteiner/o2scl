@@ -21,7 +21,7 @@ Installation Contents
 
 .. _compile_snap:
 
-Compiling O\ :sub:`2`\ scl on Ubuntu with Snap
+Compiling O₂scl on Ubuntu with Snap
 ----------------------------------------------
 
 The easiest way to install on Ubuntu is with snap (see
@@ -39,7 +39,7 @@ where I use snap to install in my ``.bashrc``, I use::
 
 .. _compile_homebrew:
   
-Compiling O\ :sub:`2`\ scl on Mac OSX with Homebrew
+Compiling O₂scl on Mac OSX with Homebrew
 ---------------------------------------------------
 
 The easiest way to install on Mac OSX is with homebrew. Use::
@@ -47,49 +47,49 @@ The easiest way to install on Mac OSX is with homebrew. Use::
   brew tap awsteiner/science
   brew install o2scl
 
-to install O\ :sub:`2`\ scl. There are a few options for ``brew
+to install O₂scl. There are a few options for ``brew
 install``. The option ``--with-check`` performs the build-time tests
 and the option ``--with-examples`` double checks that the examples can
 also be compiled and executed. The homebrew recipe for O\ :sub:`2`\
 scl uses the Mac OS X compiler clang. Homebrew also supports the
 installation of the current version directly from the repository using
 the ``--HEAD`` option to ``brew install``. The homebrew installation
-includes the O\ :sub:`2`\ scl_part and O\ :sub:`2`\ scl_eos
-sub-libraries and readline support. The O\ :sub:`2`\ scl homebrew
+includes the O₂scl_part and O₂scl_eos
+sub-libraries and readline support. The O₂scl homebrew
 recipes are stored at the
 https://github.com/awsteiner/homebrew-science repository.
 
-(By default, a homebrew installation of O\ :sub:`2`\ scl uses the OSX LLVM
-compiler. However, a homebrew installation of O\ :sub:`2`\ scl will also
-install ``gcc`` because O\ :sub:`2`\ scl requires ``hdf5``, and the homebrew
+(By default, a homebrew installation of O₂scl uses the OSX LLVM
+compiler. However, a homebrew installation of O₂scl will also
+install ``gcc`` because O₂scl requires ``hdf5``, and the homebrew
 ``hdf5`` package requires ``gcc``. The homebrew installation of 
-O\ :sub:`2`\ scl is tested by Travis CI.)
+O₂scl is tested by Travis CI.)
 
 .. _compile_dist:
 
-Compiling O\ :sub:`2`\ scl from a release distribution
+Compiling O₂scl from a release distribution
 ------------------------------------------------------
 
-O\ :sub:`2`\ scl installation is generally similar to that for
+O₂scl installation is generally similar to that for
 GNU-style libraries. The file ``INSTALL`` has some details on this
 procedure. Once the dependencies are installed you should be able to
 run ``./configure`` and then type ``make`` and ``make install``. More
 information on the ``configure`` command can also be obtained from
-``./configure --help``. O\ :sub:`2`\ scl assumes some C++11 support,
+``./configure --help``. O₂scl assumes some C++11 support,
 so compilation may be more difficult on compilers released before
 about 2018. The ``./configure`` script attempts to determine the
 proper compiler flags for C++11 support, e.g. ``-std=gnu++11``. If
 this fails, you may have to add the proper C++11 flag to the
 ``CXXFLAGS`` environment variable manually before the ``./configure``
-script. The documentation is included in the O\ :sub:`2`\ scl release
+script. The documentation is included in the O₂scl release
 distribution and automatically installed by ``make install``.
 
 .. note::
-   If you are trying to install O\ :sub:`2`\ scl with a version of
+   If you are trying to install O₂scl with a version of
    HDF5 earlier than 1.12 you will need to compile with
    ``-DO2SCL_HDF5_PRE_1_12``.
 
-O\ :sub:`2`\ scl requires the Boost (any relatively recent version)
+O₂scl requires the Boost (any relatively recent version)
 and the GSL libraries (version 2.0 or later). If the
 ``configure`` script cannot find Boost or GSL, you may have to
 specify their location for the associated header files in the
@@ -114,28 +114,28 @@ or ``make o2scl-test``. At the end, the phrase ``"All O2scl tests
 passed"`` indicates that the testing was successful. You may also run
 ``make o2scl-test`` in the individual subdirectories of the src
 directory to individually test the classes and functions in that part
-of O\ :sub:`2`\ scl. The testing code in
+of O₂scl. The testing code in
 ``src/base/lib_settings_ts.cpp`` can be useful in finding out how O\
 :sub:`2`\ scl was compiled. After ``make o2scl-test``, running
 ``src/base/lib_settings_ts`` will output several of the installation
 settings. If HDF5 is enabled, ``acol -v`` also outputs the
 installation settings.
 
-O\ :sub:`2`\ scl uses Travis CI (see
+O₂scl uses Travis CI (see
 https://travis-ci.org/awsteiner/o2scl ) to ensure that compilation and
 testing works on standard Ubuntu and Mac OS X environments.
 
 .. _compile_release:
 
-Compiling O\ :sub:`2`\ scl from a release on Linux
+Compiling O₂scl from a release on Linux
 --------------------------------------------------
 
-For example, to install O\ :sub:`2`\ scl on Ubuntu, begin by
+For example, to install O₂scl on Ubuntu, begin by
 installing g++ and make (the ``g++`` and ``make`` packages),
 GSL (the ``libgsl-dev`` package), Boost (the
 ``libboost-all-dev`` package), GNU readline (the ``libreadline-dev``
 package), ncurses (the ``libncurses-dev`` packages), and HDF5 the
-``libhdf5-dev`` package). You can then install O\ :sub:`2`\ scl from
+``libhdf5-dev`` package). You can then install O₂scl from
 one of the release distributions by using the standard GNU
 ``./configure`` script and then invoking ``make`` and ``make install``
 (which sometimes requires ``sudo``). This installation method is
@@ -143,19 +143,19 @@ tested by the Travis CI script.
  
 The HDF5 package for Ubuntu and many other Linux systems is
 installed in ``hdf5/serial/hdf5.h`` instead of
-``hdf5.h``, so O\ :sub:`2`\ scl presumes that Linux systems are arranged
+``hdf5.h``, so O₂scl presumes that Linux systems are arranged
 that way. If HDF5 include statements should not have the
 ``hdf5/serial/`` prefix, then you can use
 ``-DO2SCL_HDF5_PLAIN_HEADER``, i.e.::
 
   CXXFLAGS="-DO2SCL_PLAIN_HDF5_HEADER" ./configure
 
-to instruct O\ :sub:`2`\ scl to look for them there (for example, on bridges at
+to instruct O₂scl to look for them there (for example, on bridges at
 the PSC). On many systems, one can use a parallel HDF5 library
 using ``-DO2SCL_HDF5_PLAIN_HEADER`` and a ``-I`` option
 to select the proper location for the parallel HDF5 header files.
 Finally, if your version of HDF5 is earlier than 1.12,
-you will need to let O\ :sub:`2`\ scl know, using::
+you will need to let O₂scl know, using::
 
   CXXFLAGS="-DO2SCL_HDF5_PRE_1_12" ./configure
 
@@ -165,7 +165,7 @@ hdf5-devel, ncurses-devel, readline-devel``, and ``boost-devel``.
 
 .. _compile_source:
 
-Compiling O\ :sub:`2`\ scl from the source code
+Compiling O₂scl from the source code
 -----------------------------------------------
 
 If you want to install from source (without generating the
@@ -189,11 +189,11 @@ typically also install ``libopenmpi-dev`` and then use
 
 .. _compile_docker:
 
-Compiling O\ :sub:`2`\ scl on Docker
+Compiling O₂scl on Docker
 ------------------------------------
 
 There are also some experimental dockerfiles which you can use to
-install O\ :sub:`2`\ scl which can be found at
+install O₂scl which can be found at
 https://github.com/awsteiner/o2scl/tree/main/docker . For those on
 MacOS, I recommend the guide at
 https://medium.com/crowdbotics/a-complete-one-by-one-guide-to-install-docker-on-your-mac-os-using-homebrew-e818eb4cfc3
@@ -207,7 +207,7 @@ Most classes and functions which require linear algebra can be used
 with the Eigen (http://eigen.tuxfamily.org) or Armadillo
 (http://arma.sourceforge.net) vector and matrix objects. This can be
 specified in the ``configure`` command with ``--enable-armadillo`` or
-``--enable-eigen``. Note that the O\ :sub:`2`\ scl classes which use
+``--enable-eigen``. Note that the O₂scl classes which use
 Armadillo use matrix decompositions so Armadillo must be compiled with
 LAPACK support, and you may need to specify the location of the LAPACK
 libraries manually. If you are installing on Mac OS X with homebrew,
@@ -226,9 +226,9 @@ More configure flags
 --------------------
 
 There are several warning flags that are useful when configuring
-and compiling with O\ :sub:`2`\ scl. See the GSL documentation for an 
+and compiling with O₂scl. See the GSL documentation for an 
 excellent discussion, and also see the generic installation
-documentation in the file ``INSTALL`` in the O\ :sub:`2`\ scl top-level 
+documentation in the file ``INSTALL`` in the O₂scl top-level 
 directory. For running ``configure``, for example, if you do
 not have privileges to write to ``/usr/local``::
 
@@ -239,13 +239,13 @@ not have privileges to write to ``/usr/local``::
 In this example, specifying ``-I/home/asteiner/install/include`` and
 ``-L/home/asteiner/install/lib`` above ensures that the GSL libraries
 can be found. The ``--prefix=/home/asteiner/install`` argument to
-``./configure`` ensures that O\ :sub:`2`\ scl is installed there as
+``./configure`` ensures that O₂scl is installed there as
 well.
 
 Generation of documentation
 ---------------------------
 
-The O\ :sub:`2`\ scl documentation is generated with ``doxygen``,
+The O₂scl documentation is generated with ``doxygen``,
 ``sphinx``, ``breathe``, and ``alabaster`` and packaged in with every
 release file. In principle, the documentation can be regenerated by
 the end-user, but this is not supported and requires several external

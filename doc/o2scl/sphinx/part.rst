@@ -51,7 +51,7 @@ unchanged, i.e.
    \sqrt{k^2+m^2} - \mu \rightarrow \sqrt{k^2+m^{* 2}} - \nu 
 
 If the particle is non-interacting, then :cpp:var:`o2scl::part_tl::nu` and
-:cpp:var:`o2scl::part_tl::ms` are sometimes used by O\ :sub:`2`\ scl_part
+:cpp:var:`o2scl::part_tl::ms` are sometimes used by O₂scl_part
 functions for temporary storage.
 
 If :cpp:var:`o2scl::part_tl::inc_rest_mass` is \c true (this is the
@@ -119,7 +119,7 @@ interacting particles is
 where :cpp:var:`o2scl::part_tl::nu` is used. This way, the particle
 class doesn't need to know about the structure of the interactions to
 ensure that the thermodynamic identity is satisfied. Note that in the
-O\ :sub:`2`\ scl_eos library, where in the equations of state the
+O₂scl_eos library, where in the equations of state the
 normal thermodynamic identity is used
 
 .. math::

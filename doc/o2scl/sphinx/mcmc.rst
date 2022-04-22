@@ -38,7 +38,7 @@ Multi-dimensional distributions are children of :ref:`prob_dens_mdim
 
 Conditional probability distributions are children of 
 :ref:`prob_cond_mdim <prob_cond_mdim>`. These classes can be used
-as proposal distributions for the O\ :sub:`2`\ scl MCMC classes.
+as proposal distributions for the O₂scl MCMC classes.
 
 - :ref:`prob_cond_mdim_gaussian <prob_cond_mdim_gaussian>`
 - :ref:`prob_cond_mdim_fixed_step <prob_cond_mdim_fixed_step>`

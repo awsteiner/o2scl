@@ -1,4 +1,4 @@
-Download O\ :sub:`2`\ scl
+Download O₂scl
 =========================
 
 :ref:`O2scl <o2scl>`
@@ -7,7 +7,7 @@ The current release version is 0.926. It can be obtained
 from
 https://github.com/awsteiner/o2scl/releases/download/v0.926/o2scl-0.926.tar.gz
 
-You may also download O\ :sub:`2`\ scl from the Github repository. To
+You may also download O₂scl from the Github repository. To
 obtain the most recent development version (0.927a1), use, e.g.::
 
   git clone https://github.com/awsteiner/o2scl.git

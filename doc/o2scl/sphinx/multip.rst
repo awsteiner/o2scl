@@ -3,7 +3,7 @@ Multiprecision Support
 
 :ref:`O2scl <o2scl>`
 
-Some O\ :sub:`2`\ scl classes support floating-point types beyond
+Some O₂scl classes support floating-point types beyond
 ``double``. Generally, these classes support both ``long double`` and
 the ``boost::multiprecision`` types. (Though some of the boost
 multiprecision types require additional libraries, such as GMP.)

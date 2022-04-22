@@ -96,7 +96,7 @@ low-order rule (e.g., 15-point) is often more efficient.
 
 Recent installations of the Boost C++ libraries include numerical
 integration routines. Because these are not available yet on all HPC
-systems, the O\ :sub:`2`\ scl interfaces for these integrators are
+systems, the O₂scl interfaces for these integrators are
 header-only and available only if the ``O2SCL_NEW_BOOST_INTEGRATION``
 define constant is defined when compiling your code with O\ :sub:`2`\
 scl (this doesn't need to be done during installation or when the
@@ -239,7 +239,7 @@ errors:
   Multi-dimensional integration routines
   --------------------------------------
 
-  O\ :sub:`2`\ scl reimplements the Cubature library for
+  O₂scl reimplements the Cubature library for
   multi-dimensional integration. The h-adaptive and p-adaptive
   integration methods are implemented in :ref:`inte_hcubature
   <inte_hcubature>` and :ref:`inte_pcubature <inte_pcubature>`. See also
@@ -247,7 +247,7 @@ errors:
   Integration`.
 
   Multi-dimensional hypercubic integration is performed by
-  children of :ref:`inte_multi . Currently in O\ :sub:`2`\ scl, only the 
+  children of :ref:`inte_multi . Currently in O₂scl, only the 
 
   General multi-dimensional integration is performed by \ref
   o2scl::inte_gen_comp, the sole descendant of :ref:inte_gen.

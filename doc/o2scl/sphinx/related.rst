@@ -9,8 +9,8 @@ Several noteworthy related projects:
   fully-tested, and well-documented scientific computing library. The
   GSL is located at https://www.gnu.org/software/gsl , and the manual
   is available at https://www.gnu.org/software/gsl/manual/html_node/ .
-  Many GSL routines are included and reworked in O\ :sub:`2`\ scl. GSL
-  is required for installation of O\ :sub:`2`\ scl. See also
+  Many GSL routines are included and reworked in O₂scl. GSL
+  is required for installation of O₂scl. See also
   [Galassi09]_.
 - Hierarchical Data Format (HDF; https://www.hdfgroup.org) A library
   developed for file I/O of scientific data. Contains C, C++, FORTRAN
@@ -34,7 +34,7 @@ Several noteworthy related projects:
   GSL integration routines are based.
 - GNU Units - Unit conversion utility from
   https://www.gnu.org/software/units/ . This utility can be used used
-  by \ref o2scl::convert_units in O\ :sub:`2`\ scl to perform unit
+  by \ref o2scl::convert_units in O₂scl to perform unit
   conversions.
 - Eigen - (https://eigen.tuxfamily.org) A linear algebra library in
   C++. Eigen is licensed under MPLv2.

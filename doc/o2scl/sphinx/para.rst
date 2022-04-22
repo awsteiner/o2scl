@@ -13,11 +13,11 @@ Parallel contents
 Thread safety and parallelism
 -----------------------------
 
-Generally, O\ :sub:`2`\ scl objects are thread-safe in the same way that
+Generally, O₂scl objects are thread-safe in the same way that
 classes like ``std::vector<double>`` are thread-safe:
 reads are safe and writes are unsafe. It may be useful to make
 objects ``const`` to ensure that one is reading data in a
-thread-safe way. O\ :sub:`2`\ scl is designed to ensure const methods are
+thread-safe way. O₂scl is designed to ensure const methods are
 thread-safe, unless noted. (A few classes contain mutable internal
 members which mean that const methods are not thread-safe, and
 this is noted in the class documentation.)
@@ -27,7 +27,7 @@ OpenMP and O2scl
 
 OpenMP support may be enabled during installation by
 ``--enable-openmp``. OpenMP support during installation
-allows O\ :sub:`2`\ scl to use parallelism to speed up
+allows O₂scl to use parallelism to speed up
 some :ref:`table <table>` functions and to 
 test the multithreaded behavior of :ref:`anneal_para <anneal_para>`,
 :ref:`mcmc_para_base <mcmc_para_base>`, and :ref:`mcmc_para_table

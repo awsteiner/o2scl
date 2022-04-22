@@ -18,7 +18,7 @@ acol contents
 acol introduction
 -----------------
   
-O\ :sub:`2`\ scl contains a command line utility, \c acol, designed to
+O₂scl contains a command line utility, \c acol, designed to
 facilitate the manipulation of various objects stored in HDF5 files.
 It can handle integers, characters, double-precision floating point
 numbers, size_t objects, arrays of any of these types, or O\ :sub:`2`\
@@ -46,7 +46,7 @@ information for these commands does not require a type argument,
 i.e. ``acol -commands`` or ``acol -help read``.
 
 ``acol`` can sometimes, but not always read and write HDF5
-files generated outside of O\ :sub:`2`\ scl.
+files generated outside of O₂scl.
 
 ``acol`` has a command, ``run``, which allows you to run
 a set of commands which are given in a separate file. An example
@@ -77,7 +77,7 @@ acol types
 
 The types which can be handled by ``acol`` are either related to C++
 internal types: ``char, double, double[], int, int[], size_t,
-size_t[], std::string``, and ``std::string[]``, or O\ :sub:`2`\ scl
+size_t[], std::string``, and ``std::string[]``, or O₂scl
 types :ref:`hist <hist>`, :ref:`hist_2d <hist_2d>`,
 :ref:`prob_dens_mdim_amr <prob_dens_mdim_amr>`, :ref:`table <table>`,
 :ref:`table3d <table3d>`, :ref:`tensor <tensor>` (including

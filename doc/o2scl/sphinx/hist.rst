@@ -6,9 +6,9 @@ Histograms
 One- and two-dimensional histograms are implemented in 
 :ref:`hist <hist>` and :ref:`hist_2d <hist_2d>`.
     
-O\ :sub:`2`\ scl histograms are made up of bins, where the size of the
+O₂scl histograms are made up of bins, where the size of the
 histogram is equal to the number of bins. Each bin has a upper
-boundary and a lower boundary, also called edges. O\ :sub:`2`\ scl
+boundary and a lower boundary, also called edges. O₂scl
 histograms require that the upper edge of each bin is equal to the
 lower edge of the following bin. Each bin stores one value or
 "weight". Thus if a histogram has size ``n``, it has ``n`` bins but

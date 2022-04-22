@@ -3,7 +3,7 @@ Developer Notes
 
 :ref:`O2scl <o2scl>`
 
-This section contains notes for O\ :sub:`2`\ scl developers.
+This section contains notes for O₂scl developers.
 
 Release procedure
 -----------------

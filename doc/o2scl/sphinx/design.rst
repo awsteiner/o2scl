@@ -41,7 +41,7 @@ Header file dependencies
 For reference, it is useful to know how the top-level header files
 depend on each other, since it can be difficult to trace everything
 down. The following are the most "top-level" header files and their
-associated dependencies within O\ :sub:`2`\ scl (there are other
+associated dependencies within O₂scl (there are other
 dependencies on GSL and the C standard library not listed here). Note
 that not all of the headers in the "base" directory are listed here
 (because they are less likely to cause problems)
@@ -132,7 +132,7 @@ never be required to call the error handler.
 Define constants and macros
 ---------------------------
 
-There are a couple define constants and macros that O\ :sub:`2`\ scl
+There are a couple define constants and macros that O₂scl
 understands, they are all in upper case and begin with the prefix
 ``O2SCL_``.
 
@@ -147,7 +147,7 @@ constant is defined, the shell command doesn't work even if
 :cpp:var:`o2scl::cli::shell_cmd_allowed` is ``true``). 
 
 The constant O2SCL_DATA_DIR is defined internally to provide the
-directory which contains the O\ :sub:`2`\ scl data files. After
+directory which contains the O₂scl data files. After
 installation, this can be accessed in :cpp:var:`o2scl::o2scl_settings`.
 
 All of the header files have their own define constant of

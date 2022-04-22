@@ -15,7 +15,7 @@ installation, then a call to
 library to use the new directory. It is assumed that the directory
 structure within the data directory has not changed.
 
-If you have changed the directory structure of the O\ :sub:`2`\ scl
+If you have changed the directory structure of the O₂scl
 data files, then many of the I/O classes allow you to specify the full
 pathname of the file you wish to load.
 
