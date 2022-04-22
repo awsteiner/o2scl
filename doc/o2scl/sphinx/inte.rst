@@ -235,6 +235,8 @@ errors:
   moments is reached.
 
 ..
+
+  This section is commented out for now
   
   Multi-dimensional integration routines
   --------------------------------------

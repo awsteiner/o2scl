@@ -22,8 +22,8 @@ Most of the classes and functions reside in the namespace ``o2scl``.
 Numerical constants (many of them based on the GSL constants) are
 placed in separate namespaces (:ref:`o2scl_cgs <Namespace o2scl_cgs>`,
 :ref:`o2scl_cgsm <Namespace o2scl_cgsm>`, :ref:`o2scl_mks <Namespace
-o2scl_mks>`, and :ref:`o2scl_const <Namespace o2scl_const>`). The O\
-:sub:`2`\ scl functions and classes for HDF5 output are in the
+o2scl_mks>`, and :ref:`o2scl_const <Namespace o2scl_const>`). The
+O₂scl functions and classes for HDF5 output are in the
 ``o2scl_hdf`` namespace. There are also two namespaces which hold
 integration coefficients, :ref:`o2scl_inte_gk_coeffs <Gauss-Kronrod
 integration coefficients>` and :ref:`o2scl_inte_qng_coeffs
@@ -298,8 +298,8 @@ several details about how O₂scl was compiled.
   constant and so range checking can be turned off or on separately
   from the setting that was used during installation.
 - O2SCL_OLDER_COMPILER - A flag which can be defined both during
-  compilation of O₂scl and compilation of code using O\
-  :sub:`2`\ scl for compilers which do not have
+  compilation of O₂scl and compilation of code using O₂scl
+  for compilers which do not have
   ``std::initializer_list``, ``std::to_string``,
   ``std::uniform_distribution`` and cannot run ``mcmc_para_ts``.
 - O2SCL_OPENMP - Flag to allow OpenMP functionality in O2scl

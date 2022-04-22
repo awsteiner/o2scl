@@ -129,7 +129,7 @@ namespace o2scl_const {
     return result;
   }
 
-    /** \brief Boltzmann's constant */
+  /** \brief Boltzmann's constant */
   template<class fp_t> fp_t boltzmann_f(size_t system=o2scl_mks) {
     fp_t numer=1380649;
     fp_t denom=1000000;

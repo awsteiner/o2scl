@@ -1229,7 +1229,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
       ter.default_fg()+", version "+((string)VERSION)+".\n" << endl;
   }
 
-  cout << ter.bold() << "O2scl" << ter.default_fg()
+  cout << ter.bold() << "O₂scl" << ter.default_fg()
        << " version: " << o2scl_settings.o2scl_version() << endl;
   cout << "Range checking: " << o2scl_settings.range_check() << endl;
   if (true) {

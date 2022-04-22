@@ -28,43 +28,39 @@ Arrays, vectors, matrices and tensors contents
 Vector and matrix introduction
 ------------------------------
      
-Many useful vector and matrix objects are defined elsewhere, thus O\
-:sub:`2`\ scl does not include native vector and matrix classes.
-Internally, O₂scl uses ``std::vector``,
-Boost uBLAS vector and
-matrix objects: ``boost::numeric::ublas::vector<>``,
+Many useful vector and matrix objects are defined elsewhere, thus
+O₂scl does not include native vector and matrix classes. Internally,
+O₂scl uses ``std::vector``, Boost uBLAS vector and matrix objects:
+``boost::numeric::ublas::vector<>``,
 ``boost::numeric::ublas::matrix<>``, and other related class
-templates. Many O₂scl routines are templates which are
-compatible with a wide range of vector and matrix types. See the
-:ref:`Multi-dimensional solver example` which shows how an O\
-:sub:`2`\ scl class can be used with Boost, Eigen, or Armadillo
-objects.
+templates. Many O₂scl routines are templates which are compatible with
+a wide range of vector and matrix types. See the
+:ref:`Multi-dimensional solver example` which shows how an O₂scl class
+can be used with Boost, Eigen, or Armadillo objects.
 
-The O₂scl library uses a standard nomenclature to distinguish a
-couple different concepts. The word "array" is always used to
-refer to C-style arrays, i.e. ``double[]``. If there are two
-dimensions in the array, it is a "two-dimensional array", i.e.
-``double[][]`` . The word "vector" is reserved generic
-objects with array-like semantics.
+The O₂scl library uses a standard nomenclature to distinguish a couple
+different concepts. The word "array" is always used to refer to
+C-style arrays, i.e. ``double[]``. If there are two dimensions in the
+array, it is a "two-dimensional array", i.e. ``double[][]`` . The word
+"vector" is reserved generic objects with array-like semantics.
 
 In general, there are many vector types (STL, Boost, etc.) and they
 can be characterized by whether or not they satisfy certain "concepts"
-like ``DefaultConstructible``. O₂scl classes which operate
-on vector types are designed to be as flexible as possible, so that
-they can be used with almost any vector type. Eventually, all O\
-:sub:`2`\ scl classes with template vector and matrix types should
-specify exactly which concepts are required to be satisified, but this
-is still in progress.
+like ``DefaultConstructible``. O₂scl classes which operate on vector
+types are designed to be as flexible as possible, so that they can be
+used with almost any vector type. Eventually, all O₂scl classes with
+template vector and matrix types should specify exactly which concepts
+are required to be satisified, but this is still in progress.
 
 The word "matrix" is reserved for the a generic object which has
 matrix-like semantics and can be accessed using ``operator(,)``. C++
 matrix types typically prefer ``operator(,)`` over ``operator[][]``.
 This is because ``operator[][]`` implies the creation of a temporary
 row object, and it is thus difficult to implement ``operator[]``
-without incurring an overhead. Nevertheless, some O₂scl
-classes have separate versions which operate on matrix types which are
-only accessible with ``operator[][]`` (like two-dimensional arrays).
-See :ref:`Linear Algebra` for examples of this distinction.
+without incurring an overhead. Nevertheless, some O₂scl classes have
+separate versions which operate on matrix types which are only
+accessible with ``operator[][]`` (like two-dimensional arrays). See
+:ref:`Linear Algebra` for examples of this distinction.
 
 With ``std::function<>`` and the new lambda function support in C++11,
 it is important to notice that ``std::function<double
@@ -92,8 +88,8 @@ The word "tensor" is used for a generic object which has rank ``n``
 and then has ``n`` associated indices. A vector is just a \tensor of
 rank 1 and a matrix is just a \tensor of rank 2. Tensors are
 implemented in O₂scl by :ref:`tensor <tensor>`. A
-multivariate function specified on a grid can be implemented in O\
-:sub:`2`\ scl with :ref:`tensor_grid <tensor_grid>`. See more
+multivariate function specified on a grid can be implemented in
+O₂scl with :ref:`tensor_grid <tensor_grid>`. See more
 discussion in the tensor section below.
 
 Rows and columns vs. x and y

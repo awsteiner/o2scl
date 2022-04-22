@@ -129,6 +129,7 @@ namespace o2scl {
       val3=v3;
     }
 
+    /// If true, then two index specifications are equal
     bool equal(index_spec &is) {
       bool ret;
       ret=(type==is.type && ix1==is.ix1 && ix2==is.ix2 && ix3==is.ix3 &&

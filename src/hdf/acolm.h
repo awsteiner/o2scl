@@ -2463,7 +2463,7 @@ namespace o2scl_acol {
         into base units.
 
         One can delete a constant with, e.g. <tt>'acol -del
-        hbar'</tt> (this doesn't quite work yet for constants with
+        pi'</tt> (this doesn't quite work yet for constants with
         different values in different unit systems).
 
         To add a constant, one must specify the name of the constant,
