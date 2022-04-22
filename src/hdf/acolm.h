@@ -411,10 +411,23 @@ namespace o2scl_acol {
 
         <expr>
 
-        This computes the value of the constant expression
-        <expr>. Examples are "calc acos(-1)" or "calc 2+1/sqrt(2.0e4)".
-        Results are given at the current precision. To see valid
-        expressions type 'acol -help <tt>functions</tt>'.
+        This computes the value of the constant expression <expr>.
+        Examples are "calc acos(-1)" or "calc 2+1/sqrt(2.0e4)". To see
+        valid expressions type 'acol -help <tt>functions</tt>'.
+
+        Results are given at the current value of <tt>precision</tt>.
+        Values of precision up to 50 are allowed, and multiprecision
+        (rather than double precision) arithmetic is used if
+        necessary. For example, try 'acol -set precision 45 -calc
+        "acos(-1)"'.
+
+        Constant values from the constant library (see 'acol -help
+        <tt>constant</tt>') will automatically be used, so long as
+        they have a unique value in MKS units. However, constant
+        values are currently only stored to double precision, so they
+        will result in an error if the value of <tt>precision</tt> is
+        not larger than 15. Unicode is also supported for constants,
+        so try, e.g. 'acol -set precision 15 -calc π'.
     */
     virtual int comm_calc(std::vector<std::string> &sv, bool itive_com);
 
