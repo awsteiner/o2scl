@@ -2354,15 +2354,43 @@ namespace o2scl_acol {
         <old unit (or "list", "add", "del", or "nat")> <new unit>
         [value to convert]
 
-        This command computes a unit conversion factor and optionally
-        applies than conversion factor to a user-specified value.
+        The <tt>convert</tt> command handles unit conversions. To
+        compute a unit conversion factor and then optionally apply
+        than conversion factor to a user-specified value. use the form
+        <tt>'acol -convert <old unit> <new unit> [value]'</tt>.
         Conversions which presume ħ=c=kB=1 are allowed by default. For
-        example, 'convert MeV 1/fm' returns '1.000000e+00 MeV =
-        5.067731e-03 1/fm'. The conversion factor is output at the
-        current precision, but is always internally stored with full
-        double precision. To print the list of known units, SI
-        prefixes, and the unit conversion cache, use -convert list. To
-        add a unit (only MKS is supported) the format is:
+        example, <tt>'acol -convert MeV 1/fm'</tt> returns
+        '1.000000e+00 MeV = 5.067731e-03 1/fm'. The conversion factor
+        is output at the current value of <tt>precision</tt>, but is
+        always internally stored with full double precision. 
+
+        If no value to convert is specified, then a value of 1.0
+        is assumed.
+
+        Conversions are cached, so that if the user requests 
+        an identical conversion with a different numerical value,
+        then obtaining the conversion from the cache is faster than
+        looking it up and processing it each time.
+
+        The <tt>convert</tt> command attempts to handle arbitrary
+        combinations of powers of SI base units to automatically
+        compute new unit conversion. For example, <tt>'acol -convert
+        "fm^10/g^30" "m^10/kg^30"'</tt> reports <tt>1.000000e+00
+        fm^10/g^30 = 1.000000e-60 m^10/kg^30</tt>. 
+
+        Unit conversions containing constants stored in the
+        <tt>constant</tt> library are also allowed. For example,
+        <tt>'acol -convert "Msun^2" "g^2"'</tt> gives <tt>1.000000e+00
+        Msun^2 = 3.953774e+66 g^2</tt>. SI units are also understood,
+        and both μ and "mu" are interpreted as the "micro" prefix. For
+        example, <tt>'acol -convert "μm" "pc"'</tt> or <tt>'acol
+        -convert "mum" "pc"'</tt> both report the conversion between
+        micrometers and parsecs.
+
+        To print the list of known units, SI prefixes, and the unit
+        conversion cache, use <tt>'acol -convert list'</tt>. 
+
+        To add a unit (only MKS is supported) the format is:
 
         -convert add <unit> <power of meters> <power of kg>
         <power of seconds> <power of Kelvin> <power of amps>
@@ -2373,10 +2401,13 @@ namespace o2scl_acol {
         -convert del <unit>
 
         However, note that deleting a unit does not delete its
-        occurences in the unit conversion cache. To modify the use of
-        natural units, use:
+        occurences in the unit conversion cache. 
 
-        -convert nat <boolean for c=1> <boolean for ħ> <boolean for kB>
+        While ħ=c=kB=1 is assumed by default, the user can disable
+        conversions taking advantage of these assignments. To modify
+        the use of natural units, use:
+
+        -convert nat <boolean for c=1> <boolean for ħ=1> <boolean for kB=1>
      */
     virtual int comm_convert(std::vector<std::string> &sv, bool itive_com);
 
@@ -2397,17 +2428,12 @@ namespace o2scl_acol {
 
         <name, pattern, "add", "del", "list", "list-full"> [unit]
 
-        Get a physical or numerical constant from the library. If
-        "list" is given for <name or pattern>, then the full constant
-        list is printed to the screen.
-        
         If the constant has no units, like the Euler-Mascheroni
-        constant, then no additional argument is required, for example
-        <tt>acol -constant euler</tt> will report the value
-        5.772157e-1 (at the default precision which is 6). If the user
-        requests a precision larger than 15 (double precision), then
-        the <tt>constant</tt> command fails and prints an error
-        message.
+        constant, then e.g. <tt>acol -constant euler</tt> will report
+        the value 5.772157e-1 (at the default precision which is 6).
+        If the user requests a <tt>precision</tt> larger than 15
+        (double precision), then the <tt>constant</tt> command fails
+        and prints an error message.
 
         If the constant has units but no units are specified as
         arguments to the <tt>constant</tt> command, then all values of
@@ -2415,25 +2441,29 @@ namespace o2scl_acol {
         unit is specified, then the <tt>constant</tt> command tries to
         find the unique value with the specified unit. The user can
         specify, <tt>mks</tt>, <tt>cgs</tt>, or the exact unit string
-        of the constant. For example, <tt>acol -constant hbar cgs</tt>
-        and <tt>acol -constant hbar g*cm^2/s</tt> both work and return
+        of the constant. For example, <tt>'acol -constant hbar cgs'</tt>
+        and <tt>'acol -constant hbar g*cm^2/s'</tt> both work and return
         the same value.
 
-        Search patterns are also allowed, for example <tt>acol
-        -constant "satur*"</tt> returns all the constants related to
+        Note that some constants in the library are not known to 
+        full double precision and acol currently has no way of
+        reporting this.
+
+        Search patterns are also allowed, for example <tt>'acol
+        -constant "satur*"'</tt> returns all the constants related to
         saturn in both MKS and CGS units. If <tt>use_regex</tt> is set
         to true, then regex is used to do the pattern matching, and
         otherwise <tt>fnmatch()</tt> is used. Unicode is allowed, but
         pattern matching and unicode is not fully functional.
 
-        To list all the constants in the library, use <tt>acol
-        -constant list</tt>. Alternatively, <tt>acol -constant
+        To list all the constants in the library, use <tt>'acol
+        -constant list'</tt>. Alternatively, <tt>acol -constant
         list-full</tt> gives all information for all constants,
         including all aliases, the source, and all the decompositions
         into base units.
 
-        One can delete a constant with, e.g. <tt>acol -del
-        hbar</tt> (this doesn't quite work yet for constants with
+        One can delete a constant with, e.g. <tt>'acol -del
+        hbar'</tt> (this doesn't quite work yet for constants with
         different values in different unit systems).
 
         To add a constant, one must specify the name of the constant,
