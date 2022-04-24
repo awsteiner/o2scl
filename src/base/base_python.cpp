@@ -2929,6 +2929,204 @@ void o2scl_interp_krige_optim_std_vector_double__sample_vec(void *vptr, void *pt
   return;
 }
 
+void *o2scl_create_terminal() {
+  terminal *ptr=new terminal;
+  return ptr;
+}
+
+void o2scl_free_terminal(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  delete ptr;
+  return;
+}
+
+bool o2scl_terminal_is_redirected(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  bool ret=ptr->is_redirected();
+  return ret;
+}
+
+size_t o2scl_terminal_str_len(void *vptr, char *str) {
+  terminal *ptr=(terminal *)vptr;
+  size_t ret=ptr->str_len(str);
+  return ret;
+}
+
+void *o2scl_terminal_hrule(void *vptr, size_t n) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->hrule(n);
+  return sptr;
+}
+
+void *o2scl_terminal_cyan_fg(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->cyan_fg();
+  return sptr;
+}
+
+void *o2scl_terminal_magenta_fg(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->magenta_fg();
+  return sptr;
+}
+
+void *o2scl_terminal_yellow_fg(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->yellow_fg();
+  return sptr;
+}
+
+void *o2scl_terminal_red_fg(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->red_fg();
+  return sptr;
+}
+
+void *o2scl_terminal_green_fg(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->green_fg();
+  return sptr;
+}
+
+void *o2scl_terminal_blue_fg(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->blue_fg();
+  return sptr;
+}
+
+void *o2scl_terminal_cyan_bg(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->cyan_bg();
+  return sptr;
+}
+
+void *o2scl_terminal_magenta_bg(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->magenta_bg();
+  return sptr;
+}
+
+void *o2scl_terminal_yellow_bg(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->yellow_bg();
+  return sptr;
+}
+
+void *o2scl_terminal_red_bg(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->red_bg();
+  return sptr;
+}
+
+void *o2scl_terminal_green_bg(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->green_bg();
+  return sptr;
+}
+
+void *o2scl_terminal_blue_bg(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->blue_bg();
+  return sptr;
+}
+
+void *o2scl_terminal_default_fg(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->default_fg();
+  return sptr;
+}
+
+void *o2scl_terminal_bold(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->bold();
+  return sptr;
+}
+
+void *o2scl_terminal_eight_bit_fg(void *vptr, short col) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->eight_bit_fg(col);
+  return sptr;
+}
+
+void *o2scl_terminal_eight_bit_bg(void *vptr, short col) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->eight_bit_bg(col);
+  return sptr;
+}
+
+void *o2scl_terminal_lowint(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->lowint();
+  return sptr;
+}
+
+void *o2scl_terminal_underline(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->underline();
+  return sptr;
+}
+
+void *o2scl_terminal_reverse(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->reverse();
+  return sptr;
+}
+
+void *o2scl_terminal_alt_font(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->alt_font();
+  return sptr;
+}
+
+void *o2scl_terminal_normal_font(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->normal_font();
+  return sptr;
+}
+
+void *o2scl_terminal_eight_bit_summ(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->eight_bit_summ();
+  return sptr;
+}
+
+void *o2scl_terminal_three_byte_summ(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->three_byte_summ();
+  return sptr;
+}
+
+void *o2scl_terminal_three_byte_summ_long(void *vptr) {
+  terminal *ptr=(terminal *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->three_byte_summ_long();
+  return sptr;
+}
+
 void *o2scl_create_gen_test_number_double_() {
   gen_test_number<double> *ptr=new gen_test_number<double>;
   return ptr;
@@ -3519,5 +3717,12 @@ void o2scl_linear_or_log_std_vector_double__wrapper(void *ptr_x, void *ptr_log_x
   bool *log_x=(bool *)ptr_log_x;
   linear_or_log<std::vector<double>>(*x,*log_x);
   return;
+}
+
+int o2scl_get_screen_size_ioctl_wrapper(void *ptr_row, void *ptr_col) {
+  int *row=(int *)ptr_row;
+  int *col=(int *)ptr_col;
+  int ret=get_screen_size_ioctl(*row,*col);
+  return ret;
 }
 

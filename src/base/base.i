@@ -40,6 +40,7 @@ h_include <o2scl/format_float.h>
 h_include <o2scl/interp_krige.h>
 h_include <o2scl/cli.h>
 h_include <o2scl/funct.h>
+h_include <o2scl/cursesw.h>
 # 
 # Include statement for C++ source code
 # 
@@ -1883,7 +1884,76 @@ class interp_krige_optim<std::vector<double>>
   - io std::vector<double> &y
 #
 # Functions and classes from misc.h
-# 
+#
+class terminal
+- function is_redirected
+  - bool
+- function str_len
+  - size_t
+  - std::string str
+- function hrule
+  - std::string
+  - size_t n [78]
+- function cyan_fg
+  - std::string
+- function magenta_fg
+  - std::string
+- function yellow_fg
+  - std::string
+- function red_fg
+  - std::string
+- function green_fg
+  - std::string
+- function blue_fg
+  - std::string
+- function cyan_bg
+  - std::string
+- function magenta_bg
+  - std::string
+- function yellow_bg
+  - std::string
+- function red_bg
+  - std::string
+- function green_bg
+  - std::string
+- function blue_bg
+  - std::string
+- function default_fg
+  - std::string
+- function bold
+  - std::string
+- function eight_bit_fg
+  - std::string
+  - short col
+- function eight_bit_bg
+  - std::string
+  - short col
+#- function three_byte_fg
+#  - std::string
+#  - short red
+#  - short green
+#  - short blue
+#- function three_byte_bg
+#  - std::string
+#  - short red
+#  - short green
+#  - short blue
+- function lowint
+  - std::string
+- function underline
+  - std::string
+- function reverse
+  - std::string
+- function alt_font
+  - std::string
+- function normal_font
+  - std::string
+- function eight_bit_summ
+  - std::string
+- function three_byte_summ
+  - std::string
+- function three_byte_summ_long
+  - std::string
 function fermi_function
 - double
 - double E
@@ -2203,4 +2273,10 @@ class cli
   - std::string name
 #  amp->cl->process_args(args,ca,0);
 #  amp->cl->call_args(ca);
-
+#
+# Function from cursesw.h
+#
+function get_screen_size_ioctl
+- int
+- out int &row
+- out int &col

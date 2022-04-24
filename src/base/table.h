@@ -3836,8 +3836,9 @@ namespace o2scl {
   
   /** \brief View a o2scl::table object as a matrix
 
-      \note This stores a pointer to the table and the user must ensure
-      that the pointer is valid with the matrix view is accessed.
+      \note This stores a pointer to the table and the user must
+      ensure that the pointer is valid with the matrix view is
+      accessed.
   */
   template<class vec_t=std::vector<double> > 
   class const_matrix_view_table_transpose :

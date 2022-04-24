@@ -34,6 +34,7 @@
 #include <o2scl/interp_krige.h>
 #include <o2scl/cli.h>
 #include <o2scl/funct.h>
+#include <o2scl/cursesw.h>
 
 extern "C" {
 
@@ -1009,6 +1010,64 @@ double o2scl_interp_krige_optim_std_vector_double__sample(void *vptr, double x0)
 
 void o2scl_interp_krige_optim_std_vector_double__sample_vec(void *vptr, void *ptr_x, void *ptr_y);
 
+void *o2scl_create_terminal();
+
+void o2scl_free_terminal(void *vptr);
+
+bool o2scl_terminal_is_redirected(void *vptr);
+
+size_t o2scl_terminal_str_len(void *vptr, char *str);
+
+void *o2scl_terminal_hrule(void *vptr, size_t n=78);
+
+void *o2scl_terminal_cyan_fg(void *vptr);
+
+void *o2scl_terminal_magenta_fg(void *vptr);
+
+void *o2scl_terminal_yellow_fg(void *vptr);
+
+void *o2scl_terminal_red_fg(void *vptr);
+
+void *o2scl_terminal_green_fg(void *vptr);
+
+void *o2scl_terminal_blue_fg(void *vptr);
+
+void *o2scl_terminal_cyan_bg(void *vptr);
+
+void *o2scl_terminal_magenta_bg(void *vptr);
+
+void *o2scl_terminal_yellow_bg(void *vptr);
+
+void *o2scl_terminal_red_bg(void *vptr);
+
+void *o2scl_terminal_green_bg(void *vptr);
+
+void *o2scl_terminal_blue_bg(void *vptr);
+
+void *o2scl_terminal_default_fg(void *vptr);
+
+void *o2scl_terminal_bold(void *vptr);
+
+void *o2scl_terminal_eight_bit_fg(void *vptr, short col);
+
+void *o2scl_terminal_eight_bit_bg(void *vptr, short col);
+
+void *o2scl_terminal_lowint(void *vptr);
+
+void *o2scl_terminal_underline(void *vptr);
+
+void *o2scl_terminal_reverse(void *vptr);
+
+void *o2scl_terminal_alt_font(void *vptr);
+
+void *o2scl_terminal_normal_font(void *vptr);
+
+void *o2scl_terminal_eight_bit_summ(void *vptr);
+
+void *o2scl_terminal_three_byte_summ(void *vptr);
+
+void *o2scl_terminal_three_byte_summ_long(void *vptr);
+
 void *o2scl_create_gen_test_number_double_();
 
 void o2scl_free_gen_test_number_double_(void *vptr);
@@ -1192,5 +1251,7 @@ void o2scl_linear_or_log_std_vector_double_std_vector_double__wrapper(void *ptr_
 void o2scl_vector_refine_std_vector_double_std_vector_double_double__wrapper(size_t n, void *ptr_index, void *ptr_data, size_t factor, size_t interp_type=2);
 
 void o2scl_linear_or_log_std_vector_double__wrapper(void *ptr_x, void *ptr_log_x);
+
+int o2scl_get_screen_size_ioctl_wrapper(void *ptr_row, void *ptr_col);
 
 }

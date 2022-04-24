@@ -91,9 +91,9 @@ int main(void) {
   interpm_idw<matrix_view_vec_vec<ubvector> > imi;
   interpm_idw<const_matrix_view_table_transpose<> > imi2;
 
-  imi.set_data(2,1,8,mv3);
   i2n.set_data(8,x,y,dp);
   i2p.set_data(8,x,y,dp);
+  imi.set_data(2,1,8,mv3);
   imi2.set_data(2,1,8,cmvt);
 
   // Temporary storage
@@ -124,27 +124,6 @@ int main(void) {
   t.test_rel(imi.eval(point),i2p.eval(0.03,1.0),1.0e-2,"imi vs. i2p 2");
   cout << endl;
 
-#ifdef O2SCL_NEVER_DEFINED
-  // Show how to swap a pointer instead
-  std::vector<double> x2, y2, dp2;
-  o2scl::vector_copy(x,x2);
-  o2scl::vector_copy(y,y2);
-  o2scl::vector_copy(dp,dp2);
-  interpm_idw<double *> imi2;
-
-  std::vector<double *> dat2(3);
-  dat2[0]=&(x2[0]);
-  dat2[1]=&(y2[0]);
-  dat2[2]=&(dp2[0]);
-  imi2.set_data(2,1,8,dat2);
-
-  cout << "Same interpolation as above, but with pointers for storage:"
-       << endl;
-  imi.eval_err(point,val,err);
-  cout << imi.eval(point) << " " << val << " " << err << endl;
-  cout << endl;
-#endif
-  
   cout << "Show that interpolation gets better with more points." << endl;
   for(size_t N=10;N<1000000;N*=10) {
     // Create a random data set

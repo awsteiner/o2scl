@@ -505,6 +505,12 @@ namespace o2scl {
           for(size_t ipar=0;ipar<n_params;ipar++) {
             if (initial_points[iip][ipar]<low[ipar] ||
                 initial_points[iip][ipar]>high[ipar]) {
+              std::cout << "Parameters: " << std::endl;
+              for(size_t iki=0;iki<n_params;iki++) {
+                std::cout << iki << " " << low[iki] << " "
+                          << initial_points[iip][iki] << " "
+                          << high[iki] << std::endl;
+              }
               O2SCL_ERR((((std::string)"Parameter ")+o2scl::szttos(ipar)+
                          " of "+o2scl::szttos(n_params)+" out of range (value="+
                          o2scl::dtos(initial_points[iip][ipar])+
@@ -1922,7 +1928,8 @@ namespace o2scl {
           std::cout << "mcmc: Table column names and units: " << std::endl;
           for(size_t i=0;i<table->get_ncolumns();i++) {
             std::cout << table->get_column_name(i) << " "
-                      << table->get_unit(table->get_column_name(i)) << std::endl;
+                      << table->get_unit(table->get_column_name(i))
+                      << std::endl;
           }
         }
       

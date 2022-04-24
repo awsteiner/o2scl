@@ -39,8 +39,6 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-#include <o2scl/uniform_grid.h>
-#include <o2scl/table3d.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/exception.h>
 #include <o2scl/prob_dens_func.h>
@@ -55,6 +53,42 @@ namespace o2scl {
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
   
   /** \brief A generic MCMC simulation class
+
+      Significant changes:
+      
+      * There is no data vector in the class, it's moved to a
+      parameter of the mcmc() function.
+
+      * New outside_parallel() function: the idea is that 
+      an emulator can be retrained in this function.
+
+      * New steps_in_parallel variable
+
+      * The best point mechanism has been reworked, there is now a
+      best point over all threads and a best point array which stores
+      the best point from each thread
+
+      * The initial point evaluation is essentially the same, 
+      but the main loop is reorganized.
+
+      * When aff_inv is false, there are three loops, a main loop,
+      a parallel loop over threads, and then an inner loop
+      of size steps_in_parallel.
+
+      * When aff_inv is true, there is a main loop and two sequential
+      parallel loops over the number of threads.
+
+      Todos:
+
+      * Figure out what to do with the message vector which is
+      commented out in both versions
+
+      * The main loop with the affine-invariant sampling could be
+      modified with a new inner loop to do many function evaluations
+      for each thread. However, I think this would demand combining
+      the two sequential parallel loops.
+
+      ---------------------------------------------------------
 
       This class performs a Markov chain Monte Carlo simulation of a
       user-specified function using OpenMP and/or MPI. Either the
@@ -421,15 +455,14 @@ namespace o2scl {
         at initial point \c init, limiting the parameters to be between
         \c low and \c high, using \c func as the objective function and
         calling the measurement function \c meas at each MC point.
+
+        The vector \c data should be of size
+        <tt>2*n_walk*n_threads</tt>.
     */
     virtual int mcmc(size_t n_params, vec_t &low, vec_t &high,
                      std::vector<func_t> &func,
                      std::vector<measure_t> &meas,
                      std::vector<data_t> &data) {
-
-      // Doxygen seems to have trouble reading the code, so we
-      // ensure it doesn't see it. 
-#ifndef DOXYGEN
 
       // Verify that the input and settings make sense and fix
       // them if we can
@@ -470,7 +503,7 @@ namespace o2scl {
       }
       if (pd_mode && aff_inv) {
         O2SCL_ERR2("Using a proposal distribution with affine-invariant ",
-                   "sampling not implemented in mcmc_para_new::mcmc_init().",
+                   "sampling not implemented in mcmc_para_new::mcmc().",
                    o2scl::exc_eunimpl);
       }
 
@@ -510,6 +543,12 @@ namespace o2scl {
           for(size_t ipar=0;ipar<n_params;ipar++) {
             if (initial_points[iip][ipar]<low[ipar] ||
                 initial_points[iip][ipar]>high[ipar]) {
+              std::cout << "Parameters: " << std::endl;
+              for(size_t iki=0;iki<n_params;iki++) {
+                std::cout << iki << " " << low[iki] << " "
+                          << initial_points[iip][iki] << " "
+                          << high[iki] << std::endl;
+              }
               O2SCL_ERR((((std::string)"Parameter ")+o2scl::szttos(ipar)+
                          " of "+o2scl::szttos(n_params)+" out of range (value="+
                          o2scl::dtos(initial_points[iip][ipar])+
@@ -677,7 +716,7 @@ namespace o2scl {
       // --------------------------------------------------------------
       // Initial verbose output (note that scr_out isn't created until
       // the mcmc_init() function call above.
-    
+      
       if (verbose>=1) {
         if (aff_inv) {
           scr_out << "mcmc: Affine-invariant step, n_params="
@@ -899,8 +938,8 @@ namespace o2scl {
           for(size_t it=0;it<n_threads;it++) {
           
             // Note that this value is used (e.g. in
-            // mcmc_para_new_table::add_line() ) even if aff_inv is false,
-            // so we set it to zero here.
+            // mcmc_para_new_table::add_line() ) even if aff_inv is
+            // false, so we set it to zero here.
             curr_walker[it]=0;
           
             // Copy from the initial points array into current point
@@ -1256,10 +1295,11 @@ namespace o2scl {
                 if (meas_ret[it]==mcmc_done || func_ret[it]==mcmc_done) {
                   main_done=true;
                 }
-                if (meas_ret[it]!=mcmc_done && meas_ret[it]!=o2scl::success) {
+                if (meas_ret[it]!=mcmc_done &&
+                    meas_ret[it]!=o2scl::success) {
                   if (err_nonconv) {
-                    O2SCL_ERR((((std::string)"Measurement function returned ")+
-                               o2scl::dtos(meas_ret[it])+
+                    O2SCL_ERR((((std::string)"Measurement function ")+
+                               "returned "+o2scl::dtos(meas_ret[it])+
                                " in mcmc_para_new_base::mcmc().").c_str(),
                               o2scl::exc_efailed);
                   }
@@ -1358,6 +1398,10 @@ namespace o2scl {
 
           std::vector<double> smove_z(n_threads);
       
+          // ----------------------------------------------------------
+          // First parallel region to make the stretch move and 
+          // call the object function
+          
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
 #endif
@@ -1366,9 +1410,9 @@ namespace o2scl {
 #pragma omp for
 #endif
             for(size_t it=0;it<n_threads;it++) {
-
+              
               // Choose walker to move. If the threads are not coupled,
-              // then each thread maintains its own ensenble, and we
+              // then each thread maintains its own ensemble, and we
               // just loop over all of the walkers
               curr_walker[it]=mcmc_iters % n_walk;
             
@@ -1473,7 +1517,8 @@ namespace o2scl {
                       scr_out << "mcmc (" << it << "," << mpi_rank
                               << "): Parameter with index " << k
                               << " and value " << next[it][k]
-                              << " larger than limit " << high[k] << std::endl;
+                              << " larger than limit " << high[k]
+                              << std::endl;
                     }
                   }
                 }
@@ -1551,8 +1596,8 @@ namespace o2scl {
           }
 
           // ----------------------------------------------------------
-          // Parallel region to accept or reject, and call measurement
-          // function
+          // Second parallel region to accept or reject, and call
+          // measurement function
       
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
@@ -1739,9 +1784,6 @@ namespace o2scl {
     
       mcmc_cleanup();
 
-      // End of ifdef DOXYGEN
-#endif
-
       return 0;
     }
     
@@ -1861,10 +1903,11 @@ namespace o2scl {
   */
   template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
   class mcmc_para_new_table :
-    public mcmc_para_new_base<func_t,std::function<int(const vec_t &,
-                                                   double,size_t,
-                                                   int,bool,data_t &)>,
-                          data_t,vec_t> {
+    public mcmc_para_new_base<func_t,
+                              std::function<int(const vec_t &,
+                                                double,size_t,
+                                                int,bool,data_t &)>,
+                              data_t,vec_t> {
     
   protected:
   
@@ -1937,7 +1980,8 @@ namespace o2scl {
           std::cout << "mcmc: Table column names and units: " << std::endl;
           for(size_t i=0;i<table->get_ncolumns();i++) {
             std::cout << table->get_column_name(i) << " "
-                      << table->get_unit(table->get_column_name(i)) << std::endl;
+                      << table->get_unit(table->get_column_name(i))
+                      << std::endl;
           }
         }
       
@@ -2225,7 +2269,8 @@ namespace o2scl {
                                  std::vector<std::string> units) {
       if (names.size()!=units.size()) {
         O2SCL_ERR2("Size of names and units arrays don't match in ",
-                   "mcmc_para_new_table::set_names_units().",o2scl::exc_einval);
+                   "mcmc_para_new_table::set_names_units().",
+                   o2scl::exc_einval);
       }
       col_names=names;
       col_units=units;
@@ -2340,12 +2385,12 @@ namespace o2scl {
         named \c fname, distributing across the chain if necessary
 
         The values of \ref o2scl::mcmc_para_new_base::n_walk and \ref
-        o2scl::mcmc_para_new_base::n_threads, must be set to their correct values
-        before calling this function. This function requires that a
-        table is present in \c fname which stores parameters in a block
-        of columns. This function does not double check
-        that the columns in the file associated with the parameters 
-        have the correct names.
+        o2scl::mcmc_para_new_base::n_threads, must be set to their
+        correct values before calling this function. This function
+        requires that a table is present in \c fname which stores
+        parameters in a block of columns. This function does not
+        double check that the columns in the file associated with the
+        parameters have the correct names.
     */
     virtual void initial_points_file_dist(std::string fname,
                                           size_t n_param_loc,
@@ -2415,13 +2460,13 @@ namespace o2scl {
         named \c fname
 
         The values of \ref o2scl::mcmc_para_new_base::n_walk and \ref
-        o2scl::mcmc_para_new_base::n_threads, must be set to their correct values
-        before calling this function. This function requires that a
-        table is present in \c fname which stores parameters in a block
-        of columns and contains a separate column named \c log_wgt .
-        This function does not double check
-        that the columns in the file associated with the parameters 
-        have the correct names.  
+        o2scl::mcmc_para_new_base::n_threads, must be set to their
+        correct values before calling this function. This function
+        requires that a table is present in \c fname which stores
+        parameters in a block of columns and contains a separate
+        column named \c log_wgt . This function does not double check
+        that the columns in the file associated with the parameters
+        have the correct names.
     */
     virtual void initial_points_file_best(std::string fname,
                                           size_t n_param_loc,
