@@ -47,8 +47,8 @@ namespace o2scl {
     /** \brief Evaluate the emulator at the point \c p returning
         \c log_wgt and \c dat
      */
-    int eval(size_t n, const vec_t &p, double &log_wgt,
-             data_t &dat);
+    virtual int eval(size_t n, const vec_t &p, double &log_wgt,
+             data_t &dat)=0;
     
   };
 
@@ -63,13 +63,13 @@ namespace o2scl {
     /** \brief Evaluate the emulator at the point \c p returning
         \c log_wgt and \c dat and their uncertainties
      */
-    int eval_unc(size_t n, const vec_t &p, double &log_wgt,
-                 double &log_wgt_unc, data_t &dat, data_unc_t &dat_unc);
+    virtual int eval_unc(size_t n, const vec_t &p, double &log_wgt,
+                 double &log_wgt_unc, data_t &dat, data_unc_t &dat_unc)=0;
     
     /** \brief Evaluate the emulator at the point \c p returning
         \c log_wgt and \c dat
     */
-    int eval(size_t n, const vec_t &p, double &log_wgt,
+    virtual int eval(size_t n, const vec_t &p, double &log_wgt,
              data_t &dat) {
       double log_wgt_unc;
       data_unc_t dat_unc;
@@ -116,10 +116,10 @@ namespace o2scl {
     /** \brief Evaluate the emulator at the point \c p returning
         \c log_wgt and \c dat and their uncertainties
      */
-    int eval_unc(size_t n, const vec_t &p, double &log_wgt,
+    virtual int eval_unc(size_t n, const vec_t &p, double &log_wgt,
                  double &log_wgt_unc, vec2_t &dat, vec2_t &dat_unc) {
       
-      ii.eval_err<vec2_t>(p,dat,dat_unc);
+      ii.eval_err<vec_t,vec2_t,vec2_t>(p,dat,dat_unc);
       //log_wgt=dat[ix_log_wgt];
       //log_wgt_unc=dat_unc[ix_log_wgt];
       return 0;
@@ -127,7 +127,7 @@ namespace o2scl {
     
   };
 
-  /** \brief An adaptive emulator
+  /** \brief Placeholder for an adaptive emulator
    */
   template<class emu_t, class exact_t,
     class vec2_t, class vec_t> class emulator_adapt :
@@ -142,7 +142,7 @@ namespace o2scl {
     /** \brief Evaluate the emulator at the point \c p returning
         \c log_wgt and \c dat
     */
-    int eval(size_t n, const vec_t &p, double &log_wgt,
+    virtual int eval(size_t n, const vec_t &p, double &log_wgt,
              vec2_t &dat) {
       
       return 0;

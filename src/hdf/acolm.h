@@ -1438,12 +1438,11 @@ namespace o2scl_acol {
 
     /** \brief Output current object in the internal HDF5 format.
         
-        [file]
+        <file>
 
-        Output the current object in the internal HDF5 format.
-        If no argument is given, then output is sent to the screen,
-        otherwise, output is sent to the specified file. 
-     */
+        Output the current object to the specified file
+        in the internal HDF5 format. 
+    */
     virtual int comm_internal(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Perform an interpolation using the current object
