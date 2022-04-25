@@ -72,7 +72,9 @@ namespace o2scl {
     virtual int eval(size_t n, const vec_t &p, double &log_wgt,
              data_t &dat) {
       double log_wgt_unc;
-      data_unc_t dat_unc;
+      // This assignment effectively allocates memory for
+      // dat_unc
+      data_unc_t dat_unc=dat;
       return eval_unc(n,p,log_wgt,log_wgt_unc,dat,dat_unc);
     }
     
@@ -85,13 +87,15 @@ namespace o2scl {
 
   protected:
     
-    /// The internal interpolation objec
-    o2scl::interpm_idw<> ii;
-    
     /// The view of the user-specified table
     const_matrix_view_table_transpose<> cmvtt;
+
+    size_t ix;
     
   public:
+    
+    /// The internal interpolation objec
+    o2scl::interpm_idw<o2scl::const_matrix_view_table_transpose<>> ii;
     
     /** \brief Create an emulator
      */
@@ -109,7 +113,8 @@ namespace o2scl {
     void set(size_t np, size_t n_out, size_t ix_log_wgt,
              table<> &t, std::vector<std::string> list) {
       cmvtt.set(t,list);
-      //set_data(np,list.size()-np,t.get_nlines(),cmvtt);
+      ix=ix_log_wgt;
+      ii.set_data(np,n_out,t.get_nlines(),cmvtt);
       return;
     }
     
@@ -118,10 +123,13 @@ namespace o2scl {
      */
     virtual int eval_unc(size_t n, const vec_t &p, double &log_wgt,
                  double &log_wgt_unc, vec2_t &dat, vec2_t &dat_unc) {
-      
+
+      //ii.verbose=3;
+      //std::cout << "E: " << dat.size() << " " << dat_unc.size()
+      //<< std::endl;
       ii.eval_err<vec_t,vec2_t,vec2_t>(p,dat,dat_unc);
-      //log_wgt=dat[ix_log_wgt];
-      //log_wgt_unc=dat_unc[ix_log_wgt];
+      log_wgt=dat[ix];
+      log_wgt_unc=dat_unc[ix];
       return 0;
     }
     

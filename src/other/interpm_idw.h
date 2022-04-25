@@ -524,9 +524,8 @@ namespace o2scl {
   /** \brief Perform the interpolation over all the functions
       giving uncertainties and the sorted index vector 
 
-      The vector \c index is automatically resized to
-      a size equal to n_points+1+n_extra
-      be larger than 
+      The vector \c index is automatically resized to a size equal to
+      n_points+1+n_extra be larger than ...
   */
   template<class vec2_t, class vec3_t, class vec4_t>
   void eval_err_index(const vec2_t &x, vec3_t &val, vec4_t &err,
@@ -543,11 +542,26 @@ namespace o2scl {
       dists[i]=dist(i,x);
     }
 
+    if (this->verbose>2) {
+      std::cout << "interpm_idw::eval_err_index(): " << np << " "
+                << nd_in << " " << nd_out
+                << std::endl;
+    }
+
     // Find closest points, note that index is automatically resized
     // by the vector_smallest_index function
     o2scl::vector_smallest_index<std::vector<double>,double,
-    std::vector<size_t> >(dists,points+1+n_extra,index);
+                                 std::vector<size_t> >
+      (dists,points+1+n_extra,index);
 
+    if (this->verbose>2) {
+      std::cout << "index: ";
+      o2scl::vector_out(std::cout,points+1+n_extra,index,true);
+      for(size_t kk=0;kk<points+1+n_extra;kk++) {
+        std::cout << kk << " " << dists[index[kk]] << std::endl;
+      }
+    }
+    
     if (n_extra>0) {
       // Remove degenerate points to ensure accurate interpolation
       bool found=true;
@@ -559,6 +573,9 @@ namespace o2scl {
 	    double dist_jk=dist(j,k);
 	    if (index.size()>points+1 && dist_jk<min_dist) {
 	      found=true;
+              if (verbose>2) {
+                std::cout << "Erasing: " << j << std::endl;
+              }
 	      index.erase(index.begin()+j);
 	    }
 	  }
@@ -577,28 +594,49 @@ namespace o2scl {
       return;
 
     } else {
-	
+      
       for(size_t k=0;k<nd_out;k++) {
-	  
+
+        if (verbose>2) {
+          std::cout << "Output quantity " << k << " of " << nd_out
+                    << std::endl;
+        }
+        
 	std::vector<double> vals(points+1);
-	  
+
 	for(size_t j=0;j<points+1;j++) {
+
+          if (verbose>2) {
+            std::cout << "point " << j << " of " << points+1
+                      << std::endl;
+          }
 	    
 	  // Compute normalization
 	  double norm=0.0;
 	  for(size_t i=0;i<points+1;i++) {
 	    if (i!=j) norm+=1.0/dists[index[i]];
 	  }
+
+          if (verbose>2) {
+            std::cout << "norm: " << norm << std::endl;
+          }
 	    
 	  // Compute the inverse-distance weighted average
 	  vals[j]=0.0;
 	  for(size_t i=0;i<points+1;i++) {
 	    if (i!=j) {
 	      vals[j]+=data(nd_in+k,index[i])/dists[index[i]];
+              if (verbose>2) {
+                std::cout << "value, 1.0/dist: "
+                          << data(nd_in+k,index[i]) << " "
+                          << 1.0/dists[index[i]]
+                          << std::endl;
+              }
 	    }
 	  }
+
 	  vals[j]/=norm;
-	    
+
 	}
 
 	// Instead of using the average, we report the value as the
@@ -607,11 +645,16 @@ namespace o2scl {
 	val[k]=vals[points];
 	  
 	err[k]=o2scl::vector_stddev(vals);
-	  
+
+        if (verbose>2) {
+          std::cout << "Final value, err: " << val[k] << " "
+                    << err[k] << std::endl;
+        }
+        
       }
 
     }
-      
+
     return;
   }
     

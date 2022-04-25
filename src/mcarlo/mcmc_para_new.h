@@ -489,6 +489,9 @@ namespace o2scl {
         n_threads=meas.size();
       }
       if (data.size()<2*n_walk*n_threads) {
+        std::cout << "mcmc_para_new::mcmc() data.size(): " << data.size()
+                  << " n_walk: " << n_walk << " threads: "
+                  << n_threads << std::endl;
         O2SCL_ERR2("Not enough data objects for walkers and threads in ",
                    "mcmc_para_new::mcmc()",o2scl::exc_einval);
       }
