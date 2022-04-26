@@ -355,6 +355,13 @@ void acol_manager::update_o2_docs(size_t narr,
 
       // End of 'k' loop over command doc strings
     }
+
+    // Afterwards, strip the prefix "Parameters: " from the
+    // parameter description
+    if (options_arr[j].parm_desc.substr(0,12)==((string)"Parameters: ")) {
+      options_arr[j].parm_desc=options_arr[j].parm_desc.substr
+        (12,options_arr[j].parm_desc.length()-12);
+    }
     
     if (found==true) {
       if (verbose>2 || loc_verbose>1) {

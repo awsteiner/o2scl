@@ -68,7 +68,8 @@ namespace o2scl {
   */
   template<class vec_t, class mat_x_t, class mat_x_row_t, class mat_x_col_t,
            class mat_y_t, class mat_y_row_t, class mat_inv_kxx_t,
-           class mat_inv_t=o2scl_linalg::matrix_invert_det_cholesky<mat_inv_kxx_t> >
+           class mat_inv_t=
+           o2scl_linalg::matrix_invert_det_cholesky<mat_inv_kxx_t> >
   class interpm_krige {    
     
   public:
@@ -406,7 +407,8 @@ namespace o2scl {
   */
   template<class vec_t, class mat_x_t, class mat_x_row_t, class mat_x_col_t,
            class mat_y_t, class mat_y_row_t, class mat_inv_kxx_t,
-           class mat_inv_t=o2scl_linalg::matrix_invert_det_cholesky<mat_inv_kxx_t> >
+           class mat_inv_t=
+           o2scl_linalg::matrix_invert_det_cholesky<mat_inv_kxx_t> >
   class interpm_krige_optim :
     public interpm_krige<vec_t,mat_x_t,mat_x_row_t,mat_x_col_t,mat_y_t,
                          mat_y_row_t,mat_inv_kxx_t,mat_inv_t> {    

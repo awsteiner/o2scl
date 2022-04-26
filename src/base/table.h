@@ -3096,7 +3096,10 @@ namespace o2scl {
         calc.set_rng(r);
 
         std::map<std::string,double> vars;
-        if (true) {
+        
+        if (false) {
+
+          // Old version (slower)
           
           std::map<std::string,double>::const_iterator mit;
           for(mit=constants.begin();mit!=constants.end();mit++) {
@@ -3113,6 +3116,10 @@ namespace o2scl {
           }
           
         } else {
+
+          // New (hopefully faster) version which uses
+          // calc_utf8::get_var_list() to obtain a list of variables
+          // needed to compute the user-specified function.
           
           calc.compile(function.c_str(),0);
 

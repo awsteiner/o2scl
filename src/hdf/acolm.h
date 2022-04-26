@@ -263,7 +263,8 @@ namespace o2scl_acol {
 
   public:
 
-    /** \brief Desc
+    /** \brief Make all of the XML replacements in string \c s
+        based on the command list \c clist
      */
     void xml_replacements(std::string &s,
                           std::vector<std::string> &clist);
@@ -272,7 +273,8 @@ namespace o2scl_acol {
      */
     void command_add(std::string new_type);
 
-    /** \brief Desc
+    /** \brief Update the command documentation from the o2scl
+        data file
      */
     void update_o2_docs(size_t narr,
                         o2scl::comm_option_s *options_arr,
@@ -321,12 +323,12 @@ namespace o2scl_acol {
         Assign a constant to the table, e.g. <tt>-assign pi
         "acos(-1)"</tt>.
 
-        <name> val
+        Parameters: <tt><name> val</tt>
 
         Assign a constant value to a name for the present table. Valid
-        constant values are things like 1.618 or acos(-1.0) or
-        sin(4^5). To remove an assignment, call assign with a blank
-        value.
+        constant values are things like <tt>1.618</tt>,
+        <tt>acos(-1.0)</tt> or <tt>sin(4^5)</tt>. To remove an
+        assignment, call assign with a blank value.
      */
     virtual int comm_assign(std::vector<std::string> &sv, bool itive_com);
 
