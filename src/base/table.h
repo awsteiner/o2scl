@@ -3132,8 +3132,8 @@ namespace o2scl {
 
           // Create column from function
           for(int j=i_thread;j<((int)nlines);j+=n_threads) {
-            for(size_t j=0;j<cols.size();j++) {
-              vars[cols[j]]=this->get(cols[j],j);
+            for(size_t k=0;k<cols.size();k++) {
+              vars[cols[k]]=this->get(cols[k],j);
             }
             vec[j]=calc.eval(&vars);
           }
