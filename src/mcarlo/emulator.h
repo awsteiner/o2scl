@@ -73,7 +73,7 @@ namespace o2scl {
              data_t &dat) {
       double log_wgt_unc;
       // This assignment effectively allocates memory for
-      // dat_unc
+      // dat_unc object using a copy constructor
       data_unc_t dat_unc=dat;
       return eval_unc(n,p,log_wgt,log_wgt_unc,dat,dat_unc);
     }
@@ -81,6 +81,12 @@ namespace o2scl {
   };
   
   /** \brief Emulate data stored in a table object with interpm_idw
+
+      \note Currently, this emulator only works if the data object
+      from the MCMC class is a vector type so that it knows how
+      to find the "log weight" output
+
+      This class is experimental.
    */
   template<class vec2_t, class vec_t> class emulator_interpm_idw_table :
     public emulator_unc<vec2_t,vec2_t,vec_t> {
@@ -89,7 +95,8 @@ namespace o2scl {
     
     /// The view of the user-specified table
     const_matrix_view_table_transpose<> cmvtt;
-
+    
+    /// Index of the "log weight" in the MCMC data vector
     size_t ix;
     
   public:
@@ -105,10 +112,11 @@ namespace o2scl {
     /** \brief Set the emulator
 
         Set the emulator using a table containing \c np parameters and
-        \c n_out output quantities using \c ix_log_wgt as the column
-        index of the column which contains log_wgt and \c list as
-        the the column names of the parameters and output quantities,
-        in order.
+        \c n_out output quantities. The variable \c ix_log_wgt should
+        be the index of the log_weight among all of the output
+        variables, from 0 to <tt>n_out-1</tt>. The list, \c list,
+        should include the column names of the parameters and then the
+        output quantities (including the log weight column), in order.
      */
     void set(size_t np, size_t n_out, size_t ix_log_wgt,
              table<> &t, std::vector<std::string> list) {
@@ -123,10 +131,7 @@ namespace o2scl {
      */
     virtual int eval_unc(size_t n, const vec_t &p, double &log_wgt,
                  double &log_wgt_unc, vec2_t &dat, vec2_t &dat_unc) {
-
-      //ii.verbose=3;
-      //std::cout << "E: " << dat.size() << " " << dat_unc.size()
-      //<< std::endl;
+      
       ii.eval_err<vec_t,vec2_t,vec2_t>(p,dat,dat_unc);
       log_wgt=dat[ix];
       log_wgt_unc=dat_unc[ix];
