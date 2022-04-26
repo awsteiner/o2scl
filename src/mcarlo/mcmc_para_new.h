@@ -550,7 +550,13 @@ namespace o2scl {
               for(size_t iki=0;iki<n_params;iki++) {
                 std::cout << iki << " " << low[iki] << " "
                           << initial_points[iip][iki] << " "
-                          << high[iki] << std::endl;
+                          << high[iki];
+                if (initial_points[iip][ipar]<low[ipar]) {
+                  std::cout << " L";
+                } else if (initial_points[iip][ipar]<high[ipar]) {
+                  std::cout << " H";
+                }
+                std::cout << std::endl;
               }
               O2SCL_ERR((((std::string)"Parameter ")+o2scl::szttos(ipar)+
                          " of "+o2scl::szttos(n_params)+" out of range (value="+
@@ -2507,7 +2513,8 @@ namespace o2scl {
       if (this->verbose>0) {
         std::cout << "Initial points: Finding best " << n_points
                   << " unique points from file named "
-                  << fname << " ." << std::endl;
+                  << fname << " using threshold " << thresh
+                  << " and offset " << offset << std::endl;
       }
 
       typedef std::map<double,int,std::greater<double> > map_t;
@@ -2531,7 +2538,8 @@ namespace o2scl {
           if (mit2!=m.end()) {
             if (fabs(mit->first-mit2->first)<thresh) {
               if (this->verbose>0) {
-                std::cout << "Removing duplicate weights: "
+                std::cout << "mcmc_para_new::initial_points_file_best():\n  "
+                          << "Removing duplicate weights: "
                           << mit->first << " " << mit2->first << std::endl;
                 
               }
