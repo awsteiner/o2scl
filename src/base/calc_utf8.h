@@ -1127,7 +1127,8 @@ namespace o2scl {
       while (rpn.size()) {
         token_base *tb=rpn.front();
         if (tb->type==2) {
-          token32<std::u32string>* str=dynamic_cast<token32<std::u32string>*>(tb);
+          token32<std::u32string>* str=
+            dynamic_cast<token32<std::u32string>*>(tb);
           if (str!=0) {
             list.push_back(str->val);
           } else {

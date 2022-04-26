@@ -1968,6 +1968,10 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     // appropriately.
 
     for(int i=0;i<nargs;i++) {
+      if (verbose>0) {
+        cout << "acol table select: argument "
+             << i+1 << " of " << nargs << endl;
+      }
 
       if (is_pattern[i]==false) {
       
@@ -2016,7 +2020,8 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
 
               // Fill it with the new data
               ubvector vec(table_obj.get_nlines());
-              table_obj.function_vector(table_obj.get_column_name(j),vec,false);
+              table_obj.function_vector(table_obj.get_column_name(j),
+                                        vec,false);
               new_table.copy_to_column(vec,table_obj.get_column_name(j));
             }
           }
@@ -2053,7 +2058,9 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
       }
     }
 
-    // Todo: Replace this copy with std::swap
+    if (verbose>0) {
+      cout << "acol table select: running swap." << endl;
+    }
     std::swap(table_obj,new_table);
 
   }

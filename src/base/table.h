@@ -3094,22 +3094,52 @@ namespace o2scl {
         // Parse function, separate calculator for each thread
         calc_utf8<> calc;
         calc.set_rng(r);
-        
-        std::map<std::string,double> vars;
-        std::map<std::string,double>::const_iterator mit;
-        for(mit=constants.begin();mit!=constants.end();mit++) {
-          vars[mit->first]=mit->second;
-        }
-        calc.compile(function.c_str(),&vars);
-      
-        // Create column from function
-        for(int j=i_thread;j<((int)nlines);j+=n_threads) {
-          for(aciter it=atree.begin();it!=atree.end();it++) {
-            vars[it->first]=it->second.dat[j];
-          }
-          vec[j]=calc.eval(&vars);
-        }
 
+        std::map<std::string,double> vars;
+        if (true) {
+          
+          std::map<std::string,double>::const_iterator mit;
+          for(mit=constants.begin();mit!=constants.end();mit++) {
+            vars[mit->first]=mit->second;
+          }
+          calc.compile(function.c_str(),&vars);
+
+          // Create column from function
+          for(int j=i_thread;j<((int)nlines);j+=n_threads) {
+            for(aciter it=atree.begin();it!=atree.end();it++) {
+              vars[it->first]=it->second.dat[j];
+            }
+            vec[j]=calc.eval(&vars);
+          }
+          
+        } else {
+          
+          calc.compile(function.c_str(),0);
+
+          // Get the variable list as a list of u32string
+          std::vector<std::u32string> cols32=calc.get_var_list();
+
+          // Convert it to a list of utf8 strings
+          std::vector<std::string> cols(cols32.size());
+          for(size_t ij=0;ij<cols32.size();ij++) {
+            char32_to_utf8(cols32[ij],cols[ij]);
+          }
+
+          std::map<std::string,double>::const_iterator mit;
+          for(mit=constants.begin();mit!=constants.end();mit++) {
+            vars[mit->first]=mit->second;
+          }
+
+          // Create column from function
+          for(int j=i_thread;j<((int)nlines);j+=n_threads) {
+            for(size_t j=0;j<cols.size();j++) {
+              vars[cols[j]]=this->get(cols[j],j);
+            }
+            vec[j]=calc.eval(&vars);
+          }
+          
+        }
+      
         // End of parallel region
       }
 
