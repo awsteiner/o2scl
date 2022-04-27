@@ -30,6 +30,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/interpm_idw.h>
+#include <o2scl/interpm_krige.h>
 
 namespace o2scl {
   
@@ -166,8 +167,8 @@ namespace o2scl {
 
     size_t ix;
 
-    vector<string> col_list_x;
-    vector<string> col_list_y;
+    std::vector<std::string> col_list_x;
+    std::vector<std::string> col_list_y;
     matrix_view_table<> mvt_x;
     matrix_view_table_transpose<> mvt_y;
     
@@ -219,7 +220,7 @@ namespace o2scl {
     virtual int eval_unc(size_t n, const vec_t &p, double &log_wgt,
                  double &log_wgt_unc, vec2_t &dat, vec2_t &dat_unc) {
       
-      iko.eval_err<vec_t,vec2_t,vec2_t>(p,dat,dat_unc);
+      //iko.eval_err<vec_t,vec2_t,vec2_t>(p,dat,dat_unc);
       log_wgt=dat[ix];
       log_wgt_unc=dat_unc[ix];
       return 0;
