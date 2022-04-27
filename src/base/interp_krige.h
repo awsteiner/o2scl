@@ -70,6 +70,7 @@ namespace o2scl {
 
          - The cross validation method may need to be fixed to match,
            e.g. R&W.
+         - Fix integrals.
          
       \endverbatim
 
@@ -377,7 +378,7 @@ namespace o2scl {
     /** \brief Generate a probability distribution for the interpolation
         at a specified point
 
-        This function ipmlements Eq. 2.19 of R&W
+        This function implements Eq. 2.19 of R&W
      */
     prob_dens_gaussian gen_dist(double x0) const {
 
@@ -465,6 +466,16 @@ namespace o2scl {
       \endverbatim
 
       \note This class is experimental.
+
+      \verbatim embed:rst
+
+      .. todo:
+
+         Future: Class interp_krige_optim only allows one parameter,
+         but we could generalize it to allow several hyperparameters,
+         similar to the way sklearn works.
+         
+      \endverbatim
   */
   template<class vec_t, class vec2_t=vec_t,
            class mat_t=boost::numeric::ublas::matrix<double>,

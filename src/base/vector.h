@@ -1064,7 +1064,8 @@ namespace o2scl {
       elements.
 
       \note This \f$ {\cal O}(k N) \f$ algorithm is useful only when 
-      \f$ k << N \f$.
+      \f$ k << N \f$. The vector \c index is always resized to 
+      have a size equal to \c k.
 
       If \c k is zero or \c n is zero or \f$ k > n\f$, then this
       function calls the error handler.
