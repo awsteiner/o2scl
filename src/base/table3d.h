@@ -749,6 +749,38 @@ namespace o2scl {
 
     /** \brief Set the current table3d object by reading a 
 	\ref o2scl::table 
+
+        The function reads the table \c tab and attempts to convert it
+        to a table3d object by using column \c xname2 and \c yname2 as
+        the values for the x- and y-grids. This function is particularly
+        useful for a table which has the following structure:
+        \verbatim
+        x y z
+        1 1 4.5
+        1 2 2.0
+        1 3 1.6
+        2 1 1.5
+        2 3 4.7
+        3 1 3.9
+        3 2 4.5
+        3 3 4.8
+        \endverbatim
+        If \c xname2 or \c yname2 are empty strings, then the first or
+        second column is presumed to hold the value for the x- or
+        y-grid, respectively. The grids in the table3d object are set
+        to include all possible values in the associated column,
+        treating any values with a relative deviation of \c eps as
+        identical. In the example above, using "x" and "y" as the
+        columns for the table3d grid, the grids would both be [1,2,3].
+
+        New slices are created in the table3d for each column in the
+        table object which is not part of the grid. Any current data
+        stored in the table3d object is destroyed. All slices are
+        filled with \c empty_value before being assigned values from
+        \c tab. For example, in the table above, the slice named "z"
+        in the new table3d object would have a final entry of 0.0 for
+        (x,y) at (2,2) because there is no entry in the original table
+        for that location.
      */
     template<class vec_t>
       int read_table(const o2scl::table<vec_t> &tab, 
@@ -843,7 +875,8 @@ namespace o2scl {
       // Create new slices
       std::vector<std::string> sl_names;
       for(size_t i=0;i<tab.get_ncolumns();i++) {
-	if (tab.get_column_name(i)!=xname2 && tab.get_column_name(i)!=yname2) {
+	if (tab.get_column_name(i)!=xname2 &&
+            tab.get_column_name(i)!=yname2) {
 	  std::string sl=tab.get_column_name(i);
 	  if (verbose>0) {
 	    std::cout << "New slice: " << sl << std::endl;
@@ -856,7 +889,8 @@ namespace o2scl {
       
       // Set the data
       for(size_t i=0;i<tab.get_ncolumns();i++) {
-	if (tab.get_column_name(i)!=xname2 && tab.get_column_name(i)!=yname2) {
+	if (tab.get_column_name(i)!=xname2 &&
+            tab.get_column_name(i)!=yname2) {
 	  std::string sl=tab.get_column_name(i);
 	  for(size_t j=0;j<tab.get_nlines();j++) {
 	    set_val(xdata[j],ydata[j],sl,tab.get(i,j));
