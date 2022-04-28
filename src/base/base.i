@@ -1848,21 +1848,21 @@ class interp_krige_optim<std::vector<double>>
 - size_t mode
 - size_t nlen
 - bool full_min
-#- function set_noise
-#  - int
-#  - size_t size
-#  - io const std::vector<double> &x
-#  - io const std::vector<double> &y
-#  - double noise_var
-#  - bool rescale [false]
-#  - bool err_on_fail [true]    
-#- function set
-#  - int
-#  - size_t size
-#  - io const std::vector<double> &x
-#  - io const std::vector<double> &y
-#  - bool rescale
-#  - bool err_on_fail [true]
+- function set_noise
+  - int
+  - size_t size
+  - io const std::vector<double> &x
+  - io const std::vector<double> &y
+  - double noise_var
+  - bool rescale [false]
+  - bool err_on_fail [true]    
+- function set
+  - void
+  - size_t size
+  - io const std::vector<double> &x
+  - io const std::vector<double> &y
+  - bool rescale
+  - bool err_on_fail [true]
 - function eval
   - double
   - double x0

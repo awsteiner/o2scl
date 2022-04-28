@@ -998,6 +998,10 @@ bool o2scl_interp_krige_optim_std_vector_double__get_full_min(void *vptr);
 
 void o2scl_interp_krige_optim_std_vector_double__set_full_min(void *vptr, bool v);
 
+int o2scl_interp_krige_optim_std_vector_double__set_noise(void *vptr, size_t size, void *ptr_x, void *ptr_y, double noise_var, bool rescale=false, bool err_on_fail=true);
+
+void o2scl_interp_krige_optim_std_vector_double__set(void *vptr, size_t size, void *ptr_x, void *ptr_y, bool rescale, bool err_on_fail=true);
+
 double o2scl_interp_krige_optim_std_vector_double__eval(void *vptr, double x0);
 
 double o2scl_interp_krige_optim_std_vector_double__deriv(void *vptr, double x0);

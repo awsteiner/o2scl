@@ -2891,6 +2891,22 @@ void o2scl_interp_krige_optim_std_vector_double__set_full_min(void *vptr, bool v
   return;
 }
 
+int o2scl_interp_krige_optim_std_vector_double__set_noise(void *vptr, size_t size, void *ptr_x, void *ptr_y, double noise_var, bool rescale, bool err_on_fail) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  int ret=ptr->set_noise(size,*x,*y,noise_var,rescale,err_on_fail);
+  return ret;
+}
+
+void o2scl_interp_krige_optim_std_vector_double__set(void *vptr, size_t size, void *ptr_x, void *ptr_y, bool rescale, bool err_on_fail) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  ptr->set(size,*x,*y,rescale,err_on_fail);
+  return;
+}
+
 double o2scl_interp_krige_optim_std_vector_double__eval(void *vptr, double x0) {
   interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
   double ret=ptr->eval(x0);
