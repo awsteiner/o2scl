@@ -982,6 +982,12 @@ void *o2scl_create_interp_krige_optim_std_vector_double_();
 
 void o2scl_free_interp_krige_optim_std_vector_double_(void *vptr);
 
+size_t o2scl_interp_krige_optim_std_vector_double__get_mode_loo_cv(void *vptr);
+
+
+size_t o2scl_interp_krige_optim_std_vector_double__get_mode_max_lml(void *vptr);
+
+
 int o2scl_interp_krige_optim_std_vector_double__get_verbose(void *vptr);
 
 void o2scl_interp_krige_optim_std_vector_double__set_verbose(void *vptr, int v);

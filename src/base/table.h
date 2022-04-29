@@ -3132,6 +3132,10 @@ namespace o2scl {
             char32_to_utf8(cols32[ij],cols[ij]);
           }
 
+          // At this point, the vector \c cols may contain the names
+          // of constants which are not columns, so we have to use
+          // is_column() below to double check.
+          
           std::map<std::string,double>::const_iterator mit;
           for(mit=constants.begin();mit!=constants.end();mit++) {
             vars[mit->first]=mit->second;
@@ -3140,7 +3144,11 @@ namespace o2scl {
           // Create column from function
           for(int j=i_thread;j<((int)nlines);j+=n_threads) {
             for(size_t k=0;k<cols.size();k++) {
-              vars[cols[k]]=this->get(cols[k],j);
+              // Skip entries that are constants because they're
+              // already taken care of above.
+              if (this->is_column(cols[k])) {
+                vars[cols[k]]=this->get(cols[k],j);
+              }
             }
             vec[j]=calc.eval(&vars);
           }

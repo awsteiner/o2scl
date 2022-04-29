@@ -2847,6 +2847,18 @@ void o2scl_free_interp_krige_optim_std_vector_double_(void *vptr) {
   return;
 }
 
+size_t o2scl_interp_krige_optim_std_vector_double__get_mode_loo_cv(void *vptr) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  return ptr->mode_loo_cv;
+}
+
+
+size_t o2scl_interp_krige_optim_std_vector_double__get_mode_max_lml(void *vptr) {
+  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
+  return ptr->mode_max_lml;
+}
+
+
 int o2scl_interp_krige_optim_std_vector_double__get_verbose(void *vptr) {
   interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
   return ptr->verbose;

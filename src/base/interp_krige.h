@@ -223,7 +223,7 @@ namespace o2scl {
     
     virtual ~interp_krige() {}
     
-    /** \brief If true, keep \f$ K^{-1} \f$
+    /** \brief If true, keep \f$ K^{-1} \f$ (default true)
 
         This must be set to true in order to use \ref sigma() or
         \ref gen_dist() .
@@ -1007,8 +1007,7 @@ namespace o2scl {
     }
   
     /// Initialize interpolation routine
-    virtual void set(
-                     size_t size, const vec_t &x, const vec2_t &y,
+    virtual void set(size_t size, const vec_t &x, const vec2_t &y,
                      bool rescale, bool err_on_fail=true) {
 
       // Use the mean absolute value to determine noise

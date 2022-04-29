@@ -2,12 +2,11 @@
 #
 # Todo:
 # 1. Finish o2sclpy/test/test_tensor.py
-# 2. Implement static const ints for class columnify
-# 3. Fix interp_vec and interp_krige_optim
-# 4. Fix all of the functions at the end
-# 5. Check links in python docs to o2scl website
-# 6. global functions like abs() and norm() for complex numbers
-# 7. Create o2sclpy/test/test_tensor_grid.py
+# 2. Fix interp_vec and interp_krige_optim
+# 3. Fix all of the functions at the end
+# 4. Check links in python docs to o2scl website
+# 5. global functions like abs() and norm() for complex numbers
+# 6. Create o2sclpy/test/test_tensor_grid.py
 #
 namespace o2scl
 py_class_doc |
@@ -1844,6 +1843,8 @@ class interp_vec<std::vector<double>>
 #
 class interp_krige_optim<std::vector<double>>
 - py_name interp_krige_optim  
+- static const size_t mode_loo_cv
+- static const size_t mode_max_lml
 - int verbose
 - size_t mode
 - size_t nlen

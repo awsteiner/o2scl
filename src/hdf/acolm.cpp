@@ -358,9 +358,9 @@ void acol_manager::update_o2_docs(size_t narr,
 
     // Afterwards, strip the prefix "Parameters: " from the
     // parameter description
-    if (options_arr[j].parm_desc.substr(0,12)==((string)"Parameters: ")) {
+    if (options_arr[j].parm_desc.substr(0,11)==((string)"Arguments: ")) {
       options_arr[j].parm_desc=options_arr[j].parm_desc.substr
-        (12,options_arr[j].parm_desc.length()-12);
+        (11,options_arr[j].parm_desc.length()-11);
     }
     
     if (found==true) {

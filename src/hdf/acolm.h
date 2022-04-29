@@ -323,7 +323,7 @@ namespace o2scl_acol {
         Assign a constant to the table, e.g. <tt>-assign pi
         "acos(-1)"</tt>.
 
-        Parameters: <tt><name> val</tt>
+        Arguments: <tt><name> val</tt>
 
         Assign a constant value to a name for the present table. Valid
         constant values are things like <tt>1.618</tt>,
@@ -338,9 +338,9 @@ namespace o2scl_acol {
 
         Histogram series in a table3d object.
 
-        <grid vector spec.> <direction (\"x\" or \"y\")> <grid name>
-        <bin edges vector spec.> "<bin grid vector spec.> <bin name>
-        <pattern> <new slice>
+        Arguments: <tt><grid vector spec.> <direction (\"x\" or
+        \"y\")> <grid name> <bin edges vector spec.> "<bin grid vector
+        spec.> <bin name> <pattern> <new slice></tt>
 
         Detailed desc.
      */
@@ -353,7 +353,7 @@ namespace o2scl_acol {
 
         Apply a binary function to two tensor_grid objects.
 
-        <file> <object name> <function>
+        Arguments: <tt><file> <object name> <function></tt>
 
         Read tensor_grid named <object name> from file <file> and use
         it along with the function <function> to modify the current
@@ -370,7 +370,8 @@ namespace o2scl_acol {
 
         Average rows of some or all columns together.
 
-        <column or '*' for all> <window> [block averages]
+        Arguments: <tt><column or '*' for all> <window> [block
+        averages]</tt>
 
         The first argument is the column to be modified. If the first
         argument is '*', then all columns are averaged. The second
@@ -389,7 +390,7 @@ namespace o2scl_acol {
 
         Compute the correlation coefficient between two columns.
 
-        <column 1> <column 2>
+        Arguments: <tt><column 1> <column 2></tt>
 
         Compute the correlation coefficient between two columns, or,
         if no arguments are given, then compute the correlation
@@ -403,7 +404,7 @@ namespace o2scl_acol {
 
         Refine the table.
 
-        <index column> <factor>
+        Arguments: <tt><index column> <factor></tt>
 
         Detailed desc.
      */
@@ -411,7 +412,7 @@ namespace o2scl_acol {
 
     /** \brief Compute the value of a constant expression.
 
-        <expr>
+        Arguments: <tt><expr></tt>
 
         This computes the value of the constant expression <expr>.
         Examples are "calc acos(-1)" or "calc 2+1/sqrt(2.0e4)". To see
@@ -435,7 +436,7 @@ namespace o2scl_acol {
 
     /** \brief Clear the current object
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         Deallocate the memory associated with the current object. This
         command does not clear the object name stored in \c obj_name.
@@ -444,7 +445,7 @@ namespace o2scl_acol {
 
     /** \brief Get help
 
-        [command or parameter or type or topic]
+        Arguments: <tt>[command or parameter or type or topic]</tt>
 
         If no argument is specified, this outputs all of the commands
         which are valid for the current type, and then some generic
@@ -461,7 +462,7 @@ namespace o2scl_acol {
     
     /** \brief List commands, with an optional type argument
 
-        [type]
+        Arguments: <tt>[type]</tt>
 
         If no argument is specified, list all valid commands for the
         current type (including those commands which do not require a
@@ -472,48 +473,48 @@ namespace o2scl_acol {
     
     /** \brief Create an object.
 
-        <type> [...]
+        Arguments: <tt><type> [...]</tt>
 
         Create a new object of type <type>. If an object is currently
         in memory, it is deallocated before creating the new object.
 
-        "<tt>create</tt> <type> <value>": For types <tt>char</tt>,
+        <tt>create <type> <value></tt>: For types <tt>char</tt>,
         <tt>int</tt>, <tt>size_t</tt>, and <tt>string</tt>, create an
         object and give it the initial value specified.
 
-        "<tt>create</tt> <tt>double</tt> <value spec.>": Create a
-        <tt>double</tt> object and set it equal to the value specified by
-        <value spec.>. (See "acol -help functions" for help on
-        specifying functions and "acol -help value-spec" for help on
-        value specifications.)
+        <tt>create double <value spec.></tt>: Create a <tt>double</tt>
+        object and set it equal to the value specified by <value
+        spec.>. (See "acol -help functions" for help on specifying
+        functions and "acol -help value-spec" for help on value
+        specifications.)
 
-        "<tt>create</tt> <type> <size> <function of "i">": For array
+        <tt>create <type> <size> <function of "i"></tt>: For array
         types <tt>int[]</tt> and <tt>size_t[]</tt>, the user must
         specify the size of the array and a function of the array
         index <tt>i</tt> to fill the array.
 
-        "<tt>create</tt> <tt>double[]</tt> [<size> <function of "i">]
-        or [vector spec.]": For <tt>double[]</tt> the user must either
+        <tt>create double[] [<size> <function of "i">]
+        or [vector spec.]</tt>: For <tt>double[]</tt> the user must either
         give a vector specification, or specify the size of the array
         and a function of the array index <tt>i</tt>.
 
-        "<tt>create</tt> <tt>table</tt> <name> <vector spec.>":
+        <tt>create table <name> <vector spec.></tt>:
         Create a new <tt>table</tt> object with one column named <name>
         from a vector specification (see ``Vector specifications``
         for the syntax).
         
-        "<tt>create</tt> <tt>tensor</tt> <rank> <size 0> <size 1>
-        ...": Create a <tt>tensor</tt> object with the specified rank and
-        sizes. All tensor entries are initialized to zero.
+        <tt>create tensor <rank> <size 0> <size 1> ...</tt>: Create a
+        <tt>tensor</tt> object with the specified rank and sizes. All
+        tensor entries are initialized to zero.
 
-        "<tt>create</tt> <tt>tensor_grid</tt> <rank> <size 0> <size 1>
-        ...": <tt>Create a tensor_grid object</tt> with the specified
-        rank and sizes. The tensor grid is initialized to count each
-        index (beginning with zero) and the entries of the tensor are
+        <tt>create tensor_grid <rank> <size 0> <size 1> ...</tt>:
+        Create a <tt>tensor_grid object</tt> with the specified rank
+        and sizes. The tensor grid is initialized to count each index
+        (beginning with zero) and the entries of the tensor are
         initialized to zero. The grid can be specified afterwards
         using <tt>set-grid</tt>.
 
-        "<tt>create</tt> <tt>table3d</tt> <x name> <x vector spec.> <y
+        <tt>create table3d</tt> <x name> <x vector spec.> <y
         name> <y vector spec.>\n <slice name> <slice function>":
         Create a new table3d object which has one slice. The x and y
         grids are given as vector specifications (see "acol -help
@@ -535,7 +536,7 @@ namespace o2scl_acol {
 
         Set the tensor grid.
 
-        <index> <func. or vector spec>
+        Arguments: <tt><index> <func. or vector spec></tt>
 
         The first argument for the \c set-grid command specifies the
         index for which grid to set. The second argument specifies the
@@ -555,7 +556,7 @@ namespace o2scl_acol {
 
         Print out the table3d grid.
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         Output the table3d grid as a series of columns.
 
@@ -563,7 +564,7 @@ namespace o2scl_acol {
 
         Get the tensor grid.
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         Output the tensor grid as a series of columns.
      */
@@ -571,8 +572,8 @@ namespace o2scl_acol {
 
     /** \brief Download a file from the specified URL.
 
-        <file> <URL> [hash, \"file:\"hash_filename, or \"none\"] 
-        [directory]
+        Arguments: <tt><file> <URL> [hash, \"file:\"hash_filename, or
+        \"none\"] [directory]</tt>
 
         Check if a file matches a specified hash, and if not, attempt
         to download a fresh copy from the specified URL. If the
@@ -583,7 +584,7 @@ namespace o2scl_acol {
 
     /** \brief Parse doxygen XML to generate runtime docs.
         
-        (No arguments.)
+        Arguments: (No arguments.)
 
         When pugixml is enabled, this function reads the
         doxygen XML output and generates an HDF5 file which acol reads
@@ -593,7 +594,7 @@ namespace o2scl_acol {
     
     /** \brief Open local HTML docs for acol or an O₂scl topic.
 
-        [topic]
+        Arguments: <tt>[topic]</tt>
 
         If [topic] is unspecified, this command opens up the local
         HTML documentation for acol in the default web browser using
@@ -607,7 +608,8 @@ namespace o2scl_acol {
 
     /** \brief Open remote HTML docs for acol or an O₂scl topic.
 
-        [search_term], [topic] or [section search_term]
+        Arguments: <tt>[search_term], [topic] or [section
+        search_term]</tt>
         
         If no arguments are given, this command opens up the remote
         HTML documentation for acol in the default web browser using
@@ -629,7 +631,7 @@ namespace o2scl_acol {
 
         Delete a table column.
 
-        <name>
+        Arguments: <tt><name></tt>
 
         Delete the entire column named <name>.
      */
@@ -641,7 +643,7 @@ namespace o2scl_acol {
 
         Delete rows selected by a function.
 
-        <function>
+        Arguments: <tt><function></tt>
 
         Delete the set of rows for which a function evaluates to a
         number greater than 0.5. For example, <tt>-delete-rows
@@ -657,7 +659,7 @@ namespace o2scl_acol {
 
         Delete rows which match to within a specified tolerance
 
-        [relative tol.] [absolute tol.]
+        Arguments: <tt>[relative tol.] [absolute tol.]</tt>
 
         This command deletes all rows which match within the specified
         tolerances. If verbose is larger than zero then information
@@ -672,7 +674,7 @@ namespace o2scl_acol {
 
         Derivative of a function defined by two columns.
 
-        <x> <y> <name>
+        Arguments: <tt><x> <y> <name></tt>
 
         Create a new column named <name> filled with the derivative
         of the function y(x) obtained from columns <x> and <y>.
@@ -681,7 +683,7 @@ namespace o2scl_acol {
 
         Compute the derivative of the tensor object w.r.t. an index
 
-        <index>
+        Arguments: <tt><index></tt>
 
         The <tt>deriv</tt> command differentiates the tensor object
         with respect to one of the indices.
@@ -690,7 +692,7 @@ namespace o2scl_acol {
 
         Compute the derivative of the tensor object w.r.t. an index
 
-        <index>
+        Arguments: <tt><index></tt>
 
         The <tt>deriv</tt> command differentiates the tensor object
         with respect to one of the indices.
@@ -699,7 +701,7 @@ namespace o2scl_acol {
 
         Replace the array with its derivative.
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         Replace the array with its derivative using the current
         interpolation type.
@@ -708,7 +710,7 @@ namespace o2scl_acol {
 
         Replace the array with its derivative.
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         Replace the array with its derivative using the current
         interpolation type, converting it to a double[].
@@ -717,7 +719,7 @@ namespace o2scl_acol {
 
         Replace the array with its derivative.
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         Replace the array with its derivative using the current
         interpolation type, converting it to a double[].

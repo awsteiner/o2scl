@@ -742,6 +742,10 @@ namespace o2scl {
            Future: It would be great to add a function which generates
            a text file in this format as well. 
 
+           Future: This function is very similar to from_table() below,
+           so it might be possible just to avoid code duplication
+           between these two functions.
+
         \endverbatim
     */
     int read_gen3_list(std::istream &fin, int verbose=0,

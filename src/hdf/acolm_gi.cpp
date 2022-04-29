@@ -232,11 +232,14 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
   if (ncols<=0) {
     int srow, scol;
     int iret=get_screen_size_ioctl(srow,scol);
+    std::cout << "iret,srow,scol: " << iret << " " << srow << " "
+              << scol << std::endl;
     if (scol>10 && iret==0) ncols_loc=scol;
     else ncols_loc=80;
   } else {
     ncols_loc=ncols;
   }
+  cout << "Number of columns: " << ncols_loc << endl;
 
   //--------------------------------------------------------------------
   // Temporary storage strings for names and data
