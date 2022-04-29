@@ -514,19 +514,18 @@ namespace o2scl_acol {
         initialized to zero. The grid can be specified afterwards
         using <tt>set-grid</tt>.
 
-        <tt>create table3d</tt> <x name> <x vector spec.> <y
-        name> <y vector spec.>\n <slice name> <slice function>":
-        Create a new table3d object which has one slice. The x and y
-        grids are given as vector specifications (see "acol -help
-        vector-spec" for the syntax). The slice function can be
-        written in terms of the x- and y-grid values which are
-        referred to by name.
+        <tt>create table3d <x name> <x vector spec.> <y name> <y
+        vector spec.>\n <slice name> <slice function></tt>: Create a
+        new table3d object which has one slice. The x and y grids are
+        given as vector specifications (see "acol -help vector-spec"
+        for the syntax). The slice function can be written in terms of
+        the x- and y-grid values which are referred to by name.
 
         For example, using <tt>o2graph</tt> from o2sclpy:
 
-        o2graph -create table3d x func:100:i/200 y func:100:i/200 z
-        "sin(1/(x+0.01))* sin(1/(y+0.01))" -den-plot z -xtitle x
-        -ytitle y -show
+        <tt>o2graph -create table3d x func:100:i/200 y func:100:i/200
+        z "sin(1/(x+0.01))* sin(1/(y+0.01))" -den-plot z -xtitle x
+        -ytitle y -show</tt>
     */
     virtual int comm_create(std::vector<std::string> &sv, bool itive_com);
 
@@ -732,7 +731,7 @@ namespace o2scl_acol {
 
         Convert to a table object.
 
-        <column name>
+        Arguments: <tt><column name></tt>
         
         Convert the vector to a table with a single column named
         <column name>.
@@ -741,7 +740,7 @@ namespace o2scl_acol {
 
         Convert to a table object.
 
-        <column name>
+        Arguments: <tt><column name></tt>
         
         Convert the vector to a table with a single column named
         <column name>.
@@ -750,7 +749,7 @@ namespace o2scl_acol {
 
         Convert to a table object.
 
-        <column name>
+        Arguments: <tt><column name></tt>
         
         Convert the vector to a table with a single column named
         <column name>.
@@ -759,7 +758,8 @@ namespace o2scl_acol {
 
         Convert to a table object.
 
-        <index> <grid name> <data name> [values of fixed indices]
+        Arguments: <tt><index> <grid name> <data name> [values of
+        fixed indices]</tt>
         
         Detailed desc.
 
@@ -767,7 +767,7 @@ namespace o2scl_acol {
 
         Convert to a table object.
 
-        (No arguments.)
+        Arguments: (No arguments.)
         
         Convert to a table object.
      */
@@ -779,7 +779,7 @@ namespace o2scl_acol {
 
         Get diagonal elements.
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         Extract only the elements on the main diagonal to create a
         double[] object.
@@ -792,7 +792,7 @@ namespace o2scl_acol {
 
         Convert a table to a table3d object.
 
-        <x column> <y column> [empty value] [eps]
+        Arguments: <tt><x column> <y column> [empty value] [eps]</tt>
 
         The 'to-table3d' creates a table3d object using 'x column' and
         'y column' as the data for the x and y grids. If 'empty
@@ -804,7 +804,8 @@ namespace o2scl_acol {
 
         Select two indices and convert to a table3d object.
 
-        <x index> <y index> <slice name> [fixed 1] [fixed 2] ...
+        Arguments: <tt><x index> <y index> <slice name> [fixed 1]
+        [fixed 2] ...</tt>
 
         This command uses two indices in the current tensor object to
         create a table3d object. The values for the remaining indices
@@ -821,7 +822,8 @@ namespace o2scl_acol {
 
         Select two indices and convert to a table3d object.
 
-        <x index> <y index> <slice name> [fixed 1] [fixed 2] ...
+        Arguments: <tt><x index> <y index> <slice name> [fixed 1]
+        [fixed 2] ...</tt>
 
         This command uses two indices in the current tensor object to
         create a table3d object. The values for the remaining indices
@@ -838,7 +840,8 @@ namespace o2scl_acol {
 
         Select two indices and convert to a table3d object.
 
-        <x index> <y index> <slice name> [fixed 1] [fixed 2] ...
+        Arguments: <tt><x index> <y index> <slice name> [fixed 1]
+        [fixed 2] ...</tt>
 
         This command uses two indices in the current tensor object to
         create a table3d object. The values for the remaining indices
@@ -855,7 +858,8 @@ namespace o2scl_acol {
 
         Select two indices and convert to a table3d object.
 
-        <x index> <y index> <slice name> [value 1] [value 2] ...
+        Arguments: <tt><x index> <y index> <slice name> [value 1]
+        [value 2] ...</tt>
 
         This command uses two indices in the current tensor_grid
         object to create a table3d object. The values for the
@@ -873,7 +877,7 @@ namespace o2scl_acol {
 
         Convert to a hist_2d object.
 
-        <x name> <y name> <weight name>
+        Arguments: <tt><x name> <y name> <weight name></tt>
 
         Convert to a hist_2d object using the specified names.
         
@@ -881,8 +885,8 @@ namespace o2scl_acol {
 
         Select two indices and convert to a table3d object.
 
-        <x index> <y index> <x name> <x points> <y name> <y points>
-        <slice name>
+        Arguments: <tt><x index> <y index> <x name> <x points> <y
+        name> <y points> <slice name></tt>
 
         Select two indices and convert to a table3d object.
      */
@@ -894,7 +898,7 @@ namespace o2scl_acol {
 
         Convert a slice of the table3d object to a tensor_grid object.
 
-        <slice>
+        Arguments: <tt><slice></tt>
 
         Detailed desc.
 
@@ -902,7 +906,7 @@ namespace o2scl_acol {
 
         Convert the tensor to a tensor_grid object.
 
-        [function 1] [function 2] ...
+        Arguments: <tt>[function 1] [function 2] ...</tt>
 
         Convert a tensor to a tensor_grid object, using functions to
         specify the grid for each index. The functions should be
@@ -920,7 +924,7 @@ namespace o2scl_acol {
 
         Convert to a tensor object.
 
-        (No arguments.)
+        Arguments: (No arguments.)
         
         Convert to a tensor object, ignoring the grid.
      */
@@ -934,7 +938,8 @@ namespace o2scl_acol {
 
         Select two indices and convert to a table3d object.
 
-        <x name> <y name> <slice name> [fixed 1] [fixed 2] ...
+        Arguments: <tt><x name> <y name> <slice name> [fixed 1] [fixed
+        2] ...</tt>
 
         Detailed desc.
     */
@@ -947,7 +952,7 @@ namespace o2scl_acol {
 
         Compute autocorrelation coefficients from a set of vectors
 
-        <mult. vec. spec. 1> [mult. vec. spec. 2]
+        Arguments: <tt><mult. vec. spec. 1> [mult. vec. spec. 2]</tt>
         
         This command computes the autocorrelation coefficients for all
         vectors specified as multiple vector specifications in the
@@ -958,7 +963,7 @@ namespace o2scl_acol {
 
         For objects of type int[]:
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         Replace the current object with a <tt>double[]</tt> object which
         contains the autocorrelation coefficient as a function of the
@@ -966,7 +971,7 @@ namespace o2scl_acol {
 
         For objects of type double[]:
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         Replace the current object with a <tt>double[]</tt> object which
         contains the autocorrelation coefficient as a function of the
@@ -974,8 +979,8 @@ namespace o2scl_acol {
 
         For objects of type table:
 
-        <ac> <ftom> <column or vector specification> [second column or vector
-        specification] ... 
+        Arguments: <tt><ac> <ftom> <column or vector specification>
+        [second column or vector specification] ...</tt>
 
         Compute autocorrelation coefficients from a column of a table.
         The first argument, <ac>, is the name of the column in which
@@ -1000,7 +1005,7 @@ namespace o2scl_acol {
 
         Compute the autocorrelation coefficient using \c acor
 
-        <column>
+        Arguments: <tt><column></tt>
 
         Detailed desc.
      */
@@ -1013,7 +1018,7 @@ namespace o2scl_acol {
 
         Derivative with respect to x.
 
-        <f> <dfdx>
+        Arguments: <tt><f> <dfdx></tt>
 
         Create a new slice named <dfdx> filled with the derivative of
         the function from the x grid and slice named <f>.
@@ -1026,7 +1031,7 @@ namespace o2scl_acol {
 
         Derivative with respect to y.
 
-        <f> <dfdy>
+        Arguments: <tt><f> <dfdy></tt>
 
         Create a new slice named <dfdy> filled with the derivative of
         the function from the y grid and slice named <f>.
@@ -1039,7 +1044,7 @@ namespace o2scl_acol {
 
         Second derivative of a function defined by two columns.
 
-        <x> <y> <name>
+        Arguments: <tt><x> <y> <name></tt>
 
         Create a new column named <name> filled with the second
         derivative of the function y(x) obtained from columns <x> and
@@ -1049,7 +1054,7 @@ namespace o2scl_acol {
 
     /** \brief List objects in a HDF5 file
 
-        <file>
+        Arguments: <tt><file></tt>
 
         This lists all the top-level datasets and groups in a HDF5
         file and, for those groups which are in the O₂scl format,
@@ -1060,7 +1065,7 @@ namespace o2scl_acol {
 
     /** \brief Read an object from an O₂scl-style HDF5 file.
 
-        <file> [object name]
+        Arguments: <tt><file> [object name]</tt>
 
         Read an HDF5 file with the specified filename. If the [object
         name] argument is specified, then read the object with the
@@ -1076,7 +1081,7 @@ namespace o2scl_acol {
 
         Add 'nlines' as a constant to a table object.
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         Add a constant called 'nlines' to the table and set it equal
         to the number of lines (rows) in the table.
@@ -1089,7 +1094,7 @@ namespace o2scl_acol {
 
         Convert a table to a histogram.
 
-        <col> <n_bins> [wgts]
+        Arguments: <tt><col> <n_bins> [wgts]</tt>
 
         The 'to-hist' command creates a 1D histogram from 'col' using
         exactly 'n_bins' bins and (optionally) weighting the entries
@@ -1106,7 +1111,8 @@ namespace o2scl_acol {
 
         Convert a table to a 2d histogram.
 
-        <col x> <col y> <n_x_bins> <n_y_bins> [wgts]
+        Arguments: <tt><col x> <col y> <n_x_bins> <n_y_bins>
+        [wgts]</tt>
 
         The 'to-hist-2d' command creates a 2D histogram from 'col x'
         and 'col y' using 'n_x_bins' bins in the x direction and
@@ -1126,7 +1132,7 @@ namespace o2scl_acol {
 
     /** \brief Output the type of the current object
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         Show the current object type, either <tt>table</tt>,
         <tt>table3d</tt>, <tt>hist</tt>, <tt>hist_2d</tt>,
@@ -1145,7 +1151,7 @@ namespace o2scl_acol {
 
         Find a row which maximizes a function.
 
-        <func> or find-row <col> <val>
+        Arguments: <tt><func> or find-row <col> <val></tt>
 
         If one argument is given, then find-row finds the row which
         maximizes the value of the expression given in <func>, and
@@ -1162,7 +1168,7 @@ namespace o2scl_acol {
 
         Create a column from a function
 
-        <func> <name>
+        Arguments: <tt><func> <name></tt>
 
         Set the column named <name> to the result of a function,
         <func>, in terms of the other columns. If the column does not
@@ -1175,7 +1181,7 @@ namespace o2scl_acol {
 
         Set the values of the array given a function.
 
-        <function>
+        Arguments: <tt><function></tt>
 
         Set the values of the array given a user-specified function of
         'i'. For example, "(sin(i)>1)*4".
@@ -1184,7 +1190,7 @@ namespace o2scl_acol {
 
         Set the values of the array given a function.
 
-        <function>
+        Arguments: <tt><function></tt>
 
         Set the values of the array given a user-specified function of
         'i'. For example, "(sin(i)>1)*4".
@@ -1193,7 +1199,7 @@ namespace o2scl_acol {
 
         Set the values of the array given a function.
 
-        <function>
+        Arguments: <tt><function></tt>
 
         Set the values of the array given a user-specified function of
         'i'. For example, "(sin(i)>1)*4".
@@ -1201,8 +1207,8 @@ namespace o2scl_acol {
         For objects of type hist:
 
         Apply a function to the weights.
-
-        <function>
+        
+        Arguments: <tt><function></tt>
 
         Apply a function to the weights.
 
@@ -1210,7 +1216,7 @@ namespace o2scl_acol {
 
         Create a new slice from a function.
 
-        <func> <name>
+        Arguments: <tt><func> <name></tt>
 
         Set the slice named <name> to the result of a function,
         <func>, in terms of the other slices. If the slice does not
@@ -1223,7 +1229,7 @@ namespace o2scl_acol {
 
         Set the tensor values from a function.
 
-        [cond. function] <function of v, i0, i1, ...>
+        Arguments: <tt>[cond. function] <function of v, i0, i1, ...></tt>
 
         The \c function command sets all entries in a tensor equal to
         a user-specified mathematical function of the indices. When
@@ -1235,7 +1241,8 @@ namespace o2scl_acol {
 
         Set the tensor values from a function.
 
-        [conditional func.] <func. of v, i0, i1, ... and x0, x1, ...>
+        Arguments: <tt>[conditional func.] <func. of v, i0, i1, ...
+        and x0, x1, ...></tt>
 
         The "function" command sets all the data entries in a
         tensor_grid equal to a user-specified mathematical function of
@@ -1256,7 +1263,7 @@ namespace o2scl_acol {
 
         Add column from a vector specification to the table.
 
-        <vec. spec.> <column>
+        Arguments: <tt><vec. spec.> <column></tt>
 
         Detailed spec.
      */
@@ -1264,7 +1271,7 @@ namespace o2scl_acol {
 
     /** \brief Read an object generic text file
         
-        <type> <file>
+        Arguments: <tt><type> <file></tt>
         
         Read an object of type <type> from a text file named <file>.
         The allowed text file formats depend on the particular type
@@ -1308,7 +1315,7 @@ namespace o2scl_acol {
 
         Get a row by index.
 
-        <index>
+        Arguments: <tt><index></tt>
 
         Get a row by index. The first row has index 0, and the last
         row has index n-1, where n is the total number of rows as
