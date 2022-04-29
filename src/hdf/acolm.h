@@ -478,13 +478,13 @@ namespace o2scl_acol {
         Create a new object of type <type>. If an object is currently
         in memory, it is deallocated before creating the new object.
 
-        <tt>create <type> <value></tt>: For types <tt>char</tt>,
+        <tt>create <type> <val></tt>: For types <tt>char</tt>,
         <tt>int</tt>, <tt>size_t</tt>, and <tt>string</tt>, create an
         object and give it the initial value specified.
 
         <tt>create double <value spec.></tt>: Create a <tt>double</tt>
         object and set it equal to the value specified by <value
-        spec.>. (See "acol -help functions" for help on specifying
+        spec.>. (See "acol -help <tt>functions</tt>' for help on specifying
         functions and "acol -help value-spec" for help on value
         specifications.)
 
@@ -508,7 +508,7 @@ namespace o2scl_acol {
         tensor entries are initialized to zero.
 
         <tt>create tensor_grid <rank> <size 0> <size 1> ...</tt>:
-        Create a <tt>tensor_grid object</tt> with the specified rank
+        Create a <tt>tensor_grid</tt> object with the specified rank
         and sizes. The tensor grid is initialized to count each index
         (beginning with zero) and the entries of the tensor are
         initialized to zero. The grid can be specified afterwards
@@ -516,10 +516,11 @@ namespace o2scl_acol {
 
         <tt>create table3d <x name> <x vector spec.> <y name> <y
         vector spec.>\n <slice name> <slice function></tt>: Create a
-        new table3d object which has one slice. The x and y grids are
-        given as vector specifications (see "acol -help vector-spec"
-        for the syntax). The slice function can be written in terms of
-        the x- and y-grid values which are referred to by name.
+        new <tt>table3d</tt> object which has one slice. The x and y
+        grids are given as vector specifications (see "acol -help
+        vector-spec" for the syntax). The slice function can be
+        written in terms of the x- and y-grid values which are
+        referred to by name.
 
         For example, using <tt>o2graph</tt> from o2sclpy:
 
