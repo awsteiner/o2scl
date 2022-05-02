@@ -783,7 +783,7 @@ namespace o2scl_acol {
         Arguments: (No arguments.)
 
         Extract only the elements on the main diagonal to create a
-        double[] object.
+        <tt>double[]</tt> object.
      */
     virtual int comm_diag(std::vector<std::string> &sv, bool itive_com);
 
@@ -791,7 +791,7 @@ namespace o2scl_acol {
 
         For objects of type table:
 
-        Convert a table to a table3d object.
+        Convert a <tt>table</tt> to a <tt>table3d</tt> object.
 
         Arguments: <tt><x column> <y column> [empty value] [eps]</tt>
 
@@ -1334,7 +1334,7 @@ namespace o2scl_acol {
 
         Convert a slice to a table object.
 
-        <"x" or "y"> <value>
+        Arguments: <tt><"x" or "y"> <value></tt>
 
         Extract a slice of a table3d object at fixed x or fixed y to
         create a new table object. This function uses interpolation
@@ -1346,7 +1346,7 @@ namespace o2scl_acol {
 
         Slice to a smaller rank tensor_grid object.
 
-        <index 1> <value 1> <index 2> <value 2> ...
+        Arguments: <tt><index 1> <value 1> <index 2> <value 2> ...</tt>
 
         Detailed desc.
     */
@@ -1358,7 +1358,7 @@ namespace o2scl_acol {
 
         Construct a histogram from a slice.
 
-        <slice>
+        Arguments: <tt><slice></tt>
 
         Detailed desc.
      */
@@ -1370,7 +1370,7 @@ namespace o2scl_acol {
 
         Fit two columns to a function (experimental).
 
-        <x> <y> <yerr> <ynew> <par names> <func> <vals>
+        Arguments: <tt><x> <y> <yerr> <ynew> <par names> <func> <vals></tt>
 
         Detailed desc.
     */
@@ -1383,7 +1383,7 @@ namespace o2scl_acol {
 
         Interpolate a column from another file.
 
-        <file> <table> <oldx> <oldy> <newx> [newy]
+        Arguments: <tt><file> <table> <oldx> <oldy> <newx> [newy]</tt>
 
         Insert a column from file <fname> interpolating it into the
         current table. The column <oldy> is the columns in the file
@@ -1396,7 +1396,7 @@ namespace o2scl_acol {
 
         Interpolate a slice from another file.
 
-        <file> <table> <old> [new]
+        Arguments: <tt><file> <table> <old> [new]</tt>
     */
     virtual int comm_insert(std::vector<std::string> &sv, bool itive_com);
 
@@ -1406,7 +1406,7 @@ namespace o2scl_acol {
 
         Insert a table from another file.
 
-        <fname> [table name] [old_x new_x]
+        Arguments: <tt><fname> [table name] [old_x new_x]</tt>
 
         Insert all columns from file <fname> into the current table.
         The first table is used or the table object named table_name,
@@ -1429,8 +1429,8 @@ namespace o2scl_acol {
 
         Integrate a function specified by two columns.
 
-        <x> <y> <name>
-
+        Arguments: <tt><x> <y> <name></tt>
+        
         Create a new column named <name> filled with the integral of
         the function y(x) obtained from columns <x> and <y>.
      */
@@ -1438,7 +1438,7 @@ namespace o2scl_acol {
 
     /** \brief Toggle interactive mode
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         If given as a command-line parameter, 'interactive' toggles
         the execution of the interactive mode after the command-line
@@ -1450,7 +1450,7 @@ namespace o2scl_acol {
 
     /** \brief Output current object in the internal HDF5 format.
         
-        <file>
+        Arguments: <tt><file></tt>
 
         Output the current object to the specified file
         in the internal HDF5 format. 
@@ -1463,7 +1463,7 @@ namespace o2scl_acol {
 
         Interpolate a number into a column.
 
-        <x name> <x value> <y name>
+        Arguments: <tt><x name> <x value> <y name></tt>
 
         Interpolate <x value> from column named <x name> into column
         named <y name>.
@@ -1472,7 +1472,7 @@ namespace o2scl_acol {
 
         Interpolate an index into the array
 
-        <x value>
+        Arguments: <tt><x value></tt>
 
         Interpolate <x value> in the array.
 
@@ -1480,7 +1480,7 @@ namespace o2scl_acol {
 
         Interpolate an index into the array
 
-        <x value>
+        Arguments: <tt><x value></tt>
 
         Interpolate <x value> in the array and print out the result
         as a double.
@@ -1489,7 +1489,7 @@ namespace o2scl_acol {
 
         Interpolate an index into the array
 
-        <x value>
+        Arguments: <tt><x value></tt>
 
         Interpolate <x value> in the array and print out the result
         as a double.
@@ -1498,7 +1498,7 @@ namespace o2scl_acol {
 
         Interpolate x and y values into a slice.
 
-        <z name> <x value> <y value>
+        Arguments: <tt><z name> <x value> <y value></tt>
 
         Interpolate (<x value>,<y value>) into the slice named <z
         name>.
@@ -1507,7 +1507,7 @@ namespace o2scl_acol {
 
         Linearly interpolate in the grid.
 
-        <value 1> <value 2> <value 3> ...
+        Arguments: <tt><value 1> <value 2> <value 3> ...</tt>
 
         The command "interp" uses linear interpolation to interpolate
         an array with size equal to the tensor rank into the tensor
@@ -1521,7 +1521,7 @@ namespace o2scl_acol {
 
         List the constants, column names and other info.
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         List the constants, column names and other info.
 
@@ -1529,7 +1529,7 @@ namespace o2scl_acol {
 
         List the slice names and print out grid info.
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         List the slice names and print out grid info.
 
@@ -1537,7 +1537,7 @@ namespace o2scl_acol {
 
         List the tensor rank and index sizes.
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         List the tensor rank and index sizes.
 
@@ -1545,7 +1545,7 @@ namespace o2scl_acol {
 
         List the tensor rank and index sizes.
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         List the tensor rank and index sizes.
 
@@ -1553,7 +1553,7 @@ namespace o2scl_acol {
 
         List the tensor rank and index sizes.
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         List the tensor rank and index sizes.
 
@@ -1561,7 +1561,7 @@ namespace o2scl_acol {
 
         List the tensor rank and index sizes.
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         List the tensor rank and index sizes.
 
@@ -1569,7 +1569,7 @@ namespace o2scl_acol {
 
         List the bin edges.
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         For objects of type hist_2d:
     */
@@ -1581,7 +1581,7 @@ namespace o2scl_acol {
 
         Compute the maximum value of a column.
 
-        <column name>
+        Arguments: <tt><column name></tt>
 
         Compute the maximum value of a column.
 
@@ -1589,7 +1589,7 @@ namespace o2scl_acol {
 
         Compute the maximum value and the associated index.
 
-        (No arguments.)
+        Arguments: (No arguments.)
 
         Compute the maximum value and the associated index.
 
@@ -1613,7 +1613,7 @@ namespace o2scl_acol {
 
         Compute the maximum value of a slice.
 
-        <slice name>
+        Arguments: <tt><slice name></tt>
 
         Compute the maximum value of a slice.
 
@@ -1665,7 +1665,7 @@ namespace o2scl_acol {
 
         Compute the minimum value of a column.
 
-        <column name>
+        Arguments: <tt><column name></tt>
 
         Compute the minimum value of a column.
 
@@ -1697,7 +1697,7 @@ namespace o2scl_acol {
 
         Compute the minimum value of a slice.
 
-        <slice name>
+        Arguments: <tt><slice name></tt>
 
         Compute the minimum value of a slice.
 
@@ -1749,7 +1749,7 @@ namespace o2scl_acol {
 
         Get or set the name of the x grid.
 
-        [name]
+        Arguments: <tt>[name]</tt>
 
         Get or set the name of the x grid.
      */
@@ -1761,7 +1761,7 @@ namespace o2scl_acol {
 
         Get or set the name of the y grid.
 
-        [name]
+        Arguments: <tt>[name]</tt>
 
         Get or set the name of the y grid.
      */
@@ -1773,7 +1773,7 @@ namespace o2scl_acol {
 
         Add a column containing the row numbers.
 
-        [column name]
+        Arguments: <tt>[column name]</tt>
         
         Define a new column named [column name] and fill the column
         with the row indexes, beginning with zero. If no argument is
@@ -1783,7 +1783,7 @@ namespace o2scl_acol {
 
     /** \brief Output the current object to screen or text file.
 
-        [file]
+        Arguments: <tt>[file]</tt>
 
         Output the object to the screen, or if the [file] argument is
         specified, to a file. This is the same format as can be read
@@ -1797,7 +1797,7 @@ namespace o2scl_acol {
 
         Rearrange the tensor
 
-        <index spec. 1> [index spec. 2] ...
+        Arguments: <tt><index spec. 1> [index spec. 2] ...</tt>
 
         Index specifications are: index(ix), fixed(ix), sum(ix),
         trace(ix1,ix2), reverse(ix), and range(ix,start,end). Index
@@ -1812,7 +1812,7 @@ namespace o2scl_acol {
 
         Rearrange the tensor.
 
-        <index spec. 1> [index spec. 2] ...
+        Arguments: <tt><index spec. 1> [index spec. 2] ...</tt>
 
         Index specifications are: index(ix), fixed(ix), sum(ix),
         trace(ix1,ix2), reverse(ix), and range(ix,start,end). Index
@@ -1827,7 +1827,7 @@ namespace o2scl_acol {
 
         Rearrange the tensor.
 
-        <index spec. 1> [index spec. 2] ...
+        Arguments: <tt><index spec. 1> [index spec. 2] ...</tt>
 
         Index specifications are: index(ix), fixed(ix), sum(ix),
         trace(ix1,ix2), reverse(ix), and range(ix,start,end). Index
@@ -1842,7 +1842,7 @@ namespace o2scl_acol {
 
         Rearrange the tensor_grid object.
 
-        <index spec. 1> [index spec. 2] ...
+        Arguments: <tt><index spec. 1> [index spec. 2] ...</tt>
 
         Index specifications are: index(ix), fixed(ix), sum(ix),
         trace(ix1,ix2), reverse(ix), range(ix,start,end),
@@ -1858,7 +1858,7 @@ namespace o2scl_acol {
 
     /** \brief Preview the current object
 
-        [number of lines] [number of columns]
+        Arguments: <tt>[number of lines] [number of columns]</tt>
 
         Print out all or part of the current object in format suitable
         for the screen.
@@ -1867,7 +1867,7 @@ namespace o2scl_acol {
 
     /** \brief Send a slack message
 
-        ["#channel"] <strings-spec>
+        Arguments: <tt>["#channel"] <strings-spec></tt>
 
         Send a message to slack, using the specified channel. If the
         channel is not specified, it is taken from the environment
@@ -1885,32 +1885,32 @@ namespace o2scl_acol {
 
         For objects of type int:
 
-        [value]
+        Arguments: <tt>[value]</tt>
 
         Get or set the integer.
 
         For objects of type size_t:
 
-        [value]
+        Arguments: <tt>[value]</tt>
 
         Get or set the size_t object.
 
         For objects of type string:
 
-        [value]
+        Arguments: <tt>[value]</tt>
 
         Get or set the string.
 
         For objects of type double:
 
-        [value spec.]
+        Arguments: <tt>[value spec.]</tt>
 
         Get or set the value of the double object. See ``Value
         specifications`` for more information.
 
         For objects of type char:
 
-        [value]
+        Arguments: <tt>[value]</tt>
 
         Get or set the character.
 
@@ -1932,7 +1932,7 @@ namespace o2scl_acol {
 
         Concatenate data from a second table3d onto current table3d.
 
-        <file> [name]
+        Arguments: <tt><file> [name]</tt>
 
         Add all slices from the second table3d object which aren't
         already present in the current table3d object.
@@ -1946,7 +1946,7 @@ namespace o2scl_acol {
 
         Add data from a second table object to current table.
 
-        <file> [name]
+        Arguments: <tt><file> [name]</tt>
 
         Add all columns from the second table to their corresponding
         columns in the current table, creating new columns if
@@ -1980,7 +1980,7 @@ namespace o2scl_acol {
 
         Add data from a second table3d object to current table3d.
         
-        <file> [name]
+        Arguments: <tt><file> [name]</tt>
 
         Add all slides from the second table3d to their corresponding
         slices in the current table3d, creating new slices if
@@ -2016,7 +2016,7 @@ namespace o2scl_acol {
 
         Rename a column.
 
-        <old> <new>
+        Arguments: <tt><old> <new></tt>
 
         Rename a column from <old> to <new>. Note that to rename the
         entire object, you should use <tt>-set obj_name new_name</tt>.
@@ -2025,7 +2025,7 @@ namespace o2scl_acol {
 
         Rename a slice.
 
-        <old> <new>
+        Arguments: <tt><old> <new></tt>
 
         Rename a slice from <old> to <new>. Note that to rename the
         entire object, you should use <tt>-set obj_name new_name</tt>.
@@ -2038,7 +2038,7 @@ namespace o2scl_acol {
 
         Select columns for a new table.
 
-        <column 1> [column 2] ...
+        Arguments: <tt><column 1> [column 2] ...</tt>
 
         Select creates a new table from the present table, including
         only the columns specified in <cols>. The column specification
@@ -2052,7 +2052,7 @@ namespace o2scl_acol {
 
         Select columns for a new table3d.
 
-        <slice 1> [slice 2] ...
+        Arguments: <tt><slice 1> [slice 2] ...</tt>
 
         Select creates a new table3d from the present table3d,
         including only the slices specified in <slice spec.>. The
@@ -2069,7 +2069,7 @@ namespace o2scl_acol {
 
         For objects of type table:
         
-        <row specification>
+        Arguments: <tt><row specification></tt>
 
         Select the rows from a table for which the row specification
         in <row_spec> evaluates to a number greater than 0.5.
@@ -2087,7 +2087,7 @@ namespace o2scl_acol {
 
         Set the entries of a column.
 
-        <row_spec> <col> <val_spec>
+        Arguments: <tt><row_spec> <col> <val_spec></tt>
 
         Set the value of rows specifed by the 'row_spec' function in
         column 'col' to the value given by the 'val_spec' function.
@@ -2098,7 +2098,7 @@ namespace o2scl_acol {
 
         Set the entries of a slice.
 
-        <x value> <y value> <z name> <val>
+        Arguments: <tt><x value> <y value> <z name> <val></tt>
 
         Set the value of the slice named 'z name' at the grid point
         closest to (<x value>,<y value>) to the value <val>.
@@ -2111,7 +2111,7 @@ namespace o2scl_acol {
 
         Set the units for a specified column.
 
-        <column> <unit>
+        Arguments: <tt><column> <unit></tt>
 
         Detailed desc.
      */
@@ -2123,7 +2123,7 @@ namespace o2scl_acol {
 
         Create contour lines from a table3d slice.
 
-        <value> <slice_name> [output_filename object_name]
+        Arguments: <tt><value> <slice_name> [output_filename object_name]</tt>
 
         The "contours" command constructs a set of contour lines using
         the data in slice named <slice> at the fixed value given in
@@ -2137,7 +2137,7 @@ namespace o2scl_acol {
 
         Create contour lines from a table3d slice.
 
-        ["frac"] <value> [output file] [output name]
+        Arguments: <tt>["frac"] <value> [output file] [output name]</tt>
 
         If the argument "frac" is not present, the "contours" command
         constructs a set of contour lines using at the fixed value
@@ -2158,7 +2158,7 @@ namespace o2scl_acol {
 
         Get the units for a specified column.
 
-        <column>
+        Arguments: <tt><column></tt>
 
         Obtains the units for the specified column.
      */
@@ -2170,7 +2170,7 @@ namespace o2scl_acol {
 
         Get or set a single entry in a table.
 
-        <column> <row> [value or "none"]
+        Arguments: <tt><column> <row> [value or "none"]</tt>
 
         This command gets or sets the value in the specified column
         and row. If "none" is specified as the third argument, then
@@ -2181,7 +2181,7 @@ namespace o2scl_acol {
 
         Get or set a single entry in a table3d object.
 
-        <slice> <x index> <y index> [value or "none"]
+        Arguments: <tt><slice> <x index> <y index> [value or "none"]</tt>
 
         Detailed desc.
 
@@ -2189,7 +2189,7 @@ namespace o2scl_acol {
 
         Get or set a single entry in a tensor object.
 
-        <index 1> <index 2> <index 3> ... [value or "none"]
+        Arguments: <tt><index 1> <index 2> <index 3> ... [value or "none"]</tt>
 
         Detailed desc.
 
@@ -2197,7 +2197,7 @@ namespace o2scl_acol {
 
         Get or set a single entry in a tensor_grid object.
 
-        <index 1> <index 2> <index 3> ... [value or "none"]
+        Arguments: <tt><index 1> <index 2> <index 3> ... [value or "none"]</tt>
 
         The \"entry\" command gets or sets a value in the tensor_grid
         object. The arguments are a list of indices and (optionally) a
@@ -2211,7 +2211,7 @@ namespace o2scl_acol {
 
         Get or set a single entry in a table.
         
-        <index column> <index value> <target column> [value or "none"]
+        Arguments: <tt><index column> <index value> <target column> [value or "none"]</tt>
         
         The "entry-grid" command first looks for the value closest to
         <index value> in the column <index column> to determine a row
@@ -2224,7 +2224,7 @@ namespace o2scl_acol {
 
         Get a single entry in a table3d object.
 
-        <slice> <x value> <y value> [value or "none"]
+        Arguments: <tt><slice> <x value> <y value> [value or "none"]</tt>
 
         Detailed desc.
 
@@ -2232,7 +2232,7 @@ namespace o2scl_acol {
 
         Get a single entry in a tensor_grid object.
 
-        <value 1> <value 2> <value 3> ... [value or "none"]
+        Arguments: <tt><value 1> <value 2> <value 3> ... [value or "none"]</tt>
 
         The "entry-grid" command gets or sets a value in the
         tensor_grid object. The arguments are a list of grid values
@@ -2247,7 +2247,7 @@ namespace o2scl_acol {
 
         Convert a column to a new unit.
 
-        <column> <new_unit>
+        Arguments: <tt><column> <new_unit></tt>
 
         Convert the units of a column to <new unit>, multipliying all
         entries in that column by the appropriate factor.
@@ -2285,7 +2285,7 @@ namespace o2scl_acol {
 
         Sort the entire table by one column.
 
-        <col> [unique]
+        Arguments: <tt><col> [unique]</tt>
 
         Sorts the entire table by the column specified in <col>.
         If the word "unique" is specified as the second argument, then
@@ -2299,7 +2299,7 @@ namespace o2scl_acol {
 
         Show column statistics.
 
-        <column>
+        Arguments: <tt><column></tt>
 
         Output the average, std. dev, max and min of <column>.
 
@@ -2307,7 +2307,7 @@ namespace o2scl_acol {
 
         Show slice statistics.
 
-        <slice>
+        Arguments: <tt><slice></tt>
 
         Output the average, std. dev, max and min of <slice>.
 
