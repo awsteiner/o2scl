@@ -918,6 +918,32 @@ namespace o2scl_acol {
      */
     virtual int comm_to_tensor_grid(std::vector<std::string> &sv,
                                     bool itive_com);
+
+    /** \brief Convert object to a \ref o2scl::tensor_grid object
+
+        For objects of type table3d:
+
+        Convert a slice of the table3d object to a tensor_grid object.
+
+        Arguments: <tt><slice></tt>
+
+        Detailed desc.
+
+        For objects of type tensor:
+
+        Convert the tensor to a tensor_grid object.
+
+        Arguments: <tt>[function 1] [function 2] ...</tt>
+
+        Convert a tensor to a tensor_grid object, using functions to
+        specify the grid for each index. The functions should be
+        specified as functions of the variable 'i', which runs from 0
+        to size-1 for each index. Any user-specified functions are
+        used up to the rank of the tensor, and if not enough functions
+        are specified, then the function 'i' is used.
+     */
+    virtual int comm_to_tg_fermi(std::vector<std::string> &sv,
+                                    bool itive_com);
     
     /** \brief Convert object to a \ref o2scl::tensor object
 

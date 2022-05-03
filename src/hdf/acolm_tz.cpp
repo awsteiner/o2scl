@@ -1090,6 +1090,46 @@ int acol_manager::comm_to_tensor_grid(std::vector<std::string> &sv,
   return 0;
 }
 
+int acol_manager::comm_to_tg_fermi(std::vector<std::string> &sv,
+				      bool itive_com) {
+
+  if (type=="table3d") {
+
+    if (sv.size()<2) {
+      cerr << "Need slice name." << endl;
+      return 1;
+    }
+    string name=sv[1];
+
+    if (sv.size()<3) {
+      cerr << "Need number of points." << endl;
+      return 2;
+    }
+    size_t n_points=o2scl::stoszt(sv[2]);
+
+    double low=0.0, high=0.0, width=0.0;
+    if (sv.size()>=4) low=o2scl::stod(sv[3]);
+    if (sv.size()>=5) high=o2scl::stod(sv[4]);
+    if (sv.size()>=6) width=o2scl::stod(sv[5]);
+    
+    tensor_grid_obj.from_table3d_fermi(table3d_obj,name,n_points,
+                                       low,high,width);
+    
+    command_del(type);
+    clear_obj();
+    command_add("tensor_grid");
+    type="tensor_grid";
+
+  } else {
+    
+    cerr << "Cannot use command 'to-tg-fermi' for type "
+	 << type << "." << endl;
+    return exc_efailed;
+  }
+  
+  return 0;
+}
+
 int acol_manager::comm_to_tensor(std::vector<std::string> &sv,
 				 bool itive_com) {
   
