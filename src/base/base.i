@@ -208,6 +208,19 @@ class std::vector<size_t>
 |     for i in range(0,len(v)):
 |         self.__setitem__(i,v[i])
 |     return
+| def __str__(self):
+|     """
+|     Desc
+|     """
+|     s='('
+|     for i in range(0,len(self)):
+|         if i!=len(self)-1:
+|             s=s+str(self[i])+','
+|         else:
+|             s=s+str(self[i])
+|     s=s+')'
+|     return s
+|     
 class std::vector<std::string>
 - py_name std_vector_string
 - function resize
@@ -962,6 +975,16 @@ class table3d
 - function get_grid_y
   - double
   - size_t iy
+- function get_x_name
+  - std::string
+- function get_y_name
+  - std::string
+- function set_x_name
+  - void
+  - std::string name
+- function set_y_name
+  - void
+  - std::string name
 - function get_size
   - void
   - out size_t &nx
@@ -1404,6 +1427,11 @@ class tensor_grid<>
 #  - std::vector<index_spec> spec
 #  - int verbose [0]
 #  - bool err_on_fail [true]
+- function rearrange_and_copy
+  - tensor_grid<>
+  - std::string spec
+  - int verbose [0]
+  - bool err_on_fail [true]
 # 
 # Class tensor_int
 #

@@ -1756,9 +1756,9 @@ namespace o2scl {
         \future Some code duplication between this function
         and the one in the tensor class.
     */
-    tensor_grid<> rearrange_and_copy(std::vector<index_spec> spec,
-                                     int verbose=0,
-                                     bool err_on_fail=true) const {
+    tensor_grid<vec_t,vec_size_t>
+      rearrange_and_copy(std::vector<index_spec> spec,
+                         int verbose=0, bool err_on_fail=true) const {
       
       // Old rank and new rank (computed later)
       size_t rank_old=this->rk;
@@ -2394,7 +2394,21 @@ namespace o2scl {
     
       return t_new;
     }
-  
+
+    /** \brief Rearrange, sum and copy current tensor to a new tensor
+        (string input version)
+    */
+    tensor_grid<vec_t,vec_size_t>
+      rearrange_and_copy(std::string spec,
+                         int verbose=0, bool err_on_fail=true) {
+      
+      std::vector<std::string> sv2;
+      this->index_spec_preprocess(spec,sv2);
+      std::vector<o2scl::index_spec> vis;
+      this->strings_to_indexes(sv2,vis,verbose);
+      return rearrange_and_copy(vis,verbose,err_on_fail);
+    }
+    
   };
 
   /** \brief Rank 1 tensor with a grid

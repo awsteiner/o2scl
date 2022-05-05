@@ -1293,6 +1293,32 @@ double o2scl_table3d_get_grid_y(void *vptr, size_t iy) {
   return ret;
 }
 
+void *o2scl_table3d_get_x_name(void *vptr) {
+  table3d *ptr=(table3d *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->get_x_name();
+  return sptr;
+}
+
+void *o2scl_table3d_get_y_name(void *vptr) {
+  table3d *ptr=(table3d *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->get_y_name();
+  return sptr;
+}
+
+void o2scl_table3d_set_x_name(void *vptr, char *name) {
+  table3d *ptr=(table3d *)vptr;
+  ptr->set_x_name(name);
+  return;
+}
+
+void o2scl_table3d_set_y_name(void *vptr, char *name) {
+  table3d *ptr=(table3d *)vptr;
+  ptr->set_y_name(name);
+  return;
+}
+
 void o2scl_table3d_get_size(void *vptr, size_t *nx, size_t *ny) {
   table3d *ptr=(table3d *)vptr;
   ptr->get_size(*nx,*ny);
@@ -1983,6 +2009,13 @@ void o2scl_tensor_grid__from_table3d_fermi(void *vptr, void *ptr_t3d, char *slic
   table3d *t3d=(table3d *)ptr_t3d;
   ptr->from_table3d_fermi(*t3d,slice,n_points,low,high,width);
   return;
+}
+
+void *o2scl_tensor_grid__rearrange_and_copy(void *vptr, char *spec, int verbose, bool err_on_fail) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  tensor_grid<> *ret=new tensor_grid<>;
+  *ret=ptr->rearrange_and_copy(spec,verbose,err_on_fail);
+  return ret;
 }
 
 void *o2scl_create_tensor_int_std_vector_int_() {

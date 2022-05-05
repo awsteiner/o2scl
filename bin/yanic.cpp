@@ -2777,6 +2777,11 @@ int main(int argc, char *argv[]) {
             it!=class_py_names.end();it++) {
           if (it->first==ret_temp) ret_temp=it->second;
         }
+        size_t len=ret_temp.length();
+        // Manually remove '<>' from the return type if necessary
+        if (len>2 && ret_temp[len-2]=='<' && ret_temp[len-1]=='>') {
+          ret_temp=ret_temp.substr(0,len-2);
+        }
         
         post_func_code.push_back(((string)"ret=")+ret_temp+
                                  "(self._link,ret2)");
