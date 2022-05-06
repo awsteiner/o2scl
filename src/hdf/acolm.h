@@ -1360,7 +1360,7 @@ namespace o2scl_acol {
 
         Convert a slice to a table object.
 
-        Arguments: <tt><"x" or "y"> <value></tt>
+        Arguments: <tt><"x" or "y"> <val></tt>
 
         Extract a slice of a table3d object at fixed x or fixed y to
         create a new table object. This function uses interpolation
@@ -2149,11 +2149,12 @@ namespace o2scl_acol {
 
         Create contour lines from a table3d slice.
 
-        Arguments: <tt><value> <slice_name> [output_filename object_name]</tt>
-
+        Arguments: <tt><val> <slice_name> [output_filename
+        object_name]</tt>
+        
         The "contours" command constructs a set of contour lines using
         the data in slice named <slice> at the fixed value given in
-        <value>. If two additional arguments are given, then the
+        <val>. If two additional arguments are given, then the
         contour lines are stored in the file named output_filename and
         the object is named object_name. If the file does not exist,
         it is created. If no contours are found, then no file I/O is
@@ -2163,17 +2164,17 @@ namespace o2scl_acol {
 
         Create contour lines from a table3d slice.
 
-        Arguments: <tt>["frac"] <value> [output file] [output name]</tt>
+        Arguments: <tt>["frac"] <val> [output file] [output name]</tt>
 
         If the argument "frac" is not present, the "contours" command
         constructs a set of contour lines using at the fixed value
-        given in <value>. If two additional arguments are given, then
+        given in <val>. If two additional arguments are given, then
         the contour lines are stored in the file named output_filename
         and the object is named object_name. If the file does not
         exist, it is created. If no contours are found, then no file
         I/O is performed and the current table3d object is
         unmodified."+ If the argument "frac" is present, then the
-        operation is the same except that <value> is interpreted as a
+        operation is the same except that <val> is interpreted as a
         fraction of the total integral under the data.
      */
     virtual int comm_contours(std::vector<std::string> &sv, bool itive_com);
@@ -2431,7 +2432,7 @@ namespace o2scl_acol {
 
         -convert add <unit> <power of meters> <power of kg>
         <power of seconds> <power of Kelvin> <power of amps>
-        <power of moles> <power of candelas> <value> <long name>
+        <power of moles> <power of candelas> <val> <long name>
 
         To delete a unit, the format is:
 

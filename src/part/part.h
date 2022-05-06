@@ -636,6 +636,7 @@ namespace o2scl {
                           << -p.ed+p.n*p.nu+p.en*T << " " << val << " "
                           << new_test << std::endl;
               }
+              std::cout << p.inc_rest_mass << std::endl;
               if (val>0.1) {
                 std::cout << "     " << T << " " << p.ms << " " << p.m
                           << std::endl;

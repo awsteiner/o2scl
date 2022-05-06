@@ -228,9 +228,9 @@ namespace o2scl {
       internal_fp_t E=hypot(k/T,eta)-mot;
       internal_fp_t arg1=E-y;
       
-      //ret=k*k*k*k/3/E/T/(1.0+exp(arg1));
+      ret=k*k*k*k/3/hypot(k/T,eta)/T/(1.0+exp(arg1));
       //ret=k*k*T*log1p(exp(-arg1));
-      ret=k*k*T*log(1.0+exp(-arg1));
+      //ret=k*k*T*log(1.0+exp(-arg1));
       
       if (debug) {
         std::cout << "Z: " << k << " " << T << " " << y << " "
