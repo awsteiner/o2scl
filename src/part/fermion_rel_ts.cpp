@@ -156,25 +156,35 @@ int main(void) {
 
   fr.verify_ti=true;
   double v1=pcc.part_calibrate<fermion,fermion_rel>
-    (f,fr,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
+    (f,fr,true,"../../data/o2scl/fermion_deriv_cal.o2",false,0,true);
   t.test_rel(v1,0.0,4.0e-6,"calibrate");
+  cout << endl;
 
-  fermion_rel_tl<fermion_tl<double>,o2scl::fermi_dirac_integ_gsl,
-                 bessel_K_exp_integ_boost<double>,
-                 fermion_rel_integ<funct,double>,
-                 root_cern<>,root_cern<>,funct,double> fr2;
+  /*
+    AWS, 5/6/22: I'm commenting this out for now as it gives 
+    identical results to the default
+    
+    typedef fermion_rel_tl<fermion_tl<double>,o2scl::fermi_dirac_integ_gsl,
+    bessel_K_exp_integ_boost<double>,
+    fermion_rel_integ<funct,double>,
+    root_cern<>,root_cern<>,funct,double> fr2_t;
+    
+    fr2_t fr2;
+    
+    fr2.verify_ti=true;
+    double v1x=pcc.part_calibrate<fermion,fr2_t>
+    (f,fr2,true,"../../data/o2scl/fermion_deriv_cal.o2",false,0,true);
+    t.test_rel(v1x,0.0,4.0e-6,"calibrate x");
+  */
 
-  fr.verify_ti=true;
-  double v1x=pcc.part_calibrate<fermion,fermion_rel>
-    (f,fr,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
-  t.test_rel(v1x,0.0,4.0e-6,"calibrate x");
-
+  /*
   cout << fr.upper_limit_fac << endl;
   cout << fr.fri.dit.tol_abs << endl;
   cout << fr.fri.dit.tol_rel << endl;
   cout << fr.fri.nit.tol_abs << endl;
   cout << fr.fri.nit.tol_rel << endl;
   cout << fr.density_root->tol_rel << endl;
+  */
   
   cout << "----------------------------------------------------" << endl;
   cout << "Function calibrate() with better limits." << endl;
@@ -191,29 +201,62 @@ int main(void) {
   fr.density_root->tol_rel=1.0e-10;
 
   double v2=pcc.part_calibrate<fermion,fermion_rel>
-    (f,fr,1,"../../data/o2scl/fermion_deriv_cal.o2",false,1,1);
+    (f,fr,1,"../../data/o2scl/fermion_deriv_cal.o2",false,0,true);
   t.test_rel(v2,0.0,4.0e-10,"calibrate 2");
+
+  cout << endl;
+  cout << "----------------------------------------------------" << endl;
+  cout << "Testing multiprecision" << endl;
+  cout << "----------------------------------------------------" << endl;
+  cout << endl;
 
   fermion_ld fld;
   fermion_rel_ld3 frld3;
+
+  cout << "Non-degnerate test:" << endl;
+  f.inc_rest_mass=true;
+  f.non_interacting=true;
+  f.mu=1.5;
+  f.m=1.0;
+  f.g=2.0;
+  f.m=1.0;
+  fr.calc_mu(f,0.3);
+  cout << "double: " << endl;
+  cout << f.n << " " << f.ed << endl;
+  cout << f.pr << " " << f.en << endl;
+  cout << endl;
+  
   fld.m=1;
   fld.g=2;
   fld.mu=3;
   fld.mu/=2;
   long double Tld=3;
   Tld/=10;
-  std::cout << "Here2." << endl;
   frld3.verify_ti=true;
   frld3.calc_mu(fld,Tld);
   cout << "long double: " << frld3.last_method << endl;
-  cout << dtos(fld.n,0) << " " << dtos(fld.ed,0) << endl;
-  cout << dtos(fld.pr,0) << " " << dtos(fld.en,0) << endl;
-  cout << dtos(-fld.ed+fld.n*fld.mu+Tld*fld.en,0) << endl;
+  cout << "    n,ed: " << dtos(fld.n,0) << " " << dtos(fld.ed,0) << endl;
+  cout << "   pr,en: " << dtos(fld.pr,0) << " " << dtos(fld.en,0) << endl;
+  cout << "pr check: " << dtos(-fld.ed+fld.n*fld.mu+Tld*fld.en,0) << endl;
   cout << endl;
 
-  fld.mu=30;
-  fld.mu/=2;
-  std::cout << "Here4." << endl;
+  cout << "Degnerate test:" << endl;
+  f.mu=15.0;
+  f.m=1.0;
+  f.g=2.0;
+  f.m=1.0;
+  fr.calc_mu(f,0.3);
+  cout << "double: " << endl;
+  cout << f.n << " " << f.ed << endl;
+  cout << f.pr << " " << f.en << endl;
+  cout << endl;
+
+  /*
+    AWS: 5/6/22: I'm having trouble with deg_pressure_fun(). I think
+    the solution is to integrate by parts, but I think I have done that
+    incorrectly in deg_pressure_fun().
+  */
+  fld.mu=15;
   frld3.fri.dit25.verbose=1;
   frld3.fri.dit35.verbose=1;
   frld3.fri.dit50.verbose=1;
@@ -257,9 +300,6 @@ int main(void) {
   fermion_rel_ld frld;
   fermion_rel_ld2 frld2;
   
-  fermion_cdf35 f35;
-  fermion_rel_cdf35 fr35;
-
   f.m=1;
   f.g=2;
   f.mu=3;

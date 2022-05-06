@@ -222,7 +222,7 @@ namespace o2scl {
     template<class internal_fp_t>
     internal_fp_t deg_pressure_fun(internal_fp_t k, internal_fp_t T,
                                    internal_fp_t y, internal_fp_t eta,
-                                   internal_fp_t mot) {
+                                   internal_fp_t mot, bool debug) {
 
       internal_fp_t ret;
       internal_fp_t E=hypot(k/T,eta)-mot;
@@ -231,6 +231,12 @@ namespace o2scl {
       //ret=k*k*k*k/3/E/T/(1.0+exp(arg1));
       //ret=k*k*T*log1p(exp(-arg1));
       ret=k*k*T*log(1.0+exp(-arg1));
+      
+      if (debug) {
+        std::cout << "Z: " << k << " " << T << " " << y << " "
+                  << eta << " "
+                  << mot << " " << ret << std::endl;
+      }
 
       if (!o2isfinite(ret)) {
         return 0.0;
@@ -323,21 +329,25 @@ namespace o2scl {
      */
     int eval_density(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       
-      funct_cdf25 mfd25=std::bind(std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t)>
-                                  (&fermion_rel_integ_base::density_fun<fp1_t>),
-                                  this,std::placeholders::_1,
-                                  static_cast<fp1_t>(y),
-                                  static_cast<fp1_t>(eta));
-      funct_cdf35 mfd35=std::bind(std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t)>
-                                  (&fermion_rel_integ_base::density_fun<fp2_t>),
-                                  this,std::placeholders::_1,
-                                  static_cast<fp2_t>(y),
-                                  static_cast<fp2_t>(eta));
-      funct_cdf50 mfd50=std::bind(std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t)>
-                                  (&fermion_rel_integ_base::density_fun<fp3_t>),
-                                  this,std::placeholders::_1,
-                                  static_cast<fp3_t>(y),
-                                  static_cast<fp3_t>(eta));
+      funct_cdf25 mfd25=std::bind
+        (std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t)>
+         (&fermion_rel_integ_base::density_fun<fp1_t>),
+         this,std::placeholders::_1,
+         static_cast<fp1_t>(y),
+         static_cast<fp1_t>(eta));
+      funct_cdf35 mfd35=std::bind
+        (std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t)>
+         (&fermion_rel_integ_base::density_fun<fp2_t>),
+         this,std::placeholders::_1,
+         static_cast<fp2_t>(y),
+         static_cast<fp2_t>(eta));
+      funct_cdf50 mfd50=std::bind
+        (std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t)>
+         (&fermion_rel_integ_base::density_fun<fp3_t>),
+         this,std::placeholders::_1,
+         static_cast<fp3_t>(y),
+         static_cast<fp3_t>(eta));
+      
       fp1_t res1, err1;
       fp2_t res2, err2;
       fp3_t res3, err3;
@@ -430,21 +440,25 @@ namespace o2scl {
      */
     int eval_energy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       
-      funct_cdf25 mfd25=std::bind(std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t)>
-                                  (&fermion_rel_integ_base::energy_fun<fp1_t>),
-                                  this,std::placeholders::_1,
-                                  static_cast<fp1_t>(y),
-                                  static_cast<fp1_t>(eta));
-      funct_cdf35 mfd35=std::bind(std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t)>
-                                  (&fermion_rel_integ_base::energy_fun<fp2_t>),
-                                  this,std::placeholders::_1,
-                                  static_cast<fp2_t>(y),
-                                  static_cast<fp2_t>(eta));
-      funct_cdf50 mfd50=std::bind(std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t)>
-                                  (&fermion_rel_integ_base::energy_fun<fp3_t>),
-                                  this,std::placeholders::_1,
-                                  static_cast<fp3_t>(y),
-                                  static_cast<fp3_t>(eta));
+      funct_cdf25 mfd25=std::bind
+        (std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t)>
+         (&fermion_rel_integ_base::energy_fun<fp1_t>),
+         this,std::placeholders::_1,
+         static_cast<fp1_t>(y),
+         static_cast<fp1_t>(eta));
+      funct_cdf35 mfd35=std::bind
+        (std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t)>
+         (&fermion_rel_integ_base::energy_fun<fp2_t>),
+         this,std::placeholders::_1,
+         static_cast<fp2_t>(y),
+         static_cast<fp2_t>(eta));
+      funct_cdf50 mfd50=std::bind
+        (std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t)>
+         (&fermion_rel_integ_base::energy_fun<fp3_t>),
+         this,std::placeholders::_1,
+         static_cast<fp3_t>(y),
+         static_cast<fp3_t>(eta));
+      
       fp1_t res1, err1;
       fp2_t res2, err2;
       fp3_t res3, err3;
@@ -539,21 +553,25 @@ namespace o2scl {
      */
     int eval_entropy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       
-      funct_cdf25 mfd25=std::bind(std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t)>
-                                  (&fermion_rel_integ_base::entropy_fun<fp1_t>),
-                                  this,std::placeholders::_1,
-                                  static_cast<fp1_t>(y),
-                                  static_cast<fp1_t>(eta));
-      funct_cdf35 mfd35=std::bind(std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t)>
-                                  (&fermion_rel_integ_base::entropy_fun<fp2_t>),
-                                  this,std::placeholders::_1,
-                                  static_cast<fp2_t>(y),
-                                  static_cast<fp2_t>(eta));
-      funct_cdf50 mfd50=std::bind(std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t)>
-                                  (&fermion_rel_integ_base::entropy_fun<fp3_t>),
-                                  this,std::placeholders::_1,
-                                  static_cast<fp3_t>(y),
-                                  static_cast<fp3_t>(eta));
+      funct_cdf25 mfd25=std::bind
+        (std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t)>
+         (&fermion_rel_integ_base::entropy_fun<fp1_t>),
+         this,std::placeholders::_1,
+         static_cast<fp1_t>(y),
+         static_cast<fp1_t>(eta));
+      funct_cdf35 mfd35=std::bind
+        (std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t)>
+         (&fermion_rel_integ_base::entropy_fun<fp2_t>),
+         this,std::placeholders::_1,
+         static_cast<fp2_t>(y),
+         static_cast<fp2_t>(eta));
+      funct_cdf50 mfd50=std::bind
+        (std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t)>
+         (&fermion_rel_integ_base::entropy_fun<fp3_t>),
+         this,std::placeholders::_1,
+         static_cast<fp3_t>(y),
+         static_cast<fp3_t>(eta));
+      
       fp1_t res1, err1;
       fp2_t res2, err2;
       fp3_t res3, err3;
@@ -698,29 +716,29 @@ namespace o2scl {
                           fp_t ul, fp_t &res, fp_t &err) {
 
       funct_cdf25 mfd25=std::bind
-        (std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t,fp1_t,fp1_t)>
+        (std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t,fp1_t,fp1_t,bool)>
          (&fermion_rel_integ_base::deg_pressure_fun<fp1_t>),
          this,std::placeholders::_1,
          static_cast<fp1_t>(T),
          static_cast<fp1_t>(y),
          static_cast<fp1_t>(eta),
-         static_cast<fp1_t>(mot));
+         static_cast<fp1_t>(mot),false);
       funct_cdf35 mfd35=std::bind
-        (std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t,fp2_t,fp2_t)>
+        (std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t,fp2_t,fp2_t,bool)>
          (&fermion_rel_integ_base::deg_pressure_fun<fp2_t>),
          this,std::placeholders::_1,
          static_cast<fp2_t>(T),
          static_cast<fp2_t>(y),
          static_cast<fp2_t>(eta),
-         static_cast<fp2_t>(mot));
+         static_cast<fp2_t>(mot),false);
       funct_cdf50 mfd50=std::bind
-        (std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t,fp3_t,fp3_t)>
+        (std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t,fp3_t,fp3_t,bool)>
          (&fermion_rel_integ_base::deg_pressure_fun<fp3_t>),
          this,std::placeholders::_1,
          static_cast<fp3_t>(T),
          static_cast<fp3_t>(y),
          static_cast<fp3_t>(eta),
-         static_cast<fp3_t>(mot));
+         static_cast<fp3_t>(mot),false);
       
       fp1_t res1, err1;
       fp2_t res2, err2;
@@ -857,10 +875,11 @@ namespace o2scl {
      */
     int eval_deg_pressure(fp_t T, fp_t y, fp_t eta, fp_t mot,
                           fp_t ul, fp_t &res, fp_t &err) {
-      func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
+      func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,
+                                            fp_t,bool)>
                            (&fermion_rel_integ<func_t,
                             fp_t>::deg_pressure_fun<fp_t>),
-                           this,std::placeholders::_1,T,y,eta,mot);
+                           this,std::placeholders::_1,T,y,eta,mot,false);
       int iret=dit.integ_err(mfd,0.0,ul,res,err);
       return iret;
     }
@@ -1561,7 +1580,7 @@ namespace o2scl {
             std::cout << "calc_mu(): deg pressure."
                       << std::endl;
           }
-          
+
           fri.eval_deg_pressure(temper,y,eta,mot,ul,f.pr,unc.pr);
           f.pr*=prefac;
           unc.pr*=prefac;

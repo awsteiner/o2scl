@@ -637,6 +637,8 @@ namespace o2scl {
                           << new_test << std::endl;
               }
               if (val>0.1) {
+                std::cout << "     " << T << " " << p.ms << " " << p.m
+                          << std::endl;
                 std::cout << "     " << p.n << " " << exact.n << std::endl;
                 std::cout << "     " << p.ed << " " << exact.ed << std::endl;
                 std::cout << "     " << p.en << " " << exact.en << std::endl;
