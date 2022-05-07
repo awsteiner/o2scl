@@ -183,13 +183,17 @@ namespace o2scl {
     template<class internal_fp_t>
     internal_fp_t deg_density_fun(internal_fp_t k, internal_fp_t T,
                                   internal_fp_t y, internal_fp_t eta,
-                                  internal_fp_t mot) {
+                                  internal_fp_t mot, bool debug) {
 
       internal_fp_t ret;
       
       internal_fp_t E=hypot(k/T,eta)-mot;
       internal_fp_t arg1=E-y;
       ret=k*k/(1.0+exp(arg1));
+
+      if (debug) {
+        std::cout << k << " " << ret << std::endl;
+      }
           
       if (!o2isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
@@ -381,29 +385,29 @@ namespace o2scl {
                          fp_t ul, fp_t &res, fp_t &err) {
       
       funct_cdf25 mfd25=std::bind
-        (std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t,fp1_t,fp1_t)>
+        (std::mem_fn<fp1_t(fp1_t,fp1_t,fp1_t,fp1_t,fp1_t,bool)>
          (&fermion_rel_integ_base::deg_density_fun<fp1_t>),
          this,std::placeholders::_1,
          static_cast<fp1_t>(T),
          static_cast<fp1_t>(y),
          static_cast<fp1_t>(eta),
-         static_cast<fp1_t>(mot));
+         static_cast<fp1_t>(mot),false);
       funct_cdf35 mfd35=std::bind
-        (std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t,fp2_t,fp2_t)>
+        (std::mem_fn<fp2_t(fp2_t,fp2_t,fp2_t,fp2_t,fp2_t,bool)>
          (&fermion_rel_integ_base::deg_density_fun<fp2_t>),
          this,std::placeholders::_1,
          static_cast<fp2_t>(T),
          static_cast<fp2_t>(y),
          static_cast<fp2_t>(eta),
-         static_cast<fp2_t>(mot));
+         static_cast<fp2_t>(mot),false);
       funct_cdf50 mfd50=std::bind
-        (std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t,fp3_t,fp3_t)>
+        (std::mem_fn<fp3_t(fp3_t,fp3_t,fp3_t,fp3_t,fp3_t,bool)>
          (&fermion_rel_integ_base::deg_density_fun<fp3_t>),
          this,std::placeholders::_1,
          static_cast<fp3_t>(T),
          static_cast<fp3_t>(y),
          static_cast<fp3_t>(eta),
-         static_cast<fp3_t>(mot));
+         static_cast<fp3_t>(mot),false);
       
       fp1_t res1, err1;
       fp2_t res2, err2;
@@ -411,6 +415,10 @@ namespace o2scl {
       fp1_t ul1=static_cast<fp1_t>(ul);
       fp2_t ul2=static_cast<fp2_t>(ul);
       fp3_t ul3=static_cast<fp3_t>(ul);
+
+      if (ul1<1) ul1=1;
+      if (ul2<1) ul2=1;
+      if (ul3<1) ul3=1;
       
       int iret=dit25.integ_err(mfd25,0.0,ul1,res1,err1);
       if (iret==0) {
@@ -523,7 +531,7 @@ namespace o2scl {
       fp1_t ul1=static_cast<fp1_t>(ul);
       fp2_t ul2=static_cast<fp2_t>(ul);
       fp3_t ul3=static_cast<fp3_t>(ul);
-      
+
       int iret=dit25.integ_err(mfd25,0.0,ul1,res1,err1);
       if (iret==0) {
         res=static_cast<fp_t>(res1);
@@ -805,10 +813,10 @@ namespace o2scl {
      */
     int eval_deg_density(fp_t T, fp_t y, fp_t eta, fp_t mot,
                          fp_t ul, fp_t &res, fp_t &err) {
-      func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t)>
+      func_t mfd=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t,bool)>
                            (&fermion_rel_integ<func_t,
                             fp_t>::deg_density_fun<fp_t>),
-                           this,std::placeholders::_1,T,y,eta,mot);
+                           this,std::placeholders::_1,T,y,eta,mot,false);
       int iret=dit.integ_err(mfd,0.0,ul,res,err);
       return iret;
     }
@@ -2526,7 +2534,7 @@ namespace o2scl {
   */
   typedef fermion_rel_tl<> fermion_rel;
 
-  class fermion_rel_ld3 : public
+  class fermion_rel_ld : public
   fermion_rel_tl<
     // the fermion type
     fermion_tl<long double>,
@@ -2552,7 +2560,7 @@ namespace o2scl {
 
   public:
     
-    fermion_rel_ld3() {
+    fermion_rel_ld() {
 
       // See output of polylog_ts for numeric limit information
       
@@ -2587,223 +2595,6 @@ namespace o2scl {
     }
     
   };
-  
-#ifdef O2SCL_NEVER_DEFINED
-  
-  /** \brief Equation of state for a relativistic fermion using long 
-      double precision
-  */
-  class fermion_rel_ld : public
-  fermion_rel_tl<
-    // the fermion type
-    fermion_tl<long double>,
-    // the Fermi-Dirac integrator
-    fermi_dirac_integ_direct<
-      long double,funct_cdf35,25,
-      boost::multiprecision::number<
-	boost::multiprecision::cpp_dec_float<35> > >,
-    // the Bessel-exp integrator
-    bessel_K_exp_integ_direct<
-      long double,funct_cdf35,25,
-      boost::multiprecision::number<
-	boost::multiprecision::cpp_dec_float<35> > >,
-    // The non-degenerate integrator
-    inte_tanh_sinh_boost<funct_ld,25,long double>,
-    // The degenerate integrator
-    inte_tanh_sinh_boost<funct_ld,25,long double>,
-    // The density solver
-    root_brent_gsl<funct_ld,long double>,
-    // The parent solver for massless fermions
-    root_brent_gsl<funct_ld,long double>,
-    // The function type
-    funct_ld,
-    // The floating-point type
-    long double> {
-    
-  public:
-    
-    fermion_rel_ld() {
-
-      // See output of polylog_ts for numeric limit information
-      
-      // Tolerance for the integrator for massless fermions
-      this->fd_integ.set_tol(1.0e-21);
-
-      // Tolerance for the integrator for the nondegenerate expansion
-      this->be_integ.set_tol(1.0e-21);
-
-      // Internal function tolerances
-
-      // This could be as large as log(1.0e4932)=11400,
-      // but only 200 is used for double, so we try this for now.
-      this->exp_limit=4000.0;
-      
-      // log(1.0e18) is 41.4
-      this->upper_limit_fac=42.0;
-      this->deg_entropy_fac=42.0;
-      this->tol_expan=1.0e-17;
-
-      // Solver tolerances
-      this->def_density_root.tol_abs=1.0e-18;
-      this->def_massless_root.tol_abs=1.0e-18;
-
-      // Integrator tolerances
-      this->def_dit.tol_abs=1.0e-16;
-      this->def_dit.tol_rel=1.0e-16;
-      this->def_nit.tol_abs=1.0e-15;
-      this->def_nit.tol_rel=1.0e-15;
-     
-    }
-    
-  };
-
-  class fermion_rel_ld2 : public
-  fermion_rel_tl<
-    // the fermion type
-    fermion_tl<long double>,
-    // the Fermi-Dirac integrator
-    fermi_dirac_integ_direct<
-      long double,funct_cdf35,25,
-      boost::multiprecision::number<
-	boost::multiprecision::cpp_dec_float<35> > >,
-    // the Bessel-exp integrator
-    bessel_K_exp_integ_direct<
-      long double,funct_cdf35,25,
-      boost::multiprecision::number<
-	boost::multiprecision::cpp_dec_float<35> > >,
-    // The non-degenerate integrator
-    inte_transform<funct_ld,inte_adapt_cern
-		   <funct_ld,inte_gauss56_cern
-		    <funct_ld,long double,
-		     inte_gauss56_coeffs_long_double>,1000,
-		    long double>,long double>,
-    // The degenerate integrator
-    inte_adapt_cern<funct_ld,inte_gauss56_cern<funct_ld,long double,
-                                               inte_gauss56_coeffs_long_double>,
-                    1000,long double>,
-    // The density solver
-    root_brent_gsl<funct_ld,long double>,
-    // The parent solver for massless fermions
-    root_brent_gsl<funct_ld,long double>,
-    // The function type
-    funct_ld,
-    // The floating-point type
-    long double> {
-
-  public:
-
-    fermion_rel_ld2() {
-      // See output of polylog_ts for numeric limit information
-      
-      // Tolerance for the integrator for massless fermions
-      this->fd_integ.set_tol(1.0e-21);
-
-      // Tolerance for the integrator for the nondegenerate expansion
-      this->be_integ.set_tol(1.0e-21);
-
-      // Internal function tolerances
-
-      // This could be as large as log(1.0e4932)=11400,
-      // but only 200 is used for double, so we try this for now.
-      this->exp_limit=4000.0;
-      
-      // log(1.0e18) is 41.4
-      this->upper_limit_fac=42.0;
-      this->deg_entropy_fac=42.0;
-      this->tol_expan=1.0e-17;
-
-      // Solver tolerances
-      this->def_density_root.tol_abs=1.0e-18;
-      this->def_massless_root.tol_abs=1.0e-18;
-
-      // Integrator tolerances
-      this->def_dit.tol_abs=1.0e-16;
-      this->def_dit.tol_rel=1.0e-16;
-      this->def_nit.tol_abs=1.0e-15;
-      this->def_nit.tol_rel=1.0e-15;
-    }
-    
-  };
-  
-  /** \brief Equation of state for a relativistic fermion using 
-      35 decimal digit precision
-  */
-  class fermion_rel_cdf35 : public
-  fermion_rel_tl<
-    // the fermion type
-    fermion_tl<
-      boost::multiprecision::number<
-	boost::multiprecision::cpp_dec_float<35> > >,
-    // the Fermi-Dirac integrator
-    fermi_dirac_integ_direct<
-      boost::multiprecision::number<
-	boost::multiprecision::cpp_dec_float<35> >,
-      funct_cdf50,30,
-      boost::multiprecision::number<
-	boost::multiprecision::cpp_dec_float<50> > >,
-    // the Bessel-exp integrator
-    bessel_K_exp_integ_direct
-    <boost::multiprecision::number<
-       boost::multiprecision::cpp_dec_float<35> >,
-     funct_cdf50,30,
-     boost::multiprecision::number<
-       boost::multiprecision::cpp_dec_float<50> > >,
-    // The non-degenerate integrator
-    inte_tanh_sinh_boost<
-      funct_cdf35,30,
-      boost::multiprecision::number<
-	boost::multiprecision::cpp_dec_float<35> > >,
-    // The degenerate integrator
-    inte_tanh_sinh_boost<
-      funct_cdf35,30,
-      boost::multiprecision::number<
-	boost::multiprecision::cpp_dec_float<35> > >,
-    // The density solver
-    root_brent_gsl<
-      funct_cdf35,
-      boost::multiprecision::number<
-	boost::multiprecision::cpp_dec_float<35> > >,
-    // The parent solver for massless fermions
-    root_brent_gsl<
-      funct_cdf35,boost::multiprecision::number<
-		    boost::multiprecision::cpp_dec_float<35> > >,
-    // The function type
-    funct_cdf35,
-    // The floating-point type
-    boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<35> > > {
-    
-  public:
-    
-    fermion_rel_cdf35() {
-      
-      // See output of polylog_ts for numeric limit information
-
-      // Tolerance for the integrator for massless fermions
-      this->fd_integ.set_tol(1.0e-60);
-
-      // Tolerance for the integrator for the nondegenerate expansion
-      this->be_integ.set_tol(1.0e-60);
-
-      // Internal function tolerances
-      this->exp_limit=6.0e7;
-      this->upper_limit_fac=81.0;
-      this->deg_entropy_fac=81.0;
-      this->tol_expan=1.0e-35;
-
-      // Solver tolerances
-      this->def_density_root.tol_abs=1.0e-35;
-      this->def_massless_root.tol_abs=1.0e-35;
-
-      // Integrator tolerances
-      this->def_dit.tol_abs=1.0e-35;
-      this->def_dit.tol_rel=1.0e-35;
-      this->def_nit.tol_abs=1.0e-34;
-      this->def_nit.tol_rel=1.0e-34;
-    }
-  };
-  
-#endif
   
 }
 

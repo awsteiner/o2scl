@@ -211,7 +211,7 @@ int main(void) {
   cout << endl;
 
   fermion_ld fld;
-  fermion_rel_ld3 frld3;
+  fermion_rel_ld frld;
 
   cout << "Non-degnerate test:" << endl;
   f.inc_rest_mass=true;
@@ -232,9 +232,9 @@ int main(void) {
   fld.mu/=2;
   long double Tld=3;
   Tld/=10;
-  frld3.verify_ti=true;
-  frld3.calc_mu(fld,Tld);
-  cout << "long double: " << frld3.last_method << endl;
+  frld.verify_ti=true;
+  frld.calc_mu(fld,Tld);
+  cout << "long double: " << frld.last_method << endl;
   cout << "    n,ed: " << dtos(fld.n,0) << " " << dtos(fld.ed,0) << endl;
   cout << "   pr,en: " << dtos(fld.pr,0) << " " << dtos(fld.en,0) << endl;
   cout << "pr check: " << dtos(-fld.ed+fld.n*fld.mu+Tld*fld.en,0) << endl;
@@ -251,165 +251,25 @@ int main(void) {
   cout << f.pr << " " << f.en << endl;
   cout << endl;
 
-  /*
-    AWS: 5/6/22: I'm having trouble with deg_pressure_fun(). I think
-    the solution is to integrate by parts, but I think I have done that
-    incorrectly in deg_pressure_fun().
-  */
   fld.mu=15;
-  frld3.fri.dit25.verbose=1;
-  frld3.fri.dit35.verbose=1;
-  frld3.fri.dit50.verbose=1;
-  frld3.calc_mu(fld,Tld);
-  cout << "long double: " << frld3.last_method << endl;
+  frld.fri.dit25.verbose=1;
+  frld.fri.dit35.verbose=1;
+  frld.fri.dit50.verbose=1;
+  frld.calc_mu(fld,Tld);
+  cout << "long double: " << frld.last_method << endl;
   cout << dtos(fld.n,0) << " " << dtos(fld.ed,0) << endl;
   cout << dtos(fld.pr,0) << " " << dtos(fld.en,0) << endl;
   cout << dtos(-fld.ed+fld.n*fld.mu+Tld*fld.en,0) << endl;
   cout << endl;
+
+  // AWS 5/6/22: this doesn't quite work, it fails on one of
+  // the degenerate entropy integrals
   
-  // AWS, 11/1/21: taking the multiprecision types out while I
-  // develop new fermion integrators.
-#ifdef O2SCL_NEVER_DEFINED
-  
-  // -----------------------------------------------------------------
-  // Downcast the shared_ptr to the default integration type. This
-  // shows how to get access the internal integration object that
-  // fermion_rel is using.
-  // 
-  // From cppreference.com: "If the cast is successful, dynamic_cast
-  // returns a value of type new_type. If the cast fails and new_type
-  // is a pointer type, it returns a null pointer of that type. If the
-  // cast fails and new_type is a reference type, it throws an
-  // exception that matches a handler of type std::bad_cast."
-  
-  //inte_qag_gsl<> *qag=dynamic_cast<inte_qag_gsl<> *>(fr.dit.get());
-  //inte_qag_gsl<> &qag2=dynamic_cast<inte_qag_gsl<> &>(*fr.dit.get());
-  //t.test_gen(qag->get_rule()==qag2.get_rule(),"downcast");
-  
-  // The long double type isn't that much more precise than double, so
-  // I'm concerned about precision loss in the integrands. Thus, the
-  // plan is to have a particle type which operates in
-  // cpp_dec_float_35 precision, with integrators which internally use
-  // cpp_dec_float_50 precision. For the integrators, the template
-  // parameter is the maximum number of refinements, we try 30.
-  
-  // One limitation for using multiprecision types is the lack of a
-  // systematic expansion for massless fermions in fermion.h
-
-  fermion_ld fld;
-  fermion_rel_ld frld;
-  fermion_rel_ld2 frld2;
-  
-  f.m=1;
-  f.g=2;
-  f.mu=3;
-  f.mu/=2;
-  double T=3;
-  T/=10;
-  fr.calc_mu(f,T);
-  cout << "double:" << endl;
-  cout << dtos(f.n,0) << " " << dtos(f.ed,0) << endl;
-  cout << dtos(f.pr,0) << " " << dtos(f.en,0) << endl;
-  cout << endl;
-
-  frld.verbose=2;
-  fld.m=1;
-  fld.g=2;
-  fld.mu=3;
-  fld.mu/=2;
-  long double Tld=3;
-  Tld/=10;
-  frld.calc_mu(fld,Tld);
-  cout << "long double:" << endl;
-  cout << dtos(fld.n,0) << " " << dtos(fld.ed,0) << endl;
-  cout << dtos(fld.pr,0) << " " << dtos(fld.en,0) << endl;
-  cout << endl;
-       
-  fld.m=1;
-  fld.g=2;
-  fld.mu=4;
-  frld.calc_mu(fld,Tld);
-  cout << "long double:" << endl;
-  cout << dtos(fld.n,0) << " " << dtos(fld.ed,0) << endl;
-  cout << dtos(fld.pr,0) << " " << dtos(fld.en,0) << endl;
-  cout << endl;
-
-  fr35.verbose=2;
-  f35.m=1;
-  f35.g=2;
-  f35.mu=3;
-  f35.mu/=2;
-  cpp_dec_float_35 T35=3;
-  T35/=10;
-  fr35.calc_mu(f35,T35);
-  cout << "cpp_dec_float_35:" << endl;
-  cout << dtos(f35.n,0) << "\n" << dtos(f35.ed,0) << endl;
-  cout << dtos(f35.pr,0) << "\n" << dtos(f35.en,0) << endl;
-  cout << endl;
-
-  f35.m=1;
-  f35.g=2;
-  f35.mu=4;
-  fr35.calc_mu(f35,T35);
-  cout << "cpp_dec_float_35:" << endl;
-  cout << dtos(f35.n,0) << "\n" << dtos(f35.ed,0) << endl;
-  cout << dtos(f35.pr,0) << "\n" << dtos(f35.en,0) << endl;
-  cout << endl;
-
-  // -------------
-
-  // This doesn't work yet
-
-  if (false) {
-    f35.g=2;
-    f35.m=1;
-    f35.m/=100000;
-    f35.mu=10001;
-    f35.mu/=100000;
-    T35=1;
-    T35/=100;
-    cout << dtos(f35.m,0) << endl;
-    cout << dtos(f35.mu,0) << endl;
-    cout << dtos(T35,0) << endl;
-    fr35.calc_mu(f35,T35);
-    cout << "cpp_dec_float_35:" << endl;
-    cout << dtos(f35.n,0) << "\n" << dtos(f35.ed,0) << endl;
-    cout << dtos(f35.pr,0) << "\n" << dtos(f35.en,0) << endl;
-    cout << endl;
-  }
-
-  if (false) {
-    Tld=0.01L;
-    fld.m=1.0e-5L;
-    fld.g=2;
-    fld.mu=1.0001e-1L;
-    frld2.pair_mu(fld,Tld);
-    cout << "long double:" << endl;
-    cout << dtos(fld.n,0) << " " << dtos(fld.ed,0) << endl;
-    cout << dtos(fld.pr,0) << " " << dtos(fld.en,0) << endl;
-    cout << endl;
-  }
-
-  // These don't work yet
-  
-  //part_calibrate_class_tl<long double> pcc_ld;
-  //long double vx_ld=pcc_ld.part_calibrate<fermion_ld,fermion_rel_ld>
+  //frld.verbose=2;
+  //long double v3=pcc.part_calibrate<fermion_ld,fermion_rel_ld>
   //(fld,frld,1,"../../data/o2scl/fermion_deriv_cal.o2",false,2,true);
-  //cout << vx_ld << endl;
+  //t.test_rel<long double>(v3,0.0,4.0e-10,"calibrate 3");
 
-  //part_calibrate_class_tl<long double> pcc_ld;
-  //long double vx_ld2=pcc_ld.part_calibrate<fermion_ld,fermion_rel_ld2>
-  //(fld,frld2,1,"../../data/o2scl/fermion_deriv_cal.o2",false,2,true);
-  //cout << vx_ld2 << endl;
-
-  //part_calibrate_class_tl<cpp_dec_float_35> pcc_cdf35;
-  //cpp_dec_float_35 vx_cdf35=pcc_cdf35.part_calibrate<fermion_cdf35,
-  //fermion_rel_cdf35>
-  //(f35,fr35,1,"../../data/o2scl/fermion_deriv_cal.o2",false,3,true);
-  //cout << vx_cdf35 << endl;
-  
-#endif
-  
   t.report();
 
   return 0;

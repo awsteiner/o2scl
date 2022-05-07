@@ -563,7 +563,10 @@ namespace o2scl {
       p.non_interacting=true;
   
       // ----------------------------------------------------------------
-      // First pass, test calc_mu() 
+      // First pass, test calc_mu()
+      if (verbose>1) {
+        std::cout << "First pass, testing calc_mu().\n" << std::endl;
+      }
 
       // k=0,2 are with rest mass, k=1,3 are without
       // k=0,1 are non-interacting, k=2,3 are interacting
@@ -636,17 +639,21 @@ namespace o2scl {
                           << -p.ed+p.n*p.nu+p.en*T << " " << val << " "
                           << new_test << std::endl;
               }
-              std::cout << p.inc_rest_mass << std::endl;
               if (val>0.1) {
-                std::cout << "     " << T << " " << p.ms << " " << p.m
-                          << std::endl;
-                std::cout << "     " << p.n << " " << exact.n << std::endl;
-                std::cout << "     " << p.ed << " " << exact.ed << std::endl;
-                std::cout << "     " << p.en << " " << exact.en << std::endl;
-                std::cout << "     " << p.pr << " " << exact.pr << " "
+                std::cout << "     T,m*,m: " << T << " " << p.ms
+                          << " " << p.m << std::endl;
+                std::cout << "     n1,n2: " << p.n << " "
+                          << exact.n << std::endl;
+                std::cout << "     ed1,ed2: " << p.ed << " "
+                          << exact.ed << std::endl;
+                std::cout << "     en1,en2: " << p.en << " "
+                          << exact.en << std::endl;
+                std::cout << "     pr1,pr2,pr3: " << p.pr << " "
+                          << exact.pr << " "
                           << -p.ed+p.n*p.nu+p.en*T << std::endl;
-                std::cout << "     " << p.ed << " " << p.en << " "
-                          << p.n << " " << p.mu << std::endl;
+                std::cout << "     ed,en,n,mu: " << p.ed << " "
+                          << p.en << " " << p.n << " " << p.mu << std::endl;
+                          
                 exit(-1);
               }
             }
@@ -749,6 +756,10 @@ namespace o2scl {
       // ----------------------------------------------------------------
       // Second pass, test calc_density()
 
+      if (verbose>1) {
+        std::cout << "Second pass, testing calc_density().\n" << std::endl;
+      }
+      
       // k=0,2 are with rest mass, k=1,3 are without
       // k=0,1 are non-interacting, k=2,3 are interacting
       for(size_t k=0;k<4;k++) {
