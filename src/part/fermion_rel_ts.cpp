@@ -264,11 +264,13 @@ int main(void) {
 
   // AWS 5/6/22: this doesn't quite work, it fails on one of
   // the degenerate entropy integrals
-  
-  //frld.verbose=2;
-  //long double v3=pcc.part_calibrate<fermion_ld,fermion_rel_ld>
-  //(fld,frld,1,"../../data/o2scl/fermion_deriv_cal.o2",false,2,true);
-  //t.test_rel<long double>(v3,0.0,4.0e-10,"calibrate 3");
+
+  if (0) {
+    frld.verbose=2;
+    long double v3=pcc.part_calibrate<fermion_ld,fermion_rel_ld>
+      (fld,frld,1,"../../data/o2scl/fermion_deriv_cal.o2",false,2,true);
+    t.test_rel<long double>(v3,0.0,4.0e-10,"calibrate 3");
+  }
 
   t.report();
 

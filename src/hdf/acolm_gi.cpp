@@ -1065,10 +1065,10 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   
 #ifndef O2SCL_UBUNTU_PKG
     cout << ((string)"Compiled at ")+((string)__TIME__)+" on "+
-      ((string)__DATE__)+" for "+ter.bold()+((string)PACKAGE)+
+      ((string)__DATE__)+" for "+ter.bold()+"O₂scl"+
       ter.default_fg()+", version "+((string)VERSION)+".\n" << endl;
 #else
-    cout << ((string)"Compiled for ")+ter.bold()+((string)PACKAGE)+
+    cout << ((string)"Compiled for ")+ter.bold()+"O₂scl"+
       ter.default_fg()+", version "+((string)VERSION)+".\n" << endl;
 #endif
 

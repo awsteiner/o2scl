@@ -1265,7 +1265,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   terminal ter;
   if (cl->cmd_name==((string)"acol")) {
     cout << ((string)"Compiled at ")+((string)__TIME__)+" on "+
-      ((string)__DATE__)+" for "+ter.bold()+((string)PACKAGE)+
+      ((string)__DATE__)+" for "+ter.bold()+"O₂scl"+
       ter.default_fg()+", version "+((string)VERSION)+".\n" << endl;
   }
 
@@ -1275,7 +1275,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   if (true) {
     unsigned maj, min, rel;
     o2scl_settings.hdf5_header_version(maj,min,rel);
-    cout << "  HDF5 version numbers when O2scl was compiled: "
+    cout << "  HDF5 version numbers when O₂scl was compiled: "
 	 << maj << " " << min << " " << rel << endl;
     o2scl_settings.hdf5_lib_version(maj,min,rel);
     cout << "  HDF5 version numbers in libraries currently linked: "

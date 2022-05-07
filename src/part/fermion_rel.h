@@ -189,7 +189,7 @@ namespace o2scl {
       
       internal_fp_t E=hypot(k/T,eta)-mot;
       internal_fp_t arg1=E-y;
-      ret=k*k/(1.0+exp(arg1));
+      ret=k*k/(1+exp(arg1));
 
       if (debug) {
         std::cout << k << " " << ret << std::endl;
@@ -212,7 +212,7 @@ namespace o2scl {
       internal_fp_t E=hypot(k/T,eta)-mot;
       internal_fp_t arg1=E-y;
       
-      ret=k*k*E*T/(1.0+exp(arg1));
+      ret=k*k*E*T/(1+exp(arg1));
       
       if (!o2isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
@@ -232,9 +232,9 @@ namespace o2scl {
       internal_fp_t E=hypot(k/T,eta)-mot;
       internal_fp_t arg1=E-y;
       
-      ret=k*k*k*k/3/hypot(k/T,eta)/T/(1.0+exp(arg1));
+      ret=k*k*k*k/3/hypot(k/T,eta)/T/(1+exp(arg1));
       //ret=k*k*T*log1p(exp(-arg1));
-      //ret=k*k*T*log(1.0+exp(-arg1));
+      //ret=k*k*T*log(1+exp(-arg1));
       
       if (debug) {
         std::cout << "Z: " << k << " " << T << " " << y << " "
@@ -269,11 +269,12 @@ namespace o2scl {
 	// then addition of 1 makes us lose precision, so we use an
 	// alternative:
       } else if (arg1<-deg_entropy_fac) {
-	ret=-k*k*(-1.0+arg1)*exp(arg1);
+	ret=-k*k*(-1+arg1)*exp(arg1);
       } else {
-	internal_fp_t nx=1.0/(1.0+exp(arg1));
-        internal_fp_t arg2=1.0-nx;
-	ret=-k*k*(nx*log(nx)+(1.0-nx)*log(arg2));
+	internal_fp_t nx=(1+exp(arg1));
+        nx=1/nx;
+        internal_fp_t arg2=1-nx;
+	ret=-k*k*(nx*log(nx)+arg2*log(arg2));
       }
 
       if (!o2isfinite(ret)) {

@@ -1240,10 +1240,10 @@ int acol_manager::setup_help() {
   
 #ifndef O2SCL_UBUNTU_PKG
   dsc+=((string)"Compiled at ")+((string)__TIME__)+" on "+
-    ((string)__DATE__)+" for "+((string)PACKAGE)+", version "+
+    ((string)__DATE__)+" for O₂scl, version "+
     ((string)VERSION)+".\n";
 #else
-  dsc+=((string)"Compiled for ")+((string)PACKAGE)+", version "+
+  dsc+=((string)"Compiled for O₂scl, version "+
     ((string)VERSION)+".\n";
 #endif
   
