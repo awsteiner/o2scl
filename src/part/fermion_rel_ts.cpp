@@ -201,10 +201,13 @@ int main(void) {
   fr.density_root->tol_rel=1.0e-10;
 
   double v2=pcc.part_calibrate<fermion,fermion_rel>
-    (f,fr,1,"../../data/o2scl/fermion_deriv_cal.o2",false,0,true);
+    (f,fr,1,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
   t.test_rel(v2,0.0,4.0e-10,"calibrate 2");
 
   cout << endl;
+  
+#ifndef O2SCL_FAST_TEST
+  
   cout << "----------------------------------------------------" << endl;
   cout << "Testing multiprecision" << endl;
   cout << "----------------------------------------------------" << endl;
@@ -213,65 +216,15 @@ int main(void) {
   fermion_ld fld;
   fermion_rel_ld frld;
 
-  cout << "Non-degnerate test:" << endl;
-  f.inc_rest_mass=true;
-  f.non_interacting=true;
-  f.mu=1.5;
-  f.m=1.0;
-  f.g=2.0;
-  f.m=1.0;
-  fr.calc_mu(f,0.3);
-  cout << "double: " << endl;
-  cout << f.n << " " << f.ed << endl;
-  cout << f.pr << " " << f.en << endl;
-  cout << endl;
-  
-  fld.m=1;
-  fld.g=2;
-  fld.mu=3;
-  fld.mu/=2;
-  long double Tld=3;
-  Tld/=10;
-  frld.verify_ti=true;
-  frld.calc_mu(fld,Tld);
-  cout << "long double: " << frld.last_method << endl;
-  cout << "    n,ed: " << dtos(fld.n,0) << " " << dtos(fld.ed,0) << endl;
-  cout << "   pr,en: " << dtos(fld.pr,0) << " " << dtos(fld.en,0) << endl;
-  cout << "pr check: " << dtos(-fld.ed+fld.n*fld.mu+Tld*fld.en,0) << endl;
-  cout << endl;
-
-  cout << "Degnerate test:" << endl;
-  f.mu=15.0;
-  f.m=1.0;
-  f.g=2.0;
-  f.m=1.0;
-  fr.calc_mu(f,0.3);
-  cout << "double: " << endl;
-  cout << f.n << " " << f.ed << endl;
-  cout << f.pr << " " << f.en << endl;
-  cout << endl;
-
-  fld.mu=15;
-  frld.fri.dit25.verbose=1;
-  frld.fri.dit35.verbose=1;
-  frld.fri.dit50.verbose=1;
-  frld.calc_mu(fld,Tld);
-  cout << "long double: " << frld.last_method << endl;
-  cout << dtos(fld.n,0) << " " << dtos(fld.ed,0) << endl;
-  cout << dtos(fld.pr,0) << " " << dtos(fld.en,0) << endl;
-  cout << dtos(-fld.ed+fld.n*fld.mu+Tld*fld.en,0) << endl;
-  cout << endl;
-
   // AWS 5/6/22: this doesn't quite work, it fails on one of
   // the degenerate entropy integrals
 
-  if (1) {
-    frld.verbose=2;
-    long double v3=pcc.part_calibrate<fermion_ld,fermion_rel_ld>
-      (fld,frld,1,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
-    t.test_rel<long double>(v3,0.0,4.0e-10,"calibrate 3");
-  }
+  long double v3=pcc.part_calibrate<fermion_ld,fermion_rel_ld>
+    (fld,frld,1,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
+  t.test_rel<long double>(v3,0.0,4.0e-10,"calibrate 3");
 
+#endif
+  
   t.report();
 
   return 0;

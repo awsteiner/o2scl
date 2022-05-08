@@ -634,12 +634,8 @@ namespace o2scl {
               }
               new_test+=val;
               new_count++;
-              if (false) {
-                std::cout << "nt1: " << p.pr << " " 
-                          << -p.ed+p.n*p.nu+p.en*T << " " << val << " "
-                          << new_test << std::endl;
-              }
-              if (val>0.1) {
+              
+              if (val>0.1 || !isfinite(new_test)) {
                 std::cout << "     T,m*,m: " << T << " " << p.ms
                           << " " << p.m << std::endl;
                 std::cout << "     n1,n2: " << p.n << " "
@@ -653,8 +649,9 @@ namespace o2scl {
                           << -p.ed+p.n*p.nu+p.en*T << std::endl;
                 std::cout << "     ed,en,n,mu: " << p.ed << " "
                           << p.en << " " << p.n << " " << p.mu << std::endl;
-                          
-                exit(-1);
+
+                O2SCL_ERR("Thermodynamic identity violated.",
+                          o2scl::exc_esanity);
               }
             }
 	    dev.n+=fabs((p.n-exact.n)/exact.n);
@@ -691,6 +688,7 @@ namespace o2scl {
 			<< exact.pr << " " << exact.en << std::endl;
 	      std::cout << "bad   : " << bad.n << " " << bad.ed << " " 
 			<< bad.pr << " " << bad.en << std::endl;
+              std::cout << "check ti: " << new_test/new_count << std::endl;
 	      std::cout << "ret_local,ret: " << ret_local << " "
 			<< ret << std::endl;
 	      std::cout << std::endl;
@@ -738,6 +736,7 @@ namespace o2scl {
 	  std::cout << "mu: " << mu_bad << " m: " << m_bad 
 		    << " T: " << T_bad << " mot: " << mot_bad
 		    << "\n\tpsi: " << psi_bad << std::endl;
+          std::cout << "check ti: " << new_test/new_count << std::endl;
 	  std::cout << "ret_local,ret: " << ret_local << " "
 		    << ret << std::endl;
 	  std::cout << std::endl;
@@ -839,10 +838,11 @@ namespace o2scl {
                           << -p.ed+p.n*p.nu+p.en*T << " " << val << " "
                           << new_test << std::endl;
               }
-              if (val>0.1) {
+              if (val>0.1 || !isfinite(new_test)) {
                 std::cout << "     " << p.ed << " " << p.en << " " << p.n << " "
                           << p.nu << std::endl;
-                exit(-1);
+                O2SCL_ERR("Thermodynamic identity violated.",
+                          o2scl::exc_esanity);
               }
             }
 	
@@ -880,6 +880,7 @@ namespace o2scl {
 	      }
 	      std::cout << "bad   : " << bad.mu << " " << bad.ed << " " 
 			<< bad.pr << " " << bad.en << std::endl;
+              std::cout << "check ti: " << new_test/new_count << std::endl;
 	      std::cout << "ret_local,ret: " << ret_local << " "
 			<< ret << std::endl;
 	      std::cout << std::endl;
@@ -927,6 +928,7 @@ namespace o2scl {
 	  std::cout << "mu: " << mu_bad << " m: " << m_bad
 		    << " T: " << T_bad << " mot: " << mot_bad
 		    << "\n\tpsi: " << psi_bad << std::endl;
+          std::cout << "check ti: " << new_test/new_count << std::endl;
 	  std::cout << "ret_local,ret: " << ret_local << " "
 		    << ret << std::endl;
 	  std::cout << std::endl;
@@ -992,10 +994,11 @@ namespace o2scl {
                             << -p.ed+p.n*p.nu+p.en*T << " " << val << " "
                             << new_test << std::endl;
                 }
-                if (val>0.1) {
+                if (val>0.1 || !isfinite(new_test)) {
                   std::cout << "     " << p.ed << " " << p.en << " "
                             << p.n << " " << p.nu << std::endl;
-                  exit(-1);
+                  O2SCL_ERR("Thermodynamic identity violated.",
+                            o2scl::exc_esanity);
                 }
               }
 	
@@ -1034,6 +1037,7 @@ namespace o2scl {
 			  << exact.pr << " " << exact.en << std::endl;
 		std::cout << "bad   : " << bad.n << " " << bad.ed << " " 
 			  << bad.pr << " " << bad.en << std::endl;
+                std::cout << "check ti: " << new_test/new_count << std::endl;
 		std::cout << "ret_local,ret: " << ret_local << " "
 			  << ret << std::endl;
 		std::cout << std::endl;
@@ -1081,6 +1085,7 @@ namespace o2scl {
 	    std::cout << "mu: " << mu_bad << " m: " << m_bad
 		      << " T: " << T_bad << " mot: " << mot_bad
 		      << "\n\tpsi: " << psi_bad << std::endl;
+            std::cout << "check ti: " << new_test/new_count << std::endl;
 	    std::cout << "ret_local,ret: " << ret_local << " "
 		      << ret << std::endl;
 	    std::cout << std::endl;
@@ -1161,11 +1166,12 @@ namespace o2scl {
                             << -p.ed+p.n*p.nu+p.en*T << " " << val << " "
                             << new_test << std::endl;
                 }
-                if (val>0.1) {
+                if (val>0.1 || !isfinite(new_test)) {
                   std::cout << "     " << p.ed << " " << p.en << " "
                             << p.n << " "
                             << p.nu << std::endl;
-                  exit(-1);
+                  O2SCL_ERR("Thermodynamic identity violated.",
+                            o2scl::exc_esanity);
                 }
               }
               
@@ -1204,6 +1210,7 @@ namespace o2scl {
 		}
 		std::cout << "bad   : " << bad.mu << " " << bad.ed << " " 
 			  << bad.pr << " " << bad.en << std::endl;
+                std::cout << "check ti: " << new_test/new_count << std::endl;
 		std::cout << "ret_local,ret: " << ret_local << " "
 			  << ret << std::endl;
 		std::cout << std::endl;
@@ -1251,6 +1258,7 @@ namespace o2scl {
 	    std::cout << "mu: " << mu_bad << " m: " << m_bad
 		      << " T: " << T_bad << " mot: " << mot_bad
 		      << "\n\tpsi: " << psi_bad << std::endl;
+            std::cout << "check ti: " << new_test/new_count << std::endl;
 	    std::cout << "ret_local,ret: " << ret_local << " "
 		      << ret << std::endl;
 	    std::cout << std::endl;
@@ -1276,7 +1284,7 @@ namespace o2scl {
       p=orig;
 
       if (th.verify_ti) {
-        std::cout << "ntx: " << new_test << " " << new_test/new_count
+        std::cout << "check ti: " << new_test/new_count
                   << std::endl;
       }
   

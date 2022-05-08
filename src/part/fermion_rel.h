@@ -260,7 +260,7 @@ namespace o2scl {
                                   internal_fp_t mot) {
   
       internal_fp_t ret;
-      internal_fp_t E=o2hypot(k/T,eta)-mot;
+      internal_fp_t E=hypot(k/T,eta)-mot;
       internal_fp_t arg1=E-y;
 
       // If the argument to the exponential is really small, then the
@@ -271,16 +271,16 @@ namespace o2scl {
 	// then addition of 1 makes us lose precision, so we use an
 	// alternative:
       } else if (arg1<-deg_entropy_fac) {
-	ret=-k*k*(-1+arg1)*o2exp(arg1);
+	ret=-k*k*(-1+arg1)*exp(arg1);
       } else {
-	internal_fp_t nx=(1+o2exp(arg1));
+	internal_fp_t nx=(1+exp(arg1));
         nx=1/nx;
         internal_fp_t arg2=1-nx;
-        internal_fp_t t1=nx*o2log(nx);
-        internal_fp_t t2=arg2*o2log(arg2);
+        internal_fp_t t1=nx*log(nx);
+        internal_fp_t t2=arg2*log(arg2);
         internal_fp_t t3=t1+t2;
         ret=-k*k*t3;
-	//ret=-k*k*(nx*o2log(nx)+arg2*o2log(arg2));
+	//ret=-k*k*(nx*log(nx)+arg2*log(arg2));
       }
 
       if (!o2isfinite(ret)) {
@@ -312,14 +312,14 @@ namespace o2scl {
     typedef cpp_dec_float_50 fp3_t;
   
     // The non-degenerate integrators
-    inte_tanh_sinh_boost<funct_cdf25,30,cpp_dec_float_25> nit25;
-    inte_tanh_sinh_boost<funct_cdf35,30,cpp_dec_float_35> nit35;
-    inte_tanh_sinh_boost<funct_cdf50,30,cpp_dec_float_50> nit50;
+    inte_tanh_sinh_boost<funct_cdf25,30,fp1_t> nit25;
+    inte_tanh_sinh_boost<funct_cdf35,30,fp2_t> nit35;
+    inte_tanh_sinh_boost<funct_cdf50,30,fp3_t> nit50;
     
     // The degenerate integrators
-    inte_tanh_sinh_boost<funct_cdf25,30,cpp_dec_float_25> dit25;
-    inte_tanh_sinh_boost<funct_cdf35,30,cpp_dec_float_35> dit35;
-    inte_tanh_sinh_boost<funct_cdf50,30,cpp_dec_float_50> dit50;
+    inte_tanh_sinh_boost<funct_cdf25,30,fp1_t> dit25;
+    inte_tanh_sinh_boost<funct_cdf35,30,fp2_t> dit35;
+    inte_tanh_sinh_boost<funct_cdf50,30,fp3_t> dit50;
 
     /** \brief Alternate boost integrator
 
@@ -327,7 +327,7 @@ namespace o2scl {
         I don't find any integrals for which this does 
         better than inte_tanh_sinh_boost.
      */
-    inte_kronrod_boost<funct_cdf25,61,cpp_dec_float_25> dit25b;
+    inte_kronrod_boost<funct_cdf25,61,fp1_t> dit25b;
 
     /** \brief Alternate integrator
 
@@ -335,11 +335,7 @@ namespace o2scl {
         integrators have a hard time with some of the degenerate
         integrals, but this cernlib version works for them.
      */
-    inte_adapt_cern<funct_cdf25,inte_gauss56_cern
-                    <funct_cdf25,cpp_dec_float_25,
-                     inte_gauss56_coeffs_float_50<cpp_dec_float_25> >,10000,
-                    cpp_dec_float_25>
-    dit25c;
+    inte_adapt_cern_cdf25 dit25c;
                       
     int verbose;
     
@@ -351,7 +347,11 @@ namespace o2scl {
       dit35.tol_rel=1.0e-15;
       dit50.tol_rel=1.0e-15;
       dit25b.tol_rel=1.0e-15;
-      
+
+      // Note that the inte_adapt_cern integrator works a bit
+      // differently, in that it allows either the tol_abs or tol_rel
+      // test to be satisfied, so unless tol_abs is zero then some
+      // integrals don't use the tol_rel test.
       dit25c.tol_rel=1.0e-15;
       dit25c.tol_abs=0.0;
       
@@ -450,7 +450,7 @@ namespace o2scl {
          static_cast<fp3_t>(y),
          static_cast<fp3_t>(eta),
          static_cast<fp3_t>(mot),false);
-      
+
       fp1_t res1, err1;
       fp2_t res2, err2;
       fp3_t res3, err3;
@@ -2305,7 +2305,7 @@ namespace o2scl {
 
       f.nu=T*x;
       if (log_mode) {
-	f.nu=T*o2exp(x);
+	f.nu=T*exp(x);
       }
 
       // Sometimes the exp() call above causes an overflow, so
@@ -2467,10 +2467,10 @@ namespace o2scl {
 
       if (f.inc_rest_mass) {
 	f.nu=-T*x;
-	if (log_mode) f.nu=-T*o2exp(x);
+	if (log_mode) f.nu=-T*exp(x);
       } else {
 	f.nu=-T*x-2.0*f.m;
-	if (log_mode) f.nu=-T*o2exp(x)-2.0*f.m;
+	if (log_mode) f.nu=-T*exp(x)-2.0*f.m;
       }
       if (f.non_interacting) f.mu=f.nu;
 

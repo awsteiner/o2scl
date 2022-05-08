@@ -181,7 +181,7 @@ namespace o2scl {
       // the boost integrator succeed.
       res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm,&levels);
       if (err>this->tol_rel) {
-        if (this->err_nonconv==true) {
+        if (this->verbose>0) {
           std::cout << "Function inte_exp_sinh_boost::integ_err() failed."
                     << std::endl;
           std::cout << "Values err,tol_rel,L1norm,levels,max: "
@@ -258,7 +258,7 @@ namespace o2scl {
       // the boost integrator succeed.
       res=it.integrate(func,this->tol_rel/10.0,&err,&L1norm,&levels);
       if (err>this->tol_rel) {
-        if (this->err_nonconv==true) {
+        if (this->verbose>0) {
           std::cout << "Function inte_sinh_sinh_boost::integ_err() failed."
                     << std::endl;
           std::cout << "Values err,tol_rel,L1norm,levels,max: "

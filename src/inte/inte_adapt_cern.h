@@ -302,9 +302,50 @@ namespace o2scl {
       return 0;
     }
     //@}
-
+    
   };
+  
+  typedef
+  inte_adapt_cern<funct_ld,inte_gauss56_cern
+                  <funct_ld,long double,
+                   inte_gauss56_coeffs_long_double>,1000,
+                  long double>
+  inte_adapt_cern_ld;
 
+  typedef
+  inte_adapt_cern<funct_cdf25,inte_gauss56_cern
+                  <funct_cdf25,boost::multiprecision::number<
+                                 boost::multiprecision::cpp_dec_float<25> >,
+                   inte_gauss56_coeffs_float_50
+                   <boost::multiprecision::number<
+                      boost::multiprecision::cpp_dec_float<25> >> >,1000,
+                  boost::multiprecision::number<
+                    boost::multiprecision::cpp_dec_float<25> >>
+  inte_adapt_cern_cdf25;
+  
+  typedef
+  inte_adapt_cern<funct_cdf35,inte_gauss56_cern
+                  <funct_cdf35,boost::multiprecision::number<
+                                 boost::multiprecision::cpp_dec_float<35> >,
+                   inte_gauss56_coeffs_float_50
+                   <boost::multiprecision::number<
+                      boost::multiprecision::cpp_dec_float<35> >> >,1000,
+                  boost::multiprecision::number<
+                    boost::multiprecision::cpp_dec_float<35> >>
+  inte_adapt_cern_cdf35;
+  
+  typedef
+  inte_adapt_cern<funct_cdf50,inte_gauss56_cern
+                  <funct_cdf50,boost::multiprecision::number<
+                                 boost::multiprecision::cpp_dec_float<50> >,
+                   inte_gauss56_coeffs_float_50
+                   <boost::multiprecision::number<
+                      boost::multiprecision::cpp_dec_float<50> >> >,10000,
+                  boost::multiprecision::number<
+                    boost::multiprecision::cpp_dec_float<50> >>
+  inte_adapt_cern_cdf50;
+  
+  
 }
 
 #endif
