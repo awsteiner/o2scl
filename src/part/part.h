@@ -496,9 +496,9 @@ namespace o2scl {
 
         .. todo::
 
-        In function pair_calibrate()
+           In function pair_calibrate()
 
-        - Future: Also calibrate massless fermions?
+           - Future: Also calibrate massless fermions?
 
         \endverbatim
     */
@@ -517,8 +517,10 @@ namespace o2scl {
       // ----------------------------------------------------------------
       // Read data file
 
-      fp_t new_test=0;
-      size_t new_count=0;
+      fp_t ti_test=0;
+      fp_t ti_local=0;
+      fp_t ti_max=0;
+      size_t ti_count=0;
       
       std::string fname;
       if (external==false) {
@@ -564,6 +566,7 @@ namespace o2scl {
   
       // ----------------------------------------------------------------
       // First pass, test calc_mu()
+      
       if (verbose>1) {
         std::cout << "First pass, testing calc_mu().\n" << std::endl;
       }
@@ -572,7 +575,8 @@ namespace o2scl {
       // k=0,1 are non-interacting, k=2,3 are interacting
       for(size_t k=0;k<4;k++) {
 
-	fp_t ret_local=0.0;
+	fp_t ret_local=0;
+        ti_local=0;
       
 	// Initialize storage
 	dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
@@ -632,10 +636,11 @@ namespace o2scl {
               } else {
                 val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/abs(p.pr);
               }
-              new_test+=val;
-              new_count++;
+              ti_test+=val;
+              ti_count++;
+              if (ti_test>ti_local) ti_local=ti_test;
               
-              if (val>0.1 || !isfinite(new_test)) {
+              if (val>0.1 || !isfinite(ti_test)) {
                 std::cout << "     T,m*,m: " << T << " " << p.ms
                           << " " << p.m << std::endl;
                 std::cout << "     n1,n2: " << p.n << " "
@@ -688,7 +693,10 @@ namespace o2scl {
 			<< exact.pr << " " << exact.en << std::endl;
 	      std::cout << "bad   : " << bad.n << " " << bad.ed << " " 
 			<< bad.pr << " " << bad.en << std::endl;
-              std::cout << "check ti: " << new_test/new_count << std::endl;
+              if (ti_count>0) {
+                std::cout << "check ti: " << ti_test/ti_count << " "
+                          << ti_local << std::endl;
+              }
 	      std::cout << "ret_local,ret: " << ret_local << " "
 			<< ret << std::endl;
 	      std::cout << std::endl;
@@ -700,6 +708,9 @@ namespace o2scl {
 
 	    if (ret_local>ret) {
 	      ret=ret_local;
+	    }
+	    if (ti_local>ti_max) {
+	      ti_max=ret_local;
 	    }
 	  
 	    // End of loop over points in data file
@@ -736,7 +747,10 @@ namespace o2scl {
 	  std::cout << "mu: " << mu_bad << " m: " << m_bad 
 		    << " T: " << T_bad << " mot: " << mot_bad
 		    << "\n\tpsi: " << psi_bad << std::endl;
-          std::cout << "check ti: " << new_test/new_count << std::endl;
+          if (ti_count>0) {
+            std::cout << "check ti: " << ti_test/ti_count << " "
+                      << ti_local << std::endl;
+          }
 	  std::cout << "ret_local,ret: " << ret_local << " "
 		    << ret << std::endl;
 	  std::cout << std::endl;
@@ -831,16 +845,12 @@ namespace o2scl {
               } else {
                 val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/abs(p.pr);
               }
-              new_test+=val;
-              new_count++;
-              if (false) {
-                std::cout << "nt2: " << p.pr << " " 
-                          << -p.ed+p.n*p.nu+p.en*T << " " << val << " "
-                          << new_test << std::endl;
-              }
-              if (val>0.1 || !isfinite(new_test)) {
-                std::cout << "     " << p.ed << " " << p.en << " " << p.n << " "
-                          << p.nu << std::endl;
+              ti_test+=val;
+              ti_count++;
+              if (ti_test>ti_local) ti_local=ti_test;
+              if (val>0.1 || !isfinite(ti_test)) {
+                std::cout << "     " << p.ed << " " << p.en << " "
+                          << p.n << " " << p.nu << std::endl;
                 O2SCL_ERR("Thermodynamic identity violated.",
                           o2scl::exc_esanity);
               }
@@ -857,8 +867,9 @@ namespace o2scl {
 
 	    cnt++;
 
-	    check_chem_pot<part_t>(p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
-				   mot_bad,psi_bad,ret_local);
+	    check_chem_pot<part_t>(p,exact,bad,k,T,mot,psi,mu_bad,
+                                   m_bad,T_bad,mot_bad,psi_bad,ret_local);
+				   
 	  
 	    check_eps<part_t>(p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
 			      mot_bad,psi_bad,ret_local);
@@ -869,18 +880,21 @@ namespace o2scl {
 		std::cout << "nu,ed,pr,en: " << std::endl;
 		std::cout << "approx: " << p.nu << " " << p.ed << " "
 			  << p.pr << " " << p.en << std::endl;
-		std::cout << "exact : " << exact.nu << " " << exact.ed << " " 
-			  << exact.pr << " " << exact.en << std::endl;
+		std::cout << "exact : " << exact.nu << " " << exact.ed 
+			  << " " << exact.pr << " " << exact.en << std::endl;
 	      } else {
 		std::cout << "mu,ed,pr,en: " << std::endl;
 		std::cout << "approx: " << p.mu << " " << p.ed << " "
 			  << p.pr << " " << p.en << std::endl;
-		std::cout << "exact : " << exact.mu << " " << exact.ed << " " 
-			  << exact.pr << " " << exact.en << std::endl;
+		std::cout << "exact : " << exact.mu << " " << exact.ed 
+			  << " " << exact.pr << " " << exact.en << std::endl;
 	      }
 	      std::cout << "bad   : " << bad.mu << " " << bad.ed << " " 
 			<< bad.pr << " " << bad.en << std::endl;
-              std::cout << "check ti: " << new_test/new_count << std::endl;
+              if (ti_count>0) {
+                std::cout << "check ti: " << ti_test/ti_count << " "
+                          << ti_local << std::endl;
+              }
 	      std::cout << "ret_local,ret: " << ret_local << " "
 			<< ret << std::endl;
 	      std::cout << std::endl;
@@ -892,6 +906,9 @@ namespace o2scl {
 
 	    if (ret_local>ret) {
 	      ret=ret_local;
+	    }
+	    if (ti_local>ti_max) {
+	      ti_max=ret_local;
 	    }
     
 	    // End of loop over points in data file
@@ -928,7 +945,10 @@ namespace o2scl {
 	  std::cout << "mu: " << mu_bad << " m: " << m_bad
 		    << " T: " << T_bad << " mot: " << mot_bad
 		    << "\n\tpsi: " << psi_bad << std::endl;
-          std::cout << "check ti: " << new_test/new_count << std::endl;
+          if (ti_count>0) {
+            std::cout << "check ti: " << ti_test/ti_count << " "
+                      << ti_local << std::endl;
+          }
 	  std::cout << "ret_local,ret: " << ret_local << " "
 		    << ret << std::endl;
 	  std::cout << std::endl;
@@ -987,14 +1007,10 @@ namespace o2scl {
                 } else {
                   val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/abs(p.pr);
                 }
-                new_test+=val;
-                new_count++;
-                if (false) {
-                  std::cout << "nt3: " << p.pr << " " 
-                            << -p.ed+p.n*p.nu+p.en*T << " " << val << " "
-                            << new_test << std::endl;
-                }
-                if (val>0.1 || !isfinite(new_test)) {
+                ti_test+=val;
+                ti_count++;
+              if (ti_test>ti_local) ti_local=ti_test;
+                if (val>0.1 || !isfinite(ti_test)) {
                   std::cout << "     " << p.ed << " " << p.en << " "
                             << p.n << " " << p.nu << std::endl;
                   O2SCL_ERR("Thermodynamic identity violated.",
@@ -1037,7 +1053,10 @@ namespace o2scl {
 			  << exact.pr << " " << exact.en << std::endl;
 		std::cout << "bad   : " << bad.n << " " << bad.ed << " " 
 			  << bad.pr << " " << bad.en << std::endl;
-                std::cout << "check ti: " << new_test/new_count << std::endl;
+                if (ti_count>0) {
+                  std::cout << "check ti: " << ti_test/ti_count << " "
+                            << ti_local << std::endl;
+                }
 		std::cout << "ret_local,ret: " << ret_local << " "
 			  << ret << std::endl;
 		std::cout << std::endl;
@@ -1050,6 +1069,9 @@ namespace o2scl {
 	      if (ret_local>ret) {
 		ret=ret_local;
 	      }
+	    if (ti_local>ti_max) {
+	      ti_max=ret_local;
+	    }
 	    
 	      // End of loop over points in data file
 	    }
@@ -1085,8 +1107,11 @@ namespace o2scl {
 	    std::cout << "mu: " << mu_bad << " m: " << m_bad
 		      << " T: " << T_bad << " mot: " << mot_bad
 		      << "\n\tpsi: " << psi_bad << std::endl;
-            std::cout << "check ti: " << new_test/new_count << std::endl;
-	    std::cout << "ret_local,ret: " << ret_local << " "
+            if (ti_count>0) {
+              std::cout << "check ti: " << ti_test/ti_count << " "
+                        << ti_local << std::endl;
+            }
+            std::cout << "ret_local,ret: " << ret_local << " "
 		      << ret << std::endl;
 	    std::cout << std::endl;
 	    if (verbose>2) {
@@ -1159,14 +1184,10 @@ namespace o2scl {
                 } else {
                   val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/abs(p.pr);
                 }
-                new_test+=val;
-                new_count++;
-                if (false) {
-                  std::cout << "nt4: " << p.pr << " " 
-                            << -p.ed+p.n*p.nu+p.en*T << " " << val << " "
-                            << new_test << std::endl;
-                }
-                if (val>0.1 || !isfinite(new_test)) {
+                ti_test+=val;
+                ti_count++;
+              if (ti_test>ti_local) ti_local=ti_test;
+                if (val>0.1 || !isfinite(ti_test)) {
                   std::cout << "     " << p.ed << " " << p.en << " "
                             << p.n << " "
                             << p.nu << std::endl;
@@ -1186,10 +1207,12 @@ namespace o2scl {
 	
 	      cnt++;
 
-	      check_chem_pot<part_t>(p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
+	      check_chem_pot<part_t>(p,exact,bad,k,T,mot,psi,
+                                     mu_bad,m_bad,T_bad,
 				     mot_bad,psi_bad,ret_local);
 
-	      check_eps<part_t>(p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
+	      check_eps<part_t>(p,exact,bad,k,T,mot,psi,mu_bad,
+                                m_bad,T_bad,
 				mot_bad,psi_bad,ret_local);
 	    
 	    
@@ -1199,18 +1222,23 @@ namespace o2scl {
 		  std::cout << "nu,ed,pr,en: " << std::endl;
 		  std::cout << "approx: " << p.nu << " " << p.ed << " "
 			    << p.pr << " " << p.en << std::endl;
-		  std::cout << "exact : " << exact.nu << " " << exact.ed << " " 
-			    << exact.pr << " " << exact.en << std::endl;
+		  std::cout << "exact : " << exact.nu << " "
+                            << exact.ed << " " << exact.pr << " "
+                            << exact.en << std::endl;
 		} else {
 		  std::cout << "mu,ed,pr,en: " << std::endl;
 		  std::cout << "approx: " << p.mu << " " << p.ed << " "
 			    << p.pr << " " << p.en << std::endl;
-		  std::cout << "exact : " << exact.mu << " " << exact.ed << " " 
-			    << exact.pr << " " << exact.en << std::endl;
+		  std::cout << "exact : " << exact.mu << " "
+                            << exact.ed << " " << exact.pr << " "
+                            << exact.en << std::endl;
 		}
 		std::cout << "bad   : " << bad.mu << " " << bad.ed << " " 
 			  << bad.pr << " " << bad.en << std::endl;
-                std::cout << "check ti: " << new_test/new_count << std::endl;
+                if (ti_count>0) {
+                  std::cout << "check ti: " << ti_test/ti_count
+                            << " " << ti_local << std::endl;
+                }
 		std::cout << "ret_local,ret: " << ret_local << " "
 			  << ret << std::endl;
 		std::cout << std::endl;
@@ -1223,6 +1251,9 @@ namespace o2scl {
 	      if (ret_local>ret) {
 		ret=ret_local;
 	      }
+	    if (ti_local>ti_max) {
+	      ti_max=ret_local;
+	    }
 
 	      // End of loop over points in data file
 	    }
@@ -1258,7 +1289,10 @@ namespace o2scl {
 	    std::cout << "mu: " << mu_bad << " m: " << m_bad
 		      << " T: " << T_bad << " mot: " << mot_bad
 		      << "\n\tpsi: " << psi_bad << std::endl;
-            std::cout << "check ti: " << new_test/new_count << std::endl;
+            if (ti_count>0) {
+              std::cout << "check ti: " << ti_test/ti_count << " "
+                        << ti_local << std::endl;
+            }
 	    std::cout << "ret_local,ret: " << ret_local << " "
 		      << ret << std::endl;
 	    std::cout << std::endl;
@@ -1271,6 +1305,9 @@ namespace o2scl {
 	  if (ret_local>ret) {
 	    ret=ret_local;
 	  }
+          if (ti_local>ti_max) {
+            ti_max=ret_local;
+          }
     
 	  // End of k loop
 	}
@@ -1284,8 +1321,8 @@ namespace o2scl {
       p=orig;
 
       if (th.verify_ti) {
-        std::cout << "check ti: " << new_test/new_count
-                  << std::endl;
+        std::cout << "check ti, ti_max: " << ti_test/ti_count << " "
+                  << ti_max << std::endl;
       }
   
       return ret;

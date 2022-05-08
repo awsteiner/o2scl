@@ -63,12 +63,18 @@ namespace o2scl {
         (default 30.0)
     */
     double deg_entropy_fac;
+
+    /** \brief If true, call the error handler if the integration
+        does not succeed
+    */
+    bool err_nonconv;
     
   public:
 
     fermion_rel_integ_base() {
       exp_limit=200.0;
       deg_entropy_fac=30.0;
+      err_nonconv=true;
     }      
     
     /// The integrand for the density for non-degenerate fermions
@@ -300,6 +306,8 @@ namespace o2scl {
     
   public:
 
+    /// \name Typedefs for convenience
+    //@{
     typedef boost::multiprecision::number<
     boost::multiprecision::cpp_dec_float<25> > cpp_dec_float_25;
     typedef boost::multiprecision::number<
@@ -310,13 +318,17 @@ namespace o2scl {
     typedef cpp_dec_float_25 fp1_t;
     typedef cpp_dec_float_35 fp2_t;
     typedef cpp_dec_float_50 fp3_t;
+    //@}
   
-    // The non-degenerate integrators
+    /// \name The non-degenerate integrators
+    //@{
     inte_tanh_sinh_boost<funct_cdf25,30,fp1_t> nit25;
     inte_tanh_sinh_boost<funct_cdf35,30,fp2_t> nit35;
     inte_tanh_sinh_boost<funct_cdf50,30,fp3_t> nit50;
+    //@}
     
-    // The degenerate integrators
+    /// \name The degenerate integrators
+    //@{
     inte_tanh_sinh_boost<funct_cdf25,30,fp1_t> dit25;
     inte_tanh_sinh_boost<funct_cdf35,30,fp2_t> dit35;
     inte_tanh_sinh_boost<funct_cdf50,30,fp3_t> dit50;
@@ -336,7 +348,9 @@ namespace o2scl {
         integrals, but this cernlib version works for them.
      */
     inte_adapt_cern_cdf25 dit25c;
-                      
+    //@}
+
+    /// Verbosity parameter
     int verbose;
     
     fermion_rel_integ_multip() {
@@ -418,6 +432,11 @@ namespace o2scl {
                   << "highest precision for y,eta: " << y << " " << eta
                   << std::endl;
       }
+      if (iret!=0 && err_nonconv) {
+        O2SCL_ERR2("Density integration failed in ",
+                  "fermion_rel_integ::eval_density().",
+                  o2scl::exc_efailed);
+      }
       return iret;
     }
 
@@ -491,6 +510,11 @@ namespace o2scl {
                   << "highest precision for y,eta: " << y << " " << eta
                   << std::endl;
       }
+      if (iret!=0 && err_nonconv) {
+        O2SCL_ERR2("Degenerate density integration failed in ",
+                  "fermion_rel_integ::eval_density().",
+                  o2scl::exc_efailed);
+      }
       return iret;
     }
 
@@ -542,6 +566,11 @@ namespace o2scl {
         std::cout << "Non-degenerate energy integrator failed at "
                   << "highest precision for y,eta: " << y << " " << eta
                   << std::endl;
+      }
+      if (iret!=0 && err_nonconv) {
+        O2SCL_ERR2("Energy integration failed in ",
+                  "fermion_rel_integ::eval_density().",
+                  o2scl::exc_efailed);
       }
       return iret;
     }
@@ -612,7 +641,11 @@ namespace o2scl {
                   << "highest precision for y,eta: " << y << " " << eta
                   << std::endl;
       }
-      
+      if (iret!=0 && err_nonconv) {
+        O2SCL_ERR2("Degenerate energy integration failed in ",
+                  "fermion_rel_integ::eval_density().",
+                  o2scl::exc_efailed);
+      }      
       return iret;
     }
 
@@ -665,7 +698,11 @@ namespace o2scl {
                   << "highest precision for y,eta: " << y << " " << eta
                   << std::endl;
       }
-      
+      if (iret!=0 && err_nonconv) {
+        O2SCL_ERR2("Entropy integration failed in ",
+                  "fermion_rel_integ::eval_density().",
+                  o2scl::exc_efailed);
+      }      
       return iret;
     }
 
@@ -735,7 +772,11 @@ namespace o2scl {
                   << "highest precision for y,eta: " << y << " " << eta
                   << std::endl;
       }
-      
+      if (iret!=0 && err_nonconv) {
+        O2SCL_ERR2("Degenerate entropy integration failed in ",
+                  "fermion_rel_integ::eval_density().",
+                  o2scl::exc_efailed);
+      }      
       return iret;
     }
 
@@ -784,7 +825,11 @@ namespace o2scl {
         std::cout << "Non-degenerate pressure integrator failed at "
                   << "highest precision for y,eta: " << y << " " << eta
                   << std::endl;
-
+      }
+      if (iret!=0 && err_nonconv) {
+        O2SCL_ERR2("Pressure integration failed in ",
+                  "fermion_rel_integ::eval_density().",
+                  o2scl::exc_efailed);
       }
       return iret;
     }
@@ -855,10 +900,14 @@ namespace o2scl {
                   << "highest precision for y,eta,iret: " << y << " " << eta
                   << iret << std::endl;
       }
+      if (iret!=0 && err_nonconv) {
+        O2SCL_ERR2("Degenerate pressure integration failed in ",
+                  "fermion_rel_integ::eval_density().",
+                  o2scl::exc_efailed);
+      }
       return iret;
     }
     
-
   };
 
   /** \brief Default integrator for \ref o2scl::fermion_rel_tl
@@ -884,6 +933,11 @@ namespace o2scl {
                             fp_t>::density_fun<fp_t>),
                            this,std::placeholders::_1,y,eta);
       int iret=nit.integ_iu_err(mfd,0.0,res,err);
+      if (iret!=0 && err_nonconv) {
+        O2SCL_ERR2("Density integration failed in ",
+                  "fermion_rel_integ::eval_density().",
+                  o2scl::exc_efailed);
+      }
       return iret;
     }
 
@@ -896,6 +950,11 @@ namespace o2scl {
                             fp_t>::deg_density_fun<fp_t>),
                            this,std::placeholders::_1,T,y,eta,mot,false);
       int iret=dit.integ_err(mfd,0.0,ul,res,err);
+      if (iret!=0 && err_nonconv) {
+        O2SCL_ERR2("Degenerate density integration failed in ",
+                  "fermion_rel_integ::eval_density().",
+                  o2scl::exc_efailed);
+      }
       return iret;
     }
 
@@ -907,6 +966,11 @@ namespace o2scl {
                             fp_t>::energy_fun<fp_t>),
                            this,std::placeholders::_1,y,eta);
       int iret=nit.integ_iu_err(mfd,0.0,res,err);
+      if (iret!=0 && err_nonconv) {
+        O2SCL_ERR2("Energy integration failed in ",
+                  "fermion_rel_integ::eval_density().",
+                  o2scl::exc_efailed);
+      }
       return iret;
     }
 
@@ -919,6 +983,11 @@ namespace o2scl {
                             fp_t>::deg_energy_fun<fp_t>),
                            this,std::placeholders::_1,T,y,eta,mot);
       int iret=dit.integ_err(mfd,0.0,ul,res,err);
+      if (iret!=0 && err_nonconv) {
+        O2SCL_ERR2("Degenerate energy integration failed in ",
+                  "fermion_rel_integ::eval_density().",
+                  o2scl::exc_efailed);
+      }
       return iret;
     }
 
@@ -930,6 +999,11 @@ namespace o2scl {
                             fp_t>::entropy_fun<fp_t>),
                            this,std::placeholders::_1,y,eta);
       int iret=nit.integ_iu_err(mfd,0.0,res,err);
+      if (iret!=0 && err_nonconv) {
+        O2SCL_ERR2("Entropy integration failed in ",
+                  "fermion_rel_integ::eval_density().",
+                  o2scl::exc_efailed);
+      }
       return iret;
     }
 
@@ -942,6 +1016,11 @@ namespace o2scl {
                             fp_t>::deg_entropy_fun<fp_t>),
                            this,std::placeholders::_1,T,y,eta,mot);
       int iret=dit.integ_err(mfd,0.0,ul,res,err);
+      if (iret!=0 && err_nonconv) {
+        O2SCL_ERR2("Degnerate entropy integration failed in ",
+                  "fermion_rel_integ::eval_density().",
+                  o2scl::exc_efailed);
+      }
       return iret;
     }
 
@@ -953,8 +1032,12 @@ namespace o2scl {
                             fp_t>::pressure_fun<fp_t>),
                            this,std::placeholders::_1,y,eta);
       int iret=nit.integ_iu_err(mfd,0.0,res,err);
-      return 0;
-      //return iret;
+      if (iret!=0 && err_nonconv) {
+        O2SCL_ERR2("Pressure integration failed in ",
+                  "fermion_rel_integ::eval_density().",
+                  o2scl::exc_efailed);
+      }
+      return iret;
     }
 
     /** \brief Evalulate the entropy integral in the degenerate limit
@@ -967,6 +1050,11 @@ namespace o2scl {
                             fp_t>::deg_pressure_fun<fp_t>),
                            this,std::placeholders::_1,T,y,eta,mot,false);
       int iret=dit.integ_err(mfd,0.0,ul,res,err);
+      if (iret!=0 && err_nonconv) {
+        O2SCL_ERR2("Degenerate pressure integration failed in ",
+                  "fermion_rel_integ::eval_density().",
+                  o2scl::exc_efailed);
+      }
       return iret;
     }
 
