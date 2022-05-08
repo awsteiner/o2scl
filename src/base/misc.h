@@ -75,6 +75,11 @@ namespace o2scl {
    */
   long double o2abs(const long double x);
 
+  /** \brief Absolute value for cpp_dec_float_25
+   */
+  boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
+    o2abs(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> > x);
+  
   /** \brief Absolute value for cpp_dec_float_35
    */
   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
@@ -112,6 +117,11 @@ namespace o2scl {
    */
   long double o2exp(const long double x);
 
+  /** \brief Exponential for cpp_dec_float_25
+   */
+  boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
+    o2exp(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> > x);
+  
   /** \brief Exponential for cpp_dec_float_35
    */
   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
@@ -139,6 +149,11 @@ namespace o2scl {
    */
   long double o2log(const long double x);
 
+  /** \brief Logarithm for cpp_dec_float_25
+   */
+  boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
+    o2log(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> > x);
+  
   /** \brief Logarithm for cpp_dec_float_35
    */
   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
@@ -166,6 +181,11 @@ namespace o2scl {
    */
   long double o2sqrt(const long double x);
 
+  /** \brief Square root for cpp_dec_float_25
+   */
+  boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
+    o2sqrt(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> > x);
+  
   /** \brief Square root for cpp_dec_float_35
    */
   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
@@ -203,6 +223,12 @@ namespace o2scl {
    */
   long double o2pow(const long double x, const long double y);
 
+  /** \brief Exponential for cpp_dec_float_25
+   */
+  boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
+  o2pow(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> > x,
+        const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> > y);
+  
   /** \brief Exponential for cpp_dec_float_35
    */
   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
@@ -244,9 +270,9 @@ namespace o2scl {
 
   /** \brief Compatbility function for isfinite()
    */
-  bool o2isfinite(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> > x);
-  
   bool o2isfinite(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> > x);
+  
+  bool o2isfinite(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> > x);
 
   /** \brief Compatbility function for isfinite()
    */
@@ -275,6 +301,12 @@ namespace o2scl {
   /** \brief Compatbility function for hypot()
   */
   long double o2hypot(const long double x, const long double y);
+
+  /** \brief Compatbility function for hypot()
+   */
+  boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
+  o2hypot(const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> > x,
+	  const boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> > y);
 
   /** \brief Compatbility function for hypot()
    */

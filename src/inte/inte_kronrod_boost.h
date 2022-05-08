@@ -83,17 +83,29 @@ namespace o2scl {
   virtual int integ_err(func_t &func, fp_t a, fp_t b, 
 			fp_t &res, fp_t &err) {
     res=boost::math::quadrature::gauss_kronrod<fp_t,rule>::integrate
-    (func,a,b,max_depth,this->tol_rel,&err,&L1norm);
+      (func,a,b,max_depth,this->tol_rel,&err,&L1norm);
     if (err>this->tol_rel) {
-      O2SCL_ERR2("Failed to achieve tolerance in ",
-		 "inte_kronrod_boost::integ_err().",o2scl::exc_efailed);
+      if (this->verbose>0) {
+        std::cout << "Function inte_kronrod_boost::integ_err() failed."
+                  << std::endl;
+        std::cout << "Values err,tol_rel,L1norm,max: "
+                  << err << " " << this->tol_rel << " "
+                  << L1norm << " " << max_depth
+                  << std::endl;
+      }
+      O2SCL_CONV2_RET("Failed to achieve tolerance in ",
+                      "inte_kronrod_boost::integ_err().",o2scl::exc_efailed,
+                      this->err_nonconv);
     }
     return 0;
   }
   
-  /// L1 norm
-  fp_t L1norm;
-  
+    /// L1 norm
+    fp_t L1norm;
+    
+    /// Number of refinement levels in last integral computed
+    size_t levels;
+    
   };
   
 #ifndef DOXYGEN_NO_O2NS

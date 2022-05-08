@@ -43,6 +43,8 @@
 #include <o2scl/inte_qagiu_gsl.h>
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/polylog.h>
+#include <o2scl/inte_kronrod_boost.h>
+#include <o2scl/inte_adapt_cern.h>
 
 namespace o2scl {
 
@@ -258,7 +260,7 @@ namespace o2scl {
                                   internal_fp_t mot) {
   
       internal_fp_t ret;
-      internal_fp_t E=hypot(k/T,eta)-mot;
+      internal_fp_t E=o2hypot(k/T,eta)-mot;
       internal_fp_t arg1=E-y;
 
       // If the argument to the exponential is really small, then the
@@ -269,12 +271,16 @@ namespace o2scl {
 	// then addition of 1 makes us lose precision, so we use an
 	// alternative:
       } else if (arg1<-deg_entropy_fac) {
-	ret=-k*k*(-1+arg1)*exp(arg1);
+	ret=-k*k*(-1+arg1)*o2exp(arg1);
       } else {
-	internal_fp_t nx=(1+exp(arg1));
+	internal_fp_t nx=(1+o2exp(arg1));
         nx=1/nx;
         internal_fp_t arg2=1-nx;
-	ret=-k*k*(nx*log(nx)+arg2*log(arg2));
+        internal_fp_t t1=nx*o2log(nx);
+        internal_fp_t t2=arg2*o2log(arg2);
+        internal_fp_t t3=t1+t2;
+        ret=-k*k*t3;
+	//ret=-k*k*(nx*o2log(nx)+arg2*o2log(arg2));
       }
 
       if (!o2isfinite(ret)) {
@@ -314,7 +320,29 @@ namespace o2scl {
     inte_tanh_sinh_boost<funct_cdf25,30,cpp_dec_float_25> dit25;
     inte_tanh_sinh_boost<funct_cdf35,30,cpp_dec_float_35> dit35;
     inte_tanh_sinh_boost<funct_cdf50,30,cpp_dec_float_50> dit50;
-      
+
+    /** \brief Alternate boost integrator
+
+        AWS, 5/8/22: I'm keeping this here for posterity but
+        I don't find any integrals for which this does 
+        better than inte_tanh_sinh_boost.
+     */
+    inte_kronrod_boost<funct_cdf25,61,cpp_dec_float_25> dit25b;
+
+    /** \brief Alternate integrator
+
+        AWS, 5/8/22: I'm not sure why, but all of the boost
+        integrators have a hard time with some of the degenerate
+        integrals, but this cernlib version works for them.
+     */
+    inte_adapt_cern<funct_cdf25,inte_gauss56_cern
+                    <funct_cdf25,cpp_dec_float_25,
+                     inte_gauss56_coeffs_float_50<cpp_dec_float_25> >,10000,
+                    cpp_dec_float_25>
+    dit25c;
+                      
+    int verbose;
+    
     fermion_rel_integ_multip() {
       nit25.tol_rel=1.0e-15;
       nit35.tol_rel=1.0e-15;
@@ -322,12 +350,23 @@ namespace o2scl {
       dit25.tol_rel=1.0e-15;
       dit35.tol_rel=1.0e-15;
       dit50.tol_rel=1.0e-15;
+      dit25b.tol_rel=1.0e-15;
+      
+      dit25c.tol_rel=1.0e-15;
+      dit25c.tol_abs=0.0;
+      
       nit25.err_nonconv=false;
       nit35.err_nonconv=false;
       nit50.err_nonconv=false;
       dit25.err_nonconv=false;
       dit35.err_nonconv=false;
       dit50.err_nonconv=false;
+      dit25b.err_nonconv=false;
+      dit25c.err_nonconv=false;
+      
+      dit25b.set_max_depth(30);
+
+      verbose=0;
     }
     
     /** \brief Evalulate the density integral in the nondegenerate limit
@@ -374,9 +413,11 @@ namespace o2scl {
         err=static_cast<fp_t>(err3);
         return iret;
       }
-      std::cout << "Non-degenerate density integrator failed at "
-                << "highest precision for y,eta: " << y << " " << eta
-                << std::endl;
+      if (verbose>0) {
+        std::cout << "Non-degenerate density integrator failed at "
+                  << "highest precision for y,eta: " << y << " " << eta
+                  << std::endl;
+      }
       return iret;
     }
 
@@ -427,6 +468,12 @@ namespace o2scl {
         err=static_cast<fp_t>(err1);
         return iret;
       }
+      iret=dit25c.integ_err(mfd25,0.0,ul1,res1,err1);
+      if (iret==0) {
+        res=static_cast<fp_t>(res1);
+        err=static_cast<fp_t>(err1);
+        return iret;
+      }
       iret=dit35.integ_err(mfd35,0.0,ul2,res2,err2);
       if (iret==0) {
         res=static_cast<fp_t>(res2);
@@ -439,9 +486,11 @@ namespace o2scl {
         err=static_cast<fp_t>(err3);
         return iret;
       }
-      std::cout << "Degenerate density integrator failed at "
-                << "highest precision for y,eta: " << y << " " << eta
-                << std::endl;
+      if (verbose>0) {
+        std::cout << "Degenerate density integrator failed at "
+                  << "highest precision for y,eta: " << y << " " << eta
+                  << std::endl;
+      }
       return iret;
     }
 
@@ -489,10 +538,11 @@ namespace o2scl {
         err=static_cast<fp_t>(err3);
         return iret;
       }
-      std::cout << "Non-degenerate energy integrator failed at "
-                << "highest precision for y,eta: " << y << " " << eta
-                << std::endl;
-      
+      if (verbose>0) {
+        std::cout << "Non-degenerate energy integrator failed at "
+                  << "highest precision for y,eta: " << y << " " << eta
+                  << std::endl;
+      }
       return iret;
     }
 
@@ -539,6 +589,12 @@ namespace o2scl {
         err=static_cast<fp_t>(err1);
         return iret;
       }
+      iret=dit25c.integ_err(mfd25,0.0,ul1,res1,err1);
+      if (iret==0) {
+        res=static_cast<fp_t>(res1);
+        err=static_cast<fp_t>(err1);
+        return iret;
+      }
       iret=dit35.integ_err(mfd35,0.0,ul2,res2,err2);
       if (iret==0) {
         res=static_cast<fp_t>(res2);
@@ -551,9 +607,11 @@ namespace o2scl {
         err=static_cast<fp_t>(err3);
         return iret;
       }
-      std::cout << "Degenerate energy integrator failed at "
-                << "highest precision for y,eta: " << y << " " << eta
-                << std::endl;
+      if (verbose>0) {
+        std::cout << "Degenerate energy integrator failed at "
+                  << "highest precision for y,eta: " << y << " " << eta
+                  << std::endl;
+      }
       
       return iret;
     }
@@ -602,9 +660,11 @@ namespace o2scl {
         err=static_cast<fp_t>(err3);
         return iret;
       }
-      std::cout << "Non-degenerate entropy integrator failed at "
-                << "highest precision for y,eta: " << y << " " << eta
-                << std::endl;
+      if (verbose>0) {
+        std::cout << "Non-degenerate entropy integrator failed at "
+                  << "highest precision for y,eta: " << y << " " << eta
+                  << std::endl;
+      }
       
       return iret;
     }
@@ -652,6 +712,12 @@ namespace o2scl {
         err=static_cast<fp_t>(err1);
         return iret;
       }
+      iret=dit25c.integ_err(mfd25,0.0,ul1,res1,err1);
+      if (iret==0) {
+        res=static_cast<fp_t>(res1);
+        err=static_cast<fp_t>(err1);
+        return iret;
+      }
       iret=dit35.integ_err(mfd35,0.0,ul2,res2,err2);
       if (iret==0) {
         res=static_cast<fp_t>(res2);
@@ -664,9 +730,11 @@ namespace o2scl {
         err=static_cast<fp_t>(err3);
         return iret;
       }
-      std::cout << "Degenerate entropy integrator failed at "
-                << "highest precision for y,eta: " << y << " " << eta
-                << std::endl;
+      if (verbose>0) {
+        std::cout << "Degenerate entropy integrator failed at "
+                  << "highest precision for y,eta: " << y << " " << eta
+                  << std::endl;
+      }
       
       return iret;
     }
@@ -712,10 +780,12 @@ namespace o2scl {
         err=static_cast<fp_t>(err3);
         return iret;
       }
-      std::cout << "Non-degenerate pressure integrator failed at "
-                << "highest precision for y,eta: " << y << " " << eta
-                << std::endl;
-      
+      if (verbose>0) {
+        std::cout << "Non-degenerate pressure integrator failed at "
+                  << "highest precision for y,eta: " << y << " " << eta
+                  << std::endl;
+
+      }
       return iret;
     }
 
@@ -762,6 +832,12 @@ namespace o2scl {
         err=static_cast<fp_t>(err1);
         return iret;
       }
+      iret=dit25c.integ_err(mfd25,0.0,ul1,res1,err1);
+      if (iret==0) {
+        res=static_cast<fp_t>(res1);
+        err=static_cast<fp_t>(err1);
+        return iret;
+      }
       iret=dit35.integ_err(mfd35,0.0,ul2,res2,err2);
       if (iret==0) {
         res=static_cast<fp_t>(res2);
@@ -774,10 +850,11 @@ namespace o2scl {
         err=static_cast<fp_t>(err3);
         return iret;
       }
-      std::cout << "Degenerate pressure integrator failed at "
-                << "highest precision for y,eta,iret: " << y << " " << eta
-                << iret << std::endl;
-      
+      if (verbose>0) {
+        std::cout << "Degenerate pressure integrator failed at "
+                  << "highest precision for y,eta,iret: " << y << " " << eta
+                  << iret << std::endl;
+      }
       return iret;
     }
     
