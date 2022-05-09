@@ -356,7 +356,7 @@ namespace o2scl {
 
   /** \brief Simple in-place transpose of the first \f$ (m,n) \f$ 
       matrix elements
-
+      
       Copy the transpose of the first \c m rows and the first \c cols
       of the matrix \c src into the matrix \c dest
       
@@ -2721,11 +2721,11 @@ namespace o2scl {
     size_t row_;
 
   public:
-
-    /// Create a row object from row \c row of matrix \c m 
-  matrix_row_gen(mat_t &m, size_t row) : m_(m), row_(row) {
-    }
     
+    /// Create a row object from row \c row of matrix \c m 
+    matrix_row_gen(mat_t &m, size_t row) : m_(m), row_(row) {
+    }
+
     /// Return a reference to the ith column of the selected row
     double &operator[](size_t i) {
       return m_(row_,i);

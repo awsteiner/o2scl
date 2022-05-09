@@ -32,20 +32,6 @@
 using namespace std;
 using namespace o2scl;
 
-/*
-typedef boost::numeric::ublas::vector<double> ubvector;
-typedef boost::numeric::ublas::matrix<double> ubmatrix;
-typedef o2scl::matrix_view_table<> mat_x_t;
-typedef const matrix_row_gen<mat_x_t> mat_x_row_t;
-typedef const matrix_column_gen<mat_x_t> mat_x_col_t;
-typedef o2scl::matrix_view_table_transpose<> mat_y_t;
-typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
-typedef vector<function<double(mat_x_row_t &, mat_x_row_t &) > > f1_t;
-typedef vector<function<double(mat_x_row_t &, const ubvector &) > > f2_t;
-typedef vector<function<double(mat_y_row_t &, mat_y_row_t &) > > f3_t;
-typedef vector<function<double(mat_y_row_t &, const ubvector &) > > f4_t;
-*/
-
 template<class vec_t, class vec2_t>
 double covar(const vec_t &x, const vec2_t &y, double len) {
   double ret=exp(-(pow(x[0]-y[0],2.0)+pow(x[1]-y[1],2.0))/len/len/2.0);
@@ -93,19 +79,20 @@ int main(void) {
     typedef vector<function<double(mat_x_row_t &, const ubvector &) > > f2_t;
     
     interpm_krige<ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
-                  mat_y_t,mat_y_row_t,ubmatrix,
+                  mat_y_t,mat_y_row_t,ubmatrix,f1_t,
                   o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > ik;
     f1_t fa1={std::bind(&covar<mat_x_row_t,mat_x_row_t>,
                         std::placeholders::_1,std::placeholders::_2,0.70)};
     f2_t fa2={std::bind(&covar<mat_x_row_t,ubvector>,
                         std::placeholders::_1,std::placeholders::_2,0.70)};
     
+    
     vector<string> col_list_x={"x","y"};
     vector<string> col_list_y={"z"};
     matrix_view_table<> mvt_x(tab,col_list_x);
     matrix_view_table_transpose<> mvt_y(tab,col_list_y);
 
-    ik.set_data<>(2,1,8,mvt_x,mvt_y,fa1);
+    ik.set_data(2,1,8,mvt_x,mvt_y,fa1);
       
     ubvector point(2);
     ubvector out(1);
@@ -122,7 +109,7 @@ int main(void) {
     cout << out[0] << " " << ft(point[0],point[1]) << endl;
     cout << endl;
 
-    ik.set_data<>(2,1,8,mvt_x,mvt_y,fa1,true);
+    ik.set_data(2,1,8,mvt_x,mvt_y,fa1,true);
 
     point[0]=0.4;
     point[1]=0.5;
@@ -145,7 +132,7 @@ int main(void) {
 
     if (false) {
       ubvector len_precompute;
-      iko.set_data<>(2,1,8,mvt_x,mvt_y,len_precompute);
+      iko.set_data(2,1,8,mvt_x,mvt_y,len_precompute);
       
       point[0]=0.4;
       point[1]=0.5;
@@ -159,12 +146,9 @@ int main(void) {
       cout << out[0] << " " << ft(point[0],point[1]) << endl;
       cout << endl;
     }
-
     
   }
 
-#ifdef O2SCL_NEVER_DEFINED
-  
   {
 
     typedef boost::numeric::ublas::vector<double> ubvector;
@@ -174,8 +158,6 @@ int main(void) {
     typedef const matrix_column_gen<mat_x_t> mat_x_col_t;
     typedef vector<ubvector> mat_y_t;
     typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
-    typedef vector<function<double(mat_x_row_t &, mat_x_row_t &) > > f1_t;
-    typedef vector<function<double(mat_x_row_t &, const ubvector &) > > f2_t;
     
     interpm_krige<ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
                   mat_y_t,mat_y_row_t,ubmatrix,
@@ -211,8 +193,8 @@ int main(void) {
     y.push_back(tmp);
     mat_x_t y2(y);
 
-    interpm_krige_optim<ubvector,mat_x_t,
-			matrix_row_gen<mat_x_t> > iko;
+    interpm_krige_optim<ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
+                        mat_y_t,mat_y_row_t,ubmatrix> iko;
     iko.verbose=2;
 
     /*
@@ -250,9 +232,19 @@ int main(void) {
     }
     matrix_view_table<> cmvtx(tab,{"x","y"});
     matrix_view_table_transpose<> cmvty(tab,{"z"});
-  
-    interpm_krige_optim<ubvector,mat_y_t,
-			matrix_row_gen<mat_y_t> > iko;
+    
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
+    
+    typedef matrix_view_table<> mat_x_t;
+    typedef matrix_view_table_transpose<> mat_y_t;
+    typedef const matrix_row_gen<mat_x_t> mat_x_row_t;
+    typedef const matrix_column_gen<mat_x_t> mat_x_col_t;
+    typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
+    
+    
+    interpm_krige_optim<ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
+                        mat_y_t,mat_y_row_t,ubmatrix> iko;
     iko.verbose=2;
 
     /*
@@ -323,8 +315,6 @@ int main(void) {
   }
   */
 
-#endif
-  
   t.report();
   return 0;
 }

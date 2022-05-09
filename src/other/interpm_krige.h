@@ -66,8 +66,11 @@ namespace o2scl {
 
       \note Experimental.
   */
-  template<class vec_t, class mat_x_t, class mat_x_row_t, class mat_x_col_t,
+  template<class vec_t,
+           class mat_x_t, class mat_x_row_t, class mat_x_col_t,
            class mat_y_t, class mat_y_row_t, class mat_inv_kxx_t,
+           class covar_func_t=std::vector
+           <std::function<double(double,double)>>,
            class mat_inv_t=
            o2scl_linalg::matrix_invert_det_cholesky<mat_inv_kxx_t> >
   class interpm_krige {    
@@ -87,6 +90,18 @@ namespace o2scl {
     */
     std::vector<mat_inv_kxx_t> inv_KXX;
 
+    /** \brief Pointer to user-specified covariance function
+     */
+    covar_func_t *f;
+    
+    /** \brief Pointer to user-specified derivative
+     */
+    covar_func_t *fd;
+    
+    /** \brief Pointer to user-specified second derivative
+     */
+    covar_func_t *fd2;
+    
     /// The matrix inversion object
     mat_inv_t mi;
     
@@ -111,12 +126,12 @@ namespace o2scl {
         \ref o2scl::interpm_idw::set_data() . See this
         class description for more details.
     */
-    template<class func_vec_t>
-    int set_data_noise(size_t n_in, size_t n_out, size_t n_points,
-                       mat_x_t &user_x, mat_y_t &user_y,
-                       func_vec_t &fcovar,
-                       const vec_t &noise_var, bool rescale=false,
-                       bool err_on_fail=true) {
+    int set_data_di_noise_internal
+    (size_t n_in, size_t n_out, size_t n_points,
+     mat_x_t &user_x, mat_y_t &user_y,
+     covar_func_t &fcovar, covar_func_t *fderiv, covar_func_t *fderiv2,
+     const vec_t &noise_var, bool rescale=false,
+     bool err_on_fail=true) {
 
       if (n_points<2) {
         O2SCL_ERR2("Must provide at least two points in ",
@@ -137,6 +152,10 @@ namespace o2scl {
       np=n_points;
       nd_in=n_in;
       nd_out=n_out;
+
+      f=&fcovar;
+      fd=fderiv;
+      fd2=fderiv2;
     
       if (user_x.size1()!=n_points || user_x.size2()!=n_in) {
         
@@ -293,31 +312,26 @@ namespace o2scl {
         \ref o2scl::interpm_idw::set_data() . See this
         class description for more details.
     */
-    template<class func_vec_t>
     int set_data(size_t n_in, size_t n_out, size_t n_points,
                  mat_x_t &user_x, mat_y_t &user_y,
-                 func_vec_t &fcovar, bool rescale=false,
+                 covar_func_t &fcovar, bool rescale=false,
                  bool err_on_fail=true) {
       vec_t noise_vec;
       noise_vec.resize(1);
       noise_vec[0]=0.0;
-      return set_data_noise<func_vec_t>
-        (n_in,n_out,n_points,user_x,user_y,fcovar,
+      return set_data_di_noise_internal
+        (n_in,n_out,n_points,user_x,user_y,fcovar,0,0,
          noise_vec,rescale,err_on_fail);
     }
 
     /** \brief Given covariance function \c fcovar and input vector \c x
         store the result of the interpolation in \c y
     */
-    template<class vec2_t, class vec3_t, class vec_func_t>
-    void eval(const vec2_t &x0, vec3_t &y0, vec_func_t &fcovar) {
+    template<class vec2_t, class vec3_t, class covar_func2_t>
+    void eval(const vec2_t &x0, vec3_t &y0, covar_func2_t &f2) {
     
       if (data_set==false) {
         O2SCL_ERR("Data not set in interpm_krige::eval().",
-                  exc_einval);
-      }
-      if (fcovar.size()==0) {
-        O2SCL_ERR("No covariance functions in interpm_krige::eval().",
                   exc_einval);
       }
 
@@ -332,11 +346,11 @@ namespace o2scl {
 
         // Evaluate the interpolated result
         for(size_t iout=0;iout<nd_out;iout++) {
-          size_t icovar=iout % fcovar.size();
+          size_t icovar=iout % f2.size();
           y0[iout]=0.0;
           for(size_t ipoints=0;ipoints<np;ipoints++) {
             mat_x_row_t xrow(*x,ipoints);
-            double covar_val=fcovar[icovar](xrow,x0p);
+            double covar_val=f2[icovar](xrow,x0p);
             y0[iout]+=covar_val*Kinvf[iout][ipoints];
           }
           y0[iout]*=std_y[iout];
@@ -349,14 +363,79 @@ namespace o2scl {
         std::cout << "E1 " << nd_out << " " << np << " "
                   << Kinvf.size() << " " << Kinvf[0].size() << std::endl;
         for(size_t iout=0;iout<nd_out;iout++) {
-          size_t icovar=iout % fcovar.size();
+          size_t icovar=iout % f2.size();
           y0[iout]=0.0;
           for(size_t ipoints=0;ipoints<np;ipoints++) {
             mat_x_row_t xrow(*x,ipoints);
-            y0[iout]+=fcovar[icovar](xrow,x0)*Kinvf[iout][ipoints];
+            y0[iout]+=f2[icovar](xrow,x0)*Kinvf[iout][ipoints];
           }
         }
         std::cout << "E2" << std::endl;
+
+      }
+
+      return;
+      
+    }
+    
+    /** \brief Given covariance function \c fcovar and input vector \c x
+        store the result of the interpolation in \c y
+    */
+    template<class vec2_t, class vec3_t>
+    void sigma(const vec2_t &x0, vec3_t &dy0) {
+    
+      if (data_set==false) {
+        O2SCL_ERR("Data not set in interpm_krige::eval().",
+                  exc_einval);
+      }
+      if (!keep_matrix) {
+        O2SCL_ERR2("Matrix information missing (keep_matrix==false) in ",
+                   "interpm_krige::sigma().",o2scl::exc_einval);
+      }
+
+      if (rescaled) {
+        
+        // If necessary, rescale before evaluating the interpolated
+        // result
+        vec2_t x0p(nd_in);
+        for(size_t iin=0;iin<nd_in;iin++) {
+          x0p[iin]=(x0[iin]-mean_x[iin])/std_x[iin];
+        }
+
+        // Evaluate the interpolated result
+        for(size_t iout=0;iout<nd_out;iout++) {
+          size_t icovar=iout % (*f).size();
+          double kx0x0=(*f)[icovar](x0p,x0p);
+
+          vec_t kxx0(np), prod(np);
+          
+          for(size_t ipoints=0;ipoints<np;ipoints++) {
+            mat_x_row_t xrow(*x,ipoints);
+            kxx0[ipoints]=(*f)[icovar](x0p,xrow);
+          }
+          boost::numeric::ublas::axpy_prod(inv_KXX[iout],kxx0,prod,true);
+          dy0[iout]=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
+          
+          dy0[iout]*=std_y[iout];
+        }
+
+      } else {
+      
+        // Evaluate the interpolated result
+        for(size_t iout=0;iout<nd_out;iout++) {
+          size_t icovar=iout % (*f).size();
+          double kx0x0=(*f)[icovar](x0,x0);
+
+          vec_t kxx0(np), prod(np);
+          
+          for(size_t ipoints=0;ipoints<np;ipoints++) {
+            mat_x_row_t xrow(*x,ipoints);
+            kxx0[ipoints]=(*f)[icovar](x0,xrow);
+          }
+          boost::numeric::ublas::axpy_prod(inv_KXX[iout],kxx0,prod,true);
+          dy0[iout]=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
+          
+        }
 
       }
 
@@ -411,7 +490,10 @@ namespace o2scl {
            o2scl_linalg::matrix_invert_det_cholesky<mat_inv_kxx_t> >
   class interpm_krige_optim :
     public interpm_krige<vec_t,mat_x_t,mat_x_row_t,mat_x_col_t,mat_y_t,
-                         mat_y_row_t,mat_inv_kxx_t,mat_inv_t> {    
+                         mat_y_row_t,mat_inv_kxx_t,
+                         std::vector
+                         <std::function<double(mat_x_row_t &,mat_x_row_t &)>>,
+                         mat_inv_t> {    
 
   public:
 
@@ -421,9 +503,12 @@ namespace o2scl {
     std::vector<std::function<double(const mat_x_row_t &,
                                      const vec_t &)> > ff2;
     
-  
   protected:
 
+    typedef std::vector<std::function<double(const mat_x_row_t &,
+                                             const mat_x_row_t &)> >
+    covar_func_t;
+    
     /// Function objects for the covariance
     std::vector<std::function<double(const mat_x_row_t &,
                                      const mat_x_row_t &)> > ff1;
@@ -668,10 +753,11 @@ namespace o2scl {
         \endverbatim
      */
     template<class vec2_t, class vec3_t>
-    int set_data_noise(size_t n_in, size_t n_out, size_t n_points,
-                       mat_x_t &user_x, mat_y_t &user_y, 
-                       const vec2_t &noise_var, const vec3_t &len_precompute,
-                       bool rescale=false, bool err_on_fail=true) {
+    int set_data_di_noise_internal
+    (size_t n_in, size_t n_out, size_t n_points,
+     mat_x_t &user_x, mat_y_t &user_y, 
+     const vec2_t &noise_var, const vec3_t &len_precompute,
+     bool rescale=false, bool err_on_fail=true) {
 
       if (n_points<2) {
         O2SCL_ERR2("Must provide at least two points in ",
@@ -904,10 +990,11 @@ namespace o2scl {
                  mat_x_t &user_x, mat_y_t &user_y,
                  const vec2_t &len_precompute,
                  bool rescale=false, bool err_on_fail=true) {
+                 
       vec_t noise_vec;
       noise_vec.resize(1);
       noise_vec[0]=0.0;
-      return set_data_noise<vec_t,vec2_t>
+      return set_data_di_noise_internal<vec_t,vec2_t>
         (n_in,n_out,n_points,user_x,
          user_y,noise_vec,len_precompute,rescale,err_on_fail);
     }
