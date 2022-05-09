@@ -712,19 +712,14 @@ namespace o2scl {
     /** \brief Compute the EOS in beta-equilibrium at 
         zero temperature
 
-        This solves the function \ref solve_beta_eq_T0().
-
-        \verbatim embed:rst
-        .. todo:: 
-
-           In eos_had_base::beta_eq_T0(), clearly document why this
-           function is different than the calc_eos() function in
-           the nstar_cold object and explain the differences.
-        \endverbatim 
+        This solves the function \ref solve_beta_eq_T0(). This
+        function is different from \ref nstar_cold because it is a
+        generic interface which works for non-hadronic EOSs.
     */
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
-                           fermion &e, bool include_muons,
-                           fermion &mu, fermion_rel &frel,
+                           eos_leptons &elep,
+                           //fermion &e, bool include_muons,
+                           //fermion &mu, fermion_rel &frel,
                            std::shared_ptr<table_units<> > results);
 
     /** \brief Compute (numerically) the number susceptibilities as a
@@ -984,8 +979,9 @@ namespace o2scl {
      */
     virtual int solve_beta_eq_T0(size_t nv, const ubvector &x,
                                  ubvector &y, const double &nB,
-                                 fermion &e, bool include_muons,
-                                 fermion &mu, fermion_rel &frel);
+                                 eos_leptons &elep);
+    //fermion &e, bool include_muons,
+    //fermion &mu, fermion_rel &frel);
     //@}
     
     /// \name Numerical methods [protected]

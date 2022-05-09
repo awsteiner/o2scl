@@ -1300,32 +1300,28 @@ int eos_had_temp_pres_base::calc_temp_e(fermion &n, fermion &p,
 }
 
 int eos_had_base::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
-			     fermion &e, bool include_muons,
-			     fermion &mu, fermion_rel &frel,
+                             eos_leptons &elep,
+			     //fermion &e, bool include_muons,
+			     //fermion &mu, fermion_rel &frel,
 			     std::shared_ptr<table_units<> > results) {
   
   // Ensure initial guess is valid
   if (guess[0]<=0.0 || guess[0]>=nB_grid[0]) guess[0]=nB_grid[0]/2.0;
 
-  double nB_temp;
-      
-  mm_funct fmf=std::bind
-    (std::mem_fn<int(size_t,const ubvector &, ubvector &, 
-		     const double &, fermion &, bool, fermion &,
-		     fermion_rel &)>
-     (&eos_had_base::solve_beta_eq_T0),
-     this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3,std::cref(nB_temp),std::ref(e),
-     include_muons,std::ref(mu),std::ref(frel));
-
   results->clear();
   results->line_of_names("ed pr nb nn np mun mup kfn kfp");
   results->line_of_units(((std::string)"1/fm^4 1/fm^4 1/fm^3 1/fm^3 ")+
 			 "1/fm^3 1/fm 1/fm 1/fm 1/fm");
-      
+  
   for(size_t i=0;i<nB_grid.size();i++) {
-    nB_temp=nB_grid[i];
-	
+    
+    mm_funct fmf=std::bind
+      (std::mem_fn<int(size_t,const ubvector &, ubvector &, 
+                       const double &, eos_leptons &)>
+       (&eos_had_base::solve_beta_eq_T0),
+       this,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3,std::cref(nB_grid[i]),std::ref(elep));
+
     beta_mroot.msolve(1,guess,fmf);
 	
     // Final function evaluation to make sure, e.g.
@@ -1333,20 +1329,23 @@ int eos_had_base::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
     ubvector y(1);
     fmf(1,guess,y);
 	
-    std::vector<double> line={eos_thermo->ed,eos_thermo->pr,nB_temp,
+    std::vector<double> line={eos_thermo->ed,eos_thermo->pr,nB_grid[i],
 			      neutron->n,proton->n,
 			      neutron->mu,proton->mu,
 			      neutron->kf,proton->kf};
     results->line_of_data(line);
   }
+
+  // Store the initial guess for the first density in the guess vector
+  // since we used the guess vector as storage space above
+  guess[0]=results->get("np",0);
       
   return 0;
 }
 
 int eos_had_base::solve_beta_eq_T0(size_t nv, const ubvector &x,
 				   ubvector &y, const double &nB,
-				   fermion &e, bool include_muons,
-				   fermion &mu, fermion_rel &frel) {
+                                   eos_leptons &elep) {
   
   if (x[0]<0.0) return 1;
   double n_charge=x[0];
@@ -1354,13 +1353,11 @@ int eos_had_base::solve_beta_eq_T0(size_t nv, const ubvector &x,
   neutron->n=nB-n_charge;
   if (neutron->n<0.0) return 2;
   this->calc_e(*neutron,*proton,*eos_thermo);
-  e.mu=neutron->mu-proton->mu;
-  frel.calc_mu_zerot(e);
-  y[0]=n_charge-e.n;
-  if (include_muons) {
-    mu.mu=e.mu;
-    frel.calc_mu_zerot(mu);
-    y[0]=n_charge-e.n-mu.n;
+  elep.e.mu=neutron->mu-proton->mu;
+  elep.pair_mu(0.0);
+  y[0]=n_charge-elep.e.n;
+  if (elep.include_muons) {
+    y[0]=n_charge-elep.e.n-elep.mu.n;
   }
   return 0;
 }

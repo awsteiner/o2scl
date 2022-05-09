@@ -9,6 +9,8 @@ Function o2exp (o2scl)
 
 .. doxygenfunction:: o2scl::o2exp(const long double x)
 
+.. doxygenfunction:: o2scl::o2exp(const boost::multiprecision::number< boost::multiprecision::cpp_dec_float< 25 > > x)
+
 .. doxygenfunction:: o2scl::o2exp(const boost::multiprecision::number< boost::multiprecision::cpp_dec_float< 35 > > x)
 
 .. doxygenfunction:: o2scl::o2exp(const boost::multiprecision::cpp_dec_float_50 x)

@@ -183,7 +183,7 @@ int eos_had_rmf_hyp::calc_eq_hyp_p
   duds=b*ne.m*gs2*gs*sig2+c*gs2*gs2*sig2*sig;
   
   fun=a1*sig+a2*sig2+a3*sig2*sig+a4*sig4+
-	      a5*sig4*sig+a6*sig4*sig2+b1*ome2+b2*ome4+b3*ome4*ome2;
+    a5*sig4*sig+a6*sig4*sig2+b1*ome2+b2*ome4+b3*ome4*ome2;
   dfdw=2.0*b1*ome+4.0*b2*ome2*ome+6.0*b3*ome4*ome;
   
   us=b/3.0*ne.m*gs2*gs*sig2*sig+c/4.0*gs2*gs2*sig4;
@@ -839,8 +839,9 @@ void eos_had_rmf_hyp::set_hyp(fermion &lam, fermion &sigp, fermion &sigz,
 }
 
 int eos_had_rmf_hyp::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
-				fermion &e, bool include_muons,
-				fermion &mu, fermion_rel &frel,
+                                eos_leptons &elep,
+				//fermion &e, bool include_muons,
+				//fermion &mu, fermion_rel &frel,
 				std::shared_ptr<table_units<> > results) {
   
   guess[0]=0.01;
@@ -853,12 +854,11 @@ int eos_had_rmf_hyp::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
       
   mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &, ubvector &, 
-		     const double &, fermion &, bool,
-		     fermion &, fermion_rel &)>
+		     const double &, eos_leptons &)>
      (&eos_had_rmf_hyp::solve_beta_eq_T0),
      this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3,std::cref(nB_temp),std::ref(e),
-     include_muons,std::ref(mu),std::ref(frel));
+     std::placeholders::_3,std::cref(nB_temp),std::ref(elep));
+  //include_muons,std::ref(mu),std::ref(frel));
       
   results->clear();
   results->line_of_names(((std::string)"ed pr nb ne nmu nn np nlam ")+
@@ -889,13 +889,13 @@ int eos_had_rmf_hyp::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
     fmf(5,guess,y);
 
     std::vector<double> line={eos_thermo->ed,eos_thermo->pr,nB_temp,
-			      e.n,mu.n,
-			      neutron->n,proton->n,lambda->n,
-			      sigma_p->n,sigma_z->n,sigma_m->n,
-			      neutron->mu,proton->mu,lambda->mu,
-			      sigma_p->mu,sigma_z->mu,sigma_m->mu,
-			      neutron->kf,proton->kf,lambda->kf,
-			      sigma_p->kf,sigma_z->kf,sigma_m->kf};
+      elep.e.n,elep.mu.n,
+      neutron->n,proton->n,lambda->n,
+      sigma_p->n,sigma_z->n,sigma_m->n,
+      neutron->mu,proton->mu,lambda->mu,
+      sigma_p->mu,sigma_z->mu,sigma_m->mu,
+      neutron->kf,proton->kf,lambda->kf,
+      sigma_p->kf,sigma_z->kf,sigma_m->kf};
     results->line_of_data(line);
     if (inc_cascade) {
       size_t row=results->get_nlines()-1;
@@ -914,8 +914,9 @@ int eos_had_rmf_hyp::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
 
 int eos_had_rmf_hyp::solve_beta_eq_T0(size_t nv, const ubvector &x,
 				      ubvector &y, const double &nB,
-				      fermion &e, bool include_muons,
-				      fermion &mu, fermion_rel &frel) {
+                                      eos_leptons &elep) {
+  //fermion &e, bool include_muons,
+  //fermion &mu, fermion_rel &frel) {
 
   neutron->mu=x[3];
   proton->mu=x[4];
@@ -929,14 +930,12 @@ int eos_had_rmf_hyp::solve_beta_eq_T0(size_t nv, const ubvector &x,
   double f1, f2, f3;
   calc_eq_hyp_p(*neutron,*proton,*lambda,*sigma_p,*sigma_z,*sigma_m,
 		*cascade_z,*cascade_m,x[0],x[1],x[2],f1,f2,f3,*eos_thermo);
-  e.mu=neutron->mu-proton->mu;
-  frel.calc_mu_zerot(e);
+  elep.e.mu=neutron->mu-proton->mu;
+  elep.pair_mu(0.0);
   
-  y[0]=proton->n+sigma_p->n-sigma_m->n-cascade_m->n-e.n;
-  if (include_muons) {
-    mu.mu=e.mu;
-    frel.calc_mu_zerot(mu);
-    y[0]-=mu.n;
+  y[0]=proton->n+sigma_p->n-sigma_m->n-cascade_m->n-elep.e.n;
+  if (elep.include_muons) {
+    y[0]-=elep.mu.n;
   }
   y[1]=neutron->n+proton->n+lambda->n+sigma_p->n+sigma_z->n+sigma_m->n+
     cascade_z->n+cascade_m->n-nB;

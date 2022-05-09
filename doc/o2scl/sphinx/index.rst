@@ -75,6 +75,7 @@ User's Guide
    part_multip
    hadrons
    eos_quarks
+   eos_beta
    eos_tov
    eos_momi
    eos_tidal

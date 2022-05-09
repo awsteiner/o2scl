@@ -231,8 +231,9 @@ namespace o2scl {
 	zero temperature
     */
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
-			   fermion &e, bool include_muons,
-			   fermion &mu, fermion_rel &frel,
+                           eos_leptons &elep,
+			   //fermion &e, bool include_muons,
+			   //fermion &mu, fermion_rel &frel,
 			   std::shared_ptr<table_units<> > results);
     
   protected:

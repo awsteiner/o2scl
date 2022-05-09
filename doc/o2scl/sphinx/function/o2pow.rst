@@ -9,6 +9,8 @@ Function o2pow (o2scl)
 
 .. doxygenfunction:: o2scl::o2pow(const long double x, const long double y)
 
+.. doxygenfunction:: o2scl::o2pow(const boost::multiprecision::number< boost::multiprecision::cpp_dec_float< 25 > > x, const boost::multiprecision::number< boost::multiprecision::cpp_dec_float< 25 > > y)
+
 .. doxygenfunction:: o2scl::o2pow(const boost::multiprecision::number< boost::multiprecision::cpp_dec_float< 35 > > x, const boost::multiprecision::number< boost::multiprecision::cpp_dec_float< 35 > > y)
 
 .. doxygenfunction:: o2scl::o2pow(const boost::multiprecision::cpp_dec_float_50 x, const boost::multiprecision::cpp_dec_float_50 y)
