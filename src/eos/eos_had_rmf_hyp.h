@@ -91,14 +91,17 @@ namespace o2scl {
                           ubvector &ey, double nB,
                           double Ye, double Ys);
     
+    /// The function for calc_e_hyp_nobeta_np()
+    int calc_e_nobeta_np_fun(size_t nv, const ubvector &ex, 
+                             ubvector &ey, double nn,
+                             double np, double Ys);
+    
     /** \brief Equation for solving for beta-equilibrium at T=0
     */
     virtual int solve_beta_eq_T0(size_t nv, const ubvector &x,
                                  ubvector &y, const double &nB,
                                  eos_leptons &elep);
-    //fermion &e, bool include_muons,
-    //fermion &mu, fermion_rel &frel);
-    
+
   public:
 
     eos_had_rmf_hyp();
@@ -138,10 +141,19 @@ namespace o2scl {
         as a function of chemical potentials
     */
     virtual int calc_eq_hyp_p
-      (fermion &ne, fermion &pr, fermion &lam, fermion &sigp, fermion &sigz, 
-       fermion &sigm, fermion &casz, fermion &casm, double sig, double ome, 
-       double lrho, double &f1, double &f2, double &f3, thermo &lth);
-
+    (fermion &ne, fermion &pr, fermion &lam, fermion &sigp, fermion &sigz, 
+     fermion &sigm, fermion &casz, fermion &casm, double sig, double ome, 
+     double lrho, double &f1, double &f2, double &f3, thermo &lth);
+    
+    /** \brief Equation of state and meson field equations 
+        as a function of chemical potentials at finite temperature
+    */
+    virtual int calc_eq_temp_hyp_p
+    (fermion &ne, fermion &pr, fermion &lam, fermion &sigp, fermion &sigz, 
+     fermion &sigm, fermion &casz, fermion &casm, double T,
+     double sig, double ome, 
+     double lrho, double &f1, double &f2, double &f3, thermo &lth);
+    
     /** \brief Compute xs assuming a fixed value of the \f$ \Lambda \f$
         binding energy in nuclear matter in \f$ \mathrm{fm}^{-1} \f$
     */
@@ -157,8 +169,7 @@ namespace o2scl {
         are in beta-equilibrium with the nucleons
 
         (AWS, 1/27/22: I'm not sure if this function is useful or not.
-        It might be useful in the new github.com/awsteiner/eos code to
-        implicitly include strangeness.)
+        It might be useful in the new github.com/awsteiner/eos)
         
         Initial guesses for the chemical potentials are taken
         from the user-given values. Initial guesses for the fields
@@ -166,7 +177,8 @@ namespace o2scl {
         After the call to calc_e(), the final values of the fields
         can be accessed through get_fields(). 
     */
-    virtual int calc_hyp_e(fermion &ne, fermion &pr,
+    virtual int calc_hyp_e(double n_baryon, double n_charge,
+                           fermion &ne, fermion &pr,
                            fermion &lam, fermion &sigp, fermion &sigz, 
                            fermion &sigm, fermion &casz, fermion &casm,
                            thermo &lth);
@@ -179,6 +191,15 @@ namespace o2scl {
                                   fermion &lam, fermion &sigp, fermion &sigz, 
                                   fermion &sigm, fermion &casz, fermion &casm,
                                   thermo &lth);
+    
+    /** \brief Equation of state as a function of density
+        out of beta equilibrium at fixed neutron and proton densities
+    */
+    virtual int calc_hyp_e_nobeta_np(double Ys, fermion &ne, fermion &pr,
+                                     fermion &lam, fermion &sigp,
+                                     fermion &sigz, fermion &sigm,
+                                     fermion &casz, fermion &casm,
+                                     thermo &lth);
     
     /** \brief Set the hyperon objects
      */

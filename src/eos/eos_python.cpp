@@ -1025,6 +1025,12 @@ bool o2scl_eos_tov_has_baryons(void *vptr) {
   return ret;
 }
 
+double o2scl_eos_tov_ed_from_pr(void *vptr, double pr) {
+  eos_tov *ptr=(eos_tov *)vptr;
+  double ret=ptr->ed_from_pr(pr);
+  return ret;
+}
+
 void *o2scl_create_eos_tov_buchdahl() {
   eos_tov_buchdahl *ptr=new eos_tov_buchdahl;
   return ptr;
@@ -1045,6 +1051,41 @@ void o2scl_eos_tov_buchdahl_set_Pstar(void *vptr, double v) {
   eos_tov_buchdahl *ptr=(eos_tov_buchdahl *)vptr;
   ptr->Pstar=v;
   return;
+}
+
+double o2scl_eos_tov_buchdahl_get_G_km_Msun(void *vptr) {
+  eos_tov_buchdahl *ptr=(eos_tov_buchdahl *)vptr;
+  return ptr->G_km_Msun;
+}
+
+void o2scl_eos_tov_buchdahl_set_G_km_Msun(void *vptr, double v) {
+  eos_tov_buchdahl *ptr=(eos_tov_buchdahl *)vptr;
+  ptr->G_km_Msun=v;
+  return;
+}
+
+void o2scl_eos_tov_buchdahl_set_baryon_density(void *vptr, double nb, double ed) {
+  eos_tov_buchdahl *ptr=(eos_tov_buchdahl *)vptr;
+  ptr->set_baryon_density(nb,ed);
+  return;
+}
+
+double o2scl_eos_tov_buchdahl_rad_from_gm(void *vptr, double gm) {
+  eos_tov_buchdahl *ptr=(eos_tov_buchdahl *)vptr;
+  double ret=ptr->rad_from_gm(gm);
+  return ret;
+}
+
+double o2scl_eos_tov_buchdahl_ed_from_r_gm(void *vptr, double r, double beta) {
+  eos_tov_buchdahl *ptr=(eos_tov_buchdahl *)vptr;
+  double ret=ptr->ed_from_r_gm(r,beta);
+  return ret;
+}
+
+double o2scl_eos_tov_buchdahl_pr_from_r_gm(void *vptr, double r, double beta) {
+  eos_tov_buchdahl *ptr=(eos_tov_buchdahl *)vptr;
+  double ret=ptr->pr_from_r_gm(r,beta);
+  return ret;
 }
 
 void *o2scl_create_eos_tov_polytrope() {

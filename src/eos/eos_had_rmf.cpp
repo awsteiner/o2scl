@@ -157,9 +157,12 @@ int eos_had_rmf::calc_eq_temp_p
   double nsn, nsp;
   if (ne.inc_rest_mass) {
     nsn=1.0/ne.ms*(ne.ed-3.0*ne.pr);
-    nsp=1.0/pr.ms*(pr.ed-3.0*pr.pr);
   } else {
     nsn=1.0/ne.ms*(ne.ed+ne.n*ne.m-3.0*ne.pr);
+  }
+  if (pr.inc_rest_mass) {
+    nsp=1.0/pr.ms*(pr.ed-3.0*pr.pr);
+  } else {
     nsp=1.0/pr.ms*(pr.ed+pr.n*pr.m-3.0*pr.pr);
   }
 

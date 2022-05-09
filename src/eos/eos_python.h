@@ -387,6 +387,8 @@ void o2scl_eos_tov_set_verbose(void *vptr, int v);
 
 bool o2scl_eos_tov_has_baryons(void *vptr);
 
+double o2scl_eos_tov_ed_from_pr(void *vptr, double pr);
+
 void *o2scl_create_eos_tov_buchdahl();
 
 void o2scl_free_eos_tov_buchdahl(void *vptr);
@@ -394,6 +396,18 @@ void o2scl_free_eos_tov_buchdahl(void *vptr);
 double o2scl_eos_tov_buchdahl_get_Pstar(void *vptr);
 
 void o2scl_eos_tov_buchdahl_set_Pstar(void *vptr, double v);
+
+double o2scl_eos_tov_buchdahl_get_G_km_Msun(void *vptr);
+
+void o2scl_eos_tov_buchdahl_set_G_km_Msun(void *vptr, double v);
+
+void o2scl_eos_tov_buchdahl_set_baryon_density(void *vptr, double nb, double ed);
+
+double o2scl_eos_tov_buchdahl_rad_from_gm(void *vptr, double gm);
+
+double o2scl_eos_tov_buchdahl_ed_from_r_gm(void *vptr, double r, double beta);
+
+double o2scl_eos_tov_buchdahl_pr_from_r_gm(void *vptr, double r, double beta);
 
 void *o2scl_create_eos_tov_polytrope();
 

@@ -355,12 +355,51 @@ class eos_tov abstract
 - int verbose
 - function has_baryons
   - bool
+- function ed_from_pr
+  - double
+  - double pr
+- function pr_from_ed
+  - double
+  - double ed
+- function nb_from_ed
+  - double
+  - double ed
+- function nb_from_pr
+  - double
+  - double pr
+- function ed_from_nb
+  - double
+  - double nb
+- function pr_from_nb
+  - double
+  - double nb
+- function ed_nb_from_pr
+  - void
+  - double pr
+  - out double &ed
+  - out double &nb
 # 
 # Class eos_tov_buchdahl
 #
 class eos_tov_buchdahl
 - parent eos_tov
 - double Pstar
+- double G_km_Msun
+- function set_baryon_density
+  - void
+  - double nb
+  - double ed
+- function rad_from_gm
+  - double
+  - double gm
+- function ed_from_r_gm
+  - double
+  - double r
+  - double beta
+- function pr_from_r_gm
+  - double
+  - double r
+  - double beta
 # 
 # Class eos_tov_polytrope
 #
