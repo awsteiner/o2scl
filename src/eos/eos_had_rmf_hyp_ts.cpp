@@ -135,7 +135,9 @@ int main(int argc, char *argv[]) {
     }
 
     //cout.precision(10);
-    re.beta_eq_T0(nB_grid,guess,e,true,mu,frel,eos_table);
+    eos_leptons elep;
+    elep.include_muons=true;
+    re.beta_eq_T0(nB_grid,guess,elep,eos_table);
     /*
     for(size_t j=0;j<eos_table->get_nlines();j+=10) {
       cout << j << " ";
@@ -206,7 +208,9 @@ int main(int argc, char *argv[]) {
   t.test_rel(re.eoa,-16.3/hc_mev_fm,0.8/hc_mev_fm,"eoa 2");
   cout << endl;
 
-  re.beta_eq_T0(nB_grid,guess,e,true,mu,frel,eos_table);
+  eos_leptons elep;
+  elep.include_muons=true;
+  re.beta_eq_T0(nB_grid,guess,elep,eos_table);
 
   if (false) {
     re.verbose=2;

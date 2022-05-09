@@ -915,8 +915,6 @@ int eos_had_rmf_hyp::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
 int eos_had_rmf_hyp::solve_beta_eq_T0(size_t nv, const ubvector &x,
 				      ubvector &y, const double &nB,
                                       eos_leptons &elep) {
-  //fermion &e, bool include_muons,
-  //fermion &mu, fermion_rel &frel) {
 
   neutron->mu=x[3];
   proton->mu=x[4];
