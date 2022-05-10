@@ -400,6 +400,14 @@ class eos_tov_buchdahl
   - double
   - double r
   - double beta
+- function exp2lam_from_r_gm
+  - double
+  - double r
+  - double beta
+- function exp2phi_from_r_gm
+  - double
+  - double r
+  - double beta
 # 
 # Class eos_tov_polytrope
 #

@@ -168,8 +168,10 @@ namespace o2scl {
         fixed baryon and charge density presuming the hyperons 
         are in beta-equilibrium with the nucleons
 
-        (AWS, 1/27/22: I'm not sure if this function is useful or not.
-        It might be useful in the new github.com/awsteiner/eos)
+        (AWS, 5/9/22: I don't think this is useful for the
+        UTK EOS code because it takes n_baryon and n_charge as
+        input, where as that code more naturally works with
+        neutron and proton densities as inputs.)
         
         Initial guesses for the chemical potentials are taken
         from the user-given values. Initial guesses for the fields

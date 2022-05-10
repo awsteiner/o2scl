@@ -1031,6 +1031,42 @@ double o2scl_eos_tov_ed_from_pr(void *vptr, double pr) {
   return ret;
 }
 
+double o2scl_eos_tov_pr_from_ed(void *vptr, double ed) {
+  eos_tov *ptr=(eos_tov *)vptr;
+  double ret=ptr->pr_from_ed(ed);
+  return ret;
+}
+
+double o2scl_eos_tov_nb_from_ed(void *vptr, double ed) {
+  eos_tov *ptr=(eos_tov *)vptr;
+  double ret=ptr->nb_from_ed(ed);
+  return ret;
+}
+
+double o2scl_eos_tov_nb_from_pr(void *vptr, double pr) {
+  eos_tov *ptr=(eos_tov *)vptr;
+  double ret=ptr->nb_from_pr(pr);
+  return ret;
+}
+
+double o2scl_eos_tov_ed_from_nb(void *vptr, double nb) {
+  eos_tov *ptr=(eos_tov *)vptr;
+  double ret=ptr->ed_from_nb(nb);
+  return ret;
+}
+
+double o2scl_eos_tov_pr_from_nb(void *vptr, double nb) {
+  eos_tov *ptr=(eos_tov *)vptr;
+  double ret=ptr->pr_from_nb(nb);
+  return ret;
+}
+
+void o2scl_eos_tov_ed_nb_from_pr(void *vptr, double pr, double *ed, double *nb) {
+  eos_tov *ptr=(eos_tov *)vptr;
+  ptr->ed_nb_from_pr(pr,*ed,*nb);
+  return;
+}
+
 void *o2scl_create_eos_tov_buchdahl() {
   eos_tov_buchdahl *ptr=new eos_tov_buchdahl;
   return ptr;
@@ -1085,6 +1121,18 @@ double o2scl_eos_tov_buchdahl_ed_from_r_gm(void *vptr, double r, double beta) {
 double o2scl_eos_tov_buchdahl_pr_from_r_gm(void *vptr, double r, double beta) {
   eos_tov_buchdahl *ptr=(eos_tov_buchdahl *)vptr;
   double ret=ptr->pr_from_r_gm(r,beta);
+  return ret;
+}
+
+double o2scl_eos_tov_buchdahl_exp2lam_from_r_gm(void *vptr, double r, double beta) {
+  eos_tov_buchdahl *ptr=(eos_tov_buchdahl *)vptr;
+  double ret=ptr->exp2lam_from_r_gm(r,beta);
+  return ret;
+}
+
+double o2scl_eos_tov_buchdahl_exp2phi_from_r_gm(void *vptr, double r, double beta) {
+  eos_tov_buchdahl *ptr=(eos_tov_buchdahl *)vptr;
+  double ret=ptr->exp2phi_from_r_gm(r,beta);
   return ret;
 }
 

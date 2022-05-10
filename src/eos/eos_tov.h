@@ -305,6 +305,16 @@ namespace o2scl {
     */
     virtual double pr_from_r_gm(double r, double beta);
     
+    /** \brief Compute \f$ \exp(2 \Phi) \f$ at radius
+        \c r given the compactness (unitless)
+    */
+    virtual double exp2phi_from_r_gm(double r, double beta);
+    
+    /** \brief Compute \f$ \exp(2 \Lambda) \f$ at radius
+        \c r given the compactness (unitless)
+    */
+    virtual double exp2lam_from_r_gm(double r, double beta);
+    
   protected:
 
     /** \brief Solve for the radius at fixed gravitational mass

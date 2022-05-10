@@ -172,6 +172,41 @@ double eos_tov_buchdahl::ed_from_r_gm(double r, double beta) {
   return ed;
 }
 
+double eos_tov_buchdahl::exp2phi_from_r_gm(double r, double beta) {
+  double A=sqrt(288.0*o2scl_const::pi*Pstar*G_km_Msun/(1.0-2.0*beta));
+
+  // Solve for r prime
+  funct fx=std::bind
+    (std::mem_fn<double(double,double,double)>
+     (&eos_tov_buchdahl::solve_rp),this,std::placeholders::_1,r,beta);
+  double rp=r;
+  rbg.solve(rp,fx);
+
+  // Now compute exp2phi
+  double u=beta*sin(A*rp)/A/rp;
+  double exp2phi=(1-2.0*beta)*(1.0-beta-u)/(1.0-beta+u);
+
+  return exp2phi;
+}
+
+double eos_tov_buchdahl::exp2lam_from_r_gm(double r, double beta) {
+  double A=sqrt(288.0*o2scl_const::pi*Pstar*G_km_Msun/(1.0-2.0*beta));
+
+  // Solve for r prime
+  funct fx=std::bind
+    (std::mem_fn<double(double,double,double)>
+     (&eos_tov_buchdahl::solve_rp),this,std::placeholders::_1,r,beta);
+  double rp=r;
+  rbg.solve(rp,fx);
+
+  // Now compute exp2lam
+  double u=beta*sin(A*rp)/A/rp;
+  double exp2lam=(1-2.0*beta)*(1.0-beta+u)/(1.0-beta-u)/
+    pow(1.0-beta+beta*cos(A*rp),2.0);
+
+  return exp2lam;
+}
+
 double eos_tov_buchdahl::ed_from_pr(double pr) {
   return 12.0*sqrt(Pstar*pr)-5.0*pr;
 }

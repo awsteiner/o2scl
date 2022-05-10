@@ -352,7 +352,7 @@ int main(void) {
 	     tab->get("ed",0),1.0e-8,"Buch rho_c");
 
   t.test_rel(at.rad,buch.rad_from_gm(at.mass),1.0e-10,"Buch rad(gm)");
-  
+
   // For now, don't test the point at r=0 and the points very
   // close to r=R
   for(size_t i=1;i<tab->get_nlines()-10;i+=10) {
@@ -363,7 +363,13 @@ int main(void) {
     t.test_rel(tab->get("ed",i),
 	       buch.ed_from_r_gm(tab->get("r",i),beta),1.0e-10,
 	       "Buch ed profile");
+    t.test_rel(1.0/(1.0-2.0*tab->get("gm",i)*buch.G_km_Msun/
+                    tab->get("r",i)),
+               buch.exp2lam_from_r_gm(tab->get("r",i),beta),1.0e-10,
+               "buch exp2lam");
   }
+  t.test_rel((1.0-2.0*at.mass*buch.G_km_Msun/at.rad),
+             buch.exp2phi_from_r_gm(at.rad,beta),1.0e-10,"buch exp2phi");
   
   cout << endl;
 
