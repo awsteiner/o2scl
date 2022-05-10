@@ -51,8 +51,11 @@ namespace o2scl {
       double width;
       double width_errp;
       double width_errm;
+      int spin_deg;
       std::string name;
+      int baryon;
       int charge;
+      int strangeness;
     } pdg_entry;
 
     void output_text();
@@ -60,7 +63,7 @@ namespace o2scl {
   protected:
     
     std::vector<pdg_entry> db;
-    
+
   };
   
   /** \brief Particle from the PDG

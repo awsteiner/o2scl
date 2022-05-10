@@ -26,6 +26,7 @@ using namespace std;
 using namespace o2scl;
 
 part_pdg_db::part_pdg_db() {
+  /*
   db={
     {21,0,0,-0,
      0,0,-0,"g",0},
@@ -644,6 +645,7 @@ part_pdg_db::part_pdg_db() {
     {5332,6.0461,0.0017,-0.0017,
      4e-13,4e-14,-4e-14,"Omega(b)",-3}
   };
+  */
 }
 
 void part_pdg_db::output_text() {
