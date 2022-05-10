@@ -971,6 +971,173 @@ int eos_had_rmf_hyp::calc_hyp_e(double n_baryon, double n_charge,
   return 0;
 }
 
+int eos_had_rmf_hyp::calc_temp_hyp_e
+(double n_baryon, double n_charge,
+ fermion &ne, fermion &pr,
+ fermion &lam, fermion &sigp, fermion &sigz, 
+ fermion &sigm, fermion &casz, fermion &casm,
+ double T, thermo &lth) {
+  
+  size_t nv=5;
+
+  ubvector x(nv), y(nv);
+  int ret;
+
+  ne.non_interacting=false;
+  pr.non_interacting=false;
+  
+  set_thermo(lth);
+  set_n_and_p(ne,pr);
+  lambda=&lam;
+  sigma_p=&sigp;
+  sigma_z=&sigz;
+  sigma_m=&sigm;
+  cascade_z=&casz;
+  cascade_m=&casm;
+
+  lambda->non_interacting=false;
+  sigma_p->non_interacting=false;
+  sigma_z->non_interacting=false;
+  sigma_m->non_interacting=false;
+  cascade_z->non_interacting=false;
+  cascade_m->non_interacting=false;
+
+  mm_funct fmf;
+  //=std::bind
+  //(std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+  //(&eos_had_rmf_hyp::calc_temp_hyp_e_fun),
+  //this,std::placeholders::_1,std::placeholders::_2,
+  //std::placeholders::_3);
+
+  if (guess_set) {
+    
+    // If an initial guess is given, then use it to directly compute
+    // the EOS
+    
+    x[0]=ne.mu;
+    x[1]=pr.mu;
+    x[2]=sigma;
+    x[3]=omega;
+    x[4]=rho;
+    guess_set=false;
+    
+    ret=eos_mroot->msolve(nv,x,fmf);
+    
+    int rt=calc_e_solve_fun(nv,x,y);
+    if (rt!=0) {
+      O2SCL_CONV2_RET("Final solution failed (user guess) in ",
+		      "eos_had_rmf_hyp::calc_e().",exc_efailed,
+		      this->err_nonconv);
+    }
+    
+  } else {
+
+    // If no initial guess is given, then create one by beginning
+    // at saturated nuclear matter and proceeding incrementally.
+
+    double nn=ne.n;
+    double np=pr.n;
+    
+    x[0]=ne.m+0.05;
+    x[1]=pr.m+0.01;
+    x[2]=0.1;
+    x[3]=0.07;
+    x[4]=0.001;
+    
+    if (verbose>0) {
+      cout << "Solving in eos_had_rmf_hyp::calc_temp_hyp_e()." << endl;
+      cout << "alpha      n_B        n_ch       mu_n       "
+	   << "mu_p       sigma       omega      rho         ret" << endl;
+      cout.precision(4);
+    }
+
+    for(double alpha=0.0;alpha<=1.0+1.0e-10;
+	alpha+=1.0/((double)calc_e_steps)) {
+
+      if (ce_prot_matter) {
+	n_baryon=0.12*(1.0-alpha)+np*alpha;
+	n_charge=n_baryon;
+      } else if (ce_neut_matter) {
+	n_baryon=0.12*(1.0-alpha)+nn*alpha;
+	n_charge=0.0;
+      } else {
+	n_baryon=0.16*(1.0-alpha)+(nn+np)*alpha;
+	n_charge=0.08*(1.0-alpha)+np*alpha;
+      }
+    
+      // 10/16/14: I think this was some previous debug code
+      // if (fabs(alpha-0.1)<1.0e-8) {
+      // x[0]*=1.0+1.0e-5;
+      // x[4]=-1.0e-10;
+      // }
+
+      // If the chemical potentials are too small, shift them by
+      // a little more than required to get positive densities. 
+      int rt=calc_e_solve_fun(5,x,y);
+      if (!ce_prot_matter && neutron->nu<neutron->ms) {
+	neutron->mu+=(neutron->ms-neutron->mu)*1.01;
+	rt=calc_e_solve_fun(5,x,y);
+      }
+      if (!ce_neut_matter && proton->nu<proton->ms) {
+	proton->mu+=(proton->ms-proton->mu)*1.01;
+	rt=calc_e_solve_fun(5,x,y);
+      }
+
+      // The initial point has n_n = n_p and thus rho=0, and the
+      // solver has a little problem with the stepsize getting away
+      // from the rho=0 point, so we give rho a small non-zero value
+      if (fabs(x[4])<1.0e-8) {
+	if (neutron->n>proton->n) {
+	  x[4]=-1.0e-8;
+	} else if (neutron->n<proton->n) {
+	  x[4]=1.0e-8;
+	}
+      }
+      
+      // If the initial guess failed then we won't be able to solve
+      if (rt!=0) {
+	string s=((string)"Initial guess failed at (nn=")+
+	  dtos(neutron->n)+" and np="+dtos(proton->n)+") in "+
+	  "eos_had_rmf_hyp::calc_e().";
+	O2SCL_CONV_RET(s.c_str(),exc_efailed,this->err_nonconv);
+      }
+
+      ret=eos_mroot->msolve(5,x,fmf);
+      if (verbose>0.0) {
+	cout << alpha << " " << n_baryon << " " << n_charge << " "
+	     << x[0] << " " << x[1] << " " << x[2] << " " 
+	     << x[3] << " " << x[4] << " " << ret << endl;
+      }
+    }
+    if (verbose>0) {
+      cout.precision(6);
+      cout << endl;
+    }
+    
+    int rt2=calc_e_solve_fun(5,x,y);
+    if (rt2!=0) {
+      O2SCL_CONV_RET("Final solution failed in eos_had_rmf_hyp::calc_e().",
+		     exc_efailed,this->err_nonconv);
+    }
+    
+  }
+
+  sigma=x[2];
+  omega=x[3];
+  rho=x[4];
+
+  // return neutron and proton densities to original values
+  ne.n=n_baryon-n_charge;
+  pr.n=n_charge;
+  
+  if (ret!=0) {
+    O2SCL_CONV2_RET("Solver failed in eos_had_rmf_hyp::calc_e",
+		    "(fermion,fermion,thermo).",exc_efailed,this->err_nonconv);
+  }
+
+  return 0;
+}
+
 int eos_had_rmf_hyp::calc_hyp_e_nobeta
 (double nB, double Ye, double Ys, fermion &ne, fermion &pr,
  fermion &lam, fermion &sigp, fermion &sigz, 

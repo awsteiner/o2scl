@@ -168,11 +168,6 @@ namespace o2scl {
         fixed baryon and charge density presuming the hyperons 
         are in beta-equilibrium with the nucleons
 
-        (AWS, 5/9/22: I don't think this is useful for the
-        UTK EOS code because it takes n_baryon and n_charge as
-        input, where as that code more naturally works with
-        neutron and proton densities as inputs.)
-        
         Initial guesses for the chemical potentials are taken
         from the user-given values. Initial guesses for the fields
         can be set by set_fields(), or default values will be used.
@@ -184,6 +179,22 @@ namespace o2scl {
                            fermion &lam, fermion &sigp, fermion &sigz, 
                            fermion &sigm, fermion &casz, fermion &casm,
                            thermo &lth);
+    
+    /** \brief Equation of state as a function of density at 
+        fixed baryon and charge density presuming the hyperons 
+        are in beta-equilibrium with the nucleons
+
+        Initial guesses for the chemical potentials are taken
+        from the user-given values. Initial guesses for the fields
+        can be set by set_fields(), or default values will be used.
+        After the call to calc_e(), the final values of the fields
+        can be accessed through get_fields(). 
+    */
+    virtual int calc_temp_hyp_e(double n_baryon, double n_charge,
+                                fermion &ne, fermion &pr,
+                                fermion &lam, fermion &sigp, fermion &sigz, 
+                                fermion &sigm, fermion &casz, fermion &casm,
+                                double T, thermo &lth);
 
     /** \brief Equation of state as a function of density
         out of beta equilibrium
