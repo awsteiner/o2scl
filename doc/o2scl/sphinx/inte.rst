@@ -96,15 +96,14 @@ low-order rule (e.g., 15-point) is often more efficient.
 
 Recent installations of the Boost C++ libraries include numerical
 integration routines. Because these are not available yet on all HPC
-systems, the O₂scl interfaces for these integrators are
-header-only and available only if the ``O2SCL_NEW_BOOST_INTEGRATION``
-define constant is defined when compiling your code with O\ :sub:`2`\
-scl (this doesn't need to be done during installation or when the
-``configure`` script is run). See :ref:`inte_kronrod_boost
-<inte_kronrod_boost>`, :ref:`inte_tanh_sinh_boost
-<inte_tanh_sinh_boost>`, :ref:`inte_exp_sinh_boost
-<inte_exp_sinh_boost>` and :ref:`inte_sinh_sinh_boost
-<inte_sinh_sinh_boost>` .
+systems, the O₂scl interfaces for these integrators are header-only
+and available only if the ``O2SCL_NEW_BOOST_INTEGRATION`` define
+constant is defined when compiling your code with O₂scl (this doesn't
+need to be done during installation or when the ``configure`` script
+is run). See :ref:`inte_kronrod_boost <inte_kronrod_boost>`,
+:ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>`,
+:ref:`inte_exp_sinh_boost <inte_exp_sinh_boost>` and
+:ref:`inte_sinh_sinh_boost <inte_sinh_sinh_boost>` .
     
 GSL-based integration details
 -----------------------------

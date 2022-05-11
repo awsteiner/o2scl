@@ -24,16 +24,16 @@ with classes that perform common numerical tasks. The most
 important principle is that the library should add functionality
 to the user while at the same time retaining as much freedom for
 the user as possible and allowing for ease of use and extensibility. 
-To that end,
+A few recommendations:
 
 - The classes which utilize user-specified functions
   should be able to operate on member functions without requiring
   a particular inheritance structure,
-- The interfaces ought to be generic so that the user can create new
-  classes which perform related numerical tasks through inheritance.
-- The classes should not use static variables or status functions.
+- The interfaces should be generic where possible so that the user can
+  create new classes which perform related numerical tasks through
+  inheritance.
+- The classes should avoid static variables or static functions.
 - Const-correctness and type-safety should be respected wherever possible.
-- The design should be somewhat compatible with GSL.
 
 Header file dependencies
 ------------------------
@@ -150,9 +150,9 @@ The constant O2SCL_DATA_DIR is defined internally to provide the
 directory which contains the O₂scl data files. After
 installation, this can be accessed in :cpp:var:`o2scl::o2scl_settings`.
 
-All of the header files have their own define constant of
-the form ``O2SCL_HEADER_FILE_NAME`` which ensures that
-the header file is only included once.
+All of the header files have their own define constant of the form
+``O2SCL_HEADER_FILE_NAME`` which ensures that the header file is only
+included once.
 
 Finally, I sometimes comment out sections of code with::
 
@@ -173,26 +173,26 @@ input and output will appear later.
 Global objects
 --------------
 
-There are four global objects that are created in
-libo2scl:
-:cpp:var:`o2scl::def_err_hnd` is the default error handler
-:cpp:var:`o2scl::alt_err_hnd` is the GSL-like error handler 
-:cpp:var:`o2scl::err_hnd` is the pointer to the error handler (points to
-:cpp:var:`o2scl::def_err_hnd` by default)
+There four global objects that are created in libo2scl:
+
+- :cpp:var:`o2scl::def_err_hnd` is the default error handler
+- :cpp:var:`o2scl::alt_err_hnd` is the GSL-like error handler 
+- :cpp:var:`o2scl::err_hnd` is the pointer to the error handler (points to
+  :cpp:var:`o2scl::def_err_hnd` by default)
 - :cpp:var:`o2scl::o2scl_settings` to control a few library settings
 
-All other global objects are to be avoided.
+All other global objects should be avoided.
 
 Thread safety
 -------------
 
-Most of the classes are thread-safe, meaning that two instances of
-the same class will not clash if their methods are called
-concurrently since static variables are only used for compile-time
-constants. However, two threads cannot, in general, safely
-manipulate the same instance of a class. In this respect, O\
-:sub:`2`\ scl is
-no different from GSL.
+Most of the classes are thread-safe, meaning that two instances of the
+same class will not clash if their methods are called concurrently
+since static variables are only used for compile-time constants.
+Additionally, two threads should be able to safely call a const method
+for the same instance. However, two threads cannot, in general, safely
+modify the same instance of a class. In this respect, O₂scl is no
+different from GSL.
     
 .. Documentation design
    --------------------
@@ -207,9 +207,7 @@ Copyright notices
 For files where it is appropriate to do so, I have followed the
 prescription suggested in
 http://lists.gnu.org/archive/html/help-gsl/2008-11/msg00017.html
-retaining the GSL copyright notices and putting the O\
-:sub:`2`\ scl notices at
+retaining the GSL copyright notices and putting the O₂scl notices at
 the top. CERNLIB has no such standard, but their licensing information
-is outlined at
-http://cernlib.web.cern.ch/cernlib/conditions.html .
+is outlined at http://cernlib.web.cern.ch/cernlib/conditions.html .
 

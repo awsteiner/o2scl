@@ -148,8 +148,8 @@ everywhere, so that mass, energy, and temperature all have the same
 units. Number and entropy densities have units of mass cubed (or
 energy cubed). The particle classes can be used with any system of
 units which is based on powers of one unit, i.e. :math:`[n] = [T]^3 =
-[m]^3 = [P]^{3/4} = [\varepsilon]^{3/4}`, etc. For O\ :sub:`2`\
-scl_eos classes, powers of :math:`\mathrm{fm}^{-1}` are often chosen.
+[m]^3 = [P]^{3/4} = [\varepsilon]^{3/4}`, etc. For O₂scl
+EOS classes, powers of :math:`\mathrm{fm}^{-1}` are often chosen.
 
 Classes for particle thermodynamics
 -----------------------------------

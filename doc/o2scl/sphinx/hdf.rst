@@ -12,8 +12,7 @@ command-line tool. Users can easily mix code which performs I/O with
 :cpp:class:`o2scl_hdf::hdf_file` and other O₂scl functions
 with their own HDF code. The caveat is that O₂scl
 cannot parse generic HDF5 files, so that HDF files which contain data
-not output through O₂scl cannot always be read by O\
-:sub:`2`\ scl.
+not output through O₂scl cannot always be read by O₂scl.
 
 HDF5 files which are written by O₂scl can be viewed and
 manipulated on the command line using the ``acol`` utility. See
@@ -29,8 +28,8 @@ of the current classes which provide I/O are :ref:`table <table>`,
 :ref:`hist_2d <hist_2d>`.
     
 O₂scl formats complicated data types for HDF I/O by
-combining basic data into groups. For that reason, one cannot use O\
-:sub:`2`\ scl to read or write HDF files where groups have the same
+combining basic data into groups. For that reason, one cannot use
+O₂scl to read or write HDF files where groups have the same
 name as a dataset in the current HDF id. All O₂scl groups
 in HDF files come with a fixed-length string named
 ``o2scl_type``, which refers to the type of object which has been
@@ -46,9 +45,8 @@ written to the HDF file as a group.
 
 .. note:: There are some current limitations regarding the matching of
 	  error handling policies between O₂scl and the HDF
-	  library. HDF functions do not always call the O\ :sub:`2`\
-	  scl error handler and thus do not always throw O\ :sub:`2`\
-	  scl exceptions.
+	  library. HDF functions do not always call the O₂scl error
+          handler and thus do not always throw O₂scl exceptions.
     
 .. todo:: (Future) Create an HDF file I/O example
 

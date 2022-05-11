@@ -23,8 +23,8 @@ Several noteworthy related projects:
 - CERNLIB: (https://cernlib.web.cern.ch/cernlib/mathlib.html) A
   collection of FORTRAN functions for scientific computing. This
   library has apparently disappeared from CERN's web pages. Several
-  CERNLIB routines are rewritten completely in C++ and included in O\
-  :sub:`2`\ scl.
+  CERNLIB routines are rewritten completely in C++ and included in
+  O₂scl.
 - LAPACK and ATLAS - The gold standard for linear algebra
   Available at https://www.netlib.org/lapack and
   https://www.netlib.org/atlas . See also
@@ -41,10 +41,10 @@ Several noteworthy related projects:
 - Armadillo - (https://arma.sourceforge.net) A linear algebra library
   in C++. Armadillo is licensed under MPLv2.
 - OOL - Open Optimization Library (https://ool.sourceforge.net)
-  Constrained minimization library designed with GSL in mind. The O\
-  :sub:`2`\ scl constrained minimization classes are derived from this
-  library (see :ref:`Constrained Minimization`). OOL appears not to be
-  under current development.
+  Constrained minimization library designed with GSL in mind. The
+  O₂scl constrained minimization classes are derived from this library
+  (see :ref:`Constrained Minimization`). OOL appears not to be under
+  current development.
 - Root - CERN's new C++ analysis package (https://root.cern.ch)
   A gargantuan library for data analysis, focused mostly on
   high-energy physics. Their histograms, graphics, file I/O and

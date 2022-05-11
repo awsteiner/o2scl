@@ -16,8 +16,7 @@ Probability distributions
 Probability distributions are provided by the C++ standard library,
 but some useful functionality is not included and multidimensional and
 conditional distributions are not provided. For the time being, some
-experimental probability distributions are included in O\ :sub:`2`\
-scl.
+experimental probability distributions are included in O₂scl.
 
 The one-dimensional probability distributions are children of
 :ref:`prob_dens_func <prob_dens_func>` and are modeled similar to the

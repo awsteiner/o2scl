@@ -50,8 +50,8 @@ The easiest way to install on Mac OSX is with homebrew. Use::
 to install O₂scl. There are a few options for ``brew
 install``. The option ``--with-check`` performs the build-time tests
 and the option ``--with-examples`` double checks that the examples can
-also be compiled and executed. The homebrew recipe for O\ :sub:`2`\
-scl uses the Mac OS X compiler clang. Homebrew also supports the
+also be compiled and executed. The homebrew recipe for O₂scl
+uses the Mac OS X compiler clang. Homebrew also supports the
 installation of the current version directly from the repository using
 the ``--HEAD`` option to ``brew install``. The homebrew installation
 includes the O₂scl_part and O₂scl_eos
@@ -114,12 +114,11 @@ or ``make o2scl-test``. At the end, the phrase ``"All O2scl tests
 passed"`` indicates that the testing was successful. You may also run
 ``make o2scl-test`` in the individual subdirectories of the src
 directory to individually test the classes and functions in that part
-of O₂scl. The testing code in
-``src/base/lib_settings_ts.cpp`` can be useful in finding out how O\
-:sub:`2`\ scl was compiled. After ``make o2scl-test``, running
-``src/base/lib_settings_ts`` will output several of the installation
-settings. If HDF5 is enabled, ``acol -v`` also outputs the
-installation settings.
+of O₂scl. The testing code in ``src/base/lib_settings_ts.cpp`` can be
+useful in finding out how O₂scl was compiled. After ``make
+o2scl-test``, running ``src/base/lib_settings_ts`` will output several
+of the installation settings. If HDF5 is enabled, ``acol -v`` also
+outputs the installation settings.
 
 O₂scl uses Travis CI (see
 https://travis-ci.org/awsteiner/o2scl ) to ensure that compilation and
@@ -130,13 +129,12 @@ testing works on standard Ubuntu and Mac OS X environments.
 Compiling O₂scl from a release on Linux
 --------------------------------------------------
 
-For example, to install O₂scl on Ubuntu, begin by
-installing g++ and make (the ``g++`` and ``make`` packages),
-GSL (the ``libgsl-dev`` package), Boost (the
-``libboost-all-dev`` package), GNU readline (the ``libreadline-dev``
-package), ncurses (the ``libncurses-dev`` packages), and HDF5 the
-``libhdf5-dev`` package). You can then install O₂scl from
-one of the release distributions by using the standard GNU
+For example, to install O₂scl on Ubuntu, begin by installing g++ and
+make (the ``g++`` and ``make`` packages), GSL (the ``libgsl-dev``
+package), Boost (the ``libboost-all-dev`` package), GNU readline (the
+``libreadline-dev`` package), ncurses (the ``libncurses-dev``
+packages), and HDF5 the ``libhdf5-dev`` package). You can then install
+O₂scl from one of the release distributions by using the standard GNU
 ``./configure`` script and then invoking ``make`` and ``make install``
 (which sometimes requires ``sudo``). This installation method is
 tested by the Travis CI script.

@@ -18,19 +18,19 @@ Constrained minimization introduction
    better found in either https://github.com/stevengj/nlopt or
    https://petsc.org/main/docs/manual/tao/ .
 
-O\ :sub:`2`\ scl reimplements the Open Optimization Library (OOL)
-available at http://ool.sourceforge.net. The associated classes allow
-constrained minimization when the constraint can be expressed as a
-hyper-cubic constraint on all of the independent variables. The
-routines have been rewritten and reformatted for C++ in order to
-facilitate the use of member functions and user-defined vector types
-as arguments. The base class is :ref:`mmin_constr <mmin_constr>` and
-there are two different constrained minimzation algorithms implemented
-in :ref:`mmin_constr_pgrad <mmin_constr_pgrad>`, :ref:`mmin_constr_spg
+O₂scl reimplements the Open Optimization Library (OOL) available at
+http://ool.sourceforge.net. The associated classes allow constrained
+minimization when the constraint can be expressed as a hyper-cubic
+constraint on all of the independent variables. The routines have been
+rewritten and reformatted for C++ in order to facilitate the use of
+member functions and user-defined vector types as arguments. The base
+class is :ref:`mmin_constr <mmin_constr>` and there are two different
+constrained minimzation algorithms implemented in
+:ref:`mmin_constr_pgrad <mmin_constr_pgrad>`, :ref:`mmin_constr_spg
 <mmin_constr_spg>`. (The :ref:`mmin_constr_gencan
-<mmin_constr_gencan>` minimizer is not yet finished). The O\ :sub:`2`\
-scl implementation should be essentially identical to the most
-recently released version of OOL.
+<mmin_constr_gencan>` minimizer is not yet finished). The O₂scl
+implementation should be essentially identical to the most recently
+released version of OOL.
 
 The constrained minimization classes operate in a similar way to the
 other multi-dimensional minimization classes (which are derived from
@@ -45,9 +45,9 @@ and the minimization can be performed by calling either
 by the user). The method in :ref:`mmin_constr_gencan
 <mmin_constr_gencan>` requires a Hessian vector product and the user
 can specify this product for the minimization by using
-:cpp:func:`o2scl::mmin_constr::mmin_hess()`. The Hessian product function can
-be specified as an object of type :ref:`ool_hfunct <ool_hfunct>` in a
-similar way to the other function objects in O\ :sub:`2`\ scl.
+:cpp:func:`o2scl::mmin_constr::mmin_hess()`. The Hessian product
+function can be specified as an object of type :ref:`ool_hfunct
+<ool_hfunct>` in a similar way to the other function objects in O₂scl.
 
 There are five error codes defined in :ref:`mmin_constr <mmin_constr>`
 which are specific to the classes derived from OOL.
