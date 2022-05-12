@@ -56,7 +56,7 @@ int main(void) {
   cout << "Degenerate: " << endl;
   b.m=1.1;
   b.mu=1.0;
-  T=0.1;
+  T=0.3;
   cout << "(m=" << b.m << ", mu=" << b.mu << ", T=" << T << ")" << endl;
   cout << endl;
   
@@ -77,7 +77,7 @@ int main(void) {
   
   b3.m=1.1;
   b3.mu=1.0;
-  T=0.1;
+  T=0.3;
   cout << "boson_rel: calc_mu(T) vs. calc_density(T)" << endl;
   rb.calc_mu(b3,T);
   cout << b3.n << " " << b3.mu << " " << b3.ed << " " 
@@ -156,6 +156,7 @@ int main(void) {
   eb.pair_density(b,T);
   cout << b.n << " " << b.mu << " " << b.ed << " " 
        << b.pr << " " << b.en << endl;
+  cout << endl;
   //  t.test_rel(b.n,t1,1.0e-10,"calc_mu vs calc_density density");
   //  t.test_rel(b.mu,t2,1.0e-10,"calc_mu vs calc_density chem. pot.");
   //  t.test_rel(b.ed,t3,1.0e-10,"calc_mu vs calc_density energy");
@@ -164,16 +165,15 @@ int main(void) {
   b.m=0.11;
   b.mu=0.1;
   T=1.0;
-  /*
   cout << "boson_rel: pair_mu(T) vs. pair_density(T)" << endl;
-  ret=rb.pair_mu(b3,T);
+  rb.pair_mu(b3,T);
   cout << b3.n << " " << b3.mu << " " << b3.ed << " " 
        << b3.pr << " " << b3.en << endl; 
   t1=b.n; t2=b.mu; t3=b.ed; t4=b.pr; t5=b.en;
-  ret=b3.pair_density(T);
+  rb.pair_density(b3,T);
   cout << b3.n << " " << b3.mu << " " << b3.ed << " " 
-  << b3.pr << " " << b3.en << endl;
-  */
+       << b3.pr << " " << b3.en << endl;
+  cout << endl;
   /*
     t.test_rel(b.n,t1,1.0e-10,"density");
     t.test_rel(b.mu,t2,1.0e-10,"chem. pot.");
@@ -186,8 +186,10 @@ int main(void) {
   /*
     rb.def_dit.tol_rel*=1.0e2;
     rb.def_dit.tol_abs*=1.0e2;
-    part_calibrate(b,rb,0,"../../data/o2scl/boson_cal.o2",false,1,1);
   */
+  part_calibrate_class pcc;
+  //double v1=pcc.part_calibrate<boson,boson_rel>
+  //(b,rb,0,"../../data/o2scl/boson_cal.o2",false,3,true);
   
   t.report();
   return 0;

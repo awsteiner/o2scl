@@ -38,7 +38,7 @@ boson_rel::boson_rel() {
   density_root=&def_density_root;
   nit=&def_nit;
   dit=&def_dit;
-
+  verify_ti=false;
 }
 
 boson_rel::~boson_rel() {
@@ -251,7 +251,7 @@ double boson_rel::deg_entropy_fun(double k, boson &b, double T) {
   double E=o2hypot(k,b.ms);
   double nx=o2scl::bose_function(E,b.nu,T);
   double ret;
-  ret=k*k*(nx*log(nx)-(1.0+nx)*log(1.0+nx));
+  ret=-k*k*(nx*log(nx)-(1.0+nx)*log(1.0+nx));
   
   if (!std::isfinite(ret)) {
     return 0.0;
@@ -463,3 +463,49 @@ void boson_rel::pair_mu(boson &b, double temper) {
   return;
 }
 
+void boson_rel::pair_density(boson &b, double temper) {
+  
+  if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
+
+  double x=b.nu/temper;
+
+  funct mf=std::bind(std::mem_fn<double(double,double,boson &,double)>
+                     (&boson_rel::pair_density_fun),
+                     this,std::placeholders::_1,b.n,std::ref(b),temper);
+  bool ec=density_root->err_nonconv;
+  density_root->err_nonconv=false;
+  int ret1=density_root->solve(x,mf);
+  density_root->err_nonconv=ec;
+
+  if (ret1!=0) {
+
+    root_brent_gsl<> rbg;
+    rbg.err_nonconv=false;
+    int ret2=rbg.solve(x,mf);
+
+    if (ret2!=0) {
+      O2SCL_ERR("Solvers failed in boson_rel::nu_from_n().",
+		o2scl::exc_efailed);
+    }
+  }
+  
+  b.nu=x*temper;
+
+  if (b.non_interacting==true) { b.mu=b.nu; }
+  
+  pair_mu(b,temper);
+
+  return;
+}
+
+double boson_rel::pair_density_fun(double x, double density,
+                                   boson &b, double T) {
+
+  b.nu=x*T;
+
+  pair_mu(b,T);
+
+  double y=(b.n-density)/density;
+  
+  return y;
+}

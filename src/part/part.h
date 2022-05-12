@@ -701,6 +701,7 @@ namespace o2scl {
 			<< ret << std::endl;
 	      std::cout << std::endl;
 	      if (verbose>2) {
+                std::cout << "Waiting for character: " << std::flush;
 		char ch;
 		std::cin >> ch;
 	      }
@@ -755,6 +756,7 @@ namespace o2scl {
 		    << ret << std::endl;
 	  std::cout << std::endl;
 	  if (verbose>2) {
+                std::cout << "Waiting for character: " << std::flush;
 	    char ch;
 	    std::cin >> ch;
 	  }
@@ -899,6 +901,7 @@ namespace o2scl {
 			<< ret << std::endl;
 	      std::cout << std::endl;
 	      if (verbose>2) {
+                std::cout << "Waiting for character: " << std::flush;
 		char ch;
 		std::cin >> ch;
 	      }
@@ -953,6 +956,7 @@ namespace o2scl {
 		    << ret << std::endl;
 	  std::cout << std::endl;
 	  if (verbose>2) {
+                std::cout << "Waiting for character: " << std::flush;
 	    char ch;
 	    std::cin >> ch;
 	  }
@@ -1061,6 +1065,7 @@ namespace o2scl {
 			  << ret << std::endl;
 		std::cout << std::endl;
 		if (verbose>2) {
+                std::cout << "Waiting for character: " << std::flush;
 		  char ch;
 		  std::cin >> ch;
 		}
@@ -1115,6 +1120,7 @@ namespace o2scl {
 		      << ret << std::endl;
 	    std::cout << std::endl;
 	    if (verbose>2) {
+                std::cout << "Waiting for character: " << std::flush;
 	      char ch;
 	      std::cin >> ch;
 	    }
@@ -1243,6 +1249,7 @@ namespace o2scl {
 			  << ret << std::endl;
 		std::cout << std::endl;
 		if (verbose>2) {
+                std::cout << "Waiting for character: " << std::flush;
 		  char ch;
 		  std::cin >> ch;
 		}
@@ -1297,6 +1304,7 @@ namespace o2scl {
 		      << ret << std::endl;
 	    std::cout << std::endl;
 	    if (verbose>2) {
+                std::cout << "Waiting for character: " << std::flush;
 	      char ch;
 	      std::cin >> ch;
 	    }

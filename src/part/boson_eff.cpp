@@ -398,6 +398,11 @@ void boson_eff::pair_density(boson &b, double temper) {
 
   if (b.non_interacting) { b.mu=b.nu; }
 
+  if (false) {
+    pair_mu(b,temper);
+    return;
+  }
+
   oph=1.0+h;
   gg=temper/b.ms;
   opg=1.0+gg;

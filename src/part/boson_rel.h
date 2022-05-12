@@ -78,10 +78,7 @@ namespace o2scl {
     /** \brief Calculate properties with antiparticles as function of
 	density
     */
-    virtual void pair_density(boson &b, double temper) {
-      O2SCL_ERR("Function boson_rel::pair_density() unimplemented.",
-		exc_eunimpl);
-    }
+    virtual void pair_density(boson &b, double temper);
 
     /// Calculate effective chemical potential from density
     virtual void nu_from_n(boson &b, double temper);
@@ -108,6 +105,14 @@ namespace o2scl {
     /// Return string denoting type ("boson_rel")
     virtual const char *type() { return "boson_rel"; }
 
+    /** \brief If true, verify the thermodynamic identity
+     */
+    bool verify_ti;
+
+    /** \brief Verbosity parameter
+     */
+    int verbose;
+    
   protected:
 
     /// The non-degenerate integrator
@@ -131,6 +136,9 @@ namespace o2scl {
     double deg_entropy_fun(double u, boson &b, double T);
     /// Solve for the density in calc_density()
     double solve_fun(double x, boson &b, double T);
+    /// Desc
+    double pair_density_fun(double x, double density,
+                            boson &b, double T);
 
   };
 
