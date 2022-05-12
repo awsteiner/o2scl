@@ -176,8 +176,8 @@ namespace o2scl {
       internal_fp_t arg4=y-eta-u;
       internal_fp_t arg5=1+exp(arg4);
       internal_fp_t arg6=1+exp(arg2);
-      internal_fp_t term1=log(arg5)/(1+exp(arg4));
-      internal_fp_t term2=log(arg6)/(1+exp(arg2));
+      internal_fp_t term1=log(arg5)/arg5;
+      internal_fp_t term2=log(arg6)/arg6;
       ret=arg3*sqrt(arg1)*(term1+term2);
   
       if (!o2isfinite(ret)) {

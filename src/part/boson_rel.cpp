@@ -67,7 +67,7 @@ void boson_rel::calc_mu(boson &b, double temper) {
 
   if (psi>0.0) {
     O2SCL_ERR2("Chemical potential must be smaller than mass in ",
-	      "boson_rel::calc_mu().",o2scl::exc_einval);
+               "boson_rel::calc_mu().",o2scl::exc_einval);
   }
   
   bool deg=true;
@@ -152,6 +152,7 @@ void boson_rel::calc_mu(boson &b, double temper) {
 }
 
 void boson_rel::nu_from_n(boson &b, double temper) {
+  
   double nex;
 
   nex=b.nu/temper;
@@ -190,6 +191,9 @@ void boson_rel::calc_density(boson &b, double temper) {
 
   nu_from_n(b,temper);
 
+  calc_mu(b,temper);
+
+  /*
   funct fe=std::bind(std::mem_fn<double(double,boson &,double)>
 		       (&boson_rel::deg_energy_fun),
 		       this,std::placeholders::_1,std::ref(b),temper);
@@ -203,6 +207,7 @@ void boson_rel::calc_density(boson &b, double temper) {
   b.en*=b.g/2.0/pi2;
 
   b.pr=-b.ed+temper*b.en+b.mu*b.n;
+  */
 
   return;
 }
@@ -246,7 +251,7 @@ double boson_rel::deg_entropy_fun(double k, boson &b, double T) {
   double E=o2hypot(k,b.ms);
   double nx=o2scl::bose_function(E,b.nu,T);
   double ret;
-  ret=-k*k*(nx*log(nx)-(1.0+nx)*log(1.0+nx));
+  ret=k*k*(nx*log(nx)-(1.0+nx)*log(1.0+nx));
   
   if (!std::isfinite(ret)) {
     return 0.0;
@@ -338,6 +343,25 @@ double boson_rel::entropy_fun(double u, boson &b, double T) {
   }
   double eta=b.ms/T;
 
+  double arg1=u*u+2*eta*u;
+  double arg2=eta+u-y;
+  double arg3=eta+u;
+
+  double fb=1.0/(-1.0+exp(arg2));
+  double ret=arg3*sqrt(arg1)*((1.0+fb)*log(1.0+fb)-fb*log(fb));
+
+  if (!std::isfinite(ret)) {
+    return 0.0;
+  }
+  /*
+  double arg4=y-eta-u;
+  double arg5=1+exp(arg4);
+  double arg6=1+exp(arg2);
+  double term1=log(arg5)/arg5;
+  double term2=log(arg6)/arg6;
+  double ret=arg3*sqrt(arg1)*(term1+term2);
+  return ret;
+
   double ret;
   if (u-eta>200.0 && u-y>200.0) {
     ret=0.0;
@@ -348,9 +372,7 @@ double boson_rel::entropy_fun(double u, boson &b, double T) {
       (exp(eta+u)-exp(y));
   }
 
-  if (!std::isfinite(ret)) {
-    return 0.0;
-  }
+  */
 
   /*
   if (false) {

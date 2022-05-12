@@ -122,15 +122,14 @@ namespace o2scl {
     
     /** \brief Initialize the data for the interpolation
 
-        \note This function works differently than 
-        \ref o2scl::interpm_idw::set_data() . See this
-        class description for more details.
+        \note This function works differently than \ref
+        o2scl::interpm_idw::set_data() . See this class description
+        for more details.
     */
     int set_data_di_noise_internal
-    (size_t n_in, size_t n_out, size_t n_points,
-     mat_x_t &user_x, mat_y_t &user_y,
-     covar_func_t &fcovar, covar_func_t *fderiv, covar_func_t *fderiv2,
-     const vec_t &noise_var, bool rescale=false,
+    (size_t n_in, size_t n_out, size_t n_points, mat_x_t &user_x, 
+     mat_y_t &user_y, covar_func_t &fcovar, covar_func_t *fderiv, 
+     covar_func_t *fderiv2, const vec_t &noise_var, bool rescale=false,
      bool err_on_fail=true) {
 
       if (n_points<2) {
@@ -149,6 +148,7 @@ namespace o2scl {
         O2SCL_ERR2("Noise vector empty in ",
                    "interpm_krige::set_data_noise()",exc_efailed);
       }
+      
       np=n_points;
       nd_in=n_in;
       nd_out=n_out;
@@ -157,26 +157,23 @@ namespace o2scl {
       fd=fderiv;
       fd2=fderiv2;
     
+      // Check that the data is properly sized
       if (user_x.size1()!=n_points || user_x.size2()!=n_in) {
-        
-        std::cout << user_x.size1() << std::endl;
-        std::cout << user_x.size2() << std::endl;
-        
+        std::cout << "Object user_x, function size1() and size2(): "
+                  << user_x.size1() << " " << user_x.size2() << std::endl;
         O2SCL_ERR2("Size of x not correct in ",
                    "interpm_krige::set_data_noise().",o2scl::exc_efailed);
       }
     
-      // Check that the data is properly sized
       if (user_y.size2()!=n_points || user_y.size1()!=n_out) {
-        std::cout << user_y.size1() << std::endl;
-        std::cout << user_y.size2() << std::endl;
-      
+        std::cout << "Object user_y, function size1() and size2(): "
+                  << user_y.size1() << " " << user_y.size2() << std::endl;
         O2SCL_ERR2("Size of y not correct in ",
                    "interpm_krige::set_data_noise().",o2scl::exc_efailed);
       }
 
-      x=&user_x;
-      y=&user_y;
+      std::swap(x,user_x);
+      std::swap(y,user_y);
       
       rescaled=rescale;
     
@@ -189,28 +186,15 @@ namespace o2scl {
       }
     
       if (rescale==true) {
-        mean_x.resize(n_in);
-        std_x.resize(n_in);
-        for(size_t j=0;j<n_in;j++) {
-          mat_x_col_t vec(*x,j);
-          mean_x[j]=vector_mean(n_points,vec);
-          std_x[j]=vector_stddev(n_points,vec);
-          if (verbose>1) {
-            std::cout << "Mean,stddev of x " << j << " of " << n_in << " is "
-                      << mean_x[j] << " " << std_x[j] << std::endl;
-          }
-          for(size_t i=0;i<n_points;i++) {
-            user_x(i,j)=(user_x(i,j)-mean_x[j])/std_x[j];
-          }
-        }
         mean_y.resize(n_out);
         std_y.resize(n_out);
         for(size_t j=0;j<n_out;j++) {
-          mat_y_row_t vec(*y,j);
+          mat_y_row_t vec(y,j);
           mean_y[j]=vector_mean(n_points,vec);
           std_y[j]=vector_stddev(n_points,vec);
           if (verbose>1) {
-            std::cout << "Mean,stddev of y " << j << " of " << n_out << " is "
+            std::cout << "Mean,stddev of y " << j << " of "
+                      << n_out << " is "
                       << mean_y[j] << " " << std_y[j] << std::endl;
           }
           for(size_t i=0;i<n_points;i++) {
@@ -232,17 +216,17 @@ namespace o2scl {
       for(size_t iout=0;iout<n_out;iout++) {
 
         size_t icovar=iout % n_covar;
-        size_t inoise=iout & noise_var.size();
+        size_t inoise=iout % noise_var.size();
 
         // Select the row of the data matrix
-        mat_y_row_t yiout(*y,iout);
+        mat_y_row_t yiout(y,iout);
 
         // Construct the KXX matrix
         mat_inv_kxx_t KXX(n_points,n_points);
         for(size_t irow=0;irow<n_points;irow++) {
-          mat_x_row_t xrow(*x,irow);
+          mat_x_row_t xrow(x,irow);
           for(size_t icol=0;icol<n_points;icol++) {
-            mat_x_row_t xcol(*x,icol);
+            mat_x_row_t xcol(x,icol);
             if (irow>icol) {
               KXX(irow,icol)=KXX(icol,irow);
             } else if (irow==icol) {
@@ -253,7 +237,8 @@ namespace o2scl {
             }
           }
         }
-
+        std::cout << "Hx: " << KXX(0,1) << std::endl;
+        
         inv_KXX[iout].resize(n_points,n_points);
         mi.invert(n_points,KXX,inv_KXX[iout]);
         
@@ -286,15 +271,11 @@ namespace o2scl {
     /** \brief Remove the rescaling of the data
      */
     void unscale() {
+      
       if (rescaled==true) {
-        for(size_t j=0;j<nd_in;j++) {
-          for(size_t i=0;i<np;i++) {
-            (*x)(i,j)=(*x)(i,j)*std_x[j]+mean_x[j];
-          }
-        }
         for(size_t j=0;j<nd_out;j++) {
           for(size_t i=0;i<np;i++) {
-            (*y)(j,i)=(*y)(j,i)*std_y[j]+mean_y[j];
+            y(j,i)=y(j,i)*std_y[j]+mean_y[j];
           }
         }
         if (verbose>1) {
@@ -303,6 +284,7 @@ namespace o2scl {
                     << std::endl;
         }
       }
+      
       return;
     }      
 
@@ -316,6 +298,7 @@ namespace o2scl {
                  mat_x_t &user_x, mat_y_t &user_y,
                  covar_func_t &fcovar, bool rescale=false,
                  bool err_on_fail=true) {
+      
       vec_t noise_vec;
       noise_vec.resize(1);
       noise_vec[0]=0.0;
@@ -335,43 +318,27 @@ namespace o2scl {
                   exc_einval);
       }
 
-      if (rescaled) {
-        
-        // If necessary, rescale before evaluating the interpolated
-        // result
-        vec2_t x0p(nd_in);
-        for(size_t iin=0;iin<nd_in;iin++) {
-          x0p[iin]=(x0[iin]-mean_x[iin])/std_x[iin];
-        }
-
-        // Evaluate the interpolated result
-        for(size_t iout=0;iout<nd_out;iout++) {
-          size_t icovar=iout % f2.size();
-          y0[iout]=0.0;
-          for(size_t ipoints=0;ipoints<np;ipoints++) {
-            mat_x_row_t xrow(*x,ipoints);
-            double covar_val=f2[icovar](xrow,x0p);
-            y0[iout]+=covar_val*Kinvf[iout][ipoints];
+      // Evaluate the interpolated result
+      for(size_t iout=0;iout<nd_out;iout++) {
+        size_t icovar=iout % f2.size();
+        y0[iout]=0.0;
+        for(size_t ipoints=0;ipoints<np;ipoints++) {
+          mat_x_row_t xrow(x,ipoints);
+          double covar_val=f2[icovar](xrow,x0);
+          y0[iout]+=covar_val*Kinvf[iout][ipoints];
+          if (ipoints==0) {
+            std::cout << "H2: " << iout << " "
+                      << f2[icovar](xrow,x0) << " "
+                      << Kinvf[iout][ipoints] << " "
+                      << ipoints << " " << y0[iout] << std::endl;
           }
+        }
+        if (rescaled) {
+          //std::cout << "here: " << std_y[iout] << " "
+          //<< mean_y[iout] << std::endl;
           y0[iout]*=std_y[iout];
           y0[iout]+=mean_y[iout];
         }
-
-      } else {
-      
-        // Evaluate the interpolated result
-        std::cout << "E1 " << nd_out << " " << np << " "
-                  << Kinvf.size() << " " << Kinvf[0].size() << std::endl;
-        for(size_t iout=0;iout<nd_out;iout++) {
-          size_t icovar=iout % f2.size();
-          y0[iout]=0.0;
-          for(size_t ipoints=0;ipoints<np;ipoints++) {
-            mat_x_row_t xrow(*x,ipoints);
-            y0[iout]+=f2[icovar](xrow,x0)*Kinvf[iout][ipoints];
-          }
-        }
-        std::cout << "E2" << std::endl;
-
       }
 
       return;
@@ -392,51 +359,25 @@ namespace o2scl {
         O2SCL_ERR2("Matrix information missing (keep_matrix==false) in ",
                    "interpm_krige::sigma().",o2scl::exc_einval);
       }
-
-      if (rescaled) {
+      
+      // Evaluate the interpolated result
+      for(size_t iout=0;iout<nd_out;iout++) {
+        size_t icovar=iout % (*f).size();
+        double kx0x0=(*f)[icovar](x0,x0);
         
-        // If necessary, rescale before evaluating the interpolated
-        // result
-        vec2_t x0p(nd_in);
-        for(size_t iin=0;iin<nd_in;iin++) {
-          x0p[iin]=(x0[iin]-mean_x[iin])/std_x[iin];
+        vec_t kxx0(np), prod(np);
+        
+        for(size_t ipoints=0;ipoints<np;ipoints++) {
+          mat_x_row_t xrow(x,ipoints);
+          kxx0[ipoints]=(*f)[icovar](x0,xrow);
         }
-
-        // Evaluate the interpolated result
-        for(size_t iout=0;iout<nd_out;iout++) {
-          size_t icovar=iout % (*f).size();
-          double kx0x0=(*f)[icovar](x0p,x0p);
-
-          vec_t kxx0(np), prod(np);
-          
-          for(size_t ipoints=0;ipoints<np;ipoints++) {
-            mat_x_row_t xrow(*x,ipoints);
-            kxx0[ipoints]=(*f)[icovar](x0p,xrow);
-          }
-          boost::numeric::ublas::axpy_prod(inv_KXX[iout],kxx0,prod,true);
-          dy0[iout]=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
+        boost::numeric::ublas::axpy_prod(inv_KXX[iout],kxx0,prod,true);
+        dy0[iout]=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
+        
+        if (rescaled) {
           
           dy0[iout]*=std_y[iout];
         }
-
-      } else {
-      
-        // Evaluate the interpolated result
-        for(size_t iout=0;iout<nd_out;iout++) {
-          size_t icovar=iout % (*f).size();
-          double kx0x0=(*f)[icovar](x0,x0);
-
-          vec_t kxx0(np), prod(np);
-          
-          for(size_t ipoints=0;ipoints<np;ipoints++) {
-            mat_x_row_t xrow(*x,ipoints);
-            kxx0[ipoints]=(*f)[icovar](x0,xrow);
-          }
-          boost::numeric::ublas::axpy_prod(inv_KXX[iout],kxx0,prod,true);
-          dy0[iout]=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
-          
-        }
-
       }
 
       return;
@@ -454,15 +395,11 @@ namespace o2scl {
     /// The number of dimensions of the outputs
     size_t nd_out;
     /// The data
-    mat_x_t* x;
+    mat_x_t x;
     /// The data
-    mat_y_t* y;
+    mat_y_t y;
     /// True if the data has been specified
     bool data_set;
-    /// Desc
-    ubvector mean_x;
-    /// Desc
-    ubvector std_x;
     /// Desc
     ubvector mean_y;
     /// Desc
@@ -554,7 +491,7 @@ namespace o2scl {
     
       success=0;
 
-      size_t size=this->x->size1();
+      size_t size=this->x.size1();
 
       if (mode==mode_loo_cv) {
 
@@ -562,7 +499,7 @@ namespace o2scl {
 
           // Create the new data objects, x_jk and y_jk
           size_t row=ell*size/loo_npts;
-          matrix_view_omit_row<mat_x_t> x_jk(*this->x,row);
+          matrix_view_omit_row<mat_x_t> x_jk(this->x,row);
           ubvector y_jk(size-1);
           // FIXME
           //vector_copy_jackknife(size,*this->y,row,y_jk);
@@ -609,7 +546,7 @@ namespace o2scl {
           double yact=y[row];
           for(size_t i=0;i<size-1;i++) {
             matrix_row_gen<matrix_view_omit_row<mat_x_t> > xrow(x_jk,i);
-            mat_x_row_t xcol(*this->x,row);
+            mat_x_row_t xcol(this->x,row);
             ypred+=covar<matrix_row_gen<matrix_view_omit_row<mat_x_t> >,
                          mat_x_row_t>(xrow,xcol,this->nd_in,xlen)*
               this->Kinvf[iout][i];
@@ -635,9 +572,9 @@ namespace o2scl {
         // Construct the KXX matrix
         mat_inv_kxx_t KXX(size,size);
         for(size_t irow=0;irow<size;irow++) {
-          mat_x_row_t xrow(*this->x,irow);
+          mat_x_row_t xrow(this->x,irow);
           for(size_t icol=0;icol<size;icol++) {
-            mat_x_row_t xcol(*this->x,icol);
+            mat_x_row_t xcol(this->x,icol);
             if (irow>icol) {
               KXX(irow,icol)=KXX(icol,irow);
             } else {
@@ -782,8 +719,8 @@ namespace o2scl {
       this->nd_out=n_out;
       this->rescaled=rescale;
       this->data_set=true;
-      this->x=&user_x;
-      this->y=&user_y;
+      std::swap(this->x,user_x);
+      std::swap(this->y,user_y);
        
       if (verbose>0) {
         std::cout << "interpm_krige_optim::set_data_noise() : Using "
@@ -793,24 +730,10 @@ namespace o2scl {
       }
 
       if (rescale==true) {
-        this->mean_x.resize(n_in);
-        this->std_x.resize(n_in);
-        for(size_t j=0;j<n_in;j++) {
-          mat_x_col_t vec(*this->x,j);
-          this->mean_x[j]=vector_mean(n_points,vec);
-          this->std_x[j]=vector_stddev(n_points,vec);
-          if (verbose>1) {
-            std::cout << "Mean,stddev of x " << j << " of " << n_in << " is "
-                      << this->mean_x[j] << " " << this->std_x[j] << std::endl;
-          }
-          for(size_t i=0;i<n_points;i++) {
-            user_x(i,j)=(user_x(i,j)-this->mean_x[j])/this->std_x[j];
-          }
-        }
         this->mean_y.resize(n_out);
         this->std_y.resize(n_out);
         for(size_t j=0;j<n_out;j++) {
-          mat_y_row_t vec(*this->y,j);
+          mat_y_row_t vec(this->y,j);
           this->mean_y[j]=vector_mean(n_points,vec);
           this->std_y[j]=vector_stddev(n_points,vec);
           if (verbose>1) {
@@ -839,7 +762,7 @@ namespace o2scl {
       for(size_t iout=0;iout<n_out;iout++) {
       
         // Select the row of the data matrix
-        mat_y_row_t yiout(*this->y,iout);
+        mat_y_row_t yiout(this->y,iout);
       
         if (iout<len_precompute.size()) {
 	

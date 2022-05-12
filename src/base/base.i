@@ -2077,6 +2077,10 @@ function string_to_uint_list<vector<size_t>>
 #- std::string s
 #- char *x
 #- int len
+function find_constant
+- double
+- std::string name
+- std::string unit  
 #
 # Functions from interp.h
 # 

@@ -134,13 +134,13 @@ namespace o2scl {
     
   protected:
 
-    ///
+    /// Pointer to a random number generator for \c rand
     rng<> *r;
 
-    ///
+    /// The default random number generator for \c rand
     rng<> def_r;
     
-    /** \brief A typedef for a queue of tokens for \ref o2scl::calculator
+    /** \brief A typedef for a queue of tokens for \ref o2scl::calc_utf8
      */
     typedef std::queue<token_base *> token_queue_t;
     
@@ -317,10 +317,12 @@ namespace o2scl {
               return 2;
             }
           }
-        } else if (base->type == token_num) { // Number
+        } else if (base->type == token_num) {
+          // Number
           token32<fp_t> *doubleTok = static_cast<token32<fp_t>*>(base);
           evaluation.push(doubleTok->val);
-        } else if (base->type == token_var) { // Variable
+        } else if (base->type == token_var) {
+          // Variable
           if (!vars) {
             //throw std::domain_error
             //("Detected variable, but the variable map is null.");
@@ -331,11 +333,14 @@ namespace o2scl {
             static_cast<token32<std::u32string>*>(base);
       
           std::u32string key=strTok->val;
+          
           if (key.length()==4 && ((char)key[0])=='r' &&
               ((char)key[1])=='a' && ((char)key[2])=='n' &&
               ((char)key[3])=='d') {
+            
             double rx=r->random();
             evaluation.push(rx);
+            
           } else {
         
             typename std::map<std::u32string, fp_t>::const_iterator it=

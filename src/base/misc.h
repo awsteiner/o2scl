@@ -1123,7 +1123,7 @@ namespace o2scl {
       O2SCL_ERR("No strings specified in screenify().",exc_efailed);
     }
 
-    size_t i,j,lmax,itemp;
+    size_t i, j, lmax, itemp;
     std::vector<std::string> in_spaces(nin);
 
     terminal ter;
@@ -1152,7 +1152,7 @@ namespace o2scl {
     if (nin/col*col==nin) row=nin/col;
     else row=nin/col+1;
 
-    // Create outc
+    // Create out_cols
     out_cols.reserve(row);
     for(i=0;i<row;i++) {
       out_cols.push_back("");

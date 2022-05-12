@@ -31,7 +31,7 @@ using namespace o2scl_const;
 int main(void) {
 
   test_mgr t;
-  t.set_output_level(2);
+  t.set_output_level(1);
 
   cout.setf(ios::scientific);
 
@@ -58,6 +58,8 @@ int main(void) {
   b.mu=1.0;
   T=0.1;
   cout << "(m=" << b.m << ", mu=" << b.mu << ", T=" << T << ")" << endl;
+  cout << endl;
+  
   cout << "boson_eff: calc_mu(T) vs. calc_density(T)" << endl;
   eb.calc_mu(b,T);
   cout << b.n << " " << b.mu << " " << b.ed << " " 
@@ -71,6 +73,8 @@ int main(void) {
   t.test_rel(b.ed,t3,1.0e-10,"deg eb calc_mu vs calc_density energy");
   t.test_rel(b.pr,t4,1.0e-10,"deg eb calc_mu vs calc_density pressure");
   t.test_rel(b.en,t5,1.0e-10,"deg eb calc_mu vs calc_density entropy");
+  cout << endl;
+  
   b3.m=1.1;
   b3.mu=1.0;
   T=0.1;
@@ -98,6 +102,8 @@ int main(void) {
   b.mu=0.11;
   T=1.0;
   cout << "(m=" << b.m << ", mu=" << b.mu << ", T=" << T << ")" << endl;
+  cout << endl;
+  
   cout << "boson_eff: calc_mu(T) vs. calc_density(T)" << endl;
   eb.calc_mu(b,T);
   cout << b.n << " " << b.mu << " " << b.ed << " " 
@@ -111,6 +117,8 @@ int main(void) {
   t.test_rel(b.ed,t3,1.0e-10,"ndeg lm eb calc_mu vs calc_density energy");
   t.test_rel(b.pr,t4,1.0e-10,"ndeg lm eb calc_mu vs calc_density pressure");
   t.test_rel(b.en,t5,1.0e-10,"ndeg lm eb calc_mu vs calc_density entropy");
+  cout << endl;
+  
   b3.m=1.0;
   b3.mu=0.11;
   T=1.0;
@@ -138,6 +146,8 @@ int main(void) {
   b.mu=0.1;
   T=1.0;
   cout << "(m=" << b.m << ", mu=" << b.mu << ", T=" << T << ")" << endl;
+  cout << endl;
+  
   cout << "boson_eff: pair_mu(T) vs. pair_density(T)" << endl;
   eb.pair_mu(b,T);
   cout << b.n << " " << b.mu << " " << b.ed << " " 
@@ -155,14 +165,16 @@ int main(void) {
   b.mu=0.1;
   T=1.0;
   /*
-    cout << "boson_rel: pair_mu(T) vs. pair_density(T)" << endl;
-    ret=rb.pair_mu(b3,T);
-    cout << b3.n << " " << b3.mu << " " << b3.ed << " " 
-    << b3.pr << " " << b3.en << endl; 
-    t1=b.n; t2=b.mu; t3=b.ed; t4=b.pr; t5=b.en;
-    ret=b3.pair_density(T);
-    cout << b3.n << " " << b3.mu << " " << b3.ed << " " 
-    << b3.pr << " " << b3.en << endl;
+  cout << "boson_rel: pair_mu(T) vs. pair_density(T)" << endl;
+  ret=rb.pair_mu(b3,T);
+  cout << b3.n << " " << b3.mu << " " << b3.ed << " " 
+       << b3.pr << " " << b3.en << endl; 
+  t1=b.n; t2=b.mu; t3=b.ed; t4=b.pr; t5=b.en;
+  ret=b3.pair_density(T);
+  cout << b3.n << " " << b3.mu << " " << b3.ed << " " 
+  << b3.pr << " " << b3.en << endl;
+  */
+  /*
     t.test_rel(b.n,t1,1.0e-10,"density");
     t.test_rel(b.mu,t2,1.0e-10,"chem. pot.");
     t.test_rel(b.ed,t3,1.0e-10,"energy");

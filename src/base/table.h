@@ -3651,8 +3651,9 @@ namespace o2scl {
       return (*cp)[row];
     }
 
-    template<class vec2_t> friend void std::swap(matrix_view_table<vec2_t> &t1,
-                                                 matrix_view_table<vec2_t> &t2);
+    template<class vec2_t> friend void std::swap
+    (matrix_view_table<vec2_t> &t1,
+     matrix_view_table<vec2_t> &t2);
     
   };
   
@@ -3983,8 +3984,9 @@ namespace std {
   
   /** \brief Swap method
    */
-  template<class vec2_t> void swap(o2scl::matrix_view_table<vec2_t> &t1,
-                                   o2scl::matrix_view_table<vec2_t> &t2) {
+  template<class vec2_t> void swap
+  (o2scl::matrix_view_table<vec2_t> &t1,
+   o2scl::matrix_view_table<vec2_t> &t2) {
     
     using std::swap;
     swap(t1.nc,t2.nc);
