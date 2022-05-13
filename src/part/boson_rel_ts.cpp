@@ -187,9 +187,12 @@ int main(void) {
     rb.def_dit.tol_rel*=1.0e2;
     rb.def_dit.tol_abs*=1.0e2;
   */
-  part_calibrate_class pcc;
-  //double v1=pcc.part_calibrate<boson,boson_rel>
-  //(b,rb,0,"../../data/o2scl/boson_cal.o2",false,3,true);
+
+  if (false) {
+    part_calibrate_class pcc;
+    double v1=pcc.part_calibrate<boson,boson_rel>
+      (b,rb,0,"../../data/o2scl/boson_cal.o2",false,2,true);
+  }
   
   t.report();
   return 0;

@@ -73,12 +73,16 @@ void boson_rel::calc_mu(boson &b, double temper) {
   bool deg=true;
   double deg_limit=-0.5;
   if (psi<deg_limit) deg=false;
+
+  if (verbose>1) {
+    cout << "boson_rel::calc_mu() psi: " << psi << endl;
+  }
   
   if (deg) {
     
     // Compute the upper limit for degenerate integrals
 
-    double arg, upper_limit_fac=20.0;
+    double arg, upper_limit_fac=30.0;
     if (b.inc_rest_mass) {
       arg=pow(upper_limit_fac*temper+b.nu,2.0)-b.ms*b.ms;
     } else {
@@ -92,6 +96,9 @@ void boson_rel::calc_mu(boson &b, double temper) {
 		 "calc_mu().",exc_efailed);
       return;
     }
+
+    cout << "boson_rel::calc_mu() arg, ulf, ul: " << arg << " "
+         << upper_limit_fac << " " << ul << endl;
     
     funct fd=std::bind(std::mem_fn<double(double,boson &,double)>
 		       (&boson_rel::deg_density_fun),
@@ -103,14 +110,51 @@ void boson_rel::calc_mu(boson &b, double temper) {
 		       (&boson_rel::deg_entropy_fun),
 		       this,std::placeholders::_1,std::ref(b),temper);
 
-    b.n=dit->integ(fd,0.0,ul);
+    if (verbose>1) {
+      cout << "boson_rel::calc_mu() deg density integral" << endl;
+    }
+
+    int iret;
+    double err;
+
+    dit->err_nonconv=false;
+    iret=dit->integ_err(fd,0.0,ul,b.n,err);
+    if (iret!=0) {
+      cout << "Problem 1." << endl;
+      for(double xx=0.0;xx<ul*(1.01);xx+=ul/20.0) {
+        cout << xx << " " << fd(xx) << endl;
+      }
+      exit(-1);
+    }
     b.n*=b.g/2.0/pi2;
     
-    b.ed=dit->integ(fe,0.0,ul);
+    if (verbose>1) {
+      cout << "boson_rel::calc_mu() deg energy density integral" << endl;
+    }
+    iret=dit->integ_err(fe,0.0,ul,b.ed,err);
+    if (iret!=0) {
+      cout << "Problem 2." << endl;
+      for(double xx=0.0;xx<ul*(1.01);xx+=ul/20.0) {
+        cout << xx << " " << fe(xx) << endl;
+      }
+      exit(-1);
+    }
     b.ed*=b.g/2.0/pi2;
     
-    b.en=dit->integ(fs,0.0,ul);
+    if (verbose>1) {
+      cout << "boson_rel::calc_mu() deg entropy density integral" << endl;
+    }
+    iret=dit->integ_err(fs,0.0,ul,b.en,err);
+    if (iret!=0) {
+      cout << "Problem 3." << endl;
+      for(double xx=0.0;xx<ul*(1.01);xx+=ul/20.0) {
+        cout << xx << " " << fs(xx) << endl;
+      }
+      exit(-1);
+    }
     b.en*=b.g/2.0/pi2;
+
+    dit->err_nonconv=true;
     
   } else {
     
@@ -129,20 +173,48 @@ void boson_rel::calc_mu(boson &b, double temper) {
     double prefac=b.g*pow(temper,3.0)/2.0/pi2;
 
     // Compute the number density
+
+    double err;
+    int iret;
+
+    nit->err_nonconv=false;
     
-    b.n=nit->integ(mfd,0.0,0.0);
+    if (verbose>1) {
+      cout << "boson_rel::calc_mu() ndeg density integral" << endl;
+    }
+    iret=nit->integ_err(mfd,0.0,0.0,b.n,err);
+    if (iret!=0 || b.n==0.0) {
+      cout << "Problem 4." << endl;
+      exit(-1);
+    }
     b.n*=prefac;
 
     // Compute the energy density
 
-    b.ed=nit->integ(mfe,0.0,0.0);
+    if (verbose>1) {
+      cout << "boson_rel::calc_mu() ndeg energy density integral" << endl;
+    }
+    iret=nit->integ_err(mfe,0.0,0.0,b.ed,err);
+    if (iret!=0) {
+      cout << "Problem 5." << endl;
+      exit(-1);
+    }
     b.ed*=prefac*temper;
     if (!b.inc_rest_mass) b.ed-=b.n*b.m;
     
     // Compute the entropy
 
-    b.en=nit->integ(mfs,0.0,0.0);
+    if (verbose>1) {
+      cout << "boson_rel::calc_mu() ndeg entropy density integral" << endl;
+    }
+    iret=nit->integ_err(mfs,0.0,0.0,b.en,err);
+    if (iret!=0) {
+      cout << "Problem 6." << endl;
+      exit(-1);
+    }
     b.en*=prefac;
+
+    nit->err_nonconv=true;
     
   }
 
@@ -285,8 +357,8 @@ double boson_rel::density_fun(double u, boson &b, double T) {
   double eta=b.ms/T;
 
   double ret;
-  if (y-u>200.0 && eta-u>200.0) {
-    if (eta+u+y>100.0) {
+  if (y>700.0 && eta+u>700.0) {
+    if (eta+u-y>700.0) {
       ret=0.0;
     } else {
       ret=(eta+u)*sqrt(u*u+2.0*eta*u)/(exp(eta+u-y)-1.0);
@@ -395,6 +467,8 @@ double boson_rel::entropy_fun(double u, boson &b, double T) {
 
 double boson_rel::solve_fun(double x, boson &b, double T) {
   double nden;
+
+  b.nu=x*T;
   
   double psi;
   if (b.inc_rest_mass) {
@@ -411,7 +485,7 @@ double boson_rel::solve_fun(double x, boson &b, double T) {
 
       // Compute the upper limit for degenerate integrals
 
-    double arg, upper_limit_fac=20.0;
+    double arg, upper_limit_fac=30.0;
     if (b.inc_rest_mass) {
       arg=pow(upper_limit_fac*T+b.nu,2.0)-b.ms*b.ms;
     } else {
@@ -422,7 +496,17 @@ double boson_rel::solve_fun(double x, boson &b, double T) {
     funct fd=std::bind(std::mem_fn<double(double,boson &,double)>
                        (&boson_rel::deg_density_fun),
                        this,std::placeholders::_1,std::ref(b),T);
-    nden=dit->integ(fd,0.0,ul);
+    double err;
+    dit->err_nonconv=false;
+    int iret=dit->integ_err(fd,0.0,ul,nden,err);
+    dit->err_nonconv=true;
+    if (iret!=0) {
+      cout << "Problem 7." << endl;
+      for(double xx=0.0;xx<ul*(1.01);xx+=ul/20.0) {
+        cout << xx << " " << fd(xx) << endl;
+      }
+      exit(-1);
+    }
     nden*=b.g/2.0/pi2;
 
   } else {
@@ -436,8 +520,15 @@ double boson_rel::solve_fun(double x, boson &b, double T) {
     double prefac=b.g*pow(T,3.0)/2.0/pi2;
     
     // Compute the number density
-    
-    nden=nit->integ(mfd,0.0,0.0);
+
+    double err;
+    nit->err_nonconv=false;
+    int iret=nit->integ_err(mfd,0.0,0.0,nden,err);
+    nit->err_nonconv=true;
+    if (iret!=0) {
+      cout << "Problem 8." << endl;
+      exit(-1);
+    }
     nden*=prefac;
 
   }
