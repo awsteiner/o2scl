@@ -34,6 +34,7 @@
 #include <o2scl/constants.h>
 #include <o2scl/mroot.h>
 #include <o2scl/inte.h>
+#include <o2scl/polylog.h>
 
 #include <o2scl/part.h>
 
@@ -73,6 +74,9 @@ namespace o2scl {
   class boson_thermo {
     
   public:
+
+    /// Object for Bessel-exp integrals
+    bessel_K_exp_integ_gsl be_integ;
     
     /** \brief Compute a term in the nondegenerate expansion
      */
@@ -84,29 +88,28 @@ namespace o2scl {
       double dj=((double)j);
       double jot=dj/tt;
 
-      /*
       double K2j=be_integ.K2exp(jot);
       if (inc_antip==false) {
         double K1j=be_integ.K1exp(jot);
         pterm=exp(jot*xx)/jot/jot*K2j;
         nterm=pterm*jot/m;
-        double enterm1=(4.0*tt-dj*xx-dj)/dj/tt*nterm;
+        double enterm1=(4*tt-dj*xx-dj)/dj/tt*nterm;
         double enterm2=exp(jot*xx)/dj*K1j/m;
         enterm=enterm1+enterm2;
         edterm=(K1j*dj+3.0*K2j*tt)/jot/dj*exp(xx*jot);
       } else {
         double K3j=be_integ.K3exp(jot);
-        pterm=exp(-jot)*2.0*cosh(jot*(xx+1.0)/tt)/jot/jot*K2j;
-        nterm=pterm*tanh(jot*(xx+1.0))*jot/m;
-        double enterm1=-(1.0+xx)/tt*nterm/m;
-        double enterm2=2.0*exp(-jot)/dj*cosh(jot*(xx+1.0))*K3j/m;
+        pterm=exp(-jot)*2*cosh(jot*(xx+1))/jot/jot*K2j;
+        nterm=pterm*tanh(jot*(xx+1))*jot/m;
+        // entropy and energy density terms not right yet
+        double enterm1=-(1+xx)/tt*nterm/m;
+        double enterm2=2*exp(-jot)/dj*cosh(jot*(xx+1))*K3j/m;
           enterm=enterm1-enterm2;
-        edterm=2.0/jot/dj*exp(-jot)*(K3j*dj*cosh(jot*(xx+1.0))-
-                                     2.0*K2j*dj*xx*sinh(jot*(xx+1.0))-
-                                     2.0*K2j*dj*sinh(jot*(xx+1.0))-
-                                     K2j*tt*cosh(jot*(xx+1.0)));
+        edterm=2/jot/dj*exp(-jot)*(K3j*dj*cosh(jot*(xx+1))-
+                                     2*K2j*dj*xx*sinh(jot*(xx+1))-
+                                     2*K2j*dj*sinh(jot*(xx+1))-
+                                     K2j*tt*cosh(jot*(xx+1)));
       }
-      */
                     
       return;
     }

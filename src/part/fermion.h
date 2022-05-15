@@ -508,7 +508,7 @@ namespace o2scl {
       f.pr=0.0;
       f.n=0.0;
       f.en=0.0;
-      
+
       for(size_t j=1;j<=max_term;j++) {
         
         fp_t pterm, nterm, enterm, edterm;
@@ -951,34 +951,31 @@ namespace o2scl {
         pterm=exp(jot*xx)/jot/jot*K2j;
         if (j%2==0) pterm=-pterm;
         nterm=pterm*jot/m;
-        fp_t enterm1=(4.0*tt-dj*xx-dj)/dj/tt*nterm;
+        fp_t enterm1=(4*tt-dj*xx-dj)/dj/tt*nterm;
         fp_t enterm2=exp(jot*xx)/dj*K1j/m;
         if (j%2==0) {
           enterm=enterm1-enterm2;
         } else {
           enterm=enterm1+enterm2;
         }
-        //edterm=(dj*dj*K1j+3.0*dj*tt*K2j-2.0*K1j/jot)*
-        //exp(jot*(xx+1.0))/jot/dj/dj;
         edterm=(K1j*dj+3.0*K2j*tt)/jot/dj*exp(xx*jot);
         if (j%2==0) edterm=-edterm;
       } else {
         double K3j=be_integ.K3exp(jot);
-        // AWS 9/27/20: should this be cosh(jot*(xx+1.0))??
-        pterm=exp(-jot)*2.0*cosh(jot*(xx+1.0)/tt)/jot/jot*K2j;
-        if (j%2==0) pterm*=-1.0;
-        nterm=pterm*tanh(jot*(xx+1.0))*jot/m;
-        fp_t enterm1=-(1.0+xx)/tt*nterm/m;
-        fp_t enterm2=2.0*exp(-jot)/dj*cosh(jot*(xx+1.0))*K3j/m;
+        pterm=exp(-jot)*2*cosh(jot*(xx+1))/jot/jot*K2j;
+        if (j%2==0) pterm*=-1;
+        nterm=pterm*tanh(jot*(xx+1))*jot/m;
+        fp_t enterm1=-(1+xx)/tt*nterm/m;
+        fp_t enterm2=2*exp(-jot)/dj*cosh(jot*(xx+1))*K3j/m;
         if (j%2==0) {
           enterm=enterm1-enterm2;
         } else {
           enterm=enterm1+enterm2;
         }
-        edterm=2.0/jot/dj*exp(-jot)*(K3j*dj*cosh(jot*(xx+1.0))-
-                                     2.0*K2j*dj*xx*sinh(jot*(xx+1.0))-
-                                     2.0*K2j*dj*sinh(jot*(xx+1.0))-
-                                     K2j*tt*cosh(jot*(xx+1.0)));
+        edterm=2/jot/dj*exp(-jot)*(K3j*dj*cosh(jot*(xx+1))-
+                                     2*K2j*dj*xx*sinh(jot*(xx+1))-
+                                     2*K2j*dj*sinh(jot*(xx+1))-
+                                     K2j*tt*cosh(jot*(xx+1)));
         if (j%2==0) edterm=-edterm;
       }
                     

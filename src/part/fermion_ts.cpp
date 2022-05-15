@@ -214,6 +214,39 @@ int main(void) {
 
   }
 
+  if (true) {
+    cout << "An alternative way of testing ndeg_terms(), by\n  "
+         << "comparing with numerical values in fermion.ipynb." << endl;
+      
+    double tt, psi;
+    e.ms=0.511/197.33;
+    e.inc_rest_mass=true;
+    tt=0.1/0.511;
+    psi=(8.0e-12-e.ms)/0.1*197.33;
+    for(size_t j=1;j<6;j++) {
+      double pterm, nterm, enterm, edterm;
+      fet.ndeg_terms(j,tt,psi*tt,e.ms,e.inc_rest_mass,false,
+                 pterm,nterm,enterm,edterm);
+      std::cout.setf(std::ios::showpos);
+      std::cout.precision(8);
+      std::cout << j << " " << pterm << " " << nterm << " "
+                << enterm << " " << edterm << std::endl;
+    }
+    std::cout << endl;
+    
+    for(size_t j=1;j<6;j++) {
+      double pterm, nterm, enterm, edterm;
+      fet.ndeg_terms(j,tt,psi*tt,e.ms,e.inc_rest_mass,true,
+                     pterm,nterm,enterm,edterm);
+      std::cout.setf(std::ios::showpos);
+      std::cout.precision(8);
+      std::cout << j << " " << pterm << " " << nterm << " "
+                << enterm << " " << edterm << std::endl;
+    }
+    exit(-1);
+  }
+  
+  
   t.report();
 
   return 0;
