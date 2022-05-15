@@ -89,8 +89,8 @@ namespace o2scl {
       double jot=dj/tt;
 
       double K2j=be_integ.K2exp(jot);
+      double K1j=be_integ.K1exp(jot);
       if (inc_antip==false) {
-        double K1j=be_integ.K1exp(jot);
         pterm=exp(jot*xx)/jot/jot*K2j;
         nterm=pterm*jot/m;
         double enterm1=(4*tt-dj*xx-dj)/dj/tt*nterm;
@@ -98,17 +98,14 @@ namespace o2scl {
         enterm=enterm1+enterm2;
         edterm=(K1j*dj+3.0*K2j*tt)/jot/dj*exp(xx*jot);
       } else {
-        double K3j=be_integ.K3exp(jot);
-        pterm=exp(-jot)*2*cosh(jot*(xx+1))/jot/jot*K2j;
+        double co=cosh(jot*(xx+1));
+        double si=sinh(jot*(xx+1));
+        pterm=exp(-jot)*2*co/jot/jot*K2j;
         nterm=pterm*tanh(jot*(xx+1))*jot/m;
-        // entropy and energy density terms not right yet
-        double enterm1=-(1+xx)/tt*nterm/m;
-        double enterm2=2*exp(-jot)/dj*cosh(jot*(xx+1))*K3j/m;
-          enterm=enterm1-enterm2;
-        edterm=2/jot/dj*exp(-jot)*(K3j*dj*cosh(jot*(xx+1))-
-                                     2*K2j*dj*xx*sinh(jot*(xx+1))-
-                                     2*K2j*dj*sinh(jot*(xx+1))-
-                                     K2j*tt*cosh(jot*(xx+1)));
+        enterm=(-2*K2j*(xx+1)*si/dj/m+
+                2*(K1j*dj+4*K2j*tt)*co/dj/dj/m)*exp(-jot);
+        edterm=2*exp(-jot)/jot*(K1j*co-2*K2j*xx*si-2*K2j*si+
+                                3*K2j*tt*co/dj);
       }
                     
       return;

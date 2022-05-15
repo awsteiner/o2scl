@@ -243,9 +243,7 @@ int main(void) {
       std::cout << j << " " << pterm << " " << nterm << " "
                 << enterm << " " << edterm << std::endl;
     }
-    exit(-1);
   }
-  
   
   t.report();
 
