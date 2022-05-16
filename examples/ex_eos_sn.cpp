@@ -118,16 +118,16 @@ protected:
     string fname=directory;
 
     if (sv[1]=="ls") {
-      fname+="ls.dat";
+      fname+="/ls.dat";
       name="ls_ls";
     } else if (sv[1]=="skm") {
-      fname+="skm.dat";
+      fname+="/skm.dat";
       name="ls_skm";
     } else if (sv[1]=="ska") {
-      fname+="ska.dat";
+      fname+="/ska.dat";
       name="ls_ska";
     } else if (sv[1]=="sk1") {
-      fname+="sk1.dat";
+      fname+="/sk1.dat";
       name="ls_sk1";
     } else {
       O2SCL_ERR("Need EOS type.",exc_efailed);
@@ -334,12 +334,12 @@ protected:
 
     if (true) {
       // Make the electron EOS a bit more accurate
-      genp->relf.upper_limit_fac=40.0;
-      genp->relf.dit->tol_abs=1.0e-11;
-      genp->relf.dit->tol_rel=1.0e-11;
-      genp->relf.nit->tol_abs=1.0e-11;
-      genp->relf.nit->tol_rel=1.0e-11;
-      genp->relf.density_root->tol_rel=1.0e-10;
+      genp->elep.frel.upper_limit_fac=40.0;
+      genp->elep.frel.fri.dit.tol_abs=1.0e-11;
+      genp->elep.frel.fri.dit.tol_rel=1.0e-11;
+      genp->elep.frel.fri.nit.tol_abs=1.0e-11;
+      genp->elep.frel.fri.nit.tol_rel=1.0e-11;
+      genp->elep.frel.density_root->tol_rel=1.0e-10;
     }
     genp->compute_eg();
     return 0;
@@ -374,12 +374,12 @@ protected:
     if (genp->data_with_leptons()==false ||
 	genp->data_baryons_only()==false) {
       
-      genp->relf.upper_limit_fac=40.0;
-      genp->relf.dit->tol_abs=1.0e-11;
-      genp->relf.dit->tol_rel=1.0e-11;
-      genp->relf.nit->tol_abs=1.0e-11;
-      genp->relf.nit->tol_rel=1.0e-11;
-      genp->relf.density_root->tol_rel=1.0e-10;
+      genp->elep.frel.upper_limit_fac=40.0;
+      genp->elep.frel.fri.dit.tol_abs=1.0e-11;
+      genp->elep.frel.fri.dit.tol_rel=1.0e-11;
+      genp->elep.frel.fri.nit.tol_abs=1.0e-11;
+      genp->elep.frel.fri.nit.tol_rel=1.0e-11;
+      genp->elep.frel.density_root->tol_rel=1.0e-10;
 
       double mue;
       genp->compute_eg_point(nB,Ye,T,th,mue);

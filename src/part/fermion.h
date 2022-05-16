@@ -116,11 +116,16 @@ namespace o2scl {
   };
   
   typedef fermion_tl<double> fermion;
-  
   typedef fermion_tl<long double> fermion_ld;
-  typedef fermion_tl<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> > > fermion_cdf35;
-  typedef fermion_tl<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<50> > > fermion_cdf50;
-  typedef fermion_tl<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<100> > > fermion_cdf100;
+  typedef fermion_tl<boost::multiprecision::number<
+                       boost::multiprecision::cpp_dec_float<35> > >
+  fermion_cdf35;
+  typedef fermion_tl<boost::multiprecision::number<
+                       boost::multiprecision::cpp_dec_float<50> > >
+  fermion_cdf50;
+  typedef fermion_tl<boost::multiprecision::number<
+                       boost::multiprecision::cpp_dec_float<100> > >
+  fermion_cdf100;
   
   /** \brief Fermion properties at zero temperature
 
@@ -130,19 +135,6 @@ namespace o2scl {
       functions are calc_mu_zerot() and calc_density_zerot() which
       compute all the thermodynamic quantities as a function of the
       chemical potential, or the density, respectively.
-      
-      \verbatim embed:rst
-
-      .. todo::
-
-         In class fermion_zerot_tl:
-
-         - Future: Use hypot() and other more accurate functions for the
-           analytic expressions for the zero temperature integrals. [Progress
-           has been made, but there are probably other functions which may
-           break down for small but finite masses and temperatures]
-
-      \endverbatim
   */
   template<class fp_t=double> class fermion_zerot_tl {
 
