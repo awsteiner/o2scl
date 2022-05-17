@@ -951,6 +951,9 @@ namespace o2scl {
                    double &nn_err, double &np_err);
     //@}
 
+    /// Beta-equilibrium solver
+    mroot_hybrids<> beta_mroot;
+    
 #ifndef DOXYGEN_INTERNAL
 
   protected:
@@ -969,9 +972,6 @@ namespace o2scl {
     /// The proton object
     fermion *proton;
 
-    /// Beta-equilibrium solver
-    mroot_hybrids<> beta_mroot;
-    
     /** \brief Equation for solving for beta-equilibrium at T=0
 
         This function is very similar to \ref
