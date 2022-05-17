@@ -1321,8 +1321,9 @@ int eos_had_base::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
        (&eos_had_base::solve_beta_eq_T0),
        this,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3,std::cref(nB_grid[i]),std::ref(elep));
-
-    beta_mroot.msolve(1,guess,fmf);
+    
+    int iret=beta_mroot.msolve(1,guess,fmf);
+    if (iret!=0) return iret;
 	
     // Final function evaluation to make sure, e.g.
     // eos_thermo object is correct

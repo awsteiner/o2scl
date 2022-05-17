@@ -125,9 +125,9 @@ namespace o2scl {
     
     *result = 0;
     *abserr = 0;
-      
-      double dbl_eps=std::numeric_limits<double>::epsilon();
-
+    
+    double dbl_eps=std::numeric_limits<double>::epsilon();
+    
     if (l_epsabs <= 0 && 
 	(l_epsrel < 50 * dbl_eps || l_epsrel < 0.5e-28)) {
       this->last_iter=0;
@@ -193,7 +193,9 @@ namespace o2scl {
     errsum = abserr0;
       
     iteration = 1;
+    
     do {
+      
       double a1, b1, a2, b2;
       double a_i, b_i, r_i, e_i;
       double area1 = 0, area2 = 0, area12 = 0;

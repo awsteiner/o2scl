@@ -10,12 +10,14 @@ classes are particularly useful for static neutron star structure:
 given any equation of state one can calculate the mass vs. radius
 curve and the properties of any star of a given mass.
 
-The EOS is typically specified using :ref:`eos_tov_interp <eos_tov_interp>`
-which uses linear interpolation to interpolate a user-specified
-:ref:`table <o2scl:table>` object. The Buchdahl EOS is given in 
-:ref:`eos_tov_buchdahl <eos_tov_buchdahl>`, a single polytrope EOS is given
-in :ref:`eos_tov_polytrope <eos_tov_polytrope>`, and a linear EOS is given
-in :ref:`eos_tov_linear <eos_tov_linear>`.
+The EOS is typically specified using :ref:`eos_tov_interp
+<eos_tov_interp>` which uses linear interpolation to interpolate a
+user-specified :ref:`table <o2scl:table>` object. A faster lower-level
+EOS interpolation is performed by :ref:`eos_tov_vectors
+<eos_tov_vectors>`. The Buchdahl EOS is given in
+:ref:`eos_tov_buchdahl <eos_tov_buchdahl>`, a single polytrope EOS is
+given in :ref:`eos_tov_polytrope <eos_tov_polytrope>`, and a linear
+EOS is given in :ref:`eos_tov_linear <eos_tov_linear>`.
 
 In units where :math:`c=1`, the most general static and 
 spherically symmetric metric is of the form

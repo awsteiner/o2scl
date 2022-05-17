@@ -73,18 +73,20 @@ void boson_rel::calc_mu(boson &b, double temper) {
 
   // Try the non-degenerate expansion if psi is small enough
   if (use_expansions) {
-    bool acc=this->calc_mu_ndeg(f,temper,tol_expan);
+    bool acc=this->calc_mu_ndeg(b,temper,1.0e-14);
     if (verbose>1) {
       std::cout << "calc_mu(): non-deg expan " << acc
                 << std::endl;
     }
     if (acc) {
+      /*
       unc.n=f.n*tol_expan;
       unc.ed=f.ed*tol_expan;
       unc.pr=f.pr*tol_expan;
       unc.en=f.en*tol_expan;
+      */
       //last_method=4;
-      return 0;
+      return;
     }
   }
   
@@ -304,10 +306,21 @@ void boson_rel::calc_density(boson &b, double temper) {
 
 double boson_rel::deg_density_fun(double k, boson &b, double T) {
 
-  double E=o2hypot(k,b.ms);
-  double nx=o2scl::bose_function(E,b.nu,T);
+  double nx;
+  if (b.ms==b.nu) {
+    nx=1.0/(exp(k/T)-1.0);
+  } else {
+    double E=o2hypot(k,b.ms);
+    nx=o2scl::bose_function(E,b.nu,T);
+  }
   double ret=k*k*nx;
 
+  if (nx<0.0) {
+    cout << b.ms << " " << b.nu << " " << k << " " << T << endl;
+    cout << (b.ms==b.nu) << " " << b.ms-b.nu << " " << nx << endl;
+    cout << "Problem 17." << endl;
+    exit(-1);
+  }
   if (!std::isfinite(ret)) {
     return 0.0;
     /*
@@ -519,10 +532,16 @@ double boson_rel::solve_fun(double x, boson &b, double T) {
     int iret=dit->integ_err(fd,0.0,ul,nden,err);
     dit->err_nonconv=true;
     if (iret!=0) {
-      cout << "Problem 7." << endl;
-      for(double xx=0.0;xx<ul*(1.01);xx+=ul/20.0) {
-        cout << xx << " " << fd(xx) << endl;
-      }
+      /*
+        table_units<> t;
+        def_dit.get_workspace().make_table(t);
+        o2scl_hdf::hdf_file hf;
+        hf.open_or_create("br.o2");
+        hdf_output(hf,t,"br");
+        hf.close();
+        cout << b.nu << " " << b.ms << endl;
+      */
+      cout << "Problem 7b." << endl;
       exit(-1);
     }
     nden*=b.g/2.0/pi2;

@@ -693,16 +693,12 @@ namespace o2scl {
   };
   
   /** \brief An EOS for the TOV solver using simple linear
-      interpolation and an optional crust EOS
+      interpolation and an optional low-density EOS
 
       The simplest usage of this class is simply to use \ref
       read_table() to read a tabulated EOS stored in a \ref
-      table_units object and optionally specify a separate crust EOS.
-
-      Alternatively, the user can simply specify objects
-      of type <tt>std::vector<double></tt> which store the energy
-      density, pressure, and baryon density (which should 
-      include the crust if necessary).
+      table_units object and optionally specify a separate crust 
+      (i.e. low-density) EOS.
 
       There are two methods to handle the crust-core interface. The
       method labeled <tt>smooth_trans</tt> uses the crust below
@@ -757,23 +753,11 @@ namespace o2scl {
       needed in ed_nb_from_pr() and other functions from the units
       specified in the input \ref table_units object.
 
-      \comment
-      \todo It might be useful to exit more gracefully when non-finite
-      values are obtained in interpolation, analogous to the
-      err_nonconv mechanism elsewhere.
-      2/6/16: I'm not sure this is really necessary. It's only
-      linear interpolation, so the err_nonconv mechanism probably
-      won't be useful.
-      \endcomment
-
-      \future Create a sanity check where core_auxp is nonzero only if
-      core_table is also nonzero. Alternatively, this complication is
-      due to the fact that this class works in two ways: one where it
-      reads a table (and adds a crust), and one where it reads in
-      vectors (with no crust). Maybe these two modes of operation
-      should be separated into two classes. (2/6/16: Now there is
-      a new eos_tov_vector class. The best way forward may be 
-      to make this a child of eos_tov_vectors.)
+      A faster method is provided in \ref o2scl::eos_tov_vectors where
+      the user can simply specify objects of type
+      <tt>std::vector<double></tt> which store the energy density,
+      pressure, and baryon density (which should include the crust if
+      necessary).
   */
   class eos_tov_interp : public eos_tov {
     
@@ -854,7 +838,13 @@ namespace o2scl {
     */
     void default_low_dens_eos();
 
-    /// Desc
+    /** \brief The EOS labeled "C" in Stergioulas' rotating 
+        neutron star code
+
+        \verbatim embed:rst
+        This EOS is adapted from [Bethe74]_.
+        \endverbatim
+    */
     void rns_C_low_dens_eos();
     
     /** \brief Crust EOS from Shen et al. (2011)
