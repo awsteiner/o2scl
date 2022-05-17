@@ -112,6 +112,10 @@ namespace o2scl {
     /** \brief Verbosity parameter
      */
     int verbose;
+
+    /** \brief Verbosity parameter
+     */
+    bool use_expansions;
     
   protected:
 

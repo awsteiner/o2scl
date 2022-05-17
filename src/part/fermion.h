@@ -446,7 +446,7 @@ namespace o2scl {
       if (inc_antip==false && psi>0.0) return false;
       
       // Prefactor 'd' in Johns96
-      fp_t prefac=f.g/2.0/this->pi2*pow(f.ms,4.0);
+      fp_t prefac=f.g/2/this->pi2*pow(f.ms,4);
       
       // One term is always used, so only values of max_term greater than
       // 0 are useful.
@@ -455,8 +455,12 @@ namespace o2scl {
       // Maximum argument for exponential
       // fp_t log_dbl_max=709.78;
       
-      // Return zero if psi+1/t is too small
-      if (psi+1.0/tt<-700.0) {
+      // Return zero if psi+1/t is too small.
+      // log(std::numeric_limits<double>::min()) is the log
+      // of the smallest representable number, about -700,
+      fp_t limit=log(std::numeric_limits<fp_t>::min());
+      
+      if (psi+1.0/tt<limit) {
         f.n=0.0;
         f.ed=0.0;
         f.pr=0.0;

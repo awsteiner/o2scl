@@ -140,14 +140,35 @@ namespace o2scl {
       // 0 are useful.
       static const size_t max_term=200;
       
+      // ─────────────────────────────────────────────────────────────────
+      // Return early if the last term is going to be too large.
+      
+      // Ratio of last term to first term in the pressure expansion
+      double rat, pterm_1, pterm_max;
+      double pterm, nterm, enterm, edterm;
+
+      ndeg_terms(1,tt,psi*tt,b.ms,b.inc_rest_mass,inc_antip,
+                 pterm_1,nterm,enterm,edterm);
+      ndeg_terms(max_term,tt,psi*tt,b.ms,b.inc_rest_mass,inc_antip,
+                 pterm_max,nterm,enterm,edterm);
+      rat=pterm_max/pterm_1;
+      
+      // If the ratio between the last term and the first term is 
+      // not small enough, return false
+      if (o2scl::o2isfinite(rat) && rat>prec) {
+        return false;
+      }
+      
+      // ─────────────────────────────────────────────────────────────────
+      // Go through term by term and see if we obtain the requested
+      // precision
+
       double first_term=0.0;
       b.pr=0.0;
       b.n=0.0;
       b.en=0.0;
       
       for(size_t j=1;j<=max_term;j++) {
-        
-        double pterm, nterm, enterm, edterm;
         
         ndeg_terms(j,tt,psi*tt,b.ms,b.inc_rest_mass,inc_antip,
                    pterm,nterm,enterm,edterm);

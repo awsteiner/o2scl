@@ -39,6 +39,7 @@ boson_rel::boson_rel() {
   nit=&def_nit;
   dit=&def_dit;
   verify_ti=false;
+  use_expansions=true;
 }
 
 boson_rel::~boson_rel() {
@@ -68,6 +69,23 @@ void boson_rel::calc_mu(boson &b, double temper) {
   if (psi>0.0) {
     O2SCL_ERR2("Chemical potential must be smaller than mass in ",
                "boson_rel::calc_mu().",o2scl::exc_einval);
+  }
+
+  // Try the non-degenerate expansion if psi is small enough
+  if (use_expansions) {
+    bool acc=this->calc_mu_ndeg(f,temper,tol_expan);
+    if (verbose>1) {
+      std::cout << "calc_mu(): non-deg expan " << acc
+                << std::endl;
+    }
+    if (acc) {
+      unc.n=f.n*tol_expan;
+      unc.ed=f.ed*tol_expan;
+      unc.pr=f.pr*tol_expan;
+      unc.en=f.en*tol_expan;
+      //last_method=4;
+      return 0;
+    }
   }
   
   bool deg=true;
