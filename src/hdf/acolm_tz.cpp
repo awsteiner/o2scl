@@ -166,6 +166,34 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
     command_add("table");
     type="table";
     
+  } else if (type=="table3d") {
+
+    table_obj.clear();
+    table_obj.new_column(table3d_obj.get_x_name());
+    table_obj.new_column(table3d_obj.get_y_name());
+    for(size_t j=0;j<table3d_obj.get_nslices();j++) {
+      table_obj.new_column(table3d_obj.get_slice_name(j));
+    }
+
+    for(size_t i=0;i<table3d_obj.get_nx();i++) {
+      for(size_t j=0;j<table3d_obj.get_ny();j++) {
+        vector<double> line;
+        line.push_back(table3d_obj.get_grid_x(i));
+        line.push_back(table3d_obj.get_grid_y(j));
+        for(size_t k=0;k<table3d_obj.get_nslices();k++) {
+          line.push_back(table3d_obj.get(table3d_obj.get_grid_x(i),
+                                         table3d_obj.get_grid_y(j),
+                                         table3d_obj.get_slice_name(k)));
+        }
+        table_obj.line_of_data(line.size(),line);
+      }
+    }
+
+    command_del(type);
+    clear_obj();
+    command_add("table");
+    type="table";
+    
   }
   
   return 0;

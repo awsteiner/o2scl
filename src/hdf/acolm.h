@@ -764,6 +764,14 @@ namespace o2scl_acol {
         
         Detailed desc.
 
+        For objects of type table3d:
+
+        Convert to a table object.
+
+        Arguments: (No arguments.)
+        
+        Detailed desc.
+
         For objects of type hist:
 
         Convert to a table object.
