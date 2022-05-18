@@ -32,10 +32,8 @@
 #include <fstream>
 #include <cmath>
 #include <o2scl/constants.h>
-#include <o2scl/root.h>
-#include <o2scl/mroot.h>
+#include <o2scl/mroot_hybrids.h>
 #include <o2scl/inte.h>
-#include <o2scl/root_cern.h>
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/inte_qagiu_gsl.h>
 
@@ -88,13 +86,13 @@ namespace o2scl {
 
     /** \brief Set the solver for use in calculating the chemical
 	potential from the density */
-    void set_density_root(root<> &rp) {
-      density_root=&rp;
+    void set_density_mroot(mroot<> &rp) {
+      density_mroot=&rp;
       return;
     }
 
     /// The default solver for calc_density().
-    root_cern<> def_density_root;
+    mroot_hybrids<> def_density_mroot;
 
     /// Default nondegenerate integrator
     inte_qagiu_gsl<> def_nit;
@@ -116,6 +114,8 @@ namespace o2scl {
     /** \brief Verbosity parameter
      */
     bool use_expansions;
+
+    double deg_limit;
     
   protected:
 
@@ -124,7 +124,7 @@ namespace o2scl {
     /// The degenerate integrator
     inte<> *dit;
     /// The solver for calc_density()
-    root<> *density_root;
+    mroot<> *density_mroot;
 
     /// Non-degenerate density integral
     double density_fun(double u, boson &b, double T);
@@ -139,10 +139,11 @@ namespace o2scl {
     /// Degenerate entropy integral
     double deg_entropy_fun(double u, boson &b, double T);
     /// Solve for the density in calc_density()
-    double solve_fun(double x, boson &b, double T);
+    int solve_fun(size_t nv, const ubvector &x, ubvector &y,
+                  double density, boson &b, double T);
     /// Desc
-    double pair_density_fun(double x, double density,
-                            boson &b, double T);
+    int pair_density_fun(size_t nv, const ubvector &x, ubvector &y,
+                         double density, boson &b, double T);
 
   };
 

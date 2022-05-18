@@ -25,7 +25,6 @@
 #endif
 
 #include <o2scl/boson_rel.h>
-#include <o2scl/root_brent_gsl.h>
 
 using namespace std;
 using namespace o2scl;
@@ -35,11 +34,12 @@ using namespace o2scl_const;
 // boson_rel class
 
 boson_rel::boson_rel() {
-  density_root=&def_density_root;
+  density_mroot=&def_density_mroot;
   nit=&def_nit;
   dit=&def_dit;
   verify_ti=false;
   use_expansions=true;
+  deg_limit=-0.5;
 }
 
 boson_rel::~boson_rel() {
@@ -91,7 +91,6 @@ void boson_rel::calc_mu(boson &b, double temper) {
   }
   
   bool deg=true;
-  double deg_limit=-0.5;
   if (psi<deg_limit) deg=false;
 
   if (verbose>1) {
@@ -237,7 +236,7 @@ void boson_rel::calc_mu(boson &b, double temper) {
     nit->err_nonconv=true;
     
   }
-
+  
   b.pr=-b.ed+temper*b.en+b.mu*b.n;
 
   return;
@@ -245,30 +244,41 @@ void boson_rel::calc_mu(boson &b, double temper) {
 
 void boson_rel::nu_from_n(boson &b, double temper) {
   
-  double nex;
+  ubvector x(1);
 
-  nex=b.nu/temper;
-  funct mf=std::bind(std::mem_fn<double(double,boson &,double)>
-		       (&boson_rel::solve_fun),
-		       this,std::placeholders::_1,std::ref(b),temper);
-  bool ec=density_root->err_nonconv;
-  density_root->err_nonconv=false;
-  int ret1=density_root->solve(nex,mf);
-  density_root->err_nonconv=ec;
+  x[0]=b.nu/temper;
+  
+  mm_funct mf=std::bind(std::mem_fn<int(size_t nv, const ubvector &,
+                                        ubvector &,double,boson &,double)>
+                        (&boson_rel::solve_fun),
+                        this,std::placeholders::_1,std::placeholders::_2,
+                        std::placeholders::_3,b.n,std::ref(b),temper);
+  
+  bool ec=density_mroot->err_nonconv;
+  density_mroot->err_nonconv=false;
+  int ret1=density_mroot->msolve(1,x,mf);
+  density_mroot->err_nonconv=ec;
 
+  if (ret1!=0) {
+    density_mroot->verbose=2;
+    int ret1=density_mroot->msolve(1,x,mf);
+  }
+
+  /*
   if (ret1!=0) {
 
     root_brent_gsl<> rbg;
     rbg.err_nonconv=false;
     int ret2=rbg.solve(nex,mf);
+  */
 
-    if (ret2!=0) {
-      O2SCL_ERR("Solvers failed in boson_rel::nu_from_n().",
-		o2scl::exc_efailed);
-    }
+  if (ret1!=0) {
+    O2SCL_ERR("Solvers failed in boson_rel::nu_from_n().",
+              o2scl::exc_efailed);
   }
+  //}
   
-  b.nu=nex*temper;
+  b.nu=x[0]*temper;
   
   return;
 }
@@ -316,8 +326,15 @@ double boson_rel::deg_density_fun(double k, boson &b, double T) {
   double ret=k*k*nx;
 
   if (nx<0.0) {
+    long double m2=b.ms;
+    long double mu2=b.nu;
+    long double T2=T;
+    long double k2=k;
+    long double E2=o2hypot(k2,m2);
+    long double nx2=1.0L/(exp((E2-mu2)/T2)-1.0L);
     cout << b.ms << " " << b.nu << " " << k << " " << T << endl;
-    cout << (b.ms==b.nu) << " " << b.ms-b.nu << " " << nx << endl;
+    cout << E2-mu2 << " " << b.ms-b.nu << " " << nx << " "
+         << nx2 << endl;
     cout << "Problem 17." << endl;
     exit(-1);
   }
@@ -496,10 +513,13 @@ double boson_rel::entropy_fun(double u, boson &b, double T) {
   return ret;
 }
 
-double boson_rel::solve_fun(double x, boson &b, double T) {
-  double nden;
+int boson_rel::solve_fun(size_t nv, const ubvector &x, ubvector &y,
+                         double density, boson &b, double T) {
 
-  b.nu=x*T;
+  double nden;
+  
+  b.nu=x[0]*T;
+  if (b.non_interacting) b.mu=b.nu;
   
   double psi;
   if (b.inc_rest_mass) {
@@ -508,8 +528,9 @@ double boson_rel::solve_fun(double x, boson &b, double T) {
     psi=(b.nu+(b.m-b.ms))/T;
   }
 
+  if (b.nu>b.ms) return 1;
+
   bool deg=true;
-  double deg_limit=-0.5;
   if (psi<deg_limit) deg=false;
   
   if (deg) {
@@ -570,9 +591,11 @@ double boson_rel::solve_fun(double x, boson &b, double T) {
 
   }
 
-  double yy=nden/b.n-1.0;
+  y[0]=nden/density-1.0;
+  cout.precision(12);
+  cout << "A: " << x[0] << " " << y[0] << endl;
 
-  return yy;
+  return 0;
 }
 
 void boson_rel::pair_mu(boson &b, double temper) {
@@ -595,29 +618,34 @@ void boson_rel::pair_density(boson &b, double temper) {
   
   if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
 
-  double x=b.nu/temper;
+  ubvector x(1);
+  x[0]=b.nu/temper;
 
-  funct mf=std::bind(std::mem_fn<double(double,double,boson &,double)>
-                     (&boson_rel::pair_density_fun),
-                     this,std::placeholders::_1,b.n,std::ref(b),temper);
-  bool ec=density_root->err_nonconv;
-  density_root->err_nonconv=false;
-  int ret1=density_root->solve(x,mf);
-  density_root->err_nonconv=ec;
+  mm_funct mf=std::bind(std::mem_fn<int(size_t nv, const ubvector &,
+                                        ubvector &,double,boson &,double)>
+                        (&boson_rel::pair_density_fun),
+                        this,std::placeholders::_1,std::placeholders::_2,
+                        std::placeholders::_3,b.n,std::ref(b),temper);
+  bool ec=density_mroot->err_nonconv;
+  density_mroot->err_nonconv=false;
+  int ret1=density_mroot->msolve(1,x,mf);
+  density_mroot->err_nonconv=ec;
 
+  /*
   if (ret1!=0) {
 
     root_brent_gsl<> rbg;
     rbg.err_nonconv=false;
     int ret2=rbg.solve(x,mf);
+  */
 
-    if (ret2!=0) {
-      O2SCL_ERR("Solvers failed in boson_rel::nu_from_n().",
-		o2scl::exc_efailed);
-    }
+  if (ret1!=0) {
+    O2SCL_ERR("Solvers failed in boson_rel::nu_from_n().",
+              o2scl::exc_efailed);
   }
+  //}
   
-  b.nu=x*temper;
+  b.nu=x[0]*temper;
 
   if (b.non_interacting==true) { b.mu=b.nu; }
   
@@ -626,14 +654,22 @@ void boson_rel::pair_density(boson &b, double temper) {
   return;
 }
 
-double boson_rel::pair_density_fun(double x, double density,
-                                   boson &b, double T) {
+int boson_rel::pair_density_fun(size_t nv,
+                                const ubvector &x, ubvector &y,
+                                double density, boson &b, double T) {
 
-  b.nu=x*T;
+  b.nu=x[0]*T;
+  if (b.non_interacting) {
+    b.mu=b.nu;
+  }
 
   pair_mu(b,T);
-
-  double y=(b.n-density)/density;
   
-  return y;
+  y[0]=(b.n-density)/density;
+  
+  cout << "H: " << x[0] << " " << y[0] << " " << b.nu << " " << b.ms
+       << endl;
+  cout << "\t: " << b.n << " " << density << endl;
+  
+  return 0;
 }
