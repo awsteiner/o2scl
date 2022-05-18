@@ -40,6 +40,7 @@ boson_rel::boson_rel() {
   verify_ti=false;
   use_expansions=true;
   deg_limit=-0.5;
+  upper_limit_fac=30.0;
 }
 
 boson_rel::~boson_rel() {
@@ -101,7 +102,7 @@ void boson_rel::calc_mu(boson &b, double temper) {
     
     // Compute the upper limit for degenerate integrals
 
-    double arg, upper_limit_fac=30.0;
+    double arg;
     if (b.inc_rest_mass) {
       arg=pow(upper_limit_fac*temper+b.nu,2.0)-b.ms*b.ms;
     } else {
@@ -246,6 +247,14 @@ void boson_rel::nu_from_n(boson &b, double temper) {
   
   ubvector x(1);
 
+  if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
+
+  // If the chemical potential is too large, create a valid
+  // initial guess
+  if (b.nu>=b.ms) {
+    b.nu=b.ms-1.0e-4;
+  }
+  
   x[0]=b.nu/temper;
   
   mm_funct mf=std::bind(std::mem_fn<int(size_t nv, const ubvector &,
@@ -253,24 +262,23 @@ void boson_rel::nu_from_n(boson &b, double temper) {
                         (&boson_rel::solve_fun),
                         this,std::placeholders::_1,std::placeholders::_2,
                         std::placeholders::_3,b.n,std::ref(b),temper);
-  
+
   bool ec=density_mroot->err_nonconv;
   density_mroot->err_nonconv=false;
   int ret1=density_mroot->msolve(1,x,mf);
   density_mroot->err_nonconv=ec;
 
   if (ret1!=0) {
+    ubvector y(1);
+    for(x[0]=9.88e-2;x[0]<9.91e-2;x[0]+=1.0e-6) {
+      mf(1,x,y);
+      cout << x[0] << " " << y[0] << endl;
+    }
+    exit(-1);
     density_mroot->verbose=2;
-    int ret1=density_mroot->msolve(1,x,mf);
+    x[0]*=0.99;
+    ret1=density_mroot->msolve(1,x,mf);
   }
-
-  /*
-  if (ret1!=0) {
-
-    root_brent_gsl<> rbg;
-    rbg.err_nonconv=false;
-    int ret2=rbg.solve(nex,mf);
-  */
 
   if (ret1!=0) {
     O2SCL_ERR("Solvers failed in boson_rel::nu_from_n().",
@@ -325,18 +333,13 @@ double boson_rel::deg_density_fun(double k, boson &b, double T) {
   }
   double ret=k*k*nx;
 
-  if (nx<0.0) {
+  if (false) {
     long double m2=b.ms;
     long double mu2=b.nu;
     long double T2=T;
     long double k2=k;
     long double E2=o2hypot(k2,m2);
     long double nx2=1.0L/(exp((E2-mu2)/T2)-1.0L);
-    cout << b.ms << " " << b.nu << " " << k << " " << T << endl;
-    cout << E2-mu2 << " " << b.ms-b.nu << " " << nx << " "
-         << nx2 << endl;
-    cout << "Problem 17." << endl;
-    exit(-1);
   }
   if (!std::isfinite(ret)) {
     return 0.0;
@@ -528,7 +531,9 @@ int boson_rel::solve_fun(size_t nv, const ubvector &x, ubvector &y,
     psi=(b.nu+(b.m-b.ms))/T;
   }
 
-  if (b.nu>b.ms) return 1;
+  if (b.nu>b.ms) {
+    return 1;
+  }
 
   bool deg=true;
   if (psi<deg_limit) deg=false;
@@ -537,7 +542,7 @@ int boson_rel::solve_fun(size_t nv, const ubvector &x, ubvector &y,
 
       // Compute the upper limit for degenerate integrals
 
-    double arg, upper_limit_fac=30.0;
+    double arg;
     if (b.inc_rest_mass) {
       arg=pow(upper_limit_fac*T+b.nu,2.0)-b.ms*b.ms;
     } else {
@@ -552,6 +557,7 @@ int boson_rel::solve_fun(size_t nv, const ubvector &x, ubvector &y,
     dit->err_nonconv=false;
     int iret=dit->integ_err(fd,0.0,ul,nden,err);
     dit->err_nonconv=true;
+    //cout << "A: " << fd(ul/2.0) << " " << fd(ul) << endl;
     if (iret!=0) {
       /*
         table_units<> t;
@@ -593,7 +599,6 @@ int boson_rel::solve_fun(size_t nv, const ubvector &x, ubvector &y,
 
   y[0]=nden/density-1.0;
   cout.precision(12);
-  cout << "A: " << x[0] << " " << y[0] << endl;
 
   return 0;
 }

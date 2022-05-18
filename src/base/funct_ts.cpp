@@ -22,6 +22,7 @@
 */
 #include <o2scl/funct.h>
 #include <o2scl/test_mgr.h>
+#include <o2scl/err_hnd.h>
 #include <o2scl/constants.h>
 
 using namespace std;
@@ -29,7 +30,16 @@ using namespace o2scl;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 
+class fmc {
+public:
+  template<class fp_t> fp_t func(fp_t x) {
+    return log(1+x);
+  }
+};
+
 int main(void) {
+  cout.setf(ios::scientific);
+  
   test_mgr t;
   t.set_output_level(2);
 
@@ -58,6 +68,51 @@ int main(void) {
   o2scl_settings.py_final();
   
 #endif
+
+
+  fmc f2;
+  funct f2_d=std::bind(std::mem_fn<double(double)>(&fmc::func<double>),
+                       &f2,std::placeholders::_1);
+  funct_ld f2_ld=std::bind(std::mem_fn<long double(long double)>
+                           (&fmc::func<long double>),
+                           &f2,std::placeholders::_1);
+  funct_cdf25 f2_cdf25=std::bind(std::mem_fn<boost::multiprecision::number<
+                                 boost::multiprecision::cpp_dec_float<25>>
+                                 (boost::multiprecision::number<
+                                  boost::multiprecision::cpp_dec_float<25>>)>
+                                 (&fmc::func<boost::multiprecision::number<
+                                  boost::multiprecision::cpp_dec_float<25>>>),
+                                 &f2,std::placeholders::_1);
+  funct_cdf35 f2_cdf35=std::bind(std::mem_fn<boost::multiprecision::number<
+                                 boost::multiprecision::cpp_dec_float<35>>
+                                 (boost::multiprecision::number<
+                                  boost::multiprecision::cpp_dec_float<35>>)>
+                                 (&fmc::func<boost::multiprecision::number<
+                                  boost::multiprecision::cpp_dec_float<35>>>),
+                                 &f2,std::placeholders::_1);
+  funct_cdf50 f2_cdf50=std::bind(std::mem_fn<boost::multiprecision::number<
+                                 boost::multiprecision::cpp_dec_float<50>>
+                                 (boost::multiprecision::number<
+                                  boost::multiprecision::cpp_dec_float<50>>)>
+                                 (&fmc::func<boost::multiprecision::number<
+                                  boost::multiprecision::cpp_dec_float<50>>>),
+                                 &f2,std::placeholders::_1);
+  funct_cdf100 f2_cdf100=std::bind
+    (std::mem_fn<boost::multiprecision::number<
+     boost::multiprecision::cpp_dec_float<100>>
+     (boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<100>>)>
+     (&fmc::func<boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<100>>>),
+     &f2,std::placeholders::_1);
+  funct_multip_wrapper fmw(f2_d,f2_ld,f2_cdf25,f2_cdf35,
+                           f2_cdf50,f2_cdf100);
+  funct_multip fm(fmw);
+  fm.verbose=1;
+  cout << dtos(log(1.0+1.0e-4),0) << endl;
+  cout << dtos(log1p(1.0e-4),0) << endl;
+  cout << dtos(fm(1.0e-4),0) << endl;
+  cout << dtos(fm(1.0e-4L),0) << endl;
   
   t.report();
   return 0;

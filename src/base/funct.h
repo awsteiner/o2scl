@@ -82,7 +82,7 @@ namespace o2scl {
       
       This typedef is only present if O2SCL_MPFR is
       defined during compilation.
-   */
+  */
   typedef std::function<boost::multiprecision::mpfr_float_50
 			(boost::multiprecision::mpfr_float_50)>
   funct_mp50;
@@ -102,7 +102,7 @@ namespace o2scl {
       funct_string f("pi*r^2","r");
       f.set_parm("pi",o2scl_const::pi);
       for(double r=1.0;r<=2.0;r+=0.1) {
-        cout << f(x) << endl;
+      cout << f(x) << endl;
       }
       \endcode
       will print out the area of circles having radii between 1 and 2.
@@ -152,8 +152,6 @@ namespace o2scl {
       return calc.eval(&vars);
     }
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// The object for evaluating strings
@@ -169,8 +167,6 @@ namespace o2scl {
 
     funct_string() {};
 
-#endif
-
   private:
 
     funct_string(const funct_string &);
@@ -180,7 +176,7 @@ namespace o2scl {
 
   /** \brief A wrapper to specify \ref o2scl::funct objects 
       to GSL
-   */
+  */
   class funct_gsl : public gsl_function {
 
   protected:
@@ -202,7 +198,7 @@ namespace o2scl {
   };
 
   /** \brief Two-dimensional function from a string
-  */
+   */
   class funct2_string {
     
   public:
@@ -252,8 +248,6 @@ namespace o2scl {
       return calc.eval(&vars);
     }
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// The object for evaluating strings
@@ -271,8 +265,6 @@ namespace o2scl {
 
     funct2_string() {};
 
-#endif
-
   private:
 
     funct2_string(const funct2_string &);
@@ -283,7 +275,7 @@ namespace o2scl {
 #ifdef O2SCL_PYTHON
   
   /** \brief One-dimensional function from a python function
-  */
+   */
   class funct_python {
 
   protected:
@@ -315,20 +307,16 @@ namespace o2scl {
 
         This function is called by the constructor and thus
         cannot be virtual.
-     */
+    */
     int set_function(std::string module, std::string func);
     
     /** \brief Compute the function at point \c x and return the result
      */
     virtual double operator()(double x) const;
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     funct_python() {};
-
-#endif
 
   private:
 
@@ -338,7 +326,7 @@ namespace o2scl {
   };
 
   /** \brief One-dimensional function from a python function
-  */
+   */
   class funct_python_method {
 
   protected:
@@ -377,7 +365,7 @@ namespace o2scl {
 
         This function is called by the constructor and thus
         cannot be virtual.
-     */
+    */
     int set_function(std::string module, std::string class_name,
                      std::string func);
     
@@ -385,13 +373,9 @@ namespace o2scl {
      */
     virtual double operator()(double x) const;
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     funct_python_method() {};
-
-#endif
 
   private:
 
@@ -402,6 +386,280 @@ namespace o2scl {
 
 #endif
 
+  /** \brief Desc
+   */
+  class funct_multip_wrapper {
+  
+  public:
+  
+    funct f;
+    funct_ld f_ld;
+    funct_cdf25 f_cdf25;
+    funct_cdf35 f_cdf35;
+    funct_cdf50 f_cdf50;
+    funct_cdf100 f_cdf100;
+  
+    funct_multip_wrapper(funct &f_x,
+                         funct_ld &f_ld_x,
+                         funct_cdf25 &f_cdf25_x,
+                         funct_cdf35 &f_cdf35_x,
+                         funct_cdf50 &f_cdf50_x,
+                         funct_cdf100 &f_cdf100_x) {
+      f=f_x;
+      f_ld=f_ld_x;
+      f_cdf25=f_cdf25_x;
+      f_cdf35=f_cdf35_x;
+      f_cdf50=f_cdf50_x;
+      f_cdf100=f_cdf100_x;
+      return;
+    }
+
+    /** \brief Desc
+     */
+    double eval(double x) {
+      return f(x);
+    }
+  
+    /** \brief Desc
+     */
+    long double eval(long double x) {
+      return f_ld(x);
+    }
+
+    /** \brief Desc
+     */
+    boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<25>> eval
+    (boost::multiprecision::number<
+     boost::multiprecision::cpp_dec_float<25>> x) {
+      return f_cdf25(x);
+    }
+  
+    /** \brief Desc
+     */
+    boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<35>> eval
+    (boost::multiprecision::number<
+     boost::multiprecision::cpp_dec_float<35>> x) {
+      return f_cdf35(x);
+    }
+  
+    /** \brief Desc
+     */
+    boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<50>> eval
+    (boost::multiprecision::number<
+     boost::multiprecision::cpp_dec_float<50>> x) {
+      return f_cdf50(x);
+    }
+  
+    /** \brief Desc
+     */
+    boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<100>> eval
+    (boost::multiprecision::number<
+     boost::multiprecision::cpp_dec_float<100>> x) {
+      return f_cdf100(x);
+    }
+  
+    /** \brief Desc
+     */
+    template<class fp_t> fp_t operator()(fp_t x) {
+      return eval(x);
+    }
+
+  };
+
+  /** \brief Use multiprecision to automatically evaluate a function to
+      a specified level of precision
+  */
+  template<class func_t=funct_multip_wrapper> class funct_multip {
+  
+  protected:
+
+    /** \brief Desc
+     */
+    func_t &f;
+
+    /// \name Typedefs for multiprecision types
+    //@{
+    typedef
+    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
+    cpp_dec_float_25;
+  
+    typedef
+    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+    cpp_dec_float_35;
+  
+    typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+  
+    typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
+    //@}
+
+  public:
+
+    /** \brief Desc
+     */
+    funct_multip(func_t &fx) : f(fx) {
+      verbose=0;
+      tol_rel=-1.0;
+    }
+
+    /** \brief Desc
+     */
+    int verbose;
+
+    /** \brief Desc
+     */
+    double tol_rel;
+
+    /** \brief Desc
+     */
+    template<class fp_t> int eval_tol_err(fp_t x, fp_t &val,
+                                          fp_t &err, double tol_loc=-1.0) {
+    
+      if (tol_loc<=0.0 && tol_rel<=0.0) {
+        tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10);
+      } else {
+        tol_loc=tol_rel;
+      }
+      if (verbose>0) {
+        std::cout << "Set tol to: " << tol_loc << std::endl;
+      }
+    
+      double x_d=static_cast<double>(x);
+      long double x_ld=static_cast<long double>(x);
+      double y_d=f(x_d);
+      long double y_ld=f(x_ld);
+
+      if (y_ld==0 && y_d==0) {
+        val=0;
+        err=0;
+        return 0;
+      }
+      if (y_ld!=0) {
+        err=static_cast<fp_t>(abs(y_ld-y_d)/abs(y_ld));
+        if (err<tol_loc) {
+          val=static_cast<fp_t>(y_ld);
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 1: " << dtos(y_ld,0) << " "
+                  << dtos(y_d,0) << " "
+                  << dtos(err,0) << " " << tol_loc << std::endl;
+      }
+    
+      cpp_dec_float_25 x_cdf25=static_cast<cpp_dec_float_25>(x);
+      cpp_dec_float_25 y_cdf25=f(x_cdf25);
+
+      if (y_cdf25==0 && y_ld==0) {
+        val=0;
+        err=0;
+        return 0;
+      }
+      if (y_cdf25!=0) {
+        err=static_cast<fp_t>(abs(y_cdf25-y_ld)/abs(y_cdf25));
+        if (err<tol_loc) {
+          val=static_cast<fp_t>(y_cdf25);
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 2: " << dtos(y_cdf25,0) << " "
+                  << dtos(y_ld,0) << " "
+                  << dtos(err,0) << " " << tol_loc << std::endl;
+      }
+    
+      cpp_dec_float_35 x_cdf35=static_cast<cpp_dec_float_35>(x);
+      cpp_dec_float_35 y_cdf35=f(x_cdf35);
+        
+      if (y_cdf35==0 && y_cdf25==0) {
+        val=0;
+        err=0;
+        return 0;
+      }
+      if (y_cdf35!=0) {
+        err=static_cast<fp_t>(abs(y_cdf35-y_cdf25)/abs(y_cdf35));
+        if (err<tol_loc) {
+          val=static_cast<fp_t>(y_cdf35);
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 3: " << dtos(y_cdf35,0) << " "
+                  << dtos(y_cdf25,0) << " "
+                  << dtos(err,0) << " " << tol_loc << std::endl;
+      }
+    
+      cpp_dec_float_50 x_cdf50=static_cast<cpp_dec_float_50>(x);
+      cpp_dec_float_50 y_cdf50=f(x_cdf50);
+    
+      if (y_cdf50==0 && y_cdf35==0) {
+        val=0;
+        err=0;
+        return 0;
+      }
+      if (y_cdf50!=0) {
+        err=static_cast<fp_t>(abs(y_cdf50-y_cdf35)/abs(y_cdf50));
+        if (err<tol_loc) {
+          val=static_cast<fp_t>(y_cdf50);
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 4: " << dtos(y_cdf50,0) << " "
+                  << dtos(y_cdf35,0) << " "
+                  << dtos(err,0) << " " << tol_loc << std::endl;
+      }
+    
+      cpp_dec_float_100 x_cdf100=static_cast<cpp_dec_float_100>(x);
+      cpp_dec_float_100 y_cdf100=f(x_cdf100);
+    
+      if (y_cdf100==0 && y_cdf50==0) {
+        val=0;
+        err=0;
+        return 0;
+      }
+      if (y_cdf100!=0) {
+        err=static_cast<fp_t>(abs(y_cdf100-y_cdf50)/abs(y_cdf100));
+        if (err<tol_loc) {
+          val=static_cast<fp_t>(y_cdf100);
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 5: " << dtos(y_cdf100,0) << " "
+                  << dtos(y_cdf50,0) << " "
+                  << dtos(err,0) << " " << tol_loc << std::endl;
+      
+      }
+    
+      O2SCL_ERR2("Failed to compute with requested accuracy ",
+                 "in funct_multip::eval_tol_err().",
+                 o2scl::exc_efailed);
+      return o2scl::exc_efailed;
+    }
+
+    /** \brief Desc
+     */
+    template<class fp_t> int eval_err(fp_t x, fp_t &val, fp_t &err) {
+      return eval_tol_err(x,val,err);
+    }
+  
+    /** \brief Desc
+     */
+    template<class fp_t> fp_t operator()(fp_t x) {
+      fp_t val,err;
+    
+      eval_err(x,val,err);
+    
+      return val;
+    }
+    
+  };
+
+  
 }
 
 #endif

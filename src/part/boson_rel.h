@@ -116,6 +116,8 @@ namespace o2scl {
     bool use_expansions;
 
     double deg_limit;
+
+    double upper_limit_fac;
     
   protected:
 
