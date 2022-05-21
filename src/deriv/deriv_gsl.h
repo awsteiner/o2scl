@@ -246,7 +246,7 @@ namespace o2scl {
       return 0;
     }
   
-    /** \brief Internal version of calc_err() for second
+    /** \brief Internal version of deriv_err() for second
 	and third derivatives
     */
     virtual int deriv_err_int
@@ -346,9 +346,210 @@ namespace o2scl {
 
   };
 
+#ifdef O2SCL_NEVER_DEFINED
+  
+  /** \brief Evalulate a derivative to within a requested tolerance
+      using multiprecision
+   */
+  template<class func_t=funct_multip> class deriv_multip_gsl {
+
+  protected:
+    
+    typedef boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
+    typedef boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
+    typedef boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<50>> cpp_dec_float_50;
+    typedef boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
+    
+    deriv_gsl<funct,double> dg_d;
+    deriv_gsl<funct_ld,long double> dg_ld;
+    deriv_gsl<funct_cdf25,cpp_dec_float_25> dg_cdf25;
+    deriv_gsl<funct_cdf35,cpp_dec_float_35> dg_cdf35;
+    deriv_gsl<funct_cdf50,cpp_dec_float_50> dg_cdf50;
+    deriv_gsl<funct_cdf100,cpp_dec_float_100> dg_cdf100;
+    
+  public:
+
+    /** \brief Relative tolerance
+     */
+    double tol_rel;
+
+    int verbose=0;
+
+    virtual int deriv_err(fp_t x, func_t &func, fp_t &dfdx, fp_t &err,
+                          double tol_loc=-1) {
+      
+      if (tol_loc<=0.0 && tol_rel<=0.0) {
+        tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10);
+      } else {
+        tol_loc=tol_rel;
+      }
+      if (verbose>0) {
+        std::cout << "Set tol to: " << tol_loc << std::endl;
+      }
+      
+      // Demand that the function evaluations are higher precision
+      double func.tol_rel=pow(tol_loc,1.33);
+
+      double dfdx_d, err_d;
+      long double dfdx_ld, err_ld;
+      
+      dg_d.deriv_err(static_cast<double>(x),func,dfdx_d,err_d);
+      dg_ld.deriv_err(static_cast<long double>(x),func,dfdx_ld,err_ld);
+
+      /*
+        Sometimes the deriv_gsl class overestimates the uncertainty,
+        so we don't always check for, e.g., err_d<tol_loc and
+        err_ld<tol_loc.
+      */
+      if (dfdx_d==0 && dfdx_ld==0 && err_d<tol_loc && err_ld<tol_loc) {
+        dfdx=0;
+        err=static_cast<fp_t>(err_d);
+        if (err<err_ld) err=static_cast<fp_t>(err_ld);
+        return 0;
+      }
+      
+      if (dfdx_ld!=0) {
+        err=static_cast<fp_t>(abs(dfdx_ld-dfdx_d)/abs(dfdx_ld));
+        if (err<tol_loc) {
+          val=static_cast<fp_t>(dfdx_ld);
+          return 0;
+        }
+      }
+      
+      if (verbose>0) {
+        std::cout << "Failed 1: " << dtos(dfdx_d,0) << " "
+                  << dtos(dfdx_ld,0) << " "
+                  << dtos(err_d,0) << " "
+                  << dtos(err_ld,0) << " "
+                  << tol_loc << std::endl;
+      }
+    
+      cpp_dec_float_25 dfdx_cdf25, err_cdf25;
+      dg_cdf25.deriv_err(static_cast<cpp_def_float_25>(x),
+                         func,dfdx_cdf25,err_cdf25);
+
+      if (dfdx_ld==0 && dfdx_cdf25==0 && err_ld<tol_loc &&
+          err_cdf25<tol_loc) {
+        dfdx=0;
+        err=static_cast<fp_t>(err_ld);
+        if (err<err_cdf25) err=static_cast<fp_t>(err_cdf25);
+        return 0;
+      }
+      
+      if (dfdx_cdf25!=0) {
+        err=static_cast<fp_t>(abs(dfdx_cdf25-dfdx_ld)/abs(dfdx_cdf25));
+        if (err<tol_loc) {
+          val=static_cast<fp_t>(dfdx_cdf25);
+          return 0;
+        }
+      }
+      
+      if (verbose>0) {
+        std::cout << "Failed 2: " << dtos(dfdx_ld,0) << " "
+                  << dtos(dfdx_cdf25,0) << " "
+                  << dtos(err_ld,0) << " "
+                  << dtos(err_cdf25,0) << " "
+                  << tol_loc << std::endl;
+      }
+    
+      cpp_dec_float_35 dfdx_cdf35, err_cdf35;
+      dg_cdf35.deriv_err(static_cast<cpp_def_float_35>(x),
+                         func,dfdx_cdf35,err_cdf35);
+
+      if (dfdx_cdf25==0 && dfdx_cdf35==0 && err_cdf25<tol_loc &&
+          err_cdf35<tol_loc) {
+        dfdx=0;
+        err=static_cast<fp_t>(err_cdf25);
+        if (err<err_cdf35) err=static_cast<fp_t>(err_cdf35);
+        return 0;
+      }
+      
+      if (dfdx_cdf35!=0) {
+        err=static_cast<fp_t>(abs(dfdx_cdf35-dfdx_cdf25)/abs(dfdx_cdf35));
+        if (err<tol_loc) {
+          val=static_cast<fp_t>(dfdx_cdf35);
+          return 0;
+        }
+      }
+      
+      if (verbose>0) {
+        std::cout << "Failed 3: " << dtos(dfdx_cdf25,0) << " "
+                  << dtos(dfdx_cdf35,0) << " "
+                  << dtos(err_cdf25,0) << " "
+                  << dtos(err_cdf35,0) << " "
+                  << tol_loc << std::endl;
+      }
+    
+      cpp_dec_float_50 dfdx_cdf50, err_cdf50;
+      dg_cdf50.deriv_err(static_cast<cpp_def_float_50>(x),
+                         func,dfdx_cdf50,err_cdf50);
+
+      if (dfdx_cdf35==0 && dfdx_cdf50==0 && err_cdf35<tol_loc &&
+          err_cdf50<tol_loc) {
+        dfdx=0;
+        err=static_cast<fp_t>(err_cdf35);
+        if (err<err_cdf50) err=static_cast<fp_t>(err_cdf50);
+        return 0;
+      }
+      
+      if (dfdx_cdf50!=0) {
+        err=static_cast<fp_t>(abs(dfdx_cdf50-dfdx_cdf35)/abs(dfdx_cdf50));
+        if (err<tol_loc) {
+          val=static_cast<fp_t>(dfdx_cdf50);
+          return 0;
+        }
+      }
+      
+      if (verbose>0) {
+        std::cout << "Failed 4: " << dtos(dfdx_cdf35,0) << " "
+                  << dtos(dfdx_cdf50,0) << " "
+                  << dtos(err_cdf35,0) << " "
+                  << dtos(err_cdf50,0) << " "
+                  << tol_loc << std::endl;
+      }
+    
+      cpp_dec_float_100 dfdx_cdf100, err_cdf100;
+      dg_cdf100.deriv_err(static_cast<cpp_def_float_100>(x),
+                         func,dfdx_cdf100,err_cdf100);
+
+      if (dfdx_cdf50==0 && dfdx_cdf100==0 && err_cdf50<tol_loc &&
+          err_cdf100<tol_loc) {
+        dfdx=0;
+        err=static_cast<fp_t>(err_cdf50);
+        if (err<err_cdf100) err=static_cast<fp_t>(err_cdf100);
+        return 0;
+      }
+      
+      if (dfdx_cdf100!=0) {
+        err=static_cast<fp_t>(abs(dfdx_cdf100-dfdx_cdf50)/abs(dfdx_cdf100));
+        if (err<tol_loc) {
+          val=static_cast<fp_t>(dfdx_cdf100);
+          return 0;
+        }
+      }
+      
+      if (verbose>0) {
+        std::cout << "Failed 5: " << dtos(dfdx_cdf50,0) << " "
+                  << dtos(dfdx_cdf100,0) << " "
+                  << dtos(err_cdf50,0) << " "
+                  << dtos(err_cdf100,0) << " "
+                  << tol_loc << std::endl;
+      }
+    
+      O2SCL_ERR2("Failed to compute with requested accuracy ",
+                 "in deriv_multip_gsl::deriv_err().",
+                 o2scl::exc_efailed);
+      return o2scl::exc_efailed;
+    }
+    
+  };
+    
+#endif
+  
 }
 
 #endif
-
-
-

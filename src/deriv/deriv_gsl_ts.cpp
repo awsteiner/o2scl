@@ -27,6 +27,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/deriv_gsl.h>
 
+#include <boost/math/differentiation/finite_difference.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
 using namespace std;
@@ -82,6 +83,11 @@ int main(void) {
        << " " << std::cos(0.5) << endl;
   t.test_rel(res,std::cos(0.5),1.0e-11,"simple derivative");
 
+  // Show how to use boost to compute the same derivative
+  double err;
+  cout << boost::math::differentiation::finite_difference_derivative
+    (tf,0.5,&err) << " " << err << endl;
+  
   cout << "Second derivative: " << endl;
   res=de.deriv2(0.5,tf);
   cout << res << " " 

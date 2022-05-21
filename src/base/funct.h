@@ -523,7 +523,7 @@ namespace o2scl {
         and provide an error estimate
      */
     template<class fp_t> int eval_tol_err(fp_t x, fp_t &val,
-                                          fp_t &err, double tol_loc=-1.0) {
+                                          fp_t &err, double tol_loc=-1) {
     
       if (tol_loc<=0.0 && tol_rel<=0.0) {
         tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10);
