@@ -48,6 +48,9 @@
 
 namespace o2scl {
 
+  // Experimental template typedef
+  //template<class fp_t> using funct2 = std::function<fp_t(fp_t)>;
+  
   /// One-dimensional function typedef in src/base/funct.h
   typedef std::function<double(double)> funct;
 
@@ -658,7 +661,7 @@ namespace o2scl {
     /** \brief Evalulate the function without an error estimate
      */
     template<class fp_t> fp_t operator()(fp_t x) {
-      fp_t val,err;
+      fp_t val, err;
       
       eval_err(x,val,err);
     

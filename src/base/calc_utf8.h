@@ -88,7 +88,7 @@ namespace o2scl {
          In class calc_utf8:
 
          - Future: Add functions atan2, cot, csc, ceil, floor, max, min,
-           and maybe if?
+           log1p and maybe if?
 
          - Future: There is some code duplication across the
            functions, especially with regard to conversion between UTF8

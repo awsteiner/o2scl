@@ -277,12 +277,16 @@ namespace o2scl {
       fp_t two=2, three=3, four=4, one=1;
 
       fp_t eps=std::numeric_limits<fp_t>::epsilon();
-      
-      fm1=func(x-hh);
-      fp1=func(x+hh);
 
-      fmh=func(x-hh/two);
-      fph=func(x+hh/two);
+      fp_t xph=x+hh;
+      fp_t xmh=x-hh;
+      fm1=func(xmh);
+      fp1=func(xph);
+
+      fp_t xmh2=x-hh/two;
+      fp_t xph2=x+hh/two;
+      fmh=func(xmh2);
+      fph=func(xph2);
 
       if (this->verbose>0) {
 	std::cout << "deriv_gsl: " << std::endl;
@@ -346,12 +350,10 @@ namespace o2scl {
 
   };
 
-#ifdef O2SCL_NEVER_DEFINED
-  
   /** \brief Evalulate a derivative to within a requested tolerance
       using multiprecision
-   */
-  template<class func_t=funct_multip> class deriv_multip_gsl {
+  */
+  template<class func_t=funct_multip<>> class deriv_multip_gsl {
 
   protected:
     
@@ -363,13 +365,13 @@ namespace o2scl {
       boost::multiprecision::cpp_dec_float<50>> cpp_dec_float_50;
     typedef boost::multiprecision::number<
       boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
-    
-    deriv_gsl<funct,double> dg_d;
-    deriv_gsl<funct_ld,long double> dg_ld;
-    deriv_gsl<funct_cdf25,cpp_dec_float_25> dg_cdf25;
-    deriv_gsl<funct_cdf35,cpp_dec_float_35> dg_cdf35;
-    deriv_gsl<funct_cdf50,cpp_dec_float_50> dg_cdf50;
-    deriv_gsl<funct_cdf100,cpp_dec_float_100> dg_cdf100;
+
+    deriv_gsl<func_t,double> dg_d;
+    deriv_gsl<func_t,long double> dg_ld;
+    deriv_gsl<func_t,cpp_dec_float_25> dg_cdf25;
+    deriv_gsl<func_t,cpp_dec_float_35> dg_cdf35;
+    deriv_gsl<func_t,cpp_dec_float_50> dg_cdf50;
+    deriv_gsl<func_t,cpp_dec_float_100> dg_cdf100;
     
   public:
 
@@ -379,8 +381,13 @@ namespace o2scl {
 
     int verbose=0;
 
-    virtual int deriv_err(fp_t x, func_t &func, fp_t &dfdx, fp_t &err,
-                          double tol_loc=-1) {
+    deriv_multip_gsl() {
+      tol_rel=-1.0;
+    }
+
+    template<class fp_t>
+    int deriv_err(fp_t x, func_t &func, fp_t &dfdx, fp_t &err,
+                  double tol_loc=-1) {
       
       if (tol_loc<=0.0 && tol_rel<=0.0) {
         tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10);
@@ -392,8 +399,8 @@ namespace o2scl {
       }
       
       // Demand that the function evaluations are higher precision
-      double func.tol_rel=pow(tol_loc,1.33);
-
+      func.tol_rel=pow(tol_loc,1.33);
+      
       double dfdx_d, err_d;
       long double dfdx_ld, err_ld;
       
@@ -415,7 +422,7 @@ namespace o2scl {
       if (dfdx_ld!=0) {
         err=static_cast<fp_t>(abs(dfdx_ld-dfdx_d)/abs(dfdx_ld));
         if (err<tol_loc) {
-          val=static_cast<fp_t>(dfdx_ld);
+          dfdx=static_cast<fp_t>(dfdx_ld);
           return 0;
         }
       }
@@ -425,11 +432,12 @@ namespace o2scl {
                   << dtos(dfdx_ld,0) << " "
                   << dtos(err_d,0) << " "
                   << dtos(err_ld,0) << " "
+                  << dtos(err,0) << " " 
                   << tol_loc << std::endl;
       }
     
       cpp_dec_float_25 dfdx_cdf25, err_cdf25;
-      dg_cdf25.deriv_err(static_cast<cpp_def_float_25>(x),
+      dg_cdf25.deriv_err(static_cast<cpp_dec_float_25>(x),
                          func,dfdx_cdf25,err_cdf25);
 
       if (dfdx_ld==0 && dfdx_cdf25==0 && err_ld<tol_loc &&
@@ -443,7 +451,7 @@ namespace o2scl {
       if (dfdx_cdf25!=0) {
         err=static_cast<fp_t>(abs(dfdx_cdf25-dfdx_ld)/abs(dfdx_cdf25));
         if (err<tol_loc) {
-          val=static_cast<fp_t>(dfdx_cdf25);
+          dfdx=static_cast<fp_t>(dfdx_cdf25);
           return 0;
         }
       }
@@ -453,11 +461,12 @@ namespace o2scl {
                   << dtos(dfdx_cdf25,0) << " "
                   << dtos(err_ld,0) << " "
                   << dtos(err_cdf25,0) << " "
+                  << dtos(err,0) << " " 
                   << tol_loc << std::endl;
       }
     
       cpp_dec_float_35 dfdx_cdf35, err_cdf35;
-      dg_cdf35.deriv_err(static_cast<cpp_def_float_35>(x),
+      dg_cdf35.deriv_err(static_cast<cpp_dec_float_35>(x),
                          func,dfdx_cdf35,err_cdf35);
 
       if (dfdx_cdf25==0 && dfdx_cdf35==0 && err_cdf25<tol_loc &&
@@ -471,7 +480,7 @@ namespace o2scl {
       if (dfdx_cdf35!=0) {
         err=static_cast<fp_t>(abs(dfdx_cdf35-dfdx_cdf25)/abs(dfdx_cdf35));
         if (err<tol_loc) {
-          val=static_cast<fp_t>(dfdx_cdf35);
+          dfdx=static_cast<fp_t>(dfdx_cdf35);
           return 0;
         }
       }
@@ -481,11 +490,12 @@ namespace o2scl {
                   << dtos(dfdx_cdf35,0) << " "
                   << dtos(err_cdf25,0) << " "
                   << dtos(err_cdf35,0) << " "
+                  << dtos(err,0) << " " 
                   << tol_loc << std::endl;
       }
     
       cpp_dec_float_50 dfdx_cdf50, err_cdf50;
-      dg_cdf50.deriv_err(static_cast<cpp_def_float_50>(x),
+      dg_cdf50.deriv_err(static_cast<cpp_dec_float_50>(x),
                          func,dfdx_cdf50,err_cdf50);
 
       if (dfdx_cdf35==0 && dfdx_cdf50==0 && err_cdf35<tol_loc &&
@@ -499,7 +509,7 @@ namespace o2scl {
       if (dfdx_cdf50!=0) {
         err=static_cast<fp_t>(abs(dfdx_cdf50-dfdx_cdf35)/abs(dfdx_cdf50));
         if (err<tol_loc) {
-          val=static_cast<fp_t>(dfdx_cdf50);
+          dfdx=static_cast<fp_t>(dfdx_cdf50);
           return 0;
         }
       }
@@ -509,11 +519,12 @@ namespace o2scl {
                   << dtos(dfdx_cdf50,0) << " "
                   << dtos(err_cdf35,0) << " "
                   << dtos(err_cdf50,0) << " "
+                  << dtos(err,0) << " " 
                   << tol_loc << std::endl;
       }
     
       cpp_dec_float_100 dfdx_cdf100, err_cdf100;
-      dg_cdf100.deriv_err(static_cast<cpp_def_float_100>(x),
+      dg_cdf100.deriv_err(static_cast<cpp_dec_float_100>(x),
                          func,dfdx_cdf100,err_cdf100);
 
       if (dfdx_cdf50==0 && dfdx_cdf100==0 && err_cdf50<tol_loc &&
@@ -527,7 +538,7 @@ namespace o2scl {
       if (dfdx_cdf100!=0) {
         err=static_cast<fp_t>(abs(dfdx_cdf100-dfdx_cdf50)/abs(dfdx_cdf100));
         if (err<tol_loc) {
-          val=static_cast<fp_t>(dfdx_cdf100);
+          dfdx=static_cast<fp_t>(dfdx_cdf100);
           return 0;
         }
       }
@@ -537,6 +548,7 @@ namespace o2scl {
                   << dtos(dfdx_cdf100,0) << " "
                   << dtos(err_cdf50,0) << " "
                   << dtos(err_cdf100,0) << " "
+                  << dtos(err,0) << " " 
                   << tol_loc << std::endl;
       }
     
@@ -548,8 +560,6 @@ namespace o2scl {
     
   };
     
-#endif
-  
 }
 
 #endif

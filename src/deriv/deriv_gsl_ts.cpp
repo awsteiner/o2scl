@@ -33,22 +33,28 @@
 using namespace std;
 using namespace o2scl;
 
-double testfun(double x) {
-  return std::sin(x);
-}
-
-double testfun2(double x) {
-  return std::sqrt(x);
-}
-
-long double testfun_ld(long double x) {
-  return std::sin(x);
-}
-
+typedef boost::multiprecision::number<
+  boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
+typedef boost::multiprecision::number<
+  boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
 
-cpp_dec_float_50 testfun_cdf(cpp_dec_float_50 x) {
+template<class fp_t> fp_t sin_fun(fp_t x) {
   return sin(x);
+}
+
+template<class fp_t> fp_t sqrt_fun(fp_t x) {
+  return sqrt(x);
+}
+
+template<class fp_t> fp_t difficult_fun(fp_t x) {
+  return exp(x)/(cos(x)*cos(x)*cos(x)+sin(x)*sin(x)*sin(x));
+}
+
+template<class fp_t> fp_t difficult_deriv(fp_t x) {
+  fp_t den=(cos(x)*cos(x)*cos(x)+sin(x)*sin(x)*sin(x));
+  return exp(x)*(2*cos(3*x)+3*sin(x)+sin(3*x))/2/den/den;
 }
 
 class tempc {
@@ -72,8 +78,8 @@ int main(void) {
   // a user-defined type as well
   deriv_gsl<tempc> de2;
 
-  funct tf=testfun;
-  funct tf2=testfun2;
+  funct tf=sin_fun<double>;
+  funct tf2=sqrt_fun<double>;
 
   de.h=1.0e-4;
 
@@ -113,7 +119,7 @@ int main(void) {
 
   // Try a long double derivative
   deriv_gsl<funct_ld,long double> de_ld;
-  funct_ld tf_ld=testfun_ld;
+  funct_ld tf_ld=sin_fun<long double>;
   long double ld_res;
 
   ld_res=de_ld.deriv(0.5L,tf_ld);
@@ -123,7 +129,7 @@ int main(void) {
   t.test_rel(ld_res,std::cos(0.5L),4.0e-14L,"simple derivative long double");
 
   deriv_gsl<funct_cdf50,cpp_dec_float_50> de_cdf;
-  funct_cdf50 tf_cdf=testfun_cdf;
+  funct_cdf50 tf_cdf=sin_fun<cpp_dec_float_50>;
   cpp_dec_float_50 cdf_res;
   cpp_dec_float_50 one=1;
   cpp_dec_float_50 two=2;
@@ -133,9 +139,44 @@ int main(void) {
   cout << "First derivative: " << endl;
   cout << cdf_res << " " << de.get_err() 
        << " " << cos(half) << endl;
-  t.test_rel_boost<cpp_dec_float_50>(cdf_res,cos(half),4.0e-20,
+  t.test_rel_boost<cpp_dec_float_50>(cdf_res,cos(half),1.0e-50,
 				     "simple derivative cpp_dec_float_50");
-				     
+
+  // A difficult function
+  funct df=difficult_fun<double>;
+  res=de.deriv(5.5,df);
+  cout << "First derivative: " << endl;
+  cout << res << " " << de.get_err() 
+       << " " << difficult_deriv(5.5) << endl;
+  t.test_rel(res,difficult_deriv(5.5),1.0e-8,"simple derivative");
+  cout << endl;
+
+  funct f1=difficult_fun<double>;
+  funct_ld f2=difficult_fun<long double>;
+  funct_cdf25 f3=difficult_fun<cpp_dec_float_25>;
+  funct_cdf35 f4=difficult_fun<cpp_dec_float_35>;
+  funct_cdf50 f5=difficult_fun<cpp_dec_float_50>;
+  funct_cdf100 f6=difficult_fun<cpp_dec_float_100>;
+  funct_multip_wrapper fmw(f1,f2,f3,f4,f5,f6);
+  funct_multip<> fm(fmw);
+
+  funct f7=difficult_deriv<double>;
+  funct_ld f8=difficult_deriv<long double>;
+  funct_cdf25 f9=difficult_deriv<cpp_dec_float_25>;
+  funct_cdf35 f10=difficult_deriv<cpp_dec_float_35>;
+  funct_cdf50 f11=difficult_deriv<cpp_dec_float_50>;
+  funct_cdf100 f12=difficult_deriv<cpp_dec_float_100>;
+  funct_multip_wrapper fmw2(f7,f8,f9,f10,f11,f12);
+  funct_multip<> fm2(fmw2);
+  
+  deriv_multip_gsl<funct_multip<>> dmg;
+  dmg.verbose=2;
+  dmg.deriv_err(5.5,fm,res,err);
+  double exact=fm2(5.5);
+  cout << dtos(exact,0) << " " << dtos(res,0) << " " << err << " "
+       << abs(res-exact)/abs(exact) << endl;
+  t.test_rel(res,exact,1.0e-15,"dmg");
+  
   t.report();
   return 0;
 }
