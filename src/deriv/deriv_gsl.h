@@ -352,9 +352,30 @@ namespace o2scl {
 
   /** \brief Evalulate a derivative to within a requested tolerance
       using multiprecision
-  */
-  template<class func_t=funct_multip<>> class deriv_multip_gsl {
 
+      Experimental.
+
+      \note Derivatives near zero can be particularly troublesome,
+      even for simple functions, since this class only uses relative
+      tolerances.
+
+      \verbatim embed:rst
+      .. todo:: 
+
+         In class deriv_multip_gsl:
+
+         - More carefully optimize pow_tol_func and the 
+           stepsize guesses.
+         - Allow the user to specify the value of 'h' 
+           for the individual derivative objects.
+         - Allow the user to determine how many function evaluations
+           or precision required for the last derivative.
+
+      \endverbatim
+  */
+  template<class func_t=funct_multip<>>
+  class deriv_multip_gsl {
+    
   protected:
     
     typedef boost::multiprecision::number<
@@ -366,12 +387,15 @@ namespace o2scl {
     typedef boost::multiprecision::number<
       boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
 
+    /// \name The derivative objects for varying levels of precision
+    //@{
     deriv_gsl<func_t,double> dg_d;
     deriv_gsl<func_t,long double> dg_ld;
     deriv_gsl<func_t,cpp_dec_float_25> dg_cdf25;
     deriv_gsl<func_t,cpp_dec_float_35> dg_cdf35;
     deriv_gsl<func_t,cpp_dec_float_50> dg_cdf50;
     deriv_gsl<func_t,cpp_dec_float_100> dg_cdf100;
+    //@}
     
   public:
 
@@ -394,9 +418,12 @@ namespace o2scl {
       pow_tol_func=1.33;
     }
 
+    /** \brief Calculate the first derivative of \c func  w.r.t. x and 
+	uncertainty
+    */
     template<class fp_t>
     int deriv_err(fp_t x, func_t &func, fp_t &dfdx, fp_t &err,
-                  double tol_loc=-1) {
+                          double tol_loc=-1.0) {
       
       if (tol_loc<=0.0) {
         if (tol_rel<=0.0) {
@@ -632,7 +659,7 @@ namespace o2scl {
                  o2scl::exc_efailed);
       return o2scl::exc_efailed;
     }
-    
+
   };
     
 }

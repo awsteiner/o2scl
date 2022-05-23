@@ -1408,7 +1408,7 @@ int eos_had_rmf_hyp::calc_hyp_e_nobeta_np
       // solver has a little problem with the stepsize getting away
       // from the rho=0 point, so we give rho a small non-zero value
       if (fabs(x[5])<1.0e-8) {
-	if (nn2>np2<0.5) {
+	if (nn2-np2<0.5) {
           cout << "adjusting 3." << endl;
 	  x[5]=-1.0e-8;
 	} else {
