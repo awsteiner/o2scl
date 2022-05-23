@@ -470,6 +470,185 @@ namespace o2scl {
  
   };
    
+  template<class func_t=funct_multip<>>
+  class root_multip_brent_gsl {
+    
+  protected:
+    
+    typedef boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
+    typedef boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
+    typedef boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<50>> cpp_dec_float_50;
+    typedef boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
+
+    /// \name The derivative objects for varying levels of precision
+    //@{
+    root_brent_gsl<func_t,double> rbg_d;
+    root_brent_gsl<func_t,long double> rbg_ld;
+    root_brent_gsl<func_t,cpp_dec_float_25> rbg_cdf25;
+    root_brent_gsl<func_t,cpp_dec_float_35> rbg_cdf35;
+    root_brent_gsl<func_t,cpp_dec_float_50> rbg_cdf50;
+    root_brent_gsl<func_t,cpp_dec_float_100> rbg_cdf100;
+    //@}
+    
+  public:
+
+    /** \brief Relative tolerance
+     */
+    double tol_rel;
+
+    /** \brief Power for tolerance of function evaluations 
+        (default 1.33)
+     */
+    double pow_tol_func;
+
+    /** \brief Verbosity parameter
+     */
+    int verbose;
+
+    root_multip_brent_gsl() {
+      tol_rel=-1.0;
+      verbose=0;
+      pow_tol_func=1.33;
+      rbg_d.tol_abs=0.0;
+      rbg_ld.tol_abs=0.0;
+      rbg_cdf25.tol_abs=0.0;
+      rbg_cdf35.tol_abs=0.0;
+      rbg_cdf50.tol_abs=0.0;
+      rbg_cdf100.tol_abs=0.0;
+      rbg_d.err_nonconv=false;
+      rbg_ld.err_nonconv=false;
+      rbg_cdf25.err_nonconv=false;
+      rbg_cdf35.err_nonconv=false;
+      rbg_cdf50.err_nonconv=false;
+      rbg_cdf100.err_nonconv=false;
+    }
+
+    /** \brief Calculate the first derivative of \c func  w.r.t. x and 
+	uncertainty
+    */
+    template<class fp_t>
+    int solve_bkt(fp_t &x1, fp_t x2, func_t &func,
+                  double tol_loc=-1.0) {
+      
+      if (tol_loc<=0.0) {
+        if (tol_rel<=0.0) {
+          tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10);
+        } else {
+          tol_loc=tol_rel;
+        }
+      } 
+
+      if (verbose>0) {
+        std::cout << "Function deriv_multi_gsl::deriv_err(): set "
+                  << "tolerance to: " << tol_loc << std::endl;
+      }
+      
+      // Demand that the function evaluations are higher precision
+      func.tol_rel=pow(tol_loc,pow_tol_func);
+      
+      int ret;
+      
+      if (tol_loc>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
+        double x1_d=static_cast<double>(x1);
+        double x2_d=static_cast<double>(x2);
+        
+        rbg_d.tol_rel=tol_loc;
+        ret=rbg_d.solve_bkt(x1_d,x2_d,func);
+        
+        if (ret==0) {
+          x1=static_cast<fp_t>(x1_d);
+          return 0;
+        }
+      }
+
+      if (tol_loc>pow(10.0,-std::numeric_limits<long double>::digits10+3)) {
+        long double x1_ld=static_cast<long double>(x1);
+        long double x2_ld=static_cast<long double>(x2);
+        
+        rbg_ld.tol_rel=tol_loc;
+        ret=rbg_ld.solve_bkt(x1_ld,x2_ld,func);
+        
+        if (ret==0) {
+          x1=static_cast<fp_t>(x1_ld);
+          return 0;
+        }
+      }
+
+      if (tol_loc>pow(10.0,-std::numeric_limits
+                      <cpp_dec_float_25>::digits10+3)) {
+        cpp_dec_float_25 x1_cdf25=static_cast<cpp_dec_float_25>(x1);
+        cpp_dec_float_25 x2_cdf25=static_cast<cpp_dec_float_25>(x2);
+        
+        rbg_cdf25.tol_rel=tol_loc;
+        ret=rbg_cdf25.solve_bkt(x1_cdf25,x2_cdf25,func);
+        
+        if (ret==0) {
+          x1=static_cast<fp_t>(x1_cdf25);
+          return 0;
+        }
+      }
+
+      if (tol_loc>pow(10.0,-std::numeric_limits
+                      <cpp_dec_float_35>::digits10+3)) {
+        cpp_dec_float_35 x1_cdf35=static_cast<cpp_dec_float_35>(x1);
+        cpp_dec_float_35 x2_cdf35=static_cast<cpp_dec_float_35>(x2);
+        
+        rbg_cdf35.tol_rel=tol_loc;
+        ret=rbg_cdf35.solve_bkt(x1_cdf35,x2_cdf35,func);
+        
+        if (ret==0) {
+          x1=static_cast<fp_t>(x1_cdf35);
+          return 0;
+        }
+      }
+
+      if (tol_loc>pow(10.0,-std::numeric_limits
+                      <cpp_dec_float_50>::digits10+3)) {
+        cpp_dec_float_50 x1_cdf50=static_cast<cpp_dec_float_50>(x1);
+        cpp_dec_float_50 x2_cdf50=static_cast<cpp_dec_float_50>(x2);
+        
+        rbg_cdf50.tol_rel=tol_loc;
+        ret=rbg_cdf50.solve_bkt(x1_cdf50,x2_cdf50,func);
+        
+        if (ret==0) {
+          x1=static_cast<fp_t>(x1_cdf50);
+          return 0;
+        }
+      }
+
+      if (tol_loc>pow(10.0,-std::numeric_limits
+                      <cpp_dec_float_100>::digits10+3)) {
+        cpp_dec_float_100 x1_cdf100=static_cast<cpp_dec_float_100>(x1);
+        cpp_dec_float_100 x2_cdf100=static_cast<cpp_dec_float_100>(x2);
+        
+        rbg_cdf100.tol_rel=tol_loc;
+        ret=rbg_cdf100.solve_bkt(x1_cdf100,x2_cdf100,func);
+        
+        if (ret==0) {
+          x1=static_cast<fp_t>(x1_cdf100);
+          return 0;
+        }
+      }
+
+      if (verbose>0) {
+        std::cout << "Function root_multip_brent_gsl::deriv_err() "
+                  << "failed after cpp_dec_float_100:\n  "
+                  << tol_loc << std::endl;
+      }
+    
+      O2SCL_ERR2("Failed to compute with requested accuracy ",
+                 "in root_multip_brent_gsl::deriv_err().",
+                 o2scl::exc_efailed);
+      return o2scl::exc_efailed;
+    }
+
+  };
+
+  
 }
 
 #endif

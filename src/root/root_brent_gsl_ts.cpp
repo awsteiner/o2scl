@@ -44,7 +44,18 @@ public:
   }
 };
 
+    
+typedef boost::multiprecision::number<
+  boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
+typedef boost::multiprecision::number<
+  boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+typedef boost::multiprecision::number<
+  boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
+
+template<class fp_t> fp_t cbrt_fun(fp_t x) {
+  return x*x*x-5;
+}
 
 class cl_ld {
 
@@ -182,6 +193,28 @@ int main(void) {
   grb2_cdf.solve_bkt(a_cdf,b_cdf,fmf_cdf);
   cout << a_cdf << endl;
 
+  funct f1=cbrt_fun<double>;
+  funct_ld f2=cbrt_fun<long double>;
+  funct_cdf25 f3=cbrt_fun<cpp_dec_float_25>;
+  funct_cdf35 f4=cbrt_fun<cpp_dec_float_35>;
+  funct_cdf50 f5=cbrt_fun<cpp_dec_float_50>;
+  funct_cdf100 f6=cbrt_fun<cpp_dec_float_100>;
+  funct_multip_wrapper fmw(f1,f2,f3,f4,f5,f6);
+  funct_multip<> fm(fmw);
+
+  root_multip_brent_gsl<funct_multip<>> rmbg;
+  double x1=0.01;
+  double x2=10.0;
+  cout << "Here: " << endl;
+  rmbg.solve_bkt(x1,x2,fm);
+  cout << dtos(x1,0) << " " << dtos(x1*x1*x1,0) << endl;
+  long double x1_ld=0.01;
+  long double x2_ld=10.0;
+  cout << "Here: " << endl;
+  rmbg.solve_bkt(x1_ld,x2_ld,fm);
+  cout << dtos(x1_ld,0) << " " << dtos(x1_ld*x1_ld*x1_ld,0) << endl;
+  
+  
   t.report();
   return 0;
 }
