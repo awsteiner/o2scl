@@ -379,33 +379,66 @@ namespace o2scl {
      */
     double tol_rel;
 
-    int verbose=0;
+    /** \brief Power for tolerance of function evaluations 
+        (default 1.33)
+     */
+    double pow_tol_func;
+
+    /** \brief Verbosity parameter
+     */
+    int verbose;
 
     deriv_multip_gsl() {
       tol_rel=-1.0;
+      verbose=0;
+      pow_tol_func=1.33;
     }
 
     template<class fp_t>
     int deriv_err(fp_t x, func_t &func, fp_t &dfdx, fp_t &err,
                   double tol_loc=-1) {
       
-      if (tol_loc<=0.0 && tol_rel<=0.0) {
-        tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10);
-      } else {
-        tol_loc=tol_rel;
-      }
+      if (tol_loc<=0.0) {
+        if (tol_rel<=0.0) {
+          tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10);
+        } else {
+          tol_loc=tol_rel;
+        }
+      } 
+
       if (verbose>0) {
-        std::cout << "Set tol to: " << tol_loc << std::endl;
+        std::cout << "Function deriv_multi_gsl::deriv_err(): set "
+                  << "tolerance to: " << tol_loc << std::endl;
       }
       
       // Demand that the function evaluations are higher precision
-      func.tol_rel=pow(tol_loc,1.33);
+      func.tol_rel=pow(tol_loc,pow_tol_func);
       
       double dfdx_d, err_d;
       long double dfdx_ld, err_ld;
       
       dg_d.deriv_err(static_cast<double>(x),func,dfdx_d,err_d);
+      if (verbose>0) {
+        std::cout << "Function deriv_multi_gsl::deriv_err() "
+                  << "double h_opt is: " << dg_d.h_opt << std::endl;
+      }
+
+      // If the tolerance is large, then just return the result
+      // quickly
+      if (err_d<tol_loc) {
+        dfdx=static_cast<fp_t>(dfdx_d);
+        err=static_cast<fp_t>(err_d);
+        return 0;
+      }
+
+      // Determine the next stepsize by the previous optimal stepsize
+      dg_ld.h=static_cast<long double>(dg_d.h_opt);
+      
       dg_ld.deriv_err(static_cast<long double>(x),func,dfdx_ld,err_ld);
+      if (verbose>0) {
+        std::cout << "Function deriv_multi_gsl::deriv_err() "
+                  << "long double h_opt is: " << dg_ld.h_opt << std::endl;
+      }
 
       /*
         Sometimes the deriv_gsl class overestimates the uncertainty,
@@ -428,7 +461,9 @@ namespace o2scl {
       }
       
       if (verbose>0) {
-        std::cout << "Failed 1: " << dtos(dfdx_d,0) << " "
+        std::cout << "Function deriv_multi_gsl::deriv_err() "
+                  << "failed after long double:\n  "
+                  << dtos(dfdx_d,0) << " "
                   << dtos(dfdx_ld,0) << " "
                   << dtos(err_d,0) << " "
                   << dtos(err_ld,0) << " "
@@ -436,9 +471,17 @@ namespace o2scl {
                   << tol_loc << std::endl;
       }
     
+      // Determine the next stepsize by the previous optimal stepsize
+      dg_cdf25.h=static_cast<cpp_dec_float_25>(dg_ld.h_opt/10);
+      
       cpp_dec_float_25 dfdx_cdf25, err_cdf25;
       dg_cdf25.deriv_err(static_cast<cpp_dec_float_25>(x),
                          func,dfdx_cdf25,err_cdf25);
+      if (verbose>0) {
+        std::cout << "Function deriv_multi_gsl::deriv_err() "
+                  << "cpp_dec_float_25 h_opt is: "
+                  << dg_cdf25.h_opt << std::endl;
+      }
 
       if (dfdx_ld==0 && dfdx_cdf25==0 && err_ld<tol_loc &&
           err_cdf25<tol_loc) {
@@ -457,7 +500,9 @@ namespace o2scl {
       }
       
       if (verbose>0) {
-        std::cout << "Failed 2: " << dtos(dfdx_ld,0) << " "
+        std::cout << "Function deriv_multi_gsl::deriv_err() "
+                  << "failed after cpp_dec_float_25:\n  "
+                  << dtos(dfdx_ld,0) << " "
                   << dtos(dfdx_cdf25,0) << " "
                   << dtos(err_ld,0) << " "
                   << dtos(err_cdf25,0) << " "
@@ -465,9 +510,17 @@ namespace o2scl {
                   << tol_loc << std::endl;
       }
     
+      // Determine the next stepsize by the previous optimal stepsize
+      dg_cdf35.h=static_cast<cpp_dec_float_35>(dg_cdf25.h_opt/100);
+
       cpp_dec_float_35 dfdx_cdf35, err_cdf35;
       dg_cdf35.deriv_err(static_cast<cpp_dec_float_35>(x),
                          func,dfdx_cdf35,err_cdf35);
+      if (verbose>0) {
+        std::cout << "Function deriv_multi_gsl::deriv_err() "
+                  << "cpp_dec_float_35 h_opt is: "
+                  << dg_cdf35.h_opt << std::endl;
+      }
 
       if (dfdx_cdf25==0 && dfdx_cdf35==0 && err_cdf25<tol_loc &&
           err_cdf35<tol_loc) {
@@ -486,7 +539,9 @@ namespace o2scl {
       }
       
       if (verbose>0) {
-        std::cout << "Failed 3: " << dtos(dfdx_cdf25,0) << " "
+        std::cout << "Function deriv_multi_gsl::deriv_err() "
+                  << "failed after cpp_dec_float_35:\n  "
+                  << dtos(dfdx_cdf25,0) << " "
                   << dtos(dfdx_cdf35,0) << " "
                   << dtos(err_cdf25,0) << " "
                   << dtos(err_cdf35,0) << " "
@@ -494,9 +549,17 @@ namespace o2scl {
                   << tol_loc << std::endl;
       }
     
+      // Determine the next stepsize by the previous optimal stepsize
+      dg_cdf50.h=static_cast<cpp_dec_float_50>(dg_cdf35.h_opt/10000);
+      
       cpp_dec_float_50 dfdx_cdf50, err_cdf50;
       dg_cdf50.deriv_err(static_cast<cpp_dec_float_50>(x),
                          func,dfdx_cdf50,err_cdf50);
+      if (verbose>0) {
+        std::cout << "Function deriv_multi_gsl::deriv_err() "
+                  << "cpp_dec_float_50 h_opt is: "
+                  << dg_cdf50.h_opt << std::endl;
+      }
 
       if (dfdx_cdf35==0 && dfdx_cdf50==0 && err_cdf35<tol_loc &&
           err_cdf50<tol_loc) {
@@ -515,7 +578,9 @@ namespace o2scl {
       }
       
       if (verbose>0) {
-        std::cout << "Failed 4: " << dtos(dfdx_cdf35,0) << " "
+        std::cout << "Function deriv_multi_gsl::deriv_err() "
+                  << "failed after cpp_dec_float_50:\n  "
+                  << dtos(dfdx_cdf35,0) << " "
                   << dtos(dfdx_cdf50,0) << " "
                   << dtos(err_cdf35,0) << " "
                   << dtos(err_cdf50,0) << " "
@@ -523,9 +588,17 @@ namespace o2scl {
                   << tol_loc << std::endl;
       }
     
+      // Determine the next stepsize by the previous optimal stepsize
+      dg_cdf100.h=static_cast<cpp_dec_float_50>(dg_cdf50.h_opt/1e8);
+      
       cpp_dec_float_100 dfdx_cdf100, err_cdf100;
       dg_cdf100.deriv_err(static_cast<cpp_dec_float_100>(x),
                          func,dfdx_cdf100,err_cdf100);
+      if (verbose>0) {
+        std::cout << "Function deriv_multi_gsl::deriv_err() "
+                  << "cpp_dec_float_100 h_opt is: "
+                  << dg_cdf100.h_opt << std::endl;
+      }
 
       if (dfdx_cdf50==0 && dfdx_cdf100==0 && err_cdf50<tol_loc &&
           err_cdf100<tol_loc) {
@@ -544,7 +617,9 @@ namespace o2scl {
       }
       
       if (verbose>0) {
-        std::cout << "Failed 5: " << dtos(dfdx_cdf50,0) << " "
+        std::cout << "Function deriv_multi_gsl::deriv_err() "
+                  << "failed after cpp_dec_float_100:\n  "
+                  << dtos(dfdx_cdf50,0) << " "
                   << dtos(dfdx_cdf100,0) << " "
                   << dtos(err_cdf50,0) << " "
                   << dtos(err_cdf100,0) << " "
