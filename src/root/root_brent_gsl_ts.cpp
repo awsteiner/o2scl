@@ -205,15 +205,15 @@ int main(void) {
   root_multip_brent_gsl<funct_multip<>> rmbg;
   double x1=0.01;
   double x2=10.0;
-  cout << "Here: " << endl;
   rmbg.solve_bkt(x1,x2,fm);
   cout << dtos(x1,0) << " " << dtos(x1*x1*x1,0) << endl;
+  t.test_rel(x1*x1*x1,5.0,1.0e-15,"rmbg 1");
+
   long double x1_ld=0.01;
   long double x2_ld=10.0;
-  cout << "Here: " << endl;
   rmbg.solve_bkt(x1_ld,x2_ld,fm);
   cout << dtos(x1_ld,0) << " " << dtos(x1_ld*x1_ld*x1_ld,0) << endl;
-  
+  t.test_rel<long double>(x1_ld*x1_ld*x1_ld,5.0,1.0e-19,"rmbg 2");
   
   t.report();
   return 0;

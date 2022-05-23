@@ -83,6 +83,8 @@ namespace o2scl {
            better variable names would also be helpful.
          - Create a meaningful enum list for \ref
            o2scl::root_brent_gsl::test_form.
+         - There is code duplication between the test_interval here
+           and in root_toms748.
 
       \endverbatim
 
@@ -469,7 +471,9 @@ namespace o2scl {
 #endif
  
   };
-   
+
+  /** \brief Desc
+   */
   template<class func_t=funct_multip<>>
   class root_multip_brent_gsl {
     

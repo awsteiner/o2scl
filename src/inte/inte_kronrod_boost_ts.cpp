@@ -29,20 +29,17 @@
 using namespace std;
 using namespace o2scl;
 
-// This function oscillates quite rapidly near x=0
-double test_func(double x) {
-  return -sin(1.0/(x+0.01))*pow(x+0.01,-2.0);
-}
-
-long double test_func_ld(long double x) {
-  return -sin(1.0L/(x+0.01L))*pow(x+0.01L,-2.0L);
-}
-
+typedef boost::multiprecision::number<
+  boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
+typedef boost::multiprecision::number<
+  boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+typedef boost::multiprecision::number<
+  boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
 
-cpp_dec_float_50 test_func_cdf(cpp_dec_float_50 x) {
-  cpp_dec_float_50 one=1;
-  cpp_dec_float_50 hundred=100;
+template<class fp_t> fp_t test_func(fp_t x) {
+  fp_t one=1;
+  fp_t hundred=100;
   return -sin(one/(x+one/hundred))/(x+one/hundred)/(x+one/hundred);
 }
 
@@ -57,7 +54,7 @@ int main(void) {
     
     double ans, exact, err;
     
-    funct tf=test_func;
+    funct tf=test_func<double>;
     
     // Compare with the exact result
     ikb.integ_err(tf,0.0,1.0,ans,err);
@@ -71,7 +68,7 @@ int main(void) {
     
     long double ans, exact, err;
     
-    funct_ld tf=test_func_ld;
+    funct_ld tf=test_func<long double>;
     
     // Compare with the exact result
     ikb.tol_rel=1.0e-14;
@@ -89,7 +86,7 @@ int main(void) {
     
     cpp_dec_float_50 ans, exact, err;
     
-    funct_cdf50 tf=test_func_cdf;
+    funct_cdf50 tf=test_func<cpp_dec_float_50>;
     
     // Compare with the exact result
     ikb.tol_rel=1.0e-30;
@@ -101,6 +98,29 @@ int main(void) {
     std::cout << ans << " " << err << std::endl;
     t.test_rel_boost<cpp_dec_float_50>(ans,exact,1.0e-30,"qag test");
   }
+
+  funct f1=test_func<double>;
+  funct_ld f2=test_func<long double>;
+  funct_cdf25 f3=test_func<cpp_dec_float_25>;
+  funct_cdf35 f4=test_func<cpp_dec_float_35>;
+  funct_cdf50 f5=test_func<cpp_dec_float_50>;
+  funct_cdf100 f6=test_func<cpp_dec_float_100>;
+  funct_multip_wrapper fmw(f1,f2,f3,f4,f5,f6);
+  funct_multip<> fm(fmw);
+
+  /*
+  inte_multip_kronrod_boost<funct_multip<>> imkb;
+  double a=0.0, b=1.0, res, err, exact;
+  exact=cos(100.0)-cos(1/1.01);
+  imkb.integ_err(fm,a,b,res,err);
+  cout << res << " " << exact << endl;
+
+  long double a_ld=0.0, b_ld=1.0, res_ld, err_ld, exact_ld;
+  exact_ld=cos(100.0L)-cos(1.0L/1.01L);
+  imkb.integ_err(fm,a_ld,b_ld,res_ld,err_ld);
+  cout << res_ld << " " << exact_ld << endl;
+  */
+  
   
   t.report();
   return 0;
