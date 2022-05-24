@@ -164,7 +164,7 @@ namespace o2scl {
     */
     template<class fp_t>
     int integ_err(func_t &func, fp_t a, fp_t b, 
-                          fp_t &res, fp_t &err, double tol_loc=-1.0) {
+                  fp_t &res, fp_t &err, double tol_loc=-1.0) {
       
       if (tol_loc<=0.0) {
         if (tol_rel<=0.0) {

@@ -121,7 +121,6 @@ int main(void) {
   cout << res_ld << " " << exact_ld << endl;
   */
   
-  
   t.report();
   return 0;
 }
