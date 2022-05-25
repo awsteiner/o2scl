@@ -396,22 +396,39 @@ namespace o2scl {
 
   protected:
     
-    funct f;
-    funct_ld f_ld;
-    funct_cdf25 f_cdf25;
-    funct_cdf35 f_cdf35;
-    funct_cdf50 f_cdf50;
-    funct_cdf100 f_cdf100;
+    /// \name Typedefs for multiprecision types
+    //@{
+    typedef
+    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
+    cpp_dec_float_25;
   
+    typedef
+    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+    cpp_dec_float_35;
+  
+    typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+  
+    typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
+    //@}
+    
+    std::function<double(const double &)> f;
+    
+    std::function<long double(const long double &)> f_ld;
+    
+    std::function<cpp_dec_float_25(const cpp_dec_float_25 &)> f_cdf25;
+    std::function<cpp_dec_float_35(const cpp_dec_float_35 &)> f_cdf35;
+    std::function<cpp_dec_float_50(const cpp_dec_float_50 &)> f_cdf50;
+    std::function<cpp_dec_float_100(const cpp_dec_float_100 &)> f_cdf100;
+    
     /** \brief The function for double
      */
-    double eval(double x) const {
+    double eval(const double &x) const {
       return f(x);
     }
   
     /** \brief The function for long double
      */
-    long double eval(long double x) const {
+    long double eval(const long double &x) const {
       return f_ld(x);
     }
 
@@ -419,8 +436,8 @@ namespace o2scl {
      */
     boost::multiprecision::number<
       boost::multiprecision::cpp_dec_float<25>> eval
-    (boost::multiprecision::number<
-     boost::multiprecision::cpp_dec_float<25>> x) const {
+    (const boost::multiprecision::number<
+     boost::multiprecision::cpp_dec_float<25>> &x) const {
       return f_cdf25(x);
     }
   
@@ -428,8 +445,8 @@ namespace o2scl {
      */
     boost::multiprecision::number<
       boost::multiprecision::cpp_dec_float<35>> eval
-    (boost::multiprecision::number<
-     boost::multiprecision::cpp_dec_float<35>> x) const {
+    (const boost::multiprecision::number<
+     boost::multiprecision::cpp_dec_float<35>> &x) const {
       return f_cdf35(x);
     }
   
@@ -437,8 +454,8 @@ namespace o2scl {
      */
     boost::multiprecision::number<
       boost::multiprecision::cpp_dec_float<50>> eval
-    (boost::multiprecision::number<
-     boost::multiprecision::cpp_dec_float<50>> x) const {
+    (const boost::multiprecision::number<
+     boost::multiprecision::cpp_dec_float<50>> &x) const {
       return f_cdf50(x);
     }
   
@@ -446,8 +463,8 @@ namespace o2scl {
      */
     boost::multiprecision::number<
       boost::multiprecision::cpp_dec_float<100>> eval
-    (boost::multiprecision::number<
-     boost::multiprecision::cpp_dec_float<100>> x) const {
+    (const boost::multiprecision::number<
+     boost::multiprecision::cpp_dec_float<100>> &x) const {
       return f_cdf100(x);
     }
   
@@ -472,7 +489,7 @@ namespace o2scl {
 
     /** \brief The template operator() function
      */
-    template<class fp_t> fp_t operator()(fp_t x) const {
+    template<class fp_t> fp_t operator()(const fp_t &x) const {
       return eval(x);
     }
 
@@ -485,7 +502,7 @@ namespace o2scl {
   
   protected:
 
-    /** \brief Desc
+    /** \brief Const reference to the user-specified function
      */
     const func_t &f;
 
@@ -526,7 +543,7 @@ namespace o2scl {
         and provide an error estimate
      */
     template<class fp_t> int eval_tol_err
-    (fp_t x, fp_t &val, fp_t &err, double tol_loc=-1) const {
+    (const fp_t &x, fp_t &val, fp_t &err, double tol_loc=-1) const {
     
       if (tol_loc<=0.0 && tol_rel<=0.0) {
         tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10);
@@ -654,13 +671,14 @@ namespace o2scl {
     /** \brief Evaluate the function and return the error estimate
         with the default tolerance for the specified type
      */
-    template<class fp_t> int eval_err(fp_t x, fp_t &val, fp_t &err) const {
+    template<class fp_t> int eval_err(const fp_t &x,
+                                      fp_t &val, fp_t &err) const {
       return eval_tol_err(x,val,err);
     }
   
     /** \brief Evalulate the function without an error estimate
      */
-    template<class fp_t> fp_t operator()(fp_t x) const {
+    template<class fp_t> fp_t operator()(const fp_t &x) const {
       fp_t val;
       fp_t err;
       

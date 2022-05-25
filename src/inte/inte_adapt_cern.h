@@ -305,67 +305,93 @@ namespace o2scl {
     
   };
   
+  typedef boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
+  typedef boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
+  typedef boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<50>> cpp_dec_float_50;
+  typedef boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
+
   typedef
   inte_adapt_cern<funct_ld,inte_gauss56_cern
                   <funct_ld,long double,
-                   inte_gauss56_coeffs_long_double>,1000,
-                  long double>
-  inte_adapt_cern_ld;
+                   inte_gauss56_coeffs_long_double>,100,
+                  long double> inte_adapt_cern_ld;
 
   typedef
   inte_adapt_cern<funct_cdf25,inte_gauss56_cern
-                  <funct_cdf25,boost::multiprecision::number<
-                                 boost::multiprecision::cpp_dec_float<25> >,
-                   inte_gauss56_coeffs_float_50
-                   <boost::multiprecision::number<
-                      boost::multiprecision::cpp_dec_float<25> >> >,1000,
-                  boost::multiprecision::number<
-                    boost::multiprecision::cpp_dec_float<25> >>
-  inte_adapt_cern_cdf25;
+                  <funct_cdf25,cpp_dec_float_25,
+                   inte_gauss56_coeffs_float_50<cpp_dec_float_25>>,1000,
+                   cpp_dec_float_25> inte_adapt_cern_cdf25;
   
   typedef
   inte_adapt_cern<funct_cdf35,inte_gauss56_cern
-                  <funct_cdf35,boost::multiprecision::number<
-                                 boost::multiprecision::cpp_dec_float<35> >,
-                   inte_gauss56_coeffs_float_50
-                   <boost::multiprecision::number<
-                      boost::multiprecision::cpp_dec_float<35> >> >,1000,
-                  boost::multiprecision::number<
-                    boost::multiprecision::cpp_dec_float<35> >>
-  inte_adapt_cern_cdf35;
+                  <funct_cdf35,cpp_dec_float_35,
+                   inte_gauss56_coeffs_float_50<cpp_dec_float_35>>,1000,
+                   cpp_dec_float_35> inte_adapt_cern_cdf35;
   
   typedef
   inte_adapt_cern<funct_cdf50,inte_gauss56_cern
-                  <funct_cdf50,boost::multiprecision::number<
-                                 boost::multiprecision::cpp_dec_float<50> >,
-                   inte_gauss56_coeffs_float_50
-                   <boost::multiprecision::number<
-                      boost::multiprecision::cpp_dec_float<50> >> >,10000,
-                  boost::multiprecision::number<
-                    boost::multiprecision::cpp_dec_float<50> >>
-  inte_adapt_cern_cdf50;
+                  <funct_cdf50,cpp_dec_float_50,
+                   inte_gauss56_coeffs_float_50<cpp_dec_float_50>>,1000,
+                   cpp_dec_float_50> inte_adapt_cern_cdf50;
+  
+  typedef std::function<double(const double &)> funct_cr;
+  typedef std::function<long double(const long double &)> funct_cr_ld;
+  typedef std::function<cpp_dec_float_25(const cpp_dec_float_25 &)>
+  funct_cr_cdf25;
+  typedef std::function<cpp_dec_float_35(const cpp_dec_float_35 &)>
+  funct_cr_cdf35;
+  typedef std::function<cpp_dec_float_50(const cpp_dec_float_50 &)>
+  funct_cr_cdf50;
+  typedef std::function<cpp_dec_float_100(const cpp_dec_float_100 &)>
+  funct_cr_cdf100;
+  
+  typedef
+  inte_adapt_cern<funct_cr,inte_gauss56_cern
+                  <funct_cr,double,
+                   inte_gauss56_coeffs_double>,100,
+                  double> inte_adapt_cern_cr;
+  
+  typedef
+  inte_adapt_cern<funct_cr_ld,inte_gauss56_cern
+                  <funct_cr_ld,long double,
+                   inte_gauss56_coeffs_long_double>,100,
+                  long double> inte_adapt_cern_cr_ld;
+
+  typedef
+  inte_adapt_cern<funct_cr_cdf25,inte_gauss56_cern
+                  <funct_cr_cdf25,cpp_dec_float_25,
+                   inte_gauss56_coeffs_float_50<cpp_dec_float_25>>,1000,
+                   cpp_dec_float_25> inte_adapt_cern_cr_cdf25;
+  
+  typedef
+  inte_adapt_cern<funct_cr_cdf35,inte_gauss56_cern
+                  <funct_cr_cdf35,cpp_dec_float_35,
+                   inte_gauss56_coeffs_float_50<cpp_dec_float_35>>,1000,
+                   cpp_dec_float_35> inte_adapt_cern_cr_cdf35;
+  
+  typedef
+  inte_adapt_cern<funct_cr_cdf50,inte_gauss56_cern
+                  <funct_cr_cdf50,cpp_dec_float_50,
+                   inte_gauss56_coeffs_float_50<cpp_dec_float_50>>,1000,
+                   cpp_dec_float_50> inte_adapt_cern_cr_cdf50;
+  
   
   template<class func_t=funct_multip<>>
   class inte_multip_adapt_cern {
     
   protected:
     
-    typedef boost::multiprecision::number<
-    boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
-    typedef boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
-    typedef boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<50>> cpp_dec_float_50;
-    typedef boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
-
     /// \name The derivative objects for varying levels of precision
     //@{
-    inte_adapt_cern<> iac_d;
-    inte_adapt_cern_ld iac_ld;
-    inte_adapt_cern_cdf25 iac_cdf25;
-    inte_adapt_cern_cdf35 iac_cdf35;
-    inte_adapt_cern_cdf50 iac_cdf50;
+    inte_adapt_cern_cr iac_d;
+    inte_adapt_cern_cr_ld iac_ld;
+    inte_adapt_cern_cr_cdf25 iac_cdf25;
+    inte_adapt_cern_cr_cdf35 iac_cdf35;
+    inte_adapt_cern_cr_cdf50 iac_cdf50;
     //@}
     
   public:
