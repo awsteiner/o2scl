@@ -35,56 +35,34 @@
 using namespace std;
 using namespace o2scl;
 
-double testfun(double tx, double &a) {
-  return -cos(1.0/(tx+a))/(a+tx)/(a+tx);
+template<class fp_t>
+fp_t testfun(fp_t tx, fp_t &a) {
+  return -cos(1/(tx+a))/(a+tx)/(a+tx);
 }
 
-long double testfun_ld(long double tx, long double &a) {
-  return -cos(1.0/(tx+a))/(a+tx)/(a+tx);
+template<class fp_t> fp_t sin_recip(fp_t x) {
+  fp_t one=1;
+  fp_t hundred=100;
+  return sin(1/(-x+one/hundred))*pow(-x+one/hundred,-2);
 }
 
-double sin_recip(double x) {
-  return sin(1.0/(-x+0.01))*pow(-x+0.01,-2.0);
-}
-
-long double sin_recip_ld(long double x) {
-  return sin(1.0L/(-x+0.01L))*pow(-x+0.01L,-2.0L);
-}
-
+typedef boost::multiprecision::number<
+  boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
+typedef boost::multiprecision::number<
+  boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
-
-cpp_dec_float_50 testfun_cdf(cpp_dec_float_50 tx, cpp_dec_float_50 &a) {
-  cpp_dec_float_50 one=1.0;
-  return -cos(one/(tx+a))/(a+tx)/(a+tx);
-}
-
-cpp_dec_float_50 sin_recip_cdf(cpp_dec_float_50 x) {
-  cpp_dec_float_50 one=1;
-  cpp_dec_float_50 hundred=100;
-  return sin(one/(-x+one/hundred))*pow(-x+one/hundred,-one-one);
-}
+typedef boost::multiprecision::number<
+  boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
 
 #ifdef O2SCL_MPFR
 typedef boost::multiprecision::mpfr_float_50 mpfr_float_50;
-
-mpfr_float_50 testfun_mpfr(mpfr_float_50 tx, mpfr_float_50 &a) {
-  mpfr_float_50 one=1.0;
-  return -cos(one/(tx+a))/(a+tx)/(a+tx);
-}
-
-mpfr_float_50 sin_recip_mpfr(mpfr_float_50 x) {
-  mpfr_float_50 one=1;
-  mpfr_float_50 hundred=100;
-  return sin(one/(-x+one/hundred))*pow(-x+one/hundred,-one-one);
-}
-
 #endif
 
 template<class func_t=funct, class fp_t=double,
 	 class def_inte_t, size_t nsub>
 void test_iac(test_mgr &t, func_t &f, fp_t acc,
 	      std::string comment, fp_t &diff, bool output_sub=false) {
-
+  
   cout << comment << ":\n  ";
   fp_t one=1;
   fp_t ten=10;
@@ -135,7 +113,7 @@ int main(void) {
     cout << "inte_adapt_cern, double, testfun:\n  ";
     
     double a=0.01, diff;
-    funct tf=std::bind(testfun,std::placeholders::_1,a);
+    funct tf=std::bind(testfun<double>,std::placeholders::_1,a);
     test_iac<funct,double,
 	     inte_gauss56_cern<funct,double,
 			       inte_gauss56_coeffs_double>,100>
@@ -145,7 +123,8 @@ int main(void) {
     cout << "inte_adapt_cern, long double, testfun:\n  ";
     
     long double a_ld=0.01L, diff_ld;
-    funct_ld tf_ld=std::bind(testfun_ld,std::placeholders::_1,a_ld);
+    funct_ld tf_ld=std::bind(testfun<long double>,
+                             std::placeholders::_1,a_ld);
     test_iac<funct_ld,long double,
 	     inte_gauss56_cern<funct_ld,long double,
 			       inte_gauss56_coeffs_long_double>,1000>
@@ -157,7 +136,8 @@ int main(void) {
     cpp_dec_float_50 one=1.0, diff_cdf;
     cpp_dec_float_50 hundred=100.0;
     cpp_dec_float_50 a_cdf=one/hundred;
-    funct_cdf50 tf_cdf=std::bind(testfun_cdf,std::placeholders::_1,a_cdf);
+    funct_cdf50 tf_cdf=std::bind(testfun<cpp_dec_float_50>,
+                                 std::placeholders::_1,a_cdf);
     test_iac<funct_cdf50,cpp_dec_float_50,
 	     inte_gauss56_cern<funct_cdf50,cpp_dec_float_50,
 			       inte_gauss56_coeffs_float_50<cpp_dec_float_50>
@@ -173,7 +153,8 @@ int main(void) {
     mpfr_float_50 one_mpfr=1.0, diff_mpfr;
     mpfr_float_50 hundred_mpfr=100.0;
     mpfr_float_50 a_mpfr=one_mpfr/hundred_mpfr;
-    funct_mp50 tf_mpfr=std::bind(testfun_mpfr,std::placeholders::_1,a_mpfr);
+    funct_mp50 tf_mpfr=std::bind(testfun<mpfr_float_50>,
+                                 std::placeholders::_1,a_mpfr);
     test_iac<funct_mp50,mpfr_float_50,
 	     inte_gauss56_cern<funct_mp50,mpfr_float_50,
 			       inte_gauss56_coeffs_float_50<mpfr_float_50>
@@ -195,7 +176,7 @@ int main(void) {
 
     inte_transform<funct,inte_adapt_cern<>,double> it_iac;
     double exact=1.0-cos(100.0/101.0);
-    funct tf2=std::bind(sin_recip,std::placeholders::_1);
+    funct tf2=std::bind(sin_recip<double>,std::placeholders::_1);
     it_iac.integ_il_err(tf2,-1.0,calc,ei);
     diff=fabs(calc-exact);
     cout << calc << " " << exact << " " << diff << " " << ei << endl;
@@ -212,7 +193,8 @@ int main(void) {
 		    long double>,long double> it_iac_ld;
 
     long double exact_ld=1.0L-cos(100.0L/101.0L);
-    funct_ld tf2_ld=std::bind(sin_recip_ld,std::placeholders::_1);
+    funct_ld tf2_ld=std::bind(sin_recip<long double>,
+                              std::placeholders::_1);
     long double calc_ld, ei_ld;
     it_iac_ld.def_inte.tol_rel=1.0e-15;
     it_iac_ld.def_inte.tol_abs=1.0e-15;
@@ -235,7 +217,8 @@ int main(void) {
     cpp_dec_float_50 one=1.0;
     cpp_dec_float_50 hundred=100.0;
     cpp_dec_float_50 exact_cdf=one-cos(hundred/(hundred+one));
-    funct_cdf50 tf2_cdf=std::bind(sin_recip_cdf,std::placeholders::_1);
+    funct_cdf50 tf2_cdf=std::bind(sin_recip<cpp_dec_float_50>,
+                                  std::placeholders::_1);
     cpp_dec_float_50 calc_cdf, ei_cdf;
     it_iac_cdf.def_inte.tol_rel=1.0e-30;
     it_iac_cdf.def_inte.tol_abs=1.0e-30;
@@ -261,7 +244,8 @@ int main(void) {
     mpfr_float_50 one_mp50=1.0;
     mpfr_float_50 hundred_mp50=100.0;
     mpfr_float_50 exact_mp50=one_mp50-cos(hundred_mp50/(hundred_mp50+one_mp50));
-    funct_mp50 tf2_mp50=std::bind(sin_recip_mpfr,std::placeholders::_1);
+    funct_mp50 tf2_mp50=std::bind(sin_recip<mpfr_float_50>,
+                                  std::placeholders::_1);
     mpfr_float_50 calc_mp50, ei_mp50;
     it_iac_mp50.def_inte.tol_rel=1.0e-30;
     it_iac_mp50.def_inte.tol_abs=1.0e-30;
@@ -275,6 +259,30 @@ int main(void) {
 
 #endif
     
+  }
+
+  if (true) {
+    
+    funct f1=sin_recip<double>;
+    funct_ld f2=sin_recip<long double>;
+    funct_cdf25 f3=sin_recip<cpp_dec_float_25>;
+    funct_cdf35 f4=sin_recip<cpp_dec_float_35>;
+    funct_cdf50 f5=sin_recip<cpp_dec_float_50>;
+    funct_cdf100 f6=sin_recip<cpp_dec_float_100>;
+    funct_multip_wrapper fmw(f1,f2,f3,f4,f5,f6);
+    funct_multip<> fm(fmw);
+
+    /*
+      inte_multip_adapt_cern<funct_multip<>> imkb;
+      double a=0.0, b=1.0, res, err, exact;
+      imkb.integ_err(fm,a,b,res,err);
+      cout << res << " " << exact << endl;
+      
+      long double a_ld=0.0, b_ld=1.0, res_ld, err_ld, exact_ld;
+      imkb.integ_err(fm,a_ld,b_ld,res_ld,err_ld);
+      cout << res_ld << " " << exact_ld << endl;
+    */
+  
   }
   
   t.report();

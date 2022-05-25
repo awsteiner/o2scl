@@ -487,7 +487,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    func_t &f;
+    const func_t &f;
 
     /// \name Typedefs for multiprecision types
     //@{
@@ -509,7 +509,7 @@ namespace o2scl {
     /** \brief Create a function evaluator based on the operator()
         given in the class \c fx of type \c func_t
      */
-    funct_multip(func_t &fx) : f(fx) {
+    funct_multip(const func_t &fx) : f(fx) {
       verbose=0;
       tol_rel=-1.0;
     }
@@ -525,8 +525,8 @@ namespace o2scl {
     /** \brief Evalulate the function with the specified tolerance
         and provide an error estimate
      */
-    template<class fp_t> int eval_tol_err(fp_t x, fp_t &val,
-                                          fp_t &err, double tol_loc=-1) const {
+    template<class fp_t> int eval_tol_err
+    (fp_t x, fp_t &val, fp_t &err, double tol_loc=-1) const {
     
       if (tol_loc<=0.0 && tol_rel<=0.0) {
         tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10);

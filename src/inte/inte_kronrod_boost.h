@@ -293,7 +293,6 @@ namespace o2scl {
 
   };
   
-
   
 #ifndef DOXYGEN_NO_O2NS
 }
