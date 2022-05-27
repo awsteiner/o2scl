@@ -643,7 +643,10 @@ namespace o2scl {
         Used by fcomp().
     */
     double calc_pressure_nb(double nb, double delta=0.0);
-
+    
+    int calc_pressure_nb_mroot(size_t nv, const ubvector &x,
+                               ubvector &y, double delta);
+    
     /** \brief Compute the energy density as a function of baryon density
         at fixed isospin asymmetry
 
@@ -764,14 +767,15 @@ namespace o2scl {
     */
     virtual void set_mroot(mroot<> &mr);
     
-    /** \brief Set class mroot object for use calculating saturation density
+    /** \brief Set class mroot object for use calculating saturation 
+        density
 
         \note While in principle this allows one to use any \ref mroot
         object, in practice some of the current EOSs require \ref
         mroot_hybrids because it automatically avoids regions
         where the equations are undefined.
     */
-    virtual void set_sat_root(root<> &mr);
+    virtual void set_sat_mroot(mroot<> &mr);
     
     /// Set \ref deriv_base object to use to find saturation properties
     virtual void set_sat_deriv(deriv_base<> &de);
@@ -820,7 +824,7 @@ namespace o2scl {
         Used by fn0() (which is called by saturation()) to solve
         saturation_matter_e() (1 variable).
     */
-    root_cern<> def_sat_root;
+    mroot_hybrids<> def_sat_mroot;
 
     /** \brief The defaut neutron
 
@@ -990,7 +994,7 @@ namespace o2scl {
     mroot<> *eos_mroot;
     
     /// The solver to compute saturation properties
-    root<> *sat_root;
+    mroot<> *sat_mroot;
 
     /// The derivative object for saturation properties
     deriv_base<> *sat_deriv;

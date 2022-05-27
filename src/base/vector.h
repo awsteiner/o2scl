@@ -2678,6 +2678,77 @@ namespace o2scl {
     }
     
   };
+
+  /** \brief Return true if two vectors contain the same elements 
+      but in a possibly different order (tests size and elements) 
+  */
+  template<class vec_t, class vec2_t> 
+  bool vectors_equal_reorder(const vec_t &v1, const vec2_t &v2) {
+    
+    if (v1.size()!=v2.size()) return false;
+    
+    // If some of the elements are found multiple times, we need to
+    // make sure they are found the same number of times in both
+    // vectors.
+    std::vector<bool> found(v1.size());
+    vector_set_all(found,false);
+    
+    for(size_t j=0;j<v1.size();j++) {
+      bool matched=false;
+      for(size_t k=0;k<v2.size();k++) {
+        if (v1[j]==v2[k] && found[k]==false) {
+          found[k]=true;
+          matched=true;
+        }
+      }
+      if (matched==false) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+  
+  /** \brief Find all elements in \c v1 which are not in \c v2,
+      and all elements in \c v2 which are not in \c v1
+     
+      \note This function counts duplicates as missing if there
+      are less copies in one vector than the other.
+  */
+  template<class vec_t, class vec2_t, class vec3_t, class vec4_t> 
+  void vectors_missing(const vec_t &v1, const vec2_t &v2,
+                       vec3_t &missing1, vec4_t &missing2) {
+
+    missing1.clear();
+    missing2.clear();
+    
+    // If some of the elements are found multiple times, we need to
+    // make sure they are found the same number of times in both
+    // vectors.
+    std::vector<bool> found(v2.size());
+    vector_set_all(found,false);
+    
+    for(size_t j=0;j<v1.size();j++) {
+      bool matched=false;
+      for(size_t k=0;k<v2.size();k++) {
+        if (v1[j]==v2[k] && found[k]==false) {
+          found[k]=true;
+          matched=true;
+        }
+      }
+      if (matched==false) {
+        missing1.push_back(v1[j]);
+      }
+    }
+
+    for(size_t k=0;k<v2.size();k++) {
+      if (found[k]==false) {
+        missing2.push_back(v2[k]);
+      }
+    }
+
+    return;
+  }
   
   /** \brief Construct a row of a matrix
 

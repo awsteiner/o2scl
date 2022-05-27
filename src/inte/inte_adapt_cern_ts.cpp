@@ -273,14 +273,14 @@ int main(void) {
     funct_multip<> fm(fmw);
 
     /*
-      inte_multip_adapt_cern<funct_multip<>> imkb;
-      double a=0.0, b=1.0, res, err, exact;
-      imkb.integ_err(fm,a,b,res,err);
-      cout << res << " " << exact << endl;
-      
-      long double a_ld=0.0, b_ld=1.0, res_ld, err_ld, exact_ld;
-      imkb.integ_err(fm,a_ld,b_ld,res_ld,err_ld);
-      cout << res_ld << " " << exact_ld << endl;
+    inte_multip_adapt_cern<funct_multip<>> imkb;
+    double a=0.0, b=1.0, res, err, exact;
+    imkb.integ_err(fm,a,b,res,err);
+    cout << res << " " << exact << endl;
+    
+    long double a_ld=0.0, b_ld=1.0, res_ld, err_ld, exact_ld;
+    imkb.integ_err(fm,a_ld,b_ld,res_ld,err_ld);
+    cout << res_ld << " " << exact_ld << endl;
     */
   
   }

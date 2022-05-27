@@ -90,6 +90,40 @@ public:
     return sin(x)-p;
   }
   
+  // A member function which operates on a const reference
+  double mfncr(const double &x) {
+    return sin(x)-0.1;
+  }
+
+  // A const member function which operates on a const reference
+  double cmfncr(const double &x) const {
+    return sin(x)-0.1;
+  }
+  
+  // A member function with a value parameter which operates on a
+  // const reference
+  double mfncr_param(const double &x, double p) {
+    return sin(x)-p;
+  }
+  
+  // A member function with a reference parameter which operates on a
+  // const reference
+  double mfncr_rparam(const double &x, double &p) {
+    return sin(x)-p;
+  }
+  
+  // A const member function with a reference parameter which operates
+  // on a const reference
+  double cmfncr_rparam(const double &x, double &p) const {
+    return sin(x)-p;
+  }
+  
+  // A const member function with a const reference parameter which
+  // operates on a const reference
+  double cmfncr_crparam(const double &x, const double &p) const {
+    return sin(x)-p;
+  }
+  
 };
 
 int main(void) {
@@ -225,6 +259,132 @@ int main(void) {
                "Const member function with const reference parameter");
   }
 
+  // ─────────────────────────────────────────────────────────────────
+  // This section shows that one can use functions which take const
+  // references as inputs rather than values. This distinction is
+  // important when you are creating function pointers to functions
+  // which operate on more complicated classes.
+  
+  // With a member function
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct f=std::bind(std::mem_fn<double(const double &)>(&a_class::mfncr),
+		      ac,std::placeholders::_1);
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,"Member function");
+  }
+
+  // With a const member function, note the extra const in the
+  // template parameter for std::mem_fn
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct f=std::bind(std::mem_fn<double(const double &) const>
+                      (&a_class::cmfncr),
+		      ac,std::placeholders::_1);
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,"Const member function");
+  }
+
+  // With a member function which has a value parameter.
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct f=std::bind(std::mem_fn<double(const double &,double)>
+		      (&a_class::mfncr_param),
+		      ac,std::placeholders::_1,0.1);
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,"Member function with parameter");
+  }
+
+  // With a member function which has a reference parameter.
+  // Note the use of std::ref() for the reference parameter.
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct f=std::bind(std::mem_fn<double(const double &,double &)>
+		      (&a_class::mfncr_rparam),
+		      ac,std::placeholders::_1,std::ref(p));
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Member function with reference parameter");
+  }
+
+  // With a const member function which has a reference parameter Note
+  // the use of const in the template parameter for std::mem_fn.
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct f=std::bind(std::mem_fn<double(const double &,double &) const>
+		      (&a_class::cmfncr_rparam),
+		      ac,std::placeholders::_1,std::ref(p));
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Const member function with reference parameter");
+  }
+
+  // With a const member function which has a const reference
+  // parameter. Note the use of const in the template parameter
+  // for std::mem_fn and the use of std::cref() for the reference
+  // parameter.
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct f=std::bind(std::mem_fn<double(const double &,
+                                         const double &) const>
+		      (&a_class::cmfncr_crparam),
+		      ac,std::placeholders::_1,std::cref(p));
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Const member function with const reference parameter");
+  }
+
+  // ─────────────────────────────────────────────────────────────────
+  // A few examples which show how to use this with a slightly
+  // different function type, one which accepts a const reference
+
+  typedef std::function<double(const double &)> funct2;
+  root_brent_gsl<funct2> grb2;
+  
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct2 f=std::bind(std::mem_fn<double(const double &)>(&a_class::mfncr),
+                       ac,std::placeholders::_1);
+    grb2.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,"Member function");
+  }
+
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct2 f=std::bind(std::mem_fn<double(double,
+                                         const double &) const>
+		      (&a_class::cmfn_crparam),
+		      ac,std::placeholders::_1,std::cref(p));
+    grb2.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Const member function with const reference parameter");
+  }
+  
+  {
+    a=-0.9, b=0.9;
+    a_class ac;
+    funct2 f=std::bind(std::mem_fn<double(const double &,
+                                         const double &) const>
+		      (&a_class::cmfncr_crparam),
+		      ac,std::placeholders::_1,std::cref(p));
+    grb2.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Const member function with const reference parameter");
+  }
+
+  
+  // ─────────────────────────────────────────────────────────────────
+  // This section shows how you can use lambda expressions similar to
+  // the function pointers above
+  
   // Lambda expression with inline specification
   {
     a=-0.9, b=0.9;

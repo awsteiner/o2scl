@@ -351,9 +351,17 @@ namespace o2scl {
   };
 
   /** \brief Evalulate a derivative to within a requested tolerance
-      using multiprecision
+      using multiprecision if necessary
 
       Experimental.
+
+      This class uses \ref funct_multip to ensure the function
+      evaluations are sufficiently accurate and then ensures that the
+      derivative evaluation is below the requested relative tolerance.
+      If the relative tolerance is not specified, then \f$ 10^{-d} \f$
+      is used where \f$ d \f$ is the value reported by
+      <tt>numeric_limits::digits10</tt> for the input floating point
+      type.
 
       \note Derivatives near zero can be particularly troublesome,
       even for simple functions, since this class only uses relative

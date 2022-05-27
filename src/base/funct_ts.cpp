@@ -109,10 +109,8 @@ int main(void) {
                            f2_cdf50,f2_cdf100);
   funct_multip fm(fmw);
   fm.verbose=1;
-  cout << dtos(log(1.0+1.0e-4),0) << endl;
-  cout << dtos(log1p(1.0e-4),0) << endl;
-  cout << dtos(fm(1.0e-4),0) << endl;
-  cout << dtos(fm(1.0e-4L),0) << endl;
+  t.test_rel(log1p(1.0e-4),fm(1.0e-4),1.0e-15,"funct_multip 1");
+  t.test_rel<long double>(log1p(1.0e-4L),fm(1.0e-4L),1.0e-18,"funct_multip 2");
   
   t.report();
   return 0;

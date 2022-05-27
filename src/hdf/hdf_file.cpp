@@ -3364,8 +3364,9 @@ int hdf_file::geti_mat_prealloc(std::string name, size_t n,
 
 int hdf_file::find_object_by_type(std::string type, std::string &name,
                                   bool use_regex, int verbose) {
+  std::vector<std::string> vs;
   iterate_parms ip={"",this,false,type,verbose,ip_name_from_type,
-    use_regex};
+    use_regex,vs};
   H5Literate(get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
              0,iterate_func,&ip);
   if (ip.found) {
@@ -3375,11 +3376,26 @@ int hdf_file::find_object_by_type(std::string type, std::string &name,
   return exc_enotfound;
 }
 
+int hdf_file::list_objects_by_type(std::string type, 
+                                   std::vector<std::string> &vs,
+                                   bool use_regex, int verbose) {
+  iterate_parms ip={"",this,false,type,verbose,ip_name_list_from_type,
+    use_regex,vs};
+  H5Literate(get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
+             0,iterate_func,&ip);
+  if (ip.name_list.size()>0) {
+    vs=ip.name_list;
+    return success;
+  }
+  return exc_enotfound;
+}
+
 int hdf_file::find_object_by_pattern(std::string pattern, std::string &type,
                                      bool use_regex, int verbose) {
 				     
+  std::vector<std::string> vs;
   iterate_parms ip={pattern,this,false,"",verbose,ip_type_from_pattern,
-    use_regex};
+    use_regex,vs};
   H5Literate(get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
              0,iterate_func,&ip);
   if (ip.found) {
@@ -3391,7 +3407,9 @@ int hdf_file::find_object_by_pattern(std::string pattern, std::string &type,
 
 int hdf_file::find_object_by_name(std::string name, std::string &type,
                                   bool use_regex, int verbose) {
-  iterate_parms ip={name,this,false,"",verbose,ip_type_from_name,use_regex};
+  std::vector<std::string> vs;
+  iterate_parms ip={name,this,false,"",verbose,ip_type_from_name,
+    use_regex,vs};
   H5Literate(get_current_id(),H5_INDEX_NAME,H5_ITER_NATIVE,
              0,iterate_func,&ip);
   if (ip.found) {
@@ -3430,6 +3448,10 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	  ip.tname=name;
 	  ip.found=true;
 	  return;
+	} else if (mode==ip_name_list_from_type && base_type==ip.type) {
+          ip.name_list.push_back(name);
+	  ip.found=true;
+	  return;
 	}
       }
 #else
@@ -3447,6 +3469,10 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	  return;
 	} else if (mode==ip_name_from_type && base_type==ip.type) {
 	  ip.tname=name;
+	  ip.found=true;
+	  return;
+	} else if (mode==ip_name_list_from_type && base_type==ip.type) {
+          ip.name_list.push_back(name);
 	  ip.found=true;
 	  return;
 	}
@@ -3481,6 +3507,10 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	} else if (mode==ip_name_from_type && curr_type==ip.type) {
 	  ip.tname=name;
 	  ip.found=true;
+          return;
+	} else if (mode==ip_name_list_from_type && curr_type==ip.type) {
+          ip.name_list.push_back(name);
+	  ip.found=true;
 	  return;
 	}
       }
@@ -3505,6 +3535,10 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	  return;
 	} else if (mode==ip_name_from_type && curr_type==ip.type) {
 	  ip.tname=name;
+	  ip.found=true;
+	  return;
+	} else if (mode==ip_name_list_from_type && curr_type==ip.type) {
+          ip.name_list.push_back(name);
 	  ip.found=true;
 	  return;
 	}
@@ -3550,6 +3584,10 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
 	  ip.tname=name;
 	  ip.found=true;
 	  return;
+	} else if (mode==ip_name_list_from_type && curr_type==ip.type) {
+          ip.name_list.push_back(name);
+	  ip.found=true;
+	  return;
 	}
       }
     }
@@ -3584,6 +3622,10 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
         return;
       } else if (mode==ip_name_from_type && curr_type==ip.type) {
         ip.tname=name;
+        ip.found=true;
+        return;
+      } else if (mode==ip_name_list_from_type && curr_type==ip.type) {
+        ip.name_list.push_back(name);
         ip.found=true;
         return;
       }
@@ -3631,6 +3673,10 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
       ip.tname=name;
       ip.found=true;
       return;
+    } else if (mode==ip_name_list_from_type && curr_type==ip.type) {
+      ip.name_list.push_back(name);
+      ip.found=true;
+      return;
     }
   }
 #else
@@ -3664,6 +3710,10 @@ void hdf_file::type_process(iterate_parms &ip, int mode, size_t ndims,
       return;
     } else if (mode==ip_name_from_type && curr_type==ip.type) {
       ip.tname=name;
+      ip.found=true;
+      return;
+    } else if (mode==ip_name_list_from_type && curr_type==ip.type) {
+      ip.name_list.push_back(name);
       ip.found=true;
       return;
     }
@@ -4083,6 +4133,10 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
           ip->tname=name;
           ip->found=true;
           return 1;
+        } else if (mode==ip_name_list_from_type && otype==ip->type) {
+          ip->name_list.push_back(name);
+          ip->found=true;
+          return 0;
         }
       } else {
         // Non-O2scl group
@@ -4113,6 +4167,10 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
           ip->tname=name;
           ip->found=true;
           return 1;
+        } else if (mode==ip_name_list_from_type && otype==ip->type) {
+          ip->name_list.push_back(name);
+          ip->found=true;
+          return 0;
         }
       } else {
         // Non-O2scl group

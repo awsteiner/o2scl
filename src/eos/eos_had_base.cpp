@@ -48,7 +48,7 @@ eos_had_base::eos_had_base() {
   proton=&def_proton;
   
   eos_mroot=&def_mroot;
-  sat_root=&def_sat_root;
+  sat_mroot=&def_sat_mroot;
 
   err_nonconv=true;
 }
@@ -280,14 +280,28 @@ double eos_had_base::fn0(double delta, double &leoa) {
   
   // Initial guess
   nb=0.16;
-
-  funct fmf=std::bind(std::mem_fn<double(double,double)>
-		      (&eos_had_base::calc_pressure_nb),
-		      this,std::placeholders::_1,delta);
   
-  sat_root->solve(nb,fmf);
+  mm_funct fmf=std::bind(std::mem_fn<int(size_t,const ubvector &,
+                                         ubvector &,double)>
+                         (&eos_had_base::calc_pressure_nb_mroot),
+                         this,std::placeholders::_1,
+                         std::placeholders::_2,std::placeholders::_3,
+                         delta);
+
+  ubvector x(1);
+  x[0]=0.16;
+  
+  int mret=sat_mroot->msolve(1,x,fmf);
+  if (mret!=0) {
+    O2SCL_ERR2("Solver failed in ",
+	       "eos_had_base::fn0().",exc_efailed);
+  }
+  
+  nb=x[0];
+  
   calc_pressure_nb(nb);
   leoa=eos_thermo->ed/nb;
+  
   if (neutron->inc_rest_mass) {
     leoa-=neutron->m/2.0;
   }
@@ -386,6 +400,18 @@ double eos_had_base::calc_pressure_nb(double nb, double delta) {
   calc_e(*neutron,*proton,*eos_thermo);
   
   return eos_thermo->pr;
+}
+
+int eos_had_base::calc_pressure_nb_mroot(size_t nv, const ubvector &x,
+                                         ubvector &y, double delta) {
+
+  if ((1.0+delta)*x[0]/2.0<0.0 || (1.0-delta)*x[0]/2.0<0.0) {
+    // Avoid negative densities
+    return 1;
+  }
+  y[0]=calc_pressure_nb(x[0],delta);
+  
+  return 0;
 }
 
 void eos_had_base::const_pf_derivs(double nb, double pf, 
@@ -618,8 +644,8 @@ void eos_had_base::set_mroot(mroot<mm_funct,
   return;
 }
 
-void eos_had_base::set_sat_root(root<funct> &mr) {
-  sat_root=&mr;
+void eos_had_base::set_sat_mroot(mroot<> &mr) {
+  sat_mroot=&mr;
   return;
 }
 

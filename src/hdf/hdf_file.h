@@ -1081,6 +1081,11 @@ namespace o2scl_hdf {
     int find_object_by_type(std::string type, std::string &name,
                             bool use_regex=false, int verbose=0);
 
+    /// Desc
+    int list_objects_by_type(std::string type,
+                             std::vector<std::string> &vs,
+                             bool use_regex=false, int verbose=0);
+
     /** \brief Look in hdf_file \c hf for an \o2 object with name 
 	\c name and if found, set \c type to the associated type
 	
@@ -1115,7 +1120,7 @@ namespace o2scl_hdf {
     
     /// Parameters for iterate_func()
     typedef struct {
-      /// Name
+      /// Object name
       std::string tname;
       /// Pointer to HDF5 file
       o2scl_hdf::hdf_file *hf;
@@ -1130,8 +1135,10 @@ namespace o2scl_hdf {
           ip_type_from_pattern
        */
       int mode;
-      /// Desc
+      /// If true, then use regex to match names
       bool use_regex;
+      /// Desc
+      std::vector<std::string> name_list;
     } iterate_parms;
 
     /// Parameters for iterate_copy_func()
@@ -1150,6 +1157,7 @@ namespace o2scl_hdf {
     static const int ip_name_from_type=2;
     static const int ip_type_from_name=3;
     static const int ip_type_from_pattern=4;
+    static const int ip_name_list_from_type=5;
     //@}
 
     /// Process a type for \ref iterate_func() 
