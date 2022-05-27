@@ -314,6 +314,11 @@ double eos_had_base::fn0(double delta, double &leoa) {
 
 int eos_had_base::saturation() {
   n0=fn0(0.0,eoa);
+  if (n0<0.08 || n0>0.24) {
+    O2SCL_CONV_RET("Function eos_had_base::saturation() found an ",
+                   "unphysical saturation density.",
+                   o2scl::exc_efailed,err_nonconv);
+  }
   comp=fcomp(n0);
   esym=fesym(n0);
   msom=fmsom(n0);
