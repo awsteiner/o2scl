@@ -124,7 +124,7 @@ int main(void) {
   ld.def_had_eos.def_mroot.def_jac.set_epsmin(1.0e-15);
 
   double eoa;
-  ld.n0=ld.def_had_eos.fn0(0.0,eoa);
+  ld.def_had_eos.fn0(0.0,ld.n0,eoa);
   cout << "Lead from RMF: " << endl;
   cout << "Mass excess:\t\t " << ld.mass_excess(82,126) << endl;
   cout << "Binding energy:\t\t " << ld.binding_energy(82,126)/208.0 << endl;

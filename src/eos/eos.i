@@ -159,8 +159,9 @@ class eos_had_base abstract
   - double nb
   - double delta
 - function fn0
-  - double
+  - int
   - double delta
+  - out double &nb                             
   - out double &leoa
 - function f_number_suscept
   - void

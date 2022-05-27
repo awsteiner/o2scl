@@ -126,7 +126,7 @@ int main(void) {
     cout.precision(6);
   
     ap.set_n_and_p(n,pr);
-    barn=ap.fn0(0.0,dtemp);
+    ap.fn0(0.0,barn,dtemp);
     cout << "Saturation density: " << barn << endl;
     cout << "Binding energy: " << ap.feoa(barn)*hc_mev_fm << endl;
     cout << "Symmetry energy: " << ap.fesym(barn)*hc_mev_fm << endl;

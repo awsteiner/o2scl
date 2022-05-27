@@ -534,8 +534,8 @@ public:
     rmf.def_neutron.mu=4.9;
     rmf.def_proton.mu=4.9;
     rmf.set_fields(nsig,nome,nrho);
-    double eoa;
-    double n0=rmf.fn0(0.0,eoa);
+    double eoa, n0;
+    rmf.fn0(0.0,n0,eoa);
     cout << n0 << " " << eoa*hc_mev_fm << endl;
   
     rmf.zeta=0.06;

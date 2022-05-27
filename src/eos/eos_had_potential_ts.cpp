@@ -63,8 +63,8 @@ int main(void) {
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.bgbd_form;
-  
-    n0=go.fn0(0.0,dtemp);
+ 
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -108,7 +108,7 @@ int main(void) {
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.gbd_form;
   
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -155,7 +155,7 @@ int main(void) {
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.pal_form;
     
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -184,7 +184,7 @@ int main(void) {
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.pal_form;
     
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -212,7 +212,7 @@ int main(void) {
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.pal_form;
     
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -241,7 +241,7 @@ int main(void) {
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.pal_form;
     
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -270,7 +270,7 @@ int main(void) {
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.pal_form;
     
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -299,7 +299,7 @@ int main(void) {
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.pal_form;
     
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -327,7 +327,7 @@ int main(void) {
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.pal_form;
     
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -363,7 +363,7 @@ int main(void) {
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.pal_form;
     
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -399,7 +399,7 @@ int main(void) {
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.pal_form;
     
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -436,7 +436,7 @@ int main(void) {
   
     go.def_neutron.n=0.08;
     go.def_proton.n=0.08;
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -473,7 +473,7 @@ int main(void) {
   
     go.def_neutron.n=0.08;
     go.def_proton.n=0.08;
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -510,7 +510,7 @@ int main(void) {
   
     go.def_neutron.n=0.08;
     go.def_proton.n=0.08;
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -547,7 +547,7 @@ int main(void) {
   
     go.def_neutron.n=0.08;
     go.def_proton.n=0.08;
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -584,7 +584,7 @@ int main(void) {
   
     go.def_neutron.n=0.08;
     go.def_proton.n=0.08;
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -621,7 +621,7 @@ int main(void) {
   
     go.def_neutron.n=0.08;
     go.def_proton.n=0.08;
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -658,7 +658,7 @@ int main(void) {
   
     go.def_neutron.n=0.08;
     go.def_proton.n=0.08;
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -698,7 +698,7 @@ int main(void) {
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.bpal_form;
   
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -726,7 +726,7 @@ int main(void) {
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.bpal_form;
   
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -754,7 +754,7 @@ int main(void) {
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.sl_form;
   
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -800,7 +800,7 @@ int main(void) {
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.sl_form;
   
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -846,7 +846,7 @@ int main(void) {
     go.Lambda2=3.0*cbrt(1.5*pi2*go.rho0);
     go.form=go.sl_form;
   
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -889,7 +889,7 @@ int main(void) {
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
     go.form=go.gbd_form;
   
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -935,7 +935,7 @@ int main(void) {
     go.rho0=0.16;
     go.Lambda=1.5*cbrt(1.5*pi2*go.rho0);
   
-    n0=go.fn0(0.0,dtemp);
+    go.fn0(0.0,n0,dtemp);
     cout << "n0:      " << n0 << endl;
     cout << "eoa:    " << dtemp*hc_mev_fm << endl;
     cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;
@@ -986,7 +986,7 @@ int main(void) {
     go.Al=-120.75/hc_mev_fm+2.0*go.B*go.x/(go.sigma+1.0);
     
     {
-      n0=go.fn0(0.0,dtemp);
+      go.fn0(0.0,n0,dtemp);
       cout << "n0:      " << n0 << endl;
       cout << "eoa:    " << dtemp*hc_mev_fm << endl;
       cout << "K:       " << go.fcomp(n0)*hc_mev_fm << endl;

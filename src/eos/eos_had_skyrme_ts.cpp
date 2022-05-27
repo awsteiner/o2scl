@@ -138,7 +138,7 @@ int main(void) {
   cout << endl;
   cout << "Compare saturation properties of SkMs with known values:"
        << endl;
-  n0=sk.fn0(0.0,eoa2);
+  sk.fn0(0.0,n0,eoa2);
   cout << n0 << " " << 0.1603 << endl;
   cout << -sk.feoa(n0)*hc_mev_fm << " " << 15.78 << endl;
   cout << sk.fmsom(n0) << " " << 0.79 << endl;
@@ -160,7 +160,7 @@ int main(void) {
   cout << "With a non-zero value of a" << endl;
   sk.a=0.1;
 
-  sk.n0=sk.fn0(0.0,eoa2);
+  sk.fn0(0.0,sk.n0,eoa2);
   n0=sk.n0;
   sk.eoa=eoa2;
   sk.msom=sk.fmsom(n0);
@@ -169,7 +169,7 @@ int main(void) {
   sk.kprime=sk.fkprime(n0);
 
   sk.parent_method=true;
-  n0=sk.fn0(0.0,eoa2);
+  sk.fn0(0.0,n0,eoa2);
   cout << sk.fesym(n0)*hc_mev_fm << endl;
   /// FIXME n0 doesn't look right here?
   cout << "n0=" << n0 << endl;
@@ -294,7 +294,7 @@ int main(void) {
 
   sk.load("PeHF");
   
-  n0=sk.fn0(0.0,eoa2);
+  sk.fn0(0.0,n0,eoa2);
   cout << n0 << " " << 2.0*pow(1.34,3.0)/3.0/pi2 << endl;
   cout << -sk.feoa(n0)*hc_mev_fm << " " << -eoa2*hc_mev_fm << " " << 16.00 
        << endl;
@@ -308,7 +308,7 @@ int main(void) {
   
   sk.load("SkSC10");
   
-  n0=sk.fn0(0.0,eoa2);
+  sk.fn0(0.0,n0,eoa2);
   cout << n0 << endl;
   cout << -sk.feoa(n0)*hc_mev_fm << " " << -eoa2*hc_mev_fm << endl;
   cout << sk.fmsom(n0) << " " << 1.0 << endl;

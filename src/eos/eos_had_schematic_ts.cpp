@@ -98,7 +98,7 @@ int main(void) {
   se.kprime=-2000.0/hc_mev_fm;
   se.n0=0.16;
 
-  n0=se.fn0(0.0,dtemp);
+  se.fn0(0.0,n0,dtemp);
   t.test_rel(n0,0.16,1.0e-8,"n0");
   t.test_rel(se.feoa(n0)*hc_mev_fm,-16.0,1.0e-8,"eoa");
   t.test_rel(se.fcomp(n0)*hc_mev_fm,200.0,2.0e-8,"comp");

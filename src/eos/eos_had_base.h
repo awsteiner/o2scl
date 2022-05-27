@@ -559,7 +559,7 @@ namespace o2scl {
         This function finds the baryon density for which the pressure 
         vanishes. 
     */
-    virtual double fn0(double delta, double &leoa);
+    virtual int fn0(double delta, double &nb, double &leoa);
 
     /** \brief Calculates some of the EOS properties at the saturation 
         density

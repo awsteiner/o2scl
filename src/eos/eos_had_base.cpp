@@ -274,12 +274,7 @@ double eos_had_base::f_effm_vector(double nb, double delta) {
   return 2.0*mn*mp*delta/((mn+mp)*delta+mn-mp);
 }
 
-double eos_had_base::fn0(double delta, double &leoa) {
-  double nb;
-  int ret=0;
-  
-  // Initial guess
-  nb=0.16;
+int eos_had_base::fn0(double delta, double &nb, double &leoa) {
   
   mm_funct fmf=std::bind(std::mem_fn<int(size_t,const ubvector &,
                                          ubvector &,double)>
@@ -293,8 +288,8 @@ double eos_had_base::fn0(double delta, double &leoa) {
   
   int mret=sat_mroot->msolve(1,x,fmf);
   if (mret!=0) {
-    O2SCL_ERR2("Solver failed in ",
-	       "eos_had_base::fn0().",exc_efailed);
+    O2SCL_CONV2_RET("Solver failed in ",
+                    "eos_had_base::fn0().",exc_efailed,err_nonconv);
   }
   
   nb=x[0];
@@ -314,11 +309,11 @@ double eos_had_base::fn0(double delta, double &leoa) {
 
 int eos_had_base::saturation() {
   std::cout << "sat 1" << std::endl;
-  n0=fn0(0.0,eoa);
-  if (n0<0.08 || n0>0.24) {
+  int sret=fn0(0.0,n0,eoa);
+  if (sret!=0 || n0<0.08 || n0>0.24) {
     O2SCL_CONV2_RET("Function eos_had_base::saturation() found an ",
-                   "unphysical saturation density.",
-                   o2scl::exc_efailed,err_nonconv);
+                    "unphysical saturation density.",
+                    o2scl::exc_efailed,err_nonconv);
   }
   std::cout << "sat 2" << std::endl;
   comp=fcomp(n0);
