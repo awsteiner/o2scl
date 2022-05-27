@@ -316,7 +316,7 @@ int eos_had_base::saturation() {
   std::cout << "sat 1" << std::endl;
   n0=fn0(0.0,eoa);
   if (n0<0.08 || n0>0.24) {
-    O2SCL_CONV_RET("Function eos_had_base::saturation() found an ",
+    O2SCL_CONV2_RET("Function eos_had_base::saturation() found an ",
                    "unphysical saturation density.",
                    o2scl::exc_efailed,err_nonconv);
   }
