@@ -57,7 +57,6 @@ eos_had_rmf::eos_had_rmf() {
   zm_mode=false;
   guess_set=false;
   
-  sat_mroot=&def_sat_mroot;
   verbose=0;
 
   calc_e_relative=true;

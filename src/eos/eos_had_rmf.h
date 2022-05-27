@@ -617,24 +617,6 @@ namespace o2scl {
     /// Return string denoting type ("eos_had_rmf")
     virtual const char *type() { return "eos_had_rmf"; }
 
-    /// \name Solver
-    //@{
-    /** \brief Set class mroot object for use calculating saturation density
-     */
-    virtual int set_sat_mroot(mroot<mm_funct,ubvector,jac_funct> &mrx) {
-      sat_mroot=&mrx;
-      return 0;
-    }
-
-    /** \brief The default solver for calculating the saturation 
-        density
-        
-        Used by fn0() (which is called by saturation()) to solve
-        saturation_matter_e() (1 variable).
-    */
-    mroot_hybrids<> def_sat_mroot;
-    //@}
-
     /// \name Functions dealing with naturalness
     //@{
         /** \brief Set the coefficients of a eos_had_rmf object to their 
@@ -832,9 +814,6 @@ namespace o2scl {
     /// True if a guess for the fields has been given
     bool guess_set;
 
-    /// The solver to compute saturation properties
-    mroot<mm_funct,ubvector,jac_funct> *sat_mroot;
-    
     /// The function for fix_saturation()
     int fix_saturation_fun(size_t nv, const ubvector &x, ubvector &y);
 
