@@ -121,7 +121,7 @@ double o2scl_eos_had_base_f_effm_scalar(void *vptr, double nb, double delta);
 
 double o2scl_eos_had_base_f_effm_vector(void *vptr, double nb, double delta);
 
-double o2scl_eos_had_base_fn0(void *vptr, double delta, double *leoa);
+int o2scl_eos_had_base_fn0(void *vptr, double delta, double *nb, double *leoa);
 
 void o2scl_eos_had_base_f_number_suscept(void *vptr, double mun, double mup, double *dPdnn, double *dPdnp, double *dPdpp);
 

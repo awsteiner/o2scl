@@ -274,9 +274,9 @@ double o2scl_eos_had_base_f_effm_vector(void *vptr, double nb, double delta) {
   return ret;
 }
 
-double o2scl_eos_had_base_fn0(void *vptr, double delta, double *leoa) {
+int o2scl_eos_had_base_fn0(void *vptr, double delta, double *nb, double *leoa) {
   eos_had_base *ptr=(eos_had_base *)vptr;
-  double ret=ptr->fn0(delta,*leoa);
+  int ret=ptr->fn0(delta,*nb,*leoa);
   return ret;
 }
 
