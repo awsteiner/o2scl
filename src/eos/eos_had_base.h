@@ -571,6 +571,12 @@ namespace o2scl {
         stored in \ref n0, \ref comp, \ref esym, \ref eoa, \ref msom,
         and \ref kprime, respectively.
 
+        \note If the saturation density is less than \f$
+        0.08~\mathrm{fm}^{-3} \f$ or larger than \f$
+        0.24~\mathrm{fm}^{-3} \f$ then either the error handler is
+        called, or if \ref err_nonconv is false, then a non-zero value
+        is returned.
+
         \future It would be great to provide numerical uncertainties
         in the saturation properties.
     */
