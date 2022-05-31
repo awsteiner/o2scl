@@ -73,6 +73,9 @@ void boson_rel::calc_mu(boson &b, double temper) {
   } else {
     psi=(b.nu+(b.m-b.ms))/temper;
     if (b.nu+b.m>b.ms) {
+      std::cout.precision(12);
+      std::cout << "Here: " << b.nu << " " << b.m << " " << b.ms << " "
+                << b.ms/b.m << endl;
       O2SCL_ERR2("Chemical potential must be smaller than mass in ",
                  "boson_rel::calc_mu().",o2scl::exc_einval);
     }

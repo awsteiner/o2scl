@@ -247,6 +247,7 @@ namespace o2scl {
       if (k>=2) {
 	p.non_interacting=false;
 	p.ms=mot*T;
+        // It's important that m<m* for bosons to work
 	p.m=p.ms*1.5;
       } else {
 	p.non_interacting=true;

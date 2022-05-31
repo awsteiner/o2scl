@@ -689,6 +689,194 @@ namespace o2scl {
     
   };
 
+  /** \brief Use multiprecision to automatically evaluate a function to
+      a specified level of precision
+  */
+  class funct_multip2 {
+
+  protected:
+    
+    /// \name Typedefs for multiprecision types
+    //@{
+    typedef
+    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
+    cpp_dec_float_25;
+  
+    typedef
+    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+    cpp_dec_float_35;
+  
+    typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+  
+    typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
+    //@}
+
+  public:
+
+    funct_multip2() {
+      verbose=0;
+      tol_rel=-1.0;
+    }
+
+    /** \brief Verbosity parameter
+     */
+    int verbose;
+
+    /** \brief Relative tolerance
+     */
+    double tol_rel;
+
+    template<typename func_t, class fp_t>
+    int eval_tol_err(func_t &&f, const fp_t &x, fp_t &val,
+                     fp_t &err, double tol_loc=-1) const {
+      
+      if (tol_loc<=0.0 && tol_rel<=0.0) {
+        tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10);
+      } else {
+        tol_loc=tol_rel;
+      }
+      if (verbose>0) {
+        std::cout << "Set tol to: " << tol_loc << std::endl;
+      }
+    
+      double x_d=static_cast<double>(x);
+      long double x_ld=static_cast<long double>(x);
+      double y_d=f(x_d);
+      long double y_ld=f(x_ld);
+
+      if (y_ld==0 && y_d==0) {
+        val=0;
+        err=0;
+        return 0;
+      }
+      if (y_ld!=0) {
+        err=static_cast<fp_t>(abs(y_ld-y_d)/abs(y_ld));
+        if (err<tol_loc) {
+          val=static_cast<fp_t>(y_ld);
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 1: " << dtos(y_ld,0) << " "
+                  << dtos(y_d,0) << " "
+                  << dtos(err,0) << " " << tol_loc << std::endl;
+      }
+    
+      cpp_dec_float_25 x_cdf25=static_cast<cpp_dec_float_25>(x);
+      cpp_dec_float_25 y_cdf25=f(x_cdf25);
+
+      if (y_cdf25==0 && y_ld==0) {
+        val=0;
+        err=0;
+        return 0;
+      }
+      if (y_cdf25!=0) {
+        err=static_cast<fp_t>(abs(y_cdf25-y_ld)/abs(y_cdf25));
+        if (err<tol_loc) {
+          val=static_cast<fp_t>(y_cdf25);
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 2: " << dtos(y_cdf25,0) << " "
+                  << dtos(y_ld,0) << " "
+                  << dtos(err,0) << " " << tol_loc << std::endl;
+      }
+    
+      cpp_dec_float_35 x_cdf35=static_cast<cpp_dec_float_35>(x);
+      cpp_dec_float_35 y_cdf35=f(x_cdf35);
+        
+      if (y_cdf35==0 && y_cdf25==0) {
+        val=0;
+        err=0;
+        return 0;
+      }
+      if (y_cdf35!=0) {
+        err=static_cast<fp_t>(abs(y_cdf35-y_cdf25)/abs(y_cdf35));
+        if (err<tol_loc) {
+          val=static_cast<fp_t>(y_cdf35);
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 3: " << dtos(y_cdf35,0) << " "
+                  << dtos(y_cdf25,0) << " "
+                  << dtos(err,0) << " " << tol_loc << std::endl;
+      }
+    
+      cpp_dec_float_50 x_cdf50=static_cast<cpp_dec_float_50>(x);
+      cpp_dec_float_50 y_cdf50=f(x_cdf50);
+    
+      if (y_cdf50==0 && y_cdf35==0) {
+        val=0;
+        err=0;
+        return 0;
+      }
+      if (y_cdf50!=0) {
+        err=static_cast<fp_t>(abs(y_cdf50-y_cdf35)/abs(y_cdf50));
+        if (err<tol_loc) {
+          val=static_cast<fp_t>(y_cdf50);
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 4: " << dtos(y_cdf50,0) << " "
+                  << dtos(y_cdf35,0) << " "
+                  << dtos(err,0) << " " << tol_loc << std::endl;
+      }
+    
+      cpp_dec_float_100 x_cdf100=static_cast<cpp_dec_float_100>(x);
+      cpp_dec_float_100 y_cdf100=f(x_cdf100);
+    
+      if (y_cdf100==0 && y_cdf50==0) {
+        val=0;
+        err=0;
+        return 0;
+      }
+      if (y_cdf100!=0) {
+        err=static_cast<fp_t>(abs(y_cdf100-y_cdf50)/abs(y_cdf100));
+        if (err<tol_loc) {
+          val=static_cast<fp_t>(y_cdf100);
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 5: " << dtos(y_cdf100,0) << " "
+                  << dtos(y_cdf50,0) << " "
+                  << dtos(err,0) << " " << tol_loc << std::endl;
+      
+      }
+    
+      O2SCL_ERR2("Failed to compute with requested accuracy ",
+                 "in funct_multip::eval_tol_err().",
+                 o2scl::exc_efailed);
+      return o2scl::exc_efailed;
+    }
+
+    /** \brief Evaluate the function and return the error estimate
+        with the default tolerance for the specified type
+     */
+    template<typename func_t, class fp_t>
+    int eval_err(func_t &&f, const fp_t &x,
+                 fp_t &val, fp_t &err) const {
+      return eval_tol_err(f,x,val,err);
+    }
+  
+    /** \brief Evalulate the function without an error estimate
+     */
+    template<typename func_t, class fp_t>
+    fp_t operator()(func_t &&f, const fp_t &x) const {
+      fp_t val;
+      fp_t err;
+      
+      eval_err(f,x,val,err);
+    
+      return val;
+    }
+    
+      
+  };
+
   /// One-dimensional function typedef in src/base/funct.h
   typedef std::function<int(double,double &)> funct_ret;
 

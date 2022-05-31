@@ -111,6 +111,12 @@ int main(void) {
   fm.verbose=1;
   t.test_rel(log1p(1.0e-4),fm(1.0e-4),1.0e-15,"funct_multip 1");
   t.test_rel<long double>(log1p(1.0e-4L),fm(1.0e-4L),1.0e-18,"funct_multip 2");
+
+  double val, err;
+  funct_multip2 fm2;
+  fm2.eval_tol_err([f2](auto &&t) mutable
+  { return f2.func(std::forward<decltype(t)>(t)); },1.0e-4,val,err);
+  cout << fm(1.0e-4) << " " << val << endl;
   
   t.report();
   return 0;
