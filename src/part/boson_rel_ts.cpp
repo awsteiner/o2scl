@@ -63,7 +63,7 @@ int main(void) {
   cout << "boson_eff: calc_mu(T) vs. calc_density(T)" << endl;
   eb.calc_mu(b,T);
   cout << b.n << " " << b.mu << " " << b.ed << " " 
-       << b.pr << " " << b.en << endl; 
+       << b.pr << " " << b.en << endl;
   t1=b.n; t2=b.mu; t3=b.ed; t4=b.pr; t5=b.en;
   eb.calc_density(b,T);
   cout << b.n << " " << b.mu << " " << b.ed << " " 
@@ -96,7 +96,7 @@ int main(void) {
   t.test_rel(b.pr,t4,1.0e-10,"deg eb vs. rb pressure");
   t.test_rel(b.en,t5,1.0e-10,"deg eb vs. rb entropy");
   cout << endl;
-
+  
   cout << "Non-degenerate (large mass): " << endl;
   b.m=1.0;
   b.mu=0.11;

@@ -563,7 +563,11 @@ namespace o2scl {
       part_t bad, dev, exact;
       fp_t m_bad=0.0, mu_bad=0.0, T_bad=0.0, mot_bad=0.0, psi_bad=0.0;
       p.non_interacting=true;
-  
+
+      // This counts tests, 4*4*3 times the number of lines in the
+      // calibrate data file
+      int count=0;
+      
       // ----------------------------------------------------------------
       // First pass, test calc_mu()
       
@@ -597,17 +601,18 @@ namespace o2scl {
 
 	    set_mass_flags(p,mot,T,k);
 	    set_chem_pot(p,psi,T,k,nr_mode);
+            count++;
 
 	    if (verbose>1) {
 	      std::cout.precision(5);
 	      if (k>=2) {
-		std::cout << "T,ms,nu,psi,mot: " << T << " "
+		std::cout << "T,ms,nu,psi,mot,count: " << T << " "
 			  << p.ms << " " << p.nu << " "
-			  << psi << " " << mot << std::endl;
+			  << psi << " " << mot << " " << count << std::endl;
 	      } else {
 		std::cout << "T,m,mu,psi,mot: " << T << " "
 			  << p.m << " " << p.mu << " " 
-			  << psi << " " << mot << std::endl;
+			  << psi << " " << mot << " " << count << std::endl;
 	      }
             }
 
@@ -824,17 +829,19 @@ namespace o2scl {
 	    } else {
 	      p.mu=p.m;
 	    }
+            
+            count++;
 
 	    if (verbose>1) {
 	      std::cout.precision(5);
 	      if (k>=2) {
-		std::cout << "T,ms,n,psi,mot: " << T << " "
+		std::cout << "T,ms,n,psi,mot,count: " << T << " "
 			  << p.ms << " " << p.n << " "
-			  << psi << " " << mot << std::endl;
+			  << psi << " " << mot << " " << count << std::endl;
 	      } else {
-		std::cout << "T,m,n,psi,mot: " << T << " "
+		std::cout << "T,m,n,psi,mot,count: " << T << " "
 			  << p.m << " " << p.n << " "
-			  << psi << " " << mot << std::endl;
+			  << psi << " " << mot << " " << count << std::endl;
 	      }
             }
             
@@ -995,11 +1002,14 @@ namespace o2scl {
 	    
 	      set_mass_flags(p,mot,T,k);
 	      set_chem_pot(p,psi,T,k,nr_mode);
-	
+              count++;
+            
 	      if (verbose>1) {
 		std::cout.precision(5);
-		std::cout << "T,m,mu,psi,mot: " << T << " " << p.m << " "
-			  << p.mu << " " << psi << " " << mot << std::endl;
+		std::cout << "T,m,mu,psi,mot,count: " << T << " "
+                          << p.m << " "
+			  << p.mu << " " << psi << " " << mot << " "
+                          << count << std::endl;
               }
               
 	      th.pair_mu(p,T);
@@ -1157,6 +1167,7 @@ namespace o2scl {
 	  
 	      set_mass_flags(p,mot,T,k);
 	      set_chem_pot(exact,psi,T,k,nr_mode);
+              count++;
 
 	      exact.n=p.n;
 	      if (k%2==0) {
@@ -1173,11 +1184,15 @@ namespace o2scl {
 	      if (verbose>1) {
 		std::cout.precision(5);
 		if (k>=2) {
-		  std::cout << "T,ms,n,psi,mot: " << T << " " << p.ms << " " 
-			    << p.n << " " << psi << " " << mot << std::endl;
+		  std::cout << "T,ms,n,psi,mot,count: "
+                            << T << " " << p.ms << " " 
+			    << p.n << " " << psi << " " << mot << " "
+                            << count << std::endl;
 		} else {
-		  std::cout << "T,m,n,psi,mot: " << T << " " << p.m << " " 
-			    << p.n << " " << psi << " " << mot << std::endl;
+		  std::cout << "T,m,n,psi,mot,count: "
+                            << T << " " << p.m << " " 
+			    << p.n << " " << psi << " " << mot << " "
+                            << count << std::endl;
 		}
               }
               

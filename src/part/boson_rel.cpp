@@ -58,18 +58,24 @@ void boson_rel::calc_mu(boson &b, double temper) {
     O2SCL_ERR2("Temperature less than or equal to zero in ",
 	       "boson_rel::calc_mu().",exc_einval);
   }
-  if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
+  if (b.non_interacting==true) {
+    b.nu=b.mu;
+    b.ms=b.m;
+  }
 
   double psi;
   if (b.inc_rest_mass) {
     psi=(b.nu-b.ms)/temper;
+    if (b.nu>b.ms) {
+      O2SCL_ERR2("Chemical potential must be smaller than mass in ",
+                 "boson_rel::calc_mu().",o2scl::exc_einval);
+    }
   } else {
     psi=(b.nu+(b.m-b.ms))/temper;
-  }
-
-  if (psi>0.0) {
-    O2SCL_ERR2("Chemical potential must be smaller than mass in ",
-               "boson_rel::calc_mu().",o2scl::exc_einval);
+    if (b.nu+b.m>b.ms) {
+      O2SCL_ERR2("Chemical potential must be smaller than mass in ",
+                 "boson_rel::calc_mu().",o2scl::exc_einval);
+    }
   }
 
   // Try the non-degenerate expansion if psi is small enough
@@ -117,9 +123,6 @@ void boson_rel::calc_mu(boson &b, double temper) {
       return;
     }
 
-    cout << "boson_rel::calc_mu() arg, ulf, ul: " << arg << " "
-         << upper_limit_fac << " " << ul << endl;
-    
     funct fd=std::bind(std::mem_fn<double(double,boson &,double)>
 		       (&boson_rel::deg_density_fun),
 		       this,std::placeholders::_1,std::ref(b),temper);
@@ -243,11 +246,30 @@ void boson_rel::calc_mu(boson &b, double temper) {
   return;
 }
 
+void boson_rel::calc_max_density(boson &b, double temper) {
+
+  if (temper<=0.0) {
+    O2SCL_ERR2("Temperature less than or equal to zero in ",
+	       "boson_rel::calc_mu().",exc_einval);
+  }
+  
+  if (b.non_interacting==true) {
+    b.mu=b.m;
+  } else {
+    b.nu=b.ms;
+  }
+
+  return calc_mu(b,temper);
+}
+
 void boson_rel::nu_from_n(boson &b, double temper) {
   
   ubvector x(1);
 
-  if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
+  if (b.non_interacting==true) {
+    b.nu=b.mu;
+    b.ms=b.m;
+  }
 
   // If the chemical potential is too large, create a valid
   // initial guess
@@ -269,6 +291,8 @@ void boson_rel::nu_from_n(boson &b, double temper) {
   density_mroot->err_nonconv=ec;
 
   if (ret1!=0) {
+    std::cout << "Problem A." << std::endl;
+    cout << b.nu << " " << b.ms << endl;
     ubvector y(1);
     for(x[0]=9.88e-2;x[0]<9.91e-2;x[0]+=1.0e-6) {
       mf(1,x,y);
@@ -299,10 +323,38 @@ void boson_rel::calc_density(boson &b, double temper) {
   }
   if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
 
+  if (b.non_interacting) {
+    double mu_temp=b.mu;
+    double n_temp=b.n;
+    calc_max_density(b,temper);
+    if (b.n<n_temp) {
+      cout << "m: " << b.m << " mu: " << mu_temp << endl;
+      cout.precision(12);
+      cout << "requested density: " << n_temp << " max density: "
+           << b.n << endl;
+      O2SCL_ERR2("Density larger than max in ",
+                 "boson_rel::calc_density().",o2scl::exc_einval);
+    }
+    b.mu=mu_temp;
+    b.n=n_temp;
+  } else {
+    double mu_temp=b.nu;
+    double n_temp=b.n;
+    calc_max_density(b,temper);
+    if (b.n<n_temp) {
+      O2SCL_ERR2("Density larger than max in ",
+                 "boson_rel::calc_density().",o2scl::exc_einval);
+    }
+    b.nu=mu_temp;
+    b.n=n_temp;
+  }
+  
   nu_from_n(b,temper);
 
   calc_mu(b,temper);
 
+  //cout << "Here: " << b.n << " " << b.nu << endl;
+  //exit(-1);
   /*
   funct fe=std::bind(std::mem_fn<double(double,boson &,double)>
 		       (&boson_rel::deg_energy_fun),
@@ -324,23 +376,10 @@ void boson_rel::calc_density(boson &b, double temper) {
 
 double boson_rel::deg_density_fun(double k, boson &b, double T) {
 
-  double nx;
-  if (b.ms==b.nu) {
-    nx=1.0/(exp(k/T)-1.0);
-  } else {
-    double E=o2hypot(k,b.ms);
-    nx=o2scl::bose_function(E,b.nu,T);
-  }
+  double E=o2hypot(k,b.ms);
+  double nx=o2scl::bose_function(E,b.nu,T);
   double ret=k*k*nx;
 
-  if (false) {
-    long double m2=b.ms;
-    long double mu2=b.nu;
-    long double T2=T;
-    long double k2=k;
-    long double E2=o2hypot(k2,m2);
-    long double nx2=1.0L/(exp((E2-mu2)/T2)-1.0L);
-  }
   if (!std::isfinite(ret)) {
     return 0.0;
     /*
@@ -537,7 +576,7 @@ int boson_rel::solve_fun(size_t nv, const ubvector &x, ubvector &y,
 
   bool deg=true;
   if (psi<deg_limit) deg=false;
-  
+
   if (deg) {
 
       // Compute the upper limit for degenerate integrals
@@ -555,9 +594,18 @@ int boson_rel::solve_fun(size_t nv, const ubvector &x, ubvector &y,
                        this,std::placeholders::_1,std::ref(b),T);
     double err;
     dit->err_nonconv=false;
+    
     int iret=dit->integ_err(fd,0.0,ul,nden,err);
+    if (fabs(err)/fabs(nden)>1.0e-4) {
+      def_dit.tol_rel=1.0e-10;
+      def_dit.tol_abs=1.0e-10;
+      iret=dit->integ_err(fd,0.0,ul,nden,err);
+      def_dit.tol_rel=1.0e-8;
+      def_dit.tol_abs=1.0e-8;
+    }
+        
     dit->err_nonconv=true;
-    //cout << "A: " << fd(ul/2.0) << " " << fd(ul) << endl;
+
     if (iret!=0) {
       /*
         table_units<> t;
@@ -598,7 +646,6 @@ int boson_rel::solve_fun(size_t nv, const ubvector &x, ubvector &y,
   }
 
   y[0]=nden/density-1.0;
-  cout.precision(12);
 
   return 0;
 }

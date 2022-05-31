@@ -68,6 +68,10 @@ namespace o2scl {
      */
     virtual void calc_density(boson &b, double temper);
     
+    /** \brief Calculate the maximum density as a function of temperature
+     */
+    virtual void calc_max_density(boson &b, double temper);
+    
     /** \brief Calculate properties with antiparticles as function of
         chemical potential
     */

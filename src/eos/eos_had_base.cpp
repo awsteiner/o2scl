@@ -308,22 +308,16 @@ int eos_had_base::fn0(double delta, double &nb, double &leoa) {
 }
 
 int eos_had_base::saturation() {
-  std::cout << "sat 1" << std::endl;
   int sret=fn0(0.0,n0,eoa);
   if (sret!=0 || n0<0.08 || n0>0.24) {
     O2SCL_CONV2_RET("Function eos_had_base::saturation() found an ",
                     "unphysical saturation density.",
                     o2scl::exc_efailed,err_nonconv);
   }
-  std::cout << "sat 2" << std::endl;
   comp=fcomp(n0);
-  std::cout << "sat 3" << std::endl;
   esym=fesym(n0);
-  std::cout << "sat 4" << std::endl;
   msom=fmsom(n0);
-  std::cout << "sat 5" << std::endl;
   kprime=fkprime(n0);
-  std::cout << "sat 6" << std::endl;
 
   return 0;
 }
