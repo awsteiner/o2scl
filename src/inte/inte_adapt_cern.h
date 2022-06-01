@@ -379,6 +379,8 @@ namespace o2scl {
                    inte_gauss56_coeffs_float_50<cpp_dec_float_50>>,1000,
                    cpp_dec_float_50> inte_adapt_cern_cr_cdf50;
   
+
+#ifdef O2SCL_NEVER_DEFINED
   
   template<class func_t=funct_multip<>>
   class inte_multip_adapt_cern {
@@ -536,6 +538,8 @@ namespace o2scl {
   }
 
 };
+
+#endif
   
 }
 

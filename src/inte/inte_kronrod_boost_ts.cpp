@@ -99,6 +99,7 @@ int main(void) {
     t.test_rel_boost<cpp_dec_float_50>(ans,exact,1.0e-30,"qag test");
   }
 
+  /*
   funct f1=test_func<double>;
   funct_ld f2=test_func<long double>;
   funct_cdf25 f3=test_func<cpp_dec_float_25>;
@@ -108,7 +109,6 @@ int main(void) {
   funct_multip_wrapper fmw(f1,f2,f3,f4,f5,f6);
   funct_multip<> fm(fmw);
 
-  /*
   inte_multip_kronrod_boost<funct_multip<>> imkb;
   double a=0.0, b=1.0, res, err, exact;
   exact=cos(100.0)-cos(1/1.01);

@@ -71,7 +71,7 @@ int main(void) {
 
   fmc f2;
   double val, err;
-  funct_multip2 fm2;
+  funct_multip fm2;
   fm2.eval_tol_err([f2](auto &&t) mutable { return f2.func(t); },
                    1.0e-4,val,err);
   

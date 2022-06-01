@@ -193,6 +193,7 @@ int main(void) {
   grb2_cdf.solve_bkt(a_cdf,b_cdf,fmf_cdf);
   cout << a_cdf << endl;
 
+  /*
   funct f1=cbrt_fun<double>;
   funct_ld f2=cbrt_fun<long double>;
   funct_cdf25 f3=cbrt_fun<cpp_dec_float_25>;
@@ -214,6 +215,7 @@ int main(void) {
   rmbg.solve_bkt(x1_ld,x2_ld,fm);
   cout << dtos(x1_ld,0) << " " << dtos(x1_ld*x1_ld*x1_ld,0) << endl;
   t.test_rel<long double>(x1_ld*x1_ld*x1_ld,5.0,1.0e-19,"rmbg 2");
+  */
   
   t.report();
   return 0;

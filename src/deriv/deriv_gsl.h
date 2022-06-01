@@ -381,7 +381,7 @@ namespace o2scl {
 
       \endverbatim
   */
-  class deriv_multip2_gsl {
+  class deriv_multip_gsl {
     
   protected:
     
@@ -488,7 +488,7 @@ namespace o2scl {
     int central_deriv(func_t &&func, fp_t x, double hh, fp_t &result, 
 		      fp_t &abserr_round, fp_t &abserr_trunc, double tol) {
 
-      funct_multip2 fm2;
+      funct_multip fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=tol;
       
@@ -603,7 +603,7 @@ namespace o2scl {
      */
     int verbose;
 
-    deriv_multip2_gsl() {
+    deriv_multip_gsl() {
       tol_rel=-1.0;
       verbose=0;
       pow_tol_func=1.33;

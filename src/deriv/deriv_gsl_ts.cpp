@@ -152,7 +152,7 @@ int main(void) {
   cout << endl;
 
   double val, err2;
-  deriv_multip2_gsl dmg2;
+  deriv_multip_gsl dmg2;
   dmg2.deriv_err([](auto &&t) mutable { return difficult_fun(t); },5.5,
                  val,err2);
   

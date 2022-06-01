@@ -472,6 +472,8 @@ namespace o2scl {
  
   };
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   /** \brief Desc
    */
   template<class func_t=funct_multip<>>
@@ -652,6 +654,7 @@ namespace o2scl {
 
   };
 
+#endif
   
 }
 

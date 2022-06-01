@@ -263,6 +263,7 @@ int main(void) {
 
   if (true) {
     
+    /*
     funct f1=sin_recip<double>;
     funct_ld f2=sin_recip<long double>;
     funct_cdf25 f3=sin_recip<cpp_dec_float_25>;
@@ -272,7 +273,6 @@ int main(void) {
     funct_multip_wrapper fmw(f1,f2,f3,f4,f5,f6);
     funct_multip<> fm(fmw);
 
-    /*
     inte_multip_adapt_cern<funct_multip<>> imkb;
     double a=0.0, b=1.0, res, err, exact;
     imkb.integ_err(fm,a,b,res,err);

@@ -108,6 +108,8 @@ namespace o2scl {
     
   };
 
+#ifdef O2SCL_NEVER_DEFINED  
+
   template<class func_t=funct_multip<>>
   class inte_multip_kronrod_boost {
     
@@ -293,6 +295,7 @@ namespace o2scl {
 
   };
   
+#endif
   
 #ifndef DOXYGEN_NO_O2NS
 }
