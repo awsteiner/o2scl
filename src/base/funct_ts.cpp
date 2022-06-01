@@ -69,54 +69,13 @@ int main(void) {
   
 #endif
 
-
   fmc f2;
-  funct f2_d=std::bind(std::mem_fn<double(double)>(&fmc::func<double>),
-                       &f2,std::placeholders::_1);
-  funct_ld f2_ld=std::bind(std::mem_fn<long double(long double)>
-                           (&fmc::func<long double>),
-                           &f2,std::placeholders::_1);
-  funct_cdf25 f2_cdf25=std::bind(std::mem_fn<boost::multiprecision::number<
-                                 boost::multiprecision::cpp_dec_float<25>>
-                                 (boost::multiprecision::number<
-                                  boost::multiprecision::cpp_dec_float<25>>)>
-                                 (&fmc::func<boost::multiprecision::number<
-                                  boost::multiprecision::cpp_dec_float<25>>>),
-                                 &f2,std::placeholders::_1);
-  funct_cdf35 f2_cdf35=std::bind(std::mem_fn<boost::multiprecision::number<
-                                 boost::multiprecision::cpp_dec_float<35>>
-                                 (boost::multiprecision::number<
-                                  boost::multiprecision::cpp_dec_float<35>>)>
-                                 (&fmc::func<boost::multiprecision::number<
-                                  boost::multiprecision::cpp_dec_float<35>>>),
-                                 &f2,std::placeholders::_1);
-  funct_cdf50 f2_cdf50=std::bind(std::mem_fn<boost::multiprecision::number<
-                                 boost::multiprecision::cpp_dec_float<50>>
-                                 (boost::multiprecision::number<
-                                  boost::multiprecision::cpp_dec_float<50>>)>
-                                 (&fmc::func<boost::multiprecision::number<
-                                  boost::multiprecision::cpp_dec_float<50>>>),
-                                 &f2,std::placeholders::_1);
-  funct_cdf100 f2_cdf100=std::bind
-    (std::mem_fn<boost::multiprecision::number<
-     boost::multiprecision::cpp_dec_float<100>>
-     (boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<100>>)>
-     (&fmc::func<boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<100>>>),
-     &f2,std::placeholders::_1);
-  funct_multip_wrapper fmw(f2_d,f2_ld,f2_cdf25,f2_cdf35,
-                           f2_cdf50,f2_cdf100);
-  funct_multip fm(fmw);
-  fm.verbose=1;
-  t.test_rel(log1p(1.0e-4),fm(1.0e-4),1.0e-15,"funct_multip 1");
-  t.test_rel<long double>(log1p(1.0e-4L),fm(1.0e-4L),1.0e-18,"funct_multip 2");
-
   double val, err;
   funct_multip2 fm2;
-  fm2.eval_tol_err([f2](auto &&t) mutable
-  { return f2.func(std::forward<decltype(t)>(t)); },1.0e-4,val,err);
-  cout << fm(1.0e-4) << " " << val << endl;
+  fm2.eval_tol_err([f2](auto &&t) mutable { return f2.func(t); },
+                   1.0e-4,val,err);
+  
+  cout << log1p(1.0e-4) << " " << val << " " << err << endl;
   
   t.report();
   return 0;

@@ -151,31 +151,12 @@ int main(void) {
   t.test_rel(res,difficult_deriv(5.5),1.0e-8,"simple derivative");
   cout << endl;
 
-  funct f1=difficult_fun<double>;
-  funct_ld f2=difficult_fun<long double>;
-  funct_cdf25 f3=difficult_fun<cpp_dec_float_25>;
-  funct_cdf35 f4=difficult_fun<cpp_dec_float_35>;
-  funct_cdf50 f5=difficult_fun<cpp_dec_float_50>;
-  funct_cdf100 f6=difficult_fun<cpp_dec_float_100>;
-  funct_multip_wrapper fmw(f1,f2,f3,f4,f5,f6);
-  funct_multip<> fm(fmw);
-
-  funct f7=difficult_deriv<double>;
-  funct_ld f8=difficult_deriv<long double>;
-  funct_cdf25 f9=difficult_deriv<cpp_dec_float_25>;
-  funct_cdf35 f10=difficult_deriv<cpp_dec_float_35>;
-  funct_cdf50 f11=difficult_deriv<cpp_dec_float_50>;
-  funct_cdf100 f12=difficult_deriv<cpp_dec_float_100>;
-  funct_multip_wrapper fmw2(f7,f8,f9,f10,f11,f12);
-  funct_multip<> fm2(fmw2);
+  double val, err2;
+  deriv_multip2_gsl dmg2;
+  dmg2.deriv_err([](auto &&t) mutable { return difficult_fun(t); },5.5,
+                 val,err2);
   
-  deriv_multip_gsl<funct_multip<>> dmg;
-  dmg.verbose=2;
-  dmg.deriv_err(5.5,fm,res,err);
-  double exact=fm2(5.5);
-  cout << dtos(exact,0) << " " << dtos(res,0) << " " << err << " "
-       << abs(res-exact)/abs(exact) << endl;
-  t.test_rel(res,exact,1.0e-15,"dmg");
+  cout << "X: " << val << " " << err2 << endl;
   
   t.report();
   return 0;
