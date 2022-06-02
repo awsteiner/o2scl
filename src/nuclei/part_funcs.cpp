@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 #include <o2scl/part_funcs.h>
+#include <o2scl/nucdist.h>
 
 using namespace std;
 using namespace o2scl;
@@ -31,13 +32,12 @@ part_funcs::part_funcs() : cu(o2scl_settings.get_convert_units()) {
   rtk_alpha=0.1337;
   rtk_beta=-0.06571;
   rtk_gamma=0.04884;
-  
 }
 
 int part_funcs::load_rt00(std::string fname, bool external) {
 
-  std::string dir=o2scl::o2scl_settings.get_data_dir();
   if (!external) {
+    std::string dir=o2scl::o2scl_settings.get_data_dir();
     fname=dir+"/pf_frdm_low.o2";
   }
   
@@ -51,8 +51,8 @@ int part_funcs::load_rt00(std::string fname, bool external) {
 
 int part_funcs::load_r03(std::string fname, bool external) {
 
-  std::string dir=o2scl::o2scl_settings.get_data_dir();
   if (!external) {
+    std::string dir=o2scl::o2scl_settings.get_data_dir();
     fname=dir+"/pf_frdm_high.o2";
   }
   
@@ -172,27 +172,99 @@ double part_funcs::delta_large_iand_prime(double E, double T_MeV, double delta,
   return ret;
 } 
 
-void compare_spin_deg() {
+void part_funcs::compare_spin_deg() {
 
-  /*
+  vector<nucleus> dist;
+  nucdist_set(dist,mnmsk);
+  int comp1=0, comp2=0;
+  
+  for(size_t i=0;i<dist.size();i++) {
+    int Z=dist[i].Z;
+    int N=dist[i].N;
+
+    double g_hfb=-1.0;
+    if (hfb.is_included(Z,N)) {
+      if (hfb.get_ZN(Z,N).Jexp<99) {
+        g_hfb=2.0*hfb.get_ZN(Z,N).Jexp+1.0;
+      } else {
+        g_hfb=2.0*hfb.get_ZN(Z,N).Jth+1.0;
+      }
+    } else {
+      if (Z%2==0 && N%2==0) {
+        g_hfb=1.0;
+      } else {
+        g_hfb=2.0;
+      }
+    }
+
+    double g_rt00=-1.0;
+    for(size_t j=0;j<tab_rt00.get_nlines();j++) {
+      if (fabs(Z-tab_rt00.get("Z",j))+
+          fabs(Z+N-tab_rt00.get("A",j))<1.0e-3) {
+        g_rt00=tab_rt00.get("spin",j)*2.0+1.0;
+      }
+    }
+
+    double g_r03=-1.0;
+    for(size_t j=0;j<tab_r03.get_nlines();j++) {
+      if (fabs(Z-tab_r03.get("Z",j))+
+          fabs(Z+N-tab_r03.get("A",j))<1.0e-3) {
+        g_r03=tab_r03.get("J0",j)*2.0+1.0;
+      }
+    }
+
+    bool found=false;
+    if (g_rt00>=0.0 && g_hfb>=0.0 && fabs(g_rt00-g_hfb)>0.5) {
+      comp1++;
+      found=true;
+    }
+    if (g_rt00>=0.0 && g_r03>=0.0 && fabs(g_rt00-g_r03)>0.5) {
+      comp2++;
+      found=true;
+    }
+    if (false && found) {
+      cout << Z << " " << N << " " << g_hfb << " "
+           << g_rt00 << " " << g_r03 << endl;
+    }
+    
+  }
+
+  cout << dist.size() << " " << comp1 << " " << comp2 << endl;
+
+  return;
+}
+
+double part_funcs::get_spin_deg(int Z, int N) {
+
+  for(size_t j=0;j<tab_r03.get_nlines();j++) {
+    if (fabs(Z-tab_r03.get("Z",j))+
+        fabs(Z+N-tab_r03.get("A",j))<1.0e-3) {
+      return tab_r03.get("J0",j)*2.0+1.0;
+    }
+  }
+
+  for(size_t j=0;j<tab_rt00.get_nlines();j++) {
+    if (fabs(Z-tab_rt00.get("Z",j))+
+        fabs(Z+N-tab_rt00.get("A",j))<1.0e-3) {
+      return tab_rt00.get("spin",j)*2.0+1.0;
+    }
+  }
+
   if (hfb.is_included(Z,N)) {
     if (hfb.get_ZN(Z,N).Jexp<99) {
-      nuclei[index].g=2.0*hfb.get_ZN(Z,N).Jexp+1.0;
+      return 2.0*hfb.get_ZN(Z,N).Jexp+1.0;
     } else {
-      nuclei[index].g=2.0*hfb.get_ZN(Z,N).Jth+1.0;
+      return 2.0*hfb.get_ZN(Z,N).Jth+1.0;
     }
   } else {
     if (Z%2==0 && N%2==0) {
-      nuclei[index].g=1.0;
-      //} else if (Z%2==1 && N%2==1) {
-      //nuclei[index].g=3.0;
+      return 1.0;
     } else {
-      nuclei[index].g=2.0;
+      return 2.0;
     }
   }
-  */
-
-  return;
+  O2SCL_ERR("Not found in get_spin_deg().",o2scl::exc_esanity);
+  return 0.0;
 }
 
 int part_funcs::few78(int Z, int N, double T_K, double &pf, double &dpfdT) {
@@ -221,7 +293,7 @@ int part_funcs::shen10(int Z, int N, double T_K, double &pf, double &dpfdT,
   /// Critical temperature connecting low and high energies in MeV
   double Tc;
 
-  double g=1.0;
+  double g=get_spin_deg(Z,N);
 
   // Get the neutron and proton separation energy from FRDM
   nucmass_mnmsk::entry me=mnmsk.get_ZN(Z,N);

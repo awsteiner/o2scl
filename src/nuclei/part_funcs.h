@@ -44,26 +44,60 @@ namespace o2scl {
     
     part_funcs();
 
+    /** \brief Desc
+     */
     int few78(int Z, int N, double T, double &pf, double &dpfdT);
     
+    /** \brief Desc
+     */
     int rtk97(int Z, int N, double T, double &pf, double &dpfdT);
     
+    /** \brief Desc
+     */
     int rt00(int Z, int N, double T, double &pf, double &dpfdT);
     
+    /** \brief Desc
+     */
     int r03(int Z, int N, double T, double &pf, double &dpfdT);
 
+    /** \brief Desc
+     */
     int load_rt00(std::string fname="", bool external=false);
     
+    /** \brief Desc
+     */
     int load_r03(std::string fname="", bool external=false);
 
+    /** \brief Desc
+     */
     void compare_spin_deg();
+
+    /** \brief Desc
+     */
+    double get_spin_deg(int Z, int N);
     
-    void load() {
-      load_rt00();
-      load_r03();
-      o2scl_hdf::ame_load(ame);
-      o2scl_hdf::mnmsk_load(mnmsk);
-      o2scl_hdf::hfb_sp_load(hfb,27);
+    /** \brief Load all of the data necessary
+     */
+    void load(std::string dir="") {
+      if (dir.length()>0) {
+        load_rt00(dir+"/pf_frdm_low.o2");
+        load_r03(dir+"/pf_frdm_high.o2");
+        o2scl_hdf::ame_load_ext(ame,dir+"/ame12.o2","ame12.o2");
+        o2scl_hdf::mnmsk_load(mnmsk,"msis16",
+                              dir+"/msis16.o2");
+        o2scl_hdf::hfb_sp_load(hfb,27,dir);
+      } else {
+        load_rt00();
+        load_r03();
+        o2scl_hdf::ame_load(ame);
+        o2scl_hdf::mnmsk_load(mnmsk);
+        o2scl_hdf::hfb_sp_load(hfb,27);
+      }
+      std::cout << "rt00: " << tab_rt00.get_nlines() << std::endl;
+      std::cout << "r03: " << tab_r03.get_nlines() << std::endl;
+      std::cout << "ame: " << ame.is_included(28,28) << std::endl;
+      std::cout << "mnmsk: " << mnmsk.is_included(28,28) << std::endl;
+      std::cout << "hfb: " << hfb.is_included(28,28) << std::endl;
       return;
     }
     
@@ -93,7 +127,9 @@ namespace o2scl {
     double rtk_alpha;
     double rtk_beta;
     double rtk_gamma;
-    
+
+    /** \brief Desc
+     */
     int shen10(int Z, int N, double T, double &pf, double &dpfdT,
                int a_delta=0);
 
