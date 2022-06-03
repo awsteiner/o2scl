@@ -127,9 +127,11 @@ double part_funcs::delta_small_iand(double E, double T_MeV, double delta,
   //(1.0+E_mic*(1.0-exp(-rtk_gamma*U)/U));
   //}
   
-  // This integrand is in units of 1/MeV? Check this.
+  // a is in 1/MeV, delta, E, and T_MeV are in MeV, so the
+  // integrand is in 1/MeV
   double ret=sqrt(pi)/12.0*exp(2.0*sqrt(a*(E-delta)))/
     pow(a,1.0/4.0)/pow((E-delta),5.0/4.0)*exp(-E/T_MeV);
+  
   if (!std::isfinite(ret)) {
     cout << "a,delta,T_MeV,E: "
 	 << a << " " << delta << " " << T_MeV << " " << E << endl;
@@ -143,9 +145,14 @@ double part_funcs::delta_small_iand(double E, double T_MeV, double delta,
 
 double part_funcs::delta_small_iand_prime(double E, double T_MeV, double delta,
                                           double a) {
+  
   if (E<1.0e-200) return 0.0;
+  
+  // a is in 1/MeV, delta, E, and T_MeV are in MeV, so the
+  // integrand is in 1/MeV. 
   double ret=E/T_MeV*sqrt(pi)/12.0*exp(2.0*sqrt(a*(E-delta)))/
     pow(a,1.0/4.0)/pow((E-delta),5.0/4.0)*exp(-E/T_MeV);
+  
   if (!std::isfinite(ret)) {
     cout << "a,delta,T_MeV,E: "
 	 << a << " " << delta << " " << T_MeV << " " << E << endl;
@@ -158,7 +165,9 @@ double part_funcs::delta_small_iand_prime(double E, double T_MeV, double delta,
   
 double part_funcs::delta_large_iand(double E, double T_MeV, double delta,
                                     double Tc, double C) {
+  
   if (E<1.0e-200) return 0.0;
+  // C is in 1/MeV so the integrand is in 1/MeV
   double ret=C*exp((E-delta)/Tc)*exp(-E/T_MeV); 
   if (!std::isfinite(ret)) {
     O2SCL_ERR2("Value of delta_large_iand is not finite ",
@@ -170,6 +179,7 @@ double part_funcs::delta_large_iand(double E, double T_MeV, double delta,
 double part_funcs::delta_large_iand_prime(double E, double T_MeV, double delta,
                                           double Tc, double C) {
   if (E<1.0e-200) return 0.0;
+  // C is in 1/MeV so the integrand is in 1/MeV
   double ret=E/T_MeV*C*exp((E-delta)/Tc)*exp(-E/T_MeV); 
   if (!std::isfinite(ret)) {
     O2SCL_ERR2("Value of delta_large_iand_prime is not finite ",
@@ -244,6 +254,19 @@ void part_funcs::compare_spin_deg() {
 double part_funcs::get_spin_deg(int Z, int N) {
 
   if (spin_deg_mode==0) {
+
+    if (Z==2 && N==2) {
+      return 1.0;
+    } else if (Z==1 && N==1) {
+      return 3.0;
+    } else if (Z==1 && N==2) {
+      return 2.0;
+    } else if (Z==3 && N==1) {
+      return 5.0;
+    } else if (Z==2 && N==1) {
+      return 2.0;
+    }
+       
     for(size_t j=0;j<tab_r03.get_nlines();j++) {
       if (fabs(Z-tab_r03.get("Z",j))+
           fabs(Z+N-tab_r03.get("A",j))<1.0e-3) {
@@ -304,11 +327,18 @@ int part_funcs::shen10(int Z, int N, double T_K, double &pf, double &TdpfdT,
 
   double g=get_spin_deg(Z,N);
 
+  if (Z==1 && N==1) {
+    pf=3.0;
+    TdpfdT=0.0;
+    return 0;
+  }
+
   // Get the neutron and proton separation energy 
   
   o2scl::nucleus nuc1, nuc2;
-  double Sneut, Sprot;
-  
+  // These are stored in MeV
+  double Sneut=0.0, Sprot=0.0;
+
   if (ame.is_included(Z,N) && ame.is_included(Z-1,N) &&
       ame.is_included(Z,N-1)) {
     
@@ -327,29 +357,52 @@ int part_funcs::shen10(int Z, int N, double T_K, double &pf, double &TdpfdT,
     mnmsk.get_nucleus(Z-1,N,nuc2);
     Sprot=-(nuc1.be-nuc2.be)*hc_mev_fm;
     
+  } else {
+    Sneut=-1.0;
+    Sprot=-1.0;
+
   }
-  
-  double m=mnmsk.total_mass(Z,N);
+          
+  if (Sneut<0.0 || Sprot<0.0) {
+    pf=g;
+    TdpfdT=0.0;
+    return 0;
+  }
+
+  // The nuclear mass in 1/fm
+  double m=nuc1.m;//mnmsk.total_mass(Z,N);
   double n0=0.16;
   
   double res, err, ret, ret_prime, res_prime, err_prime;
-  
+
+  // zEd is in MeV
   double zEd=min(Sneut,Sprot)/2.0;
+  // zR is in 1/fm  
   double zR=1.25*cbrt(Z+N-1.0);
+  // zER is in MeV since the the nuclear mass is in 1/fm
   double zER=0.5/m/zR/zR*hc_mev_fm;
+  // zEc is in MeV
   double zEc=(Z-1.0)*fine_structure/zR*hc_mev_fm;
+  // zEt is in MeV
   double zEt=min(Sneut+zER,Sprot+zER+zEc/2.0);
+  // zrA is in fm
   double zrA=cbrt(3.0*(N+Z)/4.0/pi/n0);
-  
+
+  // delta_p is in MeV
   double delta_p=11.0/sqrt(Z+N)*
     (1.0+pow(-1.0,Z)/2.0+pow(-1.0,N)/2.0);
 
   if (a_delta==0) {
     if (Z<=30) {
+      // a is in 1/MeV
       a=0.052*pow(N+Z,1.2);
+      // delta is in MeV
       delta=delta_p-80.0/(Z+N);
+      cout << "a,delta: " << a << " " << delta << endl;
     } else {
+      // a is in 1/MeV
       a=0.125*(N+Z);
+      // delta is in MeV
       delta=delta_p-80.0/(Z+N)-0.5;
     }
   }
@@ -370,9 +423,14 @@ int part_funcs::shen10(int Z, int N, double T_K, double &pf, double &TdpfdT,
   }
   
   if (delta>zEd) {
+
+    cout << "delta,zEd: " << delta << " " << zEd << endl;
     
+    // MeV
     delta=zEd;
+    // MeV
     Tc=1.0/(-1.25/delta+sqrt(a)/sqrt(delta));
+    // 1/MeV
     C=sqrt(pi)/12.0*pow(a,-0.25)*pow(delta,-1.25)*
       exp(1.25+sqrt(a*delta));
     
@@ -404,14 +462,19 @@ int part_funcs::shen10(int Z, int N, double T_K, double &pf, double &TdpfdT,
                    "eos_nuclei::eos_fixed_dist()",
                    o2scl::exc_esanity);
       }
+      
       ret=iqg.integ_err(f1,2.0*zEd,zEt,res,err)+
         iqg.integ_err(f2,zEd,2.0*zEd,res,err);
       ret_prime=iqg.integ_err(f1_prime,2.0*zEd,zEt,res_prime,err_prime)+
         iqg.integ_err(f2_prime,zEd,2.0*zEd,res_prime,err_prime);
+      
     } else {
+      
       ret=iqg.integ_err(f2,zEd,zEt,res,err);
       ret_prime=iqg.integ_err(f2_prime,zEd,zEt,res_prime,err_prime);
+      
     }
+    
   } else {
     
     if (!std::isfinite(zEd)) {

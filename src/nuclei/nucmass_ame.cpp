@@ -149,10 +149,18 @@ nucmass_ame::entry nucmass_ame::get_ZN(int l_Z, int l_N) {
 	      exc_einval);
     return ret;
   }
-  for(size_t i=0;i<n;i++) {
+  bool found=false;
+  for(size_t i=0;i<n && found==false;i++) {
     if (mass[i].Z==l_Z && mass[i].N==l_N) {
       ret=mass[i];
+      found=true;
     }
+  }
+  if (found==false) {
+    std::string err=((std::string)"Nucleus with (Z,N)=(")+
+      o2scl::itos(l_Z)+","+o2scl::itos(l_N)+") not found in "+
+      "nucmass_ame::get_ZN().";
+    O2SCL_ERR(err.c_str(),exc_einval);
   }
   return ret;
 }

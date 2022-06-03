@@ -36,7 +36,7 @@
 
 namespace o2scl {
 
-  /** \brief Desc
+  /** \brief Partition functions for nuclei
    */
   class part_funcs {
     
@@ -44,39 +44,41 @@ namespace o2scl {
     
     part_funcs();
 
-    /** \brief Desc
+    /** \brief Partition functions from Fowler et al. (1978)
      */
     int few78(int Z, int N, double T, double &pf, double &TdpfdT);
     
-    /** \brief Desc
+    /** \brief Partition functions from Rauscher et al. (1997)
      */
     int rtk97(int Z, int N, double T, double &pf, double &TdpfdT);
     
-    /** \brief Desc
+    /** \brief Partition functions from Rauscher et al. (2000)
      */
     int rt00(int Z, int N, double T, double &pf, double &TdpfdT);
     
-    /** \brief Desc
+    /** \brief Partition functions from Rauscher et al. (2003)
      */
     int r03(int Z, int N, double T, double &pf, double &TdpfdT);
 
-    /** \brief Desc
+    /** \brief Load Rauscher et al. (2000) table
      */
     int load_rt00(std::string fname="", bool external=false);
     
-    /** \brief Desc
+    /** \brief Load Rauscher et al. (2003) table
      */
     int load_r03(std::string fname="", bool external=false);
 
-    /** \brief Desc
+    /** \brief Compare spin degeneracies from HFB and the 
+        Rauscher et al. tables
      */
     void compare_spin_deg();
 
-    /** \brief Desc
+    /** \brief Get the spin degeneracy depending on the value
+        of \ref spin_deg_mode
      */
     double get_spin_deg(int Z, int N);
     
-    /** \brief Desc
+    /** \brief Mode for computing spin degeneracies
      */
     int spin_deg_mode;
 
@@ -110,29 +112,32 @@ namespace o2scl {
     /// For unit conversions (set in constructor)
     convert_units<double> &cu;
     
-    /// Desc
+    /// The Rauscher et al. (2000) table
     table_units<> tab_rt00;
 
-    /// Desc
+    /// The Rauscher (2003) table
     table_units<> tab_r03;
 
-    /// Desc
+    /// Moller et al. masses from the FRDM
     nucmass_mnmsk mnmsk;
 
-    /// Desc
+    /// Atomic mass evaluation masses
     nucmass_ame ame;
 
-    /// Desc
+    /// HFB mass formula for an alternate spin degeneracy
     nucmass_hfb_sp hfb;
     
     /// Integrator
     o2scl::inte_qag_gsl<> iqg;
 
+    /// Parameters from Rauscher et al. (1997)
+    //@{
     double rtk_alpha;
     double rtk_beta;
     double rtk_gamma;
+    //@}
 
-    /** \brief Desc
+    /** \brief Partition function formalism from Shen et al. (2010)
      */
     int shen10(int Z, int N, double T, double &pf, double &TdpfdT,
                int a_delta=0);
