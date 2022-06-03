@@ -46,19 +46,19 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int few78(int Z, int N, double T, double &pf, double &dpfdT);
+    int few78(int Z, int N, double T, double &pf, double &TdpfdT);
     
     /** \brief Desc
      */
-    int rtk97(int Z, int N, double T, double &pf, double &dpfdT);
+    int rtk97(int Z, int N, double T, double &pf, double &TdpfdT);
     
     /** \brief Desc
      */
-    int rt00(int Z, int N, double T, double &pf, double &dpfdT);
+    int rt00(int Z, int N, double T, double &pf, double &TdpfdT);
     
     /** \brief Desc
      */
-    int r03(int Z, int N, double T, double &pf, double &dpfdT);
+    int r03(int Z, int N, double T, double &pf, double &TdpfdT);
 
     /** \brief Desc
      */
@@ -76,6 +76,10 @@ namespace o2scl {
      */
     double get_spin_deg(int Z, int N);
     
+    /** \brief Desc
+     */
+    int spin_deg_mode;
+
     /** \brief Load all of the data necessary
      */
     void load(std::string dir="") {
@@ -130,7 +134,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    int shen10(int Z, int N, double T, double &pf, double &dpfdT,
+    int shen10(int Z, int N, double T, double &pf, double &TdpfdT,
                int a_delta=0);
 
     /** \brief Integrand for partition function when \f$ \delta \f$

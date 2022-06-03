@@ -32,6 +32,7 @@ part_funcs::part_funcs() : cu(o2scl_settings.get_convert_units()) {
   rtk_alpha=0.1337;
   rtk_beta=-0.06571;
   rtk_gamma=0.04884;
+  spin_deg_mode=0;
 }
 
 int part_funcs::load_rt00(std::string fname, bool external) {
@@ -64,45 +65,50 @@ int part_funcs::load_r03(std::string fname, bool external) {
   return 0;
 }
 
-int part_funcs::r03(int Z, int N, double T_K, double &pf, double &dpfdT) {
+int part_funcs::rt00(int Z, int N, double T_K, double &pf, double &TdpfdT) {
 
   int A=Z+N;
   interp<vector<double>> itp(itp_linear);
-  for(size_t i=0;i<tab_r03.get_nlines();i++) {
-    if (fabs(tab_r03.get("Z",i)-Z)+fabs(tab_r03.get("A",i)-A)<1.0e-4) {
+  for(size_t i=0;i<tab_rt00.get_nlines();i++) {
+    if (fabs(tab_rt00.get("Z",i)-Z)+fabs(tab_rt00.get("A",i)-A)<1.0e-4) {
       vector<double> x={0.01,0.15,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,
         1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,6.0,7.0,8.0,9.0,10.0};
+      for(size_t j=0;j<x.size();j++) x[j]*=1.0e9;
       vector<double> y;
       for(size_t j=3;j<27;j++) {
-        y.push_back(tab_r03.get(tab_r03.get_column_name(j),i));
+        y.push_back(tab_rt00.get(tab_rt00.get_column_name(j),i));
       }
-      cout << x.size() << " " << y.size() << endl;
-      exit(-1);
       pf=itp.eval(T_K,x.size(),x,y);
-      dpfdT=itp.eval(T_K,x.size(),x,y);
+      TdpfdT=T_K*itp.deriv(T_K,x.size(),x,y);
+      double g=get_spin_deg(Z,N);
+      pf*=g;
+      TdpfdT*=g;
       return 0;
     }
   }
   return 1;
 }
 
-int part_funcs::rt00(int Z, int N, double T_K, double &pf, double &dpfdT) {
+int part_funcs::r03(int Z, int N, double T_K, double &pf, double &TdpfdT) {
 
   int A=Z+N;
   interp<vector<double>> itp(itp_linear);
-  for(size_t i=0;i<tab_rt00.get_nlines();i++) {
-    if (fabs(tab_rt00.get("Z",i)-Z)+fabs(tab_rt00.get("A",i)-A)<1.0e-4) {
+  for(size_t i=0;i<tab_r03.get_nlines();i++) {
+    if (fabs(tab_r03.get("Z",i)-Z)+fabs(tab_r03.get("A",i)-A)<1.0e-4) {
       vector<double> x={12,14,16,18,20,22,24,26,28,30,35,40,45,50,
         55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,135,
-        140,145,150,155,160,165,170,175,180,190,200,210,220,230,240,250,275};
+        140,145,150,155,160,165,170,175,180,190,200,210,220,230,240,
+        250,275};
+      for(size_t j=0;j<x.size();j++) x[j]*=1.0e9;
       vector<double> y;
       for(size_t j=3;j<3+x.size();j++) {
-        y.push_back(tab_rt00.get(tab_rt00.get_column_name(j),i));
+        y.push_back(tab_r03.get(tab_r03.get_column_name(j),i));
       }
-      cout << x.size() << " " << y.size() << endl;
-      exit(-1);
       pf=itp.eval(T_K,x.size(),x,y);
-      dpfdT=itp.eval(T_K,x.size(),x,y);
+      TdpfdT=T_K*itp.deriv(T_K,x.size(),x,y);
+      double g=get_spin_deg(Z,N);
+      pf*=g;
+      TdpfdT*=g;
       return 0;
     }
   }
@@ -111,6 +117,7 @@ int part_funcs::rt00(int Z, int N, double T_K, double &pf, double &dpfdT) {
 
 double part_funcs::delta_small_iand(double E, double T_MeV, double delta,
                                     double a) {
+  
   //, int a_delta, int Z, int N,
   //double E_mic) {
   if (E<1.0e-200) return 0.0;
@@ -236,17 +243,19 @@ void part_funcs::compare_spin_deg() {
 
 double part_funcs::get_spin_deg(int Z, int N) {
 
-  for(size_t j=0;j<tab_r03.get_nlines();j++) {
-    if (fabs(Z-tab_r03.get("Z",j))+
-        fabs(Z+N-tab_r03.get("A",j))<1.0e-3) {
-      return tab_r03.get("J0",j)*2.0+1.0;
+  if (spin_deg_mode==0) {
+    for(size_t j=0;j<tab_r03.get_nlines();j++) {
+      if (fabs(Z-tab_r03.get("Z",j))+
+          fabs(Z+N-tab_r03.get("A",j))<1.0e-3) {
+        return tab_r03.get("J0",j)*2.0+1.0;
+      }
     }
-  }
-
-  for(size_t j=0;j<tab_rt00.get_nlines();j++) {
-    if (fabs(Z-tab_rt00.get("Z",j))+
-        fabs(Z+N-tab_rt00.get("A",j))<1.0e-3) {
-      return tab_rt00.get("spin",j)*2.0+1.0;
+    
+    for(size_t j=0;j<tab_rt00.get_nlines();j++) {
+      if (fabs(Z-tab_rt00.get("Z",j))+
+          fabs(Z+N-tab_rt00.get("A",j))<1.0e-3) {
+        return tab_rt00.get("spin",j)*2.0+1.0;
+      }
     }
   }
 
@@ -267,15 +276,15 @@ double part_funcs::get_spin_deg(int Z, int N) {
   return 0.0;
 }
 
-int part_funcs::few78(int Z, int N, double T_K, double &pf, double &dpfdT) {
-  return shen10(Z,N,T_K,pf,dpfdT,0);
+int part_funcs::few78(int Z, int N, double T_K, double &pf, double &TdpfdT) {
+  return shen10(Z,N,T_K,pf,TdpfdT,0);
 }
 
-int part_funcs::rtk97(int Z, int N, double T_K, double &pf, double &dpfdT) {
-  return shen10(Z,N,T_K,pf,dpfdT,1);
+int part_funcs::rtk97(int Z, int N, double T_K, double &pf, double &TdpfdT) {
+  return shen10(Z,N,T_K,pf,TdpfdT,1);
 }
   
-int part_funcs::shen10(int Z, int N, double T_K, double &pf, double &dpfdT,
+int part_funcs::shen10(int Z, int N, double T_K, double &pf, double &TdpfdT,
                        int a_delta) {
 
   /// Temperature in MeV
@@ -295,10 +304,31 @@ int part_funcs::shen10(int Z, int N, double T_K, double &pf, double &dpfdT,
 
   double g=get_spin_deg(Z,N);
 
-  // Get the neutron and proton separation energy from FRDM
-  nucmass_mnmsk::entry me=mnmsk.get_ZN(Z,N);
-  double Sneut=me.S1n;
-  double Sprot=me.S1p;
+  // Get the neutron and proton separation energy 
+  
+  o2scl::nucleus nuc1, nuc2;
+  double Sneut, Sprot;
+  
+  if (ame.is_included(Z,N) && ame.is_included(Z-1,N) &&
+      ame.is_included(Z,N-1)) {
+    
+    ame.get_nucleus(Z,N,nuc1);
+    ame.get_nucleus(Z,N-1,nuc2);
+    Sneut=-(nuc1.be-nuc2.be)*hc_mev_fm;
+    ame.get_nucleus(Z-1,N,nuc2);
+    Sprot=-(nuc1.be-nuc2.be)*hc_mev_fm;
+    
+  } else if (mnmsk.is_included(Z,N) && mnmsk.is_included(Z-1,N) &&
+	     mnmsk.is_included(Z,N-1)) {
+    
+    mnmsk.get_nucleus(Z,N,nuc1);
+    mnmsk.get_nucleus(Z,N-1,nuc2);
+    Sneut=-(nuc1.be-nuc2.be)*hc_mev_fm;
+    mnmsk.get_nucleus(Z-1,N,nuc2);
+    Sprot=-(nuc1.be-nuc2.be)*hc_mev_fm;
+    
+  }
+  
   double m=mnmsk.total_mass(Z,N);
   double n0=0.16;
   
@@ -409,7 +439,7 @@ int part_funcs::shen10(int Z, int N, double T_K, double &pf, double &dpfdT,
   }
   
   pf=g+res;
-  dpfdT=res_prime/T_MeV;
+  TdpfdT=res_prime/T_MeV;
   
   return 0;
 }
