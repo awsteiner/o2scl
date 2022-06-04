@@ -150,10 +150,10 @@ namespace o2scl {
     double delta_small_iand(double E, double T_MeV, double delta,
                             double a);
     
-    /** \brief Integrand for derivative of partition function
-        with respect to temperature when \f$ \delta \f$
-        is smaller than \f$ E_d \f$
-
+    /** \brief Integrand for derivative of partition function with
+        respect to temperature when \f$ \delta \f$ is smaller than \f$
+        E_d \f$
+        
         From eq. (26) & (27) in Shen 10.
     */
     double delta_small_iand_prime(double E, double T_MeV, double delta,

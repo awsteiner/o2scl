@@ -253,20 +253,20 @@ void part_funcs::compare_spin_deg() {
 
 double part_funcs::get_spin_deg(int Z, int N) {
 
+  if (Z==2 && N==2) {
+    return 1.0;
+  } else if (Z==1 && N==1) {
+    return 3.0;
+  } else if (Z==1 && N==2) {
+    return 2.0;
+  } else if (Z==3 && N==1) {
+    return 5.0;
+  } else if (Z==2 && N==1) {
+    return 2.0;
+  }
+  
   if (spin_deg_mode==0) {
 
-    if (Z==2 && N==2) {
-      return 1.0;
-    } else if (Z==1 && N==1) {
-      return 3.0;
-    } else if (Z==1 && N==2) {
-      return 2.0;
-    } else if (Z==3 && N==1) {
-      return 5.0;
-    } else if (Z==2 && N==1) {
-      return 2.0;
-    }
-       
     for(size_t j=0;j<tab_r03.get_nlines();j++) {
       if (fabs(Z-tab_r03.get("Z",j))+
           fabs(Z+N-tab_r03.get("A",j))<1.0e-3) {
@@ -295,7 +295,9 @@ double part_funcs::get_spin_deg(int Z, int N) {
       return 2.0;
     }
   }
+  
   O2SCL_ERR("Not found in get_spin_deg().",o2scl::exc_esanity);
+  
   return 0.0;
 }
 
@@ -398,7 +400,6 @@ int part_funcs::shen10(int Z, int N, double T_K, double &pf, double &TdpfdT,
       a=0.052*pow(N+Z,1.2);
       // delta is in MeV
       delta=delta_p-80.0/(Z+N);
-      cout << "a,delta: " << a << " " << delta << endl;
     } else {
       // a is in 1/MeV
       a=0.125*(N+Z);
@@ -424,8 +425,6 @@ int part_funcs::shen10(int Z, int N, double T_K, double &pf, double &TdpfdT,
   
   if (delta>zEd) {
 
-    cout << "delta,zEd: " << delta << " " << zEd << endl;
-    
     // MeV
     delta=zEd;
     // MeV
@@ -500,9 +499,11 @@ int part_funcs::shen10(int Z, int N, double T_K, double &pf, double &TdpfdT,
     ret=iqg.integ_err(f1,zEd,zEt,res,err);
     ret_prime=iqg.integ_err(f1_prime,zEd,zEt,res_prime,err_prime);
   }
-  
+
   pf=g+res;
-  TdpfdT=res_prime/T_MeV;
+  // res_prime is, T \Omega^{\prime}, i.e. Eq. 26 of Shen et al. (2010),
+  // which is unitless
+  TdpfdT=res_prime;
   
   return 0;
 }
