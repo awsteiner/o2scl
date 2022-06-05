@@ -24,7 +24,7 @@
 #define O2SCL_PART_FUNCS_H
 
 /** \file part_funcs.h
-    \brief File defining \ref o2scl::nucmass_dz_table and other classes
+    \brief File defining \ref o2scl::part_funcs
 */
 
 #include <o2scl/table_units.h>
@@ -37,6 +37,9 @@
 namespace o2scl {
 
   /** \brief Partition functions for nuclei
+
+      \note The partition functions returned by this class have
+      not been divided by the spin degeneracy factor.
    */
   class part_funcs {
     
@@ -44,6 +47,8 @@ namespace o2scl {
     
     part_funcs();
 
+    /// \name Obtain partition functions and first derivatives
+    //@{
     /** \brief Partition functions from Fowler et al. (1978)
      */
     int few78(int Z, int N, double T, double &pf, double &TdpfdT);
@@ -60,6 +65,13 @@ namespace o2scl {
      */
     int r03(int Z, int N, double T, double &pf, double &TdpfdT);
 
+    /** \brief Partition functions from Goriely et al. (2008)
+     */
+    int ghk08(int Z, int N, double T, double &pf, double &TdpfdT);
+    //@}
+
+    /// \name Load data files
+    //@{
     /** \brief Load Rauscher et al. (2000) table
      */
     int load_rt00(std::string fname="", bool external=false);
@@ -68,6 +80,40 @@ namespace o2scl {
      */
     int load_r03(std::string fname="", bool external=false);
 
+    /** \brief Load Goriely et al. (2008) table
+     */
+    int load_g08(std::string fname="", bool external=false);
+
+    /** \brief Load all of the data necessary
+     */
+    void load(std::string dir="") {
+      if (dir.length()>0) {
+        load_rt00(dir+"/pf_frdm_low.o2");
+        load_r03(dir+"/pf_frdm_high.o2");
+        load_g08(dir+"/bruslib.o2");
+        o2scl_hdf::ame_load_ext(ame,dir+"/ame20.o2","ame20.o2");
+        o2scl_hdf::mnmsk_load(mnmsk,"msis16",
+                              dir+"/msis16.o2");
+        o2scl_hdf::hfb_sp_load(hfb,27,dir);
+      } else {
+        load_rt00();
+        load_r03();
+        load_g08();
+        o2scl_hdf::ame_load(ame);
+        o2scl_hdf::mnmsk_load(mnmsk);
+        o2scl_hdf::hfb_sp_load(hfb,27);
+      }
+      std::cout << "rt00: " << tab_rt00.get_nlines() << std::endl;
+      std::cout << "r03: " << tab_r03.get_nlines() << std::endl;
+      std::cout << "ame: " << ame.is_included(28,28) << std::endl;
+      std::cout << "mnmsk: " << mnmsk.is_included(28,28) << std::endl;
+      std::cout << "hfb: " << hfb.is_included(28,28) << std::endl;
+      return;
+    }
+    //@}
+
+    /// \naem Compute spin degeneracies
+    //@{
     /** \brief Compare spin degeneracies from HFB and the 
         Rauscher et al. tables
      */
@@ -81,43 +127,24 @@ namespace o2scl {
     /** \brief Mode for computing spin degeneracies
      */
     int spin_deg_mode;
+    //@}
 
-    /** \brief Load all of the data necessary
-     */
-    void load(std::string dir="") {
-      if (dir.length()>0) {
-        load_rt00(dir+"/pf_frdm_low.o2");
-        load_r03(dir+"/pf_frdm_high.o2");
-        o2scl_hdf::ame_load_ext(ame,dir+"/ame20.o2","ame20.o2");
-        o2scl_hdf::mnmsk_load(mnmsk,"msis16",
-                              dir+"/msis16.o2");
-        o2scl_hdf::hfb_sp_load(hfb,27,dir);
-      } else {
-        load_rt00();
-        load_r03();
-        o2scl_hdf::ame_load(ame);
-        o2scl_hdf::mnmsk_load(mnmsk);
-        o2scl_hdf::hfb_sp_load(hfb,27);
-      }
-      std::cout << "rt00: " << tab_rt00.get_nlines() << std::endl;
-      std::cout << "r03: " << tab_r03.get_nlines() << std::endl;
-      std::cout << "ame: " << ame.is_included(28,28) << std::endl;
-      std::cout << "mnmsk: " << mnmsk.is_included(28,28) << std::endl;
-      std::cout << "hfb: " << hfb.is_included(28,28) << std::endl;
-      return;
-    }
-    
   protected:
 
-    /// For unit conversions (set in constructor)
-    convert_units<double> &cu;
-    
+    /// \name Partition function tables [protected]
+    //@{
     /// The Rauscher et al. (2000) table
     table_units<> tab_rt00;
 
     /// The Rauscher (2003) table
     table_units<> tab_r03;
 
+    /// The Goriely et al. (2008) table
+    table_units<> tab_g08;
+    //@}
+
+    /// \name Nuclear masses, etc.
+    //@{
     /// Moller et al. masses from the FRDM
     nucmass_mnmsk mnmsk;
 
@@ -126,7 +153,11 @@ namespace o2scl {
 
     /// HFB mass formula for an alternate spin degeneracy
     nucmass_hfb_sp hfb;
+    //@}
     
+    /// For unit conversions (set in constructor)
+    convert_units<double> &cu;
+
     /// Integrator
     o2scl::inte_qag_gsl<> iqg;
 
@@ -142,6 +173,8 @@ namespace o2scl {
     int shen10(int Z, int N, double T, double &pf, double &TdpfdT,
                int a_delta=0);
 
+    /// \name Integrands for analytical partition functions [protected]
+    //@{
     /** \brief Integrand for partition function when \f$ \delta \f$
         is smaller than \f$ E_d \f$
 
@@ -173,6 +206,7 @@ namespace o2scl {
     */
     double delta_large_iand_prime(double E, double T_MeV, double delta,
                                   double Tc, double C);
+    //@}
     
   };
 
