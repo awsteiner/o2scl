@@ -88,7 +88,7 @@ namespace o2scl {
       if (dir.length()>0) {
         load_rt00(dir+"/pf_frdm_low.o2");
         load_r03(dir+"/pf_frdm_high.o2");
-        o2scl_hdf::ame_load_ext(ame,dir+"/ame12.o2","ame12.o2");
+        o2scl_hdf::ame_load_ext(ame,dir+"/ame20.o2","ame20.o2");
         o2scl_hdf::mnmsk_load(mnmsk,"msis16",
                               dir+"/msis16.o2");
         o2scl_hdf::hfb_sp_load(hfb,27,dir);
