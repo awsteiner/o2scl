@@ -95,7 +95,7 @@ int part_funcs::rt00(int Z, int N, double T_K, double &pf, double &TdpfdT) {
       }
       pf=itp.eval(T_K,x.size(),x,y);
       TdpfdT=T_K*itp.deriv(T_K,x.size(),x,y);
-      double g=get_spin_deg(Z,N);
+      double g=tab_rt00.get("spin",i)*2.0+1.0;
       pf*=g;
       TdpfdT*=g;
       return 0;
@@ -121,7 +121,7 @@ int part_funcs::r03(int Z, int N, double T_K, double &pf, double &TdpfdT) {
       }
       pf=itp.eval(T_K,x.size(),x,y);
       TdpfdT=T_K*itp.deriv(T_K,x.size(),x,y);
-      double g=get_spin_deg(Z,N);
+      double g=tab_r03.get("J0",i)*2.0+1.0;
       pf*=g;
       TdpfdT*=g;
       return 0;
@@ -192,8 +192,7 @@ double part_funcs::delta_small_iand_prime(double E, double T_MeV, double delta,
   // a is in 1/MeV, delta, E, and T_MeV are in MeV, so the
   // integrand is in 1/MeV. 
   double ret=E/T_MeV*sqrt(pi)/12.0*exp(2.0*sqrt(a*(E-delta)))/
-    pow(a,1.0/4.0)/pow((E-delta),5.0/4.0)*exp(-E/T_MeV);
-  
+    pow(a,1.0/4.0)/pow((E-delta),5.0/4.0)*exp(-E/T_MeV);  
   if (!std::isfinite(ret)) {
     cout << "a,delta,T_MeV,E: "
 	 << a << " " << delta << " " << T_MeV << " " << E << endl;
@@ -308,6 +307,12 @@ double part_funcs::get_spin_deg(int Z, int N) {
   
   if (spin_deg_mode==0) {
 
+    for(size_t j=0;j<tab_g08.get_nlines();j++) {
+      if (fabs(Z-tab_g08.get("Z",j))+
+          fabs(N-tab_g08.get("N",j))<1.0e-3) {
+        return tab_g08.get("spin",j)*2.0+1.0;
+      }
+    }
     for(size_t j=0;j<tab_r03.get_nlines();j++) {
       if (fabs(Z-tab_r03.get("Z",j))+
           fabs(Z+N-tab_r03.get("A",j))<1.0e-3) {
