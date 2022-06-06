@@ -74,7 +74,7 @@ int main(void) {
   funct_multip fm2;
   fm2.eval_tol_err([f2](auto &&t) mutable { return f2.func(t); },
                    1.0e-4,val,err);
-  
+
   cout << log1p(1.0e-4) << " " << val << " " << err << endl;
   
   t.report();

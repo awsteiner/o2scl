@@ -391,6 +391,20 @@ namespace o2scl {
 
   /** \brief Use multiprecision to automatically evaluate a function to
       a specified level of precision
+
+      The function must be specified as a template, i.e. it must be of
+      the form <tt>template<class fp_t> fp_t function(fp_t x)</tt>.
+      
+      This class will fail to evalate a function with the requested
+      precision if:
+      - The user-specified result data type does not have enough
+      precision to store the result 
+      - The requested precision is near or smaller than 1.0e-50
+      - The function is noisy, non-deterministic, or is not 
+      continuous in the local neighborhood
+
+      \note The algorithm attempts not to be wasteful, but is not
+      necessarily optimized for speed. 
   */
   class funct_multip {
 
@@ -438,16 +452,45 @@ namespace o2scl {
     template<typename func_t, class fp_t>
     int eval_tol_err(func_t &&f, const fp_t &x, fp_t &val,
                      fp_t &err, double tol_loc=-1) const {
+
+      /// Tolerance choice and verification logic
       
       if (tol_loc<=0.0 && tol_rel<=0.0) {
         tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10);
-      } else {
+        if (verbose>0) {
+          std::cout << "Set tolerance from data type to: "
+                    << tol_loc << std::endl;
+        }
+      } else if (tol_loc<=0.0) {
+        if (tol_rel<pow(10.0,-std::numeric_limits<fp_t>::digits10)) {
+          std::cerr << "Class data member tol_rel is " << tol_rel
+                    << " but data type only stores "
+                    << std::numeric_limits<fp_t>::digits10
+                    << " digits." << std::endl;
+          O2SCL_ERR("Cannot compute to required precision",
+                    o2scl::exc_einval);
+        }
         tol_loc=tol_rel;
+        if (verbose>0) {
+          std::cout << "Set tolerance from value of tol_rel to: "
+                    << tol_loc << std::endl;
+        }
+      } else {
+        if (tol_loc<pow(10.0,-std::numeric_limits<fp_t>::digits10)) {
+          std::cerr << "Caller requested tolerance " << tol_loc
+                    << " but data type only stores "
+                    << std::numeric_limits<fp_t>::digits10
+                    << " digits." << std::endl;
+          O2SCL_ERR("Cannot compute to required precision",
+                    o2scl::exc_einval);
+        } else if (verbose>0) {
+          std::cout << "Set tolerance from user-specified value to: "
+                    << tol_loc << std::endl;
+        }
       }
-      if (verbose>0) {
-        std::cout << "Set tol to: " << tol_loc << std::endl;
-      }
-    
+
+      /// First pass, compare double and long double
+      
       double x_d=static_cast<double>(x);
       long double x_ld=static_cast<long double>(x);
       double y_d=f(x_d);
@@ -471,6 +514,8 @@ namespace o2scl {
                   << dtos(err,0) << " " << tol_loc << std::endl;
       }
     
+      /// Second pass, compare long double and 25-digit precision
+
       cpp_dec_float_25 x_cdf25=static_cast<cpp_dec_float_25>(x);
       cpp_dec_float_25 y_cdf25=f(x_cdf25);
 
@@ -492,6 +537,8 @@ namespace o2scl {
                   << dtos(err,0) << " " << tol_loc << std::endl;
       }
     
+      /// Third pass, compare 25- and 35-digit precision
+
       cpp_dec_float_35 x_cdf35=static_cast<cpp_dec_float_35>(x);
       cpp_dec_float_35 y_cdf35=f(x_cdf35);
         
@@ -513,6 +560,8 @@ namespace o2scl {
                   << dtos(err,0) << " " << tol_loc << std::endl;
       }
     
+      /// Fourth pass, compare 35- and 50-digit precision
+      
       cpp_dec_float_50 x_cdf50=static_cast<cpp_dec_float_50>(x);
       cpp_dec_float_50 y_cdf50=f(x_cdf50);
     
@@ -534,6 +583,8 @@ namespace o2scl {
                   << dtos(err,0) << " " << tol_loc << std::endl;
       }
     
+      /// Final pass, compare 50- and 100-digit precision
+      
       cpp_dec_float_100 x_cdf100=static_cast<cpp_dec_float_100>(x);
       cpp_dec_float_100 y_cdf100=f(x_cdf100);
     
@@ -556,6 +607,8 @@ namespace o2scl {
       
       }
     
+      /// Algorithm failed
+      
       O2SCL_CONV2("Failed to compute with requested accuracy ",
                   "in funct_multip::eval_tol_err().",
                   o2scl::exc_efailed,err_nonconv);
