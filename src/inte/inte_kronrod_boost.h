@@ -33,9 +33,7 @@
 
 #include <o2scl/inte.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Gauss-Kronrod integration class (Boost)
 
@@ -99,21 +97,50 @@ namespace o2scl {
     }
     return 0;
   }
-  
+    
     /// L1 norm
     fp_t L1norm;
     
-    /// Number of refinement levels in last integral computed
-    size_t levels;
-    
   };
 
-#ifdef O2SCL_NEVER_DEFINED  
-
-  template<class func_t=funct_multip<>>
+  template<size_t rule=15>
   class inte_multip_kronrod_boost {
     
   protected:
+    
+    /// Maximum depth
+    size_t max_depth;
+
+    /** \brief Integrate function \c func from \c a to \c b and place
+        the result in \c res and the error in \c err
+    */
+    template <typename func_t, class fp_t>
+    int integ_err_int(func_t &&func, fp_t a, fp_t b, 
+                      fp_t &res, fp_t &err, fp_t &L1norm,
+                      double target_tol, double integ_tol, double func_tol) {
+      
+      funct_multip fm2;
+      fm2.err_nonconv=false;
+      fm2.tol_rel=func_tol;
+
+      std::function<fp_t(fp_t)> fx=[fm2,func](fp_t x) mutable -> fp_t
+      { return fm2(func,x); };
+
+      res=boost::math::quadrature::gauss_kronrod<fp_t,rule>::integrate
+        (fx,a,b,max_depth,target_tol,&err,&L1norm);
+
+      if (verbose>1) {
+        std::cout << "inte_multip_kronrod_boost::integ_err() "
+                  << "tols(target,integ,func),err:\n  "
+                  << target_tol << " " << integ_tol << " "
+                  << func_tol << " " << err << std::endl;
+      }
+
+      if (err>integ_tol) {
+        return 1;
+      }
+      return 0;
+    }
     
     typedef boost::multiprecision::number<
     boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
@@ -124,18 +151,18 @@ namespace o2scl {
     typedef boost::multiprecision::number<
       boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
 
-    /// \name The derivative objects for varying levels of precision
-    //@{
-    inte_kronrod_boost<func_t,15,double> ikb_d;
-    inte_kronrod_boost<func_t,15,long double> ikb_ld;
-    inte_kronrod_boost<func_t,15,cpp_dec_float_25> ikb_cdf25;
-    inte_kronrod_boost<func_t,15,cpp_dec_float_35> ikb_cdf35;
-    inte_kronrod_boost<func_t,15,cpp_dec_float_50> ikb_cdf50;
-    inte_kronrod_boost<func_t,15,cpp_dec_float_100> ikb_cdf100;
-    //@}
-    
   public:
 
+    /** \brief Set the maximum number of interval splittings
+     */
+    void set_max_depth(size_t md) {
+      max_depth=md;
+      return;
+    }
+    
+    /// Number of refinement levels in last integral computed
+    size_t levels;
+    
     /** \brief Relative tolerance
      */
     double tol_rel;
@@ -149,156 +176,207 @@ namespace o2scl {
      */
     int verbose;
 
+    bool err_nonconv;
+    
     inte_multip_kronrod_boost() {
       tol_rel=-1.0;
       verbose=0;
       pow_tol_func=1.33;
-      ikb_d.err_nonconv=false;
-      ikb_ld.err_nonconv=false;
-      ikb_cdf25.err_nonconv=false;
-      ikb_cdf35.err_nonconv=false;
-      ikb_cdf50.err_nonconv=false;
-      ikb_cdf100.err_nonconv=false;
+      max_depth=15;
+      err_nonconv=true;
     }
 
     /** \brief Calculate the first derivative of \c func  w.r.t. x and 
 	uncertainty
     */
-    template<class fp_t>
-    int integ_err(func_t &func, fp_t a, fp_t b, 
-                  fp_t &res, fp_t &err, double tol_loc=-1.0) {
+    template <typename func_t, class fp_t>
+    int integ_err(func_t &&func, fp_t a, fp_t b, 
+                  fp_t &res, fp_t &err, double integ_tol=-1.0) {
       
-      if (tol_loc<=0.0) {
+      if (integ_tol<=0.0) {
         if (tol_rel<=0.0) {
-          tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10);
+          integ_tol=pow(10.0,-std::numeric_limits<fp_t>::digits10);
         } else {
-          tol_loc=tol_rel;
+          integ_tol=tol_rel;
         }
       } 
 
       if (verbose>0) {
-        std::cout << "Function deriv_multi_gsl::deriv_err(): set "
-                  << "tolerance to: " << tol_loc << std::endl;
+        std::cout << "int_multip_kronrod_boost::integ_err(): set "
+                  << "tolerance to: " << integ_tol << std::endl;
       }
       
       // Demand that the function evaluations are higher precision
-      func.tol_rel=pow(tol_loc,pow_tol_func);
+      double func_tol=pow(integ_tol,pow_tol_func);
+
+      double target_tol=integ_tol/10.0;
       
       int ret;
-      
-      if (tol_loc>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
+
+      if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_multip_kronrod_boost::integ_err(): "
+            << integ_tol << " > "
+            << pow(10.0,-std::numeric_limits<double>::digits10+3)
+            << "\n  for double integration." << std::endl;
+        }
         double a_d=static_cast<double>(a);
         double b_d=static_cast<double>(b);
-        double res_d, err_d;
+        double res_d, err_d, L1norm_d;
         
-        ikb_d.tol_rel=tol_loc;
-        ret=ikb_d.integ_err(func,a_d,b_d,res_d,err_d);
+        ret=integ_err_int(func,a_d,b_d,res_d,err_d,L1norm_d,
+                          target_tol,integ_tol,func_tol);
         
-        if (ret==0 && err_d<tol_loc) {
+        if (ret==0 && err_d<integ_tol) {
           res=static_cast<fp_t>(res_d);
           err=static_cast<fp_t>(err_d);
           return 0;
+        } else {
+          target_tol/=10;
         }
       }
 
-      if (tol_loc>pow(10.0,-std::numeric_limits<long double>::digits10+3)) {
+      if (integ_tol>pow(10.0,-std::numeric_limits<long double>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_multip_kronrod_boost::integ_err(): "
+                    << integ_tol << " > "
+                    << pow(10.0,-std::numeric_limits<long double>::digits10+3)
+                    << "\n  for long double integration." << std::endl;
+        }
         long double a_ld=static_cast<long double>(a);
         long double b_ld=static_cast<long double>(b);
-        long double res_ld, err_ld;
+        long double res_ld, err_ld, L1norm_ld;
         
-        ikb_ld.tol_rel=tol_loc;
-        ret=ikb_ld.integ_err(func,a_ld,b_ld,res_ld,err_ld);
+        ret=integ_err_int(func,a_ld,b_ld,res_ld,err_ld,L1norm_ld,
+                          target_tol,integ_tol,func_tol);
         
-        if (ret==0 && err_ld<tol_loc) {
+        if (ret==0 && err_ld<integ_tol) {
           res=static_cast<fp_t>(res_ld);
           err=static_cast<fp_t>(err_ld);
           return 0;
+        } else {
+          target_tol/=10;
         }
       }
 
-      if (tol_loc>pow(10.0,-std::numeric_limits
+      if (integ_tol>pow(10.0,-std::numeric_limits
                       <cpp_dec_float_25>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_multip_kronrod_boost::integ_err(): "
+                    << integ_tol << " > "
+                    << pow(10.0,-std::numeric_limits
+                           <cpp_dec_float_25>::digits10+3)
+                    << "\n  for cpp_dec_float_25 integration." << std::endl;
+        }
         cpp_dec_float_25 a_cdf25=static_cast<cpp_dec_float_25>(a);
         cpp_dec_float_25 b_cdf25=static_cast<cpp_dec_float_25>(b);
-        cpp_dec_float_25 res_cdf25, err_cdf25;
+        cpp_dec_float_25 res_cdf25, err_cdf25, L1norm_cdf25;
         
-        ikb_cdf25.tol_rel=tol_loc;
-        ret=ikb_cdf25.integ_err(func,a_cdf25,b_cdf25,res_cdf25,err_cdf25);
+        ret=integ_err_int(func,a_cdf25,b_cdf25,res_cdf25,
+                          err_cdf25,L1norm_cdf25,target_tol,
+                          integ_tol,func_tol);
         
-        if (ret==0 && err_cdf25<tol_loc) {
+        if (ret==0 && err_cdf25<integ_tol) {
           res=static_cast<fp_t>(res_cdf25);
           err=static_cast<fp_t>(err_cdf25);
           return 0;
+        } else {
+          target_tol/=10;
         }
       }
 
-      if (tol_loc>pow(10.0,-std::numeric_limits
+      if (integ_tol>pow(10.0,-std::numeric_limits
                       <cpp_dec_float_35>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_multip_kronrod_boost::integ_err(): "
+                    << integ_tol << " > "
+                    << pow(10.0,-std::numeric_limits
+                           <cpp_dec_float_35>::digits10+3)
+                    << "\n  for cpp_dec_float_35 integration." << std::endl;
+        }
         cpp_dec_float_35 a_cdf35=static_cast<cpp_dec_float_35>(a);
         cpp_dec_float_35 b_cdf35=static_cast<cpp_dec_float_35>(b);
-        cpp_dec_float_35 res_cdf35, err_cdf35;
+        cpp_dec_float_35 res_cdf35, err_cdf35, L1norm_cdf35;
         
-        ikb_cdf35.tol_rel=tol_loc;
-        ret=ikb_cdf35.integ_err(func,a_cdf35,b_cdf35,res_cdf35,err_cdf35);
+        ret=integ_err_int(func,a_cdf35,b_cdf35,res_cdf35,
+                          err_cdf35,L1norm_cdf35,target_tol,
+                          integ_tol,func_tol);
         
-        if (ret==0 && err_cdf35<tol_loc) {
+        if (ret==0 && err_cdf35<integ_tol) {
           res=static_cast<fp_t>(res_cdf35);
           err=static_cast<fp_t>(err_cdf35);
           return 0;
+        } else {
+          target_tol/=10;
         }
       }
 
-      if (tol_loc>pow(10.0,-std::numeric_limits
+      if (integ_tol>pow(10.0,-std::numeric_limits
                       <cpp_dec_float_50>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_multip_kronrod_boost::integ_err(): "
+                    << integ_tol << " > "
+                    << pow(10.0,-std::numeric_limits
+                           <cpp_dec_float_50>::digits10+3)
+                    << "\n  for cpp_dec_float_50 integration." << std::endl;
+        }
         cpp_dec_float_50 a_cdf50=static_cast<cpp_dec_float_50>(a);
         cpp_dec_float_50 b_cdf50=static_cast<cpp_dec_float_50>(b);
-        cpp_dec_float_50 res_cdf50, err_cdf50;
+        cpp_dec_float_50 res_cdf50, err_cdf50, L1norm_cdf50;
         
-        ikb_cdf50.tol_rel=tol_loc;
-        ret=ikb_cdf50.integ_err(func,a_cdf50,b_cdf50,res_cdf50,err_cdf50);
+        ret=integ_err_int(func,a_cdf50,b_cdf50,res_cdf50,
+                          err_cdf50,L1norm_cdf50,target_tol,
+                          integ_tol,func_tol);
         
-        if (ret==0 && err_cdf50<tol_loc) {
+        if (ret==0 && err_cdf50<integ_tol) {
           res=static_cast<fp_t>(res_cdf50);
           err=static_cast<fp_t>(err_cdf50);
           return 0;
+        } else {
+          target_tol/=10;
         }
       }
 
-      if (tol_loc>pow(10.0,-std::numeric_limits
+      if (integ_tol>pow(10.0,-std::numeric_limits
                       <cpp_dec_float_100>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_multip_kronrod_boost::integ_err(): "
+                    << integ_tol << " > "
+                    << pow(10.0,-std::numeric_limits
+                           <cpp_dec_float_100>::digits10+3)
+                    << "\n  for cpp_dec_float_100 integration." << std::endl;
+        }
         cpp_dec_float_100 a_cdf100=static_cast<cpp_dec_float_100>(a);
         cpp_dec_float_100 b_cdf100=static_cast<cpp_dec_float_100>(b);
-        cpp_dec_float_100 res_cdf100, err_cdf100;
+        cpp_dec_float_100 res_cdf100, err_cdf100, L1norm_cdf100;
         
-        ikb_cdf100.tol_rel=tol_loc;
-        ret=ikb_cdf100.integ_err(func,a_cdf100,b_cdf100,res_cdf100,
-                                 err_cdf100);
+        ret=integ_err_int(func,a_cdf100,b_cdf100,res_cdf100,
+                          err_cdf100,L1norm_cdf100,target_tol,
+                          integ_tol,func_tol);
         
-        if (ret==0 && err_cdf100<tol_loc) {
+        if (ret==0 && err_cdf100<integ_tol) {
           res=static_cast<fp_t>(res_cdf100);
           err=static_cast<fp_t>(err_cdf100);
           return 0;
+        } else {
+          target_tol/=10;
         }
       }
 
       if (verbose>0) {
-        std::cout << "Function root_multip_brent_gsl::deriv_err() "
+        std::cout << "inte_multip_kronrod_boost::integ_err() "
                   << "failed after cpp_dec_float_100:\n  "
-                  << tol_loc << std::endl;
+                  << integ_tol << std::endl;
       }
     
       O2SCL_ERR2("Failed to compute with requested accuracy ",
-                 "in root_multip_brent_gsl::deriv_err().",
+                 "in inte_multip_kronrod_boost::integ_err().",
                  o2scl::exc_efailed);
       return o2scl::exc_efailed;
     }
 
   };
   
-#endif
-  
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
