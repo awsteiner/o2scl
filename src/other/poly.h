@@ -933,7 +933,8 @@ namespace o2scl {
                 int ret=solve_rc(ca,cb,cc,cd,cr1,cr2,cr3);
                 fp_t disc=this->disc_r(ca,cb,cc,cd);
                 if ((disc>=0.0 && ret==1) ||
-                    (disc<0.0 && ret==3)) {
+                    (disc<0.0 && ret==3) ||
+                    (ret!=1 && ret!=3)) {
                   wrong_ret++;
                 }
                 
@@ -1856,13 +1857,14 @@ namespace o2scl {
         r1=x[0];
         r2=x[1]+i*x[2];
         r3=x[1]-i*x[2];
+        return 1;
       } else {
         r1=x[0];
         r2=x[1];
         r3=x[2];
       }
       
-      return success;
+      return 3;
     }
 
     // Generic sign function
@@ -1971,7 +1973,7 @@ namespace o2scl {
         else v=sign(o2pow(o2abs(v0),r3),v0);
         x[0]=u+v-h;
         x[1]=-r2*(u+v)-h;
-        x[2]=r4*o2abs(u-v);
+        x[2]=r4*abs(u-v);
         if (o2abs(u0)<=eps || o2abs(v0)<=eps) {
           y[0]=x[0];
           for(k=0;k<=1;k++) {
@@ -1981,8 +1983,10 @@ namespace o2scl {
           x[0]=y[2];
           z[0]=x[1]+i*x[2];
           for(k=0;k<=1;k++) {
+            cx_t den=three*z[k];
+            den-=two*r;
             z[k+1]=z[k]-(((z[k]+r)*z[k]+s)*z[k]+t)/
-              ((three*z[k]+two*r)*z[k]+s);
+              (den*z[k]+s);
           }
           x[1]=z[2].real();
           x[2]=z[2].imag();
@@ -2016,8 +2020,8 @@ namespace o2scl {
         
       } else {
         
-        h3=o2abs(r3*p);
-        h3=o2sqrt(h3*h3*h3);
+        h3=abs(r3*p);
+        h3=sqrt(h3*h3*h3);
         h2=r3*acos(-h1/h3);
         if (h3==0.0) h1=0.0;
         else h1=o2pow(h3,r3);
@@ -2533,6 +2537,360 @@ namespace o2scl {
 
   };
 
+#ifndef O2SCL_NEVER_DEFINED
+  
+  /** \brief Use multiprecision to automatically evaluate a function to
+      a specified level of precision
+
+      The function must be specified as a template, i.e. it must be of
+      the form <tt>template<class fp_t> fp_t function(fp_t x)</tt>.
+      
+      This class will fail to evalate a function with the requested
+      precision if:
+      - The user-specified input and result data type does not have enough
+      precision to compute or store the result 
+      - The requested precision is near to or smaller than 1.0e-50
+      - The function is noisy, non-deterministic, or is not 
+      continuous in the local neighborhood
+
+      \note The algorithm attempts not to be wasteful, but is not
+      necessarily optimized for speed. 
+  */
+  class cubic_real_coeff_multip :
+    public cubic_real_coeff<double,std::complex<double> > {
+    
+  protected:
+    
+    /// \name Typedefs for multiprecision types
+    //@{
+    typedef
+    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
+    cpp_dec_float_25;
+  
+    typedef
+    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+    cpp_dec_float_35;
+  
+    typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+  
+    typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
+    //@}
+
+    /// \name Solvers
+    //@{
+    cubic_real_coeff_cern<double,std::complex<double>> q_d;
+    cubic_real_coeff_cern<long double,std::complex<long double>> q_ld;
+    cubic_real_coeff_cern<cpp_dec_float_25,std::complex<cpp_dec_float_25>>
+    q_cdf25;
+    cubic_real_coeff_cern<cpp_dec_float_35,std::complex<cpp_dec_float_35>>
+    q_cdf35;
+    cubic_real_coeff_cern<cpp_dec_float_50,std::complex<cpp_dec_float_50>>
+    q_cdf50;
+    cubic_real_coeff_cern<cpp_dec_float_100,std::complex<cpp_dec_float_100>>
+    q_cdf100;
+    //@}
+    
+  public:
+
+    cubic_real_coeff_multip() {
+      verbose=0;
+      tol_rel=-1.0;
+      err_nonconv=true;
+    }
+
+    /** \brief Verbosity parameter
+     */
+    int verbose;
+
+    /** \brief Relative tolerance
+     */
+    double tol_rel;
+
+    /** \brief If true, call the error handler if the function
+        evaluation fails
+     */
+    bool err_nonconv;
+
+    /** \brief Evaluate the function and return the error estimate
+        with the specified tolerance
+     */
+    template<class fp_t, class cx_t>
+    int solve_rc_tol_err(const fp_t &a, const fp_t &b,
+                                 const fp_t &c, const fp_t &d,
+                                 fp_t &x1, cx_t &x2, cx_t &x3,
+                                 fp_t &err, double tol_loc=-1) {
+        
+      /// Tolerance choice and verification logic
+      
+      if (tol_loc<=0.0 && tol_rel<=0.0) {
+        tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10);
+        if (verbose>0) {
+          std::cout << "Set tolerance from data type to: "
+                    << tol_loc << std::endl;
+        }
+      } else if (tol_loc<=0.0) {
+        if (tol_rel<pow(10.0,-std::numeric_limits<fp_t>::digits10)) {
+          std::cerr << "Class data member tol_rel is " << tol_rel
+                    << " but data type only stores "
+                    << std::numeric_limits<fp_t>::digits10
+                    << " digits." << std::endl;
+          O2SCL_ERR("Cannot compute to required precision",
+                    o2scl::exc_einval);
+        }
+        tol_loc=tol_rel;
+        if (verbose>0) {
+          std::cout << "Set tolerance from value of tol_rel to: "
+                    << tol_loc << std::endl;
+        }
+      } else {
+        if (tol_loc<pow(10.0,-std::numeric_limits<fp_t>::digits10)) {
+          std::cerr << "Caller requested tolerance " << tol_loc
+                    << " but data type only stores "
+                    << std::numeric_limits<fp_t>::digits10
+                    << " digits." << std::endl;
+          O2SCL_ERR("Cannot compute to required precision",
+                    o2scl::exc_einval);
+        } else if (verbose>0) {
+          std::cout << "Set tolerance from user-specified value to: "
+                    << tol_loc << std::endl;
+        }
+      }
+
+      if (verbose>0) {
+        std::cout << "Cubic: "
+                  << dtos(a,0) << " "
+                  << dtos(b,0) << " "
+                  << dtos(c,0) << " "
+                  << dtos(d,0) << std::endl;
+      }
+          
+      /// First pass, compare double and long double
+      
+      double a_d=static_cast<double>(a);
+      double b_d=static_cast<double>(b);
+      double c_d=static_cast<double>(c);
+      double d_d=static_cast<double>(d);
+      double x1_d;
+      std::complex<double> x2_d, x3_d;
+      long double a_ld=static_cast<long double>(a);
+      long double b_ld=static_cast<long double>(b);
+      long double c_ld=static_cast<long double>(c);
+      long double d_ld=static_cast<long double>(d);
+      long double x1_ld;
+      std::complex<long double> x2_ld, x3_ld;
+      
+      int ret_d=q_d.solve_rc(a_d,b_d,c_d,d_d,x1_d,x2_d,x3_d);
+      int ret_ld=q_ld.solve_rc(a_ld,b_ld,c_ld,d_ld,x1_ld,x2_ld,x3_ld);
+      
+      if (ret_d==ret_ld) {
+        err=static_cast<fp_t>(abs(x1_ld-x1_d)/abs(x1_ld));
+        err+=static_cast<fp_t>(abs(static_cast<std::complex<double>>(x2_ld)-
+                                   x2_d)/abs(x2_ld));
+        err+=static_cast<fp_t>(abs(static_cast<std::complex<double>>(x3_ld)-
+                                   x3_d)/abs(x3_ld));
+        err/=3;
+        if (err<tol_loc) {
+          x1=static_cast<fp_t>(x1_ld);
+          x2=static_cast<cx_t>(x2_ld);
+          x3=static_cast<cx_t>(x3_ld);
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 1: "
+                  << dtos(x1_ld,0) << " " << dtos(x1_d,0) << " "
+                  << dtos(x2_ld,0) << " " << dtos(x2_d,0) << " "
+                  << dtos(x3_ld,0) << " " << dtos(x3_d,0) << " "
+                  << dtos(err,0) << " " << tol_loc << std::endl;
+      }
+    
+      /// Second pass, compare long double and 25-digit precision
+
+      cpp_dec_float_25 a_cdf25=static_cast<cpp_dec_float_25>(a);
+      cpp_dec_float_25 b_cdf25=static_cast<cpp_dec_float_25>(b);
+      cpp_dec_float_25 c_cdf25=static_cast<cpp_dec_float_25>(c);
+      cpp_dec_float_25 d_cdf25=static_cast<cpp_dec_float_25>(d);
+      cpp_dec_float_25 x1_cdf25;
+      std::complex<cpp_dec_float_25> x2_cdf25, x3_cdf25;
+      
+      int ret_cdf25=q_cdf25.solve_rc(a_cdf25,b_cdf25,c_cdf25,d_cdf25,
+                                     x1_cdf25,x2_cdf25,x3_cdf25);
+
+      if (ret_cdf25==ret_ld) {
+        err=static_cast<fp_t>(abs(x1_cdf25-x1_ld)/abs(x1_cdf25));
+        err+=static_cast<fp_t>
+          (abs(abs(x2_cdf25)-abs(x2_ld))/abs(x2_cdf25));
+        err+=static_cast<fp_t>
+          (abs(abs(x3_cdf25)-abs(x3_ld))/abs(x3_cdf25));
+        err/=3;
+        if (err<tol_loc) {
+          x1=static_cast<fp_t>(x1_cdf25);
+          x2.real(static_cast<fp_t>(x2_cdf25.real()));
+          x2.imag(static_cast<fp_t>(x2_cdf25.imag()));
+          x3.real(static_cast<fp_t>(x3_cdf25.real()));
+          x3.imag(static_cast<fp_t>(x3_cdf25.imag()));
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 2: "
+                  << dtos(x1_cdf25,0) << " " << dtos(x1_ld,0) << " "
+                  << dtos(x2_cdf25,0) << " " << dtos(x2_ld,0) << " "
+                  << dtos(x3_cdf25,0) << " " << dtos(x3_ld,0) << " "
+                  << dtos(err,0) << " " << tol_loc << std::endl;
+      }
+    
+      /// Third pass, compare 25- and 35-digit precision
+
+      cpp_dec_float_35 a_cdf35=static_cast<cpp_dec_float_35>(a);
+      cpp_dec_float_35 b_cdf35=static_cast<cpp_dec_float_35>(b);
+      cpp_dec_float_35 c_cdf35=static_cast<cpp_dec_float_35>(c);
+      cpp_dec_float_35 d_cdf35=static_cast<cpp_dec_float_35>(d);
+      cpp_dec_float_35 x1_cdf35;
+      std::complex<cpp_dec_float_35> x2_cdf35, x3_cdf35;
+      
+      int ret_cdf35=q_cdf35.solve_rc(a_cdf35,b_cdf35,c_cdf35,d_cdf35,
+                                     x1_cdf35,x2_cdf35,x3_cdf35);
+
+      if (ret_cdf35==ret_cdf25) {
+        err=static_cast<fp_t>(abs(x1_cdf35-x1_cdf25)/abs(x1_cdf35));
+        err+=static_cast<fp_t>
+          (abs(abs(x2_cdf35)-abs(x2_cdf25))/abs(x2_cdf35));
+        err+=static_cast<fp_t>
+          (abs(abs(x3_cdf35)-abs(x3_cdf25))/abs(x3_cdf35));
+        err/=3;
+        if (err<tol_loc) {
+          x1=static_cast<fp_t>(x1_cdf35);
+          x2.real(static_cast<fp_t>(x2_cdf35.real()));
+          x2.imag(static_cast<fp_t>(x2_cdf35.imag()));
+          x3.real(static_cast<fp_t>(x3_cdf35.real()));
+          x3.imag(static_cast<fp_t>(x3_cdf35.imag()));
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 3: "
+                  << dtos(x1_cdf35,0) << " " << dtos(x1_cdf25,0) << " "
+                  << dtos(x2_cdf35,0) << " " << dtos(x2_cdf25,0) << " "
+                  << dtos(x3_cdf35,0) << " " << dtos(x3_cdf25,0) << " "
+                  << dtos(err,0) << " " << tol_loc << std::endl;
+      }
+    
+      /// Fourth pass, compare 35- and 50-digit precision
+      
+      cpp_dec_float_50 a_cdf50=static_cast<cpp_dec_float_50>(a);
+      cpp_dec_float_50 b_cdf50=static_cast<cpp_dec_float_50>(b);
+      cpp_dec_float_50 c_cdf50=static_cast<cpp_dec_float_50>(c);
+      cpp_dec_float_50 d_cdf50=static_cast<cpp_dec_float_50>(d);
+      cpp_dec_float_50 x1_cdf50;
+      std::complex<cpp_dec_float_50> x2_cdf50, x3_cdf50;
+      
+      int ret_cdf50=q_cdf50.solve_rc(a_cdf50,b_cdf50,c_cdf50,d_cdf50,
+                                     x1_cdf50,x2_cdf50,x3_cdf50);
+
+      if (ret_cdf50==ret_cdf35) {
+        err=static_cast<fp_t>(abs(x1_cdf50-x1_cdf35)/abs(x1_cdf50));
+        err+=static_cast<fp_t>
+          (abs(abs(x2_cdf50)-abs(x2_cdf35))/abs(x2_cdf50));
+        err+=static_cast<fp_t>
+          (abs(abs(x3_cdf50)-abs(x3_cdf35))/abs(x3_cdf50));
+        err/=3;
+        if (err<tol_loc) {
+          x1=static_cast<fp_t>(x1_cdf50);
+          x2.real(static_cast<fp_t>(x2_cdf50.real()));
+          x2.imag(static_cast<fp_t>(x2_cdf50.imag()));
+          x3.real(static_cast<fp_t>(x3_cdf50.real()));
+          x3.imag(static_cast<fp_t>(x3_cdf50.imag()));
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 4: "
+                  << dtos(x1_cdf50,0) << " " << dtos(x1_cdf35,0) << " "
+                  << dtos(x2_cdf50,0) << " " << dtos(x2_cdf35,0) << " "
+                  << dtos(x3_cdf50,0) << " " << dtos(x3_cdf35,0) << " "
+                  << dtos(err,0) << " " << tol_loc << std::endl;
+      }
+    
+      /// Final pass, compare 50- and 100-digit precision
+      
+      cpp_dec_float_100 a_cdf100=static_cast<cpp_dec_float_100>(a);
+      cpp_dec_float_100 b_cdf100=static_cast<cpp_dec_float_100>(b);
+      cpp_dec_float_100 c_cdf100=static_cast<cpp_dec_float_100>(c);
+      cpp_dec_float_100 d_cdf100=static_cast<cpp_dec_float_100>(d);
+      cpp_dec_float_100 x1_cdf100;
+      std::complex<cpp_dec_float_100> x2_cdf100, x3_cdf100;
+      
+      int ret_cdf100=q_cdf100.solve_rc(a_cdf100,b_cdf100,c_cdf100,d_cdf100,
+                                       x1_cdf100,x2_cdf100,x3_cdf100);
+
+      if (ret_cdf100==ret_cdf50) {
+        err=static_cast<fp_t>(abs(x1_cdf100-x1_cdf50)/abs(x1_cdf100));
+        err+=static_cast<fp_t>
+          (abs(abs(x2_cdf100)-abs(x2_cdf50))/
+           abs(x2_cdf100));
+        err+=static_cast<fp_t>
+          (abs(abs(x3_cdf100)-abs(x3_cdf50))/
+           abs(x3_cdf100));
+        err/=3;
+        if (err<tol_loc) {
+          x1=static_cast<fp_t>(x1_cdf100);
+          x2.real(static_cast<fp_t>(x2_cdf100.real()));
+          x2.imag(static_cast<fp_t>(x2_cdf100.imag()));
+          x3.real(static_cast<fp_t>(x3_cdf100.real()));
+          x3.imag(static_cast<fp_t>(x3_cdf100.imag()));
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 5: "
+                  << dtos(x1_cdf100,0) << " " << dtos(x1_cdf50,0) << " "
+                  << dtos(x2_cdf100,0) << " " << dtos(x2_cdf50,0) << " "
+                  << dtos(x3_cdf100,0) << " " << dtos(x3_cdf50,0) << " "
+                  << dtos(err,0) << " " << tol_loc << std::endl;
+      }
+    
+      /// Algorithm failed
+      
+      O2SCL_CONV2("Failed to compute with requested accuracy ",
+                  "in cubic_real_coeff_multip::solve_rc_tol_err().",
+                  o2scl::exc_efailed,err_nonconv);
+      return o2scl::exc_efailed;
+    }
+
+    /** \brief Evaluate the function and return the error estimate
+        with the default tolerance for the specified type
+     */
+    template<class fp_t, class cx_t>
+    int solve_rc_err(const fp_t &a, const fp_t &b,
+                     const fp_t &c, const fp_t &d,
+                     fp_t &x1, cx_t &x2, cx_t &x3,
+                     fp_t &err) {
+      return solve_rc_tol_err(a,b,c,d,x1,x2,x3,err);
+    }
+  
+    /** \brief Evalulate the function without an error estimate
+     */
+    template<class fp_t, class cx_t>
+    int solve_rc(const fp_t &a, const fp_t &b,
+                         const fp_t &c, const fp_t &d,
+                         fp_t &x1, cx_t &x2, cx_t &x3) {
+      fp_t err;
+      return solve_rc_err(a,b,c,d,x1,x2,x3,err);
+    }
+
+    virtual int solve_rc(const double a3, const double b3, const double c3, 
+			 const double d3, double &x1,
+                         std::complex<double> &x2,
+			 std::complex<double> &x3) {
+      return solve_rc<double,std::complex<double>>(a3,b3,c3,d3,x1,x2,x3);
+    }
+    
+
+  };
+
+#endif
+  
   /** \brief Solve a general polynomial with real coefficients (GSL)
    */
   template<class fp_t=double, class cx_t=std::complex<fp_t>,

@@ -523,6 +523,8 @@ int main(void) {
   cubic_real_coeff_gsl c4;
   cubic_real_coeff_gsl2<> c2;
   cubic_complex_std<> c3;
+  cubic_real_coeff_multip c5;
+  c5.verbose=1;
   
   // Quartic solvers
   quartic_real_coeff_cern<> q1;
@@ -604,7 +606,7 @@ int main(void) {
     (&t1_cdf50,"quad_rc_gsl2_50",1.0e-5,
      1.0e-49,1.0e-49,1.0e-48,1.0e-48,true);
   test_quadratic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
-    (&t2_cdf50,"quad_r_std_50",1.0e-5,
+    (&t2_cdf50,"quad_c_std_50",1.0e-5,
      1.0e-49,1.0e-49,1.0e-48,1.0e-48,true);
   cout << endl;
 
@@ -626,13 +628,15 @@ int main(void) {
   test_cubic_real_coeff(&c1,"cubic_rc_cern",1.0,
 			1.0e0,1.0e6,1.0e1,1.0e7,true);
   test_cubic_real_coeff(&c4,"cubic_rc_gsl",1.0,
-			1.0e-1,1.0e-2,1.0e1,8.0e0,false);
+                        1.0e-1,1.0e-2,1.0e1,8.0e0,false);
   test_cubic_real_coeff(&c2,"cubic_rc_gsl2",1.0,
 			1.0e-1,1.0e-2,1.0e1,8.0e0,true);
   test_cubic_real_coeff(&c3,"cubic_c_std",1.0,
 			1.0e-1,1.0e-1,1.0e1,1.0e1,true);
   test_cubic_real_coeff(&p3,"poly_rc_gsl",1.0,
 			1.0e-1,4.0e-2,1.0e1,1.0e1,false);
+  //test_cubic_real_coeff(&c5,"cubic_rc_mp",1.0,
+  //1.0e-1,1.0e-2,1.0e1,8.0e0,false);
   test_cubic_real_coeff<long double,std::complex<long double> >
     (&c1_ld,"cubic_rc_cern_ld",
      1.0,1.0e-12,1.0e-12,1.0e-9,1.0e-10,true);

@@ -397,9 +397,9 @@ namespace o2scl {
       
       This class will fail to evalate a function with the requested
       precision if:
-      - The user-specified result data type does not have enough
-      precision to store the result 
-      - The requested precision is near or smaller than 1.0e-50
+      - The user-specified input and result data type does not have enough
+      precision to compute or store the result 
+      - The requested precision is near to or smaller than 1.0e-50
       - The function is noisy, non-deterministic, or is not 
       continuous in the local neighborhood
 
