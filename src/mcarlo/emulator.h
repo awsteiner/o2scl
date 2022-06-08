@@ -53,7 +53,7 @@ namespace o2scl {
         \c log_wgt and \c dat
      */
     virtual int eval(size_t n, const vec_t &p, double &log_wgt,
-             data_t &dat)=0;
+                     data_t &dat)=0;
     
   };
 
@@ -233,7 +233,9 @@ namespace o2scl {
   };
 
 #ifdef O2SCL_PYTHON
-  
+
+  /** \brief A semi-generic interface for a python emulator
+   */
   template<class vec2_t, class vec_t> class emulator_python :
     public emulator_unc<vec2_t,vec2_t,vec_t> {
 
@@ -241,8 +243,14 @@ namespace o2scl {
 
     PyObject *p_modname;
     PyObject *p_module;
+    PyObject *p_class;
+    PyObject *p_instance;
     PyObject *p_point_func;
     PyObject *p_np;
+
+    size_t num_param;
+    size_t num_out;
+    bool has_unc;
     
   public:
     
@@ -251,8 +259,14 @@ namespace o2scl {
     emulator_python() {
       p_modname=0;
       p_module=0;
+      p_class=0;
+      p_instance=0;
       p_point_func=0;
       p_np=0;
+      num_param=0;
+      num_out=0;
+      has_unc=true;
+      verbose=0;
     }
     
     /** \brief Clear the memory for all of the python objects
@@ -261,36 +275,41 @@ namespace o2scl {
       if (p_modname!=0) {
         Py_DECREF(p_modname);
         Py_DECREF(p_module);
+        Py_DECREF(p_class);
+        Py_DECREF(p_instance);
         Py_DECREF(p_point_func);
         Py_DECREF(p_np);
         p_modname=0;
         p_module=0;
+        p_class=0;
+        p_instance=0;
         p_point_func=0;
         p_np=0;
       }
       return;
     }
 
+    int verbose;
+    
     virtual ~emulator_python() {
       decref();
     }
     
     /** \brief Set the emulator
-
-        Set the emulator using a table containing \c np parameters and
-        \c n_out output quantities. The variable \c ix_log_wgt should
-        be the index of the log_weight among all of the output
-        variables, from 0 to <tt>n_out-1</tt>. The list, \c list,
-        should include the column names of the parameters and then the
-        output quantities (including the log weight column), in order.
      */
-    void set(std::string module, std::string train_func,
-             std::string point_func, size_t np, std::string file,
-             std::string log_wgt, std::vector<std::string> list) {
-
+    void set(std::string module, std::string class_name,
+             std::string train_func, std::string point_func,
+             size_t np, std::string file,
+             std::string log_wgt, std::vector<std::string> list,
+             bool has_uncerts=true) {
+      
       decref();
       
       int ret;
+
+      num_param=np;
+      num_out=list.size()-np-1;
+      has_unc=has_uncerts;
 
       p_modname=PyUnicode_FromString(module.c_str());
       if (p_modname==0) {
@@ -303,15 +322,36 @@ namespace o2scl {
         O2SCL_ERR2("Module import failed in ",
                    "emulator_python::set().",o2scl::exc_efailed);
       }
+
+      p_class=PyObject_GetAttrString(p_module,class_name.c_str());
+      if (p_class==0) {
+        O2SCL_ERR2("Get class failed in ",
+                   "emulator_python::set().",o2scl::exc_efailed);
+      }
+
+      // Create an instance of the class
+      if (verbose>0) {
+        cout << "Loading python class instance." << endl;
+      }
+      if (PyCallable_Check(p_class)==false) {
+        O2SCL_ERR2("Check class callable failed in ",
+                   "funct_python_method::set_function().",o2scl::exc_efailed);
+      }
+      
+      p_instance=PyObject_CallObject(p_class,0);
+      if (p_instance==0) {
+        O2SCL_ERR2("Instantiate class failed in ",
+                   "funct_python_method::set_function().",o2scl::exc_efailed);
+      }
       
       PyObject *p_train_func=
-        PyObject_GetAttrString(p_module,train_func.c_str());
+        PyObject_GetAttrString(p_instance,train_func.c_str());
       if (p_train_func==0) {
         O2SCL_ERR2("Get training function failed in ",
                    "emulator_python::set().",o2scl::exc_efailed);
       }
       
-      p_point_func=PyObject_GetAttrString(p_module,point_func.c_str());
+      p_point_func=PyObject_GetAttrString(p_instance,point_func.c_str());
       if (p_point_func==0) {
         O2SCL_ERR2("Get point function failed in ",
                    "emulator_python::set().",o2scl::exc_efailed);
@@ -330,8 +370,8 @@ namespace o2scl {
       }
 
       std::string list_reformat=log_wgt;
-      for(size_t k=0;k<list_list.size();k++) {
-        list_reformat+=","+list_list[k];
+      for(size_t k=0;k<list.size();k++) {
+        list_reformat+=","+list[k];
       }
       PyObject *p_list=PyUnicode_FromString(list_reformat.c_str());
       if (p_list==0) {
@@ -350,7 +390,7 @@ namespace o2scl {
         O2SCL_ERR2("Tuple set 1 failed in ",
                    "emulator_python::set().",o2scl::exc_efailed);
       }
-      ret=PyTuple_SetItem(p_args,2,p_out);
+      ret=PyTuple_SetItem(p_args,2,p_list);
       if (ret!=0) {
         O2SCL_ERR2("Tuple set 2 failed in ",
                    "emulator_python::set().",o2scl::exc_efailed);
@@ -381,14 +421,18 @@ namespace o2scl {
                          double &log_wgt_unc, vec2_t &dat,
                          vec2_t &dat_unc) {
 
+      if (p_modname==0) {
+        O2SCL_ERR2("Emulator was not set in ",
+                   "emulator_python::eval_unc().",o2scl::exc_efailed);
+      }
+
+      
       // Create the list object
       PyObject *p_list=PyList_New(n);
       if (p_list==0) {
         O2SCL_ERR2("List creation failed in ",
                    "emulator_python::eval_unc().",o2scl::exc_efailed);
       }
-
-      double y;
       
       // Create a python object from the vector
       std::vector<PyObject *> p_values(n);
@@ -417,7 +461,7 @@ namespace o2scl {
                    "multi_funct_python::set_function().",o2scl::exc_efailed);
       }
       
-      int ret=PyTuple_SetItem(pArgs,0,p_list);
+      int ret=PyTuple_SetItem(p_args,0,p_list);
       if (ret!=0) {
         O2SCL_ERR2("Tuple set failed in ",
                    "emulator_python::eval_unc().",o2scl::exc_efailed);
@@ -428,15 +472,14 @@ namespace o2scl {
         std::cout << "Call python function." << std::endl;
       }
       PyObject *p_result=PyObject_CallObject(p_point_func,p_args);
-      if (result==0) {
+      if (p_result==0) {
         O2SCL_ERR2("Function call failed in ",
                    "emulator_python::eval_unc().",o2scl::exc_efailed);
       }
-
-      size_t n=10;
-      for(size_t i=0;i<n;i++) {
+      
+      for(size_t i=0;i<num_out+1;i++) {
         PyObject *p_y_val=PyList_GetItem(p_result,i);
-        if (yval==0) {
+        if (p_y_val==0) {
           O2SCL_ERR2("Failed to get y list value in ",
                      "mm_funct_python::operator().",o2scl::exc_efailed);
         }
@@ -446,15 +489,50 @@ namespace o2scl {
           dat[i-1]=PyFloat_AsDouble(p_y_val);
         }
         if (verbose>0) {
-          std::cout << "Decref yval " << i << " of " << pValues.size()
+          std::cout << "Decref yval " << i << " of " << p_values.size()
                     << std::endl;
         }
-        Py_DECREF(yval);
+        Py_DECREF(p_y_val);
       }
+
+      if (has_unc) {
+        size_t n2=num_out+1;
+        for(size_t i=n2;i<2*n2;i++) {
+          PyObject *p_y_val=PyList_GetItem(p_result,i);
+          if (p_y_val==0) {
+            O2SCL_ERR2("Failed to get y list value in ",
+                       "mm_funct_python::operator().",o2scl::exc_efailed);
+          }
+          if (i==n2) {
+            log_wgt=PyFloat_AsDouble(p_y_val);
+          } else {
+            dat_unc[i-n2-1]=PyFloat_AsDouble(p_y_val);
+          }
+          if (verbose>0) {
+            std::cout << "Decref yval " << i << " of " << p_values.size()
+                      << std::endl;
+          }
+          Py_DECREF(p_y_val);
+        }
+      }
+
+      for(size_t i=0;i<p_values.size();i++) {
+        if (verbose>0) {
+          std::cout << "Decref value " << i << " of " << p_values.size()
+                    << std::endl;
+        }
+        Py_DECREF(p_values[i]);
+      }
+      if (verbose>0) {
+        std::cout << "Decref list." << std::endl;
+      }
+      Py_DECREF(p_list);
       
-      //log_wgt=dat[ix];
-      //log_wgt_unc=dat_unc[ix];
-      
+      if (verbose>0) {
+        std::cout << "Decref result." << std::endl;
+      }
+      Py_DECREF(p_result);
+  
       return 0;
     }
     
