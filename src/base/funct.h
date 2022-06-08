@@ -395,6 +395,13 @@ namespace o2scl {
       The function must be specified as a template, i.e. it must be of
       the form <tt>template<class fp_t> fp_t function(fp_t x)</tt>.
       
+      By default, this class uses a tolerance equal to \f$ 10^{-d+1}
+      \f$, where \f$ d \f$ is the value returned by
+      <tt>numeric_limits<fp_t>::digits10</tt>. Only simple functions
+      can be evaluated to within this accuracy without more precise
+      inputs. Preferably, the user should choose this tolerance
+      carefully.
+
       This class will fail to evalate a function with the requested
       precision if:
       - The user-specified input and result data type does not have enough
@@ -456,7 +463,7 @@ namespace o2scl {
       /// Tolerance choice and verification logic
       
       if (tol_loc<=0.0 && tol_rel<=0.0) {
-        tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10);
+        tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10+1);
         if (verbose>0) {
           std::cout << "Set tolerance from data type to: "
                     << tol_loc << std::endl;

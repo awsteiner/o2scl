@@ -114,71 +114,98 @@ int main(void) {
   // cpp_dec_float_100 100      128          1.0e67108864 294.7
   
   cout.precision(4);
-
+  cout.setf(ios::left);
+  
+  cout.width(18);
+  cout << "double";
   cout.width(3);
   cout << std::numeric_limits<double>::digits10 << " ";
   cout.width(3);
   cout << std::numeric_limits<double>::max_digits10 << " ";
-  cout.width(20);
+  cout.width(17);
   cout << std::numeric_limits<double>::max() << " ";
   cout.width(10);
-  cout << log(pow(10.0,std::numeric_limits<double>::max_digits10))
+  cout << log(pow(10.0,std::numeric_limits<double>::max_digits10));
+  cout << " ";
+  cout << std::numeric_limits<double>::epsilon()
        << std::endl;
   
+  cout.width(18);
+  cout << "long double";
   cout.width(3);
   cout << std::numeric_limits<long double>::digits10 << " ";
   cout.width(3);
   cout << std::numeric_limits<long double>::max_digits10 << " ";
-  cout.width(20);
+  cout.width(17);
   cout << std::numeric_limits<long double>::max() << " ";
   cout.width(10);
-  cout << log(pow(10.0,std::numeric_limits<long double>::max_digits10))
+  cout << log(pow(10.0,std::numeric_limits<long double>::max_digits10));
+  cout << " ";
+  cout << std::numeric_limits<long double>::epsilon()
        << std::endl;
   
+  cout.width(18);
+  cout << "cpp_dec_float_25";
   cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_25>::digits10 << " ";
   cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_25>::max_digits10 << " "; 
-  cout.width(20);
+  cout.width(17);
   cout << std::numeric_limits<cpp_dec_float_25>::max() << " ";
   cout.width(10);
   cout << log(pow(10.0,
-                  std::numeric_limits<cpp_dec_float_25>::max_digits10))
+                  std::numeric_limits<cpp_dec_float_25>::max_digits10));
+  cout << " ";
+  cout << std::numeric_limits<cpp_dec_float_25>::epsilon()
        << std::endl;
   
+  cout.width(18);
+  cout << "cpp_dec_float_35";
   cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_35>::digits10 << " ";
   cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_35>::max_digits10 << " "; 
-  cout.width(20);
+  cout.width(17);
   cout << std::numeric_limits<cpp_dec_float_35>::max() << " ";
   cout.width(10);
   cout << log(pow(10.0,
-                  std::numeric_limits<cpp_dec_float_35>::max_digits10))
+                  std::numeric_limits<cpp_dec_float_35>::max_digits10));
+  cout << " ";
+  cout << std::numeric_limits<cpp_dec_float_35>::epsilon()
        << std::endl;
   
+  cout.width(18);
+  cout << "cpp_dec_float_50";
   cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_50>::digits10 << " ";
   cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_50>::max_digits10 << " ";
-  cout.width(20);
+  cout.width(17);
   cout << std::numeric_limits<cpp_dec_float_50>::max() << " ";
   cout.width(10);
   cout << log(pow(10.0,
-                  std::numeric_limits<cpp_dec_float_50>::max_digits10))
+                  std::numeric_limits<cpp_dec_float_50>::max_digits10));
+  cout << " ";
+  cout << std::numeric_limits<cpp_dec_float_50>::epsilon()
        << std::endl;
   
+  cout.width(18);
+  cout << "cpp_dec_float_100";
   cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_100>::digits10 << " ";
   cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_100>::max_digits10 << " ";
-  cout.width(20);
+  cout.width(17);
   cout << std::numeric_limits<cpp_dec_float_100>::max() << " ";
   cout.width(10);
   cout << log(pow(10.0,
-                  std::numeric_limits<cpp_dec_float_100>::max_digits10))
+                  std::numeric_limits<cpp_dec_float_100>::max_digits10));
+  cout << " ";
+  cout << std::numeric_limits<cpp_dec_float_100>::epsilon()
        << std::endl;
 
+  cout.unsetf(ios::left);
+  
   // Todo: better testing
 
   // More accurate versions for testing

@@ -708,10 +708,10 @@ int main(void) {
   test_cubic_real_coeff<long double,std::complex<long double> >
     (&c2_ld,"cubic_rc_gsl2_ld",
      1.0,1.0e-12,1.0e-12,1.0e-9,1.0e-10,true);
-  //test_cubic_real_coeff<long double,std::complex<long double>,
-  //cubic_real_coeff_multip>
-  //(&c5,"cubic_rc_mp_ld",
-  //1.0,1.0e1,1.0e-1,1.0e1,1.0e1,true);
+  test_cubic_real_coeff<long double,std::complex<long double>,
+    cubic_real_coeff_multip>
+    (&c5,"cubic_rc_mp_ld",
+     1.0,1.0e1,1.0e-1,1.0e1,1.0e1,true);
   test_cubic_real_coeff<long double,std::complex<long double> >
     (&c3_ld,"cubic_c_std_ld",
      1.0,1.0e-1,1.0e-1,1.0e1,1.0e1,true);

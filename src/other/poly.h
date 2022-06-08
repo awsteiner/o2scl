@@ -2620,7 +2620,7 @@ namespace o2scl {
       /// Tolerance choice and verification logic
       
       if (tol_loc<=0.0 && tol_rel<=0.0) {
-        tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10);
+        tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10+1);
         if (verbose>0) {
           std::cout << "Set tolerance from data type to: "
                     << tol_loc << std::endl;
@@ -2655,10 +2655,10 @@ namespace o2scl {
 
       if (verbose>0) {
         std::cout << "Cubic: "
-                  << dtos(a,0) << " "
-                  << dtos(b,0) << " "
-                  << dtos(c,0) << " "
-                  << dtos(d,0) << std::endl;
+                  << dtos(a,10) << " "
+                  << dtos(b,10) << " "
+                  << dtos(c,10) << " "
+                  << dtos(d,10) << std::endl;
       }
           
       /// Degenerate cubics
@@ -2720,16 +2720,16 @@ namespace o2scl {
       
       if (verbose>0) {
         std::cout << "Failed 1: " << ret_d << " " << ret_ld 
-                  << "\n  " << dtos(x1_d,0) << " " << dtos(x1_ld,0) << " "
-                  << "\n  (" << dtos(x2_d.real(),0) << ","
-                  << dtos(x2_d.imag(),0) << ") ("
-                  << dtos(x2_ld.real(),0) << ","
-                  << dtos(x2_ld.imag(),0) << ")"
-                  << "\n  (" << dtos(x3_d.real(),0) << ","
-                  << dtos(x3_d.imag(),0) << ") ("
-                  << dtos(x3_ld.real(),0) << ","
-                  << dtos(x3_ld.imag(),0) << ")"
-                  << "\n  " << dtos(err,0) << " " << tol_loc << std::endl;
+                  << "\n  " << dtos(x1_d,10) << " " << dtos(x1_ld,10) << " "
+                  << "\n  (" << dtos(x2_d.real(),10) << ","
+                  << dtos(x2_d.imag(),10) << ") ("
+                  << dtos(x2_ld.real(),10) << ","
+                  << dtos(x2_ld.imag(),10) << ")"
+                  << "\n  (" << dtos(x3_d.real(),10) << ","
+                  << dtos(x3_d.imag(),10) << ") ("
+                  << dtos(x3_ld.real(),10) << ","
+                  << dtos(x3_ld.imag(),10) << ")"
+                  << "\n  " << dtos(err,10) << " " << tol_loc << std::endl;
       }
     
       /// Second pass, compare long double and 25-digit precision
@@ -2784,17 +2784,17 @@ namespace o2scl {
       
       if (verbose>0) {
         std::cout << "Failed 2: " << ret_ld << " " << ret_cdf25 
-                  << "\n  " << dtos(x1_ld,0) << " "
-                  << dtos(x1_cdf25,0) << " "
-                  << "\n  (" << dtos(x2_ld.real(),0) << ","
-                  << dtos(x2_ld.imag(),0) << ") ("
-                  << dtos(x2_cdf25.real(),0) << ","
-                  << dtos(x2_cdf25.imag(),0) << ")"
-                  << "\n  (" << dtos(x3_ld.real(),0) << ","
-                  << dtos(x3_ld.imag(),0) << ") ("
-                  << dtos(x3_cdf25.real(),0) << ","
-                  << dtos(x3_cdf25.imag(),0) << ")"
-                  << "\n  " << dtos(err,0) << " " << tol_loc << std::endl;
+                  << "\n  " << dtos(x1_ld,10) << " "
+                  << dtos(x1_cdf25,10) << " "
+                  << "\n  (" << dtos(x2_ld.real(),10) << ","
+                  << dtos(x2_ld.imag(),10) << ") ("
+                  << dtos(x2_cdf25.real(),10) << ","
+                  << dtos(x2_cdf25.imag(),10) << ")"
+                  << "\n  (" << dtos(x3_ld.real(),10) << ","
+                  << dtos(x3_ld.imag(),10) << ") ("
+                  << dtos(x3_cdf25.real(),10) << ","
+                  << dtos(x3_cdf25.imag(),10) << ")"
+                  << "\n  " << dtos(err,10) << " " << tol_loc << std::endl;
       }
     
       /// Third pass, compare 25- and 35-digit precision
@@ -2849,17 +2849,17 @@ namespace o2scl {
       
       if (verbose>0) {
         std::cout << "Failed 3: " << ret_cdf25 << " " << ret_cdf35 
-                  << "\n  " << dtos(x1_cdf25,0) << " "
-                  << dtos(x1_cdf35,0) << " "
-                  << "\n  (" << dtos(x2_cdf25.real(),0) << ","
-                  << dtos(x2_cdf25.imag(),0) << ") ("
-                  << dtos(x2_cdf35.real(),0) << ","
-                  << dtos(x2_cdf35.imag(),0) << ")"
-                  << "\n  (" << dtos(x3_cdf25.real(),0) << ","
-                  << dtos(x3_cdf25.imag(),0) << ") ("
-                  << dtos(x3_cdf35.real(),0) << ","
-                  << dtos(x3_cdf35.imag(),0) << ")"
-                  << "\n  " << dtos(err,0) << " " << tol_loc << std::endl;
+                  << "\n  " << dtos(x1_cdf25,10) << " "
+                  << dtos(x1_cdf35,10) << " "
+                  << "\n  (" << dtos(x2_cdf25.real(),10) << ","
+                  << dtos(x2_cdf25.imag(),10) << ") ("
+                  << dtos(x2_cdf35.real(),10) << ","
+                  << dtos(x2_cdf35.imag(),10) << ")"
+                  << "\n  (" << dtos(x3_cdf25.real(),10) << ","
+                  << dtos(x3_cdf25.imag(),10) << ") ("
+                  << dtos(x3_cdf35.real(),10) << ","
+                  << dtos(x3_cdf35.imag(),10) << ")"
+                  << "\n  " << dtos(err,10) << " " << tol_loc << std::endl;
       }
     
       /// Fourth pass, compare 35- and 50-digit precision
@@ -2914,17 +2914,17 @@ namespace o2scl {
       
       if (verbose>0) {
         std::cout << "Failed 4: " << ret_cdf35 << " " << ret_cdf50 
-                  << "\n  " << dtos(x1_cdf35,0) << " "
-                  << dtos(x1_cdf50,0) << " "
-                  << "\n  (" << dtos(x2_cdf35.real(),0) << ","
-                  << dtos(x2_cdf35.imag(),0) << ") ("
-                  << dtos(x2_cdf50.real(),0) << ","
-                  << dtos(x2_cdf50.imag(),0) << ")"
-                  << "\n  (" << dtos(x3_cdf35.real(),0) << ","
-                  << dtos(x3_cdf35.imag(),0) << ") ("
-                  << dtos(x3_cdf50.real(),0) << ","
-                  << dtos(x3_cdf50.imag(),0) << ")"
-                  << "\n  " << dtos(err,0) << " " << tol_loc << std::endl;
+                  << "\n  " << dtos(x1_cdf35,10) << " "
+                  << dtos(x1_cdf50,10) << " "
+                  << "\n  (" << dtos(x2_cdf35.real(),10) << ","
+                  << dtos(x2_cdf35.imag(),10) << ") ("
+                  << dtos(x2_cdf50.real(),10) << ","
+                  << dtos(x2_cdf50.imag(),10) << ")"
+                  << "\n  (" << dtos(x3_cdf35.real(),10) << ","
+                  << dtos(x3_cdf35.imag(),10) << ") ("
+                  << dtos(x3_cdf50.real(),10) << ","
+                  << dtos(x3_cdf50.imag(),10) << ")"
+                  << "\n  " << dtos(err,10) << " " << tol_loc << std::endl;
       }
         
       /// Final pass, compare 50- and 100-digit precision
@@ -2979,17 +2979,17 @@ namespace o2scl {
       
       if (verbose>0) {
         std::cout << "Failed 5: " << ret_cdf50 << " " << ret_cdf100 
-                  << "\n  " << dtos(x1_cdf50,0) << " "
-                  << dtos(x1_cdf100,0) << " "
-                  << "\n  (" << dtos(x2_cdf50.real(),0) << ","
-                  << dtos(x2_cdf50.imag(),0) << ") ("
-                  << dtos(x2_cdf100.real(),0) << ","
-                  << dtos(x2_cdf100.imag(),0) << ")"
-                  << "\n  (" << dtos(x3_cdf50.real(),0) << ","
-                  << dtos(x3_cdf50.imag(),0) << ") ("
-                  << dtos(x3_cdf100.real(),0) << ","
-                  << dtos(x3_cdf100.imag(),0) << ")"
-                  << "\n  " << dtos(err,0) << " " << tol_loc << std::endl;
+                  << "\n  " << dtos(x1_cdf50,10) << " "
+                  << dtos(x1_cdf100,10) << " "
+                  << "\n  (" << dtos(x2_cdf50.real(),10) << ","
+                  << dtos(x2_cdf50.imag(),10) << ") ("
+                  << dtos(x2_cdf100.real(),10) << ","
+                  << dtos(x2_cdf100.imag(),10) << ")"
+                  << "\n  (" << dtos(x3_cdf50.real(),10) << ","
+                  << dtos(x3_cdf50.imag(),10) << ") ("
+                  << dtos(x3_cdf100.real(),10) << ","
+                  << dtos(x3_cdf100.imag(),10) << ")"
+                  << "\n  " << dtos(err,10) << " " << tol_loc << std::endl;
       }
     
       /// Algorithm failed

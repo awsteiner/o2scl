@@ -1380,9 +1380,12 @@ int eos_had_base::solve_beta_eq_T0(size_t nv, const ubvector &x,
   proton->n=n_charge;
   neutron->n=nB-n_charge;
   if (neutron->n<0.0) return 2;
+  std::cout << "calc_e 1" << std::endl;
   this->calc_e(*neutron,*proton,*eos_thermo);
+  std::cout << "calc_e 2" << std::endl;
   elep.e.mu=neutron->mu-proton->mu;
   elep.pair_mu(0.0);
+  std::cout << "calc_e 3" << std::endl;
   y[0]=n_charge-elep.e.n;
   if (elep.include_muons) {
     y[0]=n_charge-elep.e.n-elep.mu.n;
