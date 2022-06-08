@@ -396,7 +396,7 @@ namespace o2scl {
         roots, if it is zero, it has a double real root, and if it is
         negative then the quadratic has complex conjugate roots.
      */
-    virtual fp_t disc_r(fp_t a2, fp_t b2, fp_t c2) {
+    virtual fp_t disc2_r(fp_t a2, fp_t b2, fp_t c2) {
       return b2*b2-4.0*a2*c2;
     }
     
@@ -649,7 +649,7 @@ namespace o2scl {
 
       cx_t r1, r2;
       int ret=solve_c(a2,b2,c2,r1,r2);
-      if (this->disc_r(a2,b2,c2)>=0.0) {
+      if (this->disc2_r(a2,b2,c2)>=0.0) {
         x1=r1.real();
         x2=r2.real();
         return 2;
@@ -669,7 +669,7 @@ namespace o2scl {
       }
       
       int ret=solve_c(a2,b2,c2,x1,x2);
-      if (this->disc_r(a2,b2,c2)>=0.0) {
+      if (this->disc2_r(a2,b2,c2)>=0.0) {
         return 2;
       }
       return 0;
@@ -852,7 +852,7 @@ namespace o2scl {
         then there is one real root and two complex conjugate
         roots. 
      */
-    virtual fp_t disc_r(const fp_t a3, const fp_t b3, const fp_t c3, 
+    virtual fp_t disc3_r(const fp_t a3, const fp_t b3, const fp_t c3, 
 			  const fp_t d3) {
       return b3*b3*c3*c3-4.0*a3*c3*c3*c3-4.0*b3*b3*b3*d3-
 	27.0*a3*a3*d3*d3+18.0*a3*b3*c3*d3;
@@ -906,7 +906,7 @@ namespace o2scl {
 
     /** \brief Test \f$ n^4 \f$ cubics with real coefficients
      */
-    size_t test_real_coeffs(fp_t alpha, fp_t &s1, fp_t &s2,
+    size_t test_cubic_real_coeffs(fp_t alpha, fp_t &s1, fp_t &s2,
                             fp_t &m1, fp_t &m2, size_t &wrong_ret,
                             size_t n=16) {
       
@@ -931,7 +931,7 @@ namespace o2scl {
                 fp_t cr1;
                 cx_t cr2, cr3;
                 int ret=solve_rc(ca,cb,cc,cd,cr1,cr2,cr3);
-                fp_t disc=this->disc_r(ca,cb,cc,cd);
+                fp_t disc=this->disc3_r(ca,cb,cc,cd);
                 if ((disc>=0.0 && ret==1) ||
                     (disc<0.0 && ret==3) ||
                     (ret!=1 && ret!=3)) {
@@ -995,7 +995,7 @@ namespace o2scl {
       
       cx_t r1,r2,r3;
       int ret=solve_c(a3,b3,c3,d3,r1,r2,r3);
-      if (this->disc_r(a3,b3,c3,d3)>=0) {
+      if (this->disc3_r(a3,b3,c3,d3)>=0) {
         x1=r1.real();
         x2=r2.real();
         x3=r3.real();
@@ -1190,7 +1190,7 @@ namespace o2scl {
 	roots, and it is positive if the roots are either all real or
 	all non-real.
     */
-    virtual fp_t disc_r(const fp_t a, const fp_t b, const fp_t c, 
+    virtual fp_t disc4_r(const fp_t a, const fp_t b, const fp_t c, 
 			  const fp_t d, const fp_t e) {
       fp_t a2=a*a;
       fp_t b2=b*b;
@@ -1417,7 +1417,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    size_t test_real_coeffs(fp_t &s1, fp_t &s2, fp_t &m1,
+    size_t test_quartic_real_coeffs(fp_t &s1, fp_t &s2, fp_t &m1,
                           fp_t &m2, size_t n=9) {
       
       cx_t i(0.0,1.0);
@@ -2554,8 +2554,7 @@ namespace o2scl {
       \note The algorithm attempts not to be wasteful, but is not
       necessarily optimized for speed. 
   */
-  class cubic_real_coeff_multip :
-    public cubic_real_coeff<double,std::complex<double> > {
+  class cubic_real_coeff_multip {
     
   protected:
     
@@ -3022,14 +3021,24 @@ namespace o2scl {
       return solve_rc_err(a,b,c,d,x1,x2,x3,err);
     }
 
-    virtual int solve_rc(const double a3, const double b3, const double c3, 
-			 const double d3, double &x1,
-                         std::complex<double> &x2,
-			 std::complex<double> &x3) {
-      return solve_rc<double,std::complex<double>>(a3,b3,c3,d3,x1,x2,x3);
-    }
-    
+    /** \brief Compute the cubic discriminant, 
+	\f$ b^2 c^2 - 4 a c^3 - 4 b^3 d - 27 a^2 d^2 + 18 a b c d \f$
 
+        If the discriminant is zero, then all roots qre real and
+        at least two are equal (possibly all three are identical).
+        If the discriminant is positive, then there are 
+        three distinct real roots, and if the discriminant is negative
+        then there is one real root and two complex conjugate
+        roots. 
+     */
+    template<class fp_t>
+    fp_t disc3_r(const fp_t a3, const fp_t b3, const fp_t c3, 
+                        const fp_t d3) {
+      return b3*b3*c3*c3-4.0*a3*c3*c3*c3-4.0*b3*b3*b3*d3-
+	27.0*a3*a3*d3*d3+18.0*a3*b3*c3*d3;
+    }
+
+    
   };
 
   /** \brief Solve a general polynomial with real coefficients (GSL)
