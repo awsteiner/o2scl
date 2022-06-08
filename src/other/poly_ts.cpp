@@ -524,7 +524,7 @@ int main(void) {
   cubic_real_coeff_gsl2<> c2;
   cubic_complex_std<> c3;
   cubic_real_coeff_multip c5;
-  c5.verbose=1;
+  //c5.verbose=1;
   
   // Quartic solvers
   quartic_real_coeff_cern<> q1;
@@ -635,17 +635,17 @@ int main(void) {
 			1.0e-1,1.0e-1,1.0e1,1.0e1,true);
   test_cubic_real_coeff(&p3,"poly_rc_gsl",1.0,
 			1.0e-1,4.0e-2,1.0e1,1.0e1,false);
-  //test_cubic_real_coeff(&c5,"cubic_rc_mp",1.0,
-  //1.0e-1,1.0e-2,1.0e1,8.0e0,false);
   test_cubic_real_coeff<long double,std::complex<long double> >
     (&c1_ld,"cubic_rc_cern_ld",
-     1.0,1.0e-12,1.0e-12,1.0e-9,1.0e-10,true);
+     1.0,5.0e-11,5.0e-11,5.0e-7,1.0e-10,true);
   test_cubic_real_coeff<long double,std::complex<long double> >
     (&c2_ld,"cubic_rc_gsl2_ld",
      1.0,1.0e-12,1.0e-12,1.0e-9,1.0e-10,true);
   test_cubic_real_coeff<long double,std::complex<long double> >
     (&c3_ld,"cubic_c_std_ld",
      1.0,1.0e-1,1.0e-1,1.0e1,1.0e1,true);
+  test_cubic_real_coeff(&c5,"cubic_rc_mp",1.0,
+                        1.0e-1,1.0e-2,1.0e1,8.0e0,true);
   test_cubic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
     (&c1_cdf50,"cubic_rc_cern_50",
      1.0,1.0e-40,1.0e-40,1.0e-38,1.0e-37,true);
@@ -656,7 +656,7 @@ int main(void) {
     (&c3_cdf50,"cubic_c_std_50",
      1.0,1.0e-1,1.0e-1,1.0e1,1.0e1,true);
   cout << endl;
-  
+
   cout << "Cubics with real coefficients and complex roots -\n"
        << " coefficients of odd powers small:" << endl;
   cout << "type                   Avg 1      Avg 2      Max 1"
@@ -683,6 +683,8 @@ int main(void) {
   test_cubic_real_coeff<long double,std::complex<long double> >
     (&c3_ld,"cubic_c_std_ld",
      1.0e-3,1.0e1,1.0e-1,1.0e1,1.0e1,true);
+  test_cubic_real_coeff(&c5,"cubic_rc_mp",1.0e-3,
+                        1.0e-1,1.0e-2,1.0e1,8.0e0,true);
   test_cubic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
     (&c1_cdf50,"cubic_rc_cern_50",
      1.0e-3,1.0e-38,1.0e-36,1.0e-37,1.0e-35,true);

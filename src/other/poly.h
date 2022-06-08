@@ -1962,7 +1962,7 @@ namespace o2scl {
       }
       
       if (d_new>delta2) {
-        h2=sqrt(d);
+        h2=o2sqrt(d);
         fp_t u0=-h1+h2;
         fp_t v0=-h1-h2;
         if (o2abs(u0)==0.0) {
@@ -1973,7 +1973,8 @@ namespace o2scl {
         else v=sign(o2pow(o2abs(v0),r3),v0);
         x[0]=u+v-h;
         x[1]=-r2*(u+v)-h;
-        x[2]=r4*abs(u-v);
+        fp_t tmp=u-v;
+        x[2]=r4*o2abs(tmp);
         if (o2abs(u0)<=eps || o2abs(v0)<=eps) {
           y[0]=x[0];
           for(k=0;k<=1;k++) {
@@ -2019,9 +2020,11 @@ namespace o2scl {
         }
         
       } else {
-        
-        h3=abs(r3*p);
-        h3=sqrt(h3*h3*h3);
+
+        fp_t tmp2=r3*p;
+        h3=o2abs(tmp2);
+        fp_t tmp3=h3*h3*h3;
+        h3=o2sqrt(tmp3);
         h2=r3*acos(-h1/h3);
         if (h3==0.0) h1=0.0;
         else h1=o2pow(h3,r3);
@@ -2537,14 +2540,9 @@ namespace o2scl {
 
   };
 
-#ifndef O2SCL_NEVER_DEFINED
-  
-  /** \brief Use multiprecision to automatically evaluate a function to
+  /** \brief Use multiprecision to automatically solve a cubic to 
       a specified level of precision
 
-      The function must be specified as a template, i.e. it must be of
-      the form <tt>template<class fp_t> fp_t function(fp_t x)</tt>.
-      
       This class will fail to evalate a function with the requested
       precision if:
       - The user-specified input and result data type does not have enough
@@ -2664,6 +2662,14 @@ namespace o2scl {
                   << dtos(d,0) << std::endl;
       }
           
+      /// Degenerate cubics
+      if (b==0 && c==0 && d==0) {
+        x1=0;
+        x2=0;
+        x3=0;
+        return 3;
+      }
+
       /// First pass, compare double and long double
       
       double a_d=static_cast<double>(a);
@@ -2683,25 +2689,48 @@ namespace o2scl {
       int ret_ld=q_ld.solve_rc(a_ld,b_ld,c_ld,d_ld,x1_ld,x2_ld,x3_ld);
       
       if (ret_d==ret_ld) {
-        err=static_cast<fp_t>(abs(x1_ld-x1_d)/abs(x1_ld));
-        err+=static_cast<fp_t>(abs(static_cast<std::complex<double>>(x2_ld)-
-                                   x2_d)/abs(x2_ld));
-        err+=static_cast<fp_t>(abs(static_cast<std::complex<double>>(x3_ld)-
-                                   x3_d)/abs(x3_ld));
-        err/=3;
+        err=0;
+        if (d==0 && (ret_ld==1 ||
+                     (abs(x1_ld)<abs(x2_ld) && abs(x1_ld)<abs(x3_ld)))) {
+          x1_ld=0;
+        } else {
+          err=static_cast<fp_t>(abs(x1_ld-x1_d)/abs(x1_ld));
+        }
+        if (d==0 && abs(x2_ld)<abs(x1_ld) && abs(x2_ld)<abs(x3_ld)) {
+          x2_ld=0;
+        } else if (x2_ld.real()!=0 || x2_ld.imag()!=0 ||
+                   x2_d.real()!=0 || x2_d.imag()!=0) {
+          err+=static_cast<fp_t>(abs(static_cast<std::complex<double>>(x2_ld)-
+                                     x2_d)/abs(x2_ld));
+        }
+        if (d==0 && abs(x3_ld)<abs(x1_ld) && abs(x3_ld)<abs(x2_ld)) {
+          x3_ld=0;
+        } else if (x3_ld.real()!=0 || x3_ld.imag()!=0 ||
+                   x3_d.real()!=0 || x3_d.imag()!=0) {
+          err+=static_cast<fp_t>
+            (abs(static_cast<std::complex<double>>(x3_ld)-
+                 x3_d)/abs(x3_ld));
+        }
         if (err<tol_loc) {
           x1=static_cast<fp_t>(x1_ld);
           x2=static_cast<cx_t>(x2_ld);
           x3=static_cast<cx_t>(x3_ld);
-          return 0;
+          return ret_d;
         }
       }
+      
       if (verbose>0) {
-        std::cout << "Failed 1: "
-                  << dtos(x1_ld,0) << " " << dtos(x1_d,0) << " "
-                  << dtos(x2_ld,0) << " " << dtos(x2_d,0) << " "
-                  << dtos(x3_ld,0) << " " << dtos(x3_d,0) << " "
-                  << dtos(err,0) << " " << tol_loc << std::endl;
+        std::cout << "Failed 1: " << ret_d << " " << ret_ld 
+                  << "\n  " << dtos(x1_d,0) << " " << dtos(x1_ld,0) << " "
+                  << "\n  (" << dtos(x2_d.real(),0) << ","
+                  << dtos(x2_d.imag(),0) << ") ("
+                  << dtos(x2_ld.real(),0) << ","
+                  << dtos(x2_ld.imag(),0) << ")"
+                  << "\n  (" << dtos(x3_d.real(),0) << ","
+                  << dtos(x3_d.imag(),0) << ") ("
+                  << dtos(x3_ld.real(),0) << ","
+                  << dtos(x3_ld.imag(),0) << ")"
+                  << "\n  " << dtos(err,0) << " " << tol_loc << std::endl;
       }
     
       /// Second pass, compare long double and 25-digit precision
@@ -2716,28 +2745,57 @@ namespace o2scl {
       int ret_cdf25=q_cdf25.solve_rc(a_cdf25,b_cdf25,c_cdf25,d_cdf25,
                                      x1_cdf25,x2_cdf25,x3_cdf25);
 
-      if (ret_cdf25==ret_ld) {
-        err=static_cast<fp_t>(abs(x1_cdf25-x1_ld)/abs(x1_cdf25));
-        err+=static_cast<fp_t>
-          (abs(abs(x2_cdf25)-abs(x2_ld))/abs(x2_cdf25));
-        err+=static_cast<fp_t>
-          (abs(abs(x3_cdf25)-abs(x3_ld))/abs(x3_cdf25));
-        err/=3;
+      if (ret_ld==ret_cdf25) {
+        // If d is 0 and the first root is near 0, then avoid dividing
+        // by it
+        err=0;
+        if (d==0 && (ret_cdf25==1 ||
+                     (abs(x1_cdf25)<abs(x2_cdf25) &&
+                      abs(x1_cdf25)<abs(x3_cdf25)))) {
+          x1_cdf25=0;
+        } else {
+          err=static_cast<fp_t>(abs(x1_cdf25-x1_ld)/abs(x1_cdf25));
+        }
+        if (d==0 && abs(x2_cdf25)<abs(x1_cdf25) &&
+            abs(x2_cdf25)<abs(x3_cdf25)) {
+          x2_cdf25=0;
+        } else if (x2_cdf25.real()!=0 || x2_cdf25.imag()!=0 ||
+                   x2_ld.real()!=0 || x2_ld.imag()!=0) {
+          err+=static_cast<fp_t>(abs(abs(x2_cdf25)-abs(x2_ld))/
+                                 abs(x2_cdf25));
+        }
+        if (d==0 && abs(x3_cdf25)<abs(x1_cdf25) &&
+            abs(x3_cdf25)<abs(x2_cdf25)) {
+          x3_cdf25=0;
+        } else if (x3_cdf25.real()!=0 || x3_cdf25.imag()!=0 ||
+                   x3_ld.real()!=0 || x3_ld.imag()!=0) {
+          err+=static_cast<fp_t>(abs(abs(x3_cdf25)-abs(x3_ld))/
+                                 abs(x3_cdf25));
+                                     
+        }
         if (err<tol_loc) {
           x1=static_cast<fp_t>(x1_cdf25);
           x2.real(static_cast<fp_t>(x2_cdf25.real()));
           x2.imag(static_cast<fp_t>(x2_cdf25.imag()));
           x3.real(static_cast<fp_t>(x3_cdf25.real()));
           x3.imag(static_cast<fp_t>(x3_cdf25.imag()));
-          return 0;
+          return ret_ld;
         }
       }
+      
       if (verbose>0) {
-        std::cout << "Failed 2: "
-                  << dtos(x1_cdf25,0) << " " << dtos(x1_ld,0) << " "
-                  << dtos(x2_cdf25,0) << " " << dtos(x2_ld,0) << " "
-                  << dtos(x3_cdf25,0) << " " << dtos(x3_ld,0) << " "
-                  << dtos(err,0) << " " << tol_loc << std::endl;
+        std::cout << "Failed 2: " << ret_ld << " " << ret_cdf25 
+                  << "\n  " << dtos(x1_ld,0) << " "
+                  << dtos(x1_cdf25,0) << " "
+                  << "\n  (" << dtos(x2_ld.real(),0) << ","
+                  << dtos(x2_ld.imag(),0) << ") ("
+                  << dtos(x2_cdf25.real(),0) << ","
+                  << dtos(x2_cdf25.imag(),0) << ")"
+                  << "\n  (" << dtos(x3_ld.real(),0) << ","
+                  << dtos(x3_ld.imag(),0) << ") ("
+                  << dtos(x3_cdf25.real(),0) << ","
+                  << dtos(x3_cdf25.imag(),0) << ")"
+                  << "\n  " << dtos(err,0) << " " << tol_loc << std::endl;
       }
     
       /// Third pass, compare 25- and 35-digit precision
@@ -2752,28 +2810,57 @@ namespace o2scl {
       int ret_cdf35=q_cdf35.solve_rc(a_cdf35,b_cdf35,c_cdf35,d_cdf35,
                                      x1_cdf35,x2_cdf35,x3_cdf35);
 
-      if (ret_cdf35==ret_cdf25) {
-        err=static_cast<fp_t>(abs(x1_cdf35-x1_cdf25)/abs(x1_cdf35));
-        err+=static_cast<fp_t>
-          (abs(abs(x2_cdf35)-abs(x2_cdf25))/abs(x2_cdf35));
-        err+=static_cast<fp_t>
-          (abs(abs(x3_cdf35)-abs(x3_cdf25))/abs(x3_cdf35));
-        err/=3;
+      if (ret_cdf25==ret_cdf35) {
+        // If d is 0 and the first root is near 0, then avoid dividing
+        // by it
+        err=0;
+        if (d==0 && (ret_cdf35==1 ||
+                     (abs(x1_cdf35)<abs(x2_cdf35) &&
+                      abs(x1_cdf35)<abs(x3_cdf35)))) {
+          x1_cdf35=0;
+        } else {
+          err=static_cast<fp_t>(abs(x1_cdf35-x1_cdf25)/abs(x1_cdf35));
+        }
+        if (d==0 && abs(x2_cdf35)<abs(x1_cdf35) &&
+            abs(x2_cdf35)<abs(x3_cdf35)) {
+          x2_cdf35=0;
+        } else if (x2_cdf35.real()!=0 || x2_cdf35.imag()!=0 ||
+                   x2_cdf25.real()!=0 || x2_cdf25.imag()!=0) {
+          err+=static_cast<fp_t>(abs(abs(x2_cdf35)-abs(x2_cdf25))/
+                                 abs(x2_cdf35));
+        }
+        if (d==0 && abs(x3_cdf35)<abs(x1_cdf35) &&
+            abs(x3_cdf35)<abs(x2_cdf35)) {
+          x3_cdf35=0;
+        } else if (x3_cdf35.real()!=0 || x3_cdf35.imag()!=0 ||
+                   x3_cdf25.real()!=0 || x3_cdf25.imag()!=0) {
+          err+=static_cast<fp_t>(abs(abs(x3_cdf35)-abs(x3_cdf25))/
+                                 abs(x3_cdf35));
+                                     
+        }
         if (err<tol_loc) {
           x1=static_cast<fp_t>(x1_cdf35);
           x2.real(static_cast<fp_t>(x2_cdf35.real()));
           x2.imag(static_cast<fp_t>(x2_cdf35.imag()));
           x3.real(static_cast<fp_t>(x3_cdf35.real()));
           x3.imag(static_cast<fp_t>(x3_cdf35.imag()));
-          return 0;
+          return ret_cdf25;
         }
       }
+      
       if (verbose>0) {
-        std::cout << "Failed 3: "
-                  << dtos(x1_cdf35,0) << " " << dtos(x1_cdf25,0) << " "
-                  << dtos(x2_cdf35,0) << " " << dtos(x2_cdf25,0) << " "
-                  << dtos(x3_cdf35,0) << " " << dtos(x3_cdf25,0) << " "
-                  << dtos(err,0) << " " << tol_loc << std::endl;
+        std::cout << "Failed 3: " << ret_cdf25 << " " << ret_cdf35 
+                  << "\n  " << dtos(x1_cdf25,0) << " "
+                  << dtos(x1_cdf35,0) << " "
+                  << "\n  (" << dtos(x2_cdf25.real(),0) << ","
+                  << dtos(x2_cdf25.imag(),0) << ") ("
+                  << dtos(x2_cdf35.real(),0) << ","
+                  << dtos(x2_cdf35.imag(),0) << ")"
+                  << "\n  (" << dtos(x3_cdf25.real(),0) << ","
+                  << dtos(x3_cdf25.imag(),0) << ") ("
+                  << dtos(x3_cdf35.real(),0) << ","
+                  << dtos(x3_cdf35.imag(),0) << ")"
+                  << "\n  " << dtos(err,0) << " " << tol_loc << std::endl;
       }
     
       /// Fourth pass, compare 35- and 50-digit precision
@@ -2788,30 +2875,59 @@ namespace o2scl {
       int ret_cdf50=q_cdf50.solve_rc(a_cdf50,b_cdf50,c_cdf50,d_cdf50,
                                      x1_cdf50,x2_cdf50,x3_cdf50);
 
-      if (ret_cdf50==ret_cdf35) {
-        err=static_cast<fp_t>(abs(x1_cdf50-x1_cdf35)/abs(x1_cdf50));
-        err+=static_cast<fp_t>
-          (abs(abs(x2_cdf50)-abs(x2_cdf35))/abs(x2_cdf50));
-        err+=static_cast<fp_t>
-          (abs(abs(x3_cdf50)-abs(x3_cdf35))/abs(x3_cdf50));
-        err/=3;
+      if (ret_cdf35==ret_cdf50) {
+        // If d is 0 and the first root is near 0, then avoid dividing
+        // by it
+        err=0;
+        if (d==0 && (ret_cdf50==1 ||
+                     (abs(x1_cdf50)<abs(x2_cdf50) &&
+                      abs(x1_cdf50)<abs(x3_cdf50)))) {
+          x1_cdf50=0;
+        } else {
+          err=static_cast<fp_t>(abs(x1_cdf50-x1_cdf35)/abs(x1_cdf50));
+        }
+        if (d==0 && abs(x2_cdf50)<abs(x1_cdf50) &&
+            abs(x2_cdf50)<abs(x3_cdf50)) {
+          x2_cdf50=0;
+        } else if (x2_cdf50.real()!=0 || x2_cdf50.imag()!=0 ||
+                   x2_cdf35.real()!=0 || x2_cdf35.imag()!=0) {
+          err+=static_cast<fp_t>(abs(abs(x2_cdf50)-abs(x2_cdf35))/
+                                 abs(x2_cdf50));
+        }
+        if (d==0 && abs(x3_cdf50)<abs(x1_cdf50) &&
+            abs(x3_cdf50)<abs(x2_cdf50)) {
+          x3_cdf50=0;
+        } else if (x3_cdf50.real()!=0 || x3_cdf50.imag()!=0 ||
+                   x3_cdf35.real()!=0 || x3_cdf35.imag()!=0) {
+          err+=static_cast<fp_t>(abs(abs(x3_cdf50)-abs(x3_cdf35))/
+                                 abs(x3_cdf50));
+                                     
+        }
         if (err<tol_loc) {
           x1=static_cast<fp_t>(x1_cdf50);
           x2.real(static_cast<fp_t>(x2_cdf50.real()));
           x2.imag(static_cast<fp_t>(x2_cdf50.imag()));
           x3.real(static_cast<fp_t>(x3_cdf50.real()));
           x3.imag(static_cast<fp_t>(x3_cdf50.imag()));
-          return 0;
+          return ret_cdf35;
         }
       }
+      
       if (verbose>0) {
-        std::cout << "Failed 4: "
-                  << dtos(x1_cdf50,0) << " " << dtos(x1_cdf35,0) << " "
-                  << dtos(x2_cdf50,0) << " " << dtos(x2_cdf35,0) << " "
-                  << dtos(x3_cdf50,0) << " " << dtos(x3_cdf35,0) << " "
-                  << dtos(err,0) << " " << tol_loc << std::endl;
+        std::cout << "Failed 4: " << ret_cdf35 << " " << ret_cdf50 
+                  << "\n  " << dtos(x1_cdf35,0) << " "
+                  << dtos(x1_cdf50,0) << " "
+                  << "\n  (" << dtos(x2_cdf35.real(),0) << ","
+                  << dtos(x2_cdf35.imag(),0) << ") ("
+                  << dtos(x2_cdf50.real(),0) << ","
+                  << dtos(x2_cdf50.imag(),0) << ")"
+                  << "\n  (" << dtos(x3_cdf35.real(),0) << ","
+                  << dtos(x3_cdf35.imag(),0) << ") ("
+                  << dtos(x3_cdf50.real(),0) << ","
+                  << dtos(x3_cdf50.imag(),0) << ")"
+                  << "\n  " << dtos(err,0) << " " << tol_loc << std::endl;
       }
-    
+        
       /// Final pass, compare 50- and 100-digit precision
       
       cpp_dec_float_100 a_cdf100=static_cast<cpp_dec_float_100>(a);
@@ -2824,30 +2940,57 @@ namespace o2scl {
       int ret_cdf100=q_cdf100.solve_rc(a_cdf100,b_cdf100,c_cdf100,d_cdf100,
                                        x1_cdf100,x2_cdf100,x3_cdf100);
 
-      if (ret_cdf100==ret_cdf50) {
-        err=static_cast<fp_t>(abs(x1_cdf100-x1_cdf50)/abs(x1_cdf100));
-        err+=static_cast<fp_t>
-          (abs(abs(x2_cdf100)-abs(x2_cdf50))/
-           abs(x2_cdf100));
-        err+=static_cast<fp_t>
-          (abs(abs(x3_cdf100)-abs(x3_cdf50))/
-           abs(x3_cdf100));
-        err/=3;
+      if (ret_cdf50==ret_cdf100) {
+        // If d is 0 and the first root is near 0, then avoid dividing
+        // by it
+        err=0;
+        if (d==0 && (ret_cdf100==1 ||
+                     (abs(x1_cdf100)<abs(x2_cdf100) &&
+                      abs(x1_cdf100)<abs(x3_cdf100)))) {
+          x1_cdf100=0;
+        } else {
+          err=static_cast<fp_t>(abs(x1_cdf100-x1_cdf50)/abs(x1_cdf100));
+        }
+        if (d==0 && abs(x2_cdf100)<abs(x1_cdf100) &&
+            abs(x2_cdf100)<abs(x3_cdf100)) {
+          x2_cdf100=0;
+        } else if (x2_cdf100.real()!=0 || x2_cdf100.imag()!=0 ||
+                   x2_cdf50.real()!=0 || x2_cdf50.imag()!=0) {
+          err+=static_cast<fp_t>(abs(abs(x2_cdf100)-abs(x2_cdf50))/
+                                 abs(x2_cdf100));
+        }
+        if (d==0 && abs(x3_cdf100)<abs(x1_cdf100) &&
+            abs(x3_cdf100)<abs(x2_cdf100)) {
+          x3_cdf100=0;
+        } else if (x3_cdf100.real()!=0 || x3_cdf100.imag()!=0 ||
+                   x3_cdf50.real()!=0 || x3_cdf50.imag()!=0) {
+          err+=static_cast<fp_t>(abs(abs(x3_cdf100)-abs(x3_cdf50))/
+                                 abs(x3_cdf100));
+                                     
+        }
         if (err<tol_loc) {
           x1=static_cast<fp_t>(x1_cdf100);
           x2.real(static_cast<fp_t>(x2_cdf100.real()));
           x2.imag(static_cast<fp_t>(x2_cdf100.imag()));
           x3.real(static_cast<fp_t>(x3_cdf100.real()));
           x3.imag(static_cast<fp_t>(x3_cdf100.imag()));
-          return 0;
+          return ret_cdf50;
         }
       }
+      
       if (verbose>0) {
-        std::cout << "Failed 5: "
-                  << dtos(x1_cdf100,0) << " " << dtos(x1_cdf50,0) << " "
-                  << dtos(x2_cdf100,0) << " " << dtos(x2_cdf50,0) << " "
-                  << dtos(x3_cdf100,0) << " " << dtos(x3_cdf50,0) << " "
-                  << dtos(err,0) << " " << tol_loc << std::endl;
+        std::cout << "Failed 5: " << ret_cdf50 << " " << ret_cdf100 
+                  << "\n  " << dtos(x1_cdf50,0) << " "
+                  << dtos(x1_cdf100,0) << " "
+                  << "\n  (" << dtos(x2_cdf50.real(),0) << ","
+                  << dtos(x2_cdf50.imag(),0) << ") ("
+                  << dtos(x2_cdf100.real(),0) << ","
+                  << dtos(x2_cdf100.imag(),0) << ")"
+                  << "\n  (" << dtos(x3_cdf50.real(),0) << ","
+                  << dtos(x3_cdf50.imag(),0) << ") ("
+                  << dtos(x3_cdf100.real(),0) << ","
+                  << dtos(x3_cdf100.imag(),0) << ")"
+                  << "\n  " << dtos(err,0) << " " << tol_loc << std::endl;
       }
     
       /// Algorithm failed
@@ -2889,8 +3032,6 @@ namespace o2scl {
 
   };
 
-#endif
-  
   /** \brief Solve a general polynomial with real coefficients (GSL)
    */
   template<class fp_t=double, class cx_t=std::complex<fp_t>,
