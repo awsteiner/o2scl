@@ -241,15 +241,31 @@ namespace o2scl {
 
   protected:
 
+    /// The name of the module
     PyObject *p_modname;
+
+    /// The module
     PyObject *p_module;
+
+    /// The class
     PyObject *p_class;
+
+    /// An instance of the class
     PyObject *p_instance;
+
+    /// The code to compute a point using the emulator
     PyObject *p_point_func;
+
+    /// Python object for the number of parameters
     PyObject *p_np;
 
+    /// The number of parameters
     size_t num_param;
+
+    /// The number of output data points
     size_t num_out;
+
+    /// If true, then the emulator provides uncertainties (default true)
     bool has_unc;
     
   public:
@@ -289,6 +305,7 @@ namespace o2scl {
       return;
     }
 
+    /// Verbosity parameter
     int verbose;
     
     virtual ~emulator_python() {
@@ -296,6 +313,12 @@ namespace o2scl {
     }
     
     /** \brief Set the emulator
+
+        Set the emulator presuming table containing \c np parameters
+        and several output quantities. The string \c log_wgt should be
+        the column of the log_weight in the table. The list, \c list,
+        should include the column names of the parameters and then the
+        output quantities (including the log weight column), in order.
      */
     void set(std::string module, std::string class_name,
              std::string train_func, std::string point_func,
@@ -331,17 +354,19 @@ namespace o2scl {
 
       // Create an instance of the class
       if (verbose>0) {
-        cout << "Loading python class instance." << endl;
+        std::cout << "Loading python class instance." << std::endl;
       }
       if (PyCallable_Check(p_class)==false) {
         O2SCL_ERR2("Check class callable failed in ",
-                   "funct_python_method::set_function().",o2scl::exc_efailed);
+                   "funct_python_method::set_function().",
+                   o2scl::exc_efailed);
       }
       
       p_instance=PyObject_CallObject(p_class,0);
       if (p_instance==0) {
         O2SCL_ERR2("Instantiate class failed in ",
-                   "funct_python_method::set_function().",o2scl::exc_efailed);
+                   "funct_python_method::set_function().",
+                   o2scl::exc_efailed);
       }
       
       PyObject *p_train_func=
