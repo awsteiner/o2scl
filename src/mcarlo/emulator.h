@@ -289,6 +289,9 @@ namespace o2scl {
      */
     void decref() {
       if (p_modname!=0) {
+        if (verbose>0) {
+          std::cout << "Executing decrefs." << std::endl;
+        }
         Py_DECREF(p_modname);
         Py_DECREF(p_module);
         Py_DECREF(p_class);
@@ -329,23 +332,35 @@ namespace o2scl {
       decref();
       
       int ret;
-
+      
+      if (verbose>0) {
+        std::cout << "Bookkeeping." << std::endl;
+      }
       num_param=np;
       num_out=list.size()-np-1;
       has_unc=has_uncerts;
 
+      if (verbose>0) {
+        std::cout << "Getting module name in unicode." << std::endl;
+      }
       p_modname=PyUnicode_FromString(module.c_str());
       if (p_modname==0) {
         O2SCL_ERR2("Module name string creation failed in ",
                    "emulator_python::set().",o2scl::exc_efailed);
       }
       
+      if (verbose>0) {
+        std::cout << "Obtaining python module." << std::endl;
+      }
       p_module=PyImport_Import(p_modname);
       if (p_module==0) {
         O2SCL_ERR2("Module import failed in ",
                    "emulator_python::set().",o2scl::exc_efailed);
       }
 
+      if (verbose>0) {
+        std::cout << "Obtaining python class." << std::endl;
+      }
       p_class=PyObject_GetAttrString(p_module,class_name.c_str());
       if (p_class==0) {
         O2SCL_ERR2("Get class failed in ",
@@ -354,7 +369,7 @@ namespace o2scl {
 
       // Create an instance of the class
       if (verbose>0) {
-        std::cout << "Loading python class instance." << std::endl;
+        std::cout << "Loading python class." << std::endl;
       }
       if (PyCallable_Check(p_class)==false) {
         O2SCL_ERR2("Check class callable failed in ",
@@ -362,6 +377,9 @@ namespace o2scl {
                    o2scl::exc_efailed);
       }
       
+      if (verbose>0) {
+        std::cout << "Loading python class instance." << std::endl;
+      }
       p_instance=PyObject_CallObject(p_class,0);
       if (p_instance==0) {
         O2SCL_ERR2("Instantiate class failed in ",
@@ -369,6 +387,10 @@ namespace o2scl {
                    o2scl::exc_efailed);
       }
       
+      if (verbose>0) {
+        std::cout << "Loading python class training function "
+                  << train_func << std::endl;
+      }
       PyObject *p_train_func=
         PyObject_GetAttrString(p_instance,train_func.c_str());
       if (p_train_func==0) {
@@ -376,27 +398,44 @@ namespace o2scl {
                    "emulator_python::set().",o2scl::exc_efailed);
       }
       
+      if (verbose>0) {
+        std::cout << "Loading python class point function "
+                  << point_func << std::endl;
+      }
       p_point_func=PyObject_GetAttrString(p_instance,point_func.c_str());
       if (p_point_func==0) {
         O2SCL_ERR2("Get point function failed in ",
                    "emulator_python::set().",o2scl::exc_efailed);
       }
       
+      if (verbose>0) {
+        std::cout << "Loading python number of parameters." << std::endl;
+      }
       p_np=PyLong_FromSsize_t(np);
       if (p_np==0) {
         O2SCL_ERR2("Parameter number object failed in ",
                    "emulator_python::set().",o2scl::exc_efailed);
       }
       
+      if (verbose>0) {
+        std::cout << "Loading python filename " << file << std::endl;
+      }
       PyObject *p_file=PyUnicode_FromString(file.c_str());
       if (p_file==0) {
         O2SCL_ERR2("File name string creation failed in ",
                    "emulator_python::set().",o2scl::exc_efailed);
       }
 
+      if (verbose>0) {
+        std::cout << "Reformatting list." << std::endl;
+      }
       std::string list_reformat=log_wgt;
       for(size_t k=0;k<list.size();k++) {
         list_reformat+=","+list[k];
+      }
+
+      if (verbose>0) {
+        std::cout << "Creating python list." << std::endl;
       }
       PyObject *p_list=PyUnicode_FromString(list_reformat.c_str());
       if (p_list==0) {
@@ -404,16 +443,31 @@ namespace o2scl {
                    "emulator_python::set().",o2scl::exc_efailed);
       }
       
-      PyObject *p_args=PyTuple_New(3);
+      if (verbose>0) {
+        std::cout << "Creating python tuple." << std::endl;
+      }
+      PyObject *p_args=PyTuple_New(4);
+      
+      if (verbose>0) {
+        std::cout << "Setting first item." << std::endl;
+      }
       ret=PyTuple_SetItem(p_args,0,p_np);
       if (ret!=0) {
         O2SCL_ERR2("Tuple set 0 failed in ",
                    "emulator_python::set().",o2scl::exc_efailed);
       }
+
+      if (verbose>0) {
+        std::cout << "Setting second item." << std::endl;
+      }
       ret=PyTuple_SetItem(p_args,1,p_file);
       if (ret!=0) {
         O2SCL_ERR2("Tuple set 1 failed in ",
                    "emulator_python::set().",o2scl::exc_efailed);
+      }
+
+      if (verbose>0) {
+        std::cout << "Setting third item." << std::endl;
       }
       ret=PyTuple_SetItem(p_args,2,p_list);
       if (ret!=0) {
@@ -421,20 +475,41 @@ namespace o2scl {
                    "emulator_python::set().",o2scl::exc_efailed);
       }
 
+      if (verbose>0) {
+        std::cout << "Setting verbose parameter." << std::endl;
+      }
+      PyObject *p_verbose=PyLong_FromSsize_t(verbose);
+      if (p_verbose==0) {
+        O2SCL_ERR2("Verbose object failed in ",
+                   "emulator_python::set().",o2scl::exc_efailed);
+      }
+      ret=PyTuple_SetItem(p_args,3,p_verbose);
+      if (ret!=0) {
+        O2SCL_ERR2("Tuple set 2 failed in ",
+                   "emulator_python::set().",o2scl::exc_efailed);
+      }
+      
+      if (verbose>0) {
+        std::cout << "Calling training function." << std::endl;
+      }
       PyObject *p_result=PyObject_CallObject(p_train_func,p_args);
       if (p_result==0) {
         O2SCL_ERR2("Function call failed in ",
                    "emulator_python::set().",o2scl::exc_efailed);
       }
       
-      //if (verbose>0) {
-      //cout << "Decref value and result." << endl;
-      //}
+      if (verbose>0) {
+        std::cout << "Decref value and result." << std::endl;
+      }
       Py_DECREF(p_train_func);
       Py_DECREF(p_file);
       Py_DECREF(p_list);
       Py_DECREF(p_args);
       Py_DECREF(p_result);
+
+      if (verbose>0) {
+        std::cout << "Done in emulator_python::set()." << std::endl;
+      }
       
       return;
     }
