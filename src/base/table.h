@@ -197,7 +197,7 @@ namespace o2scl {
       acol utility 
 
       \verbatim embed:rst
-      See :ref:`The acol Command-line Utility` for more details
+      See :ref:`The acol Command Line Utility` for more details
       on `acol`.
       \endverbatim
 

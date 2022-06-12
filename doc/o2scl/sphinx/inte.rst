@@ -9,11 +9,16 @@ Integration contents
 - :ref:`One-dimensional integration based on GSL, CERNLIB, and Boost`
 - :ref:`GSL-based integration details`
 - :ref:`GSL-based integration error messages`
-- :ref:`Multi-dimensional integration routines`
 - :ref:`One-dimensional integration example`
 - :ref:`Gauss-Kronrod integration coefficients`
 - :ref:`Non-adaptive quadrature integration coefficients`
 
+..
+
+  This section is commented out for now
+
+  - :ref:`Multi-dimensional integration routines`
+  
 One-dimensional integration based on GSL, CERNLIB, and Boost
 ------------------------------------------------------------
 

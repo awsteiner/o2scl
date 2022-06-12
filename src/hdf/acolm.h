@@ -594,7 +594,7 @@ namespace o2scl_acol {
     
     /** \brief Open local HTML docs for acol or an O₂scl topic.
 
-        Arguments: <tt>[topic]</tt>
+        Arguments: <tt>["dev"] [topic]</tt>
 
         If [topic] is unspecified, this command opens up the local
         HTML documentation for acol in the default web browser using

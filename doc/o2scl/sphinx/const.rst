@@ -28,7 +28,7 @@ values.
 The :ref:`find_constants <find_constants>` class contains a
 simple constant database which can be searched at compiled time
 and also provides the constant database to ``acol -constants``
-(see :ref:`The acol Command-line Utility`).
+(see :ref:`The acol Command Line Utility`).
 
 These physical constants can also be used to create unit conversion
 factors, described in :ref:`Unit conversions`.

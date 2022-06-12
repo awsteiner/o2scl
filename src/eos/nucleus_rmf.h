@@ -48,9 +48,11 @@ namespace o2scl {
       This class is based on a code developed by C.J. Horowitz and
       B.D. Serot, and used in [Horowitz81]_ which was then adapted
       by P.J. Ellis and used in [Heide94]_ and [Prakash94ns]_. Ellis
-      and A.W. Steiner adapted it for the parameterization in in 
-      eos_had_rmf for [Steiner05b]_, and then converted to C++ by
-      Steiner afterwards.
+      and A.W. Steiner adapted it for the parameterization in 
+      :ref:`eos_had_rmf <eos_had_rmf>` 
+      for [Steiner05b]_, and then converted to C++ by
+      Steiner afterwards. This code was also used in [Steiner13cs]_
+      to create SFHo and SFHx .
       \endverbatim
 
       The standard usage is something like:
@@ -63,6 +65,14 @@ namespace o2scl {
       which computes the structure of \f$ ^{208}\mathrm{Pb} \f$ and
       outputs the neutron skin thickness using the model \c 'NL4'.
 
+      This code does not always converge, and this can sometimes
+      be addressed by choosing a different initial guess, stored
+      in \ref nucleus_rmf::ig, which is an object of type
+      \ref nucleus_rmf::initial_guess .
+
+      \note This class does not currently have the ability to 
+      assign fractional occupation numbers to the various shells.
+      
       Potential exceptions are
       - Failed to converge
       - Failed to solve meson field equations
@@ -160,7 +170,7 @@ namespace o2scl {
       If the delta meson is included, there is another field equation
       \f[
       \delta^{\prime \prime}(r) + \frac{2}{r} \delta^{\prime}(r)
-      - m_{\delta}^2 \delta &=& - \frac{g_{\delta}}{2} 
+      - m_{\delta}^2 \delta = - \frac{g_{\delta}}{2} 
       \left[n_n(r)-n_p(r)\right] + 2 g_{\delta}^2 \delta f + \frac{\xi}{6}
       g_{\delta}^4 \delta^3
       \f]
@@ -198,8 +208,9 @@ namespace o2scl {
       \f]
       \verbatim embed:rst
       and the parameter :math:`\mu = (0.71)^{1/2}~\mathrm{GeV}` (see
-      Eq. 20b in [Horowitz81]_). The default value of \ref a_proton
-      is the value of :math:`\mu` converted into :math:`\mathrm{fm}^{-1}`.
+      Eq. 20b in [Horowitz81]_). The default value of
+      :cpp:var:`nucleus_rmf::a_proton` is the value of :math:`\mu`
+      converted into :math:`\mathrm{fm}^{-1}`.
       \endverbatim
 
       Generally, the first array index associated with a function
@@ -275,9 +286,9 @@ namespace o2scl {
       std::string state;
       /// Matching radius (in fm)
       double match_point;
-      /// Desc.
+      /// Energy eigenvalue
       double eigen;
-      /// Desc.
+      /// Correction to the energy eigenvalue
       double eigenc;
       /// Number of nodes in the wave function
       int nodes;
@@ -496,6 +507,12 @@ namespace o2scl {
 	\sigma(r)=\mathrm{sigma0}/
 	[1+\exp((r-\mathrm{fermi\_radius})/\mathrm{fermi\_width})]
 	\f]
+
+        \note AWS, 6/12/22: For the initial guess, it appears that 
+        the meson fields have been multiplied by their couplings,
+        so "sigma0" is actually \f$ g_{\sigma} \sigma \f$ or
+        \f$ c_{\sigma} m_{\sigma} \sigma \f$, using the 
+        notation of \ref eos_had_rmf::nucleus_rmf .
     */
     typedef struct {
       /// Scalar field at r=0

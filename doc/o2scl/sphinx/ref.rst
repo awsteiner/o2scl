@@ -599,6 +599,10 @@ Bibliography
    <https://doi.org/10.1103/PhysRevC.85.055804>`_,
    Phys. Rev. C **85** (2012) 055804.
 
+.. [Steiner13cs] : `A. W. Steiner, M. Hempel, and T. Fischer
+   <http://doi.org/10.1088/0004-637X/774/1/17>`_,
+   Astrophys. J. **774** (2013) 17.
+
 .. [Stergioulas03] : `N. Stergioulas
    <https://doi.org/10.12942/lrr-2003-3>`_,
    Liv. Rev. Rel. **6** (2003) 3.
