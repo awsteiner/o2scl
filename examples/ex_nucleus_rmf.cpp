@@ -106,9 +106,8 @@ int main(int argc, char *argv[]) {
 
   std::shared_ptr<table_units<> > profiles=rn.get_profiles();
   lead_chden_exp(profiles);
-  
-#ifdef O2SCL_HDF
 
+  // Output the results to a file
   hdf_file hf;
   hdf_file hf2;
   hf.open_or_create("ex_nucleus_rmf_prof.o2");
@@ -119,11 +118,18 @@ int main(int argc, char *argv[]) {
   hf.close();
   hf2.close();
 
-  //profiles.line_of_names(((string)"r rhop rhon sig ome rho ")+
-  //"coul chden rhosp rhosn ");
-  //chden_table.line_of_names("x chden1 chdenc");
+  cout << "Now with IUFSU:\n" << endl;
 
-#endif
+  // IUFSU requires a different initial guess
+  rn.ig.sigma0=1.73;
+  rn.ig.omega0=1.38;
+  rn.ig.rho0=1.0e-13;
+  rmf_load(rn.def_rmf,"IUFSU");
+  rn.run_nucleus(82,126,0,0);
+  
+  cout << "Proton RMS radius       :  " << rn.rprms << " fm." << endl;
+  cout << "Neutron RMS radius      :  " << rn.rnrms << " fm." << endl;
+  cout << "Total energy per nucleon: " << rn.etot << " MeV." << endl;
 
   t.report();
 

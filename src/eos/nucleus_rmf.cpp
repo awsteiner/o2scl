@@ -967,6 +967,7 @@ double nucleus_rmf::rho_rhs(double sig, double ome, double rho) {
 }
 
 int nucleus_rmf::dirac(int ilevel) {
+  
   int iturn, i, j, jmatch, jtop, no=0;
   double deltae, x, yfs, ygs, alpha, xk, v0, e;
   double scale, xnorm=0.0, factor, x1, x2, yf1, yf2, yg1, yg2;
@@ -988,6 +989,7 @@ int nucleus_rmf::dirac(int ilevel) {
 
   iturn=1;
   deltae=dirac_tol2*3.0;
+  
   while (iturn<=dirac_itmax && fabs(deltae)>dirac_tol2) {
 
     //--------------------------------------------------------------
@@ -1004,6 +1006,9 @@ int nucleus_rmf::dirac(int ilevel) {
       f[0]=f[0]/((*levp)[ilevel].eigen-v[0]-fields(0,0)*hc_mev_fm+
 		 2.0*mnuc*hc_mev_fm);
     }
+    if (verbose>2) {
+      cout << "f[0], g[0]: " << f[0] << " " << g[0] << endl;
+    }
 
     jmatch=(int)(25.0*(*levp)[ilevel].match_point+0.5+1.0e-6);
     ode_y[0]=f[0];
@@ -1016,6 +1021,9 @@ int nucleus_rmf::dirac(int ilevel) {
       dirac_step(x,step_size,(*levp)[ilevel].eigen,(*levp)[ilevel].kappa,v);
       f[i]=ode_y[0];
       g[i]=ode_y[1];
+      if (verbose>2) {
+        cout << "f[i], g[i]: " << i << " " << f[i] << " " << g[i] << endl;
+      }
     }
     
     //--------------------------------------------------------------
@@ -1041,6 +1049,12 @@ int nucleus_rmf::dirac(int ilevel) {
     e=hc_mev_fm/2.0/((*levp)[ilevel].eigen+2.0*mnuc*hc_mev_fm);
     
     f[grid_size-1]=xz[1]*g[grid_size-1];
+
+    if (verbose>2) {
+      cout << "f[grid_size-1], g[grid_size-1]: "
+           << f[grid_size-1] << " " << g[grid_size-1] << endl;
+    }
+    
     ode_y[0]=f[grid_size-1];
     ode_y[1]=g[grid_size-1];
     jtop=grid_size-jmatch;
@@ -1051,6 +1065,10 @@ int nucleus_rmf::dirac(int ilevel) {
       i=grid_size-j;
       f[i-1]=ode_y[0];
       g[i-1]=ode_y[1];
+      if (verbose>2) {
+        cout << "f[i-1], g[i-1]: " << i << " " 
+             << f[i-1] << " " << g[i-1] << endl;
+      }
     }
   
     //--------------------------------------------------------------
@@ -1084,6 +1102,11 @@ int nucleus_rmf::dirac(int ilevel) {
 
     (*levp)[ilevel].eigen=(*levp)[ilevel].eigen+deltae;
 
+    if (verbose>1) {
+      cout << "iturn, deltae: " << f[jmatch-1] << " "
+           << g[jmatch-1] << " " << iturn << " " << deltae << endl;
+    }
+    
     //--------------------------------------------------------------
     // If the level is unbound, then set to a
     // default value.

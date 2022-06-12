@@ -522,7 +522,7 @@ namespace o2scl {
     initial_guess ig;
 
     /** \brief If true, use the generic ODE solver instead of the 
-	internal 4th order Runge-Kutta
+	internal 4th order Runge-Kutta (default false)
      */
     bool generic_ode;
 

@@ -390,7 +390,6 @@ double eos_had_base::calc_pressure_nb(double nb, double delta) {
   neutron->n=(1.0+delta)*nb/2.0;
   proton->n=(1.0-delta)*nb/2.0;
 
-  std::cout << "H: " << neutron->n << " " << proton->n << std::endl;
   calc_e(*neutron,*proton,*eos_thermo);
   
   return eos_thermo->pr;
