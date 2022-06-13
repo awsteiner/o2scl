@@ -1559,26 +1559,26 @@ int acol_manager::comm_wdocs(std::vector<std::string> &sv, bool itive_com) {
     }
     if (section=="part") {
       if (dev) {
-        cmd+=((string)"http://neutronstars.utk.edu/code/")+
+        cmd+=((string)"https://neutronstars.utk.edu/code/")+
           "o2scl-dev/part/html/search.html?q="+term+" &";
       } else {
-        cmd+=((string)"http://neutronstars.utk.edu/code/")+
+        cmd+=((string)"https://neutronstars.utk.edu/code/")+
           "o2scl/part/html/search.html?q="+term+" &";
       }
     } else if (section=="eos") {
       if (dev) {
-        cmd+=((string)"http://neutronstars.utk.edu/code/")+
+        cmd+=((string)"https://neutronstars.utk.edu/code/")+
           "o2scl-dev/eos/html/search.html?q="+term+" &";
       } else {
-        cmd+=((string)"http://neutronstars.utk.edu/code/")+
+        cmd+=((string)"https://neutronstars.utk.edu/code/")+
           "o2scl/eos/html/search.html?q="+term+" &";
       }
     } else {
       if (dev) {
-        cmd+=((string)"http://neutronstars.utk.edu/code/")+
+        cmd+=((string)"https://neutronstars.utk.edu/code/")+
           "o2scl-dev/html/search.html?q="+term+" &";
       } else {
-        cmd+=((string)"http://neutronstars.utk.edu/code/")+
+        cmd+=((string)"https://neutronstars.utk.edu/code/")+
           "o2scl/html/search.html?q="+term+" &";
       }
     }

@@ -499,7 +499,8 @@ void nucleus_rmf::init_run(int nucleus_Z, int nucleus_N,
   // Initial guess for fields
 
   for (i=0;i<grid_size;i++) {
-    double ex=exp((step_size*((double)(i+1))-ig.fermi_radius)/ig.fermi_width);
+    double ex=exp((step_size*((double)(i+1))-ig.fermi_radius)/
+                  ig.fermi_width);
     fields(i,0)=ig.sigma0/(1.0+ex);
     fields(i,1)=ig.omega0/(1.0+ex);
     fields(i,2)=ig.rho0/(1.0+ex);
@@ -705,9 +706,9 @@ int nucleus_rmf::meson_solve() {
   
   if (verbose>1) cout << "Solving meson field equations. " << endl;
 	
-  bool mesondone=false;
-  int mesonfieldcount=0;
-  while(mesondone==false) {
+  bool meson_done=false;
+  int meson_field_count=0;
+  while (meson_done==false) {
 
     for (i=0;i<grid_size;i++) {
       double xr=pow(((double)(i+1))*step_size,2.0);
@@ -725,14 +726,14 @@ int nucleus_rmf::meson_solve() {
       xrho(i,2)=xrho(i,2)+xrhor[i]*xr;
     }
     
-    mesondone=true;
-    if (fabs(t1/xrho(0,0)-1.0)>meson_tol) mesondone=false;
-    if (fabs(t2/xrho(surf_index-1,0)-1.0)>meson_tol) mesondone=false;
-    if (fabs(t3/xrho(0,1)-1.0)>meson_tol) mesondone=false;
-    if (fabs(t4/xrho(surf_index-1,1)-1.0)>meson_tol) mesondone=false;
-    if (fabs(t5/xrho(0,2)-1.0)>meson_tol) mesondone=false;
+    meson_done=true;
+    if (fabs(t1/xrho(0,0)-1.0)>meson_tol) meson_done=false;
+    if (fabs(t2/xrho(surf_index-1,0)-1.0)>meson_tol) meson_done=false;
+    if (fabs(t3/xrho(0,1)-1.0)>meson_tol) meson_done=false;
+    if (fabs(t4/xrho(surf_index-1,1)-1.0)>meson_tol) meson_done=false;
+    if (fabs(t5/xrho(0,2)-1.0)>meson_tol) meson_done=false;
 
-    if (mesondone==false) {
+    if (meson_done==false) {
       xitno=1.0;
       t1=xrho(0,0);
       t2=xrho(surf_index-1,0);
@@ -743,10 +744,11 @@ int nucleus_rmf::meson_solve() {
       meson_iter(3);
     }
 
-    mesonfieldcount++;
-    if (mesonfieldcount>meson_itmax) {
+    meson_field_count++;
+    if (meson_field_count>meson_itmax) {
       O2SCL_CONV2_RET("Failed to solve meson field equations in ",
-		      "nucleus_rmf::meson_solve().",exc_efailed,err_nonconv);
+		      "nucleus_rmf::meson_solve().",exc_efailed,
+                      err_nonconv);
     }
 
   }
@@ -814,10 +816,12 @@ void nucleus_rmf::center_mass_corr(double atot) {
   // Does not work with nn!=100
   nn=100;
   xqmax=8.0;
-  // AWS: The harmonic-oscillator energy in inverse fm,
-  // see e.g. 2.30 in Negele (1970), but the coefficients
-  // here may have been updated by Paul Ellis
+  
+  // AWS: The harmonic-oscillator energy in inverse fm, see e.g. 2.30
+  // in Negele (1970), but the coefficients here may have been updated
+  // by Paul Ellis
   hw=(3.923+23.265/cbrt(atot))/hc_mev_fm;
+  
   b=hc_mev_fm/sqrt(mnuc*hw);
   factor=b*b/(4.0*atot);
   
@@ -915,8 +919,9 @@ double nucleus_rmf::sigma_rhs(double sig, double ome, double rho) {
 
   gs=rmf->cs*rmf->ms;
 
-  // sigma in fm^-1
+  // The sigma field without the nucleon coupling in fm^-1
   sig2=sig/gs;
+  
   dfdphi=rmf->a1+2.0*rmf->a2*sig2+3.0*rmf->a3*sig2*sig2+
     4.0*rmf->a4*pow(sig2,3.0)+5.0*rmf->a5*pow(sig2,4.0)+
     6.0*rmf->a6*pow(sig2,5.0);
@@ -936,6 +941,8 @@ double nucleus_rmf::omega_rhs(double sig, double ome, double rho) {
   // The fields are in fm^{-1}
 
   gw=rmf->cw*rmf->mw;
+
+  // The omega field without the nucleon coupling
   omet=ome/gw;
 
   dfdome=2.0*rmf->b1*omet+4.0*rmf->b2*pow(omet,3.0)+
@@ -955,6 +962,7 @@ double nucleus_rmf::rho_rhs(double sig, double ome, double rho) {
 
   gs=rmf->cs*rmf->ms;
   gw=rmf->cw*rmf->mw;
+  
   sigt=sig/gs;
   omet=ome/gw;
   f=rmf->a1*sigt+rmf->a2*sigt*sigt+rmf->a3*pow(sigt,3.0)+

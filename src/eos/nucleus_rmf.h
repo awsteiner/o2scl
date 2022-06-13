@@ -72,6 +72,12 @@ namespace o2scl {
 
       \note This class does not currently have the ability to 
       assign fractional occupation numbers to the various shells.
+
+      \note In this code, the meson fields are internally stored with
+      together with their nucleon couplings, so \ref fields contains
+      \f$ (g_{\sigma} \sigma, g_{\omega} \omega, g_{\rho} \rho, A )
+      \f$ where \f$ g_{\sigma} \f$ is given, e.g. by the product of
+      \ref eos_had_rmf::ms times \ref eos_had_rmf::cs .
       
       Potential exceptions are
       - Failed to converge
@@ -124,6 +130,8 @@ namespace o2scl {
       // 184 nucleons
       \endverbatim
       
+      \b Details
+
       Below, \f$ \alpha \f$ is a generic index for the isospin, the
       radial quantum number \f$ n \f$ and the angular quantum numbers
       \f$ \kappa \f$ and \f$ m \f$. The meson fields are \f$
@@ -155,7 +163,7 @@ namespace o2scl {
       \frac{\zeta}{6} g_{\omega}^4 \omega^3 + g_{\rho}^2 \rho^2 
       \frac{\partial f}{\partial \omega} \\
       \rho^{\prime \prime}(r) + \frac{2}{r} \rho^{\prime}(r)
-      - m_{\rho}^2 \rho &=& - \frac{g_{\rho}}{2} 
+      - m_{\rho}^2 \rho &=& \frac{g_{\rho}}{2} 
       \left[n_n(r)-n_p(r)\right] + 2 g_{\rho}^2 \rho f + \frac{\xi}{6}
       g_{\rho}^4 \rho^3
       \f}
@@ -232,7 +240,8 @@ namespace o2scl {
       \future Make the neutron and proton orbitals more configurable
       \future Generalize to \f$ m_n \neq m_p \f$ .
       \future Allow more freedom in the integrations
-      \future Consider converting everything to inverse fermis.
+      \future Consider converting everything to inverse fermis 
+      (AWS 6/12/22: I think this has been at least partially completed)
       \future Convert to zero-indexed arrays (mostly done)
       \future Warn when the level ordering is wrong, and unoccupied levels
       are lower energy than occupied levels
@@ -251,7 +260,7 @@ namespace o2scl {
       double eigen;
       /// Quantum number \f$ \kappa \f$ .
       double kappa;
-      /// The meson fields
+      /// The meson fields times the nucleon couplings
       ubmatrix *fields;
       /// Desc
       ubvector *varr;
@@ -313,7 +322,7 @@ namespace o2scl {
     //@{
     /** \brief Initialize a run
 
-        Note that \ref rmf must be set before run_nucleus() is called.
+        Note that \ref rmf must be set before init_run() is called.
     */
     void init_run(int nucleus_Z, int nucleus_N, int unocc_Z, int unocc_N);
     
@@ -507,34 +516,37 @@ namespace o2scl {
 	\sigma(r)=\mathrm{sigma0}/
 	[1+\exp((r-\mathrm{fermi\_radius})/\mathrm{fermi\_width})]
 	\f]
-
-        \note AWS, 6/12/22: For the initial guess, it appears that 
-        the meson fields have been multiplied by their couplings,
-        so "sigma0" is actually \f$ g_{\sigma} \sigma \f$ or
-        \f$ c_{\sigma} m_{\sigma} \sigma \f$, using the 
-        notation of \ref eos_had_rmf::nucleus_rmf .
     */
     typedef struct {
-      /// Scalar field at r=0
+      /** \brief Scalar field times the nucleon coupling at \f$ r=0 \f$ 
+          in \f$ 1/\mathrm{fm} \f$
+      */
       double sigma0;
-      /// Vector field at r=0
+      /** \brief Vector field times the nucleon coupling at \f$ r=0 \f$ 
+          in \f$ 1/\mathrm{fm} \f$
+      */
       double omega0;
-      /// Isubvector field at r=0
+      /** \brief Isovector field times the nucleon coupling at \f$ r=0 \f$ 
+          in \f$ 1/\mathrm{fm} \f$
+      */
       double rho0;
 #ifdef O2SCL_NEVER_DEFINED
       double delta0;
 #endif
-      /// Coulomb field at r=0
+      /// Coulomb field at \f$ r=0 \f$ in \f$ 1/\mathrm{fm} \f$
       double A0;
-      /// The radius for which the fields are half their central value
+      /// The radius (in fm) for which the fields are half their
+      /// central value
       double fermi_radius;
-      /// The "width" of the Fermi-Dirac function
+      /// The "width" of the Fermi-Dirac function (in fm)
       double fermi_width;
     } initial_guess;
 
     /** \brief Parameters for initial guess
 
-	Default is <tt>{310,240,-6,25.9,6.85,0.6}</tt>
+	Default is \f$ (310/(\hbar c),240/(\hbar c), -6/(\hbar
+        c),25.9/(\hbar c), 6.85, 0.6) \f$ where the first four are in
+        \f$ 1/\mathrm{fm} \f$ and the last two are in fm.
     */
     initial_guess ig;
 
@@ -548,7 +560,9 @@ namespace o2scl {
   protected:
 
     /** \brief The parameter for the charge density of the proton
-	(default is about 4.27073)
+        in \f$ 1/\mathrm{fm} \f$ (default is about 4.27073)
+
+        This quantity is used in \ref pfold() and \ref gauss()
     */
     double a_proton;
 
@@ -596,7 +610,7 @@ namespace o2scl {
     /// Values of the fields from the last iteration
     ubmatrix field0;
 
-    /// The values of the fields
+    /// The meson fields (times the nucleon couplings) and photon fields
     ubmatrix fields;
 
     /// The Green's functions inside
