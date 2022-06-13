@@ -170,6 +170,9 @@ namespace o2scl_const {
 
   /// \f$ \hbar c \f$ in MeV cm (exact)
   const double hc_mev_cm=hc_mev_fm*1.0e-13;
+
+  /// Mass of proton in amu from CODATA 2018
+  const double mass_proton_amu=1.007276466621;
 }
 
 /** \brief Constants in CGS units 
