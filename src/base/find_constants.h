@@ -581,7 +581,9 @@ namespace o2scl {
 
     /// Type for constant database (also used for list of matches)
     class const_entry {
+      
     public:
+      
       /// List of names for the constant, with the preferred name first
       std::vector<std::string> names;
       /// Unit
@@ -589,7 +591,7 @@ namespace o2scl {
       /// Flag (currently in the range 0 to 4)
       int unit_flag;
       /// Value
-      double val;
+      fp_t val;
       /// Source or reference for value
       std::string source;
       /// Power of length
@@ -606,6 +608,7 @@ namespace o2scl {
       int mol;
       /// Power of luminous intensity
       int cd;
+      
     };
 
     /// \name Return values for find_nothrow()
