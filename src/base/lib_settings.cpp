@@ -143,8 +143,8 @@ void lib_settings_class::add_python_path(std::string path, int verbose) {
   PyObject *sys_mod=PyImport_ImportModule("sys");
   if (sys_mod==0) {
     O2SCL_ERR2("Import system module failed in",
-              "funct_python::set_function().",
-              o2scl::exc_efailed);
+               "funct_python::set_function().",
+               o2scl::exc_efailed);
   }
   
   // Obtain the path and the number of elements 
@@ -154,8 +154,8 @@ void lib_settings_class::add_python_path(std::string path, int verbose) {
   PyObject *sys_path=PyObject_GetAttrString(sys_mod,"path");
   if (sys_path==0) {
     O2SCL_ERR2("Obtain sys.path failed in",
-              "funct_python::set_function().",
-              o2scl::exc_efailed);
+               "funct_python::set_function().",
+               o2scl::exc_efailed);
   }
   if (verbose>0) {
     cout << "Getting len(sys.path)" << endl;
@@ -163,8 +163,8 @@ void lib_settings_class::add_python_path(std::string path, int verbose) {
   Py_ssize_t path_size=PySequence_Size(sys_path);
   if (path_size==-1) {
     O2SCL_ERR2("Getting sys.path sequence size failed in",
-              "funct_python::set_function().",
-              o2scl::exc_efailed);
+               "funct_python::set_function().",
+               o2scl::exc_efailed);
   }
 
   // Iterate through each element in the path, and compare with
@@ -179,8 +179,8 @@ void lib_settings_class::add_python_path(std::string path, int verbose) {
     PyObject *item=PySequence_GetItem(sys_path,j);
     if (item==0) {
       O2SCL_ERR2("Getting sequence item failed in",
-                "funct_python::set_function().",
-                o2scl::exc_efailed);
+                 "funct_python::set_function().",
+                 o2scl::exc_efailed);
     }
     if (verbose>0) {
       cout << "Getting representation." << endl;
@@ -188,8 +188,8 @@ void lib_settings_class::add_python_path(std::string path, int verbose) {
     PyObject *item2=PyObject_Repr(item);
     if (item2==0) {
       O2SCL_ERR2("Getting sequence item unicode failed in",
-                "funct_python::set_function().",
-                o2scl::exc_efailed);
+                 "funct_python::set_function().",
+                 o2scl::exc_efailed);
     }
     if (verbose>0) {
       cout << "Getting string." << endl;
@@ -197,8 +197,8 @@ void lib_settings_class::add_python_path(std::string path, int verbose) {
     PyObject *str=PyUnicode_AsEncodedString(item2,"utf-8","Error");
     if (str==0) {
       O2SCL_ERR2("Getting encoded sequence item failed in",
-                "funct_python::set_function().",
-                o2scl::exc_efailed);
+                 "funct_python::set_function().",
+                 o2scl::exc_efailed);
     }
     if (verbose>0) {
       cout << "Getting C string." << endl;
@@ -206,8 +206,8 @@ void lib_settings_class::add_python_path(std::string path, int verbose) {
     const char *cstr=PyBytes_AS_STRING(str);
     if (cstr==0) {
       O2SCL_ERR2("Getting C string from sequence item failed in",
-                "funct_python::set_function().",
-                o2scl::exc_efailed);
+                 "funct_python::set_function().",
+                 o2scl::exc_efailed);
     }
     
     if (verbose>0) {
@@ -590,4 +590,40 @@ void lib_settings_class::config_h_report() {
 
 void *o2scl_get_o2scl_settings() {
   return &o2scl::o2scl_settings;
+}
+
+int o2scl::function_to_long_double_nothrow(std::string s,
+                                           long double &result,
+                                           int verbose) {
+  
+  std::string s2;
+  // Remove quotes and apostrophes
+  for(size_t i=0;i<s.length();i++) {
+    if (s[i]!='\"' && s[i]!='\'') {
+      s2+=s[i];
+    }
+  }
+  
+  calc_utf8<long double> calc;
+  
+  int ret=calc.compile_nothrow(s2.c_str(),0);
+  if (ret!=0) return ret;
+
+  std::vector<std::u32string> vs=calc.get_var_list();
+
+  // The o2scl class find_constants doesn't work for 
+  // multiprecision, so we return a non-zero value instead
+  if (vs.size()!=0) {
+    
+    // There are undefined constants
+    return 1;
+    
+  } else {
+
+    // No variables, so just evaluate
+    int ret2=calc.eval_nothrow(0,result);
+    if (ret2!=0) return ret2;
+  }
+  
+  return 0;
 }

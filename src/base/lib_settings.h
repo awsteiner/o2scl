@@ -349,40 +349,8 @@ namespace o2scl {
       integer when it fails.
   */
   int function_to_long_double_nothrow(std::string s, long double &result,
-                                      int verbose=0) {
-    
-    std::string s2;
-    // Remove quotes and apostrophes
-    for(size_t i=0;i<s.length();i++) {
-      if (s[i]!='\"' && s[i]!='\'') {
-        s2+=s[i];
-      }
-    }
+                                      int verbose=0);
   
-    calc_utf8<long double> calc;
-  
-    int ret=calc.compile_nothrow(s2.c_str(),0);
-    if (ret!=0) return ret;
-
-    std::vector<std::u32string> vs=calc.get_var_list();
-
-    // The o2scl class find_constants doesn't work for 
-    // multiprecision, so we return a non-zero value instead
-    if (vs.size()!=0) {
-    
-      // There are undefined constants
-      return 1;
-    
-    } else {
-
-      // No variables, so just evaluate
-      int ret2=calc.eval_nothrow(0,result);
-      if (ret2!=0) return ret2;
-    }
-  
-    return 0;
-  }
-
   /** \brief Find constant named \c name with unit \c unit and
       return the associated value
   */
