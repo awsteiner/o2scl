@@ -294,7 +294,7 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
            << "a constant but not enough arguments were given." << endl;
       return 1;
     }
-    find_constants::const_entry f;
+    find_constants<>::const_entry f;
     f.names.push_back(sv[2]);
     f.val=o2scl::stod(sv[3]);
     if (sv.size()>=5) {
