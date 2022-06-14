@@ -192,7 +192,7 @@ namespace o2scl {
     }
 
     /// Get the global convert_units object
-    find_constants &get_find_constants() {
+    find_constants<> &get_find_constants() {
       return *fcp;
     }
 
@@ -243,7 +243,7 @@ namespace o2scl {
     convert_units<double> *cup;
 
     /// Pointer to current \ref find_constants object
-    find_constants *fcp;
+    find_constants<> *fcp;
     //@}
 
 #endif
@@ -294,20 +294,20 @@ namespace o2scl {
     // from the constant database
     if (vs.size()!=0) {
     
-      find_constants &fc=o2scl_settings.get_find_constants();
+      find_constants<> &fc=o2scl_settings.get_find_constants();
     
       std::map<std::string,fp_t> vars;
     
-      std::vector<find_constants::const_entry> matches;
+      std::vector<find_constants<>::const_entry> matches;
       for(size_t i=0;i<vs.size();i++) {
         std::string vsi2;
         char32_to_utf8(vs[i],vsi2);
         int fret=cu.find_nothrow2(vsi2,"mks",matches);
       
-        if (fret==find_constants::one_exact_match_unit_match ||
-            fret==find_constants::one_pattern_match_unit_match) {
+        if (fret==find_constants<>::one_exact_match_unit_match ||
+            fret==find_constants<>::one_pattern_match_unit_match) {
 
-          find_constants::const_entry &fcl=matches[0];
+          find_constants<>::const_entry &fcl=matches[0];
 
           vars.insert(std::make_pair(vsi2,fcl.val));
           if (verbose>=2) {
@@ -443,9 +443,10 @@ namespace o2scl {
       \ref lib_settings_class::get_find_constants() to interpret
       constant values.
   */
-  double function_to_double(std::string s, int verbose=0) {
-    double res;
-    int ret=function_to_double_nothrow<double>(s,res,verbose);
+  template<class fp_t=double>
+  fp_t function_to_double(std::string s, int verbose=0) {
+    fp_t res;
+    int ret=function_to_double_nothrow<fp_t>(s,res,verbose);
     if (ret!=0) {
       O2SCL_ERR("Function function_to_double() failed.",ret);
     }

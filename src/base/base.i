@@ -1619,34 +1619,34 @@ class tensor<size_t,std::vector<size_t>>
 # 
 # Class find_constants::const_entry
 #
-class find_constants::const_entry
-- py_name find_constants_const_entry
-- std::vector<std::string> names
-- std::string unit
-- int unit_flag
-- double val
-- std::string source
-- int m
-- int k
-- int s
-- int K
-- int A
-- int mol
-- int cd
+#class find_constants::const_entry
+#- py_name find_constants_const_entry
+#- std::vector<std::string> names
+#- std::string unit
+#- int unit_flag
+#- double val
+#- std::string source
+#- int m
+#- int k
+#- int s
+#- int K
+#- int A
+#- int mol
+#- int cd
 # 
 # Class find_constants
 #
-class find_constants
-- function output_list_cout
-  - void
-- function add_constant
-  - void
-  - io find_constants::const_entry &f
-  - int verbose [0]    
-- function del_constant
-  - void
-  - io std::string &name
-  - int verbose [0]
+#class find_constants
+#- function output_list_cout
+#  - void
+#- function add_constant
+#  - void
+#  - io find_constants::const_entry &f
+#  - int verbose [0]    
+#- function del_constant
+#  - void
+#  - io std::string &name
+#  - int verbose [0]
 #
 # Class convert_units_der_unit  
 #
@@ -2058,15 +2058,15 @@ class gen_test_number<double>
 #
 # Functions from string_conv.h
 #
-function function_to_double
-- double
-- std::string s
-- int verbose [0]
-function function_to_double_nothrow
-- int
-- std::string s
-- out double &result
-- int verbose [0]
+#function function_to_double
+#- double
+#- std::string s
+#- int verbose [0]
+#function function_to_double_nothrow
+#- int
+#- std::string s
+#- out double &result
+#- int verbose [0]
 function string_to_uint_list<vector<size_t>>
 - int
 - py_name string_to_uint_list
@@ -2077,10 +2077,10 @@ function string_to_uint_list<vector<size_t>>
 #- std::string s
 #- char *x
 #- int len
-function find_constant
-- double
-- std::string name
-- std::string unit  
+#function find_constant
+#- double
+#- std::string name
+#- std::string unit  
 #
 # Functions from interp.h
 # 

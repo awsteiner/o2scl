@@ -809,7 +809,7 @@ namespace o2scl {
     virtual ~convert_units() {}
 
     /// The associated \ref o2scl::find_constants object
-    find_constants fc;
+    find_constants<> fc;
     
     /** \brief Add a user-defined unit
      */
@@ -1013,7 +1013,7 @@ namespace o2scl {
 	\c unit (possibly empty) and store matches in \c indexes
     */
     int find_nothrow2(std::string name, std::string unit,
-                      std::vector<find_constants::const_entry> &matches,
+                      std::vector<find_constants<>::const_entry> &matches,
                       bool use_regex=false, int verbose=0) {
       
       if (verbose>1) {
@@ -1334,7 +1334,7 @@ namespace o2scl {
     
       std::cout.precision(prec);
 
-      std::vector<find_constants::const_entry> matches;
+      std::vector<find_constants<>::const_entry> matches;
       int ret=find_nothrow2(name,unit,matches,use_regex,verbose);
       if (ret==fc.no_matches) {
         std::cout << "find_constant::find_print(): No matches found for name "
@@ -1362,7 +1362,7 @@ namespace o2scl {
     double find_unique2(std::string name,
                         std::string unit,
                         bool use_regex=false) {
-      std::vector<find_constants::const_entry> matches;
+      std::vector<find_constants<>::const_entry> matches;
       int ret=find_nothrow2(name,unit,matches,use_regex);
       if (ret!=fc.one_exact_match_unit_match &&
           ret!=fc.one_pattern_match_unit_match) {
@@ -1449,13 +1449,13 @@ namespace o2scl {
         o2scl::vector_out(std::cout,new_units,true);
       }
       
-      std::vector<find_constants::const_entry> matches;
+      std::vector<find_constants<>::const_entry> matches;
       for(size_t i=0;i<new_units.size();i++) {
         int fret=find_nothrow2(new_units[i],"mks",matches);
-        if (fret==find_constants::one_exact_match_unit_match ||
-            fret==find_constants::one_pattern_match_unit_match) {
+        if (fret==find_constants<>::one_exact_match_unit_match ||
+            fret==find_constants<>::one_pattern_match_unit_match) {
           der_unit du;
-          find_constants::const_entry &fcl=matches[0];
+          find_constants<>::const_entry &fcl=matches[0];
           du.label=new_units[i];
           du.m=fcl.m;
           du.k=fcl.k;

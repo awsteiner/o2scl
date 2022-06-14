@@ -1222,10 +1222,6 @@ void o2scl_wordexp_single_file_wrapper(void *&ptr_fname);
 
 void o2scl_wordexp_wrapper_wrapper(char *word, void *ptr_matches);
 
-double o2scl_function_to_double_wrapper(char *s, int verbose=0);
-
-int o2scl_function_to_double_nothrow_wrapper(char *s, void *ptr_result, int verbose=0);
-
 int o2scl_string_to_uint_list_vector_size_t__wrapper(void *&ptr_x, void *ptr_list);
 
 double o2scl_find_constant_wrapper(char *name, char *unit);
