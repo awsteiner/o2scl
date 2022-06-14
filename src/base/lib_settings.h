@@ -51,12 +51,12 @@
     <tt>src/base/lib_settings.h</tt>
 */
 /*
-    \comment
-    For a full list of all the
-    O<span style='position: relative; top: 0.3em; font-size: 0.8em'>2</span>scl 
-    global objects which are not
-    classes, see <a href="globals.html">Files::Globals</a>.
-    \endcomment
+  \comment
+  For a full list of all the
+  O<span style='position: relative; top: 0.3em; font-size: 0.8em'>2</span>scl 
+  global objects which are not
+  classes, see <a href="globals.html">Files::Globals</a>.
+  \endcomment
 */
 namespace o2scl {
 }
@@ -145,7 +145,7 @@ namespace o2scl {
     /** \brief Return system type determined by autoconf
 
 	Returns either "OSX", "Linux" or "unknown".
-     */
+    */
     std::string system_type();
     
     /** \brief Return true if range checking was turned on during 
@@ -256,15 +256,148 @@ namespace o2scl {
       constant database, the global unit conversion database, and the
       directory for \o2p and \o2e data files. It may also be used by
       the end-user to probe details of the \o2 installation.
-   */
+  */
   extern lib_settings_class o2scl_settings;
+  
+  /** \brief Convert a formula to a double and return an integer to
+      indicate success or failure
+      
+      This is an alternate version of \ref function_to_double()
+      which does not call the error handler and returns a non-zero
+      integer when it fails.
+  */
+  template<class fp_t=double>
+  int function_to_double_nothrow(std::string s, fp_t &result,
+                                 int verbose=0, o2scl::rng<> *r=0) {
+    
+    std::string s2;
+    // Remove quotes and apostrophes
+    for(size_t i=0;i<s.length();i++) {
+      if (s[i]!='\"' && s[i]!='\'') {
+        s2+=s[i];
+      }
+    }
+  
+    calc_utf8<> calc;
+    if (r!=0) {
+      calc.set_rng(*r);
+    }
+  
+    int ret=calc.compile_nothrow(s2.c_str(),0);
+    if (ret!=0) return ret;
+
+    std::vector<std::u32string> vs=calc.get_var_list();
+
+    convert_units<fp_t> cu;
+    
+    // If there are undefined variables, then attempt to get them
+    // from the constant database
+    if (vs.size()!=0) {
+    
+      find_constants &fc=o2scl_settings.get_find_constants();
+    
+      std::map<std::string,fp_t> vars;
+    
+      std::vector<find_constants::const_entry> matches;
+      for(size_t i=0;i<vs.size();i++) {
+        std::string vsi2;
+        char32_to_utf8(vs[i],vsi2);
+        int fret=cu.find_nothrow2(vsi2,"mks",matches);
+      
+        if (fret==find_constants::one_exact_match_unit_match ||
+            fret==find_constants::one_pattern_match_unit_match) {
+
+          find_constants::const_entry &fcl=matches[0];
+
+          vars.insert(std::make_pair(vsi2,fcl.val));
+          if (verbose>=2) {
+            std::cout << "Found constant " << vsi2
+                      << " with value " << fcl.val << std::endl;
+          }
+        
+        } else {
+        
+          if (verbose>=2) {
+            std::cout << "Variable " << vsi2
+                      << " not uniquely specified in constant list ("
+                      << fret << ")." << std::endl;
+          }
+        
+          return 1;
+        }
+      }
+
+      // No variables, so just evaluate
+      int ret2=calc.eval_nothrow(&vars,result);
+      if (ret2!=0) return ret2;
+    
+    } else {
+
+      // No variables, so just evaluate
+      int ret2=calc.eval_nothrow(0,result);
+      if (ret2!=0) return ret2;
+    }
+  
+    return 0;
+  }
+
+  /** \brief Convert a formula to a long double and return an integer
+      to indicate success or failure
+      
+      This is an alternate version of \ref function_to_double()
+      which does not call the error handler and returns a non-zero
+      integer when it fails.
+  */
+  int function_to_long_double_nothrow(std::string s, long double &result,
+                                      int verbose=0) {
+    
+    std::string s2;
+    // Remove quotes and apostrophes
+    for(size_t i=0;i<s.length();i++) {
+      if (s[i]!='\"' && s[i]!='\'') {
+        s2+=s[i];
+      }
+    }
+  
+    calc_utf8<long double> calc;
+  
+    int ret=calc.compile_nothrow(s2.c_str(),0);
+    if (ret!=0) return ret;
+
+    std::vector<std::u32string> vs=calc.get_var_list();
+
+    // The o2scl class find_constants doesn't work for 
+    // multiprecision, so we return a non-zero value instead
+    if (vs.size()!=0) {
+    
+      // There are undefined constants
+      return 1;
+    
+    } else {
+
+      // No variables, so just evaluate
+      int ret2=calc.eval_nothrow(0,result);
+      if (ret2!=0) return ret2;
+    }
+  
+    return 0;
+  }
+
+  /** \brief Find constant named \c name with unit \c unit and
+      return the associated value
+  */
+  template<class fp_t=double>
+  fp_t find_constant(std::string name, std::string unit) {
+    o2scl::convert_units<fp_t> &cu=o2scl_settings.get_convert_units();
+    return cu.find_unique2(name,unit);
+  }
 
   /** \brief
 
       Note that this template is in lib_settings.h because of the
       hierarchy of header files which must be included
-   */
-  template<class fp_t> int function_to_double_nothrow
+  */
+  template<class fp_t> int function_to_double_nothrow_nofc
   (std::string s,
    fp_t &result, int verbose=0) {
     
@@ -299,6 +432,24 @@ namespace o2scl {
     }
     
     return 0;
+  }
+
+  /** \brief Convert a formula to a double 
+      
+      This function removes all quotes and apostrophes from the string
+      and then uses \ref o2scl::calculator to convert strings like
+      "-1.0e-3", "pi/3.0" and "exp(cos(-1.0e-2))" to floating point
+      numbers. This function uses the \o2 constant database from
+      \ref lib_settings_class::get_find_constants() to interpret
+      constant values.
+  */
+  double function_to_double(std::string s, int verbose=0) {
+    double res;
+    int ret=function_to_double_nothrow<double>(s,res,verbose);
+    if (ret!=0) {
+      O2SCL_ERR("Function function_to_double() failed.",ret);
+    }
+    return res;
   }
   
 }

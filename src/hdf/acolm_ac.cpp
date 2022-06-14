@@ -269,7 +269,7 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
       cout << "constant: Looking up constant " << in[0]
            << " with unit " << in[1] << endl;
     }
-    fc.find_print(in[0],in[1],precision,verbose);
+    cu.find_print2(in[0],in[1],precision,false,verbose);
     return 0;
   }
   
@@ -281,7 +281,7 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
       cout << "constant: Looking up constant " << sv[1]
            << " with unit " << sv[2] << endl;
     }
-    fc.find_print(sv[1],sv[2],precision,verbose);
+    cu.find_print2(sv[1],sv[2],precision,false,verbose);
   } else if (sv[1]=="list") {
     cout.precision(precision);
     fc.output_list(cout);
@@ -354,7 +354,7 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
       cout << "constant: Printing constant named " << sv[1]
            << " (unit unspecified)" << endl;
     }
-    fc.find_print(sv[1],"",precision,verbose);
+    cu.find_print2(sv[1],"",precision,false,verbose);
   }
 
   return 0;

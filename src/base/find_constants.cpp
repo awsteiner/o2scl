@@ -508,6 +508,7 @@ bool find_constants::unit_match_logic(std::string unit,
 }
                                       
 
+#ifdef O2SCL_NEVER_DEFINED    
 int find_constants::find_nothrow(std::string name, std::string unit,
 				 vector<const_entry> &matches,
 				 bool use_regex, int verbose) const {
@@ -856,6 +857,7 @@ double find_constants::find_unique(std::string name,
   }
   return matches[0].val;
 }
+#endif
 
 void find_constants::output_list(std::ostream &os) const {
   for(size_t i=0;i<list.size();i++) {

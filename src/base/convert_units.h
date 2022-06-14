@@ -32,6 +32,10 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <regex>
+#include <fnmatch.h>
+
+#include <boost/algorithm/string.hpp>
 
 #include <o2scl/misc.h>
 #include <o2scl/constants.h>
@@ -90,9 +94,9 @@ namespace o2scl {
       \verbatim embed:rst
       .. todo::
 
-         In class convert_units:
+      In class convert_units:
 
-         - (Future) Add G=1. 
+      - (Future) Add G=1. 
 
       \endverbatim
   */
@@ -170,14 +174,18 @@ namespace o2scl {
         Set in constructor.
     */
     std::vector<der_unit> SI;
+    //@}
 
+  public:
+    
     /** \brief Other units which do not allow prefixing
-      
+        
         Set in constructor.
     */
     std::vector<der_unit> other;
-    //@}
 
+  protected:
+    
     /// \name Flags for natural units
     //@{
     bool c_is_1;
@@ -599,22 +607,22 @@ namespace o2scl {
       //"k","h","da","d","c","m","mu","μ","n",
       //"p","f","a","z","y","r","q"};
       prefixes={"Y","Z","E","P","T",
-                "G","M","k","h","da",
-                "d","c","m","mu","μ",
-                "n","p","f","a","z",
-                "y"};
+        "G","M","k","h","da",
+        "d","c","m","mu","μ",
+        "n","p","f","a","z",
+        "y"};
     
       prefix_facts={1.0e24,1.0e21,1.0e18,1.0e15,1.0e12,
-                    1.0e9,1.0e6,1.0e3,1.0e2,10.0,
-                    0.1,1.0e-2,1.0e-3,1.0e-6,1.0e-6,
-                    1.0e-9,1.0e-12,1.0e-15,1.0e-18,1.0e-21,
-                    1.0e-24};
+        1.0e9,1.0e6,1.0e3,1.0e2,10.0,
+        0.1,1.0e-2,1.0e-3,1.0e-6,1.0e-6,
+        1.0e-9,1.0e-12,1.0e-15,1.0e-18,1.0e-21,
+        1.0e-24};
 
       prefix_names={"yotta","zetta","exa","peta","tera",
-                    "giga","mega","kilo","hecto","deka",
-                    "deci","centi","milli","micro","micro",
-                    "nano","pico","femto","atto","zepto",
-                    "yocto"};
+        "giga","mega","kilo","hecto","deka",
+        "deci","centi","milli","micro","micro",
+        "nano","pico","femto","atto","zepto",
+        "yocto"};
     
       // SI derived units, in order m, kg, s, K, A, mol, and cd. Note
       // that, according to the SI page on Wikipedia, "newton" is left
@@ -656,137 +664,137 @@ namespace o2scl {
       std::vector<der_unit> other_=
         {
 
-         // Length units
-         {"ft",1,0,0,0,0,0,0,o2scl_mks::foot,"foot"},
-         {"foot",1,0,0,0,0,0,0,o2scl_mks::foot,"foot"},
-         {"in",1,0,0,0,0,0,0,o2scl_mks::inch,"inch"},
-         {"yd",1,0,0,0,0,0,0,o2scl_mks::yard,"yard"},
-         {"mi",1,0,0,0,0,0,0,o2scl_mks::mile,"mile"},
-         {"nmi",1,0,0,0,0,0,0,o2scl_mks::nautical_mile,"nautical mile"},
-         {"fathom",1,0,0,0,0,0,0,o2scl_mks::fathom,"fathom"},
-         {"angstrom",1,0,0,0,0,0,0,o2scl_mks::angstrom,"angstrom"},
-         {"mil",1,0,0,0,0,0,0,o2scl_mks::mil,"mil"},
-         {"point",1,0,0,0,0,0,0,o2scl_mks::point,"point"},
-         {"texpoint",1,0,0,0,0,0,0,o2scl_mks::texpoint,"texpoint"},
-         {"micron",1,0,0,0,0,0,0,o2scl_mks::micron,"micron"},
-         // AU's: "au" and "AU"
-         {"AU",1,0,0,0,0,0,0,o2scl_mks::astronomical_unit,"astronomical unit"},
-         {"au",1,0,0,0,0,0,0,o2scl_mks::astronomical_unit,"astronomical unit"},
-         // light years: "ly" and "lyr"
-         {"ly",1,0,0,0,0,0,0,o2scl_mks::light_year,"light year"},
-         {"lyr",1,0,0,0,0,0,0,o2scl_mks::light_year,"light year"},
-         // We add common SI-like prefixes for non-SI units
-         {"Gpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e9,"gigaparsec"},
-         {"Mpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e6,"megaparsec"},
-         {"kpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e3,"kiloparsec"},
-         {"pc",1,0,0,0,0,0,0,o2scl_mks::parsec,"parsec"},
-         {"fermi",1,0,0,0,0,0,0,1.0e-15,"fermi"},
+          // Length units
+          {"ft",1,0,0,0,0,0,0,o2scl_mks::foot,"foot"},
+          {"foot",1,0,0,0,0,0,0,o2scl_mks::foot,"foot"},
+          {"in",1,0,0,0,0,0,0,o2scl_mks::inch,"inch"},
+          {"yd",1,0,0,0,0,0,0,o2scl_mks::yard,"yard"},
+          {"mi",1,0,0,0,0,0,0,o2scl_mks::mile,"mile"},
+          {"nmi",1,0,0,0,0,0,0,o2scl_mks::nautical_mile,"nautical mile"},
+          {"fathom",1,0,0,0,0,0,0,o2scl_mks::fathom,"fathom"},
+          {"angstrom",1,0,0,0,0,0,0,o2scl_mks::angstrom,"angstrom"},
+          {"mil",1,0,0,0,0,0,0,o2scl_mks::mil,"mil"},
+          {"point",1,0,0,0,0,0,0,o2scl_mks::point,"point"},
+          {"texpoint",1,0,0,0,0,0,0,o2scl_mks::texpoint,"texpoint"},
+          {"micron",1,0,0,0,0,0,0,o2scl_mks::micron,"micron"},
+          // AU's: "au" and "AU"
+          {"AU",1,0,0,0,0,0,0,o2scl_mks::astronomical_unit,"astronomical unit"},
+          {"au",1,0,0,0,0,0,0,o2scl_mks::astronomical_unit,"astronomical unit"},
+          // light years: "ly" and "lyr"
+          {"ly",1,0,0,0,0,0,0,o2scl_mks::light_year,"light year"},
+          {"lyr",1,0,0,0,0,0,0,o2scl_mks::light_year,"light year"},
+          // We add common SI-like prefixes for non-SI units
+          {"Gpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e9,"gigaparsec"},
+          {"Mpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e6,"megaparsec"},
+          {"kpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e3,"kiloparsec"},
+          {"pc",1,0,0,0,0,0,0,o2scl_mks::parsec,"parsec"},
+          {"fermi",1,0,0,0,0,0,0,1.0e-15,"fermi"},
 
-         // Area units
-         // hectares, "ha" and "hectare"
-         {"hectare",2,0,0,0,0,0,0,o2scl_mks::hectare,"hectare"},
-         {"ha",2,0,0,0,0,0,0,1.0e4,"hectare"},
-         // acre
-         {"acre",2,0,0,0,0,0,0,o2scl_mks::acre,"acre"},
-         // barn
-         {"barn",2,0,0,0,0,0,0,o2scl_mks::barn,"barn"},
+          // Area units
+          // hectares, "ha" and "hectare"
+          {"hectare",2,0,0,0,0,0,0,o2scl_mks::hectare,"hectare"},
+          {"ha",2,0,0,0,0,0,0,1.0e4,"hectare"},
+          // acre
+          {"acre",2,0,0,0,0,0,0,o2scl_mks::acre,"acre"},
+          // barn
+          {"barn",2,0,0,0,0,0,0,o2scl_mks::barn,"barn"},
      
-         // Volume units
-         {"us_gallon",3,0,0,0,0,0,0,o2scl_mks::us_gallon,"gallon"},
-         {"quart",3,0,0,0,0,0,0,o2scl_mks::quart,"quart"},
-         {"pint",3,0,0,0,0,0,0,o2scl_mks::pint,"pint"},
-         {"cup",3,0,0,0,0,0,0,o2scl_mks::cup,"cup"},
-         {"tbsp",3,0,0,0,0,0,0,o2scl_mks::tablespoon,"tablespoon"},
-         {"tsp",3,0,0,0,0,0,0,o2scl_mks::teaspoon,"teaspoon"},
-         {"ca_gallon",3,0,0,0,0,0,0,o2scl_mks::canadian_gallon,
-          "canadian gallon"},
-         {"uk_gallon",3,0,0,0,0,0,0,o2scl_mks::uk_gallon,"uk gallon"},
+          // Volume units
+          {"us_gallon",3,0,0,0,0,0,0,o2scl_mks::us_gallon,"gallon"},
+          {"quart",3,0,0,0,0,0,0,o2scl_mks::quart,"quart"},
+          {"pint",3,0,0,0,0,0,0,o2scl_mks::pint,"pint"},
+          {"cup",3,0,0,0,0,0,0,o2scl_mks::cup,"cup"},
+          {"tbsp",3,0,0,0,0,0,0,o2scl_mks::tablespoon,"tablespoon"},
+          {"tsp",3,0,0,0,0,0,0,o2scl_mks::teaspoon,"teaspoon"},
+          {"ca_gallon",3,0,0,0,0,0,0,o2scl_mks::canadian_gallon,
+           "canadian gallon"},
+          {"uk_gallon",3,0,0,0,0,0,0,o2scl_mks::uk_gallon,"uk gallon"},
 
-         // Mass units
-         // Solar masses, "Msun", and "Msolar"
-         {"Msun",0,1,0,0,0,0,0,o2scl_mks::solar_mass,"solar mass"},
-         {"Msolar",0,1,0,0,0,0,0,o2scl_mks::solar_mass,"solar mass"},
-         {"pound",0,1,0,0,0,0,0,o2scl_mks::pound_mass,"pound"},
-         {"ounce",0,1,0,0,0,0,0,o2scl_mks::ounce_mass,"ounce"},
+          // Mass units
+          // Solar masses, "Msun", and "Msolar"
+          {"Msun",0,1,0,0,0,0,0,o2scl_mks::solar_mass,"solar mass"},
+          {"Msolar",0,1,0,0,0,0,0,o2scl_mks::solar_mass,"solar mass"},
+          {"pound",0,1,0,0,0,0,0,o2scl_mks::pound_mass,"pound"},
+          {"ounce",0,1,0,0,0,0,0,o2scl_mks::ounce_mass,"ounce"},
 
-         // The offical abbreviation for tonne is "t", but then SI
-         // prefixes cause confusion between between "foot" and
-         // "femtotonne". For now, we use "tonne" instead of "t".
-         {"tonne",0,1,0,0,0,0,0,1.0e3,"(metric) tonne"},
-         {"uk_ton",0,1,0,0,0,0,0,o2scl_mks::uk_ton,"uk ton"},
-         {"troy_ounce",0,1,0,0,0,0,0,o2scl_mks::troy_ounce,"troy ounce"},
-         {"carat",0,1,0,0,0,0,0,o2scl_mks::carat,"carat"},
+          // The offical abbreviation for tonne is "t", but then SI
+          // prefixes cause confusion between between "foot" and
+          // "femtotonne". For now, we use "tonne" instead of "t".
+          {"tonne",0,1,0,0,0,0,0,1.0e3,"(metric) tonne"},
+          {"uk_ton",0,1,0,0,0,0,0,o2scl_mks::uk_ton,"uk ton"},
+          {"troy_ounce",0,1,0,0,0,0,0,o2scl_mks::troy_ounce,"troy ounce"},
+          {"carat",0,1,0,0,0,0,0,o2scl_mks::carat,"carat"},
      
-         // Velocity units
-         {"knot",1,0,-1,0,0,0,0,o2scl_mks::knot,"knot"},
-         {"c",1,0,-1,0,0,0,0,o2scl_const::speed_of_light_f<fp_t>(),
-          "speed of light"},
+          // Velocity units
+          {"knot",1,0,-1,0,0,0,0,o2scl_mks::knot,"knot"},
+          {"c",1,0,-1,0,0,0,0,o2scl_const::speed_of_light_f<fp_t>(),
+           "speed of light"},
      
-         // Energy units
-         {"cal",2,1,-2,0,0,0,0,o2scl_mks::calorie,"calorie"},
-         {"btu",2,1,-2,0,0,0,0,o2scl_mks::btu,"btu"},
-         {"erg",2,1,-2,0,0,0,0,o2scl_mks::erg,"erg"},
+          // Energy units
+          {"cal",2,1,-2,0,0,0,0,o2scl_mks::calorie,"calorie"},
+          {"btu",2,1,-2,0,0,0,0,o2scl_mks::btu,"btu"},
+          {"erg",2,1,-2,0,0,0,0,o2scl_mks::erg,"erg"},
 
-         // Power units
-         {"therm",2,1,-3,0,0,0,0,o2scl_mks::therm,"therm"},
-         {"horsepower",2,1,-3,0,0,0,0,o2scl_mks::horsepower,"horsepower"},
-         {"hp",2,1,-3,0,0,0,0,o2scl_mks::horsepower,"horsepower"},
+          // Power units
+          {"therm",2,1,-3,0,0,0,0,o2scl_mks::therm,"therm"},
+          {"horsepower",2,1,-3,0,0,0,0,o2scl_mks::horsepower,"horsepower"},
+          {"hp",2,1,-3,0,0,0,0,o2scl_mks::horsepower,"horsepower"},
 
-         // Pressure units
-         {"atm",-1,2,-2,0,0,0,0,o2scl_mks::std_atmosphere,"atmosphere"},
-         {"bar",-1,1,-2,0,0,0,0,o2scl_mks::bar,"bar"},
-         {"torr",-1,1,-2,0,0,0,0,o2scl_mks::torr,"torr"},
-         {"psi",-1,1,-2,0,0,0,0,o2scl_mks::psi,"psi"},
+          // Pressure units
+          {"atm",-1,2,-2,0,0,0,0,o2scl_mks::std_atmosphere,"atmosphere"},
+          {"bar",-1,1,-2,0,0,0,0,o2scl_mks::bar,"bar"},
+          {"torr",-1,1,-2,0,0,0,0,o2scl_mks::torr,"torr"},
+          {"psi",-1,1,-2,0,0,0,0,o2scl_mks::psi,"psi"},
 
-         // Time units. Years are obtained from
-         // https://pdg.lbl.gov/2021/reviews/contents_sports.html,
-         // which references the 2020 Astronomical almanac.
-         {"yr",0,0,1,0,0,0,0,31556925.1,"year (tropical)"},
-         {"wk",0,0,1,0,0,0,0,o2scl_mks::week,"week"},
-         {"d",0,0,1,0,0,0,0,o2scl_mks::day,"day"},
+          // Time units. Years are obtained from
+          // https://pdg.lbl.gov/2021/reviews/contents_sports.html,
+          // which references the 2020 Astronomical almanac.
+          {"yr",0,0,1,0,0,0,0,31556925.1,"year (tropical)"},
+          {"wk",0,0,1,0,0,0,0,o2scl_mks::week,"week"},
+          {"d",0,0,1,0,0,0,0,o2scl_mks::day,"day"},
 
-         // Angular units
-         {"deg",0,0,0,0,0,0,0,o2scl_const::pi/180.0,"degree"},
-         {"°",0,0,0,0,0,0,0,o2scl_const::pi/180.0,"degree"},
-         {"′",0,0,0,0,0,0,0,o2scl_const::pi/10800.0,
-          "arcminute (fraction of a degree)"},
-         {"″",0,0,0,0,0,0,0,o2scl_const::pi/648000.0,
-          "arcsecond (fraction of a degree)"},
+          // Angular units
+          {"deg",0,0,0,0,0,0,0,o2scl_const::pi/180.0,"degree"},
+          {"°",0,0,0,0,0,0,0,o2scl_const::pi/180.0,"degree"},
+          {"′",0,0,0,0,0,0,0,o2scl_const::pi/10800.0,
+           "arcminute (fraction of a degree)"},
+          {"″",0,0,0,0,0,0,0,o2scl_const::pi/648000.0,
+           "arcsecond (fraction of a degree)"},
 
-         // Hours, "hr", to avoid confusion with Planck's constant
-         {"hr",0,0,1,0,0,0,0,o2scl_mks::hour,"hour"},
-         {"min",0,0,1,0,0,0,0,o2scl_mks::minute,"minute"},
+          // Hours, "hr", to avoid confusion with Planck's constant
+          {"hr",0,0,1,0,0,0,0,o2scl_mks::hour,"hour"},
+          {"min",0,0,1,0,0,0,0,o2scl_mks::minute,"minute"},
 
-         // Inverse time units
-         {"curie",0,0,-1,0,0,0,0,o2scl_mks::curie,"curie"},
+          // Inverse time units
+          {"curie",0,0,-1,0,0,0,0,o2scl_mks::curie,"curie"},
      
-         // Force units
-         {"dyne",1,1,-2,0,0,0,0,o2scl_mks::dyne,"dyne"},
+          // Force units
+          {"dyne",1,1,-2,0,0,0,0,o2scl_mks::dyne,"dyne"},
      
-         // Viscosity units
-         {"poise",-1,1,-1,0,0,0,0,o2scl_mks::poise,"poise"},
+          // Viscosity units
+          {"poise",-1,1,-1,0,0,0,0,o2scl_mks::poise,"poise"},
 
-         // Units of heat capacity or entropy
-         // Boltzmann's constant. Could be confused with kilobytes?
-         {"kB",2,1,-2,-1,0,0,0,o2scl_const::boltzmann_f<fp_t>(),
-          "Boltzmann's constant"},
+          // Units of heat capacity or entropy
+          // Boltzmann's constant. Could be confused with kilobytes?
+          {"kB",2,1,-2,-1,0,0,0,o2scl_const::boltzmann_f<fp_t>(),
+           "Boltzmann's constant"},
      
-         {"hbar",2,1,-1,0,0,0,0,o2scl_const::hbar_f<fp_t>(),
-          "reduced Planck constant"},
-         // "Planck" instead of "h", to avoid confusing with hours
-         {"Planck",2,1,-1,0,0,0,0,o2scl_const::planck_f<fp_t>(),
-          "Planck constant"},
+          {"hbar",2,1,-1,0,0,0,0,o2scl_const::hbar_f<fp_t>(),
+           "reduced Planck constant"},
+          // "Planck" instead of "h", to avoid confusing with hours
+          {"Planck",2,1,-1,0,0,0,0,o2scl_const::planck_f<fp_t>(),
+           "Planck constant"},
      
-         // Gravitational constant. We cannot use "G" because of
-         // confusion with "Gauss"
-         {"GNewton",3,-1,-2,0,0,0,0,o2scl_mks::gravitational_constant,
-          "gravitational constant"},
+          // Gravitational constant. We cannot use "G" because of
+          // confusion with "Gauss"
+          {"GNewton",3,-1,-2,0,0,0,0,o2scl_mks::gravitational_constant,
+           "gravitational constant"},
          
-         // Gauss, and note the possible confusion with the gravitational
-         // constant
-         {"G",0,1,-2,0,-1,0,0,o2scl_mks::gauss,"gauss"},
+          // Gauss, and note the possible confusion with the gravitational
+          // constant
+          {"G",0,1,-2,0,-1,0,0,o2scl_mks::gauss,"gauss"},
          
-         {"NA",0,0,0,0,0,-1,0,o2scl_const::avogadro,"Avogadro's number"}
+          {"NA",0,0,0,0,0,-1,0,o2scl_const::avogadro,"Avogadro's number"}
      
         };
       
@@ -946,7 +954,7 @@ namespace o2scl {
       return;
     }
     
-  protected:
+  public:
     
     /** \brief Get the current unit list as an array of strings
      */
@@ -999,12 +1007,380 @@ namespace o2scl {
       return;
     }
     
+  public:
+    
+    /** \brief Search for constants matching \c name with unit
+	\c unit (possibly empty) and store matches in \c indexes
+    */
+    int find_nothrow2(std::string name, std::string unit,
+                      std::vector<find_constants::const_entry> &matches,
+                      bool use_regex=false, int verbose=0) {
+      
+      if (verbose>1) {
+        std::cout << "find_constants::find_nothrow(): "
+                  << "before simplify: " << name << std::endl;
+      }
+      
+      // Remove whitespace and punctuation. We need + and - to distinguish
+      // between positive and negative particle masses.
+      remove_ws_punct(name);
+      
+      if (verbose>1) {
+        std::cout << "find_constants::find_nothrow(): "
+                  << "after simplify: " << name << std::endl;
+      }
+      
+      // Start with a fresh list
+      matches.clear();
+      
+      // Temporarily store matching indexes
+      std::vector<size_t> indexes;
+      
+      int match_type=0, match_exact=1, match_pattern=2;
+      
+      // Initial pass, exact name matches
+      for(size_t i=0;i<fc.list.size();i++) {
+        for(size_t j=0;j<fc.list[i].names.size();j++) {
+          if (verbose>2) {
+            std::cout << "find_constants::find_nothrow(): "
+                      << name << " " << i << " " << j << " "
+                      << fc.list[i].names[j] << " "
+                      << boost::iequals(name,fc.list[i].names[j])
+                      << std::endl;
+          }
+          std::string temp=fc.list[i].names[j];
+          remove_ws_punct(temp);
+          if (boost::iequals(name,temp)) {
+            if (verbose>2) {
+              std::cout << "find_constants::find_nothrow(): Found match."
+                        << std::endl;
+            }
+            indexes.push_back(i);
+            // Now that we've found a match, don't look in the
+            // other names for this list entry
+            j=fc.list[i].names.size();
+            match_type=match_exact;
+          }
+        }
+      }
+      
+      std::string fn_pat=((std::string)"*")+name+"*";
+      
+      if (verbose>1) {
+        std::cout << "find_constants::find_nothrow(): "
+                  << "pass 1 indexes: ";
+        vector_out(std::cout,indexes,true);
+        if (use_regex) {
+          std::cout << "find_constants::find_nothrow(): Using regex "
+                    << name << std::endl;
+        } else {
+          std::cout << "find_constants::find_nothrow(): Using fnmatch() "
+                    << "with pattern " << fn_pat << std::endl;
+        }
+      }
+      
+      // No matches, so try wildcard matches
+      if (indexes.size()==0) {
+        
+        for(size_t i=0;i<fc.list.size();i++) {
+          for(size_t j=0;j<fc.list[i].names.size();j++) {
+            std::string temp=fc.list[i].names[j];
+            remove_ws_punct(temp);
+            
+            bool fn_ret;
+            if (use_regex) {
+              std::regex r(name);
+              fn_ret=std::regex_search(temp,r);
+            } else {
+              fn_ret=(fnmatch(fn_pat.c_str(),temp.c_str(),0)==0);
+            }
+            
+            if (verbose>2) {
+              std::cout << "find_constants::find_nothrow(): "
+                        << name << " " << i << " " << j << " "
+                        << fc.list[i].names[j]
+                        << " " << fn_ret << std::endl;
+            }
+            if (fn_ret==true) {
+              indexes.push_back(i);
+              // Now that we've found a match, don't look in the
+              // other names for this list entry
+              j=fc.list[i].names.size();
+              match_type=match_pattern;
+            }
+          }
+        }
+        
+      }
+      
+      if (verbose>1) {
+        std::cout << "find_constants::find_nothrow(): "
+                  << "pass 2 indexes: ";
+        vector_out(std::cout,indexes,true);
+      }
+      
+      // There was only one match
+      if (indexes.size()==1) {
+        
+        // Add to 'matches' list
+        matches.push_back(fc.list[indexes[0]]);
+        
+        if (verbose>1) {
+          std::cout << "find_constants::find_nothrow(): "
+                    << "one match unit: " << unit << " "
+                    << fc.list[indexes[0]].unit_flag << " "
+                    << fc.list[indexes[0]].unit << std::endl;
+        }
+        
+        // Unit unspecified or matching
+        if (fc.unit_match_logic(unit,fc.list[indexes[0]])) {
+          if (match_type==match_exact) {
+            return fc.one_exact_match_unit_match;
+          } else {
+            return fc.one_pattern_match_unit_match;
+          }
+        }
+        
+        // Try to convert units
+        if (unit.length()>0) {
+          double val2;
+          if (verbose>0) {
+            std::cout << "find_constant::find_nothrow(): "
+                      << "Trying to convert from "
+                      << fc.list[indexes[0]].unit << " to "
+                      << unit << std::endl;
+          }
+          int cret=convert_ret(fc.list[indexes[0]].unit,unit,
+                               fc.list[indexes[0]].val,val2);
+          if (cret==0) {
+            // Update the value with the unit conversion and
+            // the unit with the new unit
+            matches[0].val=val2;
+            matches[0].unit=unit;
+            if (match_type==match_exact) {
+              return fc.one_exact_match_unit_match;
+            } else {
+              return fc.one_pattern_match_unit_match;
+            }
+          }
+        }
+        
+        if (match_type==match_exact) {
+          return fc.one_exact_match_unit_diff;
+        } else {
+          return fc.one_pattern_match_unit_diff;
+        }
+      }
+      
+      if (indexes.size()>0 && unit=="") {
+        
+        if (verbose>1) {
+          std::cout << "find_constants::find_nothrow(): "
+                    << "Multiple matches found. No unit given." << std::endl;
+        }
+        
+        // No unit string was given, so just return
+        for(size_t i=0;i<indexes.size();i++) {
+          matches.push_back(fc.list[indexes[i]]);
+        }
+        if (match_type==match_exact) {
+          return fc.exact_matches_no_unit;
+        } else {
+          return fc.pattern_matches_no_unit;
+        }
+      }
+      
+      if (indexes.size()>0) {
+        
+        if (verbose>1) {
+          std::cout << "find_constants::find_nothrow(): "
+                    << "Multiple name matches found. Checking units."
+                    << std::endl;
+        }
+        
+        // We found at least one match, check unit
+        
+        std::vector<size_t> indexes2;
+        
+        // Look for entries with matching unit
+        for(size_t i=0;i<indexes.size();i++) {
+          
+          if (verbose>1) {
+            std::cout << "find_constants::find_nothrow(): "
+                      << "many name matches unit: " << unit << " "
+                      << fc.list[indexes[i]].unit_flag << " "
+                      << fc.list[indexes[i]].unit << std::endl;
+          }
+          
+          if (fc.unit_match_logic(unit,fc.list[indexes[i]])) {
+            indexes2.push_back(indexes[i]);
+            if (verbose>2) {
+              std::cout << "find_constants::find_nothrow(): Added."
+                        << std::endl;
+            }
+          }
+        }
+        
+        if (indexes2.size()==0) {
+          
+          if (verbose>1) {
+            std::cout << "find_constants::find_nothrow(): "
+                      << "many name matches and unit " << unit
+                      << " specified, "
+                      << "but no unit matches." << std::endl;
+          }
+          
+          // No matching unit, try to convert
+          for(size_t i=0;i<indexes.size();i++) {
+            double val2;
+            std::cout << "Trying to convert from "
+                      << fc.list[indexes[i]].unit << " to "
+                      << unit << std::endl;
+            int cret=convert_ret(fc.list[indexes[i]].unit,unit,
+                                 fc.list[indexes[i]].val,val2);
+            if (cret==0 &&
+                (matches.size()==0 ||
+                 fc.list[indexes[i]].names!=matches[matches.size()-1].names)) {
+              matches.push_back(fc.list[indexes[i]]);
+              // Update the value with the unit conversion and
+              // the unit with the new unit
+              matches[matches.size()-1].val=val2;
+              matches[matches.size()-1].unit=unit;
+            }
+          }
+          
+          if (matches.size()>0) {
+            if (matches.size()==1) {
+              if (match_type==match_exact) {
+                return fc.one_exact_match_unit_match;
+              } else {
+                return fc.one_pattern_match_unit_match;
+              }
+            } else {
+              if (match_type==match_exact) {
+                return fc.exact_matches_unit_match;
+              } else {
+                return fc.pattern_matches_unit_match;
+              }
+            }
+          }
+          
+          // If no matching unit conversions, just return the list of name
+          // matches
+          for(size_t i=0;i<indexes.size();i++) {
+            if (i==0 ||
+                fc.list[indexes[i]].names!=matches[matches.size()-1].names) {
+              matches.push_back(fc.list[indexes[i]]);
+            }
+          }
+          if (match_type==match_exact) {
+            return fc.exact_matches_unit_diff;
+          } else {
+            return fc.pattern_matches_unit_diff;
+          }
+          
+        } else {
+          
+          if (verbose>1) {
+            std::cout << "At least one exact unit match was found."
+                      << std::endl;
+          }
+          
+          // There were exact unit matches, so set up the matches list
+          for(size_t i=0;i<indexes2.size();i++) {
+            if (i==0 ||
+                fc.list[indexes2[i]].names!=matches[matches.size()-1].names) {
+              matches.push_back(fc.list[indexes2[i]]);
+            }
+          }
+          if (match_type==match_exact) {
+            if (matches.size()==1) {
+              return fc.one_exact_match_unit_match;
+            } else {
+              return fc.exact_matches_unit_match;
+            }
+          } else {
+            if (matches.size()==1) {
+              return fc.one_pattern_match_unit_match;
+            } else {
+              return fc.pattern_matches_unit_match;
+            }
+          }
+        }
+      }
+      
+      return fc.no_matches;
+    }
+
+    /** \brief Search for constants matching \c name with unit \c unit
+	and output result(s) with precision \c prec
+        
+        This function can fail, if either the requested precision
+        is larger than machine precision or if the argument \c name
+        does not match a constant in the library. In either case,
+        this function prints a short message to std::cout explaining
+        the failure.
+    */
+    void find_print2(std::string name, std::string unit,
+                     size_t prec, bool use_regex,
+                     int verbose) {
+
+      if (prec>std::numeric_limits<double>::digits10) {
+        std::cout << "Requested precision is " << prec << " and largest "
+                  << "allowable precision is "
+                  << std::numeric_limits<double>::digits10 << std::endl;
+        return;
+      }
+    
+      std::cout.precision(prec);
+
+      std::vector<find_constants::const_entry> matches;
+      int ret=find_nothrow2(name,unit,matches,use_regex,verbose);
+      if (ret==fc.no_matches) {
+        std::cout << "find_constant::find_print(): No matches found for name "
+                  << name << std::endl;
+        return;
+      }
+  
+      std::cout << "find_constant::find_print(): Matches for " << name;
+      if (ret==fc.one_exact_match_unit_diff ||
+          ret==fc.exact_matches_unit_diff) {
+        std::cout << " (no matching units)" << std::endl;
+      } else if (unit.length()>0) {
+        std::cout << " in " << unit;
+      }
+      std::cout << ": " << std::endl;
+      for(size_t i=0;i<matches.size();i++) {
+        std::cout << "(" << i+1 << "/" << matches.size() << ") ";
+        fc.output(matches[i],std::cout);
+      }
+      return;
+    }
+  
+    /** \brief Find a unique match and return the numerical value
+     */
+    double find_unique2(std::string name,
+                        std::string unit,
+                        bool use_regex=false) {
+      std::vector<find_constants::const_entry> matches;
+      int ret=find_nothrow2(name,unit,matches,use_regex);
+      if (ret!=fc.one_exact_match_unit_match &&
+          ret!=fc.one_pattern_match_unit_match) {
+        std::string err=((std::string)"Failed to find unique match for name ")+
+          name+" and unit "+unit+" in find_constants::find_unique(). "+
+          "Returned "+o2scl::itos(ret)+".";
+        O2SCL_ERR(err.c_str(),o2scl::exc_einval);
+      }
+      return matches[0].val;
+    }
+
+    
     /** \brief Convert units, possibly using constants from
         the internal \ref o2scl::find_constants object
-     */
+    */
     int convert_calc(std::string from, std::string to,
-                      fp_t val, fp_t &converted,
-                      fp_t &factor) {
+                     fp_t val, fp_t &converted,
+                     fp_t &factor) {
 
       o2scl::calc_utf8<> calc;
       o2scl::calc_utf8<> calc2;
@@ -1012,8 +1388,8 @@ namespace o2scl {
       int cret1=calc.compile_nothrow(from.c_str());
       if (cret1!=0) {
         if (verbose>0) {
-          std::cout << "Compile from expression " << from << " failed."
-                    << std::endl;
+          std::cout<< "Compile from expression " << from << " failed."
+                   << std::endl;
         }
         return 1;
       }
@@ -1075,7 +1451,7 @@ namespace o2scl {
       
       std::vector<find_constants::const_entry> matches;
       for(size_t i=0;i<new_units.size();i++) {
-        int fret=fc.find_nothrow(new_units[i],"mks",matches);
+        int fret=find_nothrow2(new_units[i],"mks",matches);
         if (fret==find_constants::one_exact_match_unit_match ||
             fret==find_constants::one_pattern_match_unit_match) {
           der_unit du;
@@ -1107,7 +1483,7 @@ namespace o2scl {
 
       return convert_calc_hck(from,to,val,converted,factor);
     }
-    
+
     /** \brief Convert units, taking into account conversions
         which are allowed by setting hbar, c, or kB to 1
         
@@ -1316,8 +1692,6 @@ namespace o2scl {
       return 0;
     }
     
-  public:
-    
     /// \name Basic usage
     //@{
     /** \brief Return the value \c val after converting using units \c
@@ -1460,11 +1834,11 @@ namespace o2scl {
 
         The possible return values are as follows:
         - 0: neither the forward nor the reverse conversion are in
-          the cache
+        the cache
         - 1: only the forward conversion is in the cache
         - 2: only the reverse conversion is in the cache
         - 3: both the forward and reverse conversions are in the cache
-     */
+    */
     int is_in_cache(std::string from, std::string to) const {
 
       // Remove whitespace

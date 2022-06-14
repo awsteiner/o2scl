@@ -1637,16 +1637,6 @@ class find_constants::const_entry
 # Class find_constants
 #
 class find_constants
-- function find_print
-  - void
-  - std::string name
-  - std::string unit
-  - size_t prec
-  - int verbose
-- function find_unique
-  - double
-  - std::string name
-  - std::string unit
 - function output_list_cout
   - void
 - function add_constant
@@ -1753,6 +1743,16 @@ class convert_units<>
   - void
 - function print_units_cout
   - void
+#- function find_print2
+#  - void
+#  - std::string name
+#  - std::string unit
+#  - size_t prec
+#  - int verbose
+#- function find_unique2
+#  - double
+#  - std::string name
+#  - std::string unit
 - int verbose
 - bool err_on_fail
 - bool combine_two_conv

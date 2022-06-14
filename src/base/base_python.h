@@ -822,10 +822,6 @@ void *o2scl_create_find_constants();
 
 void o2scl_free_find_constants(void *vptr);
 
-void o2scl_find_constants_find_print(void *vptr, char *name, char *unit, size_t prec, int verbose);
-
-double o2scl_find_constants_find_unique(void *vptr, char *name, char *unit);
-
 void o2scl_find_constants_output_list_cout(void *vptr);
 
 void o2scl_find_constants_add_constant(void *vptr, void *ptr_f, int verbose=0);

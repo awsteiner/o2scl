@@ -2387,18 +2387,6 @@ void o2scl_free_find_constants(void *vptr) {
   return;
 }
 
-void o2scl_find_constants_find_print(void *vptr, char *name, char *unit, size_t prec, int verbose) {
-  find_constants *ptr=(find_constants *)vptr;
-  ptr->find_print(name,unit,prec,verbose);
-  return;
-}
-
-double o2scl_find_constants_find_unique(void *vptr, char *name, char *unit) {
-  find_constants *ptr=(find_constants *)vptr;
-  double ret=ptr->find_unique(name,unit);
-  return ret;
-}
-
 void o2scl_find_constants_output_list_cout(void *vptr) {
   find_constants *ptr=(find_constants *)vptr;
   ptr->output_list_cout();

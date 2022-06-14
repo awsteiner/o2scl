@@ -68,7 +68,7 @@ namespace o2scl {
   /** \brief Convert a boolean value to a string 
 
       This returns \c "1" for true and \c "0" for false.
-   */
+  */
   std::string btos(bool b);
 
   /** \brief Convert a floating-point number to a string 
@@ -85,9 +85,9 @@ namespace o2scl {
       converted to a string in the <tt>ios::scientific</tt> mode,
       otherwise, neither the scientific or fixed mode flags are set
       and the number is converted to a string in "automatic" mode.
-   */
+  */
   template<class fp_t>
-    std::string dtos(const fp_t &x, int prec=6, bool auto_prec=false) {
+  std::string dtos(const fp_t &x, int prec=6, bool auto_prec=false) {
     
     std::ostringstream strout;
     
@@ -117,7 +117,7 @@ namespace o2scl {
       magnitude of the exponent is greater than or equal to 100. It
       uses <tt>stringstream</tt> to convert the number to a string and
       counts the number of characters directly.
-   */
+  */
   size_t size_of_exponent(double x);
 
   /** \brief Convert a double to a string using a specified format
@@ -132,7 +132,7 @@ namespace o2scl {
 
   /** \brief Convert a string to an integer without throwing an 
       exception
-   */
+  */
   int stoi_nothrow(std::string s, int &result);
 
   /** \brief Convert a string to a size_t
@@ -226,12 +226,14 @@ namespace o2scl {
       \note The test employed is not exhaustive and this function may
       return \c true for some numbers and may return \c false for some
       non-numbers.
-   */
+  */
   bool is_number(std::string s);
 
+#ifdef NEVER_DEFINED
+  
   /** \brief Find constant named \c name with unit \c unit and
       return the associated value
-   */
+  */
   double find_constant(std::string name, std::string unit);
   
   /** \brief Convert a formula to a double 
@@ -264,7 +266,8 @@ namespace o2scl {
   */
   int function_to_double_nothrow(std::string s, long double &result,
                                  int verbose=0);
-
+#endif
+  
   /** \brief Split a string into words using whitespace for delimiters
       and (partially) respecting quotes
 
@@ -297,11 +300,11 @@ namespace o2scl {
 
       .. todo:: 
 
-         In function split_string(), the rules surrounding spaces and
-         quotes are not well documented.
+      In function split_string(), the rules surrounding spaces and
+      quotes are not well documented.
 
-         - Future: Replace with a better algorithm. Should quotes be
-           escaped?
+      - Future: Replace with a better algorithm. Should quotes be
+      escaped?
 
       \endverbatim
   */
@@ -314,14 +317,14 @@ namespace o2scl {
   
   /** \brief Rewrap a string into a single column, avoiding
       strings less than a particular number of characters
-   */
+  */
   void rewrap(std::string str, std::vector<std::string> &sv,
 	      size_t ncol=79);
 
   /** \brief Rewrap string \c str splitting at spaces and place in \c
       sv, but ignore vt100 characters which do not occupy space in the
       terminal
-   */
+  */
   void rewrap_ignore_vt100(std::string str,
 			   std::vector<std::string> &sv,
 			   size_t ncol=79);
@@ -332,7 +335,7 @@ namespace o2scl {
       \note If the string \c s1 can be found inside \c s2, then
       this would lead to an infinite loop, so the error handler
       is called.
-   */
+  */
   size_t string_replace(std::string &s, const std::string &s1,
                         const std::string &s2);
   
@@ -340,16 +343,16 @@ namespace o2scl {
 
       \note I'm deprecating this function as I'm not sure 
       it is different from rewrap_ignore_vt100().
-   */
+  */
   void rewrap_colorx(std::string str, std::vector<std::string> &sv,
-		    size_t ncol=79);
+                     size_t ncol=79);
 
   /** \brief Convert from UTF-8 to 32-bit integers
 
       \warning This depends on C++ extensions that will 
       eventually be deprecated, but apparently haven't been
       replaced in C++20 yet?
-   */
+  */
   void utf8_to_char32(const std::string &in,
                       std::u32string &out);
 
@@ -358,7 +361,7 @@ namespace o2scl {
       \warning This depends on C++ extensions that will 
       eventually be deprecated, but apparently haven't been
       replaced in C++20 yet?
-   */
+  */
   void char32_to_utf8(const std::u32string &in,
                       std::string &out);
   
@@ -377,10 +380,10 @@ namespace o2scl {
 
   /** \brief Convert a string-based list of unsigned integers
       to a list
-   */
+  */
   template<class size_vec_t>
-    int string_to_uint_list(const std::string &x,
-			    size_vec_t &list) {
+  int string_to_uint_list(const std::string &x,
+                          size_vec_t &list) {
     
     list.clear();
     std::vector<std::string> ranges;
@@ -424,7 +427,7 @@ namespace o2scl {
 
   /** \brief Parse \c line into \c entries using the FORTRAN
       format string \c format
-   */
+  */
   void parse_fortran_format(std::string line, std::string format,
                             std::vector<std::string> &entries);
 

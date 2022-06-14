@@ -78,7 +78,7 @@ namespace o2scl {
     static const int no_matches=10;
     //@}
 
-  protected:
+  public:
 
     /// \name List of constants and unit match function [protected]
     //@{
@@ -102,8 +102,6 @@ namespace o2scl {
                           const const_entry &f) const;
     //@}
     
-  public:
-  
     find_constants();
 
     // FYI, from constants.h, we have:
@@ -118,6 +116,7 @@ namespace o2scl {
     static const int fc_other=4;
     //@}
 
+#ifdef O2SCL_NEVER_DEFINED    
     /// \name Basic usage
     //@{
     /** \brief Search for constants matching \c name with unit
@@ -138,13 +137,14 @@ namespace o2scl {
     */
     void find_print(std::string name, std::string unit="", size_t prec=6,
 		    bool use_regex=false, int verbose=0) const;
-  
+    
     /** \brief Find a unique match and return the numerical value
      */
     double find_unique(std::string name, std::string unit="",
                        bool use_regex=false) const;
     //@}
-
+#endif
+    
     /// \name Functions to show or modify the constant list
     //@{
     /** \brief Output the full list of constants to \c os 

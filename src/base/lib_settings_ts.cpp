@@ -51,6 +51,11 @@ int main(void) {
   cout << "config.h: " << endl;
   o2scl_settings.config_h_report();
 
+  convert_units<double> cud;
+  find_constants fcd;
+  double d1, d2;
+  int ix=convert_units_calc2(cud,fcd,"J","K",2.0,d1,d2);
+  
   t.report();
   return 0;
 }
