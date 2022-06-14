@@ -35,6 +35,8 @@ namespace o2scl {
 
   public:
 
+    find_constants();
+
     /// Type for constant database (also used for list of matches)
     typedef struct const_entry_s {
       /// List of names for the constant, with the preferred name first
@@ -78,8 +80,6 @@ namespace o2scl {
     static const int no_matches=10;
     //@}
 
-  public:
-
     /// \name List of constants and unit match function [protected]
     //@{
     /// Database of constant values
@@ -102,8 +102,6 @@ namespace o2scl {
                           const const_entry &f) const;
     //@}
     
-    find_constants();
-
     // FYI, from constants.h, we have:
     //
     // static const size_t o2scl_mks=1;

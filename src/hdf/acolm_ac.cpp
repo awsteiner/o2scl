@@ -135,7 +135,7 @@ int acol_manager::comm_convert
 
     double val=1.0;
     if (in.size()>=3) {
-      int ret2=function_to_double_nothrow(in[9],val,0,&rng);
+      int ret2=function_to_double_nothrow<double>(in[9],val,0,&rng);
       if (ret2!=0) {
         cerr << "Converting " << in[9] << " to value failed." << endl;
         return 2;
@@ -213,7 +213,7 @@ int acol_manager::comm_convert
     cout << "Using convert()." << endl;
     
     if (in.size()>=4) {
-      int ret2=function_to_double_nothrow(in[3],val,0,&rng);
+      int ret2=function_to_double_nothrow<double>(in[3],val,0,&rng);
       if (ret2!=0) {
         cerr << "Converting " << in[3] << " to value failed." << endl;
         return 2;
@@ -233,7 +233,7 @@ int acol_manager::comm_convert
   } else {
     
     if (in.size()>=3) {
-      int ret2=function_to_double_nothrow(in[2],val,0,&rng);
+      int ret2=function_to_double_nothrow<double>(in[2],val,0,&rng);
       if (ret2!=0) {
         cerr << "Converting " << in[2] << " to value failed." << endl;
         return 2;
@@ -257,7 +257,7 @@ int acol_manager::comm_convert
 int acol_manager::comm_constant(std::vector<std::string> &sv,
 				bool itive_com) {
 
-  find_constants &fc=o2scl_settings.get_find_constants();
+  convert_units<double> &cu=o2scl_settings.get_convert_units();
 
   if (sv.size()<2) {
     vector<string> pr, in;
@@ -284,10 +284,10 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
     cu.find_print2(sv[1],sv[2],precision,false,verbose);
   } else if (sv[1]=="list") {
     cout.precision(precision);
-    fc.output_list(cout);
+    cu.fc.output_list(cout);
   } else if (sv[1]=="list-full") {
     cout.precision(precision);
-    fc.output_list_full(cout);
+    cu.fc.output_list_full(cout);
   } else if (sv[1]=="add") {
     if (sv.size()<4) {
       cerr << "Argument 'add' given to command 'constant' implies add "
@@ -338,7 +338,7 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
       cout << "constant: Adding constant named " << sv[2]
            << " with value " << sv[3] << endl;
     }
-    fc.add_constant(f,verbose);
+    cu.fc.add_constant(f,verbose);
   } else if (sv[1]=="del") {
     if (sv.size()==2) {
       cerr << "Argument 'del' given to command 'constant' implies delete "
@@ -348,7 +348,7 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
     if (verbose>=1) {
       cout << "constant: Deleting constant named " << sv[2] << endl;
     }
-    fc.del_constant(sv[2],verbose);
+    cu.fc.del_constant(sv[2],verbose);
   } else {
     if (verbose>=1) {
       cout << "constant: Printing constant named " << sv[1]
@@ -477,7 +477,7 @@ int acol_manager::comm_assign(std::vector<std::string> &sv, bool itive_com) {
   if (ret!=0) return ret;
 
   double d;
-  int retx=function_to_double_nothrow(sv[2],d,0,&rng);
+  int retx=function_to_double_nothrow<double>(sv[2],d,0,&rng);
   if (retx!=0) {
     cerr << "Converting " << sv[2] << " to value failed." << endl;
     return 1;
@@ -934,7 +934,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   } else if (precision>35) {
     boost::multiprecision::number<boost::multiprecision::cpp_dec_float<50> >
       d;
-    int retx=o2scl::function_to_double_nothrow(i1,d);
+    int retx=o2scl::function_to_double_nothrow_nofc(i1,d);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -945,7 +945,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   } else if (precision>18) {
     boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
       d;
-    int retx=o2scl::function_to_double_nothrow(i1,d);
+    int retx=o2scl::function_to_double_nothrow_nofc(i1,d);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -955,7 +955,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   } else if (precision>15) {
     long double d;
-    int retx=o2scl::function_to_double_nothrow(i1,d);
+    int retx=o2scl::function_to_double_nothrow_nofc(i1,d);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -966,7 +966,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   }
   
   double d;
-  int retx=o2scl::function_to_double_nothrow(i1,d,0,&rng);
+  int retx=o2scl::function_to_double_nothrow<double>(i1,d,0,&rng);
   if (retx!=0) {
     cerr << "Converting " << i1 << " to value failed." << endl;
     return 1;
@@ -1377,7 +1377,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     }
     
     ubvector levs(1);
-    int retx=o2scl::function_to_double_nothrow(svalue,levs[0],0,&rng);
+    int retx=o2scl::function_to_double_nothrow<double>(svalue,levs[0],0,&rng);
     if (retx!=0) {
       cerr << "Failed to convert " << svalue << " to value." << endl;
       return 1;
@@ -1573,7 +1573,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     }
 
     ubvector levs(1);
-    int retx=o2scl::function_to_double_nothrow(svalue,levs[0],0,&rng);
+    int retx=o2scl::function_to_double_nothrow<double>(svalue,levs[0],0,&rng);
     if (retx!=0) {
       cerr << "Failed to convert " << svalue << " to value." << endl;
       return 1;
