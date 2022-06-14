@@ -766,68 +766,6 @@ size_t o2scl_tensor_size_t_std_vector_size_t__total_sum(void *vptr);
 
 void *o2scl_tensor_size_t_std_vector_size_t__create_size(size_t rank, void *ptr_sizes);
 
-void *o2scl_create_find_constants_const_entry();
-
-void o2scl_free_find_constants_const_entry(void *vptr);
-
-void *o2scl_find_constants_const_entry_get_names(void *vptr);
-
-void o2scl_find_constants_const_entry_set_names(void *vptr, void *p_v);
-
-void *o2scl_find_constants_const_entry_get_unit(void *vptr);
-
-void o2scl_find_constants_const_entry_set_unit(void *vptr, void *p_v);
-
-int o2scl_find_constants_const_entry_get_unit_flag(void *vptr);
-
-void o2scl_find_constants_const_entry_set_unit_flag(void *vptr, int v);
-
-double o2scl_find_constants_const_entry_get_val(void *vptr);
-
-void o2scl_find_constants_const_entry_set_val(void *vptr, double v);
-
-void *o2scl_find_constants_const_entry_get_source(void *vptr);
-
-void o2scl_find_constants_const_entry_set_source(void *vptr, void *p_v);
-
-int o2scl_find_constants_const_entry_get_m(void *vptr);
-
-void o2scl_find_constants_const_entry_set_m(void *vptr, int v);
-
-int o2scl_find_constants_const_entry_get_k(void *vptr);
-
-void o2scl_find_constants_const_entry_set_k(void *vptr, int v);
-
-int o2scl_find_constants_const_entry_get_s(void *vptr);
-
-void o2scl_find_constants_const_entry_set_s(void *vptr, int v);
-
-int o2scl_find_constants_const_entry_get_K(void *vptr);
-
-void o2scl_find_constants_const_entry_set_K(void *vptr, int v);
-
-int o2scl_find_constants_const_entry_get_A(void *vptr);
-
-void o2scl_find_constants_const_entry_set_A(void *vptr, int v);
-
-int o2scl_find_constants_const_entry_get_mol(void *vptr);
-
-void o2scl_find_constants_const_entry_set_mol(void *vptr, int v);
-
-int o2scl_find_constants_const_entry_get_cd(void *vptr);
-
-void o2scl_find_constants_const_entry_set_cd(void *vptr, int v);
-
-void *o2scl_create_find_constants();
-
-void o2scl_free_find_constants(void *vptr);
-
-void o2scl_find_constants_output_list_cout(void *vptr);
-
-void o2scl_find_constants_add_constant(void *vptr, void *ptr_f, int verbose=0);
-
-void o2scl_find_constants_del_constant(void *vptr, void *ptr_name, int verbose=0);
-
 void *o2scl_create_convert_units_der_unit();
 
 void o2scl_free_convert_units_der_unit(void *vptr);
@@ -1223,8 +1161,6 @@ void o2scl_wordexp_single_file_wrapper(void *&ptr_fname);
 void o2scl_wordexp_wrapper_wrapper(char *word, void *ptr_matches);
 
 int o2scl_string_to_uint_list_vector_size_t__wrapper(void *&ptr_x, void *ptr_list);
-
-double o2scl_find_constant_wrapper(char *name, char *unit);
 
 size_t o2scl_vector_level_count_std_vector_double_std_vector_double__wrapper(double level, size_t n, void *ptr_x, void *ptr_y);
 
