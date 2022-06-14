@@ -278,7 +278,7 @@ namespace o2scl {
       }
     }
   
-    calc_utf8<> calc;
+    calc_utf8<fp_t> calc;
     if (r!=0) {
       calc.set_rng(*r);
     }

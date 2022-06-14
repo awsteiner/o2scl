@@ -1144,7 +1144,7 @@ namespace o2scl {
         
         // Try to convert units
         if (unit.length()>0) {
-          double val2;
+          fp_t val2;
           if (verbose>0) {
             std::cout << "find_constant::find_nothrow(): "
                       << "Trying to convert from "
@@ -1334,8 +1334,8 @@ namespace o2scl {
     
       std::cout.precision(prec);
 
-      std::vector<find_constants<>::const_entry> matches;
-      int ret=find_nothrow(name,unit,matches,use_regex,verbose);
+      std::vector<typename find_constants<fp_t>::const_entry> matches;
+      int ret=find_nothrow(name,unit,matches,use_regex);
       if (ret==fc.no_matches) {
         std::cout << "find_constant::find_print(): No matches found for name "
                   << name << std::endl;
@@ -1362,7 +1362,7 @@ namespace o2scl {
     double find_unique(std::string name,
                        std::string unit,
                        bool use_regex=false) {
-      std::vector<find_constants<>::const_entry> matches;
+      std::vector<typename find_constants<fp_t>::const_entry> matches;
       int ret=find_nothrow(name,unit,matches,use_regex);
       if (ret!=fc.one_exact_match_unit_match &&
           ret!=fc.one_pattern_match_unit_match) {
@@ -1382,8 +1382,8 @@ namespace o2scl {
                      fp_t val, fp_t &converted,
                      fp_t &factor) {
 
-      o2scl::calc_utf8<> calc;
-      o2scl::calc_utf8<> calc2;
+      o2scl::calc_utf8<fp_t> calc;
+      o2scl::calc_utf8<fp_t> calc2;
 
       int cret1=calc.compile_nothrow(from.c_str());
       if (cret1!=0) {
@@ -1449,13 +1449,13 @@ namespace o2scl {
         o2scl::vector_out(std::cout,new_units,true);
       }
       
-      std::vector<find_constants<>::const_entry> matches;
+      std::vector<typename find_constants<fp_t>::const_entry> matches;
       for(size_t i=0;i<new_units.size();i++) {
         int fret=find_nothrow(new_units[i],"mks",matches);
-        if (fret==find_constants<>::one_exact_match_unit_match ||
-            fret==find_constants<>::one_pattern_match_unit_match) {
+        if (fret==find_constants<fp_t>::one_exact_match_unit_match ||
+            fret==find_constants<fp_t>::one_pattern_match_unit_match) {
           der_unit du;
-          find_constants<>::const_entry &fcl=matches[0];
+          typename find_constants<fp_t>::const_entry &fcl=matches[0];
           du.label=new_units[i];
           du.m=fcl.m;
           du.k=fcl.k;
@@ -1502,8 +1502,8 @@ namespace o2scl {
       
       // These calculator objects have to be inside this
       // function to make the function const
-      o2scl::calc_utf8<> calc;
-      o2scl::calc_utf8<> calc2;
+      o2scl::calc_utf8<fp_t> calc;
+      o2scl::calc_utf8<fp_t> calc2;
 
       std::map<std::string, fp_t> vars;
 

@@ -269,7 +269,8 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
       cout << "constant: Looking up constant " << in[0]
            << " with unit " << in[1] << endl;
     }
-    cu.find_print2(in[0],in[1],precision,false,verbose);
+    cu.verbose=verbose;
+    cu.find_print(in[0],in[1],precision,false);
     return 0;
   }
   
@@ -281,7 +282,8 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
       cout << "constant: Looking up constant " << sv[1]
            << " with unit " << sv[2] << endl;
     }
-    cu.find_print2(sv[1],sv[2],precision,false,verbose);
+    cu.verbose=verbose;
+    cu.find_print(sv[1],sv[2],precision,false);
   } else if (sv[1]=="list") {
     cout.precision(precision);
     cu.fc.output_list(cout);
@@ -354,7 +356,8 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
       cout << "constant: Printing constant named " << sv[1]
            << " (unit unspecified)" << endl;
     }
-    cu.find_print2(sv[1],"",precision,false,verbose);
+    cu.verbose=verbose;
+    cu.find_print(sv[1],"",precision,false);
   }
 
   return 0;
@@ -935,8 +938,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     typedef
       boost::multiprecision::number<boost::multiprecision::cpp_dec_float<50> >
       cpp_dec_float_50;
-    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<50> >
-      d;
+    cpp_dec_float_50 d;
     int retx=o2scl::function_to_double_nothrow<cpp_dec_float_50>(i1,d);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
