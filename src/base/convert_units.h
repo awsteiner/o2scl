@@ -1233,7 +1233,7 @@ namespace o2scl {
           
           // No matching unit, try to convert
           for(size_t i=0;i<indexes.size();i++) {
-            double val2;
+            fp_t val2;
             std::cout << "Trying to convert from "
                       << fc.list[indexes[i]].unit << " to "
                       << unit << std::endl;

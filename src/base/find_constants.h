@@ -111,8 +111,8 @@ namespace o2scl {
               Astrophysical/cosmological constants from PDG
             */
             {{"elementary charge","e"},"C",
-             o2scl_const::o2scl_mks,1.602176634,"exact",
-             0,0,1,0,1,0,0},
+             o2scl_const::o2scl_mks,o2scl_const::elem_charge_f<fp_t>(),
+             "exact",0,0,1,0,1,0,0},
             {{"Bohr magneton"},"J/T",
              o2scl_const::o2scl_mks,9.2740100783e-24,"CODATA 2018",
              1,1,0,0,1,0,0},
