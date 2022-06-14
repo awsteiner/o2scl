@@ -294,20 +294,20 @@ namespace o2scl {
     // from the constant database
     if (vs.size()!=0) {
     
-      find_constants<> &fc=o2scl_settings.get_find_constants();
+      find_constants<fp_t> &fc=cu.fc;
     
       std::map<std::string,fp_t> vars;
-    
-      std::vector<find_constants<>::const_entry> matches;
+      typedef typename find_constants<fp_t>::const_entry ce;
+      std::vector<ce> matches;
       for(size_t i=0;i<vs.size();i++) {
         std::string vsi2;
         char32_to_utf8(vs[i],vsi2);
-        int fret=cu.find_nothrow2(vsi2,"mks",matches);
+        int fret=cu.find_nothrow(vsi2,"mks",matches);
       
-        if (fret==find_constants<>::one_exact_match_unit_match ||
-            fret==find_constants<>::one_pattern_match_unit_match) {
+        if (fret==find_constants<fp_t>::one_exact_match_unit_match ||
+            fret==find_constants<fp_t>::one_pattern_match_unit_match) {
 
-          find_constants<>::const_entry &fcl=matches[0];
+          ce &fcl=matches[0];
 
           vars.insert(std::make_pair(vsi2,fcl.val));
           if (verbose>=2) {
@@ -341,16 +341,6 @@ namespace o2scl {
     return 0;
   }
 
-  /** \brief Convert a formula to a long double and return an integer
-      to indicate success or failure
-      
-      This is an alternate version of \ref function_to_double()
-      which does not call the error handler and returns a non-zero
-      integer when it fails.
-  */
-  int function_to_long_double_nothrow(std::string s, long double &result,
-                                      int verbose=0);
-  
   /** \brief Find constant named \c name with unit \c unit and
       return the associated value
   */

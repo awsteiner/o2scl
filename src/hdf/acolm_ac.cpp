@@ -932,9 +932,12 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
          << "command." << endl;
     return 2;
   } else if (precision>35) {
+    typedef
+      boost::multiprecision::number<boost::multiprecision::cpp_dec_float<50> >
+      cpp_dec_float_50;
     boost::multiprecision::number<boost::multiprecision::cpp_dec_float<50> >
       d;
-    int retx=o2scl::function_to_double_nothrow_nofc(i1,d);
+    int retx=o2scl::function_to_double_nothrow<cpp_dec_float_50>(i1,d);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -943,9 +946,12 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     cout << dtos(d,precision) << endl;
     return 0;
   } else if (precision>18) {
+    typedef
+      boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
+      cpp_dec_float_35;
     boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
       d;
-    int retx=o2scl::function_to_double_nothrow_nofc(i1,d);
+    int retx=o2scl::function_to_double_nothrow<cpp_dec_float_35>(i1,d);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -955,7 +961,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   } else if (precision>15) {
     long double d;
-    int retx=o2scl::function_to_double_nothrow_nofc(i1,d);
+    int retx=o2scl::function_to_double_nothrow<long double>(i1,d);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;

@@ -147,6 +147,24 @@ namespace o2scl_const {
   template<class fp_t> fp_t hbarc_f(size_t system=o2scl_mks) {
     return hbar_f<fp_t>(system)*speed_of_light_f<fp_t>(system);
   }
+
+  /** \brief Gravitational constant (CODATA 2018 value)
+      
+      Of course the gravitational constant is not known precisely, but
+      this function ensures there is no additional noise in the
+      multiprecision generalization.
+  */
+  template<class fp_t> fp_t gravitational_constant_f
+  (size_t system=o2scl_mks) {
+    if (system==o2scl_cgs) {
+      fp_t numer=667430;
+      fp_t denom=100000000;
+      return numer/denom;
+    }
+    fp_t numer=667430;
+    fp_t denom=100000000000;
+    return numer/denom;
+  }
   
   /// Elementary charge
   template<class fp_t> fp_t elem_charge_f() {

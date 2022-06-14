@@ -119,7 +119,9 @@ namespace o2scl {
              o2scl_const::o2scl_mks,5.0507837461e-27,"CODATA 2018",
              1,1,0,0,1,0,0},
             {{"strong coupling constant at the Z mass"},"",
-             fc_none,0.1179,"https://pdg.lbl.gov/2021/reviews/contents_sports.html",
+             fc_none,0.1179,
+             ((std::string)"https://pdg.lbl.gov/2021/reviews/")+
+             "contents_sports.html",
              0,0,0,0,0,0,0},
             {{"Schwarzchild radius","rschwarz"},
              "cm",o2scl_const::o2scl_cgs,o2scl_cgs::schwarzchild_radius,
@@ -137,9 +139,12 @@ namespace o2scl {
              "cm/s",o2scl_const::o2scl_cgs,
              o2scl_const::speed_of_light_f<fp_t>(o2scl_const::o2scl_cgs),
              "exact",0,0,0,0,0,0,0},
-            {{"gravitational","g","gnewton"},"m^3/kg/s^2",o2scl_const::o2scl_mks,
-             o2scl_mks::gravitational_constant,"CODATA 2018",3,-1,-2,0,0,0,0},
-            {{"gravitational","g","gnewton"},"cm^3/g/s^2",o2scl_const::o2scl_cgs,
+            {{"gravitational","g","gnewton"},"m^3/kg/s^2",
+             o2scl_const::o2scl_mks,
+             o2scl_mks::gravitational_constant,"CODATA 2018",
+             3,-1,-2,0,0,0,0},
+            {{"gravitational","g","gnewton"},"cm^3/g/s^2",
+             o2scl_const::o2scl_cgs,
              o2scl_cgs::gravitational_constant,"CODATA 2018",0,0,0,0,0,0,0},
             {{"Boltzmann's","kb","boltzmann"},
              "m^2/kg/s^2/K",o2scl_const::o2scl_mks,o2scl_mks::boltzmann,
@@ -150,11 +155,12 @@ namespace o2scl {
             {{"Stefan-Boltzmann","sigmasb","stefanboltzmann","ssb","σsb"},
              "kg/s^3/K^4",o2scl_const::o2scl_mks,
              o2scl_mks::stefan_boltzmann_constant,
-             "exact; derived from k_B, c, and h bar",0,1,-3,-4,0,0,0},
-            {{"Stefan-Boltzmann","sigmasb","stefanboltzmann","ssb","σsb"},
+             "exact; derived from k_B, c, and ħ",0,1,-3,-4,0,0,0},
+            {{"Stefan-Boltzmann","sigmasb","stefanboltzmann",
+               "ssb","σsb"},
              "g/s^3/K^4",o2scl_const::o2scl_cgs,
              o2scl_cgs::stefan_boltzmann_constant,
-             "exact; derived from k_B, c, and h bar",0,0,0,0,0,0,0},
+             "exact; derived from k_B, c, and ħ",0,0,0,0,0,0,0},
             {{"Planck","h","plancks"},
              "kg*m^2/s",o2scl_const::o2scl_mks,
              o2scl_const::planck_f<fp_t>(o2scl_const::o2scl_mks),
@@ -522,7 +528,8 @@ namespace o2scl {
 
 
     /// Type for constant database (also used for list of matches)
-    typedef struct const_entry_s {
+    class const_entry {
+    public:
       /// List of names for the constant, with the preferred name first
       std::vector<std::string> names;
       /// Unit
@@ -547,7 +554,7 @@ namespace o2scl {
       int mol;
       /// Power of luminous intensity
       int cd;
-    } const_entry;
+    };
 
     /// \name Return values for find_nothrow()
     //@{
