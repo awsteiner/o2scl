@@ -48,6 +48,7 @@
 #include <o2scl/inte_kronrod_gsl.h>
 #include <o2scl/funct.h>
 #include <o2scl/string_conv.h>
+#include <o2scl/smooth_func.h>
 
 #ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
@@ -314,6 +315,77 @@ namespace o2scl {
   
   };
 
+  /** \brief Experimental
+   */
+  template<class func_t=funct> class inte_qag_smooth : 
+    public inte<func_t,double> {
+    
+  protected:
+    
+    gauss_filter<func_t> gf;
+    
+  public:
+
+    inte_qag_gsl<func_t> qag;
+    
+    inte_qag_smooth() {
+      qag.err_nonconv=false;
+    }
+    
+    virtual int integ_err(func_t &func, double a, double b, 
+			  double &res, double &err) {
+      
+      int iret=qag.integ_err(func,a,b,res,err);
+      //if (iret==0) return 0;
+      std::cout << "iqs: " << res << " " << err << " " << iret << std::endl;
+      
+      funct f1=std::bind(std::mem_fn<double(double)>
+                         (&gauss_filter<>::operator()),&gf,
+                         std::placeholders::_1);
+
+      for(double factor=1.0e13;factor>1.0e3/1.0001;factor/=1.0e2) {
+      
+        gf.set_func(func);
+        gf.h_rel=(b-a)/factor;
+        gf.set_alpha(3.0);
+        gf.set_K(10);
+
+        iret=qag.integ_err(f1,a,b,res,err);
+        std::cout << factor << " " << res << " " << err << " "
+                  << res/factor << " " << iret << std::endl;
+        if (iret==0) {
+          err=sqrt(err*err+pow(res/factor,2.0));
+          if (err<this->tol_abs || err<this->tol_rel*fabs(res)) {
+            //return 0;
+          }
+        }
+      }
+
+      for(double factor=1.0e13;factor>1.0e3/1.0001;factor/=1.0e2) {
+      
+        gf.set_func(func);
+        gf.h_rel=(b-a)/factor;
+        gf.set_alpha(3.0);
+        gf.set_K(100);
+        
+        iret=qag.integ_err(f1,a,b,res,err);
+        
+        std::cout << factor << " " << res << " " << err << " "
+                  << res/factor << " " << iret << std::endl;
+        if (iret==0) {
+          err=sqrt(err*err+pow(res/factor,2.0));
+          if (err<this->tol_abs || err<this->tol_rel*fabs(res)) {
+            //return 0;
+          }
+        }
+      }
+
+      exit(-1);
+      return 0;
+    }
+    
+  };
+  
 #ifndef DOXYGEN_NO_O2NS
 }
 #endif

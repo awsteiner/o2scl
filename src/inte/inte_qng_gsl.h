@@ -308,8 +308,8 @@ namespace o2scl {
     double f_center;
     f_center=func(center);
     
-      double dbl_eps=std::numeric_limits<double>::epsilon();
-
+    double dbl_eps=std::numeric_limits<double>::epsilon();
+    
     if (this->tol_abs <= 0 && (this->tol_rel < 50 * dbl_eps || 
 			       this->tol_rel < min_rel_tol)) {
       res = 0;

@@ -293,11 +293,11 @@ namespace o2scl {
         for(int j=0;j<((int)K);j++) {
           double x2=x+h*((double)(j-((int)K)/2))/((double)(K/2));
           if (x2>=lower_limit && x2<=upper_limit) {
-            wsum+=gsl_vector_get(v,j);
+            w_sum+=gsl_vector_get(v,j);
             y+=(*f)(x2)*gsl_vector_get(v,j);
           }
         }
-        y/=wsum;
+        y/=w_sum;
         
       } else {
         
