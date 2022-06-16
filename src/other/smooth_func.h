@@ -28,7 +28,12 @@
 
 #include <iostream>
 #include <vector>
+
 #include <gsl/gsl_qrng.h>
+#include <gsl/gsl_filter.h>
+#include <gsl/gsl_vector.h>
+
+#include <o2scl/funct.h>
 #include <o2scl/vector.h>
 
 namespace o2scl {
@@ -162,6 +167,152 @@ namespace o2scl {
   
   };
 
+  /** \brief Apply a Gaussian filter to a function
+   */
+  template<class func_t=funct> class gauss_filter {
+    
+  protected:
+  
+    /** \brief The pointer to the original function
+     */
+    func_t *f;
+  
+    /** \brief Number of points (default 5)
+     */
+    size_t K;
+
+    /** \brief GSL workspace
+     */
+    gsl_filter_gaussian_workspace *w;
+
+    /** \brief Windowing parameter
+     */
+    double alpha;
+
+    /** \brief Vector storage for kernel
+     */
+    gsl_vector *v;
+    
+  public:
+
+    gauss_filter() {
+      K=5;
+      f=0;
+      w=gsl_filter_gaussian_alloc(K);
+      v=gsl_vector_alloc(K);
+      alpha=1.0;
+      h_rel=1.0e-14;
+      h_abs=0.0;
+      lower_limit=0.0;
+      upper_limit=0.0;
+    }
+
+    /// Relative stepsize (default \f$ 10^{-14} \f$
+    double h_rel;
+    
+    /// Absolute stepsize (default \f$ 0 \f$)
+    double h_abs;
+
+    /// Lower limit
+    double lower_limit;
+    
+    /// Upper limit
+    double upper_limit;
+    
+    virtual ~gauss_filter() {
+      gsl_filter_gaussian_free(w);
+      gsl_vector_free(v);
+    }
+    
+    /** \brief Set the base function
+     */
+    void set_func(func_t &func) {
+      f=&func;
+      return;
+    }
+
+    /** \brief Set the window parameter
+     */
+    void set_alpha(double alpha_new) {
+      alpha=alpha_new;
+      return;
+    }
+    
+    /** \brief Set the number of points to use in the average
+
+	If \c n_new is zero then the error handler will be called.
+    */
+    void set_K(size_t K_new) {
+      if (K_new==0) {
+	O2SCL_ERR2("Cannot call set_n() with argument 0 in ",
+		   "gauss_filter::set_n().",o2scl::exc_einval);
+      }
+      gsl_filter_gaussian_free(w);
+      gsl_vector_free(v);
+      K=K_new;
+      w=gsl_filter_gaussian_alloc(K);
+      v=gsl_vector_alloc(K);
+      return;
+    }
+  
+    /** \brief Evaluate the function
+    */
+    double operator()(double x) {
+      
+      if (f==0) {
+	O2SCL_ERR2("Function not set in ",
+		   "gauss_filter::operator().",o2scl::exc_einval);
+      }
+
+      double h=0.0;
+      if (h_rel>0.0) {
+        if (h_abs>0.0) {
+          h=x*h_rel+h_abs;
+        } else {
+          h=x*h_rel;
+        }
+      } else {
+        if (h_abs>0.0) {
+          h=h_abs;
+        } else {
+          O2SCL_ERR("Step not set in gauss_filter::operator().",
+                    o2scl::exc_einval);
+        }
+      }
+      
+      gsl_filter_gaussian_kernel(alpha,0,1,v);
+      
+      double y=0.0;
+
+      // If the smallest or largest value is beyond the lower and
+      // upper limits, then adjust the sum accordingly
+      
+      if (lower_limit<upper_limit && (x-h<lower_limit || x+h>upper_limit)) {
+        
+        double w_sum=0.0;
+        for(int j=0;j<((int)K);j++) {
+          double x2=x+h*((double)(j-((int)K)/2))/((double)(K/2));
+          if (x2>=lower_limit && x2<=upper_limit) {
+            wsum+=gsl_vector_get(v,j);
+            y+=(*f)(x2)*gsl_vector_get(v,j);
+          }
+        }
+        y/=wsum;
+        
+      } else {
+        
+        for(int j=0;j<((int)K);j++) {
+          double x2=x+h*((double)(j-((int)K)/2))/((double)(K/2));
+          y+=(*f)(x2)*gsl_vector_get(v,j);
+        }
+        
+      }
+
+      return y;
+    }
+  
+  };
+  
 }
 
 #endif

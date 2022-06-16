@@ -52,6 +52,10 @@ public:
 
 };
 
+double od_test(double x) {
+  return 2.0+sin(x*1.0e20);
+}
+
 int main(void) {
 
   cout.setf(ios::scientific);
@@ -100,6 +104,14 @@ int main(void) {
 
   t.test_rel(x[0]*x[0]*x[0],3.0,1.0e-4,"x[0]");
   t.test_rel(x[0]*x[1],4.0,1.0e-4,"x[1]");
+
+  funct fx=od_test;
+  gauss_filter<> gf;
+  gf.set_func(fx);
+  gf.set_K(11);
+  cout << gf(2.0) << endl;
+  cout << fx(2.0) << endl;
+  
   t.report();
   
   return 0;
