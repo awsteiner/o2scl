@@ -181,7 +181,7 @@ namespace o2scl {
     std::string o2scl_tarname();
     //@}
 
-    /// \name Unit conversion and constant objects
+    /// \name Unit conversion objects
     //@{
     /// Default convert_units object
     convert_units<double> def_cu;
@@ -189,18 +189,6 @@ namespace o2scl {
     /// Get the global convert_units object
     convert_units<double> &get_convert_units() {
       return *cup;
-    }
-
-    /// Get the global convert_units object
-    find_constants<> &get_find_constants() {
-      return *fcp;
-    }
-
-    /// Set the global convert_units and find_constants objects
-    void set_convert_units(convert_units<double> &cu) {
-      cup=&cu;
-      fcp=&cu.fc;
-      return;
     }
     //@}
 
