@@ -255,8 +255,9 @@ namespace o2scl {
       integer when it fails.
   */
   template<class fp_t=double>
-  int function_to_double_nothrow(std::string s, fp_t &result,
-                                 int verbose=0, o2scl::rng<> *r=0) {
+  int function_to_fp_nothrow(std::string s, fp_t &result,
+                                 convert_units<fp_t> &cu,
+                                 int verbose=0, rng<> *r=0) {
     
     std::string s2;
     // Remove quotes and apostrophes
@@ -265,7 +266,7 @@ namespace o2scl {
         s2+=s[i];
       }
     }
-  
+    
     calc_utf8<fp_t> calc;
     if (r!=0) {
       calc.set_rng(*r);
@@ -276,8 +277,6 @@ namespace o2scl {
 
     std::vector<std::u32string> vs=calc.get_var_list();
 
-    convert_units<fp_t> cu;
-    
     // If there are undefined variables, then attempt to get them
     // from the constant database
     if (vs.size()!=0) {
@@ -285,17 +284,19 @@ namespace o2scl {
       find_constants<fp_t> &fc=cu.fc;
     
       std::map<std::string,fp_t> vars;
-      typedef typename find_constants<fp_t>::const_entry ce;
-      std::vector<ce> matches;
+      std::vector<typename find_constants<fp_t>::const_entry> matches;
+      
       for(size_t i=0;i<vs.size();i++) {
+        
         std::string vsi2;
         char32_to_utf8(vs[i],vsi2);
+        
         int fret=cu.find_nothrow(vsi2,"mks",matches);
       
         if (fret==find_constants<fp_t>::one_exact_match_unit_match ||
             fret==find_constants<fp_t>::one_pattern_match_unit_match) {
 
-          ce &fcl=matches[0];
+          typename find_constants<fp_t>::const_entry &fcl=matches[0];
 
           vars.insert(std::make_pair(vsi2,fcl.val));
           if (verbose>=2) {
@@ -329,55 +330,24 @@ namespace o2scl {
     return 0;
   }
 
-  /** \brief Find constant named \c name with unit \c unit and
-      return the associated value
+  /** \brief Convert a formula to a double 
+      
+      This function removes all quotes and apostrophes from the string
+      and then uses \ref o2scl::calculator to convert strings like
+      "-1.0e-3", "pi/3.0" and "exp(cos(-1.0e-2))" to floating point
+      numbers. This function uses the \o2 constant database from
+      \ref lib_settings_class::get_find_constants() to interpret
+      constant values.
   */
   template<class fp_t=double>
-  fp_t find_constant(std::string name, std::string unit) {
-    o2scl::convert_units<fp_t> &cu=o2scl_settings.get_convert_units();
-    return cu.find_unique2(name,unit);
-  }
-
-  /** \brief
-
-      Note that this template is in lib_settings.h because of the
-      hierarchy of header files which must be included
-  */
-  template<class fp_t> int function_to_double_nothrow_nofc
-  (std::string s,
-   fp_t &result, int verbose=0) {
-    
-    std::string s2;
-    
-    // Remove quotes and apostrophes
-    for(size_t i=0;i<s.length();i++) {
-      if (s[i]!='\"' && s[i]!='\'') {
-        s2+=s[i];
-      }
+  fp_t function_to_fp(std::string s, int verbose=0) {
+    fp_t res;
+    convert_units<fp_t> cu;
+    int ret=function_to_fp_nothrow<fp_t>(s,res,cu,verbose);
+    if (ret!=0) {
+      O2SCL_ERR("Function function_to_double() failed.",ret);
     }
-    
-    calc_utf8<fp_t> calc;
-    
-    int ret=calc.compile_nothrow(s2.c_str(),0);
-    if (ret!=0) return ret;
-    
-    std::vector<std::u32string> vs=calc.get_var_list();
-    
-    // The o2scl class find_constants doesn't work for 
-    // multiprecision, so we return a non-zero value instead
-    if (vs.size()!=0) {
-
-      // There are undefined constants
-      return 1;
-      
-    } else {
-      
-      // No variables, so just evaluate
-      int ret2=calc.eval_nothrow(0,result);
-      if (ret2!=0) return ret2;
-    }
-    
-    return 0;
+    return res;
   }
 
   /** \brief Convert a formula to a double 
@@ -389,14 +359,27 @@ namespace o2scl {
       \ref lib_settings_class::get_find_constants() to interpret
       constant values.
   */
+  int function_to_double_nothrow(std::string s, double &result,
+                                 int verbose=0, rng<> *r=0);
+    
+  /** \brief Convert a formula to a double 
+      
+      This function removes all quotes and apostrophes from the string
+      and then uses \ref o2scl::calculator to convert strings like
+      "-1.0e-3", "pi/3.0" and "exp(cos(-1.0e-2))" to floating point
+      numbers. This function uses the \o2 constant database from
+      \ref lib_settings_class::get_find_constants() to interpret
+      constant values.
+  */
+  double function_to_double(std::string s, int verbose=0);
+
+  /** \brief Find constant named \c name with unit \c unit and
+      return the associated value
+  */
   template<class fp_t=double>
-  fp_t function_to_double(std::string s, int verbose=0) {
-    fp_t res;
-    int ret=function_to_double_nothrow<fp_t>(s,res,verbose);
-    if (ret!=0) {
-      O2SCL_ERR("Function function_to_double() failed.",ret);
-    }
-    return res;
+  fp_t find_constant(std::string name, std::string unit) {
+    o2scl::convert_units<fp_t> &cu=o2scl_settings.get_convert_units();
+    return cu.find_unique(name,unit);
   }
   
 }

@@ -1322,10 +1322,10 @@ namespace o2scl {
     void find_print(std::string name, std::string unit,
                      size_t prec, bool use_regex) {
 
-      if (prec>std::numeric_limits<double>::digits10) {
+      if (prec>std::numeric_limits<fp_t>::digits10) {
         std::cout << "Requested precision is " << prec << " and largest "
                   << "allowable precision is "
-                  << std::numeric_limits<double>::digits10 << std::endl;
+                  << std::numeric_limits<fp_t>::digits10 << std::endl;
         return;
       }
     
@@ -1356,7 +1356,7 @@ namespace o2scl {
   
     /** \brief Find a unique match and return the numerical value
      */
-    double find_unique(std::string name,
+    fp_t find_unique(std::string name,
                        std::string unit,
                        bool use_regex=false) {
       std::vector<typename find_constants<fp_t>::const_entry> matches;

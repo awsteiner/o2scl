@@ -84,7 +84,7 @@ int cli::parameter_double::set(std::string s) {
     //
     // o2scl_hdf::value_spec(s,*d);
     
-    int iret=function_to_double_nothrow<double>(s,*d);
+    int iret=function_to_double_nothrow(s,*d);
     return iret;
     
   } else {
@@ -96,7 +96,7 @@ int cli::parameter_double::set(std::string s) {
 int cli::parameter_int::set(std::string s) {
   if (parse_strings) {
     double d;
-    int iret=function_to_double_nothrow<double>(s,d);
+    int iret=function_to_double_nothrow(s,d);
     if (iret==0) *i=((int)d);
     return iret;
   }
@@ -106,7 +106,7 @@ int cli::parameter_int::set(std::string s) {
 int cli::parameter_size_t::set(std::string st) {
   if (parse_strings) {
     double d;
-    int iret=function_to_double_nothrow<double>(st,d);
+    int iret=function_to_double_nothrow(st,d);
     if (iret==0) *s=((size_t)d);
     return iret;
   }

@@ -4113,13 +4113,8 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
         string sname=name;
         regex r(sname);
         if (mode==ip_filelist) {
-          if (otype==((string)"string[]")) {
-            cout << "O2scl object \"" << name << "\" of type " 
-                 << otype << "." << endl;
-          } else {
-            cout << "O2scl object \"" << name << "\" of type " 
-                 << otype << "." << endl;
-          }
+          cout << "O2scl object \"" << name << "\" of type " 
+               << otype << "." << endl;
         } else if (mode==ip_type_from_name && name==ip->tname) {
           ip->type=otype;
           ip->found=true;

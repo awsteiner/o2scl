@@ -592,3 +592,18 @@ void *o2scl_get_o2scl_settings() {
   return &o2scl::o2scl_settings;
 }
 
+int o2scl::function_to_double_nothrow(std::string s, double &result,
+                                      int verbose, rng<> *r) {
+  convert_units<double> &cu=o2scl_settings.get_convert_units();
+  return function_to_fp_nothrow<double>
+    (s,result,cu,verbose,r);
+}
+
+double o2scl::function_to_double(std::string s, int verbose) {
+  double res;
+  int ret=function_to_double_nothrow(s,res,verbose);
+  if (ret!=0) {
+    O2SCL_ERR("Function function_to_double() failed.",ret);
+  }
+  return res;
+}

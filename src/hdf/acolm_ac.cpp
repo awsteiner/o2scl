@@ -135,7 +135,7 @@ int acol_manager::comm_convert
 
     double val=1.0;
     if (in.size()>=3) {
-      int ret2=function_to_double_nothrow<double>(in[9],val,0,&rng);
+      int ret2=function_to_double_nothrow(in[9],val,0,&rng);
       if (ret2!=0) {
         cerr << "Converting " << in[9] << " to value failed." << endl;
         return 2;
@@ -213,7 +213,7 @@ int acol_manager::comm_convert
     cout << "Using convert()." << endl;
     
     if (in.size()>=4) {
-      int ret2=function_to_double_nothrow<double>(in[3],val,0,&rng);
+      int ret2=function_to_double_nothrow(in[3],val,0,&rng);
       if (ret2!=0) {
         cerr << "Converting " << in[3] << " to value failed." << endl;
         return 2;
@@ -233,7 +233,7 @@ int acol_manager::comm_convert
   } else {
     
     if (in.size()>=3) {
-      int ret2=function_to_double_nothrow<double>(in[2],val,0,&rng);
+      int ret2=function_to_double_nothrow(in[2],val,0,&rng);
       if (ret2!=0) {
         cerr << "Converting " << in[2] << " to value failed." << endl;
         return 2;
@@ -256,7 +256,7 @@ int acol_manager::comm_convert
 
 int acol_manager::comm_constant(std::vector<std::string> &sv,
 				bool itive_com) {
-
+  
   convert_units<double> &cu=o2scl_settings.get_convert_units();
 
   if (sv.size()<2) {
@@ -270,7 +270,24 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
            << " with unit " << in[1] << endl;
     }
     cu.verbose=verbose;
-    cu.find_print(in[0],in[1],precision,false);
+    if (precision>50) {
+      cerr << "Requested precision too large for the calc "
+           << "command." << endl;
+    } else if (precision>35) {
+      convert_units<cpp_dec_float_50> cu50;
+      cu50.find_print(in[0],in[1],precision,false);
+    } else if (precision>25) {
+      convert_units<cpp_dec_float_35> cu35;
+      cu35.find_print(in[0],in[1],precision,false);
+    } else if (precision>18) {
+      convert_units<cpp_dec_float_25> cu25;
+      cu25.find_print(in[0],in[1],precision,false);
+    } else if (precision>15) {
+      convert_units<long double> culd;
+      culd.find_print(in[0],in[1],precision,false);
+    } else {
+      cu.find_print(in[0],in[1],precision,false);
+    }
     return 0;
   }
   
@@ -480,7 +497,7 @@ int acol_manager::comm_assign(std::vector<std::string> &sv, bool itive_com) {
   if (ret!=0) return ret;
 
   double d;
-  int retx=function_to_double_nothrow<double>(sv[2],d,0,&rng);
+  int retx=function_to_double_nothrow(sv[2],d,0,&rng);
   if (retx!=0) {
     cerr << "Converting " << sv[2] << " to value failed." << endl;
     return 1;
@@ -931,15 +948,13 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   }
 
   if (precision>50) {
-    cerr << "Requested precision larger too large for the calc "
+    cerr << "Requested precision too large for the calc "
          << "command." << endl;
     return 2;
   } else if (precision>35) {
-    typedef
-      boost::multiprecision::number<boost::multiprecision::cpp_dec_float<50> >
-      cpp_dec_float_50;
     cpp_dec_float_50 d;
-    int retx=o2scl::function_to_double_nothrow<cpp_dec_float_50>(i1,d);
+    convert_units<cpp_dec_float_50> cu50;
+    int retx=o2scl::function_to_fp_nothrow<cpp_dec_float_50>(i1,d,cu50);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -947,13 +962,10 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     if (verbose>0) cout << "Result (cpp_dec_float_50): ";
     cout << dtos(d,precision) << endl;
     return 0;
-  } else if (precision>18) {
-    typedef
-      boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
-      cpp_dec_float_35;
-    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
-      d;
-    int retx=o2scl::function_to_double_nothrow<cpp_dec_float_35>(i1,d);
+  } else if (precision>25) {
+    cpp_dec_float_35 d;
+    convert_units<cpp_dec_float_35> cu35;
+    int retx=o2scl::function_to_fp_nothrow<cpp_dec_float_35>(i1,d,cu35);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -961,9 +973,21 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     if (verbose>0) cout << "Result (cpp_dec_float_35): ";
     cout << dtos(d,precision) << endl;
     return 0;
+  } else if (precision>18) {
+    cpp_dec_float_25 d;
+    convert_units<cpp_dec_float_25> cu25;
+    int retx=o2scl::function_to_fp_nothrow<cpp_dec_float_25>(i1,d,cu25);
+    if (retx!=0) {
+      cerr << "Converting " << i1 << " to value failed." << endl;
+      return 1;
+    }
+    if (verbose>0) cout << "Result (cpp_dec_float_25): ";
+    cout << dtos(d,precision) << endl;
+    return 0;
   } else if (precision>15) {
     long double d;
-    int retx=o2scl::function_to_double_nothrow<long double>(i1,d);
+    convert_units<long double> culd;
+    int retx=o2scl::function_to_fp_nothrow<long double>(i1,d,culd);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -974,7 +998,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   }
   
   double d;
-  int retx=o2scl::function_to_double_nothrow<double>(i1,d,0,&rng);
+  int retx=o2scl::function_to_double_nothrow(i1,d,0,&rng);
   if (retx!=0) {
     cerr << "Converting " << i1 << " to value failed." << endl;
     return 1;
@@ -1385,7 +1409,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     }
     
     ubvector levs(1);
-    int retx=o2scl::function_to_double_nothrow<double>(svalue,levs[0],0,&rng);
+    int retx=o2scl::function_to_double_nothrow(svalue,levs[0],0,&rng);
     if (retx!=0) {
       cerr << "Failed to convert " << svalue << " to value." << endl;
       return 1;
@@ -1581,7 +1605,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     }
 
     ubvector levs(1);
-    int retx=o2scl::function_to_double_nothrow<double>(svalue,levs[0],0,&rng);
+    int retx=o2scl::function_to_double_nothrow(svalue,levs[0],0,&rng);
     if (retx!=0) {
       cerr << "Failed to convert " << svalue << " to value." << endl;
       return 1;
