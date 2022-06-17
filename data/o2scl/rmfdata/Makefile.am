@@ -8,4 +8,4 @@ dist_rdata_DATA = BMPI.o2 BMPII.o2 FPWC.o2 FSUGold.o2 L-BF.o2 L-HS.o2 \
 	es275n15.o2 es30.o2 es30n15.o2 es325.o2 es325n15.o2 es35.o2 \
 	es35n15.o2 es25small.o2 model_list es25new.o2 \
 	es275new.o2 es30new.o2 SFHo.o2 SFHx.o2 IUFSU.o2 SFHo_old.o2 \
-	SFHx_old.o2
+	SFHx_old.o2 FSUGold5.o2 FSUGarnet.o2 BigApple.o2
