@@ -1296,7 +1296,8 @@ namespace o2scl_const {
       \f[
       q_HL=\sqrt{4 \pi} q_G = \frac{1}{\sqrt{\varepsilon_0}} q_{SI}
       \f]
-      as mentioned, e.g. in pg. 13 of D. Griffiths Intro to Elem. Particles.
+      as mentioned, e.g. in pg. 13 of D. Griffiths Intro to Elem. 
+      Particles.
   */      
   const double e2_mks=o2scl_mks::electron_charge;
   //@}

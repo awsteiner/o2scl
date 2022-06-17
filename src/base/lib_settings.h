@@ -185,7 +185,7 @@ namespace o2scl {
     //@{
     /// Default convert_units object
     convert_units<double> def_cu;
-
+    
     /// Get the global convert_units object
     convert_units<double> &get_convert_units() {
       return *cup;

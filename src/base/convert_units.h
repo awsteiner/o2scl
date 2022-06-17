@@ -602,10 +602,7 @@ namespace o2scl {
       units_cmd_string="units";
       err_on_fail=true;
       combine_two_conv=true;
-
-      //prefixes={"Q","R","Y","Z","E","P","T","G","M",
-      //"k","h","da","d","c","m","mu","μ","n",
-      //"p","f","a","z","y","r","q"};
+      
       prefixes={"Y","Z","E","P","T",
         "G","M","k","h","da",
         "d","c","m","mu","μ",

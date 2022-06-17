@@ -217,12 +217,11 @@ int main(void) {
   fermion_ld fld;
   fermion_rel_ld frld;
 
-  // AWS 5/6/22: this doesn't quite work, it fails on one of
-  // the degenerate entropy integrals
+  // AWS 6/17/22: this doesn't quite work, it fails on calc_density()
 
   frld.verify_ti=true;
   long double v3=pcc.part_calibrate<fermion_ld,fermion_rel_ld>
-    (fld,frld,1,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
+    (fld,frld,1,"../../data/o2scl/fermion_deriv_cal.o2",false,2,true);
   t.test_rel<long double>(v3,0.0,4.0e-10,"calibrate 3");
 
 #endif

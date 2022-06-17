@@ -518,7 +518,8 @@ namespace o2scl {
       return iret;
     }
 
-    /** \brief Evalulate the energy density integral in the nondegenerate limit
+    /** \brief Evalulate the energy density integral in the 
+        nondegenerate limit
      */
     int eval_energy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
       

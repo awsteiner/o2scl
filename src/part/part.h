@@ -870,6 +870,15 @@ namespace o2scl {
 	      dev.nu+=fabs((p.nu-exact.nu)/exact.nu);
 	    } else {
 	      dev.mu+=fabs((p.mu-exact.mu)/exact.mu);
+              if (false && dev.mu>0.1) {
+                std::cout << "p.mu,exact.mu: "
+                          << p.mu << " " << exact.mu << std::endl;
+		std::cout << "T,m,n,psi,mot,count: " << T << " "
+			  << p.m << " " << p.n << " "
+			  << psi << " " << mot << " " << count << std::endl;
+                O2SCL_ERR("Chemical potential match failed.",
+                          o2scl::exc_einval);
+              }
 	    }
 	    dev.ed+=fabs((p.ed-exact.ed)/exact.ed);
 	    dev.pr+=fabs((p.pr-exact.pr)/exact.pr);
