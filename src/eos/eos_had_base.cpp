@@ -293,8 +293,13 @@ int eos_had_base::fn0(double delta, double &nb, double &leoa) {
   }
   
   nb=x[0];
+
+  // AWS, 6/17/22: Use the final value of the density to call
+  // calc_pressure_nb() again. This may be important, e.g., in
+  // eos_had_rmf to get the right value of the meson fields
+  // and the right energy per particle.
+  calc_pressure_nb(nb,delta);
   
-  calc_pressure_nb(nb);
   leoa=eos_thermo->ed/nb;
   
   if (neutron->inc_rest_mass) {
@@ -391,7 +396,7 @@ double eos_had_base::calc_pressure_nb(double nb, double delta) {
   proton->n=(1.0-delta)*nb/2.0;
 
   calc_e(*neutron,*proton,*eos_thermo);
-  
+
   return eos_thermo->pr;
 }
 

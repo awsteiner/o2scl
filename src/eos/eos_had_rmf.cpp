@@ -1096,7 +1096,7 @@ int eos_had_rmf::saturation() {
   } 
   if (it==max_it) {
     O2SCL_CONV_RET("Failed to make initial density finite in saturation()",
-	       exc_efailed,this->err_nonconv);
+                   exc_efailed,this->err_nonconv);
   }
   
   if (verbose>0) {
