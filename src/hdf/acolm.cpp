@@ -182,7 +182,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 
   // Ensure the RNGs for different types are somewhat uncorrelated
   rng.clock_seed();
-  //rng_ld.set_seed(rng.get_seed()*2);
+  rng_ld.set_seed(rng.get_seed()*2);
 }
 
 void acol_manager::update_o2_docs(size_t narr,

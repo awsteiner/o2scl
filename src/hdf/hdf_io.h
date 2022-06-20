@@ -659,12 +659,16 @@ namespace o2scl_hdf {
       }
       o2scl::calc_utf8<> calc;
       std::map<std::string,double> vars;
+      std::cout << "Compile 1." << std::endl;
       calc.compile(func.c_str(),&vars);
+      std::cout << "Compile 2." << std::endl;
       v.resize(n);
+      std::cout << "Eval 1." << std::endl;
       for(size_t i=0;i<n;i++) {
 	vars["i"]=((double)i);
 	v[i]=calc.eval(&vars);
       }
+      std::cout << "Eval 2." << std::endl;
 	
     } else if (spec.find("grid:")==0) {
 	

@@ -342,6 +342,7 @@ namespace o2scl {
               ((char)key[3])=='d') {
             
             fp_t rx=r->random();
+            std::cout << "Generating random number " << rx << std::endl;
             evaluation.push(rx);
             
           } else {
@@ -564,6 +565,9 @@ namespace o2scl {
               << key.length() << " " << (key[0]=='r')
               << std::endl;
             */
+            // False and true are known at compile time, but random
+            // numbers need to be generated only at the time of the
+            // evaluation, so they are left unevaluated at this point
             if (key.length()==4 && ((char)key[0])=='t' &&
                 ((char)key[1])=='r' && ((char)key[2])=='u' &&
                 ((char)key[3])=='e') {
@@ -574,11 +578,15 @@ namespace o2scl {
                        ((char)key[3])=='s' && ((char)key[4])=='e') {
               found=true;
               val=0;
-            } else if (key.length()==4 && ((char)key[0])=='r' &&
-                       ((char)key[1])=='a' && ((char)key[2])=='n' &&
-                       ((char)key[3])=='d') {
-              found=true;
-              val=r->random();
+              /*
+                } else if (key.length()==4 && ((char)key[0])=='r' &&
+                ((char)key[1])=='a' && ((char)key[2])=='n' &&
+                ((char)key[3])=='d') {
+                found=true;
+                val=r->random();
+                std::cout << "Generating random number (location 2) "
+                << val << std::endl;
+              */
             } else if (vars) {
               typename std::map<std::u32string,fp_t>::const_iterator it=
                 vars->find(key);
