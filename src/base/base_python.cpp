@@ -2226,6 +2226,187 @@ void *o2scl_tensor_size_t_std_vector_size_t__create_size(size_t rank, void *ptr_
   return ptr;
 }
 
+void *o2scl_create_find_constants_const_entry() {
+  find_constants<>::const_entry *ptr=new find_constants<>::const_entry;
+  return ptr;
+}
+
+void o2scl_free_find_constants_const_entry(void *vptr) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  delete ptr;
+  return;
+}
+
+void *o2scl_find_constants_const_entry_get_names(void *vptr) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  return (void *)(&(ptr->names));
+}
+
+void o2scl_find_constants_const_entry_set_names(void *vptr, void *p_v) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  std::vector<std::string> *p_tsot=(std::vector<std::string> *)p_v;
+  ptr->names=*(p_tsot);
+  return;
+}
+
+void *o2scl_find_constants_const_entry_get_unit(void *vptr) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->unit;
+  return sptr;
+}
+
+void o2scl_find_constants_const_entry_set_unit(void *vptr, void *p_v) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->unit=*(p_tsot);
+  return;
+}
+
+int o2scl_find_constants_const_entry_get_unit_flag(void *vptr) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  return ptr->unit_flag;
+}
+
+void o2scl_find_constants_const_entry_set_unit_flag(void *vptr, int v) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  ptr->unit_flag=v;
+  return;
+}
+
+double o2scl_find_constants_const_entry_get_val(void *vptr) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  return ptr->val;
+}
+
+void o2scl_find_constants_const_entry_set_val(void *vptr, double v) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  ptr->val=v;
+  return;
+}
+
+void *o2scl_find_constants_const_entry_get_source(void *vptr) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->source;
+  return sptr;
+}
+
+void o2scl_find_constants_const_entry_set_source(void *vptr, void *p_v) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->source=*(p_tsot);
+  return;
+}
+
+int o2scl_find_constants_const_entry_get_m(void *vptr) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  return ptr->m;
+}
+
+void o2scl_find_constants_const_entry_set_m(void *vptr, int v) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  ptr->m=v;
+  return;
+}
+
+int o2scl_find_constants_const_entry_get_k(void *vptr) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  return ptr->k;
+}
+
+void o2scl_find_constants_const_entry_set_k(void *vptr, int v) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  ptr->k=v;
+  return;
+}
+
+int o2scl_find_constants_const_entry_get_s(void *vptr) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  return ptr->s;
+}
+
+void o2scl_find_constants_const_entry_set_s(void *vptr, int v) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  ptr->s=v;
+  return;
+}
+
+int o2scl_find_constants_const_entry_get_K(void *vptr) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  return ptr->K;
+}
+
+void o2scl_find_constants_const_entry_set_K(void *vptr, int v) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  ptr->K=v;
+  return;
+}
+
+int o2scl_find_constants_const_entry_get_A(void *vptr) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  return ptr->A;
+}
+
+void o2scl_find_constants_const_entry_set_A(void *vptr, int v) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  ptr->A=v;
+  return;
+}
+
+int o2scl_find_constants_const_entry_get_mol(void *vptr) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  return ptr->mol;
+}
+
+void o2scl_find_constants_const_entry_set_mol(void *vptr, int v) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  ptr->mol=v;
+  return;
+}
+
+int o2scl_find_constants_const_entry_get_cd(void *vptr) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  return ptr->cd;
+}
+
+void o2scl_find_constants_const_entry_set_cd(void *vptr, int v) {
+  find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  ptr->cd=v;
+  return;
+}
+
+void *o2scl_create_find_constants_() {
+  find_constants<> *ptr=new find_constants<>;
+  return ptr;
+}
+
+void o2scl_free_find_constants_(void *vptr) {
+  find_constants<> *ptr=(find_constants<> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_find_constants__output_list_cout(void *vptr) {
+  find_constants<> *ptr=(find_constants<> *)vptr;
+  ptr->output_list_cout();
+  return;
+}
+
+void o2scl_find_constants__add_constant(void *vptr, void *ptr_f, int verbose) {
+  find_constants<> *ptr=(find_constants<> *)vptr;
+  find_constants<>::const_entry *f=(find_constants<>::const_entry *)ptr_f;
+  ptr->add_constant(*f,verbose);
+  return;
+}
+
+void o2scl_find_constants__del_constant(void *vptr, void *ptr_name, int verbose) {
+  find_constants<> *ptr=(find_constants<> *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  ptr->del_constant(*name,verbose);
+  return;
+}
+
 void *o2scl_create_convert_units_der_unit() {
   convert_units<>::der_unit *ptr=new convert_units<>::der_unit;
   return ptr;
@@ -2463,6 +2644,18 @@ void o2scl_convert_units__print_units_cout(void *vptr) {
   convert_units<> *ptr=(convert_units<> *)vptr;
   ptr->print_units_cout();
   return;
+}
+
+void o2scl_convert_units__find_print(void *vptr, char *name, char *unit, size_t prec, bool use_regex) {
+  convert_units<> *ptr=(convert_units<> *)vptr;
+  ptr->find_print(name,unit,prec,use_regex);
+  return;
+}
+
+double o2scl_convert_units__find_unique(void *vptr, char *name, char *unit, bool use_regex) {
+  convert_units<> *ptr=(convert_units<> *)vptr;
+  double ret=ptr->find_unique(name,unit,use_regex);
+  return ret;
 }
 
 void *o2scl_create_columnify() {

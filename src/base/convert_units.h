@@ -1370,7 +1370,6 @@ namespace o2scl {
       }
       return matches[0].val;
     }
-
     
     /** \brief Convert units, possibly using constants from
         the internal \ref o2scl::find_constants object

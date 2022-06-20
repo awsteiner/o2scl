@@ -580,7 +580,6 @@ namespace o2scl {
       
     }
 
-
     /// Type for constant database (also used for list of matches)
     class const_entry {
       
@@ -819,8 +818,9 @@ namespace o2scl {
     void add_constant(const const_entry &f, int verbose=0) {
 
       if (verbose>1) {
-        std::cout << "find_constants::add_constant() attempting to add constant "
-             << f.names[0] << " with value " << f.val << std::endl;
+        std::cout << "find_constants::add_constant() attempting "
+                  << "to add constant " << f.names[0] 
+                  << " with value " << f.val << std::endl;
       }
   
       if (f.names.size()==0) {

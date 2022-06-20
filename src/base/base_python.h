@@ -766,6 +766,68 @@ size_t o2scl_tensor_size_t_std_vector_size_t__total_sum(void *vptr);
 
 void *o2scl_tensor_size_t_std_vector_size_t__create_size(size_t rank, void *ptr_sizes);
 
+void *o2scl_create_find_constants_const_entry();
+
+void o2scl_free_find_constants_const_entry(void *vptr);
+
+void *o2scl_find_constants_const_entry_get_names(void *vptr);
+
+void o2scl_find_constants_const_entry_set_names(void *vptr, void *p_v);
+
+void *o2scl_find_constants_const_entry_get_unit(void *vptr);
+
+void o2scl_find_constants_const_entry_set_unit(void *vptr, void *p_v);
+
+int o2scl_find_constants_const_entry_get_unit_flag(void *vptr);
+
+void o2scl_find_constants_const_entry_set_unit_flag(void *vptr, int v);
+
+double o2scl_find_constants_const_entry_get_val(void *vptr);
+
+void o2scl_find_constants_const_entry_set_val(void *vptr, double v);
+
+void *o2scl_find_constants_const_entry_get_source(void *vptr);
+
+void o2scl_find_constants_const_entry_set_source(void *vptr, void *p_v);
+
+int o2scl_find_constants_const_entry_get_m(void *vptr);
+
+void o2scl_find_constants_const_entry_set_m(void *vptr, int v);
+
+int o2scl_find_constants_const_entry_get_k(void *vptr);
+
+void o2scl_find_constants_const_entry_set_k(void *vptr, int v);
+
+int o2scl_find_constants_const_entry_get_s(void *vptr);
+
+void o2scl_find_constants_const_entry_set_s(void *vptr, int v);
+
+int o2scl_find_constants_const_entry_get_K(void *vptr);
+
+void o2scl_find_constants_const_entry_set_K(void *vptr, int v);
+
+int o2scl_find_constants_const_entry_get_A(void *vptr);
+
+void o2scl_find_constants_const_entry_set_A(void *vptr, int v);
+
+int o2scl_find_constants_const_entry_get_mol(void *vptr);
+
+void o2scl_find_constants_const_entry_set_mol(void *vptr, int v);
+
+int o2scl_find_constants_const_entry_get_cd(void *vptr);
+
+void o2scl_find_constants_const_entry_set_cd(void *vptr, int v);
+
+void *o2scl_create_find_constants_();
+
+void o2scl_free_find_constants_(void *vptr);
+
+void o2scl_find_constants__output_list_cout(void *vptr);
+
+void o2scl_find_constants__add_constant(void *vptr, void *ptr_f, int verbose=0);
+
+void o2scl_find_constants__del_constant(void *vptr, void *ptr_name, int verbose=0);
+
 void *o2scl_create_convert_units_der_unit();
 
 void o2scl_free_convert_units_der_unit(void *vptr);
@@ -847,6 +909,10 @@ void o2scl_convert_units__test_unique(void *vptr);
 void o2scl_convert_units__print_cache(void *vptr);
 
 void o2scl_convert_units__print_units_cout(void *vptr);
+
+void o2scl_convert_units__find_print(void *vptr, char *name, char *unit, size_t prec, bool use_regex);
+
+double o2scl_convert_units__find_unique(void *vptr, char *name, char *unit, bool use_regex=false);
 
 void *o2scl_create_columnify();
 
