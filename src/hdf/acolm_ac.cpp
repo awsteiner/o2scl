@@ -991,7 +991,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     long double d;
     convert_units<long double> culd;
     int retx=o2scl::function_to_fp_nothrow<long double>
-      (i1,d,culd,verbose,&rng_ld);
+      (i1,d,culd,verbose,&rng);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
