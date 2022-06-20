@@ -26,6 +26,7 @@
 #ifndef O2SCL_RNG_H
 #define O2SCL_RNG_H
 
+#include <boost/random.hpp>
 #include <random>
 #include <ctime>
 #include <o2scl/err_hnd.h>

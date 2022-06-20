@@ -247,8 +247,8 @@ namespace o2scl {
   */
   extern lib_settings_class o2scl_settings;
   
-  /** \brief Convert a formula to a double and return an integer to
-      indicate success or failure
+  /** \brief Convert a formula to a floating point number and 
+      return an integer to indicate success or failure
       
       This is an alternate version of \ref function_to_double()
       which does not call the error handler and returns a non-zero
@@ -256,8 +256,8 @@ namespace o2scl {
   */
   template<class fp_t=double>
   int function_to_fp_nothrow(std::string s, fp_t &result,
-                                 convert_units<fp_t> &cu,
-                                 int verbose=0, rng<> *r=0) {
+                             convert_units<fp_t> &cu,
+                             int verbose=0, rng<> *r=0) {
     
     std::string s2;
     // Remove quotes and apostrophes
@@ -290,7 +290,13 @@ namespace o2scl {
         
         std::string vsi2;
         char32_to_utf8(vs[i],vsi2);
-        
+
+        if (verbose>2) {
+          std::cout << "Function function_to_fp_nothrow(): "
+                    << "trying to find constant " << vsi2 << std::endl;
+        }
+
+        cu.verbose=verbose;
         int fret=cu.find_nothrow(vsi2,"mks",matches);
       
         if (fret==find_constants<fp_t>::one_exact_match_unit_match ||
@@ -299,9 +305,10 @@ namespace o2scl {
           typename find_constants<fp_t>::const_entry &fcl=matches[0];
 
           vars.insert(std::make_pair(vsi2,fcl.val));
-          if (verbose>=2) {
-            std::cout << "Found constant " << vsi2
-                      << " with value " << fcl.val << std::endl;
+          if (verbose>1) {
+            std::cout << "Function function_to_fp_nothrow(): "
+                      << "Found constant " << vsi2
+                      << " value " << fcl.val << std::endl;
           }
         
         } else {

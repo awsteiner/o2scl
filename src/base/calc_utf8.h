@@ -206,12 +206,15 @@ namespace o2scl {
     /** \brief Return true if \c is a variable
      */
     bool is_variable_char(const char32_t c) {
+      
       // Presume it's a variable if it's not an operator or digit
-      if (c=='^' || c=='*' || c=='/' || c=='%' || c=='+' || c=='-' ||
-          c=='<' || c=='=' || c=='>' || c=='!' || c=='&' || c=='|' ||
-          c=='(' || c==')' || isdigit(c) || c=='.' || c==',' || isspace(c)) {
+      if (c=='^' || c=='*' || c=='/' || c=='%' || c=='+' ||
+          c=='-' || c=='<' || c=='=' || c=='>' || c=='!' ||
+          c=='&' || c=='|' || c=='(' || c==')' || isdigit(c) ||
+          c=='.' || c==',' || isspace(c)) {
         return false;
       }
+      
       return true;
     }      
     
@@ -338,7 +341,7 @@ namespace o2scl {
               ((char)key[1])=='a' && ((char)key[2])=='n' &&
               ((char)key[3])=='d') {
             
-            double rx=r->random();
+            fp_t rx=r->random();
             evaluation.push(rx);
             
           } else {
@@ -767,7 +770,7 @@ namespace o2scl {
       cleanRPN(this->RPN);
     }
 
-    /** \brief
+    /** \brief Set the random number generator
      */
     void set_rng(rng<> &r_new) {
       r=&r_new;
@@ -780,7 +783,7 @@ namespace o2scl {
 	\c vars
     */
     fp_t calculate(const std::u32string &expr,
-                     const std::map<std::u32string, fp_t> *vars=0) {
+                   const std::map<std::u32string, fp_t> *vars=0) {
 
       // Convert to RPN with Dijkstra's Shunting-yard algorithm.
       token_queue_t rpn;
@@ -945,9 +948,11 @@ namespace o2scl {
 
       int retx;
       if (vars==0) {
-        retx=calc_utf8::toRPN_nothrow(expr2,0,op_precedence,this->RPN);
+        retx=calc_utf8::toRPN_nothrow(expr2,0,
+                                      op_precedence,this->RPN);
       } else {
-        retx=calc_utf8::toRPN_nothrow(expr2,&vars2,op_precedence,this->RPN);
+        retx=calc_utf8::toRPN_nothrow(expr2,&vars2,
+                                      op_precedence,this->RPN);
       }
       if (retx!=0) {
         O2SCL_ERR("Failed.",o2scl::exc_einval);
@@ -956,9 +961,8 @@ namespace o2scl {
       return;
     }      
     
-    /** \brief Compile expression \c expr using variables 
-	specified in \c vars and return an
-	integer to indicate success or failure
+    /** \brief Compile expression \c expr using variables specified in
+	\c vars and return an integer to indicate success or failure
     */
     int compile_nothrow(const std::string &expr,
 			const std::map<std::string, fp_t> *vars=0) {

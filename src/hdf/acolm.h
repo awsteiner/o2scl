@@ -127,6 +127,8 @@ namespace o2scl_acol {
     /// Random number generator
     o2scl::rng<> rng;
     
+    //o2scl::rng<long double> rng_ld;
+    
     /// The object which sends Slack messages
     o2scl::slack_messenger smess;
     

@@ -954,7 +954,8 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   } else if (precision>35) {
     cpp_dec_float_50 d;
     convert_units<cpp_dec_float_50> cu50;
-    int retx=o2scl::function_to_fp_nothrow<cpp_dec_float_50>(i1,d,cu50);
+    int retx=o2scl::function_to_fp_nothrow<cpp_dec_float_50>
+      (i1,d,cu50,verbose);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -965,7 +966,8 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   } else if (precision>25) {
     cpp_dec_float_35 d;
     convert_units<cpp_dec_float_35> cu35;
-    int retx=o2scl::function_to_fp_nothrow<cpp_dec_float_35>(i1,d,cu35);
+    int retx=o2scl::function_to_fp_nothrow<cpp_dec_float_35>
+      (i1,d,cu35,verbose);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -976,7 +978,8 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   } else if (precision>18) {
     cpp_dec_float_25 d;
     convert_units<cpp_dec_float_25> cu25;
-    int retx=o2scl::function_to_fp_nothrow<cpp_dec_float_25>(i1,d,cu25);
+    int retx=o2scl::function_to_fp_nothrow<cpp_dec_float_25>
+      (i1,d,cu25,verbose);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -987,7 +990,8 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   } else if (precision>15) {
     long double d;
     convert_units<long double> culd;
-    int retx=o2scl::function_to_fp_nothrow<long double>(i1,d,culd);
+    int retx=o2scl::function_to_fp_nothrow<long double>
+      (i1,d,culd,verbose,&rng);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -998,7 +1002,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   }
   
   double d;
-  int retx=o2scl::function_to_double_nothrow(i1,d,0,&rng);
+  int retx=o2scl::function_to_double_nothrow(i1,d,verbose,&rng);
   if (retx!=0) {
     cerr << "Converting " << i1 << " to value failed." << endl;
     return 1;

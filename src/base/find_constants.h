@@ -676,35 +676,6 @@ namespace o2scl {
     static const int fc_other=4;
     //@}
 
-#ifdef O2SCL_NEVER_DEFINED    
-    /// \name Basic usage
-    //@{
-    /** \brief Search for constants matching \c name with unit
-	\c unit (possibly empty) and store matches in \c indexes
-    */
-    int find_nothrow(std::string name, std::string unit,
-		     std::vector<const_entry> &matches,
-		     bool use_regex=false, int verbose=0) const;
-  
-    /** \brief Search for constants matching \c name with unit \c unit
-	and output result(s) with precision \c prec
-        
-        This function can fail, if either the requested precision
-        is larger than machine precision or if the argument \c name
-        does not match a constant in the library. In either case,
-        this function prints a short message to std::cout explaining
-        the failure.
-    */
-    void find_print(std::string name, std::string unit="", size_t prec=6,
-		    bool use_regex=false, int verbose=0) const;
-    
-    /** \brief Find a unique match and return the numerical value
-     */
-    double find_unique(std::string name, std::string unit="",
-                       bool use_regex=false) const;
-    //@}
-#endif
-    
     /// \name Functions to show or modify the constant list
     //@{
     /** \brief Output the full list of constants to \c os 
