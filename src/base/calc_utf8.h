@@ -561,10 +561,6 @@ namespace o2scl {
             
           } else {
 
-            /*std::cout << "Here2: " << key[0] << " "
-              << key.length() << " " << (key[0]=='r')
-              << std::endl;
-            */
             // False and true are known at compile time, but random
             // numbers need to be generated only at the time of the
             // evaluation, so they are left unevaluated at this point
@@ -578,15 +574,6 @@ namespace o2scl {
                        ((char)key[3])=='s' && ((char)key[4])=='e') {
               found=true;
               val=0;
-              /*
-                } else if (key.length()==4 && ((char)key[0])=='r' &&
-                ((char)key[1])=='a' && ((char)key[2])=='n' &&
-                ((char)key[3])=='d') {
-                found=true;
-                val=r->random();
-                std::cout << "Generating random number (location 2) "
-                << val << std::endl;
-              */
             } else if (vars) {
               typename std::map<std::u32string,fp_t>::const_iterator it=
                 vars->find(key);
@@ -600,7 +587,8 @@ namespace o2scl {
           
               // Save the number
               if (verbose>=1) {
-                std::cout << "In toRPN_nothrow(), value: " << val << std::endl;
+                std::cout << "In toRPN_nothrow(), value: " << val
+                          << std::endl;
               }
               rpn_queue.push(new token32<fp_t>(val,token_num));
           
