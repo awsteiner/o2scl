@@ -209,7 +209,7 @@ int main(void) {
 #endif
 #endif
 
-#ifdef O2SCL_NEVER_DEFINED
+#ifndef O2SCL_NEVER_DEFINED
   hdf_file hfx;
   hfx.open("../../data/o2scl/fermion_deriv_cal.o2");
   table_units<> tx;
@@ -263,7 +263,7 @@ int main(void) {
     }
   }
 #endif
-  
+
   t.report();
 
   return 0;

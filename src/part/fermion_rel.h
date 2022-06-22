@@ -306,6 +306,110 @@ namespace o2scl {
   
   /** \brief Default integrator for \ref o2scl::fermion_rel_tl
    */
+  template<class fp_t> class fermion_rel_integ_multip2 :
+    public fermion_rel_integ_base {
+
+  public:
+
+    inte_multip_tanh_sinh_boost<> it;
+
+    double tol_rel;
+    
+    int eval_density(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
+
+      fp_t zero=0;
+      
+      it.integ_iu_err([this,y,eta](auto &&u) mutable {
+        return this->density_fun(u,y,eta); },
+        zero,res,err,tol_rel);
+      
+      return 0;
+    }
+
+    int eval_energy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
+
+      fp_t zero=0;
+      
+      it.integ_iu_err([this,y,eta](auto &&u) mutable {
+        return this->energy_fun(u,y,eta); },
+        zero,res,err,tol_rel);
+      
+      return 0;
+    }
+
+    int eval_entropy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
+
+      fp_t zero=0;
+      
+      it.integ_iu_err([this,y,eta](auto &&u) mutable {
+        return this->entropy_fun(u,y,eta); },
+        zero,res,err,tol_rel);
+      
+      return 0;
+    }
+
+    int eval_pressure(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
+
+      fp_t zero=0;
+      
+      it.integ_iu_err([this,y,eta](auto &&u) mutable {
+        return this->pressure_fun(u,y,eta); },
+        zero,res,err,tol_rel);
+      
+      return 0;
+    }
+
+    int eval_deg_density(fp_t T, fp_t y, fp_t eta, fp_t mot,
+                         fp_t ul, fp_t &res, fp_t &err) {
+
+      fp_t zero=0;
+      
+      it.integ_err([this,T,y,eta,mot](auto &&k) mutable {
+        return this->deg_density_fun(k,T,y,eta,mot,false); },
+        zero,ul,res,err,tol_rel);
+      
+      return 0;
+    }
+    
+    int eval_deg_energy(fp_t T, fp_t y, fp_t eta, fp_t mot,
+                        fp_t ul, fp_t &res, fp_t &err) {
+
+      fp_t zero=0;
+      
+      it.integ_err([this,T,y,eta,mot](auto &&k) mutable {
+        return this->deg_energy_fun(k,T,y,eta,mot,false); },
+        zero,ul,res,err,tol_rel);
+      
+      return 0;
+    }
+    
+    int eval_deg_entropy(fp_t T, fp_t y, fp_t eta, fp_t mot,
+                         fp_t ll, fp_t ul, fp_t &res, fp_t &err) {
+
+      it.integ_err([this,T,y,eta,mot](auto &&k) mutable {
+        return this->deg_entropy_fun(k,T,y,eta,mot,false); },
+        ll,ul,res,err,tol_rel);
+      
+      return 0;
+    }
+    
+    int eval_deg_pressure(fp_t T, fp_t y, fp_t eta, fp_t mot,
+                         fp_t ul, fp_t &res, fp_t &err) {
+
+      fp_t zero=0;
+      
+      it.integ_err([this,T,y,eta,mot](auto &&k) mutable {
+        return this->deg_pressure_fun(k,T,y,eta,mot,false); },
+        zero,ul,res,err,tol_rel);
+      
+      return 0;
+    }
+    
+    
+  };
+    
+  /** \brief Default integrator for \ref o2scl::fermion_rel_tl
+   */
   template<class fp_t> class fermion_rel_integ_multip :
     public fermion_rel_integ_base {
     
@@ -2763,6 +2867,65 @@ namespace o2scl {
     }
     
   };
+
+#ifdef O2SCL_NEVER_DEFINED
+  
+  /** \brief Desc
+   */
+  class fermion_rel_ld2 : public
+  fermion_rel_tl<
+    // the fermion type
+    fermion_tl<long double>,
+    // the Fermi-Dirac integrator
+    fermi_dirac_integ_direct<long double,funct_cdf25,25,
+                             cpp_dec_float_25>,
+                         // the Bessel-exp integrator
+                         bessel_K_exp_integ_direct<
+                           long double,funct_cdf25,25,cpp_dec_float_25>,
+    fermion_rel_integ_multip2<long double>,
+    // The density solver
+    root_brent_gsl<funct_ld,long double>,
+    // The parent solver for massless fermions
+    root_brent_gsl<funct_ld,long double>,
+    // The function type
+    funct_ld,
+    // The floating-point type
+    long double> {
+
+  public:
+    
+    fermion_rel_ld2() {
+
+      // See output of polylog_ts for numeric limit information
+      
+      // Tolerance for the integrator for massless fermions
+      this->fd_integ.set_tol(1.0e-21);
+
+      // Tolerance for the integrator for the nondegenerate expansion
+      this->be_integ.set_tol(1.0e-21);
+
+      // Internal function tolerances
+
+      // This could be as large as log(1.0e4932)=11400,
+      // but only 200 is used for double, so we try this for now.
+      this->exp_limit=4000.0;
+      
+      // log(1.0e18) is 41.4
+      this->upper_limit_fac=42.0;
+      this->deg_entropy_fac=42.0;
+      this->tol_expan=1.0e-17;
+
+      // Solver tolerances
+      this->def_density_root.tol_abs=1.0e-18;
+      this->def_massless_root.tol_abs=1.0e-18;
+
+      // Integrator tolerances
+      fri.tol_rel=1.0e-16;
+    }
+    
+  };
+
+#endif
   
   /** \brief Desc
   */
