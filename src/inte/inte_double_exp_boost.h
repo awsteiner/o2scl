@@ -280,6 +280,290 @@ namespace o2scl {
     size_t levels;
 
   };
+
+  /** \brief Tanh-sinh multiprecision integration class (Boost)
+   */
+  template<size_t max_refine=15>
+  class inte_multip_tanh_sinh_boost {
+    
+  protected:
+    
+    /** \brief Integrate function \c func from \c a to \c b and place
+        the result in \c res and the error in \c err
+
+        There are three tolerances:
+        - \c target_tol is the target tolerance which is sent to
+        the boost integration function. The error value returned 
+        by the boost integration function is often larger than this
+        - \c integ_tol is the desired final tolerance of the integration.
+        This function regards the integration as a failure if the 
+        error value is larger than \c integ_tol
+        - \c func_tol is the tolerance for evaluations of the 
+        integrand. This value is passed to \ref o2scl::funct_multip.
+
+    */
+    template <typename func_t, class fp_t, class it_t>
+    int integ_err_int(it_t &it, func_t &&func, fp_t a, fp_t b, 
+                      fp_t &res, fp_t &err, fp_t &L1norm,
+                      double target_tol, double integ_tol, double func_tol) {
+      
+      funct_multip fm2;
+      fm2.err_nonconv=false;
+      fm2.tol_rel=func_tol;
+
+      std::function<fp_t(fp_t)> fx=[fm2,func](fp_t x) mutable -> fp_t
+      { return fm2(func,x); };
+
+      res=it.integrate(fx,a,b,target_tol,&err,&L1norm,&this->levels);
+
+      if (verbose>1) {
+        std::cout << "inte_multip_tanh_sinh_boost::integ_err() "
+                  << "tols(target,integ,func),err:\n  "
+                  << target_tol << " " << integ_tol << " "
+                  << func_tol << " " << err << std::endl;
+      }
+
+      if (err>integ_tol) {
+        return 1;
+      }
+      return 0;
+    }
+    
+    typedef boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
+    typedef boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
+    typedef boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<50>> cpp_dec_float_50;
+    typedef boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
+
+    boost::math::quadrature::tanh_sinh<double> it_d;
+    boost::math::quadrature::tanh_sinh<long double> it_ld;
+    boost::math::quadrature::tanh_sinh<cpp_dec_float_25> it_cdf25;
+    boost::math::quadrature::tanh_sinh<cpp_dec_float_35> it_cdf35;
+    boost::math::quadrature::tanh_sinh<cpp_dec_float_50> it_cdf50;
+    boost::math::quadrature::tanh_sinh<cpp_dec_float_100> it_cdf100;
+    
+  public:
+
+    /// Number of refinement levels in last integral computed
+    size_t levels;
+    
+    /** \brief Relative tolerance
+     */
+    double tol_rel;
+
+    /** \brief Power for tolerance of function evaluations 
+        (default 1.33)
+     */
+    double pow_tol_func;
+
+    /** \brief Verbosity parameter
+     */
+    int verbose;
+
+    /** \brief Desc
+     */
+    bool err_nonconv;
+    
+    inte_multip_tanh_sinh_boost() {
+      tol_rel=-1.0;
+      verbose=0;
+      pow_tol_func=1.33;
+      err_nonconv=true;
+    }
+
+    /** \brief Calculate the first derivative of \c func  w.r.t. x and 
+	uncertainty
+    */
+    template <typename func_t, class fp_t>
+    int integ_err(func_t &&func, fp_t a, fp_t b, 
+                  fp_t &res, fp_t &err, double integ_tol=-1.0) {
+      
+      if (integ_tol<=0.0) {
+        if (tol_rel<=0.0) {
+          integ_tol=pow(10.0,-std::numeric_limits<fp_t>::digits10);
+        } else {
+          integ_tol=tol_rel;
+        }
+      } 
+
+      if (verbose>0) {
+        std::cout << "int_multip_tanh_sinh_boost::integ_err(): set "
+                  << "tolerance to: " << integ_tol << std::endl;
+      }
+      
+      // Demand that the function evaluations are higher precision
+      double func_tol=pow(integ_tol,pow_tol_func);
+
+      double target_tol=integ_tol/10.0;
+      
+      int ret;
+
+      if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_multip_tanh_sinh_boost::integ_err(): "
+            << integ_tol << " > "
+            << pow(10.0,-std::numeric_limits<double>::digits10+3)
+            << "\n  for double integration." << std::endl;
+        }
+        double a_d=static_cast<double>(a);
+        double b_d=static_cast<double>(b);
+        double res_d, err_d, L1norm_d;
+        
+        ret=integ_err_int(it_d,func,a_d,b_d,res_d,err_d,L1norm_d,
+                          target_tol,integ_tol,func_tol);
+        
+        if (ret==0 && err_d<integ_tol) {
+          res=static_cast<fp_t>(res_d);
+          err=static_cast<fp_t>(err_d);
+          return 0;
+        } else {
+          target_tol/=10;
+        }
+      }
+
+      if (integ_tol>pow(10.0,-std::numeric_limits<long double>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_multip_tanh_sinh_boost::integ_err(): "
+                    << integ_tol << " > "
+                    << pow(10.0,-std::numeric_limits<long double>::digits10+3)
+                    << "\n  for long double integration." << std::endl;
+        }
+        long double a_ld=static_cast<long double>(a);
+        long double b_ld=static_cast<long double>(b);
+        long double res_ld, err_ld, L1norm_ld;
+        
+        ret=integ_err_int(it_ld,func,a_ld,b_ld,res_ld,err_ld,L1norm_ld,
+                          target_tol,integ_tol,func_tol);
+        
+        if (ret==0 && err_ld<integ_tol) {
+          res=static_cast<fp_t>(res_ld);
+          err=static_cast<fp_t>(err_ld);
+          return 0;
+        } else {
+          target_tol/=10;
+        }
+      }
+
+      if (integ_tol>pow(10.0,-std::numeric_limits
+                      <cpp_dec_float_25>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_multip_tanh_sinh_boost::integ_err(): "
+                    << integ_tol << " > "
+                    << pow(10.0,-std::numeric_limits
+                           <cpp_dec_float_25>::digits10+3)
+                    << "\n  for cpp_dec_float_25 integration." << std::endl;
+        }
+        cpp_dec_float_25 a_cdf25=static_cast<cpp_dec_float_25>(a);
+        cpp_dec_float_25 b_cdf25=static_cast<cpp_dec_float_25>(b);
+        cpp_dec_float_25 res_cdf25, err_cdf25, L1norm_cdf25;
+        
+        ret=integ_err_int(it_cdf25,func,a_cdf25,b_cdf25,res_cdf25,
+                          err_cdf25,L1norm_cdf25,target_tol,
+                          integ_tol,func_tol);
+        
+        if (ret==0 && err_cdf25<integ_tol) {
+          res=static_cast<fp_t>(res_cdf25);
+          err=static_cast<fp_t>(err_cdf25);
+          return 0;
+        } else {
+          target_tol/=10;
+        }
+      }
+
+      if (integ_tol>pow(10.0,-std::numeric_limits
+                      <cpp_dec_float_35>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_multip_tanh_sinh_boost::integ_err(): "
+                    << integ_tol << " > "
+                    << pow(10.0,-std::numeric_limits
+                           <cpp_dec_float_35>::digits10+3)
+                    << "\n  for cpp_dec_float_35 integration." << std::endl;
+        }
+        cpp_dec_float_35 a_cdf35=static_cast<cpp_dec_float_35>(a);
+        cpp_dec_float_35 b_cdf35=static_cast<cpp_dec_float_35>(b);
+        cpp_dec_float_35 res_cdf35, err_cdf35, L1norm_cdf35;
+        
+        ret=integ_err_int(it_cdf35,func,a_cdf35,b_cdf35,res_cdf35,
+                          err_cdf35,L1norm_cdf35,target_tol,
+                          integ_tol,func_tol);
+        
+        if (ret==0 && err_cdf35<integ_tol) {
+          res=static_cast<fp_t>(res_cdf35);
+          err=static_cast<fp_t>(err_cdf35);
+          return 0;
+        } else {
+          target_tol/=10;
+        }
+      }
+
+      if (integ_tol>pow(10.0,-std::numeric_limits
+                      <cpp_dec_float_50>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_multip_tanh_sinh_boost::integ_err(): "
+                    << integ_tol << " > "
+                    << pow(10.0,-std::numeric_limits
+                           <cpp_dec_float_50>::digits10+3)
+                    << "\n  for cpp_dec_float_50 integration." << std::endl;
+        }
+        cpp_dec_float_50 a_cdf50=static_cast<cpp_dec_float_50>(a);
+        cpp_dec_float_50 b_cdf50=static_cast<cpp_dec_float_50>(b);
+        cpp_dec_float_50 res_cdf50, err_cdf50, L1norm_cdf50;
+        
+        ret=integ_err_int(it_cdf50,func,a_cdf50,b_cdf50,res_cdf50,
+                          err_cdf50,L1norm_cdf50,target_tol,
+                          integ_tol,func_tol);
+        
+        if (ret==0 && err_cdf50<integ_tol) {
+          res=static_cast<fp_t>(res_cdf50);
+          err=static_cast<fp_t>(err_cdf50);
+          return 0;
+        } else {
+          target_tol/=10;
+        }
+      }
+
+      if (integ_tol>pow(10.0,-std::numeric_limits
+                      <cpp_dec_float_100>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_multip_tanh_sinh_boost::integ_err(): "
+                    << integ_tol << " > "
+                    << pow(10.0,-std::numeric_limits
+                           <cpp_dec_float_100>::digits10+3)
+                    << "\n  for cpp_dec_float_100 integration." << std::endl;
+        }
+        cpp_dec_float_100 a_cdf100=static_cast<cpp_dec_float_100>(a);
+        cpp_dec_float_100 b_cdf100=static_cast<cpp_dec_float_100>(b);
+        cpp_dec_float_100 res_cdf100, err_cdf100, L1norm_cdf100;
+        
+        ret=integ_err_int(it_cdf100,func,a_cdf100,b_cdf100,res_cdf100,
+                          err_cdf100,L1norm_cdf100,target_tol,
+                          integ_tol,func_tol);
+        
+        if (ret==0 && err_cdf100<integ_tol) {
+          res=static_cast<fp_t>(res_cdf100);
+          err=static_cast<fp_t>(err_cdf100);
+          return 0;
+        } else {
+          target_tol/=10;
+        }
+      }
+
+      if (verbose>0) {
+        std::cout << "inte_multip_tanh_sinh_boost::integ_err() "
+                  << "failed after cpp_dec_float_100:\n  "
+                  << integ_tol << std::endl;
+      }
+    
+      O2SCL_ERR2("Failed to compute with requested accuracy ",
+                 "in inte_multip_tanh_sinh_boost::integ_err().",
+                 o2scl::exc_efailed);
+      return o2scl::exc_efailed;
+    }
+
+  };
   
 }
 

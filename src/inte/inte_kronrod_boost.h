@@ -103,6 +103,8 @@ namespace o2scl {
     
   };
 
+  /** \brief Gauss-Kronrod multiprecision integration class (Boost)
+   */
   template<size_t rule=15>
   class inte_multip_kronrod_boost {
     
@@ -187,6 +189,8 @@ namespace o2scl {
      */
     int verbose;
 
+    /** \brief Desc
+     */
     bool err_nonconv;
     
     inte_multip_kronrod_boost() {

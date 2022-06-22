@@ -27,34 +27,28 @@
 using namespace std;
 using namespace o2scl;
 
-// This function oscillates quite rapidly near x=0
-double test_func_1(double x) {
-  return -sin(1.0/(x+0.01))*pow(x+0.01,-2.0);
-}
-
-double test_func_2(double x) {
-  return exp(-x*x);
-}
-
-long double test_func_1_ld(long double x) {
-  long double one=1;
-  long double hundred=100;
-  return -sin(one/(x+one/hundred))/(x+one/hundred)/(x+one/hundred);
-}
-
-long double test_func_2_ld(long double x) {
-  return exp(-x*x);
-}
-
+typedef boost::multiprecision::number<
+  boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
+typedef boost::multiprecision::number<
+  boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+typedef boost::multiprecision::number<
+  boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
 
-cpp_dec_float_50 test_func_1_cdf(cpp_dec_float_50 x) {
-  cpp_dec_float_50 one=1;
-  cpp_dec_float_50 hundred=100;
+template<class fp_t> fp_t test_func(fp_t x) {
+  fp_t one=1;
+  fp_t hundred=100;
   return -sin(one/(x+one/hundred))/(x+one/hundred)/(x+one/hundred);
 }
 
-cpp_dec_float_50 test_func_2_cdf(cpp_dec_float_50 x) {
+template<class fp_t> fp_t exact_func() {
+  fp_t one=1;
+  fp_t hundred=100;
+  fp_t exact=cos(hundred)-cos(one/(one+one/hundred));
+  return exact;
+}
+
+template<class fp_t> fp_t test_func_2(fp_t x) {
   return exp(-x*x);
 }
 
@@ -71,13 +65,13 @@ int main(void) {
 
   double ans, exact, err;
 
-  funct tf1=test_func_1;
-  funct tf2=test_func_2;
+  funct tf1=test_func<double>;
+  funct tf2=test_func_2<double>;
 
   // Finite integral, moderately difficult integrand
   cout << "tanh-sinh, finite interval:" << endl;
   itsb.integ_err(tf1,0.0,1.0,ans,err);
-  exact=cos(100.0)-cos(1/1.01);
+  exact=exact_func<double>();
   std::cout << ans << " " << err << " " << exact << " "
 	    << itsb.L1norm << std::endl;
   t.test_rel(ans,exact,1.0e-8,"tanh_sinh test");
@@ -143,10 +137,10 @@ int main(void) {
   t.test_rel(ans,exact,1.0e-8,"sinh_sinh test");
   cout << endl;
 
-  funct_ld tf1_ld=test_func_1_ld;
-  funct_cdf50 tf1_cdf=test_func_1_cdf;
-  funct_ld tf2_ld=test_func_2_ld;
-  funct_cdf50 tf2_cdf=test_func_2_cdf;
+  funct_ld tf1_ld=test_func<long double>;
+  funct_cdf50 tf1_cdf=test_func<cpp_dec_float_50>;
+  funct_ld tf2_ld=test_func_2<long double>;
+  funct_cdf50 tf2_cdf=test_func_2<cpp_dec_float_50>;
 
   inte_tanh_sinh_boost<funct_ld,61,long double> itsb_ld;
   inte_tanh_sinh_boost<funct_cdf50,61,cpp_dec_float_50> itsb_cdf;
@@ -155,7 +149,7 @@ int main(void) {
   cout << "tanh-sinh, finite interval, long double:" << endl;
   long double one_ld=1;
   long double hundred_ld=100;
-  long double exact_ld=cos(hundred_ld)-cos(one_ld/(one_ld+one_ld/hundred_ld));
+  long double exact_ld=exact_func<long double>();
   long double ans_ld, err_ld;
   itsb_ld.integ_err(tf1_ld,0.0,1.0,ans_ld,err_ld);
   t.test_rel<long double>(ans_ld,exact_ld,1.0e-16,"tanh_sinh test ld");
@@ -167,8 +161,7 @@ int main(void) {
   cout << "tanh-sinh, finite interval, cpp_dec_float_50:" << endl;
   cpp_dec_float_50 one_cdf=1;
   cpp_dec_float_50 hundred_cdf=100;
-  cpp_dec_float_50 exact_cdf=cos(hundred_cdf)-
-    cos(one_cdf/(one_cdf+one_cdf/hundred_cdf));
+  cpp_dec_float_50 exact_cdf=exact_func<cpp_dec_float_50>();
   cpp_dec_float_50 ans_cdf, err_cdf;
   itsb_cdf.integ_err(tf1_cdf,0.0,1.0,ans_cdf,err_cdf);
   std::cout << ans_cdf << " " << err_cdf << " " << exact_cdf << " "
@@ -176,6 +169,18 @@ int main(void) {
   t.test_rel_boost<cpp_dec_float_50>(ans_cdf,exact_cdf,1.0e-40,
 				     "tanh_sinh test cdf");
   cout << endl;
+  
+  {
+    double val, err2, a=0, b=1;
+    double exact=cos(100.0)-cos(1/1.01);
+    inte_multip_tanh_sinh_boost<> imtsb;
+    imtsb.verbose=2;
+    imtsb.integ_err([](auto &&t) mutable { return test_func(t); },
+                    a,b,val,err2,1.0e-8);
+    imtsb.integ_err([](auto &&t) mutable { return test_func(t); },
+                    a,b,val,err2);
+    t.test_rel(val,exact,1.0e-15,"multip");
+  }
   
   t.report();
   return 0;
