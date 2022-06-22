@@ -343,10 +343,10 @@ namespace o2scl {
     virtual ~fermion_thermo_tl() {
     }
     
-    /// Object for Fermi-Dirac integrals
+    /// Object for Fermi-Dirac integrals (for massless fermions)
     fd_inte_t fd_integ;
     
-    /// Object for Bessel-exp integrals
+    /// Object for Bessel-exp integrals (for nondegenerate expansion)
     be_inte_t be_integ;
     
     /** \brief Non-degenerate expansion for fermions

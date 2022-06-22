@@ -104,9 +104,13 @@ namespace o2scl {
   };
 
   /** \brief Gauss-Kronrod multiprecision integration class (Boost)
+
+      \note The uncertainties reported by this class depend on those
+      returned by the boost integration functions and are occasionally
+      be underestimated. 
+      
    */
-  template<size_t rule=15>
-  class inte_multip_kronrod_boost {
+  template<size_t rule=15> class inte_multip_kronrod_boost {
     
   protected:
     
@@ -189,8 +193,9 @@ namespace o2scl {
      */
     int verbose;
 
-    /** \brief Desc
-     */
+    /** \brief If true, call the error handler if the integration
+        does not succeed (default true)
+    */
     bool err_nonconv;
     
     inte_multip_kronrod_boost() {

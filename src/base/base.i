@@ -1637,6 +1637,7 @@ class find_constants<>::const_entry
 # Class find_constants
 #
 class find_constants<>
+- py_name find_constants
 - function output_list_cout
   - void
 - function add_constant

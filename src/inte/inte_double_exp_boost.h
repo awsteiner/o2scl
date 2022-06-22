@@ -282,6 +282,11 @@ namespace o2scl {
   };
 
   /** \brief Tanh-sinh multiprecision integration class (Boost)
+
+      \note The uncertainties reported by this class depend on those
+      returned by the boost integration object and are occasionally
+      be underestimated. 
+      
    */
   template<size_t max_refine=15>
   class inte_multip_tanh_sinh_boost {
@@ -363,8 +368,9 @@ namespace o2scl {
      */
     int verbose;
 
-    /** \brief Desc
-     */
+    /** \brief If true, call the error handler if the integration
+        does not succeed (default true)
+    */
     bool err_nonconv;
     
     inte_multip_tanh_sinh_boost() {
