@@ -30,6 +30,7 @@
 
 using namespace std;
 using namespace o2scl;
+using namespace o2scl_hdf;
 using namespace o2scl_const;
 
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
@@ -160,32 +161,6 @@ int main(void) {
   t.test_rel(v1,0.0,4.0e-6,"calibrate");
   cout << endl;
 
-  /*
-    AWS, 5/6/22: I'm commenting this out for now as it gives 
-    identical results to the default
-    
-    typedef fermion_rel_tl<fermion_tl<double>,o2scl::fermi_dirac_integ_gsl,
-    bessel_K_exp_integ_boost<double>,
-    fermion_rel_integ<funct,double>,
-    root_cern<>,root_cern<>,funct,double> fr2_t;
-    
-    fr2_t fr2;
-    
-    fr2.verify_ti=true;
-    double v1x=pcc.part_calibrate<fermion,fr2_t>
-    (f,fr2,true,"../../data/o2scl/fermion_deriv_cal.o2",false,0,true);
-    t.test_rel(v1x,0.0,4.0e-6,"calibrate x");
-  */
-
-  /*
-  cout << fr.upper_limit_fac << endl;
-  cout << fr.fri.dit.tol_abs << endl;
-  cout << fr.fri.dit.tol_rel << endl;
-  cout << fr.fri.nit.tol_abs << endl;
-  cout << fr.fri.nit.tol_rel << endl;
-  cout << fr.density_root->tol_rel << endl;
-  */
-  
   cout << "----------------------------------------------------" << endl;
   cout << "Function calibrate() with better limits." << endl;
   cout << "----------------------------------------------------" << endl;
@@ -201,11 +176,16 @@ int main(void) {
   fr.density_root->tol_rel=1.0e-10;
 
   double v2=pcc.part_calibrate<fermion,fermion_rel>
-    (f,fr,1,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
+    (f,fr,1,"../../data/o2scl/fermion_deriv_cal.o2",false,0,true);
   t.test_rel(v2,0.0,4.0e-10,"calibrate 2");
 
   cout << endl;
   
+  fermion_ld fld;
+  fermion_rel_ld frld;
+  fermion_cdf25 f25;
+  fermion_rel_cdf25 fr25;
+
 #ifndef O2SCL_FAST_TEST
 #ifdef O2SCL_NEVER_DEFINED
   
@@ -214,9 +194,6 @@ int main(void) {
   cout << "----------------------------------------------------" << endl;
   cout << endl;
 
-  fermion_ld fld;
-  fermion_rel_ld frld;
-
   // AWS 6/17/22: this doesn't quite work, it fails on calc_density()
 
   frld.verify_ti=true;
@@ -224,7 +201,67 @@ int main(void) {
     (fld,frld,1,"../../data/o2scl/fermion_deriv_cal.o2",false,2,true);
   t.test_rel<long double>(v3,0.0,4.0e-10,"calibrate 3");
 
+  //fr25.verify_ti=true;
+  //cpp_dec_float_25 v4=pcc.part_calibrate<fermion_cdf25,fermion_rel_cdf25>
+  //(f25,fr25,1,"../../data/o2scl/fermion_deriv_cal.o2",false,2,true);
+  //t.test_rel<cpp_dec_float_25>(v3,0.0,4.0e-10,"calibrate 3");
+
 #endif
+#endif
+
+#ifdef O2SCL_NEVER_DEFINED
+  hdf_file hfx;
+  hfx.open("../../data/o2scl/fermion_deriv_cal.o2");
+  table_units<> tx;
+  hdf_input(hfx,tx);
+  hfx.close();
+  f.non_interacting=true;
+  f.inc_rest_mass=true;
+  fld.non_interacting=true;
+  fld.inc_rest_mass=true;
+  f25.non_interacting=true;
+  f25.inc_rest_mass=true;
+  double T=1;
+  long double Tld=1;
+  long double T25=1;
+  int ret;
+  for(int lmot=-3;lmot<=3;lmot++) {
+    for(int lpsi=-3;lpsi<=1;lpsi++) {
+      
+      double psi=pow(10.0,((double)lpsi));
+      double mot=pow(10.0,((double)lmot));
+      long double psi_ld=pow(10,((long double)lpsi));
+      long double mot_ld=pow(10,((long double)lmot));
+      cpp_dec_float_25 psi_25=pow(10,((cpp_dec_float_25)lpsi));
+      cpp_dec_float_25 mot_25=pow(10,((cpp_dec_float_25)lmot));
+      
+      f.g=2;
+      f.m=mot*T;
+      f.mu=psi*T+f.m;
+      ret=fr.calc_mu(f,T);
+      cout << lmot << " " << lpsi << endl;
+      fld.g=2;
+      fld.m=mot_ld*Tld;
+      fld.mu=psi_ld*Tld+fld.m;
+      ret=frld.calc_mu(fld,Tld);
+      f25.g=2;
+      f25.m=mot_25*T25;
+      f25.mu=psi_25*T25+f25.m;
+      ret=fr25.calc_mu(f25,T25);
+      cout << dtos(f.n,0) << " " << abs(f.n-fld.n)/abs(fld.n) << endl;
+      cout << dtos(f.ed,0) << " " << abs(f.ed-fld.ed)/abs(fld.ed) << endl;
+      cout << dtos(f.pr,0) << " " << abs(f.pr-fld.pr)/abs(fld.pr) << endl;
+      cout << dtos(f.en,0) << " " << abs(f.en-fld.en)/abs(fld.en) << endl;
+      cout << dtos(fld.n,0) << " " << abs(fld.n-f25.n)/abs(f25.n) << endl;
+      cout << dtos(fld.ed,0) << " " << abs(fld.ed-f25.ed)/abs(f25.ed) << endl;
+      cout << dtos(fld.pr,0) << " " << abs(fld.pr-f25.pr)/abs(f25.pr) << endl;
+      cout << dtos(fld.en,0) << " " << abs(fld.en-f25.en)/abs(f25.en) << endl;
+      cout << dtos(f25.n,0) << endl;
+      cout << dtos(f25.ed,0) << endl;
+      cout << dtos(f25.pr,0) << endl;
+      cout << dtos(f25.en,0) << endl;
+    }
+  }
 #endif
   
   t.report();

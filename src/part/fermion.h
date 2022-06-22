@@ -118,6 +118,9 @@ namespace o2scl {
   typedef fermion_tl<double> fermion;
   typedef fermion_tl<long double> fermion_ld;
   typedef fermion_tl<boost::multiprecision::number<
+                       boost::multiprecision::cpp_dec_float<25> > >
+  fermion_cdf25;
+  typedef fermion_tl<boost::multiprecision::number<
                        boost::multiprecision::cpp_dec_float<35> > >
   fermion_cdf35;
   typedef fermion_tl<boost::multiprecision::number<

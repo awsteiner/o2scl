@@ -48,6 +48,11 @@
 
 namespace o2scl {
 
+  typedef boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<25> > cpp_dec_float_25;
+  typedef boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<35> > cpp_dec_float_35;
+  
   /** \brief Integrands for \ref o2scl::fermion_rel_tl
    */
   class fermion_rel_integ_base {
@@ -308,8 +313,6 @@ namespace o2scl {
 
     /// \name Typedefs for convenience
     //@{
-    typedef boost::multiprecision::number<
-    boost::multiprecision::cpp_dec_float<25> > cpp_dec_float_25;
     typedef boost::multiprecision::number<
       boost::multiprecision::cpp_dec_float<35> > cpp_dec_float_35;
     typedef boost::multiprecision::number<
@@ -2696,25 +2699,22 @@ namespace o2scl {
 
   };
 
-  /** \brief Double-precision version of 
-      \ref o2scl::fermion_rel_tl 
+  /** \brief Double-precision version of \ref o2scl::fermion_rel_tl
   */
   typedef fermion_rel_tl<> fermion_rel;
 
+  /** \brief Desc
+   */
   class fermion_rel_ld : public
   fermion_rel_tl<
     // the fermion type
     fermion_tl<long double>,
     // the Fermi-Dirac integrator
-    fermi_dirac_integ_direct<
-      long double,funct_cdf35,25,
-      boost::multiprecision::number<
-	boost::multiprecision::cpp_dec_float<35> > >,
-    // the Bessel-exp integrator
-    bessel_K_exp_integ_direct<
-      long double,funct_cdf35,25,
-      boost::multiprecision::number<
-	boost::multiprecision::cpp_dec_float<35> > >,
+    fermi_dirac_integ_direct<long double,funct_cdf25,25,
+                             cpp_dec_float_25>,
+                         // the Bessel-exp integrator
+                         bessel_K_exp_integ_direct<
+                           long double,funct_cdf25,25,cpp_dec_float_25>,
     fermion_rel_integ_multip<long double>,
     // The density solver
     root_brent_gsl<funct_ld,long double>,
@@ -2759,6 +2759,64 @@ namespace o2scl {
       fri.dit25.tol_rel=1.0e-16;
       fri.dit35.tol_rel=1.0e-16;
       fri.dit50.tol_rel=1.0e-16;
+    }
+    
+  };
+  
+  /** \brief Desc
+  */
+  class fermion_rel_cdf25 : public
+  fermion_rel_tl<
+    // the fermion type
+    fermion_tl<cpp_dec_float_25>,
+    // the Fermi-Dirac integrator
+    fermi_dirac_integ_direct<
+      cpp_dec_float_25,funct_cdf35,25,cpp_dec_float_35>,
+    // the Bessel-exp integrator
+    bessel_K_exp_integ_direct<
+      cpp_dec_float_25,funct_cdf35,25,cpp_dec_float_35>,
+    fermion_rel_integ_multip<cpp_dec_float_25>,
+    // The density solver
+    root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
+    // The parent solver for massless fermions
+    root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
+    // The function type
+    funct_cdf25,
+    // The floating-point type
+    cpp_dec_float_25> {
+
+  public:
+    
+    fermion_rel_cdf25() {
+
+      // See output of polylog_ts for numeric limit information
+      
+      // Tolerance for the integrator for massless fermions
+      this->fd_integ.set_tol(1.0e-25);
+
+      // Tolerance for the integrator for the nondegenerate expansion
+      this->be_integ.set_tol(1.0e-25);
+
+      // Internal function tolerances
+
+      this->exp_limit=1000000.0;
+      
+      // log(1.0e25) is 57.5
+      this->upper_limit_fac=58.0;
+      this->deg_entropy_fac=58.0;
+      this->tol_expan=1.0e-24;
+
+      // Solver tolerances
+      this->def_density_root.tol_abs=1.0e-25;
+      this->def_massless_root.tol_abs=1.0e-25;
+
+      // Integrator tolerances
+      fri.nit25.tol_rel=1.0e-23;
+      fri.nit35.tol_rel=1.0e-23;
+      fri.nit50.tol_rel=1.0e-23;
+      fri.dit25.tol_rel=1.0e-23;
+      fri.dit35.tol_rel=1.0e-23;
+      fri.dit50.tol_rel=1.0e-23;
     }
     
   };

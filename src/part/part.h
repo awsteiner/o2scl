@@ -264,10 +264,30 @@ namespace o2scl {
     
     /** \brief Set chemical potential from psi, T, the index k,
 	and the flag nr_mode
+
+        This function sets either \c mu or \c nu, depending on whether
+        or not we're comparing interacting or noninteracting
+        particles. The other chemical potential is set to zero to
+        ensure that the correct one is being used in the calculation.
     */
     template<class part_t>
     void set_chem_pot(part_t &p, fp_t psi, fp_t T, size_t k,
                       bool nr_mode) {
+      /*
+        if (k==0) {
+        std::cout << "Function calc_mu(), include rest mass:"
+        << std::endl;
+        } else if (k==1) {
+        std::cout << "Function calc_mu(), without rest mass:"
+        << std::endl;
+        } else if (k==2) {
+        std::cout << "Function calc_mu(), include rest mass, "
+        << "interacting:" << std::endl;
+        } else {
+        std::cout << "Function calc_mu(), without rest mass, "
+        << "interacting:" << std::endl;
+        }
+      */
       if (k%2==0) {
 	if (k>=2) {
 	  if (nr_mode) {
@@ -298,27 +318,31 @@ namespace o2scl {
 
     /** \brief Check the density against the exact result 
 	and update 
+
+        This function compares the number densities in \c p and \c
+        exact. If the difference is greater than that recorded in \c
+        max, and if so then all the "max" quantities are updated.
     */
     template<class part1_t, class part2_t, class part3_t>
-    void check_density(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
+    void check_density(part1_t &p, part2_t &exact, part3_t &max, size_t k,
                        fp_t T, fp_t mot, fp_t psi,
-                       fp_t &mu_bad, fp_t &m_bad,
-                       fp_t &T_bad, fp_t &mot_bad, fp_t &psi_bad,
+                       fp_t &mu_max, fp_t &m_max,
+                       fp_t &T_max, fp_t &mot_max, fp_t &psi_max,
                        fp_t &ret_local) {
-      if (fabs((p.n-exact.n)/exact.n)>bad.n) {
-	bad.n=fabs((p.n-exact.n)/exact.n);
-	if (bad.n>ret_local) {
+      if (fabs((p.n-exact.n)/exact.n)>max.n) {
+	max.n=fabs((p.n-exact.n)/exact.n);
+	if (max.n>ret_local) {
 	  if (k>=2) {
-	    mu_bad=p.nu;
-	    m_bad=p.ms;
+	    mu_max=p.nu;
+	    m_max=p.ms;
 	  } else {
-	    mu_bad=p.mu;
-	    m_bad=p.m;
+	    mu_max=p.mu;
+	    m_max=p.m;
 	  }
-	  T_bad=T;
-	  mot_bad=mot;
-	  psi_bad=psi;
-	  ret_local=bad.n;
+	  T_max=T;
+	  mot_max=mot;
+	  psi_max=psi;
+	  ret_local=max.n;
 	}
       }
       return;
@@ -328,33 +352,33 @@ namespace o2scl {
 	and update 
     */
     template<class part1_t, class part2_t, class part3_t>
-    void check_chem_pot(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
+    void check_chem_pot(part1_t &p, part2_t &exact, part3_t &max, size_t k,
                         fp_t T, fp_t mot, fp_t psi,
-                        fp_t &mu_bad, fp_t &m_bad,
-                        fp_t &T_bad, fp_t &mot_bad, fp_t &psi_bad,
+                        fp_t &mu_max, fp_t &m_max,
+                        fp_t &T_max, fp_t &mot_max, fp_t &psi_max,
                         fp_t &ret_local) {
       if (k>=2) {
-	if (fabs((p.nu-exact.nu)/exact.nu)>bad.mu) {
-	  bad.mu=fabs((p.nu-exact.nu)/exact.nu);
-	  if (bad.mu>ret_local) {
-	    mu_bad=p.nu;
-	    m_bad=p.ms;
-	    T_bad=T;
-	    mot_bad=mot;
-	    psi_bad=psi;
-	    ret_local=bad.n;
+	if (fabs((p.nu-exact.nu)/exact.nu)>max.mu) {
+	  max.mu=fabs((p.nu-exact.nu)/exact.nu);
+	  if (max.mu>ret_local) {
+	    mu_max=p.nu;
+	    m_max=p.ms;
+	    T_max=T;
+	    mot_max=mot;
+	    psi_max=psi;
+	    ret_local=max.n;
 	  }
 	}
       } else {
-	if (fabs((p.mu-exact.mu)/exact.mu)>bad.mu) {
-	  bad.mu=fabs((p.mu-exact.mu)/exact.mu);
-	  if (bad.mu>ret_local) {
-	    mu_bad=p.mu;
-	    m_bad=p.m;
-	    T_bad=T;
-	    mot_bad=mot;
-	    psi_bad=psi;
-	    ret_local=bad.n;
+	if (fabs((p.mu-exact.mu)/exact.mu)>max.mu) {
+	  max.mu=fabs((p.mu-exact.mu)/exact.mu);
+	  if (max.mu>ret_local) {
+	    mu_max=p.mu;
+	    m_max=p.m;
+	    T_max=T;
+	    mot_max=mot;
+	    psi_max=psi;
+	    ret_local=max.n;
 	  }
 	}
       }
@@ -365,57 +389,57 @@ namespace o2scl {
 	the exact result and update
     */
     template<class part1_t, class part2_t, class part3_t>
-    void check_eps(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
+    void check_eps(part1_t &p, part2_t &exact, part3_t &max, size_t k,
                    fp_t T, fp_t mot, fp_t psi,
-                   fp_t &mu_bad, fp_t &m_bad,
-                   fp_t &T_bad, fp_t &mot_bad, fp_t &psi_bad,
+                   fp_t &mu_max, fp_t &m_max,
+                   fp_t &T_max, fp_t &mot_max, fp_t &psi_max,
                    fp_t &ret_local) {
-      if (fabs((p.ed-exact.ed)/exact.ed)>bad.ed) {
-	bad.ed=fabs((p.ed-exact.ed)/exact.ed);
-	if (bad.ed>ret_local) {
+      if (fabs((p.ed-exact.ed)/exact.ed)>max.ed) {
+	max.ed=fabs((p.ed-exact.ed)/exact.ed);
+	if (max.ed>ret_local) {
 	  if (k>=2) {
-	    mu_bad=p.nu;
-	    m_bad=p.ms;
+	    mu_max=p.nu;
+	    m_max=p.ms;
 	  } else {
-	    mu_bad=p.mu;
-	    m_bad=p.m;
+	    mu_max=p.mu;
+	    m_max=p.m;
 	  }
-	  T_bad=T;
-	  mot_bad=mot;
-	  psi_bad=psi;
-	  ret_local=bad.ed;
+	  T_max=T;
+	  mot_max=mot;
+	  psi_max=psi;
+	  ret_local=max.ed;
 	}
       }
-      if (fabs((p.pr-exact.pr)/exact.pr)>bad.pr) {
-	bad.pr=fabs((p.pr-exact.pr)/exact.pr);
-	if (bad.pr>ret_local) {
+      if (fabs((p.pr-exact.pr)/exact.pr)>max.pr) {
+	max.pr=fabs((p.pr-exact.pr)/exact.pr);
+	if (max.pr>ret_local) {
 	  if (k>=2) {
-	    mu_bad=p.nu;
-	    m_bad=p.ms;
+	    mu_max=p.nu;
+	    m_max=p.ms;
 	  } else {
-	    mu_bad=p.mu;
-	    m_bad=p.m;
+	    mu_max=p.mu;
+	    m_max=p.m;
 	  }
-	  T_bad=T;
-	  mot_bad=mot;
-	  psi_bad=psi;
-	  ret_local=bad.pr;
+	  T_max=T;
+	  mot_max=mot;
+	  psi_max=psi;
+	  ret_local=max.pr;
 	}
       }
-      if (fabs((p.en-exact.en)/exact.en)>bad.en) {
-	bad.en=fabs((p.en-exact.en)/exact.en);
-	if (bad.en>ret_local) {
+      if (fabs((p.en-exact.en)/exact.en)>max.en) {
+	max.en=fabs((p.en-exact.en)/exact.en);
+	if (max.en>ret_local) {
 	  if (k>=2) {
-	    mu_bad=p.nu;
-	    m_bad=p.ms;
+	    mu_max=p.nu;
+	    m_max=p.ms;
 	  } else {
-	    mu_bad=p.mu;
-	    m_bad=p.m;
+	    mu_max=p.mu;
+	    m_max=p.m;
 	  }
-	  T_bad=T;
-	  mot_bad=mot;
-	  psi_bad=psi;
-	  ret_local=bad.en;
+	  T_max=T;
+	  mot_max=mot;
+	  psi_max=psi;
+	  ret_local=max.en;
 	}
       }
       return;
@@ -425,57 +449,57 @@ namespace o2scl {
 	the exact result and update
     */
     template<class part1_t, class part2_t, class part3_t>
-    void check_derivs(part1_t &p, part2_t &exact, part3_t &bad, size_t k,
+    void check_derivs(part1_t &p, part2_t &exact, part3_t &max, size_t k,
                       fp_t T, fp_t mot, fp_t psi,
-                      fp_t &mu_bad, fp_t &m_bad,
-                      fp_t &T_bad, fp_t &mot_bad, fp_t &psi_bad,
+                      fp_t &mu_max, fp_t &m_max,
+                      fp_t &T_max, fp_t &mot_max, fp_t &psi_max,
                       fp_t &ret_local) {
-      if (fabs((p.dndT-exact.dndT)/exact.dndT)>bad.dndT) {
-	bad.dndT=fabs((p.dndT-exact.dndT)/exact.dndT);
-	if (bad.dndT>ret_local) {
+      if (fabs((p.dndT-exact.dndT)/exact.dndT)>max.dndT) {
+	max.dndT=fabs((p.dndT-exact.dndT)/exact.dndT);
+	if (max.dndT>ret_local) {
 	  if (k>=2) {
-	    mu_bad=p.nu;
-	    m_bad=p.ms;
+	    mu_max=p.nu;
+	    m_max=p.ms;
 	  } else {
-	    mu_bad=p.mu;
-	    m_bad=p.m;
+	    mu_max=p.mu;
+	    m_max=p.m;
 	  }
-	  T_bad=T;
-	  mot_bad=mot;
-	  psi_bad=psi;
-	  ret_local=bad.dndT;
+	  T_max=T;
+	  mot_max=mot;
+	  psi_max=psi;
+	  ret_local=max.dndT;
 	}
       }
-      if (fabs((p.dndmu-exact.dndmu)/exact.dndmu)>bad.dndmu) {
-	bad.dndmu=fabs((p.dndmu-exact.dndmu)/exact.dndmu);
-	if (bad.dndmu>ret_local) {
+      if (fabs((p.dndmu-exact.dndmu)/exact.dndmu)>max.dndmu) {
+	max.dndmu=fabs((p.dndmu-exact.dndmu)/exact.dndmu);
+	if (max.dndmu>ret_local) {
 	  if (k>=2) {
-	    mu_bad=p.nu;
-	    m_bad=p.ms;
+	    mu_max=p.nu;
+	    m_max=p.ms;
 	  } else {
-	    mu_bad=p.mu;
-	    m_bad=p.m;
+	    mu_max=p.mu;
+	    m_max=p.m;
 	  }
-	  T_bad=T;
-	  mot_bad=mot;
-	  psi_bad=psi;
-	  ret_local=bad.dndmu;
+	  T_max=T;
+	  mot_max=mot;
+	  psi_max=psi;
+	  ret_local=max.dndmu;
 	}
       }
-      if (fabs((p.dsdT-exact.dsdT)/exact.dsdT)>bad.dsdT) {
-	bad.dsdT=fabs((p.dsdT-exact.dsdT)/exact.dsdT);
-	if (bad.dsdT>ret_local) {
+      if (fabs((p.dsdT-exact.dsdT)/exact.dsdT)>max.dsdT) {
+	max.dsdT=fabs((p.dsdT-exact.dsdT)/exact.dsdT);
+	if (max.dsdT>ret_local) {
 	  if (k>=2) {
-	    mu_bad=p.nu;
-	    m_bad=p.ms;
+	    mu_max=p.nu;
+	    m_max=p.ms;
 	  } else {
-	    mu_bad=p.mu;
-	    m_bad=p.m;
+	    mu_max=p.mu;
+	    m_max=p.m;
 	  }
-	  T_bad=T;
-	  mot_bad=mot;
-	  psi_bad=psi;
-	  ret_local=bad.dsdT;
+	  T_max=T;
+	  mot_max=mot;
+	  psi_max=psi;
+	  ret_local=max.dsdT;
 	}
       }
       return;
@@ -545,7 +569,7 @@ namespace o2scl {
   
       if (tab.get_nlines()==0) {
 	std::string str="Failed to load data from file '"+fname+
-	  "' in part_calibrate(). Bad filename?";
+	  "' in part_calibrate(). Max filename?";
 	O2SCL_ERR(str.c_str(),exc_efilenotfound);
       }
 
@@ -561,8 +585,8 @@ namespace o2scl {
       p.g=2.0;
   
       size_t cnt=0;
-      part_t bad, dev, exact;
-      fp_t m_bad=0.0, mu_bad=0.0, T_bad=0.0, mot_bad=0.0, psi_bad=0.0;
+      part_t max, dev, exact;
+      fp_t m_max=0.0, mu_max=0.0, T_max=0.0, mot_max=0.0, psi_max=0.0;
       p.non_interacting=true;
 
       // This counts tests, 4*4*3 times the number of lines in the
@@ -572,20 +596,32 @@ namespace o2scl {
       // ----------------------------------------------------------------
       // First pass, test calc_mu()
       
-      if (verbose>1) {
-        std::cout << "First pass, testing calc_mu().\n" << std::endl;
-      }
-
       // k=0,2 are with rest mass, k=1,3 are without
       // k=0,1 are non-interacting, k=2,3 are interacting
       for(size_t k=0;k<4;k++) {
+        
+        if (verbose>1) {
+          if (k==0) {
+            std::cout << "Function calc_mu(), include rest mass:\n"
+                      << std::endl;
+          } else if (k==1) {
+            std::cout << "Function calc_mu(), without rest mass:\n"
+                      << std::endl;
+          } else if (k==2) {
+            std::cout << "Function calc_mu(), include rest mass, "
+                      << "interacting:\n" << std::endl;
+          } else {
+            std::cout << "Function calc_mu(), without rest mass, "
+                      << "interacting:\n" << std::endl;
+          }
+        }
 
 	fp_t ret_local=0;
         ti_local=0;
       
 	// Initialize storage
 	dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
-	bad.n=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
+	max.n=0.0; max.ed=0.0; max.pr=0.0; max.en=0.0;
     
 	// Temperature loop
 	for(fp_t T=1.0e-2;T<=1.001e2;T*=1.0e2) {
@@ -605,16 +641,17 @@ namespace o2scl {
             count++;
 
 	    if (verbose>1) {
-	      std::cout.precision(5);
+	      std::cout.precision(4);
 	      if (k>=2) {
-		std::cout << "T,ms,nu,psi,mot,count: " << T << " "
+		std::cout << "T,ms,nu,psi,mot,cnt: " << T << " "
 			  << p.ms << " " << p.nu << " "
 			  << psi << " " << mot << " " << count << std::endl;
 	      } else {
-		std::cout << "T,m,mu,psi,mot: " << T << " "
+		std::cout << "T,m,mu,psi,mot,cnt: " << T << " "
 			  << p.m << " " << p.mu << " " 
 			  << psi << " " << mot << " " << count << std::endl;
 	      }
+	      std::cout.precision(6);
             }
 
 	    th.calc_mu(p,T);
@@ -673,35 +710,48 @@ namespace o2scl {
 	    cnt++;
 	  
 	    check_density<part_t,part_t,part_t>
-              (p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
-               mot_bad,psi_bad,ret_local);
+              (p,exact,max,k,T,mot,psi,mu_max,m_max,T_max,
+               mot_max,psi_max,ret_local);
 	  
 	    check_eps<part_t,part_t,part_t>
-              (p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
-               mot_bad,psi_bad,ret_local);
+              (p,exact,max,k,T,mot,psi,mu_max,m_max,T_max,
+               mot_max,psi_max,ret_local);
 
+	    if (ret_local>ret) {
+	      ret=ret_local;
+	    }
+	    if (ti_local>ti_max) {
+	      ti_max=ret_local;
+	    }
+	  
 	    if (verbose>1) {
 	      std::cout.precision(5);
-	      if (k>=2) {
+              /*
+                AWS, 6/21/22: took this out because it appeared
+                to be duplicated by the output above
+                
+                if (k>=2) {
 		std::cout << "T,ms,nu,psi,mot: " << T << " "
-			  << p.ms << " " << p.nu << " "
-			  << psi << " " << mot << std::endl;
-	      } else {
+                << p.ms << " " << p.nu << " "
+                << psi << " " << mot << std::endl;
+                } else {
 		std::cout << "T,m,mu,psi,mot: " << T << " "
-			  << p.m << " " << p.mu << " " 
-			  << psi << " " << mot << std::endl;
-	      }
+                << p.m << " " << p.mu << " " 
+                << psi << " " << mot << std::endl;
+                }
+              */
 	      std::cout.precision(5);
 	      std::cout << "n,ed,pr,en: " << std::endl;
-	      std::cout << "approx: " << p.n << " " << p.ed << " "
+	      std::cout << "comput: " << p.n << " " << p.ed << " "
 			<< p.pr << " " << p.en << std::endl;
 	      std::cout << "exact : " << exact.n << " " << exact.ed << " " 
 			<< exact.pr << " " << exact.en << std::endl;
-	      std::cout << "bad   : " << bad.n << " " << bad.ed << " " 
-			<< bad.pr << " " << bad.en << std::endl;
+	      std::cout << "maxdev: " << max.n << " " << max.ed << " " 
+			<< max.pr << " " << max.en << std::endl;
               if (ti_count>0) {
-                std::cout << "check ti: " << ti_test/ti_count << " "
-                          << ti_local << std::endl;
+                std::cout << "check ti (avg, curr, max): "
+                          << ti_test/ti_count << " "
+                          << ti_local << " " << ti_max << std::endl;
               }
 	      std::cout << "ret_local,ret: " << ret_local << " "
 			<< ret << std::endl;
@@ -713,13 +763,6 @@ namespace o2scl {
 	      }
 	    }
 
-	    if (ret_local>ret) {
-	      ret=ret_local;
-	    }
-	    if (ti_local>ti_max) {
-	      ti_max=ret_local;
-	    }
-	  
 	    // End of loop over points in data file
 	  }
 	  // End of temperature loop
@@ -732,28 +775,29 @@ namespace o2scl {
 
 	if (verbose>0) {
 	  if (k==0) {
-	    std::cout << "Function calc_mu(), include rest mass"
+	    std::cout << "Function calc_mu(), include rest mass:"
 		      << std::endl;
 	  } else if (k==1) {
-	    std::cout << "Function calc_mu(), without rest mass"
+	    std::cout << "Function calc_mu(), without rest mass:"
 		      << std::endl;
 	  } else if (k==2) {
 	    std::cout << "Function calc_mu(), include rest mass, "
-		      << "interacting" << std::endl;
+		      << "interacting:" << std::endl;
 	  } else {
 	    std::cout << "Function calc_mu(), without rest mass, "
-		      << "interacting" << std::endl;
+		      << "interacting:" << std::endl;
 	  }
 
 	  std::cout << "Average performance: " << std::endl;
 	  std::cout << "n: " << dev.n << " ed: " << dev.ed << " pr: " 
 		    << dev.pr << " en: " << dev.en << std::endl;
 	  std::cout << "Worst case: " << std::endl;
-	  std::cout << "n: " << bad.n << " ed: " << bad.ed << " pr: " 
-		    << bad.pr << " en: " << bad.en << std::endl;
-	  std::cout << "mu: " << mu_bad << " m: " << m_bad 
-		    << " T: " << T_bad << " mot: " << mot_bad
-		    << "\n\tpsi: " << psi_bad << std::endl;
+	  std::cout << "n: " << max.n << " ed: " << max.ed << " pr: " 
+		    << max.pr << " en: " << max.en << std::endl;
+          std::cout << "Worst case occurred at:" << std::endl;
+	  std::cout << "mu: " << mu_max << " m: " << m_max 
+		    << " T: " << T_max << " mot: " << mot_max
+		    << "\n\tpsi: " << psi_max << std::endl;
           if (ti_count>0) {
             std::cout << "check ti: " << ti_test/ti_count << " "
                       << ti_local << std::endl;
@@ -777,19 +821,32 @@ namespace o2scl {
       // ----------------------------------------------------------------
       // Second pass, test calc_density()
 
-      if (verbose>1) {
-        std::cout << "Second pass, testing calc_density().\n" << std::endl;
-      }
-      
       // k=0,2 are with rest mass, k=1,3 are without
       // k=0,1 are non-interacting, k=2,3 are interacting
       for(size_t k=0;k<4;k++) {
 
-	fp_t ret_local=0.0;
+        if (verbose>1) {
+	  if (k==0) {
+	    std::cout << "Function calc_density(), include rest mass, "
+                      << "noninteracting:" << std::endl;
+	  } else if (k==1) {
+	    std::cout << "Function calc_density(), without rest mass, "
+                      << "noninteracting:" << std::endl;
+	  } else if (k==2) {
+	    std::cout << "Function calc_density(), include rest mass, "
+		      << "interacting:" << std::endl;
+	  } else {
+	    std::cout << "Function calc_density(), without rest mass, "
+		      << "interacting:" << std::endl;
+	  }
+        }
+        
+        fp_t ret_local=0.0;
+        ti_local=0;
       
 	// Initialize storage
 	dev.mu=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
-	bad.mu=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
+	max.mu=0.0; max.ed=0.0; max.pr=0.0; max.en=0.0;
     
 	// Temperature loop
 	for(fp_t T=1.0e-2;T<=1.001e2;T*=1.0e2) {
@@ -805,6 +862,7 @@ namespace o2scl {
 	    exact.en=tab.get("en",i);
 
 	    set_mass_flags(p,mot,T,k);
+	    set_mass_flags(exact,mot,T,k);
 	    set_chem_pot(exact,psi,T,k,nr_mode);
 	    
 	    exact.n=p.n;
@@ -886,30 +944,28 @@ namespace o2scl {
 
 	    cnt++;
 
-	    check_chem_pot<part_t>(p,exact,bad,k,T,mot,psi,mu_bad,
-                                   m_bad,T_bad,mot_bad,psi_bad,ret_local);
-				   
-	  
-	    check_eps<part_t>(p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
-			      mot_bad,psi_bad,ret_local);
-
+	    check_chem_pot<part_t>(p,exact,max,k,T,mot,psi,mu_max,
+                                   m_max,T_max,mot_max,psi_max,ret_local);
+	    check_eps<part_t>(p,exact,max,k,T,mot,psi,mu_max,m_max,T_max,
+			      mot_max,psi_max,ret_local);
+            
 	    if (verbose>1) {
 	      std::cout.precision(6);
 	      if (k>=2) {
 		std::cout << "nu,ed,pr,en: " << std::endl;
-		std::cout << "approx: " << p.nu << " " << p.ed << " "
+		std::cout << "comput: " << p.nu << " " << p.ed << " "
 			  << p.pr << " " << p.en << std::endl;
 		std::cout << "exact : " << exact.nu << " " << exact.ed 
 			  << " " << exact.pr << " " << exact.en << std::endl;
 	      } else {
 		std::cout << "mu,ed,pr,en: " << std::endl;
-		std::cout << "approx: " << p.mu << " " << p.ed << " "
+		std::cout << "comput: " << p.mu << " " << p.ed << " "
 			  << p.pr << " " << p.en << std::endl;
 		std::cout << "exact : " << exact.mu << " " << exact.ed 
 			  << " " << exact.pr << " " << exact.en << std::endl;
 	      }
-	      std::cout << "bad   : " << bad.mu << " " << bad.ed << " " 
-			<< bad.pr << " " << bad.en << std::endl;
+	      std::cout << "maxdev: " << max.mu << " " << max.ed << " " 
+			<< max.pr << " " << max.en << std::endl;
               if (ti_count>0) {
                 std::cout << "check ti: " << ti_test/ti_count << " "
                           << ti_local << std::endl;
@@ -960,11 +1016,11 @@ namespace o2scl {
 	  std::cout << "mu: " << dev.mu << " ed: " << dev.ed << " pr: " 
 		    << dev.pr << " en: " << dev.en << std::endl;
 	  std::cout << "Worst case: " << std::endl;
-	  std::cout << "mu: " << bad.mu << " ed: " << bad.ed << " pr: " 
-		    << bad.pr << " en: " << bad.en << std::endl;
-	  std::cout << "mu: " << mu_bad << " m: " << m_bad
-		    << " T: " << T_bad << " mot: " << mot_bad
-		    << "\n\tpsi: " << psi_bad << std::endl;
+	  std::cout << "mu: " << max.mu << " ed: " << max.ed << " pr: " 
+		    << max.pr << " en: " << max.en << std::endl;
+	  std::cout << "mu: " << mu_max << " m: " << m_max
+		    << " T: " << T_max << " mot: " << mot_max
+		    << "\n\tpsi: " << psi_max << std::endl;
           if (ti_count>0) {
             std::cout << "check ti: " << ti_test/ti_count << " "
                       << ti_local << std::endl;
@@ -992,10 +1048,11 @@ namespace o2scl {
 	for(size_t k=0;k<4;k++) {
 
 	  fp_t ret_local=0.0;
+        ti_local=0;
 
 	  // Initialize storage
 	  dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
-	  bad.n=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
+	  max.n=0.0; max.ed=0.0; max.pr=0.0; max.en=0.0;
     
 	  // Temperature loop
 	  for(fp_t T=1.0e-2;T<=1.001e2;T*=1.0e2) {
@@ -1059,24 +1116,24 @@ namespace o2scl {
 	      cnt++;
 
 	      check_density<part_t,part_t,part_t>
-                (p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
-                 mot_bad,psi_bad,ret_local);
+                (p,exact,max,k,T,mot,psi,mu_max,m_max,T_max,
+                 mot_max,psi_max,ret_local);
 	    
 	      check_eps<part_t,part_t,part_t>
-                (p,exact,bad,k,T,mot,psi,mu_bad,m_bad,T_bad,
-                 mot_bad,psi_bad,ret_local);
+                (p,exact,max,k,T,mot,psi,mu_max,m_max,T_max,
+                 mot_max,psi_max,ret_local);
               
 	      if (verbose>1) {
 		std::cout.precision(6);
 		std::cout << i << " " << exact.m << " " << exact.ms << " "
 			  << exact.mu << " " << exact.nu << std::endl;
 		std::cout << "n,ed,pr,en: " << std::endl;
-		std::cout << "approx: " << p.n << " " << p.ed << " "
+		std::cout << "comput: " << p.n << " " << p.ed << " "
 			  << p.pr << " " << p.en << std::endl;
 		std::cout << "exact : " << exact.n << " " << exact.ed << " " 
 			  << exact.pr << " " << exact.en << std::endl;
-		std::cout << "bad   : " << bad.n << " " << bad.ed << " " 
-			  << bad.pr << " " << bad.en << std::endl;
+		std::cout << "maxdev: " << max.n << " " << max.ed << " " 
+			  << max.pr << " " << max.en << std::endl;
                 if (ti_count>0) {
                   std::cout << "check ti: " << ti_test/ti_count << " "
                             << ti_local << std::endl;
@@ -1127,11 +1184,11 @@ namespace o2scl {
 	    std::cout << "n: " << dev.n << " ed: " << dev.ed << " pr: " 
 		      << dev.pr << " en: " << dev.en << std::endl;
 	    std::cout << "Worst case: " << std::endl;
-	    std::cout << "n: " << bad.n << " ed: " << bad.ed << " pr: " 
-		      << bad.pr << " en: " << bad.en << std::endl;
-	    std::cout << "mu: " << mu_bad << " m: " << m_bad
-		      << " T: " << T_bad << " mot: " << mot_bad
-		      << "\n\tpsi: " << psi_bad << std::endl;
+	    std::cout << "n: " << max.n << " ed: " << max.ed << " pr: " 
+		      << max.pr << " en: " << max.en << std::endl;
+	    std::cout << "mu: " << mu_max << " m: " << m_max
+		      << " T: " << T_max << " mot: " << mot_max
+		      << "\n\tpsi: " << psi_max << std::endl;
             if (ti_count>0) {
               std::cout << "check ti: " << ti_test/ti_count << " "
                         << ti_local << std::endl;
@@ -1157,10 +1214,11 @@ namespace o2scl {
 	for(size_t k=0;k<4;k++) {
 
 	  fp_t ret_local=0.0;
+        ti_local=0;
 	
 	  // Initialize storage
 	  dev.mu=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
-	  bad.mu=0.0; bad.ed=0.0; bad.pr=0.0; bad.en=0.0;
+	  max.mu=0.0; max.ed=0.0; max.pr=0.0; max.en=0.0;
     
 	  // Temperature loop
 	  for(fp_t T=1.0e-2;T<=1.001e2;T*=1.0e2) {
@@ -1238,34 +1296,34 @@ namespace o2scl {
 	
 	      cnt++;
 
-	      check_chem_pot<part_t>(p,exact,bad,k,T,mot,psi,
-                                     mu_bad,m_bad,T_bad,
-				     mot_bad,psi_bad,ret_local);
+	      check_chem_pot<part_t>(p,exact,max,k,T,mot,psi,
+                                     mu_max,m_max,T_max,
+				     mot_max,psi_max,ret_local);
 
-	      check_eps<part_t>(p,exact,bad,k,T,mot,psi,mu_bad,
-                                m_bad,T_bad,
-				mot_bad,psi_bad,ret_local);
+	      check_eps<part_t>(p,exact,max,k,T,mot,psi,mu_max,
+                                m_max,T_max,
+				mot_max,psi_max,ret_local);
 	    
 	    
 	      if (verbose>1) {
 		std::cout.precision(6);
 		if (k>=2) {
 		  std::cout << "nu,ed,pr,en: " << std::endl;
-		  std::cout << "approx: " << p.nu << " " << p.ed << " "
+		  std::cout << "comput: " << p.nu << " " << p.ed << " "
 			    << p.pr << " " << p.en << std::endl;
 		  std::cout << "exact : " << exact.nu << " "
                             << exact.ed << " " << exact.pr << " "
                             << exact.en << std::endl;
 		} else {
 		  std::cout << "mu,ed,pr,en: " << std::endl;
-		  std::cout << "approx: " << p.mu << " " << p.ed << " "
+		  std::cout << "comput: " << p.mu << " " << p.ed << " "
 			    << p.pr << " " << p.en << std::endl;
 		  std::cout << "exact : " << exact.mu << " "
                             << exact.ed << " " << exact.pr << " "
                             << exact.en << std::endl;
 		}
-		std::cout << "bad   : " << bad.mu << " " << bad.ed << " " 
-			  << bad.pr << " " << bad.en << std::endl;
+		std::cout << "maxdev: " << max.mu << " " << max.ed << " " 
+			  << max.pr << " " << max.en << std::endl;
                 if (ti_count>0) {
                   std::cout << "check ti: " << ti_test/ti_count
                             << " " << ti_local << std::endl;
@@ -1316,11 +1374,11 @@ namespace o2scl {
 	    std::cout << "mu: " << dev.mu << " ed: " << dev.ed << " pr: " 
 		      << dev.pr << " en: " << dev.en << std::endl;
 	    std::cout << "Worst case: " << std::endl;
-	    std::cout << "mu: " << bad.mu << " ed: " << bad.ed << " pr: " 
-		      << bad.pr << " en: " << bad.en << std::endl;
-	    std::cout << "mu: " << mu_bad << " m: " << m_bad
-		      << " T: " << T_bad << " mot: " << mot_bad
-		      << "\n\tpsi: " << psi_bad << std::endl;
+	    std::cout << "mu: " << max.mu << " ed: " << max.ed << " pr: " 
+		      << max.pr << " en: " << max.en << std::endl;
+	    std::cout << "mu: " << mu_max << " m: " << m_max
+		      << " T: " << T_max << " mot: " << mot_max
+		      << "\n\tpsi: " << psi_max << std::endl;
             if (ti_count>0) {
               std::cout << "check ti: " << ti_test/ti_count << " "
                         << ti_local << std::endl;
@@ -1353,7 +1411,7 @@ namespace o2scl {
 
       p=orig;
 
-      if (th.verify_ti) {
+      if (th.verify_ti && verbose>0) {
         std::cout << "check ti, ti_max: " << ti_test/ti_count << " "
                   << ti_max << std::endl;
       }

@@ -445,7 +445,7 @@ namespace o2scl {
                          internal_fp_t> it;
 
     fermi_dirac_integ_direct() {
-      // AWS 8/14/21 changed from 1.0e-17 to 1.0e-14 because it
+      // AWS 8/14/21: changed from 1.0e-17 to 1.0e-14 because it
       // appeard to more frequently converge (see polylog_ts) without
       // sacrificing accuracy.
       it.iiu.tol_rel=1.0e-14;
