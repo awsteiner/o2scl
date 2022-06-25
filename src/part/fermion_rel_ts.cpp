@@ -182,9 +182,11 @@ int main(void) {
   cout << endl;
   
   fermion_ld fld;
-  fermion_rel_ld frld;
+  fermion_rel_ld frld2;
+  fermion_rel_ld2 frld;
   fermion_cdf25 f25;
-  fermion_rel_cdf25 fr25;
+  fermion_rel_cdf25 fr252;
+  fermion_rel_cdf252 fr25;
 
 #ifndef O2SCL_FAST_TEST
 #ifdef O2SCL_NEVER_DEFINED
@@ -210,6 +212,7 @@ int main(void) {
 #endif
 
 #ifndef O2SCL_NEVER_DEFINED
+  
   hdf_file hfx;
   hfx.open("../../data/o2scl/fermion_deriv_cal.o2");
   table_units<> tx;
@@ -224,6 +227,8 @@ int main(void) {
   double T=1;
   long double Tld=1;
   long double T25=1;
+  double max=0.0;
+  cpp_dec_float_25 maxld=0.0;
   int ret;
   for(int lmot=-3;lmot<=3;lmot++) {
     for(int lpsi=-3;lpsi<=1;lpsi++) {
@@ -243,19 +248,55 @@ int main(void) {
       fld.g=2;
       fld.m=mot_ld*Tld;
       fld.mu=psi_ld*Tld+fld.m;
+      frld.verbose=2;
+      cout << "long double" << endl;
       ret=frld.calc_mu(fld,Tld);
       f25.g=2;
       f25.m=mot_25*T25;
       f25.mu=psi_25*T25+f25.m;
+      fr25.verbose=2;
+      cout << "cpp_dec_float_25" << endl;
+      fr25.fri.verbose=2;
+      fr25.fri.it.verbose=2;
       ret=fr25.calc_mu(f25,T25);
       cout << dtos(f.n,0) << " " << abs(f.n-fld.n)/abs(fld.n) << endl;
       cout << dtos(f.ed,0) << " " << abs(f.ed-fld.ed)/abs(fld.ed) << endl;
       cout << dtos(f.pr,0) << " " << abs(f.pr-fld.pr)/abs(fld.pr) << endl;
       cout << dtos(f.en,0) << " " << abs(f.en-fld.en)/abs(fld.en) << endl;
+
+      if (abs(f.n-fld.n)/abs(fld.n)>max) {
+        max=abs(f.n-fld.n)/abs(fld.n);
+      }
+      if (abs(f.ed-fld.ed)/abs(fld.ed)>max) {
+        max=abs(f.ed-fld.ed)/abs(fld.ed);
+      }
+      if (abs(f.pr-fld.pr)/abs(fld.pr)>max) {
+        max=abs(f.pr-fld.pr)/abs(fld.pr);
+      }
+      if (abs(f.en-fld.en)/abs(fld.en)>max) {
+        max=abs(f.en-fld.en)/abs(fld.en);
+      }
+      cout << "max: " << max << endl;
+      
       cout << dtos(fld.n,0) << " " << abs(fld.n-f25.n)/abs(f25.n) << endl;
       cout << dtos(fld.ed,0) << " " << abs(fld.ed-f25.ed)/abs(f25.ed) << endl;
       cout << dtos(fld.pr,0) << " " << abs(fld.pr-f25.pr)/abs(f25.pr) << endl;
       cout << dtos(fld.en,0) << " " << abs(fld.en-f25.en)/abs(f25.en) << endl;
+
+      if (abs(fld.n-f25.n)/abs(f25.n)>maxld) {
+        maxld=abs(fld.n-f25.n)/abs(f25.n);
+      }
+      if (abs(fld.ed-f25.ed)/abs(f25.ed)>maxld) {
+        maxld=abs(fld.ed-f25.ed)/abs(f25.ed);
+      }
+      if (abs(fld.pr-f25.pr)/abs(f25.pr)>maxld) {
+        maxld=abs(fld.pr-f25.pr)/abs(f25.pr);
+      }
+      if (abs(fld.en-f25.en)/abs(f25.en)>maxld) {
+        maxld=abs(fld.en-f25.en)/abs(f25.en);
+      }
+      cout << "maxld: " << maxld << endl;
+      
       cout << dtos(f25.n,0) << endl;
       cout << dtos(f25.ed,0) << endl;
       cout << dtos(f25.pr,0) << endl;

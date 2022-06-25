@@ -311,14 +311,259 @@ namespace o2scl {
 
   public:
 
+    int verbose;
+    
     inte_multip_tanh_sinh_boost<> it;
 
     double tol_rel;
+
+    fermion_rel_integ_multip2() {
+      verbose=0;
+    }
+    
+    /// The integrand for the density for non-degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t density_fun(internal_fp_t u, fp_t y2, fp_t eta2) {
+      
+      internal_fp_t ret;
+
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      
+      internal_fp_t arg1=u*u+2*eta*u;
+      internal_fp_t arg2=eta+u-y;
+      internal_fp_t arg3=eta+u;
+      if (y-eta-u>exp_limit) {
+	ret=arg3*sqrt(arg1);
+      } else if (y>u+exp_limit && eta>u+exp_limit) {
+	ret=arg3*sqrt(arg1)/(exp(arg2)+1);
+      } else {
+	ret=arg3*sqrt(arg1)*exp(y)/(exp(arg3)+exp(y));
+      }
+      
+      if (!o2isfinite(ret)) {
+	ret=0.0;
+      }
+
+      return ret;
+    }
+
+    /// The integrand for the pressure for non-degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t pressure_fun(internal_fp_t u, fp_t y2,
+                               fp_t eta2) {
+
+      internal_fp_t ret;
+      
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      
+      internal_fp_t arg1=u*u+2*eta*u;
+      internal_fp_t term1=sqrt(arg1);
+      internal_fp_t arg3=eta+u;
+      ret=term1*arg3*log1p(exp(y-arg3));
+      
+      if (!o2isfinite(ret)) {
+	ret=0.0;
+      }
+
+      return ret;
+    }
+
+    /// The integrand for the energy density for non-degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t energy_fun(internal_fp_t u, fp_t y2,
+                             fp_t eta2) {
+
+      internal_fp_t ret;
+
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      
+      internal_fp_t arg1=u*u+2*eta*u;
+      internal_fp_t arg2=eta+u-y;
+      internal_fp_t arg3=eta+u;
+      if (y>u+exp_limit && eta>u+exp_limit) {
+	ret=arg3*arg3*sqrt(arg1)/(exp(arg2)+1);
+      } else {
+	ret=arg3*arg3*sqrt(arg1)*exp(y)/(exp(arg3)+exp(y));
+      }
+ 
+      if (!o2isfinite(ret)) {
+	return 0;
+      }
+
+      return ret;
+    }
+
+    /// The integrand for the entropy density for non-degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t entropy_fun(internal_fp_t u, fp_t y2,
+                              fp_t eta2) {
+
+      internal_fp_t ret;
+
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      
+      internal_fp_t arg1=u*u+2*eta*u;
+      internal_fp_t arg2=eta+u-y;
+      internal_fp_t arg3=eta+u;
+      internal_fp_t arg4=y-eta-u;
+      internal_fp_t arg5=1+exp(arg4);
+      internal_fp_t arg6=1+exp(arg2);
+      internal_fp_t term1=log(arg5)/arg5;
+      internal_fp_t term2=log(arg6)/arg6;
+      ret=arg3*sqrt(arg1)*(term1+term2);
+  
+      if (!o2isfinite(ret)) {
+	return 0.0;
+      }
+
+      return ret;
+    }
+
+    /// The integrand for the density for degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t deg_density_fun(internal_fp_t k, fp_t T2,
+                                  fp_t y2, fp_t eta2,
+                                  fp_t mot2, bool debug) {
+
+      internal_fp_t ret;
+      
+      internal_fp_t T=static_cast<internal_fp_t>(T2);
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      internal_fp_t mot=static_cast<internal_fp_t>(mot2);
+      
+      internal_fp_t E=hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
+      ret=k*k/(1+exp(arg1));
+
+      if (debug) {
+        std::cout << k << " " << ret << std::endl;
+      }
+          
+      if (!o2isfinite(ret)) {
+	O2SCL_ERR2("Returned not finite result ",
+		   "in fermion_rel::deg_density_fun().",exc_einval);
+      }
+      return ret;
+    }
+
+    /// The integrand for the energy density for degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t deg_energy_fun(internal_fp_t k, fp_t T2,
+                                 fp_t y2, fp_t eta2,
+                                 fp_t mot2) {
+
+      internal_fp_t ret;
+      
+      internal_fp_t T=static_cast<internal_fp_t>(T2);
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      internal_fp_t mot=static_cast<internal_fp_t>(mot2);
+      
+      internal_fp_t E=hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
+      
+      ret=k*k*E*T/(1+exp(arg1));
+      
+      if (!o2isfinite(ret)) {
+	O2SCL_ERR2("Returned not finite result ",
+		   "in fermion_rel::deg_energy_fun().",exc_einval);
+      }
+  
+      return ret;
+    }
+
+    /// The integrand for the energy density for degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t deg_pressure_fun(internal_fp_t k, fp_t T2,
+                                   fp_t y2, fp_t eta2,
+                                   fp_t mot2, bool debug) {
+
+      internal_fp_t ret;
+      
+      internal_fp_t T=static_cast<internal_fp_t>(T2);
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      internal_fp_t mot=static_cast<internal_fp_t>(mot2);
+      
+      internal_fp_t E=hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
+      
+      ret=k*k*k*k/3/hypot(k/T,eta)/T/(1+exp(arg1));
+      //ret=k*k*T*log1p(exp(-arg1));
+      //ret=k*k*T*log(1+exp(-arg1));
+      
+      if (debug) {
+        std::cout << "Z: " << k << " " << T << " " << y << " "
+                  << eta << " "
+                  << mot << " " << ret << std::endl;
+      }
+
+      if (!o2isfinite(ret)) {
+        return 0.0;
+	//O2SCL_ERR2("Returned not finite result ",
+        //"in fermion_rel::deg_pressure_fun().",exc_einval);
+      }
+  
+      return ret;
+    }
+
+    /// The integrand for the entropy density for degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t deg_entropy_fun(internal_fp_t k, fp_t T2,
+                                  fp_t y2, fp_t eta2,
+                                  fp_t mot2) {
+  
+      internal_fp_t ret;
+      
+      internal_fp_t T=static_cast<internal_fp_t>(T2);
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      internal_fp_t mot=static_cast<internal_fp_t>(mot2);
+      
+      internal_fp_t E=hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
+
+      // If the argument to the exponential is really small, then the
+      // value of the integrand is just zero
+      if (arg1<-exp_limit) {
+	ret=0.0;
+	// Otherwise, if the argument to the exponential is still small,
+	// then addition of 1 makes us lose precision, so we use an
+	// alternative:
+      } else if (arg1<-deg_entropy_fac) {
+	ret=-k*k*(-1+arg1)*exp(arg1);
+      } else {
+	internal_fp_t nx=(1+exp(arg1));
+        nx=1/nx;
+        internal_fp_t arg2=1-nx;
+        internal_fp_t t1=nx*log(nx);
+        internal_fp_t t2=arg2*log(arg2);
+        internal_fp_t t3=t1+t2;
+        ret=-k*k*t3;
+	//ret=-k*k*(nx*log(nx)+arg2*log(arg2));
+      }
+
+      if (!o2isfinite(ret)) {
+	O2SCL_ERR2("Returned not finite result ",
+		   "in fermion_rel::deg_entropy_fun().",exc_einval);
+      }
+
+      return ret;
+    }
     
     int eval_density(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
 
       fp_t zero=0;
-      
+
+      if (verbose>1) {
+        std::cout << "Calling non-degenerate integrator for density "
+                  << "with tolerance: " << tol_rel << std::endl;
+      }
       it.integ_iu_err([this,y,eta](auto &&u) mutable {
         return this->density_fun(u,y,eta); },
         zero,res,err,tol_rel);
@@ -330,6 +575,10 @@ namespace o2scl {
 
       fp_t zero=0;
       
+      if (verbose>1) {
+        std::cout << "Calling non-degenerate integrator for energy density "
+                  << "with tolerance: " << tol_rel << std::endl;
+      }
       it.integ_iu_err([this,y,eta](auto &&u) mutable {
         return this->energy_fun(u,y,eta); },
         zero,res,err,tol_rel);
@@ -341,6 +590,10 @@ namespace o2scl {
 
       fp_t zero=0;
       
+      if (verbose>1) {
+        std::cout << "Calling non-degenerate integrator for entropy density "
+                  << "with tolerance: " << tol_rel << std::endl;
+      }
       it.integ_iu_err([this,y,eta](auto &&u) mutable {
         return this->entropy_fun(u,y,eta); },
         zero,res,err,tol_rel);
@@ -352,6 +605,10 @@ namespace o2scl {
 
       fp_t zero=0;
       
+      if (verbose>1) {
+        std::cout << "Calling non-degenerate integrator for pressure "
+                  << "with tolerance: " << tol_rel << std::endl;
+      }
       it.integ_iu_err([this,y,eta](auto &&u) mutable {
         return this->pressure_fun(u,y,eta); },
         zero,res,err,tol_rel);
@@ -364,6 +621,10 @@ namespace o2scl {
 
       fp_t zero=0;
       
+      if (verbose>1) {
+        std::cout << "Calling degenerate integrator for density "
+                  << "with tolerance: " << tol_rel << std::endl;
+      }
       it.integ_err([this,T,y,eta,mot](auto &&k) mutable {
         return this->deg_density_fun(k,T,y,eta,mot,false); },
         zero,ul,res,err,tol_rel);
@@ -376,8 +637,12 @@ namespace o2scl {
 
       fp_t zero=0;
       
+      if (verbose>1) {
+        std::cout << "Calling degenerate integrator for energy density "
+                  << "with tolerance: " << tol_rel << std::endl;
+      }
       it.integ_err([this,T,y,eta,mot](auto &&k) mutable {
-        return this->deg_energy_fun(k,T,y,eta,mot,false); },
+        return this->deg_energy_fun(k,T,y,eta,mot); },
         zero,ul,res,err,tol_rel);
       
       return 0;
@@ -386,8 +651,12 @@ namespace o2scl {
     int eval_deg_entropy(fp_t T, fp_t y, fp_t eta, fp_t mot,
                          fp_t ll, fp_t ul, fp_t &res, fp_t &err) {
 
+      if (verbose>1) {
+        std::cout << "Calling degenerate integrator for entropy density "
+                  << "with tolerance: " << tol_rel << std::endl;
+      }
       it.integ_err([this,T,y,eta,mot](auto &&k) mutable {
-        return this->deg_entropy_fun(k,T,y,eta,mot,false); },
+        return this->deg_entropy_fun(k,T,y,eta,mot); },
         ll,ul,res,err,tol_rel);
       
       return 0;
@@ -398,6 +667,10 @@ namespace o2scl {
 
       fp_t zero=0;
       
+      if (verbose>1) {
+        std::cout << "Calling degenerate integrator for pressure "
+                  << "with tolerance: " << tol_rel << std::endl;
+      }
       it.integ_err([this,T,y,eta,mot](auto &&k) mutable {
         return this->deg_pressure_fun(k,T,y,eta,mot,false); },
         zero,ul,res,err,tol_rel);
@@ -2868,7 +3141,7 @@ namespace o2scl {
     
   };
 
-#ifdef O2SCL_NEVER_DEFINED
+#ifndef O2SCL_NEVER_DEFINED
   
   /** \brief Desc
    */
@@ -2984,6 +3257,63 @@ namespace o2scl {
     }
     
   };
+
+#ifndef O2SCL_NEVER_DEFINED
+  
+  /** \brief Desc
+  */
+  class fermion_rel_cdf252 : public
+  fermion_rel_tl<
+    // the fermion type
+    fermion_tl<cpp_dec_float_25>,
+    // the Fermi-Dirac integrator
+    fermi_dirac_integ_direct<
+      cpp_dec_float_25,funct_cdf35,25,cpp_dec_float_35>,
+    // the Bessel-exp integrator
+    bessel_K_exp_integ_direct<
+      cpp_dec_float_25,funct_cdf35,25,cpp_dec_float_35>,
+    fermion_rel_integ_multip2<cpp_dec_float_25>,
+    // The density solver
+    root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
+    // The parent solver for massless fermions
+    root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
+    // The function type
+    funct_cdf25,
+    // The floating-point type
+    cpp_dec_float_25> {
+
+  public:
+    
+    fermion_rel_cdf252() {
+
+      // See output of polylog_ts for numeric limit information
+      
+      // Tolerance for the integrator for massless fermions
+      this->fd_integ.set_tol(1.0e-25);
+
+      // Tolerance for the integrator for the nondegenerate expansion
+      this->be_integ.set_tol(1.0e-25);
+
+      // Internal function tolerances
+
+      this->exp_limit=1000000.0;
+      
+      // log(1.0e25) is 57.5
+      this->upper_limit_fac=58.0;
+      this->deg_entropy_fac=58.0;
+      this->tol_expan=1.0e-24;
+
+      // Solver tolerances
+      this->def_density_root.tol_abs=1.0e-25;
+      this->def_massless_root.tol_abs=1.0e-25;
+
+      // Integrator tolerances
+      fri.tol_rel=1.0e-23;
+    }
+    
+  };
+
+#endif
   
 }
 

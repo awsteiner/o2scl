@@ -432,7 +432,7 @@ namespace o2scl {
       // Demand that the function evaluations are higher precision
       double func_tol=pow(integ_tol,pow_tol_func);
 
-      double target_tol=integ_tol/10.0;
+      double target_tol=integ_tol/100.0;
       
       int ret;
 
@@ -615,13 +615,13 @@ namespace o2scl {
 
       if (verbose>0) {
         std::cout << "int_multip_tanh_sinh_boost::integ_iu_err(): set "
-                  << "tolerance to: " << integ_tol << std::endl;
+                  << "integ_tol to: " << integ_tol << std::endl;
       }
       
       // Demand that the function evaluations are higher precision
       double func_tol=pow(integ_tol,pow_tol_func);
 
-      double target_tol=integ_tol/10.0;
+      double target_tol=integ_tol/100.0;
       
       int ret;
 
@@ -630,7 +630,7 @@ namespace o2scl {
           std::cout << "int_multip_tanh_sinh_boost::integ_iu_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
-                    << "\n  for double integ_iuration." << std::endl;
+                    << "\n  for double integration." << std::endl;
         }
         double a_d=static_cast<double>(a);
         double res_d, err_d, L1norm_d;
@@ -652,7 +652,7 @@ namespace o2scl {
           std::cout << "int_multip_tanh_sinh_boost::integ_iu_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<long double>::digits10+3)
-                    << "\n  for long double integ_iuration." << std::endl;
+                    << "\n  for long double integration." << std::endl;
         }
         long double a_ld=static_cast<long double>(a);
         long double res_ld, err_ld, L1norm_ld;
@@ -676,7 +676,7 @@ namespace o2scl {
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
-                    << "\n  for cpp_dec_float_25 integ_iuration." << std::endl;
+                    << "\n  for cpp_dec_float_25 integration." << std::endl;
         }
         cpp_dec_float_25 a_cdf25=static_cast<cpp_dec_float_25>(a);
         cpp_dec_float_25 res_cdf25, err_cdf25, L1norm_cdf25;
@@ -701,7 +701,7 @@ namespace o2scl {
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
-                    << "\n  for cpp_dec_float_35 integ_iuration." << std::endl;
+                    << "\n  for cpp_dec_float_35 integration." << std::endl;
         }
         cpp_dec_float_35 a_cdf35=static_cast<cpp_dec_float_35>(a);
         cpp_dec_float_35 res_cdf35, err_cdf35, L1norm_cdf35;
@@ -726,7 +726,7 @@ namespace o2scl {
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
-                    << "\n  for cpp_dec_float_50 integ_iuration." << std::endl;
+                    << "\n  for cpp_dec_float_50 integration." << std::endl;
         }
         cpp_dec_float_50 a_cdf50=static_cast<cpp_dec_float_50>(a);
         cpp_dec_float_50 res_cdf50, err_cdf50, L1norm_cdf50;
@@ -751,7 +751,7 @@ namespace o2scl {
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_100>::digits10+3)
-                    << "\n  for cpp_dec_float_100 integ_iuration." << std::endl;
+                    << "\n  for cpp_dec_float_100 integration." << std::endl;
         }
         cpp_dec_float_100 a_cdf100=static_cast<cpp_dec_float_100>(a);
         cpp_dec_float_100 res_cdf100, err_cdf100, L1norm_cdf100;
