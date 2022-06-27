@@ -105,10 +105,10 @@ int main(void) {
     inte_multip_kronrod_boost<> imkb;
     imkb.verbose=2;
     std::cout << "1: " << std::endl;
-    imkb.integ_err([](auto &&t) mutable { return test_func(t); },
+    imkb.integ_err_multip([](auto &&t) mutable { return test_func(t); },
                    a,b,val,err2,1.0e-8);
     std::cout << "2: " << std::endl;
-    imkb.integ_err([](auto &&t) mutable { return test_func(t); },
+    imkb.integ_err_multip([](auto &&t) mutable { return test_func(t); },
                    a,b,val,err2);
     t.test_rel(val,exact,1.0e-15,"multip");
   }
