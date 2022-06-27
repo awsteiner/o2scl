@@ -113,8 +113,7 @@ namespace o2scl {
       be underestimated. 
       
    */
-  template<size_t rule=15> class inte_multip_kronrod_boost :
-    public inte<funct,double>{
+  template<size_t rule=15> class inte_multip_kronrod_boost {
     
   protected:
     
@@ -124,8 +123,8 @@ namespace o2scl {
     /** \brief Integrate function \c func from \c a to \c b and place
         the result in \c res and the error in \c err
     */
-    template <class fp_t>
-    int integ_err_funct(funct &f, fp_t a, fp_t b, 
+    template<typename func_t, class fp_t>
+    int integ_err_funct(func_t &f, fp_t a, fp_t b, 
                        fp_t &res, fp_t &err, fp_t &L1norm_loc,
                        double target_tol, double integ_tol) {
       int ret=0;
@@ -174,9 +173,12 @@ namespace o2scl {
 
       std::function<fp_t(fp_t)> fx=[fm2,func](fp_t x) mutable -> fp_t
       { return fm2(func,x); };
+
+      res=boost::math::quadrature::gauss_kronrod<fp_t,rule>::integrate
+        (fx,a,b,max_depth,target_tol,&err,&L1norm_loc);
       
-      integ_err_funct(fx,a,b,res,err,L1norm_loc,target_tol,
-                      integ_tol);
+      //integ_err_funct(fx,a,b,res,err,L1norm_loc,target_tol,
+      //integ_tol);
 
       return 0;
     }
@@ -252,8 +254,8 @@ namespace o2scl {
                   fp_t &res, fp_t &err) {
       
       fp_t L1norm_loc;
-      int ret=integ_err_int2(func,a,b,res,err,L1norm_loc,
-                             this->tol_rel,this->tol_rel/10.0);
+      int ret=integ_err_funct(func,a,b,res,err,L1norm_loc,
+                              this->tol_rel,this->tol_rel/10.0);
       
       if (ret!=0) {
         if (this->verbose>0) {
@@ -271,14 +273,6 @@ namespace o2scl {
       return 0;
     }
       
-    /** \brief Integrate function \c func from \c a to \c b and place
-        the result in \c res and the error in \c err
-    */
-    virtual int integ_err(funct &func, double a, double b, 
-                          double &res, double &err) {
-      return integ_err<double>(func,a,b,res,err);
-    }
-    
     /** \brief Calculate the first derivative of \c func  w.r.t. x and 
 	uncertainty
     */
