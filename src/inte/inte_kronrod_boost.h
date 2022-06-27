@@ -56,50 +56,47 @@ namespace o2scl {
     
   protected:
 
-    /// Maximum depth
-    size_t max_depth;
-    
+  /// Maximum depth
+  size_t max_depth;
+
   public:
+
+  inte_kronrod_boost() {
+    max_depth=15;
+  }
+  
+  virtual ~inte_kronrod_boost() {
+  }
+
+  /** \brief Set the maximum number of interval splittings
+   */
+  void set_max_depth(size_t md) {
+    max_depth=md;
+    return;
+  }
     
-    inte_kronrod_boost() {
-      max_depth=15;
-    }
-    
-    virtual ~inte_kronrod_boost() {
-    }
-    
-    /** \brief Set the maximum number of interval splittings
-     */
-    void set_max_depth(size_t md) {
-      max_depth=md;
-      return;
-    }
-    
-    /** \brief Integrate function \c func from \c a to \c b and place
-        the result in \c res and the error in \c err
-    */
-    virtual int integ_err(func_t &func, fp_t a, fp_t b, 
-                          fp_t &res, fp_t &err) {
-      
-      res=boost::math::quadrature::gauss_kronrod<fp_t,rule>::integrate
-        (func,a,b,max_depth,this->tol_rel,&err,&L1norm);
-      
-      if (err>this->tol_rel) {
-        if (this->verbose>0) {
-          std::cout << "Function inte_kronrod_boost::integ_err() failed."
-                    << std::endl;
-          std::cout << "Values err,tol_rel,L1norm,max: "
-                    << err << " " << this->tol_rel << " "
-                    << L1norm << " " << max_depth
-                    << std::endl;
-        }
-        O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_kronrod_boost::integ_err().",o2scl::exc_efailed,
-                        this->err_nonconv);
+  /** \brief Integrate function \c func from \c a to \c b and place
+      the result in \c res and the error in \c err
+  */
+  virtual int integ_err(func_t &func, fp_t a, fp_t b, 
+			fp_t &res, fp_t &err) {
+    res=boost::math::quadrature::gauss_kronrod<fp_t,rule>::integrate
+      (func,a,b,max_depth,this->tol_rel,&err,&L1norm);
+    if (err>this->tol_rel) {
+      if (this->verbose>0) {
+        std::cout << "Function inte_kronrod_boost::integ_err() failed."
+                  << std::endl;
+        std::cout << "Values err,tol_rel,L1norm,max: "
+                  << err << " " << this->tol_rel << " "
+                  << L1norm << " " << max_depth
+                  << std::endl;
       }
-      
-      return 0;
+      O2SCL_CONV2_RET("Failed to achieve tolerance in ",
+                      "inte_kronrod_boost::integ_err().",o2scl::exc_efailed,
+                      this->err_nonconv);
     }
+    return 0;
+  }
     
     /// L1 norm
     fp_t L1norm;
@@ -119,34 +116,7 @@ namespace o2scl {
     
     /// Maximum depth
     size_t max_depth;
-    
-    /** \brief Integrate function \c func from \c a to \c b and place
-        the result in \c res and the error in \c err
-    */
-    template<typename func_t, class fp_t>
-    int integ_err_funct(func_t &f, fp_t a, fp_t b, 
-                       fp_t &res, fp_t &err, fp_t &L1norm_loc,
-                       double target_tol, double integ_tol) {
-      int ret=0;
-      
-      res=boost::math::quadrature::gauss_kronrod<fp_t,rule>::integrate
-        (f,a,b,max_depth,target_tol,&err,&L1norm_loc);
-      this->L1norm=static_cast<double>(L1norm_loc);
-      
-      if (verbose>1) {
-        std::cout << "inte_multip_kronrod_boost::integ_err() "
-                  << "tols(target,integ),err:\n  "
-                  << target_tol << " " << integ_tol << " "
-                  << err << std::endl;
-      }
 
-      if (err>integ_tol) {
-        return 1;
-      }
-      
-      return ret;
-    }
-    
     /** \brief Integrate function \c func from \c a to \c b and place
         the result in \c res and the error in \c err
 
@@ -163,9 +133,8 @@ namespace o2scl {
     */
     template <typename func_t, class fp_t>
     int integ_err_int(func_t &&func, fp_t a, fp_t b, 
-                      fp_t &res, fp_t &err, fp_t &L1norm_loc,
-                      double target_tol, double integ_tol,
-                      double func_tol) {
+                      fp_t &res, fp_t &err, fp_t &L1norm,
+                      double target_tol, double integ_tol, double func_tol) {
       
       funct_multip fm2;
       fm2.err_nonconv=false;
@@ -175,16 +144,21 @@ namespace o2scl {
       { return fm2(func,x); };
 
       res=boost::math::quadrature::gauss_kronrod<fp_t,rule>::integrate
-        (fx,a,b,max_depth,target_tol,&err,&L1norm_loc);
-      
-      //integ_err_funct(fx,a,b,res,err,L1norm_loc,target_tol,
-      //integ_tol);
+        (fx,a,b,max_depth,target_tol,&err,&L1norm);
 
+      if (verbose>1) {
+        std::cout << "inte_multip_kronrod_boost::integ_err() "
+                  << "tols(target,integ,func),err:\n  "
+                  << target_tol << " " << integ_tol << " "
+                  << func_tol << " " << err << std::endl;
+      }
+
+      if (err>integ_tol) {
+        return 1;
+      }
       return 0;
     }
-
-    /// \name Typedefs for multiprecision
-    //@{
+    
     typedef boost::multiprecision::number<
     boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
     typedef boost::multiprecision::number<
@@ -193,7 +167,6 @@ namespace o2scl {
       boost::multiprecision::cpp_dec_float<50>> cpp_dec_float_50;
     typedef boost::multiprecision::number<
       boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
-    //@}
 
   public:
 
@@ -211,22 +184,11 @@ namespace o2scl {
      */
     double tol_rel;
 
-    /** \brief Relative tolerance
-     */
-    double tol_abs;
-
-    /** \brief Relative tolerance for multiprecision integrations
-     */
-    double tol_rel_multip;
-
     /** \brief Power for tolerance of function evaluations 
         (default 1.33)
      */
     double pow_tol_func;
 
-    /// L1 norm
-    double L1norm;
-    
     /** \brief Verbosity parameter
      */
     int verbose;
@@ -242,49 +204,20 @@ namespace o2scl {
       pow_tol_func=1.33;
       max_depth=15;
       err_nonconv=true;
-      tol_rel=1.0e-8;
-      tol_abs=1.0e-8;
     }
 
-    /** \brief Integrate function \c func from \c a to \c b and place
-        the result in \c res and the error in \c err
-    */
-    template<class fp_t>
-    int integ_err(funct &func, fp_t a, fp_t b, 
-                  fp_t &res, fp_t &err) {
-      
-      fp_t L1norm_loc;
-      int ret=integ_err_funct(func,a,b,res,err,L1norm_loc,
-                              this->tol_rel,this->tol_rel/10.0);
-      
-      if (ret!=0) {
-        if (this->verbose>0) {
-          std::cout << "Function inte_kronrod_boost::integ_err() failed."
-                    << std::endl;
-          std::cout << "Values err,tol_rel,L1norm,max: "
-                    << err << " " << this->tol_rel << " "
-                    << L1norm << " " << max_depth
-                    << std::endl;
-        }
-        O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_kronrod_boost::integ_err().",o2scl::exc_efailed,
-                        this->err_nonconv);
-      }
-      return 0;
-    }
-      
     /** \brief Calculate the first derivative of \c func  w.r.t. x and 
 	uncertainty
     */
     template <typename func_t, class fp_t>
-    int integ_err_multip(func_t &&func, fp_t a, fp_t b, 
-                         fp_t &res, fp_t &err, double integ_tol=-1.0) {
+    int integ_err(func_t &&func, fp_t a, fp_t b, 
+                  fp_t &res, fp_t &err, double integ_tol=-1.0) {
       
       if (integ_tol<=0.0) {
-        if (tol_rel_multip<=0.0) {
+        if (tol_rel<=0.0) {
           integ_tol=pow(10.0,-std::numeric_limits<fp_t>::digits10);
         } else {
-          integ_tol=tol_rel_multip;
+          integ_tol=tol_rel;
         }
       } 
 
