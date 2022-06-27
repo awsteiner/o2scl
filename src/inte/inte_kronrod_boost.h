@@ -329,11 +329,13 @@ namespace o2scl {
         }
       }
 
-      if (integ_tol>pow(10.0,-std::numeric_limits<long double>::digits10+3)) {
+      if (integ_tol>pow(10.0,
+                        -std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
           std::cout << "int_multip_kronrod_boost::integ_err(): "
                     << integ_tol << " > "
-                    << pow(10.0,-std::numeric_limits<long double>::digits10+3)
+                    << pow(10.0,
+                           -std::numeric_limits<long double>::digits10+3)
                     << "\n  for long double integration." << std::endl;
         }
         long double a_ld=static_cast<long double>(a);

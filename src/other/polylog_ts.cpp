@@ -24,10 +24,6 @@
 #include <o2scl/inte_adapt_cern.h>
 #include <o2scl/polylog.h>
 
-#ifdef O2SCL_POLYLOGARITHM
-#include <Li.hpp>
-#endif
-
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
