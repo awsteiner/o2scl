@@ -113,7 +113,8 @@ namespace o2scl {
       be underestimated. 
       
    */
-  template<size_t rule=15> class inte_multip_kronrod_boost {
+  template<size_t rule=15> class inte_multip_kronrod_boost :
+    public inte<funct,double>{
     
   protected:
     
@@ -270,6 +271,14 @@ namespace o2scl {
       return 0;
     }
       
+    /** \brief Integrate function \c func from \c a to \c b and place
+        the result in \c res and the error in \c err
+    */
+    virtual int integ_err(funct &func, double a, double b, 
+                          double &res, double &err) {
+      return integ_err<double>(func,a,b,res,err);
+    }
+    
     /** \brief Calculate the first derivative of \c func  w.r.t. x and 
 	uncertainty
     */
