@@ -720,7 +720,7 @@ namespace o2scl {
         I don't find any integrals for which this does 
         better than inte_tanh_sinh_boost.
      */
-    inte_kronrod_boost<funct_cdf25,61,fp1_t> dit25b;
+    inte_kronrod_boost<61> dit25b;
 
     /** \brief Alternate integrator
 
