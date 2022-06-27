@@ -49,15 +49,16 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
+  inte_multip_kronrod_boost<61> ikbm;
   {
-    inte_kronrod_boost<funct,61> ikb;
+    //inte_kronrod_boost<funct,61> ikb;
     
     double ans, exact, err;
     
     funct tf=test_func<double>;
     
     // Compare with the exact result
-    ikb.integ_err(tf,0.0,1.0,ans,err);
+    ikbm.integ_err(tf,0.0,1.0,ans,err);
     exact=cos(100.0)-cos(1/1.01);
     std::cout << ans << " " << err << std::endl;
     t.test_rel(ans,exact,1.0e-8,"qag test");
@@ -91,9 +92,10 @@ int main(void) {
     // Compare with the exact result
     ikb.tol_rel=1.0e-30;
     ikb.set_max_depth(25);
+    cpp_dec_float_50 zero=0;
     cpp_dec_float_50 one=1;
     cpp_dec_float_50 hundred=100;
-    ikb.integ_err(tf,0.0L,one,ans,err);
+    ikb.integ_err(tf,zero,one,ans,err);
     exact=cos(hundred)-cos(hundred/(hundred+one));
     std::cout << ans << " " << err << std::endl;
     t.test_rel_boost<cpp_dec_float_50>(ans,exact,1.0e-30,"qag test");

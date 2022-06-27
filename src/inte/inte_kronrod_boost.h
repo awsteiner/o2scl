@@ -254,9 +254,8 @@ namespace o2scl {
     /** \brief Integrate function \c func from \c a to \c b and place
         the result in \c res and the error in \c err
     */
-    template<class fp_t>
-    int integ_err(funct &func, fp_t a, fp_t b, 
-                  fp_t &res, fp_t &err) {
+    template<typename func_t, class fp_t>
+    int integ_err(func_t &func, fp_t a, fp_t b, fp_t &res, fp_t &err) {
       
       fp_t L1norm_loc;
       int ret=integ_err_funct(func,a,b,res,err,L1norm_loc,
