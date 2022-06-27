@@ -35,6 +35,8 @@
 
 namespace o2scl {
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   /** \brief Gauss-Kronrod integration class (Boost)
 
       The rule parameter should be either 15, 31, 41, 51, or 61. 
@@ -103,6 +105,8 @@ namespace o2scl {
     
   };
 
+#endif
+  
   /** \brief Gauss-Kronrod multiprecision integration class (Boost)
 
       \note The uncertainties reported by this class depend on those
@@ -110,7 +114,7 @@ namespace o2scl {
       be underestimated. 
       
   */
-  template<size_t rule=15> class inte_multip_kronrod_boost {
+  template<size_t rule=15> class inte_kronrod_boost {
     
   protected:
     
@@ -125,7 +129,7 @@ namespace o2scl {
                         fp_t &res, fp_t &err, fp_t &L1norm_loc,
                         double target_tol, double integ_tol) {
       int ret=0;
-      
+
       res=boost::math::quadrature::gauss_kronrod<fp_t,rule>::integrate
         (f,a,b,max_depth,target_tol,&err,&L1norm_loc);
       this->L1norm=static_cast<double>(L1norm_loc);
@@ -172,8 +176,6 @@ namespace o2scl {
 
       integ_err_funct(fx,a,b,res,err,L1norm_loc,target_tol,
                       integ_tol);
-      //res=boost::math::quadrature::gauss_kronrod<fp_t,rule>::integrate
-      //(fx,a,b,max_depth,target_tol,&err,&L1norm_loc);
 
       if (verbose>1) {
         std::cout << "inte_multip_kronrod_boost::integ_err() "
@@ -241,7 +243,7 @@ namespace o2scl {
     */
     bool err_nonconv;
     
-    inte_multip_kronrod_boost() {
+    inte_kronrod_boost() {
       tol_rel_multip=-1.0;
       verbose=0;
       pow_tol_func=1.33;
@@ -259,7 +261,7 @@ namespace o2scl {
       
       fp_t L1norm_loc;
       int ret=integ_err_funct(func,a,b,res,err,L1norm_loc,
-                              this->tol_rel,this->tol_rel/10.0);
+                              this->tol_rel/10.0,this->tol_rel);
       
       if (ret!=0) {
         if (this->verbose>0) {
