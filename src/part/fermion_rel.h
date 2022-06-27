@@ -319,6 +319,7 @@ namespace o2scl {
 
     fermion_rel_integ_multip2() {
       verbose=0;
+      it.pow_tol_func=1.5;
     }
     
     /// The integrand for the density for non-degenerate fermions

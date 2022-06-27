@@ -71,7 +71,8 @@ namespace o2scl {
 			  fp_t &res, fp_t &err) {
       // Dropping the tolerance by a factor of 10 seems to help
       // the boost integrator succeed.
-      res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm,&this->levels);
+      res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm,
+                       &this->levels);
       if (err>this->tol_rel) {
         if (this->verbose>0) {
           std::cout << "Function inte_tanh_sinh_boost::integ_err() failed."
@@ -352,9 +353,10 @@ namespace o2scl {
 
       if (verbose>1) {
         std::cout << "inte_multip_tanh_sinh_boost::integ_iu_err() "
-                  << "tols(target,integ,func),err:\n  "
+                  << "tols(target,integ,func),err,L1norm:\n  "
                   << target_tol << " " << integ_tol << " "
-                  << func_tol << " " << err << std::endl;
+                  << func_tol << " " << err << " "
+                  << L1norm << std::endl;
       }
 
       if (err>integ_tol) {

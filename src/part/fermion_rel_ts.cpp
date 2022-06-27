@@ -211,7 +211,7 @@ int main(void) {
 #endif
 #endif
 
-#ifndef O2SCL_NEVER_DEFINED
+#ifdef O2SCL_NEVER_DEFINED
   
   hdf_file hfx;
   hfx.open("../../data/o2scl/fermion_deriv_cal.o2");
