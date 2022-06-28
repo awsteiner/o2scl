@@ -475,6 +475,8 @@ namespace o2scl_acol {
         so try, e.g. 'acol -set precision 15 -calc π'.
     */
     virtual int comm_calcm(std::vector<std::string> &sv, bool itive_com);
+    
+    virtual int comm_integm(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Clear the current object
 

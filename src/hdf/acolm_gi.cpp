@@ -69,6 +69,11 @@ int acol_manager::comm_h5_copy(std::vector<std::string> &sv,
   return 0;
 }
 
+int acol_manager::comm_integm(std::vector<std::string> &sv, bool itive_com) {
+  
+  return 0;
+}
+
 int acol_manager::comm_get_grid(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {
