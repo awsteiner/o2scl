@@ -40,7 +40,7 @@ cpp_using o2scl
 #
 class thermo
 - py_class_doc |
-| Python interface for class :ref:`%name% <o2sclp:%name%_tl>`.
+| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - double ed
 - double pr
 - double en
@@ -49,7 +49,7 @@ class thermo
 #
 class part
 - py_class_doc |
-| Python interface for class :ref:`%name% <o2sclp:%name%_tl>`.
+| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - double g
 - double m
 - double ms
@@ -93,7 +93,7 @@ class quark
 #
 class fermion_zerot
 - py_class_doc |
-| Python interface for class :ref:`%name% <o2sclp:%name%_tl>`.
+| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - function kf_from_density
   - void
   - fermion &f
@@ -114,7 +114,7 @@ class fermion_zerot
 #
 class fermion_thermo abstract
 - py_class_doc |
-| Python interface for :ref:`%name% <o2sclp:%name%_tl>`.
+| Python interface for :ref:`%name% <o2scl:%name%_tl>`.
 - parent fermion_zerot
 - function calc_mu_deg
   - bool
@@ -148,7 +148,7 @@ class fermion_thermo abstract
 #   
 class fermion_rel
 - py_class_doc |
-| Python interface for class :ref:`%name% <o2sclp:%name%_tl>`.
+| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - parent fermion_thermo
 - bool err_nonconv
 - double min_psi
@@ -187,7 +187,7 @@ class fermion_rel
 #
 class fermion_nonrel
 - py_class_doc |
-| Python interface for class :ref:`%name% <o2sclp:%name%_tl>`.
+| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - parent fermion_zerot
 - function calc_density
   - int
@@ -236,7 +236,7 @@ class boson_rel
 #
 class classical_thermo
 - py_class_doc |
-| Python interface for class :ref:`%name% <o2sclp:%name%_tl>`.
+| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - function calc_density
   - void
   - part &p
@@ -250,7 +250,7 @@ class classical_thermo
 #
 class thermo_np_deriv_press
 - py_class_doc |
-| Python interface for class :ref:`%name% <o2sclp:%name%_tl>`.
+| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - double dsdT
 - double dnndT
 - double dnpdT
@@ -262,7 +262,7 @@ class thermo_np_deriv_press
 #
 class thermo_np_deriv_helm
 - py_class_doc |
-| Python interface for class :ref:`%name% <o2sclp:%name%_tl>`.
+| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - double dsdT
 - double dmundT
 - double dmupdT
@@ -274,7 +274,7 @@ class thermo_np_deriv_helm
 #
 class part_deriv_press
 - py_class_doc |
-| Python interface for class :ref:`%name% <o2sclp:%name%_tl>`.
+| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - double dndmu
 - double dndT
 - double dsdT
@@ -288,7 +288,7 @@ class part_deriv_press
 #
 class part_deriv
 - py_class_doc |
-| Python interface for class :ref:`%name% <o2sclp:%name%_tl>`.
+| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - parent part
 - parent part_deriv_press
 # 
@@ -296,7 +296,7 @@ class part_deriv
 #
 class fermion_deriv
 - py_class_doc |
-| Python interface for class :ref:`%name% <o2sclp:%name%_tl>`.
+| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - parent fermion
 - parent part_deriv_press
 # 
@@ -304,7 +304,7 @@ class fermion_deriv
 #
 class deriv_thermo_base
 - py_class_doc |
-| Python interface for class :ref:`%name% <o2sclp:%name%_tl>`.
+| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - function heat_cap_ppart_const_vol
   - double
   - part_deriv &p
@@ -334,7 +334,7 @@ class deriv_thermo_base
 #
 class fermion_deriv_rel
 - py_class_doc |
-| Python interface for class :ref:`%name% <o2sclp:%name%_tl>`.
+| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - double exp_limit
 - double deg_limit
 - double upper_limit_fac
@@ -369,7 +369,7 @@ class fermion_deriv_rel
 #
 class fermion_deriv_nr
 - py_class_doc |
-| Python interface for class :ref:`%name% <o2sclp:%name%_tl>`.
+| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - double flimit
 - fermion_deriv unc
 - function calc_density_zerot
@@ -395,7 +395,7 @@ class fermion_deriv_nr
 #
 class classical_deriv_thermo
 - py_class_doc |
-| Python interface for class :ref:`%name% <o2sclp:%name%_tl>`.
+| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - function calc_density
   - void
   - part_deriv &p
