@@ -303,7 +303,7 @@ namespace o2scl {
             fret==find_constants<fp_t>::one_pattern_match_unit_match) {
 
           typename find_constants<fp_t>::const_entry &fcl=matches[0];
-
+          
           vars.insert(std::make_pair(vsi2,fcl.val));
           if (verbose>1) {
             std::cout << "Function function_to_fp_nothrow(): "
@@ -323,13 +323,13 @@ namespace o2scl {
         }
       }
 
-      // No variables, so just evaluate
+      // Evaluate the expression with the variables assigned above
       int ret2=calc.eval_nothrow(&vars,result);
       if (ret2!=0) return ret2;
     
     } else {
 
-      // No variables, so just evaluate
+      // Evaluate the expression (no variables necessary)
       int ret2=calc.eval_nothrow(0,result);
       if (ret2!=0) return ret2;
     }
@@ -388,7 +388,327 @@ namespace o2scl {
     o2scl::convert_units<fp_t> &cu=o2scl_settings.get_convert_units();
     return cu.find_unique(name,unit);
   }
-  
+
+  /** \brief Evaluate a one-dimensional function from a string
+      at multiprecision
+   */
+  class funct_multip_string {
+
+  protected:
+    
+    /// \name Typedefs for multiprecision types
+    //@{
+    typedef boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<25> > cpp_dec_float_25;
+    typedef boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<35> > cpp_dec_float_35;
+    typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+    typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
+    //@}
+
+    /// \name The function evaluation objects
+    //@{
+    calc_utf8<double> c;
+    calc_utf8<long double> c_ld;
+    calc_utf8<cpp_dec_float_25> c_25;
+    calc_utf8<cpp_dec_float_35> c_35;
+    calc_utf8<cpp_dec_float_50> c_50;
+    calc_utf8<cpp_dec_float_100> c_100;
+    //@}
+
+    /// \name The unit conversion objects
+    //@{
+    convert_units<double> cu;
+    convert_units<long double> cu_ld;
+    convert_units<cpp_dec_float_25> cu_25;
+    convert_units<cpp_dec_float_35> cu_35;
+    convert_units<cpp_dec_float_50> cu_50;
+    convert_units<cpp_dec_float_100> cu_100;
+    //@}
+
+    /// \name The variable lists
+    //@{
+    std::map<std::string,double> vars;
+    std::map<std::string,long double> vars_ld;
+    std::map<std::string,cpp_dec_float_25> vars_25;
+    std::map<std::string,cpp_dec_float_35> vars_35;
+    std::map<std::string,cpp_dec_float_50> vars_50;
+    std::map<std::string,cpp_dec_float_100> vars_100;
+    //@}
+
+    /** \brief If true, then the most recent function has been
+        compiled in all of the function evaluation objects
+    */
+    bool compiled;
+    
+    /// The expression to be evaluated
+    std::string st_form;
+    
+    /// The variable
+    std::string st_var;
+
+  public:
+    
+    funct_multip_string() {
+      verbose=0;
+      err_nonconv=true;
+      compiled=false;
+    }
+
+    /** \brief Set the function to compute
+     */
+    int set_function(std::string expr, std::string var) {
+      st_form=expr;
+      st_var=var;
+      compiled=false;
+      return 0;
+    }
+
+    /** \brief Verbosity parameter
+     */
+    int verbose;
+
+    /** \brief If true, call the error handler if the function
+        evaluation fails
+     */
+    bool err_nonconv;
+
+    /** \brief Compute the function at the value \c x returning
+        \c value with uncertainty \c err
+     */
+    template<class fp_t> int eval_err(fp_t x, fp_t &val, fp_t &err) {
+    
+      // Tolerance
+      fp_t tol=pow(10.0,-std::numeric_limits<fp_t>::digits10+1);
+
+      if (compiled==false) {
+
+        c.verbose=verbose;
+        c_ld.verbose=verbose;
+        c_25.verbose=verbose;
+        c_35.verbose=verbose;
+        c_50.verbose=verbose;
+        c_100.verbose=verbose;
+        
+        c.compile(st_form.c_str());
+        c_ld.compile(st_form.c_str());
+        c_25.compile(st_form.c_str());
+        c_35.compile(st_form.c_str());
+        c_50.compile(st_form.c_str());
+        c_100.compile(st_form.c_str());
+        
+        std::vector<std::u32string> vs=c.get_var_list();
+        
+        // If there are undefined variables, then attempt to get them
+        // from the constant database
+        if (vs.size()!=0) {
+          
+          for(size_t i=0;i<vs.size();i++) {
+            
+            std::string vsi2;
+            char32_to_utf8(vs[i],vsi2);
+
+            if (vsi2!=st_var) {
+            
+              if (verbose>2) {
+                std::cout << "trying to find constant " << vsi2
+                          << std::endl;
+              }
+              
+              std::vector<typename find_constants<
+                double>::const_entry> matches;
+              int fret=cu.find_nothrow(vsi2,"mks",matches);
+              
+              if (fret==find_constants<
+                  double>::one_exact_match_unit_match ||
+                  fret==find_constants<
+                  double>::one_pattern_match_unit_match) {
+                
+                find_constants<double>::const_entry &fcl=matches[0];
+                vars.insert(std::make_pair(vsi2,fcl.val));
+                
+                std::vector<typename
+                            find_constants<long double>::const_entry>
+                  matches_ld;
+                cu_ld.find_nothrow(vsi2,"mks",matches_ld);
+                vars_ld.insert(std::make_pair(vsi2,matches_ld[0].val));
+                
+                std::vector<typename
+                            find_constants<cpp_dec_float_25>::const_entry>
+                  matches_25;
+                cu_25.find_nothrow(vsi2,"mks",matches_25);
+                vars_25.insert(std::make_pair(vsi2,matches_25[0].val));
+                
+                std::vector<typename
+                            find_constants<cpp_dec_float_35>::const_entry>
+                  matches_35;
+                cu_35.find_nothrow(vsi2,"mks",matches_35);
+                vars_35.insert(std::make_pair(vsi2,matches_35[0].val));
+                
+                std::vector<typename
+                            find_constants<cpp_dec_float_50>::const_entry>
+                  matches_50;
+                cu_50.find_nothrow(vsi2,"mks",matches_50);
+                vars_50.insert(std::make_pair(vsi2,matches_50[0].val));
+                
+                std::vector<typename
+                            find_constants<cpp_dec_float_100>::const_entry>
+                  matches_100;
+                cu_100.find_nothrow(vsi2,"mks",matches_100);
+                vars_100.insert(std::make_pair(vsi2,matches_100[0].val));
+                
+              }
+            }
+          }
+        }
+        
+        compiled=true;
+      }
+
+      vars[st_var]=static_cast<double>(x);
+      vars_ld[st_var]=static_cast<long double>(x);
+      vars_25[st_var]=static_cast<cpp_dec_float_25>(x);
+      vars_35[st_var]=static_cast<cpp_dec_float_35>(x);
+      vars_50[st_var]=static_cast<cpp_dec_float_50>(x);
+      vars_100[st_var]=static_cast<cpp_dec_float_100>(x);
+      
+      /// First pass, compare double and long double
+      
+      double y_d=c.eval(&vars);
+      long double y_ld=c_ld.eval(&vars_ld);
+
+      if (y_ld==0 && y_d==0) {
+        val=0;
+        err=0;
+        return 0;
+      }
+      if (y_ld!=0) {
+        err=static_cast<fp_t>(abs(y_ld-y_d)/abs(y_ld));
+        if (err<tol) {
+          val=static_cast<fp_t>(y_ld);
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 1: " << dtos(y_ld,0) << " "
+                  << dtos(y_d,0) << " "
+                  << dtos(err,0) << " " << tol << std::endl;
+      }
+    
+      /// Second pass, compare long double and 25-digit precision
+
+      cpp_dec_float_25 x_cdf25=static_cast<cpp_dec_float_25>(x);
+      cpp_dec_float_25 y_cdf25=c_25.eval(&vars_25);
+
+      if (y_cdf25==0 && y_ld==0) {
+        val=0;
+        err=0;
+        return 0;
+      }
+      if (y_cdf25!=0) {
+        err=static_cast<fp_t>(abs(y_cdf25-y_ld)/abs(y_cdf25));
+        if (err<tol) {
+          val=static_cast<fp_t>(y_cdf25);
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 2: " << dtos(y_cdf25,0) << " "
+                  << dtos(y_ld,0) << " "
+                  << dtos(err,0) << " " << tol << std::endl;
+      }
+    
+      /// Third pass, compare 25- and 35-digit precision
+
+      cpp_dec_float_35 x_cdf35=static_cast<cpp_dec_float_35>(x);
+      cpp_dec_float_35 y_cdf35=c_35.eval(&vars_35);
+        
+      if (y_cdf35==0 && y_cdf25==0) {
+        val=0;
+        err=0;
+        return 0;
+      }
+      if (y_cdf35!=0) {
+        err=static_cast<fp_t>(abs(y_cdf35-y_cdf25)/abs(y_cdf35));
+        if (err<tol) {
+          val=static_cast<fp_t>(y_cdf35);
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 3: " << dtos(y_cdf35,0) << " "
+                  << dtos(y_cdf25,0) << " "
+                  << dtos(err,0) << " " << tol << std::endl;
+      }
+    
+      /// Fourth pass, compare 35- and 50-digit precision
+      
+      cpp_dec_float_50 x_cdf50=static_cast<cpp_dec_float_50>(x);
+      cpp_dec_float_50 y_cdf50=c_50.eval(&vars_50);
+    
+      if (y_cdf50==0 && y_cdf35==0) {
+        val=0;
+        err=0;
+        return 0;
+      }
+      if (y_cdf50!=0) {
+        err=static_cast<fp_t>(abs(y_cdf50-y_cdf35)/abs(y_cdf50));
+        if (err<tol) {
+          val=static_cast<fp_t>(y_cdf50);
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 4: " << dtos(y_cdf50,0) << " "
+                  << dtos(y_cdf35,0) << " "
+                  << dtos(err,0) << " " << tol << std::endl;
+      }
+    
+      /// Final pass, compare 50- and 100-digit precision
+      
+      cpp_dec_float_100 x_cdf100=static_cast<cpp_dec_float_100>(x);
+      cpp_dec_float_100 y_cdf100=c_100.eval(&vars_100);
+      
+      if (y_cdf100==0 && y_cdf50==0) {
+        val=0;
+        err=0;
+        return 0;
+      }
+      if (y_cdf100!=0) {
+        err=static_cast<fp_t>(abs(y_cdf100-y_cdf50)/abs(y_cdf100));
+        if (err<tol) {
+          val=static_cast<fp_t>(y_cdf100);
+          return 0;
+        }
+      }
+      if (verbose>0) {
+        std::cout << "Failed 5: " << dtos(y_cdf100,0) << " "
+                  << dtos(y_cdf50,0) << " "
+                  << dtos(err,0) << " " << tol << std::endl;
+      
+      }
+    
+      /// Algorithm failed
+      O2SCL_CONV2("Failed to compute with requested accuracy ",
+                  "in funct_string2::eval_tol_err().",
+                  o2scl::exc_efailed,err_nonconv);
+      return o2scl::exc_efailed;
+    }
+
+    /** \brief Evaluate the function
+     */
+    template<class fp_t> fp_t operator()(fp_t x) {
+      fp_t res,err;
+      int ret=eval_err(x,res,err);
+      if (ret!=0) {
+        O2SCL_ERR("Failed 1.",o2scl::exc_einval);
+      }
+      return res;
+    }
+
+    
+  };
+    
 }
 
 extern "C" {

@@ -1015,6 +1015,104 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
+int acol_manager::comm_calcm(std::vector<std::string> &sv, bool itive_com) {
+
+  std::string i1;
+  if (sv.size()>1) {
+    i1=sv[1];
+  } else if (itive_com) {
+    i1=cl->cli_gets("Enter expression to compute (or blank to stop): ");
+    if (i1.length()==0) {
+      if (verbose>0) cout << "Command 'calc' cancelled." << endl;
+      return 0;
+    }
+  } else {
+    cerr << "No expression to compute in 'calc'." << endl;
+    return exc_efailed;
+  }
+
+  funct_multip_string fms;
+  fms.verbose=verbose;
+  fms.set_function(i1,"x");
+  
+  // Note the funct_multip_string object uses a tolerance of
+  // pow(10.0,-std::numeric_limits<fp_t>::digits10+1), a factor of 10
+  // different from digits10, and then when cout.precision is 6,
+  // actually 7 significant figures are output, so we need a two digit
+  // buffer thus, e.g., anything over 33 digit precision requires
+  // 35-digit floats.
+  
+  if (precision>48) {
+    
+    cerr << "Requested precision too large for the calcm "
+         << "command." << endl;
+    return 2;
+    
+  } else if (precision>33) {
+    
+    cpp_dec_float_50 d=0, err;
+    int retx=fms.eval_err(d,d,err);
+    if (retx!=0) {
+      cerr << "Converting " << i1 << " to value failed." << endl;
+      return 1;
+    }
+    if (verbose>0) cout << "Result (cpp_dec_float_50): ";
+    cout << dtos(d,precision) << endl;
+    return 0;
+    
+  } else if (precision>23) {
+    
+    cpp_dec_float_35 d=0, err;
+    int retx=fms.eval_err(d,d,err);
+    if (retx!=0) {
+      cerr << "Converting " << i1 << " to value failed." << endl;
+      return 1;
+    }
+    if (verbose>0) cout << "Result (cpp_dec_float_35): ";
+    cout << dtos(d,precision) << endl;
+    return 0;
+    
+  } else if (precision>16) {
+    
+    cpp_dec_float_25 d=0, err;
+    int retx=fms.eval_err(d,d,err);
+    if (retx!=0) {
+      cerr << "Converting " << i1 << " to value failed." << endl;
+      return 1;
+    }
+    if (verbose>0) cout << "Result (cpp_dec_float_25): ";
+    cout << dtos(d,precision) << endl;
+    
+    return 0;
+    
+  } else if (precision>13) {
+    
+    long double d=0, err;
+    int retx=fms.eval_err(d,d,err);
+    if (retx!=0) {
+      cerr << "Converting " << i1 << " to value failed." << endl;
+      return 1;
+    }
+    if (verbose>0) cout << "Result (long double): ";
+    cout << dtos(d,precision) << endl;
+    
+    return 0;
+  }
+
+  double d=0, err;
+  int retx=fms.eval_err(d,d,err);
+  if (retx!=0) {
+    cerr << "Converting " << i1 << " to value failed." << endl;
+    return 1;
+  }
+  if (scientific) cout.setf(ios::scientific);
+  else cout.unsetf(ios::scientific);
+  cout.precision(precision);
+  if (verbose>0) cout << "Result: ";
+  cout << d << endl;
+  return 0;
+}
+
 int acol_manager::comm_clear(std::vector<std::string> &sv, bool itive_com) {
 
   command_del(type);

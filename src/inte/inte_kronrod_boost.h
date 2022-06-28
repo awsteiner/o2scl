@@ -35,78 +35,6 @@
 
 namespace o2scl {
 
-#ifdef O2SCL_NEVER_DEFINED
-  
-  /** \brief Gauss-Kronrod integration class (Boost)
-
-      The rule parameter should be either 15, 31, 41, 51, or 61. 
-      
-      This class calls the error handler if the
-      error returned by boost is larger than \ref inte::tol_rel .
-
-      \future Figure out what to do with L1norm. The boost
-      documentation claims that "the error estimates provided by the
-      routine are woefully pessimistic" and the integral appears to be
-      correct, but the boost documentation also says "if there is a
-      significant difference between this [the L1 norm] and the
-      returned value, then the result is likely to be
-      ill-conditioned". It would be nice to test L1 norm in some
-      reasonable way.
-  */
-  template<class func_t=funct, size_t rule=15, class fp_t=double>
-  class inte_kronrod_boost : public inte<func_t,fp_t> {
-    
-  protected:
-
-    /// Maximum depth
-    size_t max_depth;
-
-  public:
-
-    inte_kronrod_boost() {
-      max_depth=15;
-    }
-  
-    virtual ~inte_kronrod_boost() {
-    }
-
-    /** \brief Set the maximum number of interval splittings
-     */
-    void set_max_depth(size_t md) {
-      max_depth=md;
-      return;
-    }
-    
-    /** \brief Integrate function \c func from \c a to \c b and place
-        the result in \c res and the error in \c err
-    */
-    virtual int integ_err(func_t &func, fp_t a, fp_t b, 
-                          fp_t &res, fp_t &err) {
-      res=boost::math::quadrature::gauss_kronrod<fp_t,rule>::integrate
-        (func,a,b,max_depth,this->tol_rel,&err,&L1norm);
-      if (err>this->tol_rel) {
-        if (this->verbose>0) {
-          std::cout << "Function inte_kronrod_boost::integ_err() failed."
-                    << std::endl;
-          std::cout << "Values err,tol_rel,L1norm,max: "
-                    << err << " " << this->tol_rel << " "
-                    << L1norm << " " << max_depth
-                    << std::endl;
-        }
-        O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_kronrod_boost::integ_err().",o2scl::exc_efailed,
-                        this->err_nonconv);
-      }
-      return 0;
-    }
-    
-    /// L1 norm
-    fp_t L1norm;
-    
-  };
-
-#endif
-  
   /** \brief Gauss-Kronrod multiprecision integration class (Boost)
 
       \note The uncertainties reported by this class depend on those
@@ -121,8 +49,12 @@ namespace o2scl {
     /// Maximum depth
     size_t max_depth;
     
-    /** \brief Integrate function \c func from \c a to \c b and place
-        the result in \c res and the error in \c err
+    /** \brief Internal integration wrapper of the boost function
+        which stores the L1 norm and tests if the uncertainty is
+        sufficiently small
+
+        This function is used by both \ref integ_err() and \ref
+        integ_err_int() .
     */
     template<typename func_t, class fp_t>
     int integ_err_funct(func_t &f, fp_t a, fp_t b, 
@@ -148,8 +80,8 @@ namespace o2scl {
       return ret;
     }
 
-    /** \brief Integrate function \c func from \c a to \c b and place
-        the result in \c res and the error in \c err
+    /** \brief Integrate function \c func, the internal wrapper
+        which uses a \ref funct_multip object
 
         There are three tolerances:
         - \c target_tol is the target tolerance which is sent to
@@ -161,6 +93,7 @@ namespace o2scl {
         - \c func_tol is the tolerance for evaluations of the 
         integrand. This value is passed to \ref o2scl::funct_multip.
 
+        This function is used by \ref integ_err_multip()
     */
     template <typename func_t, class fp_t>
     int integ_err_int(func_t &&func, fp_t a, fp_t b, 
@@ -201,23 +134,23 @@ namespace o2scl {
 
   public:
 
-    /** \brief Set the maximum number of interval splittings
-     */
-    void set_max_depth(size_t md) {
-      max_depth=md;
-      return;
+    inte_kronrod_boost() {
+      tol_rel_multip=-1.0;
+      verbose=0;
+      pow_tol_func=1.33;
+      max_depth=15;
+      err_nonconv=true;
+      tol_rel=1.0e-8;
+      tol_abs=1.0e-8;
     }
-    
-    /// Number of refinement levels in last integral computed
-    size_t levels;
-    
+
     /** \brief The maximum relative uncertainty for multipreicsion
 	integrals (default \f$ -1 \f$)
     */
     double tol_rel_multip;
 
-    /** \brief Power for tolerance of function evaluations 
-        (default 1.33)
+    /** \brief Power for tolerance of function evaluations in
+        multiprecision integrations (default 1.33)
     */
     double pow_tol_func;
 
@@ -243,16 +176,14 @@ namespace o2scl {
     */
     bool err_nonconv;
     
-    inte_kronrod_boost() {
-      tol_rel_multip=-1.0;
-      verbose=0;
-      pow_tol_func=1.33;
-      max_depth=15;
-      err_nonconv=true;
-      tol_rel=1.0e-8;
-      tol_abs=1.0e-8;
+    /** \brief Set the maximum number of interval splittings (default
+        15)
+     */
+    void set_max_depth(size_t md) {
+      max_depth=md;
+      return;
     }
-
+    
     /** \brief Integrate function \c func from \c a to \c b and place
         the result in \c res and the error in \c err
     */
@@ -279,8 +210,9 @@ namespace o2scl {
       return 0;
     }
 
-    /** \brief Calculate the first derivative of \c func  w.r.t. x and 
-	uncertainty
+    /** \brief Integrate function \c func from \c a to \c b using
+        multipreicsion, placing the result in \c res and the error in
+        \c err
     */
     template <typename func_t, class fp_t>
     int integ_err_multip(func_t &&func, fp_t a, fp_t b, 

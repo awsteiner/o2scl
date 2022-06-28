@@ -599,7 +599,6 @@ namespace o2scl {
     /// Create a unit-conversion object
     convert_units() {
       verbose=0;
-      units_cmd_string="units";
       err_on_fail=true;
       combine_two_conv=true;
       
@@ -1738,9 +1737,6 @@ namespace o2scl {
 
     /// If true, allow combinations of two conversions (default true)
     bool combine_two_conv;
-
-    /// Command string to call units (default "units")
-    std::string units_cmd_string;
     //@}
 
     /// \name Conversions which don't throw exceptions

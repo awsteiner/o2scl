@@ -51,6 +51,12 @@ int main(void) {
   cout << "config.h: " << endl;
   o2scl_settings.config_h_report();
 
+  funct_multip_string fms;
+  fms.set_function("log(1+x)","x");
+  fms.verbose=2;
+  double x=1.0e-4;
+  cout << dtos(fms(1.0e-4),0) << endl;
+  
   t.report();
   return 0;
 }
