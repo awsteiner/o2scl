@@ -14,9 +14,9 @@ Integration contents
 - :ref:`Non-adaptive quadrature integration coefficients`
 
 ..
-
   This section is commented out for now
 
+..
   - :ref:`Multi-dimensional integration routines`
   
 One-dimensional integration based on GSL, CERNLIB, and Boost
@@ -239,7 +239,6 @@ errors:
   moments is reached.
 
 ..
-
   This section is commented out for now
   
   Multi-dimensional integration routines

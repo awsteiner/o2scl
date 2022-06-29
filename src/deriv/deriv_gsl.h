@@ -370,14 +370,14 @@ namespace o2scl {
       \verbatim embed:rst
       .. todo:: 
 
-      In class deriv_multip_gsl:
+         In class deriv_multip_gsl:
 
-      - More carefully optimize pow_tol_func and the 
-      stepsize guesses.
-      - Allow the user to specify the value of 'h' 
-      for the individual derivative objects.
-      - Allow the user to determine how many function evaluations
-      or precision required for the last derivative.
+         - More carefully optimize pow_tol_func and the 
+           stepsize guesses.
+         - Allow the user to specify the value of 'h' 
+           for the individual derivative objects.
+         - Allow the user to determine how many function evaluations
+           or precision required for the last derivative.
 
       \endverbatim
   */

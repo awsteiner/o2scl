@@ -9,9 +9,6 @@ Bibliography
    <https://doi.org/10.1103/PhysRevC.58.1804>`_,
    Phys. Rev. C **58** (1998) 1804.
 
-.. [Klimt90] : S. Klimt, M. Lutz, U. Vogl, and W. Weise,
-   Nucl. Phys. A **516** (1990) 429.
-
 .. [Alaverdyan21] : `G. Alaverdyan
    <https://doi.org/10.3390/sym13010124>`_,
    Symmetry **13** (2021) .
@@ -316,6 +313,10 @@ Bibliography
 .. [Kelley99] : C. T. Kelley,
    `Iterative methods for optimization <https://www.worldcat.org/isbn/9780898714333>`_,
    (1999) SIAM, Philadelphia.
+
+.. [Klimt90] : `S. Klimt, M. Lutz, U. Vogl, and W. Weise
+   <https://doi.org/10.1016/0375-9474(90)90123-4>`_,
+   Nucl. Phys. A **516** (1990) 429.
 
 .. [Komatsu89] : `H. Komatsu, Y. Eriguchi, and I. Hachisu
    <https://doi.org/10.1093/mnras/237.2.355>`_,

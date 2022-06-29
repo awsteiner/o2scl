@@ -94,9 +94,9 @@ namespace o2scl {
       \verbatim embed:rst
       .. todo::
 
-      In class convert_units:
+         In class convert_units:
 
-      - (Future) Add G=1. 
+         - (Future) Add G=1. 
 
       \endverbatim
   */

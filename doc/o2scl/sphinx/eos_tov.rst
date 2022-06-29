@@ -12,7 +12,7 @@ curve and the properties of any star of a given mass.
 
 The EOS is typically specified using :ref:`eos_tov_interp
 <eos_tov_interp>` which uses linear interpolation to interpolate a
-user-specified :ref:`table <o2scl:table>` object. A faster lower-level
+user-specified :ref:`table <table>` object. A faster lower-level
 EOS interpolation is performed by :ref:`eos_tov_vectors
 <eos_tov_vectors>`. The Buchdahl EOS is given in
 :ref:`eos_tov_buchdahl <eos_tov_buchdahl>`, a single polytrope EOS is

@@ -106,9 +106,9 @@ associated generated contours. The figure clearly shows the peaks at
    :width: 60%	   
    :alt: alt text
 
-The :ref:`contour` class can also use interpolation to 
-attempt to refine the data grid. The new contours after a 
-refinement of a factor of 5 is given in the figure below.
+The :ref:`contour <contour>` class can also use interpolation to
+attempt to refine the data grid. The new contours after a refinement
+of a factor of 5 is given in the figure below.
     
 .. image:: ../../../examples/plot/ex_contour_plot2.png
    :width: 60%	   
