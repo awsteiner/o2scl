@@ -124,27 +124,30 @@ namespace o2scl {
       (ensuring that the argument to the square root is positive) and
       \f$ \beta=G M/R<1/6 \f$ (ensuring that the EOS is not acausal).
 
-      The baryon chemical potential is
+      The (baryon) chemical potential is
       \f[
       \mu = \mu_1 
       \left(\sqrt{P_1}-3\sqrt{P^{*}}\right)^{1/2}
       \left(\sqrt{P}-3\sqrt{P^{*}}\right)^{-1/2}
       \f]
-      The baryon density is 
-      \f[
-      n_B = n_{B,1} + 12 \frac{\sqrt{P^{*} P}}{\mu_1}
-      \left(1 - \frac{\sqrt{P}}{3 \sqrt{P^{*}}} \right)^{3/2}
-      \left(1 - \frac{\sqrt{P_1}}{3 \sqrt{P^{*}}}\right)^{-1/2}
-      \f]
+      where \f$ \mu_1 \f$ is the chemical potential at \f$ P=P_1 \f$.
+      The baryon density, as a function of \f$ P \f$ can be obtained
+      from \f$ n_B=(\varepsilon+P)/\mu \f$. In \o2, the parameters \f$
+      \mu_1 \f$ and \f$ P_1 \f$ are expressed in terms of the baryon
+      density (\f$ n_{B,1} \f$) and energy density (\f$ \varepsilon_1
+      \f$) instead, and can be set in \ref set_baryon_density().
 
-      In the case that one
-      assumes \f$ \mu_1 = m_n \f$ at \f$ P_1 = 0 \f$, the baryon
-      density can be simplified to
+      Without loss of generality, one can choose \f$ P_1 = 0 \f$,
+      leaving \f$ \mu_1 \f$, the value of the chemical potential when
+      \f$ P=0 \f$, as the remaining parameter. In analogy to the case
+      of nucleonic matter, one can choose \f$ mu_1 = m \f$ where \f$ m
+      \f$ is the nucleon mass. Then, the baryon density can be
+      simplified to
       \f[
       n m_n = 12 \sqrt{P p_{*}} \left( 1-\frac{1}{3} \sqrt{P/p_{*}} 
       \right)^{3/2}
       \f]
-      c.f. Eq. 10 in Lattimer et al. (2001)
+      c.f. Eq. 10 in Lattimer et al. (2001).
 
       The mass-radius curve is the solution of the equation
       \f[
@@ -331,7 +334,7 @@ namespace o2scl {
   /** \brief Standard polytropic EOS \f$ P = K \varepsilon^{1+1/n} \f$
 
       The quantity \f$ K \f$ must be in units of 
-      \f$ \left(M_{\odot}/km^3\right)^{-1/n} \f$ .
+      \f$ \left(\mathrm{M}_{\odot}/\mathrm{km}^3\right)^{-1/n} \f$ .
 
       \comment
       The documentation below was taken from bamr.
@@ -441,15 +444,37 @@ namespace o2scl {
       the baryon density, if one calls \ref set_baryon_density() to
       set the baryon density at one fiducial energy density.
 
-      Given a fiducial baryon density \f$ n_{B,1} \f$ at
-      some energy density \f$ \varepsilon_1 \f$ and pressure
-      \f$ P_1 \f$, the baryon density is
+      Given a fiducial baryon density \f$ n_{B,1} \f$ at some energy
+      density \f$ \varepsilon_1 \f$ and pressure \f$ P_1 =
+      c_s^2(\varepsilon_1-\varepsilon) \f$, the baryon density is
       \f[
       n_B = n_{B,1} \left[ \frac{\varepsilon(1+c_s^2) - 
       c_s^2 \varepsilon_0 } {\varepsilon_1 (1 + c_s^2) - 
       c_s^2 \varepsilon_0}\right]^{1/(1+c_s^2)} = 
       n_{B,1} \left[ \frac{ \varepsilon + P }
       {\varepsilon_1 + P_1} \right]^{1/(1+c_s^2)}
+      \f]
+
+      \note AWS, 6/29/22: As can be seen from this expression, if \f$
+      \epsilon_0 =0 \f$, then I don't think one can take \f$
+      \varepsilon_1=P_1=0 \f$ because the baryon density does not have
+      a finite value at that point, independent of the value of \f$
+      n_{B,1} \f$.
+
+      One can write the energy density as a function of the
+      baryon density
+      \f[
+      \varepsilon = \varepsilon_0 \left(\frac{c_s^2}{1+c_s^2}\right) + 
+      \left(\frac{\varepsilon_1+P_1}{1+c_s^2}\right)
+      \left(\frac{n_B}{n_{B,1}}\right)^{1+c_s^2} 
+      \f]
+      which has the form of a constant term plus a power-law
+      in the density with exponent \f$ 1+c_s^2 \f$. The pressure
+      is 
+      \f[
+      P = c_s^2 \left[\varepsilon_1 - \left(\frac{c_s^2 \varepsilon_0}
+      {1+c_s^2}\right)\right] \left(\frac{n_B}{n_{B,1}}\right)^{1+c_s^2} 
+      - \varepsilon_0 \left(\frac{c_s^2}{1+c_s^2}\right) 
       \f]
 
       \note Experimental
