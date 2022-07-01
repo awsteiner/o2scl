@@ -38,6 +38,14 @@ using namespace o2scl_acol;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
+/*
+  int acol_manager::comm_list()
+  int acol_manager::comm_max()
+  int acol_manager::comm_min()
+  int acol_manager::comm_nlines()
+  int acol_manager::comm_output()
+*/
+
 int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
 
   cout.precision(precision);
@@ -135,6 +143,300 @@ int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
     cerr << "Cannot 'list' for type " << type << "." << endl;
     return exc_efailed;
   }
+  return 0;
+}
+
+int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="table3d") {
+
+    if (table3d_obj.get_nslices()==0) {
+      cerr << "No slices to find the maximum value of." << endl;
+      return exc_efailed;
+    }
+    
+    std::string i1;
+    int ret=get_input_one(sv,"Enter slice to find maximum value of",
+			  i1,"max",itive_com);
+    if (ret!=0) return ret;
+
+    size_t ix;
+    if (!table3d_obj.is_slice(i1,ix)) {
+      cerr << "No slice named '" << i1 << "'." << endl;
+      return exc_efailed;
+    }
+    
+    const ubmatrix &mat=table3d_obj.get_slice(ix);
+    size_t i, j;
+    double max;
+    matrix_max_index(mat,i,j,max);
+
+    cout << "Maximum value of slice '" << i1 << "' is: " 
+	 << max << " at indices (" << i << "," << j << ")\n  and grid "
+	 << "point (" << table3d_obj.get_grid_x(i) << ","
+	 << table3d_obj.get_grid_y(j) << ")." << endl;
+
+  } else if (type=="hist_2d") {
+    
+    const ubmatrix &mat=hist_2d_obj.get_wgts();
+    size_t i, j;
+    double max;
+    matrix_max_index(mat,i,j,max);
+    
+    cout << "Maximum weight is: "
+	 << max << " at indices (" << i << "," << j << ")\n  and grid "
+	 << "point (" << table3d_obj.get_grid_x(i) << ","
+	 << table3d_obj.get_grid_y(j) << ")." << endl;
+
+  } else if (type=="table") {
+    
+    if (table_obj.get_nlines()==0) {
+      cerr << "No table with columns to find the maximum value of." << endl;
+      return exc_efailed;
+    }
+    
+    std::string i1;
+    int ret=get_input_one(sv,"Enter column to find maximum value of",
+			  i1,"max",itive_com);
+    if (ret!=0) return ret;
+    
+    if (table_obj.is_column(i1)==false) {
+      cerr << "Could not find column named '" << i1 << "'." << endl;
+      return exc_efailed;
+    }
+    
+    double max;
+    size_t ix;
+    vector_max(table_obj.get_nlines(),(table_obj)[i1],ix,max);
+    cout << "Maximum value of column '" << i1 << "' is: " 
+	 << max << " at row with index " << ix << "." << endl;
+
+  } else if (type=="double[]") {
+
+    double val;
+    size_t loc;
+    o2scl::vector_max<vector<double>,double>(doublev_obj.size(),
+					     doublev_obj,loc,val);
+    cout << "Maximum value is " << val << " at index "
+	 << loc << endl;
+    
+  } else if (type=="tensor") {
+
+    double val;
+    size_t loc;
+    const vector<double> &v=tensor_obj.get_data();
+    o2scl::vector_max<vector<double>,double>(v.size(),v,loc,val);
+    vector<size_t> ix(tensor_obj.get_rank());
+    tensor_obj.unpack_index(loc,ix);
+    cout << "Maximum value is " << val << " at indices ";
+    vector_out(cout,ix,true);
+    
+  } else if (type=="tensor<size_t>") {
+
+    size_t val;
+    size_t loc;
+    const vector<size_t> &v=tensor_size_t_obj.get_data();
+    o2scl::vector_max<vector<size_t>,size_t>(v.size(),v,loc,val);
+    vector<size_t> ix(tensor_size_t_obj.get_rank());
+    tensor_size_t_obj.unpack_index(loc,ix);
+    cout << "Maximum value is " << val << " at indices ";
+    vector_out(cout,ix,true);
+    
+  } else if (type=="tensor<int>") {
+
+    int val;
+    size_t loc;
+    const vector<int> &v=tensor_int_obj.get_data();
+    o2scl::vector_max<vector<int>,int>(v.size(),v,loc,val);
+    vector<size_t> ix(tensor_int_obj.get_rank());
+    tensor_int_obj.unpack_index(loc,ix);
+    cout << "Maximum value is " << val << " at indices ";
+    vector_out(cout,ix,true);
+    
+  } else if (type=="tensor_grid") {
+
+    double val;
+    size_t loc;
+    const vector<double> &v=tensor_grid_obj.get_data();
+    o2scl::vector_max<vector<double>,double>(v.size(),v,loc,val);
+    vector<size_t> ix(tensor_grid_obj.get_rank());
+    vector<double> dx(tensor_grid_obj.get_rank());
+    tensor_grid_obj.unpack_index(loc,ix);
+    for(size_t j=0;j<tensor_grid_obj.get_rank();j++) {
+      dx[j]=tensor_grid_obj.get_grid(j,ix[j]);
+    }
+    cout << "Maximum value is " << val << " at indices ";
+    vector_out(cout,ix,true);
+    cout << "  and grid point ";
+    vector_out(cout,dx,true);
+    
+  } else if (type=="int[]") {
+    
+    int val;
+    size_t loc;
+    o2scl::vector_max<vector<int>,int>(intv_obj.size(),
+				       intv_obj,loc,val);
+    cout << "Maximum value is " << val << " at index "
+	 << loc << endl;
+    
+  } else if (type=="size_t[]") {
+    
+    size_t val;
+    size_t loc;
+    o2scl::vector_max<vector<size_t>,size_t>(size_tv_obj.size(),
+					     size_tv_obj,loc,val);
+    cout << "Maximum value is " << val << " at index "
+	 << loc << endl;
+    
+  }
+  
+  return 0;
+}
+
+int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="table3d") {
+
+    if (type!="table3d" || table3d_obj.get_nslices()==0) {
+      cerr << "No table3d with slices to find the minimum value of." << endl;
+      return exc_efailed;
+    }
+    
+    std::string i1;
+    int ret=get_input_one(sv,"Enter slice to find minimum of",
+			  i1,"min",itive_com);
+    if (ret!=0) return ret;
+
+    size_t ix;
+    if (!table3d_obj.is_slice(i1,ix)) {
+      cerr << "No slice named '" << i1 << "'." << endl;
+      return exc_efailed;
+    }
+    
+    const ubmatrix &mat=table3d_obj.get_slice(ix);
+    size_t i, j;
+    double min;
+    matrix_min_index(mat,i,j,min);
+
+    cout << "Minimum value of slice '" << i1 << "' is: " 
+	 << min << " at indices (" << i << "," << j << ")\n  and grid "
+	 << "point (" << table3d_obj.get_grid_x(i) << ","
+	 << table3d_obj.get_grid_y(j) << ")." << endl;
+
+  } else if (type=="hist_2d") {
+    
+    const ubmatrix &mat=hist_2d_obj.get_wgts();
+    size_t i, j;
+    double min;
+    matrix_min_index(mat,i,j,min);
+    
+    cout << "Minimum weight is: "
+	 << min << " at indices (" << i << "," << j << ")\n  and grid "
+	 << "point (" << table3d_obj.get_grid_x(i) << ","
+	 << table3d_obj.get_grid_y(j) << ")." << endl;
+
+  } else if (type=="table") {
+    
+    if (table_obj.get_nlines()==0) {
+      cerr << "No table with columns to find the minimum value of." << endl;
+      return exc_efailed;
+    }
+    
+    std::string i1;
+    int ret=get_input_one(sv,"Enter column to find minimum of",
+			  i1,"min",itive_com);
+    if (ret!=0) return ret;
+    
+    if (table_obj.is_column(i1)==false) {
+      cerr << "Could not find column named '" << i1 << "'." << endl;
+      return exc_efailed;
+    }
+    
+    double min;
+    size_t ix;
+    vector_min(table_obj.get_nlines(),(table_obj)[i1],ix,min);
+    cout << "Minimum value of column '" << i1 << "' is: " 
+	 << min << " at row with index " << ix << "." << endl;
+    
+  } else if (type=="double[]") {
+
+    double val;
+    size_t loc;
+    o2scl::vector_min<vector<double>,double>(doublev_obj.size(),
+					     doublev_obj,loc,val);
+    cout << "Minimum value is " << val << " at index "
+	 << loc << endl;
+    
+  } else if (type=="tensor") {
+
+    double val;
+    size_t loc;
+    const vector<double> &v=tensor_obj.get_data();
+    o2scl::vector_min<vector<double>,double>(v.size(),v,loc,val);
+    vector<size_t> ix(tensor_obj.get_rank());
+    tensor_obj.unpack_index(loc,ix);
+    cout << "Minimum value is " << val << " at indices ";
+    vector_out(cout,ix,true);
+    
+  } else if (type=="tensor<size_t>") {
+
+    size_t val;
+    size_t loc;
+    const vector<size_t> &v=tensor_size_t_obj.get_data();
+    o2scl::vector_max<vector<size_t>,size_t>(v.size(),v,loc,val);
+    vector<size_t> ix(tensor_size_t_obj.get_rank());
+    tensor_size_t_obj.unpack_index(loc,ix);
+    cout << "Maximum value is " << val << " at indices ";
+    vector_out(cout,ix,true);
+    
+  } else if (type=="tensor<int>") {
+
+    int val;
+    size_t loc;
+    const vector<int> &v=tensor_int_obj.get_data();
+    o2scl::vector_max<vector<int>,int>(v.size(),v,loc,val);
+    vector<size_t> ix(tensor_int_obj.get_rank());
+    tensor_int_obj.unpack_index(loc,ix);
+    cout << "Maximum value is " << val << " at indices ";
+    vector_out(cout,ix,true);
+    
+  } else if (type=="tensor_grid") {
+
+    double val;
+    size_t loc;
+    const vector<double> &v=tensor_grid_obj.get_data();
+    o2scl::vector_min<vector<double>,double>(v.size(),v,loc,val);
+    vector<size_t> ix(tensor_grid_obj.get_rank());
+    vector<double> dx(tensor_grid_obj.get_rank());
+    tensor_grid_obj.unpack_index(loc,ix);
+    for(size_t j=0;j<tensor_grid_obj.get_rank();j++) {
+      dx[j]=tensor_grid_obj.get_grid(j,ix[j]);
+    }
+    cout << "Minimum value is " << val << " at indices ";
+    vector_out(cout,ix,true);
+    cout << "  and grid point ";
+    vector_out(cout,dx,true);
+    
+  } else if (type=="int[]") {
+    
+    int val;
+    size_t loc;
+    o2scl::vector_min<vector<int>,int>(intv_obj.size(),
+				       intv_obj,loc,val);
+    cout << "Minimum value is " << val << " at index "
+	 << loc << endl;
+    
+  } else if (type=="size_t[]") {
+    
+    size_t val;
+    size_t loc;
+    o2scl::vector_min<vector<size_t>,size_t>(size_tv_obj.size(),
+					     size_tv_obj,loc,val);
+    cout << "Minimum value is " << val << " at index "
+	 << loc << endl;
+    
+  }
+  
   return 0;
 }
 
@@ -481,300 +783,6 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
   if (sv.size()!=1) {
     ffout.close();
-  }
-  
-  return 0;
-}
-
-int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
-
-  if (type=="table3d") {
-
-    if (table3d_obj.get_nslices()==0) {
-      cerr << "No slices to find the maximum value of." << endl;
-      return exc_efailed;
-    }
-    
-    std::string i1;
-    int ret=get_input_one(sv,"Enter slice to find maximum value of",
-			  i1,"max",itive_com);
-    if (ret!=0) return ret;
-
-    size_t ix;
-    if (!table3d_obj.is_slice(i1,ix)) {
-      cerr << "No slice named '" << i1 << "'." << endl;
-      return exc_efailed;
-    }
-    
-    const ubmatrix &mat=table3d_obj.get_slice(ix);
-    size_t i, j;
-    double max;
-    matrix_max_index(mat,i,j,max);
-
-    cout << "Maximum value of slice '" << i1 << "' is: " 
-	 << max << " at indices (" << i << "," << j << ")\n  and grid "
-	 << "point (" << table3d_obj.get_grid_x(i) << ","
-	 << table3d_obj.get_grid_y(j) << ")." << endl;
-
-  } else if (type=="hist_2d") {
-    
-    const ubmatrix &mat=hist_2d_obj.get_wgts();
-    size_t i, j;
-    double max;
-    matrix_max_index(mat,i,j,max);
-    
-    cout << "Maximum weight is: "
-	 << max << " at indices (" << i << "," << j << ")\n  and grid "
-	 << "point (" << table3d_obj.get_grid_x(i) << ","
-	 << table3d_obj.get_grid_y(j) << ")." << endl;
-
-  } else if (type=="table") {
-    
-    if (table_obj.get_nlines()==0) {
-      cerr << "No table with columns to find the maximum value of." << endl;
-      return exc_efailed;
-    }
-    
-    std::string i1;
-    int ret=get_input_one(sv,"Enter column to find maximum value of",
-			  i1,"max",itive_com);
-    if (ret!=0) return ret;
-    
-    if (table_obj.is_column(i1)==false) {
-      cerr << "Could not find column named '" << i1 << "'." << endl;
-      return exc_efailed;
-    }
-    
-    double max;
-    size_t ix;
-    vector_max(table_obj.get_nlines(),(table_obj)[i1],ix,max);
-    cout << "Maximum value of column '" << i1 << "' is: " 
-	 << max << " at row with index " << ix << "." << endl;
-
-  } else if (type=="double[]") {
-
-    double val;
-    size_t loc;
-    o2scl::vector_max<vector<double>,double>(doublev_obj.size(),
-					     doublev_obj,loc,val);
-    cout << "Maximum value is " << val << " at index "
-	 << loc << endl;
-    
-  } else if (type=="tensor") {
-
-    double val;
-    size_t loc;
-    const vector<double> &v=tensor_obj.get_data();
-    o2scl::vector_max<vector<double>,double>(v.size(),v,loc,val);
-    vector<size_t> ix(tensor_obj.get_rank());
-    tensor_obj.unpack_index(loc,ix);
-    cout << "Maximum value is " << val << " at indices ";
-    vector_out(cout,ix,true);
-    
-  } else if (type=="tensor<size_t>") {
-
-    size_t val;
-    size_t loc;
-    const vector<size_t> &v=tensor_size_t_obj.get_data();
-    o2scl::vector_max<vector<size_t>,size_t>(v.size(),v,loc,val);
-    vector<size_t> ix(tensor_size_t_obj.get_rank());
-    tensor_size_t_obj.unpack_index(loc,ix);
-    cout << "Maximum value is " << val << " at indices ";
-    vector_out(cout,ix,true);
-    
-  } else if (type=="tensor<int>") {
-
-    int val;
-    size_t loc;
-    const vector<int> &v=tensor_int_obj.get_data();
-    o2scl::vector_max<vector<int>,int>(v.size(),v,loc,val);
-    vector<size_t> ix(tensor_int_obj.get_rank());
-    tensor_int_obj.unpack_index(loc,ix);
-    cout << "Maximum value is " << val << " at indices ";
-    vector_out(cout,ix,true);
-    
-  } else if (type=="tensor_grid") {
-
-    double val;
-    size_t loc;
-    const vector<double> &v=tensor_grid_obj.get_data();
-    o2scl::vector_max<vector<double>,double>(v.size(),v,loc,val);
-    vector<size_t> ix(tensor_grid_obj.get_rank());
-    vector<double> dx(tensor_grid_obj.get_rank());
-    tensor_grid_obj.unpack_index(loc,ix);
-    for(size_t j=0;j<tensor_grid_obj.get_rank();j++) {
-      dx[j]=tensor_grid_obj.get_grid(j,ix[j]);
-    }
-    cout << "Maximum value is " << val << " at indices ";
-    vector_out(cout,ix,true);
-    cout << "  and grid point ";
-    vector_out(cout,dx,true);
-    
-  } else if (type=="int[]") {
-    
-    int val;
-    size_t loc;
-    o2scl::vector_max<vector<int>,int>(intv_obj.size(),
-				       intv_obj,loc,val);
-    cout << "Maximum value is " << val << " at index "
-	 << loc << endl;
-    
-  } else if (type=="size_t[]") {
-    
-    size_t val;
-    size_t loc;
-    o2scl::vector_max<vector<size_t>,size_t>(size_tv_obj.size(),
-					     size_tv_obj,loc,val);
-    cout << "Maximum value is " << val << " at index "
-	 << loc << endl;
-    
-  }
-  
-  return 0;
-}
-
-int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
-
-  if (type=="table3d") {
-
-    if (type!="table3d" || table3d_obj.get_nslices()==0) {
-      cerr << "No table3d with slices to find the minimum value of." << endl;
-      return exc_efailed;
-    }
-    
-    std::string i1;
-    int ret=get_input_one(sv,"Enter slice to find minimum of",
-			  i1,"min",itive_com);
-    if (ret!=0) return ret;
-
-    size_t ix;
-    if (!table3d_obj.is_slice(i1,ix)) {
-      cerr << "No slice named '" << i1 << "'." << endl;
-      return exc_efailed;
-    }
-    
-    const ubmatrix &mat=table3d_obj.get_slice(ix);
-    size_t i, j;
-    double min;
-    matrix_min_index(mat,i,j,min);
-
-    cout << "Minimum value of slice '" << i1 << "' is: " 
-	 << min << " at indices (" << i << "," << j << ")\n  and grid "
-	 << "point (" << table3d_obj.get_grid_x(i) << ","
-	 << table3d_obj.get_grid_y(j) << ")." << endl;
-
-  } else if (type=="hist_2d") {
-    
-    const ubmatrix &mat=hist_2d_obj.get_wgts();
-    size_t i, j;
-    double min;
-    matrix_min_index(mat,i,j,min);
-    
-    cout << "Minimum weight is: "
-	 << min << " at indices (" << i << "," << j << ")\n  and grid "
-	 << "point (" << table3d_obj.get_grid_x(i) << ","
-	 << table3d_obj.get_grid_y(j) << ")." << endl;
-
-  } else if (type=="table") {
-    
-    if (table_obj.get_nlines()==0) {
-      cerr << "No table with columns to find the minimum value of." << endl;
-      return exc_efailed;
-    }
-    
-    std::string i1;
-    int ret=get_input_one(sv,"Enter column to find minimum of",
-			  i1,"min",itive_com);
-    if (ret!=0) return ret;
-    
-    if (table_obj.is_column(i1)==false) {
-      cerr << "Could not find column named '" << i1 << "'." << endl;
-      return exc_efailed;
-    }
-    
-    double min;
-    size_t ix;
-    vector_min(table_obj.get_nlines(),(table_obj)[i1],ix,min);
-    cout << "Minimum value of column '" << i1 << "' is: " 
-	 << min << " at row with index " << ix << "." << endl;
-    
-  } else if (type=="double[]") {
-
-    double val;
-    size_t loc;
-    o2scl::vector_min<vector<double>,double>(doublev_obj.size(),
-					     doublev_obj,loc,val);
-    cout << "Minimum value is " << val << " at index "
-	 << loc << endl;
-    
-  } else if (type=="tensor") {
-
-    double val;
-    size_t loc;
-    const vector<double> &v=tensor_obj.get_data();
-    o2scl::vector_min<vector<double>,double>(v.size(),v,loc,val);
-    vector<size_t> ix(tensor_obj.get_rank());
-    tensor_obj.unpack_index(loc,ix);
-    cout << "Minimum value is " << val << " at indices ";
-    vector_out(cout,ix,true);
-    
-  } else if (type=="tensor<size_t>") {
-
-    size_t val;
-    size_t loc;
-    const vector<size_t> &v=tensor_size_t_obj.get_data();
-    o2scl::vector_max<vector<size_t>,size_t>(v.size(),v,loc,val);
-    vector<size_t> ix(tensor_size_t_obj.get_rank());
-    tensor_size_t_obj.unpack_index(loc,ix);
-    cout << "Maximum value is " << val << " at indices ";
-    vector_out(cout,ix,true);
-    
-  } else if (type=="tensor<int>") {
-
-    int val;
-    size_t loc;
-    const vector<int> &v=tensor_int_obj.get_data();
-    o2scl::vector_max<vector<int>,int>(v.size(),v,loc,val);
-    vector<size_t> ix(tensor_int_obj.get_rank());
-    tensor_int_obj.unpack_index(loc,ix);
-    cout << "Maximum value is " << val << " at indices ";
-    vector_out(cout,ix,true);
-    
-  } else if (type=="tensor_grid") {
-
-    double val;
-    size_t loc;
-    const vector<double> &v=tensor_grid_obj.get_data();
-    o2scl::vector_min<vector<double>,double>(v.size(),v,loc,val);
-    vector<size_t> ix(tensor_grid_obj.get_rank());
-    vector<double> dx(tensor_grid_obj.get_rank());
-    tensor_grid_obj.unpack_index(loc,ix);
-    for(size_t j=0;j<tensor_grid_obj.get_rank();j++) {
-      dx[j]=tensor_grid_obj.get_grid(j,ix[j]);
-    }
-    cout << "Minimum value is " << val << " at indices ";
-    vector_out(cout,ix,true);
-    cout << "  and grid point ";
-    vector_out(cout,dx,true);
-    
-  } else if (type=="int[]") {
-    
-    int val;
-    size_t loc;
-    o2scl::vector_min<vector<int>,int>(intv_obj.size(),
-				       intv_obj,loc,val);
-    cout << "Minimum value is " << val << " at index "
-	 << loc << endl;
-    
-  } else if (type=="size_t[]") {
-    
-    size_t val;
-    size_t loc;
-    o2scl::vector_min<vector<size_t>,size_t>(size_tv_obj.size(),
-					     size_tv_obj,loc,val);
-    cout << "Minimum value is " << val << " at index "
-	 << loc << endl;
-    
   }
   
   return 0;

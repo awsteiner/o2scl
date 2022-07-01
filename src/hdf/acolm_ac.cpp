@@ -37,438 +37,104 @@ using namespace o2scl_acol;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-int acol_manager::comm_convert
-(std::vector<std::string> &sv, bool itive_com) {
+/*
+int acol_manager::comm_ac_len()
+int acol_manager::comm_add_vec()
+int acol_manager::comm_assign()
+int acol_manager::comm_autocorr()
+int acol_manager::comm_average_rows()
+int acol_manager::comm_binary()
+int acol_manager::comm_calc()
+int acol_manager::comm_calcm()
+int acol_manager::comm_cat()
+int acol_manager::comm_clear()
+int acol_manager::comm_commands()
+int acol_manager::comm_constant()
+int acol_manager::comm_contours()
+int acol_manager::comm_convert()
+int acol_manager::comm_correl()
+int acol_manager::comm_convert_unit()
+int acol_manager::comm_create()
+*/
 
-  if (verbose>=2) {
-    cng.verbose=verbose;
-  } else {
-    cng.verbose=0;
-  }
-  
-  if (sv.size()==2 && sv[1]=="list") {
-    cng.print_units(std::cout);
-    cout << endl;
-    cng.print_cache();
-    return 0;
-  }
+int acol_manager::comm_ac_len(std::vector<std::string> &sv,
+                              bool itive_com) {
 
-  vector<string> in, pr;
-  if (sv.size()>=3) {
-    for(size_t j=1;j<sv.size();j++) {
-      in.push_back(sv[j]);
+  if (type=="table") {
+    
+    if (table_obj.get_nlines()==0) {
+      cerr << "Table has no lines of data to compute "
+	   << "autocorrelations with." << endl;
+      return exc_efailed;
     }
-  } else {
-    std::vector<std::string> sv2;
-    std::string in2;
-    int ret=get_input_one(sv2,"Old unit (or \"add\", \"del\", or \"nat\")",
-                          in2,"convert",itive_com);
+
+    vector<string> in, pr;
+    pr.push_back("Enter column name");
+    int ret=get_input(sv,pr,in,"ac_len",itive_com);
     if (ret!=0) return ret;
-    in.push_back(in2);
-    if (in2=="add") {
-      ret=get_input_one(sv2,"New unit",in2,"convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-      ret=get_input_one(sv2,"Power of length",in2,"convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-      ret=get_input_one(sv2,"Power of mass",in2,"convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-      ret=get_input_one(sv2,"Power of time",in2,"convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-      ret=get_input_one(sv2,"Power of temperature",in2,"convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-      ret=get_input_one(sv2,"Power of current",in2,"convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-      ret=get_input_one(sv2,"Power of moles",in2,"convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-      ret=get_input_one(sv2,"Power of luminous intensity",in2,
-                        "convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-      ret=get_input_one(sv2,"Value",in2,"convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-      ret=get_input_one(sv2,"Long name",in2,"convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-    } else if (in2=="del") {
-      ret=get_input_one(sv2,"Unit to delete",in2,"convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-    } else if (in2=="nat") {
-      ret=get_input_one(sv2,"Treat c as 1 (true or false)",
-                        in2,"convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-      ret=get_input_one(sv2,"Treat ħ as 1 (true or false)",
-                        in2,"convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-      ret=get_input_one(sv2,"Treat kb as 1 (true or false)",
-                        in2,"convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-    } else {
-      ret=get_input_one(sv2,"New unit",in2,"convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-      ret=get_input_one(sv2,"Value",in2,"convert",itive_com);
-      if (ret!=0) return ret;
-      in.push_back(in2);
-    }
-  }
 
-  // Set the proper output precision and mode
-  if (scientific) cout.setf(ios::scientific);
-  else cout.unsetf(ios::scientific);
-  cout.precision(precision);
-  
-  if (in[0]=="add") {
-
-    cout << "Add unit." << endl;
-
-    double val=1.0;
-    if (in.size()>=3) {
-      int ret2=function_to_double_nothrow(in[9],val,0,&rng);
-      if (ret2!=0) {
-        cerr << "Converting " << in[9] << " to value failed." << endl;
-        return 2;
-      }
+    size_t n=table_obj.get_nlines();
+    vector<double> vcopy(n);
+    for(size_t j=0;j<n;j++) {
+      vcopy[j]=table_obj.get(in[0],j);
     }
 
-    convert_units<double>::der_unit d;
-    d.label=in[1];
-    d.m=o2scl::stod(in[2]);
-    d.k=o2scl::stod(in[3]);
-    d.s=o2scl::stod(in[4]);
-    d.K=o2scl::stod(in[5]);
-    d.A=o2scl::stod(in[6]);
-    d.mol=o2scl::stod(in[7]);
-    d.cd=o2scl::stod(in[8]);
-    d.val=val;
-    d.name=in[10];
+    double mean, sigma, tau;
+    vector_acor(n,vcopy,mean,sigma,tau,verbose);
 
-    cng.add_unit(d);
+    cout << "mean, sigma, tau: " << mean << " "
+	 << sigma << " " << tau << endl;
 
     return 0;
-    
-  } else if (in[0]=="del") {
+  } 
 
-    cout << "Delete unit." << endl;
-
-    cng.del_unit(in[2]);
-
-    return 0;
-    
-  } else if (in[0]=="nat") {
-
-    if (o2scl::stob(in[1])) {
-      if (o2scl::stob(in[2])) {
-        if (o2scl::stob(in[3])) {
-          cout << "Setting c, ħ, and kB to 1." << endl;
-        } else {
-          cout << "Setting c and ħ to 1." << endl;
-        }
-      } else {
-        if (o2scl::stob(in[3])) {
-          cout << "Setting c and kB to 1." << endl;
-        } else {
-          cout << "Setting c to 1." << endl;
-        }
-      }
-    } else {
-      if (o2scl::stob(in[2])) {
-        if (o2scl::stob(in[3])) {
-          cout << "Setting ħ and kB to 1." << endl;
-        } else {
-          cout << "Setting ħ to 1." << endl;
-        }
-      } else {
-        if (o2scl::stob(in[3])) {
-          cout << "Setting kB to 1." << endl;
-        } else {
-          cout << "No natural units will be used." << endl;
-        }
-      }
-    }
-    
-    cng.set_natural_units(o2scl::stob(in[1]),
-                          o2scl::stob(in[2]),
-                          o2scl::stob(in[3]));
-    
-    return 0;
-    
-  }
-  
-  double val=1.0;
-  
-  if (in[0]=="2") {
-    
-    cout << "Using convert()." << endl;
-    
-    if (in.size()>=4) {
-      int ret2=function_to_double_nothrow(in[3],val,0,&rng);
-      if (ret2!=0) {
-        cerr << "Converting " << in[3] << " to value failed." << endl;
-        return 2;
-      }
-    }
-    
-    double val_out;
-    int cret=cng.convert_ret(in[1],in[2],val,val_out);
-    if (cret!=0) {
-      cerr << "Conversion failed." << endl;
-      return 1;
-    }
-
-    cout << val << " " << in[1] << " = " << val_out << " " << in[2] << endl;
-    return 0;
-    
-  } else {
-    
-    if (in.size()>=3) {
-      int ret2=function_to_double_nothrow(in[2],val,0,&rng);
-      if (ret2!=0) {
-        cerr << "Converting " << in[2] << " to value failed." << endl;
-        return 2;
-      }
-    }
-
-    // If cng.verbose is non-zero, then cng.convert may output
-    // verbose information to cout
-    double val_out;
-    int cret=cng.convert_ret(in[0],in[1],val,val_out);
-    if (cret!=0) {
-      cerr << "Conversion failed." << endl;
-      return 1;
-    }
-    cout << val << " " << in[0] << " = " << val_out << " " << in[1] << endl;
-  }
-  
-  return 0;
+  cout << "ac_len does not work for type " << type << endl;
+  return 1;
 }
 
-int acol_manager::comm_constant(std::vector<std::string> &sv,
-				bool itive_com) {
-  
-  convert_units<double> &cu=o2scl_settings.get_convert_units();
+int acol_manager::comm_add_vec(std::vector<std::string> &sv, bool itive_com) {
 
-  if (sv.size()<2) {
+  if (type=="table") {
+    
+    if (table_obj.get_nlines()==0) {
+      cerr << "No table to add a column to." << endl;
+      return exc_efailed;
+    }
+    
     vector<string> pr, in;
-    pr.push_back("Name or search pattern");
-    pr.push_back("Unit (or 'none' for any)");
-    int ret=get_input(sv,pr,in,"constant",itive_com);
+    pr.push_back("Enter vector specification for new column");
+    pr.push_back("Enter name for new column");
+    int ret=get_input(sv,pr,in,"function",itive_com);
     if (ret!=0) return ret;
-    if (verbose>=1) {
-      cout << "constant: Looking up constant " << in[0]
-           << " with unit " << in[1] << endl;
+    
+    // Remove single or double quotes just in case
+    if (in[0].size()>=3 && ((in[0][0]=='\'' && in[0][in[0].size()-1]=='\'') ||
+			    (in[0][0]=='\"' && in[0][in[0].size()-1]=='\"'))) {
+      in[0]=in[0].substr(1,in[0].size()-2);
     }
-    cu.verbose=verbose;
-    if (precision>50) {
-      cerr << "Requested precision too large for the calc "
-           << "command." << endl;
-    } else if (precision>35) {
-      convert_units<cpp_dec_float_50> cu50;
-      cu50.find_print(in[0],in[1],precision,false);
-    } else if (precision>25) {
-      convert_units<cpp_dec_float_35> cu35;
-      cu35.find_print(in[0],in[1],precision,false);
-    } else if (precision>18) {
-      convert_units<cpp_dec_float_25> cu25;
-      cu25.find_print(in[0],in[1],precision,false);
-    } else if (precision>15) {
-      convert_units<long double> culd;
-      culd.find_print(in[0],in[1],precision,false);
-    } else {
-      cu.find_print(in[0],in[1],precision,false);
+
+    std::vector<double> vec;
+    int vret=vector_spec(in[0],vec,verbose,false);
+    if (vret!=0) {
+      cerr << "Vector spec failed in add-vec." << endl;
+      return exc_efailed;
     }
-    return 0;
-  }
-  
-  if (sv.size()>=3 && sv[2]!="none" && sv[2]!="None" && sv[1]!="add" &&
-      sv[1]!="del") {
-    // If a unit was specified, then search for the constant with
-    // the specified unit
-    if (verbose>=1) {
-      cout << "constant: Looking up constant " << sv[1]
-           << " with unit " << sv[2] << endl;
+    if (vec.size()<table_obj.get_nlines()) {
+      cerr << "Not enough entries in vector." << endl;
+      cout << vec.size() << " " << table_obj.get_nlines() << endl;
+      return exc_efailed;
     }
-    cu.verbose=verbose;
-    cu.find_print(sv[1],sv[2],precision,false);
-  } else if (sv[1]=="list") {
-    cout.precision(precision);
-    cu.fc.output_list(cout);
-  } else if (sv[1]=="list-full") {
-    cout.precision(precision);
-    cu.fc.output_list_full(cout);
-  } else if (sv[1]=="add") {
-    if (sv.size()<4) {
-      cerr << "Argument 'add' given to command 'constant' implies add "
-           << "a constant but not enough arguments were given." << endl;
-      return 1;
+
+    table_obj.new_column(in[1]);
+    for(size_t i=0;i<table_obj.get_nlines();i++) {
+      table_obj.set(in[1],i,vec[i]);
     }
-    find_constants<>::const_entry f;
-    f.names.push_back(sv[2]);
-    f.val=o2scl::stod(sv[3]);
-    if (sv.size()>=5) {
-      f.unit=sv[4];
-    }
-    if (sv.size()>=6) {
-      f.unit_flag=stoszt(sv[5]);
-    } else {
-      f.unit_flag=0;
-    }
-    if (sv.size()>=7) {
-      f.source=sv[6];
-    }
-    if (sv.size()>=8) {
-      f.m=o2scl::stoi(sv[7]);
-    }
-    if (sv.size()>=9) {
-      f.k=o2scl::stoi(sv[8]);
-    }
-    if (sv.size()>=10) {
-      f.s=o2scl::stoi(sv[9]);
-    }
-    if (sv.size()>=11) {
-      f.K=o2scl::stoi(sv[10]);
-    }
-    if (sv.size()>=12) {
-      f.A=o2scl::stoi(sv[11]);
-    }
-    if (sv.size()>=13) {
-      f.mol=o2scl::stoi(sv[12]);
-    }
-    if (sv.size()>=14) {
-      f.cd=o2scl::stoi(sv[13]);
-    }
-    if (sv.size()>=15) {
-      for(size_t j=14;j<sv.size();j++) {
-        f.names.push_back(sv[j]);
-      }
-    }
-    if (verbose>=1) {
-      cout << "constant: Adding constant named " << sv[2]
-           << " with value " << sv[3] << endl;
-    }
-    cu.fc.add_constant(f,verbose);
-  } else if (sv[1]=="del") {
-    if (sv.size()==2) {
-      cerr << "Argument 'del' given to command 'constant' implies delete "
-           << "a constant but no name was given." << endl;
-      return 1;
-    }
-    if (verbose>=1) {
-      cout << "constant: Deleting constant named " << sv[2] << endl;
-    }
-    cu.fc.del_constant(sv[2],verbose);
+    
   } else {
-    if (verbose>=1) {
-      cout << "constant: Printing constant named " << sv[1]
-           << " (unit unspecified)" << endl;
-    }
-    cu.verbose=verbose;
-    cu.find_print(sv[1],"",precision,false);
-  }
-
-  return 0;
-}
-
-int acol_manager::comm_correl(std::vector<std::string> &sv, bool itive_com) {
-
-  if (sv.size()>=3) {
-    
-    double c=vector_correlation(table_obj.get_nlines(),table_obj[sv[1]],
-				table_obj[sv[2]]);
-    cout << "Correlation coefficient: " << c << endl;
-
-  } else {
-  
-    vector<string> labels;
-    vector<double> coeffs, abs_coeffs;
-    
-    size_t n=table_obj.get_ncolumns();
-    
-    for(size_t i=0;i<n;i++) {
-      cout << i << "/" << n << endl;
-      for(size_t j=i+1;j<n;j++) {
-	labels.push_back(table_obj.get_column_name(i)+","+
-			 table_obj.get_column_name(j));
-	double c=vector_correlation(table_obj.get_nlines(),
-				    table_obj[i],table_obj[j]);
-	if (!std::isfinite(c)) c=0.0;
-	coeffs.push_back(c);
-	abs_coeffs.push_back(fabs(c));
-	/*
-	  cout << labels[labels.size()-1] << " " << c << endl;
-	  char ch;
-	  cin >> ch;
-	*/
-      }
-    }
-    
-    vector<size_t> indexes(coeffs.size());
-    vector_sort_index(coeffs.size(),abs_coeffs,indexes);
-    
-    for(size_t j=0;j<coeffs.size();j++) {
-      size_t k=indexes[coeffs.size()-1-j];
-      cout << j << " ";
-      cout << labels[k] << " "
-	   << coeffs[k] << " " << abs_coeffs[k] << endl;;
-    }
-  }
-  
-  return 0;
-}
-  
-int acol_manager::comm_average_rows(std::vector<std::string> &sv,
-				    bool itive_com) {
-
-  if (type!="table") {
-    cerr << "No table to average_rows." << endl;
+    cerr << "Not implemented for type " << type << " ." << endl;
     return exc_efailed;
   }
 
-  if (sv.size()==3) {
-
-    if (sv[1]=="*") {
-      table_obj.average_rows(o2scl::stoszt(sv[2]));
-    } else {
-      table_obj.average_col_roll(sv[1],o2scl::stoszt(sv[2]));
-    }
-
-  } else {
-    
-    vector<string> pr, in;
-    pr.push_back("Column name, or '*' for all");
-    pr.push_back("Window size (greater than 1)");
-    pr.push_back("True for block average, false for rolling average");
-    int ret=get_input(sv,pr,in,"average-rows",itive_com);
-    if (ret!=0) return ret;
-    
-    if (o2scl::stob(in[2])==true) {
-      if (in[0]=="*") {
-	table_obj.average_rows(o2scl::stoszt(in[1]),true);
-      } else {
-	cerr << "Cannot specify column name with block averages." << endl;
-	return 2;
-      }
-    } else {
-      if (in[0]=="*") {
-	table_obj.average_rows(o2scl::stoszt(in[1]),false);
-      } else {
-	table_obj.average_col_roll(in[0],o2scl::stoszt(in[1]));
-      }
-    }
-
-  }
-  
   return 0;
 }
 
@@ -842,94 +508,113 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
   return 0;
 }
 
-int acol_manager::comm_ac_len(std::vector<std::string> &sv,
-                              bool itive_com) {
+int acol_manager::comm_average_rows(std::vector<std::string> &sv,
+				    bool itive_com) {
 
-  if (type=="table") {
-    
-    if (table_obj.get_nlines()==0) {
-      cerr << "Table has no lines of data to compute "
-	   << "autocorrelations with." << endl;
-      return exc_efailed;
-    }
-
-    vector<string> in, pr;
-    pr.push_back("Enter column name");
-    int ret=get_input(sv,pr,in,"ac_len",itive_com);
-    if (ret!=0) return ret;
-
-    size_t n=table_obj.get_nlines();
-    vector<double> vcopy(n);
-    for(size_t j=0;j<n;j++) {
-      vcopy[j]=table_obj.get(in[0],j);
-    }
-
-    double mean, sigma, tau;
-    vector_acor(n,vcopy,mean,sigma,tau,verbose);
-
-    cout << "mean, sigma, tau: " << mean << " "
-	 << sigma << " " << tau << endl;
-
-    return 0;
-  } 
-
-  cout << "ac_len does not work for type " << type << endl;
-  return 1;
-}
-
-#ifdef O2SCL_NEVER_DEFINED
-int acol_manager::comm_comment(std::vector<std::string> &sv, 
-			       bool itive_com) {
-
-  if (sv.size()==2) {
-    hdf_file hf;
-    hf.open(sv[1]);
-    std::string def, s;
-    hf.gets_def("comment",def,s);
-    if (s==def) {
-      cout << "No comment in file " << sv[1] << endl;
-    } else {
-      cout << "Comment in file " << sv[1] << " :" << endl;
-      cout << s << endl;
-    }
-    hf.close();
-    return 0;
+  if (type!="table") {
+    cerr << "No table to average_rows." << endl;
+    return exc_efailed;
   }
-  
-  hdf_file hf;
-  // Make sure to open with write access
-  hf.open(sv[1],1);
-  
-  // If it's already present as a fixed length string,
-  // then we need to double check
-  std::string def, s;
-  int iret=hf.gets_def_fixed("comment",def,s);
-  if (s!=def) {
-    if (iret==1) {
-      size_t len=s.length();
-      if (sv[2].length()>len) {
-	cerr << "Size of new comment (" << sv[2].length()
-	     << ") longer than size of current "
-	     << "fixed length string " << len << "." << endl;
-	hf.close();
-	return 1;
-      } else {
-	while (sv[2].length()<len) sv[2]+=' ';
-      }
-      hf.sets_fixed("comment",sv[2]);
+
+  if (sv.size()==3) {
+
+    if (sv[1]=="*") {
+      table_obj.average_rows(o2scl::stoszt(sv[2]));
     } else {
-      hf.sets("comment",sv[2]);
+      table_obj.average_col_roll(sv[1],o2scl::stoszt(sv[2]));
     }
+
   } else {
-    // String is not present so just set
-    hf.sets("comment",sv[2]);
+    
+    vector<string> pr, in;
+    pr.push_back("Column name, or '*' for all");
+    pr.push_back("Window size (greater than 1)");
+    pr.push_back("True for block average, false for rolling average");
+    int ret=get_input(sv,pr,in,"average-rows",itive_com);
+    if (ret!=0) return ret;
+    
+    if (o2scl::stob(in[2])==true) {
+      if (in[0]=="*") {
+	table_obj.average_rows(o2scl::stoszt(in[1]),true);
+      } else {
+	cerr << "Cannot specify column name with block averages." << endl;
+	return 2;
+      }
+    } else {
+      if (in[0]=="*") {
+	table_obj.average_rows(o2scl::stoszt(in[1]),false);
+      } else {
+	table_obj.average_col_roll(in[0],o2scl::stoszt(in[1]));
+      }
+    }
+
   }
-  cout << "Set comment in file " << sv[1] << " to " << endl;
-  cout << sv[2] << endl;
-  hf.close();
+  
   return 0;
 }
-#endif
+
+int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="tensor_grid") {
+
+    std::string function, fname, oname;
+
+    vector<string> pr, in;
+    pr.push_back("Filename of second object");
+    pr.push_back("Name of second object.");
+    pr.push_back("Enter function of i0,i1,... and x0,x1,...");
+    int ret=get_input(sv,pr,in,"binary",itive_com);
+
+    fname=in[0];
+    oname=in[1];
+    function=in[2];
+
+    hdf_file hf;
+    wordexp_single_file(fname);
+    hf.open(fname);
+    tensor_grid<> tg;
+    hdf_input(hf,tg,oname);
+    hf.close();
+
+    if (tg.get_rank()!=tensor_grid_obj.get_rank()) {
+      cerr << "Ranks do not match." << endl;
+      return 2;
+    }
+
+    if (tg.total_size()!=tensor_grid_obj.total_size()) {
+      cerr << "Sizes do not match." << endl;
+      return 3;
+    }
+
+    // Parse function(s)
+    calc_utf8<> calc;
+    calc.set_rng(rng);
+    std::map<std::string,double> vars;
+    calc.compile(function.c_str(),&vars);
+
+    // Set
+    size_t rk=tensor_grid_obj.get_rank();
+    vector<size_t> ix(rk);
+    for(size_t i=0;i<tensor_grid_obj.total_size();i++) {
+      tensor_grid_obj.unpack_index(i,ix);
+      vector<double> xa;
+      for(size_t j=0;j<rk;j++) {
+	vars[((string)"i")+szttos(j)]=ix[j];
+	vars[((string)"x")+szttos(j)]=tensor_grid_obj.get_grid(j,ix[j]);
+	xa.push_back(tensor_grid_obj.get_grid(j,ix[j]));
+      }
+      vars["v"]=tensor_grid_obj.get(ix);
+      vars["w"]=tg.interp_linear(xa);
+      tensor_grid_obj.set(ix,calc.eval(&vars));
+    }
+    
+  } else {
+    cerr << "Not implemented for type " << type << " ." << endl;
+    return exc_efailed;
+  }
+
+  return 0;
+}
 
 int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
 
@@ -1023,11 +708,11 @@ int acol_manager::comm_calcm(std::vector<std::string> &sv, bool itive_com) {
   } else if (itive_com) {
     i1=cl->cli_gets("Enter expression to compute (or blank to stop): ");
     if (i1.length()==0) {
-      if (verbose>0) cout << "Command 'calc' cancelled." << endl;
+      if (verbose>0) cout << "Command 'calcm' cancelled." << endl;
       return 0;
     }
   } else {
-    cerr << "No expression to compute in 'calc'." << endl;
+    cerr << "No expression to compute in 'calcm'." << endl;
     return exc_efailed;
   }
 
@@ -1047,7 +732,7 @@ int acol_manager::comm_calcm(std::vector<std::string> &sv, bool itive_com) {
   if (precision>48) {
     
     cerr << "Requested precision too large for the calcm "
-         << "command." << endl;
+         << "command (maximum is 48)." << endl;
     return 2;
     
   } else if (precision>33) {
@@ -1117,16 +802,6 @@ int acol_manager::comm_calcm(std::vector<std::string> &sv, bool itive_com) {
   cout.precision(precision);
   if (verbose>0) cout << "Result: ";
   cout << d << endl;
-  return 0;
-}
-
-int acol_manager::comm_clear(std::vector<std::string> &sv, bool itive_com) {
-
-  command_del(type);
-
-  // The clear_obj() function sets type to an empty string.
-  clear_obj();
-  
   return 0;
 }
 
@@ -1260,6 +935,16 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
     return exc_efailed;
     
   }
+  
+  return 0;
+}
+
+int acol_manager::comm_clear(std::vector<std::string> &sv, bool itive_com) {
+
+  command_del(type);
+
+  // The clear_obj() function sets type to an empty string.
+  clear_obj();
   
   return 0;
 }
@@ -1423,6 +1108,132 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
        << "for the various types." << endl;
   
   return ret;
+}
+
+int acol_manager::comm_constant(std::vector<std::string> &sv,
+				bool itive_com) {
+  
+  convert_units<double> &cu=o2scl_settings.get_convert_units();
+
+  if (sv.size()<2) {
+    vector<string> pr, in;
+    pr.push_back("Name or search pattern");
+    pr.push_back("Unit (or 'none' for any)");
+    int ret=get_input(sv,pr,in,"constant",itive_com);
+    if (ret!=0) return ret;
+    if (verbose>=1) {
+      cout << "constant: Looking up constant " << in[0]
+           << " with unit " << in[1] << endl;
+    }
+    cu.verbose=verbose;
+    if (precision>50) {
+      cerr << "Requested precision too large for the constant "
+           << "command (the maximum is 50)." << endl;
+    } else if (precision>35) {
+      convert_units<cpp_dec_float_50> cu50;
+      cu50.find_print(in[0],in[1],precision,false);
+    } else if (precision>25) {
+      convert_units<cpp_dec_float_35> cu35;
+      cu35.find_print(in[0],in[1],precision,false);
+    } else if (precision>18) {
+      convert_units<cpp_dec_float_25> cu25;
+      cu25.find_print(in[0],in[1],precision,false);
+    } else if (precision>15) {
+      convert_units<long double> culd;
+      culd.find_print(in[0],in[1],precision,false);
+    } else {
+      cu.find_print(in[0],in[1],precision,false);
+    }
+    return 0;
+  }
+  
+  if (sv.size()>=3 && sv[2]!="none" && sv[2]!="None" && sv[1]!="add" &&
+      sv[1]!="del") {
+    // If a unit was specified, then search for the constant with
+    // the specified unit
+    if (verbose>=1) {
+      cout << "constant: Looking up constant " << sv[1]
+           << " with unit " << sv[2] << endl;
+    }
+    cu.verbose=verbose;
+    cu.find_print(sv[1],sv[2],precision,false);
+  } else if (sv[1]=="list") {
+    cout.precision(precision);
+    cu.fc.output_list(cout);
+  } else if (sv[1]=="list-full") {
+    cout.precision(precision);
+    cu.fc.output_list_full(cout);
+  } else if (sv[1]=="add") {
+    if (sv.size()<4) {
+      cerr << "Argument 'add' given to command 'constant' implies add "
+           << "a constant but not enough arguments were given." << endl;
+      return 1;
+    }
+    find_constants<>::const_entry f;
+    f.names.push_back(sv[2]);
+    f.val=o2scl::stod(sv[3]);
+    if (sv.size()>=5) {
+      f.unit=sv[4];
+    }
+    if (sv.size()>=6) {
+      f.unit_flag=stoszt(sv[5]);
+    } else {
+      f.unit_flag=0;
+    }
+    if (sv.size()>=7) {
+      f.source=sv[6];
+    }
+    if (sv.size()>=8) {
+      f.m=o2scl::stoi(sv[7]);
+    }
+    if (sv.size()>=9) {
+      f.k=o2scl::stoi(sv[8]);
+    }
+    if (sv.size()>=10) {
+      f.s=o2scl::stoi(sv[9]);
+    }
+    if (sv.size()>=11) {
+      f.K=o2scl::stoi(sv[10]);
+    }
+    if (sv.size()>=12) {
+      f.A=o2scl::stoi(sv[11]);
+    }
+    if (sv.size()>=13) {
+      f.mol=o2scl::stoi(sv[12]);
+    }
+    if (sv.size()>=14) {
+      f.cd=o2scl::stoi(sv[13]);
+    }
+    if (sv.size()>=15) {
+      for(size_t j=14;j<sv.size();j++) {
+        f.names.push_back(sv[j]);
+      }
+    }
+    if (verbose>=1) {
+      cout << "constant: Adding constant named " << sv[2]
+           << " with value " << sv[3] << endl;
+    }
+    cu.fc.add_constant(f,verbose);
+  } else if (sv[1]=="del") {
+    if (sv.size()==2) {
+      cerr << "Argument 'del' given to command 'constant' implies delete "
+           << "a constant but no name was given." << endl;
+      return 1;
+    }
+    if (verbose>=1) {
+      cout << "constant: Deleting constant named " << sv[2] << endl;
+    }
+    cu.fc.del_constant(sv[2],verbose);
+  } else {
+    if (verbose>=1) {
+      cout << "constant: Printing constant named " << sv[1]
+           << " (unit unspecified)" << endl;
+    }
+    cu.verbose=verbose;
+    cu.find_print(sv[1],"",precision,false);
+  }
+
+  return 0;
 }
 
 int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
@@ -1853,6 +1664,223 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
+int acol_manager::comm_convert
+(std::vector<std::string> &sv, bool itive_com) {
+
+  if (verbose>=2) {
+    cng.verbose=verbose;
+  } else {
+    cng.verbose=0;
+  }
+  
+  if (sv.size()==2 && sv[1]=="list") {
+    cng.print_units(std::cout);
+    cout << endl;
+    cng.print_cache();
+    return 0;
+  }
+
+  vector<string> in, pr;
+  if (sv.size()>=3) {
+    for(size_t j=1;j<sv.size();j++) {
+      in.push_back(sv[j]);
+    }
+  } else {
+    std::vector<std::string> sv2;
+    std::string in2;
+    int ret=get_input_one(sv2,"Old unit (or \"add\", \"del\", or \"nat\")",
+                          in2,"convert",itive_com);
+    if (ret!=0) return ret;
+    in.push_back(in2);
+    if (in2=="add") {
+      ret=get_input_one(sv2,"New unit",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Power of length",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Power of mass",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Power of time",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Power of temperature",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Power of current",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Power of moles",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Power of luminous intensity",in2,
+                        "convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Value",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Long name",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+    } else if (in2=="del") {
+      ret=get_input_one(sv2,"Unit to delete",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+    } else if (in2=="nat") {
+      ret=get_input_one(sv2,"Treat c as 1 (true or false)",
+                        in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Treat ħ as 1 (true or false)",
+                        in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Treat kb as 1 (true or false)",
+                        in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+    } else {
+      ret=get_input_one(sv2,"New unit",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+      ret=get_input_one(sv2,"Value",in2,"convert",itive_com);
+      if (ret!=0) return ret;
+      in.push_back(in2);
+    }
+  }
+
+  // Set the proper output precision and mode
+  if (scientific) cout.setf(ios::scientific);
+  else cout.unsetf(ios::scientific);
+  cout.precision(precision);
+  
+  if (in[0]=="add") {
+
+    cout << "Add unit." << endl;
+
+    double val=1.0;
+    if (in.size()>=3) {
+      int ret2=function_to_double_nothrow(in[9],val,0,&rng);
+      if (ret2!=0) {
+        cerr << "Converting " << in[9] << " to value failed." << endl;
+        return 2;
+      }
+    }
+
+    convert_units<double>::der_unit d;
+    d.label=in[1];
+    d.m=o2scl::stod(in[2]);
+    d.k=o2scl::stod(in[3]);
+    d.s=o2scl::stod(in[4]);
+    d.K=o2scl::stod(in[5]);
+    d.A=o2scl::stod(in[6]);
+    d.mol=o2scl::stod(in[7]);
+    d.cd=o2scl::stod(in[8]);
+    d.val=val;
+    d.name=in[10];
+
+    cng.add_unit(d);
+
+    return 0;
+    
+  } else if (in[0]=="del") {
+
+    cout << "Delete unit." << endl;
+
+    cng.del_unit(in[2]);
+
+    return 0;
+    
+  } else if (in[0]=="nat") {
+
+    if (o2scl::stob(in[1])) {
+      if (o2scl::stob(in[2])) {
+        if (o2scl::stob(in[3])) {
+          cout << "Setting c, ħ, and kB to 1." << endl;
+        } else {
+          cout << "Setting c and ħ to 1." << endl;
+        }
+      } else {
+        if (o2scl::stob(in[3])) {
+          cout << "Setting c and kB to 1." << endl;
+        } else {
+          cout << "Setting c to 1." << endl;
+        }
+      }
+    } else {
+      if (o2scl::stob(in[2])) {
+        if (o2scl::stob(in[3])) {
+          cout << "Setting ħ and kB to 1." << endl;
+        } else {
+          cout << "Setting ħ to 1." << endl;
+        }
+      } else {
+        if (o2scl::stob(in[3])) {
+          cout << "Setting kB to 1." << endl;
+        } else {
+          cout << "No natural units will be used." << endl;
+        }
+      }
+    }
+    
+    cng.set_natural_units(o2scl::stob(in[1]),
+                          o2scl::stob(in[2]),
+                          o2scl::stob(in[3]));
+    
+    return 0;
+    
+  }
+  
+  double val=1.0;
+  
+  if (in[0]=="2") {
+    
+    cout << "Using convert()." << endl;
+    
+    if (in.size()>=4) {
+      int ret2=function_to_double_nothrow(in[3],val,0,&rng);
+      if (ret2!=0) {
+        cerr << "Converting " << in[3] << " to value failed." << endl;
+        return 2;
+      }
+    }
+    
+    double val_out;
+    int cret=cng.convert_ret(in[1],in[2],val,val_out);
+    if (cret!=0) {
+      cerr << "Conversion failed." << endl;
+      return 1;
+    }
+
+    cout << val << " " << in[1] << " = " << val_out << " " << in[2] << endl;
+    return 0;
+    
+  } else {
+    
+    if (in.size()>=3) {
+      int ret2=function_to_double_nothrow(in[2],val,0,&rng);
+      if (ret2!=0) {
+        cerr << "Converting " << in[2] << " to value failed." << endl;
+        return 2;
+      }
+    }
+
+    // If cng.verbose is non-zero, then cng.convert may output
+    // verbose information to cout
+    double val_out;
+    int cret=cng.convert_ret(in[0],in[1],val,val_out);
+    if (cret!=0) {
+      cerr << "Conversion failed." << endl;
+      return 1;
+    }
+    cout << val << " " << in[0] << " = " << val_out << " " << in[1] << endl;
+  }
+  
+  return 0;
+}
+
 int acol_manager::comm_convert_unit
 (std::vector<std::string> &sv, bool itive_com) {
   
@@ -1888,6 +1916,53 @@ int acol_manager::comm_convert_unit
   return 0;
 }
 
+int acol_manager::comm_correl(std::vector<std::string> &sv, bool itive_com) {
+
+  if (sv.size()>=3) {
+    
+    double c=vector_correlation(table_obj.get_nlines(),table_obj[sv[1]],
+				table_obj[sv[2]]);
+    cout << "Correlation coefficient: " << c << endl;
+
+  } else {
+  
+    vector<string> labels;
+    vector<double> coeffs, abs_coeffs;
+    
+    size_t n=table_obj.get_ncolumns();
+    
+    for(size_t i=0;i<n;i++) {
+      cout << i << "/" << n << endl;
+      for(size_t j=i+1;j<n;j++) {
+	labels.push_back(table_obj.get_column_name(i)+","+
+			 table_obj.get_column_name(j));
+	double c=vector_correlation(table_obj.get_nlines(),
+				    table_obj[i],table_obj[j]);
+	if (!std::isfinite(c)) c=0.0;
+	coeffs.push_back(c);
+	abs_coeffs.push_back(fabs(c));
+	/*
+	  cout << labels[labels.size()-1] << " " << c << endl;
+	  char ch;
+	  cin >> ch;
+	*/
+      }
+    }
+    
+    vector<size_t> indexes(coeffs.size());
+    vector_sort_index(coeffs.size(),abs_coeffs,indexes);
+    
+    for(size_t j=0;j<coeffs.size();j++) {
+      size_t k=indexes[coeffs.size()-1-j];
+      cout << j << " ";
+      cout << labels[k] << " "
+	   << coeffs[k] << " " << abs_coeffs[k] << endl;;
+    }
+  }
+  
+  return 0;
+}
+  
 int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
   std::string ctype, tval;
 
@@ -2262,115 +2337,6 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     cerr << "Cannot create object of type " << ctype << endl;
     return 1;
       
-  }
-
-  return 0;
-}
-
-int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
-
-  if (type=="tensor_grid") {
-
-    std::string function, fname, oname;
-
-    vector<string> pr, in;
-    pr.push_back("Filename of second object");
-    pr.push_back("Name of second object.");
-    pr.push_back("Enter function of i0,i1,... and x0,x1,...");
-    int ret=get_input(sv,pr,in,"binary",itive_com);
-
-    fname=in[0];
-    oname=in[1];
-    function=in[2];
-
-    hdf_file hf;
-    wordexp_single_file(fname);
-    hf.open(fname);
-    tensor_grid<> tg;
-    hdf_input(hf,tg,oname);
-    hf.close();
-
-    if (tg.get_rank()!=tensor_grid_obj.get_rank()) {
-      cerr << "Ranks do not match." << endl;
-      return 2;
-    }
-
-    if (tg.total_size()!=tensor_grid_obj.total_size()) {
-      cerr << "Sizes do not match." << endl;
-      return 3;
-    }
-
-    // Parse function(s)
-    calc_utf8<> calc;
-    calc.set_rng(rng);
-    std::map<std::string,double> vars;
-    calc.compile(function.c_str(),&vars);
-
-    // Set
-    size_t rk=tensor_grid_obj.get_rank();
-    vector<size_t> ix(rk);
-    for(size_t i=0;i<tensor_grid_obj.total_size();i++) {
-      tensor_grid_obj.unpack_index(i,ix);
-      vector<double> xa;
-      for(size_t j=0;j<rk;j++) {
-	vars[((string)"i")+szttos(j)]=ix[j];
-	vars[((string)"x")+szttos(j)]=tensor_grid_obj.get_grid(j,ix[j]);
-	xa.push_back(tensor_grid_obj.get_grid(j,ix[j]));
-      }
-      vars["v"]=tensor_grid_obj.get(ix);
-      vars["w"]=tg.interp_linear(xa);
-      tensor_grid_obj.set(ix,calc.eval(&vars));
-    }
-    
-  } else {
-    cerr << "Not implemented for type " << type << " ." << endl;
-    return exc_efailed;
-  }
-
-  return 0;
-}
-
-int acol_manager::comm_add_vec(std::vector<std::string> &sv, bool itive_com) {
-
-  if (type=="table") {
-    
-    if (table_obj.get_nlines()==0) {
-      cerr << "No table to add a column to." << endl;
-      return exc_efailed;
-    }
-    
-    vector<string> pr, in;
-    pr.push_back("Enter vector specification for new column");
-    pr.push_back("Enter name for new column");
-    int ret=get_input(sv,pr,in,"function",itive_com);
-    if (ret!=0) return ret;
-    
-    // Remove single or double quotes just in case
-    if (in[0].size()>=3 && ((in[0][0]=='\'' && in[0][in[0].size()-1]=='\'') ||
-			    (in[0][0]=='\"' && in[0][in[0].size()-1]=='\"'))) {
-      in[0]=in[0].substr(1,in[0].size()-2);
-    }
-
-    std::vector<double> vec;
-    int vret=vector_spec(in[0],vec,verbose,false);
-    if (vret!=0) {
-      cerr << "Vector spec failed in add-vec." << endl;
-      return exc_efailed;
-    }
-    if (vec.size()<table_obj.get_nlines()) {
-      cerr << "Not enough entries in vector." << endl;
-      cout << vec.size() << " " << table_obj.get_nlines() << endl;
-      return exc_efailed;
-    }
-
-    table_obj.new_column(in[1]);
-    for(size_t i=0;i<table_obj.get_nlines();i++) {
-      table_obj.set(in[1],i,vec[i]);
-    }
-    
-  } else {
-    cerr << "Not implemented for type " << type << " ." << endl;
-    return exc_efailed;
   }
 
   return 0;

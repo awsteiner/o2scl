@@ -39,452 +39,23 @@ using namespace o2scl_acol;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-int acol_manager::comm_h5_copy(std::vector<std::string> &sv, 
-			       bool itive_com) {
-
-  cout << "Warning h5-copy is still experimental." << endl;
-  
-  vector<string> in, pr;
-  
-  pr.push_back("Source file");
-  pr.push_back("Destination file");
-  int ret=get_input(sv,pr,in,"h5-copy",itive_com);
-  if (ret!=0) return ret;
-
-  if (in[0]==in[1]) {
-    cerr << "Command 'h5-copy' will not copy a file onto itself." << endl;
-    return 2;
-  }
-
-  // Use hdf_file to open the file
-  hdf_file hf, hf2;
-  int hfret=hf.open(in[0].c_str(),false,false);
-  if (hfret!=0) {
-    cerr << "Failed to read file named " << in[0].c_str() << endl;
-    return exc_efailed;
-  }
-  hf2.open_or_create(in[1].c_str());
-
-  hf.copy(verbose,hf2);
-  
-  return 0;
-}
-
-int acol_manager::comm_integm(std::vector<std::string> &sv, bool itive_com) {
-
-  /*
-  std::string i1;
-  if (sv.size()>1) {
-    i1=sv[1];
-  } else if (itive_com) {
-    i1=cl->cli_gets("Enter expression to compute (or blank to stop): ");
-    if (i1.length()==0) {
-      if (verbose>0) cout << "Command 'calc' cancelled." << endl;
-      return 0;
-    }
-  } else {
-    cerr << "No expression to compute in 'calc'." << endl;
-    return exc_efailed;
-  }
-  */
-  if (sv.size()<5) {
-    cerr << "Not enough arguments for integm." << endl;
-    return 1;
-  }
-  std::string func=sv[1];
-  std::string var=sv[2];
-
-  funct_multip_string fms;
-  fms.verbose=verbose;
-  fms.set_function(func,var);
-
-  funct_multip fm2;
-
-  inte_kronrod_boost<61> imkb;
-  
-  imkb.tol_rel=pow(10.0,-precision-1);
-  
-  if (precision>49) {
-    
-    cerr << "Requested precision too large for the calcm "
-         << "command." << endl;
-    return 2;
-    
-  } else if (precision>34) {
-    
-    cpp_dec_float_50 d=0, err;
-    cpp_dec_float_50 lower_lim(sv[3]);
-    cpp_dec_float_50 upper_lim(sv[4]);
-    int retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
-                                   lower_lim,upper_lim,d,err);
-    if (retx!=0) {
-      cerr << "Integrating " << func << " failed." << endl;
-      return 1;
-    }
-    if (verbose>0) cout << "Result (cpp_dec_float_50): ";
-    cout << dtos(d,precision) << endl;
-    return 0;
-    
-  } else if (precision>24) {
-    
-    cpp_dec_float_35 d=0, err;
-    cpp_dec_float_35 lower_lim(sv[3]);
-    cpp_dec_float_35 upper_lim(sv[4]);
-    int retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
-                                   lower_lim,upper_lim,d,err);
-    if (retx!=0) {
-      cerr << "Integrating " << func << " failed." << endl;
-      return 1;
-    }
-    if (verbose>0) cout << "Result (cpp_dec_float_35): ";
-    cout << dtos(d,precision) << endl;
-    return 0;
-    
-  } else if (precision>17) {
-    
-    cpp_dec_float_25 d=0, err;
-    cpp_dec_float_25 lower_lim(sv[3]);
-    cpp_dec_float_25 upper_lim(sv[4]);
-    int retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
-                                   lower_lim,upper_lim,d,err);
-    if (retx!=0) {
-      cerr << "Integrating " << func << " failed." << endl;
-      return 1;
-    }
-    if (verbose>0) cout << "Result (cpp_dec_float_25): ";
-    cout << dtos(d,precision) << endl;
-    
-    return 0;
-    
-  } else if (precision>14) {
-    
-    long double d=0, err;
-    long double lower_lim=o2scl::stod(sv[3]);
-    long double upper_lim=o2scl::stod(sv[4]);
-    int retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
-                                   lower_lim,upper_lim,d,err);
-    if (retx!=0) {
-      cerr << "Integrating " << func << " failed." << endl;
-      return 1;
-    }
-    if (verbose>0) cout << "Result (long double): ";
-    cout << dtos(d,precision) << endl;
-    
-    return 0;
-  }
-  
-  double d=0, err;
-  double lower_lim=o2scl::stod(sv[3]);
-  double upper_lim=o2scl::stod(sv[4]);
-  int retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
-                                 lower_lim,upper_lim,d,err);
-  if (retx!=0) {
-    cerr << "Integrating " << func << " failed." << endl;
-    return 1;
-  }
-  if (scientific) cout.setf(ios::scientific);
-  else cout.unsetf(ios::scientific);
-  cout.precision(precision);
-  if (verbose>0) cout << "Result: ";
-  cout << d << endl;
-  return 0;
-}
-
-int acol_manager::comm_get_grid(std::vector<std::string> &sv, bool itive_com) {
-
-  if (type=="table3d") {
-    
-    vector<vector<string> > string_mat(3);
-    vector<int> align_spec(3);
-    
-    size_t max_size=table3d_obj.get_nx();
-    if (table3d_obj.get_ny()>max_size) {
-      max_size=table3d_obj.get_ny();
-    }
-
-    // The first column which enumerates the grid points
-    align_spec[0]=columnify::align_left;
-    string_mat[0].resize(max_size+1);
-    for(size_t ell=0;ell<max_size;ell++) {
-      string_mat[0][ell+1]=o2scl::szttos(ell)+".";
-    }
-
-    // The first row which labels the grids
-    string_mat[1].resize(max_size+1);
-    align_spec[1]=columnify::align_right;
-    string_mat[1][0]=table3d_obj.get_x_name();
-    string_mat[2].resize(max_size+1);
-    align_spec[2]=columnify::align_right;
-    string_mat[2][0]=table3d_obj.get_y_name();
-    
-    // Now the grid data
-    for(size_t ell=0;ell<max_size;ell++) {
-      if (ell<table3d_obj.get_nx()) {
-	string_mat[1][ell+1]=o2scl::dtos(table3d_obj.get_grid_x(ell),precision);
-      }
-      if (ell<table3d_obj.get_ny()) {
-	string_mat[2][ell+1]=o2scl::dtos(table3d_obj.get_grid_y(ell),precision);
-      }
-    }
-
-    columnify col;
-    vector<string> aligned(max_size+1);
-    col.align(string_mat,3,max_size+1,aligned,align_spec);
-    for(size_t i=0;i<aligned.size();i++) {
-      cout << aligned[i] << endl;
-    }
-
-  } else if (type=="tensor_grid") {
-
-    size_t rank=tensor_grid_obj.get_rank();
-
-    size_t max_size=0;
-    for(size_t k=0;k<rank;k++) {
-      if (tensor_grid_obj.get_size(k)>max_size) {
-	max_size=tensor_grid_obj.get_size(k);
-      }
-    }
-
-    vector<vector<string> > string_mat(rank+1);
-    vector<int> align_spec(rank+1);
-
-    // The first column which enumerates the grid points
-    align_spec[0]=columnify::align_left;
-    string_mat[0].resize(max_size+1);
-    for(size_t ell=0;ell<max_size;ell++) {
-      string_mat[0][ell+1]=o2scl::szttos(ell)+".";
-    }
-
-    // The first row which labels the grids
-    for(size_t k=0;k<rank;k++) {
-      string_mat[k+1].resize(max_size+1);
-      align_spec[k+1]=columnify::align_right;
-      string_mat[k+1][0]=((string)"Grid ")+o2scl::szttos(k);
-    }
-
-    // Now the grid data
-    for(size_t ell=0;ell<max_size;ell++) {
-      for(size_t k=0;k<rank;k++) {
-	if (ell<tensor_grid_obj.get_size(k)) {
-	  string_mat[k+1][ell+1]=
-	    o2scl::dtos(tensor_grid_obj.get_grid(k,ell),precision);
-	}
-      }
-    }
-
-    columnify col;
-    vector<string> aligned(max_size+1);
-    col.align(string_mat,rank+1,max_size+1,aligned,align_spec);
-    for(size_t i=0;i<aligned.size();i++) {
-      cout << aligned[i] << endl;
-    }
-
-  } else {
-
-    cout << "Not implemented for type " << type << endl;
-  }
-  
-  return 0;
-}
-
-int acol_manager::comm_get_unit(std::vector<std::string> &sv, bool itive_com) {
-
-  if (type!="table") {
-    cerr << "Not implemented for type " << type << " ." << endl;
-    return exc_efailed;
-  }
-
-  if (table_obj.get_nlines()==0) {
-    cerr << "No table to get units for." << endl;
-    return exc_efailed;
-  }
-
-  vector<string> in, pr;
-  pr.push_back("Column to get units of");
-  int ret=get_input(sv,pr,in,"get-unit",itive_com);
-  if (ret!=0) return ret;
-  
-  if (table_obj.is_column(in[0])==false) {
-    cerr << "Could not find column named '" << in[0] << "'." << endl;
-    return exc_efailed;
-  }
-
-  cout << "Units of column " << in[0] << " are: " 
-       << table_obj.get_unit(in[0]) << endl;
-
-  return 0;
-}
-
-int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
-
-  if (type!="table") {
-    cerr << "Not implemented for type " << type << " ." << endl;
-    return exc_efailed;
-  }
-  
-  if (table_obj.get_nlines()==0 || table_obj.get_nlines()==0) {
-    cerr << "No table or empty table in get-row." << endl;
-    return exc_efailed;
-  }
-
-  std::string i1;
-  int ret=get_input_one(sv,"Enter row number to get",
-			i1,"get-row",itive_com);
-  if (ret!=0) return ret;
-
-  int ix=((int)(o2scl::function_to_double(i1)));
-  
-  // If negative, view as distance from end
-  if (ix<0) ix+=table_obj.get_nlines();
-
-  if (ix<0) {
-    cerr << "Requested negative row in 'get-row'." << endl;
-    return exc_efailed;
-  }
-  if (ix>((int)table_obj.get_nlines())-1) {
-    cerr << "Requested row beyond end of table in get-row." << endl;
-    return exc_efailed;
-  }
-  
-  //--------------------------------------------------------------------
-  // Compute number of screen columns
-
-  int ncols_loc;
-  if (ncols<=0) {
-    int srow, scol;
-    int iret=get_screen_size_ioctl(srow,scol);
-    //std::cout << "iret,srow,scol: " << iret << " " << srow << " "
-    //<< scol << std::endl;
-    if (scol>10 && iret==0) ncols_loc=scol;
-    else ncols_loc=80;
-  } else {
-    ncols_loc=ncols;
-  }
-  cout << "Number of columns: " << ncols_loc << endl;
-
-  //--------------------------------------------------------------------
-  // Temporary storage strings for names and data
-
-  vector<string> row_names, row_data;
-
-  //--------------------------------------------------------------------
-  // Process and/or output names
-
-  if (names_out==true) {
-
-    if (pretty) {
-
-      size_t running_width=0;
-      ostringstream str;
-      // Clear ostringstream with str.str(""); and str.clear();
-      str.setf(ios::scientific);
-      str.precision(precision);
-      
-      for(size_t i=0;i<table_obj.get_ncolumns();i++) {
-
-	// Count for space between columns and sign
-	size_t this_col=2;
-	// Count column name
-	this_col+=table_obj.get_column_name(i).size();
-	// Count extra spaces to format number
-	int num_spaces=precision+6-((int)(table_obj.get_column_name(i).size()));
-	if (num_spaces>0) this_col+=num_spaces;
-	// See if there will be space
-	if (running_width>0 && ((int)(running_width+this_col))>=ncols_loc) {
-	  row_names.push_back(str.str());
-	  str.str("");
-	  str.clear();
-	  str.setf(ios::scientific);
-	  str.precision(precision);
-	  running_width=0;
-	}
-	// Output this column name
-	str << ' ' << table_obj.get_column_name(i) << ' ';
-	for(int j=0;j<num_spaces;j++) {
-	  str << ' ';
-	}
-	running_width+=this_col;
-      }
-      row_names.push_back(str.str());
-      str.str("");
-      str.clear();
-      
-    } else {
-      
-      cout.precision(precision);
-  
-      for(size_t i=0;i<table_obj.get_ncolumns();i++) {
-	cout << table_obj.get_column_name(i) << ' ';
-      }
-      cout << endl;
-
-    }
-  }
-  
-  //--------------------------------------------------------------------
-  // Process and/or output data
-  
-  if (pretty) {
-    
-    size_t running_width=0;
-    ostringstream str;
-    str.setf(ios::scientific);
-    str.precision(precision);
-    
-    for(size_t i=0;i<table_obj.get_ncolumns();i++) {
-      
-      // Count space for number
-      size_t this_col=precision+8;
-      // Count extra spaces if necessary
-      int num_spaces=((int)(table_obj.get_column_name(i).size())-precision-6);
-      if (num_spaces>0) this_col+=num_spaces;
-      // See if there will be space
-      if (running_width>0 && ((int)(running_width+this_col))>=ncols_loc) {
-	row_data.push_back(str.str());
-	str.str("");
-	str.clear();
-	str.setf(ios::scientific);
-	str.precision(precision);
-	running_width=0;
-      }
-      // Output the data
-      if (table_obj.get(i,ix)>=0.0) {
-	str << ' ' << table_obj.get(i,ix) << ' ';
-      } else {
-	str << table_obj.get(i,ix) << ' ';
-      }
-      for(int j=0;j<num_spaces;j++) {
-	str << ' ';
-      }
-      running_width+=this_col;
-    }
-    row_data.push_back(str.str());
-    str.str("");
-    str.clear();
-    
-    //--------------------------------------------------------------------
-    // Now output both names and data to cout
-
-    if (row_names.size()!=row_data.size()) {
-      O2SCL_ERR("Names and data size don't match in get-row.",
-		exc_esanity);
-    }
-    for(size_t k=0;k<row_names.size();k++) {
-      cout << row_names[k] << endl;
-      cout << row_data[k] << endl;
-    }
-    
-  } else {
-    
-    for(size_t i=0;i<table_obj.get_ncolumns();i++) {
-      cout << table_obj.get(i,ix) << ' ';
-    }
-    cout << endl;
-    
-  }
-  
-  return 0;
-}
+/*
+  int acol_manager::comm_generic()
+  int acol_manager::comm_get_grid()
+  int acol_manager::comm_get_row()
+  int acol_manager::comm_get_unit()
+  int acol_manager::comm_help()
+  int acol_manager::comm_h5_copy()
+  int acol_manager::comm_index()
+  int acol_manager::comm_insert()
+  int acol_manager::comm_insert_full()
+  int acol_manager::comm_integ()
+  int acol_manager::comm_integm()
+  int acol_manager::comm_internal()
+  int acol_manager::comm_interp()
+  int acol_manager::comm_interp_type()
+  int acol_manager::comm_interactive()
+*/
 
 int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
   std::string ctype;
@@ -663,6 +234,302 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
   if (fname!=((std::string)"cin")) {
     ifs.close();
   }
+
+  return 0;
+}
+
+int acol_manager::comm_get_grid(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="table3d") {
+    
+    vector<vector<string> > string_mat(3);
+    vector<int> align_spec(3);
+    
+    size_t max_size=table3d_obj.get_nx();
+    if (table3d_obj.get_ny()>max_size) {
+      max_size=table3d_obj.get_ny();
+    }
+
+    // The first column which enumerates the grid points
+    align_spec[0]=columnify::align_left;
+    string_mat[0].resize(max_size+1);
+    for(size_t ell=0;ell<max_size;ell++) {
+      string_mat[0][ell+1]=o2scl::szttos(ell)+".";
+    }
+
+    // The first row which labels the grids
+    string_mat[1].resize(max_size+1);
+    align_spec[1]=columnify::align_right;
+    string_mat[1][0]=table3d_obj.get_x_name();
+    string_mat[2].resize(max_size+1);
+    align_spec[2]=columnify::align_right;
+    string_mat[2][0]=table3d_obj.get_y_name();
+    
+    // Now the grid data
+    for(size_t ell=0;ell<max_size;ell++) {
+      if (ell<table3d_obj.get_nx()) {
+	string_mat[1][ell+1]=o2scl::dtos(table3d_obj.get_grid_x(ell),precision);
+      }
+      if (ell<table3d_obj.get_ny()) {
+	string_mat[2][ell+1]=o2scl::dtos(table3d_obj.get_grid_y(ell),precision);
+      }
+    }
+
+    columnify col;
+    vector<string> aligned(max_size+1);
+    col.align(string_mat,3,max_size+1,aligned,align_spec);
+    for(size_t i=0;i<aligned.size();i++) {
+      cout << aligned[i] << endl;
+    }
+
+  } else if (type=="tensor_grid") {
+
+    size_t rank=tensor_grid_obj.get_rank();
+
+    size_t max_size=0;
+    for(size_t k=0;k<rank;k++) {
+      if (tensor_grid_obj.get_size(k)>max_size) {
+	max_size=tensor_grid_obj.get_size(k);
+      }
+    }
+
+    vector<vector<string> > string_mat(rank+1);
+    vector<int> align_spec(rank+1);
+
+    // The first column which enumerates the grid points
+    align_spec[0]=columnify::align_left;
+    string_mat[0].resize(max_size+1);
+    for(size_t ell=0;ell<max_size;ell++) {
+      string_mat[0][ell+1]=o2scl::szttos(ell)+".";
+    }
+
+    // The first row which labels the grids
+    for(size_t k=0;k<rank;k++) {
+      string_mat[k+1].resize(max_size+1);
+      align_spec[k+1]=columnify::align_right;
+      string_mat[k+1][0]=((string)"Grid ")+o2scl::szttos(k);
+    }
+
+    // Now the grid data
+    for(size_t ell=0;ell<max_size;ell++) {
+      for(size_t k=0;k<rank;k++) {
+	if (ell<tensor_grid_obj.get_size(k)) {
+	  string_mat[k+1][ell+1]=
+	    o2scl::dtos(tensor_grid_obj.get_grid(k,ell),precision);
+	}
+      }
+    }
+
+    columnify col;
+    vector<string> aligned(max_size+1);
+    col.align(string_mat,rank+1,max_size+1,aligned,align_spec);
+    for(size_t i=0;i<aligned.size();i++) {
+      cout << aligned[i] << endl;
+    }
+
+  } else {
+
+    cout << "Not implemented for type " << type << endl;
+  }
+  
+  return 0;
+}
+
+int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type!="table") {
+    cerr << "Not implemented for type " << type << " ." << endl;
+    return exc_efailed;
+  }
+  
+  if (table_obj.get_nlines()==0 || table_obj.get_nlines()==0) {
+    cerr << "No table or empty table in get-row." << endl;
+    return exc_efailed;
+  }
+
+  std::string i1;
+  int ret=get_input_one(sv,"Enter row number to get",
+			i1,"get-row",itive_com);
+  if (ret!=0) return ret;
+
+  int ix=((int)(o2scl::function_to_double(i1)));
+  
+  // If negative, view as distance from end
+  if (ix<0) ix+=table_obj.get_nlines();
+
+  if (ix<0) {
+    cerr << "Requested negative row in 'get-row'." << endl;
+    return exc_efailed;
+  }
+  if (ix>((int)table_obj.get_nlines())-1) {
+    cerr << "Requested row beyond end of table in get-row." << endl;
+    return exc_efailed;
+  }
+  
+  //--------------------------------------------------------------------
+  // Compute number of screen columns
+
+  int ncols_loc;
+  if (ncols<=0) {
+    int srow, scol;
+    int iret=get_screen_size_ioctl(srow,scol);
+    //std::cout << "iret,srow,scol: " << iret << " " << srow << " "
+    //<< scol << std::endl;
+    if (scol>10 && iret==0) ncols_loc=scol;
+    else ncols_loc=80;
+  } else {
+    ncols_loc=ncols;
+  }
+  cout << "Number of columns: " << ncols_loc << endl;
+
+  //--------------------------------------------------------------------
+  // Temporary storage strings for names and data
+
+  vector<string> row_names, row_data;
+
+  //--------------------------------------------------------------------
+  // Process and/or output names
+
+  if (names_out==true) {
+
+    if (pretty) {
+
+      size_t running_width=0;
+      ostringstream str;
+      // Clear ostringstream with str.str(""); and str.clear();
+      str.setf(ios::scientific);
+      str.precision(precision);
+      
+      for(size_t i=0;i<table_obj.get_ncolumns();i++) {
+
+	// Count for space between columns and sign
+	size_t this_col=2;
+	// Count column name
+	this_col+=table_obj.get_column_name(i).size();
+	// Count extra spaces to format number
+	int num_spaces=precision+6-((int)(table_obj.get_column_name(i).size()));
+	if (num_spaces>0) this_col+=num_spaces;
+	// See if there will be space
+	if (running_width>0 && ((int)(running_width+this_col))>=ncols_loc) {
+	  row_names.push_back(str.str());
+	  str.str("");
+	  str.clear();
+	  str.setf(ios::scientific);
+	  str.precision(precision);
+	  running_width=0;
+	}
+	// Output this column name
+	str << ' ' << table_obj.get_column_name(i) << ' ';
+	for(int j=0;j<num_spaces;j++) {
+	  str << ' ';
+	}
+	running_width+=this_col;
+      }
+      row_names.push_back(str.str());
+      str.str("");
+      str.clear();
+      
+    } else {
+      
+      cout.precision(precision);
+  
+      for(size_t i=0;i<table_obj.get_ncolumns();i++) {
+	cout << table_obj.get_column_name(i) << ' ';
+      }
+      cout << endl;
+
+    }
+  }
+  
+  //--------------------------------------------------------------------
+  // Process and/or output data
+  
+  if (pretty) {
+    
+    size_t running_width=0;
+    ostringstream str;
+    str.setf(ios::scientific);
+    str.precision(precision);
+    
+    for(size_t i=0;i<table_obj.get_ncolumns();i++) {
+      
+      // Count space for number
+      size_t this_col=precision+8;
+      // Count extra spaces if necessary
+      int num_spaces=((int)(table_obj.get_column_name(i).size())-precision-6);
+      if (num_spaces>0) this_col+=num_spaces;
+      // See if there will be space
+      if (running_width>0 && ((int)(running_width+this_col))>=ncols_loc) {
+	row_data.push_back(str.str());
+	str.str("");
+	str.clear();
+	str.setf(ios::scientific);
+	str.precision(precision);
+	running_width=0;
+      }
+      // Output the data
+      if (table_obj.get(i,ix)>=0.0) {
+	str << ' ' << table_obj.get(i,ix) << ' ';
+      } else {
+	str << table_obj.get(i,ix) << ' ';
+      }
+      for(int j=0;j<num_spaces;j++) {
+	str << ' ';
+      }
+      running_width+=this_col;
+    }
+    row_data.push_back(str.str());
+    str.str("");
+    str.clear();
+    
+    //--------------------------------------------------------------------
+    // Now output both names and data to cout
+
+    if (row_names.size()!=row_data.size()) {
+      O2SCL_ERR("Names and data size don't match in get-row.",
+		exc_esanity);
+    }
+    for(size_t k=0;k<row_names.size();k++) {
+      cout << row_names[k] << endl;
+      cout << row_data[k] << endl;
+    }
+    
+  } else {
+    
+    for(size_t i=0;i<table_obj.get_ncolumns();i++) {
+      cout << table_obj.get(i,ix) << ' ';
+    }
+    cout << endl;
+    
+  }
+  
+  return 0;
+}
+
+int acol_manager::comm_get_unit(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type!="table") {
+    cerr << "Not implemented for type " << type << " ." << endl;
+    return exc_efailed;
+  }
+
+  if (table_obj.get_nlines()==0) {
+    cerr << "No table to get units for." << endl;
+    return exc_efailed;
+  }
+
+  vector<string> in, pr;
+  pr.push_back("Column to get units of");
+  int ret=get_input(sv,pr,in,"get-unit",itive_com);
+  if (ret!=0) return ret;
+  
+  if (table_obj.is_column(in[0])==false) {
+    cerr << "Could not find column named '" << in[0] << "'." << endl;
+    return exc_efailed;
+  }
+
+  cout << "Units of column " << in[0] << " are: " 
+       << table_obj.get_unit(in[0]) << endl;
 
   return 0;
 }
@@ -1198,229 +1065,34 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   return ret;
 }
 
-/*
-  int acol_manager::comm_interp_type(std::vector<std::string> &sv, 
-  bool itive_com) {
+int acol_manager::comm_h5_copy(std::vector<std::string> &sv, 
+			       bool itive_com) {
 
-  if (type=="table3d") {
-    
-  if (type!="table3d") {
-  cout << "No table to get interpolation type of in 'interp-type'." << endl;
-  return exc_efailed;
-  }
-
-  if (sv.size()>1) {
-  if (o2scl::stoi(sv[1])>7 || o2scl::stoi(sv[1])<0) {
-  cout << "Invalid interpolation type in 'interp-type'." << endl;
-  return exc_efailed;
-  }
-  table3d_obj.set_interp_type(o2scl::stoi(sv[1]));
-  }
-    
-  if (sv.size()==1 || verbose>0) {
-  size_t itype=table3d_obj.get_interp_type();
-  cout << "Current interpolation type is " << itype;
-      
-  if (itype<4) {
-  if (itype<3) {
-  if (itype==1) {
-  cout << " (linear)." << endl;
-  } else {
-  cout << " (cubic spline)." << endl;
-  }
-  } else {
-  cout << " (cubic spline, periodic)." << endl;
-  }
-  } else {
-  if (itype<6) {
-  if (itype<5) {
-  cout << " (Akima spline)." << endl;
-  } else {
-  cout << " (Akima spline, periodic)." << endl;
-  }
-  } else {
-  if (itype<7) {
-  cout << " (Monotonicity-preserving)." << endl;
-  } else {
-  cout << " (Steffen's monotonic)." << endl;
-  }
-  }
-  }
-  }
-    
-  return 0;
-  }
+  cout << "Warning h5-copy is still experimental." << endl;
   
-  if (table_obj.get_nlines()==0) {
-  cout << "No table to get interpolation type of." << endl;
-  return exc_efailed;
-  }
-
-  if (sv.size()>1) {
-  if (o2scl::stoi(sv[1])>7 || o2scl::stoi(sv[1])<0) {
-  cout << "Invalid interpolation type in interp-type." << endl;
-  return exc_efailed;
-  }
-  table_obj.set_interp_type(o2scl::stoi(sv[1]));
-  }
-
-  if (sv.size()==1 || verbose>0) {
-  size_t itype=table_obj.get_interp_type();
-  cout << "Current interpolation type is " << itype;
-    
-  if (itype<4) {
-  if (itype<3) {
-  if (itype==1) {
-  cout << " (linear)." << endl;
-  } else {
-  cout << " (cubic spline)." << endl;
-  }
-  } else {
-  cout << " (cubic spline, periodic)." << endl;
-  }
-  } else {
-  if (itype<6) {
-  if (itype<5) {
-  cout << " (Akima spline)." << endl;
-  } else {
-  cout << " (Akima spline, periodic)." << endl;
-  }
-  } else {
-  if (itype<7) {
-  cout << " (Monotonicity-preserving)." << endl;
-  } else {
-  cout << " (Steffen's monotonic)." << endl;
-  }
-  }
-  }
-  }
+  vector<string> in, pr;
   
-  return 0;
-  }
-*/
-
-int acol_manager::comm_integ(std::vector<std::string> &sv, bool itive_com) {
-
-  if (type!="table") {
-    cerr << "Not implemented for type " << type << " ." << endl;
-    return exc_efailed;
-  }
-
-  if (table_obj.get_nlines()==0) {
-    cerr << "No table with columns to integrate." << endl;
-    return exc_efailed;
-  }
-  vector<string> pr, in;
-  pr.push_back("Enter 'x' column");
-  pr.push_back("Enter 'y' column");
-  pr.push_back("Enter name of new column");
-  int ret=get_input(sv,pr,in,"integ",itive_com);
+  pr.push_back("Source file");
+  pr.push_back("Destination file");
+  int ret=get_input(sv,pr,in,"h5-copy",itive_com);
   if (ret!=0) return ret;
 
-  if (table_obj.is_column(in[0])==false) {
-    cerr << "Could not find column named '" << in[0] << "'." << endl;
+  if (in[0]==in[1]) {
+    cerr << "Command 'h5-copy' will not copy a file onto itself." << endl;
+    return 2;
+  }
+
+  // Use hdf_file to open the file
+  hdf_file hf, hf2;
+  int hfret=hf.open(in[0].c_str(),false,false);
+  if (hfret!=0) {
+    cerr << "Failed to read file named " << in[0].c_str() << endl;
     return exc_efailed;
   }
-  if (table_obj.is_column(in[1])==false) {
-    cerr << "Could not find column named '" << in[1] << "'." << endl;
-    return exc_efailed;
-  }
+  hf2.open_or_create(in[1].c_str());
 
-  table_obj.integ(in[0],in[1],in[2]);
-
-  return 0;
-}
-
-int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
+  hf.copy(verbose,hf2);
   
-  std::string i1;
-  int ret=get_input_one(sv,"Enter filename",i1,"internal",itive_com);
-  if (ret!=0) return ret;
-  
-  if (verbose>2) {
-    cout << "Opening O2scl file: " << i1 << endl;
-  }
-  
-  hdf_file hf;
-  hf.compr_type=compress;
-  hf.open_or_create(i1);
-  
-  if (type=="int") {
-
-    hf.seti(obj_name,int_obj);
-    
-  } else if (type=="double") {
-
-    hf.setd(obj_name,double_obj);
-    
-  } else if (type=="char") {
-
-    hf.setc(obj_name,char_obj);
-    
-  } else if (type=="string") {
-
-    hf.sets(obj_name,string_obj);
-    
-  } else if (type=="size_t") {
-
-    hf.set_szt(obj_name,size_t_obj);
-    
-  } else if (type=="double[]") {
-
-    hf.setd_vec(obj_name,doublev_obj);
-    
-  } else if (type=="tensor") {
-
-    hf.setd_ten(obj_name,tensor_obj);
-    
-  } else if (type=="int[]") {
-
-    hf.seti_vec(obj_name,intv_obj);
-    
-  } else if (type=="size_t[]") {
-
-    hf.set_szt_vec(obj_name,size_tv_obj);
-    
-  } else if (type=="string[]") {
-
-    hf.sets_vec(obj_name,stringv_obj);
-    
-  } else if (type=="vec_vec_string") {
-
-    hf.sets_vec_vec(obj_name,vvstring_obj);
-    
-  } else if (type=="table3d") {
-    
-    hdf_output(hf,((const table3d &)(table3d_obj)),obj_name);
-    
-  } else if (type=="tensor_grid") {
-    
-    hdf_output(hf,tensor_grid_obj,obj_name);
-    
-  } else if (type=="table") {
-    
-    hdf_output(hf,table_obj,obj_name);
-
-  } else if (type=="hist") {
-
-    hdf_output(hf,hist_obj,obj_name);
-    
-  } else if (type=="hist_2d") {
-
-    hdf_output(hf,((const hist_2d &)(hist_2d_obj)),obj_name);
-    
-  } else if (type=="vector<contour_line>") {
-
-    hdf_output(hf,cont_obj,obj_name);
-    
-  } else if (type=="uniform_grid<double>") {
-
-    hdf_output(hf,ug_obj,obj_name);
-    
-  }
-
-  hf.close();
-    
   return 0;
 }
 
@@ -1441,22 +1113,6 @@ int acol_manager::comm_index(std::vector<std::string> &sv, bool itive_com) {
   table_obj.new_column(i1);
   for(size_t i=0;i<table_obj.get_nlines();i++) table_obj.set(i1,i,((double)i));
 
-  return 0;
-}
-
-int acol_manager::comm_interactive(std::vector<std::string> &sv, 
-				   bool itive_com) {
-
-  post_interactive=!post_interactive;
-  if (verbose>0) {
-    if (post_interactive) {
-      cout << "Interactive mode will run after command-line is parsed." 
-	   << endl;
-    } else {
-      cout << "Interactive mode will not run after command-line is parsed." 
-	   << endl;
-    }
-  }
   return 0;
 }
 
@@ -1700,6 +1356,252 @@ int acol_manager::comm_insert_full(std::vector<std::string> &sv,
   return 0;
 }
 
+int acol_manager::comm_integ(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type!="table") {
+    cerr << "Not implemented for type " << type << " ." << endl;
+    return exc_efailed;
+  }
+
+  if (table_obj.get_nlines()==0) {
+    cerr << "No table with columns to integrate." << endl;
+    return exc_efailed;
+  }
+  vector<string> pr, in;
+  pr.push_back("Enter 'x' column");
+  pr.push_back("Enter 'y' column");
+  pr.push_back("Enter name of new column");
+  int ret=get_input(sv,pr,in,"integ",itive_com);
+  if (ret!=0) return ret;
+
+  if (table_obj.is_column(in[0])==false) {
+    cerr << "Could not find column named '" << in[0] << "'." << endl;
+    return exc_efailed;
+  }
+  if (table_obj.is_column(in[1])==false) {
+    cerr << "Could not find column named '" << in[1] << "'." << endl;
+    return exc_efailed;
+  }
+
+  table_obj.integ(in[0],in[1],in[2]);
+
+  return 0;
+}
+
+int acol_manager::comm_integm(std::vector<std::string> &sv, bool itive_com) {
+
+  vector<string> in, pr;
+  
+  pr.push_back("Function");
+  pr.push_back("Integration variable");
+  pr.push_back("Lower limit");
+  pr.push_back("Upper limit");
+  int ret=get_input(sv,pr,in,"integm",itive_com);
+  if (ret!=0) return ret;
+
+  if (sv.size()<5) {
+    cerr << "Not enough arguments for integm." << endl;
+    return 1;
+  }
+  std::string func=in[0];
+  std::string var=in[1];
+
+  funct_multip_string fms;
+  fms.verbose=verbose;
+  fms.set_function(func,var);
+
+  funct_multip fm2;
+  inte_kronrod_boost<61> imkb;
+
+  // C++ prints out precision+1 significant figures so we add one to
+  // 'precision' to construct the integration tolerance.
+  imkb.tol_rel=pow(10.0,-precision-1);
+  
+  if (precision>49) {
+    
+    cerr << "Requested precision too large for the calcm "
+         << "command (maximum is 49)." << endl;
+    return 2;
+    
+  } else if (precision>34) {
+    
+    cpp_dec_float_50 d=0, err, lower_lim, upper_lim;
+    convert_units<cpp_dec_float_50> cu;
+    function_to_fp_nothrow(in[2],lower_lim,cu);
+    function_to_fp_nothrow(in[3],upper_lim,cu);
+    int retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
+                                   lower_lim,upper_lim,d,err);
+    if (retx!=0) {
+      cerr << "Integrating " << func << " failed." << endl;
+      return 1;
+    }
+    if (verbose>0) cout << "Result (cpp_dec_float_50): ";
+    cout << dtos(d,precision) << endl;
+    return 0;
+    
+  } else if (precision>24) {
+    
+    cpp_dec_float_35 d=0, err, lower_lim, upper_lim;
+    convert_units<cpp_dec_float_35> cu;
+    function_to_fp_nothrow(in[2],lower_lim,cu);
+    function_to_fp_nothrow(in[3],upper_lim,cu);
+    int retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
+                                   lower_lim,upper_lim,d,err);
+    if (retx!=0) {
+      cerr << "Integrating " << func << " failed." << endl;
+      return 1;
+    }
+    if (verbose>0) cout << "Result (cpp_dec_float_35): ";
+    cout << dtos(d,precision) << endl;
+    return 0;
+    
+  } else if (precision>17) {
+    
+    cpp_dec_float_25 d=0, err, lower_lim, upper_lim;
+    convert_units<cpp_dec_float_25> cu;
+    function_to_fp_nothrow(in[2],lower_lim,cu);
+    function_to_fp_nothrow(in[3],upper_lim,cu);
+    int retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
+                                   lower_lim,upper_lim,d,err);
+    if (retx!=0) {
+      cerr << "Integrating " << func << " failed." << endl;
+      return 1;
+    }
+    if (verbose>0) cout << "Result (cpp_dec_float_25): ";
+    cout << dtos(d,precision) << endl;
+    
+    return 0;
+    
+  } else if (precision>14) {
+    
+    long double d=0, err, lower_lim, upper_lim;
+    convert_units<long double> cu;
+    function_to_fp_nothrow(in[2],lower_lim,cu);
+    function_to_fp_nothrow(in[3],upper_lim,cu);
+    int retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
+                                   lower_lim,upper_lim,d,err);
+    if (retx!=0) {
+      cerr << "Integrating " << func << " failed." << endl;
+      return 1;
+    }
+    if (verbose>0) cout << "Result (long double): ";
+    cout << dtos(d,precision) << endl;
+    
+    return 0;
+  }
+  
+  double d=0, err, lower_lim, upper_lim;
+  convert_units<double> cu;
+  function_to_fp_nothrow(in[2],lower_lim,cu);
+  function_to_fp_nothrow(in[3],upper_lim,cu);
+  int retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
+                                 lower_lim,upper_lim,d,err);
+  if (retx!=0) {
+    cerr << "Integrating " << func << " failed." << endl;
+    return 1;
+  }
+  if (scientific) cout.setf(ios::scientific);
+  else cout.unsetf(ios::scientific);
+  cout.precision(precision);
+  if (verbose>0) cout << "Result: ";
+  cout << d << endl;
+  
+  return 0;
+}
+
+int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
+  
+  std::string i1;
+  int ret=get_input_one(sv,"Enter filename",i1,"internal",itive_com);
+  if (ret!=0) return ret;
+  
+  if (verbose>2) {
+    cout << "Opening O2scl file: " << i1 << endl;
+  }
+  
+  hdf_file hf;
+  hf.compr_type=compress;
+  hf.open_or_create(i1);
+  
+  if (type=="int") {
+
+    hf.seti(obj_name,int_obj);
+    
+  } else if (type=="double") {
+
+    hf.setd(obj_name,double_obj);
+    
+  } else if (type=="char") {
+
+    hf.setc(obj_name,char_obj);
+    
+  } else if (type=="string") {
+
+    hf.sets(obj_name,string_obj);
+    
+  } else if (type=="size_t") {
+
+    hf.set_szt(obj_name,size_t_obj);
+    
+  } else if (type=="double[]") {
+
+    hf.setd_vec(obj_name,doublev_obj);
+    
+  } else if (type=="tensor") {
+
+    hf.setd_ten(obj_name,tensor_obj);
+    
+  } else if (type=="int[]") {
+
+    hf.seti_vec(obj_name,intv_obj);
+    
+  } else if (type=="size_t[]") {
+
+    hf.set_szt_vec(obj_name,size_tv_obj);
+    
+  } else if (type=="string[]") {
+
+    hf.sets_vec(obj_name,stringv_obj);
+    
+  } else if (type=="vec_vec_string") {
+
+    hf.sets_vec_vec(obj_name,vvstring_obj);
+    
+  } else if (type=="table3d") {
+    
+    hdf_output(hf,((const table3d &)(table3d_obj)),obj_name);
+    
+  } else if (type=="tensor_grid") {
+    
+    hdf_output(hf,tensor_grid_obj,obj_name);
+    
+  } else if (type=="table") {
+    
+    hdf_output(hf,table_obj,obj_name);
+
+  } else if (type=="hist") {
+
+    hdf_output(hf,hist_obj,obj_name);
+    
+  } else if (type=="hist_2d") {
+
+    hdf_output(hf,((const hist_2d &)(hist_2d_obj)),obj_name);
+    
+  } else if (type=="vector<contour_line>") {
+
+    hdf_output(hf,cont_obj,obj_name);
+    
+  } else if (type=="uniform_grid<double>") {
+
+    hdf_output(hf,ug_obj,obj_name);
+    
+  }
+
+  hf.close();
+    
+  return 0;
+}
+
 int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {
@@ -1856,6 +1758,123 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
     return 1;
   }    
   
+  return 0;
+}
+
+/*
+  int acol_manager::comm_interp_type(std::vector<std::string> &sv, 
+  bool itive_com) {
+
+  if (type=="table3d") {
+    
+  if (type!="table3d") {
+  cout << "No table to get interpolation type of in 'interp-type'." << endl;
+  return exc_efailed;
+  }
+
+  if (sv.size()>1) {
+  if (o2scl::stoi(sv[1])>7 || o2scl::stoi(sv[1])<0) {
+  cout << "Invalid interpolation type in 'interp-type'." << endl;
+  return exc_efailed;
+  }
+  table3d_obj.set_interp_type(o2scl::stoi(sv[1]));
+  }
+    
+  if (sv.size()==1 || verbose>0) {
+  size_t itype=table3d_obj.get_interp_type();
+  cout << "Current interpolation type is " << itype;
+      
+  if (itype<4) {
+  if (itype<3) {
+  if (itype==1) {
+  cout << " (linear)." << endl;
+  } else {
+  cout << " (cubic spline)." << endl;
+  }
+  } else {
+  cout << " (cubic spline, periodic)." << endl;
+  }
+  } else {
+  if (itype<6) {
+  if (itype<5) {
+  cout << " (Akima spline)." << endl;
+  } else {
+  cout << " (Akima spline, periodic)." << endl;
+  }
+  } else {
+  if (itype<7) {
+  cout << " (Monotonicity-preserving)." << endl;
+  } else {
+  cout << " (Steffen's monotonic)." << endl;
+  }
+  }
+  }
+  }
+    
+  return 0;
+  }
+  
+  if (table_obj.get_nlines()==0) {
+  cout << "No table to get interpolation type of." << endl;
+  return exc_efailed;
+  }
+
+  if (sv.size()>1) {
+  if (o2scl::stoi(sv[1])>7 || o2scl::stoi(sv[1])<0) {
+  cout << "Invalid interpolation type in interp-type." << endl;
+  return exc_efailed;
+  }
+  table_obj.set_interp_type(o2scl::stoi(sv[1]));
+  }
+
+  if (sv.size()==1 || verbose>0) {
+  size_t itype=table_obj.get_interp_type();
+  cout << "Current interpolation type is " << itype;
+    
+  if (itype<4) {
+  if (itype<3) {
+  if (itype==1) {
+  cout << " (linear)." << endl;
+  } else {
+  cout << " (cubic spline)." << endl;
+  }
+  } else {
+  cout << " (cubic spline, periodic)." << endl;
+  }
+  } else {
+  if (itype<6) {
+  if (itype<5) {
+  cout << " (Akima spline)." << endl;
+  } else {
+  cout << " (Akima spline, periodic)." << endl;
+  }
+  } else {
+  if (itype<7) {
+  cout << " (Monotonicity-preserving)." << endl;
+  } else {
+  cout << " (Steffen's monotonic)." << endl;
+  }
+  }
+  }
+  }
+  
+  return 0;
+  }
+*/
+
+int acol_manager::comm_interactive(std::vector<std::string> &sv, 
+				   bool itive_com) {
+
+  post_interactive=!post_interactive;
+  if (verbose>0) {
+    if (post_interactive) {
+      cout << "Interactive mode will run after command-line is parsed." 
+	   << endl;
+    } else {
+      cout << "Interactive mode will not run after command-line is parsed." 
+	   << endl;
+    }
+  }
   return 0;
 }
 
