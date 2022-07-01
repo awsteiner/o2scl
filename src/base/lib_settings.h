@@ -473,22 +473,20 @@ namespace o2scl {
      */
     bool err_nonconv;
 
-    /** \brief Compute the function at the value \c x returning
-        \c value with uncertainty \c err
+    /** \brief Compute the function at the value \c x 
      */
-    template<class fp_t> int eval_err(fp_t x, fp_t &val, fp_t &err) {
+    template<class fp_t> fp_t operator()(fp_t x) {
     
-      // Tolerance
-      fp_t tol=pow(10.0,-std::numeric_limits<fp_t>::digits10+1);
-
       if (compiled==false) {
 
-        c.verbose=verbose;
-        c_ld.verbose=verbose;
-        c_25.verbose=verbose;
-        c_35.verbose=verbose;
-        c_50.verbose=verbose;
-        c_100.verbose=verbose;
+        /*
+          c.verbose=verbose;
+          c_ld.verbose=verbose;
+          c_25.verbose=verbose;
+          c_35.verbose=verbose;
+          c_50.verbose=verbose;
+          c_100.verbose=verbose;
+        */
         
         c.compile(st_form.c_str());
         c_ld.compile(st_form.c_str());
@@ -565,147 +563,34 @@ namespace o2scl {
         compiled=true;
       }
 
-      vars[st_var]=static_cast<double>(x);
-      vars_ld[st_var]=static_cast<long double>(x);
-      vars_25[st_var]=static_cast<cpp_dec_float_25>(x);
-      vars_35[st_var]=static_cast<cpp_dec_float_35>(x);
-      vars_50[st_var]=static_cast<cpp_dec_float_50>(x);
-      vars_100[st_var]=static_cast<cpp_dec_float_100>(x);
+      // AWS, 7/1/22: This is a hack to determine the type so we can
+      // get the right convert_units object.
       
-      /// First pass, compare double and long double
-      
-      double y_d=c.eval(&vars);
-      long double y_ld=c_ld.eval(&vars_ld);
+      int d10=std::numeric_limits<fp_t>::digits10;
+      if (d10==15) {
+        vars[st_var]=static_cast<double>(x);
+        return static_cast<fp_t>(c.eval(&vars));
+      } else if (d10==18) {
+        vars_ld[st_var]=static_cast<long double>(x);
+        return static_cast<fp_t>(c_ld.eval(&vars_ld));
+      } else if (d10==25) {
+        vars_25[st_var]=static_cast<cpp_dec_float_25>(x);
+        return static_cast<fp_t>(c_25.eval(&vars_25));
+      } else if (d10==35) {
+        vars_35[st_var]=static_cast<cpp_dec_float_35>(x);
+        return static_cast<fp_t>(c_35.eval(&vars_35));
+      } else if (d10==50) {
+        vars_50[st_var]=static_cast<cpp_dec_float_50>(x);
+        return static_cast<fp_t>(c_50.eval(&vars_50));
+      } else if (d10==100) {
+        vars_100[st_var]=static_cast<cpp_dec_float_100>(x);
+        return static_cast<fp_t>(c_100.eval(&vars_100));
+      }
 
-      if (y_ld==0 && y_d==0) {
-        val=0;
-        err=0;
-        return 0;
-      }
-      if (y_ld!=0) {
-        err=static_cast<fp_t>(abs(y_ld-y_d)/abs(y_ld));
-        if (err<tol) {
-          val=static_cast<fp_t>(y_ld);
-          return 0;
-        }
-      }
-      if (verbose>0) {
-        std::cout << "Failed 1: " << dtos(y_ld,0) << " "
-                  << dtos(y_d,0) << " "
-                  << dtos(err,0) << " " << tol << std::endl;
-      }
-    
-      /// Second pass, compare long double and 25-digit precision
-
-      cpp_dec_float_25 x_cdf25=static_cast<cpp_dec_float_25>(x);
-      cpp_dec_float_25 y_cdf25=c_25.eval(&vars_25);
-
-      if (y_cdf25==0 && y_ld==0) {
-        val=0;
-        err=0;
-        return 0;
-      }
-      if (y_cdf25!=0) {
-        err=static_cast<fp_t>(abs(y_cdf25-y_ld)/abs(y_cdf25));
-        if (err<tol) {
-          val=static_cast<fp_t>(y_cdf25);
-          return 0;
-        }
-      }
-      if (verbose>0) {
-        std::cout << "Failed 2: " << dtos(y_cdf25,0) << " "
-                  << dtos(y_ld,0) << " "
-                  << dtos(err,0) << " " << tol << std::endl;
-      }
-    
-      /// Third pass, compare 25- and 35-digit precision
-
-      cpp_dec_float_35 x_cdf35=static_cast<cpp_dec_float_35>(x);
-      cpp_dec_float_35 y_cdf35=c_35.eval(&vars_35);
-        
-      if (y_cdf35==0 && y_cdf25==0) {
-        val=0;
-        err=0;
-        return 0;
-      }
-      if (y_cdf35!=0) {
-        err=static_cast<fp_t>(abs(y_cdf35-y_cdf25)/abs(y_cdf35));
-        if (err<tol) {
-          val=static_cast<fp_t>(y_cdf35);
-          return 0;
-        }
-      }
-      if (verbose>0) {
-        std::cout << "Failed 3: " << dtos(y_cdf35,0) << " "
-                  << dtos(y_cdf25,0) << " "
-                  << dtos(err,0) << " " << tol << std::endl;
-      }
-    
-      /// Fourth pass, compare 35- and 50-digit precision
-      
-      cpp_dec_float_50 x_cdf50=static_cast<cpp_dec_float_50>(x);
-      cpp_dec_float_50 y_cdf50=c_50.eval(&vars_50);
-    
-      if (y_cdf50==0 && y_cdf35==0) {
-        val=0;
-        err=0;
-        return 0;
-      }
-      if (y_cdf50!=0) {
-        err=static_cast<fp_t>(abs(y_cdf50-y_cdf35)/abs(y_cdf50));
-        if (err<tol) {
-          val=static_cast<fp_t>(y_cdf50);
-          return 0;
-        }
-      }
-      if (verbose>0) {
-        std::cout << "Failed 4: " << dtos(y_cdf50,0) << " "
-                  << dtos(y_cdf35,0) << " "
-                  << dtos(err,0) << " " << tol << std::endl;
-      }
-    
-      /// Final pass, compare 50- and 100-digit precision
-      
-      cpp_dec_float_100 x_cdf100=static_cast<cpp_dec_float_100>(x);
-      cpp_dec_float_100 y_cdf100=c_100.eval(&vars_100);
-      
-      if (y_cdf100==0 && y_cdf50==0) {
-        val=0;
-        err=0;
-        return 0;
-      }
-      if (y_cdf100!=0) {
-        err=static_cast<fp_t>(abs(y_cdf100-y_cdf50)/abs(y_cdf100));
-        if (err<tol) {
-          val=static_cast<fp_t>(y_cdf100);
-          return 0;
-        }
-      }
-      if (verbose>0) {
-        std::cout << "Failed 5: " << dtos(y_cdf100,0) << " "
-                  << dtos(y_cdf50,0) << " "
-                  << dtos(err,0) << " " << tol << std::endl;
-      
-      }
-    
-      /// Algorithm failed
-      O2SCL_CONV2("Failed to compute with requested accuracy ",
-                  "in funct_string2::eval_tol_err().",
-                  o2scl::exc_efailed,err_nonconv);
-      return o2scl::exc_efailed;
+      O2SCL_ERR("Unexpected type in funct_multip_strings.",
+                o2scl::exc_einval);
+      return o2scl::exc_einval;
     }
-
-    /** \brief Evaluate the function
-     */
-    template<class fp_t> fp_t operator()(fp_t x) {
-      fp_t res,err;
-      int ret=eval_err(x,res,err);
-      if (ret!=0) {
-        O2SCL_ERR("Failed 1.",o2scl::exc_einval);
-      }
-      return res;
-    }
-
     
   };
     

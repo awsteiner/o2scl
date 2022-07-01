@@ -25,6 +25,7 @@
 #include <o2scl/cloud_file.h>
 #include <o2scl/vector_derint.h>
 #include <o2scl/cursesw.h>
+#include <o2scl/inte_kronrod_boost.h>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
@@ -70,7 +71,122 @@ int acol_manager::comm_h5_copy(std::vector<std::string> &sv,
 }
 
 int acol_manager::comm_integm(std::vector<std::string> &sv, bool itive_com) {
+
+  /*
+  std::string i1;
+  if (sv.size()>1) {
+    i1=sv[1];
+  } else if (itive_com) {
+    i1=cl->cli_gets("Enter expression to compute (or blank to stop): ");
+    if (i1.length()==0) {
+      if (verbose>0) cout << "Command 'calc' cancelled." << endl;
+      return 0;
+    }
+  } else {
+    cerr << "No expression to compute in 'calc'." << endl;
+    return exc_efailed;
+  }
+  */
+  if (sv.size()<5) {
+    cerr << "Not enough arguments for integm." << endl;
+    return 1;
+  }
+  std::string func=sv[1];
+  std::string var=sv[2];
+
+  funct_multip_string fms;
+  fms.verbose=verbose;
+  fms.set_function(func,var);
+
+  funct_multip fm2;
+
+  inte_kronrod_boost<61> imkb;
   
+  imkb.tol_rel=pow(10.0,-precision-1);
+  
+  if (precision>49) {
+    
+    cerr << "Requested precision too large for the calcm "
+         << "command." << endl;
+    return 2;
+    
+  } else if (precision>34) {
+    
+    cpp_dec_float_50 d=0, err;
+    cpp_dec_float_50 lower_lim(sv[3]);
+    cpp_dec_float_50 upper_lim(sv[4]);
+    int retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
+                                   lower_lim,upper_lim,d,err);
+    if (retx!=0) {
+      cerr << "Integrating " << func << " failed." << endl;
+      return 1;
+    }
+    if (verbose>0) cout << "Result (cpp_dec_float_50): ";
+    cout << dtos(d,precision) << endl;
+    return 0;
+    
+  } else if (precision>24) {
+    
+    cpp_dec_float_35 d=0, err;
+    cpp_dec_float_35 lower_lim(sv[3]);
+    cpp_dec_float_35 upper_lim(sv[4]);
+    int retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
+                                   lower_lim,upper_lim,d,err);
+    if (retx!=0) {
+      cerr << "Integrating " << func << " failed." << endl;
+      return 1;
+    }
+    if (verbose>0) cout << "Result (cpp_dec_float_35): ";
+    cout << dtos(d,precision) << endl;
+    return 0;
+    
+  } else if (precision>17) {
+    
+    cpp_dec_float_25 d=0, err;
+    cpp_dec_float_25 lower_lim(sv[3]);
+    cpp_dec_float_25 upper_lim(sv[4]);
+    int retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
+                                   lower_lim,upper_lim,d,err);
+    if (retx!=0) {
+      cerr << "Integrating " << func << " failed." << endl;
+      return 1;
+    }
+    if (verbose>0) cout << "Result (cpp_dec_float_25): ";
+    cout << dtos(d,precision) << endl;
+    
+    return 0;
+    
+  } else if (precision>14) {
+    
+    long double d=0, err;
+    long double lower_lim=o2scl::stod(sv[3]);
+    long double upper_lim=o2scl::stod(sv[4]);
+    int retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
+                                   lower_lim,upper_lim,d,err);
+    if (retx!=0) {
+      cerr << "Integrating " << func << " failed." << endl;
+      return 1;
+    }
+    if (verbose>0) cout << "Result (long double): ";
+    cout << dtos(d,precision) << endl;
+    
+    return 0;
+  }
+  
+  double d=0, err;
+  double lower_lim=o2scl::stod(sv[3]);
+  double upper_lim=o2scl::stod(sv[4]);
+  int retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
+                                 lower_lim,upper_lim,d,err);
+  if (retx!=0) {
+    cerr << "Integrating " << func << " failed." << endl;
+    return 1;
+  }
+  if (scientific) cout.setf(ios::scientific);
+  else cout.unsetf(ios::scientific);
+  cout.precision(precision);
+  if (verbose>0) cout << "Result: ";
+  cout << d << endl;
   return 0;
 }
 

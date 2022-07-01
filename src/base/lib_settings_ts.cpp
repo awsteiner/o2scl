@@ -25,6 +25,7 @@
 #include <o2scl/lib_settings.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/err_hnd.h>
+#include <o2scl/funct.h>
 
 using namespace std;
 using namespace o2scl;
@@ -56,6 +57,14 @@ int main(void) {
   fms.verbose=2;
   double x=1.0e-4;
   cout << dtos(fms(1.0e-4),0) << endl;
+
+  double val, err;
+  funct_multip fm2;
+  fm2.eval_tol_err([fms](auto &&t) mutable { return fms(t); },
+                   1.0e-4,val,err);
+
+  cout << dtos(log1p(1.0e-4),0) << " "
+       << dtos(val,0) << " " << err << endl;
   
   t.report();
   return 0;

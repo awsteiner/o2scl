@@ -1034,6 +1034,8 @@ int acol_manager::comm_calcm(std::vector<std::string> &sv, bool itive_com) {
   funct_multip_string fms;
   fms.verbose=verbose;
   fms.set_function(i1,"x");
+
+  funct_multip fm2;
   
   // Note the funct_multip_string object uses a tolerance of
   // pow(10.0,-std::numeric_limits<fp_t>::digits10+1), a factor of 10
@@ -1051,7 +1053,8 @@ int acol_manager::comm_calcm(std::vector<std::string> &sv, bool itive_com) {
   } else if (precision>33) {
     
     cpp_dec_float_50 d=0, err;
-    int retx=fms.eval_err(d,d,err);
+    int retx=fm2.eval_tol_err([fms](auto &&t) mutable { return fms(t); },
+                   d,d,err);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -1063,7 +1066,8 @@ int acol_manager::comm_calcm(std::vector<std::string> &sv, bool itive_com) {
   } else if (precision>23) {
     
     cpp_dec_float_35 d=0, err;
-    int retx=fms.eval_err(d,d,err);
+    int retx=fm2.eval_tol_err([fms](auto &&t) mutable { return fms(t); },
+                              d,d,err);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -1075,7 +1079,8 @@ int acol_manager::comm_calcm(std::vector<std::string> &sv, bool itive_com) {
   } else if (precision>16) {
     
     cpp_dec_float_25 d=0, err;
-    int retx=fms.eval_err(d,d,err);
+    int retx=fm2.eval_tol_err([fms](auto &&t) mutable { return fms(t); },
+                              d,d,err);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -1088,7 +1093,8 @@ int acol_manager::comm_calcm(std::vector<std::string> &sv, bool itive_com) {
   } else if (precision>13) {
     
     long double d=0, err;
-    int retx=fms.eval_err(d,d,err);
+    int retx=fm2.eval_tol_err([fms](auto &&t) mutable { return fms(t); },
+                              d,d,err);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -1098,9 +1104,10 @@ int acol_manager::comm_calcm(std::vector<std::string> &sv, bool itive_com) {
     
     return 0;
   }
-
+  
   double d=0, err;
-  int retx=fms.eval_err(d,d,err);
+  int retx=fm2.eval_tol_err([fms](auto &&t) mutable { return fms(t); },
+                            d,d,err);
   if (retx!=0) {
     cerr << "Converting " << i1 << " to value failed." << endl;
     return 1;

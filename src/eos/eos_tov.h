@@ -132,7 +132,7 @@ namespace o2scl {
       \f]
       where \f$ \mu_1 \f$ is the chemical potential at \f$ P=P_1 \f$.
       The baryon density, as a function of \f$ P \f$ can be obtained
-      from \f$ n_B=(\varepsilon+P)/\mu \f$. In \o2, the parameters \f$
+      from \f$ n_B=(\varepsilon+P)/\mu \f$. In O2scl, the parameters \f$
       \mu_1 \f$ and \f$ P_1 \f$ are expressed in terms of the baryon
       density (\f$ n_{B,1} \f$) and energy density (\f$ \varepsilon_1
       \f$) instead, and can be set in \ref set_baryon_density().
@@ -331,14 +331,16 @@ namespace o2scl {
     
   };
 
-  /** \brief Standard polytropic EOS \f$ P = K \varepsilon^{1+1/n} \f$
+  /** \brief Polytropic EOS \f$ P = K \varepsilon^{1+1/n} \f$
 
       The quantity \f$ K \f$ must be in units of 
       \f$ \left(\mathrm{M}_{\odot}/\mathrm{km}^3\right)^{-1/n} \f$ .
 
-      \comment
-      The documentation below was taken from bamr.
-      \endcomment
+      \note Polytropes in Newtonian gravity are often written in terms
+      of the number density rather than, as this class does, in terms
+      of the energy density. This distinction is noticable in neutron
+      star structure.
+
       For a polytrope \f$ P = K \varepsilon^{1+1/n} \f$
       beginning at a pressure of \f$ P_1 \f$, an energy
       density of \f$ \varepsilon_1 \f$ and a baryon density 
