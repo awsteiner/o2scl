@@ -476,6 +476,12 @@ namespace o2scl_acol {
     */
     virtual int comm_calcm(std::vector<std::string> &sv, bool itive_com);
     
+    /** \brief Integrate in multiprecision
+
+        Arguments: <function> <variable> <lower limit> <upper limit>
+
+        Desc.
+     */
     virtual int comm_integm(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Clear the current object
