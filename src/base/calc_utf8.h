@@ -66,6 +66,8 @@
 #include <stdexcept>
 #include <cmath>
 
+#include <boost/math/special_functions/bessel.hpp>
+
 #include <o2scl/rng.h>
 #include <o2scl/err_hnd.h>
 #include <o2scl/string_conv.h>
@@ -87,8 +89,8 @@ namespace o2scl {
 
          In class calc_utf8:
 
-         - Future: Add functions atan2, cot, csc, ceil, floor, max, min,
-           log1p and maybe if?
+         - Future: Add functions cot, csc, log1p, if, 
+           boost special functions?
 
          - Future: There is some code duplication across the
            functions, especially with regard to conversion between UTF8
@@ -182,6 +184,11 @@ namespace o2scl {
       opp["acosh"]=2;
       opp["atanh"]=2;
       opp["floor"]=2;
+      opp["ceil"]=2;
+      opp["atan2"]=2;
+      opp["max"]=2;
+      opp["min"]=2;
+      opp["cyl_bessel_j"]=2;
       opp["^"]=2;
       opp["*"]=3;
       opp["/"]=3;
@@ -198,6 +205,8 @@ namespace o2scl {
       opp["!="]=7;
       opp["&&"]=11;
       opp["||"]=12;
+      // AWS 7/2/22: I'm guessing the comma should go here?
+      opp[","]=13;
       opp["("]=16;
 
       return opp;
@@ -243,81 +252,105 @@ namespace o2scl {
             }
           */
           fp_t right = evaluation.top();
-          evaluation.pop();
-          if (!str.compare("sin")) {
-            evaluation.push(sin(right));
-          } else if (!str.compare("cos")) {
-            evaluation.push(cos(right));
-          } else if (!str.compare("tan")) {
-            evaluation.push(tan(right));
-          } else if (!str.compare("sqrt")) {
-            evaluation.push(sqrt(right));
-          } else if (!str.compare("log")) {
-            evaluation.push(log(right));
-          } else if (!str.compare("exp")) {
-            evaluation.push(exp(right));
-          } else if (!str.compare("abs")) {
-            evaluation.push(abs(right));
-          } else if (!str.compare("log10")) {
-            evaluation.push(log10(right));
-          } else if (!str.compare("asin")) {
-            evaluation.push(asin(right));
-          } else if (!str.compare("acos")) {
-            evaluation.push(acos(right));
-          } else if (!str.compare("atan")) {
-            evaluation.push(atan(right));
-          } else if (!str.compare("sinh")) {
-            evaluation.push(sinh(right));
-          } else if (!str.compare("cosh")) {
-            evaluation.push(cosh(right));
-          } else if (!str.compare("tanh")) {
-            evaluation.push(tanh(right));
-          } else if (!str.compare("asinh")) {
-            evaluation.push(asinh(right));
-          } else if (!str.compare("acosh")) {
-            evaluation.push(acosh(right));
-          } else if (!str.compare("atanh")) {
-            evaluation.push(atanh(right));
-          } else if (!str.compare("floor")) {
-            evaluation.push(floor(right));
-          } else {
-            fp_t left  = evaluation.top();
+          // AWS, 7/2/22: The comma is treated as an operator
+          // which does nothing
+          if (str.compare(",")) {
             evaluation.pop();
-            if (!str.compare("+")) {
-              evaluation.push(left + right);
-            } else if (!str.compare("*")) {
-              evaluation.push(left * right);
-            } else if (!str.compare("-")) {
-              evaluation.push(left - right);
-            } else if (!str.compare("/")) {
-              evaluation.push(left / right);
-            } else if (!str.compare("<<")) {
-              evaluation.push((int) left << (int) right);
-            } else if (!str.compare("^")) {
-              evaluation.push(pow(left, right));
-            } else if (!str.compare(">>")) {
-              evaluation.push((int) left >> (int) right);
-            } else if (!str.compare("%")) {
-              evaluation.push((int) left % (int) right);
-            } else if (!str.compare("<")) {
-              evaluation.push(left < right);
-            } else if (!str.compare(">")) {
-              evaluation.push(left > right);
-            } else if (!str.compare("<=")) {
-              evaluation.push(left <= right);
-            } else if (!str.compare(">=")) {
-              evaluation.push(left >= right);
-            } else if (!str.compare("==")) {
-              evaluation.push(left == right);
-            } else if (!str.compare("!=")) {
-              evaluation.push(left != right);
-            } else if (!str.compare("&&")) {
-              evaluation.push((int) left && (int) right);
-            } else if (!str.compare("||")) {
-              evaluation.push((int) left || (int) right);
+            if (!str.compare("sin")) {
+              evaluation.push(sin(right));
+            } else if (!str.compare("cos")) {
+              evaluation.push(cos(right));
+            } else if (!str.compare("tan")) {
+              evaluation.push(tan(right));
+            } else if (!str.compare("sqrt")) {
+              evaluation.push(sqrt(right));
+            } else if (!str.compare("log")) {
+              evaluation.push(log(right));
+            } else if (!str.compare("exp")) {
+              evaluation.push(exp(right));
+            } else if (!str.compare("abs")) {
+              evaluation.push(abs(right));
+            } else if (!str.compare("log10")) {
+              evaluation.push(log10(right));
+            } else if (!str.compare("asin")) {
+              evaluation.push(asin(right));
+            } else if (!str.compare("acos")) {
+              evaluation.push(acos(right));
+            } else if (!str.compare("atan")) {
+              evaluation.push(atan(right));
+            } else if (!str.compare("sinh")) {
+              evaluation.push(sinh(right));
+            } else if (!str.compare("cosh")) {
+              evaluation.push(cosh(right));
+            } else if (!str.compare("tanh")) {
+              evaluation.push(tanh(right));
+            } else if (!str.compare("asinh")) {
+              evaluation.push(asinh(right));
+            } else if (!str.compare("acosh")) {
+              evaluation.push(acosh(right));
+            } else if (!str.compare("atanh")) {
+              evaluation.push(atanh(right));
+            } else if (!str.compare("floor")) {
+              evaluation.push(floor(right));
+            } else if (!str.compare("ceil")) {
+              evaluation.push(ceil(right));
+            } else if (!str.compare("atan2")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(atan2(next,right));
+            } else if (!str.compare("max")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              if (next>right) evaluation.push(next);
+              else evaluation.push(right);
+            } else if (!str.compare("min")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              if (next<right) evaluation.push(next);
+              else evaluation.push(right);
+            } else if (!str.compare("cyl_bessel_j")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::cyl_bessel_j(next,right));
             } else {
-              //throw std::domain_error("Unknown operator: '" + str + "'.");
-              return 2;
+              fp_t left  = evaluation.top();
+              evaluation.pop();
+              if (!str.compare("+")) {
+                evaluation.push(left + right);
+              } else if (!str.compare("*")) {
+                evaluation.push(left * right);
+              } else if (!str.compare("-")) {
+                evaluation.push(left - right);
+              } else if (!str.compare("/")) {
+                evaluation.push(left / right);
+              } else if (!str.compare("<<")) {
+                evaluation.push((int) left << (int) right);
+              } else if (!str.compare("^")) {
+                evaluation.push(pow(left, right));
+              } else if (!str.compare(">>")) {
+                evaluation.push((int) left >> (int) right);
+              } else if (!str.compare("%")) {
+                evaluation.push((int) left % (int) right);
+              } else if (!str.compare("<")) {
+                evaluation.push(left < right);
+              } else if (!str.compare(">")) {
+                evaluation.push(left > right);
+              } else if (!str.compare("<=")) {
+                evaluation.push(left <= right);
+              } else if (!str.compare(">=")) {
+                evaluation.push(left >= right);
+              } else if (!str.compare("==")) {
+                evaluation.push(left == right);
+              } else if (!str.compare("!=")) {
+                evaluation.push(left != right);
+              } else if (!str.compare("&&")) {
+                evaluation.push((int) left && (int) right);
+              } else if (!str.compare("||")) {
+                evaluation.push((int) left || (int) right);
+              } else {
+                //throw std::domain_error("Unknown operator: '" + str + "'.");
+                return 2;
+              }
             }
           }
         } else if (base->type == token_num) {
@@ -342,7 +375,7 @@ namespace o2scl {
               ((char)key[3])=='d') {
             
             fp_t rx=r->random();
-            std::cout << "Generating random number " << rx << std::endl;
+            //std::cout << "Generating random number " << rx << std::endl;
             evaluation.push(rx);
             
           } else {
@@ -409,7 +442,7 @@ namespace o2scl {
       
           if (verbose>=2) {
             std::cout << "In toRPN_nothrow(), found digit at character "
-                 << i << std::endl;
+                      << i << std::endl;
           }
       
           std::u32string str_num;
@@ -427,7 +460,8 @@ namespace o2scl {
           bool exponent=false;
           
           while (i+1<expr.length() &&
-                 (expr[i+1]=='.' || expr[i+1]==',' ||
+                 (expr[i+1]=='.' ||
+                  //expr[i+1]==',' ||
                   isdigit(expr[i+1]) || expr[i+1]=='e' ||
                   expr[i+1]=='E' || (exponent && plus_minus==false &&
                                      (expr[i+1]=='+' ||
@@ -464,7 +498,7 @@ namespace o2scl {
 
           if (verbose>=2) {
             std::cout << "In toRPN_nothrow(), found variable at character "
-                 << i << std::endl;
+                      << i << std::endl;
           }
       
           std::u32string key;
@@ -558,7 +592,29 @@ namespace o2scl {
                      key[2]=='o' && key[3]=='o' && key[4]=='r') {
             operator_stack.push("floor");
             last_token_was_op=true;
-            
+          } else if (key.length()==4 && key[0]=='c' && key[1]=='e' &&
+                     key[2]=='i' && key[3]=='l') {
+            operator_stack.push("ceil");
+            last_token_was_op=true;
+          } else if (key.length()==5 && key[0]=='a' && key[1]=='t' &&
+                     key[2]=='a' && key[3]=='n' && key[4]=='2') {
+            operator_stack.push("atan2");
+            last_token_was_op=true;
+          } else if (key.length()==3 && key[0]=='m' && key[1]=='a' &&
+                     key[2]=='x') {
+            operator_stack.push("max");
+            last_token_was_op=true;
+          } else if (key.length()==3 && key[0]=='m' && key[1]=='i' &&
+                     key[2]=='n') {
+            operator_stack.push("min");
+            last_token_was_op=true;
+          } else if (key.length()==12 && key[0]=='c' && key[1]=='y' &&
+                     key[2]=='l' && key[3]=='_' && key[4]=='b' &&
+                     key[5]=='e' && key[6]=='s' && key[7]=='s' &&
+                     key[8]=='e' && key[9]=='l' && key[10]=='_' &&
+                     key[11]=='j') {
+            operator_stack.push("cyl_bessel_j");
+            last_token_was_op=true;
           } else {
 
             // False and true are known at compile time, but random
@@ -679,7 +735,7 @@ namespace o2scl {
                   //str + "'.");
                   if (verbose>=2) {
                     std::cout << "In toRPN_nothrow(), "
-                         << "unrecognized unary operator." << std::endl;
+                              << "unrecognized unary operator." << std::endl;
                   }
                   cleanRPN(rpn_queue);
                   return 1;
@@ -800,7 +856,7 @@ namespace o2scl {
 	\c vars
     */
     fp_t calculate(const std::string &expr,
-                     const std::map<std::string, fp_t> *vars=0) {
+                   const std::map<std::string, fp_t> *vars=0) {
       fp_t ret;
       std::u32string expr2;
       utf8_to_char32(expr,expr2);

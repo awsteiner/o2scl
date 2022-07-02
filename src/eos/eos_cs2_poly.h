@@ -52,6 +52,7 @@ namespace o2scl {
   class eos_cs2_poly {
 
   protected:
+    
     /** \brief First speed of sound parameter
      */
     double a1i;

@@ -198,6 +198,14 @@ int main(void) {
   calc_utf8<cpp_dec_float_50> calc_50;
   calc_50.compile("sqrt(2)",0);
   std::cout << dtos(calc_50.eval(0),0) << std::endl;
+
+  calc.compile("atan2(2,4+5)+3+atan2(1/7,9)");
+  t.test_rel(calc.eval(0),atan2(2.0,9.0)+3.0+atan2(1.0/7.0,9.0),1.0e-14,
+             "two var func.");
+
+  calc.compile("cyl_bessel_j(2,3)");
+  t.test_rel(calc.eval(0),boost::math::cyl_bessel_j(2,3),1.0e-14,
+             "two var func. 2");
   
   t.report();
   return 0;
