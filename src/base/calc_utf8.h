@@ -67,6 +67,7 @@
 #include <cmath>
 
 #include <boost/math/special_functions/bessel.hpp>
+#include <boost/math/special_functions/sqrt1pm1.hpp>
 
 #include <o2scl/rng.h>
 #include <o2scl/err_hnd.h>
@@ -89,8 +90,7 @@ namespace o2scl {
 
          In class calc_utf8:
 
-         - Future: Add functions cot, csc, log1p, if, 
-           boost special functions?
+         - Future: Add all boost special functions?
 
          - Future: There is some code duplication across the
            functions, especially with regard to conversion between UTF8
@@ -170,8 +170,12 @@ namespace o2scl {
       opp["cos"]=2;
       opp["tan"]=2;
       opp["sqrt"]=2;
+      opp["cbrt"]=2;
       opp["log"]=2;
+      opp["log1p"]=2;
+      opp["expm1"]=2;
       opp["exp"]=2;
+      //opp["exp10"]=2;
       opp["abs"]=2;
       opp["log10"]=2;
       opp["asin"]=2;
@@ -185,10 +189,18 @@ namespace o2scl {
       opp["atanh"]=2;
       opp["floor"]=2;
       opp["ceil"]=2;
+      opp["erf"]=2;
+      opp["erfc"]=2;
+      opp["lgamma"]=2;
+      opp["tgamma"]=2;
+      opp["pow"]=2;
       opp["atan2"]=2;
       opp["max"]=2;
       opp["min"]=2;
+      opp["hypot"]=2;
+      opp["if"]=2;
       opp["cyl_bessel_j"]=2;
+      opp["sqrt1pm1"]=2;
       opp["^"]=2;
       opp["*"]=3;
       opp["/"]=3;
@@ -264,10 +276,18 @@ namespace o2scl {
               evaluation.push(tan(right));
             } else if (!str.compare("sqrt")) {
               evaluation.push(sqrt(right));
+            } else if (!str.compare("cbrt")) {
+              evaluation.push(cbrt(right));
             } else if (!str.compare("log")) {
               evaluation.push(log(right));
+            } else if (!str.compare("log1p")) {
+              evaluation.push(log1p(right));
+            } else if (!str.compare("expm1")) {
+              evaluation.push(expm1(right));
             } else if (!str.compare("exp")) {
               evaluation.push(exp(right));
+              //} else if (!str.compare("exp10")) {
+              //evaluation.push(exp10(right));
             } else if (!str.compare("abs")) {
               evaluation.push(abs(right));
             } else if (!str.compare("log10")) {
@@ -294,10 +314,24 @@ namespace o2scl {
               evaluation.push(floor(right));
             } else if (!str.compare("ceil")) {
               evaluation.push(ceil(right));
+            } else if (!str.compare("erf")) {
+              evaluation.push(erf(right));
+            } else if (!str.compare("erfc")) {
+              evaluation.push(erfc(right));
+            } else if (!str.compare("lgamma")) {
+              evaluation.push(lgamma(right));
+            } else if (!str.compare("tgamma")) {
+              evaluation.push(tgamma(right));
+            } else if (!str.compare("sqrt1pm1")) {
+              evaluation.push(boost::math::sqrt1pm1(right));
             } else if (!str.compare("atan2")) {
               fp_t next=evaluation.top();
               evaluation.pop();
               evaluation.push(atan2(next,right));
+            } else if (!str.compare("pow")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(pow(next,right));
             } else if (!str.compare("max")) {
               fp_t next=evaluation.top();
               evaluation.pop();
@@ -307,6 +341,17 @@ namespace o2scl {
               fp_t next=evaluation.top();
               evaluation.pop();
               if (next<right) evaluation.push(next);
+              else evaluation.push(right);
+            } else if (!str.compare("hypot")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(hypot(right,next));
+            } else if (!str.compare("if")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              fp_t next2=evaluation.top();
+              evaluation.pop();
+              if (next2>=0.5) evaluation.push(next);
               else evaluation.push(right);
             } else if (!str.compare("cyl_bessel_j")) {
               fp_t next=evaluation.top();
@@ -536,14 +581,35 @@ namespace o2scl {
                      key[1]=='q' && key[2]=='r' && key[3]=='t') {
             operator_stack.push("sqrt");
             last_token_was_op=true;
+          } else if (key.length()==4 && key[0]=='c' &&
+                     key[1]=='b' && key[2]=='r' && key[3]=='t') {
+            operator_stack.push("cbrt");
+            last_token_was_op=true;
           } else if (key.length()==3 &&
                      key[0]=='l' && key[1]=='o' && key[2]=='g') {
             operator_stack.push("log");
+            last_token_was_op=true;
+          } else if (key.length()==5 &&
+                     key[0]=='l' && key[1]=='o' && key[2]=='g' &&
+                     key[3]=='1' && key[4]=='p') {
+            operator_stack.push("log1p");
+            last_token_was_op=true;
+          } else if (key.length()==5 &&
+                     key[0]=='e' && key[1]=='x' && key[2]=='p' &&
+                     key[3]=='m' && key[4]=='1') {
+            operator_stack.push("expm1");
             last_token_was_op=true;
           } else if (key.length()==3 &&
                      key[0]=='e' && key[1]=='x' && key[2]=='p') {
             operator_stack.push("exp");
             last_token_was_op=true;
+            /*
+              } else if (key.length()==5 &&
+              key[0]=='e' && key[1]=='x' && key[2]=='p' &&
+              key[3]=='1' && key[4]=='0') {
+              operator_stack.push("exp10");
+              last_token_was_op=true;
+            */
           } else if (key.length()==3 &&
                      key[0]=='a' && key[1]=='b' && key[2]=='s') {
             operator_stack.push("abs");
@@ -596,9 +662,31 @@ namespace o2scl {
                      key[2]=='i' && key[3]=='l') {
             operator_stack.push("ceil");
             last_token_was_op=true;
+          } else if (key.length()==3 && key[0]=='e' && key[1]=='r' &&
+                     key[2]=='f') {
+            operator_stack.push("erf");
+            last_token_was_op=true;
+          } else if (key.length()==4 && key[0]=='e' && key[1]=='r' &&
+                     key[2]=='f' && key[3]=='c') {
+            operator_stack.push("erfc");
+            last_token_was_op=true;
+          } else if (key.length()==6 && key[0]=='l' && key[1]=='g' &&
+                     key[2]=='a' && key[3]=='m' && key[4]=='m' &&
+                     key[5]=='a') {
+            operator_stack.push("lgamma");
+            last_token_was_op=true;
+          } else if (key.length()==6 && key[0]=='t' && key[1]=='g' &&
+                     key[2]=='a' && key[3]=='m' && key[4]=='m' &&
+                     key[5]=='a') {
+            operator_stack.push("tgamma");
+            last_token_was_op=true;
           } else if (key.length()==5 && key[0]=='a' && key[1]=='t' &&
                      key[2]=='a' && key[3]=='n' && key[4]=='2') {
             operator_stack.push("atan2");
+            last_token_was_op=true;
+          } else if (key.length()==3 && key[0]=='p' && key[1]=='o' &&
+                     key[2]=='2') {
+            operator_stack.push("pow");
             last_token_was_op=true;
           } else if (key.length()==3 && key[0]=='m' && key[1]=='a' &&
                      key[2]=='x') {
@@ -607,6 +695,18 @@ namespace o2scl {
           } else if (key.length()==3 && key[0]=='m' && key[1]=='i' &&
                      key[2]=='n') {
             operator_stack.push("min");
+            last_token_was_op=true;
+          } else if (key.length()==5 && key[0]=='h' && key[1]=='y' &&
+                     key[2]=='p' && key[3]=='o' && key[4]=='t') {
+            operator_stack.push("hypot");
+            last_token_was_op=true;
+          } else if (key.length()==2 && key[0]=='i' && key[1]=='f') {
+            operator_stack.push("if");
+            last_token_was_op=true;
+          } else if (key.length()==8 && key[0]=='s' && key[1]=='q' &&
+                     key[2]=='r' && key[3]=='t' && key[4]=='1' &&
+                     key[5]=='p' && key[6]=='m' && key[7]=='1') {
+            operator_stack.push("sqrt1pm1");
             last_token_was_op=true;
           } else if (key.length()==12 && key[0]=='c' && key[1]=='y' &&
                      key[2]=='l' && key[3]=='_' && key[4]=='b' &&

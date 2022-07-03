@@ -207,6 +207,15 @@ int main(void) {
   t.test_rel(calc.eval(0),boost::math::cyl_bessel_j(2,3),1.0e-14,
              "two var func. 2");
   
+  calc.compile("if(1,2,3)");
+  t.test_rel(calc.eval(0),2.0,1.0e-14,"three var func.");
+             
+  calc.compile("if(0,2,3)");
+  t.test_rel(calc.eval(0),3.0,1.0e-14,"three var func. 2");
+  
+  calc.compile("hypot(3,4)");
+  t.test_rel(calc.eval(0),5.0,1.0e-14,"hypot");
+  
   t.report();
   return 0;
 }
