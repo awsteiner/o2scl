@@ -20,8 +20,6 @@
 
   -------------------------------------------------------------------
 */
-#include "acolm.h"
-
 #include <regex>
 
 #include <boost/numeric/ublas/vector.hpp>
@@ -31,6 +29,7 @@
 #include <o2scl/cloud_file.h>
 #include <o2scl/vector_derint.h>
 #include <o2scl/cursesw.h>
+#include <o2scl/acolm.h>
 
 using namespace std;
 using namespace o2scl;

@@ -20,14 +20,14 @@
 
   -------------------------------------------------------------------
 */
-#include "acolm.h"
-
-#include <o2scl/cloud_file.h>
-#include <o2scl/vector_derint.h>
-
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
+
+#include <o2scl/acolm.h>
+
+#include <o2scl/cloud_file.h>
+#include <o2scl/vector_derint.h>
 
 using namespace std;
 using namespace o2scl;
@@ -702,6 +702,8 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_calcm(std::vector<std::string> &sv, bool itive_com) {
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   std::string i1;
   if (sv.size()>1) {
     i1=sv[1];
@@ -802,6 +804,9 @@ int acol_manager::comm_calcm(std::vector<std::string> &sv, bool itive_com) {
   cout.precision(precision);
   if (verbose>0) cout << "Result: ";
   cout << d << endl;
+  
+#endif
+  
   return 0;
 }
 

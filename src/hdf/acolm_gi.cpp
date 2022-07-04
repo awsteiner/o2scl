@@ -1401,6 +1401,8 @@ int acol_manager::comm_integ(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_integm(std::vector<std::string> &sv, bool itive_com) {
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   vector<string> in, pr;
   
   pr.push_back("Function");
@@ -1516,6 +1518,8 @@ int acol_manager::comm_integm(std::vector<std::string> &sv, bool itive_com) {
   cout.precision(precision);
   if (verbose>0) cout << "Result: ";
   cout << d << endl;
+  
+#endif
   
   return 0;
 }
