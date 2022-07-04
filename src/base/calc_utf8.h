@@ -319,9 +319,9 @@ namespace o2scl {
             } else if (!str.compare("erfc")) {
               evaluation.push(erfc(right));
             } else if (!str.compare("lgamma")) {
-              evaluation.push(lgamma(right));
+              //evaluation.push(lgamma(right));
             } else if (!str.compare("tgamma")) {
-              evaluation.push(tgamma(right));
+              //evaluation.push(tgamma(right));
             } else if (!str.compare("sqrt1pm1")) {
               evaluation.push(boost::math::sqrt1pm1(right));
             } else if (!str.compare("atan2")) {
@@ -356,7 +356,7 @@ namespace o2scl {
             } else if (!str.compare("cyl_bessel_j")) {
               fp_t next=evaluation.top();
               evaluation.pop();
-              evaluation.push(boost::math::cyl_bessel_j(next,right));
+              //evaluation.push(boost::math::cyl_bessel_j(next,right));
             } else {
               fp_t left  = evaluation.top();
               evaluation.pop();
