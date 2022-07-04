@@ -702,7 +702,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_calcm(std::vector<std::string> &sv, bool itive_com) {
 
-#ifdef O2SCL_NEVER_DEFINED
+#ifdef O2SCL_OSX
   
   std::string i1;
   if (sv.size()>1) {

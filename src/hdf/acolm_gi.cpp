@@ -1401,7 +1401,7 @@ int acol_manager::comm_integ(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_integm(std::vector<std::string> &sv, bool itive_com) {
 
-#ifdef O2SCL_NEVER_DEFINED
+#ifdef O2SCL_OSX
   
   vector<string> in, pr;
   
