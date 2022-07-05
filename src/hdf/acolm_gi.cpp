@@ -635,9 +635,10 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     str+="asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x) asinh(x) ";
     str+="acosh(x) atanh(x) atan2(y,x)\n\n";
     str+="Exponential functions:\n\n";
-    str+="erf(x) erfc(x) lgamma(x) tgamma(x)\n\n";
-    str+="Bessel functions:\n\n";
-    str+="cyl_bessel_j(ν,x)\n\n";
+    str+="erf(x) erfc(x)\n\n";
+    //lgamma(x) tgamma(x)\n\n";
+    //str+="Bessel functions:\n\n";
+    //str+="cyl_bessel_j(ν,x)\n\n";
     str+="Other functions:\n\n";
     str+="abs(x) min(x,y) max(x,y) floor(x) ceil(x)\n";
     str+="sqrt1pm1(x) [√(1+x)-1]\n";
@@ -646,11 +647,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     str+="false = 0, true = 1, rand = random number\n\n";
     str+="Use \"acol -help function\" to get more information on the ";
     str+="type-specific command called \"function\".\n\n";
-    /*
-      dsc+="atan2(x,y) if(x,y,z)\n";
-      dsc+="cot(x) csc(x) sec(x)\n";
-      dsc+="ceil(x) int(x) max(x,y) min(x,y)\n";
-    */
+
     std::vector<std::string> sv;
     o2scl::rewrap_keep_endlines(str,sv,ncols_loc-1);
     for(size_t i=0;i<sv.size();i++) {
@@ -1401,8 +1398,6 @@ int acol_manager::comm_integ(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_integm(std::vector<std::string> &sv, bool itive_com) {
 
-#ifdef O2SCL_OSX
-  
   vector<string> in, pr;
   
   pr.push_back("Function");
@@ -1419,12 +1414,15 @@ int acol_manager::comm_integm(std::vector<std::string> &sv, bool itive_com) {
   std::string func=in[0];
   std::string var=in[1];
 
+  inte_kronrod_boost<61> imkb;
+  
+#ifdef O2SCL_OSX
+
   funct_multip_string fms;
   fms.verbose=verbose;
   fms.set_function(func,var);
 
   funct_multip fm2;
-  inte_kronrod_boost<61> imkb;
 
   // C++ prints out precision+1 significant figures so we add one to
   // 'precision' to construct the integration tolerance.
@@ -1503,24 +1501,39 @@ int acol_manager::comm_integm(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
   
+#endif
+  
   double d=0, err, lower_lim, upper_lim;
   convert_units<double> cu;
   function_to_fp_nothrow(in[2],lower_lim,cu);
   function_to_fp_nothrow(in[3],upper_lim,cu);
-  int retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
-                                 lower_lim,upper_lim,d,err);
+
+  int retx;
+  
+#ifdef O2SCL_OSX
+  
+  retx=imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
+                             lower_lim,upper_lim,d,err);
+
+#else
+
+  funct_strings fs;
+  fs.set_function(func,var);
+  retx=imkb.integ_err(fs,lower_lim,upper_lim,d,err);
+  
+#endif
+  
   if (retx!=0) {
     cerr << "Integrating " << func << " failed." << endl;
     return 1;
   }
+  
   if (scientific) cout.setf(ios::scientific);
   else cout.unsetf(ios::scientific);
   cout.precision(precision);
   if (verbose>0) cout << "Result: ";
   cout << d << endl;
-  
-#endif
-  
+
   return 0;
 }
 
