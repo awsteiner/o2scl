@@ -637,10 +637,10 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     str+="Exponential functions:\n\n";
     str+="erf(x) erfc(x) lgamma(x) tgamma(x)\n\n";
     str+="Bessel functions:\n\n";
-    str+="cyl_bessel_j(n,x) ";
+    str+="cyl_bessel_j(ν,x)\n\n";
     str+="Other functions:\n\n";
-    str+="abs(x) min(x,y) max(x,y) floor(x) ceil(x) ";
-    str+="sqrt1pm1(x) [√(1+x)-1] ";
+    str+="abs(x) min(x,y) max(x,y) floor(x) ceil(x)\n";
+    str+="sqrt1pm1(x) [√(1+x)-1]\n";
     str+="if(t,x,y) [If t>0.5 then x, otherwise y.]\n\n";
     str+="Special values:\n\n";
     str+="false = 0, true = 1, rand = random number\n\n";
