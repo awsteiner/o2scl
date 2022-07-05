@@ -58,6 +58,7 @@ int main(void) {
   double x=1.0e-4;
   cout << dtos(fms(1.0e-4),0) << endl;
 
+#ifdef O2SCL_OSX
   double val, err;
   funct_multip fm2;
   fm2.eval_tol_err([fms](auto &&t) mutable { return fms(t); },
@@ -65,6 +66,7 @@ int main(void) {
 
   cout << dtos(log1p(1.0e-4),0) << " "
        << dtos(val,0) << " " << err << endl;
+#endif
   
   t.report();
   return 0;
