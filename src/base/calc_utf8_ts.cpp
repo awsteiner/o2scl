@@ -203,9 +203,11 @@ int main(void) {
   t.test_rel(calc.eval(0),atan2(2.0,9.0)+3.0+atan2(1.0/7.0,9.0),1.0e-14,
              "two var func.");
 
+#ifdef O2SCL_OSX
   calc.compile("cyl_bessel_j(2,3)");
   t.test_rel(calc.eval(0),boost::math::cyl_bessel_j(2,3),1.0e-14,
              "two var func. 2");
+#endif
   
   calc.compile("if(1,2,3)");
   t.test_rel(calc.eval(0),2.0,1.0e-14,"three var func.");
