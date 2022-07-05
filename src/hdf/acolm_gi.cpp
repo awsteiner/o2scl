@@ -1517,8 +1517,7 @@ int acol_manager::comm_integm(std::vector<std::string> &sv, bool itive_com) {
 
 #else
 
-  funct_string fs;
-  fs.set_function(func,var);
+  funct_string fs(func,var);
   retx=imkb.integ_err(fs,lower_lim,upper_lim,d,err);
   
 #endif
