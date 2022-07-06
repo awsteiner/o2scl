@@ -26,6 +26,7 @@
 #include <o2scl/vector_derint.h>
 #include <o2scl/cursesw.h>
 #include <o2scl/inte_kronrod_boost.h>
+#include <o2scl/inte_qag_gsl.h>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
@@ -1517,8 +1518,9 @@ int acol_manager::comm_integm(std::vector<std::string> &sv, bool itive_com) {
 
 #else
 
+  inte_qag_gsl<funct_string> iqg;
   funct_string fs(func,var);
-  retx=imkb.integ_err(fs,lower_lim,upper_lim,d,err);
+  retx=iqg.integ_err(fs,lower_lim,upper_lim,d,err);
   
 #endif
   
