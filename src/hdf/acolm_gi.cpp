@@ -1539,9 +1539,7 @@ int acol_manager::comm_integm(std::vector<std::string> &sv, bool itive_com) {
   cout << d << endl;
 #else
   cout << d << " +/- " << err << endl;
-  cout << st.substr(0,st.length()-4) << "(" << ((int)x) << ")"
-       << st.substr(st.length()-4,4)<< endl;
-  
+  cout << unc_to_string(d,err,1) << endl;
 #endif
 
   return 0;
