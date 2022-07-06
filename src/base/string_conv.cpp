@@ -34,6 +34,28 @@
 using namespace std;
 using namespace o2scl;
 
+std::string o2scl::unc_to_string(double val, double err, int verbose) {
+  if (verbose>0) {
+    cout << val << " +/- " << err << endl;
+  }
+  int prec2=-log10(err)+1;
+  if (verbose>0) {
+    cout << "prec2: " << prec2 << endl;
+  }
+  double x=err*pow(10.0,prec2+1);
+  if (verbose>0) {
+    cout << "test: " << x << " " << ((int)x) << endl;
+  }
+  string st=o2scl::dtos(val,prec2);
+  if (verbose>0) {
+    cout << "st: " << st << endl;
+  }
+  string ret=st.substr(0,st.length()-4)+"("+
+    o2scl::itos(x)+")"+st.substr(st.length()-4,4);
+  
+  return ret;
+}
+
 void o2scl::utf8_to_char32(const std::string &in,
                            std::u32string &out) {
   wstring_convert<std::codecvt_utf8<char32_t>,char32_t> cv;

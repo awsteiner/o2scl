@@ -1518,9 +1518,11 @@ int acol_manager::comm_integm(std::vector<std::string> &sv, bool itive_com) {
 
 #else
 
-  inte_qag_gsl<funct_string> iqg;
   funct_string fs(func,var);
-  retx=iqg.integ_err(fs,lower_lim,upper_lim,d,err);
+  funct f=std::bind(std::mem_fn<double(double) const>
+                    (&funct_string::operator()),&fs,
+                    std::placeholders::_1);
+  retx=imkb.integ_err(f,lower_lim,upper_lim,d,err);
   
 #endif
   
@@ -1533,7 +1535,14 @@ int acol_manager::comm_integm(std::vector<std::string> &sv, bool itive_com) {
   else cout.unsetf(ios::scientific);
   cout.precision(precision);
   if (verbose>0) cout << "Result: ";
+#ifdef O2SCL_OSX
   cout << d << endl;
+#else
+  cout << d << " +/- " << err << endl;
+  cout << st.substr(0,st.length()-4) << "(" << ((int)x) << ")"
+       << st.substr(st.length()-4,4)<< endl;
+  
+#endif
 
   return 0;
 }

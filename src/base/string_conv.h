@@ -124,6 +124,10 @@ namespace o2scl {
    */
   std::string dtos(double x, std::ostream &format);
 
+  /** \brief Desc
+   */
+  std::string unc_to_string(double val, double err, int verbose=0);
+  
   /** \brief Convert a string to an integer 
       
       This function is now just a wrapper for <tt>std::stoi</tt>.
