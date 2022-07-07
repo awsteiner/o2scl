@@ -193,19 +193,13 @@ int main(int argc, char *argv[]) {
   cout << "Test cache_calc(): " << endl;
   cout << endl;
 
-  cout << "H1" << endl;
   cux.set_natural_units(1,1,1);
-  cout << "H2" << endl;
   cux.default_conversions();
-  cout << "H3" << endl;
   cux.test_cache_calc<test_mgr>(t);
-  cout << "H4" << endl;
   cout << endl;
   
   cux.verbose=1;
-  cout << "H5" << endl;
   int cret=cux.convert_ret("g","solarmass",1.0,d1);
-  cout << "H6" << endl;
   t.test_rel(1.0/o2scl_cgs::solar_mass,d1,1.0e-6,"calc2");
 
   cux.err_on_fail=false;

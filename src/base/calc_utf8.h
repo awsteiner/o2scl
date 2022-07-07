@@ -935,6 +935,10 @@ namespace o2scl {
 
     /** \brief If true, interpret "min" as the minimum function
         (default true)
+
+        This setting allows convert_units to use this class without
+        creating confusion between "minutes" and the "minimum"
+        function.
      */
     bool allow_min;
     
