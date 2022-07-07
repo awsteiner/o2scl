@@ -258,11 +258,13 @@ namespace o2scl {
           token32<std::string>* strTok =
             static_cast<token32<std::string>*>(base);
           std::string str = strTok->val;
-          /*
-            if (evaluation.size() < 2) {
-            throw std::domain_error("Invalid equation.");
-            }
-          */
+          //if (evaluation.size()==0) {
+          //O2SCL_ERR("Sanity in calc_utf8.",o2scl::exc_einval);
+          //}
+          if (evaluation.size()<2) {
+            return 99;
+            //throw std::domain_error("Invalid equation.");
+          }
           fp_t right = evaluation.top();
           // AWS, 7/2/22: The comma is treated as an operator
           // which does nothing
@@ -337,7 +339,7 @@ namespace o2scl {
               evaluation.pop();
               if (next>right) evaluation.push(next);
               else evaluation.push(right);
-            } else if (!str.compare("min")) {
+            } else if (allow_min && !str.compare("min")) {
               fp_t next=evaluation.top();
               evaluation.pop();
               if (next<right) evaluation.push(next);
@@ -693,7 +695,7 @@ namespace o2scl {
             operator_stack.push("max");
             last_token_was_op=true;
           } else if (key.length()==3 && key[0]=='m' && key[1]=='i' &&
-                     key[2]=='n') {
+                     key[2]=='n' && allow_min) {
             operator_stack.push("min");
             last_token_was_op=true;
           } else if (key.length()==5 && key[0]=='h' && key[1]=='y' &&
@@ -899,6 +901,8 @@ namespace o2scl {
       
       def_r.clock_seed();
       r=&def_r;
+
+      allow_min=true;
     }      
 
     /** \brief Compile expression \c expr using variables 
@@ -929,6 +933,11 @@ namespace o2scl {
       return;
     }
 
+    /** \brief If true, interpret "min" as the minimum function
+        (default true)
+     */
+    bool allow_min;
+    
     /// \name Compile and evaluate 
     //@{
     /** \brief Compile and evaluate \c expr using definitions in 

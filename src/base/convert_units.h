@@ -333,7 +333,7 @@ namespace o2scl {
         vars.insert(std::make_pair(other[i].label,val));
       }
 
-      if (verbose>=3) {
+      if (verbose>=4) {
         std::cout << "vars: " << std::endl;
         for (typename std::map<std::string,fp_t>::iterator it=vars.begin();
              it!=vars.end();it++) {
@@ -737,7 +737,7 @@ namespace o2scl {
           {"hp",2,1,-3,0,0,0,0,o2scl_mks::horsepower,"horsepower"},
 
           // Pressure units
-          {"atm",-1,2,-2,0,0,0,0,o2scl_mks::std_atmosphere,"atmosphere"},
+          {"atm",-1,1,-2,0,0,0,0,o2scl_mks::std_atmosphere,"atmosphere"},
           {"bar",-1,1,-2,0,0,0,0,o2scl_mks::bar,"bar"},
           {"torr",-1,1,-2,0,0,0,0,o2scl_mks::torr,"torr"},
           {"psi",-1,1,-2,0,0,0,0,o2scl_mks::psi,"psi"},
@@ -1379,6 +1379,8 @@ namespace o2scl {
 
       o2scl::calc_utf8<fp_t> calc;
       o2scl::calc_utf8<fp_t> calc2;
+      calc.allow_min=false;
+      calc2.allow_min=false;
 
       int cret1=calc.compile_nothrow(from.c_str());
       if (cret1!=0) {
@@ -1499,18 +1501,22 @@ namespace o2scl {
       // function to make the function const
       o2scl::calc_utf8<fp_t> calc;
       o2scl::calc_utf8<fp_t> calc2;
+      calc.allow_min=false;
+      calc2.allow_min=false;
 
       std::map<std::string, fp_t> vars;
 
       set_vars(1.0,1.0,1.0,1.0,1.0,1.0,1.0,vars);
 
       if (verbose>=3) {
-        std::cout << "Compile: " << from << std::endl;
+        std::cout << "Function convert_calc_hck, compile 1: "
+                  << from << std::endl;
       }
       int cret1=calc.compile_nothrow(from.c_str());
       if (verbose>=3) {
         std::cout << "Result: " << cret1 << std::endl;
-        std::cout << "Compile: " << to << std::endl;
+        std::cout << "Function convert_calc_hck, compile 2: "
+                  << to << std::endl;
       }
       if (cret1!=0) return 1;
       int cret2=calc2.compile_nothrow(to.c_str());
@@ -1550,6 +1556,12 @@ namespace o2scl {
         // powers of K
         set_vars(1.0,1.0,1.0,2.0,1.0,1.0,1.0,vars);
         kb_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
+        if (!isfinite(calc.eval(&vars)) ||
+            !isfinite(calc2.eval(&vars))) {
+          std::cout << "Not finite result in convert."
+                    << std::endl;
+          O2SCL_ERR("Not finite.",o2scl::exc_efailed);
+        }
         if (verbose>1) {
           std::cout << "kb: " << before << ' ' << after << ' '
                     << calc.eval(&vars) << "\n\t"
@@ -1919,9 +1931,13 @@ namespace o2scl {
         \note We make this a template to avoid problems with
         circular headers.
     */
-    template<class test_mgr_t> void test_cache_calc(test_mgr_t &t) const {
+    template<class test_mgr_t> void test_cache_calc(test_mgr_t &t) {
       mciter m;
+      int cnt=0;
+      std::cout << "size: " << mcache.size() << std::endl;
       for (m=mcache.begin();m!=mcache.end();m++) {
+        std::cout.width(3);
+        std::cout << cnt << " ";
         std::cout.setf(std::ios::left);
         std::cout.width(10);
         std::cout << m->second.f << ' ';
@@ -1932,9 +1948,14 @@ namespace o2scl {
         std::cout << m->second.c << ' ';
         fp_t c, f;
         int ix=convert_calc_hck(m->second.f,m->second.t,1.0,c,f);
+        if (ix!=0) {
+          O2SCL_ERR("Function test_cache_calc() failed to convert.",
+                    o2scl::exc_esanity);
+        }
         std::cout << ix << ' ' << f << ' ';
         t.test_rel(f,m->second.c,1.0e-13,"test_cache_calc");
         std::cout << (fabs(f-m->second.c)/fabs(f)<1.0e-12) << std::endl;
+        cnt++;
       }
       return;
     }

@@ -124,8 +124,9 @@ namespace o2scl {
    */
   std::string dtos(double x, std::ostream &format);
 
-  /** \brief Desc
-   */
+  /** \brief Convert a value and an uncertainty to a string, 
+      e.g. "1.72634(34)e-12"
+  */
   std::string unc_to_string(double val, double err, int verbose=0);
   
   /** \brief Convert a string to an integer 
