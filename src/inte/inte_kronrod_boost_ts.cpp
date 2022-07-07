@@ -99,6 +99,7 @@ int main(void) {
     t.test_rel_boost<cpp_dec_float_50>(ans,exact,1.0e-30,"qag test");
   }
 
+#ifdef O2SCL_OSX
   {
     double val, err2, a=0, b=1;
     double exact=cos(100.0)-cos(1/1.01);
@@ -119,6 +120,7 @@ int main(void) {
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip");
   }
+#endif  
   
   t.report();
   return 0;
