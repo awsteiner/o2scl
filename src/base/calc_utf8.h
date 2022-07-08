@@ -261,7 +261,7 @@ namespace o2scl {
           //if (evaluation.size()==0) {
           //O2SCL_ERR("Sanity in calc_utf8.",o2scl::exc_einval);
           //}
-          if (evaluation.size()<2) {
+          if (evaluation.size()<1) {
             return 99;
             //throw std::domain_error("Invalid equation.");
           }
