@@ -293,6 +293,7 @@ int main(void) {
   
   }
 
+#ifdef O2SCL_NEVER_DEFINED
 #ifdef O2SCL_OSX
   {
     cout.precision(6);
@@ -315,6 +316,7 @@ int main(void) {
     cout << dtos(res,0) << " " << dtos(err,0) << " "
          << abs(res-exact)/exact << endl;
   }
+#endif
 #endif
   
   t.report();
