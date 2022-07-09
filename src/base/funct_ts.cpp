@@ -38,11 +38,21 @@ public:
 };
 
 class fmc2 {
+  
 public:
+  
+  template<class fp_t> fp_t param_f(fp_t x) {
+    fp_t one=1;
+    fp_t ten=10;
+    fp_t ret=one+one/ten;
+    return ret;
+  }
+  
   template<class fp_t, class fp2_t> fp_t func(fp_t x, fp2_t a) {
     fp_t a2=static_cast<fp_t>(a);
     return log(a2+x);
   }
+  
 };
 
 int main(void) {
@@ -80,12 +90,13 @@ int main(void) {
   fmc f2;
   double val, err;
   funct_multip fm2;
+
+  // No parameters
   fm2.eval_tol_err([f2](auto &&t) mutable { return f2.func(t); },
                    1.0e-4,val,err);
-
-  cout << log1p(1.0e-4) << " " << val << " " << err << endl;
   t.test_rel(val,log1p(1.0e-4),1.0e-15,"funct_multip");
 
+  // A parameter with a fixed type
   fmc2 f3;
   boost::multiprecision::number<
     boost::multiprecision::cpp_dec_float<25>> one=1;
@@ -95,7 +106,12 @@ int main(void) {
     boost::multiprecision::cpp_dec_float<25>> param=one+one/ten;
   fm2.eval_tol_err([f3,param](auto &&t) mutable
   { return f3.func(t,param); },1.0e-4,val,err);
-  t.test_rel(val,log1p(0.1+1.0e-4),1.0e-15,"funct_multip 2");
+  t.test_rel(val,log1p(0.1001),1.0e-15,"funct_multip 2");
+
+  // A fully templated parameter defined by a function 
+  fm2.eval_tol_err([f3](auto &&t) mutable
+  { return f3.func(t,f3.param_f(t)); },1.0e-4,val,err);
+  t.test_rel(val,log1p(0.1001),1.0e-15,"funct_multip 3");
   
   t.report();
   return 0;
