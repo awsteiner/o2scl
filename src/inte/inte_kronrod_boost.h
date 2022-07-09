@@ -67,13 +67,13 @@ namespace o2scl {
       this->L1norm=static_cast<double>(L1norm_loc);
       
       if (verbose>1) {
-        std::cout << "inte_multip_kronrod_boost::integ_err() "
+        std::cout << "inte_kronrod_boost::integ_err() "
                   << "tols(target,integ),err:\n  "
                   << target_tol << " " << integ_tol << " "
                   << err << std::endl;
       }
       
-      if (err>integ_tol) {
+      if (err/abs(res)>integ_tol) {
         return 1;
       }
       
@@ -111,7 +111,7 @@ namespace o2scl {
                       integ_tol);
 
       if (verbose>1) {
-        std::cout << "inte_multip_kronrod_boost::integ_err() "
+        std::cout << "inte_kronrod_boost::integ_err() "
                   << "tols(target,integ,func),err:\n  "
                   << target_tol << " " << integ_tol << " "
                   << func_tol << " " << err << std::endl;
@@ -210,6 +210,19 @@ namespace o2scl {
       return 0;
     }
 
+    /** \brief Integrate function \c func from \c a to \c b.
+     */
+    template<typename func_t, class fp_t>
+    fp_t integ(func_t &func, fp_t a, fp_t b) {
+      fp_t res, interror;
+      int ret=integ_err(func,a,b,res,interror);
+      if (ret!=0) {
+	O2SCL_ERR2("Integration failed in inte::integ(), ",
+		   "but cannot return int.",o2scl::exc_efailed);
+      }
+      return res;
+    }
+
     /** \brief Integrate function \c func from \c a to \c b using
         multipreicsion, placing the result in \c res and the error in
         \c err
@@ -227,7 +240,7 @@ namespace o2scl {
       } 
 
       if (verbose>0) {
-        std::cout << "int_multip_kronrod_boost::integ_err(): set "
+        std::cout << "int_kronrod_boost::integ_err(): set "
                   << "tolerance to: " << integ_tol << std::endl;
       }
       
@@ -240,7 +253,7 @@ namespace o2scl {
 
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_multip_kronrod_boost::integ_err(): "
+          std::cout << "int_kronrod_boost::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
                     << "\n  for double integration." << std::endl;
@@ -252,7 +265,7 @@ namespace o2scl {
         ret=integ_err_int(func,a_d,b_d,res_d,err_d,L1norm_d,
                           target_tol,integ_tol,func_tol);
         
-        if (ret==0 && err_d<integ_tol) {
+        if (ret==0 && err_d/abs(res_d)<integ_tol) {
           res=static_cast<fp_t>(res_d);
           err=static_cast<fp_t>(err_d);
           return 0;
@@ -264,7 +277,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_multip_kronrod_boost::integ_err(): "
+          std::cout << "int_kronrod_boost::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,
                            -std::numeric_limits<long double>::digits10+3)
@@ -277,7 +290,7 @@ namespace o2scl {
         ret=integ_err_int(func,a_ld,b_ld,res_ld,err_ld,L1norm_ld,
                           target_tol,integ_tol,func_tol);
         
-        if (ret==0 && err_ld<integ_tol) {
+        if (ret==0 && err_ld/abs(res_ld)<integ_tol) {
           res=static_cast<fp_t>(res_ld);
           err=static_cast<fp_t>(err_ld);
           return 0;
@@ -289,7 +302,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_multip_kronrod_boost::integ_err(): "
+          std::cout << "int_kronrod_boost::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
@@ -303,7 +316,7 @@ namespace o2scl {
                           err_cdf25,L1norm_cdf25,target_tol,
                           integ_tol,func_tol);
         
-        if (ret==0 && err_cdf25<integ_tol) {
+        if (ret==0 && err_cdf25/abs(res_cdf25)<integ_tol) {
           res=static_cast<fp_t>(res_cdf25);
           err=static_cast<fp_t>(err_cdf25);
           return 0;
@@ -315,7 +328,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_35>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_multip_kronrod_boost::integ_err(): "
+          std::cout << "int_kronrod_boost::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
@@ -329,7 +342,7 @@ namespace o2scl {
                           err_cdf35,L1norm_cdf35,target_tol,
                           integ_tol,func_tol);
         
-        if (ret==0 && err_cdf35<integ_tol) {
+        if (ret==0 && err_cdf35/abs(res_cdf35)<integ_tol) {
           res=static_cast<fp_t>(res_cdf35);
           err=static_cast<fp_t>(err_cdf35);
           return 0;
@@ -341,7 +354,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_50>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_multip_kronrod_boost::integ_err(): "
+          std::cout << "int_kronrod_boost::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
@@ -355,7 +368,7 @@ namespace o2scl {
                           err_cdf50,L1norm_cdf50,target_tol,
                           integ_tol,func_tol);
         
-        if (ret==0 && err_cdf50<integ_tol) {
+        if (ret==0 && err_cdf50/abs(res_cdf50)<integ_tol) {
           res=static_cast<fp_t>(res_cdf50);
           err=static_cast<fp_t>(err_cdf50);
           return 0;
@@ -367,7 +380,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_100>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_multip_kronrod_boost::integ_err(): "
+          std::cout << "int_kronrod_boost::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_100>::digits10+3)
@@ -381,7 +394,7 @@ namespace o2scl {
                           err_cdf100,L1norm_cdf100,target_tol,
                           integ_tol,func_tol);
         
-        if (ret==0 && err_cdf100<integ_tol) {
+        if (ret==0 && err_cdf100/abs(res_cdf100)<integ_tol) {
           res=static_cast<fp_t>(res_cdf100);
           err=static_cast<fp_t>(err_cdf100);
           return 0;
@@ -391,13 +404,13 @@ namespace o2scl {
       }
 
       if (verbose>0) {
-        std::cout << "inte_multip_kronrod_boost::integ_err() "
+        std::cout << "inte_kronrod_boost::integ_err() "
                   << "failed after cpp_dec_float_100:\n  "
                   << integ_tol << std::endl;
       }
     
       O2SCL_ERR2("Failed to compute with requested accuracy ",
-                 "in inte_multip_kronrod_boost::integ_err().",
+                 "in inte_kronrod_boost::integ_err().",
                  o2scl::exc_efailed);
       return o2scl::exc_efailed;
     }

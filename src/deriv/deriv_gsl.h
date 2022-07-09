@@ -654,7 +654,7 @@ namespace o2scl {
         called_d=true;
         
         // If the result is sufficiently accurate, then return
-        if (err_d<tol_loc) {
+        if (err_d/abs(dfdx_d)<tol_loc) {
           dfdx=static_cast<fp_t>(dfdx_d);
           err=static_cast<fp_t>(err_d);
           return 0;
@@ -691,7 +691,7 @@ namespace o2scl {
         called_ld=true;
         
         // If the result is sufficiently accurate, then return
-        if (err_ld<tol_loc) {
+        if (err_ld/abs(dfdx_ld)<tol_loc) {
           dfdx=static_cast<fp_t>(dfdx_ld);
           err=static_cast<fp_t>(err_ld);
           return 0;
@@ -748,7 +748,7 @@ namespace o2scl {
         called_cdf25=true;
         
         // If the result is sufficiently accurate, then return
-        if (err_cdf25<tol_loc) {
+        if (err_cdf25/abs(dfdx_cdf25)<tol_loc) {
           dfdx=static_cast<fp_t>(dfdx_cdf25);
           err=static_cast<fp_t>(err_cdf25);
           return 0;
@@ -805,7 +805,7 @@ namespace o2scl {
         }
         
         // If the result is sufficiently accurate, then return
-        if (err_cdf35<tol_loc) {
+        if (err_cdf35/abs(dfdx_cdf35)<tol_loc) {
           dfdx=static_cast<fp_t>(dfdx_cdf35);
           err=static_cast<fp_t>(err_cdf35);
           return 0;
@@ -862,7 +862,7 @@ namespace o2scl {
         called_cdf50=true;
         
         // If the result is sufficiently accurate, then return
-        if (err_cdf50<tol_loc) {
+        if (err_cdf50/abs(dfdx_cdf50)<tol_loc) {
           dfdx=static_cast<fp_t>(dfdx_cdf50);
           err=static_cast<fp_t>(err_cdf50);
           return 0;
@@ -919,7 +919,7 @@ namespace o2scl {
         called_cdf100=true;
         
         // If the result is sufficiently accurate, then return
-        if (err_cdf100<tol_loc) {
+        if (err_cdf100/abs(dfdx_cdf100)<tol_loc) {
           dfdx=static_cast<fp_t>(dfdx_cdf100);
           err=static_cast<fp_t>(err_cdf100);
           return 0;

@@ -465,7 +465,8 @@ namespace o2scl {
       if (tol_loc<=0.0 && tol_rel<=0.0) {
         tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10+1);
         if (verbose>0) {
-          std::cout << "Set tolerance from data type to: "
+          std::cout << "funct_multip::eval_tol_err(): "
+                    << "Set tolerance from data type to: "
                     << tol_loc << std::endl;
         }
       } else if (tol_loc<=0.0) {
@@ -479,7 +480,8 @@ namespace o2scl {
         }
         tol_loc=tol_rel;
         if (verbose>0) {
-          std::cout << "Set tolerance from value of tol_rel to: "
+          std::cout << "funct_multip::eval_tol_err(): "
+                    << "Set tolerance from value of tol_rel to: "
                     << tol_loc << std::endl;
         }
       } else {
@@ -491,7 +493,8 @@ namespace o2scl {
           O2SCL_ERR("Cannot compute to required precision",
                     o2scl::exc_einval);
         } else if (verbose>0) {
-          std::cout << "Set tolerance from user-specified value to: "
+          std::cout << "funct_multip::eval_tol_err(): "
+                    << "Set tolerance from user-specified value to: "
                     << tol_loc << std::endl;
         }
       }
@@ -516,7 +519,8 @@ namespace o2scl {
         }
       }
       if (verbose>0) {
-        std::cout << "Failed 1: " << dtos(y_ld,0) << " "
+        std::cout << "funct_multip::eval_tol_err():\n  "
+                  << "Failed 1: " << dtos(y_ld,0) << " "
                   << dtos(y_d,0) << " "
                   << dtos(err,0) << " " << tol_loc << std::endl;
       }
@@ -539,7 +543,8 @@ namespace o2scl {
         }
       }
       if (verbose>0) {
-        std::cout << "Failed 2: " << dtos(y_cdf25,0) << " "
+        std::cout << "funct_multip::eval_tol_err():\n  "
+                  << "Failed 2: " << dtos(y_cdf25,0) << " "
                   << dtos(y_ld,0) << " "
                   << dtos(err,0) << " " << tol_loc << std::endl;
       }
@@ -562,7 +567,8 @@ namespace o2scl {
         }
       }
       if (verbose>0) {
-        std::cout << "Failed 3: " << dtos(y_cdf35,0) << " "
+        std::cout << "funct_multip::eval_tol_err():\n  "
+                  << "Failed 3: " << dtos(y_cdf35,0) << " "
                   << dtos(y_cdf25,0) << " "
                   << dtos(err,0) << " " << tol_loc << std::endl;
       }
@@ -585,7 +591,8 @@ namespace o2scl {
         }
       }
       if (verbose>0) {
-        std::cout << "Failed 4: " << dtos(y_cdf50,0) << " "
+        std::cout << "funct_multip::eval_tol_err():\n  "
+                  << "Failed 4: " << dtos(y_cdf50,0) << " "
                   << dtos(y_cdf35,0) << " "
                   << dtos(err,0) << " " << tol_loc << std::endl;
       }
@@ -608,7 +615,8 @@ namespace o2scl {
         }
       }
       if (verbose>0) {
-        std::cout << "Failed 5: " << dtos(y_cdf100,0) << " "
+        std::cout << "funct_multip::eval_tol_err():\n  "
+                  << "Failed 5: " << dtos(y_cdf100,0) << " "
                   << dtos(y_cdf50,0) << " "
                   << dtos(err,0) << " " << tol_loc << std::endl;
       

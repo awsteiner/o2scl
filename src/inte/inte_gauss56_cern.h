@@ -254,47 +254,72 @@ namespace o2scl {
       been supported since 2003.)
   */
   template<class func_t=funct, class fp_t=double,
-    class weights_t=inte_gauss56_coeffs_double>
-    class inte_gauss56_cern : public inte<func_t,fp_t> {
+           class weights_t=inte_gauss56_coeffs_double>
+  class inte_gauss56_cern : public inte<func_t,fp_t> {
 
   protected:
 
-  const fp_t *w5, *x5, *w6, *x6;
-  weights_t wgts;
+    const fp_t *w5, *x5, *w6, *x6;
+    weights_t wgts;
     
   public:
   
-  inte_gauss56_cern() {
-    w5=&(wgts.w5[0]);
-    x5=&(wgts.x5[0]);
-    w6=&(wgts.w6[0]);
-    x6=&(wgts.x6[0]);
-  }
-
-  /** \brief Integrate function \c func from \c a to \c b
-      giving result \c res and error \c err
-
-      This function always returns \ref success.
-  */
-  virtual int integ_err(func_t &func, fp_t a, fp_t b,
-			fp_t &res, fp_t &err) {
-
-    fp_t rang=b-a, e5=0.0, e6=0.0, ytmp;
-
-    for(int i=0;i<5;i++) {
-      ytmp=func(a+rang*x5[i]);
-      e5+=w5[i]*ytmp;
-      ytmp=func(a+rang*x6[i]);
-      e6+=w6[i]*ytmp;
+    inte_gauss56_cern() {
+      w5=&(wgts.w5[0]);
+      x5=&(wgts.x5[0]);
+      w6=&(wgts.w6[0]);
+      x6=&(wgts.x6[0]);
     }
-    ytmp=func(a+rang*x6[5]);
-    e6+=w6[5]*ytmp;
-    res=(e6+e5)*rang/2.0;
-    fp_t diff=e5-e6;
-    err=abs(diff)*rang;
 
-    return success;
-  }
+    /** \brief Integrate function \c func from \c a to \c b
+        giving result \c res and error \c err
+
+        This function always returns \ref success.
+    */
+    virtual int integ_err(func_t &func, fp_t a, fp_t b,
+                          fp_t &res, fp_t &err) {
+
+      fp_t rang=b-a, e5=0.0, e6=0.0, ytmp;
+
+      for(int i=0;i<5;i++) {
+        ytmp=func(a+rang*x5[i]);
+        e5+=w5[i]*ytmp;
+        ytmp=func(a+rang*x6[i]);
+        e6+=w6[i]*ytmp;
+      }
+      ytmp=func(a+rang*x6[5]);
+      e6+=w6[5]*ytmp;
+      res=(e6+e5)*rang/2.0;
+      fp_t diff=e5-e6;
+      err=abs(diff)*rang;
+
+      return success;
+    }
+
+    /** \brief Integrate function \c func from \c a to \c b
+        giving result \c res and error \c err
+
+        This function always returns \ref success.
+    */
+    int integ_err2(func_t func, fp_t a, fp_t b,
+                   fp_t &res, fp_t &err) {
+
+      fp_t rang=b-a, e5=0.0, e6=0.0, ytmp;
+
+      for(int i=0;i<5;i++) {
+        ytmp=func(a+rang*x5[i]);
+        e5+=w5[i]*ytmp;
+        ytmp=func(a+rang*x6[i]);
+        e6+=w6[i]*ytmp;
+      }
+      ytmp=func(a+rang*x6[5]);
+      e6+=w6[5]*ytmp;
+      res=(e6+e5)*rang/2.0;
+      fp_t diff=e5-e6;
+      err=abs(diff)*rang;
+
+      return success;
+    }
 
   };
 

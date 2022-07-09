@@ -40,6 +40,14 @@ fp_t testfun(fp_t tx, fp_t &a) {
   return -cos(1/(tx+a))/(a+tx)/(a+tx);
 }
 
+template<class fp_t>
+fp_t testfun2(fp_t tx) {
+  fp_t a=1;
+  fp_t a2=100;
+  fp_t a3=a/a2;
+  return -cos(1/(tx+a3))/(a3+tx)/(a3+tx);
+}
+
 template<class fp_t> fp_t sin_recip(fp_t x) {
   fp_t one=1;
   fp_t hundred=100;
@@ -284,6 +292,30 @@ int main(void) {
     */
   
   }
+
+#ifdef O2SCL_OSX
+  {
+    cout.precision(6);
+    
+    inte_adapt_cern2<1000> iac2;
+    double a=0.01;
+    funct tf=std::bind(testfun<double>,std::placeholders::_1,a);
+    double res, err;
+    double exact=sin(1.0/(1.0+a))-sin(1.0/a);
+    iac2.integ_err(tf,0.0,1.0,res,err);
+    cout << res << " " << exact << " " << fabs(res-exact) << endl;
+
+    iac2.verbose=1;
+    iac2.integ_err_multip([a](auto &&t) mutable { return testfun2(t); },
+                          0.0,1.0,res,err,1.0e-8);
+    cout << dtos(res,0) << " " << dtos(err,0) << " "
+         << abs(res-exact)/exact << endl;
+    iac2.integ_err_multip([a](auto &&t) mutable { return testfun2(t); },
+                          0.0,1.0,res,err);
+    cout << dtos(res,0) << " " << dtos(err,0) << " "
+         << abs(res-exact)/exact << endl;
+  }
+#endif
   
   t.report();
   return 0;

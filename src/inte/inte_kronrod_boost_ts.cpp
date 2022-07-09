@@ -111,14 +111,16 @@ int main(void) {
     imkb.verbose=2;
     imkb.integ_err_multip([](auto &&t) mutable { return test_func(t); },
                           a,b,val,err2,1.0e-8);
+    t.test_rel(val,exact,1.0e-8,"multip 1");
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     imkb.integ_err_multip([](auto &&t) mutable { return test_func(t); },
                           a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
+    t.test_rel(val,exact,1.0e-15,"multip 2");
     imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
                           a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
-    t.test_rel(val,exact,1.0e-15,"multip");
+    t.test_rel(val,exact,1.0e-15,"multip string");
   }
 #endif  
   

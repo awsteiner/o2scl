@@ -1612,7 +1612,7 @@ namespace o2scl {
                                abs(czo3)*abs(czo3)+abs(czo4)*abs(czo4));
                   
                   //std::cout << q1 << " " << q2 << std::endl;
-                  if (!o2isfinite(q1) || !o2isfinite(q2)
+                  if (!isfinite(q1) || !isfinite(q2)
                       || q1>1.0e-10 || q2>1.0e-10) {
                     std::cout << "ca,cb,cc,cd,ce: "
                               << ca << " " << cb << " " << cc << " "
@@ -2423,8 +2423,8 @@ namespace o2scl {
         x3.real(-a/3);
         x3.imag(0);
 
-        if (!o2isfinite(x1) || !o2isfinite(x2.real()) ||
-            !o2isfinite(x2.imag())) {
+        if (!isfinite(x1) || !isfinite(x2.real()) ||
+            !isfinite(x2.imag())) {
           std::cout << "1. " << x1 << " " << x2 << " " << x3 << std::endl;
           exit(-1);
         }
@@ -2455,8 +2455,8 @@ namespace o2scl {
           x3.imag(0);
         }
         
-        if (!o2isfinite(x1) || !o2isfinite(x2.real()) ||
-            !o2isfinite(x2.imag())) {
+        if (!isfinite(x1) || !isfinite(x2.real()) ||
+            !isfinite(x2.imag())) {
           std::cout << "2. " << x1 << " " << x2 << " " << x3 << std::endl;
           exit(-1);
         }
@@ -2490,8 +2490,8 @@ namespace o2scl {
         x3.real(r2);
         x3.imag(0);
         
-        if (!o2isfinite(x1) || !o2isfinite(x2.real()) ||
-            !o2isfinite(x2.imag())) {
+        if (!isfinite(x1) || !isfinite(x2.real()) ||
+            !isfinite(x2.imag())) {
           std::cout << "3. " << x1 << " " << x2 << " " << x3 << std::endl;
           std::cout << Q << std::endl;
           std::cout << norm << " " << sqrtQ << " " << theta << std::endl;
@@ -2522,8 +2522,8 @@ namespace o2scl {
       x3.real(-half*(A+B)-a/3);
       x3.imag((root3*half)*fabs(A-B));
       
-      if (!o2isfinite(x1) || !o2isfinite(x2.real()) ||
-          !o2isfinite(x2.imag())) {
+      if (!isfinite(x1) || !isfinite(x2.real()) ||
+          !isfinite(x2.imag())) {
         std::cout << R2-Q3 << std::endl;
         std::cout << fabs(R)+sqrt(R2-Q3) << std::endl;
         std::cout << "4. " << x1 << " " << x2 << " " << x3 << std::endl;
@@ -3352,10 +3352,10 @@ namespace o2scl {
         // It seems that if the real part of alpha is < 0 and the imaginary
         // part is zero, then cbrta is NaN (esp. w/Cygwin). We fix this
         // here:
-        if (!o2isfinite(cbrta.real())) {
+        if (!isfinite(cbrta.real())) {
           cbrta=pow(-alpha,onethird)*exp_i_pi_three;
         }
-        if (!o2isfinite(cbrtb.real())) {
+        if (!isfinite(cbrtb.real())) {
           cbrtb=pow(-beta,onethird)*exp_i_pi_three;
         }
         
@@ -3585,7 +3585,7 @@ namespace o2scl {
       int ir1=quad2.solve_r(1,b2a,c2a,x1,x2);
       int ir2=quad2.solve_r(1,b2b,c2b,x3,x4);
 
-      if (ir1>=2 && (!o2isfinite(x1) || !o2isfinite(x2))) {
+      if (ir1>=2 && (!isfinite(x1) || !isfinite(x2))) {
         /*
           std::cout << "Zere1: " << std::endl;
           std::cout << u1 << " " << u2 << " " << u3 << std::endl;
@@ -3598,7 +3598,7 @@ namespace o2scl {
         O2SCL_ERR("Quartic failure 1 in quartic_real_std.",
                   o2scl::exc_einval);
       }
-      if (ir2>=2 && (!o2isfinite(x3) || !o2isfinite(x4))) {
+      if (ir2>=2 && (!isfinite(x3) || !isfinite(x4))) {
         /*
           std::cout << "Zere1: " << std::endl;
           std::cout << u1 << " " << u2 << " " << u3 << std::endl;
@@ -3811,10 +3811,10 @@ namespace o2scl {
       //cx_t check3=a3*u42*u42*u42+b3*u42*u42+c3*u42+d3;
       //std::cout << "check3: " << check3 << std::endl;
       
-      if (!o2isfinite(x1.real()) || !o2isfinite(x1.imag()) ||
-          !o2isfinite(x2.real()) || !o2isfinite(x2.imag()) ||
-          !o2isfinite(x3.real()) || !o2isfinite(x3.imag()) ||
-          !o2isfinite(x4.real()) || !o2isfinite(x4.imag())) {
+      if (!isfinite(x1.real()) || !isfinite(x1.imag()) ||
+          !isfinite(x2.real()) || !isfinite(x2.imag()) ||
+          !isfinite(x3.real()) || !isfinite(x3.imag()) ||
+          !isfinite(x4.real()) || !isfinite(x4.imag())) {
         std::cout << "Pt.1" << std::endl;
         std::cout << "a3,b3,c3,d3: " << a3 << " " << b3 << " "
                   << c3 << " " << d3 << std::endl;

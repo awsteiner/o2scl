@@ -37,6 +37,14 @@ public:
   }
 };
 
+class fmc2 {
+public:
+  template<class fp_t, class fp2_t> fp_t func(fp_t x, fp2_t a) {
+    fp_t a2=static_cast<fp_t>(a);
+    return log(a2+x);
+  }
+};
+
 int main(void) {
   cout.setf(ios::scientific);
   
@@ -76,6 +84,18 @@ int main(void) {
                    1.0e-4,val,err);
 
   cout << log1p(1.0e-4) << " " << val << " " << err << endl;
+  t.test_rel(val,log1p(1.0e-4),1.0e-15,"funct_multip");
+
+  fmc2 f3;
+  boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<25>> one=1;
+  boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<25>> ten=10;
+  boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<25>> param=one+one/ten;
+  fm2.eval_tol_err([f3,param](auto &&t) mutable
+  { return f3.func(t,param); },1.0e-4,val,err);
+  t.test_rel(val,log1p(0.1+1.0e-4),1.0e-15,"funct_multip 2");
   
   t.report();
   return 0;

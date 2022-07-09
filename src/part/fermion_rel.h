@@ -3091,9 +3091,9 @@ namespace o2scl {
     // the Fermi-Dirac integrator
     fermi_dirac_integ_direct<long double,funct_cdf25,25,
                              cpp_dec_float_25>,
-                         // the Bessel-exp integrator
-                         bessel_K_exp_integ_direct<
-                           long double,funct_cdf25,25,cpp_dec_float_25>,
+    // the Bessel-exp integrator
+    bessel_K_exp_integ_direct<
+      long double,funct_cdf25,25,cpp_dec_float_25>,
     fermion_rel_integ_multip<long double>,
     // The density solver
     root_brent_gsl<funct_ld,long double>,
@@ -3153,9 +3153,9 @@ namespace o2scl {
     // the Fermi-Dirac integrator
     fermi_dirac_integ_direct<long double,funct_cdf25,25,
                              cpp_dec_float_25>,
-                         // the Bessel-exp integrator
-                         bessel_K_exp_integ_direct<
-                           long double,funct_cdf25,25,cpp_dec_float_25>,
+    // the Bessel-exp integrator
+    bessel_K_exp_integ_direct<
+      long double,funct_cdf25,25,cpp_dec_float_25>,
     fermion_rel_integ_multip2<long double>,
     // The density solver
     root_brent_gsl<funct_ld,long double>,
