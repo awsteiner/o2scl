@@ -297,7 +297,7 @@ int main(void) {
   {
     cout.precision(6);
     
-    inte_adapt_cern2<1000> iac2;
+    inte_adapt_cern2 iac2;
     double a=0.01;
     funct tf=std::bind(testfun<double>,std::placeholders::_1,a);
     double res, err;
@@ -310,10 +310,10 @@ int main(void) {
                           0.0,1.0,res,err,1.0e-8);
     cout << dtos(res,0) << " " << dtos(err,0) << " "
          << abs(res-exact)/exact << endl;
-    //iac2.integ_err_multip([a](auto &&t) mutable { return testfun2(t); },
-    //0.0,1.0,res,err);
-    //cout << dtos(res,0) << " " << dtos(err,0) << " "
-    //<< abs(res-exact)/exact << endl;
+    iac2.integ_err_multip([a](auto &&t) mutable { return testfun2(t); },
+                          0.0,1.0,res,err);
+    cout << dtos(res,0) << " " << dtos(err,0) << " "
+         << abs(res-exact)/exact << endl;
   }
 #endif
   
