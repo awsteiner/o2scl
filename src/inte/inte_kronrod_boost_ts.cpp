@@ -50,6 +50,13 @@ template<class fp_t, class fp2_t> fp_t test_func_param
   return -sin(one/(x+a2))/(x+a2)/(x+a2);
 }
 
+template<class fp_t> fp_t param_f(fp_t x) {
+  fp_t one=1;
+  fp_t hundred=100;
+  fp_t ret=one/hundred;
+  return ret;
+}
+
 int main(void) {
   cout.setf(ios::scientific);
   
@@ -112,8 +119,7 @@ int main(void) {
     double exact=cos(100.0)-cos(1/1.01);
 
     funct_multip_string fms;
-    fms.set_function("-sin(one/(x+1/100))/(x+1/100)^2","x");
-    fms.verbose=2;
+    fms.set_function("-sin(1/(x+1/100))/(x+1/100)^2","x");
 
     imkb.verbose=2;
     imkb.integ_err_multip([](auto &&t) mutable { return test_func(t); },
@@ -137,6 +143,12 @@ int main(void) {
     { return test_func_param(t,param); },a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip 3");
+
+    // A parameter specified by a template function
+    imkb.integ_err_multip([param](auto &&t) mutable
+    { return test_func_param(t,param_f(t)); },a,b,val,err2);
+    cout << dtos(val,0) << " " << dtos(err2,0) << endl;
+    t.test_rel(val,exact,1.0e-15,"multip 4");
     
     imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
                           a,b,val,err2);

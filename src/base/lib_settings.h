@@ -488,6 +488,13 @@ namespace o2scl {
           c_100.verbose=verbose;
         */
         
+        if (verbose>1) {
+          std::cout << "funct_multip_string::operator() "
+                    << "compiling with function "
+                    << st_form << " and variable " << st_var
+                    << std::endl;
+        }
+        
         c.compile(st_form.c_str());
         c_ld.compile(st_form.c_str());
         c_25.compile(st_form.c_str());
@@ -508,8 +515,9 @@ namespace o2scl {
 
             if (vsi2!=st_var) {
             
-              if (verbose>2) {
-                std::cout << "trying to find constant " << vsi2
+              if (verbose>1) {
+                std::cout << "funct_multip_string::operator() "
+                          << "trying to find constant " << vsi2
                           << std::endl;
               }
               
@@ -555,6 +563,12 @@ namespace o2scl {
                 cu_100.find_nothrow(vsi2,"mks",matches_100);
                 vars_100.insert(std::make_pair(vsi2,matches_100[0].val));
                 
+              } else {
+                std::cerr << "Cannot find constant " << vsi2
+                          << "in funct_multip_string::operator()."
+                          << std::endl;
+                O2SCL_ERR2("Cannot find constant in ",
+                           "funct_multip_string.",o2scl::exc_efailed);
               }
             }
           }
@@ -567,24 +581,59 @@ namespace o2scl {
       // get the right convert_units object.
       
       int d10=std::numeric_limits<fp_t>::digits10;
+      if (verbose>1) {
+        std::cout << "funct_multip_string::operator(): input is "
+                  << dtos(x,0) << " and d10 is "
+                  << d10 << std::endl;
+      }
       if (d10==15) {
         vars[st_var]=static_cast<double>(x);
-        return static_cast<fp_t>(c.eval(&vars));
+        fp_t ret=static_cast<fp_t>(c.eval(&vars));
+        if (verbose>1) {
+          std::cout << "funct_multip_string::operator(): double "
+                    << "precision returning " << ret << std::endl;
+        }
+        return ret;
       } else if (d10==18) {
         vars_ld[st_var]=static_cast<long double>(x);
-        return static_cast<fp_t>(c_ld.eval(&vars_ld));
+        fp_t ret=static_cast<fp_t>(c_ld.eval(&vars_ld));
+        if (verbose>1) {
+          std::cout << "funct_multip_string::operator(): long double "
+                    << "precision returning " << ret << std::endl;
+        }
+        return ret;
       } else if (d10==25) {
         vars_25[st_var]=static_cast<cpp_dec_float_25>(x);
-        return static_cast<fp_t>(c_25.eval(&vars_25));
+        fp_t ret=static_cast<fp_t>(c_25.eval(&vars_25));
+        if (verbose>1) {
+          std::cout << "funct_multip_string::operator(): 25-digit "
+                    << "precision returning " << ret << std::endl;
+        }
+        return ret;
       } else if (d10==35) {
         vars_35[st_var]=static_cast<cpp_dec_float_35>(x);
-        return static_cast<fp_t>(c_35.eval(&vars_35));
+        fp_t ret=static_cast<fp_t>(c_35.eval(&vars_35));
+        if (verbose>1) {
+          std::cout << "funct_multip_string::operator(): 35-digit "
+                    << "precision returning " << ret << std::endl;
+        }
+        return ret;
       } else if (d10==50) {
         vars_50[st_var]=static_cast<cpp_dec_float_50>(x);
-        return static_cast<fp_t>(c_50.eval(&vars_50));
+        fp_t ret=static_cast<fp_t>(c_50.eval(&vars_50));
+        if (verbose>1) {
+          std::cout << "funct_multip_string::operator(): 50-digit "
+                    << "precision returning " << ret << std::endl;
+        }
+        return ret;
       } else if (d10==100) {
         vars_100[st_var]=static_cast<cpp_dec_float_100>(x);
-        return static_cast<fp_t>(c_100.eval(&vars_100));
+        fp_t ret=static_cast<fp_t>(c_100.eval(&vars_100));
+        if (verbose>1) {
+          std::cout << "funct_multip_string::operator(): 100-digit "
+                    << "precision returning " << ret << std::endl;
+        }
+        return ret;
       }
 
       O2SCL_ERR("Unexpected type in funct_multip_strings.",
