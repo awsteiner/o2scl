@@ -43,6 +43,13 @@ template<class fp_t> fp_t test_func(fp_t x) {
   return -sin(one/(x+one/hundred))/(x+one/hundred)/(x+one/hundred);
 }
 
+template<class fp_t, class fp2_t> fp_t test_func_param
+(fp_t x, fp2_t a) {
+  fp_t one=1;
+  fp_t a2=static_cast<fp_t>(a);
+  return -sin(one/(x+a2))/(x+a2)/(x+a2);
+}
+
 int main(void) {
   cout.setf(ios::scientific);
   
@@ -111,12 +118,26 @@ int main(void) {
     imkb.verbose=2;
     imkb.integ_err_multip([](auto &&t) mutable { return test_func(t); },
                           a,b,val,err2,1.0e-8);
-    t.test_rel(val,exact,1.0e-8,"multip 1");
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
+    t.test_rel(val,exact,1.0e-8,"multip 1");
+    
     imkb.integ_err_multip([](auto &&t) mutable { return test_func(t); },
                           a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip 2");
+
+    // A parameter with a fixed type
+    boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<25>> one=1;
+    boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<25>> hundred=100;
+    boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<25>> param=one/hundred;
+    imkb.integ_err_multip([param](auto &&t) mutable
+    { return test_func_param(t,param); },a,b,val,err2);
+    cout << dtos(val,0) << " " << dtos(err2,0) << endl;
+    t.test_rel(val,exact,1.0e-15,"multip 3");
+    
     imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
                           a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;

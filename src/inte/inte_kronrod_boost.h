@@ -117,7 +117,7 @@ namespace o2scl {
                   << func_tol << " " << err << std::endl;
       }
 
-      if (err>integ_tol) {
+      if (err/abs(res)>integ_tol) {
         return 1;
       }
       return 0;
@@ -311,11 +311,16 @@ namespace o2scl {
         cpp_dec_float_25 a_cdf25=static_cast<cpp_dec_float_25>(a);
         cpp_dec_float_25 b_cdf25=static_cast<cpp_dec_float_25>(b);
         cpp_dec_float_25 res_cdf25, err_cdf25, L1norm_cdf25;
-        
+
         ret=integ_err_int(func,a_cdf25,b_cdf25,res_cdf25,
                           err_cdf25,L1norm_cdf25,target_tol,
                           integ_tol,func_tol);
-        
+
+        if (verbose>1) {
+          std::cout << "ret,res,err,tol: " << ret << " "
+                    << res_cdf25 << " " << err_cdf25 << " "
+                    << integ_tol << std::endl;
+        }
         if (ret==0 && err_cdf25/abs(res_cdf25)<integ_tol) {
           res=static_cast<fp_t>(res_cdf25);
           err=static_cast<fp_t>(err_cdf25);
