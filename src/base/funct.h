@@ -402,20 +402,25 @@ namespace o2scl {
       function evaluations, one at \c double and one at \c long \c
       double precision. However, only simple functions can be
       evaluated to within this accuracy without more precise inputs.
-      Preferably, the user should choose this tolerance carefully.
+      Preferably, the user should choose this tolerance carefully. If
+      the tolerance is sufficiently small, no low-precision function
+      evaluations will be performed.
 
       This class will fail to evalate a function with the requested
       precision if:
-      - The user-specified input and result data type does not have enough
+      - the user-specified input and result data type does not have enough
       precision to compute or store the result (i.e. the tolerance
-      is less than \f$ 10^{-m} \f$ where \f$ m \f$ is the value
+      is less than \f$ 10^{-m} \f$ where \f$ m \f$ is the value,
       returned by <tt>numeric_limits<fp_t>::max_digits10</tt>).
-      - The requested precision is near to or smaller than 1.0e-50
-      - The function is noisy, non-deterministic, or is not 
-      continuous in the local neighborhood
+      - the requested precision is near to or smaller than 1.0e-50, or
+      - the function is noisy, non-deterministic, or is 
+      discontinuous in the local neighborhood.
 
       \note The algorithm attempts not to be wasteful, but is not
-      necessarily optimized for speed. 
+      necessarily optimized for speed. One way to improve it would
+      be to more intelligently choose the number of digits used
+      in the boost multiprecision numbers based on the tolerance
+      which was specified.
   */
   class funct_multip {
 
@@ -521,126 +526,231 @@ namespace o2scl {
       }
 
       /// First pass, compare double and long double
-      
-      double x_d=static_cast<double>(x);
-      long double x_ld=static_cast<long double>(x);
-      double y_d=f(x_d);
-      long double y_ld=f(x_ld);
 
-      if (y_ld==0 && y_d==0) {
-        val=0;
-        err=0;
-        return 0;
+      bool d_eval=false;
+      double x_d=0, y_d=0;
+      if (tol_loc>pow(10.0,-std::numeric_limits<double>::max_digits10)) {
+        x_d=static_cast<double>(x);
+        y_d=f(x_d);
+        d_eval=true;
       }
-      if (y_ld!=0) {
-        err=static_cast<fp_t>(abs(y_ld-y_d)/abs(y_ld));
-        if (err<tol_loc) {
-          val=static_cast<fp_t>(y_ld);
+      
+      bool ld_eval=false;
+      long double x_ld=0, y_ld=0;
+      if (tol_loc>pow(10.0,-std::numeric_limits<long double>::max_digits10)) {
+        x_ld=static_cast<long double>(x);
+        y_ld=f(x_ld);
+        ld_eval=true;
+      }
+
+      if (d_eval && ld_eval) {
+        if (y_ld==0 && y_d==0) {
+          val=0;
+          err=0;
           return 0;
         }
+      
+        if (y_ld!=0) {
+          err=static_cast<fp_t>(abs(y_ld-y_d)/abs(y_ld));
+          if (err<tol_loc) {
+            val=static_cast<fp_t>(y_ld);
+            return 0;
+          }
+        }
       }
+      
       if (verbose>0) {
-        std::cout << "funct_multip::eval_tol_err():\n  "
-                  << "Failed 1: " << dtos(y_ld,0) << " "
-                  << dtos(y_d,0) << " "
-                  << dtos(err,0) << " " << tol_loc << std::endl;
+        if (d_eval && ld_eval) {
+          std::cout << "funct_multip::eval_tol_err():\n  "
+                    << "Failed first round: " << dtos(y_ld,0) << " "
+                    << dtos(y_d,0) << " "
+                    << dtos(err,0) << " " << tol_loc << std::endl;
+        } else if (ld_eval) {
+          std::cout << "funct_multip::eval_tol_err():\n  "
+                    << "Failed first round (d_eval is false): "
+                    << dtos(y_ld,0) << " "
+                    << tol_loc << std::endl;
+        } else {
+          std::cout << "funct_multip::eval_tol_err():\n  "
+                    << "Failed first round "
+                    << "(d_eval and ld_eval are both false)." << std::endl;
+        }
       }
     
       /// Second pass, compare long double and 25-digit precision
-
-      cpp_dec_float_25 x_cdf25=static_cast<cpp_dec_float_25>(x);
-      cpp_dec_float_25 y_cdf25=f(x_cdf25);
-
-      if (y_cdf25==0 && y_ld==0) {
-        val=0;
-        err=0;
-        return 0;
+      
+      bool cdf25_eval=false;
+      cpp_dec_float_25 x_cdf25=0, y_cdf25=0;
+      if (tol_loc>pow(10.0,-std::numeric_limits
+                      <cpp_dec_float_25>::max_digits10)) {
+        x_cdf25=static_cast<cpp_dec_float_25>(x);
+        y_cdf25=f(x_cdf25);
+        cdf25_eval=true;
       }
-      if (y_cdf25!=0) {
-        err=static_cast<fp_t>(abs(y_cdf25-y_ld)/abs(y_cdf25));
-        if (err<tol_loc) {
-          val=static_cast<fp_t>(y_cdf25);
+
+      if (ld_eval && cdf25_eval) {
+        if (y_cdf25==0 && y_ld==0) {
+          val=0;
+          err=0;
           return 0;
         }
+        if (y_cdf25!=0) {
+          err=static_cast<fp_t>(abs(y_cdf25-y_ld)/abs(y_cdf25));
+          if (err<tol_loc) {
+            val=static_cast<fp_t>(y_cdf25);
+            return 0;
+          }
+        }
       }
+      
       if (verbose>0) {
-        std::cout << "funct_multip::eval_tol_err():\n  "
-                  << "Failed 2: " << dtos(y_cdf25,0) << " "
-                  << dtos(y_ld,0) << " "
-                  << dtos(err,0) << " " << tol_loc << std::endl;
+        if (ld_eval && cdf25_eval) {
+          std::cout << "funct_multip::eval_tol_err():\n  "
+                    << "Failed second round: " << dtos(y_cdf25,0) << " "
+                    << dtos(y_ld,0) << " "
+                    << dtos(err,0) << " " << tol_loc << std::endl;
+        } else if (cdf25_eval) {
+          std::cout << "funct_multip::eval_tol_err():\n  "
+                    << "Failed second round (ld_eval is false): "
+                    << dtos(y_cdf25,0) << " "
+                    << tol_loc << std::endl;
+        } else {
+          std::cout << "funct_multip::eval_tol_err():\n  "
+                    << "Failed second round (ld_eval and "
+                    << "cdf25_eval are both false)." << std::endl;
+        }
       }
     
       /// Third pass, compare 25- and 35-digit precision
 
-      cpp_dec_float_35 x_cdf35=static_cast<cpp_dec_float_35>(x);
-      cpp_dec_float_35 y_cdf35=f(x_cdf35);
-        
-      if (y_cdf35==0 && y_cdf25==0) {
-        val=0;
-        err=0;
-        return 0;
+      bool cdf35_eval=false;
+      cpp_dec_float_35 x_cdf35=0, y_cdf35=0;
+      if (tol_loc>pow(10.0,-std::numeric_limits
+                      <cpp_dec_float_35>::max_digits10)) {
+        x_cdf35=static_cast<cpp_dec_float_35>(x);
+        y_cdf35=f(x_cdf35);
+        cdf35_eval=true;
       }
-      if (y_cdf35!=0) {
-        err=static_cast<fp_t>(abs(y_cdf35-y_cdf25)/abs(y_cdf35));
-        if (err<tol_loc) {
-          val=static_cast<fp_t>(y_cdf35);
+
+      if (cdf25_eval && cdf35_eval) {
+        if (y_cdf35==0 && y_cdf25==0) {
+          val=0;
+          err=0;
           return 0;
         }
+        if (y_cdf35!=0) {
+          err=static_cast<fp_t>(abs(y_cdf35-y_cdf25)/abs(y_cdf35));
+          if (err<tol_loc) {
+            val=static_cast<fp_t>(y_cdf35);
+            return 0;
+          }
+        }
       }
+      
       if (verbose>0) {
-        std::cout << "funct_multip::eval_tol_err():\n  "
-                  << "Failed 3: " << dtos(y_cdf35,0) << " "
-                  << dtos(y_cdf25,0) << " "
-                  << dtos(err,0) << " " << tol_loc << std::endl;
+        if (cdf25_eval && cdf35_eval) {
+          std::cout << "funct_multip::eval_tol_err():\n  "
+                    << "Failed third round: " << dtos(y_cdf35,0) << " "
+                    << dtos(y_cdf25,0) << " "
+                    << dtos(err,0) << " " << tol_loc << std::endl;
+        } else if (cdf35_eval) {
+          std::cout << "funct_multip::eval_tol_err():\n  "
+                    << "Failed third round (cdf25_eval is false): "
+                    << dtos(y_cdf35,0) << " "
+                    << tol_loc << std::endl;
+        } else {
+          std::cout << "funct_multip::eval_tol_err():\n  "
+                    << "Failed third round (cdf25_eval and "
+                    << "cdf35_eval are both false)." << std::endl;
+        }
       }
     
       /// Fourth pass, compare 35- and 50-digit precision
       
-      cpp_dec_float_50 x_cdf50=static_cast<cpp_dec_float_50>(x);
-      cpp_dec_float_50 y_cdf50=f(x_cdf50);
-    
-      if (y_cdf50==0 && y_cdf35==0) {
-        val=0;
-        err=0;
-        return 0;
+      bool cdf50_eval=false;
+      cpp_dec_float_50 x_cdf50=0, y_cdf50=0;
+      if (tol_loc>pow(10.0,-std::numeric_limits
+                      <cpp_dec_float_50>::max_digits10)) {
+        x_cdf50=static_cast<cpp_dec_float_50>(x);
+        y_cdf50=f(x_cdf50);
+        cdf50_eval=true;
       }
-      if (y_cdf50!=0) {
-        err=static_cast<fp_t>(abs(y_cdf50-y_cdf35)/abs(y_cdf50));
-        if (err<tol_loc) {
-          val=static_cast<fp_t>(y_cdf50);
+
+      if (cdf35_eval && cdf50_eval) {
+        if (y_cdf50==0 && y_cdf35==0) {
+          val=0;
+          err=0;
           return 0;
         }
+        if (y_cdf50!=0) {
+          err=static_cast<fp_t>(abs(y_cdf50-y_cdf35)/abs(y_cdf50));
+          if (err<tol_loc) {
+            val=static_cast<fp_t>(y_cdf50);
+            return 0;
+          }
+        }
       }
+      
       if (verbose>0) {
-        std::cout << "funct_multip::eval_tol_err():\n  "
-                  << "Failed 4: " << dtos(y_cdf50,0) << " "
-                  << dtos(y_cdf35,0) << " "
-                  << dtos(err,0) << " " << tol_loc << std::endl;
+        if (cdf35_eval && cdf50_eval) {
+          std::cout << "funct_multip::eval_tol_err():\n  "
+                    << "Failed fourth round: " << dtos(y_cdf50,0) << " "
+                    << dtos(y_cdf35,0) << " "
+                    << dtos(err,0) << " " << tol_loc << std::endl;
+        } else if (cdf50_eval) {
+          std::cout << "funct_multip::eval_tol_err():\n  "
+                    << "Failed fourth round (cdf35_eval is false): "
+                    << dtos(y_cdf50,0) << " "
+                    << tol_loc << std::endl;
+        } else {
+          std::cout << "funct_multip::eval_tol_err():\n  "
+                    << "Failed fourth round (cdf35_eval and "
+                    << "cdf50_eval are both false)." << std::endl;
+        }
       }
     
       /// Final pass, compare 50- and 100-digit precision
       
-      cpp_dec_float_100 x_cdf100=static_cast<cpp_dec_float_100>(x);
-      cpp_dec_float_100 y_cdf100=f(x_cdf100);
-    
-      if (y_cdf100==0 && y_cdf50==0) {
-        val=0;
-        err=0;
-        return 0;
+      bool cdf100_eval=false;
+      cpp_dec_float_100 x_cdf100=0, y_cdf100=0;
+      if (tol_loc>pow(10.0,-std::numeric_limits
+                      <cpp_dec_float_100>::max_digits10)) {
+        x_cdf100=static_cast<cpp_dec_float_100>(x);
+        y_cdf100=f(x_cdf100);
+        cdf100_eval=true;
       }
-      if (y_cdf100!=0) {
-        err=static_cast<fp_t>(abs(y_cdf100-y_cdf50)/abs(y_cdf100));
-        if (err<tol_loc) {
-          val=static_cast<fp_t>(y_cdf100);
+
+      if (cdf100_eval && cdf50_eval) {
+        if (y_cdf100==0 && y_cdf50==0) {
+          val=0;
+          err=0;
           return 0;
         }
+        if (y_cdf100!=0) {
+          err=static_cast<fp_t>(abs(y_cdf100-y_cdf50)/abs(y_cdf100));
+          if (err<tol_loc) {
+            val=static_cast<fp_t>(y_cdf100);
+            return 0;
+          }
+        }
       }
-      if (verbose>0) {
-        std::cout << "funct_multip::eval_tol_err():\n  "
-                  << "Failed 5: " << dtos(y_cdf100,0) << " "
-                  << dtos(y_cdf50,0) << " "
-                  << dtos(err,0) << " " << tol_loc << std::endl;
       
+      if (verbose>0) {
+        if (cdf50_eval && cdf100_eval) {
+          std::cout << "funct_multip::eval_tol_err():\n  "
+                    << "Failed last round: " << dtos(y_cdf100,0) << " "
+                    << dtos(y_cdf50,0) << " "
+                    << dtos(err,0) << " " << tol_loc << std::endl;
+        } else if (cdf100_eval) {
+          std::cout << "funct_multip::eval_tol_err():\n  "
+                    << "Failed last round (cdf50_eval is false): "
+                    << dtos(y_cdf100,0) << " "
+                    << tol_loc << std::endl;
+        } else {
+          std::cout << "funct_multip::eval_tol_err():\n  "
+                    << "Failed last round (cdf50_eval and "
+                    << "cdf100_eval are both false)." << std::endl;
+        }
       }
     
       /// Algorithm failed
