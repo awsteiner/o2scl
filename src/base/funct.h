@@ -463,6 +463,8 @@ namespace o2scl {
       /// Tolerance choice and verification logic
       
       if (tol_loc<=0.0 && tol_rel<=0.0) {
+        // Add one to the value returned by digits10 to get a
+        // reasonable precision goal for the user-specified type. 
         tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10+1);
         if (verbose>0) {
           std::cout << "funct_multip::eval_tol_err(): "
@@ -470,6 +472,8 @@ namespace o2scl {
                     << tol_loc << std::endl;
         }
       } else if (tol_loc<=0.0) {
+        // If the data type is not sufficiently accurate to hold
+        // the requested tolerance, then call the error handler
         if (tol_rel<pow(10.0,-std::numeric_limits<fp_t>::digits10)) {
           std::cerr << "Class data member tol_rel is " << tol_rel
                     << " but data type only stores "
@@ -478,6 +482,7 @@ namespace o2scl {
           O2SCL_ERR("Cannot compute to required precision",
                     o2scl::exc_einval);
         }
+        // If the user specified tol_rel, then use that value
         tol_loc=tol_rel;
         if (verbose>0) {
           std::cout << "funct_multip::eval_tol_err(): "
@@ -485,6 +490,8 @@ namespace o2scl {
                     << tol_loc << std::endl;
         }
       } else {
+        // If the data type is not sufficiently accurate to hold
+        // the requested tolerance, then call the error handler
         if (tol_loc<pow(10.0,-std::numeric_limits<fp_t>::digits10)) {
           std::cerr << "Caller requested tolerance " << tol_loc
                     << " but data type only stores "
@@ -497,6 +504,7 @@ namespace o2scl {
                     << "Set tolerance from user-specified value to: "
                     << tol_loc << std::endl;
         }
+        // Use the value of tol_loc
       }
 
       /// First pass, compare double and long double
