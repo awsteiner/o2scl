@@ -395,17 +395,21 @@ namespace o2scl {
       The function must be specified as a template, i.e. it must be of
       the form <tt>template<class fp_t> fp_t function(fp_t x)</tt>.
       
-      By default, this class uses a tolerance equal to \f$ 10^{-d+1}
-      \f$, where \f$ d \f$ is the value returned by
-      <tt>numeric_limits<fp_t>::digits10</tt>. Only simple functions
-      can be evaluated to within this accuracy without more precise
-      inputs. Preferably, the user should choose this tolerance
-      carefully.
+      By default, this class uses a relative tolerance equal to \f$
+      10^{-d+1} \f$, where \f$ d \f$ is the value returned by
+      <tt>numeric_limits<fp_t>::digits10</tt>. This choice ensures
+      that most exact or nearly exact functions will require only two
+      function evaluations, one at \c double and one at \c long \c
+      double precision. However, only simple functions can be
+      evaluated to within this accuracy without more precise inputs.
+      Preferably, the user should choose this tolerance carefully.
 
       This class will fail to evalate a function with the requested
       precision if:
       - The user-specified input and result data type does not have enough
-      precision to compute or store the result 
+      precision to compute or store the result (i.e. the tolerance
+      is less than \f$ 10^{-m} \f$ where \f$ m \f$ is the value
+      returned by <tt>numeric_limits<fp_t>::max_digits10</tt>).
       - The requested precision is near to or smaller than 1.0e-50
       - The function is noisy, non-deterministic, or is not 
       continuous in the local neighborhood
@@ -455,16 +459,25 @@ namespace o2scl {
     
     /** \brief Evaluate the function and return the error estimate
         with the specified tolerance
-     */
+
+        If \c tol_loc is positive and non-zero, then this is the
+        relative tolerance used. If \c tol_loc is zero or negative 
+        and \ref tol_rel is positive and non-zero, then \ref tol_rel
+        is used for the relative tolerance. Otherwise, if both of
+        these values is negative, then the default relative
+        tolerance is used.
+    */
     template<typename func_t, class fp_t>
     int eval_tol_err(func_t &&f, const fp_t &x, fp_t &val,
                      fp_t &err, double tol_loc=-1) const {
 
-      /// Tolerance choice and verification logic
+      // Tolerance choice and verification logic
       
       if (tol_loc<=0.0 && tol_rel<=0.0) {
         // Add one to the value returned by digits10 to get a
-        // reasonable precision goal for the user-specified type. 
+        // reasonable precision goal for the user-specified type.
+        // This choice means that most exact or nearly exact functions
+        // will require only two function evaluations.
         tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10+1);
         if (verbose>0) {
           std::cout << "funct_multip::eval_tol_err(): "
@@ -474,7 +487,7 @@ namespace o2scl {
       } else if (tol_loc<=0.0) {
         // If the data type is not sufficiently accurate to hold
         // the requested tolerance, then call the error handler
-        if (tol_rel<pow(10.0,-std::numeric_limits<fp_t>::digits10)) {
+        if (tol_rel<pow(10.0,-std::numeric_limits<fp_t>::max_digits10)) {
           std::cerr << "Class data member tol_rel is " << tol_rel
                     << " but data type only stores "
                     << std::numeric_limits<fp_t>::digits10
@@ -492,7 +505,7 @@ namespace o2scl {
       } else {
         // If the data type is not sufficiently accurate to hold
         // the requested tolerance, then call the error handler
-        if (tol_loc<pow(10.0,-std::numeric_limits<fp_t>::digits10)) {
+        if (tol_loc<pow(10.0,-std::numeric_limits<fp_t>::max_digits10)) {
           std::cerr << "Caller requested tolerance " << tol_loc
                     << " but data type only stores "
                     << std::numeric_limits<fp_t>::digits10
