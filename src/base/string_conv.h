@@ -124,6 +124,32 @@ namespace o2scl {
    */
   std::string dtos(double x, std::ostream &format);
 
+  /** \brief Given a floating-point number, extract the exponent
+      and mantissa separately
+
+      This function ensures that the mantissa is always 
+      greater than or equal to 1 and less than 10.
+   */
+  template<class fp_t>
+  void float_expo_mant(fp_t x, int &expo, fp_t &mant) {
+    
+    // Compute exponent and mantissa separately
+    expo=((int)log10(x));
+    mant=x/pow(10,expo);
+    
+    // Occasionally, finite precision errors compute the 
+    // mantissa incorrectly. Fix this here.
+    if (mant<1) {
+      mant*=10;
+      expo-=1;
+    }
+    if (mant>=10) {
+      mant/=10;
+      expo+=1;
+    }
+    return;
+  }
+  
   /** \brief Convert a value and an uncertainty to a string, 
       e.g. "1.72634(34)e-12"
   */

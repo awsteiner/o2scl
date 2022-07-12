@@ -175,6 +175,35 @@ int main(void) {
     cpp_dec_float_50 pi=boost::math::constants::pi<cpp_dec_float_50>();
     cout << dtos(pi,-1) << endl;
   }
+
+  cpp_dec_float_50 x=1.5e-200;
+  cpp_dec_float_50 mant;
+  int expo;
+  float_expo_mant(x,expo,mant);
+  cout << expo << " " << dtos(mant,10) << endl;
+
+  std::string us1;
+  cout << "\nA: " << endl;
+  us1=unc_to_string(1.45245234e-4,2.45e-6,1);
+  cout << us1 << endl;
+  cout << "\nB: " << endl;
+  us1=unc_to_string(1.45245234e+6,2.45e+4,1);
+  cout << us1 << endl;
+  cout << "\nC: " << endl;
+  us1=unc_to_string(1.45245234e+4,2.45e+6,1);
+  cout << us1 << endl;
+  cout << "\nD: " << endl;
+  us1=unc_to_string(1.45245234e+4,0.0,1);
+  cout << us1 << endl;
+  cout << "\nE: " << endl;
+  us1=unc_to_string(1.45245234e-1,2.45e-3,1);
+  cout << us1 << endl;
+  cout << "\nF: " << endl;
+  us1=unc_to_string(1.45245234,2.45e-1,1);
+  cout << us1 << endl;
+  cout << "\nG: " << endl;
+  us1=unc_to_string(1.45245234,2.45e-2,1);
+  cout << us1 << endl;
   
   t.report();
   return 0;

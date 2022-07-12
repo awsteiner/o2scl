@@ -35,23 +35,72 @@ using namespace std;
 using namespace o2scl;
 
 std::string o2scl::unc_to_string(double val, double err, int verbose) {
-  if (verbose>0) {
-    cout << val << " +/- " << err << endl;
+  if (err<0) err*=-1;
+
+  if (err>fabs(val)) {
+    return "(Uncertainty larger than value.)";
   }
-  int prec2=-log10(err)+1;
+  
   if (verbose>0) {
-    cout << "prec2: " << prec2 << endl;
+    cout << "val ± err: " << val << " ± " << err << endl;
   }
-  double x=err*pow(10.0,prec2+1);
+
+  // Compute exponent and mantissa separately
+  int expo;
+  double mant;
+  float_expo_mant(val,expo,mant);
   if (verbose>0) {
-    cout << "test: " << x << " " << ((int)x) << endl;
+    cout << "mant, expo: " << mant << " " << expo << endl;
   }
-  string st=o2scl::dtos(val,prec2);
+  if (err==0) {
+    return dtos(val,0)+" (no error)";
+  }
+
+  int expo_e;
+  double mant_e;
+  float_expo_mant(err,expo_e,mant_e);
+  if (verbose>0) {
+    cout << "mant_e, expo_e: " << mant_e << " " << expo_e << endl;
+  }
+  
+  int prec=-log10(err);
+  if (verbose>0) {
+    cout << "prec: " << prec << endl;
+  }
+  
+  int prec2=-log10(err/pow(10.0,expo))+1;
+  if (verbose>0) {
+    cout << "prec2: " << prec2 << " " << expo-expo_e << endl;
+    // AWS 7/12/22: I'm not sure if prec2 or expo-expo_e is a
+    // better value for the final precision of the mantissa.
+    // For now, I use expo-expo_e below. 
+  }
+  
+  double err_two_digits=mant_e*10;
+  int err_two_digits_i=round(err_two_digits);
+  if (verbose>0) {
+    cout << "err_two_digits,err_two_digits_i: " << dtos(err_two_digits,20)
+         << " " << err_two_digits_i << endl;
+  }
+
+  // Have to add 1 because we're in auto, not scientific mode
+  string st=o2scl::dtos(mant,expo-expo_e+1,true);
   if (verbose>0) {
     cout << "st: " << st << endl;
   }
-  string ret=st.substr(0,st.length()-4)+"("+
-    o2scl::itos(x)+")"+st.substr(st.length()-4,4);
+  string ret;
+  if (abs(expo)<10) {
+    if (expo<0) {
+      ret=st+"("+o2scl::itos(err_two_digits_i)+")e-0"+
+        o2scl::itos(abs(expo));
+    } else {
+      ret=st+"("+o2scl::itos(err_two_digits_i)+")e+0"+
+        o2scl::itos(expo);
+    }
+  } else {
+    ret=st+"("+o2scl::itos(err_two_digits_i)+")e"+
+      o2scl::itos(expo);
+  }
   
   return ret;
 }

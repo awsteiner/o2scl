@@ -153,6 +153,11 @@ string format_float::convert(double x, bool debug) {
   }
 
   // Compute exponent and mantissa separately
+  int expo, itmp;
+  double mant;
+  float_expo_mant(x,expo,mant);
+
+  /*
   int expo=((int)log10(x)), itmp;
   double mant=x/pow(10.0,expo);
 
@@ -177,6 +182,7 @@ string format_float::convert(double x, bool debug) {
     cout << "Expo: " << expo << " Mant: " << mant << " "
 	 << "Mant-10: " << mant-10.0 << endl;
   }
+  */
   
   // Pick off the digits
   int digits[16];
