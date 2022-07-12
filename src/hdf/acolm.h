@@ -64,41 +64,41 @@ namespace o2scl_acol {
 
       .. todo::
 
-         In class acol_manager:
+      In class acol_manager:
 
-         - (Future) There is quite a bit of code duplication in
-           comm_autocorr() between the "table" and "other" types. 
-           This could be streamlined.
+      - (Future) There is quite a bit of code duplication in
+      comm_autocorr() between the "table" and "other" types. 
+      This could be streamlined.
 
-         - (Future) sum/max/min/output/interp/deriv/integ/deriv2 
-           for hist, hist_2d, and v<c>
+      - (Future) sum/max/min/output/interp/deriv/integ/deriv2 
+      for hist, hist_2d, and v<c>
 
-         - (Future) Commands xindex and yindex for table3d.
+      - (Future) Commands xindex and yindex for table3d.
 
-         - (Future) Enable set_grid() for table3d similar to tensor_grid.
+      - (Future) Enable set_grid() for table3d similar to tensor_grid.
 
-         - (Future) Fix fit for table.
+      - (Future) Fix fit for table.
 
-         - (Future) Use swap instead of copy in 'select' for table objects.
+      - (Future) Use swap instead of copy in 'select' for table objects.
 
-         - (Future) Make sure get_input() is used more consistently.
+      - (Future) Make sure get_input() is used more consistently.
 
-         - (Future) Make sure preview, output, internal, generic, and create
-           work consistently across all types.
+      - (Future) Make sure preview, output, internal, generic, and create
+      work consistently across all types.
 
-         - (Future) Stack-like operations (push, pop, swap, 
-           stack-list, etc.)?
+      - (Future) Stack-like operations (push, pop, swap, 
+      stack-list, etc.)?
 
-         - (Future) Add functionality to ensure that three digit exponents
-           are still handled gracefully (do this by creating a new boolean
-           setting which, if true, always makes three spaces for
-           exponents?)
+      - (Future) Add functionality to ensure that three digit exponents
+      are still handled gracefully (do this by creating a new boolean
+      setting which, if true, always makes three spaces for
+      exponents?)
 
-         - (Future) Fix insert and insert_full so that it automatically
-           renames columns
+      - (Future) Fix insert and insert_full so that it automatically
+      renames columns
       
-         - (Future) Allow "insert" commands to be restrictive, avoiding
-           extrapolation
+      - (Future) Allow "insert" commands to be restrictive, avoiding
+      extrapolation
 
       \endverbatim
   */
@@ -227,7 +227,7 @@ namespace o2scl_acol {
 
     /// String designating the current type
     std::string type;
-
+    
     /// Dummy cli object for cli::cli_gets()
     o2scl::cli *cl;
     
@@ -283,17 +283,17 @@ namespace o2scl_acol {
 
     /** \brief Make all of the XML replacements in string \c s
         based on the command list \c clist
-     */
+    */
     void xml_replacements(std::string &s,
                           std::vector<std::string> &clist);
 
     /** \brief Add new commands for type \c new_type
      */
     void command_add(std::string new_type);
-
+    
     /** \brief Update the command documentation from the o2scl
         data file
-     */
+    */
     void update_o2_docs(size_t narr,
                         o2scl::comm_option_s *options_arr,
                         std::string new_type="");
@@ -301,13 +301,13 @@ namespace o2scl_acol {
     /** \brief Remove the type-specific commands
 
         \note This needs to be public for the o2graph interface
-     */
+    */
     void command_del(std::string ltype);
     
     /** \brief Get the verbose parameter
         
         This function is used in \ref o2scl_acol_mult_vectors_to_conts() .
-     */
+    */
     int get_verbose() {
       return verbose;
     }
@@ -347,7 +347,7 @@ namespace o2scl_acol {
         constant values are things like <tt>1.618</tt>,
         <tt>acos(-1.0)</tt> or <tt>sin(4^5)</tt>. To remove an
         assignment, call assign with a blank value.
-     */
+    */
     virtual int comm_assign(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Convert a series of histograms to a table3d object
@@ -361,7 +361,7 @@ namespace o2scl_acol {
         spec.> <bin name> <pattern> <new slice></tt>
 
         Detailed desc.
-     */
+    */
     virtual int comm_ser_hist_t3d(std::vector<std::string> &sv,
                                   bool itive_com);
 
@@ -379,7 +379,7 @@ namespace o2scl_acol {
         mathematical function of the value in the current tensor (v),
         the value in the tensor named <object name> (w), the indices
         (i0, i1, ...) or the grid points (x0, x1, ...).
-     */
+    */
     virtual int comm_binary(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Average rows together 
@@ -398,7 +398,7 @@ namespace o2scl_acol {
         averages are computed, and then the number of rows is divided
         by the window parameter. If block averages are requested, then
         the first argument must be '*'.
-     */
+    */
     virtual int comm_average_rows(std::vector<std::string> &sv,
                                   bool itive_com);
 
@@ -413,7 +413,7 @@ namespace o2scl_acol {
         Compute the correlation coefficient between two columns, or,
         if no arguments are given, then compute the correlation
         coefficients between all pairs of columns.
-     */
+    */
     virtual int comm_correl(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Refine an object
@@ -425,12 +425,12 @@ namespace o2scl_acol {
         Arguments: <tt><index column> <factor></tt>
 
         Detailed desc.
-     */
+    */
     virtual int comm_refine(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Compute the value of a constant expression.
 
-        Arguments: <tt><expr></tt>
+        Arguments: <tt><expr> ["1" for multiprecision]</tt>
 
         This computes the value of the constant expression <expr>.
         Examples are "calc acos(-1)" or "calc 2+1/sqrt(2.0e4)". To see
@@ -449,48 +449,33 @@ namespace o2scl_acol {
         will result in an error if the value of <tt>precision</tt> is
         not larger than 15. Unicode is also supported for constants,
         so try, e.g. 'acol -set precision 15 -calc π'.
+
+        If the second optional argument evaluates to true, the calc
+        command uses multiprecision to ensure the result is exact to
+        within the requested precision. This is distinct from the
+        'calc' command in that, if it succeeds, it gives a result
+        which is (nearly) guaranteed to be as precise as requested by
+        the user.
+        
+        Note that the variable "precision" is used for the argument to
+        the <tt>cout.precision()</tt> function, so a precision of 10
+        is actually 11 significant figures, thus the value is
+        computed to within a relative tolerance of \f$ 10^{-11} \f$.
+        
+        Constant values from the constant library will automatically
+        be used, but many constant values are not known to high
+        precision and thus the calc command will give imprecise
+        results.
     */
     virtual int comm_calc(std::vector<std::string> &sv, bool itive_com);
     
-    /** \brief Compute the value of a constant (multiprecision)
-
-        Arguments: <tt><expr></tt>
-
-        This computes the value of the constant expression <expr>.
-        Examples are "calc acos(-1)" or "calc 2+1/sqrt(2.0e4)". To see
-        valid expressions type 'acol -help <tt>functions</tt>'.
-
-        Results are given at the current value of <tt>precision</tt>.
-        Values of precision up to 50 are allowed, and multiprecision
-        (rather than double precision) arithmetic is used if
-        necessary. For example, try 'acol -set precision 45 -calc
-        "acos(-1)"'.
-
-        Constant values from the constant library (see 'acol -help
-        <tt>constant</tt>') will automatically be used, so long as
-        they have a unique value in MKS units. However, constant
-        values are currently only stored to double precision, so they
-        will result in an error if the value of <tt>precision</tt> is
-        not larger than 15. Unicode is also supported for constants,
-        so try, e.g. 'acol -set precision 15 -calc π'.
-    */
-    virtual int comm_calcm(std::vector<std::string> &sv, bool itive_com);
-    
-    /** \brief Integrate in multiprecision
-
-        Arguments: <function> <variable> <lower limit> <upper limit>
-
-        Desc.
-     */
-    virtual int comm_integm(std::vector<std::string> &sv, bool itive_com);
-
     /** \brief Clear the current object
 
         Arguments: (No arguments.)
 
         Deallocate the memory associated with the current object. This
         command does not clear the object name stored in \c obj_name.
-     */
+    */
     virtual int comm_clear(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Get help
@@ -507,7 +492,7 @@ namespace o2scl_acol {
         list of commands which operate on objects of that type is
         printed. Finally, if a help topic is specified as the
         argument, then that help information is printed.
-     */
+    */
     virtual int comm_help(std::vector<std::string> &sv, bool itive_com);
     
     /** \brief List commands, with an optional type argument
@@ -518,7 +503,7 @@ namespace o2scl_acol {
         current type (including those commands which do not require a
         current object). If a type argument is given, then list all
         valid commands for the specified type.
-     */
+    */
     virtual int comm_commands(std::vector<std::string> &sv, bool itive_com);
     
     /** \brief Create an object.
@@ -597,7 +582,7 @@ namespace o2scl_acol {
         'i' ranges from 0 to m-1, where 'm' is the tensor size for
         each rank and the value of 'x' is equal to the previous grid
         value.
-     */
+    */
     virtual int comm_set_grid(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Get the grid for a \ref o2scl::tensor_grid object
@@ -617,7 +602,7 @@ namespace o2scl_acol {
         Arguments: (No arguments.)
 
         Output the tensor grid as a series of columns.
-     */
+    */
     virtual int comm_get_grid(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Download a file from the specified URL.
@@ -629,7 +614,7 @@ namespace o2scl_acol {
         to download a fresh copy from the specified URL. If the
         filename is "_", then the file is extracted from the end of
         the URL.
-     */
+    */
     virtual int comm_download(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Parse doxygen XML to generate runtime docs.
@@ -684,7 +669,7 @@ namespace o2scl_acol {
         Arguments: <tt><name></tt>
 
         Delete the entire column named <name>.
-     */
+    */
     virtual int comm_delete_col(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Delete rows
@@ -700,7 +685,7 @@ namespace o2scl_acol {
         if(col1+col2>10,1,0)</tt> will delete all columns where the
         sum of the entries in \c col1 and \c col2 is larger than 10.
         See also the \c select-rows command.
-     */
+    */
     virtual int comm_delete_rows(std::vector<std::string> &sv, bool itive_com);
     
     /** \brief Delete rows which match to within a specified tolerance
@@ -714,7 +699,7 @@ namespace o2scl_acol {
         This command deletes all rows which match within the specified
         tolerances. If verbose is larger than zero then information
         about how many rows were deleted is provided.
-     */
+    */
     virtual int comm_delete_rows_tol(std::vector<std::string> &sv,
                                      bool itive_com);
 
@@ -773,7 +758,7 @@ namespace o2scl_acol {
 
         Replace the array with its derivative using the current
         interpolation type, converting it to a double[].
-     */
+    */
     virtual int comm_deriv(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Convert object to a \ref o2scl::table object
@@ -829,7 +814,7 @@ namespace o2scl_acol {
         Arguments: (No arguments.)
         
         Convert to a table object.
-     */
+    */
     virtual int comm_to_table(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Get entries along the main diagonal
@@ -842,7 +827,7 @@ namespace o2scl_acol {
 
         Extract only the elements on the main diagonal to create a
         <tt>double[]</tt> object.
-     */
+    */
     virtual int comm_diag(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Convert object to a \ref o2scl::table3d object
@@ -948,7 +933,7 @@ namespace o2scl_acol {
         name> <y points> <slice name></tt>
 
         Select two indices and convert to a table3d object.
-     */
+    */
     virtual int comm_to_table3d(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Convert object to a \ref o2scl::tensor_grid object
@@ -973,7 +958,7 @@ namespace o2scl_acol {
         to size-1 for each index. Any user-specified functions are
         used up to the rank of the tensor, and if not enough functions
         are specified, then the function 'i' is used.
-     */
+    */
     virtual int comm_to_tensor_grid(std::vector<std::string> &sv,
                                     bool itive_com);
 
@@ -999,9 +984,9 @@ namespace o2scl_acol {
         to size-1 for each index. Any user-specified functions are
         used up to the rank of the tensor, and if not enough functions
         are specified, then the function 'i' is used.
-     */
+    */
     virtual int comm_to_tg_fermi(std::vector<std::string> &sv,
-                                    bool itive_com);
+                                 bool itive_com);
     
     /** \brief Convert object to a \ref o2scl::tensor object
 
@@ -1012,7 +997,7 @@ namespace o2scl_acol {
         Arguments: (No arguments.)
         
         Convert to a tensor object, ignoring the grid.
-     */
+    */
     virtual int comm_to_tensor(std::vector<std::string> &sv,
                                bool itive_com);
 
@@ -1093,7 +1078,7 @@ namespace o2scl_acol {
         Arguments: <tt><column></tt>
 
         Detailed desc.
-     */
+    */
     virtual int comm_ac_len(std::vector<std::string> &sv,
                             bool itive_com);
 
@@ -1107,7 +1092,7 @@ namespace o2scl_acol {
 
         Create a new slice named <dfdx> filled with the derivative of
         the function from the x grid and slice named <f>.
-     */
+    */
     virtual int comm_deriv_x(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Create a slice which is the derivative wrt y of another
@@ -1120,7 +1105,7 @@ namespace o2scl_acol {
 
         Create a new slice named <dfdy> filled with the derivative of
         the function from the y grid and slice named <f>.
-     */
+    */
     virtual int comm_deriv_y(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Compute a second derivative
@@ -1134,7 +1119,7 @@ namespace o2scl_acol {
         Create a new column named <name> filled with the second
         derivative of the function y(x) obtained from columns <x> and
         <y>.
-     */
+    */
     virtual int comm_deriv2(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief List objects in a HDF5 file
@@ -1145,7 +1130,7 @@ namespace o2scl_acol {
         file and, for those groups which are in the O₂scl format,
         gives the type and name of the object stored in that HDF5
         group.
-     */
+    */
     virtual int comm_filelist(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Read an object from an O₂scl-style HDF5 file.
@@ -1170,7 +1155,7 @@ namespace o2scl_acol {
 
         Add a constant called 'nlines' to the table and set it equal
         to the number of lines (rows) in the table.
-     */
+    */
     virtual int comm_nlines(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Convert to a \ref o2scl::hist object
@@ -1187,7 +1172,7 @@ namespace o2scl_acol {
         histogram from 'col1' and 'col2' using N1 bins in the x
         direction and N2 bins in the y direction, optionally weighting
         the entries by the column 'wgts'.
-     */
+    */
     virtual int comm_to_hist(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Convert to a \ref o2scl::hist_2d object
@@ -1212,7 +1197,7 @@ namespace o2scl_acol {
 
         The 'to-hist-2d' command creates a 2D histogram from slice
         <slice>.
-     */
+    */
     virtual int comm_to_hist_2d(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Output the type of the current object
@@ -1227,7 +1212,7 @@ namespace o2scl_acol {
         <tt>size_t[]</tt>, <tt>uniform_grid<double></tt>,
         <tt>tensor_grid</tt>, <tt>tensor</tt>, <tt>tensor<int></tt>,
         <tt>tensor<size_t></tt> or <tt>prob_dens_mdim_amr</tt>.
-     */
+    */
     virtual int comm_type(std::vector<std::string> &sv, bool itive_com);
     
     /** \brief Find a row
@@ -1244,7 +1229,7 @@ namespace o2scl_acol {
         for which the value in column named <col> is as close as
         possible to the value <val>. See command 'get-row' to get a
         row by it's index.
-     */
+    */
     virtual int comm_find_row(std::vector<std::string> &sv, bool itive_com);
     
     /** \brief Create a column from a function
@@ -1351,7 +1336,7 @@ namespace o2scl_acol {
         Arguments: <tt><vec. spec.> <column></tt>
 
         Detailed spec.
-     */
+    */
     virtual int comm_add_vec(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Read an object generic text file
@@ -1391,7 +1376,7 @@ namespace o2scl_acol {
         lines need not be in any particular order. The columns may
         have one header line at top which specifies the names of the
         x- and y-grids and the names of each slice (in order).
-     */
+    */
     virtual int comm_generic(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Print out an entire row
@@ -1408,7 +1393,7 @@ namespace o2scl_acol {
         column of row indexes. To find a row which contains a
         particular value or maximizes a specified function, use
         'find-row'.
-     */
+    */
     virtual int comm_get_row(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Extract a slice from a table3d object to generate a 
@@ -1445,7 +1430,7 @@ namespace o2scl_acol {
         Arguments: <tt><slice></tt>
 
         Detailed desc.
-     */
+    */
     virtual int comm_slice_hist(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Fit data to a function
@@ -1504,7 +1489,7 @@ namespace o2scl_acol {
         then it is rewritten with new data, with one exception. If a
         column in the new table has the same name as old_x, then it is
         left unmodified.
-     */
+    */
     virtual int comm_insert_full(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Create a column which is the integral of another
@@ -1517,8 +1502,30 @@ namespace o2scl_acol {
         
         Create a new column named <name> filled with the integral of
         the function y(x) obtained from columns <x> and <y>.
-     */
+    */
     virtual int comm_integ(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Numerically integrate a user-specified function 
+
+        Arguments: <tt><function> <variable> <lower limit> 
+        <upper limit> ["1" for multiprecision]</tt>
+
+        This command numerically integrates <function> with respect to
+        <variable> from <lower limit> to <upper limit>. If the fifth
+        argument is either \c "1" or \c "true", then multiprecision is
+        used to attempt to ensure the result is accurate to within the
+        requested precision.
+
+        At the moment, infinite upper or lower limits are not
+        supported.
+
+        Note that the variable "precision" is used for the argument to
+        the <tt>cout.precision()</tt> function, so precision of 10 is
+        actually 11 significant figures. Thus in multiprecision mode,
+        the integral is computed to within a relative tolerance of \f$
+        10^{-11} \f$.
+    */
+    virtual int comm_ninteg(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Toggle interactive mode
 
@@ -1529,7 +1536,7 @@ namespace o2scl_acol {
         parameters are processed. If zero arguments are given to
         'acol' on the command-line then the interactive interface is
         automatically turned on.
-     */
+    */
     virtual int comm_interactive(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Output current object in the internal HDF5 format.
@@ -1836,7 +1843,7 @@ namespace o2scl_acol {
         Arguments: <tt>[name]</tt>
 
         Get or set the name of the x grid.
-     */
+    */
     virtual int comm_x_name(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Set the name of the y grid
@@ -1848,7 +1855,7 @@ namespace o2scl_acol {
         Arguments: <tt>[name]</tt>
 
         Get or set the name of the y grid.
-     */
+    */
     virtual int comm_y_name(std::vector<std::string> &sv, bool itive_com);
     
     /** \brief Add a column for line numbers
@@ -1872,7 +1879,7 @@ namespace o2scl_acol {
         Output the object to the screen, or if the [file] argument is
         specified, to a file. This is the same format as can be read
         using the 'generic' command.
-     */
+    */
     virtual int comm_output(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Rearrange a tensor
@@ -1962,7 +1969,7 @@ namespace o2scl_acol {
         message is constructed from the string list specification in
         <strings-spec> (see 'acol -help strings-spec' for more
         information).
-     */
+    */
     virtual int comm_slack(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Get or set the value of an object
@@ -1998,7 +2005,7 @@ namespace o2scl_acol {
 
         Get or set the character.
 
-     */
+    */
     virtual int comm_value(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Concatenate two objects
@@ -2021,7 +2028,7 @@ namespace o2scl_acol {
         Add all slices from the second table3d object which aren't
         already present in the current table3d object.
 
-     */
+    */
     virtual int comm_cat(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Sum two objects
@@ -2113,7 +2120,7 @@ namespace o2scl_acol {
 
         Rename a slice from <old> to <new>. Note that to rename the
         entire object, you should use <tt>-set obj_name new_name</tt>.
-     */
+    */
     virtual int comm_rename(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Select part of an object
@@ -2146,7 +2153,7 @@ namespace o2scl_acol {
         '?'. All of the rows of data are copied over. If functions are
         specified, the result can be named using '='.
 
-     */
+    */
     virtual int comm_select(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Select rows from an object
@@ -2159,7 +2166,7 @@ namespace o2scl_acol {
         in <row_spec> evaluates to a number greater than 0.5.
     */
     virtual int comm_select_rows(std::vector<std::string> &sv,
-                                  bool itive_com);
+                                 bool itive_com);
 
     /// Post-processing for setting a value
     virtual int comm_set(std::vector<std::string> &sv, bool itive_com);
@@ -2186,7 +2193,7 @@ namespace o2scl_acol {
 
         Set the value of the slice named 'z name' at the grid point
         closest to (<x value>,<y value>) to the value <val>.
-     */
+    */
     virtual int comm_set_data(std::vector<std::string> &sv, bool itive_com);
     
     /** \brief Set units of a column
@@ -2198,7 +2205,7 @@ namespace o2scl_acol {
         Arguments: <tt><column> <unit></tt>
 
         Detailed desc.
-     */
+    */
     virtual int comm_set_unit(std::vector<std::string> &sv, bool itive_com);
     
     /** \brief Compute contour lines
@@ -2234,7 +2241,7 @@ namespace o2scl_acol {
         unmodified."+ If the argument "frac" is present, then the
         operation is the same except that <val> is interpreted as a
         fraction of the total integral under the data.
-     */
+    */
     virtual int comm_contours(std::vector<std::string> &sv, bool itive_com);
     
     /** \brief Get units of a column
@@ -2246,7 +2253,7 @@ namespace o2scl_acol {
         Arguments: <tt><column></tt>
 
         Obtains the units for the specified column.
-     */
+    */
     virtual int comm_get_unit(std::vector<std::string> &sv, bool itive_com);
     
     /** \brief Get or set an entry
@@ -2375,7 +2382,7 @@ namespace o2scl_acol {
         Sorts the entire table by the column specified in <col>.
         If the word "unique" is specified as the second argument, then
         delete duplicate rows after sorting.
-     */
+    */
     virtual int comm_sort(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Get object statistics
@@ -2415,7 +2422,7 @@ namespace o2scl_acol {
         The 'stats' command outputs the number of entries, their mean,
         standard deviation, minimum and maximum. It also counts the
         number of infinite or NaN values.
-     */
+    */
     virtual int comm_stats(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Get weighted statistics
@@ -2438,7 +2445,7 @@ namespace o2scl_acol {
         The 'stats' command outputs the number of entries, their mean,
         standard deviation, minimum and maximum. It also counts the
         number of infinite or NaN values.
-     */
+    */
     virtual int comm_wstats(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Print version information and O₂scl settings.
@@ -2504,7 +2511,7 @@ namespace o2scl_acol {
         the use of natural units, use:
 
         -convert nat <boolean for c=1> <boolean for ħ=1> <boolean for kB=1>
-     */
+    */
     virtual int comm_convert(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Copy an O₂scl-generated HDF5 file
@@ -2516,7 +2523,7 @@ namespace o2scl_acol {
         and destination filenames may not be identical. The
         destination file may not be the same size as the source, but
         will contain the same information.
-     */
+    */
     virtual int comm_h5_copy(std::vector<std::string> &sv, 
                              bool itive_com);
 
@@ -2566,7 +2573,7 @@ namespace o2scl_acol {
         the value, the unit system, the unit flag, the source, and
         then the 7 powers of the SI base units (in order
         m,kg,s,K,A,mol,cd).
-     */
+    */
     virtual int comm_constant(std::vector<std::string> &sv, bool itive_com);
     //@}
     
@@ -2621,7 +2628,7 @@ namespace o2scl_acol {
       o2scl_acol_alias_counts() and \ref o2scl_acol_apply_aliases() .
   */
   std::vector<std::string> parse_arrays
-    (int n_entries, int *sizes, char *str);
+  (int n_entries, int *sizes, char *str);
   
 }
 
@@ -2636,7 +2643,7 @@ extern "C" {
       \ref o2scl_acol::acol_manager with the <tt>new</tt>
       operator and then calls the function
       \ref o2scl_acol::acol_manager::run() .
-   */
+  */
   void *o2scl_create_acol_manager();
   
   /** \brief Free memory associated with a \ref
@@ -2663,7 +2670,7 @@ extern "C" {
       allocate memory in Python in
       <tt>o2graph_plotter::parse_argv()</tt> in order to prepare for a
       call to \ref o2scl_acol_apply_aliases() .
-   */
+  */
   void o2scl_acol_alias_counts(void *vp, int n_entries, int *sizes, 
                                char *str, int &n_new, int &s_new);
 
@@ -2703,7 +2710,7 @@ extern "C" {
       latter of which corresponds to transposing the two indices.
 
       This function is used in o2graph_plotter::den_plot().
-   */
+  */
   int o2scl_acol_tensor_to_table3d(void *vp, int i1, int i2);
   
   /** \brief Parse the set of commands in \c n_entries, \c sizes
@@ -2716,7 +2723,7 @@ extern "C" {
 
       This function is used in \o2y in o2graph_plotter::set_wrapper(),
       o2graph_plotter::get_wrapper(), and o2graph_plotter::gen_acol().
-   */
+  */
   void o2scl_acol_parse(void *vp, int n_entries, int *sizes, 
                         char *str);
 
@@ -2727,7 +2734,7 @@ extern "C" {
       o2graph_plotter::plot1(), o2graph_plotter::rplot(),
       o2graph_plotter::scatter(), o2graph_plotter::histplot(),
       o2graph_plotter::hist2dplot(), and o2graph_plotter::errorbar().
-   */
+  */
   int o2scl_acol_get_column(void *vp, char *col_name,
                             int &n, double *&ptr);
 
@@ -2738,7 +2745,7 @@ extern "C" {
       precursor for a mult-vector-spec?
 
       \note Deprecating this for now.
-   */
+  */
   //int o2scl_acol_get_row_ser(void *vp, char *parttern, int row_index,
   //int &n, double *&ptr);
   
@@ -2747,7 +2754,7 @@ extern "C" {
       <tt>double[]</tt> object
 
       This function is used in o2graph_plotter::plot1().
-   */
+  */
   int o2scl_acol_get_double_arr(void *vp, int &n, double *&ptr);
 
   /** \brief Return the sizes, grid, and data pointer for 
@@ -2755,7 +2762,7 @@ extern "C" {
 
       This function is used in <tt>o2graph_plotter</tt> for 
       <tt>yt-add-vol</tt>.
-   */
+  */
   int o2scl_acol_get_tensor_grid3(void *vp, int &nx, int &ny,
                                   int &nz, const double *&xg,
                                   const double *&yg,
@@ -2766,14 +2773,14 @@ extern "C" {
 
       This function is used in o2graph_plotter::plot() and
       o2graph_plotter::hist_plot().
-   */
+  */
   int o2scl_acol_get_hist_reps(void *vp, int &n, double *&ptr);
 
   /** \brief Return the size and a pointer to the histogram bin edges
       in a \ref o2scl::hist object
 
       This function is used in o2graph_plotter::hist_plot().
-   */
+  */
   int o2scl_acol_get_hist_bins(void *vp, int &n, double *&ptr);
 
   /** \brief Return the size and a pointer to the histogram weights in
@@ -2781,7 +2788,7 @@ extern "C" {
 
       This function is used in o2graph_plotter::plot() and
       o2graph_plotter::hist_plot().
-   */
+  */
   int o2scl_acol_get_hist_wgts(void *vp, int &n, double *&ptr);
 
   /** \brief Return the dimensionality, mesh size, and 
@@ -2789,7 +2796,7 @@ extern "C" {
       object.
 
       This function is used in o2graph_plotter::plot().
-   */
+  */
   int o2scl_acol_pdma_get_base(void *vp, int &ndim, int &n, 
                                double *&low, double *&high);
 
@@ -2798,7 +2805,7 @@ extern "C" {
       of index \c ix
 
       This function is used in o2graph_plotter::plot().
-   */
+  */
   int o2scl_acol_pdma_get_cube(void *vp, int ix, 
                                double *&low, double *&high,
                                double &frac_vol, double &weight);
@@ -2808,7 +2815,7 @@ extern "C" {
 
       This function is used in o2graph_plotter::plot() and 
       o2graph_plotter::plotv().
-   */
+  */
   int o2scl_acol_contours_n(void *vp);
   
   /** \brief For the current contour line vector object, set the
@@ -2826,14 +2833,14 @@ extern "C" {
       o2graph_plotter::histplot(), o2graph_plotter::hist2dplot(), 
       o2graph_plotter::errorbar(), o2graph_plotter::plot1(), 
       and o2graph_plotter::parse_string_list().
-   */
+  */
   void o2scl_acol_get_type(void *vp, int &n, char *&str);
 
   /** \brief Return the size and a pointer to the slice
       named \c sl_name in a \ref o2scl::table object
-
+      
       This function is used in o2graph_plotter::den_plot().
-   */
+  */
   int o2scl_acol_get_slice(void *vp, char *slice_name,
                            int &nx, double *&xptr,
                            int &ny, double *&yptr,
@@ -2843,7 +2850,7 @@ extern "C" {
       number of bins in both directions, and the weights in each bin
 
       This function is used in o2graph_plotter::den_plot().
-   */
+  */
   int o2scl_acol_get_hist_2d(void *vp, 
                              int &nx, double *&xptr,
                              int &ny, double *&yptr,
@@ -2859,34 +2866,34 @@ extern "C" {
 
   /** \brief Get the list of parameters from the acol_manager cli
       object
-   */
+  */
   int o2scl_acol_get_cli_parameters(void *vp, int &n, int *&sizes,
                                     char *&chlist);
 
   /** \brief Get the list of options/commands from the acol_manager
       cli object
-   */
+  */
   int o2scl_acol_get_cli_options(void *vp, int &n, int *&sizes,
                                  char *&chlist);
 
   /** \brief Get the list of options/commands from the acol_manager
       cli object
-   */
+  */
   int o2scl_acol_get_cli_options_type(void *vp, char *type,
                                       int &n, int *&sizes,
                                       char *&chlist);
   
   /** \brief Obtain the description of a parameter from the 
       acol_manager cli object
-   */
+  */
   int o2scl_acol_cli_param_desc(void *vp, char *name, int &ndesc, 
-                                    char *&chlist);
+                                char *&chlist);
   
   /** \brief Obtain the short description of an option/command from
       the acol_manager cli object
-   */
+  */
   int o2scl_acol_cli_option_desc(void *vp, char *name, int &ndesc, 
-                                     char *&chlist);
+                                 char *&chlist);
   
   //@}
   
