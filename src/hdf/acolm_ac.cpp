@@ -45,7 +45,6 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
   int acol_manager::comm_average_rows()
   int acol_manager::comm_binary()
   int acol_manager::comm_calc()
-  int acol_manager::comm_calcm()
   int acol_manager::comm_cat()
   int acol_manager::comm_clear()
   int acol_manager::comm_commands()
@@ -621,7 +620,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   if (sv.size()>2 && o2scl::stob(sv[2])==true) {
     
 #ifdef O2SCL_OSX
-    
+
     std::string i1=sv[1];
     
     funct_multip_string fms;

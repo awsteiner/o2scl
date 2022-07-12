@@ -430,7 +430,7 @@ namespace o2scl_acol {
 
     /** \brief Compute the value of a constant expression.
 
-        Arguments: <tt><expr> ["1" for multiprecision]</tt>
+        Arguments: <tt><expr> ["1" for adaptive multiprecision]</tt>
 
         This computes the value of the constant expression <expr>.
         Examples are "calc acos(-1)" or "calc 2+1/sqrt(2.0e4)". To see
