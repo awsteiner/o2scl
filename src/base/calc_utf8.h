@@ -90,7 +90,7 @@ namespace o2scl {
 
          In class calc_utf8:
 
-         - Future: Add all boost special functions?
+         - Future: Add all boost special functions? hypot(x,y,z)?
 
          - Future: There is some code duplication across the
            functions, especially with regard to conversion between UTF8

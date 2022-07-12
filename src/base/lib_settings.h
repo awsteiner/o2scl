@@ -391,6 +391,13 @@ namespace o2scl {
 
   /** \brief Evaluate a one-dimensional function from a string
       at multiprecision
+
+      \note Experimental.
+
+      \warning This class only supports a limited number of data
+      types, including double, long double, and cpp_dec_float types
+      with 25, 35, 50, or 100 digits. It is designed to be used with
+      the \ref funct_multip class.
    */
   class funct_multip_string {
 
@@ -479,14 +486,21 @@ namespace o2scl {
     
       if (compiled==false) {
 
-        /*
-          c.verbose=verbose;
-          c_ld.verbose=verbose;
-          c_25.verbose=verbose;
-          c_35.verbose=verbose;
-          c_50.verbose=verbose;
-          c_100.verbose=verbose;
-        */
+        if (verbose>3) {
+          c.verbose=2;
+          c_ld.verbose=2;
+          c_25.verbose=2;
+          c_35.verbose=2;
+          c_50.verbose=2;
+          c_100.verbose=2;
+        } else if (verbose>2) {
+          c.verbose=1;
+          c_ld.verbose=1;
+          c_25.verbose=1;
+          c_35.verbose=1;
+          c_50.verbose=1;
+          c_100.verbose=1;
+        }
         
         if (verbose>1) {
           std::cout << "funct_multip_string::operator() "

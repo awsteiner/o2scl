@@ -1034,7 +1034,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=23;
+  static const int narr=22;
 
   string type_list_str;
   for(size_t i=0;i<type_list.size()-1;i++) {
@@ -1052,9 +1052,6 @@ int acol_manager::setup_options() {
        both},
      {0,"calc","",0,1,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_calc),
-      both},
-     {0,"calcm","",0,1,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_calcm),
       both},
      {0,"clear","",0,0,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_clear),
@@ -1092,8 +1089,8 @@ int acol_manager::setup_options() {
      {'i',"internal","",0,1,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_internal),
       both},
-     {0,"integm","",0,4,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_integm),
+     {0,"ninteg","",0,4,"","",
+      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_ninteg),
       both},
      {'o',"output","",0,1,"","",
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_output),

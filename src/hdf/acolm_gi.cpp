@@ -51,7 +51,7 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
   int acol_manager::comm_insert()
   int acol_manager::comm_insert_full()
   int acol_manager::comm_integ()
-  int acol_manager::comm_integm()
+  int acol_manager::comm_ninteg()
   int acol_manager::comm_internal()
   int acol_manager::comm_interp()
   int acol_manager::comm_interp_type()
@@ -636,7 +636,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     str+="asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x) asinh(x) ";
     str+="acosh(x) atanh(x) atan2(y,x)\n\n";
     str+="Exponential functions:\n\n";
-    str+="erf(x) erfc(x)\n\n";
+    str+="erf(x) [2/sqrt(pi) int_0^{x} exp(-t^2) dt]\n";
+    str+="erfc(x) [2/sqrt(pi) int_x^{infty} exp(-t^2) dt = 1-erf(x)]\n\n";
     //lgamma(x) tgamma(x)\n\n";
     //str+="Bessel functions:\n\n";
     //str+="cyl_bessel_j(ν,x)\n\n";
@@ -1397,19 +1398,35 @@ int acol_manager::comm_integ(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
-int acol_manager::comm_integm(std::vector<std::string> &sv, bool itive_com) {
+int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
 
   vector<string> in, pr;
+  bool multiprecision=false;
   
-  pr.push_back("Function");
-  pr.push_back("Integration variable");
-  pr.push_back("Lower limit");
-  pr.push_back("Upper limit");
-  int ret=get_input(sv,pr,in,"integm",itive_com);
-  if (ret!=0) return ret;
+  if (sv.size()>=5) {
+
+    in.resize(4);
+    in[0]=sv[1];
+    in[1]=sv[2];
+    in[2]=sv[3];
+    in[3]=sv[4];
+    
+  } else {
+    
+    pr.push_back("Function");
+    pr.push_back("Integration variable");
+    pr.push_back("Lower limit");
+    pr.push_back("Upper limit");
+    pr.push_back("Multiprecision (0 or 1)");
+    int ret=get_input(sv,pr,in,"ninteg",itive_com);
+    if (ret!=0) return ret;
+    
+    multiprecision=o2scl::stob(in[4]);
+
+  }
 
   if (sv.size()<5) {
-    cerr << "Not enough arguments for integm." << endl;
+    cerr << "Not enough arguments for ninteg." << endl;
     return 1;
   }
   std::string func=in[0];

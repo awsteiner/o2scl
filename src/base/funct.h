@@ -392,6 +392,8 @@ namespace o2scl {
   /** \brief Use multiprecision to automatically evaluate a function to
       a specified level of precision
 
+      \note Experimental.
+
       The function must be specified as a template, i.e. it must be of
       the form <tt>template<class fp_t> fp_t function(fp_t x)</tt>.
       
@@ -417,10 +419,11 @@ namespace o2scl {
       discontinuous in the local neighborhood.
 
       \note The algorithm attempts not to be wasteful, but is not
-      necessarily optimized for speed. One way to improve it would
-      be to more intelligently choose the number of digits used
-      in the boost multiprecision numbers based on the tolerance
-      which was specified.
+      necessarily optimized for speed. One way to improve it would be
+      to more intelligently choose the number of digits used in the
+      boost multiprecision numbers based on the tolerance which was
+      specified. Another way to improve this class would be to use
+      other multiprecision types beyond boost.
   */
   class funct_multip {
 
