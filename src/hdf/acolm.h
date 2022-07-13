@@ -1517,6 +1517,27 @@ namespace o2scl_acol {
         actually 11 significant figures. Thus in multiprecision mode,
         the integral is computed to within a relative tolerance of \f$
         10^{-11} \f$.
+
+        An example demonstrating a dilogarithm ladder:
+
+        acol -set verbose 2 -set precision 30 \
+        -calc "pi^2/10-(log((sqrt(5)-1)/2)^2)" 1
+
+        Result (cpp_dec_float_35): 7.553956195317414693865200287561e-01
+
+        The <tt>calc</tt> command begins by obtaining the value of pi
+        to 35 digits. It then starts with 35-digit precision and then
+        compares that result to that obtained with 50-digit precision
+        and finds that those two are equal to within the requested
+        precision.
+
+        acol -set verbose 2 -set precision 30 \
+        -ninteg "(-log(1-t)/t)" t 0 "(sqrt(5)-1)/2" 1
+
+        Result (cpp_dec_float_35): 7.553956195317414693865200287561e-01
+
+        The <tt>ninteg</tt> command computes this same value using
+        numerical integration (and obtains the same result).
     */
     virtual int comm_ninteg(std::vector<std::string> &sv, bool itive_com);
 

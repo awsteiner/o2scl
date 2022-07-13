@@ -597,8 +597,7 @@ namespace o2scl {
       int d10=std::numeric_limits<fp_t>::digits10;
       if (verbose>1) {
         std::cout << "funct_multip_string::operator(): input is "
-                  << dtos(x,0) << " and d10 is "
-                  << d10 << std::endl;
+                  << x << " and d10 is " << d10 << std::endl;
       }
       if (d10==15) {
         vars[st_var]=static_cast<double>(x);

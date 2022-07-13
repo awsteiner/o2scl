@@ -25,6 +25,7 @@
 #include <o2scl/cloud_file.h>
 #include <o2scl/vector_derint.h>
 #include <o2scl/cursesw.h>
+#include <o2scl/inte_kronrod_boost.h>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
@@ -42,6 +43,7 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
   int acol_manager::comm_list()
   int acol_manager::comm_max()
   int acol_manager::comm_min()
+  int acol_manager::comm_ninteg()
   int acol_manager::comm_nlines()
   int acol_manager::comm_output()
 */
@@ -437,6 +439,211 @@ int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
     
   }
   
+  return 0;
+}
+
+int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
+
+  vector<string> in, pr;
+  bool multiprecision=false;
+  
+  if (sv.size()>5) {
+
+    in.resize(4);
+    in[0]=sv[1];
+    in[1]=sv[2];
+    in[2]=sv[3];
+    in[3]=sv[4];
+    
+    multiprecision=o2scl::stob(sv[5]);
+
+  } else if (sv.size()>4) {
+
+    in.resize(4);
+    in[0]=sv[1];
+    in[1]=sv[2];
+    in[2]=sv[3];
+    in[3]=sv[4];
+    
+  } else {
+    
+    pr.push_back("Function");
+    pr.push_back("Integration variable");
+    pr.push_back("Lower limit");
+    pr.push_back("Upper limit");
+    pr.push_back("Multiprecision (0 or 1)");
+    int ret=get_input(sv,pr,in,"ninteg",itive_com);
+    if (ret!=0) return ret;
+    
+  }
+
+  if (sv.size()<5) {
+    cerr << "Not enough arguments for ninteg." << endl;
+    return 1;
+  }
+  std::string func=in[0];
+  std::string var=in[1];
+
+  inte_kronrod_boost<61> imkb;
+
+  if (multiprecision) {
+    
+#ifndef O2SCL_OSX
+
+    std::cerr << "Multipreicsion for ninteg only works for OSX "
+              << "at the moment." << std::endl;
+    return 5;
+
+#else
+
+    funct_multip_string fms;
+    //fms.verbose=verbose;
+    fms.set_function(func,var);
+    
+    funct_multip fm2;
+    
+    // C++ prints out precision+1 significant figures so we add one to
+    // 'precision' to construct the integration tolerance.
+    imkb.tol_rel_multip=pow(10.0,-precision-1);
+    imkb.verbose=verbose;
+    
+    if (precision>49) {
+      
+      cerr << "Requested precision too large for the calcm "
+           << "command (maximum is 49)." << endl;
+      return 2;
+      
+    } else if (precision>34) {
+      
+      cpp_dec_float_50 d=0, err, lower_lim, upper_lim;
+      convert_units<cpp_dec_float_50> cu;
+      function_to_fp_nothrow(in[2],lower_lim,cu);
+      function_to_fp_nothrow(in[3],upper_lim,cu);
+      int retx=imkb.integ_err_multip([fms](auto &&t) mutable
+      { return fms(t); },lower_lim,upper_lim,d,err);
+        
+      if (retx!=0) {
+        cerr << "Integrating " << func << " failed." << endl;
+        return 1;
+      }
+      if (verbose>0) cout << "Result (cpp_dec_float_50): ";
+      cout << dtos(d,precision) << endl;
+      return 0;
+      
+    } else if (precision>24) {
+      
+      cpp_dec_float_35 d=0, err, lower_lim, upper_lim;
+      convert_units<cpp_dec_float_35> cu;
+      function_to_fp_nothrow(in[2],lower_lim,cu);
+      function_to_fp_nothrow(in[3],upper_lim,cu);
+      int retx=imkb.integ_err_multip([fms](auto &&t) mutable
+      { return fms(t); }, lower_lim,upper_lim,d,err);
+        
+      if (retx!=0) {
+        cerr << "Integrating " << func << " failed." << endl;
+        return 1;
+      }
+      if (verbose>0) cout << "Result (cpp_dec_float_35): ";
+      cout << dtos(d,precision) << endl;
+      return 0;
+      
+    } else if (precision>17) {
+      
+      cpp_dec_float_25 d=0, err, lower_lim, upper_lim;
+      convert_units<cpp_dec_float_25> cu;
+      function_to_fp_nothrow(in[2],lower_lim,cu);
+      function_to_fp_nothrow(in[3],upper_lim,cu);
+      int retx=imkb.integ_err_multip([fms](auto &&t) mutable
+      { return fms(t); }, lower_lim,upper_lim,d,err);
+        
+      if (retx!=0) {
+        cerr << "Integrating " << func << " failed." << endl;
+        return 1;
+      }
+      if (verbose>0) cout << "Result (cpp_dec_float_25): ";
+      cout << dtos(d,precision) << endl;
+      
+      return 0;
+      
+    } else if (precision>14) {
+      
+      long double d=0, err, lower_lim, upper_lim;
+      convert_units<long double> cu;
+      function_to_fp_nothrow(in[2],lower_lim,cu);
+      function_to_fp_nothrow(in[3],upper_lim,cu);
+      int retx=imkb.integ_err_multip([fms](auto &&t) mutable
+      { return fms(t); },lower_lim,upper_lim,d,err);
+        
+      if (retx!=0) {
+        cerr << "Integrating " << func << " failed." << endl;
+        return 1;
+      }
+      if (verbose>0) cout << "Result (long double): ";
+      cout << dtos(d,precision) << endl;
+      
+      return 0;
+      
+    } else {
+      
+      double d=0, err, lower_lim, upper_lim;
+      convert_units<double> cu;
+      function_to_fp_nothrow(in[2],lower_lim,cu);
+      function_to_fp_nothrow(in[3],upper_lim,cu);
+      int retx=imkb.integ_err_multip([fms](auto &&t) mutable
+      { return fms(t); },lower_lim,upper_lim,d,err);
+        
+      if (retx!=0) {
+        cerr << "Integrating " << func << " failed." << endl;
+        return 1;
+      }
+      if (verbose>0) cout << "Result (double): ";
+      cout << dtos(d,precision) << endl;
+      
+    }
+
+#endif
+    
+  } else {
+    
+    // Normal double-precision integration
+
+    if (precision>16) {
+      std::cerr << "Warning: multiprecision is required to numerically "
+                << "integrate to the\n requested precision."
+                << std::endl;
+    }
+    
+    double d=0, err, lower_lim, upper_lim;
+    convert_units<double> cu;
+    function_to_fp_nothrow(in[2],lower_lim,cu);
+    function_to_fp_nothrow(in[3],upper_lim,cu);
+    funct_string fs(func,var);
+    funct f=std::bind(std::mem_fn<double(double) const>
+                      (&funct_string::operator()),&fs,
+                      std::placeholders::_1);
+    //std::cout << "lower, upper: " << lower_lim << " "
+    //<< upper_lim << std::endl;
+    int retx=imkb.integ_err(f,lower_lim,upper_lim,d,err);
+    if (retx!=0) {
+      cerr << "Integrating " << func << " failed." << endl;
+      return 1;
+    }
+    
+    if (scientific) cout.setf(ios::scientific);
+    else cout.unsetf(ios::scientific);
+    cout.precision(precision);
+    if (verbose>0) cout << "Result: ";
+    cout << d << " +/- " << err << endl;
+    std::string us;
+    if (verbose>1) {
+      us=unc_to_string(d,err,1);
+    } else {
+      us=unc_to_string(d,err);
+    }
+    cout << us << endl;
+
+  }
+
   return 0;
 }
 

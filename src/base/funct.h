@@ -418,6 +418,10 @@ namespace o2scl {
       - the function is noisy, non-deterministic, or is 
       discontinuous in the local neighborhood.
 
+      If \ref verbose is 0, no output will be generated. If it is 1,
+      then the tolerance and result will be output. If it is 2, then
+      more diagnostics will be output.
+
       \note The algorithm attempts not to be wasteful, but is not
       necessarily optimized for speed. One way to improve it would be
       to more intelligently choose the number of digits used in the
@@ -532,7 +536,7 @@ namespace o2scl {
 
       bool d_eval=false;
       double x_d=0, y_d=0;
-      if (tol_loc>pow(10.0,-std::numeric_limits<double>::max_digits10)) {
+      if (tol_loc>pow(10.0,-std::numeric_limits<double>::digits10)) {
         x_d=static_cast<double>(x);
         y_d=f(x_d);
         d_eval=true;
@@ -540,7 +544,7 @@ namespace o2scl {
       
       bool ld_eval=false;
       long double x_ld=0, y_ld=0;
-      if (tol_loc>pow(10.0,-std::numeric_limits<long double>::max_digits10)) {
+      if (tol_loc>pow(10.0,-std::numeric_limits<long double>::digits10)) {
         x_ld=static_cast<long double>(x);
         y_ld=f(x_ld);
         ld_eval=true;
@@ -550,6 +554,11 @@ namespace o2scl {
         if (y_ld==0 && y_d==0) {
           val=0;
           err=0;
+          if (verbose>0) {
+            std::cout << "funct_multip::eval_tol_err() "
+                      << "double and long double both got zero."
+                      << std::endl;
+          }
           return 0;
         }
       
@@ -557,6 +566,11 @@ namespace o2scl {
           err=static_cast<fp_t>(abs(y_ld-y_d)/abs(y_ld));
           if (err<tol_loc) {
             val=static_cast<fp_t>(y_ld);
+            if (verbose>0) {
+              std::cout << "funct_multip::eval_tol_err() "
+                        << "succeeded with double and long double:\n  "
+                        << "val,err: " << val << " " << err << std::endl;
+            }
             return 0;
           }
         }
@@ -568,12 +582,12 @@ namespace o2scl {
                     << "Failed first round: " << dtos(y_ld,0) << " "
                     << dtos(y_d,0) << " "
                     << dtos(err,0) << " " << tol_loc << std::endl;
-        } else if (ld_eval) {
+        } else if (ld_eval && verbose>1) {
           std::cout << "funct_multip::eval_tol_err():\n  "
                     << "Failed first round (d_eval is false): "
                     << dtos(y_ld,0) << " "
                     << tol_loc << std::endl;
-        } else {
+        } else if (verbose>1) {
           std::cout << "funct_multip::eval_tol_err():\n  "
                     << "Failed first round "
                     << "(d_eval and ld_eval are both false)." << std::endl;
@@ -585,7 +599,7 @@ namespace o2scl {
       bool cdf25_eval=false;
       cpp_dec_float_25 x_cdf25=0, y_cdf25=0;
       if (tol_loc>pow(10.0,-std::numeric_limits
-                      <cpp_dec_float_25>::max_digits10)) {
+                      <cpp_dec_float_25>::digits10)) {
         x_cdf25=static_cast<cpp_dec_float_25>(x);
         y_cdf25=f(x_cdf25);
         cdf25_eval=true;
@@ -595,12 +609,22 @@ namespace o2scl {
         if (y_cdf25==0 && y_ld==0) {
           val=0;
           err=0;
+          if (verbose>0) {
+            std::cout << "funct_multip::eval_tol_err() "
+                      << "long double and 25-digit both got zero."
+                      << std::endl;
+          }
           return 0;
         }
         if (y_cdf25!=0) {
           err=static_cast<fp_t>(abs(y_cdf25-y_ld)/abs(y_cdf25));
           if (err<tol_loc) {
             val=static_cast<fp_t>(y_cdf25);
+            if (verbose>0) {
+              std::cout << "funct_multip::eval_tol_err() "
+                        << "succeeded with long double and 25-digit:\n  "
+                        << "val,err: " << val << " " << err << std::endl;
+            }
             return 0;
           }
         }
@@ -612,12 +636,12 @@ namespace o2scl {
                     << "Failed second round: " << dtos(y_cdf25,0) << " "
                     << dtos(y_ld,0) << " "
                     << dtos(err,0) << " " << tol_loc << std::endl;
-        } else if (cdf25_eval) {
+        } else if (cdf25_eval && verbose>1) {
           std::cout << "funct_multip::eval_tol_err():\n  "
                     << "Failed second round (ld_eval is false): "
                     << dtos(y_cdf25,0) << " "
                     << tol_loc << std::endl;
-        } else {
+        } else if (verbose>1) {
           std::cout << "funct_multip::eval_tol_err():\n  "
                     << "Failed second round (ld_eval and "
                     << "cdf25_eval are both false)." << std::endl;
@@ -629,7 +653,7 @@ namespace o2scl {
       bool cdf35_eval=false;
       cpp_dec_float_35 x_cdf35=0, y_cdf35=0;
       if (tol_loc>pow(10.0,-std::numeric_limits
-                      <cpp_dec_float_35>::max_digits10)) {
+                      <cpp_dec_float_35>::digits10)) {
         x_cdf35=static_cast<cpp_dec_float_35>(x);
         y_cdf35=f(x_cdf35);
         cdf35_eval=true;
@@ -639,12 +663,22 @@ namespace o2scl {
         if (y_cdf35==0 && y_cdf25==0) {
           val=0;
           err=0;
+          if (verbose>0) {
+            std::cout << "funct_multip::eval_tol_err() "
+                      << "25-digit and 35-digit both got zero."
+                      << std::endl;
+          }
           return 0;
         }
         if (y_cdf35!=0) {
           err=static_cast<fp_t>(abs(y_cdf35-y_cdf25)/abs(y_cdf35));
           if (err<tol_loc) {
             val=static_cast<fp_t>(y_cdf35);
+            if (verbose>0) {
+              std::cout << "funct_multip::eval_tol_err() "
+                        << "succeeded with 25-digit and 35-digit:\n  "
+                        << "val,err: " << val << " " << err << std::endl;
+            }
             return 0;
           }
         }
@@ -656,12 +690,12 @@ namespace o2scl {
                     << "Failed third round: " << dtos(y_cdf35,0) << " "
                     << dtos(y_cdf25,0) << " "
                     << dtos(err,0) << " " << tol_loc << std::endl;
-        } else if (cdf35_eval) {
+        } else if (cdf35_eval && verbose>1) {
           std::cout << "funct_multip::eval_tol_err():\n  "
                     << "Failed third round (cdf25_eval is false): "
                     << dtos(y_cdf35,0) << " "
                     << tol_loc << std::endl;
-        } else {
+        } else if (verbose>1) {
           std::cout << "funct_multip::eval_tol_err():\n  "
                     << "Failed third round (cdf25_eval and "
                     << "cdf35_eval are both false)." << std::endl;
@@ -673,7 +707,7 @@ namespace o2scl {
       bool cdf50_eval=false;
       cpp_dec_float_50 x_cdf50=0, y_cdf50=0;
       if (tol_loc>pow(10.0,-std::numeric_limits
-                      <cpp_dec_float_50>::max_digits10)) {
+                      <cpp_dec_float_50>::digits10)) {
         x_cdf50=static_cast<cpp_dec_float_50>(x);
         y_cdf50=f(x_cdf50);
         cdf50_eval=true;
@@ -683,12 +717,22 @@ namespace o2scl {
         if (y_cdf50==0 && y_cdf35==0) {
           val=0;
           err=0;
+          if (verbose>0) {
+            std::cout << "funct_multip::eval_tol_err() "
+                      << "35-digit and 50-digit both got zero."
+                      << std::endl;
+          }
           return 0;
         }
         if (y_cdf50!=0) {
           err=static_cast<fp_t>(abs(y_cdf50-y_cdf35)/abs(y_cdf50));
           if (err<tol_loc) {
             val=static_cast<fp_t>(y_cdf50);
+            if (verbose>0) {
+              std::cout << "funct_multip::eval_tol_err() "
+                        << "succeeded with 35-digit and 50-digit:\n  "
+                        << "val,err: " << val << " " << err << std::endl;
+            }
             return 0;
           }
         }
@@ -700,12 +744,12 @@ namespace o2scl {
                     << "Failed fourth round: " << dtos(y_cdf50,0) << " "
                     << dtos(y_cdf35,0) << " "
                     << dtos(err,0) << " " << tol_loc << std::endl;
-        } else if (cdf50_eval) {
+        } else if (cdf50_eval && verbose>1) {
           std::cout << "funct_multip::eval_tol_err():\n  "
                     << "Failed fourth round (cdf35_eval is false): "
                     << dtos(y_cdf50,0) << " "
                     << tol_loc << std::endl;
-        } else {
+        } else if (verbose>1) {
           std::cout << "funct_multip::eval_tol_err():\n  "
                     << "Failed fourth round (cdf35_eval and "
                     << "cdf50_eval are both false)." << std::endl;
@@ -717,7 +761,7 @@ namespace o2scl {
       bool cdf100_eval=false;
       cpp_dec_float_100 x_cdf100=0, y_cdf100=0;
       if (tol_loc>pow(10.0,-std::numeric_limits
-                      <cpp_dec_float_100>::max_digits10)) {
+                      <cpp_dec_float_100>::digits10)) {
         x_cdf100=static_cast<cpp_dec_float_100>(x);
         y_cdf100=f(x_cdf100);
         cdf100_eval=true;
@@ -727,12 +771,22 @@ namespace o2scl {
         if (y_cdf100==0 && y_cdf50==0) {
           val=0;
           err=0;
+          if (verbose>0) {
+            std::cout << "funct_multip::eval_tol_err() "
+                      << "50-digit and 100-digit both got zero."
+                      << std::endl;
+          }
           return 0;
         }
         if (y_cdf100!=0) {
           err=static_cast<fp_t>(abs(y_cdf100-y_cdf50)/abs(y_cdf100));
           if (err<tol_loc) {
             val=static_cast<fp_t>(y_cdf100);
+            if (verbose>0) {
+              std::cout << "funct_multip::eval_tol_err() "
+                        << "succeeded with 50-digit and 100-digit:\n  "
+                        << "val,err: " << val << " " << err << std::endl;
+            }
             return 0;
           }
         }
@@ -744,12 +798,12 @@ namespace o2scl {
                     << "Failed last round: " << dtos(y_cdf100,0) << " "
                     << dtos(y_cdf50,0) << " "
                     << dtos(err,0) << " " << tol_loc << std::endl;
-        } else if (cdf100_eval) {
+        } else if (cdf100_eval && verbose>1) {
           std::cout << "funct_multip::eval_tol_err():\n  "
                     << "Failed last round (cdf50_eval is false): "
                     << dtos(y_cdf100,0) << " "
                     << tol_loc << std::endl;
-        } else {
+        } else if (verbose>1) {
           std::cout << "funct_multip::eval_tol_err():\n  "
                     << "Failed last round (cdf50_eval and "
                     << "cdf100_eval are both false)." << std::endl;

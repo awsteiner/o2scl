@@ -628,6 +628,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     fms.set_function(i1,"x");
     
     funct_multip fm2;
+    fm2.verbose=verbose;
     
     // Note the funct_multip_string object uses a tolerance of
     // pow(10.0,-std::numeric_limits<fp_t>::digits10+1), a factor of

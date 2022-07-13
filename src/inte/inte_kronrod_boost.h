@@ -251,6 +251,7 @@ namespace o2scl {
       
       int ret;
 
+      // FIXME, explain the +3 here. 
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
           std::cout << "int_kronrod_boost::integ_err(): "
