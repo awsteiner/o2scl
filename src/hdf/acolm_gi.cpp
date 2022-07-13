@@ -1450,7 +1450,7 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
               << "at the moment." << std::endl;
     return 5;
 
-#endif
+#else
 
     funct_multip_string fms;
     fms.verbose=verbose;
@@ -1556,6 +1556,8 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       
     }
 
+#endif
+    
   } else {
     
     // Normal double-precision integration
@@ -1568,6 +1570,8 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     funct f=std::bind(std::mem_fn<double(double) const>
                       (&funct_string::operator()),&fs,
                       std::placeholders::_1);
+    std::cout << "lower, upper: " << lower_lim << " "
+              << upper_lim << std::endl;
     int retx=imkb.integ_err(f,lower_lim,upper_lim,d,err);
     if (retx!=0) {
       cerr << "Integrating " << func << " failed." << endl;
