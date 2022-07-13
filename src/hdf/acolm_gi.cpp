@@ -1562,6 +1562,12 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     
     // Normal double-precision integration
 
+    if (precision>16) {
+      std::cerr << "Warning: multiprecision is required to numerically "
+                << "integrate to the\n requested precision."
+                << std::endl;
+    }
+    
     double d=0, err, lower_lim, upper_lim;
     convert_units<double> cu;
     function_to_fp_nothrow(in[2],lower_lim,cu);
@@ -1570,8 +1576,8 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     funct f=std::bind(std::mem_fn<double(double) const>
                       (&funct_string::operator()),&fs,
                       std::placeholders::_1);
-    std::cout << "lower, upper: " << lower_lim << " "
-              << upper_lim << std::endl;
+    //std::cout << "lower, upper: " << lower_lim << " "
+    //<< upper_lim << std::endl;
     int retx=imkb.integ_err(f,lower_lim,upper_lim,d,err);
     if (retx!=0) {
       cerr << "Integrating " << func << " failed." << endl;
@@ -1583,7 +1589,13 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     cout.precision(precision);
     if (verbose>0) cout << "Result: ";
     cout << d << " +/- " << err << endl;
-    cout << unc_to_string(d,err) << endl;
+    std::string us;
+    if (verbose>1) {
+      us=unc_to_string(d,err,1);
+    } else {
+      us=unc_to_string(d,err);
+    }
+    cout << us << endl;
 
   }
 

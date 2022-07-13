@@ -71,9 +71,9 @@ std::string o2scl::unc_to_string(double val, double err, int verbose) {
   int prec2=-log10(err/pow(10.0,expo))+1;
   if (verbose>0) {
     cout << "prec2: " << prec2 << " " << expo-expo_e << endl;
-    // AWS 7/12/22: I'm not sure if prec2 or expo-expo_e is a
+    // AWS 7/12/22: I'm not sure if prec2+1 or expo-expo_e+1 is a
     // better value for the final precision of the mantissa.
-    // For now, I use expo-expo_e below. 
+    // For now, I use expo-expo_e+1 below. 
   }
   
   double err_two_digits=mant_e*10;
@@ -83,22 +83,24 @@ std::string o2scl::unc_to_string(double val, double err, int verbose) {
          << " " << err_two_digits_i << endl;
   }
 
-  // Have to add 1 because we're in auto, not scientific mode
-  string st=o2scl::dtos(mant,expo-expo_e+1,true);
+  string st=o2scl::dtos(mant,expo-expo_e+1);
   if (verbose>0) {
-    cout << "st: " << st << endl;
+    cout << "expo-expo_e+1,st: " << expo-expo_e+1 << " " << st << endl;
   }
   string ret;
   if (abs(expo)<10) {
     if (expo<0) {
-      ret=st+"("+o2scl::itos(err_two_digits_i)+")e-0"+
+      ret=st.substr(0,st.length()-4)+
+        "("+o2scl::itos(err_two_digits_i)+")e-0"+
         o2scl::itos(abs(expo));
     } else {
-      ret=st+"("+o2scl::itos(err_two_digits_i)+")e+0"+
+      ret=st.substr(0,st.length()-4)+
+        "("+o2scl::itos(err_two_digits_i)+")e+0"+
         o2scl::itos(expo);
     }
   } else {
-    ret=st+"("+o2scl::itos(err_two_digits_i)+")e"+
+    ret=st.substr(0,st.length()-4)+
+      "("+o2scl::itos(err_two_digits_i)+")e"+
       o2scl::itos(expo);
   }
   
