@@ -433,15 +433,15 @@ namespace o2scl_acol {
         Arguments: <tt><expr> ["1" for adaptive multiprecision]</tt>
 
         This computes the value of the constant mathematical
-        expression <expr>. Examples are "calc acos(-1)" or "calc
-        2+1/sqrt(2.0e4)". To see which operators and functions can be
-        used, type 'acol -help <tt>functions</tt>'.
+        expression <expr>. Examples are <tt>calc acos(-1)</tt> or
+        <tt>calc 2+1/sqrt(2.0e4)</tt>. To see which operators and
+        functions can be used, use 'acol -help <tt>functions</tt>'.
 
         Results are given at the current value of <tt>precision</tt>.
         Values of precision up to 50 are allowed, and multiprecision
         (rather than double precision) arithmetic is used if
-        necessary. For example, try 'acol -set precision 45 -calc
-        "acos(-1)"'. If the second optional argument evaluates to
+        necessary. For example, try <tt>acol -set precision 45 -calc
+        "acos(-1)"</tt>. If the second optional argument evaluates to
         true, the calc command uses multiprecision to attempt to
         ensure the result is exact to within the requested precision.
         
@@ -450,8 +450,8 @@ namespace o2scl_acol {
         they have a unique value in MKS units. However, some constant
         values are currently only stored to double precision and will
         be arbitrarily promoted to higher-precision without warning.
-        Unicode is also supported for constants, so try, e.g. 'acol
-        -set precision 15 -calc π'.
+        Unicode is also supported for constants, so try, e.g. <tt>acol
+        -set precision 15 -calc π</tt>.
 
         Note that the variable <tt>precision</tt> is used for the
         argument to the <tt>cout.precision()</tt> function, so a
@@ -1537,7 +1537,8 @@ namespace o2scl_acol {
         Result (cpp_dec_float_35): 7.553956195317414693865200287561e-01
 
         The <tt>ninteg</tt> command computes this same value using
-        numerical integration (and obtains the same result).
+        numerical integration (and obtains the same result), using
+        42-digit -precision internally to evaluate the integrand.
     */
     virtual int comm_ninteg(std::vector<std::string> &sv, bool itive_com);
 
