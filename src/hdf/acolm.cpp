@@ -584,8 +584,8 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_tensor_grid),both},
        {0,"to-table","",0,2,"","",
-         new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_to_table),both},
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_to_table),both},
        {0,"to-tg-fermi","",0,5,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_tg_fermi),both},
@@ -1183,83 +1183,6 @@ int acol_manager::setup_help() {
   terminal ter;
   cl->desc=((string)"acol: A data viewing and processing ")+
     "program for "+ter.bold()+"O₂scl"+ter.default_fg()+".\n";
-
-#ifdef O2SCL_NEVER_DEFINED
-
-  // This code is now moved to acolm_gi.cpp
-  
-  ostringstream oss;
-  oss << ((char)27) << '(' << '0';
-  for(size_t i=0;i<78;i++) oss << 'q';
-  oss << ((char)27) << '(' << 'B';
-  string line=oss.str();
-  
-  string stemp;
-  string dsc=line+"\nNotes:\n\n";
-  vector<std::string> sv;
-  
-  stemp="1. Help for general commands may be obtained with '-help ";
-  stemp+="<command>'. Help for type-specific commands can be obtained ";
-  stemp+="by '-help <type> <command>'. A list of commands for each type ";
-  stemp+="can be obtained with '-commands <type>', or for all commands ";
-  stemp+=" use '-commands all'. Required arguments ";
-  stemp+="are surrounded by ";
-  stemp+="<>'s and optional arguments are surrounded by []'s.\n";
-  rewrap_ignore_vt100(stemp,sv,76);
-  dsc+=sv[0]+"\n";
-  for(size_t j=1;j<sv.size();j++) {
-    dsc+="   "+sv[j]+"\n";
-  }
-  
-  stemp="2. Options may also be specified in the environment variable ";
-  stemp+=env_var_name+".\n";
-  rewrap_ignore_vt100(stemp,sv,76);
-  dsc+=sv[0]+"\n";
-  for(size_t j=1;j<sv.size();j++) {
-    dsc+="   "+sv[j]+"\n";
-  }
-
-  stemp="3. Long options may be preceeded by two dashes.\n";
-  rewrap_ignore_vt100(stemp,sv,76);
-  dsc+=sv[0]+"\n";
-  for(size_t j=1;j<sv.size();j++) {
-    dsc+="   "+sv[j]+"\n";
-  }
-
-  stemp="4. In order to avoid confusion between arguments and functions, ";
-  stemp+="use parenthesis and quotes, i.e. \"(-x*2)\" instead of -x*2.\n";
-  rewrap_ignore_vt100(stemp,sv,76);
-  dsc+=sv[0]+"\n";
-  for(size_t j=1;j<sv.size();j++) {
-    dsc+="   "+sv[j]+"\n";
-  }
-
-  stemp="5. Also, do not use a unary minus next to a binary operator, ";
-  stemp+="i.e. use \"a>(-1)\" instead of \"a>-1\".\n\n";
-  rewrap_ignore_vt100(stemp,sv,76);
-  dsc+=sv[0]+"\n";
-  for(size_t j=1;j<sv.size();j++) {
-    dsc+="   "+sv[j]+"\n";
-  }
-
-  dsc+=line+"\n";
-  
-  dsc+="List of additional help topics (e.g. \"acol -help <topic>\"): ";
-  dsc+="functions, mult-vector-spec, types, value-spec, and vector-spec.\n\n";
-  
-#ifndef O2SCL_UBUNTU_PKG
-  dsc+=((string)"Compiled at ")+((string)__TIME__)+" on "+
-    ((string)__DATE__)+" for O₂scl, version "+
-    ((string)VERSION)+".\n";
-#else
-  dsc+=((string)"Compiled for O₂scl, version "+
-    ((string)VERSION)+".\n";
-#endif
-  
-  cl->addl_help_cmd=dsc;
-  cl->addl_help_cli=dsc;
-
-#endif
   
   return 0;
 }
@@ -1406,17 +1329,17 @@ int acol_manager::run(int argc, char *argv[], bool full_process) {
   
   // If not, attempt to obtain the result from the environment
   /*
-  char *ncstring=getenv("COLUMNS");
-  if (ncstring) {
+    char *ncstring=getenv("COLUMNS");
+    if (ncstring) {
     int nc2;
     int sret=o2scl::stoi_nothrow(ncstring,nc2);
     if (sret==0 && nc2>0) {
-      ncol=nc2;
+    ncol=nc2;
     } else {
-      cerr << "Failed to interpret COLUMNS value " << ncstring
-           << " as a positive number of columns." << endl;
+    cerr << "Failed to interpret COLUMNS value " << ncstring
+    << " as a positive number of columns." << endl;
     }
-  }
+    }
   */
   
   //#endif
@@ -1566,3 +1489,20 @@ int acol_manager::get_input(vector<string> &sv, vector<string> &directions,
   return success;
 }
 
+int acol_manager::validate_interp_type() {
+
+  if (interp_type<1) {
+    cout << "Interpolation type invalid, less than 1. Setting to 1 (linear)."
+         << endl;
+    interp_type=1;
+    return 1;
+  } else if (interp_type>8) {
+    cout << "Interpolation type invalid, greater than 8. "
+         << "Setting to 1 (linear)."
+         << endl;
+    interp_type=1;
+    return 1;
+  }
+
+  return 0;
+}

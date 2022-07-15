@@ -189,7 +189,17 @@ namespace o2scl_acol {
     */
     int ncols;
     
-    /// The interpolation type
+    /** \brief The interpolation type (default is 1; linear)
+
+        The valid interpolation types are 1: linear, 2: cubic, 3:
+        periodic cubic, 4: akima, 5: periodic akima, 6: monotonic
+        [experimental], 7: Steffen's monotonic, 8: nearest neighbor
+        [experimental].
+
+        Note that when this value is modified and the current object
+        is a table, table3d or a histogram object, it also modifies
+        the interpolation type of the object.
+    */
     int interp_type;
 
     /// If set, try to compress
@@ -2622,6 +2632,8 @@ namespace o2scl_acol {
     std::vector<char> ctemp;
     //@}
 
+    int validate_interp_type();
+    
     // End of class acol_manager
   };
 

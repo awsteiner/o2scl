@@ -1706,6 +1706,34 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_set(std::vector<std::string> &sv, bool itive_com) {
 
+  validate_interp_type();
+
+  if (interp_type==1) {
+    cout << "Set interpolation type to linear interpolation (1)."
+         << endl;
+  } else if (interp_type==2) {
+    cout << "Set interpolation type to cubic spline interpolation "
+         << "with natural boundary conditions (2)." << endl;
+  } else if (interp_type==3) {
+    cout << "Set interpolation type to cubic spline interpolation "
+         << "with periodic boundary conditions (2)." << endl;
+  } else if (interp_type==4) {
+    cout << "Set interpolation type to Akima spline interpolation "
+         << "with natural boundary conditions (2)." << endl;
+  } else if (interp_type==5) {
+    cout << "Set interpolation type to Akima spline interpolation "
+         << "with periodic boundary conditions (2)." << endl;
+  } else if (interp_type==6) {
+    cout << "Set interpolation type to monotonic interpolation "
+         << "(experimental; 6)." << endl;
+  } else if (interp_type==7) {
+    cout << "Set interpolation type to Steffen's monotonic "
+         << "interpolation (7)." << endl;
+  } else if (interp_type==8) {
+    cout << "Set interpolation type to nearest neighbor "
+         << "interpolation (experimental; 8)." << endl;
+  } 
+  
   // Make sure the object interpolation types coincide with the
   // variable setting
   if (type=="table") {
