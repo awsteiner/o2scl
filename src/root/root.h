@@ -241,7 +241,7 @@ namespace o2scl {
       // a non-zero derivative
 
       fx=func(x);
-      if (!o2scl::o2isfinite(fx)) {
+      if (!isfinite(fx)) {
 	O2SCL_ERR2("First function value not finite in ",
 		   "root_bkt::solve().",exc_ebadfunc);
       }
@@ -259,7 +259,7 @@ namespace o2scl {
       size_t j=0;
       fp_t two=2;
       fp_t step_phase1=bstep_int;
-      while ((!o2scl::o2isfinite(fx2) || df==0.0) && j<bracket_iters*2) {
+      while ((!isfinite(fx2) || df==0.0) && j<bracket_iters*2) {
 	// Alternate between flipping the sign and making it smaller
 	if (j%2==0) step_phase1=-step_phase1;
 	else step_phase1/=two;
@@ -278,7 +278,7 @@ namespace o2scl {
 	O2SCL_CONV_RET("Failed to bracket (df==0) in root_bkt::solve().",
 		       o2scl::exc_emaxiter,this->err_nonconv);
       }
-      if (!o2scl::o2isfinite(fx2)) {
+      if (!isfinite(fx2)) {
 	O2SCL_CONV2_RET("Failed to bracket (f2 not finite, phase 1) in ",
 			"root_bkt::solve().",
 			o2scl::exc_emaxiter,this->err_nonconv);
@@ -305,7 +305,7 @@ namespace o2scl {
 
       // Adjust if the function value is not finite
       size_t k=0;
-      while (!o2scl::o2isfinite(fx2) && k<bracket_iters) {
+      while (!isfinite(fx2) && k<bracket_iters) {
 	step_phase2/=two;
 	x2=x-step_phase2*fx/df;
 	fx2=func(x2);
@@ -317,7 +317,7 @@ namespace o2scl {
       }
 
       // Throw if we failed
-      if (!o2scl::o2isfinite(fx2)) {
+      if (!isfinite(fx2)) {
 	O2SCL_CONV2_RET("Failed to bracket (f2 not finite, phase 2) in ",
 			"root_bkt::solve().",
 			o2scl::exc_emaxiter,this->err_nonconv);

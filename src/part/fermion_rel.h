@@ -100,7 +100,7 @@ namespace o2scl {
 	ret=arg3*sqrt(arg1)*exp(y)/(exp(arg3)+exp(y));
       }
       
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
 	ret=0.0;
       }
 
@@ -119,7 +119,7 @@ namespace o2scl {
       internal_fp_t arg3=eta+u;
       ret=term1*term1*term1*exp(y)/(exp(arg3)+exp(y))/3;
       
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
 	ret=0.0;
       }
 
@@ -138,7 +138,7 @@ namespace o2scl {
       internal_fp_t arg3=eta+u;
       ret=term1*arg3*log1p(exp(y-arg3));
       
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
 	ret=0.0;
       }
 
@@ -161,7 +161,7 @@ namespace o2scl {
 	ret=arg3*arg3*sqrt(arg1)*exp(y)/(exp(arg3)+exp(y));
       }
  
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
 	return 0;
       }
 
@@ -185,7 +185,7 @@ namespace o2scl {
       internal_fp_t term2=log(arg6)/arg6;
       ret=arg3*sqrt(arg1)*(term1+term2);
   
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
 	return 0.0;
       }
 
@@ -208,7 +208,7 @@ namespace o2scl {
         std::cout << k << " " << ret << std::endl;
       }
           
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
 		   "in fermion_rel::deg_density_fun().",exc_einval);
       }
@@ -227,7 +227,7 @@ namespace o2scl {
       
       ret=k*k*E*T/(1+exp(arg1));
       
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
 		   "in fermion_rel::deg_energy_fun().",exc_einval);
       }
@@ -255,7 +255,7 @@ namespace o2scl {
                   << mot << " " << ret << std::endl;
       }
 
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
         return 0.0;
 	//O2SCL_ERR2("Returned not finite result ",
         //"in fermion_rel::deg_pressure_fun().",exc_einval);
@@ -294,7 +294,7 @@ namespace o2scl {
 	//ret=-k*k*(nx*log(nx)+arg2*log(arg2));
       }
 
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
 		   "in fermion_rel::deg_entropy_fun().",exc_einval);
       }
@@ -342,7 +342,7 @@ namespace o2scl {
 	ret=arg3*sqrt(arg1)*exp(y)/(exp(arg3)+exp(y));
       }
       
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
 	ret=0.0;
       }
 
@@ -364,7 +364,7 @@ namespace o2scl {
       internal_fp_t arg3=eta+u;
       ret=term1*arg3*log1p(exp(y-arg3));
       
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
 	ret=0.0;
       }
 
@@ -390,7 +390,7 @@ namespace o2scl {
 	ret=arg3*arg3*sqrt(arg1)*exp(y)/(exp(arg3)+exp(y));
       }
  
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
 	return 0;
       }
 
@@ -417,7 +417,7 @@ namespace o2scl {
       internal_fp_t term2=log(arg6)/arg6;
       ret=arg3*sqrt(arg1)*(term1+term2);
   
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
 	return 0.0;
       }
 
@@ -445,7 +445,7 @@ namespace o2scl {
         std::cout << k << " " << ret << std::endl;
       }
           
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
 		   "in fermion_rel::deg_density_fun().",exc_einval);
       }
@@ -470,7 +470,7 @@ namespace o2scl {
       
       ret=k*k*E*T/(1+exp(arg1));
       
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
 		   "in fermion_rel::deg_energy_fun().",exc_einval);
       }
@@ -504,7 +504,7 @@ namespace o2scl {
                   << mot << " " << ret << std::endl;
       }
 
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
         return 0.0;
 	//O2SCL_ERR2("Returned not finite result ",
         //"in fermion_rel::deg_pressure_fun().",exc_einval);
@@ -549,7 +549,7 @@ namespace o2scl {
 	//ret=-k*k*(nx*log(nx)+arg2*log(arg2));
       }
 
-      if (!o2isfinite(ret)) {
+      if (!isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
 		   "in fermion_rel::deg_entropy_fun().",exc_einval);
       }
@@ -1834,7 +1834,7 @@ namespace o2scl {
       }
   
       // If neither worked, call the error handler
-      if (y==1.0 || !o2isfinite(y)) {
+      if (y==1.0 || !isfinite(y)) {
 	O2SCL_CONV2_RET("Couldn't find reasonable initial guess in ",
 			"fermion_rel::nu_from_n().",exc_einval,
 			this->err_nonconv);
@@ -2208,7 +2208,7 @@ namespace o2scl {
       // that this function will produce gibberish if the density is not
       // finite, but I've found this extra checking of the inputs useful
       // for debugging.
-      if (!o2isfinite(f.n)) {
+      if (!isfinite(f.n)) {
 	O2SCL_ERR2("Density not finite in ",
 		   "fermion_rel::calc_density().",exc_einval);
       }
@@ -2519,7 +2519,7 @@ namespace o2scl {
 
 	// (max doesn't work with boost::multiprecision?)
 	fp_t lg;
-	if (o2abs(f.nu)>f.ms) lg=o2abs(f.nu);
+	if (abs(f.nu)>f.ms) lg=abs(f.nu);
 	lg=f.ms;
 
         if (verbose>0) {
@@ -2781,7 +2781,7 @@ namespace o2scl {
 
       // Sometimes the exp() call above causes an overflow, so
       // we avoid extreme values
-      if (!o2isfinite(f.nu)) return 3;
+      if (!isfinite(f.nu)) return 3;
 
       if (f.non_interacting) f.mu=f.nu;
 
@@ -2795,14 +2795,14 @@ namespace o2scl {
       // case and it causes the calibrate() test function to fail.
 
       if (false && use_expansions) {
-	if (this->calc_mu_ndeg(f,T,1.0e-18,true) && o2isfinite(f.n)) {
+	if (this->calc_mu_ndeg(f,T,1.0e-18,true) && isfinite(f.n)) {
           fp_t y1;
           if (density_match==0.0) {
             y1=f.n;
           } else {
             y1=(f.n-density_match)/fabs(density_match);
           }
-	  if (!o2isfinite(y1)) {
+	  if (!isfinite(y1)) {
 	    O2SCL_ERR("Value 'y1' not finite (10) in fermion_rel::pair_fun().",
 		      exc_einval);
 	  }
@@ -2835,10 +2835,10 @@ namespace o2scl {
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
         bool acc=this->calc_mu_ndeg(f,T,1.0e-18);
-	if (acc && o2isfinite(f.n)) {
+	if (acc && isfinite(f.n)) {
 	  particles_done=true;
 	  nden_p=f.n;
-	  if (!o2isfinite(nden_p)) {
+	  if (!isfinite(nden_p)) {
 	    O2SCL_ERR2("Value 'nden_p' not finite (1) in ",
 		       "fermion_rel::pair_fun().",exc_einval);
 	  }
@@ -2847,10 +2847,10 @@ namespace o2scl {
   
       // Try the degenerate expansion if psi is large enough
       if (use_expansions && particles_done==false && psi>20.0) {
-	if (this->calc_mu_deg(f,T,1.0e-8) && o2isfinite(f.n)) {
+	if (this->calc_mu_deg(f,T,1.0e-8) && isfinite(f.n)) {
 	  particles_done=true;
 	  nden_p=f.n;
-	  if (!o2isfinite(nden_p)) {
+	  if (!isfinite(nden_p)) {
 	    O2SCL_ERR2("Value 'nden_p' not finite (2) in",
 		       "fermion_rel::pair_fun().",exc_einval);
 	  }
@@ -2881,7 +2881,7 @@ namespace o2scl {
           if (reti1!=0) return 1;
           nden_p*=prefac;
         
-	  if (!o2isfinite(nden_p)) {
+	  if (!isfinite(nden_p)) {
 	    O2SCL_ERR2("Value 'nden_p' not finite (3) in",
 		       "fermion_rel::pair_fun().",exc_einval);
 	  }
@@ -2921,7 +2921,7 @@ namespace o2scl {
 	    nden_p=0.0;
 	  }
       
-	  if (!o2isfinite(nden_p)) {
+	  if (!isfinite(nden_p)) {
 	    O2SCL_ERR2("Value 'nden_p' not finite (4) in",
 		       "fermion_rel::pair_fun().",exc_einval);
 	  }
@@ -2966,7 +2966,7 @@ namespace o2scl {
 	if (acc) {
 	  antiparticles_done=true;
 	  nden_ap=f.n;
-	  if (!o2isfinite(nden_ap)) {
+	  if (!isfinite(nden_ap)) {
 	    O2SCL_ERR2("Value 'nden_ap' not finite (5) in",
 		       "fermion_rel::pair_fun().",
 		       exc_einval);
@@ -2979,7 +2979,7 @@ namespace o2scl {
 	if (this->calc_mu_deg(f,T,1.0e-8)) {
 	  antiparticles_done=true;
 	  nden_ap=f.n;
-	  if (!o2isfinite(nden_ap)) {
+	  if (!isfinite(nden_ap)) {
 	    O2SCL_ERR2("Value 'nden_ap' not finite (6) in",
 		       "fermion_rel::pair_fun().",
 		       exc_einval);
@@ -3007,7 +3007,7 @@ namespace o2scl {
           fri.eval_density(y,eta,nden_ap,unc2);
           nden_ap*=prefac;
         
-	  if (!o2isfinite(nden_ap)) {
+	  if (!isfinite(nden_ap)) {
 	    O2SCL_ERR2("Value 'nden_ap' not finite (7) in",
 		       "fermion_rel::pair_fun().",
 		       exc_einval);
@@ -3042,7 +3042,7 @@ namespace o2scl {
 	  } else {
 	    nden_ap=0.0;
 	  }
-	  if (!o2isfinite(nden_ap)) {
+	  if (!isfinite(nden_ap)) {
 	    O2SCL_ERR2("Value 'nden_ap' not finite (8) in",
 		       "fermion_rel::pair_fun().",
 		       exc_einval);
@@ -3062,7 +3062,7 @@ namespace o2scl {
 	//y2=(nden_p-nden_ap)/density_match-1.0;
       }
 
-      if (!o2isfinite(y2)) {
+      if (!isfinite(y2)) {
 	O2SCL_ERR("Value 'y2' not finite (9) in fermion_rel::pair_fun().",
 		  exc_einval);
       }

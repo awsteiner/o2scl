@@ -290,14 +290,14 @@ namespace o2scl {
     /* Estimate cumulative numerical error */
       
     for (i = 0; i <= order; i++) {
-      absc += o2scl::o2abs(c[i]);
+      absc += abs(c[i]);
     }
       
     /* Combine truncation error and numerical error */
       
     fp_t dbl_eps=std::numeric_limits<fp_t>::epsilon();
 
-    abserr = o2scl::o2abs(c[order])+absc*dbl_eps;
+    abserr = abs(c[order])+absc*dbl_eps;
       
     return;
   }
@@ -330,13 +330,13 @@ namespace o2scl {
     /* Estimate cumulative numerical error */
 
     for (i = 0; i <= eval_order; i++) {
-      absc += o2scl::o2abs(c[i]);
+      absc += abs(c[i]);
     }
 
     fp_t dbl_eps=std::numeric_limits<fp_t>::epsilon();
 
     /* Combine truncation error and numerical error */
-    abserr = o2scl::o2abs(c[eval_order])+absc*dbl_eps;
+    abserr = abs(c[eval_order])+absc*dbl_eps;
 
     return;
   }

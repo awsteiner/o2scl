@@ -1857,7 +1857,7 @@ namespace o2scl {
       <tt>operator[]</tt> method which returns a floating point number
       of type fp_t (either as a value or a reference), and which is
       composed of a floating point number of type \c fp_t for which
-      the function \c o2abs() is defined.
+      the function \c abs() is defined.
   */
   template<class vec_t, class fp_t>
     size_t vector_lookup(size_t n, const vec_t &x, fp_t x0) {
@@ -1873,12 +1873,12 @@ namespace o2scl {
 		 "function vector_lookup()",exc_einval);
       return 0;
     }
-    fp_t best=x[i], bdiff=o2abs(x[i]-x0);
+    fp_t best=x[i], bdiff=abs(x[i]-x0);
     for(;i<n;i++) {
-      if (std::isfinite(x[i]) && o2abs(x[i]-x0)<bdiff) {
+      if (std::isfinite(x[i]) && abs(x[i]-x0)<bdiff) {
 	row=i;
 	best=x[i];
-	bdiff=o2abs(x[i]-x0);
+	bdiff=abs(x[i]-x0);
       }
     }
     return row;
@@ -1896,7 +1896,7 @@ namespace o2scl {
       <tt>size()</tt> method and where an operator[] is defined which
       returns a fp_t (either as a value or a reference), and which is
       composed of a floating point number of type \c fp_t for which
-      the function \c o2abs() is defined.
+      the function \c abs() is defined.
   */
   template<class vec_t, class fp_t>
     size_t vector_lookup(const vec_t &x, fp_t x0) {
