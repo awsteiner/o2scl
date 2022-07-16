@@ -179,7 +179,7 @@ namespace o2scl {
       fp_t hh=0;
       if (h<=0.0) {
 	if (x==0.0) hh=1.0e-4;
-	else hh=o2scl::o2abs(x)*1.0e-4;
+	else hh=abs(x)*1.0e-4;
       } else {
 	hh=h;
       }
@@ -217,7 +217,7 @@ namespace o2scl {
 
 	  fp_t tdiff=r_opt-r_0;
 	  if (fail==false && error_opt < error &&
-	      o2scl::o2abs(tdiff) < two*two*error) {
+	      abs(tdiff) < two*two*error) {
 	    r_0=r_opt;
 	    error=error_opt;
 	  }
@@ -298,27 +298,27 @@ namespace o2scl {
 		  << fp1 << std::endl;
       }
       
-      if (!o2isfinite(fm1) || !o2isfinite(fp1) ||
-	  !o2isfinite(fmh) || !o2isfinite(fph) ||
-	  (func_max>0.0 && (o2scl::o2abs(fm1)>func_max ||
-			    o2scl::o2abs(fp1)>func_max ||
-			    o2scl::o2abs(fmh)>func_max ||
-			    o2scl::o2abs(fph)>func_max))) {
+      if (!isfinite(fm1) || !isfinite(fp1) ||
+	  !isfinite(fmh) || !isfinite(fph) ||
+	  (func_max>0.0 && (abs(fm1)>func_max ||
+			    abs(fp1)>func_max ||
+			    abs(fmh)>func_max ||
+			    abs(fph)>func_max))) {
 	return 1;
       }
 
       fp_t r3=(fp1-fm1)/two;
       fp_t r5=(four/three)*(fph-fmh)-(one/three)*r3;
       
-      fp_t e3=(o2scl::o2abs(fp1)+o2scl::o2abs(fm1))*eps;
-      fp_t e5=two*(o2scl::o2abs(fph)+o2scl::o2abs(fmh))*eps+e3;
+      fp_t e3=(abs(fp1)+abs(fm1))*eps;
+      fp_t e5=two*(abs(fph)+abs(fmh))*eps+e3;
       
       /* The next term is due to finite precision in x+h=O (eps*x) */
       fp_t trat0=x/hh;
       fp_t trat1=r3/hh;
       fp_t trat2=r5/hh;
-      fp_t dy=std::max(o2scl::o2abs(trat1),o2scl::o2abs(trat2))*
-	o2scl::o2abs(trat0)*eps;
+      fp_t dy=std::max(abs(trat1),abs(trat2))*
+	abs(trat0)*eps;
       
       /* The truncation error in the r5 approximation itself is O(h^4).
 	 However, for safety, we estimate the error from r5-r3, which is
@@ -330,10 +330,10 @@ namespace o2scl {
       /* Estimated truncation error O(h^2) */
       fp_t tdiff2=r5-r3;
       fp_t trat3=tdiff2/hh;
-      abserr_trunc=o2scl::o2abs(trat3);
+      abserr_trunc=abs(trat3);
       /* Rounding error (cancellations) */
       fp_t trat4=e5/hh;
-      abserr_round=o2scl::o2abs(trat4)+dy;
+      abserr_round=abs(trat4)+dy;
       
       if (this->verbose>0) {
 	std::cout << "res: " << result << " trc: " << abserr_trunc 
@@ -405,7 +405,7 @@ namespace o2scl {
       double hh=0;
       if (h<=0.0) {
 	if (x==0.0) hh=1.0e-4;
-	else hh=static_cast<double>(o2scl::o2abs(x))*1.0e-4;
+	else hh=static_cast<double>(abs(x))*1.0e-4;
       } else {
 	hh=h;
       }
@@ -443,7 +443,7 @@ namespace o2scl {
 
 	  fp_t tdiff=r_opt-r_0;
 	  if (fail==false && error_opt < error &&
-	      o2scl::o2abs(tdiff) < two*two*error) {
+	      abs(tdiff) < two*two*error) {
 	    r_0=r_opt;
 	    error=error_opt;
 	  }
@@ -529,23 +529,23 @@ namespace o2scl {
 		  << fp1 << std::endl;
       }
       
-      if (!o2isfinite(fm1) || !o2isfinite(fp1) ||
-	  !o2isfinite(fmh) || !o2isfinite(fph)) {
+      if (!isfinite(fm1) || !isfinite(fp1) ||
+	  !isfinite(fmh) || !isfinite(fph)) {
         return 5;
       }
 
       fp_t r3=(fp1-fm1)/two;
       fp_t r5=(four/three)*(fph-fmh)-(one/three)*r3;
       
-      fp_t e3=(o2scl::o2abs(fp1)+o2scl::o2abs(fm1))*eps;
-      fp_t e5=two*(o2scl::o2abs(fph)+o2scl::o2abs(fmh))*eps+e3;
+      fp_t e3=(abs(fp1)+abs(fm1))*eps;
+      fp_t e5=two*(abs(fph)+abs(fmh))*eps+e3;
       
       /* The next term is due to finite precision in x+h=O (eps*x) */
       fp_t trat0=x/hh;
       fp_t trat1=r3/hh;
       fp_t trat2=r5/hh;
-      fp_t dy=std::max(o2scl::o2abs(trat1),o2scl::o2abs(trat2))*
-	o2scl::o2abs(trat0)*eps;
+      fp_t dy=std::max(abs(trat1),abs(trat2))*
+	abs(trat0)*eps;
       
       /* The truncation error in the r5 approximation itself is O(h^4).
 	 However, for safety, we estimate the error from r5-r3, which is
@@ -557,10 +557,10 @@ namespace o2scl {
       /* Estimated truncation error O(h^2) */
       fp_t tdiff2=r5-r3;
       fp_t trat3=tdiff2/hh;
-      abserr_trunc=o2scl::o2abs(trat3);
+      abserr_trunc=abs(trat3);
       /* Rounding error (cancellations) */
       fp_t trat4=e5/hh;
-      abserr_round=o2scl::o2abs(trat4)+dy;
+      abserr_round=abs(trat4)+dy;
       
       if (this->verbose>0) {
 	std::cout << "res: " << result << " trc: " << abserr_trunc 

@@ -700,7 +700,7 @@ int main(void) {
   test_cubic_real_coeff(&c5,"cubic_rc_mp",1.0,
                         1.0e-14,1.0e-14,1.0e-14,1.0e-12,9);
   test_cubic_real_coeff(&c3,"cubic_c_std",1.0,
-			1.0e-10,1.0e-9,1.0e-6,1.0e-6,12025);
+			1.0e-10,1.0e-9,1.0e-6,1.0e-6,12300);
   test_cubic_real_coeff(&p3,"poly_rc_gsl",1.0,
 			1.0e-13,1.0e-13,1.0e-13,1.0e-12,0);
   test_cubic_real_coeff<long double,std::complex<long double> >
@@ -742,7 +742,7 @@ int main(void) {
   test_cubic_real_coeff(&c5,"cubic_rc_mp",1.0e-3,
 			1.0e-14,1.0e-8,1.0e-14,1.0e-6,1);
   test_cubic_real_coeff(&c3,"cubic_c_std",1.0e-3,
-			1.0e-8,1.0e-8,1.0e-5,1.0e-5,30345);
+			1.0e-8,1.0e-8,1.0e-5,1.0e-5,30600);
   test_cubic_real_coeff(&p3,"poly_rc_gsl",1.0e-3,
 			1.0e-13,1.0e-8,1.0e-12,1.0e-6,0);
   //p3.check_refine=true;

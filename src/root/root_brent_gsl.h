@@ -180,7 +180,7 @@ namespace o2scl {
       e=b-a;
     }
   
-    if (o2scl::o2abs(fc) < o2scl::o2abs(fb)) {
+    if (abs(fc) < abs(fb)) {
       ac_equal=1;
       a=b;
       b=c;
@@ -190,7 +190,7 @@ namespace o2scl {
       fc=fa;
     }
     
-    tol=o2scl::o2abs(b)*std::numeric_limits<fp_t>::epsilon()/two;
+    tol=abs(b)*std::numeric_limits<fp_t>::epsilon()/two;
     m=(c-b)/two;
   
     if (fb == 0) {
@@ -200,7 +200,7 @@ namespace o2scl {
     
       return o2scl::success;
     }
-    if (o2scl::o2abs(m) <= tol) {
+    if (abs(m) <= tol) {
       root=b;
     
       if (b < c) {
@@ -214,7 +214,7 @@ namespace o2scl {
       return o2scl::success;
     }
   
-    if (o2scl::o2abs(e) < tol || o2scl::o2abs(fa) <= o2scl::o2abs(fb)) {
+    if (abs(e) < tol || abs(fa) <= abs(fb)) {
       // [GSL] Use bisection 
       d=m;            
       e=m;
@@ -242,10 +242,10 @@ namespace o2scl {
       fp_t dtmp;
       fp_t ptmp=e*q;
       fp_t ptmp2=tol*q;
-      if (3*m*q-o2scl::o2abs(ptmp2)<o2scl::o2abs(ptmp)) {
-	dtmp=3*m*q-o2scl::o2abs(ptmp2);
+      if (3*m*q-abs(ptmp2)<abs(ptmp)) {
+	dtmp=3*m*q-abs(ptmp2);
       } else {
-	dtmp=o2scl::o2abs(ptmp);
+	dtmp=abs(ptmp);
       }
       if (2*p<dtmp) {
 	e=d;
@@ -260,7 +260,7 @@ namespace o2scl {
     a=b;
     fa=fb;
   
-    if (o2scl::o2abs(d) > tol) {
+    if (abs(d) > tol) {
       b+=d;
     } else {
       b+=(m > 0 ? +tol : -tol);
@@ -333,10 +333,10 @@ namespace o2scl {
 
 	fp_t y=f(root);
 
-	if (o2scl::o2abs(y)<this->tol_rel) status=o2scl::success;
+	if (abs(y)<this->tol_rel) status=o2scl::success;
       
 	if (this->verbose>0) {
-	  this->print_iter(root,y,iter,o2scl::o2abs(y),this->tol_rel,
+	  this->print_iter(root,y,iter,abs(y),this->tol_rel,
 			   "root_brent_gsl (relative deviation)");
 	}
       }
@@ -357,9 +357,9 @@ namespace o2scl {
         
 	if (status==o2scl::success) {
 	  fp_t y=f(root);
-	  if (o2scl::o2abs(y)>=this->tol_rel) status=gsl_continue;
+	  if (abs(y)>=this->tol_rel) status=gsl_continue;
 	  if (this->verbose>0) {
-	    this->print_iter(root,y,iter,o2scl::o2abs(y),this->tol_rel,
+	    this->print_iter(root,y,iter,abs(y),this->tol_rel,
 			     "root_brent_gsl (relative deviation 2)");
 	  }
 	} else {

@@ -1932,7 +1932,7 @@ namespace o2scl {
       fp_t p=s-r3*r*r;
       fp_t q=(r1*r*r-r3*s)*r+t;
       d=r2*r2*q*q+r3*p*r3*p*r3*p;
-      if (o2abs(d)<=eps) {
+      if (abs(d)<=eps) {
         fp_t pp=s-q3*r*r;
         fp_t qq=(q1*r*r-q3*s)*r+t;
         d=q2*q2*qq*qq+q3*pp*q3*pp*q3*pp;
@@ -1962,20 +1962,20 @@ namespace o2scl {
       }
       
       if (d_new>delta2) {
-        h2=o2sqrt(d);
+        h2=sqrt(d);
         fp_t u0=-h1+h2;
         fp_t v0=-h1-h2;
-        if (o2abs(u0)==0.0) {
+        if (abs(u0)==0.0) {
           u=sign(0.0,u0);
         }
-        else u=sign(o2pow(o2abs(u0),r3),u0);
-        if (o2abs(v0)==0.0) v=sign(0.0,v0);
-        else v=sign(o2pow(o2abs(v0),r3),v0);
+        else u=sign(pow(abs(u0),r3),u0);
+        if (abs(v0)==0.0) v=sign(0.0,v0);
+        else v=sign(pow(abs(v0),r3),v0);
         x[0]=u+v-h;
         x[1]=-r2*(u+v)-h;
         fp_t tmp=u-v;
-        x[2]=r4*o2abs(tmp);
-        if (o2abs(u0)<=eps || o2abs(v0)<=eps) {
+        x[2]=r4*abs(tmp);
+        if (abs(u0)<=eps || abs(v0)<=eps) {
           y[0]=x[0];
           for(k=0;k<=1;k++) {
             y[k+1]=y[k]-(((y[k]+r)*y[k]+s)*y[k]+t)/
@@ -1993,19 +1993,19 @@ namespace o2scl {
           x[2]=z[2].imag();
         }
         
-      } else if (o2abs(d_new)<=delta2) {
+      } else if (abs(d_new)<=delta2) {
         
         d=0.0;
-        if (o2abs(h1)==0.0) u=sign(0.0,-h1);
-        else u=sign(o2pow(o2abs(h1),r3),-h1);
+        if (abs(h1)==0.0) u=sign(0.0,-h1);
+        else u=sign(pow(abs(h1),r3),-h1);
         x[0]=u+u-h;
         x[1]=-u-h;
         x[2]=x[1];
-        if (o2abs(h1)<=eps) {
+        if (abs(h1)<=eps) {
           y[0]=x[0];
           for(k=0;k<=1;k++) {
             h1=(three*y[k]+two*r)*y[k]+s;
-            if (o2abs(h1)>delta2) {
+            if (abs(h1)>delta2) {
               y[k+1]=y[k]-(((y[k]+r)*y[k]+s)*y[k]+t)/h1;
             } else {
               x[0]=-r3*r;
@@ -2022,12 +2022,12 @@ namespace o2scl {
       } else {
 
         fp_t tmp2=r3*p;
-        h3=o2abs(tmp2);
+        h3=abs(tmp2);
         fp_t tmp3=h3*h3*h3;
-        h3=o2sqrt(tmp3);
+        h3=sqrt(tmp3);
         h2=r3*acos(-h1/h3);
         if (h3==0.0) h1=0.0;
-        else h1=o2pow(h3,r3);
+        else h1=pow(h3,r3);
         u=h1*cos(h2);
         v=w3*h1*sin(h2);
         x[0]=u+u-h;
@@ -2161,9 +2161,9 @@ namespace o2scl {
       if (dc==0) u[2]=u[1];
       if (dc<=0) {
         mt=2;
-        v[1]=o2abs(u[0]);
-        v[2]=o2abs(u[1]);
-        v[3]=o2abs(u[2]);
+        v[1]=abs(u[0]);
+        v[2]=abs(u[1]);
+        v[3]=abs(u[2]);
         v1=std::max(std::max(v[1],v[2]),v[3]);
         if (v1==v[1]) {
           k1=0;
@@ -3528,7 +3528,7 @@ namespace o2scl {
       fp_t a03=-(a14*a14+a04*a34*a34-4.0*a04*a24);
       
       fp_t u1, u2, u3;
-      cub2.solve_r(1,a23,a13,a03,u1,u2,u3);
+      int cret=cub2.solve_r(1,a23,a13,a03,u1,u2,u3);
 
       // FIXME: if the cubic above has only one real root,
       // then u2 will be uninitialized
