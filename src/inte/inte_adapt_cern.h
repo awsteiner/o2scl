@@ -27,6 +27,7 @@
 #define O2SCL_CERN_ADAPT_H
 
 #include <o2scl/misc.h>
+#include <o2scl/funct_multip.h>
 #include <o2scl/inte.h>
 #include <o2scl/inte_gauss56_cern.h>
 #include <o2scl/string_conv.h>

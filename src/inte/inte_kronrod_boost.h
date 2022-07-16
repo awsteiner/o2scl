@@ -32,6 +32,7 @@
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 
 #include <o2scl/inte.h>
+#include <o2scl/funct_multip.h>
 
 namespace o2scl {
 

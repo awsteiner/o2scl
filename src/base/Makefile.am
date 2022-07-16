@@ -9,7 +9,8 @@ BASE_HEADER_VAR =  err_hnd.h misc.h test_mgr.h table.h \
 	tensor.h vector.h table3d.h cli_readline.h tensor_grid.h \
 	format_float.h table_units.h exception.h uniform_grid.h \
 	shunting_yard.h interp_krige.h find_constants.h cursesw.h \
-	prev_commit.h auto_format.h base_python.h calc_utf8.h
+	prev_commit.h auto_format.h base_python.h calc_utf8.h \
+	funct_multip.h
 
 HEADER_VAR = $(BASE_HEADER_VAR)
 

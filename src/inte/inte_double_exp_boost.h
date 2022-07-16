@@ -34,6 +34,7 @@
 #include <boost/math/quadrature/sinh_sinh.hpp>
 
 #include <o2scl/inte.h>
+#include <o2scl/funct_multip.h>
 
 namespace o2scl {
 

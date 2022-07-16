@@ -58,6 +58,7 @@
 #include <o2scl/deriv.h>
 #include <o2scl/funct.h>
 #include <o2scl/err_hnd.h>
+#include <o2scl/funct_multip.h>
 
 namespace o2scl {
 
