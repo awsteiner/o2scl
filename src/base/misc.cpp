@@ -55,6 +55,8 @@ bool o2scl::file_exists(std::string fname) {
   return true;
 }     
 
+#ifdef O2SCL_NEVER_DEFINED
+
 float o2scl::o2abs(const float x) {
   return fabsf(x);
 }
@@ -330,6 +332,8 @@ o2scl::o2pow(const boost::multiprecision::cpp_bin_float_100 x,
              const boost::multiprecision::cpp_bin_float_100 y) {
   return boost::multiprecision::pow(x,y);
 }
+
+#endif
 
 int o2scl::pipe_cmd_string(std::string cmd, std::string &result,
 			   bool err_on_fail, int nmax) {

@@ -51,6 +51,8 @@
 
 namespace o2scl {
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   /*
     AWS 10/10/19: A new abs() function is probably overkill, but I am
     concerned that a user who includes math.h before an o2scl header
@@ -327,6 +329,7 @@ namespace o2scl {
 	    const boost::multiprecision::cpp_dec_float_100 y);
   
   //@}
+#endif
   
   /// \name Functions from src/base/misc.h
   //@{

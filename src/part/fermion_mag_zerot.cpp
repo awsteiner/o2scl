@@ -225,15 +225,15 @@ void fermion_mag_zerot::calc_density_zerot_mag
     f.kf=2.0*pi2*f.n/fabs(qB);
     if (f.non_interacting) {
       if (f.inc_rest_mass) {
-	f.mu=o2hypot(f.kf,f.m);
+	f.mu=hypot(f.kf,f.m);
       } else {
-	f.mu=o2hypot(f.kf,f.m)-f.m;
+	f.mu=hypot(f.kf,f.m)-f.m;
       }
     } else {
       if (f.inc_rest_mass) {
-	f.nu=o2hypot(f.kf,f.ms);
+	f.nu=hypot(f.kf,f.ms);
       } else {
-	f.nu=o2hypot(f.kf,f.ms)-f.m;
+	f.nu=hypot(f.kf,f.ms)-f.m;
       }
     }
     if (f.non_interacting && f.inc_rest_mass) {
