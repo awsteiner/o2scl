@@ -23,6 +23,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/root_toms748.h>
 #include <o2scl/funct.h>
+#include <o2scl/funct_multip.h>
 
 double gfn(double x) {
   return sin(x-0.2);

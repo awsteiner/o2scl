@@ -24,6 +24,7 @@
 
 #include <boost/math/constants/constants.hpp>
 #include <o2scl/funct.h>
+#include <o2scl/funct_multip.h>
 #include <o2scl/inte_gauss_cern.h>
 #include <o2scl/test_mgr.h>
 

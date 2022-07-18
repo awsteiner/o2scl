@@ -22,6 +22,7 @@
 */
 #include <o2scl/test_mgr.h>
 #include <o2scl/funct.h>
+#include <o2scl/funct_multip.h>
 #include <o2scl/inte_double_exp_boost.h>
 
 using namespace std;
@@ -138,11 +139,14 @@ int main(void) {
   cout << endl;
 
   funct_ld tf1_ld=test_func<long double>;
-  funct_cdf50 tf1_cdf=test_func<cpp_dec_float_50>;
   funct_ld tf2_ld=test_func_2<long double>;
+  funct_cdf50 tf1_cdf=test_func<cpp_dec_float_50>;
   funct_cdf50 tf2_cdf=test_func_2<cpp_dec_float_50>;
+  funct_cdf35 tf1_cdf35=test_func<cpp_dec_float_35>;
+  funct_cdf35 tf2_cdf35=test_func_2<cpp_dec_float_35>;
 
   inte_tanh_sinh_boost<funct_ld,61,long double> itsb_ld;
+  inte_tanh_sinh_boost<funct_cdf35,61,cpp_dec_float_35> itsb_cdf35;
   inte_tanh_sinh_boost<funct_cdf50,61,cpp_dec_float_50> itsb_cdf;
 
   // Finite integral, moderately difficult integrand
@@ -158,15 +162,32 @@ int main(void) {
   cout << endl;
 
   // Finite integral, moderately difficult integrand
+  cout << "tanh-sinh, finite interval, cpp_dec_float_35:" << endl;
+  cpp_dec_float_35 one_cdf35=1;
+  cpp_dec_float_35 hundred_cdf35=100;
+  cpp_dec_float_35 exact_cdf35=exact_func<cpp_dec_float_35>();
+  cpp_dec_float_35 ans_cdf35, err_cdf35;
+  itsb_cdf35.tol_rel=1.0e-30;
+  itsb_cdf35.integ_err(tf1_cdf35,0.0,1.0,ans_cdf35,err_cdf35);
+  std::cout << ans_cdf35 << " " << err_cdf35 << std::endl;
+  std::cout << dtos(exact_cdf35,0) << std::endl;
+  std::cout << itsb_cdf35.L1norm << std::endl;
+  t.test_rel_boost<cpp_dec_float_35>(ans_cdf35,exact_cdf35,1.0e-29,
+				     "tanh_sinh test cdf35");
+  cout << endl;
+
+  // Finite integral, moderately difficult integrand
   cout << "tanh-sinh, finite interval, cpp_dec_float_50:" << endl;
   cpp_dec_float_50 one_cdf=1;
   cpp_dec_float_50 hundred_cdf=100;
   cpp_dec_float_50 exact_cdf=exact_func<cpp_dec_float_50>();
   cpp_dec_float_50 ans_cdf, err_cdf;
+  itsb_cdf.tol_rel=1.0e-40;
   itsb_cdf.integ_err(tf1_cdf,0.0,1.0,ans_cdf,err_cdf);
-  std::cout << ans_cdf << " " << err_cdf << " " << exact_cdf << " "
-	    << itsb.L1norm << std::endl;
-  t.test_rel_boost<cpp_dec_float_50>(ans_cdf,exact_cdf,1.0e-40,
+  std::cout << ans_cdf << " " << err_cdf << std::endl;
+  std::cout << dtos(exact_cdf,0) << std::endl;
+  std::cout << itsb_cdf.L1norm << std::endl;
+  t.test_rel_boost<cpp_dec_float_50>(ans_cdf,exact_cdf,1.0e-39,
 				     "tanh_sinh test cdf");
   cout << endl;
 

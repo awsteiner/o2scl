@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 #include <o2scl/funct.h>
+#include <o2scl/funct_multip.h>
 #include <o2scl/inte_gauss56_cern.h>
 #include <o2scl/test_mgr.h>
 

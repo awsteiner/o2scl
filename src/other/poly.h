@@ -3530,9 +3530,16 @@ namespace o2scl {
       fp_t u1, u2, u3;
       int cret=cub2.solve_r(1,a23,a13,a03,u1,u2,u3);
 
-      // FIXME: if the cubic above has only one real root,
-      // then u2 will be uninitialized
-      fp_t u4=u2;
+      // AWS, 7/17/22: The old code had just u4=u2 here, but if the
+      // cubic above has only one real root, then u2 will be
+      // uninitialized. I'm not sure if this fix is optimal, but it
+      // seems to work for now.
+      fp_t u4;
+      if (cret==1) {
+        u4=u1;
+      } else {
+        u4=u2;
+      }
       
       //---------------------------------------
       // Now construct the two quadratics:

@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 #include <o2scl/funct.h>
+#include <o2scl/funct_multip.h>
 #include <o2scl/root_brent_gsl.h>
 #include <o2scl/test_mgr.h>
 

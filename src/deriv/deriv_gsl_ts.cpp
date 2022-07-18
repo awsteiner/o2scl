@@ -160,7 +160,7 @@ int main(void) {
                  val,err2);
   t.test_rel((long double)val,difficult_deriv<long double>(5.5L),1.0e-15L,
              "multip 1");
-  t.test_abs(0.0,err2,1.0e-15,"multip 2");
+  t.test_abs(0.0,err2/val,1.0e-15,"multip 2");
 #endif
   
   t.report();

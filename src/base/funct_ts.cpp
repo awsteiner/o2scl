@@ -24,6 +24,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/err_hnd.h>
 #include <o2scl/constants.h>
+#include <o2scl/funct_multip.h>
 
 using namespace std;
 using namespace o2scl;

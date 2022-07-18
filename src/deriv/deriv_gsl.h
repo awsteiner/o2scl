@@ -227,7 +227,7 @@ namespace o2scl {
 	if (fail==true) {
 	  hh/=ten;
 	  if (this->verbose>0) {
-	    std::cout << "Function deriv_gsl::deriv_tlate out of range. "
+	    std::cout << "deriv_gsl::deriv_tlate out of range. "
 		      << "Decreasing step." << std::endl;
 	  }
 	}
@@ -453,7 +453,7 @@ namespace o2scl {
 	if (fail==true) {
 	  hh/=static_cast<double>(ten);
 	  if (this->verbose>0) {
-	    std::cout << "Function deriv_gsl::deriv_tlate out of range. "
+	    std::cout << "deriv_gsl::deriv_tlate out of range. "
 		      << "Decreasing step." << std::endl;
 	  }
 	}
@@ -629,7 +629,7 @@ namespace o2scl {
       } 
       
       if (verbose>0) {
-        std::cout << "Function deriv_multi_gsl::deriv_err(): set "
+        std::cout << "deriv_multi_gsl::deriv_err(): set "
                   << "tolerance to: " << tol_loc << std::endl;
       }
       
@@ -645,10 +645,10 @@ namespace o2scl {
       // Begin with a double precision derivative, but only
       // if double precision is enough for the function evaluations
       if (func_tol>pow(10.0,-std::numeric_limits<double>::digits10)) {
-      
+
         deriv_err_int(f,static_cast<double>(x),dfdx_d,err_d,func_tol);
         if (verbose>0) {
-          std::cout << "Function deriv_multi_gsl::deriv_err() "
+          std::cout << "deriv_multi_gsl::deriv_err() "
                     << "double h_opt is: " << h_opt << std::endl;
         }
         
@@ -662,7 +662,7 @@ namespace o2scl {
         }
 
         if (verbose>0) {
-          std::cout << "Function deriv_multi_gsl::deriv_err() "
+          std::cout << "deriv_multi_gsl::deriv_err() "
                     << "failed after double:\n  "
                     << dtos(dfdx_d,0) << " "
                     << dtos(err_d,0) << " "
@@ -685,7 +685,7 @@ namespace o2scl {
                       err_ld,func_tol);
         
         if (verbose>0) {
-          std::cout << "Function deriv_multi_gsl::deriv_err() "
+          std::cout << "deriv_multi_gsl::deriv_err() "
                     << "long double h_opt is: " << h_opt << std::endl;
         }
         
@@ -709,7 +709,7 @@ namespace o2scl {
         }
         
         if (verbose>0) {
-          std::cout << "Function deriv_multi_gsl::deriv_err() "
+          std::cout << "deriv_multi_gsl::deriv_err() "
                     << "failed after long double:\n  "
                     << dtos(dfdx_d,0) << " "
                     << dtos(dfdx_ld,0) << " "
@@ -741,9 +741,10 @@ namespace o2scl {
                       dfdx_cdf25,err_cdf25,func_tol);
         
         if (verbose>0) {
-          std::cout << "Function deriv_multi_gsl::deriv_err() "
-                    << "cpp_dec_float_25 h_opt is: "
-                    << h_opt << std::endl;
+          std::cout << "deriv_multi_gsl::deriv_err() [cpp_dec_float_25]\n "
+                    << "h_opt,dfdx,err: "
+                    << h_opt << " " << dfdx_cdf25 << " "
+                    << err_cdf25 << std::endl;
         }
         
         called_cdf25=true;
@@ -766,8 +767,8 @@ namespace o2scl {
         }
         
         if (verbose>0) {
-          std::cout << "Function deriv_multi_gsl::deriv_err() "
-                    << "failed after cpp_dec_float_25:\n  "
+          std::cout << "deriv_multi_gsl::deriv_err() "
+                    << "failed after cpp_dec_25:\n  "
                     << dtos(dfdx_ld,0) << " "
                     << dtos(dfdx_cdf25,0) << " "
                     << dtos(err_ld,0) << " "
@@ -800,9 +801,10 @@ namespace o2scl {
         called_cdf35=true;
         
         if (verbose>0) {
-          std::cout << "Function deriv_multi_gsl::deriv_err() "
-                    << "cpp_dec_float_35 h_opt is: "
-                    << h_opt << std::endl;
+          std::cout << "deriv_multi_gsl::deriv_err() [cpp_dec_float_35]\n "
+                    << "h_opt,dfdx,err: "
+                    << h_opt << " " << dfdx_cdf35 << " "
+                    << err_cdf35 << std::endl;
         }
         
         // If the result is sufficiently accurate, then return
@@ -823,7 +825,7 @@ namespace o2scl {
         }
         
         if (verbose>0) {
-          std::cout << "Function deriv_multi_gsl::deriv_err() "
+          std::cout << "deriv_multi_gsl::deriv_err() "
                     << "failed after cpp_dec_float_35:\n  "
                     << dtos(dfdx_cdf25,0) << " "
                     << dtos(dfdx_cdf35,0) << " "
@@ -855,7 +857,7 @@ namespace o2scl {
                       dfdx_cdf50,err_cdf50,func_tol);
       
         if (verbose>0) {
-          std::cout << "Function deriv_multi_gsl::deriv_err() "
+          std::cout << "deriv_multi_gsl::deriv_err() "
                     << "cpp_dec_float_50 h_opt is: "
                     << h_opt << std::endl;
         }
@@ -880,7 +882,7 @@ namespace o2scl {
         }
       
         if (verbose>0) {
-          std::cout << "Function deriv_multi_gsl::deriv_err() "
+          std::cout << "deriv_multi_gsl::deriv_err() "
                     << "failed after cpp_dec_float_50:\n  "
                     << dtos(dfdx_cdf35,0) << " "
                     << dtos(dfdx_cdf50,0) << " "
@@ -912,7 +914,7 @@ namespace o2scl {
                       dfdx_cdf100,err_cdf100,func_tol);
       
         if (verbose>0) {
-          std::cout << "Function deriv_multi_gsl::deriv_err() "
+          std::cout << "deriv_multi_gsl::deriv_err() "
                     << "cpp_dec_float_100 h_opt is: "
                     << h_opt << std::endl;
         }
@@ -937,7 +939,7 @@ namespace o2scl {
         }
       
         if (verbose>0) {
-          std::cout << "Function deriv_multi_gsl::deriv_err() "
+          std::cout << "deriv_multi_gsl::deriv_err() "
                     << "failed after cpp_dec_float_100:\n  "
                     << dtos(dfdx_cdf50,0) << " "
                     << dtos(dfdx_cdf100,0) << " "
