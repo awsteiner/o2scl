@@ -42,6 +42,14 @@
 namespace o2scl {
 
   /** \brief A EOS base class for the TOV solver
+
+      The children classes do not always perform unit conversions and
+      often assume that energy density and pressure have the same
+      units. The units for baryon density are fixed when calling the
+      function <tt>set_baryon_density()</tt>. Unless the pressure and
+      energy density have units of \f$
+      \mathrm{M}_\odot/\mathrm{km}^3\f$, then the user must ensure
+      that \ref tov_solve is set to work in a different unit system.
    */
   class eos_tov {
 
@@ -140,14 +148,16 @@ namespace o2scl {
       Without loss of generality, one can choose \f$ P_1 = 0 \f$,
       leaving \f$ \mu_1 \f$, the value of the chemical potential when
       \f$ P=0 \f$, as the remaining parameter. In analogy to the case
-      of nucleonic matter, one can choose \f$ mu_1 = m \f$ where \f$ m
-      \f$ is the nucleon mass. Then, the baryon density can be
+      of nucleonic matter, one can choose \f$ \mu_1 = m \f$ where \f$ m
+      \f$ is the nucleon mass. Then, the (baryon) number density can be
       simplified to
       \f[
-      n m_n = 12 \sqrt{P p_{*}} \left( 1-\frac{1}{3} \sqrt{P/p_{*}} 
+      n m = 12 \sqrt{P p_{*}} \left( 1-\frac{1}{3} \sqrt{P/p_{*}} 
       \right)^{3/2}
       \f]
-      c.f. Eq. 10 in Lattimer et al. (2001).
+      \verbatim embed:rst
+      see also Eq. 10 in [Lattimer01]_.
+      \endverbatim
 
       The mass-radius curve is the solution of the equation
       \f[
@@ -195,14 +205,14 @@ namespace o2scl {
       \f]
       
       \verbatim embed:rst
-      Based on [Lattimer01]_.
+      This class is based on [Lattimer01]_.
       \endverbatim
 
-      \note The default tov_solve beginning and ending pressures
-      work well for physical EOSs, but not for the Buchdahl EOS,
-      so if you use this EOS in a tov_solve object and try to 
-      compute the M-R curve you will need to change prbegin
-      and prend.
+      \note The default tov_solve beginning and ending pressures work
+      well for physical EOSs, but not for the Buchdahl EOS, so if you
+      use this EOS in a tov_solve object and try to compute the M-R
+      curve you will need to change \ref o2scl::tov_solve::prbegin and
+      \ref o2scl::tov_solve::prend.
 
   */
   class eos_tov_buchdahl : public eos_tov {
@@ -231,9 +241,9 @@ namespace o2scl {
 
     virtual ~eos_tov_buchdahl() {}
 
-    /** \brief The parameter with units of pressure in units of solar
-        masses per km cubed (default value \f$ 3.2 \times 10^{-5} \f$
-        )
+    /** \brief The parameter with units of pressure (the default value
+        is \f$ 3.2 \times 10^{-5}\f$ which is sensible for units of
+        \f$ \mathrm{M}_\odot/\mathrm{km}^3\f$)
     */
     double Pstar;
 
@@ -369,7 +379,7 @@ namespace o2scl {
       \left( \frac{\mu_B}{n_B}\right) \, .
       \f]
 
-      \future The simple formulation fo the expressions here more than
+      \future The simple formulation of the expressions here more than
       likely break down when their arguments are sufficiently extreme.
   */
   class eos_tov_polytrope : public eos_tov {
@@ -448,7 +458,7 @@ namespace o2scl {
 
       Given a fiducial baryon density \f$ n_{B,1} \f$ at some energy
       density \f$ \varepsilon_1 \f$ and pressure \f$ P_1 =
-      c_s^2(\varepsilon_1-\varepsilon) \f$, the baryon density is
+      c_s^2(\varepsilon_1-\varepsilon_0) \f$, the baryon density is
       \f[
       n_B = n_{B,1} \left[ \frac{\varepsilon(1+c_s^2) - 
       c_s^2 \varepsilon_0 } {\varepsilon_1 (1 + c_s^2) - 
@@ -458,7 +468,7 @@ namespace o2scl {
       \f]
 
       \note AWS, 6/29/22: As can be seen from this expression, if \f$
-      \epsilon_0 =0 \f$, then I don't think one can take \f$
+      \varepsilon_0 =0 \f$, then I don't think one can take \f$
       \varepsilon_1=P_1=0 \f$ because the baryon density does not have
       a finite value at that point, independent of the value of \f$
       n_{B,1} \f$.

@@ -60,12 +60,21 @@ namespace o2scl_const {
   const double zepto=1e-21;
   const double yocto=1e-24;
 
+  /// MKS units
+  static const size_t o2scl_mks=1;
+  /// CGS units
+  static const size_t o2scl_cgs=2;
+  
   /** \brief Fine structure constant (CODATA 2018 value)
    */
   const double fine_structure=7.2973525693e-3;
   /** \brief Avogadro's number (CODATA 2018 value; exact)
    */
-  const double avogadro=6.02214076e23;
+  template<class fp_t> fp_t avogadro_f() {
+    fp_t ret=602214076e23;
+    return ret;
+  }
+  //const double avogadro=6.02214076e23;
 
   /// \f$ \pi \f$ 
   const double pi=boost::math::constants::pi<double>();
@@ -87,19 +96,28 @@ namespace o2scl_const {
   const double zeta7=1.0083492773819228268;
 
   /// The Euler-Mascheroni constant
-  const double euler_mascheroni=0.57721566490153286060;
+  const double euler=boost::math::constants::euler<double>();
   
+  //const double sin2_theta_weak=0.23121;
+
   /// \f$ \sin^2 \theta_W \f$ (PDG 2020 value)
-  const double sin2_theta_weak=0.23121;
+  template<class fp_t> fp_t sin2_theta_weak_f() {
+    fp_t numer=23121;
+    fp_t denom=100000;
+    fp_t ret=numer/denom;
+    return ret;
+  }
+  
+  //const double gfermi_gev2=1.1663787e-5;
   /** \brief Fermi coupling constant in \f$ \mathrm{GeV}^{-2} \f$
       (CODATA 2018 value)
   */
-  const double gfermi_gev2=1.1663787e-5;
-  
-  /// MKS units
-  static const size_t o2scl_mks=1;
-  /// CGS units
-  static const size_t o2scl_cgs=2;
+  template<class fp_t> fp_t gfermi_gev2_f() {
+    fp_t numer=11663787;
+    fp_t denom=1000000000000;
+    fp_t ret=numer/denom;
+    return ret;
+  }
   
   /// Planck constant
   template<class fp_t> fp_t planck_f(size_t system=o2scl_mks) {

@@ -453,11 +453,38 @@ int acol_manager::comm_docs(std::vector<std::string> &sv, bool itive_com) {
    */
 
   if (sv.size()>=2) {
-#ifdef O2SCL_OSX
 
     if (sv[1].length()>40) {
       sv[1]=sv[1].substr(0,40);
     }
+    cout << "Looking for documentation for '" << sv[1] << "'." << endl;
+
+    std::string topic_fn=o2scl_settings.get_doc_dir()+
+      "html/"+sv[1]+".html";
+    if (file_exists(topic_fn)) {
+      cout << "Found documentation file:\n  " << topic_fn << endl;
+      cmd+=((string)"\"file://")+topic_fn+"\" &";
+    } else {
+      std::string class_fn=o2scl_settings.get_doc_dir()+
+        "html/class/"+sv[1]+".html";
+      if (file_exists(class_fn)) {
+        cout << "Found documentation file:\n  " << class_fn << endl;
+        cmd+=((string)"\"file://")+class_fn+"\" &";
+      } else {
+        std::string function_fn=o2scl_settings.get_doc_dir()+
+          "html/function/"+sv[1]+".html";
+        if (file_exists(function_fn)) {
+          cout << "Found documentation file:\n  " << function_fn << endl;
+          cmd+=((string)"\"file://")+function_fn+"\" &";
+        } else {
+          cerr << "Could not find class, function, or topic "
+               << "named '" << sv[1] << "'." << endl;
+          return 2;
+        }
+      }
+    }
+
+    /*
     for(size_t i=0;i<sv[1].length();i++) {
       // If there is a space, then replace it with "%20"
       if (sv[1][i]==' ') {
@@ -472,18 +499,17 @@ int acol_manager::comm_docs(std::vector<std::string> &sv, bool itive_com) {
         i=0;
       }
     }
+    
     cmd+=((string)"\"file://")+
       o2scl_settings.get_doc_dir()+
       "html/search.html?q="+sv[1]+"\" &";
+    */
     
-#else
-    cmd+="file://"+o2scl_settings.get_doc_dir()+"html/index.html &";
-#endif
   } else {
     cmd+="file://"+o2scl_settings.get_doc_dir()+"html/index.html &";
   }
   
-  cout << "Using command: " << cmd << endl;
+  cout << "Using command:\n  " << cmd << endl;
 
   int xret=system(cmd.c_str());
   

@@ -292,11 +292,11 @@ namespace o2scl {
 
       .. todo:: 
 
-      In function split_string(), the rules surrounding spaces and
-      quotes are not well documented.
+         In function split_string(), the rules surrounding spaces and
+         quotes are not well documented.
 
-      - Future: Replace with a better algorithm. Should quotes be
-      escaped?
+         - Future: Replace with a better algorithm. Should quotes be
+           escaped?
 
       \endverbatim
   */

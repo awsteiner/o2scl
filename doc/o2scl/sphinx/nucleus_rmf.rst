@@ -15,15 +15,15 @@ using :ref:`nucleus_rmf <nucleus_rmf>`. The results are stored in
 files. It also computes the energy of three unoccupied neutron and
 proton levels.
 
-.. literalinclude:: ../../../../examples/ex_nucleus_rmf.cpp
+.. literalinclude:: ../../../examples/ex_nucleus_rmf.cpp
    :language: c++		    
    :start-after: sphinx-example-start
 
-.. image:: ../../../../examples/plot/ex_nuc_prof.png
+.. image:: ../../../examples/plot/ex_nuc_prof.png
    :width: 60%	   
    :alt: alt text
 
 Typical output:
 
-.. literalinclude:: ../../../../examples/ex_nucleus_rmf.scr      
+.. literalinclude:: ../../../examples/ex_nucleus_rmf.scr      
    :language: none

@@ -30,6 +30,8 @@
 
 #include <o2scl/constants.h>
 #include <o2scl/err_hnd.h>
+#include <o2scl/root_brent_gsl.h>
+#include <o2scl/eos_tov.h>
 
 namespace o2scl {
 
@@ -47,11 +49,14 @@ namespace o2scl {
       
       The EOS requires a hypergeometric function which only converges
       under specific conditions on the parameters.
-
   */
-  class eos_cs2_poly {
+  class eos_cs2_poly : public eos_tov {
 
   protected:
+    
+    /** \brief Solver
+     */
+    root_brent_gsl<> rbg;
     
     /** \brief First speed of sound parameter
      */
@@ -71,14 +76,28 @@ namespace o2scl {
     /** \brief Energy density integration constant
      */
     double C2;
-  
+
+    /// If true, then a guess for the baryon density has been given
+    bool nb_guess_set;
+
+    /// An initial guess when solving for the baryon density
+    double nb_guess;
+    
   public:
 
     eos_cs2_poly() {
       C1=0.0;
       C2=0.0;
+      nb_guess_set=false;
+      nb_guess=0.0;
     }
-  
+
+    void set_nb_guess(double nb) {
+      nb_guess=nb;
+      nb_guess_set=true;
+      return;
+    }
+    
     /** \brief Fix \f$ a_1 \f$ and \f$ a_2 \f$ based on fitting
 	to the sound speed at two different densities
     */
@@ -91,6 +110,7 @@ namespace o2scl {
       a1i=(cs21*nb0a3-cs20*nb1a3-a4*cs20*nb0a3*nb1a3+a4*cs21*nb0a3*nb1a3)/
 	(nb0a3-nb1a3);
       a2i=(cs20-cs21)*(1.0+a4*nb0a3)*(1.0+a4*nb1a3)/(nb0a3-nb1a3);
+      baryon_column=true;
       return;
     }
   
@@ -150,6 +170,119 @@ namespace o2scl {
       return -ed_from_nb(nb)+nb*mu_from_nb(nb);
     }
 
+    /// Convert ed_from_nb() into a function for the solver
+    double ed_from_nb_function(double ed0, double nb) {
+      return (ed_from_nb(nb)-ed0)/ed0;
+    }
+    
+    /// Convert pr_from_nb() into a function for the solver
+    double pr_from_nb_function(double pr0, double nb) {
+      return (pr_from_nb(nb)-pr0)/pr0;
+    }
+    
+    /** \brief Compute the pressure from the energy density using the
+        specified guess for the baryon density
+    */
+    double pr_from_ed_guess(double ed, double nb_guess_loc) {
+
+      // Solve for r prime
+      funct fx=std::bind
+        (std::mem_fn<double(double,double)>
+         (&eos_cs2_poly::ed_from_nb_function),this,ed,std::placeholders::_1);
+      rbg.solve(nb_guess_loc,fx);
+
+      // Now compute pressure
+      return pr_from_nb(nb_guess_loc);
+    }
+    
+    /** \brief Compute the baryon density from the energy density
+        using the specified guess for the baryon density
+    */
+    double nb_from_ed_guess(double ed, double nb_guess_loc) {
+
+      // Solve for r prime
+      funct fx=std::bind
+        (std::mem_fn<double(double,double)>
+         (&eos_cs2_poly::ed_from_nb_function),this,ed,std::placeholders::_1);
+      rbg.solve(nb_guess_loc,fx);
+
+      // Now compute pressure
+      return nb_guess_loc;
+    }
+
+    /** \brief Compute the energy density from the pressure using the
+        specified guess for the baryon density
+    */
+    double ed_from_pr_guess(double pr, double nb_guess_loc) {
+
+      // Solve for r prime
+      funct fx=std::bind
+        (std::mem_fn<double(double,double)>
+         (&eos_cs2_poly::pr_from_nb_function),this,pr,std::placeholders::_1);
+      rbg.solve(nb_guess_loc,fx);
+
+      // Now compute pressure
+      return ed_from_nb(nb_guess_loc);
+    }
+
+    /** \brief Compute the baryon density from the pressure using the
+        specified guess for the baryon density
+    */
+    double nb_from_pr_guess(double pr, double nb_guess_loc) {
+
+      // Solve for r prime
+      funct fx=std::bind
+        (std::mem_fn<double(double,double)>
+         (&eos_cs2_poly::pr_from_nb_function),this,pr,std::placeholders::_1);
+      rbg.solve(nb_guess_loc,fx);
+
+      // Now compute pressure
+      return nb_guess_loc;
+    }
+
+    /// Compute the energy density from the pressure
+    double pr_from_ed(double ed) {
+      nb_guess_set=false;
+      if (nb_guess_set) {
+        double nb=pr_from_ed_guess(ed,nb_guess);
+      }
+      return pr_from_ed_guess(ed,1.0);
+    }
+    
+    /// Compute the baryon density from the energy density
+    double nb_from_ed(double ed) {
+      nb_guess_set=false;
+      if (nb_guess_set) {
+        return nb_from_ed_guess(ed,nb_guess);
+      }
+      return nb_from_ed_guess(ed,1.0);
+    }
+    
+    /// Compute the energy density from the pressure
+    double ed_from_pr(double pr) {
+      nb_guess_set=false;
+      if (nb_guess_set) {
+        return ed_from_pr_guess(pr,nb_guess);
+      }
+      return ed_from_pr_guess(pr,1.0);
+    }
+    
+    /// Compute the baryon density from the pressure
+    double nb_from_pr(double pr) {
+      nb_guess_set=false;
+      if (nb_guess_set) {
+        return nb_from_pr_guess(pr,nb_guess);
+      }
+      return nb_from_pr_guess(pr,1.0);
+    }
+    
+    /// Compute the energy and baryon densities from the pressure
+    virtual void ed_nb_from_pr(double pr, double &ed, double &nb) {
+      nb_from_pr(pr);
+      ed_from_nb(nb);
+      return;
+    }
+    
   };
 
   /** \brief EOS with a constant speed of sound

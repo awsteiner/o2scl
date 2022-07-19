@@ -64,41 +64,41 @@ namespace o2scl_acol {
 
       .. todo::
 
-      In class acol_manager:
+         In class acol_manager:
 
-      - (Future) There is quite a bit of code duplication in
-      comm_autocorr() between the "table" and "other" types. 
-      This could be streamlined.
+         - (Future) There is quite a bit of code duplication in
+           comm_autocorr() between the "table" and "other" types. 
+           This could be streamlined.
 
-      - (Future) sum/max/min/output/interp/deriv/integ/deriv2 
-      for hist, hist_2d, and v<c>
+         - (Future) sum/max/min/output/interp/deriv/integ/deriv2 
+           for hist, hist_2d, and v<c>
 
-      - (Future) Commands xindex and yindex for table3d.
+         - (Future) Commands xindex and yindex for table3d.
 
-      - (Future) Enable set_grid() for table3d similar to tensor_grid.
+         - (Future) Enable set_grid() for table3d similar to tensor_grid.
 
-      - (Future) Fix fit for table.
+         - (Future) Fix fit for table.
 
-      - (Future) Use swap instead of copy in 'select' for table objects.
+         - (Future) Use swap instead of copy in 'select' for table objects.
 
-      - (Future) Make sure get_input() is used more consistently.
+         - (Future) Make sure get_input() is used more consistently.
 
-      - (Future) Make sure preview, output, internal, generic, and create
-      work consistently across all types.
+         - (Future) Make sure preview, output, internal, generic, and create
+           work consistently across all types.
 
-      - (Future) Stack-like operations (push, pop, swap, 
-      stack-list, etc.)?
+         - (Future) Stack-like operations (push, pop, swap, 
+           stack-list, etc.)?
 
-      - (Future) Add functionality to ensure that three digit exponents
-      are still handled gracefully (do this by creating a new boolean
-      setting which, if true, always makes three spaces for
-      exponents?)
+         - (Future) Add functionality to ensure that three digit exponents
+           are still handled gracefully (do this by creating a new boolean
+           setting which, if true, always makes three spaces for
+           exponents?)
 
-      - (Future) Fix insert and insert_full so that it automatically
-      renames columns
+         - (Future) Fix insert and insert_full so that it automatically
+           renames columns
       
-      - (Future) Allow "insert" commands to be restrictive, avoiding
-      extrapolation
+         - (Future) Allow "insert" commands to be restrictive, avoiding
+           extrapolation
 
       \endverbatim
   */
