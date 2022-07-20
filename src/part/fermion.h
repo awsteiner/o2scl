@@ -477,7 +477,7 @@ namespace o2scl {
       // Ratio of last term to first term in the pressure expansion
       fp_t rat;
       fp_t dj1=((fp_t)max_term), jot1=max_term/tt;
-      fp_t dj2=1.0, jot2=1/tt;
+      fp_t dj2=1, jot2=1/tt;
       
       if (inc_antip==false) {
         rat=exp(dj1*psi)/jot1/jot1*be_integ.K2exp(jot1);
@@ -944,9 +944,9 @@ namespace o2scl {
       fp_t dj=((fp_t)j);
       fp_t jot=dj/tt;
 
-      double K2j=be_integ.K2exp(jot);
+      fp_t K2j=be_integ.K2exp(jot);
       if (inc_antip==false) {
-        double K1j=be_integ.K1exp(jot);
+        fp_t K1j=be_integ.K1exp(jot);
         pterm=exp(jot*xx)/jot/jot*K2j;
         if (j%2==0) pterm=-pterm;
         nterm=pterm*jot/m;
@@ -960,7 +960,7 @@ namespace o2scl {
         edterm=(K1j*dj+3.0*K2j*tt)/jot/dj*exp(xx*jot);
         if (j%2==0) edterm=-edterm;
       } else {
-        double K3j=be_integ.K3exp(jot);
+        fp_t K3j=be_integ.K3exp(jot);
         pterm=exp(-jot)*2*cosh(jot*(xx+1))/jot/jot*K2j;
         if (j%2==0) pterm*=-1;
         nterm=pterm*tanh(jot*(xx+1))*jot/m;

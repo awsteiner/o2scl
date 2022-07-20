@@ -19,7 +19,7 @@ RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
 RUN mkdir m4
 RUN autoreconf -i
-RUN LDFLAGS="-lncurses" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -DO2SCL_LD_TYPES -DO2SCL_NEW_BOOST_INTEGRATION -I/usr/include" ./configure --enable-openmp
+RUN LDFLAGS="-lncurses" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include" ./configure --enable-openmp
 RUN make blank-doc
 RUN make
 RUN make install

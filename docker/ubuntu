@@ -21,7 +21,7 @@ WORKDIR /opt
 RUN curl -L https://github.com/awsteiner/o2scl/releases/download/v0.926/o2scl-0.926.tar.gz --output o2scl-0.926.tar.gz
 RUN tar xvzf o2scl-0.926.tar.gz
 WORKDIR /opt/o2scl-0.926
-RUN LDFLAGS="-larmadillo -llapack -lblas -lncurses" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_REGEX -DO2SCL_HDF5_COMP -DO2SCL_LD_TYPES -DO2SCL_NEW_BOOST_INTEGRATION -I/usr/include" ./configure --enable-eigen --enable-armadillo --enable-openmp --enable-fftw
+RUN LDFLAGS="-larmadillo -llapack -lblas -lncurses" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_REGEX -DO2SCL_HDF5_COMP -I/usr/include" ./configure --enable-eigen --enable-armadillo --enable-openmp --enable-fftw
 RUN make
 RUN make install
 WORKDIR /
