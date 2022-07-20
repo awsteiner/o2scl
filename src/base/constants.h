@@ -67,7 +67,14 @@ namespace o2scl_const {
   
   /** \brief Fine structure constant (CODATA 2018 value)
    */
-  const double fine_structure=7.2973525693e-3;
+  template<class fp_t> fp_t fine_structure_f() {
+    fp_t num=72973525693;
+    fp_t den=10000000000000;
+    fp_t ret=num/den;
+    return ret;
+  }
+  //const double fine_structure=7.2973525693e-3;
+  
   /** \brief Avogadro's number (CODATA 2018 value; exact)
    */
   template<class fp_t> fp_t avogadro_f() {
@@ -1271,7 +1278,7 @@ namespace o2scl_const {
       \f}
   */
   const double e2_gaussian=o2scl_const::hc_mev_fm*
-    o2scl_const::fine_structure;
+    o2scl_const::fine_structure_f<double>();
 
   /** \brief Electron charge sqaured in 
       Heaviside-Lorentz units where \f$\hbar=c=1\f$ (derived)
@@ -1292,7 +1299,7 @@ namespace o2scl_const {
       \alpha=\frac{e^2}{4 \pi}=\frac{1}{137}&
       \f}
   */      
-  const double e2_hlorentz=o2scl_const::fine_structure*4.0*pi;
+  const double e2_hlorentz=o2scl_const::fine_structure_f<double>()*4.0*pi;
 
   /** \brief Electron charge squared in SI(MKS) units (derived)
 
@@ -1335,7 +1342,7 @@ namespace o2scl_const {
       to an energy density.
   */
   const double gauss2_fm4=ec_gauss_fm2*ec_gauss_fm2/
-    o2scl_const::fine_structure;
+    o2scl_const::fine_structure_f<double>();
 
   /// \name Particle masses from PDG 2020
   //@{
