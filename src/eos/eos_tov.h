@@ -43,13 +43,18 @@ namespace o2scl {
 
   /** \brief A EOS base class for the TOV solver
 
-      The children classes do not always perform unit conversions and
-      often assume that energy density and pressure have the same
-      units. The units for baryon density are fixed when calling the
-      function <tt>set_baryon_density()</tt>. Unless the pressure and
-      energy density have units of \f$
-      \mathrm{M}_\odot/\mathrm{km}^3\f$, then the user must ensure
-      that \ref tov_solve is set to work in a different unit system.
+      Classes derived from \ref o2scl::eos_tov have different
+      requirements for the units used for energy density and pressure.
+      The often assume that energy density and pressure have the same
+      units (i.e. by setting \f$ c=1 \f$). The units for baryon
+      density are fixed in some child classes by calling the function
+      <tt>set_baryon_density()</tt>.
+
+      The class \ref o2scl::tov_solve defaults to pressure and energy
+      density units of \f$ \mathrm{M}_\odot/\mathrm{km}^3\f$. If the
+      pressure and energy density have other units, then the user must
+      use \ref o2scl::tov_solve::set_units() to ensure that \ref
+      o2scl::tov_solve is set to work in a different unit system.
    */
   class eos_tov {
 
@@ -128,6 +133,9 @@ namespace o2scl {
       \right]
       \f]
 
+      This class presumes that pressure and energy density have units
+      of \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$.
+      
       Physical solutions are obtained only for \f$ P< 25 P_{*}/144 \f$
       (ensuring that the argument to the square root is positive) and
       \f$ \beta=G M/R<1/6 \f$ (ensuring that the EOS is not acausal).
@@ -213,7 +221,6 @@ namespace o2scl {
       use this EOS in a tov_solve object and try to compute the M-R
       curve you will need to change \ref o2scl::tov_solve::prbegin and
       \ref o2scl::tov_solve::prend.
-
   */
   class eos_tov_buchdahl : public eos_tov {
     

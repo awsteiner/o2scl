@@ -630,15 +630,17 @@ namespace o2scl_acol {
     */
     virtual int comm_xml_to_o2(std::vector<std::string> &sv, bool itive_com);
     
-    /** \brief Open local HTML docs for acol or an O₂scl topic.
+    /** \brief Open local HTML docs for O₂scl documentation.
 
-        Arguments: <tt>["dev"] [topic]</tt>
+        Arguments: <tt>[section, class, or function]</tt>
 
         If [topic] is unspecified, this command opens up the local
-        HTML documentation for acol in the default web browser using
+        HTML documentation for O₂scl in the default web browser using
         'open' on OSX and 'xdg-open' on other systems. If a topic is
-        specified, then the closest O₂scl documentation web page is
-        opened. In order to open the remote version of the
+        specified, then the <tt>docs</tt> command looks for the O₂scl
+        documentation web page for the specified section, class, or
+        function. If the documentation is found, then that web page is
+        opened instead. In order to open the remote version of the
         documentation instead of the local copy, use the
         <tt>wdocs</tt> command instead.
     */
@@ -646,7 +648,7 @@ namespace o2scl_acol {
 
     /** \brief Open remote HTML docs for acol or an O₂scl topic.
 
-        Arguments: <tt>[search_term], [topic] or [section
+        Arguments: <tt>["dev"] [search_term], [topic] or [section
         search_term]</tt>
         
         If no arguments are given, this command opens up the remote
@@ -657,9 +659,11 @@ namespace o2scl_acol {
         search feature on the O₂scl web page is opened using the
         specified search term. Note that, for search terms, spaces can
         be included using e.g. '-wdocs \"Simulated annealing\"'. Valid
-        sections are either \"eos\" or \"part\". In order to open
-        the local version of the documentation instead of the remote
-        copy, use <tt>docs</tt> instead of <tt>wdocs</tt>.
+        sections are either \"eos\" or \"part\". If the optional
+        argument "dev" is given, then the development raterh than
+        release documentation is used. In order to open the local
+        version of the documentation instead of the remote copy, use
+        <tt>docs</tt> instead of <tt>wdocs</tt>.
     */
     virtual int comm_wdocs(std::vector<std::string> &sv, bool itive_com);
 

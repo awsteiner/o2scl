@@ -249,7 +249,7 @@ namespace o2scl_cgs {
   /** \brief Fermi coupling constant in s^4 / cm^4 g^2
       (derived from CODATA 2018 value)
   */
-  const double gfermi=o2scl_const::gfermi_gev2*1.0e-18/
+  const double gfermi=o2scl_const::gfermi_gev2_f<double>()*1.0e-18/
     o2scl_cgs::electron_volt/o2scl_cgs::electron_volt;
   //@}
 
@@ -400,7 +400,8 @@ namespace o2scl_cgs {
   /** \brief Molar gas constant, "R", in g cm^2 / K mol s^2 
       (CODATA 2018; exact; derived)
   */
-  const double molar_gas=o2scl_const::avogadro*o2scl_cgs::boltzmann;
+  const double molar_gas=o2scl_const::avogadro_f<double>()*
+    o2scl_cgs::boltzmann;
   /** \brief Molar volume of ideal gas at standard T and P in 
       cm^3 / mol (CODATA 2018 value)
   */
@@ -888,7 +889,8 @@ namespace o2scl_cgsm {
   /// Nuclear magneton in abamp cm^2 (CODATA 2018 value)
   const double nuclear_magneton=5.0507837461e-24;
   /// Faraday constant in abamp s / mol (CODATA 2018 value; derived; exact)
-  const double faraday=o2scl_const::avogadro*o2scl_cgs::electron_volt/1.0e8;
+  const double faraday=o2scl_const::avogadro_f<double>()*
+    o2scl_cgs::electron_volt/1.0e8;
   /// Electron charge in abamp s (derived)
   const double electron_charge=electron_volt*1.0e-8;
   //@}

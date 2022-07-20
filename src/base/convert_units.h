@@ -790,7 +790,8 @@ namespace o2scl {
           // constant
           {"G",0,1,-2,0,-1,0,0,o2scl_mks::gauss,"gauss"},
          
-          {"NA",0,0,0,0,0,-1,0,o2scl_const::avogadro,"Avogadro's number"}
+          {"NA",0,0,0,0,0,-1,0,o2scl_const::avogadro_f<fp_t>(),
+           "Avogadro's number"}
      
         };
       
