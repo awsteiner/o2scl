@@ -43,19 +43,14 @@ namespace o2scl {
 
   /** \brief A EOS base class for the TOV solver
 
-      \warning Classes derived from \ref o2scl::eos_tov have different
-      requirements for the units used for energy density and pressure.
-      The often assume that energy density and pressure have the same
-      units (i.e. by setting \f$ c=1 \f$). The units for baryon
-      density are fixed in some child classes by calling the function
-      <tt>set_baryon_density()</tt>.
-
-      The class \ref o2scl::tov_solve defaults to pressure and energy
-      density units of \f$ \mathrm{M}_\odot/\mathrm{km}^3\f$. If the
-      pressure and energy density in the \ref o2scl::eos_tov object
-      have other units, then the user must use \ref
-      o2scl::tov_solve::set_units() to ensure that \ref
-      o2scl::tov_solve is set to work in a different unit system.
+      The class \ref o2scl::tov_solve uses only the functions \ref
+      baryons_only() and \ref ed_nb_from_pr(). Thus the function \ref
+      ed_nb_from_pr() must work with pressure and energy density in
+      units of \f$ \mathrm{M}_\odot/\mathrm{km}^3\f$ and baryon
+      density in units of \f$ 1/\mathrm{fm}^3 \f$. This requirement
+      holds, for example, even when if \ref
+      o2scl::tov_solve::set_units() is used to modify the units of the
+      output of the TOV solver.
    */
   class eos_tov {
 
@@ -111,11 +106,12 @@ namespace o2scl {
 
     /** \brief Given the pressure, produce the energy and number densities
         
-        The arguments \c pr and \c ed should always be in \f$
-        M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
-        in \f$ \mathrm{fm}^{-3} \f$ .
+        The TOV solver \ref o2scl::tov_solve assumes that \c pr and \c
+        ed are always in \f$ M_{\odot}/\mathrm{km}^3 \f$ and that \c
+        nb is always in in \f$ \mathrm{fm}^{-3} \f$ .
         
-        If \ref baryon_column is false, then \c nb is unmodified.
+        If \ref has_baryons() is false, then \c nb is unmodified
+        by \ref o2scl::tov_solve.
     */
     virtual void ed_nb_from_pr(double pr, double &ed, double &nb)=0;
 
@@ -135,7 +131,8 @@ namespace o2scl {
       \f]
 
       This class presumes that pressure and energy density have units
-      of \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$.
+      of \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ and that baryon
+      number density has units of \f$ 1/\mathrm{fm}^{3} \f$.
       
       Physical solutions are obtained only for \f$ P< 25 P_{*}/144 \f$
       (ensuring that the argument to the square root is positive) and
@@ -351,11 +348,11 @@ namespace o2scl {
   /** \brief Polytropic EOS \f$ P = K \varepsilon^{1+1/n} \f$
 
       This class can handle any units for \f$ P \f$, \f$ \varepsilon
-      \f$ and \f$ n_B \f$ as long as they are consistent. The \ref
-      o2scl::tov_solve class assumes that \f$ P \f$ and \f$
-      \varepsilon \f$ are in units of \f$
-      \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ unless \ref
-      o2scl::tov_solve::set_units() is called to change unit systems.
+      \f$ and \f$ n_B \f$ as long as they are consistent. However,
+      this class can only be used in \ref o2scl::tov_solve and \ref
+      o2scl::tov_love if \f$ P \f$ and \f$ \varepsilon \f$ are in
+      units of \f$ \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ and \f$ n_B
+      \f$ is in units of \f$ 1/\mathrm{fm}^{3} \f$.
 
       \note Polytropes in Newtonian gravity are often written in terms
       of the number density rather than, as this class does, in terms
@@ -383,15 +380,27 @@ namespace o2scl {
       {n_B \varepsilon_1} \right)^{1/n}
       \left(1+\frac{P_1}{\varepsilon_1}\right)-K\right]^{-n} \, .
       \f]
-      Sometimes the baryon susceptibility is also useful 
+      The baryon susceptibility is
       \f[
       \frac{d \mu_B}{d n_B} = \left(1+1/n\right)
       \left( \frac{P}{\varepsilon}\right)
       \left( \frac{\mu_B}{n_B}\right) \, .
       \f]
 
-      \future The simple formulation of the expressions here more than
-      likely break down when their arguments are sufficiently extreme.
+      \note Negative values of \f$ n \f$ are allowed, but these cannot
+      be used at low energy densities because they imply baryon
+      densities which are non-zero when the energy density and
+      pressure vanish. Also, this class may have difficulty when \f$ n
+      \f$ is near zero.
+
+      
+      \verbatim embed:rst
+      .. todo::
+
+         In eos_tov_polytrope, document the behavior of the baryon
+         density in the small energy density limit
+      \endverbatim
+         
   */
   class eos_tov_polytrope : public eos_tov {
     
@@ -968,7 +977,10 @@ namespace o2scl {
 
         The arguments \c pr and \c ed should always be in \f$
         M_{\odot}/\mathrm{km}^3 \f$ . The argument for \c nb should be
-        in \f$ \mathrm{fm}^{-3} \f$ .
+        in \f$ \mathrm{fm}^{-3} \f$ . This requirement allows
+        the TOV solver to be faster, assuming that it is not 
+        required to do any unit conversions while solving the
+        TOV equations.
         
         If the baryon density is not specified, it should be set to
         zero or \ref baryon_column should be set to false
