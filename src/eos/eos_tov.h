@@ -43,7 +43,7 @@ namespace o2scl {
 
   /** \brief A EOS base class for the TOV solver
 
-      Classes derived from \ref o2scl::eos_tov have different
+      \warning Classes derived from \ref o2scl::eos_tov have different
       requirements for the units used for energy density and pressure.
       The often assume that energy density and pressure have the same
       units (i.e. by setting \f$ c=1 \f$). The units for baryon
@@ -52,8 +52,9 @@ namespace o2scl {
 
       The class \ref o2scl::tov_solve defaults to pressure and energy
       density units of \f$ \mathrm{M}_\odot/\mathrm{km}^3\f$. If the
-      pressure and energy density have other units, then the user must
-      use \ref o2scl::tov_solve::set_units() to ensure that \ref
+      pressure and energy density in the \ref o2scl::eos_tov object
+      have other units, then the user must use \ref
+      o2scl::tov_solve::set_units() to ensure that \ref
       o2scl::tov_solve is set to work in a different unit system.
    */
   class eos_tov {
@@ -248,9 +249,8 @@ namespace o2scl {
 
     virtual ~eos_tov_buchdahl() {}
 
-    /** \brief The parameter with units of pressure (the default value
-        is \f$ 3.2 \times 10^{-5}\f$ which is sensible for units of
-        \f$ \mathrm{M}_\odot/\mathrm{km}^3\f$)
+    /** \brief The parameter with units of pressure (default is \f$
+        3.2 \times 10^{-5}~\mathrm{M}_\odot/\mathrm{km}^3\f$)
     */
     double Pstar;
 
@@ -350,8 +350,12 @@ namespace o2scl {
 
   /** \brief Polytropic EOS \f$ P = K \varepsilon^{1+1/n} \f$
 
-      The quantity \f$ K \f$ must be in units of 
-      \f$ \left(\mathrm{M}_{\odot}/\mathrm{km}^3\right)^{-1/n} \f$ .
+      This class can handle any units for \f$ P \f$, \f$ \varepsilon
+      \f$ and \f$ n_B \f$ as long as they are consistent. The \ref
+      o2scl::tov_solve class assumes that \f$ P \f$ and \f$
+      \varepsilon \f$ are in units of \f$
+      \mathrm{M}_{\odot}/\mathrm{km}^3 \f$ unless \ref
+      o2scl::tov_solve::set_units() is called to change unit systems.
 
       \note Polytropes in Newtonian gravity are often written in terms
       of the number density rather than, as this class does, in terms
@@ -567,7 +571,7 @@ namespace o2scl {
 
   /** \brief Provide an EOS for TOV solvers based on 
       interpolation of user-supplied vectors
-   */
+  */
   template<class vec_t> class eos_tov_vectors : public eos_tov {
 
     /** \brief Internal function to reset the interpolation
@@ -741,8 +745,8 @@ namespace o2scl {
 
       The simplest usage of this class is simply to use \ref
       read_table() to read a tabulated EOS stored in a \ref
-      table_units object and optionally specify a separate crust 
-      (i.e. low-density) EOS.
+      table_units object and optionally specify a separate crust (i.e.
+      low-density) EOS.
 
       There are two methods to handle the crust-core interface. The
       method labeled <tt>smooth_trans</tt> uses the crust below
