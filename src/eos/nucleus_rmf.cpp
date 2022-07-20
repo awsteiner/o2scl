@@ -1327,7 +1327,8 @@ void nucleus_rmf::meson_iter(double ic) {
 	fields(i,2)=fields(i,2)*step_size*rmf->cr*rmf->mr*rmf->cr*
 	  rmf->mr;
       } else {
-	fields(i,3)=fields(i,3)*step_size*4.0*pi*o2scl_const::fine_structure;
+	fields(i,3)=fields(i,3)*step_size*4.0*pi*
+          o2scl_const::fine_structure_f<double>();
       }
     }
 
