@@ -538,7 +538,7 @@ void nucmass_densmat::binding_energy_densmat_derivs
   // Add the finite-size part of the Coulomb energy
   double fdu=0.2*chi_p-0.6*cbrt(chi_p);
   double coul=(Z+N)*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
-    o2scl_const::fine_structure*R_p*R_p*
+    o2scl_const::fine_structure_f<double>()*R_p*R_p*
     pow(fabs(n0o2-npout),2.0)/0.16*fdu;
 
   // Total binding energy
