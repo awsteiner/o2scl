@@ -18,9 +18,9 @@ AC_PROG_MAKE_SET
 # optional here and users will have to modify their flags if this
 # fails. AWS, 1/5/22, this is probably unnecessary now
 #
-# 7/20/22, commenting this out now as o2scl uses c++14 extensions
+# 7/20/22, fixing this since o2scl uses c++14 extensions
 #
-# AX_CXX_COMPILE_STDCXX_11(,[optional])
+AX_CXX_COMPILE_STDCXX('14',[optional])
 
 # Newer replacement for LT_INIT
 LT_INIT
