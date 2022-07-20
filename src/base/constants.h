@@ -78,7 +78,7 @@ namespace o2scl_const {
   /** \brief Avogadro's number (CODATA 2018 value; exact)
    */
   template<class fp_t> fp_t avogadro_f() {
-    fp_t ret=602214076e23;
+    fp_t ret=602214076e15;
     return ret;
   }
   //const double avogadro=6.02214076e23;
