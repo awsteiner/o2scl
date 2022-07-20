@@ -9,6 +9,11 @@ help:
 	@echo "build_ubuntu_dev:"
 	@echo "build_ubuntu_dev_nolinalg:"
 
+docker_clean:
+	sudo docker rm \
+	`sudo docker ps --all | grep -i -v container | awk '{print $1}'`
+	sudo docker rmi \
+	`sudo docker images --all | grep -i -v container | awk '{print $3}'`
 
 build_opensuse_leap:
 	sudo docker build - < opensuse_leap \
